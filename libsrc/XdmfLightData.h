@@ -27,16 +27,21 @@
 
 #include "XdmfObject.h"
 
+class XdmfDOM;
+class XdmfXNode;
+
+//! Base object for Light Data (XML)
 /*!
 This is an abstract convenience object for reading and writing
 LightData Files. LightData is stored in XML File or DOMs.
 LightData "points" to HeavyData ; the giga-terabytes of HPC simulations.
 This class points to a DOM, and a current node in that DOM which is presumeably
 points to the "root" of the data object ( Grid, Geometry, Topology, etc.)
-*/
 
-class XdmfDOM;
-class XdmfXNode;
+XdmfLightData is typically not used by itself. Rather one of the derived
+classes like XdmfGrid or XdmfFormatMulti is used and these derived methods
+are used from that class.
+*/
 
 class XDMF_EXPORT XdmfLightData : public XdmfObject {
 
@@ -52,6 +57,19 @@ public:
         void SetNdgmHost( XdmfString String ) { strcpy( this->NdgmHost, String ); }
 
 //! Get the current name
+/*!
+	In the XML, it is \b HIGHLY reccomended to give a Name to every
+	XdmfGrid and XdmfAttribute. Example :
+\verbatim
+	<Grid Name="Concrete Block"
+		.
+		.
+		.
+		<Attribute Name="Pressure" ...
+\endverbatim
+	Visualization tools, in particular, look for this information to
+	distinguish grids and scalars.
+*/
   XdmfGetValueMacro(Name, XdmfString);
 //! Set the current name
   void SetName( XdmfConstString File ) {
@@ -68,6 +86,11 @@ public:
 //! Get the current WorkingDirectory
   XdmfGetValueMacro(WorkingDirectory, XdmfString);
 //! Set the current WorkingDirectory
+/*!
+	This alleviates the need to hard code pathnames in the
+	light data. i.e. the heavy and light data can be in 
+	one directory and accessed from another.
+*/
   void SetWorkingDirectory( XdmfString File ) {
     strcpy( this->WorkingDirectory, File );
     } ;
@@ -82,6 +105,7 @@ public:
 //! Get the "root" element in the DOM for the associated LightData type
   XdmfGetValueMacro(CurrentElement, XdmfXNode *);
 
+//! For internal use
   XdmfInt32 HasBeenInited( void ) {
     if( this->DOM && this->CurrentElement ) {
       return( XDMF_SUCCESS );
@@ -91,9 +115,13 @@ public:
 
 protected:
 
+//! How to connect to NDGM for Heavy Data
   char    NdgmHost[XDMF_MAX_STRING_LENGTH];
+//! Where to find data
   char    WorkingDirectory[XDMF_MAX_STRING_LENGTH];
+//! XML filename
   char    FileName[XDMF_MAX_STRING_LENGTH];
+//! Unique Identifier
   char    Name[XDMF_MAX_STRING_LENGTH];
   XdmfDOM    *DOM;
   XdmfXNode    *CurrentElement;

@@ -27,10 +27,12 @@
 
 #include "XdmfArray.h"
 
+//! Container class for Heavy Data Access
 /*!
 This is an abstract convenience object for reading and writing
 HeavyData Files. 
 Datasets in HeavyDat are specified by :
+\verbatim
   Domain:Filename:Pathname
 where
   Domain = NDGM | FILE | CORE | GASS
@@ -38,6 +40,7 @@ where
     FILE is assumed
   Filename = UNIX style Pathname of HeavyDat file
   Pathname = HeavyData Pathname inside HeavyData File
+\endverbatim
 */
 class XDMF_EXPORT XdmfHeavyData : public XdmfDataDesc {
 

@@ -35,6 +35,12 @@ This is the SuperClass for All XDMF Arrays.
 XDMF Arrays allow the user to set and query the
 number of elements and will automatically re-allocate
 enough space. You can also set the pointer directly.
+
+XdmfArray is a self-describing data structure. It is derived from
+XdmfDataDesc so it understands the number type and the \b SHAPE
+of the data. An XdmfArray is a homogeneous array (each element
+of the array is the same type). Access to HDF5 files is
+accomplished directly thru XdmfArrays by the XdmfHDF class.
 */
 
 
@@ -50,6 +56,7 @@ public:
 
   XdmfConstString GetClassName( void ) { return ( "XdmfArray" ) ; };
 
+//! Get the \b NAME of the array
   XdmfString    GetTagName( void );
 //! Get the length ( in bytes ) of the current data array
   XdmfLength GetCoreLength( ) { return ( this->GetElementSize() * this->GetNumberOfElements() ) ; } ;
@@ -73,6 +80,7 @@ public:
   XdmfInt32  CopyShape( hid_t DataSpace );
 #endif
 
+//! Get the undelying data for fast access \b CAUTION !!
   XdmfPointer  GetDataPointer( XdmfInt64 Index  = 0 );
 
   void    SetDataPointer( XdmfPointer Pointer ){

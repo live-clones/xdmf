@@ -32,6 +32,26 @@
 #define XDMF_HYPERSLAB    1
 #define XDMF_COORDINATES  2
 
+//! Number Type and Shape
+/*!
+	XdmfDataDesc is a class to operate of the \b TYPE and \b SHAPE of data.
+	The \b TYPE refers to wheather the data is Interger or Floating Point
+	and its percision (i.e. 64 bit floats, 32 bit ints). The \b SHAPE refers to
+	the \b rank and \b dimensions of the data. The \b rank is the number of
+	dimensions. The \b dimensions are the length of each extent. For example,
+	if we have an array that is 10x20x30 then the rank is 3 and the dimensions
+	are 10,20,30. Data is specified with it's slowest changing dimension listed 
+	first. So for a datset with IDim = 100, JDim = 200, and KDim = 300, the
+	shape would be (300, 200, 100).
+
+	XdmfDataDesc also specifies \b SELECTION. This is the part of the dataset
+	that will be accessed. \b SELECTION can either be a HyperSlab or Coordinates.
+	HyperSlab specifies start, stride, and count (length) for each dimension. Coordinates
+	specifies the parametric coordinates. For a 300x200x100 dataset, the HyperSlab
+	(0, 1, 300, 99, 1, 1, 0, 1, 100) would specify the 99'th J Plane of data. The
+	Coordinate (0,0,0) would specify the first value, and (299, 199, 99) would
+	specify the last.
+*/
 
 class XDMF_EXPORT XdmfDataDesc : public XdmfObject {
 
@@ -40,6 +60,7 @@ public :
   XdmfDataDesc();
   virtual ~XdmfDataDesc();
 
+//! Print Information to stdout
   void    Print( void );
 
 //!  Set the type of number for homogeneous DataSets : all Float, all Int etc.
@@ -52,11 +73,15 @@ public :
   XdmfString  GetNumberTypeAsString( void );
 //! Set Rank and Dimensions of Dataset
   XdmfInt32  SetShape( XdmfInt32 Rank, XdmfInt64 *Dimensions );
+//! Fills Dimensions and returns Rank
   XdmfInt32  GetShape( XdmfInt64 *Dimensions );
+//! Returns a SPACE separated string of the dimensions
   XdmfString  GetShapeAsString( void );
+//! Copy the Selection from one Desc to another
   XdmfInt32  CopySelection( XdmfDataDesc *DataDesc );
-//! Convenience
+//! Copy the Shape from one Desc to another
   XdmfInt32  CopyShape( XdmfDataDesc *DataDesc );
+//! Copy the Number Type from one Desc to another
   XdmfInt32  CopyType( XdmfDataDesc *DataDesc ) {
         return( this->CopyType( DataDesc->GetDataType() ) );
         }
@@ -68,6 +93,9 @@ public :
 #endif  /* SWIG */
 
 //! Convenience function to set shape linear
+/*!
+	Sets the rank = 1, and Dimensions[0] = Length
+*/
   XdmfInt32  SetNumberOfElements( XdmfInt64 Length ) {
         return( this->SetShape( 1, &Length ) );
         };
@@ -80,7 +108,17 @@ public :
   XdmfInt32  SelectHyperSlab( XdmfInt64 *Start, XdmfInt64 *Stride, XdmfInt64 *Count );
 //! Select by Start, Stride, Count mechanism via String
   XdmfInt32  SelectHyperSlabFromString( XdmfString Start, XdmfString Stride, XdmfString Count );
+//! Fills in Start, Stride, and Count. Returns the rank
   XdmfInt32  GetHyperSlab( XdmfInt64 *Start, XdmfInt64 *Stride, XdmfInt64 *Count );
+//! Returns the HyperSlab as a SPACE separated string
+/*!
+	Return value is
+\verbatim
+	Start[0] Start[1] ... Start[N]
+	Stride[0] Stride[1] ... Stride[N]
+	Count[0] Count[1] ... Count[N]
+\endverbatim
+*/
   XdmfString  GetHyperSlabAsString( void );
 //! Select via explicit parametric coordinates
   XdmfInt32  SelectCoordinates( XdmfInt64 NumberOfElements, XdmfInt64 *Coordinates );

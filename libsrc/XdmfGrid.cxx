@@ -207,8 +207,8 @@ if( Status == XDMF_FAIL ){
   XdmfErrorMessage("Error Reading Geometry");
   return( XDMF_FAIL );
   }
-XdmfDebug("Setting Base Grid");
 /*
+XdmfDebug("Setting Base Grid");
 Status = this->SetBaseGrid();
 if( Status == XDMF_FAIL ){
   XdmfErrorMessage("Error Setting Base Grid");

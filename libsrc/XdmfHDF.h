@@ -32,6 +32,9 @@
 #define XDMF_H5_UNKNOWN    H5G_UNKNOWN
 #define XDMF_H5_OTHER    0xFF
 
+class XdmfArray;
+
+//! Class for Accessing HDF5 Data
 /*!
 This is a convenience object for reading and writing
 HDF5 Files. Use this to remain XDMF compliant.
@@ -43,9 +46,37 @@ where
     FILE is assumed
   Filename = UNIX style Pathname of HDF5 file
   Pathname = HDF5 Pathname inside HDF5 File
+
+XdmfHDF confines HDF5 to using only HDF5 Groups and
+HDF5 Datasets. HDF5 Attributes (Name=Value pairs) are
+not used (that function is served by XML). HDF5 Groups
+are treated like "Directories" on a UNIX filesystem.
+HDF5 Datasets are treated like "Files" on a UNIX
+Filesystem.
+
+Example of Createing an HDF5 File :
+\code
+	XdmfHDF		*H5 = new XdmfHDF();
+	XdmfArray	*MyData = new XdmfArray();
+	XdmfConstString	DataSetNameConst;
+
+	MyData->SetNumberType(XDMF_FLOAT32_TYPE);
+	MyData->SetNumberOfElements(100);
+	MyData->Generate(0, 99);
+	DataSetNameConst = "FILE:TestFile.h5:/TestDataSets/Values1";
+	H5->CopyType( MyData );
+	H5->CopyShape( MyData );
+	H5->Open( DataSetName, "rw" );
+	H5->Write( MyData );
+	H5->Close();
+	
+\endcode
+
+This would create an HDF5 file with one Group (TestDataSets) and one Dataset in
+that Group (Values1). The Dataset would be 100 32 bit floating point values
+ranging from 0-99.
 */
 
-class XdmfArray;
 
 class XDMF_EXPORT XdmfHDF : public XdmfHeavyData {
 
@@ -56,6 +87,16 @@ public:
   XdmfConstString GetClassName() { return ( "XdmfHDF" ) ; };
 
 //! Set Compression Level to 0 - 9 . Level <= 0 is Off
+/*!
+	Compression level refers to the next dataset that is
+	created. Once a dataset is created, the compression
+	level does not change.
+
+	Compression Levels 1-9 are progressively slower but
+	result in much smaller HDF5 files. Compression uses
+	the libz compression and "CHUNKS" the HDF5 file
+	in the major dimension.
+*/
   XdmfSetValueMacro(Compression, XdmfInt32);
 //! Get Compression Level
   XdmfGetValueMacro(Compression, XdmfInt32);

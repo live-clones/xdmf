@@ -35,12 +35,61 @@
 
 class XdmfParameter;
 
+//! Class for XML Parsing using the Document Object Model
 /*!
 This is the Base XML Parsing Object. A XdmfDOM will 
 read the XML and build an internal tree structure. The
 tree can then be walked and queried. Any node can be 
 "serialized". This generates an XML string that implements
 the node and all of its' children.
+
+Many other Xdmf Classes (XdmfGrid, XdmfTopology, etc.) use this
+class to parse and generate XML. The DOM can accept XML from a 
+String or from a File. Once \b PARSED the resulting tree can be
+modified by adding or deleting nodes and then "serialized" to produce
+XML. For example, the following XML might be in MyFile.xml :
+\verbatim
+<Tag1 Name="First Parent">
+	<Tag2 Name="First Child" />
+	<Tag2 Name="Second Child">
+		Text for Second Child
+	</Tag2>
+</Tag1>
+\endverbatim
+
+The DOM might manipulate the XML with :
+
+\code
+	XdmfDOM		*DOM = new XdmfDOM();
+	XdmfXNode	*Parent, *FirstChild, *SecondChild;
+
+	// Parse the XML File
+	DOM->SetInputFileName("MyFile.xml");
+	DOM->Parse();
+	// Find the first element with TAG = Tag1
+	Parent = DOM->FindElement("Tag1");
+	// Find the first (zero based) Tag2 below Parent
+	FirstChild = DOM->FindElement("Tag2", 0, Parent);
+	cout << "The Name of the First Child is <" << DOM->Get(FirstChild, "Name") << ">" << endl;
+	// Find the second (zero based) Tag2 below Parent
+	SecondChild = DOM->FindElement("Tag2", 1, Parent);
+	DOM->Set(SecondChild, "Age", "10");
+	DOM->DeleteNode(FirstChild);
+	cout << endl << "XML = " << endl << DOM->Serialize(Parent) << endl;
+\endcode
+
+Would Procude the following Output:
+\verbatim
+The Name of the First Child is <First Child>
+
+XML =
+<Tag1 Name="First Parent">
+	<Tag2 Name="Second Child" Age="10">
+		Text for Second Child
+	</Tag2>
+</Tag1>
+\endverbatim
+
 */
 class XDMF_EXPORT XdmfDOM : public XdmfObject {
 
@@ -51,13 +100,19 @@ public :
 
   XdmfConstString GetClassName() { return("XdmfDOM"); } ;
 
+//! Sets the XMLVersion for the XML Document
   XdmfSetValueMacro(XMLVersion, float);
+//! Get the XMLVersion from the XML Document
   XdmfGetValueMacro(XMLVersion, float);
 
+//! Sets the DocType for the XML Document
   XdmfSetStringMacro(DocType);
+//! Get the DocType from the XML Document
   XdmfGetStringMacro(DocType);
 
+//! Sets the System for the XML Document
   XdmfSetStringMacro(System);
+//! Get the System from the XML Document
   XdmfGetStringMacro(System);
 
   //! Set the FileName of the XML Description : stdin or Filename
@@ -84,12 +139,17 @@ public :
   //! Set the XML destination
         XdmfSetValueMacro( Input, istream *);
 
+//! Generate a Standard XDMF Header
   XdmfInt32 GenerateHead( void );
+//! Output a String to the XML document
   XdmfInt32 Puts( XdmfConstString String );
+//! Generate a Standard XDMF Tail i.e. </Xdmf>
   XdmfInt32 GenerateTail( void );
 
+//! Get the rest of the documant as a string
   XdmfConstString Gets( void );
 
+//! Return the Low Level root of the tree
   XDMF_TREE_NODE *GetTree( void );
 
   //! Parse XML without re-initializing entire DOM
@@ -99,6 +159,7 @@ public :
   XdmfInt32 Parse(XdmfConstString xml = NULL );
 
 
+//! Get the Root Node
   XdmfXNode *GetRoot( void );
 
   //! Get the Number of immediate Children
@@ -130,6 +191,7 @@ tree starting at a particular node.
   XdmfXNode *FindElement(XdmfConstString TagName,
       XdmfInt32 Index= 0,
       XdmfXNode *Node = NULL );
+//! Find the Node that has Attribute="Value"
   XdmfXNode *FindElementByAttribute(XdmfConstString Attribute,
       XdmfConstString Value,
       XdmfInt32 Index= 0,
@@ -137,6 +199,7 @@ tree starting at a particular node.
   //! Find the number of nodes of a certain type
   XdmfInt32 FindNumberOfElements(XdmfConstString TagName,
       XdmfXNode *Node = NULL );
+//! Find the number if Nodes that has Attribute="Value"
   XdmfInt32 FindNumberOfElementsByAttribute(XdmfConstString Attribute,
       XdmfConstString Value,
       XdmfXNode *Node = NULL );
@@ -158,21 +221,26 @@ tree starting at a particular node.
 //! Set the default Working directory to use for HDF5 files
   void SetWorkingDirectory( XdmfConstString String ) { strcpy( this->WorkingDirectory, String ); }
 
+//! Get the Value of an Attribute from an Element
 /*!
 Get the various attributes from a node. If the XML is :
+\verbatim
   <Tag Name="Test" Type="Data">
   file.h5
   </Tag>
-Dom->Get(Node, "Name")  will return "Test"
-Dom->Get(Node, "Type")  will return "Data"
-Dom->Get(Node, "Other")  will return NUll ; there is none
-Dom->Get(Node, "CData")  will return "file.h5" ; the Character Data
+\endverbatim
+\code
+Dom->Get(Node, "Name")  // will return "Test"
+Dom->Get(Node, "Type")  // will return "Data"
+Dom->Get(Node, "Other")  // will return NULL ; there is none
+Dom->Get(Node, "CData")  // will return "file.h5" ; the Character Data
+\endcode
 
 The XdmfXNode can be parsed directly with :
-Node->Get( "Name ); etc.
+Node->Get( "Name" ); etc.
 
 The reason to use this get is to confirm that this node
-is in this DOM and to accomplish PARAMETER substiution.
+is in this DOM and to accomplish \b PARAMETER substiution via XdmfParameter.
 */
   XdmfConstString  Get( XdmfXNode *Node, XdmfConstString Attribute );
 
@@ -204,11 +272,13 @@ XML by : NuberType="Integer" Precision="4"
 */
   XdmfInt32 GetNumberType( XdmfXNode *Node );
 
+//! Find the Number of XdmfParameters
   XdmfInt32 FindNumberOfParameters( XdmfXNode *Node = NULL ) {
       return( this->FindNumberOfElements( "Parameter", Node ) );
       }
-
+//! Find the XdmfParameter with the specified ParameterName
   XdmfParameter  *FindParameter( XdmfConstString ParameterName, XdmfXNode *Node = NULL );
+//! Retreive the i'th XdmfParameter
   XdmfParameter  *GetParameter( XdmfInt32 Index = 0, XdmfXNode *Node = NULL );
 
 protected :
