@@ -152,7 +152,7 @@ return( H5G_UNKNOWN );
 #ifdef __cplusplus
 extern "C" {
 #endif
-static herr_t
+herr_t
 XdmfHDFList( hid_t group, XdmfConstString name, void *me )
 {
 XdmfHDF *ThisClassPtr = ( XdmfHDF *)me;
