@@ -54,6 +54,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "vtkRectilinearGrid.h"
 #include "vtkStructuredGrid.h"
 #include "vtkUnstructuredGrid.h"
+#include "vtkDataSetCollection.h"
 
 #include "XdmfHDF.h"
 #include "XdmfArray.h"
@@ -70,13 +71,13 @@ public:
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfWriter);
-vtkCxxRevisionMacro(vtkXdmfWriter, "1.3");
+vtkCxxRevisionMacro(vtkXdmfWriter, "1.4");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter::vtkXdmfWriter()
 {
-  this->FileName = 0;
-  this->HeavyDataSetName = 0;
+  this->FileNameString = 0;
+  this->HeavyDataSetNameString = 0;
   this->GridName = 0;
   this->SetHeavyDataSetName( "XdmfData.h5" );
   this->SetGridName( "Unnamed" );
@@ -86,6 +87,7 @@ vtkXdmfWriter::vtkXdmfWriter()
   this->Internals = new vtkXdmfWriterInternals;
   this->Internals->XMLStream = 0;
   this->ResetXML();
+  this->InputList = NULL;
 
 }
 
@@ -93,30 +95,54 @@ vtkXdmfWriter::vtkXdmfWriter()
 vtkXdmfWriter::~vtkXdmfWriter()
 {
   this->SetHeavyDataSetName(0);
-  this->SetFileName(0);
+  this->SetFileNameString(0);
   delete this->Internals->XMLStream;
+  if (this->InputList != NULL)
+    {
+    this->InputList->Delete();
+    this->InputList = NULL;
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkXdmfWriter::SetFileName(const char* fname)
+{
+  if ( fname )
+    {
+    char* hname = new char [ strlen(fname) + 10 ]; // space for extension
+    strcpy(hname, fname);
+    size_t cc;
+    for ( cc = strlen(hname); cc > 0; cc -- )
+      {
+      if ( hname[cc] == '.' )
+        {
+        break;
+        }
+      }
+    if ( cc > 0 )
+      {
+      hname[cc+1] = 0;
+      }
+    strcat(hname, "h5");
+    this->SetHeavyDataSetName(hname);
+    cout << "Set Heavy Data Set Name: " << hname << endl;
+    delete [] hname;
+    }
+  this->SetFileNameString(fname);
+}
+
+//----------------------------------------------------------------------------
+const char* vtkXdmfWriter::GetFileName()
+{
+  return this->FileNameString;
 }
 
 //----------------------------------------------------------------------------
 void vtkXdmfWriter::SetHeavyDataSetName( const char *name) 
 {
-  if ( this->HeavyDataSetName == name )
+  this->SetHeavyDataSetNameString(name);
+  if ( name )
     {
-    return;
-    }
-  if ( this->HeavyDataSetName && name && strcmp(this->HeavyDataSetName, name) == 0 )
-    {
-    return;
-    }
-  if ( this->HeavyDataSetName )
-    {
-    delete [] this->HeavyDataSetName;
-    this->HeavyDataSetName = 0;
-    }
-  if( name ) 
-    {
-    this->HeavyDataSetName = new char [ strlen(name) + 1 ];
-    strcpy( this->HeavyDataSetName, name);
     this->AllLight = 0;
     }
   else
@@ -124,6 +150,12 @@ void vtkXdmfWriter::SetHeavyDataSetName( const char *name)
     this->AllLight = 1;
     }
   this->Modified();
+}
+
+//----------------------------------------------------------------------------
+const char* vtkXdmfWriter::GetHeavyDataSetName()
+{
+  return this->HeavyDataSetNameString;
 }
 
 //----------------------------------------------------------------------------
@@ -205,7 +237,7 @@ int vtkXdmfWriter::WriteCellArray( vtkCellArray *Cells )
     XdmfInt64  Dims[2];
     XdmfInt32  *Dp;
 
-    sprintf(DataSetName, "%s:/Connections" , this->HeavyDataSetName);
+    sprintf(DataSetName, "%s:/Connections" , this->HeavyDataSetNameString);
     cout << "DataSetName: " << DataSetName << endl;
     *this->Internals->XMLStream << "\t\tFormat=\"HDF\">" << endl;
     *this->Internals->XMLStream << "\t\t" << DataSetName << endl;
@@ -250,7 +282,6 @@ int vtkXdmfWriter::WritePoints( vtkPoints *Points )
 
   NumberOfPoints = Points->GetNumberOfPoints();
   Pp = Points->GetPoint(0);
-  cerr << NumberOfPoints << " Points: " << endl;
   *this->Internals->XMLStream << "\t<DataStructure" << endl;
   *this->Internals->XMLStream << "\t\tDataType=\"Float\"" << endl;
   *this->Internals->XMLStream << "\t\tDimensions=\"" << NumberOfPoints << " 3\"" << endl;
@@ -273,7 +304,7 @@ int vtkXdmfWriter::WritePoints( vtkPoints *Points )
     XdmfInt64  Dims[2];
     XdmfFloat64  *Dp;
 
-    sprintf(DataSetName, "%s:/XYZ" , this->HeavyDataSetName);
+    sprintf(DataSetName, "%s:/XYZ" , this->HeavyDataSetNameString);
     *this->Internals->XMLStream << "\t\tFormat=\"HDF\">" << endl;
     *this->Internals->XMLStream << "\t\t" << DataSetName << endl;
     Geo.SetNumberType( XDMF_FLOAT64_TYPE );
@@ -408,7 +439,8 @@ int vtkXdmfWriter::WriteScalar( vtkDataArray *Scalars, const char *Name, const c
         *this->Internals->XMLStream << endl << "\t\t";
         j = 0;
         }
-      *this->Internals->XMLStream << Scalars->GetTuple1( i ) << " ";
+      double* tuple = Scalars->GetTuple( i );
+      *this->Internals->XMLStream << tuple[0] << " ";
       j++;
       }
     } 
@@ -420,7 +452,7 @@ int vtkXdmfWriter::WriteScalar( vtkDataArray *Scalars, const char *Name, const c
     XdmfHDF    H5;
     XdmfFloat32  *Dp;
 
-    sprintf(DataSetName, "%s:/%s" , this->HeavyDataSetName, arrayName);
+    sprintf(DataSetName, "%s:/%s" , this->HeavyDataSetNameString, arrayName);
     *this->Internals->XMLStream << "\t\tFormat=\"HDF\">" << endl;
     *this->Internals->XMLStream << "\t\t" << DataSetName << endl;
     Data.SetNumberType( XDMF_FLOAT32_TYPE );
@@ -428,7 +460,8 @@ int vtkXdmfWriter::WriteScalar( vtkDataArray *Scalars, const char *Name, const c
     Dp = (XdmfFloat32 *)Data.GetDataPointer();
     for( j = 0 ; j < Scalars->GetNumberOfTuples(); j++ )
       {
-      *Dp++ = Scalars->GetTuple1(j);
+      double* tuple = Scalars->GetTuple(j);
+      *Dp++ = tuple[0];
       }
     H5.CopyType( &Data);
     H5.CopyShape( &Data);
@@ -495,7 +528,7 @@ int vtkXdmfWriter::WriteVector( vtkDataArray *Vectors, const char *Name, const c
     XdmfHDF    H5;
     XdmfFloat32  *Dp;
 
-    sprintf(DataSetName, "%s:/%s" , this->HeavyDataSetName, arrayName);
+    sprintf(DataSetName, "%s:/%s" , this->HeavyDataSetNameString, arrayName);
     *this->Internals->XMLStream << "\t\tFormat=\"HDF\">" << endl;
     *this->Internals->XMLStream << "\t\t" << DataSetName << endl;
     Data.SetNumberType( XDMF_FLOAT32_TYPE );
@@ -769,7 +802,7 @@ int vtkXdmfWriter::WriteGrid( void )
 //----------------------------------------------------------------------------
 void vtkXdmfWriter::Write()
 {
-  if ( !this->FileName )
+  if ( !this->FileNameString )
     {
     vtkErrorMacro("No file name specified");
     return;
@@ -781,10 +814,10 @@ void vtkXdmfWriter::Write()
     vtkErrorMacro("No input or input of the wrong type");
     return;
     }
-  ofstream ofs(this->FileName);
+  ofstream ofs(this->FileNameString);
   if ( !ofs )
     {
-    vtkErrorMacro("Cannot open file: " << this->FileName);
+    vtkErrorMacro("Cannot open file: " << this->FileNameString);
     return;
     }
 
@@ -799,7 +832,7 @@ void vtkXdmfWriter::Write()
     {
     ofs << "<?xml version=\"1.0\" ?>" << endl
       << "<!DOCTYPE Xdmf SYSTEM \"Xdmf.dtd\" [" << endl
-      << "<!ENTITY HeavyData \"" << this->HeavyDataSetName << "\">" <<endl
+      << "<!ENTITY HeavyData \"" << this->HeavyDataSetNameString << "\">" <<endl
       << "]>" << endl << endl << endl
       << "<Xdmf>" << endl
       << "<Domain>" << endl
@@ -821,5 +854,61 @@ void vtkXdmfWriter::SetInput(vtkDataSet* ds)
 //----------------------------------------------------------------------------
 vtkDataSet* vtkXdmfWriter::GetInputDataSet()
 {
-  return vtkDataSet::SafeDownCast(this->Inputs[0]);
+  vtkDataSet* ds = vtkDataSet::SafeDownCast(this->Inputs[0]);
+  return ds;
 }
+
+//----------------------------------------------------------------------------
+// Add a dataset to the list of data to append.
+void vtkXdmfWriter::AddInput(vtkDataSet *ds)
+{
+  vtkErrorMacro("AddInput does not work as it should yet. Use SetInput.");
+  this->vtkProcessObject::AddInput(ds);
+}
+
+//----------------------------------------------------------------------------
+vtkDataSet *vtkXdmfWriter::GetInput(int idx)
+{
+  if (idx >= this->NumberOfInputs || idx < 0)
+    {
+    return NULL;
+    }
+  
+  return (vtkDataSet *)(this->Inputs[idx]);
+}
+
+//----------------------------------------------------------------------------
+// Remove a dataset from the list of data to append.
+void vtkXdmfWriter::RemoveInput(vtkDataSet *ds)
+{
+  this->vtkProcessObject::RemoveInput(ds);
+}
+
+//----------------------------------------------------------------------------
+vtkDataSetCollection *vtkXdmfWriter::GetInputList()
+{
+  int idx;
+  
+  if (this->InputList)
+    {
+    this->InputList->Delete();
+    }
+  this->InputList = vtkDataSetCollection::New();
+  
+  for (idx = 0; idx < this->NumberOfInputs; ++idx)
+    {
+    if (this->Inputs[idx] != NULL)
+      {
+      this->InputList->AddItem((vtkDataSet*)(this->Inputs[idx]));
+      }
+    }  
+  
+  return this->InputList;
+}
+
+//----------------------------------------------------------------------------
+void vtkXdmfWriter::PrintSelf(ostream& os, vtkIndent indent)
+{
+  this->Superclass::PrintSelf(os,indent);
+}
+

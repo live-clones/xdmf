@@ -32,6 +32,7 @@ class vtkDataSet;
 class vtkPoints;
 class vtkCellArray;
 class vtkDataArray;
+class vtkDataSetCollection;
 
 class vtkXdmfWriterInternals;
 
@@ -39,7 +40,8 @@ class VTK_EXPORT vtkXdmfWriter : public vtkProcessObject
 {
 public:
   static vtkXdmfWriter *New();
-  vtkTypeRevisionMacro(vtkXdmfWriter,vtkObject);
+  vtkTypeRevisionMacro(vtkXdmfWriter,vtkProcessObject);
+  void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
   // Set or get the AllLight flag. If set, all data will be written as light
@@ -50,8 +52,8 @@ public:
 
   // Description:
   // Set or get the file name of the xdmf file.
-  vtkSetStringMacro(FileName);
-  vtkGetStringMacro(FileName);
+  virtual void SetFileName(const char* fname);
+  virtual const char* GetFileName();
 
   // Description:
   // Set or get the grid name of the dataset.
@@ -60,8 +62,8 @@ public:
 
   // Description:
   // Set or get the name of the heavy data file name.
-  void SetHeavyDataSetName( const char *name);
-  vtkGetStringMacro(HeavyDataSetName);
+  virtual void SetHeavyDataSetName( const char *name);
+  virtual const char* GetHeavyDataSetName();
 
   // Description:
   // Set the input data set.
@@ -70,6 +72,25 @@ public:
   // Description:
   // Write the XDMF file.
   void Write();
+
+  // Description:
+  // Add a dataset to the list of data to append.
+  void AddInput(vtkDataSet *in);
+
+  // Description:
+  // Get any input of this filter.
+  vtkDataSet *GetInput(int idx);
+  vtkDataSet *GetInput() 
+    {return this->GetInput( 0 );}
+  
+  // Description:
+  // Remove a dataset from the list of data to append.
+  void RemoveInput(vtkDataSet *in);
+
+  // Description:
+  // Returns a copy of the input array.  Modifications to this list
+  // will not be reflected in the actual inputs.
+  vtkDataSetCollection *GetInputList();
 
 protected:
   vtkXdmfWriter();
@@ -90,12 +111,19 @@ protected:
 
   vtkDataSet* GetInputDataSet();
 
-  char    *HeavyDataSetName;
-  char    *FileName;
+  vtkSetStringMacro(HeavyDataSetNameString);
+  char    *HeavyDataSetNameString;
+
+  vtkSetStringMacro(FileNameString);
+  char    *FileNameString;
   char    *GridName;
   
   int    AllLight;
   vtkXdmfWriterInternals *Internals;
+
+  // list of data sets to append together.
+  // Here as a convenience.  It is a copy of the input array.
+  vtkDataSetCollection *InputList;
 
 private:
   vtkXdmfWriter(const vtkXdmfWriter&); // Not implemented
