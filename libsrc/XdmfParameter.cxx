@@ -124,7 +124,7 @@ if( !this->ParameterArray ){
       this->ParameterArray->GetNumberOfElements() - 1 ));
   }
 }
-IValue = Value;
+IValue = static_cast<XdmfInt64>(Value);
 LastFormatCharIndex = strlen( this->ParameterFormat ) - 1;
 if ( LastFormatCharIndex >= 0 ) {
         switch ( this->ParameterFormat[ LastFormatCharIndex ] ) {

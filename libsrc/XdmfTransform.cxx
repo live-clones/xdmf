@@ -154,14 +154,14 @@ if( XDMF_WORD_CMP( Attribute, "Function" ) ){
 
   CData = this->DOM->Get( Element, "Function" );
   XdmfDebug("Transform is Function = " << CData);
-  while( c = *CData++ ) {
+  while( (c = *CData++) ) {
     if( c == '$' ) {
       XdmfXNode  *Argument;
       XdmfArray  *TmpArray;
       XdmfTransform  TmpTransform;
       istrstream  CDataStream(CData);
       CDataStream >> Id;
-      while( c = *CData++ ) {
+      while( (c = *CData++) ) {
         if( c > ' ') break;
         }
       Argument = this->DOM->FindElement( NULL, Id, Element );

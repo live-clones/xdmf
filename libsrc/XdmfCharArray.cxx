@@ -51,7 +51,7 @@ if ( stat( FileName, &FileStatus ) < 0 ) {
 XdmfDebug("File " << FileName << " is " << FileStatus.st_size << " bytes long");
 this->SetNumberOfElements( FileStatus.st_size + 1 );
 cp = (char *)this->GetDataPointer();
-if( fp = fopen( FileName, "r" ) ) {
+if( (fp = fopen( FileName, "r" )) ) {
   while( ( ch = getc( fp ) ) != EOF ){
     *cp++ = ch;  
     }

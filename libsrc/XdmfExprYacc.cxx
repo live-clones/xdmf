@@ -877,7 +877,7 @@ case 4:
       XdmfLength  i, index, Length = Array1->GetNumberOfElements();
 
       for( i = 0 ; i < Length ; i++ ){
-        index = Array1->GetValueAsFloat64( i );
+        index = static_cast<XdmfLength>(Array1->GetValueAsFloat64( i ));
         Result->SetValueFromFloat64( index, yyvsp[0].DoubleValue );
         }
       delete Array1;
@@ -894,7 +894,7 @@ case 5:
       XdmfLength  i, index, Length = Array1->GetNumberOfElements();
 
       for( i = 0 ; i < Length ; i++ ){
-        index = Array1->GetValueAsFloat64( i );
+        index = static_cast<XdmfLength>(Array1->GetValueAsFloat64( i ));
         Value = Array2->GetValueAsFloat64( i );
         Result->SetValueFromFloat64( index, Value );
         }
@@ -906,7 +906,7 @@ case 5:
 case 6:
 #line 114 "/vis/clarke/IceDevel02/Base/Xdmf/libsrc/XdmfExpr.y"
 {
-      XdmfArray *Range, *Result;
+      XdmfArray *Range;
 
       /* printf("Array Range %d:%d = ScalarExpression \n", $3, $5);   */
       Range = (XdmfArray *)yyvsp[-7].ArrayPointer;
@@ -921,7 +921,7 @@ case 7:
 #line 125 "/vis/clarke/IceDevel02/Base/Xdmf/libsrc/XdmfExpr.y"
 {
       XdmfArray *TempArray = ( XdmfArray *)yyvsp[0].ArrayPointer;
-      XdmfArray *Range, *Result;
+      XdmfArray *Range;
 
       /* printf("Array Range %d:%d = ArrayExpression \n", $3, $5);   */
       Range = (XdmfArray *)yyvsp[-7].ArrayPointer;
@@ -1285,7 +1285,7 @@ case 26:
       /* printf("Found %d Wheres\n", cntr ); */
       if( cntr == 0 ){
         yyerror("WHERE Function Length == 0");
-        return( NULL );
+        return( 0 );
         }
       Index->SetNumberOfElements( cntr );
       yyval.ArrayPointer = ( XdmfArray *)Index;
@@ -1309,7 +1309,7 @@ case 27:
       /* printf("Found %d Wheres\n", cntr ); */
       if( cntr == 0 ){
         yyerror("WHERE Function Length == 0");
-        return( NULL );
+        return( 0 );
         }
       Index->SetNumberOfElements( cntr );
       yyval.ArrayPointer = ( XdmfArray *)Index;
@@ -1333,7 +1333,7 @@ case 28:
       /* printf("Found %d Wheres\n", cntr ); */
       if( cntr == 0 ){
         yyerror("WHERE Function Length == 0");
-        return( NULL );
+        return( 0 );
         }
       Index->SetNumberOfElements( cntr );
       yyval.ArrayPointer = ( XdmfArray *)Index;
@@ -1357,7 +1357,7 @@ case 29:
       /* printf("Found %d Wheres\n", cntr ); */
       if( cntr == 0 ){
         yyerror("WHERE Function Length == 0");
-        return( NULL );
+        return( 0 );
         }
       Index->SetNumberOfElements( cntr );
       yyval.ArrayPointer = ( XdmfArray *)Index;
@@ -1381,7 +1381,7 @@ case 30:
       /* printf("Found %d Wheres\n", cntr ); */
       if( cntr == 0 ){
         yyerror("WHERE Function Length == 0");
-        return( NULL );
+        return( 0 );
         }
       Index->SetNumberOfElements( cntr );
       yyval.ArrayPointer = ( XdmfArray *)Index;
@@ -1405,7 +1405,7 @@ case 31:
       /* printf("Found %d Wheres\n", cntr ); */
       if( cntr == 0 ){
         yyerror("WHERE Function Length == 0");
-        return( NULL );
+        return( 0 );
         }
       Index->SetNumberOfElements( cntr );
       yyval.ArrayPointer = ( XdmfArray *)Index;
@@ -1457,7 +1457,7 @@ case 35:
       if ( Array1 == NULL ){
         /* Bomb */
         yyerror("NULL Array Pointer");
-        return( NULL );
+        return( 0 );
       } else {
         Result  = Array1->Clone();
         yyval.ArrayPointer = Result;
@@ -1760,7 +1760,8 @@ extern "C" {
 static  char  InputBuffer[ 512 ];
 static  int  InputBufferPtr = 0, InputBufferEnd = 0;
 static  char  OutputBuffer[ 512 ];
-static  int  OutputBufferPtr = 0, OutputBufferEnd = 511;
+static  int  OutputBufferPtr = 0;
+//static  int  OutputBufferEnd = 511;
 
 int
 dice_yywrap( void ) {
@@ -1775,6 +1776,7 @@ fprintf(stderr, "XdmfExpr : %s \n", string);
 
 int
 XdmfExprFlexInput( char *buf, int maxlen ) {
+  (void)maxlen;
 if ( InputBufferPtr < InputBufferEnd ){
   buf[0] = InputBuffer[ InputBufferPtr++ ];
   return(1);

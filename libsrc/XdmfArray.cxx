@@ -1040,12 +1040,12 @@ return( Value );
 
 XdmfInt64
 XdmfArray::GetMinAsInt64( void ) {
-return( this->GetMinAsFloat64() );
+return( static_cast<XdmfInt64>(this->GetMinAsFloat64()) );
 }
 
 XdmfInt64
 XdmfArray::GetMaxAsInt64( void ) {
-return( this->GetMaxAsFloat64() );
+return( static_cast<XdmfInt64>(this->GetMaxAsFloat64()) );
 }
 
 XdmfInt32 XdmfArray::SetValue( XdmfInt64 Index, XdmfInt8 Value ) {

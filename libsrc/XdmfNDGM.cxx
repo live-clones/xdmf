@@ -39,7 +39,12 @@ extern "C" {
 #else
    char *XdmfGetNdgmEntries( void ){return(NULL);}
    void XdmfDeleteAllNdgmEntries( void ){return;}
-   XdmfInt64 XdmfAddNdgmEntry( char *Name, XdmfInt64 Length ){return(0);}
+   XdmfInt64 XdmfAddNdgmEntry( char *Name, XdmfInt64 Length )
+     {
+     (void)Name;
+     (void)Length;
+     return(0);
+     }
 #endif
   }
 
@@ -165,6 +170,7 @@ switch ( this->NdgmMode ) {
   }
 return( XDMF_SUCCESS );
 #else
+(void)IdOffset;
 return(XDMF_FAIL);
 #endif
 }
@@ -190,6 +196,7 @@ XdmfNDGM::Close( XdmfInt32 Disconnect ) {
   }
 return( XDMF_SUCCESS );
 #else
+(void)Disconnect;
 return(XDMF_FAIL);
 #endif
 }
@@ -244,6 +251,8 @@ if( ndgm_get( Address, Array->GetDataPointer(), Length ) == XDMF_FAIL ){
   }
 return( XDMF_SUCCESS );
 #else
+(void)Address;
+(void)Array;
 return(XDMF_FAIL);
 #endif
 }
@@ -262,6 +271,8 @@ if( ndgm_put( Address, Array->GetDataPointer(), Length ) == XDMF_FAIL ){
   }
 return( XDMF_SUCCESS );
 #else
+(void)Address;
+(void)Array;
 return(XDMF_FAIL);
 #endif
 }
@@ -290,6 +301,8 @@ if( Status > 0 ) {
   }
 return( Status );
 #else
+(void)Array;
+(void)Opcode;
 return(XDMF_FAIL);
 #endif
 }
@@ -317,6 +330,8 @@ if( this->NdgmNode ) {
       Cmd->length );
   return( Cmd->length );
 }
+#else
+(void)Array;
 #endif
 return( XDMF_FAIL );
 }
