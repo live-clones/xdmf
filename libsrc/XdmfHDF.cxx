@@ -123,6 +123,16 @@ extern "C" { typedef herr_t (*H5E_saved_efunc_type)(void*); }
     H5Eget_auto (&H5E_saved_efunc, &H5E_saved_edata);                         \
     H5Eset_auto (NULL, NULL);
 
+
+/*Need to redefine H5E_END_TRY also, to allow this to compile with hdf version
+ *1.7.40. The 1.7.40 version of H5E_END_TRY is not compatible with version
+ *1.6.2, and the above edited version of H5E_BEGIN_TRY came from version 1.6.2.
+ *The following version of H5E_END_TRY comes from 1.6.2 with no edits.*/
+#undef H5E_END_TRY
+#define H5E_END_TRY                                                           \
+    H5Eset_auto (H5E_saved_efunc, H5E_saved_edata);                           \
+}
+
 //
 // Get Type of Object
 //
@@ -296,7 +306,7 @@ if( path ) {
   this->SetPath( path );
   }else {
       XdmfDebug("CreateDataset passed NULL path");
-	}
+  }
 XdmfDebug( "Creating HDF Dataset " <<
   this->Path << "  Rank = " << this->GetRank() );
 
