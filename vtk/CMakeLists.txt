@@ -1,36 +1,38 @@
 # Build vtkXdmf*RenderWindowInteractor.h
 IF(WIN32)
-	SET(XDMF_WINDOWINTERACTOR vtkWin32RenderWindowInteractor)
-	CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.h.in
-		${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.h
-		@ONLY IMMEDIATE)
-	CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx.in
-		${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
-		@ONLY IMMEDIATE)
+  SET(XDMF_WINDOWINTERACTOR vtkWin32RenderWindowInteractor)
+  CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.h.in
+    ${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.h
+    @ONLY IMMEDIATE)
+  CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx.in
+    ${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
+    @ONLY IMMEDIATE)
 ELSE(WIN32)
-	INCLUDE_DIRECTORIES(${X11_X11_INCLUDE_PATH})
-	SET(XDMF_WINDOWINTERACTOR vtkXRenderWindowInteractor)
-	CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.h.in
-		${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.h
-		@ONLY IMMEDIATE)
-	CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx.in
-		${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
-		@ONLY IMMEDIATE)
+  IF(X11_FOUND)
+    INCLUDE_DIRECTORIES(${X11_X11_INCLUDE_PATH})
+  ENDIF(X11_FOUND)
+  SET(XDMF_WINDOWINTERACTOR vtkXRenderWindowInteractor)
+  CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.h.in
+    ${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.h
+    @ONLY IMMEDIATE)
+  CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx.in
+    ${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
+    @ONLY IMMEDIATE)
 ENDIF(WIN32)
 
 SET( Xdmf_SRCS
-	vtkXdmfReader.cxx
+  vtkXdmfReader.cxx
   vtkXdmfWriter.cxx
-	vtkXdmfDataArray.cxx
-	vtkXdmfOpenGLCamera.cxx
+  vtkXdmfDataArray.cxx
+  vtkXdmfOpenGLCamera.cxx
   #${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
   #vtkXdmfDataSetWriter.cxx
   )
 
 IF (NOT APPLE)
-	SET(Xdmf_SRCS ${Xdmf_SRCS}
-		${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
-		)
+  SET(Xdmf_SRCS ${Xdmf_SRCS}
+    ${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
+    )
 ENDIF (NOT APPLE)
 
 SET_SOURCE_FILES_PROPERTIES(
