@@ -144,6 +144,6 @@ protected:
 extern XdmfArray *CreateArrayFromType( XdmfType *Type,
   XdmfInt64 NumberOfElements = 10 );
 */
-extern XdmfArray *CopyArray( XdmfArray *Source, XdmfArray *Target = NULL );
+extern XDMF_EXPORT XdmfArray *CopyArray( XdmfArray *Source, XdmfArray *Target = NULL );
 
 #endif // __XdmfHDF_h

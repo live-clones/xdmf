@@ -28,7 +28,7 @@
 
 #include "XdmfFormat.h"
 
-class XdmfFormatXML : public XdmfFormat {
+class XDMF_EXPORT XdmfFormatXML : public XdmfFormat {
 
 public :
 

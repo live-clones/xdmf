@@ -24,10 +24,10 @@
 /*******************************************************************/
 #include "XdmfArray.h"
 
-void XdmfArrayExpr( XdmfArray *Array,
+XDMF_EXPORT void XdmfArrayExpr( XdmfArray *Array,
     XdmfString Operation, XdmfArray *Values );
-void XdmfScalarExpr( XdmfArray *Array,
+XDMF_EXPORT void XdmfScalarExpr( XdmfArray *Array,
     XdmfString Operation, XdmfFloat64 Value);
 
-XdmfArray *XdmfExpr( XdmfString Statement );
+XDMF_EXPORT XdmfArray *XdmfExpr( XdmfString Statement );
 

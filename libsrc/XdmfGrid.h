@@ -77,5 +77,5 @@ protected:
   XdmfAttribute  *AssignedAttribute;
 };
 
-extern XdmfGrid *HandleToXdmfGrid( char *Source);
+extern XDMF_EXPORT XdmfGrid *HandleToXdmfGrid( char *Source);
 #endif // __XdmfGrid_h

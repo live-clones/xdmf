@@ -43,7 +43,7 @@ XdmfXNode : XDMF Runtime Expandable Structure.
 This is an attempt to implement Tcl Arrays in C++.
 */
 #ifndef DOXYGEN_SKIP
-class XdmfXNodeNode : public virtual XdmfObject {
+class XDMF_EXPORT XdmfXNodeNode : public virtual XdmfObject {
 
 public :
   XdmfXNodeNode();
@@ -60,7 +60,7 @@ XdmfString Data;
 
 };
 #endif /* DOXYGEN_SKIP */
-class XdmfXNode : public virtual XdmfObject {
+class XDMF_EXPORT XdmfXNode : public virtual XdmfObject {
 
 public :
   

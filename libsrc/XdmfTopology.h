@@ -144,5 +144,5 @@ protected:
   XdmfDataDesc  Shape;
 };
 
-extern XdmfTopology *HandleToXdmfTopology( char *Source );
+extern XDMF_EXPORT XdmfTopology *HandleToXdmfTopology( char *Source );
 #endif // __XdmfTopology_h

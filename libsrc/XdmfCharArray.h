@@ -31,7 +31,7 @@
 This is a special XdmfArray designed to
 handle character strings.
 */
-class XdmfCharArray : public XdmfArray {
+class XDMF_EXPORT XdmfCharArray : public XdmfArray {
 
 public:
   XdmfCharArray();

@@ -36,7 +36,7 @@
 
 
 
-class XdmfGeometry : public XdmfLightData {
+class XDMF_EXPORT XdmfGeometry : public XdmfLightData {
 
 public:
   XdmfGeometry();
@@ -106,5 +106,5 @@ protected:
   XdmfArray  *VectorZ;
 };
 
-extern XdmfGeometry *GetXdmfGeometryHandle( void *Pointer );
+extern XDMF_EXPORT XdmfGeometry *GetXdmfGeometryHandle( void *Pointer );
 #endif // __XdmfGeometry_h
