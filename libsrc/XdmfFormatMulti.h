@@ -26,10 +26,11 @@
 #define __XdmfFormatMulti_h
 
 
-#include "XdmfFormatXML.h"
-#include "XdmfFormatHDF.h"
+#include "XdmfFormat.h"
 
-#include "XdmfExport.h"
+class XdmfXNode;
+class XdmfArray;
+
 
 class XDMF_EXPORT XdmfFormatMulti : public XdmfFormat {
 

@@ -54,6 +54,8 @@ char    Name[1024], *Namep;
 char    *ExternalXML = NULL;
 FILE    *fp;
 
+(void)publicId;
+
 Name[0] = '\0';
 userData = XML_GetUserData( parser );
 /*
@@ -134,9 +136,10 @@ void ProcessingElement( void *userData,
     const char *target,
     const char *data ){
 
-char  *Attributes[XdmfXML_MAX_ATTRIBUTES];
-char  *Name, *Value, *NodeData = NULL;
-int  i, j, len, attr_index = 0;
+const char  *Attributes[XdmfXML_MAX_ATTRIBUTES];
+const char  *Name, *Value;
+char *NodeData = NULL;
+int  i, attr_index = 0;
 char  *cp;
 
 NodeData = strdup( data );
@@ -145,7 +148,7 @@ for( i = 0 ; i < XdmfXML_MAX_ATTRIBUTES ; i++ ){
   }
 Attributes[attr_index++] = "Target";
 Attributes[attr_index++] = target;
-cp = data;
+cp = NodeData;
 while( *cp > '\0' ){
   /* Swallow White Space */
   while( ( *cp > '\0' ) && ( *cp <= ' ' )) {
@@ -219,9 +222,8 @@ EndElement(void *userData, const char *type) {
 
         XMLUserData *data;
         void *node;
-        char *s;
-/*        char *tmp;*/
-        int len;
+
+        (void)type;
 
         data = (XMLUserData *)userData;
         data->Depth -= 1;
@@ -234,6 +236,9 @@ EndElement(void *userData, const char *type) {
 
 void
 GetDefaultData(void *userData, const XML_Char *NodeData, int newlen){
+  (void)userData;
+  (void)NodeData;
+  (void)newlen;
 /*
 char data[256], *cpt;
 cpt = ( char *)NodeData;
@@ -249,8 +254,6 @@ GetData(void *userData, const XML_Char *NodeData, int newlen){
         void *node;
         char *s;
         char *tmp1;
-        char *tmp2;
-  char *type;
         int   oldlen;
 
         if (!ValidElement) return;
@@ -276,8 +279,8 @@ int
 PrintTree(XDMF_TREE_NODE *node, void *clientdata){
 
 void *data;
-const char *type;
 
+(void)clientdata;
 printf("Printit : Node has %d children\n", XDMF_TREE_NCHILD(node));
 data = XDMF_TREE_CLIENT_DATA(node);
 C__XdmfXNodePrint(data);
@@ -324,7 +327,7 @@ C_FindXMLNodeByAttribute(XDMF_TREE_NODE *node, void *clientdata){
 
 void *data;
 FindNodeData *fndata;
-char *attribute, *value;
+char *attribute;
 
 data = XDMF_TREE_CLIENT_DATA(node);
 fndata = (FindNodeData*)clientdata;
@@ -367,7 +370,7 @@ C_FindXMLNumberOfNodesByAttribute(XDMF_TREE_NODE *node, void *clientdata){
 
 void *data;
 FindNodeData *fndata;
-char *attribute, *value;
+char *attribute;
 
 data = XDMF_TREE_CLIENT_DATA(node);
 fndata = (FindNodeData*)clientdata;
@@ -387,6 +390,8 @@ int depth;
 char tmp[10];
 XDMF_TREE_NODE *parent;
 void *data, *pdata;
+
+(void)clientdata;
 data = XDMF_TREE_CLIENT_DATA(node);
 parent = XDMF_TREE_PARENT(node);
 pdata = XDMF_TREE_CLIENT_DATA(parent);

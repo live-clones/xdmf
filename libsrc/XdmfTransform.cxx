@@ -23,9 +23,12 @@
 /*                                                                 */
 /*******************************************************************/
 #include "XdmfTransform.h"
+
 #include "XdmfFormatMulti.h"
 #include "XdmfExpression.h"
 #include "XdmfArray.h"
+#include "XdmfXNode.h"
+#include "XdmfDOM.h"
 
 XdmfTransform::XdmfTransform() {
   strcpy( this->DataTransform, "XML" );
@@ -58,8 +61,7 @@ XdmfXNode *
 XdmfTransform::DataDescToElement( XdmfDataDesc *Desc,
       XdmfString HeavyDataName,  XdmfXNode *Element ) {
 
-XdmfInt32  j, i, Rank, SelectionType;
-XdmfString  Type;
+XdmfInt32  Rank, SelectionType;
 char    Attribute[ XDMF_MAX_STRING_LENGTH  ];
 XdmfInt64  *Coordinates, Dimensions[ XDMF_MAX_DIMENSION ];
 XdmfFormatMulti  Formatter;
@@ -152,14 +154,14 @@ if( XDMF_WORD_CMP( Attribute, "Function" ) ){
 
   CData = this->DOM->Get( Element, "Function" );
   XdmfDebug("Transform is Function = " << CData);
-  while( c = *CData++ ) {
+  while( (c = *CData++) ) {
     if( c == '$' ) {
       XdmfXNode  *Argument;
       XdmfArray  *TmpArray;
       XdmfTransform  TmpTransform;
       istrstream  CDataStream(CData);
       CDataStream >> Id;
-      while( c = *CData++ ) {
+      while( (c = *CData++) ) {
         if( c > ' ') break;
         }
       Argument = this->DOM->FindElement( NULL, Id, Element );
@@ -207,6 +209,7 @@ if( Desc ){
   Formatter.SetDOM( this->DOM );
   Formatter.SetFormat( this->DataTransform );
   Array = Formatter.ElementToArray( ArrayElement, Desc );
+  delete Desc;
   return( Array );
   }
 return( NULL );
@@ -219,7 +222,7 @@ XdmfDataDesc  *Desc;
 XdmfArray  *Selection;
 XdmfXNode    *Child;
 XdmfString  Attribute;
-XdmfInt32  i, Rank = 1, NumberType;
+XdmfInt32  Rank = 1;
 XdmfInt64  Dimensions[ XDMF_MAX_DIMENSION ];
 
 if( !this->DOM ){

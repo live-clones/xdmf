@@ -23,8 +23,12 @@
 /*                                                                 */
 /*******************************************************************/
 #include "XdmfTopology.h"
+
 #include "XdmfTransform.h"
 #include "XdmfFormatMulti.h"
+#include "XdmfArray.h"
+#include "XdmfDOM.h"
+#include "XdmfHDF.h"
 
 XdmfTopology *HandleToXdmfTopology( char *Source ){
   XdmfObject  *TempObj;
@@ -39,7 +43,8 @@ XdmfTopology::XdmfTopology() {
   XdmfInt64 Dimensions = 1;
   this->TopologyType = XDMF_NOTOPOLOGY;
   this->NodesPerElement = 0;
-  this->Shape.SetShape( 1, &Dimensions );
+  this->Shape = new XdmfDataDesc;
+  this->Shape->SetShape( 1, &Dimensions );
   this->Connectivity = NULL;
   this->ConnectivityIsMine = 1;
   this->OrderIsDefault = 1;
@@ -48,6 +53,11 @@ XdmfTopology::XdmfTopology() {
 
 XdmfTopology::~XdmfTopology() {
   if( this->ConnectivityIsMine && this->Connectivity ) delete this->Connectivity;
+  delete this->Shape;
+  }
+
+XdmfInt64 XdmfTopology::GetNumberOfElements( void ) {
+  return( this->Shape->GetNumberOfElements() );
   }
 
 XdmfInt32

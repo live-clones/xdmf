@@ -25,9 +25,13 @@
 #ifndef __XdmfXMLParser_h 
 #define __XdmfXMLParser_h
 
-#include <stdio.h>
-#include "expat.h"
 #include "XdmfDice.h"
+
+#if defined(__cplusplus)
+extern "C" {
+#endif 
+
+#include "expat.h"
 
 typedef struct {
         XDMF_TREE_NODE *Root;
@@ -62,6 +66,10 @@ extern int C_FindXMLNode(XDMF_TREE_NODE *tree, void *clientData);
 extern int C_FindXMLNodeByAttribute(XDMF_TREE_NODE *tree, void *clientData);
 extern int C_FindXMLNumberOfNodes(XDMF_TREE_NODE *tree, void *clientData);
 extern int C_FindXMLNumberOfNodesByAttribute(XDMF_TREE_NODE *tree, void *clientData);
+
+#if defined(__cplusplus)
+}
+#endif
 
 #endif 
 

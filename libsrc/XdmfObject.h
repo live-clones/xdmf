@@ -71,12 +71,14 @@
 #define __XdmfObject_h
 
 #ifdef __cplusplus
-// Use ANSI C++ ---------------------------------------------
-#ifdef XDMF_USE_ANSI_STDLIB
-#  include <iostream>
-#  include <strstream>
-#  include <fstream>
-#  include <iomanip>
+/* Use ANSI C++ --------------------------------------------- */
+# ifndef SWIG
+#  include <string>
+#  ifdef XDMF_USE_ANSI_STDLIB
+#   include <iostream>
+#   include <strstream>
+#   include <fstream>
+#   include <iomanip>
 using std::cerr;
 using std::cout;
 using std::cin;
@@ -95,18 +97,19 @@ using std::hex;
 
 
 
-// otherwise, non-ANSI -----------------------------------------------------
-#else /* XDMF_USE_ANSI_STDLIB */
-#  include <iostream.h>
-#  if defined(_MSC_VER)
-#    include <strstrea.h>
-#  else
-#    include <strstream.h>
-#  endif
-#  include <fstream.h>
-#  include <iomanip.h>
-#endif /* XDMF_USE_ANSI_STDLIB */
-#endif
+/* otherwise, non-ANSI ----------------------------------------------------- */
+#  else /* XDMF_USE_ANSI_STDLIB */
+#   include <iostream.h>
+#   if defined(_MSC_VER)
+#     include <strstrea.h>
+#   else
+#     include <strstream.h>
+#   endif
+#   include <fstream.h>
+#   include <iomanip.h>
+#  endif /* XDMF_USE_ANSI_STDLIB */
+# endif /* SWIG */
+#endif /* __cplusplus */
 
 #include "XdmfExport.h"
 
@@ -166,7 +169,7 @@ typedef char *    XdmfString;
 typedef void *    XdmfPointer;
 typedef unsigned char  XdmfInt8;
 typedef int    XdmfInt32;
-// typedef long    XdmfInt64; 
+/* typedef long    XdmfInt64;  */
 typedef long long  XdmfInt64;
 typedef float    XdmfFloat32;
 typedef double    XdmfFloat64;
@@ -265,6 +268,8 @@ need to make sure ....
 #define XDMF_WORD_TRIM( a ) { \
   int             StringLength; \
   char            *fp; \
+  char            *st; \
+  char            *ed; \
    \
   fp = (a); \
   StringLength = strlen( ( a ) ); \
@@ -272,7 +277,14 @@ need to make sure ....
           fp++; \
           StringLength--; \
           } \
-  strcpy((a), fp ); \
+  ed = fp;\
+  st = a;\
+  while(*ed) {\
+    *st = *ed;\
+    st++;\
+    ed++;\
+    }\
+  /*strcpy((a), fp );*/ \
   fp = &(a)[ StringLength - 1 ]; \
   while( ( *fp <= ' ' ) && ( StringLength > 0 ) ){ \
           fp--; \

@@ -35,6 +35,35 @@ XdmfLlist_new_key(void)
 return(next_unique_key++);
 }
 
+void
+XdmfLlist_remove_anchor(XDMF_LIST_KEY key)
+{
+XdmfLlist_Anchor  *item = xdmf_master_llist;
+XdmfLlist_Anchor  *previous = xdmf_master_llist;
+
+while(item != NULL){
+  if(item->key == key){
+    break;
+    }
+  previous = item;
+  item = item->next;
+  }
+
+if ( item->key != key )
+  {
+  return;
+  }
+if ( previous == item )
+  {
+  xdmf_master_llist = item->next;
+  }
+else
+  {
+  previous->next = item->next;
+  }
+free(item);
+}
+
 XdmfLlist_Anchor *
 XdmfLlist_anchor_init(XDMF_LIST_KEY key)
 {

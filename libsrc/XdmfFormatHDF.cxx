@@ -24,6 +24,10 @@
 /*******************************************************************/
 #include "XdmfFormatHDF.h"
 
+#include "XdmfDOM.h"
+#include "XdmfHDF.h"
+#include "XdmfArray.h"
+#include "XdmfDataDesc.h"
 
 #ifndef _WIN32
 #include <unistd.h>
@@ -93,7 +97,7 @@ if( Data && strlen( Data ) > 1 ){
           Array->SelectAll();
           }
       } else {
-        XdmfInt64  i, NumberOfCoordinates;
+        XdmfInt64  NumberOfCoordinates;
         XdmfInt64  *Coordinates;
 
 

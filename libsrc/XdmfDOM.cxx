@@ -23,7 +23,9 @@
 /*                                                                 */
 /*******************************************************************/
 #include "XdmfDOM.h"
+
 #include "XdmfCharArray.h"
+#include "XdmfParameter.h"
 
 XdmfDOM *HandleToXdmfDOM( char *Source ){
   XdmfObject  *TempObj;
@@ -101,6 +103,8 @@ XdmfDOM::~XdmfDOM(){
   if( this->Input != &cin ) {
           ifstream *OldInput = ( ifstream *)this->Input;
           OldInput->close();
+          delete this->Input;
+          this->Input = &cin;
         }
 }
 
@@ -202,6 +206,8 @@ XdmfDOM::SetInputFileName( XdmfString Filename ){
   if( this->Input != &cin ) {
           ifstream *OldInput = ( ifstream *)this->Input;
           OldInput->close();
+          delete this->Input;
+          this->Input = &cin;
         }
   if( XDMF_WORD_CMP( Filename, "stdin" ) ) {
           this->Input = &cin;
@@ -682,10 +688,8 @@ XdmfDOM::FindElementByAttribute(const char * Attribute,
 
 char  *attribute = (char *)Attribute;
 int  occurance = Index;
-XDMF_TREE_NODE *Start;
-XDMF_TREE_NODE **children;
+XDMF_TREE_NODE * Start;
 XdmfXNode *node;
-int nchildren;
 FindNodeData fndata;
 
 // XdmfDebug( " IN FindElement , type = " << type << " Node = " << Node << " #  " << occurance);

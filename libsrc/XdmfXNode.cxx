@@ -46,8 +46,15 @@ if (this->Data != NULL) free(this->Data);
 
 void
 XdmfXNodeNode::SetName(const char *name){
-  if(this->Name != NULL) free(this->Name);
-  this->Name = strdup(name);  
+  if(this->Name != NULL)
+    {
+    free(this->Name);
+    this->Name = 0;
+    }
+  if ( name )
+    {
+    this->Name = strdup(name);
+    }
 }
 
 char *
@@ -57,8 +64,15 @@ XdmfXNodeNode::GetName(){
 
 void
 XdmfXNodeNode::SetData(const char *data){
-  if(this->Data != NULL) free(this->Data);
-  this->Data = strdup(data);  
+  if(this->Data != NULL) 
+    {
+    free(this->Data);
+    this->Data = 0;
+    }
+  if ( data )
+    {
+    this->Data = strdup(data);  
+    }
 }
 
 char *
@@ -86,6 +100,9 @@ XdmfXNode::~XdmfXNode() {
 XdmfXNodeNode *node;
 node = (XdmfXNodeNode *)XdmfLlist_first_member(this->key);
 while(node != NULL) {
+
+  node->SetData(0);
+  node->SetName(0);
   XdmfLlist_delete_item(this->key, node);
 //  This was not created with "new XdmfXNodeNode" so
 //  it's part of the LinkedList that is freed with 
@@ -96,7 +113,7 @@ while(node != NULL) {
 //  Don't do this - it may be a treee node which
 //  will result in it getting freed twice .... bad !!
 // if (this->ClientData != NULL) free(this->ClientData);
-
+XdmfLlist_remove_anchor(this->key);
 }
 
 void 

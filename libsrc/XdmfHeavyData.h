@@ -27,14 +27,6 @@
 
 #include "XdmfArray.h"
 
-#ifndef SWIG
-extern "C" {
-#include "hdf5.h"
-}
-#endif
-
-#include "XdmfExport.h"
-
 /*!
 This is an abstract convenience object for reading and writing
 HeavyData Files. 
@@ -63,7 +55,7 @@ public:
 //! Get the default Pathname for File:/Dataset
         XdmfGetValueMacro(WorkingDirectory, XdmfString);
 //! Set the default Pathname for File:/Dataset
-        void SetWorkingDirectory( char *String ) { strcpy( this->WorkingDirectory, String ); }
+        void SetWorkingDirectory( char *String );
 
 
 //! Get the current domain
@@ -76,9 +68,7 @@ public:
 //! Get the current filename
   XdmfGetValueMacro(FileName, XdmfString);
 //! Set the current filename
-  void SetFileName( XdmfString File ) {
-    strcpy( this->FileName, File );
-    } ;
+  void SetFileName( XdmfString File );
 
 //! Get the current HeavyData Dataset path
   XdmfGetValueMacro(Path, XdmfString);
@@ -103,10 +93,10 @@ values can be :
 protected:
 
   char    NdgmHost[XDMF_MAX_STRING_LENGTH];
-  char    WorkingDirectory[XDMF_MAX_STRING_LENGTH];
+  char    *WorkingDirectory;
   char    Access[XDMF_MAX_STRING_LENGTH];
   char    Domain[XDMF_MAX_STRING_LENGTH];
-  char    FileName[XDMF_MAX_STRING_LENGTH];
+  char    *FileName;
   char    Path[XDMF_MAX_STRING_LENGTH];
 };
 

@@ -28,8 +28,6 @@
 #include "XdmfObject.h"
 #include "XdmfHDFSupport.h"
 
-#include "XdmfExport.h"
-
 #define XDMF_SELECTALL    0
 #define XDMF_HYPERSLAB    1
 #define XDMF_COORDINATES  2

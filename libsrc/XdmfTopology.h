@@ -26,12 +26,8 @@
 #define __XdmfTopology_h
 
 #include "XdmfLightData.h"
-#include "XdmfDataDesc.h"
-
-#include "XdmfExport.h"
 
 #define XDMF_MAX_ORDER  10
-
 
 // General Organization
 #define XDMF_STRUCTURED    0
@@ -74,6 +70,10 @@ Currently supported base topologies are :
       3DRECTMESH
       3DCORECTMESH
 */
+
+class XdmfArray;
+class XdmfDataDesc;
+
 class XDMF_EXPORT XdmfTopology : public XdmfLightData {
 
 public:
@@ -115,11 +115,9 @@ public:
 
   XdmfDataDesc *
   GetShapeDesc( void ) {
-    return( &this->Shape );
+    return( this->Shape );
     }
-  XdmfInt64 GetNumberOfElements( void ) {
-    return( this->Shape.GetNumberOfElements() );
-    }
+  XdmfInt64 GetNumberOfElements( void );
   XdmfInt32 InitTopologyFromElement( XdmfXNode *Element );
   XdmfInt32 SetTopologyFromElement( XdmfXNode *Element );
   XdmfArray *GetConnectivity( XdmfArray *Array = NULL );
@@ -141,7 +139,7 @@ protected:
   XdmfInt32  OrderIsDefault;
   XdmfInt32  ConnectivityIsMine;
   XdmfInt32  BaseOffset;
-  XdmfDataDesc  Shape;
+  XdmfDataDesc  *Shape;
 };
 
 extern XDMF_EXPORT XdmfTopology *HandleToXdmfTopology( char *Source );

@@ -28,6 +28,8 @@
 
 #include "XdmfFormat.h"
 
+class XdmfArray;
+
 class XDMF_EXPORT XdmfFormatXML : public XdmfFormat {
 
 public :

@@ -24,6 +24,10 @@
 /*******************************************************************/
 #include "XdmfGrid.h"
 
+#include "XdmfDOM.h"
+#include "XdmfGeometry.h"
+#include "XdmfAttribute.h"
+
 XdmfGrid *HandleToXdmfGrid( char *Source ){
   XdmfObject  *TempObj;
   XdmfGrid   *Grid;
@@ -44,10 +48,17 @@ XdmfGrid::XdmfGrid() {
   this->BaseGridIsMine = 1;
   this->Attribute = (XdmfAttribute **)calloc(1, sizeof( XdmfAttribute * ));
   this->AssignedAttribute = NULL;
+  this->NumberOfAttributes = 0;
   }
 
 XdmfGrid::~XdmfGrid() {
+  XdmfInt32  Index;
   if( this->GeometryIsMine && this->Geometry ) delete this->Geometry;
+  for ( Index = 0; Index < this->NumberOfAttributes; Index ++ )
+    {
+    delete this->Attribute[Index];
+    }
+  free(this->Attribute);
   }
 
 XdmfInt32
@@ -139,12 +150,17 @@ if( Attribute ) {
 } else {
   this->SetName( GetUnique("Grid_" ) );
 }
+XdmfInt32 OldNumberOfAttributes = this->NumberOfAttributes;
 this->NumberOfAttributes = this->DOM->FindNumberOfElements("Attribute", Element );
 if( this->NumberOfAttributes > 0 ){
   XdmfInt32  Index;
   XdmfAttribute  *Attribute;
   XdmfXNode    *AttributeElement;
 
+  for ( Index = 0; Index < OldNumberOfAttributes; Index ++ )
+    {
+    delete this->Attribute[Index];
+    }
   this->Attribute = ( XdmfAttribute **)realloc( this->Attribute,
       this->NumberOfAttributes * sizeof( XdmfAttribute * ));
   for( Index = 0 ; Index < this->NumberOfAttributes ; Index++ ){

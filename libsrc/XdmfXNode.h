@@ -29,14 +29,9 @@
 
 #ifdef __cplusplus
 
-#include <stdio.h>
-// #include <string>
-
-extern "C" {
-#include "XdmfDice.h"
-}
-
 #include "XdmfObject.h"
+
+#include "XdmfDice.h"
 
 /*!
 XdmfXNode : XDMF Runtime Expandable Structure.
@@ -114,7 +109,7 @@ extern void C__XdmfXNodeDelete(void *XdmfXNode);
 
 #endif /* ifndef __XdmfXNode_h */
 
-#else // SWIG
+#else /* SWIG */
 
 class XdmfXNode : public virtual XdmfObject {
 

@@ -26,9 +26,6 @@
 #define __XdmfHDF_h
 
 #include "XdmfHeavyData.h"
-#include "XdmfArray.h"
-
-#include "XdmfExport.h"
 
 #define XDMF_H5_DIRECTORY  H5G_GROUP
 #define XDMF_H5_DATASET    H5G_DATASET
@@ -47,6 +44,9 @@ where
   Filename = UNIX style Pathname of HDF5 file
   Pathname = HDF5 Pathname inside HDF5 File
 */
+
+class XdmfArray;
+
 class XDMF_EXPORT XdmfHDF : public XdmfHeavyData {
 
 public:

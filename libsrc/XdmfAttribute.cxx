@@ -23,17 +23,23 @@
 /*                                                                 */
 /*******************************************************************/
 #include "XdmfAttribute.h"
+
 #include "XdmfTransform.h"
 #include "XdmfFormatMulti.h"
+#include "XdmfDataDesc.h"
+#include "XdmfArray.h"
+#include "XdmfDOM.h"
 
 XdmfAttribute::XdmfAttribute() {
   this->AttributeType = XDMF_ATTRIBUTE_TYPE_NONE;
   this->ValuesAreMine = 1;
   this->Values = NULL;
+  this->ShapeDesc = new XdmfDataDesc();
   }
 
 XdmfAttribute::~XdmfAttribute() {
   if( this->ValuesAreMine && this->Values )  delete this->Values;
+  delete this->ShapeDesc;
   }
 
 XdmfString
@@ -61,16 +67,16 @@ XdmfDebug("Setting Type to " << AttributeType );
 if( XDMF_WORD_CMP( AttributeType, "Scalar" ) ) {
   this->AttributeType = XDMF_ATTRIBUTE_TYPE_SCALAR;
   Dimensions[0] = 1;
-  this->ShapeDesc.SetShape( 1, Dimensions );
+  this->ShapeDesc->SetShape( 1, Dimensions );
 } else if( XDMF_WORD_CMP( AttributeType, "Vector" ) ) {
   this->AttributeType = XDMF_ATTRIBUTE_TYPE_VECTOR;
   Dimensions[0] = 3;
-  this->ShapeDesc.SetShape( 1, Dimensions );
+  this->ShapeDesc->SetShape( 1, Dimensions );
 } else if( XDMF_WORD_CMP( AttributeType, "Tensor" ) ) {
   this->AttributeType = XDMF_ATTRIBUTE_TYPE_TENSOR;
   Dimensions[0] = 3;
   Dimensions[1] = 3;
-  this->ShapeDesc.SetShape( 2, Dimensions );
+  this->ShapeDesc->SetShape( 2, Dimensions );
 } else if( XDMF_WORD_CMP( AttributeType, "Matrix" ) ) {
   this->AttributeType = XDMF_ATTRIBUTE_TYPE_MATRIX;
 } else {
@@ -149,7 +155,7 @@ if( Attribute ){
 }
 Attribute = this->DOM->Get( Element, "Dimensions" );
 if( Attribute ){
-  this->ShapeDesc.SetShapeFromString( Attribute );
+  this->ShapeDesc->SetShapeFromString( Attribute );
 }
 Attribute = this->DOM->Get( Element, "Name" );
 if( Attribute ) {

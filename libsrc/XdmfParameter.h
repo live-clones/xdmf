@@ -28,8 +28,7 @@
 #define XDMF_PARAMETER_RANGE_TYPE  1
 #define XDMF_PARAMETER_LIST_TYPE  2
 
-#include "XdmfArray.h"
-#include "XdmfXNode.h"
+#include "XdmfObject.h"
 
 /*!
 This is the basic "looping" mechanism inside the XdmfDom.
@@ -37,6 +36,10 @@ It is used to enclose a group of elements, particularly
 for timesteps, so that data names with patterns can be easily
 defined.
 */
+
+class XdmfArray;
+class XdmfXNode;
+
 class XDMF_EXPORT XdmfParameter : public XdmfObject {
 
 public:

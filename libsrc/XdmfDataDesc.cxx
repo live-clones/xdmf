@@ -220,7 +220,7 @@ if( ( this->DataSpace == H5I_BADID )  || ( this->DataSpace == H5S_ALL ) ) {
     }
 } else {
   HRank = H5Sget_simple_extent_ndims( this->DataSpace );
-  if( HRank != Rank ){
+  if( HRank != (hsize_t)Rank ){
     XdmfDebug( "Current Rank " << (int)HRank << " Requested Rank " << Rank );
     XdmfDebug( "Data Space Rank Change After Creation" );
   // Work around for ?bug? in HDF
@@ -353,7 +353,7 @@ this->Rank = Rank;
 H5Sget_simple_extent_dims( this->DataSpace, Dimensions, NULL );
 if(Rank) {
   Nelements = this->Dimension[0] = Dimensions[0];
-  for( i = 1 ; i < Rank ; i++ ){
+  for( i = 1 ; i < (hsize_t)Rank ; i++ ){
     this->Dimension[i] = Dimensions[i];
     Nelements *= Dimensions[i];
     }
@@ -494,7 +494,7 @@ hid_t    DataType;
 
 if( Index >  ( H5Tget_nmembers( this->DataType ) - 1 ) ){
   XdmfErrorMessage("Index is Greater than Number of Members");
-  return( NULL );
+  return( 0 );
   }
 DataType =  H5Tget_member_type( this->DataType, Index );
 RetVal = HDF5TypeToXdmfType( DataType ); 
@@ -520,7 +520,7 @@ XdmfInt64  RetVal;
 
 if( Index >  ( H5Tget_nmembers( this->DataType ) - 1 ) ){
   XdmfErrorMessage("Index is Greater than Number of Members");
-  return( NULL );
+  return( 0 );
   }
 RetVal =  H5Tget_member_offset( this->DataType, Index );
 return( RetVal );
@@ -533,7 +533,7 @@ hsize_t     Dims[XDMF_MAX_DIMENSION];
 
 if( Index >  ( H5Tget_nmembers( this->DataType ) - 1 ) ){
   XdmfErrorMessage("Index is Greater than Number of Members");
-  return( NULL );
+  return( 0 );
   }
 DataType =  H5Tget_member_type( this->DataType, Index );
 if( HDF5TypeToXdmfType(DataType) == XDMF_COMPOUND_TYPE ) {
@@ -594,7 +594,7 @@ XdmfInt64
 XdmfDataDesc::GetMemberSize( XdmfInt64 Index ) {
 hsize_t    Length;
 XdmfInt64  RetVal = 1;
-hsize_t     Dims[XDMF_MAX_DIMENSION];
+//hsize_t     Dims[XDMF_MAX_DIMENSION];
 
 if( Index >  ( H5Tget_nmembers( this->DataType ) - 1 ) ){
   XdmfErrorMessage("Index is Greater than Number of Members");
@@ -758,7 +758,7 @@ if( this->SelectionType == XDMF_COORDINATES ){
     hsize_t j, *Cp = Coords;
     H5Sget_select_elem_pointlist( this->DataSpace, Start, Nelements, Coords );
     for( i = 0 ; i < Nelements ; i++ ){
-      for( j = 0 ; j < Rank ; j++ ){
+      for( j = 0 ; j < (hsize_t)Rank ; j++ ){
         StringOutput << (int)*Cp++ << " ";
         }
       }  
@@ -782,7 +782,7 @@ XdmfInt32 Rank = H5Sget_simple_extent_ndims(this->DataSpace );
 
 cout << "Rank " << Rank << endl;
 H5Sget_simple_extent_dims( this->DataSpace, Dimensions, NULL );
-for( i = 0 ; i < Rank ; i++ ){
+for( i = 0 ; i < (hsize_t)Rank ; i++ ){
   cout << "Dimansion[" << (int)i << "] " << (int)Dimensions[i] << endl;
   }
 cout << "Selection Type : " << this->GetSelectionTypeAsString() << endl;
@@ -795,7 +795,7 @@ if ( Nelements > 0 ) {
   H5Sget_select_elem_pointlist( this->DataSpace, 0, Nelements, Coords );
   for( i = 0 ; i < Nelements ; i++ ){
     cout << "Element[" << (int)i << "] ";
-    for( j = 0 ; j < Rank ; j++ ){
+    for( j = 0 ; j < (hsize_t)Rank ; j++ ){
       cout << " " << (int)*Cp++;
       }
     cout << endl;

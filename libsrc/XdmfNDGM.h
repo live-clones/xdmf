@@ -25,6 +25,8 @@
 #ifndef __XdmfNDGM_h
 #define __XdmfNDGM_h
 
+#include "XdmfDataDesc.h"
+
 #ifndef SWIG
 extern "C" {
 #ifdef HAVE_NDGM
@@ -38,13 +40,11 @@ extern "C" {
 }
 #endif /* SWIG */
 
-#include "XdmfHeavyData.h"
-#include "XdmfArray.h"
-
 #define XDMF_NDGM_MSG_SERVER  0
 #define XDMF_NDGM_MSG_CLIENT  1
 #define XDMF_NDGM_CLIENT  2
 
+class XdmfArray;
 
 /*!
 Object to Handle Low level NDGM Details

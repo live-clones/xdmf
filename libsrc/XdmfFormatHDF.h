@@ -27,7 +27,10 @@
 
 
 #include "XdmfFormat.h"
-#include "XdmfHDF.h"
+
+class XdmfArray;
+class XdmfDataDesc;
+class XdmfXNode;
 
 class XDMF_EXPORT XdmfFormatHDF : public XdmfFormat {
 
