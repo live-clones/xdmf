@@ -101,6 +101,7 @@ ENDIF(XDMF_HAS_NDGM)
 
 OPTION(XDMF_WRAP_PYTHON "Build a Python wrapping interface" ON)
 IF(XDMF_WRAP_PYTHON)
+  FIND_PACKAGE(PythonExecutable)
   IF(NOT BUILD_SHARED_LIBS)
     MESSAGE("Python wrapping only works on shared libraries")
   ENDIF(NOT BUILD_SHARED_LIBS)

@@ -22,6 +22,7 @@ INCLUDE (${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake)
 MESSAGE(STATUS "Configure IceConfig.h")
 SUBDIRS(Ice/libsrc)
 
+SET(CMAKE_MODULE_PATH ${Xdmf_SOURCE_DIR}/CMake)
 
 OPTION(XDMF_HAS_NDGM "XDMF has Network Distributed Global Memory (NDGM)" OFF)
 IF(XDMF_HAS_NDGM)
