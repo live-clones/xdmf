@@ -22,18 +22,51 @@
 /*     for more information.                                       */
 /*                                                                 */
 /*******************************************************************/
-#ifndef H5FDndgm_H
-#define H5FDndgm_H
+#include <vtkXdmfXRenderWindowInteractor.h>
 
-#include "H5Ipublic.h"
-#include "H5pubconf.h"
 
-#include "XdmfExport.h"
+#include <vtkObjectFactory.h>
+#include <vtkCommand.h>
 
-#define H5FD_NDGM  (H5FD_ndgm_init())
+//----------------------------------------------------------------------------
+vtkXdmfXRenderWindowInteractor* vtkXdmfXRenderWindowInteractor::New()
+{
+  // First try to create the object from the vtkObjectFactory
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkXdmfXRenderWindowInteractor");
+  if(ret)
+    {
+    return (vtkXdmfXRenderWindowInteractor*)ret;
+    }
+  // If the factory was unable to create the object, then create it here.
+  return new vtkXdmfXRenderWindowInteractor;
+}
 
-XDMF_EXPORT hid_t H5FD_ndgm_init(void);
-XDMF_EXPORT herr_t H5Pset_fapl_ndgm(hid_t fapl_id, size_t increment, char *host);
-XDMF_EXPORT herr_t H5Pget_fapl_ndgm(hid_t fapl_id, size_t *increment/*out*/, char **host);
+void vtkXdmfXRenderWindowInteractor::Start( int Block ) {
 
-#endif
+if ( Block ) {
+  vtkXRenderWindowInteractor::Start();
+} else {
+  this->LoopOnce();
+}
+
+}
+
+void vtkXdmfXRenderWindowInteractor::LoopOnce( )
+{
+    XEvent event;
+
+  if (!this->Initialized)
+    {
+    this->Initialize();
+    }
+  if (! this->Initialized )
+    {
+    return;
+    }
+
+    this->BreakLoopFlag = 0;
+  while( XtAppPending( this->App )) {
+        XtAppNextEvent(this->App, &event);
+        XtDispatchEvent(&event);
+  }
+}

@@ -22,18 +22,43 @@
 /*     for more information.                                       */
 /*                                                                 */
 /*******************************************************************/
-#ifndef H5FDndgm_H
-#define H5FDndgm_H
+#include <vtkXdmfWin32RenderWindowInteractor.h>
 
-#include "H5Ipublic.h"
-#include "H5pubconf.h"
 
-#include "XdmfExport.h"
+#include <vtkObjectFactory.h>
+#include <vtkCommand.h>
 
-#define H5FD_NDGM  (H5FD_ndgm_init())
+//----------------------------------------------------------------------------
+vtkXdmfWin32RenderWindowInteractor* vtkXdmfWin32RenderWindowInteractor::New()
+{
+  // First try to create the object from the vtkObjectFactory
+  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkXdmfWin32RenderWindowInteractor");
+  if(ret)
+    {
+    return (vtkXdmfWin32RenderWindowInteractor*)ret;
+    }
+  // If the factory was unable to create the object, then create it here.
+  return new vtkXdmfWin32RenderWindowInteractor;
+}
 
-XDMF_EXPORT hid_t H5FD_ndgm_init(void);
-XDMF_EXPORT herr_t H5Pset_fapl_ndgm(hid_t fapl_id, size_t increment, char *host);
-XDMF_EXPORT herr_t H5Pget_fapl_ndgm(hid_t fapl_id, size_t *increment/*out*/, char **host);
+void vtkXdmfWin32RenderWindowInteractor::Start( int Block ) {
 
-#endif
+if ( Block ) {
+// Check for WIN32 but without Cygwin with X11
+  vtkWin32RenderWindowInteractor::Start();
+} else {
+  this->LoopOnce();
+}
+
+}
+
+void vtkXdmfWin32RenderWindowInteractor::LoopOnce( )
+{
+MSG msg;
+while (PeekMessage ( &msg, NULL, 0, 0, PM_NOREMOVE) {
+	if(GetMessage(&msg, NULL, 0, 0)){
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);	
+		}
+	}
+}

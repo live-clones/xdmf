@@ -22,18 +22,13 @@
 /*     for more information.                                       */
 /*                                                                 */
 /*******************************************************************/
-#ifndef H5FDndgm_H
-#define H5FDndgm_H
+#include <vtkWin32RenderWindowInteractor.h>
 
-#include "H5Ipublic.h"
-#include "H5pubconf.h"
-
-#include "XdmfExport.h"
-
-#define H5FD_NDGM  (H5FD_ndgm_init())
-
-XDMF_EXPORT hid_t H5FD_ndgm_init(void);
-XDMF_EXPORT herr_t H5Pset_fapl_ndgm(hid_t fapl_id, size_t increment, char *host);
-XDMF_EXPORT herr_t H5Pget_fapl_ndgm(hid_t fapl_id, size_t *increment/*out*/, char **host);
-
-#endif
+class VTK_EXPORT vtkXdmfWin32RenderWindowInteractor : public vtkWin32RenderWindowInteractor
+{
+public:
+  static vtkXdmfWin32RenderWindowInteractor *New();
+  vtkTypeMacro(vtkXdmfWin32RenderWindowInteractor,vtkWin32RenderWindowInteractor);
+  virtual void LoopOnce();
+  virtual void Start( int Block = 0 );
+};

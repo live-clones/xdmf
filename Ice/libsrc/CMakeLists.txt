@@ -89,3 +89,4 @@ CONFIGURE_FILE(
   ${ICE_BINARY_DIR}/IceConfig.h
   )
 
+INSTALL_FILES(/include .h IceConfig ice)

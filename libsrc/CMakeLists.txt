@@ -4,13 +4,10 @@ SET( XdmfFormatSource
 	XdmfDOM
 	XdmfDataDesc
 	XdmfExpression
-	XdmfExprLex
-	XdmfExprYacc
 	XdmfFormat
 	XdmfFormatMulti
 	XdmfFormatHDF
 	XdmfFormatXML
-	XdmfLlist
 	XdmfHeavyData
 	XdmfHDF
 	XdmfHDFSupport
@@ -19,9 +16,15 @@ SET( XdmfFormatSource
 	XdmfParameter
 	XdmfXNode
 	XdmfTransform
-	XdmfTree
 	XdmfXMLParser
 )
+
+SET( XdmfExtraSource
+	XdmfTree
+	XdmfLlist
+	XdmfExprLex
+	XdmfExprYacc
+	)
 
 SET( XdmfModelSource
 	XdmfAttribute
@@ -55,9 +58,28 @@ CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/libsrc/XdmfConfig.h.in
                ${Xdmf_BINARY_DIR}/libsrc/XdmfConfig.h)
 
 IF(XDMF_HAS_NDGM)
-  SET(XdmfSources ${XdmfFormatSource} ${XdmfModelSource} ${XdmfNdgmSource})
+  SET(XdmfSources ${XdmfFormatSource} ${XdmfExtraSource} ${XdmfModelSource} ${XdmfNdgmSource})
+  INSTALL_FILES(/include/Xdmf .h
+		XdmfConfig
+		Xdmf
+		XdmfArrayCopyMacro
+		XdmfDice
+		XdmfExport
+		XdmfExpr
+		${XdmfFormatSource}
+		${XdmfModelSource}
+		${XdmfNdgmSource})
 ELSE(XDMF_HAS_NDGM)
-  SET(XdmfSources ${XdmfFormatSource} ${XdmfModelSource})
+  SET(XdmfSources ${XdmfFormatSource} ${XdmfExtraSource} ${XdmfModelSource})
+  INSTALL_FILES(/include/Xdmf .h
+		XdmfConfig
+		Xdmf
+		XdmfArrayCopyMacro
+		XdmfDice
+		XdmfExport
+		XdmfExpr
+		${XdmfFormatSource}
+		${XdmfModelSource})
 ENDIF(XDMF_HAS_NDGM)
 
 IF(XDMF_BUILD_SHARED_LIBS)
@@ -65,6 +87,7 @@ IF(XDMF_BUILD_SHARED_LIBS)
 ELSE(XDMF_BUILD_SHARED_LIBS)
   ADD_LIBRARY(Xdmf STATIC ${XdmfSources})
 ENDIF(XDMF_BUILD_SHARED_LIBS)
+INSTALL_TARGETS(/lib Xdmf)
 
 TARGET_LINK_LIBRARIES(Xdmf ${HDF5_LIBRARY} ${XDMF_EXPAT_LIBRARIES})
 
@@ -76,6 +99,7 @@ IF(XDMF_WRAP_PYTHON)
   INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
   INCLUDE (${CMAKE_ROOT}/Modules/FindPythonLibs.cmake)
   ADD_LIBRARY(_Xdmf SHARED ${XdmfSources} ${XdmfPythonSource})
+  INSTALL_TARGETS(/lib _Xdmf)
   IF(XDMF_HAS_NDGM)
       TARGET_LINK_LIBRARIES(_Xdmf ${PYTHON_LIBRARY} ndgm ${HDF5_LIBRARY} ${EXPAT_LIBRARY})
   ELSE(XDMF_HAS_NDGM)
@@ -92,6 +116,7 @@ IF(XDMF_WRAP_TCL)
   INCLUDE_DIRECTORIES(${TCL_INCLUDE_PATH})
   INCLUDE (${CMAKE_ROOT}/Modules/FindTCL.cmake)
   ADD_LIBRARY(XdmfTCL SHARED ${XdmfSources} ${XdmfTclSource})
+  INSTALL_TARGETS(/lib XdmfTCL)
   IF(XDMF_HAS_NDGM)
      TARGET_LINK_LIBRARIES(XdmfTCL ${TCL_LIBRARY} ndgm ${HDF5_LIBRARY} ${EXPAT_LIBRARY})
      ADD_EXECUTABLE(DummyTCL dummy.cxx)
