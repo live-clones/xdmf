@@ -1,5 +1,5 @@
 #include "vtkXMLUnstructuredGridReader.h"
-#include "vtkXdmfDataSetWriter.h"
+#include "vtkXdmfWriter.h"
 #include "vtkUnstructuredGrid.h"
 
 int main(int argc, char* argv[])
@@ -11,9 +11,11 @@ int main(int argc, char* argv[])
     }
   
   vtkXMLUnstructuredGridReader* reader = vtkXMLUnstructuredGridReader::New();
-  vtkXdmfDataSetWriter* writer = vtkXdmfDataSetWriter::New();
+  vtkXdmfWriter* writer = vtkXdmfWriter::New();
 
   writer->SetInput(reader->GetOutput());
+  writer->SetGridName("GridName");
+  //writer->AllLightOn();
 
   
   reader->SetFileName(argv[1]);
