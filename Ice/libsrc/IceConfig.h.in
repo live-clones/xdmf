@@ -20,6 +20,9 @@
 
 #define ICE_SYSTEM "@ICE_SYSTEM@"
 #define ICE_HOST @ICE_SYSTEM@
+#ifndef @ICE_SYSTEM@
+#define @ICE_SYSTEM@
+#endif
 
 #cmakedefine ICE_VOID_VALID
 #ifndef ICE_VOID_VALID
@@ -89,6 +92,7 @@
 #elif defined( SIZEOF_LONG_LONG )
 # define ICE_64_INT long long
 # define HAVE_64_INT
+# define ICE_have_64_bit_int
 #else
 # error "64 bit long not defined"
 #endif
