@@ -52,8 +52,6 @@ IF(WIN32)
 ENDIF(WIN32)
 CHECK_TYPE_SIZE("long long"    SIZEOF_LONG_LONG)
 
-OPTION(BUILD_SHARED_LIBS "Build Shared XDMF Library" ON)
-
 CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/libsrc/XdmfConfig.h.in
   ${Xdmf_BINARY_DIR}/libsrc/XdmfConfig.h)
 
