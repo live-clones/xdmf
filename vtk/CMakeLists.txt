@@ -1,30 +1,35 @@
 # Build vtkXdmf*RenderWindowInteractor.h
 IF(WIN32)
-	SET(XDMF_WINDOWINTERACTOR vtkWin32RenderWindowInteractor)
-	CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.h.in
-		${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.h
-		@ONLY IMMEDIATE)
-	CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx.in
-		${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
-		@ONLY IMMEDIATE)
+  SET(XDMF_WINDOWINTERACTOR vtkWin32RenderWindowInteractor)
+  CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.h.in
+    ${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.h
+    @ONLY IMMEDIATE)
+  CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx.in
+    ${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
+    @ONLY IMMEDIATE)
 ELSE(WIN32)
-	SET(XDMF_WINDOWINTERACTOR vtkXRenderWindowInteractor)
-	CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.h.in
-		${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.h
-		@ONLY IMMEDIATE)
-	CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx.in
-		${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
-		@ONLY IMMEDIATE)
+  SET(XDMF_WINDOWINTERACTOR vtkXRenderWindowInteractor)
+  CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.h.in
+    ${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.h
+    @ONLY IMMEDIATE)
+  CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx.in
+    ${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
+    @ONLY IMMEDIATE)
 ENDIF(WIN32)
 
 SET( Xdmf_SRCS
-	vtkXdmfReader.cxx
+  vtkXdmfReader.cxx
   vtkXdmfWriter.cxx
-	vtkXdmfDataSetWriter.cxx
-	vtkXdmfDataArray.cxx
-	vtkXdmfOpenGLCamera.cxx
-	${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
-	)
+  vtkXdmfDataArray.cxx
+  vtkXdmfOpenGLCamera.cxx
+  ${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
+  )
+IF(NOT ParaViewComplete_BINARY_DIR)
+  SET( Xdmf_SRCS
+    ${Xdmf_SRCS}
+    vtkXdmfDataSetWriter.cxx
+    )
+ENDIF(NOT ParaViewComplete_BINARY_DIR)
 
 INSTALL_FILES(/include/XdmfVtk .h ${Xdmf_SRCS})
 
@@ -58,5 +63,5 @@ IF (VTK_FOUND)
     SUBDIRS(Testing)
   ENDIF(XDMF_BUILD_TESTING)
 ELSE(VTK_FOUND)
-MESSAGE(STATUS "Can't find VTK ... no vtkXdmf interface can be built")
+  MESSAGE(STATUS "Can't find VTK ... no vtkXdmf interface can be built")
 ENDIF (VTK_FOUND)
