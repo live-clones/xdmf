@@ -73,7 +73,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.28");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.29");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -472,6 +472,14 @@ void vtkXdmfReader::Execute()
         {
         if( Points )
           {
+          if ( Points->GetData()->GetDataType() != VTK_DOUBLE )
+            {
+            vtkDoubleArray* da = vtkDoubleArray::New();
+            da->SetNumberOfComponents(3);
+            Points->SetData(da);
+            da->Delete();
+            }
+
           Length = Geometry->GetPoints()->GetNumberOfElements();
           vtkDebugMacro( << "Setting Array of " << (int)Length << " = " 
             << (int)Geometry->GetNumberOfPoints() << " Points");
@@ -522,12 +530,13 @@ void vtkXdmfReader::Execute()
               upext[kk] = whext[kk];
               }
             }
-          pp = Points->GetPoint( 0 );
-          if( sizeof( float ) == sizeof( XdmfFloat32 ) && !strides_or_extents) 
+          vtkDoubleArray* da = vtkDoubleArray::SafeDownCast(Points->GetData());
+          pp = da->GetPointer(0);
+          if( sizeof( double ) == sizeof( XdmfFloat32 ) && !strides_or_extents) 
             {
             Geometry->GetPoints()->GetValues( 0, (XdmfFloat32 *)pp, Length );
             } 
-          else if( sizeof( float ) == sizeof( XdmfFloat64 ) && !strides_or_extents) 
+          else if( sizeof( double ) == sizeof( XdmfFloat64 ) && !strides_or_extents) 
             {
             Geometry->GetPoints()->GetValues( 0, (XdmfFloat64 *)pp, Length );
             } 
@@ -698,17 +707,17 @@ void vtkXdmfReader::Execute()
       for( Index = cstart[0], cc = 0 ; Index < cend[0] ; Index += this->Stride[0] )
         {
         XCoord->SetValue( cc++, 
-          Geometry->GetVectorX()->GetValueAsFloat32( Index ) ) ;
+          Geometry->GetVectorX()->GetValueAsFloat64( Index ) ) ;
         } 
       for( Index = cstart[1], cc = 0 ; Index < cend[1] ; Index+= this->Stride[1] )
         {
         YCoord->SetValue( cc++ , 
-          Geometry->GetVectorY()->GetValueAsFloat32( Index ) );
+          Geometry->GetVectorY()->GetValueAsFloat64( Index ) );
         } 
       for( Index = cstart[2], cc = 0 ; Index < cend[2] ; Index += this->Stride[2] )
         {
         ZCoord->SetValue( cc++ , 
-          Geometry->GetVectorZ()->GetValueAsFloat32( Index ) );
+          Geometry->GetVectorZ()->GetValueAsFloat64( Index ) );
         }
 
       stride[2] = this->Stride[0];
