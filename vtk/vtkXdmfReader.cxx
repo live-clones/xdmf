@@ -74,7 +74,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vtkstd/vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.47");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.48");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -923,38 +923,44 @@ void vtkXdmfReader::Execute()
             dataSet->GetPointData()->RemoveArray(name);
             dataSet->GetPointData()->AddArray(vtkValues);
             //cout << "Add point array: " << name << endl;
-            switch( AttributeType )
+            if ( Attribute->GetActive() )
               {
-            case XDMF_ATTRIBUTE_TYPE_SCALAR :
-              dataSet->GetPointData()->SetActiveScalars( name );
-              break;
-            case XDMF_ATTRIBUTE_TYPE_VECTOR :
-              dataSet->GetPointData()->SetActiveVectors( name );
-              break;
-            case XDMF_ATTRIBUTE_TYPE_TENSOR :
-              dataSet->GetPointData()->SetActiveTensors( name );
-              break;
-            default :
-              break;
+              switch( AttributeType )
+                {
+              case XDMF_ATTRIBUTE_TYPE_SCALAR :
+                dataSet->GetPointData()->SetActiveScalars( name );
+                break;
+              case XDMF_ATTRIBUTE_TYPE_VECTOR :
+                dataSet->GetPointData()->SetActiveVectors( name );
+                break;
+              case XDMF_ATTRIBUTE_TYPE_TENSOR :
+                dataSet->GetPointData()->SetActiveTensors( name );
+                break;
+              default :
+                break;
+                }
               }
             break;
           case XDMF_ATTRIBUTE_CENTER_CELL :
             dataSet->GetCellData()->RemoveArray(name);
             dataSet->GetCellData()->AddArray(vtkValues);
             //cout << "Add cell array: " << name << endl;
-            switch( AttributeType )
+            if ( Attribute->GetActive() )
               {
-            case XDMF_ATTRIBUTE_TYPE_SCALAR :
-              dataSet->GetCellData()->SetActiveScalars( name );
-              break;
-            case XDMF_ATTRIBUTE_TYPE_VECTOR :
-              dataSet->GetCellData()->SetActiveVectors( name );
-              break;
-            case XDMF_ATTRIBUTE_TYPE_TENSOR :
-              dataSet->GetCellData()->SetActiveTensors( name );
-              break;
-            default :
-              break;
+              switch( AttributeType )
+                {
+              case XDMF_ATTRIBUTE_TYPE_SCALAR :
+                dataSet->GetCellData()->SetActiveScalars( name );
+                break;
+              case XDMF_ATTRIBUTE_TYPE_VECTOR :
+                dataSet->GetCellData()->SetActiveVectors( name );
+                break;
+              case XDMF_ATTRIBUTE_TYPE_TENSOR :
+                dataSet->GetCellData()->SetActiveTensors( name );
+                break;
+              default :
+                break;
+                }
               }
             break;
           default : 
