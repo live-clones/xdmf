@@ -46,6 +46,43 @@ SET( XdmfTclSource
   XdmfTcl
   )
 
+OPTION(XDMF_REGENERATE_WRAPPERS
+  "Regenerate XdmfPython.cxx XdmfTcl.cxx and XdmfJava.cxx" OFF)
+MARK_AS_ADVANCED(XDMF_REGENERATE_WRAPPERS)
+IF(XDMF_REGENERATE_WRAPPERS)
+  FIND_PROGRAM(SWIG_EXECUTABLE 
+    NAMES swig-1.3 swig
+    PATHS /usr/bin
+    DOC "Swig executable for generating wrapped files")
+  MARK_AS_ADVANCED(SWIG_EXECUTABLE)
+  IF(SWIG_EXECUTABLE)
+    SET(XDMF_SWIG_INCLUDES 
+      -I${Xdmf_SOURCE_DIR} 
+      -I${Xdmf_SOURCE_DIR}/libsrc 
+      -I${Xdmf_BINARY_DIR}/libsrc 
+      -I${Xdmf_SOURCE_DIR}/Ice/libsrc
+      -I${Xdmf_BINARY_DIR}/Ice/libsrc
+      )
+    FOREACH(LANGUAGE Tcl Python Java)
+      STRING(TOLOWER ${LANGUAGE} lang)
+      SET(swigtarget ${Xdmf_BINARY_DIR}/libsrc/Xdmf${LANGUAGE}.cxx)
+      IF(LANGUAGE MATCHES "Tcl")
+        SET(swig_extra_args -prefix Xdmf -namespace)
+      ENDIF(LANGUAGE MATCHES "Tcl")
+      ADD_CUSTOM_COMMAND(
+        OUTPUT ${swigtarget}
+        COMMAND ${SWIG_EXECUTABLE}
+        ARGS -v -c++ -make_default -includeall "-${lang}" ${swig_extra_args} ${XDMF_SWIG_INCLUDES} -o "${swigtarget}" Xdmf.i)
+
+    ENDFOREACH(LANGUAGE)
+    ADD_CUSTOM_TARGET(RerunSwig DEPENDS 
+      ${Xdmf_BINARY_DIR}/libsrc/XdmfTcl.cxx
+      ${Xdmf_BINARY_DIR}/libsrc/XdmfPython.cxx
+      ${Xdmf_BINARY_DIR}/libsrc/XdmfJava.cxx
+      )
+  ENDIF(SWIG_EXECUTABLE)
+ENDIF(XDMF_REGENERATE_WRAPPERS)
+
 INCLUDE (${CMAKE_ROOT}/Modules/CheckTypeSize.cmake)
 IF(WIN32)
   CHECK_TYPE_SIZE(__int64        SIZEOF___INT64)
