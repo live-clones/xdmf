@@ -74,7 +74,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vtkstd/vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.45");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.46");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -105,6 +105,7 @@ public:
   XdmfXNode* DomainPtr;
   GridListType Grids;
   DataDescListType DataDescriptions;
+  StringListType EnabledUnknownGrids;
 };
 
 //----------------------------------------------------------------------------
@@ -1479,7 +1480,24 @@ int vtkXdmfReader::GetGridIndex(const char* name)
 void vtkXdmfReader::EnableGrid(const char* name)
 {
   vtkDebugMacro("Enable grid \"" << name << "\"");
-  this->EnableGrid(this->GetGridIndex(name));
+  int gidx = this->GetGridIndex(name);
+  if ( gidx < 0 || gidx >= this->GetNumberOfGrids() )
+    {
+    cout << "Enabling unknown grid" << endl;
+    vtkXdmfReaderInternal::StringListType::iterator it = 0;
+    for ( it = this->Internals->EnabledUnknownGrids.begin();
+      it != this->Internals->EnabledUnknownGrids.end();
+      ++ it )
+      {
+      if ( *it == name )
+        {
+        return;
+        }
+      }
+    this->Internals->EnabledUnknownGrids.push_back(name);
+    return;
+    }
+  this->EnableGrid(gidx);
 }
 
 //----------------------------------------------------------------------------
@@ -1993,6 +2011,18 @@ void vtkXdmfReader::UpdateGrids()
     this->Internals->Grids[currentGrid]->SetDOM(this->DOM);
     this->Internals->Grids[currentGrid]->InitGridFromElement( gridNode );
     str.rdbuf()->freeze(0);
+    }
+
+  vtkXdmfReaderInternal::StringListType::iterator it;
+  for ( it = this->Internals->EnabledUnknownGrids.begin();
+    it != this->Internals->EnabledUnknownGrids.end();
+    ++ it )
+    {
+    int gidx = this->GetGridIndex(it->c_str());
+    if ( gidx >= 0 && gidx < this->GetNumberOfGrids() )
+      {
+      this->Internals->SelectedGrids[gidx] = 1;
+      }
     }
   this->GridsModified = 0;
 }
