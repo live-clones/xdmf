@@ -28,9 +28,13 @@
 #include <vtkCommand.h>
 
 #include <vtkUnsignedCharArray.h>
+#include <vtkCharArray.h>
 #include <vtkIntArray.h>
 #include <vtkFloatArray.h>
 #include <vtkDoubleArray.h>
+#include <vtkUnsignedIntArray.h>
+#include "vtkShortArray.h"
+#include "vtkUnsignedShortArray.h"
 
 #include <XdmfArray.h>
 
@@ -56,10 +60,35 @@ vtkDataArray *vtkXdmfDataArray::FromXdmfArray( char *ArrayName, int CopyShape,
     XdmfErrorMessage("Array is NULL");
     return(NULL);
   }
+  if ( this->vtkArray )
+    {
+    this->vtkArray->Delete();
+    this->vtkArray = 0;
+    }
   switch( Array->GetNumberType() ){
   case XDMF_INT8_TYPE :
     if( this->vtkArray == NULL ) {
+      this->vtkArray = vtkCharArray::New();
+    }
+    break;
+  case XDMF_UINT8_TYPE :
+    if( this->vtkArray == NULL ) {
       this->vtkArray = vtkUnsignedCharArray::New();
+    }
+    break;
+  case XDMF_INT16_TYPE :
+    if( this->vtkArray == NULL ) {
+      this->vtkArray = vtkShortArray::New();
+    }
+    break;
+  case XDMF_UINT16_TYPE :
+    if( this->vtkArray == NULL ) {
+      this->vtkArray = vtkUnsignedShortArray::New();
+    }
+    break;
+  case XDMF_UINT32_TYPE :
+    if( this->vtkArray == NULL ) {
+      this->vtkArray = vtkUnsignedIntArray::New();
     }
     break;
   case XDMF_INT32_TYPE :
@@ -73,11 +102,14 @@ vtkDataArray *vtkXdmfDataArray::FromXdmfArray( char *ArrayName, int CopyShape,
       this->vtkArray = vtkFloatArray::New();
     }
     break;
-  default :
+  case XDMF_FLOAT64_TYPE :
     if( this->vtkArray == NULL ) {
       this->vtkArray = vtkDoubleArray::New();
     }
     break;
+  default:
+    vtkErrorMacro("Cannot create VTK data array: " << Array->GetNumberType());
+    return 0;
   }
   if ( CopyShape )
     {
@@ -109,13 +141,22 @@ vtkDataArray *vtkXdmfDataArray::FromXdmfArray( char *ArrayName, int CopyShape,
   switch( Array->GetNumberType() ){
   case XDMF_INT8_TYPE :
     Array->GetValues( 0,
-      ( unsigned char  *)this->vtkArray->GetVoidPointer( 0 ),
+      ( XDMF_8_INT*)this->vtkArray->GetVoidPointer( 0 ),
+      Array->GetNumberOfElements() );  
+    break;
+  case XDMF_UINT8_TYPE :
+    Array->GetValues( 0,
+      ( XDMF_8_UINT*)this->vtkArray->GetVoidPointer( 0 ),
       Array->GetNumberOfElements() );  
     break;
   case XDMF_INT32_TYPE :
-  case XDMF_INT64_TYPE :
     Array->GetValues( 0,
-      ( int *)this->vtkArray->GetVoidPointer( 0 ),
+      (XDMF_32_INT *)this->vtkArray->GetVoidPointer( 0 ),
+      Array->GetNumberOfElements() );  
+    break;
+  case XDMF_UINT32_TYPE :
+    Array->GetValues( 0,
+      (XDMF_32_UINT *)this->vtkArray->GetVoidPointer( 0 ),
       Array->GetNumberOfElements() );  
     break;
   case XDMF_FLOAT32_TYPE :

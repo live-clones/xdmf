@@ -499,6 +499,57 @@ delete [] ValueArray;
 return( XDMF_SUCCESS );
 }
 
+XdmfInt32 XdmfArray::SetValues( XdmfInt64 Index, XdmfUInt8 *Values,
+        XdmfInt64 NumberOfValues,
+        XdmfInt64 ArrayStride,
+        XdmfInt64 ValuesStride ) {
+XdmfPointer  ArrayPointer;
+
+ArrayPointer = this->GetDataPointer(Index);
+if( ArrayPointer == NULL ){
+  this->SetNumberOfElements( NumberOfValues + Index );
+  ArrayPointer = this->GetDataPointer(Index);
+  }
+XDMF_ARRAY_COPY( ArrayPointer, this->GetNumberType(), ArrayStride,
+    Values, XDMF_UINT8_TYPE, ValuesStride,
+    XDMF_ARRAY_IN, NumberOfValues );
+return( XDMF_SUCCESS );
+}
+
+XdmfInt32 XdmfArray::SetValues( XdmfInt64 Index, XdmfUInt16 *Values,
+        XdmfInt64 NumberOfValues,
+        XdmfInt64 ArrayStride,
+        XdmfInt64 ValuesStride ) {
+XdmfPointer  ArrayPointer;
+
+ArrayPointer = this->GetDataPointer(Index);
+if( ArrayPointer == NULL ){
+  this->SetNumberOfElements( NumberOfValues + Index );
+  ArrayPointer = this->GetDataPointer(Index);
+  }
+XDMF_ARRAY_COPY( ArrayPointer, this->GetNumberType(), ArrayStride,
+    Values, XDMF_UINT16_TYPE, ValuesStride,
+    XDMF_ARRAY_IN, NumberOfValues );
+return( XDMF_SUCCESS );
+}
+
+XdmfInt32 XdmfArray::SetValues( XdmfInt64 Index, XdmfUInt32 *Values,
+        XdmfInt64 NumberOfValues,
+        XdmfInt64 ArrayStride,
+        XdmfInt64 ValuesStride ) {
+XdmfPointer  ArrayPointer;
+
+ArrayPointer = this->GetDataPointer(Index);
+if( ArrayPointer == NULL ){
+  this->SetNumberOfElements( NumberOfValues + Index );
+  ArrayPointer = this->GetDataPointer(Index);
+  }
+XDMF_ARRAY_COPY( ArrayPointer, this->GetNumberType(), ArrayStride,
+    Values, XDMF_UINT32_TYPE, ValuesStride,
+    XDMF_ARRAY_IN, NumberOfValues );
+return( XDMF_SUCCESS );
+}
+
 XdmfInt32 XdmfArray::SetValues( XdmfInt64 Index, XdmfInt8 *Values,
         XdmfInt64 NumberOfValues,
         XdmfInt64 ArrayStride,
@@ -512,6 +563,23 @@ if( ArrayPointer == NULL ){
   }
 XDMF_ARRAY_COPY( ArrayPointer, this->GetNumberType(), ArrayStride,
     Values, XDMF_INT8_TYPE, ValuesStride,
+    XDMF_ARRAY_IN, NumberOfValues );
+return( XDMF_SUCCESS );
+}
+
+XdmfInt32 XdmfArray::SetValues( XdmfInt64 Index, XdmfInt16 *Values,
+        XdmfInt64 NumberOfValues,
+        XdmfInt64 ArrayStride,
+        XdmfInt64 ValuesStride ) {
+XdmfPointer  ArrayPointer;
+
+ArrayPointer = this->GetDataPointer(Index);
+if( ArrayPointer == NULL ){
+  this->SetNumberOfElements( NumberOfValues + Index );
+  ArrayPointer = this->GetDataPointer(Index);
+  }
+XDMF_ARRAY_COPY( ArrayPointer, this->GetNumberType(), ArrayStride,
+    Values, XDMF_INT16_TYPE, ValuesStride,
     XDMF_ARRAY_IN, NumberOfValues );
 return( XDMF_SUCCESS );
 }
@@ -646,6 +714,45 @@ return( Value );
 }
 
 
+XdmfInt32 XdmfArray::GetValues( XdmfInt64 Index, XdmfUInt8 *Values,
+        XdmfInt64 NumberOfValues,
+        XdmfInt64 ArrayStride,
+        XdmfInt64 ValuesStride ) {
+XdmfPointer  ArrayPointer;
+
+ArrayPointer = this->GetDataPointer(Index);
+XDMF_ARRAY_COPY( ArrayPointer, this->GetNumberType(), ArrayStride,
+    Values, XDMF_UINT8_TYPE, ValuesStride,
+    XDMF_ARRAY_OUT, NumberOfValues );
+return( XDMF_SUCCESS );
+}
+
+XdmfInt32 XdmfArray::GetValues( XdmfInt64 Index, XdmfUInt16 *Values,
+        XdmfInt64 NumberOfValues,
+        XdmfInt64 ArrayStride,
+        XdmfInt64 ValuesStride ) {
+XdmfPointer  ArrayPointer;
+
+ArrayPointer = this->GetDataPointer(Index);
+XDMF_ARRAY_COPY( ArrayPointer, this->GetNumberType(), ArrayStride,
+    Values, XDMF_UINT16_TYPE, ValuesStride,
+    XDMF_ARRAY_OUT, NumberOfValues );
+return( XDMF_SUCCESS );
+}
+
+XdmfInt32 XdmfArray::GetValues( XdmfInt64 Index, XdmfUInt32 *Values,
+        XdmfInt64 NumberOfValues,
+        XdmfInt64 ArrayStride,
+        XdmfInt64 ValuesStride ) {
+XdmfPointer  ArrayPointer;
+
+ArrayPointer = this->GetDataPointer(Index);
+XDMF_ARRAY_COPY( ArrayPointer, this->GetNumberType(), ArrayStride,
+    Values, XDMF_UINT32_TYPE, ValuesStride,
+    XDMF_ARRAY_OUT, NumberOfValues );
+return( XDMF_SUCCESS );
+}
+
 XdmfInt32 XdmfArray::GetValues( XdmfInt64 Index, XdmfInt8 *Values,
         XdmfInt64 NumberOfValues,
         XdmfInt64 ArrayStride,
@@ -655,6 +762,19 @@ XdmfPointer  ArrayPointer;
 ArrayPointer = this->GetDataPointer(Index);
 XDMF_ARRAY_COPY( ArrayPointer, this->GetNumberType(), ArrayStride,
     Values, XDMF_INT8_TYPE, ValuesStride,
+    XDMF_ARRAY_OUT, NumberOfValues );
+return( XDMF_SUCCESS );
+}
+
+XdmfInt32 XdmfArray::GetValues( XdmfInt64 Index, XdmfInt16 *Values,
+        XdmfInt64 NumberOfValues,
+        XdmfInt64 ArrayStride,
+        XdmfInt64 ValuesStride ) {
+XdmfPointer  ArrayPointer;
+
+ArrayPointer = this->GetDataPointer(Index);
+XDMF_ARRAY_COPY( ArrayPointer, this->GetNumberType(), ArrayStride,
+    Values, XDMF_INT16_TYPE, ValuesStride,
     XDMF_ARRAY_OUT, NumberOfValues );
 return( XDMF_SUCCESS );
 }
@@ -821,7 +941,7 @@ Length = MIN( this->GetNumberOfElements(), Array.GetNumberOfElements() );
 Vp = Values = new XdmfFloat64[ Length + 10 ];
 Array.GetValues( 0, Values, Length );
 ArrayPointer = this->GetDataPointer();
-XDMF_ARRAY_OPERATE( +=, ArrayPointer, this->GetNumberType(), 1,
+XDMF_ARRAY_OPERATE( XdmfArrayAddTag, ArrayPointer, this->GetNumberType(), 1,
     Vp, XDMF_FLOAT64_TYPE, 1,
     XDMF_ARRAY_IN, Length );
 delete [] Values;
@@ -834,7 +954,7 @@ XdmfPointer  ArrayPointer;
 XdmfFloat64  *Vp = &Value;
 
 ArrayPointer = this->GetDataPointer();
-XDMF_ARRAY_OPERATE( +=, ArrayPointer, this->GetNumberType(), 1,
+XDMF_ARRAY_OPERATE( XdmfArrayAddTag, ArrayPointer, this->GetNumberType(), 1,
     Vp, XDMF_FLOAT64_TYPE, 0,
     XDMF_ARRAY_IN, this->GetNumberOfElements());
 return( *this );
@@ -850,7 +970,7 @@ Length = MIN( this->GetNumberOfElements(), Array.GetNumberOfElements() );
 Vp = Values = new XdmfFloat64[ Length + 10 ];
 Array.GetValues( 0, Values, Length );
 ArrayPointer = this->GetDataPointer();
-XDMF_ARRAY_OPERATE( -=, ArrayPointer, this->GetNumberType(), 1,
+XDMF_ARRAY_OPERATE( XdmfArraySubtractTag, ArrayPointer, this->GetNumberType(), 1,
     Vp, XDMF_FLOAT64_TYPE, 1,
     XDMF_ARRAY_IN, Length );
 delete [] Values;
@@ -863,7 +983,7 @@ XdmfPointer  ArrayPointer;
 XdmfFloat64  *Vp = &Value;
 
 ArrayPointer = this->GetDataPointer();
-XDMF_ARRAY_OPERATE( -=, ArrayPointer, this->GetNumberType(), 1,
+XDMF_ARRAY_OPERATE( XdmfArraySubtractTag, ArrayPointer, this->GetNumberType(), 1,
     Vp, XDMF_FLOAT64_TYPE, 0,
     XDMF_ARRAY_IN, this->GetNumberOfElements());
 return( *this );
@@ -879,7 +999,7 @@ Length = MIN( this->GetNumberOfElements(), Array.GetNumberOfElements() );
 Vp = Values = new XdmfFloat64[ Length + 10 ];
 Array.GetValues( 0, Values, Length );
 ArrayPointer = this->GetDataPointer();
-XDMF_ARRAY_OPERATE( *=, ArrayPointer, this->GetNumberType(), 1,
+XDMF_ARRAY_OPERATE( XdmfArrayMultiplyTag, ArrayPointer, this->GetNumberType(), 1,
     Vp, XDMF_FLOAT64_TYPE, 1,
     XDMF_ARRAY_IN, Length );
 delete [] Values;
@@ -892,7 +1012,7 @@ XdmfPointer  ArrayPointer;
 XdmfFloat64  *Vp = &Value;
 
 ArrayPointer = this->GetDataPointer();
-XDMF_ARRAY_OPERATE( *=, ArrayPointer, this->GetNumberType(), 1,
+XDMF_ARRAY_OPERATE( XdmfArrayMultiplyTag, ArrayPointer, this->GetNumberType(), 1,
     Vp, XDMF_FLOAT64_TYPE, 0,
     XDMF_ARRAY_IN, this->GetNumberOfElements());
 return( *this );
@@ -908,7 +1028,7 @@ Length = MIN( this->GetNumberOfElements(), Array.GetNumberOfElements() );
 Vp = Values = new XdmfFloat64[ Length + 10 ];
 Array.GetValues( 0, Values, Length );
 ArrayPointer = this->GetDataPointer();
-XDMF_ARRAY_OPERATE( /=, ArrayPointer, this->GetNumberType(), 1,
+XDMF_ARRAY_OPERATE( XdmfArrayDivideTag, ArrayPointer, this->GetNumberType(), 1,
     Vp, XDMF_FLOAT64_TYPE, 1,
     XDMF_ARRAY_IN, Length );
 delete [] Values;
@@ -921,7 +1041,7 @@ XdmfPointer  ArrayPointer;
 XdmfFloat64  *Vp = &Value;
 
 ArrayPointer = this->GetDataPointer();
-XDMF_ARRAY_OPERATE( /=, ArrayPointer, this->GetNumberType(), 1,
+XDMF_ARRAY_OPERATE( XdmfArrayDivideTag, ArrayPointer, this->GetNumberType(), 1,
     Vp, XDMF_FLOAT64_TYPE, 0,
     XDMF_ARRAY_IN, this->GetNumberOfElements());
 return( *this );
@@ -1056,7 +1176,19 @@ XdmfArray::GetMaxAsInt64( void ) {
 return( static_cast<XdmfInt64>(this->GetMaxAsFloat64()) );
 }
 
+XdmfInt32 XdmfArray::SetValue( XdmfInt64 Index, XdmfUInt8 Value ) {
+return(this->SetValueFromInt64( Index, Value ));
+}
+XdmfInt32 XdmfArray::SetValue( XdmfInt64 Index, XdmfUInt16 Value ) {
+return(this->SetValueFromInt64( Index, Value ));
+}
+XdmfInt32 XdmfArray::SetValue( XdmfInt64 Index, XdmfUInt32 Value ) {
+return(this->SetValueFromInt64( Index, Value ));
+}
 XdmfInt32 XdmfArray::SetValue( XdmfInt64 Index, XdmfInt8 Value ) {
+return(this->SetValueFromInt64( Index, Value ));
+}
+XdmfInt32 XdmfArray::SetValue( XdmfInt64 Index, XdmfInt16 Value ) {
 return(this->SetValueFromInt64( Index, Value ));
 }
 XdmfInt32 XdmfArray::SetValue( XdmfInt64 Index, XdmfInt32 Value ) {

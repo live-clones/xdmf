@@ -62,6 +62,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "vtkIntArray.h"
 #include "vtkLongArray.h"
 #include "vtkShortArray.h"
+#include "vtkUnsignedCharArray.h"
+#include "vtkUnsignedShortArray.h"
+#include "vtkUnsignedIntArray.h"
 
 #include "XdmfHDF.h"
 #include "XdmfArray.h"
@@ -69,7 +72,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfWriter);
-vtkCxxRevisionMacro(vtkXdmfWriter, "1.8");
+vtkCxxRevisionMacro(vtkXdmfWriter, "1.9");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter::vtkXdmfWriter()
@@ -394,7 +397,8 @@ void vtkXdmfWriter::StartTopology( ostream& ost, int Type, vtkCellArray *Cells )
 
 //----------------------------------------------------------------------------
 template<class AType, class NType>
-vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost, AType* array, 
+vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost, 
+  AType* array, 
   const char* dataName, const char* arrayName, 
   const char* scalar_type, NType value,
   int allLight, int type,
@@ -402,7 +406,8 @@ vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost, AType* 
 {
   if ( !array )
     {
-    vtkErrorWithObjectMacro(self, "No array specified. Should be " << scalar_type << " array");
+    vtkErrorWithObjectMacro(self, "No array specified. Should be " 
+      << scalar_type << " array");
     return -2;
     }
   ost << "<DataStructure";
@@ -415,9 +420,22 @@ vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost, AType* 
   self->Indent(ost);
   ost << " DataType=\"" << scalar_type << "\"";
   self->Indent(ost);
-  if ( type == XDMF_FLOAT64_TYPE )
+  int precision = 1;
+  switch ( type )
     {
-    ost << " Precision=\"8\"";
+  case XDMF_FLOAT64_TYPE: case XDMF_INT64_TYPE:
+    precision = 8;
+    break;
+  case XDMF_FLOAT32_TYPE: case XDMF_INT32_TYPE: case XDMF_UINT32_TYPE:
+    precision = 4;
+    break;
+  case XDMF_INT16_TYPE: case XDMF_UINT16_TYPE:
+    precision = 2;
+    break;
+    }
+  if ( precision > 1 )
+    {
+    ost << " Precision=\"" << precision << "\"";
     self->Indent(ost);
     }
   else if ( type == XDMF_FLOAT32_TYPE )
@@ -581,13 +599,25 @@ int vtkXdmfWriter::WriteVTKArray( ostream& ost, vtkDataArray* array, int dims[3]
     }
   switch ( array->GetDataType() )
     {
+  case VTK_UNSIGNED_CHAR:
+    res = vtkXdmfWriterWriteXMLScalar(this, ost, vtkUnsignedCharArray::SafeDownCast(array), dataName,
+      Name, "UChar", static_cast<short>(0), alllight, XDMF_UINT8_TYPE, dims);
+    break;
+  case VTK_UNSIGNED_SHORT:
+    res = vtkXdmfWriterWriteXMLScalar(this, ost, vtkUnsignedShortArray::SafeDownCast(array), dataName,
+      Name, "UInt", static_cast<short>(0), alllight, XDMF_UINT16_TYPE, dims);
+    break;
+  case VTK_UNSIGNED_INT:
+    res = vtkXdmfWriterWriteXMLScalar(this, ost, vtkUnsignedIntArray::SafeDownCast(array), dataName,
+      Name, "UInt", static_cast<int>(0), alllight, XDMF_UINT32_TYPE, dims);
+    break;
   case VTK_CHAR:
     res = vtkXdmfWriterWriteXMLScalar(this, ost, vtkCharArray::SafeDownCast(array), dataName,
       Name, "Char", static_cast<short>(0), alllight, XDMF_INT8_TYPE, dims);
     break;
   case VTK_SHORT:
     res = vtkXdmfWriterWriteXMLScalar(this, ost, vtkShortArray::SafeDownCast(array), dataName,
-      Name, "Int", static_cast<int>(0), alllight, int_type, dims);
+      Name, "Int", static_cast<short>(0), alllight, XDMF_INT16_TYPE, dims);
     break;
   case VTK_INT:
     res = vtkXdmfWriterWriteXMLScalar(this, ost, vtkIntArray::SafeDownCast(array), dataName,

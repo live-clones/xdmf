@@ -888,18 +888,48 @@ Precision = this->Get( Node, "Precision" );
 if( XDMF_WORD_CMP( Attribute, "Int" ) ){
   if( XDMF_WORD_CMP( Precision, "8" ) ) {
     return XDMF_INT64_TYPE;
+  } else if( !Precision || XDMF_WORD_CMP( Precision, "4" ) ) {
+    return XDMF_INT32_TYPE;
+  } else if( XDMF_WORD_CMP( Precision, "2" ) ) {
+    return XDMF_INT16_TYPE;
   } else if( XDMF_WORD_CMP( Precision, "1" ) ) {
     return XDMF_INT8_TYPE;
   } else {
+    cerr << "Unknown int precision: " << Precision << endl;
+    abort();
     return XDMF_INT32_TYPE;
   }
-} else if( XDMF_WORD_CMP( Attribute, "Compound" ) ){
-  return XDMF_COMPOUND_TYPE;
-} else {
+} else if( XDMF_WORD_CMP( Attribute, "UInt" ) ){
+  if( !Precision || XDMF_WORD_CMP( Precision, "4" ) ) {
+    return XDMF_UINT32_TYPE;
+  } else if( XDMF_WORD_CMP( Precision, "2" ) ) {
+    return XDMF_UINT16_TYPE;
+  } else if( XDMF_WORD_CMP( Precision, "1" ) ) {
+    return XDMF_UINT8_TYPE;
+  } else {
+    cerr << "Unknown unsigned int precision: " << Precision << endl;
+    abort();
+    return XDMF_INT32_TYPE;
+  }
+} else if ( XDMF_WORD_CMP( Attribute, "Float" ) ){
   if( XDMF_WORD_CMP( Precision, "8" ) ) {
     return XDMF_FLOAT64_TYPE;
   }
+  else if( !Precision || XDMF_WORD_CMP( Precision, "4" ) ) {
+    return XDMF_FLOAT32_TYPE;
+  }
+  cerr << "Unknown float precision: " << Precision << endl;
+  abort();
+  return XDMF_FLOAT32_TYPE;
+} else if( XDMF_WORD_CMP( Attribute, "Char" ) ){
+  return XDMF_INT8_TYPE;
+} else if( XDMF_WORD_CMP( Attribute, "UChar" ) ){
+  return XDMF_UINT8_TYPE;
+} else if( XDMF_WORD_CMP( Attribute, "Compound" ) ){
+  return XDMF_COMPOUND_TYPE;
 }
+cerr << "Unknown type: " << Attribute << endl;
+abort();
 return XDMF_FLOAT32_TYPE;
 }
 

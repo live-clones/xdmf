@@ -51,6 +51,15 @@
 #error	ICE_8_INT not defined
 #endif
 #define ICE_8_INT 	@ICE_8_INT@
+#define ICE_8_U_INT 	@ICE_8_U_INT@
+
+#cmakedefine ICE_16_INT_VALID
+#ifndef ICE_16_INT_VALID
+	/* Force an Error */
+#error	ICE_16_INT not defined
+#endif
+#define ICE_16_INT 	@ICE_16_INT@
+#define ICE_16_U_INT 	@ICE_16_U_INT@
 
 #cmakedefine ICE_32_INT_VALID
 #ifndef ICE_32_INT_VALID

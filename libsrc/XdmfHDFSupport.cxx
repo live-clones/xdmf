@@ -29,6 +29,10 @@ XdmfTypeToClassString( XdmfInt32 XdmfType ) {
   switch( XdmfType ){
     case XDMF_INT8_TYPE :
       return( "Char");
+    case XDMF_UINT8_TYPE :
+      return( "UChar");
+    case XDMF_UINT32_TYPE :
+      return "UInt";
     case XDMF_INT32_TYPE :
     case XDMF_INT64_TYPE :
       return( "Int");
@@ -44,7 +48,11 @@ return( "Compound" );
 XdmfInt32
 StringToXdmfType( XdmfString TypeName ) {
 
+if( STRCASECMP( TypeName, "XDMF_UINT8_TYPE" ) == 0 ) return( XDMF_UINT8_TYPE );
+if( STRCASECMP( TypeName, "XDMF_UINT16_TYPE" ) == 0 ) return( XDMF_UINT16_TYPE );
+if( STRCASECMP( TypeName, "XDMF_UINT32_TYPE" ) == 0 ) return( XDMF_UINT32_TYPE );
 if( STRCASECMP( TypeName, "XDMF_INT8_TYPE" ) == 0 ) return( XDMF_INT8_TYPE );
+if( STRCASECMP( TypeName, "XDMF_INT16_TYPE" ) == 0 ) return( XDMF_INT16_TYPE );
 if( STRCASECMP( TypeName, "XDMF_INT32_TYPE" ) == 0 ) return( XDMF_INT32_TYPE );
 if( STRCASECMP( TypeName, "XDMF_INT64_TYPE" ) == 0 ) return( XDMF_INT64_TYPE );
 if( STRCASECMP( TypeName, "XDMF_FLOAT32_TYPE" ) == 0 ) return( XDMF_FLOAT32_TYPE );
@@ -56,8 +64,16 @@ return( XDMF_FAIL );
 XdmfString
 XdmfTypeToString( XdmfInt32 XdmfType ) {
   switch( XdmfType ){
+    case XDMF_UINT8_TYPE :
+      return( "XDMF_UINT8_TYPE" );
+    case XDMF_UINT16_TYPE :
+      return( "XDMF_UINT16_TYPE" );
+    case XDMF_UINT32_TYPE :
+      return( "XDMF_UINT32_TYPE" );
     case XDMF_INT8_TYPE :
       return( "XDMF_INT8_TYPE" );
+    case XDMF_INT16_TYPE :
+      return( "XDMF_INT16_TYPE" );
     case XDMF_INT32_TYPE :
       return( "XDMF_INT32_TYPE" );
     case XDMF_INT64_TYPE :
@@ -75,8 +91,16 @@ return( "XDMF_COMPOUND_TYPE" );
 hid_t
 XdmfTypeToHDF5Type( XdmfInt32 XdmfType ) {
   switch( XdmfType ){
+    case XDMF_UINT8_TYPE :
+      return( H5T_NATIVE_UINT8 );
+    case XDMF_UINT16_TYPE :
+      return( H5T_NATIVE_UINT16 );
+    case XDMF_UINT32_TYPE :
+      return( H5T_NATIVE_UINT32 );
     case XDMF_INT8_TYPE :
       return( H5T_NATIVE_INT8 );
+    case XDMF_INT16_TYPE :
+      return( H5T_NATIVE_INT16 );
     case XDMF_INT32_TYPE :
       return( H5T_NATIVE_INT32 );
     case XDMF_INT64_TYPE :
@@ -95,15 +119,35 @@ XdmfInt32
 HDF5TypeToXdmfType( hid_t HDF5Type ) {
   switch( H5Tget_class( HDF5Type ) ) {
     case H5T_INTEGER :
-      switch( H5Tget_size( HDF5Type ) ) {
+      if ( H5Tget_sign(HDF5Type) )
+        {
+        switch( H5Tget_size( HDF5Type ) ) 
+          {
         case 1 :
           return( XDMF_INT8_TYPE );
+        case 2 :
+          return( XDMF_INT16_TYPE );
         case 4 :
           return( XDMF_INT32_TYPE );
         case 8 :
           return( XDMF_INT64_TYPE );
         default :
           break;
+          }
+        }
+      else
+        {
+        switch( H5Tget_size( HDF5Type ) ) 
+          {
+        case 1 :
+          return( XDMF_UINT8_TYPE );
+        case 2 :
+          return( XDMF_UINT16_TYPE );
+        case 4 :
+          return( XDMF_UINT32_TYPE );
+        default :
+          break;
+          }
         }
       break;
     case H5T_FLOAT :

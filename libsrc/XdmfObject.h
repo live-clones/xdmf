@@ -137,20 +137,28 @@ using std::hex;
 #define XDMF_SELECT_SLAB    1
 #define XDMF_SELECT_INDEX  2
 
-#define  XDMF_INT8_TYPE    1
-#define  XDMF_INT32_TYPE    2
-#define  XDMF_INT64_TYPE    3
-#define  XDMF_FLOAT32_TYPE  4
-#define  XDMF_FLOAT64_TYPE  5
+#define  XDMF_INT8_TYPE      1
+#define  XDMF_INT16_TYPE     6
+#define  XDMF_INT32_TYPE     2
+#define  XDMF_INT64_TYPE     3
+#define  XDMF_FLOAT32_TYPE   4
+#define  XDMF_FLOAT64_TYPE   5
+#define  XDMF_UINT8_TYPE     7
+#define  XDMF_UINT16_TYPE    8
+#define  XDMF_UINT32_TYPE    9
 #define XDMF_COMPOUND_TYPE  0x10
 
-typedef ICE_CHAR  XDMF_CHAR;
-typedef ICE_PTR  XDMF_PTR;
-typedef ICE_8_INT  XDMF_8_INT;
-typedef ICE_32_INT  XDMF_32_INT;
-typedef ICE_64_INT  XDMF_64_INT;
-typedef ICE_FLOAT  XDMF_FLOAT;
-typedef ICE_DOUBLE  XDMF_DOUBLE;
+typedef ICE_CHAR       XDMF_CHAR;
+typedef ICE_PTR        XDMF_PTR;
+typedef ICE_8_INT      XDMF_8_INT;
+typedef ICE_8_U_INT    XDMF_8_UINT;
+typedef ICE_16_INT     XDMF_16_INT;
+typedef ICE_16_U_INT   XDMF_16_UINT;
+typedef ICE_32_INT     XDMF_32_INT;
+typedef ICE_32_U_INT   XDMF_32_UINT;
+typedef ICE_64_INT     XDMF_64_INT;
+typedef ICE_FLOAT      XDMF_FLOAT;
+typedef ICE_DOUBLE     XDMF_DOUBLE;
 
 #ifdef __cplusplus
 # ifndef SWIG
@@ -164,7 +172,11 @@ typedef XDMF_32_INT  XdmfBoolean;
 typedef XDMF_CHAR *  XdmfString;
 typedef const XDMF_CHAR *  XdmfConstString;
 typedef XDMF_PTR  XdmfPointer;
-typedef  XDMF_8_INT  XdmfInt8;
+typedef XDMF_8_UINT   XdmfUInt8;
+typedef XDMF_16_UINT  XdmfUInt16;
+typedef XDMF_32_UINT  XdmfUInt32;
+typedef XDMF_8_INT   XdmfInt8;
+typedef XDMF_16_INT  XdmfInt16;
 typedef XDMF_32_INT  XdmfInt32;
 typedef XDMF_64_INT  XdmfInt64;
 typedef XDMF_FLOAT  XdmfFloat32;
@@ -178,19 +190,22 @@ Swig only understands certain types
 and doesn't to well with typedefs
 so we need to fool the interface code
 ***************************************/
-typedef int    XdmfBoolean;
-typedef char *    XdmfString;
+typedef int             XdmfBoolean;
+typedef char *          XdmfString;
 typedef const char *    XdmfConstString;
-typedef void *    XdmfPointer;
-typedef unsigned char  XdmfInt8;
-typedef int    XdmfInt32;
-/* typedef long    XdmfInt64;  */
-typedef long long  XdmfInt64;
-typedef float    XdmfFloat32;
-typedef double    XdmfFloat64;
+typedef void *          XdmfPointer;
+typedef unsigned char   XdmfUInt8;
+typedef unsigned short  XdmfUInt16;
+typedef unsigned int    XdmfUInt32;
+typedef char            XdmfInt8;
+typedef short           XdmfInt16;
+typedef int             XdmfInt32;
+typedef long long       XdmfInt64;
+typedef float           XdmfFloat32;
+typedef double          XdmfFloat64;
 
-typedef unsigned char  XdmfByte;
-typedef long long  XdmfLength;
+typedef unsigned char   XdmfByte;
+typedef long long       XdmfLength;
 
 #endif
 

@@ -101,12 +101,32 @@ public:
 #ifndef SWIG
 /*! The Following Methods are NOT directly available via SWIG
 */
+  XdmfInt32  SetValue( XdmfInt64 Index, XdmfUInt8 Value );
+  XdmfInt32  SetValue( XdmfInt64 Index, XdmfUInt16 Value );
+  XdmfInt32  SetValue( XdmfInt64 Index, XdmfUInt32 Value );
   XdmfInt32  SetValue( XdmfInt64 Index, XdmfInt8 Value );
+  XdmfInt32  SetValue( XdmfInt64 Index, XdmfInt16 Value );
   XdmfInt32  SetValue( XdmfInt64 Index, XdmfInt32 Value );
   XdmfInt32  SetValue( XdmfInt64 Index, XdmfInt64 Value );
   XdmfInt32  SetValue( XdmfInt64 Index, XdmfFloat32 Value );
   XdmfInt32  SetValue( XdmfInt64 Index, XdmfFloat64 Value );
+  XdmfInt32  SetValues( XdmfInt64 Index, XdmfUInt8 *Values,
+        XdmfInt64 NumberOfValues,
+        XdmfInt64 ArrayStride = 1,
+        XdmfInt64 ValuesStride = 1 );
+  XdmfInt32  SetValues( XdmfInt64 Index, XdmfUInt16 *Values,
+        XdmfInt64 NumberOfValues,
+        XdmfInt64 ArrayStride = 1,
+        XdmfInt64 ValuesStride = 1 );
+  XdmfInt32  SetValues( XdmfInt64 Index, XdmfUInt32 *Values,
+        XdmfInt64 NumberOfValues,
+        XdmfInt64 ArrayStride = 1,
+        XdmfInt64 ValuesStride = 1 );
   XdmfInt32  SetValues( XdmfInt64 Index, XdmfInt8 *Values,
+        XdmfInt64 NumberOfValues,
+        XdmfInt64 ArrayStride = 1,
+        XdmfInt64 ValuesStride = 1 );
+  XdmfInt32  SetValues( XdmfInt64 Index, XdmfInt16 *Values,
         XdmfInt64 NumberOfValues,
         XdmfInt64 ArrayStride = 1,
         XdmfInt64 ValuesStride = 1 );
@@ -127,7 +147,27 @@ public:
         XdmfInt64 ArrayStride = 1,
         XdmfInt64 ValuesStride = 1 );
 
+  XdmfInt32  GetValues( XdmfInt64 Index, XdmfUInt8 *Values,
+        XdmfInt64 NumberOfValues,
+        XdmfInt64 ArrayStride = 1,
+        XdmfInt64 ValuesStride = 1 );
+
+  XdmfInt32  GetValues( XdmfInt64 Index, XdmfUInt16 *Values,
+        XdmfInt64 NumberOfValues,
+        XdmfInt64 ArrayStride = 1,
+        XdmfInt64 ValuesStride = 1 );
+
+  XdmfInt32  GetValues( XdmfInt64 Index, XdmfUInt32 *Values,
+        XdmfInt64 NumberOfValues,
+        XdmfInt64 ArrayStride = 1,
+        XdmfInt64 ValuesStride = 1 );
+
   XdmfInt32  GetValues( XdmfInt64 Index, XdmfInt8 *Values,
+        XdmfInt64 NumberOfValues,
+        XdmfInt64 ArrayStride = 1,
+        XdmfInt64 ValuesStride = 1 );
+
+  XdmfInt32  GetValues( XdmfInt64 Index, XdmfInt16 *Values,
         XdmfInt64 NumberOfValues,
         XdmfInt64 ArrayStride = 1,
         XdmfInt64 ValuesStride = 1 );
@@ -290,6 +330,7 @@ public:
   XdmfFloat32  GetValueAsFloat32( XdmfInt64 Index );
   XdmfInt64  GetValueAsInt64( XdmfInt64 Index );
   XdmfInt32  GetValueAsInt32( XdmfInt64 Index );
+  XdmfInt16  GetValueAsInt16( XdmfInt64 Index );
   XdmfInt8  GetValueAsInt8( XdmfInt64 Index );
   XdmfString  GetValues( XdmfInt64 Index = 0,
         XdmfInt64 NumberOfValues = 0,
