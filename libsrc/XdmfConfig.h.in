@@ -19,5 +19,10 @@
 # error "64 bit long not defined"
 #endif
 
+#cmakedefine XDMF_BUILD_SHARED_LIBS
+#ifndef XDMF_BUILD_SHARED_LIBS
+# define XDMFSTATIC
+#endif
+
 
 #endif /* __XdmfConfig_h */

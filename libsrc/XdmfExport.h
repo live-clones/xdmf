@@ -1,6 +1,8 @@
 #ifndef __xdmf_export_h
 #define __xdmf_export_h
 
+#include "XdmfConfig.h"
+
 #if defined(_WIN32) && !defined(WIN32)
 # define WIN32
 #endif
