@@ -417,7 +417,7 @@ XdmfDataDesc::SetShapeFromString( const XdmfString String ) {
 }
 
 XdmfInt32
-XdmfDataDesc::SelectCoordinatesFromString( const XdmfString String ) {
+XdmfDataDesc::SelectCoordinatesFromString( XdmfString String ) {
   XdmfInt32  Status;
   XdmfLength      i = 0, count = 0;
   istrstream   ist(String, strlen( String ) );
