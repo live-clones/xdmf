@@ -107,7 +107,7 @@ struct vtkXdmfWriterInternal
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfWriter);
-vtkCxxRevisionMacro(vtkXdmfWriter, "1.16");
+vtkCxxRevisionMacro(vtkXdmfWriter, "1.17");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter::vtkXdmfWriter()
@@ -728,7 +728,7 @@ void vtkXdmfWriter::WriteAttributes( ostream& ost, vtkDataSet* ds, const char* g
       {
       vtkDataArray* array = CellData->GetArray(cc);
       int type = XDMF_ATTRIBUTE_TYPE_NONE;
-      if ( array == CellData->GetScalars() )
+      if ( array == CellData->GetScalars()  || array->GetNumberOfComponents() == 1 )
         {
         type = XDMF_ATTRIBUTE_TYPE_SCALAR;
         }
@@ -758,7 +758,7 @@ void vtkXdmfWriter::WriteAttributes( ostream& ost, vtkDataSet* ds, const char* g
       {
       vtkDataArray* array = PointData->GetArray(cc);
       int type = XDMF_ATTRIBUTE_TYPE_NONE;
-      if ( array == PointData->GetScalars() )
+      if ( array == PointData->GetScalars() || array->GetNumberOfComponents() == 1 )
         {
         type = XDMF_ATTRIBUTE_TYPE_SCALAR;
         }
