@@ -220,7 +220,7 @@ XML by : NuberType="Integer" Precision="4"
       return( this->FindNumberOfElements( "Parameter", Node ) );
       }
 
-  XdmfParameter  *FindParameter( XdmfString ParameterName, XdmfXNode *Node = NULL );
+  XdmfParameter  *FindParameter( XdmfConstString ParameterName, XdmfXNode *Node = NULL );
   XdmfParameter  *GetParameter( XdmfInt32 Index = 0, XdmfXNode *Node = NULL );
 
 protected :

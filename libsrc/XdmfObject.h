@@ -145,6 +145,7 @@ typedef ICE_DOUBLE  XDMF_DOUBLE;
 #ifndef SWIG
 typedef XDMF_32_INT  XdmfBoolean;
 typedef XDMF_CHAR *  XdmfString;
+typedef const XDMF_CHAR *  XdmfConstString;
 typedef XDMF_PTR  XdmfPointer;
 typedef  XDMF_8_INT  XdmfInt8;
 typedef XDMF_32_INT  XdmfInt32;

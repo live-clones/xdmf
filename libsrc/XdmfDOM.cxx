@@ -903,7 +903,7 @@ return XDMF_FLOAT32_TYPE;
 
 
 XdmfParameter *
-XdmfDOM::FindParameter( XdmfString ParameterName, XdmfXNode *Node ) {
+XdmfDOM::FindParameter( XdmfConstString ParameterName, XdmfXNode *Node ) {
 
 char    *Attribute;
 XdmfInt32  i, NumberOfParameters;
