@@ -168,10 +168,13 @@ for( i = 0 ; i < NumberOfMembers ; i++ ){
     if( !name ) {
       name = GetUnique("XdmfMember");
       }
-    Desc->AddCompoundMember( name,
+    XdmfString sname = 0;
+    XDMF_STRING_DUPLICATE(sname, name);
+    Desc->AddCompoundMember( sname,
         ChildDesc->GetNumberType(),
         Rank,
         Dimensions );
+    delete [] sname;
     delete ChildDesc;
     }
   }
