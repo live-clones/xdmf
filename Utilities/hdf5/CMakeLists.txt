@@ -28,7 +28,7 @@ OPTION(HDF5_ENABLE_HSIZET "Enable datasets larger than memory" ON)
 SET(WINDOWS)
 IF(WIN32)
   IF(NOT UNIX)
-    SET(WINDOWS 1)
+    #SET(WINDOWS 1)
   ENDIF(NOT UNIX)
 ENDIF(WIN32)
 
@@ -45,7 +45,7 @@ INCLUDE (${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake)
 INCLUDE (${CMAKE_ROOT}/Modules/CheckIncludeFiles.cmake)
 INCLUDE (${CMAKE_ROOT}/Modules/CheckLibraryExists.cmake)
 INCLUDE (${CMAKE_ROOT}/Modules/CheckSymbolExists.cmake)
-INCLUDE (${CMAKE_ROOT}/Modules/CheckTypeSize.cmake)
+INCLUDE (${VTKHDF5_SOURCE_DIR}/CMake/CheckTypeSize.cmake)
 
 # This macro checks if the symbol exists in the library and if it
 # does, it appends library to the list.
@@ -311,7 +311,7 @@ IF(INLINE_TEST___inline__)
 ELSE(INLINE_TEST___inline__)
   IF(INLINE_TEST___inline)
     SET(inline __inline)
-  ELSE(INLINE_TEST_inline)
+  ELSE(INLINE_TEST___inline)
     IF(INLINE_TEST_inline)
       SET(inline inline)
     ENDIF(INLINE_TEST_inline)
@@ -404,12 +404,11 @@ ELSE(BUILD_SHARED_LIBS)
   SET(VTKHDF5_BUILD_SHARED_LIBS 0)
 ENDIF(BUILD_SHARED_LIBS)
 
+SET(CONFIG_FILE_EXT h.cmake)
 IF(WINDOWS)
-  #SET(CONFIG_FILE_EXT h.cmake)
-  SET(CONFIG_FILE_EXT WIN32.h)
-ELSE(WINDOWS)
-  SET(CONFIG_FILE_EXT h.cmake)
+  #SET(CONFIG_FILE_EXT WIN32.h)
 ENDIF(WINDOWS)
+
 CONFIGURE_FILE(${VTKHDF5_SOURCE_DIR}/H5config.${CONFIG_FILE_EXT}.in
   ${VTKHDF5_BINARY_DIR}/H5config.h IMMEDIATE)
 

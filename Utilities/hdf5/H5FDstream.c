@@ -514,7 +514,11 @@ H5FD_stream_read_from_socket (H5FD_stream_t *stream)
     /* now receive the next chunk of data */
     size = recv (stream->socket, ptr, max_size, 0);
 
-    if (size < 0 && (EINTR == errno || EAGAIN == errno || EWOULDBLOCK))
+    if (size < 0 && (EINTR == errno || EAGAIN == errno
+#ifndef _WIN32
+        || EWOULDBLOCK == errno
+#endif 
+    ))
       continue;
     if (size < 0)
       HGOTO_ERROR(H5E_IO,H5E_READERROR,FAIL,"error reading from file from socket");
@@ -727,7 +731,11 @@ H5FD_stream_flush (H5FD_t *_stream, hid_t UNUSED dxpl_id, unsigned UNUSED closin
       while (size) {
         bytes_send = send (sock, ptr, size, 0);
         if (bytes_send < 0) {
-          if (EINTR == errno || EAGAIN == errno || EWOULDBLOCK == errno)
+          if (EINTR == errno || EAGAIN == errno
+#ifndef _WIN32
+            || EWOULDBLOCK == errno
+#endif 
+          )
             continue;
 
           /* continue the outermost loop for other clients to connect */

@@ -24,7 +24,7 @@ return 0;
 #include <string.h>
 #include <float.h>
 int main() { return 0; }
-#endif
+#endif /* STDC_HEADERS */
 
 #ifdef HAVE_TM_ZONE
 
