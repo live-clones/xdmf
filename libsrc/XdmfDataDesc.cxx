@@ -783,7 +783,7 @@ void
 XdmfDataDesc::Print( void ){
 
 hsize_t  i, Dimensions[ XDMF_MAX_DIMENSION ];
-hsize_t  Nelements;
+hsize_t  Nelements = 0;
 XdmfInt32 rank = 0;
 if ( this->DataSpace != H5I_BADID )
   {
