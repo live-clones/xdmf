@@ -265,6 +265,8 @@ need to make sure ....
 #define XDMF_WORD_TRIM( a ) { \
   int             StringLength; \
   char            *fp; \
+  char            *st; \
+  char            *ed; \
    \
   fp = (a); \
   StringLength = strlen( ( a ) ); \
@@ -272,7 +274,14 @@ need to make sure ....
           fp++; \
           StringLength--; \
           } \
-  strcpy((a), fp ); \
+  ed = fp;\
+  st = a;\
+  while(*ed) {\
+    *st = *ed;\
+    st++;\
+    ed++;\
+    }\
+  /*strcpy((a), fp );*/ \
   fp = &(a)[ StringLength - 1 ]; \
   while( ( *fp <= ' ' ) && ( StringLength > 0 ) ){ \
           fp--; \
