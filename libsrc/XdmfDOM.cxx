@@ -911,7 +911,7 @@ if( XDMF_WORD_CMP( Attribute, "Int" ) ){
     abort();
     return XDMF_INT32_TYPE;
   }
-} else if ( XDMF_WORD_CMP( Attribute, "Float" ) ){
+} else if ( !Attribute ||  XDMF_WORD_CMP( Attribute, "Float" ) ){
   if( XDMF_WORD_CMP( Precision, "8" ) ) {
     return XDMF_FLOAT64_TYPE;
   }
