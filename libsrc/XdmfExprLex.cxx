@@ -41,7 +41,9 @@
 #ifdef __cplusplus
 
 #include <stdlib.h>
+#if !defined(_WIN32) || defined(__CYGWIN__)
 #include <unistd.h>
+#endif
 
 /* Use prototypes in function declarations. */
 #define YY_USE_PROTOS
@@ -439,6 +441,7 @@ char *yytext;
 #include "XdmfExprYacc.tab.h"
 #include <ice.h>
 #include <math.h>
+#define YY_NEVER_INTERACTIVE 1
 
 #ifndef yylval
 #define yylval dice_yylval
