@@ -136,8 +136,9 @@ extern "C" {
 #include <XdmfHDF.h>
 #include <math.h>
 
-
 static XdmfArray *XdmfExprReturnValue;
+XdmfExprSymbol *XdmfExprItemsTable = NULL;
+
 
 class XdmfInt64Array : public XdmfArray {
 public :
@@ -176,7 +177,7 @@ public :
 #endif
 
 #if ! defined (YYSTYPE) && ! defined (YYSTYPE_IS_DECLARED)
-#line 43 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 44 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
 typedef union YYSTYPE {
         double                DoubleValue;
         long                IntegerValue;
@@ -184,7 +185,7 @@ typedef union YYSTYPE {
         XdmfExprSymbol        *Symbol;
 } YYSTYPE;
 /* Line 191 of yacc.c.  */
-#line 188 "/home/andy/vtk/Xdmf-bin/libsrc/XdmfExprYacc.tab.c"
+#line 189 "/home/andy/vtk/Xdmf-bin/libsrc/XdmfExprYacc.tab.c"
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
 # define YYSTYPE_IS_TRIVIAL 1
@@ -196,7 +197,7 @@ typedef union YYSTYPE {
 
 
 /* Line 214 of yacc.c.  */
-#line 200 "/home/andy/vtk/Xdmf-bin/libsrc/XdmfExprYacc.tab.c"
+#line 201 "/home/andy/vtk/Xdmf-bin/libsrc/XdmfExprYacc.tab.c"
 
 #if ! defined (yyoverflow) || YYERROR_VERBOSE
 
@@ -389,11 +390,11 @@ static const yysigned_char yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const unsigned short yyrline[] =
 {
-       0,    67,    67,    75,    83,    88,   100,   116,   127,   140,
-     147,   152,   161,   238,   302,   311,   321,   330,   339,   348,
-     357,   366,   375,   384,   393,   402,   412,   423,   468,   501,
-     522,   543,   564,   585,   606,   627,   645,   649,   653,   670,
-     674,   678,   682,   686,   694,   698,   702
+       0,    68,    68,    76,    84,    89,   101,   117,   128,   141,
+     148,   153,   162,   239,   303,   312,   322,   331,   340,   349,
+     358,   367,   376,   385,   394,   403,   413,   424,   469,   502,
+     523,   544,   565,   586,   607,   628,   646,   650,   654,   671,
+     675,   679,   683,   687,   695,   699,   703
 };
 #endif
 
@@ -1177,7 +1178,7 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 67 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 68 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                 /* 
                 printf("Complete\n");
@@ -1187,7 +1188,7 @@ yyreduce:
     break;
 
   case 3:
-#line 75 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 76 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                 XdmfArray *TempArray = ( XdmfArray *)yyvsp[0].ArrayPointer;
 
@@ -1199,7 +1200,7 @@ yyreduce:
     break;
 
   case 4:
-#line 83 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 84 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                 /* printf("Setting %s from ScalarExpression\n", $1); */
                 XdmfExprReturnValue = (XdmfArray *)yyvsp[-2].ArrayPointer;
@@ -1208,7 +1209,7 @@ yyreduce:
     break;
 
   case 5:
-#line 88 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 89 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
                         XdmfArray        *Result = ( XdmfArray *)yyvsp[-5].ArrayPointer;
@@ -1224,7 +1225,7 @@ yyreduce:
     break;
 
   case 6:
-#line 100 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 101 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
                         XdmfArray        *Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
@@ -1244,7 +1245,7 @@ yyreduce:
     break;
 
   case 7:
-#line 116 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 117 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         XdmfArray *Range;
 
@@ -1259,7 +1260,7 @@ yyreduce:
     break;
 
   case 8:
-#line 127 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 128 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         XdmfArray *TempArray = ( XdmfArray *)yyvsp[0].ArrayPointer;
                         XdmfArray *Range;
@@ -1276,7 +1277,7 @@ yyreduce:
     break;
 
   case 9:
-#line 140 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 141 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                 XdmfArray *TempArray = ( XdmfArray *)yyvsp[0].ArrayPointer;
 
@@ -1287,14 +1288,14 @@ yyreduce:
     break;
 
   case 10:
-#line 147 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 148 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                 printf("Pointless !! Scalar = %g\n", yyvsp[0].DoubleValue);
                 }
     break;
 
   case 11:
-#line 152 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 153 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
                         XdmfArray *Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
@@ -1307,7 +1308,7 @@ yyreduce:
     break;
 
   case 12:
-#line 161 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 162 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         /* Interlace */
                         XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
@@ -1387,7 +1388,7 @@ yyreduce:
     break;
 
   case 13:
-#line 238 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 239 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         /* Interlace */
                         XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
@@ -1455,7 +1456,7 @@ yyreduce:
     break;
 
   case 14:
-#line 302 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 303 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
                         XdmfArray *Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
@@ -1468,7 +1469,7 @@ yyreduce:
     break;
 
   case 15:
-#line 311 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 312 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
                         XdmfArray *Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
@@ -1482,7 +1483,7 @@ yyreduce:
     break;
 
   case 16:
-#line 321 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 322 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
                         XdmfArray *Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
@@ -1495,7 +1496,7 @@ yyreduce:
     break;
 
   case 17:
-#line 330 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 331 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
                         XdmfArray *Result;
@@ -1508,7 +1509,7 @@ yyreduce:
     break;
 
   case 18:
-#line 339 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 340 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
                         XdmfArray *Result;
@@ -1521,7 +1522,7 @@ yyreduce:
     break;
 
   case 19:
-#line 348 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 349 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
                         XdmfArray *Result;
@@ -1534,7 +1535,7 @@ yyreduce:
     break;
 
   case 20:
-#line 357 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 358 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
                         XdmfArray *Result;
@@ -1547,7 +1548,7 @@ yyreduce:
     break;
 
   case 21:
-#line 366 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 367 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         XdmfArray *Array1 = ( XdmfArray *)yyvsp[0].ArrayPointer;
                         XdmfArray *Result;
@@ -1560,7 +1561,7 @@ yyreduce:
     break;
 
   case 22:
-#line 375 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 376 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         XdmfArray *Array1 = ( XdmfArray *)yyvsp[0].ArrayPointer;
                         XdmfArray *Result;
@@ -1573,7 +1574,7 @@ yyreduce:
     break;
 
   case 23:
-#line 384 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 385 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         XdmfArray *Array1 = ( XdmfArray *)yyvsp[0].ArrayPointer;
                         XdmfArray *Result;
@@ -1586,7 +1587,7 @@ yyreduce:
     break;
 
   case 24:
-#line 393 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 394 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         XdmfArray *Array1 = ( XdmfArray *)yyvsp[0].ArrayPointer;
                         XdmfArray *Result;
@@ -1599,7 +1600,7 @@ yyreduce:
     break;
 
   case 25:
-#line 402 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 403 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
                         XdmfArray        *Array2 = ( XdmfArray *)yyvsp[-1].ArrayPointer;
@@ -1613,7 +1614,7 @@ yyreduce:
     break;
 
   case 26:
-#line 412 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 413 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         XdmfArray *Array1 = ( XdmfArray *)yyvsp[-5].ArrayPointer;
                         XdmfArray *Range, *Result;
@@ -1628,7 +1629,7 @@ yyreduce:
     break;
 
   case 27:
-#line 423 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 424 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
                         XdmfArray        *Array2 = ( XdmfArray *)yyvsp[-1].ArrayPointer;
@@ -1677,7 +1678,7 @@ yyreduce:
     break;
 
   case 28:
-#line 468 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 469 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
                         /* XdmfLength        howmany = 0; */
@@ -1714,7 +1715,7 @@ yyreduce:
     break;
 
   case 29:
-#line 501 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 502 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
                         XdmfLength        i, cntr = 0;
@@ -1739,7 +1740,7 @@ yyreduce:
     break;
 
   case 30:
-#line 522 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 523 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
                         XdmfLength        i, cntr = 0;
@@ -1764,7 +1765,7 @@ yyreduce:
     break;
 
   case 31:
-#line 543 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 544 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
                         XdmfLength        i, cntr = 0;
@@ -1789,7 +1790,7 @@ yyreduce:
     break;
 
   case 32:
-#line 564 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 565 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
                         XdmfLength        i, cntr = 0;
@@ -1814,7 +1815,7 @@ yyreduce:
     break;
 
   case 33:
-#line 585 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 586 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
                         XdmfLength        i, cntr = 0;
@@ -1839,7 +1840,7 @@ yyreduce:
     break;
 
   case 34:
-#line 606 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 607 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
                         XdmfLength        i, cntr = 0;
@@ -1864,7 +1865,7 @@ yyreduce:
     break;
 
   case 35:
-#line 627 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 628 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
 
                         if( yyvsp[-3].Symbol->DoubleFunctionPtr == NULL ){
@@ -1886,7 +1887,7 @@ yyreduce:
     break;
 
   case 36:
-#line 645 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 646 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         /* printf("( ArrayExpression )\n"); */
                         yyval.ArrayPointer = yyvsp[-1].ArrayPointer;
@@ -1894,7 +1895,7 @@ yyreduce:
     break;
 
   case 37:
-#line 649 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 650 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         /* printf("( ArrayExpression )\n"); */
                         yyval.ArrayPointer = yyvsp[-1].ArrayPointer;
@@ -1902,7 +1903,7 @@ yyreduce:
     break;
 
   case 38:
-#line 653 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 654 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         XdmfArray *Array1 = ( XdmfArray *)yyvsp[0].ArrayPointer;
                         XdmfArray *Result;
@@ -1921,7 +1922,7 @@ yyreduce:
     break;
 
   case 39:
-#line 670 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 671 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         /* printf("Scalar +\n"); */
                         yyval.DoubleValue = yyvsp[-2].DoubleValue + yyvsp[0].DoubleValue;
@@ -1929,7 +1930,7 @@ yyreduce:
     break;
 
   case 40:
-#line 674 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 675 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         /* printf("Scalar -\n"); */
                         yyval.DoubleValue = yyvsp[-2].DoubleValue - yyvsp[0].DoubleValue;
@@ -1937,7 +1938,7 @@ yyreduce:
     break;
 
   case 41:
-#line 678 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 679 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         /* printf("Scalar *\n"); */
                         yyval.DoubleValue = yyvsp[-2].DoubleValue * yyvsp[0].DoubleValue;
@@ -1945,7 +1946,7 @@ yyreduce:
     break;
 
   case 42:
-#line 682 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 683 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         /* printf("Scalar /\n"); */
                         yyval.DoubleValue = yyvsp[-2].DoubleValue / yyvsp[0].DoubleValue;
@@ -1953,7 +1954,7 @@ yyreduce:
     break;
 
   case 43:
-#line 686 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 687 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         if( yyvsp[-3].Symbol->DoubleFunctionPtr == NULL ){
                                 /* printf("Bad Function Ptr for %s\n", $1->Name ); */
@@ -1965,7 +1966,7 @@ yyreduce:
     break;
 
   case 44:
-#line 694 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 695 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         /* printf ("( ScalarExpression )\n"); */
                         yyval.DoubleValue = yyvsp[-1].DoubleValue;
@@ -1973,7 +1974,7 @@ yyreduce:
     break;
 
   case 45:
-#line 698 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 699 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         /* printf ("ScalarExpression from tokINTEGER\n"); */
                         yyval.DoubleValue = yyvsp[0].IntegerValue;
@@ -1981,7 +1982,7 @@ yyreduce:
     break;
 
   case 46:
-#line 702 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 703 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
                         /* printf ("ScalarExpression from FLOAT\n"); */
                         yyval.DoubleValue = yyvsp[0].DoubleValue;
@@ -1992,7 +1993,7 @@ yyreduce:
     }
 
 /* Line 999 of yacc.c.  */
-#line 2007 "/home/andy/vtk/Xdmf-bin/libsrc/XdmfExprYacc.tab.c"
+#line 2008 "/home/andy/vtk/Xdmf-bin/libsrc/XdmfExprYacc.tab.c"
 
   yyvsp -= yylen;
   yyssp -= yylen;
@@ -2186,7 +2187,7 @@ yyreturn:
 }
 
 
-#line 709 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
+#line 710 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
 
 
 /* extern        FILE        *yyin, *yyout; */
@@ -2254,13 +2255,11 @@ XdmfExprOutput( int c ) {
 XdmfExprSymbol
 *XdmfExprSymbolLookup( const char *Name ){
 
-XdmfExprSymbol *Table = NULL;
-
-XdmfExprSymbol        *Last = NULL, *Item = Table;
+XdmfExprSymbol        *Last = NULL, *Item = XdmfExprItemsTable;
 
 if( Name == NULL ) {
         /* Table Check  */
-        return( Table );
+        return( XdmfExprItemsTable );
         }
 
 while( Item != NULL ) {
@@ -2278,8 +2277,8 @@ Item->Name = strdup( Name );
 Item->ClientData = NULL;
 Item->DoubleValue = 0;
 Item->DoubleFunctionPtr = NULL;
-if( Table == NULL ) {
-        Table = Item;
+if( XdmfExprItemsTable == NULL ) {
+        XdmfExprItemsTable = Item;
         }
 if( Last != NULL ){
         Last->Next = Item;
@@ -2343,6 +2342,15 @@ if ( yyparse() != 0 ){
         /* Error */
         XdmfExprReturnValue = NULL;
         }
+Item = XdmfExprSymbolLookup( NULL );
+while( Item != NULL ) {
+  XdmfExprSymbol *next = Item->Next;
+  free(Item);
+        Item = next;
+        }
+
+XdmfExprItemsTable = NULL;
+
 /* Remove All Arrays Older than when we started */
 /* printf("Cleaning up Temparary Arrays\n"); */
 while( ( ap = GetNextOlderArray( CurrentTime, &TimeOfCreation ) ) != NULL ){
