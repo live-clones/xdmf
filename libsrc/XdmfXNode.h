@@ -93,7 +93,9 @@ int        size;
 //     ObjectHandle->ManualDelete(ObjectHandle);
 //   }
 
-extern void C__XdmfXNodeDelete(void *XdmfXNode);
+extern "C" {
+ void C__XdmfXNodeDelete(void *XdmfXNode);
+}
 
 #else 
 
