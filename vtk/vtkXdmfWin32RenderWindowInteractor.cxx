@@ -55,7 +55,7 @@ if ( Block ) {
 void vtkXdmfWin32RenderWindowInteractor::LoopOnce( )
 {
 MSG msg;
-while (PeekMessage ( &msg, NULL, 0, 0, PM_NOREMOVE) {
+while (PeekMessage ( &msg, NULL, 0, 0, PM_NOREMOVE)) {
 	if(GetMessage(&msg, NULL, 0, 0)){
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);	
