@@ -64,13 +64,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "XdmfTransform.h"
 #include "XdmfGrid.h"
 #include "XdmfXNode.h"
+#include "XdmfGeometry.h"
+#include "XdmfAttribute.h"
 
 #include <sys/stat.h>
 #include <string>
 #include <vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.18");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.19");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
