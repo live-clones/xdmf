@@ -786,7 +786,7 @@ XdmfInt32 Rank = H5Sget_simple_extent_ndims(this->DataSpace );
 cout << "Rank " << Rank << endl;
 H5Sget_simple_extent_dims( this->DataSpace, Dimensions, NULL );
 for( i = 0 ; i < (hsize_t)Rank ; i++ ){
-  cout << "Dimansion[" << (int)i << "] " << (int)Dimensions[i] << endl;
+  cout << "Dimension[" << (int)i << "] " << (int)Dimensions[i] << endl;
   }
 cout << "Selection Type : " << this->GetSelectionTypeAsString() << endl;
 if( this->SelectionType == XDMF_COORDINATES ){
