@@ -56,8 +56,8 @@ XdmfDebug("Getting array from element");
 NumberType = this->DOM->GetNumberType( Element );
 Data = this->DOM->Get(Element, "CData");
 if( Data && strlen( Data ) > 1 ){
-  XdmfString NewData = new char [ strlen(Data) + 1 ];
-  strcpy(NewData, Data);
+  XdmfString NewData = 0;
+  XDMF_STRING_DUPLICATE(NewData, Data);
   if( Array == NULL ){
     NewArray = Array = new XdmfArray( NumberType );
     }
