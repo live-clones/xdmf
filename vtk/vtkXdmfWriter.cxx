@@ -69,7 +69,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfWriter);
-vtkCxxRevisionMacro(vtkXdmfWriter, "1.7");
+vtkCxxRevisionMacro(vtkXdmfWriter, "1.8");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter::vtkXdmfWriter()
@@ -77,6 +77,7 @@ vtkXdmfWriter::vtkXdmfWriter()
   this->FileNameString = 0;
   this->HeavyDataSetNameString = 0;
   this->GridName = 0;
+  this->DomainName = 0;
   this->SetHeavyDataSetName( "XdmfData.h5" );
   this->SetGridName( "Unnamed" );
 
@@ -99,6 +100,7 @@ vtkXdmfWriter::~vtkXdmfWriter()
     this->InputList = NULL;
     }
   this->SetHDF5ArrayName(0);
+  this->SetDomainName(0);
 }
 
 //----------------------------------------------------------------------------
@@ -841,7 +843,12 @@ void vtkXdmfWriter::Write()
 
   ds->Update();
   this->WriteHead(ofs);
-  ofs << "<Domain>";
+  ofs << "<Domain";
+  if ( this->DomainName )
+    {
+    ofs << " Name=\"" << this->DomainName << "\"";
+    }
+  ofs << ">";
   this->IncrementIndent();
 
   this->Indent(ofs);

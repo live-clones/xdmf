@@ -59,6 +59,11 @@ public:
   vtkGetStringMacro(GridName);
 
   // Description:
+  // Set or ger the domain name.
+  vtkSetStringMacro(DomainName);
+  vtkGetStringMacro(DomainName);
+
+  // Description:
   // Set or get the name of the heavy data file name.
   virtual void SetHeavyDataSetName( const char *name);
   virtual const char* GetHeavyDataSetName();
@@ -126,6 +131,7 @@ protected:
   vtkSetStringMacro(FileNameString);
   char    *FileNameString;
   char    *GridName;
+  char    *DomainName;
   
   int    AllLight;
 
