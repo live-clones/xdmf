@@ -74,7 +74,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.40");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.41");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -185,6 +185,7 @@ vtkXdmfReader::~vtkXdmfReader()
     }
 
   delete this->Internals;
+  H5garbage_collect();
 }
 
 //----------------------------------------------------------------------------
