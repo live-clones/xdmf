@@ -97,7 +97,7 @@ void XdmfArrayListClass::RemoveArray(XdmfArray* array)
   XdmfLength   i;
 for( i = 0 ; i < this->ListLength ; i++ ){
   if ( this->List[ i ].Array == array ){
-    memcpy( &this->List[ i ],
+    memmove( &this->List[ i ],
       &this->List[ i + 1 ],
       (this->ListIndex - i) * sizeof( XdmfArrayList ) );      
     this->ListIndex--;
