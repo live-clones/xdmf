@@ -897,7 +897,7 @@ extern XdmfString XdmfGetNdgmEntries(void);
 extern void XdmfDeleteAllNdgmEntries(void);
 extern XdmfInt64 XdmfAddNdgmEntry(XdmfString,XdmfInt64);
 
-XDMF_EXPORT void XdmfSwigException(int code, const char* msg)
+void XdmfSwigException(int code, const char* msg)
 {
   SWIG_exception_(code, msg);
 }

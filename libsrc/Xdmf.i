@@ -95,7 +95,7 @@ inline XDMF_LONG64 XDMF_strtoll(char *str, void*, int)
 
 #ifdef SWIGPYTHON
 %{
-XDMF_EXPORT void XdmfSwigException(int code, const char* msg)
+void XdmfSwigException(int code, const char* msg)
 {
   SWIG_exception_(code, msg);
 }
