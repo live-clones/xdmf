@@ -12,6 +12,15 @@ IF(VTK_WRAP_PYTHON)
 ENDIF(VTK_WRAP_PYTHON)
 ADD_TEST(VTKTest ${EXECUTABLE_OUTPUT_PATH}/VTKTest ${Xdmf_SOURCE_DIR}/Data/Data/Test1.xmf)
 
+ADD_EXECUTABLE(SystemInformation SystemInformation.cxx)
+ADD_TEST(SystemInformation ${EXECUTABLE_OUTPUT_PATH}/SystemInformation)
+TARGET_LINK_LIBRARIES(SystemInformation vtkXdmf)
+
+# Configure a header needed by SystemInformation.
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/SystemInformation.h.in"
+               "${CMAKE_CURRENT_BINARY_DIR}/SystemInformation.h"
+               @ONLY IMMEDIATE)
+
 ADD_EXECUTABLE(WriterTest WriterTest.cxx)
 TARGET_LINK_LIBRARIES(WriterTest vtkXdmf)
 
