@@ -780,7 +780,6 @@ class XdmfGrid(XdmfTopology):
     def GetGeometry(*args): return apply(_Xdmf.XdmfGrid_GetGeometry,args)
     def GetNumberOfAttributes(*args): return apply(_Xdmf.XdmfGrid_GetNumberOfAttributes,args)
     def GetAttribute(*args): return apply(_Xdmf.XdmfGrid_GetAttribute,args)
-    def GetBaseGrid(*args): return apply(_Xdmf.XdmfGrid_GetBaseGrid,args)
     def AssignAttribute(*args): return apply(_Xdmf.XdmfGrid_AssignAttribute,args)
     def AssignAttributeByIndex(*args): return apply(_Xdmf.XdmfGrid_AssignAttributeByIndex,args)
     def AssignAttributeByName(*args): return apply(_Xdmf.XdmfGrid_AssignAttributeByName,args)
@@ -854,6 +853,10 @@ class XdmfHDF(XdmfHeavyData):
             if self.thisown: destroy(self)
         except: pass
     def GetClassName(*args): return apply(_Xdmf.XdmfHDF_GetClassName,args)
+    def SetCompression(*args): return apply(_Xdmf.XdmfHDF_SetCompression,args)
+    def GetCompression(*args): return apply(_Xdmf.XdmfHDF_GetCompression,args)
+    def SetUseSerialFile(*args): return apply(_Xdmf.XdmfHDF_SetUseSerialFile,args)
+    def GetUseSerialFile(*args): return apply(_Xdmf.XdmfHDF_GetUseSerialFile,args)
     def SetCwdName(*args): return apply(_Xdmf.XdmfHDF_SetCwdName,args)
     def GetCwdName(*args): return apply(_Xdmf.XdmfHDF_GetCwdName,args)
     def Cd(*args): return apply(_Xdmf.XdmfHDF_Cd,args)
