@@ -77,7 +77,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vtkstd/vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.51");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.52");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -1234,7 +1234,7 @@ int vtkXdmfReader::RequestInformation(
       // Put this here so that GetOutput 
       // does not call ExecuteInformation again.
       this->OutputsInitialized = 1;
-      if ( this->GetNumberOfOutputPorts() <= idx || outInfo->Get(vtkDataObject::DATA_TYPE_NAME()) != vGrid->GetClassName() )
+      if ( this->GetNumberOfOutputPorts() <= idx || this->GetOutput(idx)->GetClassName() != vGrid->GetClassName() )
         {
         if ( this->GetNumberOfOutputPorts() > idx && this->GetOutput(idx) )
           {
