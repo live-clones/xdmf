@@ -74,7 +74,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vtkstd/vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.48");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.49");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -783,6 +783,7 @@ void vtkXdmfReader::Execute()
       dataSet->GetPointData()->RemoveArray(
         dataSet->GetPointData()->GetArrayName(cc));
       }
+    int haveActive = 0;
     for( cc = 0 ; cc < grid->GetNumberOfAttributes() ; cc++ )
       {
       XdmfInt32 AttributeCenter;
@@ -925,6 +926,7 @@ void vtkXdmfReader::Execute()
             //cout << "Add point array: " << name << endl;
             if ( Attribute->GetActive() )
               {
+              haveActive = 1;
               switch( AttributeType )
                 {
               case XDMF_ATTRIBUTE_TYPE_SCALAR :
@@ -947,6 +949,7 @@ void vtkXdmfReader::Execute()
             //cout << "Add cell array: " << name << endl;
             if ( Attribute->GetActive() )
               {
+              haveActive = 1;
               switch( AttributeType )
                 {
               case XDMF_ATTRIBUTE_TYPE_SCALAR :
@@ -977,6 +980,43 @@ void vtkXdmfReader::Execute()
             delete this->Internals->DataDescriptions[currentGrid];
             this->Internals->DataDescriptions[currentGrid] = 0;
             }
+          }
+        }
+      }
+    if ( !haveActive )
+      {
+      vtkDataSetAttributes* fd = dataSet->GetPointData();
+      for ( cc = 0; cc < fd->GetNumberOfArrays(); cc ++ )
+        {
+        vtkDataArray* ar = fd->GetArray(cc);
+        switch ( ar->GetNumberOfComponents() )
+          {
+        case 1:
+          fd->SetActiveScalars(ar->GetName());
+          break;
+        case 3:
+          fd->SetActiveVectors(ar->GetName());
+          break;
+        case 6:
+          fd->SetActiveTensors(ar->GetName());
+          break;
+          }
+        }
+      fd = dataSet->GetCellData();
+      for ( cc = 0; cc < fd->GetNumberOfArrays(); cc ++ )
+        {
+        vtkDataArray* ar = fd->GetArray(cc);
+        switch ( ar->GetNumberOfComponents() )
+          {
+        case 1:
+          fd->SetActiveScalars(ar->GetName());
+          break;
+        case 3:
+          fd->SetActiveVectors(ar->GetName());
+          break;
+        case 6:
+          fd->SetActiveTensors(ar->GetName());
+          break;
           }
         }
       }
