@@ -92,7 +92,7 @@ for(i=0 ; i < NumberOfChildren ; i++){
 				}
 			Rank = H5->GetShape(Dimensions);
 			for(j=0;j<Rank;j++){
-				cout << "\t\tDimension[" << j << "] = " << Dimensions[j] << endl;
+				cout << "\t\tDimension[" << j << "] = " << ICE_64BIT_CAST Dimensions[j] << endl;
 				}
 			ToDirectory = new char[strlen(ToCwd) + strlen(Child) + 10];
 			strcpy(ToDirectory, ToCwd);
