@@ -107,7 +107,7 @@ struct vtkXdmfWriterInternal
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfWriter);
-vtkCxxRevisionMacro(vtkXdmfWriter, "1.19");
+vtkCxxRevisionMacro(vtkXdmfWriter, "1.20");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter::vtkXdmfWriter()
@@ -1093,16 +1093,16 @@ const char* vtkXdmfWriter::GenerateHDF5ArrayName(const char* gridName, const cha
     namelen += strlen(gridName);
     }
   char *name = new char [ namelen + 10 ];
-  // Use the ENTITY HeavyData
+  // Should Use the ENTITY HeavyData
   if ( gridName )
     {
-    // sprintf(name, "%s:/%s/%s", this->HeavyDataSetNameString, gridName, array);
-    sprintf(name, "&HeavyData;:/%s/%s", gridName, array);
+    sprintf(name, "%s:/%s/%s", this->HeavyDataSetNameString, gridName, array);
+    // sprintf(name, "&HeavyData;:/%s/%s", gridName, array);
     }
   else
     {
-    // sprintf(name, "%s:/%s", this->HeavyDataSetNameString, array);
-    sprintf(name, "&HeavyData;:/%s", array);
+    sprintf(name, "%s:/%s", this->HeavyDataSetNameString, array);
+    // sprintf(name, "&HeavyData;:/%s", array);
     }
   this->SetHDF5ArrayName(name);
   delete [] name;
