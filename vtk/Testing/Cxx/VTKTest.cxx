@@ -13,6 +13,7 @@ int main(int argc, char* argv[])
     return 1;
     }
   vtkXdmfReader* vr = vtkXdmfReader::New();
+  cout << "File valid: " << vr->CanReadFile(argv[1]) << endl;
   vr->SetFileName(argv[1]);
   //vr->UpdateInformation();
 

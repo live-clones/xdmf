@@ -189,6 +189,10 @@ public:
   int GetGridSetting(const char* name);
   int GetGridSetting(int idx);
 
+  // Description:
+  // Determine if the file can be readed with this reader.
+  virtual int CanReadFile(const char* fname);
+
 protected:
   vtkXdmfReader();
   ~vtkXdmfReader();   

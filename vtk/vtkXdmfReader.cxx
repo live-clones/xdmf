@@ -55,6 +55,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "vtkCell.h"
 #include "vtkCellArray.h"
 #include "vtkCharArray.h"
+#include "vtkXMLParser.h"
 
 #include "XdmfArray.h"
 #include "XdmfDOM.h"
@@ -72,7 +73,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.24");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.25");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -1827,4 +1828,63 @@ void vtkXdmfReader::PrintSelf(ostream& os, vtkIndent indent)
     os << nindent << "Output " << cc << " " << this->Outputs[cc]->GetClassName() << endl;
     this->Outputs[cc]->PrintSelf(os, nindent.GetNextIndent());
     }
+}
+
+class vtkXdmfReaderTester : public vtkXMLParser
+{
+public:
+  vtkTypeMacro(vtkXdmfReaderTester, vtkXMLParser);
+  static vtkXdmfReaderTester* New();
+  int TestReadFile()
+    {
+    this->Valid = 0;
+    if(!this->FileName)
+      {
+      return 0;
+      }
+
+    ifstream inFile(this->FileName);
+    if(!inFile)
+      {
+      return 0;
+      }
+
+    this->SetStream(&inFile);
+    this->Done = 0;
+
+    this->Parse();
+
+    if(this->Done && this->Valid )
+      {
+      return 1;
+      }
+    return 0;
+    }
+  void StartElement(const char* name, const char**)
+    {
+    this->Done = 1;
+    if(strcmp(name, "Xdmf") == 0)
+      {
+      this->Valid = 1;
+      }
+    }
+private:
+  vtkXdmfReaderTester()
+    {
+    this->Valid = 0;
+    this->Done = 0;
+    }
+  int ParsingComplete() { return this->Done; }
+  int Valid;
+  int Done;
+};
+vtkStandardNewMacro(vtkXdmfReaderTester);
+
+int vtkXdmfReader::CanReadFile(const char* fname)
+{
+  vtkXdmfReaderTester* tester = vtkXdmfReaderTester::New();
+  tester->SetFileName(fname);
+  int res = tester->TestReadFile();
+  tester->Delete();
+  return res;
 }
