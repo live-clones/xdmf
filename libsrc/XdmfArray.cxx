@@ -126,7 +126,7 @@ Tag >> Id;
 {
   double d;
   Tag >> d;
-  Id = d;
+  Id = (XdmfInt64)d;
 }
 #endif
 
@@ -197,19 +197,19 @@ XdmfArray::XdmfArray() {
   this->AddArrayToList();
  }
 
-XdmfArray::XdmfArray( XdmfInt32 NumberType ) {
+XdmfArray::XdmfArray( XdmfInt32 numberType ) {
   XdmfDebug("XdmfArray Constructor");
   this->DataPointer = NULL;
   this->DataIsMine = 1;
-  this->SetNumberType( NumberType );
+  this->SetNumberType( numberType );
   this->AddArrayToList();
  }
 
-XdmfArray::XdmfArray( XdmfInt32 NumberType, XdmfLength Length ) {
+XdmfArray::XdmfArray( XdmfInt32 numberType, XdmfLength Length ) {
   XdmfDebug("XdmfArray Constructor");
   this->DataPointer = NULL;
   this->DataIsMine = 1;
-  this->SetNumberType( NumberType );
+  this->SetNumberType( numberType );
   this->SetNumberOfElements( Length );
   this->AddArrayToList();
  }
@@ -291,26 +291,26 @@ XdmfInt32 XdmfArray::Allocate( void ){
   return( XDMF_SUCCESS );
 }
 
-XdmfInt32 XdmfArray::Reform( XdmfInt32 Rank, XdmfInt64 *Dimensions ) {
+XdmfInt32 XdmfArray::Reform( XdmfInt32 rank, XdmfInt64 *Dimensions ) {
 
   XdmfDebug("Reform Shape");
-  XdmfDataDesc::SetShape( Rank, Dimensions );  
+  XdmfDataDesc::SetShape( rank, Dimensions );  
 return( XDMF_SUCCESS );
 }
 
-XdmfInt32 XdmfArray::SetShape( XdmfInt32 Rank, XdmfInt64 *Dimensions ) {
+XdmfInt32 XdmfArray::SetShape( XdmfInt32 rank, XdmfInt64 *Dimensions ) {
 
   XdmfDebug("Setting Shape and Allocating Memory");
-  XdmfDataDesc::SetShape( Rank, Dimensions );  
+  XdmfDataDesc::SetShape( rank, Dimensions );  
   this->Allocate();
 
 return( XDMF_SUCCESS );
 }
 
 XdmfInt32
-XdmfArray::CopyShape( hid_t DataSpace ){
+XdmfArray::CopyShape( hid_t dataSpace ){
   XdmfDebug("Setting Shape and Allocating Memory");
-  XdmfDataDesc::CopyShape( DataSpace );  
+  XdmfDataDesc::CopyShape( dataSpace );  
   this->Allocate();
   return( XDMF_SUCCESS );
 }
@@ -1074,40 +1074,40 @@ return( NewArray );
 }
 
 XdmfArray *
-XdmfArray::Clone( XdmfLength Start, XdmfLength End ) {
+XdmfArray::Clone( XdmfLength start, XdmfLength End ) {
 
 XdmfLength  Length;
 XdmfArray  *NewArray = new XdmfArray();
 
 
-if( ( Start == 0 ) && ( End == 0 )){
+if( ( start == 0 ) && ( End == 0 )){
   NewArray->CopyType( this );
   NewArray->CopyShape( this );
   Length = this->GetNumberOfElements();
   End = Length - 1;
 } else {
-  if( End <= Start ) End = this->GetNumberOfElements() - Start - 1;
-  Length = End - Start + 1;
+  if( End <= start ) End = this->GetNumberOfElements() - start - 1;
+  Length = End - start + 1;
   NewArray->SetNumberType( this->GetNumberType() );
   NewArray->SetNumberOfElements( Length );
 }
 memcpy( NewArray->GetDataPointer(0),
-  this->GetDataPointer( Start ),
+  this->GetDataPointer( start ),
   Length * this->GetElementSize() );
 return( NewArray );
 }
 
 XdmfArray *
-XdmfArray::Reference( XdmfLength Start, XdmfLength End ) {
+XdmfArray::Reference( XdmfLength start, XdmfLength End ) {
 
 XdmfLength  Length;
 XdmfArray  *NewArray = new XdmfArray();
 
 
-if( End <= Start ) End = this->GetNumberOfElements() - Start - 1;
-Length = End - Start + 1;
+if( End <= start ) End = this->GetNumberOfElements() - start - 1;
+Length = End - start + 1;
 NewArray->SetNumberType( this->GetNumberType() );
-NewArray->SetDataPointer( this->GetDataPointer( Start ) );
+NewArray->SetDataPointer( this->GetDataPointer( start ) );
 NewArray->SetNumberOfElements( Length );
 return( NewArray );
 }
@@ -1207,7 +1207,7 @@ istr >>i;
 {
 double d; 
 istr >> d;
-i = d;
+i = (XdmfInt64)d;
 }
 #endif
 return istr;

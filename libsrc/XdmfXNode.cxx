@@ -163,14 +163,14 @@ if (node != NULL) {
 int
 XdmfXNode::GetSize(){
 
-int size = 0;
+int isize = 0;
 XdmfXNodeNode *node;
 node = (XdmfXNodeNode *)XdmfLlist_first_member(this->key);
 while(node != NULL) {
-        size++;
+        isize++;
         node = (XdmfXNodeNode *)XdmfLlist_next_member(node);
 }
-return(size);
+return(isize);
 
 }
 

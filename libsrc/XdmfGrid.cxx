@@ -62,13 +62,13 @@ XdmfGrid::~XdmfGrid() {
   }
 
 XdmfInt32
-XdmfGrid::AssignAttribute( XdmfAttribute *Attribute ){
+XdmfGrid::AssignAttribute( XdmfAttribute *attribute ){
 XdmfInt32 Status = 0;
 
-if( Attribute ){
-  Attribute->Update();
-  // Status = Attribute->SetBaseAttribute( this, this->BaseGrid );
-  this->AssignedAttribute = Attribute;
+if( attribute ){
+  attribute->Update();
+  // Status = attribute->SetBaseAttribute( this, this->BaseGrid );
+  this->AssignedAttribute = attribute;
 } else {
   XdmfErrorMessage("Attribute is NULL");
   return( XDMF_FAIL );
@@ -93,12 +93,12 @@ return( Status );
 }
 
 XdmfInt32
-XdmfGrid::AssignAttributeByName( XdmfString Name ){
+XdmfGrid::AssignAttributeByName( XdmfString name ){
 XdmfInt64 i;
 XdmfInt32 Status = XDMF_FAIL;
 
 for( i = 0 ; i < this->NumberOfAttributes ; i++ ){
-  if( XDMF_WORD_CMP( this->Attribute[i]->GetName(), Name ) ){
+  if( XDMF_WORD_CMP( this->Attribute[i]->GetName(), name ) ){
     Status = this->AssignAttribute( this->Attribute[ i ] );
     break;
   }
@@ -122,13 +122,13 @@ XdmfInt32
 XdmfGrid::InitGridFromElement( XdmfXNode *Element ) {
 
 XdmfInt32  Status = XDMF_FAIL;
-XdmfConstString  Attribute;
+XdmfConstString  attribute;
 
-Attribute = this->DOM->Get( Element, "NodeType");
-if( XDMF_WORD_CMP( Attribute, "Grid" ) == 0 ){
+attribute = this->DOM->Get( Element, "NodeType");
+if( XDMF_WORD_CMP( attribute, "Grid" ) == 0 ){
   Element = this->DOM->FindElement("Grid", 0, Element );
-  Attribute = this->DOM->Get( Element, "NodeType");
-  if( XDMF_WORD_CMP( Attribute, "Grid" ) == 0 ){
+  attribute = this->DOM->Get( Element, "NodeType");
+  if( XDMF_WORD_CMP( attribute, "Grid" ) == 0 ){
     XdmfErrorMessage("Can't Find Grid Element");
     return( XDMF_FAIL );
     }
@@ -144,9 +144,9 @@ if( Status == XDMF_FAIL ){
   XdmfErrorMessage("Error Reading Geometry");
   return( XDMF_FAIL );
   }
-Attribute = this->DOM->Get( Element, "Name" );
-if( Attribute ) {
-  this->SetName( Attribute );
+attribute = this->DOM->Get( Element, "Name" );
+if( attribute ) {
+  this->SetName( attribute );
 } else {
   this->SetName( GetUnique("Grid_" ) );
 }
@@ -154,7 +154,7 @@ XdmfInt32 OldNumberOfAttributes = this->NumberOfAttributes;
 this->NumberOfAttributes = this->DOM->FindNumberOfElements("Attribute", Element );
 if( this->NumberOfAttributes > 0 ){
   XdmfInt32  Index;
-  XdmfAttribute  *Attribute;
+  XdmfAttribute  *iattribute;
   XdmfXNode    *AttributeElement;
 
   for ( Index = 0; Index < OldNumberOfAttributes; Index ++ )
@@ -164,12 +164,12 @@ if( this->NumberOfAttributes > 0 ){
   this->Attribute = ( XdmfAttribute **)realloc( this->Attribute,
       this->NumberOfAttributes * sizeof( XdmfAttribute * ));
   for( Index = 0 ; Index < this->NumberOfAttributes ; Index++ ){
-    Attribute = new XdmfAttribute;
+    iattribute = new XdmfAttribute;
 
-    this->Attribute[Index] = Attribute;
-    Attribute->SetDOM( this->DOM );    
+    this->Attribute[Index] = iattribute;
+    iattribute->SetDOM( this->DOM );    
     AttributeElement = this->DOM->FindElement( "Attribute", Index, Element );
-    Attribute->InitAttributeFromElement( AttributeElement );
+    iattribute->InitAttributeFromElement( AttributeElement );
     }
 }
 this->CurrentElement = Element;
@@ -180,13 +180,13 @@ XdmfInt32
 XdmfGrid::SetGridFromElement( XdmfXNode *Element ) {
 
 XdmfInt32  Status = XDMF_FAIL;
-XdmfConstString  Attribute;
+XdmfConstString  attribute;
 
-Attribute = this->DOM->Get( Element, "NodeType");
-if( XDMF_WORD_CMP( Attribute, "Grid" ) == 0 ){
+attribute = this->DOM->Get( Element, "NodeType");
+if( XDMF_WORD_CMP( attribute, "Grid" ) == 0 ){
   Element = this->DOM->FindElement("Grid", 0, Element );
-  Attribute = this->DOM->Get( Element, "NodeType");
-  if( XDMF_WORD_CMP( Attribute, "Grid" ) == 0 ){
+  attribute = this->DOM->Get( Element, "NodeType");
+  if( XDMF_WORD_CMP( attribute, "Grid" ) == 0 ){
     XdmfErrorMessage("Can't Find Grid Element");
     return( XDMF_FAIL );
     }
@@ -219,15 +219,15 @@ if( Status == XDMF_FAIL ){
 XdmfDebug("Setting Attributes");
 if( this->NumberOfAttributes > 0 ){
   XdmfInt32  Index;
-  XdmfAttribute  *Attribute;
+  XdmfAttribute  *attribute;
   XdmfXNode    *AttributeElement;
 
   for( Index = 0 ; Index < this->NumberOfAttributes ; Index++ ){
     XdmfDebug("Setting Attribute #" << Index + 1);
     AttributeElement = this->DOM->FindElement( "Attribute", Index, Element );
-    Attribute = this->Attribute[ Index ];
-    Attribute->SetDOM( this->DOM );    
-    Attribute->SetAttributeFromElement( AttributeElement );
+    attribute = this->Attribute[ Index ];
+    attribute->SetDOM( this->DOM );    
+    attribute->SetAttributeFromElement( AttributeElement );
     }
 }
 */

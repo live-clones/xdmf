@@ -64,8 +64,8 @@ public:
 //! Get the current domain
   XdmfGetValueMacro(Domain, XdmfString);
 //! Set the current domain
-  void SetDomain( XdmfString Domain ) {
-    strcpy( this->Domain, Domain );
+  void SetDomain( XdmfString domain ) {
+    strcpy( this->Domain, domain );
     } ;
 
 //! Get the current filename
@@ -76,8 +76,8 @@ public:
 //! Get the current HeavyData Dataset path
   XdmfGetValueMacro(Path, XdmfString);
 //! Set the current HeavyData Dataset path
-  void SetPath( XdmfConstString Path ) {
-    strcpy( this->Path, Path );
+  void SetPath( XdmfConstString path ) {
+    strcpy( this->Path, path );
     } ;
 
 /*!
@@ -89,8 +89,8 @@ values can be :
 */
   XdmfGetValueMacro(Access, XdmfString);
 //! Set the access permissions
-  void SetAccess( XdmfString Access ) {
-    strcpy( this->Access, Access );
+  void SetAccess( XdmfString access ) {
+    strcpy( this->Access, access );
     } ;
 
 protected:

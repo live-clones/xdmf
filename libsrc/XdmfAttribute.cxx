@@ -60,27 +60,27 @@ return("None");
 }
 
 XdmfInt32
-XdmfAttribute::SetAttributeTypeFromString( XdmfConstString AttributeType ){
+XdmfAttribute::SetAttributeTypeFromString( XdmfConstString attributeType ){
 XdmfInt64  Dimensions[3];
 
-XdmfDebug("Setting Type to " << AttributeType );
-if( XDMF_WORD_CMP( AttributeType, "Scalar" ) ) {
+XdmfDebug("Setting Type to " << attributeType );
+if( XDMF_WORD_CMP( attributeType, "Scalar" ) ) {
   this->AttributeType = XDMF_ATTRIBUTE_TYPE_SCALAR;
   Dimensions[0] = 1;
   this->ShapeDesc->SetShape( 1, Dimensions );
-} else if( XDMF_WORD_CMP( AttributeType, "Vector" ) ) {
+} else if( XDMF_WORD_CMP( attributeType, "Vector" ) ) {
   this->AttributeType = XDMF_ATTRIBUTE_TYPE_VECTOR;
   Dimensions[0] = 3;
   this->ShapeDesc->SetShape( 1, Dimensions );
-} else if( XDMF_WORD_CMP( AttributeType, "Tensor" ) ) {
+} else if( XDMF_WORD_CMP( attributeType, "Tensor" ) ) {
   this->AttributeType = XDMF_ATTRIBUTE_TYPE_TENSOR;
   Dimensions[0] = 3;
   Dimensions[1] = 3;
   this->ShapeDesc->SetShape( 2, Dimensions );
-} else if( XDMF_WORD_CMP( AttributeType, "Matrix" ) ) {
+} else if( XDMF_WORD_CMP( attributeType, "Matrix" ) ) {
   this->AttributeType = XDMF_ATTRIBUTE_TYPE_MATRIX;
 } else {
-  XdmfErrorMessage("Unknown Attribute Type " << AttributeType );
+  XdmfErrorMessage("Unknown Attribute Type " << attributeType );
   return( XDMF_FAIL );
   }
 return( XDMF_SUCCESS );
@@ -106,20 +106,20 @@ return( "Node" );
 }
 
 XdmfInt32
-XdmfAttribute::SetAttributeCenterFromString( XdmfConstString AttributeCenter ){
+XdmfAttribute::SetAttributeCenterFromString( XdmfConstString attributeCenter ){
 
-if( XDMF_WORD_CMP( AttributeCenter, "Grid" ) ) {
+if( XDMF_WORD_CMP( attributeCenter, "Grid" ) ) {
   this->AttributeCenter = XDMF_ATTRIBUTE_CENTER_GRID;
-} else if( XDMF_WORD_CMP( AttributeCenter, "Cell" ) ) {
+} else if( XDMF_WORD_CMP( attributeCenter, "Cell" ) ) {
   this->AttributeCenter = XDMF_ATTRIBUTE_CENTER_CELL;
-} else if( XDMF_WORD_CMP( AttributeCenter, "Face" ) ) {
+} else if( XDMF_WORD_CMP( attributeCenter, "Face" ) ) {
   this->AttributeCenter = XDMF_ATTRIBUTE_CENTER_FACE;
-} else if( XDMF_WORD_CMP( AttributeCenter, "Edge" ) ) {
+} else if( XDMF_WORD_CMP( attributeCenter, "Edge" ) ) {
   this->AttributeCenter = XDMF_ATTRIBUTE_CENTER_EDGE;
-} else if( XDMF_WORD_CMP( AttributeCenter, "Node" ) ) {
+} else if( XDMF_WORD_CMP( attributeCenter, "Node" ) ) {
   this->AttributeCenter = XDMF_ATTRIBUTE_CENTER_NODE;
 } else {
-  XdmfErrorMessage("Unknown Attribute Center " << AttributeCenter );
+  XdmfErrorMessage("Unknown Attribute Center " << attributeCenter );
   return( XDMF_FAIL );
   }
 return( XDMF_SUCCESS );

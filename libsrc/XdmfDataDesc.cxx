@@ -43,25 +43,25 @@ XdmfDataDesc::~XdmfDataDesc() {
   }
 
 XdmfInt32
-XdmfDataDesc::GetHyperSlab( XdmfInt64 *Start, XdmfInt64 *Stride, XdmfInt64 *Count ) {
+XdmfDataDesc::GetHyperSlab( XdmfInt64 *start, XdmfInt64 *stride, XdmfInt64 *count ) {
 
-XdmfInt32  i, Rank = this->Rank;
+XdmfInt32  i, rank = this->Rank;
 
 if( this->SelectionType != XDMF_HYPERSLAB ){
   return( XDMF_FAIL );
   }
-for( i = 0 ; i < Rank ; i++ ){
-  if( Start ) {
-    *Start++ = this->Start[i];
+for( i = 0 ; i < rank ; i++ ){
+  if( start ) {
+    *start++ = this->Start[i];
     }
-  if( Stride ) {
-    *Stride++ = this->Stride[i];
+  if( stride ) {
+    *stride++ = this->Stride[i];
     }
-  if( Count ) {
-    *Count++ = this->Count[i];
+  if( count ) {
+    *count++ = this->Count[i];
     }
   }
-return( Rank );
+return( rank );
 }
 
 XdmfString
@@ -69,23 +69,23 @@ XdmfDataDesc::GetHyperSlabAsString( void ){
 ostrstream   StringOutput;
 XdmfString Ptr;
 static XdmfString Result = NULL;
-XdmfInt32  i, Rank;
-XdmfInt64  Start[ XDMF_MAX_DIMENSION ];
-XdmfInt64  Stride[ XDMF_MAX_DIMENSION ];
-XdmfInt64  Count[ XDMF_MAX_DIMENSION ];
+XdmfInt32  i, rank;
+XdmfInt64  start[ XDMF_MAX_DIMENSION ];
+XdmfInt64  stride[ XDMF_MAX_DIMENSION ];
+XdmfInt64  count[ XDMF_MAX_DIMENSION ];
 
-Rank = this->GetHyperSlab( Start, Stride, Count );
-if( Rank == XDMF_FAIL ) {
+Rank = this->GetHyperSlab( start, stride, count );
+if( rank == XDMF_FAIL ) {
   return( NULL );
   }
-for( i = 0 ; i < Rank ; i++ ){
-  StringOutput << ICE_64BIT_CAST Start[i] << " ";
+for( i = 0 ; i < rank ; i++ ){
+  StringOutput << ICE_64BIT_CAST start[i] << " ";
   }
-for( i = 0 ; i < Rank ; i++ ){
-  StringOutput << ICE_64BIT_CAST Stride[i] << " ";
+for( i = 0 ; i < rank ; i++ ){
+  StringOutput << ICE_64BIT_CAST stride[i] << " ";
   }
-for( i = 0 ; i < Rank ; i++ ){
-  StringOutput << ICE_64BIT_CAST Count[i] << " ";
+for( i = 0 ; i < rank ; i++ ){
+  StringOutput << ICE_64BIT_CAST count[i] << " ";
   }
 StringOutput << ends;
 Ptr = StringOutput.str();
@@ -104,12 +104,12 @@ if( Desc->SelectionType == XDMF_SELECTALL ) {
   return( XDMF_SUCCESS );
   }
 if( Desc->GetSelectionType() == XDMF_HYPERSLAB ){
-  XdmfInt64  Start[ XDMF_MAX_DIMENSION ];
-  XdmfInt64  Stride[ XDMF_MAX_DIMENSION ];
-  XdmfInt64  Count[ XDMF_MAX_DIMENSION ];
+  XdmfInt64  start[ XDMF_MAX_DIMENSION ];
+  XdmfInt64  stride[ XDMF_MAX_DIMENSION ];
+  XdmfInt64  count[ XDMF_MAX_DIMENSION ];
   
-  Rank = Desc->GetHyperSlab( Start, Stride, Count );
-  this->SelectHyperSlab( Start, Stride, Count );
+  this->Rank = Desc->GetHyperSlab( start, stride, count );
+  this->SelectHyperSlab( start, stride, count );
 } else {
   XdmfInt64  NumberOfCoordinates;
   XdmfInt64  *Coordinates;
@@ -137,24 +137,24 @@ return( Status );
 };
 
 XdmfInt32
-XdmfDataDesc::CopyType( hid_t DataType ) {
+XdmfDataDesc::CopyType( hid_t dataType ) {
 if( this->DataType != H5I_BADID ) {
   H5Tclose( this->DataType );
   }
-this->DataType = H5Tcopy( DataType );
+this->DataType = H5Tcopy( dataType );
 return( XDMF_SUCCESS );
 }
 
 XdmfInt32
-XdmfDataDesc::CopyShape( hid_t DataSpace ) {
+XdmfDataDesc::CopyShape( hid_t dataSpace ) {
 
 hsize_t      i, HRank;
 hsize_t      HDimension[ XDMF_MAX_DIMENSION ];
 XdmfInt64    Dimensions[ XDMF_MAX_DIMENSION ];
 XdmfInt32    Status;
 
-HRank = H5Sget_simple_extent_ndims( DataSpace );
-H5Sget_simple_extent_dims( DataSpace, HDimension, NULL );
+HRank = H5Sget_simple_extent_ndims( dataSpace );
+H5Sget_simple_extent_dims( dataSpace, HDimension, NULL );
 for( i = 0 ; i < HRank ; i++ ){
   Dimensions[i] = HDimension[i];
   }
@@ -171,8 +171,8 @@ XdmfDataDesc::GetShape( XdmfInt64 *Dimensions ) {
 hsize_t      i, HRank;
 hsize_t      HDimension[ XDMF_MAX_DIMENSION ];
 
-HRank = H5Sget_simple_extent_ndims( DataSpace );
-H5Sget_simple_extent_dims( DataSpace, HDimension, NULL );
+HRank = H5Sget_simple_extent_ndims( this->DataSpace );
+H5Sget_simple_extent_dims( this->DataSpace, HDimension, NULL );
 for( i = 0 ; i < HRank ; i++ ){
   Dimensions[i] = HDimension[i];
   }
@@ -184,10 +184,10 @@ XdmfDataDesc::GetShapeAsString( void ) {
 ostrstream   StringOutput;
 XdmfString Ptr;
 static XdmfString Result = NULL;
-XdmfInt64  i, Rank, Dimensions[ XDMF_MAX_DIMENSION ];
+XdmfInt64  i, rank, Dimensions[ XDMF_MAX_DIMENSION ];
 
-Rank = this->GetShape( Dimensions );
-for( i = 0 ; i < Rank ; i++ ){
+rank = this->GetShape( Dimensions );
+for( i = 0 ; i < rank ; i++ ){
   StringOutput << ICE_64BIT_CAST Dimensions[i] << " ";
   }
 StringOutput << ends;
@@ -200,7 +200,7 @@ return( Result );
 }
 
 XdmfInt32
-XdmfDataDesc::SetShape( XdmfInt32 Rank, XdmfInt64 *Dimensions ) {
+XdmfDataDesc::SetShape( XdmfInt32 rank, XdmfInt64 *Dimensions ) {
 XdmfInt32    i;
 hsize_t      HRank;
 hsize_t      HDimension[ XDMF_MAX_DIMENSION ];
@@ -219,8 +219,8 @@ if( ( this->DataSpace == H5I_BADID )  || ( this->DataSpace == H5S_ALL ) ) {
     }
 } else {
   HRank = H5Sget_simple_extent_ndims( this->DataSpace );
-  if( HRank != (hsize_t)Rank ){
-    XdmfDebug( "Current Rank " << (int)HRank << " Requested Rank " << Rank );
+  if( HRank != (hsize_t)rank ){
+    XdmfDebug( "Current Rank " << (int)HRank << " Requested Rank " << rank );
     XdmfDebug( "Data Space Rank Change After Creation" );
   // Work around for ?bug? in HDF
         // when you increase rank
@@ -238,9 +238,9 @@ if( ( this->DataSpace == H5I_BADID )  || ( this->DataSpace == H5S_ALL ) ) {
   }
 }
 
-this->Rank = HRank = Rank;
+this->Rank = HRank = rank;
 XdmfDebug("Shape : Rank = " << (int)HRank);
-for( i = 0 ; i < Rank ; i++ ) {
+for( i = 0 ; i < rank ; i++ ) {
   XdmfDebug("  Dimension[" << i << "] = " << ICE_64BIT_CAST Dimensions[i] );
   this->Count[i] = this->Dimension[i] = HDimension[i] = Dimensions[i];
   this->Start[i] = 0;
@@ -273,7 +273,7 @@ for( i = 0 ; i < this->Rank ; i++ ) {
 }
 
 XdmfInt32
-XdmfDataDesc::SelectHyperSlab(  XdmfInt64 *Start, XdmfInt64 *Stride, XdmfInt64 *Count ) {
+XdmfDataDesc::SelectHyperSlab(  XdmfInt64 *start, XdmfInt64 *stride, XdmfInt64 *count ) {
 
 XdmfInt32  i;
 XdmfInt64  Dimensions[ XDMF_MAX_DIMENSION ];
@@ -281,18 +281,18 @@ herr_t    status;
 
 this->GetShape( Dimensions );
 for( i = 0 ; i < this->Rank ; i++ ) {
-  if( Start ) {
-    this->Start[i] = Start[ i ];  
+  if( start ) {
+    this->Start[i] = start[ i ];  
   } else {
     this->Start[i] = 0;
   }
-  if( Stride ){
-    this->Stride[i] = Stride[ i ];  
+  if( stride ){
+    this->Stride[i] = stride[ i ];  
   } else {
     this->Stride[i] = 1;
   }
-  if( Count ) {
-    this->Count[i] = Count[ i ];  
+  if( count ) {
+    this->Count[i] = count[ i ];  
   } else {
     this->Count[i] = (( Dimensions[i] - this->Start[i] - 1 ) / this->Stride[i]) + 1;
   }
@@ -317,9 +317,9 @@ XdmfInt32
 XdmfDataDesc::SelectCoordinates(  XdmfInt64 NumberOfElements, XdmfInt64 *Coordinates ){
 hssize_t  *HCoordinates;
 XdmfInt32  status;
-XdmfInt64  i, Rank = this->Rank;
-hssize_t  Length = NumberOfElements * Rank;
-hssize_t  NElements = Length / MAX( 1, Rank );
+XdmfInt64  i, rank = this->Rank;
+hssize_t  Length = NumberOfElements * rank;
+hssize_t  NElements = Length / MAX( 1, rank );
 
 
 if( this->Rank <= 0 ) {
@@ -346,13 +346,13 @@ XdmfInt64
 XdmfDataDesc::GetNumberOfElements( void ) {
 hsize_t    i, Dimensions[ XDMF_MAX_DIMENSION ];
 XdmfInt64  Nelements = 0;
-XdmfInt32  Rank = H5Sget_simple_extent_ndims(this->DataSpace );
+XdmfInt32  rank = H5Sget_simple_extent_ndims(this->DataSpace );
 
-this->Rank = Rank;
+this->Rank = rank;
 H5Sget_simple_extent_dims( this->DataSpace, Dimensions, NULL );
-if(Rank) {
+if(rank) {
   Nelements = this->Dimension[0] = Dimensions[0];
-  for( i = 1 ; i < (hsize_t)Rank ; i++ ){
+  for( i = 1 ; i < (hsize_t)rank ; i++ ){
     this->Dimension[i] = Dimensions[i];
     Nelements *= Dimensions[i];
     }
@@ -371,24 +371,24 @@ XdmfDataDesc::GetSelectionSize( void ) {
 }
 
 XdmfInt32
-XdmfDataDesc::SelectHyperSlabFromString(  XdmfString Start, XdmfString Stride, XdmfString Count ) {
+XdmfDataDesc::SelectHyperSlabFromString(  XdmfString start, XdmfString stride, XdmfString count ) {
 XdmfInt64  i, HStart[XDMF_MAX_DIMENSION], HStride[XDMF_MAX_DIMENSION], HCount[XDMF_MAX_DIMENSION];
-istrstream   Start_ist(Start, strlen( Start ) );
-istrstream   Stride_ist(Stride, strlen( Stride ) );
-istrstream   Count_ist(Count, strlen( Count ) );
+istrstream   Start_ist(start, strlen( start ) );
+istrstream   stride_ist(stride, strlen( stride ) );
+istrstream   Count_ist(count, strlen( count ) );
 
 for( i = 0 ; i < this->Rank ; i++ ){
-  if( Start ){
+  if( start ){
     ICE_READ_STREAM64(Start_ist, HStart[i]);
   } else {
     HStart[i] = 0;
     }
-  if( Stride ){
-    ICE_READ_STREAM64(Stride_ist, HStride[i]);
+  if( stride ){
+    ICE_READ_STREAM64(stride_ist, HStride[i]);
   } else {
     HStride[i] = 1;
   }
-  if( Count ){
+  if( count ){
     ICE_READ_STREAM64(Count_ist, HCount[i]);
   } else {
     HCount[i] = (this->Dimension[i] - HStart[i]) / HStride[i];
@@ -440,15 +440,15 @@ XdmfDataDesc::SelectCoordinatesFromString( XdmfString String ) {
 }
 
 XdmfInt32
-XdmfDataDesc::SetNumberType( XdmfInt32 NumberType, XdmfInt64 CompoundSize ) {
+XdmfDataDesc::SetNumberType( XdmfInt32 numberType, XdmfInt64 CompoundSize ) {
 
 if( this->DataType != H5I_BADID ) {
   H5Tclose( this->DataType );
   }
-if( NumberType == XDMF_COMPOUND_TYPE ) {
+if( numberType == XDMF_COMPOUND_TYPE ) {
    this->DataType = H5Tcreate( H5T_COMPOUND, CompoundSize );
 } else {
-  this->DataType =  H5Tcopy( XdmfTypeToHDF5Type( NumberType ) );
+  this->DataType =  H5Tcopy( XdmfTypeToHDF5Type( numberType ) );
 }
 if ( this->DataType < 0 ) {
   XdmfErrorMessage("Error Creating Data Type");
@@ -460,10 +460,10 @@ return( XDMF_SUCCESS );
 
 XdmfInt32
 XdmfDataDesc::SetNumberTypeFromString( XdmfString NumberTypeString, XdmfInt64 CompoundSize ) {
-XdmfInt32 NumberType;
+XdmfInt32 numberType;
 
 NumberType = StringToXdmfType( NumberTypeString );
-return( this->SetNumberType( NumberType, CompoundSize ) );
+return( this->SetNumberType( numberType, CompoundSize ) );
 }
 
 XdmfInt32
@@ -492,21 +492,21 @@ return( H5Tget_nmembers( this->DataType ) );
 XdmfInt32
 XdmfDataDesc::GetMemberType( XdmfInt64 Index ) {
 XdmfInt32  RetVal;
-hid_t    DataType;
+hid_t    dataType;
 
 if( Index >  ( H5Tget_nmembers( this->DataType ) - 1 ) ){
   XdmfErrorMessage("Index is Greater than Number of Members");
   return( 0 );
   }
 DataType =  H5Tget_member_type( this->DataType, Index );
-RetVal = HDF5TypeToXdmfType( DataType ); 
+RetVal = HDF5TypeToXdmfType( dataType ); 
 if( RetVal == XDMF_COMPOUND_TYPE ) {
   hid_t  Super;
 
-  Super = H5Tget_super( DataType );
+  Super = H5Tget_super( dataType );
   RetVal = HDF5TypeToXdmfType( Super );
 }
-H5Tclose( DataType );
+H5Tclose( dataType );
 return( RetVal );
 }
 
@@ -530,7 +530,7 @@ return( RetVal );
 
 XdmfInt32
 XdmfDataDesc::GetMemberShape( XdmfInt64 Index, XdmfInt64 *Dimensions ) {
-XdmfInt32  i, Rank, DataType;
+XdmfInt32  i, rank, dataType;
 hsize_t     Dims[XDMF_MAX_DIMENSION];
 
 if( Index >  ( H5Tget_nmembers( this->DataType ) - 1 ) ){
@@ -538,20 +538,20 @@ if( Index >  ( H5Tget_nmembers( this->DataType ) - 1 ) ){
   return( 0 );
   }
 DataType =  H5Tget_member_type( this->DataType, Index );
-if( HDF5TypeToXdmfType(DataType) == XDMF_COMPOUND_TYPE ) {
-  Rank = H5Tget_array_ndims( DataType );
-  if( Rank <= 0 ){
+if( HDF5TypeToXdmfType(dataType) == XDMF_COMPOUND_TYPE ) {
+  rank = H5Tget_array_ndims( dataType );
+  if( rank <= 0 ){
     return( XDMF_FAIL );
     }
-  H5Tget_array_dims(DataType, Dims, NULL );
-  for( i = 0 ; i < Rank ; i++ ){
+  H5Tget_array_dims(dataType, Dims, NULL );
+  for( i = 0 ; i < rank ; i++ ){
     Dimensions[i] = Dims[i];
   }
 } else {
-  Rank =  1;
+  rank =  1;
   Dimensions[0] = 1;
 }
-return( Rank );
+return( rank );
 }
 
 XdmfString
@@ -560,15 +560,15 @@ XdmfDataDesc::GetMemberShapeAsString( XdmfInt64 Index ){
 static char    ReturnString[ 80 ];
 ostrstream  ReturnStream( ReturnString, 80 );
 XdmfInt64  Dimensions[XDMF_MAX_DIMENSION];
-XdmfInt32  i, Rank;
+XdmfInt32  i, rank;
 
 Rank = this->GetMemberShape( Index, Dimensions );
-if( Rank == XDMF_FAIL ) {
+if( rank == XDMF_FAIL ) {
   XdmfErrorMessage("Error Getting Member Shape");
   return( NULL );
   }
 ReturnString[0] = '0';
-for( i = 0 ; i < Rank ; i++ ){
+for( i = 0 ; i < rank ; i++ ){
   ReturnStream << ICE_64BIT_CAST Dimensions[i] << " ";
   }
 ReturnStream << ends;
@@ -578,15 +578,15 @@ return( ReturnString );
 XdmfInt64
 XdmfDataDesc::GetMemberLength( XdmfInt64 Index ) {
 XdmfInt64  Length, Dimensions[XDMF_MAX_DIMENSION];
-XdmfInt32  i, Rank;
+XdmfInt32  i, rank;
 
 Rank = this->GetMemberShape( Index, Dimensions );
-if( Rank == XDMF_FAIL ) {
+if( rank == XDMF_FAIL ) {
   XdmfErrorMessage("Error Getting Member Shape");
   return( 0 );
   }
 Length = 1;
-for( i = 0 ; i < Rank ; i++ ){
+for( i = 0 ; i < rank ; i++ ){
   Length *= Dimensions[i];
   }
 return( Length );
@@ -636,23 +636,23 @@ XdmfDataDesc::AddCompoundMemberFromString( XdmfConstString Name,
     XdmfString Shape,
     XdmfInt64 Offset ){
 
-XdmfInt32  i, Rank = 0, NumberType;
+XdmfInt32  i, rank = 0, numberType;
 XdmfInt64  Dim, Dimensions[XDMF_MAX_DIMENSION];
 istrstream  ShapeString( Shape, strlen(Shape) );
 
 NumberType = StringToXdmfType( NumberTypeString );
 i = 0;
 while( ICE_READ_STREAM64(ShapeString, Dim) ){
-  Rank++;
+  rank++;
   Dimensions[i++] = Dim;
   }
-return( this->AddCompoundMember( Name, NumberType, Rank, Dimensions, Offset) );
+return( this->AddCompoundMember( Name, numberType, rank, Dimensions, Offset) );
 }
 
 XdmfInt32
 XdmfDataDesc::AddCompoundMember( XdmfConstString Name,
-    XdmfInt32 NumberType,
-    XdmfInt32 Rank,
+    XdmfInt32 numberType,
+    XdmfInt32 rank,
     XdmfInt64 *Dimensions,
     XdmfInt64 Offset ){
 
@@ -667,13 +667,13 @@ if( Offset == 0 ){
 if( Dimensions == NULL ){
   Dimensions = &One;
   }
-XdmfDebug("Inserting " << Name << " at Offset " << ICE_64BIT_CAST Offset << " as type " << XdmfTypeToString( NumberType ) );
+XdmfDebug("Inserting " << Name << " at Offset " << ICE_64BIT_CAST Offset << " as type " << XdmfTypeToString( numberType ) );
 if( this->GetNumberType() != XDMF_COMPOUND_TYPE ){
   this->SetNumberType( XDMF_COMPOUND_TYPE );
   }
-HNumberType = XdmfTypeToHDF5Type( NumberType);
+HNumberType = XdmfTypeToHDF5Type( numberType);
 Size = H5Tget_size( HNumberType );
-if( ( Rank == 1 ) && ( *Dimensions == 1 ) ){
+if( ( rank == 1 ) && ( *Dimensions == 1 ) ){
   status = H5Tinsert( this->DataType,
     Name,
     Offset,
@@ -681,18 +681,18 @@ if( ( Rank == 1 ) && ( *Dimensions == 1 ) ){
 } else {
   hsize_t    Dims[ XDMF_MAX_DIMENSION ];
 
-  for( i = 0; i < Rank ; i++ ){
+  for( i = 0; i < rank ; i++ ){
     Dims[i] = Dimensions[i];
     }
   status = H5Tinsert( this->DataType,
     Name,
     Offset,
-    H5Tarray_create( HNumberType, Rank, Dims, NULL ));
+    H5Tarray_create( HNumberType, rank, Dims, NULL ));
 }
 if( status < 0 ){
   return( XDMF_FAIL );
   }
-for( i = 0 ; i < Rank ; i++ ){
+for( i = 0 ; i < rank ; i++ ){
   Size *= Dimensions[i];
   }
 this->NextOffset += Size;
@@ -716,10 +716,10 @@ switch( this->SelectionType ) {
 }
 
 XdmfInt64 *
-XdmfDataDesc::GetCoordinates( XdmfInt64 Start, XdmfInt64 Nelements ){
+XdmfDataDesc::GetCoordinates( XdmfInt64 start, XdmfInt64 Nelements ){
 
 XdmfInt64 i, Total, *Coordinates = NULL;
-XdmfInt32 Rank = H5Sget_simple_extent_ndims(this->DataSpace );
+XdmfInt32 rank = H5Sget_simple_extent_ndims(this->DataSpace );
 
 if( this->SelectionType == XDMF_COORDINATES ){
   hsize_t  *HCoordinates;
@@ -727,10 +727,10 @@ if( this->SelectionType == XDMF_COORDINATES ){
     Nelements = H5Sget_select_elem_npoints( this->DataSpace );
   }
   if ( Nelements > 0 ) {
-    Total = Nelements * Rank;
+    Total = Nelements * rank;
     HCoordinates = new hsize_t[ Total ];
     Coordinates = new XdmfInt64[ Total ];
-    H5Sget_select_elem_pointlist( this->DataSpace, Start, Nelements, HCoordinates);
+    H5Sget_select_elem_pointlist( this->DataSpace, start, Nelements, HCoordinates);
     for( i = 0 ; i < Total ; i++ ){
       Coordinates[i] = HCoordinates[i];
       }
@@ -741,10 +741,10 @@ return( Coordinates );
 }
 
 XdmfString
-XdmfDataDesc::GetCoordinatesAsString( XdmfInt64 Start, XdmfInt64 Nelements ){
+XdmfDataDesc::GetCoordinatesAsString( XdmfInt64 start, XdmfInt64 Nelements ){
 
 hsize_t    i;
-XdmfInt32 Rank = H5Sget_simple_extent_ndims(this->DataSpace );
+XdmfInt32 rank = H5Sget_simple_extent_ndims(this->DataSpace );
 
 ostrstream StringOutput;
 XdmfString Ptr;
@@ -756,11 +756,11 @@ if( this->SelectionType == XDMF_COORDINATES ){
     Nelements = H5Sget_select_elem_npoints( this->DataSpace );
   }
   if ( Nelements > 0 ) {
-    hsize_t *Coords = new hsize_t[ Nelements * Rank ];
+    hsize_t *Coords = new hsize_t[ Nelements * rank ];
     hsize_t j, *Cp = Coords;
-    H5Sget_select_elem_pointlist( this->DataSpace, Start, Nelements, Coords );
+    H5Sget_select_elem_pointlist( this->DataSpace, start, Nelements, Coords );
     for( i = 0 ; i < (hsize_t)Nelements ; i++ ){
-      for( j = 0 ; j < (hsize_t)Rank ; j++ ){
+      for( j = 0 ; j < (hsize_t)rank ; j++ ){
         StringOutput << (int)*Cp++ << " ";
         }
       }  
@@ -780,11 +780,11 @@ XdmfDataDesc::Print( void ){
 
 hsize_t  i, Dimensions[ XDMF_MAX_DIMENSION ];
 hsize_t  Nelements;
-XdmfInt32 Rank = H5Sget_simple_extent_ndims(this->DataSpace );
+XdmfInt32 rank = H5Sget_simple_extent_ndims(this->DataSpace );
 
-cout << "Rank " << Rank << endl;
+cout << "Rank " << rank << endl;
 H5Sget_simple_extent_dims( this->DataSpace, Dimensions, NULL );
-for( i = 0 ; i < (hsize_t)Rank ; i++ ){
+for( i = 0 ; i < (hsize_t)rank ; i++ ){
   cout << "Dimension[" << (int)i << "] " << (int)Dimensions[i] << endl;
   }
 cout << "Selection Type : " << this->GetSelectionTypeAsString() << endl;
@@ -792,12 +792,12 @@ if( this->SelectionType == XDMF_COORDINATES ){
 Nelements = H5Sget_select_elem_npoints( this->DataSpace );
 cout << "Selected Elements : " << (int)Nelements << endl;
 if ( Nelements > 0 ) {
-  hsize_t *Coords = new hsize_t[ Nelements * Rank ];
+  hsize_t *Coords = new hsize_t[ Nelements * rank ];
   hsize_t j, *Cp = Coords;
   H5Sget_select_elem_pointlist( this->DataSpace, 0, Nelements, Coords );
   for( i = 0 ; i < Nelements ; i++ ){
     cout << "Element[" << (int)i << "] ";
-    for( j = 0 ; j < (hsize_t)Rank ; j++ ){
+    for( j = 0 ; j < (hsize_t)rank ; j++ ){
       cout << " " << (int)*Cp++;
       }
     cout << endl;
@@ -807,9 +807,9 @@ if ( Nelements > 0 ) {
 }
 if( this->SelectionType == XDMF_HYPERSLAB ){
 int  k;
-for( k = 0 ; k < Rank ; k++ ){
-  cout << k << " : Start " << (int)Start[k] << " Stride " <<
-    (int)Stride[k] << " Count " << (int)Count[k] << endl;
+for( k = 0 ; k < rank ; k++ ){
+  cout << k << " : Start " << (int)this->Start[k] << " Stride " <<
+    (int)this->Stride[k] << " Count " << (int)this->Count[k] << endl;
   }
 }
 }

@@ -47,7 +47,7 @@ XdmfGeometry::XdmfGeometry() {
   }
 
 XdmfGeometry::~XdmfGeometry() {
-  if( this->PointsAreMine && this->Points )  delete Points;
+  if( this->PointsAreMine && this->Points )  delete this->Points;
   }
 
 XdmfInt32
@@ -60,8 +60,8 @@ return( XDMF_SUCCESS );
 }
 
 XdmfInt32
-XdmfGeometry::SetOrigin( XdmfFloat64 *Origin ){
-return( this->SetOrigin( Origin[0], Origin[1], Origin[2] ) );
+XdmfGeometry::SetOrigin( XdmfFloat64 *origin ){
+return( this->SetOrigin( origin[0], origin[1], origin[2] ) );
 }
 
 XdmfInt32
@@ -74,39 +74,39 @@ return( XDMF_SUCCESS );
 
 
 XdmfInt32
-XdmfGeometry::SetDxDyDz( XdmfFloat64 *DxDyDz ){
-return( this->SetDxDyDz( DxDyDz[0], DxDyDz[1], DxDyDz[2] ) );
+XdmfGeometry::SetDxDyDz( XdmfFloat64 *dxDyDz ){
+return( this->SetDxDyDz( dxDyDz[0], dxDyDz[1], dxDyDz[2] ) );
 }
 
 
 XdmfInt32
-XdmfGeometry::SetPoints( XdmfArray *Points ){
-    if( this->PointsAreMine && this->Points ) delete Points;
+XdmfGeometry::SetPoints( XdmfArray *points ){
+    if( this->PointsAreMine && this->Points ) delete points;
     this->PointsAreMine = 0;
-    this->Points = Points;
+    this->Points = points;
     return( XDMF_SUCCESS );
     }
 
 XdmfInt32
-XdmfGeometry::SetGeometryTypeFromString( XdmfConstString GeometryType ){
+XdmfGeometry::SetGeometryTypeFromString( XdmfConstString geometryType ){
 
-if( XDMF_WORD_CMP( GeometryType, "X_Y_Z" ) ){
+if( XDMF_WORD_CMP( geometryType, "X_Y_Z" ) ){
   this->GeometryType = XDMF_GEOMETRY_X_Y_Z;
   return(XDMF_SUCCESS);
   }
-if( XDMF_WORD_CMP( GeometryType, "XY" ) ){
+if( XDMF_WORD_CMP( geometryType, "XY" ) ){
   this->GeometryType = XDMF_GEOMETRY_XY;
   return(XDMF_SUCCESS);
   }
-if( XDMF_WORD_CMP( GeometryType, "XYZ" ) ){
+if( XDMF_WORD_CMP( geometryType, "XYZ" ) ){
   this->GeometryType = XDMF_GEOMETRY_XYZ;
   return(XDMF_SUCCESS);
   }
-if( XDMF_WORD_CMP( GeometryType, "ORIGIN_DXDYDZ" ) ){
+if( XDMF_WORD_CMP( geometryType, "ORIGIN_DXDYDZ" ) ){
   this->GeometryType = XDMF_GEOMETRY_ORIGIN_DXDYDZ;
   return(XDMF_SUCCESS);
   }
-if( XDMF_WORD_CMP( GeometryType, "VXVYVZ" ) ){
+if( XDMF_WORD_CMP( geometryType, "VXVYVZ" ) ){
   this->GeometryType = XDMF_GEOMETRY_VXVYVZ;
   return(XDMF_SUCCESS);
   }
@@ -179,7 +179,7 @@ XdmfInt64  Start[ XDMF_MAX_DIMENSION ];
 XdmfInt64  Stride[ XDMF_MAX_DIMENSION ];
 XdmfInt64  Count[ XDMF_MAX_DIMENSION ];
 XdmfXNode    *PointsElement;
-XdmfArray  *Points = NULL;
+XdmfArray  *points = NULL;
 XdmfArray  *TmpArray;
 XdmfTransform  PointsReader;
 
@@ -209,20 +209,20 @@ if( ( this->GeometryType == XDMF_GEOMETRY_X_Y_Z ) ||
   if( PointsElement ){
     TmpArray = PointsReader.ElementToArray( PointsElement );
   if( TmpArray ){
-    if( !Points ){
+    if( !points ){
     switch( this->GeometryType ){
       case XDMF_GEOMETRY_X_Y_Z :
-        Points = new XdmfArray;
-        Points->CopyType( TmpArray );
-        Points->SetNumberOfElements( TmpArray->GetNumberOfElements() * 3 );
+        points = new XdmfArray;
+        points->CopyType( TmpArray );
+        points->SetNumberOfElements( TmpArray->GetNumberOfElements() * 3 );
         break;
       case XDMF_GEOMETRY_XY :
-        Points = new XdmfArray;
-        Points->CopyType( TmpArray );
-        Points->SetNumberOfElements( TmpArray->GetNumberOfElements() / 2 * 3 );
+        points = new XdmfArray;
+        points->CopyType( TmpArray );
+        points->SetNumberOfElements( TmpArray->GetNumberOfElements() / 2 * 3 );
         break;
       default :
-        Points = TmpArray;
+        points = TmpArray;
         break;
       }
     }
@@ -231,24 +231,24 @@ if( ( this->GeometryType == XDMF_GEOMETRY_X_Y_Z ) ||
       case XDMF_GEOMETRY_X_Y_Z :
         Start[0] = ArrayIndex;
         Stride[0] = 3;
-        Points->SelectHyperSlab( Start, Stride, NULL );
-        CopyArray( TmpArray, Points);
+        points->SelectHyperSlab( Start, Stride, NULL );
+        CopyArray( TmpArray, points);
         this->NumberOfPoints = TmpArray->GetNumberOfElements();
         break;
       case XDMF_GEOMETRY_XY :
         Start[0] = TmpArray->GetNumberOfElements();
         Start[1] = 3;
-        Points->SetShape( 2 , Start );
+        points->SetShape( 2 , Start );
         Stride[0] = 1;
         Stride[0] = 1;
         Count[0] = TmpArray->GetNumberOfElements();
         Count[1] = 2;
-        Points->SelectHyperSlab( NULL, Stride, Count);
-        CopyArray( TmpArray, Points);
+        points->SelectHyperSlab( NULL, Stride, Count);
+        CopyArray( TmpArray, points);
         this->NumberOfPoints = TmpArray->GetNumberOfElements() / 2 ;
         break;
       default :
-        // Points = TmpArray so do nothing
+        // points = TmpArray so do nothing
         this->NumberOfPoints = TmpArray->GetNumberOfElements() / 3;
         break;
       }
@@ -309,7 +309,7 @@ if( ( this->GeometryType == XDMF_GEOMETRY_X_Y_Z ) ||
       }
   }
 }
-if( Points ) this->SetPoints( Points );
+if( points ) this->SetPoints( points );
 this->CurrentElement = Element;
 return( XDMF_SUCCESS );
 }

@@ -148,6 +148,13 @@ H5FL_BLK_DEFINE_STATIC(vlen_seq);
     } CI_END;                                                                 \
 }
 
+#define H5T_CONV_uS_always(STYPE,DTYPE,ST,DT,D_MAX) {                         \
+    assert(sizeof(ST)<=sizeof(DT));                                           \
+    CI_BEGIN(STYPE, DTYPE, ST, DT, nelmts-1) {                                \
+            *((DT*)d) = (DT)(*((ST*)s));                                      \
+    } CI_END;                                                                 \
+}
+
 #define H5T_CONV_uS(STYPE,DTYPE,ST,DT,D_MAX) {                                \
     assert(sizeof(ST)<=sizeof(DT));                                           \
     CI_BEGIN(STYPE, DTYPE, ST, DT, nelmts-1) {                                \
@@ -3774,7 +3781,7 @@ H5T_conv_uchar_short(hid_t src_id, hid_t dst_id, H5T_cdata_t *cdata,
                      hid_t UNUSED dset_xfer_plist)
 {
     FUNC_ENTER(H5T_conv_uchar_short, FAIL);
-    H5T_CONV_uS(UCHAR, SHORT,
+    H5T_CONV_uS_always(UCHAR, SHORT,
                 unsigned char, short,
                 SHRT_MAX);
     FUNC_LEAVE(SUCCEED);
@@ -3904,7 +3911,7 @@ H5T_conv_uchar_int(hid_t src_id, hid_t dst_id, H5T_cdata_t *cdata,
                    void *buf, void UNUSED *bkg, hid_t UNUSED dset_xfer_plist)
 {
     FUNC_ENTER(H5T_conv_uchar_int, FAIL);
-    H5T_CONV_uS(UCHAR, INT,
+    H5T_CONV_uS_always(UCHAR, INT,
                 unsigned char, int,
                 INT_MAX);
     FUNC_LEAVE(SUCCEED);
@@ -4034,7 +4041,7 @@ H5T_conv_uchar_long(hid_t src_id, hid_t dst_id, H5T_cdata_t *cdata,
                     void *buf, void UNUSED *bkg, hid_t UNUSED dset_xfer_plist)
 {
     FUNC_ENTER(H5T_conv_uchar_long, FAIL);
-    H5T_CONV_uS(UCHAR, LONG,
+    H5T_CONV_uS_always(UCHAR, LONG,
                 unsigned char, long,
                 LONG_MAX);
     FUNC_LEAVE(SUCCEED);
@@ -4167,7 +4174,7 @@ H5T_conv_uchar_llong(hid_t src_id, hid_t dst_id, H5T_cdata_t *cdata,
                      hid_t UNUSED dset_xfer_plist)
 {
     FUNC_ENTER(H5T_conv_uchar_llong, FAIL);
-    H5T_CONV_uS(UCHAR, LLONG,
+    H5T_CONV_uS_always(UCHAR, LLONG,
                 unsigned char, long_long,
                 LLONG_MAX);
     FUNC_LEAVE(SUCCEED);
@@ -4503,7 +4510,7 @@ H5T_conv_ushort_int(hid_t src_id, hid_t dst_id, H5T_cdata_t *cdata,
                     hid_t UNUSED dset_xfer_plist)
 {
     FUNC_ENTER(H5T_conv_ushort_int, FAIL);
-    H5T_CONV_uS(USHORT, INT,
+    H5T_CONV_uS_always(USHORT, INT,
                 unsigned short, int,
                 INT_MAX);
     FUNC_LEAVE(SUCCEED);
@@ -4636,7 +4643,7 @@ H5T_conv_ushort_long(hid_t src_id, hid_t dst_id, H5T_cdata_t *cdata,
                      hid_t UNUSED dset_xfer_plist)
 {
     FUNC_ENTER(H5T_conv_ushort_long, FAIL);
-    H5T_CONV_uS(USHORT, LONG,
+    H5T_CONV_uS_always(USHORT, LONG,
                 unsigned short, long,
                 LONG_MAX);
     FUNC_LEAVE(SUCCEED);
@@ -4769,7 +4776,7 @@ H5T_conv_ushort_llong(hid_t src_id, hid_t dst_id, H5T_cdata_t *cdata,
                       hid_t UNUSED dset_xfer_plist)
 {
     FUNC_ENTER(H5T_conv_ushort_llong, FAIL);
-    H5T_CONV_uS(USHORT, LLONG,
+    H5T_CONV_uS_always(USHORT, LLONG,
                 unsigned short, long_long,
                 LLONG_MAX);
     FUNC_LEAVE(SUCCEED);
@@ -5365,7 +5372,7 @@ H5T_conv_uint_llong(hid_t src_id, hid_t dst_id, H5T_cdata_t *cdata,
                     void *buf, void UNUSED *bkg, hid_t UNUSED dset_xfer_plist)
 {
     FUNC_ENTER(H5T_conv_uint_llong, FAIL);
-    H5T_CONV_uS(UINT, LLONG,
+    H5T_CONV_uS_always(UINT, LLONG,
                 unsigned, long_long,
                 LLONG_MAX);
     FUNC_LEAVE(SUCCEED);
@@ -5962,7 +5969,7 @@ H5T_conv_ulong_llong(hid_t src_id, hid_t dst_id, H5T_cdata_t *cdata,
                      hid_t UNUSED dset_xfer_plist)
 {
     FUNC_ENTER(H5T_conv_long_llong, FAIL);
-    H5T_CONV_uS(ULONG, LLONG,
+    H5T_CONV_uS_always(ULONG, LLONG,
                 unsigned long, long_long,
                 LLONG_MAX);
     FUNC_LEAVE(SUCCEED);

@@ -71,8 +71,8 @@ public :
   void *GetClientData( void ) {
       return( this->ClientData );
       }
-  void SetClientData( void *ClientData ) {
-    this->ClientData = ClientData;
+  void SetClientData( void *clientData ) {
+    this->ClientData = clientData;
     }
   void ManualDelete(XdmfXNode *obj);
   XdmfGetValueMacro( UserData, XdmfPointer );

@@ -429,7 +429,7 @@ XdmfDOM::ExpandNode(XDMF_TREE_NODE *node, XdmfInt32 *size) {
 }
 
 XDMF_TREE_NODE *
-XdmfDOM::__Parse( XdmfConstString xml) {
+XdmfDOM::__Parse( XdmfConstString inxml) {
 
 XMLUserData data;
 XdmfXNode *node = new XdmfXNode;
@@ -455,7 +455,7 @@ XML_SetCharacterDataHandler(parser, GetData);
 XML_SetProcessingInstructionHandler( parser, ProcessingElement );
 XML_SetParamEntityParsing( parser, XML_PARAM_ENTITY_PARSING_ALWAYS );
 XML_SetExternalEntityRefHandler( parser, ExternalEntity );
-if (!XML_Parse(parser, xml, strlen(xml), 1)) {
+if (!XML_Parse(parser, inxml, strlen(inxml), 1)) {
   XdmfErrorMessage("Parse Error at XML line " <<
     XML_GetCurrentLineNumber(parser) <<
     " : " << XML_ErrorString(XML_GetErrorCode(parser)));
@@ -468,7 +468,7 @@ return( data.Root );
 }
 
 XdmfInt32
-XdmfDOM::Parse(XdmfConstString xml) {
+XdmfDOM::Parse(XdmfConstString inxml) {
 
 XDMF_TREE_NODE *Root;
 XdmfXNode    *Node;
@@ -482,13 +482,13 @@ this->tree = NULL;
 this->SetDocType(NULL);
 this->SetSystem(NULL);
 
-if( xml == NULL ) xml = this->Gets();
-if( strlen(xml) < 7 ){
+if( inxml == NULL ) inxml = this->Gets();
+if( strlen(inxml) < 7 ){
   // At least <?xml>
   return( XDMF_FAIL );
   }
 
-if ( xml && ( Root = this->__Parse( xml ) ) ) {
+if ( inxml && ( Root = this->__Parse( inxml ) ) ) {
   this->tree = Root;
 } else {
   return(XDMF_FAIL);
@@ -524,11 +524,11 @@ return(XDMF_SUCCESS);
 }
 
 XdmfInt32
-XdmfDOM::InsertFromString(XdmfXNode *Parent, XdmfConstString xml) {
+XdmfDOM::InsertFromString(XdmfXNode *Parent, XdmfConstString inxml) {
 
 XDMF_TREE_NODE *NewNode;
 
-if( ( NewNode = this->__Parse( xml ) ) ) {
+if( ( NewNode = this->__Parse( inxml ) ) ) {
   XdmfTree_add_branch( (XDMF_TREE_NODE *)Parent->GetClientData(), NewNode );
   return( XDMF_SUCCESS );
   }

@@ -70,42 +70,42 @@ return( XDMF_SUCCESS );
 
 
 XdmfInt32
-XdmfTopology::SetTopologyTypeFromString( XdmfConstString TopologyType ) {
+XdmfTopology::SetTopologyTypeFromString( XdmfConstString topologyType ) {
 
 XdmfInt32  newTopologyType = XDMF_NOTOPOLOGY;
 
 
-if ( XDMF_WORD_CMP( TopologyType, "NOTOPOLOGY") ){
+if ( XDMF_WORD_CMP( topologyType, "NOTOPOLOGY") ){
   newTopologyType = XDMF_NOTOPOLOGY;
-} else if( XDMF_WORD_CMP( TopologyType, "POLYVERTEX") ){
+} else if( XDMF_WORD_CMP( topologyType, "POLYVERTEX") ){
   newTopologyType = XDMF_POLYVERTEX;
-} else if( XDMF_WORD_CMP( TopologyType, "POLYLINE") ){
+} else if( XDMF_WORD_CMP( topologyType, "POLYLINE") ){
   newTopologyType = XDMF_POLYLINE;
-} else if( XDMF_WORD_CMP( TopologyType, "POLYGON") ){
+} else if( XDMF_WORD_CMP( topologyType, "POLYGON") ){
   newTopologyType = XDMF_POLYGON;
-} else if( XDMF_WORD_CMP( TopologyType, "TRIANGLE") ){
+} else if( XDMF_WORD_CMP( topologyType, "TRIANGLE") ){
   newTopologyType = XDMF_TRI;
-} else if( XDMF_WORD_CMP( TopologyType, "QUADRILATERAL") ){
+} else if( XDMF_WORD_CMP( topologyType, "QUADRILATERAL") ){
   newTopologyType = XDMF_QUAD;
-} else if( XDMF_WORD_CMP( TopologyType, "TETRAHEDRON") ){
+} else if( XDMF_WORD_CMP( topologyType, "TETRAHEDRON") ){
   newTopologyType = XDMF_TET;
-} else if( XDMF_WORD_CMP( TopologyType, "PYRAMID") ){
+} else if( XDMF_WORD_CMP( topologyType, "PYRAMID") ){
   newTopologyType = XDMF_PYRAMID;
-} else if( XDMF_WORD_CMP( TopologyType, "WEDGE") ){
+} else if( XDMF_WORD_CMP( topologyType, "WEDGE") ){
   newTopologyType = XDMF_WEDGE;
-} else if( XDMF_WORD_CMP( TopologyType, "HEXAHEDRON") ){
+} else if( XDMF_WORD_CMP( topologyType, "HEXAHEDRON") ){
   newTopologyType = XDMF_HEX;
-} else if( XDMF_WORD_CMP( TopologyType, "2DSMESH") ){
+} else if( XDMF_WORD_CMP( topologyType, "2DSMESH") ){
   newTopologyType = XDMF_2DSMESH;
-} else if( XDMF_WORD_CMP( TopologyType, "2DRECTMESH") ){
+} else if( XDMF_WORD_CMP( topologyType, "2DRECTMESH") ){
   newTopologyType = XDMF_2DRECTMESH;
-} else if( XDMF_WORD_CMP( TopologyType, "2DCORECTMESH") ){
+} else if( XDMF_WORD_CMP( topologyType, "2DCORECTMESH") ){
   newTopologyType = XDMF_2DCORECTMESH;
-} else if( XDMF_WORD_CMP( TopologyType, "3DSMESH") ){
+} else if( XDMF_WORD_CMP( topologyType, "3DSMESH") ){
   newTopologyType = XDMF_3DSMESH;
-} else if( XDMF_WORD_CMP( TopologyType, "3DRECTMESH") ){
+} else if( XDMF_WORD_CMP( topologyType, "3DRECTMESH") ){
   newTopologyType = XDMF_3DRECTMESH;
-} else if( XDMF_WORD_CMP( TopologyType, "3DCORECTMESH") ){
+} else if( XDMF_WORD_CMP( topologyType, "3DCORECTMESH") ){
   newTopologyType = XDMF_3DCORECTMESH;
 }
 
@@ -159,64 +159,64 @@ return( "NOTOPOLOGY");
 }
 
 XdmfInt32
-XdmfTopology::SetTopologyType( XdmfInt32 TopologyType ) {
+XdmfTopology::SetTopologyType( XdmfInt32 topologyType ) {
 
-XdmfInt32  NodesPerElement = 0;
+XdmfInt32  nodesPerElement = 0;
 
-  switch ( TopologyType ){
+  switch ( topologyType ){
     case  XDMF_NOTOPOLOGY :
       break;
     case  XDMF_POLYVERTEX :
-      NodesPerElement = 1;
+      nodesPerElement = 1;
       break;
     case  XDMF_POLYLINE :
-      NodesPerElement = 1;
+      nodesPerElement = 1;
       break;
     case  XDMF_POLYGON :
-      NodesPerElement = 1;
+      nodesPerElement = 1;
       break;
     case  XDMF_TRI :
-      NodesPerElement = 3;
+      nodesPerElement = 3;
       break;
     case  XDMF_QUAD :
-      NodesPerElement = 4;
+      nodesPerElement = 4;
       break;
     case  XDMF_TET :
-      NodesPerElement = 4;
+      nodesPerElement = 4;
       break;
     case  XDMF_PYRAMID :
-      NodesPerElement = 5;
+      nodesPerElement = 5;
       break;
     case  XDMF_WEDGE :
-      NodesPerElement = 6;
+      nodesPerElement = 6;
       break;
     case  XDMF_HEX :
-      NodesPerElement = 8;
+      nodesPerElement = 8;
       break;
     case  XDMF_2DSMESH :
-      NodesPerElement = 1;
+      nodesPerElement = 1;
       break;
     case  XDMF_2DRECTMESH :
-      NodesPerElement = 1;
+      nodesPerElement = 1;
       break;
     case  XDMF_2DCORECTMESH :
-      NodesPerElement = 1;
+      nodesPerElement = 1;
       break;
     case  XDMF_3DSMESH :
-      NodesPerElement = 1;
+      nodesPerElement = 1;
       break;
     case  XDMF_3DRECTMESH :
-      NodesPerElement = 1;
+      nodesPerElement = 1;
       break;
     case  XDMF_3DCORECTMESH :
-      NodesPerElement = 1;
+      nodesPerElement = 1;
       break;
     default :
       return( XDMF_FAIL );
   }
 
-this->TopologyType = TopologyType;
-this->NodesPerElement = NodesPerElement;
+this->TopologyType = topologyType;
+this->NodesPerElement = nodesPerElement;
 return ( XDMF_SUCCESS );
 }
 
@@ -239,7 +239,7 @@ return( Value );
 }
 
 XdmfInt32
-XdmfTopology::SetOrder( XdmfInt32 Length, XdmfInt32 *Order ) {
+XdmfTopology::SetOrder( XdmfInt32 Length, XdmfInt32 *order ) {
 XdmfInt32  i;
 
 if( Length > XDMF_MAX_ORDER ) {
@@ -247,9 +247,9 @@ if( Length > XDMF_MAX_ORDER ) {
   }
 this->OrderIsDefault = 1;
 for( i = 0 ; i < Length ; i++ ){
-  XdmfDebug("Set Order[" << i << "] = " << Order[i] );
-  this->Order[i] = Order[i];
-  if ( Order[i] != i ){
+  XdmfDebug("Set Order[" << i << "] = " << order[i] );
+  this->Order[i] = order[i];
+  if ( order[i] != i ){
     this->OrderIsDefault = 0;
     }
   }
@@ -257,10 +257,10 @@ return( XDMF_SUCCESS );
 }
 
 XdmfInt32
-XdmfTopology::SetOrderFromString( XdmfConstString Order ){
+XdmfTopology::SetOrderFromString( XdmfConstString order ){
 XdmfInt32  i = 0, List[ XDMF_MAX_ORDER];
-char *NewOrder = new char[ strlen(Order) + 1];
-strcpy(NewOrder, Order);
+char *NewOrder = new char[ strlen(order) + 1];
+strcpy(NewOrder, order);
 istrstream  InStream( NewOrder, strlen(NewOrder) );
 
 while( InStream >> List[i] ) i++;
@@ -316,10 +316,10 @@ if( Attribute ){
 }
 Attribute = this->DOM->Get( Element, "NodesPerElement" );
 if( Attribute ){
-  XdmfInt64 NodesPerElement;
+  XdmfInt64 nodesPerElement;
 
-  NodesPerElement = strtol( Attribute, (XdmfString *)NULL, 0 );
-  this->SetNodesPerElement( NodesPerElement );
+  nodesPerElement = strtol( Attribute, (XdmfString *)NULL, 0 );
+  this->SetNodesPerElement( nodesPerElement );
   }
 Attribute = this->DOM->Get( Element, "Order" );
 if( Attribute ){

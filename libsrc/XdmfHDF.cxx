@@ -265,21 +265,21 @@ return( XDMF_SUCCESS );
 }
 
 XdmfInt32
-XdmfHDF::CreateDataset( XdmfConstString Path ) {
+XdmfHDF::CreateDataset( XdmfConstString path ) {
 
 XdmfString  Pathname, Slash;
 hid_t    Directory;
 
-if( Path ) {
+if( path ) {
   XdmfString lastcolon;
 
   // Skip Colons
-    lastcolon = strrchr( Path, ':' );
+    lastcolon = strrchr( path, ':' );
   if( lastcolon != NULL ){
-    Path = lastcolon;
-    Path++;
+    path = lastcolon;
+    path++;
     }
-  this->SetPath( Path );
+  this->SetPath( path );
   }
 XdmfDebug( "Creating HDF Dataset " <<
   this->Path << "  Rank = " << this->GetRank() );
@@ -353,7 +353,7 @@ if( this->Dataset < 0 ) {
   hid_t  Prop;
   hsize_t ChunkDims[XDMF_MAX_DIMENSION];
   XdmfInt64 DataDims[XDMF_MAX_DIMENSION];
-  int    Compression;
+  int    compression;
   int    i, NDims, NCDims;
   
   XdmfDebug("Creating New Compressed Dataset");
@@ -375,9 +375,9 @@ if( this->Dataset < 0 ) {
    }
   Prop = H5Pcreate(H5P_DATASET_CREATE);
   H5Pset_chunk(Prop, NCDims, ChunkDims);
-  Compression = MIN(this->Compression, 9);
-  XdmfDebug("Compression Level = " << Compression);
-  H5Pset_deflate(Prop, Compression);
+  compression = MIN(this->Compression, 9);
+  XdmfDebug("Compression Level = " << compression);
+  H5Pset_deflate(Prop, compression);
   this->Dataset = H5Dcreate(this->Cwd,
       this->Path,
       this->GetDataType(),
@@ -513,7 +513,7 @@ return( Array );
 
 
 XdmfInt32
-XdmfHDF::Open( XdmfConstString DataSetName, XdmfConstString Access ) {
+XdmfHDF::Open( XdmfConstString DataSetName, XdmfConstString access ) {
 
 // XdmfString Domain, *File, *Path;
 XdmfString lastcolon;
@@ -579,8 +579,8 @@ if( DataSetName != NULL ) {
   if( NewName ) free( NewName );
 }
 
-if ( Access != NULL ){
-  strcpy( this->Access, Access );
+if ( access != NULL ){
+  strcpy( this->Access, access );
 }
 
 if( STRCASECMP( this->Access, "RW" ) == 0 ) {

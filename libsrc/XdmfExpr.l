@@ -15,6 +15,9 @@
 #define yylval dice_yylval
 extern YYSTYPE dice_yylval;
 #endif
+#ifndef yywrap
+#define yywrap dice_yywrap
+#endif
 extern "C" int dice_yywrap(void);
 /*
 #define DiceExprDebug 1
@@ -55,7 +58,7 @@ if ( strcmp( _c, "NULL" ) == 0 ){
 	return( 1 );
   }
 
-*_ptr = (void *) _p;
+*_ptr = *((void **) &_p);
 return( 0 );
 }
 
@@ -124,3 +127,7 @@ extern void	XdmfExprOutput( int c );
 #define unput(c) XdmfExprUnput((c))
 #define output(c) XdmfExprOutput( ( c ) )
 
+void XdmfYYUnput(int c, char* buf_ptr )
+{
+  yyunput(c, buf_ptr);
+}

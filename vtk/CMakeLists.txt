@@ -23,13 +23,8 @@ SET( Xdmf_SRCS
 	vtkXdmfDataArray.cxx
 	vtkXdmfOpenGLCamera.cxx
   ${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
+  #vtkXdmfDataSetWriter.cxx
   )
-IF(NOT ParaViewComplete_BINARY_DIR)
-  SET( Xdmf_SRCS
-    ${Xdmf_SRCS}
-    vtkXdmfDataSetWriter.cxx
-    )
-ENDIF(NOT ParaViewComplete_BINARY_DIR)
 
 SET_SOURCE_FILES_PROPERTIES(
   vtkXdmfDataArray

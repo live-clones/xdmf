@@ -73,7 +73,7 @@ Value << ends;
 Element->Set("Dimensions", Attribute );
 if( Desc->GetNumberType() == XDMF_COMPOUND_TYPE ){
   XdmfXNode    *Child;
-  XdmfInt64  i, NumberOfMembers;
+  XdmfInt64  ii, NumberOfMembers;
   
   if( this->DOM->IsChild( Element ) == XDMF_FAIL ) {
     XdmfErrorMessage("Array is COMPOUND but Element can't have Child Element");
@@ -81,16 +81,16 @@ if( Desc->GetNumberType() == XDMF_COMPOUND_TYPE ){
     return( NULL );
     }
   NumberOfMembers = Desc->GetNumberOfMembers();
-  for( i = 0 ; i < NumberOfMembers ; i++ ){
+  for( ii = 0 ; ii < NumberOfMembers ; ii++ ){
     Child = new XdmfXNode;
     Child->Set("NodeType", "StructureMember");
     Value.seekp(0);
-    Type = XdmfTypeToClassString( Desc->GetMemberType(i) );
+    Type = XdmfTypeToClassString( Desc->GetMemberType(ii) );
     Child->Set("DataType", Type );
-    Value << ICE_64BIT_CAST(Desc->GetMemberSize(i) /  Desc->GetMemberLength(i)) << ends;
+    Value << ICE_64BIT_CAST(Desc->GetMemberSize(ii) /  Desc->GetMemberLength(ii)) << ends;
     Value.seekp(0);
     Child->Set("Precision", Attribute );
-    Rank =  Desc->GetMemberShape( i, Dimensions );
+    Rank =  Desc->GetMemberShape( ii, Dimensions );
     Value << Rank << ends;
     Child->Set("Rank", Attribute );
     Value.seekp(0);
@@ -148,7 +148,7 @@ XdmfDebug("Total = " << ICE_64BIT_CAST(TotalSize) );
 Desc->SetNumberType( XDMF_COMPOUND_TYPE, TotalSize );
 // Now Fill in the Members
 for( i = 0 ; i < NumberOfMembers ; i++ ){
-  XdmfConstString  Name;
+  XdmfConstString  name;
   XdmfXNode    *Child;
   XdmfDataDesc  *ChildDesc;
 
@@ -157,11 +157,11 @@ for( i = 0 ; i < NumberOfMembers ; i++ ){
     XdmfDebug("Adding Member for Node Named " << this->DOM->Get( Child, "Name") );
     ChildDesc = this->ElementToDataDesc( Child );
     Rank = ChildDesc->GetShape( Dimensions );
-    Name = this->DOM->Get( Child, "Name" );
-    if( !Name ) {
-      Name = GetUnique("XdmfMember");
+    name = this->DOM->Get( Child, "Name" );
+    if( !name ) {
+      name = GetUnique("XdmfMember");
       }
-    Desc->AddCompoundMember( Name,
+    Desc->AddCompoundMember( name,
         ChildDesc->GetNumberType(),
         Rank,
         Dimensions );

@@ -42,6 +42,7 @@ pvTemp69.EnableGrid("Iron05")
 pvTemp69.EnableGrid("Iron06")
 pvTemp69.EnableGrid("Iron07")
 pvTemp69.UpdateInformation()
+#pvTemp69.SetStride(2,3,5)
 
 pvTemp206 = vtk.vtkContourFilter()
 pvTemp207 = vtk.vtkContourFilter()

@@ -1,319 +1,7 @@
+/* A Bison parser, made by GNU Bison 1.875a.  */
 
-/*  A Bison parser, made from XdmfExpr.y
-    by GNU Bison version 1.28  */
-
-#define YYBISON 1  /* Identify Bison output.  */
-
-#define yyparse dice_yyparse
-#define yylex dice_yylex
-#define yyerror dice_yyerror
-#define yylval dice_yylval
-#define yychar dice_yychar
-#define yydebug dice_yydebug
-#define yynerrs dice_yynerrs
-#define        lFLOAT        257
-#define        tokINTEGER        258
-#define        tokARRAY        259
-#define        NAME        260
-#define        SIN        261
-#define        COS        262
-#define        TAN        263
-#define        ACOS        264
-#define        ASIN        265
-#define        ATAN        266
-#define        LOG        267
-#define        EXP        268
-#define        ABS_TOKEN        269
-#define        SQRT        270
-#define        WHERE        271
-#define        INDEX        272
-#define        EQEQ        273
-#define        LT        274
-#define        LE        275
-#define        GT        276
-#define        GE        277
-#define        NE        278
-#define        LTLT        279
-#define        GTGT        280
-#define        JOIN        281
-
-#line 1 "XdmfExpr.y"
-
-/* Force the definition for Linux */
-/* Possible bug in older Linux yacc */
-#ifndef NOBISON
-extern int yylex();
-extern "C" {
-        void yyerror( char *);
-        int  yyparse( void );
-}
-#endif
-#include <XdmfExpr.h>
-#include <XdmfArray.h>
-#include <XdmfHDF.h>
-#include <math.h>
-
-static XdmfArray *XdmfExprReturnValue;
-
-class XdmfInt64Array : public XdmfArray {
-public :
-        XdmfInt64Array( XdmfInt64 Length ) {
-                this->SetNumberType( XDMF_INT64_TYPE );
-                this->SetNumberOfElements( Length );
-                }
-        XdmfInt64Array() {
-                this->SetNumberType( XDMF_INT64_TYPE );
-                this->SetNumberOfElements( 10 );
-                };
-};
-
-#define ADD_XDMF_tokARRAY_TO_SYMBOL( a ) \
-        { \
-        char        name[80]; \
-        XdmfExprSymbol *sp; \
-        sprintf( name, "XdmfArray_%X", ( XdmfLength)(a) ); \
-        sp = XdmfExprSymbolLookup( name ); \
-        sp->ClientData = (a); \
-        }
-
-
-#line 41 "XdmfExpr.y"
-typedef union {
-        double                DoubleValue;
-        long                IntegerValue;
-        void                *ArrayPointer;
-        XdmfExprSymbol        *Symbol;
-} YYSTYPE;
-#include <stdio.h>
-
-#ifndef __cplusplus
-#ifndef __STDC__
-#define const
-#endif
-#endif
-
-
-
-#define        YYFINAL                119
-#define        YYFLAG                -32768
-#define        YYNTBASE        40
-
-#define YYTRANSLATE(x) ((unsigned)(x) <= 281 ? yytranslate[x] : 44)
-
-static const char yytranslate[] = {     0,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,    38,
-    39,    30,    29,    32,    28,     2,    31,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,    37,    33,     2,
-    34,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-    35,     2,    36,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     1,     3,     4,     5,     6,
-     7,     8,     9,    10,    11,    12,    13,    14,    15,    16,
-    17,    18,    19,    20,    21,    22,    23,    24,    25,    26,
-    27
-};
-
-#if YYDEBUG != 0
-static const short yyprhs[] = {     0,
-     0,     2,     6,    10,    17,    24,    33,    42,    44,    46,
-    50,    54,    58,    62,    66,    70,    74,    78,    82,    86,
-    90,    94,    98,   102,   107,   114,   121,   128,   135,   142,
-   149,   156,   163,   170,   175,   179,   184,   186,   190,   194,
-   198,   202,   207,   211,   213
-};
-
-static const short yyrhs[] = {    41,
-     0,     5,    34,    42,     0,     5,    34,    43,     0,     5,
-    35,    42,    36,    34,    43,     0,     5,    35,    42,    36,
-    34,    42,     0,     5,    35,     4,    37,     4,    36,    34,
-    43,     0,     5,    35,     4,    37,     4,    36,    34,    42,
-     0,    42,     0,    43,     0,    42,    29,    42,     0,    42,
-    32,    42,     0,    42,    33,    42,     0,    42,    28,    42,
-     0,    42,    30,    42,     0,    42,    31,    42,     0,    42,
-    29,    43,     0,    42,    28,    43,     0,    42,    30,    43,
-     0,    42,    31,    43,     0,    43,    29,    42,     0,    43,
-    28,    42,     0,    43,    30,    42,     0,    43,    31,    42,
-     0,     5,    35,    42,    36,     0,     5,    35,     4,    37,
-     4,    36,     0,    18,    38,    42,    19,    42,    39,     0,
-    17,    38,    42,    19,    42,    39,     0,    17,    38,    42,
-    19,    43,    39,     0,    17,    38,    42,    20,    43,    39,
-     0,    17,    38,    42,    21,    43,    39,     0,    17,    38,
-    42,    22,    43,    39,     0,    17,    38,    42,    23,    43,
-    39,     0,    17,    38,    42,    24,    43,    39,     0,     6,
-    38,    42,    39,     0,    38,    42,    39,     0,    27,    38,
-    42,    39,     0,     5,     0,    43,    29,    43,     0,    43,
-    28,    43,     0,    43,    30,    43,     0,    43,    31,    43,
-     0,     6,    38,    43,    39,     0,    38,    43,    39,     0,
-     4,     0,     3,     0
-};
-
-#endif
-
-#if YYDEBUG != 0
-static const short yyrline[] = { 0,
-    65,    73,    81,    86,    98,   114,   125,   138,   145,   150,
-   159,   236,   300,   309,   319,   328,   337,   346,   355,   364,
-   373,   382,   391,   400,   410,   421,   466,   498,   519,   540,
-   561,   582,   603,   624,   642,   646,   650,   667,   671,   675,
-   679,   683,   691,   695,   699
-};
-#endif
-
-
-#if YYDEBUG != 0 || defined (YYERROR_VERBOSE)
-
-static const char * const yytname[] = {   "$","error","$undefined.","lFLOAT",
-"tokINTEGER","tokARRAY","NAME","SIN","COS","TAN","ACOS","ASIN","ATAN","LOG",
-"EXP","ABS_TOKEN","SQRT","WHERE","INDEX","EQEQ","LT","LE","GT","GE","NE","LTLT",
-"GTGT","JOIN","'-'","'+'","'*'","'/'","','","';'","'='","'['","']'","':'","'('",
-"')'","statemant_list","statement","ArrayExpression","ScalarExpression", NULL
-};
-#endif
-
-static const short yyr1[] = {     0,
-    40,    41,    41,    41,    41,    41,    41,    41,    41,    42,
-    42,    42,    42,    42,    42,    42,    42,    42,    42,    42,
-    42,    42,    42,    42,    42,    42,    42,    42,    42,    42,
-    42,    42,    42,    42,    42,    42,    42,    43,    43,    43,
-    43,    43,    43,    43,    43
-};
-
-static const short yyr2[] = {     0,
-     1,     3,     3,     6,     6,     8,     8,     1,     1,     3,
-     3,     3,     3,     3,     3,     3,     3,     3,     3,     3,
-     3,     3,     3,     4,     6,     6,     6,     6,     6,     6,
-     6,     6,     6,     4,     3,     4,     1,     3,     3,     3,
-     3,     4,     3,     1,     1
-};
-
-static const short yydefact[] = {     0,
-    45,    44,    37,     0,     0,     0,     0,     0,     1,     8,
-     9,     0,     0,     0,     0,     0,     0,    37,     0,     0,
-     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-     2,     3,    44,     0,     0,     0,     0,     0,     0,     0,
-     0,    35,    43,    13,    17,    10,    16,    14,    18,    15,
-    19,    11,    12,    21,    39,    20,    38,    22,    40,    23,
-    41,     0,    24,    34,    42,     0,     0,     0,     0,     0,
-     0,     0,    36,    44,     0,     0,     0,     0,     0,     0,
-     0,     0,     0,     0,     0,     0,     0,     0,    24,    25,
-     5,     4,    27,    28,     0,     0,     0,     0,     0,     0,
-    29,    30,    31,    32,    33,    26,     0,     0,     0,    39,
-    38,    40,    41,    25,     7,     6,     0,     0,     0
-};
-
-static const short yydefgoto[] = {   117,
-     9,    10,    35
-};
-
-static const short yypact[] = {    55,
--32768,-32768,   -25,   -37,   -31,   -27,    -7,    99,-32768,   237,
-    91,    99,   106,    99,    99,    99,    99,     9,   135,   -26,
-    99,    99,    99,    99,    99,    99,    99,    99,    99,    99,
-   237,    91,    -2,   219,    91,   147,   142,   126,   -13,   159,
-   124,-32768,-32768,   241,    -5,   241,    -5,     1,-32768,     1,
--32768,-32768,-32768,   241,    -5,   241,    -5,     1,-32768,     1,
--32768,    51,    22,-32768,-32768,    99,    80,    80,    80,    80,
-    80,    99,-32768,    20,   228,    26,    99,   171,   154,    25,
-    80,   166,   178,   190,   195,   202,   183,    60,-32768,    40,
-   237,    91,-32768,-32768,    80,   207,    80,    80,    80,    80,
--32768,-32768,-32768,-32768,-32768,-32768,    39,    99,   214,    12,
-    12,-32768,-32768,-32768,   237,    91,    76,    78,-32768
-};
-
-static const short yypgoto[] = {-32768,
--32768,    24,     0
-};
-
-
-#define        YYLAST                274
-
-
-static const short yytable[] = {    11,
-    14,    27,    28,    29,    30,    72,    15,    20,    12,    13,
-    16,    32,    43,    37,    21,    22,    23,    24,    25,    26,
-    45,    47,    49,    51,    29,    30,    55,    57,    59,    61,
-    17,    19,    25,    26,    62,    31,    34,    36,    38,    39,
-    40,    99,   100,    41,    44,    46,    48,    50,    52,    53,
-    54,    56,    58,    60,    76,    77,    88,     1,     2,     3,
-     4,    90,    95,   107,    75,    79,    82,    83,    84,    85,
-    86,     5,     6,   108,   114,   118,    92,   119,     0,     0,
-    96,     7,     1,     2,     0,    80,     0,     0,     0,    78,
-     0,     0,     8,     0,   109,    87,   110,   111,   112,   113,
-    91,     1,     2,    18,     4,     0,     0,   116,     1,    33,
-    18,     4,     0,     0,     0,     5,     6,    81,    27,    28,
-    29,    30,     5,     6,     0,     7,     1,    74,    18,     4,
-     0,   115,     7,     0,     0,     0,     8,     0,     0,     0,
-     5,     6,     0,     8,    66,    67,    68,    69,    70,    71,
-     7,     0,     0,    21,    22,    23,    24,    25,    26,     0,
-     0,     8,    21,    22,    23,    24,    25,    26,     0,    27,
-    28,    29,    30,    42,    21,    22,    23,    24,    25,    26,
-    65,    27,    28,    29,    30,    64,    21,    22,    23,    24,
-    25,    26,    94,    97,    98,    99,   100,    73,    21,    22,
-    23,    24,    25,    26,   101,    97,    98,    99,   100,    93,
-    21,    22,    23,    24,    25,    26,   102,    97,    98,    99,
-   100,   106,    97,    98,    99,   100,     0,     0,   103,    97,
-    98,    99,   100,   104,    97,    98,    99,   100,     0,     0,
-   105,    97,    98,    99,   100,    43,    21,    22,    23,    24,
-    25,    26,    65,     0,    63,    21,    22,    23,    24,    25,
-    26,     0,     0,    89,    21,    22,    23,    24,    25,    26,
-    23,    24,    25,    26
-};
-
-static const short yycheck[] = {     0,
-    38,    28,    29,    30,    31,    19,    38,     8,    34,    35,
-    38,    12,    39,    14,    28,    29,    30,    31,    32,    33,
-    21,    22,    23,    24,    30,    31,    27,    28,    29,    30,
-    38,     8,    32,    33,    37,    12,    13,    14,    15,    16,
-    17,    30,    31,    35,    21,    22,    23,    24,    25,    26,
-    27,    28,    29,    30,     4,    34,    37,     3,     4,     5,
-     6,    36,    38,     4,    41,    66,    67,    68,    69,    70,
-    71,    17,    18,    34,    36,     0,    77,     0,    -1,    -1,
-    81,    27,     3,     4,    -1,     6,    -1,    -1,    -1,    66,
-    -1,    -1,    38,    -1,    95,    72,    97,    98,    99,   100,
-    77,     3,     4,     5,     6,    -1,    -1,   108,     3,     4,
-     5,     6,    -1,    -1,    -1,    17,    18,    38,    28,    29,
-    30,    31,    17,    18,    -1,    27,     3,     4,     5,     6,
-    -1,   108,    27,    -1,    -1,    -1,    38,    -1,    -1,    -1,
-    17,    18,    -1,    38,    19,    20,    21,    22,    23,    24,
-    27,    -1,    -1,    28,    29,    30,    31,    32,    33,    -1,
-    -1,    38,    28,    29,    30,    31,    32,    33,    -1,    28,
-    29,    30,    31,    39,    28,    29,    30,    31,    32,    33,
-    39,    28,    29,    30,    31,    39,    28,    29,    30,    31,
-    32,    33,    39,    28,    29,    30,    31,    39,    28,    29,
-    30,    31,    32,    33,    39,    28,    29,    30,    31,    39,
-    28,    29,    30,    31,    32,    33,    39,    28,    29,    30,
-    31,    39,    28,    29,    30,    31,    -1,    -1,    39,    28,
-    29,    30,    31,    39,    28,    29,    30,    31,    -1,    -1,
-    39,    28,    29,    30,    31,    39,    28,    29,    30,    31,
-    32,    33,    39,    -1,    36,    28,    29,    30,    31,    32,
-    33,    -1,    -1,    36,    28,    29,    30,    31,    32,    33,
-    30,    31,    32,    33
-};
-/* -*-C-*-  Note some compilers choke on comments on `#line' lines.  */
-#line 3 "/usr/gnu/share/bison.simple"
-/* This file comes from bison-1.28.  */
-
-/* Skeleton output parser for bison,
-   Copyright (C) 1984, 1989, 1990 Free Software Foundation, Inc.
+/* Skeleton parser for Yacc-like parsing with Bison,
+   Copyright (C) 1984, 1989, 1990, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -335,388 +23,1069 @@ static const short yycheck[] = {     0,
    This special exception was added by the Free Software Foundation
    in version 1.24 of Bison.  */
 
-/* This is the parser code that is written into each bison parser
-  when the %semantic_parser declaration is not specified in the grammar.
-  It was written by Richard Stallman by simplifying the hairy parser
-  used when %semantic_parser is specified.  */
+/* Written by Richard Stallman by simplifying the original so called
+   ``semantic'' parser.  */
 
-#ifndef YYSTACK_USE_ALLOCA
-#ifdef alloca
-#define YYSTACK_USE_ALLOCA
-#else /* alloca not defined */
-#ifdef __GNUC__
-#define YYSTACK_USE_ALLOCA
-#define alloca __builtin_alloca
-#else /* not GNU C.  */
-#if (!defined (__STDC__) && defined (sparc)) || defined (__sparc__) || defined (__sparc) || defined (__sgi) || (defined (__sun) && defined (__i386))
-#define YYSTACK_USE_ALLOCA
-#include <alloca.h>
-#else /* not sparc */
-/* We think this test detects Watcom and Microsoft C.  */
-/* This used to test MSDOS, but that is a bad idea
-   since that symbol is in the user namespace.  */
-#if (defined (_MSDOS) || defined (_MSDOS_)) && !defined (__TURBOC__)
-#if 0 /* No need for malloc.h, which pollutes the namespace;
-         instead, just don't use alloca.  */
-#include <malloc.h>
-#endif
-#else /* not MSDOS, or __TURBOC__ */
-#if defined(_AIX)
-/* I don't know what this was needed for, but it pollutes the namespace.
-   So I turned it off.   rms, 2 May 1997.  */
-/* #include <malloc.h>  */
- #pragma alloca
-#define YYSTACK_USE_ALLOCA
-#else /* not MSDOS, or __TURBOC__, or _AIX */
-#if 0
-#ifdef __hpux /* haible@ilog.fr says this works for HPUX 9.05 and up,
-                 and on HPUX 10.  Eventually we can turn this on.  */
-#define YYSTACK_USE_ALLOCA
-#define alloca __builtin_alloca
-#endif /* __hpux */
-#endif
-#endif /* not _AIX */
-#endif /* not MSDOS, or __TURBOC__ */
-#endif /* not sparc */
-#endif /* not GNU C */
-#endif /* alloca not defined */
-#endif /* YYSTACK_USE_ALLOCA not defined */
+/* All symbols defined below should begin with yy or YY, to avoid
+   infringing on user name space.  This should be done even for local
+   variables, as they might otherwise be expanded by user macros.
+   There are some unavoidable exceptions within include files to
+   define necessary library symbols; they are noted "INFRINGES ON
+   USER NAME SPACE" below.  */
 
-#ifdef YYSTACK_USE_ALLOCA
-#define YYSTACK_ALLOC alloca
+/* Identify Bison output.  */
+#define YYBISON 1
+
+/* Skeleton name.  */
+#define YYSKELETON_NAME "yacc.c"
+
+/* Pure parsers.  */
+#define YYPURE 0
+
+/* Using locations.  */
+#define YYLSP_NEEDED 0
+
+
+
+/* Tokens.  */
+#ifndef YYTOKENTYPE
+# define YYTOKENTYPE
+   /* Put the tokens into the symbol table, so that GDB and other debuggers
+      know about them.  */
+   enum yytokentype {
+     lFLOAT = 258,
+     tokINTEGER = 259,
+     tokARRAY = 260,
+     NAME = 261,
+     SIN = 262,
+     COS = 263,
+     TAN = 264,
+     ACOS = 265,
+     ASIN = 266,
+     ATAN = 267,
+     LOG = 268,
+     EXP = 269,
+     ABS_TOKEN = 270,
+     SQRT = 271,
+     WHERE = 272,
+     INDEX = 273,
+     EQEQ = 274,
+     LT = 275,
+     LE = 276,
+     GT = 277,
+     GE = 278,
+     NE = 279,
+     LTLT = 280,
+     GTGT = 281,
+     JOIN = 282
+   };
+#endif
+#define lFLOAT 258
+#define tokINTEGER 259
+#define tokARRAY 260
+#define NAME 261
+#define SIN 262
+#define COS 263
+#define TAN 264
+#define ACOS 265
+#define ASIN 266
+#define ATAN 267
+#define LOG 268
+#define EXP 269
+#define ABS_TOKEN 270
+#define SQRT 271
+#define WHERE 272
+#define INDEX 273
+#define EQEQ 274
+#define LT 275
+#define LE 276
+#define GT 277
+#define GE 278
+#define NE 279
+#define LTLT 280
+#define GTGT 281
+#define JOIN 282
+
+
+
+
+/* Copy the first part of user declarations.  */
+#line 1 "XdmfExpr.y"
+
+/* Force the definition for Linux */
+/* Possible bug in older Linux yacc */
+#ifndef yylval
+#define yylval dice_yylval
+#endif
+#ifndef yyerror
+#define yyerror dice_yyerror
+#endif
+
+#ifndef NOBISON
+extern int yylex();
+extern "C" {
+	void yyerror( char *);
+	int  yyparse( void );
+}
+#endif
+#include <XdmfExpr.h>
+#include <XdmfArray.h>
+#include <XdmfHDF.h>
+#include <math.h>
+
+
+static XdmfArray *XdmfExprReturnValue;
+
+class XdmfInt64Array : public XdmfArray {
+public :
+	XdmfInt64Array( XdmfInt64 Length ) {
+		this->SetNumberType( XDMF_INT64_TYPE );
+		this->SetNumberOfElements( Length );
+		}
+	XdmfInt64Array() {
+		this->SetNumberType( XDMF_INT64_TYPE );
+		this->SetNumberOfElements( 10 );
+		};
+};
+
+#define ADD_XDMF_tokARRAY_TO_SYMBOL( a ) \
+	{ \
+	char	name[80]; \
+	XdmfExprSymbol *sp; \
+	sprintf( name, "XdmfArray_%X", ( XdmfLength)(a) ); \
+	sp = XdmfExprSymbolLookup( name ); \
+	sp->ClientData = (a); \
+	}
+
+
+
+/* Enabling traces.  */
+#ifndef YYDEBUG
+# define YYDEBUG 0
+#endif
+
+/* Enabling verbose error messages.  */
+#ifdef YYERROR_VERBOSE
+# undef YYERROR_VERBOSE
+# define YYERROR_VERBOSE 1
 #else
-#define YYSTACK_ALLOC malloc
+# define YYERROR_VERBOSE 0
 #endif
 
-/* Note: there must be only one dollar sign in this file.
-   It is replaced by the list of actions, each action
-   as one case of the switch.  */
+#if ! defined (YYSTYPE) && ! defined (YYSTYPE_IS_DECLARED)
+#line 49 "XdmfExpr.y"
+typedef union YYSTYPE {
+	double		DoubleValue;
+	long		IntegerValue;
+	void		*ArrayPointer;
+	XdmfExprSymbol	*Symbol;
+} YYSTYPE;
+/* Line 191 of yacc.c.  */
+#line 185 "y.tab.c"
+# define yystype YYSTYPE /* obsolescent; will be withdrawn */
+# define YYSTYPE_IS_DECLARED 1
+# define YYSTYPE_IS_TRIVIAL 1
+#endif
 
-#define yyerrok                (yyerrstatus = 0)
-#define yyclearin        (yychar = YYEMPTY)
-#define YYEMPTY                -2
-#define YYEOF                0
-#define YYACCEPT        goto yyacceptlab
-#define YYABORT         goto yyabortlab
-#define YYERROR                goto yyerrlab1
-/* Like YYERROR except do call yyerror.
-   This remains here temporarily to ease the
-   transition to the new meaning of YYERROR, for GCC.
+
+
+/* Copy the second part of user declarations.  */
+
+
+/* Line 214 of yacc.c.  */
+#line 197 "y.tab.c"
+
+#if ! defined (yyoverflow) || YYERROR_VERBOSE
+
+/* The parser invokes alloca or malloc; define the necessary symbols.  */
+
+# if YYSTACK_USE_ALLOCA
+#  define YYSTACK_ALLOC alloca
+# else
+#  ifndef YYSTACK_USE_ALLOCA
+#   if defined (alloca) || defined (_ALLOCA_H)
+#    define YYSTACK_ALLOC alloca
+#   else
+#    ifdef __GNUC__
+#     define YYSTACK_ALLOC __builtin_alloca
+#    endif
+#   endif
+#  endif
+# endif
+
+# ifdef YYSTACK_ALLOC
+   /* Pacify GCC's `empty if-body' warning. */
+#  define YYSTACK_FREE(Ptr) do { /* empty */; } while (0)
+# else
+#  if defined (__STDC__) || defined (__cplusplus)
+#   include <stdlib.h> /* INFRINGES ON USER NAME SPACE */
+#   define YYSIZE_T size_t
+#  endif
+#  define YYSTACK_ALLOC malloc
+#  define YYSTACK_FREE free
+# endif
+#endif /* ! defined (yyoverflow) || YYERROR_VERBOSE */
+
+
+#if (! defined (yyoverflow) \
+     && (! defined (__cplusplus) \
+	 || (YYSTYPE_IS_TRIVIAL)))
+
+/* A type that is properly aligned for any stack member.  */
+union yyalloc
+{
+  short yyss;
+  YYSTYPE yyvs;
+  };
+
+/* The size of the maximum gap between one aligned stack and the next.  */
+# define YYSTACK_GAP_MAXIMUM (sizeof (union yyalloc) - 1)
+
+/* The size of an array large to enough to hold all stacks, each with
+   N elements.  */
+# define YYSTACK_BYTES(N) \
+     ((N) * (sizeof (short) + sizeof (YYSTYPE))				\
+      + YYSTACK_GAP_MAXIMUM)
+
+/* Copy COUNT objects from FROM to TO.  The source and destination do
+   not overlap.  */
+# ifndef YYCOPY
+#  if 1 < __GNUC__
+#   define YYCOPY(To, From, Count) \
+      __builtin_memcpy (To, From, (Count) * sizeof (*(From)))
+#  else
+#   define YYCOPY(To, From, Count)		\
+      do					\
+	{					\
+	  register YYSIZE_T yyi;		\
+	  for (yyi = 0; yyi < (Count); yyi++)	\
+	    (To)[yyi] = (From)[yyi];		\
+	}					\
+      while (0)
+#  endif
+# endif
+
+/* Relocate STACK from its old location to the new one.  The
+   local variables YYSIZE and YYSTACKSIZE give the old and new number of
+   elements in the stack, and YYPTR gives the new location of the
+   stack.  Advance YYPTR to a properly aligned location for the next
+   stack.  */
+# define YYSTACK_RELOCATE(Stack)					\
+    do									\
+      {									\
+	YYSIZE_T yynewbytes;						\
+	YYCOPY (&yyptr->Stack, Stack, yysize);				\
+	Stack = &yyptr->Stack;						\
+	yynewbytes = yystacksize * sizeof (*Stack) + YYSTACK_GAP_MAXIMUM; \
+	yyptr += yynewbytes / sizeof (*yyptr);				\
+      }									\
+    while (0)
+
+#endif
+
+#if defined (__STDC__) || defined (__cplusplus)
+   typedef signed char yysigned_char;
+#else
+   typedef short yysigned_char;
+#endif
+
+/* YYFINAL -- State number of the termination state. */
+#define YYFINAL  22
+/* YYLAST -- Last index in YYTABLE.  */
+#define YYLAST   278
+
+/* YYNTOKENS -- Number of terminals. */
+#define YYNTOKENS  40
+/* YYNNTS -- Number of nonterminals. */
+#define YYNNTS  5
+/* YYNRULES -- Number of rules. */
+#define YYNRULES  46
+/* YYNRULES -- Number of states. */
+#define YYNSTATES  119
+
+/* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
+#define YYUNDEFTOK  2
+#define YYMAXUTOK   282
+
+#define YYTRANSLATE(YYX) 						\
+  ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
+
+/* YYTRANSLATE[YYLEX] -- Bison symbol number corresponding to YYLEX.  */
+static const unsigned char yytranslate[] =
+{
+       0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+      38,    39,    30,    29,    32,    28,     2,    31,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,    37,    33,
+       2,    34,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,    35,     2,    36,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
+       5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
+      15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
+      25,    26,    27
+};
+
+#if YYDEBUG
+/* YYPRHS[YYN] -- Index of the first RHS symbol of rule number YYN in
+   YYRHS.  */
+static const unsigned char yyprhs[] =
+{
+       0,     0,     3,     5,     9,    13,    20,    27,    36,    45,
+      47,    49,    53,    57,    61,    65,    69,    73,    77,    81,
+      85,    89,    93,    97,   101,   105,   110,   117,   124,   131,
+     138,   145,   152,   159,   166,   173,   178,   182,   187,   189,
+     193,   197,   201,   205,   210,   214,   216
+};
+
+/* YYRHS -- A `-1'-separated list of the rules' RHS. */
+static const yysigned_char yyrhs[] =
+{
+      41,     0,    -1,    42,    -1,     5,    34,    43,    -1,     5,
+      34,    44,    -1,     5,    35,    43,    36,    34,    44,    -1,
+       5,    35,    43,    36,    34,    43,    -1,     5,    35,     4,
+      37,     4,    36,    34,    44,    -1,     5,    35,     4,    37,
+       4,    36,    34,    43,    -1,    43,    -1,    44,    -1,    43,
+      29,    43,    -1,    43,    32,    43,    -1,    43,    33,    43,
+      -1,    43,    28,    43,    -1,    43,    30,    43,    -1,    43,
+      31,    43,    -1,    43,    29,    44,    -1,    43,    28,    44,
+      -1,    43,    30,    44,    -1,    43,    31,    44,    -1,    44,
+      29,    43,    -1,    44,    28,    43,    -1,    44,    30,    43,
+      -1,    44,    31,    43,    -1,     5,    35,    43,    36,    -1,
+       5,    35,     4,    37,     4,    36,    -1,    18,    38,    43,
+      19,    43,    39,    -1,    17,    38,    43,    19,    43,    39,
+      -1,    17,    38,    43,    19,    44,    39,    -1,    17,    38,
+      43,    20,    44,    39,    -1,    17,    38,    43,    21,    44,
+      39,    -1,    17,    38,    43,    22,    44,    39,    -1,    17,
+      38,    43,    23,    44,    39,    -1,    17,    38,    43,    24,
+      44,    39,    -1,     6,    38,    43,    39,    -1,    38,    43,
+      39,    -1,    27,    38,    43,    39,    -1,     5,    -1,    44,
+      29,    44,    -1,    44,    28,    44,    -1,    44,    30,    44,
+      -1,    44,    31,    44,    -1,     6,    38,    44,    39,    -1,
+      38,    44,    39,    -1,     4,    -1,     3,    -1
+};
+
+/* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
+static const unsigned short yyrline[] =
+{
+       0,    73,    73,    81,    89,    94,   106,   122,   133,   146,
+     153,   158,   167,   244,   308,   317,   327,   336,   345,   354,
+     363,   372,   381,   390,   399,   408,   418,   429,   474,   507,
+     528,   549,   570,   591,   612,   633,   651,   655,   659,   676,
+     680,   684,   688,   692,   700,   704,   708
+};
+#endif
+
+#if YYDEBUG || YYERROR_VERBOSE
+/* YYTNME[SYMBOL-NUM] -- String name of the symbol SYMBOL-NUM.
+   First, the terminals, then, starting at YYNTOKENS, nonterminals. */
+static const char *const yytname[] =
+{
+  "$end", "error", "$undefined", "lFLOAT", "tokINTEGER", "tokARRAY", "NAME", 
+  "SIN", "COS", "TAN", "ACOS", "ASIN", "ATAN", "LOG", "EXP", "ABS_TOKEN", 
+  "SQRT", "WHERE", "INDEX", "EQEQ", "LT", "LE", "GT", "GE", "NE", "LTLT", 
+  "GTGT", "JOIN", "'-'", "'+'", "'*'", "'/'", "','", "';'", "'='", "'['", 
+  "']'", "':'", "'('", "')'", "$accept", "statemant_list", "statement", 
+  "ArrayExpression", "ScalarExpression", 0
+};
+#endif
+
+# ifdef YYPRINT
+/* YYTOKNUM[YYLEX-NUM] -- Internal token number corresponding to
+   token YYLEX-NUM.  */
+static const unsigned short yytoknum[] =
+{
+       0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
+     265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
+     275,   276,   277,   278,   279,   280,   281,   282,    45,    43,
+      42,    47,    44,    59,    61,    91,    93,    58,    40,    41
+};
+# endif
+
+/* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
+static const unsigned char yyr1[] =
+{
+       0,    40,    41,    42,    42,    42,    42,    42,    42,    42,
+      42,    43,    43,    43,    43,    43,    43,    43,    43,    43,
+      43,    43,    43,    43,    43,    43,    43,    43,    43,    43,
+      43,    43,    43,    43,    43,    43,    43,    43,    43,    44,
+      44,    44,    44,    44,    44,    44,    44
+};
+
+/* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
+static const unsigned char yyr2[] =
+{
+       0,     2,     1,     3,     3,     6,     6,     8,     8,     1,
+       1,     3,     3,     3,     3,     3,     3,     3,     3,     3,
+       3,     3,     3,     3,     3,     4,     6,     6,     6,     6,
+       6,     6,     6,     6,     6,     4,     3,     4,     1,     3,
+       3,     3,     3,     4,     3,     1,     1
+};
+
+/* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
+   STATE-NUM when YYTABLE doesn't specify something else to do.  Zero
+   means the default is an error.  */
+static const unsigned char yydefact[] =
+{
+       0,    46,    45,    38,     0,     0,     0,     0,     0,     0,
+       2,     9,    10,     0,     0,     0,     0,     0,     0,    38,
+       0,     0,     1,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     3,     4,    45,     0,     0,     0,     0,
+       0,     0,     0,     0,    36,    44,    14,    18,    11,    17,
+      15,    19,    16,    20,    12,    13,    22,    40,    21,    39,
+      23,    41,    24,    42,     0,    25,    35,    43,     0,     0,
+       0,     0,     0,     0,     0,    37,    45,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,    25,    26,     6,     5,    28,    29,     0,     0,     0,
+       0,     0,     0,    30,    31,    32,    33,    34,    27,     0,
+       0,     0,    40,    39,    41,    42,    26,     8,     7
+};
+
+/* YYDEFGOTO[NTERM-NUM]. */
+static const yysigned_char yydefgoto[] =
+{
+      -1,     9,    10,    11,    37
+};
+
+/* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
+   STATE-NUM.  */
+#define YYPACT_NINF -36
+static const short yypact[] =
+{
+       1,   -36,   -36,   -33,   -35,   -27,   -24,   -16,    88,    27,
+     -36,   245,    26,    88,   113,    88,    88,    88,    88,     5,
+     143,     7,   -36,    88,    88,    88,    88,    88,    88,    88,
+      88,    88,    88,   245,    26,     4,   227,    26,   155,   108,
+     137,    56,   167,   117,   -36,   -36,   220,   -14,   220,   -14,
+     -12,   -36,   -12,   -36,   -36,   -36,   220,   -14,   220,   -14,
+     -12,   -36,   -12,   -36,    38,    11,   -36,   -36,    88,     6,
+       6,     6,     6,     6,    88,   -36,    10,   236,    40,    88,
+     179,   150,    36,     6,   162,   174,   186,   198,   203,   191,
+      73,   -36,    46,   245,    26,   -36,   -36,     6,   210,     6,
+       6,     6,     6,   -36,   -36,   -36,   -36,   -36,   -36,    45,
+      88,   215,     3,     3,   -36,   -36,   -36,   245,    26
+};
+
+/* YYPGOTO[NTERM-NUM].  */
+static const yysigned_char yypgoto[] =
+{
+     -36,   -36,   -36,    35,     0
+};
+
+/* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
+   positive, shift that token.  If negative, reduce the rule which
+   number is the opposite.  If zero, do what YYDEFACT says.
+   If YYTABLE_NINF, syntax error.  */
+#define YYTABLE_NINF -1
+static const unsigned char yytable[] =
+{
+      12,    13,    14,    15,     1,     2,     3,     4,    21,     1,
+       2,    16,    82,    34,    17,    39,    31,    32,     5,     6,
+      27,    28,    18,    47,    49,    51,    53,    22,     7,    57,
+      59,    61,    63,   101,   102,    29,    30,    31,    32,     8,
+      43,    64,    78,    20,    83,    79,    45,    90,    33,    36,
+      38,    40,    41,    42,    29,    30,    31,    32,    46,    48,
+      50,    52,    54,    55,    56,    58,    60,    62,    81,    84,
+      85,    86,    87,    88,    97,    74,    92,   109,    77,    94,
+     110,   116,     0,    98,    23,    24,    25,    26,    27,    28,
+       0,     1,     2,    19,     4,     0,     0,   111,     0,   112,
+     113,   114,   115,    80,     0,     5,     6,     0,     0,    89,
+     118,     0,     0,     0,    93,     7,     1,    35,    19,     4,
+       1,    76,    19,     4,     0,     0,     8,     0,     0,     0,
+       5,     6,     0,     0,     5,     6,    29,    30,    31,    32,
+       7,     0,     0,     0,     7,   117,     0,    67,     0,     0,
+       0,     8,     0,     0,     0,     8,    68,    69,    70,    71,
+      72,    73,     0,     0,     0,    23,    24,    25,    26,    27,
+      28,    23,    24,    25,    26,    27,    28,     0,    29,    30,
+      31,    32,    44,    23,    24,    25,    26,    27,    28,    96,
+      99,   100,   101,   102,    66,    23,    24,    25,    26,    27,
+      28,   103,    99,   100,   101,   102,    75,    23,    24,    25,
+      26,    27,    28,   104,    99,   100,   101,   102,    95,    23,
+      24,    25,    26,    27,    28,   105,    99,   100,   101,   102,
+     108,    99,   100,   101,   102,     0,     0,   106,    99,   100,
+     101,   102,   107,    99,   100,   101,   102,     0,     0,    45,
+      25,    26,    27,    28,    67,    23,    24,    25,    26,    27,
+      28,     0,     0,    65,    23,    24,    25,    26,    27,    28,
+       0,     0,    91,    23,    24,    25,    26,    27,    28
+};
+
+static const yysigned_char yycheck[] =
+{
+       0,    34,    35,    38,     3,     4,     5,     6,     8,     3,
+       4,    38,     6,    13,    38,    15,    30,    31,    17,    18,
+      32,    33,    38,    23,    24,    25,    26,     0,    27,    29,
+      30,    31,    32,    30,    31,    28,    29,    30,    31,    38,
+      35,    37,     4,     8,    38,    34,    39,    37,    13,    14,
+      15,    16,    17,    18,    28,    29,    30,    31,    23,    24,
+      25,    26,    27,    28,    29,    30,    31,    32,    68,    69,
+      70,    71,    72,    73,    38,    19,    36,     4,    43,    79,
+      34,    36,    -1,    83,    28,    29,    30,    31,    32,    33,
+      -1,     3,     4,     5,     6,    -1,    -1,    97,    -1,    99,
+     100,   101,   102,    68,    -1,    17,    18,    -1,    -1,    74,
+     110,    -1,    -1,    -1,    79,    27,     3,     4,     5,     6,
+       3,     4,     5,     6,    -1,    -1,    38,    -1,    -1,    -1,
+      17,    18,    -1,    -1,    17,    18,    28,    29,    30,    31,
+      27,    -1,    -1,    -1,    27,   110,    -1,    39,    -1,    -1,
+      -1,    38,    -1,    -1,    -1,    38,    19,    20,    21,    22,
+      23,    24,    -1,    -1,    -1,    28,    29,    30,    31,    32,
+      33,    28,    29,    30,    31,    32,    33,    -1,    28,    29,
+      30,    31,    39,    28,    29,    30,    31,    32,    33,    39,
+      28,    29,    30,    31,    39,    28,    29,    30,    31,    32,
+      33,    39,    28,    29,    30,    31,    39,    28,    29,    30,
+      31,    32,    33,    39,    28,    29,    30,    31,    39,    28,
+      29,    30,    31,    32,    33,    39,    28,    29,    30,    31,
+      39,    28,    29,    30,    31,    -1,    -1,    39,    28,    29,
+      30,    31,    39,    28,    29,    30,    31,    -1,    -1,    39,
+      30,    31,    32,    33,    39,    28,    29,    30,    31,    32,
+      33,    -1,    -1,    36,    28,    29,    30,    31,    32,    33,
+      -1,    -1,    36,    28,    29,    30,    31,    32,    33
+};
+
+/* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
+   symbol of state STATE-NUM.  */
+static const unsigned char yystos[] =
+{
+       0,     3,     4,     5,     6,    17,    18,    27,    38,    41,
+      42,    43,    44,    34,    35,    38,    38,    38,    38,     5,
+      43,    44,     0,    28,    29,    30,    31,    32,    33,    28,
+      29,    30,    31,    43,    44,     4,    43,    44,    43,    44,
+      43,    43,    43,    35,    39,    39,    43,    44,    43,    44,
+      43,    44,    43,    44,    43,    43,    43,    44,    43,    44,
+      43,    44,    43,    44,    37,    36,    39,    39,    19,    20,
+      21,    22,    23,    24,    19,    39,     4,    43,     4,    34,
+      43,    44,     6,    38,    44,    44,    44,    44,    44,    43,
+      37,    36,    36,    43,    44,    39,    39,    38,    44,    28,
+      29,    30,    31,    39,    39,    39,    39,    39,    39,     4,
+      34,    44,    44,    44,    44,    44,    36,    43,    44
+};
+
+#if ! defined (YYSIZE_T) && defined (__SIZE_TYPE__)
+# define YYSIZE_T __SIZE_TYPE__
+#endif
+#if ! defined (YYSIZE_T) && defined (size_t)
+# define YYSIZE_T size_t
+#endif
+#if ! defined (YYSIZE_T)
+# if defined (__STDC__) || defined (__cplusplus)
+#  include <stddef.h> /* INFRINGES ON USER NAME SPACE */
+#  define YYSIZE_T size_t
+# endif
+#endif
+#if ! defined (YYSIZE_T)
+# define YYSIZE_T unsigned int
+#endif
+
+#define yyerrok		(yyerrstatus = 0)
+#define yyclearin	(yychar = YYEMPTY)
+#define YYEMPTY		(-2)
+#define YYEOF		0
+
+#define YYACCEPT	goto yyacceptlab
+#define YYABORT		goto yyabortlab
+#define YYERROR		goto yyerrlab1
+
+
+/* Like YYERROR except do call yyerror.  This remains here temporarily
+   to ease the transition to the new meaning of YYERROR, for GCC.
    Once GCC version 2 has supplanted version 1, this can go.  */
-#define YYFAIL                goto yyerrlab
+
+#define YYFAIL		goto yyerrlab
+
 #define YYRECOVERING()  (!!yyerrstatus)
-#define YYBACKUP(token, value) \
-do                                                                \
-  if (yychar == YYEMPTY && yylen == 1)                                \
-    { yychar = (token), yylval = (value);                        \
-      yychar1 = YYTRANSLATE (yychar);                                \
-      YYPOPSTACK;                                                \
-      goto yybackup;                                                \
-    }                                                                \
-  else                                                                \
-    { yyerror ("syntax error: cannot back up"); YYERROR; }        \
+
+#define YYBACKUP(Token, Value)					\
+do								\
+  if (yychar == YYEMPTY && yylen == 1)				\
+    {								\
+      yychar = (Token);						\
+      yylval = (Value);						\
+      yytoken = YYTRANSLATE (yychar);				\
+      YYPOPSTACK;						\
+      goto yybackup;						\
+    }								\
+  else								\
+    { 								\
+      yyerror ("syntax error: cannot back up");\
+      YYERROR;							\
+    }								\
 while (0)
 
-#define YYTERROR        1
-#define YYERRCODE        256
+#define YYTERROR	1
+#define YYERRCODE	256
 
-#ifndef YYPURE
-#define YYLEX                yylex()
+/* YYLLOC_DEFAULT -- Compute the default location (before the actions
+   are run).  */
+
+#ifndef YYLLOC_DEFAULT
+# define YYLLOC_DEFAULT(Current, Rhs, N)         \
+  Current.first_line   = Rhs[1].first_line;      \
+  Current.first_column = Rhs[1].first_column;    \
+  Current.last_line    = Rhs[N].last_line;       \
+  Current.last_column  = Rhs[N].last_column;
 #endif
 
-#ifdef YYPURE
-#ifdef YYLSP_NEEDED
+/* YYLEX -- calling `yylex' with the right arguments.  */
+
 #ifdef YYLEX_PARAM
-#define YYLEX                yylex(&yylval, &yylloc, YYLEX_PARAM)
+# define YYLEX yylex (YYLEX_PARAM)
 #else
-#define YYLEX                yylex(&yylval, &yylloc)
+# define YYLEX yylex ()
 #endif
-#else /* not YYLSP_NEEDED */
-#ifdef YYLEX_PARAM
-#define YYLEX                yylex(&yylval, YYLEX_PARAM)
+
+/* Enable debugging if requested.  */
+#if YYDEBUG
+
+# ifndef YYFPRINTF
+#  include <stdio.h> /* INFRINGES ON USER NAME SPACE */
+#  define YYFPRINTF fprintf
+# endif
+
+# define YYDPRINTF(Args)			\
+do {						\
+  if (yydebug)					\
+    YYFPRINTF Args;				\
+} while (0)
+
+# define YYDSYMPRINT(Args)			\
+do {						\
+  if (yydebug)					\
+    yysymprint Args;				\
+} while (0)
+
+# define YYDSYMPRINTF(Title, Token, Value, Location)		\
+do {								\
+  if (yydebug)							\
+    {								\
+      YYFPRINTF (stderr, "%s ", Title);				\
+      yysymprint (stderr, 					\
+                  Token, Value);	\
+      YYFPRINTF (stderr, "\n");					\
+    }								\
+} while (0)
+
+/*------------------------------------------------------------------.
+| yy_stack_print -- Print the state stack from its BOTTOM up to its |
+| TOP (cinluded).                                                   |
+`------------------------------------------------------------------*/
+
+#if defined (__STDC__) || defined (__cplusplus)
+static void
+yy_stack_print (short *bottom, short *top)
 #else
-#define YYLEX                yylex(&yylval)
+static void
+yy_stack_print (bottom, top)
+    short *bottom;
+    short *top;
 #endif
-#endif /* not YYLSP_NEEDED */
+{
+  YYFPRINTF (stderr, "Stack now");
+  for (/* Nothing. */; bottom <= top; ++bottom)
+    YYFPRINTF (stderr, " %d", *bottom);
+  YYFPRINTF (stderr, "\n");
+}
+
+# define YY_STACK_PRINT(Bottom, Top)				\
+do {								\
+  if (yydebug)							\
+    yy_stack_print ((Bottom), (Top));				\
+} while (0)
+
+
+/*------------------------------------------------.
+| Report that the YYRULE is going to be reduced.  |
+`------------------------------------------------*/
+
+#if defined (__STDC__) || defined (__cplusplus)
+static void
+yy_reduce_print (int yyrule)
+#else
+static void
+yy_reduce_print (yyrule)
+    int yyrule;
+#endif
+{
+  int yyi;
+  unsigned int yylineno = yyrline[yyrule];
+  YYFPRINTF (stderr, "Reducing stack by rule %d (line %u), ",
+             yyrule - 1, yylineno);
+  /* Print the symbols being reduced, and their result.  */
+  for (yyi = yyprhs[yyrule]; 0 <= yyrhs[yyi]; yyi++)
+    YYFPRINTF (stderr, "%s ", yytname [yyrhs[yyi]]);
+  YYFPRINTF (stderr, "-> %s\n", yytname [yyr1[yyrule]]);
+}
+
+# define YY_REDUCE_PRINT(Rule)		\
+do {					\
+  if (yydebug)				\
+    yy_reduce_print (Rule);		\
+} while (0)
+
+/* Nonzero means print parse trace.  It is left uninitialized so that
+   multiple parsers can coexist.  */
+int yydebug;
+#else /* !YYDEBUG */
+# define YYDPRINTF(Args)
+# define YYDSYMPRINT(Args)
+# define YYDSYMPRINTF(Title, Token, Value, Location)
+# define YY_STACK_PRINT(Bottom, Top)
+# define YY_REDUCE_PRINT(Rule)
+#endif /* !YYDEBUG */
+
+
+/* YYINITDEPTH -- initial size of the parser's stacks.  */
+#ifndef	YYINITDEPTH
+# define YYINITDEPTH 200
 #endif
 
-/* If nonreentrant, generate the variables here */
+/* YYMAXDEPTH -- maximum size the stacks can grow to (effective only
+   if the built-in stack extension method is used).
 
-#ifndef YYPURE
-
-int        yychar;                        /*  the lookahead symbol                */
-YYSTYPE        yylval;                        /*  the semantic value of the                */
-                                /*  lookahead symbol                        */
-
-#ifdef YYLSP_NEEDED
-YYLTYPE yylloc;                        /*  location data for the lookahead        */
-                                /*  symbol                                */
-#endif
-
-int yynerrs;                        /*  number of parse errors so far       */
-#endif  /* not YYPURE */
-
-#if YYDEBUG != 0
-int yydebug;                        /*  nonzero means print parse trace        */
-/* Since this is uninitialized, it does not stop multiple parsers
-   from coexisting.  */
-#endif
-
-/*  YYINITDEPTH indicates the initial size of the parser's stacks        */
-
-#ifndef        YYINITDEPTH
-#define YYINITDEPTH 200
-#endif
-
-/*  YYMAXDEPTH is the maximum size the stacks can grow to
-    (effective only if the built-in stack extension method is used).  */
+   Do not make this value too large; the results are undefined if
+   SIZE_MAX < YYSTACK_BYTES (YYMAXDEPTH)
+   evaluated with infinite-precision integer arithmetic.  */
 
 #if YYMAXDEPTH == 0
-#undef YYMAXDEPTH
+# undef YYMAXDEPTH
 #endif
 
 #ifndef YYMAXDEPTH
-#define YYMAXDEPTH 10000
+# define YYMAXDEPTH 10000
 #endif
+
 
-/* Define __yy_memcpy.  Note that the size argument
-   should be passed with type unsigned int, because that is what the non-GCC
-   definitions require.  With GCC, __builtin_memcpy takes an arg
-   of type size_t, but it can handle unsigned int.  */
 
-#if __GNUC__ > 1                /* GNU C and GNU C++ define this.  */
-#define __yy_memcpy(TO,FROM,COUNT)        __builtin_memcpy(TO,FROM,COUNT)
-#else                                /* not GNU C or C++ */
-#ifndef __cplusplus
+#if YYERROR_VERBOSE
 
-/* This is the most reliable way to avoid incompatibilities
-   in available built-in functions on various systems.  */
-static void
-__yy_memcpy (to, from, count)
-     char *to;
-     char *from;
-     unsigned int count;
+# ifndef yystrlen
+#  if defined (__GLIBC__) && defined (_STRING_H)
+#   define yystrlen strlen
+#  else
+/* Return the length of YYSTR.  */
+static YYSIZE_T
+#   if defined (__STDC__) || defined (__cplusplus)
+yystrlen (const char *yystr)
+#   else
+yystrlen (yystr)
+     const char *yystr;
+#   endif
 {
-  register char *f = from;
-  register char *t = to;
-  register int i = count;
+  register const char *yys = yystr;
 
-  while (i-- > 0)
-    *t++ = *f++;
+  while (*yys++ != '\0')
+    continue;
+
+  return yys - yystr - 1;
 }
+#  endif
+# endif
 
-#else /* __cplusplus */
-
-/* This is the most reliable way to avoid incompatibilities
-   in available built-in functions on various systems.  */
-static void
-__yy_memcpy (char *to, char *from, unsigned int count)
+# ifndef yystpcpy
+#  if defined (__GLIBC__) && defined (_STRING_H) && defined (_GNU_SOURCE)
+#   define yystpcpy stpcpy
+#  else
+/* Copy YYSRC to YYDEST, returning the address of the terminating '\0' in
+   YYDEST.  */
+static char *
+#   if defined (__STDC__) || defined (__cplusplus)
+yystpcpy (char *yydest, const char *yysrc)
+#   else
+yystpcpy (yydest, yysrc)
+     char *yydest;
+     const char *yysrc;
+#   endif
 {
-  register char *t = to;
-  register char *f = from;
-  register int i = count;
+  register char *yyd = yydest;
+  register const char *yys = yysrc;
 
-  while (i-- > 0)
-    *t++ = *f++;
+  while ((*yyd++ = *yys++) != '\0')
+    continue;
+
+  return yyd - 1;
 }
+#  endif
+# endif
 
-#endif
-#endif
+#endif /* !YYERROR_VERBOSE */
+
 
-#line 217 "/usr/gnu/share/bison.simple"
 
-/* The user can define YYPARSE_PARAM as the name of an argument to be passed
-   into yyparse.  The argument should have type void *.
-   It should actually point to an object.
-   Grammar actions can access the variable by casting it
-   to the proper pointer type.  */
+#if YYDEBUG
+/*--------------------------------.
+| Print this symbol on YYOUTPUT.  |
+`--------------------------------*/
 
-#ifdef YYPARSE_PARAM
-#ifdef __cplusplus
-#define YYPARSE_PARAM_ARG void *YYPARSE_PARAM
-#define YYPARSE_PARAM_DECL
-#else /* not __cplusplus */
-#define YYPARSE_PARAM_ARG YYPARSE_PARAM
-#define YYPARSE_PARAM_DECL void *YYPARSE_PARAM;
-#endif /* not __cplusplus */
-#else /* not YYPARSE_PARAM */
-#define YYPARSE_PARAM_ARG
-#define YYPARSE_PARAM_DECL
-#endif /* not YYPARSE_PARAM */
-
-/* Prevent warning if -Wstrict-prototypes.  */
-#ifdef __GNUC__
-#ifdef YYPARSE_PARAM
-int yyparse (void *);
+#if defined (__STDC__) || defined (__cplusplus)
+static void
+yysymprint (FILE *yyoutput, int yytype, YYSTYPE *yyvaluep)
 #else
-int yyparse (void);
+static void
+yysymprint (yyoutput, yytype, yyvaluep)
+    FILE *yyoutput;
+    int yytype;
+    YYSTYPE *yyvaluep;
 #endif
-#endif
-
-int
-yyparse(YYPARSE_PARAM_ARG)
-     YYPARSE_PARAM_DECL
 {
+  /* Pacify ``unused variable'' warnings.  */
+  (void) yyvaluep;
+
+  if (yytype < YYNTOKENS)
+    {
+      YYFPRINTF (yyoutput, "token %s (", yytname[yytype]);
+# ifdef YYPRINT
+      YYPRINT (yyoutput, yytoknum[yytype], *yyvaluep);
+# endif
+    }
+  else
+    YYFPRINTF (yyoutput, "nterm %s (", yytname[yytype]);
+
+  switch (yytype)
+    {
+      default:
+        break;
+    }
+  YYFPRINTF (yyoutput, ")");
+}
+
+#endif /* ! YYDEBUG */
+/*-----------------------------------------------.
+| Release the memory associated to this symbol.  |
+`-----------------------------------------------*/
+
+#if defined (__STDC__) || defined (__cplusplus)
+static void
+yydestruct (int yytype, YYSTYPE *yyvaluep)
+#else
+static void
+yydestruct (yytype, yyvaluep)
+    int yytype;
+    YYSTYPE *yyvaluep;
+#endif
+{
+  /* Pacify ``unused variable'' warnings.  */
+  (void) yyvaluep;
+
+  switch (yytype)
+    {
+
+      default:
+        break;
+    }
+}
+
+
+/* Prevent warnings from -Wmissing-prototypes.  */
+
+#ifdef YYPARSE_PARAM
+# if defined (__STDC__) || defined (__cplusplus)
+int yyparse (void *YYPARSE_PARAM);
+# else
+int yyparse ();
+# endif
+#else /* ! YYPARSE_PARAM */
+#if defined (__STDC__) || defined (__cplusplus)
+int yyparse (void);
+#else
+int yyparse ();
+#endif
+#endif /* ! YYPARSE_PARAM */
+
+
+
+/* The lookahead symbol.  */
+int yychar;
+
+/* The semantic value of the lookahead symbol.  */
+YYSTYPE yylval;
+
+/* Number of syntax errors so far.  */
+int yynerrs;
+
+
+
+/*----------.
+| yyparse.  |
+`----------*/
+
+#ifdef YYPARSE_PARAM
+# if defined (__STDC__) || defined (__cplusplus)
+int yyparse (void *YYPARSE_PARAM)
+# else
+int yyparse (YYPARSE_PARAM)
+  void *YYPARSE_PARAM;
+# endif
+#else /* ! YYPARSE_PARAM */
+#if defined (__STDC__) || defined (__cplusplus)
+int
+yyparse (void)
+#else
+int
+yyparse ()
+
+#endif
+#endif
+{
+  
   register int yystate;
   register int yyn;
+  int yyresult;
+  /* Number of tokens to shift before error messages enabled.  */
+  int yyerrstatus;
+  /* Lookahead token as an internal (translated) token number.  */
+  int yytoken = 0;
+
+  /* Three stacks and their tools:
+     `yyss': related to states,
+     `yyvs': related to semantic values,
+     `yyls': related to locations.
+
+     Refer to the stacks thru separate pointers, to allow yyoverflow
+     to reallocate them elsewhere.  */
+
+  /* The state stack.  */
+  short	yyssa[YYINITDEPTH];
+  short *yyss = yyssa;
   register short *yyssp;
+
+  /* The semantic value stack.  */
+  YYSTYPE yyvsa[YYINITDEPTH];
+  YYSTYPE *yyvs = yyvsa;
   register YYSTYPE *yyvsp;
-  int yyerrstatus;        /*  number of tokens to shift before error messages enabled */
-  int yychar1 = 0;                /*  lookahead token as an internal (translated) token number */
 
-  short        yyssa[YYINITDEPTH];        /*  the state stack                        */
-  YYSTYPE yyvsa[YYINITDEPTH];        /*  the semantic value stack                */
 
-  short *yyss = yyssa;                /*  refer to the stacks thru separate pointers */
-  YYSTYPE *yyvs = yyvsa;        /*  to allow yyoverflow to reallocate them elsewhere */
 
-#ifdef YYLSP_NEEDED
-  YYLTYPE yylsa[YYINITDEPTH];        /*  the location stack                        */
-  YYLTYPE *yyls = yylsa;
-  YYLTYPE *yylsp;
-
-#define YYPOPSTACK   (yyvsp--, yyssp--, yylsp--)
-#else
 #define YYPOPSTACK   (yyvsp--, yyssp--)
-#endif
 
-  int yystacksize = YYINITDEPTH;
-  int yyfree_stacks = 0;
+  YYSIZE_T yystacksize = YYINITDEPTH;
 
-#ifdef YYPURE
-  int yychar;
-  YYSTYPE yylval;
-  int yynerrs;
-#ifdef YYLSP_NEEDED
-  YYLTYPE yylloc;
-#endif
-#endif
+  /* The variables used to return semantic value and location from the
+     action routines.  */
+  YYSTYPE yyval;
 
-  YYSTYPE yyval;                /*  the variable used to return                */
-                                /*  semantic values from the action        */
-                                /*  routines                                */
 
+  /* When reducing, the number of symbols on the RHS of the reduced
+     rule.  */
   int yylen;
 
-#if YYDEBUG != 0
-  if (yydebug)
-    fprintf(stderr, "Starting parse\n");
-#endif
+  YYDPRINTF ((stderr, "Starting parse\n"));
 
   yystate = 0;
   yyerrstatus = 0;
   yynerrs = 0;
-  yychar = YYEMPTY;                /* Cause a token to be read.  */
+  yychar = YYEMPTY;		/* Cause a token to be read.  */
 
   /* Initialize stack pointers.
      Waste one element of value and location stack
      so that they stay on the same level as the state stack.
      The wasted elements are never initialized.  */
 
-  yyssp = yyss - 1;
+  yyssp = yyss;
   yyvsp = yyvs;
-#ifdef YYLSP_NEEDED
-  yylsp = yyls;
-#endif
 
-/* Push a new state, which is found in  yystate  .  */
-/* In all cases, when you get here, the value and location stacks
-   have just been pushed. so pushing a state here evens the stacks.  */
-yynewstate:
+  goto yysetstate;
 
-  *++yyssp = yystate;
+/*------------------------------------------------------------.
+| yynewstate -- Push a new state, which is found in yystate.  |
+`------------------------------------------------------------*/
+ yynewstate:
+  /* In all cases, when you get here, the value and location stacks
+     have just been pushed. so pushing a state here evens the stacks.
+     */
+  yyssp++;
 
-  if (yyssp >= yyss + yystacksize - 1)
+ yysetstate:
+  *yyssp = yystate;
+
+  if (yyss + yystacksize - 1 <= yyssp)
     {
-      /* Give user a chance to reallocate the stack */
-      /* Use copies of these so that the &'s don't force the real ones into memory. */
-      YYSTYPE *yyvs1 = yyvs;
-      short *yyss1 = yyss;
-#ifdef YYLSP_NEEDED
-      YYLTYPE *yyls1 = yyls;
-#endif
-
       /* Get the current used size of the three stacks, in elements.  */
-      int size = yyssp - yyss + 1;
+      YYSIZE_T yysize = yyssp - yyss + 1;
 
 #ifdef yyoverflow
-      /* Each stack pointer address is followed by the size of
-         the data in use in that stack, in bytes.  */
-#ifdef YYLSP_NEEDED
-      /* This used to be a conditional around just the two extra args,
-         but that might be undefined if yyoverflow is a macro.  */
-      yyoverflow("parser stack overflow",
-                 &yyss1, size * sizeof (*yyssp),
-                 &yyvs1, size * sizeof (*yyvsp),
-                 &yyls1, size * sizeof (*yylsp),
-                 &yystacksize);
-#else
-      yyoverflow("parser stack overflow",
-                 &yyss1, size * sizeof (*yyssp),
-                 &yyvs1, size * sizeof (*yyvsp),
-                 &yystacksize);
-#endif
+      {
+	/* Give user a chance to reallocate the stack. Use copies of
+	   these so that the &'s don't force the real ones into
+	   memory.  */
+	YYSTYPE *yyvs1 = yyvs;
+	short *yyss1 = yyss;
 
-      yyss = yyss1; yyvs = yyvs1;
-#ifdef YYLSP_NEEDED
-      yyls = yyls1;
-#endif
+
+	/* Each stack pointer address is followed by the size of the
+	   data in use in that stack, in bytes.  This used to be a
+	   conditional around just the two extra args, but that might
+	   be undefined if yyoverflow is a macro.  */
+	yyoverflow ("parser stack overflow",
+		    &yyss1, yysize * sizeof (*yyssp),
+		    &yyvs1, yysize * sizeof (*yyvsp),
+
+		    &yystacksize);
+
+	yyss = yyss1;
+	yyvs = yyvs1;
+      }
 #else /* no yyoverflow */
+# ifndef YYSTACK_RELOCATE
+      goto yyoverflowlab;
+# else
       /* Extend the stack our own way.  */
-      if (yystacksize >= YYMAXDEPTH)
-        {
-          yyerror("parser stack overflow");
-          if (yyfree_stacks)
-            {
-              free (yyss);
-              free (yyvs);
-#ifdef YYLSP_NEEDED
-              free (yyls);
-#endif
-            }
-          return 2;
-        }
+      if (YYMAXDEPTH <= yystacksize)
+	goto yyoverflowlab;
       yystacksize *= 2;
-      if (yystacksize > YYMAXDEPTH)
-        yystacksize = YYMAXDEPTH;
-#ifndef YYSTACK_USE_ALLOCA
-      yyfree_stacks = 1;
-#endif
-      yyss = (short *) YYSTACK_ALLOC (yystacksize * sizeof (*yyssp));
-      __yy_memcpy ((char *)yyss, (char *)yyss1,
-                   size * (unsigned int) sizeof (*yyssp));
-      yyvs = (YYSTYPE *) YYSTACK_ALLOC (yystacksize * sizeof (*yyvsp));
-      __yy_memcpy ((char *)yyvs, (char *)yyvs1,
-                   size * (unsigned int) sizeof (*yyvsp));
-#ifdef YYLSP_NEEDED
-      yyls = (YYLTYPE *) YYSTACK_ALLOC (yystacksize * sizeof (*yylsp));
-      __yy_memcpy ((char *)yyls, (char *)yyls1,
-                   size * (unsigned int) sizeof (*yylsp));
-#endif
+      if (YYMAXDEPTH < yystacksize)
+	yystacksize = YYMAXDEPTH;
+
+      {
+	short *yyss1 = yyss;
+	union yyalloc *yyptr =
+	  (union yyalloc *) YYSTACK_ALLOC (YYSTACK_BYTES (yystacksize));
+	if (! yyptr)
+	  goto yyoverflowlab;
+	YYSTACK_RELOCATE (yyss);
+	YYSTACK_RELOCATE (yyvs);
+
+#  undef YYSTACK_RELOCATE
+	if (yyss1 != yyssa)
+	  YYSTACK_FREE (yyss1);
+      }
+# endif
 #endif /* no yyoverflow */
 
-      yyssp = yyss + size - 1;
-      yyvsp = yyvs + size - 1;
-#ifdef YYLSP_NEEDED
-      yylsp = yyls + size - 1;
-#endif
+      yyssp = yyss + yysize - 1;
+      yyvsp = yyvs + yysize - 1;
 
-#if YYDEBUG != 0
-      if (yydebug)
-        fprintf(stderr, "Stack size increased to %d\n", yystacksize);
-#endif
 
-      if (yyssp >= yyss + yystacksize - 1)
-        YYABORT;
+      YYDPRINTF ((stderr, "Stack size increased to %lu\n",
+		  (unsigned long int) yystacksize));
+
+      if (yyss + yystacksize - 1 <= yyssp)
+	YYABORT;
     }
 
-#if YYDEBUG != 0
-  if (yydebug)
-    fprintf(stderr, "Entering state %d\n", yystate);
-#endif
+  YYDPRINTF ((stderr, "Entering state %d\n", yystate));
 
   goto yybackup;
- yybackup:
+
+/*-----------.
+| yybackup.  |
+`-----------*/
+yybackup:
 
 /* Do appropriate processing given the current state.  */
 /* Read a lookahead token if we need one and don't already have one.  */
@@ -725,1124 +1094,1110 @@ yynewstate:
   /* First try to decide what to do without reference to lookahead token.  */
 
   yyn = yypact[yystate];
-  if (yyn == YYFLAG)
+  if (yyn == YYPACT_NINF)
     goto yydefault;
 
   /* Not known => get a lookahead token if don't already have one.  */
 
-  /* yychar is either YYEMPTY or YYEOF
-     or a valid token in external form.  */
-
+  /* YYCHAR is either YYEMPTY or YYEOF or a valid lookahead symbol.  */
   if (yychar == YYEMPTY)
     {
-#if YYDEBUG != 0
-      if (yydebug)
-        fprintf(stderr, "Reading a token: ");
-#endif
+      YYDPRINTF ((stderr, "Reading a token: "));
       yychar = YYLEX;
     }
 
-  /* Convert token to internal form (in yychar1) for indexing tables with */
-
-  if (yychar <= 0)                /* This means end of input. */
+  if (yychar <= YYEOF)
     {
-      yychar1 = 0;
-      yychar = YYEOF;                /* Don't call YYLEX any more */
-
-#if YYDEBUG != 0
-      if (yydebug)
-        fprintf(stderr, "Now at end of input.\n");
-#endif
+      yychar = yytoken = YYEOF;
+      YYDPRINTF ((stderr, "Now at end of input.\n"));
     }
   else
     {
-      yychar1 = YYTRANSLATE(yychar);
-
-#if YYDEBUG != 0
-      if (yydebug)
-        {
-          fprintf (stderr, "Next token is %d (%s", yychar, yytname[yychar1]);
-          /* Give the individual parser a way to print the precise meaning
-             of a token, for further debugging info.  */
-#ifdef YYPRINT
-          YYPRINT (stderr, yychar, yylval);
-#endif
-          fprintf (stderr, ")\n");
-        }
-#endif
+      yytoken = YYTRANSLATE (yychar);
+      YYDSYMPRINTF ("Next token is", yytoken, &yylval, &yylloc);
     }
 
-  yyn += yychar1;
-  if (yyn < 0 || yyn > YYLAST || yycheck[yyn] != yychar1)
+  /* If the proper action on seeing token YYTOKEN is to reduce or to
+     detect an error, take that action.  */
+  yyn += yytoken;
+  if (yyn < 0 || YYLAST < yyn || yycheck[yyn] != yytoken)
     goto yydefault;
-
   yyn = yytable[yyn];
-
-  /* yyn is what to do for this token type in this state.
-     Negative => reduce, -yyn is rule number.
-     Positive => shift, yyn is new state.
-       New state is final state => don't bother to shift,
-       just return success.
-     0, or most negative number => error.  */
-
-  if (yyn < 0)
+  if (yyn <= 0)
     {
-      if (yyn == YYFLAG)
-        goto yyerrlab;
+      if (yyn == 0 || yyn == YYTABLE_NINF)
+	goto yyerrlab;
       yyn = -yyn;
       goto yyreduce;
     }
-  else if (yyn == 0)
-    goto yyerrlab;
 
   if (yyn == YYFINAL)
     YYACCEPT;
 
   /* Shift the lookahead token.  */
-
-#if YYDEBUG != 0
-  if (yydebug)
-    fprintf(stderr, "Shifting token %d (%s), ", yychar, yytname[yychar1]);
-#endif
+  YYDPRINTF ((stderr, "Shifting token %s, ", yytname[yytoken]));
 
   /* Discard the token being shifted unless it is eof.  */
   if (yychar != YYEOF)
     yychar = YYEMPTY;
 
   *++yyvsp = yylval;
-#ifdef YYLSP_NEEDED
-  *++yylsp = yylloc;
-#endif
 
-  /* count tokens shifted since error; after three, turn off error status.  */
-  if (yyerrstatus) yyerrstatus--;
+
+  /* Count tokens shifted since error; after three, turn off error
+     status.  */
+  if (yyerrstatus)
+    yyerrstatus--;
 
   yystate = yyn;
   goto yynewstate;
 
-/* Do the default action for the current state.  */
-yydefault:
 
+/*-----------------------------------------------------------.
+| yydefault -- do the default action for the current state.  |
+`-----------------------------------------------------------*/
+yydefault:
   yyn = yydefact[yystate];
   if (yyn == 0)
     goto yyerrlab;
+  goto yyreduce;
 
-/* Do a reduction.  yyn is the number of a rule to reduce with.  */
+
+/*-----------------------------.
+| yyreduce -- Do a reduction.  |
+`-----------------------------*/
 yyreduce:
+  /* yyn is the number of a rule to reduce with.  */
   yylen = yyr2[yyn];
-  if (yylen > 0)
-    yyval = yyvsp[1-yylen]; /* implement default value of the action */
 
-#if YYDEBUG != 0
-  if (yydebug)
+  /* If YYLEN is nonzero, implement the default value of the action:
+     `$$ = $1'.
+
+     Otherwise, the following line sets YYVAL to garbage.
+     This behavior is undocumented and Bison
+     users should not rely upon it.  Assigning to YYVAL
+     unconditionally makes the parser a bit smaller, and it avoids a
+     GCC warning that YYVAL may be used uninitialized.  */
+  yyval = yyvsp[1-yylen];
+
+
+  YY_REDUCE_PRINT (yyn);
+  switch (yyn)
     {
-      int i;
-
-      fprintf (stderr, "Reducing via rule %d (line %d), ",
-               yyn, yyrline[yyn]);
-
-      /* Print the symbols being reduced, and their result.  */
-      for (i = yyprhs[yyn]; yyrhs[i] > 0; i++)
-        fprintf (stderr, "%s ", yytname[yyrhs[i]]);
-      fprintf (stderr, " -> %s\n", yytname[yyr1[yyn]]);
-    }
-#endif
-
-
-  switch (yyn) {
-
-case 1:
-#line 65 "XdmfExpr.y"
-{
-                /* 
-                printf("Complete\n");
-                printf("XdmfExprReturnValue Nelms = %d\n", XdmfExprReturnValue->GetNumberOfElements());
-                */
-                ;
-    break;}
-case 2:
+        case 2:
 #line 73 "XdmfExpr.y"
-{
-                XdmfArray *TempArray = ( XdmfArray *)yyvsp[0].ArrayPointer;
+    {
+		/* 
+		printf("Complete\n");
+		printf("XdmfExprReturnValue Nelms = %d\n", XdmfExprReturnValue->GetNumberOfElements());
+		*/
+		}
+    break;
 
-                /* printf("Setting %s from ArrayExpression\n", $1); */
-                XdmfExprReturnValue = (XdmfArray *)yyvsp[-2].ArrayPointer;
-                *XdmfExprReturnValue = *TempArray;
-                delete TempArray;
-                ;
-    break;}
-case 3:
+  case 3:
 #line 81 "XdmfExpr.y"
-{
-                /* printf("Setting %s from ScalarExpression\n", $1); */
-                XdmfExprReturnValue = (XdmfArray *)yyvsp[-2].ArrayPointer;
-                *XdmfExprReturnValue = yyvsp[0].DoubleValue;
-                ;
-    break;}
-case 4:
-#line 86 "XdmfExpr.y"
-{
-                        XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
-                        XdmfArray        *Result = ( XdmfArray *)yyvsp[-5].ArrayPointer;
-                        XdmfLength        i, index, Length = Array1->GetNumberOfElements();
+    {
+		XdmfArray *TempArray = ( XdmfArray *)yyvsp[0].ArrayPointer;
 
-                        for( i = 0 ; i < Length ; i++ ){
-                                index = Array1->GetValueAsFloat64( i );
-                                Result->SetValueFromFloat64( index, yyvsp[0].DoubleValue );
-                                }
-                        delete Array1;
-                        XdmfExprReturnValue = Result;
-                ;
-    break;}
-case 5:
-#line 98 "XdmfExpr.y"
-{
-                        XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
-                        XdmfArray        *Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
-                        XdmfArray        *Result = ( XdmfArray *)yyvsp[-5].ArrayPointer;
-                        XdmfFloat64        Value;
-                        XdmfLength        i, index, Length = Array1->GetNumberOfElements();
+		/* printf("Setting %s from ArrayExpression\n", $1); */
+		XdmfExprReturnValue = (XdmfArray *)yyvsp[-2].ArrayPointer;
+		*XdmfExprReturnValue = *TempArray;
+		delete TempArray;
+		}
+    break;
 
-                        for( i = 0 ; i < Length ; i++ ){
-                                index = Array1->GetValueAsFloat64( i );
-                                Value = Array2->GetValueAsFloat64( i );
-                                Result->SetValueFromFloat64( index, Value );
-                                }
-                        delete Array1;
-                        delete Array2;
-                        XdmfExprReturnValue = Result;
-                ;
-    break;}
-case 6:
-#line 114 "XdmfExpr.y"
-{
-                        XdmfArray *Range;
+  case 4:
+#line 89 "XdmfExpr.y"
+    {
+		/* printf("Setting %s from ScalarExpression\n", $1); */
+		XdmfExprReturnValue = (XdmfArray *)yyvsp[-2].ArrayPointer;
+		*XdmfExprReturnValue = yyvsp[0].DoubleValue;
+		}
+    break;
 
-                        /* printf("Array Range %d:%d = ScalarExpression \n", $3, $5);         */
-                        Range = (XdmfArray *)yyvsp[-7].ArrayPointer;
-                        XdmfExprReturnValue = Range->Reference( yyvsp[-5].IntegerValue, yyvsp[-3].IntegerValue ); /* This is a Reference */
-                        *XdmfExprReturnValue = yyvsp[0].DoubleValue;
+  case 5:
+#line 94 "XdmfExpr.y"
+    {
+			XdmfArray	*Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
+			XdmfArray	*Result = ( XdmfArray *)yyvsp[-5].ArrayPointer;
+			XdmfLength	i, index, Length = Array1->GetNumberOfElements();
 
-                        /* Now Point to the Entire Array */
-                        XdmfExprReturnValue = (XdmfArray *)yyvsp[-7].ArrayPointer;
-                        ;
-    break;}
-case 7:
-#line 125 "XdmfExpr.y"
-{
-                        XdmfArray *TempArray = ( XdmfArray *)yyvsp[0].ArrayPointer;
-                        XdmfArray *Range;
+			for( i = 0 ; i < Length ; i++ ){
+				index = (XdmfLength)Array1->GetValueAsFloat64( i );
+				Result->SetValueFromFloat64( index, yyvsp[0].DoubleValue );
+				}
+			delete Array1;
+			XdmfExprReturnValue = Result;
+		}
+    break;
 
-                        /* printf("Array Range %d:%d = ArrayExpression \n", $3, $5);         */
-                        Range = (XdmfArray *)yyvsp[-7].ArrayPointer;
-                        XdmfExprReturnValue = Range->Reference( yyvsp[-5].IntegerValue, yyvsp[-3].IntegerValue ); /* This is a Reference */
-                        *XdmfExprReturnValue = *TempArray;
+  case 6:
+#line 106 "XdmfExpr.y"
+    {
+			XdmfArray	*Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
+			XdmfArray	*Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
+			XdmfArray	*Result = ( XdmfArray *)yyvsp[-5].ArrayPointer;
+			XdmfFloat64	Value;
+			XdmfLength	i, index, Length = Array1->GetNumberOfElements();
 
-                        /* Now Point to the Entire Array */
-                        XdmfExprReturnValue = (XdmfArray *)yyvsp[-7].ArrayPointer;
-                        delete TempArray;
-                        ;
-    break;}
-case 8:
-#line 138 "XdmfExpr.y"
-{
-                XdmfArray *TempArray = ( XdmfArray *)yyvsp[0].ArrayPointer;
+			for( i = 0 ; i < Length ; i++ ){
+				index = (XdmfLength)Array1->GetValueAsFloat64( i );
+				Value = Array2->GetValueAsFloat64( i );
+				Result->SetValueFromFloat64( index, Value );
+				}
+			delete Array1;
+			delete Array2;
+			XdmfExprReturnValue = Result;
+		}
+    break;
 
-                /* printf("Clone from ArrayExpression\n"); */
-                XdmfExprReturnValue = TempArray;        
-                /* printf("XdmfExprReturnValue Nelms = %d\n", XdmfExprReturnValue->GetNumberOfElements()); */
-                ;
-    break;}
-case 9:
-#line 145 "XdmfExpr.y"
-{
-                printf("Pointless !! Scalar = %g\n", yyvsp[0].DoubleValue);
-                ;
-    break;}
-case 10:
-#line 150 "XdmfExpr.y"
-{
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
-                        XdmfArray *Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
+  case 7:
+#line 122 "XdmfExpr.y"
+    {
+			XdmfArray *Range;
 
-                        /* printf("Array 0x%X + 0x%X\n", Array1, Array2); */
-                        *Array1 += *Array2;
-                        yyval.ArrayPointer = Array1;
-                        delete Array2;
-                        ;
-    break;}
-case 11:
-#line 159 "XdmfExpr.y"
-{
-                        /* Interlace */
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
-                        XdmfArray *Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
-                        XdmfArray *NewArray = new XdmfArray();
-                        XdmfInt32 i, Rank1, Rank2;
-                        XdmfInt64 NewLength, Length1, Length2, IFactor, Lcd;
-                        XdmfInt64 Dimension1[ XDMF_MAX_DIMENSION ];
-                        XdmfInt64 Dimension2[ XDMF_MAX_DIMENSION ];
-                        XdmfInt64 Start[ XDMF_MAX_DIMENSION ];
-                        XdmfInt64 Stride[ XDMF_MAX_DIMENSION ];
-                        XdmfInt64 Count[ XDMF_MAX_DIMENSION ];
-                        XdmfInt64 NewDimension[ XDMF_MAX_DIMENSION ];
+			/* printf("Array Range %d:%d = ScalarExpression \n", $3, $5);	 */
+			Range = (XdmfArray *)yyvsp[-7].ArrayPointer;
+			XdmfExprReturnValue = Range->Reference( yyvsp[-5].IntegerValue, yyvsp[-3].IntegerValue ); /* This is a Reference */
+			*XdmfExprReturnValue = yyvsp[0].DoubleValue;
 
-                        /* printf("Array 0x%X , 0x%X\n", Array1, Array2); */
-                        
-                        Rank1 = Array1->GetShape( Dimension1 );
-                        Rank2 = Array2->GetShape( Dimension2 );
-                        if( Rank1 != Rank2 ){
-                                printf(" Interlace : Rank Mismatch !!\n");
-                                }
-                        NewArray->CopyType( Array1 );
+			/* Now Point to the Entire Array */
+			XdmfExprReturnValue = (XdmfArray *)yyvsp[-7].ArrayPointer;
+			}
+    break;
 
-                        Length1 = Array1->GetNumberOfElements();
-                        Length2 = Array2->GetNumberOfElements();
-                        NewLength = Length1 + Length2;
-                        IFactor = Length1 / Length2;
-                        Lcd = Length1;
-                        if( Length2 < Length1 ){
-                                Lcd = Length2;
-                                }
-                        NewDimension[0] = Lcd;
-                        NewDimension[1] = NewLength / Lcd;
-                        NewArray->SetShape( 2, NewDimension );
-                        /*
-                        printf("Rank1 = %d Rank2 = %d\n", Rank1, Rank2 );
-                        printf("Array1 Size = %d\n", Array1->GetNumberOfElements() );
-                        printf("Array2 Size = %d\n", Array2->GetNumberOfElements() );
-                        printf("NewLength = %d\n", NewLength );
-                        printf("Lcd = %d\n", Lcd );
-                        printf("IFactor = %d\n", IFactor );
-                        printf("New Dims = %s\n", NewArray->GetShapeAsString() );
-                        */
-                        /* NewArray->Generate( -55.0,  -55.0 ); */
-                        /* Copy in Array 1 */
-                        Start[0] = 0; Start[1] = 0;
-                        Stride[0] = 1; Stride[1] = 1;
-                        Count[0] = Lcd; Count[1] = Length1 / Lcd;
-                        NewArray->SelectHyperSlab( Start, Stride, Count );
-                        Array1->SelectAll();
-                        /*
-                        printf("Copy in Array1 = %s\n", NewArray->GetHyperSlabAsString() );
-                        */
-                        CopyArray( Array1, NewArray );
-                        /* Copy in Array 2 */
-                        Start[0] = 0; Start[1] = Length1 / Lcd;
-                        Stride[0] = 1; Stride[1] = 1;
-                        Count[0] = Lcd; Count[1] = Length2 / Lcd;
-                        NewArray->SelectHyperSlab( Start, Stride, Count );
-                        Array2->SelectAll();
-                        /*
-                        printf("Copy in Array2 = %s\n", NewArray->GetHyperSlabAsString() );
-                        */
-                        CopyArray( Array2, NewArray );
-                        NewDimension[0] = Dimension1[0] + Dimension2[0];
-                        for( i = 1 ; i < Rank1 ; i++ ){
-                                NewDimension[i] = Dimension1[i];
-                                } 
-                        NewArray->Reform( Rank1, NewDimension );
-                        /*        
-                        printf("Result(%s) = %s\n", NewArray->GetShapeAsString(), NewArray->GetValues() );
-                        */
-                        yyval.ArrayPointer = NewArray;
-                        delete Array1;
-                        delete Array2;
-                        ;
-    break;}
-case 12:
-#line 236 "XdmfExpr.y"
-{
-                        /* Interlace */
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
-                        XdmfArray *Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
-                        XdmfArray *NewArray = new XdmfArray();
-                        XdmfInt32 i, Rank1, Rank2;
-                        XdmfInt64 Dimension1[ XDMF_MAX_DIMENSION ];
-                        XdmfInt64 Dimension2[ XDMF_MAX_DIMENSION ];
-                        XdmfInt64 Start[ XDMF_MAX_DIMENSION ];
-                        XdmfInt64 Stride[ XDMF_MAX_DIMENSION ];
-                        XdmfInt64 Count[ XDMF_MAX_DIMENSION ];
-                        XdmfInt64 NewDimension[ XDMF_MAX_DIMENSION ];
+  case 8:
+#line 133 "XdmfExpr.y"
+    {
+			XdmfArray *TempArray = ( XdmfArray *)yyvsp[0].ArrayPointer;
+			XdmfArray *Range;
 
-                         /* printf("Array 0x%X  << 0x%X\n", Array1, Array2); */
-                        
-                        Rank1 = Array1->GetShape( Dimension1 );
-                        Rank2 = Array2->GetShape( Dimension2 );
-                        if( Rank1 != Rank2 ){
-                                printf(" Cat : Rank Mismatch !!\n");
-                                }
-                        NewDimension[0] = Dimension1[0] + Dimension2[0];
-                        for( i = 1 ; i < Rank1 ; i++ ){
-                                NewDimension[i] = Dimension1[i];
-                                } 
-                        NewArray->CopyType( Array1 );
-                        NewArray->SetShape( Rank1, NewDimension );
+			/* printf("Array Range %d:%d = ArrayExpression \n", $3, $5);	 */
+			Range = (XdmfArray *)yyvsp[-7].ArrayPointer;
+			XdmfExprReturnValue = Range->Reference( yyvsp[-5].IntegerValue, yyvsp[-3].IntegerValue ); /* This is a Reference */
+			*XdmfExprReturnValue = *TempArray;
 
-                        /*
-                        NewArray->Generate( -55.0,  -55.0 );
-                        */
-                        /* Copy in Array 1 */
-                        for( i = 0 ; i < Rank1 ; i++ ){
-                                Start[i] = 0;
-                                Stride[i] = 1;
-                                Count[i] = Dimension1[i];
-                                }
-                        NewArray->SelectHyperSlab( Start, Stride, Count );
-                        Array1->SelectAll();
-                        /*
-                        printf("Copy in Array1 = %s\n", NewArray->GetHyperSlabAsString() );
-                        */
-                        CopyArray( Array1, NewArray );
-                        /* Copy in Array 2 */
-                        Start[0] = Dimension1[0];
-                        Stride[0] = 1;
-                        Count[0] = Dimension2[0];
-                        for( i = 1 ; i < Rank1 ; i++ ){
-                                Start[i] = 0;
-                                Stride[i] = 1;
-                                Count[i] = Dimension1[i];
-                                }
-                        NewArray->SelectHyperSlab( Start, Stride, Count );
-                        Array2->SelectAll();
-                        /*
-                        printf("Copy in Array2 = %s\n", NewArray->GetHyperSlabAsString() );
-                        */
-                        CopyArray( Array2, NewArray );
-                        /*
-                        printf("Result(%s) = %s\n", NewArray->GetShapeAsString(), NewArray->GetValues() );
-                        */
-                        yyval.ArrayPointer = NewArray;
-                        delete Array1;
-                        delete Array2;
-                        ;
-    break;}
-case 13:
-#line 300 "XdmfExpr.y"
-{
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
-                        XdmfArray *Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
+			/* Now Point to the Entire Array */
+			XdmfExprReturnValue = (XdmfArray *)yyvsp[-7].ArrayPointer;
+			delete TempArray;
+			}
+    break;
 
-                        /* printf("Array 0x%X + 0x%X\n", Array1, Array2); */
-                        *Array1 -= *Array2;
-                        yyval.ArrayPointer = Array1;
-                        delete Array2;
-                        ;
-    break;}
-case 14:
-#line 309 "XdmfExpr.y"
-{
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
-                        XdmfArray *Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
+  case 9:
+#line 146 "XdmfExpr.y"
+    {
+		XdmfArray *TempArray = ( XdmfArray *)yyvsp[0].ArrayPointer;
 
-                        /* printf("Array 0x%X * 0x%X\n", Array1, Array2); */
-                        *Array1 *= *Array2;
-                        yyval.ArrayPointer = Array1;
-                        delete Array2;
-                        /* printf("Array1 Nelms = %d\n", Array1->GetNumberOfElements()); */
-                        ;
-    break;}
-case 15:
-#line 319 "XdmfExpr.y"
-{
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
-                        XdmfArray *Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
+		/* printf("Clone from ArrayExpression\n"); */
+		XdmfExprReturnValue = TempArray;	
+		/* printf("XdmfExprReturnValue Nelms = %d\n", XdmfExprReturnValue->GetNumberOfElements()); */
+		}
+    break;
 
-                        /* printf("Array 0x%X + 0x%X\n", Array1, Array2); */
-                        *Array1 /= *Array2;
-                        yyval.ArrayPointer = Array1;
-                        delete Array2;
-                        ;
-    break;}
-case 16:
-#line 328 "XdmfExpr.y"
-{
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
-                        XdmfArray *Result;
+  case 10:
+#line 153 "XdmfExpr.y"
+    {
+		printf("Pointless !! Scalar = %g\n", yyvsp[0].DoubleValue);
+		}
+    break;
 
-                        /* printf("Array + %g\n", $3); */
-                        Result  = Array1;
-                        *Result += yyvsp[0].DoubleValue;
-                        yyval.ArrayPointer = Result;
-                        ;
-    break;}
-case 17:
-#line 337 "XdmfExpr.y"
-{
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
-                        XdmfArray *Result;
+  case 11:
+#line 158 "XdmfExpr.y"
+    {
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
+			XdmfArray *Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
 
-                        /* printf("Array - %g\n", $3); */
-                        Result  = Array1;
-                        *Result -= yyvsp[0].DoubleValue;
-                        yyval.ArrayPointer = Result;
-                        ;
-    break;}
-case 18:
-#line 346 "XdmfExpr.y"
-{
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
-                        XdmfArray *Result;
+			/* printf("Array 0x%X + 0x%X\n", Array1, Array2); */
+			*Array1 += *Array2;
+			yyval.ArrayPointer = Array1;
+			delete Array2;
+			}
+    break;
 
-                        /* printf("Array * %g\n", $3); */
-                        Result  = Array1;
-                        *Result *= yyvsp[0].DoubleValue;
-                        yyval.ArrayPointer = Result;
-                        ;
-    break;}
-case 19:
-#line 355 "XdmfExpr.y"
-{
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
-                        XdmfArray *Result;
+  case 12:
+#line 167 "XdmfExpr.y"
+    {
+			/* Interlace */
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
+			XdmfArray *Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
+			XdmfArray *NewArray = new XdmfArray();
+			XdmfInt32 i, Rank1, Rank2;
+			XdmfInt64 NewLength, Length1, Length2, IFactor, Lcd;
+			XdmfInt64 Dimension1[ XDMF_MAX_DIMENSION ];
+			XdmfInt64 Dimension2[ XDMF_MAX_DIMENSION ];
+			XdmfInt64 Start[ XDMF_MAX_DIMENSION ];
+			XdmfInt64 Stride[ XDMF_MAX_DIMENSION ];
+			XdmfInt64 Count[ XDMF_MAX_DIMENSION ];
+			XdmfInt64 NewDimension[ XDMF_MAX_DIMENSION ];
 
-                        /* printf("Array / %g\n", $3); */
-                        Result  = Array1;
-                        *Result /= yyvsp[0].DoubleValue;
-                        yyval.ArrayPointer = Result;
-                        ;
-    break;}
-case 20:
-#line 364 "XdmfExpr.y"
-{
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[0].ArrayPointer;
-                        XdmfArray *Result;
+			/* printf("Array 0x%X , 0x%X\n", Array1, Array2); */
+			
+			Rank1 = Array1->GetShape( Dimension1 );
+			Rank2 = Array2->GetShape( Dimension2 );
+			if( Rank1 != Rank2 ){
+				printf(" Interlace : Rank Mismatch !!\n");
+				}
+			NewArray->CopyType( Array1 );
 
-                        /* printf("Array + %g\n", $1); */
-                        Result  = Array1;
-                        *Result += yyvsp[-2].DoubleValue;
-                        yyval.ArrayPointer = Result;
-                        ;
-    break;}
-case 21:
-#line 373 "XdmfExpr.y"
-{
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[0].ArrayPointer;
-                        XdmfArray *Result;
+			Length1 = Array1->GetNumberOfElements();
+			Length2 = Array2->GetNumberOfElements();
+			NewLength = Length1 + Length2;
+			IFactor = Length1 / Length2;
+			Lcd = Length1;
+			if( Length2 < Length1 ){
+				Lcd = Length2;
+				}
+			NewDimension[0] = Lcd;
+			NewDimension[1] = NewLength / Lcd;
+			NewArray->SetShape( 2, NewDimension );
+			/*
+			printf("Rank1 = %d Rank2 = %d\n", Rank1, Rank2 );
+			printf("Array1 Size = %d\n", Array1->GetNumberOfElements() );
+			printf("Array2 Size = %d\n", Array2->GetNumberOfElements() );
+			printf("NewLength = %d\n", NewLength );
+			printf("Lcd = %d\n", Lcd );
+			printf("IFactor = %d\n", IFactor );
+			printf("New Dims = %s\n", NewArray->GetShapeAsString() );
+			*/
+			/* NewArray->Generate( -55.0,  -55.0 ); */
+			/* Copy in Array 1 */
+			Start[0] = 0; Start[1] = 0;
+			Stride[0] = 1; Stride[1] = 1;
+			Count[0] = Lcd; Count[1] = Length1 / Lcd;
+			NewArray->SelectHyperSlab( Start, Stride, Count );
+			Array1->SelectAll();
+			/*
+			printf("Copy in Array1 = %s\n", NewArray->GetHyperSlabAsString() );
+			*/
+			CopyArray( Array1, NewArray );
+			/* Copy in Array 2 */
+			Start[0] = 0; Start[1] = Length1 / Lcd;
+			Stride[0] = 1; Stride[1] = 1;
+			Count[0] = Lcd; Count[1] = Length2 / Lcd;
+			NewArray->SelectHyperSlab( Start, Stride, Count );
+			Array2->SelectAll();
+			/*
+			printf("Copy in Array2 = %s\n", NewArray->GetHyperSlabAsString() );
+			*/
+			CopyArray( Array2, NewArray );
+			NewDimension[0] = Dimension1[0] + Dimension2[0];
+			for( i = 1 ; i < Rank1 ; i++ ){
+				NewDimension[i] = Dimension1[i];
+				} 
+			NewArray->Reform( Rank1, NewDimension );
+			/*	
+			printf("Result(%s) = %s\n", NewArray->GetShapeAsString(), NewArray->GetValues() );
+			*/
+			yyval.ArrayPointer = NewArray;
+			delete Array1;
+			delete Array2;
+			}
+    break;
 
-                        /* printf("Array - %g\n", $1); */
-                        Result  = Array1;
-                        *Result -= yyvsp[-2].DoubleValue;
-                        yyval.ArrayPointer = Result;
-                        ;
-    break;}
-case 22:
-#line 382 "XdmfExpr.y"
-{
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[0].ArrayPointer;
-                        XdmfArray *Result;
+  case 13:
+#line 244 "XdmfExpr.y"
+    {
+			/* Interlace */
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
+			XdmfArray *Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
+			XdmfArray *NewArray = new XdmfArray();
+			XdmfInt32 i, Rank1, Rank2;
+			XdmfInt64 Dimension1[ XDMF_MAX_DIMENSION ];
+			XdmfInt64 Dimension2[ XDMF_MAX_DIMENSION ];
+			XdmfInt64 Start[ XDMF_MAX_DIMENSION ];
+			XdmfInt64 Stride[ XDMF_MAX_DIMENSION ];
+			XdmfInt64 Count[ XDMF_MAX_DIMENSION ];
+			XdmfInt64 NewDimension[ XDMF_MAX_DIMENSION ];
 
-                        /* printf("Array * %g\n", $1); */
-                        Result  = Array1;
-                        *Result *= yyvsp[-2].DoubleValue;
-                        yyval.ArrayPointer = Result;
-                        ;
-    break;}
-case 23:
-#line 391 "XdmfExpr.y"
-{
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[0].ArrayPointer;
-                        XdmfArray *Result;
+		 	/* printf("Array 0x%X  << 0x%X\n", Array1, Array2); */
+			
+			Rank1 = Array1->GetShape( Dimension1 );
+			Rank2 = Array2->GetShape( Dimension2 );
+			if( Rank1 != Rank2 ){
+				printf(" Cat : Rank Mismatch !!\n");
+				}
+			NewDimension[0] = Dimension1[0] + Dimension2[0];
+			for( i = 1 ; i < Rank1 ; i++ ){
+				NewDimension[i] = Dimension1[i];
+				} 
+			NewArray->CopyType( Array1 );
+			NewArray->SetShape( Rank1, NewDimension );
 
-                        /* printf("Array / %g\n", $1); */
-                        Result  = Array1;
-                        *Result /= yyvsp[-2].DoubleValue;
-                        yyval.ArrayPointer = Result;
-                        ;
-    break;}
-case 24:
-#line 400 "XdmfExpr.y"
-{
-                        XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
-                        XdmfArray        *Array2 = ( XdmfArray *)yyvsp[-1].ArrayPointer;
-                        XdmfArray        *Result;
+			/*
+			NewArray->Generate( -55.0,  -55.0 );
+			*/
+			/* Copy in Array 1 */
+			for( i = 0 ; i < Rank1 ; i++ ){
+				Start[i] = 0;
+				Stride[i] = 1;
+				Count[i] = Dimension1[i];
+				}
+			NewArray->SelectHyperSlab( Start, Stride, Count );
+			Array1->SelectAll();
+			/*
+			printf("Copy in Array1 = %s\n", NewArray->GetHyperSlabAsString() );
+			*/
+			CopyArray( Array1, NewArray );
+			/* Copy in Array 2 */
+			Start[0] = Dimension1[0];
+			Stride[0] = 1;
+			Count[0] = Dimension2[0];
+			for( i = 1 ; i < Rank1 ; i++ ){
+				Start[i] = 0;
+				Stride[i] = 1;
+				Count[i] = Dimension1[i];
+				}
+			NewArray->SelectHyperSlab( Start, Stride, Count );
+			Array2->SelectAll();
+			/*
+			printf("Copy in Array2 = %s\n", NewArray->GetHyperSlabAsString() );
+			*/
+			CopyArray( Array2, NewArray );
+			/*
+			printf("Result(%s) = %s\n", NewArray->GetShapeAsString(), NewArray->GetValues() );
+			*/
+			yyval.ArrayPointer = NewArray;
+			delete Array1;
+			delete Array2;
+			}
+    break;
 
-                        /* printf("ArrayExpression From Indexes\n"); */
-                        Result = Array1->Clone( Array2 );
-                        delete Array2;
-                        yyval.ArrayPointer = Result;
-                ;
-    break;}
-case 25:
-#line 410 "XdmfExpr.y"
-{
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[-5].ArrayPointer;
-                        XdmfArray *Range, *Result;
+  case 14:
+#line 308 "XdmfExpr.y"
+    {
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
+			XdmfArray *Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
 
-                        /* printf("ArrayExpression From Array Range %d:%d\n", $3, $5);         */
-                        Range = Array1->Reference( yyvsp[-3].IntegerValue, yyvsp[-1].IntegerValue ); /* This not a copy  */
-        
-                        Result  = Range->Clone(); /* So Copy It */
-                        delete Array1;
-                        yyval.ArrayPointer = Result;
-                        ;
-    break;}
-case 26:
-#line 421 "XdmfExpr.y"
-{
-                        XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
-                        XdmfArray        *Array2 = ( XdmfArray *)yyvsp[-1].ArrayPointer;
-                        XdmfLength        i, howmany = 0, cntr = 0;
-                        XdmfLength        Length1 = Array1->GetNumberOfElements(), Length2;
-                        XdmfInt64Array        *Index = new XdmfInt64Array( Length1 );
-                        XdmfInt64        A1Value, A2Value;
-                        XdmfInt64        *A1Values, *A2Values;
-                        float                Percent;
+			/* printf("Array 0x%X + 0x%X\n", Array1, Array2); */
+			*Array1 -= *Array2;
+			yyval.ArrayPointer = Array1;
+			delete Array2;
+			}
+    break;
 
-                        if(Array1->GetNumberType() != XDMF_INT64_TYPE){
-                                yyerror("INDEX operator only uses XdmfInt64 Arrays");
-                                return( NULL );
-                                }
-                        if(Array2->GetNumberType() != XDMF_INT64_TYPE){
-                                yyerror("INDEX operator only uses XdmfInt64 Arrays");
-                                return( NULL );
-                                }
-                        Length2 = Array2->GetNumberOfElements();
-                        A1Values = (XdmfInt64 *)Array1->GetDataPointer();
-                        A2Values = (XdmfInt64 *)Array2->GetDataPointer();
-                        for( i = 0 ; i < Length1 ; i++ ){
-                                /* A1Value = Array1->GetValueAsFloat64( i ); */
-                                A1Value = *A1Values++;
-                                cntr = 0;
-                                A2Value = A1Value + 1;
-                                while((cntr < Length2) && (A2Value != A1Value)) {
-                                        /* A2Value = Array2->GetValueAsFloat64(cntr); */
-                                        A2Value = A2Values[cntr];
-                                        cntr++;
-                                        }
-                                howmany++;
-                                if(howmany > 5000){
-                                        Percent = 100.0 * i / Length1;
-                                        printf("%5.2f %% Done\n", Percent);
-                                        howmany = 0;
-                                        }
-                                if( A1Value == A2Value ) {
-                                        Index->SetValue( i, cntr - 1 );
-                                }else{
-                                        Index->SetValue( i, -1);
-                                        }
-                                }        
-                        yyval.ArrayPointer = ( XdmfArray *)Index;
-                        ;
-    break;}
-case 27:
-#line 466 "XdmfExpr.y"
-{
-                        XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
-                        XdmfLength        i, howmany = 0, cntr = 0;
-                        XdmfLength        Length1 = Array1->GetNumberOfElements(), Length2;
-                        XdmfInt64Array        *Index = new XdmfInt64Array( Length1 );
-                        XdmfArray        *Array2 = ( XdmfArray *)yyvsp[-1].ArrayPointer;
-                        XdmfFloat64        A1Value, A2Value;
+  case 15:
+#line 317 "XdmfExpr.y"
+    {
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
+			XdmfArray *Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
 
-                        Length2 = Array2->GetNumberOfElements();
-                        for( i = 0 ; i < Length1 ; i++ ){
-                                A1Value = Array1->GetValueAsFloat64( i );
-                                cntr = 0;
-                                A2Value = A1Value + 1;
-                                while((cntr < Length2) && (A2Value != A1Value)) {
-                                        A2Value = Array2->GetValueAsFloat64(cntr);
-                                        cntr++;
-                                        }
+			/* printf("Array 0x%X * 0x%X\n", Array1, Array2); */
+			*Array1 *= *Array2;
+			yyval.ArrayPointer = Array1;
+			delete Array2;
+			/* printf("Array1 Nelms = %d\n", Array1->GetNumberOfElements()); */
+			}
+    break;
+
+  case 16:
+#line 327 "XdmfExpr.y"
+    {
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
+			XdmfArray *Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
+
+			/* printf("Array 0x%X + 0x%X\n", Array1, Array2); */
+			*Array1 /= *Array2;
+			yyval.ArrayPointer = Array1;
+			delete Array2;
+			}
+    break;
+
+  case 17:
+#line 336 "XdmfExpr.y"
+    {
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
+			XdmfArray *Result;
+
+			/* printf("Array + %g\n", $3); */
+			Result  = Array1;
+			*Result += yyvsp[0].DoubleValue;
+			yyval.ArrayPointer = Result;
+			}
+    break;
+
+  case 18:
+#line 345 "XdmfExpr.y"
+    {
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
+			XdmfArray *Result;
+
+			/* printf("Array - %g\n", $3); */
+			Result  = Array1;
+			*Result -= yyvsp[0].DoubleValue;
+			yyval.ArrayPointer = Result;
+			}
+    break;
+
+  case 19:
+#line 354 "XdmfExpr.y"
+    {
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
+			XdmfArray *Result;
+
+			/* printf("Array * %g\n", $3); */
+			Result  = Array1;
+			*Result *= yyvsp[0].DoubleValue;
+			yyval.ArrayPointer = Result;
+			}
+    break;
+
+  case 20:
+#line 363 "XdmfExpr.y"
+    {
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
+			XdmfArray *Result;
+
+			/* printf("Array / %g\n", $3); */
+			Result  = Array1;
+			*Result /= yyvsp[0].DoubleValue;
+			yyval.ArrayPointer = Result;
+			}
+    break;
+
+  case 21:
+#line 372 "XdmfExpr.y"
+    {
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[0].ArrayPointer;
+			XdmfArray *Result;
+
+			/* printf("Array + %g\n", $1); */
+			Result  = Array1;
+			*Result += yyvsp[-2].DoubleValue;
+			yyval.ArrayPointer = Result;
+			}
+    break;
+
+  case 22:
+#line 381 "XdmfExpr.y"
+    {
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[0].ArrayPointer;
+			XdmfArray *Result;
+
+			/* printf("Array - %g\n", $1); */
+			Result  = Array1;
+			*Result -= yyvsp[-2].DoubleValue;
+			yyval.ArrayPointer = Result;
+			}
+    break;
+
+  case 23:
+#line 390 "XdmfExpr.y"
+    {
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[0].ArrayPointer;
+			XdmfArray *Result;
+
+			/* printf("Array * %g\n", $1); */
+			Result  = Array1;
+			*Result *= yyvsp[-2].DoubleValue;
+			yyval.ArrayPointer = Result;
+			}
+    break;
+
+  case 24:
+#line 399 "XdmfExpr.y"
+    {
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[0].ArrayPointer;
+			XdmfArray *Result;
+
+			/* printf("Array / %g\n", $1); */
+			Result  = Array1;
+			*Result /= yyvsp[-2].DoubleValue;
+			yyval.ArrayPointer = Result;
+			}
+    break;
+
+  case 25:
+#line 408 "XdmfExpr.y"
+    {
+			XdmfArray	*Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
+			XdmfArray	*Array2 = ( XdmfArray *)yyvsp[-1].ArrayPointer;
+			XdmfArray	*Result;
+
+			/* printf("ArrayExpression From Indexes\n"); */
+			Result = Array1->Clone( Array2 );
+			delete Array2;
+			yyval.ArrayPointer = Result;
+		}
+    break;
+
+  case 26:
+#line 418 "XdmfExpr.y"
+    {
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[-5].ArrayPointer;
+			XdmfArray *Range, *Result;
+
+			/* printf("ArrayExpression From Array Range %d:%d\n", $3, $5);	 */
+			Range = Array1->Reference( yyvsp[-3].IntegerValue, yyvsp[-1].IntegerValue ); /* This not a copy  */
+	
+			Result  = Range->Clone(); /* So Copy It */
+			delete Array1;
+			yyval.ArrayPointer = Result;
+			}
+    break;
+
+  case 27:
+#line 429 "XdmfExpr.y"
+    {
+			XdmfArray	*Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
+			XdmfArray	*Array2 = ( XdmfArray *)yyvsp[-1].ArrayPointer;
+			XdmfLength	i, howmany = 0, cntr = 0;
+			XdmfLength	Length1 = Array1->GetNumberOfElements(), Length2;
+			XdmfInt64Array	*Index = new XdmfInt64Array( Length1 );
+			XdmfInt64	A1Value, A2Value;
+			XdmfInt64	*A1Values, *A2Values;
+			float		Percent;
+
+			if(Array1->GetNumberType() != XDMF_INT64_TYPE){
+				yyerror("INDEX operator only uses XdmfInt64 Arrays");
+				return( 0 );
+				}
+			if(Array2->GetNumberType() != XDMF_INT64_TYPE){
+				yyerror("INDEX operator only uses XdmfInt64 Arrays");
+				return( 0 );
+				}
+			Length2 = Array2->GetNumberOfElements();
+			A1Values = (XdmfInt64 *)Array1->GetDataPointer();
+			A2Values = (XdmfInt64 *)Array2->GetDataPointer();
+			for( i = 0 ; i < Length1 ; i++ ){
+				/* A1Value = Array1->GetValueAsFloat64( i ); */
+				A1Value = *A1Values++;
+				cntr = 0;
+				A2Value = A1Value + 1;
+				while((cntr < Length2) && (A2Value != A1Value)) {
+					/* A2Value = Array2->GetValueAsFloat64(cntr); */
+					A2Value = A2Values[cntr];
+					cntr++;
+					}
+				howmany++;
+				if(howmany > 5000){
+					Percent = 100.0 * i / Length1;
+					printf("%5.2f %% Done\n", Percent);
+					howmany = 0;
+					}
+				if( A1Value == A2Value ) {
+					Index->SetValue( i, cntr - 1 );
+				}else{
+					Index->SetValue( i, -1);
+					}
+				}	
+			yyval.ArrayPointer = ( XdmfArray *)Index;
+			}
+    break;
+
+  case 28:
+#line 474 "XdmfExpr.y"
+    {
+			XdmfArray	*Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
+			/* XdmfLength	howmany = 0; */
+			XdmfLength	i, cntr = 0;
+			XdmfLength	Length1 = Array1->GetNumberOfElements(), Length2;
+			XdmfInt64Array	*Index = new XdmfInt64Array( Length1 );
+			XdmfArray	*Array2 = ( XdmfArray *)yyvsp[-1].ArrayPointer;
+			XdmfFloat64	A1Value, A2Value;
+
+			Length2 = Array2->GetNumberOfElements();
+			for( i = 0 ; i < Length1 ; i++ ){
+				A1Value = Array1->GetValueAsFloat64( i );
+				cntr = 0;
+				A2Value = A1Value + 1;
+				while((cntr < Length2) && (A2Value != A1Value)) {
+					A2Value = Array2->GetValueAsFloat64(cntr);
+					cntr++;
+					}
 /*
-                                howmany++;
-                                if(howmany > 1000){
-                                        cout << "Checked " << i << " of " << Length1 << endl;
-                                        howmany = 0;
-                                        }
+				howmany++;
+				if(howmany > 1000){
+					cout << "Checked " << i << " of " << Length1 << endl;
+					howmany = 0;
+					}
 */
-                                if( A1Value == A2Value ) {
-                                        Index->SetValue( i, cntr - 1 );
-                                }else{
-                                        Index->SetValue( i, -1);
-                                        }
-                                }        
-                        yyval.ArrayPointer = ( XdmfArray *)Index;
-                        ;
-    break;}
-case 28:
-#line 498 "XdmfExpr.y"
-{
-                        XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
-                        XdmfLength        i, cntr = 0;
-                        XdmfLength        Length = Array1->GetNumberOfElements();
-                        XdmfInt64Array        *Index = new XdmfInt64Array( Length );
-                        XdmfFloat64        Value, SValue = yyvsp[-1].DoubleValue;
+				if( A1Value == A2Value ) {
+					Index->SetValue( i, cntr - 1 );
+				}else{
+					Index->SetValue( i, -1);
+					}
+				}	
+			yyval.ArrayPointer = ( XdmfArray *)Index;
+			}
+    break;
 
-                        for( i = 0 ; i < Length ; i++ ){
-                                Value = Array1->GetValueAsFloat64( i );
-                                if( Value == SValue ) {
-                                        Index->SetValue( cntr++, i );
-                                        }
-                                }        
-                        /* printf("Found %d Wheres\n", cntr ); */
-                        if( cntr == 0 ){
-                                yyerror("WHERE Function Length == 0");
-                                return( NULL );
-                                }
-                        Index->SetNumberOfElements( cntr );
-                        yyval.ArrayPointer = ( XdmfArray *)Index;
-                        ;
-    break;}
-case 29:
-#line 519 "XdmfExpr.y"
-{
-                        XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
-                        XdmfLength        i, cntr = 0;
-                        XdmfLength        Length = Array1->GetNumberOfElements();
-                        XdmfInt64Array        *Index = new XdmfInt64Array( Length );
-                        XdmfFloat64        Value, SValue = yyvsp[-1].DoubleValue;
+  case 29:
+#line 507 "XdmfExpr.y"
+    {
+			XdmfArray	*Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
+			XdmfLength	i, cntr = 0;
+			XdmfLength	Length = Array1->GetNumberOfElements();
+			XdmfInt64Array	*Index = new XdmfInt64Array( Length );
+			XdmfFloat64	Value, SValue = yyvsp[-1].DoubleValue;
 
-                        for( i = 0 ; i < Length ; i++ ){
-                                Value = Array1->GetValueAsFloat64( i );
-                                if( Value < SValue ) {
-                                        Index->SetValue( cntr++, i );
-                                        }
-                                }        
-                        /* printf("Found %d Wheres\n", cntr ); */
-                        if( cntr == 0 ){
-                                yyerror("WHERE Function Length == 0");
-                                return( NULL );
-                                }
-                        Index->SetNumberOfElements( cntr );
-                        yyval.ArrayPointer = ( XdmfArray *)Index;
-                        ;
-    break;}
-case 30:
-#line 540 "XdmfExpr.y"
-{
-                        XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
-                        XdmfLength        i, cntr = 0;
-                        XdmfLength        Length = Array1->GetNumberOfElements();
-                        XdmfInt64Array        *Index = new XdmfInt64Array( Length );
-                        XdmfFloat64        Value, SValue = yyvsp[-1].DoubleValue;
+			for( i = 0 ; i < Length ; i++ ){
+				Value = Array1->GetValueAsFloat64( i );
+				if( Value == SValue ) {
+					Index->SetValue( cntr++, i );
+					}
+				}	
+			/* printf("Found %d Wheres\n", cntr ); */
+			if( cntr == 0 ){
+				yyerror("WHERE Function Length == 0");
+				return( 0 );
+				}
+			Index->SetNumberOfElements( cntr );
+			yyval.ArrayPointer = ( XdmfArray *)Index;
+			}
+    break;
 
-                        for( i = 0 ; i < Length ; i++ ){
-                                Value = Array1->GetValueAsFloat64( i );
-                                if( Value <= SValue ) {
-                                        Index->SetValue( cntr++, i );
-                                        }
-                                }        
-                        /* printf("Found %d Wheres\n", cntr ); */
-                        if( cntr == 0 ){
-                                yyerror("WHERE Function Length == 0");
-                                return( NULL );
-                                }
-                        Index->SetNumberOfElements( cntr );
-                        yyval.ArrayPointer = ( XdmfArray *)Index;
-                        ;
-    break;}
-case 31:
-#line 561 "XdmfExpr.y"
-{
-                        XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
-                        XdmfLength        i, cntr = 0;
-                        XdmfLength        Length = Array1->GetNumberOfElements();
-                        XdmfInt64Array        *Index = new XdmfInt64Array( Length );
-                        XdmfFloat64        Value, SValue = yyvsp[-1].DoubleValue;
+  case 30:
+#line 528 "XdmfExpr.y"
+    {
+			XdmfArray	*Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
+			XdmfLength	i, cntr = 0;
+			XdmfLength	Length = Array1->GetNumberOfElements();
+			XdmfInt64Array	*Index = new XdmfInt64Array( Length );
+			XdmfFloat64	Value, SValue = yyvsp[-1].DoubleValue;
 
-                        for( i = 0 ; i < Length ; i++ ){
-                                Value = Array1->GetValueAsFloat64( i );
-                                if( Value > SValue ) {
-                                        Index->SetValue( cntr++, i );
-                                        }
-                                }        
-                        /* printf("Found %d Wheres\n", cntr ); */
-                        if( cntr == 0 ){
-                                yyerror("WHERE Function Length == 0");
-                                return( NULL );
-                                }
-                        Index->SetNumberOfElements( cntr );
-                        yyval.ArrayPointer = ( XdmfArray *)Index;
-                        ;
-    break;}
-case 32:
-#line 582 "XdmfExpr.y"
-{
-                        XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
-                        XdmfLength        i, cntr = 0;
-                        XdmfLength        Length = Array1->GetNumberOfElements();
-                        XdmfInt64Array        *Index = new XdmfInt64Array( Length );
-                        XdmfFloat64        Value, SValue = yyvsp[-1].DoubleValue;
+			for( i = 0 ; i < Length ; i++ ){
+				Value = Array1->GetValueAsFloat64( i );
+				if( Value < SValue ) {
+					Index->SetValue( cntr++, i );
+					}
+				}	
+			/* printf("Found %d Wheres\n", cntr ); */
+			if( cntr == 0 ){
+				yyerror("WHERE Function Length == 0");
+				return( 0 );
+				}
+			Index->SetNumberOfElements( cntr );
+			yyval.ArrayPointer = ( XdmfArray *)Index;
+			}
+    break;
 
-                        for( i = 0 ; i < Length ; i++ ){
-                                Value = Array1->GetValueAsFloat64( i );
-                                if( Value >= SValue ) {
-                                        Index->SetValue( cntr++, i );
-                                        }
-                                }        
-                        /* printf("Found %d Wheres\n", cntr ); */
-                        if( cntr == 0 ){
-                                yyerror("WHERE Function Length == 0");
-                                return( NULL );
-                                }
-                        Index->SetNumberOfElements( cntr );
-                        yyval.ArrayPointer = ( XdmfArray *)Index;
-                        ;
-    break;}
-case 33:
-#line 603 "XdmfExpr.y"
-{
-                        XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
-                        XdmfLength        i, cntr = 0;
-                        XdmfLength        Length = Array1->GetNumberOfElements();
-                        XdmfInt64Array        *Index = new XdmfInt64Array( Length );
-                        XdmfFloat64        Value, SValue = yyvsp[-1].DoubleValue;
+  case 31:
+#line 549 "XdmfExpr.y"
+    {
+			XdmfArray	*Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
+			XdmfLength	i, cntr = 0;
+			XdmfLength	Length = Array1->GetNumberOfElements();
+			XdmfInt64Array	*Index = new XdmfInt64Array( Length );
+			XdmfFloat64	Value, SValue = yyvsp[-1].DoubleValue;
 
-                        for( i = 0 ; i < Length ; i++ ){
-                                Value = Array1->GetValueAsFloat64( i );
-                                if( Value != SValue ) {
-                                        Index->SetValue( cntr++, i );
-                                        }
-                                }        
-                        /* printf("Found %d Wheres\n", cntr ); */
-                        if( cntr == 0 ){
-                                yyerror("WHERE Function Length == 0");
-                                return( NULL );
-                                }
-                        Index->SetNumberOfElements( cntr );
-                        yyval.ArrayPointer = ( XdmfArray *)Index;
-                        ;
-    break;}
-case 34:
-#line 624 "XdmfExpr.y"
-{
+			for( i = 0 ; i < Length ; i++ ){
+				Value = Array1->GetValueAsFloat64( i );
+				if( Value <= SValue ) {
+					Index->SetValue( cntr++, i );
+					}
+				}	
+			/* printf("Found %d Wheres\n", cntr ); */
+			if( cntr == 0 ){
+				yyerror("WHERE Function Length == 0");
+				return( 0 );
+				}
+			Index->SetNumberOfElements( cntr );
+			yyval.ArrayPointer = ( XdmfArray *)Index;
+			}
+    break;
 
-                        if( yyvsp[-3].Symbol->DoubleFunctionPtr == NULL ){
-                                /* printf("Bad Function Ptr for %s\n", $1->Name ); */
-                                yyval.ArrayPointer = yyvsp[-1].ArrayPointer;
-                        } else {
-                                XdmfArray *Array1 = ( XdmfArray *)yyvsp[-1].ArrayPointer;
-                                XdmfFloat64        Value;
-                                XdmfLength        i, Length = Array1->GetNumberOfElements();
+  case 32:
+#line 570 "XdmfExpr.y"
+    {
+			XdmfArray	*Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
+			XdmfLength	i, cntr = 0;
+			XdmfLength	Length = Array1->GetNumberOfElements();
+			XdmfInt64Array	*Index = new XdmfInt64Array( Length );
+			XdmfFloat64	Value, SValue = yyvsp[-1].DoubleValue;
 
-                                /* printf("Function Call %s\n", $1->Name ); */
-                                for( i = 0 ; i < Length ; i++ ){
-                                        Value = Array1->GetValueAsFloat64( i );
-                                        Array1->SetValueFromFloat64( i, (yyvsp[-3].Symbol->DoubleFunctionPtr)( Value ) );
-                                        }        
-                                yyval.ArrayPointer = Array1;
-                        }
-                        ;
-    break;}
-case 35:
-#line 642 "XdmfExpr.y"
-{
-                        /* printf("( ArrayExpression )\n"); */
-                        yyval.ArrayPointer = yyvsp[-1].ArrayPointer;
-                        ;
-    break;}
-case 36:
-#line 646 "XdmfExpr.y"
-{
-                        /* printf("( ArrayExpression )\n"); */
-                        yyval.ArrayPointer = yyvsp[-1].ArrayPointer;
-                        ;
-    break;}
-case 37:
-#line 650 "XdmfExpr.y"
-{
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[0].ArrayPointer;
-                        XdmfArray *Result;
+			for( i = 0 ; i < Length ; i++ ){
+				Value = Array1->GetValueAsFloat64( i );
+				if( Value > SValue ) {
+					Index->SetValue( cntr++, i );
+					}
+				}	
+			/* printf("Found %d Wheres\n", cntr ); */
+			if( cntr == 0 ){
+				yyerror("WHERE Function Length == 0");
+				return( 0 );
+				}
+			Index->SetNumberOfElements( cntr );
+			yyval.ArrayPointer = ( XdmfArray *)Index;
+			}
+    break;
 
-                        /* printf("ArrayExpression From Array\n"); */
+  case 33:
+#line 591 "XdmfExpr.y"
+    {
+			XdmfArray	*Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
+			XdmfLength	i, cntr = 0;
+			XdmfLength	Length = Array1->GetNumberOfElements();
+			XdmfInt64Array	*Index = new XdmfInt64Array( Length );
+			XdmfFloat64	Value, SValue = yyvsp[-1].DoubleValue;
 
-                        if ( Array1 == NULL ){
-                                /* Bomb */
-                                yyerror("NULL Array Pointer");
-                                return( NULL );
-                        } else {
-                                Result  = Array1->Clone();
-                                yyval.ArrayPointer = Result;
-                                }
-                        ;
-    break;}
-case 38:
-#line 667 "XdmfExpr.y"
-{
-                        /* printf("Scalar +\n"); */
-                        yyval.DoubleValue = yyvsp[-2].DoubleValue + yyvsp[0].DoubleValue;
-                        ;
-    break;}
-case 39:
-#line 671 "XdmfExpr.y"
-{
-                        /* printf("Scalar -\n"); */
-                        yyval.DoubleValue = yyvsp[-2].DoubleValue - yyvsp[0].DoubleValue;
-                        ;
-    break;}
-case 40:
-#line 675 "XdmfExpr.y"
-{
-                        /* printf("Scalar *\n"); */
-                        yyval.DoubleValue = yyvsp[-2].DoubleValue * yyvsp[0].DoubleValue;
-                        ;
-    break;}
-case 41:
-#line 679 "XdmfExpr.y"
-{
-                        /* printf("Scalar /\n"); */
-                        yyval.DoubleValue = yyvsp[-2].DoubleValue / yyvsp[0].DoubleValue;
-                        ;
-    break;}
-case 42:
-#line 683 "XdmfExpr.y"
-{
-                        if( yyvsp[-3].Symbol->DoubleFunctionPtr == NULL ){
-                                /* printf("Bad Function Ptr for %s\n", $1->Name ); */
-                                yyval.DoubleValue = 0.0;
-                        } else {
-                                yyval.DoubleValue = (yyvsp[-3].Symbol->DoubleFunctionPtr)( yyvsp[-1].DoubleValue );
-                        }
-                        ;
-    break;}
-case 43:
-#line 691 "XdmfExpr.y"
-{
-                        /* printf ("( ScalarExpression )\n"); */
-                        yyval.DoubleValue = yyvsp[-1].DoubleValue;
-                        ;
-    break;}
-case 44:
-#line 695 "XdmfExpr.y"
-{
-                        /* printf ("ScalarExpression from tokINTEGER\n"); */
-                        yyval.DoubleValue = yyvsp[0].IntegerValue;
-                        ;
-    break;}
-case 45:
-#line 699 "XdmfExpr.y"
-{
-                        /* printf ("ScalarExpression from FLOAT\n"); */
-                        yyval.DoubleValue = yyvsp[0].DoubleValue;
-                        ;
-    break;}
-}
-   /* the action file gets copied in in place of this dollarsign */
-#line 543 "/usr/gnu/share/bison.simple"
+			for( i = 0 ; i < Length ; i++ ){
+				Value = Array1->GetValueAsFloat64( i );
+				if( Value >= SValue ) {
+					Index->SetValue( cntr++, i );
+					}
+				}	
+			/* printf("Found %d Wheres\n", cntr ); */
+			if( cntr == 0 ){
+				yyerror("WHERE Function Length == 0");
+				return( 0 );
+				}
+			Index->SetNumberOfElements( cntr );
+			yyval.ArrayPointer = ( XdmfArray *)Index;
+			}
+    break;
+
+  case 34:
+#line 612 "XdmfExpr.y"
+    {
+			XdmfArray	*Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
+			XdmfLength	i, cntr = 0;
+			XdmfLength	Length = Array1->GetNumberOfElements();
+			XdmfInt64Array	*Index = new XdmfInt64Array( Length );
+			XdmfFloat64	Value, SValue = yyvsp[-1].DoubleValue;
+
+			for( i = 0 ; i < Length ; i++ ){
+				Value = Array1->GetValueAsFloat64( i );
+				if( Value != SValue ) {
+					Index->SetValue( cntr++, i );
+					}
+				}	
+			/* printf("Found %d Wheres\n", cntr ); */
+			if( cntr == 0 ){
+				yyerror("WHERE Function Length == 0");
+				return( 0 );
+				}
+			Index->SetNumberOfElements( cntr );
+			yyval.ArrayPointer = ( XdmfArray *)Index;
+			}
+    break;
+
+  case 35:
+#line 633 "XdmfExpr.y"
+    {
+
+			if( yyvsp[-3].Symbol->DoubleFunctionPtr == NULL ){
+				/* printf("Bad Function Ptr for %s\n", $1->Name ); */
+				yyval.ArrayPointer = yyvsp[-1].ArrayPointer;
+			} else {
+				XdmfArray *Array1 = ( XdmfArray *)yyvsp[-1].ArrayPointer;
+				XdmfFloat64	Value;
+				XdmfLength	i, Length = Array1->GetNumberOfElements();
+
+				/* printf("Function Call %s\n", $1->Name ); */
+				for( i = 0 ; i < Length ; i++ ){
+					Value = Array1->GetValueAsFloat64( i );
+					Array1->SetValueFromFloat64( i, (yyvsp[-3].Symbol->DoubleFunctionPtr)( Value ) );
+					}	
+				yyval.ArrayPointer = Array1;
+			}
+			}
+    break;
+
+  case 36:
+#line 651 "XdmfExpr.y"
+    {
+			/* printf("( ArrayExpression )\n"); */
+			yyval.ArrayPointer = yyvsp[-1].ArrayPointer;
+			}
+    break;
+
+  case 37:
+#line 655 "XdmfExpr.y"
+    {
+			/* printf("( ArrayExpression )\n"); */
+			yyval.ArrayPointer = yyvsp[-1].ArrayPointer;
+			}
+    break;
+
+  case 38:
+#line 659 "XdmfExpr.y"
+    {
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[0].ArrayPointer;
+			XdmfArray *Result;
+
+			/* printf("ArrayExpression From Array\n"); */
+
+			if ( Array1 == NULL ){
+				/* Bomb */
+				yyerror("NULL Array Pointer");
+				return( 0 );
+			} else {
+				Result  = Array1->Clone();
+				yyval.ArrayPointer = Result;
+				}
+			}
+    break;
+
+  case 39:
+#line 676 "XdmfExpr.y"
+    {
+			/* printf("Scalar +\n"); */
+			yyval.DoubleValue = yyvsp[-2].DoubleValue + yyvsp[0].DoubleValue;
+			}
+    break;
+
+  case 40:
+#line 680 "XdmfExpr.y"
+    {
+			/* printf("Scalar -\n"); */
+			yyval.DoubleValue = yyvsp[-2].DoubleValue - yyvsp[0].DoubleValue;
+			}
+    break;
+
+  case 41:
+#line 684 "XdmfExpr.y"
+    {
+			/* printf("Scalar *\n"); */
+			yyval.DoubleValue = yyvsp[-2].DoubleValue * yyvsp[0].DoubleValue;
+			}
+    break;
+
+  case 42:
+#line 688 "XdmfExpr.y"
+    {
+			/* printf("Scalar /\n"); */
+			yyval.DoubleValue = yyvsp[-2].DoubleValue / yyvsp[0].DoubleValue;
+			}
+    break;
+
+  case 43:
+#line 692 "XdmfExpr.y"
+    {
+			if( yyvsp[-3].Symbol->DoubleFunctionPtr == NULL ){
+				/* printf("Bad Function Ptr for %s\n", $1->Name ); */
+				yyval.DoubleValue = 0.0;
+			} else {
+				yyval.DoubleValue = (yyvsp[-3].Symbol->DoubleFunctionPtr)( yyvsp[-1].DoubleValue );
+			}
+			}
+    break;
+
+  case 44:
+#line 700 "XdmfExpr.y"
+    {
+			/* printf ("( ScalarExpression )\n"); */
+			yyval.DoubleValue = yyvsp[-1].DoubleValue;
+			}
+    break;
+
+  case 45:
+#line 704 "XdmfExpr.y"
+    {
+			/* printf ("ScalarExpression from tokINTEGER\n"); */
+			yyval.DoubleValue = yyvsp[0].IntegerValue;
+			}
+    break;
+
+  case 46:
+#line 708 "XdmfExpr.y"
+    {
+			/* printf ("ScalarExpression from FLOAT\n"); */
+			yyval.DoubleValue = yyvsp[0].DoubleValue;
+			}
+    break;
+
+
+    }
+
+/* Line 999 of yacc.c.  */
+#line 2004 "y.tab.c"
 
   yyvsp -= yylen;
   yyssp -= yylen;
-#ifdef YYLSP_NEEDED
-  yylsp -= yylen;
-#endif
 
-#if YYDEBUG != 0
-  if (yydebug)
-    {
-      short *ssp1 = yyss - 1;
-      fprintf (stderr, "state stack now");
-      while (ssp1 != yyssp)
-        fprintf (stderr, " %d", *++ssp1);
-      fprintf (stderr, "\n");
-    }
-#endif
+
+  YY_STACK_PRINT (yyss, yyssp);
 
   *++yyvsp = yyval;
 
-#ifdef YYLSP_NEEDED
-  yylsp++;
-  if (yylen == 0)
-    {
-      yylsp->first_line = yylloc.first_line;
-      yylsp->first_column = yylloc.first_column;
-      yylsp->last_line = (yylsp-1)->last_line;
-      yylsp->last_column = (yylsp-1)->last_column;
-      yylsp->text = 0;
-    }
-  else
-    {
-      yylsp->last_line = (yylsp+yylen-1)->last_line;
-      yylsp->last_column = (yylsp+yylen-1)->last_column;
-    }
-#endif
 
-  /* Now "shift" the result of the reduction.
-     Determine what state that goes to,
-     based on the state we popped back to
-     and the rule number reduced by.  */
+  /* Now `shift' the result of the reduction.  Determine what state
+     that goes to, based on the state we popped back to and the rule
+     number reduced by.  */
 
   yyn = yyr1[yyn];
 
-  yystate = yypgoto[yyn - YYNTBASE] + *yyssp;
-  if (yystate >= 0 && yystate <= YYLAST && yycheck[yystate] == *yyssp)
+  yystate = yypgoto[yyn - YYNTOKENS] + *yyssp;
+  if (0 <= yystate && yystate <= YYLAST && yycheck[yystate] == *yyssp)
     yystate = yytable[yystate];
   else
-    yystate = yydefgoto[yyn - YYNTBASE];
+    yystate = yydefgoto[yyn - YYNTOKENS];
 
   goto yynewstate;
 
-yyerrlab:   /* here on detecting error */
 
-  if (! yyerrstatus)
-    /* If not already recovering from an error, report this error.  */
+/*------------------------------------.
+| yyerrlab -- here on detecting error |
+`------------------------------------*/
+yyerrlab:
+  /* If not already recovering from an error, report this error.  */
+  if (!yyerrstatus)
     {
       ++yynerrs;
-
-#ifdef YYERROR_VERBOSE
+#if YYERROR_VERBOSE
       yyn = yypact[yystate];
 
-      if (yyn > YYFLAG && yyn < YYLAST)
-        {
-          int size = 0;
-          char *msg;
-          int x, count;
+      if (YYPACT_NINF < yyn && yyn < YYLAST)
+	{
+	  YYSIZE_T yysize = 0;
+	  int yytype = YYTRANSLATE (yychar);
+	  char *yymsg;
+	  int yyx, yycount;
 
-          count = 0;
-          /* Start X at -yyn if nec to avoid negative indexes in yycheck.  */
-          for (x = (yyn < 0 ? -yyn : 0);
-               x < (sizeof(yytname) / sizeof(char *)); x++)
-            if (yycheck[x + yyn] == x)
-              size += strlen(yytname[x]) + 15, count++;
-          msg = (char *) malloc(size + 15);
-          if (msg != 0)
-            {
-              strcpy(msg, "parse error");
+	  yycount = 0;
+	  /* Start YYX at -YYN if negative to avoid negative indexes in
+	     YYCHECK.  */
+	  for (yyx = yyn < 0 ? -yyn : 0;
+	       yyx < (int) (sizeof (yytname) / sizeof (char *)); yyx++)
+	    if (yycheck[yyx + yyn] == yyx && yyx != YYTERROR)
+	      yysize += yystrlen (yytname[yyx]) + 15, yycount++;
+	  yysize += yystrlen ("syntax error, unexpected ") + 1;
+	  yysize += yystrlen (yytname[yytype]);
+	  yymsg = (char *) YYSTACK_ALLOC (yysize);
+	  if (yymsg != 0)
+	    {
+	      char *yyp = yystpcpy (yymsg, "syntax error, unexpected ");
+	      yyp = yystpcpy (yyp, yytname[yytype]);
 
-              if (count < 5)
-                {
-                  count = 0;
-                  for (x = (yyn < 0 ? -yyn : 0);
-                       x < (sizeof(yytname) / sizeof(char *)); x++)
-                    if (yycheck[x + yyn] == x)
-                      {
-                        strcat(msg, count == 0 ? ", expecting `" : " or `");
-                        strcat(msg, yytname[x]);
-                        strcat(msg, "'");
-                        count++;
-                      }
-                }
-              yyerror(msg);
-              free(msg);
-            }
-          else
-            yyerror ("parse error; also virtual memory exceeded");
-        }
+	      if (yycount < 5)
+		{
+		  yycount = 0;
+		  for (yyx = yyn < 0 ? -yyn : 0;
+		       yyx < (int) (sizeof (yytname) / sizeof (char *));
+		       yyx++)
+		    if (yycheck[yyx + yyn] == yyx && yyx != YYTERROR)
+		      {
+			const char *yyq = ! yycount ? ", expecting " : " or ";
+			yyp = yystpcpy (yyp, yyq);
+			yyp = yystpcpy (yyp, yytname[yyx]);
+			yycount++;
+		      }
+		}
+	      yyerror (yymsg);
+	      YYSTACK_FREE (yymsg);
+	    }
+	  else
+	    yyerror ("syntax error; also virtual memory exhausted");
+	}
       else
 #endif /* YYERROR_VERBOSE */
-        yyerror("parse error");
+	yyerror ("syntax error");
     }
 
-  goto yyerrlab1;
-yyerrlab1:   /* here on error raised explicitly by an action */
+
 
   if (yyerrstatus == 3)
     {
-      /* if just tried and failed to reuse lookahead token after an error, discard it.  */
+      /* If just tried and failed to reuse lookahead token after an
+	 error, discard it.  */
 
-      /* return failure if at end of input */
+      /* Return failure if at end of input.  */
       if (yychar == YYEOF)
-        YYABORT;
+        {
+	  /* Pop the error token.  */
+          YYPOPSTACK;
+	  /* Pop the rest of the stack.  */
+	  while (yyss < yyssp)
+	    {
+	      YYDSYMPRINTF ("Error: popping", yystos[*yyssp], yyvsp, yylsp);
+	      yydestruct (yystos[*yyssp], yyvsp);
+	      YYPOPSTACK;
+	    }
+	  YYABORT;
+        }
 
-#if YYDEBUG != 0
-      if (yydebug)
-        fprintf(stderr, "Discarding token %d (%s).\n", yychar, yytname[yychar1]);
-#endif
-
+      YYDSYMPRINTF ("Error: discarding", yytoken, &yylval, &yylloc);
+      yydestruct (yytoken, &yylval);
       yychar = YYEMPTY;
+
     }
 
-  /* Else will try to reuse lookahead token
-     after shifting the error token.  */
+  /* Else will try to reuse lookahead token after shifting the error
+     token.  */
+  goto yyerrlab1;
 
-  yyerrstatus = 3;                /* Each real token shifted decrements this */
 
-  goto yyerrhandle;
+/*----------------------------------------------------.
+| yyerrlab1 -- error raised explicitly by an action.  |
+`----------------------------------------------------*/
+yyerrlab1:
+  yyerrstatus = 3;	/* Each real token shifted decrements this.  */
 
-yyerrdefault:  /* current state does not do anything special for the error token. */
-
-#if 0
-  /* This is wrong; only states that explicitly want error tokens
-     should shift them.  */
-  yyn = yydefact[yystate];  /* If its default is to accept any token, ok.  Otherwise pop it.*/
-  if (yyn) goto yydefault;
-#endif
-
-yyerrpop:   /* pop the current state because it cannot handle the error token */
-
-  if (yyssp == yyss) YYABORT;
-  yyvsp--;
-  yystate = *--yyssp;
-#ifdef YYLSP_NEEDED
-  yylsp--;
-#endif
-
-#if YYDEBUG != 0
-  if (yydebug)
+  for (;;)
     {
-      short *ssp1 = yyss - 1;
-      fprintf (stderr, "Error: state stack now");
-      while (ssp1 != yyssp)
-        fprintf (stderr, " %d", *++ssp1);
-      fprintf (stderr, "\n");
+      yyn = yypact[yystate];
+      if (yyn != YYPACT_NINF)
+	{
+	  yyn += YYTERROR;
+	  if (0 <= yyn && yyn <= YYLAST && yycheck[yyn] == YYTERROR)
+	    {
+	      yyn = yytable[yyn];
+	      if (0 < yyn)
+		break;
+	    }
+	}
+
+      /* Pop the current state because it cannot handle the error token.  */
+      if (yyssp == yyss)
+	YYABORT;
+
+      YYDSYMPRINTF ("Error: popping", yystos[*yyssp], yyvsp, yylsp);
+      yydestruct (yystos[yystate], yyvsp);
+      yyvsp--;
+      yystate = *--yyssp;
+
+      YY_STACK_PRINT (yyss, yyssp);
     }
-#endif
-
-yyerrhandle:
-
-  yyn = yypact[yystate];
-  if (yyn == YYFLAG)
-    goto yyerrdefault;
-
-  yyn += YYTERROR;
-  if (yyn < 0 || yyn > YYLAST || yycheck[yyn] != YYTERROR)
-    goto yyerrdefault;
-
-  yyn = yytable[yyn];
-  if (yyn < 0)
-    {
-      if (yyn == YYFLAG)
-        goto yyerrpop;
-      yyn = -yyn;
-      goto yyreduce;
-    }
-  else if (yyn == 0)
-    goto yyerrpop;
 
   if (yyn == YYFINAL)
     YYACCEPT;
 
-#if YYDEBUG != 0
-  if (yydebug)
-    fprintf(stderr, "Shifting error token, ");
-#endif
+  YYDPRINTF ((stderr, "Shifting error token, "));
 
   *++yyvsp = yylval;
-#ifdef YYLSP_NEEDED
-  *++yylsp = yylloc;
-#endif
+
 
   yystate = yyn;
   goto yynewstate;
 
- yyacceptlab:
-  /* YYACCEPT comes here.  */
-  if (yyfree_stacks)
-    {
-      free (yyss);
-      free (yyvs);
-#ifdef YYLSP_NEEDED
-      free (yyls);
-#endif
-    }
-  return 0;
 
- yyabortlab:
-  /* YYABORT comes here.  */
-  if (yyfree_stacks)
-    {
-      free (yyss);
-      free (yyvs);
-#ifdef YYLSP_NEEDED
-      free (yyls);
+/*-------------------------------------.
+| yyacceptlab -- YYACCEPT comes here.  |
+`-------------------------------------*/
+yyacceptlab:
+  yyresult = 0;
+  goto yyreturn;
+
+/*-----------------------------------.
+| yyabortlab -- YYABORT comes here.  |
+`-----------------------------------*/
+yyabortlab:
+  yyresult = 1;
+  goto yyreturn;
+
+#ifndef yyoverflow
+/*----------------------------------------------.
+| yyoverflowlab -- parser overflow comes here.  |
+`----------------------------------------------*/
+yyoverflowlab:
+  yyerror ("parser stack overflow");
+  yyresult = 2;
+  /* Fall through.  */
 #endif
-    }
-  return 1;
+
+yyreturn:
+#ifndef yyoverflow
+  if (yyss != yyssa)
+    YYSTACK_FREE (yyss);
+#endif
+  return yyresult;
 }
-#line 706 "XdmfExpr.y"
 
 
-/* extern        FILE        *yyin, *yyout; */
+#line 715 "XdmfExpr.y"
+
+
+/* extern	FILE	*yyin, *yyout; */
 
 #ifdef __cplusplus
 /**/
@@ -1850,10 +2205,11 @@ extern "C" {
 /**/
 #endif
 
-static        char        InputBuffer[ 512 ];
-static        int        InputBufferPtr = 0, InputBufferEnd = 0;
-static        char        OutputBuffer[ 512 ];
-static        int        OutputBufferPtr = 0, OutputBufferEnd = 511;
+static	char	InputBuffer[ 512 ];
+static	int	InputBufferPtr = 0, InputBufferEnd = 0;
+static	char	OutputBuffer[ 512 ];
+static	int	OutputBufferPtr = 0;
+/* static int OutputBufferEnd = 511; */
 
 int
 dice_yywrap( void ) {
@@ -1868,59 +2224,60 @@ fprintf(stderr, "XdmfExpr : %s \n", string);
 
 int
 XdmfExprFlexInput( char *buf, int maxlen ) {
+(void)maxlen;
 if ( InputBufferPtr < InputBufferEnd ){
-        buf[0] = InputBuffer[ InputBufferPtr++ ];
-        return(1);
+	buf[0] = InputBuffer[ InputBufferPtr++ ];
+	return(1);
 } else {
-        buf[0] = '\n';
-        return( 0 );
-        }
+	buf[0] = '\n';
+	return( 0 );
+	}
 }
 
 int
 XdmfExprInput( void ){
 
 if ( InputBufferPtr < InputBufferEnd ){
-        return( InputBuffer[ InputBufferPtr++ ] );
+	return( InputBuffer[ InputBufferPtr++ ] );
 } else {
-        return '\n';
-        }
+	return '\n';
+	}
 }
 
 void
 XdmfExprUnput( int c ) {
 if( InputBufferPtr > 0 ){
-        InputBufferPtr--;
-        InputBuffer[ InputBufferPtr ] = c;
-        }
+	InputBufferPtr--;
+	InputBuffer[ InputBufferPtr ] = c;
+	}
 }
 
 void
 XdmfExprOutput( int c ) {
-        /* printf("XdmfExprOutput Called\n"); */
-        OutputBuffer[ OutputBufferPtr++ ] = c;
-        OutputBuffer[ OutputBufferPtr ] = '\0';
-        }
+	/* printf("XdmfExprOutput Called\n"); */
+	OutputBuffer[ OutputBufferPtr++ ] = c;
+	OutputBuffer[ OutputBufferPtr ] = '\0';
+	}
 
 XdmfExprSymbol
 *XdmfExprSymbolLookup( char *Name ){
 
 static XdmfExprSymbol *Table = NULL;
 
-XdmfExprSymbol        *Last = NULL, *Item = Table;
+XdmfExprSymbol	*Last = NULL, *Item = Table;
 
 if( Name == NULL ) {
-        /* Table Check  */
-        return( Table );
-        }
+	/* Table Check  */
+	return( Table );
+	}
 
 while( Item != NULL ) {
-        if( strcmp( Item->Name, Name ) == 0 ) {
-                /* printf("Found Symbol %s\n", Name ); */
-                return( Item );
-                }
-        Last = Item;
-        Item = Item->Next;
+	if( strcmp( Item->Name, Name ) == 0 ) {
+		/* printf("Found Symbol %s\n", Name ); */
+		return( Item );
+		}
+	Last = Item;
+	Item = Item->Next;
 }
 /* Not Found : Create New One */
 Item = ( XdmfExprSymbol *)calloc( 1, sizeof( XdmfExprSymbol ));
@@ -1930,11 +2287,11 @@ Item->ClientData = NULL;
 Item->DoubleValue = 0;
 Item->DoubleFunctionPtr = NULL;
 if( Table == NULL ) {
-        Table = Item;
-        }
+	Table = Item;
+	}
 if( Last != NULL ){
-        Last->Next = Item;
-        }
+	Last->Next = Item;
+	}
 /* printf("New Symbol for %s\n", Name ); */
 return( Item );
 }
@@ -1948,42 +2305,42 @@ return( Item );
 XdmfArray *
 XdmfExprParse( char *string ){
 
-XdmfExprSymbol        *Item;
-XdmfLength        CurrentTime;
-XdmfLength        TimeOfCreation;
-XdmfArray        *ap;
+XdmfExprSymbol	*Item;
+XdmfLength	CurrentTime;
+XdmfLength	TimeOfCreation;
+XdmfArray	*ap;
 
 /* Build the Symbol Table if Necessary */
 Item = XdmfExprSymbolLookup( NULL );
 if( Item == NULL ){
-        /* printf("Creating Symbol Table\n"); */
-        Item = XdmfExprSymbolLookup( "cos" );
-        Item->DoubleFunctionPtr = cos;
-        Item = XdmfExprSymbolLookup( "sin" );
-        Item->DoubleFunctionPtr = sin;
-        Item = XdmfExprSymbolLookup( "exp" );
-        Item->DoubleFunctionPtr = exp;
-        Item = XdmfExprSymbolLookup( "tan" );
-        Item->DoubleFunctionPtr = tan;
-        Item = XdmfExprSymbolLookup( "acos" );
-        Item->DoubleFunctionPtr = acos;
-        Item = XdmfExprSymbolLookup( "asin" );
-        Item->DoubleFunctionPtr = asin;
-        Item = XdmfExprSymbolLookup( "atan" );
-        Item->DoubleFunctionPtr = atan;
-        Item = XdmfExprSymbolLookup( "log" );
-        Item->DoubleFunctionPtr = log;
-        Item = XdmfExprSymbolLookup( "sqrt" );
-        Item->DoubleFunctionPtr = sqrt;
-        }
+	/* printf("Creating Symbol Table\n"); */
+	Item = XdmfExprSymbolLookup( "cos" );
+	Item->DoubleFunctionPtr = cos;
+	Item = XdmfExprSymbolLookup( "sin" );
+	Item->DoubleFunctionPtr = sin;
+	Item = XdmfExprSymbolLookup( "exp" );
+	Item->DoubleFunctionPtr = exp;
+	Item = XdmfExprSymbolLookup( "tan" );
+	Item->DoubleFunctionPtr = tan;
+	Item = XdmfExprSymbolLookup( "acos" );
+	Item->DoubleFunctionPtr = acos;
+	Item = XdmfExprSymbolLookup( "asin" );
+	Item->DoubleFunctionPtr = asin;
+	Item = XdmfExprSymbolLookup( "atan" );
+	Item->DoubleFunctionPtr = atan;
+	Item = XdmfExprSymbolLookup( "log" );
+	Item->DoubleFunctionPtr = log;
+	Item = XdmfExprSymbolLookup( "sqrt" );
+	Item->DoubleFunctionPtr = sqrt;
+	}
 /* Print Symbol Table */
 Item = XdmfExprSymbolLookup( NULL );
 while( Item != NULL ) {
-        if( Item->ClientData != NULL ){
-                /* printf("Found Symbol %s\n", Item->Name ); */
-                }
-        Item = Item->Next;
-        }
+	if( Item->ClientData != NULL ){
+		/* printf("Found Symbol %s\n", Item->Name ); */
+		}
+	Item = Item->Next;
+	}
 strcpy( InputBuffer, string );
 InputBufferEnd = strlen( InputBuffer );
 InputBufferPtr = OutputBufferPtr = 0;
@@ -1991,19 +2348,21 @@ XdmfExprReturnValue = NULL;
 /* printf("XdmfExprParse Scanning <%s>\n", InputBuffer); */
 CurrentTime = GetCurrentArrayTime();
 if ( yyparse() != 0 ){
-        /* Error */
-        XdmfExprReturnValue = NULL;
-        }
+	/* Error */
+	XdmfExprReturnValue = NULL;
+	}
 /* Remove All Arrays Older than when we started */
 /* printf("Cleaning up Temparary Arrays\n"); */
 while( ( ap = GetNextOlderArray( CurrentTime, &TimeOfCreation ) ) != NULL ){
-        /* Don't remove the return value */
-        if( ap != XdmfExprReturnValue ){
-                /* printf("Removing Temporary Array\n"); */
-                delete ap;
-                }
-        CurrentTime = TimeOfCreation;
-        }
+	/* Don't remove the return value */
+	if( ap != XdmfExprReturnValue ){
+		/* printf("Removing Temporary Array\n"); */
+		delete ap;
+		}
+	CurrentTime = TimeOfCreation;
+	}
 return( XdmfExprReturnValue );
 }
+
+
 

@@ -1,6 +1,13 @@
 %{
 /* Force the definition for Linux */
 /* Possible bug in older Linux yacc */
+#ifndef yylval
+#define yylval dice_yylval
+#endif
+#ifndef yyerror
+#define yyerror dice_yyerror
+#endif
+
 #ifndef NOBISON
 extern int yylex();
 extern "C" {
@@ -12,6 +19,7 @@ extern "C" {
 #include <XdmfArray.h>
 #include <XdmfHDF.h>
 #include <math.h>
+
 
 static XdmfArray *XdmfExprReturnValue;
 
@@ -89,7 +97,7 @@ statement: tokARRAY '=' ArrayExpression	{
 			XdmfLength	i, index, Length = Array1->GetNumberOfElements();
 
 			for( i = 0 ; i < Length ; i++ ){
-				index = Array1->GetValueAsFloat64( i );
+				index = (XdmfLength)Array1->GetValueAsFloat64( i );
 				Result->SetValueFromFloat64( index, $6 );
 				}
 			delete Array1;
@@ -103,7 +111,7 @@ statement: tokARRAY '=' ArrayExpression	{
 			XdmfLength	i, index, Length = Array1->GetNumberOfElements();
 
 			for( i = 0 ; i < Length ; i++ ){
-				index = Array1->GetValueAsFloat64( i );
+				index = (XdmfLength)Array1->GetValueAsFloat64( i );
 				Value = Array2->GetValueAsFloat64( i );
 				Result->SetValueFromFloat64( index, Value );
 				}
@@ -430,11 +438,11 @@ ArrayExpression: ArrayExpression '+' ArrayExpression {
 
 			if(Array1->GetNumberType() != XDMF_INT64_TYPE){
 				yyerror("INDEX operator only uses XdmfInt64 Arrays");
-				return( NULL );
+				return( 0 );
 				}
 			if(Array2->GetNumberType() != XDMF_INT64_TYPE){
 				yyerror("INDEX operator only uses XdmfInt64 Arrays");
-				return( NULL );
+				return( 0 );
 				}
 			Length2 = Array2->GetNumberOfElements();
 			A1Values = (XdmfInt64 *)Array1->GetDataPointer();
@@ -465,7 +473,8 @@ ArrayExpression: ArrayExpression '+' ArrayExpression {
 			}
 	|	WHERE '(' ArrayExpression EQEQ ArrayExpression ')' {
 			XdmfArray	*Array1 = ( XdmfArray *)$3;
-			XdmfLength	i, howmany = 0, cntr = 0;
+			/* XdmfLength	howmany = 0; */
+			XdmfLength	i, cntr = 0;
 			XdmfLength	Length1 = Array1->GetNumberOfElements(), Length2;
 			XdmfInt64Array	*Index = new XdmfInt64Array( Length1 );
 			XdmfArray	*Array2 = ( XdmfArray *)$5;
@@ -511,7 +520,7 @@ ArrayExpression: ArrayExpression '+' ArrayExpression {
 			/* printf("Found %d Wheres\n", cntr ); */
 			if( cntr == 0 ){
 				yyerror("WHERE Function Length == 0");
-				return( NULL );
+				return( 0 );
 				}
 			Index->SetNumberOfElements( cntr );
 			$$ = ( XdmfArray *)Index;
@@ -532,7 +541,7 @@ ArrayExpression: ArrayExpression '+' ArrayExpression {
 			/* printf("Found %d Wheres\n", cntr ); */
 			if( cntr == 0 ){
 				yyerror("WHERE Function Length == 0");
-				return( NULL );
+				return( 0 );
 				}
 			Index->SetNumberOfElements( cntr );
 			$$ = ( XdmfArray *)Index;
@@ -553,7 +562,7 @@ ArrayExpression: ArrayExpression '+' ArrayExpression {
 			/* printf("Found %d Wheres\n", cntr ); */
 			if( cntr == 0 ){
 				yyerror("WHERE Function Length == 0");
-				return( NULL );
+				return( 0 );
 				}
 			Index->SetNumberOfElements( cntr );
 			$$ = ( XdmfArray *)Index;
@@ -574,7 +583,7 @@ ArrayExpression: ArrayExpression '+' ArrayExpression {
 			/* printf("Found %d Wheres\n", cntr ); */
 			if( cntr == 0 ){
 				yyerror("WHERE Function Length == 0");
-				return( NULL );
+				return( 0 );
 				}
 			Index->SetNumberOfElements( cntr );
 			$$ = ( XdmfArray *)Index;
@@ -595,7 +604,7 @@ ArrayExpression: ArrayExpression '+' ArrayExpression {
 			/* printf("Found %d Wheres\n", cntr ); */
 			if( cntr == 0 ){
 				yyerror("WHERE Function Length == 0");
-				return( NULL );
+				return( 0 );
 				}
 			Index->SetNumberOfElements( cntr );
 			$$ = ( XdmfArray *)Index;
@@ -616,7 +625,7 @@ ArrayExpression: ArrayExpression '+' ArrayExpression {
 			/* printf("Found %d Wheres\n", cntr ); */
 			if( cntr == 0 ){
 				yyerror("WHERE Function Length == 0");
-				return( NULL );
+				return( 0 );
 				}
 			Index->SetNumberOfElements( cntr );
 			$$ = ( XdmfArray *)Index;
@@ -656,7 +665,7 @@ ArrayExpression: ArrayExpression '+' ArrayExpression {
 			if ( Array1 == NULL ){
 				/* Bomb */
 				yyerror("NULL Array Pointer");
-				return( NULL );
+				return( 0 );
 			} else {
 				Result  = Array1->Clone();
 				$$ = Result;
@@ -716,7 +725,8 @@ extern "C" {
 static	char	InputBuffer[ 512 ];
 static	int	InputBufferPtr = 0, InputBufferEnd = 0;
 static	char	OutputBuffer[ 512 ];
-static	int	OutputBufferPtr = 0, OutputBufferEnd = 511;
+static	int	OutputBufferPtr = 0;
+/* static int OutputBufferEnd = 511; */
 
 int
 dice_yywrap( void ) {
@@ -731,6 +741,7 @@ fprintf(stderr, "XdmfExpr : %s \n", string);
 
 int
 XdmfExprFlexInput( char *buf, int maxlen ) {
+(void)maxlen;
 if ( InputBufferPtr < InputBufferEnd ){
 	buf[0] = InputBuffer[ InputBufferPtr++ ];
 	return(1);
