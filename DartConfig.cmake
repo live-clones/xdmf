@@ -28,4 +28,4 @@ SET (GNATS_WEB_URL "http://public.kitware.com/Bug/index.php")
 SET (USE_GNATS "On")
 
 # copy over the testing logo
-#CONFIGURE_FILE(${PARAVIEW_SOURCE_DIR}/Web/Art/ParaViewLogo.gif ${PARAVIEW_BINARY_DIR}/Testing/HTML/TestingResults/Icons/Logo.gif COPYONLY)
+CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/DiceLogo.gif ${Xdmf_BINARY_DIR}/Testing/HTML/TestingResults/Icons/Logo.gif COPYONLY)
