@@ -22,6 +22,9 @@
 /*     for more information.                                       */
 /*                                                                 */
 /*******************************************************************/
+#ifndef _@XDMF_WINDOWINTERACTOR@_h
+#define _@XDMF_WINDOWINTERACTOR@_h
+
 #include <@XDMF_WINDOWINTERACTOR@.h>
 
 class VTK_EXPORT vtkXdmfRenderWindowInteractor : public @XDMF_WINDOWINTERACTOR@
@@ -30,5 +33,8 @@ public:
   static vtkXdmfRenderWindowInteractor *New();
   vtkTypeMacro(vtkXdmfRenderWindowInteractor,@XDMF_WINDOWINTERACTOR@);
   virtual void LoopOnce();
-  virtual void Start( int Block = 0 );
+  virtual void Start( int Block );
+  virtual void Start( ) { this->Start(0); }
 };
+
+#endif

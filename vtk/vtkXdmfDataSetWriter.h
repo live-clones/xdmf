@@ -62,8 +62,8 @@ public:
   void SetInput(vtkDataSet *input) {
     this->Input = input;
     }
-  void SetHeavyDataSetName( char *HeavyDataSetName ) {
-    if( HeavyDataSetName ) strcpy( this->HeavyDataSetName, HeavyDataSetName );
+  void SetHeavyDataSetName( char *hd) {
+    if( hd ) strcpy( this->HeavyDataSetName, hd );
     this->AllLight = 0;
     }
   void StartTopology( int Type, vtkCellArray *Cells);

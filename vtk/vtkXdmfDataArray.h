@@ -63,9 +63,9 @@ public:
     return( NULL );
     }
 
-  void SetVtkArray( vtkDataArray *Array ) {
-    this->vtkArray = Array;
-    this->ToXdmfArray( Array );
+  void SetVtkArray( vtkDataArray *array) {
+    this->vtkArray = array;
+    this->ToXdmfArray( array );
     }
 
   vtkDataArray *GetVtkArray( void ) {
