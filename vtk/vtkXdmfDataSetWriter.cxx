@@ -81,8 +81,13 @@ char *vtkXdmfDataSetWriter::GetXML( void ) {
   char  *String, *ptr;
   
   ptr = this->Internals->XMLStream->str();
-  String = new char[ strlen( ptr ) + 1 ];
-  strcpy( String, ptr );
+  if ( ptr ){
+    String = new char[ strlen( ptr ) + 1 ];
+    strcpy( String, ptr );
+  }
+  else {
+    String = 0;
+  }
   this->Internals->XMLStream->rdbuf()->freeze( 0 );
   return( String );
   }
