@@ -37,7 +37,7 @@
 #include "string.h"
 
 #ifdef __hpux
-# include <sys.param.h>
+# include <sys/param.h>
 #endif
 
 #ifdef UNIX
