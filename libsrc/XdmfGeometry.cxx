@@ -94,6 +94,10 @@ if( XDMF_WORD_CMP( geometryType, "X_Y_Z" ) ){
   this->GeometryType = XDMF_GEOMETRY_X_Y_Z;
   return(XDMF_SUCCESS);
   }
+if( XDMF_WORD_CMP( geometryType, "X_Y" ) ){
+  this->GeometryType = XDMF_GEOMETRY_X_Y;
+  return(XDMF_SUCCESS);
+  }
 if( XDMF_WORD_CMP( geometryType, "XY" ) ){
   this->GeometryType = XDMF_GEOMETRY_XY;
   return(XDMF_SUCCESS);
@@ -126,6 +130,9 @@ switch( this->GeometryType ){
     break;
   case XDMF_GEOMETRY_X_Y_Z :
     strcpy( Value, "X_Y_Z" );
+    break;
+  case XDMF_GEOMETRY_X_Y :
+    strcpy( Value, "X_Y" );
     break;
   case XDMF_GEOMETRY_XY :
     strcpy( Value, "XY" );
@@ -200,6 +207,7 @@ if( XDMF_WORD_CMP( Attribute, "Geometry" ) == 0 ){
  ArrayIndex = 0;
  PointsReader.SetDOM( this->DOM );
 if( ( this->GeometryType == XDMF_GEOMETRY_X_Y_Z ) ||
+  ( this->GeometryType == XDMF_GEOMETRY_X_Y ) ||
   ( this->GeometryType == XDMF_GEOMETRY_XYZ ) ||
   ( this->GeometryType == XDMF_GEOMETRY_XY ) ){
  do {
@@ -217,6 +225,11 @@ if( ( this->GeometryType == XDMF_GEOMETRY_X_Y_Z ) ||
         points->SetNumberOfElements( TmpArray->GetNumberOfElements() * 3 );
         break;
       case XDMF_GEOMETRY_XY :
+        points = new XdmfArray;
+        points->CopyType( TmpArray );
+        points->SetNumberOfElements( TmpArray->GetNumberOfElements() / 2 * 3 );
+        break;
+      case XDMF_GEOMETRY_X_Y :
         points = new XdmfArray;
         points->CopyType( TmpArray );
         points->SetNumberOfElements( TmpArray->GetNumberOfElements() / 2 * 3 );
@@ -246,6 +259,13 @@ if( ( this->GeometryType == XDMF_GEOMETRY_X_Y_Z ) ||
         points->SelectHyperSlab( NULL, Stride, Count);
         CopyArray( TmpArray, points);
         this->NumberOfPoints = TmpArray->GetNumberOfElements() / 2 ;
+        break;
+      case XDMF_GEOMETRY_X_Y :
+        Start[0] = ArrayIndex;
+        Stride[0] = 3;
+        points->SelectHyperSlab( Start, Stride, NULL );
+        CopyArray( TmpArray, points);
+        this->NumberOfPoints = TmpArray->GetNumberOfElements();
         break;
       default :
         // points = TmpArray so do nothing

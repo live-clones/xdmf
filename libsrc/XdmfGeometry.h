@@ -31,8 +31,9 @@
 #define XDMF_GEOMETRY_XYZ    1
 #define XDMF_GEOMETRY_XY    2
 #define XDMF_GEOMETRY_X_Y_Z    3
-#define XDMF_GEOMETRY_VXVYVZ    4
-#define XDMF_GEOMETRY_ORIGIN_DXDYDZ  5
+#define XDMF_GEOMETRY_X_Y    4
+#define XDMF_GEOMETRY_VXVYVZ    5
+#define XDMF_GEOMETRY_ORIGIN_DXDYDZ  6
 
 
 //! Class to handle the XYZ positions of a Grid
