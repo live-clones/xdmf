@@ -14,8 +14,9 @@ extern "C" {
 #include <XdmfHDF.h>
 #include <math.h>
 
-
 static XdmfArray *XdmfExprReturnValue;
+XdmfExprSymbol *XdmfExprItemsTable = NULL;
+
 
 class XdmfInt64Array : public XdmfArray {
 public :
@@ -773,13 +774,11 @@ XdmfExprOutput( int c ) {
 XdmfExprSymbol
 *XdmfExprSymbolLookup( const char *Name ){
 
-XdmfExprSymbol *Table = NULL;
-
-XdmfExprSymbol	*Last = NULL, *Item = Table;
+XdmfExprSymbol	*Last = NULL, *Item = XdmfExprItemsTable;
 
 if( Name == NULL ) {
 	/* Table Check  */
-	return( Table );
+	return( XdmfExprItemsTable );
 	}
 
 while( Item != NULL ) {
@@ -797,8 +796,8 @@ Item->Name = strdup( Name );
 Item->ClientData = NULL;
 Item->DoubleValue = 0;
 Item->DoubleFunctionPtr = NULL;
-if( Table == NULL ) {
-	Table = Item;
+if( XdmfExprItemsTable == NULL ) {
+	XdmfExprItemsTable = Item;
 	}
 if( Last != NULL ){
 	Last->Next = Item;
@@ -862,6 +861,15 @@ if ( yyparse() != 0 ){
 	/* Error */
 	XdmfExprReturnValue = NULL;
 	}
+Item = XdmfExprSymbolLookup( NULL );
+while( Item != NULL ) {
+  XdmfExprSymbol *next = Item->Next;
+  free(Item);
+	Item = next;
+	}
+
+XdmfExprItemsTable = NULL;
+
 /* Remove All Arrays Older than when we started */
 /* printf("Cleaning up Temparary Arrays\n"); */
 while( ( ap = GetNextOlderArray( CurrentTime, &TimeOfCreation ) ) != NULL ){
