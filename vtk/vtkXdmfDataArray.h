@@ -42,7 +42,8 @@ public:
   char *ToArray( void ) {
     return( this->ToXdmfArray() );
     }
-  vtkDataArray *FromXdmfArray( char *ArrayName = NULL, int CopyShape = 1 );
+  vtkDataArray *FromXdmfArray( char *ArrayName = NULL, int CopyShape = 1, 
+   int rank = 1 );
   char *ToXdmfArray( vtkDataArray *DataArray = NULL, int CopyShape = 1 );
 
   void SetArray( char *TagName ) {

@@ -46,92 +46,111 @@ vtkXdmfDataArray::vtkXdmfDataArray()
 
 
 //----------------------------------------------------------------------------
-vtkDataArray *vtkXdmfDataArray::FromXdmfArray( char *ArrayName, int CopyShape ){
+vtkDataArray *vtkXdmfDataArray::FromXdmfArray( char *ArrayName, int CopyShape,
+  int rank ){
   XdmfArray *Array = this->Array;
   if ( ArrayName != NULL ) {
     Array = TagNameToArray( ArrayName );
-    }
+  }
   if( Array == NULL ){
     XdmfErrorMessage("Array is NULL");
     return(NULL);
-    }
-  //cout << "Array: " << Array << endl;
+  }
   switch( Array->GetNumberType() ){
-    case XDMF_INT8_TYPE :
-      if( this->vtkArray == NULL ) {
-        this->vtkArray = vtkUnsignedCharArray::New();
-        }
-      break;
-    case XDMF_INT32_TYPE :
-    case XDMF_INT64_TYPE :
-      if( this->vtkArray == NULL ) {
-        this->vtkArray = vtkIntArray::New();
-        }
-      break;
-    case XDMF_FLOAT32_TYPE :
-      if( this->vtkArray == NULL ) {
-        this->vtkArray = vtkFloatArray::New();
-        }
-      break;
-    default :
-      if( this->vtkArray == NULL ) {
-        this->vtkArray = vtkDoubleArray::New();
-        }
-      break;
+  case XDMF_INT8_TYPE :
+    if( this->vtkArray == NULL ) {
+      this->vtkArray = vtkUnsignedCharArray::New();
     }
-  if ( CopyShape && ( Array->GetRank() == 2 ) ) {
-    this->vtkArray->SetNumberOfComponents( Array->GetDimension( 1 ) );
-    this->vtkArray->SetNumberOfTuples( Array->GetDimension( 0 ) );
-  } else {
+    break;
+  case XDMF_INT32_TYPE :
+  case XDMF_INT64_TYPE :
+    if( this->vtkArray == NULL ) {
+      this->vtkArray = vtkIntArray::New();
+    }
+    break;
+  case XDMF_FLOAT32_TYPE :
+    if( this->vtkArray == NULL ) {
+      this->vtkArray = vtkFloatArray::New();
+    }
+    break;
+  default :
+    if( this->vtkArray == NULL ) {
+      this->vtkArray = vtkDoubleArray::New();
+    }
+    break;
+  }
+  if ( CopyShape )
+    {
+    XdmfInt64 components = 1;
+    XdmfInt64 tuples = 0;
+    if  ( Array->GetRank() > rank + 1 )
+      {
+      this->vtkArray->Delete();
+      this->vtkArray = 0;
+      vtkErrorMacro("Rank of Xdmf array is more than 1 + rank of dataset");
+      return 0;
+      }
+    if ( Array->GetRank() > rank ) 
+      {
+      components = Array->GetDimension( rank );
+      }
+    tuples = Array->GetNumberOfElements() / components;
+    //cout << "Tuples: " << tuples << " components: " << components << endl;
+    //cout << "Rank: " << rank << endl;
+    this->vtkArray->SetNumberOfComponents( components );
+    this->vtkArray->SetNumberOfTuples( tuples );
+    } 
+  else 
+    {
     this->vtkArray->SetNumberOfComponents( 1 );
     this->vtkArray->SetNumberOfTuples( Array->GetNumberOfElements() );
     }
   //cout << "Number type: " << Array->GetNumberType() << endl;
   switch( Array->GetNumberType() ){
-    case XDMF_INT8_TYPE :
-      Array->GetValues( 0,
-        ( unsigned char  *)this->vtkArray->GetVoidPointer( 0 ),
-        Array->GetNumberOfElements() );  
-      break;
-    case XDMF_INT32_TYPE :
-    case XDMF_INT64_TYPE :
-      Array->GetValues( 0,
-        ( int *)this->vtkArray->GetVoidPointer( 0 ),
-        Array->GetNumberOfElements() );  
-      break;
-    case XDMF_FLOAT32_TYPE :
-      Array->GetValues( 0,
-        ( float *)this->vtkArray->GetVoidPointer( 0 ),
-        Array->GetNumberOfElements() );  
-      break;
-    case XDMF_FLOAT64_TYPE :
-      Array->GetValues( 0,
-        ( double *)this->vtkArray->GetVoidPointer( 0 ),
-        Array->GetNumberOfElements() );  
-      break;
-    default :
-      if ( Array->GetNumberOfElements() > 0 )
+  case XDMF_INT8_TYPE :
+    Array->GetValues( 0,
+      ( unsigned char  *)this->vtkArray->GetVoidPointer( 0 ),
+      Array->GetNumberOfElements() );  
+    break;
+  case XDMF_INT32_TYPE :
+  case XDMF_INT64_TYPE :
+    Array->GetValues( 0,
+      ( int *)this->vtkArray->GetVoidPointer( 0 ),
+      Array->GetNumberOfElements() );  
+    break;
+  case XDMF_FLOAT32_TYPE :
+    Array->GetValues( 0,
+      ( float *)this->vtkArray->GetVoidPointer( 0 ),
+      Array->GetNumberOfElements() );  
+    break;
+  case XDMF_FLOAT64_TYPE :
+    Array->GetValues( 0,
+      ( double *)this->vtkArray->GetVoidPointer( 0 ),
+      Array->GetNumberOfElements() );  
+    break;
+  default :
+    if ( Array->GetNumberOfElements() > 0 )
+      {
+      //cout << "Manual idx" << endl;
+      //cout << "Tuples: " << vtkArray->GetNumberOfTuples() << endl;
+      //cout << "Components: " << vtkArray->GetNumberOfComponents() << endl;
+      //cout << "Elements: " << Array->GetNumberOfElements() << endl;
+      vtkIdType jj, kk;
+      vtkIdType idx = 0;
+      for ( jj = 0; jj < vtkArray->GetNumberOfTuples(); jj ++ )
         {
-        //cout << "Manual idx" << endl;
-        //cout << "Tuples: " << vtkArray->GetNumberOfTuples() << endl;
-        //cout << "Components: " << vtkArray->GetNumberOfComponents() << endl;
-        //cout << "Elements: " << Array->GetNumberOfElements() << endl;
-        vtkIdType jj, kk;
-        vtkIdType idx = 0;
-        for ( jj = 0; jj < vtkArray->GetNumberOfTuples(); jj ++ )
+        for ( kk = 0; kk < vtkArray->GetNumberOfComponents(); kk ++ )
           {
-          for ( kk = 0; kk < vtkArray->GetNumberOfComponents(); kk ++ )
-            {
-            double val = Array->GetValueAsFloat64(idx);
-            //cout << "Value: " << val << endl;
-            vtkArray->SetComponent(jj, kk, val);
-            idx ++;
-            }
+          double val = Array->GetValueAsFloat64(idx);
+          //cout << "Value: " << val << endl;
+          vtkArray->SetComponent(jj, kk, val);
+          idx ++;
           }
         }
-      break;
-    }
-return( this->vtkArray );
+      }
+    break;
+  }
+  return( this->vtkArray );
 }
 
 //----------------------------------------------------------------------------
@@ -139,37 +158,37 @@ char *vtkXdmfDataArray::ToXdmfArray( vtkDataArray *DataArray, int CopyShape ){
   XdmfArray *Array;
   if ( DataArray  == NULL )  {
     DataArray = this->vtkArray;
-    }
+  }
   if ( DataArray  == NULL )  {
     vtkDebugMacro(<< "Array is NULL");
     return(NULL);
-    }
+  }
   if ( this->Array == NULL ){
     this->Array = new XdmfArray();
     switch( DataArray->GetDataType() ){
-      case VTK_CHAR :
-      case VTK_UNSIGNED_CHAR :
-        this->Array->SetNumberType( XDMF_INT8_TYPE );
-        break;
-      case VTK_SHORT :
-      case VTK_UNSIGNED_SHORT :
-      case VTK_INT :
-      case VTK_UNSIGNED_INT :
-      case VTK_LONG :
-      case VTK_UNSIGNED_LONG :
-        this->Array->SetNumberType( XDMF_INT32_TYPE );
-        break;
-      case VTK_FLOAT :
-        this->Array->SetNumberType( XDMF_FLOAT32_TYPE );
-        break;
-      case VTK_DOUBLE :
-        this->Array->SetNumberType( XDMF_FLOAT64_TYPE );
-        break;
-      default :
-        XdmfErrorMessage("Can't handle Data Type");
-        return( NULL );
-      }
+    case VTK_CHAR :
+    case VTK_UNSIGNED_CHAR :
+      this->Array->SetNumberType( XDMF_INT8_TYPE );
+      break;
+    case VTK_SHORT :
+    case VTK_UNSIGNED_SHORT :
+    case VTK_INT :
+    case VTK_UNSIGNED_INT :
+    case VTK_LONG :
+    case VTK_UNSIGNED_LONG :
+      this->Array->SetNumberType( XDMF_INT32_TYPE );
+      break;
+    case VTK_FLOAT :
+      this->Array->SetNumberType( XDMF_FLOAT32_TYPE );
+      break;
+    case VTK_DOUBLE :
+      this->Array->SetNumberType( XDMF_FLOAT64_TYPE );
+      break;
+    default :
+      XdmfErrorMessage("Can't handle Data Type");
+      return( NULL );
     }
+  }
   Array = this->Array;
   if( CopyShape ) {
     XdmfInt64 Shape[3];
@@ -182,29 +201,29 @@ char *vtkXdmfDataArray::ToXdmfArray( vtkDataArray *DataArray, int CopyShape ){
       Array->SetShape( 2, Shape );
     }
 
-    }
+  }
   switch( Array->GetNumberType() ){
-    case XDMF_INT8_TYPE :
-      Array->SetValues( 0,
-        ( unsigned char  *)DataArray->GetVoidPointer( 0 ),
-        Array->GetNumberOfElements() );  
-      break;
-    case XDMF_INT32_TYPE :
-    case XDMF_INT64_TYPE :
-      Array->SetValues( 0,
-        ( int *)DataArray->GetVoidPointer( 0 ),
-        Array->GetNumberOfElements() );  
-      break;
-    case XDMF_FLOAT32_TYPE :
-      Array->SetValues( 0,
-        ( float *)DataArray->GetVoidPointer( 0 ),
-        Array->GetNumberOfElements() );  
-      break;
-    default :
-      Array->SetValues( 0,
-        ( double *)DataArray->GetVoidPointer( 0 ),
-        Array->GetNumberOfElements() );  
-      break;
-    }
-return( Array->GetTagName() );
+  case XDMF_INT8_TYPE :
+    Array->SetValues( 0,
+      ( unsigned char  *)DataArray->GetVoidPointer( 0 ),
+      Array->GetNumberOfElements() );  
+    break;
+  case XDMF_INT32_TYPE :
+  case XDMF_INT64_TYPE :
+    Array->SetValues( 0,
+      ( int *)DataArray->GetVoidPointer( 0 ),
+      Array->GetNumberOfElements() );  
+    break;
+  case XDMF_FLOAT32_TYPE :
+    Array->SetValues( 0,
+      ( float *)DataArray->GetVoidPointer( 0 ),
+      Array->GetNumberOfElements() );  
+    break;
+  default :
+    Array->SetValues( 0,
+      ( double *)DataArray->GetVoidPointer( 0 ),
+      Array->GetNumberOfElements() );  
+    break;
+  }
+  return( Array->GetTagName() );
 }
