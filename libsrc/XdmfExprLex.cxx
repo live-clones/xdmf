@@ -499,6 +499,11 @@ char *yytext;
 #include <ice.h>
 #include <math.h>
 #define YY_NEVER_INTERACTIVE 1
+#if defined( _WIN32 ) && !defined( __CYGWIN__ )
+#  include <io.h>
+#  define YY_NO_UNISTD_H
+#  define isatty _isatty
+#endif
 
 #ifndef yylval
 #define yylval dice_yylval
