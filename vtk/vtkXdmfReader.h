@@ -201,8 +201,11 @@ protected:
   vtkXdmfReader();
   ~vtkXdmfReader();   
 
-  virtual void Execute();
-  virtual void ExecuteInformation();
+  virtual int RequestData(vtkInformation *, vtkInformationVector **,
+                          vtkInformationVector *);
+  virtual int RequestInformation(vtkInformation *, vtkInformationVector **,
+                                 vtkInformationVector *);
+  virtual int FillOutputPortInformation(int port, vtkInformation *info);
 
   // Callback registered with the SelectionObserver.
   static void SelectionModifiedCallback(vtkObject* caller, unsigned long eid,
