@@ -69,7 +69,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.10");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.11");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -1195,6 +1195,14 @@ if(Param) {
 
 }
 //----------------------------------------------------------------------------
+char *vtkXdmfReader::GetParameterTypeAsString(char *Name){
+
+if (this->GetParameterType(Name) == XDMF_PARAMETER_RANGE_TYPE) {
+	return("RANGE");
+} 
+return("LIST");
+}
+//----------------------------------------------------------------------------
 int vtkXdmfReader::GetParameterType(int index){
 XdmfParameter *Param;
 
@@ -1212,10 +1220,17 @@ if(Param) {
 }
 
 //----------------------------------------------------------------------------
-int *vtkXdmfReader::GetParameterRange(int index){
+char *vtkXdmfReader::GetParameterTypeAsString(int index){
+
+if (this->GetParameterType(index) == XDMF_PARAMETER_RANGE_TYPE) {
+	return("RANGE");
+} 
+return("LIST");
+}
+//----------------------------------------------------------------------------
+int vtkXdmfReader::GetParameterRange(int index, int Shape[3]){
 XdmfParameter *Param;
 XdmfArray  *Parray;
-static int Shape[3];
 
 
 if(!this->DOM) {
@@ -1233,16 +1248,14 @@ if(Param) {
 		Shape[1] = 1;
 		Shape[2] = Param->GetNumberOfElements();
 	}
-	return(Shape);
+	return(Shape[2]);
 }
-return(NULL);
+return(0);
 }
 //----------------------------------------------------------------------------
-int *vtkXdmfReader::GetParameterRange(char *Name){
+int vtkXdmfReader::GetParameterRange(char *Name, int Shape[3]){
 XdmfParameter *Param;
 XdmfArray  *Parray;
-static int Shape[3];
-
 
 if(!this->DOM) {
 	return(0);
@@ -1259,17 +1272,19 @@ if(Param) {
 		Shape[1] = 1;
 		Shape[2] = Param->GetNumberOfElements();
 	}
-	return(Shape);
+	return(Shape[2]);
 }
-return(NULL);
+return(0);
 }
 
 //----------------------------------------------------------------------------
 char *vtkXdmfReader::GetParameterRangeAsString(int index){
-int *Range;
+int Range[3];
 ostrstream StringOutput;
 
-Range = this->GetParameterRange(index);
+if(this->GetParameterRange(index, Range) <= 0){
+	return(NULL);
+}
 StringOutput << ICE_64BIT_CAST Range[0] << " ";
 StringOutput << ICE_64BIT_CAST Range[1] << " ";
 StringOutput << ICE_64BIT_CAST Range[2] << ends;
@@ -1277,17 +1292,19 @@ return(StringOutput.str());
 }
 //----------------------------------------------------------------------------
 char *vtkXdmfReader::GetParameterRangeAsString(char *Name){
-int *Range;
+int Range[3];
 ostrstream StringOutput;
 
-Range = this->GetParameterRange(Name);
+if (this->GetParameterRange(Name, Range) <= 0) {
+	return(NULL);
+}
 StringOutput << ICE_64BIT_CAST Range[0] << " ";
 StringOutput << ICE_64BIT_CAST Range[1] << " ";
 StringOutput << ICE_64BIT_CAST Range[2] << ends;
 return(StringOutput.str());
 }
 //----------------------------------------------------------------------------
-int vtkXdmfReader::SetParameterCurrentIndex(int Index, int CurrentIndex) {
+int vtkXdmfReader::SetParameterIndex(int Index, int CurrentIndex) {
 XdmfParameter *Param;
 
 
@@ -1302,7 +1319,7 @@ return(Param->SetCurrentIndex(CurrentIndex));
 }
 
 //----------------------------------------------------------------------------
-int vtkXdmfReader::GetParameterCurrentIndex(int Index) {
+int vtkXdmfReader::GetParameterIndex(int Index) {
 XdmfParameter *Param;
 
 
@@ -1317,7 +1334,7 @@ return(Param->GetCurrentIndex());
 }
 
 //----------------------------------------------------------------------------
-int vtkXdmfReader::SetParameterCurrentIndex(char *ParameterName, int CurrentIndex) {
+int vtkXdmfReader::SetParameterIndex(char *ParameterName, int CurrentIndex) {
 XdmfParameter *Param;
 int Status;
 
@@ -1338,7 +1355,7 @@ return(Status);
 }
 
 //----------------------------------------------------------------------------
-int vtkXdmfReader::GetParameterCurrentIndex(char *Name) {
+int vtkXdmfReader::GetParameterIndex(char *Name) {
 XdmfParameter *Param;
 
 

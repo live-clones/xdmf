@@ -93,11 +93,13 @@ public:
   // Get Parameter Type
   int GetParameterType(int index);
   int GetParameterType(char *Name);
+  char *GetParameterTypeAsString(int index);
+  char *GetParameterTypeAsString(char *Name);
 
   // Description:
   // Get start, stride, count
-  int *GetParameterRange(int index);
-  int *GetParameterRange(char *Name);
+  int GetParameterRange(int index, int Shape[3]);
+  int GetParameterRange(char *Name, int Shape[3]);
   char *GetParameterRangeAsString(int index);
   char *GetParameterRangeAsString(char *Name);
 
@@ -107,10 +109,10 @@ public:
 
   // Description:
   // Set/Get Parameter Current Index
-  int SetParameterCurrentIndex(char *Name, int CurrentIndex); 
-  int SetParameterCurrentIndex(int ParameterIndex, int CurrentIndex); 
-  int GetParameterCurrentIndex(char *Name);
-  int GetParameterCurrentIndex(int index);
+  int SetParameterIndex(char *Name, int CurrentIndex); 
+  int SetParameterIndex(int ParameterIndex, int CurrentIndex); 
+  int GetParameterIndex(char *Name);
+  int GetParameterIndex(int index);
 
   // Description:
   // Get Length of Parameter
