@@ -122,7 +122,7 @@ if( !this->ParameterArray ){
   }
 }
 IValue = Value;
-LastFormatCharIndex = strlen( this->ParameterFormat );
+LastFormatCharIndex = strlen( this->ParameterFormat ) - 1;
 if ( LastFormatCharIndex >= 0 ) {
         switch ( this->ParameterFormat[ LastFormatCharIndex ] ) {
                 case 'g' :
