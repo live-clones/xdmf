@@ -27,6 +27,19 @@ except AttributeError:
     _newclass = 0
 
 
+SIZEOF_LONG_LONG = _Xdmf.SIZEOF_LONG_LONG
+ICE_SYSTEM = _Xdmf.ICE_SYSTEM
+ICE_MACHINE_TYPE = _Xdmf.ICE_MACHINE_TYPE
+ICE_TRUE = _Xdmf.ICE_TRUE
+ICE_FALSE = _Xdmf.ICE_FALSE
+ICE_SUCCESS = _Xdmf.ICE_SUCCESS
+ICE_FAIL = _Xdmf.ICE_FAIL
+ICE_CHAR_TYPE = _Xdmf.ICE_CHAR_TYPE
+ICE_8_INT_TYPE = _Xdmf.ICE_8_INT_TYPE
+ICE_32_INT_TYPE = _Xdmf.ICE_32_INT_TYPE
+ICE_64_INT_TYPE = _Xdmf.ICE_64_INT_TYPE
+ICE_FLOAT_TYPE = _Xdmf.ICE_FLOAT_TYPE
+ICE_DOUBLE_TYPE = _Xdmf.ICE_DOUBLE_TYPE
 XDMF_SUCCESS = _Xdmf.XDMF_SUCCESS
 XDMF_FAIL = _Xdmf.XDMF_FAIL
 XDMF_TRUE = _Xdmf.XDMF_TRUE
@@ -48,8 +61,8 @@ class XdmfObject(_object):
     __swig_getmethods__ = {}
     __getattr__ = lambda self, name: _swig_getattr(self, XdmfObject, name)
     def __init__(self,*args):
-        self.this = apply(_Xdmf.new_XdmfObject,args)
-        self.thisown = 1
+        _swig_setattr(self, XdmfObject, 'this', apply(_Xdmf.new_XdmfObject,args))
+        _swig_setattr(self, XdmfObject, 'thisown', 1)
     def __del__(self, destroy= _Xdmf.delete_XdmfObject):
         try:
             if self.thisown: destroy(self)
@@ -66,9 +79,9 @@ class XdmfObject(_object):
 
 class XdmfObjectPtr(XdmfObject):
     def __init__(self,this):
-        self.this = this
-        if not hasattr(self,"thisown"): self.thisown = 0
-        self.__class__ = XdmfObject
+        _swig_setattr(self, XdmfObject, 'this', this)
+        if not hasattr(self,"thisown"): _swig_setattr(self, XdmfObject, 'thisown', 0)
+        _swig_setattr(self, XdmfObject,self.__class__,XdmfObject)
 _Xdmf.XdmfObject_swigregister(XdmfObjectPtr)
 
 SetGlobalDebugOn = _Xdmf.SetGlobalDebugOn
@@ -85,8 +98,8 @@ XdmfObjectToHandle = _Xdmf.XdmfObjectToHandle
 
 HandleToXdmfObject = _Xdmf.HandleToXdmfObject
 
-XDMF_PARAMETER_RANGE_TYPE = _Xdmf.XDMF_PARAMETER_RANGE_TYPE
-XDMF_PARAMETER_LIST_TYPE = _Xdmf.XDMF_PARAMETER_LIST_TYPE
+ICE_READ_STREAM64 = _Xdmf.ICE_READ_STREAM64
+
 XdmfTypeToHDF5Type = _Xdmf.XdmfTypeToHDF5Type
 
 HDF5TypeToXdmfType = _Xdmf.HDF5TypeToXdmfType
@@ -108,8 +121,8 @@ class XdmfDataDesc(XdmfObject):
     for _s in [XdmfObject]: __swig_getmethods__.update(_s.__swig_getmethods__)
     __getattr__ = lambda self, name: _swig_getattr(self, XdmfDataDesc, name)
     def __init__(self,*args):
-        self.this = apply(_Xdmf.new_XdmfDataDesc,args)
-        self.thisown = 1
+        _swig_setattr(self, XdmfDataDesc, 'this', apply(_Xdmf.new_XdmfDataDesc,args))
+        _swig_setattr(self, XdmfDataDesc, 'thisown', 1)
     def __del__(self, destroy= _Xdmf.delete_XdmfDataDesc):
         try:
             if self.thisown: destroy(self)
@@ -163,13 +176,11 @@ class XdmfDataDesc(XdmfObject):
 
 class XdmfDataDescPtr(XdmfDataDesc):
     def __init__(self,this):
-        self.this = this
-        if not hasattr(self,"thisown"): self.thisown = 0
-        self.__class__ = XdmfDataDesc
+        _swig_setattr(self, XdmfDataDesc, 'this', this)
+        if not hasattr(self,"thisown"): _swig_setattr(self, XdmfDataDesc, 'thisown', 0)
+        _swig_setattr(self, XdmfDataDesc,self.__class__,XdmfDataDesc)
 _Xdmf.XdmfDataDesc_swigregister(XdmfDataDescPtr)
 
-XDMF_ARRAY_IN = _Xdmf.XDMF_ARRAY_IN
-XDMF_ARRAY_OUT = _Xdmf.XDMF_ARRAY_OUT
 XDMF_ARRAY_TAG_LENGTH = _Xdmf.XDMF_ARRAY_TAG_LENGTH
 class XdmfArray(XdmfDataDesc):
     __swig_setmethods__ = {}
@@ -179,8 +190,8 @@ class XdmfArray(XdmfDataDesc):
     for _s in [XdmfDataDesc]: __swig_getmethods__.update(_s.__swig_getmethods__)
     __getattr__ = lambda self, name: _swig_getattr(self, XdmfArray, name)
     def __init__(self,*args):
-        self.this = apply(_Xdmf.new_XdmfArray,args)
-        self.thisown = 1
+        _swig_setattr(self, XdmfArray, 'this', apply(_Xdmf.new_XdmfArray,args))
+        _swig_setattr(self, XdmfArray, 'thisown', 1)
     def __del__(self, destroy= _Xdmf.delete_XdmfArray):
         try:
             if self.thisown: destroy(self)
@@ -230,9 +241,9 @@ class XdmfArray(XdmfDataDesc):
 
 class XdmfArrayPtr(XdmfArray):
     def __init__(self,this):
-        self.this = this
-        if not hasattr(self,"thisown"): self.thisown = 0
-        self.__class__ = XdmfArray
+        _swig_setattr(self, XdmfArray, 'this', this)
+        if not hasattr(self,"thisown"): _swig_setattr(self, XdmfArray, 'thisown', 0)
+        _swig_setattr(self, XdmfArray,self.__class__,XdmfArray)
 _Xdmf.XdmfArray_swigregister(XdmfArrayPtr)
 
 class XdmfArrayList(_object):
@@ -250,8 +261,8 @@ class XdmfArrayList(_object):
     __swig_getmethods__["Array"] = _Xdmf.XdmfArrayList_Array_get
     if _newclass:Array = property(_Xdmf.XdmfArrayList_Array_get,_Xdmf.XdmfArrayList_Array_set)
     def __init__(self,*args):
-        self.this = apply(_Xdmf.new_XdmfArrayList,args)
-        self.thisown = 1
+        _swig_setattr(self, XdmfArrayList, 'this', apply(_Xdmf.new_XdmfArrayList,args))
+        _swig_setattr(self, XdmfArrayList, 'thisown', 1)
     def __del__(self, destroy= _Xdmf.delete_XdmfArrayList):
         try:
             if self.thisown: destroy(self)
@@ -261,9 +272,9 @@ class XdmfArrayList(_object):
 
 class XdmfArrayListPtr(XdmfArrayList):
     def __init__(self,this):
-        self.this = this
-        if not hasattr(self,"thisown"): self.thisown = 0
-        self.__class__ = XdmfArrayList
+        _swig_setattr(self, XdmfArrayList, 'this', this)
+        if not hasattr(self,"thisown"): _swig_setattr(self, XdmfArrayList, 'thisown', 0)
+        _swig_setattr(self, XdmfArrayList,self.__class__,XdmfArrayList)
 _Xdmf.XdmfArrayList_swigregister(XdmfArrayListPtr)
 
 TagNameToArray = _Xdmf.TagNameToArray
@@ -274,6 +285,121 @@ GetNextOlderArray = _Xdmf.GetNextOlderArray
 
 GetCurrentArrayTime = _Xdmf.GetCurrentArrayTime
 
+class XdmfLightData(XdmfObject):
+    __swig_setmethods__ = {}
+    for _s in [XdmfObject]: __swig_setmethods__.update(_s.__swig_setmethods__)
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfLightData, name, value)
+    __swig_getmethods__ = {}
+    for _s in [XdmfObject]: __swig_getmethods__.update(_s.__swig_getmethods__)
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfLightData, name)
+    def __init__(self,*args):
+        _swig_setattr(self, XdmfLightData, 'this', apply(_Xdmf.new_XdmfLightData,args))
+        _swig_setattr(self, XdmfLightData, 'thisown', 1)
+    def __del__(self, destroy= _Xdmf.delete_XdmfLightData):
+        try:
+            if self.thisown: destroy(self)
+        except: pass
+    def GetClassName(*args): return apply(_Xdmf.XdmfLightData_GetClassName,args)
+    def GetNdgmHost(*args): return apply(_Xdmf.XdmfLightData_GetNdgmHost,args)
+    def SetNdgmHost(*args): return apply(_Xdmf.XdmfLightData_SetNdgmHost,args)
+    def GetName(*args): return apply(_Xdmf.XdmfLightData_GetName,args)
+    def SetName(*args): return apply(_Xdmf.XdmfLightData_SetName,args)
+    def GetFileName(*args): return apply(_Xdmf.XdmfLightData_GetFileName,args)
+    def SetFileName(*args): return apply(_Xdmf.XdmfLightData_SetFileName,args)
+    def GetWorkingDirectory(*args): return apply(_Xdmf.XdmfLightData_GetWorkingDirectory,args)
+    def SetWorkingDirectory(*args): return apply(_Xdmf.XdmfLightData_SetWorkingDirectory,args)
+    def SetDOM(*args): return apply(_Xdmf.XdmfLightData_SetDOM,args)
+    def GetDOM(*args): return apply(_Xdmf.XdmfLightData_GetDOM,args)
+    def SetCurrentElement(*args): return apply(_Xdmf.XdmfLightData_SetCurrentElement,args)
+    def GetCurrentElement(*args): return apply(_Xdmf.XdmfLightData_GetCurrentElement,args)
+    def HasBeenInited(*args): return apply(_Xdmf.XdmfLightData_HasBeenInited,args)
+    def __repr__(self):
+        return "<C XdmfLightData instance at %s>" % (self.this,)
+
+class XdmfLightDataPtr(XdmfLightData):
+    def __init__(self,this):
+        _swig_setattr(self, XdmfLightData, 'this', this)
+        if not hasattr(self,"thisown"): _swig_setattr(self, XdmfLightData, 'thisown', 0)
+        _swig_setattr(self, XdmfLightData,self.__class__,XdmfLightData)
+_Xdmf.XdmfLightData_swigregister(XdmfLightDataPtr)
+
+XDMF_ATTRIBUTE_TYPE_NONE = _Xdmf.XDMF_ATTRIBUTE_TYPE_NONE
+XDMF_ATTRIBUTE_TYPE_SCALAR = _Xdmf.XDMF_ATTRIBUTE_TYPE_SCALAR
+XDMF_ATTRIBUTE_TYPE_VECTOR = _Xdmf.XDMF_ATTRIBUTE_TYPE_VECTOR
+XDMF_ATTRIBUTE_TYPE_TENSOR = _Xdmf.XDMF_ATTRIBUTE_TYPE_TENSOR
+XDMF_ATTRIBUTE_TYPE_MATRIX = _Xdmf.XDMF_ATTRIBUTE_TYPE_MATRIX
+XDMF_ATTRIBUTE_CENTER_GRID = _Xdmf.XDMF_ATTRIBUTE_CENTER_GRID
+XDMF_ATTRIBUTE_CENTER_CELL = _Xdmf.XDMF_ATTRIBUTE_CENTER_CELL
+XDMF_ATTRIBUTE_CENTER_FACE = _Xdmf.XDMF_ATTRIBUTE_CENTER_FACE
+XDMF_ATTRIBUTE_CENTER_EDGE = _Xdmf.XDMF_ATTRIBUTE_CENTER_EDGE
+XDMF_ATTRIBUTE_CENTER_NODE = _Xdmf.XDMF_ATTRIBUTE_CENTER_NODE
+class XdmfAttribute(XdmfLightData):
+    __swig_setmethods__ = {}
+    for _s in [XdmfLightData]: __swig_setmethods__.update(_s.__swig_setmethods__)
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfAttribute, name, value)
+    __swig_getmethods__ = {}
+    for _s in [XdmfLightData]: __swig_getmethods__.update(_s.__swig_getmethods__)
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfAttribute, name)
+    def __init__(self,*args):
+        _swig_setattr(self, XdmfAttribute, 'this', apply(_Xdmf.new_XdmfAttribute,args))
+        _swig_setattr(self, XdmfAttribute, 'thisown', 1)
+    def __del__(self, destroy= _Xdmf.delete_XdmfAttribute):
+        try:
+            if self.thisown: destroy(self)
+        except: pass
+    def GetClassName(*args): return apply(_Xdmf.XdmfAttribute_GetClassName,args)
+    def SetAttributeType(*args): return apply(_Xdmf.XdmfAttribute_SetAttributeType,args)
+    def GetAttributeType(*args): return apply(_Xdmf.XdmfAttribute_GetAttributeType,args)
+    def SetAttributeTypeFromString(*args): return apply(_Xdmf.XdmfAttribute_SetAttributeTypeFromString,args)
+    def GetAttributeTypeAsString(*args): return apply(_Xdmf.XdmfAttribute_GetAttributeTypeAsString,args)
+    def SetAttributeCenterFromString(*args): return apply(_Xdmf.XdmfAttribute_SetAttributeCenterFromString,args)
+    def GetAttributeCenterAsString(*args): return apply(_Xdmf.XdmfAttribute_GetAttributeCenterAsString,args)
+    def SetAttributeCenter(*args): return apply(_Xdmf.XdmfAttribute_SetAttributeCenter,args)
+    def GetAttributeCenter(*args): return apply(_Xdmf.XdmfAttribute_GetAttributeCenter,args)
+    def GetShapeDesc(*args): return apply(_Xdmf.XdmfAttribute_GetShapeDesc,args)
+    def SetValues(*args): return apply(_Xdmf.XdmfAttribute_SetValues,args)
+    def GetValues(*args): return apply(_Xdmf.XdmfAttribute_GetValues,args)
+    def InitAttributeFromElement(*args): return apply(_Xdmf.XdmfAttribute_InitAttributeFromElement,args)
+    def SetAttributeFromElement(*args): return apply(_Xdmf.XdmfAttribute_SetAttributeFromElement,args)
+    def Update(*args): return apply(_Xdmf.XdmfAttribute_Update,args)
+    def __repr__(self):
+        return "<C XdmfAttribute instance at %s>" % (self.this,)
+
+class XdmfAttributePtr(XdmfAttribute):
+    def __init__(self,this):
+        _swig_setattr(self, XdmfAttribute, 'this', this)
+        if not hasattr(self,"thisown"): _swig_setattr(self, XdmfAttribute, 'thisown', 0)
+        _swig_setattr(self, XdmfAttribute,self.__class__,XdmfAttribute)
+_Xdmf.XdmfAttribute_swigregister(XdmfAttributePtr)
+
+class XdmfCharArray(XdmfArray):
+    __swig_setmethods__ = {}
+    for _s in [XdmfArray]: __swig_setmethods__.update(_s.__swig_setmethods__)
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfCharArray, name, value)
+    __swig_getmethods__ = {}
+    for _s in [XdmfArray]: __swig_getmethods__.update(_s.__swig_getmethods__)
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfCharArray, name)
+    def __init__(self,*args):
+        _swig_setattr(self, XdmfCharArray, 'this', apply(_Xdmf.new_XdmfCharArray,args))
+        _swig_setattr(self, XdmfCharArray, 'thisown', 1)
+    def __del__(self, destroy= _Xdmf.delete_XdmfCharArray):
+        try:
+            if self.thisown: destroy(self)
+        except: pass
+    def GetClassName(*args): return apply(_Xdmf.XdmfCharArray_GetClassName,args)
+    def GetString(*args): return apply(_Xdmf.XdmfCharArray_GetString,args)
+    def SetString(*args): return apply(_Xdmf.XdmfCharArray_SetString,args)
+    def SetFromFile(*args): return apply(_Xdmf.XdmfCharArray_SetFromFile,args)
+    def __repr__(self):
+        return "<C XdmfCharArray instance at %s>" % (self.this,)
+
+class XdmfCharArrayPtr(XdmfCharArray):
+    def __init__(self,this):
+        _swig_setattr(self, XdmfCharArray, 'this', this)
+        if not hasattr(self,"thisown"): _swig_setattr(self, XdmfCharArray, 'thisown', 0)
+        _swig_setattr(self, XdmfCharArray,self.__class__,XdmfCharArray)
+_Xdmf.XdmfCharArray_swigregister(XdmfCharArrayPtr)
+
 class XdmfXNode(XdmfObject):
     __swig_setmethods__ = {}
     for _s in [XdmfObject]: __swig_setmethods__.update(_s.__swig_setmethods__)
@@ -282,8 +408,8 @@ class XdmfXNode(XdmfObject):
     for _s in [XdmfObject]: __swig_getmethods__.update(_s.__swig_getmethods__)
     __getattr__ = lambda self, name: _swig_getattr(self, XdmfXNode, name)
     def __init__(self,*args):
-        self.this = apply(_Xdmf.new_XdmfXNode,args)
-        self.thisown = 1
+        _swig_setattr(self, XdmfXNode, 'this', apply(_Xdmf.new_XdmfXNode,args))
+        _swig_setattr(self, XdmfXNode, 'thisown', 1)
     def __del__(self, destroy= _Xdmf.delete_XdmfXNode):
         try:
             if self.thisown: destroy(self)
@@ -302,131 +428,10 @@ class XdmfXNode(XdmfObject):
 
 class XdmfXNodePtr(XdmfXNode):
     def __init__(self,this):
-        self.this = this
-        if not hasattr(self,"thisown"): self.thisown = 0
-        self.__class__ = XdmfXNode
+        _swig_setattr(self, XdmfXNode, 'this', this)
+        if not hasattr(self,"thisown"): _swig_setattr(self, XdmfXNode, 'thisown', 0)
+        _swig_setattr(self, XdmfXNode,self.__class__,XdmfXNode)
 _Xdmf.XdmfXNode_swigregister(XdmfXNodePtr)
-
-class XdmfParameter(XdmfObject):
-    __swig_setmethods__ = {}
-    for _s in [XdmfObject]: __swig_setmethods__.update(_s.__swig_setmethods__)
-    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfParameter, name, value)
-    __swig_getmethods__ = {}
-    for _s in [XdmfObject]: __swig_getmethods__.update(_s.__swig_getmethods__)
-    __getattr__ = lambda self, name: _swig_getattr(self, XdmfParameter, name)
-    def __init__(self,*args):
-        self.this = apply(_Xdmf.new_XdmfParameter,args)
-        self.thisown = 1
-    def __del__(self, destroy= _Xdmf.delete_XdmfParameter):
-        try:
-            if self.thisown: destroy(self)
-        except: pass
-    def GetClassName(*args): return apply(_Xdmf.XdmfParameter_GetClassName,args)
-    def GetParameterType(*args): return apply(_Xdmf.XdmfParameter_GetParameterType,args)
-    def GetParameterTypeAsString(*args): return apply(_Xdmf.XdmfParameter_GetParameterTypeAsString,args)
-    def SetParameterType(*args): return apply(_Xdmf.XdmfParameter_SetParameterType,args)
-    def GetCurrentIndex(*args): return apply(_Xdmf.XdmfParameter_GetCurrentIndex,args)
-    def SetCurrentIndex(*args): return apply(_Xdmf.XdmfParameter_SetCurrentIndex,args)
-    def GetParameterName(*args): return apply(_Xdmf.XdmfParameter_GetParameterName,args)
-    def SetParameterName(*args): return apply(_Xdmf.XdmfParameter_SetParameterName,args)
-    def GetParameterNode(*args): return apply(_Xdmf.XdmfParameter_GetParameterNode,args)
-    def SetParameterNode(*args): return apply(_Xdmf.XdmfParameter_SetParameterNode,args)
-    def GetFormat(*args): return apply(_Xdmf.XdmfParameter_GetFormat,args)
-    def GetNumberOfElements(*args): return apply(_Xdmf.XdmfParameter_GetNumberOfElements,args)
-    def GetArray(*args): return apply(_Xdmf.XdmfParameter_GetArray,args)
-    def GetParameterValue(*args): return apply(_Xdmf.XdmfParameter_GetParameterValue,args)
-    def Update(*args): return apply(_Xdmf.XdmfParameter_Update,args)
-    def Substitute(*args): return apply(_Xdmf.XdmfParameter_Substitute,args)
-    def __repr__(self):
-        return "<C XdmfParameter instance at %s>" % (self.this,)
-
-class XdmfParameterPtr(XdmfParameter):
-    def __init__(self,this):
-        self.this = this
-        if not hasattr(self,"thisown"): self.thisown = 0
-        self.__class__ = XdmfParameter
-_Xdmf.XdmfParameter_swigregister(XdmfParameterPtr)
-
-class XdmfHeavyData(XdmfDataDesc):
-    __swig_setmethods__ = {}
-    for _s in [XdmfDataDesc]: __swig_setmethods__.update(_s.__swig_setmethods__)
-    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfHeavyData, name, value)
-    __swig_getmethods__ = {}
-    for _s in [XdmfDataDesc]: __swig_getmethods__.update(_s.__swig_getmethods__)
-    __getattr__ = lambda self, name: _swig_getattr(self, XdmfHeavyData, name)
-    def __init__(self,*args):
-        self.this = apply(_Xdmf.new_XdmfHeavyData,args)
-        self.thisown = 1
-    def __del__(self, destroy= _Xdmf.delete_XdmfHeavyData):
-        try:
-            if self.thisown: destroy(self)
-        except: pass
-    def GetClassName(*args): return apply(_Xdmf.XdmfHeavyData_GetClassName,args)
-    def GetNdgmHost(*args): return apply(_Xdmf.XdmfHeavyData_GetNdgmHost,args)
-    def SetNdgmHost(*args): return apply(_Xdmf.XdmfHeavyData_SetNdgmHost,args)
-    def GetWorkingDirectory(*args): return apply(_Xdmf.XdmfHeavyData_GetWorkingDirectory,args)
-    def SetWorkingDirectory(*args): return apply(_Xdmf.XdmfHeavyData_SetWorkingDirectory,args)
-    def GetDomain(*args): return apply(_Xdmf.XdmfHeavyData_GetDomain,args)
-    def SetDomain(*args): return apply(_Xdmf.XdmfHeavyData_SetDomain,args)
-    def GetFileName(*args): return apply(_Xdmf.XdmfHeavyData_GetFileName,args)
-    def SetFileName(*args): return apply(_Xdmf.XdmfHeavyData_SetFileName,args)
-    def GetPath(*args): return apply(_Xdmf.XdmfHeavyData_GetPath,args)
-    def SetPath(*args): return apply(_Xdmf.XdmfHeavyData_SetPath,args)
-    def GetAccess(*args): return apply(_Xdmf.XdmfHeavyData_GetAccess,args)
-    def SetAccess(*args): return apply(_Xdmf.XdmfHeavyData_SetAccess,args)
-    def __repr__(self):
-        return "<C XdmfHeavyData instance at %s>" % (self.this,)
-
-class XdmfHeavyDataPtr(XdmfHeavyData):
-    def __init__(self,this):
-        self.this = this
-        if not hasattr(self,"thisown"): self.thisown = 0
-        self.__class__ = XdmfHeavyData
-_Xdmf.XdmfHeavyData_swigregister(XdmfHeavyDataPtr)
-
-XDMF_H5_OTHER = _Xdmf.XDMF_H5_OTHER
-class XdmfHDF(XdmfHeavyData):
-    __swig_setmethods__ = {}
-    for _s in [XdmfHeavyData]: __swig_setmethods__.update(_s.__swig_setmethods__)
-    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfHDF, name, value)
-    __swig_getmethods__ = {}
-    for _s in [XdmfHeavyData]: __swig_getmethods__.update(_s.__swig_getmethods__)
-    __getattr__ = lambda self, name: _swig_getattr(self, XdmfHDF, name)
-    def __init__(self,*args):
-        self.this = apply(_Xdmf.new_XdmfHDF,args)
-        self.thisown = 1
-    def __del__(self, destroy= _Xdmf.delete_XdmfHDF):
-        try:
-            if self.thisown: destroy(self)
-        except: pass
-    def GetClassName(*args): return apply(_Xdmf.XdmfHDF_GetClassName,args)
-    def SetCwdName(*args): return apply(_Xdmf.XdmfHDF_SetCwdName,args)
-    def GetCwdName(*args): return apply(_Xdmf.XdmfHDF_GetCwdName,args)
-    def Cd(*args): return apply(_Xdmf.XdmfHDF_Cd,args)
-    def Mkdir(*args): return apply(_Xdmf.XdmfHDF_Mkdir,args)
-    def GetNumberOfChildren(*args): return apply(_Xdmf.XdmfHDF_GetNumberOfChildren,args)
-    def GetChild(*args): return apply(_Xdmf.XdmfHDF_GetChild,args)
-    def SetNextChild(*args): return apply(_Xdmf.XdmfHDF_SetNextChild,args)
-    def Info(*args): return apply(_Xdmf.XdmfHDF_Info,args)
-    def GetChildType(*args): return apply(_Xdmf.XdmfHDF_GetChildType,args)
-    def GetChildTypeAsString(*args): return apply(_Xdmf.XdmfHDF_GetChildTypeAsString,args)
-    def CreateDataset(*args): return apply(_Xdmf.XdmfHDF_CreateDataset,args)
-    def OpenDataset(*args): return apply(_Xdmf.XdmfHDF_OpenDataset,args)
-    def Open(*args): return apply(_Xdmf.XdmfHDF_Open,args)
-    def Read(*args): return apply(_Xdmf.XdmfHDF_Read,args)
-    def Write(*args): return apply(_Xdmf.XdmfHDF_Write,args)
-    def Close(*args): return apply(_Xdmf.XdmfHDF_Close,args)
-    def __repr__(self):
-        return "<C XdmfHDF instance at %s>" % (self.this,)
-
-class XdmfHDFPtr(XdmfHDF):
-    def __init__(self,this):
-        self.this = this
-        if not hasattr(self,"thisown"): self.thisown = 0
-        self.__class__ = XdmfHDF
-_Xdmf.XdmfHDF_swigregister(XdmfHDFPtr)
-
-CopyArray = _Xdmf.CopyArray
 
 class XdmfDOM(XdmfObject):
     __swig_setmethods__ = {}
@@ -436,8 +441,8 @@ class XdmfDOM(XdmfObject):
     for _s in [XdmfObject]: __swig_getmethods__.update(_s.__swig_getmethods__)
     __getattr__ = lambda self, name: _swig_getattr(self, XdmfDOM, name)
     def __init__(self,*args):
-        self.this = apply(_Xdmf.new_XdmfDOM,args)
-        self.thisown = 1
+        _swig_setattr(self, XdmfDOM, 'this', apply(_Xdmf.new_XdmfDOM,args))
+        _swig_setattr(self, XdmfDOM, 'thisown', 1)
     def __del__(self, destroy= _Xdmf.delete_XdmfDOM):
         try:
             if self.thisown: destroy(self)
@@ -497,9 +502,9 @@ class XdmfDOM(XdmfObject):
 
 class XdmfDOMPtr(XdmfDOM):
     def __init__(self,this):
-        self.this = this
-        if not hasattr(self,"thisown"): self.thisown = 0
-        self.__class__ = XdmfDOM
+        _swig_setattr(self, XdmfDOM, 'this', this)
+        if not hasattr(self,"thisown"): _swig_setattr(self, XdmfDOM, 'thisown', 0)
+        _swig_setattr(self, XdmfDOM,self.__class__,XdmfDOM)
 _Xdmf.XdmfDOM_swigregister(XdmfDOMPtr)
 
 GetXNodeSize = _Xdmf.GetXNodeSize
@@ -510,43 +515,123 @@ GetXNodeData = _Xdmf.GetXNodeData
 
 HandleToXdmfDOM = _Xdmf.HandleToXdmfDOM
 
-class XdmfLightData(XdmfObject):
+XdmfArrayExpr = _Xdmf.XdmfArrayExpr
+
+XdmfScalarExpr = _Xdmf.XdmfScalarExpr
+
+XdmfExpr = _Xdmf.XdmfExpr
+
+class XdmfFormat(XdmfLightData):
     __swig_setmethods__ = {}
-    for _s in [XdmfObject]: __swig_setmethods__.update(_s.__swig_setmethods__)
-    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfLightData, name, value)
+    for _s in [XdmfLightData]: __swig_setmethods__.update(_s.__swig_setmethods__)
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfFormat, name, value)
     __swig_getmethods__ = {}
-    for _s in [XdmfObject]: __swig_getmethods__.update(_s.__swig_getmethods__)
-    __getattr__ = lambda self, name: _swig_getattr(self, XdmfLightData, name)
+    for _s in [XdmfLightData]: __swig_getmethods__.update(_s.__swig_getmethods__)
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfFormat, name)
     def __init__(self,*args):
-        self.this = apply(_Xdmf.new_XdmfLightData,args)
-        self.thisown = 1
-    def __del__(self, destroy= _Xdmf.delete_XdmfLightData):
+        _swig_setattr(self, XdmfFormat, 'this', apply(_Xdmf.new_XdmfFormat,args))
+        _swig_setattr(self, XdmfFormat, 'thisown', 1)
+    def __del__(self, destroy= _Xdmf.delete_XdmfFormat):
         try:
             if self.thisown: destroy(self)
         except: pass
-    def GetClassName(*args): return apply(_Xdmf.XdmfLightData_GetClassName,args)
-    def GetNdgmHost(*args): return apply(_Xdmf.XdmfLightData_GetNdgmHost,args)
-    def SetNdgmHost(*args): return apply(_Xdmf.XdmfLightData_SetNdgmHost,args)
-    def GetName(*args): return apply(_Xdmf.XdmfLightData_GetName,args)
-    def SetName(*args): return apply(_Xdmf.XdmfLightData_SetName,args)
-    def GetFileName(*args): return apply(_Xdmf.XdmfLightData_GetFileName,args)
-    def SetFileName(*args): return apply(_Xdmf.XdmfLightData_SetFileName,args)
-    def GetWorkingDirectory(*args): return apply(_Xdmf.XdmfLightData_GetWorkingDirectory,args)
-    def SetWorkingDirectory(*args): return apply(_Xdmf.XdmfLightData_SetWorkingDirectory,args)
-    def SetDOM(*args): return apply(_Xdmf.XdmfLightData_SetDOM,args)
-    def GetDOM(*args): return apply(_Xdmf.XdmfLightData_GetDOM,args)
-    def SetCurrentElement(*args): return apply(_Xdmf.XdmfLightData_SetCurrentElement,args)
-    def GetCurrentElement(*args): return apply(_Xdmf.XdmfLightData_GetCurrentElement,args)
-    def HasBeenInited(*args): return apply(_Xdmf.XdmfLightData_HasBeenInited,args)
+    def GetClassName(*args): return apply(_Xdmf.XdmfFormat_GetClassName,args)
+    def SetFormat(*args): return apply(_Xdmf.XdmfFormat_SetFormat,args)
+    def GetFormat(*args): return apply(_Xdmf.XdmfFormat_GetFormat,args)
+    def ElementToDataDesc(*args): return apply(_Xdmf.XdmfFormat_ElementToDataDesc,args)
+    def ElementToCompoundDataDesc(*args): return apply(_Xdmf.XdmfFormat_ElementToCompoundDataDesc,args)
+    def DataDescToElement(*args): return apply(_Xdmf.XdmfFormat_DataDescToElement,args)
     def __repr__(self):
-        return "<C XdmfLightData instance at %s>" % (self.this,)
+        return "<C XdmfFormat instance at %s>" % (self.this,)
 
-class XdmfLightDataPtr(XdmfLightData):
+class XdmfFormatPtr(XdmfFormat):
     def __init__(self,this):
-        self.this = this
-        if not hasattr(self,"thisown"): self.thisown = 0
-        self.__class__ = XdmfLightData
-_Xdmf.XdmfLightData_swigregister(XdmfLightDataPtr)
+        _swig_setattr(self, XdmfFormat, 'this', this)
+        if not hasattr(self,"thisown"): _swig_setattr(self, XdmfFormat, 'thisown', 0)
+        _swig_setattr(self, XdmfFormat,self.__class__,XdmfFormat)
+_Xdmf.XdmfFormat_swigregister(XdmfFormatPtr)
+
+class XdmfFormatHDF(XdmfFormat):
+    __swig_setmethods__ = {}
+    for _s in [XdmfFormat]: __swig_setmethods__.update(_s.__swig_setmethods__)
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfFormatHDF, name, value)
+    __swig_getmethods__ = {}
+    for _s in [XdmfFormat]: __swig_getmethods__.update(_s.__swig_getmethods__)
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfFormatHDF, name)
+    def __init__(self,*args):
+        _swig_setattr(self, XdmfFormatHDF, 'this', apply(_Xdmf.new_XdmfFormatHDF,args))
+        _swig_setattr(self, XdmfFormatHDF, 'thisown', 1)
+    def __del__(self, destroy= _Xdmf.delete_XdmfFormatHDF):
+        try:
+            if self.thisown: destroy(self)
+        except: pass
+    def GetClassName(*args): return apply(_Xdmf.XdmfFormatHDF_GetClassName,args)
+    def ElementToArray(*args): return apply(_Xdmf.XdmfFormatHDF_ElementToArray,args)
+    def ArrayToElement(*args): return apply(_Xdmf.XdmfFormatHDF_ArrayToElement,args)
+    def __repr__(self):
+        return "<C XdmfFormatHDF instance at %s>" % (self.this,)
+
+class XdmfFormatHDFPtr(XdmfFormatHDF):
+    def __init__(self,this):
+        _swig_setattr(self, XdmfFormatHDF, 'this', this)
+        if not hasattr(self,"thisown"): _swig_setattr(self, XdmfFormatHDF, 'thisown', 0)
+        _swig_setattr(self, XdmfFormatHDF,self.__class__,XdmfFormatHDF)
+_Xdmf.XdmfFormatHDF_swigregister(XdmfFormatHDFPtr)
+
+class XdmfFormatMulti(XdmfFormat):
+    __swig_setmethods__ = {}
+    for _s in [XdmfFormat]: __swig_setmethods__.update(_s.__swig_setmethods__)
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfFormatMulti, name, value)
+    __swig_getmethods__ = {}
+    for _s in [XdmfFormat]: __swig_getmethods__.update(_s.__swig_getmethods__)
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfFormatMulti, name)
+    def __init__(self,*args):
+        _swig_setattr(self, XdmfFormatMulti, 'this', apply(_Xdmf.new_XdmfFormatMulti,args))
+        _swig_setattr(self, XdmfFormatMulti, 'thisown', 1)
+    def __del__(self, destroy= _Xdmf.delete_XdmfFormatMulti):
+        try:
+            if self.thisown: destroy(self)
+        except: pass
+    def GetClassName(*args): return apply(_Xdmf.XdmfFormatMulti_GetClassName,args)
+    def SetFormatFromElement(*args): return apply(_Xdmf.XdmfFormatMulti_SetFormatFromElement,args)
+    def ElementToArray(*args): return apply(_Xdmf.XdmfFormatMulti_ElementToArray,args)
+    def ArrayToElement(*args): return apply(_Xdmf.XdmfFormatMulti_ArrayToElement,args)
+    def __repr__(self):
+        return "<C XdmfFormatMulti instance at %s>" % (self.this,)
+
+class XdmfFormatMultiPtr(XdmfFormatMulti):
+    def __init__(self,this):
+        _swig_setattr(self, XdmfFormatMulti, 'this', this)
+        if not hasattr(self,"thisown"): _swig_setattr(self, XdmfFormatMulti, 'thisown', 0)
+        _swig_setattr(self, XdmfFormatMulti,self.__class__,XdmfFormatMulti)
+_Xdmf.XdmfFormatMulti_swigregister(XdmfFormatMultiPtr)
+
+class XdmfFormatXML(XdmfFormat):
+    __swig_setmethods__ = {}
+    for _s in [XdmfFormat]: __swig_setmethods__.update(_s.__swig_setmethods__)
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfFormatXML, name, value)
+    __swig_getmethods__ = {}
+    for _s in [XdmfFormat]: __swig_getmethods__.update(_s.__swig_getmethods__)
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfFormatXML, name)
+    def __init__(self,*args):
+        _swig_setattr(self, XdmfFormatXML, 'this', apply(_Xdmf.new_XdmfFormatXML,args))
+        _swig_setattr(self, XdmfFormatXML, 'thisown', 1)
+    def __del__(self, destroy= _Xdmf.delete_XdmfFormatXML):
+        try:
+            if self.thisown: destroy(self)
+        except: pass
+    def GetClassName(*args): return apply(_Xdmf.XdmfFormatXML_GetClassName,args)
+    def ElementToArray(*args): return apply(_Xdmf.XdmfFormatXML_ElementToArray,args)
+    def ArrayToElement(*args): return apply(_Xdmf.XdmfFormatXML_ArrayToElement,args)
+    def __repr__(self):
+        return "<C XdmfFormatXML instance at %s>" % (self.this,)
+
+class XdmfFormatXMLPtr(XdmfFormatXML):
+    def __init__(self,this):
+        _swig_setattr(self, XdmfFormatXML, 'this', this)
+        if not hasattr(self,"thisown"): _swig_setattr(self, XdmfFormatXML, 'thisown', 0)
+        _swig_setattr(self, XdmfFormatXML,self.__class__,XdmfFormatXML)
+_Xdmf.XdmfFormatXML_swigregister(XdmfFormatXMLPtr)
 
 XDMF_MAX_ORDER = _Xdmf.XDMF_MAX_ORDER
 XDMF_STRUCTURED = _Xdmf.XDMF_STRUCTURED
@@ -575,8 +660,8 @@ class XdmfTopology(XdmfLightData):
     for _s in [XdmfLightData]: __swig_getmethods__.update(_s.__swig_getmethods__)
     __getattr__ = lambda self, name: _swig_getattr(self, XdmfTopology, name)
     def __init__(self,*args):
-        self.this = apply(_Xdmf.new_XdmfTopology,args)
-        self.thisown = 1
+        _swig_setattr(self, XdmfTopology, 'this', apply(_Xdmf.new_XdmfTopology,args))
+        _swig_setattr(self, XdmfTopology, 'thisown', 1)
     def __del__(self, destroy= _Xdmf.delete_XdmfTopology):
         try:
             if self.thisown: destroy(self)
@@ -608,201 +693,12 @@ class XdmfTopology(XdmfLightData):
 
 class XdmfTopologyPtr(XdmfTopology):
     def __init__(self,this):
-        self.this = this
-        if not hasattr(self,"thisown"): self.thisown = 0
-        self.__class__ = XdmfTopology
+        _swig_setattr(self, XdmfTopology, 'this', this)
+        if not hasattr(self,"thisown"): _swig_setattr(self, XdmfTopology, 'thisown', 0)
+        _swig_setattr(self, XdmfTopology,self.__class__,XdmfTopology)
 _Xdmf.XdmfTopology_swigregister(XdmfTopologyPtr)
 
 HandleToXdmfTopology = _Xdmf.HandleToXdmfTopology
-
-XDMF_ATTRIBUTE_TYPE_NONE = _Xdmf.XDMF_ATTRIBUTE_TYPE_NONE
-XDMF_ATTRIBUTE_TYPE_SCALAR = _Xdmf.XDMF_ATTRIBUTE_TYPE_SCALAR
-XDMF_ATTRIBUTE_TYPE_VECTOR = _Xdmf.XDMF_ATTRIBUTE_TYPE_VECTOR
-XDMF_ATTRIBUTE_TYPE_TENSOR = _Xdmf.XDMF_ATTRIBUTE_TYPE_TENSOR
-XDMF_ATTRIBUTE_TYPE_MATRIX = _Xdmf.XDMF_ATTRIBUTE_TYPE_MATRIX
-XDMF_ATTRIBUTE_CENTER_GRID = _Xdmf.XDMF_ATTRIBUTE_CENTER_GRID
-XDMF_ATTRIBUTE_CENTER_CELL = _Xdmf.XDMF_ATTRIBUTE_CENTER_CELL
-XDMF_ATTRIBUTE_CENTER_FACE = _Xdmf.XDMF_ATTRIBUTE_CENTER_FACE
-XDMF_ATTRIBUTE_CENTER_EDGE = _Xdmf.XDMF_ATTRIBUTE_CENTER_EDGE
-XDMF_ATTRIBUTE_CENTER_NODE = _Xdmf.XDMF_ATTRIBUTE_CENTER_NODE
-class XdmfAttribute(XdmfLightData):
-    __swig_setmethods__ = {}
-    for _s in [XdmfLightData]: __swig_setmethods__.update(_s.__swig_setmethods__)
-    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfAttribute, name, value)
-    __swig_getmethods__ = {}
-    for _s in [XdmfLightData]: __swig_getmethods__.update(_s.__swig_getmethods__)
-    __getattr__ = lambda self, name: _swig_getattr(self, XdmfAttribute, name)
-    def __init__(self,*args):
-        self.this = apply(_Xdmf.new_XdmfAttribute,args)
-        self.thisown = 1
-    def __del__(self, destroy= _Xdmf.delete_XdmfAttribute):
-        try:
-            if self.thisown: destroy(self)
-        except: pass
-    def GetClassName(*args): return apply(_Xdmf.XdmfAttribute_GetClassName,args)
-    def SetAttributeType(*args): return apply(_Xdmf.XdmfAttribute_SetAttributeType,args)
-    def GetAttributeType(*args): return apply(_Xdmf.XdmfAttribute_GetAttributeType,args)
-    def SetAttributeTypeFromString(*args): return apply(_Xdmf.XdmfAttribute_SetAttributeTypeFromString,args)
-    def GetAttributeTypeAsString(*args): return apply(_Xdmf.XdmfAttribute_GetAttributeTypeAsString,args)
-    def SetAttributeCenterFromString(*args): return apply(_Xdmf.XdmfAttribute_SetAttributeCenterFromString,args)
-    def GetAttributeCenterAsString(*args): return apply(_Xdmf.XdmfAttribute_GetAttributeCenterAsString,args)
-    def SetAttributeCenter(*args): return apply(_Xdmf.XdmfAttribute_SetAttributeCenter,args)
-    def GetAttributeCenter(*args): return apply(_Xdmf.XdmfAttribute_GetAttributeCenter,args)
-    def GetShapeDesc(*args): return apply(_Xdmf.XdmfAttribute_GetShapeDesc,args)
-    def SetValues(*args): return apply(_Xdmf.XdmfAttribute_SetValues,args)
-    def GetValues(*args): return apply(_Xdmf.XdmfAttribute_GetValues,args)
-    def InitAttributeFromElement(*args): return apply(_Xdmf.XdmfAttribute_InitAttributeFromElement,args)
-    def SetAttributeFromElement(*args): return apply(_Xdmf.XdmfAttribute_SetAttributeFromElement,args)
-    def Update(*args): return apply(_Xdmf.XdmfAttribute_Update,args)
-    def __repr__(self):
-        return "<C XdmfAttribute instance at %s>" % (self.this,)
-
-class XdmfAttributePtr(XdmfAttribute):
-    def __init__(self,this):
-        self.this = this
-        if not hasattr(self,"thisown"): self.thisown = 0
-        self.__class__ = XdmfAttribute
-_Xdmf.XdmfAttribute_swigregister(XdmfAttributePtr)
-
-class XdmfCharArray(XdmfArray):
-    __swig_setmethods__ = {}
-    for _s in [XdmfArray]: __swig_setmethods__.update(_s.__swig_setmethods__)
-    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfCharArray, name, value)
-    __swig_getmethods__ = {}
-    for _s in [XdmfArray]: __swig_getmethods__.update(_s.__swig_getmethods__)
-    __getattr__ = lambda self, name: _swig_getattr(self, XdmfCharArray, name)
-    def __init__(self,*args):
-        self.this = apply(_Xdmf.new_XdmfCharArray,args)
-        self.thisown = 1
-    def __del__(self, destroy= _Xdmf.delete_XdmfCharArray):
-        try:
-            if self.thisown: destroy(self)
-        except: pass
-    def GetClassName(*args): return apply(_Xdmf.XdmfCharArray_GetClassName,args)
-    def GetString(*args): return apply(_Xdmf.XdmfCharArray_GetString,args)
-    def SetString(*args): return apply(_Xdmf.XdmfCharArray_SetString,args)
-    def SetFromFile(*args): return apply(_Xdmf.XdmfCharArray_SetFromFile,args)
-    def __repr__(self):
-        return "<C XdmfCharArray instance at %s>" % (self.this,)
-
-class XdmfCharArrayPtr(XdmfCharArray):
-    def __init__(self,this):
-        self.this = this
-        if not hasattr(self,"thisown"): self.thisown = 0
-        self.__class__ = XdmfCharArray
-_Xdmf.XdmfCharArray_swigregister(XdmfCharArrayPtr)
-
-class XdmfFormat(XdmfLightData):
-    __swig_setmethods__ = {}
-    for _s in [XdmfLightData]: __swig_setmethods__.update(_s.__swig_setmethods__)
-    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfFormat, name, value)
-    __swig_getmethods__ = {}
-    for _s in [XdmfLightData]: __swig_getmethods__.update(_s.__swig_getmethods__)
-    __getattr__ = lambda self, name: _swig_getattr(self, XdmfFormat, name)
-    def __init__(self,*args):
-        self.this = apply(_Xdmf.new_XdmfFormat,args)
-        self.thisown = 1
-    def __del__(self, destroy= _Xdmf.delete_XdmfFormat):
-        try:
-            if self.thisown: destroy(self)
-        except: pass
-    def GetClassName(*args): return apply(_Xdmf.XdmfFormat_GetClassName,args)
-    def SetFormat(*args): return apply(_Xdmf.XdmfFormat_SetFormat,args)
-    def GetFormat(*args): return apply(_Xdmf.XdmfFormat_GetFormat,args)
-    def ElementToDataDesc(*args): return apply(_Xdmf.XdmfFormat_ElementToDataDesc,args)
-    def ElementToCompoundDataDesc(*args): return apply(_Xdmf.XdmfFormat_ElementToCompoundDataDesc,args)
-    def DataDescToElement(*args): return apply(_Xdmf.XdmfFormat_DataDescToElement,args)
-    def __repr__(self):
-        return "<C XdmfFormat instance at %s>" % (self.this,)
-
-class XdmfFormatPtr(XdmfFormat):
-    def __init__(self,this):
-        self.this = this
-        if not hasattr(self,"thisown"): self.thisown = 0
-        self.__class__ = XdmfFormat
-_Xdmf.XdmfFormat_swigregister(XdmfFormatPtr)
-
-class XdmfFormatXML(XdmfFormat):
-    __swig_setmethods__ = {}
-    for _s in [XdmfFormat]: __swig_setmethods__.update(_s.__swig_setmethods__)
-    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfFormatXML, name, value)
-    __swig_getmethods__ = {}
-    for _s in [XdmfFormat]: __swig_getmethods__.update(_s.__swig_getmethods__)
-    __getattr__ = lambda self, name: _swig_getattr(self, XdmfFormatXML, name)
-    def __init__(self,*args):
-        self.this = apply(_Xdmf.new_XdmfFormatXML,args)
-        self.thisown = 1
-    def __del__(self, destroy= _Xdmf.delete_XdmfFormatXML):
-        try:
-            if self.thisown: destroy(self)
-        except: pass
-    def GetClassName(*args): return apply(_Xdmf.XdmfFormatXML_GetClassName,args)
-    def ElementToArray(*args): return apply(_Xdmf.XdmfFormatXML_ElementToArray,args)
-    def ArrayToElement(*args): return apply(_Xdmf.XdmfFormatXML_ArrayToElement,args)
-    def __repr__(self):
-        return "<C XdmfFormatXML instance at %s>" % (self.this,)
-
-class XdmfFormatXMLPtr(XdmfFormatXML):
-    def __init__(self,this):
-        self.this = this
-        if not hasattr(self,"thisown"): self.thisown = 0
-        self.__class__ = XdmfFormatXML
-_Xdmf.XdmfFormatXML_swigregister(XdmfFormatXMLPtr)
-
-class XdmfFormatHDF(XdmfFormat):
-    __swig_setmethods__ = {}
-    for _s in [XdmfFormat]: __swig_setmethods__.update(_s.__swig_setmethods__)
-    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfFormatHDF, name, value)
-    __swig_getmethods__ = {}
-    for _s in [XdmfFormat]: __swig_getmethods__.update(_s.__swig_getmethods__)
-    __getattr__ = lambda self, name: _swig_getattr(self, XdmfFormatHDF, name)
-    def __init__(self,*args):
-        self.this = apply(_Xdmf.new_XdmfFormatHDF,args)
-        self.thisown = 1
-    def __del__(self, destroy= _Xdmf.delete_XdmfFormatHDF):
-        try:
-            if self.thisown: destroy(self)
-        except: pass
-    def GetClassName(*args): return apply(_Xdmf.XdmfFormatHDF_GetClassName,args)
-    def ElementToArray(*args): return apply(_Xdmf.XdmfFormatHDF_ElementToArray,args)
-    def ArrayToElement(*args): return apply(_Xdmf.XdmfFormatHDF_ArrayToElement,args)
-    def __repr__(self):
-        return "<C XdmfFormatHDF instance at %s>" % (self.this,)
-
-class XdmfFormatHDFPtr(XdmfFormatHDF):
-    def __init__(self,this):
-        self.this = this
-        if not hasattr(self,"thisown"): self.thisown = 0
-        self.__class__ = XdmfFormatHDF
-_Xdmf.XdmfFormatHDF_swigregister(XdmfFormatHDFPtr)
-
-class XdmfFormatMulti(XdmfFormat):
-    __swig_setmethods__ = {}
-    for _s in [XdmfFormat]: __swig_setmethods__.update(_s.__swig_setmethods__)
-    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfFormatMulti, name, value)
-    __swig_getmethods__ = {}
-    for _s in [XdmfFormat]: __swig_getmethods__.update(_s.__swig_getmethods__)
-    __getattr__ = lambda self, name: _swig_getattr(self, XdmfFormatMulti, name)
-    def __init__(self,*args):
-        self.this = apply(_Xdmf.new_XdmfFormatMulti,args)
-        self.thisown = 1
-    def __del__(self, destroy= _Xdmf.delete_XdmfFormatMulti):
-        try:
-            if self.thisown: destroy(self)
-        except: pass
-    def GetClassName(*args): return apply(_Xdmf.XdmfFormatMulti_GetClassName,args)
-    def SetFormatFromElement(*args): return apply(_Xdmf.XdmfFormatMulti_SetFormatFromElement,args)
-    def ElementToArray(*args): return apply(_Xdmf.XdmfFormatMulti_ElementToArray,args)
-    def ArrayToElement(*args): return apply(_Xdmf.XdmfFormatMulti_ArrayToElement,args)
-    def __repr__(self):
-        return "<C XdmfFormatMulti instance at %s>" % (self.this,)
-
-class XdmfFormatMultiPtr(XdmfFormatMulti):
-    def __init__(self,this):
-        self.this = this
-        if not hasattr(self,"thisown"): self.thisown = 0
-        self.__class__ = XdmfFormatMulti
-_Xdmf.XdmfFormatMulti_swigregister(XdmfFormatMultiPtr)
 
 XDMF_GEOMETRY_NONE = _Xdmf.XDMF_GEOMETRY_NONE
 XDMF_GEOMETRY_XYZ = _Xdmf.XDMF_GEOMETRY_XYZ
@@ -818,8 +714,8 @@ class XdmfGeometry(XdmfLightData):
     for _s in [XdmfLightData]: __swig_getmethods__.update(_s.__swig_getmethods__)
     __getattr__ = lambda self, name: _swig_getattr(self, XdmfGeometry, name)
     def __init__(self,*args):
-        self.this = apply(_Xdmf.new_XdmfGeometry,args)
-        self.thisown = 1
+        _swig_setattr(self, XdmfGeometry, 'this', apply(_Xdmf.new_XdmfGeometry,args))
+        _swig_setattr(self, XdmfGeometry, 'thisown', 1)
     def __del__(self, destroy= _Xdmf.delete_XdmfGeometry):
         try:
             if self.thisown: destroy(self)
@@ -858,9 +754,9 @@ class XdmfGeometry(XdmfLightData):
 
 class XdmfGeometryPtr(XdmfGeometry):
     def __init__(self,this):
-        self.this = this
-        if not hasattr(self,"thisown"): self.thisown = 0
-        self.__class__ = XdmfGeometry
+        _swig_setattr(self, XdmfGeometry, 'this', this)
+        if not hasattr(self,"thisown"): _swig_setattr(self, XdmfGeometry, 'thisown', 0)
+        _swig_setattr(self, XdmfGeometry,self.__class__,XdmfGeometry)
 _Xdmf.XdmfGeometry_swigregister(XdmfGeometryPtr)
 
 GetXdmfGeometryHandle = _Xdmf.GetXdmfGeometryHandle
@@ -873,8 +769,8 @@ class XdmfGrid(XdmfTopology):
     for _s in [XdmfTopology]: __swig_getmethods__.update(_s.__swig_getmethods__)
     __getattr__ = lambda self, name: _swig_getattr(self, XdmfGrid, name)
     def __init__(self,*args):
-        self.this = apply(_Xdmf.new_XdmfGrid,args)
-        self.thisown = 1
+        _swig_setattr(self, XdmfGrid, 'this', apply(_Xdmf.new_XdmfGrid,args))
+        _swig_setattr(self, XdmfGrid, 'thisown', 1)
     def __del__(self, destroy= _Xdmf.delete_XdmfGrid):
         try:
             if self.thisown: destroy(self)
@@ -898,18 +794,135 @@ class XdmfGrid(XdmfTopology):
 
 class XdmfGridPtr(XdmfGrid):
     def __init__(self,this):
-        self.this = this
-        if not hasattr(self,"thisown"): self.thisown = 0
-        self.__class__ = XdmfGrid
+        _swig_setattr(self, XdmfGrid, 'this', this)
+        if not hasattr(self,"thisown"): _swig_setattr(self, XdmfGrid, 'thisown', 0)
+        _swig_setattr(self, XdmfGrid,self.__class__,XdmfGrid)
 _Xdmf.XdmfGrid_swigregister(XdmfGridPtr)
 
 HandleToXdmfGrid = _Xdmf.HandleToXdmfGrid
 
-XdmfArrayExpr = _Xdmf.XdmfArrayExpr
+class XdmfHeavyData(XdmfDataDesc):
+    __swig_setmethods__ = {}
+    for _s in [XdmfDataDesc]: __swig_setmethods__.update(_s.__swig_setmethods__)
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfHeavyData, name, value)
+    __swig_getmethods__ = {}
+    for _s in [XdmfDataDesc]: __swig_getmethods__.update(_s.__swig_getmethods__)
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfHeavyData, name)
+    def __init__(self,*args):
+        _swig_setattr(self, XdmfHeavyData, 'this', apply(_Xdmf.new_XdmfHeavyData,args))
+        _swig_setattr(self, XdmfHeavyData, 'thisown', 1)
+    def __del__(self, destroy= _Xdmf.delete_XdmfHeavyData):
+        try:
+            if self.thisown: destroy(self)
+        except: pass
+    def GetClassName(*args): return apply(_Xdmf.XdmfHeavyData_GetClassName,args)
+    def GetNdgmHost(*args): return apply(_Xdmf.XdmfHeavyData_GetNdgmHost,args)
+    def SetNdgmHost(*args): return apply(_Xdmf.XdmfHeavyData_SetNdgmHost,args)
+    def GetWorkingDirectory(*args): return apply(_Xdmf.XdmfHeavyData_GetWorkingDirectory,args)
+    def SetWorkingDirectory(*args): return apply(_Xdmf.XdmfHeavyData_SetWorkingDirectory,args)
+    def GetDomain(*args): return apply(_Xdmf.XdmfHeavyData_GetDomain,args)
+    def SetDomain(*args): return apply(_Xdmf.XdmfHeavyData_SetDomain,args)
+    def GetFileName(*args): return apply(_Xdmf.XdmfHeavyData_GetFileName,args)
+    def SetFileName(*args): return apply(_Xdmf.XdmfHeavyData_SetFileName,args)
+    def GetPath(*args): return apply(_Xdmf.XdmfHeavyData_GetPath,args)
+    def SetPath(*args): return apply(_Xdmf.XdmfHeavyData_SetPath,args)
+    def GetAccess(*args): return apply(_Xdmf.XdmfHeavyData_GetAccess,args)
+    def SetAccess(*args): return apply(_Xdmf.XdmfHeavyData_SetAccess,args)
+    def __repr__(self):
+        return "<C XdmfHeavyData instance at %s>" % (self.this,)
 
-XdmfScalarExpr = _Xdmf.XdmfScalarExpr
+class XdmfHeavyDataPtr(XdmfHeavyData):
+    def __init__(self,this):
+        _swig_setattr(self, XdmfHeavyData, 'this', this)
+        if not hasattr(self,"thisown"): _swig_setattr(self, XdmfHeavyData, 'thisown', 0)
+        _swig_setattr(self, XdmfHeavyData,self.__class__,XdmfHeavyData)
+_Xdmf.XdmfHeavyData_swigregister(XdmfHeavyDataPtr)
 
-XdmfExpr = _Xdmf.XdmfExpr
+XDMF_H5_OTHER = _Xdmf.XDMF_H5_OTHER
+class XdmfHDF(XdmfHeavyData):
+    __swig_setmethods__ = {}
+    for _s in [XdmfHeavyData]: __swig_setmethods__.update(_s.__swig_setmethods__)
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfHDF, name, value)
+    __swig_getmethods__ = {}
+    for _s in [XdmfHeavyData]: __swig_getmethods__.update(_s.__swig_getmethods__)
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfHDF, name)
+    def __init__(self,*args):
+        _swig_setattr(self, XdmfHDF, 'this', apply(_Xdmf.new_XdmfHDF,args))
+        _swig_setattr(self, XdmfHDF, 'thisown', 1)
+    def __del__(self, destroy= _Xdmf.delete_XdmfHDF):
+        try:
+            if self.thisown: destroy(self)
+        except: pass
+    def GetClassName(*args): return apply(_Xdmf.XdmfHDF_GetClassName,args)
+    def SetCwdName(*args): return apply(_Xdmf.XdmfHDF_SetCwdName,args)
+    def GetCwdName(*args): return apply(_Xdmf.XdmfHDF_GetCwdName,args)
+    def Cd(*args): return apply(_Xdmf.XdmfHDF_Cd,args)
+    def Mkdir(*args): return apply(_Xdmf.XdmfHDF_Mkdir,args)
+    def GetNumberOfChildren(*args): return apply(_Xdmf.XdmfHDF_GetNumberOfChildren,args)
+    def GetChild(*args): return apply(_Xdmf.XdmfHDF_GetChild,args)
+    def SetNextChild(*args): return apply(_Xdmf.XdmfHDF_SetNextChild,args)
+    def Info(*args): return apply(_Xdmf.XdmfHDF_Info,args)
+    def GetChildType(*args): return apply(_Xdmf.XdmfHDF_GetChildType,args)
+    def GetChildTypeAsString(*args): return apply(_Xdmf.XdmfHDF_GetChildTypeAsString,args)
+    def CreateDataset(*args): return apply(_Xdmf.XdmfHDF_CreateDataset,args)
+    def OpenDataset(*args): return apply(_Xdmf.XdmfHDF_OpenDataset,args)
+    def Open(*args): return apply(_Xdmf.XdmfHDF_Open,args)
+    def Read(*args): return apply(_Xdmf.XdmfHDF_Read,args)
+    def Write(*args): return apply(_Xdmf.XdmfHDF_Write,args)
+    def Close(*args): return apply(_Xdmf.XdmfHDF_Close,args)
+    def __repr__(self):
+        return "<C XdmfHDF instance at %s>" % (self.this,)
+
+class XdmfHDFPtr(XdmfHDF):
+    def __init__(self,this):
+        _swig_setattr(self, XdmfHDF, 'this', this)
+        if not hasattr(self,"thisown"): _swig_setattr(self, XdmfHDF, 'thisown', 0)
+        _swig_setattr(self, XdmfHDF,self.__class__,XdmfHDF)
+_Xdmf.XdmfHDF_swigregister(XdmfHDFPtr)
+
+CopyArray = _Xdmf.CopyArray
+
+XDMF_PARAMETER_RANGE_TYPE = _Xdmf.XDMF_PARAMETER_RANGE_TYPE
+XDMF_PARAMETER_LIST_TYPE = _Xdmf.XDMF_PARAMETER_LIST_TYPE
+class XdmfParameter(XdmfObject):
+    __swig_setmethods__ = {}
+    for _s in [XdmfObject]: __swig_setmethods__.update(_s.__swig_setmethods__)
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfParameter, name, value)
+    __swig_getmethods__ = {}
+    for _s in [XdmfObject]: __swig_getmethods__.update(_s.__swig_getmethods__)
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfParameter, name)
+    def __init__(self,*args):
+        _swig_setattr(self, XdmfParameter, 'this', apply(_Xdmf.new_XdmfParameter,args))
+        _swig_setattr(self, XdmfParameter, 'thisown', 1)
+    def __del__(self, destroy= _Xdmf.delete_XdmfParameter):
+        try:
+            if self.thisown: destroy(self)
+        except: pass
+    def GetClassName(*args): return apply(_Xdmf.XdmfParameter_GetClassName,args)
+    def GetParameterType(*args): return apply(_Xdmf.XdmfParameter_GetParameterType,args)
+    def GetParameterTypeAsString(*args): return apply(_Xdmf.XdmfParameter_GetParameterTypeAsString,args)
+    def SetParameterType(*args): return apply(_Xdmf.XdmfParameter_SetParameterType,args)
+    def GetCurrentIndex(*args): return apply(_Xdmf.XdmfParameter_GetCurrentIndex,args)
+    def SetCurrentIndex(*args): return apply(_Xdmf.XdmfParameter_SetCurrentIndex,args)
+    def GetParameterName(*args): return apply(_Xdmf.XdmfParameter_GetParameterName,args)
+    def SetParameterName(*args): return apply(_Xdmf.XdmfParameter_SetParameterName,args)
+    def GetParameterNode(*args): return apply(_Xdmf.XdmfParameter_GetParameterNode,args)
+    def SetParameterNode(*args): return apply(_Xdmf.XdmfParameter_SetParameterNode,args)
+    def GetFormat(*args): return apply(_Xdmf.XdmfParameter_GetFormat,args)
+    def GetNumberOfElements(*args): return apply(_Xdmf.XdmfParameter_GetNumberOfElements,args)
+    def GetArray(*args): return apply(_Xdmf.XdmfParameter_GetArray,args)
+    def GetParameterValue(*args): return apply(_Xdmf.XdmfParameter_GetParameterValue,args)
+    def Update(*args): return apply(_Xdmf.XdmfParameter_Update,args)
+    def Substitute(*args): return apply(_Xdmf.XdmfParameter_Substitute,args)
+    def __repr__(self):
+        return "<C XdmfParameter instance at %s>" % (self.this,)
+
+class XdmfParameterPtr(XdmfParameter):
+    def __init__(self,this):
+        _swig_setattr(self, XdmfParameter, 'this', this)
+        if not hasattr(self,"thisown"): _swig_setattr(self, XdmfParameter, 'thisown', 0)
+        _swig_setattr(self, XdmfParameter,self.__class__,XdmfParameter)
+_Xdmf.XdmfParameter_swigregister(XdmfParameterPtr)
 
 class XdmfTransform(XdmfLightData):
     __swig_setmethods__ = {}
@@ -919,8 +932,8 @@ class XdmfTransform(XdmfLightData):
     for _s in [XdmfLightData]: __swig_getmethods__.update(_s.__swig_getmethods__)
     __getattr__ = lambda self, name: _swig_getattr(self, XdmfTransform, name)
     def __init__(self,*args):
-        self.this = apply(_Xdmf.new_XdmfTransform,args)
-        self.thisown = 1
+        _swig_setattr(self, XdmfTransform, 'this', apply(_Xdmf.new_XdmfTransform,args))
+        _swig_setattr(self, XdmfTransform, 'thisown', 1)
     def __del__(self, destroy= _Xdmf.delete_XdmfTransform):
         try:
             if self.thisown: destroy(self)
@@ -937,9 +950,9 @@ class XdmfTransform(XdmfLightData):
 
 class XdmfTransformPtr(XdmfTransform):
     def __init__(self,this):
-        self.this = this
-        if not hasattr(self,"thisown"): self.thisown = 0
-        self.__class__ = XdmfTransform
+        _swig_setattr(self, XdmfTransform, 'this', this)
+        if not hasattr(self,"thisown"): _swig_setattr(self, XdmfTransform, 'thisown', 0)
+        _swig_setattr(self, XdmfTransform,self.__class__,XdmfTransform)
 _Xdmf.XdmfTransform_swigregister(XdmfTransformPtr)
 
 XDMF_NDGM_MSG_SERVER = _Xdmf.XDMF_NDGM_MSG_SERVER
@@ -953,8 +966,8 @@ class XdmfNDGM(XdmfDataDesc):
     for _s in [XdmfDataDesc]: __swig_getmethods__.update(_s.__swig_getmethods__)
     __getattr__ = lambda self, name: _swig_getattr(self, XdmfNDGM, name)
     def __init__(self,*args):
-        self.this = apply(_Xdmf.new_XdmfNDGM,args)
-        self.thisown = 1
+        _swig_setattr(self, XdmfNDGM, 'this', apply(_Xdmf.new_XdmfNDGM,args))
+        _swig_setattr(self, XdmfNDGM, 'thisown', 1)
     def __del__(self, destroy= _Xdmf.delete_XdmfNDGM):
         try:
             if self.thisown: destroy(self)
@@ -994,9 +1007,9 @@ class XdmfNDGM(XdmfDataDesc):
 
 class XdmfNDGMPtr(XdmfNDGM):
     def __init__(self,this):
-        self.this = this
-        if not hasattr(self,"thisown"): self.thisown = 0
-        self.__class__ = XdmfNDGM
+        _swig_setattr(self, XdmfNDGM, 'this', this)
+        if not hasattr(self,"thisown"): _swig_setattr(self, XdmfNDGM, 'thisown', 0)
+        _swig_setattr(self, XdmfNDGM,self.__class__,XdmfNDGM)
 _Xdmf.XdmfNDGM_swigregister(XdmfNDGMPtr)
 
 XdmfGetNdgmEntries = _Xdmf.XdmfGetNdgmEntries
