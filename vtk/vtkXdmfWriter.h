@@ -73,17 +73,17 @@ public:
 
   // Description:
   // Add a dataset to the list of data to append.
-  void AddInput(vtkDataSet *in);
+  void AddInput(vtkDataObject *in);
 
   // Description:
   // Get any input of this filter.
-  vtkDataSet *GetInput(int idx);
-  vtkDataSet *GetInput() 
+  vtkDataObject *GetInput(int idx);
+  vtkDataObject *GetInput() 
     {return this->GetInput( 0 );}
   
   // Description:
   // Remove a dataset from the list of data to append.
-  void RemoveInput(vtkDataSet *in);
+  void RemoveInput(vtkDataObject *in);
 
   // Description:
   // Returns a copy of the input array.  Modifications to this list
@@ -109,7 +109,7 @@ protected:
   virtual int WriteCellArray( ostream& ost, vtkCellArray *Cells );
   virtual int WritePoints( ostream& ost, vtkPoints *Points );
   virtual int WriteDataArray( ostream& ost, vtkDataArray* array, const char* Name, const char* Center );
-  virtual int WriteVTKArray( ostream& ost, vtkDataArray* array, const char* array );
+  virtual int WriteVTKArray( ostream& ost, vtkDataArray* array, const char* name);
 
   vtkDataSet* GetInputDataSet();
 

@@ -68,7 +68,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfWriter);
-vtkCxxRevisionMacro(vtkXdmfWriter, "1.5");
+vtkCxxRevisionMacro(vtkXdmfWriter, "1.6");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter::vtkXdmfWriter()
@@ -851,26 +851,26 @@ vtkDataSet* vtkXdmfWriter::GetInputDataSet()
 
 //----------------------------------------------------------------------------
 // Add a dataset to the list of data to append.
-void vtkXdmfWriter::AddInput(vtkDataSet *ds)
+void vtkXdmfWriter::AddInput(vtkDataObject *ds)
 {
   vtkErrorMacro("AddInput does not work as it should yet. Use SetInput.");
   this->vtkProcessObject::AddInput(ds);
 }
 
 //----------------------------------------------------------------------------
-vtkDataSet *vtkXdmfWriter::GetInput(int idx)
+vtkDataObject *vtkXdmfWriter::GetInput(int idx)
 {
   if (idx >= this->NumberOfInputs || idx < 0)
     {
     return NULL;
     }
 
-  return (vtkDataSet *)(this->Inputs[idx]);
+  return (vtkDataObject *)(this->Inputs[idx]);
 }
 
 //----------------------------------------------------------------------------
 // Remove a dataset from the list of data to append.
-void vtkXdmfWriter::RemoveInput(vtkDataSet *ds)
+void vtkXdmfWriter::RemoveInput(vtkDataObject *ds)
 {
   this->vtkProcessObject::RemoveInput(ds);
 }
