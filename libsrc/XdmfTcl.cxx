@@ -8,6 +8,8 @@
  * interface file instead. 
  * ----------------------------------------------------------------------------- */
 
+#include <stdarg.h>
+
 
 #ifdef __cplusplus
 template<class T> class SwigValueWrapper {
@@ -1088,6 +1090,36 @@ SWIGEXPORT(int) SWIG_init(Tcl_Interp *);
 #include <XdmfNDGM.h>
 
 
+#ifndef HAVE_STRTOLL
+inline XDMF_LONG64 XDMF_strtoll(char *str, void*, int)
+{
+  XDMF_LONG64 result = 0;
+  int negative=0;
+
+  while (*str == ' ' || *str == '\t')
+    {
+    str++;
+    }
+  if (*str == '+')
+    {
+    str++;
+    }
+  else if (*str == '-')
+    {
+    negative = 1;
+    str++;
+    }
+
+  while (*str >= '0' && *str <= '9')
+    {
+    result = (result*10)-(*str++ - '0');
+    }
+  return negative ? result : -result;
+}
+#else
+# define XDMF_strtoll strtoll
+#endif
+
 #define  SWIG_MemoryError    1
 #define  SWIG_IOError        2
 #define  SWIG_RuntimeError   3
@@ -1542,7 +1574,7 @@ _wrap_XdmfDataDesc_SetNumberType(ClientData clientData, Tcl_Interp *interp, int 
     if (SWIG_GetArgs(interp, objc, objv,"oi|o:Xdmf::XdmfDataDesc_SetNumberTypeself NumberType CompoundSize ",0,&arg2,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfDataDesc,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
     if (objc > 3) {
-        arg3 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[3],NULL),0,0);
+        arg3 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[3],NULL),0,0);
     }
     result = (XdmfInt32)(arg1)->SetNumberType(arg2,arg3);
     
@@ -1563,7 +1595,7 @@ _wrap_XdmfDataDesc_SetNumberTypeFromString(ClientData clientData, Tcl_Interp *in
     if (SWIG_GetArgs(interp, objc, objv,"os|o:Xdmf::XdmfDataDesc_SetNumberTypeFromStringself NumberType CompoundSize ",0,&arg2,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfDataDesc,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
     if (objc > 3) {
-        arg3 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[3],NULL),0,0);
+        arg3 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[3],NULL),0,0);
     }
     result = (XdmfInt32)(arg1)->SetNumberTypeFromString(arg2,arg3);
     
@@ -1721,7 +1753,7 @@ _wrap_XdmfDataDesc_SetNumberOfElements(ClientData clientData, Tcl_Interp *interp
     
     if (SWIG_GetArgs(interp, objc, objv,"oo:Xdmf::XdmfDataDesc_SetNumberOfElementsself Length ",0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfDataDesc,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     result = (XdmfInt32)(arg1)->SetNumberOfElements(arg2);
     
     Tcl_SetObjResult(interp,Tcl_NewIntObj((long) result));
@@ -1852,7 +1884,7 @@ _wrap_XdmfDataDesc_SelectCoordinates(ClientData clientData, Tcl_Interp *interp, 
     
     if (SWIG_GetArgs(interp, objc, objv,"ooo:Xdmf::XdmfDataDesc_SelectCoordinatesself NumberOfElements Coordinates ",0,0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfDataDesc,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     if ((SWIG_ConvertPtr(interp, objv[3], (void **) &arg3, SWIGTYPE_p_XdmfInt64,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
     result = (XdmfInt32)(arg1)->SelectCoordinates(arg2,arg3);
     
@@ -1890,10 +1922,10 @@ _wrap_XdmfDataDesc_GetCoordinates(ClientData clientData, Tcl_Interp *interp, int
     if (SWIG_GetArgs(interp, objc, objv,"o|oo:Xdmf::XdmfDataDesc_GetCoordinatesself Start Nelements ",0,0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfDataDesc,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
     if (objc > 2) {
-        arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+        arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     }
     if (objc > 3) {
-        arg3 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[3],NULL),0,0);
+        arg3 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[3],NULL),0,0);
     }
     result = (XdmfInt64 *)(arg1)->GetCoordinates(arg2,arg3);
     
@@ -1914,10 +1946,10 @@ _wrap_XdmfDataDesc_GetCoordinatesAsString(ClientData clientData, Tcl_Interp *int
     if (SWIG_GetArgs(interp, objc, objv,"o|oo:Xdmf::XdmfDataDesc_GetCoordinatesAsStringself Start Nelements ",0,0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfDataDesc,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
     if (objc > 2) {
-        arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+        arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     }
     if (objc > 3) {
-        arg3 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[3],NULL),0,0);
+        arg3 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[3],NULL),0,0);
     }
     result = (XdmfString)(arg1)->GetCoordinatesAsString(arg2,arg3);
     
@@ -1992,7 +2024,7 @@ _wrap_XdmfDataDesc_GetDimension(ClientData clientData, Tcl_Interp *interp, int o
     
     if (SWIG_GetArgs(interp, objc, objv,"oo:Xdmf::XdmfDataDesc_GetDimensionself Index ",0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfDataDesc,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     result = (XdmfInt64)(arg1)->GetDimension(arg2);
     
     {
@@ -2014,7 +2046,7 @@ _wrap_XdmfDataDesc_GetStart(ClientData clientData, Tcl_Interp *interp, int objc,
     
     if (SWIG_GetArgs(interp, objc, objv,"oo:Xdmf::XdmfDataDesc_GetStartself Index ",0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfDataDesc,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     result = (XdmfInt64)(arg1)->GetStart(arg2);
     
     {
@@ -2036,7 +2068,7 @@ _wrap_XdmfDataDesc_GetStride(ClientData clientData, Tcl_Interp *interp, int objc
     
     if (SWIG_GetArgs(interp, objc, objv,"oo:Xdmf::XdmfDataDesc_GetStrideself Index ",0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfDataDesc,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     result = (XdmfInt64)(arg1)->GetStride(arg2);
     
     {
@@ -2058,7 +2090,7 @@ _wrap_XdmfDataDesc_GetCount(ClientData clientData, Tcl_Interp *interp, int objc,
     
     if (SWIG_GetArgs(interp, objc, objv,"oo:Xdmf::XdmfDataDesc_GetCountself Index ",0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfDataDesc,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     result = (XdmfInt64)(arg1)->GetCount(arg2);
     
     {
@@ -2176,7 +2208,7 @@ _wrap_XdmfDataDesc_AddCompoundMemberFromString(ClientData clientData, Tcl_Interp
     if (SWIG_GetArgs(interp, objc, objv,"osss|o:Xdmf::XdmfDataDesc_AddCompoundMemberFromStringself Name NumberType Shape Offset ",0,&arg2,&arg3,&arg4,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfDataDesc,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
     if (objc > 5) {
-        arg5 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[5],NULL),0,0);
+        arg5 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[5],NULL),0,0);
     }
     result = (XdmfInt32)(arg1)->AddCompoundMemberFromString(arg2,arg3,arg4,arg5);
     
@@ -2215,7 +2247,7 @@ _wrap_XdmfDataDesc_GetMemberName(ClientData clientData, Tcl_Interp *interp, int 
     
     if (SWIG_GetArgs(interp, objc, objv,"oo:Xdmf::XdmfDataDesc_GetMemberNameself Index ",0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfDataDesc,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     result = (XdmfString)(arg1)->GetMemberName(arg2);
     
     Tcl_SetObjResult(interp,Tcl_NewStringObj(result,-1));
@@ -2233,7 +2265,7 @@ _wrap_XdmfDataDesc_GetMemberLength(ClientData clientData, Tcl_Interp *interp, in
     
     if (SWIG_GetArgs(interp, objc, objv,"oo:Xdmf::XdmfDataDesc_GetMemberLengthself Index ",0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfDataDesc,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     result = (XdmfInt64)(arg1)->GetMemberLength(arg2);
     
     {
@@ -2255,7 +2287,7 @@ _wrap_XdmfDataDesc_GetMemberSize(ClientData clientData, Tcl_Interp *interp, int 
     
     if (SWIG_GetArgs(interp, objc, objv,"oo:Xdmf::XdmfDataDesc_GetMemberSizeself Index ",0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfDataDesc,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     result = (XdmfInt64)(arg1)->GetMemberSize(arg2);
     
     {
@@ -2278,7 +2310,7 @@ _wrap_XdmfDataDesc_GetMemberShape(ClientData clientData, Tcl_Interp *interp, int
     
     if (SWIG_GetArgs(interp, objc, objv,"ooo:Xdmf::XdmfDataDesc_GetMemberShapeself Index Dimensions ",0,0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfDataDesc,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     if ((SWIG_ConvertPtr(interp, objv[3], (void **) &arg3, SWIGTYPE_p_XdmfInt64,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
     result = (XdmfInt32)(arg1)->GetMemberShape(arg2,arg3);
     
@@ -2297,7 +2329,7 @@ _wrap_XdmfDataDesc_GetMemberShapeAsString(ClientData clientData, Tcl_Interp *int
     
     if (SWIG_GetArgs(interp, objc, objv,"oo:Xdmf::XdmfDataDesc_GetMemberShapeAsStringself Index ",0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfDataDesc,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     result = (XdmfString)(arg1)->GetMemberShapeAsString(arg2);
     
     Tcl_SetObjResult(interp,Tcl_NewStringObj(result,-1));
@@ -2315,7 +2347,7 @@ _wrap_XdmfDataDesc_GetMemberType(ClientData clientData, Tcl_Interp *interp, int 
     
     if (SWIG_GetArgs(interp, objc, objv,"oo:Xdmf::XdmfDataDesc_GetMemberTypeself Index ",0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfDataDesc,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     result = (XdmfInt32)(arg1)->GetMemberType(arg2);
     
     Tcl_SetObjResult(interp,Tcl_NewIntObj((long) result));
@@ -2333,7 +2365,7 @@ _wrap_XdmfDataDesc_GetMemberTypeAsString(ClientData clientData, Tcl_Interp *inte
     
     if (SWIG_GetArgs(interp, objc, objv,"oo:Xdmf::XdmfDataDesc_GetMemberTypeAsStringself Index ",0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfDataDesc,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     result = (XdmfString)(arg1)->GetMemberTypeAsString(arg2);
     
     Tcl_SetObjResult(interp,Tcl_NewStringObj(result,-1));
@@ -2351,7 +2383,7 @@ _wrap_XdmfDataDesc_GetMemberOffset(ClientData clientData, Tcl_Interp *interp, in
     
     if (SWIG_GetArgs(interp, objc, objv,"oo:Xdmf::XdmfDataDesc_GetMemberOffsetself Index ",0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfDataDesc,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     result = (XdmfInt64)(arg1)->GetMemberOffset(arg2);
     
     {
@@ -2563,7 +2595,7 @@ _wrap_XdmfArray_SetNumberOfElements(ClientData clientData, Tcl_Interp *interp, i
     
     if (SWIG_GetArgs(interp, objc, objv,"oo:Xdmf::XdmfArray_SetNumberOfElementsself Length ",0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfArray,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     result = (XdmfInt32)(arg1)->SetNumberOfElements(arg2);
     
     Tcl_SetObjResult(interp,Tcl_NewIntObj((long) result));
@@ -2617,7 +2649,7 @@ _wrap_XdmfArray_GetDataPointer(ClientData clientData, Tcl_Interp *interp, int ob
     if (SWIG_GetArgs(interp, objc, objv,"o|o:Xdmf::XdmfArray_GetDataPointerself Index ",0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfArray,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
     if (objc > 2) {
-        arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+        arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     }
     result = (XdmfPointer)(arg1)->GetDataPointer(arg2);
     
@@ -2654,7 +2686,7 @@ _wrap_XdmfArray_SetValueFromFloat64(ClientData clientData, Tcl_Interp *interp, i
     
     if (SWIG_GetArgs(interp, objc, objv,"ood:Xdmf::XdmfArray_SetValueFromFloat64self Index Value ",0,0,&arg3) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfArray,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     result = (XdmfInt32)(arg1)->SetValueFromFloat64(arg2,arg3);
     
     Tcl_SetObjResult(interp,Tcl_NewIntObj((long) result));
@@ -2673,8 +2705,8 @@ _wrap_XdmfArray_SetValueFromInt64(ClientData clientData, Tcl_Interp *interp, int
     
     if (SWIG_GetArgs(interp, objc, objv,"ooo:Xdmf::XdmfArray_SetValueFromInt64self Index Value ",0,0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfArray,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
-    arg3 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[3],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg3 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[3],NULL),0,0);
     result = (XdmfInt32)(arg1)->SetValueFromInt64(arg2,arg3);
     
     Tcl_SetObjResult(interp,Tcl_NewIntObj((long) result));
@@ -2695,12 +2727,12 @@ _wrap_XdmfArray_SetValues(ClientData clientData, Tcl_Interp *interp, int objc, T
     
     if (SWIG_GetArgs(interp, objc, objv,"oos|oo:Xdmf::XdmfArray_SetValuesself Index Values ArrayStride ValuesStride ",0,0,&arg3,0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfArray,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     if (objc > 4) {
-        arg4 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[4],NULL),0,0);
+        arg4 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[4],NULL),0,0);
     }
     if (objc > 5) {
-        arg5 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[5],NULL),0,0);
+        arg5 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[5],NULL),0,0);
     }
     result = (XdmfInt32)(arg1)->SetValues(arg2,arg3,arg4,arg5);
     
@@ -2723,14 +2755,14 @@ _wrap_XdmfArray_GetValuesAsInt8(ClientData clientData, Tcl_Interp *interp, int o
     
     if (SWIG_GetArgs(interp, objc, objv,"oooo|oo:Xdmf::XdmfArray_GetValuesAsInt8self Index Values NumberOfValues ArrayStride ValuesStride ",0,0,0,0,0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfArray,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     if ((SWIG_ConvertPtr(interp, objv[3], (void **) &arg3, SWIGTYPE_p_XdmfInt8,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg4 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[4],NULL),0,0);
+    arg4 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[4],NULL),0,0);
     if (objc > 5) {
-        arg5 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[5],NULL),0,0);
+        arg5 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[5],NULL),0,0);
     }
     if (objc > 6) {
-        arg6 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[6],NULL),0,0);
+        arg6 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[6],NULL),0,0);
     }
     result = (XdmfInt32)(arg1)->GetValuesAsInt8(arg2,arg3,arg4,arg5,arg6);
     
@@ -2753,14 +2785,14 @@ _wrap_XdmfArray_SetValuesFromInt8(ClientData clientData, Tcl_Interp *interp, int
     
     if (SWIG_GetArgs(interp, objc, objv,"oooo|oo:Xdmf::XdmfArray_SetValuesFromInt8self Index Values NumberOfValues ArrayStride ValuesStride ",0,0,0,0,0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfArray,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     if ((SWIG_ConvertPtr(interp, objv[3], (void **) &arg3, SWIGTYPE_p_XdmfInt8,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg4 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[4],NULL),0,0);
+    arg4 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[4],NULL),0,0);
     if (objc > 5) {
-        arg5 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[5],NULL),0,0);
+        arg5 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[5],NULL),0,0);
     }
     if (objc > 6) {
-        arg6 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[6],NULL),0,0);
+        arg6 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[6],NULL),0,0);
     }
     result = (XdmfInt32)(arg1)->SetValuesFromInt8(arg2,arg3,arg4,arg5,arg6);
     
@@ -2783,14 +2815,14 @@ _wrap_XdmfArray_GetValuesAsInt32(ClientData clientData, Tcl_Interp *interp, int 
     
     if (SWIG_GetArgs(interp, objc, objv,"oooo|oo:Xdmf::XdmfArray_GetValuesAsInt32self Index Values NumberOfValues ArrayStride ValuesStride ",0,0,0,0,0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfArray,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     if ((SWIG_ConvertPtr(interp, objv[3], (void **) &arg3, SWIGTYPE_p_XdmfInt32,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg4 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[4],NULL),0,0);
+    arg4 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[4],NULL),0,0);
     if (objc > 5) {
-        arg5 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[5],NULL),0,0);
+        arg5 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[5],NULL),0,0);
     }
     if (objc > 6) {
-        arg6 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[6],NULL),0,0);
+        arg6 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[6],NULL),0,0);
     }
     result = (XdmfInt32)(arg1)->GetValuesAsInt32(arg2,arg3,arg4,arg5,arg6);
     
@@ -2813,14 +2845,14 @@ _wrap_XdmfArray_SetValuesFromInt32(ClientData clientData, Tcl_Interp *interp, in
     
     if (SWIG_GetArgs(interp, objc, objv,"oooo|oo:Xdmf::XdmfArray_SetValuesFromInt32self Index Values NumberOfValues ArrayStride ValuesStride ",0,0,0,0,0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfArray,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     if ((SWIG_ConvertPtr(interp, objv[3], (void **) &arg3, SWIGTYPE_p_XdmfInt32,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg4 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[4],NULL),0,0);
+    arg4 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[4],NULL),0,0);
     if (objc > 5) {
-        arg5 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[5],NULL),0,0);
+        arg5 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[5],NULL),0,0);
     }
     if (objc > 6) {
-        arg6 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[6],NULL),0,0);
+        arg6 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[6],NULL),0,0);
     }
     result = (XdmfInt32)(arg1)->SetValuesFromInt32(arg2,arg3,arg4,arg5,arg6);
     
@@ -2843,14 +2875,14 @@ _wrap_XdmfArray_GetValuesAsInt64(ClientData clientData, Tcl_Interp *interp, int 
     
     if (SWIG_GetArgs(interp, objc, objv,"oooo|oo:Xdmf::XdmfArray_GetValuesAsInt64self Index Values NumberOfValues ArrayStride ValuesStride ",0,0,0,0,0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfArray,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     if ((SWIG_ConvertPtr(interp, objv[3], (void **) &arg3, SWIGTYPE_p_XdmfInt64,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg4 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[4],NULL),0,0);
+    arg4 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[4],NULL),0,0);
     if (objc > 5) {
-        arg5 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[5],NULL),0,0);
+        arg5 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[5],NULL),0,0);
     }
     if (objc > 6) {
-        arg6 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[6],NULL),0,0);
+        arg6 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[6],NULL),0,0);
     }
     result = (XdmfInt32)(arg1)->GetValuesAsInt64(arg2,arg3,arg4,arg5,arg6);
     
@@ -2873,14 +2905,14 @@ _wrap_XdmfArray_SetValuesFromInt64(ClientData clientData, Tcl_Interp *interp, in
     
     if (SWIG_GetArgs(interp, objc, objv,"oooo|oo:Xdmf::XdmfArray_SetValuesFromInt64self Index Values NumberOfValues ArrayStride ValuesStride ",0,0,0,0,0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfArray,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     if ((SWIG_ConvertPtr(interp, objv[3], (void **) &arg3, SWIGTYPE_p_XdmfInt64,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg4 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[4],NULL),0,0);
+    arg4 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[4],NULL),0,0);
     if (objc > 5) {
-        arg5 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[5],NULL),0,0);
+        arg5 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[5],NULL),0,0);
     }
     if (objc > 6) {
-        arg6 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[6],NULL),0,0);
+        arg6 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[6],NULL),0,0);
     }
     result = (XdmfInt32)(arg1)->SetValuesFromInt64(arg2,arg3,arg4,arg5,arg6);
     
@@ -2903,14 +2935,14 @@ _wrap_XdmfArray_GetValuesAsFloat32(ClientData clientData, Tcl_Interp *interp, in
     
     if (SWIG_GetArgs(interp, objc, objv,"oooo|oo:Xdmf::XdmfArray_GetValuesAsFloat32self Index Values NumberOfValues ArrayStride ValuesStride ",0,0,0,0,0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfArray,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     if ((SWIG_ConvertPtr(interp, objv[3], (void **) &arg3, SWIGTYPE_p_XdmfFloat32,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg4 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[4],NULL),0,0);
+    arg4 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[4],NULL),0,0);
     if (objc > 5) {
-        arg5 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[5],NULL),0,0);
+        arg5 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[5],NULL),0,0);
     }
     if (objc > 6) {
-        arg6 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[6],NULL),0,0);
+        arg6 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[6],NULL),0,0);
     }
     result = (XdmfInt32)(arg1)->GetValuesAsFloat32(arg2,arg3,arg4,arg5,arg6);
     
@@ -2933,14 +2965,14 @@ _wrap_XdmfArray_SetValuesFromFloat32(ClientData clientData, Tcl_Interp *interp, 
     
     if (SWIG_GetArgs(interp, objc, objv,"oooo|oo:Xdmf::XdmfArray_SetValuesFromFloat32self Index Values NumberOfValues ArrayStride ValuesStride ",0,0,0,0,0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfArray,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     if ((SWIG_ConvertPtr(interp, objv[3], (void **) &arg3, SWIGTYPE_p_XdmfFloat32,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg4 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[4],NULL),0,0);
+    arg4 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[4],NULL),0,0);
     if (objc > 5) {
-        arg5 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[5],NULL),0,0);
+        arg5 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[5],NULL),0,0);
     }
     if (objc > 6) {
-        arg6 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[6],NULL),0,0);
+        arg6 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[6],NULL),0,0);
     }
     result = (XdmfInt32)(arg1)->SetValuesFromFloat32(arg2,arg3,arg4,arg5,arg6);
     
@@ -2963,14 +2995,14 @@ _wrap_XdmfArray_GetValuesAsFloat64(ClientData clientData, Tcl_Interp *interp, in
     
     if (SWIG_GetArgs(interp, objc, objv,"oooo|oo:Xdmf::XdmfArray_GetValuesAsFloat64self Index Values NumberOfValues ArrayStride ValuesStride ",0,0,0,0,0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfArray,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     if ((SWIG_ConvertPtr(interp, objv[3], (void **) &arg3, SWIGTYPE_p_XdmfFloat64,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg4 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[4],NULL),0,0);
+    arg4 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[4],NULL),0,0);
     if (objc > 5) {
-        arg5 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[5],NULL),0,0);
+        arg5 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[5],NULL),0,0);
     }
     if (objc > 6) {
-        arg6 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[6],NULL),0,0);
+        arg6 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[6],NULL),0,0);
     }
     result = (XdmfInt32)(arg1)->GetValuesAsFloat64(arg2,arg3,arg4,arg5,arg6);
     
@@ -2993,14 +3025,14 @@ _wrap_XdmfArray_SetValuesFromFloat64(ClientData clientData, Tcl_Interp *interp, 
     
     if (SWIG_GetArgs(interp, objc, objv,"oooo|oo:Xdmf::XdmfArray_SetValuesFromFloat64self Index Values NumberOfValues ArrayStride ValuesStride ",0,0,0,0,0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfArray,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     if ((SWIG_ConvertPtr(interp, objv[3], (void **) &arg3, SWIGTYPE_p_XdmfFloat64,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg4 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[4],NULL),0,0);
+    arg4 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[4],NULL),0,0);
     if (objc > 5) {
-        arg5 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[5],NULL),0,0);
+        arg5 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[5],NULL),0,0);
     }
     if (objc > 6) {
-        arg6 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[6],NULL),0,0);
+        arg6 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[6],NULL),0,0);
     }
     result = (XdmfInt32)(arg1)->SetValuesFromFloat64(arg2,arg3,arg4,arg5,arg6);
     
@@ -3019,7 +3051,7 @@ _wrap_XdmfArray_GetValueAsFloat64(ClientData clientData, Tcl_Interp *interp, int
     
     if (SWIG_GetArgs(interp, objc, objv,"oo:Xdmf::XdmfArray_GetValueAsFloat64self Index ",0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfArray,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     result = (XdmfFloat64)(arg1)->GetValueAsFloat64(arg2);
     
     Tcl_SetObjResult(interp,Tcl_NewDoubleObj((double) result));
@@ -3037,7 +3069,7 @@ _wrap_XdmfArray_GetValueAsFloat32(ClientData clientData, Tcl_Interp *interp, int
     
     if (SWIG_GetArgs(interp, objc, objv,"oo:Xdmf::XdmfArray_GetValueAsFloat32self Index ",0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfArray,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     result = (XdmfFloat32)(arg1)->GetValueAsFloat32(arg2);
     
     Tcl_SetObjResult(interp,Tcl_NewDoubleObj((double) result));
@@ -3055,7 +3087,7 @@ _wrap_XdmfArray_GetValueAsInt64(ClientData clientData, Tcl_Interp *interp, int o
     
     if (SWIG_GetArgs(interp, objc, objv,"oo:Xdmf::XdmfArray_GetValueAsInt64self Index ",0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfArray,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     result = (XdmfInt64)(arg1)->GetValueAsInt64(arg2);
     
     {
@@ -3077,7 +3109,7 @@ _wrap_XdmfArray_GetValueAsInt32(ClientData clientData, Tcl_Interp *interp, int o
     
     if (SWIG_GetArgs(interp, objc, objv,"oo:Xdmf::XdmfArray_GetValueAsInt32self Index ",0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfArray,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     result = (XdmfInt32)(arg1)->GetValueAsInt32(arg2);
     
     Tcl_SetObjResult(interp,Tcl_NewIntObj((long) result));
@@ -3095,7 +3127,7 @@ _wrap_XdmfArray_GetValueAsInt8(ClientData clientData, Tcl_Interp *interp, int ob
     
     if (SWIG_GetArgs(interp, objc, objv,"oo:Xdmf::XdmfArray_GetValueAsInt8self Index ",0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfArray,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     result = (XdmfInt8)(arg1)->GetValueAsInt8(arg2);
     
     Tcl_SetObjResult(interp,Tcl_NewIntObj((long) result));
@@ -3116,13 +3148,13 @@ _wrap_XdmfArray_GetValues(ClientData clientData, Tcl_Interp *interp, int objc, T
     if (SWIG_GetArgs(interp, objc, objv,"o|ooo:Xdmf::XdmfArray_GetValuesself Index NumberOfValues ArrayStride ",0,0,0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfArray,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
     if (objc > 2) {
-        arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+        arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     }
     if (objc > 3) {
-        arg3 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[3],NULL),0,0);
+        arg3 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[3],NULL),0,0);
     }
     if (objc > 4) {
-        arg4 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[4],NULL),0,0);
+        arg4 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[4],NULL),0,0);
     }
     result = (XdmfString)(arg1)->GetValues(arg2,arg3,arg4);
     
@@ -3145,10 +3177,10 @@ _wrap_XdmfArray_Generate(ClientData clientData, Tcl_Interp *interp, int objc, Tc
     if (SWIG_GetArgs(interp, objc, objv,"odd|oo:Xdmf::XdmfArray_Generateself StartValue EndValue StartIndex EndIndex ",0,&arg2,&arg3,0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfArray,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
     if (objc > 4) {
-        arg4 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[4],NULL),0,0);
+        arg4 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[4],NULL),0,0);
     }
     if (objc > 5) {
-        arg5 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[5],NULL),0,0);
+        arg5 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[5],NULL),0,0);
     }
     result = (XdmfInt32)(arg1)->Generate(arg2,arg3,arg4,arg5);
     
@@ -3169,10 +3201,10 @@ _wrap_XdmfArray_Clone(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_O
     if (SWIG_GetArgs(interp, objc, objv,"o|oo:Xdmf::XdmfArray_Cloneself Start End ",0,0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfArray,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
     if (objc > 2) {
-        arg2 = (XdmfLength) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+        arg2 = (XdmfLength) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     }
     if (objc > 3) {
-        arg3 = (XdmfLength) strtoll(Tcl_GetStringFromObj(objv[3],NULL),0,0);
+        arg3 = (XdmfLength) XDMF_strtoll(Tcl_GetStringFromObj(objv[3],NULL),0,0);
     }
     result = (XdmfArray *)(arg1)->Clone(arg2,arg3);
     
@@ -3193,10 +3225,10 @@ _wrap_XdmfArray_Reference(ClientData clientData, Tcl_Interp *interp, int objc, T
     if (SWIG_GetArgs(interp, objc, objv,"o|oo:Xdmf::XdmfArray_Referenceself Start End ",0,0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfArray,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
     if (objc > 2) {
-        arg2 = (XdmfLength) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+        arg2 = (XdmfLength) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     }
     if (objc > 3) {
-        arg3 = (XdmfLength) strtoll(Tcl_GetStringFromObj(objv[3],NULL),0,0);
+        arg3 = (XdmfLength) XDMF_strtoll(Tcl_GetStringFromObj(objv[3],NULL),0,0);
     }
     result = (XdmfArray *)(arg1)->Reference(arg2,arg3);
     
@@ -3426,7 +3458,7 @@ _wrap_XdmfArrayList_timecntr_set(ClientData clientData, Tcl_Interp *interp, int 
     
     if (SWIG_GetArgs(interp, objc, objv,"oo:Xdmf::XdmfArrayList_timecntr_setself timecntr ",0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfArrayList,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfLength) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfLength) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     if (arg1) (arg1)->timecntr = arg2;
     
     
@@ -3567,7 +3599,7 @@ _wrap_GetNextOlderArray(ClientData clientData, Tcl_Interp *interp, int objc, Tcl
     XdmfArray *result;
     
     if (SWIG_GetArgs(interp, objc, objv,"o|o:Xdmf::GetNextOlderArrayAge AgeOfArray ",0,0) == TCL_ERROR) SWIG_fail;
-    arg1 = (XdmfLength) strtoll(Tcl_GetStringFromObj(objv[1],NULL),0,0);
+    arg1 = (XdmfLength) XDMF_strtoll(Tcl_GetStringFromObj(objv[1],NULL),0,0);
     if (objc > 2) {
         if ((SWIG_ConvertPtr(interp, objv[2], (void **) &arg2, SWIGTYPE_p_XdmfLength,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
     }
@@ -4943,7 +4975,7 @@ _wrap_XdmfDOM_GetChild(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_
     
     if (SWIG_GetArgs(interp, objc, objv,"ooo:Xdmf::XdmfDOM_GetChildself Index Node ",0,0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfDOM,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     if ((SWIG_ConvertPtr(interp, objv[3], (void **) &arg3, SWIGTYPE_p_XdmfXNode,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
     result = (XdmfXNode *)(arg1)->GetChild(arg2,arg3);
     
@@ -6640,7 +6672,7 @@ _wrap_XdmfGeometry_SetNumberOfPoints(ClientData clientData, Tcl_Interp *interp, 
     
     if (SWIG_GetArgs(interp, objc, objv,"oo:Xdmf::XdmfGeometry_SetNumberOfPointsself _arg ",0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfGeometry,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     result = (XdmfInt32)(arg1)->SetNumberOfPoints(arg2);
     
     Tcl_SetObjResult(interp,Tcl_NewIntObj((long) result));
@@ -7264,7 +7296,7 @@ _wrap_XdmfGrid_GetAttribute(ClientData clientData, Tcl_Interp *interp, int objc,
     
     if (SWIG_GetArgs(interp, objc, objv,"oo:Xdmf::XdmfGrid_GetAttributeself Index ",0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfGrid,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     result = (XdmfAttribute *)(arg1)->GetAttribute(arg2);
     
     Tcl_SetObjResult(interp,SWIG_NewInstanceObj(interp, (void *) result, SWIGTYPE_p_XdmfAttribute,0));
@@ -7282,7 +7314,7 @@ _wrap_XdmfGrid_AssignAttribute(ClientData clientData, Tcl_Interp *interp, int ob
     
     if (SWIG_GetArgs(interp, objc, objv,"oo:Xdmf::XdmfGrid_AssignAttributeself Index ",0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfGrid,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     result = (XdmfInt32)(arg1)->AssignAttribute(arg2);
     
     Tcl_SetObjResult(interp,Tcl_NewIntObj((long) result));
@@ -7300,7 +7332,7 @@ _wrap_XdmfGrid_AssignAttributeByIndex(ClientData clientData, Tcl_Interp *interp,
     
     if (SWIG_GetArgs(interp, objc, objv,"oo:Xdmf::XdmfGrid_AssignAttributeByIndexself Index ",0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfGrid,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     result = (XdmfInt32)(arg1)->AssignAttributeByIndex(arg2);
     
     Tcl_SetObjResult(interp,Tcl_NewIntObj((long) result));
@@ -7892,7 +7924,7 @@ _wrap_XdmfHDF_GetChild(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_
     
     if (SWIG_GetArgs(interp, objc, objv,"oo:Xdmf::XdmfHDF_GetChildself Index ",0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfHDF,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     result = (XdmfString)(arg1)->GetChild(arg2);
     
     Tcl_SetObjResult(interp,Tcl_NewStringObj(result,-1));
@@ -7947,7 +7979,7 @@ _wrap_XdmfHDF_GetChildType(ClientData clientData, Tcl_Interp *interp, int objc, 
     
     if (SWIG_GetArgs(interp, objc, objv,"oo:Xdmf::XdmfHDF_GetChildTypeself Index ",0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfHDF,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     result = (XdmfInt32)(arg1)->GetChildType(arg2);
     
     Tcl_SetObjResult(interp,Tcl_NewIntObj((long) result));
@@ -7965,7 +7997,7 @@ _wrap_XdmfHDF_GetChildTypeAsString(ClientData clientData, Tcl_Interp *interp, in
     
     if (SWIG_GetArgs(interp, objc, objv,"oo:Xdmf::XdmfHDF_GetChildTypeAsStringself Index ",0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfHDF,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     result = (XdmfString)(arg1)->GetChildTypeAsString(arg2);
     
     Tcl_SetObjResult(interp,Tcl_NewStringObj(result,-1));
@@ -8254,7 +8286,7 @@ _wrap_XdmfParameter_SetCurrentIndex(ClientData clientData, Tcl_Interp *interp, i
     
     if (SWIG_GetArgs(interp, objc, objv,"oo:Xdmf::XdmfParameter_SetCurrentIndexself Value ",0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfParameter,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     result = (XdmfInt32)(arg1)->SetCurrentIndex(arg2);
     
     Tcl_SetObjResult(interp,Tcl_NewIntObj((long) result));
@@ -9046,7 +9078,7 @@ _wrap_XdmfNDGM_Put(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj 
     
     if (SWIG_GetArgs(interp, objc, objv,"ooo:Xdmf::XdmfNDGM_Putself Address Array ",0,0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfNDGM,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     if ((SWIG_ConvertPtr(interp, objv[3], (void **) &arg3, SWIGTYPE_p_XdmfArray,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
     result = (XdmfInt32)(arg1)->Put(arg2,arg3);
     
@@ -9066,7 +9098,7 @@ _wrap_XdmfNDGM_Get(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj 
     
     if (SWIG_GetArgs(interp, objc, objv,"ooo:Xdmf::XdmfNDGM_Getself Address Array ",0,0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfNDGM,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     if ((SWIG_ConvertPtr(interp, objv[3], (void **) &arg3, SWIGTYPE_p_XdmfArray,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
     result = (XdmfInt32)(arg1)->Get(arg2,arg3);
     
@@ -9259,7 +9291,7 @@ _wrap_XdmfAddNdgmEntry(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_
     XdmfInt64 result;
     
     if (SWIG_GetArgs(interp, objc, objv,"so:Xdmf::XdmfAddNdgmEntryName Length ",&arg1,0) == TCL_ERROR) SWIG_fail;
-    arg2 = (XdmfInt64) strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
+    arg2 = (XdmfInt64) XDMF_strtoll(Tcl_GetStringFromObj(objv[2],NULL),0,0);
     result = (XdmfInt64)XdmfAddNdgmEntry(arg1,arg2);
     
     {
