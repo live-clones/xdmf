@@ -51,16 +51,6 @@ CHECK_TYPE_SIZE("long long"    SIZEOF_LONG_LONG)
 
 OPTION(XDMF_BUILD_SHARED_LIBS "Build Shared XDMF Library" ON)
 
-IF(CMAKE_COMPILER_IS_GNUCXX)
-  OPTION(XDMF_USE_ANSI_STDLIB "Use the ANSI standard iostream library" ON)
-ELSE(CMAKE_COMPILER_IS_GNUCXX)
-  IF(CMAKE_BUILD_TOOL MATCHES "devenv")
-    OPTION(XDMF_USE_ANSI_STDLIB "Use the ANSI standard iostream library" ON)
-  ELSE(CMAKE_BUILD_TOOL MATCHES "devenv")
-    OPTION(XDMF_USE_ANSI_STDLIB "Use the ANSI standard iostream library" OFF)
-  ENDIF(CMAKE_BUILD_TOOL MATCHES "devenv")
-ENDIF(CMAKE_COMPILER_IS_GNUCXX)
-
 CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/libsrc/XdmfConfig.h.in
                ${Xdmf_BINARY_DIR}/libsrc/XdmfConfig.h)
 
