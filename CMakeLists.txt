@@ -1,9 +1,12 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 1.6)
 PROJECT(Xdmf)
+
+SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${Xdmf_SOURCE_DIR}/CMake)
 
 INCLUDE_DIRECTORIES(${Xdmf_SOURCE_DIR}/Ice/libsrc)
 INCLUDE_DIRECTORIES(${Xdmf_SOURCE_DIR}/libsrc
-                    ${Xdmf_BINARY_DIR}/libsrc
-                    ${Xdmf_BINARY_DIR}/Ice/libsrc)
+  ${Xdmf_BINARY_DIR}/libsrc
+  ${Xdmf_BINARY_DIR}/Ice/libsrc)
 
 SET (LIBRARY_OUTPUT_PATH ${Xdmf_BINARY_DIR}/bin/ CACHE PATH "Single output directory for building all libraries.")
 SET (EXECUTABLE_OUTPUT_PATH ${Xdmf_BINARY_DIR}/bin/ CACHE PATH "Single output directory for building all executables.")
@@ -17,54 +20,66 @@ SUBDIRS(Ice/libsrc)
 
 OPTION(XDMF_HAS_NDGM "XDMF has Network Distributed Global Memory (NDGM)" OFF)
 IF(XDMF_HAS_NDGM)
-	FIND_PATH(NDGM_DIR BuildNDGM.cmake ${Xdmf_SOURCE_DIR}/../Ndgm "Root of Source for NDGM")
-	IF(NDGM_DIR)
-		MESSAGE(STATUS "Process NDGM")
-#		INCLUDE(${NDGM_DIR}/BuildNDGM.cmake)
-		SUBDIRS(NDGM)
-	ENDIF(NDGM_DIR)
-	ADD_DEFINITIONS(-DHAVE_NDGM)
-	INCLUDE_DIRECTORIES(${NDGM_DIR}/libsrc)
+  FIND_PATH(NDGM_DIR BuildNDGM.cmake ${Xdmf_SOURCE_DIR}/../Ndgm "Root of Source for NDGM")
+  IF(NDGM_DIR)
+    MESSAGE(STATUS "Process NDGM")
+    #		INCLUDE(${NDGM_DIR}/BuildNDGM.cmake)
+    SUBDIRS(NDGM)
+  ENDIF(NDGM_DIR)
+  ADD_DEFINITIONS(-DHAVE_NDGM)
+  INCLUDE_DIRECTORIES(${NDGM_DIR}/libsrc)
 ENDIF(XDMF_HAS_NDGM)
+
+OPTION(XDMF_BUILD_VTK "Build VTK reader" OFF)
+
+IF(XDMF_BUILD_VTK)
+  # include module to find vtk
+  FIND_PACKAGE(VTK)
+  IF(VTK_FOUND)
+    INCLUDE(${VTK_USE_FILE})
+  ENDIF(VTK_FOUND)
+
+  SET(XDMF_ZLIB_LIBRARIES ${VTK_ZLIB_LIBRARIES})
+  SET(XDMF_ZLIB_INCLUDE_DIRS)
+  SET(XDMF_EXPAT_LIBRARIES ${VTK_EXPAT_LIBRARIES})
+  SET(XDMF_EXPAT_INCLUDE_DIRS)
+ELSE(XDMF_BUILD_VTK)
+  SET(VTK_DIR)
+  FIND_PACKAGE(ZLIB)
+  SET(XDMF_ZLIB_LIBRARIES ${ZLIB_LIBRARY})
+  SET(XDMF_ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIR})
+  FIND_PACKAGE(EXPAT)
+  SET(XDMF_EXPAT_LIBRARIES ${EXPAT_LIBRARY})
+  SET(XDMF_EXPAT_INCLUDE_DIRS ${EXPAT_INCLUDE_DIR})
+ENDIF(XDMF_BUILD_VTK)
 
 OPTION(XDMF_SYSTEM_HDF5 "Use sytstem HDF5" ON)
 
 IF(XDMF_SYSTEM_HDF5)
   FIND_LIBRARY(HDF5_LIBRARY
-	hdf5
-	/usr/lib
-	/opt/lib
-	/usr/local/lib)
+    hdf5
+    /usr/lib
+    /opt/lib
+    /usr/local/lib)
   FIND_PATH(HDF5_INCLUDE_PATH
-	H5Ipublic.h
-	/usr/include
-	/opt/include
-	/usr/local/include)
+    H5Ipublic.h
+    /usr/include
+    /opt/include
+    /usr/local/include)
   MESSAGE(STATUS "Using system HDF5")
   INCLUDE_DIRECTORIES(${HDF5_INCLUDE_PATH})
   SET(HDF5_LIBRARY ${HDF5_LIBRARY})
 ELSE(XDMF_SYSTEM_HDF5)
   INCLUDE_DIRECTORIES(${Xdmf_SOURCE_DIR}/Utilities/hdf5
-                      ${Xdmf_BINARY_DIR}/Utilities/hdf5)
+    ${Xdmf_BINARY_DIR}/Utilities/hdf5)
   SUBDIRS(Utilities)
   SET(HDF5_LIBRARY vtkhdf5)
 ENDIF(XDMF_SYSTEM_HDF5)
 
-FIND_PATH(EXPAT_INCLUDE_DIR expat.h
-  /usr/local/include
-  /usr/include
-)
-
-FIND_LIBRARY(EXPAT_LIBRARY expat
-  /usr/lib
-  /usr/local/lib
-)
-
-INCLUDE_DIRECTORIES(${EXPAT_INCLUDE_DIR})
+INCLUDE_DIRECTORIES(${XDMF_EXPAT_INCLUDE_DIRS})
 
 SUBDIRS(libsrc binsrc)
 
-OPTION(XDMF_BUILD_VTK "Build VTK reader" OFF)
 IF(XDMF_BUILD_VTK)
   SUBDIRS(vtk)
 ENDIF(XDMF_BUILD_VTK)
@@ -75,3 +90,42 @@ IF(XDMF_BUILD_TESTING)
   ENABLE_TESTING()
   INCLUDE (${CMAKE_ROOT}/Modules/Dart.cmake)
 ENDIF(XDMF_BUILD_TESTING)
+
+# This code has to be duplicated for install tree
+SET(XDMF_INCLUDE_DIRS_CONFIG 
+  ${Xdmf_SOURCE_DIR}/libsrc
+  ${Xdmf_BINARY_DIR}/libsrc
+  ${Xdmf_BINARY_DIR}/Ice/libsrc)
+SET(XDMF_LIBRARY_DIRS_CONFIG 
+  ${LIBRARY_OUTPUT_PATH})
+
+IF(XDMF_BUILD_VTK)
+  SET(XDMF_INCLUDE_DIRS_CONFIG ${XDMF_INCLUDE_DIRS_CONFIG} 
+    ${Xdmf_SOURCE_DIR}/vtk)
+ENDIF(XDMF_BUILD_VTK)
+
+IF(XDMF_SYSTEM_HDF5)
+  SET(XDMF_INCLUDE_DIRS_CONFIG ${XDMF_INCLUDE_DIRS_CONFIG}
+    ${Xdmf_SOURCE_DIR}/Utilities/hdf5
+    ${Xdmf_BINARY_DIR}/Utilities/hdf5
+    ${XDMF_ZLIB_INCLUDE_DIRS})
+ENDIF(XDMF_SYSTEM_HDF5)
+
+# Save the compiler settings so another project can import them.
+INCLUDE(${CMAKE_ROOT}/Modules/CMakeExportBuildSettings.cmake)
+CMAKE_EXPORT_BUILD_SETTINGS(${Xdmf_BINARY_DIR}/XDMFBuildSettings.cmake)
+
+SET(XDMF_BUILD_SETTINGS_FILE ${Xdmf_BINARY_DIR}/XDMFBuildSettings.cmake)
+SET(XDMF_USE_FILE "${Xdmf_SOURCE_DIR}/UseXDMF.cmake")
+
+SET(XDMF_EXPAT_LIBRARIES ${EXPAT_LIBRARY})
+SET(XDMF_EXPAT_INCLUDE_DIRS ${EXPAT_INCLUDE_DIR})
+SET(XDMF_HDF5_LIBRARIES ${HDF5_LIBRARY})
+
+# Save library dependencies.
+EXPORT_LIBRARY_DEPENDENCIES(${Xdmf_BINARY_DIR}/XDMFLibraryDepends.cmake)
+SET(XDMF_LIBRARY_DEPENDS_FILE ${Xdmf_BINARY_DIR}/XDMFLibraryDepends.cmake)
+
+CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/XDMFConfig.cmake.in
+  ${Xdmf_BINARY_DIR}/XDMFConfig.cmake @ONLY IMMEDIATE)
+

@@ -20,8 +20,6 @@ INCLUDE (${CMAKE_ROOT}/Modules/CheckLibraryExists.cmake)
 INCLUDE (${CMAKE_ROOT}/Modules/CheckSymbolExists.cmake)
 INCLUDE (${CMAKE_ROOT}/Modules/CheckTypeSize.cmake)
 
-INCLUDE (${CMAKE_ROOT}/Modules/FindZLIB.cmake)
-
 # This macro checks if the symbol exists in the library and if it
 # does, it appends library to the list.
 SET(LINK_LIBS "")
@@ -406,10 +404,10 @@ CONFIGURE_FILE(${VTKHDF5_SOURCE_DIR}/H5pubconf.${CONFIG_FILE_EXT}.in
 SET(common_SRCS ${common_SRCS} ${VTKHDF5_BINARY_DIR}/H5Tinit.c)
 SET_SOURCE_FILES_PROPERTIES (${VTKHDF5_BINARY_DIR}/H5Tinit.c GENERATED)
 
-INCLUDE_DIRECTORIES(${ZLIB_INCLUDE_DIR})
+INCLUDE_DIRECTORIES(${XDMF_ZLIB_INCLUDE_DIRS})
 
 ADD_LIBRARY(vtkhdf5 STATIC ${common_SRCS})
-TARGET_LINK_LIBRARIES(vtkhdf5 ${LINK_LIBS} ${ZLIB_LIBRARY})
+TARGET_LINK_LIBRARIES(vtkhdf5 ${LINK_LIBS} ${XDMF_ZLIB_LIBRARIES})
 
 IF(WIN32)
   SET(EXE_EXT ".exe")

@@ -5,12 +5,8 @@ vtkXdmfReader
 vtkXdmfDataArray
 )
 
-# include module to find vtk
-INCLUDE (${CMAKE_ROOT}/Modules/FindVTK.cmake)
 # if vtk was found include the use vtk file
 IF (VTK_FOUND)
-  INCLUDE(${VTK_USE_FILE})
-
   ADD_LIBRARY(vtkXdmf SHARED ${Xdmf_SRCS})
   TARGET_LINK_LIBRARIES(vtkXdmf vtkIO Xdmf)
 
