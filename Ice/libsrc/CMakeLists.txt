@@ -4,7 +4,7 @@ PROJECT(ICE)
 SET(ICE_YEAR 03)
 SET(ICE_MONTH 08)
 SET(ICE_VERSION
-        "${ICE_YEAR}.${ICE_MONTH)")
+  "${ICE_YEAR}.${ICE_MONTH)")
 
 # Platform configuration tests.
 INCLUDE(${CMAKE_ROOT}/Modules/CMakeBackwardCompatibilityC.cmake)
@@ -27,7 +27,7 @@ SET(ICE_SIZEOF_SHORT  ${CMAKE_SIZEOF_SHORT})
 INCLUDE (${CMAKE_ROOT}/Modules/CheckTypeSize.cmake)
 MESSAGE(STATUS "Finding a 64 Bit Integer")
 IF(WIN32)
-	CHECK_TYPE_SIZE(__int64        SIZEOF___INT64)
+  CHECK_TYPE_SIZE(__int64        SIZEOF___INT64)
 ENDIF(WIN32)
 CHECK_TYPE_SIZE("long long"    SIZEOF_LONG_LONG)
 
@@ -42,36 +42,39 @@ SET(ICE_8_INT_VALID 1)
 SET(ICE_8_INT  "unsigned char")
 # These should be Valid
 IF(${ICE_SIZEOF_FLOAT} MATCHES 4)
-	SET(ICE_32_FLOAT_VALID 1)
-	SET(ICE_FLOAT "float")
-	SET(ICE_32_FLOAT "float")
+  SET(ICE_32_FLOAT_VALID 1)
+  SET(ICE_FLOAT "float")
+  SET(ICE_32_FLOAT "float")
 ELSE (${ICE_SIZEOF_FLOAT} MATCHES 4)
-	MESSAGE(SEND_ERROR "Can't Find a 32 Bit Float")
+  MESSAGE(SEND_ERROR "Can't Find a 32 Bit Float")
 ENDIF (${ICE_SIZEOF_FLOAT} MATCHES 4)
 IF(${ICE_SIZEOF_DOUBLE} MATCHES 8)
-	SET(ICE_64_FLOAT_VALID 1)
-	SET(ICE_DOUBLE "double")
-	SET(ICE_64_FLOAT "double")
+  SET(ICE_64_FLOAT_VALID 1)
+  SET(ICE_DOUBLE "double")
+  SET(ICE_64_FLOAT "double")
 ELSE (${ICE_SIZEOF_DOUBLE} MATCHES 8)
-	MESSAGE(SEND_ERROR "Can't Find a 64 Bit Float")
+  MESSAGE(SEND_ERROR "Can't Find a 64 Bit Float")
 ENDIF (${ICE_SIZEOF_DOUBLE} MATCHES 8)
 # These are sometimes different
 IF(${ICE_SIZEOF_INT} MATCHES 4)
-	SET(ICE_32_INT_VALID 1)
-	SET(ICE_32_INT "int")
-	SET(ICE_32_U_INT "unsigned int")
-	SET(ICE_32_S_INT "int")
+  SET(ICE_32_INT_VALID 1)
+  SET(ICE_32_INT "int")
+  SET(ICE_32_U_INT "unsigned int")
+  SET(ICE_32_S_INT "int")
 ELSE (${ICE_SIZEOF_INT} MATCHES 4)
-	IF(${ICE_SIZEOF_LONG} MATCHES 4)
-		SET(ICE_32_INT_VALID 1)
-		SET(ICE_32_INT "long")
-		SET(ICE_32_U_INT "unsigned long")
-		SET(ICE_32_S_INT "long")
-	ELSE(${ICE_SIZEOF_LONG} MATCHES 4)
-		MESSAGE(SEND_ERROR "Can't Find a 32 Bit Integer")
-	ENDIF(${ICE_SIZEOF_LONG} MATCHES 4)
+  IF(${ICE_SIZEOF_LONG} MATCHES 4)
+    SET(ICE_32_INT_VALID 1)
+    SET(ICE_32_INT "long")
+    SET(ICE_32_U_INT "unsigned long")
+    SET(ICE_32_S_INT "long")
+  ELSE(${ICE_SIZEOF_LONG} MATCHES 4)
+    MESSAGE(SEND_ERROR "Can't Find a 32 Bit Integer")
+  ENDIF(${ICE_SIZEOF_LONG} MATCHES 4)
 ENDIF(${ICE_SIZEOF_INT} MATCHES 4)
 
+INCLUDE(${CMAKE_ROOT}/Modules/TestForANSIStreamHeaders.cmake)
+INCLUDE(${Xdmf_SOURCE_DIR}/CMake/CheckFor64BitStreams.cmake)
+CHECK_FOR_64BIT_STREAMS(ICE_HAVE_64BIT_STREAMS)
 
 # Find include files
 FIND_PATH(ICE_HAVE_FCNTL fcntl.h /usr/include /usr/include/sys)
@@ -81,7 +84,7 @@ MARK_AS_ADVANCED(ICE_HAVE_FCNTL ICE_HAVE_NETINET ICE_HAVE_MMAN)
 
 #Create IceConfig.h 
 CONFIGURE_FILE(
-${ICE_SOURCE_DIR}/IceConfig.h.in
-${ICE_BINARY_DIR}/IceConfig.h
-)
+  ${ICE_SOURCE_DIR}/IceConfig.h.in
+  ${ICE_BINARY_DIR}/IceConfig.h
+  )
 

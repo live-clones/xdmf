@@ -93,6 +93,7 @@
 # error "64 bit long not defined"
 #endif
 
+#cmakedefine ICE_HAVE_64BIT_STREAMS
 
 
 #cmakedefine ICE_HAVE_FCNTL
