@@ -48,7 +48,8 @@ An XML Transform Node Looks like :
   </DataStructure>
 </DataTransform>
 */
-class XdmfTransform : public XdmfLightData {
+
+class XDMF_EXPORT XdmfTransform : public XdmfLightData {
 
 public :
 

@@ -354,7 +354,7 @@ extern XdmfInt32 GetGlobalDebug( void );
 extern void SetGlobalDebug( XdmfInt32 DebugLevel );
 
 extern XdmfString GetUnique( XdmfString Pattern = NULL );
-extern char *XdmfObjectToHandle( XdmfObject *Source );
+extern XDMF_EXPORT char *XdmfObjectToHandle( XdmfObject *Source );
 extern XdmfObject *HandleToXdmfObject( char *Source );
 #endif /* __cplusplus */
 

@@ -37,7 +37,7 @@ It is used to enclose a group of elements, particularly
 for timesteps, so that data names with patterns can be easily
 defined.
 */
-class XdmfParameter : public XdmfObject {
+class XDMF_EXPORT XdmfParameter : public XdmfObject {
 
 public:
   XdmfParameter();
