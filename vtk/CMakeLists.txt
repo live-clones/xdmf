@@ -1,7 +1,6 @@
 SET( Xdmf_SRCS
-vtkMyXdmfReader
-vtkXdmfDataSetWriter
 vtkXdmfReader
+vtkXdmfDataSetWriter
 vtkXdmfDataArray
 )
 

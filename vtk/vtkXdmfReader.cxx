@@ -39,7 +39,7 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =========================================================================*/
-#include "vtkMyXdmfReader.h"
+#include "vtkXdmfReader.h"
 
 #include "vtkCallbackCommand.h"
 #include "vtkDataArraySelection.h"
@@ -68,8 +68,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string>
 #include <vector>
 
-vtkStandardNewMacro(vtkMyXdmfReader);
-vtkCxxRevisionMacro(vtkMyXdmfReader, "1.3");
+vtkStandardNewMacro(vtkXdmfReader);
+vtkCxxRevisionMacro(vtkXdmfReader, "1.4");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -83,18 +83,18 @@ vtkCxxRevisionMacro(vtkMyXdmfReader, "1.3");
 #define vtkMAX(x, y) (((x)>(y))?(x):(y))
 #define vtkMIN(x, y) (((x)<(y))?(x):(y))
 
-class vtkMyXdmfReaderInternal
+class vtkXdmfReaderInternal
 {
 public:
-  typedef vtkstd::vector<vtkstd::string> vtkMyXdmfReaderList;
-  vtkMyXdmfReaderList DomainList;
-  vtkMyXdmfReaderList GridList;
+  typedef vtkstd::vector<vtkstd::string> vtkXdmfReaderList;
+  vtkXdmfReaderList DomainList;
+  vtkXdmfReaderList GridList;
 };
 
 //----------------------------------------------------------------------------
-vtkMyXdmfReader::vtkMyXdmfReader()
+vtkXdmfReader::vtkXdmfReader()
 {
-  this->Internals = new vtkMyXdmfReaderInternal;
+  this->Internals = new vtkXdmfReaderInternal;
 
   this->SetOutput(vtkDataObject::New());
   // Releasing data for pipeline parallism.
@@ -115,7 +115,7 @@ vtkMyXdmfReader::vtkMyXdmfReader()
   // selection is changed.
   this->SelectionObserver = vtkCallbackCommand::New();
   this->SelectionObserver->SetCallback(
-    &vtkMyXdmfReader::SelectionModifiedCallback);
+    &vtkXdmfReader::SelectionModifiedCallback);
   this->SelectionObserver->SetClientData(this);
   this->PointDataArraySelection->AddObserver(vtkCommand::ModifiedEvent,
                                              this->SelectionObserver);
@@ -135,7 +135,7 @@ vtkMyXdmfReader::vtkMyXdmfReader()
 }
 
 //----------------------------------------------------------------------------
-vtkMyXdmfReader::~vtkMyXdmfReader()
+vtkXdmfReader::~vtkXdmfReader()
 {
   if ( this->DOM )
     {
@@ -162,7 +162,7 @@ vtkMyXdmfReader::~vtkMyXdmfReader()
   delete this->Internals;
 }
 
-vtkDataSet *vtkMyXdmfReader::GetOutput()
+vtkDataSet *vtkXdmfReader::GetOutput()
 {
   if (this->NumberOfOutputs < 1)
     {
@@ -172,23 +172,23 @@ vtkDataSet *vtkMyXdmfReader::GetOutput()
   return static_cast<vtkDataSet *>(this->Outputs[0]);
 }
 
-void vtkMyXdmfReader::SetOutput(vtkDataSet *output)
+void vtkXdmfReader::SetOutput(vtkDataSet *output)
 {
   this->vtkSource::SetNthOutput(0, output);
 }
 
-void vtkMyXdmfReader::SetOutput(vtkDataObject *output)
+void vtkXdmfReader::SetOutput(vtkDataObject *output)
 {
   this->vtkSource::SetNthOutput(0, output);
 }
 
-vtkDataSet *vtkMyXdmfReader::GetOutput(int idx)
+vtkDataSet *vtkXdmfReader::GetOutput(int idx)
 {
   return static_cast<vtkDataSet *>( this->Superclass::GetOutput(idx) ); 
 }
 
 //----------------------------------------------------------------------------
-void vtkMyXdmfReader::Execute()
+void vtkXdmfReader::Execute()
 {
   if ( !this->FileName )
     {
@@ -659,7 +659,7 @@ void vtkMyXdmfReader::Execute()
 }
 
 //----------------------------------------------------------------------------
-void vtkMyXdmfReader::ExecuteInformation()
+void vtkXdmfReader::ExecuteInformation()
 {
   vtkIdType cc;
   XdmfInt32    Rank;
@@ -1001,32 +1001,32 @@ void vtkMyXdmfReader::ExecuteInformation()
 }
 
 //----------------------------------------------------------------------------
-void vtkMyXdmfReader::SelectionModifiedCallback(vtkObject*, unsigned long,
+void vtkXdmfReader::SelectionModifiedCallback(vtkObject*, unsigned long,
                                              void* clientdata, void*)
 {
-  static_cast<vtkMyXdmfReader*>(clientdata)->Modified();
+  static_cast<vtkXdmfReader*>(clientdata)->Modified();
 }
 
 //----------------------------------------------------------------------------
-int vtkMyXdmfReader::GetNumberOfPointArrays()
+int vtkXdmfReader::GetNumberOfPointArrays()
 {
   return this->PointDataArraySelection->GetNumberOfArrays();
 }
 
 //----------------------------------------------------------------------------
-const char* vtkMyXdmfReader::GetPointArrayName(int index)
+const char* vtkXdmfReader::GetPointArrayName(int index)
 {
   return this->PointDataArraySelection->GetArrayName(index);
 }
 
 //----------------------------------------------------------------------------
-int vtkMyXdmfReader::GetPointArrayStatus(const char* name)
+int vtkXdmfReader::GetPointArrayStatus(const char* name)
 {
   return this->PointDataArraySelection->ArrayIsEnabled(name);
 }
 
 //----------------------------------------------------------------------------
-void vtkMyXdmfReader::SetPointArrayStatus(const char* name, int status)
+void vtkXdmfReader::SetPointArrayStatus(const char* name, int status)
 {
   if(status)
     {
@@ -1039,25 +1039,25 @@ void vtkMyXdmfReader::SetPointArrayStatus(const char* name, int status)
 }
 
 //----------------------------------------------------------------------------
-int vtkMyXdmfReader::GetNumberOfCellArrays()
+int vtkXdmfReader::GetNumberOfCellArrays()
 {
   return this->CellDataArraySelection->GetNumberOfArrays();
 }
 
 //----------------------------------------------------------------------------
-const char* vtkMyXdmfReader::GetCellArrayName(int index)
+const char* vtkXdmfReader::GetCellArrayName(int index)
 {
   return this->CellDataArraySelection->GetArrayName(index);
 }
 
 //----------------------------------------------------------------------------
-int vtkMyXdmfReader::GetCellArrayStatus(const char* name)
+int vtkXdmfReader::GetCellArrayStatus(const char* name)
 {
   return this->CellDataArraySelection->ArrayIsEnabled(name);
 }
 
 //----------------------------------------------------------------------------
-void vtkMyXdmfReader::SetCellArrayStatus(const char* name, int status)
+void vtkXdmfReader::SetCellArrayStatus(const char* name, int status)
 {
   if(status)
     {
@@ -1070,32 +1070,32 @@ void vtkMyXdmfReader::SetCellArrayStatus(const char* name, int status)
 }
 
 //----------------------------------------------------------------------------
-int vtkMyXdmfReader::GetNumberOfDomains()
+int vtkXdmfReader::GetNumberOfDomains()
 {
   return this->Internals->DomainList.size();
 }
 
 //----------------------------------------------------------------------------
-int vtkMyXdmfReader::GetNumberOfGrids()
+int vtkXdmfReader::GetNumberOfGrids()
 {
   return this->Internals->GridList.size();
 }
 
 //----------------------------------------------------------------------------
-const char* vtkMyXdmfReader::GetDomainName(int idx)
+const char* vtkXdmfReader::GetDomainName(int idx)
 {
   return this->Internals->DomainList[idx].c_str();
 }
 
 //----------------------------------------------------------------------------
-const char* vtkMyXdmfReader::GetGridName(int idx)
+const char* vtkXdmfReader::GetGridName(int idx)
 {
   return this->Internals->GridList[idx].c_str();
 }
 
 
 //----------------------------------------------------------------------------
-int vtkMyXdmfReader::GetNumberOfParameters(){
+int vtkXdmfReader::GetNumberOfParameters(){
 if(!this->DOM) {
 	return(-1);
 	}
@@ -1103,7 +1103,7 @@ return(this->DOM->FindNumberOfParameters());
 }
 
 //----------------------------------------------------------------------------
-const char *vtkMyXdmfReader::GetParameterName(int index){
+const char *vtkXdmfReader::GetParameterName(int index){
 XdmfParameter *Param;
 
 
@@ -1120,7 +1120,7 @@ if(Param) {
 }
 
 //----------------------------------------------------------------------------
-int vtkMyXdmfReader::SetParameterCurrentIndex(int Index, int CurrentIndex) {
+int vtkXdmfReader::SetParameterCurrentIndex(int Index, int CurrentIndex) {
 XdmfParameter *Param;
 
 
@@ -1135,7 +1135,7 @@ return(Param->SetCurrentIndex(CurrentIndex));
 }
 
 //----------------------------------------------------------------------------
-int vtkMyXdmfReader::GetParameterCurrentIndex(int Index) {
+int vtkXdmfReader::GetParameterCurrentIndex(int Index) {
 XdmfParameter *Param;
 
 
@@ -1150,7 +1150,7 @@ return(Param->GetCurrentIndex());
 }
 
 //----------------------------------------------------------------------------
-int vtkMyXdmfReader::SetParameterCurrentIndex(char *ParameterName, int CurrentIndex) {
+int vtkXdmfReader::SetParameterCurrentIndex(char *ParameterName, int CurrentIndex) {
 XdmfParameter *Param;
 int Status;
 
@@ -1171,7 +1171,7 @@ return(Status);
 }
 
 //----------------------------------------------------------------------------
-int vtkMyXdmfReader::GetParameterCurrentIndex(char *Name) {
+int vtkXdmfReader::GetParameterCurrentIndex(char *Name) {
 XdmfParameter *Param;
 
 
@@ -1186,7 +1186,7 @@ return(Param->GetCurrentIndex());
 }
 
 //----------------------------------------------------------------------------
-const char *vtkMyXdmfReader::GetParameterValue(char *Name) {
+const char *vtkXdmfReader::GetParameterValue(char *Name) {
 XdmfParameter *Param;
 
 
@@ -1202,7 +1202,7 @@ return(Param->GetParameterValue());
 }
 
 //----------------------------------------------------------------------------
-const char *vtkMyXdmfReader::GetParameterValue(int index) {
+const char *vtkXdmfReader::GetParameterValue(int index) {
 XdmfParameter *Param;
 
 
@@ -1219,7 +1219,7 @@ return(Param->GetParameterValue());
 
 
 //----------------------------------------------------------------------------
-int vtkMyXdmfReader::GetParameterLength(int index){
+int vtkXdmfReader::GetParameterLength(int index){
 XdmfParameter *Param;
 
 
@@ -1235,7 +1235,7 @@ if(Param) {
 }
 
 //----------------------------------------------------------------------------
-int vtkMyXdmfReader::GetParameterLength(char *Name){
+int vtkXdmfReader::GetParameterLength(char *Name){
 XdmfParameter *Param;
 
 
@@ -1251,15 +1251,15 @@ if(Param) {
 }
 
 //----------------------------------------------------------------------------
-const char * vtkMyXdmfReader::GetXdmfDOMHandle() {
+const char * vtkXdmfReader::GetXdmfDOMHandle() {
  return( XdmfObjectToHandle( this->DOM ) );
 }
 //----------------------------------------------------------------------------
-const char * vtkMyXdmfReader::GetXdmfGridHandle() {
+const char * vtkXdmfReader::GetXdmfGridHandle() {
  return( XdmfObjectToHandle( this->Grid ) );
 }
 //----------------------------------------------------------------------------
-void vtkMyXdmfReader::PrintSelf(ostream& os, vtkIndent indent)
+void vtkXdmfReader::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
   os << indent << "CellDataArraySelection: " << this->CellDataArraySelection 

@@ -1,4 +1,4 @@
-#include "vtkMyXdmfReader.h"
+#include "vtkXdmfReader.h"
 #include "vtkDataSet.h"
 #include "vtkRectilinearGrid.h"
 #include "vtkCellData.h"
@@ -12,7 +12,7 @@ int main(int argc, char* argv[])
     cout << "Usage: " << argv[0] << " <filename>" << endl;
     return 1;
     }
-  vtkMyXdmfReader* vr = vtkMyXdmfReader::New();
+  vtkXdmfReader* vr = vtkXdmfReader::New();
   vr->SetFileName(argv[1]);
   cout << "------------- UpdateInformation --------" << endl;
   vr->UpdateInformation();

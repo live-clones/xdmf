@@ -15,7 +15,7 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-// .NAME vtkMyXdmfReader - read eXtensible Data Model and Format files
+// .NAME vtkXdmfReader - read eXtensible Data Model and Format files
 // .SECTION Description
 // vtkXdmfReader is a source object that reads ASCII or binary 
 // rectilinear grid data files in vtk format (see text for format details).
@@ -29,8 +29,8 @@
 // .SECTION See Also
 // vtkDataReader
 
-#ifndef __vtkMyXdmfReader_h
-#define __vtkMyXdmfReader_h
+#ifndef __vtkXdmfReader_h
+#define __vtkXdmfReader_h
 
 #include "vtkDataReader.h"
 
@@ -51,15 +51,15 @@ class XdmfDataDesc;
 class XdmfGrid;
 class vtkXdmfDataArray;
 
-class vtkMyXdmfReaderInternal;
+class vtkXdmfReaderInternal;
 
 //ETX
 
-class VTK_EXPORT vtkMyXdmfReader : public vtkDataReader
+class VTK_EXPORT vtkXdmfReader : public vtkDataReader
 {
 public:
-  static vtkMyXdmfReader* New();
-  vtkTypeRevisionMacro(vtkMyXdmfReader, vtkDataReader);
+  static vtkXdmfReader* New();
+  vtkTypeRevisionMacro(vtkXdmfReader, vtkDataReader);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
@@ -154,8 +154,8 @@ public:
   vtkGetVector3Macro(Stride, int);
 
 protected:
-  vtkMyXdmfReader();
-  ~vtkMyXdmfReader();   
+  vtkXdmfReader();
+  ~vtkXdmfReader();   
 
   virtual void Execute();
   virtual void ExecuteInformation();
@@ -184,13 +184,13 @@ protected:
   char* DomainName;
   char* GridName;
 
-  vtkMyXdmfReaderInternal* Internals;
+  vtkXdmfReaderInternal* Internals;
 
   int Stride[3];
 
 private:
-  vtkMyXdmfReader(const vtkMyXdmfReader&); // Not implemented
-  void operator=(const vtkMyXdmfReader&); // Not implemented  
+  vtkXdmfReader(const vtkXdmfReader&); // Not implemented
+  void operator=(const vtkXdmfReader&); // Not implemented  
 };
 
-#endif //__vtkMyXdmfReader_h
+#endif //__vtkXdmfReader_h
