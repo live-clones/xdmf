@@ -117,6 +117,7 @@ if( ListIndex >= ListLength ){
   XdmfArrayList  *NewList = new XdmfArrayList[ ListLength + 32];
   if( List != NULL ){
     memcpy( NewList, List, ListLength * sizeof( XdmfArrayList ));
+    delete [] List;
     }
   List = NewList;
   ListLength += 32;
@@ -173,6 +174,12 @@ for( i = 0 ; i < ListLength ; i++ ){
     break;
     }
   }
+  if ( ListIndex == 0 )
+    {
+    delete [] List;
+    List = 0;
+    ListLength = 0;
+    }
 }
 
 XdmfString
