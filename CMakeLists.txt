@@ -175,6 +175,8 @@ OPTION(XDMF_BUILD_TESTING "Test the project" OFF)
 IF(XDMF_BUILD_TESTING)
   ENABLE_TESTING()
   INCLUDE (${CMAKE_ROOT}/Modules/Dart.cmake)
+  OPTION(VTK_USE_DISPLAY "Turn this option off and tests will not popup windows" ON)
+  MARK_AS_ADVANCED(VTK_USE_DISPLAY)
 ENDIF(XDMF_BUILD_TESTING)
 
 # This code has to be duplicated for install tree
