@@ -23,6 +23,7 @@
 /*                                                                 */
 /*******************************************************************/
 #include "XdmfNDGM.h"
+#include "XdmfArray.h"
 
 #ifndef WIN32
 #include <unistd.h>
