@@ -39,18 +39,21 @@ XdmfInt32  Rank = 3;
 // and zero based
 XdmfInt64  Dimensions[] = { 10, 20, 30 };
 
+const char    *DataSetNameConst;
 char    *DataSetName;
 int    i, k;
 double    *DataFromSomewhereElse;
 
 if(argc > 1 ) {
   // i.e. NDGM:TestFile.h5:/TestDataSets/Values1
-  DataSetName = argv[1];
+  DataSetNameConst = argv[1];
 } else {
   // Domain:FileName:/HDF5Directory/..../HDF5DataSetName
   //  Domains : FILE, NDGM, GASS (Globus), CORE (malloc)
-  DataSetName = "FILE:TestFile.h5:/TestDataSets/Values1";
+  DataSetNameConst = "FILE:TestFile.h5:/TestDataSets/Values1";
   }
+DataSetName = new char[ strlen(DataSetNameConst) + 1 ];
+strcpy(DataSetName, DataSetNameConst);
 
 // Create Some Data
 // XdmfArray and XdmfHDF ( and some others ) are derived
@@ -136,7 +139,7 @@ for( k = 0 ; k < 10 ; k++ ){
   cout << endl;
 }
 
-
+delete [] DataSetName;
 
 return 0;
 }
