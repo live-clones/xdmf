@@ -249,6 +249,7 @@ IF(NOT XDMF_NOT_INSTALL_INCLUDE_FILES)
     XdmfArrayCopyMacro
     XdmfDice
     XdmfExport
+    xdmf_expat
     XdmfExpr
     ${XdmfFormatSource}
     ${XdmfModelSource})
