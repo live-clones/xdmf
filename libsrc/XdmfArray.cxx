@@ -30,10 +30,6 @@
 #include <unistd.h>
 #endif
 
-#if defined(IRIX64) || defined(IRIXN32)
-#else
-#endif
-
 static XdmfLength  GlobalTimeCntr = 0;
 // static  ostrstream  *StringOutput = NULL;
 

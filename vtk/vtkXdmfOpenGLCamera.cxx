@@ -1,23 +1,12 @@
-#include <vtkXdmfOpenGLCamera.h>
+#include "vtkXdmfOpenGLCamera.h"
 
-#include <vtkObjectFactory.h>
-#include <vtkOpenGLRenderer.h>
-#include <vtkRenderWindow.h>
-#include <vtkCommand.h>
+#include "vtkObjectFactory.h"
+#include "vtkOpenGLRenderer.h"
+#include "vtkRenderWindow.h"
+#include "vtkCommand.h"
 
 //----------------------------------------------------------------------------
-vtkXdmfOpenGLCamera* vtkXdmfOpenGLCamera::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkXdmfOpenGLCamera");
-  if(ret)
-    {
-    return (vtkXdmfOpenGLCamera*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkXdmfOpenGLCamera;
-}
-
+vtkStandardNewMacro(vtkXdmfOpenGLCamera);
 
 // Implement base class method.
 void vtkXdmfOpenGLCamera::Render(vtkRenderer *ren)
@@ -28,26 +17,26 @@ void vtkXdmfOpenGLCamera::Render(vtkRenderer *ren)
     switch ((ren->GetRenderWindow())->GetStereoType())
       {
       case VTK_STEREO_LEFT :
-	if( this->ReallyLeft) {
-		vtkOpenGLCamera::Render(ren);
-	}else{
-		(ren->GetRenderWindow())->SetStereoTypeToRight();
-		vtkOpenGLCamera::Render(ren);
-		(ren->GetRenderWindow())->SetStereoTypeToLeft();
-	}
-	break;
+        if( this->ReallyLeft) {
+                vtkOpenGLCamera::Render(ren);
+        }else{
+                (ren->GetRenderWindow())->SetStereoTypeToRight();
+                vtkOpenGLCamera::Render(ren);
+                (ren->GetRenderWindow())->SetStereoTypeToLeft();
+        }
+        break;
       default:
-	vtkOpenGLCamera::Render(ren);
+        vtkOpenGLCamera::Render(ren);
         break;
       }
     }
 */
 
 if( this->ReallyLeft) {
-	vtkOpenGLCamera::Render(ren);
+        vtkOpenGLCamera::Render(ren);
 }else{
-	(ren->GetRenderWindow())->SetStereoTypeToRight();
-	vtkOpenGLCamera::Render(ren);
-	(ren->GetRenderWindow())->SetStereoTypeToLeft();
+        (ren->GetRenderWindow())->SetStereoTypeToRight();
+        vtkOpenGLCamera::Render(ren);
+        (ren->GetRenderWindow())->SetStereoTypeToLeft();
 }
 }
