@@ -35,6 +35,9 @@ extern "C" {
   XdmfNDGMErrorCallback( NDGM_NODE *node,
           NDGM_32_INT     reason,
           NDGM_PTR        user_data) {
+    (void)node;
+    (void)reason;
+    (void)user_data;
     return(NDGM_SUCCESS); /* Device Close and Free Lower Data Structs */
     }
 #else
