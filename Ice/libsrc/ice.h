@@ -25,7 +25,7 @@
 #ifndef ice_included
 #define ice_included
 
-#ifndef WIN32 
+#if !defined( WIN32 ) || defined(__CYGWIN__)
 #define UNIX
 #endif /* WIN32 */
 
@@ -49,7 +49,7 @@
 #define STRNCMP strncmp
 #endif
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(__CYGWIN__)
 #include "winsock.h"
 /* String comparison routine. */
 #define STRCASECMP _stricmp
