@@ -127,7 +127,7 @@ using std::hex;
 #define XDMF_FALSE  0
 
 #define XDMF_MAX_DIMENSION  10
-#define XDMF_MAX_STRING_LENGTH  256
+#define XDMF_MAX_STRING_LENGTH  1024
 
 /* #define XDMF_LIST_KEY  ICE_LIST_KEY */
 #define XDMF_BIG_INT  ICE_BIG_INT

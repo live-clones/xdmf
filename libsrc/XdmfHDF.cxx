@@ -505,7 +505,8 @@ if( DataSetName != NULL ) {
   strcpy(this->Path, lastcolon );
   *firstcolon = '\0';
   firstcolon++;
-  strcpy(this->FileName, firstcolon );
+  // strcpy(this->FileName, firstcolon );
+  this->SetFileName(firstcolon);
   strcpy(this->Domain, NewName);
   XdmfDebug("Two Colons -  Full HDF Filename Domain : " <<
     this->Domain << " File " <<
@@ -522,13 +523,15 @@ if( DataSetName != NULL ) {
     ( STRCASECMP( NewName, "DUMMY" ) == 0 ) ) {
     // Domain::File
     strcpy( this->Domain, NewName);
-    strcpy( this->FileName, firstcolon );
+    // strcpy( this->FileName, firstcolon );
+    this->SetFileName(firstcolon);
   XdmfDebug("Two Colons -  Domain : " <<
     this->Domain << " File " <<
     this->FileName);
   } else {
     // File:Path
-    strcpy( this->FileName, NewName);
+    // strcpy( this->FileName, NewName);
+    this->SetFileName(NewName);
     strcpy( this->Path, firstcolon );
   XdmfDebug("Two Colons -  File : " <<
     this->FileName << " Path " <<

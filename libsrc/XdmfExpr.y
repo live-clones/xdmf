@@ -418,6 +418,38 @@ ArrayExpression: ArrayExpression '+' ArrayExpression {
 			delete Array1;
 			$$ = Result;
 			}
+	|	WHERE '(' ArrayExpression EQEQ ArrayExpression ')' {
+			XdmfArray	*Array1 = ( XdmfArray *)$3;
+			XdmfLength	i, j, howmany = 0, cntr = 0;
+			XdmfLength	Length1 = Array1->GetNumberOfElements(), Length2;
+			XdmfInt64Array	*Index = new XdmfInt64Array( Length1 );
+			XdmfArray	*Array2 = ( XdmfArray *)$5;
+			XdmfFloat64	A1Value, A2Value;
+
+			Length2 = Array2->GetNumberOfElements();
+			for( i = 0 ; i < Length1 ; i++ ){
+				A1Value = Array1->GetValueAsFloat64( i );
+				cntr = 0;
+				A2Value = A1Value + 1;
+				while((cntr < Length2) && (A2Value != A1Value)) {
+					A2Value = Array2->GetValueAsFloat64(cntr);
+					cntr++;
+					}
+/*
+				howmany++;
+				if(howmany > 1000){
+					cout << "Checked " << i << " of " << Length1 << endl;
+					howmany = 0;
+					}
+*/
+				if( A1Value == A2Value ) {
+					Index->SetValue( i, cntr - 1 );
+				}else{
+					Index->SetValue( i, -1);
+					}
+				}	
+			$$ = ( XdmfArray *)Index;
+			}
 	|	WHERE '(' ArrayExpression EQEQ ScalarExpression ')' {
 			XdmfArray	*Array1 = ( XdmfArray *)$3;
 			XdmfLength	i, cntr = 0;
