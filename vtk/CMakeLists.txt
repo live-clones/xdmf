@@ -1,8 +1,31 @@
+# Build vtkXdmfRenderWindowInteractor.h
+IF(WIN32)
+ SET(XDMF_WINDOWINTERACTOR "vtkWin32RenderWindowInteractor")
+ELSE(WIN32)
+ SET(XDMF_WINDOWINTERACTOR "vtkXRenderWindowInteractor")
+ENDIF(WIN32)
+CONFIGURE_FILE(
+	${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.h.in
+	${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.h
+	)
+CONFIGURE_FILE(
+ 	${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx.in
+ 	${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
+ 	)
+
 SET( Xdmf_SRCS
 vtkXdmfReader
 vtkXdmfDataSetWriter
 vtkXdmfDataArray
+vtkXdmfRenderWindowInteractor
 )
+
+SET_SOURCE_FILES_PROPERTIES(
+	vtkXdmfRenderWindowInteractor.cxx
+	vtkXdmfRenderWindowInteractor.h
+	GENERATED)
+
+	
 
 # if vtk was found include the use vtk file
 IF (VTK_FOUND)
