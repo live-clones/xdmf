@@ -90,6 +90,18 @@ public:
   int GetNumberOfParameters();
 
   // Description:
+  // Get Parameter Type
+  int GetParameterType(int index);
+  int GetParameterType(char *Name);
+
+  // Description:
+  // Get start, stride, count
+  int *GetParameterRange(int index);
+  int *GetParameterRange(char *Name);
+  char *GetParameterRangeAsString(int index);
+  char *GetParameterRangeAsString(char *Name);
+
+  // Description:
   // Get Parameter Name
   const char *GetParameterName(int index);
 

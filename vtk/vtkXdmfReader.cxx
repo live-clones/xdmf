@@ -69,7 +69,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.9");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.10");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -1178,7 +1178,114 @@ if(Param) {
 }
 
 }
+//----------------------------------------------------------------------------
+int vtkXdmfReader::GetParameterType(char *Name){
+XdmfParameter *Param;
 
+
+if(!this->DOM) {
+	return(0);
+	}
+Param = this->DOM->FindParameter(Name);
+if(Param) {
+	return(Param->GetParameterType());
+} else {
+	return(0);
+}
+
+}
+//----------------------------------------------------------------------------
+int vtkXdmfReader::GetParameterType(int index){
+XdmfParameter *Param;
+
+
+if(!this->DOM) {
+	return(0);
+	}
+Param = this->DOM->GetParameter(index);
+if(Param) {
+	return(Param->GetParameterType());
+} else {
+	return(0);
+}
+
+}
+
+//----------------------------------------------------------------------------
+int *vtkXdmfReader::GetParameterRange(int index){
+XdmfParameter *Param;
+XdmfArray  *Parray;
+static int Shape[3];
+
+
+if(!this->DOM) {
+	return(0);
+	}
+Param = this->DOM->GetParameter(index);
+if(Param) {
+	if( Param->GetParameterType() == XDMF_PARAMETER_RANGE_TYPE ){
+		Parray = Param->GetArray();
+		Shape[0] = Parray->GetValueAsInt64(0);
+		Shape[1] = Parray->GetValueAsInt64(1);
+		Shape[2] = Parray->GetValueAsInt64(2);
+	} else {
+		Shape[0] = 0;
+		Shape[1] = 1;
+		Shape[2] = Param->GetNumberOfElements();
+	}
+	return(Shape);
+}
+return(NULL);
+}
+//----------------------------------------------------------------------------
+int *vtkXdmfReader::GetParameterRange(char *Name){
+XdmfParameter *Param;
+XdmfArray  *Parray;
+static int Shape[3];
+
+
+if(!this->DOM) {
+	return(0);
+	}
+Param = this->DOM->FindParameter(Name);
+if(Param) {
+	if( Param->GetParameterType() == XDMF_PARAMETER_RANGE_TYPE ){
+		Parray = Param->GetArray();
+		Shape[0] = Parray->GetValueAsInt64(0);
+		Shape[1] = Parray->GetValueAsInt64(1);
+		Shape[2] = Parray->GetValueAsInt64(2);
+	} else {
+		Shape[0] = 0;
+		Shape[1] = 1;
+		Shape[2] = Param->GetNumberOfElements();
+	}
+	return(Shape);
+}
+return(NULL);
+}
+
+//----------------------------------------------------------------------------
+char *vtkXdmfReader::GetParameterRangeAsString(int index){
+int *Range;
+ostrstream StringOutput;
+
+Range = this->GetParameterRange(index);
+StringOutput << ICE_64BIT_CAST Range[0] << " ";
+StringOutput << ICE_64BIT_CAST Range[1] << " ";
+StringOutput << ICE_64BIT_CAST Range[2] << ends;
+return(StringOutput.str());
+}
+//----------------------------------------------------------------------------
+char *vtkXdmfReader::GetParameterRangeAsString(char *Name){
+int *Range;
+ostrstream StringOutput;
+
+Range = this->GetParameterRange(Name);
+StringOutput << ICE_64BIT_CAST Range[0] << " ";
+StringOutput << ICE_64BIT_CAST Range[1] << " ";
+StringOutput << ICE_64BIT_CAST Range[2] << ends;
+return(StringOutput.str());
+}
 //----------------------------------------------------------------------------
 int vtkXdmfReader::SetParameterCurrentIndex(int Index, int CurrentIndex) {
 XdmfParameter *Param;
