@@ -22,9 +22,9 @@ SET (PROJECT_URL "http://www.arl.hpc.mil/ice/")
 SET (ROLLUP_URL "http://${DROP_SITE}/cgi-bin/xdmf-rollup-dashboard.sh")
 SET (CVS_WEB_URL "http://${DROP_SITE}/cgi-bin/cvsweb.cgi/Xdmf/")
 SET (CVS_WEB_CVSROOT "Xdmf")
-#SET (DOXYGEN_URL "http://${DROP_SITE}/" )
-#SET (GNATS_WEB_URL "http://${DROP_SITE}/")
-SET (GNATS_WEB_URL "http://public.kitware.com/Bug/bug.php")
+SET (USE_DOXYGEN "On")
+SET (DOXYGEN_URL "http://www.arl.hpc.mil/ice/Manuals/Xdmf/index.html" )
+SET (GNATS_WEB_URL "http://public.kitware.com/Bug/index.php")
 SET (USE_GNATS "On")
 
 # copy over the testing logo
