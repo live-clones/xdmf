@@ -137,6 +137,7 @@ using std::hex;
 #define XDMF_SELECT_SLAB    1
 #define XDMF_SELECT_INDEX  2
 
+#define  XDMF_UNKNOWN_TYPE   -1
 #define  XDMF_INT8_TYPE      1
 #define  XDMF_INT16_TYPE     6
 #define  XDMF_INT32_TYPE     2
@@ -294,6 +295,14 @@ need to make sure ....
 /*! Used for Parsing */
 
 #define XDMF_WORD_CMP( a, b )  ( (a) != NULL ) && ( STRCASECMP((a),(b)) == 0 )
+
+#define XDMF_STRING_DUPLICATE( dest, src ) \
+  if ( src ) { \
+    dest = new char[strlen(src) + 1]; \
+    strcpy(dest, src); \
+  } else { \
+    dest = 0; \
+  }
 
 #define XDMF_STRING_TRIM( str ) { \
   std::string::size_type spos = str.find_first_not_of(" \n\t"); \
