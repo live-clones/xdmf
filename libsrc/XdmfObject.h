@@ -352,17 +352,17 @@ protected:
 private:
 };
 
-extern void SetGlobalDebugOn();
-extern void SetGlobalDebugOff();
+XDMF_EXPORT void SetGlobalDebugOn();
+XDMF_EXPORT void SetGlobalDebugOff();
 
-extern XdmfInt32 GetGlobalDebug( void );
-extern void SetGlobalDebug( XdmfInt32 DebugLevel );
+XDMF_EXPORT XdmfInt32 GetGlobalDebug( void );
+XDMF_EXPORT void SetGlobalDebug( XdmfInt32 DebugLevel );
 
-extern XdmfString GetUnique( XdmfString Pattern = NULL );
+XDMF_EXPORT XdmfString GetUnique( XdmfString Pattern = NULL );
 extern XDMF_EXPORT char *XdmfObjectToHandle( XdmfObject *Source );
-extern XdmfObject *HandleToXdmfObject( char *Source );
+extern XDMF_EXPORT XdmfObject *HandleToXdmfObject( char *Source );
 
-extern istrstream& ICE_READ_STREAM64(istrstream& istr, ICE_64_INT& i);
+extern XDMF_EXPORT istrstream& ICE_READ_STREAM64(istrstream& istr, ICE_64_INT& i);
 
 #endif /* __cplusplus */
 

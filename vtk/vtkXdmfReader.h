@@ -145,17 +145,16 @@ public:
 
   // Description:
   // Get the Low Level XdmfGrid
-  const char *GetXdmfGridHandle();
+  const char *GetXdmfGridHandle(int idx);
 
   // Description:
   // Get/Set the current domain name.
-  vtkSetStringMacro(DomainName);
+  virtual void SetDomainName(const char*);
   vtkGetStringMacro(DomainName);
 
   // Description:
   // Get/Set the current grid name.
-  vtkSetStringMacro(GridName);
-  vtkGetStringMacro(GridName);
+  void SetGridName(const char*);
 
   // Description:
   // Get number of domains and grids.
@@ -166,11 +165,29 @@ public:
   // Get the name of domain or grid at index.
   const char* GetDomainName(int idx);
   const char* GetGridName(int idx);
+  int GetGridIndex(const char* name);
 
   // Description:
   // Set / get stride
   vtkSetVector3Macro(Stride, int);
   vtkGetVector3Macro(Stride, int);
+
+  // Description:
+  // Enable grids.
+  void EnableGrid(const char* name);
+  void EnableGrid(int idx);
+  void EnableAllGrids();
+
+  // Description:
+  // Disable grids
+  void DisableGrid(const char* name);
+  void DisableGrid(int idx);
+  void DisableAllGrids();
+
+  // Description:
+  // Get current enable/disable of the grid
+  int GetGridSetting(const char* name);
+  int GetGridSetting(int idx);
 
 protected:
   vtkXdmfReader();
@@ -194,8 +211,6 @@ protected:
   XdmfDOM         *DOM;
   XdmfFormatMulti *FormatMulti;
   XdmfTransform   *Transform;
-  XdmfDataDesc    *DataDescription;
-  XdmfGrid        *Grid;
 
   // For converting arrays from XDMF to VTK format
   vtkXdmfDataArray *ArrayConverter;
@@ -207,6 +222,10 @@ protected:
 
   int Stride[3];
   int OutputsInitialized;
+
+  int GridsModified;
+
+  void UpdateGrids();
 
 private:
   vtkXdmfReader(const vtkXdmfReader&); // Not implemented

@@ -32,11 +32,11 @@ extern "C" {
 }
 #endif
 
-extern hid_t    XdmfTypeToHDF5Type( XdmfInt32 XdmfType );
-extern XdmfInt32  HDF5TypeToXdmfType( hid_t HDF5Type );
-extern XdmfString  XdmfTypeToString( XdmfInt32 XdmfType );
-extern XdmfInt32  StringToXdmfType( XdmfString TypeName );
-extern XdmfString  XdmfTypeToClassString( XdmfInt32 XdmfType );
+extern XDMF_EXPORT hid_t    XdmfTypeToHDF5Type( XdmfInt32 XdmfType );
+extern XDMF_EXPORT XdmfInt32  HDF5TypeToXdmfType( hid_t HDF5Type );
+extern XDMF_EXPORT XdmfString  XdmfTypeToString( XdmfInt32 XdmfType );
+extern XDMF_EXPORT XdmfInt32  StringToXdmfType( XdmfString TypeName );
+extern XDMF_EXPORT XdmfString  XdmfTypeToClassString( XdmfInt32 XdmfType );
 
 
 #endif // __XdmfHDFSupport_h

@@ -50,7 +50,7 @@ extern "C" {
 Object to Handle Low level NDGM Details
 like sending and recciving NDGM Messages
 */
-class XdmfNDGM : public XdmfDataDesc {
+class XDMF_EXPORT XdmfNDGM : public XdmfDataDesc {
 
 public:
   XdmfNDGM();
@@ -177,9 +177,9 @@ protected:
 
 
 extern "C" {
-extern char *XdmfGetNdgmEntries( void );
-extern void XdmfDeleteAllNdgmEntries( void );
-extern XdmfInt64 XdmfAddNdgmEntry( char *Name, XdmfInt64 Length );
+extern XDMF_EXPORT char *XdmfGetNdgmEntries( void );
+extern XDMF_EXPORT void XdmfDeleteAllNdgmEntries( void );
+extern XDMF_EXPORT XdmfInt64 XdmfAddNdgmEntry( char *Name, XdmfInt64 Length );
   }
 
 #endif // __XdmfNDGM_h
