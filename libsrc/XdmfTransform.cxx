@@ -207,6 +207,7 @@ if( Desc ){
   Formatter.SetDOM( this->DOM );
   Formatter.SetFormat( this->DataTransform );
   Array = Formatter.ElementToArray( ArrayElement, Desc );
+  delete Desc;
   return( Array );
   }
 return( NULL );
