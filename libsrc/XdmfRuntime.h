@@ -98,7 +98,7 @@ next Frequency multiple
 //! Gracefully Clean up
   XdmfInt32  Term( void );
 //! Update from XML in a Disk File
-  XdmfInt32  ParseFile( XdmfString FileName = "XdmfRuntime.xml" );
+  XdmfInt32  ParseFile( XdmfConstString FileName = "XdmfRuntime.xml" );
 //! Update from XML in a XdmfString
   XdmfInt32  ParseBuffer( XdmfString Buffer = NULL  );
 

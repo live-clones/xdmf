@@ -185,7 +185,6 @@ typedef union YYSTYPE {
         XdmfExprSymbol        *Symbol;
 } YYSTYPE;
 /* Line 191 of yacc.c.  */
-#line 189 "/home/andy/vtk/Xdmf-bin/libsrc/XdmfExprYacc.tab.c"
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
 # define YYSTYPE_IS_TRIVIAL 1

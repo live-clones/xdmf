@@ -86,15 +86,13 @@
 
 
 #if ! defined (YYSTYPE) && ! defined (YYSTYPE_IS_DECLARED)
-#line 43 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
 typedef union YYSTYPE {
-	double		DoubleValue;
-	long		IntegerValue;
-	void		*ArrayPointer;
-	XdmfExprSymbol	*Symbol;
+        double          DoubleValue;
+        long            IntegerValue;
+        void            *ArrayPointer;
+        XdmfExprSymbol  *Symbol;
 } YYSTYPE;
 /* Line 1240 of yacc.c.  */
-#line 98 "/home/andy/vtk/Xdmf-bin/libsrc/XdmfExprYacc.tab.h"
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
 # define YYSTYPE_IS_TRIVIAL 1
