@@ -168,7 +168,8 @@ CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/libsrc/XdmfConfig.h.in
 IF(XDMF_BUILD_VTK)
   SET(XDMF_EXPAT_HEADER "vtk_expat.h")
 ELSE(XDMF_BUILD_VTK)
-  SET(XDMF_EXPAT_HEADER "expat.h")
+#  SET(XDMF_EXPAT_HEADER "expat.h")
+# this is set in ../CMakeLists.txt
 ENDIF(XDMF_BUILD_VTK)
 
 CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/libsrc/xdmf_expat.h.in
