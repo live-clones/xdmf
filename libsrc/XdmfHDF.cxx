@@ -649,11 +649,11 @@ XdmfDebug("Using Domain " << this->Domain );
         this->AccessPlist = H5Pcreate( H5P_FILE_ACCESS );
         H5Pset_fapl_mpio(this->AccessPlist, MPI_COMM_WORLD, MPI_INFO_NULL);
     }else{
-      XdmfDebug("Using Serial File Interface, Path = " << this->GetWorkingDirectory() );
+      XdmfDebug("Using Serial File Interface (Specified in DOMAIN), Path = " << this->GetWorkingDirectory() );
         }
         
 #else
-      XdmfDebug("Using Serial File Interface, Path = " << this->GetWorkingDirectory() );
+      XdmfDebug("Using Serial File Interface (Parallel Not Available), Path = " << this->GetWorkingDirectory() );
 #endif
       if( ( strlen( this->GetWorkingDirectory() ) > 0 ) && 
         ( this->FileName[0] != '/' ) ){
