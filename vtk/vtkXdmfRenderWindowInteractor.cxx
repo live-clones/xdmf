@@ -44,10 +44,11 @@ vtkXdmfRenderWindowInteractor* vtkXdmfRenderWindowInteractor::New()
 void vtkXdmfRenderWindowInteractor::Start( int Block ) {
 
 if ( Block ) {
-#if !defined(CYGWIN)
-  vtkXRenderWindowInteractor::Start();
-#else
+// Check for WIN32 but without Cygwin with X11
+#if defined(_WIN32) && !defined(VTK_USE_OGLR)
   vtkWin32RenderWindowInteractor::Start();
+#else
+  vtkXRenderWindowInteractor::Start();
 #endif
 } else {
   this->LoopOnce();
@@ -57,7 +58,9 @@ if ( Block ) {
 
 void vtkXdmfRenderWindowInteractor::LoopOnce( )
 {
-#if !defined(CYGWIN)
+// Check for WIN32 but without Cygwin with X11
+#if defined(_WIN32) && !defined(VTK_USE_OGLR)
+#else
     XEvent event;
 
   if (!this->Initialized)
