@@ -84,11 +84,11 @@ struct vtkXdmfWriterInternal
     CellType(const CellType& ct) : VTKType(ct.VTKType), NumPoints(ct.NumPoints) {}
     vtkIdType VTKType;
     vtkIdType NumPoints;
-    int operator<(const CellType& ct) const
+    vtkstd_bool operator<(const CellType& ct) const
       {
       return this->VTKType < ct.VTKType || this->VTKType == ct.VTKType && this->NumPoints < ct.NumPoints;
       }
-    int operator==(const CellType& ct) const
+    vtkstd_bool operator==(const CellType& ct) const
       {
       return this->VTKType == ct.VTKType && this->NumPoints == ct.NumPoints;
       }
@@ -107,7 +107,7 @@ struct vtkXdmfWriterInternal
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfWriter);
-vtkCxxRevisionMacro(vtkXdmfWriter, "1.13");
+vtkCxxRevisionMacro(vtkXdmfWriter, "1.14");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter::vtkXdmfWriter()
