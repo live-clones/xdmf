@@ -14,10 +14,10 @@ CONFIGURE_FILE(
  	)
 
 SET( Xdmf_SRCS
-vtkXdmfReader
-vtkXdmfDataSetWriter
-vtkXdmfDataArray
-vtkXdmfRenderWindowInteractor
+vtkXdmfReader.cxx
+vtkXdmfDataSetWriter.cxx
+vtkXdmfDataArray.cxx
+${Xdmf_BINARY_DIR}/vtkXdmfRenderWindowInteractor.cxx
 )
 
 SET_SOURCE_FILES_PROPERTIES(
