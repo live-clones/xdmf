@@ -749,7 +749,7 @@ XdmfArray *CopyArray( XdmfArray *Source, XdmfArray *Target ) {
 
 XdmfString  H5Name;
 XdmfHDF    Hdf;
-XdmfArray  *NewArray;
+XdmfArray  *NewArray = NULL;
 ostrstream str;
 
 if( Target == NULL ){
