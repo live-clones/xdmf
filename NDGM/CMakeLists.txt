@@ -1,0 +1,1 @@
+INCLUDE(${NDGM_DIR}/BuildNDGM.cmake)

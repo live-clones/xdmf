@@ -62,10 +62,11 @@ ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/libsrc/XdmfConfig.h.in
                ${Xdmf_BINARY_DIR}/libsrc/XdmfConfig.h)
 
-SET(XdmfSources ${XdmfFormatSource} ${XdmfModelSource})
-IF(XDMF_HAVE_NDGM)
-  SET(XdmfSources XdmfSources ${XdmfNdgmSource})
-ENDIF(XDMF_HAVE_NDGM)
+IF(XDMF_HAS_NDGM)
+  SET(XdmfSources ${XdmfFormatSource} ${XdmfModelSource} ${XdmfNdgmSource})
+ELSE(XDMF_HAS_NDGM)
+  SET(XdmfSources ${XdmfFormatSource} ${XdmfModelSource})
+ENDIF(XDMF_HAS_NDGM)
 
 IF(XDMF_BUILD_SHARED_LIBS)
   ADD_LIBRARY(Xdmf SHARED ${XdmfSources})

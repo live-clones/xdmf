@@ -75,6 +75,7 @@ ENDIF(${ICE_SIZEOF_INT} MATCHES 4)
 FIND_PATH(ICE_HAVE_FCNTL fcntl.h /usr/include /usr/include/sys)
 FIND_PATH(ICE_HAVE_NETINET in.h /usr/include/netinet /usr/include /usr/include/sys)
 FIND_PATH(ICE_HAVE_MMAN mman.h /usr/include/sys /usr/include)
+MARK_AS_ADVANCED(ICE_HAVE_FCNTL ICE_HAVE_NETINET ICE_HAVE_MMAN)
 
 #Create IceConfig.h 
 CONFIGURE_FILE(

@@ -19,6 +19,13 @@ IF (VTK_FOUND)
     TARGET_LINK_LIBRARIES(vtk${PROJECT_NAME}TCL vtkIOTCL Xdmf)
   ENDIF(VTK_WRAP_TCL)
 
+  # Create Python wrappers if VTK is wrapped in Python.
+  IF(VTK_WRAP_PYTHON)
+    VTK_WRAP_PYTHON(vtk${PROJECT_NAME}Python XdmfPython_SRCS ${Xdmf_SRCS})
+    ADD_LIBRARY(vtk${PROJECT_NAME}Python SHARED ${XdmfPython_SRCS} ${Xdmf_SRCS})
+    TARGET_LINK_LIBRARIES(vtk${PROJECT_NAME}Python vtkIOPython Xdmf)
+  ENDIF(VTK_WRAP_PYTHON)
+
   ADD_EXECUTABLE(VTKTest VTKTest.cxx)
   TARGET_LINK_LIBRARIES(VTKTest vtkXdmfTCL)
 ENDIF (VTK_FOUND)

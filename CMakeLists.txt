@@ -2,13 +2,29 @@ PROJECT(Xdmf)
 
 INCLUDE_DIRECTORIES(${Xdmf_SOURCE_DIR}/Ice/libsrc)
 INCLUDE_DIRECTORIES(${Xdmf_SOURCE_DIR}/libsrc
-                    ${Xdmf_BINARY_DIR}/libsrc)
+                    ${Xdmf_BINARY_DIR}/libsrc
+                    ${Xdmf_BINARY_DIR}/Ice/libsrc)
 
 SET (LIBRARY_OUTPUT_PATH ${Xdmf_BINARY_DIR}/bin/ CACHE PATH "Single output directory for building all libraries.")
 SET (EXECUTABLE_OUTPUT_PATH ${Xdmf_BINARY_DIR}/bin/ CACHE PATH "Single output directory for building all executables.")
 
 INCLUDE (${CMAKE_ROOT}/Modules/CheckLibraryExists.cmake)
 INCLUDE (${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake)
+
+# Build IceConfig.h
+MESSAGE(STATUS "Configure IceConfig.h")
+SUBDIRS(Ice/libsrc)
+
+OPTION(XDMF_HAS_NDGM "XDMF has Network Distributed Global Memory (NDGM)" OFF)
+IF(XDMF_HAS_NDGM)
+	FIND_PATH(NDGM_DIR BuildNDGM.cmake ${Xdmf_SOURCE_DIR}/../Ndgm "Root of Source for NDGM")
+	IF(NDGM_DIR)
+		MESSAGE(STATUS "Process NDGM")
+#		INCLUDE(${NDGM_DIR}/BuildNDGM.cmake)
+		SUBDIRS(NDGM)
+	ENDIF(NDGM_DIR)
+	ADD_DEFINITIONS(-DHAVE_NDGM)
+ENDIF(XDMF_HAS_NDGM)
 
 OPTION(XDMF_SYSTEM_HDF5 "Use sytstem HDF5" ON)
 
