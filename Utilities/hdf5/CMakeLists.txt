@@ -528,3 +528,6 @@ ELSE("${cmver}" GREATER 1.6)
     OUTPUTS ${VTKHDF5_BINARY_DIR}/H5Tinit.c)
   ADD_DEPENDENCIES(vtkhdf5 H5detect)
 ENDIF("${cmver}" GREATER 1.6)
+
+CONFIGURE_FILE(${VTKHDF5_SOURCE_DIR}/CTestCustom.ctest.in
+  ${VTKHDF5_BINARY_DIR}/CTestCustom.ctest @ONLY)
