@@ -336,6 +336,8 @@ while(*size <= 0) {
   *size = *size + BLOCKSIZE;
   blocks++;
 }
+// Add a gratuitous block to cover for extra chars
+blocks++;
 len = strlen(this->xml);
 // Round up to nearest block
 len = (( len / BLOCKSIZE ) + 1 ) * BLOCKSIZE;
