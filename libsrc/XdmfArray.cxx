@@ -99,7 +99,7 @@ for( i = 0 ; i < this->ListLength ; i++ ){
   if ( this->List[ i ].Array == array ){
     memmove( &this->List[ i ],
       &this->List[ i + 1 ],
-      (this->ListIndex - i) * sizeof( XdmfArrayList ) );      
+      MAX(0,(this->ListLength - i - 1)) * sizeof( XdmfArrayList ) );      
     this->ListIndex--;
     break;
     }

@@ -50,6 +50,7 @@ XdmfHDF::XdmfHDF() {
 
   // Defaults
   this->NumberOfChildren = 0;
+  this->Compression = 0;
   strcpy( this->CwdName, "" );
 }
 
@@ -341,12 +342,48 @@ H5E_BEGIN_TRY {
   this->Dataset = H5Dopen( this->Cwd, this->Path );
 } H5E_END_TRY;
 if( this->Dataset < 0 ) {
-  XdmfDebug("Creating New Dataset");
+ if(this->Compression <= 0){
+  XdmfDebug("Creating New Contiguous Dataset");
   this->Dataset = H5Dcreate(this->Cwd,
       this->Path,
       this->GetDataType(),
       this->GetDataSpace(),
       H5P_DEFAULT);
+  }else{
+  hid_t  Prop;
+  hsize_t ChunkDims[XDMF_MAX_DIMENSION];
+  XdmfInt64 DataDims[XDMF_MAX_DIMENSION];
+  int    Compression;
+  int    i, NDims, NCDims;
+  
+  XdmfDebug("Creating New Compressed Dataset");
+  NDims = this->GetShape(DataDims);
+  if (NDims == 1) {
+	// Special Case
+	NCDims = 1;
+	if(DataDims[0] > 10000) {
+		ChunkDims[0] = 100; 
+	} else {
+		ChunkDims[0] = 1000; 
+	}
+  } else {
+	NCDims = NDims;
+	ChunkDims[0] = 1;
+	for(i=1 ; i < NDims ; i++) {
+		ChunkDims[i] = DataDims[i];
+		}
+   }
+  Prop = H5Pcreate(H5P_DATASET_CREATE);
+  H5Pset_chunk(Prop, NCDims, ChunkDims);
+  Compression = MIN(this->Compression, 9);
+  XdmfDebug("Compression Level = " << Compression);
+  H5Pset_deflate(Prop, Compression);
+  this->Dataset = H5Dcreate(this->Cwd,
+      this->Path,
+      this->GetDataType(),
+      this->GetDataSpace(),
+      Prop);
+  }
 } else {
   XdmfDebug("Dataset Exists");
   this->CopyType( H5Dget_type( this->Dataset ) );

@@ -50,7 +50,7 @@ public :
 %token <ArrayPointer>	ARRAY
 %token <Symbol>		NAME
 
-%token SIN COS TAN ACOS ASIN ATAN LOG EXP ABS_TOKEN SQRT WHERE
+%token SIN COS TAN ACOS ASIN ATAN LOG EXP ABS_TOKEN SQRT WHERE INDEX
 %token EQEQ LT LE GT GE NE LTLT GTGT JOIN
 
 %left	'-' '+'
@@ -417,6 +417,51 @@ ArrayExpression: ArrayExpression '+' ArrayExpression {
 			Result  = Range->Clone(); /* So Copy It */
 			delete Array1;
 			$$ = Result;
+			}
+	|	INDEX'(' ArrayExpression EQEQ ArrayExpression ')' {
+			XdmfArray	*Array1 = ( XdmfArray *)$3;
+			XdmfArray	*Array2 = ( XdmfArray *)$5;
+			XdmfLength	i, j, howmany = 0, cntr = 0;
+			XdmfLength	Length1 = Array1->GetNumberOfElements(), Length2;
+			XdmfInt64Array	*Index = new XdmfInt64Array( Length1 );
+			XdmfInt64	A1Value, A2Value;
+			XdmfInt64	*A1Values, *A2Values;
+			float		Percent;
+
+			if(Array1->GetNumberType() != XDMF_INT64_TYPE){
+				yyerror("INDEX operator only uses XdmfInt64 Arrays");
+				return( NULL );
+				}
+			if(Array2->GetNumberType() != XDMF_INT64_TYPE){
+				yyerror("INDEX operator only uses XdmfInt64 Arrays");
+				return( NULL );
+				}
+			Length2 = Array2->GetNumberOfElements();
+			A1Values = (XdmfInt64 *)Array1->GetDataPointer();
+			A2Values = (XdmfInt64 *)Array2->GetDataPointer();
+			for( i = 0 ; i < Length1 ; i++ ){
+				/* A1Value = Array1->GetValueAsFloat64( i ); */
+				A1Value = *A1Values++;
+				cntr = 0;
+				A2Value = A1Value + 1;
+				while((cntr < Length2) && (A2Value != A1Value)) {
+					/* A2Value = Array2->GetValueAsFloat64(cntr); */
+					A2Value = A2Values[cntr];
+					cntr++;
+					}
+				howmany++;
+				if(howmany > 5000){
+					Percent = 100.0 * i / Length1;
+					printf("%5.2f %% Done\n", Percent);
+					howmany = 0;
+					}
+				if( A1Value == A2Value ) {
+					Index->SetValue( i, cntr - 1 );
+				}else{
+					Index->SetValue( i, -1);
+					}
+				}	
+			$$ = ( XdmfArray *)Index;
 			}
 	|	WHERE '(' ArrayExpression EQEQ ArrayExpression ')' {
 			XdmfArray	*Array1 = ( XdmfArray *)$3;

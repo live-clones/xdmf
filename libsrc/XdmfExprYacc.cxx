@@ -26,15 +26,16 @@
 #define	ABS_TOKEN	269
 #define	SQRT	270
 #define	WHERE	271
-#define	EQEQ	272
-#define	LT	273
-#define	LE	274
-#define	GT	275
-#define	GE	276
-#define	NE	277
-#define	LTLT	278
-#define	GTGT	279
-#define	JOIN	280
+#define	INDEX	272
+#define	EQEQ	273
+#define	LT	274
+#define	LE	275
+#define	GT	276
+#define	GE	277
+#define	NE	278
+#define	LTLT	279
+#define	GTGT	280
+#define	JOIN	281
 
 #line 1 "XdmfExpr.y"
 
@@ -93,23 +94,23 @@ typedef union {
 
 
 
-#define	YYFINAL		113
+#define	YYFINAL		119
 #define	YYFLAG		-32768
-#define	YYNTBASE	39
+#define	YYNTBASE	40
 
-#define YYTRANSLATE(x) ((unsigned)(x) <= 280 ? yytranslate[x] : 43)
+#define YYTRANSLATE(x) ((unsigned)(x) <= 281 ? yytranslate[x] : 44)
 
 static const char yytranslate[] = {     0,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,    37,
-    38,    29,    28,    31,    27,     2,    30,     2,     2,     2,
-     2,     2,     2,     2,     2,     2,     2,    36,    32,     2,
-    33,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+     2,     2,     2,     2,     2,     2,     2,     2,     2,    38,
+    39,    30,    29,    32,    28,     2,    31,     2,     2,     2,
+     2,     2,     2,     2,     2,     2,     2,    37,    33,     2,
+    34,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-    34,     2,    35,     2,     2,     2,     2,     2,     2,     2,
+    35,     2,    36,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -127,7 +128,8 @@ static const char yytranslate[] = {     0,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     1,     3,     4,     5,     6,
      7,     8,     9,    10,    11,    12,    13,    14,    15,    16,
-    17,    18,    19,    20,    21,    22,    23,    24,    25,    26
+    17,    18,    19,    20,    21,    22,    23,    24,    25,    26,
+    27
 };
 
 #if YYDEBUG != 0
@@ -135,32 +137,33 @@ static const short yyprhs[] = {     0,
      0,     2,     6,    10,    17,    24,    33,    42,    44,    46,
     50,    54,    58,    62,    66,    70,    74,    78,    82,    86,
     90,    94,    98,   102,   107,   114,   121,   128,   135,   142,
-   149,   156,   163,   168,   172,   177,   179,   183,   187,   191,
-   195,   200,   204,   206
+   149,   156,   163,   170,   175,   179,   184,   186,   190,   194,
+   198,   202,   207,   211,   213
 };
 
-static const short yyrhs[] = {    40,
-     0,     5,    33,    41,     0,     5,    33,    42,     0,     5,
-    34,    41,    35,    33,    42,     0,     5,    34,    41,    35,
-    33,    41,     0,     5,    34,     4,    36,     4,    35,    33,
-    42,     0,     5,    34,     4,    36,     4,    35,    33,    41,
-     0,    41,     0,    42,     0,    41,    28,    41,     0,    41,
-    31,    41,     0,    41,    32,    41,     0,    41,    27,    41,
-     0,    41,    29,    41,     0,    41,    30,    41,     0,    41,
-    28,    42,     0,    41,    27,    42,     0,    41,    29,    42,
-     0,    41,    30,    42,     0,    42,    28,    41,     0,    42,
-    27,    41,     0,    42,    29,    41,     0,    42,    30,    41,
-     0,     5,    34,    41,    35,     0,     5,    34,     4,    36,
-     4,    35,     0,    17,    37,    41,    18,    41,    38,     0,
-    17,    37,    41,    18,    42,    38,     0,    17,    37,    41,
-    19,    42,    38,     0,    17,    37,    41,    20,    42,    38,
-     0,    17,    37,    41,    21,    42,    38,     0,    17,    37,
-    41,    22,    42,    38,     0,    17,    37,    41,    23,    42,
-    38,     0,     6,    37,    41,    38,     0,    37,    41,    38,
-     0,    26,    37,    41,    38,     0,     5,     0,    42,    28,
-    42,     0,    42,    27,    42,     0,    42,    29,    42,     0,
-    42,    30,    42,     0,     6,    37,    42,    38,     0,    37,
-    42,    38,     0,     4,     0,     3,     0
+static const short yyrhs[] = {    41,
+     0,     5,    34,    42,     0,     5,    34,    43,     0,     5,
+    35,    42,    36,    34,    43,     0,     5,    35,    42,    36,
+    34,    42,     0,     5,    35,     4,    37,     4,    36,    34,
+    43,     0,     5,    35,     4,    37,     4,    36,    34,    42,
+     0,    42,     0,    43,     0,    42,    29,    42,     0,    42,
+    32,    42,     0,    42,    33,    42,     0,    42,    28,    42,
+     0,    42,    30,    42,     0,    42,    31,    42,     0,    42,
+    29,    43,     0,    42,    28,    43,     0,    42,    30,    43,
+     0,    42,    31,    43,     0,    43,    29,    42,     0,    43,
+    28,    42,     0,    43,    30,    42,     0,    43,    31,    42,
+     0,     5,    35,    42,    36,     0,     5,    35,     4,    37,
+     4,    36,     0,    18,    38,    42,    19,    42,    39,     0,
+    17,    38,    42,    19,    42,    39,     0,    17,    38,    42,
+    19,    43,    39,     0,    17,    38,    42,    20,    43,    39,
+     0,    17,    38,    42,    21,    43,    39,     0,    17,    38,
+    42,    22,    43,    39,     0,    17,    38,    42,    23,    43,
+    39,     0,    17,    38,    42,    24,    43,    39,     0,     6,
+    38,    42,    39,     0,    38,    42,    39,     0,    27,    38,
+    42,    39,     0,     5,     0,    43,    29,    43,     0,    43,
+    28,    43,     0,    43,    30,    43,     0,    43,    31,    43,
+     0,     6,    38,    43,    39,     0,    38,    43,    39,     0,
+     4,     0,     3,     0
 };
 
 #endif
@@ -169,9 +172,9 @@ static const short yyrhs[] = {    40,
 static const short yyrline[] = { 0,
     65,    73,    81,    86,    98,   114,   125,   138,   145,   150,
    159,   236,   300,   309,   319,   328,   337,   346,   355,   364,
-   373,   382,   391,   400,   410,   421,   453,   474,   495,   516,
-   537,   558,   579,   597,   601,   605,   622,   626,   630,   634,
-   638,   646,   650,   654
+   373,   382,   391,   400,   410,   421,   466,   498,   519,   540,
+   561,   582,   603,   624,   642,   646,   650,   667,   671,   675,
+   679,   683,   691,   695,   699
 };
 #endif
 
@@ -180,126 +183,130 @@ static const short yyrline[] = { 0,
 
 static const char * const yytname[] = {   "$","error","$undefined.","lFLOAT",
 "INTEGER","ARRAY","NAME","SIN","COS","TAN","ACOS","ASIN","ATAN","LOG","EXP",
-"ABS_TOKEN","SQRT","WHERE","EQEQ","LT","LE","GT","GE","NE","LTLT","GTGT","JOIN",
-"'-'","'+'","'*'","'/'","','","';'","'='","'['","']'","':'","'('","')'","statemant_list",
-"statement","ArrayExpression","ScalarExpression", NULL
+"ABS_TOKEN","SQRT","WHERE","INDEX","EQEQ","LT","LE","GT","GE","NE","LTLT","GTGT",
+"JOIN","'-'","'+'","'*'","'/'","','","';'","'='","'['","']'","':'","'('","')'",
+"statemant_list","statement","ArrayExpression","ScalarExpression", NULL
 };
 #endif
 
 static const short yyr1[] = {     0,
-    39,    40,    40,    40,    40,    40,    40,    40,    40,    41,
-    41,    41,    41,    41,    41,    41,    41,    41,    41,    41,
-    41,    41,    41,    41,    41,    41,    41,    41,    41,    41,
-    41,    41,    41,    41,    41,    41,    42,    42,    42,    42,
-    42,    42,    42,    42
+    40,    41,    41,    41,    41,    41,    41,    41,    41,    42,
+    42,    42,    42,    42,    42,    42,    42,    42,    42,    42,
+    42,    42,    42,    42,    42,    42,    42,    42,    42,    42,
+    42,    42,    42,    42,    42,    42,    42,    43,    43,    43,
+    43,    43,    43,    43,    43
 };
 
 static const short yyr2[] = {     0,
      1,     3,     3,     6,     6,     8,     8,     1,     1,     3,
      3,     3,     3,     3,     3,     3,     3,     3,     3,     3,
      3,     3,     3,     4,     6,     6,     6,     6,     6,     6,
-     6,     6,     4,     3,     4,     1,     3,     3,     3,     3,
-     4,     3,     1,     1
+     6,     6,     6,     4,     3,     4,     1,     3,     3,     3,
+     3,     4,     3,     1,     1
 };
 
 static const short yydefact[] = {     0,
-    44,    43,    36,     0,     0,     0,     0,     1,     8,     9,
-     0,     0,     0,     0,     0,    36,     0,     0,     0,     0,
-     0,     0,     0,     0,     0,     0,     0,     0,     2,     3,
-    43,     0,     0,     0,     0,     0,     0,     0,    34,    42,
-    13,    17,    10,    16,    14,    18,    15,    19,    11,    12,
-    21,    38,    20,    37,    22,    39,    23,    40,     0,    24,
-    33,    41,     0,     0,     0,     0,     0,     0,    35,    43,
+    45,    44,    37,     0,     0,     0,     0,     0,     1,     8,
+     9,     0,     0,     0,     0,     0,     0,    37,     0,     0,
      0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-     0,     0,     0,    24,    25,     5,     4,    26,    27,     0,
-     0,     0,     0,     0,     0,    28,    29,    30,    31,    32,
-     0,     0,     0,    38,    37,    39,    40,    25,     7,     6,
-     0,     0,     0
+     2,     3,    44,     0,     0,     0,     0,     0,     0,     0,
+     0,    35,    43,    13,    17,    10,    16,    14,    18,    15,
+    19,    11,    12,    21,    39,    20,    38,    22,    40,    23,
+    41,     0,    24,    34,    42,     0,     0,     0,     0,     0,
+     0,     0,    36,    44,     0,     0,     0,     0,     0,     0,
+     0,     0,     0,     0,     0,     0,     0,     0,    24,    25,
+     5,     4,    27,    28,     0,     0,     0,     0,     0,     0,
+    29,    30,    31,    32,    33,    26,     0,     0,     0,    39,
+    38,    40,    41,    25,     7,     6,     0,     0,     0
 };
 
-static const short yydefgoto[] = {   111,
-     8,     9,    33
+static const short yydefgoto[] = {   117,
+     9,    10,    35
 };
 
-static const short yypact[] = {    52,
--32768,-32768,   -24,   -19,    -8,    15,    94,-32768,   220,   -13,
-    94,   100,    94,    94,    94,    -3,    53,   -26,    94,    94,
-    94,    94,    94,    94,    94,    94,    94,    94,   220,   -13,
-    17,   202,   -13,   130,    85,   124,   142,   104,-32768,-32768,
-   103,    -6,   103,    -6,     1,-32768,     1,-32768,-32768,-32768,
-   103,    -6,   103,    -6,     1,-32768,     1,-32768,    50,    26,
--32768,-32768,    94,     2,     2,     2,     2,     2,-32768,    24,
-   211,    27,    94,   154,   137,    33,     2,   149,   161,   166,
-   173,   178,    67,-32768,    39,   220,   -13,-32768,-32768,     2,
-   185,     2,     2,     2,     2,-32768,-32768,-32768,-32768,-32768,
-    40,    94,   190,    11,    11,-32768,-32768,-32768,   220,   -13,
-    74,    76,-32768
+static const short yypact[] = {    55,
+-32768,-32768,   -25,   -37,   -31,   -27,    -7,    99,-32768,   237,
+    91,    99,   106,    99,    99,    99,    99,     9,   135,   -26,
+    99,    99,    99,    99,    99,    99,    99,    99,    99,    99,
+   237,    91,    -2,   219,    91,   147,   142,   126,   -13,   159,
+   124,-32768,-32768,   241,    -5,   241,    -5,     1,-32768,     1,
+-32768,-32768,-32768,   241,    -5,   241,    -5,     1,-32768,     1,
+-32768,    51,    22,-32768,-32768,    99,    80,    80,    80,    80,
+    80,    99,-32768,    20,   228,    26,    99,   171,   154,    25,
+    80,   166,   178,   190,   195,   202,   183,    60,-32768,    40,
+   237,    91,-32768,-32768,    80,   207,    80,    80,    80,    80,
+-32768,-32768,-32768,-32768,-32768,-32768,    39,    99,   214,    12,
+    12,-32768,-32768,-32768,   237,    91,    76,    78,-32768
 };
 
 static const short yypgoto[] = {-32768,
--32768,    23,     0
+-32768,    24,     0
 };
 
 
-#define	YYLAST		252
+#define	YYLAST		274
 
 
-static const short yytable[] = {    10,
-    25,    26,    27,    28,     1,     2,    18,    76,    11,    12,
-    30,    40,    35,    25,    26,    27,    28,    13,    42,    44,
-    46,    48,    27,    28,    52,    54,    56,    58,    14,    17,
-    38,    23,    24,    29,    32,    34,    36,    37,    77,    94,
-    95,    41,    43,    45,    47,    49,    50,    51,    53,    55,
-    57,    15,    59,    72,     1,     2,     3,     4,    73,    83,
-    71,    85,    75,    78,    79,    80,    81,    82,     5,    90,
-   101,   102,    87,   112,   108,   113,    91,     6,     0,    19,
-    20,    21,    22,    23,    24,    74,     0,     0,     7,   103,
-    39,   104,   105,   106,   107,    86,     1,     2,    16,     4,
-     0,   110,     1,    31,    16,     4,     1,    70,    16,     4,
-     5,    25,    26,    27,    28,     0,     5,     0,     0,     6,
-     5,     0,    62,     0,   109,     6,     0,     0,     0,     6,
-     7,    21,    22,    23,    24,     0,     7,     0,     0,     0,
-     7,    63,    64,    65,    66,    67,    68,     0,     0,     0,
-    19,    20,    21,    22,    23,    24,    19,    20,    21,    22,
-    23,    24,     0,    25,    26,    27,    28,    61,    19,    20,
-    21,    22,    23,    24,    89,    92,    93,    94,    95,    69,
-    19,    20,    21,    22,    23,    24,    96,    92,    93,    94,
-    95,    88,    92,    93,    94,    95,     0,     0,    97,    92,
-    93,    94,    95,    98,    92,    93,    94,    95,     0,     0,
-    99,    92,    93,    94,    95,   100,    92,    93,    94,    95,
-     0,     0,    40,     0,     0,     0,     0,    62,    19,    20,
-    21,    22,    23,    24,     0,     0,    60,    19,    20,    21,
-    22,    23,    24,     0,     0,    84,    19,    20,    21,    22,
-    23,    24
+static const short yytable[] = {    11,
+    14,    27,    28,    29,    30,    72,    15,    20,    12,    13,
+    16,    32,    43,    37,    21,    22,    23,    24,    25,    26,
+    45,    47,    49,    51,    29,    30,    55,    57,    59,    61,
+    17,    19,    25,    26,    62,    31,    34,    36,    38,    39,
+    40,    99,   100,    41,    44,    46,    48,    50,    52,    53,
+    54,    56,    58,    60,    76,    77,    88,     1,     2,     3,
+     4,    90,    95,   107,    75,    79,    82,    83,    84,    85,
+    86,     5,     6,   108,   114,   118,    92,   119,     0,     0,
+    96,     7,     1,     2,     0,    80,     0,     0,     0,    78,
+     0,     0,     8,     0,   109,    87,   110,   111,   112,   113,
+    91,     1,     2,    18,     4,     0,     0,   116,     1,    33,
+    18,     4,     0,     0,     0,     5,     6,    81,    27,    28,
+    29,    30,     5,     6,     0,     7,     1,    74,    18,     4,
+     0,   115,     7,     0,     0,     0,     8,     0,     0,     0,
+     5,     6,     0,     8,    66,    67,    68,    69,    70,    71,
+     7,     0,     0,    21,    22,    23,    24,    25,    26,     0,
+     0,     8,    21,    22,    23,    24,    25,    26,     0,    27,
+    28,    29,    30,    42,    21,    22,    23,    24,    25,    26,
+    65,    27,    28,    29,    30,    64,    21,    22,    23,    24,
+    25,    26,    94,    97,    98,    99,   100,    73,    21,    22,
+    23,    24,    25,    26,   101,    97,    98,    99,   100,    93,
+    21,    22,    23,    24,    25,    26,   102,    97,    98,    99,
+   100,   106,    97,    98,    99,   100,     0,     0,   103,    97,
+    98,    99,   100,   104,    97,    98,    99,   100,     0,     0,
+   105,    97,    98,    99,   100,    43,    21,    22,    23,    24,
+    25,    26,    65,     0,    63,    21,    22,    23,    24,    25,
+    26,     0,     0,    89,    21,    22,    23,    24,    25,    26,
+    23,    24,    25,    26
 };
 
 static const short yycheck[] = {     0,
-    27,    28,    29,    30,     3,     4,     7,     6,    33,    34,
-    11,    38,    13,    27,    28,    29,    30,    37,    19,    20,
-    21,    22,    29,    30,    25,    26,    27,    28,    37,     7,
-    34,    31,    32,    11,    12,    13,    14,    15,    37,    29,
-    30,    19,    20,    21,    22,    23,    24,    25,    26,    27,
-    28,    37,    36,     4,     3,     4,     5,     6,    33,    36,
-    38,    35,    63,    64,    65,    66,    67,    68,    17,    37,
-     4,    33,    73,     0,    35,     0,    77,    26,    -1,    27,
-    28,    29,    30,    31,    32,    63,    -1,    -1,    37,    90,
-    38,    92,    93,    94,    95,    73,     3,     4,     5,     6,
-    -1,   102,     3,     4,     5,     6,     3,     4,     5,     6,
-    17,    27,    28,    29,    30,    -1,    17,    -1,    -1,    26,
-    17,    -1,    38,    -1,   102,    26,    -1,    -1,    -1,    26,
-    37,    29,    30,    31,    32,    -1,    37,    -1,    -1,    -1,
-    37,    18,    19,    20,    21,    22,    23,    -1,    -1,    -1,
-    27,    28,    29,    30,    31,    32,    27,    28,    29,    30,
-    31,    32,    -1,    27,    28,    29,    30,    38,    27,    28,
-    29,    30,    31,    32,    38,    27,    28,    29,    30,    38,
-    27,    28,    29,    30,    31,    32,    38,    27,    28,    29,
-    30,    38,    27,    28,    29,    30,    -1,    -1,    38,    27,
-    28,    29,    30,    38,    27,    28,    29,    30,    -1,    -1,
-    38,    27,    28,    29,    30,    38,    27,    28,    29,    30,
-    -1,    -1,    38,    -1,    -1,    -1,    -1,    38,    27,    28,
-    29,    30,    31,    32,    -1,    -1,    35,    27,    28,    29,
-    30,    31,    32,    -1,    -1,    35,    27,    28,    29,    30,
-    31,    32
+    38,    28,    29,    30,    31,    19,    38,     8,    34,    35,
+    38,    12,    39,    14,    28,    29,    30,    31,    32,    33,
+    21,    22,    23,    24,    30,    31,    27,    28,    29,    30,
+    38,     8,    32,    33,    37,    12,    13,    14,    15,    16,
+    17,    30,    31,    35,    21,    22,    23,    24,    25,    26,
+    27,    28,    29,    30,     4,    34,    37,     3,     4,     5,
+     6,    36,    38,     4,    41,    66,    67,    68,    69,    70,
+    71,    17,    18,    34,    36,     0,    77,     0,    -1,    -1,
+    81,    27,     3,     4,    -1,     6,    -1,    -1,    -1,    66,
+    -1,    -1,    38,    -1,    95,    72,    97,    98,    99,   100,
+    77,     3,     4,     5,     6,    -1,    -1,   108,     3,     4,
+     5,     6,    -1,    -1,    -1,    17,    18,    38,    28,    29,
+    30,    31,    17,    18,    -1,    27,     3,     4,     5,     6,
+    -1,   108,    27,    -1,    -1,    -1,    38,    -1,    -1,    -1,
+    17,    18,    -1,    38,    19,    20,    21,    22,    23,    24,
+    27,    -1,    -1,    28,    29,    30,    31,    32,    33,    -1,
+    -1,    38,    28,    29,    30,    31,    32,    33,    -1,    28,
+    29,    30,    31,    39,    28,    29,    30,    31,    32,    33,
+    39,    28,    29,    30,    31,    39,    28,    29,    30,    31,
+    32,    33,    39,    28,    29,    30,    31,    39,    28,    29,
+    30,    31,    32,    33,    39,    28,    29,    30,    31,    39,
+    28,    29,    30,    31,    32,    33,    39,    28,    29,    30,
+    31,    39,    28,    29,    30,    31,    -1,    -1,    39,    28,
+    29,    30,    31,    39,    28,    29,    30,    31,    -1,    -1,
+    39,    28,    29,    30,    31,    39,    28,    29,    30,    31,
+    32,    33,    39,    -1,    36,    28,    29,    30,    31,    32,
+    33,    -1,    -1,    36,    28,    29,    30,    31,    32,    33,
+    30,    31,    32,    33
 };
 /* -*-C-*-  Note some compilers choke on comments on `#line' lines.  */
 #line 3 "/usr/gnu/share/bison.simple"
@@ -1274,6 +1281,54 @@ case 26:
 #line 421 "XdmfExpr.y"
 {
 			XdmfArray	*Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
+			XdmfArray	*Array2 = ( XdmfArray *)yyvsp[-1].ArrayPointer;
+			XdmfLength	i, j, howmany = 0, cntr = 0;
+			XdmfLength	Length1 = Array1->GetNumberOfElements(), Length2;
+			XdmfInt64Array	*Index = new XdmfInt64Array( Length1 );
+			XdmfInt64	A1Value, A2Value;
+			XdmfInt64	*A1Values, *A2Values;
+			float		Percent;
+
+			if(Array1->GetNumberType() != XDMF_INT64_TYPE){
+				yyerror("INDEX operator only uses XdmfInt64 Arrays");
+				return( NULL );
+				}
+			if(Array2->GetNumberType() != XDMF_INT64_TYPE){
+				yyerror("INDEX operator only uses XdmfInt64 Arrays");
+				return( NULL );
+				}
+			Length2 = Array2->GetNumberOfElements();
+			A1Values = (XdmfInt64 *)Array1->GetDataPointer();
+			A2Values = (XdmfInt64 *)Array2->GetDataPointer();
+			for( i = 0 ; i < Length1 ; i++ ){
+				/* A1Value = Array1->GetValueAsFloat64( i ); */
+				A1Value = *A1Values++;
+				cntr = 0;
+				A2Value = A1Value + 1;
+				while((cntr < Length2) && (A2Value != A1Value)) {
+					/* A2Value = Array2->GetValueAsFloat64(cntr); */
+					A2Value = A2Values[cntr];
+					cntr++;
+					}
+				howmany++;
+				if(howmany > 5000){
+					Percent = 100.0 * i / Length1;
+					printf("%5.2f %% Done\n", Percent);
+					howmany = 0;
+					}
+				if( A1Value == A2Value ) {
+					Index->SetValue( i, cntr - 1 );
+				}else{
+					Index->SetValue( i, -1);
+					}
+				}	
+			yyval.ArrayPointer = ( XdmfArray *)Index;
+			;
+    break;}
+case 27:
+#line 466 "XdmfExpr.y"
+{
+			XdmfArray	*Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
 			XdmfLength	i, j, howmany = 0, cntr = 0;
 			XdmfLength	Length1 = Array1->GetNumberOfElements(), Length2;
 			XdmfInt64Array	*Index = new XdmfInt64Array( Length1 );
@@ -1305,8 +1360,8 @@ case 26:
 			yyval.ArrayPointer = ( XdmfArray *)Index;
 			;
     break;}
-case 27:
-#line 453 "XdmfExpr.y"
+case 28:
+#line 498 "XdmfExpr.y"
 {
 			XdmfArray	*Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
 			XdmfLength	i, cntr = 0;
@@ -1329,8 +1384,8 @@ case 27:
 			yyval.ArrayPointer = ( XdmfArray *)Index;
 			;
     break;}
-case 28:
-#line 474 "XdmfExpr.y"
+case 29:
+#line 519 "XdmfExpr.y"
 {
 			XdmfArray	*Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
 			XdmfLength	i, cntr = 0;
@@ -1353,8 +1408,8 @@ case 28:
 			yyval.ArrayPointer = ( XdmfArray *)Index;
 			;
     break;}
-case 29:
-#line 495 "XdmfExpr.y"
+case 30:
+#line 540 "XdmfExpr.y"
 {
 			XdmfArray	*Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
 			XdmfLength	i, cntr = 0;
@@ -1377,8 +1432,8 @@ case 29:
 			yyval.ArrayPointer = ( XdmfArray *)Index;
 			;
     break;}
-case 30:
-#line 516 "XdmfExpr.y"
+case 31:
+#line 561 "XdmfExpr.y"
 {
 			XdmfArray	*Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
 			XdmfLength	i, cntr = 0;
@@ -1401,8 +1456,8 @@ case 30:
 			yyval.ArrayPointer = ( XdmfArray *)Index;
 			;
     break;}
-case 31:
-#line 537 "XdmfExpr.y"
+case 32:
+#line 582 "XdmfExpr.y"
 {
 			XdmfArray	*Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
 			XdmfLength	i, cntr = 0;
@@ -1425,8 +1480,8 @@ case 31:
 			yyval.ArrayPointer = ( XdmfArray *)Index;
 			;
     break;}
-case 32:
-#line 558 "XdmfExpr.y"
+case 33:
+#line 603 "XdmfExpr.y"
 {
 			XdmfArray	*Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
 			XdmfLength	i, cntr = 0;
@@ -1449,8 +1504,8 @@ case 32:
 			yyval.ArrayPointer = ( XdmfArray *)Index;
 			;
     break;}
-case 33:
-#line 579 "XdmfExpr.y"
+case 34:
+#line 624 "XdmfExpr.y"
 {
 
 			if( yyvsp[-3].Symbol->DoubleFunctionPtr == NULL ){
@@ -1470,22 +1525,22 @@ case 33:
 			}
 			;
     break;}
-case 34:
-#line 597 "XdmfExpr.y"
-{
-			/* printf("( ArrayExpression )\n"); */
-			yyval.ArrayPointer = yyvsp[-1].ArrayPointer;
-			;
-    break;}
 case 35:
-#line 601 "XdmfExpr.y"
+#line 642 "XdmfExpr.y"
 {
 			/* printf("( ArrayExpression )\n"); */
 			yyval.ArrayPointer = yyvsp[-1].ArrayPointer;
 			;
     break;}
 case 36:
-#line 605 "XdmfExpr.y"
+#line 646 "XdmfExpr.y"
+{
+			/* printf("( ArrayExpression )\n"); */
+			yyval.ArrayPointer = yyvsp[-1].ArrayPointer;
+			;
+    break;}
+case 37:
+#line 650 "XdmfExpr.y"
 {
 			XdmfArray *Array1 = ( XdmfArray *)yyvsp[0].ArrayPointer;
 			XdmfArray *Result;
@@ -1502,36 +1557,36 @@ case 36:
 				}
 			;
     break;}
-case 37:
-#line 622 "XdmfExpr.y"
+case 38:
+#line 667 "XdmfExpr.y"
 {
 			/* printf("Scalar +\n"); */
 			yyval.DoubleValue = yyvsp[-2].DoubleValue + yyvsp[0].DoubleValue;
 			;
     break;}
-case 38:
-#line 626 "XdmfExpr.y"
+case 39:
+#line 671 "XdmfExpr.y"
 {
 			/* printf("Scalar -\n"); */
 			yyval.DoubleValue = yyvsp[-2].DoubleValue - yyvsp[0].DoubleValue;
 			;
     break;}
-case 39:
-#line 630 "XdmfExpr.y"
+case 40:
+#line 675 "XdmfExpr.y"
 {
 			/* printf("Scalar *\n"); */
 			yyval.DoubleValue = yyvsp[-2].DoubleValue * yyvsp[0].DoubleValue;
 			;
     break;}
-case 40:
-#line 634 "XdmfExpr.y"
+case 41:
+#line 679 "XdmfExpr.y"
 {
 			/* printf("Scalar /\n"); */
 			yyval.DoubleValue = yyvsp[-2].DoubleValue / yyvsp[0].DoubleValue;
 			;
     break;}
-case 41:
-#line 638 "XdmfExpr.y"
+case 42:
+#line 683 "XdmfExpr.y"
 {
 			if( yyvsp[-3].Symbol->DoubleFunctionPtr == NULL ){
 				/* printf("Bad Function Ptr for %s\n", $1->Name ); */
@@ -1541,22 +1596,22 @@ case 41:
 			}
 			;
     break;}
-case 42:
-#line 646 "XdmfExpr.y"
+case 43:
+#line 691 "XdmfExpr.y"
 {
 			/* printf ("( ScalarExpression )\n"); */
 			yyval.DoubleValue = yyvsp[-1].DoubleValue;
 			;
     break;}
-case 43:
-#line 650 "XdmfExpr.y"
+case 44:
+#line 695 "XdmfExpr.y"
 {
 			/* printf ("ScalarExpression from INTEGER\n"); */
 			yyval.DoubleValue = yyvsp[0].IntegerValue;
 			;
     break;}
-case 44:
-#line 654 "XdmfExpr.y"
+case 45:
+#line 699 "XdmfExpr.y"
 {
 			/* printf ("ScalarExpression from FLOAT\n"); */
 			yyval.DoubleValue = yyvsp[0].DoubleValue;
@@ -1784,7 +1839,7 @@ yyerrhandle:
     }
   return 1;
 }
-#line 661 "XdmfExpr.y"
+#line 706 "XdmfExpr.y"
 
 
 /* extern	FILE	*yyin, *yyout; */

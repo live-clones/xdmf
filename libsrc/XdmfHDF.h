@@ -55,6 +55,10 @@ public:
 
   XdmfConstString GetClassName() { return ( "XdmfHDF" ) ; };
 
+//! Set Compression Level to 0 - 9 . Level <= 0 is Off
+  XdmfSetValueMacro(Compression, XdmfInt32);
+//! Get Compression Level
+  XdmfGetValueMacro(Compression, XdmfInt32);
 //! Set the current internal HDF "Group" for creation
   XdmfInt32 SetCwdName( XdmfString Directory );
 //! Get the current internal HDF "Group"
@@ -135,6 +139,7 @@ protected:
   hid_t    AccessPlist;
 
   char    CwdName[XDMF_MAX_STRING_LENGTH];
+  XdmfInt32  Compression;
   XdmfInt64  NumberOfChildren;
   XdmfString  Child[1024];
 

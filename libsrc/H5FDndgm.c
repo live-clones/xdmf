@@ -35,8 +35,14 @@
 #include "stdlib.h"
 #include "Ndgm/ndgm.h"
 
-/*
+/**/
 #define HDF_IO_DEBUG    1
+/**/
+
+/*
+#ifdef XDMF_NOT_USED
+#undef XDMF_NOT_USED
+#endif
 */
 
 #ifndef FAIL
@@ -948,7 +954,7 @@ H5FD_ndgm_write(H5FD_t *_file, H5FD_mem_t type, hid_t dxpl_id/*unused*/, haddr_t
     H5FD_ndgm_t    *file = (H5FD_ndgm_t*)_file;
     herr_t    status;
 
-    //const char    *bufp = buf;
+    const char    *bufp = buf;
     
     (void)type;
     (void)dxpl_id;

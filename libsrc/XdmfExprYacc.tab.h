@@ -19,15 +19,16 @@ typedef union {
 #define	ABS_TOKEN	269
 #define	SQRT	270
 #define	WHERE	271
-#define	EQEQ	272
-#define	LT	273
-#define	LE	274
-#define	GT	275
-#define	GE	276
-#define	NE	277
-#define	LTLT	278
-#define	GTGT	279
-#define	JOIN	280
+#define	INDEX	272
+#define	EQEQ	273
+#define	LT	274
+#define	LE	275
+#define	GT	276
+#define	GE	277
+#define	NE	278
+#define	LTLT	279
+#define	GTGT	280
+#define	JOIN	281
 
 
 extern YYSTYPE dice_yylval;

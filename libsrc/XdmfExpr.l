@@ -62,7 +62,14 @@ return( 0 );
 
 %%
 join { return JOIN; }
+JOIN { return JOIN; }
+Join { return JOIN; }
 where { return WHERE; }
+WHERE { return WHERE; }
+Where { return WHERE; }
+index { return INDEX; }
+INDEX { return INDEX; }
+Index { return INDEX; }
 ">>" { return GTGT; }
 "<<" { return LTLT; }
 "==" { return EQEQ; }
