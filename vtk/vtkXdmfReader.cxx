@@ -73,7 +73,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.29");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.30");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -446,7 +446,6 @@ void vtkXdmfReader::Execute()
       ( Geometry->GetGeometryType() == XDMF_GEOMETRY_XYZ ) ||
       ( Geometry->GetGeometryType() == XDMF_GEOMETRY_XY ) )
       {
-      double *pp;
       XdmfInt64   Length;
       vtkPoints   *Points;
       vtkPointSet *Pointset = ( vtkPointSet *)this->Outputs[idx];
@@ -472,12 +471,25 @@ void vtkXdmfReader::Execute()
         {
         if( Points )
           {
-          if ( Points->GetData()->GetDataType() != VTK_DOUBLE )
+          if ( Geometry->GetPoints()->GetDataType() == XDMF_FLOAT32_TYPE )
             {
-            vtkDoubleArray* da = vtkDoubleArray::New();
-            da->SetNumberOfComponents(3);
-            Points->SetData(da);
-            da->Delete();
+            if ( Points->GetData()->GetDataType() != VTK_FLOAT)
+              {
+              vtkDoubleArray* da = vtkDoubleArray::New();
+              da->SetNumberOfComponents(3);
+              Points->SetData(da);
+              da->Delete();
+              }
+            }
+          else
+            {
+            if ( Points->GetData()->GetDataType() != VTK_DOUBLE )
+              {
+              vtkFloatArray* da = vtkFloatArray::New();
+              da->SetNumberOfComponents(3);
+              Points->SetData(da);
+              da->Delete();
+              }
             }
 
           Length = Geometry->GetPoints()->GetNumberOfElements();
@@ -530,15 +542,17 @@ void vtkXdmfReader::Execute()
               upext[kk] = whext[kk];
               }
             }
-          vtkDoubleArray* da = vtkDoubleArray::SafeDownCast(Points->GetData());
-          pp = da->GetPointer(0);
-          if( sizeof( double ) == sizeof( XdmfFloat32 ) && !strides_or_extents) 
+          if( Geometry->GetPoints()->GetDataType() == XDMF_FLOAT32_TYPE && 
+            !strides_or_extents) 
             {
-            Geometry->GetPoints()->GetValues( 0, (XdmfFloat32 *)pp, Length );
+            Geometry->GetPoints()->GetValues( 0, 
+              vtkFloatArray::SafeDownCast(Points)->GetPointer(0), Length );
             } 
-          else if( sizeof( double ) == sizeof( XdmfFloat64 ) && !strides_or_extents) 
+          else if( Geometry->GetPoints()->GetDataType() == XDMF_FLOAT64_TYPE && 
+            !strides_or_extents) 
             {
-            Geometry->GetPoints()->GetValues( 0, (XdmfFloat64 *)pp, Length );
+            Geometry->GetPoints()->GetValues( 0, 
+              vtkDoubleArray::SafeDownCast(Points)->GetPointer(0), Length );
             } 
           else 
             {
@@ -574,19 +588,13 @@ void vtkXdmfReader::Execute()
                       mii == 0 && mjj == 0 && mkk == 0 )
                       {
                       // We are inside the extents
-                      for ( cc = 0; cc < 3; cc ++ )
-                        {
-                        *pp = *TmpPp;
-                        pp ++;
-                        TmpPp++;
-                        }
+                      Points->SetPoint(cnt, TmpPp);
+                      TmpPp += 3;
                       cnt ++;
                       }
                     else
                       {
-                      TmpPp++;
-                      TmpPp++;
-                      TmpPp++;
+                      TmpPp += 3;
                       }
                     }
                   }
@@ -594,9 +602,12 @@ void vtkXdmfReader::Execute()
               }
             else
               {
-              for( ii = 0 ; ii < Length ; ii++ )
+              cnt = 0;
+              for( ii = 0 ; ii < Length / 3 ; ii++ )
                 {
-                *pp++ = *TmpPp++;
+                Points->SetPoint(cnt, TmpPp);
+                TmpPp += 3;
+                cnt ++;
                 }
               }
             delete TmpPoints;
