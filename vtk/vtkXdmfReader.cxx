@@ -69,7 +69,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.7");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.8");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -247,9 +247,30 @@ void vtkXdmfReader::Execute()
   // XdmfInt64 end[4] = { 0, 0, 0, 0 };
   this->DataDescription->GetShape(count);
 
-  int *upext = this->GetOutput()->GetUpdateExtent();
+  int upext[6];
+  int whext[6];
+  this->GetOutput()->GetUpdateExtent(upext);
+  this->GetOutput()->GetWholeExtent(whext);
 
   vtkDebugMacro( << "In Execute: Update Extents = " << upext[0] << ", " << upext[1] << ", " << upext[2] << ", " << upext[3] << ", " << upext[4] << ", " << upext[5]);
+
+  int ext_fixed =0;
+  for ( cc = 0; cc < 3; cc ++ )
+    {
+    if ( upext[cc*2] == upext[cc*2+1] )
+      {
+      if ( upext[cc*2] == whext[cc*2+1] )
+        {
+        upext[cc*2] = whext[cc*2+1]-1;
+        }
+      else
+        {
+        upext[cc*2+1] = upext[cc*2+1] + 1;
+        }
+      ext_fixed = 1;
+      }
+    }
+  vtkDebugMacro( << "After fixing extent: Update Extents = " << upext[0] << ", " << upext[1] << ", " << upext[2] << ", " << upext[3] << ", " << upext[4] << ", " << upext[5]);
 
   start[2] = vtkMAX(0, upext[0]);
   start[1] = vtkMAX(0, upext[2]);
