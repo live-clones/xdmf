@@ -59,7 +59,7 @@
 *  "less that 50-100" values, it's Light data.
 * 
 * This API is also "wrapped" using SWIG. This provides a scripting language
-* interface to Tcl, Python, Perl, and Java
+* interface to Tcl, Python, Perl, and Java.
 *
 *  
 */
