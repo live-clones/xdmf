@@ -1,0 +1,50 @@
+%module Xdmf
+%{
+#include <XdmfObject.h>
+#include <XdmfCharArray.h>
+#include <XdmfAttribute.h>
+#include <XdmfDOM.h>
+#include <XdmfArray.h>
+#include <XdmfHDFSupport.h>
+#include <XdmfFormat.h>
+#include <XdmfFormatMulti.h>
+#include <XdmfFormatXML.h>
+#include <XdmfFormatHDF.h>
+#include <XdmfGeometry.h>
+#include <XdmfGrid.h>
+#include <XdmfLightData.h>
+#include <XdmfHeavyData.h>
+#include <XdmfHDF.h>
+#include <XdmfDataDesc.h>
+#include <XdmfXNode.h>
+#include <XdmfExpression.h>
+#include <XdmfTransform.h>
+#include <XdmfTopology.h>
+#include <XdmfParameter.h>
+#ifdef HAVE_NDGM
+#include <XdmfNDGM.h>
+#endif
+%}
+#include <XdmfObject.h>
+#include <XdmfAttribute.h>
+#include <XdmfCharArray.h>
+#include <XdmfDOM.h>
+#include <XdmfArray.h>
+#include <XdmfFormat.h>
+#include <XdmfFormatMulti.h>
+#include <XdmfFormatXML.h>
+#include <XdmfFormatHDF.h>
+#include <XdmfGeometry.h>
+#include <XdmfGrid.h>
+#include <XdmfDataDesc.h>
+#include <XdmfLightData.h>
+#include <XdmfHeavyData.h>
+#include <XdmfHDF.h>
+#include <XdmfXNode.h>
+#include <XdmfExpression.h>
+#include <XdmfTopology.h>
+#include <XdmfTransform.h>
+#include <XdmfParameter.h>
+#ifdef HAVE_NDGM
+#include <XdmfNDGM.h>
+#endif

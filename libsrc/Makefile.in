@@ -1,0 +1,368 @@
+##########################################################
+#
+# XDMF - eXtensible Data Model and Format
+#
+##########################################################
+
+#
+# Default Options
+#  Change as needed
+# 
+SHELL=/bin/sh
+ICE_WITH_NDGM = NO
+ICE_WITH_PYTHON = YES
+ICE_WITH_TCL = NO
+ICE_WITH_JAVA = NO
+
+# 
+# Defined values passed from "configure"
+#
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+srcdir=@srcdir@
+ICE_ROOT=@ICE_ROOT@
+ICE_SUPPORT_ROOT=@ICE_SUPPORT_ROOT@
+ICE_RELEASE_ROOT=@ICE_RELEASE_ROOT@
+ICE_HOST=@ICE_HOST@
+CC=@CC@
+CFLAGS=@CFLAGS@
+CXX=@CXX@
+CXXFLAGS=@CXXFLAGS@
+F77=@F77@
+FFLAGS=@FFLAGS@
+JAVAC=@JAVAC@
+JAVAINCLUDE=@JAVAINCLUDE@
+SHLIB_LD=@SHLIB_LD@
+SHLIB_LDFLAGS=@SHLIB_LDFLAGS@
+SHLIB_SUFFIX=@SHLIB_SUFFIX@
+AR=@AR@
+RANLIB=@RANLIB@
+STD_INCLUDES=@STD_INCLUDES@
+DEFS =@DEFS@
+LDFLAGS =@LDFLAGS@
+ICE_SYSTEM_LIBS=@ICE_SYSTEM_LIBS@
+ICE_X11_LIBS=@ICE_X11_LIBS@
+ICE_OPENGL_LIBS=@ICE_OPENGL_LIBS@
+ICE_CURSES_LIBS=@ICE_CURSES_LIBS@
+
+VPATH=${srcdir}
+.SUFFIXES:  .c .f .cxx
+
+
+#
+#  Generic Defines
+#
+ICE_DEFINE_FLAGS = -D$(ICE_HOST)
+
+ICE_INCLUDES = \
+	$(STD_INCLUDES) \
+	-I$(ICE_RELEASE_ROOT)/$(ICE_HOST)/include \
+
+
+ICE_COMPILE_FLAGS = \
+	$(ICE_DEFINE_FLAGS) \
+	$(ICE_INCLUDES)
+
+###
+# Objects to Build
+###
+
+ICE_EXTRA_SHLIBS = \
+	-L$(ICE_RELEASE_ROOT)/$(ICE_HOST)/lib \
+	-L$(ICE_SUPPORT_ROOT)/$(ICE_HOST)/lib \
+	-L$(exec_prefix)/lib \
+	-lhdf5 -lexpat
+
+ICE_NDGM_LIB = \
+	-lndgm
+
+XDMF_FORMAT_OBJECTS = \
+	XdmfArray.o \
+	XdmfCharArray.o \
+	XdmfDOM.o \
+	XdmfDataDesc.o \
+	XdmfExpression.o \
+	XdmfExprLex.o \
+	XdmfExprYacc.o \
+	XdmfFormat.o \
+	XdmfFormatMulti.o \
+	XdmfFormatHDF.o \
+	XdmfFormatXML.o \
+	XdmfLlist.o \
+	XdmfHeavyData.o \
+	XdmfHDF.o \
+	XdmfHDFSupport.o \
+	XdmfLightData.o \
+	XdmfObject.o \
+	XdmfParameter.o \
+	XdmfXNode.o \
+	XdmfTransform.o \
+	XdmfTree.o \
+	XdmfXMLParser.o
+
+XDMF_MODEL_OBJECTS = \
+	XdmfAttribute.o \
+	XdmfGeometry.o \
+	XdmfGrid.o \
+	XdmfTopology.o
+
+XDMF_NDGM_OBJECTS = \
+	H5FDndgm.o \
+	XdmfNDGM.o \
+	XdmfRuntime.o
+
+all : libXdmf.a
+	@if test $(ICE_WITH_PYTHON) == "YES"; then	\
+		$(MAKE) libXdmfPython.so;		\
+	fi;						
+	@if test $(ICE_WITH_TCL) == "YES"; then		\
+		$(MAKE) libXdmfTcl.so;			\
+	fi;						
+	@if test $(ICE_WITH_JAVA) == "YES"; then	\
+		$(MAKE) libXdmfJava.so;			\
+	fi;
+
+documentation :
+	doxygen ./XdmfDoxygen
+
+doc : documentation
+
+XdmfHDF.o : XdmfHDF.cxx XdmfHDF.h
+	@if test $(ICE_WITH_NDGM) == "YES"; then		\
+		echo "Building XdmfHDF with NDGM";		\
+		set -x ;$(CXX) -c 				\
+			-DHAVE_NDGM $(CXXFLAGS)			\
+			$(ICE_COMPILE_FLAGS) 			\
+			$(srcdir)/XdmfHDF.cxx;			\
+	else							\
+		echo "Building without NDGM";			\
+		set -x ;$(CXX) -c 				\
+			$(CXXFLAGS)				\
+			$(ICE_COMPILE_FLAGS) 			\
+			$(srcdir)/XdmfHDF.cxx;			\
+	fi;
+
+
+install : $(XDMF_FORMAT_OBJECTS) $(XDMF_MODEL_OBJECTS)
+	cp *.a $(ICE_RELEASE_ROOT)/$(ICE_HOST)/lib
+	cp *.so $(ICE_RELEASE_ROOT)/$(ICE_HOST)/lib
+	@if test $(ICE_WITH_PYTHON) == "YES"; then	\
+		set -x ;cp Xdmf.py $(ICE_RELEASE_ROOT)/lib/python;	\
+	fi;
+
+libXdmf.a : $(XDMF_FORMAT_OBJECTS) $(XDMF_MODEL_OBJECTS)
+	@if test $(ICE_WITH_NDGM) == "YES"; then		\
+		$(MAKE) XdmfWithNdgm;				\
+	else							\
+		$(AR) libXdmf.a $(XDMF_FORMAT_OBJECTS) $(XDMF_MODEL_OBJECTS);	\
+		$(RANLIB) libXdmf.a;				\
+		$(SHLIB_LD) $(SHLIB_LDFLAGS) -o libXdmf.so 	\
+			$(XDMF_FORMAT_OBJECTS) $(XDMF_MODEL_OBJECTS) \
+			$(ICE_EXTRA_SHLIBS);			\
+	fi;
+
+XdmfWithNdgm : $(XDMF_FORMAT_OBJECTS) $(XDMF_MODEL_OBJECTS) $(XDMF_NDGM_OBJECTS)
+	$(AR) libXdmf.a $(XDMF_FORMAT_OBJECTS) $(XDMF_MODEL_OBJECTS) $(XDMF_NDGM_OBJECTS)
+	$(RANLIB) libXdmf.a
+	$(SHLIB_LD) $(SHLIB_LDFLAGS) -o libXdmf.so \
+		$(XDMF_FORMAT_OBJECTS) $(XDMF_MODEL_OBJECTS) $(XDMF_NDGM_OBJECTS) \
+		$(ICE_EXTRA_SHLIBS) -lndgm
+
+libXdmfTcl.so : $(XDMF_FORMAT_OBJECTS) $(XDMF_MODEL_OBJECTS) XdmfTcl.o
+	@if test $(ICE_WITH_NDGM) == "YES"; then		\
+		set -x; $(SHLIB_LD) $(SHLIB_LDFLAGS) -o libXdmfTcl.so XdmfTcl.o \
+			$(XDMF_FORMAT_OBJECTS) $(XDMF_MODEL_OBJECTS) $(XDMF_NDGM_OBJECTS) \
+			$(ICE_EXTRA_SHLIBS) -lndgm;			\
+	else 							\
+		set -x; $(SHLIB_LD) $(SHLIB_LDFLAGS) -o libXdmfTcl.so XdmfTcl.o \
+			$(XDMF_FORMAT_OBJECTS) $(XDMF_MODEL_OBJECTS) \
+			$(ICE_EXTRA_SHLIBS);			\
+	fi;
+
+libXdmfPython.so : $(XDMF_FORMAT_OBJECTS) $(XDMF_MODEL_OBJECTS) XdmfPython.o
+	@if test $(ICE_WITH_NDGM) == "YES"; then		\
+		set -x; $(SHLIB_LD) $(SHLIB_LDFLAGS) -o libXdmfPython.so XdmfPython.o \
+			$(XDMF_FORMAT_OBJECTS) $(XDMF_MODEL_OBJECTS) $(XDMF_NDGM_OBJECTS) \
+			$(ICE_EXTRA_SHLIBS) -lndgm;			\
+	else 							\
+		set -x; $(SHLIB_LD) $(SHLIB_LDFLAGS) -o libXdmfPython.so XdmfPython.o \
+			$(XDMF_FORMAT_OBJECTS) $(XDMF_MODEL_OBJECTS) \
+			$(ICE_EXTRA_SHLIBS);			\
+	fi;
+	cp libXdmfPython.so Xdmfc.so
+
+
+libXdmfJava.so : $(XDMF_FORMAT_OBJECTS) $(XDMF_MODEL_OBJECTS) XdmfJava.o
+	@if test $(ICE_WITH_NDGM) == "YES"; then		\
+		set -x; $(SHLIB_LD) $(SHLIB_LDFLAGS) -o libXdmfJava.so XdmfJava.o \
+			$(XDMF_FORMAT_OBJECTS) $(XDMF_MODEL_OBJECTS) $(XDMF_NDGM_OBJECTS) \
+			$(ICE_EXTRA_SHLIBS) -lndgm;			\
+	else 							\
+		set -x; $(SHLIB_LD) $(SHLIB_LDFLAGS) -o libXdmfJava.so XdmfJava.o \
+			$(XDMF_FORMAT_OBJECTS) $(XDMF_MODEL_OBJECTS) \
+			$(ICE_EXTRA_SHLIBS);			\
+	fi;
+
+
+XdmfTcl.o : XdmfTcl.cxx
+	@if test $(ICE_WITH_NDGM) == "YES"; then		\
+		set -x; $(CXX) -c \
+			$(CXXFLAGS) \
+			$(ICE_COMPILE_FLAGS) \
+			-DHAVE_NDGM \
+			-DMAIN_SWIG_TCL_XDMF \
+			$<;	\
+	else \
+		set -x; $(CXX) -c \
+			$(CXXFLAGS) \
+			-DMAIN_SWIG_TCL_XDMF \
+			$(ICE_COMPILE_FLAGS) \
+			$<;	\
+	fi;
+
+XdmfJava.o : XdmfJava.cxx
+	@if test $(ICE_WITH_NDGM) == "YES"; then		\
+		set -x; $(CXX) -c \
+			$(CXXFLAGS) \
+			-DHAVE_NDGM \
+			$(ICE_COMPILE_FLAGS) \
+			$(JAVAINCLUDE) \
+			$<;	\
+	else \
+		set -x; $(CXX) -c \
+			$(CXXFLAGS) \
+			$(ICE_COMPILE_FLAGS) \
+			$(JAVAINCLUDE) \
+			$<;	\
+	fi;
+
+XdmfPython.o : XdmfPython.cxx
+	@if test $(ICE_WITH_NDGM) == "YES"; then		\
+		set -x; $(CXX) -c \
+			$(CXXFLAGS) \
+			-DHAVE_NDGM \
+			$(ICE_COMPILE_FLAGS) \
+			-I$(ICE_SUPPORT_ROOT)/include/python2.2 \
+			-I$(ICE_SUPPORT_ROOT)/$(ICE_HOST)/include/python2.2 \
+			-I$(prefix)/include/python2.2 \
+			-I$(exec_prefix)/include/python2.2 \
+			$<; \
+	else		\
+		set -x; $(CXX) -c \
+			$(CXXFLAGS) \
+			$(ICE_COMPILE_FLAGS) \
+			-I$(ICE_SUPPORT_ROOT)/include/python2.2 \
+			-I$(ICE_SUPPORT_ROOT)/$(ICE_HOST)/include/python2.2 \
+			-I$(prefix)/include/python2.2 \
+			-I$(exec_prefix)/include/python2.2 \
+			$<; \
+	fi;
+
+XdmfTcl.cxx : Xdmf.i $(ICE_OBJECTS)
+	@if test $(ICE_WITH_NDGM) == "YES"; then		\
+		echo "Creating Tcl Interface with NDGM";	\
+		set -x ;swig -v -c++ -make_default -includeall 	\
+			-tcl -prefix Xdmf  -namespace		\
+			-I. 					\
+			$(ICE_INCLUDES) 			\
+			-DHAVE_NDGM				\
+			-o XdmfTcl.cxx ${srcdir}/Xdmf.i;	\
+	else							\
+		echo "Creating Tcl Interface without NDGM";	\
+		set -x; swig -v -c++ -make_default -includeall	\
+			-I. 					\
+			-tcl -prefix Xdmf  -namespace		\
+			$(ICE_INCLUDES) 			\
+			-o XdmfTcl.cxx ${srcdir}/Xdmf.i;	\
+	fi
+
+XdmfPython.cxx : Xdmf.i $(ICE_OBJECTS)
+	@if test $(ICE_WITH_NDGM) == "YES"; then		\
+		echo "Creating Python Interface with NDGM";	\
+		set -x ;swig -v -c++ -make_default -includeall 	\
+			-shadow -python 			\
+			-I. 					\
+			$(ICE_INCLUDES) 			\
+			-DHAVE_NDGM				\
+			-o XdmfPython.cxx ${srcdir}/Xdmf.i;	\
+	else							\
+		echo "Creating Python Interface without NDGM";	\
+		set -x; swig -v -c++ -make_default -includeall	\
+			-shadow -python 			\
+			-I. 					\
+			$(ICE_INCLUDES) 			\
+			-o XdmfPython.cxx ${srcdir}/Xdmf.i;	\
+	fi
+
+
+XdmfJava.cxx : Xdmf.i $(ICE_OBJECTS)
+	@if test $(ICE_WITH_NDGM) == "YES"; then		\
+		echo "Creating Java Interface with NDGM";	\
+		set -x ;swig -v -c++ -make_default -includeall 	\
+			-shadow -java 				\
+			-I. 					\
+			$(ICE_INCLUDES) 			\
+			-DHAVE_NDGM				\
+			-o XdmfJava.cxx ${srcdir}/Xdmf.i;	\
+	else							\
+		echo "Creating Java Interface without NDGM";	\
+		set -x; swig -v -c++ -make_default -includeall	\
+			-shadow -java				\
+			-I. 					\
+			$(ICE_INCLUDES) 			\
+			-o XdmfJava.cxx ${srcdir}/Xdmf.i;	\
+	fi
+
+XdmfExprLex.o : Xdmflex.cxx
+	$(CXX) -c \
+		$(CXXFLAGS) \
+		$(ICE_COMPILE_FLAGS) \
+		-o XdmfExprLex.o \
+		Xdmflex.cxx
+
+Xdmflex.cxx : XdmfExpr.l XdmfExprYacc.cxx
+	flex -oXdmflex.cxx -Pdice_yy ${srcdir}/XdmfExpr.l
+
+XdmfExprYacc.cxx : XdmfExpr.y
+	bison -d -b XdmfExprYacc -p dice_yy ${srcdir}/XdmfExpr.y
+	mv XdmfExprYacc.tab.c XdmfExprYacc.cxx
+
+XdmfExprYacc.o : XdmfExprYacc.cxx XdmfExprLex.o
+	$(CXX) -c \
+		$(CXXFLAGS) \
+		$(ICE_COMPILE_FLAGS) \
+		-o XdmfExprYacc.o \
+		XdmfExprYacc.cxx
+
+clean :
+	rm -f *.o
+	rm -f *.a
+	rm -f *.so
+	rm -f core*
+	rm -f y.*
+	rm -f lex.*
+	rm -f XdmfTcl.cxx
+	rm -f XdmfJava.cxx
+	rm -f XdmfPython.cxx
+
+#
+# How To Compile
+#
+
+.f.o :
+	$(F77) -c \
+		$(ICE_INCLUDES) \
+		$(FFLAGS) $<
+
+.cxx.o :
+	$(CXX) -c \
+		$(CXXFLAGS) \
+		$(ICE_COMPILE_FLAGS) \
+		$<
+
+.c.o :
+	$(CC) -c \
+		$(CFLAGS) \
+		$(ICE_COMPILE_FLAGS) \
+		$<

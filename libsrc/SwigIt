@@ -1,0 +1,43 @@
+#!/bin/sh
+
+ICE_ROOT=`grep "ICE_ROOT=" Makefile | sed -e "s/ICE_ROOT=//g"`/include
+prefix=`grep "^prefix=" Makefile | sed -e "s/prefix=//g"`
+exec_prefix=`grep "^exec_prefix=" Makefile | sed -e "s/exec_prefix=//g"`
+OUTPUT_LANG="Tcl"
+args=""
+swigargs="-v -c++ -make_default -includeall -I${ICE_ROOT}/include -I${prefix}/include"
+while [ $# -gt 0 ]
+do
+	case $1 in 
+		-java )
+		OUTPUT_LANG="Java"
+		swigargs="$swigargs -shadow -java"
+		;;
+		-tcl )
+		swigargs="$swigargs -tcl -prefix Xdmf  -namespace"
+		;;
+		-python )
+		OUTPUT_LANG="Python"
+		swigargs="$swigargs -shadow -python"
+		;;
+		*)
+		args="$args $1"
+		;;
+	esac
+	shift
+done
+SWIG=swig
+
+echo ICE_ROOT = $ICE_ROOT
+echo $SWIG $swigargs
+
+echo "$SWIG $swigargs $args -o Xdmf${OUTPUT_LANG}.cxx Xdmf${OUTPUT_LANG}.i"
+$SWIG $swigargs $args -o Xdmf${OUTPUT_LANG}.cxx Xdmf${OUTPUT_LANG}.i
+case $OUTPUT_LANG in 
+	Python )
+#	echo "$SWIG $swigargs $args -o XdmfFormat${OUTPUT_LANG}.cxx XdmfFormat${OUTPUT_LANG}.i"
+#	$SWIG $swigargs $args -o XdmfFormat${OUTPUT_LANG}.cxx XdmfFormat${OUTPUT_LANG}.i
+	;;
+	*)
+	;;
+esac

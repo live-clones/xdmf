@@ -1,0 +1,108 @@
+##########################################################
+#
+# Friday December 29, 2000
+#
+##########################################################
+SHELL=/bin/sh
+
+
+
+# 
+# Defined values passed from "configure"
+#
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+srcdir=@srcdir@
+ICE_ROOT=@ICE_ROOT@
+ICE_HOST=@ICE_HOST@
+ICE_SUPPORT_ROOT=@ICE_SUPPORT_ROOT@
+ICE_RELEASE_ROOT=@ICE_RELEASE_ROOT@
+CC=@CC@
+CFLAGS=@CFLAGS@
+CXX=@CXX@
+CXXFLAGS=@CXXFLAGS@
+F77=@F77@
+FFLAGS=@FFLAGS@
+JAVAC=@JAVAC@
+JAVAINCLUDE=@JAVAINCLUDE@
+SHLIB_LD=@SHLIB_LD@
+SHLIB_LDFLAGS=@SHLIB_LDFLAGS@
+SHLIB_SUFFIX=@SHLIB_SUFFIX@
+AR=@AR@
+RANLIB=@RANLIB@
+STD_INCLUDES=@STD_INCLUDES@
+DEFS =@DEFS@
+LDFLAGS =@LDFLAGS@
+ICE_SYSTEM_LIBS=@ICE_SYSTEM_LIBS@
+ICE_X11_LIBS=@ICE_X11_LIBS@
+ICE_OPENGL_LIBS=@ICE_OPENGL_LIBS@
+ICE_CURSES_LIBS=@ICE_CURSES_LIBS@
+
+VPATH=${srcdir}
+.SUFFIXES:  .c .f .cxx
+
+#
+#  Generic Defines
+#
+ICE_DEFINE_FLAGS =-D$(ICE_HOST)
+
+ICE_INCLUDES = \
+	$(STD_INCLUDES) \
+	-I$(srcdir)/../libsrc \
+	-I$(ICE_SUPPORT_ROOT)/$(ICE_HOST)/include \
+	-I$(ICE_RELEASE_ROOT)/$(ICE_HOST)/include/Ndgm \
+	-I$(exec_prefix)/include/vtk
+
+ICE_COMPILE_FLAGS = \
+	$(ICE_DEFINE_FLAGS) \
+	$(ICE_INCLUDES)
+
+ICE_LDFLAGS = \
+	-L../libsrc \
+	-L$(ICE_SUPPORT_ROOT)/$(ICE_HOST)/lib \
+	-L$(exec_prefix)/lib \
+	-lXdmfFormat -lexpat -lhdf5 -lndgm \
+	$(ICE_SYSTEM_LIBS)
+
+EXEC = \
+	SpeedTest \
+	XdmfFormatExample
+
+all : $(EXEC)
+
+clean :
+	rm -f $(EXEC)
+	rm -f *.o
+	rm -f *.a
+	rm -f *.so
+	rm -f core*
+
+#
+# Special
+#
+
+FromExoII : FromExoII.cxx
+	$(CXX) \
+		-o $@ \
+		$(CFLAGS) \
+		$(ICE_COMPILE_FLAGS) \
+		-I/unsupported/ICE/CSM/Access/inc \
+		$(srcdir)/FromExoII.cxx \
+		$(ICE_LDFLAGS) \
+		-L/unsupported/ICE/CSM/Access/lib \
+		-lexoIIv2c -lnetcdf \
+		$(LIBS )
+
+#
+# How To Compile
+#
+
+.cxx :
+	$(CXX) \
+		-o $@ \
+		$(CFLAGS) \
+		$(ICE_COMPILE_FLAGS) \
+		$< \
+		$(ICE_LDFLAGS) \
+		$(LIBS )

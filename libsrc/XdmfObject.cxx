@@ -1,0 +1,111 @@
+/*******************************************************************/
+/*                               XDMF                              */
+/*                   eXtensible Data Model and Format              */
+/*                                                                 */
+/*  Id : Id  */
+/*  Date : $Date$ */
+/*  Version : $Revision$ */
+/*                                                                 */
+/*  Author:                                                        */
+/*     Jerry A. Clarke                                             */
+/*     clarke@arl.army.mil                                         */
+/*     US Army Research Laboratory                                 */
+/*     Aberdeen Proving Ground, MD                                 */
+/*                                                                 */
+/*     Copyright @ 2002 US Army Research Laboratory                */
+/*     All Rights Reserved                                         */
+/*     See Copyright.txt or http://www.arl.hpc.mil/ice for details */
+/*                                                                 */
+/*     This software is distributed WITHOUT ANY WARRANTY; without  */
+/*     even the implied warranty of MERCHANTABILITY or FITNESS     */
+/*     FOR A PARTICULAR PURPOSE.  See the above copyright notice   */
+/*     for more information.                                       */
+/*                                                                 */
+/*******************************************************************/
+#include "XdmfObject.h"
+#include <strstream>
+
+using namespace std;
+
+static XdmfInt32 GlobalDebugFlag = 0;
+static XdmfInt64 NameCntr = 0;
+
+// This is a comment
+XdmfObject::XdmfObject() {
+  this->Debug = 0;
+}
+
+XdmfObject::~XdmfObject() {
+}
+
+XdmfInt32
+XdmfObject::GetGlobalDebug(){
+  return GlobalDebugFlag;
+}
+
+void
+XdmfObject::SetGlobalDebug( XdmfInt32 Value ){
+  GlobalDebugFlag = Value;
+}
+
+XdmfInt32
+GetGlobalDebug(){
+  return GlobalDebugFlag;
+}
+
+void
+SetGlobalDebug( XdmfInt32 Value ){
+  GlobalDebugFlag = Value;
+}
+
+void
+SetGlobalDebugOn(){
+  GlobalDebugFlag = 1;
+}
+
+void
+SetGlobalDebugOff(){
+  GlobalDebugFlag = 0;
+}
+
+
+XdmfString GetUnique( XdmfString Pattern ) {
+static char  ReturnName[80];
+ostrstream  String(ReturnName,80);
+
+if( Pattern == NULL ) Pattern = "Xdmf_";
+String << Pattern << NameCntr++ << ends;
+return( ReturnName );
+}
+
+char *
+XdmfObjectToHandle( XdmfObject *Source ){
+ostrstream Handle;
+long long RealObjectPointer;
+XdmfObject **Rpt = &Source;
+
+RealObjectPointer = (long long)*Rpt;
+Handle << "_" << hex << RealObjectPointer << "_" << Source->GetClassName() << ends;
+// cout << "XdmfObjectToHandle : Source = " << Source << endl;
+// cout << "Handle = " << (XdmfString)Handle.str() << endl;
+return( (XdmfString)Handle.str() );
+}
+
+XdmfObject *
+HandleToXdmfObject( char *Source ){
+istrstream Handle( (const char *)Source, strlen( (const char *)Source ));
+char  c;
+long long RealObjectPointer;
+XdmfObject *RealObject = NULL, **Rpt = &RealObject;
+
+Handle >> c;
+if( c != '_' ) {
+  XdmfErrorMessage("Bad Handle " << Source );
+  return( NULL );
+  }
+Handle >> hex >> RealObjectPointer;
+// cout << "Source = " << Source << endl;
+// cout << "RealObjectPointer = " << RealObjectPointer << endl;
+*Rpt = (XdmfObject *)RealObjectPointer;
+return( RealObject );
+}

@@ -1,0 +1,112 @@
+##########################################################
+#
+# Create Source Using : flex, bison, and swig
+# Create Documentation Using : Doxygen
+#
+##########################################################
+
+#
+#######################
+# 
+SHELL=/bin/sh
+ICE_WITH_NDGM = NO
+ICE_WITH_PYTHON = YES
+ICE_WITH_TCL = YES
+ICE_WITH_JAVA = YES
+
+srcdir=/vis/clarke/IceDevel02/Base/Xdmf/libsrc
+#
+#######################
+#
+
+VPATH=${srcdir}
+
+ICE_INCLUDES = -I.
+
+all : XdmfExprLex.cxx XdmfExprYacc.cxx Wrappers
+
+documentation :
+	doxygen ./XdmfDoxygen
+
+doc : documentation
+
+XdmfExprLex.cxx : XdmfExpr.l XdmfExprYacc.cxx
+	flex -oXdmfExprLex.cxx -Pdice_yy ${srcdir}/XdmfExpr.l
+
+XdmfExprYacc.cxx : XdmfExpr.y
+	bison -d -b XdmfExprYacc -p dice_yy ${srcdir}/XdmfExpr.y
+	mv XdmfExprYacc.tab.c XdmfExprYacc.cxx
+
+Wrappers : Xdmf.i
+	@if test $(ICE_WITH_PYTHON) = "YES"; then	\
+		$(MAKE) -f MakeSource XdmfPython.cxx;		\
+	fi;						
+	@if test $(ICE_WITH_TCL) = "YES"; then		\
+		$(MAKE) -f MakeSource XdmfTcl.cxx;			\
+	fi;						
+	@if test $(ICE_WITH_JAVA) = "YES"; then	\
+		$(MAKE) -f MakeSource XdmfJava.cxx;			\
+	fi;
+
+
+XdmfTcl.cxx : Xdmf.i 
+	@if test $(ICE_WITH_NDGM) = "YES"; then		\
+		echo "Creating Tcl Interface with NDGM";	\
+		set -x ;swig -v -c++ -make_default -includeall 	\
+			-tcl -prefix Xdmf  -namespace		\
+			$(ICE_INCLUDES) 			\
+			-DHAVE_NDGM				\
+			-o XdmfTcl.cxx ${srcdir}/Xdmf.i;	\
+	else							\
+		echo "Creating Tcl Interface without NDGM";	\
+		set -x; swig -v -c++ -make_default -includeall	\
+			$(ICE_INCLUDES) 			\
+			-tcl -prefix Xdmf  -namespace		\
+			-o XdmfTcl.cxx ${srcdir}/Xdmf.i;	\
+	fi
+
+XdmfPython.cxx : Xdmf.i 
+	@if test $(ICE_WITH_NDGM) = "YES"; then		\
+		echo "Creating Python Interface with NDGM";	\
+		set -x ;swig -v -c++ -make_default -includeall 	\
+			-shadow -python 			\
+			$(ICE_INCLUDES) 			\
+			-DHAVE_NDGM				\
+			-o XdmfPython.cxx ${srcdir}/Xdmf.i;	\
+	else							\
+		echo "Creating Python Interface without NDGM";	\
+		set -x; swig -v -c++ -make_default -includeall	\
+			-shadow -python 			\
+			$(ICE_INCLUDES) 			\
+			-o XdmfPython.cxx ${srcdir}/Xdmf.i;	\
+	fi
+
+
+XdmfJava.cxx : Xdmf.i $(ICE_OBJECTS)
+	@if test $(ICE_WITH_NDGM) = "YES"; then		\
+		echo "Creating Java Interface with NDGM";	\
+		set -x ;swig -v -c++ -make_default -includeall 	\
+			-shadow -java 				\
+			$(ICE_INCLUDES) 			\
+			-DHAVE_NDGM				\
+			-o XdmfJava.cxx ${srcdir}/Xdmf.i;	\
+	else							\
+		echo "Creating Java Interface without NDGM";	\
+		set -x; swig -v -c++ -make_default -includeall	\
+			-shadow -java				\
+			$(ICE_INCLUDES) 			\
+			-o XdmfJava.cxx ${srcdir}/Xdmf.i;	\
+	fi
+
+clean :
+	rm -f *.o
+	rm -f *.a
+	rm -f *.so
+	rm -f core*
+	rm -f y.*
+	rm -f lex.*
+	rm -f XdmfTcl.cxx
+	rm -f XdmfJava.cxx
+	rm -f XdmfPython.cxx
+	rm -f XdmfExprLex.cxx 
+	rm -f XdmfExprYacc.cxx

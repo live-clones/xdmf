@@ -1,0 +1,761 @@
+/*******************************************************************/
+/*                               XDMF                              */
+/*                   eXtensible Data Model and Format              */
+/*                                                                 */
+/*  Id : Id  */
+/*  Date : $Date$ */
+/*  Version : $Revision$ */
+/*                                                                 */
+/*  Author:                                                        */
+/*     Jerry A. Clarke                                             */
+/*     clarke@arl.army.mil                                         */
+/*     US Army Research Laboratory                                 */
+/*     Aberdeen Proving Ground, MD                                 */
+/*                                                                 */
+/*     All Rights Reserved                                         */
+/*     See Copyright.txt or http://www.arl.hpc.mil/ice for details */
+/*                                                                 */
+/*     This software is distributed WITHOUT ANY WARRANTY; without  */
+/*     even the implied warranty of MERCHANTABILITY or FITNESS     */
+/*     FOR A PARTICULAR PURPOSE.  See the above copyright notice   */
+/*     for more information.                                       */
+/*                                                                 */
+/*******************************************************************/
+#include "XdmfHDF.h"
+
+#ifdef HAVE_NDGM
+extern "C" {
+#include "H5FDndgm.h"
+}
+#endif
+
+#ifdef WIN32
+#define XDMF_HDF5_SIZE_T        ssize_t
+#else
+#define XDMF_HDF5_SIZE_T        hsize_t
+#endif
+
+
+
+XdmfHDF::XdmfHDF() {
+
+  H5dont_atexit();
+
+  // We Know Nothing is Open
+  this->File = H5I_BADID;
+  this->Cwd = H5I_BADID;
+  this->Dataset = H5I_BADID;
+  this->CreatePlist = H5P_DEFAULT;
+  this->AccessPlist = H5P_DEFAULT;
+
+  // Defaults
+  this->NumberOfChildren = 0;
+  strcpy( this->CwdName, "" );
+}
+
+XdmfHDF::~XdmfHDF() {
+XdmfInt32 i;
+
+this->Close();
+for( i = 0 ; i < this->NumberOfChildren ; i++ ){
+  delete this->Child[ i ];
+  }
+}
+
+//
+// Set the next child in the list
+//
+void
+XdmfHDF::SetNextChild( const char *Name)
+{
+
+this->Child[ this->NumberOfChildren ] = new char[ strlen( Name ) + 2 ];
+strcpy( this->Child[ this->NumberOfChildren ], Name );
+this->NumberOfChildren++;
+}
+
+//
+// Get Directory Name from Dataset
+//
+XdmfString
+GetDirectoryName( const char *Name )
+{
+static char Directory[XDMF_MAX_STRING_LENGTH];
+char *slash;
+
+strcpy( Directory, Name );
+slash = strrchr( Directory, '/' );
+if( slash == NULL ){
+  // No Slash Present
+  strcpy( Directory, ".");  
+} else if( slash == &Directory[0] ) {
+  // Root
+  strcpy( Directory, "/" );
+} else {
+  *slash = '\0';
+}
+
+return( Directory );
+}
+
+//
+// Get Type of Object
+//
+XdmfInt32
+XdmfHDF::Info( hid_t Group, const char *Name )
+{
+H5G_stat_t StatusBuffer;
+herr_t Status;
+
+H5E_BEGIN_TRY {
+  Status = H5Gget_objinfo(Group,
+      Name,
+      0,
+      &StatusBuffer );
+} H5E_END_TRY;
+
+if( ( Status >= 0 )  && ( StatusBuffer.type < H5G_NTYPES ) ){
+    return( StatusBuffer.type );
+}
+
+return( H5G_UNKNOWN );
+}
+
+//
+// Used by Giterate()
+//
+static herr_t
+XdmfHDFList( hid_t group, const char *name, void *me )
+{
+XdmfHDF *ThisClassPtr = ( XdmfHDF *)me;
+
+switch ( ThisClassPtr->Info( group, name ) ) {
+  case H5G_GROUP :
+    break;
+  case H5G_DATASET :
+    break;
+  default :
+    return(0);
+  }
+ThisClassPtr->SetNextChild( name );
+return(0);
+}
+
+//
+// Set the Current Working Directory
+//
+XdmfInt32
+XdmfHDF::SetCwdName( XdmfString Directory )
+{
+hid_t    NewDirectory;
+XdmfString  NewDirectoryName = Directory;
+XdmfInt32  i, Type;
+
+Type = this->Info( this->Cwd, Directory );
+if ( Type != H5G_GROUP ) {
+  NewDirectoryName = GetDirectoryName( Directory );
+  Type = this->Info( this->Cwd, NewDirectoryName );
+  if ( Type != H5G_GROUP ) {
+    return( XDMF_FAIL );
+  }
+}
+
+if( NewDirectoryName[0] == '/' ){
+  strcpy( this->CwdName, NewDirectoryName );
+} else {
+  if( NewDirectoryName[ strlen( NewDirectoryName ) - 1 ] != '/' ) {
+    strcat( this->CwdName, "/");
+  }
+  strcat( this->CwdName, NewDirectoryName);
+}
+for( i = 0 ; i < this->NumberOfChildren ; i++ ){
+  delete this->Child[ i ];
+  }
+this->NumberOfChildren = 0;
+H5Giterate( this->Cwd,
+    NewDirectoryName,
+    NULL,
+    XdmfHDFList,
+    this );
+NewDirectory = H5Gopen( this->Cwd, NewDirectoryName );
+H5Gclose( this->Cwd );
+this->Cwd = NewDirectory;
+
+return( XDMF_SUCCESS );
+}
+
+
+XdmfInt32
+XdmfHDF::Mkdir( XdmfString Name )
+{
+hid_t    NewDirectory = -1;
+
+XdmfDebug( " Checking for Existance of HDF Directory " << Name );
+H5E_BEGIN_TRY {
+NewDirectory = H5Gopen( this->Cwd, Name );
+} H5E_END_TRY;
+if ( NewDirectory < 0 ) {
+  XdmfDebug( " Creating HDF Directory " << Name );
+  H5Gcreate( this->Cwd, Name , 0);
+} else {
+XdmfDebug(Name << " Already exists");
+}
+
+// Re-Scan Children
+return( this->SetCwdName( this->CwdName ) );
+}
+
+XdmfInt32
+XdmfHDF::Close() {
+
+XdmfDebug("Closing");
+if ( this->CreatePlist != H5P_DEFAULT ){
+  XdmfDebug("Closing Create Plist");
+  H5Pclose( this->CreatePlist );
+  this->CreatePlist = H5P_DEFAULT;
+  }
+if ( this->AccessPlist != H5P_DEFAULT ){
+  XdmfDebug("Closing Access Plist");
+  H5Pclose( this->AccessPlist );
+  this->AccessPlist = H5P_DEFAULT;
+  }
+if ( this->Cwd != H5I_BADID ){
+  XdmfDebug("Closing Current Group");
+  H5Gclose(this->Cwd);
+  this->Cwd = H5I_BADID;
+  }
+if ( this->Dataset != H5I_BADID ){
+  XdmfDebug("Closing Dataset");
+  H5Dclose(this->Dataset);
+  this->Dataset = H5I_BADID;
+  }
+
+if (this->File != H5I_BADID ) {
+  XdmfDebug("Closing File");
+  H5Fclose(this->File);  
+  this->File = H5I_BADID;
+  }
+
+return( XDMF_SUCCESS );
+}
+
+XdmfInt32
+XdmfHDF::CreateDataset( XdmfString Path ) {
+
+XdmfString  Pathname, Slash;
+hid_t    Directory;
+
+if( Path ) {
+  XdmfString lastcolon;
+
+  // Skip Colons
+    lastcolon = strrchr( Path, ':' );
+  if( lastcolon != NULL ){
+    Path = lastcolon;
+    Path++;
+    }
+  this->SetPath( Path );
+  }
+XdmfDebug( "Creating HDF Dataset " <<
+  this->Path << "  Rank = " << this->GetRank() );
+
+// Check That Directory Exists
+Pathname = strdup( this->Path );
+Slash = strrchr( Pathname, '/' );
+if( Slash != NULL ){
+  XdmfString  TmpSlash;
+
+
+  *Slash = '\0';
+  TmpSlash = Pathname;
+
+  // This is no necessarily an error
+  H5E_BEGIN_TRY {
+  Directory = H5Gopen( this->Cwd, Pathname );
+  } H5E_END_TRY;
+  if( Directory < 0 ){
+    // Create All Subdirectories
+    *Slash = '/';
+    if( Directory > 0  ) {
+      H5Gclose( Directory );
+    }
+    XdmfDebug("Createing Subdirectories ...");
+    if( *TmpSlash == '/' ){
+      // Skip Leading Slash
+      TmpSlash++;
+      }
+    while( TmpSlash <= Slash ){
+      if( *TmpSlash == '/' ){
+        *TmpSlash = '\0';
+        H5E_BEGIN_TRY {
+        Directory = H5Gopen( this->Cwd, Pathname );
+        } H5E_END_TRY;
+        if( Directory < 0 ){
+          XdmfDebug("Creating Directory" << Pathname );
+          Directory = H5Gcreate( this->Cwd, Pathname, 0);
+          if( Directory < 0 ){
+            XdmfErrorMessage("Can't Create " << Pathname );
+            return( XDMF_FAIL ); 
+          }
+          H5Gclose( Directory );
+        } else {
+          XdmfDebug(Pathname << " Already Exists");
+          H5Gclose( Directory );
+          }
+        *TmpSlash = '/';
+        }
+      TmpSlash++;
+      }
+  } else {
+    H5Gclose( Directory );
+  }
+}
+
+free( Pathname );
+XdmfDebug("Checking for existance of " << this->Path );
+H5E_BEGIN_TRY {
+  this->Dataset = H5Dopen( this->Cwd, this->Path );
+} H5E_END_TRY;
+if( this->Dataset < 0 ) {
+  XdmfDebug("Creating New Dataset");
+  this->Dataset = H5Dcreate(this->Cwd,
+      this->Path,
+      this->GetDataType(),
+      this->GetDataSpace(),
+      H5P_DEFAULT);
+} else {
+  XdmfDebug("Dataset Exists");
+  this->CopyType( H5Dget_type( this->Dataset ) );
+  this->CopyShape( H5Dget_space( this->Dataset ) );
+  }
+if( this->Dataset < 0 ){
+  return( XDMF_FAIL );
+  }
+return( XDMF_SUCCESS );
+}
+
+
+XdmfInt32
+XdmfHDF::OpenDataset() {
+
+
+if( this->Dataset > 0 ) {
+  // There is a currently open Dataset
+  H5Dclose(this->Dataset);
+  }
+
+this->Dataset = H5Dopen(this->Cwd, this->Path);
+if( this->Dataset < 0 ){
+  XdmfErrorMessage("Cannot find dataset " << this->Cwd <<
+    "/" << this->Path );
+  return( XDMF_FAIL );  
+  }
+this->CopyType( H5Dget_type( this->Dataset ) );
+this->CopyShape( H5Dget_space( this->Dataset ) );
+
+return( XDMF_SUCCESS );
+}
+
+XdmfArray *
+XdmfHDF::Read( XdmfArray *Array ) {
+
+herr_t      status;
+XDMF_HDF5_SIZE_T  src_npts, dest_npts;
+
+if ( Array == NULL ){
+  Array = new XdmfArray;
+  Array->CopyType( this->GetDataType() );
+  if( this->GetNumberOfElements() == this->GetSelectionSize() ) {
+    Array->CopyShape( this->GetDataSpace() );
+  } else {
+    Array->SetNumberOfElements( this->GetSelectionSize() );
+    }
+  }
+
+if( Array->GetDataPointer() == NULL ){
+  XdmfErrorMessage("Memory Object Array has no data storage");
+  return( NULL );
+  }
+
+src_npts = H5Sget_select_npoints( this->GetDataSpace() );
+dest_npts = H5Sget_select_npoints( Array->GetDataSpace() );
+if( src_npts != dest_npts ) {
+  XdmfErrorMessage("Source and Target Spaces specify different sizes");
+  XdmfErrorMessage("Source = " << src_npts << " items");
+  XdmfErrorMessage("Target = " << dest_npts << " items");
+  return( NULL );
+} else {
+  XdmfDebug("Reading " << src_npts << " items");
+}
+
+status = H5Dread( this->Dataset,
+      Array->GetDataType(),
+      Array->GetDataSpace(),
+      this->GetDataSpace(),
+      H5P_DEFAULT,
+      Array->GetDataPointer() );
+
+if ( status < 0 ) {
+  return( NULL );
+  }
+return( Array );
+}
+
+XdmfArray *
+XdmfHDF::Write( XdmfArray *Array ) {
+
+herr_t    status;
+XDMF_HDF5_SIZE_T src_npts, dest_npts;
+
+if ( Array == NULL ){
+  XdmfErrorMessage("No Array to Write");
+  return( NULL );
+  }
+if( Array->GetDataPointer() == NULL ){
+  XdmfErrorMessage("Memory Object Array has no data storage");
+  return( NULL );
+  }
+if( this->Dataset == H5I_BADID ){
+  XdmfDebug("Attempt Create");
+  this->CopyType( Array );
+  this->CopyShape( Array );
+  if( this->CreateDataset() != XDMF_SUCCESS ){
+    XdmfErrorMessage("Unable to Create Dataset");
+    return( NULL );
+    }
+  }
+
+
+src_npts = H5Sget_select_npoints( this->GetDataSpace() );
+dest_npts = H5Sget_select_npoints( Array->GetDataSpace() );
+if( src_npts != dest_npts ) {
+  XdmfErrorMessage("Source and Target Spaces specify different sizes");
+  XdmfErrorMessage("Source = " << src_npts << " items");
+  XdmfErrorMessage("Target = " << dest_npts << " items");
+  return( NULL );
+} else {
+  XdmfDebug("Writing " << src_npts << " items");
+}
+
+status = H5Dwrite( this->Dataset,
+      Array->GetDataType(),
+      Array->GetDataSpace(),
+      this->GetDataSpace(),
+      H5P_DEFAULT,
+      Array->GetDataPointer() );
+
+if ( status < 0 ) {
+  return( NULL );
+  }
+return( Array );
+}
+
+
+XdmfInt32
+XdmfHDF::Open( char *DataSetName , char *Access ) {
+
+// char    *Domain, *File, *Path;
+char    *lastcolon, *firstcolon;
+XdmfInt32  status, flags = H5F_ACC_RDWR;
+XdmfInt32  AllowCreate = 0;
+char    FullFileName[XDMF_MAX_STRING_LENGTH];
+
+FullFileName[0] = '\0';
+if( DataSetName != NULL ) {
+  char  *NewName = NULL;
+  NewName = DataSetName = strdup( DataSetName );
+  // Get Parts from Fulll Name
+  //   Start from the back
+  lastcolon = strrchr( DataSetName, ':' );
+  firstcolon = strchr( DataSetName, ':' );
+
+  if( ( lastcolon == NULL ) && ( firstcolon == NULL ) ){
+  // No : in name so "name" is a Dataset
+  XdmfDebug("No Colons in HDF Filename");
+  strcpy(this->Path, DataSetName );
+  } else if( lastcolon != firstcolon ) {
+  // Two :'s 
+  // This is a full name
+  *lastcolon = '\0';
+  lastcolon++;
+  strcpy(this->Path, lastcolon );
+  *firstcolon = '\0';
+  firstcolon++;
+  strcpy(this->FileName, firstcolon );
+  strcpy(this->Domain, DataSetName);
+  XdmfDebug("Two Colons -  Full HDF Filename Domain : " <<
+    this->Domain << " File " <<
+    this->FileName);
+  } else {
+  // One :
+  //  
+  *firstcolon = '\0';
+  firstcolon++;
+  if ( ( STRCASECMP( DataSetName, "FILE" ) == 0 ) ||
+    ( STRCASECMP( DataSetName, "NDGM" ) == 0 ) ||
+    ( STRCASECMP( DataSetName, "GASS" ) == 0 ) ||
+    ( STRCASECMP( DataSetName, "CORE" ) == 0 ) ||
+    ( STRCASECMP( DataSetName, "DUMMY" ) == 0 ) ) {
+    // Domain::File
+    strcpy( this->Domain, DataSetName);
+    strcpy( this->FileName, firstcolon );
+  XdmfDebug("Two Colons -  Domain : " <<
+    this->Domain << " File " <<
+    this->FileName);
+  } else {
+    // File:Path
+    strcpy( this->FileName, DataSetName);
+    strcpy( this->Path, firstcolon );
+  XdmfDebug("Two Colons -  File : " <<
+    this->FileName << " Path " <<
+    this->Path);
+  }
+
+  }
+  if( NewName ) free( NewName );
+}
+
+if ( Access != NULL ){
+  strcpy( this->Access, Access );
+}
+
+if( STRCASECMP( this->Access, "RW" ) == 0 ) {
+  // Read, Write, Create
+  flags = H5F_ACC_RDWR;
+  AllowCreate = 1;
+} else if( STRCASECMP( this->Access, "WR" ) == 0 ) {
+  // Read, Write, Create
+  flags = H5F_ACC_RDWR;
+  AllowCreate = 1;
+} else if( STRCASECMP( this->Access, "R+" ) == 0 ) {
+  // Read, Write
+  flags = H5F_ACC_RDWR;
+} else if( STRCASECMP( this->Access, "W+" ) == 0 ) {
+  // Read, Write
+  flags = H5F_ACC_RDWR | H5F_ACC_TRUNC;
+} else if( STRCASECMP( this->Access, "W" ) == 0 ) {
+  // Read, Write, Create
+  flags = H5F_ACC_RDWR | H5F_ACC_TRUNC;
+  AllowCreate = 1;
+} else if( STRCASECMP( this->Access, "R" ) == 0 ) {
+  // Read
+  flags = H5F_ACC_RDONLY;
+} else {
+  flags = H5F_ACC_RDONLY;
+}
+
+
+XdmfDebug("Using Domain " << this->Domain );
+    if( STRCASECMP( this->Domain, "CORE" ) == 0 ) {
+      XdmfDebug("Using CORE Interface");  
+      if( this->AccessPlist != H5P_DEFAULT ) {
+        H5Pclose( this->AccessPlist );
+        }
+      this->AccessPlist = H5Pcreate( H5P_FILE_ACCESS );
+//      H5Pset_fapl_core( this->AccessPlist, 1000000, 1 );
+      H5Pset_fapl_core( this->AccessPlist, 1000000, 0 );
+    } else if( STRCASECMP( this->Domain, "NDGM" ) == 0 ) {
+#ifdef HAVE_NDGM
+      XdmfDebug("Using NDGM Interface");  
+      H5FD_ndgm_init();
+      this->AccessPlist = H5Pcreate( H5P_FILE_ACCESS );
+      XdmfDebug("Using NdgmHost " << this->GetNdgmHost() );
+      if( strlen( this->GetNdgmHost() ) < 2 ) {
+        H5Pset_fapl_ndgm( this->AccessPlist, 1000000, NULL);
+      } else {
+        H5Pset_fapl_ndgm( this->AccessPlist, 1000000, this->GetNdgmHost());
+      }
+#else
+      XdmfErrorMessage("NDGM Interface is unavailable");
+      return( XDMF_FAIL );  
+#endif
+    } else if( STRCASECMP( this->Domain, "GASS" ) == 0 ) {
+    } else {
+      XdmfDebug("Using File Interface, Path = " << this->GetWorkingDirectory() );
+      if( ( strlen( this->GetWorkingDirectory() ) > 0 ) && 
+        ( this->FileName[0] != '/' ) ){
+        strcat( FullFileName, this->GetWorkingDirectory() );
+        strcat( FullFileName, "/" );
+      }
+    }
+// ????
+if ( 1  ) {
+
+strcat( FullFileName, this->FileName );
+
+// printf("Opening %s flags 0x%X\n", this->FileName, flags );
+// Turn of Errors if Creation is Allowed
+if( AllowCreate ) {
+  H5E_BEGIN_TRY {
+  this->File = H5Fopen(FullFileName, flags, this->AccessPlist);
+  } H5E_END_TRY;
+} else {
+  this->File = H5Fopen(FullFileName, flags, this->AccessPlist);
+}
+if( this->File < 0 ){
+  XdmfDebug("Open failed, Checking for Create");
+  if( AllowCreate ) {
+    // File Doesn't Exist
+    // So Create it and Return
+    if( STRCASECMP( this->Domain, "CORE" ) == 0 ) {
+      XdmfDebug("Using CORE Interface");  
+      if( this->AccessPlist != H5P_DEFAULT ) {
+        H5Pclose( this->AccessPlist );
+        }
+      this->AccessPlist = H5Pcreate( H5P_FILE_ACCESS );
+//      H5Pset_fapl_core( this->AccessPlist, 1000000, 1);
+      H5Pset_fapl_core( this->AccessPlist, 1000000, 0);
+    } else if( STRCASECMP( this->Domain, "NDGM" ) == 0 ) {
+      XdmfDebug("Using NDGM Interface");  
+#ifdef HAVE_NDGM
+      H5FD_ndgm_init();
+      this->AccessPlist = H5Pcreate( H5P_FILE_ACCESS );
+      XdmfDebug("Using NdgmHost " << this->GetNdgmHost() );
+      if( strlen( this->GetNdgmHost() ) < 2 ) {
+        H5Pset_fapl_ndgm( this->AccessPlist, 1000000, NULL);
+      } else {
+        H5Pset_fapl_ndgm( this->AccessPlist, 1000000, this->GetNdgmHost() );
+      }
+#else
+      XdmfErrorMessage("NDGM interface is unavailable");
+      return( XDMF_FAIL );
+#endif
+    } else if( STRCASECMP( this->Domain, "FILE" ) == 0 ) {
+    }
+    this->File = H5Fcreate(this->FileName,
+      H5F_ACC_TRUNC,
+      this->CreatePlist,
+      this->AccessPlist);
+    if( this->File < 0 ){
+      XdmfErrorMessage( "Cannot create " << this->GetFileName() );
+      return( XDMF_FAIL );  
+    }
+  } else {
+    XdmfErrorMessage( "Cannot open " << this->GetFileName() );
+    return( XDMF_FAIL );  
+    }
+  }
+this->Cwd = H5Gopen(this->File, "/");
+}
+XdmfDebug("File Open at /");
+
+status = XDMF_SUCCESS;
+if( this->Path[0] != '\0' ){
+  XdmfInt32  Type;
+
+  Type = Info( this->Cwd, this->Path );
+  switch( Type ) {
+    case H5G_GROUP :
+      XdmfDebug("Attempt Cd to Path " << this->Path );
+      status = this->SetCwdName( this->Path );
+      break;
+    case H5G_DATASET :
+      XdmfDebug("Attempt OpenDataset of Path " << this->Path );
+      status = this->OpenDataset();
+      break;
+    default :
+      XdmfDebug( "H5 Data " <<
+        this->Path <<
+        " does not exist");
+      status = XDMF_FAIL;
+      break;
+    
+    }
+
+}
+
+return( status );
+}
+
+XdmfArray *CopyArray( XdmfArray *Source, XdmfArray *Target ) {
+
+XdmfString  H5Name;
+XdmfHDF    Hdf;
+XdmfArray  *NewArray;
+char    FullName[ 80 ];
+
+if( Target == NULL ){
+  NewArray = Target = new XdmfArray( Source->GetNumberType() );
+  Target->SetNumberOfElements( Source->GetSelectionSize() );
+  }
+// Build a Unique Name
+H5Name = GetUnique( "CORE:XdmfJunk" );
+strcpy( FullName, H5Name );
+// strcat( FullName, ".h5:/" );
+strcat( FullName, ".h5:/TempData" );
+Hdf.CopyType( Source );
+if( Source->GetSelectionSize() == Source->GetNumberOfElements() ) {
+  Hdf.CopyShape( Source );
+} else {
+  XdmfInt64  Dimensions[2];
+
+  Dimensions[0] = Source->GetSelectionSize();
+  Hdf.SetShape( 1, Dimensions );
+}
+Hdf.Open( FullName, "rw" );
+if( Hdf.CreateDataset( FullName ) != XDMF_SUCCESS ){
+  XdmfErrorMessage("Can't Create Temp Dataset " << FullName );
+  if( NewArray ){
+    delete NewArray;
+    }
+  Hdf.Close();
+  return( NULL );
+  }
+if( Hdf.Write( Source ) == NULL ){
+  XdmfErrorMessage("Can't Write Temp Dataset");
+  if( NewArray ){
+    delete NewArray;
+    }
+  Hdf.Close();
+  return( NULL );
+  }
+if( Hdf.Read( Target ) == NULL ){
+  XdmfErrorMessage("Can't Read Temp Dataset");
+  if( NewArray ){
+    delete NewArray;
+    }
+  Hdf.Close();
+  return( NULL );
+  }
+Hdf.Close();
+return( Target );
+}
+/*
+XdmfArray *
+CreateArrayFromType( XdmfType *Type, XdmfInt64 NumberOfElements ) {
+
+XdmfArray    *array;
+XdmfCompoundArray  *carray;
+XdmfInt32         type;
+
+
+type = HDF5TypeToXdmfType( Type->GetType() );  
+switch ( type ) {
+  case XDMF_INT8_TYPE :
+    array = new XdmfInt8Array;
+    break;
+  case XDMF_INT32_TYPE :
+    array = new XdmfInt32Array;
+    break;
+  case XDMF_INT64_TYPE :
+    array = new XdmfInt64Array;
+    break;
+  case XDMF_FLOAT32_TYPE :
+    array = new XdmfFloat32Array;
+    break;
+  case XDMF_FLOAT64_TYPE :
+    array = new XdmfFloat64Array;
+    break;
+  case XDMF_COMPOUND_TYPE :
+    carray = new XdmfCompoundArray;
+    carray->SetPrecision( Type->GetSize() );  
+    array = (XdmfArray *)carray;
+    break;
+  default :
+    XdmfErrorMessage( " Unknown Datatype " );
+    return( NULL );
+  }
+array->SetNumberOfElements(NumberOfElements);
+return( array );
+}
+*/
