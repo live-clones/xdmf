@@ -93,6 +93,12 @@ public:
   // Description:
   // Indent xml 
   void Indent(ostream& ost);
+  void IncrementIndent() { this->CurrIndent ++; }
+  void DecrementIndent() { this->CurrIndent --; }
+
+  // Description:
+  // Generate hdf5 name for array
+  const char* GenerateHDF5ArrayName(const char* arrayName);
 
 protected:
   vtkXdmfWriter();
@@ -100,6 +106,7 @@ protected:
 
   void WriteAttributes( ostream& ost );
   void StartTopology( ostream& ost, int Type, vtkCellArray *Cells);
+  void StartTopology( ostream& ost, const char* toptype, int rank, int *dims);
   void EndTopology( ostream& ost );
   void StartGeometry( ostream& ost, const char* type );
   void EndGeometry( ostream& ost );
@@ -108,8 +115,8 @@ protected:
   virtual int WriteGrid( ostream& ost );
   virtual int WriteCellArray( ostream& ost, vtkCellArray *Cells );
   virtual int WritePoints( ostream& ost, vtkPoints *Points );
-  virtual int WriteDataArray( ostream& ost, vtkDataArray* array, const char* Name, const char* Center );
-  virtual int WriteVTKArray( ostream& ost, vtkDataArray* array, const char* name);
+  virtual int WriteDataArray( ostream& ost, vtkDataArray* array, int dims[3], const char* Name, const char* Center, int type );
+  virtual int WriteVTKArray( ostream& ost, vtkDataArray* array, int dims[3], const char* name, const char* dataName, int alllight);
 
   vtkDataSet* GetInputDataSet();
 
@@ -123,6 +130,9 @@ protected:
   int    AllLight;
 
   int CurrIndent;
+
+  vtkSetStringMacro(HDF5ArrayName);
+  char* HDF5ArrayName;
 
   // list of data sets to append together.
   // Here as a convenience.  It is a copy of the input array.
