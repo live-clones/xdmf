@@ -70,7 +70,7 @@ public:
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfWriter);
-vtkCxxRevisionMacro(vtkXdmfWriter, "1.1");
+vtkCxxRevisionMacro(vtkXdmfWriter, "1.2");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter::vtkXdmfWriter()
@@ -81,7 +81,6 @@ vtkXdmfWriter::vtkXdmfWriter()
   this->SetHeavyDataSetName( "XdmfData.h5" );
   this->SetGridName( "Unnamed" );
 
-  this->FastWrite = 1;
   this->AllLight = 0;
 
   this->Internals = new vtkXdmfWriterInternals;
@@ -119,6 +118,10 @@ void vtkXdmfWriter::SetHeavyDataSetName( const char *name)
     this->HeavyDataSetName = new char [ strlen(name) + 1 ];
     strcpy( this->HeavyDataSetName, name);
     this->AllLight = 0;
+    }
+  else
+    {
+    this->AllLight = 1;
     }
   this->Modified();
 }

@@ -41,10 +41,6 @@ public:
   static vtkXdmfWriter *New();
   vtkTypeRevisionMacro(vtkXdmfWriter,vtkObject);
 
-  vtkSetClampMacro(FastWrite, int, 0, 1);
-  vtkBooleanMacro(FastWrite, int);
-  vtkGetMacro(FastWrite, int);
-
   // Description:
   // Set or get the AllLight flag. If set, all data will be written as light
   // data (inlined).
@@ -98,7 +94,6 @@ protected:
   char    *FileName;
   char    *GridName;
   
-  int    FastWrite;
   int    AllLight;
   vtkXdmfWriterInternals *Internals;
 
