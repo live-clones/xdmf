@@ -19,6 +19,7 @@ ENDIF(WIN32)
 
 SET( Xdmf_SRCS
 	vtkXdmfReader.cxx
+  vtkXdmfWriter.cxx
 	vtkXdmfDataSetWriter.cxx
 	vtkXdmfDataArray.cxx
 	vtkXdmfOpenGLCamera.cxx
