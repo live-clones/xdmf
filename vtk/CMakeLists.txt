@@ -8,6 +8,7 @@ IF(WIN32)
 		${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
 		@ONLY IMMEDIATE)
 ELSE(WIN32)
+	INCLUDE_DIRECTORIES(${X11_X11_INCLUDE_PATH})
 	SET(XDMF_WINDOWINTERACTOR vtkXRenderWindowInteractor)
 	CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.h.in
 		${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.h
