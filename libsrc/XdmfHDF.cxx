@@ -244,6 +244,7 @@ XdmfInt32
 XdmfHDF::Close() {
 
 XdmfDebug("Closing");
+H5E_BEGIN_TRY {
 if ( this->CreatePlist != H5P_DEFAULT ){
   XdmfDebug("Closing Create Plist");
   H5Pclose( this->CreatePlist );
@@ -270,6 +271,7 @@ if (this->File != H5I_BADID ) {
   H5Fclose(this->File);  
   this->File = H5I_BADID;
   }
+} H5E_END_TRY;
 
 return( XDMF_SUCCESS );
 }
