@@ -50,7 +50,7 @@ XML_Parser   NewParser;
 XML_Char   *encoding = NULL;
 XMLUserData   *data;
 void     *userData;
-char    Name[256], *Namep;
+char    Name[1024], *Namep;
 char    *ExternalXML = NULL;
 FILE    *fp;
 
