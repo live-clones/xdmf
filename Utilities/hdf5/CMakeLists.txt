@@ -1,5 +1,9 @@
-PROJECT(VTKHDF5 C++)
+PROJECT(VTKHDF5 C)
 INCLUDE_REGULAR_EXPRESSION("^.*\\.[ch]$")
+
+SET(LIBRARY_OUTPUT_PATH ${VTKHDF5_BINARY_DIR}/bin CACHE PATH "Single output directory for building all libraries.")
+SET(EXECUTABLE_OUTPUT_PATH ${VTKHDF5_BINARY_DIR}/bin CACHE PATH "Single output directory for building all executables.")
+MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
 
 IF(WIN32)
   SET(ssize_t long)
