@@ -1,36 +1,36 @@
 # Build vtkXdmf*RenderWindowInteractor.h
 IF(WIN32)
-	SET(XDMF_WINDOWINTERACTOR vtkWin32RenderWindowInteractor)
-	CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.h.in
-		${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.h
-		@ONLY IMMEDIATE)
-	CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx.in
-		${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
-		@ONLY IMMEDIATE)
+  SET(XDMF_WINDOWINTERACTOR vtkWin32RenderWindowInteractor)
+  CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.h.in
+    ${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.h
+    @ONLY IMMEDIATE)
+  CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx.in
+    ${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
+    @ONLY IMMEDIATE)
 ELSE(WIN32)
-	INCLUDE_DIRECTORIES(${X11_X11_INCLUDE_PATH})
-	SET(XDMF_WINDOWINTERACTOR vtkXRenderWindowInteractor)
-	CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.h.in
-		${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.h
-		@ONLY IMMEDIATE)
-	CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx.in
-		${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
-		@ONLY IMMEDIATE)
+  INCLUDE_DIRECTORIES(${X11_X11_INCLUDE_PATH})
+  SET(XDMF_WINDOWINTERACTOR vtkXRenderWindowInteractor)
+  CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.h.in
+    ${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.h
+    @ONLY IMMEDIATE)
+  CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx.in
+    ${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
+    @ONLY IMMEDIATE)
 ENDIF(WIN32)
 
 SET( Xdmf_SRCS
-	vtkXdmfReader.cxx
+  vtkXdmfReader.cxx
   vtkXdmfWriter.cxx
-	vtkXdmfDataArray.cxx
-	vtkXdmfOpenGLCamera.cxx
+  vtkXdmfDataArray.cxx
+  vtkXdmfOpenGLCamera.cxx
   #${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
   #vtkXdmfDataSetWriter.cxx
   )
 
 IF (NOT APPLE)
-	SET(Xdmf_SRCS ${Xdmf_SRCS}
-		${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
-		)
+  SET(Xdmf_SRCS ${Xdmf_SRCS}
+    ${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
+    )
 ENDIF (NOT APPLE)
 
 SET_SOURCE_FILES_PROPERTIES(
@@ -75,15 +75,15 @@ ELSE(VTK_FOUND)
 ENDIF (VTK_FOUND)
 
 IF(NOT XDMF_NOT_INSTALL_INCLUDE_FILES)
-  INSTALL_FILES(/include/XdmfVtk .h ${Xdmf_SRCS})
+  INSTALL_FILES(${XDMF_INSTALL_INCLUDE_VTK_DIR} .h ${Xdmf_SRCS})
 ENDIF(NOT XDMF_NOT_INSTALL_INCLUDE_FILES)
 IF (VTK_FOUND AND BUILD_SHARED_LIBS)
-  INSTALL_TARGETS(/lib vtkXdmf)
+  INSTALL_TARGETS(${XDMF_INSTALL_LIB_DIR} vtkXdmf)
   IF(VTK_WRAP_TCL)
-    INSTALL_TARGETS(/lib vtk${PROJECT_NAME}TCL)
+    INSTALL_TARGETS(${XDMF_INSTALL_LIB_DIR} vtk${PROJECT_NAME}TCL)
   ENDIF(VTK_WRAP_TCL)
   IF(VTK_WRAP_PYTHON)
-    INSTALL_TARGETS(/lib vtk${PROJECT_NAME}Python)
+    INSTALL_TARGETS(${XDMF_INSTALL_LIB_DIR} vtk${PROJECT_NAME}Python)
   ENDIF(VTK_WRAP_PYTHON)
 ENDIF (VTK_FOUND AND BUILD_SHARED_LIBS)
 
