@@ -32,10 +32,6 @@
 class VTK_EXPORT vtkXdmfDataArray : public vtkObject
 {
 public:
-  vtkDataArray  *vtkArray;
-  XdmfArray  *Array;
-
-  vtkXdmfDataArray();
   static vtkXdmfDataArray *New();
   vtkTypeMacro(vtkXdmfDataArray,vtkObject);
 
@@ -52,7 +48,7 @@ public:
   void SetArray( char *TagName ) {
     this->Array = TagNameToArray( TagName );
     if( this->Array ) {
-      FromXdmfArray();
+      this->FromXdmfArray();
       }
     }
 
@@ -72,5 +68,11 @@ public:
     return( this->vtkArray );
     }
 
+protected:
+  vtkXdmfDataArray();
+
+private:
+  vtkDataArray  *vtkArray;
+  XdmfArray  *Array;
 };
 #endif /* _vtkXdmfDataArray_h */

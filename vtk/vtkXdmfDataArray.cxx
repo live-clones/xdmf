@@ -35,18 +35,9 @@
 #include <XdmfArray.h>
 
 //----------------------------------------------------------------------------
-vtkXdmfDataArray* vtkXdmfDataArray::New()
-{
-  // First try to create the object from the vtkObjectFactory
-  vtkObject* ret = vtkObjectFactory::CreateInstance("vtkXdmfDataArray");
-  if(ret)
-    {
-    return (vtkXdmfDataArray*)ret;
-    }
-  // If the factory was unable to create the object, then create it here.
-  return new vtkXdmfDataArray;
-}
+vtkStandardNewMacro(vtkXdmfDataArray);
 
+//----------------------------------------------------------------------------
 vtkXdmfDataArray::vtkXdmfDataArray()
 {
   this->Array = NULL;
@@ -54,6 +45,7 @@ vtkXdmfDataArray::vtkXdmfDataArray()
 }
 
 
+//----------------------------------------------------------------------------
 vtkDataArray *vtkXdmfDataArray::FromXdmfArray( char *ArrayName, int CopyShape ){
   XdmfArray *Array = this->Array;
   if ( ArrayName != NULL ) {
@@ -63,6 +55,7 @@ vtkDataArray *vtkXdmfDataArray::FromXdmfArray( char *ArrayName, int CopyShape ){
     XdmfErrorMessage("Array is NULL");
     return(NULL);
     }
+  //cout << "Array: " << Array << endl;
   switch( Array->GetNumberType() ){
     case XDMF_INT8_TYPE :
       if( this->vtkArray == NULL ) {
@@ -93,6 +86,7 @@ vtkDataArray *vtkXdmfDataArray::FromXdmfArray( char *ArrayName, int CopyShape ){
     this->vtkArray->SetNumberOfComponents( 1 );
     this->vtkArray->SetNumberOfTuples( Array->GetNumberOfElements() );
     }
+  //cout << "Number type: " << Array->GetNumberType() << endl;
   switch( Array->GetNumberType() ){
     case XDMF_INT8_TYPE :
       Array->GetValues( 0,
@@ -110,15 +104,37 @@ vtkDataArray *vtkXdmfDataArray::FromXdmfArray( char *ArrayName, int CopyShape ){
         ( float *)this->vtkArray->GetVoidPointer( 0 ),
         Array->GetNumberOfElements() );  
       break;
-    default :
+    case XDMF_FLOAT64_TYPE :
       Array->GetValues( 0,
         ( double *)this->vtkArray->GetVoidPointer( 0 ),
         Array->GetNumberOfElements() );  
+      break;
+    default :
+      if ( Array->GetNumberOfElements() > 0 )
+        {
+        //cout << "Manual idx" << endl;
+        //cout << "Tuples: " << vtkArray->GetNumberOfTuples() << endl;
+        //cout << "Components: " << vtkArray->GetNumberOfComponents() << endl;
+        //cout << "Elements: " << Array->GetNumberOfElements() << endl;
+        vtkIdType jj, kk;
+        vtkIdType idx = 0;
+        for ( jj = 0; jj < vtkArray->GetNumberOfTuples(); jj ++ )
+          {
+          for ( kk = 0; kk < vtkArray->GetNumberOfComponents(); kk ++ )
+            {
+            double val = Array->GetValueAsFloat64(idx);
+            //cout << "Value: " << val << endl;
+            vtkArray->SetComponent(jj, kk, val);
+            idx ++;
+            }
+          }
+        }
       break;
     }
 return( this->vtkArray );
 }
 
+//----------------------------------------------------------------------------
 char *vtkXdmfDataArray::ToXdmfArray( vtkDataArray *DataArray, int CopyShape ){
   XdmfArray *Array;
   if ( DataArray  == NULL )  {
