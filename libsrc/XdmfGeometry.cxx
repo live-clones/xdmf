@@ -232,7 +232,7 @@ if( ( this->GeometryType == XDMF_GEOMETRY_X_Y_Z ) ||
       case XDMF_GEOMETRY_X_Y :
         points = new XdmfArray;
         points->CopyType( TmpArray );
-        points->SetNumberOfElements( TmpArray->GetNumberOfElements() / 2 * 3 );
+        points->SetNumberOfElements( TmpArray->GetNumberOfElements() * 3 );
         break;
       default :
         points = TmpArray;
