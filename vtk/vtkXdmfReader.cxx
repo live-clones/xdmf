@@ -74,7 +74,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vtkstd/vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.49");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.50");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -330,6 +330,7 @@ void vtkXdmfReader::Execute()
 
     vtkDebugMacro( << "In Execute: Update Extents = " << upext[0] << ", " << upext[1] << ", " << upext[2] << ", " << upext[3] << ", " << upext[4] << ", " << upext[5]);
 
+/*
     int ext_fixed =0;
     for ( cc = 0; cc < 3; cc ++ )
       {
@@ -346,6 +347,7 @@ void vtkXdmfReader::Execute()
         ext_fixed = 1;
         }
       }
+*/
     vtkDebugMacro( << "After fixing extent: Update Extents = " << upext[0] << ", " << upext[1] << ", " << upext[2] << ", " << upext[3] << ", " << upext[4] << ", " << upext[5]);
 
     start[2] = vtkMAX(0, upext[0]);
@@ -469,6 +471,7 @@ void vtkXdmfReader::Execute()
     // Read Geometry
     if( ( Geometry->GetGeometryType() == XDMF_GEOMETRY_X_Y_Z ) ||
       ( Geometry->GetGeometryType() == XDMF_GEOMETRY_XYZ ) ||
+      ( Geometry->GetGeometryType() == XDMF_GEOMETRY_X_Y ) ||
       ( Geometry->GetGeometryType() == XDMF_GEOMETRY_XY ) )
       {
       XdmfInt64   Length;
@@ -1318,9 +1321,9 @@ void vtkXdmfReader::ExecuteInformation()
     EndExtent[1] = Dimensions[1] - 1;
     EndExtent[2] = Dimensions[2] - 1;
     // vtk Dims are i,j,k XDMF are k,j,i
-    EndExtent[0] = vtkMAX(1, EndExtent[0]) / this->Stride[2];
-    EndExtent[1] = vtkMAX(1, EndExtent[1]) / this->Stride[1];
-    EndExtent[2] = vtkMAX(1, EndExtent[2]) / this->Stride[0];
+    EndExtent[0] = vtkMAX(0, EndExtent[0]) / this->Stride[2];
+    EndExtent[1] = vtkMAX(0, EndExtent[1]) / this->Stride[1];
+    EndExtent[2] = vtkMAX(0, EndExtent[2]) / this->Stride[0];
     vtkDebugMacro( << "EndExtents = " << (vtkIdType)EndExtent[0] << ", " 
       << (vtkIdType)EndExtent[1] << ", " << (vtkIdType)EndExtent[2]);
     this->Outputs[idx]->SetWholeExtent(
