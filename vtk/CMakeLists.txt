@@ -23,9 +23,15 @@ SET( Xdmf_SRCS
   vtkXdmfWriter.cxx
 	vtkXdmfDataArray.cxx
 	vtkXdmfOpenGLCamera.cxx
-  ${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
+  #${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
   #vtkXdmfDataSetWriter.cxx
   )
+
+IF (NOT APPLE)
+	SET(Xdmf_SRCS ${Xdmf_SRCS}
+		${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
+		)
+ENDIF (NOT APPLE)
 
 SET_SOURCE_FILES_PROPERTIES(
   vtkXdmfDataArray
