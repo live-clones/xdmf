@@ -72,7 +72,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfWriter);
-vtkCxxRevisionMacro(vtkXdmfWriter, "1.9");
+vtkCxxRevisionMacro(vtkXdmfWriter, "1.10");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter::vtkXdmfWriter()
@@ -748,19 +748,29 @@ int vtkXdmfWriter::WriteGrid( ostream& ost )
     {
     int     Dims[3];
     double Origin[3], Spacing[3];
+    int     Extent[6];
     vtkImageData *SGrid = ( vtkImageData *)DataSet;
     SGrid->GetDimensions( Dims );
     SGrid->GetOrigin( Origin );
     SGrid->GetSpacing( Spacing );
+    SGrid->GetExtent( Extent );
     this->StartTopology(ost, "3DCORECTMESH", 3, Dims);
     this->EndTopology(ost);
     this->Indent(ost);
     this->StartGeometry( ost, "ORIGIN_DXDYDZ" );
     this->Indent(ost);
 
+    int cc;
+    for ( cc = 0; cc < 3; cc ++ )
+      {
+      Origin[cc] = Origin[cc] +  Spacing[cc] * Extent[cc * 2];
+      }
+
     // Origin
     ost << "<DataStructure";
     this->IncrementIndent();
+    this->Indent(ost);
+    ost << " Name=\"Origin\"";
     this->Indent(ost);
     ost << " DataType=\"Float\"";
     this->Indent(ost);
@@ -768,7 +778,8 @@ int vtkXdmfWriter::WriteGrid( ostream& ost )
     this->Indent(ost);
     ost << " Format=\"XML\">";
     this->Indent(ost);
-    ost << Origin[0] << " " << Origin[1] << " " << Origin[2];
+    ost << Origin[2] << " " << Origin[1] << " " << Origin[0];
+    cout << "Origin: "<< Origin[0] << " " << Origin[1] << " " << Origin[2] << endl;
     this->DecrementIndent();
     this->Indent(ost);
     ost << "</DataStructure>";
@@ -778,13 +789,15 @@ int vtkXdmfWriter::WriteGrid( ostream& ost )
     ost << "<DataStructure";
     this->IncrementIndent();
     this->Indent(ost);
+    ost << " Name=\"Spacing\"";
+    this->Indent(ost);
     ost << " DataType=\"Float\"";
     this->Indent(ost);
     ost << " Dimensions=\"3\"";
     this->Indent(ost);
     ost << " Format=\"XML\">";
     this->Indent(ost);
-    ost << Spacing[0] << " " << Spacing[1] << " " << Spacing[2];
+    ost << Spacing[2] << " " << Spacing[1] << " " << Spacing[0];
     this->DecrementIndent();
     this->Indent(ost);
     ost << "</DataStructure>";
