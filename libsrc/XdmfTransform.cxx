@@ -193,7 +193,7 @@ if( XDMF_WORD_CMP( Attribute, "Function" ) ){
     ReturnArray->ReformFromString(CData);
    }
 
-  delete StreamString;
+  delete [] StreamString;
   while( NTmp ){
     NTmp--;
     XdmfDebug("Deleteing TmpArray " << ArrayToDelete[ NTmp ]->GetTagName() );
