@@ -373,9 +373,9 @@ XdmfDataDesc::GetSelectionSize( void ) {
 XdmfInt32
 XdmfDataDesc::SelectHyperSlabFromString(  XdmfConstString start, XdmfConstString stride, XdmfConstString count ) {
 XdmfInt64  i, HStart[XDMF_MAX_DIMENSION], HStride[XDMF_MAX_DIMENSION], HCount[XDMF_MAX_DIMENSION];
-istrstream   Start_ist(start, strlen( start ) );
-istrstream   stride_ist(stride, strlen( stride ) );
-istrstream   Count_ist(count, strlen( count ) );
+istrstream   Start_ist(const_cast<char*>(start), strlen( start ) );
+istrstream   stride_ist(const_cast<char*>(stride), strlen( stride ) );
+istrstream   Count_ist(const_cast<char*>(count), strlen( count ) );
 
 for( i = 0 ; i < this->Rank ; i++ ){
   if( start ){
@@ -422,8 +422,8 @@ XdmfInt32
 XdmfDataDesc::SelectCoordinatesFromString( XdmfConstString String ) {
   XdmfInt32  Status;
   XdmfLength      i = 0, count = 0;
-  istrstream   ist(String, strlen( String ) );
-  istrstream   counter(String, strlen( String ) );
+  istrstream   ist(const_cast<char*>(String), strlen( String ) );
+  istrstream   counter(const_cast<char*>(String), strlen( String ) );
   XdmfInt64  dummy, *Coordinates;
 
   while( ICE_READ_STREAM64(counter, dummy) ) count++;
@@ -638,7 +638,7 @@ XdmfDataDesc::AddCompoundMemberFromString( XdmfConstString Name,
 
 XdmfInt32  i, rank = 0, numberType;
 XdmfInt64  Dim, Dimensions[XDMF_MAX_DIMENSION];
-istrstream  ShapeString( Shape, strlen(Shape) );
+istrstream  ShapeString( const_cast<char*>(Shape), strlen(Shape) );
 
 numberType = StringToXdmfType( NumberTypeString );
 i = 0;
