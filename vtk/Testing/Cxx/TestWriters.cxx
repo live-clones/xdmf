@@ -246,7 +246,7 @@ int main(int argc, char* argv[])
   if ( argc < 2 )
     {
     cout << "Usage: " << argv[0] << " <xdmf file>" << endl;
-    return 0;
+    return 1;
     }
   int res = 0;
 
