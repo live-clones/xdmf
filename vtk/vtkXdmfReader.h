@@ -1,117 +1,196 @@
-/*******************************************************************/
-/*                               XDMF                              */
-/*                   eXtensible Data Model and Format              */
-/*                                                                 */
-/*  Id : Id  */
-/*  Date : $Date$ */
-/*  Version : $Revision$ */
-/*                                                                 */
-/*  Author:                                                        */
-/*     Jerry A. Clarke                                             */
-/*     clarke@arl.army.mil                                         */
-/*     US Army Research Laboratory                                 */
-/*     Aberdeen Proving Ground, MD                                 */
-/*                                                                 */
-/*     Copyright @ 2002 US Army Research Laboratory                */
-/*     All Rights Reserved                                         */
-/*     See Copyright.txt or http://www.arl.hpc.mil/ice for details */
-/*                                                                 */
-/*     This software is distributed WITHOUT ANY WARRANTY; without  */
-/*     even the implied warranty of MERCHANTABILITY or FITNESS     */
-/*     FOR A PARTICULAR PURPOSE.  See the above copyright notice   */
-/*     for more information.                                       */
-/*                                                                 */
-/*******************************************************************/
-#ifndef __vtkXdmfReader_h
-#define __vtkXdmfReader_h
+/*=========================================================================
 
-// #include "vtkDataSetSource.h"
-// #include "vtkSource.h"
+  Program:   Visualization Toolkit
+  Module:    vtkXdmfReader.h
+  Language:  C++
+  Date:      $Date$
+  Version:   $Revision$
+
+  Copyright (c) 1993-2002 Ken Martin, Will Schroeder, Bill Lorensen 
+  All rights reserved.
+  See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even 
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     PURPOSE.  See the above copyright notice for more information.
+
+=========================================================================*/
+// .NAME vtkMyXdmfReader - read eXtensible Data Model and Format files
+// .SECTION Description
+// vtkXdmfReader is a source object that reads ASCII or binary 
+// rectilinear grid data files in vtk format (see text for format details).
+// The output of this reader is a single vtkUnstructuredGrid, vtkStructuredGrid
+//  or vtkRectilinearGrid data object.
+// The superclass of this class, vtkDataReader, provides many methods for
+// controlling the reading of the data file, see vtkDataReader for more
+// information.
+// .SECTION Caveats
+// used the XDMF API
+// .SECTION See Also
+// vtkDataReader
+
+#ifndef __vtkMyXdmfReader_h
+#define __vtkMyXdmfReader_h
+
 #include "vtkDataReader.h"
-#include "vtkXdmfDataArray.h"
-#include "Xdmf.h"
 
+class vtkDoubleArray;
+class vtkDataArray;
+class vtkRectilinearGrid;
+class vtkDataObject;
+class vtkRectilinearGrid;
+class vtkDataArraySelection;
+class vtkCallbackCommand;
+class vtkDataSet;
 
-class vtkDataArrayCollection;
-class vtkIdListCollection;
+//BTX
+class XdmfDOM;
+class XdmfFormatMulti;
+class XdmfTransform;
+class XdmfDataDesc;
+class XdmfGrid;
+class vtkXdmfDataArray;
 
-// class VTK_EXPORT vtkXdmfReader : public vtkDataSetSource
-// class VTK_EXPORT vtkXdmfReader : public vtkSource
-class VTK_EXPORT vtkXdmfReader : public vtkDataReader
+class vtkMyXdmfReaderInternal;
+
+//ETX
+
+class VTK_EXPORT vtkMyXdmfReader : public vtkDataReader
 {
-public :
-  static vtkXdmfReader *New();
-  // vtkTypeRevisionMacro(vtkXdmfReader,vtkDataSetSource);
-  vtkTypeRevisionMacro(vtkXdmfReader,vtkDataReader);
+public:
+  static vtkMyXdmfReader* New();
+  vtkTypeRevisionMacro(vtkMyXdmfReader, vtkDataReader);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  void Update();
-  void SetInputFileName( const char *fileName );
-  char *GetInputFileName( ) {
-    return(this->InputFileName);
-    }
-  int Parse();
-  int GetNumberOfAttributes() {
-    return( this->Grid->GetNumberOfAttributes() );
-    }
-  vtkDataObject *GetOutput();
-  vtkDataObject *GetOutput(int idx);
-  int GetAttributeStatus( int Index ) {
-    if( Index >= this->NumberOfAttributes ) {
-      return( -1 );
-      }
-    return( this->AttributeStatus[ Index ] );
-    }
-  void SetAttributeStatusOn( int Index );
-  void SetAttributeStatusOff( int Index );
-  void SetAttributeStatusOn( char *Name );
-  void SetAttributeStatusOff( char *Name );
-  void SetAllAttributeStatusOn();
-  void SetAllAttributeStatusOff();
-  int  Initialize();
-  char *GetXdmfDOMHandle();
-  char *GetXdmfGridHandle();
-  int GetGridIndex() {
-    return( this->GridIndex );
-    }
-  void SetGridIndex( int Index ) {
-    this->GridIndex = Index;
-    }
-  char *GetGridName() {
-    return( this->GridName );
-    }
-  void SetGridName( char *Name ) {
-    if( this->GridName ) {
-      delete [] this->GridName ;
-      }
-    this->GridName = new char[ strlen(Name) + 1 ];
-    strcpy( this->GridName, Name );
-    }
+  // Description:
+  // Get and set the output of this reader.
+  vtkDataSet *GetOutput();
+  vtkDataSet *GetOutput(int idx);
+  void SetOutput(vtkDataSet *output);
+  void SetOutput(vtkDataObject *output);
 
+  // Description:
+  // Get the data array selection tables used to configure which data
+  // arrays are loaded by the reader.
+  vtkGetObjectMacro(PointDataArraySelection, vtkDataArraySelection);
+  vtkGetObjectMacro(CellDataArraySelection, vtkDataArraySelection);
   
+  // Description:  
+  // Get the number of point or cell arrays available in the input.
+  int GetNumberOfPointArrays();
+  int GetNumberOfCellArrays();
+  
+  // Description:
+  // Get the name of the point or cell array with the given index in
+  // the input.
+  const char* GetPointArrayName(int index);
+  const char* GetCellArrayName(int index);
+  
+  // Description:
+  // Get the number of Parameters
+  int GetNumberOfParameters();
+
+  // Description:
+  // Get Parameter Name
+  const char *GetParameterName(int index);
+
+  // Description:
+  // Set/Get Parameter Current Index
+  int SetParameterCurrentIndex(char *Name, int CurrentIndex); 
+  int SetParameterCurrentIndex(int ParameterIndex, int CurrentIndex); 
+  int GetParameterCurrentIndex(char *Name);
+  int GetParameterCurrentIndex(int index);
+
+  // Description:
+  // Get Length of Parameter
+  int GetParameterLength(char *Name);
+  int GetParameterLength(int index);
+
+
+  // Description:
+  // Get the Current Value of the Parameter
+  const char *GetParameterValue(int index);
+  const char *GetParameterValue(char *Name);
+
+  // Description:
+  // Get/Set whether the point or cell array with the given name is to
+  // be read.
+  int GetPointArrayStatus(const char* name);
+  int GetCellArrayStatus(const char* name);
+  void SetPointArrayStatus(const char* name, int status);  
+  void SetCellArrayStatus(const char* name, int status);  
+
+  // Description:
+  // Get the Low Level XdmfDOM
+  const char *GetXdmfDOMHandle();
+
+  // Description:
+  // Get the Low Level XdmfGrid
+  const char *GetXdmfGridHandle();
+
+  // Description:
+  // Get/Set the current domain name.
+  vtkSetStringMacro(DomainName);
+  vtkGetStringMacro(DomainName);
+
+  // Description:
+  // Get/Set the current grid name.
+  vtkSetStringMacro(GridName);
+  vtkGetStringMacro(GridName);
+
+  // Description:
+  // Get number of domains and grids.
+  int GetNumberOfDomains();
+  int GetNumberOfGrids();
+  
+  // Description:
+  // Get the name of domain or grid at index.
+  const char* GetDomainName(int idx);
+  const char* GetGridName(int idx);
+
+  // Description:
+  // Set / get stride
+  vtkSetVector3Macro(Stride, int);
+  vtkGetVector3Macro(Stride, int);
+
 protected:
-  vtkXdmfReader();
-  ~vtkXdmfReader();
+  vtkMyXdmfReader();
+  ~vtkMyXdmfReader();   
 
-  int    SetBaseTopology();
-  int    SetBaseGeometry();
-  int    SetBaseAttributes();
-  int    NumberOfAttributes;
-  int    *AttributeStatus;
+  virtual void Execute();
+  virtual void ExecuteInformation();
 
-  vtkDataObject  *CurrentOutput;
+  // Callback registered with the SelectionObserver.
+  static void SelectionModifiedCallback(vtkObject* caller, unsigned long eid,
+                                        void* clientdata, void* calldata);
+  
+  // The array selections.
+  vtkDataArraySelection* PointDataArraySelection;
+  vtkDataArraySelection* CellDataArraySelection;
+
+  // The observer to modify this object when the array selections are
+  // modified.
+  vtkCallbackCommand* SelectionObserver;
+
+  XdmfDOM         *DOM;
+  XdmfFormatMulti *FormatMulti;
+  XdmfTransform   *Transform;
+  XdmfDataDesc    *DataDescription;
+  XdmfGrid        *Grid;
+
+  // For converting arrays from XDMF to VTK format
   vtkXdmfDataArray *ArrayConverter;
-  XdmfDOM    *DOM;
-  XdmfGrid  *Grid;
-  void    Execute();
-  char    *InputFileName;
-  int    GridIndex;
-  int    Initialized;
-  char    *GridName;
 
-private :
-  vtkXdmfReader( const vtkXdmfReader&); // Not implemented.
-  void operator=(const vtkXdmfReader&); // Not implemented.
+  char* DomainName;
+  char* GridName;
+
+  vtkMyXdmfReaderInternal* Internals;
+
+  int Stride[3];
+
+private:
+  vtkMyXdmfReader(const vtkMyXdmfReader&); // Not implemented
+  void operator=(const vtkMyXdmfReader&); // Not implemented  
 };
 
-#endif // __vtkXdmfReader_h
+#endif //__vtkMyXdmfReader_h
