@@ -139,8 +139,12 @@ H5E_BEGIN_TRY {
       &StatusBuffer );
 } H5E_END_TRY;
 
-if( ( Status >= 0 )  && ( StatusBuffer.type < H5G_NTYPES ) ){
+if( ( Status >= 0 ) )
+{
+  if ( StatusBuffer.type == H5G_GROUP || StatusBuffer.type == H5G_DATASET )
+    {
     return( StatusBuffer.type );
+    }
 }
 
 return( H5G_UNKNOWN );
