@@ -76,7 +76,7 @@ public:
 //! Get the current HeavyData Dataset path
   XdmfGetValueMacro(Path, XdmfString);
 //! Set the current HeavyData Dataset path
-  void SetPath( XdmfString Path ) {
+  void SetPath( XdmfConstString Path ) {
     strcpy( this->Path, Path );
     } ;
 

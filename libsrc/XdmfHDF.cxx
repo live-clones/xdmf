@@ -265,7 +265,7 @@ return( XDMF_SUCCESS );
 }
 
 XdmfInt32
-XdmfHDF::CreateDataset( XdmfString Path ) {
+XdmfHDF::CreateDataset( XdmfConstString Path ) {
 
 XdmfString  Pathname, Slash;
 hid_t    Directory;

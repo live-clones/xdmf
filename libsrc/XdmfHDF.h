@@ -157,7 +157,7 @@ public:
   return("XDMF_H5_OTHER");
   };
 //! Create a new dataset in the current Group
-  XdmfInt32 CreateDataset( XdmfString Path = NULL );
+  XdmfInt32 CreateDataset( XdmfConstString Path = NULL );
 
 //! Open an existing Dataset in a currently open HDF5 file
   XdmfInt32 OpenDataset();
