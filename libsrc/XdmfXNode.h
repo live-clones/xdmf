@@ -109,7 +109,7 @@ extern void C__XdmfXNodeDelete(void *XdmfXNode);
 
 #endif /* ifndef __XdmfXNode_h */
 
-#else // SWIG
+#else /* SWIG */
 
 class XdmfXNode : public virtual XdmfObject {
 

@@ -71,8 +71,9 @@
 #define __XdmfObject_h
 
 #ifdef __cplusplus
-// Use ANSI C++ ---------------------------------------------
+/* Use ANSI C++ --------------------------------------------- */
 # ifndef SWIG
+#  include <string>
 #  ifdef XDMF_USE_ANSI_STDLIB
 #   include <iostream>
 #   include <strstream>
@@ -96,7 +97,7 @@ using std::hex;
 
 
 
-// otherwise, non-ANSI -----------------------------------------------------
+/* otherwise, non-ANSI ----------------------------------------------------- */
 #  else /* XDMF_USE_ANSI_STDLIB */
 #   include <iostream.h>
 #   if defined(_MSC_VER)
@@ -168,7 +169,7 @@ typedef char *    XdmfString;
 typedef void *    XdmfPointer;
 typedef unsigned char  XdmfInt8;
 typedef int    XdmfInt32;
-// typedef long    XdmfInt64; 
+/* typedef long    XdmfInt64;  */
 typedef long long  XdmfInt64;
 typedef float    XdmfFloat32;
 typedef double    XdmfFloat64;
