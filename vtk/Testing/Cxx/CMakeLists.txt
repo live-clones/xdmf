@@ -27,3 +27,6 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/SystemInformation.h.in"
 ADD_EXECUTABLE(WriterTest WriterTest.cxx)
 TARGET_LINK_LIBRARIES(WriterTest vtkXdmf)
 
+ADD_EXECUTABLE(TestWriters TestWriters.cxx)
+TARGET_LINK_LIBRARIES(TestWriters vtkXdmf)
+
