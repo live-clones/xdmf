@@ -1090,8 +1090,8 @@ SWIGEXPORT(int) SWIG_init(Tcl_Interp *);
 #include <XdmfNDGM.h>
 
 
-#ifndef HAVE_XDMF_strtoll
-inline XDMF_LONG64 XDMF_XDMF_strtoll(char *str, void*, int)
+#ifndef HAVE_STRTOLL
+inline XDMF_LONG64 XDMF_strtoll(char *str, void*, int)
 {
   XDMF_LONG64 result = 0;
   int negative=0;
@@ -1117,7 +1117,7 @@ inline XDMF_LONG64 XDMF_XDMF_strtoll(char *str, void*, int)
   return negative ? result : -result;
 }
 #else
-# define XDMF_XDMF_strtoll strtoll
+# define XDMF_strtoll strtoll
 #endif
 
 #define  SWIG_MemoryError    1
