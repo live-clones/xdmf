@@ -98,6 +98,30 @@ if( slash == NULL ){
 return( Directory );
 }
 
+/*
+ * One often needs to temporarily disable automatic error reporting when
+ * trying something that's likely or expected to fail.  For instance, to
+ * determine if an object exists one can call H5Gget_objinfo() which will fail if
+ * the object doesn't exist.  The code to try can be nested between calls to
+ * H5Eget_auto() and H5Eset_auto(), but it's easier just to use this macro
+ * like:
+ *      H5E_BEGIN_TRY {
+ *          ...stuff here that's likely to fail...
+ *      } H5E_END_TRY;
+ *
+ * Warning: don't break, return, or longjmp() from the body of the loop or
+ *          the error reporting won't be properly restored!
+ *
+ * This does not work on Sun because of extern "C"
+ */
+#undef H5E_BEGIN_TRY
+extern "C" { typedef herr_t (*H5E_saved_efunc_type)(void*); }
+#define H5E_BEGIN_TRY {                                                       \
+    H5E_saved_efunc_type H5E_saved_efunc;                                     \
+    void *H5E_saved_edata;                                                    \
+    H5Eget_auto (&H5E_saved_efunc, &H5E_saved_edata);                         \
+    H5Eset_auto (NULL, NULL);
+
 //
 // Get Type of Object
 //

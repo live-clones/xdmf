@@ -119,7 +119,7 @@ using std::hex;
 #define XDMF_MAX_DIMENSION  10
 #define XDMF_MAX_STRING_LENGTH  256
 
-// #define XDMF_LIST_KEY  ICE_LIST_KEY
+/* #define XDMF_LIST_KEY  ICE_LIST_KEY */
 #define XDMF_BIG_INT  ICE_BIG_INT
 
 #define XDMF_DEFAULT_INDEX  -1
@@ -258,7 +258,7 @@ need to make sure ....
 #endif /* MIN */
 
 
-//! Used for Parsing
+/*! Used for Parsing */
 
 #define XDMF_WORD_CMP( a, b )  ( (a) != NULL ) && ( STRCASECMP((a),(b)) == 0 )
 
