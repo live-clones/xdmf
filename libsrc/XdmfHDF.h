@@ -105,11 +105,11 @@ public:
 //! Get Value of Use Serial
   XdmfGetValueMacro(UseSerialFile, XdmfInt32);
 //! Set the current internal HDF "Group" for creation
-  XdmfInt32 SetCwdName( XdmfString Directory );
+  XdmfInt32 SetCwdName( XdmfConstString Directory );
 //! Get the current internal HDF "Group"
   XdmfGetValueMacro(CwdName, XdmfString );
 //! Go to another HDF5 "Group"
-  XdmfInt32 Cd( XdmfString Directory = "/"  ) {
+  XdmfInt32 Cd( XdmfConstString Directory = "/"  ) {
     return( this->SetCwdName( Directory ) );
     };
 //! Create an HDF5 Gourp
@@ -145,7 +145,7 @@ public:
   return( XDMF_H5_OTHER );
   };
 //! Get The Type of the Child as a String 
-  XdmfString GetChildTypeAsString( XdmfInt64 Index ) {
+  XdmfConstString GetChildTypeAsString( XdmfInt64 Index ) {
     switch( this->GetChildType( Index ) ) {
       case XDMF_H5_DIRECTORY :
         return("XDMF_H5_DIRECTORY");

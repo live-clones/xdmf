@@ -170,10 +170,10 @@ return(0);
 // Set the Current Working Directory
 //
 XdmfInt32
-XdmfHDF::SetCwdName( XdmfString Directory )
+XdmfHDF::SetCwdName( XdmfConstString Directory )
 {
 hid_t    NewDirectory;
-XdmfString  NewDirectoryName = Directory;
+XdmfConstString  NewDirectoryName = Directory;
 XdmfInt32  i, Type;
 
 Type = this->Info( this->Cwd, Directory );
