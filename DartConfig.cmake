@@ -15,8 +15,8 @@ SET (PROJECT_URL "http://www.arl.hpc.mil/ice/")
 
 # Dart server configuration 
 SET (ROLLUP_URL "http://${DROP_SITE}/cgi-bin/xdmf-rollup-dashboard.sh")
-#SET (CVS_WEB_URL "http://${DROP_SITE}/cgi-bin/cvsweb.cgi/Xdmf/")
-#SET (CVS_WEB_CVSROOT "Xdmf")
+SET (CVS_WEB_URL "http://${DROP_SITE}/cgi-bin/cvsweb.cgi/Xdmf/")
+SET (CVS_WEB_CVSROOT "Xdmf")
 #SET (DOXYGEN_URL "http://${DROP_SITE}/" )
 #SET (GNATS_WEB_URL "http://${DROP_SITE}/")
 
