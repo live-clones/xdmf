@@ -64,13 +64,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "XdmfTransform.h"
 #include "XdmfGrid.h"
 #include "XdmfXNode.h"
+#include "XdmfGeometry.h"
+#include "XdmfAttribute.h"
 
 #include <sys/stat.h>
 #include <string>
 #include <vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.13.2.1");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.13.2.2");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -83,6 +85,8 @@ vtkCxxRevisionMacro(vtkXdmfReader, "1.13.2.1");
 
 #define vtkMAX(x, y) (((x)>(y))?(x):(y))
 #define vtkMIN(x, y) (((x)<(y))?(x):(y))
+
+#define PRINT_EXTENT(x) "[" << (x)[0] << " " << (x)[1] << " " << (x)[2] << " " << (x)[3] << " " << (x)[4] << " " << (x)[5] << "]" 
 
 class vtkXdmfReaderInternal
 {
@@ -170,6 +174,14 @@ vtkXdmfReader::~vtkXdmfReader()
   this->PointDataArraySelection->Delete();
 
   this->SetDomainName(0);
+
+
+  vtkXdmfReaderInternal::GridListType::size_type currentGrid;
+  for ( currentGrid = 0; currentGrid < this->Internals->Grids.size(); currentGrid ++ )
+    {
+    delete this->Internals->Grids[currentGrid];
+    }
+
   delete this->Internals;
 }
 
@@ -213,6 +225,7 @@ vtkDataSet *vtkXdmfReader::GetOutput(int idx)
 //----------------------------------------------------------------------------
 void vtkXdmfReader::Execute()
 {
+  vtkDebugMacro("Execute");
   if ( !this->FileName )
     {
     vtkErrorMacro("File name not set");
@@ -240,12 +253,21 @@ void vtkXdmfReader::Execute()
       {
       continue;
       }
+
+    //cout << "WholeExtent:  " << PRINT_EXTENT(this->Outputs[idx]->GetWholeExtent()) << endl;
+    //cout << "UpdateExtent: " << PRINT_EXTENT(this->Outputs[idx]->GetUpdateExtent()) << endl;
+    //vtkStructuredGrid  *vGrid = vtkStructuredGrid::SafeDownCast(this->Outputs[idx]);
+    //if ( vGrid )
+    //  {
+    //  cout << "Extent:       " << PRINT_EXTENT(vGrid->GetExtent()) << endl;
+    //  }
+    XdmfGrid* grid = this->Internals->Grids[currentGrid];
+
     if ( !this->Internals->DataDescriptions[currentGrid] )
       {
-      continue;
+      this->Internals->DataDescriptions[currentGrid] = grid->GetShapeDesc();
+      //continue;
       }
-
-    XdmfGrid* grid = this->Internals->Grids[currentGrid];
 
     grid->Update();
 
@@ -595,6 +617,10 @@ void vtkXdmfReader::Execute()
           status = this->CellDataArraySelection->ArrayIsEnabled(name);
           }
         }
+      if ( !status )
+        {
+        continue;
+        }
       status = 1;
       vtkDebugMacro(<< "Array with name: " << name << " has status: " << status);
       // attrNode = this->DOM->FindElement("Attribute", cc);
@@ -740,6 +766,7 @@ void vtkXdmfReader::Execute()
 //----------------------------------------------------------------------------
 void vtkXdmfReader::ExecuteInformation()
 {
+  vtkDebugMacro("ExecuteInformation");
   vtkIdType cc;
   char         *CurrentFileName;
   XdmfInt32    Rank;
@@ -1061,7 +1088,14 @@ void vtkXdmfReader::ExecuteInformation()
         << upext[2] << ", " 
         << upext[3] << ", " 
         << upext[4] << ", " 
-        << upext[5] )
+        << upext[5] );
+      //cout << "WholeExtent:  " << PRINT_EXTENT(this->Outputs[idx]->GetWholeExtent()) << endl;
+      //cout << "UpdateExtent: " << PRINT_EXTENT(this->Outputs[idx]->GetUpdateExtent()) << endl;
+      //vtkStructuredGrid  *vGrid = vtkStructuredGrid::SafeDownCast(this->Outputs[idx]);
+      //if ( vGrid )
+      //  {
+      //  cout << "Extent:       " << PRINT_EXTENT(vGrid->GetExtent()) << endl;
+      //  }
       }
 
     idx ++;
@@ -1097,6 +1131,7 @@ int vtkXdmfReader::GetPointArrayStatus(const char* name)
 //----------------------------------------------------------------------------
 void vtkXdmfReader::SetPointArrayStatus(const char* name, int status)
 {
+  vtkDebugMacro("Set point array \"" << name << "\" status to: " << status);
   if(status)
     {
     this->PointDataArraySelection->EnableArray(name);
@@ -1110,6 +1145,7 @@ void vtkXdmfReader::SetPointArrayStatus(const char* name, int status)
 //----------------------------------------------------------------------------
 void vtkXdmfReader::EnableAllArrays()
 {
+  vtkDebugMacro("Enable all point and cell arrays");
   this->PointDataArraySelection->EnableAllArrays();
   this->CellDataArraySelection->EnableAllArrays();
 }
@@ -1117,6 +1153,7 @@ void vtkXdmfReader::EnableAllArrays()
 //----------------------------------------------------------------------------
 void vtkXdmfReader::DisableAllArrays()
 {
+  vtkDebugMacro("Disable all point and cell arrays");
   this->PointDataArraySelection->DisableAllArrays();
   this->CellDataArraySelection->DisableAllArrays();
 }
@@ -1142,6 +1179,7 @@ int vtkXdmfReader::GetCellArrayStatus(const char* name)
 //----------------------------------------------------------------------------
 void vtkXdmfReader::SetCellArrayStatus(const char* name, int status)
 {
+  vtkDebugMacro("Set cell array \"" << name << "\" status to: " << status);
   if(status)
     {
     this->CellDataArraySelection->EnableArray(name);
@@ -1193,6 +1231,7 @@ int vtkXdmfReader::GetGridIndex(const char* name)
 //----------------------------------------------------------------------------
 void vtkXdmfReader::EnableGrid(const char* name)
 {
+  vtkDebugMacro("Enable grid \"" << name << "\"");
   this->EnableGrid(this->GetGridIndex(name));
 }
 
@@ -1204,24 +1243,27 @@ void vtkXdmfReader::EnableGrid(int idx)
     vtkErrorMacro("Cannot enable grid. Grid " << idx << " does not exists.");
     return;
     }
+  vtkDebugMacro("Enable grid " << idx);
   this->Internals->SelectedGrids[idx] = 1;
   this->Modified();
+  this->UpdateInformation();
 }
 
 //----------------------------------------------------------------------------
 void vtkXdmfReader::EnableAllGrids()
 {
+  vtkDebugMacro("Enable all grids");
   int currentGrid;
   for ( currentGrid = 0; currentGrid < this->GetNumberOfGrids(); currentGrid ++ )
     {
-    this->Internals->SelectedGrids[currentGrid] = 1;
+    this->EnableGrid(currentGrid);
     }
-  this->Modified();
 }
 
 //----------------------------------------------------------------------------
 void vtkXdmfReader::DisableGrid(const char* name)
 {
+  vtkDebugMacro("Disable grid \"" << name << "\"");
   this->DisableGrid(this->GetGridIndex(name));
 }
 
@@ -1233,19 +1275,21 @@ void vtkXdmfReader::DisableGrid(int idx)
     vtkErrorMacro("Cannot disable grid. Grid " << idx << " does not exists.");
     return;
     }
+  vtkDebugMacro("Disable grid " << idx);
   this->Internals->SelectedGrids[idx] = 0;
   this->Modified();
+  this->UpdateInformation();
 }
 
 //----------------------------------------------------------------------------
 void vtkXdmfReader::DisableAllGrids()
 {
+  vtkDebugMacro("Disable all grids");
   int currentGrid;
   for ( currentGrid = 0; currentGrid < this->GetNumberOfGrids(); currentGrid ++ )
     {
-    this->Internals->SelectedGrids[currentGrid] = 0;
+    this->DisableGrid(currentGrid);
     }
-  this->Modified();
 }
 
 //----------------------------------------------------------------------------
