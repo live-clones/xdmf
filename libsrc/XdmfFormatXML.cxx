@@ -105,7 +105,7 @@ return( Array );
 
 XdmfXNode *
 XdmfFormatXML::ArrayToElement( XdmfArray *Array,
-      XdmfString HeavyDataset,
+      XdmfString /*HeavyDataset*/,
       XdmfXNode *Element,
       XdmfDataDesc *Desc ) {
 

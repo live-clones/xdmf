@@ -97,7 +97,7 @@ if( Data && strlen( Data ) > 1 ){
           Array->SelectAll();
           }
       } else {
-        XdmfInt64  i, NumberOfCoordinates;
+        XdmfInt64  NumberOfCoordinates;
         XdmfInt64  *Coordinates;
 
 

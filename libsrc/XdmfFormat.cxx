@@ -110,8 +110,8 @@ XdmfDataDesc *
 XdmfFormat::ElementToCompoundDataDesc( XdmfXNode *Element ) {
 
 XdmfDataDesc  *Desc;
-XdmfString  Attribute;
-XdmfInt32  i, NumberOfMembers, Member, Rank = 1, NumberType;
+//XdmfString  Attribute;
+XdmfInt32  i, NumberOfMembers, Member, Rank = 1;
 XdmfInt64  TotalSize, Dimensions[ XDMF_MAX_DIMENSION ];
 if( !this->DOM ){
   XdmfErrorMessage("Object has no DOM");
@@ -176,7 +176,7 @@ XdmfFormat::ElementToDataDesc( XdmfXNode *Element ) {
 
 XdmfDataDesc  *Desc;
 XdmfString  Attribute;
-XdmfInt32  i, Rank = 1, NumberType;
+XdmfInt32  Rank = 1, NumberType;
 XdmfInt64  Dimensions[ XDMF_MAX_DIMENSION ];
 
 if( !this->DOM ){

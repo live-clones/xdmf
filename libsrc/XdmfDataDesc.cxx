@@ -594,7 +594,7 @@ XdmfInt64
 XdmfDataDesc::GetMemberSize( XdmfInt64 Index ) {
 hsize_t    Length;
 XdmfInt64  RetVal = 1;
-hsize_t     Dims[XDMF_MAX_DIMENSION];
+//hsize_t     Dims[XDMF_MAX_DIMENSION];
 
 if( Index >  ( H5Tget_nmembers( this->DataType ) - 1 ) ){
   XdmfErrorMessage("Index is Greater than Number of Members");

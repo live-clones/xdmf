@@ -366,8 +366,8 @@ return( this->SetValue( Index, Value ) );
 }
 
 XdmfInt32 XdmfArray::CopyCompound( XdmfPointer ArrayPointer,
-      XdmfInt32 ArrayType,
-      XdmfInt64 ArrayStride,
+      XdmfInt32 /*ArrayType*/,
+      XdmfInt64 /*ArrayStride*/,
       XdmfPointer ValuePointer,
       XdmfInt32  ValueType,
       XdmfInt64 ValueStride,

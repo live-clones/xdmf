@@ -688,10 +688,8 @@ XdmfDOM::FindElementByAttribute(const char * Attribute,
 
 char  *attribute = (char *)Attribute;
 int  occurance = Index;
-XDMF_TREE_NODE *Start;
-XDMF_TREE_NODE **children;
+XDMF_TREE_NODE * Start;
 XdmfXNode *node;
-int nchildren;
 FindNodeData fndata;
 
 // XdmfDebug( " IN FindElement , type = " << type << " Node = " << Node << " #  " << occurance);
