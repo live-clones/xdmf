@@ -1,3 +1,6 @@
 ADD_EXECUTABLE(XdmfFormatExample XdmfFormatExample.cxx)
 
 TARGET_LINK_LIBRARIES(XdmfFormatExample Xdmf)
+IF(XDMF_HAS_NDGM)
+  TARGET_LINK_LIBRARIES(XdmfFormatExample ${NDGM_LIBRARY})
+ENDIF(XDMF_HAS_NDGM)
