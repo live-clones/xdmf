@@ -34,7 +34,7 @@ extern "C" {
 #else
 #define NDGM_CMD_NOP  0
 	typedef struct {
-		char *dummy;
+		XdmfString dummy;
 		} NDGM_NODE;
 #endif
 }
@@ -56,12 +56,12 @@ public:
   XdmfNDGM();
   ~XdmfNDGM();
 
-  const char * GetClassName() { return ( "XdmfNDGM" ) ; };
+  XdmfConstString GetClassName() { return ( "XdmfNDGM" ) ; };
 
 //! Get the Default hostname of the NDGM Server
         XdmfGetValueMacro(NdgmHost, XdmfString);
 //! Set the Default hostname of the NDGM Server
-        void SetNdgmHost( char *String ) { strcpy( this->NdgmHost, String ); }
+        void SetNdgmHost( XdmfString String ) { strcpy( this->NdgmHost, String ); }
 
 //! Get the low level transport mechanism
   XdmfGetValueMacro(NdgmDriver, XdmfInt32);
@@ -177,9 +177,9 @@ protected:
 
 
 extern "C" {
-extern XDMF_EXPORT char *XdmfGetNdgmEntries( void );
+extern XDMF_EXPORT XdmfString XdmfGetNdgmEntries( void );
 extern XDMF_EXPORT void XdmfDeleteAllNdgmEntries( void );
-extern XDMF_EXPORT XdmfInt64 XdmfAddNdgmEntry( char *Name, XdmfInt64 Length );
+extern XDMF_EXPORT XdmfInt64 XdmfAddNdgmEntry( XdmfString Name, XdmfInt64 Length );
   }
 
 #endif // __XdmfNDGM_h

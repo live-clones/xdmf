@@ -39,7 +39,7 @@ XdmfArray *
 XdmfFormatXML::ElementToArray( XdmfXNode *Element, XdmfDataDesc *Desc, XdmfArray *Array  ) {
 
 XdmfInt32  NumberType;
-XdmfString  Data;
+XdmfConstString  Data;
 XdmfArray  *NewArray = NULL;
 XdmfDataDesc  *NewDesc = NULL;
 

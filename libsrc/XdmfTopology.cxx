@@ -30,7 +30,7 @@
 #include "XdmfDOM.h"
 #include "XdmfHDF.h"
 
-XdmfTopology *HandleToXdmfTopology( char *Source ){
+XdmfTopology *HandleToXdmfTopology( XdmfString Source ){
   XdmfObject  *TempObj;
   XdmfTopology   *Topology;
 
@@ -70,7 +70,7 @@ return( XDMF_SUCCESS );
 
 
 XdmfInt32
-XdmfTopology::SetTopologyTypeFromString( XdmfString TopologyType ) {
+XdmfTopology::SetTopologyTypeFromString( XdmfConstString TopologyType ) {
 
 XdmfInt32  newTopologyType = XDMF_NOTOPOLOGY;
 
@@ -257,7 +257,7 @@ return( XDMF_SUCCESS );
 }
 
 XdmfInt32
-XdmfTopology::SetOrderFromString( XdmfString Order ){
+XdmfTopology::SetOrderFromString( XdmfConstString Order ){
 XdmfInt32  i = 0, List[ XDMF_MAX_ORDER];
 istrstream  InStream( Order, strlen(Order) );
 
@@ -283,7 +283,7 @@ return( NULL );
 XdmfInt32
 XdmfTopology::InitTopologyFromElement( XdmfXNode *Element ) {
 
-XdmfString  Attribute;
+XdmfConstString  Attribute;
 
 if( !Element ) {
   XdmfErrorMessage("NULL Element");
@@ -315,7 +315,7 @@ Attribute = this->DOM->Get( Element, "NodesPerElement" );
 if( Attribute ){
   XdmfInt64 NodesPerElement;
 
-  NodesPerElement = strtol( Attribute, (char **)NULL, 0 );
+  NodesPerElement = strtol( Attribute, (XdmfString *)NULL, 0 );
   this->SetNodesPerElement( NodesPerElement );
   }
 Attribute = this->DOM->Get( Element, "Order" );
@@ -324,7 +324,7 @@ if( Attribute ){
   }
 Attribute = this->DOM->Get( Element, "BaseOffset" );
 if( Attribute ){
-  this->BaseOffset = strtol( Attribute, (char **)NULL, 0);
+  this->BaseOffset = strtol( Attribute, (XdmfString *)NULL, 0);
   }
 Attribute = this->DOM->Get( Element, "Name" );
 if( Attribute ) {
@@ -339,7 +339,7 @@ return( XDMF_SUCCESS );
 XdmfInt32
 XdmfTopology::SetTopologyFromElement( XdmfXNode *Element ) {
 
-XdmfString  Attribute;
+XdmfConstString  Attribute;
 XdmfXNode    *ConnectionElement;
 
 if( !Element ) {

@@ -111,7 +111,14 @@ using std::hex;
 # endif /* SWIG */
 #endif /* __cplusplus */
 
+#ifdef XDMF_NO_STD_NAMESPACE
+#  define xdmfstd
+#else
+#  define xdmfstd std
+#endif
+
 #include "XdmfExport.h"
+
 
 #define XDMF_SUCCESS  1
 #define XDMF_FAIL  -1
@@ -145,6 +152,13 @@ typedef ICE_64_INT  XDMF_64_INT;
 typedef ICE_FLOAT  XDMF_FLOAT;
 typedef ICE_DOUBLE  XDMF_DOUBLE;
 
+#ifdef __cplusplus
+# ifndef SWIG
+#  include <string>
+# endif 
+//typedef xdmfstd::string XdmfSTDString;
+#endif
+
 #ifndef SWIG
 typedef XDMF_32_INT  XdmfBoolean;
 typedef XDMF_CHAR *  XdmfString;
@@ -166,6 +180,7 @@ so we need to fool the interface code
 ***************************************/
 typedef int    XdmfBoolean;
 typedef char *    XdmfString;
+typedef const char *    XdmfConstString;
 typedef void *    XdmfPointer;
 typedef unsigned char  XdmfInt8;
 typedef int    XdmfInt32;
@@ -265,6 +280,23 @@ need to make sure ....
 
 #define XDMF_WORD_CMP( a, b )  ( (a) != NULL ) && ( STRCASECMP((a),(b)) == 0 )
 
+#define XDMF_STRING_TRIM( str ) { \
+  std::string::size_type spos = str.find_first_not_of(" \n\t"); \
+  std::string::size_type epos = str.find_last_not_of(" \n\t"); \
+  if ( spos == str.npos ) \
+    { \
+    str = ""; \
+    } \
+  else \
+    { \
+    if ( epos != str.npos ) \
+      { \
+      epos = epos - spos + 1; \
+      } \
+    str = str.substr(spos, epos); \
+    } \
+  }
+
 #define XDMF_WORD_TRIM( a ) { \
   int             StringLength; \
   char            *fp; \
@@ -346,7 +378,7 @@ class XDMF_EXPORT XdmfObject {
 public:
   XdmfObject();
   ~XdmfObject();
-  const char * GetClassName() { return("XdmfObject"); } ;
+  XdmfConstString GetClassName() { return("XdmfObject"); } ;
 
   XdmfSetValueMacro(Debug, XdmfBoolean);
   XdmfGetValueMacro(Debug, XdmfBoolean);
@@ -371,8 +403,8 @@ XDMF_EXPORT XdmfInt32 GetGlobalDebug( void );
 XDMF_EXPORT void SetGlobalDebug( XdmfInt32 DebugLevel );
 
 XDMF_EXPORT XdmfString GetUnique( XdmfString Pattern = NULL );
-extern XDMF_EXPORT char *XdmfObjectToHandle( XdmfObject *Source );
-extern XDMF_EXPORT XdmfObject *HandleToXdmfObject( char *Source );
+extern XDMF_EXPORT XdmfString XdmfObjectToHandle( XdmfObject *Source );
+extern XDMF_EXPORT XdmfObject *HandleToXdmfObject( XdmfString Source );
 
 extern XDMF_EXPORT istrstream& ICE_READ_STREAM64(istrstream& istr, ICE_64_INT& i);
 

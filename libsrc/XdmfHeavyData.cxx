@@ -42,7 +42,7 @@ XdmfHeavyData::~XdmfHeavyData() {
   this->SetWorkingDirectory(0);
 }
 
-void XdmfHeavyData::SetWorkingDirectory( char *String )
+void XdmfHeavyData::SetWorkingDirectory( XdmfString String )
 {
   if ( String == this->WorkingDirectory )
     {
@@ -64,7 +64,7 @@ void XdmfHeavyData::SetWorkingDirectory( char *String )
     }
 }
 
-void XdmfHeavyData::SetFileName( char *String )
+void XdmfHeavyData::SetFileName( XdmfString String )
 {
   if ( String == this->FileName )
     {

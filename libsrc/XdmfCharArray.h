@@ -37,13 +37,13 @@ public:
   XdmfCharArray();
   ~XdmfCharArray();
 
-  const char * GetClassName() { return ( "XdmfCharArray" ) ; };
+  XdmfConstString GetClassName() { return ( "XdmfCharArray" ) ; };
 
-//! Get the data as if is were a char *
-  char *GetString( void ) {
+//! Get the data as if is were a XdmfString
+  XdmfString GetString( void ) {
     return( this->GetDataPointerAsCharPointer() );
     };
-//! Set the data from a char *
+//! Set the data from a XdmfString
   XdmfInt32 SetString( XdmfString String ) {
     this->SetDataFromChars( String );
     return( strlen( String ) );

@@ -45,7 +45,7 @@ if (this->Data != NULL) free(this->Data);
 }
 
 void
-XdmfXNodeNode::SetName(const char *name){
+XdmfXNodeNode::SetName(XdmfConstString name){
   if(this->Name != NULL)
     {
     free(this->Name);
@@ -57,13 +57,13 @@ XdmfXNodeNode::SetName(const char *name){
     }
 }
 
-char *
+XdmfString 
 XdmfXNodeNode::GetName(){
   return(this->Name);
 }
 
 void
-XdmfXNodeNode::SetData(const char *data){
+XdmfXNodeNode::SetData(XdmfConstString data){
   if(this->Data != NULL) 
     {
     free(this->Data);
@@ -75,7 +75,7 @@ XdmfXNodeNode::SetData(const char *data){
     }
 }
 
-char *
+XdmfString 
 XdmfXNodeNode::GetData(){
   return(this->Data);
 }
@@ -117,7 +117,7 @@ XdmfLlist_remove_anchor(this->key);
 }
 
 void 
-XdmfXNode::Set(const char *name, const char *data){
+XdmfXNode::Set(XdmfConstString name, XdmfConstString data){
 
 XdmfXNodeNode *node;
 node = (XdmfXNodeNode *)XdmfLlist_first_member(this->key);
@@ -143,8 +143,8 @@ if (node == NULL) {
 }
 }
 
-char *
-XdmfXNode::Get(const char *name){
+XdmfString 
+XdmfXNode::Get(XdmfConstString name){
 XdmfXNodeNode *node;
 node = (XdmfXNodeNode *)XdmfLlist_first_member(this->key);
 while(node != NULL) {
@@ -174,7 +174,7 @@ return(size);
 
 }
 
-char *
+XdmfString 
 XdmfXNode::GetNameByIndex(int index){
 
 int i;
@@ -191,7 +191,7 @@ if(node != NULL) {
 }
 }
 
-char *
+XdmfString 
 XdmfXNode::GetDataByIndex(int index){
 
 int i;
@@ -231,13 +231,13 @@ extern "C" void *C__NewXdmfXNode(void) {
   return( NewObject );
   };
 
-extern "C" void C__XdmfXNodeSet(void *obj,  const char *name, const char *data){
+extern "C" void C__XdmfXNodeSet(void *obj,  XdmfConstString name, XdmfConstString data){
   XdmfXNode *ObjectHandle = ( XdmfXNode *)obj;
   ObjectHandle->Set(name, data);
   };
-extern "C" char *C__XdmfXNodeGet(void *obj,  const char *name){
+extern "C" XdmfString C__XdmfXNodeGet(void *obj,  XdmfConstString name){
   XdmfXNode *ObjectHandle = ( XdmfXNode *)obj;
-  return( (char *)ObjectHandle->Get(name) );
+  return( (XdmfString )ObjectHandle->Get(name) );
   };
 extern "C" void C__XdmfXNodePrint(void *obj){
   XdmfXNode *ObjectHandle = ( XdmfXNode *)obj;
@@ -247,12 +247,12 @@ extern "C" int C__XdmfXNodeGetSize(void *obj){
   XdmfXNode *ObjectHandle = ( XdmfXNode *)obj;
   return( (int)ObjectHandle->GetSize() );
   };
-extern "C" char *C__XdmfXNodeGetNameByIndex(void *obj, int index){
+extern "C" XdmfString C__XdmfXNodeGetNameByIndex(void *obj, int index){
   XdmfXNode *ObjectHandle = ( XdmfXNode *)obj;
-  return( (char *)ObjectHandle->GetNameByIndex(index) );
+  return( (XdmfString )ObjectHandle->GetNameByIndex(index) );
   };
-extern "C" char *C__XdmfXNodeGetDataByIndex(void *obj, int index){
+extern "C" XdmfString C__XdmfXNodeGetDataByIndex(void *obj, int index){
   XdmfXNode *ObjectHandle = ( XdmfXNode *)obj;
-  return( (char *)ObjectHandle->GetDataByIndex(index) );
+  return( (XdmfString )ObjectHandle->GetDataByIndex(index) );
   };
 

@@ -42,7 +42,7 @@ public:
   XdmfGeometry();
   ~XdmfGeometry();
 
-  const char * GetClassName() { return ( "XdmfGeometry" ) ; };
+  XdmfConstString GetClassName() { return ( "XdmfGeometry" ) ; };
 
   XdmfSetValueMacro( NumberOfPoints, XdmfInt64 );
   XdmfGetValueMacro( NumberOfPoints, XdmfInt64 );
@@ -51,7 +51,7 @@ public:
   XdmfGetValueMacro( GeometryType, XdmfInt32 );
 
   XdmfString GetGeometryTypeAsString( void );
-  XdmfInt32 SetGeometryTypeFromString( XdmfString GeometryType );
+  XdmfInt32 SetGeometryTypeFromString( XdmfConstString GeometryType );
 
   XdmfInt32 InitGeometryFromElement( XdmfXNode *Element );
   XdmfInt32 SetGeometryFromElement( XdmfXNode *Element );

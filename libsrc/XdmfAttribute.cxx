@@ -60,7 +60,7 @@ return("None");
 }
 
 XdmfInt32
-XdmfAttribute::SetAttributeTypeFromString( XdmfString AttributeType ){
+XdmfAttribute::SetAttributeTypeFromString( XdmfConstString AttributeType ){
 XdmfInt64  Dimensions[3];
 
 XdmfDebug("Setting Type to " << AttributeType );
@@ -106,7 +106,7 @@ return( "Node" );
 }
 
 XdmfInt32
-XdmfAttribute::SetAttributeCenterFromString( XdmfString AttributeCenter ){
+XdmfAttribute::SetAttributeCenterFromString( XdmfConstString AttributeCenter ){
 
 if( XDMF_WORD_CMP( AttributeCenter, "Grid" ) ) {
   this->AttributeCenter = XDMF_ATTRIBUTE_CENTER_GRID;
@@ -128,7 +128,7 @@ return( XDMF_SUCCESS );
 XdmfInt32
 XdmfAttribute::InitAttributeFromElement( XdmfXNode *Element ) {
 
-XdmfString  Attribute;
+XdmfConstString  Attribute;
 
 if( !Element ){
   XdmfErrorMessage("Element is NULL");
@@ -173,7 +173,7 @@ XdmfInt32  Status;
 XdmfXNode   *ValuesNode;
 XdmfTransform  ValueReader;
 
-XdmfString  Attribute;
+XdmfConstString  Attribute;
 
 if( !Element ){
   XdmfErrorMessage("Element is NULL");

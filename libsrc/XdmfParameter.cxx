@@ -87,7 +87,7 @@ if( Attribute ){
   }
 Attribute = Node->Get("CurrentIndex");
 if( Attribute ){
-  this->CurrentIndex = strtol( Attribute, ( char **)NULL, 0 );
+  this->CurrentIndex = strtol( Attribute, ( XdmfString *)NULL, 0 );
   }
 return( XDMF_SUCCESS );
 }
@@ -156,10 +156,10 @@ return( XDMF_SUCCESS );
 XdmfString
 XdmfParameter::Substitute( XdmfString OriginalString ){
 
-char  *NewString;
-char  *Where;
-char  *Name;
-char  *NewName = NULL;
+XdmfString NewString;
+XdmfString Where;
+XdmfString Name;
+XdmfString NewName = NULL;
 
 this->Update();
 

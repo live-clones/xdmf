@@ -72,7 +72,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.22");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.23");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -707,7 +707,7 @@ void vtkXdmfReader::Execute()
       {
       XdmfInt32 AttributeCenter;
       XdmfAttribute       *Attribute;
-      char		*NodeType;
+      XdmfConstString NodeType;
       Attribute = grid->GetAttribute( cc );
       char *name = Attribute->GetName();
       int status = 1;
@@ -942,7 +942,7 @@ void vtkXdmfReader::ExecuteInformation()
       {
       break;
       }
-    const char *Name = this->DOM->Get( domain, "Name" );
+    XdmfConstString Name = this->DOM->Get( domain, "Name" );
     ostrstream str;
     if ( !Name )
       {
@@ -961,14 +961,14 @@ void vtkXdmfReader::ExecuteInformation()
         {
         break;
         }
-      char *Name = this->DOM->Get( domain, "Name" );
+      XdmfConstString Name = this->DOM->Get( domain, "Name" );
       ostrstream str;
       if ( !Name )
         {
         str << "Domain" << cc << ends;
         Name = str.str();
         }
-      if( Name && strcmp(Name, this->DomainName) == 0) 
+      if( Name && strcmp(Name, this->DomainName) == 0)
         {
         break;
         }      
@@ -1779,7 +1779,8 @@ void vtkXdmfReader::UpdateGrids()
       {
       break;
       }
-    char *Name = this->DOM->Get( gridNode, "Name" );
+
+    XdmfConstString Name = this->DOM->Get( gridNode, "Name" );
     ostrstream str;
     if ( !Name )
       {

@@ -43,10 +43,10 @@ class XDMF_EXPORT XdmfXNodeNode : public virtual XdmfObject {
 public :
   XdmfXNodeNode();
   ~XdmfXNodeNode();
-  void SetName(const char *name);
-  char * GetName();
-  void SetData(const char *data);
-  char * GetData();
+  void SetName(XdmfConstString name);
+  XdmfString  GetName();
+  void SetData(XdmfConstString data);
+  XdmfString  GetData();
 
 protected :
 
@@ -61,12 +61,12 @@ public :
   
   XdmfXNode();
   ~XdmfXNode();
-  void Set(const char *name, const char*data);
-  char * Get(const char *name);
+  void Set(XdmfConstString name, XdmfConstString data);
+  XdmfString  Get(XdmfConstString name);
   void Print();
         int GetSize();
-        char *GetNameByIndex(int index);
-        char *GetDataByIndex(int index);
+        XdmfString GetNameByIndex(int index);
+        XdmfString GetDataByIndex(int index);
   void *GetClientData( void ) {
       return( this->ClientData );
       }
@@ -97,11 +97,11 @@ extern void C__XdmfXNodeDelete(void *XdmfXNode);
 #else 
 
 extern void *C__NewXdmfXNode();
-extern void C__XdmfXNodeSet(void *XdmfXNode, const char *name, const char *data);
-extern char *C__XdmfXNodeGet(void *XdmfXNode, const char *name);
+extern void C__XdmfXNodeSet(void *XdmfXNode, XdmfConstString name, XdmfConstString data);
+extern XdmfString C__XdmfXNodeGet(void *XdmfXNode, XdmfConstString name);
 extern int  C__XdmfXNodeGetSize(void *XdmfXNode);
-extern char *C__XdmfXNodeGetNameByIndex(void *XdmfXNode, int index);
-extern char *C__XdmfXNodeGetDataByIndex(void *XdmfXNode, int index);
+extern XdmfString C__XdmfXNodeGetNameByIndex(void *XdmfXNode, int index);
+extern XdmfString C__XdmfXNodeGetDataByIndex(void *XdmfXNode, int index);
 extern void C__XdmfXNodePrint(void *XdmfXNode);
 extern void C__XdmfXNodeDelete(void *XdmfXNode);
 
@@ -117,12 +117,12 @@ public :
   
   XdmfXNode();
   ~XdmfXNode();
-  void Set(const char *name, const char*data);
-  char * Get(const char *name);
+  void Set(XdmfConstString name, XdmfConstString data);
+  XdmfString  Get(XdmfConstString name);
   void Print();
         int GetSize();
-        char *GetNameByIndex(int index);
-        char *GetDataByIndex(int index);
+        XdmfString GetNameByIndex(int index);
+        XdmfString GetDataByIndex(int index);
   void *GetClientData( void ) {
       return( this->ClientData );
       }

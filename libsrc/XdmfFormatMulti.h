@@ -39,9 +39,9 @@ public :
   XdmfFormatMulti();
   ~XdmfFormatMulti();
 
-  const char * GetClassName() { return("XdmfFormatMulti"); } ;
+  XdmfConstString GetClassName() { return("XdmfFormatMulti"); } ;
 
-  XdmfString  SetFormatFromElement( XdmfXNode *Element );
+  XdmfConstString  SetFormatFromElement( XdmfXNode *Element );
 //! Return an Array from the DOM Element
   XdmfArray  *ElementToArray( XdmfXNode *Element,
             XdmfDataDesc  *Desc = NULL,

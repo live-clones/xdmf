@@ -44,7 +44,7 @@ XdmfArray *
 XdmfFormatHDF::ElementToArray( XdmfXNode *Element, XdmfDataDesc *Desc, XdmfArray *Array  ) {
 
 XdmfInt32  NumberType;
-XdmfString  Data;
+XdmfConstString  Data;
 XdmfArray  *NewArray = NULL;
 XdmfDataDesc  *NewDesc = NULL;
 
@@ -56,6 +56,8 @@ XdmfDebug("Getting array from element");
 NumberType = this->DOM->GetNumberType( Element );
 Data = this->DOM->Get(Element, "CData");
 if( Data && strlen( Data ) > 1 ){
+  XdmfString NewData = new char [ strlen(Data) + 1 ];
+  strcpy(NewData, Data);
   if( Array == NULL ){
     NewArray = Array = new XdmfArray( NumberType );
     }
@@ -73,13 +75,14 @@ if( Data && strlen( Data ) > 1 ){
       Array->CopySelection( Desc );
       Array->Allocate();
     }
-    XDMF_WORD_TRIM( Data );
-    XdmfDebug("Opening HDF data from " << Data );
-    if( H5.Open( Data, "r" ) == XDMF_FAIL ) {
-      XdmfErrorMessage("Can't Open Dataset " << Data );
+    XDMF_WORD_TRIM( NewData );
+    XdmfDebug("Opening HDF data from " << NewData );
+    if( H5.Open( NewData, "r" ) == XDMF_FAIL ) {
+      XdmfErrorMessage("Can't Open Dataset " << NewData );
       if( NewArray ){
         delete NewArray;
         }
+      if ( NewData ) { delete [] NewData; }
       return( NULL );
       }
     if( Desc->GetSelectionSize() != H5.GetNumberOfElements() ){
@@ -117,6 +120,7 @@ if( Data && strlen( Data ) > 1 ){
         delete NewArray;
         }
       H5.Close();
+      if ( NewData ) { delete [] NewData; }
       return( NULL );
     }
     XdmfDebug("Closing Dataset");
@@ -129,9 +133,10 @@ if( Data && strlen( Data ) > 1 ){
     if( NewArray ){
       delete NewArray;
       }
+    if ( NewData ) { delete [] NewData; }
     return( NULL );
     }
-  
+  if ( NewData ) { delete [] NewData; }
 } else {
   XdmfErrorMessage("Node has no CData");
   return( NULL );

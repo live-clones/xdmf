@@ -339,7 +339,7 @@ XdmfInt32 XdmfArray::SetShapeFromString( XdmfString Dimensions ) {
 return( XDMF_SUCCESS );
 }
 
-XdmfInt32 XdmfArray::ReformFromString( XdmfString Dimensions ) {
+XdmfInt32 XdmfArray::ReformFromString( XdmfConstString Dimensions ) {
 
   XdmfDebug("Setting Shape and Allocating Memory");
   XdmfDataDesc::SetShapeFromString( Dimensions );
@@ -471,7 +471,7 @@ XDMF_ARRAY_COPY( ArrayPointer, this->GetNumberType(), 1,
 return( XDMF_SUCCESS );
 }
 
-XdmfInt32 XdmfArray::SetValues( XdmfInt64 Index, XdmfString Values,
+XdmfInt32 XdmfArray::SetValues( XdmfInt64 Index, XdmfConstString Values,
         XdmfInt64 ArrayStride,
         XdmfInt64 ValuesStride ) {
 XdmfPointer  ArrayPointer;
@@ -716,8 +716,8 @@ XdmfString  XdmfArray::GetValues( XdmfInt64 Index,
 XdmfInt64  i = 0, MemberLength;
 XdmfFloat64  *Values;
 ostrstream      StringOutput;
-char    *Ptr;
-static char  *ReturnString = NULL;
+XdmfString Ptr;
+static XdmfString ReturnString = NULL;
 
 
 

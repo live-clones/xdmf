@@ -88,7 +88,7 @@ XdmfGeometry::SetPoints( XdmfArray *Points ){
     }
 
 XdmfInt32
-XdmfGeometry::SetGeometryTypeFromString( XdmfString GeometryType ){
+XdmfGeometry::SetGeometryTypeFromString( XdmfConstString GeometryType ){
 
 if( XDMF_WORD_CMP( GeometryType, "X_Y_Z" ) ){
   this->GeometryType = XDMF_GEOMETRY_X_Y_Z;
@@ -139,7 +139,7 @@ return( Value );
 
 XdmfInt32
 XdmfGeometry::InitGeometryFromElement( XdmfXNode *Element ) {
-XdmfString  Attribute;
+XdmfConstString  Attribute;
 
 if( !Element ) {
   XdmfErrorMessage("Element is NULL");
@@ -173,7 +173,7 @@ return( XDMF_SUCCESS );
 XdmfInt32
 XdmfGeometry::SetGeometryFromElement( XdmfXNode *Element ) {
 
-XdmfString  Attribute;
+XdmfConstString  Attribute;
 XdmfInt32  ArrayIndex;
 XdmfInt64  Start[ XDMF_MAX_DIMENSION ];
 XdmfInt64  Stride[ XDMF_MAX_DIMENSION ];

@@ -39,7 +39,7 @@ public :
   XdmfFormatHDF();
   ~XdmfFormatHDF();
 
-  const char * GetClassName() { return("XdmfFormatHDF"); } ;
+  XdmfConstString GetClassName() { return("XdmfFormatHDF"); } ;
 
 //! Return an Array from the DOM Element
   XdmfArray  *ElementToArray( XdmfXNode *Element,

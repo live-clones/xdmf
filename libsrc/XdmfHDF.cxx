@@ -66,7 +66,7 @@ for( i = 0 ; i < this->NumberOfChildren ; i++ ){
 // Set the next child in the list
 //
 void
-XdmfHDF::SetNextChild( const char *Name)
+XdmfHDF::SetNextChild( XdmfConstString Name)
 {
 
 this->Child[ this->NumberOfChildren ] = new char[ strlen( Name ) + 2 ];
@@ -78,10 +78,10 @@ this->NumberOfChildren++;
 // Get Directory Name from Dataset
 //
 XdmfString
-GetDirectoryName( const char *Name )
+GetDirectoryName( XdmfConstString Name )
 {
 static char Directory[XDMF_MAX_STRING_LENGTH];
-char *slash;
+XdmfString slash;
 
 strcpy( Directory, Name );
 slash = strrchr( Directory, '/' );
@@ -126,7 +126,7 @@ extern "C" { typedef herr_t (*H5E_saved_efunc_type)(void*); }
 // Get Type of Object
 //
 XdmfInt32
-XdmfHDF::Info( hid_t Group, const char *Name )
+XdmfHDF::Info( hid_t Group, XdmfConstString Name )
 {
 H5G_stat_t StatusBuffer;
 herr_t Status;
@@ -149,7 +149,7 @@ return( H5G_UNKNOWN );
 // Used by Giterate()
 //
 static herr_t
-XdmfHDFList( hid_t group, const char *name, void *me )
+XdmfHDFList( hid_t group, XdmfConstString name, void *me )
 {
 XdmfHDF *ThisClassPtr = ( XdmfHDF *)me;
 
@@ -476,26 +476,27 @@ return( Array );
 
 
 XdmfInt32
-XdmfHDF::Open( char *DataSetName , char *Access ) {
+XdmfHDF::Open( XdmfConstString DataSetName, XdmfConstString Access ) {
 
-// char    *Domain, *File, *Path;
-char    *lastcolon, *firstcolon;
+// XdmfString Domain, *File, *Path;
+XdmfString lastcolon;
+XdmfString firstcolon;
 XdmfInt32  status, flags = H5F_ACC_RDWR;
 XdmfInt32  AllowCreate = 0;
 ostrstream FullFileName;
 
 if( DataSetName != NULL ) {
-  char  *NewName = NULL;
-  NewName = DataSetName = strdup( DataSetName );
+  XdmfString NewName = NULL;
+  NewName = strdup( DataSetName );
   // Get Parts from Fulll Name
   //   Start from the back
-  lastcolon = strrchr( DataSetName, ':' );
-  firstcolon = strchr( DataSetName, ':' );
+  lastcolon = strrchr( NewName, ':' );
+  firstcolon = strchr( NewName, ':' );
 
   if( ( lastcolon == NULL ) && ( firstcolon == NULL ) ){
   // No : in name so "name" is a Dataset
   XdmfDebug("No Colons in HDF Filename");
-  strcpy(this->Path, DataSetName );
+  strcpy(this->Path, NewName );
   } else if( lastcolon != firstcolon ) {
   // Two :'s 
   // This is a full name
@@ -505,7 +506,7 @@ if( DataSetName != NULL ) {
   *firstcolon = '\0';
   firstcolon++;
   strcpy(this->FileName, firstcolon );
-  strcpy(this->Domain, DataSetName);
+  strcpy(this->Domain, NewName);
   XdmfDebug("Two Colons -  Full HDF Filename Domain : " <<
     this->Domain << " File " <<
     this->FileName);
@@ -514,20 +515,20 @@ if( DataSetName != NULL ) {
   //  
   *firstcolon = '\0';
   firstcolon++;
-  if ( ( STRCASECMP( DataSetName, "FILE" ) == 0 ) ||
-    ( STRCASECMP( DataSetName, "NDGM" ) == 0 ) ||
-    ( STRCASECMP( DataSetName, "GASS" ) == 0 ) ||
-    ( STRCASECMP( DataSetName, "CORE" ) == 0 ) ||
-    ( STRCASECMP( DataSetName, "DUMMY" ) == 0 ) ) {
+  if ( ( STRCASECMP( NewName, "FILE" ) == 0 ) ||
+    ( STRCASECMP( NewName, "NDGM" ) == 0 ) ||
+    ( STRCASECMP( NewName, "GASS" ) == 0 ) ||
+    ( STRCASECMP( NewName, "CORE" ) == 0 ) ||
+    ( STRCASECMP( NewName, "DUMMY" ) == 0 ) ) {
     // Domain::File
-    strcpy( this->Domain, DataSetName);
+    strcpy( this->Domain, NewName);
     strcpy( this->FileName, firstcolon );
   XdmfDebug("Two Colons -  Domain : " <<
     this->Domain << " File " <<
     this->FileName);
   } else {
     // File:Path
-    strcpy( this->FileName, DataSetName);
+    strcpy( this->FileName, NewName);
     strcpy( this->Path, firstcolon );
   XdmfDebug("Two Colons -  File : " <<
     this->FileName << " Path " <<
@@ -696,7 +697,7 @@ XdmfArray *CopyArray( XdmfArray *Source, XdmfArray *Target ) {
 XdmfString  H5Name;
 XdmfHDF    Hdf;
 XdmfArray  *NewArray;
-char    FullName[ 80 ];
+ostrstream str;
 
 if( Target == NULL ){
   NewArray = Target = new XdmfArray( Source->GetNumberType() );
@@ -704,9 +705,8 @@ if( Target == NULL ){
   }
 // Build a Unique Name
 H5Name = GetUnique( "CORE:XdmfJunk" );
-strcpy( FullName, H5Name );
-// strcat( FullName, ".h5:/" );
-strcat( FullName, ".h5:/TempData" );
+str << H5Name;
+str << ".h5:/TempData" << ends;
 Hdf.CopyType( Source );
 if( Source->GetSelectionSize() == Source->GetNumberOfElements() ) {
   Hdf.CopyShape( Source );
@@ -716,15 +716,17 @@ if( Source->GetSelectionSize() == Source->GetNumberOfElements() ) {
   Dimensions[0] = Source->GetSelectionSize();
   Hdf.SetShape( 1, Dimensions );
 }
-Hdf.Open( FullName, "rw" );
-if( Hdf.CreateDataset( FullName ) != XDMF_SUCCESS ){
-  XdmfErrorMessage("Can't Create Temp Dataset " << FullName );
+Hdf.Open( str.str(), "rw" );
+if( Hdf.CreateDataset( str.str()) != XDMF_SUCCESS ){
+  XdmfErrorMessage("Can't Create Temp Dataset " << str.str());
+  str.rdbuf()->freeze(0);
   if( NewArray ){
     delete NewArray;
     }
   Hdf.Close();
   return( NULL );
   }
+str.rdbuf()->freeze(0);
 if( Hdf.Write( Source ) == NULL ){
   XdmfErrorMessage("Can't Write Temp Dataset");
   if( NewArray ){

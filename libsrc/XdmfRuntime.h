@@ -49,7 +49,7 @@ public:
   XdmfRuntime();
   ~XdmfRuntime();
 
-  const char * GetClassName() { return ( "XdmfRuntime" ) ; };
+  XdmfConstString GetClassName() { return ( "XdmfRuntime" ) ; };
 
 //! Set/Get Barrier Mode
   XdmfSetValueMacro( BarrierMode, XdmfInt32 );
@@ -98,7 +98,7 @@ next Frequency multiple
   XdmfInt32  Term( void );
 //! Update from XML in a Disk File
   XdmfInt32  ParseFile( XdmfString FileName = "XdmfRuntime.xml" );
-//! Update from XML in a char *
+//! Update from XML in a XdmfString
   XdmfInt32  ParseBuffer( XdmfString Buffer = NULL  );
 
 //! Signal Completed Update in Free Run or Safe Mode

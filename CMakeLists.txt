@@ -113,6 +113,15 @@ ELSE(XDMF_BUILD_VTK)
     ENDIF(CMAKE_BUILD_TOOL MATCHES "devenv")
   ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 ENDIF(XDMF_BUILD_VTK)
+INCLUDE(${CMAKE_ROOT}/Modules/TestForSTDNamespace.cmake)
+
+# Enforce 0/1 as only possible values.  Needed for the means by which
+# Configure.hxx is implemented.
+IF(CMAKE_NO_STD_NAMESPACE)
+  SET(XDMF_NO_STD_NAMESPACE 1)
+ELSE(CMAKE_NO_STD_NAMESPACE)
+  SET(XDMF_NO_STD_NAMESPACE 0)
+ENDIF(CMAKE_NO_STD_NAMESPACE)
 
 SUBDIRS(libsrc binsrc)
 

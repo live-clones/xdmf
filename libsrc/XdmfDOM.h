@@ -49,7 +49,7 @@ public :
   XdmfDOM();
   ~XdmfDOM();
 
-  const char * GetClassName() { return("XdmfDOM"); } ;
+  XdmfConstString GetClassName() { return("XdmfDOM"); } ;
 
   XdmfSetValueMacro(XMLVersion, float);
   XdmfGetValueMacro(XMLVersion, float);
@@ -127,11 +127,11 @@ Index ( 0 based ) can be used to find the n'th
 node that satisfies the criteria. The search can also
 tree starting at a particular node.
 */
-  XdmfXNode *FindElement(const char *TagName,
+  XdmfXNode *FindElement(XdmfConstString TagName,
       XdmfInt32 Index= 0,
       XdmfXNode *Node = NULL );
-  XdmfXNode *FindElementByAttribute(const char *Attribute,
-      const char *Value,
+  XdmfXNode *FindElementByAttribute(XdmfConstString Attribute,
+      XdmfConstString Value,
       XdmfInt32 Index= 0,
       XdmfXNode *Node = NULL );
   //! Find the number of nodes of a certain type
@@ -141,22 +141,22 @@ tree starting at a particular node.
       XdmfString Value,
       XdmfXNode *Node = NULL );
   //! Find the n'th occurance of a certain type of PI
-  XdmfXNode *FindProcessingInstruction( const char *Target = NULL,
+  XdmfXNode *FindProcessingInstruction( XdmfConstString Target = NULL,
       XdmfInt32 occurance = 0,
       XdmfXNode *Node = NULL );
   //! Find the number of PIs of a certain type
-  XdmfInt32 FindNumberOfProcessingInstructions( const char *Target = NULL,
+  XdmfInt32 FindNumberOfProcessingInstructions( XdmfConstString Target = NULL,
       XdmfXNode *Node = NULL );
 
 //! Get the default NDGM Host to use for HDF5 files
   XdmfGetValueMacro(NdgmHost, XdmfString);
 //! Set the default NDGM Host to use for HDF5 files
-  void SetNdgmHost( char *String ) { strcpy( this->NdgmHost, String ); }
+  void SetNdgmHost( XdmfConstString String ) { strcpy( this->NdgmHost, String ); }
 
 //! Get the default Working directory to use for HDF5 files
   XdmfGetValueMacro(WorkingDirectory, XdmfString);
 //! Set the default Working directory to use for HDF5 files
-  void SetWorkingDirectory( char *String ) { strcpy( this->WorkingDirectory, String ); }
+  void SetWorkingDirectory( XdmfConstString String ) { strcpy( this->WorkingDirectory, String ); }
 
 /*!
 Get the various attributes from a node. If the XML is :
@@ -174,7 +174,7 @@ Node->Get( "Name ); etc.
 The reason to use this get is to confirm that this node
 is in this DOM and to accomplish PARAMETER substiution.
 */
-  XdmfString  Get( XdmfXNode *Node, XdmfString Attribute );
+  XdmfConstString  Get( XdmfXNode *Node, XdmfString Attribute );
 
 //! Set a Node's User Data
   void    SetUserData( XdmfXNode *Node, XdmfPointer UserData ){
@@ -231,7 +231,7 @@ void ReNew(XdmfInt32 *size);
 };
 
 extern XDMF_EXPORT int GetXNodeSize( XdmfXNode *Node );
-extern XDMF_EXPORT char *GetXNodeName(XdmfXNode *Node, int index);
-extern XDMF_EXPORT char *GetXNodeData(XdmfXNode *Node, int index);
-extern XDMF_EXPORT XdmfDOM *HandleToXdmfDOM( char *Source );
+extern XDMF_EXPORT XdmfString GetXNodeName(XdmfXNode *Node, int index);
+extern XDMF_EXPORT XdmfString GetXNodeData(XdmfXNode *Node, int index);
+extern XDMF_EXPORT XdmfDOM *HandleToXdmfDOM( XdmfString Source );
 #endif

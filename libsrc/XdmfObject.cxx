@@ -75,7 +75,7 @@ String << Pattern << ICE_64BIT_CAST(NameCntr++) << ends;
 return( ReturnName );
 }
 
-char *
+XdmfString 
 XdmfObjectToHandle( XdmfObject *Source ){
 ostrstream Handle;
 XDMF_64_INT RealObjectPointer;
@@ -91,8 +91,8 @@ return( (XdmfString)Handle.str() );
 }
 
 XdmfObject *
-HandleToXdmfObject( char *Source ){
-char* src = new char[ strlen(Source) + 1 ];
+HandleToXdmfObject( XdmfString Source ){
+XdmfString src = new char[ strlen(Source) + 1 ];
 strcpy(src, Source);
 istrstream Handle( src, strlen(src));
 char  c;

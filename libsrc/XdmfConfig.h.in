@@ -2,6 +2,7 @@
 #define __XdmfConfig_h
 
 #cmakedefine XDMF_USE_ANSI_STDLIB
+#cmakedefine XDMF_NO_STD_NAMESPACE
 
 #ifndef SIZEOF___INT64
 #cmakedefine SIZEOF___INT64

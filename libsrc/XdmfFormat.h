@@ -55,7 +55,7 @@ public :
   XdmfFormat();
   ~XdmfFormat();
 
-  const char * GetClassName() { return("XdmfFormat"); } ;
+  XdmfConstString GetClassName() { return("XdmfFormat"); } ;
 
   void  SetFormat( XdmfString Format ) {
     strcpy( this->DataFormat, Format );

@@ -67,8 +67,8 @@ return( Rank );
 XdmfString
 XdmfDataDesc::GetHyperSlabAsString( void ){
 ostrstream   StringOutput;
-char    *Ptr;
-static char   *Result = NULL;
+XdmfString Ptr;
+static XdmfString Result = NULL;
 XdmfInt32  i, Rank;
 XdmfInt64  Start[ XDMF_MAX_DIMENSION ];
 XdmfInt64  Stride[ XDMF_MAX_DIMENSION ];
@@ -183,8 +183,8 @@ return( HRank );
 XdmfString
 XdmfDataDesc::GetShapeAsString( void ) {
 ostrstream   StringOutput;
-char    *Ptr;
-static char   *Result = NULL;
+XdmfString Ptr;
+static XdmfString Result = NULL;
 XdmfInt64  i, Rank, Dimensions[ XDMF_MAX_DIMENSION ];
 
 Rank = this->GetShape( Dimensions );
@@ -399,7 +399,7 @@ return( this->SelectHyperSlab( HStart, HStride, HCount ) );
 }
 
 XdmfInt32
-XdmfDataDesc::SetShapeFromString( const XdmfString String ) {
+XdmfDataDesc::SetShapeFromString( XdmfConstString String ) {
   XdmfLength      i = 0, count = 0;
   istrstream   ist(String, strlen( String ) );
   istrstream   counter(String, strlen( String ) );
@@ -613,7 +613,7 @@ return( RetVal );
 XdmfString
 XdmfDataDesc::GetMemberName( XdmfInt64 Index ) {
 
-char     *Name;
+XdmfString Name;
 static char  MemberName[256];
 
 if( Index >  ( H5Tget_nmembers( this->DataType ) - 1 ) ){
@@ -629,7 +629,7 @@ return( MemberName );
 
 
 XdmfInt32
-XdmfDataDesc::AddCompoundMemberFromString( XdmfString Name,
+XdmfDataDesc::AddCompoundMemberFromString( XdmfConstString Name,
     XdmfString NumberTypeString,
     XdmfString Shape,
     XdmfInt64 Offset ){
@@ -648,7 +648,7 @@ return( this->AddCompoundMember( Name, NumberType, Rank, Dimensions, Offset) );
 }
 
 XdmfInt32
-XdmfDataDesc::AddCompoundMember( XdmfString Name,
+XdmfDataDesc::AddCompoundMember( XdmfConstString Name,
     XdmfInt32 NumberType,
     XdmfInt32 Rank,
     XdmfInt64 *Dimensions,
@@ -745,8 +745,8 @@ hsize_t    i;
 XdmfInt32 Rank = H5Sget_simple_extent_ndims(this->DataSpace );
 
 ostrstream StringOutput;
-char  *Ptr;
-static char *Result = NULL;
+XdmfString Ptr;
+static XdmfString Result = NULL;
 
 
 if( this->SelectionType == XDMF_COORDINATES ){

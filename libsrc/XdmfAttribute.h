@@ -51,15 +51,15 @@ public:
   XdmfAttribute();
   ~XdmfAttribute();
 
-  const char * GetClassName() { return ( "XdmfAttribute" ) ; };
+  XdmfConstString GetClassName() { return ( "XdmfAttribute" ) ; };
 
   XdmfSetValueMacro( AttributeType, XdmfInt32 );
   XdmfGetValueMacro( AttributeType, XdmfInt32 );
 
-  XdmfInt32 SetAttributeTypeFromString( XdmfString AttributeType );
+  XdmfInt32 SetAttributeTypeFromString( XdmfConstString AttributeType );
   XdmfString GetAttributeTypeAsString( void );
 
-  XdmfInt32 SetAttributeCenterFromString( XdmfString AttributeCenter );
+  XdmfInt32 SetAttributeCenterFromString( XdmfConstString AttributeCenter );
   XdmfString GetAttributeCenterAsString( void );
 
   XdmfSetValueMacro( AttributeCenter, XdmfInt32 );

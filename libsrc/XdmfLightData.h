@@ -44,17 +44,17 @@ public:
   XdmfLightData();
   ~XdmfLightData();
 
-  const char * GetClassName() { return ( "XdmfLightData" ) ; };
+  XdmfConstString GetClassName() { return ( "XdmfLightData" ) ; };
 
 //! Get the default NDGM Host
         XdmfGetValueMacro(NdgmHost, XdmfString);
 //! Set the default NDGM Host 
-        void SetNdgmHost( char *String ) { strcpy( this->NdgmHost, String ); }
+        void SetNdgmHost( XdmfString String ) { strcpy( this->NdgmHost, String ); }
 
 //! Get the current name
   XdmfGetValueMacro(Name, XdmfString);
 //! Set the current name
-  void SetName( XdmfString File ) {
+  void SetName( XdmfConstString File ) {
     strcpy( this->Name, File );
     } ;
 

@@ -28,7 +28,7 @@
 #include "XdmfGeometry.h"
 #include "XdmfAttribute.h"
 
-XdmfGrid *HandleToXdmfGrid( char *Source ){
+XdmfGrid *HandleToXdmfGrid( XdmfString Source ){
   XdmfObject  *TempObj;
   XdmfGrid   *Grid;
 
@@ -122,7 +122,7 @@ XdmfInt32
 XdmfGrid::InitGridFromElement( XdmfXNode *Element ) {
 
 XdmfInt32  Status = XDMF_FAIL;
-XdmfString  Attribute;
+XdmfConstString  Attribute;
 
 Attribute = this->DOM->Get( Element, "NodeType");
 if( XDMF_WORD_CMP( Attribute, "Grid" ) == 0 ){
@@ -180,7 +180,7 @@ XdmfInt32
 XdmfGrid::SetGridFromElement( XdmfXNode *Element ) {
 
 XdmfInt32  Status = XDMF_FAIL;
-XdmfString  Attribute;
+XdmfConstString  Attribute;
 
 Attribute = this->DOM->Get( Element, "NodeType");
 if( XDMF_WORD_CMP( Attribute, "Grid" ) == 0 ){

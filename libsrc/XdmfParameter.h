@@ -45,7 +45,7 @@ class XDMF_EXPORT XdmfParameter : public XdmfObject {
 public:
   XdmfParameter();
   ~XdmfParameter();
-  const char * GetClassName() { return ( "XdmfParameter" ) ; };
+  XdmfConstString GetClassName() { return ( "XdmfParameter" ) ; };
 
 //! Get the type of Parameter
   XdmfGetValueMacro(ParameterType, XdmfInt32);

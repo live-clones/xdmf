@@ -38,9 +38,9 @@ extern "C" {
     return(NDGM_SUCCESS); /* Device Close and Free Lower Data Structs */
     }
 #else
-   char *XdmfGetNdgmEntries( void ){return(NULL);}
+   XdmfString XdmfGetNdgmEntries( void ){return(NULL);}
    void XdmfDeleteAllNdgmEntries( void ){return;}
-   XdmfInt64 XdmfAddNdgmEntry( char *Name, XdmfInt64 Length )
+   XdmfInt64 XdmfAddNdgmEntry( XdmfString Name, XdmfInt64 Length )
      {
      (void)Name;
      (void)Length;
@@ -112,7 +112,7 @@ switch ( this->NdgmMode ) {
     {
       int   i, argc = 0;
       char  args[10][80];
-      char   *argv[10];
+      XdmfString argv[10];
 
       strcpy(args[argc++], "XDMF_NDGM_CLIENT");
       strcpy(args[argc++], "-host");

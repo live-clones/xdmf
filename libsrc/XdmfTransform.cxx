@@ -128,7 +128,7 @@ return( Element );
 XdmfArray *
 XdmfTransform::ElementToArray( XdmfXNode *Element ) {
 
-XdmfString  Attribute;
+XdmfConstString  Attribute;
 XdmfDataDesc  *Desc;
 XdmfFormatMulti  Formatter;
 XdmfXNode    *ArrayElement;
@@ -146,7 +146,7 @@ if( XDMF_WORD_CMP( Attribute, "DataStructure" ) ){
 Attribute = this->DOM->Get( Element, "Type" );
 XdmfDebug("Type = " << Attribute );
 if( XDMF_WORD_CMP( Attribute, "Function" ) ){
-  XdmfString  CData;
+  XdmfConstString  CData;
   XdmfArray  *ReturnArray, *ArrayToDelete[100];
   ostrstream  Function;
   XdmfInt32  Id, NTmp = 0;;
@@ -154,14 +154,15 @@ if( XDMF_WORD_CMP( Attribute, "Function" ) ){
 
   CData = this->DOM->Get( Element, "Function" );
   XdmfDebug("Transform is Function = " << CData);
-  while( (c = *CData++) ) {
+  XdmfConstString ch = CData;
+  while( (c = *ch++) ) {
     if( c == '$' ) {
       XdmfXNode  *Argument;
       XdmfArray  *TmpArray;
       XdmfTransform  TmpTransform;
-      istrstream  CDataStream(CData);
+      istrstream  CDataStream(ch);
       CDataStream >> Id;
-      while( (c = *CData++) ) {
+      while( (c = *ch++) ) {
         if( c > ' ') break;
         }
       Argument = this->DOM->FindElement( NULL, Id, Element );
@@ -221,7 +222,7 @@ XdmfTransform::ElementToDataDesc( XdmfXNode *Element ) {
 XdmfDataDesc  *Desc;
 XdmfArray  *Selection;
 XdmfXNode    *Child;
-XdmfString  Attribute;
+XdmfConstString  Attribute;
 XdmfInt32  Rank = 1;
 XdmfInt64  Dimensions[ XDMF_MAX_DIMENSION ];
 

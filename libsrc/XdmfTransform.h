@@ -60,7 +60,7 @@ public :
   XdmfTransform();
   ~XdmfTransform();
 
-  const char * GetClassName() { return("XdmfTransform"); } ;
+  XdmfConstString GetClassName() { return("XdmfTransform"); } ;
 
   void  SetTransform( XdmfString Transform ) {
     strcpy( this->DataTransform, Transform );

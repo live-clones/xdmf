@@ -37,7 +37,7 @@ public :
   XdmfFormatXML();
   ~XdmfFormatXML();
 
-  const char * GetClassName() { return("XdmfFormatXML"); } ;
+  XdmfConstString GetClassName() { return("XdmfFormatXML"); } ;
 
 //! Return an Array from the DOM Element
   XdmfArray  *ElementToArray( XdmfXNode *Element,

@@ -38,7 +38,7 @@ XdmfCharArray::~XdmfCharArray() {
 XdmfInt32
 XdmfCharArray::SetFromFile(  XdmfString FileName ) {
 
-char  *cp;
+XdmfString cp;
 int  ch;
 FILE  *fp;
 struct stat FileStatus;
@@ -50,7 +50,7 @@ if ( stat( FileName, &FileStatus ) < 0 ) {
   }
 XdmfDebug("File " << FileName << " is " << FileStatus.st_size << " bytes long");
 this->SetNumberOfElements( FileStatus.st_size + 1 );
-cp = (char *)this->GetDataPointer();
+cp = (XdmfString )this->GetDataPointer();
 if( (fp = fopen( FileName, "r" )) ) {
   while( ( ch = getc( fp ) ) != EOF ){
     *cp++ = ch;  

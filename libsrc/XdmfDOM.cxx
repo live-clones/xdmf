@@ -27,7 +27,7 @@
 #include "XdmfCharArray.h"
 #include "XdmfParameter.h"
 
-XdmfDOM *HandleToXdmfDOM( char *Source ){
+XdmfDOM *HandleToXdmfDOM( XdmfString Source ){
   XdmfObject  *TempObj;
   XdmfDOM   *DOM;
 
@@ -65,14 +65,14 @@ if( XdmfResPtr == *XdmfChildResPtr ){
 return(XDMF_TRUE);
 }
 
-char *
-C_GetXMLFromFile( char *FileName ) {
+XdmfString 
+C_GetXMLFromFile( XdmfString FileName ) {
 
   XdmfCharArray  c;
-  char    *buffer;
+  XdmfString buffer;
 
   c.SetFromFile( FileName );
-  buffer = ( char *)malloc( c.GetNumberOfElements() + 1 );
+  buffer = ( XdmfString )malloc( c.GetNumberOfElements() + 1 );
   strcpy( buffer, c.GetString() );
   return( buffer );
   }
@@ -247,14 +247,14 @@ XdmfDOM::Gets( void ) {
 
     if( this->xml ) free( this->xml );
     // Bad Hack
-    cptr = this->xml = ( char *)malloc( 100000 );
+    cptr = this->xml = ( XdmfString )malloc( 100000 );
     while( !from->get( ch ) ) *cptr++ = ch;
     *cptr = '\0';
   } else  {
     XdmfCharArray  c;
     c.SetFromFile( this->GetInputFileName() );
     if( this->xml ) free( this->xml );
-    this->xml = ( char *)malloc( c.GetNumberOfElements() + 1 );
+    this->xml = ( XdmfString )malloc( c.GetNumberOfElements() + 1 );
     strcpy( this->xml, c.GetString() );
   }
 return( this->xml );
@@ -323,10 +323,10 @@ this->xml[tmp-1] = '\0';
 
 void 
 XdmfDOM::ExpandNode(XDMF_TREE_NODE *node, XdmfInt32 *size) {
-        char *type;
-        char *ndata;
-        char *resname;
-        char *resdata;
+        XdmfString type;
+        XdmfString ndata;
+        XdmfString resname;
+        XdmfString resdata;
         int  nchild;
         int  i, j;
   int NumEl;
@@ -472,7 +472,7 @@ XdmfDOM::Parse(XdmfString xml) {
 
 XDMF_TREE_NODE *Root;
 XdmfXNode    *Node;
-XdmfString  Attribute;
+XdmfConstString  Attribute;
 
 // Remove Previous Data
 if (this->tree != NULL) XdmfTree_remove(this->tree,C__XdmfXNodeDelete);
@@ -630,9 +630,9 @@ return( NULL );
 }
 
 XdmfXNode * 
-XdmfDOM::FindElement(const char * TagName, XdmfInt32 Index, XdmfXNode *Node ) {
+XdmfDOM::FindElement(XdmfConstString TagName, XdmfInt32 Index, XdmfXNode *Node ) {
 
-char  *type = (char *)TagName;
+XdmfString type = (XdmfString )TagName;
 int  occurance = Index;
 XDMF_TREE_NODE *Start;
 XDMF_TREE_NODE **children;
@@ -683,10 +683,10 @@ if ( !type ) {
 }
 
 XdmfXNode * 
-XdmfDOM::FindElementByAttribute(const char * Attribute,
-    const char *Value, XdmfInt32 Index, XdmfXNode *Node ) {
+XdmfDOM::FindElementByAttribute(XdmfConstString Attribute,
+    XdmfConstString Value, XdmfInt32 Index, XdmfXNode *Node ) {
 
-char  *attribute = (char *)Attribute;
+XdmfString attribute = (XdmfString )Attribute;
 int  occurance = Index;
 XDMF_TREE_NODE * Start;
 XdmfXNode *node;
@@ -704,7 +704,7 @@ if ( !attribute ) {
 } else {
   // XdmfDebug("Type = " << type << " occurance = " << occurance);
   fndata.attribute = attribute;
-  fndata.value = ( char *)Value;
+  fndata.value = ( XdmfString )Value;
   fndata.occurance = occurance + 1;
   XdmfTree_walk(Start, C_FindXMLNodeByAttribute, &fndata);
   if( fndata.node ) {
@@ -770,7 +770,7 @@ return(fndata.occurance);
 }
 
 XdmfInt32
-XdmfDOM::FindNumberOfProcessingInstructions( const char *Target, XdmfXNode *Node )
+XdmfDOM::FindNumberOfProcessingInstructions( XdmfConstString Target, XdmfXNode *Node )
 {
 XdmfInt32  Count = 0, i = 0;
 XdmfXNode *Next = NULL;
@@ -797,7 +797,7 @@ return( Count );
 }
 
 XdmfXNode *
-XdmfDOM::FindProcessingInstruction( const char *Target,
+XdmfDOM::FindProcessingInstruction( XdmfConstString Target,
       XdmfInt32 occurance, XdmfXNode *Node ){
 
 XdmfInt32  Count = 0, i=0;
@@ -832,10 +832,10 @@ return( NULL );
 }
 
 int GetXNodeSize( XdmfXNode *Node ) { return( Node->GetSize() ); };
-char *GetXNodeName(XdmfXNode *Node, int index) { return( Node->GetNameByIndex( index ) ); };
-char *GetXNodeData(XdmfXNode *Node, int index) { return( Node->GetDataByIndex( index ) ); };
+XdmfString GetXNodeName(XdmfXNode *Node, int index) { return( Node->GetNameByIndex( index ) ); };
+XdmfString GetXNodeData(XdmfXNode *Node, int index) { return( Node->GetDataByIndex( index ) ); };
 
-XdmfString
+XdmfConstString
 XdmfDOM::Get( XdmfXNode *Node, XdmfString Attribute ) {
 
 XdmfInt64  i;
@@ -881,8 +881,8 @@ return( FinalValue );
 XdmfInt32
 XdmfDOM::GetNumberType( XdmfXNode *Node ){
 
-XdmfString  Attribute;
-XdmfString  Precision;
+XdmfConstString  Attribute;
+XdmfConstString  Precision;
 
 Attribute = this->Get( Node, "DataType" );
 if( !Attribute ) Attribute = this->Get( Node, "Type" );
@@ -909,7 +909,7 @@ return XDMF_FLOAT32_TYPE;
 XdmfParameter *
 XdmfDOM::FindParameter( XdmfConstString ParameterName, XdmfXNode *Node ) {
 
-char    *Attribute;
+XdmfString Attribute;
 XdmfInt32  i, NumberOfParameters;
 XdmfParameter  *Param = NULL;
 XdmfXNode    *ParamNode;
