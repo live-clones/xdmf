@@ -29,38 +29,53 @@
 #endif
 
 extern "C" {
+#ifdef HAVE_NDGM
   NDGM_32_INT
   XdmfNDGMErrorCallback( NDGM_NODE *node,
           NDGM_32_INT     reason,
           NDGM_PTR        user_data) {
     return(NDGM_SUCCESS); /* Device Close and Free Lower Data Structs */
     }
+#else
+   char *XdmfGetNdgmEntries( void ){return(NULL);}
+   void XdmfDeleteAllNdgmEntries( void ){return;}
+   XdmfInt64 XdmfAddNdgmEntry( char *Name, XdmfInt64 Length ){return(0);}
+#endif
   }
 
 
 XdmfNDGM::XdmfNDGM() {
   // Default NDGM UID
+#ifdef HAVE_NDGM
   this->NdgmUid = ndgm_unique( NULL, 1, 0 );
   gethostname( this->NdgmHost, XDMF_MAX_STRING_LENGTH );
   this->NdgmMode = XDMF_NDGM_MSG_SERVER;
   this->NdgmNode = NULL;
   this->NdgmDriver = NDGM_SOC;
+#endif
 
 }
 
 XdmfNDGM::~XdmfNDGM() {
+#ifdef HAVE_NDGM
   if( this->NdgmNode ) {
     ndgm_msg_close( this->NdgmNode );
     }
+#endif
 }
 
 XdmfInt64
 XdmfNDGM::GetLastAddress( void ) {
+#ifdef HAVE_NDGM
   return( NDGM_LAST_ADDRESS() );
+#else
+  return(0);
+#endif
   }
 
 XdmfInt32
 XdmfNDGM::Clear( void ) {
+#ifdef HAVE_NDGM
 XdmfInt64  Address = 0, LastAddress = NDGM_LAST_ADDRESS();
 XdmfInt8  buffer[ 1000010 ];
 
@@ -72,12 +87,13 @@ while( Address < ( LastAddress - 1000000)  ){
 if( Address < LastAddress ){
   ndgm_put( Address, buffer, LastAddress - Address + 1 );
   }
+#endif
 return( XDMF_SUCCESS );
 }
 
 XdmfInt32
 XdmfNDGM::Open( XdmfInt32 IdOffset ) {
-
+#ifdef HAVE_NDGM
 char  connection[ XDMF_MAX_STRING_LENGTH ];
 
 
@@ -148,10 +164,14 @@ switch ( this->NdgmMode ) {
     break;
   }
 return( XDMF_SUCCESS );
+#else
+return(XDMF_FAIL);
+#endif
 }
 
 XdmfInt32
 XdmfNDGM::Close( XdmfInt32 Disconnect ) {
+#ifdef HAVE_NDGM
    switch ( this->NdgmMode ) {
   case XDMF_NDGM_CLIENT :
     XdmfDebug("Closing Client Connection");
@@ -169,10 +189,14 @@ XdmfNDGM::Close( XdmfInt32 Disconnect ) {
     break;
   }
 return( XDMF_SUCCESS );
+#else
+return(XDMF_FAIL);
+#endif
 }
 
 XdmfInt32
 XdmfNDGM::Check( void ) {
+#ifdef HAVE_NDGM
 NDGM_CHAR  dummy[NDGM_MAX_PACKET_SIZE];
 NDGM_CMD  *Cmd;
 
@@ -201,11 +225,15 @@ if( this->NdgmNode == NULL ){
   this->NdgmClient->id = this->NdgmClient->msg->owner;
   }
 return( XDMF_SUCCESS );
+#else
+return(XDMF_FAIL);
+#endif
 }
 
 XdmfInt32
 XdmfNDGM::Get(XdmfInt64 Address, XdmfArray *Array )
 {
+#ifdef HAVE_NDGM
 NDGM_LENGTH  Length;
 
 Length = Array->GetCoreLength();
@@ -215,11 +243,15 @@ if( ndgm_get( Address, Array->GetDataPointer(), Length ) == XDMF_FAIL ){
   return( XDMF_FAIL );
   }
 return( XDMF_SUCCESS );
+#else
+return(XDMF_FAIL);
+#endif
 }
 
 XdmfInt32
 XdmfNDGM::Put(XdmfInt64 Address, XdmfArray *Array )
 {
+#ifdef HAVE_NDGM
 NDGM_LENGTH  Length;
 
 Length = Array->GetCoreLength();
@@ -229,11 +261,15 @@ if( ndgm_put( Address, Array->GetDataPointer(), Length ) == XDMF_FAIL ){
   return( XDMF_FAIL );
   }
 return( XDMF_SUCCESS );
+#else
+return(XDMF_FAIL);
+#endif
 }
 
 XdmfInt32
 XdmfNDGM::Send(XdmfArray *Array, XdmfInt32 Opcode )
 {
+#ifdef HAVE_NDGM
 NDGM_CMD  *Cmd;
 XdmfInt32  Status;
 
@@ -253,11 +289,15 @@ if( Status > 0 ) {
   Status -= sizeof(NDGM_CMD);
   }
 return( Status );
+#else
+return(XDMF_FAIL);
+#endif
 }
 
 XdmfInt32
 XdmfNDGM::Recv( XdmfArray *Array )
 {
+#ifdef HAVE_NDGM
 NDGM_CMD  *Cmd;
 
 if( this->NdgmClient == NULL ) return( XDMF_FAIL  );
@@ -277,6 +317,7 @@ if( this->NdgmNode ) {
       Cmd->length );
   return( Cmd->length );
 }
+#endif
 return( XDMF_FAIL );
 }
 

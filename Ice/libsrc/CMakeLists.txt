@@ -26,7 +26,9 @@ SET(ICE_SIZEOF_LONG   ${CMAKE_SIZEOF_LONG})
 SET(ICE_SIZEOF_SHORT  ${CMAKE_SIZEOF_SHORT})
 INCLUDE (${CMAKE_ROOT}/Modules/CheckTypeSize.cmake)
 MESSAGE(STATUS "Finding a 64 Bit Integer")
-CHECK_TYPE_SIZE(__int64        SIZEOF___INT64)
+IF(WIN32)
+	CHECK_TYPE_SIZE(__int64        SIZEOF___INT64)
+ENDIF(WIN32)
 CHECK_TYPE_SIZE("long long"    SIZEOF_LONG_LONG)
 
 # Don't Really Need to check these ...

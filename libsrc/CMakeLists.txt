@@ -28,12 +28,12 @@ SET( XdmfModelSource
 	XdmfGeometry
 	XdmfGrid
 	XdmfTopology
+	XdmfNDGM
+	XdmfRuntime
 )
 
 SET( XdmfNdgmSource
 	H5FDndgm
-	XdmfNDGM
-	XdmfRuntime
 )
 
 SET( XdmfPythonSource
@@ -44,7 +44,9 @@ SET( XdmfTclSource
 )
 
 INCLUDE (${CMAKE_ROOT}/Modules/CheckTypeSize.cmake)
-CHECK_TYPE_SIZE(__int64        SIZEOF___INT64)
+IF(WIN32)
+	CHECK_TYPE_SIZE(__int64        SIZEOF___INT64)
+ENDIF(WIN32)
 CHECK_TYPE_SIZE("long long"    SIZEOF_LONG_LONG)
 
 OPTION(XDMF_BUILD_SHARED_LIBS "Build Shared XDMF Library" ON)

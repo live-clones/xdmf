@@ -711,9 +711,7 @@ static swig_type_info *swig_types[35];
 #include <XdmfTransform.h>
 #include <XdmfTopology.h>
 #include <XdmfParameter.h>
-#ifdef HAVE_NDGM
 #include <XdmfNDGM.h>
-#endif
 
 extern void SetGlobalDebugOn();
 extern void SetGlobalDebugOff();
@@ -3872,7 +3870,6 @@ static PyObject *_wrap_XdmfHeavyData_GetClassName(PyObject *self, PyObject *args
     return NULL;
 }
 
-#ifdef HAVE_NDGM
 static PyObject *_wrap_XdmfHeavyData_GetNdgmHost(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     XdmfHeavyData *arg1 = (XdmfHeavyData *) 0 ;
@@ -3905,7 +3902,6 @@ static PyObject *_wrap_XdmfHeavyData_SetNdgmHost(PyObject *self, PyObject *args)
     fail:
     return NULL;
 }
-#endif
 
 static PyObject *_wrap_XdmfHeavyData_GetWorkingDirectory(PyObject *self, PyObject *args) {
     PyObject *resultobj;
@@ -5240,7 +5236,6 @@ static PyObject *_wrap_XdmfDOM_FindNumberOfProcessingInstructions(PyObject *self
     return NULL;
 }
 
-#ifdef HAVE_NDGM
 static PyObject *_wrap_XdmfDOM_GetNdgmHost(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     XdmfDOM *arg1 = (XdmfDOM *) 0 ;
@@ -5273,7 +5268,6 @@ static PyObject *_wrap_XdmfDOM_SetNdgmHost(PyObject *self, PyObject *args) {
     fail:
     return NULL;
 }
-#endif
 
 static PyObject *_wrap_XdmfDOM_GetWorkingDirectory(PyObject *self, PyObject *args) {
     PyObject *resultobj;
@@ -5602,7 +5596,6 @@ static PyObject *_wrap_XdmfLightData_GetClassName(PyObject *self, PyObject *args
     return NULL;
 }
 
-#ifdef HAVE_NDGM
 static PyObject *_wrap_XdmfLightData_GetNdgmHost(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     XdmfLightData *arg1 = (XdmfLightData *) 0 ;
@@ -5635,7 +5628,6 @@ static PyObject *_wrap_XdmfLightData_SetNdgmHost(PyObject *self, PyObject *args)
     fail:
     return NULL;
 }
-#endif
 
 static PyObject *_wrap_XdmfLightData_GetName(PyObject *self, PyObject *args) {
     PyObject *resultobj;
@@ -8337,7 +8329,6 @@ static PyObject * XdmfTransform_swigregister(PyObject *self, PyObject *args) {
     return Py_BuildValue((char *)"");
 }
 
-#ifdef HAVE_NDGM
 static PyObject *_wrap_new_XdmfNDGM(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     XdmfNDGM *result;
@@ -8962,7 +8953,6 @@ static PyObject *_wrap_XdmfAddNdgmEntry(PyObject *self, PyObject *args) {
     fail:
     return NULL;
 }
-#endif
 
 static PyMethodDef SwigMethods[] = {
    { (char *)"new_XdmfObject", _wrap_new_XdmfObject, METH_VARARGS },
@@ -9124,10 +9114,8 @@ static PyMethodDef SwigMethods[] = {
    { (char *)"new_XdmfHeavyData", _wrap_new_XdmfHeavyData, METH_VARARGS },
    { (char *)"delete_XdmfHeavyData", _wrap_delete_XdmfHeavyData, METH_VARARGS },
    { (char *)"XdmfHeavyData_GetClassName", _wrap_XdmfHeavyData_GetClassName, METH_VARARGS },
-#ifdef HAVE_NDGM
    { (char *)"XdmfHeavyData_GetNdgmHost", _wrap_XdmfHeavyData_GetNdgmHost, METH_VARARGS },
    { (char *)"XdmfHeavyData_SetNdgmHost", _wrap_XdmfHeavyData_SetNdgmHost, METH_VARARGS },
-#endif
    { (char *)"XdmfHeavyData_GetWorkingDirectory", _wrap_XdmfHeavyData_GetWorkingDirectory, METH_VARARGS },
    { (char *)"XdmfHeavyData_SetWorkingDirectory", _wrap_XdmfHeavyData_SetWorkingDirectory, METH_VARARGS },
    { (char *)"XdmfHeavyData_GetDomain", _wrap_XdmfHeavyData_GetDomain, METH_VARARGS },
@@ -9200,10 +9188,8 @@ static PyMethodDef SwigMethods[] = {
    { (char *)"XdmfDOM_FindNumberOfElementsByAttribute", _wrap_XdmfDOM_FindNumberOfElementsByAttribute, METH_VARARGS },
    { (char *)"XdmfDOM_FindProcessingInstruction", _wrap_XdmfDOM_FindProcessingInstruction, METH_VARARGS },
    { (char *)"XdmfDOM_FindNumberOfProcessingInstructions", _wrap_XdmfDOM_FindNumberOfProcessingInstructions, METH_VARARGS },
-#ifdef HAVE_NDGM
    { (char *)"XdmfDOM_GetNdgmHost", _wrap_XdmfDOM_GetNdgmHost, METH_VARARGS },
    { (char *)"XdmfDOM_SetNdgmHost", _wrap_XdmfDOM_SetNdgmHost, METH_VARARGS },
-#endif
    { (char *)"XdmfDOM_GetWorkingDirectory", _wrap_XdmfDOM_GetWorkingDirectory, METH_VARARGS },
    { (char *)"XdmfDOM_SetWorkingDirectory", _wrap_XdmfDOM_SetWorkingDirectory, METH_VARARGS },
    { (char *)"XdmfDOM_Get", _wrap_XdmfDOM_Get, METH_VARARGS },
@@ -9222,10 +9208,8 @@ static PyMethodDef SwigMethods[] = {
    { (char *)"new_XdmfLightData", _wrap_new_XdmfLightData, METH_VARARGS },
    { (char *)"delete_XdmfLightData", _wrap_delete_XdmfLightData, METH_VARARGS },
    { (char *)"XdmfLightData_GetClassName", _wrap_XdmfLightData_GetClassName, METH_VARARGS },
-#ifdef HAVE_NDGM
    { (char *)"XdmfLightData_GetNdgmHost", _wrap_XdmfLightData_GetNdgmHost, METH_VARARGS },
    { (char *)"XdmfLightData_SetNdgmHost", _wrap_XdmfLightData_SetNdgmHost, METH_VARARGS },
-#endif
    { (char *)"XdmfLightData_GetName", _wrap_XdmfLightData_GetName, METH_VARARGS },
    { (char *)"XdmfLightData_SetName", _wrap_XdmfLightData_SetName, METH_VARARGS },
    { (char *)"XdmfLightData_GetFileName", _wrap_XdmfLightData_GetFileName, METH_VARARGS },
@@ -9381,7 +9365,6 @@ static PyMethodDef SwigMethods[] = {
    { (char *)"XdmfTransform_DataDescToElement", _wrap_XdmfTransform_DataDescToElement, METH_VARARGS },
    { (char *)"XdmfTransform_ArrayToElement", _wrap_XdmfTransform_ArrayToElement, METH_VARARGS },
    { (char *)"XdmfTransform_swigregister", XdmfTransform_swigregister, METH_VARARGS },
-#ifdef HAVE_NDGM
    { (char *)"new_XdmfNDGM", _wrap_new_XdmfNDGM, METH_VARARGS },
    { (char *)"delete_XdmfNDGM", _wrap_delete_XdmfNDGM, METH_VARARGS },
    { (char *)"XdmfNDGM_GetClassName", _wrap_XdmfNDGM_GetClassName, METH_VARARGS },
@@ -9418,7 +9401,6 @@ static PyMethodDef SwigMethods[] = {
    { (char *)"XdmfGetNdgmEntries", _wrap_XdmfGetNdgmEntries, METH_VARARGS },
    { (char *)"XdmfDeleteAllNdgmEntries", _wrap_XdmfDeleteAllNdgmEntries, METH_VARARGS },
    { (char *)"XdmfAddNdgmEntry", _wrap_XdmfAddNdgmEntry, METH_VARARGS },
-#endif
    { NULL, NULL }
 };
 
@@ -9500,11 +9482,9 @@ static void *_p_XdmfFormatMultiTo_p_XdmfObject(void *x) {
 static void *_p_XdmfArrayTo_p_XdmfObject(void *x) {
     return (void *)((XdmfObject *) (XdmfDataDesc *) ((XdmfArray *) x));
 }
-#ifdef HAVE_NDGM
 static void *_p_XdmfNDGMTo_p_XdmfObject(void *x) {
     return (void *)((XdmfObject *) (XdmfDataDesc *) ((XdmfNDGM *) x));
 }
-#endif
 static void *_p_XdmfGeometryTo_p_XdmfObject(void *x) {
     return (void *)((XdmfObject *) (XdmfLightData *) ((XdmfGeometry *) x));
 }
@@ -9529,11 +9509,9 @@ static void *_p_XdmfGridTo_p_XdmfTopology(void *x) {
 static void *_p_XdmfHeavyDataTo_p_XdmfDataDesc(void *x) {
     return (void *)((XdmfDataDesc *)  ((XdmfHeavyData *) x));
 }
-#ifdef HAVE_NDGM
 static void *_p_XdmfNDGMTo_p_XdmfDataDesc(void *x) {
     return (void *)((XdmfDataDesc *)  ((XdmfNDGM *) x));
 }
-#endif
 static void *_p_XdmfArrayTo_p_XdmfDataDesc(void *x) {
     return (void *)((XdmfDataDesc *)  ((XdmfArray *) x));
 }
@@ -9549,9 +9527,7 @@ static void *_p_XdmfCharArrayTo_p_XdmfArray(void *x) {
 static swig_type_info _swigt__p_XdmfFormatXML[] = {{"_p_XdmfFormatXML", 0, "XdmfFormatXML *", 0},{"_p_XdmfFormatXML"},{0}};
 static swig_type_info _swigt__p_XdmfTransform[] = {{"_p_XdmfTransform", 0, "XdmfTransform *", 0},{"_p_XdmfTransform"},{0}};
 static swig_type_info _swigt__p_XdmfTopology[] = {{"_p_XdmfTopology", 0, "XdmfTopology *", 0},{"_p_XdmfGrid", _p_XdmfGridTo_p_XdmfTopology},{"_p_XdmfTopology"},{0}};
-#ifdef HAVE_NDGM
 static swig_type_info _swigt__p_XdmfNDGM[] = {{"_p_XdmfNDGM", 0, "XdmfNDGM *", 0},{"_p_XdmfNDGM"},{0}};
-#endif
 static swig_type_info _swigt__p_XdmfInt64[] = {{"_p_XdmfInt64", 0, "XdmfInt64 *", 0},{"_p_XdmfLength"},{"_p_XdmfInt64"},{0}};
 static swig_type_info _swigt__XdmfPointer[] = {{"_XdmfPointer", 0, "XdmfPointer", 0},{"_XdmfPointer"},{"_p_void"},{0}};
 static swig_type_info _swigt__p_void[] = {{"_p_void", 0, "void *", 0},{"_XdmfPointer"},{"_p_void"},{0}};
@@ -9560,11 +9536,7 @@ static swig_type_info _swigt__p_XDMF_TREE_NODE[] = {{"_p_XDMF_TREE_NODE", 0, "XD
 static swig_type_info _swigt__p_XdmfFormatHDF[] = {{"_p_XdmfFormatHDF", 0, "XdmfFormatHDF *", 0},{"_p_XdmfFormatHDF"},{0}};
 static swig_type_info _swigt__p_XdmfGeometry[] = {{"_p_XdmfGeometry", 0, "XdmfGeometry *", 0},{"_p_XdmfGeometry"},{0}};
 static swig_type_info _swigt__p_XdmfFormatMulti[] = {{"_p_XdmfFormatMulti", 0, "XdmfFormatMulti *", 0},{"_p_XdmfFormatMulti"},{0}};
-static swig_type_info _swigt__p_XdmfObject[] = {{"_p_XdmfObject", 0, "XdmfObject *", 0},{"_p_XdmfTransform", _p_XdmfTransformTo_p_XdmfObject},{"_p_XdmfLightData", _p_XdmfLightDataTo_p_XdmfObject},{"_p_XdmfDOM", _p_XdmfDOMTo_p_XdmfObject},{"_p_XdmfObject"},{"_p_XdmfParameter", _p_XdmfParameterTo_p_XdmfObject},{"_p_XdmfFormatHDF", _p_XdmfFormatHDFTo_p_XdmfObject},{"_p_XdmfFormatXML", _p_XdmfFormatXMLTo_p_XdmfObject},{"_p_XdmfXNode", _p_XdmfXNodeTo_p_XdmfObject},{"_p_XdmfCharArray", _p_XdmfCharArrayTo_p_XdmfObject},{"_p_XdmfGrid", _p_XdmfGridTo_p_XdmfObject},{"_p_XdmfHeavyData", _p_XdmfHeavyDataTo_p_XdmfObject},{"_p_XdmfAttribute", _p_XdmfAttributeTo_p_XdmfObject},{"_p_XdmfFormat", _p_XdmfFormatTo_p_XdmfObject},{"_p_XdmfTopology", _p_XdmfTopologyTo_p_XdmfObject},{"_p_XdmfFormatMulti", _p_XdmfFormatMultiTo_p_XdmfObject},{"_p_XdmfDataDesc", _p_XdmfDataDescTo_p_XdmfObject},
-#ifdef HAVE_NDGM
-                                                {"_p_XdmfNDGM", _p_XdmfNDGMTo_p_XdmfObject},
-#endif
-                                                {"_p_XdmfArray", _p_XdmfArrayTo_p_XdmfObject},{"_p_XdmfGeometry", _p_XdmfGeometryTo_p_XdmfObject},{"_p_XdmfHDF", _p_XdmfHDFTo_p_XdmfObject},{0}};
+static swig_type_info _swigt__p_XdmfObject[] = {{"_p_XdmfObject", 0, "XdmfObject *", 0},{"_p_XdmfTransform", _p_XdmfTransformTo_p_XdmfObject},{"_p_XdmfLightData", _p_XdmfLightDataTo_p_XdmfObject},{"_p_XdmfDOM", _p_XdmfDOMTo_p_XdmfObject},{"_p_XdmfObject"},{"_p_XdmfParameter", _p_XdmfParameterTo_p_XdmfObject},{"_p_XdmfFormatHDF", _p_XdmfFormatHDFTo_p_XdmfObject},{"_p_XdmfFormatXML", _p_XdmfFormatXMLTo_p_XdmfObject},{"_p_XdmfXNode", _p_XdmfXNodeTo_p_XdmfObject},{"_p_XdmfCharArray", _p_XdmfCharArrayTo_p_XdmfObject},{"_p_XdmfGrid", _p_XdmfGridTo_p_XdmfObject},{"_p_XdmfHeavyData", _p_XdmfHeavyDataTo_p_XdmfObject},{"_p_XdmfAttribute", _p_XdmfAttributeTo_p_XdmfObject},{"_p_XdmfFormat", _p_XdmfFormatTo_p_XdmfObject},{"_p_XdmfTopology", _p_XdmfTopologyTo_p_XdmfObject},{"_p_XdmfFormatMulti", _p_XdmfFormatMultiTo_p_XdmfObject},{"_p_XdmfDataDesc", _p_XdmfDataDescTo_p_XdmfObject}, {"_p_XdmfNDGM", _p_XdmfNDGMTo_p_XdmfObject}, {"_p_XdmfArray", _p_XdmfArrayTo_p_XdmfObject},{"_p_XdmfGeometry", _p_XdmfGeometryTo_p_XdmfObject},{"_p_XdmfHDF", _p_XdmfHDFTo_p_XdmfObject},{0}};
 static swig_type_info _swigt__p_XdmfHDF[] = {{"_p_XdmfHDF", 0, "XdmfHDF *", 0},{"_p_XdmfHDF"},{0}};
 static swig_type_info _swigt__p_XdmfXNode[] = {{"_p_XdmfXNode", 0, "XdmfXNode *", 0},{"_p_XdmfXNode"},{0}};
 static swig_type_info _swigt__p_XdmfDOM[] = {{"_p_XdmfDOM", 0, "XdmfDOM *", 0},{"_p_XdmfDOM"},{0}};
@@ -9573,9 +9545,7 @@ static swig_type_info _swigt__p_XdmfLightData[] = {{"_p_XdmfLightData", 0, "Xdmf
 static swig_type_info _swigt__p_XdmfInt32[] = {{"_p_XdmfInt32", 0, "XdmfInt32 *", 0},{"_p_XdmfInt32"},{0}};
 static swig_type_info _swigt__p_XdmfHeavyData[] = {{"_p_XdmfHeavyData", 0, "XdmfHeavyData *", 0},{"_p_XdmfHeavyData"},{"_p_XdmfHDF", _p_XdmfHDFTo_p_XdmfHeavyData},{0}};
 static swig_type_info _swigt__p_XdmfFloat64[] = {{"_p_XdmfFloat64", 0, "XdmfFloat64 *", 0},{"_p_XdmfFloat64"},{0}};
-#ifdef HAVE_NDGM
 static swig_type_info _swigt__p_NDGM_NODE[] = {{"_p_NDGM_NODE", 0, "NDGM_NODE *", 0},{"_p_NDGM_NODE"},{0}};
-#endif
 static swig_type_info _swigt__p_hid_t[] = {{"_p_hid_t", 0, "hid_t *", 0},{"_p_hid_t"},{0}};
 static swig_type_info _swigt__p_XdmfParameter[] = {{"_p_XdmfParameter", 0, "XdmfParameter *", 0},{"_p_XdmfParameter"},{0}};
 static swig_type_info _swigt__p_std__istream[] = {{"_p_std__istream", 0, "istream *", 0},{"_p_std__istream"},{0}};
@@ -9586,20 +9556,14 @@ static swig_type_info _swigt__p_XdmfCharArray[] = {{"_p_XdmfCharArray", 0, "Xdmf
 static swig_type_info _swigt__p_XdmfFormat[] = {{"_p_XdmfFormat", 0, "XdmfFormat *", 0},{"_p_XdmfFormatHDF", _p_XdmfFormatHDFTo_p_XdmfFormat},{"_p_XdmfFormat"},{"_p_XdmfFormatMulti", _p_XdmfFormatMultiTo_p_XdmfFormat},{"_p_XdmfFormatXML", _p_XdmfFormatXMLTo_p_XdmfFormat},{0}};
 static swig_type_info _swigt__p_XdmfInt8[] = {{"_p_XdmfInt8", 0, "XdmfInt8 *", 0},{"_p_XdmfInt8"},{0}};
 static swig_type_info _swigt__p_XdmfFloat32[] = {{"_p_XdmfFloat32", 0, "XdmfFloat32 *", 0},{"_p_XdmfFloat32"},{0}};
-static swig_type_info _swigt__p_XdmfDataDesc[] = {{"_p_XdmfDataDesc", 0, "XdmfDataDesc *", 0},{"_p_XdmfHeavyData", _p_XdmfHeavyDataTo_p_XdmfDataDesc},
-#ifdef HAVE_NDGM
-                                                  {"_p_XdmfNDGM", _p_XdmfNDGMTo_p_XdmfDataDesc},
-#endif
-                                                  {"_p_XdmfArray", _p_XdmfArrayTo_p_XdmfDataDesc},{"_p_XdmfDataDesc"},{"_p_XdmfHDF", _p_XdmfHDFTo_p_XdmfDataDesc},{"_p_XdmfCharArray", _p_XdmfCharArrayTo_p_XdmfDataDesc},{0}};
+static swig_type_info _swigt__p_XdmfDataDesc[] = {{"_p_XdmfDataDesc", 0, "XdmfDataDesc *", 0},{"_p_XdmfHeavyData", _p_XdmfHeavyDataTo_p_XdmfDataDesc}, {"_p_XdmfNDGM", _p_XdmfNDGMTo_p_XdmfDataDesc}, {"_p_XdmfArray", _p_XdmfArrayTo_p_XdmfDataDesc},{"_p_XdmfDataDesc"},{"_p_XdmfHDF", _p_XdmfHDFTo_p_XdmfDataDesc},{"_p_XdmfCharArray", _p_XdmfCharArrayTo_p_XdmfDataDesc},{0}};
 static swig_type_info _swigt__p_XdmfGrid[] = {{"_p_XdmfGrid", 0, "XdmfGrid *", 0},{"_p_XdmfGrid"},{0}};
 
 static swig_type_info *swig_types_initial[] = {
 _swigt__p_XdmfFormatXML, 
 _swigt__p_XdmfTransform, 
 _swigt__p_XdmfTopology, 
-#ifdef HAVE_NDGM
 _swigt__p_XdmfNDGM, 
-#endif
 _swigt__p_XdmfInt64, 
 _swigt__XdmfPointer, 
 _swigt__p_void, 
@@ -9617,9 +9581,7 @@ _swigt__p_XdmfLightData,
 _swigt__p_XdmfInt32, 
 _swigt__p_XdmfHeavyData, 
 _swigt__p_XdmfFloat64, 
-#ifdef HAVE_NDGM
 _swigt__p_NDGM_NODE, 
-#endif
 _swigt__p_hid_t, 
 _swigt__p_XdmfParameter, 
 _swigt__p_std__istream, 
@@ -9698,11 +9660,9 @@ static swig_const_info swig_const_table[] = {
 { SWIG_PY_INT,     (char *)"XDMF_GEOMETRY_X_Y_Z", (long) 3, 0, 0, 0},
 { SWIG_PY_INT,     (char *)"XDMF_GEOMETRY_VXVYVZ", (long) 4, 0, 0, 0},
 { SWIG_PY_INT,     (char *)"XDMF_GEOMETRY_ORIGIN_DXDYDZ", (long) 5, 0, 0, 0},
-#ifdef HAVE_NDGM
 { SWIG_PY_INT,     (char *)"XDMF_NDGM_MSG_SERVER", (long) 0, 0, 0, 0},
 { SWIG_PY_INT,     (char *)"XDMF_NDGM_MSG_CLIENT", (long) 1, 0, 0, 0},
 { SWIG_PY_INT,     (char *)"XDMF_NDGM_CLIENT", (long) 2, 0, 0, 0},
-#endif
 {0}};
 
 #ifdef __cplusplus

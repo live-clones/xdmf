@@ -27,7 +27,14 @@
 
 #ifndef SWIG
 extern "C" {
+#ifdef HAVE_NDGM
 #include "Ndgm/ndgm.h"
+#else
+#define NDGM_CMD_NOP  0
+	typedef struct {
+		char *dummy;
+		} NDGM_NODE;
+#endif
 }
 #endif /* SWIG */
 
@@ -127,19 +134,35 @@ Open a connection
   XdmfInt32  Recv( XdmfArray *Array );
 //! Initialize a Barrier
   XdmfInt32  BarrierInit( XdmfInt32  Barrier = 20 , XdmfInt32 Value = -1 ){
+#ifdef HAVE_NDGM
       return( ndgm_barrier_init( Barrier, Value ));
+#else
+      return(-1);
+#endif
       }
 //! Wait in a Barrier
   XdmfInt32  BarrierWait( XdmfInt32  Barrier ) {
+#ifdef HAVE_NDGM
         return( ndgm_barrier_wait( Barrier ) );
+#else
+      return(-1);
+#endif
         }
 //! Wait in a Barrier without effecting count
   XdmfInt32  BarrierAudit( XdmfInt32  Barrier ) {
+#ifdef HAVE_NDGM
         return( ndgm_barrier_audit( Barrier ) );
+#else
+      return(-1);
+#endif
         }
 
   XdmfInt32  BarrierPoll( XdmfInt32  Barrier ) {
+#ifdef HAVE_NDGM
         return( ndgm_barrier_poll( Barrier ) );
+#else
+      return(-1);
+#endif
         }
 
 
