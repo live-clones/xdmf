@@ -33,7 +33,12 @@
 #include "vtkIdListCollection.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkXdmfReader, "1.1");
+#include "vtkPointData.h"
+#include "vtkCellData.h"
+#include "vtkCell.h"
+#include "vtkCellArray.h"
+
+vtkCxxRevisionMacro(vtkXdmfReader, "1.2");
 vtkStandardNewMacro(vtkXdmfReader);
 
 
@@ -533,7 +538,8 @@ if( ( Geometry->GetGeometryType() == XDMF_GEOMETRY_X_Y_Z ) ||
    if( Geometry->GetPoints() ){
   if( Points ){
     Length = Geometry->GetPoints()->GetNumberOfElements();
-    vtkDebugMacro( << "Setting Array of " << Length << " = " << Geometry->GetNumberOfPoints() << " Points");
+    vtkDebugMacro( << "Setting Array of " << (vtkIdType)Length << " = " 
+                   << (vtkIdType)Geometry->GetNumberOfPoints() << " Points");
     Points->SetNumberOfPoints( Geometry->GetNumberOfPoints() );
     // XdmfDebug("Getting Pointer");
     pp = Points->GetPoint( 0 );
@@ -572,8 +578,8 @@ if( ( Geometry->GetGeometryType() == XDMF_GEOMETRY_X_Y_Z ) ||
 
   // Make Sure Grid Has Coordinates
   Topology->GetShapeDesc()->GetShape( Dimensions );
-  vtkDebugMacro( << "Dimensions of Grid = " << Dimensions[0] <<
-       " x " << Dimensions[1] << " x " << Dimensions[2] );
+  vtkDebugMacro( << "Dimensions of Grid = " << (vtkIdType)Dimensions[0] <<
+       " x " << (vtkIdType)Dimensions[1] << " x " << (vtkIdType)Dimensions[2] );
     XCoord = vtkDoubleArray::New();
     vGrid->SetXCoordinates( XCoord );
     // OK Because of Reference Counting

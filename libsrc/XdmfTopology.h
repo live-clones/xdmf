@@ -28,6 +28,8 @@
 #include "XdmfLightData.h"
 #include "XdmfDataDesc.h"
 
+#include "XdmfExport.h"
+
 #define XDMF_MAX_ORDER  10
 
 
@@ -72,7 +74,7 @@ Currently supported base topologies are :
       3DRECTMESH
       3DCORECTMESH
 */
-class XdmfTopology : public XdmfLightData {
+class XDMF_EXPORT XdmfTopology : public XdmfLightData {
 
 public:
   XdmfTopology();

@@ -1,0 +1,23 @@
+#ifndef __XdmfConfig_h
+#define __XdmfConfig_h
+
+#cmakedefine XDMF_USE_ANSI_STDLIB
+
+#ifndef SIZEOF___INT64
+#cmakedefine SIZEOF___INT64
+#endif
+
+#ifndef SIZEOF_LONG_LONG
+#cmakedefine SIZEOF_LONG_LONG
+#endif
+
+#if defined( SIZEOF___INT64 )
+# define XDMF_LONG64 __int64
+#elif defined( SIZEOF_LONG_LONG )
+# define XDMF_LONG64 long long
+#else
+# error "64 bit long not defined"
+#endif
+
+
+#endif /* __XdmfConfig_h */

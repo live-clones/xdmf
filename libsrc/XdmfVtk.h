@@ -30,8 +30,6 @@
 #include "XdmfGrid.h"
 #include "XdmfAttribute.h"
 
-#include <iostream>
-
 /*!
 This is s conveniece object to handle 
 common vtk tasks and getting data beteen the

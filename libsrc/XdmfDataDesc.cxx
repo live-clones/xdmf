@@ -24,10 +24,6 @@
 /*******************************************************************/
 #include "XdmfDataDesc.h"
 
-#include <strstream>
-
-using namespace std;
-
 XdmfDataDesc::XdmfDataDesc() {
   H5dont_atexit();
   this->DataSpace = H5I_BADID;
@@ -224,7 +220,7 @@ if( ( this->DataSpace == H5I_BADID )  || ( this->DataSpace == H5S_ALL ) ) {
 } else {
   HRank = H5Sget_simple_extent_ndims( this->DataSpace );
   if( HRank != Rank ){
-    XdmfDebug( "Current Rank " << HRank << " Requested Rank " << Rank );
+    XdmfDebug( "Current Rank " << (int)HRank << " Requested Rank " << Rank );
     XdmfDebug( "Data Space Rank Change After Creation" );
   // Work around for ?bug? in HDF
         // when you increase rank
@@ -243,7 +239,7 @@ if( ( this->DataSpace == H5I_BADID )  || ( this->DataSpace == H5S_ALL ) ) {
 }
 
 this->Rank = HRank = Rank;
-XdmfDebug("Shape : Rank = " << HRank);
+XdmfDebug("Shape : Rank = " << (int)HRank);
 for( i = 0 ; i < Rank ; i++ ) {
   XdmfDebug("  Dimension[" << i << "] = " << Dimensions[i] );
   this->Count[i] = this->Dimension[i] = HDimension[i] = Dimensions[i];
@@ -302,9 +298,9 @@ for( i = 0 ; i < this->Rank ; i++ ) {
   }
   XdmfDebug("Dim[" << i << "] = " << this->Dimension[i]  << 
     " Start Stride Count = " <<
-    this->Start[i] << " " <<
-    this->Stride[i] << " " <<
-    this->Count[i] );
+    (int)this->Start[i] << " " <<
+    (int)this->Stride[i] << " " <<
+    (int)this->Count[i] );
   }
 this->SelectionType = XDMF_HYPERSLAB;
 status = H5Sselect_hyperslab( this->DataSpace,
@@ -331,7 +327,7 @@ if( this->Rank <= 0 ) {
         }
 
 this->SelectionType = XDMF_COORDINATES;
-XdmfDebug(" Selecting " << NElements << " elements" );
+XdmfDebug(" Selecting " << (int)NElements << " elements" );
 HCoordinates = new hssize_t[ Length ];
 for( i = 0 ; i < Length ; i++ ){
   HCoordinates[i] = Coordinates[i];
@@ -762,7 +758,7 @@ if( this->SelectionType == XDMF_COORDINATES ){
     H5Sget_select_elem_pointlist( this->DataSpace, Start, Nelements, Coords );
     for( i = 0 ; i < Nelements ; i++ ){
       for( j = 0 ; j < Rank ; j++ ){
-        StringOutput << *Cp++ << " ";
+        StringOutput << (int)*Cp++ << " ";
         }
       }  
     delete [] Coords;
@@ -786,20 +782,20 @@ XdmfInt32 Rank = H5Sget_simple_extent_ndims(this->DataSpace );
 cout << "Rank " << Rank << endl;
 H5Sget_simple_extent_dims( this->DataSpace, Dimensions, NULL );
 for( i = 0 ; i < Rank ; i++ ){
-  cout << "Dimansion[" << i << "] " << Dimensions[i] << endl;
+  cout << "Dimansion[" << (int)i << "] " << (int)Dimensions[i] << endl;
   }
 cout << "Selection Type : " << this->GetSelectionTypeAsString() << endl;
 if( this->SelectionType == XDMF_COORDINATES ){
 Nelements = H5Sget_select_elem_npoints( this->DataSpace );
-cout << "Selected Elements : " << Nelements << endl;
+cout << "Selected Elements : " << (int)Nelements << endl;
 if ( Nelements > 0 ) {
   hsize_t *Coords = new hsize_t[ Nelements * Rank ];
   hsize_t j, *Cp = Coords;
   H5Sget_select_elem_pointlist( this->DataSpace, 0, Nelements, Coords );
   for( i = 0 ; i < Nelements ; i++ ){
-    cout << "Element[" << i << "] ";
+    cout << "Element[" << (int)i << "] ";
     for( j = 0 ; j < Rank ; j++ ){
-      cout << " " << *Cp++;
+      cout << " " << (int)*Cp++;
       }
     cout << endl;
     }  
@@ -809,8 +805,8 @@ if ( Nelements > 0 ) {
 if( this->SelectionType == XDMF_HYPERSLAB ){
 int  k;
 for( k = 0 ; k < Rank ; k++ ){
-  cout << k << " : Start " << Start[k] << " Stride " <<
-    Stride[k] << " Count " << Count[k] << endl;
+  cout << k << " : Start " << (int)Start[k] << " Stride " <<
+    (int)Stride[k] << " Count " << (int)Count[k] << endl;
   }
 }
 }

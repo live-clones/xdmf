@@ -25,10 +25,6 @@
 #include "XdmfFormatXML.h"
 #include "XdmfHDF.h"
 
-#include <strstream>
-
-using namespace std;
-
 XdmfFormatXML::XdmfFormatXML() {
   strcpy( this->DataFormat, "XML" );
 }

@@ -11,7 +11,7 @@
 #define yychar dice_yychar
 #define yydebug dice_yydebug
 #define yynerrs dice_yynerrs
-#define  FLOAT  257
+#define  lFLOAT  257
 #define  INTEGER  258
 #define  ARRAY  259
 #define  NAME  260

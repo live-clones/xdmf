@@ -24,21 +24,13 @@
 /*******************************************************************/
 #include "XdmfArray.h"
 
-/*
-#if defined(CYGWIN)
-#include <sstream>
-#else
-#include <strstream>
-#endif
-*/
-
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 
 #if defined(IRIX64) || defined(IRIXN32)
 #else
 #endif
-using namespace std;
-
 // static  ostrstream  *StringOutput = NULL;
 static  XdmfLength  GlobalTimeCntr = 0;
 static  XdmfLength  ListLength = 0;
@@ -225,7 +217,9 @@ XdmfInt32 XdmfArray::Allocate( void ){
     if( this->DataPointer == NULL ) {
       XdmfDebug("Allocation Failed");
       perror(" Alloc :" );
+#ifndef _WIN32      
       XdmfDebug("End == " << sbrk(0)  );
+#endif
       }
   }
   XdmfDebug("Data Pointer = " << this->DataPointer );

@@ -27,6 +27,8 @@
 
 #include "XdmfTopology.h"
 
+#include "XdmfExport.h"
+
 // Value Types
 #define XDMF_ATTRIBUTE_TYPE_NONE  0
 #define XDMF_ATTRIBUTE_TYPE_SCALAR  1
@@ -42,7 +44,7 @@
 #define XDMF_ATTRIBUTE_CENTER_NODE  4
 
 
-class XdmfAttribute : public XdmfLightData {
+class XDMF_EXPORT XdmfAttribute : public XdmfLightData {
 
 public:
   XdmfAttribute();

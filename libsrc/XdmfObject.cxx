@@ -23,9 +23,6 @@
 /*                                                                 */
 /*******************************************************************/
 #include "XdmfObject.h"
-#include <strstream>
-
-using namespace std;
 
 static XdmfInt32 GlobalDebugFlag = 0;
 static XdmfInt64 NameCntr = 0;
@@ -81,10 +78,10 @@ return( ReturnName );
 char *
 XdmfObjectToHandle( XdmfObject *Source ){
 ostrstream Handle;
-long long RealObjectPointer;
+XDMF_64_INT RealObjectPointer;
 XdmfObject **Rpt = &Source;
 
-RealObjectPointer = (long long)*Rpt;
+RealObjectPointer = (XDMF_64_INT)*Rpt;
 Handle << "_" << hex << RealObjectPointer << "_" << Source->GetClassName() << ends;
 // cout << "XdmfObjectToHandle : Source = " << Source << endl;
 // cout << "Handle = " << (XdmfString)Handle.str() << endl;
@@ -93,19 +90,23 @@ return( (XdmfString)Handle.str() );
 
 XdmfObject *
 HandleToXdmfObject( char *Source ){
-istrstream Handle( (const char *)Source, strlen( (const char *)Source ));
+char* src = new char[ strlen(Source) + 1 ];
+strcpy(src, Source);
+istrstream Handle( src, strlen(src));
 char  c;
-long long RealObjectPointer;
+XDMF_64_INT RealObjectPointer;
 XdmfObject *RealObject = NULL, **Rpt = &RealObject;
 
 Handle >> c;
 if( c != '_' ) {
   XdmfErrorMessage("Bad Handle " << Source );
+  delete [] src;
   return( NULL );
   }
 Handle >> hex >> RealObjectPointer;
 // cout << "Source = " << Source << endl;
 // cout << "RealObjectPointer = " << RealObjectPointer << endl;
 *Rpt = (XdmfObject *)RealObjectPointer;
+delete [] src;
 return( RealObject );
 }

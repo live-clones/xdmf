@@ -24,11 +24,6 @@
 /*******************************************************************/
 #include "XdmfDOM.h"
 #include "XdmfCharArray.h"
-#include <iostream>
-#include <fstream>
-
-using namespace std;
-
 
 XdmfDOM *HandleToXdmfDOM( char *Source ){
   XdmfObject  *TempObj;
@@ -360,7 +355,7 @@ XdmfDOM::ExpandNode(XDMF_TREE_NODE *node, XdmfInt32 *size) {
             resname = data->GetNameByIndex(j);
             resdata = data->GetDataByIndex(j);
             if ((strcmp(resname, "NodeType") != 0)&&
-          (strncasecmp(resname, "_Xdmf", 5 ) != 0) &&
+          (STRNCASECMP(resname, "_Xdmf", 5 ) != 0) &&
                       (strcmp(resname, "CData") != 0)&&
                       (strcmp(resname, "NodeDepth") != 0)) {
           if( pi && ( strcmp(resname, "Target" ) == 0 ) ) {

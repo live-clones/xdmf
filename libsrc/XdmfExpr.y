@@ -45,7 +45,7 @@ public :
 	XdmfExprSymbol	*Symbol;
 }
 
-%token <DoubleValue>	FLOAT
+%token <DoubleValue>	lFLOAT
 %token <IntegerValue>	INTEGER
 %token <ArrayPointer>	ARRAY
 %token <Symbol>		NAME
@@ -619,7 +619,7 @@ ScalarExpression: 	ScalarExpression '+' ScalarExpression {
 			/* printf ("ScalarExpression from INTEGER\n"); */
 			$$ = $1;
 			}
-	|	FLOAT {
+	|	lFLOAT {
 			/* printf ("ScalarExpression from FLOAT\n"); */
 			$$ = $1;
 			}

@@ -24,8 +24,6 @@
 /*******************************************************************/
 #include "XdmfXNode.h"
 
-using namespace std;
-
 void
 C__XdmfXNodeDelete(void *obj){
         XdmfXNode *ObjectHandle = ( XdmfXNode *)obj;

@@ -32,7 +32,7 @@
 #include <vtkFloatArray.h>
 #include <vtkDoubleArray.h>
 
-#include <Xdmf/XdmfArray.h>
+#include <XdmfArray.h>
 
 //----------------------------------------------------------------------------
 vtkXdmfDataArray* vtkXdmfDataArray::New()

@@ -26,11 +26,6 @@
 #include "XdmfTransform.h"
 #include "XdmfFormatMulti.h"
 
-#include <strstream>
-
-using namespace std;
-
-
 XdmfTopology *HandleToXdmfTopology( char *Source ){
   XdmfObject  *TempObj;
   XdmfTopology   *Topology;

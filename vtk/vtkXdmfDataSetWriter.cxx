@@ -36,8 +36,19 @@
 #include <vtkObjectFactory.h>
 #include <vtkCommand.h>
 
-#include <Xdmf/XdmfHDF.h>
-#include <Xdmf/XdmfArray.h>
+#include "vtkCellArray.h"
+#include "vtkCellData.h"
+#include "vtkPointData.h"
+
+
+#include <XdmfHDF.h>
+#include <XdmfArray.h>
+
+class vtkXdmfDataSetWriterInternals
+{
+public:
+  ostrstream *XMLStream;
+};
 
 //----------------------------------------------------------------------------
 vtkXdmfDataSetWriter* vtkXdmfDataSetWriter::New()
@@ -57,21 +68,22 @@ vtkXdmfDataSetWriter::vtkXdmfDataSetWriter()
   strcpy( this->HeavyDataSetName, "XdmfData.h5" );
   this->FastWrite = 1;
   this->AllLight = 0;
-  XMLStream = new ostrstream();
+  this->Internals = new vtkXdmfDataSetWriterInternals;
+  this->Internals->XMLStream = new ostrstream();
 }
 
 void vtkXdmfDataSetWriter::ResetXML( void ) {
-  delete XMLStream;
-  XMLStream = new ostrstream();
+  delete this->Internals->XMLStream;
+  this->Internals->XMLStream = new ostrstream();
   }
 
 char *vtkXdmfDataSetWriter::GetXML( void ) {
   char  *String, *ptr;
   
-  ptr = XMLStream->str();
+  ptr = this->Internals->XMLStream->str();
   String = new char[ strlen( ptr ) + 1 ];
   strcpy( String, ptr );
-  XMLStream->rdbuf()->freeze( 0 );
+  this->Internals->XMLStream->rdbuf()->freeze( 0 );
   return( String );
   }
 int
@@ -93,18 +105,18 @@ int    i, j;
 Cp = Cells->GetPointer();
 NumberOfCells = Cells->GetNumberOfCells();
 PointsInPoly = *Cp;
-*XMLStream << "\t<DataStructure" << endl;
-*XMLStream << "\t\tDataType=\"Int\"" << endl;
-*XMLStream << "\t\tDimensions=\"" << NumberOfCells << " " << PointsInPoly << "\"" << endl;
+*this->Internals->XMLStream << "\t<DataStructure" << endl;
+*this->Internals->XMLStream << "\t\tDataType=\"Int\"" << endl;
+*this->Internals->XMLStream << "\t\tDimensions=\"" << NumberOfCells << " " << PointsInPoly << "\"" << endl;
 if( this->AllLight ){
-  *XMLStream << "\t\tFormat=\"XML\">" << endl;
+  *this->Internals->XMLStream << "\t\tFormat=\"XML\">" << endl;
   for( i = 0 ; i < NumberOfCells ; i++ ){
     PointsInPoly = *Cp++;
-    *XMLStream << "\t\t";
+    *this->Internals->XMLStream << "\t\t";
     for( j = 0 ; j < PointsInPoly ; j++ ){
-      *XMLStream << *Cp++ << " ";
+      *this->Internals->XMLStream << *Cp++ << " ";
       }
-    *XMLStream << endl;
+    *this->Internals->XMLStream << endl;
     }
 } else {
   // Create HDF File
@@ -115,8 +127,8 @@ if( this->AllLight ){
   XdmfInt32  *Dp;
 
   sprintf(DataSetName, "%s:/Connections" , this->HeavyDataSetName);
-  *XMLStream << "\t\tFormat=\"HDF\">" << endl;
-  *XMLStream << "\t\t" << DataSetName << endl;
+  *this->Internals->XMLStream << "\t\tFormat=\"HDF\">" << endl;
+  *this->Internals->XMLStream << "\t\t" << DataSetName << endl;
   Conns.SetNumberType( XDMF_INT32_TYPE );
   Dims[0] = NumberOfCells;
   Dims[1] = PointsInPoly;
@@ -141,7 +153,7 @@ if( this->AllLight ){
   
   
 }
-*XMLStream << "</DataStructure>" << endl;
+*this->Internals->XMLStream << "</DataStructure>" << endl;
 return( NumberOfCells );
 }
 
@@ -154,15 +166,15 @@ float  *Pp;
 NumberOfPoints = Points->GetNumberOfPoints();
 Pp = Points->GetPoint(0);
 cerr << NumberOfPoints << " Points: " << endl;
-*XMLStream << "\t<DataStructure" << endl;
-*XMLStream << "\t\tDataType=\"Float\"" << endl;
-*XMLStream << "\t\tDimensions=\"" << NumberOfPoints << " 3\"" << endl;
+*this->Internals->XMLStream << "\t<DataStructure" << endl;
+*this->Internals->XMLStream << "\t\tDataType=\"Float\"" << endl;
+*this->Internals->XMLStream << "\t\tDimensions=\"" << NumberOfPoints << " 3\"" << endl;
 if( this->AllLight ){
-  *XMLStream << "\tFormat=\"XML\">" << endl;
+  *this->Internals->XMLStream << "\tFormat=\"XML\">" << endl;
   for( i = 0 ; i < NumberOfPoints ; i++ ){
-    *XMLStream << "\t\t" << *Pp++ << " ";
-    *XMLStream << *Pp++ << " ";
-    *XMLStream << *Pp++ << endl;
+    *this->Internals->XMLStream << "\t\t" << *Pp++ << " ";
+    *this->Internals->XMLStream << *Pp++ << " ";
+    *this->Internals->XMLStream << *Pp++ << endl;
     }
 } else {
   // Create HDF File
@@ -173,8 +185,8 @@ if( this->AllLight ){
   XdmfFloat64  *Dp;
 
   sprintf(DataSetName, "%s:/XYZ" , this->HeavyDataSetName);
-  *XMLStream << "\t\tFormat=\"HDF\">" << endl;
-  *XMLStream << "\t\t" << DataSetName << endl;
+  *this->Internals->XMLStream << "\t\tFormat=\"HDF\">" << endl;
+  *this->Internals->XMLStream << "\t\t" << DataSetName << endl;
   Geo.SetNumberType( XDMF_FLOAT64_TYPE );
   Dims[0] = NumberOfPoints;
   Dims[1] = 3;
@@ -194,7 +206,7 @@ if( this->AllLight ){
   H5.Write( &Geo );
   H5.Close();
 }
-*XMLStream << "\t</DataStructure>" << endl;
+*this->Internals->XMLStream << "\t</DataStructure>" << endl;
 return( NumberOfPoints );
 }
 
@@ -202,74 +214,74 @@ void vtkXdmfDataSetWriter::StartTopology( int Type, vtkCellArray *Cells ){
   vtkIdType *Cp;
 
   Cp = Cells->GetPointer();
-  *XMLStream << "<Topology " << endl;
+  *this->Internals->XMLStream << "<Topology " << endl;
   switch( Type ) {
     case VTK_EMPTY_CELL :
       cerr << "Start Empty Cell" << endl;
     case VTK_VERTEX :
       cerr << "Start " <<  " VERTEX" << endl;
-      *XMLStream << "\tType=\"POLYVERTEX\"" << endl;
+      *this->Internals->XMLStream << "\tType=\"POLYVERTEX\"" << endl;
       break;
     case VTK_POLY_VERTEX :
       cerr << "Start " <<  " POLY_VERTEX" << endl;
-      *XMLStream << "\tType=\"POLYVERTEX\"" << endl;
+      *this->Internals->XMLStream << "\tType=\"POLYVERTEX\"" << endl;
       break;
     case VTK_LINE :
       cerr << "Start " <<  " LINE" << endl;
-      *XMLStream << "\tType=\"POLYLINE\"" << endl;
-      *XMLStream << "\tNodesPerElement=\"" << *Cp << "\"" << endl;
+      *this->Internals->XMLStream << "\tType=\"POLYLINE\"" << endl;
+      *this->Internals->XMLStream << "\tNodesPerElement=\"" << *Cp << "\"" << endl;
       break;
     case VTK_POLY_LINE :
       cerr << "Start " <<  " POLY_LINE" << endl;
-      *XMLStream << "\tType=\"POLYLINE\"" << endl;
-      *XMLStream << "\tNodesPerElement=\"" << *Cp << "\"" << endl;
+      *this->Internals->XMLStream << "\tType=\"POLYLINE\"" << endl;
+      *this->Internals->XMLStream << "\tNodesPerElement=\"" << *Cp << "\"" << endl;
       break;
     case VTK_TRIANGLE :
       cerr << "Start " <<  " TRIANGLE" << endl;
-      *XMLStream << "\tType=\"TRIANGLE\"" << endl;
+      *this->Internals->XMLStream << "\tType=\"TRIANGLE\"" << endl;
       break;
     case VTK_TRIANGLE_STRIP :
       cerr << "Start " <<  " TRIANGLE_STRIP" << endl;
-      *XMLStream << "\tType=\"TRIANGLE\"" << endl;
+      *this->Internals->XMLStream << "\tType=\"TRIANGLE\"" << endl;
       break;
     case VTK_POLYGON :
       cerr << "Start " <<  " POLYGON" << endl;
-      *XMLStream << "\tType=\"POLYGON\"" << endl;
-      *XMLStream << "\tNodesPerElement=\"" << *Cp << "\"" << endl;
+      *this->Internals->XMLStream << "\tType=\"POLYGON\"" << endl;
+      *this->Internals->XMLStream << "\tNodesPerElement=\"" << *Cp << "\"" << endl;
       break;
     case VTK_PIXEL :
       cerr << "Start " <<  " PIXEL" << endl;
-      *XMLStream << "\tType=\"QUADRILATERAL\"" << endl;
+      *this->Internals->XMLStream << "\tType=\"QUADRILATERAL\"" << endl;
       break;
     case VTK_QUAD :
       cerr << "Start " <<  " QUAD" << endl;
-      *XMLStream << "\tType=\"QUADRILATERAL\"" << endl;
+      *this->Internals->XMLStream << "\tType=\"QUADRILATERAL\"" << endl;
       break;
     case VTK_TETRA :
       cerr << "Start " <<  " TETRA" << endl;
-      *XMLStream << "\tType=\"TETRAHEDRON\"" << endl;
+      *this->Internals->XMLStream << "\tType=\"TETRAHEDRON\"" << endl;
       break;
     case VTK_VOXEL :
       cerr << "Start " <<  " VOXEL" << endl;
-      *XMLStream << "\tType=\"HEXAHEDRON\"" << endl;
+      *this->Internals->XMLStream << "\tType=\"HEXAHEDRON\"" << endl;
       break;
     case VTK_HEXAHEDRON :
       cerr << "Start " <<  " HEXAHEDRON" << endl;
-      *XMLStream << "\tType=\"HEXAHEDRON\"" << endl;
+      *this->Internals->XMLStream << "\tType=\"HEXAHEDRON\"" << endl;
       break;
     case VTK_WEDGE :
       cerr << "Start " <<  " WEDGE" << endl;
-      *XMLStream << "\tType=\"WEDGE\"" << endl;
+      *this->Internals->XMLStream << "\tType=\"WEDGE\"" << endl;
       break;
     case VTK_PYRAMID :
       cerr << "Start " <<  " PYRAMID" << endl;
-      *XMLStream << "\tType=\"PYRAMID\"" << endl;
+      *this->Internals->XMLStream << "\tType=\"PYRAMID\"" << endl;
       break;
     default :
       cerr << "Unknown Topology Type" << endl;
       break;
     }
-  *XMLStream << "\tDimensions=\"" << Cells->GetNumberOfCells() << "\">" << endl;
+  *this->Internals->XMLStream << "\tDimensions=\"" << Cells->GetNumberOfCells() << "\">" << endl;
 }
 
 int
@@ -277,23 +289,23 @@ vtkXdmfDataSetWriter::WriteScalar( vtkDataArray *Scalars, char *Name, char *Cent
 
   int i, j;
 
-  *XMLStream << "<Attribute Center=\"" <<
+  *this->Internals->XMLStream << "<Attribute Center=\"" <<
       Center << "\"" <<
       " Name=\"" << Name << "\">" << endl;
-  *XMLStream << "\t<DataStructure" << endl;
-  *XMLStream << "\t\tDataType=\"Float\"" << endl;
-  *XMLStream << "\t\tDimensions=\"" << 
+  *this->Internals->XMLStream << "\t<DataStructure" << endl;
+  *this->Internals->XMLStream << "\t\tDataType=\"Float\"" << endl;
+  *this->Internals->XMLStream << "\t\tDimensions=\"" << 
     Scalars->GetNumberOfTuples() << "\"" << endl;
   if( this->AllLight ){
-    *XMLStream << "\t\tFormat=\"XML\">" << endl;
-    *XMLStream << "\t\t";
+    *this->Internals->XMLStream << "\t\tFormat=\"XML\">" << endl;
+    *this->Internals->XMLStream << "\t\t";
     j = 0;
     for( i = 0 ; i < Scalars->GetNumberOfTuples() ; i++ ){
       if( j >= 10 ){
-        *XMLStream << endl << "\t\t";
+        *this->Internals->XMLStream << endl << "\t\t";
         j = 0;
         }
-      *XMLStream << Scalars->GetTuple1( i ) << " ";
+      *this->Internals->XMLStream << Scalars->GetTuple1( i ) << " ";
       j++;
     }
   } else {
@@ -304,8 +316,8 @@ vtkXdmfDataSetWriter::WriteScalar( vtkDataArray *Scalars, char *Name, char *Cent
     XdmfFloat32  *Dp;
 
     sprintf(DataSetName, "%s:/%s" , this->HeavyDataSetName, Name);
-    *XMLStream << "\t\tFormat=\"HDF\">" << endl;
-    *XMLStream << "\t\t" << DataSetName << endl;
+    *this->Internals->XMLStream << "\t\tFormat=\"HDF\">" << endl;
+    *this->Internals->XMLStream << "\t\t" << DataSetName << endl;
     Data.SetNumberType( XDMF_FLOAT32_TYPE );
     Data.SetNumberOfElements( Scalars->GetNumberOfTuples() );
     Dp = (XdmfFloat32 *)Data.GetDataPointer();
@@ -324,8 +336,8 @@ vtkXdmfDataSetWriter::WriteScalar( vtkDataArray *Scalars, char *Name, char *Cent
     H5.Write( &Data );
     H5.Close();
   }
-  *XMLStream << "</DataStructure>" << endl;
-  *XMLStream << "</Attribute>" << endl;
+  *this->Internals->XMLStream << "</DataStructure>" << endl;
+  *this->Internals->XMLStream << "</Attribute>" << endl;
   return( Scalars->GetNumberOfTuples() );
 }
 
@@ -335,24 +347,24 @@ vtkXdmfDataSetWriter::WriteVector( vtkDataArray *Vectors, char *Name, char *Cent
   int i, j;
   double  VectorData[3];
 
-  *XMLStream << "<Attribute Center=\"" <<
+  *this->Internals->XMLStream << "<Attribute Center=\"" <<
       Center << "\"" <<
       " Name=\"" << Name << "\">" << endl;
-  *XMLStream << "\t<DataStructure" << endl;
-  *XMLStream << "\t\tDataType=\"Float\"" << endl;
-  *XMLStream << "\t\tDimensions=\"" << 
+  *this->Internals->XMLStream << "\t<DataStructure" << endl;
+  *this->Internals->XMLStream << "\t\tDataType=\"Float\"" << endl;
+  *this->Internals->XMLStream << "\t\tDimensions=\"" << 
     Vectors->GetNumberOfTuples() * 3 << "\"" << endl;
   if( this->AllLight ){
-    *XMLStream << "\t\tFormat=\"XML\">" << endl;
-    *XMLStream << "\t\t";
+    *this->Internals->XMLStream << "\t\tFormat=\"XML\">" << endl;
+    *this->Internals->XMLStream << "\t\t";
     j = 0;
     for( i = 0 ; i < Vectors->GetNumberOfTuples() ; i++ ){
       Vectors->GetTuple( i, VectorData );
       if( j >= 2 ){
-        *XMLStream << endl << "\t\t";
+        *this->Internals->XMLStream << endl << "\t\t";
         j = 0;
         }
-      *XMLStream <<
+      *this->Internals->XMLStream <<
         VectorData[0] << " " <<
         VectorData[1] << " " <<
         VectorData[2] << "      ";
@@ -366,8 +378,8 @@ vtkXdmfDataSetWriter::WriteVector( vtkDataArray *Vectors, char *Name, char *Cent
     XdmfFloat32  *Dp;
 
     sprintf(DataSetName, "%s:/%s" , this->HeavyDataSetName, Name);
-    *XMLStream << "\t\tFormat=\"HDF\">" << endl;
-    *XMLStream << "\t\t" << DataSetName << endl;
+    *this->Internals->XMLStream << "\t\tFormat=\"HDF\">" << endl;
+    *this->Internals->XMLStream << "\t\t" << DataSetName << endl;
     Data.SetNumberType( XDMF_FLOAT32_TYPE );
     Data.SetNumberOfElements( Vectors->GetNumberOfTuples() * 3  );
     Dp = (XdmfFloat32 *)Data.GetDataPointer();
@@ -389,8 +401,8 @@ vtkXdmfDataSetWriter::WriteVector( vtkDataArray *Vectors, char *Name, char *Cent
     H5.Write( &Data );
     H5.Close();
   }
-  *XMLStream << "</DataStructure>" << endl;
-  *XMLStream << "</Attribute>" << endl;
+  *this->Internals->XMLStream << "</DataStructure>" << endl;
+  *this->Internals->XMLStream << "</Attribute>" << endl;
   return( Vectors->GetNumberOfTuples() );
 }
 
@@ -438,11 +450,11 @@ int vtkXdmfDataSetWriter::WriteGrid( void )
     vtkPolyData *Polys = ( vtkPolyData *)DataSet;
     this->StartTopology( Polys->GetCell(0)->GetCellType(), Polys->GetPolys());
     this->WriteCellArray( Polys->GetPolys());
-    *XMLStream << "</Topology>" << endl;
+    *this->Internals->XMLStream << "</Topology>" << endl;
     
-    *XMLStream << "<Geometry Type=\"XYZ\">" << endl;
+    *this->Internals->XMLStream << "<Geometry Type=\"XYZ\">" << endl;
     this->WritePoints( Polys->GetPoints());
-    *XMLStream << "</Geometry>" << endl;
+    *this->Internals->XMLStream << "</Geometry>" << endl;
   }
   else if ( type == VTK_STRUCTURED_POINTS || type == VTK_IMAGE_DATA)
   {
@@ -452,62 +464,62 @@ int vtkXdmfDataSetWriter::WriteGrid( void )
     SGrid->GetDimensions( Dims );
     SGrid->GetOrigin( Origin );
     SGrid->GetSpacing( Spacing );
-    *XMLStream << "<Topology Type=\"3DCORECTMESH\"" << endl;
-    *XMLStream << "\tDimensions=\"" << 
+    *this->Internals->XMLStream << "<Topology Type=\"3DCORECTMESH\"" << endl;
+    *this->Internals->XMLStream << "\tDimensions=\"" << 
       Dims[2] << " " <<
       Dims[1] << " " <<
       Dims[0] <<
       "\"/>" << endl;
-    *XMLStream << "<Geometry Type=\"ORIGIN_DXDYDZ\">" << endl;
+    *this->Internals->XMLStream << "<Geometry Type=\"ORIGIN_DXDYDZ\">" << endl;
     // Origin
-    *XMLStream << "\t<DataStructure" << endl;
-    *XMLStream << "\t\tDataType=\"Float\"" << endl;
-    *XMLStream << "\t\tDimensions=\"3\"" << endl;
-    *XMLStream << "\t\tFormat=\"XML\">" << endl;
-    *XMLStream << "\t\t" <<
+    *this->Internals->XMLStream << "\t<DataStructure" << endl;
+    *this->Internals->XMLStream << "\t\tDataType=\"Float\"" << endl;
+    *this->Internals->XMLStream << "\t\tDimensions=\"3\"" << endl;
+    *this->Internals->XMLStream << "\t\tFormat=\"XML\">" << endl;
+    *this->Internals->XMLStream << "\t\t" <<
       Origin[0] <<
       " " << Origin[1] <<
       " " << Origin[2] << endl;
-    *XMLStream << "\t</DataStructure>" << endl;
+    *this->Internals->XMLStream << "\t</DataStructure>" << endl;
     // DX DY DZ
-    *XMLStream << "\t<DataStructure" << endl;
-    *XMLStream << "\t\tDataType=\"Float\"" << endl;
-    *XMLStream << "\t\tDimensions=\"3\"" << endl;
-    *XMLStream << "\t\tFormat=\"XML\">" << endl;
-    *XMLStream << "\t\t" <<
+    *this->Internals->XMLStream << "\t<DataStructure" << endl;
+    *this->Internals->XMLStream << "\t\tDataType=\"Float\"" << endl;
+    *this->Internals->XMLStream << "\t\tDimensions=\"3\"" << endl;
+    *this->Internals->XMLStream << "\t\tFormat=\"XML\">" << endl;
+    *this->Internals->XMLStream << "\t\t" <<
       Spacing[0] <<
       " " << Spacing[1] <<
       " " << Spacing[2] << endl;
-    *XMLStream << "\t</DataStructure>" << endl;
+    *this->Internals->XMLStream << "\t</DataStructure>" << endl;
 
 
-    *XMLStream << "</Geometry>" << endl;
+    *this->Internals->XMLStream << "</Geometry>" << endl;
   }
   else if ( type == VTK_STRUCTURED_GRID )
   {
     int     Dims[3];
     vtkStructuredGrid *SGrid = ( vtkStructuredGrid *)DataSet;
     SGrid->GetDimensions( Dims );
-    *XMLStream << "<Topology Type=\"3DSMESH\"" << endl;
-    *XMLStream << "\tDimensions=\"" << 
+    *this->Internals->XMLStream << "<Topology Type=\"3DSMESH\"" << endl;
+    *this->Internals->XMLStream << "\tDimensions=\"" << 
       Dims[2] << " " <<
       Dims[1] << " " <<
       Dims[0] <<
       "\"/>" << endl;
-    *XMLStream << "<Geometry Type=\"XYZ\">" << endl;
+    *this->Internals->XMLStream << "<Geometry Type=\"XYZ\">" << endl;
     this->WritePoints( SGrid->GetPoints());
-    *XMLStream << "</Geometry>" << endl;
+    *this->Internals->XMLStream << "</Geometry>" << endl;
   }
   else if ( type == VTK_UNSTRUCTURED_GRID )
   {
     vtkUnstructuredGrid *UGrid = ( vtkUnstructuredGrid *)DataSet;
     this->StartTopology( UGrid->GetCell(0)->GetCellType(), UGrid->GetCells());
     this->WriteCellArray( UGrid->GetCells());
-    *XMLStream << "</Topology>" << endl;
+    *this->Internals->XMLStream << "</Topology>" << endl;
     
-    *XMLStream << "<Geometry Type=\"XYZ\">" << endl;
+    *this->Internals->XMLStream << "<Geometry Type=\"XYZ\">" << endl;
     this->WritePoints( UGrid->GetPoints());
-    *XMLStream << "</Geometry>" << endl;
+    *this->Internals->XMLStream << "</Geometry>" << endl;
   }
   else if ( type == VTK_RECTILINEAR_GRID )
   {
@@ -516,71 +528,71 @@ int vtkXdmfDataSetWriter::WriteGrid( void )
     vtkDataArray  *Coord;
     vtkRectilinearGrid *RGrid = ( vtkRectilinearGrid *)DataSet;
     RGrid->GetDimensions( Dims );
-    *XMLStream << "<Topology Type=\"3DRECTMESH\"" << endl;
-    *XMLStream << "\tDimensions=\"" << 
+    *this->Internals->XMLStream << "<Topology Type=\"3DRECTMESH\"" << endl;
+    *this->Internals->XMLStream << "\tDimensions=\"" << 
       Dims[2] << " " <<
       Dims[1] << " " <<
       Dims[0] <<
       "\"/>" << endl;
-    *XMLStream << "<Geometry Type=\"VXVYVZ\">" << endl;
+    *this->Internals->XMLStream << "<Geometry Type=\"VXVYVZ\">" << endl;
     // X Coordinated
     Coord = RGrid->GetXCoordinates();
     NumberOfPoints = Coord->GetNumberOfTuples();
-    *XMLStream << "\t<DataStructure" << endl;
-    *XMLStream << "\t\tDataType=\"Float\"" << endl;
-    *XMLStream << "\t\tDimensions=\"" << NumberOfPoints << "\"" << endl;
-    *XMLStream << "\t\tFormat=\"XML\">" << endl;
-    *XMLStream << "\t\t";
+    *this->Internals->XMLStream << "\t<DataStructure" << endl;
+    *this->Internals->XMLStream << "\t\tDataType=\"Float\"" << endl;
+    *this->Internals->XMLStream << "\t\tDimensions=\"" << NumberOfPoints << "\"" << endl;
+    *this->Internals->XMLStream << "\t\tFormat=\"XML\">" << endl;
+    *this->Internals->XMLStream << "\t\t";
     j = 0;
     for( i = 0 ; i < NumberOfPoints ; i++ ){
       if( j >= 10 ){
-        *XMLStream << endl << "\t\t";
+        *this->Internals->XMLStream << endl << "\t\t";
         j = 0;
         }
-      *XMLStream << *Coord->GetTuple( i ) << " ";
+      *this->Internals->XMLStream << *Coord->GetTuple( i ) << " ";
       j++;
       }
-    *XMLStream << endl;
-    *XMLStream << "</DataStructure>" << endl;
+    *this->Internals->XMLStream << endl;
+    *this->Internals->XMLStream << "</DataStructure>" << endl;
     // Y Coordinated
     Coord = RGrid->GetYCoordinates();
     NumberOfPoints = Coord->GetNumberOfTuples();
-    *XMLStream << "\t<DataStructure" << endl;
-    *XMLStream << "\t\tDataType=\"Float\"" << endl;
-    *XMLStream << "\t\tDimensions=\"" << NumberOfPoints << "\"" << endl;
-    *XMLStream << "\t\tFormat=\"XML\">" << endl;
-    *XMLStream << "\t\t";
+    *this->Internals->XMLStream << "\t<DataStructure" << endl;
+    *this->Internals->XMLStream << "\t\tDataType=\"Float\"" << endl;
+    *this->Internals->XMLStream << "\t\tDimensions=\"" << NumberOfPoints << "\"" << endl;
+    *this->Internals->XMLStream << "\t\tFormat=\"XML\">" << endl;
+    *this->Internals->XMLStream << "\t\t";
     j = 0;
     for( i = 0 ; i < NumberOfPoints ; i++ ){
       if( j >= 10 ){
-        *XMLStream << endl << "\t\t";
+        *this->Internals->XMLStream << endl << "\t\t";
         j = 0;
         }
-      *XMLStream << *Coord->GetTuple( i ) << " ";
+      *this->Internals->XMLStream << *Coord->GetTuple( i ) << " ";
       j++;
       }
-    *XMLStream << endl;
-    *XMLStream << "</DataStructure>" << endl;
+    *this->Internals->XMLStream << endl;
+    *this->Internals->XMLStream << "</DataStructure>" << endl;
     // Z Coordinated
     Coord = RGrid->GetZCoordinates();
     NumberOfPoints = Coord->GetNumberOfTuples();
-    *XMLStream << "\t<DataStructure" << endl;
-    *XMLStream << "\t\tDataType=\"Float\"" << endl;
-    *XMLStream << "\t\tDimensions=\"" << NumberOfPoints << "\"" << endl;
-    *XMLStream << "\t\tFormat=\"XML\">" << endl;
-    *XMLStream << "\t\t";
+    *this->Internals->XMLStream << "\t<DataStructure" << endl;
+    *this->Internals->XMLStream << "\t\tDataType=\"Float\"" << endl;
+    *this->Internals->XMLStream << "\t\tDimensions=\"" << NumberOfPoints << "\"" << endl;
+    *this->Internals->XMLStream << "\t\tFormat=\"XML\">" << endl;
+    *this->Internals->XMLStream << "\t\t";
     j = 0;
     for( i = 0 ; i < NumberOfPoints ; i++ ){
       if( j >= 10 ){
-        *XMLStream << endl << "\t\t";
+        *this->Internals->XMLStream << endl << "\t\t";
         j = 0;
         }
-      *XMLStream << *Coord->GetTuple( i ) << " ";
+      *this->Internals->XMLStream << *Coord->GetTuple( i ) << " ";
       j++;
       }
-    *XMLStream << endl;
-    *XMLStream << "</DataStructure>" << endl;
-    *XMLStream << "</Geometry>" << endl;
+    *this->Internals->XMLStream << endl;
+    *this->Internals->XMLStream << "</DataStructure>" << endl;
+    *this->Internals->XMLStream << "</Geometry>" << endl;
   }
 
   return( 1 );

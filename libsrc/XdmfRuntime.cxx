@@ -24,8 +24,6 @@
 /*******************************************************************/
 #include "XdmfRuntime.h"
 
-#include <fstream>
-
 XdmfRuntime::XdmfRuntime() {
   this->ParseBufferArray = new XdmfCharArray;
   this->DOM = new XdmfDOM;

@@ -83,7 +83,7 @@ where { return WHERE; }
 	printf(" Lex got a FLOAT\n");
 #endif
 	yylval.DoubleValue = atof(yytext);
-	return FLOAT;
+	return lFLOAT;
 	}
 _+[0-9a-zA-Z_]*"_"* {
 #ifdef DiceExprDebug

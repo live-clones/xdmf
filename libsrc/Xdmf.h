@@ -37,10 +37,15 @@
 #include "XdmfDataDesc.h"
 #include "XdmfXNode.h"
 #include "XdmfExpression.h"
+#ifdef ICE_HAVE_NDGM
 #include "XdmfNDGM.h"
+#endif
 #include "XdmfTransform.h"
 #include "XdmfParameter.h"
+#ifdef ICE_HAVE_NDGM
 #include "XdmfRuntime.h"
+#endif
+
 // XDMF_MODEL
 #include "XdmfAttribute.h"
 #include "XdmfGeometry.h"

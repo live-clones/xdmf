@@ -26,8 +26,6 @@
 #include "XdmfTransform.h"
 #include "XdmfFormatMulti.h"
 
-#include <strstream>
-
 XdmfAttribute::XdmfAttribute() {
   this->AttributeType = XDMF_ATTRIBUTE_TYPE_NONE;
   this->ValuesAreMine = 1;

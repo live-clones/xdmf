@@ -64,42 +64,47 @@
 *  
 */
 
-#ifndef SWIG
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "XdmfConfig.h"
 #include "ice.h"
-#ifdef __cplusplus
-}
-#endif
-
-#ifdef __cplusplus
-#if defined(CYGWIN) 
-#if defined(_WCHAR_H_)
-/* We're Compiling XdmfPython.cxx which included
-   conflicting C Headers */
-/* Really Bad Hack */
-#define _MBSTATE_T
-#define _GLIBCPP_HAVE_MBSTATE_T
-#else
-/* Generic C++ */
-#endif
-#include <string>
-#include <fstream>
-#include <strstream>
-#include <iostream>
-#else
-#include <string>
-#include <fstream>
-#include <strstream>
-#include <iostream>
-#endif /* CYGWIN */
-#endif /* __cplusplus */
-#endif /* SWIG */
-
 
 #ifndef __XdmfObject_h
 #define __XdmfObject_h
+
+#ifdef __cplusplus
+// Use ANSI C++ ---------------------------------------------
+#ifdef XDMF_USE_ANSI_STDLIB
+#  include <iostream>
+#  include <strstream>
+#  include <fstream>
+using std::cerr;
+using std::cout;
+using std::cin;
+using std::ios;
+using std::endl;
+using std::ends;
+using std::ostream;
+using std::istream;
+using std::ostrstream;
+using std::istrstream;
+using std::strstream;
+using std::ofstream;
+using std::ifstream;
+using std::fstream;
+using std::hex;
+
+// otherwise, non-ANSI -----------------------------------------------------
+#else /* XDMF_USE_ANSI_STDLIB */
+#  include <iostream.h>
+#  if defined(_MSC_VER)
+#    include <strstrea.h>
+#  else
+#    include <strstream.h>
+#  endif
+#  include <fstream.h>
+#endif /* XDMF_USE_ANSI_STDLIB */
+#endif
+
+#include "XdmfExport.h"
 
 #define XDMF_SUCCESS  1
 #define XDMF_FAIL  -1
@@ -285,13 +290,13 @@ need to make sure ....
 
 #define XdmfDebug(x) \
 { if ( this->Debug || XdmfObject::GetGlobalDebug() ) { \
-  std::cerr << "XDMF Debug : " << __FILE__ << " line " << __LINE__ << " ("<< x << ")" << "\n"; \
+  cerr << "XDMF Debug : " << __FILE__ << " line " << __LINE__ << " ("<< x << ")" << "\n"; \
   } \
 }
 
 
 #define XdmfErrorMessage(x) \
-  std::cerr << "XDMF Error in " << __FILE__ << " line " << __LINE__ << " ("<< x << ")" << "\n";
+  cerr << "XDMF Error in " << __FILE__ << " line " << __LINE__ << " ("<< x << ")" << "\n";
 
 #define XdmfSetValueMacro(var,type) \
 XdmfInt32 Set##var (type _arg) \
@@ -320,7 +325,7 @@ type Get##var (XdmfInt64 Index) \
   return ( this->var[ Index ]  ); \
   }
 
-class XdmfObject {
+class XDMF_EXPORT XdmfObject {
 public:
   XdmfObject();
   ~XdmfObject();

@@ -22,9 +22,9 @@
 /*     for more information.                                       */
 /*                                                                 */
 /*******************************************************************/
-#include <Xdmf/Xdmf.h>
+#include <Xdmf.h>
 
-using namespace std;
+//using namespace std;
 
 // Usage : XdmfFormatExample [ DataSetName ] 
 int
@@ -115,7 +115,7 @@ InCoreSection = new XdmfArray();
 // Instead of allocating itself, use
 // an external pointer : core dumps are
 // your fault !!
-DataFromSomewhereElse = new double( 150 );
+DataFromSomewhereElse = new double[ 150 ];
 InCoreSection->SetDataPointer( DataFromSomewhereElse );
 InCoreSection->SetNumberTypeFromString( "XDMF_FLOAT64_TYPE" );
 // Make a 2D array to read back a section of the data
@@ -138,7 +138,7 @@ for( k = 0 ; k < 10 ; k++ ){
 
 
 
-exit(0);
+return 0;
 }
 
 

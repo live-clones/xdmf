@@ -25,7 +25,7 @@
 #ifndef _vtkXdmfDataArray_h
 #define _vtkXdmfDataArray_h
 
-#include <Xdmf/XdmfArray.h>
+#include <XdmfArray.h>
 #include <vtkDataArray.h>
 #include <vtkFloatArray.h>
 

@@ -27,10 +27,6 @@
 #include "XdmfExpression.h"
 #include "XdmfArray.h"
 
-#include <strstream>
-
-using namespace std;
-
 XdmfTransform::XdmfTransform() {
   strcpy( this->DataTransform, "XML" );
 }
@@ -181,9 +177,16 @@ if( XDMF_WORD_CMP( Attribute, "Function" ) ){
       Function << c;
       }
     }
+  Function << '\0';
   StreamString = Function.str();
   XdmfDebug("Transform Function = " << StreamString );
   ReturnArray = XdmfExpr(  StreamString );
+ // Reset Dimensions if Necessary
+  CData = this->DOM->Get( Element, "Dimensions" );
+  if(CData && ReturnArray){
+    ReturnArray->ReformFromString(CData);
+   }
+
   delete StreamString;
   while( NTmp ){
     NTmp--;

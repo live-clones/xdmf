@@ -25,7 +25,7 @@
 #ifndef __vtkXdmfReaderHelper_h
 #define __vtkXdmfReaderHelper_h
 
-#include "Xdmf/Xdmf.h"
+#include "Xdmf.h"
 
 
 class vtkXdmfReaderHelper : public XdmfGrid

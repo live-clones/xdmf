@@ -27,6 +27,8 @@
 
 #include "XdmfDOM.h"
 
+#include "XdmfExport.h"
+
 /*!
 This is an abstract convenience object for reading and writing
 LightData Files. LightData is stored in XML File or DOMs.
@@ -34,7 +36,7 @@ LightData "points" to HeavyData ; the giga-terabytes of HPC simulations.
 This class points to a DOM, and a current node in that DOM which is presumeably
 points to the "root" of the data object ( Grid, Geometry, Topology, etc.)
 */
-class XdmfLightData : public XdmfObject {
+class XDMF_EXPORT XdmfLightData : public XdmfObject {
 
 public:
   XdmfLightData();

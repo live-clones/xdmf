@@ -24,8 +24,6 @@
 /*******************************************************************/
 #include "vtkXdmfReaderHelper.h"
 
-using namespace std;
-
 //---------------------------------------------------------------------------
 vtkXdmfReaderHelper::vtkXdmfReaderHelper() {
   this->InputXMLFileName = NULL;

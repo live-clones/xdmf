@@ -26,10 +26,6 @@
 #include "XdmfTransform.h"
 #include "XdmfFormatMulti.h"
 
-#include <strstream>
-
-using namespace std;
-
 XdmfGeometry *GetXdmfGeometryHandle( void *Pointer ){
   XdmfGeometry *tmp = (XdmfGeometry *)Pointer;
   return((XdmfGeometry *)Pointer);

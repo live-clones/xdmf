@@ -24,8 +24,6 @@
 /*******************************************************************/
 #include "XdmfFormatMulti.h"
 
-#include <strstream>
-
 XdmfFormatMulti::XdmfFormatMulti() {
   strcpy( this->DataFormat, "HDF" );
 }

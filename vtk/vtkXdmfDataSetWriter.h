@@ -27,7 +27,8 @@
 
 #include <vtkUnstructuredGrid.h>
 #include <vtkFloatArray.h>
-#include <strstream.h>
+
+class vtkXdmfDataSetWriterInternals;
 
 class VTK_EXPORT vtkXdmfDataSetWriter : public vtkUnstructuredGrid
 {
@@ -36,7 +37,7 @@ public:
   char    HeavyDataSetName[256];
   int    FastWrite;
   int    AllLight;
-  ostrstream  *XMLStream;
+  vtkXdmfDataSetWriterInternals *Internals;
   
 
   vtkXdmfDataSetWriter();

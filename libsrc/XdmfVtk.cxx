@@ -29,10 +29,6 @@
 #include "vtkStructuredGrid.h"
 #include "vtkUnstructuredGrid.h"
 
-#include <iostream>
-#include <fstream>
-
-
 XdmfVtk::XdmfVtk( ) {
   this->Mpi = NULL;
   this->Polygons = NULL;

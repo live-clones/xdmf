@@ -3,3 +3,6 @@
 CreateConverters.tcl  crlf=input
 JavaWrap.tcl     crlf=input
 SwigIt           crlf=input
+config.guess     crlf=input
+config.sub       crlf=input
+configure        crlf=input

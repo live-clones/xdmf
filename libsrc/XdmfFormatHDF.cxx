@@ -25,10 +25,9 @@
 #include "XdmfFormatHDF.h"
 
 
-#include <strstream>
+#ifndef _WIN32
 #include <unistd.h>
-
-using namespace std;
+#endif
 
 XdmfFormatHDF::XdmfFormatHDF() {
   strcpy( this->DataFormat, "HDF" );
@@ -61,7 +60,8 @@ if( Data && strlen( Data ) > 1 ){
     }
   if( Desc ){
     XdmfHDF  H5;
-
+    // (Added by Andy)
+    H5.SetWorkingDirectory(this->DOM->GetWorkingDirectory());
     if( NewArray ){
       Array->CopyType( Desc );
       Array->CopyShape( Desc );

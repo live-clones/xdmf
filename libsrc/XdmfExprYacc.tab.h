@@ -4,7 +4,7 @@ typedef union {
   void    *ArrayPointer;
   XdmfExprSymbol  *Symbol;
 } YYSTYPE;
-#define  FLOAT  257
+#define  lFLOAT  257
 #define  INTEGER  258
 #define  ARRAY  259
 #define  NAME  260

@@ -29,7 +29,7 @@
 // #include "vtkSource.h"
 #include "vtkDataReader.h"
 #include "vtkXdmfDataArray.h"
-#include "Xdmf/Xdmf.h"
+#include "Xdmf.h"
 
 
 class vtkDataArrayCollection;

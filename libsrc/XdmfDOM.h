@@ -33,7 +33,6 @@
 #include "XdmfArray.h"
 
 #ifndef SWIG
-// #include <iostream>
 
 extern "C" {
 #include <sys/types.h>
@@ -46,6 +45,8 @@ extern "C" {
 
 #endif
 
+#include "XdmfExport.h"
+
 /*!
 This is the Base XML Parsing Object. A XdmfDOM will 
 read the XML and build an internal tree structure. The
@@ -53,7 +54,7 @@ tree can then be walked and queried. Any node can be
 "serialized". This generates an XML string that implements
 the node and all of its' children.
 */
-class XdmfDOM : public XdmfObject {
+class XDMF_EXPORT XdmfDOM : public XdmfObject {
 
 public :
 
@@ -84,16 +85,16 @@ public :
          XdmfGetValueMacro( OutputFileName, XdmfString );
 
   //! Get the XML destination
-        XdmfGetValueMacro( Output, std::ostream *);
+        XdmfGetValueMacro( Output, ostream *);
   
   //! Set the XML destination
-        XdmfSetValueMacro( Output, std::ostream *);
+        XdmfSetValueMacro( Output, ostream *);
 
   //! Get the XML destination
-        XdmfGetValueMacro( Input, std::istream *);
+        XdmfGetValueMacro( Input, istream *);
   
   //! Set the XML destination
-        XdmfSetValueMacro( Input, std::istream *);
+        XdmfSetValueMacro( Input, istream *);
 
   XdmfInt32 GenerateHead( void );
   XdmfInt32 Puts( XdmfString String );
@@ -203,7 +204,7 @@ is in this DOM and to accomplish PARAMETER substiution.
           return;
           }
         }
-      if( Value && ( strcasecmp( Value, "NULL" ) == 0 )) {
+      if( Value && ( STRCASECMP( Value, "NULL" ) == 0 )) {
         Value = NULL;
       }
       Node->Set( Attribute, Value );
@@ -228,8 +229,8 @@ char    NdgmHost[ XDMF_MAX_STRING_LENGTH ];
 char    WorkingDirectory[ XDMF_MAX_STRING_LENGTH ];
 char            InputFileName[ XDMF_MAX_STRING_LENGTH ];
 char            OutputFileName[ XDMF_MAX_STRING_LENGTH ];
-std::ostream         *Output;
-std::istream         *Input;
+ostream         *Output;
+istream         *Input;
 float     XMLVersion;
 XdmfString  DocType;
 XdmfString  System;
