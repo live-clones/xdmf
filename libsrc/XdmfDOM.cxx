@@ -101,6 +101,8 @@ XdmfDOM::~XdmfDOM(){
   if( this->Input != &cin ) {
           ifstream *OldInput = ( ifstream *)this->Input;
           OldInput->close();
+          delete this->Input;
+          this->Input = &cin;
         }
 }
 
@@ -202,6 +204,8 @@ XdmfDOM::SetInputFileName( XdmfString Filename ){
   if( this->Input != &cin ) {
           ifstream *OldInput = ( ifstream *)this->Input;
           OldInput->close();
+          delete this->Input;
+          this->Input = &cin;
         }
   if( XDMF_WORD_CMP( Filename, "stdin" ) ) {
           this->Input = &cin;

@@ -48,6 +48,7 @@ XdmfGrid::XdmfGrid() {
 
 XdmfGrid::~XdmfGrid() {
   if( this->GeometryIsMine && this->Geometry ) delete this->Geometry;
+  free(this->Attribute);
   }
 
 XdmfInt32
