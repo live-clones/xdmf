@@ -214,12 +214,12 @@ tree starting at a particular node.
 //! Get the default NDGM Host to use for HDF5 files
   XdmfGetStringMacro( NdgmHost );
 //! Set the default NDGM Host to use for HDF5 files
-  void SetNdgmHost( XdmfConstString String ) { strcpy( this->NdgmHost, String ); }
+  XdmfSetStringMacro( NdgmHost );
 
 //! Get the default Working directory to use for HDF5 files
   XdmfGetStringMacro( WorkingDirectory );
 //! Set the default Working directory to use for HDF5 files
-  void SetWorkingDirectory( XdmfConstString String ) { strcpy( this->WorkingDirectory, String ); }
+  XdmfSetStringMacro( WorkingDirectory );
 
 //! Get the Value of an Attribute from an Element
 /*!
@@ -284,18 +284,18 @@ XML by : NuberType="Integer" Precision="4"
 
 protected :
 
-char    NdgmHost[ XDMF_MAX_STRING_LENGTH ];
-char    WorkingDirectory[ XDMF_MAX_STRING_LENGTH ];
-char            InputFileName[ XDMF_MAX_STRING_LENGTH ];
-char            OutputFileName[ XDMF_MAX_STRING_LENGTH ];
+XdmfString      NdgmHost;
+XdmfString      WorkingDirectory;
+XdmfString      InputFileName;
+XdmfString      OutputFileName;
 ostream         *Output;
 istream         *Input;
-float     XMLVersion;
-XdmfString  DocType;
-XdmfString  System;
-XdmfString  xml;
+float           XMLVersion;
+XdmfString      DocType;
+XdmfString      System;
+XdmfString      xml;
 XDMF_TREE_NODE  *tree;
-XdmfString LastDOMGet;
+XdmfString      LastDOMGet;
 
 void ExpandNode(XDMF_TREE_NODE *node, XdmfInt32 *size);
 void ReNew(XdmfInt32 *size);

@@ -79,6 +79,8 @@ C_GetXMLFromFile( XdmfString FileName ) {
 }
 
 XdmfDOM::XdmfDOM(){
+  this->WorkingDirectory = 0;
+  this->NdgmHost = 0;
   this->LastDOMGet = 0;
   this->tree = NULL;
   this->xml = NULL;
@@ -86,8 +88,11 @@ XdmfDOM::XdmfDOM(){
   this->System = NULL;
   this->Output = &cout;
   this->Input = &cin;
-  strcpy(this->OutputFileName, "stdout" );
-  strcpy(this->InputFileName, "stdin" );
+
+  this->OutputFileName = 0;
+  this->InputFileName = 0;
+  XDMF_STRING_DUPLICATE(this->OutputFileName, "stdout");
+  XDMF_STRING_DUPLICATE(this->InputFileName, "stdin");
   this->SetNdgmHost( "" );
   this->SetWorkingDirectory( "" );
 }
@@ -110,6 +115,16 @@ XdmfDOM::~XdmfDOM(){
   if ( this->LastDOMGet )
     {
     delete [] this->LastDOMGet;
+    }
+  this->SetWorkingDirectory(0);
+  this->SetNdgmHost(0);
+  if ( this->InputFileName )
+    {
+    delete [] this->InputFileName;
+    }
+  if ( this->OutputFileName )
+    {
+    delete [] this->OutputFileName;
     }
 }
 
@@ -199,8 +214,11 @@ XdmfDOM::SetOutputFileName( XdmfConstString Filename ){
                 }
           this->Output = NewOutput;
         }
-  this->OutputFileName[0] = '\0';
-  strcat( this->OutputFileName, Filename );
+  if ( this->OutputFileName )
+    {
+    delete [] this->OutputFileName;
+    }
+  XDMF_STRING_DUPLICATE(this->InputFileName, Filename);
   return( XDMF_SUCCESS );
 
 }
@@ -209,25 +227,27 @@ XdmfInt32
 XdmfDOM::SetInputFileName( XdmfConstString Filename ){
 
   if( this->Input != &cin ) {
-          ifstream *OldInput = ( ifstream *)this->Input;
-          OldInput->close();
-          delete this->Input;
-          this->Input = &cin;
-        }
+    ifstream *OldInput = ( ifstream *)this->Input;
+    OldInput->close();
+    delete this->Input;
+    this->Input = &cin;
+  }
   if( XDMF_WORD_CMP( Filename, "stdin" ) ) {
-          this->Input = &cin;
+    this->Input = &cin;
   } else {
-          ifstream        *NewInput = new ifstream( Filename );
-          if( !NewInput ) {
-                  XdmfErrorMessage("Can't Open Input File " << Filename );
-                  return( XDMF_FAIL );
-                }
-          this->Input = NewInput;
-        }
-  this->InputFileName[0] = '\0';
-  strcat( this->InputFileName, Filename );
+    ifstream        *NewInput = new ifstream( Filename );
+    if( !NewInput ) {
+      XdmfErrorMessage("Can't Open Input File " << Filename );
+      return( XDMF_FAIL );
+    }
+    this->Input = NewInput;
+  }
+  if ( this->InputFileName )
+    {
+    delete [] this->InputFileName;
+    }
+  XDMF_STRING_DUPLICATE(this->InputFileName, Filename);
   return( XDMF_SUCCESS );
-
 }
 
 XdmfInt32
