@@ -72,7 +72,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.21");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.22");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -775,8 +775,9 @@ void vtkXdmfReader::Execute()
         XdmfArray *values = this->FormatMulti->ElementToArray( 
         dataNode, this->Internals->DataDescriptions[currentGrid] );
         */
+        vtkDebugMacro("Topology class: " << grid->GetClassAsString());
         if( XDMF_WORD_CMP(NodeType, "DataStructure") &&
-          ( grid->GetTopologyType() != XDMF_UNSTRUCTURED))
+          ( grid->GetClass() != XDMF_UNSTRUCTURED))
           {
           // Only works for the structured and rectilinear grid
           vtkDebugMacro( << "Preparing to Read :" << this->DOM->Get(dataNode, "CData"));
