@@ -143,7 +143,7 @@ return( XDMF_SUCCESS );
 }
 
 XdmfInt32
-XdmfRuntime::ParseFile( XdmfString FileName ) {
+XdmfRuntime::ParseFile( XdmfConstString FileName ) {
 
 XdmfInt32 Status;
 
