@@ -70,7 +70,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.14");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.15");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -594,6 +594,10 @@ void vtkXdmfReader::Execute()
           {
           status = this->CellDataArraySelection->ArrayIsEnabled(name);
           }
+        }
+      if ( !status )
+        {
+        continue;
         }
       status = 1;
       vtkDebugMacro(<< "Array with name: " << name << " has status: " << status);
