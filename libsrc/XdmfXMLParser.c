@@ -22,6 +22,10 @@
 /*     for more information.                                       */
 /*                                                                 */
 /*******************************************************************/
+#ifdef _MSC_VER
+#pragma warning (disable: 4115)
+#endif
+
 #include "XdmfObject.h"
 #include "XdmfXMLParser.h"
 #include "XdmfXNode.h"

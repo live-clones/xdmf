@@ -70,11 +70,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "XdmfAttribute.h"
 
 #include <sys/stat.h>
-#include <string>
-#include <vector>
+#include <vtkstd/string>
+#include <vtkstd/vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.43");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.44");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -2068,6 +2068,8 @@ private:
   int ParsingComplete() { return this->Done; }
   int Valid;
   int Done;
+  vtkXdmfReaderTester(const vtkXdmfReaderTester&); // Not implemented
+  void operator=(const vtkXdmfReaderTester&); // Not implemented
 };
 vtkStandardNewMacro(vtkXdmfReaderTester);
 

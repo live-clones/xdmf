@@ -25,7 +25,7 @@
 #ifndef _@XDMF_WINDOWINTERACTOR@_h
 #define _@XDMF_WINDOWINTERACTOR@_h
 
-#include <@XDMF_WINDOWINTERACTOR@.h>
+#include "@XDMF_WINDOWINTERACTOR@.h"
 
 class VTK_EXPORT vtkXdmfRenderWindowInteractor : public @XDMF_WINDOWINTERACTOR@
 {
@@ -35,6 +35,11 @@ public:
   virtual void LoopOnce();
   virtual void Start( int Block );
   virtual void Start( ) { this->Start(0); }
+protected:
+  vtkXdmfRenderWindowInteractor() {}
+private:
+  vtkXdmfRenderWindowInteractor(const vtkXdmfRenderWindowInteractor&); // Not implemented
+  void operator=(const vtkXdmfRenderWindowInteractor&); // Not implemented
 };
 
 #endif
