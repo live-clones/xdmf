@@ -35,9 +35,9 @@
 #include "stdlib.h"
 #include "Ndgm/ndgm.h"
 
-/**/
+/*
 #define HDF_IO_DEBUG    1
-/**/
+*/
 
 /*
 #ifdef XDMF_NOT_USED
