@@ -107,7 +107,7 @@ struct vtkXdmfWriterInternal
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfWriter);
-vtkCxxRevisionMacro(vtkXdmfWriter, "1.18");
+vtkCxxRevisionMacro(vtkXdmfWriter, "1.19");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter::vtkXdmfWriter()
@@ -342,6 +342,7 @@ void vtkXdmfWriter::StartTopology( ostream& ost, const char* toptype, int rank, 
     ost << dims[cc]; 
     }
   ost << "\">";
+  this->Indent(ost);
 }
 //----------------------------------------------------------------------------
 void vtkXdmfWriter::StartTopology( ostream& ost, int cellType, vtkIdType numVert, vtkIdType numCells )
@@ -433,6 +434,7 @@ void vtkXdmfWriter::StartTopology( ostream& ost, int cellType, vtkIdType numVert
     break;
     }
   ost << " Dimensions=\"" << numCells << "\">";
+  this->Indent(ost);
 }
 
 //----------------------------------------------------------------------------
@@ -528,7 +530,7 @@ vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost,
     ost << " Format=\"HDF\">";
     self->Indent(ost);
     ost << " " << DataSetName;
-    self->Indent(ost);
+    // self->Indent(ost);
 
     if ( dims[0] < 1 )
       {
@@ -1091,13 +1093,16 @@ const char* vtkXdmfWriter::GenerateHDF5ArrayName(const char* gridName, const cha
     namelen += strlen(gridName);
     }
   char *name = new char [ namelen + 10 ];
+  // Use the ENTITY HeavyData
   if ( gridName )
     {
-    sprintf(name, "%s:/%s/%s", this->HeavyDataSetNameString, gridName, array);
+    // sprintf(name, "%s:/%s/%s", this->HeavyDataSetNameString, gridName, array);
+    sprintf(name, "&HeavyData;:/%s/%s", gridName, array);
     }
   else
     {
-    sprintf(name, "%s:/%s", this->HeavyDataSetNameString, array);
+    // sprintf(name, "%s:/%s", this->HeavyDataSetNameString, array);
+    sprintf(name, "&HeavyData;:/%s", array);
     }
   this->SetHDF5ArrayName(name);
   delete [] name;
