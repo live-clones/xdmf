@@ -112,7 +112,7 @@ statement: tokARRAY '=' ArrayExpression	{
 			XdmfExprReturnValue = Result;
 		}
 	|	tokARRAY '[' tokINTEGER ':' tokINTEGER ']'  '=' ScalarExpression {
-			XdmfArray *Range, *Result;
+			XdmfArray *Range;
 
 			/* printf("Array Range %d:%d = ScalarExpression \n", $3, $5);	 */
 			Range = (XdmfArray *)$1;
@@ -124,7 +124,7 @@ statement: tokARRAY '=' ArrayExpression	{
 			}
 	|	tokARRAY '[' tokINTEGER ':' tokINTEGER ']'  '=' ArrayExpression {
 			XdmfArray *TempArray = ( XdmfArray *)$8;
-			XdmfArray *Range, *Result;
+			XdmfArray *Range;
 
 			/* printf("Array Range %d:%d = ArrayExpression \n", $3, $5);	 */
 			Range = (XdmfArray *)$1;
@@ -421,7 +421,7 @@ ArrayExpression: ArrayExpression '+' ArrayExpression {
 	|	INDEX'(' ArrayExpression EQEQ ArrayExpression ')' {
 			XdmfArray	*Array1 = ( XdmfArray *)$3;
 			XdmfArray	*Array2 = ( XdmfArray *)$5;
-			XdmfLength	i, j, howmany = 0, cntr = 0;
+			XdmfLength	i, howmany = 0, cntr = 0;
 			XdmfLength	Length1 = Array1->GetNumberOfElements(), Length2;
 			XdmfInt64Array	*Index = new XdmfInt64Array( Length1 );
 			XdmfInt64	A1Value, A2Value;
@@ -465,7 +465,7 @@ ArrayExpression: ArrayExpression '+' ArrayExpression {
 			}
 	|	WHERE '(' ArrayExpression EQEQ ArrayExpression ')' {
 			XdmfArray	*Array1 = ( XdmfArray *)$3;
-			XdmfLength	i, j, howmany = 0, cntr = 0;
+			XdmfLength	i, howmany = 0, cntr = 0;
 			XdmfLength	Length1 = Array1->GetNumberOfElements(), Length2;
 			XdmfInt64Array	*Index = new XdmfInt64Array( Length1 );
 			XdmfArray	*Array2 = ( XdmfArray *)$5;

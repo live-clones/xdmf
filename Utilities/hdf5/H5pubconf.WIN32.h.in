@@ -1,6 +1,9 @@
 /* src/H5config.h.  Generated automatically by configure.  */
 /* src/H5config.h.in.  Generated automatically from configure.in by autoheader.  */
 
+/* Define if the compiler understands the __FUNCTION__ keyword. */
+#cmakedefine H5_HAVE_FUNCTION ${H5_HAVE_FUNCTION}
+
 /*#define H5_HAVE_TM_ZONE 1 windows do not use this constant.*/
 #define H5_STDC_HEADERS 1
 #define H5_HAVE_ATTRIBUTE 1

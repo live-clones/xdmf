@@ -74,7 +74,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.34");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.35");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -1572,285 +1572,349 @@ int vtkXdmfReader::GetGridSetting(int idx)
 }
 
 //----------------------------------------------------------------------------
-int vtkXdmfReader::GetNumberOfParameters(){
-if(!this->DOM) {
-	return(-1);
-	}
-return(this->DOM->FindNumberOfParameters());
+int vtkXdmfReader::GetNumberOfParameters()
+{
+  if(!this->DOM) 
+    {
+    return(-1);
+    }
+  return(this->DOM->FindNumberOfParameters());
 }
 
 //----------------------------------------------------------------------------
-const char *vtkXdmfReader::GetParameterName(int index){
-XdmfParameter *Param;
-
-
-if(!this->DOM) {
-	return(0);
-	}
-Param = this->DOM->GetParameter(index);
-if(Param) {
-	return(Param->GetParameterName());
-} else {
-	return(0);
-}
-
-}
-//----------------------------------------------------------------------------
-int vtkXdmfReader::GetParameterType(const char *Name){
-XdmfParameter *Param;
-
-
-if(!this->DOM) {
-	return(0);
-	}
-Param = this->DOM->FindParameter(Name);
-if(Param) {
-	return(Param->GetParameterType());
-} else {
-	return(0);
-}
-
+const char *vtkXdmfReader::GetParameterName(int index)
+{
+  XdmfParameter *Param;
+  
+  
+  if(!this->DOM) 
+    {
+    return(0);
+    }
+  Param = this->DOM->GetParameter(index);
+  if(Param) 
+    {
+    return(Param->GetParameterName());
+    } 
+  else 
+    {
+    return(0);
+    }
 }
 //----------------------------------------------------------------------------
-char *vtkXdmfReader::GetParameterTypeAsString(const char *Name){
-
-if (this->GetParameterType(Name) == XDMF_PARAMETER_RANGE_TYPE) {
-	return("RANGE");
-} 
-return("LIST");
+int vtkXdmfReader::GetParameterType(const char *Name)
+{
+  XdmfParameter *Param;
+  
+  
+  if(!this->DOM) 
+    {
+    return(0);
+    }
+  Param = this->DOM->FindParameter(Name);
+  if(Param) 
+    {
+    return(Param->GetParameterType());
+    } 
+  else 
+    {
+    return(0);
+    }
 }
 //----------------------------------------------------------------------------
-int vtkXdmfReader::GetParameterType(int index){
-XdmfParameter *Param;
-
-
-if(!this->DOM) {
-	return(0);
-	}
-Param = this->DOM->GetParameter(index);
-if(Param) {
-	return(Param->GetParameterType());
-} else {
-	return(0);
-}
-
-}
-
-//----------------------------------------------------------------------------
-char *vtkXdmfReader::GetParameterTypeAsString(int index){
-
-if (this->GetParameterType(index) == XDMF_PARAMETER_RANGE_TYPE) {
-	return("RANGE");
-} 
-return("LIST");
+char *vtkXdmfReader::GetParameterTypeAsString(const char *Name)
+{
+  if (this->GetParameterType(Name) == XDMF_PARAMETER_RANGE_TYPE) 
+    {
+    return("RANGE");
+    } 
+  return("LIST");
 }
 //----------------------------------------------------------------------------
-int vtkXdmfReader::GetParameterRange(int index, int Shape[3]){
-XdmfParameter *Param;
-XdmfArray  *Parray;
-
-
-if(!this->DOM) {
-	return(0);
-	}
-Param = this->DOM->GetParameter(index);
-if(Param) {
-	if( Param->GetParameterType() == XDMF_PARAMETER_RANGE_TYPE ){
-		Parray = Param->GetArray();
-		Shape[0] = Parray->GetValueAsInt64(0);
-		Shape[1] = Parray->GetValueAsInt64(1);
-		Shape[2] = Parray->GetValueAsInt64(2);
-	} else {
-		Shape[0] = 0;
-		Shape[1] = 1;
-		Shape[2] = Param->GetNumberOfElements();
-	}
-	return(Shape[2]);
-}
-return(0);
-}
-//----------------------------------------------------------------------------
-int vtkXdmfReader::GetParameterRange(const char *Name, int Shape[3]){
-XdmfParameter *Param;
-XdmfArray  *Parray;
-
-if(!this->DOM) {
-	return(0);
-	}
-Param = this->DOM->FindParameter(Name);
-if(Param) {
-	if( Param->GetParameterType() == XDMF_PARAMETER_RANGE_TYPE ){
-		Parray = Param->GetArray();
-		Shape[0] = Parray->GetValueAsInt64(0);
-		Shape[1] = Parray->GetValueAsInt64(1);
-		Shape[2] = Parray->GetValueAsInt64(2);
-	} else {
-		Shape[0] = 0;
-		Shape[1] = 1;
-		Shape[2] = Param->GetNumberOfElements();
-	}
-	return(Shape[2]);
-}
-return(0);
+int vtkXdmfReader::GetParameterType(int index)
+{
+  XdmfParameter *Param;
+  
+  
+  if(!this->DOM) 
+    {
+    return(0);
+    }
+  Param = this->DOM->GetParameter(index);
+  if(Param) 
+    {
+    return(Param->GetParameterType());
+    } 
+  else 
+    {
+    return(0);
+    }
 }
 
 //----------------------------------------------------------------------------
-char *vtkXdmfReader::GetParameterRangeAsString(int index){
-int Range[3];
-ostrstream StringOutput;
-
-if(this->GetParameterRange(index, Range) <= 0){
-	return(NULL);
-}
-StringOutput << ICE_64BIT_CAST Range[0] << " ";
-StringOutput << ICE_64BIT_CAST Range[1] << " ";
-StringOutput << ICE_64BIT_CAST Range[2] << ends;
-return(StringOutput.str());
+char *vtkXdmfReader::GetParameterTypeAsString(int index)
+{
+  
+  if (this->GetParameterType(index) == XDMF_PARAMETER_RANGE_TYPE) 
+    {
+    return("RANGE");
+    } 
+  return("LIST");
 }
 //----------------------------------------------------------------------------
-char *vtkXdmfReader::GetParameterRangeAsString(const char *Name){
-int Range[3];
-ostrstream StringOutput;
-
-if (this->GetParameterRange(Name, Range) <= 0) {
-	return(NULL);
-}
-StringOutput << ICE_64BIT_CAST Range[0] << " ";
-StringOutput << ICE_64BIT_CAST Range[1] << " ";
-StringOutput << ICE_64BIT_CAST Range[2] << ends;
-return(StringOutput.str());
+int vtkXdmfReader::GetParameterRange(int index, int Shape[3])
+{
+  XdmfParameter *Param;
+  XdmfArray  *Parray;
+  
+  
+  if(!this->DOM) 
+    {
+    return(0);
+    }
+  Param = this->DOM->GetParameter(index);
+  if(Param) 
+    {
+    if( Param->GetParameterType() == XDMF_PARAMETER_RANGE_TYPE )
+      {
+      Parray = Param->GetArray();
+      Shape[0] = Parray->GetValueAsInt64(0);
+      Shape[1] = Parray->GetValueAsInt64(1);
+      Shape[2] = Parray->GetValueAsInt64(2);
+      } else {
+      Shape[0] = 0;
+      Shape[1] = 1;
+      Shape[2] = Param->GetNumberOfElements();
+      }
+    return(Shape[2]);
+    }
+  return(0);
 }
 //----------------------------------------------------------------------------
-int vtkXdmfReader::SetParameterIndex(int Index, int CurrentIndex) {
-XdmfParameter *Param;
-
-
-if(!this->DOM) {
-	return(0);
-	}
-Param = this->DOM->GetParameter(Index);
-if(!Param) {
-	return(-1);
-}
-this->Modified();
-return(Param->SetCurrentIndex(CurrentIndex));
-}
-
-//----------------------------------------------------------------------------
-int vtkXdmfReader::GetParameterIndex(int Index) {
-XdmfParameter *Param;
-
-
-if(!this->DOM) {
-	return(0);
-	}
-Param = this->DOM->GetParameter(Index);
-if(!Param) {
-	return(-1);
-}
-return(Param->GetCurrentIndex());
-}
-
-//----------------------------------------------------------------------------
-int vtkXdmfReader::SetParameterIndex(const char *ParameterName, int CurrentIndex) {
-XdmfParameter *Param;
-int Status;
-
-if(!this->DOM) {
-	return(0);
-	}
-for(int i=0 ; i < this->DOM->FindNumberOfParameters() ;  i++){
-	Param = this->DOM->GetParameter(i);
-	if(!Param) {
-		return(-1);
-	}
-	if(XDMF_WORD_CMP(Param->GetParameterName(), ParameterName)){
-		Status = Param->SetCurrentIndex(CurrentIndex);
-    this->Modified();
-		if(Status <= 0 ) return(Status);
-		}
-}
-return(Status);
+int vtkXdmfReader::GetParameterRange(const char *Name, int Shape[3])
+{
+  XdmfParameter *Param;
+  XdmfArray  *Parray;
+  
+  if(!this->DOM) 
+    {
+    return(0);
+    }
+  Param = this->DOM->FindParameter(Name);
+  if(Param) 
+    {
+    if( Param->GetParameterType() == XDMF_PARAMETER_RANGE_TYPE )
+      {
+      Parray = Param->GetArray();
+      Shape[0] = Parray->GetValueAsInt64(0);
+      Shape[1] = Parray->GetValueAsInt64(1);
+      Shape[2] = Parray->GetValueAsInt64(2);
+      } 
+    else 
+      {
+      Shape[0] = 0;
+      Shape[1] = 1;
+      Shape[2] = Param->GetNumberOfElements();
+      }
+    return(Shape[2]);
+    }
+  return(0);
 }
 
 //----------------------------------------------------------------------------
-int vtkXdmfReader::GetParameterIndex(const char *Name) {
-XdmfParameter *Param;
-
-
-if(!this->DOM) {
-	return(0);
-	}
-Param = this->DOM->FindParameter(Name);
-if(!Param) {
-	return(-1);
+char *vtkXdmfReader::GetParameterRangeAsString(int index)
+{
+  int Range[3];
+  ostrstream StringOutput;
+  
+  if(this->GetParameterRange(index, Range) <= 0)
+    {
+    return(NULL);
+    }
+  StringOutput << ICE_64BIT_CAST Range[0] << " ";
+  StringOutput << ICE_64BIT_CAST Range[1] << " ";
+  StringOutput << ICE_64BIT_CAST Range[2] << ends;
+  return(StringOutput.str());
 }
-return(Param->GetCurrentIndex());
+//----------------------------------------------------------------------------
+char *vtkXdmfReader::GetParameterRangeAsString(const char *Name)
+{
+  int Range[3];
+  ostrstream StringOutput;
+  
+  if (this->GetParameterRange(Name, Range) <= 0) 
+    {
+    return(NULL);
+    }
+  StringOutput << ICE_64BIT_CAST Range[0] << " ";
+  StringOutput << ICE_64BIT_CAST Range[1] << " ";
+  StringOutput << ICE_64BIT_CAST Range[2] << ends;
+  return(StringOutput.str());
+}
+//----------------------------------------------------------------------------
+int vtkXdmfReader::SetParameterIndex(int Index, int CurrentIndex) 
+{
+  XdmfParameter *Param;
+  
+  
+  if(!this->DOM) 
+    {
+    return(0);
+    }
+  Param = this->DOM->GetParameter(Index);
+  if(!Param) 
+    {
+    return(-1);
+    }
+  this->Modified();
+  return(Param->SetCurrentIndex(CurrentIndex));
 }
 
 //----------------------------------------------------------------------------
-const char *vtkXdmfReader::GetParameterValue(const char *Name) {
-XdmfParameter *Param;
-
-
-if(!this->DOM) {
-	return(0);
-	}
-Param = this->DOM->FindParameter(Name);
-if(!Param) {
-	return(0);
-}
-Param->Update();
-return(Param->GetParameterValue());
-}
-
-//----------------------------------------------------------------------------
-const char *vtkXdmfReader::GetParameterValue(int index) {
-XdmfParameter *Param;
-
-
-if(!this->DOM) {
-	return(0);
-	}
-Param = this->DOM->GetParameter(index);
-if(!Param) {
-	return(0);
-}
-Param->Update();
-return(Param->GetParameterValue());
-}
-
-
-//----------------------------------------------------------------------------
-int vtkXdmfReader::GetParameterLength(int index){
-XdmfParameter *Param;
-
-
-if(!this->DOM) {
-	return(0);
-	}
-Param = this->DOM->GetParameter(index);
-if(Param) {
-	return(Param->GetNumberOfElements());
-} else {
-	return(0);
-}
+int vtkXdmfReader::GetParameterIndex(int Index) 
+{
+  XdmfParameter *Param;
+  
+  
+  if(!this->DOM) 
+    {
+    return(0);
+    }
+  Param = this->DOM->GetParameter(Index);
+  if(!Param) 
+    {
+    return(-1);
+    }
+  return(Param->GetCurrentIndex());
 }
 
 //----------------------------------------------------------------------------
-int vtkXdmfReader::GetParameterLength(const char *Name){
-XdmfParameter *Param;
+int vtkXdmfReader::SetParameterIndex(const char *ParameterName, int CurrentIndex) 
+{
+  XdmfParameter *Param;
+  int Status;
 
-
-if(!this->DOM) {
-	return(0);
-	}
-Param = this->DOM->FindParameter(Name);
-if(Param) {
-	return(Param->GetNumberOfElements());
-} else {
-	return(0);
+  if(!this->DOM) 
+    {
+    return(0);
+    }
+  for(int i=0 ; i < this->DOM->FindNumberOfParameters() ;  i++)
+    {
+    Param = this->DOM->GetParameter(i);
+    if(!Param) 
+      {
+      return(-1);
+      }
+    if(XDMF_WORD_CMP(Param->GetParameterName(), ParameterName))
+      {
+      Status = Param->SetCurrentIndex(CurrentIndex);
+      this->Modified();
+      if(Status <= 0 ) 
+        {
+        return(Status);
+        }
+      }
+    }
+  return(Status);
 }
+
+//----------------------------------------------------------------------------
+int vtkXdmfReader::GetParameterIndex(const char *Name) 
+{
+  XdmfParameter *Param;
+  
+  
+  if(!this->DOM) 
+    {
+    return(0);
+    }
+  Param = this->DOM->FindParameter(Name);
+  if(!Param) 
+    {
+    return(-1);
+    }
+  return(Param->GetCurrentIndex());
+}
+
+//----------------------------------------------------------------------------
+const char *vtkXdmfReader::GetParameterValue(const char *Name) 
+{
+  XdmfParameter *Param;
+  
+  
+  if(!this->DOM) 
+    {
+    return(0);
+    }
+  Param = this->DOM->FindParameter(Name);
+  if(!Param) 
+    {
+    return(0);
+    }
+  Param->Update();
+  return(Param->GetParameterValue());
+}
+
+//----------------------------------------------------------------------------
+const char *vtkXdmfReader::GetParameterValue(int index) 
+{
+  XdmfParameter *Param;
+  
+  
+  if(!this->DOM) 
+    {
+    return(0);
+    }
+  Param = this->DOM->GetParameter(index);
+  if(!Param) 
+    {
+    return(0);
+    }
+  Param->Update();
+  return(Param->GetParameterValue());
+}
+
+
+//----------------------------------------------------------------------------
+int vtkXdmfReader::GetParameterLength(int index)
+{
+  XdmfParameter *Param;
+  
+  
+  if(!this->DOM) 
+    {
+    return(0);
+    }
+  Param = this->DOM->GetParameter(index);
+  if(Param) 
+    {
+    return(Param->GetNumberOfElements());
+    } 
+  else 
+    {
+    return(0);
+    }
+}
+
+//----------------------------------------------------------------------------
+int vtkXdmfReader::GetParameterLength(const char *Name)
+{
+  XdmfParameter *Param;
+  
+  
+  if(!this->DOM) 
+    {
+    return(0);
+    }
+  Param = this->DOM->FindParameter(Name);
+  if(Param) 
+    {
+    return(Param->GetNumberOfElements());
+    } 
+  else 
+    {
+    return(0);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -1925,7 +1989,7 @@ void vtkXdmfReader::UpdateGrids()
       Name = str.str();
       }
     this->Internals->GridList.push_back(Name);
-    if ( this->Internals->Grids.size() <= currentGrid )
+    if ( this->Internals->Grids.size() <= (size_t)currentGrid )
       {
       this->Internals->Grids.push_back(0);
       }
@@ -1933,11 +1997,11 @@ void vtkXdmfReader::UpdateGrids()
       {
       this->Internals->Grids[currentGrid] = new XdmfGrid;
       }
-    if ( this->Internals->SelectedGrids.size() <= currentGrid )
+    if ( this->Internals->SelectedGrids.size() <= (size_t)currentGrid )
       {
       this->Internals->SelectedGrids.push_back(0);
       }
-    if ( this->Internals->DataDescriptions.size() <= currentGrid )
+    if ( this->Internals->DataDescriptions.size() <= (size_t)currentGrid )
       {
       this->Internals->DataDescriptions.push_back(0);
       }

@@ -63,7 +63,7 @@ XdmfGrid::~XdmfGrid() {
 
 XdmfInt32
 XdmfGrid::AssignAttribute( XdmfAttribute *Attribute ){
-XdmfInt32 Status;
+XdmfInt32 Status = 0;
 
 if( Attribute ){
   Attribute->Update();

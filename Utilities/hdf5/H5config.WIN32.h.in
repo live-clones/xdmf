@@ -39,7 +39,7 @@
 #define HAVE_ATTRIBUTE 1
 
 /* Define if the compiler understands the __FUNCTION__ keyword. */
-#undef HAVE_FUNCTION 
+#cmakedefine HAVE_FUNCTION ${HAVE_FUNCTION}
 
 /* Define if we have parallel support */
 /* #undef HAVE_PARALLEL */
