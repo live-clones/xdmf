@@ -482,9 +482,8 @@ XdmfHDF::Open( char *DataSetName , char *Access ) {
 char    *lastcolon, *firstcolon;
 XdmfInt32  status, flags = H5F_ACC_RDWR;
 XdmfInt32  AllowCreate = 0;
-char    FullFileName[XDMF_MAX_STRING_LENGTH];
+ostrstream FullFileName;
 
-FullFileName[0] = '\0';
 if( DataSetName != NULL ) {
   char  *NewName = NULL;
   NewName = DataSetName = strdup( DataSetName );
@@ -596,26 +595,27 @@ XdmfDebug("Using Domain " << this->Domain );
     } else if( STRCASECMP( this->Domain, "GASS" ) == 0 ) {
     } else {
       XdmfDebug("Using File Interface, Path = " << this->GetWorkingDirectory() );
+      cout << "Using working directory: " << this->GetWorkingDirectory() << endl;
       if( ( strlen( this->GetWorkingDirectory() ) > 0 ) && 
         ( this->FileName[0] != '/' ) ){
-        strcat( FullFileName, this->GetWorkingDirectory() );
-        strcat( FullFileName, "/" );
+        FullFileName << this->GetWorkingDirectory() << "/";
       }
     }
 // ????
 if ( 1  ) {
 
-strcat( FullFileName, this->FileName );
+FullFileName << this->FileName << ends;
 
 // printf("Opening %s flags 0x%X\n", this->FileName, flags );
 // Turn of Errors if Creation is Allowed
 if( AllowCreate ) {
   H5E_BEGIN_TRY {
-  this->File = H5Fopen(FullFileName, flags, this->AccessPlist);
+  this->File = H5Fopen(FullFileName.str(), flags, this->AccessPlist);
   } H5E_END_TRY;
 } else {
-  this->File = H5Fopen(FullFileName, flags, this->AccessPlist);
+  this->File = H5Fopen(FullFileName.str(), flags, this->AccessPlist);
 }
+FullFileName.rdbuf()->freeze(0);
 if( this->File < 0 ){
   XdmfDebug("Open failed, Checking for Create");
   if( AllowCreate ) {
@@ -655,7 +655,8 @@ if( this->File < 0 ){
       return( XDMF_FAIL );  
     }
   } else {
-    XdmfErrorMessage( "Cannot open " << this->GetFileName() );
+    XdmfErrorMessage( "Cannot open " << this->GetFileName() << " / " << FullFileName.str() );
+    FullFileName.rdbuf()->freeze(0);
     return( XDMF_FAIL );  
     }
   }
