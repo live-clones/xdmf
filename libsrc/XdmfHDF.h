@@ -100,6 +100,10 @@ public:
   XdmfSetValueMacro(Compression, XdmfInt32);
 //! Get Compression Level
   XdmfGetValueMacro(Compression, XdmfInt32);
+//! Use Serial File Interface even if Parallel is Available
+  XdmfSetValueMacro(UseSerialFile, XdmfInt32);
+//! Get Value of Use Serial
+  XdmfGetValueMacro(UseSerialFile, XdmfInt32);
 //! Set the current internal HDF "Group" for creation
   XdmfInt32 SetCwdName( XdmfString Directory );
 //! Get the current internal HDF "Group"
@@ -181,6 +185,7 @@ protected:
 
   char    CwdName[XDMF_MAX_STRING_LENGTH];
   XdmfInt32  Compression;
+  XdmfInt32  UseSerialFile;
   XdmfInt64  NumberOfChildren;
   XdmfString  Child[1024];
 
