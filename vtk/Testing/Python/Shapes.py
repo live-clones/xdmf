@@ -1,8 +1,14 @@
 from vtk import *
-from libvtkXdmfPython import *
+vtkxdmf = 0
+try:
+  import libvtkXdmfPython
+  vtkxdmf = libvtkXdmfPython
+except:
+  import vtkXdmfPython
+  vtkxdmf = vtkXdmfPython
 import sys
 
-r = vtkXdmfReader()
+r = vtkxdmf.vtkXdmfReader()
 r.SetFileName(sys.argv[1])
 r.UpdateInformation()
 r.DisableAllGrids()
