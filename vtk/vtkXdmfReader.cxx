@@ -70,7 +70,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.15");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.16");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -170,6 +170,14 @@ vtkXdmfReader::~vtkXdmfReader()
   this->PointDataArraySelection->Delete();
 
   this->SetDomainName(0);
+
+
+  vtkXdmfReaderInternal::GridListType::size_type currentGrid;
+  for ( currentGrid = 0; currentGrid < this->Internals->Grids.size(); currentGrid ++ )
+    {
+    delete this->Internals->Grids[currentGrid];
+    }
+
   delete this->Internals;
 }
 
