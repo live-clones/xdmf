@@ -783,7 +783,7 @@ static void _SWIG_exception(int code, const char *msg) {
 
 extern XdmfString XdmfObjectToHandle(XdmfObject *);
 extern XdmfObject *HandleToXdmfObject(XdmfConstString);
-extern istrstream &ICE_READ_STREAM64(istrstream &,long long &);
+extern istrstream &ICE_READ_STREAM64(istrstream &,ICE_64_INT &);
 extern hid_t XdmfTypeToHDF5Type(XdmfInt32);
 extern XdmfInt32 HDF5TypeToXdmfType(hid_t);
 extern XdmfString XdmfTypeToString(XdmfInt32);
@@ -1062,7 +1062,7 @@ static PyObject *_wrap_HandleToXdmfObject(PyObject *self, PyObject *args) {
 static PyObject *_wrap_ICE_READ_STREAM64(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     istrstream *arg1 = 0 ;
-    long long *arg2 = 0 ;
+    ICE_64_INT *arg2 = 0 ;
     istrstream *result;
     PyObject * obj0 = 0 ;
     PyObject * obj1 = 0 ;
