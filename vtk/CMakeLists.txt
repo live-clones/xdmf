@@ -9,20 +9,19 @@ CONFIGURE_FILE(
 	${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.h
 	)
 CONFIGURE_FILE(
- 	${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx.in
- 	${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
- 	)
+	${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx.in
+	${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
+	)
 
 SET( Xdmf_SRCS
 vtkXdmfReader.cxx
 vtkXdmfDataSetWriter.cxx
 vtkXdmfDataArray.cxx
-${Xdmf_BINARY_DIR}/vtkXdmfRenderWindowInteractor.cxx
+${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
 )
 
 SET_SOURCE_FILES_PROPERTIES(
-	vtkXdmfRenderWindowInteractor.cxx
-	vtkXdmfRenderWindowInteractor.h
+	${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.h
 	GENERATED)
 
 	
@@ -39,14 +38,14 @@ IF (VTK_FOUND)
 
   # Create Tcl wrappers if VTK is wrapped in Tcl.
   IF(VTK_WRAP_TCL)
-    VTK_WRAP_TCL(vtk${PROJECT_NAME}TCL XdmfTCL_SRCS ${Xdmf_SRCS})
+    VTK_WRAP_TCL2(vtk${PROJECT_NAME}TCL XdmfTCL_SRCS ${Xdmf_SRCS})
     ADD_LIBRARY(vtk${PROJECT_NAME}TCL ${LIBTYPE} ${XdmfTCL_SRCS} ${Xdmf_SRCS})
     TARGET_LINK_LIBRARIES(vtk${PROJECT_NAME}TCL vtkIOTCL vtkRenderingTCL Xdmf)
   ENDIF(VTK_WRAP_TCL)
 
   # Create Python wrappers if VTK is wrapped in Python.
   IF(VTK_WRAP_PYTHON)
-    VTK_WRAP_PYTHON(vtk${PROJECT_NAME}Python XdmfPython_SRCS ${Xdmf_SRCS})
+    VTK_WRAP_PYTHON2(vtk${PROJECT_NAME}Python XdmfPython_SRCS ${Xdmf_SRCS})
     ADD_LIBRARY(vtk${PROJECT_NAME}Python SHARED ${XdmfPython_SRCS} ${Xdmf_SRCS})
     TARGET_LINK_LIBRARIES(vtk${PROJECT_NAME}Python vtkIOPython vtkRenderingPython Xdmf)
   ENDIF(VTK_WRAP_PYTHON)
