@@ -31,7 +31,7 @@
 extern "C" {
 #endif 
 
-#include "expat.h"
+#include "xdmf_expat.h"
 
 typedef struct {
         XDMF_TREE_NODE *Root;
