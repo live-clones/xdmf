@@ -168,7 +168,7 @@ int
 vtkXdmfDataSetWriter::WritePoints( vtkPoints *Points ){
 int  NumberOfPoints;
 int  i;
-float  *Pp;
+double *Pp;
 
 NumberOfPoints = Points->GetNumberOfPoints();
 Pp = Points->GetPoint(0);
@@ -466,7 +466,7 @@ int vtkXdmfDataSetWriter::WriteGrid( void )
   else if ( type == VTK_STRUCTURED_POINTS || type == VTK_IMAGE_DATA)
   {
     int     Dims[3];
-    float    Origin[3], Spacing[3];
+    double Origin[3], Spacing[3];
     vtkImageData *SGrid = ( vtkImageData *)DataSet;
     SGrid->GetDimensions( Dims );
     SGrid->GetOrigin( Origin );

@@ -73,7 +73,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.27");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.28");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -446,7 +446,7 @@ void vtkXdmfReader::Execute()
       ( Geometry->GetGeometryType() == XDMF_GEOMETRY_XYZ ) ||
       ( Geometry->GetGeometryType() == XDMF_GEOMETRY_XY ) )
       {
-      float *pp;
+      double *pp;
       XdmfInt64   Length;
       vtkPoints   *Points;
       vtkPointSet *Pointset = ( vtkPointSet *)this->Outputs[idx];
