@@ -13,7 +13,7 @@ INCLUDE(${CMAKE_ROOT}/Modules/CMakeBackwardCompatibilityCXX.cmake)
 # System to Build
 STRING(REGEX REPLACE "-" "_" ICE_SYSTEM ${CMAKE_SYSTEM_NAME})
 
-SET(ARCH_TO_BUILD ${ICE_SYSTEM} CACHE STRING "Host Arcitecture : Linux IRIXN32 IRIX64 AIX CYGWIN")
+SET(ARCH_TO_BUILD ${ICE_SYSTEM} CACHE INTERNAL "Host Arcitecture : Linux IRIXN32 IRIX64 AIX CYGWIN")
 # Allow the user to customize their build with some local options
 #
 ADD_DEFINITIONS(-D${ARCH_TO_BUILD})
