@@ -58,7 +58,7 @@ if( Data && strlen( Data ) > 1 ){
     NewArray = Array = new XdmfArray( NumberType );
     }
   if( Desc == NULL ){
-    NewDesc = Desc = this->ElementToDataDesc( Element );
+    NewDesc = Desc = this->ElementToDataDesc( Element, 0 );
     }
   if( Desc ){
     if( NewArray ){

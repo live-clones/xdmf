@@ -1213,14 +1213,12 @@ return(this->SetValueFromFloat64( Index, Value ));
 
 istrstream& ICE_READ_STREAM64(istrstream& istr, ICE_64_INT& i)
 {
-#ifdef ICE_HAVE_64BIT_STREAMS
+#if defined( ICE_HAVE_64BIT_STREAMS )
 istr >>i;
 #else
-{
-double d; 
-istr >> d;
-i = (XdmfInt64)d;
-}
+  double d = 0;
+  istr >> d;
+  i = (ICE_64_INT)d;
 #endif
 return istr;
 }

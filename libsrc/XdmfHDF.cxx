@@ -359,19 +359,19 @@ if( this->Dataset < 0 ) {
   XdmfDebug("Creating New Compressed Dataset");
   NDims = this->GetShape(DataDims);
   if (NDims == 1) {
-	// Special Case
-	NCDims = 1;
-	if(DataDims[0] > 10000) {
-		ChunkDims[0] = 100; 
-	} else {
-		ChunkDims[0] = 1000; 
-	}
+        // Special Case
+        NCDims = 1;
+        if(DataDims[0] > 10000) {
+                ChunkDims[0] = 100; 
+        } else {
+                ChunkDims[0] = 1000; 
+        }
   } else {
-	NCDims = NDims;
-	ChunkDims[0] = 1;
-	for(i=1 ; i < NDims ; i++) {
-		ChunkDims[i] = DataDims[i];
-		}
+        NCDims = NDims;
+        ChunkDims[0] = 1;
+        for(i=1 ; i < NDims ; i++) {
+                ChunkDims[i] = DataDims[i];
+                }
    }
   Prop = H5Pcreate(H5P_DATASET_CREATE);
   H5Pset_chunk(Prop, NCDims, ChunkDims);
@@ -640,12 +640,12 @@ XdmfDebug("Using Domain " << this->Domain );
     if((!this->UseSerialFile) && (STRCASECMP( this->Domain, "SERIAL" ) != 0 )) {
       XdmfDebug("Using Parallel File Interface, Path = " << this->GetWorkingDirectory() );
 
-	this->AccessPlist = H5Pcreate( H5P_FILE_ACCESS );
-	H5Pset_fapl_mpio(this->AccessPlist, MPI_COMM_WORLD, MPI_INFO_NULL);
+        this->AccessPlist = H5Pcreate( H5P_FILE_ACCESS );
+        H5Pset_fapl_mpio(this->AccessPlist, MPI_COMM_WORLD, MPI_INFO_NULL);
     }else{
       XdmfDebug("Using Serial File Interface, Path = " << this->GetWorkingDirectory() );
-	}
-	
+        }
+        
 #else
       XdmfDebug("Using Serial File Interface, Path = " << this->GetWorkingDirectory() );
 #endif
@@ -749,7 +749,7 @@ XdmfArray *CopyArray( XdmfArray *Source, XdmfArray *Target ) {
 
 XdmfString  H5Name;
 XdmfHDF    Hdf;
-XdmfArray  *NewArray;
+XdmfArray  *NewArray = NULL;
 ostrstream str;
 
 if( Target == NULL ){

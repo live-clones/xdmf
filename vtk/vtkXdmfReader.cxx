@@ -74,7 +74,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.37");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.37.2.1");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -817,11 +817,11 @@ void vtkXdmfReader::Execute()
       // this->Internals->DataDescriptions[currentGrid] is a Copy so Delete it later
       if( XDMF_WORD_CMP(NodeType, "DataTransform") )
         {
-        this->Internals->DataDescriptions[currentGrid] = this->Transform->ElementToDataDesc( dataNode );
+        this->Internals->DataDescriptions[currentGrid] = this->Transform->ElementToDataDesc( dataNode, 0 );
         } 
       else 
         {
-        this->Internals->DataDescriptions[currentGrid] = this->FormatMulti->ElementToDataDesc( dataNode );
+        this->Internals->DataDescriptions[currentGrid] = this->FormatMulti->ElementToDataDesc( dataNode, 0 );
         }
 
       if ( Attribute && status )
@@ -1778,7 +1778,7 @@ int vtkXdmfReader::GetParameterIndex(int Index)
 int vtkXdmfReader::SetParameterIndex(const char *ParameterName, int CurrentIndex) 
 {
   XdmfParameter *Param;
-  int Status;
+  int Status=-1;
 
   if(!this->DOM) 
     {

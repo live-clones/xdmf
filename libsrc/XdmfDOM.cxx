@@ -324,7 +324,7 @@ this->xml[tmp-1] = '\0';
 void 
 XdmfDOM::ExpandNode(XDMF_TREE_NODE *node, XdmfInt32 *size) {
         XdmfString type;
-        XdmfString ndata;
+        XdmfString ndata=NULL;
         XdmfString resname;
         XdmfString resdata;
         int  nchild;

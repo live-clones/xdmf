@@ -31,7 +31,15 @@ XdmfDataDesc::XdmfDataDesc() {
   this->SelectionType = XDMF_SELECTALL;
   this->NextOffset = 0;
   this->Rank = 1;
+  this->ShapeString = 0;
+
+  /*
+  if ( this == (void*)0x8104198 )
+    {
+    abort();
   }
+    */
+}
 
 XdmfDataDesc::~XdmfDataDesc() {
   H5Tclose( this->DataType );
@@ -40,7 +48,8 @@ XdmfDataDesc::~XdmfDataDesc() {
            H5Sclose( this->DataSpace );
     this->DataSpace = H5I_BADID;
         }
-  }
+  this->SetShapeString(0);
+}
 
 XdmfInt32
 XdmfDataDesc::GetHyperSlab( XdmfInt64 *start, XdmfInt64 *stride, XdmfInt64 *count ) {
@@ -182,8 +191,6 @@ return( HRank );
 XdmfConstString
 XdmfDataDesc::GetShapeAsString( void ) {
 ostrstream   StringOutput;
-XdmfString Ptr;
-static XdmfString Result = NULL;
 XdmfInt64  i, rank, Dimensions[ XDMF_MAX_DIMENSION ];
 
 rank = this->GetShape( Dimensions );
@@ -191,12 +198,9 @@ for( i = 0 ; i < rank ; i++ ){
   StringOutput << ICE_64BIT_CAST Dimensions[i] << " ";
   }
 StringOutput << ends;
-Ptr = StringOutput.str();
-if( Result != NULL ) delete [] Result;
-Result = new char[ strlen( Ptr ) + 2 ];
-strcpy( Result, Ptr );
-delete [] Ptr;
-return( Result );
+this->SetShapeString(StringOutput.str());
+StringOutput.rdbuf()->freeze(0);
+return( this->ShapeString );
 }
 
 XdmfInt32
@@ -638,11 +642,11 @@ XdmfDataDesc::AddCompoundMemberFromString( XdmfConstString Name,
 
 XdmfInt32  i, rank = 0, numberType;
 XdmfInt64  Dim, Dimensions[XDMF_MAX_DIMENSION];
-istrstream  ShapeString( const_cast<char*>(Shape), strlen(Shape) );
+istrstream  istr( const_cast<char*>(Shape), strlen(Shape) );
 
 numberType = StringToXdmfType( NumberTypeString );
 i = 0;
-while( ICE_READ_STREAM64(ShapeString, Dim) ){
+while( ICE_READ_STREAM64(istr, Dim) ){
   rank++;
   Dimensions[i++] = Dim;
   }
@@ -780,18 +784,28 @@ XdmfDataDesc::Print( void ){
 
 hsize_t  i, Dimensions[ XDMF_MAX_DIMENSION ];
 hsize_t  Nelements;
-XdmfInt32 rank = H5Sget_simple_extent_ndims(this->DataSpace );
+XdmfInt32 rank = 0;
+if ( this->DataSpace != H5I_BADID )
+  {
+  rank = H5Sget_simple_extent_ndims(this->DataSpace );
+  }
 
 cout << "Rank " << rank << endl;
-H5Sget_simple_extent_dims( this->DataSpace, Dimensions, NULL );
-for( i = 0 ; i < (hsize_t)rank ; i++ ){
+if ( this->DataSpace != H5I_BADID )
+  {
+  H5Sget_simple_extent_dims( this->DataSpace, Dimensions, NULL );
+  }
+for( i = 0 ; static_cast<XdmfInt32>(i) < rank ; i++ ){
   cout << "Dimension[" << (int)i << "] " << (int)Dimensions[i] << endl;
   }
 cout << "Selection Type : " << this->GetSelectionTypeAsString() << endl;
 if( this->SelectionType == XDMF_COORDINATES ){
-Nelements = H5Sget_select_elem_npoints( this->DataSpace );
-cout << "Selected Elements : " << (int)Nelements << endl;
-if ( Nelements > 0 ) {
+  if ( this->DataSpace != H5I_BADID )
+    {
+    Nelements = H5Sget_select_elem_npoints( this->DataSpace );
+    }
+  cout << "Selected Elements : " << (int)Nelements << endl;
+  if ( Nelements > 0 ) {
   hsize_t *Coords = new hsize_t[ Nelements * rank ];
   hsize_t j, *Cp = Coords;
   H5Sget_select_elem_pointlist( this->DataSpace, 0, Nelements, Coords );
@@ -813,3 +827,24 @@ for( k = 0 ; k < rank ; k++ ){
   }
 }
 }
+
+void XdmfDataDesc::SetShapeString(XdmfConstString shape)
+{
+  if ( shape == this->ShapeString || 
+    ( shape && this->ShapeString && strcmp(shape, this->ShapeString) == 0 ) )
+    {
+    return;
+    }
+
+  if ( this->ShapeString )
+    {
+    delete [] this->ShapeString;
+    this->ShapeString = 0;
+    }
+  if ( shape )
+    {
+    this->ShapeString = new char[ strlen(shape) + 1 ];
+    strcpy(this->ShapeString, shape);
+    }
+}
+

@@ -202,7 +202,7 @@ if( XDMF_WORD_CMP( Attribute, "Function" ) ){
   return( ReturnArray );
 }
 
-Desc = this->ElementToDataDesc( Element );
+Desc = this->ElementToDataDesc( Element, 0 );
 if( Desc ){
   // Find the Second Element .. which contains the data
   Attribute = this->DOM->Get( Element, "NodeType");
@@ -220,7 +220,7 @@ return( NULL );
 }
 
 XdmfDataDesc *
-XdmfTransform::ElementToDataDesc( XdmfXNode *Element ) {
+XdmfTransform::ElementToDataDesc( XdmfXNode *Element, int store ) {
 
 XdmfDataDesc  *Desc;
 XdmfArray  *Selection;
@@ -252,7 +252,7 @@ Attribute = this->DOM->Get( Child, "NodeType" );
 XdmfDebug("1st Child Node Type = " << Attribute );
 if( XDMF_WORD_CMP( Attribute, "DataTransform") ) {
   // Recursive Transform
-  Desc = this->ElementToDataDesc( Child );
+  Desc = this->ElementToDataDesc( Child, store );
 } else {
   // This is the Data
   XdmfFormatMulti    Formatter;
@@ -264,9 +264,9 @@ if( XDMF_WORD_CMP( Attribute, "DataTransform") ) {
   Attribute = this->DOM->Get( Child, "NodeType" );
   XdmfDebug("2nd Child Node Type = " << Attribute );
   if( XDMF_WORD_CMP( Attribute, "DataTransform") ) {
-    Desc = this->ElementToDataDesc( Child );
+    Desc = this->ElementToDataDesc( Child, store );
   } else {
-    Desc = Formatter.ElementToDataDesc( Child );
+    Desc = Formatter.ElementToDataDesc( Child, store );
     }
   if( !Desc ){
     XdmfErrorMessage("Error Getting Taget Desc");

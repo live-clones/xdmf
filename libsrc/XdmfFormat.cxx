@@ -31,9 +31,16 @@
 
 XdmfFormat::XdmfFormat() {
   strcpy( this->DataFormat, "XML" );
+  this->LocalDataDesc = 0;
 }
 
 XdmfFormat::~XdmfFormat() {
+  if ( this->LocalDataDesc )
+    {
+    cout << "Delete: " << this->LocalDataDesc << endl;
+    delete this->LocalDataDesc;
+    this->LocalDataDesc = 0;
+    }
 }
 
 XdmfXNode *
@@ -172,7 +179,7 @@ return( Desc );
 }
 
 XdmfDataDesc *
-XdmfFormat::ElementToDataDesc( XdmfXNode *Element ) {
+XdmfFormat::ElementToDataDesc( XdmfXNode *Element, int store /* = 1 */ ) {
 
 XdmfDataDesc  *Desc;
 XdmfConstString  Attribute;
@@ -206,6 +213,14 @@ if( NumberType == XDMF_COMPOUND_TYPE ){
   XdmfDebug("NumberType is Simple");
   Desc = new XdmfDataDesc;
   Desc->SetNumberType( NumberType );
+  if ( store )
+    {
+    if ( this->LocalDataDesc )
+      {
+      delete this->LocalDataDesc;
+      }
+    this->LocalDataDesc = Desc;
+    }
   }
 //
 Attribute = this->DOM->Get(Element, "Rank");

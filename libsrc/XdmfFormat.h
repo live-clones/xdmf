@@ -67,7 +67,7 @@ public :
 
   XdmfString  GetFormat( void ) { return( this->DataFormat ); };
 //! Return a Data Desc from a DOM Element
-  XdmfDataDesc  *ElementToDataDesc( XdmfXNode *Element );
+  XdmfDataDesc  *ElementToDataDesc( XdmfXNode *Element, int store = 1 );
 //! Return Data Desc from Compound Element ( Used Internally )
   XdmfDataDesc  *ElementToCompoundDataDesc( XdmfXNode *Element );
 //! Create/Modify a DOM Element based on Data Desc
@@ -75,6 +75,8 @@ public :
 
 protected :
   char  DataFormat[ XDMF_MAX_STRING_LENGTH ];
+
+  XdmfDataDesc* LocalDataDesc;
 };
 
 #endif

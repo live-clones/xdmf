@@ -2156,7 +2156,8 @@ H5T_conv_enum(hid_t src_id, hid_t dst_id, H5T_cdata_t *cdata, hsize_t nelmts,
                 /* Use O(log N) lookup */
                 int lt = 0;
                 int rt = src->u.enumer.nmembs;
-                int md, cmp;
+                int md=0;
+                int cmp;
                 while (lt<rt) {
                     md = (lt+rt)/2;
                     cmp = HDmemcmp(s, src->u.enumer.value+md*src->size,
