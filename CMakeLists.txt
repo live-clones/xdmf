@@ -19,6 +19,8 @@ INCLUDE_DIRECTORIES(
   ${Xdmf_BINARY_DIR}/vtk
   ${VTK_INCLUDE_DIR} 
   ${VTKEXPAT_INCLUDE_DIR}
+  ${ParaView_SOURCE_DIR}/VTK/Utilities
+  ${ParaView_BINARY_DIR}/VTK/Utilities
   ${HDF5_INCLUDE_DIR}
   )
 SUBDIRS(Ice)
