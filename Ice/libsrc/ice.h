@@ -29,33 +29,35 @@
 #define UNIX
 #endif /* WIN32 */
 
+#ifndef SWIG
 /* System Includes */
-#include "stdio.h"
-#include "stdlib.h"
-#include "sys/types.h"
-#include "time.h"
-#include "string.h"
+# include "stdio.h"
+# include "stdlib.h"
+# include "sys/types.h"
+# include "time.h"
+# include "string.h"
 
-#ifdef __hpux
-# include <sys/param.h>
-#endif
+# ifdef __hpux
+#  include <sys/param.h>
+# endif
 
-#ifdef UNIX
-#include "sys/file.h"
-#include "strings.h"
-#define STRCASECMP strcasecmp
-#define STRNCASECMP strncasecmp
-#define STRCMP strcmp
-#define STRNCMP strncmp
-#endif
+# ifdef UNIX
+#  include "sys/file.h"
+#  include "strings.h"
+#  define STRCASECMP strcasecmp
+#  define STRNCASECMP strncasecmp
+#  define STRCMP strcmp
+#  define STRNCMP strncmp
+# endif
 
-#if defined(WIN32) && !defined(__CYGWIN__)
-#include "winsock.h"
+# if defined(WIN32) && !defined(__CYGWIN__)
+#  include "winsock.h"
 /* String comparison routine. */
-#define STRCASECMP _stricmp
-#define STRNCASECMP _strnicmp
-#define STRCMP strcmp
-#define STRNCMP strncmp
+#  define STRCASECMP _stricmp
+#  define STRNCASECMP _strnicmp
+#  define STRCMP strcmp
+#  define STRNCMP strncmp
+# endif
 #endif
 
 /* System Dependent Defines */
@@ -69,18 +71,20 @@ ATTENTION ERROR_IN_ICE Probably a Bad/Missing IceConfig.h
 #define ICE_MACHINE_TYPE  ICE_SYSTEM
 
 
-#ifdef ICE_HAVE_FCNTL
-#include "fcntl.h"
-#endif
+#ifndef SWIG
+# ifdef ICE_HAVE_FCNTL
+#  include "fcntl.h"
+# endif
 
-#ifdef ICE_HAVE_MMAN
-#include "sys/mman.h"
-#else
-#define ICE_HAS_NO_MMAP 1
-#endif
+# ifdef ICE_HAVE_MMAN
+#  include "sys/mman.h"
+# else
+#  define ICE_HAS_NO_MMAP 1
+# endif
 
-#ifdef ICE_HAVE_NETINET
-#include        "netinet/in.h"
+# ifdef ICE_HAVE_NETINET
+#  include        "netinet/in.h"
+# endif
 #endif
 
 /* Defines */
