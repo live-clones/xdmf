@@ -716,10 +716,10 @@ extern "C" {
 /**/
 #endif
 
-static	char	InputBuffer[ 512 ];
-static	int	InputBufferPtr = 0, InputBufferEnd = 0;
-static	char	OutputBuffer[ 512 ];
-static	int	OutputBufferPtr = 0;
+char	InputBuffer[ 512 ];
+int	InputBufferPtr = 0, InputBufferEnd = 0;
+char	OutputBuffer[ 512 ];
+int	OutputBufferPtr = 0;
 /* static int OutputBufferEnd = 511; */
 
 int
@@ -773,7 +773,7 @@ XdmfExprOutput( int c ) {
 XdmfExprSymbol
 *XdmfExprSymbolLookup( const char *Name ){
 
-static XdmfExprSymbol *Table = NULL;
+XdmfExprSymbol *Table = NULL;
 
 XdmfExprSymbol	*Last = NULL, *Item = Table;
 
