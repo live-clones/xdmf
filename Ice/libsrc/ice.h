@@ -36,6 +36,10 @@
 #include "time.h"
 #include "string.h"
 
+#ifdef __hpux
+# include <sys.param.h>
+#endif
+
 #ifdef UNIX
 #include "sys/file.h"
 #include "strings.h"
