@@ -69,7 +69,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.11");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.12");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -1315,6 +1315,7 @@ Param = this->DOM->GetParameter(Index);
 if(!Param) {
 	return(-1);
 }
+this->Modified();
 return(Param->SetCurrentIndex(CurrentIndex));
 }
 
@@ -1348,6 +1349,7 @@ for(int i=0 ; i < this->DOM->FindNumberOfParameters() ;  i++){
 	}
 	if(XDMF_WORD_CMP(Param->GetParameterName(), ParameterName)){
 		Status = Param->SetCurrentIndex(CurrentIndex);
+    this->Modified();
 		if(Status <= 0 ) return(Status);
 		}
 }
