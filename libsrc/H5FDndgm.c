@@ -446,7 +446,7 @@ H5FD_ndgm_init(void)
  *-------------------------------------------------------------------------
  */
 herr_t
-H5Pset_fapl_ndgm(hid_t fapl_id, size_t increment, char *host )
+H5Pset_fapl_ndgm(hid_t fapl_id, size_t increment, const char *host )
 {
     H5FD_ndgm_fapl_t  fa;
     

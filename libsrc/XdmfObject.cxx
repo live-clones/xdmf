@@ -91,7 +91,7 @@ return( (XdmfString)Handle.str() );
 }
 
 XdmfObject *
-HandleToXdmfObject( XdmfString Source ){
+HandleToXdmfObject( XdmfConstString Source ){
 XdmfString src = new char[ strlen(Source) + 1 ];
 strcpy(src, Source);
 istrstream Handle( src, strlen(src));

@@ -55,7 +55,7 @@ public:
 //! Get the default Pathname for File:/Dataset
         XdmfGetValueMacro(WorkingDirectory, XdmfString);
 //! Set the default Pathname for File:/Dataset
-        void SetWorkingDirectory( XdmfString String );
+        void SetWorkingDirectory( XdmfConstString String );
 
 
 //! Get the current domain

@@ -1107,7 +1107,7 @@ SWIGEXPORT(int) SWIG_init(Tcl_Interp *);
 #include <string>
 
 extern XdmfString XdmfObjectToHandle(XdmfObject *);
-extern XdmfObject *HandleToXdmfObject(XdmfString);
+extern XdmfObject *HandleToXdmfObject(XdmfConstString);
 extern istrstream &ICE_READ_STREAM64(istrstream &,long long &);
 extern hid_t XdmfTypeToHDF5Type(XdmfInt32);
 extern XdmfInt32 HDF5TypeToXdmfType(hid_t);
@@ -1115,9 +1115,9 @@ extern XdmfString XdmfTypeToString(XdmfInt32);
 extern XdmfInt32 StringToXdmfType(XdmfString);
 extern XdmfString XdmfTypeToClassString(XdmfInt32);
 extern int GetXNodeSize(XdmfXNode *);
-extern XdmfString GetXNodeName(XdmfXNode *,int);
-extern XdmfString GetXNodeData(XdmfXNode *,int);
-extern XdmfDOM *HandleToXdmfDOM(XdmfString);
+extern XdmfConstString GetXNodeName(XdmfXNode *,int);
+extern XdmfConstString GetXNodeData(XdmfXNode *,int);
+extern XdmfDOM *HandleToXdmfDOM(XdmfConstString);
 extern XdmfTopology *HandleToXdmfTopology(XdmfString);
 extern XdmfGeometry *GetXdmfGeometryHandle(void *);
 extern XdmfGrid *HandleToXdmfGrid(XdmfString);
@@ -1372,7 +1372,7 @@ _wrap_XdmfObjectToHandle(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 
 static int
 _wrap_HandleToXdmfObject(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
-    XdmfString arg1 ;
+    XdmfConstString arg1 ;
     XdmfObject *result;
     
     if (SWIG_GetArgs(interp, objc, objv,"s:Xdmf::HandleToXdmfObjectSource ",&arg1) == TCL_ERROR) SWIG_fail;
@@ -4582,7 +4582,7 @@ _wrap_XdmfDOM_GetXMLVersion(ClientData clientData, Tcl_Interp *interp, int objc,
 static int
 _wrap_XdmfDOM_SetDocType(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     XdmfDOM *arg1 = (XdmfDOM *) 0 ;
-    XdmfString arg2 ;
+    XdmfConstString arg2 ;
     XdmfInt32 result;
     
     if (SWIG_GetArgs(interp, objc, objv,"os:Xdmf::XdmfDOM_SetDocTypeself _arg ",0,&arg2) == TCL_ERROR) SWIG_fail;
@@ -4599,11 +4599,11 @@ _wrap_XdmfDOM_SetDocType(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 static int
 _wrap_XdmfDOM_GetDocType(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     XdmfDOM *arg1 = (XdmfDOM *) 0 ;
-    XdmfString result;
+    XdmfConstString result;
     
     if (SWIG_GetArgs(interp, objc, objv,"o:Xdmf::XdmfDOM_GetDocTypeself ",0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfDOM,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    result = (XdmfString)(arg1)->GetDocType();
+    result = (XdmfConstString)(arg1)->GetDocType();
     
     Tcl_SetObjResult(interp,Tcl_NewStringObj(result,-1));
     return TCL_OK;
@@ -4615,7 +4615,7 @@ _wrap_XdmfDOM_GetDocType(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 static int
 _wrap_XdmfDOM_SetSystem(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     XdmfDOM *arg1 = (XdmfDOM *) 0 ;
-    XdmfString arg2 ;
+    XdmfConstString arg2 ;
     XdmfInt32 result;
     
     if (SWIG_GetArgs(interp, objc, objv,"os:Xdmf::XdmfDOM_SetSystemself _arg ",0,&arg2) == TCL_ERROR) SWIG_fail;
@@ -4632,11 +4632,11 @@ _wrap_XdmfDOM_SetSystem(ClientData clientData, Tcl_Interp *interp, int objc, Tcl
 static int
 _wrap_XdmfDOM_GetSystem(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     XdmfDOM *arg1 = (XdmfDOM *) 0 ;
-    XdmfString result;
+    XdmfConstString result;
     
     if (SWIG_GetArgs(interp, objc, objv,"o:Xdmf::XdmfDOM_GetSystemself ",0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfDOM,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    result = (XdmfString)(arg1)->GetSystem();
+    result = (XdmfConstString)(arg1)->GetSystem();
     
     Tcl_SetObjResult(interp,Tcl_NewStringObj(result,-1));
     return TCL_OK;
@@ -4648,7 +4648,7 @@ _wrap_XdmfDOM_GetSystem(ClientData clientData, Tcl_Interp *interp, int objc, Tcl
 static int
 _wrap_XdmfDOM_SetInputFileName(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     XdmfDOM *arg1 = (XdmfDOM *) 0 ;
-    XdmfString arg2 ;
+    XdmfConstString arg2 ;
     XdmfInt32 result;
     
     if (SWIG_GetArgs(interp, objc, objv,"os:Xdmf::XdmfDOM_SetInputFileNameself Filename ",0,&arg2) == TCL_ERROR) SWIG_fail;
@@ -4665,7 +4665,7 @@ _wrap_XdmfDOM_SetInputFileName(ClientData clientData, Tcl_Interp *interp, int ob
 static int
 _wrap_XdmfDOM_SetOutputFileName(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     XdmfDOM *arg1 = (XdmfDOM *) 0 ;
-    XdmfString arg2 ;
+    XdmfConstString arg2 ;
     XdmfInt32 result;
     
     if (SWIG_GetArgs(interp, objc, objv,"os:Xdmf::XdmfDOM_SetOutputFileNameself Filename ",0,&arg2) == TCL_ERROR) SWIG_fail;
@@ -4798,7 +4798,7 @@ _wrap_XdmfDOM_GenerateHead(ClientData clientData, Tcl_Interp *interp, int objc, 
 static int
 _wrap_XdmfDOM_Puts(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     XdmfDOM *arg1 = (XdmfDOM *) 0 ;
-    XdmfString arg2 ;
+    XdmfConstString arg2 ;
     XdmfInt32 result;
     
     if (SWIG_GetArgs(interp, objc, objv,"os:Xdmf::XdmfDOM_Putsself String ",0,&arg2) == TCL_ERROR) SWIG_fail;
@@ -4831,11 +4831,11 @@ _wrap_XdmfDOM_GenerateTail(ClientData clientData, Tcl_Interp *interp, int objc, 
 static int
 _wrap_XdmfDOM_Gets(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     XdmfDOM *arg1 = (XdmfDOM *) 0 ;
-    XdmfString result;
+    XdmfConstString result;
     
     if (SWIG_GetArgs(interp, objc, objv,"o:Xdmf::XdmfDOM_Getsself ",0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfDOM,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    result = (XdmfString)(arg1)->Gets();
+    result = (XdmfConstString)(arg1)->Gets();
     
     Tcl_SetObjResult(interp,Tcl_NewStringObj(result,-1));
     return TCL_OK;
@@ -4863,7 +4863,7 @@ _wrap_XdmfDOM_GetTree(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_O
 static int
 _wrap_XdmfDOM___Parse(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     XdmfDOM *arg1 = (XdmfDOM *) 0 ;
-    XdmfString arg2 ;
+    XdmfConstString arg2 ;
     XDMF_TREE_NODE *result;
     
     if (SWIG_GetArgs(interp, objc, objv,"os:Xdmf::XdmfDOM___Parseself xml ",0,&arg2) == TCL_ERROR) SWIG_fail;
@@ -4880,7 +4880,7 @@ _wrap_XdmfDOM___Parse(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_O
 static int
 _wrap_XdmfDOM_Parse(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     XdmfDOM *arg1 = (XdmfDOM *) 0 ;
-    XdmfString arg2 = (XdmfString) NULL ;
+    XdmfConstString arg2 = (XdmfConstString) NULL ;
     XdmfInt32 result;
     
     if (SWIG_GetArgs(interp, objc, objv,"o|s:Xdmf::XdmfDOM_Parseself xml ",0,&arg2) == TCL_ERROR) SWIG_fail;
@@ -4977,12 +4977,12 @@ _wrap_XdmfDOM_GetAttribute(ClientData clientData, Tcl_Interp *interp, int objc, 
     XdmfDOM *arg1 = (XdmfDOM *) 0 ;
     XdmfXNode *arg2 = (XdmfXNode *) 0 ;
     XdmfInt32 arg3 ;
-    XdmfString result;
+    XdmfConstString result;
     
     if (SWIG_GetArgs(interp, objc, objv,"ooi:Xdmf::XdmfDOM_GetAttributeself Node Index ",0,0,&arg3) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfDOM,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[2], (void **) &arg2, SWIGTYPE_p_XdmfXNode,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    result = (XdmfString)(arg1)->GetAttribute(arg2,arg3);
+    result = (XdmfConstString)(arg1)->GetAttribute(arg2,arg3);
     
     Tcl_SetObjResult(interp,Tcl_NewStringObj(result,-1));
     return TCL_OK;
@@ -5017,14 +5017,14 @@ static int
 _wrap_XdmfDOM_Serialize(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     XdmfDOM *arg1 = (XdmfDOM *) 0 ;
     XdmfXNode *arg2 = (XdmfXNode *) NULL ;
-    XdmfString result;
+    XdmfConstString result;
     
     if (SWIG_GetArgs(interp, objc, objv,"o|o:Xdmf::XdmfDOM_Serializeself node ",0,0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfDOM,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
     if (objc > 2) {
         if ((SWIG_ConvertPtr(interp, objv[2], (void **) &arg2, SWIGTYPE_p_XdmfXNode,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
     }
-    result = (XdmfString)(arg1)->Serialize(arg2);
+    result = (XdmfConstString)(arg1)->Serialize(arg2);
     
     Tcl_SetObjResult(interp,Tcl_NewStringObj(result,-1));
     return TCL_OK;
@@ -5058,7 +5058,7 @@ static int
 _wrap_XdmfDOM_InsertFromString(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     XdmfDOM *arg1 = (XdmfDOM *) 0 ;
     XdmfXNode *arg2 = (XdmfXNode *) 0 ;
-    XdmfString arg3 ;
+    XdmfConstString arg3 ;
     XdmfInt32 result;
     
     if (SWIG_GetArgs(interp, objc, objv,"oos:Xdmf::XdmfDOM_InsertFromStringself parent xml ",0,0,&arg3) == TCL_ERROR) SWIG_fail;
@@ -5139,7 +5139,7 @@ _wrap_XdmfDOM_FindElementByAttribute(ClientData clientData, Tcl_Interp *interp, 
 static int
 _wrap_XdmfDOM_FindNumberOfElements(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     XdmfDOM *arg1 = (XdmfDOM *) 0 ;
-    XdmfString arg2 ;
+    XdmfConstString arg2 ;
     XdmfXNode *arg3 = (XdmfXNode *) NULL ;
     XdmfInt32 result;
     
@@ -5160,8 +5160,8 @@ _wrap_XdmfDOM_FindNumberOfElements(ClientData clientData, Tcl_Interp *interp, in
 static int
 _wrap_XdmfDOM_FindNumberOfElementsByAttribute(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     XdmfDOM *arg1 = (XdmfDOM *) 0 ;
-    XdmfString arg2 ;
-    XdmfString arg3 ;
+    XdmfConstString arg2 ;
+    XdmfConstString arg3 ;
     XdmfXNode *arg4 = (XdmfXNode *) NULL ;
     XdmfInt32 result;
     
@@ -5290,7 +5290,7 @@ static int
 _wrap_XdmfDOM_Get(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     XdmfDOM *arg1 = (XdmfDOM *) 0 ;
     XdmfXNode *arg2 = (XdmfXNode *) 0 ;
-    XdmfString arg3 ;
+    XdmfConstString arg3 ;
     XdmfConstString result;
     
     if (SWIG_GetArgs(interp, objc, objv,"oos:Xdmf::XdmfDOM_Getself Node Attribute ",0,0,&arg3) == TCL_ERROR) SWIG_fail;
@@ -5346,8 +5346,8 @@ static int
 _wrap_XdmfDOM_Set(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     XdmfDOM *arg1 = (XdmfDOM *) 0 ;
     XdmfXNode *arg2 = (XdmfXNode *) 0 ;
-    XdmfString arg3 ;
-    XdmfString arg4 ;
+    XdmfConstString arg3 ;
+    XdmfConstString arg4 ;
     
     if (SWIG_GetArgs(interp, objc, objv,"ooss:Xdmf::XdmfDOM_Setself Node Attribute Value ",0,0,&arg3,&arg4) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfDOM,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
@@ -5524,11 +5524,11 @@ static int
 _wrap_GetXNodeName(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     XdmfXNode *arg1 = (XdmfXNode *) 0 ;
     int arg2 ;
-    XdmfString result;
+    XdmfConstString result;
     
     if (SWIG_GetArgs(interp, objc, objv,"oi:Xdmf::GetXNodeNameNode index ",0,&arg2) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfXNode,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    result = (XdmfString)GetXNodeName(arg1,arg2);
+    result = (XdmfConstString)GetXNodeName(arg1,arg2);
     
     Tcl_SetObjResult(interp,Tcl_NewStringObj(result,-1));
     return TCL_OK;
@@ -5541,11 +5541,11 @@ static int
 _wrap_GetXNodeData(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     XdmfXNode *arg1 = (XdmfXNode *) 0 ;
     int arg2 ;
-    XdmfString result;
+    XdmfConstString result;
     
     if (SWIG_GetArgs(interp, objc, objv,"oi:Xdmf::GetXNodeDataNode index ",0,&arg2) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfXNode,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
-    result = (XdmfString)GetXNodeData(arg1,arg2);
+    result = (XdmfConstString)GetXNodeData(arg1,arg2);
     
     Tcl_SetObjResult(interp,Tcl_NewStringObj(result,-1));
     return TCL_OK;
@@ -5556,7 +5556,7 @@ _wrap_GetXNodeData(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj 
 
 static int
 _wrap_HandleToXdmfDOM(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
-    XdmfString arg1 ;
+    XdmfConstString arg1 ;
     XdmfDOM *result;
     
     if (SWIG_GetArgs(interp, objc, objv,"s:Xdmf::HandleToXdmfDOMSource ",&arg1) == TCL_ERROR) SWIG_fail;

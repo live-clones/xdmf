@@ -40,9 +40,10 @@ XdmfHeavyData::XdmfHeavyData() {
 
 XdmfHeavyData::~XdmfHeavyData() {
   this->SetWorkingDirectory(0);
+	this->SetFileName(0);
 }
 
-void XdmfHeavyData::SetWorkingDirectory( XdmfString String )
+void XdmfHeavyData::SetWorkingDirectory( XdmfConstString String )
 {
   if ( String == this->WorkingDirectory )
     {

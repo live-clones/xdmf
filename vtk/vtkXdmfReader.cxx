@@ -72,7 +72,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.23");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.24");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -889,7 +889,7 @@ void vtkXdmfReader::ExecuteInformation()
 {
   vtkDebugMacro("ExecuteInformation");
   vtkIdType cc;
-  char         *CurrentFileName;
+  XdmfConstString CurrentFileName;
   XdmfInt32    Rank;
   XdmfInt64    Dimensions[ XDMF_MAX_DIMENSION ];
   XdmfInt64    EndExtent[ XDMF_MAX_DIMENSION ];

@@ -36,7 +36,7 @@ XdmfCharArray::~XdmfCharArray() {
 }
 
 XdmfInt32
-XdmfCharArray::SetFromFile(  XdmfString FileName ) {
+XdmfCharArray::SetFromFile(  XdmfConstString FileName ) {
 
 XdmfString cp;
 int  ch;

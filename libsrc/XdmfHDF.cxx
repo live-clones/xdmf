@@ -587,7 +587,7 @@ XdmfDebug("Using Domain " << this->Domain );
       if( strlen( this->GetNdgmHost() ) < 2 ) {
         H5Pset_fapl_ndgm( this->AccessPlist, 1000000, NULL);
       } else {
-        H5Pset_fapl_ndgm( this->AccessPlist, 1000000, this->GetNdgmHost());
+        H5Pset_fapl_ndgm( this->AccessPlist, 1000000, (char*)this->GetNdgmHost());
       }
 #else
       XdmfErrorMessage("NDGM Interface is unavailable");
@@ -638,7 +638,7 @@ if( this->File < 0 ){
       if( strlen( this->GetNdgmHost() ) < 2 ) {
         H5Pset_fapl_ndgm( this->AccessPlist, 1000000, NULL);
       } else {
-        H5Pset_fapl_ndgm( this->AccessPlist, 1000000, this->GetNdgmHost() );
+        H5Pset_fapl_ndgm( this->AccessPlist, 1000000, (char*)this->GetNdgmHost() );
       }
 #else
       XdmfErrorMessage("NDGM interface is unavailable");

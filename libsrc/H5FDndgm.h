@@ -33,7 +33,7 @@
 #define H5FD_NDGM  (H5FD_ndgm_init())
 
 XDMF_EXPORT hid_t H5FD_ndgm_init(void);
-XDMF_EXPORT herr_t H5Pset_fapl_ndgm(hid_t fapl_id, size_t increment, char *host);
+XDMF_EXPORT herr_t H5Pset_fapl_ndgm(hid_t fapl_id, size_t increment, const char* host);
 XDMF_EXPORT herr_t H5Pget_fapl_ndgm(hid_t fapl_id, size_t *increment/*out*/, char **host);
 
 #endif

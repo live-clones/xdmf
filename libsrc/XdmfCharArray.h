@@ -49,7 +49,7 @@ public:
     return( strlen( String ) );
     };
 //! Set the Data from a Disk File
-  XdmfInt32 SetFromFile( XdmfString FileName );
+  XdmfInt32 SetFromFile( XdmfConstString FileName );
 };
 
 #endif // __XdmfCharArray_h
