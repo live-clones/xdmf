@@ -784,29 +784,39 @@ XdmfDataDesc::Print( void ){
 
 hsize_t  i, Dimensions[ XDMF_MAX_DIMENSION ];
 hsize_t  Nelements;
-XdmfInt32 rank = H5Sget_simple_extent_ndims(this->DataSpace );
+XdmfInt32 rank = 0;
+if ( this->DataSpace != H5I_BADID )
+  {
+  rank = H5Sget_simple_extent_ndims(this->DataSpace );
+  }
 
 cout << "Rank " << rank << endl;
-H5Sget_simple_extent_dims( this->DataSpace, Dimensions, NULL );
-for( i = 0 ; i < (hsize_t)rank ; i++ ){
+if ( this->DataSpace != H5I_BADID )
+  {
+  H5Sget_simple_extent_dims( this->DataSpace, Dimensions, NULL );
+  }
+for( i = 0 ; static_cast<XdmfInt32>(i) < rank ; i++ ){
   cout << "Dimension[" << (int)i << "] " << (int)Dimensions[i] << endl;
   }
 cout << "Selection Type : " << this->GetSelectionTypeAsString() << endl;
 if( this->SelectionType == XDMF_COORDINATES ){
-Nelements = H5Sget_select_elem_npoints( this->DataSpace );
-cout << "Selected Elements : " << (int)Nelements << endl;
-if ( Nelements > 0 ) {
-  hsize_t *Coords = new hsize_t[ Nelements * rank ];
-  hsize_t j, *Cp = Coords;
-  H5Sget_select_elem_pointlist( this->DataSpace, 0, Nelements, Coords );
-  for( i = 0 ; i < Nelements ; i++ ){
-    cout << "Element[" << (int)i << "] ";
-    for( j = 0 ; j < (hsize_t)rank ; j++ ){
-      cout << " " << (int)*Cp++;
+  if ( this->DataSpace != H5I_BADID )
+    {
+    Nelements = H5Sget_select_elem_npoints( this->DataSpace );
+    }
+  cout << "Selected Elements : " << (int)Nelements << endl;
+  if ( Nelements > 0 ) {
+    hsize_t *Coords = new hsize_t[ Nelements * rank ];
+    hsize_t j, *Cp = Coords;
+    H5Sget_select_elem_pointlist( this->DataSpace, 0, Nelements, Coords );
+    for( i = 0 ; i < Nelements ; i++ ){
+      cout << "Element[" << (int)i << "] ";
+      for( j = 0 ; j < (hsize_t)rank ; j++ ){
+        cout << " " << (int)*Cp++;
       }
-    cout << endl;
+      cout << endl;
     }  
-  delete [] Coords;
+    delete [] Coords;
   }
 }
 if( this->SelectionType == XDMF_HYPERSLAB ){
