@@ -702,14 +702,17 @@ printf("HDF::Creating\n");
           fa->increment : H5FD_NDGM_INCREMENT;
 
 #ifdef HDF_IO_DEBUG
-printf("Open of %s was successful, entry at %ld\n", name, file->entry_addr);
-printf("File Start %ld End %ld\n", file->start, file->end );
-printf("HDF::Open eoa = %ld eof = %ld\n", file->eoa, file->eof);
+fprintf(stderr, "Open of %s was successful, entry at %ld\n", name, file->entry_addr);
+fprintf(stderr, "File Start %ld End %ld\n", file->start, file->end );
+fprintf(stderr, "HDF::Open eoa = %ld eof = %ld\n", file->eoa, file->eof);
 #endif
   file->buffer_begin_addr = file->buffer_next_addr = 0;
   file->buffer_bytes_left = NDGM_MAX_PACKET_SIZE;
   file->data_buffer_ptr = file->data_buffer;
   file->dirty = 0;
+#ifdef HDF_IO_DEBUG
+fprintf(stderr, "Returning (H5FD_t*)fil = <%p>\n", file);
+#endif
     return (H5FD_t*)file;
 }
 

@@ -283,14 +283,18 @@ hid_t    Directory;
 if( path ) {
   XdmfConstString lastcolon;
 
+  XdmfDebug("CreateDataset Creating  " << path);
   // Skip Colons
     lastcolon = strrchr( path, ':' );
   if( lastcolon != NULL ){
     path = lastcolon;
     path++;
     }
+  XdmfDebug("Setting Path to " << path);
   this->SetPath( path );
-  }
+  }else {
+      XdmfDebug("CreateDataset passed NULL path");
+	}
 XdmfDebug( "Creating HDF Dataset " <<
   this->Path << "  Rank = " << this->GetRank() );
 
@@ -678,6 +682,7 @@ if( AllowCreate ) {
 } else {
   this->File = H5Fopen(FullFileName.str(), flags, this->AccessPlist);
 }
+XdmfDebug("this->File = " << this->File);
 FullFileName.rdbuf()->freeze(0);
 if( this->File < 0 ){
   XdmfDebug("Open failed, Checking for Create");
