@@ -35,6 +35,17 @@
 #define XDMF_GEOMETRY_ORIGIN_DXDYDZ  5
 
 
+//! Class to handle the XYZ positions of a Grid
+/*!
+	XdmfGeometry is a required part of an XdmfGrid.
+	Geometry can be specified in several different ways :
+\verbatim
+XDMF_GEOMETRY_XYZ 	: X0,Y0,Z0,X1,Y1,Z1 ..... XN,YN,ZN  for every point
+XDMF_GEOMETRY_X_Y_Z	: X0,X1 ... XN,Y0,Y1 ... YN,Z0,Z1 ... ZN  for every point
+XDMF_GEOMETRY_VXVYVZ	: X0,X1 ... XN,Y0,Y1 ... YN,Z0,Z1 ... ZN for XAxis, YAxis, ZAxis
+XDMF_GEOMETRY_ORIGIN_DXDYDZ : Xorigin, Yorigin, Zorigin, Dx, Dy, Dz
+\endverbatim
+*/
 
 class XDMF_EXPORT XdmfGeometry : public XdmfLightData {
 
@@ -44,10 +55,29 @@ public:
 
   XdmfConstString GetClassName() { return ( "XdmfGeometry" ) ; };
 
+//! Set the number of points in the geometry
+/*!
+	This is the number of points that are defined, not necessarily
+	the total number of points in the grid. For example, if
+	the geometry type is XDMF_GEOMETRY_ORIGIN_DXDYDZ this
+	is 6
+
+*/
   XdmfSetValueMacro( NumberOfPoints, XdmfInt64 );
+//! Get the number of points that were definded
   XdmfGetValueMacro( NumberOfPoints, XdmfInt64 );
 
+//! Set the Geometry type
+/*!
+\verbatim
+XDMF_GEOMETRY_XYZ 	: X0,Y0,Z0,X1,Y1,Z1 ..... XN,YN,ZN  for every point
+XDMF_GEOMETRY_X_Y_Z	: X0,X1 ... XN,Y0,Y1 ... YN,Z0,Z1 ... ZN  for every point
+XDMF_GEOMETRY_VXVYVZ	: X0,X1 ... XN,Y0,Y1 ... YN,Z0,Z1 ... ZN for XAxis, YAxis, ZAxis
+XDMF_GEOMETRY_ORIGIN_DXDYDZ : Xorigin, Yorigin, Zorigin, Dx, Dy, Dz
+\endverbatim
+*/
   XdmfSetValueMacro( GeometryType, XdmfInt32 );
+//! Get the Geometry type
   XdmfGetValueMacro( GeometryType, XdmfInt32 );
 
   XdmfString GetGeometryTypeAsString( void );

@@ -32,6 +32,8 @@ class XdmfXNode;
 class XdmfArray;
 
 
+//! Wrapper Class for XdmfFormatHDF and XdmfFormatXML
+
 class XDMF_EXPORT XdmfFormatMulti : public XdmfFormat {
 
 public :

@@ -31,6 +31,10 @@
 #define XDMF_SAFE    1
 #define XDMF_DEFAULT_BARRIER  20
 
+class XdmfCharArray;
+class XdmfDOM;
+
+//! Class to handle Runtime Updates in HPC Codes
 /*!
 The Object for integrating a running code
 with the XDMF Object Directory. The user
@@ -39,9 +43,6 @@ object and can access the code's internal data values.
 This object is used to listen for requests and set up
 the DOM so the parse routine can just walk the tree
 */
-
-class XdmfCharArray;
-class XdmfDOM;
 
 class XdmfRuntime : public XdmfNDGM {
 

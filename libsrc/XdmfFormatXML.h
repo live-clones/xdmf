@@ -30,6 +30,21 @@
 
 class XdmfArray;
 
+//! Handles Values directly embedded in the XML
+/*!
+	Data can be directly embedded in the XML. For Example :
+\verbatim
+<DataStructure
+  Name="XXX"
+  Rank="2"
+  Dimensions="2 4"
+  Precision="4"
+  DataType="Float">
+  1.1 3.3 5.5 7.7 9.9 11 13.1 15
+</DataStructure>
+\endverbatim
+
+*/
 class XDMF_EXPORT XdmfFormatXML : public XdmfFormat {
 
 public :

@@ -46,6 +46,7 @@ extern "C" {
 
 class XdmfArray;
 
+//! Class to handle NDGM interface
 /*!
 Object to Handle Low level NDGM Details
 like sending and recciving NDGM Messages

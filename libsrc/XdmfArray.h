@@ -30,6 +30,7 @@
 #define XDMF_LONGEST_LENGTH     (XdmfInt64)~0
 #define XDMF_ARRAY_TAG_LENGTH  80
 
+//! Self Describing Data Structure
 /*!
 This is the SuperClass for All XDMF Arrays.
 XDMF Arrays allow the user to set and query the

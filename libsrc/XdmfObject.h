@@ -390,6 +390,7 @@ type Get##var (XdmfInt64 Index) \
   return ( this->var[ Index ]  ); \
   }
 
+//! Base Class for All Xdmf Objects
 class XDMF_EXPORT XdmfObject {
 public:
   XdmfObject();

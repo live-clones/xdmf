@@ -28,12 +28,18 @@
 
 #include "XdmfLightData.h"
 
+class XdmfArray;
+class XdmfXNode;
+class XdmfDataDesc;
+
+//! Selects a Portion of an DataStructure
 /*!
 This is the Base Object for Transform Drivers.
 If the Data if embedded in the XML, this object
 is the driver. Otherwise the approrpiate
 methods are overloaded.
 
+\verbatim
 An XML Transform Node Looks like :
 
 <DataTransform
@@ -47,11 +53,9 @@ An XML Transform Node Looks like :
     Points.xml
   </DataStructure>
 </DataTransform>
+\endverbatim
 */
 
-class XdmfArray;
-class XdmfXNode;
-class XdmfDataDesc;
 
 class XDMF_EXPORT XdmfTransform : public XdmfLightData {
 

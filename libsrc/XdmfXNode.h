@@ -33,6 +33,7 @@
 
 #include "XdmfDice.h"
 
+//! XDMF Runtime Expandable Structure.
 /*!
 XdmfXNode : XDMF Runtime Expandable Structure.
 This is an attempt to implement Tcl Arrays in C++.

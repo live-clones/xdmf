@@ -32,6 +32,22 @@ class XdmfArray;
 class XdmfDataDesc;
 class XdmfXNode;
 
+//! Class for handeling XML describing HDF5 files
+/*!
+	An example tag for XML describing HDF5
+\verbatim
+<DataStructure
+  Name="XXX"
+  Rank="2"
+  Dimensions="2 4"
+  Precision="4"
+  DataType="Float"
+  Format="HDF">
+  MyFile.h5:/Values
+</DataStructure>
+\endverbatim
+
+*/
 class XDMF_EXPORT XdmfFormatHDF : public XdmfFormat {
 
 public :

@@ -27,6 +27,7 @@
 
 #include "XdmfArray.h"
 
+//! Specialized XdmfArray
 /*!
 This is a special XdmfArray designed to
 handle character strings.
