@@ -72,11 +72,12 @@
 
 #ifdef __cplusplus
 // Use ANSI C++ ---------------------------------------------
-#ifdef XDMF_USE_ANSI_STDLIB
-#  include <iostream>
-#  include <strstream>
-#  include <fstream>
-#  include <iomanip>
+# ifndef SWIG
+#  ifdef XDMF_USE_ANSI_STDLIB
+#   include <iostream>
+#   include <strstream>
+#   include <fstream>
+#   include <iomanip>
 using std::cerr;
 using std::cout;
 using std::cin;
@@ -96,17 +97,18 @@ using std::hex;
 
 
 // otherwise, non-ANSI -----------------------------------------------------
-#else /* XDMF_USE_ANSI_STDLIB */
-#  include <iostream.h>
-#  if defined(_MSC_VER)
-#    include <strstrea.h>
-#  else
-#    include <strstream.h>
-#  endif
-#  include <fstream.h>
-#  include <iomanip.h>
-#endif /* XDMF_USE_ANSI_STDLIB */
-#endif
+#  else /* XDMF_USE_ANSI_STDLIB */
+#   include <iostream.h>
+#   if defined(_MSC_VER)
+#     include <strstrea.h>
+#   else
+#     include <strstream.h>
+#   endif
+#   include <fstream.h>
+#   include <iomanip.h>
+#  endif /* XDMF_USE_ANSI_STDLIB */
+# endif /* SWIG */
+#endif /* __cplusplus */
 
 #include "XdmfExport.h"
 
