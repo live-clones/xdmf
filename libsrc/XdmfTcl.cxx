@@ -8,6 +8,8 @@
  * interface file instead. 
  * ----------------------------------------------------------------------------- */
 
+#include <stdarg.h>
+
 
 #ifdef __cplusplus
 template<class T> class SwigValueWrapper {
@@ -1077,7 +1079,7 @@ SWIGEXPORT(int) SWIG_init(Tcl_Interp *);
 #include <XdmfNDGM.h>
 #endif
 
-#ifdef SIZEOF___INT64
+#ifndef HAVE_STRTOLL
 inline XDMF_LONG64 XDMF_strtoll(char *str, void*, int)
 {
   XDMF_LONG64 result = 0;
