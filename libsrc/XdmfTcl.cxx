@@ -8,6 +8,7 @@
  * interface file instead. 
  * ----------------------------------------------------------------------------- */
 
+#include <stdarg.h>
 
 #ifdef __cplusplus
 template<class T> class SwigValueWrapper {
