@@ -74,7 +74,7 @@ XdmfInt64  start[ XDMF_MAX_DIMENSION ];
 XdmfInt64  stride[ XDMF_MAX_DIMENSION ];
 XdmfInt64  count[ XDMF_MAX_DIMENSION ];
 
-Rank = this->GetHyperSlab( start, stride, count );
+rank = this->GetHyperSlab( start, stride, count );
 if( rank == XDMF_FAIL ) {
   return( NULL );
   }
@@ -462,7 +462,7 @@ XdmfInt32
 XdmfDataDesc::SetNumberTypeFromString( XdmfString NumberTypeString, XdmfInt64 CompoundSize ) {
 XdmfInt32 numberType;
 
-NumberType = StringToXdmfType( NumberTypeString );
+numberType = StringToXdmfType( NumberTypeString );
 return( this->SetNumberType( numberType, CompoundSize ) );
 }
 
@@ -498,7 +498,7 @@ if( Index >  ( H5Tget_nmembers( this->DataType ) - 1 ) ){
   XdmfErrorMessage("Index is Greater than Number of Members");
   return( 0 );
   }
-DataType =  H5Tget_member_type( this->DataType, Index );
+dataType =  H5Tget_member_type( this->DataType, Index );
 RetVal = HDF5TypeToXdmfType( dataType ); 
 if( RetVal == XDMF_COMPOUND_TYPE ) {
   hid_t  Super;
@@ -537,7 +537,7 @@ if( Index >  ( H5Tget_nmembers( this->DataType ) - 1 ) ){
   XdmfErrorMessage("Index is Greater than Number of Members");
   return( 0 );
   }
-DataType =  H5Tget_member_type( this->DataType, Index );
+dataType =  H5Tget_member_type( this->DataType, Index );
 if( HDF5TypeToXdmfType(dataType) == XDMF_COMPOUND_TYPE ) {
   rank = H5Tget_array_ndims( dataType );
   if( rank <= 0 ){
@@ -562,7 +562,7 @@ ostrstream  ReturnStream( ReturnString, 80 );
 XdmfInt64  Dimensions[XDMF_MAX_DIMENSION];
 XdmfInt32  i, rank;
 
-Rank = this->GetMemberShape( Index, Dimensions );
+rank = this->GetMemberShape( Index, Dimensions );
 if( rank == XDMF_FAIL ) {
   XdmfErrorMessage("Error Getting Member Shape");
   return( NULL );
@@ -580,7 +580,7 @@ XdmfDataDesc::GetMemberLength( XdmfInt64 Index ) {
 XdmfInt64  Length, Dimensions[XDMF_MAX_DIMENSION];
 XdmfInt32  i, rank;
 
-Rank = this->GetMemberShape( Index, Dimensions );
+rank = this->GetMemberShape( Index, Dimensions );
 if( rank == XDMF_FAIL ) {
   XdmfErrorMessage("Error Getting Member Shape");
   return( 0 );
@@ -640,7 +640,7 @@ XdmfInt32  i, rank = 0, numberType;
 XdmfInt64  Dim, Dimensions[XDMF_MAX_DIMENSION];
 istrstream  ShapeString( Shape, strlen(Shape) );
 
-NumberType = StringToXdmfType( NumberTypeString );
+numberType = StringToXdmfType( NumberTypeString );
 i = 0;
 while( ICE_READ_STREAM64(ShapeString, Dim) ){
   rank++;
