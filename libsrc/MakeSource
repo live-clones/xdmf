@@ -12,16 +12,20 @@ SHELL=/bin/sh
 ICE_WITH_NDGM = NO
 ICE_WITH_PYTHON = YES
 ICE_WITH_TCL = YES
-ICE_WITH_JAVA = YES
+ICE_WITH_JAVA = NO
 
-srcdir=/vis/clarke/IceDevel02/Base/Xdmf/libsrc
+srcdir=/vis/clarke/XdmfDevel03/Xdmf/libsrc
+SWIG=/vis/clarke/Swig/SWIG-1.3.19/swig
 #
 #######################
 #
 
 VPATH=${srcdir}
 
-ICE_INCLUDES = -I.
+ICE_INCLUDES = -I. \
+		-I/vis/clarke/XdmfDevel03/IRIX64/libsrc \
+		-I../Ice/libsrc \
+		-I/vis/clarke/XdmfDevel03/IRIX64/Ice/libsrc
 
 all : XdmfExprLex.cxx XdmfExprYacc.cxx Wrappers
 
@@ -52,14 +56,14 @@ Wrappers : Xdmf.i
 XdmfTcl.cxx : Xdmf.i 
 	@if test $(ICE_WITH_NDGM) = "YES"; then		\
 		echo "Creating Tcl Interface with NDGM";	\
-		set -x ;swig -v -c++ -make_default -includeall 	\
+		set -x ;$(SWIG) -v -c++ -make_default -includeall 	\
 			-tcl -prefix Xdmf  -namespace		\
 			$(ICE_INCLUDES) 			\
 			-DHAVE_NDGM				\
 			-o XdmfTcl.cxx ${srcdir}/Xdmf.i;	\
 	else							\
 		echo "Creating Tcl Interface without NDGM";	\
-		set -x; swig -v -c++ -make_default -includeall	\
+		set -x; $(SWIG) -v -c++ -make_default -includeall	\
 			$(ICE_INCLUDES) 			\
 			-tcl -prefix Xdmf  -namespace		\
 			-o XdmfTcl.cxx ${srcdir}/Xdmf.i;	\
@@ -68,14 +72,16 @@ XdmfTcl.cxx : Xdmf.i
 XdmfPython.cxx : Xdmf.i 
 	@if test $(ICE_WITH_NDGM) = "YES"; then		\
 		echo "Creating Python Interface with NDGM";	\
-		set -x ;swig -v -c++ -make_default -includeall 	\
+		set SWIG_LIB /vis/clarke/Swig/SWIG-1.3.19/Lib \
+		set -x ;$(SWIG) -v -c++ -make_default -includeall 	\
 			-shadow -python 			\
 			$(ICE_INCLUDES) 			\
 			-DHAVE_NDGM				\
 			-o XdmfPython.cxx ${srcdir}/Xdmf.i;	\
 	else							\
 		echo "Creating Python Interface without NDGM";	\
-		set -x; swig -v -c++ -make_default -includeall	\
+		set SWIG_LIB /vis/clarke/Swig/SWIG-1.3.19/Lib \
+		set -x; $(SWIG) -v -c++ -make_default -includeall	\
 			-shadow -python 			\
 			$(ICE_INCLUDES) 			\
 			-o XdmfPython.cxx ${srcdir}/Xdmf.i;	\
@@ -85,14 +91,14 @@ XdmfPython.cxx : Xdmf.i
 XdmfJava.cxx : Xdmf.i $(ICE_OBJECTS)
 	@if test $(ICE_WITH_NDGM) = "YES"; then		\
 		echo "Creating Java Interface with NDGM";	\
-		set -x ;swig -v -c++ -make_default -includeall 	\
+		set -x ;$(SWIG) -v -c++ -make_default -includeall 	\
 			-shadow -java 				\
 			$(ICE_INCLUDES) 			\
 			-DHAVE_NDGM				\
 			-o XdmfJava.cxx ${srcdir}/Xdmf.i;	\
 	else							\
 		echo "Creating Java Interface without NDGM";	\
-		set -x; swig -v -c++ -make_default -includeall	\
+		set -x; $(SWIG) -v -c++ -make_default -includeall	\
 			-shadow -java				\
 			$(ICE_INCLUDES) 			\
 			-o XdmfJava.cxx ${srcdir}/Xdmf.i;	\

@@ -126,7 +126,7 @@ public:
 */
   XdmfGetIndexValueMacro( Attribute, XdmfAttribute * );
 
-  XdmfGetValueMacro( BaseGrid, XdmfPointer);
+//   XdmfGetValueMacro( BaseGrid, XdmfPointer);
 
   // XdmfPointer GetBaseGridCopy( void );
 

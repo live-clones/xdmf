@@ -783,7 +783,7 @@ static void _SWIG_exception(int code, const char *msg) {
 
 extern XdmfString XdmfObjectToHandle(XdmfObject *);
 extern XdmfObject *HandleToXdmfObject(XdmfConstString);
-extern istrstream &ICE_READ_STREAM64(istrstream &,ICE_64_INT &);
+extern istrstream &ICE_READ_STREAM64(istrstream &,long long &);
 extern hid_t XdmfTypeToHDF5Type(XdmfInt32);
 extern XdmfInt32 HDF5TypeToXdmfType(hid_t);
 extern XdmfString XdmfTypeToString(XdmfInt32);
@@ -1062,7 +1062,7 @@ static PyObject *_wrap_HandleToXdmfObject(PyObject *self, PyObject *args) {
 static PyObject *_wrap_ICE_READ_STREAM64(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     istrstream *arg1 = 0 ;
-    ICE_64_INT *arg2 = 0 ;
+    long long *arg2 = 0 ;
     istrstream *result;
     PyObject * obj0 = 0 ;
     PyObject * obj1 = 0 ;
@@ -4072,7 +4072,7 @@ static PyObject *_wrap_XdmfCharArray_SetString(PyObject *self, PyObject *args) {
 static PyObject *_wrap_XdmfCharArray_SetFromFile(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     XdmfCharArray *arg1 = (XdmfCharArray *) 0 ;
-    XdmfString arg2 ;
+    XdmfConstString arg2 ;
     XdmfInt32 result;
     PyObject * obj0 = 0 ;
     
@@ -4482,12 +4482,12 @@ static PyObject *_wrap_XdmfDOM_SetOutputFileName(PyObject *self, PyObject *args)
 static PyObject *_wrap_XdmfDOM_GetInputFileName(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     XdmfDOM *arg1 = (XdmfDOM *) 0 ;
-    XdmfString result;
+    XdmfConstString result;
     PyObject * obj0 = 0 ;
     
     if(!PyArg_ParseTuple(args,(char *)"O:XdmfDOM_GetInputFileName",&obj0)) goto fail;
     if ((SWIG_ConvertPtr(obj0,(void **) &arg1, SWIGTYPE_p_XdmfDOM,SWIG_POINTER_EXCEPTION | 0 )) == -1) SWIG_fail;
-    result = (XdmfString)(arg1)->GetInputFileName();
+    result = (XdmfConstString)(arg1)->GetInputFileName();
     
     resultobj = result ? PyString_FromString(result) : Py_BuildValue((char*)"");
     return resultobj;
@@ -4499,12 +4499,12 @@ static PyObject *_wrap_XdmfDOM_GetInputFileName(PyObject *self, PyObject *args) 
 static PyObject *_wrap_XdmfDOM_GetOutputFileName(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     XdmfDOM *arg1 = (XdmfDOM *) 0 ;
-    XdmfString result;
+    XdmfConstString result;
     PyObject * obj0 = 0 ;
     
     if(!PyArg_ParseTuple(args,(char *)"O:XdmfDOM_GetOutputFileName",&obj0)) goto fail;
     if ((SWIG_ConvertPtr(obj0,(void **) &arg1, SWIGTYPE_p_XdmfDOM,SWIG_POINTER_EXCEPTION | 0 )) == -1) SWIG_fail;
-    result = (XdmfString)(arg1)->GetOutputFileName();
+    result = (XdmfConstString)(arg1)->GetOutputFileName();
     
     resultobj = result ? PyString_FromString(result) : Py_BuildValue((char*)"");
     return resultobj;
@@ -5071,12 +5071,12 @@ static PyObject *_wrap_XdmfDOM_FindNumberOfProcessingInstructions(PyObject *self
 static PyObject *_wrap_XdmfDOM_GetNdgmHost(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     XdmfDOM *arg1 = (XdmfDOM *) 0 ;
-    XdmfString result;
+    XdmfConstString result;
     PyObject * obj0 = 0 ;
     
     if(!PyArg_ParseTuple(args,(char *)"O:XdmfDOM_GetNdgmHost",&obj0)) goto fail;
     if ((SWIG_ConvertPtr(obj0,(void **) &arg1, SWIGTYPE_p_XdmfDOM,SWIG_POINTER_EXCEPTION | 0 )) == -1) SWIG_fail;
-    result = (XdmfString)(arg1)->GetNdgmHost();
+    result = (XdmfConstString)(arg1)->GetNdgmHost();
     
     resultobj = result ? PyString_FromString(result) : Py_BuildValue((char*)"");
     return resultobj;
@@ -5105,12 +5105,12 @@ static PyObject *_wrap_XdmfDOM_SetNdgmHost(PyObject *self, PyObject *args) {
 static PyObject *_wrap_XdmfDOM_GetWorkingDirectory(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     XdmfDOM *arg1 = (XdmfDOM *) 0 ;
-    XdmfString result;
+    XdmfConstString result;
     PyObject * obj0 = 0 ;
     
     if(!PyArg_ParseTuple(args,(char *)"O:XdmfDOM_GetWorkingDirectory",&obj0)) goto fail;
     if ((SWIG_ConvertPtr(obj0,(void **) &arg1, SWIGTYPE_p_XdmfDOM,SWIG_POINTER_EXCEPTION | 0 )) == -1) SWIG_fail;
-    result = (XdmfString)(arg1)->GetWorkingDirectory();
+    result = (XdmfConstString)(arg1)->GetWorkingDirectory();
     
     resultobj = result ? PyString_FromString(result) : Py_BuildValue((char*)"");
     return resultobj;
@@ -7099,23 +7099,6 @@ static PyObject *_wrap_XdmfGrid_GetAttribute(PyObject *self, PyObject *args) {
 }
 
 
-static PyObject *_wrap_XdmfGrid_GetBaseGrid(PyObject *self, PyObject *args) {
-    PyObject *resultobj;
-    XdmfGrid *arg1 = (XdmfGrid *) 0 ;
-    XdmfPointer result;
-    PyObject * obj0 = 0 ;
-    
-    if(!PyArg_ParseTuple(args,(char *)"O:XdmfGrid_GetBaseGrid",&obj0)) goto fail;
-    if ((SWIG_ConvertPtr(obj0,(void **) &arg1, SWIGTYPE_p_XdmfGrid,SWIG_POINTER_EXCEPTION | 0 )) == -1) SWIG_fail;
-    result = (XdmfPointer)(arg1)->GetBaseGrid();
-    
-    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_XdmfPointer, 0);
-    return resultobj;
-    fail:
-    return NULL;
-}
-
-
 static PyObject *_wrap_XdmfGrid_AssignAttribute(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     XdmfGrid *arg1 = (XdmfGrid *) 0 ;
@@ -7390,7 +7373,7 @@ static PyObject *_wrap_XdmfHeavyData_GetWorkingDirectory(PyObject *self, PyObjec
 static PyObject *_wrap_XdmfHeavyData_SetWorkingDirectory(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     XdmfHeavyData *arg1 = (XdmfHeavyData *) 0 ;
-    XdmfString arg2 ;
+    XdmfConstString arg2 ;
     PyObject * obj0 = 0 ;
     
     if(!PyArg_ParseTuple(args,(char *)"Os:XdmfHeavyData_SetWorkingDirectory",&obj0,&arg2)) goto fail;
@@ -7588,6 +7571,41 @@ static PyObject *_wrap_XdmfHDF_GetClassName(PyObject *self, PyObject *args) {
     result = (XdmfConstString)(arg1)->GetClassName();
     
     resultobj = result ? PyString_FromString(result) : Py_BuildValue((char*)"");
+    return resultobj;
+    fail:
+    return NULL;
+}
+
+
+static PyObject *_wrap_XdmfHDF_SetCompression(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    XdmfHDF *arg1 = (XdmfHDF *) 0 ;
+    XdmfInt32 arg2 ;
+    XdmfInt32 result;
+    PyObject * obj0 = 0 ;
+    
+    if(!PyArg_ParseTuple(args,(char *)"Oi:XdmfHDF_SetCompression",&obj0,&arg2)) goto fail;
+    if ((SWIG_ConvertPtr(obj0,(void **) &arg1, SWIGTYPE_p_XdmfHDF,SWIG_POINTER_EXCEPTION | 0 )) == -1) SWIG_fail;
+    result = (XdmfInt32)(arg1)->SetCompression(arg2);
+    
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+    fail:
+    return NULL;
+}
+
+
+static PyObject *_wrap_XdmfHDF_GetCompression(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    XdmfHDF *arg1 = (XdmfHDF *) 0 ;
+    XdmfInt32 result;
+    PyObject * obj0 = 0 ;
+    
+    if(!PyArg_ParseTuple(args,(char *)"O:XdmfHDF_GetCompression",&obj0)) goto fail;
+    if ((SWIG_ConvertPtr(obj0,(void **) &arg1, SWIGTYPE_p_XdmfHDF,SWIG_POINTER_EXCEPTION | 0 )) == -1) SWIG_fail;
+    result = (XdmfInt32)(arg1)->GetCompression();
+    
+    resultobj = PyInt_FromLong((long)result);
     return resultobj;
     fail:
     return NULL;
@@ -9390,7 +9408,6 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfGrid_GetGeometry", _wrap_XdmfGrid_GetGeometry, METH_VARARGS },
 	 { (char *)"XdmfGrid_GetNumberOfAttributes", _wrap_XdmfGrid_GetNumberOfAttributes, METH_VARARGS },
 	 { (char *)"XdmfGrid_GetAttribute", _wrap_XdmfGrid_GetAttribute, METH_VARARGS },
-	 { (char *)"XdmfGrid_GetBaseGrid", _wrap_XdmfGrid_GetBaseGrid, METH_VARARGS },
 	 { (char *)"XdmfGrid_AssignAttribute", _wrap_XdmfGrid_AssignAttribute, METH_VARARGS },
 	 { (char *)"XdmfGrid_AssignAttributeByIndex", _wrap_XdmfGrid_AssignAttributeByIndex, METH_VARARGS },
 	 { (char *)"XdmfGrid_AssignAttributeByName", _wrap_XdmfGrid_AssignAttributeByName, METH_VARARGS },
@@ -9420,6 +9437,8 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"new_XdmfHDF", _wrap_new_XdmfHDF, METH_VARARGS },
 	 { (char *)"delete_XdmfHDF", _wrap_delete_XdmfHDF, METH_VARARGS },
 	 { (char *)"XdmfHDF_GetClassName", _wrap_XdmfHDF_GetClassName, METH_VARARGS },
+	 { (char *)"XdmfHDF_SetCompression", _wrap_XdmfHDF_SetCompression, METH_VARARGS },
+	 { (char *)"XdmfHDF_GetCompression", _wrap_XdmfHDF_GetCompression, METH_VARARGS },
 	 { (char *)"XdmfHDF_SetCwdName", _wrap_XdmfHDF_SetCwdName, METH_VARARGS },
 	 { (char *)"XdmfHDF_GetCwdName", _wrap_XdmfHDF_GetCwdName, METH_VARARGS },
 	 { (char *)"XdmfHDF_Cd", _wrap_XdmfHDF_Cd, METH_VARARGS },
@@ -9708,8 +9727,8 @@ _swigt__p_XdmfGrid,
 
 static swig_const_info swig_const_table[] = {
 { SWIG_PY_INT,     (char *)"SIZEOF_LONG_LONG", (long) 8, 0, 0, 0},
-{ SWIG_PY_STRING,  (char*)"ICE_SYSTEM", 0, 0, (void *)"Linux", 0},
-{ SWIG_PY_STRING,  (char*)"ICE_MACHINE_TYPE", 0, 0, (void *)"Linux", 0},
+{ SWIG_PY_STRING,  (char*)"ICE_SYSTEM", 0, 0, (void *)"IRIX64", 0},
+{ SWIG_PY_STRING,  (char*)"ICE_MACHINE_TYPE", 0, 0, (void *)"IRIX64", 0},
 { SWIG_PY_INT,     (char *)"ICE_TRUE", (long) 1, 0, 0, 0},
 { SWIG_PY_INT,     (char *)"ICE_FALSE", (long) 0, 0, 0, 0},
 { SWIG_PY_INT,     (char *)"ICE_SUCCESS", (long) 1, 0, 0, 0},
@@ -9725,7 +9744,7 @@ static swig_const_info swig_const_table[] = {
 { SWIG_PY_INT,     (char *)"XDMF_TRUE", (long) 1, 0, 0, 0},
 { SWIG_PY_INT,     (char *)"XDMF_FALSE", (long) 0, 0, 0, 0},
 { SWIG_PY_INT,     (char *)"XDMF_MAX_DIMENSION", (long) 10, 0, 0, 0},
-{ SWIG_PY_INT,     (char *)"XDMF_MAX_STRING_LENGTH", (long) 256, 0, 0, 0},
+{ SWIG_PY_INT,     (char *)"XDMF_MAX_STRING_LENGTH", (long) 1024, 0, 0, 0},
 { SWIG_PY_INT,     (char *)"XDMF_DEFAULT_INDEX", (long) -1, 0, 0, 0},
 { SWIG_PY_INT,     (char *)"XDMF_SELECT_SLAB", (long) 1, 0, 0, 0},
 { SWIG_PY_INT,     (char *)"XDMF_SELECT_INDEX", (long) 2, 0, 0, 0},
