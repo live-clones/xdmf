@@ -15,18 +15,19 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-// .NAME vtkMyXdmfReader - read PNG files
+// .NAME vtkMyXdmfReader - read eXtensible Data Model and Format files
 // .SECTION Description
-// vtkRectilinearGridReader is a source object that reads ASCII or binary 
+// vtkXdmfReader is a source object that reads ASCII or binary 
 // rectilinear grid data files in vtk format (see text for format details).
-// The output of this reader is a single vtkRectilinearGrid data object.
+// The output of this reader is a single vtkUnstructuredGrid, vtkStructuredGrid
+//  or vtkRectilinearGrid data object.
 // The superclass of this class, vtkDataReader, provides many methods for
 // controlling the reading of the data file, see vtkDataReader for more
 // information.
 // .SECTION Caveats
-// Binary files written on one system may not be readable on other systems.
+// used the XDMF API
 // .SECTION See Also
-// vtkRectilinearGrid vtkDataReader
+// vtkDataReader
 
 #ifndef __vtkMyXdmfReader_h
 #define __vtkMyXdmfReader_h
@@ -45,6 +46,7 @@ class vtkDataSet;
 //BTX
 class XdmfDOM;
 class XdmfFormatMulti;
+class XdmfTransform;
 class XdmfDataDesc;
 class XdmfGrid;
 class vtkXdmfDataArray;
@@ -85,12 +87,46 @@ public:
   const char* GetCellArrayName(int index);
   
   // Description:
+  // Get the number of Parameters
+  int GetNumberOfParameters();
+
+  // Description:
+  // Get Parameter Name
+  const char *GetParameterName(int index);
+
+  // Description:
+  // Set/Get Parameter Current Index
+  int SetParameterCurrentIndex(char *Name, int CurrentIndex); 
+  int SetParameterCurrentIndex(int ParameterIndex, int CurrentIndex); 
+  int GetParameterCurrentIndex(char *Name);
+  int GetParameterCurrentIndex(int index);
+
+  // Description:
+  // Get Length of Parameter
+  int GetParameterLength(char *Name);
+  int GetParameterLength(int index);
+
+
+  // Description:
+  // Get the Current Value of the Parameter
+  const char *GetParameterValue(int index);
+  const char *GetParameterValue(char *Name);
+
+  // Description:
   // Get/Set whether the point or cell array with the given name is to
   // be read.
   int GetPointArrayStatus(const char* name);
   int GetCellArrayStatus(const char* name);
   void SetPointArrayStatus(const char* name, int status);  
   void SetCellArrayStatus(const char* name, int status);  
+
+  // Description:
+  // Get the Low Level XdmfDOM
+  const char *GetXdmfDOMHandle();
+
+  // Description:
+  // Get the Low Level XdmfGrid
+  const char *GetXdmfGridHandle();
 
   // Description:
   // Get/Set the current domain name.
@@ -138,6 +174,7 @@ protected:
 
   XdmfDOM         *DOM;
   XdmfFormatMulti *FormatMulti;
+  XdmfTransform   *Transform;
   XdmfDataDesc    *DataDescription;
   XdmfGrid        *Grid;
 
