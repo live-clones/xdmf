@@ -88,10 +88,12 @@ char *vtkXdmfDataSetWriter::GetXML( void ) {
   }
 int
 vtkXdmfDataSetWriter::WriteHead( void ){
+return 0;
 }
 
 int
 vtkXdmfDataSetWriter::WriteTail( void ){
+return 0;
 }
 
 int
