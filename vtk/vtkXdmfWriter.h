@@ -34,8 +34,6 @@ class vtkCellArray;
 class vtkDataArray;
 class vtkDataSetCollection;
 
-class vtkXdmfWriterInternals;
-
 class VTK_EXPORT vtkXdmfWriter : public vtkProcessObject
 {
 public:
@@ -92,22 +90,26 @@ public:
   // will not be reflected in the actual inputs.
   vtkDataSetCollection *GetInputList();
 
+  // Description:
+  // Indent xml 
+  void Indent(ostream& ost);
+
 protected:
   vtkXdmfWriter();
   ~vtkXdmfWriter();
 
-  void ResetXML( void );
-  char *GetXML( void );
-
-  void WriteAttributes( void );
-  void StartTopology( int Type, vtkCellArray *Cells);
-  int WriteScalar( vtkDataArray *Scalars, const char *Name, const char *Center );
-  int WriteVector( vtkDataArray *Vectors, const char *Name, const char *Center );
-  virtual int WriteHead( void );
-  virtual int WriteTail( void );
-  virtual int WriteGrid( void );
-  virtual int WriteCellArray( vtkCellArray *Cells );
-  virtual int WritePoints( vtkPoints *Points );
+  void WriteAttributes( ostream& ost );
+  void StartTopology( ostream& ost, int Type, vtkCellArray *Cells);
+  void EndTopology( ostream& ost );
+  void StartGeometry( ostream& ost, const char* type );
+  void EndGeometry( ostream& ost );
+  virtual int WriteHead( ostream& ost );
+  virtual int WriteTail( ostream& ost );
+  virtual int WriteGrid( ostream& ost );
+  virtual int WriteCellArray( ostream& ost, vtkCellArray *Cells );
+  virtual int WritePoints( ostream& ost, vtkPoints *Points );
+  virtual int WriteDataArray( ostream& ost, vtkDataArray* array, const char* Name, const char* Center );
+  virtual int WriteVTKArray( ostream& ost, vtkDataArray* array, const char* array );
 
   vtkDataSet* GetInputDataSet();
 
@@ -119,7 +121,8 @@ protected:
   char    *GridName;
   
   int    AllLight;
-  vtkXdmfWriterInternals *Internals;
+
+  int CurrIndent;
 
   // list of data sets to append together.
   // Here as a convenience.  It is a copy of the input array.

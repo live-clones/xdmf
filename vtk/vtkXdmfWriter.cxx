@@ -56,22 +56,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "vtkUnstructuredGrid.h"
 #include "vtkDataSetCollection.h"
 
+#include "vtkCharArray.h"
+#include "vtkFloatArray.h"
+#include "vtkDoubleArray.h"
+#include "vtkIntArray.h"
+#include "vtkLongArray.h"
+#include "vtkShortArray.h"
+
 #include "XdmfHDF.h"
 #include "XdmfArray.h"
 
 //----------------------------------------------------------------------------
-//============================================================================
-class vtkXdmfWriterInternals
-{
-public:
-  ostrstream *XMLStream;
-};
-//============================================================================
-//----------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfWriter);
-vtkCxxRevisionMacro(vtkXdmfWriter, "1.4");
+vtkCxxRevisionMacro(vtkXdmfWriter, "1.5");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter::vtkXdmfWriter()
@@ -83,12 +80,7 @@ vtkXdmfWriter::vtkXdmfWriter()
   this->SetGridName( "Unnamed" );
 
   this->AllLight = 0;
-
-  this->Internals = new vtkXdmfWriterInternals;
-  this->Internals->XMLStream = 0;
-  this->ResetXML();
-  this->InputList = NULL;
-
+  this->CurrIndent = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -96,7 +88,6 @@ vtkXdmfWriter::~vtkXdmfWriter()
 {
   this->SetHeavyDataSetName(0);
   this->SetFileNameString(0);
-  delete this->Internals->XMLStream;
   if (this->InputList != NULL)
     {
     this->InputList->Delete();
@@ -159,48 +150,32 @@ const char* vtkXdmfWriter::GetHeavyDataSetName()
 }
 
 //----------------------------------------------------------------------------
-void vtkXdmfWriter::ResetXML( void ) 
+int vtkXdmfWriter::WriteHead( ostream& ost )
 {
-  if ( this->Internals->XMLStream )
-    {
-    delete this->Internals->XMLStream;
-    this->Internals->XMLStream = 0;
-    }
-  this->Internals->XMLStream = new ostrstream();
+  ost << "<?xml version=\"1.0\" ?>" << endl
+    << "<!DOCTYPE Xdmf SYSTEM \"Xdmf.dtd\" [" << endl
+    << "<!ENTITY HeavyData \"" << this->HeavyDataSetNameString << "\">" <<endl
+    << "]>" << endl << endl << endl;
+  this->Indent(ost);
+  ost << "<Xdmf>";
+  this->CurrIndent++;
+  this->Indent(ost);
+
+  return 1;
 }
 
 //----------------------------------------------------------------------------
-char *vtkXdmfWriter::GetXML( void ) 
+int vtkXdmfWriter::WriteTail( ostream& ost )
 {
-  char  *String, *ptr;
-
-  *this->Internals->XMLStream << ends;
-  ptr = this->Internals->XMLStream->str();
-  if ( ptr ){
-    String = new char[ strlen( ptr ) + 1 ];
-    strcpy( String, ptr );
-  }
-  else {
-    String = 0;
-  }
-  this->Internals->XMLStream->rdbuf()->freeze( 0 );
-  return( String );
-}
-
-//----------------------------------------------------------------------------
-int vtkXdmfWriter::WriteHead( void )
-{
+  this->CurrIndent--;
+  this->Indent(ost);
+  ost << "</Xdmf>";
+  this->Indent(ost);
   return 0;
 }
 
 //----------------------------------------------------------------------------
-int vtkXdmfWriter::WriteTail( void )
-{
-  return 0;
-}
-
-//----------------------------------------------------------------------------
-int vtkXdmfWriter::WriteCellArray( vtkCellArray *Cells )
+int vtkXdmfWriter::WriteCellArray( ostream& ost, vtkCellArray *Cells )
 {
 
   vtkIdType  *Cp;
@@ -211,21 +186,24 @@ int vtkXdmfWriter::WriteCellArray( vtkCellArray *Cells )
   Cp = Cells->GetPointer();
   NumberOfCells = Cells->GetNumberOfCells();
   PointsInPoly = *Cp;
-  *this->Internals->XMLStream << "\t<DataStructure" << endl;
-  *this->Internals->XMLStream << "\t\tDataType=\"Int\"" << endl;
-  *this->Internals->XMLStream << "\t\tDimensions=\"" << NumberOfCells << " " << PointsInPoly << "\"" << endl;
+  ost << "<DataStructure";
+  this->CurrIndent++;
+  this->Indent(ost);
+  ost << " DataType=\"Int\"";
+  this->Indent(ost);
+  ost << " Dimensions=\"" << NumberOfCells << " " << PointsInPoly << "\"";
+  this->Indent(ost);
   if( this->AllLight )
     {
-    *this->Internals->XMLStream << "\t\tFormat=\"XML\">" << endl;
+    ost << " Format=\"XML\">";
     for( i = 0 ; i < NumberOfCells ; i++ )
       {
+      this->Indent(ost);
       PointsInPoly = *Cp++;
-      *this->Internals->XMLStream << "\t\t";
       for( j = 0 ; j < PointsInPoly ; j++ )
         {
-        *this->Internals->XMLStream << *Cp++ << " ";
+        ost << " " << *Cp++;
         }
-      *this->Internals->XMLStream << endl;
       }
     } 
   else 
@@ -239,8 +217,11 @@ int vtkXdmfWriter::WriteCellArray( vtkCellArray *Cells )
 
     sprintf(DataSetName, "%s:/Connections" , this->HeavyDataSetNameString);
     cout << "DataSetName: " << DataSetName << endl;
-    *this->Internals->XMLStream << "\t\tFormat=\"HDF\">" << endl;
-    *this->Internals->XMLStream << "\t\t" << DataSetName << endl;
+    ost << " Format=\"HDF\">";
+    this->CurrIndent++;
+    this->Indent(ost);
+    ost << " " << DataSetName;
+    this->CurrIndent--;
     Conns.SetNumberType( XDMF_INT32_TYPE );
     Dims[0] = NumberOfCells;
     Dims[1] = PointsInPoly;
@@ -260,7 +241,7 @@ int vtkXdmfWriter::WriteCellArray( vtkCellArray *Cells )
       {
       if( H5.CreateDataset( DataSetName ) == XDMF_FAIL ) 
         {
-        cerr << "Can't Create Heavy Dataset " << DataSetName << endl;
+        vtkErrorMacro( "Can't Create Heavy Dataset " << DataSetName );
         return( -1 );
         }
       }
@@ -269,299 +250,281 @@ int vtkXdmfWriter::WriteCellArray( vtkCellArray *Cells )
 
 
     }
-  *this->Internals->XMLStream << "</DataStructure>" << endl;
+  this->CurrIndent--;
+  this->Indent(ost);
+  ost << "</DataStructure>";
   return( NumberOfCells );
 }
 
 //----------------------------------------------------------------------------
-int vtkXdmfWriter::WritePoints( vtkPoints *Points )
+int vtkXdmfWriter::WritePoints( ostream& ost, vtkPoints *Points )
 {
-  int  NumberOfPoints;
-  int  i;
-  double *Pp;
-
-  NumberOfPoints = Points->GetNumberOfPoints();
-  Pp = Points->GetPoint(0);
-  *this->Internals->XMLStream << "\t<DataStructure" << endl;
-  *this->Internals->XMLStream << "\t\tDataType=\"Float\"" << endl;
-  *this->Internals->XMLStream << "\t\tDimensions=\"" << NumberOfPoints << " 3\"" << endl;
-  if( this->AllLight )
-    {
-    *this->Internals->XMLStream << "\tFormat=\"XML\">" << endl;
-    for( i = 0 ; i < NumberOfPoints ; i++ )
-      {
-      *this->Internals->XMLStream << "\t\t" << *Pp++ << " ";
-      *this->Internals->XMLStream << *Pp++ << " ";
-      *this->Internals->XMLStream << *Pp++ << endl;
-      }
-    } 
-  else 
-    {
-    // Create HDF File
-    char    DataSetName[256];
-    XdmfArray  Geo;
-    XdmfHDF    H5;
-    XdmfInt64  Dims[2];
-    XdmfFloat64  *Dp;
-
-    sprintf(DataSetName, "%s:/XYZ" , this->HeavyDataSetNameString);
-    *this->Internals->XMLStream << "\t\tFormat=\"HDF\">" << endl;
-    *this->Internals->XMLStream << "\t\t" << DataSetName << endl;
-    Geo.SetNumberType( XDMF_FLOAT64_TYPE );
-    Dims[0] = NumberOfPoints;
-    Dims[1] = 3;
-    Geo.SetShape( 2, Dims );
-    Dp = (XdmfFloat64 *)Geo.GetDataPointer();
-    for( i = 0 ; i < NumberOfPoints * 3 ; i++ )
-      {
-      *Dp++ = *Pp++;
-      }
-    H5.CopyType( &Geo );
-    H5.CopyShape( &Geo );
-    if( H5.Open( DataSetName, "rw" ) == XDMF_FAIL )
-      {
-      if( H5.CreateDataset( DataSetName ) == XDMF_FAIL ) 
-        {
-        cerr << "Can't Create Heavy Dataset " << DataSetName << endl;
-        return( -1 );
-        }
-      }
-    H5.Write( &Geo );
-    H5.Close();
-    }
-  *this->Internals->XMLStream << "\t</DataStructure>" << endl;
-  return( NumberOfPoints );
+  return this->WriteVTKArray( ost, Points->GetData(), "XYZ" );
 }
 
 //----------------------------------------------------------------------------
-void vtkXdmfWriter::StartTopology( int Type, vtkCellArray *Cells )
+void vtkXdmfWriter::EndTopology( ostream& ost )
+{
+  this->CurrIndent--;
+  this->Indent(ost);
+  ost << "</Topology>";
+}
+
+//----------------------------------------------------------------------------
+void vtkXdmfWriter::StartTopology( ostream& ost, int Type, vtkCellArray *Cells )
 {
   vtkIdType *Cp;
 
   Cp = Cells->GetPointer();
-  *this->Internals->XMLStream << "<Topology " << endl;
+  ost << "<Topology ";
+  this->CurrIndent++;
   switch( Type ) 
     {
   case VTK_EMPTY_CELL :
     cerr << "Start Empty Cell" << endl;
   case VTK_VERTEX :
     cerr << "Start " <<  " VERTEX" << endl;
-    *this->Internals->XMLStream << "\tType=\"POLYVERTEX\"" << endl;
+    ost << " Type=\"POLYVERTEX\"";
+    this->Indent(ost);
     break;
   case VTK_POLY_VERTEX :
     cerr << "Start " <<  " POLY_VERTEX" << endl;
-    *this->Internals->XMLStream << "\tType=\"POLYVERTEX\"" << endl;
+    ost << " Type=\"POLYVERTEX\"";
+    this->Indent(ost);
     break;
   case VTK_LINE :
     cerr << "Start " <<  " LINE" << endl;
-    *this->Internals->XMLStream << "\tType=\"POLYLINE\"" << endl;
-    *this->Internals->XMLStream << "\tNodesPerElement=\"" << *Cp << "\"" << endl;
+    ost << " Type=\"POLYLINE\"";
+    this->Indent(ost);
+    ost << " NodesPerElement=\"" << *Cp << "\"";
+    this->Indent(ost);
     break;
   case VTK_POLY_LINE :
     cerr << "Start " <<  " POLY_LINE" << endl;
-    *this->Internals->XMLStream << "\tType=\"POLYLINE\"" << endl;
-    *this->Internals->XMLStream << "\tNodesPerElement=\"" << *Cp << "\"" << endl;
+    ost << " Type=\"POLYLINE\"";
+    this->Indent(ost);
+    ost << " NodesPerElement=\"" << *Cp << "\"";
+    this->Indent(ost);
     break;
   case VTK_TRIANGLE :
     cerr << "Start " <<  " TRIANGLE" << endl;
-    *this->Internals->XMLStream << "\tType=\"TRIANGLE\"" << endl;
+    ost << " Type=\"TRIANGLE\"";
+    this->Indent(ost);
     break;
   case VTK_TRIANGLE_STRIP :
     cerr << "Start " <<  " TRIANGLE_STRIP" << endl;
-    *this->Internals->XMLStream << "\tType=\"TRIANGLE\"" << endl;
+    ost << " Type=\"TRIANGLE\"";
+    this->Indent(ost);
     break;
   case VTK_POLYGON :
     cerr << "Start " <<  " POLYGON" << endl;
-    *this->Internals->XMLStream << "\tType=\"POLYGON\"" << endl;
-    *this->Internals->XMLStream << "\tNodesPerElement=\"" << *Cp << "\"" << endl;
+    ost << " Type=\"POLYGON\"";
+    this->Indent(ost);
+    ost << " NodesPerElement=\"" << *Cp << "\"";
+    this->Indent(ost);
     break;
   case VTK_PIXEL :
     cerr << "Start " <<  " PIXEL" << endl;
-    *this->Internals->XMLStream << "\tType=\"QUADRILATERAL\"" << endl;
+    ost << " Type=\"QUADRILATERAL\"";
+    this->Indent(ost);
     break;
   case VTK_QUAD :
     cerr << "Start " <<  " QUAD" << endl;
-    *this->Internals->XMLStream << "\tType=\"QUADRILATERAL\"" << endl;
+    ost << " Type=\"QUADRILATERAL\"";
+    this->Indent(ost);
     break;
   case VTK_TETRA :
     cerr << "Start " <<  " TETRA" << endl;
-    *this->Internals->XMLStream << "\tType=\"TETRAHEDRON\"" << endl;
+    ost << " Type=\"TETRAHEDRON\"";
+    this->Indent(ost);
     break;
   case VTK_VOXEL :
     cerr << "Start " <<  " VOXEL" << endl;
-    *this->Internals->XMLStream << "\tType=\"HEXAHEDRON\"" << endl;
+    ost << " Type=\"HEXAHEDRON\"";
+    this->Indent(ost);
     break;
   case VTK_HEXAHEDRON :
     cerr << "Start " <<  " HEXAHEDRON" << endl;
-    *this->Internals->XMLStream << "\tType=\"HEXAHEDRON\"" << endl;
+    ost << " Type=\"HEXAHEDRON\"";
+    this->Indent(ost);
     break;
   case VTK_WEDGE :
     cerr << "Start " <<  " WEDGE" << endl;
-    *this->Internals->XMLStream << "\tType=\"WEDGE\"" << endl;
+    ost << " Type=\"WEDGE\"";
+    this->Indent(ost);
     break;
   case VTK_PYRAMID :
     cerr << "Start " <<  " PYRAMID" << endl;
-    *this->Internals->XMLStream << "\tType=\"PYRAMID\"" << endl;
+    ost << " Type=\"PYRAMID\"";
+    this->Indent(ost);
     break;
   default :
-    cerr << "Unknown Topology Type" << endl;
+    vtkErrorMacro("Unknown Topology Type");
     break;
     }
-  *this->Internals->XMLStream << "\tDimensions=\"" << Cells->GetNumberOfCells() << "\">" << endl;
+  ost << " Dimensions=\"" << Cells->GetNumberOfCells() << "\">";
+  this->Indent(ost);
 }
 
 //----------------------------------------------------------------------------
-int vtkXdmfWriter::WriteScalar( vtkDataArray *Scalars, const char *Name, const char *Center ) 
+template<class AType, class NType>
+vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost, AType* array, 
+  const char* heavyData, const char* arrayName, 
+  const char* scalar_type, NType value,
+  int allLight, int type)
 {
-  int i, j;
-  const char* arrayName = Name;
-  if ( Scalars->GetName() )
+  if ( !array )
     {
-    arrayName = Scalars->GetName();
+    return -2;
     }
-
-  *this->Internals->XMLStream << "<Attribute Center=\"" <<
-    Center << "\"" <<
-    " Name=\"" << arrayName << "\">" << endl;
-  *this->Internals->XMLStream << "\t<DataStructure" << endl;
-  *this->Internals->XMLStream << "\t\tDataType=\"Float\"" << endl;
-  *this->Internals->XMLStream << "\t\tDimensions=\"" << 
-    Scalars->GetNumberOfTuples() << "\"" << endl;
-  if( this->AllLight )
+  ost << "<DataStructure";
+  self->Indent(ost);
+  ost << "  DataType=\"" << scalar_type << "\"";
+  self->Indent(ost);
+  ost << "  Dimensions=\"" << array->GetNumberOfTuples() 
+    << " " << array->GetNumberOfComponents() << "\"";
+  self->Indent(ost);
+  NType val = value;
+  if ( allLight )
     {
-    *this->Internals->XMLStream << "\t\tFormat=\"XML\">" << endl;
-    *this->Internals->XMLStream << "\t\t";
-    j = 0;
-    for( i = 0 ; i < Scalars->GetNumberOfTuples() ; i++ )
+    ost << "  Format=\"XML\">";
+    vtkIdType jj, kk;
+    for ( jj = 0; jj < array->GetNumberOfTuples(); jj ++ )
       {
-      if( j >= 10 )
+      if ( jj % 3 == 0 )
         {
-        *this->Internals->XMLStream << endl << "\t\t";
-        j = 0;
+        self->Indent(ost);
         }
-      double* tuple = Scalars->GetTuple( i );
-      *this->Internals->XMLStream << tuple[0] << " ";
-      j++;
+      for ( kk = 0; kk < array->GetNumberOfComponents(); kk ++ )
+        {
+        val = array->GetValue(jj * array->GetNumberOfComponents() + kk);
+        ost << " " << val;
+        }
       }
-    } 
-  else 
+    }
+  else
     {
-    // Create HDF File
-    char    DataSetName[256];
-    XdmfArray  Data;
-    XdmfHDF    H5;
-    XdmfFloat32  *Dp;
+    char *DataSetName;
+    XdmfHDF H5;
+    XdmfArray Data;
+    XdmfInt64 dims[2];
 
-    sprintf(DataSetName, "%s:/%s" , this->HeavyDataSetNameString, arrayName);
-    *this->Internals->XMLStream << "\t\tFormat=\"HDF\">" << endl;
-    *this->Internals->XMLStream << "\t\t" << DataSetName << endl;
-    Data.SetNumberType( XDMF_FLOAT32_TYPE );
-    Data.SetNumberOfElements( Scalars->GetNumberOfTuples() );
-    Dp = (XdmfFloat32 *)Data.GetDataPointer();
-    for( j = 0 ; j < Scalars->GetNumberOfTuples(); j++ )
+    DataSetName = new char [ strlen(heavyData) + strlen(arrayName) + 10 ];
+    sprintf(DataSetName, "%s:/%s", heavyData, arrayName);
+    ost << "  Format=\"HDF\">";
+    self->Indent(ost);
+    ost << "  " << DataSetName;
+    self->Indent(ost);
+
+    dims[0] = array->GetNumberOfTuples();
+    dims[1] = array->GetNumberOfComponents();
+
+    Data.SetNumberType(type);
+    cout << "Data type: " << type << endl;
+    Data.SetShape(2, dims);
+
+    vtkIdType jj, kk;
+    vtkIdType pos = 0;
+    for ( jj = 0; jj < array->GetNumberOfTuples(); jj ++ )
       {
-      double* tuple = Scalars->GetTuple(j);
-      *Dp++ = tuple[0];
+      for ( kk = 0; kk < array->GetNumberOfComponents(); kk ++ )
+        {
+        Data.SetValue(pos, array->GetValue(pos));
+        pos ++;
+        }
       }
-    H5.CopyType( &Data);
-    H5.CopyShape( &Data);
+    H5.CopyType( &Data );
+    H5.CopyShape( &Data );
+
     if( H5.Open( DataSetName, "rw" ) == XDMF_FAIL )
       {
       if( H5.CreateDataset( DataSetName ) == XDMF_FAIL ) 
         {
-        cerr << "Can't Create Heavy Dataset " <<
-          DataSetName << endl;
+        vtkErrorWithObjectMacro(self, "Can't Create Heavy Dataset " << DataSetName);
         return( -1 );
         }
       }
     H5.Write( &Data );
     H5.Close();
+
+    delete [] DataSetName;
     }
-  *this->Internals->XMLStream << "</DataStructure>" << endl;
-  *this->Internals->XMLStream << "</Attribute>" << endl;
-  return( Scalars->GetNumberOfTuples() );
+
+  self->Indent( ost );
+  ost << "</DataStructure>";
+  return( array->GetNumberOfTuples() );
 }
 
 //----------------------------------------------------------------------------
-int vtkXdmfWriter::WriteVector( vtkDataArray *Vectors, const char *Name, const char *Center ) 
+int vtkXdmfWriter::WriteDataArray( ostream& ost, vtkDataArray* array, const char* Name, const char* Center )
 {
-  int i, j;
-  double  VectorData[3];
   const char* arrayName = Name;
-  if ( Vectors->GetName() )
+  if ( array->GetName() )
     {
-    arrayName = Vectors->GetName();
+    arrayName = array->GetName();
     }
 
-  *this->Internals->XMLStream << "<Attribute Center=\"" <<
+  ost << "<Attribute Center=\"" <<
     Center << "\"" <<
-    " Name=\"" << arrayName << "\">" << endl;
-  *this->Internals->XMLStream << "\t<DataStructure" << endl;
-  *this->Internals->XMLStream << "\t\tDataType=\"Float\"" << endl;
-  *this->Internals->XMLStream << "\t\tDimensions=\"" << 
-    Vectors->GetNumberOfTuples() * 3 << "\"" << endl;
-  if( this->AllLight )
-    {
-    *this->Internals->XMLStream << "\t\tFormat=\"XML\">" << endl;
-    *this->Internals->XMLStream << "\t\t";
-    j = 0;
-    for( i = 0 ; i < Vectors->GetNumberOfTuples() ; i++ )
-      {
-      Vectors->GetTuple( i, VectorData );
-      if( j >= 2 )
-        {
-        *this->Internals->XMLStream << endl << "\t\t";
-        j = 0;
-        }
-      *this->Internals->XMLStream <<
-        VectorData[0] << " " <<
-        VectorData[1] << " " <<
-        VectorData[2] << "      ";
-      j++;
-      }
-    } 
-  else 
-    {
-    // Create HDF File
-    char    DataSetName[256];
-    XdmfArray  Data;
-    XdmfHDF    H5;
-    XdmfFloat32  *Dp;
-
-    sprintf(DataSetName, "%s:/%s" , this->HeavyDataSetNameString, arrayName);
-    *this->Internals->XMLStream << "\t\tFormat=\"HDF\">" << endl;
-    *this->Internals->XMLStream << "\t\t" << DataSetName << endl;
-    Data.SetNumberType( XDMF_FLOAT32_TYPE );
-    Data.SetNumberOfElements( Vectors->GetNumberOfTuples() * 3  );
-    Dp = (XdmfFloat32 *)Data.GetDataPointer();
-    for( j = 0 ; j < Vectors->GetNumberOfTuples(); j++ )
-      {
-      Vectors->GetTuple( j, VectorData );
-      *Dp++ = VectorData[0];
-      *Dp++ = VectorData[1];
-      *Dp++ = VectorData[2];
-      }
-    H5.CopyType( &Data);
-    H5.CopyShape( &Data);
-    if( H5.Open( DataSetName, "rw" ) == XDMF_FAIL )
-      {
-      if( H5.CreateDataset( DataSetName ) == XDMF_FAIL ) 
-        {
-        cerr << "Can't Create Heavy Dataset " <<
-          DataSetName << endl;
-        return( -1 );
-        }
-      }
-    H5.Write( &Data );
-    H5.Close();
-    }
-  *this->Internals->XMLStream << "</DataStructure>" << endl;
-  *this->Internals->XMLStream << "</Attribute>" << endl;
-  return( Vectors->GetNumberOfTuples() );
+    " Name=\"" << arrayName << "\">";
+  this->CurrIndent ++;
+  this->Indent(ost);
+  vtkIdType res = this->WriteVTKArray( ost, array, arrayName );
+  this->CurrIndent --;
+  this->Indent(ost);
+  ost << "</Attribute>";
+  this->Indent(ost);
+  return res;
 }
 
 //----------------------------------------------------------------------------
-void vtkXdmfWriter::WriteAttributes( void )
+int vtkXdmfWriter::WriteVTKArray( ostream& ost, vtkDataArray* array, const char* Name )
+{
+  vtkIdType res = -1;
+  const char* hd = this->HeavyDataSetNameString;
+  int int_type;
+  if ( sizeof(long) == 4 )
+    {
+    int_type = XDMF_INT32_TYPE;
+    }
+  else
+    {
+    int_type = XDMF_INT64_TYPE;
+    }
+  switch ( array->GetDataType() )
+    {
+  case VTK_CHAR:
+    res = vtkXdmfWriterWriteXMLScalar(this, ost, vtkCharArray::SafeDownCast(array), hd,
+      Name, "Char", static_cast<short>(0), this->AllLight, XDMF_INT8_TYPE);
+    break;
+  case VTK_SHORT:
+    res = vtkXdmfWriterWriteXMLScalar(this, ost, vtkShortArray::SafeDownCast(array), hd,
+      Name, "Int", static_cast<int>(0), this->AllLight, int_type);
+    break;
+  case VTK_INT:
+    res = vtkXdmfWriterWriteXMLScalar(this, ost, vtkIntArray::SafeDownCast(array), hd,
+      Name, "Int", static_cast<int>(0), this->AllLight, int_type);
+    break;
+  case VTK_FLOAT:
+    res = vtkXdmfWriterWriteXMLScalar(this, ost, vtkFloatArray::SafeDownCast(array), hd,
+      Name, "Float", static_cast<float>(0), this->AllLight, XDMF_FLOAT32_TYPE);
+    break;
+  case VTK_DOUBLE:
+    res = vtkXdmfWriterWriteXMLScalar(this, ost, vtkFloatArray::SafeDownCast(array), hd,
+      Name, "Float", static_cast<double>(0), this->AllLight, XDMF_FLOAT64_TYPE);
+    break;
+  default:
+    vtkErrorMacro("Unknown scalar type: " << array->GetDataType());
+    }
+  if ( res == -2 )
+    {
+    vtkErrorMacro("Cannot convert array to specified type");
+    }
+  return res;
+}
+
+//----------------------------------------------------------------------------
+void vtkXdmfWriter::WriteAttributes( ostream& ost )
 {
   vtkDataSet *DataSet = this->GetInputDataSet();
   vtkCellData *CellData = DataSet->GetCellData();
@@ -574,11 +537,13 @@ void vtkXdmfWriter::WriteAttributes( void )
     vtkDataArray *Vectors= CellData->GetVectors();
     if( Scalars )
       {
-      this->WriteScalar( Scalars, "CellScalars", "Cell" );  
+      //this->WriteScalar( Scalars, "CellScalars", "Cell" );  
+      this->WriteDataArray( ost, Scalars, "CellScalars", "Cell" );
       }
     if( Vectors )
       {
-      this->WriteVector( Vectors, "CellVectors", "Cell" );  
+      //this->WriteVector( Vectors, "CellVectors", "Cell" );  
+      this->WriteDataArray( ost, Vectors, "CellVectors", "Cell" );  
       }
     for ( cc = 0; cc < CellData->GetNumberOfArrays(); cc ++ )
       {
@@ -588,11 +553,13 @@ void vtkXdmfWriter::WriteAttributes( void )
         {
         if ( array->GetNumberOfComponents() == 3 )
           {
-          this->WriteScalar( array, "CellVectors", "Cell");
+          //this->WriteScalar( array, "CellVectors", "Cell");
+          this->WriteDataArray( ost, array, "CellVectors", "Cell");
           }
         else
           {
-          this->WriteScalar( array, "CellScalars", "Cell");
+          //this->WriteScalar( array, "CellScalars", "Cell");
+          this->WriteDataArray( ost, array, "CellScalars", "Cell");
           }
         }
       }
@@ -603,11 +570,13 @@ void vtkXdmfWriter::WriteAttributes( void )
     vtkDataArray *Vectors= PointData->GetVectors();
     if( Scalars )
       {
-      this->WriteScalar( Scalars, "NodeScalars", "Node" );  
+      //this->WriteScalar( Scalars, "NodeScalars", "Node" );  
+      this->WriteDataArray( ost, Scalars, "NodeScalars", "Node" );  
       }
     if( Vectors )
       {
-      this->WriteVector( Vectors, "NodeVectors", "Node" );  
+      //this->WriteVector( Vectors, "NodeVectors", "Node" );  
+      this->WriteDataArray( ost, Vectors, "NodeVectors", "Node" );  
       }
     for ( cc = 0; cc < PointData->GetNumberOfArrays(); cc ++ )
       {
@@ -617,11 +586,13 @@ void vtkXdmfWriter::WriteAttributes( void )
         {
         if ( array->GetNumberOfComponents() == 3 )
           {
-          this->WriteScalar( array, "CellVectors", "Node");
+          //this->WriteScalar( array, "CellVectors", "Node");
+          this->WriteDataArray( ost, array, "CellVectors", "Node");
           }
         else
           {
-          this->WriteScalar( array, "CellScalars", "Node");
+          //this->WriteScalar( array, "CellScalars", "Node");
+          this->WriteDataArray( ost, array, "CellScalars", "Node");
           }
         }
       }
@@ -629,27 +600,31 @@ void vtkXdmfWriter::WriteAttributes( void )
 }
 
 //----------------------------------------------------------------------------
-int vtkXdmfWriter::WriteGrid( void )
+int vtkXdmfWriter::WriteGrid( ostream& ost )
 {
   vtkDataSet *DataSet = this->GetInputDataSet();
   int type; 
 
   if( !DataSet ) 
     {
-    cerr << "No Input Data Set" << endl;
+    vtkErrorMacro("No Input Data Set");
     return( -1 );
     }
+  ost << "<Grid Name=\"" << this->GridName << "\">";
+  this->CurrIndent ++;
+  this->Indent(ost);
   type = DataSet->GetDataObjectType();
   if ( type == VTK_POLY_DATA )
     {
     vtkPolyData *Polys = ( vtkPolyData *)DataSet;
-    this->StartTopology( Polys->GetCell(0)->GetCellType(), Polys->GetPolys());
-    this->WriteCellArray( Polys->GetPolys());
-    *this->Internals->XMLStream << "</Topology>" << endl;
+    this->StartTopology( ost, Polys->GetCell(0)->GetCellType(), Polys->GetPolys());
+    this->WriteCellArray( ost, Polys->GetPolys());
+    this->EndTopology( ost );
+    this->Indent(ost);
 
-    *this->Internals->XMLStream << "<Geometry Type=\"XYZ\">" << endl;
-    this->WritePoints( Polys->GetPoints());
-    *this->Internals->XMLStream << "</Geometry>" << endl;
+    this->StartGeometry( ost, "XYZ" );
+    this->WritePoints( ost, Polys->GetPoints());
+    this->EndGeometry( ost );
     }
   else if ( type == VTK_STRUCTURED_POINTS || type == VTK_IMAGE_DATA)
     {
@@ -659,62 +634,69 @@ int vtkXdmfWriter::WriteGrid( void )
     SGrid->GetDimensions( Dims );
     SGrid->GetOrigin( Origin );
     SGrid->GetSpacing( Spacing );
-    *this->Internals->XMLStream << "<Topology Type=\"3DCORECTMESH\"" << endl;
-    *this->Internals->XMLStream << "\tDimensions=\"" << 
-      Dims[2] << " " <<
-      Dims[1] << " " <<
-      Dims[0] <<
-      "\"/>" << endl;
-    *this->Internals->XMLStream << "<Geometry Type=\"ORIGIN_DXDYDZ\">" << endl;
+    ost << "<Topology Type=\"3DCORECTMESH\"";
+    this->Indent(ost);
+    ost << " Dimensions=\"" << Dims[2] << " " << Dims[1] << " " << Dims[0] << "\"/>";
+    this->Indent(ost);
+    this->StartGeometry( ost, "ORIGIN_DXDYDZ" );
+    this->Indent(ost);
+
     // Origin
-    *this->Internals->XMLStream << "\t<DataStructure" << endl;
-    *this->Internals->XMLStream << "\t\tDataType=\"Float\"" << endl;
-    *this->Internals->XMLStream << "\t\tDimensions=\"3\"" << endl;
-    *this->Internals->XMLStream << "\t\tFormat=\"XML\">" << endl;
-    *this->Internals->XMLStream << "\t\t" <<
-      Origin[0] <<
-      " " << Origin[1] <<
-      " " << Origin[2] << endl;
-    *this->Internals->XMLStream << "\t</DataStructure>" << endl;
+    ost << "<DataStructure";
+    this->CurrIndent ++;
+    this->Indent(ost);
+    ost << "  DataType=\"Float\"";
+    this->Indent(ost);
+    ost << "  Dimensions=\"3\"";
+    this->Indent(ost);
+    ost << "  Format=\"XML\">";
+    this->Indent(ost);
+    ost << Origin[0] << " " << Origin[1] << " " << Origin[2];
+    this->CurrIndent--;
+    this->Indent(ost);
+    ost << "</DataStructure>";
+
     // DX DY DZ
-    *this->Internals->XMLStream << "\t<DataStructure" << endl;
-    *this->Internals->XMLStream << "\t\tDataType=\"Float\"" << endl;
-    *this->Internals->XMLStream << "\t\tDimensions=\"3\"" << endl;
-    *this->Internals->XMLStream << "\t\tFormat=\"XML\">" << endl;
-    *this->Internals->XMLStream << "\t\t" <<
-      Spacing[0] <<
-      " " << Spacing[1] <<
-      " " << Spacing[2] << endl;
-    *this->Internals->XMLStream << "\t</DataStructure>" << endl;
+    ost << "<DataStructure";
+    this->CurrIndent ++;
+    this->Indent(ost);
+    ost << "  DataType=\"Float\"";
+    this->Indent(ost);
+    ost << "  Dimensions=\"3\"";
+    this->Indent(ost);
+    ost << "  Format=\"XML\">";
+    this->Indent(ost);
+    ost << Spacing[0] << " " << Spacing[1] << " " << Spacing[2];
+    this->CurrIndent--;
+    this->Indent(ost);
+    ost << "</DataStructure>";
 
-
-    *this->Internals->XMLStream << "</Geometry>" << endl;
+    this->EndGeometry( ost );
     }
   else if ( type == VTK_STRUCTURED_GRID )
     {
     int     Dims[3];
     vtkStructuredGrid *SGrid = ( vtkStructuredGrid *)DataSet;
     SGrid->GetDimensions( Dims );
-    *this->Internals->XMLStream << "<Topology Type=\"3DSMESH\"" << endl;
-    *this->Internals->XMLStream << "\tDimensions=\"" << 
-      Dims[2] << " " <<
-      Dims[1] << " " <<
-      Dims[0] <<
-      "\"/>" << endl;
-    *this->Internals->XMLStream << "<Geometry Type=\"XYZ\">" << endl;
-    this->WritePoints( SGrid->GetPoints());
-    *this->Internals->XMLStream << "</Geometry>" << endl;
+    ost << "<Topology Type=\"3DSMESH\"";
+    this->CurrIndent++;
+    this->Indent(ost);
+    ost << " Dimensions=\"" << Dims[2] << " " << Dims[1] << " " << Dims[0] << "\"/>";
+    this->EndTopology( ost );
+    this->StartGeometry(ost, "XYZ");
+    this->WritePoints( ost, SGrid->GetPoints());
+    this->EndGeometry(ost);
     }
   else if ( type == VTK_UNSTRUCTURED_GRID )
     {
     vtkUnstructuredGrid *UGrid = ( vtkUnstructuredGrid *)DataSet;
-    this->StartTopology( UGrid->GetCell(0)->GetCellType(), UGrid->GetCells());
-    this->WriteCellArray( UGrid->GetCells());
-    *this->Internals->XMLStream << "</Topology>" << endl;
-
-    *this->Internals->XMLStream << "<Geometry Type=\"XYZ\">" << endl;
-    this->WritePoints( UGrid->GetPoints());
-    *this->Internals->XMLStream << "</Geometry>" << endl;
+    this->StartTopology( ost, UGrid->GetCell(0)->GetCellType(), UGrid->GetCells());
+    this->WriteCellArray( ost, UGrid->GetCells());
+    this->EndTopology( ost );
+    this->Indent(ost);
+    this->StartGeometry(ost, "XYZ");
+    this->WritePoints( ost, UGrid->GetPoints());
+    this->EndGeometry(ost);
     }
   else if ( type == VTK_RECTILINEAR_GRID )
     {
@@ -723,78 +705,97 @@ int vtkXdmfWriter::WriteGrid( void )
     vtkDataArray  *Coord;
     vtkRectilinearGrid *RGrid = ( vtkRectilinearGrid *)DataSet;
     RGrid->GetDimensions( Dims );
-    *this->Internals->XMLStream << "<Topology Type=\"3DRECTMESH\"" << endl;
-    *this->Internals->XMLStream << "\tDimensions=\"" << 
-      Dims[2] << " " <<
-      Dims[1] << " " <<
-      Dims[0] <<
-      "\"/>" << endl;
-    *this->Internals->XMLStream << "<Geometry Type=\"VXVYVZ\">" << endl;
+    ost << "<Topology Type=\"3DRECTMESH\"";
+    this->CurrIndent ++;
+    this->Indent(ost);
+    ost << " Dimensions=\"" << Dims[2] << " " << Dims[1] << " " << Dims[0] << "\"/>";
+    this->Indent(ost);
+    this->EndTopology( ost );
+    this->StartGeometry(ost, "VXVYVZ");
     // X Coordinated
     Coord = RGrid->GetXCoordinates();
     NumberOfPoints = Coord->GetNumberOfTuples();
-    *this->Internals->XMLStream << "\t<DataStructure" << endl;
-    *this->Internals->XMLStream << "\t\tDataType=\"Float\"" << endl;
-    *this->Internals->XMLStream << "\t\tDimensions=\"" << NumberOfPoints << "\"" << endl;
-    *this->Internals->XMLStream << "\t\tFormat=\"XML\">" << endl;
-    *this->Internals->XMLStream << "\t\t";
-    j = 0;
+    ost << "<DataStructure";
+    this->CurrIndent ++;
+    this->Indent(ost);
+    ost << "  DataType=\"Float\"";
+    this->Indent(ost);
+    ost << "  Dimensions=\"" << NumberOfPoints << "\"";
+    this->Indent(ost);
+    ost << "  Format=\"XML\">";
     for( i = 0 ; i < NumberOfPoints ; i++ )
       {
-      if( j >= 10 )
+      if( i % 3 == 0 )
         {
-        *this->Internals->XMLStream << endl << "\t\t";
-        j = 0;
+        this->Indent(ost);
         }
-      *this->Internals->XMLStream << *Coord->GetTuple( i ) << " ";
-      j++;
+      ost << " " << *Coord->GetTuple( i );
       }
-    *this->Internals->XMLStream << endl;
-    *this->Internals->XMLStream << "</DataStructure>" << endl;
+    this->CurrIndent --;
+    this->Indent(ost);
+    ost << "</DataStructure>";
+    this->Indent(ost);
     // Y Coordinated
     Coord = RGrid->GetYCoordinates();
     NumberOfPoints = Coord->GetNumberOfTuples();
-    *this->Internals->XMLStream << "\t<DataStructure" << endl;
-    *this->Internals->XMLStream << "\t\tDataType=\"Float\"" << endl;
-    *this->Internals->XMLStream << "\t\tDimensions=\"" << NumberOfPoints << "\"" << endl;
-    *this->Internals->XMLStream << "\t\tFormat=\"XML\">" << endl;
-    *this->Internals->XMLStream << "\t\t";
+    ost << "<DataStructure";
+    this->CurrIndent ++;
+    this->Indent(ost);
+    ost << "  DataType=\"Float\"";
+    this->Indent(ost);
+    ost << "  Dimensions=\"" << NumberOfPoints << "\"";
+    this->Indent(ost);
+    ost << "  Format=\"XML\">";
+    this->Indent(ost);
     j = 0;
     for( i = 0 ; i < NumberOfPoints ; i++ )
       {
       if( j >= 10 )
         {
-        *this->Internals->XMLStream << endl << "\t\t";
+        this->Indent(ost);
         j = 0;
         }
-      *this->Internals->XMLStream << *Coord->GetTuple( i ) << " ";
+      ost << " " << *Coord->GetTuple( i );
       j++;
       }
-    *this->Internals->XMLStream << endl;
-    *this->Internals->XMLStream << "</DataStructure>" << endl;
+    this->CurrIndent --;
+    this->Indent(ost);
+    ost << "</DataStructure>";
+    this->Indent(ost);
     // Z Coordinated
     Coord = RGrid->GetZCoordinates();
     NumberOfPoints = Coord->GetNumberOfTuples();
-    *this->Internals->XMLStream << "\t<DataStructure" << endl;
-    *this->Internals->XMLStream << "\t\tDataType=\"Float\"" << endl;
-    *this->Internals->XMLStream << "\t\tDimensions=\"" << NumberOfPoints << "\"" << endl;
-    *this->Internals->XMLStream << "\t\tFormat=\"XML\">" << endl;
-    *this->Internals->XMLStream << "\t\t";
+    ost << "<DataStructure";
+    this->CurrIndent ++;
+    this->Indent(ost);
+    ost << "  DataType=\"Float\"";
+    this->Indent(ost);
+    ost << "  Dimensions=\"" << NumberOfPoints << "\"";
+    this->Indent(ost);
+    ost << "  Format=\"XML\">";
+    this->Indent(ost);
     j = 0;
     for( i = 0 ; i < NumberOfPoints ; i++ )
       {
       if( j >= 10 )
         {
-        *this->Internals->XMLStream << endl << "\t\t";
+        this->Indent(ost);
         j = 0;
         }
-      *this->Internals->XMLStream << *Coord->GetTuple( i ) << " ";
+      ost << " " << *Coord->GetTuple( i );
       j++;
       }
-    *this->Internals->XMLStream << endl;
-    *this->Internals->XMLStream << "</DataStructure>" << endl;
-    *this->Internals->XMLStream << "</Geometry>" << endl;
+    this->CurrIndent --;
+    this->Indent(ost);
+    ost << "</DataStructure>";
+    this->EndGeometry(ost);
     }
+  this->Indent(ost);
+  this->WriteAttributes(ost);
+
+  this->CurrIndent --;
+  this->Indent(ost);
+  ost << "</Grid>";
 
   return( 1 );
 }
@@ -822,27 +823,17 @@ void vtkXdmfWriter::Write()
     }
 
   ds->Update();
-  this->ResetXML();
-  this->WriteHead();
-  this->WriteGrid();
-  this->WriteAttributes();
-  this->WriteTail();
-  char* str = this->GetXML();
-  if ( str )
-    {
-    ofs << "<?xml version=\"1.0\" ?>" << endl
-      << "<!DOCTYPE Xdmf SYSTEM \"Xdmf.dtd\" [" << endl
-      << "<!ENTITY HeavyData \"" << this->HeavyDataSetNameString << "\">" <<endl
-      << "]>" << endl << endl << endl
-      << "<Xdmf>" << endl
-      << "<Domain>" << endl
-      << "<Grid Name=\"" << this->GridName << "\">" << endl;
-    ofs << str;
-    ofs << "</Grid>" << endl
-      << "</Domain>" << endl
-      << "</Xdmf>" << endl;
-    delete [] str;
-    }
+  this->WriteHead(ofs);
+  ofs << "<Domain>";
+  this->CurrIndent ++;
+
+  this->Indent(ofs);
+  this->WriteGrid(ofs);
+
+  this->CurrIndent --;
+  this->Indent( ofs );
+  ofs << "</Domain>";
+  this->WriteTail(ofs);
 }
 
 //----------------------------------------------------------------------------
@@ -873,7 +864,7 @@ vtkDataSet *vtkXdmfWriter::GetInput(int idx)
     {
     return NULL;
     }
-  
+
   return (vtkDataSet *)(this->Inputs[idx]);
 }
 
@@ -888,13 +879,13 @@ void vtkXdmfWriter::RemoveInput(vtkDataSet *ds)
 vtkDataSetCollection *vtkXdmfWriter::GetInputList()
 {
   int idx;
-  
+
   if (this->InputList)
     {
     this->InputList->Delete();
     }
   this->InputList = vtkDataSetCollection::New();
-  
+
   for (idx = 0; idx < this->NumberOfInputs; ++idx)
     {
     if (this->Inputs[idx] != NULL)
@@ -902,8 +893,36 @@ vtkDataSetCollection *vtkXdmfWriter::GetInputList()
       this->InputList->AddItem((vtkDataSet*)(this->Inputs[idx]));
       }
     }  
-  
+
   return this->InputList;
+}
+
+//----------------------------------------------------------------------------
+void vtkXdmfWriter::StartGeometry( ostream& ost, const char* type )
+{
+  ost << "<Geometry Type=\"" << type << "\">";
+  this->CurrIndent ++;
+  this->Indent(ost);
+}
+
+//----------------------------------------------------------------------------
+void vtkXdmfWriter::EndGeometry( ostream& ost )
+{
+  this->CurrIndent --;
+  this->Indent(ost);
+  ost << "</Geometry>";
+}
+
+//----------------------------------------------------------------------------
+void vtkXdmfWriter::Indent(ostream& os)
+{
+  int cc;
+
+  os << endl;
+  for ( cc = 0; cc < this->CurrIndent; cc ++ )
+    {
+    os << "  ";
+    }
 }
 
 //----------------------------------------------------------------------------
