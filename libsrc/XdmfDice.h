@@ -29,10 +29,14 @@
 extern "C" {
 #endif 
 
+#include "XdmfConfig.h"
+
 #include "ice.h"
 #include "stdio.h"
 #include "stdlib.h"
-#include "malloc.h"
+#ifdef XDMF_HAVE_MALLOC_H
+#  include "malloc.h"
+#endif
 
 typedef unsigned long   XDMF_LIST_KEY;
 

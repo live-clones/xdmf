@@ -28,5 +28,6 @@
 
 #cmakedefine HAVE_NDGM
 
+#cmakedefine XDMF_HAVE_MALLOC_H
 
 #endif /* __XdmfConfig_h */
