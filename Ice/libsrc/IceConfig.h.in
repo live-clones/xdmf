@@ -82,6 +82,8 @@
 #cmakedefine SIZEOF___INT64
 #endif
 
+#cmakedefine HAVE_STRTOLL
+
 #ifndef SIZEOF_LONG_LONG
 #cmakedefine SIZEOF_LONG_LONG
 #endif
