@@ -7,7 +7,7 @@
 
 <Xdmf>
   <Domain Name="IronRectProtein">
-    <Grid Name="IronRectProtein0">
+    <Grid Name="Iron00">
       <Topology 
          Type="3DRECTMESH" Dimensions="36 36 36">
       </Topology>
@@ -95,7 +95,7 @@
       </Attribute>
       
     </Grid>
-    <Grid Name="IronRectProtein1">
+    <Grid Name="Iron01">
       <Topology 
          Type="3DRECTMESH" Dimensions="36 36 36">
       </Topology>
@@ -182,7 +182,7 @@
       </Attribute>
       
     </Grid>
-    <Grid Name="IronRectProtein2">
+    <Grid Name="Iron02">
       <Topology 
          Type="3DRECTMESH" Dimensions="36 36 36">
       </Topology>
@@ -269,7 +269,7 @@
       </Attribute>
       
     </Grid>
-    <Grid Name="IronRectProtein3">
+    <Grid Name="Iron03">
       <Topology 
          Type="3DRECTMESH" Dimensions="36 36 36">
       </Topology>
@@ -356,7 +356,7 @@
       </Attribute>
       
     </Grid>
-    <Grid Name="IronRectProtein4">
+    <Grid Name="Iron04">
       <Topology 
          Type="3DRECTMESH" Dimensions="36 36 36">
       </Topology>
@@ -443,7 +443,7 @@
       </Attribute>
       
     </Grid>
-    <Grid Name="IronRectProtein5">
+    <Grid Name="Iron05">
       <Topology 
          Type="3DRECTMESH" Dimensions="36 36 36">
       </Topology>
@@ -530,7 +530,7 @@
       </Attribute>
       
     </Grid>
-    <Grid Name="IronRectProtein6">
+    <Grid Name="Iron06">
       <Topology 
          Type="3DRECTMESH" Dimensions="36 36 36">
       </Topology>
@@ -617,7 +617,7 @@
       </Attribute>
       
     </Grid>
-    <Grid Name="IronRectProtein7">
+    <Grid Name="Iron07">
       <Topology 
          Type="3DRECTMESH" Dimensions="36 36 36">
       </Topology>
