@@ -8,8 +8,6 @@
  * interface file instead. 
  * ----------------------------------------------------------------------------- */
 
-#include <stdarg.h>
-
 
 #ifdef __cplusplus
 template<class T> class SwigValueWrapper {
@@ -1089,7 +1087,6 @@ SWIGEXPORT(int) SWIG_init(Tcl_Interp *);
 #include <XdmfXNode.h>
 #include <XdmfNDGM.h>
 
-
 #ifndef HAVE_STRTOLL
 inline XDMF_LONG64 XDMF_strtoll(char *str, void*, int)
 {
@@ -1140,7 +1137,7 @@ inline XDMF_LONG64 XDMF_strtoll(char *str, void*, int)
 
 extern XdmfString XdmfObjectToHandle(XdmfObject *);
 extern XdmfObject *HandleToXdmfObject(XdmfConstString);
-extern istrstream &ICE_READ_STREAM64(istrstream &,long long &);
+extern istrstream &ICE_READ_STREAM64(istrstream &,ICE_64_INT&);
 extern hid_t XdmfTypeToHDF5Type(XdmfInt32);
 extern XdmfInt32 HDF5TypeToXdmfType(hid_t);
 extern XdmfString XdmfTypeToString(XdmfInt32);
@@ -1420,7 +1417,7 @@ _wrap_HandleToXdmfObject(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 static int
 _wrap_ICE_READ_STREAM64(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     istrstream *arg1 = 0 ;
-    long long *arg2 = 0 ;
+    ICE_64_INT *arg2 = 0 ;
     istrstream *result;
     
     if (SWIG_GetArgs(interp, objc, objv,"oo:Xdmf::ICE_READ_STREAM64istr i ",0,0) == TCL_ERROR) SWIG_fail;
@@ -7680,7 +7677,7 @@ _wrap_XdmfHeavyData_GetPath(ClientData clientData, Tcl_Interp *interp, int objc,
 static int
 _wrap_XdmfHeavyData_SetPath(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     XdmfHeavyData *arg1 = (XdmfHeavyData *) 0 ;
-    XdmfString arg2 ;
+    XdmfConstString arg2 ;
     
     if (SWIG_GetArgs(interp, objc, objv,"os:Xdmf::XdmfHeavyData_SetPathself Path ",0,&arg2) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfHeavyData,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
@@ -7821,6 +7818,39 @@ _wrap_XdmfHDF_GetCompression(ClientData clientData, Tcl_Interp *interp, int objc
     if (SWIG_GetArgs(interp, objc, objv,"o:Xdmf::XdmfHDF_GetCompressionself ",0) == TCL_ERROR) SWIG_fail;
     if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfHDF,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
     result = (XdmfInt32)(arg1)->GetCompression();
+    
+    Tcl_SetObjResult(interp,Tcl_NewIntObj((long) result));
+    return TCL_OK;
+    fail:
+    return TCL_ERROR;
+}
+
+
+static int
+_wrap_XdmfHDF_SetUseSerialFile(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
+    XdmfHDF *arg1 = (XdmfHDF *) 0 ;
+    XdmfInt32 arg2 ;
+    XdmfInt32 result;
+    
+    if (SWIG_GetArgs(interp, objc, objv,"oi:Xdmf::XdmfHDF_SetUseSerialFileself _arg ",0,&arg2) == TCL_ERROR) SWIG_fail;
+    if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfHDF,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
+    result = (XdmfInt32)(arg1)->SetUseSerialFile(arg2);
+    
+    Tcl_SetObjResult(interp,Tcl_NewIntObj((long) result));
+    return TCL_OK;
+    fail:
+    return TCL_ERROR;
+}
+
+
+static int
+_wrap_XdmfHDF_GetUseSerialFile(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
+    XdmfHDF *arg1 = (XdmfHDF *) 0 ;
+    XdmfInt32 result;
+    
+    if (SWIG_GetArgs(interp, objc, objv,"o:Xdmf::XdmfHDF_GetUseSerialFileself ",0) == TCL_ERROR) SWIG_fail;
+    if ((SWIG_ConvertPtr(interp, objv[1], (void **) &arg1, SWIGTYPE_p_XdmfHDF,SWIG_POINTER_EXCEPTION | 0) != TCL_OK)) SWIG_fail;
+    result = (XdmfInt32)(arg1)->GetUseSerialFile();
     
     Tcl_SetObjResult(interp,Tcl_NewIntObj((long) result));
     return TCL_OK;
@@ -8010,7 +8040,7 @@ _wrap_XdmfHDF_GetChildTypeAsString(ClientData clientData, Tcl_Interp *interp, in
 static int
 _wrap_XdmfHDF_CreateDataset(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     XdmfHDF *arg1 = (XdmfHDF *) 0 ;
-    XdmfString arg2 = (XdmfString) NULL ;
+    XdmfConstString arg2 = (XdmfConstString) NULL ;
     XdmfInt32 result;
     
     if (SWIG_GetArgs(interp, objc, objv,"o|s:Xdmf::XdmfHDF_CreateDatasetself Path ",0,&arg2) == TCL_ERROR) SWIG_fail;
@@ -8120,6 +8150,8 @@ static swig_method swig_XdmfHDF_methods[] = {
     {"GetClassName", _wrap_XdmfHDF_GetClassName}, 
     {"SetCompression", _wrap_XdmfHDF_SetCompression}, 
     {"GetCompression", _wrap_XdmfHDF_GetCompression}, 
+    {"SetUseSerialFile", _wrap_XdmfHDF_SetUseSerialFile}, 
+    {"GetUseSerialFile", _wrap_XdmfHDF_GetUseSerialFile}, 
     {"SetCwdName", _wrap_XdmfHDF_SetCwdName}, 
     {"GetCwdName", _wrap_XdmfHDF_GetCwdName}, 
     {"Cd", _wrap_XdmfHDF_Cd}, 
@@ -9672,6 +9704,8 @@ static swig_command_info swig_commands[] = {
     { SWIG_prefix "XdmfHDF_GetClassName", (swig_wrapper_func) _wrap_XdmfHDF_GetClassName, NULL},
     { SWIG_prefix "XdmfHDF_SetCompression", (swig_wrapper_func) _wrap_XdmfHDF_SetCompression, NULL},
     { SWIG_prefix "XdmfHDF_GetCompression", (swig_wrapper_func) _wrap_XdmfHDF_GetCompression, NULL},
+    { SWIG_prefix "XdmfHDF_SetUseSerialFile", (swig_wrapper_func) _wrap_XdmfHDF_SetUseSerialFile, NULL},
+    { SWIG_prefix "XdmfHDF_GetUseSerialFile", (swig_wrapper_func) _wrap_XdmfHDF_GetUseSerialFile, NULL},
     { SWIG_prefix "XdmfHDF_SetCwdName", (swig_wrapper_func) _wrap_XdmfHDF_SetCwdName, NULL},
     { SWIG_prefix "XdmfHDF_GetCwdName", (swig_wrapper_func) _wrap_XdmfHDF_GetCwdName, NULL},
     { SWIG_prefix "XdmfHDF_Cd", (swig_wrapper_func) _wrap_XdmfHDF_Cd, NULL},
@@ -9764,8 +9798,8 @@ static swig_var_info swig_variables[] = {
 
 static swig_const_info swig_constants[] = {
 { SWIG_TCL_INT,     (char *)"SIZEOF_LONG_LONG", (long) 8, 0, 0, 0},
-{ SWIG_TCL_STRING,  (char*)"ICE_SYSTEM", 0, 0, (void *)"IRIX64", 0},
-{ SWIG_TCL_STRING,  (char*)"ICE_MACHINE_TYPE", 0, 0, (void *)"IRIX64", 0},
+{ SWIG_TCL_STRING,  (char*)"ICE_SYSTEM", 0, 0, (void *)"Linux", 0},
+{ SWIG_TCL_STRING,  (char*)"ICE_MACHINE_TYPE", 0, 0, (void *)"Linux", 0},
 { SWIG_TCL_INT,     (char *)"ICE_TRUE", (long) 1, 0, 0, 0},
 { SWIG_TCL_INT,     (char *)"ICE_FALSE", (long) 0, 0, 0, 0},
 { SWIG_TCL_INT,     (char *)"ICE_SUCCESS", (long) 1, 0, 0, 0},
@@ -9989,7 +10023,7 @@ static swig_type_info _swigt__p_XdmfAttribute[] = {{"_p_XdmfAttribute", 0, "Xdmf
 static swig_type_info _swigt__p_XdmfCharArray[] = {{"_p_XdmfCharArray", 0, "XdmfCharArray *", &_wrap_class_XdmfCharArray},{"_p_XdmfCharArray"},{0}};
 static swig_type_info _swigt__p_XdmfFormat[] = {{"_p_XdmfFormat", 0, "XdmfFormat *", &_wrap_class_XdmfFormat},{"_p_XdmfFormatHDF", _p_XdmfFormatHDFTo_p_XdmfFormat},{"_p_XdmfFormat"},{"_p_XdmfFormatMulti", _p_XdmfFormatMultiTo_p_XdmfFormat},{"_p_XdmfFormatXML", _p_XdmfFormatXMLTo_p_XdmfFormat},{0}};
 static swig_type_info _swigt__p_XdmfInt8[] = {{"_p_XdmfInt8", 0, "XdmfInt8 *", 0},{"_p_XdmfInt8"},{0}};
-static swig_type_info _swigt__p_long_long[] = {{"_p_long_long", 0, "long long *", 0},{"_p_long_long"},{0}};
+static swig_type_info _swigt__p_long_long[] = {{"_p_long_long", 0, "ICE_64_INT *", 0},{"_p_long_long"},{0}};
 static swig_type_info _swigt__p_XdmfFloat32[] = {{"_p_XdmfFloat32", 0, "XdmfFloat32 *", 0},{"_p_XdmfFloat32"},{0}};
 static swig_type_info _swigt__p_XdmfDataDesc[] = {{"_p_XdmfDataDesc", 0, "XdmfDataDesc *", &_wrap_class_XdmfDataDesc},{"_p_XdmfHeavyData", _p_XdmfHeavyDataTo_p_XdmfDataDesc},{"_p_XdmfNDGM", _p_XdmfNDGMTo_p_XdmfDataDesc},{"_p_XdmfArray", _p_XdmfArrayTo_p_XdmfDataDesc},{"_p_XdmfDataDesc"},{"_p_XdmfHDF", _p_XdmfHDFTo_p_XdmfDataDesc},{"_p_XdmfCharArray", _p_XdmfCharArrayTo_p_XdmfDataDesc},{0}};
 static swig_type_info _swigt__p_istrstream[] = {{"_p_istrstream", 0, "istrstream *", 0},{"_p_istrstream"},{0}};

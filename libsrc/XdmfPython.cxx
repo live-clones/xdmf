@@ -7475,7 +7475,7 @@ static PyObject *_wrap_XdmfHeavyData_GetPath(PyObject *self, PyObject *args) {
 static PyObject *_wrap_XdmfHeavyData_SetPath(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     XdmfHeavyData *arg1 = (XdmfHeavyData *) 0 ;
-    XdmfString arg2 ;
+    XdmfConstString arg2 ;
     PyObject * obj0 = 0 ;
     
     if(!PyArg_ParseTuple(args,(char *)"Os:XdmfHeavyData_SetPath",&obj0,&arg2)) goto fail;
@@ -7604,6 +7604,41 @@ static PyObject *_wrap_XdmfHDF_GetCompression(PyObject *self, PyObject *args) {
     if(!PyArg_ParseTuple(args,(char *)"O:XdmfHDF_GetCompression",&obj0)) goto fail;
     if ((SWIG_ConvertPtr(obj0,(void **) &arg1, SWIGTYPE_p_XdmfHDF,SWIG_POINTER_EXCEPTION | 0 )) == -1) SWIG_fail;
     result = (XdmfInt32)(arg1)->GetCompression();
+    
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+    fail:
+    return NULL;
+}
+
+
+static PyObject *_wrap_XdmfHDF_SetUseSerialFile(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    XdmfHDF *arg1 = (XdmfHDF *) 0 ;
+    XdmfInt32 arg2 ;
+    XdmfInt32 result;
+    PyObject * obj0 = 0 ;
+    
+    if(!PyArg_ParseTuple(args,(char *)"Oi:XdmfHDF_SetUseSerialFile",&obj0,&arg2)) goto fail;
+    if ((SWIG_ConvertPtr(obj0,(void **) &arg1, SWIGTYPE_p_XdmfHDF,SWIG_POINTER_EXCEPTION | 0 )) == -1) SWIG_fail;
+    result = (XdmfInt32)(arg1)->SetUseSerialFile(arg2);
+    
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+    fail:
+    return NULL;
+}
+
+
+static PyObject *_wrap_XdmfHDF_GetUseSerialFile(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    XdmfHDF *arg1 = (XdmfHDF *) 0 ;
+    XdmfInt32 result;
+    PyObject * obj0 = 0 ;
+    
+    if(!PyArg_ParseTuple(args,(char *)"O:XdmfHDF_GetUseSerialFile",&obj0)) goto fail;
+    if ((SWIG_ConvertPtr(obj0,(void **) &arg1, SWIGTYPE_p_XdmfHDF,SWIG_POINTER_EXCEPTION | 0 )) == -1) SWIG_fail;
+    result = (XdmfInt32)(arg1)->GetUseSerialFile();
     
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
@@ -7806,7 +7841,7 @@ static PyObject *_wrap_XdmfHDF_GetChildTypeAsString(PyObject *self, PyObject *ar
 static PyObject *_wrap_XdmfHDF_CreateDataset(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     XdmfHDF *arg1 = (XdmfHDF *) 0 ;
-    XdmfString arg2 = (XdmfString) NULL ;
+    XdmfConstString arg2 = (XdmfConstString) NULL ;
     XdmfInt32 result;
     PyObject * obj0 = 0 ;
     
@@ -9439,6 +9474,8 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfHDF_GetClassName", _wrap_XdmfHDF_GetClassName, METH_VARARGS },
 	 { (char *)"XdmfHDF_SetCompression", _wrap_XdmfHDF_SetCompression, METH_VARARGS },
 	 { (char *)"XdmfHDF_GetCompression", _wrap_XdmfHDF_GetCompression, METH_VARARGS },
+	 { (char *)"XdmfHDF_SetUseSerialFile", _wrap_XdmfHDF_SetUseSerialFile, METH_VARARGS },
+	 { (char *)"XdmfHDF_GetUseSerialFile", _wrap_XdmfHDF_GetUseSerialFile, METH_VARARGS },
 	 { (char *)"XdmfHDF_SetCwdName", _wrap_XdmfHDF_SetCwdName, METH_VARARGS },
 	 { (char *)"XdmfHDF_GetCwdName", _wrap_XdmfHDF_GetCwdName, METH_VARARGS },
 	 { (char *)"XdmfHDF_Cd", _wrap_XdmfHDF_Cd, METH_VARARGS },
@@ -9676,7 +9713,7 @@ static swig_type_info _swigt__p_XdmfAttribute[] = {{"_p_XdmfAttribute", 0, "Xdmf
 static swig_type_info _swigt__p_XdmfCharArray[] = {{"_p_XdmfCharArray", 0, "XdmfCharArray *", 0},{"_p_XdmfCharArray"},{0}};
 static swig_type_info _swigt__p_XdmfFormat[] = {{"_p_XdmfFormat", 0, "XdmfFormat *", 0},{"_p_XdmfFormatHDF", _p_XdmfFormatHDFTo_p_XdmfFormat},{"_p_XdmfFormat"},{"_p_XdmfFormatMulti", _p_XdmfFormatMultiTo_p_XdmfFormat},{"_p_XdmfFormatXML", _p_XdmfFormatXMLTo_p_XdmfFormat},{0}};
 static swig_type_info _swigt__p_XdmfInt8[] = {{"_p_XdmfInt8", 0, "XdmfInt8 *", 0},{"_p_XdmfInt8"},{0}};
-static swig_type_info _swigt__p_long_long[] = {{"_p_long_long", 0, "long long *", 0},{"_p_long_long"},{0}};
+static swig_type_info _swigt__p_long_long[] = {{"_p_long_long", 0, "ICE_64_INT *", 0},{"_p_long_long"},{0}};
 static swig_type_info _swigt__p_XdmfFloat32[] = {{"_p_XdmfFloat32", 0, "XdmfFloat32 *", 0},{"_p_XdmfFloat32"},{0}};
 static swig_type_info _swigt__p_XdmfDataDesc[] = {{"_p_XdmfDataDesc", 0, "XdmfDataDesc *", 0},{"_p_XdmfHeavyData", _p_XdmfHeavyDataTo_p_XdmfDataDesc},{"_p_XdmfNDGM", _p_XdmfNDGMTo_p_XdmfDataDesc},{"_p_XdmfArray", _p_XdmfArrayTo_p_XdmfDataDesc},{"_p_XdmfDataDesc"},{"_p_XdmfHDF", _p_XdmfHDFTo_p_XdmfDataDesc},{"_p_XdmfCharArray", _p_XdmfCharArrayTo_p_XdmfDataDesc},{0}};
 static swig_type_info _swigt__p_istrstream[] = {{"_p_istrstream", 0, "istrstream *", 0},{"_p_istrstream"},{0}};
@@ -9727,8 +9764,8 @@ _swigt__p_XdmfGrid,
 
 static swig_const_info swig_const_table[] = {
 { SWIG_PY_INT,     (char *)"SIZEOF_LONG_LONG", (long) 8, 0, 0, 0},
-{ SWIG_PY_STRING,  (char*)"ICE_SYSTEM", 0, 0, (void *)"IRIX64", 0},
-{ SWIG_PY_STRING,  (char*)"ICE_MACHINE_TYPE", 0, 0, (void *)"IRIX64", 0},
+{ SWIG_PY_STRING,  (char*)"ICE_SYSTEM", 0, 0, (void *)"Linux", 0},
+{ SWIG_PY_STRING,  (char*)"ICE_MACHINE_TYPE", 0, 0, (void *)"Linux", 0},
 { SWIG_PY_INT,     (char *)"ICE_TRUE", (long) 1, 0, 0, 0},
 { SWIG_PY_INT,     (char *)"ICE_FALSE", (long) 0, 0, 0, 0},
 { SWIG_PY_INT,     (char *)"ICE_SUCCESS", (long) 1, 0, 0, 0},
