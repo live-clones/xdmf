@@ -76,6 +76,7 @@
 #  include <iostream>
 #  include <strstream>
 #  include <fstream>
+#  include <iomanip>
 using std::cerr;
 using std::cout;
 using std::cin;
@@ -92,6 +93,8 @@ using std::ifstream;
 using std::fstream;
 using std::hex;
 
+
+
 // otherwise, non-ANSI -----------------------------------------------------
 #else /* XDMF_USE_ANSI_STDLIB */
 #  include <iostream.h>
@@ -101,6 +104,7 @@ using std::hex;
 #    include <strstream.h>
 #  endif
 #  include <fstream.h>
+#  include <iomanip.h>
 #endif /* XDMF_USE_ANSI_STDLIB */
 #endif
 

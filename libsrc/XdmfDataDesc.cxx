@@ -94,6 +94,7 @@ Result = new char[ strlen( Ptr ) + 2 ];
 strcpy( Result, Ptr );
 delete [] Ptr;
 return( Result );
+return(NULL);
 }
 
 XdmfInt32

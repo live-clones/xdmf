@@ -1,19 +1,28 @@
 # Build vtkXdmf*RenderWindowInteractor.h
 IF(WIN32)
-	SET( Xdmf_SRCS
-		vtkXdmfReader
-		vtkXdmfDataSetWriter
-		vtkXdmfDataArray
-		vtkXdmfWin32RenderWindowInteractor
-		)
+	SET(XDMF_WINDOWINTERACTOR vtkWin32RenderWindowInteractor)
+	CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.h.in
+		${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.h
+		@ONLY IMMEDIATE)
+	CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx.in
+		${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
+		@ONLY IMMEDIATE)
 ELSE(WIN32)
-	SET( Xdmf_SRCS
-		vtkXdmfReader
-		vtkXdmfDataSetWriter
-		vtkXdmfDataArray
-		vtkXdmfXRenderWindowInteractor
-		)
+	SET(XDMF_WINDOWINTERACTOR vtkXRenderWindowInteractor)
+	CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.h.in
+		${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.h
+		@ONLY IMMEDIATE)
+	CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx.in
+		${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
+		@ONLY IMMEDIATE)
 ENDIF(WIN32)
+
+SET( Xdmf_SRCS
+	vtkXdmfReader.cxx
+	vtkXdmfDataSetWriter.cxx
+	vtkXdmfDataArray.cxx
+	${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
+	)
 
 INSTALL_FILES(/include/XdmfVtk .h ${Xdmf_SRCS})
 

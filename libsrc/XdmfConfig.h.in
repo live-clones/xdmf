@@ -8,7 +8,7 @@
 #endif
 
 #ifndef SIZEOF_LONG_LONG
-#cmakedefine SIZEOF_LONG_LONG
+#cmakedefine SIZEOF_LONG_LONG @SIZEOF_LONG_LONG@
 #endif
 
 #if defined( SIZEOF___INT64 )

@@ -60,6 +60,13 @@ void vtkXdmfRenderWindowInteractor::LoopOnce( )
 {
 // Check for WIN32 but without Cygwin with X11
 #if defined(_WIN32) && !defined(VTK_USE_OGLR)
+    MSG msg;
+    while (PeekMessage ( &msg, NULL, 0, 0, PM_NOREMOVE)) {
+	if(GetMessage(&msg, NULL, 0, 0)){
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);	
+		}
+    }
 #else
     XEvent event;
 
