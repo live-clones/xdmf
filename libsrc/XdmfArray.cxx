@@ -738,7 +738,12 @@ Values = new XdmfFloat64[ NumberOfValues + 10 ];
 this->GetValues( Index, Values, NumberOfValues, ArrayStride, 1 );
 i = 0;
 while( NumberOfValues-- ) {
-  StringOutput << ICE_64BIT_CAST Values[i++] << " ";
+  // StringOutput << ICE_64BIT_CAST Values[i++] << " ";
+#ifdef ICE_HAVE_64BIT_STREAMS
+  StringOutput << (double)(Values[i++]) << " ";
+#else
+  StringOutput << Values[i++] << " ";
+#endif
   }
 StringOutput << ends;
 Ptr = StringOutput.str();
