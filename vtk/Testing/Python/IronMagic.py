@@ -47,8 +47,8 @@ pvTemp69.UpdateInformation()
 
 strides = [ 1, 1, 1 ]
 
-if len(sys.argv) > 3:
-  sstrides = string.split(sys.argv[3], " ")
+if len(sys.argv) > 4:
+  sstrides = string.split(sys.argv[4], " ")
   if len(sstrides) == 3:
     strides[0] = int(sstrides[0])
     strides[1] = int(sstrides[1])
@@ -292,7 +292,7 @@ Ren1.AddActor( pvTemp309)
 
 
 tt = vtk.vtkTesting()
-tt.SetDataFileName("%s/IronMagic%d%d%d.png" % (sys.argv[2], strides[0], strides[1], strides[2]))
+tt.SetDataFileName("%s/%s.png" % (sys.argv[2], sys.argv[3]))
 tt.SetRenderWindow(RenWin1)
 if tt.RegressionTest(10) != 1:
   sys.exit(1)
