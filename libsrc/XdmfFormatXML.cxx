@@ -54,6 +54,8 @@ if( !Element ) {
 NumberType = this->DOM->GetNumberType( Element );
 Data = this->DOM->Get(Element, "CData");
 if( Data && strlen( Data ) > 1 ){
+  XdmfString NewData = 0;
+  XDMF_STRING_DUPLICATE(NewData, Data);
   if( Array == NULL ){
     NewArray = Array = new XdmfArray( NumberType );
     }
@@ -75,7 +77,7 @@ if( Data && strlen( Data ) > 1 ){
       TempArray->CopyShape( Desc );
       TempArray->CopySelection( Desc );
       TempArray->Allocate();
-      TempArray->SetValues(0, Data );
+      TempArray->SetValues(0, NewData );
       if( NewArray ){
         NewArray->SetShape( 1, &SelectionSize );
         NewArray->SelectAll();
@@ -83,7 +85,7 @@ if( Data && strlen( Data ) > 1 ){
       CopyArray( TempArray, Array );
       delete TempArray;
     } else {
-      Array->SetValues(0, Data );
+      Array->SetValues(0, NewData );
     }
     if( NewDesc ){
       delete Desc;
@@ -93,9 +95,11 @@ if( Data && strlen( Data ) > 1 ){
     if( NewArray ){
       delete NewArray;
       }
+    delete [] NewData;
     return( NULL );
     }
   
+  delete [] NewData;
 } else {
   XdmfErrorMessage("Node has no CData");
   return( NULL );
