@@ -103,27 +103,29 @@ public:
 
   // Description:
   // Generate hdf5 name for array
-  const char* GenerateHDF5ArrayName(const char* arrayName);
+  const char* GenerateHDF5ArrayName(const char* gridName, const char* arrayName);
 
 protected:
   vtkXdmfWriter();
   ~vtkXdmfWriter();
 
-  void WriteAttributes( ostream& ost );
-  void StartTopology( ostream& ost, int Type, vtkCellArray *Cells);
-  void StartTopology( ostream& ost, const char* toptype, int rank, int *dims);
+  void WriteAttributes( ostream& ost, vtkDataSet* ds, const char* gridName );
+  void StartTopology( ostream& ost, int cellType, vtkIdType numVert, vtkIdType numCells );
+  void StartTopology( ostream& ost, const char* toptype, int rank, int *dims );
   void EndTopology( ostream& ost );
   void StartGeometry( ostream& ost, const char* type );
   void EndGeometry( ostream& ost );
   virtual int WriteHead( ostream& ost );
   virtual int WriteTail( ostream& ost );
-  virtual int WriteGrid( ostream& ost );
-  virtual int WriteCellArray( ostream& ost, vtkCellArray *Cells );
-  virtual int WritePoints( ostream& ost, vtkPoints *Points );
-  virtual int WriteDataArray( ostream& ost, vtkDataArray* array, int dims[3], const char* Name, const char* Center, int type );
-  virtual int WriteVTKArray( ostream& ost, vtkDataArray* array, int dims[3], const char* name, const char* dataName, int alllight);
-
-  vtkDataSet* GetInputDataSet();
+  virtual int WriteGrid( ostream& ost, const char* name, vtkDataSet* ds, 
+    void* mapofcells = 0, const void *celltype = 0 );
+  virtual int WriteCellArray( ostream& ost, vtkDataSet* Cells, const char* gridName, 
+    void* mapofcells, const void *celltype );
+  virtual int WritePoints( ostream& ost, vtkPoints *Points, const char* gridName );
+  virtual int WriteDataArray( ostream& ost, vtkDataArray* array, 
+    int dims[3], const char* Name, const char* Center, int type, const char* gridName );
+  virtual int WriteVTKArray( ostream& ost, vtkDataArray* array, 
+    int dims[3], const char* name, const char* dataName, const char* gridName, int alllight);
 
   vtkSetStringMacro(HeavyDataSetNameString);
   char    *HeavyDataSetNameString;
