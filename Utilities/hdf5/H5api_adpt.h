@@ -22,6 +22,13 @@
 
 #if defined(WIN32)
 
+#if defined (vtkhdf5_EXPORTS)
+#  define _HDF5DLL_
+#else
+#  define _HDF5USEDLL_
+#endif
+
+
 #if defined(_HDF5DLL_)
 #pragma warning(disable: 4273)	/* Disable the dll linkage warnings */
 #define H5_DLL __declspec(dllexport)
