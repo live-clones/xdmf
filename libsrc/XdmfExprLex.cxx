@@ -491,7 +491,7 @@ if ( strcmp( _c, "NULL" ) == 0 ){
 return( 0 );
 }
 
-#line 492 "XdmfExprLex.cxx"
+#line 493 "XdmfExprLex.cxx"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -642,9 +642,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
 
-#line 63 "XdmfExpr.l"
+#line 64 "XdmfExpr.l"
 
-#line 645 "XdmfExprLex.cxx"
+#line 646 "XdmfExprLex.cxx"
 
 	if ( yy_init )
 		{
@@ -729,103 +729,103 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 64 "XdmfExpr.l"
+#line 65 "XdmfExpr.l"
 { return JOIN; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 65 "XdmfExpr.l"
+#line 66 "XdmfExpr.l"
 { return JOIN; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 66 "XdmfExpr.l"
+#line 67 "XdmfExpr.l"
 { return JOIN; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 67 "XdmfExpr.l"
+#line 68 "XdmfExpr.l"
 { return WHERE; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 68 "XdmfExpr.l"
+#line 69 "XdmfExpr.l"
 { return WHERE; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 69 "XdmfExpr.l"
+#line 70 "XdmfExpr.l"
 { return WHERE; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 70 "XdmfExpr.l"
+#line 71 "XdmfExpr.l"
 { return INDEX; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 71 "XdmfExpr.l"
+#line 72 "XdmfExpr.l"
 { return INDEX; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 72 "XdmfExpr.l"
+#line 73 "XdmfExpr.l"
 { return INDEX; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 73 "XdmfExpr.l"
+#line 74 "XdmfExpr.l"
 { return GTGT; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 74 "XdmfExpr.l"
+#line 75 "XdmfExpr.l"
 { return LTLT; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 75 "XdmfExpr.l"
+#line 76 "XdmfExpr.l"
 { return EQEQ; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 76 "XdmfExpr.l"
+#line 77 "XdmfExpr.l"
 { return LT; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 77 "XdmfExpr.l"
+#line 78 "XdmfExpr.l"
 { return LE; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 78 "XdmfExpr.l"
+#line 79 "XdmfExpr.l"
 { return GT; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 79 "XdmfExpr.l"
+#line 80 "XdmfExpr.l"
 { return GE; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 80 "XdmfExpr.l"
+#line 81 "XdmfExpr.l"
 { return NE; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 81 "XdmfExpr.l"
+#line 82 "XdmfExpr.l"
 {
 #ifdef DiceExprDebug
-	printf(" Lex got a INTEGER\n");
+	printf(" Lex got a tokINTEGER\n");
 #endif
 	yylval.IntegerValue = atoi(yytext);
-	return INTEGER;
+	return tokINTEGER;
 	}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 88 "XdmfExpr.l"
+#line 89 "XdmfExpr.l"
 {
 #ifdef DiceExprDebug
 	printf(" Lex got a FLOAT\n");
@@ -836,21 +836,21 @@ YY_RULE_SETUP
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 95 "XdmfExpr.l"
+#line 96 "XdmfExpr.l"
 {
 #ifdef DiceExprDebug
-	printf(" Lex got an ARRAY pointer\n");
+	printf(" Lex got an tokARRAY pointer\n");
 #endif
 	if( GetPointerFromString( yytext, &yylval.ArrayPointer ) ){
 		printf("Bad Pointer Conversion\n");
 		yylval.ArrayPointer = NULL;
 	}
-	return ARRAY;
+	return tokARRAY;
 	}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 105 "XdmfExpr.l"
+#line 106 "XdmfExpr.l"
 {
 	/* Symbol */
 	XdmfExprSymbol	*sp;
@@ -862,25 +862,25 @@ YY_RULE_SETUP
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 113 "XdmfExpr.l"
+#line 114 "XdmfExpr.l"
 ;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 114 "XdmfExpr.l"
+#line 115 "XdmfExpr.l"
 return 0;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 115 "XdmfExpr.l"
+#line 116 "XdmfExpr.l"
 return yytext[0];
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 116 "XdmfExpr.l"
+#line 117 "XdmfExpr.l"
 ECHO;
 	YY_BREAK
-#line 881 "XdmfExprLex.cxx"
+#line 882 "XdmfExprLex.cxx"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1766,7 +1766,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 116 "XdmfExpr.l"
+#line 117 "XdmfExpr.l"
 
 
 extern int	XdmfExprInput();

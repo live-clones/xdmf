@@ -27,7 +27,7 @@ public :
 		};
 };
 
-#define ADD_XDMF_ARRAY_TO_SYMBOL( a ) \
+#define ADD_XDMF_tokARRAY_TO_SYMBOL( a ) \
 	{ \
 	char	name[80]; \
 	XdmfExprSymbol *sp; \
@@ -46,8 +46,8 @@ public :
 }
 
 %token <DoubleValue>	lFLOAT
-%token <IntegerValue>	INTEGER
-%token <ArrayPointer>	ARRAY
+%token <IntegerValue>	tokINTEGER
+%token <ArrayPointer>	tokARRAY
 %token <Symbol>		NAME
 
 %token SIN COS TAN ACOS ASIN ATAN LOG EXP ABS_TOKEN SQRT WHERE INDEX
@@ -70,7 +70,7 @@ statemant_list : statement {
 		}
 	;
 
-statement: ARRAY '=' ArrayExpression	{
+statement: tokARRAY '=' ArrayExpression	{
 		XdmfArray *TempArray = ( XdmfArray *)$3;
 
 		/* printf("Setting %s from ArrayExpression\n", $1); */
@@ -78,12 +78,12 @@ statement: ARRAY '=' ArrayExpression	{
 		*XdmfExprReturnValue = *TempArray;
 		delete TempArray;
 		}
-	|  ARRAY '=' ScalarExpression {
+	|  tokARRAY '=' ScalarExpression {
 		/* printf("Setting %s from ScalarExpression\n", $1); */
 		XdmfExprReturnValue = (XdmfArray *)$1;
 		*XdmfExprReturnValue = $3;
 		}
-	|	ARRAY '[' ArrayExpression ']'  '=' ScalarExpression {
+	|	tokARRAY '[' ArrayExpression ']'  '=' ScalarExpression {
 			XdmfArray	*Array1 = ( XdmfArray *)$3;
 			XdmfArray	*Result = ( XdmfArray *)$1;
 			XdmfLength	i, index, Length = Array1->GetNumberOfElements();
@@ -95,7 +95,7 @@ statement: ARRAY '=' ArrayExpression	{
 			delete Array1;
 			XdmfExprReturnValue = Result;
 		}
-	|	ARRAY '[' ArrayExpression ']'  '=' ArrayExpression {
+	|	tokARRAY '[' ArrayExpression ']'  '=' ArrayExpression {
 			XdmfArray	*Array1 = ( XdmfArray *)$3;
 			XdmfArray	*Array2 = ( XdmfArray *)$6;
 			XdmfArray	*Result = ( XdmfArray *)$1;
@@ -111,7 +111,7 @@ statement: ARRAY '=' ArrayExpression	{
 			delete Array2;
 			XdmfExprReturnValue = Result;
 		}
-	|	ARRAY '[' INTEGER ':' INTEGER ']'  '=' ScalarExpression {
+	|	tokARRAY '[' tokINTEGER ':' tokINTEGER ']'  '=' ScalarExpression {
 			XdmfArray *Range, *Result;
 
 			/* printf("Array Range %d:%d = ScalarExpression \n", $3, $5);	 */
@@ -122,7 +122,7 @@ statement: ARRAY '=' ArrayExpression	{
 			/* Now Point to the Entire Array */
 			XdmfExprReturnValue = (XdmfArray *)$1;
 			}
-	|	ARRAY '[' INTEGER ':' INTEGER ']'  '=' ArrayExpression {
+	|	tokARRAY '[' tokINTEGER ':' tokINTEGER ']'  '=' ArrayExpression {
 			XdmfArray *TempArray = ( XdmfArray *)$8;
 			XdmfArray *Range, *Result;
 
@@ -397,7 +397,7 @@ ArrayExpression: ArrayExpression '+' ArrayExpression {
 			*Result /= $1;
 			$$ = Result;
 			}
-	|	ARRAY '[' ArrayExpression ']' {
+	|	tokARRAY '[' ArrayExpression ']' {
 			XdmfArray	*Array1 = ( XdmfArray *)$1;
 			XdmfArray	*Array2 = ( XdmfArray *)$3;
 			XdmfArray	*Result;
@@ -407,7 +407,7 @@ ArrayExpression: ArrayExpression '+' ArrayExpression {
 			delete Array2;
 			$$ = Result;
 		}
-	|	ARRAY '[' INTEGER ':' INTEGER ']' {
+	|	tokARRAY '[' tokINTEGER ':' tokINTEGER ']' {
 			XdmfArray *Array1 = ( XdmfArray *)$1;
 			XdmfArray *Range, *Result;
 
@@ -647,7 +647,7 @@ ArrayExpression: ArrayExpression '+' ArrayExpression {
 			/* printf("( ArrayExpression )\n"); */
 			$$ = $3;
 			}
-	|	ARRAY {
+	|	tokARRAY {
 			XdmfArray *Array1 = ( XdmfArray *)$1;
 			XdmfArray *Result;
 
@@ -692,8 +692,8 @@ ScalarExpression: 	ScalarExpression '+' ScalarExpression {
 			/* printf ("( ScalarExpression )\n"); */
 			$$ = $2;
 			}
-	|	INTEGER {
-			/* printf ("ScalarExpression from INTEGER\n"); */
+	|	tokINTEGER {
+			/* printf ("ScalarExpression from tokINTEGER\n"); */
 			$$ = $1;
 			}
 	|	lFLOAT {

@@ -81,10 +81,10 @@ Index { return INDEX; }
 "!=" { return NE; }
 ([-+]?[0-9]+)	{
 #ifdef DiceExprDebug
-	printf(" Lex got a INTEGER\n");
+	printf(" Lex got a tokINTEGER\n");
 #endif
 	yylval.IntegerValue = atoi(yytext);
-	return INTEGER;
+	return tokINTEGER;
 	}
 ([-+]?[0-9]+|([-+]?[0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?) {
 #ifdef DiceExprDebug
@@ -95,13 +95,13 @@ Index { return INDEX; }
 	}
 _+[0-9a-zA-Z_]*"_"* {
 #ifdef DiceExprDebug
-	printf(" Lex got an ARRAY pointer\n");
+	printf(" Lex got an tokARRAY pointer\n");
 #endif
 	if( GetPointerFromString( yytext, &yylval.ArrayPointer ) ){
 		printf("Bad Pointer Conversion\n");
 		yylval.ArrayPointer = NULL;
 	}
-	return ARRAY;
+	return tokARRAY;
 	}
 [A-Za-z][A-Za-z0-9]* {
 	/* Symbol */

@@ -24,6 +24,8 @@
 /*******************************************************************/
 #include <Xdmf.h>
 
+#include "mpi.h"
+
 //using namespace std;
 
 // Usage : XdmfFormatExample [ DataSetName ] 
@@ -33,16 +35,20 @@ main( int argc, char **argv ) {
 XdmfHDF    *ExternalDataSet;
 XdmfArray  *InCoreData;
 XdmfArray  *InCoreSection;
-XdmfArray  *InCoreCoordinates;
 XdmfInt32  Rank = 3;
 // All Dimenions are "slowest changing first" : K,J,I
 // and zero based
-XdmfInt64  Dimensions[] = { 10, 20, 30 };
+XdmfInt64  Dimensions[] = { 0, 20, 30 };
+XdmfInt64  Start[] = { 0, 0, 0 };
+XdmfInt64  Stride[] = { 1, 1, 1 };
+XdmfInt64  Count[] = { 0, 20, 30 };
+XdmfInt64  NumKPlanes = 10;
 
 const char    *DataSetNameConst;
 char    *DataSetName;
 int    i, k;
 double    *DataFromSomewhereElse;
+int	size, rank;
 
 if(argc > 1 ) {
   // i.e. NDGM:TestFile.h5:/TestDataSets/Values1
@@ -50,10 +56,20 @@ if(argc > 1 ) {
 } else {
   // Domain:FileName:/HDF5Directory/..../HDF5DataSetName
   //  Domains : FILE, NDGM, GASS (Globus), CORE (malloc)
-  DataSetNameConst = "SERIAL:TestFile.h5:/TestDataSets/Values1";
+  DataSetNameConst = "FILE:TestFile.h5:/TestDataSets/Values1";
   }
 DataSetName = new char[ strlen(DataSetNameConst) + 1 ];
 strcpy(DataSetName, DataSetNameConst);
+
+MPI_Init(&argc, &argv);
+MPI_Comm_size(MPI_COMM_WORLD, &size);
+MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+cout << "Hello from Id " << rank << " of " << size << endl;
+NumKPlanes = 2 * size;
+Dimensions[0] = NumKPlanes;
+Count[0] = 2;
+Start[0] = rank * 2;
 
 // Create Some Data
 // XdmfArray and XdmfHDF ( and some others ) are derived
@@ -64,10 +80,12 @@ strcpy(DataSetName, DataSetNameConst);
 // but just dealing with a block of [10, 20, 30 ] somewhere in
 // the middle. By default Selction == Shape ... the whole thing.
 InCoreData = new XdmfArray();
-InCoreData->SetGlobalDebug(1);
+// InCoreData->SetGlobalDebug(rank);
 InCoreData->SetNumberType( XDMF_FLOAT64_TYPE );
-InCoreData->SetShape( Rank, Dimensions );
-InCoreData->Generate( 0, 5999 );
+// InCoreData->SetShape( Rank, Dimensions );
+InCoreData->SetShape( Rank, Count);
+InCoreData->Generate( rank + 1, rank + 1);
+// InCoreData->SelectHyperSlab(Start, Stride, Count);
 // Convenience for :
 // for( i = 0 ; i < InCoreData->GetNumberOfElements() ; i++ ){
 //  InCoreData->SetValue( i, i );
@@ -77,76 +95,58 @@ InCoreData->Generate( 0, 5999 );
 
 // Create an external dataset if it doesn't exist
 ExternalDataSet = new XdmfHDF();
-ExternalDataSet->SetDebug(1);
+// ExternalDataSet->SetDebug(rank);
 // ExternalDataSet->SetCompression(9);
-ExternalDataSet->CopyType( InCoreData );
-ExternalDataSet->CopyShape( InCoreData );
+ExternalDataSet->SetNumberType( XDMF_FLOAT64_TYPE );
+ExternalDataSet->SetShape( Rank, Dimensions );
+// ExternalDataSet->CopyShape( InCoreData );
 // In am MPI app the External Dataset would
 // probable be much bigger that each node's InCore.
 // i.e. ExternalDataSet->SetShape( 3, GloablDomainDimensions )
 // but here we'll deal with just the InCore dataset size.
+// ExternalDataSet->Open( DataSetName, "rw" );
 if(ExternalDataSet->Open( DataSetName, "rw" ) == XDMF_FAIL){
-        ExternalDataSet->CreateDataset(DataSetName);
-        }
+	ExternalDataSet->CreateDataset(DataSetName);
+	}
+ExternalDataSet->SelectHyperSlab(Start, Stride, Count);
+// InCoreData->SelectHyperSlab(Start, Stride, Count);
 
 // Write the Data
 ExternalDataSet->Write( InCoreData );
 ExternalDataSet->Close();
-// exit(1);
-
-// Now Read in 4 values from the "corners"
-InCoreCoordinates = new XdmfArray();
-// Most Methods have a "FromString" convenience method.
-// This makes wrapping for Python/Tcl/Java easier
-InCoreCoordinates->SetNumberTypeFromString( "XDMF_FLOAT64_TYPE" );
-InCoreCoordinates->SetShapeFromString("4");
-// This is just the same dataset we wrote
-// number type and shape get (re)set on Open
-// ExternalDataSet->Open( DataSetName, "r" );
-// Selections can be :
-//  HyperSlab - Start, Stride, Count for Each Dimension
-//  Coordinate - Parametric Coordinates
-//  Function - Lex/Yacc stuff .... $0 * $1 / 1.2
-ExternalDataSet->Open( DataSetName, "r" );
-ExternalDataSet->SelectCoordinatesFromString("0 0 0    0 0 29   9 19 0   9 19 29");
-ExternalDataSet->Read( InCoreCoordinates );
-ExternalDataSet->Close();
-cout << endl;
-cout << "4 of the Corners == ";
-DataFromSomewhereElse = (double *)InCoreCoordinates->GetDataPointer();
-for( k = 0 ; k < 4 ; k++ ){
-  cout << " " << *DataFromSomewhereElse++;  
-}
-cout << endl;
 
 
+// Read a J Plane down the middle
 InCoreSection = new XdmfArray();
 // Instead of allocating itself, use
 // an external pointer : core dumps are
 // your fault !!
-DataFromSomewhereElse = new double[ 150 ];
+DataFromSomewhereElse = new double[ NumKPlanes * 30 ];
 InCoreSection->SetDataPointer( DataFromSomewhereElse );
 InCoreSection->SetNumberTypeFromString( "XDMF_FLOAT64_TYPE" );
-// Make a 2D array to read back a section of the data
-// We'll read in one "J" PLane
-InCoreSection->SetShapeFromString("10 15");
+InCoreSection->SetNumberOfElements(NumKPlanes * 30);
 ExternalDataSet->Open( DataSetName, "r" );
-ExternalDataSet->SelectHyperSlabFromString("0 9 0", "1 1 2", "10 1 15");
-// So from a 10x20x30 data set, start at 0,9,0. Stride 2 in Idim
-// and read in 10 K x 1 J x ( 30 / 2 ) = 15 I ... a slice
+Count[0] = NumKPlanes;
+Count[1] = 1;
+Start[0] = 0;
+ExternalDataSet->SelectHyperSlab(Start, Stride, Count);
 ExternalDataSet->Read( InCoreSection );
 ExternalDataSet->Close();
 
+if(rank == 0){
 cout << endl;
-for( k = 0 ; k < 10 ; k++ ){
+for( k = 0 ; k < NumKPlanes ; k++ ){
   cout << "k = " << k << ":";
-  for( i = 0 ; i < 15 ; i++ ){
+  for( i = 0 ; i < 30 ; i++ ){
     cout << " " << *DataFromSomewhereElse++;
   }
   cout << endl;
 }
+}
 
 delete [] DataSetName;
+
+MPI_Finalize();
 
 return 0;
 }

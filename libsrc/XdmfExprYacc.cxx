@@ -12,8 +12,8 @@
 #define yydebug dice_yydebug
 #define yynerrs dice_yynerrs
 #define	lFLOAT	257
-#define	INTEGER	258
-#define	ARRAY	259
+#define	tokINTEGER	258
+#define	tokARRAY	259
 #define	NAME	260
 #define	SIN	261
 #define	COS	262
@@ -67,7 +67,7 @@ public :
 		};
 };
 
-#define ADD_XDMF_ARRAY_TO_SYMBOL( a ) \
+#define ADD_XDMF_tokARRAY_TO_SYMBOL( a ) \
 	{ \
 	char	name[80]; \
 	XdmfExprSymbol *sp; \
@@ -182,10 +182,10 @@ static const short yyrline[] = { 0,
 #if YYDEBUG != 0 || defined (YYERROR_VERBOSE)
 
 static const char * const yytname[] = {   "$","error","$undefined.","lFLOAT",
-"INTEGER","ARRAY","NAME","SIN","COS","TAN","ACOS","ASIN","ATAN","LOG","EXP",
-"ABS_TOKEN","SQRT","WHERE","INDEX","EQEQ","LT","LE","GT","GE","NE","LTLT","GTGT",
-"JOIN","'-'","'+'","'*'","'/'","','","';'","'='","'['","']'","':'","'('","')'",
-"statemant_list","statement","ArrayExpression","ScalarExpression", NULL
+"tokINTEGER","tokARRAY","NAME","SIN","COS","TAN","ACOS","ASIN","ATAN","LOG",
+"EXP","ABS_TOKEN","SQRT","WHERE","INDEX","EQEQ","LT","LE","GT","GE","NE","LTLT",
+"GTGT","JOIN","'-'","'+'","'*'","'/'","','","';'","'='","'['","']'","':'","'('",
+"')'","statemant_list","statement","ArrayExpression","ScalarExpression", NULL
 };
 #endif
 
@@ -1606,7 +1606,7 @@ case 43:
 case 44:
 #line 695 "XdmfExpr.y"
 {
-			/* printf ("ScalarExpression from INTEGER\n"); */
+			/* printf ("ScalarExpression from tokINTEGER\n"); */
 			yyval.DoubleValue = yyvsp[0].IntegerValue;
 			;
     break;}

@@ -5,8 +5,8 @@ typedef union {
 	XdmfExprSymbol	*Symbol;
 } YYSTYPE;
 #define	lFLOAT	257
-#define	INTEGER	258
-#define	ARRAY	259
+#define	tokINTEGER	258
+#define	tokARRAY	259
 #define	NAME	260
 #define	SIN	261
 #define	COS	262
