@@ -12,7 +12,7 @@
 
 /* Id */
 
-#define H5T_PACKAGE		/*suppress error about including H5Tpkg    */
+#define H5T_PACKAGE             /*suppress error about including H5Tpkg    */
 
 #include "H5private.h"          /* Generic Functions                       */
 #include "H5Eprivate.h"         /* Errors                                  */
@@ -21,7 +21,7 @@
 #include "H5MMprivate.h"        /* Memory Allocation                       */
 #include "H5Tpkg.h"             /* Datatypes                               */
 
-#define PABLO_MASK	H5Tvlen_mask
+#define PABLO_MASK      H5Tvlen_mask
 
 /* Interface initialization */
 static int interface_initialize_g = 0;
@@ -34,16 +34,16 @@ static herr_t H5T_vlen_reclaim_recurse(void *elem, H5T_t *dt, H5MM_free_t free_f
 /*-------------------------------------------------------------------------
  * Function: H5T_vlen_set_loc
  *
- * Purpose:	Sets the location of a VL datatype to be either on disk or in memory
+ * Purpose:     Sets the location of a VL datatype to be either on disk or in memory
  *
- * Return:	
+ * Return:      
  *  One of two values on success:
  *      TRUE - If the location of any vlen types changed
  *      FALSE - If the location of any vlen types is the same
  *  <0 is returned on failure
  *
- * Programmer:	Quincey Koziol
- *		Friday, June 4, 1999
+ * Programmer:  Quincey Koziol
+ *              Friday, June 4, 1999
  *
  * Modifications:
  *
@@ -129,14 +129,14 @@ H5T_vlen_set_loc(H5T_t *dt, H5F_t *f, H5T_vlen_loc_t loc)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5T_vlen_seq_mem_getlen
+ * Function:    H5T_vlen_seq_mem_getlen
  *
- * Purpose:	Retrieves the length of a memory based VL element.
+ * Purpose:     Retrieves the length of a memory based VL element.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Quincey Koziol
- *		Wednesday, June 2, 1999
+ * Programmer:  Quincey Koziol
+ *              Wednesday, June 2, 1999
  *
  * Modifications:
  *
@@ -145,7 +145,7 @@ H5T_vlen_set_loc(H5T_t *dt, H5F_t *f, H5T_vlen_loc_t loc)
 hssize_t H5T_vlen_seq_mem_getlen(H5F_t UNUSED *f, void *vl_addr)
 {
     hvl_t *vl=(hvl_t *)vl_addr;   /* Pointer to the user's hvl_t information */
-    hssize_t	ret_value = FAIL;	/*return value			*/
+    hssize_t    ret_value = FAIL;       /*return value                  */
 
     FUNC_ENTER (H5T_vlen_seq_mem_getlen, FAIL);
 
@@ -155,18 +155,20 @@ hssize_t H5T_vlen_seq_mem_getlen(H5F_t UNUSED *f, void *vl_addr)
     ret_value=(hssize_t)vl->len;
 
     FUNC_LEAVE (ret_value);
+  
+    f = 0;
 }   /* end H5T_vlen_seq_mem_getlen() */
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5T_vlen_seq_mem_read
+ * Function:    H5T_vlen_seq_mem_read
  *
- * Purpose:	"Reads" the memory based VL sequence into a buffer
+ * Purpose:     "Reads" the memory based VL sequence into a buffer
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Quincey Koziol
- *		Wednesday, June 2, 1999
+ * Programmer:  Quincey Koziol
+ *              Wednesday, June 2, 1999
  *
  * Modifications:
  *
@@ -185,18 +187,20 @@ herr_t H5T_vlen_seq_mem_read(H5F_t UNUSED *f, void *vl_addr, void *buf, size_t l
     HDmemcpy(buf,vl->p,len);
 
     FUNC_LEAVE (SUCCEED);
+  
+    f = 0;
 }   /* end H5T_vlen_seq_mem_read() */
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5T_vlen_seq_mem_write
+ * Function:    H5T_vlen_seq_mem_write
  *
- * Purpose:	"Writes" the memory based VL sequence from a buffer
+ * Purpose:     "Writes" the memory based VL sequence from a buffer
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Quincey Koziol
- *		Wednesday, June 2, 1999
+ * Programmer:  Quincey Koziol
+ *              Wednesday, June 2, 1999
  *
  * Modifications:
  *
@@ -236,18 +240,20 @@ herr_t H5T_vlen_seq_mem_write(const H5D_xfer_t *xfer_parms, H5F_t UNUSED *f, voi
     vl->len=seq_len;
 
     FUNC_LEAVE (SUCCEED);
+  
+    f = 0;
 }   /* end H5T_vlen_seq_mem_write() */
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5T_vlen_str_mem_getlen
+ * Function:    H5T_vlen_str_mem_getlen
  *
- * Purpose:	Retrieves the length of a memory based VL string.
+ * Purpose:     Retrieves the length of a memory based VL string.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Quincey Koziol
- *		Wednesday, June 2, 1999
+ * Programmer:  Quincey Koziol
+ *              Wednesday, June 2, 1999
  *
  * Modifications:
  *
@@ -256,7 +262,7 @@ herr_t H5T_vlen_seq_mem_write(const H5D_xfer_t *xfer_parms, H5F_t UNUSED *f, voi
 hssize_t H5T_vlen_str_mem_getlen(H5F_t UNUSED *f, void *vl_addr)
 {
     char *s=*(char **)vl_addr;   /* Pointer to the user's hvl_t information */
-    hssize_t	ret_value = FAIL;	/*return value			*/
+    hssize_t    ret_value = FAIL;       /*return value                  */
 
     FUNC_ENTER (H5T_vlen_str_mem_getlen, FAIL);
 
@@ -266,18 +272,20 @@ hssize_t H5T_vlen_str_mem_getlen(H5F_t UNUSED *f, void *vl_addr)
     ret_value=(hssize_t)HDstrlen(s);
 
     FUNC_LEAVE (ret_value);
+  
+    f = 0;
 }   /* end H5T_vlen_str_mem_getlen() */
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5T_vlen_str_mem_read
+ * Function:    H5T_vlen_str_mem_read
  *
- * Purpose:	"Reads" the memory based VL string into a buffer
+ * Purpose:     "Reads" the memory based VL string into a buffer
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Quincey Koziol
- *		Wednesday, June 2, 1999
+ * Programmer:  Quincey Koziol
+ *              Wednesday, June 2, 1999
  *
  * Modifications:
  *
@@ -296,18 +304,20 @@ herr_t H5T_vlen_str_mem_read(H5F_t UNUSED *f, void *vl_addr, void *buf, size_t l
     HDmemcpy(buf,s,len);
 
     FUNC_LEAVE (SUCCEED);
+  
+    f = 0;
 }   /* end H5T_vlen_str_mem_read() */
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5T_vlen_str_mem_write
+ * Function:    H5T_vlen_str_mem_write
  *
- * Purpose:	"Writes" the memory based VL string from a buffer
+ * Purpose:     "Writes" the memory based VL string from a buffer
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Quincey Koziol
- *		Wednesday, June 2, 1999
+ * Programmer:  Quincey Koziol
+ *              Wednesday, June 2, 1999
  *
  * Modifications:
  *
@@ -338,18 +348,20 @@ herr_t H5T_vlen_str_mem_write(const H5D_xfer_t *xfer_parms, H5F_t UNUSED *f, voi
     (*s)[len]='\0';
 
     FUNC_LEAVE (SUCCEED);
+  
+    f = 0;
 }   /* end H5T_vlen_str_mem_write() */
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5T_vlen_disk_getlen
+ * Function:    H5T_vlen_disk_getlen
  *
- * Purpose:	Retrieves the length of a disk based VL element.
+ * Purpose:     Retrieves the length of a disk based VL element.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Quincey Koziol
- *		Wednesday, June 2, 1999
+ * Programmer:  Quincey Koziol
+ *              Wednesday, June 2, 1999
  *
  * Modifications:
  *
@@ -358,7 +370,7 @@ herr_t H5T_vlen_str_mem_write(const H5D_xfer_t *xfer_parms, H5F_t UNUSED *f, voi
 hssize_t H5T_vlen_disk_getlen(H5F_t UNUSED *f, void *vl_addr)
 {
     uint8_t *vl=(uint8_t *)vl_addr;   /* Pointer to the disk VL information */
-    hssize_t	ret_value = FAIL;	/*return value			*/
+    hssize_t    ret_value = FAIL;       /*return value                  */
 
     FUNC_ENTER (H5T_vlen_disk_getlen, FAIL);
 
@@ -368,18 +380,20 @@ hssize_t H5T_vlen_disk_getlen(H5F_t UNUSED *f, void *vl_addr)
     UINT32DECODE(vl, ret_value);
 
     FUNC_LEAVE (ret_value);
+  
+    f = 0;
 }   /* end H5T_vlen_disk_getlen() */
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5T_vlen_disk_read
+ * Function:    H5T_vlen_disk_read
  *
- * Purpose:	Reads the disk based VL element into a buffer
+ * Purpose:     Reads the disk based VL element into a buffer
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Quincey Koziol
- *		Wednesday, June 2, 1999
+ * Programmer:  Quincey Koziol
+ *              Wednesday, June 2, 1999
  *
  * Modifications:
  *
@@ -413,18 +427,20 @@ herr_t H5T_vlen_disk_read(H5F_t *f, void *vl_addr, void *buf, size_t UNUSED len)
     } /* end if */
 
     FUNC_LEAVE (SUCCEED);
+  
+    len = 0;
 }   /* end H5T_vlen_disk_read() */
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5T_vlen_disk_write
+ * Function:    H5T_vlen_disk_write
  *
- * Purpose:	Writes the disk based VL element from a buffer
+ * Purpose:     Writes the disk based VL element from a buffer
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Quincey Koziol
- *		Wednesday, June 2, 1999
+ * Programmer:  Quincey Koziol
+ *              Wednesday, June 2, 1999
  *
  * Modifications:
  *
@@ -460,6 +476,7 @@ herr_t H5T_vlen_disk_write(const H5D_xfer_t UNUSED *xfer_parms, H5F_t *f, void *
     INT32ENCODE(vl,hobjid.idx);
 
     FUNC_LEAVE (SUCCEED);
+    xfer_parms = 0;
 }   /* end H5T_vlen_disk_write() */
 
 
@@ -600,8 +617,8 @@ done:
 herr_t 
 H5T_vlen_reclaim(void *elem, hid_t type_id, hsize_t UNUSED ndim, hssize_t UNUSED *point, void *op_data)
 {
-    H5D_xfer_t	   *xfer_parms = (H5D_xfer_t *)op_data; /* Dataset transfer plist from iterator */
-    H5T_t	*dt = NULL;
+    H5D_xfer_t     *xfer_parms = (H5D_xfer_t *)op_data; /* Dataset transfer plist from iterator */
+    H5T_t       *dt = NULL;
     herr_t ret_value = FAIL;
 
     FUNC_ENTER(H5T_vlen_reclaim, FAIL);
@@ -620,6 +637,9 @@ H5T_vlen_reclaim(void *elem, hid_t type_id, hsize_t UNUSED ndim, hssize_t UNUSED
 done:
 #endif /* LATER */
     FUNC_LEAVE(ret_value);
+
+    ndim = 0;
+    point = 0;
 }   /* end H5T_vlen_reclaim() */
 
 

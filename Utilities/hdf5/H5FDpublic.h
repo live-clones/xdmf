@@ -19,8 +19,8 @@
  * might appear in files.
  */
 typedef enum H5FD_mem_t {
-    H5FD_MEM_NOLIST	= -1,			/*must be negative*/
-    H5FD_MEM_DEFAULT	= 0,			/*must be zero*/
+    H5FD_MEM_NOLIST     = -1,                   /*must be negative*/
+    H5FD_MEM_DEFAULT    = 0,                    /*must be zero*/
     H5FD_MEM_SUPER      = 1,
     H5FD_MEM_BTREE      = 2,
     H5FD_MEM_DRAW       = 3,
@@ -28,7 +28,7 @@ typedef enum H5FD_mem_t {
     H5FD_MEM_LHEAP      = 5,
     H5FD_MEM_OHDR       = 6,
 
-    H5FD_MEM_NTYPES				/*must be last*/
+    H5FD_MEM_NTYPES                             /*must be last*/
 } H5FD_mem_t;
 /*
  * A free-list map which maps all types of allocation requests to a single
@@ -37,42 +37,42 @@ typedef enum H5FD_mem_t {
  * want to make most efficient reuse of freed memory.  The use of the
  * H5FD_MEM_SUPER free list is arbitrary.
  */
-#define H5FD_FLMAP_SINGLE {						      \
-    H5FD_MEM_SUPER,			/*default*/			      \
-    H5FD_MEM_SUPER,			/*super*/			      \
-    H5FD_MEM_SUPER,			/*btree*/			      \
-    H5FD_MEM_SUPER,			/*draw*/			      \
-    H5FD_MEM_SUPER,			/*gheap*/			      \
-    H5FD_MEM_SUPER,			/*lheap*/			      \
-    H5FD_MEM_SUPER			/*ohdr*/			      \
+#define H5FD_FLMAP_SINGLE {                                                   \
+    H5FD_MEM_SUPER,                     /*default*/                           \
+    H5FD_MEM_SUPER,                     /*super*/                             \
+    H5FD_MEM_SUPER,                     /*btree*/                             \
+    H5FD_MEM_SUPER,                     /*draw*/                              \
+    H5FD_MEM_SUPER,                     /*gheap*/                             \
+    H5FD_MEM_SUPER,                     /*lheap*/                             \
+    H5FD_MEM_SUPER                      /*ohdr*/                              \
 }
 
 /*
  * A free-list map which segregates requests into `raw' or `meta' data
  * pools.
  */
-#define H5FD_FLMAP_DICHOTOMY {						      \
-    H5FD_MEM_SUPER,			/*default*/			      \
-    H5FD_MEM_SUPER,			/*super*/			      \
-    H5FD_MEM_SUPER,			/*btree*/			      \
-    H5FD_MEM_DRAW,			/*draw*/			      \
-    H5FD_MEM_SUPER,			/*gheap*/			      \
-    H5FD_MEM_SUPER,			/*lheap*/			      \
-    H5FD_MEM_SUPER			/*ohdr*/			      \
+#define H5FD_FLMAP_DICHOTOMY {                                                \
+    H5FD_MEM_SUPER,                     /*default*/                           \
+    H5FD_MEM_SUPER,                     /*super*/                             \
+    H5FD_MEM_SUPER,                     /*btree*/                             \
+    H5FD_MEM_DRAW,                      /*draw*/                              \
+    H5FD_MEM_SUPER,                     /*gheap*/                             \
+    H5FD_MEM_SUPER,                     /*lheap*/                             \
+    H5FD_MEM_SUPER                      /*ohdr*/                              \
 }
 
 /*
  * The default free list map which causes each request type to use it's own
  * free-list.
  */
-#define H5FD_FLMAP_DEFAULT {						      \
-    H5FD_MEM_DEFAULT,			/*default*/			      \
-    H5FD_MEM_DEFAULT,			/*super*/			      \
-    H5FD_MEM_DEFAULT,			/*btree*/			      \
-    H5FD_MEM_DEFAULT,			/*draw*/			      \
-    H5FD_MEM_DEFAULT,			/*gheap*/			      \
-    H5FD_MEM_DEFAULT,			/*lheap*/			      \
-    H5FD_MEM_DEFAULT			/*ohdr*/			      \
+#define H5FD_FLMAP_DEFAULT {                                                  \
+    H5FD_MEM_DEFAULT,                   /*default*/                           \
+    H5FD_MEM_DEFAULT,                   /*super*/                             \
+    H5FD_MEM_DEFAULT,                   /*btree*/                             \
+    H5FD_MEM_DEFAULT,                   /*draw*/                              \
+    H5FD_MEM_DEFAULT,                   /*gheap*/                             \
+    H5FD_MEM_DEFAULT,                   /*lheap*/                             \
+    H5FD_MEM_DEFAULT                    /*ohdr*/                              \
 }
 
 
@@ -99,7 +99,7 @@ typedef enum H5FD_mem_t {
      *  http://www.mcs.anl.gov/~thakur/papers/mpio-high-perf.ps.gz
      */
 #define H5FD_FEAT_DATA_SIEVE            0x00000004
-	
+        
 
 /* Forward declaration */
 typedef struct H5FD_t H5FD_t;
@@ -110,7 +110,7 @@ typedef struct H5FD_class_t {
     haddr_t maxaddr;
     hsize_t (*sb_size)(H5FD_t *file);
     herr_t (*sb_encode)(H5FD_t *file, char *name/*out*/,
-			unsigned char *p/*out*/);
+                        unsigned char *p/*out*/);
     herr_t (*sb_decode)(H5FD_t *f, const char *name, const unsigned char *p);
     size_t fapl_size;
     void *(*fapl_get)(H5FD_t *file);
@@ -120,7 +120,7 @@ typedef struct H5FD_class_t {
     void *(*dxpl_copy)(const void *dxpl);
     herr_t (*dxpl_free)(void *dxpl);
     H5FD_t *(*open)(const char *name, unsigned flags, hid_t fapl,
-		    haddr_t maxaddr);
+                    haddr_t maxaddr);
     herr_t (*close)(H5FD_t *file);
     int (*cmp)(const H5FD_t *f1, const H5FD_t *f2);
     herr_t (*query)(const H5FD_t *f1, unsigned long *flags);
@@ -130,18 +130,18 @@ typedef struct H5FD_class_t {
     herr_t (*set_eoa)(H5FD_t *file, haddr_t addr);
     haddr_t (*get_eof)(H5FD_t *file);
     herr_t (*read)(H5FD_t *file, H5FD_mem_t type, hid_t dxpl, haddr_t addr, hsize_t size,
-		   void *buffer);
+                   void *buffer);
     herr_t (*write)(H5FD_t *file, H5FD_mem_t type, hid_t dxpl, haddr_t addr, hsize_t size,
-		    const void *buffer);
+                    const void *buffer);
     herr_t (*flush)(H5FD_t *file);
     H5FD_mem_t fl_map[H5FD_MEM_NTYPES];
 } H5FD_class_t;
 
 /* A free list is a singly-linked list of address/size pairs. */
 typedef struct H5FD_free_t {
-    haddr_t		addr;
-    hsize_t		size;
-    struct H5FD_free_t	*next;
+    haddr_t             addr;
+    hsize_t             size;
+    struct H5FD_free_t  *next;
 } H5FD_free_t;
 
 /*
@@ -149,8 +149,8 @@ typedef struct H5FD_free_t {
  * declared here and the driver appends private fields in memory.
  */
 struct H5FD_t {
-    hid_t		driver_id;	/*driver ID for this file	*/
-    const H5FD_class_t	*cls;		/*constant class info		*/
+    hid_t               driver_id;      /*driver ID for this file       */
+    const H5FD_class_t  *cls;           /*constant class info           */
 
     unsigned long feature_flags;  /* VFL Driver feature Flags */
     hsize_t     threshold;      /* Threshold for alignment              */
@@ -168,9 +168,9 @@ struct H5FD_t {
     hsize_t accum_buf_size; /* Size of the accumulated metadata buffer allocated (in bytes) */
     unsigned accum_dirty;   /* Flag to indicate that the accumulated metadata is dirty */
 
-    haddr_t		maxaddr;	/*for this file, overrides class*/
-    H5FD_free_t		*fl[H5FD_MEM_NTYPES];/*freelist per allocation type*/
-    hsize_t		maxsize;	/*largest object on FL, or zero	*/
+    haddr_t             maxaddr;        /*for this file, overrides class*/
+    H5FD_free_t         *fl[H5FD_MEM_NTYPES];/*freelist per allocation type*/
+    hsize_t             maxsize;        /*largest object on FL, or zero */
 };
 
 #ifdef __cplusplus
@@ -181,21 +181,21 @@ extern "C" {
 __DLL__ hid_t H5FDregister(const H5FD_class_t *cls);
 __DLL__ herr_t H5FDunregister(hid_t driver_id);
 __DLL__ H5FD_t *H5FDopen(const char *name, unsigned flags, hid_t fapl_id,
-		 haddr_t maxaddr);
+                 haddr_t maxaddr);
 __DLL__ herr_t H5FDclose(H5FD_t *file);
 __DLL__ int H5FDcmp(const H5FD_t *f1, const H5FD_t *f2);
 __DLL__ int H5FDquery(const H5FD_t *f, unsigned long *flags);
 __DLL__ haddr_t H5FDalloc(H5FD_t *file, H5FD_mem_t type, hsize_t size);
 __DLL__ herr_t H5FDfree(H5FD_t *file, H5FD_mem_t type, haddr_t addr, hsize_t size);
 __DLL__ haddr_t H5FDrealloc(H5FD_t *file, H5FD_mem_t type, haddr_t addr,
-		    hsize_t old_size, hsize_t new_size);
+                    hsize_t old_size, hsize_t new_size);
 __DLL__ haddr_t H5FDget_eoa(H5FD_t *file);
 __DLL__ herr_t H5FDset_eoa(H5FD_t *file, haddr_t eof);
 __DLL__ haddr_t H5FDget_eof(H5FD_t *file);
 __DLL__ herr_t H5FDread(H5FD_t *file, H5FD_mem_t type, hid_t dxpl_id, haddr_t addr, hsize_t size,
-		void *buf/*out*/);
+                void *buf/*out*/);
 __DLL__ herr_t H5FDwrite(H5FD_t *file, H5FD_mem_t type, hid_t dxpl_id, haddr_t addr, hsize_t size,
-		 const void *buf);
+                 const void *buf);
 __DLL__ herr_t H5FDflush(H5FD_t *file);
 
 #ifdef __cplusplus

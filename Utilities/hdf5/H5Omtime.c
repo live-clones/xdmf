@@ -1,15 +1,15 @@
 /*
  * Copyright (C) 1998-2001 NCSA
- *		           All rights reserved.
+ *                         All rights reserved.
  *
- * Programmer:	Robb Matzke <matzke@llnl.gov>
- *		Friday, July 24, 1998
+ * Programmer:  Robb Matzke <matzke@llnl.gov>
+ *              Friday, July 24, 1998
  *
- * Purpose:	The object modification time message.
+ * Purpose:     The object modification time message.
  */
 #include "H5private.h"
 #include "H5Eprivate.h"
-#include "H5FLprivate.h"	/*Free Lists	  */
+#include "H5FLprivate.h"        /*Free Lists      */
 #include "H5MMprivate.h"
 #include "H5Oprivate.h"
 
@@ -18,7 +18,7 @@
 #include <sys/timeb.h>
 #endif
 
-#define PABLO_MASK	H5O_mtime_mask
+#define PABLO_MASK      H5O_mtime_mask
 
 static void *H5O_mtime_decode(H5F_t *f, const uint8_t *p, H5O_shared_t *sh);
 static herr_t H5O_mtime_encode(H5F_t *f, uint8_t *p, const void *_mesg);
@@ -26,45 +26,45 @@ static void *H5O_mtime_copy(const void *_mesg, void *_dest);
 static size_t H5O_mtime_size(H5F_t *f, const void *_mesg);
 static herr_t H5O_mtime_free (void *_mesg);
 static herr_t H5O_mtime_debug(H5F_t *f, const void *_mesg, FILE *stream,
-			     int indent, int fwidth);
+                             int indent, int fwidth);
 
 /* This message derives from H5O */
 const H5O_class_t H5O_MTIME[1] = {{
-    H5O_MTIME_ID,		/*message id number		*/
-    "mtime",			/*message name for debugging	*/
-    sizeof(time_t),		/*native message size		*/
-    H5O_mtime_decode,		/*decode message		*/
-    H5O_mtime_encode,		/*encode message		*/
-    H5O_mtime_copy,		/*copy the native value		*/
-    H5O_mtime_size,		/*raw message size		*/
-    NULL,			/*free internal memory		*/
-    H5O_mtime_free,		            /* free method			*/
-    NULL,			/*get share method		*/
-    NULL,			/*set share method		*/
-    H5O_mtime_debug,		/*debug the message		*/
+    H5O_MTIME_ID,               /*message id number             */
+    "mtime",                    /*message name for debugging    */
+    sizeof(time_t),             /*native message size           */
+    H5O_mtime_decode,           /*decode message                */
+    H5O_mtime_encode,           /*encode message                */
+    H5O_mtime_copy,             /*copy the native value         */
+    H5O_mtime_size,             /*raw message size              */
+    NULL,                       /*free internal memory          */
+    H5O_mtime_free,                         /* free method                      */
+    NULL,                       /*get share method              */
+    NULL,                       /*set share method              */
+    H5O_mtime_debug,            /*debug the message             */
 }};
 
 /* Interface initialization */
 static int interface_initialize_g = 0;
-#define INTERFACE_INIT	NULL
+#define INTERFACE_INIT  NULL
 
 /* Declare a free list to manage the time_t struct */
 H5FL_DEFINE(time_t);
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5O_mtime_decode
+ * Function:    H5O_mtime_decode
  *
- * Purpose:	Decode a modification time message and return a pointer to a
- *		new time_t value.
+ * Purpose:     Decode a modification time message and return a pointer to a
+ *              new time_t value.
  *
- * Return:	Success:	Ptr to new message in native struct.
+ * Return:      Success:        Ptr to new message in native struct.
  *
- *		Failure:	NULL
+ *              Failure:        NULL
  *
- * Programmer:	Robb Matzke
- *		matzke@llnl.gov
- *		Jul 24 1998
+ * Programmer:  Robb Matzke
+ *              matzke@llnl.gov
+ *              Jul 24 1998
  *
  * Modifications:
  *
@@ -72,12 +72,12 @@ H5FL_DEFINE(time_t);
  */
 static void *
 H5O_mtime_decode(H5F_t UNUSED *f, const uint8_t *p,
-		 H5O_shared_t UNUSED *sh)
+                 H5O_shared_t UNUSED *sh)
 {
-    time_t	*mesg, the_time;
-    int	i;
-    struct tm	tm;
-    static int	ncalls=0;
+    time_t      *mesg, the_time;
+    int i;
+    struct tm   tm;
+    static int  ncalls=0;
 
     FUNC_ENTER(H5O_mtime_decode, NULL);
 
@@ -91,10 +91,10 @@ H5O_mtime_decode(H5F_t UNUSED *f, const uint8_t *p,
 
     /* decode */
     for (i=0; i<14; i++) {
-	if (!HDisdigit(p[i])) {
-	    HRETURN_ERROR(H5E_OHDR, H5E_CANTINIT, NULL,
-			  "badly formatted modification time message");
-	}
+        if (!HDisdigit(p[i])) {
+            HRETURN_ERROR(H5E_OHDR, H5E_CANTINIT, NULL,
+                          "badly formatted modification time message");
+        }
     }
 
     /*
@@ -105,7 +105,7 @@ H5O_mtime_decode(H5F_t UNUSED *f, const uint8_t *p,
      */
     HDmemset(&tm, 0, sizeof tm);
     tm.tm_year = (p[0]-'0')*1000 + (p[1]-'0')*100 +
-		 (p[2]-'0')*10 + (p[3]-'0') - 1900;
+                 (p[2]-'0')*10 + (p[3]-'0') - 1900;
     tm.tm_mon = (p[4]-'0')*10 + (p[5]-'0') - 1;
     tm.tm_mday = (p[6]-'0')*10 + (p[7]-'0');
     tm.tm_hour = (p[8]-'0')*10 + (p[9]-'0');
@@ -113,8 +113,8 @@ H5O_mtime_decode(H5F_t UNUSED *f, const uint8_t *p,
     tm.tm_sec = (p[12]-'0')*10 + (p[13]-'0');
     tm.tm_isdst = -1; /*figure it out*/
     if ((time_t)-1==(the_time=HDmktime(&tm))) {
-	HRETURN_ERROR(H5E_OHDR, H5E_CANTINIT, NULL,
-		      "badly formatted modification time message");
+        HRETURN_ERROR(H5E_OHDR, H5E_CANTINIT, NULL,
+                      "badly formatted modification time message");
     }
 
 #if defined(H5_HAVE_TM_GMTOFF)
@@ -129,24 +129,24 @@ H5O_mtime_decode(H5F_t UNUSED *f, const uint8_t *p,
 #elif defined(H5_HAVE_BSDGETTIMEOFDAY) && defined(H5_HAVE_STRUCT_TIMEZONE)
     /* Irix5.3 */
     {
-	struct timezone tz;
-	if (BSDgettimeofday(NULL, &tz)<0) {
-	    HRETURN_ERROR(H5E_OHDR, H5E_CANTINIT, NULL,
-			  "unable to obtain local timezone information");
-	}
-	the_time -= tz.tz_minuteswest*60 - (tm.tm_isdst?3600:0);
+        struct timezone tz;
+        if (BSDgettimeofday(NULL, &tz)<0) {
+            HRETURN_ERROR(H5E_OHDR, H5E_CANTINIT, NULL,
+                          "unable to obtain local timezone information");
+        }
+        the_time -= tz.tz_minuteswest*60 - (tm.tm_isdst?3600:0);
     }
 #elif defined(H5_HAVE_GETTIMEOFDAY) && defined(H5_HAVE_STRUCT_TIMEZONE)
     {
-	struct timezone tz;
-	if (gettimeofday(NULL, &tz)<0) {
-	    HRETURN_ERROR(H5E_OHDR, H5E_CANTINIT, NULL,
-			  "unable to obtain local timezone information");
-	}
-	the_time -= tz.tz_minuteswest*60 - (tm.tm_isdst?3600:0);
+        struct timezone tz;
+        if (gettimeofday(NULL, &tz)<0) {
+            HRETURN_ERROR(H5E_OHDR, H5E_CANTINIT, NULL,
+                          "unable to obtain local timezone information");
+        }
+        the_time -= tz.tz_minuteswest*60 - (tm.tm_isdst?3600:0);
     }
 #elif defined WIN32 && !defined __MWERKS__  
-	{
+        {
 
    struct timeb timebuffer;
    long  tz;
@@ -172,13 +172,13 @@ H5O_mtime_decode(H5F_t UNUSED *f, const uint8_t *p,
 
     /* Irix64 */
     HRETURN_ERROR(H5E_OHDR, H5E_CANTINIT, NULL,
-		  "unable to obtain local timezone information");
+                  "unable to obtain local timezone information");
 #endif
     
     /* The return value */
     if (NULL==(mesg = H5FL_ALLOC(time_t,1))) {
-	HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, NULL,
-		       "memory allocation failed");
+        HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, NULL,
+                       "memory allocation failed");
     }
     *mesg = the_time;
 
@@ -187,15 +187,15 @@ H5O_mtime_decode(H5F_t UNUSED *f, const uint8_t *p,
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5O_mtime_encode
+ * Function:    H5O_mtime_encode
  *
- * Purpose:	Encodes a modification time message.
+ * Purpose:     Encodes a modification time message.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Robb Matzke
- *		matzke@llnl.gov
- *		Jul 24 1998
+ * Programmer:  Robb Matzke
+ *              matzke@llnl.gov
+ *              Jul 24 1998
  *
  * Modifications:
  *
@@ -204,8 +204,8 @@ H5O_mtime_decode(H5F_t UNUSED *f, const uint8_t *p,
 static herr_t
 H5O_mtime_encode(H5F_t UNUSED *f, uint8_t *p, const void *_mesg)
 {
-    const time_t	*mesg = (const time_t *) _mesg;
-    struct tm		*tm;
+    const time_t        *mesg = (const time_t *) _mesg;
+    struct tm           *tm;
     
 
     FUNC_ENTER(H5O_mtime_encode, FAIL);
@@ -218,26 +218,26 @@ H5O_mtime_encode(H5F_t UNUSED *f, uint8_t *p, const void *_mesg)
     /* encode */
     tm = HDgmtime(mesg);
     sprintf((char*)p, "%04d%02d%02d%02d%02d%02d",
-	    1900+tm->tm_year, 1+tm->tm_mon, tm->tm_mday,
-	    tm->tm_hour, tm->tm_min, tm->tm_sec);
+            1900+tm->tm_year, 1+tm->tm_mon, tm->tm_mday,
+            tm->tm_hour, tm->tm_min, tm->tm_sec);
 
     FUNC_LEAVE(SUCCEED);
 }
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5O_mtime_copy
+ * Function:    H5O_mtime_copy
  *
- * Purpose:	Copies a message from _MESG to _DEST, allocating _DEST if
- *		necessary.
+ * Purpose:     Copies a message from _MESG to _DEST, allocating _DEST if
+ *              necessary.
  *
- * Return:	Success:	Ptr to _DEST
+ * Return:      Success:        Ptr to _DEST
  *
- *		Failure:	NULL
+ *              Failure:        NULL
  *
- * Programmer:	Robb Matzke
- *		matzke@llnl.gov
- *		Jul 24 1998
+ * Programmer:  Robb Matzke
+ *              matzke@llnl.gov
+ *              Jul 24 1998
  *
  * Modifications:
  *
@@ -246,8 +246,8 @@ H5O_mtime_encode(H5F_t UNUSED *f, uint8_t *p, const void *_mesg)
 static void *
 H5O_mtime_copy(const void *_mesg, void *_dest)
 {
-    const time_t	*mesg = (const time_t *) _mesg;
-    time_t		*dest = (time_t *) _dest;
+    const time_t        *mesg = (const time_t *) _mesg;
+    time_t              *dest = (time_t *) _dest;
 
     FUNC_ENTER(H5O_mtime_copy, NULL);
 
@@ -255,7 +255,7 @@ H5O_mtime_copy(const void *_mesg, void *_dest)
     assert(mesg);
     if (!dest && NULL==(dest = H5FL_ALLOC(time_t,0))) {
         HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, NULL,
-		       "memory allocation failed");
+                       "memory allocation failed");
     }
     
     /* copy */
@@ -265,20 +265,20 @@ H5O_mtime_copy(const void *_mesg, void *_dest)
 }
 
 /*-------------------------------------------------------------------------
- * Function:	H5O_mtime_size
+ * Function:    H5O_mtime_size
  *
- * Purpose:	Returns the size of the raw message in bytes not
- *		counting the message type or size fields, but only the data
- *		fields.	 This function doesn't take into account
- *		alignment.
+ * Purpose:     Returns the size of the raw message in bytes not
+ *              counting the message type or size fields, but only the data
+ *              fields.  This function doesn't take into account
+ *              alignment.
  *
- * Return:	Success:	Message data size in bytes w/o alignment.
+ * Return:      Success:        Message data size in bytes w/o alignment.
  *
- *		Failure:	0
+ *              Failure:        0
  *
- * Programmer:	Robb Matzke
- *		matzke@llnl.gov
- *		Jul 14 1998
+ * Programmer:  Robb Matzke
+ *              matzke@llnl.gov
+ *              Jul 14 1998
  *
  * Modifications:
  *
@@ -298,13 +298,13 @@ H5O_mtime_size(H5F_t UNUSED *f, const void UNUSED *mesg)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5O_mtime_free
+ * Function:    H5O_mtime_free
  *
- * Purpose:	Free's the message
+ * Purpose:     Free's the message
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Thursday, March 30, 2000
  *
  * Modifications:
@@ -325,15 +325,15 @@ H5O_mtime_free (void *mesg)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5O_mtime_debug
+ * Function:    H5O_mtime_debug
  *
- * Purpose:	Prints debugging info for the message.
+ * Purpose:     Prints debugging info for the message.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Robb Matzke
- *		matzke@llnl.gov
- *		Jul 24 1998
+ * Programmer:  Robb Matzke
+ *              matzke@llnl.gov
+ *              Jul 24 1998
  *
  * Modifications:
  *
@@ -341,11 +341,11 @@ H5O_mtime_free (void *mesg)
  */
 static herr_t
 H5O_mtime_debug(H5F_t UNUSED *f, const void *_mesg, FILE *stream,
-		int indent, int fwidth)
+                int indent, int fwidth)
 {
-    const time_t	*mesg = (const time_t *)_mesg;
-    struct tm		*tm;
-    char		buf[128];
+    const time_t        *mesg = (const time_t *)_mesg;
+    struct tm           *tm;
+    char                buf[128];
     
     FUNC_ENTER(H5O_mtime_debug, FAIL);
 
@@ -362,7 +362,7 @@ H5O_mtime_debug(H5F_t UNUSED *f, const void *_mesg, FILE *stream,
     
     HDstrftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S %Z", tm);
     fprintf(stream, "%*s%-*s %s\n", indent, "", fwidth,
-	    "Time:", buf);
+            "Time:", buf);
 
     FUNC_LEAVE(SUCCEED);
 }

@@ -1,64 +1,64 @@
 /*
  * Copyright (C) 1997 NCSA
- *		      All rights reserved.
+ *                    All rights reserved.
  *
- * Programmer:	Robb Matzke <matzke@llnl.gov>
- *		Monday, November 10, 1997
+ * Programmer:  Robb Matzke <matzke@llnl.gov>
+ *              Monday, November 10, 1997
  *
- * Purpose:	Implements a family of files that acts as a single hdf5
- *		file.  The purpose is to be able to split a huge file on a
- *		64-bit platform, transfer all the <2GB members to a 32-bit
- *		platform, and then access the entire huge file on the 32-bit
- *		platform.
+ * Purpose:     Implements a family of files that acts as a single hdf5
+ *              file.  The purpose is to be able to split a huge file on a
+ *              64-bit platform, transfer all the <2GB members to a 32-bit
+ *              platform, and then access the entire huge file on the 32-bit
+ *              platform.
  *
- *		All family members are logically the same size although their
- *		physical sizes may vary.  The logical member size is
- *		determined by looking at the physical size of the first member
- *		when the file is opened.  When creating a file family, the
- *		first member is created with a predefined physical size
- *		(actually, this happens when the file family is flushed, and
- *		can be quite time consuming on file systems that don't
- *		implement holes, like nfs).
- *		
+ *              All family members are logically the same size although their
+ *              physical sizes may vary.  The logical member size is
+ *              determined by looking at the physical size of the first member
+ *              when the file is opened.  When creating a file family, the
+ *              first member is created with a predefined physical size
+ *              (actually, this happens when the file family is flushed, and
+ *              can be quite time consuming on file systems that don't
+ *              implement holes, like nfs).
+ *              
  */
-#include "H5private.h"		/*library functions			*/
-#include "H5Eprivate.h"		/*error handling			*/
-#include "H5Fprivate.h"		/*files					*/
-#include "H5FDprivate.h"	/*file driver	                        */
+#include "H5private.h"          /*library functions                     */
+#include "H5Eprivate.h"         /*error handling                        */
+#include "H5Fprivate.h"         /*files                                 */
+#include "H5FDprivate.h"        /*file driver                           */
 #include "H5FDfamily.h"         /*family file driver                    */
 #include "H5MMprivate.h"        /*memory allocation                     */
-#include "H5Pprivate.h"		/*property lists			*/
+#include "H5Pprivate.h"         /*property lists                        */
 
 #undef MAX
-#define MAX(X,Y)	((X)>(Y)?(X):(Y))
+#define MAX(X,Y)        ((X)>(Y)?(X):(Y))
 #undef MIN
-#define MIN(X,Y)	((X)<(Y)?(X):(Y))
+#define MIN(X,Y)        ((X)<(Y)?(X):(Y))
 
 /* The driver identification number, initialized at runtime */
 static hid_t H5FD_FAMILY_g = 0;
 
 /* The description of a file belonging to this driver. */
 typedef struct H5FD_family_t {
-    H5FD_t	pub;		/*public stuff, must be first		*/
-    hid_t	memb_fapl_id;	/*file access property list for members	*/
-    hsize_t	memb_size;	/*maximum size of each member file	*/
-    int		nmembs;		/*number of family members		*/
-    int		amembs;		/*number of member slots allocated	*/
-    H5FD_t	**memb;		/*dynamic array of member pointers	*/
-    haddr_t	eoa;		/*end of allocated addresses		*/
-    char	*name;		/*name generator printf format		*/
-    unsigned	flags;		/*flags for opening additional members	*/
+    H5FD_t      pub;            /*public stuff, must be first           */
+    hid_t       memb_fapl_id;   /*file access property list for members */
+    hsize_t     memb_size;      /*maximum size of each member file      */
+    int         nmembs;         /*number of family members              */
+    int         amembs;         /*number of member slots allocated      */
+    H5FD_t      **memb;         /*dynamic array of member pointers      */
+    haddr_t     eoa;            /*end of allocated addresses            */
+    char        *name;          /*name generator printf format          */
+    unsigned    flags;          /*flags for opening additional members  */
 } H5FD_family_t;
 
 /* Driver-specific file access properties */
 typedef struct H5FD_family_fapl_t {
-    hsize_t	memb_size;	/*size of each member			*/
-    hid_t	memb_fapl_id;	/*file access property list of each memb*/
+    hsize_t     memb_size;      /*size of each member                   */
+    hid_t       memb_fapl_id;   /*file access property list of each memb*/
 } H5FD_family_fapl_t;
 
 /* Driver specific data transfer properties */
 typedef struct H5FD_family_dxpl_t {
-    hid_t	memb_dxpl_id;	/*data xfer property list of each memb	*/
+    hid_t       memb_dxpl_id;   /*data xfer property list of each memb  */
 } H5FD_family_dxpl_t;
 
 /* Callback prototypes */
@@ -68,7 +68,7 @@ static herr_t H5FD_family_fapl_free(void *_fa);
 static void *H5FD_family_dxpl_copy(const void *_old_dx);
 static herr_t H5FD_family_dxpl_free(void *_dx);
 static H5FD_t *H5FD_family_open(const char *name, unsigned flags,
-				hid_t fapl_id, haddr_t maxaddr);
+                                hid_t fapl_id, haddr_t maxaddr);
 static herr_t H5FD_family_close(H5FD_t *_file);
 static int H5FD_family_cmp(const H5FD_t *_f1, const H5FD_t *_f2);
 static herr_t H5FD_family_query(const H5FD_t *_f1, unsigned long *flags);
@@ -76,57 +76,57 @@ static haddr_t H5FD_family_get_eoa(H5FD_t *_file);
 static herr_t H5FD_family_set_eoa(H5FD_t *_file, haddr_t eoa);
 static haddr_t H5FD_family_get_eof(H5FD_t *_file);
 static herr_t H5FD_family_read(H5FD_t *_file, H5FD_mem_t type, hid_t dxpl_id, haddr_t addr,
-			       hsize_t size, void *_buf/*out*/);
+                               hsize_t size, void *_buf/*out*/);
 static herr_t H5FD_family_write(H5FD_t *_file, H5FD_mem_t type, hid_t dxpl_id, haddr_t addr,
-				hsize_t size, const void *_buf);
+                                hsize_t size, const void *_buf);
 static herr_t H5FD_family_flush(H5FD_t *_file);
 
 /* The class struct */
 static const H5FD_class_t H5FD_family_g = {
-    "family",					/*name			*/
-    HADDR_MAX,					/*maxaddr		*/
-    NULL,					/*sb_size		*/
-    NULL,					/*sb_encode		*/
-    NULL,					/*sb_decode		*/
-    sizeof(H5FD_family_fapl_t),			/*fapl_size		*/
-    H5FD_family_fapl_get,			/*fapl_get		*/
-    H5FD_family_fapl_copy,			/*fapl_copy		*/
-    H5FD_family_fapl_free,			/*fapl_free		*/
-    sizeof(H5FD_family_dxpl_t),			/*dxpl_size		*/
-    H5FD_family_dxpl_copy,			/*dxpl_copy		*/
-    H5FD_family_dxpl_free,			/*dxpl_free		*/
-    H5FD_family_open,				/*open			*/
-    H5FD_family_close,				/*close			*/
-    H5FD_family_cmp,				/*cmp			*/
-    H5FD_family_query,		                /*query			*/
-    NULL,					/*alloc			*/
-    NULL,					/*free			*/
-    H5FD_family_get_eoa,			/*get_eoa		*/
-    H5FD_family_set_eoa,			/*set_eoa		*/
-    H5FD_family_get_eof,			/*get_eof		*/
-    H5FD_family_read,				/*read			*/
-    H5FD_family_write,				/*write			*/
-    H5FD_family_flush,				/*flush			*/
-    H5FD_FLMAP_SINGLE,				/*fl_map		*/
+    "family",                                   /*name                  */
+    HADDR_MAX,                                  /*maxaddr               */
+    NULL,                                       /*sb_size               */
+    NULL,                                       /*sb_encode             */
+    NULL,                                       /*sb_decode             */
+    sizeof(H5FD_family_fapl_t),                 /*fapl_size             */
+    H5FD_family_fapl_get,                       /*fapl_get              */
+    H5FD_family_fapl_copy,                      /*fapl_copy             */
+    H5FD_family_fapl_free,                      /*fapl_free             */
+    sizeof(H5FD_family_dxpl_t),                 /*dxpl_size             */
+    H5FD_family_dxpl_copy,                      /*dxpl_copy             */
+    H5FD_family_dxpl_free,                      /*dxpl_free             */
+    H5FD_family_open,                           /*open                  */
+    H5FD_family_close,                          /*close                 */
+    H5FD_family_cmp,                            /*cmp                   */
+    H5FD_family_query,                          /*query                 */
+    NULL,                                       /*alloc                 */
+    NULL,                                       /*free                  */
+    H5FD_family_get_eoa,                        /*get_eoa               */
+    H5FD_family_set_eoa,                        /*set_eoa               */
+    H5FD_family_get_eof,                        /*get_eof               */
+    H5FD_family_read,                           /*read                  */
+    H5FD_family_write,                          /*write                 */
+    H5FD_family_flush,                          /*flush                 */
+    H5FD_FLMAP_SINGLE,                          /*fl_map                */
 };
 
 /* Interface initialization */
-#define PABLO_MASK	H5FD_family_mask
-#define INTERFACE_INIT	H5FD_family_init
+#define PABLO_MASK      H5FD_family_mask
+#define INTERFACE_INIT  H5FD_family_init
 static int interface_initialize_g = 0;
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FD_family_init
+ * Function:    H5FD_family_init
  *
- * Purpose:	Initialize this driver by registering the driver with the
- *		library.
+ * Purpose:     Initialize this driver by registering the driver with the
+ *              library.
  *
- * Return:	Success:	The driver ID for the family driver.
+ * Return:      Success:        The driver ID for the family driver.
  *
- *		Failure:	Negative
+ *              Failure:        Negative
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Wednesday, August  4, 1999
  *
  * Modifications:
@@ -146,19 +146,19 @@ H5FD_family_init(void)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5Pset_fapl_family
+ * Function:    H5Pset_fapl_family
  *
- * Purpose:	Sets the file access property list FAPL_ID to use the family
- *		driver. The MEMB_SIZE is the size in bytes of each file
- *		member (used only when creating a new file) and the
- *		MEMB_FAPL_ID is a file access property list to be used for
- *		each family member.
+ * Purpose:     Sets the file access property list FAPL_ID to use the family
+ *              driver. The MEMB_SIZE is the size in bytes of each file
+ *              member (used only when creating a new file) and the
+ *              MEMB_FAPL_ID is a file access property list to be used for
+ *              each family member.
  *
- * Return:	Success:	Non-negative
+ * Return:      Success:        Non-negative
  *
- *		Failure:	Negative
+ *              Failure:        Negative
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Wednesday, August  4, 1999
  *
  * Modifications:
@@ -169,7 +169,7 @@ herr_t
 H5Pset_fapl_family(hid_t fapl_id, hsize_t memb_size, hid_t memb_fapl_id)
 {
     herr_t ret_value=FAIL;
-    H5FD_family_fapl_t	fa;
+    H5FD_family_fapl_t  fa;
     
     FUNC_ENTER(H5Pset_fapl_family, FAIL);
     H5TRACE3("e","ihi",fapl_id,memb_size,memb_fapl_id);
@@ -195,16 +195,16 @@ H5Pset_fapl_family(hid_t fapl_id, hsize_t memb_size, hid_t memb_fapl_id)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5Pget_fapl_family
+ * Function:    H5Pget_fapl_family
  *
- * Purpose:	Returns information about the family file access property
- *		list though the function arguments.
+ * Purpose:     Returns information about the family file access property
+ *              list though the function arguments.
  *
- * Return:	Success:	Non-negative
+ * Return:      Success:        Non-negative
  *
- *		Failure:	Negative
+ *              Failure:        Negative
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Wednesday, August  4, 1999
  *
  * Modifications:
@@ -213,9 +213,9 @@ H5Pset_fapl_family(hid_t fapl_id, hsize_t memb_size, hid_t memb_fapl_id)
  */
 herr_t
 H5Pget_fapl_family(hid_t fapl_id, hsize_t *memb_size/*out*/,
-		   hid_t *memb_fapl_id/*out*/)
+                   hid_t *memb_fapl_id/*out*/)
 {
-    H5FD_family_fapl_t	*fa;
+    H5FD_family_fapl_t  *fa;
     
     FUNC_ENTER(H5Pget_fapl_family, FAIL);
     H5TRACE3("e","ixx",fapl_id,memb_size,memb_fapl_id);
@@ -234,16 +234,16 @@ H5Pget_fapl_family(hid_t fapl_id, hsize_t *memb_size/*out*/,
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FD_family_fapl_get
+ * Function:    H5FD_family_fapl_get
  *
- * Purpose:	Gets a file access property list which could be used to
- *		create an identical file.
+ * Purpose:     Gets a file access property list which could be used to
+ *              create an identical file.
  *
- * Return:	Success:	Ptr to new file access property list.
+ * Return:      Success:        Ptr to new file access property list.
  *
- *		Failure:	NULL
+ *              Failure:        NULL
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Friday, August 13, 1999
  *
  * Modifications:
@@ -253,14 +253,14 @@ H5Pget_fapl_family(hid_t fapl_id, hsize_t *memb_size/*out*/,
 static void *
 H5FD_family_fapl_get(H5FD_t *_file)
 {
-    H5FD_family_t	*file = (H5FD_family_t*)_file;
-    H5FD_family_fapl_t	*fa = NULL;
+    H5FD_family_t       *file = (H5FD_family_t*)_file;
+    H5FD_family_fapl_t  *fa = NULL;
 
     FUNC_ENTER(H5FD_family_fapl_get, NULL);
 
     if (NULL==(fa=H5MM_calloc(sizeof(H5FD_family_fapl_t))))
         HRETURN_ERROR(H5E_RESOURCE, H5E_NOSPACE, NULL,
-		      "memory allocation failed");
+                      "memory allocation failed");
 
     fa->memb_size = file->memb_size;
     fa->memb_fapl_id = H5Pcopy(file->memb_fapl_id);
@@ -270,15 +270,15 @@ H5FD_family_fapl_get(H5FD_t *_file)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FD_family_fapl_copy
+ * Function:    H5FD_family_fapl_copy
  *
- * Purpose:	Copies the family-specific file access properties.
+ * Purpose:     Copies the family-specific file access properties.
  *
- * Return:	Success:	Ptr to a new property list
+ * Return:      Success:        Ptr to a new property list
  *
- *		Failure:	NULL
+ *              Failure:        NULL
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Wednesday, August  4, 1999
  *
  * Modifications:
@@ -295,7 +295,7 @@ H5FD_family_fapl_copy(const void *_old_fa)
 
     if (NULL==(new_fa=H5MM_malloc(sizeof(H5FD_family_fapl_t))))
         HRETURN_ERROR(H5E_RESOURCE, H5E_NOSPACE, NULL,
-		      "memory allocation failed");
+                      "memory allocation failed");
 
     memcpy(new_fa, old_fa, sizeof(H5FD_family_fapl_t));
     new_fa->memb_fapl_id = H5Pcopy(old_fa->memb_fapl_id);
@@ -305,15 +305,15 @@ H5FD_family_fapl_copy(const void *_old_fa)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FD_family_fapl_free
+ * Function:    H5FD_family_fapl_free
  *
- * Purpose:	Frees the family-specific file access properties.
+ * Purpose:     Frees the family-specific file access properties.
  *
- * Return:	Success:	0
+ * Return:      Success:        0
  *
- *		Failure:	-1
+ *              Failure:        -1
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Wednesday, August  4, 1999
  *
  * Modifications:
@@ -323,7 +323,7 @@ H5FD_family_fapl_copy(const void *_old_fa)
 static herr_t
 H5FD_family_fapl_free(void *_fa)
 {
-    H5FD_family_fapl_t	*fa = (H5FD_family_fapl_t*)_fa;
+    H5FD_family_fapl_t  *fa = (H5FD_family_fapl_t*)_fa;
 
     FUNC_ENTER(H5FD_family_fapl_free, FAIL);
 
@@ -335,15 +335,15 @@ H5FD_family_fapl_free(void *_fa)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FD_family_dxpl_copy
+ * Function:    H5FD_family_dxpl_copy
  *
- * Purpose:	Copes the family-specific data transfer properties.
+ * Purpose:     Copes the family-specific data transfer properties.
  *
- * Return:	Success:	Ptr to new property list
+ * Return:      Success:        Ptr to new property list
  *
- *		Failure:	NULL
+ *              Failure:        NULL
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Wednesday, August  4, 1999
  *
  * Modifications:
@@ -360,7 +360,7 @@ H5FD_family_dxpl_copy(const void *_old_dx)
 
     if (NULL==(new_dx=H5MM_malloc(sizeof(H5FD_family_dxpl_t))))
         HRETURN_ERROR(H5E_RESOURCE, H5E_NOSPACE, NULL,
-		      "memory allocation failed");
+                      "memory allocation failed");
 
     memcpy(new_dx, old_dx, sizeof(H5FD_family_dxpl_t));
     new_dx->memb_dxpl_id = H5Pcopy(old_dx->memb_dxpl_id);
@@ -370,15 +370,15 @@ H5FD_family_dxpl_copy(const void *_old_dx)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FD_family_dxpl_free
+ * Function:    H5FD_family_dxpl_free
  *
- * Purpose:	Frees the family-specific data transfer properties.
+ * Purpose:     Frees the family-specific data transfer properties.
  *
- * Return:	Success:	0
+ * Return:      Success:        0
  *
- *		Failure:	-1
+ *              Failure:        -1
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Wednesday, August  4, 1999
  *
  * Modifications:
@@ -388,7 +388,7 @@ H5FD_family_dxpl_copy(const void *_old_dx)
 static herr_t
 H5FD_family_dxpl_free(void *_dx)
 {
-    H5FD_family_dxpl_t	*dx = (H5FD_family_dxpl_t*)_dx;
+    H5FD_family_dxpl_t  *dx = (H5FD_family_dxpl_t*)_dx;
 
     FUNC_ENTER(H5FD_family_dxpl_free, FAIL);
 
@@ -400,17 +400,17 @@ H5FD_family_dxpl_free(void *_dx)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FD_family_open
+ * Function:    H5FD_family_open
  *
- * Purpose:	Creates and/or opens a family of files as an HDF5 file.
+ * Purpose:     Creates and/or opens a family of files as an HDF5 file.
  *
- * Return:	Success:	A pointer to a new file dat structure. The
- *				public fields will be initialized by the
- *				caller, which is always H5FD_open().
+ * Return:      Success:        A pointer to a new file dat structure. The
+ *                              public fields will be initialized by the
+ *                              caller, which is always H5FD_open().
  *
- *		Failure:	NULL
+ *              Failure:        NULL
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Wednesday, August  4, 1999
  *
  * Modifications:
@@ -419,13 +419,13 @@ H5FD_family_dxpl_free(void *_dx)
  */
 static H5FD_t *
 H5FD_family_open(const char *name, unsigned flags, hid_t fapl_id,
-		 haddr_t maxaddr)
+                 haddr_t maxaddr)
 {
-    H5FD_family_t	*file=NULL;
+    H5FD_family_t       *file=NULL;
     H5FD_t     *ret_value=NULL;
-    char		memb_name[4096], temp[4096];
-    hsize_t		eof;
-    unsigned		t_flags = flags & ~H5F_ACC_CREAT;
+    char                memb_name[4096], temp[4096];
+    hsize_t             eof;
+    unsigned            t_flags = flags & ~H5F_ACC_CREAT;
     
     FUNC_ENTER(H5FD_family_open, NULL);
 
@@ -438,7 +438,7 @@ H5FD_family_open(const char *name, unsigned flags, hid_t fapl_id,
     /* Initialize file from file access properties */
     if (NULL==(file=H5MM_calloc(sizeof(H5FD_family_t))))
         HGOTO_ERROR(H5E_RESOURCE, H5E_NOSPACE, NULL,
-		    "unable to allocate file struct");
+                    "unable to allocate file struct");
     if (H5P_DEFAULT==fapl_id) {
         file->memb_fapl_id = H5P_DEFAULT;
         file->memb_size = 1024*1024*1024; /*1GB*/
@@ -467,7 +467,7 @@ H5FD_family_open(const char *name, unsigned flags, hid_t fapl_id,
             H5FD_t **x = H5MM_realloc(file->memb, n*sizeof(H5FD_t*));
             if (!x)
                 HGOTO_ERROR(H5E_RESOURCE, H5E_NOSPACE, NULL,
-			    "unable to reallocate members");
+                            "unable to reallocate members");
             file->amembs = n;
             file->memb = x;
         }
@@ -486,7 +486,7 @@ H5FD_family_open(const char *name, unsigned flags, hid_t fapl_id,
         if (!file->memb[file->nmembs]) {
             if (0==file->nmembs)
                 HGOTO_ERROR(H5E_FILE, H5E_CANTOPENFILE, NULL,
-			    "unable to open member file");
+                            "unable to open member file");
             H5Eclear();
             break;
         }
@@ -522,17 +522,17 @@ done:
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FD_family_close
+ * Function:    H5FD_family_close
  *
- * Purpose:	Closes a family of files.
+ * Purpose:     Closes a family of files.
  *
- * Return:	Success:	Non-negative
+ * Return:      Success:        Non-negative
  *
- *		Failure:	Negative with as many members closed as
- *				possible. The only subsequent operation
- *				permitted on the file is a close operation.
+ *              Failure:        Negative with as many members closed as
+ *                              possible. The only subsequent operation
+ *                              permitted on the file is a close operation.
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Wednesday, August  4, 1999
  *
  * Modifications:
@@ -542,8 +542,8 @@ done:
 static herr_t
 H5FD_family_close(H5FD_t *_file)
 {
-    H5FD_family_t	*file = (H5FD_family_t*)_file;
-    int			i, nerrors=0;
+    H5FD_family_t       *file = (H5FD_family_t*)_file;
+    int                 i, nerrors=0;
 
     FUNC_ENTER(H5FD_family_close, FAIL);
 
@@ -559,7 +559,7 @@ H5FD_family_close(H5FD_t *_file)
     }
     if (nerrors)
         HRETURN_ERROR(H5E_FILE, H5E_CANTCLOSEFILE, FAIL,
-		      "unable to close member files");
+                      "unable to close member files");
 
     /* Clean up other stuff */
     H5Pclose(file->memb_fapl_id);
@@ -574,17 +574,17 @@ H5FD_family_close(H5FD_t *_file)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FD_family_cmp
+ * Function:    H5FD_family_cmp
  *
- * Purpose:	Compares two file families to see if they are the same. It
- *		does this by comparing the first member of the two families.
+ * Purpose:     Compares two file families to see if they are the same. It
+ *              does this by comparing the first member of the two families.
  *
- * Return:	Success:	like strcmp()
+ * Return:      Success:        like strcmp()
  *
- *		Failure:	never fails (arguments were checked by the
- *				caller).
+ *              Failure:        never fails (arguments were checked by the
+ *                              caller).
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Wednesday, August  4, 1999
  *
  * Modifications:
@@ -594,8 +594,8 @@ H5FD_family_close(H5FD_t *_file)
 static int
 H5FD_family_cmp(const H5FD_t *_f1, const H5FD_t *_f2)
 {
-    const H5FD_family_t	*f1 = (const H5FD_family_t*)_f1;
-    const H5FD_family_t	*f2 = (const H5FD_family_t*)_f2;
+    const H5FD_family_t *f1 = (const H5FD_family_t*)_f1;
+    const H5FD_family_t *f2 = (const H5FD_family_t*)_f2;
     int ret_value=(H5FD_VFD_DEFAULT);
 
     FUNC_ENTER(H5FD_family_cmp, H5FD_VFD_DEFAULT);
@@ -610,16 +610,16 @@ H5FD_family_cmp(const H5FD_t *_f1, const H5FD_t *_f2)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FD_family_query
+ * Function:    H5FD_family_query
  *
- * Purpose:	Set the flags that this VFL driver is capable of supporting.
+ * Purpose:     Set the flags that this VFL driver is capable of supporting.
  *              (listed in H5FDpublic.h)
  *
- * Return:	Success:	non-negative
+ * Return:      Success:        non-negative
  *
- *		Failure:	negative
+ *              Failure:        negative
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Friday, August 25, 2000
  *
  * Modifications:
@@ -642,21 +642,23 @@ H5FD_family_query(const H5FD_t UNUSED *_f, unsigned long *flags /* out */)
     }
 
     FUNC_LEAVE(ret_value);
+
+    _f = 0;
 }
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FD_family_get_eoa
+ * Function:    H5FD_family_get_eoa
  *
- * Purpose:	Returns the end-of-address marker for the file. The EOA
- *		marker is the first address past the last byte allocated in
- *		the format address space.
+ * Purpose:     Returns the end-of-address marker for the file. The EOA
+ *              marker is the first address past the last byte allocated in
+ *              the format address space.
  *
- * Return:	Success:	The end-of-address-marker
+ * Return:      Success:        The end-of-address-marker
  *
- *		Failure:	HADDR_UNDEF
+ *              Failure:        HADDR_UNDEF
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Wednesday, August  4, 1999
  *
  * Modifications:
@@ -666,7 +668,7 @@ H5FD_family_query(const H5FD_t UNUSED *_f, unsigned long *flags /* out */)
 static haddr_t
 H5FD_family_get_eoa(H5FD_t *_file)
 {
-    H5FD_family_t	*file = (H5FD_family_t*)_file;
+    H5FD_family_t       *file = (H5FD_family_t*)_file;
 
     FUNC_ENTER(H5FD_family_get_eoa, HADDR_UNDEF);
 
@@ -675,15 +677,15 @@ H5FD_family_get_eoa(H5FD_t *_file)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FD_family_set_eoa
+ * Function:    H5FD_family_set_eoa
  *
- * Purpose:	Set the end-of-address marker for the file.
+ * Purpose:     Set the end-of-address marker for the file.
  *
- * Return:	Success:	0
+ * Return:      Success:        0
  *
- *		Failure:	-1
+ *              Failure:        -1
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Wednesday, August  4, 1999
  *
  * Modifications:
@@ -693,10 +695,10 @@ H5FD_family_get_eoa(H5FD_t *_file)
 static herr_t
 H5FD_family_set_eoa(H5FD_t *_file, haddr_t eoa)
 {
-    H5FD_family_t	*file = (H5FD_family_t*)_file;
-    haddr_t		addr=eoa;
-    int			i;
-    char		memb_name[4096];
+    H5FD_family_t       *file = (H5FD_family_t*)_file;
+    haddr_t             addr=eoa;
+    int                 i;
+    char                memb_name[4096];
 
     FUNC_ENTER(H5FD_family_set_eoa, FAIL);
 
@@ -708,7 +710,7 @@ H5FD_family_set_eoa(H5FD_t *_file, haddr_t eoa)
             H5FD_t **x = H5MM_realloc(file->memb, n*sizeof(H5FD_t*));
             if (!x)
                 HRETURN_ERROR(H5E_RESOURCE, H5E_NOSPACE, FAIL,
-			      "unable to allocate memory block");
+                              "unable to allocate memory block");
             file->amembs = n;
             file->memb = x;
             file->nmembs = i;
@@ -724,7 +726,7 @@ H5FD_family_set_eoa(H5FD_t *_file, haddr_t eoa)
             } H5E_END_TRY;
             if (NULL==file->memb[i])
                 HRETURN_ERROR(H5E_FILE, H5E_CANTOPENFILE, FAIL,
-			      "unable to open member file");
+                              "unable to open member file");
         }
         
         /* Set the EOA marker for the member */
@@ -743,18 +745,18 @@ H5FD_family_set_eoa(H5FD_t *_file, haddr_t eoa)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FD_family_get_eof
+ * Function:    H5FD_family_get_eof
  *
- * Purpose:	Returns the end-of-file marker, which is the greater of
- *		either the total family size or the current EOA marker.
+ * Purpose:     Returns the end-of-file marker, which is the greater of
+ *              either the total family size or the current EOA marker.
  *
- * Return:	Success:	End of file address, the first address past
- *				the end of the family of files or the current
- *				EOA, whichever is larger.
+ * Return:      Success:        End of file address, the first address past
+ *                              the end of the family of files or the current
+ *                              EOA, whichever is larger.
  *
- *		Failure:      	HADDR_UNDEF
+ *              Failure:        HADDR_UNDEF
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Wednesday, August  4, 1999
  *
  * Modifications:
@@ -764,9 +766,9 @@ H5FD_family_set_eoa(H5FD_t *_file, haddr_t eoa)
 static haddr_t
 H5FD_family_get_eof(H5FD_t *_file)
 {
-    H5FD_family_t	*file = (H5FD_family_t*)_file;
-    haddr_t		eof=0;
-    int			i;
+    H5FD_family_t       *file = (H5FD_family_t*)_file;
+    haddr_t             eof=0;
+    int                 i;
 
     FUNC_ENTER(H5FD_family_get_eof, HADDR_UNDEF);
 
@@ -793,18 +795,18 @@ H5FD_family_get_eof(H5FD_t *_file)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FD_family_read
+ * Function:    H5FD_family_read
  *
- * Purpose:	Reads SIZE bytes of data from FILE beginning at address ADDR
- *		into buffer BUF according to data transfer properties in
- *		DXPL_ID.
+ * Purpose:     Reads SIZE bytes of data from FILE beginning at address ADDR
+ *              into buffer BUF according to data transfer properties in
+ *              DXPL_ID.
  *
- * Return:	Success:	Zero. Result is stored in caller-supplied
- *				buffer BUF.
+ * Return:      Success:        Zero. Result is stored in caller-supplied
+ *                              buffer BUF.
  *
- *		Failure:	-1, contents of buffer BUF are undefined.
+ *              Failure:        -1, contents of buffer BUF are undefined.
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Wednesday, August  4, 1999
  *
  * Modifications:
@@ -813,14 +815,14 @@ H5FD_family_get_eof(H5FD_t *_file)
  */
 static herr_t
 H5FD_family_read(H5FD_t *_file, H5FD_mem_t type, hid_t dxpl_id, haddr_t addr, hsize_t size,
-		 void *_buf/*out*/)
+                 void *_buf/*out*/)
 {
-    H5FD_family_t	*file = (H5FD_family_t*)_file;
-    unsigned char	*buf = (unsigned char*)_buf;
-    hid_t		memb_dxpl_id = H5P_DEFAULT;
-    int			i;
-    haddr_t		sub;
-    hsize_t		req;
+    H5FD_family_t       *file = (H5FD_family_t*)_file;
+    unsigned char       *buf = (unsigned char*)_buf;
+    hid_t               memb_dxpl_id = H5P_DEFAULT;
+    int                 i;
+    haddr_t             sub;
+    hsize_t             req;
 
     FUNC_ENTER(H5FD_family_read, FAIL);
 
@@ -845,7 +847,7 @@ H5FD_family_read(H5FD_t *_file, H5FD_mem_t type, hid_t dxpl_id, haddr_t addr, hs
 
         if (H5FDread(file->memb[i], type, memb_dxpl_id, sub, req, buf)<0)
             HRETURN_ERROR(H5E_IO, H5E_READERROR, FAIL,
-			  "member file read failed");
+                          "member file read failed");
 
         addr += req;
         buf += req;
@@ -857,17 +859,17 @@ H5FD_family_read(H5FD_t *_file, H5FD_mem_t type, hid_t dxpl_id, haddr_t addr, hs
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FD_family_write
+ * Function:    H5FD_family_write
  *
- * Purpose:	Writes SIZE bytes of data to FILE beginning at address ADDR
- *		from buffer BUF according to data transfer properties in
- *		DXPL_ID.
+ * Purpose:     Writes SIZE bytes of data to FILE beginning at address ADDR
+ *              from buffer BUF according to data transfer properties in
+ *              DXPL_ID.
  *
- * Return:	Success:	Zero
+ * Return:      Success:        Zero
  *
- *		Failure:	-1
+ *              Failure:        -1
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Wednesday, August  4, 1999
  *
  * Modifications:
@@ -876,14 +878,14 @@ H5FD_family_read(H5FD_t *_file, H5FD_mem_t type, hid_t dxpl_id, haddr_t addr, hs
  */
 static herr_t
 H5FD_family_write(H5FD_t *_file, H5FD_mem_t type, hid_t dxpl_id, haddr_t addr, hsize_t size,
-		  const void *_buf)
+                  const void *_buf)
 {
-    H5FD_family_t	*file = (H5FD_family_t*)_file;
-    const unsigned char	*buf = (const unsigned char*)_buf;
-    hid_t		memb_dxpl_id = H5P_DEFAULT;
-    int			i;
-    haddr_t		sub;
-    hsize_t		req;
+    H5FD_family_t       *file = (H5FD_family_t*)_file;
+    const unsigned char *buf = (const unsigned char*)_buf;
+    hid_t               memb_dxpl_id = H5P_DEFAULT;
+    int                 i;
+    haddr_t             sub;
+    hsize_t             req;
 
     FUNC_ENTER(H5FD_family_write, FAIL);
 
@@ -908,7 +910,7 @@ H5FD_family_write(H5FD_t *_file, H5FD_mem_t type, hid_t dxpl_id, haddr_t addr, h
 
         if (H5FDwrite(file->memb[i], type, memb_dxpl_id, sub, req, buf)<0)
             HRETURN_ERROR(H5E_IO, H5E_WRITEERROR, FAIL,
-			  "member file write failed");
+                          "member file write failed");
 
         addr += req;
         buf += req;
@@ -920,15 +922,15 @@ H5FD_family_write(H5FD_t *_file, H5FD_mem_t type, hid_t dxpl_id, haddr_t addr, h
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FD_family_flush
+ * Function:    H5FD_family_flush
  *
- * Purpose:	Flushes all family members.
+ * Purpose:     Flushes all family members.
  *
- * Return:	Success:	0
+ * Return:      Success:        0
  *
- *		Failure:	-1, as many files flushed as possible.
+ *              Failure:        -1, as many files flushed as possible.
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Wednesday, August  4, 1999
  *
  * Modifications:
@@ -938,8 +940,8 @@ H5FD_family_write(H5FD_t *_file, H5FD_mem_t type, hid_t dxpl_id, haddr_t addr, h
 static herr_t
 H5FD_family_flush(H5FD_t *_file)
 {
-    H5FD_family_t	*file = (H5FD_family_t*)_file;
-    int			i, nerrors=0;
+    H5FD_family_t       *file = (H5FD_family_t*)_file;
+    int                 i, nerrors=0;
 
     FUNC_ENTER(H5FD_family_flush, FAIL);
 
@@ -949,7 +951,7 @@ H5FD_family_flush(H5FD_t *_file)
 
     if (nerrors)
         HRETURN_ERROR(H5E_IO, H5E_BADVALUE, FAIL,
-		      "unable to flush member files");
+                      "unable to flush member files");
 
     FUNC_LEAVE(SUCCEED);
 }

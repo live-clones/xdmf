@@ -21,10 +21,10 @@
 /* Private headers needed by this file */
 #include "H5private.h"
 #include "H5Gprivate.h"         /*for H5G_entry_t                            */
-#include "H5Rprivate.h"		/*for H5R_type_t			     */
+#include "H5Rprivate.h"         /*for H5R_type_t                             */
 
-#define H5T_RESERVED_ATOMS 	8
-#define H5T_NAMELEN		32	/*length of debugging name buffer    */
+#define H5T_RESERVED_ATOMS      8
+#define H5T_NAMELEN             32      /*length of debugging name buffer    */
 
 typedef struct H5T_t H5T_t;
 
@@ -37,20 +37,20 @@ typedef enum H5T_copy_t {
 
 /* Statistics about a conversion function */
 typedef struct H5T_stats_t {
-    unsigned	ncalls;			/*num calls to conversion function   */
-    hsize_t	nelmts;			/*total data points converted	     */
-    H5_timer_t	timer;			/*total time for conversion	     */
+    unsigned    ncalls;                 /*num calls to conversion function   */
+    hsize_t     nelmts;                 /*total data points converted        */
+    H5_timer_t  timer;                  /*total time for conversion          */
 } H5T_stats_t;
 
 /* The data type conversion database */
 typedef struct H5T_path_t {
-    char	name[H5T_NAMELEN];	/*name for debugging only	     */
-    H5T_t	*src;			/*source data type ID		     */
-    H5T_t	*dst;			/*destination data type ID	     */
-    H5T_conv_t	func;			/*data conversion function	     */
-    hbool_t	is_hard;		/*is it a hard function?	     */
-    H5T_stats_t	stats;			/*statistics for the conversion	     */
-    H5T_cdata_t	cdata;			/*data for this function	     */
+    char        name[H5T_NAMELEN];      /*name for debugging only            */
+    H5T_t       *src;                   /*source data type ID                */
+    H5T_t       *dst;                   /*destination data type ID           */
+    H5T_conv_t  func;                   /*data conversion function           */
+    hbool_t     is_hard;                /*is it a hard function?             */
+    H5T_stats_t stats;                  /*statistics for the conversion      */
+    H5T_cdata_t cdata;                  /*data for this function             */
 } H5T_path_t;
 
 /*
@@ -89,7 +89,7 @@ typedef struct {
  * multi-threaded application if one thread is using the no-op path when some
  * other thread changes its definition.
  */
-#define H5T_IS_NOOP(P)	((P)->is_hard && 0==H5T_cmp((P)->src, (P)->dst))
+#define H5T_IS_NOOP(P)  ((P)->is_hard && 0==H5T_cmp((P)->src, (P)->dst))
 
 /* Private functions */
 __DLL__ herr_t H5TN_init_interface(void);
@@ -117,19 +117,19 @@ __DLL__ herr_t H5T_pack(H5T_t *dt);
 __DLL__ herr_t H5T_debug(H5T_t *dt, FILE * stream);
 __DLL__ H5G_entry_t *H5T_entof(H5T_t *dt);
 __DLL__ H5T_path_t *H5T_path_find(const H5T_t *src, const H5T_t *dst,
-				  const char *name, H5T_conv_t func);
+                                  const char *name, H5T_conv_t func);
 __DLL__ herr_t H5T_sort_value(H5T_t *dt, int *map);
 __DLL__ herr_t H5T_sort_name(H5T_t *dt, int *map);
 __DLL__ herr_t H5T_convert(H5T_path_t *tpath, hid_t src_id, hid_t dst_id,
-			   hsize_t nelmts, size_t buf_stride, size_t bkg_stride,
+                           hsize_t nelmts, size_t buf_stride, size_t bkg_stride,
                            void *buf, void *bkg, hid_t dset_xfer_plist);
 __DLL__ herr_t H5T_set_size(H5T_t *dt, size_t size);
 __DLL__ herr_t H5T_set_precision(H5T_t *dt, size_t prec);
 __DLL__ herr_t H5T_set_offset(H5T_t *dt, size_t offset);
 __DLL__ char *H5T_enum_nameof(H5T_t *dt, void *value, char *name/*out*/,
-			      size_t size);
+                              size_t size);
 __DLL__ herr_t H5T_enum_valueof(H5T_t *dt, const char *name,
-				void *value/*out*/);
+                                void *value/*out*/);
 __DLL__ herr_t H5T_vlen_reclaim(void *elem, hid_t type_id, hsize_t ndim, hssize_t *point, void *_op_data);
 __DLL__ htri_t H5T_vlen_mark(H5T_t *dt, H5F_t *f, H5T_vlen_loc_t loc);
 

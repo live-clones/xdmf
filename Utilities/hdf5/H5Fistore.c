@@ -1,42 +1,42 @@
 /*
  * Copyright (C) 1997 NCSA
- *		      All rights reserved.
+ *                    All rights reserved.
  *
- * Programmer: 	Robb Matzke <matzke@llnl.gov>
- *	       	Wednesday, October  8, 1997
+ * Programmer:  Robb Matzke <matzke@llnl.gov>
+ *              Wednesday, October  8, 1997
  *
- * Purpose:	Indexed (chunked) I/O functions.  The logical
- *		multi-dimensional data space is regularly partitioned into
- *		same-sized "chunks", the first of which is aligned with the
- *		logical origin.  The chunks are given a multi-dimensional
- *		index which is used as a lookup key in a B-tree that maps
- *		chunk index to disk address.  Each chunk can be compressed
- *		independently and the chunks may move around in the file as
- *		their storage requirements change.
+ * Purpose:     Indexed (chunked) I/O functions.  The logical
+ *              multi-dimensional data space is regularly partitioned into
+ *              same-sized "chunks", the first of which is aligned with the
+ *              logical origin.  The chunks are given a multi-dimensional
+ *              index which is used as a lookup key in a B-tree that maps
+ *              chunk index to disk address.  Each chunk can be compressed
+ *              independently and the chunks may move around in the file as
+ *              their storage requirements change.
  *
- * Cache:	Disk I/O is performed in units of chunks and H5MF_alloc()
- *		contains code to optionally align chunks on disk block
- *		boundaries for performance.
+ * Cache:       Disk I/O is performed in units of chunks and H5MF_alloc()
+ *              contains code to optionally align chunks on disk block
+ *              boundaries for performance.
  *
- *		The chunk cache is an extendible hash indexed by a function
- *		of storage B-tree address and chunk N-dimensional offset
- *		within the dataset.  Collisions are not resolved -- one of
- *		the two chunks competing for the hash slot must be preempted
- *		from the cache.  All entries in the hash also participate in
- *		a doubly-linked list and entries are penalized by moving them
- *		toward the front of the list.  When a new chunk is about to
- *		be added to the cache the heap is pruned by preempting
- *		entries near the front of the list to make room for the new
- *		entry which is added to the end of the list.
+ *              The chunk cache is an extendible hash indexed by a function
+ *              of storage B-tree address and chunk N-dimensional offset
+ *              within the dataset.  Collisions are not resolved -- one of
+ *              the two chunks competing for the hash slot must be preempted
+ *              from the cache.  All entries in the hash also participate in
+ *              a doubly-linked list and entries are penalized by moving them
+ *              toward the front of the list.  When a new chunk is about to
+ *              be added to the cache the heap is pruned by preempting
+ *              entries near the front of the list to make room for the new
+ *              entry which is added to the end of the list.
  */
 
-#define H5F_PACKAGE		/*suppress error about including H5Fpkg	  */
+#define H5F_PACKAGE             /*suppress error about including H5Fpkg   */
 
 #include "H5private.h"
 #include "H5Dprivate.h"
 #include "H5Eprivate.h"
 #include "H5Fpkg.h"
-#include "H5FLprivate.h"	/*Free Lists	  */
+#include "H5FLprivate.h"        /*Free Lists      */
 #include "H5Iprivate.h"
 #include "H5MFprivate.h"
 #include "H5MMprivate.h"
@@ -49,88 +49,88 @@
 
 /*
  * Feature: If this constant is defined then every cache preemption and load
- *	    causes a character to be printed on the standard error stream:
+ *          causes a character to be printed on the standard error stream:
  *
  *     `.': Entry was preempted because it has been completely read or
- *	    completely written but not partially read and not partially
- *	    written. This is often a good reason for preemption because such
- *	    a chunk will be unlikely to be referenced in the near future.
+ *          completely written but not partially read and not partially
+ *          written. This is often a good reason for preemption because such
+ *          a chunk will be unlikely to be referenced in the near future.
  *
  *     `:': Entry was preempted because it hasn't been used recently.
  *
  *     `#': Entry was preempted because another chunk collided with it. This
- *	    is usually a relatively bad thing.  If there are too many of
- *	    these then the number of entries in the cache can be increased.
+ *          is usually a relatively bad thing.  If there are too many of
+ *          these then the number of entries in the cache can be increased.
  *
  *       c: Entry was preempted because the file is closing.
  *
- *	 w: A chunk read operation was eliminated because the library is
- *	    about to write new values to the entire chunk.  This is a good
- *	    thing, especially on files where the chunk size is the same as
- *	    the disk block size, chunks are aligned on disk block boundaries,
- *	    and the operating system can also eliminate a read operation.
+ *       w: A chunk read operation was eliminated because the library is
+ *          about to write new values to the entire chunk.  This is a good
+ *          thing, especially on files where the chunk size is the same as
+ *          the disk block size, chunks are aligned on disk block boundaries,
+ *          and the operating system can also eliminate a read operation.
  */
 /* #define H5F_ISTORE_DEBUG */
 
 /* Interface initialization */
-#define PABLO_MASK	H5Fistore_mask
-static int		interface_initialize_g = 0;
+#define PABLO_MASK      H5Fistore_mask
+static int              interface_initialize_g = 0;
 #define INTERFACE_INIT NULL
 
 /*
  * Given a B-tree node return the dimensionality of the chunks pointed to by
  * that node.
  */
-#define H5F_ISTORE_NDIMS(X)	((int)(((X)->sizeof_rkey-8)/8))
+#define H5F_ISTORE_NDIMS(X)     ((int)(((X)->sizeof_rkey-8)/8))
 
 /* Raw data chunks are cached.  Each entry in the cache is: */
 typedef struct H5F_rdcc_ent_t {
-    hbool_t	locked;		/*entry is locked in cache		*/
-    hbool_t	dirty;		/*needs to be written to disk?		*/
-    H5O_layout_t *layout;	/*the layout message			*/
-    double	split_ratios[3];/*B-tree node splitting ratios		*/
-    H5O_pline_t	*pline;		/*filter pipeline message		*/
-    hssize_t	offset[H5O_LAYOUT_NDIMS]; /*chunk name			*/
-    size_t	rd_count;	/*bytes remaining to be read		*/
-    size_t	wr_count;	/*bytes remaining to be written		*/
-    size_t	chunk_size;	/*size of a chunk			*/
-    size_t	alloc_size;	/*amount allocated for the chunk	*/
-    uint8_t	*chunk;		/*the unfiltered chunk data		*/
-    int	idx;		/*index in hash table			*/
-    struct H5F_rdcc_ent_t *next;/*next item in doubly-linked list	*/
-    struct H5F_rdcc_ent_t *prev;/*previous item in doubly-linked list	*/
+    hbool_t     locked;         /*entry is locked in cache              */
+    hbool_t     dirty;          /*needs to be written to disk?          */
+    H5O_layout_t *layout;       /*the layout message                    */
+    double      split_ratios[3];/*B-tree node splitting ratios          */
+    H5O_pline_t *pline;         /*filter pipeline message               */
+    hssize_t    offset[H5O_LAYOUT_NDIMS]; /*chunk name                  */
+    size_t      rd_count;       /*bytes remaining to be read            */
+    size_t      wr_count;       /*bytes remaining to be written         */
+    size_t      chunk_size;     /*size of a chunk                       */
+    size_t      alloc_size;     /*amount allocated for the chunk        */
+    uint8_t     *chunk;         /*the unfiltered chunk data             */
+    int idx;            /*index in hash table                   */
+    struct H5F_rdcc_ent_t *next;/*next item in doubly-linked list       */
+    struct H5F_rdcc_ent_t *prev;/*previous item in doubly-linked list   */
 } H5F_rdcc_ent_t;
 typedef H5F_rdcc_ent_t *H5F_rdcc_ent_ptr_t; /* For free lists */
 
 /* Private prototypes */
 static size_t H5F_istore_sizeof_rkey(H5F_t *f, const void *_udata);
 static herr_t H5F_istore_new_node(H5F_t *f, H5B_ins_t, void *_lt_key,
-				  void *_udata, void *_rt_key,
-				  haddr_t* /*out*/);
+                                  void *_udata, void *_rt_key,
+                                  haddr_t* /*out*/);
 static int H5F_istore_cmp2(H5F_t *f, void *_lt_key, void *_udata,
-			    void *_rt_key);
+                            void *_rt_key);
 static int H5F_istore_cmp3(H5F_t *f, void *_lt_key, void *_udata,
-			    void *_rt_key);
+                            void *_rt_key);
 static herr_t H5F_istore_found(H5F_t *f, haddr_t addr, const void *_lt_key,
-			       void *_udata, const void *_rt_key);
+                               void *_udata, const void *_rt_key);
 static H5B_ins_t H5F_istore_insert(H5F_t *f, haddr_t addr, void *_lt_key,
-				   hbool_t *lt_key_changed, void *_md_key,
-				   void *_udata, void *_rt_key,
-				   hbool_t *rt_key_changed,
-				   haddr_t *new_node/*out*/);
+                                   hbool_t *lt_key_changed, void *_md_key,
+                                   void *_udata, void *_rt_key,
+                                   hbool_t *rt_key_changed,
+                                   haddr_t *new_node/*out*/);
 static herr_t H5F_istore_iterate(H5F_t *f, void *left_key, haddr_t addr,
-				 void *right_key, void *_udata);
+                                 void *right_key, void *_udata);
 static herr_t H5F_istore_decode_key(H5F_t *f, H5B_t *bt, uint8_t *raw,
-				    void *_key);
+                                    void *_key);
 static herr_t H5F_istore_encode_key(H5F_t *f, H5B_t *bt, uint8_t *raw,
-				    void *_key);
+                                    void *_key);
 static herr_t H5F_istore_debug_key(FILE *stream, int indent, int fwidth,
-				   const void *key, const void *udata);
+                                   const void *key, const void *udata);
 static haddr_t H5F_istore_get_addr(H5F_t *f, const H5O_layout_t *layout,
-				  const hssize_t offset[]);
+                                  const hssize_t offset[]);
 
 /*
- * B-tree key.	A key contains the minimum logical N-dimensional address and
+ * B-tree key.  A key contains the minimum logical N-dimensional address and
  * the logical size of the chunk to which this key refers.  The
  * fastest-varying dimension is assumed to reference individual bytes of the
  * array, so a 100-element 1-d array of 4-byte integers would really be a 2-d
@@ -144,36 +144,36 @@ static haddr_t H5F_istore_get_addr(H5F_t *f, const H5O_layout_t *layout,
  * The chunk's file address is part of the B-tree and not part of the key.
  */
 typedef struct H5F_istore_key_t {
-    size_t	nbytes;				/*size of stored data	*/
-    hssize_t	offset[H5O_LAYOUT_NDIMS];	/*logical offset to start*/
-    unsigned	filter_mask;			/*excluded filters	*/
+    size_t      nbytes;                         /*size of stored data   */
+    hssize_t    offset[H5O_LAYOUT_NDIMS];       /*logical offset to start*/
+    unsigned    filter_mask;                    /*excluded filters      */
 } H5F_istore_key_t;
 
 typedef struct H5F_istore_ud1_t {
-    H5F_istore_key_t	key;	/*key values		*/
-    haddr_t		addr;			/*file address of chunk */
-    H5O_layout_t	mesg;		/*layout message	*/
-    hsize_t		total_storage;	/*output from iterator	*/
-    FILE		*stream;		/*debug output stream	*/
+    H5F_istore_key_t    key;    /*key values            */
+    haddr_t             addr;                   /*file address of chunk */
+    H5O_layout_t        mesg;           /*layout message        */
+    hsize_t             total_storage;  /*output from iterator  */
+    FILE                *stream;                /*debug output stream   */
 } H5F_istore_ud1_t;
 
 /* inherits B-tree like properties from H5B */
 H5B_class_t H5B_ISTORE[1] = {{
-    H5B_ISTORE_ID,				/*id			*/
-    sizeof(H5F_istore_key_t),			/*sizeof_nkey		*/
-    H5F_istore_sizeof_rkey, 			/*get_sizeof_rkey	*/
-    H5F_istore_new_node,			/*new			*/
-    H5F_istore_cmp2,				/*cmp2			*/
-    H5F_istore_cmp3,				/*cmp3			*/
-    H5F_istore_found,				/*found			*/
-    H5F_istore_insert,				/*insert		*/
-    FALSE,					/*follow min branch?	*/
-    FALSE,					/*follow max branch?	*/
-    NULL,					/*remove		*/
-    H5F_istore_iterate,				/*iterator		*/
-    H5F_istore_decode_key,			/*decode		*/
-    H5F_istore_encode_key,			/*encode		*/
-    H5F_istore_debug_key,			/*debug			*/
+    H5B_ISTORE_ID,                              /*id                    */
+    sizeof(H5F_istore_key_t),                   /*sizeof_nkey           */
+    H5F_istore_sizeof_rkey,                     /*get_sizeof_rkey       */
+    H5F_istore_new_node,                        /*new                   */
+    H5F_istore_cmp2,                            /*cmp2                  */
+    H5F_istore_cmp3,                            /*cmp3                  */
+    H5F_istore_found,                           /*found                 */
+    H5F_istore_insert,                          /*insert                */
+    FALSE,                                      /*follow min branch?    */
+    FALSE,                                      /*follow max branch?    */
+    NULL,                                       /*remove                */
+    H5F_istore_iterate,                         /*iterator              */
+    H5F_istore_decode_key,                      /*decode                */
+    H5F_istore_encode_key,                      /*encode                */
+    H5F_istore_debug_key,                       /*debug                 */
 }};
 
 #define H5F_HASH_DIVISOR 8     /* Attempt to spread out the hashing */
@@ -193,18 +193,18 @@ H5FL_ARR_DEFINE_STATIC(H5F_rdcc_ent_ptr_t,-1);
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_istore_chunk_alloc
+ * Function:    H5F_istore_chunk_alloc
  *
- * Purpose:	Allocates memory for a chunk of a dataset.  This routine is used
+ * Purpose:     Allocates memory for a chunk of a dataset.  This routine is used
  *      instead of malloc because the chunks can be kept on a free list so
  *      they don't thrash malloc/free as much.
  *
- * Return:	Success:	valid pointer to the chunk
+ * Return:      Success:        valid pointer to the chunk
  *
- *		Failure:	NULL
+ *              Failure:        NULL
  *
- * Programmer:	Quincey Koziol
- *		Tuesday, March  21, 2000
+ * Programmer:  Quincey Koziol
+ *              Tuesday, March  21, 2000
  *
  * Modifications:
  *
@@ -224,18 +224,18 @@ H5F_istore_chunk_alloc(size_t chunk_size)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_istore_chunk_free
+ * Function:    H5F_istore_chunk_free
  *
- * Purpose:	Releases memory for a chunk of a dataset.  This routine is used
+ * Purpose:     Releases memory for a chunk of a dataset.  This routine is used
  *      instead of free because the chunks can be kept on a free list so
  *      they don't thrash malloc/free as much.
  *
- * Return:	Success:	NULL
+ * Return:      Success:        NULL
  *
- *		Failure:	never fails
+ *              Failure:        never fails
  *
- * Programmer:	Quincey Koziol
- *		Tuesday, March  21, 2000
+ * Programmer:  Quincey Koziol
+ *              Tuesday, March  21, 2000
  *
  * Modifications:
  *
@@ -253,18 +253,18 @@ H5F_istore_chunk_free(void *chunk)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_istore_chunk_realloc
+ * Function:    H5F_istore_chunk_realloc
  *
- * Purpose:	Resizes a chunk in chunking memory allocation system.  This
+ * Purpose:     Resizes a chunk in chunking memory allocation system.  This
  *      does things the straightforward, simple way, not actually using
  *      realloc.
  *
- * Return:	Success:	NULL
+ * Return:      Success:        NULL
  *
- *		Failure:	never fails
+ *              Failure:        never fails
  *
- * Programmer:	Quincey Koziol
- *		Tuesday, March  21, 2000
+ * Programmer:  Quincey Koziol
+ *              Tuesday, March  21, 2000
  *
  * Modifications:
  *
@@ -284,19 +284,19 @@ H5F_istore_chunk_realloc(void *chunk, size_t new_size)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_istore_sizeof_rkey
+ * Function:    H5F_istore_sizeof_rkey
  *
- * Purpose:	Returns the size of a raw key for the specified UDATA.	The
- *		size of the key is dependent on the number of dimensions for
- *		the object to which this B-tree points.	 The dimensionality
- *		of the UDATA is the only portion that's referenced here.
+ * Purpose:     Returns the size of a raw key for the specified UDATA.  The
+ *              size of the key is dependent on the number of dimensions for
+ *              the object to which this B-tree points.  The dimensionality
+ *              of the UDATA is the only portion that's referenced here.
  *
- * Return:	Success:	Size of raw key in bytes.
+ * Return:      Success:        Size of raw key in bytes.
  *
- *		Failure:	abort()
+ *              Failure:        abort()
  *
- * Programmer:	Robb Matzke
- *		Wednesday, October  8, 1997
+ * Programmer:  Robb Matzke
+ *              Wednesday, October  8, 1997
  *
  * Modifications:
  *
@@ -306,28 +306,30 @@ static size_t
 H5F_istore_sizeof_rkey(H5F_t UNUSED *f, const void *_udata)
 {
     const H5F_istore_ud1_t *udata = (const H5F_istore_ud1_t *) _udata;
-    size_t		    nbytes;
+    size_t                  nbytes;
 
     assert(udata);
     assert(udata->mesg.ndims > 0 && udata->mesg.ndims <= H5O_LAYOUT_NDIMS);
 
-    nbytes = 4 +			/*storage size		*/
-	     4 +			/*filter mask		*/
-	     udata->mesg.ndims*8;	/*dimension indices	*/
+    nbytes = 4 +                        /*storage size          */
+             4 +                        /*filter mask           */
+             udata->mesg.ndims*8;       /*dimension indices     */
+
+    f = 0;
 
     return nbytes;
 }
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_istore_decode_key
+ * Function:    H5F_istore_decode_key
  *
- * Purpose:	Decodes a raw key into a native key for the B-tree
+ * Purpose:     Decodes a raw key into a native key for the B-tree
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Robb Matzke
- *		Friday, October 10, 1997
+ * Programmer:  Robb Matzke
+ *              Friday, October 10, 1997
  *
  * Modifications:
  *
@@ -336,9 +338,9 @@ H5F_istore_sizeof_rkey(H5F_t UNUSED *f, const void *_udata)
 static herr_t
 H5F_istore_decode_key(H5F_t UNUSED *f, H5B_t *bt, uint8_t *raw, void *_key)
 {
-    H5F_istore_key_t	*key = (H5F_istore_key_t *) _key;
-    int		i;
-    int		ndims = H5F_ISTORE_NDIMS(bt);
+    H5F_istore_key_t    *key = (H5F_istore_key_t *) _key;
+    int         i;
+    int         ndims = H5F_ISTORE_NDIMS(bt);
 
     FUNC_ENTER(H5F_istore_decode_key, FAIL);
 
@@ -353,7 +355,7 @@ H5F_istore_decode_key(H5F_t UNUSED *f, H5B_t *bt, uint8_t *raw, void *_key)
     UINT32DECODE(raw, key->nbytes);
     UINT32DECODE(raw, key->filter_mask);
     for (i=0; i<ndims; i++) {
-	UINT64DECODE(raw, key->offset[i]);
+        UINT64DECODE(raw, key->offset[i]);
     }
 
     FUNC_LEAVE(SUCCEED);
@@ -361,25 +363,25 @@ H5F_istore_decode_key(H5F_t UNUSED *f, H5B_t *bt, uint8_t *raw, void *_key)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_istore_encode_key
+ * Function:    H5F_istore_encode_key
  *
- * Purpose:	Encode a key from native format to raw format.
+ * Purpose:     Encode a key from native format to raw format.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Robb Matzke
- *		Friday, October 10, 1997
+ * Programmer:  Robb Matzke
+ *              Friday, October 10, 1997
  *
  * Modifications:
- *	
+ *      
  *-------------------------------------------------------------------------
  */
 static herr_t
 H5F_istore_encode_key(H5F_t UNUSED *f, H5B_t *bt, uint8_t *raw, void *_key)
 {
-    H5F_istore_key_t	*key = (H5F_istore_key_t *) _key;
-    int		ndims = H5F_ISTORE_NDIMS(bt);
-    int		i;
+    H5F_istore_key_t    *key = (H5F_istore_key_t *) _key;
+    int         ndims = H5F_ISTORE_NDIMS(bt);
+    int         i;
 
     FUNC_ENTER(H5F_istore_encode_key, FAIL);
 
@@ -394,7 +396,7 @@ H5F_istore_encode_key(H5F_t UNUSED *f, H5B_t *bt, uint8_t *raw, void *_key)
     UINT32ENCODE(raw, key->nbytes);
     UINT32ENCODE(raw, key->filter_mask);
     for (i=0; i<ndims; i++) {
-	UINT64ENCODE(raw, key->offset[i]);
+        UINT64ENCODE(raw, key->offset[i]);
     }
 
     FUNC_LEAVE(SUCCEED);
@@ -402,13 +404,13 @@ H5F_istore_encode_key(H5F_t UNUSED *f, H5B_t *bt, uint8_t *raw, void *_key)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_istore_debug_key
+ * Function:    H5F_istore_debug_key
  *
- * Purpose:	Prints a key.
+ * Purpose:     Prints a key.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Thursday, April 16, 1998
  *
  * Modifications:
@@ -417,21 +419,21 @@ H5F_istore_encode_key(H5F_t UNUSED *f, H5B_t *bt, uint8_t *raw, void *_key)
  */
 static herr_t
 H5F_istore_debug_key (FILE *stream, int indent, int fwidth,
-		      const void *_key, const void *_udata)
+                      const void *_key, const void *_udata)
 {
-    const H5F_istore_key_t	*key = (const H5F_istore_key_t *)_key;
-    const H5F_istore_ud1_t	*udata = (const H5F_istore_ud1_t *)_udata;
-    unsigned		u;
+    const H5F_istore_key_t      *key = (const H5F_istore_key_t *)_key;
+    const H5F_istore_ud1_t      *udata = (const H5F_istore_ud1_t *)_udata;
+    unsigned            u;
     
     FUNC_ENTER (H5F_istore_debug_key, FAIL);
     assert (key);
 
     HDfprintf(stream, "%*s%-*s %Zd bytes\n", indent, "", fwidth,
-	      "Chunk size:", key->nbytes);
+              "Chunk size:", key->nbytes);
     HDfprintf(stream, "%*s%-*s 0x%08x\n", indent, "", fwidth,
-	      "Filter mask:", key->filter_mask);
+              "Filter mask:", key->filter_mask);
     HDfprintf(stream, "%*s%-*s {", indent, "", fwidth,
-	      "Logical offset:");
+              "Logical offset:");
     for (u=0; u<udata->mesg.ndims; u++) {
         HDfprintf (stream, "%s%Hd", u?", ":"", key->offset[u]);
     }
@@ -442,21 +444,21 @@ H5F_istore_debug_key (FILE *stream, int indent, int fwidth,
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_istore_cmp2
+ * Function:    H5F_istore_cmp2
  *
- * Purpose:	Compares two keys sort of like strcmp().  The UDATA pointer
- *		is only to supply extra information not carried in the keys
- *		(in this case, the dimensionality) and is not compared
- *		against the keys.
+ * Purpose:     Compares two keys sort of like strcmp().  The UDATA pointer
+ *              is only to supply extra information not carried in the keys
+ *              (in this case, the dimensionality) and is not compared
+ *              against the keys.
  *
- * Return:	Success:	-1 if LT_KEY is less than RT_KEY;
- *				1 if LT_KEY is greater than RT_KEY;
- *				0 if LT_KEY and RT_KEY are equal.
+ * Return:      Success:        -1 if LT_KEY is less than RT_KEY;
+ *                              1 if LT_KEY is greater than RT_KEY;
+ *                              0 if LT_KEY and RT_KEY are equal.
  *
- *		Failure:	FAIL (same as LT_KEY<RT_KEY)
+ *              Failure:        FAIL (same as LT_KEY<RT_KEY)
  *
- * Programmer:	Robb Matzke
- *		Thursday, November  6, 1997
+ * Programmer:  Robb Matzke
+ *              Thursday, November  6, 1997
  *
  * Modifications:
  *
@@ -464,12 +466,12 @@ H5F_istore_debug_key (FILE *stream, int indent, int fwidth,
  */
 static int
 H5F_istore_cmp2(H5F_t UNUSED *f, void *_lt_key, void *_udata,
-		void *_rt_key)
+                void *_rt_key)
 {
-    H5F_istore_key_t	*lt_key = (H5F_istore_key_t *) _lt_key;
-    H5F_istore_key_t	*rt_key = (H5F_istore_key_t *) _rt_key;
-    H5F_istore_ud1_t	*udata = (H5F_istore_ud1_t *) _udata;
-    int		cmp;
+    H5F_istore_key_t    *lt_key = (H5F_istore_key_t *) _lt_key;
+    H5F_istore_key_t    *rt_key = (H5F_istore_key_t *) _rt_key;
+    H5F_istore_ud1_t    *udata = (H5F_istore_ud1_t *) _udata;
+    int         cmp;
 
     FUNC_ENTER(H5F_istore_cmp2, FAIL);
 
@@ -482,33 +484,34 @@ H5F_istore_cmp2(H5F_t UNUSED *f, void *_lt_key, void *_udata,
     cmp = H5V_vector_cmp_s(udata->mesg.ndims, lt_key->offset, rt_key->offset);
 
     FUNC_LEAVE(cmp);
+    f = 0;
 }
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_istore_cmp3
+ * Function:    H5F_istore_cmp3
  *
- * Purpose:	Compare the requested datum UDATA with the left and right
- *		keys of the B-tree.
+ * Purpose:     Compare the requested datum UDATA with the left and right
+ *              keys of the B-tree.
  *
- * Return:	Success:	negative if the min_corner of UDATA is less
- *				than the min_corner of LT_KEY.
+ * Return:      Success:        negative if the min_corner of UDATA is less
+ *                              than the min_corner of LT_KEY.
  *
- *				positive if the min_corner of UDATA is
- *				greater than or equal the min_corner of
- *				RT_KEY.
+ *                              positive if the min_corner of UDATA is
+ *                              greater than or equal the min_corner of
+ *                              RT_KEY.
  *
- *				zero otherwise.	 The min_corner of UDATA is
- *				not necessarily contained within the address
- *				space represented by LT_KEY, but a key that
- *				would describe the UDATA min_corner address
- *				would fall lexicographically between LT_KEY
- *				and RT_KEY.
- *				
- *		Failure:	FAIL (same as UDATA < LT_KEY)
+ *                              zero otherwise.  The min_corner of UDATA is
+ *                              not necessarily contained within the address
+ *                              space represented by LT_KEY, but a key that
+ *                              would describe the UDATA min_corner address
+ *                              would fall lexicographically between LT_KEY
+ *                              and RT_KEY.
+ *                              
+ *              Failure:        FAIL (same as UDATA < LT_KEY)
  *
- * Programmer:	Robb Matzke
- *		Wednesday, October  8, 1997
+ * Programmer:  Robb Matzke
+ *              Wednesday, October  8, 1997
  *
  * Modifications:
  *
@@ -516,12 +519,12 @@ H5F_istore_cmp2(H5F_t UNUSED *f, void *_lt_key, void *_udata,
  */
 static int
 H5F_istore_cmp3(H5F_t UNUSED *f, void *_lt_key, void *_udata,
-		void *_rt_key)
+                void *_rt_key)
 {
-    H5F_istore_key_t	*lt_key = (H5F_istore_key_t *) _lt_key;
-    H5F_istore_key_t	*rt_key = (H5F_istore_key_t *) _rt_key;
-    H5F_istore_ud1_t	*udata = (H5F_istore_ud1_t *) _udata;
-    int		cmp = 0;
+    H5F_istore_key_t    *lt_key = (H5F_istore_key_t *) _lt_key;
+    H5F_istore_key_t    *rt_key = (H5F_istore_key_t *) _rt_key;
+    H5F_istore_ud1_t    *udata = (H5F_istore_ud1_t *) _udata;
+    int         cmp = 0;
 
     FUNC_ENTER(H5F_istore_cmp3, FAIL);
 
@@ -531,31 +534,33 @@ H5F_istore_cmp3(H5F_t UNUSED *f, void *_lt_key, void *_udata,
     assert(udata->mesg.ndims > 0 && udata->mesg.ndims <= H5O_LAYOUT_NDIMS);
 
     if (H5V_vector_lt_s(udata->mesg.ndims, udata->key.offset,
-			lt_key->offset)) {
-	cmp = -1;
+                        lt_key->offset)) {
+        cmp = -1;
     } else if (H5V_vector_ge_s(udata->mesg.ndims, udata->key.offset,
-			     rt_key->offset)) {
-	cmp = 1;
+                             rt_key->offset)) {
+        cmp = 1;
     }
     FUNC_LEAVE(cmp);
+
+    f = 0;
 }
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_istore_new_node
+ * Function:    H5F_istore_new_node
  *
- * Purpose:	Adds a new entry to an i-storage B-tree.  We can assume that
- *		the domain represented by UDATA doesn't intersect the domain
- *		already represented by the B-tree.
+ * Purpose:     Adds a new entry to an i-storage B-tree.  We can assume that
+ *              the domain represented by UDATA doesn't intersect the domain
+ *              already represented by the B-tree.
  *
- * Return:	Success:	Non-negative. The address of leaf is returned
- *				through the ADDR argument.  It is also added
- *				to the UDATA.
+ * Return:      Success:        Non-negative. The address of leaf is returned
+ *                              through the ADDR argument.  It is also added
+ *                              to the UDATA.
  *
- * 		Failure:	Negative
+ *              Failure:        Negative
  *
- * Programmer:	Robb Matzke
- *		Tuesday, October 14, 1997
+ * Programmer:  Robb Matzke
+ *              Tuesday, October 14, 1997
  *
  * Modifications:
  *
@@ -563,13 +568,13 @@ H5F_istore_cmp3(H5F_t UNUSED *f, void *_lt_key, void *_udata,
  */
 static herr_t
 H5F_istore_new_node(H5F_t *f, H5B_ins_t op,
-		    void *_lt_key, void *_udata, void *_rt_key,
-		    haddr_t *addr_p/*out*/)
+                    void *_lt_key, void *_udata, void *_rt_key,
+                    haddr_t *addr_p/*out*/)
 {
-    H5F_istore_key_t	*lt_key = (H5F_istore_key_t *) _lt_key;
-    H5F_istore_key_t	*rt_key = (H5F_istore_key_t *) _rt_key;
-    H5F_istore_ud1_t	*udata = (H5F_istore_ud1_t *) _udata;
-    unsigned		u;
+    H5F_istore_key_t    *lt_key = (H5F_istore_key_t *) _lt_key;
+    H5F_istore_key_t    *rt_key = (H5F_istore_key_t *) _rt_key;
+    H5F_istore_ud1_t    *udata = (H5F_istore_ud1_t *) _udata;
+    unsigned            u;
 
     FUNC_ENTER(H5F_istore_new_node, FAIL);
 #ifdef AKC
@@ -590,7 +595,7 @@ H5F_istore_new_node(H5F_t *f, H5B_ins_t op,
 #endif
     if (HADDR_UNDEF==(*addr_p=H5MF_alloc(f, H5FD_MEM_DRAW, (hsize_t)udata->key.nbytes))) {
         HRETURN_ERROR(H5E_IO, H5E_CANTINIT, FAIL,
-		      "couldn't allocate new file storage");
+                      "couldn't allocate new file storage");
     }
     udata->addr = *addr_p;
 
@@ -625,39 +630,39 @@ H5F_istore_new_node(H5F_t *f, H5B_ins_t op,
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_istore_found
+ * Function:    H5F_istore_found
  *
- * Purpose:	This function is called when the B-tree search engine has
- *		found the leaf entry that points to a chunk of storage that
- *		contains the beginning of the logical address space
- *		represented by UDATA.  The LT_KEY is the left key (the one
- *		that describes the chunk) and RT_KEY is the right key (the
- *		one that describes the next or last chunk).
+ * Purpose:     This function is called when the B-tree search engine has
+ *              found the leaf entry that points to a chunk of storage that
+ *              contains the beginning of the logical address space
+ *              represented by UDATA.  The LT_KEY is the left key (the one
+ *              that describes the chunk) and RT_KEY is the right key (the
+ *              one that describes the next or last chunk).
  *
- * Note:	It's possible that the chunk isn't really found.  For
- *		instance, in a sparse dataset the requested chunk might fall
- *		between two stored chunks in which case this function is
- *		called with the maximum stored chunk indices less than the
- *		requested chunk indices.
+ * Note:        It's possible that the chunk isn't really found.  For
+ *              instance, in a sparse dataset the requested chunk might fall
+ *              between two stored chunks in which case this function is
+ *              called with the maximum stored chunk indices less than the
+ *              requested chunk indices.
  *
- * Return:	Non-negative on success with information about the chunk
- *		returned through the UDATA argument. Negative on failure.
+ * Return:      Non-negative on success with information about the chunk
+ *              returned through the UDATA argument. Negative on failure.
  *
- * Programmer:	Robb Matzke
- *		Thursday, October  9, 1997
+ * Programmer:  Robb Matzke
+ *              Thursday, October  9, 1997
  *
  * Modifications:
- *		Robb Matzke, 1999-07-28
- *		The ADDR argument is passed by value.
+ *              Robb Matzke, 1999-07-28
+ *              The ADDR argument is passed by value.
  *-------------------------------------------------------------------------
  */
 static herr_t
 H5F_istore_found(H5F_t UNUSED *f, haddr_t addr, const void *_lt_key,
-		 void *_udata, const void UNUSED *_rt_key)
+                 void *_udata, const void UNUSED *_rt_key)
 {
-    H5F_istore_ud1_t	   *udata = (H5F_istore_ud1_t *) _udata;
+    H5F_istore_ud1_t       *udata = (H5F_istore_ud1_t *) _udata;
     const H5F_istore_key_t *lt_key = (const H5F_istore_key_t *) _lt_key;
-    unsigned		u;
+    unsigned            u;
 
     FUNC_ENTER(H5F_istore_found, FAIL);
 
@@ -684,55 +689,57 @@ H5F_istore_found(H5F_t UNUSED *f, haddr_t addr, const void *_lt_key,
     }
 
     FUNC_LEAVE(SUCCEED);
+
+    _rt_key = 0;
 }
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_istore_insert
+ * Function:    H5F_istore_insert
  *
- * Purpose:	This function is called when the B-tree insert engine finds
- *		the node to use to insert new data.  The UDATA argument
- *		points to a struct that describes the logical addresses being
- *		added to the file.  This function allocates space for the
- *		data and returns information through UDATA describing a
- *		file chunk to receive (part of) the data.
+ * Purpose:     This function is called when the B-tree insert engine finds
+ *              the node to use to insert new data.  The UDATA argument
+ *              points to a struct that describes the logical addresses being
+ *              added to the file.  This function allocates space for the
+ *              data and returns information through UDATA describing a
+ *              file chunk to receive (part of) the data.
  *
- *		The LT_KEY is always the key describing the chunk of file
- *		memory at address ADDR. On entry, UDATA describes the logical
- *		addresses for which storage is being requested (through the
- *		`offset' and `size' fields). On return, UDATA describes the
- *		logical addresses contained in a chunk on disk.
+ *              The LT_KEY is always the key describing the chunk of file
+ *              memory at address ADDR. On entry, UDATA describes the logical
+ *              addresses for which storage is being requested (through the
+ *              `offset' and `size' fields). On return, UDATA describes the
+ *              logical addresses contained in a chunk on disk.
  *
- * Return:	Success:	An insertion command for the caller, one of
- *				the H5B_INS_* constants.  The address of the
- *				new chunk is returned through the NEW_NODE
- *				argument.
+ * Return:      Success:        An insertion command for the caller, one of
+ *                              the H5B_INS_* constants.  The address of the
+ *                              new chunk is returned through the NEW_NODE
+ *                              argument.
  *
- *		Failure:	H5B_INS_ERROR
+ *              Failure:        H5B_INS_ERROR
  *
- * Programmer:	Robb Matzke
- *		Thursday, October  9, 1997
+ * Programmer:  Robb Matzke
+ *              Thursday, October  9, 1997
  *
  * Modifications:
- *		Robb Matzke, 1999-07-28
- *		The ADDR argument is passed by value. The NEW_NODE argument
- *		is renamed NEW_NODE_P.
+ *              Robb Matzke, 1999-07-28
+ *              The ADDR argument is passed by value. The NEW_NODE argument
+ *              is renamed NEW_NODE_P.
  *-------------------------------------------------------------------------
  */
 static H5B_ins_t
 H5F_istore_insert(H5F_t *f, haddr_t addr, void *_lt_key,
-		  hbool_t UNUSED *lt_key_changed,
-		  void *_md_key, void *_udata, void *_rt_key,
-		  hbool_t UNUSED *rt_key_changed,
-		  haddr_t *new_node_p/*out*/)
+                  hbool_t UNUSED *lt_key_changed,
+                  void *_md_key, void *_udata, void *_rt_key,
+                  hbool_t UNUSED *rt_key_changed,
+                  haddr_t *new_node_p/*out*/)
 {
-    H5F_istore_key_t	*lt_key = (H5F_istore_key_t *) _lt_key;
-    H5F_istore_key_t	*md_key = (H5F_istore_key_t *) _md_key;
-    H5F_istore_key_t	*rt_key = (H5F_istore_key_t *) _rt_key;
-    H5F_istore_ud1_t	*udata = (H5F_istore_ud1_t *) _udata;
-    int		cmp;
-    unsigned		u;
-    H5B_ins_t		ret_value = H5B_INS_ERROR;
+    H5F_istore_key_t    *lt_key = (H5F_istore_key_t *) _lt_key;
+    H5F_istore_key_t    *md_key = (H5F_istore_key_t *) _md_key;
+    H5F_istore_key_t    *rt_key = (H5F_istore_key_t *) _rt_key;
+    H5F_istore_ud1_t    *udata = (H5F_istore_ud1_t *) _udata;
+    int         cmp;
+    unsigned            u;
+    H5B_ins_t           ret_value = H5B_INS_ERROR;
 
     FUNC_ENTER(H5F_istore_insert, H5B_INS_ERROR);
 #ifdef AKC
@@ -757,11 +764,11 @@ H5F_istore_insert(H5F_t *f, haddr_t addr, void *_lt_key,
         /* Negative indices not supported yet */
         assert("HDF5 INTERNAL ERROR -- see rpm" && 0);
         HRETURN_ERROR(H5E_STORAGE, H5E_UNSUPPORTED, H5B_INS_ERROR,
-		      "internal error");
-	
+                      "internal error");
+        
     } else if (H5V_vector_eq_s (udata->mesg.ndims,
-				udata->key.offset, lt_key->offset) &&
-	       lt_key->nbytes>0) {
+                                udata->key.offset, lt_key->offset) &&
+               lt_key->nbytes>0) {
         /*
          * Already exists.  If the new size is not the same as the old size
          * then we should reallocate storage.
@@ -787,11 +794,11 @@ H5F_istore_insert(H5F_t *f, haddr_t addr, void *_lt_key,
         }
 
     } else if (H5V_hyper_disjointp(udata->mesg.ndims,
-				   lt_key->offset, udata->mesg.dim,
-				   udata->key.offset, udata->mesg.dim)) {
+                                   lt_key->offset, udata->mesg.dim,
+                                   udata->key.offset, udata->mesg.dim)) {
         assert(H5V_hyper_disjointp(udata->mesg.ndims,
-				   rt_key->offset, udata->mesg.dim,
-				   udata->key.offset, udata->mesg.dim));
+                                   rt_key->offset, udata->mesg.dim,
+                                   udata->key.offset, udata->mesg.dim));
         /*
          * Split this node, inserting the new new node to the right of the
          * current node.  The MD_KEY is where the split occurs.
@@ -820,7 +827,7 @@ H5F_istore_insert(H5F_t *f, haddr_t addr, void *_lt_key,
     } else {
         assert("HDF5 INTERNAL ERROR -- see rpm" && 0);
         HRETURN_ERROR(H5E_IO, H5E_UNSUPPORTED, H5B_INS_ERROR,
-		      "internal error");
+                      "internal error");
     }
 
     FUNC_LEAVE(ret_value);
@@ -828,31 +835,31 @@ H5F_istore_insert(H5F_t *f, haddr_t addr, void *_lt_key,
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_istore_iterate
+ * Function:    H5F_istore_iterate
  *
- * Purpose:	Simply counts the number of chunks for a dataset. If the
- *		UDATA.STREAM member is non-null then debugging information is
- *		written to that stream.
+ * Purpose:     Simply counts the number of chunks for a dataset. If the
+ *              UDATA.STREAM member is non-null then debugging information is
+ *              written to that stream.
  *
- * Return:	Success:	Non-negative
+ * Return:      Success:        Non-negative
  *
- *		Failure:	Negative
+ *              Failure:        Negative
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Wednesday, April 21, 1999
  *
  * Modifications:
- *		Robb Matzke, 1999-07-28
- *		The ADDR argument is passed by value.
+ *              Robb Matzke, 1999-07-28
+ *              The ADDR argument is passed by value.
  *-------------------------------------------------------------------------
  */
 static herr_t
 H5F_istore_iterate (H5F_t UNUSED *f, void *_lt_key, haddr_t UNUSED addr,
-		    void UNUSED *_rt_key, void *_udata)
+                    void UNUSED *_rt_key, void *_udata)
 {
-    H5F_istore_ud1_t	*bt_udata = (H5F_istore_ud1_t *)_udata;
-    H5F_istore_key_t	*lt_key = (H5F_istore_key_t *)_lt_key;
-    unsigned		u;
+    H5F_istore_ud1_t    *bt_udata = (H5F_istore_ud1_t *)_udata;
+    H5F_istore_key_t    *lt_key = (H5F_istore_key_t *)_lt_key;
+    unsigned            u;
 
     FUNC_ENTER(H5F_istore_iterate, FAIL);
 
@@ -875,18 +882,21 @@ H5F_istore_iterate (H5F_t UNUSED *f, void *_lt_key, haddr_t UNUSED addr,
 
     bt_udata->total_storage += lt_key->nbytes;
     FUNC_LEAVE(SUCCEED);
+
+    f = 0;
+    _rt_key = 0;
 }
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_istore_init
+ * Function:    H5F_istore_init
  *
- * Purpose:	Initialize the raw data chunk cache for a file.  This is
- *		called when the file handle is initialized.
+ * Purpose:     Initialize the raw data chunk cache for a file.  This is
+ *              called when the file handle is initialized.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Monday, May 18, 1998
  *
  * Modifications:
@@ -896,19 +906,19 @@ H5F_istore_iterate (H5F_t UNUSED *f, void *_lt_key, haddr_t UNUSED addr,
 herr_t
 H5F_istore_init (H5F_t *f)
 {
-    H5F_rdcc_t	*rdcc = &(f->shared->rdcc);
+    H5F_rdcc_t  *rdcc = &(f->shared->rdcc);
     
     FUNC_ENTER (H5F_istore_init, FAIL);
 
     HDmemset (rdcc, 0, sizeof(H5F_rdcc_t));
     if (f->shared->rdcc_nbytes>0 && f->shared->rdcc_nelmts>0) {
-	rdcc->nslots = f->shared->rdcc_nelmts;
+        rdcc->nslots = f->shared->rdcc_nelmts;
     assert(rdcc->nslots>=0);
-	rdcc->slot = H5FL_ARR_ALLOC (H5F_rdcc_ent_ptr_t,(hsize_t)rdcc->nslots,1);
-	if (NULL==rdcc->slot) {
-	    HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, FAIL,
-			   "memory allocation failed");
-	}
+        rdcc->slot = H5FL_ARR_ALLOC (H5F_rdcc_ent_ptr_t,(hsize_t)rdcc->nslots,1);
+        if (NULL==rdcc->slot) {
+            HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, FAIL,
+                           "memory allocation failed");
+        }
     }
 
     FUNC_LEAVE (SUCCEED);
@@ -916,16 +926,16 @@ H5F_istore_init (H5F_t *f)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_istore_flush_entry
+ * Function:    H5F_istore_flush_entry
  *
- * Purpose:	Writes a chunk to disk.  If RESET is non-zero then the
- *		entry is cleared -- it's slightly faster to flush a chunk if
- *		the RESET flag is turned on because it results in one fewer
- *		memory copy.
+ * Purpose:     Writes a chunk to disk.  If RESET is non-zero then the
+ *              entry is cleared -- it's slightly faster to flush a chunk if
+ *              the RESET flag is turned on because it results in one fewer
+ *              memory copy.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Thursday, May 21, 1998
  *
  * Modifications:
@@ -935,12 +945,12 @@ H5F_istore_init (H5F_t *f)
 static herr_t
 H5F_istore_flush_entry(H5F_t *f, H5F_rdcc_ent_t *ent, hbool_t reset)
 {
-    herr_t		ret_value=FAIL;	/*return value			*/
-    H5F_istore_ud1_t 	udata;		/*pass through B-tree		*/
-    unsigned		u;		/*counters			*/
-    void		*buf=NULL;	/*temporary buffer		*/
-    size_t		alloc;		/*bytes allocated for BUF	*/
-    hbool_t		point_of_no_return = FALSE;
+    herr_t              ret_value=FAIL; /*return value                  */
+    H5F_istore_ud1_t    udata;          /*pass through B-tree           */
+    unsigned            u;              /*counters                      */
+    void                *buf=NULL;      /*temporary buffer              */
+    size_t              alloc;          /*bytes allocated for BUF       */
+    hbool_t             point_of_no_return = FALSE;
     
     FUNC_ENTER(H5F_istore_flush_entry, FAIL);
     assert(f);
@@ -1077,14 +1087,14 @@ H5F_istore_preempt (H5F_t *f, H5F_rdcc_ent_t *ent)
 
     /* Unlink from list */
     if (ent->prev) {
-	ent->prev->next = ent->next;
+        ent->prev->next = ent->next;
     } else {
-	rdcc->head = ent->next;
+        rdcc->head = ent->next;
     }
     if (ent->next) {
-	ent->next->prev = ent->prev;
+        ent->next->prev = ent->prev;
     } else {
-	rdcc->tail = ent->prev;
+        rdcc->tail = ent->prev;
     }
     ent->prev = ent->next = NULL;
 
@@ -1102,14 +1112,14 @@ H5F_istore_preempt (H5F_t *f, H5F_rdcc_ent_t *ent)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_istore_flush
+ * Function:    H5F_istore_flush
  *
- * Purpose:	Writes all dirty chunks to disk and optionally preempts them
- *		from the cache.
+ * Purpose:     Writes all dirty chunks to disk and optionally preempts them
+ *              from the cache.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Thursday, May 21, 1998
  *
  * Modifications:
@@ -1119,42 +1129,42 @@ H5F_istore_preempt (H5F_t *f, H5F_rdcc_ent_t *ent)
 herr_t
 H5F_istore_flush (H5F_t *f, hbool_t preempt)
 {
-    H5F_rdcc_t		*rdcc = &(f->shared->rdcc);
-    int		nerrors=0;
-    H5F_rdcc_ent_t	*ent=NULL, *next=NULL;
+    H5F_rdcc_t          *rdcc = &(f->shared->rdcc);
+    int         nerrors=0;
+    H5F_rdcc_ent_t      *ent=NULL, *next=NULL;
     
     FUNC_ENTER (H5F_istore_flush, FAIL);
 
     for (ent=rdcc->head; ent; ent=next) {
-	next = ent->next;
-	if (preempt) {
-	    if (H5F_istore_preempt(f, ent)<0) {
-		nerrors++;
-	    }
-	} else {
-	    if (H5F_istore_flush_entry(f, ent, FALSE)<0) {
-		nerrors++;
-	    }
-	}
+        next = ent->next;
+        if (preempt) {
+            if (H5F_istore_preempt(f, ent)<0) {
+                nerrors++;
+            }
+        } else {
+            if (H5F_istore_flush_entry(f, ent, FALSE)<0) {
+                nerrors++;
+            }
+        }
     }
     
     if (nerrors) {
-	HRETURN_ERROR (H5E_IO, H5E_CANTFLUSH, FAIL,
-		       "unable to flush one or more raw data chunks");
+        HRETURN_ERROR (H5E_IO, H5E_CANTFLUSH, FAIL,
+                       "unable to flush one or more raw data chunks");
     }
     FUNC_LEAVE (SUCCEED);
 }
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_istore_dest
+ * Function:    H5F_istore_dest
  *
- * Purpose:	Destroy the entire chunk cache by flushing dirty entries,
- *		preempting all entries, and freeing the cache itself.
+ * Purpose:     Destroy the entire chunk cache by flushing dirty entries,
+ *              preempting all entries, and freeing the cache itself.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Thursday, May 21, 1998
  *
  * Modifications:
@@ -1164,25 +1174,25 @@ H5F_istore_flush (H5F_t *f, hbool_t preempt)
 herr_t
 H5F_istore_dest (H5F_t *f)
 {
-    H5F_rdcc_t		*rdcc = &(f->shared->rdcc);
-    int		nerrors=0;
-    H5F_rdcc_ent_t	*ent=NULL, *next=NULL;
+    H5F_rdcc_t          *rdcc = &(f->shared->rdcc);
+    int         nerrors=0;
+    H5F_rdcc_ent_t      *ent=NULL, *next=NULL;
     
     FUNC_ENTER (H5F_istore_dest, FAIL);
 
     for (ent=rdcc->head; ent; ent=next) {
 #ifdef H5F_ISTORE_DEBUG
-	fputc('c', stderr);
-	fflush(stderr);
+        fputc('c', stderr);
+        fflush(stderr);
 #endif
-	next = ent->next;
-	if (H5F_istore_preempt(f, ent)<0) {
-	    nerrors++;
-	}
+        next = ent->next;
+        if (H5F_istore_preempt(f, ent)<0) {
+            nerrors++;
+        }
     }
     if (nerrors) {
-	HRETURN_ERROR (H5E_IO, H5E_CANTFLUSH, FAIL,
-		       "unable to flush one or more raw data chunks");
+        HRETURN_ERROR (H5E_IO, H5E_CANTFLUSH, FAIL,
+                       "unable to flush one or more raw data chunks");
     }
 
     H5FL_ARR_FREE (H5F_rdcc_ent_ptr_t,rdcc->slot);
@@ -1192,15 +1202,15 @@ H5F_istore_dest (H5F_t *f)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_istore_prune
+ * Function:    H5F_istore_prune
  *
- * Purpose:	Prune the cache by preempting some things until the cache has
- *		room for something which is SIZE bytes.  Only unlocked
- *		entries are considered for preemption.
+ * Purpose:     Prune the cache by preempting some things until the cache has
+ *              room for something which is SIZE bytes.  Only unlocked
+ *              entries are considered for preemption.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Thursday, May 21, 1998
  *
  * Modifications:
@@ -1210,13 +1220,13 @@ H5F_istore_dest (H5F_t *f)
 static herr_t
 H5F_istore_prune (H5F_t *f, size_t size)
 {
-    int		i, j, nerrors=0;
-    H5F_rdcc_t		*rdcc = &(f->shared->rdcc);
-    size_t		total = f->shared->rdcc_nbytes;
-    const int		nmeth=2;	/*number of methods		*/
-    int		w[1];		/*weighting as an interval	*/
-    H5F_rdcc_ent_t	*p[2], *cur;	/*list pointers			*/
-    H5F_rdcc_ent_t	*n[2];		/*list next pointers		*/
+    int         i, j, nerrors=0;
+    H5F_rdcc_t          *rdcc = &(f->shared->rdcc);
+    size_t              total = f->shared->rdcc_nbytes;
+    const int           nmeth=2;        /*number of methods             */
+    int         w[1];           /*weighting as an interval      */
+    H5F_rdcc_ent_t      *p[2], *cur;    /*list pointers                 */
+    H5F_rdcc_ent_t      *n[2];          /*list next pointers            */
 
     FUNC_ENTER (H5F_istore_prune, FAIL);
 
@@ -1236,117 +1246,117 @@ H5F_istore_prune (H5F_t *f, size_t size)
 
     while ((p[0] || p[1]) && rdcc->nbytes+size>total) {
 
-	/* Introduce new pointers */
-	for (i=0; i<nmeth-1; i++) if (0==w[i]) p[i+1] = rdcc->head;
-	
-	/* Compute next value for each pointer */
-	for (i=0; i<nmeth; i++) n[i] = p[i] ? p[i]->next : NULL;
+        /* Introduce new pointers */
+        for (i=0; i<nmeth-1; i++) if (0==w[i]) p[i+1] = rdcc->head;
+        
+        /* Compute next value for each pointer */
+        for (i=0; i<nmeth; i++) n[i] = p[i] ? p[i]->next : NULL;
 
-	/* Give each method a chance */
-	for (i=0; i<nmeth && rdcc->nbytes+size>total; i++) {
-	    if (0==i && p[0] && !p[0]->locked &&
-		((0==p[0]->rd_count && 0==p[0]->wr_count) ||
-		 (0==p[0]->rd_count && p[0]->chunk_size==p[0]->wr_count) ||
-		 (p[0]->chunk_size==p[0]->rd_count && 0==p[0]->wr_count))) {
-		/*
-		 * Method 0: Preempt entries that have been completely written
-		 * and/or completely read but not entries that are partially
-		 * written or partially read.
-		 */
-		cur = p[0];
+        /* Give each method a chance */
+        for (i=0; i<nmeth && rdcc->nbytes+size>total; i++) {
+            if (0==i && p[0] && !p[0]->locked &&
+                ((0==p[0]->rd_count && 0==p[0]->wr_count) ||
+                 (0==p[0]->rd_count && p[0]->chunk_size==p[0]->wr_count) ||
+                 (p[0]->chunk_size==p[0]->rd_count && 0==p[0]->wr_count))) {
+                /*
+                 * Method 0: Preempt entries that have been completely written
+                 * and/or completely read but not entries that are partially
+                 * written or partially read.
+                 */
+                cur = p[0];
 #ifdef H5F_ISTORE_DEBUG
-		putc('.', stderr);
-		fflush(stderr);
+                putc('.', stderr);
+                fflush(stderr);
 #endif
-		
-	    } else if (1==i && p[1] && !p[1]->locked) {
-		/*
-		 * Method 1: Preempt the entry without regard to
-		 * considerations other than being locked.  This is the last
-		 * resort preemption.
-		 */
-		cur = p[1];
+                
+            } else if (1==i && p[1] && !p[1]->locked) {
+                /*
+                 * Method 1: Preempt the entry without regard to
+                 * considerations other than being locked.  This is the last
+                 * resort preemption.
+                 */
+                cur = p[1];
 #ifdef H5F_ISTORE_DEBUG
-		putc(':', stderr);
-		fflush(stderr);
+                putc(':', stderr);
+                fflush(stderr);
 #endif
-		
-	    } else {
-		/* Nothing to preempt at this point */
-		cur= NULL;
-	    }
+                
+            } else {
+                /* Nothing to preempt at this point */
+                cur= NULL;
+            }
 
-	    if (cur) {
-		for (j=0; j<nmeth; j++) {
-		    if (p[j]==cur) p[j] = NULL;
-		    if (n[j]==cur) n[j] = cur->next;
-		}
-		if (H5F_istore_preempt(f, cur)<0) nerrors++;
-	    }
-	}
-	
-	/* Advance pointers */
-	for (i=0; i<nmeth; i++) p[i] = n[i];
-	for (i=0; i<nmeth-1; i++) w[i] -= 1;
+            if (cur) {
+                for (j=0; j<nmeth; j++) {
+                    if (p[j]==cur) p[j] = NULL;
+                    if (n[j]==cur) n[j] = cur->next;
+                }
+                if (H5F_istore_preempt(f, cur)<0) nerrors++;
+            }
+        }
+        
+        /* Advance pointers */
+        for (i=0; i<nmeth; i++) p[i] = n[i];
+        for (i=0; i<nmeth-1; i++) w[i] -= 1;
     }
 
     if (nerrors) {
-	HRETURN_ERROR (H5E_IO, H5E_CANTFLUSH, FAIL,
-		       "unable to preempt one or more raw data cache entry");
+        HRETURN_ERROR (H5E_IO, H5E_CANTFLUSH, FAIL,
+                       "unable to preempt one or more raw data cache entry");
     }
     FUNC_LEAVE (SUCCEED);
 }
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_istore_lock
+ * Function:    H5F_istore_lock
  *
- * Purpose:	Return a pointer to a dataset chunk.  The pointer points
- *		directly into the chunk cache and should not be freed
- *		by the caller but will be valid until it is unlocked.  The
- *		input value IDX_HINT is used to speed up cache lookups and
- *		it's output value should be given to H5F_rdcc_unlock().
- *		IDX_HINT is ignored if it is out of range, and if it points
- *		to the wrong entry then we fall back to the normal search
- *		method.
+ * Purpose:     Return a pointer to a dataset chunk.  The pointer points
+ *              directly into the chunk cache and should not be freed
+ *              by the caller but will be valid until it is unlocked.  The
+ *              input value IDX_HINT is used to speed up cache lookups and
+ *              it's output value should be given to H5F_rdcc_unlock().
+ *              IDX_HINT is ignored if it is out of range, and if it points
+ *              to the wrong entry then we fall back to the normal search
+ *              method.
  *
- *		If RELAX is non-zero and the chunk isn't in the cache then
- *		don't try to read it from the file, but just allocate an
- *		uninitialized buffer to hold the result.  This is intended
- *		for output functions that are about to overwrite the entire
- *		chunk.
+ *              If RELAX is non-zero and the chunk isn't in the cache then
+ *              don't try to read it from the file, but just allocate an
+ *              uninitialized buffer to hold the result.  This is intended
+ *              for output functions that are about to overwrite the entire
+ *              chunk.
  *
- * Return:	Success:	Ptr to a file chunk.
+ * Return:      Success:        Ptr to a file chunk.
  *
- *		Failure:	NULL
+ *              Failure:        NULL
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Thursday, May 21, 1998
  *
  * Modifications:
- *		Robb Matzke, 1999-08-02
- *		The split ratios are passed in as part of the data transfer
- *		property list.
+ *              Robb Matzke, 1999-08-02
+ *              The split ratios are passed in as part of the data transfer
+ *              property list.
  *-------------------------------------------------------------------------
  */
 static void *
 H5F_istore_lock(H5F_t *f, hid_t dxpl_id, const H5O_layout_t *layout,
-		const H5O_pline_t *pline, const H5O_fill_t *fill,
-		const hssize_t offset[], hbool_t relax,
-		int *idx_hint/*in,out*/)
+                const H5O_pline_t *pline, const H5O_fill_t *fill,
+                const hssize_t offset[], hbool_t relax,
+                int *idx_hint/*in,out*/)
 {
-    int		idx=0;			/*hash index number	*/
-    unsigned		temp_idx=0;			/* temporary index number	*/
-    hbool_t		found = FALSE;		/*already in cache?	*/
-    H5F_rdcc_t		*rdcc = &(f->shared->rdcc);/*raw data chunk cache*/
-    H5F_rdcc_ent_t	*ent = NULL;		/*cache entry		*/
-    unsigned		u;			/*counters		*/
-    H5F_istore_ud1_t	udata;			/*B-tree pass-through	*/
-    size_t		chunk_size=0;		/*size of a chunk	*/
-    size_t		chunk_alloc=0;		/*allocated chunk size	*/
-    herr_t		status;			/*func return status	*/
-    void		*chunk=NULL;		/*the file chunk	*/
-    void		*ret_value=NULL;	/*return value		*/
+    int         idx=0;                  /*hash index number     */
+    unsigned            temp_idx=0;                     /* temporary index number       */
+    hbool_t             found = FALSE;          /*already in cache?     */
+    H5F_rdcc_t          *rdcc = &(f->shared->rdcc);/*raw data chunk cache*/
+    H5F_rdcc_ent_t      *ent = NULL;            /*cache entry           */
+    unsigned            u;                      /*counters              */
+    H5F_istore_ud1_t    udata;                  /*B-tree pass-through   */
+    size_t              chunk_size=0;           /*size of a chunk       */
+    size_t              chunk_alloc=0;          /*allocated chunk size  */
+    herr_t              status;                 /*func return status    */
+    void                *chunk=NULL;            /*the file chunk        */
+    void                *ret_value=NULL;        /*return value          */
 
     FUNC_ENTER (H5F_istore_lock, NULL);
 
@@ -1578,51 +1588,51 @@ H5F_istore_lock(H5F_t *f, hid_t dxpl_id, const H5O_layout_t *layout,
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_istore_unlock
+ * Function:    H5F_istore_unlock
  *
- * Purpose:	Unlocks a previously locked chunk. The LAYOUT, COMP, and
- *		OFFSET arguments should be the same as for H5F_rdcc_lock().
- *		The DIRTY argument should be set to non-zero if the chunk has
- *		been modified since it was locked. The IDX_HINT argument is
- *		the returned index hint from the lock operation and BUF is
- *		the return value from the lock.
+ * Purpose:     Unlocks a previously locked chunk. The LAYOUT, COMP, and
+ *              OFFSET arguments should be the same as for H5F_rdcc_lock().
+ *              The DIRTY argument should be set to non-zero if the chunk has
+ *              been modified since it was locked. The IDX_HINT argument is
+ *              the returned index hint from the lock operation and BUF is
+ *              the return value from the lock.
  *
- *		The NACCESSED argument should be the number of bytes accessed
- *		for reading or writing (depending on the value of DIRTY).
- *		It's only purpose is to provide additional information to the
- *		preemption policy.
+ *              The NACCESSED argument should be the number of bytes accessed
+ *              for reading or writing (depending on the value of DIRTY).
+ *              It's only purpose is to provide additional information to the
+ *              preemption policy.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Thursday, May 21, 1998
  *
  * Modifications:
- *		Robb Matzke, 1999-08-02
- *		The split_ratios are passed as part of the data transfer
- *		property list.
+ *              Robb Matzke, 1999-08-02
+ *              The split_ratios are passed as part of the data transfer
+ *              property list.
  *-------------------------------------------------------------------------
  */
 static herr_t
 H5F_istore_unlock(H5F_t *f, hid_t dxpl_id, const H5O_layout_t *layout,
-		  const H5O_pline_t *pline, hbool_t dirty,
-		  const hssize_t offset[], int *idx_hint,
-		  uint8_t *chunk, size_t naccessed)
+                  const H5O_pline_t *pline, hbool_t dirty,
+                  const hssize_t offset[], int *idx_hint,
+                  uint8_t *chunk, size_t naccessed)
 {
-    H5F_rdcc_t		*rdcc = &(f->shared->rdcc);
-    H5F_rdcc_ent_t	*ent = NULL;
-    int		found = -1;
-    unsigned		u;
+    H5F_rdcc_t          *rdcc = &(f->shared->rdcc);
+    H5F_rdcc_ent_t      *ent = NULL;
+    int         found = -1;
+    unsigned            u;
     
     FUNC_ENTER (H5F_istore_unlock, FAIL);
 
     if (INT_MIN==*idx_hint) {
-	/*not in cache*/
+        /*not in cache*/
     } else {
-	assert(*idx_hint>=0 && *idx_hint<rdcc->nslots);
-	assert(rdcc->slot[*idx_hint]);
-	assert(rdcc->slot[*idx_hint]->chunk==chunk);
-	found = *idx_hint;
+        assert(*idx_hint>=0 && *idx_hint<rdcc->nslots);
+        assert(rdcc->slot[*idx_hint]);
+        assert(rdcc->slot[*idx_hint]->chunk==chunk);
+        found = *idx_hint;
     }
     
     if (found<0) {
@@ -1630,7 +1640,7 @@ H5F_istore_unlock(H5F_t *f, hid_t dxpl_id, const H5O_layout_t *layout,
          * It's not in the cache, probably because it's too big.  If it's
          * dirty then flush it to disk.  In any case, free the chunk.
          * Note: we have to copy the layout and filter messages so we
-         *	 don't discard the `const' qualifier.
+         *       don't discard the `const' qualifier.
          */
         if (dirty) {
             H5F_rdcc_ent_t x;
@@ -1678,43 +1688,43 @@ H5F_istore_unlock(H5F_t *f, hid_t dxpl_id, const H5O_layout_t *layout,
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_istore_read
+ * Function:    H5F_istore_read
  *
- * Purpose:	Reads a multi-dimensional buffer from (part of) an indexed raw
- *		storage array.
+ * Purpose:     Reads a multi-dimensional buffer from (part of) an indexed raw
+ *              storage array.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Robb Matzke
- *		Wednesday, October 15, 1997
+ * Programmer:  Robb Matzke
+ *              Wednesday, October 15, 1997
  *
  * Modifications:
- *		Robb Matzke, 1999-08-02
- *		The data transfer property list is passed as an object ID
- *		since that's how the virtual file layer wants it.
+ *              Robb Matzke, 1999-08-02
+ *              The data transfer property list is passed as an object ID
+ *              since that's how the virtual file layer wants it.
  *-------------------------------------------------------------------------
  */
 herr_t
 H5F_istore_read(H5F_t *f, hid_t dxpl_id, const H5O_layout_t *layout,
-		const H5O_pline_t *pline, const H5O_fill_t *fill,
-		const hssize_t offset_f[], const hsize_t size[], void *buf)
+                const H5O_pline_t *pline, const H5O_fill_t *fill,
+                const hssize_t offset_f[], const hsize_t size[], void *buf)
 {
-    hssize_t		offset_m[H5O_LAYOUT_NDIMS];
-    hsize_t		size_m[H5O_LAYOUT_NDIMS];
-    hsize_t		idx_cur[H5O_LAYOUT_NDIMS];
-    hsize_t		idx_min[H5O_LAYOUT_NDIMS];
-    hsize_t		idx_max[H5O_LAYOUT_NDIMS];
-    hsize_t		sub_size[H5O_LAYOUT_NDIMS];
-    hssize_t		offset_wrt_chunk[H5O_LAYOUT_NDIMS];
-    hssize_t		sub_offset_m[H5O_LAYOUT_NDIMS];
-    hssize_t		chunk_offset[H5O_LAYOUT_NDIMS];
-    int		i, carry;
-    unsigned		u;
-    size_t		naccessed;		/*bytes accessed in chnk*/
-    uint8_t		*chunk=NULL;		/*ptr to a chunk buffer	*/
-    int		idx_hint=0;		/*cache index hint	*/
-    hsize_t		chunk_size;     /* Bytes in chunk */
-    haddr_t	        chunk_addr;     /* Chunk address on disk */
+    hssize_t            offset_m[H5O_LAYOUT_NDIMS];
+    hsize_t             size_m[H5O_LAYOUT_NDIMS];
+    hsize_t             idx_cur[H5O_LAYOUT_NDIMS];
+    hsize_t             idx_min[H5O_LAYOUT_NDIMS];
+    hsize_t             idx_max[H5O_LAYOUT_NDIMS];
+    hsize_t             sub_size[H5O_LAYOUT_NDIMS];
+    hssize_t            offset_wrt_chunk[H5O_LAYOUT_NDIMS];
+    hssize_t            sub_offset_m[H5O_LAYOUT_NDIMS];
+    hssize_t            chunk_offset[H5O_LAYOUT_NDIMS];
+    int         i, carry;
+    unsigned            u;
+    size_t              naccessed;              /*bytes accessed in chnk*/
+    uint8_t             *chunk=NULL;            /*ptr to a chunk buffer */
+    int         idx_hint=0;             /*cache index hint      */
+    hsize_t             chunk_size;     /* Bytes in chunk */
+    haddr_t             chunk_addr;     /* Chunk address on disk */
 
     FUNC_ENTER(H5F_istore_read, FAIL);
 
@@ -1798,7 +1808,7 @@ H5F_istore_read(H5F_t *f, hid_t dxpl_id, const H5O_layout_t *layout,
             || IS_H5FD_MPIO(f)
 #endif /* H5_HAVE_PARALLEL */
             ) {
-            H5O_layout_t	l;	/* temporary layout */
+            H5O_layout_t        l;      /* temporary layout */
 
 #ifdef H5_HAVE_PARALLEL
             /* Additional sanity checks when operating in parallel */
@@ -1856,43 +1866,43 @@ H5F_istore_read(H5F_t *f, hid_t dxpl_id, const H5O_layout_t *layout,
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_istore_write
+ * Function:    H5F_istore_write
  *
- * Purpose:	Writes a multi-dimensional buffer to (part of) an indexed raw
- *		storage array.
+ * Purpose:     Writes a multi-dimensional buffer to (part of) an indexed raw
+ *              storage array.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Robb Matzke
- *		Wednesday, October 15, 1997
+ * Programmer:  Robb Matzke
+ *              Wednesday, October 15, 1997
  *
  * Modifications:
- *		Robb Matzke, 1999-08-02
- *		The data transfer property list is passed as an object ID
- *		since that's how the virtual file layer wants it.
+ *              Robb Matzke, 1999-08-02
+ *              The data transfer property list is passed as an object ID
+ *              since that's how the virtual file layer wants it.
  *-------------------------------------------------------------------------
  */
 herr_t
 H5F_istore_write(H5F_t *f, hid_t dxpl_id, const H5O_layout_t *layout,
-		 const H5O_pline_t *pline, const H5O_fill_t *fill,
-		 const hssize_t offset_f[], const hsize_t size[],
-		 const void *buf)
+                 const H5O_pline_t *pline, const H5O_fill_t *fill,
+                 const hssize_t offset_f[], const hsize_t size[],
+                 const void *buf)
 {
-    hssize_t	offset_m[H5O_LAYOUT_NDIMS];
-    hsize_t		size_m[H5O_LAYOUT_NDIMS];
-    int		i, carry;
-    unsigned		u;
-    hsize_t		idx_cur[H5O_LAYOUT_NDIMS];
-    hsize_t		idx_min[H5O_LAYOUT_NDIMS];
-    hsize_t		idx_max[H5O_LAYOUT_NDIMS];
-    hsize_t		sub_size[H5O_LAYOUT_NDIMS];
-    hssize_t	chunk_offset[H5O_LAYOUT_NDIMS];
-    hssize_t	offset_wrt_chunk[H5O_LAYOUT_NDIMS];
-    hssize_t	sub_offset_m[H5O_LAYOUT_NDIMS];
-    uint8_t		*chunk=NULL;
-    int		idx_hint=0;
-    size_t		chunk_size, naccessed;
-    haddr_t	        chunk_addr;     /* Chunk address on disk */
+    hssize_t    offset_m[H5O_LAYOUT_NDIMS];
+    hsize_t             size_m[H5O_LAYOUT_NDIMS];
+    int         i, carry;
+    unsigned            u;
+    hsize_t             idx_cur[H5O_LAYOUT_NDIMS];
+    hsize_t             idx_min[H5O_LAYOUT_NDIMS];
+    hsize_t             idx_max[H5O_LAYOUT_NDIMS];
+    hsize_t             sub_size[H5O_LAYOUT_NDIMS];
+    hssize_t    chunk_offset[H5O_LAYOUT_NDIMS];
+    hssize_t    offset_wrt_chunk[H5O_LAYOUT_NDIMS];
+    hssize_t    sub_offset_m[H5O_LAYOUT_NDIMS];
+    uint8_t             *chunk=NULL;
+    int         idx_hint=0;
+    size_t              chunk_size, naccessed;
+    haddr_t             chunk_addr;     /* Chunk address on disk */
     
     FUNC_ENTER(H5F_istore_write, FAIL);
 
@@ -1978,7 +1988,7 @@ H5F_istore_write(H5F_t *f, hid_t dxpl_id, const H5O_layout_t *layout,
             || IS_H5FD_MPIO(f)
 #endif /* H5_HAVE_PARALLEL */
             ) {
-            H5O_layout_t	l;	/* temporary layout */
+            H5O_layout_t        l;      /* temporary layout */
 
 #ifdef H5_HAVE_PARALLEL
             /* Additional sanity check when operating in parallel */
@@ -2039,20 +2049,20 @@ H5F_istore_write(H5F_t *f, hid_t dxpl_id, const H5O_layout_t *layout,
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_istore_create
+ * Function:    H5F_istore_create
  *
- * Purpose:	Creates a new indexed-storage B-tree and initializes the
- *		istore struct with information about the storage.  The
- *		struct should be immediately written to the object header.
+ * Purpose:     Creates a new indexed-storage B-tree and initializes the
+ *              istore struct with information about the storage.  The
+ *              struct should be immediately written to the object header.
  *
- *		This function must be called before passing ISTORE to any of
- *		the other indexed storage functions!
+ *              This function must be called before passing ISTORE to any of
+ *              the other indexed storage functions!
  *
- * Return:	Non-negative on success (with the ISTORE argument initialized
- *		and ready to write to an object header). Negative on failure.
+ * Return:      Non-negative on success (with the ISTORE argument initialized
+ *              and ready to write to an object header). Negative on failure.
  *
- * Programmer:	Robb Matzke
- *		Tuesday, October 21, 1997
+ * Programmer:  Robb Matzke
+ *              Tuesday, October 21, 1997
  *
  * Modifications:
  *
@@ -2061,9 +2071,9 @@ H5F_istore_write(H5F_t *f, hid_t dxpl_id, const H5O_layout_t *layout,
 herr_t
 H5F_istore_create(H5F_t *f, H5O_layout_t *layout /*out */ )
 {
-    H5F_istore_ud1_t	udata;
+    H5F_istore_ud1_t    udata;
 #ifndef NDEBUG
-    unsigned			u;
+    unsigned                    u;
 #endif
 
     FUNC_ENTER(H5F_istore_create, FAIL);
@@ -2074,13 +2084,13 @@ H5F_istore_create(H5F_t *f, H5O_layout_t *layout /*out */ )
     assert(layout->ndims > 0 && layout->ndims <= H5O_LAYOUT_NDIMS);
 #ifndef NDEBUG
     for (u = 0; u < layout->ndims; u++) {
-	assert(layout->dim[u] > 0);
+        assert(layout->dim[u] > 0);
     }
 #endif
 
     udata.mesg.ndims = layout->ndims;
     if (H5B_create(f, H5B_ISTORE, &udata, &(layout->addr)/*out*/) < 0) {
-	HRETURN_ERROR(H5E_IO, H5E_CANTINIT, FAIL, "can't create B-tree");
+        HRETURN_ERROR(H5E_IO, H5E_CANTINIT, FAIL, "can't create B-tree");
     }
     
     FUNC_LEAVE(SUCCEED);
@@ -2088,28 +2098,28 @@ H5F_istore_create(H5F_t *f, H5O_layout_t *layout /*out */ )
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_istore_allocated
+ * Function:    H5F_istore_allocated
  *
- * Purpose:	Return the number of bytes allocated in the file for storage
- *		of raw data under the specified B-tree (ADDR is the address
- *		of the B-tree).
+ * Purpose:     Return the number of bytes allocated in the file for storage
+ *              of raw data under the specified B-tree (ADDR is the address
+ *              of the B-tree).
  *
- * Return:	Success:	Number of bytes stored in all chunks.
+ * Return:      Success:        Number of bytes stored in all chunks.
  *
- *		Failure:	0
+ *              Failure:        0
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Wednesday, April 21, 1999
  *
  * Modifications:
- *		Robb Matzke, 1999-07-28
- *		The ADDR argument is passed by value.
+ *              Robb Matzke, 1999-07-28
+ *              The ADDR argument is passed by value.
  *-------------------------------------------------------------------------
  */
 hsize_t
 H5F_istore_allocated(H5F_t *f, unsigned ndims, haddr_t addr)
 {
-    H5F_istore_ud1_t	udata;
+    H5F_istore_ud1_t    udata;
 
     FUNC_ENTER(H5F_istore_nchunks, 0);
 
@@ -2117,34 +2127,34 @@ H5F_istore_allocated(H5F_t *f, unsigned ndims, haddr_t addr)
     udata.mesg.ndims = ndims;
     if (H5B_iterate(f, H5B_ISTORE, addr, &udata)<0) {
         HRETURN_ERROR(H5E_IO, H5E_CANTINIT, 0,
-		      "unable to iterate over chunk B-tree");
+                      "unable to iterate over chunk B-tree");
     }
     FUNC_LEAVE(udata.total_storage);
 }
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_istore_dump_btree
+ * Function:    H5F_istore_dump_btree
  *
- * Purpose:	Prints information about the storage B-tree to the specified
- *		stream.
+ * Purpose:     Prints information about the storage B-tree to the specified
+ *              stream.
  *
- * Return:	Success:	Non-negative
+ * Return:      Success:        Non-negative
  *
- *		Failure:	negative
+ *              Failure:        negative
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Wednesday, April 28, 1999
  *
  * Modifications:
- *		Robb Matzke, 1999-07-28
- *		The ADDR argument is passed by value.
+ *              Robb Matzke, 1999-07-28
+ *              The ADDR argument is passed by value.
  *-------------------------------------------------------------------------
  */
 herr_t
 H5F_istore_dump_btree(H5F_t *f, FILE *stream, unsigned ndims, haddr_t addr)
 {
-    H5F_istore_ud1_t	udata;
+    H5F_istore_ud1_t    udata;
 
     FUNC_ENTER(H5F_istore_dump_btree, FAIL);
 
@@ -2153,22 +2163,22 @@ H5F_istore_dump_btree(H5F_t *f, FILE *stream, unsigned ndims, haddr_t addr)
     udata.stream = stream;
     if (H5B_iterate(f, H5B_ISTORE, addr, &udata)<0) {
         HRETURN_ERROR(H5E_IO, H5E_CANTINIT, 0,
-		      "unable to iterate over chunk B-tree");
+                      "unable to iterate over chunk B-tree");
     }
     FUNC_LEAVE(SUCCEED);
 }
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_istore_stats
+ * Function:    H5F_istore_stats
  *
- * Purpose:	Print raw data cache statistics to the debug stream.  If
- *		HEADERS is non-zero then print table column headers,
- *		otherwise assume that the H5AC layer has already printed them.
+ * Purpose:     Print raw data cache statistics to the debug stream.  If
+ *              HEADERS is non-zero then print table column headers,
+ *              otherwise assume that the H5AC layer has already printed them.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Thursday, May 21, 1998
  *
  * Modifications:
@@ -2178,9 +2188,9 @@ H5F_istore_dump_btree(H5F_t *f, FILE *stream, unsigned ndims, haddr_t addr)
 herr_t
 H5F_istore_stats (H5F_t *f, hbool_t headers)
 {
-    H5F_rdcc_t	*rdcc = &(f->shared->rdcc);
-    double	miss_rate;
-    char	ascii[32];
+    H5F_rdcc_t  *rdcc = &(f->shared->rdcc);
+    double      miss_rate;
+    char        ascii[32];
     
     FUNC_ENTER (H5F_istore_stats, FAIL);
     if (!H5DEBUG(AC)) HRETURN(SUCCEED);
@@ -2221,25 +2231,25 @@ H5F_istore_stats (H5F_t *f, hbool_t headers)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_istore_debug
+ * Function:    H5F_istore_debug
  *
- * Purpose:	Debugs a B-tree node for indexed raw data storage.
+ * Purpose:     Debugs a B-tree node for indexed raw data storage.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Thursday, April 16, 1998
  *
  * Modifications:
- *		Robb Matzke, 1999-07-28
- *		The ADDR argument is passed by value.
+ *              Robb Matzke, 1999-07-28
+ *              The ADDR argument is passed by value.
  *-------------------------------------------------------------------------
  */
 herr_t
 H5F_istore_debug(H5F_t *f, haddr_t addr, FILE * stream, int indent,
-		 int fwidth, int ndims)
+                 int fwidth, int ndims)
 {
-    H5F_istore_ud1_t	udata;
+    H5F_istore_ud1_t    udata;
     
     FUNC_ENTER (H5F_istore_debug, FAIL);
 
@@ -2253,15 +2263,15 @@ H5F_istore_debug(H5F_t *f, haddr_t addr, FILE * stream, int indent,
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_istore_get_addr
+ * Function:    H5F_istore_get_addr
  *
- * Purpose:	Get the file address of a chunk if file space has been
- *		assigned.  Save the retrieved information in the udata
- *		supplied.
+ * Purpose:     Get the file address of a chunk if file space has been
+ *              assigned.  Save the retrieved information in the udata
+ *              supplied.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Albert Cheng
+ * Programmer:  Albert Cheng
  *              June 27, 1998
  *
  * Modifications:
@@ -2272,11 +2282,11 @@ H5F_istore_debug(H5F_t *f, haddr_t addr, FILE * stream, int indent,
  */
 static haddr_t
 H5F_istore_get_addr(H5F_t *f, const H5O_layout_t *layout,
-		    const hssize_t offset[])
+                    const hssize_t offset[])
 {
-    H5F_istore_ud1_t	udata;                  /* Information about a chunk */
-    unsigned	u;
-    haddr_t	ret_value=HADDR_UNDEF;		/* Return value */
+    H5F_istore_ud1_t    udata;                  /* Information about a chunk */
+    unsigned    u;
+    haddr_t     ret_value=HADDR_UNDEF;          /* Return value */
     
     FUNC_ENTER (H5F_istore_get_addr, HADDR_UNDEF);
 
@@ -2286,14 +2296,14 @@ H5F_istore_get_addr(H5F_t *f, const H5O_layout_t *layout,
 
     /* Initialize the information about the chunk we are looking for */
     for (u=0; u<layout->ndims; u++)
-	udata.key.offset[u] = offset[u];
+        udata.key.offset[u] = offset[u];
     udata.mesg = *layout;
     udata.addr = HADDR_UNDEF;
 
     /* Go get the chunk information */
     if (H5B_find (f, H5B_ISTORE, layout->addr, &udata)<0) {
         H5E_clear();
-	HGOTO_ERROR(H5E_BTREE,H5E_NOTFOUND,HADDR_UNDEF,"Can't locate chunk info");
+        HGOTO_ERROR(H5E_BTREE,H5E_NOTFOUND,HADDR_UNDEF,"Can't locate chunk info");
     } /* end if */
 
     /* Success!  Set the return value */
@@ -2305,51 +2315,51 @@ done:
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_istore_allocate
+ * Function:    H5F_istore_allocate
  *
- * Purpose:	Allocate file space for all chunks that are not allocated yet.
- *		Return SUCCEED if all needed allocation succeed, otherwise
- *		FAIL.
+ * Purpose:     Allocate file space for all chunks that are not allocated yet.
+ *              Return SUCCEED if all needed allocation succeed, otherwise
+ *              FAIL.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Note:	Current implementation relies on cache_size being 0,
- *		thus no chunk is cashed and written to disk immediately
- *		when a chunk is unlocked (via H5F_istore_unlock)
- *		This should be changed to do a direct flush independent
- *		of the cache value.
+ * Note:        Current implementation relies on cache_size being 0,
+ *              thus no chunk is cashed and written to disk immediately
+ *              when a chunk is unlocked (via H5F_istore_unlock)
+ *              This should be changed to do a direct flush independent
+ *              of the cache value.
  *
- * Programmer:	Albert Cheng
- *		June 26, 1998
+ * Programmer:  Albert Cheng
+ *              June 26, 1998
  *
  * Modifications:
- *		rky, 1998-09-23
- *		Added barrier to preclude racing with data writes.
+ *              rky, 1998-09-23
+ *              Added barrier to preclude racing with data writes.
  *
- *		rky, 1998-12-07
- *		Added Wait-Signal wrapper around unlock-lock critical region
- *		to prevent race condition (unlock reads, lock writes the
- *		chunk).
+ *              rky, 1998-12-07
+ *              Added Wait-Signal wrapper around unlock-lock critical region
+ *              to prevent race condition (unlock reads, lock writes the
+ *              chunk).
  *
- * 		Robb Matzke, 1999-08-02
- *		The split_ratios are passed in as part of the data transfer
- *		property list.
+ *              Robb Matzke, 1999-08-02
+ *              The split_ratios are passed in as part of the data transfer
+ *              property list.
  *-------------------------------------------------------------------------
  */
 herr_t
 H5F_istore_allocate(H5F_t *f, hid_t dxpl_id, const H5O_layout_t *layout,
-		    const hsize_t *space_dim, const H5O_pline_t *pline,
-		    const H5O_fill_t *fill)
+                    const hsize_t *space_dim, const H5O_pline_t *pline,
+                    const H5O_fill_t *fill)
 {
 
-    int		i, carry;
-    unsigned		u;
-    hssize_t		chunk_offset[H5O_LAYOUT_NDIMS];
-    uint8_t		*chunk=NULL;
-    int		idx_hint=0;
-    size_t		chunk_size;
+    int         i, carry;
+    unsigned            u;
+    hssize_t            chunk_offset[H5O_LAYOUT_NDIMS];
+    uint8_t             *chunk=NULL;
+    int         idx_hint=0;
+    size_t              chunk_size;
 #ifdef AKC
-    H5F_istore_ud1_t	udata;
+    H5F_istore_ud1_t    udata;
 #endif
     
     FUNC_ENTER(H5F_istore_allocate, FAIL);
@@ -2376,13 +2386,13 @@ H5F_istore_allocate(H5F_t *f, hid_t dxpl_id, const H5O_layout_t *layout,
 
     /* Loop over all chunks */
     while (1) {
-	
+        
 #ifdef AKC
-	printf("Checking allocation for chunk( ");
-	for (u=0; u<layout->ndims; u++){
-	    printf("%ld ", chunk_offset[u]);
-	}
-	printf(")\n");
+        printf("Checking allocation for chunk( ");
+        for (u=0; u<layout->ndims; u++){
+            printf("%ld ", chunk_offset[u]);
+        }
+        printf(")\n");
 #endif
 #ifdef NO
         if (H5F_istore_get_addr(f, layout, chunk_offset, &udata)<0) {
@@ -2431,7 +2441,7 @@ H5F_istore_allocate(H5F_t *f, hid_t dxpl_id, const H5O_layout_t *layout,
 #endif
         }
 #endif
-	
+        
         /* Increment indices */
         for (i=layout->ndims-1, carry=1; i>=0 && carry; --i) {
             chunk_offset[i] += layout->dim[i];

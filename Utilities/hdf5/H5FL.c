@@ -1,9 +1,9 @@
 /*
  * Copyright (C) 2000 NCSA
- *		      All rights reserved.
+ *                    All rights reserved.
  *
  * Programmer: Quincey Koziol <koziol@ncsa.uiuc.edu>
- *	       Thursday, March 23, 2000
+ *             Thursday, March 23, 2000
  *
  * Purpose: Manage priority queues of free-lists (of blocks of bytes).
  *      These are used in various places in the library which allocate and
@@ -17,14 +17,14 @@
 
 /* #define H5FL_DEBUG */
 
-#include "H5private.h"		/*library		  */
-#include "H5Eprivate.h"		/*error handling	  */
-#include "H5MMprivate.h"	/*Core memory management	  */
-#include "H5FLprivate.h"	/*Priority queues	  */
+#include "H5private.h"          /*library                 */
+#include "H5Eprivate.h"         /*error handling          */
+#include "H5MMprivate.h"        /*Core memory management          */
+#include "H5FLprivate.h"        /*Priority queues         */
 
-#define PABLO_MASK	H5FL_mask
-static int		interface_initialize_g = 0;
-#define INTERFACE_INIT	NULL
+#define PABLO_MASK      H5FL_mask
+static int              interface_initialize_g = 0;
+#define INTERFACE_INIT  NULL
 
 /*
  * Private type definitions
@@ -107,19 +107,19 @@ H5FL_DEFINE(H5FL_blk_node_t);
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FL_malloc
+ * Function:    H5FL_malloc
  *
- * Purpose:	Attempt to allocate space using malloc.  If malloc fails, garbage
+ * Purpose:     Attempt to allocate space using malloc.  If malloc fails, garbage
  *      collect and try again.  If malloc fails again, then return NULL.
  *
- * Return:	Success:	non-NULL
- * 		Failure:	NULL
+ * Return:      Success:        non-NULL
+ *              Failure:        NULL
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Tuesday, August 1, 2000
  *
  * Modifications:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 static void *
@@ -146,19 +146,19 @@ done:
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FL_reg_init
+ * Function:    H5FL_reg_init
  *
- * Purpose:	Initialize a free list for a certain type.  Right now, this just
+ * Purpose:     Initialize a free list for a certain type.  Right now, this just
  *      adds the free list to the list of things to garbage collect.
  *
- * Return:	Success:	Non-negative
- * 		Failure:	Negative
+ * Return:      Success:        Non-negative
+ *              Failure:        Negative
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Friday, March 24, 2000
  *
  * Modifications:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 static herr_t
@@ -188,18 +188,18 @@ H5FL_reg_init(H5FL_reg_head_t *head)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FL_reg_free
+ * Function:    H5FL_reg_free
  *
- * Purpose:	Release an object & put on free list
+ * Purpose:     Release an object & put on free list
  *
- * Return:	Success:	Non-negative
- * 		Failure:	Negative
+ * Return:      Success:        Non-negative
+ *              Failure:        Negative
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Friday, March 24, 2000
  *
  * Modifications:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 void *
@@ -260,18 +260,18 @@ H5FL_reg_free(H5FL_reg_head_t *head, void *obj)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FL_reg_alloc
+ * Function:    H5FL_reg_alloc
  *
- * Purpose:	Allocate a block on a free list
+ * Purpose:     Allocate a block on a free list
  *
- * Return:	Success:	Pointer to a valid object
- * 		Failure:	NULL
+ * Return:      Success:        Pointer to a valid object
+ *              Failure:        NULL
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Friday, March 24, 2000
  *
  * Modifications:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 void *
@@ -343,18 +343,18 @@ H5FL_reg_alloc(H5FL_reg_head_t *head, unsigned clear)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FL_reg_gc_list
+ * Function:    H5FL_reg_gc_list
  *
- * Purpose:	Garbage collect on a particular object free list
+ * Purpose:     Garbage collect on a particular object free list
  *
- * Return:	Success:	Non-negative
- * 		Failure:	Negative
+ * Return:      Success:        Non-negative
+ *              Failure:        Negative
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Tuesday, July 25, 2000
  *
  * Modifications:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 static herr_t
@@ -404,20 +404,20 @@ H5FL_reg_gc_list(H5FL_reg_head_t *head)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FL_reg_gc
+ * Function:    H5FL_reg_gc
  *
- * Purpose:	Garbage collect on all the object free lists
+ * Purpose:     Garbage collect on all the object free lists
  *
- * Return:	Success:	Non-negative
- * 		Failure:	Negative
+ * Return:      Success:        Non-negative
+ *              Failure:        Negative
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Friday, March 24, 2000
  *
  * Modifications:
  *  Broke into two parts, one for looping over all the free lists and
  *      another for freeing each list - QAK 7/25/00
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 static herr_t
@@ -452,9 +452,9 @@ H5FL_reg_gc(void)
  USAGE
     int H5FL_term()
  RETURNS
-    Success:	Positive if any action might have caused a change in some
+    Success:    Positive if any action might have caused a change in some
                 other interface; zero otherwise.
-   	Failure:	Negative
+        Failure:        Negative
  DESCRIPTION
     Release any resources allocated.
  GLOBAL VARIABLES
@@ -515,19 +515,19 @@ H5FL_reg_term(void)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FL_blk_find_list
+ * Function:    H5FL_blk_find_list
  *
- * Purpose:	Finds the free list for blocks of a given size.  Also moves that
+ * Purpose:     Finds the free list for blocks of a given size.  Also moves that
  *      free list node to the head of the priority queue (if it isn't there
  *      already).  This routine does not manage the actual free list, it just
  *      works with the priority queue.
  *
- * Return:	Success:	valid pointer to the free list node
+ * Return:      Success:        valid pointer to the free list node
  *
- *		Failure:	NULL
+ *              Failure:        NULL
  *
- * Programmer:	Quincey Koziol
- *		Thursday, March  23, 2000
+ * Programmer:  Quincey Koziol
+ *              Thursday, March  23, 2000
  *
  * Modifications:
  *
@@ -571,17 +571,17 @@ H5FL_blk_find_list(H5FL_blk_node_t **head, hsize_t size)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FL_blk_create_list
+ * Function:    H5FL_blk_create_list
  *
- * Purpose:	Creates a new free list for blocks of the given size at the
+ * Purpose:     Creates a new free list for blocks of the given size at the
  *      head of the priority queue.
  *
- * Return:	Success:	valid pointer to the free list node
+ * Return:      Success:        valid pointer to the free list node
  *
- *		Failure:	NULL
+ *              Failure:        NULL
  *
- * Programmer:	Quincey Koziol
- *		Thursday, March  23, 2000
+ * Programmer:  Quincey Koziol
+ *              Thursday, March  23, 2000
  *
  * Modifications:
  *
@@ -623,19 +623,19 @@ done:
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FL_blk_init
+ * Function:    H5FL_blk_init
  *
- * Purpose:	Initialize a priority queue of a certain type.  Right now, this just
+ * Purpose:     Initialize a priority queue of a certain type.  Right now, this just
  *      adds the PQ to the list of things to garbage collect.
  *
- * Return:	Success:	Non-negative
- * 		Failure:	Negative
+ * Return:      Success:        Non-negative
+ *              Failure:        Negative
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Saturday, March 25, 2000
  *
  * Modifications:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 static herr_t
@@ -665,18 +665,18 @@ H5FL_blk_init(H5FL_blk_head_t *head)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FL_blk_alloc
+ * Function:    H5FL_blk_alloc
  *
- * Purpose:	Allocates memory for a block.  This routine is used
+ * Purpose:     Allocates memory for a block.  This routine is used
  *      instead of malloc because the block can be kept on a free list so
  *      they don't thrash malloc/free as much.
  *
- * Return:	Success:	valid pointer to the block
+ * Return:      Success:        valid pointer to the block
  *
- *		Failure:	NULL
+ *              Failure:        NULL
  *
- * Programmer:	Quincey Koziol
- *		Thursday, March  23, 2000
+ * Programmer:  Quincey Koziol
+ *              Thursday, March  23, 2000
  *
  * Modifications:
  *
@@ -722,8 +722,8 @@ H5FL_blk_alloc(H5FL_blk_head_t *head, hsize_t size, unsigned clear)
     /* No free list available, or there are no nodes on the list, allocate a new node to give to the user */
     else { 
         /* Allocate new node, with room for the page info header and the actual page data */
-		if(NULL==(temp=H5FL_malloc(sizeof(H5FL_blk_list_t)+size)))
-		    HGOTO_ERROR(H5E_RESOURCE, H5E_NOSPACE, NULL, "memory allocation failed for chunk");
+                if(NULL==(temp=H5FL_malloc(sizeof(H5FL_blk_list_t)+size)))
+                    HGOTO_ERROR(H5E_RESOURCE, H5E_NOSPACE, NULL, "memory allocation failed for chunk");
 
         /* Increment the number of blocks allocated */
         head->allocated++;
@@ -749,18 +749,18 @@ done:
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FL_blk_free
+ * Function:    H5FL_blk_free
  *
- * Purpose:	Releases memory for a block.  This routine is used
+ * Purpose:     Releases memory for a block.  This routine is used
  *      instead of free because the blocks can be kept on a free list so
  *      they don't thrash malloc/free as much.
  *
- * Return:	Success:	NULL
+ * Return:      Success:        NULL
  *
- *		Failure:	never fails
+ *              Failure:        never fails
  *
- * Programmer:	Quincey Koziol
- *		Thursday, March  23, 2000
+ * Programmer:  Quincey Koziol
+ *              Thursday, March  23, 2000
  *
  * Modifications:
  *
@@ -827,17 +827,17 @@ printf("%s: head->name=%s, garbage collecting all block lists\n",FUNC,head->name
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FL_blk_realloc
+ * Function:    H5FL_blk_realloc
  *
- * Purpose:	Resizes a block.  This does things the straightforward, simple way,
+ * Purpose:     Resizes a block.  This does things the straightforward, simple way,
  *      not actually using realloc.
  *
- * Return:	Success:	NULL
+ * Return:      Success:        NULL
  *
- *		Failure:	never fails
+ *              Failure:        never fails
  *
- * Programmer:	Quincey Koziol
- *		Thursday, March  23, 2000
+ * Programmer:  Quincey Koziol
+ *              Thursday, March  23, 2000
  *
  * Modifications:
  *
@@ -886,18 +886,18 @@ done:
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FL_blk_gc_list
+ * Function:    H5FL_blk_gc_list
  *
- * Purpose:	Garbage collect a priority queue
+ * Purpose:     Garbage collect a priority queue
  *
- * Return:	Success:	Non-negative
- * 		Failure:	Negative
+ * Return:      Success:        Non-negative
+ *              Failure:        Negative
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Thursday, March 23, 2000
  *
  * Modifications:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 static herr_t
@@ -950,18 +950,18 @@ H5FL_blk_gc_list(H5FL_blk_head_t *head)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FL_blk_gc
+ * Function:    H5FL_blk_gc
  *
- * Purpose:	Garbage collect on all the priority queues
+ * Purpose:     Garbage collect on all the priority queues
  *
- * Return:	Success:	Non-negative
- * 		Failure:	Negative
+ * Return:      Success:        Non-negative
+ *              Failure:        Negative
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Saturday, March 25, 2000
  *
  * Modifications:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 static herr_t
@@ -996,9 +996,9 @@ H5FL_blk_gc(void)
  USAGE
     void H5FL_blk_term()
  RETURNS
-    Success:	Positive if any action might have caused a change in some
+    Success:    Positive if any action might have caused a change in some
                 other interface; zero otherwise.
-   	Failure:	Negative
+        Failure:        Negative
  DESCRIPTION
     Release any resources allocated.
  GLOBAL VARIABLES
@@ -1048,19 +1048,19 @@ printf("H5FL_blk_term: head->name=%s, head->allocated=%d\n", H5FL_blk_gc_head.fi
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FL_arr_init
+ * Function:    H5FL_arr_init
  *
- * Purpose:	Initialize a free list for a arrays of certain type.  Right now,
+ * Purpose:     Initialize a free list for a arrays of certain type.  Right now,
  *      this just adds the free list to the list of things to garbage collect.
  *
- * Return:	Success:	Non-negative
- * 		Failure:	Negative
+ * Return:      Success:        Non-negative
+ *              Failure:        Negative
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Saturday, March 25, 2000
  *
  * Modifications:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 static herr_t
@@ -1106,18 +1106,18 @@ H5FL_arr_init(H5FL_arr_head_t *head)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FL_arr_free
+ * Function:    H5FL_arr_free
  *
- * Purpose:	Release an array of objects & put on free list
+ * Purpose:     Release an array of objects & put on free list
  *
- * Return:	Success:	Non-negative
- * 		Failure:	Negative
+ * Return:      Success:        Non-negative
+ *              Failure:        Negative
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Friday, March 24, 2000
  *
  * Modifications:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 void *
@@ -1186,18 +1186,18 @@ H5FL_arr_free(H5FL_arr_head_t *head, void *obj)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FL_arr_alloc
+ * Function:    H5FL_arr_alloc
  *
- * Purpose:	Allocate an array of objects
+ * Purpose:     Allocate an array of objects
  *
- * Return:	Success:	Pointer to a valid array object
- * 		Failure:	NULL
+ * Return:      Success:        Pointer to a valid array object
+ *              Failure:        NULL
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Saturday, March 25, 2000
  *
  * Modifications:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 void *
@@ -1276,18 +1276,18 @@ H5FL_arr_alloc(H5FL_arr_head_t *head, hsize_t elem, unsigned clear)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FL_arr_realloc
+ * Function:    H5FL_arr_realloc
  *
- * Purpose:	Reallocate an array of objects
+ * Purpose:     Reallocate an array of objects
  *
- * Return:	Success:	Pointer to a valid array object
- * 		Failure:	NULL
+ * Return:      Success:        Pointer to a valid array object
+ *              Failure:        NULL
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Saturday, March 25, 2000
  *
  * Modifications:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 void *
@@ -1343,18 +1343,18 @@ H5FL_arr_realloc(H5FL_arr_head_t *head, void * obj, hsize_t new_elem)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FL_arr_gc_list
+ * Function:    H5FL_arr_gc_list
  *
- * Purpose:	Garbage collect on an array object free list
+ * Purpose:     Garbage collect on an array object free list
  *
- * Return:	Success:	Non-negative
- * 		Failure:	Negative
+ * Return:      Success:        Non-negative
+ *              Failure:        Negative
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Tuesday, July 25, 2000
  *
  * Modifications:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 static herr_t
@@ -1414,18 +1414,18 @@ H5FL_arr_gc_list(H5FL_arr_head_t *head)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FL_arr_gc
+ * Function:    H5FL_arr_gc
  *
- * Purpose:	Garbage collect on all the array object free lists
+ * Purpose:     Garbage collect on all the array object free lists
  *
- * Return:	Success:	Non-negative
- * 		Failure:	Negative
+ * Return:      Success:        Non-negative
+ *              Failure:        Negative
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Saturday, March 25, 2000
  *
  * Modifications:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 static herr_t
@@ -1460,9 +1460,9 @@ H5FL_arr_gc(void)
  USAGE
     int H5FL_arr_term()
  RETURNS
-    Success:	Positive if any action might have caused a change in some
+    Success:    Positive if any action might have caused a change in some
                 other interface; zero otherwise.
-   	Failure:	Negative
+        Failure:        Negative
  DESCRIPTION
     Release any resources allocated.
  GLOBAL VARIABLES
@@ -1540,18 +1540,18 @@ printf("H5FL_arr_term: head->name=%s, head->allocated=%d\n", H5FL_arr_gc_head->l
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FL_garbage_coll
+ * Function:    H5FL_garbage_coll
  *
- * Purpose:	Garbage collect on all the free lists
+ * Purpose:     Garbage collect on all the free lists
  *
- * Return:	Success:	Non-negative
- * 		Failure:	Negative
+ * Return:      Success:        Non-negative
+ *              Failure:        Negative
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Friday, March 24, 2000
  *
  * Modifications:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 herr_t
@@ -1573,9 +1573,9 @@ H5FL_garbage_coll(void)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FL_set_free_list_limits
+ * Function:    H5FL_set_free_list_limits
  *
- * Purpose:	Sets limits on the different kinds of free lists.  Setting a value
+ * Purpose:     Sets limits on the different kinds of free lists.  Setting a value
  *      of -1 for a limit means no limit of that type.  These limits are global
  *      for the entire library.  Each "global" limit only applies to free lists
  *      of that type, so if an application sets a limit of 1 MB on each of the
@@ -1590,11 +1590,11 @@ H5FL_garbage_coll(void)
  *  int blk_global_lim;  IN: The limit on all "block" free list memory used
  *  int blk_list_lim;    IN: The limit on memory used in each "block" free list
  *
- * Return:	Success:	non-negative
+ * Return:      Success:        non-negative
  *
- *		Failure:	negative
+ *              Failure:        negative
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Wednesday, August 2, 2000
  *
  * Modifications:
@@ -1635,9 +1635,9 @@ H5FL_set_free_list_limits(int reg_global_lim, int reg_list_lim, int arr_global_l
  USAGE
     void H5FL_term_interface()
  RETURNS
-    Success:	Positive if any action might have caused a change in some
+    Success:    Positive if any action might have caused a change in some
                 other interface; zero otherwise.
-   	Failure:	Negative
+        Failure:        Negative
  DESCRIPTION
     Release any resources allocated.
  GLOBAL VARIABLES

@@ -1,41 +1,41 @@
 /*
  * Copyright (C) 2000 NCSA
- *		      All rights reserved.
+ *                    All rights reserved.
  *
- * Programmer: 	Quincey Koziol <koziol@ncsa.uiuc.edu>
- *	       	Thursday, September 28, 2000
+ * Programmer:  Quincey Koziol <koziol@ncsa.uiuc.edu>
+ *              Thursday, September 28, 2000
  *
- * Purpose:	Contiguous dataset I/O functions.  These routines are similar
+ * Purpose:     Contiguous dataset I/O functions.  These routines are similar
  *      to the H5F_istore_* routines and really only abstract away dealing
  *      with the data sieve buffer from the H5F_arr_read/write and
  *      H5F_seg_read/write.
  *
  */
 
-#define H5F_PACKAGE		/*suppress error about including H5Fpkg	  */
+#define H5F_PACKAGE             /*suppress error about including H5Fpkg   */
 
 #include "H5private.h"
 #include "H5Eprivate.h"
 #include "H5Fpkg.h"
-#include "H5FDprivate.h"	/*file driver				  */
+#include "H5FDprivate.h"        /*file driver                             */
 #include "H5MMprivate.h"
 
 /* Interface initialization */
-#define PABLO_MASK	H5Fcontig_mask
-static int		interface_initialize_g = 0;
+#define PABLO_MASK      H5Fcontig_mask
+static int              interface_initialize_g = 0;
 #define INTERFACE_INIT NULL
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_contig_read
+ * Function:    H5F_contig_read
  *
- * Purpose:	Reads some data from a dataset into a buffer.
- *		The data is contiguous.	 The address is relative to the base
- *		address for the file.
+ * Purpose:     Reads some data from a dataset into a buffer.
+ *              The data is contiguous.  The address is relative to the base
+ *              address for the file.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Thursday, September 28, 2000
  *
  * Modifications:
@@ -44,10 +44,10 @@ static int		interface_initialize_g = 0;
  */
 herr_t
 H5F_contig_read(H5F_t *f, hsize_t max_data, H5FD_mem_t type, haddr_t addr, hsize_t size, hid_t dxpl_id,
-	       void *buf/*out*/)
+               void *buf/*out*/)
 {
-    haddr_t abs_eoa;		        /* Absolute end of file address		*/
-    haddr_t rel_eoa;		        /* Relative end of file address		*/
+    haddr_t abs_eoa;                    /* Absolute end of file address         */
+    haddr_t rel_eoa;                    /* Relative end of file address         */
    
     FUNC_ENTER(H5F_contig_read, FAIL);
 
@@ -205,15 +205,15 @@ H5F_contig_read(H5F_t *f, hsize_t max_data, H5FD_mem_t type, haddr_t addr, hsize
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_contig_write
+ * Function:    H5F_contig_write
  *
- * Purpose:	Writes some data from a dataset into a buffer.
- *		The data is contiguous.	 The address is relative to the base
- *		address for the file.
+ * Purpose:     Writes some data from a dataset into a buffer.
+ *              The data is contiguous.  The address is relative to the base
+ *              address for the file.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Thursday, September 28, 2000
  *
  * Modifications:
@@ -224,8 +224,8 @@ herr_t
 H5F_contig_write(H5F_t *f, hsize_t max_data, H5FD_mem_t type, haddr_t addr, hsize_t size,
         hid_t dxpl_id, const void *buf)
 {
-    haddr_t abs_eoa;		        /* Absolute end of file address		*/
-    haddr_t rel_eoa;		        /* Relative end of file address		*/
+    haddr_t abs_eoa;                    /* Absolute end of file address         */
+    haddr_t rel_eoa;                    /* Relative end of file address         */
 
     FUNC_ENTER(H5F_contig_write, FAIL);
 

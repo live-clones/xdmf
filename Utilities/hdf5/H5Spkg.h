@@ -1,13 +1,13 @@
 /*
  * Copyright (C) 2000 NCSA
- *		      All rights reserved.
+ *                    All rights reserved.
  *
- * Programmer:	Quincey Koziol <koziol@ncsa.uiuc.edu>
- *		Thursday, September 28, 2000
+ * Programmer:  Quincey Koziol <koziol@ncsa.uiuc.edu>
+ *              Thursday, September 28, 2000
  *
- * Purpose:	This file contains declarations which are visible only within
- *		the H5S package.  Source files outside the H5S package should
- *		include H5Sprivate.h instead.
+ * Purpose:     This file contains declarations which are visible only within
+ *              the H5S package.  Source files outside the H5S package should
+ *              include H5Sprivate.h instead.
  */
 #ifndef H5S_PACKAGE
 #error "Do not include this file outside the H5S package!"
@@ -33,9 +33,9 @@ typedef struct H5S_simple_t {
 
 /* Extent container */
 typedef struct {
-    H5S_class_t	type;		    /* Type of extent */
+    H5S_class_t type;               /* Type of extent */
     union {
-        H5S_simple_t	simple;	/* Simple dimensionality information  */
+        H5S_simple_t    simple; /* Simple dimensionality information  */
     } u;
 } H5S_extent_t;
 
@@ -100,12 +100,12 @@ typedef struct {
 /* Information about hyperslab selection */
 typedef struct {
     H5S_hyper_dim_t *diminfo;    /* ->[rank] of per-dim selection info */
-	/* diminfo only points to one array, which holds the information
-	 * for one hyperslab selection. Perhaps this might need to be
-	 * expanded into a list of arrays when the H5Sselect_hyperslab's
-	 * restriction to H5S_SELECT_SET is removed. */
+        /* diminfo only points to one array, which holds the information
+         * for one hyperslab selection. Perhaps this might need to be
+         * expanded into a list of arrays when the H5Sselect_hyperslab's
+         * restriction to H5S_SELECT_SET is removed. */
     H5S_hyper_dim_t *app_diminfo;/* ->[rank] of per-dim selection info */
-	/* 'diminfo' points to a [potentially] optimized version of the user's
+        /* 'diminfo' points to a [potentially] optimized version of the user's
      * hyperslab information.  'app_diminfo' points to the actual parameters
      * that the application used for setting the hyperslab selection.  These
      * are only used for re-gurgitating the original values used to set the
@@ -129,18 +129,18 @@ typedef struct {
 /* Main dataspace structure (typedef'd in H5Sprivate.h) */
 struct H5S_t {
     H5S_extent_t extent;        /* Dataspace extent */
-    H5S_select_t select;		/* Dataspace selection */
+    H5S_select_t select;                /* Dataspace selection */
 };
 
 __DLL__ herr_t H5S_close_simple(H5S_simple_t *simple);
 __DLL__ herr_t H5S_release_simple(H5S_simple_t *simple);
 __DLL__ herr_t H5S_extent_copy(H5S_extent_t *dst, const H5S_extent_t *src);
 __DLL__ herr_t H5S_register(H5S_sel_type cls, const H5S_fconv_t *fconv,
-			    const H5S_mconv_t *mconv);
+                            const H5S_mconv_t *mconv);
 
 /* Point select functions */
 __DLL__ herr_t H5S_point_add(H5S_t *space, H5S_seloper_t op, size_t num_elem,
-			     const hssize_t **coord);
+                             const hssize_t **coord);
 __DLL__ herr_t H5S_point_release(H5S_t *space);
 __DLL__ hsize_t H5S_point_npoints(const H5S_t *space);
 __DLL__ herr_t H5S_point_copy(H5S_t *dst, const H5S_t *src);
@@ -151,8 +151,8 @@ __DLL__ herr_t H5S_point_select_deserialize(H5S_t *space, const uint8_t *buf);
 __DLL__ herr_t H5S_point_bounds(H5S_t *space, hsize_t *start, hsize_t *end);
 __DLL__ htri_t H5S_point_select_contiguous(const H5S_t *space);
 __DLL__ herr_t H5S_point_select_iterate(void *buf, hid_t type_id, H5S_t *space,
-					H5D_operator_t op,
-					void *operator_data);
+                                        H5D_operator_t op,
+                                        void *operator_data);
 
 /* "All" select functions */
 __DLL__ herr_t H5S_all_release(H5S_t *space);
@@ -161,21 +161,21 @@ __DLL__ herr_t H5S_all_select_serialize(const H5S_t *space, uint8_t *buf);
 __DLL__ herr_t H5S_all_select_deserialize(H5S_t *space, const uint8_t *buf);
 __DLL__ herr_t H5S_all_bounds(H5S_t *space, hsize_t *start, hsize_t *end);
 __DLL__ herr_t H5S_all_read(H5F_t *f, const struct H5O_layout_t *layout,
-			    const struct H5O_pline_t *pline,
+                            const struct H5O_pline_t *pline,
                             const struct H5O_fill_t *fill,
-			    const struct H5O_efl_t *efl, size_t elmt_size,
-			    const H5S_t *file_space, const H5S_t *mem_space,
-			    hid_t dxpl_id, void *buf/*out*/,
-			    hbool_t *must_convert/*out*/);
+                            const struct H5O_efl_t *efl, size_t elmt_size,
+                            const H5S_t *file_space, const H5S_t *mem_space,
+                            hid_t dxpl_id, void *buf/*out*/,
+                            hbool_t *must_convert/*out*/);
 __DLL__ herr_t H5S_all_write(H5F_t *f, const struct H5O_layout_t *layout,
-			    const struct H5O_pline_t *pline,
+                            const struct H5O_pline_t *pline,
                             const struct H5O_fill_t *fill,
-			    const struct H5O_efl_t *efl, size_t elmt_size,
-			    const H5S_t *file_space, const H5S_t *mem_space,
-			    hid_t dxpl_id, const void *buf,
-			    hbool_t *must_convert/*out*/);
+                            const struct H5O_efl_t *efl, size_t elmt_size,
+                            const H5S_t *file_space, const H5S_t *mem_space,
+                            hid_t dxpl_id, const void *buf,
+                            hbool_t *must_convert/*out*/);
 __DLL__ herr_t H5S_all_select_iterate(void *buf, hid_t type_id, H5S_t *space,
-				      H5D_operator_t op, void *operator_data);
+                                      H5D_operator_t op, void *operator_data);
 
 /* Hyperslab selection functions */
 __DLL__ herr_t H5S_hyper_release(H5S_t *space);
@@ -187,11 +187,11 @@ __DLL__ herr_t H5S_hyper_copy(H5S_t *dst, const H5S_t *src);
 __DLL__ htri_t H5S_hyper_select_valid(const H5S_t *space);
 __DLL__ int H5S_hyper_bound_comp(const void *_b1, const void *_b2);
 __DLL__ herr_t H5S_hyper_node_add(H5S_hyper_node_t **head, int endflag,
-				  unsigned rank, const hssize_t *start,
-				  const hsize_t *size);
+                                  unsigned rank, const hssize_t *start,
+                                  const hsize_t *size);
 __DLL__ herr_t H5S_hyper_clip(H5S_t *space, H5S_hyper_node_t *nodes,
-			      H5S_hyper_node_t **uniq,
-			      H5S_hyper_node_t **overlap);
+                              H5S_hyper_node_t **uniq,
+                              H5S_hyper_node_t **overlap);
 __DLL__ hssize_t H5S_hyper_select_serial_size(const H5S_t *space);
 __DLL__ herr_t H5S_hyper_select_serialize(const H5S_t *space, uint8_t *buf);
 __DLL__ herr_t H5S_hyper_select_deserialize(H5S_t *space, const uint8_t *buf);
@@ -204,6 +204,6 @@ __DLL__ herr_t H5S_hyper_select_iterate(void *buf, hid_t type_id, H5S_t *space,
 __DLL__ herr_t H5S_none_select_serialize(const H5S_t *space, uint8_t *buf);
 __DLL__ herr_t H5S_none_select_deserialize(H5S_t *space, const uint8_t *buf);
 __DLL__ herr_t H5S_none_select_iterate(void *buf, hid_t type_id, H5S_t *space,
-				       H5D_operator_t op, void *operator_data);
+                                       H5D_operator_t op, void *operator_data);
 
 #endif

@@ -5,14 +5,14 @@
  * Programmer:  Robb Matzke <matzke@llnl.gov>
  *              Monday, August  2, 1999
  *
- * Purpose:	The public header file for the sec2 driver.
+ * Purpose:     The public header file for the sec2 driver.
  */
 #ifndef H5FDstdio_H
 #define H5FDstdio_H
 
 #include "H5Ipublic.h"
 
-#define H5FD_STDIO	(H5FD_stdio_init())
+#define H5FD_STDIO      (H5FD_stdio_init())
 
 #ifdef __cplusplus
 extern "C" {

@@ -5,16 +5,16 @@
  * Programmer:  Quincey Koziol <koziol@ncsa.uiuc.edu>
  *              Thursday, June 18, 1998
  *
- * Purpose:	Hyperslab selection data space I/O functions.
+ * Purpose:     Hyperslab selection data space I/O functions.
  */
 
-#define H5S_PACKAGE		/*suppress error about including H5Spkg	  */
+#define H5S_PACKAGE             /*suppress error about including H5Spkg   */
 
 #include "H5private.h"
 #include "H5Dprivate.h"
 #include "H5Eprivate.h"
 #include "H5Fprivate.h"
-#include "H5FLprivate.h"	/*Free Lists	  */
+#include "H5FLprivate.h"        /*Free Lists      */
 #include "H5Iprivate.h"
 #include "H5MMprivate.h"
 #include "H5Pprivate.h"
@@ -37,13 +37,13 @@ typedef struct {
     size_t elmt_size;
     const H5S_t *space;
     H5S_sel_iter_t *iter;
-	hsize_t nelmts;
+        hsize_t nelmts;
     hid_t dxpl_id;
     const void *src;
     void *dst;
-    hsize_t	mem_size[H5O_LAYOUT_NDIMS];
+    hsize_t     mem_size[H5O_LAYOUT_NDIMS];
     hssize_t offset[H5O_LAYOUT_NDIMS];
-    hsize_t	hsize[H5O_LAYOUT_NDIMS];
+    hsize_t     hsize[H5O_LAYOUT_NDIMS];
 } H5S_hyper_io_info_t;
 
 /* Parameter block for H5S_hyper_select_iter_mem */
@@ -53,7 +53,7 @@ typedef struct {
     const H5S_t *space;
     H5S_sel_iter_t *iter;
     void *src;
-    hsize_t	mem_size[H5O_LAYOUT_NDIMS];
+    hsize_t     mem_size[H5O_LAYOUT_NDIMS];
     hssize_t mem_offset[H5O_LAYOUT_NDIMS];
     H5D_operator_t op;
     void * op_data;
@@ -65,71 +65,71 @@ static H5S_hyper_region_t * H5S_hyper_get_regions (size_t *num_regions,
                H5S_hyper_bound_t **lo_bounds, hssize_t *pos, hssize_t *offset);
 static hsize_t H5S_hyper_fread (int dim, H5S_hyper_io_info_t *io_info);
 static hsize_t H5S_hyper_fread_opt (H5F_t *f, const struct H5O_layout_t *layout,
-		 const struct H5O_pline_t *pline, const struct H5O_fill_t *fill,
-		 const struct H5O_efl_t *efl, size_t elmt_size,
-		 const H5S_t *file_space, H5S_sel_iter_t *file_iter,
-		 hsize_t nelmts, hid_t dxpl_id, void *_buf/*out*/);
+                 const struct H5O_pline_t *pline, const struct H5O_fill_t *fill,
+                 const struct H5O_efl_t *efl, size_t elmt_size,
+                 const H5S_t *file_space, H5S_sel_iter_t *file_iter,
+                 hsize_t nelmts, hid_t dxpl_id, void *_buf/*out*/);
 static hsize_t H5S_hyper_fwrite (int dim,
-				H5S_hyper_io_info_t *io_info);
+                                H5S_hyper_io_info_t *io_info);
 static hsize_t H5S_hyper_fwrite_opt (H5F_t *f, const struct H5O_layout_t *layout,
-		 const struct H5O_pline_t *pline, const struct H5O_fill_t *fill,
-		 const struct H5O_efl_t *efl, size_t elmt_size,
-		 const H5S_t *file_space, H5S_sel_iter_t *file_iter,
-		 hsize_t nelmts, hid_t dxpl_id, const void *_buf);
+                 const struct H5O_pline_t *pline, const struct H5O_fill_t *fill,
+                 const struct H5O_efl_t *efl, size_t elmt_size,
+                 const H5S_t *file_space, H5S_sel_iter_t *file_iter,
+                 hsize_t nelmts, hid_t dxpl_id, const void *_buf);
 static herr_t H5S_hyper_init (const struct H5O_layout_t *layout,
-			      const H5S_t *space, H5S_sel_iter_t *iter);
+                              const H5S_t *space, H5S_sel_iter_t *iter);
 static hsize_t H5S_hyper_favail (const H5S_t *space, const H5S_sel_iter_t *iter,
-				hsize_t max);
+                                hsize_t max);
 static hsize_t H5S_hyper_fgath (H5F_t *f, const struct H5O_layout_t *layout,
-			       const struct H5O_pline_t *pline,
-			       const struct H5O_fill_t *fill,
-			       const struct H5O_efl_t *efl, size_t elmt_size,
-			       const H5S_t *file_space,
-			       H5S_sel_iter_t *file_iter, hsize_t nelmts,
-			       hid_t dxpl_id, void *buf/*out*/);
+                               const struct H5O_pline_t *pline,
+                               const struct H5O_fill_t *fill,
+                               const struct H5O_efl_t *efl, size_t elmt_size,
+                               const H5S_t *file_space,
+                               H5S_sel_iter_t *file_iter, hsize_t nelmts,
+                               hid_t dxpl_id, void *buf/*out*/);
 static herr_t H5S_hyper_fscat (H5F_t *f, const struct H5O_layout_t *layout,
-			       const struct H5O_pline_t *pline,
-			       const struct H5O_fill_t *fill,
-			       const struct H5O_efl_t *efl, size_t elmt_size,
-			       const H5S_t *file_space,
-			       H5S_sel_iter_t *file_iter, hsize_t nelmts,
-			       hid_t dxpl_id, const void *buf);
+                               const struct H5O_pline_t *pline,
+                               const struct H5O_fill_t *fill,
+                               const struct H5O_efl_t *efl, size_t elmt_size,
+                               const H5S_t *file_space,
+                               H5S_sel_iter_t *file_iter, hsize_t nelmts,
+                               hid_t dxpl_id, const void *buf);
 static hsize_t H5S_hyper_mread (int dim, H5S_hyper_io_info_t *io_info);
 static hsize_t H5S_hyper_mread_opt (const void *_buf, size_t elmt_size,
-		 const H5S_t *mem_space, H5S_sel_iter_t *mem_iter,
-		 hsize_t nelmts, void *_tconv_buf/*out*/);
+                 const H5S_t *mem_space, H5S_sel_iter_t *mem_iter,
+                 hsize_t nelmts, void *_tconv_buf/*out*/);
 static hsize_t H5S_hyper_mgath (const void *_buf, size_t elmt_size,
-			       const H5S_t *mem_space,
-			       H5S_sel_iter_t *mem_iter, hsize_t nelmts,
-			       void *_tconv_buf/*out*/);
+                               const H5S_t *mem_space,
+                               H5S_sel_iter_t *mem_iter, hsize_t nelmts,
+                               void *_tconv_buf/*out*/);
 static size_t H5S_hyper_mwrite (int dim, H5S_hyper_io_info_t *io_info);
 static hsize_t H5S_hyper_mwrite_opt (const void *_tconv_buf, size_t elmt_size,
-		 const H5S_t *mem_space, H5S_sel_iter_t *mem_iter,
-		 hsize_t nelmts, void *_buf/*out*/);
+                 const H5S_t *mem_space, H5S_sel_iter_t *mem_iter,
+                 hsize_t nelmts, void *_buf/*out*/);
 static herr_t H5S_hyper_mscat (const void *_tconv_buf, size_t elmt_size,
-			       const H5S_t *mem_space,
-			       H5S_sel_iter_t *mem_iter, hsize_t nelmts,
-			       void *_buf/*out*/);
+                               const H5S_t *mem_space,
+                               H5S_sel_iter_t *mem_iter, hsize_t nelmts,
+                               void *_buf/*out*/);
 
-const H5S_fconv_t	H5S_HYPER_FCONV[1] = {{
-    "hslab",	 				/*name			*/
-    H5S_SEL_HYPERSLABS,				/*selection type	*/
-    H5S_hyper_init,				/*initialize		*/
-    H5S_hyper_favail,				/*available		*/
-    H5S_hyper_fgath,				/*gather		*/
-    H5S_hyper_fscat,				/*scatter		*/
+const H5S_fconv_t       H5S_HYPER_FCONV[1] = {{
+    "hslab",                                    /*name                  */
+    H5S_SEL_HYPERSLABS,                         /*selection type        */
+    H5S_hyper_init,                             /*initialize            */
+    H5S_hyper_favail,                           /*available             */
+    H5S_hyper_fgath,                            /*gather                */
+    H5S_hyper_fscat,                            /*scatter               */
 }};
 
-const H5S_mconv_t	H5S_HYPER_MCONV[1] = {{
-    "hslab",					/*name			*/
-    H5S_SEL_HYPERSLABS,				/*selection type	*/
-    H5S_hyper_init, 				/*initialize		*/
-    H5S_hyper_mgath,				/*gather		*/
-    H5S_hyper_mscat,				/*scatter		*/
+const H5S_mconv_t       H5S_HYPER_MCONV[1] = {{
+    "hslab",                                    /*name                  */
+    H5S_SEL_HYPERSLABS,                         /*selection type        */
+    H5S_hyper_init,                             /*initialize            */
+    H5S_hyper_mgath,                            /*gather                */
+    H5S_hyper_mscat,                            /*scatter               */
 }};
 
 /* Array for use with I/O algorithms which frequently need array of zeros */
-static const hssize_t	zero[H5O_LAYOUT_NDIMS]={0};		/* Array of zeros */
+static const hssize_t   zero[H5O_LAYOUT_NDIMS]={0};             /* Array of zeros */
 
 /* Declare a free list to manage the H5S_hyper_node_t struct */
 H5FL_DEFINE_STATIC(H5S_hyper_node_t);
@@ -158,13 +158,13 @@ H5FL_BLK_DEFINE_STATIC(hyper_block);
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_hyper_init
+ * Function:    H5S_hyper_init
  *
- * Purpose:	Initializes iteration information for hyperslab selection.
+ * Purpose:     Initializes iteration information for hyperslab selection.
  *
- * Return:	non-negative on success, negative on failure.
+ * Return:      non-negative on success, negative on failure.
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Tuesday, June 16, 1998
  *
  * Modifications:
@@ -173,7 +173,7 @@ H5FL_BLK_DEFINE_STATIC(hyper_block);
  */
 static herr_t
 H5S_hyper_init (const struct H5O_layout_t UNUSED *layout,
-	       const H5S_t *space, H5S_sel_iter_t *sel_iter)
+               const H5S_t *space, H5S_sel_iter_t *sel_iter)
 {
     FUNC_ENTER (H5S_hyper_init, FAIL);
 
@@ -188,19 +188,21 @@ H5S_hyper_init (const struct H5O_layout_t UNUSED *layout,
     sel_iter->hyp.pos = H5FL_ARR_ALLOC(hsize_t,(hsize_t)space->extent.u.simple.rank,0);
     sel_iter->hyp.pos[0]=(-1);
     H5V_array_fill(sel_iter->hyp.pos, sel_iter->hyp.pos, sizeof(hssize_t),
-		   space->extent.u.simple.rank);
+                   space->extent.u.simple.rank);
     
     FUNC_LEAVE (SUCCEED);
+
+    layout = 0;
 }   /* H5S_hyper_init() */
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_hyper_favail
+ * Function:    H5S_hyper_favail
  *
- * Purpose:	Figure out the optimal number of elements to transfer to/from the file
+ * Purpose:     Figure out the optimal number of elements to transfer to/from the file
  *
- * Return:	non-negative number of elements on success, zero on failure
+ * Return:      non-negative number of elements on success, zero on failure
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Tuesday, June 16, 1998
  *
  * Modifications:
@@ -209,7 +211,7 @@ H5S_hyper_init (const struct H5O_layout_t UNUSED *layout,
  */
 static hsize_t
 H5S_hyper_favail (const H5S_t UNUSED *space,
-		  const H5S_sel_iter_t *sel_iter, hsize_t max)
+                  const H5S_sel_iter_t *sel_iter, hsize_t max)
 {
     FUNC_ENTER (H5S_hyper_favail, 0);
 
@@ -224,15 +226,15 @@ H5S_hyper_favail (const H5S_t UNUSED *space,
 }   /* H5S_hyper_favail() */
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_hyper_compare_regions
+ * Function:    H5S_hyper_compare_regions
  *
- * Purpose:	Compares two regions for equality (regions must not overlap!)
+ * Purpose:     Compares two regions for equality (regions must not overlap!)
  *
- * Return:	an integer less than, equal to, or greater than zero if the
- *		first region is considered to be respectively less than,
- *		equal to, or greater than the second
+ * Return:      an integer less than, equal to, or greater than zero if the
+ *              first region is considered to be respectively less than,
+ *              equal to, or greater than the second
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Friday, July 17, 1998
  *
  * Modifications:
@@ -251,16 +253,16 @@ H5S_hyper_compare_regions (const void *r1, const void *r2)
 }   /* end H5S_hyper_compare_regions */
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_hyper_get_regions
+ * Function:    H5S_hyper_get_regions
  *
- * Purpose:	Builds a sorted array of the overlaps in a dimension
+ * Purpose:     Builds a sorted array of the overlaps in a dimension
  *
- * Return:	Success:	Pointer to valid array (num_regions parameter
- *				set to array size)
+ * Return:      Success:        Pointer to valid array (num_regions parameter
+ *                              set to array size)
  *
- *		Failure:	0
+ *              Failure:        0
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Monday, June 29, 1998
  *
  * Modifications:
@@ -272,8 +274,8 @@ H5S_hyper_get_regions (size_t *num_regions, unsigned rank, unsigned dim,
     size_t bound_count, H5S_hyper_bound_t **lo_bounds, hssize_t *pos,
    hssize_t *offset)
 {
-    H5S_hyper_region_t *ret_value=NULL;	/* Pointer to array of regions to return */
-    H5S_hyper_region_t *reg=NULL;	    /* Pointer to array of regions */
+    H5S_hyper_region_t *ret_value=NULL; /* Pointer to array of regions to return */
+    H5S_hyper_region_t *reg=NULL;           /* Pointer to array of regions */
     H5S_hyper_bound_t *lo_bound_dim;    /* Pointer to the boundary nodes for a given dimension */
     H5S_hyper_node_t *node;             /* Region node for a given boundary */
     hssize_t *node_start,*node_end;     /* Extra pointers to node's start & end arrays */
@@ -384,10 +386,10 @@ H5S_hyper_get_regions (size_t *num_regions, unsigned rank, unsigned dim,
 
 #ifdef QAK
     printf("%s: check 10.0, reg=%p, num_reg=%d\n",
-	   FUNC,reg,num_reg);
+           FUNC,reg,num_reg);
     for(i=0; i<num_reg; i++)
         printf("%s: start[%d]=%d, end[%d]=%d\n",
-	       FUNC,i,(int)reg[i].start,i,(int)reg[i].end);
+               FUNC,i,(int)reg[i].start,i,(int)reg[i].end);
 #endif /* QAK */
 
     FUNC_LEAVE (ret_value);
@@ -395,13 +397,13 @@ H5S_hyper_get_regions (size_t *num_regions, unsigned rank, unsigned dim,
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_hyper_block_cache
+ * Function:    H5S_hyper_block_cache
  *
- * Purpose:	Cache a hyperslab block for reading or writing.
+ * Purpose:     Cache a hyperslab block for reading or writing.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Monday, September 21, 1998
  *
  * Modifications:
@@ -410,10 +412,10 @@ H5S_hyper_get_regions (size_t *num_regions, unsigned rank, unsigned dim,
  */
 static herr_t
 H5S_hyper_block_cache (H5S_hyper_node_t *node,
-		       H5S_hyper_io_info_t *io_info, unsigned block_read)
+                       H5S_hyper_io_info_t *io_info, unsigned block_read)
 {
-    hssize_t	file_offset[H5O_LAYOUT_NDIMS];	/*offset of slab in file*/
-    hsize_t	hsize[H5O_LAYOUT_NDIMS];	/*size of hyperslab	*/
+    hssize_t    file_offset[H5O_LAYOUT_NDIMS];  /*offset of slab in file*/
+    hsize_t     hsize[H5O_LAYOUT_NDIMS];        /*size of hyperslab     */
     unsigned u;                   /* Counters */
 
     FUNC_ENTER (H5S_hyper_block_cache, SUCCEED);
@@ -438,9 +440,9 @@ H5S_hyper_block_cache (H5S_hyper_node_t *node,
         hsize[io_info->space->extent.u.simple.rank]=io_info->elmt_size;
 
         if (H5F_arr_read(io_info->f, io_info->dxpl_id,
-			 io_info->layout, io_info->pline,
-			 io_info->fill, io_info->efl, hsize, hsize,
-			 zero, file_offset, node->cinfo.block/*out*/)<0)
+                         io_info->layout, io_info->pline,
+                         io_info->fill, io_info->efl, hsize, hsize,
+                         zero, file_offset, node->cinfo.block/*out*/)<0)
             HRETURN_ERROR (H5E_DATASPACE, H5E_READERROR, FAIL, "read error");
     } /* end if */
     else {
@@ -458,13 +460,13 @@ H5S_hyper_block_cache (H5S_hyper_node_t *node,
 }   /* H5S_hyper_block_cache() */
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_hyper_block_read
+ * Function:    H5S_hyper_block_read
  *
- * Purpose:	Read in data from a cached hyperslab block
+ * Purpose:     Read in data from a cached hyperslab block
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Monday, September 21, 1998
  *
  * Modifications:
@@ -485,7 +487,7 @@ H5S_hyper_block_read (H5S_hyper_node_t *node, H5S_hyper_io_info_t *io_info, hsiz
             permutations from the standard 'C' ordering!
     */
 #ifdef QAK
-	printf("%s: check 1.0, io_info->dst=%p, node->cinfo.rpos=%p, region_size=%lu, io_info->elmt_size=%lu\n",FUNC,io_info->dst,node->cinfo.rpos,(unsigned long)region_size,(unsigned long)io_info->elmt_size);
+        printf("%s: check 1.0, io_info->dst=%p, node->cinfo.rpos=%p, region_size=%lu, io_info->elmt_size=%lu\n",FUNC,io_info->dst,node->cinfo.rpos,(unsigned long)region_size,(unsigned long)io_info->elmt_size);
 #endif /* QAK */
     HDmemcpy(io_info->dst, node->cinfo.rpos, (size_t)(region_size*io_info->elmt_size));
 
@@ -509,13 +511,13 @@ H5S_hyper_block_read (H5S_hyper_node_t *node, H5S_hyper_io_info_t *io_info, hsiz
 }   /* H5S_hyper_block_read() */
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_hyper_block_write
+ * Function:    H5S_hyper_block_write
  *
- * Purpose:	Write out data to a cached hyperslab block
+ * Purpose:     Write out data to a cached hyperslab block
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Monday, September 21, 1998
  *
  * Modifications:
@@ -524,11 +526,11 @@ H5S_hyper_block_read (H5S_hyper_node_t *node, H5S_hyper_io_info_t *io_info, hsiz
  */
 static herr_t
 H5S_hyper_block_write (H5S_hyper_node_t *node,
-		       H5S_hyper_io_info_t *io_info,
-		       hsize_t region_size)
+                       H5S_hyper_io_info_t *io_info,
+                       hsize_t region_size)
 {
-    hssize_t	file_offset[H5O_LAYOUT_NDIMS];	/*offset of slab in file*/
-    hsize_t	hsize[H5O_LAYOUT_NDIMS];	/*size of hyperslab	*/
+    hssize_t    file_offset[H5O_LAYOUT_NDIMS];  /*offset of slab in file*/
+    hsize_t     hsize[H5O_LAYOUT_NDIMS];        /*size of hyperslab     */
     unsigned u;                   /* Counters */
 
     FUNC_ENTER (H5S_hyper_block_write, SUCCEED);
@@ -562,9 +564,9 @@ H5S_hyper_block_write (H5S_hyper_node_t *node,
         hsize[io_info->space->extent.u.simple.rank]=io_info->elmt_size;
 
         if (H5F_arr_write(io_info->f, io_info->dxpl_id, io_info->layout,
-			  io_info->pline, io_info->fill, io_info->efl, hsize,
-			  hsize, zero, file_offset,
-			  node->cinfo.block/*out*/)<0)
+                          io_info->pline, io_info->fill, io_info->efl, hsize,
+                          hsize, zero, file_offset,
+                          node->cinfo.block/*out*/)<0)
             HRETURN_ERROR (H5E_DATASPACE, H5E_WRITEERROR, FAIL, "write error");
 
         /* Release the temporary buffer */
@@ -579,16 +581,16 @@ H5S_hyper_block_write (H5S_hyper_node_t *node,
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_hyper_fread
+ * Function:    H5S_hyper_fread
  *
- * Purpose:	Recursively gathers data points from a file using the
- *		parameters passed to H5S_hyper_fgath.
+ * Purpose:     Recursively gathers data points from a file using the
+ *              parameters passed to H5S_hyper_fgath.
  *
- * Return:	Success:	Number of elements copied.
+ * Return:      Success:        Number of elements copied.
  *
- *		Failure:	0
+ *              Failure:        0
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Tuesday, June 16, 1998
  *
  * Modifications:
@@ -614,10 +616,10 @@ H5S_hyper_fread (int dim, H5S_hyper_io_info_t *io_info)
 
     assert(io_info);
     if (H5P_DEFAULT==io_info->dxpl_id) {
-	xfer_parms = &H5D_xfer_dflt;
+        xfer_parms = &H5D_xfer_dflt;
     } else {
-	xfer_parms = H5I_object(io_info->dxpl_id);
-	assert(xfer_parms);
+        xfer_parms = H5I_object(io_info->dxpl_id);
+        assert(xfer_parms);
     }
 
 #ifdef QAK
@@ -633,10 +635,10 @@ H5S_hyper_fread (int dim, H5S_hyper_io_info_t *io_info)
             io_info->iter->hyp.pos,io_info->space->select.offset))!=NULL) {
 
         /*
-	 * Check if this is the second to last dimension in dataset (Which
-	 * means that we've got a list of the regions in the fastest changing
-	 * dimension and should input those regions).
-	 */
+         * Check if this is the second to last dimension in dataset (Which
+         * means that we've got a list of the regions in the fastest changing
+         * dimension and should input those regions).
+         */
 #ifdef QAK
     if(dim>=0) {
         printf("%s: check 2.0, rank=%d, ",
@@ -654,11 +656,11 @@ H5S_hyper_fread (int dim, H5S_hyper_io_info_t *io_info)
                FUNC,(int)io_info->space->extent.u.simple.rank);
     for(i=0; i<num_regions; i++)
         printf("%s: check 2.1, region #%d: start=%d, end=%d\n",
-		   FUNC,i,(int)regions[i].start,(int)regions[i].end);
+                   FUNC,i,(int)regions[i].start,(int)regions[i].end);
 #endif /* QAK */
         if((unsigned)(dim+2)==io_info->space->extent.u.simple.rank) {
 #ifdef QAK
-	printf("%s: check 2.1.1, num_regions=%d\n",FUNC,(int)num_regions);
+        printf("%s: check 2.1.1, num_regions=%d\n",FUNC,(int)num_regions);
 #endif /* QAK */
             /* perform I/O on data from regions */
             for(i=0; i<num_regions && io_info->nelmts>0; i++) {
@@ -667,16 +669,16 @@ H5S_hyper_fread (int dim, H5S_hyper_io_info_t *io_info)
                 region_size=MIN((hssize_t)io_info->nelmts, (regions[i].end-regions[i].start)+1);
 
 #ifdef QAK
-	printf("%s: check 2.1.2, region=%d, region_size=%d, num_read=%lu\n",FUNC,(int)i,(int)region_size,(unsigned long)num_read);
+        printf("%s: check 2.1.2, region=%d, region_size=%d, num_read=%lu\n",FUNC,(int)i,(int)region_size,(unsigned long)num_read);
 #endif /* QAK */
                 /* Check if this hyperslab block is cached or could be cached */
                 if(!regions[i].node->cinfo.cached &&
-		   (xfer_parms->cache_hyper &&
-		    (xfer_parms->block_limit==0 ||
-		     xfer_parms->block_limit>=(regions[i].node->cinfo.size*io_info->elmt_size)))) {
+                   (xfer_parms->cache_hyper &&
+                    (xfer_parms->block_limit==0 ||
+                     xfer_parms->block_limit>=(regions[i].node->cinfo.size*io_info->elmt_size)))) {
                     /* if we aren't cached, attempt to cache the block */
 #ifdef QAK
-	printf("%s: check 2.1.3, caching block\n",FUNC);
+        printf("%s: check 2.1.3, caching block\n",FUNC);
 #endif /* QAK */
                     H5S_hyper_block_cache(regions[i].node,io_info,1);
                 } /* end if */
@@ -684,14 +686,14 @@ H5S_hyper_fread (int dim, H5S_hyper_io_info_t *io_info)
                 /* Read information from the cached block */
                 if(regions[i].node->cinfo.cached) {
 #ifdef QAK
-	printf("%s: check 2.1.4, reading block from cache\n",FUNC);
+        printf("%s: check 2.1.4, reading block from cache\n",FUNC);
 #endif /* QAK */
                     if(H5S_hyper_block_read(regions[i].node,io_info,region_size)<0)
                         HRETURN_ERROR (H5E_DATASPACE, H5E_READERROR, 0, "read error");
                 }
                 else {
 #ifdef QAK
-	printf("%s: check 2.1.5, reading block from file, parm_init=%d\n",FUNC,(int)parm_init);
+        printf("%s: check 2.1.5, reading block from file, parm_init=%d\n",FUNC,(int)parm_init);
 #endif /* QAK */
                     /* Set up hyperslab I/O parameters which apply to all regions */
                     if(!parm_init) {
@@ -714,13 +716,13 @@ H5S_hyper_fread (int dim, H5S_hyper_io_info_t *io_info)
                      * Gather from file.
                      */
                     if (H5F_arr_read(io_info->f, io_info->dxpl_id,
-				     io_info->layout, io_info->pline,
-				     io_info->fill, io_info->efl,
-				     io_info->hsize, io_info->hsize,
-				     zero, io_info->offset,
-				     io_info->dst/*out*/)<0) {
+                                     io_info->layout, io_info->pline,
+                                     io_info->fill, io_info->efl,
+                                     io_info->hsize, io_info->hsize,
+                                     zero, io_info->offset,
+                                     io_info->dst/*out*/)<0) {
                         HRETURN_ERROR (H5E_DATASPACE, H5E_READERROR, 0,
-				       "read error");
+                                       "read error");
                     }
                 } /* end else */
 #ifdef QAK
@@ -846,15 +848,15 @@ H5S_hyper_fread (int dim, H5S_hyper_io_info_t *io_info)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_hyper_iter_next
+ * Function:    H5S_hyper_iter_next
  *
- * Purpose:	Moves a hyperslab iterator to the beginning of the next sequence
+ * Purpose:     Moves a hyperslab iterator to the beginning of the next sequence
  *      of elements to read.  Handles walking off the end in all dimensions.
  *
- * Return:	Success:	non-negative
- *		Failure:	negative
+ * Return:      Success:        non-negative
+ *              Failure:        negative
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Friday, September 8, 2000
  *
  * Modifications:
@@ -930,16 +932,16 @@ H5S_hyper_iter_next (const H5S_t *file_space, H5S_sel_iter_t *file_iter)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_hyper_fread_opt
+ * Function:    H5S_hyper_fread_opt
  *
- * Purpose:	Performs an optimized gather from the file, based on a regular
+ * Purpose:     Performs an optimized gather from the file, based on a regular
  *      hyperslab (i.e. one which was generated from just one call to
  *      H5Sselect_hyperslab).
  *
- * Return:	Success:	Number of elements copied.
- *		Failure:	0
+ * Return:      Success:        Number of elements copied.
+ *              Failure:        0
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Friday, September 8, 2000
  *
  * Modifications:
@@ -948,17 +950,17 @@ H5S_hyper_iter_next (const H5S_t *file_space, H5S_sel_iter_t *file_iter)
  */
 static hsize_t
 H5S_hyper_fread_opt (H5F_t *f, const struct H5O_layout_t *layout,
-		 const struct H5O_pline_t *pline,
-		 const struct H5O_fill_t *fill,
-		 const struct H5O_efl_t *efl, size_t elmt_size,
-		 const H5S_t *file_space, H5S_sel_iter_t *file_iter,
-		 hsize_t nelmts, hid_t dxpl_id, void *_buf/*out*/)
+                 const struct H5O_pline_t *pline,
+                 const struct H5O_fill_t *fill,
+                 const struct H5O_efl_t *efl, size_t elmt_size,
+                 const H5S_t *file_space, H5S_sel_iter_t *file_iter,
+                 hsize_t nelmts, hid_t dxpl_id, void *_buf/*out*/)
 {
     hssize_t offset[H5O_LAYOUT_NDIMS];      /* Offset on disk */
-    hsize_t	slab[H5O_LAYOUT_NDIMS];         /* Hyperslab size */
-    hsize_t	tmp_count[H5O_LAYOUT_NDIMS];    /* Temporary block count */
-    hsize_t	tmp_block[H5O_LAYOUT_NDIMS];    /* Temporary block offset */
-    uint8_t	*buf=(uint8_t *)_buf;   /* Alias for pointer arithmetic */
+    hsize_t     slab[H5O_LAYOUT_NDIMS];         /* Hyperslab size */
+    hsize_t     tmp_count[H5O_LAYOUT_NDIMS];    /* Temporary block count */
+    hsize_t     tmp_block[H5O_LAYOUT_NDIMS];    /* Temporary block offset */
+    uint8_t     *buf=(uint8_t *)_buf;   /* Alias for pointer arithmetic */
     const H5S_hyper_dim_t *tdiminfo;    /* Local pointer to diminfo information */
     hssize_t fast_dim_start,            /* Local copies of fastest changing dimension info */
         fast_dim_offset;
@@ -968,13 +970,13 @@ H5S_hyper_fread_opt (H5F_t *f, const struct H5O_layout_t *layout,
         fast_dim_buf_off;
     int fast_dim;  /* Rank of the fastest changing dimension for the dataspace */
     int temp_dim;  /* Temporary rank holder */
-    hsize_t	acc;	/* Accumulator */
-    hsize_t	buf_off;        /* Current buffer offset for copying memory */
-    hsize_t	last_buf_off;   /* Last buffer offset for copying memory */
+    hsize_t     acc;    /* Accumulator */
+    hsize_t     buf_off;        /* Current buffer offset for copying memory */
+    hsize_t     last_buf_off;   /* Last buffer offset for copying memory */
     hsize_t buf_size;       /* Current size of the buffer to write */
     int i;         /* Counters */
     unsigned u;        /* Counters */
-    int   	ndims;      /* Number of dimensions of dataset */
+    int         ndims;      /* Number of dimensions of dataset */
     hsize_t actual_read;    /* The actual number of elements to read in */
     hsize_t actual_bytes;   /* The actual number of bytes to copy */
     hsize_t num_read=0;     /* Number of elements read */
@@ -1279,37 +1281,37 @@ for(i=0; i<file_space->extent.u.simple.rank; i++)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_hyper_fgath
+ * Function:    H5S_hyper_fgath
  *
- * Purpose:	Gathers data points from file F and accumulates them in the
- *		type conversion buffer BUF.  The LAYOUT argument describes
- *		how the data is stored on disk and EFL describes how the data
- *		is organized in external files.  ELMT_SIZE is the size in
- *		bytes of a datum which this function treats as opaque.
- *		FILE_SPACE describes the data space of the dataset on disk
- *		and the elements that have been selected for reading (via
- *		hyperslab, etc).  This function will copy at most NELMTS elements.
+ * Purpose:     Gathers data points from file F and accumulates them in the
+ *              type conversion buffer BUF.  The LAYOUT argument describes
+ *              how the data is stored on disk and EFL describes how the data
+ *              is organized in external files.  ELMT_SIZE is the size in
+ *              bytes of a datum which this function treats as opaque.
+ *              FILE_SPACE describes the data space of the dataset on disk
+ *              and the elements that have been selected for reading (via
+ *              hyperslab, etc).  This function will copy at most NELMTS elements.
  *
- * Return:	Success:	Number of elements copied.
+ * Return:      Success:        Number of elements copied.
  *
- *		Failure:	0
+ *              Failure:        0
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Tuesday, June 16, 1998
  *
  * Modifications:
- *		Robb Matzke, 1999-08-03
- *		The data transfer properties are passed by ID since that's
- *		what the virtual file layer needs.
+ *              Robb Matzke, 1999-08-03
+ *              The data transfer properties are passed by ID since that's
+ *              what the virtual file layer needs.
  *-------------------------------------------------------------------------
  */
 static hsize_t
 H5S_hyper_fgath (H5F_t *f, const struct H5O_layout_t *layout,
-		 const struct H5O_pline_t *pline,
-		 const struct H5O_fill_t *fill,
-		 const struct H5O_efl_t *efl, size_t elmt_size,
-		 const H5S_t *file_space, H5S_sel_iter_t *file_iter,
-		 hsize_t nelmts, hid_t dxpl_id, void *_buf/*out*/)
+                 const struct H5O_pline_t *pline,
+                 const struct H5O_fill_t *fill,
+                 const struct H5O_efl_t *efl, size_t elmt_size,
+                 const H5S_t *file_space, H5S_sel_iter_t *file_iter,
+                 hsize_t nelmts, hid_t dxpl_id, void *_buf/*out*/)
 {
     H5S_hyper_io_info_t io_info;  /* Block of parameters to pass into recursive calls */
     hsize_t  num_read=0;       /* number of elements read into buffer */
@@ -1369,16 +1371,16 @@ H5S_hyper_fgath (H5F_t *f, const struct H5O_layout_t *layout,
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_hyper_fwrite
+ * Function:    H5S_hyper_fwrite
  *
- * Purpose:	Recursively scatters data points to a file using the parameters
+ * Purpose:     Recursively scatters data points to a file using the parameters
  *      passed to H5S_hyper_fscat.
  *
- * Return:	Success:	Number of elements copied.
+ * Return:      Success:        Number of elements copied.
  *
- *		Failure:	0
+ *              Failure:        0
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Tuesday, June 16, 1998
  *
  * Modifications:
@@ -1395,7 +1397,7 @@ H5S_hyper_fwrite (int dim, H5S_hyper_io_info_t *io_info)
     size_t i;                   /* Counters */
     int j;
     hsize_t num_written=0;          /* Number of elements read */
-    const H5D_xfer_t *xfer_parms;	/* Data transfer properties */
+    const H5D_xfer_t *xfer_parms;       /* Data transfer properties */
 
     FUNC_ENTER (H5S_hyper_fwrite, 0);
 
@@ -1420,11 +1422,11 @@ H5S_hyper_fwrite (int dim, H5S_hyper_io_info_t *io_info)
 
 #ifdef QAK
     printf("%s: check 1.1, regions=%p\n", FUNC,regions);
-	printf("%s: check 1.2, rank=%d\n",
-	       FUNC,(int)io_info->space->extent.u.simple.rank);
-	for(i=0; i<num_regions; i++)
-	    printf("%s: check 2.1, region #%d: start=%d, end=%d\n",
-		   FUNC,i,(int)regions[i].start,(int)regions[i].end);
+        printf("%s: check 1.2, rank=%d\n",
+               FUNC,(int)io_info->space->extent.u.simple.rank);
+        for(i=0; i<num_regions; i++)
+            printf("%s: check 2.1, region #%d: start=%d, end=%d\n",
+                   FUNC,i,(int)regions[i].start,(int)regions[i].end);
 #endif /* QAK */
 
         /* Check if this is the second to last dimension in dataset */
@@ -1467,17 +1469,17 @@ H5S_hyper_fwrite (int dim, H5S_hyper_io_info_t *io_info)
                      * Scatter to file.
                      */
                     if (H5F_arr_write(io_info->f, io_info->dxpl_id,
-				      io_info->layout, io_info->pline,
-				      io_info->fill, io_info->efl,
-				      io_info->hsize, io_info->hsize, zero,
-				      io_info->offset, io_info->src)<0) {
+                                      io_info->layout, io_info->pline,
+                                      io_info->fill, io_info->efl,
+                                      io_info->hsize, io_info->hsize, zero,
+                                      io_info->offset, io_info->src)<0) {
                         HRETURN_ERROR (H5E_DATASPACE, H5E_WRITEERROR, 0, "write error");
                     }
                 } /* end else */
 
                 /* Advance the pointer in the buffer */
                 io_info->src = ((const uint8_t *)io_info->src) +
-				   region_size*io_info->elmt_size;
+                                   region_size*io_info->elmt_size;
 
                 /* Increment the number of elements read */
                 num_written+=region_size;
@@ -1491,7 +1493,7 @@ H5S_hyper_fwrite (int dim, H5S_hyper_io_info_t *io_info)
                     io_info->iter->hyp.pos[dim+1]=(-1);
                 else
                     io_info->iter->hyp.pos[dim+1] = regions[i].start +
-							region_size;
+                                                        region_size;
 
                 /* Decrement the iterator count */
                 io_info->iter->hyp.elmt_left-=region_size;
@@ -1533,16 +1535,16 @@ H5S_hyper_fwrite (int dim, H5S_hyper_io_info_t *io_info)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_hyper_fwrite_opt
+ * Function:    H5S_hyper_fwrite_opt
  *
- * Purpose:	Performs an optimized scatter to the file, based on a regular
+ * Purpose:     Performs an optimized scatter to the file, based on a regular
  *      hyperslab (i.e. one which was generated from just one call to
  *      H5Sselect_hyperslab).
  *
- * Return:	Success:	Number of elements copied.
- *		Failure:	0
+ * Return:      Success:        Number of elements copied.
+ *              Failure:        0
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Tuesday, September 12, 2000
  *
  * Modifications:
@@ -1551,17 +1553,17 @@ H5S_hyper_fwrite (int dim, H5S_hyper_io_info_t *io_info)
  */
 static hsize_t
 H5S_hyper_fwrite_opt (H5F_t *f, const struct H5O_layout_t *layout,
-		 const struct H5O_pline_t *pline,
-		 const struct H5O_fill_t *fill,
-		 const struct H5O_efl_t *efl, size_t elmt_size,
-		 const H5S_t *file_space, H5S_sel_iter_t *file_iter,
-		 hsize_t nelmts, hid_t dxpl_id, const void *_buf)
+                 const struct H5O_pline_t *pline,
+                 const struct H5O_fill_t *fill,
+                 const struct H5O_efl_t *efl, size_t elmt_size,
+                 const H5S_t *file_space, H5S_sel_iter_t *file_iter,
+                 hsize_t nelmts, hid_t dxpl_id, const void *_buf)
 {
     hssize_t offset[H5O_LAYOUT_NDIMS];      /* Offset on disk */
-    hsize_t	slab[H5O_LAYOUT_NDIMS];         /* Hyperslab size */
-    hsize_t	tmp_count[H5O_LAYOUT_NDIMS];    /* Temporary block count */
-    hsize_t	tmp_block[H5O_LAYOUT_NDIMS];    /* Temporary block offset */
-    const uint8_t	*buf=(const uint8_t *)_buf;   /* Alias for pointer arithmetic */
+    hsize_t     slab[H5O_LAYOUT_NDIMS];         /* Hyperslab size */
+    hsize_t     tmp_count[H5O_LAYOUT_NDIMS];    /* Temporary block count */
+    hsize_t     tmp_block[H5O_LAYOUT_NDIMS];    /* Temporary block offset */
+    const uint8_t       *buf=(const uint8_t *)_buf;   /* Alias for pointer arithmetic */
     const H5S_hyper_dim_t *tdiminfo;      /* Temporary pointer to diminfo information */
     hssize_t fast_dim_start,            /* Local copies of fastest changing dimension info */
         fast_dim_offset;
@@ -1571,13 +1573,13 @@ H5S_hyper_fwrite_opt (H5F_t *f, const struct H5O_layout_t *layout,
         fast_dim_buf_off;
     int fast_dim;  /* Rank of the fastest changing dimension for the dataspace */
     int temp_dim;  /* Temporary rank holder */
-    hsize_t	acc;	/* Accumulator */
-    hsize_t	buf_off;        /* Buffer offset for copying memory */
-    hsize_t	last_buf_off;   /* Last buffer offset for copying memory */
+    hsize_t     acc;    /* Accumulator */
+    hsize_t     buf_off;        /* Buffer offset for copying memory */
+    hsize_t     last_buf_off;   /* Last buffer offset for copying memory */
     hsize_t buf_size;       /* Current size of the buffer to write */
     int i;         /* Counters */
     unsigned u;         /* Counters */
-    int   	ndims;      /* Number of dimensions of dataset */
+    int         ndims;      /* Number of dimensions of dataset */
     hsize_t actual_write;     /* The actual number of elements to read in */
     hsize_t actual_bytes;     /* The actual number of bytes to copy */
     hsize_t num_write=0;     /* Number of elements read */
@@ -1857,32 +1859,32 @@ for(i=0; i<file_space->extent.u.simple.rank; i++)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_hyper_fscat
+ * Function:    H5S_hyper_fscat
  *
- * Purpose:	Scatters dataset elements from the type conversion buffer BUF
- *		to the file F where the data points are arranged according to
- *		the file data space FILE_SPACE and stored according to
- *		LAYOUT and EFL. Each element is ELMT_SIZE bytes.
- *		The caller is requesting that NELMTS elements are copied.
+ * Purpose:     Scatters dataset elements from the type conversion buffer BUF
+ *              to the file F where the data points are arranged according to
+ *              the file data space FILE_SPACE and stored according to
+ *              LAYOUT and EFL. Each element is ELMT_SIZE bytes.
+ *              The caller is requesting that NELMTS elements are copied.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Tuesday, June 16, 1998
  *
  * Modifications:
- *		Robb Matzke, 1999-08-03
- *		The data transfer properties are passed by ID since that's
- *		what the virtual file layer needs.
+ *              Robb Matzke, 1999-08-03
+ *              The data transfer properties are passed by ID since that's
+ *              what the virtual file layer needs.
  *-------------------------------------------------------------------------
  */
 static herr_t
 H5S_hyper_fscat (H5F_t *f, const struct H5O_layout_t *layout,
-		 const struct H5O_pline_t *pline,
-		 const struct H5O_fill_t *fill,
-		 const struct H5O_efl_t *efl, size_t elmt_size,
-		 const H5S_t *file_space, H5S_sel_iter_t *file_iter,
-		 hsize_t nelmts, hid_t dxpl_id, const void *_buf)
+                 const struct H5O_pline_t *pline,
+                 const struct H5O_fill_t *fill,
+                 const struct H5O_efl_t *efl, size_t elmt_size,
+                 const H5S_t *file_space, H5S_sel_iter_t *file_iter,
+                 hsize_t nelmts, hid_t dxpl_id, const void *_buf)
 {
     H5S_hyper_io_info_t io_info;  /* Block of parameters to pass into recursive calls */
     hsize_t  num_written=0;       /* number of elements read into buffer */
@@ -1941,16 +1943,16 @@ H5S_hyper_fscat (H5F_t *f, const struct H5O_layout_t *layout,
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_hyper_mread
+ * Function:    H5S_hyper_mread
  *
- * Purpose:	Recursively gathers data points from memory using the
- *		parameters passed to H5S_hyper_mgath.
+ * Purpose:     Recursively gathers data points from memory using the
+ *              parameters passed to H5S_hyper_mgath.
  *
- * Return:	Success:	Number of elements copied.
+ * Return:      Success:        Number of elements copied.
  *
- *		Failure:	0
+ *              Failure:        0
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Tuesday, June 16, 1998
  *
  * Modifications:
@@ -1987,12 +1989,12 @@ H5S_hyper_mread (int dim, H5S_hyper_io_info_t *io_info)
         /*  (Which means that we've got a list of the regions in the fastest */
         /*   changing dimension and should input those regions) */
 #ifdef QAK
-	printf("%s: check 2.0, rank=%d, num_regions=%d\n",
-	       FUNC, (int)io_info->space->extent.u.simple.rank,
-	       (int)num_regions);
-	for(i=0; i<num_regions; i++)
-	    printf("%s: check 2.1, region #%d: start=%d, end=%d\n",
-		   FUNC,i,(int)regions[i].start,(int)regions[i].end);
+        printf("%s: check 2.0, rank=%d, num_regions=%d\n",
+               FUNC, (int)io_info->space->extent.u.simple.rank,
+               (int)num_regions);
+        for(i=0; i<num_regions; i++)
+            printf("%s: check 2.1, region #%d: start=%d, end=%d\n",
+                   FUNC,i,(int)regions[i].start,(int)regions[i].end);
 #endif /* QAK */
 
         if((unsigned)(dim+2)==io_info->space->extent.u.simple.rank) {
@@ -2010,8 +2012,8 @@ H5S_hyper_mread (int dim, H5S_hyper_io_info_t *io_info)
                 io_info->hsize[io_info->space->extent.u.simple.rank-1]=region_size;
                 io_info->offset[io_info->space->extent.u.simple.rank-1]=regions[i].start;
 #ifdef QAK
-		printf("%s: check 2.1, i=%d, region_size=%d\n",
-		       FUNC,(int)i,(int)region_size);
+                printf("%s: check 2.1, i=%d, region_size=%d\n",
+                       FUNC,(int)i,(int)region_size);
 #endif /* QAK */
 
                 /*
@@ -2021,7 +2023,7 @@ H5S_hyper_mread (int dim, H5S_hyper_io_info_t *io_info)
                         io_info->hsize, io_info->hsize, zero, io_info->dst,
                         io_info->mem_size, io_info->offset, io_info->src)<0) {
                     HRETURN_ERROR (H5E_DATASPACE, H5E_READERROR, 0,
-				   "unable to gather data from memory");
+                                   "unable to gather data from memory");
                 }
 
                 /* Advance the pointer in the buffer */
@@ -2039,14 +2041,14 @@ H5S_hyper_mread (int dim, H5S_hyper_io_info_t *io_info)
                     io_info->iter->hyp.pos[dim+1]=(-1);
                 else
                     io_info->iter->hyp.pos[dim+1] =regions[i].start +
-						       region_size;
+                                                       region_size;
 
                 /* Decrement the iterator count */
                 io_info->iter->hyp.elmt_left-=region_size;
             } /* end for */
         } else { /* recurse on each region to next dimension down */
 #ifdef QAK
-	    printf("%s: check 3.0, num_regions=%d\n",FUNC,(int)num_regions);
+            printf("%s: check 3.0, num_regions=%d\n",FUNC,(int)num_regions);
 #endif /* QAK */
 
             /* Increment the dimension we are working with */
@@ -2057,7 +2059,7 @@ H5S_hyper_mread (int dim, H5S_hyper_io_info_t *io_info)
                 /* Step through each location in each region */
                 for(j=MAX(io_info->iter->hyp.pos[dim],regions[i].start); j<=regions[i].end && io_info->nelmts>0; j++) {
 #ifdef QAK
-		    printf("%s: check 4.0, dim=%d, location=%d\n",FUNC,dim,j);
+                    printf("%s: check 4.0, dim=%d, location=%d\n",FUNC,dim,j);
 #endif /* QAK */
 
                     /* Set the correct position we are working on */
@@ -2085,16 +2087,16 @@ H5S_hyper_mread (int dim, H5S_hyper_io_info_t *io_info)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_hyper_mread_opt
+ * Function:    H5S_hyper_mread_opt
  *
- * Purpose:	Performs an optimized gather from a memory buffer, based on a
+ * Purpose:     Performs an optimized gather from a memory buffer, based on a
  *      regular hyperslab (i.e. one which was generated from just one call to
  *      H5Sselect_hyperslab).
  *
- * Return:	Success:	Number of elements copied.
- *		Failure:	0
+ * Return:      Success:        Number of elements copied.
+ *              Failure:        0
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Tuesday, September 12, 2000
  *
  * Modifications:
@@ -2103,16 +2105,16 @@ H5S_hyper_mread (int dim, H5S_hyper_io_info_t *io_info)
  */
 static hsize_t
 H5S_hyper_mread_opt (const void *_buf, size_t elmt_size,
-		 const H5S_t *mem_space, H5S_sel_iter_t *mem_iter,
-		 hsize_t nelmts, void *_tconv_buf/*out*/)
+                 const H5S_t *mem_space, H5S_sel_iter_t *mem_iter,
+                 hsize_t nelmts, void *_tconv_buf/*out*/)
 {
-    hsize_t	mem_size[H5O_LAYOUT_NDIMS];     /* Size of the source buffer */
+    hsize_t     mem_size[H5O_LAYOUT_NDIMS];     /* Size of the source buffer */
     hssize_t offset[H5O_LAYOUT_NDIMS];      /* Offset on disk */
-    hsize_t	slab[H5O_LAYOUT_NDIMS];         /* Hyperslab size */
-    hsize_t	tmp_count[H5O_LAYOUT_NDIMS];    /* Temporary block count */
-    hsize_t	tmp_block[H5O_LAYOUT_NDIMS];    /* Temporary block offset */
-    const uint8_t	*src=(const uint8_t *)_buf;   /* Alias for pointer arithmetic */
-    uint8_t	*dst=(uint8_t *)_tconv_buf;   /* Alias for pointer arithmetic */
+    hsize_t     slab[H5O_LAYOUT_NDIMS];         /* Hyperslab size */
+    hsize_t     tmp_count[H5O_LAYOUT_NDIMS];    /* Temporary block count */
+    hsize_t     tmp_block[H5O_LAYOUT_NDIMS];    /* Temporary block offset */
+    const uint8_t       *src=(const uint8_t *)_buf;   /* Alias for pointer arithmetic */
+    uint8_t     *dst=(uint8_t *)_tconv_buf;   /* Alias for pointer arithmetic */
     const H5S_hyper_dim_t *tdiminfo;      /* Temporary pointer to diminfo information */
     hssize_t fast_dim_start,            /* Local copies of fastest changing dimension info */
         fast_dim_offset;
@@ -2122,11 +2124,11 @@ H5S_hyper_mread_opt (const void *_buf, size_t elmt_size,
         fast_dim_buf_off;
     int fast_dim;  /* Rank of the fastest changing dimension for the dataspace */
     int temp_dim;  /* Temporary rank holder */
-    hsize_t	acc;	/* Accumulator */
-    size_t	buf_off;  /* Buffer offset for copying memory */
+    hsize_t     acc;    /* Accumulator */
+    size_t      buf_off;  /* Buffer offset for copying memory */
     int i;         /* Counters */
     unsigned u;        /* Counters */
-    int   	ndims;      /* Number of dimensions of dataset */
+    int         ndims;      /* Number of dimensions of dataset */
     hsize_t actual_read;       /* The actual number of elements to read in */
     hsize_t actual_bytes;     /* The actual number of bytes to copy */
     hsize_t num_read=0;      /* Number of elements read */
@@ -2377,19 +2379,19 @@ for(i=0; i<mem_space->extent.u.simple.rank; i++)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_hyper_mgath
+ * Function:    H5S_hyper_mgath
  *
- * Purpose:	Gathers dataset elements from application memory BUF and
- *		copies them into the data type conversion buffer TCONV_BUF.
- *		Each element is ELMT_SIZE bytes and arranged in application
- *		memory according to MEM_SPACE.  
- *		The caller is requesting that at most NELMTS be gathered.
+ * Purpose:     Gathers dataset elements from application memory BUF and
+ *              copies them into the data type conversion buffer TCONV_BUF.
+ *              Each element is ELMT_SIZE bytes and arranged in application
+ *              memory according to MEM_SPACE.  
+ *              The caller is requesting that at most NELMTS be gathered.
  *
- * Return:	Success:	Number of elements copied.
+ * Return:      Success:        Number of elements copied.
  *
- *		Failure:	0
+ *              Failure:        0
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Tuesday, June 16, 1998
  *
  * Modifications:
@@ -2398,8 +2400,8 @@ for(i=0; i<mem_space->extent.u.simple.rank; i++)
  */
 static hsize_t
 H5S_hyper_mgath (const void *_buf, size_t elmt_size,
-		 const H5S_t *mem_space, H5S_sel_iter_t *mem_iter,
-		 hsize_t nelmts, void *_tconv_buf/*out*/)
+                 const H5S_t *mem_space, H5S_sel_iter_t *mem_iter,
+                 hsize_t nelmts, void *_tconv_buf/*out*/)
 {
     H5S_hyper_io_info_t io_info;  /* Block of parameters to pass into recursive calls */
     hsize_t  num_read;       /* number of elements read into buffer */
@@ -2408,7 +2410,7 @@ H5S_hyper_mgath (const void *_buf, size_t elmt_size,
 
 #ifdef QAK
     printf("%s: check 1.0, elmt_size=%d, mem_space=%p\n",
-	   FUNC,(int)elmt_size,mem_space);
+           FUNC,(int)elmt_size,mem_space);
     printf("%s: check 1.0, mem_iter=%p, nelmts=%d\n",FUNC,mem_iter,nelmts);
     printf("%s: check 1.0, _buf=%p, _tconv_buf=%p\n",FUNC,_buf,_tconv_buf);
 #endif /* QAK */
@@ -2457,16 +2459,16 @@ H5S_hyper_mgath (const void *_buf, size_t elmt_size,
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_hyper_mwrite
+ * Function:    H5S_hyper_mwrite
  *
- * Purpose:	Recursively scatters data points from memory using the parameters
+ * Purpose:     Recursively scatters data points from memory using the parameters
  *      passed to H5S_hyper_mscat.
  *
- * Return:	Success:	Number of elements copied.
+ * Return:      Success:        Number of elements copied.
  *
- *		Failure:	0
+ *              Failure:        0
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Tuesday, June 16, 1998
  *
  * Modifications:
@@ -2499,11 +2501,11 @@ H5S_hyper_mwrite (int dim, H5S_hyper_io_info_t *io_info)
             io_info->iter->hyp.pos,io_info->space->select.offset))!=NULL) {
 
 #ifdef QAK
-	printf("%s: check 2.0, rank=%d\n",
-	       FUNC,(int)io_info->space->extent.u.simple.rank);
-	for(i=0; i<num_regions; i++)
-	    printf("%s: check 2.1, region #%d: start=%d, end=%d\n",
-		   FUNC,i,(int)regions[i].start,(int)regions[i].end);
+        printf("%s: check 2.0, rank=%d\n",
+               FUNC,(int)io_info->space->extent.u.simple.rank);
+        for(i=0; i<num_regions; i++)
+            printf("%s: check 2.1, region #%d: start=%d, end=%d\n",
+                   FUNC,i,(int)regions[i].start,(int)regions[i].end);
 #endif /* QAK */
         /* Check if this is the second to last dimension in dataset */
         /*  (Which means that we've got a list of the regions in the fastest */
@@ -2517,7 +2519,7 @@ H5S_hyper_mwrite (int dim, H5S_hyper_io_info_t *io_info)
             io_info->offset[io_info->space->extent.u.simple.rank]=0;
 
 #ifdef QAK
-	    printf("%s: check 3.0\n",FUNC);
+            printf("%s: check 3.0\n",FUNC);
 #endif /* QAK */
             /* perform I/O on data from regions */
             for(i=0; i<num_regions && io_info->nelmts>0; i++) {
@@ -2530,15 +2532,15 @@ H5S_hyper_mwrite (int dim, H5S_hyper_io_info_t *io_info)
                  * Scatter to memory
                  */
                 if (H5V_hyper_copy (io_info->space->extent.u.simple.rank+1,
-				    io_info->hsize, io_info->mem_size, io_info->offset,
-				    io_info->dst, io_info->hsize, zero,
-				    io_info->src)<0) {
+                                    io_info->hsize, io_info->mem_size, io_info->offset,
+                                    io_info->dst, io_info->hsize, zero,
+                                    io_info->src)<0) {
                     HRETURN_ERROR (H5E_DATASPACE, H5E_READERROR, 0, "unable to gather data from memory");
                 }
 
                 /* Advance the pointer in the buffer */
                 io_info->src = ((const uint8_t *)io_info->src) +
-				   region_size*io_info->elmt_size;
+                                   region_size*io_info->elmt_size;
 
                 /* Increment the number of elements read */
                 num_write+=region_size;
@@ -2552,7 +2554,7 @@ H5S_hyper_mwrite (int dim, H5S_hyper_io_info_t *io_info)
                     io_info->iter->hyp.pos[dim+1]=(-1);
                 else
                     io_info->iter->hyp.pos[dim+1] = regions[i].start +
-							region_size;
+                                                        region_size;
 
                 /* Decrement the iterator count */
                 io_info->iter->hyp.elmt_left-=region_size;
@@ -2563,15 +2565,15 @@ H5S_hyper_mwrite (int dim, H5S_hyper_io_info_t *io_info)
             dim++;
 
 #ifdef QAK
-	    printf("%s: check 6.0, num_regions=%d\n",FUNC,(int)num_regions);
+            printf("%s: check 6.0, num_regions=%d\n",FUNC,(int)num_regions);
 #endif /* QAK */
             /* Step through each region in this dimension */
             for(i=0; i<num_regions && io_info->nelmts>0; i++) {
                 /* Step through each location in each region */
 #ifdef QAK
-		printf("%s: check 7.0, start[%d]=%d, end[%d]=%d, nelmts=%d\n",
-		       FUNC, i, (int)regions[i].start, i,
-		       (int)regions[i].end, (int)io_info->nelmts);
+                printf("%s: check 7.0, start[%d]=%d, end[%d]=%d, nelmts=%d\n",
+                       FUNC, i, (int)regions[i].start, i,
+                       (int)regions[i].end, (int)io_info->nelmts);
 #endif /* QAK */
                 for(j=MAX(io_info->iter->hyp.pos[dim],regions[i].start); j<=regions[i].end && io_info->nelmts>0; j++) {
 
@@ -2600,16 +2602,16 @@ H5S_hyper_mwrite (int dim, H5S_hyper_io_info_t *io_info)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_hyper_mwrite_opt
+ * Function:    H5S_hyper_mwrite_opt
  *
- * Purpose:	Performs an optimized scatter to a memory buffer, based on a
+ * Purpose:     Performs an optimized scatter to a memory buffer, based on a
  *      regular hyperslab (i.e. one which was generated from just one call to
  *      H5Sselect_hyperslab).
  *
- * Return:	Success:	Number of elements copied.
- *		Failure:	0
+ * Return:      Success:        Number of elements copied.
+ *              Failure:        0
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Tuesday, September 12, 2000
  *
  * Modifications:
@@ -2618,16 +2620,16 @@ H5S_hyper_mwrite (int dim, H5S_hyper_io_info_t *io_info)
  */
 static hsize_t
 H5S_hyper_mwrite_opt (const void *_tconv_buf, size_t elmt_size,
-		 const H5S_t *mem_space, H5S_sel_iter_t *mem_iter,
-		 hsize_t nelmts, void *_buf/*out*/)
+                 const H5S_t *mem_space, H5S_sel_iter_t *mem_iter,
+                 hsize_t nelmts, void *_buf/*out*/)
 {
-    hsize_t	mem_size[H5O_LAYOUT_NDIMS];     /* Size of the source buffer */
-    hsize_t	slab[H5O_LAYOUT_NDIMS];         /* Hyperslab size */
+    hsize_t     mem_size[H5O_LAYOUT_NDIMS];     /* Size of the source buffer */
+    hsize_t     slab[H5O_LAYOUT_NDIMS];         /* Hyperslab size */
     hssize_t offset[H5O_LAYOUT_NDIMS];      /* Offset on disk */
-    hsize_t	tmp_count[H5O_LAYOUT_NDIMS];    /* Temporary block count */
-    hsize_t	tmp_block[H5O_LAYOUT_NDIMS];    /* Temporary block offset */
-    const uint8_t	*src=(const uint8_t *)_tconv_buf;   /* Alias for pointer arithmetic */
-    uint8_t	*dst=(uint8_t *)_buf;   /* Alias for pointer arithmetic */
+    hsize_t     tmp_count[H5O_LAYOUT_NDIMS];    /* Temporary block count */
+    hsize_t     tmp_block[H5O_LAYOUT_NDIMS];    /* Temporary block offset */
+    const uint8_t       *src=(const uint8_t *)_tconv_buf;   /* Alias for pointer arithmetic */
+    uint8_t     *dst=(uint8_t *)_buf;   /* Alias for pointer arithmetic */
     const H5S_hyper_dim_t *tdiminfo;      /* Temporary pointer to diminfo information */
     hssize_t fast_dim_start,            /* Local copies of fastest changing dimension info */
         fast_dim_offset;
@@ -2637,11 +2639,11 @@ H5S_hyper_mwrite_opt (const void *_tconv_buf, size_t elmt_size,
         fast_dim_buf_off;
     int fast_dim;  /* Rank of the fastest changing dimension for the dataspace */
     int temp_dim;  /* Temporary rank holder */
-    hsize_t	acc;	/* Accumulator */
-    size_t	buf_off;  /* Buffer offset for copying memory */
+    hsize_t     acc;    /* Accumulator */
+    size_t      buf_off;  /* Buffer offset for copying memory */
     int i;         /* Counters */
     unsigned u;         /* Counters */
-    int   	ndims;      /* Number of dimensions of dataset */
+    int         ndims;      /* Number of dimensions of dataset */
     hsize_t actual_write;       /* The actual number of elements to read in */
     hsize_t actual_bytes;     /* The actual number of bytes to copy */
     hsize_t num_write=0;      /* Number of elements read */
@@ -2897,16 +2899,16 @@ printf("%s: buf_off=%u, actual_bytes=%u\n",FUNC,(unsigned)buf_off,(int)actual_by
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_hyper_mscat
+ * Function:    H5S_hyper_mscat
  *
- * Purpose:	Scatters NELMTS data points from the type conversion buffer
- *		TCONV_BUF to the application buffer BUF.  Each element is
- *		ELMT_SIZE bytes and they are organized in application memory
- *		according to MEM_SPACE.
+ * Purpose:     Scatters NELMTS data points from the type conversion buffer
+ *              TCONV_BUF to the application buffer BUF.  Each element is
+ *              ELMT_SIZE bytes and they are organized in application memory
+ *              according to MEM_SPACE.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Wednesday, June 17, 1998
  *
  * Modifications:
@@ -2915,8 +2917,8 @@ printf("%s: buf_off=%u, actual_bytes=%u\n",FUNC,(unsigned)buf_off,(int)actual_by
  */
 static herr_t
 H5S_hyper_mscat (const void *_tconv_buf, size_t elmt_size,
-		 const H5S_t *mem_space, H5S_sel_iter_t *mem_iter,
-		 hsize_t nelmts, void *_buf/*out*/)
+                 const H5S_t *mem_space, H5S_sel_iter_t *mem_iter,
+                 hsize_t nelmts, void *_buf/*out*/)
 {
     H5S_hyper_io_info_t io_info;    /* Block of parameters to pass into recursive calls */
     hsize_t  num_written;            /* number of elements written into buffer */
@@ -3160,7 +3162,7 @@ H5S_hyper_node_release (H5S_hyper_node_t *node)
     Add a block to hyperslab selection
  USAGE
     herr_t H5S_hyper_add(space, start, size)
-        H5S_t *space;       	  IN: Pointer to dataspace
+        H5S_t *space;             IN: Pointer to dataspace
         const hssize_t *start;    IN: Offset of block
         const hsize_t *end;       IN: Offset of end of block
  RETURNS
@@ -3198,13 +3200,13 @@ H5S_hyper_add (H5S_t *space, H5S_hyper_node_t *piece_lst)
     
 #ifdef QAK
     printf("%s: check 1.0, piece_count=%u, lo_bounds=%p\n",
-	   FUNC, (unsigned)piece_count,space->select.sel_info.hslab.hyper_lst->lo_bounds);
+           FUNC, (unsigned)piece_count,space->select.sel_info.hslab.hyper_lst->lo_bounds);
 #endif /* QAK */
     /* Increase size of boundary arrays for dataspace's selection by piece_count */
     for(u=0; u<space->extent.u.simple.rank; u++) {
         tmp=space->select.sel_info.hslab.hyper_lst->lo_bounds[u];
 #ifdef QAK
-	printf("%s: check 1.1, u=%u, space->sel_info.count=%d, tmp=%p\n",FUNC,(unsigned)u, space->select.sel_info.hslab.hyper_lst->count,tmp);
+        printf("%s: check 1.1, u=%u, space->sel_info.count=%d, tmp=%p\n",FUNC,(unsigned)u, space->select.sel_info.hslab.hyper_lst->count,tmp);
 #endif /* QAK */
         if((space->select.sel_info.hslab.hyper_lst->lo_bounds[u]=H5FL_ARR_REALLOC(H5S_hyper_bound_t,tmp,(hsize_t)(space->select.sel_info.hslab.hyper_lst->count+piece_count)))==NULL) {
             space->select.sel_info.hslab.hyper_lst->lo_bounds[u]=tmp;
@@ -3311,7 +3313,7 @@ done:
     Clip a list of nodes against the current selection
  USAGE
     herr_t H5S_hyper_clip(space, nodes, uniq, overlap)
-        H5S_t *space;       	  IN: Pointer to dataspace
+        H5S_t *space;             IN: Pointer to dataspace
         H5S_hyper_node_t *nodes;  IN: Pointer to list of nodes
         H5S_hyper_node_t **uniq;  IN: Handle to list of non-overlapping nodes
         H5S_hyper_node_t **overlap;  IN: Handle to list of overlapping nodes
@@ -3772,11 +3774,11 @@ done:
  COMMENTS, BUGS, ASSUMPTIONS
  EXAMPLES
  REVISION LOG
- * 	Robb Matzke, 1998-08-25
- *	The fields which are freed are set to NULL to prevent them from being
- *	freed again later.  This fixes some allocation problems where
- *	changing the hyperslab selection of one data space causes a core dump
- *	when closing some other data space.
+ *      Robb Matzke, 1998-08-25
+ *      The fields which are freed are set to NULL to prevent them from being
+ *      freed again later.  This fixes some allocation problems where
+ *      changing the hyperslab selection of one data space causes a core dump
+ *      when closing some other data space.
 --------------------------------------------------------------------------*/
 herr_t
 H5S_hyper_release (H5S_t *space)
@@ -3896,15 +3898,15 @@ H5S_hyper_sel_iter_release (H5S_sel_iter_t *sel_iter)
 }   /* H5S_hyper_sel_iter_release() */
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_hyper_compare_bounds
+ * Function:    H5S_hyper_compare_bounds
  *
- * Purpose:	Compares two bounds for equality
+ * Purpose:     Compares two bounds for equality
  *
- * Return:	an integer less than, equal to, or greater than zero if the first
+ * Return:      an integer less than, equal to, or greater than zero if the first
  *          region is considered to be respectively less than, equal to, or
  *          greater than the second
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Friday, July 17, 1998
  *
  * Modifications:
@@ -3947,7 +3949,7 @@ H5S_hyper_copy (H5S_t *dst, const H5S_t *src)
 {
     H5S_hyper_list_t *new_hyper=NULL;    /* New hyperslab selection */
     H5S_hyper_node_t *curr, *new, *new_head;    /* Hyperslab information nodes */
-    H5S_hyper_dim_t *new_diminfo=NULL;	/* New per-dimension info array[rank] */
+    H5S_hyper_dim_t *new_diminfo=NULL;  /* New per-dimension info array[rank] */
     unsigned u;                    /* Counters */
     size_t v;                   /* Counters */
     herr_t ret_value=SUCCEED;   /* return value */
@@ -4425,18 +4427,18 @@ for(i=0; i<ndims; i++)
 herr_t
 H5S_hyper_select_deserialize (H5S_t *space, const uint8_t *buf)
 {
-    uint32_t rank;           	/* rank of points */
-    size_t num_elem=0;      	/* number of elements in selection */
-    hssize_t *start=NULL;	/* hyperslab start information */
-    hssize_t *end=NULL;	    /* hyperslab end information */
-    hsize_t *count=NULL;    	/* hyperslab count information */
-    hsize_t *block=NULL;    	/* hyperslab block information */
-    hssize_t *tstart=NULL;	/* temporary hyperslab pointers */
-    hssize_t *tend=NULL;	/* temporary hyperslab pointers */
-    hsize_t *tcount=NULL;	/* temporary hyperslab pointers */
-    hsize_t *tblock=NULL;	/* temporary hyperslab pointers */
-    unsigned i,j;              	/* local counting variables */
-    herr_t ret_value=FAIL;  	/* return value */
+    uint32_t rank;              /* rank of points */
+    size_t num_elem=0;          /* number of elements in selection */
+    hssize_t *start=NULL;       /* hyperslab start information */
+    hssize_t *end=NULL;     /* hyperslab end information */
+    hsize_t *count=NULL;        /* hyperslab count information */
+    hsize_t *block=NULL;        /* hyperslab block information */
+    hssize_t *tstart=NULL;      /* temporary hyperslab pointers */
+    hssize_t *tend=NULL;        /* temporary hyperslab pointers */
+    hsize_t *tcount=NULL;       /* temporary hyperslab pointers */
+    hsize_t *tblock=NULL;       /* temporary hyperslab pointers */
+    unsigned i,j;               /* local counting variables */
+    herr_t ret_value=FAIL;      /* return value */
 
     FUNC_ENTER (H5S_hyper_select_deserialize, FAIL);
 
@@ -4607,7 +4609,7 @@ H5S_hyper_select_contiguous(const H5S_t *space)
          * the same as the dataspace extent's in all but the slowest changing
          * dimension.
          */
-        ret_value=TRUE;	/* assume true and reset if the dimensions don't match */
+        ret_value=TRUE; /* assume true and reset if the dimensions don't match */
         for(u=1; u<space->extent.u.simple.rank; u++) {
             if(space->select.sel_info.hslab.diminfo[u].count>1 || space->select.sel_info.hslab.diminfo[u].block!=space->extent.u.simple.size[u]) {
                 ret_value=FALSE;
@@ -4619,7 +4621,7 @@ H5S_hyper_select_contiguous(const H5S_t *space)
         /* If there is more than one hyperslab in the selection, they are not contiguous */
         if(space->select.sel_info.hslab.hyper_lst->count>1)
             ret_value=FALSE;
-        else {	/* If there is one hyperslab, then it might be contiguous */
+        else {  /* If there is one hyperslab, then it might be contiguous */
             /* Get the dataspace extent rank */
             rank=space->extent.u.simple.rank;
 
@@ -4630,7 +4632,7 @@ H5S_hyper_select_contiguous(const H5S_t *space)
              * For a hyperslab to be contiguous, it's size must be the same as the
              * dataspace extent's in all but the slowest changing dimension
              */
-            ret_value=TRUE;	/* assume true and reset if the dimensions don't match */
+            ret_value=TRUE;     /* assume true and reset if the dimensions don't match */
             for(u=1; u<rank; u++) {
                 if(((node->end[u]-node->start[u])+1)!=(hssize_t)space->extent.u.simple.size[u]) {
                     ret_value=FALSE;
@@ -4644,13 +4646,13 @@ H5S_hyper_select_contiguous(const H5S_t *space)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_generate_hyperlab
+ * Function:    H5S_generate_hyperlab
  *
- * Purpose:	Generate hyperslab information from H5S_select_hyperslab()
+ * Purpose:     Generate hyperslab information from H5S_select_hyperslab()
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Quincey Koziol (split from HS_select_hyperslab()).
+ * Programmer:  Quincey Koziol (split from HS_select_hyperslab()).
  *              Tuesday, September 12, 2000
  *
  * Modifications:
@@ -4659,13 +4661,13 @@ H5S_hyper_select_contiguous(const H5S_t *space)
  */
 static herr_t
 H5S_generate_hyperslab (H5S_t *space, H5S_seloper_t op,
-		      const hssize_t start[/*space_id*/],
-		      const hsize_t stride[/*space_id*/],
-		      const hsize_t count[/*space_id*/],
-		      const hsize_t block[/*space_id*/])
+                      const hssize_t start[/*space_id*/],
+                      const hsize_t stride[/*space_id*/],
+                      const hsize_t count[/*space_id*/],
+                      const hsize_t block[/*space_id*/])
 {
     hssize_t slab[H5O_LAYOUT_NDIMS]; /* Location of the block to add for strided selections */
-    size_t slice[H5O_LAYOUT_NDIMS];	 /* Size of preceding dimension's slice */
+    size_t slice[H5O_LAYOUT_NDIMS];      /* Size of preceding dimension's slice */
     H5S_hyper_node_t *add=NULL, /* List of hyperslab nodes to add */
         *uniq=NULL;         /* List of unique hyperslab nodes */
     unsigned acc;                /* Accumulator for building slices */
@@ -4826,13 +4828,13 @@ done:
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_select_hyperslab
+ * Function:    H5S_select_hyperslab
  *
- * Purpose:	Internal version of H5Sselect_hyperslab().
+ * Purpose:     Internal version of H5Sselect_hyperslab().
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Robb Matzke (split from HSselect_hyperslab()).
+ * Programmer:  Robb Matzke (split from HSselect_hyperslab()).
  *              Tuesday, August 25, 1998
  *
  * Modifications:
@@ -4841,10 +4843,10 @@ done:
  */
 herr_t
 H5S_select_hyperslab (H5S_t *space, H5S_seloper_t op,
-		      const hssize_t start[/*space_id*/],
-		      const hsize_t stride[/*space_id*/],
-		      const hsize_t count[/*space_id*/],
-		      const hsize_t block[/*space_id*/])
+                      const hssize_t start[/*space_id*/],
+                      const hsize_t stride[/*space_id*/],
+                      const hsize_t count[/*space_id*/],
+                      const hsize_t block[/*space_id*/])
 {
     hsize_t *_stride=NULL;      /* Stride array */
     hsize_t *_block=NULL;       /* Block size array */
@@ -5059,12 +5061,12 @@ done:
 --------------------------------------------------------------------------*/
 herr_t
 H5Sselect_hyperslab(hid_t space_id, H5S_seloper_t op,
-		     const hssize_t start[/*space_id*/],
-		     const hsize_t _stride[/*space_id*/],
-		     const hsize_t count[/*space_id*/],
-		     const hsize_t _block[/*space_id*/])
+                     const hssize_t start[/*space_id*/],
+                     const hsize_t _stride[/*space_id*/],
+                     const hsize_t count[/*space_id*/],
+                     const hsize_t _block[/*space_id*/])
 {
-    H5S_t	*space = NULL;  /* Dataspace to modify selection of */
+    H5S_t       *space = NULL;  /* Dataspace to modify selection of */
 
     FUNC_ENTER (H5Sselect_hyperslab, FAIL);
     H5TRACE6("e","iSs*[a0]Hs*[a0]h*[a0]h*[a0]h",space_id,op,start,_stride,
@@ -5085,7 +5087,7 @@ H5Sselect_hyperslab(hid_t space_id, H5S_seloper_t op,
 
     if (H5S_select_hyperslab(space, op, start, _stride, count, _block)<0) {
         HRETURN_ERROR(H5E_DATASPACE, H5E_CANTINIT, FAIL,
-		      "unable to set hyperslab selection");
+                      "unable to set hyperslab selection");
     }
 
     FUNC_LEAVE (SUCCEED);
@@ -5093,16 +5095,16 @@ H5Sselect_hyperslab(hid_t space_id, H5S_seloper_t op,
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_hyper_select_iterate_mem
+ * Function:    H5S_hyper_select_iterate_mem
  *
- * Purpose:	Recursively iterates over data points in memory using the parameters
+ * Purpose:     Recursively iterates over data points in memory using the parameters
  *      passed to H5S_hyper_select_iterate.
  *
- * Return:	Success:	Number of elements copied.
+ * Return:      Success:        Number of elements copied.
  *
- *		Failure:	0
+ *              Failure:        0
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Tuesday, June 22, 1999
  *
  * Modifications:
@@ -5373,6 +5375,8 @@ H5S_hyper_select_iterate_mem_opt(H5S_sel_iter_t UNUSED *iter, void *buf, hid_t t
 
 done:
     FUNC_LEAVE (user_ret);
+
+    iter = 0;
 } /* end H5S_hyper_select_iterate_mem_opt() */
 
 
@@ -5414,7 +5418,7 @@ H5S_hyper_select_iterate(void *buf, hid_t type_id, H5S_t *space, H5D_operator_t 
         void *operator_data)
 {
     H5S_hyper_iter_info_t iter_info;  /* Block of parameters to pass into recursive calls */
-    H5S_sel_iter_t	iter;   /* selection iteration info*/
+    H5S_sel_iter_t      iter;   /* selection iteration info*/
     herr_t ret_value=FAIL;      /* return value */
 
     FUNC_ENTER (H5S_hyper_select_iterate, FAIL);
@@ -5427,7 +5431,7 @@ H5S_hyper_select_iterate(void *buf, hid_t type_id, H5S_t *space, H5D_operator_t 
     /* Initialize the selection iterator */
     if (H5S_hyper_init(NULL, space, &iter)<0) {
         HGOTO_ERROR (H5E_DATASPACE, H5E_CANTINIT, FAIL,
-		     "unable to initialize selection information");
+                     "unable to initialize selection information");
     } 
 
     /* Check for the special case of just one H5Sselect_hyperslab call made */

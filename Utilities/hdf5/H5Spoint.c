@@ -5,10 +5,10 @@
  * Programmer:  Quincey Koziol <koziol@ncsa.uiuc.edu>
  *              Tuesday, June 16, 1998
  *
- * Purpose:	Point selection data space I/O functions.
+ * Purpose:     Point selection data space I/O functions.
  */
 
-#define H5S_PACKAGE		/*suppress error about including H5Spkg	  */
+#define H5S_PACKAGE             /*suppress error about including H5Spkg   */
 
 #include "H5private.h"
 #include "H5Eprivate.h"
@@ -24,61 +24,61 @@
 static int             interface_initialize_g = 0;
 
 static herr_t H5S_point_init (const struct H5O_layout_t *layout,
-			      const H5S_t *space, H5S_sel_iter_t *iter);
+                              const H5S_t *space, H5S_sel_iter_t *iter);
 static hsize_t H5S_point_favail (const H5S_t *space, const H5S_sel_iter_t *iter,
-				hsize_t max);
+                                hsize_t max);
 static hsize_t H5S_point_fgath (H5F_t *f, const struct H5O_layout_t *layout,
-			       const struct H5O_pline_t *pline,
-			       const struct H5O_fill_t *fill,
-			       const struct H5O_efl_t *efl, size_t elmt_size,
-			       const H5S_t *file_space,
-			       H5S_sel_iter_t *file_iter, hsize_t nelmts,
-			       hid_t dxpl_id, void *buf/*out*/);
+                               const struct H5O_pline_t *pline,
+                               const struct H5O_fill_t *fill,
+                               const struct H5O_efl_t *efl, size_t elmt_size,
+                               const H5S_t *file_space,
+                               H5S_sel_iter_t *file_iter, hsize_t nelmts,
+                               hid_t dxpl_id, void *buf/*out*/);
 static herr_t H5S_point_fscat (H5F_t *f, const struct H5O_layout_t *layout,
-			       const struct H5O_pline_t *pline,
-			       const struct H5O_fill_t *fill,
-			       const struct H5O_efl_t *efl, size_t elmt_size,
-			       const H5S_t *file_space,
-			       H5S_sel_iter_t *file_iter, hsize_t nelmts,
-			       hid_t dxpl_id, const void *buf);
+                               const struct H5O_pline_t *pline,
+                               const struct H5O_fill_t *fill,
+                               const struct H5O_efl_t *efl, size_t elmt_size,
+                               const H5S_t *file_space,
+                               H5S_sel_iter_t *file_iter, hsize_t nelmts,
+                               hid_t dxpl_id, const void *buf);
 static hsize_t H5S_point_mgath (const void *_buf, size_t elmt_size,
-			       const H5S_t *mem_space,
-			       H5S_sel_iter_t *mem_iter, hsize_t nelmts,
-			       void *_tconv_buf/*out*/);
+                               const H5S_t *mem_space,
+                               H5S_sel_iter_t *mem_iter, hsize_t nelmts,
+                               void *_tconv_buf/*out*/);
 static herr_t H5S_point_mscat (const void *_tconv_buf, size_t elmt_size,
-			       const H5S_t *mem_space,
-			       H5S_sel_iter_t *mem_iter, hsize_t nelmts,
-			       void *_buf/*out*/);
+                               const H5S_t *mem_space,
+                               H5S_sel_iter_t *mem_iter, hsize_t nelmts,
+                               void *_buf/*out*/);
 static herr_t H5S_select_elements(H5S_t *space, H5S_seloper_t op,
-				   size_t num_elem, const hssize_t **coord);
+                                   size_t num_elem, const hssize_t **coord);
 
-const H5S_fconv_t	H5S_POINT_FCONV[1] = {{
-    "point", 				/*name				*/
-    H5S_SEL_POINTS,			/*selection type		*/
-    H5S_point_init,			/*initialize			*/
-    H5S_point_favail,			/*available			*/
-    H5S_point_fgath,			/*gather			*/
-    H5S_point_fscat,			/*scatter			*/
+const H5S_fconv_t       H5S_POINT_FCONV[1] = {{
+    "point",                            /*name                          */
+    H5S_SEL_POINTS,                     /*selection type                */
+    H5S_point_init,                     /*initialize                    */
+    H5S_point_favail,                   /*available                     */
+    H5S_point_fgath,                    /*gather                        */
+    H5S_point_fscat,                    /*scatter                       */
 }};
 
-const H5S_mconv_t	H5S_POINT_MCONV[1] = {{
-    "point",				/*name				*/
-    H5S_SEL_POINTS,			/*selection type		*/
-    H5S_point_init,			/*initialize			*/
-    H5S_point_mgath,			/*gather			*/
-    H5S_point_mscat,			/*scatter			*/
+const H5S_mconv_t       H5S_POINT_MCONV[1] = {{
+    "point",                            /*name                          */
+    H5S_SEL_POINTS,                     /*selection type                */
+    H5S_point_init,                     /*initialize                    */
+    H5S_point_mgath,                    /*gather                        */
+    H5S_point_mscat,                    /*scatter                       */
 }};
 
-					      
+                                              
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_point_init
+ * Function:    H5S_point_init
  *
- * Purpose:	Initializes iteration information for point selection.
+ * Purpose:     Initializes iteration information for point selection.
  *
- * Return:	non-negative on success, negative on failure.
+ * Return:      non-negative on success, negative on failure.
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Tuesday, June 16, 1998
  *
  * Modifications:
@@ -87,7 +87,7 @@ const H5S_mconv_t	H5S_POINT_MCONV[1] = {{
  */
 static herr_t
 H5S_point_init (const struct H5O_layout_t UNUSED *layout,
-		const H5S_t *space, H5S_sel_iter_t *sel_iter)
+                const H5S_t *space, H5S_sel_iter_t *sel_iter)
 {
     FUNC_ENTER (H5S_point_init, FAIL);
 
@@ -153,30 +153,30 @@ herr_t H5S_point_add (H5S_t *space, H5S_seloper_t op, size_t num_elem, const hss
                 "can't allocate point node");
 
 #ifdef QAK
-	printf("%s: check 1.1, rank=%d\n",
-	       FUNC,(int)space->extent.u.simple.rank);
+        printf("%s: check 1.1, rank=%d\n",
+               FUNC,(int)space->extent.u.simple.rank);
 #endif /* QAK */
         if((new->pnt = H5MM_malloc(space->extent.u.simple.rank*sizeof(hssize_t)))==NULL)
             HGOTO_ERROR(H5E_RESOURCE, H5E_NOSPACE, FAIL,
                 "can't allocate coordinate information");
 #ifdef QAK
-	printf("%s: check 1.2\n",FUNC);
+        printf("%s: check 1.2\n",FUNC);
 #endif /* QAK */
 
         /* Copy over the coordinates */
         HDmemcpy(new->pnt,coord+(i*space->extent.u.simple.rank),(space->extent.u.simple.rank*sizeof(hssize_t)));
 #ifdef QAK
-	printf("%s: check 1.3\n",FUNC);
-	{
-	    int j;
+        printf("%s: check 1.3\n",FUNC);
+        {
+            int j;
 
-	    for(j=0; j<space->extent.u.simple.rank; j++) {
-		printf("%s: pnt[%d]=%d\n",FUNC,(int)j,(int)new->pnt[j]);
-		printf("%s: coord[%d][%d]=%d\n",
-		       FUNC, (int)i, (int)j,
-		       (int)*(coord+(i*space->extent.u.simple.rank)+j));
-	    }
-	}
+            for(j=0; j<space->extent.u.simple.rank; j++) {
+                printf("%s: pnt[%d]=%d\n",FUNC,(int)j,(int)new->pnt[j]);
+                printf("%s: coord[%d][%d]=%d\n",
+                       FUNC, (int)i, (int)j,
+                       (int)*(coord+(i*space->extent.u.simple.rank)+j));
+            }
+        }
 #endif /* QAK */
 
         /* Link into list */
@@ -226,13 +226,13 @@ done:
 }   /* H5S_point_add() */
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_point_favail
+ * Function:    H5S_point_favail
  *
- * Purpose:	Figure out the optimal number of elements to transfer to/from the file
+ * Purpose:     Figure out the optimal number of elements to transfer to/from the file
  *
- * Return:	non-negative number of elements on success, zero on failure
+ * Return:      non-negative number of elements on success, zero on failure
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Tuesday, June 16, 1998
  *
  * Modifications:
@@ -241,7 +241,7 @@ done:
  */
 static hsize_t
 H5S_point_favail (const H5S_t UNUSED *space,
-		  const H5S_sel_iter_t *sel_iter, hsize_t max)
+                  const H5S_sel_iter_t *sel_iter, hsize_t max)
 {
     FUNC_ENTER (H5S_point_favail, 0);
 
@@ -256,50 +256,50 @@ H5S_point_favail (const H5S_t UNUSED *space,
 }   /* H5S_point_favail() */
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_point_fgath
+ * Function:    H5S_point_fgath
  *
- * Purpose:	Gathers data points from file F and accumulates them in the
- *		type conversion buffer BUF.  The LAYOUT argument describes
- *		how the data is stored on disk and EFL describes how the data
- *		is organized in external files.  ELMT_SIZE is the size in
- *		bytes of a datum which this function treats as opaque.
- *		FILE_SPACE describes the data space of the dataset on disk
- *		and the elements that have been selected for reading (via
- *		hyperslab, etc).  This function will copy at most NELMTS
- *		elements.
+ * Purpose:     Gathers data points from file F and accumulates them in the
+ *              type conversion buffer BUF.  The LAYOUT argument describes
+ *              how the data is stored on disk and EFL describes how the data
+ *              is organized in external files.  ELMT_SIZE is the size in
+ *              bytes of a datum which this function treats as opaque.
+ *              FILE_SPACE describes the data space of the dataset on disk
+ *              and the elements that have been selected for reading (via
+ *              hyperslab, etc).  This function will copy at most NELMTS
+ *              elements.
  *
  *  Notes: This could be optimized by gathering selected elements near (how
  *      near?) each other into one I/O request and then moving the correct
  *      elements into the return buffer
  *
- * Return:	Success:	Number of elements copied.
+ * Return:      Success:        Number of elements copied.
  *
- *		Failure:	0
+ *              Failure:        0
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Tuesday, June 16, 1998
  *
  * Modifications:
- *		Robb Matzke, 1999-08-03
- *		The data transfer properties are passed by ID since that's
- *		what the virtual file layer needs.
+ *              Robb Matzke, 1999-08-03
+ *              The data transfer properties are passed by ID since that's
+ *              what the virtual file layer needs.
  *-------------------------------------------------------------------------
  */
 static hsize_t
 H5S_point_fgath (H5F_t *f, const struct H5O_layout_t *layout,
-		 const struct H5O_pline_t *pline,
-		 const struct H5O_fill_t *fill, const struct H5O_efl_t *efl,
-		 size_t elmt_size, const H5S_t *file_space,
-		 H5S_sel_iter_t *file_iter, hsize_t nelmts, hid_t dxpl_id,
-		 void *_buf/*out*/)
+                 const struct H5O_pline_t *pline,
+                 const struct H5O_fill_t *fill, const struct H5O_efl_t *efl,
+                 size_t elmt_size, const H5S_t *file_space,
+                 H5S_sel_iter_t *file_iter, hsize_t nelmts, hid_t dxpl_id,
+                 void *_buf/*out*/)
 {
-    hssize_t	file_offset[H5O_LAYOUT_NDIMS];	/*offset of slab in file*/
-    hsize_t	hsize[H5O_LAYOUT_NDIMS];	/*size of hyperslab	*/
-    hssize_t	zero[H5O_LAYOUT_NDIMS];		/*zero			*/
-    uint8_t	*buf=(uint8_t *)_buf;   /* Alias for pointer arithmetic */
-    unsigned   	ndims;          /* Number of dimensions of dataset */
-    unsigned	    u;				/*counters		*/
-    hsize_t  	num_read;       /* number of elements read into buffer */
+    hssize_t    file_offset[H5O_LAYOUT_NDIMS];  /*offset of slab in file*/
+    hsize_t     hsize[H5O_LAYOUT_NDIMS];        /*size of hyperslab     */
+    hssize_t    zero[H5O_LAYOUT_NDIMS];         /*zero                  */
+    uint8_t     *buf=(uint8_t *)_buf;   /* Alias for pointer arithmetic */
+    unsigned    ndims;          /* Number of dimensions of dataset */
+    unsigned        u;                          /*counters              */
+    hsize_t     num_read;       /* number of elements read into buffer */
 
     FUNC_ENTER (H5S_point_fgath, 0);
 
@@ -344,12 +344,12 @@ H5S_point_fgath (H5F_t *f, const struct H5O_layout_t *layout,
             }
 
 #ifdef QAK
-	    printf("%s: check 3.0\n",FUNC);
-		for(u=0; u<ndims; u++) {
-		    printf("%s: %u - pnt=%d\n", FUNC, (unsigned)u, (int)file_iter->pnt.curr->pnt[u]);
-		    printf("%s: %u - file_offset=%d\n", FUNC, (unsigned)u, (int)file_offset[u]);
-		}
-		printf("%s: *buf=%u\n",FUNC,(unsigned)*buf);
+            printf("%s: check 3.0\n",FUNC);
+                for(u=0; u<ndims; u++) {
+                    printf("%s: %u - pnt=%d\n", FUNC, (unsigned)u, (int)file_iter->pnt.curr->pnt[u]);
+                    printf("%s: %u - file_offset=%d\n", FUNC, (unsigned)u, (int)file_offset[u]);
+                }
+                printf("%s: *buf=%u\n",FUNC,(unsigned)*buf);
 #endif /* QAK */
             /* Increment the offset of the buffer */
             buf+=elmt_size;
@@ -369,39 +369,39 @@ H5S_point_fgath (H5F_t *f, const struct H5O_layout_t *layout,
 } /* H5S_point_fgath() */
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_point_fscat
+ * Function:    H5S_point_fscat
  *
- * Purpose:	Scatters dataset elements from the type conversion buffer BUF
- *		to the file F where the data points are arranged according to
- *		the file data space FILE_SPACE and stored according to
- *		LAYOUT and EFL. Each element is ELMT_SIZE bytes.
- *		The caller is requesting that NELMTS elements are copied.
+ * Purpose:     Scatters dataset elements from the type conversion buffer BUF
+ *              to the file F where the data points are arranged according to
+ *              the file data space FILE_SPACE and stored according to
+ *              LAYOUT and EFL. Each element is ELMT_SIZE bytes.
+ *              The caller is requesting that NELMTS elements are copied.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Tuesday, June 16, 1998
  *
  * Modifications:
- *		Robb Matzke, 1999-08-03
- *		The data transfer properties are passed by ID since that's
- *		what the virtual file layer needs.
+ *              Robb Matzke, 1999-08-03
+ *              The data transfer properties are passed by ID since that's
+ *              what the virtual file layer needs.
  *-------------------------------------------------------------------------
  */
 static herr_t
 H5S_point_fscat (H5F_t *f, const struct H5O_layout_t *layout,
-		 const struct H5O_pline_t *pline,
-		 const struct H5O_fill_t *fill, const struct H5O_efl_t *efl,
-		 size_t elmt_size, const H5S_t *file_space,
-		 H5S_sel_iter_t *file_iter, hsize_t nelmts, hid_t dxpl_id,
-		 const void *_buf)
+                 const struct H5O_pline_t *pline,
+                 const struct H5O_fill_t *fill, const struct H5O_efl_t *efl,
+                 size_t elmt_size, const H5S_t *file_space,
+                 H5S_sel_iter_t *file_iter, hsize_t nelmts, hid_t dxpl_id,
+                 const void *_buf)
 {
-    hssize_t	file_offset[H5O_LAYOUT_NDIMS];	/*offset of hyperslab	*/
-    hsize_t	hsize[H5O_LAYOUT_NDIMS];	/*size of hyperslab	*/
-    hssize_t	zero[H5O_LAYOUT_NDIMS];		/*zero vector		*/
+    hssize_t    file_offset[H5O_LAYOUT_NDIMS];  /*offset of hyperslab   */
+    hsize_t     hsize[H5O_LAYOUT_NDIMS];        /*size of hyperslab     */
+    hssize_t    zero[H5O_LAYOUT_NDIMS];         /*zero vector           */
     const uint8_t *buf=(const uint8_t *)_buf;   /* Alias for pointer arithmetic */
     unsigned   ndims;          /* Number of dimensions of dataset */
-    unsigned	u;				/*counters		*/
+    unsigned    u;                              /*counters              */
     hsize_t  num_written;    /* number of elements written from buffer */
 
     FUNC_ENTER (H5S_point_fscat, FAIL);
@@ -433,12 +433,12 @@ H5S_point_fscat (H5F_t *f, const struct H5O_layout_t *layout,
     num_written=0;
     while(num_written<nelmts && file_iter->pnt.elmt_left>0) {
 #ifdef QAK
-	printf("%s: check 2.0\n",FUNC);
-	{
-	    for(u=0; u<ndims; u++) {
+        printf("%s: check 2.0\n",FUNC);
+        {
+            for(u=0; u<ndims; u++) {
             printf("%s: %u - pnt=%d\n", FUNC, (unsigned)u, (int)file_iter->pnt.curr->pnt[u]);
-	    }
-	}
+            }
+        }
 #endif /* QAK */
         /* Copy the location of the point to get */
         HDmemcpy(file_offset,file_iter->pnt.curr->pnt,ndims*sizeof(hssize_t));
@@ -449,7 +449,7 @@ H5S_point_fscat (H5F_t *f, const struct H5O_layout_t *layout,
             file_offset[u] += file_space->select.offset[u];
 
 #ifdef QAK
-	printf("%s: check 3.0\n",FUNC);
+        printf("%s: check 3.0\n",FUNC);
     for(u=0; u<ndims; u++) {
         printf("%s: %u - pnt=%d\n", FUNC,(unsigned)u,(int)file_iter->pnt.curr->pnt[u]);
         printf("%s: %u - file_offset=%d\n", FUNC,(unsigned)u,(int)file_offset[u]);
@@ -471,7 +471,7 @@ H5S_point_fscat (H5F_t *f, const struct H5O_layout_t *layout,
         file_iter->pnt.elmt_left--;
         file_iter->pnt.curr=file_iter->pnt.curr->next;
 #ifdef QAK
-	printf("%s: check 5.0, file_iter->pnt.curr=%p\n", FUNC,file_iter->pnt.curr);
+        printf("%s: check 5.0, file_iter->pnt.curr=%p\n", FUNC,file_iter->pnt.curr);
 #endif
     } /* end while */
 
@@ -479,19 +479,19 @@ H5S_point_fscat (H5F_t *f, const struct H5O_layout_t *layout,
 }   /* H5S_point_fscat() */
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_point_mgath
+ * Function:    H5S_point_mgath
  *
- * Purpose:	Gathers dataset elements from application memory BUF and
- *		copies them into the data type conversion buffer TCONV_BUF.
- *		Each element is ELMT_SIZE bytes and arranged in application
- *		memory according to MEM_SPACE.  
- *		The caller is requesting that at most NELMTS be gathered.
+ * Purpose:     Gathers dataset elements from application memory BUF and
+ *              copies them into the data type conversion buffer TCONV_BUF.
+ *              Each element is ELMT_SIZE bytes and arranged in application
+ *              memory according to MEM_SPACE.  
+ *              The caller is requesting that at most NELMTS be gathered.
  *
- * Return:	Success:	Number of elements copied.
+ * Return:      Success:        Number of elements copied.
  *
- *		Failure:	0
+ *              Failure:        0
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Tuesday, June 16, 1998
  *
  * Modifications:
@@ -500,16 +500,16 @@ H5S_point_fscat (H5F_t *f, const struct H5O_layout_t *layout,
  */
 static hsize_t
 H5S_point_mgath (const void *_buf, size_t elmt_size,
-		 const H5S_t *mem_space, H5S_sel_iter_t *mem_iter,
-		 hsize_t nelmts, void *_tconv_buf/*out*/)
+                 const H5S_t *mem_space, H5S_sel_iter_t *mem_iter,
+                 hsize_t nelmts, void *_tconv_buf/*out*/)
 {
-    hsize_t	mem_size[H5O_LAYOUT_NDIMS];	/*total size of app buf	*/
+    hsize_t     mem_size[H5O_LAYOUT_NDIMS];     /*total size of app buf */
     const uint8_t *buf=(const uint8_t *)_buf;   /* Get local copies for address arithmetic */
     uint8_t *tconv_buf=(uint8_t *)_tconv_buf;
-    hsize_t	acc;				/* coordinate accumulator */
-    hsize_t	off;				/* coordinate offset */
-    int	space_ndims;			/*dimensionality of space*/
-    int	i;				/*counters		*/
+    hsize_t     acc;                            /* coordinate accumulator */
+    hsize_t     off;                            /* coordinate offset */
+    int space_ndims;                    /*dimensionality of space*/
+    int i;                              /*counters              */
     hsize_t num_gath;        /* number of elements gathered */
 
     FUNC_ENTER (H5S_point_mgath, 0);
@@ -526,7 +526,7 @@ H5S_point_mgath (const void *_buf, size_t elmt_size,
 #endif /* QAK */
     if ((space_ndims=H5S_get_simple_extent_dims (mem_space, mem_size, NULL))<0) {
         HRETURN_ERROR (H5E_DATASPACE, H5E_CANTINIT, 0,
-		       "unable to retrieve data space dimensions");
+                       "unable to retrieve data space dimensions");
     }
 
     for(num_gath=0; num_gath<nelmts; num_gath++) {
@@ -538,7 +538,7 @@ H5S_point_mgath (const void *_buf, size_t elmt_size,
             } /* end for */
 
 #ifdef QAK
-	    printf("%s: check 2.0, acc=%d, off=%d\n",FUNC,(int)acc,(int)off);
+            printf("%s: check 2.0, acc=%d, off=%d\n",FUNC,(int)acc,(int)off);
 #endif /* QAK */
             /* Copy the elements into the type conversion buffer */
             HDmemcpy(tconv_buf,buf+off,elmt_size);
@@ -558,16 +558,16 @@ H5S_point_mgath (const void *_buf, size_t elmt_size,
 }   /* H5S_point_mgath() */
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_point_mscat
+ * Function:    H5S_point_mscat
  *
- * Purpose:	Scatters NELMTS data points from the type conversion buffer
- *		TCONV_BUF to the application buffer BUF.  Each element is
- *		ELMT_SIZE bytes and they are organized in application memory
- *		according to MEM_SPACE.
+ * Purpose:     Scatters NELMTS data points from the type conversion buffer
+ *              TCONV_BUF to the application buffer BUF.  Each element is
+ *              ELMT_SIZE bytes and they are organized in application memory
+ *              according to MEM_SPACE.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Wednesday, June 17, 1998
  *
  * Modifications:
@@ -576,16 +576,16 @@ H5S_point_mgath (const void *_buf, size_t elmt_size,
  */
 static herr_t
 H5S_point_mscat (const void *_tconv_buf, size_t elmt_size,
-		 const H5S_t *mem_space, H5S_sel_iter_t *mem_iter,
-		 hsize_t nelmts, void *_buf/*out*/)
+                 const H5S_t *mem_space, H5S_sel_iter_t *mem_iter,
+                 hsize_t nelmts, void *_buf/*out*/)
 {
-    hsize_t	mem_size[H5O_LAYOUT_NDIMS];	/*total size of app buf	*/
+    hsize_t     mem_size[H5O_LAYOUT_NDIMS];     /*total size of app buf */
     uint8_t *buf=(uint8_t *)_buf;   /* Get local copies for address arithmetic */
     const uint8_t *tconv_buf=(const uint8_t *)_tconv_buf;
-    hsize_t	acc;				/* coordinate accumulator */
-    hsize_t	off;				/* coordinate offset */
-    int	space_ndims;		/*dimensionality of space*/
-    int	i;				/*counters		*/
+    hsize_t     acc;                            /* coordinate accumulator */
+    hsize_t     off;                            /* coordinate offset */
+    int space_ndims;            /*dimensionality of space*/
+    int i;                              /*counters              */
     hsize_t num_scat;        /* Number of elements scattered */
 
     FUNC_ENTER (H5S_point_mscat, FAIL);
@@ -608,7 +608,7 @@ H5S_point_mscat (const void *_tconv_buf, size_t elmt_size,
      */
     if ((space_ndims=H5S_get_simple_extent_dims (mem_space, mem_size, NULL))<0) {
         HRETURN_ERROR (H5E_DATASPACE, H5E_CANTINIT, FAIL,
-		       "unable to retrieve data space dimensions");
+                       "unable to retrieve data space dimensions");
     }
 
     for(num_scat=0; num_scat<nelmts; num_scat++) {
@@ -1123,9 +1123,9 @@ H5S_point_select_contiguous(const H5S_t *space)
 
     /* One point is definitely contiguous */
     if(space->select.num_elem==1)
-    	ret_value=TRUE;
-    else	/* More than one point might be contiguous, but it's complex to check and we don't need it right now */
-    	ret_value=FALSE;
+        ret_value=TRUE;
+    else        /* More than one point might be contiguous, but it's complex to check and we don't need it right now */
+        ret_value=FALSE;
 
     FUNC_LEAVE (ret_value);
 }   /* H5S_point_select_contiguous() */
@@ -1248,7 +1248,7 @@ done:
 herr_t H5Sselect_elements (hid_t spaceid, H5S_seloper_t op, size_t num_elem,
     const hssize_t **coord)
 {
-    H5S_t	*space = NULL;  /* Dataspace to modify selection of */
+    H5S_t       *space = NULL;  /* Dataspace to modify selection of */
     herr_t ret_value=SUCCEED;  /* return value */
 
     FUNC_ENTER (H5Sselect_elements, FAIL);
@@ -1313,8 +1313,8 @@ herr_t
 H5S_point_select_iterate(void *buf, hid_t type_id, H5S_t *space, H5D_operator_t op,
         void *operator_data)
 {
-    hsize_t	mem_size[H5O_LAYOUT_NDIMS]; /* Dataspace size */
-    hssize_t	mem_offset[H5O_LAYOUT_NDIMS];   /* Point offset */
+    hsize_t     mem_size[H5O_LAYOUT_NDIMS]; /* Dataspace size */
+    hssize_t    mem_offset[H5O_LAYOUT_NDIMS];   /* Point offset */
     hsize_t offset;             /* offset of region in buffer */
     void *tmp_buf;              /* temporary location of the element in the buffer */
     H5S_pnt_node_t *node;   /* Point node */

@@ -62,18 +62,18 @@ struct H5G_t {
  * a symbolic link or a mount point.  The normal operation is to follow the
  * symbolic link or mount point and return information about its target.
  */
-#define H5G_TARGET_NORMAL	0x0000
-#define H5G_TARGET_SLINK	0x0001
-#define H5G_TARGET_MOUNT	0x0002
+#define H5G_TARGET_NORMAL       0x0000
+#define H5G_TARGET_SLINK        0x0001
+#define H5G_TARGET_MOUNT        0x0002
 
 /*
  * These operations can be passed down from the H5G_stab layer to the
  * H5G_node layer through the B-tree layer.
  */
 typedef enum H5G_oper_t {
-    H5G_OPER_FIND       = 0,   	/*find a symbol                              */
-    H5G_OPER_INSERT     = 1,	/*insert a new symbol                        */
-    H5G_OPER_REMOVE	= 2	/*remove existing symbol		     */
+    H5G_OPER_FIND       = 0,    /*find a symbol                              */
+    H5G_OPER_INSERT     = 1,    /*insert a new symbol                        */
+    H5G_OPER_REMOVE     = 2     /*remove existing symbol                     */
 } H5G_oper_t;
 
 /*
@@ -99,14 +99,14 @@ typedef struct H5G_bt_ud1_t {
  */
 typedef struct H5G_bt_ud2_t {
     /* downward */
-    hid_t	group_id;	/*group id to pass to iteration operator     */
-    struct H5G_t *group;	/*the group to which group_id points	     */
-    int		skip;		/*initial entries to skip		     */
-    H5G_iterate_t op;		/*iteration operator			     */
-    void	*op_data;	/*user-defined operator data		     */
+    hid_t       group_id;       /*group id to pass to iteration operator     */
+    struct H5G_t *group;        /*the group to which group_id points         */
+    int         skip;           /*initial entries to skip                    */
+    H5G_iterate_t op;           /*iteration operator                         */
+    void        *op_data;       /*user-defined operator data                 */
 
     /* upward */
-    int		final_ent;  /*final entry looked at */
+    int         final_ent;  /*final entry looked at */
     
 } H5G_bt_ud2_t;
 
@@ -124,18 +124,18 @@ __DLLVAR__ const H5AC_class_t H5AC_SNODE[1];
  * the library and appear in H5Gprivate.h.
  */
 __DLL__ herr_t H5G_stab_create(H5F_t *f, size_t size_hint,
-			       H5G_entry_t *ent/*out*/);
+                               H5G_entry_t *ent/*out*/);
 __DLL__ herr_t H5G_stab_find(H5G_entry_t *grp_ent, const char *name,
-			     H5G_entry_t *obj_ent/*out*/);
+                             H5G_entry_t *obj_ent/*out*/);
 __DLL__ herr_t H5G_stab_insert(H5G_entry_t *grp_ent, const char *name,
-			       H5G_entry_t *obj_ent);
+                               H5G_entry_t *obj_ent);
 __DLL__ herr_t H5G_stab_remove(H5G_entry_t *grp_ent, const char *name);
 
 /*
  * Functions that understand symbol table entries.
  */
 __DLL__ herr_t H5G_ent_decode_vec(H5F_t *f, const uint8_t **pp,
-				  H5G_entry_t *ent, int n);
+                                  H5G_entry_t *ent, int n);
 __DLL__ herr_t H5G_ent_encode_vec(H5F_t *f, uint8_t **pp,
-				  const H5G_entry_t *ent, int n);
+                                  const H5G_entry_t *ent, int n);
 #endif

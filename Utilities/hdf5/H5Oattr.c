@@ -13,11 +13,11 @@
 /* Id */
 
 #define H5A_PACKAGE         /*prevent warning from including H5Tpkg.h */
-#define H5S_PACKAGE	    /*suppress error about including H5Spkg   */
+#define H5S_PACKAGE         /*suppress error about including H5Spkg   */
 
 #include "H5private.h"
 #include "H5Eprivate.h"
-#include "H5FLprivate.h"    /*free lists	                      */
+#include "H5FLprivate.h"    /*free lists                              */
 #include "H5Gprivate.h"
 #include "H5MMprivate.h"
 #include "H5Oprivate.h"
@@ -33,28 +33,28 @@ static void *H5O_attr_copy (const void *_mesg, void *_dest);
 static size_t H5O_attr_size (H5F_t *f, const void *_mesg);
 static herr_t H5O_attr_reset (void *_mesg);
 static herr_t H5O_attr_debug (H5F_t *f, const void *_mesg,
-			      FILE * stream, int indent, int fwidth);
+                              FILE * stream, int indent, int fwidth);
 
 /* This message derives from H5O */
 const H5O_class_t H5O_ATTR[1] = {{
-    H5O_ATTR_ID,		/* message id number            */
-    "attribute",		/* message name for debugging   */
-    sizeof(H5A_t),		/* native message size          */
-    H5O_attr_decode,		/* decode message               */
-    H5O_attr_encode,		/* encode message               */
-    H5O_attr_copy,		/* copy the native value        */
-    H5O_attr_size,		/* size of raw message          */
-    H5O_attr_reset,		/* reset method                 */
-    NULL,		        /* default free method			*/
-    NULL,			/* get share method		*/
-    NULL,			/* set share method		*/
-    H5O_attr_debug,		/* debug the message            */
+    H5O_ATTR_ID,                /* message id number            */
+    "attribute",                /* message name for debugging   */
+    sizeof(H5A_t),              /* native message size          */
+    H5O_attr_decode,            /* decode message               */
+    H5O_attr_encode,            /* encode message               */
+    H5O_attr_copy,              /* copy the native value        */
+    H5O_attr_size,              /* size of raw message          */
+    H5O_attr_reset,             /* reset method                 */
+    NULL,                       /* default free method                  */
+    NULL,                       /* get share method             */
+    NULL,                       /* set share method             */
+    H5O_attr_debug,             /* debug the message            */
 }};
 
-#define H5O_ATTR_VERSION	1
+#define H5O_ATTR_VERSION        1
 
 /* Interface initialization */
-static int		interface_initialize_g = 0;
+static int              interface_initialize_g = 0;
 #define INTERFACE_INIT  NULL
 
 /* Declare external the free list for H5S_t's */
@@ -82,19 +82,19 @@ H5FL_EXTERN(H5S_simple_t);
     function using malloc() and is returned to the caller.
  *
  * Modifications:
- * 	Robb Matzke, 17 Jul 1998
- *	Added padding for alignment.
+ *      Robb Matzke, 17 Jul 1998
+ *      Added padding for alignment.
  *
- * 	Robb Matzke, 20 Jul 1998
- *	Added a version number at the beginning.
+ *      Robb Matzke, 20 Jul 1998
+ *      Added a version number at the beginning.
 --------------------------------------------------------------------------*/
 static void *
 H5O_attr_decode(H5F_t *f, const uint8_t *p, H5O_shared_t UNUSED *sh)
 {
-    H5A_t		*attr = NULL;
-    H5S_simple_t	*simple;	/*simple dimensionality information  */
-    size_t		name_len;   	/*attribute name length */
-    int		version;	/*message version number*/
+    H5A_t               *attr = NULL;
+    H5S_simple_t        *simple;        /*simple dimensionality information  */
+    size_t              name_len;       /*attribute name length */
+    int         version;        /*message version number*/
 
     FUNC_ENTER(H5O_attr_decode, NULL);
 
@@ -103,15 +103,15 @@ H5O_attr_decode(H5F_t *f, const uint8_t *p, H5O_shared_t UNUSED *sh)
     assert(p);
 
     if (NULL==(attr = H5MM_calloc(sizeof(H5A_t)))) {
-	HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, NULL,
-		       "memory allocation failed");
+        HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, NULL,
+                       "memory allocation failed");
     }
 
     /* Version number */
     version = *p++;
     if (version!=H5O_ATTR_VERSION) {
-	HRETURN_ERROR(H5E_OHDR, H5E_CANTLOAD, NULL,
-		      "bad version number for attribute message");
+        HRETURN_ERROR(H5E_OHDR, H5E_CANTLOAD, NULL,
+                      "bad version number for attribute message");
     }
 
     /* Reserved */
@@ -127,8 +127,8 @@ H5O_attr_decode(H5F_t *f, const uint8_t *p, H5O_shared_t UNUSED *sh)
     
     /* Decode and store the name */
     if (NULL==(attr->name=H5MM_malloc(name_len))) {
-	HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, NULL,
-		       "memory allocation failed");
+        HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, NULL,
+                       "memory allocation failed");
     }
     HDmemcpy(attr->name,p,name_len);
     p += H5O_ALIGN(name_len);    /* advance the memory pointer */
@@ -142,8 +142,8 @@ H5O_attr_decode(H5F_t *f, const uint8_t *p, H5O_shared_t UNUSED *sh)
 
     /* decode the attribute dataspace */
     if (NULL==(attr->ds = H5FL_ALLOC(H5S_t,1))) {
-	HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, NULL,
-		       "memory allocation failed");
+        HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, NULL,
+                       "memory allocation failed");
     }
     if((simple=(H5O_SDSPACE->decode)(f,p,NULL))!=NULL) {
         attr->ds->extent.type = H5S_SIMPLE;
@@ -159,8 +159,8 @@ H5O_attr_decode(H5F_t *f, const uint8_t *p, H5O_shared_t UNUSED *sh)
 
     /* Go get the data */
     if (NULL==(attr->data = H5MM_malloc(attr->data_size))) {
-	HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, NULL,
-		       "memory allocation failed");
+        HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, NULL,
+                       "memory allocation failed");
     }
     HDmemcpy(attr->data,p,attr->data_size);
 
@@ -175,6 +175,7 @@ H5O_attr_decode(H5F_t *f, const uint8_t *p, H5O_shared_t UNUSED *sh)
 #endif 
 
     FUNC_LEAVE(attr);
+    sh = 0;
 }
 
 /*--------------------------------------------------------------------------
@@ -194,11 +195,11 @@ H5O_attr_decode(H5F_t *f, const uint8_t *p, H5O_shared_t UNUSED *sh)
     message in the "raw" disk form.
  *
  * Modifications:
- * 	Robb Matzke, 17 Jul 1998
- *	Added padding for alignment.
+ *      Robb Matzke, 17 Jul 1998
+ *      Added padding for alignment.
  *
- * 	Robb Matzke, 20 Jul 1998
- *	Added a version number at the beginning.
+ *      Robb Matzke, 20 Jul 1998
+ *      Added a version number at the beginning.
 --------------------------------------------------------------------------*/
 static herr_t
 H5O_attr_encode(H5F_t *f, uint8_t *p, const void *mesg)
@@ -315,14 +316,14 @@ H5O_attr_copy(const void *_src, void *_dst)
     portion of the message).  It doesn't take into account alignment.
  *
  * Modified:
- * 	Robb Matzke, 17 Jul 1998
- *	Added padding between message parts for alignment.
+ *      Robb Matzke, 17 Jul 1998
+ *      Added padding between message parts for alignment.
 --------------------------------------------------------------------------*/
 static size_t
 H5O_attr_size(H5F_t UNUSED *f, const void *mesg)
 {
-    size_t		ret_value = 0;
-    size_t		name_len;
+    size_t              ret_value = 0;
+    size_t              name_len;
     const H5A_t         *attr = (const H5A_t *) mesg;
 
     FUNC_ENTER(H5O_attr_size, 0);
@@ -331,16 +332,18 @@ H5O_attr_size(H5F_t UNUSED *f, const void *mesg)
 
     name_len = HDstrlen(attr->name)+1;
 
-    ret_value = 2 +				/*name size inc. null	*/
-		2 +				/*type size		*/
-		2 +				/*space size		*/
-		2 +				/*reserved		*/
-		H5O_ALIGN(name_len)      +	/*attribute name	*/
-		H5O_ALIGN(attr->dt_size) +	/*data type		*/
-		H5O_ALIGN(attr->ds_size) +	/*data space		*/
-		attr->data_size;		/*the data itself	*/
+    ret_value = 2 +                             /*name size inc. null   */
+                2 +                             /*type size             */
+                2 +                             /*space size            */
+                2 +                             /*reserved              */
+                H5O_ALIGN(name_len)      +      /*attribute name        */
+                H5O_ALIGN(attr->dt_size) +      /*data type             */
+                H5O_ALIGN(attr->ds_size) +      /*data space            */
+                attr->data_size;                /*the data itself       */
 
     FUNC_LEAVE(ret_value);
+
+    f = 0;
 }
 
 
@@ -369,9 +372,9 @@ H5O_attr_reset(void *_mesg)
 
     if (attr) {
         if (NULL==(tmp = H5MM_malloc(sizeof(H5A_t)))) {
-	    HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, FAIL,
-			   "memory allocation failed");
-	}
+            HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, FAIL,
+                           "memory allocation failed");
+        }
         HDmemcpy(tmp,attr,sizeof(H5A_t));
         H5A_close(tmp);
         HDmemset(attr, 0, sizeof(H5A_t));
@@ -399,7 +402,7 @@ H5O_attr_reset(void *_mesg)
 --------------------------------------------------------------------------*/
 static herr_t
 H5O_attr_debug(H5F_t *f, const void *_mesg, FILE * stream, int indent,
-	       int fwidth)
+               int fwidth)
 {
     const H5A_t *mesg = (const H5A_t *)_mesg;
 
@@ -412,27 +415,27 @@ H5O_attr_debug(H5F_t *f, const void *_mesg, FILE * stream, int indent,
     assert(fwidth >= 0);
 
     fprintf(stream, "%*s%-*s \"%s\"\n", indent, "", fwidth,
-	    "Name:",
-	    mesg->name);
+            "Name:",
+            mesg->name);
     fprintf(stream, "%*s%-*s %u\n", indent, "", fwidth,
-	    "Initialized:",
-	    (unsigned int)mesg->initialized);
+            "Initialized:",
+            (unsigned int)mesg->initialized);
     fprintf(stream, "%*s%-*s %u\n", indent, "", fwidth,
-	    "Opened:",
-	    (unsigned int)mesg->ent_opened);
+            "Opened:",
+            (unsigned int)mesg->ent_opened);
     fprintf(stream, "%*sSymbol table entry...\n", indent, "");
     H5G_ent_debug(f, &(mesg->ent), stream, indent+3, MAX(0, fwidth-3),
-		  HADDR_UNDEF);
+                  HADDR_UNDEF);
     
     fprintf(stream, "%*s%-*s %lu\n", indent, "", fwidth,
-	    "Data type size:",
-	    (unsigned long)(mesg->dt_size));
+            "Data type size:",
+            (unsigned long)(mesg->dt_size));
     fprintf(stream, "%*sData type...\n", indent, "");
     (H5O_DTYPE->debug)(f, mesg->dt, stream, indent+3, MAX(0, fwidth-3));
 
     fprintf(stream, "%*s%-*s %lu\n", indent, "", fwidth,
-	    "Data space size:",
-	    (unsigned long)(mesg->ds_size));
+            "Data space size:",
+            (unsigned long)(mesg->ds_size));
     fprintf(stream, "%*sData space...\n", indent, "");
     H5S_debug(f, mesg->ds, stream, indent+3, MAX(0, fwidth-3));
 

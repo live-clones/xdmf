@@ -10,7 +10,7 @@
 #include "H5private.h"
 #include "H5Dprivate.h"
 #include "H5Eprivate.h"
-#include "H5FLprivate.h"	/*Free Lists	  */
+#include "H5FLprivate.h"        /*Free Lists      */
 #include "H5MMprivate.h"
 #include "H5Oprivate.h"
 
@@ -21,25 +21,25 @@ static void *H5O_layout_copy(const void *_mesg, void *_dest);
 static size_t H5O_layout_size(H5F_t *f, const void *_mesg);
 static herr_t H5O_layout_free (void *_mesg);
 static herr_t H5O_layout_debug(H5F_t *f, const void *_mesg, FILE * stream,
-			       int indent, int fwidth);
+                               int indent, int fwidth);
 
 /* This message derives from H5O */
 const H5O_class_t H5O_LAYOUT[1] = {{
-    H5O_LAYOUT_ID,          	/*message id number             */
-    "layout",               	/*message name for debugging    */
-    sizeof(H5O_layout_t),   	/*native message size           */
-    H5O_layout_decode,      	/*decode message                */
-    H5O_layout_encode,      	/*encode message                */
-    H5O_layout_copy,        	/*copy the native value         */
-    H5O_layout_size,        	/*size of message on disk       */
-    NULL,                   	/*reset method                  */
-    H5O_layout_free,        	/*free the struct         */
-    NULL,		    	/*get share method		*/
-    NULL,			/*set share method		*/
-    H5O_layout_debug,       	/*debug the message             */
+    H5O_LAYOUT_ID,              /*message id number             */
+    "layout",                   /*message name for debugging    */
+    sizeof(H5O_layout_t),       /*native message size           */
+    H5O_layout_decode,          /*decode message                */
+    H5O_layout_encode,          /*encode message                */
+    H5O_layout_copy,            /*copy the native value         */
+    H5O_layout_size,            /*size of message on disk       */
+    NULL,                       /*reset method                  */
+    H5O_layout_free,            /*free the struct         */
+    NULL,                       /*get share method              */
+    NULL,                       /*set share method              */
+    H5O_layout_debug,           /*debug the message             */
 }};
 
-#define H5O_LAYOUT_VERSION	1
+#define H5O_LAYOUT_VERSION      1
 
 /* Interface initialization */
 #define PABLO_MASK      H5O_layout_mask
@@ -64,8 +64,8 @@ H5FL_DEFINE(H5O_layout_t);
  *              Wednesday, October  8, 1997
  *
  * Modifications:
- * 	Robb Matzke, 1998-07-20
- *	Rearranged the message to add a version number at the beginning.
+ *      Robb Matzke, 1998-07-20
+ *      Rearranged the message to add a version number at the beginning.
  *
  *-------------------------------------------------------------------------
  */
@@ -86,14 +86,14 @@ H5O_layout_decode(H5F_t *f, const uint8_t *p, H5O_shared_t UNUSED *sh)
     /* decode */
     if (NULL==(mesg = H5FL_ALLOC(H5O_layout_t,1))) {
         HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, NULL,
-		       "memory allocation failed");
+                       "memory allocation failed");
     }
 
     /* Version */
     version = *p++;
     if (version!=H5O_LAYOUT_VERSION) {
         HRETURN_ERROR(H5E_OHDR, H5E_CANTLOAD, NULL,
-		      "bad version number for layout message");
+                      "bad version number for layout message");
     }
 
     /* Dimensionality */
@@ -101,7 +101,7 @@ H5O_layout_decode(H5F_t *f, const uint8_t *p, H5O_shared_t UNUSED *sh)
     if (mesg->ndims>H5O_LAYOUT_NDIMS) {
         H5FL_FREE(H5O_layout_t,mesg);
         HRETURN_ERROR(H5E_OHDR, H5E_CANTLOAD, NULL,
-		      "dimensionality is too large");
+                      "dimensionality is too large");
     }
 
     /* Layout class */
@@ -133,8 +133,8 @@ H5O_layout_decode(H5F_t *f, const uint8_t *p, H5O_shared_t UNUSED *sh)
  *              Wednesday, October  8, 1997
  *
  * Modifications:
- * 	Robb Matzke, 1998-07-20
- *	Rearranged the message to add a version number at the beginning.
+ *      Robb Matzke, 1998-07-20
+ *      Rearranged the message to add a version number at the beginning.
  *
  *-------------------------------------------------------------------------
  */
@@ -205,7 +205,7 @@ H5O_layout_copy(const void *_mesg, void *_dest)
     assert(mesg);
     if (!dest && NULL==(dest=H5FL_ALLOC(H5O_layout_t,0))) {
         HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, NULL,
-		       "memory allocation failed");
+                       "memory allocation failed");
     }
     
     /* copy */
@@ -256,13 +256,13 @@ H5O_layout_size(H5F_t *f, const void *_mesg)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5O_layout_free
+ * Function:    H5O_layout_free
  *
- * Purpose:	Free's the message
+ * Purpose:     Free's the message
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Saturday, March 11, 2000
  *
  * Modifications:
@@ -298,7 +298,7 @@ H5O_layout_free (void *mesg)
  */
 static herr_t
 H5O_layout_debug(H5F_t UNUSED *f, const void *_mesg, FILE * stream,
-		 int indent, int fwidth)
+                 int indent, int fwidth)
 {
     const H5O_layout_t     *mesg = (const H5O_layout_t *) _mesg;
     unsigned                    u;
@@ -313,18 +313,18 @@ H5O_layout_debug(H5F_t UNUSED *f, const void *_mesg, FILE * stream,
     assert(fwidth >= 0);
 
     HDfprintf(stream, "%*s%-*s %a\n", indent, "", fwidth,
-	      H5D_CHUNKED == mesg->type ? "B-tree address:" : "Data address:",
-	      mesg->addr);
+              H5D_CHUNKED == mesg->type ? "B-tree address:" : "Data address:",
+              mesg->addr);
 
     HDfprintf(stream, "%*s%-*s %lu\n", indent, "", fwidth,
-	      "Number of dimensions:",
-	      (unsigned long) (mesg->ndims));
+              "Number of dimensions:",
+              (unsigned long) (mesg->ndims));
 
     /* Size */
     HDfprintf(stream, "%*s%-*s {", indent, "", fwidth, "Size:");
     for (u = 0; u < mesg->ndims; u++) {
         HDfprintf(stream, "%s%lu", u ? ", " : "",
-		  (unsigned long) (mesg->dim[u]));
+                  (unsigned long) (mesg->dim[u]));
     }
     HDfprintf(stream, "}\n");
 

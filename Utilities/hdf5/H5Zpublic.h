@@ -16,18 +16,18 @@
  * appear in the HDF5 files.
  */
 typedef int H5Z_filter_t;
-#define H5Z_FILTER_ERROR	(-1)	/*no filter			*/
-#define H5Z_FILTER_NONE		0	/*reserved indefinitely		*/
-#define H5Z_FILTER_DEFLATE	1 	/*deflation like gzip	     	*/
-#define H5Z_FILTER_MAX		65535	/*maximum filter id		*/
+#define H5Z_FILTER_ERROR        (-1)    /*no filter                     */
+#define H5Z_FILTER_NONE         0       /*reserved indefinitely         */
+#define H5Z_FILTER_DEFLATE      1       /*deflation like gzip           */
+#define H5Z_FILTER_MAX          65535   /*maximum filter id             */
 
 /* Flags for filter definition */
-#define H5Z_FLAG_DEFMASK	0x00ff	/*definition flag mask		*/
-#define H5Z_FLAG_OPTIONAL	0x0001	/*filter is optional		*/
+#define H5Z_FLAG_DEFMASK        0x00ff  /*definition flag mask          */
+#define H5Z_FLAG_OPTIONAL       0x0001  /*filter is optional            */
 
 /* Additional flags for filter invocation */
-#define H5Z_FLAG_INVMASK	0xff00	/*invocation flag mask		*/
-#define H5Z_FLAG_REVERSE	0x0100	/*reverse direction; read	*/
+#define H5Z_FLAG_INVMASK        0xff00  /*invocation flag mask          */
+#define H5Z_FLAG_REVERSE        0x0100  /*reverse direction; read       */
 
 /*
  * A filter gets definition flags and invocation flags (defined above), the
@@ -45,19 +45,19 @@ typedef int H5Z_filter_t;
  * all pointer arguments unchanged.
  */
 typedef size_t (*H5Z_func_t)(unsigned int flags, size_t cd_nelmts,
-			     const unsigned int cd_values[], size_t nbytes,
-			     size_t *buf_size, void **buf);
+                             const unsigned int cd_values[], size_t nbytes,
+                             size_t *buf_size, void **buf);
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 __DLL__ herr_t H5Zregister(H5Z_filter_t id, const char *comment,
-			   H5Z_func_t filter);
+                           H5Z_func_t filter);
 
 size_t H5Z_filter_deflate(unsigned flags, size_t cd_nelmts,
-			  const unsigned cd_values[], size_t nbytes,
-			  size_t *buf_size, void **buf);
+                          const unsigned cd_values[], size_t nbytes,
+                          size_t *buf_size, void **buf);
 
 #ifdef __cplusplus
 }

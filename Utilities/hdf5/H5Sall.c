@@ -5,10 +5,10 @@
  * Programmer:  Quincey Koziol <koziol@ncsa.uiuc.edu>
  *              Tuesday, June 16, 1998
  *
- * Purpose:	"All" selection data space I/O functions.
+ * Purpose:     "All" selection data space I/O functions.
  */
 
-#define H5S_PACKAGE		/*suppress error about including H5Spkg	  */
+#define H5S_PACKAGE             /*suppress error about including H5Spkg   */
 
 #include "H5private.h"
 #include "H5Eprivate.h"
@@ -23,57 +23,57 @@
 static int             interface_initialize_g = 0;
 
 static herr_t H5S_all_init (const struct H5O_layout_t *layout,
-			    const H5S_t *space, H5S_sel_iter_t *iter);
+                            const H5S_t *space, H5S_sel_iter_t *iter);
 static hsize_t H5S_all_favail (const H5S_t *space, const H5S_sel_iter_t *iter,
-			      hsize_t max);
+                              hsize_t max);
 static hsize_t H5S_all_fgath (H5F_t *f, const struct H5O_layout_t *layout,
-			     const struct H5O_pline_t *pline,
-			     const struct H5O_fill_t *fill,
-			     const struct H5O_efl_t *efl, size_t elmt_size,
-			     const H5S_t *file_space,
-			     H5S_sel_iter_t *file_iter, hsize_t nelmts,
-			     hid_t dxpl_id, void *buf/*out*/);
+                             const struct H5O_pline_t *pline,
+                             const struct H5O_fill_t *fill,
+                             const struct H5O_efl_t *efl, size_t elmt_size,
+                             const H5S_t *file_space,
+                             H5S_sel_iter_t *file_iter, hsize_t nelmts,
+                             hid_t dxpl_id, void *buf/*out*/);
 static herr_t H5S_all_fscat (H5F_t *f, const struct H5O_layout_t *layout,
-			     const struct H5O_pline_t *pline,
-			     const struct H5O_fill_t *fill,
-			     const struct H5O_efl_t *efl, size_t elmt_size,
-			     const H5S_t *file_space,
-			     H5S_sel_iter_t *file_iter, hsize_t nelmts,
-			     hid_t dxpl_id, const void *buf);
+                             const struct H5O_pline_t *pline,
+                             const struct H5O_fill_t *fill,
+                             const struct H5O_efl_t *efl, size_t elmt_size,
+                             const H5S_t *file_space,
+                             H5S_sel_iter_t *file_iter, hsize_t nelmts,
+                             hid_t dxpl_id, const void *buf);
 static hsize_t H5S_all_mgath (const void *_buf, size_t elmt_size,
-			     const H5S_t *mem_space, H5S_sel_iter_t *mem_iter,
-			     hsize_t nelmts, void *_tconv_buf/*out*/);
+                             const H5S_t *mem_space, H5S_sel_iter_t *mem_iter,
+                             hsize_t nelmts, void *_tconv_buf/*out*/);
 static herr_t H5S_all_mscat (const void *_tconv_buf, size_t elmt_size,
-			     const H5S_t *mem_space, H5S_sel_iter_t *mem_iter,
-			     hsize_t nelmts, void *_buf/*out*/);
+                             const H5S_t *mem_space, H5S_sel_iter_t *mem_iter,
+                             hsize_t nelmts, void *_buf/*out*/);
 static herr_t H5S_select_all(H5S_t *space);
 
-const H5S_fconv_t	H5S_ALL_FCONV[1] = {{
-    "all", 					/*name			*/
-    H5S_SEL_ALL,				/*selection type	*/
-    H5S_all_init,				/*initialize		*/
-    H5S_all_favail,				/*available		*/
-    H5S_all_fgath,				/*gather		*/
-    H5S_all_fscat,				/*scatter		*/
+const H5S_fconv_t       H5S_ALL_FCONV[1] = {{
+    "all",                                      /*name                  */
+    H5S_SEL_ALL,                                /*selection type        */
+    H5S_all_init,                               /*initialize            */
+    H5S_all_favail,                             /*available             */
+    H5S_all_fgath,                              /*gather                */
+    H5S_all_fscat,                              /*scatter               */
 }};
 
-const H5S_mconv_t	H5S_ALL_MCONV[1] = {{
-    "all", 					/*name			*/
-    H5S_SEL_ALL,				/*selection type	*/
-    H5S_all_init,				/*initialize		*/
-    H5S_all_mgath,				/*gather		*/
-    H5S_all_mscat, 				/*scatter		*/
+const H5S_mconv_t       H5S_ALL_MCONV[1] = {{
+    "all",                                      /*name                  */
+    H5S_SEL_ALL,                                /*selection type        */
+    H5S_all_init,                               /*initialize            */
+    H5S_all_mgath,                              /*gather                */
+    H5S_all_mscat,                              /*scatter               */
 }};
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_all_init
+ * Function:    H5S_all_init
  *
- * Purpose:	Initializes iteration information for all selection.
+ * Purpose:     Initializes iteration information for all selection.
  *
- * Return:	non-negative on success, negative on failure.
+ * Return:      non-negative on success, negative on failure.
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Tuesday, June 16, 1998
  *
  * Modifications:
@@ -82,7 +82,7 @@ const H5S_mconv_t	H5S_ALL_MCONV[1] = {{
  */
 static herr_t
 H5S_all_init (const struct H5O_layout_t UNUSED *layout,
-	       const H5S_t *space, H5S_sel_iter_t *sel_iter)
+               const H5S_t *space, H5S_sel_iter_t *sel_iter)
 {
     FUNC_ENTER (H5S_all_init, FAIL);
 
@@ -102,15 +102,15 @@ H5S_all_init (const struct H5O_layout_t UNUSED *layout,
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_all_favail
+ * Function:    H5S_all_favail
  *
- * Purpose:	Figure out the optimal number of elements to transfer to/from
- *		the file.
+ * Purpose:     Figure out the optimal number of elements to transfer to/from
+ *              the file.
  *
- * Return:	non-negative number of elements on success, zero on
- *		failure.
+ * Return:      non-negative number of elements on success, zero on
+ *              failure.
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Tuesday, June 16, 1998
  *
  * Modifications:
@@ -134,41 +134,41 @@ H5S_all_favail (const H5S_t UNUSED *space, const H5S_sel_iter_t *sel_iter, hsize
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_all_fgath
+ * Function:    H5S_all_fgath
  *
- * Purpose:	Gathers data points from file F and accumulates them in the
- *		type conversion buffer BUF.  The LAYOUT argument describes
- *		how the data is stored on disk and EFL describes how the data
- *		is organized in external files.  ELMT_SIZE is the size in
- *		bytes of a datum which this function treats as opaque.
- *		FILE_SPACE describes the data space of the dataset on disk
- *		and the elements that have been selected for reading (via
- *		hyperslab, etc).  This function will copy at most NELMTS
- *		elements.
+ * Purpose:     Gathers data points from file F and accumulates them in the
+ *              type conversion buffer BUF.  The LAYOUT argument describes
+ *              how the data is stored on disk and EFL describes how the data
+ *              is organized in external files.  ELMT_SIZE is the size in
+ *              bytes of a datum which this function treats as opaque.
+ *              FILE_SPACE describes the data space of the dataset on disk
+ *              and the elements that have been selected for reading (via
+ *              hyperslab, etc).  This function will copy at most NELMTS
+ *              elements.
  *
- * Return:	Success:	Number of elements copied.
+ * Return:      Success:        Number of elements copied.
  *
- *		Failure:	0
+ *              Failure:        0
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Tuesday, June 16, 1998
  *
  * Modifications:
- *		Robb Matzke, 1999-08-03
- *		The data transfer properties are passed by ID since that's
- *		what the virtual file layer needs.
+ *              Robb Matzke, 1999-08-03
+ *              The data transfer properties are passed by ID since that's
+ *              what the virtual file layer needs.
  *-------------------------------------------------------------------------
  */
 static hsize_t
 H5S_all_fgath (H5F_t *f, const struct H5O_layout_t *layout,
-	       const struct H5O_pline_t *pline,
-	       const struct H5O_fill_t *fill, const struct H5O_efl_t *efl,
-	       size_t elmt_size, const H5S_t *file_space,
-	       H5S_sel_iter_t *file_iter, hsize_t nelmts, hid_t dxpl_id,
-	       void *buf/*out*/)
+               const struct H5O_pline_t *pline,
+               const struct H5O_fill_t *fill, const struct H5O_efl_t *efl,
+               size_t elmt_size, const H5S_t *file_space,
+               H5S_sel_iter_t *file_iter, hsize_t nelmts, hid_t dxpl_id,
+               void *buf/*out*/)
 {
     hsize_t     actual_bytes;       /* The actual number of bytes to read */
-    hsize_t	buf_off;            /* Dataset offset for copying memory */
+    hsize_t     buf_off;            /* Dataset offset for copying memory */
 
     FUNC_ENTER (H5S_all_fgath, 0);
 
@@ -202,34 +202,34 @@ H5S_all_fgath (H5F_t *f, const struct H5O_layout_t *layout,
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_all_fscat
+ * Function:    H5S_all_fscat
  *
- * Purpose:	Scatters dataset elements from the type conversion buffer BUF
- *		to the file F where the data points are arranged according to
- *		the file data space FILE_SPACE and stored according to
- *		LAYOUT and EFL. Each element is ELMT_SIZE bytes.
- *		The caller is requesting that NELMTS elements are copied.
+ * Purpose:     Scatters dataset elements from the type conversion buffer BUF
+ *              to the file F where the data points are arranged according to
+ *              the file data space FILE_SPACE and stored according to
+ *              LAYOUT and EFL. Each element is ELMT_SIZE bytes.
+ *              The caller is requesting that NELMTS elements are copied.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Tuesday, June 16, 1998
  *
  * Modifications:
- *		Robb Matzke, 1999-08-03
- *		The data transfer properties are passed by ID since that's
- *		what the virtual file layer needs.
+ *              Robb Matzke, 1999-08-03
+ *              The data transfer properties are passed by ID since that's
+ *              what the virtual file layer needs.
  *-------------------------------------------------------------------------
  */
 static herr_t
 H5S_all_fscat (H5F_t *f, const struct H5O_layout_t *layout,
-	       const struct H5O_pline_t *pline, const struct H5O_fill_t *fill,
-	       const struct H5O_efl_t *efl, size_t elmt_size,
-	       const H5S_t *file_space, H5S_sel_iter_t *file_iter,
-	       hsize_t nelmts, hid_t dxpl_id, const void *buf)
+               const struct H5O_pline_t *pline, const struct H5O_fill_t *fill,
+               const struct H5O_efl_t *efl, size_t elmt_size,
+               const H5S_t *file_space, H5S_sel_iter_t *file_iter,
+               hsize_t nelmts, hid_t dxpl_id, const void *buf)
 {
     hsize_t     actual_bytes;       /* The actual number of bytes to write */
-    hsize_t	buf_off;            /* Dataset offset for copying memory */
+    hsize_t     buf_off;            /* Dataset offset for copying memory */
 
     FUNC_ENTER (H5S_all_fscat, FAIL);
 
@@ -263,19 +263,19 @@ H5S_all_fscat (H5F_t *f, const struct H5O_layout_t *layout,
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_all_mgath
+ * Function:    H5S_all_mgath
  *
- * Purpose:	Gathers dataset elements from application memory BUF and
- *		copies them into the data type conversion buffer TCONV_BUF.
- *		Each element is ELMT_SIZE bytes and arranged in application
- *		memory according to MEM_SPACE.  
- *		The caller is requesting that at most NELMTS be gathered.
+ * Purpose:     Gathers dataset elements from application memory BUF and
+ *              copies them into the data type conversion buffer TCONV_BUF.
+ *              Each element is ELMT_SIZE bytes and arranged in application
+ *              memory according to MEM_SPACE.  
+ *              The caller is requesting that at most NELMTS be gathered.
  *
- * Return:	Success:	Number of elements copied.
+ * Return:      Success:        Number of elements copied.
  *
- *		Failure:	0
+ *              Failure:        0
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Tuesday, June 16, 1998
  *
  * Modifications:
@@ -284,8 +284,8 @@ H5S_all_fscat (H5F_t *f, const struct H5O_layout_t *layout,
  */
 static hsize_t
 H5S_all_mgath (const void *_buf, size_t elmt_size,
-	       const H5S_t UNUSED *mem_space, H5S_sel_iter_t *mem_iter,
-	       hsize_t nelmts, void *tconv_buf/*out*/)
+               const H5S_t UNUSED *mem_space, H5S_sel_iter_t *mem_iter,
+               hsize_t nelmts, void *tconv_buf/*out*/)
 {
     const uint8_t *buf=(const uint8_t*)_buf;   /* Get local copies for address arithmetic */
     size_t      actual_bytes;       /* The actual number of bytes to read */
@@ -316,16 +316,16 @@ H5S_all_mgath (const void *_buf, size_t elmt_size,
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_all_mscat
+ * Function:    H5S_all_mscat
  *
- * Purpose:	Scatters NELMTS data points from the type conversion buffer
- *		TCONV_BUF to the application buffer BUF.  Each element is
- *		ELMT_SIZE bytes and they are organized in application memory
- *		according to MEM_SPACE.
+ * Purpose:     Scatters NELMTS data points from the type conversion buffer
+ *              TCONV_BUF to the application buffer BUF.  Each element is
+ *              ELMT_SIZE bytes and they are organized in application memory
+ *              according to MEM_SPACE.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Wednesday, June 17, 1998
  *
  * Modifications:
@@ -334,8 +334,8 @@ H5S_all_mgath (const void *_buf, size_t elmt_size,
  */
 static herr_t
 H5S_all_mscat (const void *tconv_buf, size_t elmt_size,
-	       const H5S_t UNUSED *mem_space, H5S_sel_iter_t *mem_iter,
-	       hsize_t nelmts, void *_buf/*out*/)
+               const H5S_t UNUSED *mem_space, H5S_sel_iter_t *mem_iter,
+               hsize_t nelmts, void *_buf/*out*/)
 {
     uint8_t *buf=(uint8_t *)_buf;
     size_t      actual_bytes;       /* The actual number of bytes to write */
@@ -366,49 +366,49 @@ H5S_all_mscat (const void *tconv_buf, size_t elmt_size,
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_all_read
+ * Function:    H5S_all_read
  *
- * Purpose:	Reads directly from file into application memory if possible.
+ * Purpose:     Reads directly from file into application memory if possible.
  *
- * Return:	Success:	Non-negative. If data was read directly then
- *				MUST_CONVERT is set to zero, otherwise
- *				MUST_CONVERT is set to non-zero.
+ * Return:      Success:        Non-negative. If data was read directly then
+ *                              MUST_CONVERT is set to zero, otherwise
+ *                              MUST_CONVERT is set to non-zero.
  *
- *		Failure:	Negative. Return value of MUST_CONVERT is
- *				undefined.
+ *              Failure:        Negative. Return value of MUST_CONVERT is
+ *                              undefined.
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Thursday, April 22, 1999
  *
  * Modifications:
- *    		Quincey Koziol, 1999-05-25
- *		Modified to allow contiguous hyperslabs to be written out.
+ *              Quincey Koziol, 1999-05-25
+ *              Modified to allow contiguous hyperslabs to be written out.
  *
- *		Robb Matzke, 1999-08-03
- *		The data transfer properties are passed by ID since that's
- *		what the virtual file layer needs.
+ *              Robb Matzke, 1999-08-03
+ *              The data transfer properties are passed by ID since that's
+ *              what the virtual file layer needs.
  *-------------------------------------------------------------------------
  */
 herr_t
 H5S_all_read(H5F_t *f, const H5O_layout_t *layout, const H5O_pline_t *pline,
              const struct H5O_fill_t *fill,
-	     const H5O_efl_t *efl, size_t elmt_size, const H5S_t *file_space,
-	     const H5S_t *mem_space, hid_t dxpl_id, void *_buf/*out*/,
-	     hbool_t *must_convert/*out*/)
+             const H5O_efl_t *efl, size_t elmt_size, const H5S_t *file_space,
+             const H5S_t *mem_space, hid_t dxpl_id, void *_buf/*out*/,
+             hbool_t *must_convert/*out*/)
 {
     char       *buf=(char*)_buf;        /* Get pointer to buffer */
     H5S_hyper_node_t *file_node=NULL,*mem_node=NULL;     /* Hyperslab node */
-    hsize_t	mem_size,file_size;
-    hssize_t	file_off,mem_off;
+    hsize_t     mem_size,file_size;
+    hssize_t    file_off,mem_off;
     hssize_t    count;              /* Regular hyperslab count */
-    hsize_t	size[H5O_LAYOUT_NDIMS];
-    hssize_t	file_offset[H5O_LAYOUT_NDIMS];
-    hssize_t	mem_offset[H5O_LAYOUT_NDIMS];
-    unsigned	u;
+    hsize_t     size[H5O_LAYOUT_NDIMS];
+    hssize_t    file_offset[H5O_LAYOUT_NDIMS];
+    hssize_t    mem_offset[H5O_LAYOUT_NDIMS];
+    unsigned    u;
     unsigned    small_contiguous=0,     /* Flags for indicating contiguous hyperslabs */
                 large_contiguous=0;
-    int	        i;
-    size_t	down_size[H5O_LAYOUT_NDIMS];
+    int         i;
+    size_t      down_size[H5O_LAYOUT_NDIMS];
     size_t      acc;
 
     FUNC_ENTER(H5S_all_read, FAIL);
@@ -443,7 +443,7 @@ printf("%s: check 1.0\n",FUNC);
         } /* end else */
     } /* end if */
     else
-    	if(mem_space->select.type!=H5S_SEL_ALL)
+        if(mem_space->select.type!=H5S_SEL_ALL)
             goto fall_through;
 
     /* Check for a single hyperslab block defined in file dataspace */
@@ -584,9 +584,9 @@ printf("%s: check 2.0\n",FUNC);
 #endif /* QAK */
     /* Read data from the file */
     if (H5F_arr_read(f, dxpl_id, layout, pline, fill, efl, size,
-		     size, mem_offset, file_offset, buf/*out*/)<0) {
+                     size, mem_offset, file_offset, buf/*out*/)<0) {
         HRETURN_ERROR(H5E_IO, H5E_READERROR, FAIL,
-		      "unable to read data from the file");
+                      "unable to read data from the file");
     }
     *must_convert = FALSE;
 
@@ -596,51 +596,51 @@ fall_through:
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5S_all_write
+ * Function:    H5S_all_write
  *
- * Purpose:	Writes data directly to the file if possible.
+ * Purpose:     Writes data directly to the file if possible.
  *
- * Return:	Success:	Non-negative. If data was written directly
- *				then MUST_CONVERT is set to zero, otherwise
- *				MUST_CONVERT is set to non-zero.
+ * Return:      Success:        Non-negative. If data was written directly
+ *                              then MUST_CONVERT is set to zero, otherwise
+ *                              MUST_CONVERT is set to non-zero.
  *
- *		Failure:	Negative. Return value of MUST_CONVERT is
- *				undefined.
+ *              Failure:        Negative. Return value of MUST_CONVERT is
+ *                              undefined.
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Wednesday, April 21, 1999
  *
  * Modifications:
- * 		Quincey Koziol, 1999-05-25
- *		Modified to allow contiguous hyperslabs to be written out.
+ *              Quincey Koziol, 1999-05-25
+ *              Modified to allow contiguous hyperslabs to be written out.
  *
- *		Robb Matzke, 1999-08-03
- *		The data transfer properties are passed by ID since that's
- *		what the virtual file layer needs.
+ *              Robb Matzke, 1999-08-03
+ *              The data transfer properties are passed by ID since that's
+ *              what the virtual file layer needs.
  *-------------------------------------------------------------------------
  */
 herr_t
 H5S_all_write(H5F_t *f, const struct H5O_layout_t *layout,
-	      const H5O_pline_t *pline,
+              const H5O_pline_t *pline,
               const struct H5O_fill_t *fill,
               const H5O_efl_t *efl,
-	      size_t elmt_size, const H5S_t *file_space,
-	      const H5S_t *mem_space, hid_t dxpl_id, const void *_buf,
-	      hbool_t *must_convert/*out*/)
+              size_t elmt_size, const H5S_t *file_space,
+              const H5S_t *mem_space, hid_t dxpl_id, const void *_buf,
+              hbool_t *must_convert/*out*/)
 {
     const char *buf=(const char*)_buf;  /* Get pointer to buffer */
     H5S_hyper_node_t *file_node=NULL,*mem_node=NULL;     /* Hyperslab node */
-    hsize_t	mem_size,file_size;
-    hssize_t	file_off,mem_off;
+    hsize_t     mem_size,file_size;
+    hssize_t    file_off,mem_off;
     hssize_t    count;              /* Regular hyperslab count */
-    hsize_t	size[H5O_LAYOUT_NDIMS];
-    hssize_t	file_offset[H5O_LAYOUT_NDIMS];
-    hssize_t	mem_offset[H5O_LAYOUT_NDIMS];
-    unsigned	u;
+    hsize_t     size[H5O_LAYOUT_NDIMS];
+    hssize_t    file_offset[H5O_LAYOUT_NDIMS];
+    hssize_t    mem_offset[H5O_LAYOUT_NDIMS];
+    unsigned    u;
     unsigned    small_contiguous=0,     /* Flags for indicating contiguous hyperslabs */
                 large_contiguous=0;
-    int	        i;
-    size_t	down_size[H5O_LAYOUT_NDIMS];
+    int         i;
+    size_t      down_size[H5O_LAYOUT_NDIMS];
     size_t      acc;
     
     FUNC_ENTER(H5S_all_write, FAIL);
@@ -672,7 +672,7 @@ H5S_all_write(H5F_t *f, const struct H5O_layout_t *layout,
         } /* end else */
     } /* end if */
     else
-    	if(mem_space->select.type!=H5S_SEL_ALL)
+        if(mem_space->select.type!=H5S_SEL_ALL)
             goto fall_through;
 
     /* Check for a single hyperslab block defined in file dataspace */
@@ -693,7 +693,7 @@ H5S_all_write(H5F_t *f, const struct H5O_layout_t *layout,
         } /* end else */
     } /* end if */
     else
-    	if(file_space->select.type!=H5S_SEL_ALL)
+        if(file_space->select.type!=H5S_SEL_ALL)
             goto fall_through;
 
     /* Get information about memory and file */
@@ -810,9 +810,9 @@ H5S_all_write(H5F_t *f, const struct H5O_layout_t *layout,
 
     /* Write data to the file */
     if (H5F_arr_write(f, dxpl_id, layout, pline, fill, efl, size,
-		      size, mem_offset, file_offset, buf)<0) {
+                      size, mem_offset, file_offset, buf)<0) {
         HRETURN_ERROR(H5E_IO, H5E_WRITEERROR, FAIL,
-		      "unable to write data to the file");
+                      "unable to write data to the file");
     }
     *must_convert = FALSE;
 
@@ -963,6 +963,8 @@ H5S_all_select_deserialize (H5S_t *space, const uint8_t UNUSED *buf)
 
 done:
     FUNC_LEAVE (ret_value);
+
+    buf = 0;
 }   /* H5S_all_select_deserialize() */
 
 
@@ -1075,7 +1077,7 @@ done:
 --------------------------------------------------------------------------*/
 herr_t H5Sselect_all (hid_t spaceid)
 {
-    H5S_t	*space = NULL;  /* Dataspace to modify selection of */
+    H5S_t       *space = NULL;  /* Dataspace to modify selection of */
     herr_t ret_value=SUCCEED;  /* return value */
 
     FUNC_ENTER (H5Sselect_all, FAIL);
@@ -1132,8 +1134,8 @@ herr_t
 H5S_all_select_iterate(void *buf, hid_t type_id, H5S_t *space, H5D_operator_t op,
         void *operator_data)
 {
-    hsize_t	mem_size[H5O_LAYOUT_NDIMS]; /* Dataspace size */
-    hsize_t	mem_offset[H5O_LAYOUT_NDIMS]; /* current coordinates */
+    hsize_t     mem_size[H5O_LAYOUT_NDIMS]; /* Dataspace size */
+    hsize_t     mem_offset[H5O_LAYOUT_NDIMS]; /* current coordinates */
     hsize_t offset;             /* offset of region in buffer */
     hsize_t nelemts;            /* Number of elements to iterate through */
     void *tmp_buf;              /* temporary location of the element in the buffer */

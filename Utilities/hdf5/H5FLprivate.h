@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------
- * Copyright (C) 2000	National Center for Supercomputing Applications.
- *			All rights reserved.
+ * Copyright (C) 2000   National Center for Supercomputing Applications.
+ *                      All rights reserved.
  *
  *-------------------------------------------------------------------------
  *
- * Created:		H5FLprivate.h
- *			Mar 23 2000
- *			Quincey Koziol <koziol@ncsa.uiuc.edu>
+ * Created:             H5FLprivate.h
+ *                      Mar 23 2000
+ *                      Quincey Koziol <koziol@ncsa.uiuc.edu>
  *
- * Purpose:		Private non-prototype header.
+ * Purpose:             Private non-prototype header.
  *
  * Modifications:
  *
@@ -19,7 +19,7 @@
 
 /* Public headers needed by this file */
 #ifdef LATER
-#include "H5FLpublic.h"		/*API prototypes			     */
+#include "H5FLpublic.h"         /*API prototypes                             */
 #endif /* LATER */
 
 /* Private headers needed by this file */
@@ -151,7 +151,7 @@ typedef struct H5FL_arr_head_t {
  * Macros for defining & using free lists for an array of a type
  */
 /* Declare a free list to manage arrays of type 't' */
-#define H5FL_ARR_DEFINE(t,m)  H5FL_arr_head_t t##_arr_free_list={0,0,NULL,0,#t##"_arr",m+1,sizeof(t),{NULL}}
+#define H5FL_ARR_DEFINE(t,m)  H5FL_arr_head_t t##_arr_free_list={0,0,NULL,0,#t "_arr",m+1,sizeof(t),{NULL}}
 
 /* Reference a free list for arrays of type 't' defined in another file */
 #define H5FL_ARR_EXTERN(t)  extern H5FL_arr_head_t t##_arr_free_list

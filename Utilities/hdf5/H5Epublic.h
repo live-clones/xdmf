@@ -30,21 +30,21 @@
  * the object doesn't exist.  The code to try can be nested between calls to
  * H5Eget_auto() and H5Eset_auto(), but it's easier just to use this macro
  * like:
- * 	H5E_BEGIN_TRY {
- *	    ...stuff here that's likely to fail...
+ *      H5E_BEGIN_TRY {
+ *          ...stuff here that's likely to fail...
  *      } H5E_END_TRY;
  *
  * Warning: don't break, return, or longjmp() from the body of the loop or
- *	    the error reporting won't be properly restored!
+ *          the error reporting won't be properly restored!
  */
-#define H5E_BEGIN_TRY {							      \
-    herr_t (*H5E_saved_efunc)(void*);					      \
-    void *H5E_saved_edata;						      \
-    H5Eget_auto (&H5E_saved_efunc, &H5E_saved_edata);			      \
+#define H5E_BEGIN_TRY {                                                       \
+    herr_t (*H5E_saved_efunc)(void*);                                         \
+    void *H5E_saved_edata;                                                    \
+    H5Eget_auto (&H5E_saved_efunc, &H5E_saved_edata);                         \
     H5Eset_auto (NULL, NULL);
 
-#define H5E_END_TRY							      \
-    H5Eset_auto (H5E_saved_efunc, H5E_saved_edata);			      \
+#define H5E_END_TRY                                                           \
+    H5Eset_auto (H5E_saved_efunc, H5E_saved_edata);                           \
 }
 
 /*
@@ -98,8 +98,8 @@ typedef enum H5E_major_t {
     H5E_PLINE,                  /*Data filters                               */
     H5E_EFL,                    /*External file list                         */
     H5E_REFERENCE,              /*References                                 */
-    H5E_VFL,			/*Virtual File Layer			     */
-    H5E_TBBT 		        /*Threaded, Balanced, Binary Trees           */
+    H5E_VFL,                    /*Virtual File Layer                         */
+    H5E_TBBT                    /*Threaded, Balanced, Binary Trees           */
 } H5E_major_t;
 
 /* Declare an enumerated type which holds all the valid minor HDF error codes */
@@ -123,18 +123,18 @@ typedef enum H5E_minor_t {
     H5E_FILEOPEN,               /*file already open                          */
     H5E_CANTCREATE,             /*Can't create file                          */
     H5E_CANTOPENFILE,           /*Can't open file                            */
-    H5E_CANTCLOSEFILE,          /*Can't close file			     */
+    H5E_CANTCLOSEFILE,          /*Can't close file                           */
     H5E_NOTHDF5,                /*not an HDF5 format file                    */
     H5E_BADFILE,                /*bad file ID accessed                       */
     H5E_TRUNCATED,              /*file has been truncated                    */
-    H5E_MOUNT,			/*file mount error			     */
+    H5E_MOUNT,                  /*file mount error                           */
 
     /* Generic low-level file I/O errors */
     H5E_SEEKERROR,              /*seek failed                                */
     H5E_READERROR,              /*read failed                                */
     H5E_WRITEERROR,             /*write failed                               */
     H5E_CLOSEERROR,             /*close failed                               */
-    H5E_OVERFLOW,		/*address overflowed			     */
+    H5E_OVERFLOW,               /*address overflowed                         */
 
     /* Function entry/exit interface errors */
     H5E_CANTINIT,               /*Can't initialize                           */
@@ -171,29 +171,29 @@ typedef enum H5E_minor_t {
     H5E_COMPLEN,                /*name component is too long                 */
     H5E_CWG,                    /*problem with current working group         */
     H5E_LINK,                   /*link count failure                         */
-    H5E_SLINK,			/*symbolic link error			     */
+    H5E_SLINK,                  /*symbolic link error                        */
 
     /* Datatype conversion errors */
     H5E_CANTCONVERT,            /*Can't convert datatypes */
 
     /* Parallel errors */
-    H5E_MPI			/*some MPI function failed		     */
+    H5E_MPI                     /*some MPI function failed                   */
 } H5E_minor_t;
 
 /* Information about an error */
 typedef struct H5E_error_t {
-    H5E_major_t maj_num;		/*major error number		     */
-    H5E_minor_t min_num;		/*minor error number		     */
-    const char	*func_name;   		/*function in which error occurred   */
-    const char	*file_name;		/*file in which error occurred       */
-    unsigned	line;			/*line in file where error occurs    */
-    const char	*desc;			/*optional supplied description      */
+    H5E_major_t maj_num;                /*major error number                 */
+    H5E_minor_t min_num;                /*minor error number                 */
+    const char  *func_name;             /*function in which error occurred   */
+    const char  *file_name;             /*file in which error occurred       */
+    unsigned    line;                   /*line in file where error occurs    */
+    const char  *desc;                  /*optional supplied description      */
 } H5E_error_t;
 
 /* Error stack traversal direction */
 typedef enum H5E_direction_t {
-    H5E_WALK_UPWARD	= 0,		/*begin deep, end at API function    */
-    H5E_WALK_DOWNWARD	= 1		/*begin at API function, end deep    */
+    H5E_WALK_UPWARD     = 0,            /*begin deep, end at API function    */
+    H5E_WALK_DOWNWARD   = 1             /*begin at API function, end deep    */
 } H5E_direction_t;
 
 /* Error stack traversal callback function */
@@ -209,7 +209,7 @@ __DLL__ herr_t H5Eget_auto (H5E_auto_t *func, void **client_data);
 __DLL__ herr_t H5Eclear (void);
 __DLL__ herr_t H5Eprint (FILE *stream);
 __DLL__ herr_t H5Ewalk (H5E_direction_t direction, H5E_walk_t func,
-			void *client_data);
+                        void *client_data);
 __DLL__ herr_t H5Ewalk_cb (int n, H5E_error_t *err_desc, void *client_data);
 __DLL__ const char *H5Eget_major (H5E_major_t major_number);
 __DLL__ const char *H5Eget_minor (H5E_minor_t minor_number);

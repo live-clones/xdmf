@@ -1,27 +1,27 @@
 /*
  * Copyright (C) 2000 NCSA
- *		      All rights reserved.
+ *                    All rights reserved.
  *
- * Programmer: 	Quincey Koziol <koziol@ncsa.uiuc.edu>
- *	       	Thursday, September 28, 2000
+ * Programmer:  Quincey Koziol <koziol@ncsa.uiuc.edu>
+ *              Thursday, September 28, 2000
  *
- * Purpose:	Provides I/O facilities for sequences of bytes stored with various 
+ * Purpose:     Provides I/O facilities for sequences of bytes stored with various 
  *      layout policies.  These routines are similar to the H5Farray.c routines,
  *      these deal in terms of byte offsets and lengths, not coordinates and
  *      hyperslab sizes.
  *
  */
 
-#define H5F_PACKAGE		/*suppress error about including H5Fpkg	  */
+#define H5F_PACKAGE             /*suppress error about including H5Fpkg   */
 
 #include "H5private.h"
 #include "H5Dprivate.h"
 #include "H5Eprivate.h"
 #include "H5Fpkg.h"
-#include "H5FDprivate.h"	/*file driver				  */
+#include "H5FDprivate.h"        /*file driver                             */
 #include "H5Iprivate.h"
 #include "H5MFprivate.h"
-#include "H5MMprivate.h"	/*memory management			  */
+#include "H5MMprivate.h"        /*memory management                       */
 #include "H5Oprivate.h"
 #include "H5Pprivate.h"
 #include "H5Vprivate.h"
@@ -30,25 +30,25 @@
 #include "H5FDmpio.h"
 
 /* Interface initialization */
-#define PABLO_MASK	H5Fseq_mask
-#define INTERFACE_INIT	NULL
+#define PABLO_MASK      H5Fseq_mask
+#define INTERFACE_INIT  NULL
 static int interface_initialize_g = 0;
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_seq_read
+ * Function:    H5F_seq_read
  *
- * Purpose:	Reads a sequence of bytes from a file dataset into a buffer in
+ * Purpose:     Reads a sequence of bytes from a file dataset into a buffer in
  *      in memory.  The data is read from file F and the array's size and
  *      storage information is in LAYOUT.  External files are described
  *      according to the external file list, EFL.  The sequence offset is 
  *      FILE_OFFSET in the file (offsets are
  *      in terms of bytes) and the size of the hyperslab is SEQ_LEN. The
- *		total size of the file array is implied in the LAYOUT argument.
+ *              total size of the file array is implied in the LAYOUT argument.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Thursday, September 28, 2000
  *
  * Modifications:
@@ -57,20 +57,20 @@ static int interface_initialize_g = 0;
  */
 herr_t
 H5F_seq_read(H5F_t *f, hid_t dxpl_id, const struct H5O_layout_t *layout,
-	     const struct H5O_pline_t *pline, const H5O_fill_t *fill,
-	     const struct H5O_efl_t *efl, const H5S_t *file_space, size_t elmt_size,
+             const struct H5O_pline_t *pline, const H5O_fill_t *fill,
+             const struct H5O_efl_t *efl, const H5S_t *file_space, size_t elmt_size,
          hsize_t seq_len, hsize_t file_offset, void *buf/*out*/)
 {
-    hsize_t	dset_dims[H5O_LAYOUT_NDIMS];	/* dataspace dimensions */
-    hssize_t    coords[H5O_LAYOUT_NDIMS];	/* offset of hyperslab in dataspace */
-    hsize_t	hslab_size[H5O_LAYOUT_NDIMS];	/* hyperslab size in dataspace*/
+    hsize_t     dset_dims[H5O_LAYOUT_NDIMS];    /* dataspace dimensions */
+    hssize_t    coords[H5O_LAYOUT_NDIMS];       /* offset of hyperslab in dataspace */
+    hsize_t     hslab_size[H5O_LAYOUT_NDIMS];   /* hyperslab size in dataspace*/
     hsize_t     down_size[H5O_LAYOUT_NDIMS];    /* Cumulative yperslab sizes (in elements) */
     hsize_t     acc;    /* Accumulator for hyperslab sizes (in elements) */
     int ndims;
-    hsize_t	max_data = 0;			/*bytes in dataset	*/
-    haddr_t	addr=0;				/*address in file	*/
-    unsigned	u;				/*counters		*/
-    int	i,j;				/*counters		*/
+    hsize_t     max_data = 0;                   /*bytes in dataset      */
+    haddr_t     addr=0;                         /*address in file       */
+    unsigned    u;                              /*counters              */
+    int i,j;                            /*counters              */
 #ifdef H5_HAVE_PARALLEL
     H5FD_mpio_xfer_t xfer_mode=H5FD_MPIO_INDEPENDENT;
 #endif
@@ -144,7 +144,7 @@ H5F_seq_read(H5F_t *f, hid_t dxpl_id, const struct H5O_layout_t *layout,
                 unsigned long max, min, temp;
 
                 temp = seq_len;
-                assert(temp==seq_len);	/* verify no overflow */
+                assert(temp==seq_len);  /* verify no overflow */
                 MPI_Allreduce(&temp, &max, 1, MPI_UNSIGNED_LONG, MPI_MAX,
                       H5FD_mpio_communicator(f->shared->lf));
                 MPI_Allreduce(&temp, &min, 1, MPI_UNSIGNED_LONG, MPI_MIN,
@@ -489,19 +489,19 @@ printf("%s: partial_size=%lu, coords[%d]=%ld, hslab_size[%d]=%ld\n",FUNC,(unsign
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_seq_write
+ * Function:    H5F_seq_write
  *
- * Purpose:	Writes a sequence of bytes to a file dataset from a buffer in
+ * Purpose:     Writes a sequence of bytes to a file dataset from a buffer in
  *      in memory.  The data is written to file F and the array's size and
  *      storage information is in LAYOUT.  External files are described
  *      according to the external file list, EFL.  The sequence offset is 
  *      FILE_OFFSET in the file (offsets are
  *      in terms of bytes) and the size of the hyperslab is SEQ_LEN. The
- *		total size of the file array is implied in the LAYOUT argument.
+ *              total size of the file array is implied in the LAYOUT argument.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Monday, October 9, 2000
  *
  * Modifications:
@@ -510,20 +510,20 @@ printf("%s: partial_size=%lu, coords[%d]=%ld, hslab_size[%d]=%ld\n",FUNC,(unsign
  */
 herr_t
 H5F_seq_write(H5F_t *f, hid_t dxpl_id, const struct H5O_layout_t *layout,
-	     const struct H5O_pline_t *pline, const H5O_fill_t *fill,
-	     const struct H5O_efl_t *efl, const H5S_t *file_space, size_t elmt_size,
+             const struct H5O_pline_t *pline, const H5O_fill_t *fill,
+             const struct H5O_efl_t *efl, const H5S_t *file_space, size_t elmt_size,
          hsize_t seq_len, hsize_t file_offset, const void *buf)
 {
-    hsize_t	dset_dims[H5O_LAYOUT_NDIMS];	/* dataspace dimensions */
-    hssize_t    coords[H5O_LAYOUT_NDIMS];	/* offset of hyperslab in dataspace */
-    hsize_t	hslab_size[H5O_LAYOUT_NDIMS];	/* hyperslab size in dataspace*/
+    hsize_t     dset_dims[H5O_LAYOUT_NDIMS];    /* dataspace dimensions */
+    hssize_t    coords[H5O_LAYOUT_NDIMS];       /* offset of hyperslab in dataspace */
+    hsize_t     hslab_size[H5O_LAYOUT_NDIMS];   /* hyperslab size in dataspace*/
     hsize_t     down_size[H5O_LAYOUT_NDIMS];    /* Cumulative hyperslab sizes (in elements) */
     hsize_t     acc;            /* Accumulator for hyperslab sizes (in elements) */
     int ndims;
-    hsize_t	max_data = 0;			/*bytes in dataset	*/
-    haddr_t	addr;				/*address in file	*/
-    unsigned	u;				/*counters		*/
-    int	i,j;				/*counters		*/
+    hsize_t     max_data = 0;                   /*bytes in dataset      */
+    haddr_t     addr;                           /*address in file       */
+    unsigned    u;                              /*counters              */
+    int i,j;                            /*counters              */
 #ifdef H5_HAVE_PARALLEL
     H5FD_mpio_xfer_t xfer_mode=H5FD_MPIO_INDEPENDENT;
 #endif
@@ -597,7 +597,7 @@ H5F_seq_write(H5F_t *f, hid_t dxpl_id, const struct H5O_layout_t *layout,
                 unsigned long max, min, temp;
 
                 temp = seq_len;
-                assert(temp==seq_len);	/* verify no overflow */
+                assert(temp==seq_len);  /* verify no overflow */
                 MPI_Allreduce(&temp, &max, 1, MPI_UNSIGNED_LONG, MPI_MAX,
                       H5FD_mpio_communicator(f->shared->lf));
                 MPI_Allreduce(&temp, &min, 1, MPI_UNSIGNED_LONG, MPI_MIN,

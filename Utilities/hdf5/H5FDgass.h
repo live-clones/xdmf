@@ -5,7 +5,7 @@
  * Programmer:  Saurabh Bagchi <bagchi@uiuc.edu>
  *              Tuesday, August 17, 1999
  *
- * Purpose:	The public header file for the gass driver.
+ * Purpose:     The public header file for the gass driver.
  */
 #ifndef H5FDgass_H
 #define H5FDgass_H

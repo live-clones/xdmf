@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------
- * Copyright (C) 2000	National Center for Supercomputing Applications.
- *			All rights reserved.
+ * Copyright (C) 2000   National Center for Supercomputing Applications.
+ *                      All rights reserved.
  *
  *-------------------------------------------------------------------------
  *
- * Created:		H5TBprivate.h
- *			Apr 22 2000
- *			Quincey Koziol <koziol@ncsa.uiuc.edu>
+ * Created:             H5TBprivate.h
+ *                      Apr 22 2000
+ *                      Quincey Koziol <koziol@ncsa.uiuc.edu>
  *
- * Purpose:		Private non-prototype header.
+ * Purpose:             Private non-prototype header.
  *
  * Modifications:
  *
@@ -19,7 +19,7 @@
 
 /* Public headers needed by this file */
 #ifdef LATER
-#include "H5TBpublic.h"		/*Public API prototypes */
+#include "H5TBpublic.h"         /*Public API prototypes */
 #endif /* LATER */
 
 /* Typedef for key comparison function */

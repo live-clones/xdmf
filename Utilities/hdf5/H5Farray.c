@@ -1,27 +1,27 @@
 /*
  * Copyright (C) 1998 NCSA
- *		      All rights reserved.
+ *                    All rights reserved.
  *
  * Programmer:  Robb Matzke <matzke@llnl.gov>
  *              Thursday, January 15, 1998
  *
- * Purpose:	Provides I/O facilities for multi-dimensional arrays of bytes
- *		stored with various layout policies.  If the caller is
- *		interested in arrays of elements >1 byte then add an extra
- *		dimension.  For example, a 10x20 array of int would
- *		translate to a 10x20x4 array of bytes at this level.
+ * Purpose:     Provides I/O facilities for multi-dimensional arrays of bytes
+ *              stored with various layout policies.  If the caller is
+ *              interested in arrays of elements >1 byte then add an extra
+ *              dimension.  For example, a 10x20 array of int would
+ *              translate to a 10x20x4 array of bytes at this level.
  */
 
-#define H5F_PACKAGE		/*suppress error about including H5Fpkg	  */
+#define H5F_PACKAGE             /*suppress error about including H5Fpkg   */
 
 #include "H5private.h"
 #include "H5Dprivate.h"
 #include "H5Eprivate.h"
 #include "H5Fpkg.h"
-#include "H5FDprivate.h"	/*file driver				  */
+#include "H5FDprivate.h"        /*file driver                             */
 #include "H5Iprivate.h"
 #include "H5MFprivate.h"
-#include "H5MMprivate.h"	/*memory management			  */
+#include "H5MMprivate.h"        /*memory management                       */
 #include "H5Oprivate.h"
 #include "H5Pprivate.h"
 #include "H5Vprivate.h"
@@ -30,20 +30,20 @@
 #include "H5FDmpio.h"
 
 /* Interface initialization */
-#define PABLO_MASK	H5Farray_mask
-#define INTERFACE_INIT	NULL
+#define PABLO_MASK      H5Farray_mask
+#define INTERFACE_INIT  NULL
 static int interface_initialize_g = 0;
 
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_arr_create
+ * Function:    H5F_arr_create
  *
- * Purpose:	Creates an array of bytes.
+ * Purpose:     Creates an array of bytes.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Friday, January 16, 1998
  *
  * Modifications:
@@ -53,8 +53,8 @@ static int interface_initialize_g = 0;
 herr_t
 H5F_arr_create (H5F_t *f, struct H5O_layout_t *layout/*in,out*/)
 {
-    unsigned		u;
-    hsize_t		nbytes;
+    unsigned            u;
+    hsize_t             nbytes;
    
     FUNC_ENTER (H5F_arr_create, FAIL);
 
@@ -94,60 +94,60 @@ H5F_arr_create (H5F_t *f, struct H5O_layout_t *layout/*in,out*/)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_arr_read
+ * Function:    H5F_arr_read
  *
- * Purpose:	Reads a hyperslab of a file byte array into a hyperslab of
- *		a byte array in	memory.  The data is read from file F and the
- *		array's size and storage information is in LAYOUT.  External
- *		files are described according to the external file list, EFL.
- *		The hyperslab offset is FILE_OFFSET[] in the file and
- *		MEM_OFFSET[] in memory (offsets are relative to the origin of
- *		the array) and the size of the hyperslab is HSLAB_SIZE[]. The
- *		total size of the file array is implied in the LAYOUT
- *		argument and the total size of the memory array is
- *		MEM_SIZE[]. The dimensionality of these vectors is implied by
- *		the LAYOUT argument.
+ * Purpose:     Reads a hyperslab of a file byte array into a hyperslab of
+ *              a byte array in memory.  The data is read from file F and the
+ *              array's size and storage information is in LAYOUT.  External
+ *              files are described according to the external file list, EFL.
+ *              The hyperslab offset is FILE_OFFSET[] in the file and
+ *              MEM_OFFSET[] in memory (offsets are relative to the origin of
+ *              the array) and the size of the hyperslab is HSLAB_SIZE[]. The
+ *              total size of the file array is implied in the LAYOUT
+ *              argument and the total size of the memory array is
+ *              MEM_SIZE[]. The dimensionality of these vectors is implied by
+ *              the LAYOUT argument.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Friday, January 16, 1998
  *
  * Modifications:
- *		Albert Cheng, 1998-06-02
- *		Added xfer_mode argument
+ *              Albert Cheng, 1998-06-02
+ *              Added xfer_mode argument
  *
- * 		Robb Matzke, 1998-09-28
- *		Added the `xfer' argument and removed the `xfer_mode'
- *		argument since it's a field of `xfer'.
+ *              Robb Matzke, 1998-09-28
+ *              Added the `xfer' argument and removed the `xfer_mode'
+ *              argument since it's a field of `xfer'.
  *
- * 		Robb Matzke, 1999-08-02
- *		Data transfer properties are passed by ID since that's how
- *		the virtual file layer wants them.
+ *              Robb Matzke, 1999-08-02
+ *              Data transfer properties are passed by ID since that's how
+ *              the virtual file layer wants them.
  *-------------------------------------------------------------------------
  */
 herr_t
 H5F_arr_read(H5F_t *f, hid_t dxpl_id, const struct H5O_layout_t *layout,
-	     const struct H5O_pline_t *pline, const H5O_fill_t *fill,
-	     const struct H5O_efl_t *efl, const hsize_t _hslab_size[],
-	     const hsize_t mem_size[], const hssize_t mem_offset[],
-	     const hssize_t file_offset[], void *_buf/*out*/)
+             const struct H5O_pline_t *pline, const H5O_fill_t *fill,
+             const struct H5O_efl_t *efl, const hsize_t _hslab_size[],
+             const hsize_t mem_size[], const hssize_t mem_offset[],
+             const hssize_t file_offset[], void *_buf/*out*/)
 {
-    uint8_t	*buf = (uint8_t*)_buf;		/*cast for arithmetic	*/
-    hssize_t	file_stride[H5O_LAYOUT_NDIMS];	/*strides through file	*/
-    hssize_t	mem_stride[H5O_LAYOUT_NDIMS];	/*strides through memory*/
-    hsize_t	hslab_size[H5O_LAYOUT_NDIMS];	/*hyperslab size	*/
-    hsize_t	idx[H5O_LAYOUT_NDIMS];		/*multi-dim counter	*/
-    size_t	mem_start;			/*byte offset to start	*/
-    hsize_t	file_start;			/*byte offset to start	*/
-    hsize_t	max_data = 0;			/*bytes in dataset	*/
-    hsize_t	elmt_size = 1;			/*bytes per element	*/
-    size_t	nelmts, z;			/*number of elements	*/
-    unsigned	ndims;				/*stride dimensionality	*/
-    haddr_t	addr;				/*address in file	*/
-    int	j;				    /*counters		*/
-    unsigned	u;				    /*counters		*/
-    hbool_t	carray;				/*carry for subtraction	*/
+    uint8_t     *buf = (uint8_t*)_buf;          /*cast for arithmetic   */
+    hssize_t    file_stride[H5O_LAYOUT_NDIMS];  /*strides through file  */
+    hssize_t    mem_stride[H5O_LAYOUT_NDIMS];   /*strides through memory*/
+    hsize_t     hslab_size[H5O_LAYOUT_NDIMS];   /*hyperslab size        */
+    hsize_t     idx[H5O_LAYOUT_NDIMS];          /*multi-dim counter     */
+    size_t      mem_start;                      /*byte offset to start  */
+    hsize_t     file_start;                     /*byte offset to start  */
+    hsize_t     max_data = 0;                   /*bytes in dataset      */
+    hsize_t     elmt_size = 1;                  /*bytes per element     */
+    size_t      nelmts, z;                      /*number of elements    */
+    unsigned    ndims;                          /*stride dimensionality */
+    haddr_t     addr;                           /*address in file       */
+    int j;                                  /*counters          */
+    unsigned    u;                                  /*counters          */
+    hbool_t     carray;                         /*carry for subtraction */
 #ifdef H5_HAVE_PARALLEL
     H5FD_mpio_xfer_t xfer_mode=H5FD_MPIO_INDEPENDENT;
 #endif
@@ -171,23 +171,23 @@ H5F_arr_read(H5F_t *f, hid_t dxpl_id, const struct H5O_layout_t *layout,
 
 #ifdef H5_HAVE_PARALLEL
     {
-	/* Get the transfer mode */
-	H5D_xfer_t *dxpl;
-	H5FD_mpio_dxpl_t *dx;
-	if (H5P_DEFAULT!=dxpl_id && (dxpl=H5I_object(dxpl_id)) &&
-	    H5FD_MPIO==dxpl->driver_id && (dx=dxpl->driver_info) &&
-	    H5FD_MPIO_INDEPENDENT!=dx->xfer_mode) {
-	    xfer_mode = dx->xfer_mode;
-	}
+        /* Get the transfer mode */
+        H5D_xfer_t *dxpl;
+        H5FD_mpio_dxpl_t *dx;
+        if (H5P_DEFAULT!=dxpl_id && (dxpl=H5I_object(dxpl_id)) &&
+            H5FD_MPIO==dxpl->driver_id && (dx=dxpl->driver_info) &&
+            H5FD_MPIO_INDEPENDENT!=dx->xfer_mode) {
+            xfer_mode = dx->xfer_mode;
+        }
     }
 #endif
     
 #ifdef H5_HAVE_PARALLEL
     /* Collective MPIO access is unsupported for non-contiguous datasets */
     if (H5D_CONTIGUOUS!=layout->type && H5FD_MPIO_COLLECTIVE==xfer_mode) {
-	HRETURN_ERROR (H5E_DATASET, H5E_READERROR, FAIL,
-		       "collective access on non-contiguous datasets not "
-		       "supported yet");
+        HRETURN_ERROR (H5E_DATASET, H5E_READERROR, FAIL,
+                       "collective access on non-contiguous datasets not "
+                       "supported yet");
     }
 #endif
 #ifdef QAK
@@ -273,7 +273,7 @@ H5F_arr_read(H5F_t *f, hid_t dxpl_id, const struct H5O_layout_t *layout,
                 unsigned long max, min, temp;
 
                 temp = nelmts;
-                assert(temp==nelmts);	/* verify no overflow */
+                assert(temp==nelmts);   /* verify no overflow */
                 MPI_Allreduce(&temp, &max, 1, MPI_UNSIGNED_LONG, MPI_MAX,
                       H5FD_mpio_communicator(f->shared->lf));
                 MPI_Allreduce(&temp, &min, 1, MPI_UNSIGNED_LONG, MPI_MIN,
@@ -375,61 +375,61 @@ H5F_arr_read(H5F_t *f, hid_t dxpl_id, const struct H5O_layout_t *layout,
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5F_arr_write
+ * Function:    H5F_arr_write
  *
- * Purpose:	Copies a hyperslab of a memory array to a hyperslab of a
- *		file array.  The data is written to file F and the file
- *		array's size and storage information is implied by LAYOUT.
- *		The data is stored in external files according to the
- *		external file list, EFL. The hyperslab offset is
- *		FILE_OFFSET[] in the file and MEM_OFFSET[] in memory (offsets
- *		are relative to the origin of the array) and the size of the
- *		hyperslab is HSLAB_SIZE[].  The total size of the file array
- *		is implied by the LAYOUT argument and the total size of the
- *		memory array is MEM_SIZE[].  The dimensionality of these
- *		vectors is implied by the LAYOUT argument.
+ * Purpose:     Copies a hyperslab of a memory array to a hyperslab of a
+ *              file array.  The data is written to file F and the file
+ *              array's size and storage information is implied by LAYOUT.
+ *              The data is stored in external files according to the
+ *              external file list, EFL. The hyperslab offset is
+ *              FILE_OFFSET[] in the file and MEM_OFFSET[] in memory (offsets
+ *              are relative to the origin of the array) and the size of the
+ *              hyperslab is HSLAB_SIZE[].  The total size of the file array
+ *              is implied by the LAYOUT argument and the total size of the
+ *              memory array is MEM_SIZE[].  The dimensionality of these
+ *              vectors is implied by the LAYOUT argument.
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Friday, January 16, 1998
  *
  * Modifications:
- *		Albert Cheng, 1998-06-02
- *		Added xfer_mode argument
+ *              Albert Cheng, 1998-06-02
+ *              Added xfer_mode argument
  *
- * 		Robb Matzke, 1998-09-28
- *		Added `xfer' argument, removed `xfer_mode' argument since it
- *		is a member of H5D_xfer_t.
+ *              Robb Matzke, 1998-09-28
+ *              Added `xfer' argument, removed `xfer_mode' argument since it
+ *              is a member of H5D_xfer_t.
  *
- * 		Robb Matzke, 1999-08-02
- *		Data transfer properties are passed by ID since that's how
- *		the virtual file layer wants them.
+ *              Robb Matzke, 1999-08-02
+ *              Data transfer properties are passed by ID since that's how
+ *              the virtual file layer wants them.
  *-------------------------------------------------------------------------
  */
 herr_t
 H5F_arr_write(H5F_t *f, hid_t dxpl_id, const struct H5O_layout_t *layout,
-	      const struct H5O_pline_t *pline,
-	      const struct H5O_fill_t *fill, const struct H5O_efl_t *efl,
-	      const hsize_t _hslab_size[], const hsize_t mem_size[],
-	      const hssize_t mem_offset[], const hssize_t file_offset[],
-	      const void *_buf)
+              const struct H5O_pline_t *pline,
+              const struct H5O_fill_t *fill, const struct H5O_efl_t *efl,
+              const hsize_t _hslab_size[], const hsize_t mem_size[],
+              const hssize_t mem_offset[], const hssize_t file_offset[],
+              const void *_buf)
 {
-    const uint8_t *buf = (const uint8_t *)_buf;	/*cast for arithmetic	*/
-    hssize_t	file_stride[H5O_LAYOUT_NDIMS];	/*strides through file	*/
-    hssize_t	mem_stride[H5O_LAYOUT_NDIMS];	/*strides through memory*/
-    hsize_t	hslab_size[H5O_LAYOUT_NDIMS];	/*hyperslab size	*/
-    hsize_t	idx[H5O_LAYOUT_NDIMS];		/*multi-dim counter	*/
-    hsize_t	mem_start;			/*byte offset to start	*/
-    hsize_t	file_start;			/*byte offset to start	*/
-    hsize_t	max_data = 0;			/*bytes in dataset	*/
-    hsize_t	elmt_size = 1;			/*bytes per element	*/
-    size_t	nelmts, z;			/*number of elements	*/
-    unsigned	ndims;				/*dimensionality	*/
-    haddr_t	addr;				/*address in file	*/
-    int	j;				    /*counters		*/
-    unsigned	u;				    /*counters		*/
-    hbool_t	carray;				/*carry for subtraction	*/
+    const uint8_t *buf = (const uint8_t *)_buf; /*cast for arithmetic   */
+    hssize_t    file_stride[H5O_LAYOUT_NDIMS];  /*strides through file  */
+    hssize_t    mem_stride[H5O_LAYOUT_NDIMS];   /*strides through memory*/
+    hsize_t     hslab_size[H5O_LAYOUT_NDIMS];   /*hyperslab size        */
+    hsize_t     idx[H5O_LAYOUT_NDIMS];          /*multi-dim counter     */
+    hsize_t     mem_start;                      /*byte offset to start  */
+    hsize_t     file_start;                     /*byte offset to start  */
+    hsize_t     max_data = 0;                   /*bytes in dataset      */
+    hsize_t     elmt_size = 1;                  /*bytes per element     */
+    size_t      nelmts, z;                      /*number of elements    */
+    unsigned    ndims;                          /*dimensionality        */
+    haddr_t     addr;                           /*address in file       */
+    int j;                                  /*counters          */
+    unsigned    u;                                  /*counters          */
+    hbool_t     carray;                         /*carry for subtraction */
 #ifdef H5_HAVE_PARALLEL
     H5FD_mpio_xfer_t xfer_mode=H5FD_MPIO_INDEPENDENT;
 #endif
@@ -450,38 +450,38 @@ H5F_arr_write(H5F_t *f, hid_t dxpl_id, const struct H5O_layout_t *layout,
 
 #ifdef H5_HAVE_PARALLEL
     {
-	/* Get the transfer mode */
-	H5D_xfer_t *dxpl;
-	H5FD_mpio_dxpl_t *dx;
-	if (H5P_DEFAULT!=dxpl_id && (dxpl=H5I_object(dxpl_id)) &&
-	    H5FD_MPIO==dxpl->driver_id && (dx=dxpl->driver_info) &&
-	    H5FD_MPIO_INDEPENDENT!=dx->xfer_mode) {
-	    xfer_mode = dx->xfer_mode;
-	}
+        /* Get the transfer mode */
+        H5D_xfer_t *dxpl;
+        H5FD_mpio_dxpl_t *dx;
+        if (H5P_DEFAULT!=dxpl_id && (dxpl=H5I_object(dxpl_id)) &&
+            H5FD_MPIO==dxpl->driver_id && (dx=dxpl->driver_info) &&
+            H5FD_MPIO_INDEPENDENT!=dx->xfer_mode) {
+            xfer_mode = dx->xfer_mode;
+        }
     }
 #endif
     
 #ifdef H5_HAVE_PARALLEL
     if (H5D_CONTIGUOUS!=layout->type && H5FD_MPIO_COLLECTIVE==xfer_mode) {
-	HRETURN_ERROR (H5E_DATASET, H5E_WRITEERROR, FAIL,
-		       "collective access on non-contiguous datasets not "
-		       "supported yet");
+        HRETURN_ERROR (H5E_DATASET, H5E_WRITEERROR, FAIL,
+                       "collective access on non-contiguous datasets not "
+                       "supported yet");
     }
 #endif
     
 #ifdef QAK
     {
-	extern int qak_debug;
+        extern int qak_debug;
 
-	printf("%s: layout->ndims=%d\n",FUNC,(int)layout->ndims);
-	for(i=0; i<layout->ndims; i++)
-	    printf("%s: %d: hslab_size=%d, mem_size=%d, mem_offset=%d, "
-		   "file_offset=%d\n", FUNC, i, (int)_hslab_size[i],
-		   (int)mem_size[i],(int)mem_offset[i],(int)file_offset[i]);
-	if(qak_debug) {
-	    printf("%s: *buf=%d, *(buf+1)=%d\n", FUNC,
-		   (int)*(const uint16_t *)buf, (int)*((const uint16_t *)buf+1));
-	}
+        printf("%s: layout->ndims=%d\n",FUNC,(int)layout->ndims);
+        for(i=0; i<layout->ndims; i++)
+            printf("%s: %d: hslab_size=%d, mem_size=%d, mem_offset=%d, "
+                   "file_offset=%d\n", FUNC, i, (int)_hslab_size[i],
+                   (int)mem_size[i],(int)mem_offset[i],(int)file_offset[i]);
+        if(qak_debug) {
+            printf("%s: *buf=%d, *(buf+1)=%d\n", FUNC,
+                   (int)*(const uint16_t *)buf, (int)*((const uint16_t *)buf+1));
+        }
     }
 #endif /* QAK */
 
@@ -555,7 +555,7 @@ H5F_arr_write(H5F_t *f, hid_t dxpl_id, const struct H5O_layout_t *layout,
                 unsigned long max, min, temp;
 
                 temp = nelmts;
-                assert(temp==nelmts);	/* verify no overflow */
+                assert(temp==nelmts);   /* verify no overflow */
                 MPI_Allreduce(&temp, &max, 1, MPI_UNSIGNED_LONG, MPI_MAX,
                       H5FD_mpio_communicator(f->shared->lf));
                 MPI_Allreduce(&temp, &min, 1, MPI_UNSIGNED_LONG, MPI_MIN,

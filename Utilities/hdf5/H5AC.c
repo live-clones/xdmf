@@ -24,13 +24,13 @@
  *-------------------------------------------------------------------------
  */
 
-#define H5F_PACKAGE		/*suppress error about including H5Fpkg	  */
+#define H5F_PACKAGE             /*suppress error about including H5Fpkg   */
 
 #include "H5private.h"
 #include "H5ACprivate.h"
 #include "H5Eprivate.h"
 #include "H5Fpkg.h"
-#include "H5FLprivate.h"	/*Free Lists                              */
+#include "H5FLprivate.h"        /*Free Lists                              */
 #include "H5MMprivate.h"
 
 /*
@@ -96,8 +96,8 @@ H5AC_create(H5F_t *f, int size_hint)
     if (size_hint < 1) size_hint = H5AC_NSLOTS;
 
     if (NULL==(f->shared->cache = cache = H5FL_ALLOC(H5AC_t,1))) {
-	HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, FAIL,
-		       "memory allocation failed");
+        HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, FAIL,
+                       "memory allocation failed");
     }
     cache->nslots = size_hint;
     cache->slot = H5FL_ARR_ALLOC(H5AC_info_ptr_t,(hsize_t)cache->nslots,1);
@@ -205,14 +205,14 @@ H5AC_dest(H5F_t *f)
  *      Keeps track of hits, misses, and flushes per object type so we have
  *      some cache performance diagnostics.
  *
- * 	Robb Matzke, 1999-07-27
- *	The ADDR argument is passed by value.
+ *      Robb Matzke, 1999-07-27
+ *      The ADDR argument is passed by value.
  *
  *-------------------------------------------------------------------------
  */
 void *
 H5AC_find_f(H5F_t *f, const H5AC_class_t *type, haddr_t addr,
-	    const void *udata1, void *udata2)
+            const void *udata1, void *udata2)
 {
     unsigned                idx;
     herr_t                  status;
@@ -384,8 +384,8 @@ H5AC_compare(const void *_a, const void *_b)
  *              Jul  9 1997
  *
  * Modifications:
- * 		Robb Matzke, 1999-07-27
- *		The ADDR argument is passed by value.
+ *              Robb Matzke, 1999-07-27
+ *              The ADDR argument is passed by value.
  *-------------------------------------------------------------------------
  */
 herr_t
@@ -416,7 +416,7 @@ H5AC_flush(H5F_t *f, const H5AC_class_t *type, haddr_t addr, hbool_t destroy)
          */
         if (NULL==(map=H5FL_ARR_ALLOC(int,(hsize_t)cache->nslots,0))) {
             HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, FAIL,
-			   "memory allocation failed");
+                           "memory allocation failed");
         }
         for (i = nslots = 0; i < cache->nslots; i++) {
             if (cache->slot[i]!=NULL)
@@ -489,7 +489,7 @@ H5AC_flush(H5F_t *f, const H5AC_class_t *type, haddr_t addr, hbool_t destroy)
              */
             flush = cache->slot[i]->type->flush;
             status = (flush)(f, destroy, cache->slot[i]->addr,
-			     cache->slot[i]);
+                             cache->slot[i]);
             if (status < 0) {
                 HRETURN_ERROR(H5E_CACHE, H5E_CANTFLUSH, FAIL,
                               "unable to flush object");
@@ -520,8 +520,8 @@ H5AC_flush(H5F_t *f, const H5AC_class_t *type, haddr_t addr, hbool_t destroy)
  *              Jul  9 1997
  *
  * Modifications:
- * 		Robb Matzke, 1999-07-27
- *		The ADDR argument is passed by value.
+ *              Robb Matzke, 1999-07-27
+ *              The ADDR argument is passed by value.
  *-------------------------------------------------------------------------
  */
 herr_t
@@ -594,13 +594,13 @@ H5AC_set(H5F_t *f, const H5AC_class_t *type, haddr_t addr, void *thing)
  *              Jul  9 1997
  *
  * Modifications:
- * 		Robb Matzke, 1999-07-27
- *		The OLD_ADDR and NEW_ADDR arguments are passed by value.
+ *              Robb Matzke, 1999-07-27
+ *              The OLD_ADDR and NEW_ADDR arguments are passed by value.
  *-------------------------------------------------------------------------
  */
 herr_t
 H5AC_rename(H5F_t *f, const H5AC_class_t *type, haddr_t old_addr,
-	    haddr_t new_addr)
+            haddr_t new_addr)
 {
     unsigned                   old_idx, new_idx;
     H5AC_flush_func_t       flush=NULL;
@@ -652,7 +652,7 @@ H5AC_rename(H5F_t *f, const H5AC_class_t *type, haddr_t old_addr,
 
         flush = cache->slot[new_idx]->type->flush;
         status = (flush)(f, TRUE, cache->slot[new_idx]->addr,
-			 cache->slot[new_idx]);
+                         cache->slot[new_idx]);
         if (status < 0) {
             HRETURN_ERROR(H5E_CACHE, H5E_CANTFLUSH, FAIL,
                           "unable to flush object");
@@ -693,13 +693,13 @@ H5AC_rename(H5F_t *f, const H5AC_class_t *type, haddr_t old_addr,
  *              Sep  2 1997
  *
  * Modifications:
- *		Robb Matzke, 1999-07-27
- *		The ADDR argument is passed by value.
+ *              Robb Matzke, 1999-07-27
+ *              The ADDR argument is passed by value.
  *-------------------------------------------------------------------------
  */
 void *
 H5AC_protect(H5F_t *f, const H5AC_class_t *type, haddr_t addr,
-	     const void *udata1, void *udata2)
+             const void *udata1, void *udata2)
 {
     int                     idx;
     void                   *thing = NULL;
@@ -711,9 +711,9 @@ H5AC_protect(H5F_t *f, const H5AC_class_t *type, haddr_t addr,
 
     static int ncalls = 0;
     if (0 == ncalls++) {
-	if (H5DEBUG(AC)) {
-	    fprintf(H5DEBUG(AC), "H5AC: debugging cache (expensive)\n");
-	}
+        if (H5DEBUG(AC)) {
+            fprintf(H5DEBUG(AC), "H5AC: debugging cache (expensive)\n");
+        }
     }
 #endif
 
@@ -820,8 +820,8 @@ H5AC_protect(H5F_t *f, const H5AC_class_t *type, haddr_t addr,
  *              Sep  2 1997
  *
  * Modifications:
- * 		Robb Matzke, 1999-07-27
- *		The ADDR argument is passed by value.
+ *              Robb Matzke, 1999-07-27
+ *              The ADDR argument is passed by value.
  *-------------------------------------------------------------------------
  */
 herr_t
@@ -924,59 +924,60 @@ H5AC_debug(H5F_t UNUSED *f)
 
 #ifdef H5AC_DEBUG
     if (H5DEBUG(AC)) {
-	fprintf(H5DEBUG(AC), "H5AC: meta data cache statistics for file %s\n",
-		f->name);
-	fprintf(H5DEBUG(AC), "   %-18s %8s %8s %8s %8s+%-8s\n",
-		"Layer", "Hits", "Misses", "MissRate", "Inits", "Flushes");
-	fprintf(H5DEBUG(AC), "   %-18s %8s %8s %8s %8s-%-8s\n",
-		"-----", "----", "------", "--------", "-----", "-------");
+        fprintf(H5DEBUG(AC), "H5AC: meta data cache statistics for file %s\n",
+                f->name);
+        fprintf(H5DEBUG(AC), "   %-18s %8s %8s %8s %8s+%-8s\n",
+                "Layer", "Hits", "Misses", "MissRate", "Inits", "Flushes");
+        fprintf(H5DEBUG(AC), "   %-18s %8s %8s %8s %8s-%-8s\n",
+                "-----", "----", "------", "--------", "-----", "-------");
 
-	for (i = H5AC_BT_ID; i < H5AC_NTYPES; i++) {
+        for (i = H5AC_BT_ID; i < H5AC_NTYPES; i++) {
 
-	    switch (i) {
-	    case H5AC_BT_ID:
-		HDstrcpy(s, "B-tree nodes");
-		break;
-	    case H5AC_SNODE_ID:
-		HDstrcpy(s, "symbol table nodes");
-		break;
-	    case H5AC_LHEAP_ID:
-		HDstrcpy (s, "local heaps");
-		break;
-	    case H5AC_GHEAP_ID:
-		HDstrcpy (s, "global heaps");
-		break;
-	    case H5AC_OHDR_ID:
-		HDstrcpy(s, "object headers");
-		break;
-	    default:
-		sprintf(s, "unknown id %d", i);
-	    }
+            switch (i) {
+            case H5AC_BT_ID:
+                HDstrcpy(s, "B-tree nodes");
+                break;
+            case H5AC_SNODE_ID:
+                HDstrcpy(s, "symbol table nodes");
+                break;
+            case H5AC_LHEAP_ID:
+                HDstrcpy (s, "local heaps");
+                break;
+            case H5AC_GHEAP_ID:
+                HDstrcpy (s, "global heaps");
+                break;
+            case H5AC_OHDR_ID:
+                HDstrcpy(s, "object headers");
+                break;
+            default:
+                sprintf(s, "unknown id %d", i);
+            }
 
-	    if (cache->diagnostics[i].nhits>0 ||
-		cache->diagnostics[i].nmisses>0) {
-		miss_rate = 100.0 * cache->diagnostics[i].nmisses /
-			    (cache->diagnostics[i].nhits+
-			     cache->diagnostics[i].nmisses);
-	    } else {
-		miss_rate = 0.0;
-	    }
+            if (cache->diagnostics[i].nhits>0 ||
+                cache->diagnostics[i].nmisses>0) {
+                miss_rate = 100.0 * cache->diagnostics[i].nmisses /
+                            (cache->diagnostics[i].nhits+
+                             cache->diagnostics[i].nmisses);
+            } else {
+                miss_rate = 0.0;
+            }
 
-	    if (miss_rate > 100) {
-		sprintf(ascii, "%7d%%", (int) (miss_rate + 0.5));
-	    } else {
-		sprintf(ascii, "%7.2f%%", miss_rate);
-	    }
-	    fprintf(H5DEBUG(AC), "   %-18s %8u %8u %7s %8u%+-9ld\n", s,
-		    cache->diagnostics[i].nhits,
-		    cache->diagnostics[i].nmisses,
-		    ascii,
-		    cache->diagnostics[i].ninits,
-		    ((long)(cache->diagnostics[i].nflushes) -
-		     (long)(cache->diagnostics[i].ninits)));
-	}
+            if (miss_rate > 100) {
+                sprintf(ascii, "%7d%%", (int) (miss_rate + 0.5));
+            } else {
+                sprintf(ascii, "%7.2f%%", miss_rate);
+            }
+            fprintf(H5DEBUG(AC), "   %-18s %8u %8u %7s %8u%+-9ld\n", s,
+                    cache->diagnostics[i].nhits,
+                    cache->diagnostics[i].nmisses,
+                    ascii,
+                    cache->diagnostics[i].ninits,
+                    ((long)(cache->diagnostics[i].nflushes) -
+                     (long)(cache->diagnostics[i].ninits)));
+        }
     }
 #endif
 
     FUNC_LEAVE(SUCCEED);
+    f = 0;
 }

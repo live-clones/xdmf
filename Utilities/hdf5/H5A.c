@@ -1,44 +1,44 @@
 /****************************************************************************
-* NCSA HDF								    *
-* Software Development Group						    *
-* National Center for Supercomputing Applications			    *
-* University of Illinois at Urbana-Champaign				    *
-* 605 E. Springfield, Champaign IL 61820				    *
-*									    *
-* For conditions of distribution and use, see the accompanying		    *
-* hdf/COPYING file.							    *
-*									    *
+* NCSA HDF                                                                  *
+* Software Development Group                                                *
+* National Center for Supercomputing Applications                           *
+* University of Illinois at Urbana-Champaign                                *
+* 605 E. Springfield, Champaign IL 61820                                    *
+*                                                                           *
+* For conditions of distribution and use, see the accompanying              *
+* hdf/COPYING file.                                                         *
+*                                                                           *
 ****************************************************************************/
 
 /* Id */
 
-#define H5A_PACKAGE		/*suppress error about including H5Apkg	*/
-#define H5S_PACKAGE		/*suppress error about including H5Spkg	*/
+#define H5A_PACKAGE             /*suppress error about including H5Apkg */
+#define H5S_PACKAGE             /*suppress error about including H5Spkg */
 
 /* Private header files */
-#include "H5private.h"		/* Generic Functions			*/
-#include "H5Iprivate.h"		/* IDs			  		*/
-#include "H5Bprivate.h"		/* B-tree subclass names	  	*/
-#include "H5Dprivate.h"		/* Datasets				*/
-#include "H5Gprivate.h"		/* Groups				*/
-#include "H5Tprivate.h"		/* Datatypes				*/
-#include "H5Eprivate.h"		/* Error handling		  	*/
-#include "H5MMprivate.h"	/* Memory management			*/
-#include "H5Pprivate.h"		/* Property lists			*/
-#include "H5Oprivate.h"     	/* Object Headers       		*/
+#include "H5private.h"          /* Generic Functions                    */
+#include "H5Iprivate.h"         /* IDs                                  */
+#include "H5Bprivate.h"         /* B-tree subclass names                */
+#include "H5Dprivate.h"         /* Datasets                             */
+#include "H5Gprivate.h"         /* Groups                               */
+#include "H5Tprivate.h"         /* Datatypes                            */
+#include "H5Eprivate.h"         /* Error handling                       */
+#include "H5MMprivate.h"        /* Memory management                    */
+#include "H5Pprivate.h"         /* Property lists                       */
+#include "H5Oprivate.h"         /* Object Headers                       */
 #include "H5Spkg.h"             /* Data-space functions                 */
-#include "H5Apkg.h"		/* Attributes				*/
+#include "H5Apkg.h"             /* Attributes                           */
 
-#define PABLO_MASK	H5A_mask
+#define PABLO_MASK      H5A_mask
 
 /* Is the interface initialized? */
-static int		interface_initialize_g = 0;
-#define INTERFACE_INIT	H5A_init_interface
-static herr_t		H5A_init_interface(void);
+static int              interface_initialize_g = 0;
+#define INTERFACE_INIT  H5A_init_interface
+static herr_t           H5A_init_interface(void);
 
 /* PRIVATE PROTOTYPES */
 static hid_t H5A_create(const H5G_entry_t *ent, const char *name,
-			const H5T_t *type, const H5S_t *space);
+                        const H5T_t *type, const H5S_t *space);
 static hid_t H5A_open(H5G_entry_t *ent, unsigned idx);
 static herr_t H5A_write(H5A_t *attr, const H5T_t *mem_type, const void *buf);
 static herr_t H5A_read(H5A_t *attr, const H5T_t *mem_type, void *buf);
@@ -66,9 +66,9 @@ H5A_init_interface(void)
      * Create attribute group.
      */
     if (H5I_init_group(H5I_ATTR, H5I_ATTRID_HASHSIZE, H5A_RESERVED_ATOMS,
-		       (H5I_free_t)H5A_close)<0) {
+                       (H5I_free_t)H5A_close)<0) {
         HRETURN_ERROR(H5E_INTERNAL, H5E_CANTINIT, FAIL,
-		      "unable to initialize interface");
+                      "unable to initialize interface");
     }
     
     FUNC_LEAVE(SUCCEED);
@@ -94,16 +94,16 @@ H5A_init_interface(void)
 int
 H5A_term_interface(void)
 {
-    int	n=0;
+    int n=0;
     
     if (interface_initialize_g) {
-	if ((n=H5I_nmembers(H5I_ATTR))) {
-	    H5I_clear_group(H5I_ATTR, FALSE);
-	} else {
-	    H5I_destroy_group(H5I_ATTR);
-	    interface_initialize_g = 0;
-	    n = 1;
-	}
+        if ((n=H5I_nmembers(H5I_ATTR))) {
+            H5I_clear_group(H5I_ATTR, FALSE);
+        } else {
+            H5I_destroy_group(H5I_ATTR);
+            interface_initialize_g = 0;
+            n = 1;
+        }
     }
     return n;
 }
@@ -144,53 +144,53 @@ H5A_term_interface(void)
     which may have any sort of attribute.
  *
  * Modifications:
- * 	Robb Matzke, 5 Jun 1998
- *	The LOC_ID can also be a committed data type.
- *	
+ *      Robb Matzke, 5 Jun 1998
+ *      The LOC_ID can also be a committed data type.
+ *      
 --------------------------------------------------------------------------*/
 hid_t
 H5Acreate(hid_t loc_id, const char *name, hid_t type_id, hid_t space_id,
-	  hid_t plist_id)
+          hid_t plist_id)
 {
-    H5G_entry_t    	*ent = NULL;
-    H5T_t		*type = NULL;
-    H5S_t		*space = NULL;
-    hid_t		ret_value = FAIL;
+    H5G_entry_t         *ent = NULL;
+    H5T_t               *type = NULL;
+    H5S_t               *space = NULL;
+    hid_t               ret_value = FAIL;
 
     FUNC_ENTER(H5Acreate, FAIL);
     H5TRACE5("i","isiii",loc_id,name,type_id,space_id,plist_id);
 
     /* check arguments */
     if (H5I_FILE==H5I_get_type(loc_id) ||
-	H5I_ATTR==H5I_get_type(loc_id)) {
-	HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL,
-		      "location is not valid for an attribute");
+        H5I_ATTR==H5I_get_type(loc_id)) {
+        HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL,
+                      "location is not valid for an attribute");
     }
     if (NULL==(ent=H5G_loc(loc_id))) {
-	HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL, "not a location");
+        HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL, "not a location");
     }
     if (!name || !*name) {
-	HRETURN_ERROR(H5E_ARGS, H5E_BADVALUE, FAIL, "no name");
+        HRETURN_ERROR(H5E_ARGS, H5E_BADVALUE, FAIL, "no name");
     }
     if (H5I_DATATYPE != H5I_get_type(type_id) ||
-	NULL == (type = H5I_object(type_id))) {
-	HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL, "not a type");
+        NULL == (type = H5I_object(type_id))) {
+        HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL, "not a type");
     }
     if (H5I_DATASPACE != H5I_get_type(space_id) ||
-	NULL == (space = H5I_object(space_id))) {
-	HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL, "not a data space");
+        NULL == (space = H5I_object(space_id))) {
+        HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL, "not a data space");
     }
     if (H5P_DEFAULT!=plist_id &&
-	(H5P_DATASET_CREATE != H5P_get_class(plist_id) ||
-	 NULL == H5I_object(plist_id))) {
-	HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL,
-		      "not a dataset creation property list");
+        (H5P_DATASET_CREATE != H5P_get_class(plist_id) ||
+         NULL == H5I_object(plist_id))) {
+        HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL,
+                      "not a dataset creation property list");
     }
 
     /* Go do the real work for attaching the attribute to the dataset */
     if ((ret_value=H5A_create(ent,name,type,space))<0) {
-	HRETURN_ERROR (H5E_ATTR, H5E_CANTINIT, FAIL,
-		       "unable to create attribute");
+        HRETURN_ERROR (H5E_ATTR, H5E_CANTINIT, FAIL,
+                       "unable to create attribute");
     }
 
     FUNC_LEAVE(ret_value);
@@ -198,9 +198,9 @@ H5Acreate(hid_t loc_id, const char *name, hid_t type_id, hid_t space_id,
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5A_create
+ * Function:    H5A_create
  *
- * Purpose:	
+ * Purpose:     
  *      This is the guts of the H5Acreate function.
  * Usage:
  *  hid_t H5A_create (ent, name, type, space)
@@ -211,20 +211,20 @@ H5Acreate(hid_t loc_id, const char *name, hid_t type_id, hid_t space_id,
  *
  * Return: Non-negative on success/Negative on failure
  *
- * Programmer:	Quincey Koziol
- *		April 2, 1998
+ * Programmer:  Quincey Koziol
+ *              April 2, 1998
  *
  * Modifications:
  *-------------------------------------------------------------------------
  */
 static hid_t
 H5A_create(const H5G_entry_t *ent, const char *name, const H5T_t *type,
-	   const H5S_t *space)
+           const H5S_t *space)
 {
-    H5A_t	*attr = NULL;
-    H5A_t	found_attr;
-    int	seq=0;
-    hid_t	ret_value = FAIL;
+    H5A_t       *attr = NULL;
+    H5A_t       found_attr;
+    int seq=0;
+    hid_t       ret_value = FAIL;
 
     FUNC_ENTER(H5A_create, FAIL);
 
@@ -237,7 +237,7 @@ H5A_create(const H5G_entry_t *ent, const char *name, const H5T_t *type,
     /* Build the attribute information */
     if((attr = H5MM_calloc(sizeof(H5A_t)))==NULL)
         HRETURN_ERROR(H5E_RESOURCE, H5E_NOSPACE, FAIL,
-		      "memory allocation failed for attribute info");
+                      "memory allocation failed for attribute info");
     attr->name=HDstrdup(name);
     attr->dt=H5T_copy(type, H5T_COPY_ALL);
     /* Mark any VL datatypes as being on disk now */
@@ -265,28 +265,28 @@ H5A_create(const H5G_entry_t *ent, const char *name, const H5T_t *type,
     seq=0;
     while(H5O_read(&(attr->ent), H5O_ATTR, seq, &found_attr)!=NULL) {
         /*
-	 * Compare found attribute name to new attribute name reject creation
-	 * if names are the same.
-	 */
-	if(HDstrcmp(found_attr.name,attr->name)==0) {
-	    H5O_reset (H5O_ATTR, &found_attr);
-	    HGOTO_ERROR(H5E_ATTR, H5E_CANTCREATE, FAIL,
-			"attribute already exists");
-	}
-	H5O_reset (H5O_ATTR, &found_attr);
-	seq++;
+         * Compare found attribute name to new attribute name reject creation
+         * if names are the same.
+         */
+        if(HDstrcmp(found_attr.name,attr->name)==0) {
+            H5O_reset (H5O_ATTR, &found_attr);
+            HGOTO_ERROR(H5E_ATTR, H5E_CANTCREATE, FAIL,
+                        "attribute already exists");
+        }
+        H5O_reset (H5O_ATTR, &found_attr);
+        seq++;
     }
     H5E_clear ();
 
     /* Create the attribute message and save the attribute index */
     if (H5O_modify(&(attr->ent), H5O_ATTR, H5O_NEW_MESG, 0, attr) < 0) 
         HGOTO_ERROR(H5E_ATTR, H5E_CANTINIT, FAIL,
-		    "unable to update attribute header messages");
+                    "unable to update attribute header messages");
 
     /* Register the new attribute and get an ID for it */
     if ((ret_value = H5I_register(H5I_ATTR, attr)) < 0) {
         HGOTO_ERROR(H5E_ATOM, H5E_CANTREGISTER, FAIL,
-		    "unable to register attribute for ID");
+                    "unable to register attribute for ID");
     }
 
     /* Now it's safe to say it's uninitialized */
@@ -324,8 +324,8 @@ done:
 static int
 H5A_get_index(H5G_entry_t *ent, const char *name)
 {
-    H5A_t      	found_attr;
-    int		ret_value=FAIL, i;
+    H5A_t       found_attr;
+    int         ret_value=FAIL, i;
 
     FUNC_ENTER(H5A_get_index, FAIL);
 
@@ -335,23 +335,23 @@ H5A_get_index(H5G_entry_t *ent, const char *name)
     /* Look up the attribute for the object */
     i=0;
     while(H5O_read(ent, H5O_ATTR, i, &found_attr)!=NULL) {
-	/*
-	 * Compare found attribute name to new attribute name reject creation
-	 * if names are the same.
-	 */
-	if(HDstrcmp(found_attr.name,name)==0) {
-	    H5O_reset (H5O_ATTR, &found_attr);
-	    ret_value = i;
-	    break;
-	}
-	H5O_reset (H5O_ATTR, &found_attr);
-	i++;
+        /*
+         * Compare found attribute name to new attribute name reject creation
+         * if names are the same.
+         */
+        if(HDstrcmp(found_attr.name,name)==0) {
+            H5O_reset (H5O_ATTR, &found_attr);
+            ret_value = i;
+            break;
+        }
+        H5O_reset (H5O_ATTR, &found_attr);
+        i++;
     }
     H5E_clear ();
     
     if(ret_value<0) {
         HRETURN_ERROR(H5E_ATTR, H5E_NOTFOUND, FAIL,
-		      "attribute not found");
+                      "attribute not found");
     }
 
     FUNC_LEAVE(ret_value);
@@ -381,30 +381,30 @@ H5A_get_index(H5G_entry_t *ent, const char *name)
     which may have any sort of attribute.
  *
  * Modifications:
- * 	Robb Matzke, 5 Jun 1998
- *	The LOC_ID can also be a named (committed) data type.
+ *      Robb Matzke, 5 Jun 1998
+ *      The LOC_ID can also be a named (committed) data type.
 --------------------------------------------------------------------------*/
 hid_t
 H5Aopen_name(hid_t loc_id, const char *name)
 {
-    H5G_entry_t    	*ent = NULL;   /*Symtab entry of object to attribute*/
-    int            	idx=0;
-    hid_t		ret_value = FAIL;
+    H5G_entry_t         *ent = NULL;   /*Symtab entry of object to attribute*/
+    int                 idx=0;
+    hid_t               ret_value = FAIL;
 
     FUNC_ENTER(H5Aopen_name, FAIL);
     H5TRACE2("i","is",loc_id,name);
 
     /* check arguments */
     if (H5I_FILE==H5I_get_type(loc_id) ||
-	H5I_ATTR==H5I_get_type(loc_id)) {
-	HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL,
-		      "location is not valid for an attribute");
+        H5I_ATTR==H5I_get_type(loc_id)) {
+        HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL,
+                      "location is not valid for an attribute");
     }
     if (NULL==(ent=H5G_loc(loc_id))) {
-	HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL, "not a location");
+        HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL, "not a location");
     }
     if (!name || !*name) {
-	HRETURN_ERROR(H5E_ARGS, H5E_BADVALUE, FAIL, "no name");
+        HRETURN_ERROR(H5E_ARGS, H5E_BADVALUE, FAIL, "no name");
     }
 
     /* Look up the attribute for the object */
@@ -413,8 +413,8 @@ H5Aopen_name(hid_t loc_id, const char *name)
 
     /* Go do the real work for opening the attribute */
     if ((ret_value=H5A_open(ent, (unsigned)idx))<0) {
-	HRETURN_ERROR (H5E_ATTR, H5E_CANTINIT, FAIL,
-		       "unable to open attribute");
+        HRETURN_ERROR (H5E_ATTR, H5E_CANTINIT, FAIL,
+                       "unable to open attribute");
     }
     
     FUNC_LEAVE(ret_value);
@@ -444,33 +444,33 @@ H5Aopen_name(hid_t loc_id, const char *name)
     which may have any sort of attribute.
  *
  * Modifications:
- * 	Robb Matzke, 5 Jun 1998
- *	The LOC_ID can also be a named (committed) data type.
- *	
+ *      Robb Matzke, 5 Jun 1998
+ *      The LOC_ID can also be a named (committed) data type.
+ *      
 --------------------------------------------------------------------------*/
 hid_t
 H5Aopen_idx(hid_t loc_id, unsigned idx)
 {
-    H5G_entry_t	*ent = NULL;	/*Symtab entry of object to attribute */
-    hid_t	ret_value = FAIL;
+    H5G_entry_t *ent = NULL;    /*Symtab entry of object to attribute */
+    hid_t       ret_value = FAIL;
 
     FUNC_ENTER(H5Aopen_idx, FAIL);
     H5TRACE2("i","iIu",loc_id,idx);
 
     /* check arguments */
     if (H5I_FILE==H5I_get_type(loc_id) ||
-	H5I_ATTR==H5I_get_type(loc_id)) {
-	HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL,
-		      "location is not valid for an attribute");
+        H5I_ATTR==H5I_get_type(loc_id)) {
+        HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL,
+                      "location is not valid for an attribute");
     }
     if (NULL==(ent=H5G_loc(loc_id))) {
-	HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL, "not a location");
+        HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL, "not a location");
     }
 
     /* Go do the real work for opening the attribute */
     if ((ret_value=H5A_open(ent, idx))<0) {
-	HRETURN_ERROR (H5E_ATTR, H5E_CANTINIT, FAIL,
-		       "unable to open attribute");
+        HRETURN_ERROR (H5E_ATTR, H5E_CANTINIT, FAIL,
+                       "unable to open attribute");
     }
     
     FUNC_LEAVE(ret_value);
@@ -478,9 +478,9 @@ H5Aopen_idx(hid_t loc_id, unsigned idx)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5A_open
+ * Function:    H5A_open
  *
- * Purpose:	
+ * Purpose:     
  *      This is the guts of the H5Aopen_xxx functions
  * Usage:
  *  herr_t H5A_open (ent, idx)
@@ -489,8 +489,8 @@ H5Aopen_idx(hid_t loc_id, unsigned idx)
  *
  * Return: Non-negative on success/Negative on failure
  *
- * Programmer:	Quincey Koziol
- *		April 2, 1998
+ * Programmer:  Quincey Koziol
+ *              April 2, 1998
  *
  * Modifications:
  *
@@ -500,7 +500,7 @@ static hid_t
 H5A_open(H5G_entry_t *ent, unsigned idx)
 {
     H5A_t       *attr = NULL;
-    hid_t	    ret_value = FAIL;
+    hid_t           ret_value = FAIL;
 
     FUNC_ENTER(H5A_open, FAIL);
 
@@ -511,7 +511,7 @@ H5A_open(H5G_entry_t *ent, unsigned idx)
     H5_CHECK_OVERFLOW(idx,unsigned,int);
     if (NULL==(attr=H5O_read(ent, H5O_ATTR, (int)idx, attr))) {
         HGOTO_ERROR(H5E_ATTR, H5E_CANTINIT, FAIL,
-		    "unable to load attribute info from dataset header");
+                    "unable to load attribute info from dataset header");
     }
     attr->initialized=1;
 
@@ -527,7 +527,7 @@ H5A_open(H5G_entry_t *ent, unsigned idx)
     /* Register the new attribute and get an ID for it */
     if ((ret_value = H5I_register(H5I_ATTR, attr)) < 0) {
         HGOTO_ERROR(H5E_ATOM, H5E_CANTREGISTER, FAIL,
-		    "unable to register attribute for ID");
+                    "unable to register attribute for ID");
     }
 
 done:
@@ -560,20 +560,20 @@ done:
 herr_t
 H5Awrite(hid_t attr_id, hid_t type_id, const void *buf)
 {
-    H5A_t		   *attr = NULL;
+    H5A_t                  *attr = NULL;
     const H5T_t    *mem_type = NULL;
-    herr_t		    ret_value = FAIL;
+    herr_t                  ret_value = FAIL;
 
     FUNC_ENTER(H5Awrite, FAIL);
     H5TRACE3("e","iix",attr_id,type_id,buf);
 
     /* check arguments */
     if (H5I_ATTR != H5I_get_type(attr_id) ||
-	(NULL == (attr = H5I_object(attr_id)))) {
+        (NULL == (attr = H5I_object(attr_id)))) {
         HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL, "not an attribute");
     }
     if (H5I_DATATYPE != H5I_get_type(type_id) ||
-	NULL == (mem_type = H5I_object(type_id))) {
+        NULL == (mem_type = H5I_object(type_id))) {
         HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL, "not a data type");
     }
     if (NULL == buf) {
@@ -583,7 +583,7 @@ H5Awrite(hid_t attr_id, hid_t type_id, const void *buf)
     /* Go write the actual data to the attribute */
     if ((ret_value=H5A_write(attr,mem_type,buf))<0) {
         HRETURN_ERROR(H5E_ATTR, H5E_WRITEERROR, FAIL,
-		      "unable to write attribute");
+                      "unable to write attribute");
     }
 
     FUNC_LEAVE(ret_value);
@@ -611,16 +611,16 @@ H5Awrite(hid_t attr_id, hid_t type_id, const void *buf)
 static herr_t
 H5A_write(H5A_t *attr, const H5T_t *mem_type, const void *buf)
 {
-    uint8_t		*tconv_buf = NULL;	/* data type conv buffer */
-    uint8_t		*bkg_buf = NULL;	/* temp conversion buffer */
-    hsize_t		nelmts;		    	/* elements in attribute */
-    H5T_path_t		*tpath = NULL;		/* conversion information*/
-    hid_t		src_id = -1, dst_id = -1;/* temporary type atoms */
-    size_t		src_type_size;		/* size of source type	*/
-    size_t		dst_type_size;		/* size of destination type*/
-    hsize_t		buf_size;		/* desired buffer size	*/
-    int         idx;	      /* index of attribute in object header */
-    herr_t		ret_value = FAIL;
+    uint8_t             *tconv_buf = NULL;      /* data type conv buffer */
+    uint8_t             *bkg_buf = NULL;        /* temp conversion buffer */
+    hsize_t             nelmts;                 /* elements in attribute */
+    H5T_path_t          *tpath = NULL;          /* conversion information*/
+    hid_t               src_id = -1, dst_id = -1;/* temporary type atoms */
+    size_t              src_type_size;          /* size of source type  */
+    size_t              dst_type_size;          /* size of destination type*/
+    hsize_t             buf_size;               /* desired buffer size  */
+    int         idx;          /* index of attribute in object header */
+    herr_t              ret_value = FAIL;
 
     FUNC_ENTER(H5A_write, FAIL);
 
@@ -641,7 +641,7 @@ H5A_write(H5A_t *attr, const H5T_t *mem_type, const void *buf)
     if (NULL==(tconv_buf = H5MM_malloc ((size_t)buf_size)) ||
             NULL==(bkg_buf = H5MM_calloc((size_t)buf_size))) {
         HGOTO_ERROR (H5E_RESOURCE, H5E_NOSPACE, FAIL,
-		     "memory allocation failed");
+                     "memory allocation failed");
     }
 
     /* Copy the user's data into the buffer for conversion */
@@ -652,14 +652,14 @@ H5A_write(H5A_t *attr, const H5T_t *mem_type, const void *buf)
     /* Set up type conversion function */
     if (NULL == (tpath = H5T_path_find(mem_type, attr->dt, NULL, NULL))) {
         HGOTO_ERROR(H5E_ATTR, H5E_UNSUPPORTED, FAIL,
-		    "unable to convert between src and dest data types");
+                    "unable to convert between src and dest data types");
     } else if (!H5T_IS_NOOP(tpath)) {
         if ((src_id = H5I_register(H5I_DATATYPE,
-				   H5T_copy(mem_type, H5T_COPY_ALL)))<0 ||
-	    (dst_id = H5I_register(H5I_DATATYPE,
-				   H5T_copy(attr->dt, H5T_COPY_ALL)))<0) {
+                                   H5T_copy(mem_type, H5T_COPY_ALL)))<0 ||
+            (dst_id = H5I_register(H5I_DATATYPE,
+                                   H5T_copy(attr->dt, H5T_COPY_ALL)))<0) {
             HGOTO_ERROR(H5E_ATTR, H5E_CANTREGISTER, FAIL,
-			"unable to register types for conversion");
+                        "unable to register types for conversion");
         }
     }
 
@@ -667,7 +667,7 @@ H5A_write(H5A_t *attr, const H5T_t *mem_type, const void *buf)
     if (H5T_convert(tpath, src_id, dst_id, nelmts, 0, 0, tconv_buf, bkg_buf,
                     H5P_DEFAULT)<0) {
         HGOTO_ERROR(H5E_ATTR, H5E_CANTENCODE, FAIL,
-		    "data type conversion failed");
+                    "data type conversion failed");
     }
 
     /* Free the previous attribute data buffer, if there is one */
@@ -682,7 +682,7 @@ H5A_write(H5A_t *attr, const H5T_t *mem_type, const void *buf)
     attr->data=tconv_buf;   /* Set the data pointer temporarily */
     if (H5O_modify(&(attr->ent), H5O_ATTR, idx, 0, attr) < 0) 
         HGOTO_ERROR(H5E_ATTR, H5E_CANTINIT, FAIL,
-		    "unable to update attribute header messages");
+                    "unable to update attribute header messages");
 
     /* Indicate the the attribute doesn't need fill-values */
     attr->initialized=TRUE;
@@ -723,20 +723,20 @@ done:
 herr_t
 H5Aread(hid_t attr_id, hid_t type_id, void *buf)
 {
-    H5A_t		*attr = NULL;
-    const H5T_t    	*mem_type = NULL;
-    herr_t		ret_value = FAIL;
+    H5A_t               *attr = NULL;
+    const H5T_t         *mem_type = NULL;
+    herr_t              ret_value = FAIL;
 
     FUNC_ENTER(H5Aread, FAIL);
     H5TRACE3("e","iix",attr_id,type_id,buf);
 
     /* check arguments */
     if (H5I_ATTR != H5I_get_type(attr_id) ||
-	(NULL == (attr = H5I_object(attr_id)))) {
+        (NULL == (attr = H5I_object(attr_id)))) {
         HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL, "not an attribute");
     }
     if (H5I_DATATYPE != H5I_get_type(type_id) ||
-	NULL == (mem_type = H5I_object(type_id))) {
+        NULL == (mem_type = H5I_object(type_id))) {
         HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL, "not a data type");
     }
     if (NULL == buf) {
@@ -746,7 +746,7 @@ H5Aread(hid_t attr_id, hid_t type_id, void *buf)
     /* Go write the actual data to the attribute */
     if ((ret_value=H5A_read(attr,mem_type,buf))<0) {
         HRETURN_ERROR(H5E_ATTR, H5E_READERROR, FAIL,
-		      "unable to read attribute");
+                      "unable to read attribute");
     }
 
     FUNC_LEAVE(ret_value);
@@ -774,15 +774,15 @@ H5Aread(hid_t attr_id, hid_t type_id, void *buf)
 static herr_t
 H5A_read(H5A_t *attr, const H5T_t *mem_type, void *buf)
 {
-    uint8_t		*tconv_buf = NULL;	/* data type conv buffer*/
-    uint8_t		*bkg_buf = NULL;	/* background buffer */
-    hsize_t		nelmts;			/* elements in attribute*/
-    H5T_path_t		*tpath = NULL;		/* type conversion info	*/
-    hid_t		src_id = -1, dst_id = -1;/* temporary type atoms*/
-    size_t		src_type_size;		/* size of source type 	*/
-    size_t		dst_type_size;		/* size of destination type */
-    hsize_t		buf_size;		/* desired buffer size	*/
-    herr_t		ret_value = FAIL;
+    uint8_t             *tconv_buf = NULL;      /* data type conv buffer*/
+    uint8_t             *bkg_buf = NULL;        /* background buffer */
+    hsize_t             nelmts;                 /* elements in attribute*/
+    H5T_path_t          *tpath = NULL;          /* type conversion info */
+    hid_t               src_id = -1, dst_id = -1;/* temporary type atoms*/
+    size_t              src_type_size;          /* size of source type  */
+    size_t              dst_type_size;          /* size of destination type */
+    hsize_t             buf_size;               /* desired buffer size  */
+    herr_t              ret_value = FAIL;
 
     FUNC_ENTER(H5A_read, FAIL);
 
@@ -853,7 +853,7 @@ done:
     if (tconv_buf)
         H5MM_xfree(tconv_buf);
     if (bkg_buf)
-	H5MM_xfree(bkg_buf);
+        H5MM_xfree(bkg_buf);
 
     FUNC_LEAVE(ret_value);
 } /* H5A_read() */
@@ -880,29 +880,29 @@ done:
 hid_t
 H5Aget_space(hid_t attr_id)
 {
-    H5A_t	*attr = NULL;
-    H5S_t	*dst = NULL;
-    hid_t	ret_value = FAIL;
+    H5A_t       *attr = NULL;
+    H5S_t       *dst = NULL;
+    hid_t       ret_value = FAIL;
 
     FUNC_ENTER(H5Aget_space, FAIL);
     H5TRACE1("i","i",attr_id);
 
     /* check arguments */
     if (H5I_ATTR != H5I_get_type(attr_id) ||
-	(NULL == (attr = H5I_object(attr_id)))) {
+        (NULL == (attr = H5I_object(attr_id)))) {
         HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL, "not an attribute");
     }
 
     /* Copy the attribute's dataspace */
     if (NULL==(dst=H5S_copy (attr->ds))) {
-	HRETURN_ERROR (H5E_ATTR, H5E_CANTINIT, FAIL,
-		       "unable to copy dataspace");
+        HRETURN_ERROR (H5E_ATTR, H5E_CANTINIT, FAIL,
+                       "unable to copy dataspace");
     }
 
     /* Atomize */
     if ((ret_value=H5I_register (H5I_DATASPACE, dst))<0) {
         HRETURN_ERROR (H5E_ATOM, H5E_CANTREGISTER, FAIL,
-		       "unable to register dataspace atom");
+                       "unable to register dataspace atom");
     }
 
     FUNC_LEAVE(ret_value);
@@ -928,25 +928,25 @@ H5Aget_space(hid_t attr_id)
     or resource leaks will develop.
  *
  * Modifications:
- * 	Robb Matzke, 4 Jun 1998
- *	The data type is reopened if it's a named type before returning it to
- *	the application.  The data types returned by this function are always
- *	read-only. If an error occurs when atomizing the return data type
- *	then the data type is closed.
+ *      Robb Matzke, 4 Jun 1998
+ *      The data type is reopened if it's a named type before returning it to
+ *      the application.  The data types returned by this function are always
+ *      read-only. If an error occurs when atomizing the return data type
+ *      then the data type is closed.
 --------------------------------------------------------------------------*/
 hid_t
 H5Aget_type(hid_t attr_id)
 {
-    H5A_t		   *attr = NULL;
-    H5T_t	*dst = NULL;
-    hid_t		        ret_value = FAIL;
+    H5A_t                  *attr = NULL;
+    H5T_t       *dst = NULL;
+    hid_t                       ret_value = FAIL;
 
     FUNC_ENTER(H5Aget_type, FAIL);
     H5TRACE1("i","i",attr_id);
 
     /* check arguments */
     if (H5I_ATTR != H5I_get_type(attr_id) ||
-	(NULL == (attr = H5I_object(attr_id)))) {
+        (NULL == (attr = H5I_object(attr_id)))) {
         HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL, "not an attribute");
     }
 
@@ -956,25 +956,25 @@ H5Aget_type(hid_t attr_id)
      * read-only.
      */
     if (NULL==(dst=H5T_copy(attr->dt, H5T_COPY_REOPEN))) {
-	HRETURN_ERROR(H5E_ATTR, H5E_CANTINIT, FAIL,
-		      "unable to copy datatype");
+        HRETURN_ERROR(H5E_ATTR, H5E_CANTINIT, FAIL,
+                      "unable to copy datatype");
     }
     /* Mark any VL datatypes as being in memory now */
-	if (H5T_vlen_mark(dst, NULL, H5T_VLEN_MEMORY)<0) {
+        if (H5T_vlen_mark(dst, NULL, H5T_VLEN_MEMORY)<0) {
         HRETURN_ERROR(H5E_DATATYPE, H5E_CANTINIT, FAIL,
-			  "invalid VL location");
+                          "invalid VL location");
     }
     if (H5T_lock(dst, FALSE)<0) {
-	H5T_close(dst);
-	HRETURN_ERROR(H5E_DATATYPE, H5E_CANTINIT, FAIL,
-		      "unable to lock transient data type");
+        H5T_close(dst);
+        HRETURN_ERROR(H5E_DATATYPE, H5E_CANTINIT, FAIL,
+                      "unable to lock transient data type");
     }
     
     /* Atomize */
     if ((ret_value=H5I_register(H5I_DATATYPE, dst))<0) {
-	H5T_close(dst);
+        H5T_close(dst);
         HRETURN_ERROR(H5E_ATOM, H5E_CANTREGISTER, FAIL,
-		      "unable to register datatype atom");
+                      "unable to register datatype atom");
     }
 
     FUNC_LEAVE(ret_value);
@@ -1007,20 +1007,20 @@ H5Aget_type(hid_t attr_id)
 ssize_t
 H5Aget_name(hid_t attr_id, size_t buf_size, char *buf)
 {
-    H5A_t		*attr = NULL;
+    H5A_t               *attr = NULL;
     size_t              copy_len, nbytes;
-    ssize_t		ret_value = FAIL;
+    ssize_t             ret_value = FAIL;
 
     FUNC_ENTER(H5Aget_name, FAIL);
     H5TRACE3("Zs","izs",attr_id,buf_size,buf);
 
     /* check arguments */
     if (H5I_ATTR != H5I_get_type(attr_id) ||
-	(NULL == (attr = H5I_object(attr_id)))) {
+        (NULL == (attr = H5I_object(attr_id)))) {
         HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL, "not an attribute");
     }
     if (!buf || buf_size<1) {
-	HRETURN_ERROR(H5E_ARGS, H5E_BADVALUE, FAIL, "invalid buffer");
+        HRETURN_ERROR(H5E_ARGS, H5E_BADVALUE, FAIL, "invalid buffer");
     }
 
     /* get the real attribute length */
@@ -1059,44 +1059,44 @@ H5Aget_name(hid_t attr_id, size_t buf_size, char *buf)
     group, 'location_id'.
  *
  * Modifications:
- * 	Robb Matzke, 5 Jun 1998
- *	The LOC_ID can also be a named (committed) data type.
+ *      Robb Matzke, 5 Jun 1998
+ *      The LOC_ID can also be a named (committed) data type.
 --------------------------------------------------------------------------*/
 int
 H5Aget_num_attrs(hid_t loc_id)
 {
-    H5G_entry_t    	*ent = NULL;	/*symtab ent of object to attribute */
-    void           	*obj = NULL;
-    int			ret_value = 0;
+    H5G_entry_t         *ent = NULL;    /*symtab ent of object to attribute */
+    void                *obj = NULL;
+    int                 ret_value = 0;
 
     FUNC_ENTER(H5Aget_num_attrs, FAIL);
     H5TRACE1("Is","i",loc_id);
 
     /* check arguments */
     if (H5I_FILE==H5I_get_type(loc_id) ||
-	H5I_ATTR==H5I_get_type(loc_id)) {
-	HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL,
-		      "location is not valid for an attribute");
+        H5I_ATTR==H5I_get_type(loc_id)) {
+        HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL,
+                      "location is not valid for an attribute");
     }
     if(NULL == (obj = H5I_object(loc_id))) {
         HRETURN_ERROR(H5E_ARGS, H5E_BADATOM, FAIL, "illegal object atom");
     }
     switch (H5I_get_type (loc_id)) {
     case H5I_DATASET:
-	ent = H5D_entof ((H5D_t*)obj);
-	break;
+        ent = H5D_entof ((H5D_t*)obj);
+        break;
     case H5I_DATATYPE:
-	if (NULL==(ent=H5T_entof ((H5T_t*)obj))) {
-	    HRETURN_ERROR (H5E_ARGS, H5E_BADTYPE, FAIL,
-			   "target data type is not committed");
-	}
-	break;
+        if (NULL==(ent=H5T_entof ((H5T_t*)obj))) {
+            HRETURN_ERROR (H5E_ARGS, H5E_BADTYPE, FAIL,
+                           "target data type is not committed");
+        }
+        break;
     case H5I_GROUP:
-	ent = H5G_entof ((H5G_t*)obj);
-	break;
+        ent = H5G_entof ((H5G_t*)obj);
+        break;
     default:
-	HRETURN_ERROR (H5E_ARGS, H5E_BADTYPE, FAIL,
-		       "inappropriate attribute target");
+        HRETURN_ERROR (H5E_ARGS, H5E_BADTYPE, FAIL,
+                       "inappropriate attribute target");
     }
 
     /* Look up the attribute for the object */
@@ -1144,33 +1144,33 @@ H5Aget_num_attrs(hid_t loc_id)
             attribute.
  *
  * Modifications:
- * 	Robb Matzke, 5 Jun 1998
- *	The LOC_ID can also be a named (committed) data type.
+ *      Robb Matzke, 5 Jun 1998
+ *      The LOC_ID can also be a named (committed) data type.
  *
- * 	Robb Matzke, 5 Jun 1998
- *	Like the group iterator, if ATTR_NUM is the null pointer then all
- *	attributes are processed.
- *	
+ *      Robb Matzke, 5 Jun 1998
+ *      Like the group iterator, if ATTR_NUM is the null pointer then all
+ *      attributes are processed.
+ *      
 --------------------------------------------------------------------------*/
 herr_t
 H5Aiterate(hid_t loc_id, unsigned *attr_num, H5A_operator_t op, void *op_data)
 {
-    H5G_entry_t		*ent = NULL;	/*symtab ent of object to attribute */
-    H5A_t          	found_attr;
-    herr_t	        ret_value = 0;
-    int		idx;
+    H5G_entry_t         *ent = NULL;    /*symtab ent of object to attribute */
+    H5A_t               found_attr;
+    herr_t              ret_value = 0;
+    int         idx;
 
     FUNC_ENTER(H5Aiterate, FAIL);
     H5TRACE4("e","i*Iuxx",loc_id,attr_num,op,op_data);
 
     /* check arguments */
     if (H5I_FILE==H5I_get_type(loc_id) ||
-	H5I_ATTR==H5I_get_type(loc_id)) {
-	HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL,
-		      "location is not valid for an attribute");
+        H5I_ATTR==H5I_get_type(loc_id)) {
+        HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL,
+                      "location is not valid for an attribute");
     }
     if (NULL==(ent=H5G_loc(loc_id))) {
-	HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL, "not a location");
+        HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL, "not a location");
     }
 
     /*
@@ -1180,17 +1180,17 @@ H5Aiterate(hid_t loc_id, unsigned *attr_num, H5A_operator_t op, void *op_data)
     idx = attr_num ? (int)*attr_num : 0;
     if(idx<H5O_count(ent, H5O_ATTR)) {
         while(H5O_read(ent, H5O_ATTR, idx++, &found_attr)!=NULL) {
-	    /*
-	     * Compare found attribute name to new attribute name reject
-	     * creation if names are the same.
-	     */
-	    if((ret_value=(op)(loc_id,found_attr.name,op_data))!=0) {
-		H5O_reset (H5O_ATTR, &found_attr);
-		break;
-	    }
-	    H5O_reset (H5O_ATTR, &found_attr);
-	}
-	H5E_clear ();
+            /*
+             * Compare found attribute name to new attribute name reject
+             * creation if names are the same.
+             */
+            if((ret_value=(op)(loc_id,found_attr.name,op_data))!=0) {
+                H5O_reset (H5O_ATTR, &found_attr);
+                break;
+            }
+            H5O_reset (H5O_ATTR, &found_attr);
+        }
+        H5E_clear ();
     }
 
     if (attr_num) *attr_num = (unsigned)idx;
@@ -1219,48 +1219,48 @@ H5Aiterate(hid_t loc_id, unsigned *attr_num, H5A_operator_t op, void *op_data)
     writes to the open attributes to produce incorrect results.
  *
  * Modifications:
- * 	Robb Matzke, 5 Jun 1998
- *	The LOC_ID can also be a named (committed) data type.
- *	
+ *      Robb Matzke, 5 Jun 1998
+ *      The LOC_ID can also be a named (committed) data type.
+ *      
 --------------------------------------------------------------------------*/
 herr_t
 H5Adelete(hid_t loc_id, const char *name)
 {
     H5A_t       found_attr;
-    H5G_entry_t	*ent = NULL;		/*symtab ent of object to attribute */
+    H5G_entry_t *ent = NULL;            /*symtab ent of object to attribute */
     int        idx=0, found=-1;
-    herr_t	ret_value = FAIL;
+    herr_t      ret_value = FAIL;
 
     FUNC_ENTER(H5Aopen_name, FAIL);
     H5TRACE2("e","is",loc_id,name);
 
     /* check arguments */
     if (H5I_FILE==H5I_get_type(loc_id) ||
-	H5I_ATTR==H5I_get_type(loc_id)) {
-	HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL,
-		      "location is not valid for an attribute");
+        H5I_ATTR==H5I_get_type(loc_id)) {
+        HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL,
+                      "location is not valid for an attribute");
     }
     if (NULL==(ent=H5G_loc(loc_id))) {
-	HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL, "not a location");
+        HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL, "not a location");
     }
     if (!name || !*name) {
-	HRETURN_ERROR(H5E_ARGS, H5E_BADVALUE, FAIL, "no name");
+        HRETURN_ERROR(H5E_ARGS, H5E_BADVALUE, FAIL, "no name");
     }
 
     /* Look up the attribute for the object */
     idx=0;
     while(H5O_read(ent, H5O_ATTR, idx, &found_attr)!=NULL) {
-	/*
-	 * Compare found attribute name to new attribute name reject
-	 * creation if names are the same.
-	 */
-	if(HDstrcmp(found_attr.name,name)==0) {
-	    H5O_reset (H5O_ATTR, &found_attr);
-	    found = idx;
-	    break;
-	}
-	H5O_reset (H5O_ATTR, &found_attr);
-	idx++;
+        /*
+         * Compare found attribute name to new attribute name reject
+         * creation if names are the same.
+         */
+        if(HDstrcmp(found_attr.name,name)==0) {
+            H5O_reset (H5O_ATTR, &found_attr);
+            found = idx;
+            break;
+        }
+        H5O_reset (H5O_ATTR, &found_attr);
+        idx++;
     }
     H5E_clear ();
     if (found<0) {
@@ -1270,7 +1270,7 @@ H5Adelete(hid_t loc_id, const char *name)
     /* Delete the attribute from the location */
     if ((ret_value=H5O_remove(ent, H5O_ATTR, found)) < 0) {
         HRETURN_ERROR(H5E_ATTR, H5E_CANTDELETE, FAIL,
-		      "unable to delete attribute header message");
+                      "unable to delete attribute header message");
     }
     
     FUNC_LEAVE(ret_value);
@@ -1312,16 +1312,16 @@ H5Aclose(hid_t attr_id)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5A_copy
+ * Function:    H5A_copy
  *
- * Purpose:	Copies attribute OLD_ATTR.
+ * Purpose:     Copies attribute OLD_ATTR.
  *
- * Return:	Success:	Pointer to a new copy of the OLD_ATTR argument.
+ * Return:      Success:        Pointer to a new copy of the OLD_ATTR argument.
  *
- *		Failure:	NULL
+ *              Failure:        NULL
  *
- * Programmer:	Robb Matzke
- *		Thursday, December  4, 1997
+ * Programmer:  Robb Matzke
+ *              Thursday, December  4, 1997
  *
  * Modifications:
  *
@@ -1330,7 +1330,7 @@ H5Aclose(hid_t attr_id)
 H5A_t *
 H5A_copy(const H5A_t *old_attr)
 {
-    H5A_t	*new_attr=NULL;
+    H5A_t       *new_attr=NULL;
 
     FUNC_ENTER(H5A_copy, NULL);
 
@@ -1339,8 +1339,8 @@ H5A_copy(const H5A_t *old_attr)
 
     /* get space */
     if (NULL==(new_attr = H5MM_calloc(sizeof(H5A_t)))) {
-	HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, NULL,
-		       "memory allocation failed");
+        HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, NULL,
+                       "memory allocation failed");
     }
 
     /* Copy the top level of the attribute */
@@ -1355,9 +1355,9 @@ H5A_copy(const H5A_t *old_attr)
     new_attr->ds=H5S_copy(old_attr->ds);
     if(old_attr->data) {
         if (NULL==(new_attr->data=H5MM_malloc(old_attr->data_size))) {
-	    HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, NULL,
-			   "memory allocation failed");
-	}
+            HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, NULL,
+                           "memory allocation failed");
+        }
         HDmemcpy(new_attr->data,old_attr->data,old_attr->data_size);
     } /* end if */
 
@@ -1370,14 +1370,14 @@ H5A_copy(const H5A_t *old_attr)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5A_close
+ * Function:    H5A_close
  *
- * Purpose:	Frees a attribute and all associated memory.  
+ * Purpose:     Frees a attribute and all associated memory.  
  *
- * Return:	Non-negative on success/Negative on failure
+ * Return:      Non-negative on success/Negative on failure
  *
- * Programmer:	Robb Matzke
- *		Monday, December  8, 1997
+ * Programmer:  Robb Matzke
+ *              Monday, December  8, 1997
  *
  * Modifications:
  *
@@ -1395,13 +1395,13 @@ H5A_close(H5A_t *attr)
         uint8_t *tmp_buf=H5MM_calloc(attr->data_size);
         if (NULL == tmp_buf) {
             HRETURN_ERROR(H5E_ATTR, H5E_NOSPACE, FAIL,
-			  "memory allocation failed for attribute fill-value");
+                          "memory allocation failed for attribute fill-value");
         }
 
         /* Go write the fill data to the attribute */
         if (H5A_write(attr,attr->dt,tmp_buf)<0) {
             HRETURN_ERROR(H5E_ATTR, H5E_WRITEERROR, FAIL,
-			  "unable to write attribute");
+                          "unable to write attribute");
         }
 
         /* Free temporary buffer */
@@ -1429,17 +1429,17 @@ H5A_close(H5A_t *attr)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5A_entof
+ * Function:    H5A_entof
  *
- * Purpose:	Return the symbol table entry for an attribute.  It's the
- *		symbol table entry for the object to which the attribute
- *		belongs, not the attribute itself.
+ * Purpose:     Return the symbol table entry for an attribute.  It's the
+ *              symbol table entry for the object to which the attribute
+ *              belongs, not the attribute itself.
  *
- * Return:	Success:	Ptr to entry
+ * Return:      Success:        Ptr to entry
  *
- *		Failure:	NULL
+ *              Failure:        NULL
  *
- * Programmer:	Robb Matzke
+ * Programmer:  Robb Matzke
  *              Thursday, August  6, 1998
  *
  * Modifications:

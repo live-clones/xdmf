@@ -6,7 +6,7 @@
  *             Friday, September 19, 1997
  */
 #define H5G_PACKAGE
-#define H5F_PACKAGE		/*suppress error about including H5Fpkg	  */
+#define H5F_PACKAGE             /*suppress error about including H5Fpkg   */
 
 #include "H5private.h"
 #include "H5Eprivate.h"
@@ -16,7 +16,7 @@
 #include "H5MMprivate.h"
 
 #define PABLO_MASK      H5G_ent_mask
-static int          	interface_initialize_g = 0;
+static int              interface_initialize_g = 0;
 #define INTERFACE_INIT  NULL
 
 
@@ -142,16 +142,16 @@ H5G_ent_decode_vec(H5F_t *f, const uint8_t **pp, H5G_entry_t *ent, int n)
  *              Jul 18 1997
  *
  * Modifications:
- *	Robb Matzke, 17 Jul 1998
- * 	Added a 4-byte padding field for alignment and future expansion.
+ *      Robb Matzke, 17 Jul 1998
+ *      Added a 4-byte padding field for alignment and future expansion.
  *
  *-------------------------------------------------------------------------
  */
 herr_t
 H5G_ent_decode(H5F_t *f, const uint8_t **pp, H5G_entry_t *ent)
 {
-    const uint8_t	*p_ret = *pp;
-    uint32_t		tmp;
+    const uint8_t       *p_ret = *pp;
+    uint32_t            tmp;
 
     FUNC_ENTER(H5G_ent_decode, FAIL);
 
@@ -181,8 +181,8 @@ H5G_ent_decode(H5F_t *f, const uint8_t **pp, H5G_entry_t *ent)
         break;
 
     case H5G_CACHED_SLINK:
-	UINT32DECODE (*pp, ent->cache.slink.lval_offset);
-	break;
+        UINT32DECODE (*pp, ent->cache.slink.lval_offset);
+        break;
 
     default:
         HDabort();
@@ -265,7 +265,7 @@ H5G_ent_encode_vec(H5F_t *f, uint8_t **pp, const H5G_entry_t *ent, int n)
 herr_t
 H5G_ent_encode(H5F_t *f, uint8_t **pp, const H5G_entry_t *ent)
 {
-    uint8_t		*p_ret = *pp + H5G_SIZEOF_ENTRY(f);
+    uint8_t             *p_ret = *pp + H5G_SIZEOF_ENTRY(f);
 
     FUNC_ENTER(H5G_ent_encode, FAIL);
 
@@ -278,7 +278,7 @@ H5G_ent_encode(H5F_t *f, uint8_t **pp, const H5G_entry_t *ent)
         H5F_ENCODE_LENGTH(f, *pp, ent->name_off);
         H5F_addr_encode(f, pp, ent->header);
         UINT32ENCODE(*pp, ent->type);
-	UINT32ENCODE(*pp, 0); /*reserved*/
+        UINT32ENCODE(*pp, 0); /*reserved*/
 
         /* encode scratch-pad */
         switch (ent->type) {
@@ -291,9 +291,9 @@ H5G_ent_encode(H5F_t *f, uint8_t **pp, const H5G_entry_t *ent)
             H5F_addr_encode(f, pp, ent->cache.stab.heap_addr);
             break;
 
-	case H5G_CACHED_SLINK:
-	    UINT32ENCODE (*pp, ent->cache.slink.lval_offset);
-	    break;
+        case H5G_CACHED_SLINK:
+            UINT32ENCODE (*pp, ent->cache.slink.lval_offset);
+            break;
 
         default:
             HDabort();
@@ -302,7 +302,7 @@ H5G_ent_encode(H5F_t *f, uint8_t **pp, const H5G_entry_t *ent)
         H5F_ENCODE_LENGTH(f, *pp, 0);
         H5F_addr_encode(f, pp, HADDR_UNDEF);
         UINT32ENCODE(*pp, H5G_NOTHING_CACHED);
-	UINT32ENCODE(*pp, 0); /*reserved*/
+        UINT32ENCODE(*pp, 0); /*reserved*/
     }
 
     /* fill with zero */
@@ -326,30 +326,30 @@ H5G_ent_encode(H5F_t *f, uint8_t **pp, const H5G_entry_t *ent)
  *              Aug 29 1997
  *
  * Modifications:
- *		Robb Matzke, 1999-07-28
- *		The HEAP argument is passed by value.
+ *              Robb Matzke, 1999-07-28
+ *              The HEAP argument is passed by value.
  *-------------------------------------------------------------------------
  */
 herr_t
 H5G_ent_debug(H5F_t UNUSED *f, const H5G_entry_t *ent, FILE * stream,
-	      int indent, int fwidth, haddr_t heap)
+              int indent, int fwidth, haddr_t heap)
 {
-    const char		*lval = NULL;
+    const char          *lval = NULL;
     
     FUNC_ENTER(H5G_ent_debug, FAIL);
 
     HDfprintf(stream, "%*s%-*s %lu\n", indent, "", fwidth,
-	      "Name offset into private heap:",
-	      (unsigned long) (ent->name_off));
+              "Name offset into private heap:",
+              (unsigned long) (ent->name_off));
 
     HDfprintf(stream, "%*s%-*s %a\n", indent, "", fwidth,
-	      "Object header address:", ent->header);
+              "Object header address:", ent->header);
 
     HDfprintf(stream, "%*s%-*s %s\n", indent, "", fwidth,
-	      "Dirty:",
-	      ent->dirty ? "Yes" : "No");
+              "Dirty:",
+              ent->dirty ? "Yes" : "No");
     HDfprintf(stream, "%*s%-*s ", indent, "", fwidth,
-	      "Symbol type:");
+              "Symbol type:");
     switch (ent->type) {
     case H5G_NOTHING_CACHED:
         HDfprintf(stream, "Nothing Cached\n");
@@ -359,29 +359,31 @@ H5G_ent_debug(H5F_t UNUSED *f, const H5G_entry_t *ent, FILE * stream,
         HDfprintf(stream, "Symbol Table\n");
 
         HDfprintf(stream, "%*s%-*s %a\n", indent, "", fwidth,
-		  "B-tree address:", ent->cache.stab.btree_addr);
+                  "B-tree address:", ent->cache.stab.btree_addr);
 
         HDfprintf(stream, "%*s%-*s %a\n", indent, "", fwidth,
-		  "Heap address:", ent->cache.stab.heap_addr);
+                  "Heap address:", ent->cache.stab.heap_addr);
         break;
 
     case H5G_CACHED_SLINK:
-	HDfprintf (stream, "Symbolic Link\n");
-	HDfprintf (stream, "%*s%-*s %lu\n", indent, "", fwidth,
-		   "Link value offset:",
-		   (unsigned long)(ent->cache.slink.lval_offset));
-	if (H5F_addr_defined(heap)) {
-	    lval = H5HL_peek (ent->file, heap, ent->cache.slink.lval_offset);
-	    HDfprintf (stream, "%*s%-*s %s\n", indent, "", fwidth,
-		       "Link value:",
-		       lval);
-	}
-	break;
-	
+        HDfprintf (stream, "Symbolic Link\n");
+        HDfprintf (stream, "%*s%-*s %lu\n", indent, "", fwidth,
+                   "Link value offset:",
+                   (unsigned long)(ent->cache.slink.lval_offset));
+        if (H5F_addr_defined(heap)) {
+            lval = H5HL_peek (ent->file, heap, ent->cache.slink.lval_offset);
+            HDfprintf (stream, "%*s%-*s %s\n", indent, "", fwidth,
+                       "Link value:",
+                       lval);
+        }
+        break;
+        
     default:
         HDfprintf(stream, "*** Unknown symbol type %d\n", ent->type);
         break;
     }
 
     FUNC_LEAVE(SUCCEED);
+
+    f = 0;
 }

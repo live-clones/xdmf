@@ -5,10 +5,10 @@
  * Programmer:  Quincey Koziol <koziol@ncsa.uiuc.edu>
  *              Tuesday, November 10, 1998
  *
- * Purpose:	"None" selection data space I/O functions.
+ * Purpose:     "None" selection data space I/O functions.
  */
 
-#define H5S_PACKAGE		/*suppress error about including H5Spkg	  */
+#define H5S_PACKAGE             /*suppress error about including H5Spkg   */
 
 #include "H5private.h"
 #include "H5Eprivate.h"
@@ -100,6 +100,8 @@ H5S_none_select_deserialize (H5S_t *space, const uint8_t UNUSED *buf)
 
 done:
     FUNC_LEAVE (ret_value);
+     
+    buf = 0;
 }   /* H5S_none_select_deserialize() */
 
 
@@ -162,7 +164,7 @@ done:
 --------------------------------------------------------------------------*/
 herr_t H5Sselect_none (hid_t spaceid)
 {
-    H5S_t	*space = NULL;  /* Dataspace to modify selection of */
+    H5S_t       *space = NULL;  /* Dataspace to modify selection of */
     herr_t ret_value=FAIL;  /* return value */
 
     FUNC_ENTER (H5Sselect_none, FAIL);
@@ -221,4 +223,6 @@ H5S_none_select_iterate(void UNUSED *buf, hid_t UNUSED type_id, H5S_t UNUSED *sp
     assert(H5I_DATATYPE == H5I_get_type(type_id));
 
     FUNC_LEAVE (ret_value);
+
+    operator_data = 0;
 }   /* H5S_hyper_select_iterate() */

@@ -1,36 +1,36 @@
 /****************************************************************************
-* NCSA HDF								   *
-* Software Development Group						   *
-* National Center for Supercomputing Applications			   *
-* University of Illinois at Urbana-Champaign				   *
-* 605 E. Springfield, Champaign IL 61820				   *
-*									   *
-* For conditions of distribution and use, see the accompanying		   *
-* hdf/COPYING file.							   *
-*									   *
+* NCSA HDF                                                                 *
+* Software Development Group                                               *
+* National Center for Supercomputing Applications                          *
+* University of Illinois at Urbana-Champaign                               *
+* 605 E. Springfield, Champaign IL 61820                                   *
+*                                                                          *
+* For conditions of distribution and use, see the accompanying             *
+* hdf/COPYING file.                                                        *
+*                                                                          *
 ****************************************************************************/
 
 /* Id */
 
-#define H5F_PACKAGE		/*suppress error about including H5Fpkg	  */
+#define H5F_PACKAGE             /*suppress error about including H5Fpkg   */
 
-#include "H5private.h"		/* Generic Functions */
-#include "H5Iprivate.h"		/* ID Functions */
-#include "H5Dprivate.h"		/* Datasets */
-#include "H5Eprivate.h"		/* Error handling */
-#include "H5Fpkg.h"		/* Files */
-#include "H5Gprivate.h"		/* Groups */
+#include "H5private.h"          /* Generic Functions */
+#include "H5Iprivate.h"         /* ID Functions */
+#include "H5Dprivate.h"         /* Datasets */
+#include "H5Eprivate.h"         /* Error handling */
+#include "H5Fpkg.h"             /* Files */
+#include "H5Gprivate.h"         /* Groups */
 #include "H5HGprivate.h"        /* Global Heaps */
 #include "H5MMprivate.h"        /* Memory Management */
-#include "H5Rprivate.h"		/* References */
-#include "H5Sprivate.h"		/* Dataspaces */
-#include "H5Tprivate.h"		/* Datatypes */
+#include "H5Rprivate.h"         /* References */
+#include "H5Sprivate.h"         /* Dataspaces */
+#include "H5Tprivate.h"         /* Datatypes */
 
 /* Interface initialization */
-#define PABLO_MASK	H5R_mask
-#define INTERFACE_INIT	H5R_init_interface
-static int		interface_initialize_g = 0;
-static herr_t		H5R_init_interface(void);
+#define PABLO_MASK      H5R_mask
+#define INTERFACE_INIT  H5R_init_interface
+static int              interface_initialize_g = 0;
+static herr_t           H5R_init_interface(void);
 
 /* Static functions */
 static herr_t H5R_create(void *ref, H5G_entry_t *loc, const char *name,
@@ -59,9 +59,9 @@ H5R_init_interface(void)
 
     /* Initialize the atom group for the file IDs */
     if (H5I_init_group(H5I_REFERENCE, H5I_REFID_HASHSIZE, H5R_RESERVED_ATOMS,
-		       (H5I_free_t)NULL)<0) {
-	HRETURN_ERROR (H5E_REFERENCE, H5E_CANTINIT, FAIL,
-		       "unable to initialize interface");
+                       (H5I_free_t)NULL)<0) {
+        HRETURN_ERROR (H5E_REFERENCE, H5E_CANTINIT, FAIL,
+                       "unable to initialize interface");
     }
 
     FUNC_LEAVE(SUCCEED);
@@ -88,16 +88,16 @@ H5R_init_interface(void)
 int
 H5R_term_interface(void)
 {
-    int	n=0;
+    int n=0;
     
     if (interface_initialize_g) {
-	if ((n=H5I_nmembers(H5I_REFERENCE))) {
-	    H5I_clear_group(H5I_REFERENCE, FALSE);
-	} else {
-	    H5I_destroy_group(H5I_REFERENCE);
-	    interface_initialize_g = 0;
-	    n = 1; /*H5I*/
-	}
+        if ((n=H5I_nmembers(H5I_REFERENCE))) {
+            H5I_clear_group(H5I_REFERENCE, FALSE);
+        } else {
+            H5I_destroy_group(H5I_REFERENCE);
+            interface_initialize_g = 0;
+            n = 1; /*H5I*/
+        }
     }
     
     return n;
@@ -283,7 +283,7 @@ herr_t
 H5Rcreate(void *ref, hid_t loc_id, const char *name, H5R_type_t ref_type, hid_t space_id)
 {
     H5G_entry_t *loc = NULL;        /* File location */
-    H5S_t	*space = NULL;          /* Pointer to dataspace containing region */
+    H5S_t       *space = NULL;          /* Pointer to dataspace containing region */
     herr_t ret_value = FAIL;
 
     FUNC_ENTER(H5Rcreate, FAIL);
@@ -670,8 +670,8 @@ done:
         void *ref;          IN: Reference to query.
         
  RETURNS
-    Success:	An object type defined in H5Gpublic.h
-    Failure:	H5G_UNKNOWN
+    Success:    An object type defined in H5Gpublic.h
+    Failure:    H5G_UNKNOWN
  DESCRIPTION
     Given a reference to some object, this function returns the type of object
     pointed to.
@@ -723,8 +723,8 @@ done:
         void *ref;          IN: Reference to query.
         
  RETURNS
-    Success:	An object type defined in H5Gpublic.h
-    Failure:	H5G_UNKNOWN
+    Success:    An object type defined in H5Gpublic.h
+    Failure:    H5G_UNKNOWN
  DESCRIPTION
     Given a reference to some object, this function returns the type of object
     pointed to.
@@ -748,15 +748,15 @@ H5Rget_object_type(hid_t id, void *_ref)
         HRETURN_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL, "not a location");
     if(_ref==NULL)
         HGOTO_ERROR (H5E_ARGS, H5E_BADVALUE, H5G_UNKNOWN,
-		     "invalid reference pointer");
+                     "invalid reference pointer");
 
     /* Get the file pointer from the entry */
     file=loc->file;
 
     /* Get the object information */
     if ((ret_value=H5R_get_object_type(file,_ref))<0) {
-	HGOTO_ERROR(H5E_REFERENCE, H5E_CANTINIT, H5G_UNKNOWN,
-		    "unable to determine object type");
+        HGOTO_ERROR(H5E_REFERENCE, H5E_CANTINIT, H5G_UNKNOWN,
+                    "unable to determine object type");
     }
     
 done:

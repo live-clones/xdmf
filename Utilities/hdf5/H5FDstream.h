@@ -6,7 +6,7 @@
  * Author:  Thomas Radke <tradke@aei-potsdam.mpg.de>
  *          Tuesday, September 12, 2000
  *
- * Purpose:	The public header file for the Stream Virtual File Driver.
+ * Purpose:     The public header file for the Stream Virtual File Driver.
  *
  * Version: Header
  *
@@ -44,7 +44,7 @@
 
 #endif
 
-#define H5FD_STREAM	(H5FD_stream_init())
+#define H5FD_STREAM     (H5FD_stream_init())
 
 #ifdef __cplusplus
 extern "C" {

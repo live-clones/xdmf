@@ -11,7 +11,7 @@
 
 #include "hdf5.h"
 #include "H5Eprivate.h"         /*error handling                          */
-#include "H5FDprivate.h"	/*file driver				  */
+#include "H5FDprivate.h"        /*file driver                             */
 #include "H5FDdpss.h"
 #include "H5MMprivate.h"        /*memory management                       */
 
@@ -29,6 +29,10 @@
 
 /* The driver identification number, initialized at runtime */
 static hid_t H5FD_DPSS_g = 0;
+hid_t GetH5FD_DPSS_g()
+{
+  return H5FD_DPSS_g;
+}
 
 
 /* compile this only if HDF5 was configured to use the Grid Storage I/O driver */
@@ -394,16 +398,16 @@ H5FD_dpss_close (H5FD_t *_file)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FD_dpss_query
+ * Function:    H5FD_dpss_query
  *
- * Purpose:	Set the flags that this VFL driver is capable of supporting.
+ * Purpose:     Set the flags that this VFL driver is capable of supporting.
  *              (listed in H5FDpublic.h)
  *
- * Return:	Success:	non-negative
+ * Return:      Success:        non-negative
  *
- *		Failure:	negative
+ *              Failure:        negative
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Tuesday, September 26, 2000
  *
  * Modifications:

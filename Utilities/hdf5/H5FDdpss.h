@@ -5,7 +5,7 @@
  * Programmer:  Thomas Radke <tradke@aei-potsdam.mpg.de>
  *              Monday, October 11, 1999
  *
- * Purpose:	The public header file for the DPSS driver.
+ * Purpose:     The public header file for the DPSS driver.
  */
 #ifndef H5FDdpss_H
 #define H5FDdpss_H

@@ -28,22 +28,22 @@ static void *H5O_name_copy(const void *_mesg, void *_dest);
 static size_t H5O_name_size(H5F_t *f, const void *_mesg);
 static herr_t H5O_name_reset(void *_mesg);
 static herr_t H5O_name_debug(H5F_t *f, const void *_mesg, FILE * stream,
-			     int indent, int fwidth);
+                             int indent, int fwidth);
 
 /* This message derives from H5O */
 const H5O_class_t H5O_NAME[1] = {{
-    H5O_NAME_ID,            	/*message id number             */
-    "name",                 	/*message name for debugging    */
-    sizeof(H5O_name_t),     	/*native message size           */
-    H5O_name_decode,        	/*decode message                */
-    H5O_name_encode,        	/*encode message                */
-    H5O_name_copy,          	/*copy the native value         */
-    H5O_name_size,          	/*raw message size              */
-    H5O_name_reset,         	/*free internal memory          */
-    NULL,		        /*free method			*/
-    NULL,		    	/*get share method		*/
-    NULL,			/*set share method		*/
-    H5O_name_debug,         	/*debug the message             */
+    H5O_NAME_ID,                /*message id number             */
+    "name",                     /*message name for debugging    */
+    sizeof(H5O_name_t),         /*native message size           */
+    H5O_name_decode,            /*decode message                */
+    H5O_name_encode,            /*encode message                */
+    H5O_name_copy,              /*copy the native value         */
+    H5O_name_size,              /*raw message size              */
+    H5O_name_reset,             /*free internal memory          */
+    NULL,                       /*free method                   */
+    NULL,                       /*get share method              */
+    NULL,                       /*set share method              */
+    H5O_name_debug,             /*debug the message             */
 }};
 
 /* Interface initialization */
@@ -71,7 +71,7 @@ static int interface_initialize_g = 0;
  */
 static void *
 H5O_name_decode(H5F_t UNUSED *f, const uint8_t *p,
-		H5O_shared_t UNUSED *sh)
+                H5O_shared_t UNUSED *sh)
 {
     H5O_name_t             *mesg;
 
@@ -84,10 +84,10 @@ H5O_name_decode(H5F_t UNUSED *f, const uint8_t *p,
 
     /* decode */
     if (NULL==(mesg = H5MM_calloc(sizeof(H5O_name_t))) ||
-	NULL==(mesg->s = H5MM_malloc (HDstrlen((const char*)p)+1))) {
-	H5MM_xfree (mesg);
-	HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, NULL,
-		       "memory allocation failed");
+        NULL==(mesg->s = H5MM_malloc (HDstrlen((const char*)p)+1))) {
+        H5MM_xfree (mesg);
+        HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, NULL,
+                       "memory allocation failed");
     }
     HDstrcpy(mesg->s, (const char*)p);
 
@@ -155,8 +155,8 @@ H5O_name_copy(const void *_mesg, void *_dest)
     /* check args */
     assert(mesg);
     if (!dest && NULL==(dest = H5MM_calloc(sizeof(H5O_name_t)))) {
-	HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, NULL,
-		       "memory allocation failed");
+        HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, NULL,
+                       "memory allocation failed");
     }
     
     /* copy */
@@ -251,9 +251,9 @@ H5O_name_reset(void *_mesg)
  */
 static herr_t
 H5O_name_debug(H5F_t UNUSED *f, const void *_mesg, FILE *stream,
-	       int indent, int fwidth)
+               int indent, int fwidth)
 {
-    const H5O_name_t	*mesg = (const H5O_name_t *)_mesg;
+    const H5O_name_t    *mesg = (const H5O_name_t *)_mesg;
 
     FUNC_ENTER(H5O_name_debug, FAIL);
 

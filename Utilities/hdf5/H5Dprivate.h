@@ -1,13 +1,13 @@
 /****************************************************************************
- * NCSA HDF								    *
- * Software Development Group						    *
- * National Center for Supercomputing Applications			    *
- * University of Illinois at Urbana-Champaign				    *
- * 605 E. Springfield, Champaign IL 61820				    *
- *									    *
- * For conditions of distribution and use, see the accompanying		    *
- * hdf/COPYING file.							    *
- *									    *
+ * NCSA HDF                                                                 *
+ * Software Development Group                                               *
+ * National Center for Supercomputing Applications                          *
+ * University of Illinois at Urbana-Champaign                               *
+ * 605 E. Springfield, Champaign IL 61820                                   *
+ *                                                                          *
+ * For conditions of distribution and use, see the accompanying             *
+ * hdf/COPYING file.                                                        *
+ *                                                                          *
  ****************************************************************************/
 
 /*
@@ -20,17 +20,17 @@
 
 /* Private headers needed by this file */
 #include "H5private.h"
-#include "H5Fprivate.h"		/*for the H5F_t type			     */
-#include "H5Gprivate.h"		/*symbol tables				     */
-#include "H5MMpublic.h"		/*for H5MM_allocate_t and H5MM_free_t types  */
-#include "H5Oprivate.h"		/*object Headers			     */
-#include "H5Sprivate.h"		/*for the H5S_t type			     */
-#include "H5Tprivate.h"		/*for the H5T_t type			     */
+#include "H5Fprivate.h"         /*for the H5F_t type                         */
+#include "H5Gprivate.h"         /*symbol tables                              */
+#include "H5MMpublic.h"         /*for H5MM_allocate_t and H5MM_free_t types  */
+#include "H5Oprivate.h"         /*object Headers                             */
+#include "H5Sprivate.h"         /*for the H5S_t type                         */
+#include "H5Tprivate.h"         /*for the H5T_t type                         */
 
 /*
  * Feature: Define H5D_DEBUG on the compiler command line if you want to
- *	    debug dataset I/O. NDEBUG must not be defined in order for this
- *	    to have any effect.
+ *          debug dataset I/O. NDEBUG must not be defined in order for this
+ *          to have any effect.
  */
 #ifdef NDEBUG
 #  undef H5D_DEBUG
@@ -43,29 +43,29 @@
 
 /* Dataset creation property list */
 typedef struct H5D_create_t {
-    H5D_layout_t	layout;		/*storage layout		     */
-    int		chunk_ndims;	/*chunk dimensionality		     */
-    hsize_t		chunk_size[32];	/*chunk size if chunked storage	     */
-    H5O_fill_t		fill;		/*fill value			     */
-    H5O_efl_t		efl;		/*external file list		     */
-    H5O_pline_t		pline;		/*data filter pipeline		     */
+    H5D_layout_t        layout;         /*storage layout                     */
+    int         chunk_ndims;    /*chunk dimensionality               */
+    hsize_t             chunk_size[32]; /*chunk size if chunked storage      */
+    H5O_fill_t          fill;           /*fill value                         */
+    H5O_efl_t           efl;            /*external file list                 */
+    H5O_pline_t         pline;          /*data filter pipeline               */
 } H5D_create_t;
 
 /* Data transfer property list */
 typedef struct H5D_xfer_t {
-    hsize_t		buf_size;	/*max temp buffer size		     */
-    void		*tconv_buf;	/*type conversion buffer or null     */
-    void		*bkg_buf;	/*background buffer or null	     */
-    H5T_bkg_t	need_bkg;	/*type of background buffer needed   */
-    double		split_ratios[3];/*B-tree node splitting ratios	     */
+    hsize_t             buf_size;       /*max temp buffer size               */
+    void                *tconv_buf;     /*type conversion buffer or null     */
+    void                *bkg_buf;       /*background buffer or null          */
+    H5T_bkg_t   need_bkg;       /*type of background buffer needed   */
+    double              split_ratios[3];/*B-tree node splitting ratios       */
     unsigned       cache_hyper;    /*cache hyperslab blocks during I/O? */
     unsigned       block_limit;    /*largest hyperslab block to cache   */
-    H5MM_allocate_t 	vlen_alloc; 	/*VL datatype allocation function    */
-    void		*alloc_info;    /*VL datatype allocation information */
-    H5MM_free_t	vlen_free;      /*VL datatype free function	     */
-    void		*free_info;	/*VL datatype free information	     */
-    hid_t		driver_id;	/*File driver ID		     */
-    void		*driver_info;	/*File driver specific information   */
+    H5MM_allocate_t     vlen_alloc;     /*VL datatype allocation function    */
+    void                *alloc_info;    /*VL datatype allocation information */
+    H5MM_free_t vlen_free;      /*VL datatype free function          */
+    void                *free_info;     /*VL datatype free information       */
+    hid_t               driver_id;      /*File driver ID                     */
+    void                *driver_info;   /*File driver specific information   */
 #ifdef COALESCE_READS
     unsigned               gather_reads;   /*coalesce single reads into a read  */
                                         /*transaction                        */
@@ -81,17 +81,17 @@ __DLLVAR__ H5D_xfer_t H5D_xfer_dflt;
 /* Functions defined in H5D.c */
 __DLL__ herr_t H5D_init(void);
 __DLL__ H5D_t *H5D_create(H5G_entry_t *loc, const char *name,
-			  const H5T_t *type, const H5S_t *space,
-			  const H5D_create_t *create_parms);
+                          const H5T_t *type, const H5S_t *space,
+                          const H5D_create_t *create_parms);
 __DLL__ H5D_t *H5D_open(H5G_entry_t *loc, const char *name);
 __DLL__ herr_t H5D_close(H5D_t *dataset);
 __DLL__ htri_t H5D_isa(H5G_entry_t *ent);
 __DLL__ herr_t H5D_read(H5D_t *dataset, const H5T_t *mem_type,
-			const H5S_t *mem_space, const H5S_t *file_space,
-			hid_t dset_xfer_plist, void *buf/*out*/);
+                        const H5S_t *mem_space, const H5S_t *file_space,
+                        hid_t dset_xfer_plist, void *buf/*out*/);
 __DLL__ herr_t H5D_write(H5D_t *dataset, const H5T_t *mem_type,
-			 const H5S_t *mem_space, const H5S_t *file_space,
-			 hid_t dset_xfer_plist, const void *buf);
+                         const H5S_t *mem_space, const H5S_t *file_space,
+                         hid_t dset_xfer_plist, const void *buf);
 __DLL__ herr_t H5D_extend(H5D_t *dataset, const hsize_t *size);
 __DLL__ H5G_entry_t *H5D_entof(H5D_t *dataset);
 __DLL__ H5T_t *H5D_typeof(H5D_t *dset);

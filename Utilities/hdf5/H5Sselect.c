@@ -5,14 +5,14 @@
  * Programmer:  Quincey Koziol <koziol@ncsa.uiuc.ued>
  *              Friday, May 29, 1998
  *
- * Purpose:	Dataspace functions.
+ * Purpose:     Dataspace functions.
  */
 
-#define H5S_PACKAGE		/*suppress error about including H5Spkg	  */
+#define H5S_PACKAGE             /*suppress error about including H5Spkg   */
 
 #include "H5private.h"
 #include "H5Eprivate.h"
-#include "H5FLprivate.h"	/*Free Lists	  */
+#include "H5FLprivate.h"        /*Free Lists      */
 #include "H5Iprivate.h"
 #include "H5MMprivate.h"
 #include "H5Spkg.h"
@@ -71,7 +71,7 @@ H5S_select_copy (H5S_t *dst, const H5S_t *src)
     /* Copy offset information */
     if (NULL==(dst->select.offset = H5FL_ARR_ALLOC(hssize_t,(hsize_t)src->extent.u.simple.rank,1))) {
         HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, FAIL,
-		       "memory allocation failed");
+                       "memory allocation failed");
     }
     if(src->select.offset!=NULL)
         HDmemcpy(dst->select.offset,src->select.offset,(src->extent.u.simple.rank*sizeof(hssize_t)));
@@ -191,7 +191,7 @@ H5S_select_release (H5S_t *space)
 hssize_t
 H5Sget_select_npoints(hid_t spaceid)
 {
-    H5S_t	*space = NULL;      /* Dataspace to modify selection of */
+    H5S_t       *space = NULL;      /* Dataspace to modify selection of */
     hssize_t ret_value=FAIL;        /* return value */
 
     FUNC_ENTER (H5Sget_select_npoints, 0);
@@ -236,24 +236,24 @@ H5S_get_select_npoints (const H5S_t *space)
 
     switch(space->select.type) {
     case H5S_SEL_POINTS:         /* Sequence of points selected */
-	ret_value=H5S_point_npoints(space);
-	break;
+        ret_value=H5S_point_npoints(space);
+        break;
 
     case H5S_SEL_HYPERSLABS:     /* Hyperslab selection defined */
-	ret_value=H5S_hyper_npoints(space);
-	break;
+        ret_value=H5S_hyper_npoints(space);
+        break;
 
     case H5S_SEL_ALL:            /* Entire extent selected */
-	ret_value=H5S_all_npoints(space);
-	break;
+        ret_value=H5S_all_npoints(space);
+        break;
 
     case H5S_SEL_NONE:           /* Nothing selected */
-	ret_value=0;
-	break;
+        ret_value=0;
+        break;
 
     case H5S_SEL_ERROR:
     case H5S_SEL_N:
-	break;
+        break;
     }
 
     FUNC_LEAVE (ret_value);
@@ -332,7 +332,7 @@ H5S_sel_iter_release (const H5S_t *space, H5S_sel_iter_t *sel_iter)
 htri_t
 H5Sselect_valid(hid_t spaceid)
 {
-    H5S_t	*space = NULL;      /* Dataspace to modify selection of */
+    H5S_t       *space = NULL;      /* Dataspace to modify selection of */
     htri_t ret_value=FAIL;     /* return value */
 
     FUNC_ENTER (H5Sselect_valid, 0);
@@ -380,21 +380,21 @@ H5S_select_valid (const H5S_t *space)
 
     switch(space->select.type) {
     case H5S_SEL_POINTS:         /* Sequence of points selected */
-	ret_value=H5S_point_select_valid(space);
-	break;
+        ret_value=H5S_point_select_valid(space);
+        break;
 
     case H5S_SEL_HYPERSLABS:     /* Hyperslab selection defined */
-	ret_value=H5S_hyper_select_valid(space);
-	break;
+        ret_value=H5S_hyper_select_valid(space);
+        break;
 
     case H5S_SEL_ALL:            /* Entire extent selected */
     case H5S_SEL_NONE:           /* Nothing selected */
-	ret_value=TRUE;
-	break;
+        ret_value=TRUE;
+        break;
 
     case H5S_SEL_ERROR:
     case H5S_SEL_N:
-	break;
+        break;
     }
 
     FUNC_LEAVE (ret_value);
@@ -637,7 +637,7 @@ for(u=0; u<space->extent.u.simple.rank; u++)
 hssize_t
 H5Sget_select_hyper_nblocks(hid_t spaceid)
 {
-    H5S_t	*space = NULL;      /* Dataspace to modify selection of */
+    H5S_t       *space = NULL;      /* Dataspace to modify selection of */
     hssize_t ret_value=FAIL;        /* return value */
 
     FUNC_ENTER (H5Sget_select_hyper_nblocks, FAIL);
@@ -707,7 +707,7 @@ H5S_get_select_elem_npoints(H5S_t *space)
 hssize_t
 H5Sget_select_elem_npoints(hid_t spaceid)
 {
-    H5S_t	*space = NULL;      /* Dataspace to modify selection of */
+    H5S_t       *space = NULL;      /* Dataspace to modify selection of */
     hssize_t ret_value=FAIL;        /* return value */
 
     FUNC_ENTER (H5Sget_select_elem_npoints, FAIL);
@@ -922,7 +922,7 @@ H5S_get_select_hyper_blocklist(H5S_t *space, hsize_t startblock, hsize_t numbloc
 herr_t
 H5Sget_select_hyper_blocklist(hid_t spaceid, hsize_t startblock, hsize_t numblocks, hsize_t *buf)
 {
-    H5S_t	*space = NULL;      /* Dataspace to modify selection of */
+    H5S_t       *space = NULL;      /* Dataspace to modify selection of */
     herr_t ret_value=FAIL;        /* return value */
 
     FUNC_ENTER (H5Sget_select_hyper_blocklist, FAIL);
@@ -1039,7 +1039,7 @@ H5S_get_select_elem_pointlist(H5S_t *space, hsize_t startpoint, hsize_t numpoint
 herr_t
 H5Sget_select_elem_pointlist(hid_t spaceid, hsize_t startpoint, hsize_t numpoints, hsize_t *buf)
 {
-    H5S_t	*space = NULL;      /* Dataspace to modify selection of */
+    H5S_t       *space = NULL;      /* Dataspace to modify selection of */
     herr_t ret_value=FAIL;        /* return value */
 
     FUNC_ENTER (H5Sget_select_elem_pointlist, FAIL);
@@ -1159,7 +1159,7 @@ H5S_get_select_bounds(H5S_t *space, hsize_t *start, hsize_t *end)
 herr_t
 H5Sget_select_bounds(hid_t spaceid, hsize_t *start, hsize_t *end)
 {
-    H5S_t	*space = NULL;      /* Dataspace to modify selection of */
+    H5S_t       *space = NULL;      /* Dataspace to modify selection of */
     herr_t ret_value=FAIL;        /* return value */
 
     FUNC_ENTER (H5Sget_select_bounds, FAIL);

@@ -1,9 +1,9 @@
 /*
  * Copyright (C) 2000 NCSA
- *		      All rights reserved.
+ *                    All rights reserved.
  *
  * Programmer: Quincey Koziol <koziol@ncsa.uiuc.edu>
- *	       Saturday, April 22, 2000
+ *             Saturday, April 22, 2000
  *
  * Purpose: Routines for using threaded, balanced, binary trees.
  *      Extended from (added threads to) Knuth 6.2.3, Algorithm A (AVL trees)
@@ -58,11 +58,11 @@
 
 /* Id */
 
-#include "H5private.h"		/*library                                 */
-#include "H5Eprivate.h"		/*error handling                          */
-#include "H5MMprivate.h"	/*core memory management                  */
-#include "H5FLprivate.h"	/*free lists                              */
-#include "H5TBprivate.h"        /*threaded, balanced, binary trees	  */
+#include "H5private.h"          /*library                                 */
+#include "H5Eprivate.h"         /*error handling                          */
+#include "H5MMprivate.h"        /*core memory management                  */
+#include "H5FLprivate.h"        /*free lists                              */
+#include "H5TBprivate.h"        /*threaded, balanced, binary trees        */
 
 #define KEYcmp(k1,k2,a) ((NULL!=compar) ? (*compar)( k1, k2, a) \
                  : HDmemcmp( k1, k2, 0<(a) ? (a) : HDstrlen(k1) )  )
@@ -87,15 +87,15 @@ static herr_t H5TB_dumpNode(H5TB_NODE *node, void (*key_dump)(void *,void *),
 /* Declare a free list to manage the H5TB_NODE struct */
 H5FL_DEFINE_STATIC(H5TB_NODE);
 
-#define PABLO_MASK	H5TB_mask
-static int		interface_initialize_g = 0;
-#define INTERFACE_INIT	NULL
+#define PABLO_MASK      H5TB_mask
+static int              interface_initialize_g = 0;
+#define INTERFACE_INIT  NULL
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5TB_dmake
+ * Function:    H5TB_dmake
  *
- * Purpose:	Allocates and initializes an empty threaded, balanced, binary tree
+ * Purpose:     Allocates and initializes an empty threaded, balanced, binary tree
  * and returns a pointer to the control structure for it.  You can also create
  * empty trees without this function as long as you never use H5TB_d* routines
  * (H5TB_dfind, H5TB_dins, H5TB_dfree) on them.
@@ -156,14 +156,14 @@ static int		interface_initialize_g = 0;
  * Never use H5TB_free() on a tree allocated with H5TB_dmake() or on a sub-tree
  * of ANY tree.  Never use H5TB_dfree() except on a H5TB_dmake()d tree.
  *
- * Return:	Success:	Pointer to a valid H5TB tree
- * 		Failure:	NULL
+ * Return:      Success:        Pointer to a valid H5TB tree
+ *              Failure:        NULL
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Saturday, April 22, 2000
  *
  * Modifications:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 H5TB_TREE  *
@@ -187,7 +187,7 @@ H5TB_dmake(H5TB_cmp_t cmp, int arg, unsigned fast_compare)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5TB_dfind
+ * Function:    H5TB_dfind
  *
  * Purpose: Look up a node in a "described" tree based on a key value
  * Locate a node based on the key given.  A pointer to the node in the tree
@@ -200,14 +200,14 @@ H5TB_dmake(H5TB_cmp_t cmp, int arg, unsigned fast_compare)
  * create using H5TB_dmake() and is used on any tree (or subtree) created with-
  * out using H5TB_dmake().]
  *
- * Return:	Success:	Pointer to a valid H5TB node
- * 		Failure:	NULL
+ * Return:      Success:        Pointer to a valid H5TB node
+ *              Failure:        NULL
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Thursday, May 5, 2000
  *
  * Modifications:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 H5TB_NODE  *
@@ -229,7 +229,7 @@ H5TB_dfind(H5TB_TREE * tree, void * key, H5TB_NODE ** pp)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5TB_find
+ * Function:    H5TB_find
  *
  * Purpose: Look up a node in a "non-described" tree based on a key value
  * Locate a node based on the key given.  A pointer to the node in the tree
@@ -242,17 +242,17 @@ H5TB_dfind(H5TB_TREE * tree, void * key, H5TB_NODE ** pp)
  * create using H5TB_dmake() and is used on any tree (or subtree) created with-
  * out using H5TB_dmake().]
  *
- * Return:	Success:	Pointer to a valid H5TB node
- * 		Failure:	NULL
+ * Return:      Success:        Pointer to a valid H5TB node
+ *              Failure:        NULL
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Thursday, May 5, 2000
  *
  * Modifications:
  * 
  * Notes:
  *  H5TB_ffind is based on this routine - fix bugs in both places!
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 H5TB_NODE  *
@@ -284,7 +284,7 @@ H5TB_find(H5TB_NODE * root, void * key,
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5TB_dless
+ * Function:    H5TB_dless
  *
  * Purpose: Look up a node in a "described" tree based on a key value.
  * Locate a node based on the key given.  A pointer to the node in the tree
@@ -297,16 +297,16 @@ H5TB_find(H5TB_NODE * root, void * key,
  * subtree of a tree create using H5TB_dmake() and is used on any tree (or
  * subtree) created with-out using H5TB_dmake().]
  *
- * Return:	Success:	Pointer to a valid H5TB node
- * 		Failure:	NULL
+ * Return:      Success:        Pointer to a valid H5TB node
+ *              Failure:        NULL
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Thursday, May 5, 2000
  *
  * Modifications:
  * 
  * Notes:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 H5TB_NODE  *
@@ -321,7 +321,7 @@ H5TB_dless(H5TB_TREE * tree, void * key, H5TB_NODE ** pp)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5TB_less
+ * Function:    H5TB_less
  *
  * Purpose: Look up a node in a "non-described" tree based on a key value.
  * Locate a node based on the key given.  A pointer to the node in the tree
@@ -334,16 +334,16 @@ H5TB_dless(H5TB_TREE * tree, void * key, H5TB_NODE ** pp)
  * subtree of a tree create using H5TB_dmake() and is used on any tree (or
  * subtree) created with-out using H5TB_dmake().]
  *
- * Return:	Success:	Pointer to a valid H5TB node
- * 		Failure:	NULL
+ * Return:      Success:        Pointer to a valid H5TB node
+ *              Failure:        NULL
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Thursday, May 5, 2000
  *
  * Modifications:
  * 
  * Notes:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 H5TB_NODE  *
@@ -367,8 +367,8 @@ H5TB_less(H5TB_NODE * root, void * key, H5TB_cmp_t compar, int arg, H5TB_NODE **
         } /* end while */
     } /* end if */
 
-	/* didn't find an exact match, search back up the tree until a node */
-	/* is found with a key less than the key searched for */
+        /* didn't find an exact match, search back up the tree until a node */
+        /* is found with a key less than the key searched for */
     if(cmp!=0) {
         while((ptr=ptr->Parent)!=NULL) {
               cmp = KEYcmp(key, ptr->key, arg);
@@ -389,7 +389,7 @@ H5TB_less(H5TB_NODE * root, void * key, H5TB_cmp_t compar, int arg, H5TB_NODE **
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5TB_index
+ * Function:    H5TB_index
  *
  * Purpose: Locate the node that has `indx' nodes with lesser key values.
  * This is like an array lookup with the first item in the list having index 0.
@@ -397,16 +397,16 @@ H5TB_less(H5TB_NODE * root, void * key, H5TB_cmp_t compar, int arg, H5TB_NODE **
  * followed by `indx' H5TB_next()s.  Thus `H5TB_index(&root,0L)' is equivalent to
  * (and almost as fast as) `H5TB_first(root)'.
  *
- * Return:	Success:	Pointer to a valid H5TB node
- * 		Failure:	NULL
+ * Return:      Success:        Pointer to a valid H5TB node
+ *              Failure:        NULL
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Friday, May 6, 2000
  *
  * Modifications:
  * 
  * Notes:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 H5TB_NODE  *
@@ -442,7 +442,7 @@ H5TB_index(H5TB_NODE * root, unsigned indx)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5TB_dins
+ * Function:    H5TB_dins
  *
  * Purpose: Insert a new node into a "described" tree, having a key value of
  * `key' and a data pointer of `item'.  If a node already exists in the tree
@@ -450,16 +450,16 @@ H5TB_index(H5TB_NODE * root, unsigned indx)
  * inserted), otherwise a pointer to the inserted node is returned.  `cmp' and
  * `arg' are as for H5TB_find().
  *
- * Return:	Success:	Pointer to a valid H5TB node
- * 		Failure:	NULL
+ * Return:      Success:        Pointer to a valid H5TB node
+ *              Failure:        NULL
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Friday, May 6, 2000
  *
  * Modifications:
  * 
  * Notes:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 H5TB_NODE  *
@@ -483,7 +483,7 @@ H5TB_dins(H5TB_TREE * tree, void * item, void * key)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5TB_ins
+ * Function:    H5TB_ins
  *
  * Purpose: Insert a new node into a "non-described" tree, having a key value of
  * `key' and a data pointer of `item'.  If a node already exists in the tree
@@ -491,16 +491,16 @@ H5TB_dins(H5TB_TREE * tree, void * item, void * key)
  * inserted), otherwise a pointer to the inserted node is returned.  `cmp' and
  * `arg' are as for H5TB_find().
  *
- * Return:	Success:	Pointer to a valid H5TB node
- * 		Failure:	NULL
+ * Return:      Success:        Pointer to a valid H5TB node
+ *              Failure:        NULL
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Friday, May 6, 2000
  *
  * Modifications:
  * 
  * Notes:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 H5TB_NODE  *
@@ -550,7 +550,7 @@ H5TB_ins(H5TB_NODE ** root, void * item, void * key, H5TB_cmp_t compar, int arg)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5TB_rem
+ * Function:    H5TB_rem
  *
  * Purpose: Remove a node from a tree.  You pass in the address of the
  * pointer to the root node of the tree along, a pointer to the node you wish
@@ -567,16 +567,16 @@ H5TB_ins(H5TB_NODE ** root, void * item, void * key, H5TB_cmp_t compar, int arg)
  *     data= H5TB_rem( &root, H5TB_find(root,key,compar,arg), NULL );
  *     data= H5TB_rem( &tree->root, H5TB_dfind(tree,key), NULL );
  *
- * Return:	Success:	Pointer to data item deleted
- * 		Failure:	NULL
+ * Return:      Success:        Pointer to data item deleted
+ *              Failure:        NULL
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Friday, May 6, 2000
  *
  * Modifications:
  * 
  * Notes:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 void *
@@ -714,23 +714,23 @@ H5TB_rem(H5TB_NODE ** root, H5TB_NODE * node, void * *kp)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5TB_first
+ * Function:    H5TB_first
  *
  * Purpose: Retrieves a pointer to node from the tree with the lowest(first)
  * key value.  If the tree is empy NULL is returned.  Examples:
  *     node= H5TB_first(*tree);
  *     node= H5TB_first(root);
  *
- * Return:	Success:	Pointer to a valid H5TB node
- * 		Failure:	NULL
+ * Return:      Success:        Pointer to a valid H5TB node
+ *              Failure:        NULL
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Friday, May 6, 2000
  *
  * Modifications:
  * 
  * Notes:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 H5TB_NODE  *
@@ -743,23 +743,23 @@ H5TB_first(H5TB_NODE * root)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5TB_last
+ * Function:    H5TB_last
  *
  * Purpose: Retrieves a pointer to node from the tree with the highest(last)
  * key value.  If the tree is empy NULL is returned.  Examples:
  *     node= H5TB_last(tree->root);
  *     node= H5TB_last(node);        (* Last node in a sub-tree *)
  *
- * Return:	Success:	Pointer to a valid H5TB node
- * 		Failure:	NULL
+ * Return:      Success:        Pointer to a valid H5TB node
+ *              Failure:        NULL
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Friday, May 6, 2000
  *
  * Modifications:
  * 
  * Notes:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 H5TB_NODE  *
@@ -772,22 +772,22 @@ H5TB_last(H5TB_NODE * root)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5TB_next
+ * Function:    H5TB_next
  *
  * Purpose: Returns a pointer the node from the tree with the next highest
  * key value relative to the node pointed to by `node'.  If `node' points the
  * last node of the tree, NULL is returned.
  *
- * Return:	Success:	Pointer to a valid H5TB node
- * 		Failure:	NULL
+ * Return:      Success:        Pointer to a valid H5TB node
+ *              Failure:        NULL
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Friday, May 6, 2000
  *
  * Modifications:
  * 
  * Notes:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 H5TB_NODE  *
@@ -800,22 +800,22 @@ H5TB_next(H5TB_NODE * node)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5TB_prev
+ * Function:    H5TB_prev
  *
  * Purpose: Returns a pointer the node from the tree with the previous lowest
  * key value relative to the node pointed to by `node'.  If `node' points the
  * first node of the tree, NULL is returned.
  *
- * Return:	Success:	Pointer to a valid H5TB node
- * 		Failure:	NULL
+ * Return:      Success:        Pointer to a valid H5TB node
+ *              Failure:        NULL
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Friday, May 6, 2000
  *
  * Modifications:
  * 
  * Notes:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 H5TB_NODE  *
@@ -828,7 +828,7 @@ H5TB_prev(H5TB_NODE * node)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5TB_dfree
+ * Function:    H5TB_dfree
  *
  * Purpose: Frees up an entire tree.  `fd' is a pointer to a function that
  * frees/destroys data items, and `fk' is the same for key values.
@@ -841,15 +841,15 @@ H5TB_prev(H5TB_NODE * node)
  * example) and likewise for `fd'.  H5TB_dfree() always returns NULL and
  * H5TB_free() always sets `root' to be NULL.
  *
- * Return:	Always returns NULL
+ * Return:      Always returns NULL
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Friday, May 6, 2000
  *
  * Modifications:
  * 
  * Notes:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 H5TB_TREE  *
@@ -871,7 +871,7 @@ H5TB_dfree(H5TB_TREE * tree, void(*fd) (void * /* item */), void(*fk) (void * /*
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5TB_free
+ * Function:    H5TB_free
  *
  * Purpose: Frees up an entire tree.  `fd' is a pointer to a function that
  * frees/destroys data items, and `fk' is the same for key values.
@@ -884,15 +884,15 @@ H5TB_dfree(H5TB_TREE * tree, void(*fd) (void * /* item */), void(*fk) (void * /*
  * example) and likewise for `fd'.  H5TB_dfree() always returns NULL and
  * H5TB_free() always sets `root' to be NULL.
  *
- * Return:	Always returns NULL
+ * Return:      Always returns NULL
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Friday, May 6, 2000
  *
  * Modifications:
  * 
  * Notes:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 void *
@@ -940,20 +940,20 @@ H5TB_free(H5TB_NODE ** root, void(*fd) (void * /* item */), void(*fk) (void * /*
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5TB_count
+ * Function:    H5TB_count
  *
  * Purpose: Returns the number of nodes in a tree
  *
- * Return:	Success - Number of nodes in the tree
+ * Return:      Success - Number of nodes in the tree
  *          Failure - Negative value
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Friday, May 6, 2000
  *
  * Modifications:
  * 
  * Notes:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 long
@@ -968,7 +968,7 @@ H5TB_count(H5TB_TREE * tree)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5TB_dump
+ * Function:    H5TB_dump
  *
  * Purpose: Prints out information about an entire tree.
  * The 'method' variable determines which sort of traversal is used:
@@ -976,15 +976,15 @@ H5TB_count(H5TB_TREE * tree)
  *       1 : Post-Order Traversal
  *       0 : In-Order Traversal
  *
- * Return:	Shouldn't fail
+ * Return:      Shouldn't fail
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Friday, May 6, 2000
  *
  * Modifications:
  * 
  * Notes:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 herr_t
@@ -992,28 +992,28 @@ H5TB_dump(H5TB_TREE *tree, void (*key_dump)(void *,void *), int method)
 {
     FUNC_ENTER(H5TB_dump,FAIL);
 
-	printf("H5TB-tree dump  %p:\n",tree);
-	printf("capacity = %ld\n\n",(long)tree->count);
-	H5TB_dumpNode(tree->root,key_dump, method);
+        printf("H5TB-tree dump  %p:\n",tree);
+        printf("capacity = %ld\n\n",(long)tree->count);
+        H5TB_dumpNode(tree->root,key_dump, method);
 
-	FUNC_LEAVE(SUCCESS);
+        FUNC_LEAVE(SUCCESS);
 }   /* end H5TB_dump() */
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5TB_printNode
+ * Function:    H5TB_printNode
  *
  * Purpose: Prints out information about a node in the tree
  *
- * Return:	Shouldn't fail
+ * Return:      Shouldn't fail
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Friday, May 6, 2000
  *
  * Modifications:
  * 
  * Notes:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 static herr_t
@@ -1037,7 +1037,7 @@ H5TB_printNode(H5TB_NODE * node, void(*key_dump)(void *,void *))
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5TB_dumpNode
+ * Function:    H5TB_dumpNode
  *
  * Purpose: Internal routine to actually dump tree
  * The 'method' variable determines which sort of traversal is used:
@@ -1045,15 +1045,15 @@ H5TB_printNode(H5TB_NODE * node, void(*key_dump)(void *,void *))
  *       1 : Post-Order Traversal
  *       0 : In-Order Traversal
  *
- * Return:	Shouldn't fail
+ * Return:      Shouldn't fail
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Friday, May 6, 2000
  *
  * Modifications:
  * 
  * Notes:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 static herr_t
@@ -1100,18 +1100,18 @@ H5TB_dumpNode(H5TB_NODE *node, void (*key_dump)(void *,void *),
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5TB_end
+ * Function:    H5TB_end
  *
- * Purpose:	Returns pointer to end-most (to LEFT or RIGHT) node of tree:
+ * Purpose:     Returns pointer to end-most (to LEFT or RIGHT) node of tree:
  *
- * Return:	Success:	Valid pointer
- * 		Failure:	NULL
+ * Return:      Success:        Valid pointer
+ *              Failure:        NULL
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Saturday, April 22, 2000
  *
  * Modifications:
- * 	
+ *      
  *-------------------------------------------------------------------------
  */
 static H5TB_NODE *

@@ -28,7 +28,7 @@ typedef enum {
     H5R_OBJECT,                 /*Object reference                           */
     H5R_DATASET_REGION,         /*Dataset Region Reference                   */
     H5R_INTERNAL,               /*Internal Reference                         */
-    H5R_MAXTYPE                 /*highest type (Invalid as true type)	     */
+    H5R_MAXTYPE                 /*highest type (Invalid as true type)        */
 } H5R_type_t;
 
 #ifdef LATER
@@ -67,7 +67,7 @@ extern "C" {
 
 /* Functions in H5R.c */
 __DLL__ herr_t H5Rcreate(void *ref, hid_t loc_id, const char *name,
-			 H5R_type_t ref_type, hid_t space_id);
+                         H5R_type_t ref_type, hid_t space_id);
 __DLL__ hid_t H5Rdereference(hid_t dataset, H5R_type_t ref_type, void *ref);
 __DLL__ hid_t H5Rget_region(hid_t dataset, H5R_type_t ref_type, void *ref);
 __DLL__ int H5Rget_object_type(hid_t dataset, void *_ref);

@@ -1,16 +1,16 @@
 /*-------------------------------------------------------------------------
- * Copyright (C) 1997	National Center for Supercomputing Applications.
- *			All rights reserved.
+ * Copyright (C) 1997   National Center for Supercomputing Applications.
+ *                      All rights reserved.
  *
  *-------------------------------------------------------------------------
  *
- * Created:		H5MM.c
- *			Jul 10 1997
- *			Robb Matzke <matzke@llnl.gov>
+ * Created:             H5MM.c
+ *                      Jul 10 1997
+ *                      Robb Matzke <matzke@llnl.gov>
  *
- * Purpose:		Memory management functions.
+ * Purpose:             Memory management functions.
  *
- * Modifications:	
+ * Modifications:       
  *
  *-------------------------------------------------------------------------
  */
@@ -25,23 +25,23 @@ static int interface_initialize_g = 0;
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5MM_realloc
+ * Function:    H5MM_realloc
  *
- * Purpose:	Just like the POSIX version of realloc(3). Specifically, the
- *		following calls are equivalent
+ * Purpose:     Just like the POSIX version of realloc(3). Specifically, the
+ *              following calls are equivalent
  *
- *		H5MM_realloc (NULL, size) <==> H5MM_malloc (size)
- *		H5MM_realloc (ptr, 0)	  <==> H5MM_xfree (ptr)
- *		H5MM_realloc (NULL, 0)	  <==> NULL
+ *              H5MM_realloc (NULL, size) <==> H5MM_malloc (size)
+ *              H5MM_realloc (ptr, 0)     <==> H5MM_xfree (ptr)
+ *              H5MM_realloc (NULL, 0)    <==> NULL
  *
- * Return:	Success:	Ptr to new memory or NULL if the memory
- *				was freed.
+ * Return:      Success:        Ptr to new memory or NULL if the memory
+ *                              was freed.
  *
- *		Failure:	abort()
+ *              Failure:        abort()
  *
- * Programmer:	Robb Matzke
- *		matzke@llnl.gov
- *		Jul 10 1997
+ * Programmer:  Robb Matzke
+ *              matzke@llnl.gov
+ *              Jul 10 1997
  *
  * Modifications:
  *
@@ -51,15 +51,15 @@ void *
 H5MM_realloc(void *mem, size_t size)
 {
     if (!mem) {
-	if (0 == size) return NULL;
-	mem = H5MM_malloc(size);
+        if (0 == size) return NULL;
+        mem = H5MM_malloc(size);
 
     } else if (0 == size) {
-	mem = H5MM_xfree(mem);
+        mem = H5MM_xfree(mem);
 
     } else {
-	mem = HDrealloc(mem, size);
-	assert(mem);
+        mem = HDrealloc(mem, size);
+        assert(mem);
     }
 
     return mem;
@@ -67,19 +67,19 @@ H5MM_realloc(void *mem, size_t size)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5MM_xstrdup
+ * Function:    H5MM_xstrdup
  *
- * Purpose:	Duplicates a string.  If the string to be duplicated is the
- *		null pointer, then return null.	 If the string to be duplicated
- *		is the empty string then return a new empty string.
+ * Purpose:     Duplicates a string.  If the string to be duplicated is the
+ *              null pointer, then return null.  If the string to be duplicated
+ *              is the empty string then return a new empty string.
  *
- * Return:	Success:	Ptr to a new string (or null if no string).
+ * Return:      Success:        Ptr to a new string (or null if no string).
  *
- *		Failure:	abort()
+ *              Failure:        abort()
  *
- * Programmer:	Robb Matzke
- *		matzke@llnl.gov
- *		Jul 10 1997
+ * Programmer:  Robb Matzke
+ *              matzke@llnl.gov
+ *              Jul 10 1997
  *
  * Modifications:
  *
@@ -88,7 +88,7 @@ H5MM_realloc(void *mem, size_t size)
 char *
 H5MM_xstrdup(const char *s)
 {
-    char	*mem;
+    char        *mem;
 
     if (!s) return NULL;
     mem = H5MM_malloc(HDstrlen(s) + 1);
@@ -99,19 +99,19 @@ H5MM_xstrdup(const char *s)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5MM_strdup
+ * Function:    H5MM_strdup
  *
- * Purpose:	Duplicates a string.  If the string to be duplicated is the
- *		null pointer, then return null.	 If the string to be duplicated
- *		is the empty string then return a new empty string.
+ * Purpose:     Duplicates a string.  If the string to be duplicated is the
+ *              null pointer, then return null.  If the string to be duplicated
+ *              is the empty string then return a new empty string.
  *
- * Return:	Success:	Ptr to a new string (or null if no string).
+ * Return:      Success:        Ptr to a new string (or null if no string).
  *
- *		Failure:	abort()
+ *              Failure:        abort()
  *
- * Programmer:	Robb Matzke
- *		matzke@llnl.gov
- *		Jul 10 1997
+ * Programmer:  Robb Matzke
+ *              matzke@llnl.gov
+ *              Jul 10 1997
  *
  * Modifications:
  *
@@ -120,17 +120,17 @@ H5MM_xstrdup(const char *s)
 char *
 H5MM_strdup(const char *s)
 {
-    char	*mem;
+    char        *mem;
 
     FUNC_ENTER (H5MM_strdup, NULL);
 
     if (!s) {
-	HRETURN_ERROR (H5E_ARGS, H5E_BADVALUE, NULL,
-		       "null string");
+        HRETURN_ERROR (H5E_ARGS, H5E_BADVALUE, NULL,
+                       "null string");
     }
     if (NULL==(mem = H5MM_malloc(HDstrlen(s) + 1))) {
-	HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, NULL,
-		       "memory allocation failed");
+        HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, NULL,
+                       "memory allocation failed");
     }
     HDstrcpy(mem, s);
 
@@ -139,21 +139,21 @@ H5MM_strdup(const char *s)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5MM_xfree
+ * Function:    H5MM_xfree
  *
- * Purpose:	Just like free(3) except null pointers are allowed as
- *		arguments, and the return value (always NULL) can be
- *		assigned to the pointer whose memory was just freed:
+ * Purpose:     Just like free(3) except null pointers are allowed as
+ *              arguments, and the return value (always NULL) can be
+ *              assigned to the pointer whose memory was just freed:
  *
- *			thing = H5MM_xfree (thing);
+ *                      thing = H5MM_xfree (thing);
  *
- * Return:	Success:	NULL
+ * Return:      Success:        NULL
  *
- *		Failure:	never fails
+ *              Failure:        never fails
  *
- * Programmer:	Robb Matzke
- *		matzke@llnl.gov
- *		Jul 10 1997
+ * Programmer:  Robb Matzke
+ *              matzke@llnl.gov
+ *              Jul 10 1997
  *
  * Modifications:
  *

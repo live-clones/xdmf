@@ -7,74 +7,78 @@
  *
  * Purpose:    SRB I/O driver.
  */
-#include "H5private.h"		/*library functions			*/
-#include "H5Eprivate.h"		/*error handling			*/
-#include "H5Fprivate.h"		/*files					*/
-#include "H5FDprivate.h"	/*file driver			        */
+#include "H5private.h"          /*library functions                     */
+#include "H5Eprivate.h"         /*error handling                        */
+#include "H5Fprivate.h"         /*files                                 */
+#include "H5FDprivate.h"        /*file driver                           */
 #include "H5FDsrb.h"            /*core file driver                      */
 #include "H5MMprivate.h"        /*memory allocation                     */
-#include "H5Pprivate.h"		/*property lists			*/
+#include "H5Pprivate.h"         /*property lists                        */
 
 /* The driver identification number, initialized at runtime */
 static hid_t H5FD_SRB_g = 0;
+hid_t GetH5FD_SRB_g()
+{ 
+  return H5FD_SRB_g;
+}
 
 #ifdef H5_HAVE_SRB
 
 #ifdef H5_HAVE_LSEEK64
-#   define file_offset_t	off64_t
-#   define file_seek		lseek64
+#   define file_offset_t        off64_t
+#   define file_seek            lseek64
 #else
-#   define file_offset_t	off_t
-#   define file_seek		lseek
+#   define file_offset_t        off_t
+#   define file_seek            lseek
 #endif
 
 /*
  * These macros check for overflow of various quantities.  These macros
  * assume that file_offset_t is signed and haddr_t and size_t are unsigned.
  * 
- * ADDR_OVERFLOW:	Checks whether a file address of type `haddr_t'
- *			is too large to be represented by the second argument
- *			of the file seek function.
+ * ADDR_OVERFLOW:       Checks whether a file address of type `haddr_t'
+ *                      is too large to be represented by the second argument
+ *                      of the file seek function.
  *
- * SIZE_OVERFLOW:	Checks whether a buffer size of type `hsize_t' is too
- *			large to be represented by the `size_t' type.
+ * SIZE_OVERFLOW:       Checks whether a buffer size of type `hsize_t' is too
+ *                      large to be represented by the `size_t' type.
  *
- * REGION_OVERFLOW:	Checks whether an address and size pair describe data
- *			which can be addressed entirely by the second
- *			argument of the file seek function.
+ * REGION_OVERFLOW:     Checks whether an address and size pair describe data
+ *                      which can be addressed entirely by the second
+ *                      argument of the file seek function.
  */
 #define MAXADDR (((haddr_t)1<<(8*sizeof(file_offset_t)-1))-1)
-#define ADDR_OVERFLOW(A)	(HADDR_UNDEF==(A) ||			      \
-				 ((A) & ~(haddr_t)MAXADDR))
-#define SIZE_OVERFLOW(Z)	((Z) & ~(hsize_t)MAXADDR)
-#define REGION_OVERFLOW(A,Z)	(ADDR_OVERFLOW(A) || SIZE_OVERFLOW(Z) ||      \
-				 sizeof(file_offset_t)<sizeof(size_t) ||      \
-                                 HADDR_UNDEF==(A)+(Z) ||		      \
-				 (file_offset_t)((A)+(Z))<(file_offset_t)(A))
+#define ADDR_OVERFLOW(A)        (HADDR_UNDEF==(A) ||                          \
+                                 ((A) & ~(haddr_t)MAXADDR))
+#define SIZE_OVERFLOW(Z)        ((Z) & ~(hsize_t)MAXADDR)
+#define REGION_OVERFLOW(A,Z)    (ADDR_OVERFLOW(A) || SIZE_OVERFLOW(Z) ||      \
+                                 sizeof(file_offset_t)<sizeof(size_t) ||      \
+                                 HADDR_UNDEF==(A)+(Z) ||                      \
+                                 (file_offset_t)((A)+(Z))<(file_offset_t)(A))
 
 
 static H5FD_t *H5FD_srb_open(const char *name, unsigned flags, hid_t fapl_id,
-	       	             haddr_t maxaddr);
+                             haddr_t maxaddr);
 static herr_t  H5FD_srb_close(H5FD_t *_file);
 static herr_t H5FD_srb_query(const H5FD_t *_f1, unsigned long *flags);
 static haddr_t H5FD_srb_get_eoa(H5FD_t *_file);
 static herr_t  H5FD_srb_set_eoa(H5FD_t *_file, haddr_t addr);
 static haddr_t H5FD_srb_get_eof(H5FD_t *_file);
 static herr_t  H5FD_srb_read(H5FD_t *_file, H5FD_mem_t type, hid_t fapl_id, haddr_t addr,
-			     hsize_t size, void *buf);
+                             hsize_t size, void *buf);
 static herr_t  H5FD_srb_write(H5FD_t *_file, H5FD_mem_t type, hid_t fapl_id, haddr_t addr,
-			      hsize_t size, const void *buf);
+                              hsize_t size, const void *buf);
 static herr_t  H5FD_srb_flush(H5FD_t *_file);
 
 /* The description of a file belonging to this driver. */ 
 typedef struct H5FD_srb_t {
-    H5FD_t	pub;			/*public stuff, must be first	*/
-    int		fd;			/*file descriptor    		*/
+    H5FD_t      pub;                    /*public stuff, must be first   */
+    int         fd;                     /*file descriptor               */
     srbConn     *srb_conn;              /*SRB connection handler        */
     SRB_Info    info;                   /*file information              */
-    haddr_t	eoa;			/*end of allocated region	*/
-    haddr_t	eof;			/*end of file; current file size*/
-    haddr_t	pos;			/*current file I/O position	*/  
+    haddr_t     eoa;                    /*end of allocated region       */
+    haddr_t     eof;                    /*end of file; current file size*/
+    haddr_t     pos;                    /*current file I/O position     */  
 } H5FD_srb_t;
 
 /* SRB-specific file access properties */
@@ -85,31 +89,31 @@ typedef struct H5FD_srb_fapl_t {
 
 /* SRB file driver information */
 static const H5FD_class_t H5FD_srb_g = {
-    "srb",					/*name			*/
-    MAXADDR,					/*maxaddr		*/
-    NULL,					/*sb_size		*/
-    NULL,					/*sb_encode		*/
-    NULL,					/*sb_decode		*/
-    sizeof(H5FD_srb_fapl_t), 			/*fapl_size		*/
-    NULL,					/*fapl_get		*/
-    NULL,					/*fapl_copy		*/
-    NULL, 					/*fapl_free		*/
-    0,						/*dxpl_size		*/
-    NULL,					/*dxpl_copy		*/
-    NULL,					/*dxpl_free		*/
-    H5FD_srb_open,         	 		/*open			*/
-    H5FD_srb_close,		        	/*close			*/
-    NULL,				        /*cmp			*/
-    H5FD_srb_query,				/*query			*/
-    NULL,					/*alloc			*/
-    NULL,					/*free			*/
-    H5FD_srb_get_eoa,           		/*get_eoa		*/
-    H5FD_srb_set_eoa, 		                /*set_eoa		*/
-    H5FD_srb_get_eof,				/*get_eof		*/
-    H5FD_srb_read,				/*read			*/
-    H5FD_srb_write,				/*write			*/
-    H5FD_srb_flush,				/*flush			*/
-    H5FD_FLMAP_SINGLE,				/*fl_map		*/
+    "srb",                                      /*name                  */
+    MAXADDR,                                    /*maxaddr               */
+    NULL,                                       /*sb_size               */
+    NULL,                                       /*sb_encode             */
+    NULL,                                       /*sb_decode             */
+    sizeof(H5FD_srb_fapl_t),                    /*fapl_size             */
+    NULL,                                       /*fapl_get              */
+    NULL,                                       /*fapl_copy             */
+    NULL,                                       /*fapl_free             */
+    0,                                          /*dxpl_size             */
+    NULL,                                       /*dxpl_copy             */
+    NULL,                                       /*dxpl_free             */
+    H5FD_srb_open,                              /*open                  */
+    H5FD_srb_close,                             /*close                 */
+    NULL,                                       /*cmp                   */
+    H5FD_srb_query,                             /*query                 */
+    NULL,                                       /*alloc                 */
+    NULL,                                       /*free                  */
+    H5FD_srb_get_eoa,                           /*get_eoa               */
+    H5FD_srb_set_eoa,                           /*set_eoa               */
+    H5FD_srb_get_eof,                           /*get_eof               */
+    H5FD_srb_read,                              /*read                  */
+    H5FD_srb_write,                             /*write                 */
+    H5FD_srb_flush,                             /*flush                 */
+    H5FD_FLMAP_SINGLE,                          /*fl_map                */
 };
 
 /* Interface initialization */
@@ -291,12 +295,12 @@ H5FD_srb_open(const char *name, unsigned flags, hid_t fapl_id, haddr_t maxaddr)
         srb_fid = srbFileCreate(fa->srb_conn, fa->info.storSysType, 
             fa->info.srbHost, name, fa->info.mode, fa->info.size);             
     else if((flags & H5F_ACC_CREAT) && (flags & H5F_ACC_RDWR) && 
-	    (flags & H5F_ACC_TRUNC)) {
+            (flags & H5F_ACC_TRUNC)) {
         if( (srb_fid = srbFileCreate(fa->srb_conn, fa->info.storSysType, 
             fa->info.srbHost, name, fa->info.mode, fa->info.size)) < 0 ) {
             srb_fid = srbFileOpen(fa->srb_conn, fa->info.storSysType, 
                  fa->info.srbHost, name, O_RDWR|O_TRUNC, fa->info.mode);
-	} 
+        } 
     }
     else if((flags & H5F_ACC_RDWR) && (flags & H5F_ACC_TRUNC))
         srb_fid = srbFileOpen(fa->srb_conn, fa->info.storSysType, 
@@ -364,16 +368,16 @@ H5FD_srb_close(H5FD_t *_file)
 
 
 /*-------------------------------------------------------------------------
- * Function:	H5FD_srb_query
+ * Function:    H5FD_srb_query
  *
- * Purpose:	Set the flags that this VFL driver is capable of supporting.
+ * Purpose:     Set the flags that this VFL driver is capable of supporting.
  *              (listed in H5FDpublic.h)
  *
- * Return:	Success:	non-negative
+ * Return:      Success:        non-negative
  *
- *		Failure:	negative
+ *              Failure:        negative
  *
- * Programmer:	Quincey Koziol
+ * Programmer:  Quincey Koziol
  *              Tuesday, September 26, 2000
  *
  * Modifications:
