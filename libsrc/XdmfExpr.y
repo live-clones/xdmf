@@ -864,6 +864,10 @@ if ( yyparse() != 0 ){
 Item = XdmfExprSymbolLookup( NULL );
 while( Item != NULL ) {
   XdmfExprSymbol *next = Item->Next;
+  if ( Item->Name )
+    {
+    free(Item->Name);
+    }
   free(Item);
 	Item = next;
 	}
