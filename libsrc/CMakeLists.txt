@@ -165,12 +165,13 @@ CHECK_INCLUDE_FILE(malloc.h XDMF_HAVE_MALLOC_H)
 CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/libsrc/XdmfConfig.h.in
   ${Xdmf_BINARY_DIR}/libsrc/XdmfConfig.h)
 
-IF(XDMF_BUILD_VTK)
-  SET(XDMF_EXPAT_HEADER "vtk_expat.h")
-ELSE(XDMF_BUILD_VTK)
-#  SET(XDMF_EXPAT_HEADER "expat.h")
-# this is set in ../CMakeLists.txt
-ENDIF(XDMF_BUILD_VTK)
+IF(NOT XDMF_EXPAT_HEADER)
+  IF(XDMF_BUILD_VTK)
+    SET(XDMF_EXPAT_HEADER "vtk_expat.h")
+  ELSE(XDMF_BUILD_VTK)
+    SET(XDMF_EXPAT_HEADER "expat.h")
+  ENDIF(XDMF_BUILD_VTK)
+ENDIF(NOT XDMF_EXPAT_HEADER)
 
 CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/libsrc/xdmf_expat.h.in
   ${Xdmf_BINARY_DIR}/libsrc/xdmf_expat.h)
