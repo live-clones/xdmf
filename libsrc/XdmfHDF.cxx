@@ -277,7 +277,7 @@ XdmfString  Pathname, Slash;
 hid_t    Directory;
 
 if( path ) {
-  XdmfString lastcolon;
+  XdmfConstString lastcolon;
 
   // Skip Colons
     lastcolon = strrchr( path, ':' );
