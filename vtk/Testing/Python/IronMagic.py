@@ -11,6 +11,12 @@ import sys
 
 import string
 
+tt = vtk.vtkTesting()
+tt.AddArgument("-D")
+tt.AddArgument(sys.argv[1])
+tt.AddArgument("-V")
+tt.AddArgument("Baseline/%s.png" % sys.argv[2])
+
 if not vtkxdmf:
   print "Cannot load vtkXdmfPython"
   sys.exit()
@@ -29,7 +35,7 @@ camera.SetViewAngle(30)
 camera.SetClippingRange(168.866, 315.51)
 
 pvTemp69 = vtkxdmf.vtkXdmfReader()
-pvTemp69.SetFileName(sys.argv[1])
+pvTemp69.SetFileName("%s/Data/Iron Protein.xmf" % tt.GetDataRoot())
 pvTemp69.SetStride(1, 1, 1)
 pvTemp69.UpdateInformation()
 pvTemp69.SetDomainName("IronProtein")
@@ -291,8 +297,6 @@ pvTemp309.GetProperty().SetSpecularColor(1, 1, 1)
 Ren1.AddActor( pvTemp309)
 
 
-tt = vtk.vtkTesting()
-tt.SetDataFileName("%s/%s.png" % (sys.argv[2], sys.argv[3]))
 tt.SetRenderWindow(RenWin1)
 if tt.RegressionTest(10) != 1:
   sys.exit(1)
