@@ -35,6 +35,7 @@ XdmfAttribute::XdmfAttribute() {
   this->ValuesAreMine = 1;
   this->Values = NULL;
   this->ShapeDesc = new XdmfDataDesc();
+  this->Active = 0;
   }
 
 XdmfAttribute::~XdmfAttribute() {
@@ -145,6 +146,14 @@ if( Attribute ){
   this->SetAttributeTypeFromString( Attribute );
 } else {
   this->AttributeType = XDMF_ATTRIBUTE_TYPE_SCALAR;
+}
+
+Attribute = this->DOM->Get( Element, "Active" );
+this->Active = 0;
+if ( Attribute ){
+  if( XDMF_WORD_CMP( Attribute, "1" ) ) {
+    this->Active = 1;
+  }
 }
 
 Attribute = this->DOM->Get( Element, "Center" );

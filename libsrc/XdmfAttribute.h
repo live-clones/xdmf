@@ -71,6 +71,9 @@ public:
 //! Return the Attribute Type
   XdmfGetValueMacro( AttributeType, XdmfInt32 );
 
+//! Return the if the Attribute is Active
+  XdmfGetValueMacro( Active, XdmfInt32 );
+
 //! Set the type using a String
   XdmfInt32 SetAttributeTypeFromString( XdmfConstString AttributeType );
 //! Get the Type as a String
@@ -114,6 +117,7 @@ protected:
   XdmfDataDesc  *ShapeDesc;
   XdmfInt32  ValuesAreMine;
   XdmfArray  *Values;
+  XdmfInt32  Active;
 };
 
 #endif // __XdmfAttribute_h
