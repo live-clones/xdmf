@@ -7,6 +7,14 @@ INCLUDE_DIRECTORIES(
   ${Xdmf_BINARY_DIR}/libsrc
   ${Xdmf_SOURCE_DIR}/vtk
   ${Xdmf_BINARY_DIR}/vtk
+  ${VTK_SOURCE_DIR}
+  ${VTK_BINARY_DIR}
+  ${VTK_SOURCE_DIR}/Common
+  ${VTK_BINARY_DIR}/Common
+  ${VTK_SOURCE_DIR}/IO
+  ${VTK_BINARY_DIR}/IO
+  ${VTK_SOURCE_DIR}/Rendering
+  ${VTK_BINARY_DIR}/Rendering
   )
 SUBDIRS(Ice)
 SUBDIRS(libsrc)
