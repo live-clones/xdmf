@@ -37,6 +37,7 @@ swig -v -c++ -make_default -includeall -shadow -java $(ICE_INCLUDES) -o XdmfJava
 #include <XdmfNDGM.h>
 
 #ifndef HAVE_STRTOLL
+# define strtoll XDMF_strtoll
 inline XDMF_LONG64 XDMF_strtoll(char *str, void*, int)
 {
   XDMF_LONG64 result = 0;

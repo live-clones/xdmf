@@ -719,42 +719,40 @@ SWIG_Python_InstallConstants(PyObject *d, swig_const_info constants[]) {
 
 /* -------- TYPES TABLE (BEGIN) -------- */
 
-#define  SWIGTYPE_p_XdmfFormatXML swig_types[0] 
-#define  SWIGTYPE_p_XdmfTransform swig_types[1] 
-#define  SWIGTYPE_p_XdmfTopology swig_types[2] 
-#define  SWIGTYPE_p_XdmfNDGM swig_types[3] 
-#define  SWIGTYPE_p_XdmfInt64 swig_types[4] 
-#define  SWIGTYPE_XdmfPointer swig_types[5] 
-#define  SWIGTYPE_p_void swig_types[6] 
-#define  SWIGTYPE_p_XdmfArray swig_types[7] 
-#define  SWIGTYPE_p_XDMF_TREE_NODE swig_types[8] 
-#define  SWIGTYPE_p_XdmfFormatHDF swig_types[9] 
-#define  SWIGTYPE_p_XdmfGeometry swig_types[10] 
-#define  SWIGTYPE_p_XdmfFormatMulti swig_types[11] 
-#define  SWIGTYPE_p_XdmfObject swig_types[12] 
-#define  SWIGTYPE_p_XdmfHDF swig_types[13] 
-#define  SWIGTYPE_p_XdmfXNode swig_types[14] 
-#define  SWIGTYPE_p_XdmfDOM swig_types[15] 
-#define  SWIGTYPE_p_XdmfArrayList swig_types[16] 
-#define  SWIGTYPE_p_XdmfLightData swig_types[17] 
-#define  SWIGTYPE_p_XdmfInt32 swig_types[18] 
-#define  SWIGTYPE_p_XdmfHeavyData swig_types[19] 
-#define  SWIGTYPE_p_XdmfFloat64 swig_types[20] 
-#define  SWIGTYPE_p_NDGM_NODE swig_types[21] 
-#define  SWIGTYPE_p_hid_t swig_types[22] 
-#define  SWIGTYPE_p_XdmfParameter swig_types[23] 
-#define  SWIGTYPE_p_istream swig_types[24] 
-#define  SWIGTYPE_p_ostream swig_types[25] 
-#define  SWIGTYPE_p_XdmfLength swig_types[26] 
-#define  SWIGTYPE_p_XdmfAttribute swig_types[27] 
-#define  SWIGTYPE_p_XdmfCharArray swig_types[28] 
-#define  SWIGTYPE_p_XdmfFormat swig_types[29] 
-#define  SWIGTYPE_p_long_long swig_types[30] 
-#define  SWIGTYPE_p_XdmfFloat32 swig_types[31] 
-#define  SWIGTYPE_p_XdmfDataDesc swig_types[32] 
-#define  SWIGTYPE_p_istrstream swig_types[33] 
-#define  SWIGTYPE_p_XdmfGrid swig_types[34] 
-static swig_type_info *swig_types[36];
+#define  SWIGTYPE_p_XdmfArrayList swig_types[0] 
+#define  SWIGTYPE_p_XdmfFloat64 swig_types[1] 
+#define  SWIGTYPE_p_XdmfLightData swig_types[2] 
+#define  SWIGTYPE_p_XdmfTransform swig_types[3] 
+#define  SWIGTYPE_p_XdmfObject swig_types[4] 
+#define  SWIGTYPE_p_XdmfDOM swig_types[5] 
+#define  SWIGTYPE_p_XdmfParameter swig_types[6] 
+#define  SWIGTYPE_p_XdmfFormatHDF swig_types[7] 
+#define  SWIGTYPE_p_XdmfXNode swig_types[8] 
+#define  SWIGTYPE_p_XdmfFormatXML swig_types[9] 
+#define  SWIGTYPE_p_XdmfCharArray swig_types[10] 
+#define  SWIGTYPE_p_XdmfFloat32 swig_types[11] 
+#define  SWIGTYPE_p_XdmfGrid swig_types[12] 
+#define  SWIGTYPE_p_hid_t swig_types[13] 
+#define  SWIGTYPE_p_XdmfHeavyData swig_types[14] 
+#define  SWIGTYPE_p_XdmfLength swig_types[15] 
+#define  SWIGTYPE_p_XdmfAttribute swig_types[16] 
+#define  SWIGTYPE_p_void swig_types[17] 
+#define  SWIGTYPE_p_ostream swig_types[18] 
+#define  SWIGTYPE_p_istream swig_types[19] 
+#define  SWIGTYPE_p_XdmfFormat swig_types[20] 
+#define  SWIGTYPE_p_XdmfInt64 swig_types[21] 
+#define  SWIGTYPE_p_XdmfTopology swig_types[22] 
+#define  SWIGTYPE_p_NDGM_NODE swig_types[23] 
+#define  SWIGTYPE_p_XdmfDataDesc swig_types[24] 
+#define  SWIGTYPE_XdmfPointer swig_types[25] 
+#define  SWIGTYPE_p_XDMF_TREE_NODE swig_types[26] 
+#define  SWIGTYPE_p_XdmfFormatMulti swig_types[27] 
+#define  SWIGTYPE_p_XdmfArray swig_types[28] 
+#define  SWIGTYPE_p_XdmfNDGM swig_types[29] 
+#define  SWIGTYPE_p_XdmfGeometry swig_types[30] 
+#define  SWIGTYPE_p_XdmfInt32 swig_types[31] 
+#define  SWIGTYPE_p_XdmfHDF swig_types[32] 
+static swig_type_info *swig_types[34];
 
 /* -------- TYPES TABLE (END) -------- */
 
@@ -787,6 +785,38 @@ static swig_type_info *swig_types[36];
 #include <XdmfTransform.h>
 #include <XdmfXNode.h>
 #include <XdmfNDGM.h>
+
+#ifndef HAVE_STRTOLL
+# define strtoll XDMF_strtoll
+inline XDMF_LONG64 XDMF_strtoll(char *str, void*, int)
+{
+  XDMF_LONG64 result = 0;
+  int negative=0;
+
+  while (*str == ' ' || *str == '\t')
+    {
+    str++;
+    }
+  if (*str == '+')
+    {
+    str++;
+    }
+  else if (*str == '-')
+    {
+    negative = 1;
+    str++;
+    }
+
+  while (*str >= '0' && *str <= '9')
+    {
+    result = (result*10)-(*str++ - '0');
+    }
+  return negative ? result : -result;
+}
+#else
+# define XDMF_strtoll strtoll
+#endif
+
 
 
 #define  SWIG_MemoryError    1
@@ -850,7 +880,6 @@ static void SWIG_exception_(int code, const char *msg) {
 
 extern XdmfString XdmfObjectToHandle(XdmfObject *);
 extern XdmfObject *HandleToXdmfObject(XdmfConstString);
-extern istrstream &ICE_READ_STREAM64(istrstream &,ICE_64_INT &);
 extern hid_t XdmfTypeToHDF5Type(XdmfInt32);
 extern XdmfInt32 HDF5TypeToXdmfType(hid_t);
 extern XdmfConstString XdmfTypeToString(XdmfInt32);
@@ -1142,36 +1171,6 @@ static PyObject *_wrap_HandleToXdmfObject(PyObject *, PyObject *args) {
     
     
     resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_XdmfObject, 0);
-    return resultobj;
-    fail:
-    return NULL;
-}
-
-
-static PyObject *_wrap_ICE_READ_STREAM64(PyObject *, PyObject *args) {
-    PyObject *resultobj;
-    istrstream *arg1 = 0 ;
-    ICE_64_INT *arg2 = 0 ;
-    istrstream *result;
-    PyObject * obj0 = 0 ;
-    PyObject * obj1 = 0 ;
-    
-    if(!PyArg_ParseTuple(args,(char *)"OO:ICE_READ_STREAM64",&obj0,&obj1)) goto fail;
-    if ((SWIG_ConvertPtr(obj0,(void **) &arg1, SWIGTYPE_p_istrstream,SWIG_POINTER_EXCEPTION | 0 )) == -1) SWIG_fail;
-    if (arg1 == NULL) {
-        PyErr_SetString(PyExc_TypeError,"null reference"); SWIG_fail; 
-    }
-    if ((SWIG_ConvertPtr(obj1,(void **) &arg2, SWIGTYPE_p_long_long,SWIG_POINTER_EXCEPTION | 0 )) == -1) SWIG_fail;
-    if (arg2 == NULL) {
-        PyErr_SetString(PyExc_TypeError,"null reference"); SWIG_fail; 
-    }
-    {
-        istrstream &_result_ref = ICE_READ_STREAM64(*arg1,*arg2);
-        result = (istrstream *) &_result_ref;
-    }
-    
-    
-    resultobj = SWIG_NewPointerObj((void *) result, SWIGTYPE_p_istrstream, 0);
     return resultobj;
     fail:
     return NULL;
@@ -9564,6 +9563,7 @@ static PyObject *_wrap_XdmfNDGM_BarrierPoll(PyObject *, PyObject *args) {
     if ((SWIG_ConvertPtr(obj0,(void **) &arg1, SWIGTYPE_p_XdmfNDGM,SWIG_POINTER_EXCEPTION | 0 )) == -1) SWIG_fail;
     result = (XdmfInt32)(arg1)->BarrierPoll(arg2);
     
+    
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
     fail:
@@ -9645,7 +9645,6 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"GetUnique", _wrap_GetUnique, METH_VARARGS, 0 },
 	 { (char *)"XdmfObjectToHandle", _wrap_XdmfObjectToHandle, METH_VARARGS, 0 },
 	 { (char *)"HandleToXdmfObject", _wrap_HandleToXdmfObject, METH_VARARGS, 0 },
-	 { (char *)"ICE_READ_STREAM64", _wrap_ICE_READ_STREAM64, METH_VARARGS, 0 },
 	 { (char *)"XdmfTypeToHDF5Type", _wrap_XdmfTypeToHDF5Type, METH_VARARGS, 0 },
 	 { (char *)"HDF5TypeToXdmfType", _wrap_HDF5TypeToXdmfType, METH_VARARGS, 0 },
 	 { (char *)"XdmfTypeToString", _wrap_XdmfTypeToString, METH_VARARGS, 0 },
@@ -10085,11 +10084,32 @@ static PyMethodDef SwigMethods[] = {
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
-static void *_p_XdmfGridTo_p_XdmfTopology(void *x) {
-    return (void *)((XdmfTopology *)  ((XdmfGrid *) x));
+static void *_p_XdmfGridTo_p_XdmfLightData(void *x) {
+    return (void *)((XdmfLightData *) (XdmfTopology *) ((XdmfGrid *) x));
 }
-static void *_p_XdmfCharArrayTo_p_XdmfArray(void *x) {
-    return (void *)((XdmfArray *)  ((XdmfCharArray *) x));
+static void *_p_XdmfFormatHDFTo_p_XdmfLightData(void *x) {
+    return (void *)((XdmfLightData *) (XdmfFormat *) ((XdmfFormatHDF *) x));
+}
+static void *_p_XdmfTopologyTo_p_XdmfLightData(void *x) {
+    return (void *)((XdmfLightData *)  ((XdmfTopology *) x));
+}
+static void *_p_XdmfAttributeTo_p_XdmfLightData(void *x) {
+    return (void *)((XdmfLightData *)  ((XdmfAttribute *) x));
+}
+static void *_p_XdmfFormatTo_p_XdmfLightData(void *x) {
+    return (void *)((XdmfLightData *)  ((XdmfFormat *) x));
+}
+static void *_p_XdmfFormatMultiTo_p_XdmfLightData(void *x) {
+    return (void *)((XdmfLightData *) (XdmfFormat *) ((XdmfFormatMulti *) x));
+}
+static void *_p_XdmfGeometryTo_p_XdmfLightData(void *x) {
+    return (void *)((XdmfLightData *)  ((XdmfGeometry *) x));
+}
+static void *_p_XdmfTransformTo_p_XdmfLightData(void *x) {
+    return (void *)((XdmfLightData *)  ((XdmfTransform *) x));
+}
+static void *_p_XdmfFormatXMLTo_p_XdmfLightData(void *x) {
+    return (void *)((XdmfLightData *) (XdmfFormat *) ((XdmfFormatXML *) x));
 }
 static void *_p_XdmfLightDataTo_p_XdmfObject(void *x) {
     return (void *)((XdmfObject *)  ((XdmfLightData *) x));
@@ -10148,33 +10168,6 @@ static void *_p_XdmfGeometryTo_p_XdmfObject(void *x) {
 static void *_p_XdmfHDFTo_p_XdmfObject(void *x) {
     return (void *)((XdmfObject *) (XdmfDataDesc *)(XdmfHeavyData *) ((XdmfHDF *) x));
 }
-static void *_p_XdmfGridTo_p_XdmfLightData(void *x) {
-    return (void *)((XdmfLightData *) (XdmfTopology *) ((XdmfGrid *) x));
-}
-static void *_p_XdmfFormatHDFTo_p_XdmfLightData(void *x) {
-    return (void *)((XdmfLightData *) (XdmfFormat *) ((XdmfFormatHDF *) x));
-}
-static void *_p_XdmfTopologyTo_p_XdmfLightData(void *x) {
-    return (void *)((XdmfLightData *)  ((XdmfTopology *) x));
-}
-static void *_p_XdmfAttributeTo_p_XdmfLightData(void *x) {
-    return (void *)((XdmfLightData *)  ((XdmfAttribute *) x));
-}
-static void *_p_XdmfFormatTo_p_XdmfLightData(void *x) {
-    return (void *)((XdmfLightData *)  ((XdmfFormat *) x));
-}
-static void *_p_XdmfFormatMultiTo_p_XdmfLightData(void *x) {
-    return (void *)((XdmfLightData *) (XdmfFormat *) ((XdmfFormatMulti *) x));
-}
-static void *_p_XdmfGeometryTo_p_XdmfLightData(void *x) {
-    return (void *)((XdmfLightData *)  ((XdmfGeometry *) x));
-}
-static void *_p_XdmfTransformTo_p_XdmfLightData(void *x) {
-    return (void *)((XdmfLightData *)  ((XdmfTransform *) x));
-}
-static void *_p_XdmfFormatXMLTo_p_XdmfLightData(void *x) {
-    return (void *)((XdmfLightData *) (XdmfFormat *) ((XdmfFormatXML *) x));
-}
 static void *_p_XdmfHDFTo_p_XdmfHeavyData(void *x) {
     return (void *)((XdmfHeavyData *)  ((XdmfHDF *) x));
 }
@@ -10186,6 +10179,9 @@ static void *_p_XdmfFormatMultiTo_p_XdmfFormat(void *x) {
 }
 static void *_p_XdmfFormatXMLTo_p_XdmfFormat(void *x) {
     return (void *)((XdmfFormat *)  ((XdmfFormatXML *) x));
+}
+static void *_p_XdmfGridTo_p_XdmfTopology(void *x) {
+    return (void *)((XdmfTopology *)  ((XdmfGrid *) x));
 }
 static void *_p_XdmfHeavyDataTo_p_XdmfDataDesc(void *x) {
     return (void *)((XdmfDataDesc *)  ((XdmfHeavyData *) x));
@@ -10202,78 +10198,77 @@ static void *_p_XdmfHDFTo_p_XdmfDataDesc(void *x) {
 static void *_p_XdmfCharArrayTo_p_XdmfDataDesc(void *x) {
     return (void *)((XdmfDataDesc *) (XdmfArray *) ((XdmfCharArray *) x));
 }
-static swig_type_info _swigt__p_XdmfFormatXML[] = {{"_p_XdmfFormatXML", 0, "XdmfFormatXML *", 0, 0, 0, 0},{"_p_XdmfFormatXML", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
-static swig_type_info _swigt__p_XdmfTransform[] = {{"_p_XdmfTransform", 0, "XdmfTransform *", 0, 0, 0, 0},{"_p_XdmfTransform", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
-static swig_type_info _swigt__p_XdmfTopology[] = {{"_p_XdmfTopology", 0, "XdmfTopology *", 0, 0, 0, 0},{"_p_XdmfGrid", _p_XdmfGridTo_p_XdmfTopology, 0, 0, 0, 0, 0},{"_p_XdmfTopology", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
-static swig_type_info _swigt__p_XdmfNDGM[] = {{"_p_XdmfNDGM", 0, "XdmfNDGM *", 0, 0, 0, 0},{"_p_XdmfNDGM", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
-static swig_type_info _swigt__p_XdmfInt64[] = {{"_p_XdmfInt64", 0, "XdmfInt64 *", 0, 0, 0, 0},{"_p_long_long", 0, 0, 0, 0, 0, 0},{"_p_XdmfLength", 0, 0, 0, 0, 0, 0},{"_p_XdmfInt64", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
-static swig_type_info _swigt__XdmfPointer[] = {{"_XdmfPointer", 0, "XdmfPointer", 0, 0, 0, 0},{"_XdmfPointer", 0, 0, 0, 0, 0, 0},{"_p_void", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
-static swig_type_info _swigt__p_void[] = {{"_p_void", 0, "void *", 0, 0, 0, 0},{"_XdmfPointer", 0, 0, 0, 0, 0, 0},{"_p_void", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
-static swig_type_info _swigt__p_XdmfArray[] = {{"_p_XdmfArray", 0, "XdmfArray *", 0, 0, 0, 0},{"_p_XdmfArray", 0, 0, 0, 0, 0, 0},{"_p_XdmfCharArray", _p_XdmfCharArrayTo_p_XdmfArray, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
-static swig_type_info _swigt__p_XDMF_TREE_NODE[] = {{"_p_XDMF_TREE_NODE", 0, "XDMF_TREE_NODE *", 0, 0, 0, 0},{"_p_XDMF_TREE_NODE", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
-static swig_type_info _swigt__p_XdmfFormatHDF[] = {{"_p_XdmfFormatHDF", 0, "XdmfFormatHDF *", 0, 0, 0, 0},{"_p_XdmfFormatHDF", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
-static swig_type_info _swigt__p_XdmfGeometry[] = {{"_p_XdmfGeometry", 0, "XdmfGeometry *", 0, 0, 0, 0},{"_p_XdmfGeometry", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
-static swig_type_info _swigt__p_XdmfFormatMulti[] = {{"_p_XdmfFormatMulti", 0, "XdmfFormatMulti *", 0, 0, 0, 0},{"_p_XdmfFormatMulti", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
-static swig_type_info _swigt__p_XdmfObject[] = {{"_p_XdmfObject", 0, "XdmfObject *", 0, 0, 0, 0},{"_p_XdmfTransform", _p_XdmfTransformTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfLightData", _p_XdmfLightDataTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfDOM", _p_XdmfDOMTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfObject", 0, 0, 0, 0, 0, 0},{"_p_XdmfParameter", _p_XdmfParameterTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfFormatHDF", _p_XdmfFormatHDFTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfFormatXML", _p_XdmfFormatXMLTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfXNode", _p_XdmfXNodeTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfCharArray", _p_XdmfCharArrayTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfGrid", _p_XdmfGridTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfHeavyData", _p_XdmfHeavyDataTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfAttribute", _p_XdmfAttributeTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfFormat", _p_XdmfFormatTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfTopology", _p_XdmfTopologyTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfFormatMulti", _p_XdmfFormatMultiTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfDataDesc", _p_XdmfDataDescTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfNDGM", _p_XdmfNDGMTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfArray", _p_XdmfArrayTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfGeometry", _p_XdmfGeometryTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfHDF", _p_XdmfHDFTo_p_XdmfObject, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
-static swig_type_info _swigt__p_XdmfHDF[] = {{"_p_XdmfHDF", 0, "XdmfHDF *", 0, 0, 0, 0},{"_p_XdmfHDF", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
-static swig_type_info _swigt__p_XdmfXNode[] = {{"_p_XdmfXNode", 0, "XdmfXNode *", 0, 0, 0, 0},{"_p_XdmfXNode", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
-static swig_type_info _swigt__p_XdmfDOM[] = {{"_p_XdmfDOM", 0, "XdmfDOM *", 0, 0, 0, 0},{"_p_XdmfDOM", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
+static void *_p_XdmfCharArrayTo_p_XdmfArray(void *x) {
+    return (void *)((XdmfArray *)  ((XdmfCharArray *) x));
+}
 static swig_type_info _swigt__p_XdmfArrayList[] = {{"_p_XdmfArrayList", 0, "XdmfArrayList *", 0, 0, 0, 0},{"_p_XdmfArrayList", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
-static swig_type_info _swigt__p_XdmfLightData[] = {{"_p_XdmfLightData", 0, "XdmfLightData *", 0, 0, 0, 0},{"_p_XdmfLightData", 0, 0, 0, 0, 0, 0},{"_p_XdmfGrid", _p_XdmfGridTo_p_XdmfLightData, 0, 0, 0, 0, 0},{"_p_XdmfFormatHDF", _p_XdmfFormatHDFTo_p_XdmfLightData, 0, 0, 0, 0, 0},{"_p_XdmfTopology", _p_XdmfTopologyTo_p_XdmfLightData, 0, 0, 0, 0, 0},{"_p_XdmfAttribute", _p_XdmfAttributeTo_p_XdmfLightData, 0, 0, 0, 0, 0},{"_p_XdmfFormat", _p_XdmfFormatTo_p_XdmfLightData, 0, 0, 0, 0, 0},{"_p_XdmfFormatMulti", _p_XdmfFormatMultiTo_p_XdmfLightData, 0, 0, 0, 0, 0},{"_p_XdmfGeometry", _p_XdmfGeometryTo_p_XdmfLightData, 0, 0, 0, 0, 0},{"_p_XdmfTransform", _p_XdmfTransformTo_p_XdmfLightData, 0, 0, 0, 0, 0},{"_p_XdmfFormatXML", _p_XdmfFormatXMLTo_p_XdmfLightData, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
-static swig_type_info _swigt__p_XdmfInt32[] = {{"_p_XdmfInt32", 0, "XdmfInt32 *", 0, 0, 0, 0},{"_p_XdmfInt32", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
-static swig_type_info _swigt__p_XdmfHeavyData[] = {{"_p_XdmfHeavyData", 0, "XdmfHeavyData *", 0, 0, 0, 0},{"_p_XdmfHeavyData", 0, 0, 0, 0, 0, 0},{"_p_XdmfHDF", _p_XdmfHDFTo_p_XdmfHeavyData, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
 static swig_type_info _swigt__p_XdmfFloat64[] = {{"_p_XdmfFloat64", 0, "XdmfFloat64 *", 0, 0, 0, 0},{"_p_XdmfFloat64", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
-static swig_type_info _swigt__p_NDGM_NODE[] = {{"_p_NDGM_NODE", 0, "NDGM_NODE *", 0, 0, 0, 0},{"_p_NDGM_NODE", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
-static swig_type_info _swigt__p_hid_t[] = {{"_p_hid_t", 0, "hid_t *", 0, 0, 0, 0},{"_p_hid_t", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
+static swig_type_info _swigt__p_XdmfLightData[] = {{"_p_XdmfLightData", 0, "XdmfLightData *", 0, 0, 0, 0},{"_p_XdmfLightData", 0, 0, 0, 0, 0, 0},{"_p_XdmfGrid", _p_XdmfGridTo_p_XdmfLightData, 0, 0, 0, 0, 0},{"_p_XdmfFormatHDF", _p_XdmfFormatHDFTo_p_XdmfLightData, 0, 0, 0, 0, 0},{"_p_XdmfTopology", _p_XdmfTopologyTo_p_XdmfLightData, 0, 0, 0, 0, 0},{"_p_XdmfAttribute", _p_XdmfAttributeTo_p_XdmfLightData, 0, 0, 0, 0, 0},{"_p_XdmfFormat", _p_XdmfFormatTo_p_XdmfLightData, 0, 0, 0, 0, 0},{"_p_XdmfFormatMulti", _p_XdmfFormatMultiTo_p_XdmfLightData, 0, 0, 0, 0, 0},{"_p_XdmfGeometry", _p_XdmfGeometryTo_p_XdmfLightData, 0, 0, 0, 0, 0},{"_p_XdmfTransform", _p_XdmfTransformTo_p_XdmfLightData, 0, 0, 0, 0, 0},{"_p_XdmfFormatXML", _p_XdmfFormatXMLTo_p_XdmfLightData, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
+static swig_type_info _swigt__p_XdmfTransform[] = {{"_p_XdmfTransform", 0, "XdmfTransform *", 0, 0, 0, 0},{"_p_XdmfTransform", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
+static swig_type_info _swigt__p_XdmfObject[] = {{"_p_XdmfObject", 0, "XdmfObject *", 0, 0, 0, 0},{"_p_XdmfTransform", _p_XdmfTransformTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfLightData", _p_XdmfLightDataTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfDOM", _p_XdmfDOMTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfObject", 0, 0, 0, 0, 0, 0},{"_p_XdmfParameter", _p_XdmfParameterTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfFormatHDF", _p_XdmfFormatHDFTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfFormatXML", _p_XdmfFormatXMLTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfXNode", _p_XdmfXNodeTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfCharArray", _p_XdmfCharArrayTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfGrid", _p_XdmfGridTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfHeavyData", _p_XdmfHeavyDataTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfAttribute", _p_XdmfAttributeTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfFormat", _p_XdmfFormatTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfTopology", _p_XdmfTopologyTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfFormatMulti", _p_XdmfFormatMultiTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfDataDesc", _p_XdmfDataDescTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfNDGM", _p_XdmfNDGMTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfArray", _p_XdmfArrayTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfGeometry", _p_XdmfGeometryTo_p_XdmfObject, 0, 0, 0, 0, 0},{"_p_XdmfHDF", _p_XdmfHDFTo_p_XdmfObject, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
+static swig_type_info _swigt__p_XdmfDOM[] = {{"_p_XdmfDOM", 0, "XdmfDOM *", 0, 0, 0, 0},{"_p_XdmfDOM", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
 static swig_type_info _swigt__p_XdmfParameter[] = {{"_p_XdmfParameter", 0, "XdmfParameter *", 0, 0, 0, 0},{"_p_XdmfParameter", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
-static swig_type_info _swigt__p_istream[] = {{"_p_istream", 0, "istream *", 0, 0, 0, 0},{"_p_istream", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
-static swig_type_info _swigt__p_ostream[] = {{"_p_ostream", 0, "ostream *", 0, 0, 0, 0},{"_p_ostream", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
-static swig_type_info _swigt__p_XdmfLength[] = {{"_p_XdmfLength", 0, "XdmfLength *", 0, 0, 0, 0},{"_p_long_long", 0, 0, 0, 0, 0, 0},{"_p_XdmfLength", 0, 0, 0, 0, 0, 0},{"_p_XdmfInt64", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
-static swig_type_info _swigt__p_XdmfAttribute[] = {{"_p_XdmfAttribute", 0, "XdmfAttribute *", 0, 0, 0, 0},{"_p_XdmfAttribute", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
+static swig_type_info _swigt__p_XdmfFormatHDF[] = {{"_p_XdmfFormatHDF", 0, "XdmfFormatHDF *", 0, 0, 0, 0},{"_p_XdmfFormatHDF", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
+static swig_type_info _swigt__p_XdmfXNode[] = {{"_p_XdmfXNode", 0, "XdmfXNode *", 0, 0, 0, 0},{"_p_XdmfXNode", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
+static swig_type_info _swigt__p_XdmfFormatXML[] = {{"_p_XdmfFormatXML", 0, "XdmfFormatXML *", 0, 0, 0, 0},{"_p_XdmfFormatXML", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
 static swig_type_info _swigt__p_XdmfCharArray[] = {{"_p_XdmfCharArray", 0, "XdmfCharArray *", 0, 0, 0, 0},{"_p_XdmfCharArray", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
-static swig_type_info _swigt__p_XdmfFormat[] = {{"_p_XdmfFormat", 0, "XdmfFormat *", 0, 0, 0, 0},{"_p_XdmfFormatHDF", _p_XdmfFormatHDFTo_p_XdmfFormat, 0, 0, 0, 0, 0},{"_p_XdmfFormat", 0, 0, 0, 0, 0, 0},{"_p_XdmfFormatMulti", _p_XdmfFormatMultiTo_p_XdmfFormat, 0, 0, 0, 0, 0},{"_p_XdmfFormatXML", _p_XdmfFormatXMLTo_p_XdmfFormat, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
-static swig_type_info _swigt__p_long_long[] = {{"_p_long_long", 0, "long long *", 0, 0, 0, 0},{"_p_long_long", 0, 0, 0, 0, 0, 0},{"_p_XdmfLength", 0, 0, 0, 0, 0, 0},{"_p_XdmfInt64", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
 static swig_type_info _swigt__p_XdmfFloat32[] = {{"_p_XdmfFloat32", 0, "XdmfFloat32 *", 0, 0, 0, 0},{"_p_XdmfFloat32", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
-static swig_type_info _swigt__p_XdmfDataDesc[] = {{"_p_XdmfDataDesc", 0, "XdmfDataDesc *", 0, 0, 0, 0},{"_p_XdmfHeavyData", _p_XdmfHeavyDataTo_p_XdmfDataDesc, 0, 0, 0, 0, 0},{"_p_XdmfNDGM", _p_XdmfNDGMTo_p_XdmfDataDesc, 0, 0, 0, 0, 0},{"_p_XdmfArray", _p_XdmfArrayTo_p_XdmfDataDesc, 0, 0, 0, 0, 0},{"_p_XdmfDataDesc", 0, 0, 0, 0, 0, 0},{"_p_XdmfHDF", _p_XdmfHDFTo_p_XdmfDataDesc, 0, 0, 0, 0, 0},{"_p_XdmfCharArray", _p_XdmfCharArrayTo_p_XdmfDataDesc, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
-static swig_type_info _swigt__p_istrstream[] = {{"_p_istrstream", 0, "istrstream *", 0, 0, 0, 0},{"_p_istrstream", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
 static swig_type_info _swigt__p_XdmfGrid[] = {{"_p_XdmfGrid", 0, "XdmfGrid *", 0, 0, 0, 0},{"_p_XdmfGrid", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
+static swig_type_info _swigt__p_hid_t[] = {{"_p_hid_t", 0, "hid_t *", 0, 0, 0, 0},{"_p_hid_t", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
+static swig_type_info _swigt__p_XdmfHeavyData[] = {{"_p_XdmfHeavyData", 0, "XdmfHeavyData *", 0, 0, 0, 0},{"_p_XdmfHeavyData", 0, 0, 0, 0, 0, 0},{"_p_XdmfHDF", _p_XdmfHDFTo_p_XdmfHeavyData, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
+static swig_type_info _swigt__p_XdmfLength[] = {{"_p_XdmfLength", 0, "XdmfLength *", 0, 0, 0, 0},{"_p_XdmfLength", 0, 0, 0, 0, 0, 0},{"_p_XdmfInt64", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
+static swig_type_info _swigt__p_XdmfAttribute[] = {{"_p_XdmfAttribute", 0, "XdmfAttribute *", 0, 0, 0, 0},{"_p_XdmfAttribute", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
+static swig_type_info _swigt__p_void[] = {{"_p_void", 0, "void *", 0, 0, 0, 0},{"_XdmfPointer", 0, 0, 0, 0, 0, 0},{"_p_void", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
+static swig_type_info _swigt__p_ostream[] = {{"_p_ostream", 0, "ostream *", 0, 0, 0, 0},{"_p_ostream", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
+static swig_type_info _swigt__p_istream[] = {{"_p_istream", 0, "istream *", 0, 0, 0, 0},{"_p_istream", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
+static swig_type_info _swigt__p_XdmfFormat[] = {{"_p_XdmfFormat", 0, "XdmfFormat *", 0, 0, 0, 0},{"_p_XdmfFormatHDF", _p_XdmfFormatHDFTo_p_XdmfFormat, 0, 0, 0, 0, 0},{"_p_XdmfFormat", 0, 0, 0, 0, 0, 0},{"_p_XdmfFormatMulti", _p_XdmfFormatMultiTo_p_XdmfFormat, 0, 0, 0, 0, 0},{"_p_XdmfFormatXML", _p_XdmfFormatXMLTo_p_XdmfFormat, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
+static swig_type_info _swigt__p_XdmfInt64[] = {{"_p_XdmfInt64", 0, "XdmfInt64 *", 0, 0, 0, 0},{"_p_XdmfLength", 0, 0, 0, 0, 0, 0},{"_p_XdmfInt64", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
+static swig_type_info _swigt__p_XdmfTopology[] = {{"_p_XdmfTopology", 0, "XdmfTopology *", 0, 0, 0, 0},{"_p_XdmfGrid", _p_XdmfGridTo_p_XdmfTopology, 0, 0, 0, 0, 0},{"_p_XdmfTopology", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
+static swig_type_info _swigt__p_NDGM_NODE[] = {{"_p_NDGM_NODE", 0, "NDGM_NODE *", 0, 0, 0, 0},{"_p_NDGM_NODE", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
+static swig_type_info _swigt__p_XdmfDataDesc[] = {{"_p_XdmfDataDesc", 0, "XdmfDataDesc *", 0, 0, 0, 0},{"_p_XdmfHeavyData", _p_XdmfHeavyDataTo_p_XdmfDataDesc, 0, 0, 0, 0, 0},{"_p_XdmfNDGM", _p_XdmfNDGMTo_p_XdmfDataDesc, 0, 0, 0, 0, 0},{"_p_XdmfArray", _p_XdmfArrayTo_p_XdmfDataDesc, 0, 0, 0, 0, 0},{"_p_XdmfDataDesc", 0, 0, 0, 0, 0, 0},{"_p_XdmfHDF", _p_XdmfHDFTo_p_XdmfDataDesc, 0, 0, 0, 0, 0},{"_p_XdmfCharArray", _p_XdmfCharArrayTo_p_XdmfDataDesc, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
+static swig_type_info _swigt__XdmfPointer[] = {{"_XdmfPointer", 0, "XdmfPointer", 0, 0, 0, 0},{"_XdmfPointer", 0, 0, 0, 0, 0, 0},{"_p_void", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
+static swig_type_info _swigt__p_XDMF_TREE_NODE[] = {{"_p_XDMF_TREE_NODE", 0, "XDMF_TREE_NODE *", 0, 0, 0, 0},{"_p_XDMF_TREE_NODE", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
+static swig_type_info _swigt__p_XdmfFormatMulti[] = {{"_p_XdmfFormatMulti", 0, "XdmfFormatMulti *", 0, 0, 0, 0},{"_p_XdmfFormatMulti", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
+static swig_type_info _swigt__p_XdmfArray[] = {{"_p_XdmfArray", 0, "XdmfArray *", 0, 0, 0, 0},{"_p_XdmfArray", 0, 0, 0, 0, 0, 0},{"_p_XdmfCharArray", _p_XdmfCharArrayTo_p_XdmfArray, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
+static swig_type_info _swigt__p_XdmfNDGM[] = {{"_p_XdmfNDGM", 0, "XdmfNDGM *", 0, 0, 0, 0},{"_p_XdmfNDGM", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
+static swig_type_info _swigt__p_XdmfGeometry[] = {{"_p_XdmfGeometry", 0, "XdmfGeometry *", 0, 0, 0, 0},{"_p_XdmfGeometry", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
+static swig_type_info _swigt__p_XdmfInt32[] = {{"_p_XdmfInt32", 0, "XdmfInt32 *", 0, 0, 0, 0},{"_p_XdmfInt32", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
+static swig_type_info _swigt__p_XdmfHDF[] = {{"_p_XdmfHDF", 0, "XdmfHDF *", 0, 0, 0, 0},{"_p_XdmfHDF", 0, 0, 0, 0, 0, 0},{0, 0, 0, 0, 0, 0, 0}};
 
 static swig_type_info *swig_types_initial[] = {
-_swigt__p_XdmfFormatXML, 
-_swigt__p_XdmfTransform, 
-_swigt__p_XdmfTopology, 
-_swigt__p_XdmfNDGM, 
-_swigt__p_XdmfInt64, 
-_swigt__XdmfPointer, 
-_swigt__p_void, 
-_swigt__p_XdmfArray, 
-_swigt__p_XDMF_TREE_NODE, 
-_swigt__p_XdmfFormatHDF, 
-_swigt__p_XdmfGeometry, 
-_swigt__p_XdmfFormatMulti, 
-_swigt__p_XdmfObject, 
-_swigt__p_XdmfHDF, 
-_swigt__p_XdmfXNode, 
-_swigt__p_XdmfDOM, 
 _swigt__p_XdmfArrayList, 
-_swigt__p_XdmfLightData, 
-_swigt__p_XdmfInt32, 
-_swigt__p_XdmfHeavyData, 
 _swigt__p_XdmfFloat64, 
-_swigt__p_NDGM_NODE, 
-_swigt__p_hid_t, 
+_swigt__p_XdmfLightData, 
+_swigt__p_XdmfTransform, 
+_swigt__p_XdmfObject, 
+_swigt__p_XdmfDOM, 
 _swigt__p_XdmfParameter, 
-_swigt__p_istream, 
-_swigt__p_ostream, 
+_swigt__p_XdmfFormatHDF, 
+_swigt__p_XdmfXNode, 
+_swigt__p_XdmfFormatXML, 
+_swigt__p_XdmfCharArray, 
+_swigt__p_XdmfFloat32, 
+_swigt__p_XdmfGrid, 
+_swigt__p_hid_t, 
+_swigt__p_XdmfHeavyData, 
 _swigt__p_XdmfLength, 
 _swigt__p_XdmfAttribute, 
-_swigt__p_XdmfCharArray, 
+_swigt__p_void, 
+_swigt__p_ostream, 
+_swigt__p_istream, 
 _swigt__p_XdmfFormat, 
-_swigt__p_long_long, 
-_swigt__p_XdmfFloat32, 
+_swigt__p_XdmfInt64, 
+_swigt__p_XdmfTopology, 
+_swigt__p_NDGM_NODE, 
 _swigt__p_XdmfDataDesc, 
-_swigt__p_istrstream, 
-_swigt__p_XdmfGrid, 
+_swigt__XdmfPointer, 
+_swigt__p_XDMF_TREE_NODE, 
+_swigt__p_XdmfFormatMulti, 
+_swigt__p_XdmfArray, 
+_swigt__p_XdmfNDGM, 
+_swigt__p_XdmfGeometry, 
+_swigt__p_XdmfInt32, 
+_swigt__p_XdmfHDF, 
 0
 };
 

@@ -438,7 +438,9 @@ XDMF_EXPORT XdmfString GetUnique( XdmfConstString Pattern = NULL );
 extern XDMF_EXPORT XdmfString XdmfObjectToHandle( XdmfObject *Source );
 extern XDMF_EXPORT XdmfObject *HandleToXdmfObject( XdmfConstString Source );
 
+#ifndef SWIG
 extern XDMF_EXPORT istrstream& ICE_READ_STREAM64(istrstream& istr, ICE_64_INT& i);
+#endif
 
 #endif /* __cplusplus */
 
