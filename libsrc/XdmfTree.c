@@ -99,7 +99,7 @@ while(this_node->nchild > 0){
 if(this_node->parent != NULL){
   for(i = 0 ; i < this_node->parent->nchild ; i++){
     if(this_node->parent->children[i] == this_node){
-      memcpy(&this_node->parent->children[i],
+      memmove(&this_node->parent->children[i],
         &this_node->parent->children[i + 1],
     (this_node->parent->nchild - i) * sizeof(XDMF_TREE_NODE));
       break;
