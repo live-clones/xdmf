@@ -1,0 +1,5 @@
+These files are extensions to vtk
+Put them in .....VtkXXX/local then ./configure .... --with-local
+All of the wrappers will be made correctly
+
+To add new classes, the Type macro in the .h is critical, so is the New() method

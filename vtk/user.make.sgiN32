@@ -1,0 +1,42 @@
+# this file can be used to override any of the values selected
+# by configure in system.make.  At a minimum you should set
+# the following Tcl/Tk values if you are planning to use Tcl/Tk
+
+TCL_INCLUDE=-I/vis/clarke/Tcl/tcl8.3.3/generic
+TCL_LIB=-L/ha/cta/unsupported/ICE/Support/IRIXN32/lib -ltcl8.3
+
+TK_INCLUDE=-I/vis/clarke/Tcl/tk8.3.3/generic
+TK_LIB=-L/ha/cta/unsupported/ICE/Support/IRIXN32/lib -ltk8.3
+
+
+# MESA_INCLUDE=-I/usr/include -I/vis/clarke/Mesa-3.0/include
+MESA_INCLUDE=-I/vis/clarke/Mesa-3.0/include
+# MESA_INCLUDE=
+MESA_LIB=/vis/clarke/Mesa-3.0/lib32/libMesaGL.so
+
+# for python you must set this
+PYTHON_INCLUDES=-I/vis/clarke/Python/Python-2.1/Include -I/vis/clarke/Python/Python-2.1
+
+# Add additional CFLAGS and CXXFLAGS for compilation
+# uncomment the following two lines to set your own flags
+USER_CFLAGS =  -O2 -n32 -G 0 -multigot
+USER_CXXFLAGS = -O2 -n32 -I/usr/java/include -I/usr/java/include/irix -G 0 -multigot
+# VTK_SHLIB_BUILD_FLAGS = -shared -rdata_shared -exports
+# USER_CXXFLAGS = -g -64 -G 0  -multigot
+
+JAVAC = javac -sourcepath ../java
+JAR = jar
+JAVA_CLASS_HOME = ../java
+# JAVA_CXX_LIB = -L/usr/java/lib32/sgi -ljawt
+INSTALL = $(VTK_OBJ)/install-sh
+
+XLIBS =
+X_EXTRA_LIBS = -lXt
+
+# GRAPHICS_API_LIBS = $(MESA_LIB)
+GRAPHICS_API_LIBS = -lGL
+# GRAPHICS_API_LIBS = $(MESA_LIB)
+# GRAPHICS_API_FLAGS = $(MESA_INCLUDE)
+XLIBS=
+GRAPHICS_API_FLAGS = 
+

@@ -1,0 +1,2 @@
+# IRIX N32
+./configure  --prefix=/ha/cta/unsupported/ICE/Support --exec-prefix=/ha/cta/unsupported/ICE/Support/IRIXN32 --with-shared --with-tcl --with-tkwidget --with-patented --with-contrib --with-java --with-python --with-parallel --with-local
