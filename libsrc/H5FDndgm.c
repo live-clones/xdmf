@@ -127,7 +127,9 @@ static void *H5FD_ndgm_fapl_get(H5FD_t *_file);
 static H5FD_t *H5FD_ndgm_open(const char *name, unsigned flags, hid_t fapl_id,
             haddr_t maxaddr);
 static herr_t H5FD_ndgm_close(H5FD_t *_file);
+#ifdef XDMF_NOT_USED
 static herr_t H5FD_ndgm_flush(H5FD_t *_file);
+#endif
 static int H5FD_ndgm_cmp(const H5FD_t *_f1, const H5FD_t *_f2);
 static haddr_t H5FD_ndgm_get_eoa(H5FD_t *_file);
 static herr_t H5FD_ndgm_set_eoa(H5FD_t *_file, haddr_t addr);
@@ -180,7 +182,7 @@ H5FD_ndgm_UpdateEntry( H5FD_ndgm_t *file ) {
 
 int status;
 
-file->end = MAX(file->start + file->eof, file->end);
+file->end = MAX(((NDGM_ADDR)(file->start + file->eof)), file->end);
 file->eof = file->end - file->start;
 
 sprintf(file->entry, HDF_NDGM_ENTRY_FORMAT,
@@ -215,7 +217,7 @@ if(last_entry == NULL) {
   addr = last - chunk_size;
   status = ndgm_get(addr, entry_list, chunk_size);
   if(status <= 0){
-    fprintf(stderr, "H5FD_next_ndgm_entry : ndgm_get() failed at %d\n", addr);
+    fprintf(stderr, "H5FD_next_ndgm_entry : ndgm_get() failed at %ld\n", (long)addr);
     return(NULL);
     }
   elp = entry_list[0];
@@ -227,7 +229,7 @@ if(last_entry == NULL) {
     addr -= chunk_size;
     status = ndgm_get(addr, entry_list, chunk_size);
     if(status <= 0){
-      fprintf(stderr,"H5FD_next_ndgm_entry : ndgm_get() failed at %d\n", addr);
+      fprintf(stderr,"H5FD_next_ndgm_entry : ndgm_get() failed at %ld\n", (long)addr);
       return(NULL);
       }
     entry = entry_list[HDF_NDGM_ENTRY_CHUNK - 1];
@@ -661,6 +663,7 @@ printf("HDF::Open eoa = %ld eof = %ld\n", file->eoa, file->eof);
  *
  *-------------------------------------------------------------------------
  */
+#ifdef XDMF_NOT_USED
 static herr_t
 H5FD_ndgm_flush(H5FD_t *_file)
 {
@@ -690,6 +693,7 @@ printf("Status = %d\n", status );
   file->dirty = 0;
 return( 0 );
 }
+#endif
 /*-------------------------------------------------------------------------
  * Function:  H5FD_ndgm_close
  *
@@ -882,6 +886,9 @@ H5FD_ndgm_read(H5FD_t *_file, H5FD_mem_t type, hid_t dxpl_id/*unused*/, haddr_t 
     H5FD_ndgm_t    *file = (H5FD_ndgm_t*)_file;
     ssize_t    nbytes;
     herr_t    status;
+
+(void)type;
+(void)dxpl_id;
     
 #ifdef HDF_IO_DEBUG
 printf("Called H5FD_ndgm_read at %ld size %ld\n", addr, size);
@@ -940,7 +947,11 @@ H5FD_ndgm_write(H5FD_t *_file, H5FD_mem_t type, hid_t dxpl_id/*unused*/, haddr_t
 {
     H5FD_ndgm_t    *file = (H5FD_ndgm_t*)_file;
     herr_t    status;
-    char    *bufp = buf;
+
+    //const char    *bufp = buf;
+    
+    (void)type;
+    (void)dxpl_id;
     
     assert(file && file->pub.cls);
     assert(buf);
@@ -969,7 +980,7 @@ printf("HDF::Write New eof %ld\n", new_eof);
     }
 
     /* Write from BUF to NDGM */
-  status = ndgm_put(file->start + addr, buf, size);
+  status = ndgm_put(file->start + addr, (char*)buf, size);
   if( status <= 0 ) return -1;
   /* Flush old buffer if non-contiguous */
 

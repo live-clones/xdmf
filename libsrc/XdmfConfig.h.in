@@ -24,5 +24,7 @@
 # define XDMFSTATIC
 #endif
 
+#cmakedefine HAVE_NDGM
+
 
 #endif /* __XdmfConfig_h */

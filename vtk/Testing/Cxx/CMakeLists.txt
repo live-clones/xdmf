@@ -1,6 +1,9 @@
 ADD_EXECUTABLE(GridTest GridTest.cxx)
 TARGET_LINK_LIBRARIES(GridTest vtkXdmf)
 
+ADD_EXECUTABLE(Structured Structured.cxx)
+TARGET_LINK_LIBRARIES(Structured vtkXdmf)
+
 ADD_EXECUTABLE(VTKTest VTKTest.cxx)
 TARGET_LINK_LIBRARIES(VTKTest vtkXdmf)
 
