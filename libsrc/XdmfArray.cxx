@@ -50,7 +50,15 @@ if( c != '_' ) {
   XdmfErrorMessage("Invalid Array Tag Name: " << TagName );
   return( NULL );
   }
+#ifdef ICE_HAVE_64BIT_STREAMS
 Tag >> Id;
+#else
+{
+  double d;
+  Tag >> d;
+  Id = d;
+}
+#endif
 
 //cerr << "List = " << List << endl;
 //cerr << "ListLength = " << ListLength << endl;
@@ -93,10 +101,10 @@ PrintAllXdmfArrays() {
 XdmfLength i;
 
 for( i = 0 ; i < ListIndex ; i++ ){
-  cerr << "XdmfArray " << i << '\n';
+  cerr << "XdmfArray " << ICE_64BIT_CAST i << '\n';
   cerr << "   NumberType " << List[ i ].Array->GetNumberTypeAsString() << '\n';
-  cerr << "   Time = " << List[ i ].timecntr << '\n';
-  cerr << "   Size = " << List[ i ].Array->GetNumberOfElements() << '\n';
+  cerr << "   Time = " << ICE_64BIT_CAST List[ i ].timecntr << '\n';
+  cerr << "   Size = " << ICE_64BIT_CAST List[ i ].Array->GetNumberOfElements() << '\n';
   }
 }
 
@@ -116,7 +124,7 @@ if( ListIndex >= ListLength ){
 List[ ListIndex ].name = NULL;
 List[ ListIndex ].timecntr = GlobalTimeCntr;
 List[ ListIndex ].Array = this;
-Tag << "_" << GlobalTimeCntr << "_XdmfArray" << ends;
+Tag << "_" << ICE_64BIT_CAST GlobalTimeCntr << "_XdmfArray" << ends;
 ListIndex++;
 }
 
@@ -205,10 +213,10 @@ return( RetVal );
 
 XdmfInt32 XdmfArray::Allocate( void ){
   XdmfDebug("Allocating " <<
-    this->GetNumberOfElements() *  this->GetElementSize() <<
+    ICE_64BIT_CAST (this->GetNumberOfElements() *  this->GetElementSize()) <<
     " Bytes");
   if( this->DataIsMine ) {
-    XdmfDebug("Data  " << this->DataPointer << " is Mine");
+    XdmfDebug("Data  " << ICE_64BIT_CAST this->DataPointer << " is Mine");
     if( this->DataPointer ) {
       this->DataPointer = (XdmfInt8 *)realloc( this->DataPointer, this->GetNumberOfElements() *  this->GetElementSize());
     } else {
@@ -320,7 +328,7 @@ XdmfInt32  MemberType;
 XdmfByte  *Ptr;
 
 
-XdmfDebug("Coping " << NumberOfValues << " Direction = " << Direction );
+XdmfDebug("Coping " << ICE_64BIT_CAST NumberOfValues << " Direction = " << Direction );
 if( Direction == XDMF_ARRAY_IN ){
 
   TmpArray = new XdmfFloat64[ NumberOfValues ];
@@ -358,7 +366,7 @@ if( Direction == XDMF_ARRAY_IN ){
   MemberIndex = 0;
   NumberOfMembers = this->GetNumberOfMembers();
   Length = NumberOfValues;
-  XdmfDebug("Copying " << NumberOfValues << " Out");
+  XdmfDebug("Copying " << ICE_64BIT_CAST NumberOfValues << " Out");
   while( NumberOfValues ){
     MemberType = this->GetMemberType( MemberIndex );
     MemberLength = this->GetMemberLength( MemberIndex );
@@ -642,7 +650,7 @@ XdmfInt32 XdmfArray::GetValues( XdmfInt64 Index, XdmfFloat64 *Values,
 XdmfPointer  ArrayPointer;
 
 ArrayPointer = this->GetDataPointer(Index);
-XdmfDebug("Getting " << NumberOfValues << " From Pointer = " << ArrayPointer << " to " << Values );
+XdmfDebug("Getting " << ICE_64BIT_CAST NumberOfValues << " From Pointer = " << ArrayPointer << " to " << Values );
 XDMF_ARRAY_COPY( ArrayPointer, this->GetNumberType(), ArrayStride,
     Values, XDMF_FLOAT64_TYPE, ValuesStride,
     XDMF_ARRAY_OUT, NumberOfValues );
@@ -666,19 +674,19 @@ if( NumberOfValues == 0 ){
   }
 // NumberOfValues -= 1;
 if( this->GetNumberType() == XDMF_COMPOUND_TYPE ){
-  XdmfDebug("Array is Compound, increasing value of NumberOfValues " << NumberOfValues );
+  XdmfDebug("Array is Compound, increasing value of NumberOfValues " << ICE_64BIT_CAST NumberOfValues );
   MemberLength = 0;
   for( i = 0 ; i < this->GetNumberOfMembers() ; i++ ){
     MemberLength += this->GetMemberLength(i);
     }
   NumberOfValues *= MemberLength;
-  XdmfDebug("New NumberOfValues  = " << NumberOfValues );
+  XdmfDebug("New NumberOfValues  = " << ICE_64BIT_CAST NumberOfValues );
 }
 Values = new XdmfFloat64[ NumberOfValues + 10 ];
 this->GetValues( Index, Values, NumberOfValues, ArrayStride, 1 );
 i = 0;
 while( NumberOfValues-- ) {
-  StringOutput << Values[i++] << " ";
+  StringOutput << ICE_64BIT_CAST Values[i++] << " ";
   }
 StringOutput << ends;
 Ptr = StringOutput.str();
@@ -999,3 +1007,16 @@ XdmfInt32 XdmfArray::SetValue( XdmfInt64 Index, XdmfFloat32 Value ) {
 return(this->SetValueFromFloat64( Index, Value ));
 }
 
+istrstream& ICE_READ_STREAM64(istrstream& istr, ICE_64_INT& i)
+{
+#ifdef ICE_HAVE_64BIT_STREAMS
+istr >>i;
+#else
+{
+double d; 
+istr >> d;
+i = d;
+}
+#endif
+return istr;
+}

@@ -63,14 +63,24 @@ typedef struct ICE_LLIST_ANCHOR_ITEM {
   XdmfLlist      *member;
   } XdmfLlist_Anchor;
 
-extern   int    XdmfLlist_init(XDMF_LIST_KEY key);
-extern   void    *XdmfLlist_add_to_tail(XDMF_LIST_KEY key, XDMF_LIST_KEY body_size);
-extern   void    *XdmfLlist_add_to_head(XDMF_LIST_KEY key, XDMF_LIST_KEY body_size);
-extern   void    XdmfLlist_delete_item(XDMF_LIST_KEY key, void *item_to_delete);
-extern   void    *XdmfLlist_first_member(XDMF_LIST_KEY key);
+#ifndef __cplusplus
+#  ifdef __hpux
+#    define ICE_ARGS(x) ()
+#  else
+#    define ICE_ARGS(x) x
+#  endif 
+#else
+#  define ICE_ARGS(x) x
+#endif
+
+extern   int    XdmfLlist_init ICE_ARGS((XDMF_LIST_KEY key));
+extern   void    *XdmfLlist_add_to_tail ICE_ARGS((XDMF_LIST_KEY key, XDMF_LIST_KEY body_size));
+extern   void    *XdmfLlist_add_to_head ICE_ARGS((XDMF_LIST_KEY key, XDMF_LIST_KEY body_size));
+extern   void    XdmfLlist_delete_item ICE_ARGS((XDMF_LIST_KEY key, void *item_to_delete));
+extern   void    *XdmfLlist_first_member ICE_ARGS((XDMF_LIST_KEY key));
 extern   void    *XdmfLlist_next_member(void *member);
-extern   void    *XdmfLlist_add_before(XDMF_LIST_KEY key, void *item_after, XDMF_LIST_KEY body_size);
-extern   void    *XdmfLlist_add_after(XDMF_LIST_KEY key, void *item_before, XDMF_LIST_KEY body_size);
+extern   void    *XdmfLlist_add_before ICE_ARGS((XDMF_LIST_KEY key, void *item_after, XDMF_LIST_KEY body_size));
+extern   void    *XdmfLlist_add_after ICE_ARGS((XDMF_LIST_KEY key, void *item_before, XDMF_LIST_KEY body_size));
 extern   XDMF_LIST_KEY  XdmfLlist_new_key(void);
 
 

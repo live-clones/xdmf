@@ -79,13 +79,13 @@ if( Rank == XDMF_FAIL ) {
   return( NULL );
   }
 for( i = 0 ; i < Rank ; i++ ){
-  StringOutput << Start[i] << " ";
+  StringOutput << ICE_64BIT_CAST Start[i] << " ";
   }
 for( i = 0 ; i < Rank ; i++ ){
-  StringOutput << Stride[i] << " ";
+  StringOutput << ICE_64BIT_CAST Stride[i] << " ";
   }
 for( i = 0 ; i < Rank ; i++ ){
-  StringOutput << Count[i] << " ";
+  StringOutput << ICE_64BIT_CAST Count[i] << " ";
   }
 StringOutput << ends;
 Ptr = StringOutput.str();
@@ -188,7 +188,7 @@ XdmfInt64  i, Rank, Dimensions[ XDMF_MAX_DIMENSION ];
 
 Rank = this->GetShape( Dimensions );
 for( i = 0 ; i < Rank ; i++ ){
-  StringOutput << Dimensions[i] << " ";
+  StringOutput << ICE_64BIT_CAST Dimensions[i] << " ";
   }
 StringOutput << ends;
 Ptr = StringOutput.str();
@@ -241,7 +241,7 @@ if( ( this->DataSpace == H5I_BADID )  || ( this->DataSpace == H5S_ALL ) ) {
 this->Rank = HRank = Rank;
 XdmfDebug("Shape : Rank = " << (int)HRank);
 for( i = 0 ; i < Rank ; i++ ) {
-  XdmfDebug("  Dimension[" << i << "] = " << Dimensions[i] );
+  XdmfDebug("  Dimension[" << i << "] = " << ICE_64BIT_CAST Dimensions[i] );
   this->Count[i] = this->Dimension[i] = HDimension[i] = Dimensions[i];
   this->Start[i] = 0;
   this->Stride[i] = 1;
@@ -296,11 +296,11 @@ for( i = 0 ; i < this->Rank ; i++ ) {
   } else {
     this->Count[i] = (( Dimensions[i] - this->Start[i] - 1 ) / this->Stride[i]) + 1;
   }
-  XdmfDebug("Dim[" << i << "] = " << this->Dimension[i]  << 
+  XdmfDebug("Dim[" << i << "] = " << ICE_64BIT_CAST this->Dimension[i]  << 
     " Start Stride Count = " <<
-    (int)this->Start[i] << " " <<
-    (int)this->Stride[i] << " " <<
-    (int)this->Count[i] );
+    ICE_64BIT_CAST this->Start[i] << " " <<
+    ICE_64BIT_CAST this->Stride[i] << " " <<
+    ICE_64BIT_CAST this->Count[i] );
   }
 this->SelectionType = XDMF_HYPERSLAB;
 status = H5Sselect_hyperslab( this->DataSpace,
@@ -379,17 +379,17 @@ istrstream   Count_ist(Count, strlen( Count ) );
 
 for( i = 0 ; i < this->Rank ; i++ ){
   if( Start ){
-    Start_ist >> HStart[i];
+    ICE_READ_STREAM64(Start_ist, HStart[i]);
   } else {
     HStart[i] = 0;
     }
   if( Stride ){
-    Stride_ist >> HStride[i];
+    ICE_READ_STREAM64(Stride_ist, HStride[i]);
   } else {
     HStride[i] = 1;
   }
   if( Count ){
-    Count_ist >> HCount[i];
+    ICE_READ_STREAM64(Count_ist, HCount[i]);
   } else {
     HCount[i] = (this->Dimension[i] - HStart[i]) / HStride[i];
   }
@@ -404,9 +404,9 @@ XdmfDataDesc::SetShapeFromString( const XdmfString String ) {
   istrstream   counter(String, strlen( String ) );
   XdmfInt64  dummy;
 
-  while( counter >> dummy ) count++;
+  while( ICE_READ_STREAM64(counter, dummy) ) count++;
   this->Rank = count;
-  while( ist >> dummy ){
+  while( ICE_READ_STREAM64(ist,dummy) ){
           this->Dimension[i] = dummy;
           i++;
           }
@@ -423,13 +423,13 @@ XdmfDataDesc::SelectCoordinatesFromString( const XdmfString String ) {
   istrstream   counter(String, strlen( String ) );
   XdmfInt64  dummy, *Coordinates;
 
-  while( counter >> dummy ) count++;
+  while( ICE_READ_STREAM64(counter, dummy) ) count++;
   Coordinates = new XdmfInt64[ count + 1 ];
-  while( ist >> dummy ){
+  while( ICE_READ_STREAM64(ist, dummy) ){
    Coordinates[i] = dummy;
           i++;
           }
-  XdmfDebug("String Contains " << count << " Coordinates" );
+  XdmfDebug("String Contains " << ICE_64BIT_CAST count << " Coordinates" );
   Status = this->SelectCoordinates( count / this->Rank, Coordinates );
   delete [] Coordinates;
   return( Status );
@@ -566,7 +566,7 @@ if( Rank == XDMF_FAIL ) {
   }
 ReturnString[0] = '0';
 for( i = 0 ; i < Rank ; i++ ){
-  ReturnStream << Dimensions[i] << " ";
+  ReturnStream << ICE_64BIT_CAST Dimensions[i] << " ";
   }
 ReturnStream << ends;
 return( ReturnString );
@@ -639,7 +639,7 @@ istrstream  ShapeString( Shape, strlen(Shape) );
 
 NumberType = StringToXdmfType( NumberTypeString );
 i = 0;
-while( ShapeString >> Dim ){
+while( ICE_READ_STREAM64(ShapeString, Dim) ){
   Rank++;
   Dimensions[i++] = Dim;
   }
@@ -664,7 +664,7 @@ if( Offset == 0 ){
 if( Dimensions == NULL ){
   Dimensions = &One;
   }
-XdmfDebug("Inserting " << Name << " at Offset " << Offset << " as type " << XdmfTypeToString( NumberType ) );
+XdmfDebug("Inserting " << Name << " at Offset " << ICE_64BIT_CAST Offset << " as type " << XdmfTypeToString( NumberType ) );
 if( this->GetNumberType() != XDMF_COMPOUND_TYPE ){
   this->SetNumberType( XDMF_COMPOUND_TYPE );
   }

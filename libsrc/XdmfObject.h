@@ -356,6 +356,9 @@ extern void SetGlobalDebug( XdmfInt32 DebugLevel );
 extern XdmfString GetUnique( XdmfString Pattern = NULL );
 extern XDMF_EXPORT char *XdmfObjectToHandle( XdmfObject *Source );
 extern XdmfObject *HandleToXdmfObject( char *Source );
+
+extern istrstream& ICE_READ_STREAM64(istrstream& istr, ICE_64_INT& i);
+
 #endif /* __cplusplus */
 
 #endif /* __XdmfObject_h */

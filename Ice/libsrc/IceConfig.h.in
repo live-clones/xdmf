@@ -94,6 +94,11 @@
 #endif
 
 #cmakedefine ICE_HAVE_64BIT_STREAMS
+#ifdef ICE_HAVE_64BIT_STREAMS
+#define ICE_64BIT_CAST
+#else
+#define ICE_64BIT_CAST (long)
+#endif
 
 
 #cmakedefine ICE_HAVE_FCNTL

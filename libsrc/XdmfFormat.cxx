@@ -53,16 +53,16 @@ Element->Set("Format", this->DataFormat );
 Value.seekp(0);
 Type = XdmfTypeToClassString( Desc->GetNumberType() );
 Element->Set("DataType", Type );
-Value << Desc->GetElementSize() << ends;
+Value << ICE_64BIT_CAST(Desc->GetElementSize()) << ends;
 Value.seekp(0);
 Element->Set("Precision", Attribute );
 Rank =  Desc->GetRank();
-Value << Rank << ends;
+Value << ICE_64BIT_CAST(Rank) << ends;
 Element->Set("Rank", Attribute );
 Value.seekp(0);
-Value << Desc->GetDimension( 0 );
+Value << ICE_64BIT_CAST(Desc->GetDimension( 0 ));
 for( i = 1 ; i < Rank ; i++ ){
-  Value << " " << Desc->GetDimension( i );
+  Value << " " << ICE_64BIT_CAST(Desc->GetDimension( i ));
   }
 Value << ends;
 Element->Set("Dimensions", Attribute );
@@ -82,16 +82,16 @@ if( Desc->GetNumberType() == XDMF_COMPOUND_TYPE ){
     Value.seekp(0);
     Type = XdmfTypeToClassString( Desc->GetMemberType(i) );
     Child->Set("DataType", Type );
-    Value << Desc->GetMemberSize(i) /  Desc->GetMemberLength(i) << ends;
+    Value << ICE_64BIT_CAST(Desc->GetMemberSize(i) /  Desc->GetMemberLength(i)) << ends;
     Value.seekp(0);
     Child->Set("Precision", Attribute );
     Rank =  Desc->GetMemberShape( i, Dimensions );
     Value << Rank << ends;
     Child->Set("Rank", Attribute );
     Value.seekp(0);
-    Value << " " << Dimensions[0];
+    Value << " " << ICE_64BIT_CAST(Dimensions[0]);
     for( j = 1 ; j < Rank ; j++ ){
-      Value << " " << Dimensions[j];
+      Value << " " << ICE_64BIT_CAST(Dimensions[j]);
       }
     Value << ends;
     Child->Set("Dimensions", Attribute );
@@ -135,11 +135,11 @@ for( i = 0 ; i < NumberOfMembers ; i++ ){
     XdmfDebug("Checking Size for Node Named " << this->DOM->Get( Child, "Name") );
     ChildDesc = this->ElementToDataDesc( Child );
     TotalSize += ChildDesc->GetElementSize() * ChildDesc->GetNumberOfElements();
-    XdmfDebug("Running Total = " << TotalSize );
+    XdmfDebug("Running Total = " << ICE_64BIT_CAST(TotalSize) );
     delete ChildDesc;
     }
   }
-XdmfDebug("Total = " << TotalSize );
+XdmfDebug("Total = " << ICE_64BIT_CAST(TotalSize) );
 Desc->SetNumberType( XDMF_COMPOUND_TYPE, TotalSize );
 // Now Fill in the Members
 for( i = 0 ; i < NumberOfMembers ; i++ ){
@@ -230,7 +230,7 @@ if( Attribute ){
   Array->SetValues( 0, Values );
   Rank = 1;
   Dimensions[0] = Array->GetNumberOfElements();
-  XdmfDebug("Setting Shape to Linear Length = " << Dimensions[0] );
+  XdmfDebug("Setting Shape to Linear Length = " << ICE_64BIT_CAST(Dimensions[0]) );
   delete Array;
   Desc->SetShape( Rank, Dimensions );
 }

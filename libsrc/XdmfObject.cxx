@@ -71,7 +71,7 @@ static char  ReturnName[80];
 ostrstream  String(ReturnName,80);
 
 if( Pattern == NULL ) Pattern = "Xdmf_";
-String << Pattern << NameCntr++ << ends;
+String << Pattern << ICE_64BIT_CAST(NameCntr++) << ends;
 return( ReturnName );
 }
 
@@ -82,7 +82,7 @@ XDMF_64_INT RealObjectPointer;
 XdmfObject **Rpt = &Source;
 
 RealObjectPointer = (XDMF_64_INT)*Rpt;
-Handle << "_" << hex << RealObjectPointer << "_" << Source->GetClassName() << ends;
+Handle << "_" << hex << ICE_64BIT_CAST(RealObjectPointer) << "_" << Source->GetClassName() << ends;
 // cout << "XdmfObjectToHandle : Source = " << Source << endl;
 // cout << "Handle = " << (XdmfString)Handle.str() << endl;
 return( (XdmfString)Handle.str() );
@@ -103,7 +103,8 @@ if( c != '_' ) {
   delete [] src;
   return( NULL );
   }
-Handle >> hex >> RealObjectPointer;
+Handle >> hex;
+ICE_READ_STREAM64(Handle, RealObjectPointer);
 // cout << "Source = " << Source << endl;
 // cout << "RealObjectPointer = " << RealObjectPointer << endl;
 *Rpt = (XdmfObject *)RealObjectPointer;

@@ -381,11 +381,11 @@ src_npts = H5Sget_select_npoints( this->GetDataSpace() );
 dest_npts = H5Sget_select_npoints( Array->GetDataSpace() );
 if( src_npts != dest_npts ) {
   XdmfErrorMessage("Source and Target Spaces specify different sizes");
-  XdmfErrorMessage("Source = " << src_npts << " items");
-  XdmfErrorMessage("Target = " << dest_npts << " items");
+  XdmfErrorMessage("Source = " << ICE_64BIT_CAST(src_npts) << " items");
+  XdmfErrorMessage("Target = " << ICE_64BIT_CAST(dest_npts) << " items");
   return( NULL );
 } else {
-  XdmfDebug("Reading " << src_npts << " items");
+  XdmfDebug("Reading " << ICE_64BIT_CAST(src_npts) << " items");
 }
 
 status = H5Dread( this->Dataset,
@@ -430,11 +430,11 @@ src_npts = H5Sget_select_npoints( this->GetDataSpace() );
 dest_npts = H5Sget_select_npoints( Array->GetDataSpace() );
 if( src_npts != dest_npts ) {
   XdmfErrorMessage("Source and Target Spaces specify different sizes");
-  XdmfErrorMessage("Source = " << src_npts << " items");
-  XdmfErrorMessage("Target = " << dest_npts << " items");
+  XdmfErrorMessage("Source = " << ICE_64BIT_CAST(src_npts) << " items");
+  XdmfErrorMessage("Target = " << ICE_64BIT_CAST(dest_npts) << " items");
   return( NULL );
 } else {
-  XdmfDebug("Writing " << src_npts << " items");
+  XdmfDebug("Writing " << ICE_64BIT_CAST(src_npts) << " items");
 }
 
 status = H5Dwrite( this->Dataset,
