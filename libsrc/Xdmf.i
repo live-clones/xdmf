@@ -35,6 +35,37 @@ swig -v -c++ -make_default -includeall -shadow -java $(ICE_INCLUDES) -o XdmfJava
 #include <XdmfTransform.h>
 #include <XdmfXNode.h>
 #include <XdmfNDGM.h>
+
+#ifndef HAVE_STRTOLL
+inline XDMF_LONG64 XDMF_strtoll(char *str, void*, int)
+{
+  XDMF_LONG64 result = 0;
+  int negative=0;
+
+  while (*str == ' ' || *str == '\t')
+    {
+    str++;
+    }
+  if (*str == '+')
+    {
+    str++;
+    }
+  else if (*str == '-')
+    {
+    negative = 1;
+    str++;
+    }
+
+  while (*str >= '0' && *str <= '9')
+    {
+    result = (result*10)-(*str++ - '0');
+    }
+  return negative ? result : -result;
+}
+#else
+# define XDMF_strtoll strtoll
+#endif
+
 %}
 
 %include std_string.i
@@ -61,3 +92,11 @@ swig -v -c++ -make_default -includeall -shadow -java $(ICE_INCLUDES) -o XdmfJava
 %include XdmfXNode.h
 %include XdmfNDGM.h
 
+#ifdef SWIGPYTHON
+%{
+XDMF_EXPORT void XdmfSwigException(int code, const char* msg)
+{
+  SWIG_exception_(code, msg);
+}
+%}
+#endif

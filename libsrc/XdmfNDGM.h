@@ -138,33 +138,38 @@ Open a connection
 #ifdef HAVE_NDGM
       return( ndgm_barrier_init( Barrier, Value ));
 #else
+      (void)Barrier;
+      (void)Value;
       return(-1);
 #endif
       }
 //! Wait in a Barrier
   XdmfInt32  BarrierWait( XdmfInt32  Barrier ) {
 #ifdef HAVE_NDGM
-        return( ndgm_barrier_wait( Barrier ) );
+      return( ndgm_barrier_wait( Barrier ) );
 #else
+      (void)Barrier;
       return(-1);
 #endif
         }
 //! Wait in a Barrier without effecting count
   XdmfInt32  BarrierAudit( XdmfInt32  Barrier ) {
 #ifdef HAVE_NDGM
-        return( ndgm_barrier_audit( Barrier ) );
+      return( ndgm_barrier_audit( Barrier ) );
 #else
+      (void)Barrier;
       return(-1);
 #endif
-        }
+      }
 
   XdmfInt32  BarrierPoll( XdmfInt32  Barrier ) {
 #ifdef HAVE_NDGM
-        return( ndgm_barrier_poll( Barrier ) );
+      return( ndgm_barrier_poll( Barrier ) );
 #else
+      (void)Barrier;
       return(-1);
 #endif
-        }
+      }
 
 
 protected:

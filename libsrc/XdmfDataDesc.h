@@ -66,17 +66,17 @@ public :
 //!  Set the type of number for homogeneous DataSets : all Float, all Int etc.
   XdmfInt32  SetNumberType( XdmfInt32 NumberType, XdmfInt64 CompoundSize = 16 );
 //!  Set the type of number for homogeneous DataSets : all Float, all Int etc.
-  XdmfInt32  SetNumberTypeFromString( XdmfString NumberType, XdmfInt64 CompoundSize = 16 );
+  XdmfInt32  SetNumberTypeFromString( XdmfConstString NumberType, XdmfInt64 CompoundSize = 16 );
 //! Returns the number type
   XdmfInt32  GetNumberType( void );
 //! Returns the number type as a character string
-  XdmfString  GetNumberTypeAsString( void );
+  XdmfConstString  GetNumberTypeAsString( void );
 //! Set Rank and Dimensions of Dataset
   XdmfInt32  SetShape( XdmfInt32 Rank, XdmfInt64 *Dimensions );
 //! Fills Dimensions and returns Rank
   XdmfInt32  GetShape( XdmfInt64 *Dimensions );
 //! Returns a SPACE separated string of the dimensions
-  XdmfString  GetShapeAsString( void );
+  XdmfConstString  GetShapeAsString( void );
 //! Copy the Selection from one Desc to another
   XdmfInt32  CopySelection( XdmfDataDesc *DataDesc );
 //! Copy the Shape from one Desc to another
@@ -107,7 +107,7 @@ public :
 //! Select by Start, Stride, Count mechanism
   XdmfInt32  SelectHyperSlab( XdmfInt64 *Start, XdmfInt64 *Stride, XdmfInt64 *Count );
 //! Select by Start, Stride, Count mechanism via String
-  XdmfInt32  SelectHyperSlabFromString( XdmfString Start, XdmfString Stride, XdmfString Count );
+  XdmfInt32  SelectHyperSlabFromString( XdmfConstString Start, XdmfConstString Stride, XdmfConstString Count );
 //! Fills in Start, Stride, and Count. Returns the rank
   XdmfInt32  GetHyperSlab( XdmfInt64 *Start, XdmfInt64 *Stride, XdmfInt64 *Count );
 //! Returns the HyperSlab as a SPACE separated string
@@ -119,15 +119,15 @@ public :
 	Count[0] Count[1] ... Count[N]
 \endverbatim
 */
-  XdmfString  GetHyperSlabAsString( void );
+  XdmfConstString  GetHyperSlabAsString( void );
 //! Select via explicit parametric coordinates
   XdmfInt32  SelectCoordinates( XdmfInt64 NumberOfElements, XdmfInt64 *Coordinates );
 //! Select via explicit parametric coordinates as a string
-  XdmfInt32  SelectCoordinatesFromString( XdmfString Coordinates );
+  XdmfInt32  SelectCoordinatesFromString( XdmfConstString Coordinates );
 //! Return Selection coordinates 
   XdmfInt64  *GetCoordinates( XdmfInt64 Start = 0, XdmfInt64 Nelements = 0 );
 //! Return Selection coordinates as a string
-  XdmfString  GetCoordinatesAsString( XdmfInt64 Start =0, XdmfInt64 Nelements = 0 );
+  XdmfConstString  GetCoordinatesAsString( XdmfInt64 Start =0, XdmfInt64 Nelements = 0 );
 //! Get the number of selected elements
   XdmfInt64  GetSelectionSize( void );
 //! Get the number of total elements in a dataset
@@ -148,7 +148,7 @@ public :
 //! Get the selection type ( HyperSlab / Coordinates )
   XdmfGetValueMacro( SelectionType, XdmfInt32 );
 //! Get the selection type as a string
-  XdmfString GetSelectionTypeAsString( void );
+  XdmfConstString GetSelectionTypeAsString( void );
 
 //! Internal Method to Get Low Level DataType
   XdmfGetValueMacro( DataType, hid_t );
@@ -168,25 +168,25 @@ public :
 #endif
 
   XdmfInt32  AddCompoundMemberFromString( XdmfConstString Name,
-        XdmfString NumberType,
-        XdmfString Shape,
+        XdmfConstString NumberType,
+        XdmfConstString Shape,
         XdmfInt64  Offset = 0);
 
 //! Get the total number of members in the Compound Data Set
   XdmfInt64  GetNumberOfMembers( void );
 //! Get the member name
-  XdmfString  GetMemberName( XdmfInt64 Index );
+  XdmfConstString  GetMemberName( XdmfInt64 Index );
 //! Get the Total Number of Element in the member
   XdmfInt64  GetMemberLength( XdmfInt64 Index );
 //! Get the total size ( in bytes ) of the member
   XdmfInt64  GetMemberSize( XdmfInt64 Index );
 //! Get the Shape of the member
   XdmfInt32  GetMemberShape( XdmfInt64 Index, XdmfInt64 *Dimensions );
-  XdmfString  GetMemberShapeAsString(  XdmfInt64 Index );
+  XdmfConstString  GetMemberShapeAsString(  XdmfInt64 Index );
 //! Get the member base number type
   XdmfInt32  GetMemberType( XdmfInt64 Index );
 //! Get the member base number type as a string 
-  XdmfString  GetMemberTypeAsString( XdmfInt64 Index );
+  XdmfConstString  GetMemberTypeAsString( XdmfInt64 Index );
 //! Get the member offset
   XdmfInt64  GetMemberOffset( XdmfInt64 Index );
 

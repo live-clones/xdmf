@@ -52,9 +52,9 @@ public:
   XdmfConstString GetClassName() { return ( "XdmfLightData" ) ; };
 
 //! Get the default NDGM Host
-        XdmfGetValueMacro(NdgmHost, XdmfString);
+        XdmfGetValueMacro(NdgmHost, XdmfConstString);
 //! Set the default NDGM Host 
-        void SetNdgmHost( XdmfString String ) { strcpy( this->NdgmHost, String ); }
+        void SetNdgmHost( XdmfConstString String ) { strcpy( this->NdgmHost, String ); }
 
 //! Get the current name
 /*!
@@ -70,28 +70,28 @@ public:
 	Visualization tools, in particular, look for this information to
 	distinguish grids and scalars.
 */
-  XdmfGetValueMacro(Name, XdmfString);
+  XdmfGetValueMacro(Name, XdmfConstString);
 //! Set the current name
   void SetName( XdmfConstString File ) {
     strcpy( this->Name, File );
     } ;
 
 //! Get the current filename
-  XdmfGetValueMacro(FileName, XdmfString);
+  XdmfGetValueMacro(FileName, XdmfConstString);
 //! Set the current filename
-  void SetFileName( XdmfString File ) {
+  void SetFileName( XdmfConstString File ) {
     strcpy( this->FileName, File );
     } ;
 
 //! Get the current WorkingDirectory
-  XdmfGetValueMacro(WorkingDirectory, XdmfString);
+  XdmfGetValueMacro(WorkingDirectory, XdmfConstString);
 //! Set the current WorkingDirectory
 /*!
 	This alleviates the need to hard code pathnames in the
 	light data. i.e. the heavy and light data can be in 
 	one directory and accessed from another.
 */
-  void SetWorkingDirectory( XdmfString File ) {
+  void SetWorkingDirectory( XdmfConstString File ) {
     strcpy( this->WorkingDirectory, File );
     } ;
 

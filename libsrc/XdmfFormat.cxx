@@ -40,7 +40,7 @@ XdmfXNode *
 XdmfFormat::DataDescToElement( XdmfDataDesc *Desc, XdmfXNode *Element ) {
 
 XdmfInt32  j, i, Rank;
-XdmfString  Type;
+XdmfConstString  Type;
 char    Attribute[ XDMF_MAX_STRING_LENGTH  ];
 XdmfInt64  Dimensions[ XDMF_MAX_DIMENSION ];
 ostrstream  Value( Attribute, XDMF_MAX_STRING_LENGTH );

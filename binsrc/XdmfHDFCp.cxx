@@ -48,7 +48,8 @@ cout << "HDF5 Group " << Cwd << " has " << NumberOfChildren << " Children" << en
 for(i=0 ; i < NumberOfChildren ; i++){
 	XdmfInt32	Type;
 	char		*Directory, *ToDirectory, *Child;
-	XdmfString	DirName, ToDirName, ChildName;
+	XdmfString	DirName, ToDirName;
+  XdmfConstString  ChildName;
 	XdmfArray	*Data;
 
 	Type = H5->GetChildType(i);

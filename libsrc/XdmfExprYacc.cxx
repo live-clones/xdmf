@@ -45,6 +45,15 @@
 /* Using locations.  */
 #define YYLSP_NEEDED 0
 
+/* If NAME_PREFIX is specified substitute the variables and functions
+   names.  */
+#define yyparse dice_yyparse
+#define yylex   dice_yylex
+#define yyerror dice_yyerror
+#define yylval  dice_yylval
+#define yychar  dice_yychar
+#define yydebug dice_yydebug
+#define yynerrs dice_yynerrs
 
 
 /* Tokens.  */
@@ -110,22 +119,16 @@
 
 
 /* Copy the first part of user declarations.  */
-#line 1 "XdmfExpr.y"
+#line 1 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
 
 /* Force the definition for Linux */
 /* Possible bug in older Linux yacc */
-#ifndef yylval
-#define yylval dice_yylval
-#endif
-#ifndef yyerror
-#define yyerror dice_yyerror
-#endif
 
 #ifndef NOBISON
 extern int yylex();
 extern "C" {
-        void yyerror( char *);
-        int  yyparse( void );
+	void yyerror( const char *);
+	int  yyparse( void );
 }
 #endif
 #include <XdmfExpr.h>
@@ -138,24 +141,24 @@ static XdmfArray *XdmfExprReturnValue;
 
 class XdmfInt64Array : public XdmfArray {
 public :
-        XdmfInt64Array( XdmfInt64 Length ) {
-                this->SetNumberType( XDMF_INT64_TYPE );
-                this->SetNumberOfElements( Length );
-                }
-        XdmfInt64Array() {
-                this->SetNumberType( XDMF_INT64_TYPE );
-                this->SetNumberOfElements( 10 );
-                };
+	XdmfInt64Array( XdmfInt64 Length ) {
+		this->SetNumberType( XDMF_INT64_TYPE );
+		this->SetNumberOfElements( Length );
+		}
+	XdmfInt64Array() {
+		this->SetNumberType( XDMF_INT64_TYPE );
+		this->SetNumberOfElements( 10 );
+		};
 };
 
 #define ADD_XDMF_tokARRAY_TO_SYMBOL( a ) \
-        { \
-        char        name[80]; \
-        XdmfExprSymbol *sp; \
-        sprintf( name, "XdmfArray_%X", ( XdmfLength)(a) ); \
-        sp = XdmfExprSymbolLookup( name ); \
-        sp->ClientData = (a); \
-        }
+	{ \
+	char	name[80]; \
+	XdmfExprSymbol *sp; \
+	sprintf( name, "XdmfArray_%X", ( XdmfLength)(a) ); \
+	sp = XdmfExprSymbolLookup( name ); \
+	sp->ClientData = (a); \
+	}
 
 
 
@@ -173,15 +176,15 @@ public :
 #endif
 
 #if ! defined (YYSTYPE) && ! defined (YYSTYPE_IS_DECLARED)
-#line 49 "XdmfExpr.y"
+#line 43 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
 typedef union YYSTYPE {
-        double                DoubleValue;
-        long                IntegerValue;
-        void                *ArrayPointer;
-        XdmfExprSymbol        *Symbol;
+	double		DoubleValue;
+	long		IntegerValue;
+	void		*ArrayPointer;
+	XdmfExprSymbol	*Symbol;
 } YYSTYPE;
 /* Line 191 of yacc.c.  */
-#line 185 "y.tab.c"
+#line 188 "/home/andy/vtk/Xdmf-bin/libsrc/XdmfExprYacc.tab.c"
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
 # define YYSTYPE_IS_TRIVIAL 1
@@ -193,7 +196,7 @@ typedef union YYSTYPE {
 
 
 /* Line 214 of yacc.c.  */
-#line 197 "y.tab.c"
+#line 200 "/home/andy/vtk/Xdmf-bin/libsrc/XdmfExprYacc.tab.c"
 
 #if ! defined (yyoverflow) || YYERROR_VERBOSE
 
@@ -229,7 +232,7 @@ typedef union YYSTYPE {
 
 #if (! defined (yyoverflow) \
      && (! defined (__cplusplus) \
-         || (YYSTYPE_IS_TRIVIAL)))
+	 || (YYSTYPE_IS_TRIVIAL)))
 
 /* A type that is properly aligned for any stack member.  */
 union yyalloc
@@ -244,7 +247,7 @@ union yyalloc
 /* The size of an array large to enough to hold all stacks, each with
    N elements.  */
 # define YYSTACK_BYTES(N) \
-     ((N) * (sizeof (short) + sizeof (YYSTYPE))                                \
+     ((N) * (sizeof (short) + sizeof (YYSTYPE))				\
       + YYSTACK_GAP_MAXIMUM)
 
 /* Copy COUNT objects from FROM to TO.  The source and destination do
@@ -254,13 +257,13 @@ union yyalloc
 #   define YYCOPY(To, From, Count) \
       __builtin_memcpy (To, From, (Count) * sizeof (*(From)))
 #  else
-#   define YYCOPY(To, From, Count)                \
-      do                                        \
-        {                                        \
-          register YYSIZE_T yyi;                \
-          for (yyi = 0; yyi < (Count); yyi++)        \
-            (To)[yyi] = (From)[yyi];                \
-        }                                        \
+#   define YYCOPY(To, From, Count)		\
+      do					\
+	{					\
+	  register YYSIZE_T yyi;		\
+	  for (yyi = 0; yyi < (Count); yyi++)	\
+	    (To)[yyi] = (From)[yyi];		\
+	}					\
       while (0)
 #  endif
 # endif
@@ -270,15 +273,15 @@ union yyalloc
    elements in the stack, and YYPTR gives the new location of the
    stack.  Advance YYPTR to a properly aligned location for the next
    stack.  */
-# define YYSTACK_RELOCATE(Stack)                                        \
-    do                                                                        \
-      {                                                                        \
-        YYSIZE_T yynewbytes;                                                \
-        YYCOPY (&yyptr->Stack, Stack, yysize);                                \
-        Stack = &yyptr->Stack;                                                \
-        yynewbytes = yystacksize * sizeof (*Stack) + YYSTACK_GAP_MAXIMUM; \
-        yyptr += yynewbytes / sizeof (*yyptr);                                \
-      }                                                                        \
+# define YYSTACK_RELOCATE(Stack)					\
+    do									\
+      {									\
+	YYSIZE_T yynewbytes;						\
+	YYCOPY (&yyptr->Stack, Stack, yysize);				\
+	Stack = &yyptr->Stack;						\
+	yynewbytes = yystacksize * sizeof (*Stack) + YYSTACK_GAP_MAXIMUM; \
+	yyptr += yynewbytes / sizeof (*yyptr);				\
+      }									\
     while (0)
 
 #endif
@@ -307,7 +310,7 @@ union yyalloc
 #define YYUNDEFTOK  2
 #define YYMAXUTOK   282
 
-#define YYTRANSLATE(YYX)                                                 \
+#define YYTRANSLATE(YYX) 						\
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
 
 /* YYTRANSLATE[YYLEX] -- Bison symbol number corresponding to YYLEX.  */
@@ -386,11 +389,11 @@ static const yysigned_char yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const unsigned short yyrline[] =
 {
-       0,    73,    73,    81,    89,    94,   106,   122,   133,   146,
-     153,   158,   167,   244,   308,   317,   327,   336,   345,   354,
-     363,   372,   381,   390,   399,   408,   418,   429,   474,   507,
-     528,   549,   570,   591,   612,   633,   651,   655,   659,   676,
-     680,   684,   688,   692,   700,   704,   708
+       0,    67,    67,    75,    83,    88,   100,   116,   127,   140,
+     147,   152,   161,   238,   302,   311,   321,   330,   339,   348,
+     357,   366,   375,   384,   393,   402,   412,   423,   468,   501,
+     522,   543,   564,   585,   606,   627,   645,   649,   653,   670,
+     674,   678,   682,   686,   694,   698,   702
 };
 #endif
 
@@ -593,43 +596,43 @@ static const unsigned char yystos[] =
 # define YYSIZE_T unsigned int
 #endif
 
-#define yyerrok                (yyerrstatus = 0)
-#define yyclearin        (yychar = YYEMPTY)
-#define YYEMPTY                (-2)
-#define YYEOF                0
+#define yyerrok		(yyerrstatus = 0)
+#define yyclearin	(yychar = YYEMPTY)
+#define YYEMPTY		(-2)
+#define YYEOF		0
 
-#define YYACCEPT        goto yyacceptlab
-#define YYABORT                goto yyabortlab
-#define YYERROR                goto yyerrlab1
+#define YYACCEPT	goto yyacceptlab
+#define YYABORT		goto yyabortlab
+#define YYERROR		goto yyerrlab1
 
 
 /* Like YYERROR except do call yyerror.  This remains here temporarily
    to ease the transition to the new meaning of YYERROR, for GCC.
    Once GCC version 2 has supplanted version 1, this can go.  */
 
-#define YYFAIL                goto yyerrlab
+#define YYFAIL		goto yyerrlab
 
 #define YYRECOVERING()  (!!yyerrstatus)
 
-#define YYBACKUP(Token, Value)                                        \
-do                                                                \
-  if (yychar == YYEMPTY && yylen == 1)                                \
-    {                                                                \
-      yychar = (Token);                                                \
-      yylval = (Value);                                                \
-      yytoken = YYTRANSLATE (yychar);                                \
-      YYPOPSTACK;                                                \
-      goto yybackup;                                                \
-    }                                                                \
-  else                                                                \
-    {                                                                 \
+#define YYBACKUP(Token, Value)					\
+do								\
+  if (yychar == YYEMPTY && yylen == 1)				\
+    {								\
+      yychar = (Token);						\
+      yylval = (Value);						\
+      yytoken = YYTRANSLATE (yychar);				\
+      YYPOPSTACK;						\
+      goto yybackup;						\
+    }								\
+  else								\
+    { 								\
       yyerror ("syntax error: cannot back up");\
-      YYERROR;                                                        \
-    }                                                                \
+      YYERROR;							\
+    }								\
 while (0)
 
-#define YYTERROR        1
-#define YYERRCODE        256
+#define YYTERROR	1
+#define YYERRCODE	256
 
 /* YYLLOC_DEFAULT -- Compute the default location (before the actions
    are run).  */
@@ -658,27 +661,27 @@ while (0)
 #  define YYFPRINTF fprintf
 # endif
 
-# define YYDPRINTF(Args)                        \
-do {                                                \
-  if (yydebug)                                        \
-    YYFPRINTF Args;                                \
+# define YYDPRINTF(Args)			\
+do {						\
+  if (yydebug)					\
+    YYFPRINTF Args;				\
 } while (0)
 
-# define YYDSYMPRINT(Args)                        \
-do {                                                \
-  if (yydebug)                                        \
-    yysymprint Args;                                \
+# define YYDSYMPRINT(Args)			\
+do {						\
+  if (yydebug)					\
+    yysymprint Args;				\
 } while (0)
 
-# define YYDSYMPRINTF(Title, Token, Value, Location)                \
-do {                                                                \
-  if (yydebug)                                                        \
-    {                                                                \
-      YYFPRINTF (stderr, "%s ", Title);                                \
-      yysymprint (stderr,                                         \
-                  Token, Value);        \
-      YYFPRINTF (stderr, "\n");                                        \
-    }                                                                \
+# define YYDSYMPRINTF(Title, Token, Value, Location)		\
+do {								\
+  if (yydebug)							\
+    {								\
+      YYFPRINTF (stderr, "%s ", Title);				\
+      yysymprint (stderr, 					\
+                  Token, Value);	\
+      YYFPRINTF (stderr, "\n");					\
+    }								\
 } while (0)
 
 /*------------------------------------------------------------------.
@@ -702,10 +705,10 @@ yy_stack_print (bottom, top)
   YYFPRINTF (stderr, "\n");
 }
 
-# define YY_STACK_PRINT(Bottom, Top)                                \
-do {                                                                \
-  if (yydebug)                                                        \
-    yy_stack_print ((Bottom), (Top));                                \
+# define YY_STACK_PRINT(Bottom, Top)				\
+do {								\
+  if (yydebug)							\
+    yy_stack_print ((Bottom), (Top));				\
 } while (0)
 
 
@@ -732,10 +735,10 @@ yy_reduce_print (yyrule)
   YYFPRINTF (stderr, "-> %s\n", yytname [yyr1[yyrule]]);
 }
 
-# define YY_REDUCE_PRINT(Rule)                \
-do {                                        \
-  if (yydebug)                                \
-    yy_reduce_print (Rule);                \
+# define YY_REDUCE_PRINT(Rule)		\
+do {					\
+  if (yydebug)				\
+    yy_reduce_print (Rule);		\
 } while (0)
 
 /* Nonzero means print parse trace.  It is left uninitialized so that
@@ -751,7 +754,7 @@ int yydebug;
 
 
 /* YYINITDEPTH -- initial size of the parser's stacks.  */
-#ifndef        YYINITDEPTH
+#ifndef	YYINITDEPTH
 # define YYINITDEPTH 200
 #endif
 
@@ -856,6 +859,11 @@ yysymprint (yyoutput, yytype, yyvaluep)
   else
     YYFPRINTF (yyoutput, "nterm %s (", yytname[yytype]);
 
+  switch (yytype)
+    {
+      default:
+        break;
+    }
   YYFPRINTF (yyoutput, ")");
 }
 
@@ -877,6 +885,12 @@ yydestruct (yytype, yyvaluep)
   /* Pacify ``unused variable'' warnings.  */
   (void) yyvaluep;
 
+  switch (yytype)
+    {
+
+      default:
+        break;
+    }
 }
 
 
@@ -949,7 +963,7 @@ yyparse ()
      to reallocate them elsewhere.  */
 
   /* The state stack.  */
-  short        yyssa[YYINITDEPTH];
+  short	yyssa[YYINITDEPTH];
   short *yyss = yyssa;
   register short *yyssp;
 
@@ -978,7 +992,7 @@ yyparse ()
   yystate = 0;
   yyerrstatus = 0;
   yynerrs = 0;
-  yychar = YYEMPTY;                /* Cause a token to be read.  */
+  yychar = YYEMPTY;		/* Cause a token to be read.  */
 
   /* Initialize stack pointers.
      Waste one element of value and location stack
@@ -1009,25 +1023,25 @@ yyparse ()
 
 #ifdef yyoverflow
       {
-        /* Give user a chance to reallocate the stack. Use copies of
-           these so that the &'s don't force the real ones into
-           memory.  */
-        YYSTYPE *yyvs1 = yyvs;
-        short *yyss1 = yyss;
+	/* Give user a chance to reallocate the stack. Use copies of
+	   these so that the &'s don't force the real ones into
+	   memory.  */
+	YYSTYPE *yyvs1 = yyvs;
+	short *yyss1 = yyss;
 
 
-        /* Each stack pointer address is followed by the size of the
-           data in use in that stack, in bytes.  This used to be a
-           conditional around just the two extra args, but that might
-           be undefined if yyoverflow is a macro.  */
-        yyoverflow ("parser stack overflow",
-                    &yyss1, yysize * sizeof (*yyssp),
-                    &yyvs1, yysize * sizeof (*yyvsp),
+	/* Each stack pointer address is followed by the size of the
+	   data in use in that stack, in bytes.  This used to be a
+	   conditional around just the two extra args, but that might
+	   be undefined if yyoverflow is a macro.  */
+	yyoverflow ("parser stack overflow",
+		    &yyss1, yysize * sizeof (*yyssp),
+		    &yyvs1, yysize * sizeof (*yyvsp),
 
-                    &yystacksize);
+		    &yystacksize);
 
-        yyss = yyss1;
-        yyvs = yyvs1;
+	yyss = yyss1;
+	yyvs = yyvs1;
       }
 #else /* no yyoverflow */
 # ifndef YYSTACK_RELOCATE
@@ -1035,23 +1049,23 @@ yyparse ()
 # else
       /* Extend the stack our own way.  */
       if (YYMAXDEPTH <= yystacksize)
-        goto yyoverflowlab;
+	goto yyoverflowlab;
       yystacksize *= 2;
       if (YYMAXDEPTH < yystacksize)
-        yystacksize = YYMAXDEPTH;
+	yystacksize = YYMAXDEPTH;
 
       {
-        short *yyss1 = yyss;
-        union yyalloc *yyptr =
-          (union yyalloc *) YYSTACK_ALLOC (YYSTACK_BYTES (yystacksize));
-        if (! yyptr)
-          goto yyoverflowlab;
-        YYSTACK_RELOCATE (yyss);
-        YYSTACK_RELOCATE (yyvs);
+	short *yyss1 = yyss;
+	union yyalloc *yyptr =
+	  (union yyalloc *) YYSTACK_ALLOC (YYSTACK_BYTES (yystacksize));
+	if (! yyptr)
+	  goto yyoverflowlab;
+	YYSTACK_RELOCATE (yyss);
+	YYSTACK_RELOCATE (yyvs);
 
 #  undef YYSTACK_RELOCATE
-        if (yyss1 != yyssa)
-          YYSTACK_FREE (yyss1);
+	if (yyss1 != yyssa)
+	  YYSTACK_FREE (yyss1);
       }
 # endif
 #endif /* no yyoverflow */
@@ -1061,10 +1075,10 @@ yyparse ()
 
 
       YYDPRINTF ((stderr, "Stack size increased to %lu\n",
-                  (unsigned long int) yystacksize));
+		  (unsigned long int) yystacksize));
 
       if (yyss + yystacksize - 1 <= yyssp)
-        YYABORT;
+	YYABORT;
     }
 
   YYDPRINTF ((stderr, "Entering state %d\n", yystate));
@@ -1115,7 +1129,7 @@ yybackup:
   if (yyn <= 0)
     {
       if (yyn == 0 || yyn == YYTABLE_NINF)
-        goto yyerrlab;
+	goto yyerrlab;
       yyn = -yyn;
       goto yyreduce;
     }
@@ -1174,822 +1188,822 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 73 "XdmfExpr.y"
+#line 67 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                /* 
-                printf("Complete\n");
-                printf("XdmfExprReturnValue Nelms = %d\n", XdmfExprReturnValue->GetNumberOfElements());
-                */
-                }
+		/* 
+		printf("Complete\n");
+		printf("XdmfExprReturnValue Nelms = %d\n", XdmfExprReturnValue->GetNumberOfElements());
+		*/
+		}
     break;
 
   case 3:
-#line 81 "XdmfExpr.y"
+#line 75 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                XdmfArray *TempArray = ( XdmfArray *)yyvsp[0].ArrayPointer;
+		XdmfArray *TempArray = ( XdmfArray *)yyvsp[0].ArrayPointer;
 
-                /* printf("Setting %s from ArrayExpression\n", $1); */
-                XdmfExprReturnValue = (XdmfArray *)yyvsp[-2].ArrayPointer;
-                *XdmfExprReturnValue = *TempArray;
-                delete TempArray;
-                }
+		/* printf("Setting %s from ArrayExpression\n", $1); */
+		XdmfExprReturnValue = (XdmfArray *)yyvsp[-2].ArrayPointer;
+		*XdmfExprReturnValue = *TempArray;
+		delete TempArray;
+		}
     break;
 
   case 4:
-#line 89 "XdmfExpr.y"
+#line 83 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                /* printf("Setting %s from ScalarExpression\n", $1); */
-                XdmfExprReturnValue = (XdmfArray *)yyvsp[-2].ArrayPointer;
-                *XdmfExprReturnValue = yyvsp[0].DoubleValue;
-                }
+		/* printf("Setting %s from ScalarExpression\n", $1); */
+		XdmfExprReturnValue = (XdmfArray *)yyvsp[-2].ArrayPointer;
+		*XdmfExprReturnValue = yyvsp[0].DoubleValue;
+		}
     break;
 
   case 5:
-#line 94 "XdmfExpr.y"
+#line 88 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
-                        XdmfArray        *Result = ( XdmfArray *)yyvsp[-5].ArrayPointer;
-                        XdmfLength        i, index, Length = Array1->GetNumberOfElements();
+			XdmfArray	*Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
+			XdmfArray	*Result = ( XdmfArray *)yyvsp[-5].ArrayPointer;
+			XdmfLength	i, index, Length = Array1->GetNumberOfElements();
 
-                        for( i = 0 ; i < Length ; i++ ){
-                                index = (XdmfLength)Array1->GetValueAsFloat64( i );
-                                Result->SetValueFromFloat64( index, yyvsp[0].DoubleValue );
-                                }
-                        delete Array1;
-                        XdmfExprReturnValue = Result;
-                }
+			for( i = 0 ; i < Length ; i++ ){
+				index = (XdmfLength)Array1->GetValueAsFloat64( i );
+				Result->SetValueFromFloat64( index, yyvsp[0].DoubleValue );
+				}
+			delete Array1;
+			XdmfExprReturnValue = Result;
+		}
     break;
 
   case 6:
-#line 106 "XdmfExpr.y"
+#line 100 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
-                        XdmfArray        *Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
-                        XdmfArray        *Result = ( XdmfArray *)yyvsp[-5].ArrayPointer;
-                        XdmfFloat64        Value;
-                        XdmfLength        i, index, Length = Array1->GetNumberOfElements();
+			XdmfArray	*Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
+			XdmfArray	*Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
+			XdmfArray	*Result = ( XdmfArray *)yyvsp[-5].ArrayPointer;
+			XdmfFloat64	Value;
+			XdmfLength	i, index, Length = Array1->GetNumberOfElements();
 
-                        for( i = 0 ; i < Length ; i++ ){
-                                index = (XdmfLength)Array1->GetValueAsFloat64( i );
-                                Value = Array2->GetValueAsFloat64( i );
-                                Result->SetValueFromFloat64( index, Value );
-                                }
-                        delete Array1;
-                        delete Array2;
-                        XdmfExprReturnValue = Result;
-                }
+			for( i = 0 ; i < Length ; i++ ){
+				index = (XdmfLength)Array1->GetValueAsFloat64( i );
+				Value = Array2->GetValueAsFloat64( i );
+				Result->SetValueFromFloat64( index, Value );
+				}
+			delete Array1;
+			delete Array2;
+			XdmfExprReturnValue = Result;
+		}
     break;
 
   case 7:
-#line 122 "XdmfExpr.y"
+#line 116 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        XdmfArray *Range;
+			XdmfArray *Range;
 
-                        /* printf("Array Range %d:%d = ScalarExpression \n", $3, $5);         */
-                        Range = (XdmfArray *)yyvsp[-7].ArrayPointer;
-                        XdmfExprReturnValue = Range->Reference( yyvsp[-5].IntegerValue, yyvsp[-3].IntegerValue ); /* This is a Reference */
-                        *XdmfExprReturnValue = yyvsp[0].DoubleValue;
+			/* printf("Array Range %d:%d = ScalarExpression \n", $3, $5);	 */
+			Range = (XdmfArray *)yyvsp[-7].ArrayPointer;
+			XdmfExprReturnValue = Range->Reference( yyvsp[-5].IntegerValue, yyvsp[-3].IntegerValue ); /* This is a Reference */
+			*XdmfExprReturnValue = yyvsp[0].DoubleValue;
 
-                        /* Now Point to the Entire Array */
-                        XdmfExprReturnValue = (XdmfArray *)yyvsp[-7].ArrayPointer;
-                        }
+			/* Now Point to the Entire Array */
+			XdmfExprReturnValue = (XdmfArray *)yyvsp[-7].ArrayPointer;
+			}
     break;
 
   case 8:
-#line 133 "XdmfExpr.y"
+#line 127 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        XdmfArray *TempArray = ( XdmfArray *)yyvsp[0].ArrayPointer;
-                        XdmfArray *Range;
+			XdmfArray *TempArray = ( XdmfArray *)yyvsp[0].ArrayPointer;
+			XdmfArray *Range;
 
-                        /* printf("Array Range %d:%d = ArrayExpression \n", $3, $5);         */
-                        Range = (XdmfArray *)yyvsp[-7].ArrayPointer;
-                        XdmfExprReturnValue = Range->Reference( yyvsp[-5].IntegerValue, yyvsp[-3].IntegerValue ); /* This is a Reference */
-                        *XdmfExprReturnValue = *TempArray;
+			/* printf("Array Range %d:%d = ArrayExpression \n", $3, $5);	 */
+			Range = (XdmfArray *)yyvsp[-7].ArrayPointer;
+			XdmfExprReturnValue = Range->Reference( yyvsp[-5].IntegerValue, yyvsp[-3].IntegerValue ); /* This is a Reference */
+			*XdmfExprReturnValue = *TempArray;
 
-                        /* Now Point to the Entire Array */
-                        XdmfExprReturnValue = (XdmfArray *)yyvsp[-7].ArrayPointer;
-                        delete TempArray;
-                        }
+			/* Now Point to the Entire Array */
+			XdmfExprReturnValue = (XdmfArray *)yyvsp[-7].ArrayPointer;
+			delete TempArray;
+			}
     break;
 
   case 9:
-#line 146 "XdmfExpr.y"
+#line 140 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                XdmfArray *TempArray = ( XdmfArray *)yyvsp[0].ArrayPointer;
+		XdmfArray *TempArray = ( XdmfArray *)yyvsp[0].ArrayPointer;
 
-                /* printf("Clone from ArrayExpression\n"); */
-                XdmfExprReturnValue = TempArray;        
-                /* printf("XdmfExprReturnValue Nelms = %d\n", XdmfExprReturnValue->GetNumberOfElements()); */
-                }
+		/* printf("Clone from ArrayExpression\n"); */
+		XdmfExprReturnValue = TempArray;	
+		/* printf("XdmfExprReturnValue Nelms = %d\n", XdmfExprReturnValue->GetNumberOfElements()); */
+		}
     break;
 
   case 10:
-#line 153 "XdmfExpr.y"
+#line 147 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                printf("Pointless !! Scalar = %g\n", yyvsp[0].DoubleValue);
-                }
+		printf("Pointless !! Scalar = %g\n", yyvsp[0].DoubleValue);
+		}
     break;
 
   case 11:
-#line 158 "XdmfExpr.y"
+#line 152 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
-                        XdmfArray *Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
+			XdmfArray *Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
 
-                        /* printf("Array 0x%X + 0x%X\n", Array1, Array2); */
-                        *Array1 += *Array2;
-                        yyval.ArrayPointer = Array1;
-                        delete Array2;
-                        }
+			/* printf("Array 0x%X + 0x%X\n", Array1, Array2); */
+			*Array1 += *Array2;
+			yyval.ArrayPointer = Array1;
+			delete Array2;
+			}
     break;
 
   case 12:
-#line 167 "XdmfExpr.y"
+#line 161 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        /* Interlace */
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
-                        XdmfArray *Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
-                        XdmfArray *NewArray = new XdmfArray();
-                        XdmfInt32 i, Rank1, Rank2;
-                        XdmfInt64 NewLength, Length1, Length2, IFactor, Lcd;
-                        XdmfInt64 Dimension1[ XDMF_MAX_DIMENSION ];
-                        XdmfInt64 Dimension2[ XDMF_MAX_DIMENSION ];
-                        XdmfInt64 Start[ XDMF_MAX_DIMENSION ];
-                        XdmfInt64 Stride[ XDMF_MAX_DIMENSION ];
-                        XdmfInt64 Count[ XDMF_MAX_DIMENSION ];
-                        XdmfInt64 NewDimension[ XDMF_MAX_DIMENSION ];
+			/* Interlace */
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
+			XdmfArray *Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
+			XdmfArray *NewArray = new XdmfArray();
+			XdmfInt32 i, Rank1, Rank2;
+			XdmfInt64 NewLength, Length1, Length2, IFactor, Lcd;
+			XdmfInt64 Dimension1[ XDMF_MAX_DIMENSION ];
+			XdmfInt64 Dimension2[ XDMF_MAX_DIMENSION ];
+			XdmfInt64 Start[ XDMF_MAX_DIMENSION ];
+			XdmfInt64 Stride[ XDMF_MAX_DIMENSION ];
+			XdmfInt64 Count[ XDMF_MAX_DIMENSION ];
+			XdmfInt64 NewDimension[ XDMF_MAX_DIMENSION ];
 
-                        /* printf("Array 0x%X , 0x%X\n", Array1, Array2); */
-                        
-                        Rank1 = Array1->GetShape( Dimension1 );
-                        Rank2 = Array2->GetShape( Dimension2 );
-                        if( Rank1 != Rank2 ){
-                                printf(" Interlace : Rank Mismatch !!\n");
-                                }
-                        NewArray->CopyType( Array1 );
+			/* printf("Array 0x%X , 0x%X\n", Array1, Array2); */
+			
+			Rank1 = Array1->GetShape( Dimension1 );
+			Rank2 = Array2->GetShape( Dimension2 );
+			if( Rank1 != Rank2 ){
+				printf(" Interlace : Rank Mismatch !!\n");
+				}
+			NewArray->CopyType( Array1 );
 
-                        Length1 = Array1->GetNumberOfElements();
-                        Length2 = Array2->GetNumberOfElements();
-                        NewLength = Length1 + Length2;
-                        IFactor = Length1 / Length2;
-                        Lcd = Length1;
-                        if( Length2 < Length1 ){
-                                Lcd = Length2;
-                                }
-                        NewDimension[0] = Lcd;
-                        NewDimension[1] = NewLength / Lcd;
-                        NewArray->SetShape( 2, NewDimension );
-                        /*
-                        printf("Rank1 = %d Rank2 = %d\n", Rank1, Rank2 );
-                        printf("Array1 Size = %d\n", Array1->GetNumberOfElements() );
-                        printf("Array2 Size = %d\n", Array2->GetNumberOfElements() );
-                        printf("NewLength = %d\n", NewLength );
-                        printf("Lcd = %d\n", Lcd );
-                        printf("IFactor = %d\n", IFactor );
-                        printf("New Dims = %s\n", NewArray->GetShapeAsString() );
-                        */
-                        /* NewArray->Generate( -55.0,  -55.0 ); */
-                        /* Copy in Array 1 */
-                        Start[0] = 0; Start[1] = 0;
-                        Stride[0] = 1; Stride[1] = 1;
-                        Count[0] = Lcd; Count[1] = Length1 / Lcd;
-                        NewArray->SelectHyperSlab( Start, Stride, Count );
-                        Array1->SelectAll();
-                        /*
-                        printf("Copy in Array1 = %s\n", NewArray->GetHyperSlabAsString() );
-                        */
-                        CopyArray( Array1, NewArray );
-                        /* Copy in Array 2 */
-                        Start[0] = 0; Start[1] = Length1 / Lcd;
-                        Stride[0] = 1; Stride[1] = 1;
-                        Count[0] = Lcd; Count[1] = Length2 / Lcd;
-                        NewArray->SelectHyperSlab( Start, Stride, Count );
-                        Array2->SelectAll();
-                        /*
-                        printf("Copy in Array2 = %s\n", NewArray->GetHyperSlabAsString() );
-                        */
-                        CopyArray( Array2, NewArray );
-                        NewDimension[0] = Dimension1[0] + Dimension2[0];
-                        for( i = 1 ; i < Rank1 ; i++ ){
-                                NewDimension[i] = Dimension1[i];
-                                } 
-                        NewArray->Reform( Rank1, NewDimension );
-                        /*        
-                        printf("Result(%s) = %s\n", NewArray->GetShapeAsString(), NewArray->GetValues() );
-                        */
-                        yyval.ArrayPointer = NewArray;
-                        delete Array1;
-                        delete Array2;
-                        }
+			Length1 = Array1->GetNumberOfElements();
+			Length2 = Array2->GetNumberOfElements();
+			NewLength = Length1 + Length2;
+			IFactor = Length1 / Length2;
+			Lcd = Length1;
+			if( Length2 < Length1 ){
+				Lcd = Length2;
+				}
+			NewDimension[0] = Lcd;
+			NewDimension[1] = NewLength / Lcd;
+			NewArray->SetShape( 2, NewDimension );
+			/*
+			printf("Rank1 = %d Rank2 = %d\n", Rank1, Rank2 );
+			printf("Array1 Size = %d\n", Array1->GetNumberOfElements() );
+			printf("Array2 Size = %d\n", Array2->GetNumberOfElements() );
+			printf("NewLength = %d\n", NewLength );
+			printf("Lcd = %d\n", Lcd );
+			printf("IFactor = %d\n", IFactor );
+			printf("New Dims = %s\n", NewArray->GetShapeAsString() );
+			*/
+			/* NewArray->Generate( -55.0,  -55.0 ); */
+			/* Copy in Array 1 */
+			Start[0] = 0; Start[1] = 0;
+			Stride[0] = 1; Stride[1] = 1;
+			Count[0] = Lcd; Count[1] = Length1 / Lcd;
+			NewArray->SelectHyperSlab( Start, Stride, Count );
+			Array1->SelectAll();
+			/*
+			printf("Copy in Array1 = %s\n", NewArray->GetHyperSlabAsString() );
+			*/
+			CopyArray( Array1, NewArray );
+			/* Copy in Array 2 */
+			Start[0] = 0; Start[1] = Length1 / Lcd;
+			Stride[0] = 1; Stride[1] = 1;
+			Count[0] = Lcd; Count[1] = Length2 / Lcd;
+			NewArray->SelectHyperSlab( Start, Stride, Count );
+			Array2->SelectAll();
+			/*
+			printf("Copy in Array2 = %s\n", NewArray->GetHyperSlabAsString() );
+			*/
+			CopyArray( Array2, NewArray );
+			NewDimension[0] = Dimension1[0] + Dimension2[0];
+			for( i = 1 ; i < Rank1 ; i++ ){
+				NewDimension[i] = Dimension1[i];
+				} 
+			NewArray->Reform( Rank1, NewDimension );
+			/*	
+			printf("Result(%s) = %s\n", NewArray->GetShapeAsString(), NewArray->GetValues() );
+			*/
+			yyval.ArrayPointer = NewArray;
+			delete Array1;
+			delete Array2;
+			}
     break;
 
   case 13:
-#line 244 "XdmfExpr.y"
+#line 238 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        /* Interlace */
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
-                        XdmfArray *Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
-                        XdmfArray *NewArray = new XdmfArray();
-                        XdmfInt32 i, Rank1, Rank2;
-                        XdmfInt64 Dimension1[ XDMF_MAX_DIMENSION ];
-                        XdmfInt64 Dimension2[ XDMF_MAX_DIMENSION ];
-                        XdmfInt64 Start[ XDMF_MAX_DIMENSION ];
-                        XdmfInt64 Stride[ XDMF_MAX_DIMENSION ];
-                        XdmfInt64 Count[ XDMF_MAX_DIMENSION ];
-                        XdmfInt64 NewDimension[ XDMF_MAX_DIMENSION ];
+			/* Interlace */
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
+			XdmfArray *Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
+			XdmfArray *NewArray = new XdmfArray();
+			XdmfInt32 i, Rank1, Rank2;
+			XdmfInt64 Dimension1[ XDMF_MAX_DIMENSION ];
+			XdmfInt64 Dimension2[ XDMF_MAX_DIMENSION ];
+			XdmfInt64 Start[ XDMF_MAX_DIMENSION ];
+			XdmfInt64 Stride[ XDMF_MAX_DIMENSION ];
+			XdmfInt64 Count[ XDMF_MAX_DIMENSION ];
+			XdmfInt64 NewDimension[ XDMF_MAX_DIMENSION ];
 
-                         /* printf("Array 0x%X  << 0x%X\n", Array1, Array2); */
-                        
-                        Rank1 = Array1->GetShape( Dimension1 );
-                        Rank2 = Array2->GetShape( Dimension2 );
-                        if( Rank1 != Rank2 ){
-                                printf(" Cat : Rank Mismatch !!\n");
-                                }
-                        NewDimension[0] = Dimension1[0] + Dimension2[0];
-                        for( i = 1 ; i < Rank1 ; i++ ){
-                                NewDimension[i] = Dimension1[i];
-                                } 
-                        NewArray->CopyType( Array1 );
-                        NewArray->SetShape( Rank1, NewDimension );
+		 	/* printf("Array 0x%X  << 0x%X\n", Array1, Array2); */
+			
+			Rank1 = Array1->GetShape( Dimension1 );
+			Rank2 = Array2->GetShape( Dimension2 );
+			if( Rank1 != Rank2 ){
+				printf(" Cat : Rank Mismatch !!\n");
+				}
+			NewDimension[0] = Dimension1[0] + Dimension2[0];
+			for( i = 1 ; i < Rank1 ; i++ ){
+				NewDimension[i] = Dimension1[i];
+				} 
+			NewArray->CopyType( Array1 );
+			NewArray->SetShape( Rank1, NewDimension );
 
-                        /*
-                        NewArray->Generate( -55.0,  -55.0 );
-                        */
-                        /* Copy in Array 1 */
-                        for( i = 0 ; i < Rank1 ; i++ ){
-                                Start[i] = 0;
-                                Stride[i] = 1;
-                                Count[i] = Dimension1[i];
-                                }
-                        NewArray->SelectHyperSlab( Start, Stride, Count );
-                        Array1->SelectAll();
-                        /*
-                        printf("Copy in Array1 = %s\n", NewArray->GetHyperSlabAsString() );
-                        */
-                        CopyArray( Array1, NewArray );
-                        /* Copy in Array 2 */
-                        Start[0] = Dimension1[0];
-                        Stride[0] = 1;
-                        Count[0] = Dimension2[0];
-                        for( i = 1 ; i < Rank1 ; i++ ){
-                                Start[i] = 0;
-                                Stride[i] = 1;
-                                Count[i] = Dimension1[i];
-                                }
-                        NewArray->SelectHyperSlab( Start, Stride, Count );
-                        Array2->SelectAll();
-                        /*
-                        printf("Copy in Array2 = %s\n", NewArray->GetHyperSlabAsString() );
-                        */
-                        CopyArray( Array2, NewArray );
-                        /*
-                        printf("Result(%s) = %s\n", NewArray->GetShapeAsString(), NewArray->GetValues() );
-                        */
-                        yyval.ArrayPointer = NewArray;
-                        delete Array1;
-                        delete Array2;
-                        }
+			/*
+			NewArray->Generate( -55.0,  -55.0 );
+			*/
+			/* Copy in Array 1 */
+			for( i = 0 ; i < Rank1 ; i++ ){
+				Start[i] = 0;
+				Stride[i] = 1;
+				Count[i] = Dimension1[i];
+				}
+			NewArray->SelectHyperSlab( Start, Stride, Count );
+			Array1->SelectAll();
+			/*
+			printf("Copy in Array1 = %s\n", NewArray->GetHyperSlabAsString() );
+			*/
+			CopyArray( Array1, NewArray );
+			/* Copy in Array 2 */
+			Start[0] = Dimension1[0];
+			Stride[0] = 1;
+			Count[0] = Dimension2[0];
+			for( i = 1 ; i < Rank1 ; i++ ){
+				Start[i] = 0;
+				Stride[i] = 1;
+				Count[i] = Dimension1[i];
+				}
+			NewArray->SelectHyperSlab( Start, Stride, Count );
+			Array2->SelectAll();
+			/*
+			printf("Copy in Array2 = %s\n", NewArray->GetHyperSlabAsString() );
+			*/
+			CopyArray( Array2, NewArray );
+			/*
+			printf("Result(%s) = %s\n", NewArray->GetShapeAsString(), NewArray->GetValues() );
+			*/
+			yyval.ArrayPointer = NewArray;
+			delete Array1;
+			delete Array2;
+			}
     break;
 
   case 14:
-#line 308 "XdmfExpr.y"
+#line 302 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
-                        XdmfArray *Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
+			XdmfArray *Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
 
-                        /* printf("Array 0x%X + 0x%X\n", Array1, Array2); */
-                        *Array1 -= *Array2;
-                        yyval.ArrayPointer = Array1;
-                        delete Array2;
-                        }
+			/* printf("Array 0x%X + 0x%X\n", Array1, Array2); */
+			*Array1 -= *Array2;
+			yyval.ArrayPointer = Array1;
+			delete Array2;
+			}
     break;
 
   case 15:
-#line 317 "XdmfExpr.y"
+#line 311 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
-                        XdmfArray *Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
+			XdmfArray *Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
 
-                        /* printf("Array 0x%X * 0x%X\n", Array1, Array2); */
-                        *Array1 *= *Array2;
-                        yyval.ArrayPointer = Array1;
-                        delete Array2;
-                        /* printf("Array1 Nelms = %d\n", Array1->GetNumberOfElements()); */
-                        }
+			/* printf("Array 0x%X * 0x%X\n", Array1, Array2); */
+			*Array1 *= *Array2;
+			yyval.ArrayPointer = Array1;
+			delete Array2;
+			/* printf("Array1 Nelms = %d\n", Array1->GetNumberOfElements()); */
+			}
     break;
 
   case 16:
-#line 327 "XdmfExpr.y"
+#line 321 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
-                        XdmfArray *Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
+			XdmfArray *Array2 = ( XdmfArray *)yyvsp[0].ArrayPointer;
 
-                        /* printf("Array 0x%X + 0x%X\n", Array1, Array2); */
-                        *Array1 /= *Array2;
-                        yyval.ArrayPointer = Array1;
-                        delete Array2;
-                        }
+			/* printf("Array 0x%X + 0x%X\n", Array1, Array2); */
+			*Array1 /= *Array2;
+			yyval.ArrayPointer = Array1;
+			delete Array2;
+			}
     break;
 
   case 17:
-#line 336 "XdmfExpr.y"
+#line 330 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
-                        XdmfArray *Result;
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
+			XdmfArray *Result;
 
-                        /* printf("Array + %g\n", $3); */
-                        Result  = Array1;
-                        *Result += yyvsp[0].DoubleValue;
-                        yyval.ArrayPointer = Result;
-                        }
+			/* printf("Array + %g\n", $3); */
+			Result  = Array1;
+			*Result += yyvsp[0].DoubleValue;
+			yyval.ArrayPointer = Result;
+			}
     break;
 
   case 18:
-#line 345 "XdmfExpr.y"
+#line 339 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
-                        XdmfArray *Result;
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
+			XdmfArray *Result;
 
-                        /* printf("Array - %g\n", $3); */
-                        Result  = Array1;
-                        *Result -= yyvsp[0].DoubleValue;
-                        yyval.ArrayPointer = Result;
-                        }
+			/* printf("Array - %g\n", $3); */
+			Result  = Array1;
+			*Result -= yyvsp[0].DoubleValue;
+			yyval.ArrayPointer = Result;
+			}
     break;
 
   case 19:
-#line 354 "XdmfExpr.y"
+#line 348 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
-                        XdmfArray *Result;
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
+			XdmfArray *Result;
 
-                        /* printf("Array * %g\n", $3); */
-                        Result  = Array1;
-                        *Result *= yyvsp[0].DoubleValue;
-                        yyval.ArrayPointer = Result;
-                        }
+			/* printf("Array * %g\n", $3); */
+			Result  = Array1;
+			*Result *= yyvsp[0].DoubleValue;
+			yyval.ArrayPointer = Result;
+			}
     break;
 
   case 20:
-#line 363 "XdmfExpr.y"
+#line 357 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
-                        XdmfArray *Result;
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[-2].ArrayPointer;
+			XdmfArray *Result;
 
-                        /* printf("Array / %g\n", $3); */
-                        Result  = Array1;
-                        *Result /= yyvsp[0].DoubleValue;
-                        yyval.ArrayPointer = Result;
-                        }
+			/* printf("Array / %g\n", $3); */
+			Result  = Array1;
+			*Result /= yyvsp[0].DoubleValue;
+			yyval.ArrayPointer = Result;
+			}
     break;
 
   case 21:
-#line 372 "XdmfExpr.y"
+#line 366 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[0].ArrayPointer;
-                        XdmfArray *Result;
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[0].ArrayPointer;
+			XdmfArray *Result;
 
-                        /* printf("Array + %g\n", $1); */
-                        Result  = Array1;
-                        *Result += yyvsp[-2].DoubleValue;
-                        yyval.ArrayPointer = Result;
-                        }
+			/* printf("Array + %g\n", $1); */
+			Result  = Array1;
+			*Result += yyvsp[-2].DoubleValue;
+			yyval.ArrayPointer = Result;
+			}
     break;
 
   case 22:
-#line 381 "XdmfExpr.y"
+#line 375 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[0].ArrayPointer;
-                        XdmfArray *Result;
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[0].ArrayPointer;
+			XdmfArray *Result;
 
-                        /* printf("Array - %g\n", $1); */
-                        Result  = Array1;
-                        *Result -= yyvsp[-2].DoubleValue;
-                        yyval.ArrayPointer = Result;
-                        }
+			/* printf("Array - %g\n", $1); */
+			Result  = Array1;
+			*Result -= yyvsp[-2].DoubleValue;
+			yyval.ArrayPointer = Result;
+			}
     break;
 
   case 23:
-#line 390 "XdmfExpr.y"
+#line 384 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[0].ArrayPointer;
-                        XdmfArray *Result;
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[0].ArrayPointer;
+			XdmfArray *Result;
 
-                        /* printf("Array * %g\n", $1); */
-                        Result  = Array1;
-                        *Result *= yyvsp[-2].DoubleValue;
-                        yyval.ArrayPointer = Result;
-                        }
+			/* printf("Array * %g\n", $1); */
+			Result  = Array1;
+			*Result *= yyvsp[-2].DoubleValue;
+			yyval.ArrayPointer = Result;
+			}
     break;
 
   case 24:
-#line 399 "XdmfExpr.y"
+#line 393 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[0].ArrayPointer;
-                        XdmfArray *Result;
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[0].ArrayPointer;
+			XdmfArray *Result;
 
-                        /* printf("Array / %g\n", $1); */
-                        Result  = Array1;
-                        *Result /= yyvsp[-2].DoubleValue;
-                        yyval.ArrayPointer = Result;
-                        }
+			/* printf("Array / %g\n", $1); */
+			Result  = Array1;
+			*Result /= yyvsp[-2].DoubleValue;
+			yyval.ArrayPointer = Result;
+			}
     break;
 
   case 25:
-#line 408 "XdmfExpr.y"
+#line 402 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
-                        XdmfArray        *Array2 = ( XdmfArray *)yyvsp[-1].ArrayPointer;
-                        XdmfArray        *Result;
+			XdmfArray	*Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
+			XdmfArray	*Array2 = ( XdmfArray *)yyvsp[-1].ArrayPointer;
+			XdmfArray	*Result;
 
-                        /* printf("ArrayExpression From Indexes\n"); */
-                        Result = Array1->Clone( Array2 );
-                        delete Array2;
-                        yyval.ArrayPointer = Result;
-                }
+			/* printf("ArrayExpression From Indexes\n"); */
+			Result = Array1->Clone( Array2 );
+			delete Array2;
+			yyval.ArrayPointer = Result;
+		}
     break;
 
   case 26:
-#line 418 "XdmfExpr.y"
+#line 412 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[-5].ArrayPointer;
-                        XdmfArray *Range, *Result;
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[-5].ArrayPointer;
+			XdmfArray *Range, *Result;
 
-                        /* printf("ArrayExpression From Array Range %d:%d\n", $3, $5);         */
-                        Range = Array1->Reference( yyvsp[-3].IntegerValue, yyvsp[-1].IntegerValue ); /* This not a copy  */
-        
-                        Result  = Range->Clone(); /* So Copy It */
-                        delete Array1;
-                        yyval.ArrayPointer = Result;
-                        }
+			/* printf("ArrayExpression From Array Range %d:%d\n", $3, $5);	 */
+			Range = Array1->Reference( yyvsp[-3].IntegerValue, yyvsp[-1].IntegerValue ); /* This not a copy  */
+	
+			Result  = Range->Clone(); /* So Copy It */
+			delete Array1;
+			yyval.ArrayPointer = Result;
+			}
     break;
 
   case 27:
-#line 429 "XdmfExpr.y"
+#line 423 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
-                        XdmfArray        *Array2 = ( XdmfArray *)yyvsp[-1].ArrayPointer;
-                        XdmfLength        i, howmany = 0, cntr = 0;
-                        XdmfLength        Length1 = Array1->GetNumberOfElements(), Length2;
-                        XdmfInt64Array        *Index = new XdmfInt64Array( Length1 );
-                        XdmfInt64        A1Value, A2Value;
-                        XdmfInt64        *A1Values, *A2Values;
-                        float                Percent;
+			XdmfArray	*Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
+			XdmfArray	*Array2 = ( XdmfArray *)yyvsp[-1].ArrayPointer;
+			XdmfLength	i, howmany = 0, cntr = 0;
+			XdmfLength	Length1 = Array1->GetNumberOfElements(), Length2;
+			XdmfInt64Array	*Index = new XdmfInt64Array( Length1 );
+			XdmfInt64	A1Value, A2Value;
+			XdmfInt64	*A1Values, *A2Values;
+			float		Percent;
 
-                        if(Array1->GetNumberType() != XDMF_INT64_TYPE){
-                                yyerror("INDEX operator only uses XdmfInt64 Arrays");
-                                return( 0 );
-                                }
-                        if(Array2->GetNumberType() != XDMF_INT64_TYPE){
-                                yyerror("INDEX operator only uses XdmfInt64 Arrays");
-                                return( 0 );
-                                }
-                        Length2 = Array2->GetNumberOfElements();
-                        A1Values = (XdmfInt64 *)Array1->GetDataPointer();
-                        A2Values = (XdmfInt64 *)Array2->GetDataPointer();
-                        for( i = 0 ; i < Length1 ; i++ ){
-                                /* A1Value = Array1->GetValueAsFloat64( i ); */
-                                A1Value = *A1Values++;
-                                cntr = 0;
-                                A2Value = A1Value + 1;
-                                while((cntr < Length2) && (A2Value != A1Value)) {
-                                        /* A2Value = Array2->GetValueAsFloat64(cntr); */
-                                        A2Value = A2Values[cntr];
-                                        cntr++;
-                                        }
-                                howmany++;
-                                if(howmany > 5000){
-                                        Percent = 100.0 * i / Length1;
-                                        printf("%5.2f %% Done\n", Percent);
-                                        howmany = 0;
-                                        }
-                                if( A1Value == A2Value ) {
-                                        Index->SetValue( i, cntr - 1 );
-                                }else{
-                                        Index->SetValue( i, -1);
-                                        }
-                                }        
-                        yyval.ArrayPointer = ( XdmfArray *)Index;
-                        }
+			if(Array1->GetNumberType() != XDMF_INT64_TYPE){
+				yyerror("INDEX operator only uses XdmfInt64 Arrays");
+				return( 0 );
+				}
+			if(Array2->GetNumberType() != XDMF_INT64_TYPE){
+				yyerror("INDEX operator only uses XdmfInt64 Arrays");
+				return( 0 );
+				}
+			Length2 = Array2->GetNumberOfElements();
+			A1Values = (XdmfInt64 *)Array1->GetDataPointer();
+			A2Values = (XdmfInt64 *)Array2->GetDataPointer();
+			for( i = 0 ; i < Length1 ; i++ ){
+				/* A1Value = Array1->GetValueAsFloat64( i ); */
+				A1Value = *A1Values++;
+				cntr = 0;
+				A2Value = A1Value + 1;
+				while((cntr < Length2) && (A2Value != A1Value)) {
+					/* A2Value = Array2->GetValueAsFloat64(cntr); */
+					A2Value = A2Values[cntr];
+					cntr++;
+					}
+				howmany++;
+				if(howmany > 5000){
+					Percent = 100.0 * i / Length1;
+					printf("%5.2f %% Done\n", Percent);
+					howmany = 0;
+					}
+				if( A1Value == A2Value ) {
+					Index->SetValue( i, cntr - 1 );
+				}else{
+					Index->SetValue( i, -1);
+					}
+				}	
+			yyval.ArrayPointer = ( XdmfArray *)Index;
+			}
     break;
 
   case 28:
-#line 474 "XdmfExpr.y"
+#line 468 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
-                        /* XdmfLength        howmany = 0; */
-                        XdmfLength        i, cntr = 0;
-                        XdmfLength        Length1 = Array1->GetNumberOfElements(), Length2;
-                        XdmfInt64Array        *Index = new XdmfInt64Array( Length1 );
-                        XdmfArray        *Array2 = ( XdmfArray *)yyvsp[-1].ArrayPointer;
-                        XdmfFloat64        A1Value, A2Value;
+			XdmfArray	*Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
+			/* XdmfLength	howmany = 0; */
+			XdmfLength	i, cntr = 0;
+			XdmfLength	Length1 = Array1->GetNumberOfElements(), Length2;
+			XdmfInt64Array	*Index = new XdmfInt64Array( Length1 );
+			XdmfArray	*Array2 = ( XdmfArray *)yyvsp[-1].ArrayPointer;
+			XdmfFloat64	A1Value, A2Value;
 
-                        Length2 = Array2->GetNumberOfElements();
-                        for( i = 0 ; i < Length1 ; i++ ){
-                                A1Value = Array1->GetValueAsFloat64( i );
-                                cntr = 0;
-                                A2Value = A1Value + 1;
-                                while((cntr < Length2) && (A2Value != A1Value)) {
-                                        A2Value = Array2->GetValueAsFloat64(cntr);
-                                        cntr++;
-                                        }
+			Length2 = Array2->GetNumberOfElements();
+			for( i = 0 ; i < Length1 ; i++ ){
+				A1Value = Array1->GetValueAsFloat64( i );
+				cntr = 0;
+				A2Value = A1Value + 1;
+				while((cntr < Length2) && (A2Value != A1Value)) {
+					A2Value = Array2->GetValueAsFloat64(cntr);
+					cntr++;
+					}
 /*
-                                howmany++;
-                                if(howmany > 1000){
-                                        cout << "Checked " << i << " of " << Length1 << endl;
-                                        howmany = 0;
-                                        }
+				howmany++;
+				if(howmany > 1000){
+					cout << "Checked " << i << " of " << Length1 << endl;
+					howmany = 0;
+					}
 */
-                                if( A1Value == A2Value ) {
-                                        Index->SetValue( i, cntr - 1 );
-                                }else{
-                                        Index->SetValue( i, -1);
-                                        }
-                                }        
-                        yyval.ArrayPointer = ( XdmfArray *)Index;
-                        }
+				if( A1Value == A2Value ) {
+					Index->SetValue( i, cntr - 1 );
+				}else{
+					Index->SetValue( i, -1);
+					}
+				}	
+			yyval.ArrayPointer = ( XdmfArray *)Index;
+			}
     break;
 
   case 29:
-#line 507 "XdmfExpr.y"
+#line 501 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
-                        XdmfLength        i, cntr = 0;
-                        XdmfLength        Length = Array1->GetNumberOfElements();
-                        XdmfInt64Array        *Index = new XdmfInt64Array( Length );
-                        XdmfFloat64        Value, SValue = yyvsp[-1].DoubleValue;
+			XdmfArray	*Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
+			XdmfLength	i, cntr = 0;
+			XdmfLength	Length = Array1->GetNumberOfElements();
+			XdmfInt64Array	*Index = new XdmfInt64Array( Length );
+			XdmfFloat64	Value, SValue = yyvsp[-1].DoubleValue;
 
-                        for( i = 0 ; i < Length ; i++ ){
-                                Value = Array1->GetValueAsFloat64( i );
-                                if( Value == SValue ) {
-                                        Index->SetValue( cntr++, i );
-                                        }
-                                }        
-                        /* printf("Found %d Wheres\n", cntr ); */
-                        if( cntr == 0 ){
-                                yyerror("WHERE Function Length == 0");
-                                return( 0 );
-                                }
-                        Index->SetNumberOfElements( cntr );
-                        yyval.ArrayPointer = ( XdmfArray *)Index;
-                        }
+			for( i = 0 ; i < Length ; i++ ){
+				Value = Array1->GetValueAsFloat64( i );
+				if( Value == SValue ) {
+					Index->SetValue( cntr++, i );
+					}
+				}	
+			/* printf("Found %d Wheres\n", cntr ); */
+			if( cntr == 0 ){
+				yyerror("WHERE Function Length == 0");
+				return( 0 );
+				}
+			Index->SetNumberOfElements( cntr );
+			yyval.ArrayPointer = ( XdmfArray *)Index;
+			}
     break;
 
   case 30:
-#line 528 "XdmfExpr.y"
+#line 522 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
-                        XdmfLength        i, cntr = 0;
-                        XdmfLength        Length = Array1->GetNumberOfElements();
-                        XdmfInt64Array        *Index = new XdmfInt64Array( Length );
-                        XdmfFloat64        Value, SValue = yyvsp[-1].DoubleValue;
+			XdmfArray	*Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
+			XdmfLength	i, cntr = 0;
+			XdmfLength	Length = Array1->GetNumberOfElements();
+			XdmfInt64Array	*Index = new XdmfInt64Array( Length );
+			XdmfFloat64	Value, SValue = yyvsp[-1].DoubleValue;
 
-                        for( i = 0 ; i < Length ; i++ ){
-                                Value = Array1->GetValueAsFloat64( i );
-                                if( Value < SValue ) {
-                                        Index->SetValue( cntr++, i );
-                                        }
-                                }        
-                        /* printf("Found %d Wheres\n", cntr ); */
-                        if( cntr == 0 ){
-                                yyerror("WHERE Function Length == 0");
-                                return( 0 );
-                                }
-                        Index->SetNumberOfElements( cntr );
-                        yyval.ArrayPointer = ( XdmfArray *)Index;
-                        }
+			for( i = 0 ; i < Length ; i++ ){
+				Value = Array1->GetValueAsFloat64( i );
+				if( Value < SValue ) {
+					Index->SetValue( cntr++, i );
+					}
+				}	
+			/* printf("Found %d Wheres\n", cntr ); */
+			if( cntr == 0 ){
+				yyerror("WHERE Function Length == 0");
+				return( 0 );
+				}
+			Index->SetNumberOfElements( cntr );
+			yyval.ArrayPointer = ( XdmfArray *)Index;
+			}
     break;
 
   case 31:
-#line 549 "XdmfExpr.y"
+#line 543 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
-                        XdmfLength        i, cntr = 0;
-                        XdmfLength        Length = Array1->GetNumberOfElements();
-                        XdmfInt64Array        *Index = new XdmfInt64Array( Length );
-                        XdmfFloat64        Value, SValue = yyvsp[-1].DoubleValue;
+			XdmfArray	*Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
+			XdmfLength	i, cntr = 0;
+			XdmfLength	Length = Array1->GetNumberOfElements();
+			XdmfInt64Array	*Index = new XdmfInt64Array( Length );
+			XdmfFloat64	Value, SValue = yyvsp[-1].DoubleValue;
 
-                        for( i = 0 ; i < Length ; i++ ){
-                                Value = Array1->GetValueAsFloat64( i );
-                                if( Value <= SValue ) {
-                                        Index->SetValue( cntr++, i );
-                                        }
-                                }        
-                        /* printf("Found %d Wheres\n", cntr ); */
-                        if( cntr == 0 ){
-                                yyerror("WHERE Function Length == 0");
-                                return( 0 );
-                                }
-                        Index->SetNumberOfElements( cntr );
-                        yyval.ArrayPointer = ( XdmfArray *)Index;
-                        }
+			for( i = 0 ; i < Length ; i++ ){
+				Value = Array1->GetValueAsFloat64( i );
+				if( Value <= SValue ) {
+					Index->SetValue( cntr++, i );
+					}
+				}	
+			/* printf("Found %d Wheres\n", cntr ); */
+			if( cntr == 0 ){
+				yyerror("WHERE Function Length == 0");
+				return( 0 );
+				}
+			Index->SetNumberOfElements( cntr );
+			yyval.ArrayPointer = ( XdmfArray *)Index;
+			}
     break;
 
   case 32:
-#line 570 "XdmfExpr.y"
+#line 564 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
-                        XdmfLength        i, cntr = 0;
-                        XdmfLength        Length = Array1->GetNumberOfElements();
-                        XdmfInt64Array        *Index = new XdmfInt64Array( Length );
-                        XdmfFloat64        Value, SValue = yyvsp[-1].DoubleValue;
+			XdmfArray	*Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
+			XdmfLength	i, cntr = 0;
+			XdmfLength	Length = Array1->GetNumberOfElements();
+			XdmfInt64Array	*Index = new XdmfInt64Array( Length );
+			XdmfFloat64	Value, SValue = yyvsp[-1].DoubleValue;
 
-                        for( i = 0 ; i < Length ; i++ ){
-                                Value = Array1->GetValueAsFloat64( i );
-                                if( Value > SValue ) {
-                                        Index->SetValue( cntr++, i );
-                                        }
-                                }        
-                        /* printf("Found %d Wheres\n", cntr ); */
-                        if( cntr == 0 ){
-                                yyerror("WHERE Function Length == 0");
-                                return( 0 );
-                                }
-                        Index->SetNumberOfElements( cntr );
-                        yyval.ArrayPointer = ( XdmfArray *)Index;
-                        }
+			for( i = 0 ; i < Length ; i++ ){
+				Value = Array1->GetValueAsFloat64( i );
+				if( Value > SValue ) {
+					Index->SetValue( cntr++, i );
+					}
+				}	
+			/* printf("Found %d Wheres\n", cntr ); */
+			if( cntr == 0 ){
+				yyerror("WHERE Function Length == 0");
+				return( 0 );
+				}
+			Index->SetNumberOfElements( cntr );
+			yyval.ArrayPointer = ( XdmfArray *)Index;
+			}
     break;
 
   case 33:
-#line 591 "XdmfExpr.y"
+#line 585 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
-                        XdmfLength        i, cntr = 0;
-                        XdmfLength        Length = Array1->GetNumberOfElements();
-                        XdmfInt64Array        *Index = new XdmfInt64Array( Length );
-                        XdmfFloat64        Value, SValue = yyvsp[-1].DoubleValue;
+			XdmfArray	*Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
+			XdmfLength	i, cntr = 0;
+			XdmfLength	Length = Array1->GetNumberOfElements();
+			XdmfInt64Array	*Index = new XdmfInt64Array( Length );
+			XdmfFloat64	Value, SValue = yyvsp[-1].DoubleValue;
 
-                        for( i = 0 ; i < Length ; i++ ){
-                                Value = Array1->GetValueAsFloat64( i );
-                                if( Value >= SValue ) {
-                                        Index->SetValue( cntr++, i );
-                                        }
-                                }        
-                        /* printf("Found %d Wheres\n", cntr ); */
-                        if( cntr == 0 ){
-                                yyerror("WHERE Function Length == 0");
-                                return( 0 );
-                                }
-                        Index->SetNumberOfElements( cntr );
-                        yyval.ArrayPointer = ( XdmfArray *)Index;
-                        }
+			for( i = 0 ; i < Length ; i++ ){
+				Value = Array1->GetValueAsFloat64( i );
+				if( Value >= SValue ) {
+					Index->SetValue( cntr++, i );
+					}
+				}	
+			/* printf("Found %d Wheres\n", cntr ); */
+			if( cntr == 0 ){
+				yyerror("WHERE Function Length == 0");
+				return( 0 );
+				}
+			Index->SetNumberOfElements( cntr );
+			yyval.ArrayPointer = ( XdmfArray *)Index;
+			}
     break;
 
   case 34:
-#line 612 "XdmfExpr.y"
+#line 606 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        XdmfArray        *Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
-                        XdmfLength        i, cntr = 0;
-                        XdmfLength        Length = Array1->GetNumberOfElements();
-                        XdmfInt64Array        *Index = new XdmfInt64Array( Length );
-                        XdmfFloat64        Value, SValue = yyvsp[-1].DoubleValue;
+			XdmfArray	*Array1 = ( XdmfArray *)yyvsp[-3].ArrayPointer;
+			XdmfLength	i, cntr = 0;
+			XdmfLength	Length = Array1->GetNumberOfElements();
+			XdmfInt64Array	*Index = new XdmfInt64Array( Length );
+			XdmfFloat64	Value, SValue = yyvsp[-1].DoubleValue;
 
-                        for( i = 0 ; i < Length ; i++ ){
-                                Value = Array1->GetValueAsFloat64( i );
-                                if( Value != SValue ) {
-                                        Index->SetValue( cntr++, i );
-                                        }
-                                }        
-                        /* printf("Found %d Wheres\n", cntr ); */
-                        if( cntr == 0 ){
-                                yyerror("WHERE Function Length == 0");
-                                return( 0 );
-                                }
-                        Index->SetNumberOfElements( cntr );
-                        yyval.ArrayPointer = ( XdmfArray *)Index;
-                        }
+			for( i = 0 ; i < Length ; i++ ){
+				Value = Array1->GetValueAsFloat64( i );
+				if( Value != SValue ) {
+					Index->SetValue( cntr++, i );
+					}
+				}	
+			/* printf("Found %d Wheres\n", cntr ); */
+			if( cntr == 0 ){
+				yyerror("WHERE Function Length == 0");
+				return( 0 );
+				}
+			Index->SetNumberOfElements( cntr );
+			yyval.ArrayPointer = ( XdmfArray *)Index;
+			}
     break;
 
   case 35:
-#line 633 "XdmfExpr.y"
+#line 627 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
 
-                        if( yyvsp[-3].Symbol->DoubleFunctionPtr == NULL ){
-                                /* printf("Bad Function Ptr for %s\n", $1->Name ); */
-                                yyval.ArrayPointer = yyvsp[-1].ArrayPointer;
-                        } else {
-                                XdmfArray *Array1 = ( XdmfArray *)yyvsp[-1].ArrayPointer;
-                                XdmfFloat64        Value;
-                                XdmfLength        i, Length = Array1->GetNumberOfElements();
+			if( yyvsp[-3].Symbol->DoubleFunctionPtr == NULL ){
+				/* printf("Bad Function Ptr for %s\n", $1->Name ); */
+				yyval.ArrayPointer = yyvsp[-1].ArrayPointer;
+			} else {
+				XdmfArray *Array1 = ( XdmfArray *)yyvsp[-1].ArrayPointer;
+				XdmfFloat64	Value;
+				XdmfLength	i, Length = Array1->GetNumberOfElements();
 
-                                /* printf("Function Call %s\n", $1->Name ); */
-                                for( i = 0 ; i < Length ; i++ ){
-                                        Value = Array1->GetValueAsFloat64( i );
-                                        Array1->SetValueFromFloat64( i, (yyvsp[-3].Symbol->DoubleFunctionPtr)( Value ) );
-                                        }        
-                                yyval.ArrayPointer = Array1;
-                        }
-                        }
+				/* printf("Function Call %s\n", $1->Name ); */
+				for( i = 0 ; i < Length ; i++ ){
+					Value = Array1->GetValueAsFloat64( i );
+					Array1->SetValueFromFloat64( i, (yyvsp[-3].Symbol->DoubleFunctionPtr)( Value ) );
+					}	
+				yyval.ArrayPointer = Array1;
+			}
+			}
     break;
 
   case 36:
-#line 651 "XdmfExpr.y"
+#line 645 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        /* printf("( ArrayExpression )\n"); */
-                        yyval.ArrayPointer = yyvsp[-1].ArrayPointer;
-                        }
+			/* printf("( ArrayExpression )\n"); */
+			yyval.ArrayPointer = yyvsp[-1].ArrayPointer;
+			}
     break;
 
   case 37:
-#line 655 "XdmfExpr.y"
+#line 649 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        /* printf("( ArrayExpression )\n"); */
-                        yyval.ArrayPointer = yyvsp[-1].ArrayPointer;
-                        }
+			/* printf("( ArrayExpression )\n"); */
+			yyval.ArrayPointer = yyvsp[-1].ArrayPointer;
+			}
     break;
 
   case 38:
-#line 659 "XdmfExpr.y"
+#line 653 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        XdmfArray *Array1 = ( XdmfArray *)yyvsp[0].ArrayPointer;
-                        XdmfArray *Result;
+			XdmfArray *Array1 = ( XdmfArray *)yyvsp[0].ArrayPointer;
+			XdmfArray *Result;
 
-                        /* printf("ArrayExpression From Array\n"); */
+			/* printf("ArrayExpression From Array\n"); */
 
-                        if ( Array1 == NULL ){
-                                /* Bomb */
-                                yyerror("NULL Array Pointer");
-                                return( 0 );
-                        } else {
-                                Result  = Array1->Clone();
-                                yyval.ArrayPointer = Result;
-                                }
-                        }
+			if ( Array1 == NULL ){
+				/* Bomb */
+				yyerror("NULL Array Pointer");
+				return( 0 );
+			} else {
+				Result  = Array1->Clone();
+				yyval.ArrayPointer = Result;
+				}
+			}
     break;
 
   case 39:
-#line 676 "XdmfExpr.y"
+#line 670 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        /* printf("Scalar +\n"); */
-                        yyval.DoubleValue = yyvsp[-2].DoubleValue + yyvsp[0].DoubleValue;
-                        }
+			/* printf("Scalar +\n"); */
+			yyval.DoubleValue = yyvsp[-2].DoubleValue + yyvsp[0].DoubleValue;
+			}
     break;
 
   case 40:
-#line 680 "XdmfExpr.y"
+#line 674 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        /* printf("Scalar -\n"); */
-                        yyval.DoubleValue = yyvsp[-2].DoubleValue - yyvsp[0].DoubleValue;
-                        }
+			/* printf("Scalar -\n"); */
+			yyval.DoubleValue = yyvsp[-2].DoubleValue - yyvsp[0].DoubleValue;
+			}
     break;
 
   case 41:
-#line 684 "XdmfExpr.y"
+#line 678 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        /* printf("Scalar *\n"); */
-                        yyval.DoubleValue = yyvsp[-2].DoubleValue * yyvsp[0].DoubleValue;
-                        }
+			/* printf("Scalar *\n"); */
+			yyval.DoubleValue = yyvsp[-2].DoubleValue * yyvsp[0].DoubleValue;
+			}
     break;
 
   case 42:
-#line 688 "XdmfExpr.y"
+#line 682 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        /* printf("Scalar /\n"); */
-                        yyval.DoubleValue = yyvsp[-2].DoubleValue / yyvsp[0].DoubleValue;
-                        }
+			/* printf("Scalar /\n"); */
+			yyval.DoubleValue = yyvsp[-2].DoubleValue / yyvsp[0].DoubleValue;
+			}
     break;
 
   case 43:
-#line 692 "XdmfExpr.y"
+#line 686 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        if( yyvsp[-3].Symbol->DoubleFunctionPtr == NULL ){
-                                /* printf("Bad Function Ptr for %s\n", $1->Name ); */
-                                yyval.DoubleValue = 0.0;
-                        } else {
-                                yyval.DoubleValue = (yyvsp[-3].Symbol->DoubleFunctionPtr)( yyvsp[-1].DoubleValue );
-                        }
-                        }
+			if( yyvsp[-3].Symbol->DoubleFunctionPtr == NULL ){
+				/* printf("Bad Function Ptr for %s\n", $1->Name ); */
+				yyval.DoubleValue = 0.0;
+			} else {
+				yyval.DoubleValue = (yyvsp[-3].Symbol->DoubleFunctionPtr)( yyvsp[-1].DoubleValue );
+			}
+			}
     break;
 
   case 44:
-#line 700 "XdmfExpr.y"
+#line 694 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        /* printf ("( ScalarExpression )\n"); */
-                        yyval.DoubleValue = yyvsp[-1].DoubleValue;
-                        }
+			/* printf ("( ScalarExpression )\n"); */
+			yyval.DoubleValue = yyvsp[-1].DoubleValue;
+			}
     break;
 
   case 45:
-#line 704 "XdmfExpr.y"
+#line 698 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        /* printf ("ScalarExpression from tokINTEGER\n"); */
-                        yyval.DoubleValue = yyvsp[0].IntegerValue;
-                        }
+			/* printf ("ScalarExpression from tokINTEGER\n"); */
+			yyval.DoubleValue = yyvsp[0].IntegerValue;
+			}
     break;
 
   case 46:
-#line 708 "XdmfExpr.y"
+#line 702 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
     {
-                        /* printf ("ScalarExpression from FLOAT\n"); */
-                        yyval.DoubleValue = yyvsp[0].DoubleValue;
-                        }
+			/* printf ("ScalarExpression from FLOAT\n"); */
+			yyval.DoubleValue = yyvsp[0].DoubleValue;
+			}
     break;
 
 
     }
 
 /* Line 999 of yacc.c.  */
-#line 2004 "y.tab.c"
+#line 2007 "/home/andy/vtk/Xdmf-bin/libsrc/XdmfExprYacc.tab.c"
 
   yyvsp -= yylen;
   yyssp -= yylen;
@@ -2027,50 +2041,50 @@ yyerrlab:
       yyn = yypact[yystate];
 
       if (YYPACT_NINF < yyn && yyn < YYLAST)
-        {
-          YYSIZE_T yysize = 0;
-          int yytype = YYTRANSLATE (yychar);
-          char *yymsg;
-          int yyx, yycount;
+	{
+	  YYSIZE_T yysize = 0;
+	  int yytype = YYTRANSLATE (yychar);
+	  char *yymsg;
+	  int yyx, yycount;
 
-          yycount = 0;
-          /* Start YYX at -YYN if negative to avoid negative indexes in
-             YYCHECK.  */
-          for (yyx = yyn < 0 ? -yyn : 0;
-               yyx < (int) (sizeof (yytname) / sizeof (char *)); yyx++)
-            if (yycheck[yyx + yyn] == yyx && yyx != YYTERROR)
-              yysize += yystrlen (yytname[yyx]) + 15, yycount++;
-          yysize += yystrlen ("syntax error, unexpected ") + 1;
-          yysize += yystrlen (yytname[yytype]);
-          yymsg = (char *) YYSTACK_ALLOC (yysize);
-          if (yymsg != 0)
-            {
-              char *yyp = yystpcpy (yymsg, "syntax error, unexpected ");
-              yyp = yystpcpy (yyp, yytname[yytype]);
+	  yycount = 0;
+	  /* Start YYX at -YYN if negative to avoid negative indexes in
+	     YYCHECK.  */
+	  for (yyx = yyn < 0 ? -yyn : 0;
+	       yyx < (int) (sizeof (yytname) / sizeof (char *)); yyx++)
+	    if (yycheck[yyx + yyn] == yyx && yyx != YYTERROR)
+	      yysize += yystrlen (yytname[yyx]) + 15, yycount++;
+	  yysize += yystrlen ("syntax error, unexpected ") + 1;
+	  yysize += yystrlen (yytname[yytype]);
+	  yymsg = (char *) YYSTACK_ALLOC (yysize);
+	  if (yymsg != 0)
+	    {
+	      char *yyp = yystpcpy (yymsg, "syntax error, unexpected ");
+	      yyp = yystpcpy (yyp, yytname[yytype]);
 
-              if (yycount < 5)
-                {
-                  yycount = 0;
-                  for (yyx = yyn < 0 ? -yyn : 0;
-                       yyx < (int) (sizeof (yytname) / sizeof (char *));
-                       yyx++)
-                    if (yycheck[yyx + yyn] == yyx && yyx != YYTERROR)
-                      {
-                        const char *yyq = ! yycount ? ", expecting " : " or ";
-                        yyp = yystpcpy (yyp, yyq);
-                        yyp = yystpcpy (yyp, yytname[yyx]);
-                        yycount++;
-                      }
-                }
-              yyerror (yymsg);
-              YYSTACK_FREE (yymsg);
-            }
-          else
-            yyerror ("syntax error; also virtual memory exhausted");
-        }
+	      if (yycount < 5)
+		{
+		  yycount = 0;
+		  for (yyx = yyn < 0 ? -yyn : 0;
+		       yyx < (int) (sizeof (yytname) / sizeof (char *));
+		       yyx++)
+		    if (yycheck[yyx + yyn] == yyx && yyx != YYTERROR)
+		      {
+			const char *yyq = ! yycount ? ", expecting " : " or ";
+			yyp = yystpcpy (yyp, yyq);
+			yyp = yystpcpy (yyp, yytname[yyx]);
+			yycount++;
+		      }
+		}
+	      yyerror (yymsg);
+	      YYSTACK_FREE (yymsg);
+	    }
+	  else
+	    yyerror ("syntax error; also virtual memory exhausted");
+	}
       else
 #endif /* YYERROR_VERBOSE */
-        yyerror ("syntax error");
+	yyerror ("syntax error");
     }
 
 
@@ -2078,21 +2092,21 @@ yyerrlab:
   if (yyerrstatus == 3)
     {
       /* If just tried and failed to reuse lookahead token after an
-         error, discard it.  */
+	 error, discard it.  */
 
       /* Return failure if at end of input.  */
       if (yychar == YYEOF)
         {
-          /* Pop the error token.  */
+	  /* Pop the error token.  */
           YYPOPSTACK;
-          /* Pop the rest of the stack.  */
-          while (yyss < yyssp)
-            {
-              YYDSYMPRINTF ("Error: popping", yystos[*yyssp], yyvsp, yylsp);
-              yydestruct (yystos[*yyssp], yyvsp);
-              YYPOPSTACK;
-            }
-          YYABORT;
+	  /* Pop the rest of the stack.  */
+	  while (yyss < yyssp)
+	    {
+	      YYDSYMPRINTF ("Error: popping", yystos[*yyssp], yyvsp, yylsp);
+	      yydestruct (yystos[*yyssp], yyvsp);
+	      YYPOPSTACK;
+	    }
+	  YYABORT;
         }
 
       YYDSYMPRINTF ("Error: discarding", yytoken, &yylval, &yylloc);
@@ -2110,25 +2124,25 @@ yyerrlab:
 | yyerrlab1 -- error raised explicitly by an action.  |
 `----------------------------------------------------*/
 yyerrlab1:
-  yyerrstatus = 3;        /* Each real token shifted decrements this.  */
+  yyerrstatus = 3;	/* Each real token shifted decrements this.  */
 
   for (;;)
     {
       yyn = yypact[yystate];
       if (yyn != YYPACT_NINF)
-        {
-          yyn += YYTERROR;
-          if (0 <= yyn && yyn <= YYLAST && yycheck[yyn] == YYTERROR)
-            {
-              yyn = yytable[yyn];
-              if (0 < yyn)
-                break;
-            }
-        }
+	{
+	  yyn += YYTERROR;
+	  if (0 <= yyn && yyn <= YYLAST && yycheck[yyn] == YYTERROR)
+	    {
+	      yyn = yytable[yyn];
+	      if (0 < yyn)
+		break;
+	    }
+	}
 
       /* Pop the current state because it cannot handle the error token.  */
       if (yyssp == yyss)
-        YYABORT;
+	YYABORT;
 
       YYDSYMPRINTF ("Error: popping", yystos[*yyssp], yyvsp, yylsp);
       yydestruct (yystos[yystate], yyvsp);
@@ -2183,10 +2197,10 @@ yyreturn:
 }
 
 
-#line 715 "XdmfExpr.y"
+#line 709 "/home/andy/vtk/Xdmf/libsrc/XdmfExpr.y"
 
 
-/* extern        FILE        *yyin, *yyout; */
+/* extern	FILE	*yyin, *yyout; */
 
 #ifdef __cplusplus
 /**/
@@ -2194,10 +2208,10 @@ extern "C" {
 /**/
 #endif
 
-static        char        InputBuffer[ 512 ];
-static        int        InputBufferPtr = 0, InputBufferEnd = 0;
-static        char        OutputBuffer[ 512 ];
-static        int        OutputBufferPtr = 0;
+static	char	InputBuffer[ 512 ];
+static	int	InputBufferPtr = 0, InputBufferEnd = 0;
+static	char	OutputBuffer[ 512 ];
+static	int	OutputBufferPtr = 0;
 /* static int OutputBufferEnd = 511; */
 
 int
@@ -2207,7 +2221,7 @@ return 1;
 }
 
 void
-dice_yyerror( char *string ) {
+dice_yyerror( const char *string ) {
 fprintf(stderr, "XdmfExpr : %s \n", string);
 }
 
@@ -2215,58 +2229,58 @@ int
 XdmfExprFlexInput( char *buf, int maxlen ) {
 (void)maxlen;
 if ( InputBufferPtr < InputBufferEnd ){
-        buf[0] = InputBuffer[ InputBufferPtr++ ];
-        return(1);
+	buf[0] = InputBuffer[ InputBufferPtr++ ];
+	return(1);
 } else {
-        buf[0] = '\n';
-        return( 0 );
-        }
+	buf[0] = '\n';
+	return( 0 );
+	}
 }
 
 int
 XdmfExprInput( void ){
 
 if ( InputBufferPtr < InputBufferEnd ){
-        return( InputBuffer[ InputBufferPtr++ ] );
+	return( InputBuffer[ InputBufferPtr++ ] );
 } else {
-        return '\n';
-        }
+	return '\n';
+	}
 }
 
 void
 XdmfExprUnput( int c ) {
 if( InputBufferPtr > 0 ){
-        InputBufferPtr--;
-        InputBuffer[ InputBufferPtr ] = c;
-        }
+	InputBufferPtr--;
+	InputBuffer[ InputBufferPtr ] = c;
+	}
 }
 
 void
 XdmfExprOutput( int c ) {
-        /* printf("XdmfExprOutput Called\n"); */
-        OutputBuffer[ OutputBufferPtr++ ] = c;
-        OutputBuffer[ OutputBufferPtr ] = '\0';
-        }
+	/* printf("XdmfExprOutput Called\n"); */
+	OutputBuffer[ OutputBufferPtr++ ] = c;
+	OutputBuffer[ OutputBufferPtr ] = '\0';
+	}
 
 XdmfExprSymbol
-*XdmfExprSymbolLookup( char *Name ){
+*XdmfExprSymbolLookup( const char *Name ){
 
 static XdmfExprSymbol *Table = NULL;
 
-XdmfExprSymbol        *Last = NULL, *Item = Table;
+XdmfExprSymbol	*Last = NULL, *Item = Table;
 
 if( Name == NULL ) {
-        /* Table Check  */
-        return( Table );
-        }
+	/* Table Check  */
+	return( Table );
+	}
 
 while( Item != NULL ) {
-        if( strcmp( Item->Name, Name ) == 0 ) {
-                /* printf("Found Symbol %s\n", Name ); */
-                return( Item );
-                }
-        Last = Item;
-        Item = Item->Next;
+	if( strcmp( Item->Name, Name ) == 0 ) {
+		/* printf("Found Symbol %s\n", Name ); */
+		return( Item );
+		}
+	Last = Item;
+	Item = Item->Next;
 }
 /* Not Found : Create New One */
 Item = ( XdmfExprSymbol *)calloc( 1, sizeof( XdmfExprSymbol ));
@@ -2276,11 +2290,11 @@ Item->ClientData = NULL;
 Item->DoubleValue = 0;
 Item->DoubleFunctionPtr = NULL;
 if( Table == NULL ) {
-        Table = Item;
-        }
+	Table = Item;
+	}
 if( Last != NULL ){
-        Last->Next = Item;
-        }
+	Last->Next = Item;
+	}
 /* printf("New Symbol for %s\n", Name ); */
 return( Item );
 }
@@ -2294,42 +2308,42 @@ return( Item );
 XdmfArray *
 XdmfExprParse( char *string ){
 
-XdmfExprSymbol        *Item;
-XdmfLength        CurrentTime;
-XdmfLength        TimeOfCreation;
-XdmfArray        *ap;
+XdmfExprSymbol	*Item;
+XdmfLength	CurrentTime;
+XdmfLength	TimeOfCreation;
+XdmfArray	*ap;
 
 /* Build the Symbol Table if Necessary */
 Item = XdmfExprSymbolLookup( NULL );
 if( Item == NULL ){
-        /* printf("Creating Symbol Table\n"); */
-        Item = XdmfExprSymbolLookup( "cos" );
-        Item->DoubleFunctionPtr = cos;
-        Item = XdmfExprSymbolLookup( "sin" );
-        Item->DoubleFunctionPtr = sin;
-        Item = XdmfExprSymbolLookup( "exp" );
-        Item->DoubleFunctionPtr = exp;
-        Item = XdmfExprSymbolLookup( "tan" );
-        Item->DoubleFunctionPtr = tan;
-        Item = XdmfExprSymbolLookup( "acos" );
-        Item->DoubleFunctionPtr = acos;
-        Item = XdmfExprSymbolLookup( "asin" );
-        Item->DoubleFunctionPtr = asin;
-        Item = XdmfExprSymbolLookup( "atan" );
-        Item->DoubleFunctionPtr = atan;
-        Item = XdmfExprSymbolLookup( "log" );
-        Item->DoubleFunctionPtr = log;
-        Item = XdmfExprSymbolLookup( "sqrt" );
-        Item->DoubleFunctionPtr = sqrt;
-        }
+	/* printf("Creating Symbol Table\n"); */
+	Item = XdmfExprSymbolLookup( "cos" );
+	Item->DoubleFunctionPtr = cos;
+	Item = XdmfExprSymbolLookup( "sin" );
+	Item->DoubleFunctionPtr = sin;
+	Item = XdmfExprSymbolLookup( "exp" );
+	Item->DoubleFunctionPtr = exp;
+	Item = XdmfExprSymbolLookup( "tan" );
+	Item->DoubleFunctionPtr = tan;
+	Item = XdmfExprSymbolLookup( "acos" );
+	Item->DoubleFunctionPtr = acos;
+	Item = XdmfExprSymbolLookup( "asin" );
+	Item->DoubleFunctionPtr = asin;
+	Item = XdmfExprSymbolLookup( "atan" );
+	Item->DoubleFunctionPtr = atan;
+	Item = XdmfExprSymbolLookup( "log" );
+	Item->DoubleFunctionPtr = log;
+	Item = XdmfExprSymbolLookup( "sqrt" );
+	Item->DoubleFunctionPtr = sqrt;
+	}
 /* Print Symbol Table */
 Item = XdmfExprSymbolLookup( NULL );
 while( Item != NULL ) {
-        if( Item->ClientData != NULL ){
-                /* printf("Found Symbol %s\n", Item->Name ); */
-                }
-        Item = Item->Next;
-        }
+	if( Item->ClientData != NULL ){
+		/* printf("Found Symbol %s\n", Item->Name ); */
+		}
+	Item = Item->Next;
+	}
 strcpy( InputBuffer, string );
 InputBufferEnd = strlen( InputBuffer );
 InputBufferPtr = OutputBufferPtr = 0;
@@ -2337,21 +2351,20 @@ XdmfExprReturnValue = NULL;
 /* printf("XdmfExprParse Scanning <%s>\n", InputBuffer); */
 CurrentTime = GetCurrentArrayTime();
 if ( yyparse() != 0 ){
-        /* Error */
-        XdmfExprReturnValue = NULL;
-        }
+	/* Error */
+	XdmfExprReturnValue = NULL;
+	}
 /* Remove All Arrays Older than when we started */
 /* printf("Cleaning up Temparary Arrays\n"); */
 while( ( ap = GetNextOlderArray( CurrentTime, &TimeOfCreation ) ) != NULL ){
-        /* Don't remove the return value */
-        if( ap != XdmfExprReturnValue ){
-                /* printf("Removing Temporary Array\n"); */
-                delete ap;
-                }
-        CurrentTime = TimeOfCreation;
-        }
+	/* Don't remove the return value */
+	if( ap != XdmfExprReturnValue ){
+		/* printf("Removing Temporary Array\n"); */
+		delete ap;
+		}
+	CurrentTime = TimeOfCreation;
+	}
 return( XdmfExprReturnValue );
 }
-
 
 

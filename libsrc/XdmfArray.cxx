@@ -330,7 +330,7 @@ XdmfArray::Reform( XdmfDataDesc *DataDesc ){
   return( XDMF_SUCCESS );
 }
 
-XdmfInt32 XdmfArray::SetShapeFromString( XdmfString Dimensions ) {
+XdmfInt32 XdmfArray::SetShapeFromString( XdmfConstString Dimensions ) {
 
   XdmfDebug("Setting Shape and Allocating Memory");
   XdmfDataDesc::SetShapeFromString( Dimensions );
@@ -697,6 +697,18 @@ XdmfInt32  Value, *vp = &Value;
 ArrayPointer = this->GetDataPointer(Index);
 XDMF_ARRAY_COPY( ArrayPointer, this->GetNumberType(), 1,
     vp, XDMF_INT32_TYPE, 1,
+    XDMF_ARRAY_OUT, 1);
+return( Value );
+}
+
+XdmfInt16 XdmfArray::GetValueAsInt16( XdmfInt64 Index ) {
+
+XdmfPointer  ArrayPointer;
+XdmfInt16  Value, *vp = &Value;
+
+ArrayPointer = this->GetDataPointer(Index);
+XDMF_ARRAY_COPY( ArrayPointer, this->GetNumberType(), 1,
+    vp, XDMF_INT16_TYPE, 1,
     XDMF_ARRAY_OUT, 1);
 return( Value );
 }

@@ -57,7 +57,7 @@ extern void     XdmfExprOutput( int c );
 #define YY_INPUT(buf, result, maxlen) { result = XdmfExprFlexInput( (buf), (maxlen)); }
 
 
-extern XdmfExprSymbol *XdmfExprSymbolLookup( char *Name );
+extern XdmfExprSymbol *XdmfExprSymbolLookup( const char *Name );
 
 #ifdef __cplusplus
 }

@@ -63,6 +63,18 @@ IF(XDMF_REGENERATE_WRAPPERS)
       -I${Xdmf_SOURCE_DIR}/Ice/libsrc
       -I${Xdmf_BINARY_DIR}/Ice/libsrc
       )
+    GET_FILENAME_COMPONENT(SWIG_EXE_PATH ${SWIG_EXECUTABLE}
+      PATH)
+    SET(SWIG_LIB_PATH "${SWIG_EXE_PATH}/../../Swig/Lib")
+    MESSAGE("SWIG_LIB_PATH ${SWIG_LIB_PATH}")
+    IF(EXISTS "${SWIG_LIB_PATH}")
+      SET(XDMF_SWIG_INCLUDES
+        ${XDMF_SWIG_INCLUDES}
+        -I${SWIG_LIB_PATH}
+        -I${SWIG_LIB_PATH}/tcl
+        -I${SWIG_LIB_PATH}/python
+        )
+    ENDIF(EXISTS "${SWIG_LIB_PATH}")
     FOREACH(LANGUAGE Tcl Python Java)
       STRING(TOLOWER ${LANGUAGE} lang)
       SET(swigtarget ${Xdmf_BINARY_DIR}/libsrc/Xdmf${LANGUAGE}.cxx)
@@ -71,6 +83,7 @@ IF(XDMF_REGENERATE_WRAPPERS)
       ENDIF(LANGUAGE MATCHES "Tcl")
       ADD_CUSTOM_COMMAND(
         OUTPUT ${swigtarget}
+        DEPENDS ${Xdmf_SOURCE_DIR}/libsrc/Xdmf.i
         COMMAND ${SWIG_EXECUTABLE}
         ARGS -v -c++ -make_default -includeall "-${lang}" ${swig_extra_args} ${XDMF_SWIG_INCLUDES} -o "${swigtarget}" Xdmf.i)
 
@@ -82,6 +95,63 @@ IF(XDMF_REGENERATE_WRAPPERS)
       )
   ENDIF(SWIG_EXECUTABLE)
 ENDIF(XDMF_REGENERATE_WRAPPERS)
+
+OPTION(XDMF_REGENERATE_YACCLEX
+  "Regenerate XdmfExprYacc.cxx and XdmfExprLex.cxx" OFF)
+MARK_AS_ADVANCED(XDMF_REGENERATE_YACCLEX)
+IF(XDMF_REGENERATE_YACCLEX)
+  FIND_PROGRAM(YACC_EXECUTABLE
+    NAMES yacc bison
+    PATHS /usr/bin
+    DOC "Yacc or Bison executable")
+  FIND_PROGRAM(FLEX_EXECUTABLE
+    NAMES flex
+    PATHS /usr/bin
+    DOC "Flex executable")
+  MARK_AS_ADVANCED(YACC_EXECUTABLE FLEX_EXECUTABLE)
+  IF(YACC_EXECUTABLE)
+    SET(BISON_FLAGS)
+    IF(YACC_EXECUTABLE MATCHES "bison")
+      SET(BISON_FLAGS "-y")
+    ENDIF(YACC_EXECUTABLE MATCHES "bison")
+    ADD_CUSTOM_COMMAND(
+      OUTPUT ${Xdmf_BINARY_DIR}/libsrc/XdmfExprYacc.tab.c
+      DEPENDS ${Xdmf_SOURCE_DIR}/libsrc/XdmfExpr.y
+      COMMAND ${YACC_EXECUTABLE}
+      ARGS ${BISON_FLAGS} -d -b ${Xdmf_BINARY_DIR}/libsrc/XdmfExprYacc
+      -p dice_yy
+      ${Xdmf_SOURCE_DIR}/libsrc/XdmfExpr.y
+      )
+    ADD_CUSTOM_COMMAND(
+      OUTPUT ${Xdmf_BINARY_DIR}/libsrc/XdmfExprYacc.tab.h
+      DEPENDS ${Xdmf_SOURCE_DIR}/libsrc/XdmfExpr.y
+      COMMAND ${YACC_EXECUTABLE}
+      ARGS ${BISON_FLAGS} -d -b ${Xdmf_BINARY_DIR}/libsrc/XdmfExprYacc
+      -p dice_yy
+      ${Xdmf_SOURCE_DIR}/libsrc/XdmfExpr.y
+      )
+    ADD_CUSTOM_COMMAND(
+      OUTPUT ${Xdmf_BINARY_DIR}/libsrc/XdmfExprYacc.cxx
+      DEPENDS ${Xdmf_BINARY_DIR}/libsrc/XdmfExprYacc.tab.c
+      COMMAND ${CMAKE_COMMAND}
+      ARGS -E copy ${Xdmf_BINARY_DIR}/libsrc/XdmfExprYacc.tab.c
+      ${Xdmf_BINARY_DIR}/libsrc/XdmfExprYacc.cxx
+      )
+    ADD_CUSTOM_TARGET(RerunYacc DEPENDS
+      ${Xdmf_BINARY_DIR}/libsrc/XdmfExprYacc.cxx)
+  ENDIF(YACC_EXECUTABLE)
+  IF(FLEX_EXECUTABLE)
+    ADD_CUSTOM_COMMAND(
+      OUTPUT ${Xdmf_BINARY_DIR}/libsrc/XdmfExprLex.cxx
+      DEPENDS ${Xdmf_SOURCE_DIR}/libsrc/XdmfExpr.l
+      COMMAND ${FLEX_EXECUTABLE}
+      ARGS -Pdice_yy -o${Xdmf_BINARY_DIR}/libsrc/XdmfExprLex.cxx 
+      ${Xdmf_SOURCE_DIR}/libsrc/XdmfExpr.l)
+    ADD_CUSTOM_TARGET(RerunLex DEPENDS
+      ${Xdmf_BINARY_DIR}/libsrc/XdmfExprLex.cxx)
+  ENDIF(FLEX_EXECUTABLE)
+
+ENDIF(XDMF_REGENERATE_YACCLEX)
 
 INCLUDE (${CMAKE_ROOT}/Modules/CheckTypeSize.cmake)
 IF(WIN32)

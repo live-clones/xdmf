@@ -131,7 +131,7 @@ public:
 //! Get the type of Parameter : XDMF_PARAMETER_RANGE_TYPE | XDMF_PARAMETER_LIST_TYPE
   XdmfGetValueMacro(ParameterType, XdmfInt32);
 //! Get the type of Parameter as a String
-  XdmfString GetParameterTypeAsString( void ) {
+  XdmfConstString GetParameterTypeAsString( void ) {
     if( this->ParameterType == XDMF_PARAMETER_RANGE_TYPE ) {
       return("XDMF_PARAMETER_RANGE_TYPE");
     }

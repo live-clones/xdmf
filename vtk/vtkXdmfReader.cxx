@@ -74,7 +74,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.36");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.37");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -787,7 +787,7 @@ void vtkXdmfReader::Execute()
       XdmfAttribute       *Attribute;
       XdmfConstString NodeType;
       Attribute = grid->GetAttribute( cc );
-      char *name = Attribute->GetName();
+      const char *name = Attribute->GetName();
       int status = 1;
       AttributeCenter = Attribute->GetAttributeCenter();
       if (name )
@@ -1192,7 +1192,7 @@ void vtkXdmfReader::ExecuteInformation()
       {
       XdmfAttribute       *Attribute;
       Attribute = grid->GetAttribute( kk );
-      char *name = Attribute->GetName();
+      const char *name = Attribute->GetName();
       if (name )
         {
         XdmfInt32 AttributeCenter = Attribute->GetAttributeCenter();
@@ -1608,7 +1608,7 @@ int vtkXdmfReader::GetParameterType(const char *Name)
     }
 }
 //----------------------------------------------------------------------------
-char *vtkXdmfReader::GetParameterTypeAsString(const char *Name)
+const char *vtkXdmfReader::GetParameterTypeAsString(const char *Name)
 {
   if (this->GetParameterType(Name) == XDMF_PARAMETER_RANGE_TYPE) 
     {
@@ -1638,7 +1638,7 @@ int vtkXdmfReader::GetParameterType(int index)
 }
 
 //----------------------------------------------------------------------------
-char *vtkXdmfReader::GetParameterTypeAsString(int index)
+const char *vtkXdmfReader::GetParameterTypeAsString(int index)
 {
   
   if (this->GetParameterType(index) == XDMF_PARAMETER_RANGE_TYPE) 
@@ -1708,7 +1708,7 @@ int vtkXdmfReader::GetParameterRange(const char *Name, int Shape[3])
 }
 
 //----------------------------------------------------------------------------
-char *vtkXdmfReader::GetParameterRangeAsString(int index)
+const char *vtkXdmfReader::GetParameterRangeAsString(int index)
 {
   int Range[3];
   ostrstream StringOutput;
@@ -1723,7 +1723,7 @@ char *vtkXdmfReader::GetParameterRangeAsString(int index)
   return(StringOutput.str());
 }
 //----------------------------------------------------------------------------
-char *vtkXdmfReader::GetParameterRangeAsString(const char *Name)
+const char *vtkXdmfReader::GetParameterRangeAsString(const char *Name)
 {
   int Range[3];
   ostrstream StringOutput;

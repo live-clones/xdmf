@@ -24,7 +24,7 @@
 /*******************************************************************/
 #include "XdmfHDFSupport.h"
 
-XdmfString
+XdmfConstString
 XdmfTypeToClassString( XdmfInt32 XdmfType ) {
   switch( XdmfType ){
     case XDMF_INT8_TYPE :
@@ -46,7 +46,7 @@ return( "Compound" );
 }
 
 XdmfInt32
-StringToXdmfType( XdmfString TypeName ) {
+StringToXdmfType( XdmfConstString TypeName ) {
 
 if( STRCASECMP( TypeName, "XDMF_UINT8_TYPE" ) == 0 ) return( XDMF_UINT8_TYPE );
 if( STRCASECMP( TypeName, "XDMF_UINT16_TYPE" ) == 0 ) return( XDMF_UINT16_TYPE );
@@ -61,7 +61,7 @@ if( STRCASECMP( TypeName, "XDMF_COMPOUND_TYPE" ) == 0 ) return( XDMF_COMPOUND_TY
 return( XDMF_FAIL );
 }
 
-XdmfString
+XdmfConstString
 XdmfTypeToString( XdmfInt32 XdmfType ) {
   switch( XdmfType ){
     case XDMF_UINT8_TYPE :

@@ -117,7 +117,7 @@ public:
 //! Get the number of members in the current HDF5 Group
   XdmfGetValueMacro( NumberOfChildren, XdmfInt64);
 //! Get the n'th child in the current group
-  XdmfString GetChild( XdmfInt64 Index ) {
+  XdmfConstString GetChild( XdmfInt64 Index ) {
     if ( Index >= this->NumberOfChildren ) {
       return( "" );
     }

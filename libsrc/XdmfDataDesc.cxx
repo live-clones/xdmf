@@ -64,7 +64,7 @@ for( i = 0 ; i < rank ; i++ ){
 return( rank );
 }
 
-XdmfString
+XdmfConstString
 XdmfDataDesc::GetHyperSlabAsString( void ){
 ostrstream   StringOutput;
 XdmfString Ptr;
@@ -179,7 +179,7 @@ for( i = 0 ; i < HRank ; i++ ){
 return( HRank );
 }
 
-XdmfString
+XdmfConstString
 XdmfDataDesc::GetShapeAsString( void ) {
 ostrstream   StringOutput;
 XdmfString Ptr;
@@ -371,7 +371,7 @@ XdmfDataDesc::GetSelectionSize( void ) {
 }
 
 XdmfInt32
-XdmfDataDesc::SelectHyperSlabFromString(  XdmfString start, XdmfString stride, XdmfString count ) {
+XdmfDataDesc::SelectHyperSlabFromString(  XdmfConstString start, XdmfConstString stride, XdmfConstString count ) {
 XdmfInt64  i, HStart[XDMF_MAX_DIMENSION], HStride[XDMF_MAX_DIMENSION], HCount[XDMF_MAX_DIMENSION];
 istrstream   Start_ist(start, strlen( start ) );
 istrstream   stride_ist(stride, strlen( stride ) );
@@ -419,7 +419,7 @@ XdmfDataDesc::SetShapeFromString( XdmfConstString String ) {
 }
 
 XdmfInt32
-XdmfDataDesc::SelectCoordinatesFromString( XdmfString String ) {
+XdmfDataDesc::SelectCoordinatesFromString( XdmfConstString String ) {
   XdmfInt32  Status;
   XdmfLength      i = 0, count = 0;
   istrstream   ist(String, strlen( String ) );
@@ -459,7 +459,7 @@ return( XDMF_SUCCESS );
 }
 
 XdmfInt32
-XdmfDataDesc::SetNumberTypeFromString( XdmfString NumberTypeString, XdmfInt64 CompoundSize ) {
+XdmfDataDesc::SetNumberTypeFromString( XdmfConstString NumberTypeString, XdmfInt64 CompoundSize ) {
 XdmfInt32 numberType;
 
 numberType = StringToXdmfType( NumberTypeString );
@@ -471,7 +471,7 @@ XdmfDataDesc::GetNumberType( void ) {
   return( HDF5TypeToXdmfType( this->DataType ) );
 }
 
-XdmfString
+XdmfConstString
 XdmfDataDesc::GetNumberTypeAsString() {
 
 XdmfInt32  Type;
@@ -510,7 +510,7 @@ H5Tclose( dataType );
 return( RetVal );
 }
 
-XdmfString
+XdmfConstString
 XdmfDataDesc::GetMemberTypeAsString( XdmfInt64 Index ) {
 
 return( XdmfTypeToString( this->GetMemberType( Index ) ) );
@@ -554,7 +554,7 @@ if( HDF5TypeToXdmfType(dataType) == XDMF_COMPOUND_TYPE ) {
 return( rank );
 }
 
-XdmfString
+XdmfConstString
 XdmfDataDesc::GetMemberShapeAsString( XdmfInt64 Index ){
 
 static char    ReturnString[ 80 ];
@@ -612,7 +612,7 @@ if( Length <= 0 ){
 return( RetVal );
 }
 
-XdmfString
+XdmfConstString
 XdmfDataDesc::GetMemberName( XdmfInt64 Index ) {
 
 XdmfString Name;
@@ -632,8 +632,8 @@ return( MemberName );
 
 XdmfInt32
 XdmfDataDesc::AddCompoundMemberFromString( XdmfConstString Name,
-    XdmfString NumberTypeString,
-    XdmfString Shape,
+    XdmfConstString NumberTypeString,
+    XdmfConstString Shape,
     XdmfInt64 Offset ){
 
 XdmfInt32  i, rank = 0, numberType;
@@ -699,7 +699,7 @@ this->NextOffset += Size;
 return( XDMF_SUCCESS );
 }
 
-XdmfString
+XdmfConstString
 XdmfDataDesc::GetSelectionTypeAsString( void ) {
 
 switch( this->SelectionType ) {
@@ -740,7 +740,7 @@ if( this->SelectionType == XDMF_COORDINATES ){
 return( Coordinates );
 }
 
-XdmfString
+XdmfConstString
 XdmfDataDesc::GetCoordinatesAsString( XdmfInt64 start, XdmfInt64 Nelements ){
 
 hsize_t    i;

@@ -66,7 +66,7 @@ SetGlobalDebugOff(){
 }
 
 
-XdmfString GetUnique( XdmfString Pattern ) {
+XdmfString GetUnique( XdmfConstString Pattern ) {
 static char  ReturnName[80];
 ostrstream  String(ReturnName,80);
 

@@ -434,7 +434,7 @@ XDMF_EXPORT void SetGlobalDebugOff();
 XDMF_EXPORT XdmfInt32 GetGlobalDebug( void );
 XDMF_EXPORT void SetGlobalDebug( XdmfInt32 DebugLevel );
 
-XDMF_EXPORT XdmfString GetUnique( XdmfString Pattern = NULL );
+XDMF_EXPORT XdmfString GetUnique( XdmfConstString Pattern = NULL );
 extern XDMF_EXPORT XdmfString XdmfObjectToHandle( XdmfObject *Source );
 extern XDMF_EXPORT XdmfObject *HandleToXdmfObject( XdmfConstString Source );
 

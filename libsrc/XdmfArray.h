@@ -65,7 +65,7 @@ public:
   XdmfInt32  Allocate( void );
 //! Overloaded SetShape to Allocate space
   XdmfInt32       SetShape( XdmfInt32 Rank, XdmfInt64 *Dimensions );
-  XdmfInt32       SetShapeFromString( XdmfString Dimensions );
+  XdmfInt32       SetShapeFromString( XdmfConstString Dimensions );
   XdmfInt32  SetNumberOfElements( XdmfInt64 Length ) { 
         return( this->SetShape( 1, &Length ) );
         };

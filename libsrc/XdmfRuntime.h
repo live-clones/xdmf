@@ -116,6 +116,8 @@ next Frequency multiple
     XdmfDebug("Status = " << Status << endl );
     return( Status );
 #else
+    (void)Barrier;
+    (void)Mode;
     // This allows for ICE Aware Applications without NDGM
     return(XDMF_SUCCESS);
 #endif

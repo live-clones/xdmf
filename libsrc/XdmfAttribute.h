@@ -74,10 +74,10 @@ public:
 //! Set the type using a String
   XdmfInt32 SetAttributeTypeFromString( XdmfConstString AttributeType );
 //! Get the Type as a String
-  XdmfString GetAttributeTypeAsString( void );
+  XdmfConstString GetAttributeTypeAsString( void );
 
   XdmfInt32 SetAttributeCenterFromString( XdmfConstString AttributeCenter );
-  XdmfString GetAttributeCenterAsString( void );
+  XdmfConstString GetAttributeCenterAsString( void );
 
 //! Set the Center
 /*!

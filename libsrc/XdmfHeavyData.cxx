@@ -65,7 +65,7 @@ void XdmfHeavyData::SetWorkingDirectory( XdmfConstString String )
     }
 }
 
-void XdmfHeavyData::SetFileName( XdmfString String )
+void XdmfHeavyData::SetFileName( XdmfConstString String )
 {
   if ( String == this->FileName )
     {

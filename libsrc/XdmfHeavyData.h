@@ -51,30 +51,30 @@ public:
   XdmfConstString GetClassName() { return ( "XdmfHeavyData" ) ; };
 
 //! Get the default NDGM Host for NDGM:File:/Dataset
-        XdmfGetValueMacro(NdgmHost, XdmfString);
+        XdmfGetValueMacro(NdgmHost, XdmfConstString);
 //! Set the default NDGM Host for NDGM:File:/Dataset
-        void SetNdgmHost( XdmfString String ) { strcpy( this->NdgmHost, String ); }
+        void SetNdgmHost( XdmfConstString String ) { strcpy( this->NdgmHost, String ); }
 
 //! Get the default Pathname for File:/Dataset
-        XdmfGetValueMacro(WorkingDirectory, XdmfString);
+        XdmfGetValueMacro(WorkingDirectory, XdmfConstString);
 //! Set the default Pathname for File:/Dataset
         void SetWorkingDirectory( XdmfConstString String );
 
 
 //! Get the current domain
-  XdmfGetValueMacro(Domain, XdmfString);
+  XdmfGetValueMacro(Domain, XdmfConstString);
 //! Set the current domain
-  void SetDomain( XdmfString domain ) {
+  void SetDomain( XdmfConstString domain ) {
     strcpy( this->Domain, domain );
     } ;
 
 //! Get the current filename
-  XdmfGetValueMacro(FileName, XdmfString);
+  XdmfGetValueMacro(FileName, XdmfConstString);
 //! Set the current filename
-  void SetFileName( XdmfString File );
+  void SetFileName( XdmfConstString File );
 
 //! Get the current HeavyData Dataset path
-  XdmfGetValueMacro(Path, XdmfString);
+  XdmfGetValueMacro(Path, XdmfConstString);
 //! Set the current HeavyData Dataset path
   void SetPath( XdmfConstString path ) {
     strcpy( this->Path, path );
@@ -87,9 +87,9 @@ values can be :
   "w"
   "rw"
 */
-  XdmfGetValueMacro(Access, XdmfString);
+  XdmfGetValueMacro(Access, XdmfConstString);
 //! Set the access permissions
-  void SetAccess( XdmfString access ) {
+  void SetAccess( XdmfConstString access ) {
     strcpy( this->Access, access );
     } ;
 

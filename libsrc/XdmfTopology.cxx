@@ -117,7 +117,7 @@ if( newTopologyType != XDMF_NOTOPOLOGY ){
 return( XDMF_FAIL );
 }
 
-XdmfString
+XdmfConstString
 XdmfTopology::GetTopologyTypeAsString( void ) {
 
 
@@ -225,7 +225,7 @@ XdmfTopology::GetOrder( void ){
   return( this->Order );
 }
 
-XdmfString
+XdmfConstString
 XdmfTopology::GetOrderAsString( void ) {
 static char    Value[ 80 ];
 ostrstream  OutStream( Value, 80 );

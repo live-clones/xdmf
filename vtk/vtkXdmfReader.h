@@ -93,15 +93,15 @@ public:
   // Get Parameter Type
   int GetParameterType(int index);
   int GetParameterType(const char *Name);
-  char *GetParameterTypeAsString(int index);
-  char *GetParameterTypeAsString(const char *Name);
+  const char *GetParameterTypeAsString(int index);
+  const char *GetParameterTypeAsString(const char *Name);
 
   // Description:
   // Get start, stride, count
   int GetParameterRange(int index, int Shape[3]);
   int GetParameterRange(const char *Name, int Shape[3]);
-  char *GetParameterRangeAsString(int index);
-  char *GetParameterRangeAsString(const char *Name);
+  const char *GetParameterRangeAsString(int index);
+  const char *GetParameterRangeAsString(const char *Name);
 
   // Description:
   // Get Parameter Name

@@ -42,7 +42,7 @@ XdmfAttribute::~XdmfAttribute() {
   delete this->ShapeDesc;
   }
 
-XdmfString
+XdmfConstString
 XdmfAttribute::GetAttributeTypeAsString( void ){
   switch ( this->AttributeType ){
     case XDMF_ATTRIBUTE_TYPE_SCALAR :
@@ -86,7 +86,7 @@ if( XDMF_WORD_CMP( attributeType, "Scalar" ) ) {
 return( XDMF_SUCCESS );
 }
 
-XdmfString
+XdmfConstString
 XdmfAttribute::GetAttributeCenterAsString( void ){
   switch ( this->AttributeCenter ){
     case XDMF_ATTRIBUTE_CENTER_GRID :

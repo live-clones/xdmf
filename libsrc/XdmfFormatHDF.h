@@ -63,7 +63,7 @@ public :
             XdmfArray *Array = NULL );
 //! Write an Array. The Shape of the Array is overridden by the Optional Desc.
   XdmfXNode    *ArrayToElement( XdmfArray *Array,
-        XdmfString HeavyDataset = NULL,
+        XdmfConstString HeavyDataset = NULL,
         XdmfXNode *Element = NULL,
         XdmfDataDesc *Desc = NULL );
 

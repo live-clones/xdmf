@@ -1,17 +1,11 @@
 %{
 /* Force the definition for Linux */
 /* Possible bug in older Linux yacc */
-#ifndef yylval
-#define yylval dice_yylval
-#endif
-#ifndef yyerror
-#define yyerror dice_yyerror
-#endif
 
 #ifndef NOBISON
 extern int yylex();
 extern "C" {
-	void yyerror( char *);
+	void yyerror( const char *);
 	int  yyparse( void );
 }
 #endif
@@ -735,7 +729,7 @@ return 1;
 }
 
 void
-dice_yyerror( char *string ) {
+dice_yyerror( const char *string ) {
 fprintf(stderr, "XdmfExpr : %s \n", string);
 }
 
@@ -777,7 +771,7 @@ XdmfExprOutput( int c ) {
 	}
 
 XdmfExprSymbol
-*XdmfExprSymbolLookup( char *Name ){
+*XdmfExprSymbolLookup( const char *Name ){
 
 static XdmfExprSymbol *Table = NULL;
 
