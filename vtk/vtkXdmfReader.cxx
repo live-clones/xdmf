@@ -73,7 +73,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.25");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.26");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -197,6 +197,25 @@ void vtkXdmfReader::SetGridName(const char* grid)
 vtkDataSet *vtkXdmfReader::GetOutput()
 {
   return this->GetOutput(0);
+}
+
+//----------------------------------------------------------------------------
+void vtkXdmfReader::SetStride(int x, int y, int z)
+{
+  if ( x <= 0 || y <= 0 || z <= 0 )
+    {
+    vtkErrorMacro("Strides have to be greater than 0.");
+    return;
+    }
+  vtkDebugMacro(<< this->GetClassName() << " (" << this 
+    << "): setting Stride to (" << x << "," << y << "," << z << ")");
+  if ((this->Stride[0] != x)||(this->Stride[1] != y)||(this->Stride[2] != z))
+    {
+    this->Stride[0] = x;
+    this->Stride[1] = y;
+    this->Stride[2] = z;
+    this->Modified();
+    }
 }
 
 //----------------------------------------------------------------------------

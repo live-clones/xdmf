@@ -169,7 +169,11 @@ public:
 
   // Description:
   // Set / get stride
-  vtkSetVector3Macro(Stride, int);
+  void SetStride(int x, int y, int z);
+  void SetStride(int xyz[3])
+    {
+    this->SetStride(xyz[0], xyz[1], xyz[2]);
+    }
   vtkGetVector3Macro(Stride, int);
 
   // Description:
