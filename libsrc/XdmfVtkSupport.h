@@ -26,7 +26,6 @@
 #define __XdmfVtkSupport_h
 
 
-
 #ifndef SWIG
 #include "vtkVersion.h"
 #include "vtkUnstructuredGrid.h"

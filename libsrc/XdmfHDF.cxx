@@ -595,7 +595,6 @@ XdmfDebug("Using Domain " << this->Domain );
     } else if( STRCASECMP( this->Domain, "GASS" ) == 0 ) {
     } else {
       XdmfDebug("Using File Interface, Path = " << this->GetWorkingDirectory() );
-      cout << "Using working directory: " << this->GetWorkingDirectory() << endl;
       if( ( strlen( this->GetWorkingDirectory() ) > 0 ) && 
         ( this->FileName[0] != '/' ) ){
         FullFileName << this->GetWorkingDirectory() << "/";
