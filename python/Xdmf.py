@@ -106,8 +106,6 @@ XdmfObjectToHandle = _Xdmf.XdmfObjectToHandle
 
 HandleToXdmfObject = _Xdmf.HandleToXdmfObject
 
-ICE_READ_STREAM64 = _Xdmf.ICE_READ_STREAM64
-
 XdmfTypeToHDF5Type = _Xdmf.XdmfTypeToHDF5Type
 
 HDF5TypeToXdmfType = _Xdmf.HDF5TypeToXdmfType
