@@ -69,7 +69,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.12");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.13");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -1179,7 +1179,7 @@ if(Param) {
 
 }
 //----------------------------------------------------------------------------
-int vtkXdmfReader::GetParameterType(char *Name){
+int vtkXdmfReader::GetParameterType(const char *Name){
 XdmfParameter *Param;
 
 
@@ -1195,7 +1195,7 @@ if(Param) {
 
 }
 //----------------------------------------------------------------------------
-char *vtkXdmfReader::GetParameterTypeAsString(char *Name){
+char *vtkXdmfReader::GetParameterTypeAsString(const char *Name){
 
 if (this->GetParameterType(Name) == XDMF_PARAMETER_RANGE_TYPE) {
 	return("RANGE");
@@ -1253,7 +1253,7 @@ if(Param) {
 return(0);
 }
 //----------------------------------------------------------------------------
-int vtkXdmfReader::GetParameterRange(char *Name, int Shape[3]){
+int vtkXdmfReader::GetParameterRange(const char *Name, int Shape[3]){
 XdmfParameter *Param;
 XdmfArray  *Parray;
 
@@ -1291,7 +1291,7 @@ StringOutput << ICE_64BIT_CAST Range[2] << ends;
 return(StringOutput.str());
 }
 //----------------------------------------------------------------------------
-char *vtkXdmfReader::GetParameterRangeAsString(char *Name){
+char *vtkXdmfReader::GetParameterRangeAsString(const char *Name){
 int Range[3];
 ostrstream StringOutput;
 
@@ -1335,7 +1335,7 @@ return(Param->GetCurrentIndex());
 }
 
 //----------------------------------------------------------------------------
-int vtkXdmfReader::SetParameterIndex(char *ParameterName, int CurrentIndex) {
+int vtkXdmfReader::SetParameterIndex(const char *ParameterName, int CurrentIndex) {
 XdmfParameter *Param;
 int Status;
 
@@ -1357,7 +1357,7 @@ return(Status);
 }
 
 //----------------------------------------------------------------------------
-int vtkXdmfReader::GetParameterIndex(char *Name) {
+int vtkXdmfReader::GetParameterIndex(const char *Name) {
 XdmfParameter *Param;
 
 
@@ -1372,7 +1372,7 @@ return(Param->GetCurrentIndex());
 }
 
 //----------------------------------------------------------------------------
-const char *vtkXdmfReader::GetParameterValue(char *Name) {
+const char *vtkXdmfReader::GetParameterValue(const char *Name) {
 XdmfParameter *Param;
 
 
@@ -1421,7 +1421,7 @@ if(Param) {
 }
 
 //----------------------------------------------------------------------------
-int vtkXdmfReader::GetParameterLength(char *Name){
+int vtkXdmfReader::GetParameterLength(const char *Name){
 XdmfParameter *Param;
 
 

@@ -92,16 +92,16 @@ public:
   // Description:
   // Get Parameter Type
   int GetParameterType(int index);
-  int GetParameterType(char *Name);
+  int GetParameterType(const char *Name);
   char *GetParameterTypeAsString(int index);
-  char *GetParameterTypeAsString(char *Name);
+  char *GetParameterTypeAsString(const char *Name);
 
   // Description:
   // Get start, stride, count
   int GetParameterRange(int index, int Shape[3]);
-  int GetParameterRange(char *Name, int Shape[3]);
+  int GetParameterRange(const char *Name, int Shape[3]);
   char *GetParameterRangeAsString(int index);
-  char *GetParameterRangeAsString(char *Name);
+  char *GetParameterRangeAsString(const char *Name);
 
   // Description:
   // Get Parameter Name
@@ -109,21 +109,21 @@ public:
 
   // Description:
   // Set/Get Parameter Current Index
-  int SetParameterIndex(char *Name, int CurrentIndex); 
+  int SetParameterIndex(const char *Name, int CurrentIndex); 
   int SetParameterIndex(int ParameterIndex, int CurrentIndex); 
-  int GetParameterIndex(char *Name);
+  int GetParameterIndex(const char *Name);
   int GetParameterIndex(int index);
 
   // Description:
   // Get Length of Parameter
-  int GetParameterLength(char *Name);
+  int GetParameterLength(const char *Name);
   int GetParameterLength(int index);
 
 
   // Description:
   // Get the Current Value of the Parameter
   const char *GetParameterValue(int index);
-  const char *GetParameterValue(char *Name);
+  const char *GetParameterValue(const char *Name);
 
   // Description:
   // Get/Set whether the point or cell array with the given name is to
