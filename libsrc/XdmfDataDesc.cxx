@@ -642,11 +642,11 @@ XdmfDataDesc::AddCompoundMemberFromString( XdmfConstString Name,
 
 XdmfInt32  i, rank = 0, numberType;
 XdmfInt64  Dim, Dimensions[XDMF_MAX_DIMENSION];
-istrstream  ShapeString( const_cast<char*>(Shape), strlen(Shape) );
+istrstream  istr( const_cast<char*>(Shape), strlen(Shape) );
 
 numberType = StringToXdmfType( NumberTypeString );
 i = 0;
-while( ICE_READ_STREAM64(ShapeString, Dim) ){
+while( ICE_READ_STREAM64(istr, Dim) ){
   rank++;
   Dimensions[i++] = Dim;
   }
