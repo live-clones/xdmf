@@ -20,7 +20,7 @@
 #ifndef H5API_ADPT_H
 #define H5API_ADPT_H
 
-#if defined(WIN32)
+#if defined(WIN32) && !defined(__CYGWIN__)
 
 #if defined (vtkhdf5_EXPORTS)
 #  define _HDF5DLL_

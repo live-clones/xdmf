@@ -49,7 +49,7 @@ static hid_t H5FD_SRB_g = 0;
 #ifdef H5_HAVE_LSEEK64
 #   define file_offset_t	off64_t
 #   define file_seek		lseek64
-#elif defined (WIN32)
+#elif defined (WIN32) && !defined(__CYGWIN__)
 #   ifdef __MWERKS__
 #       define file_offset_t off_t
 #       define file_seek lseek

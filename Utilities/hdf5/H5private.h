@@ -615,7 +615,7 @@ H5_DLL int HDfprintf (FILE *stream, const char *fmt, ...);
 #define HDfseek(F,O,W)		fseek(F,O,W)
 #define HDfsetpos(F,P)		fsetpos(F,P)
 /* definitions related to the file stat utilities */
-#ifdef WIN32
+#if defined( WIN32 ) && !defined( __CYGWIN__ )
      #ifdef __MWERKS__
      #define HDfstat(F,B)            fstat(F,B)
      typedef struct stat		h5_stat_t;
@@ -674,7 +674,7 @@ typedef struct stat		h5_stat_t;
 #define HDlog(X)		log(X)
 #define HDlog10(X)		log10(X)
 #define HDlongjmp(J,N)		longjmp(J,N)
-#ifdef WIN32
+#if defined( WIN32 ) && !defined(__CYGWIN__)
      #ifdef __MWERKS__    
         #define HDlseek(F,O,W)  lseek(F,O,W)
      #else /*MSVS */
