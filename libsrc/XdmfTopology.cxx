@@ -259,9 +259,12 @@ return( XDMF_SUCCESS );
 XdmfInt32
 XdmfTopology::SetOrderFromString( XdmfConstString Order ){
 XdmfInt32  i = 0, List[ XDMF_MAX_ORDER];
-istrstream  InStream( Order, strlen(Order) );
+char *NewOrder = new char[ strlen(Order) + 1];
+strcpy(NewOrder, Order);
+istrstream  InStream( NewOrder, strlen(NewOrder) );
 
 while( InStream >> List[i] ) i++;
+delete [] NewOrder;
 this->SetOrder( i, List );
 return( XDMF_SUCCESS );
 }

@@ -476,8 +476,10 @@ XdmfInt32 XdmfArray::SetValues( XdmfInt64 Index, XdmfConstString Values,
         XdmfInt64 ValuesStride ) {
 XdmfPointer  ArrayPointer;
 XdmfInt64    count = 0, i = 0, NumberOfValues;
-istrstream   ist(Values, strlen( Values) );
-istrstream   counter(Values, strlen( Values) );
+char* NewValues = new char [ strlen(Values) + 1 ];
+strcpy(NewValues, Values);
+istrstream   ist(NewValues, strlen( NewValues) );
+istrstream   counter(NewValues, strlen( NewValues) );
 XdmfFloat64  dummy, *ValueArray, *vp;
 
 while( counter >> dummy ) count++;
@@ -485,6 +487,7 @@ NumberOfValues = count;
 vp = ValueArray = new XdmfFloat64[ count + 1 ];
 while( ist >> dummy ) ValueArray[i++] = dummy;
 ArrayPointer = this->GetDataPointer(Index);
+delete [] NewValues;
 if( ArrayPointer == NULL ){
   this->SetNumberOfElements( NumberOfValues + Index );
   ArrayPointer = this->GetDataPointer(Index);

@@ -401,8 +401,10 @@ return( this->SelectHyperSlab( HStart, HStride, HCount ) );
 XdmfInt32
 XdmfDataDesc::SetShapeFromString( XdmfConstString String ) {
   XdmfLength      i = 0, count = 0;
-  istrstream   ist(String, strlen( String ) );
-  istrstream   counter(String, strlen( String ) );
+  char* NewString = new char[ strlen(String) + 1 ];
+  strcpy(NewString, String);
+  istrstream   ist(NewString, strlen( NewString ) );
+  istrstream   counter(NewString, strlen( NewString ) );
   XdmfInt64  dummy;
 
   while( ICE_READ_STREAM64(counter, dummy) ) count++;
@@ -411,6 +413,7 @@ XdmfDataDesc::SetShapeFromString( XdmfConstString String ) {
           this->Dimension[i] = dummy;
           i++;
           }
+  delete [] NewString;
   XdmfDebug("String Contains " << this->Rank << " Dimensions" );
   return( this->SetShape( this->Rank, this->Dimension ) );
 

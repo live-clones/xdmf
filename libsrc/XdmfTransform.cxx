@@ -160,11 +160,14 @@ if( XDMF_WORD_CMP( Attribute, "Function" ) ){
       XdmfXNode  *Argument;
       XdmfArray  *TmpArray;
       XdmfTransform  TmpTransform;
-      istrstream  CDataStream(ch);
+      char* NewCH = new char [ strlen(ch) + 1 ];
+      strcpy(NewCH, ch);
+      istrstream  CDataStream(NewCH);
       CDataStream >> Id;
       while( (c = *ch++) ) {
         if( c > ' ') break;
         }
+      delete [] NewCH;
       Argument = this->DOM->FindElement( NULL, Id, Element );
       TmpTransform.SetDOM( this->DOM );
       TmpArray = TmpTransform.ElementToArray( Argument );
