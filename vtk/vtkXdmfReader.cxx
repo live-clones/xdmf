@@ -74,7 +74,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.41");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.42");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -1071,6 +1071,7 @@ void vtkXdmfReader::ExecuteInformation()
         }
       if( Name && strcmp(Name, this->DomainName) == 0)
         {
+        str.rdbuf()->freeze(0);
         break;
         }      
       str.rdbuf()->freeze(0);
