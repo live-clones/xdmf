@@ -1,6 +1,5 @@
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/TestingConstants.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/TestingConstants.h @ONLY)
-MESSAGE("Project dir: ${Xdmf_SOURCE_DIR}")
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
 ADD_EXECUTABLE(GridTest GridTest.cxx)
@@ -34,4 +33,5 @@ TARGET_LINK_LIBRARIES(WriterTest vtkXdmf)
 
 ADD_EXECUTABLE(TestWriters TestWriters.cxx)
 TARGET_LINK_LIBRARIES(TestWriters vtkXdmf)
+ADD_TEST(TestVTKWriters ${EXECUTABLE_OUTPUT_PATH}/TestWriters ${Xdmf_BINARY_DIR}/vtk/Testing/Cxx/TestVTKWriters.xmf)
 
