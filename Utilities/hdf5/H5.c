@@ -1148,7 +1148,7 @@ HDstrtoll (const char *s, const char **rest, int base)
         if (sign>0) {
             acc = ((uint64_t)1<<(8*sizeof(int64_t)-1))-1;
         } else {
-            acc = (uint64_t)1<<(8*sizeof(int64_t)-1);
+            acc = (int64_t)1<<(8*sizeof(int64_t)-1);
         }
         errno = ERANGE;
     }
