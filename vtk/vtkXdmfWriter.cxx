@@ -107,7 +107,7 @@ struct vtkXdmfWriterInternal
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfWriter);
-vtkCxxRevisionMacro(vtkXdmfWriter, "1.12");
+vtkCxxRevisionMacro(vtkXdmfWriter, "1.13");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter::vtkXdmfWriter()
@@ -925,6 +925,11 @@ void vtkXdmfWriter::Write()
 
     vtkXdmfWriterInternal::MapOfCellTypes cellTypes;
     vtkXdmfWriterInternal::DetermineCellTypes(vtkPointSet::SafeDownCast(ds), cellTypes);
+    if ( cellTypes.size() > 1 )
+      {
+      vtkErrorMacro("Xdmf Writer only supports unstructured data of single cell type");
+      continue;
+      }
     ofs << "<Domain";
     if ( this->DomainName )
       {
