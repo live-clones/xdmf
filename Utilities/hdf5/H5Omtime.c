@@ -139,7 +139,12 @@ H5O_mtime_decode(H5F_t UNUSED *f, const uint8_t *p,
 #elif defined(H5_HAVE_GETTIMEOFDAY) && defined(H5_HAVE_STRUCT_TIMEZONE)
     {
         struct timezone tz;
+#ifdef __CYGWIN__
+        struct timeval tv;
+        if (gettimeofday(&tv, &tz)<0) {
+#else
         if (gettimeofday(NULL, &tz)<0) {
+#endif
             HRETURN_ERROR(H5E_OHDR, H5E_CANTINIT, NULL,
                           "unable to obtain local timezone information");
         }
