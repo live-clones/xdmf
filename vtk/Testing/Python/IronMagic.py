@@ -9,6 +9,8 @@ except:
   vtkxdmf = vtkXdmfPython
 import sys
 
+import string
+
 if not vtkxdmf:
   print "Cannot load vtkXdmfPython"
   sys.exit()
@@ -42,7 +44,18 @@ pvTemp69.EnableGrid("Iron05")
 pvTemp69.EnableGrid("Iron06")
 pvTemp69.EnableGrid("Iron07")
 pvTemp69.UpdateInformation()
-#pvTemp69.SetStride(2,3,5)
+
+strides = [ 1, 1, 1 ]
+
+if len(sys.argv) > 3:
+  sstrides = string.split(sys.argv[3], " ")
+  if len(sstrides) == 3:
+    strides[0] = int(sstrides[0])
+    strides[1] = int(sstrides[1])
+    strides[2] = int(sstrides[2])
+  print strides
+  
+pvTemp69.SetStride(strides)
 
 pvTemp206 = vtk.vtkContourFilter()
 pvTemp207 = vtk.vtkContourFilter()
@@ -279,7 +292,7 @@ Ren1.AddActor( pvTemp309)
 
 
 tt = vtk.vtkTesting()
-tt.SetDataFileName("%s/IronMagic.png" % sys.argv[2])
+tt.SetDataFileName("%s/IronMagic%d%d%d.png" % (sys.argv[2], strides[0], strides[1], strides[2]))
 tt.SetRenderWindow(RenWin1)
 if tt.RegressionTest(10) != 1:
   sys.exit(1)
