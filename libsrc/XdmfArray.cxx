@@ -1213,14 +1213,50 @@ return(this->SetValueFromFloat64( Index, Value ));
 
 istrstream& ICE_READ_STREAM64(istrstream& istr, ICE_64_INT& i)
 {
-#ifdef ICE_HAVE_64BIT_STREAMS
+#if defined( ICE_HAVE_64BIT_STREAMS )
 istr >>i;
-#else
+#elif defined( _MSC_VER )
 {
-double d; 
-istr >> d;
-i = (XdmfInt64)d;
+  // Up to 33 bytes may be needed (32 + null terminator).
+  char buf[33];
+  char* bufptr = buf;
+  char ch;
+  while ( istr.get(ch) && (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n') )
+    {
+    // Ignore white space
+    }
+  if ( ch != '+' && ch != '-' && ( ch < '0' || ch > '9' ) )
+    {
+    i = 0;
+    istr.clear(istr.rdstate() | ios::failbit);
+    return istr;
+    }
+  buf[0] = ch;
+  buf[1] = 0;
+  
+  for ( cc = 1; cc < 32; cc ++ )
+    {
+    ch = istr.get();
+    if ( ch < '0' || ch > '9' )
+      {
+      istr.seekg(-1, ios::cur);
+      break;
+      }
+    buf[cc] = ch;
+    }
+  buf[cc] = 0;
+  // Convert from string representation to integer.
+  if ( sscanf(buf, "%I64d", &i) != 1 )
+    {
+    i = 0;
+    istr.clear(istr.rdstate() | ios::failbit);
+    return istr;
+    }
 }
+#else
+  double d = 0;
+  istr >> d;
+  i = (ICE_64_INT)d;
 #endif
 return istr;
 }

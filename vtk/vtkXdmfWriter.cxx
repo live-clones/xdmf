@@ -72,7 +72,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfWriter);
-vtkCxxRevisionMacro(vtkXdmfWriter, "1.10");
+vtkCxxRevisionMacro(vtkXdmfWriter, "1.11");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter::vtkXdmfWriter()
@@ -104,6 +104,7 @@ vtkXdmfWriter::~vtkXdmfWriter()
     }
   this->SetHDF5ArrayName(0);
   this->SetDomainName(0);
+  this->SetGridName(0);
 }
 
 //----------------------------------------------------------------------------

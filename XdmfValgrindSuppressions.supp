@@ -416,3 +416,1226 @@
    fun:H5T_copy
 }
 
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyString_InternInPlace
+   fun:PyString_InternFromString
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Value4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyString_InternInPlace
+   fun:PyString_InternFromString
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyType_Ready
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyDict_SetItemString
+   fun:Py_InitModule4
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyList_Sort
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Value4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyList_Sort
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyDict_SetItemString
+   fun:_PyExc_Init
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   fun:_PyExc_Init
+   fun:Py_Initialize
+   fun:main
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyString_InternInPlace
+   fun:PyDict_SetItemString
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyMarshal_ReadObjectFromString
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   fun:PyMarshal_ReadLastObjectFromFile
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyEval_EvalCodeEx
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   fun:PyObject_GC_Del
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   fun:PyMem_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyCode_New
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Realloc
+   fun:_PyObject_GC_Resize
+   fun:PyFrame_New
+   fun:PyEval_EvalCodeEx
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyGrammar_AddAccelerators
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Value4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyGrammar_AddAccelerators
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyGrammar_AddAccelerators
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:PyObject_Free
+   fun:PyTokenizer_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyParser_ParseStringFlags
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Value4
+   fun:PyObject_Free
+   fun:PyTokenizer_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyParser_ParseStringFlags
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Realloc
+   fun:_PyString_Resize
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyNode_CompileFlags
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Realloc
+   fun:_PyString_Resize
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyNode_CompileFlags
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyNode_CompileFlags
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   fun:PyParser_Delete
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyParser_ParseStringFlags
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   fun:PyTokenizer_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyParser_ParseStringFlags
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:PyObject_Free
+   fun:PyParser_Delete
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyParser_ParseStringFlags
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Value4
+   fun:PyObject_Free
+   fun:PyParser_Delete
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyParser_ParseStringFlags
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:PyObject_Free
+   fun:PyMem_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyCode_New
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Value4
+   fun:PyObject_Free
+   fun:PyMem_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyCode_New
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyEval_EvalCodeEx
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Value4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyEval_EvalCodeEx
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Value4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   fun:PyObject_GC_Del
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Realloc
+   fun:_PyObject_GC_Resize
+   fun:PyFrame_New
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PySequence_SetSlice
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyDict_DelItem
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyArg_ParseTuple
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   fun:PyMem_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyCFunction_Call
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyCFunction_Call
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyDict_SetItem
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Value4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:PyObject_Realloc
+   fun:PyNode_AddChild
+   fun:PyParser_AddToken
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Value4
+   fun:PyObject_Realloc
+   fun:PyNode_AddChild
+   fun:PyParser_AddToken
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:PyObject_Free
+   fun:PyTokenizer_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyParser_SimpleParseFileFlags
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Value4
+   fun:PyObject_Free
+   fun:PyTokenizer_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyParser_SimpleParseFileFlags
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyNode_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Overlap
+   fun:memcpy
+   fun:H5V_array_fill
+   fun:H5S_hyper_init
+   fun:H5D_write
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyDict_SetItem
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Value4
+   fun:PyObject_Free
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyDict_SetItem
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   fun:PyDict_Clear
+   fun:PyImport_Cleanup
+   fun:Py_Finalize
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   fun:_PyImport_Fini
+   fun:Py_Finalize
+   fun:Py_Main
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   fun:PyThreadState_Delete
+   fun:PyInterpreterState_Delete
+   fun:Py_Finalize
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   fun:PyInterpreterState_Delete
+   fun:Py_Finalize
+   fun:Py_Main
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   fun:PyInt_Fini
+   fun:Py_Finalize
+   fun:Py_Main
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:PyObject_Free
+   fun:PyInt_Fini
+   fun:Py_Finalize
+   fun:Py_Main
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Value4
+   fun:PyObject_Free
+   fun:PyInt_Fini
+   fun:Py_Finalize
+   fun:Py_Main
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   fun:_PyUnicodeUCS4_Fini
+   fun:Py_Finalize
+   fun:Py_Main
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:PyObject_Free
+   fun:PyGrammar_RemoveAccelerators
+   fun:Py_Finalize
+   fun:Py_Main
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   fun:free_derivation
+   fun:tdestroy_recurse
+   fun:free_mem
+   fun:__GI___libc_freeres
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:PyList_New
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/lib/ld-2.3.2.so
+   fun:_dl_map_object
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:calloc
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.1
+   fun:_PyImport_GetDynLoadFunc
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:H5MM_strdup
+   fun:H5T_init_interface
+   fun:H5T_init
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:calloc
+   fun:H5S_find
+   fun:H5D_write
+   fun:H5Dwrite
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:__tsearch
+   fun:add_derivation
+   fun:find_derivation
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:__gconv_get_path
+   fun:__gconv_read_conf
+   fun:__pthread_once
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:add_derivation
+   fun:find_derivation
+   fun:__gconv_find_transform
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:__tzstring
+   fun:__tzfile_read
+   fun:tzset_internal
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:PyThread_allocate_lock
+   fun:PyInterpreterState_New
+   fun:Py_Initialize
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:__gconv_find_shlib
+   fun:gen_steps
+   fun:find_derivation
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyObject_Malloc
+   fun:_PyObject_GC_Malloc
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/lib/ld-2.3.2.so
+   fun:_dl_map_object
+   obj:/lib/ld-2.3.2.so
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:__GI___strdup
+   fun:get_proc_path
+   fun:phys_pages_info
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:H5FL_arr_init
+   fun:H5FL_arr_alloc
+   fun:H5S_set_extent_simple
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_dl_map_object_deps
+   fun:dl_open_worker
+   fun:_dl_catch_error
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:H5FL_blk_init
+   fun:H5FL_blk_alloc
+   fun:H5FL_arr_alloc
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/lib/ld-2.3.2.so
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_dl_map_object
+   fun:dl_open_worker
+   fun:_dl_catch_error
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:H5FL_reg_init
+   fun:H5FL_reg_alloc
+   fun:H5I_register
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_dl_map_object_deps
+   fun:dl_open_worker
+   fun:_dl_catch_error
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:PyMem_Malloc
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:Py_GetProgramFullPath
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/lib/ld-2.3.2.so
+   fun:_dl_map_object
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:realloc
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyList_Append
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:calloc
+   fun:H5I_init_group
+   fun:H5F_init_interface
+   fun:H5F_init
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:realloc
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyList_Append
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:PyStructSequence_InitType
+   fun:initposix
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:H5T_path_find
+   fun:H5Tregister
+   fun:H5T_init_interface
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:calloc
+   fun:H5P_create_class
+   fun:H5P_init_interface
+   fun:H5P_init
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:calloc
+   fun:H5FL_arr_init
+   fun:H5FL_arr_alloc
+   fun:H5S_set_extent_simple
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:calloc
+   fun:H5FL_arr_init
+   fun:H5FL_arr_alloc
+   fun:H5S_set_extent_simple
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:H5FDregister
+   fun:H5FD_sec2_init
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:calloc
+   fun:_dl_check_map_versions
+   fun:dl_open_worker
+   fun:_dl_catch_error
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:__tzfile_read
+   fun:tzset_internal
+   fun:__tz_convert
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:H5MM_realloc
+   fun:H5Tregister
+   fun:H5T_init_interface
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZNSt24__default_alloc_templateILb1ELi0EE14_S_chunk_allocEjRi
+   fun:_ZNSt24__default_alloc_templateILb1ELi0EE9_S_refillEj
+   fun:_ZNSt24__default_alloc_templateILb1ELi0EE8allocateEj
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:calloc
+   obj:/lib/ld-2.3.2.so
+   fun:_dl_map_object
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:calloc
+   fun:H5I_init_group
+   fun:H5F_init_interface
+   fun:H5F_init
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_PyInt_Init
+   fun:Py_Initialize
+   fun:main
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:PyObject_Malloc
+   fun:PyString_FromString
+   fun:PyType_Ready
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:H5FL_malloc
+   fun:H5FL_reg_alloc
+   fun:H5I_register
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyType_Ready
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyObject_Malloc
+   fun:_PyObject_GC_Malloc
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:H5FL_malloc
+   fun:H5FL_reg_alloc
+   fun:H5T_create
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:calloc
+   obj:/lib/ld-2.3.2.so
+   obj:/lib/ld-2.3.2.so
+   fun:_dl_map_object
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:__GI__dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.1
+   fun:_PyImport_GetDynLoadFunc
+   fun:_PyImport_LoadDynamicModule
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyImport_ImportModuleEx
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyCFunction_Call
+   fun:PyObject_Call
+   fun:PyEval_CallObjectWithKeywords
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyEval_EvalCodeEx
+   fun:PyEval_EvalCode
+   fun:PyImport_ExecCodeModuleEx
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyImport_ImportModuleEx
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyCFunction_Call
+   fun:PyObject_Call
+   fun:PyEval_CallObjectWithKeywords
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyEval_EvalCodeEx
+   fun:PyEval_EvalCode
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyRun_String
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyEval_EvalCodeEx
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyType_Ready
+   fun:PyType_Ready
+   fun:_Py_ReadyTypes
+   fun:Py_Initialize
+   fun:main
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:realloc
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:__GI__dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.1
+   fun:_PyImport_GetDynLoadFunc
+   fun:_PyImport_LoadDynamicModule
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyImport_ImportModuleEx
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyCFunction_Call
+   fun:PyObject_Call
+   fun:PyEval_CallObjectWithKeywords
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyEval_EvalCodeEx
+   fun:PyEval_EvalCode
+   fun:PyImport_ExecCodeModuleEx
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyImport_ImportModuleEx
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyCFunction_Call
+   fun:PyObject_Call
+   fun:PyEval_CallObjectWithKeywords
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyEval_EvalCodeEx
+   fun:PyEval_EvalCode
+   fun:PyImport_ExecCodeModuleEx
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyImport_ImportModuleEx
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyCFunction_Call
+   fun:PyObject_Call
+   fun:PyEval_CallObjectWithKeywords
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:__GI__dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.1
+   fun:_PyImport_GetDynLoadFunc
+   fun:_PyImport_LoadDynamicModule
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyImport_ImportModuleEx
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyCFunction_Call
+   fun:PyObject_Call
+   fun:PyEval_CallObjectWithKeywords
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyEval_EvalCodeEx
+   fun:PyEval_EvalCode
+   fun:PyImport_ExecCodeModuleEx
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyImport_ImportModuleEx
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyCFunction_Call
+   fun:PyObject_Call
+   fun:PyEval_CallObjectWithKeywords
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyEval_EvalCodeEx
+   fun:PyEval_EvalCode
+   fun:PyImport_ExecCodeModuleEx
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyImport_ImportModuleEx
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyCFunction_Call
+   fun:PyObject_Call
+   fun:PyEval_CallObjectWithKeywords
+   obj:/usr/lib/libpython2.3.so.1.0
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:add_to_global
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:__GI__dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.1
+   fun:_PyImport_GetDynLoadFunc
+   fun:_PyImport_LoadDynamicModule
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyImport_ImportModuleEx
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyCFunction_Call
+   fun:PyObject_Call
+   fun:PyEval_CallObjectWithKeywords
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyEval_EvalCodeEx
+   fun:PyEval_EvalCode
+   fun:PyImport_ExecCodeModuleEx
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyImport_ImportModuleEx
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyCFunction_Call
+   fun:PyObject_Call
+   fun:PyEval_CallObjectWithKeywords
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyEval_EvalCodeEx
+   fun:PyEval_EvalCode
+   fun:PyImport_ExecCodeModuleEx
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyImport_ImportModuleEx
+   obj:/usr/lib/libpython2.3.so.1.0
+   fun:PyCFunction_Call
+   fun:PyObject_Call
+   fun:PyEval_CallObjectWithKeywords
+}

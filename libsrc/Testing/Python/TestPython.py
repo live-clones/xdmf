@@ -21,3 +21,4 @@ print 'Selecting ' + SelectionString
 DataDesc.SelectHyperSlabFromString('0 0 0', '1 1 1', SelectionString ) 
 Values = PortionReader.ElementToArray( DataNode, DataDesc )
 print 'I read %d Elements' % Values.GetNumberOfElements()
+del DataDesc

@@ -31,7 +31,15 @@ XdmfDataDesc::XdmfDataDesc() {
   this->SelectionType = XDMF_SELECTALL;
   this->NextOffset = 0;
   this->Rank = 1;
-  }
+  this->ShapeString = 0;
+
+  /*
+  if ( this == (void*)0x8104198 )
+    {
+    abort();
+    }
+    */
+}
 
 XdmfDataDesc::~XdmfDataDesc() {
   H5Tclose( this->DataType );
@@ -39,8 +47,9 @@ XdmfDataDesc::~XdmfDataDesc() {
       ( this->DataSpace != H5I_BADID )){
            H5Sclose( this->DataSpace );
     this->DataSpace = H5I_BADID;
-        }
   }
+  this->SetShapeString(0);
+}
 
 XdmfInt32
 XdmfDataDesc::GetHyperSlab( XdmfInt64 *start, XdmfInt64 *stride, XdmfInt64 *count ) {
@@ -182,8 +191,6 @@ return( HRank );
 XdmfConstString
 XdmfDataDesc::GetShapeAsString( void ) {
 ostrstream   StringOutput;
-XdmfString Ptr;
-static XdmfString Result = NULL;
 XdmfInt64  i, rank, Dimensions[ XDMF_MAX_DIMENSION ];
 
 rank = this->GetShape( Dimensions );
@@ -191,12 +198,9 @@ for( i = 0 ; i < rank ; i++ ){
   StringOutput << ICE_64BIT_CAST Dimensions[i] << " ";
   }
 StringOutput << ends;
-Ptr = StringOutput.str();
-if( Result != NULL ) delete [] Result;
-Result = new char[ strlen( Ptr ) + 2 ];
-strcpy( Result, Ptr );
-delete [] Ptr;
-return( Result );
+this->SetShapeString(StringOutput.str());
+StringOutput.rdbuf()->freeze(0);
+return( this->ShapeString );
 }
 
 XdmfInt32
@@ -813,3 +817,24 @@ for( k = 0 ; k < rank ; k++ ){
   }
 }
 }
+
+void XdmfDataDesc::SetShapeString(XdmfConstString shape)
+{
+  if ( shape == this->ShapeString || 
+    ( shape && this->ShapeString && strcmp(shape, this->ShapeString) == 0 ) )
+    {
+    return;
+    }
+
+  if ( this->ShapeString )
+    {
+    delete [] this->ShapeString;
+    this->ShapeString = 0;
+    }
+  if ( shape )
+    {
+    this->ShapeString = new char[ strlen(shape) + 1 ];
+    strcpy(this->ShapeString, shape);
+    }
+}
+

@@ -72,7 +72,7 @@ public :
 
   XdmfString  GetTransform( void ) { return( this->DataTransform ); };
 //! Return a Data Desc from a DOM Element
-  XdmfDataDesc  *ElementToDataDesc( XdmfXNode *Element );
+  XdmfDataDesc  *ElementToDataDesc( XdmfXNode *Element, int store = 1 );
   XdmfArray  *ElementToArray( XdmfXNode *Element );
 //! Create/Modify a DOM Element based on Data Desc
   XdmfXNode    *DataDescToElement( XdmfDataDesc *Desc, XdmfString HeavyDataName,

@@ -211,6 +211,9 @@ protected:
   hssize_t  Start[XDMF_MAX_DIMENSION];
   hsize_t    Stride[XDMF_MAX_DIMENSION];
   hsize_t    Count[XDMF_MAX_DIMENSION];
+
+  void SetShapeString(XdmfConstString shape);
+  XdmfString ShapeString;
 };
 
 #endif // __XdmfDataDesc_h
