@@ -74,7 +74,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.39");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.40");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -813,9 +813,11 @@ void vtkXdmfReader::Execute()
       // dataNode = this->DOM->FindElement("DataStructure", 0, attrNode);
       // Find the DataTransform or DataStructure below the <Attribute>
       dataNode = this->DOM->FindElement(NULL, 0, attrNode);
+      XdmfString nodeType = 0;
       NodeType = this->DOM->Get(dataNode, "NodeType" );
+      XDMF_STRING_DUPLICATE(nodeType, NodeType);
       // this->Internals->DataDescriptions[currentGrid] is a Copy so Delete it later
-      if( XDMF_WORD_CMP(NodeType, "DataTransform") )
+      if( XDMF_WORD_CMP(nodeType, "DataTransform") )
         {
         this->Internals->DataDescriptions[currentGrid] = this->Transform->ElementToDataDesc( dataNode, 0 );
         } 
@@ -852,7 +854,7 @@ void vtkXdmfReader::Execute()
         dataNode, this->Internals->DataDescriptions[currentGrid] );
         */
         vtkDebugMacro("Topology class: " << grid->GetClassAsString());
-        if( XDMF_WORD_CMP(NodeType, "DataStructure") &&
+        if( XDMF_WORD_CMP(nodeType, "DataStructure") &&
           ( grid->GetClass() != XDMF_UNSTRUCTURED))
           {
           XdmfDataDesc* ds = this->Internals->DataDescriptions[currentGrid];
@@ -870,7 +872,8 @@ void vtkXdmfReader::Execute()
           //cout << "Dims = " << this->Internals->DataDescriptions[currentGrid]->GetShapeAsString() << endl;
           //cout << "Slab = " << this->Internals->DataDescriptions[currentGrid]->GetHyperSlabAsString() << endl;
           // Only works for the structured and rectilinear grid
-          vtkDebugMacro( << "Preparing to Read :" << this->DOM->Get(dataNode, "CData"));
+          vtkDebugMacro( << "Preparing to Read :" 
+            << this->DOM->Get(dataNode, "CData"));
           values = this->FormatMulti->ElementToArray(dataNode, ds);
           }
         else 
@@ -878,6 +881,7 @@ void vtkXdmfReader::Execute()
           Trans.SetDOM(this->DOM);
           values = Trans.ElementToArray( dataNode );
           }
+        delete [] nodeType;
         this->ArrayConverter->SetVtkArray( NULL );
         if ( values )
           {
