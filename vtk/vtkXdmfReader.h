@@ -192,6 +192,7 @@ protected:
   vtkXdmfReaderInternal* Internals;
 
   int Stride[3];
+  int OutputsInitialized;
 
 private:
   vtkXdmfReader(const vtkXdmfReader&); // Not implemented

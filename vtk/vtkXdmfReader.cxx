@@ -69,7 +69,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.5");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.6");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -96,7 +96,10 @@ vtkXdmfReader::vtkXdmfReader()
 {
   this->Internals = new vtkXdmfReaderInternal;
 
+  // I have this flag because I do not want to change the initialization
+  // of the output to the generic output.  It might break something;
   this->SetOutput(vtkDataObject::New());
+  this->OutputsInitialized = 0;
   // Releasing data for pipeline parallism.
   // Filters will know it is empty. 
   this->Outputs[0]->ReleaseData();
@@ -164,6 +167,10 @@ vtkXdmfReader::~vtkXdmfReader()
 
 vtkDataSet *vtkXdmfReader::GetOutput()
 {
+  if ( ! this->OutputsInitialized)
+    {
+    this->ExecuteInformation();
+    }
   if (this->NumberOfOutputs < 1)
     {
     return NULL;
@@ -172,18 +179,27 @@ vtkDataSet *vtkXdmfReader::GetOutput()
   return static_cast<vtkDataSet *>(this->Outputs[0]);
 }
 
+//----------------------------------------------------------------------------
 void vtkXdmfReader::SetOutput(vtkDataSet *output)
 {
+  this->OutputsInitialized = 1;
   this->vtkSource::SetNthOutput(0, output);
 }
 
+//----------------------------------------------------------------------------
 void vtkXdmfReader::SetOutput(vtkDataObject *output)
 {
+  this->OutputsInitialized = 1;
   this->vtkSource::SetNthOutput(0, output);
 }
 
+//----------------------------------------------------------------------------
 vtkDataSet *vtkXdmfReader::GetOutput(int idx)
 {
+  if ( ! this->OutputsInitialized)
+    {
+    this->ExecuteInformation();
+    }
   return static_cast<vtkDataSet *>( this->Superclass::GetOutput(idx) ); 
 }
 
@@ -863,6 +879,9 @@ void vtkXdmfReader::ExecuteInformation()
   int type_changed = 0;
   if ( vGrid )
     {
+    // Put this here so that GetOutput 
+    // does not call ExecuteInfomrtion again.
+    this->OutputsInitialized = 1;
     if ( this->GetOutput()->GetClassName() != vGrid->GetClassName() )
       {
       type_changed = 1;
