@@ -26,6 +26,11 @@ SET( Xdmf_SRCS
 	${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
 	)
 
+SET_SOURCE_FILES_PROPERTIES(
+  vtkXdmfDataArray
+  WRAP_EXCLUDE
+  )
+
 INSTALL_FILES(/include/XdmfVtk .h ${Xdmf_SRCS})
 
 SET(VTK_BINARY_DIR "${Xdmf_BINARY_DIR}/vtk")
