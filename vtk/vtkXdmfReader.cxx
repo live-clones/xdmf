@@ -72,7 +72,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.19");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.20");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -1028,7 +1028,7 @@ void vtkXdmfReader::ExecuteInformation()
     this->Internals->DataDescriptions[currentGrid] = grid->GetShapeDesc();
     Rank = this->Internals->DataDescriptions[currentGrid]->GetShape( Dimensions );
     int i;
-    for(i = Rank ; i < 3 ; i++)
+    for(i = Rank ; i < XDMF_MAX_DIMENSION ; i++)
       {
       Dimensions[i] = 1;
       }
