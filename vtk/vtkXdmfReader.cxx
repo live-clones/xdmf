@@ -70,7 +70,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.16");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.17");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -221,6 +221,7 @@ vtkDataSet *vtkXdmfReader::GetOutput(int idx)
 //----------------------------------------------------------------------------
 void vtkXdmfReader::Execute()
 {
+  vtkDebugMacro("Execute");
   if ( !this->FileName )
     {
     vtkErrorMacro("File name not set");
@@ -752,6 +753,7 @@ void vtkXdmfReader::Execute()
 //----------------------------------------------------------------------------
 void vtkXdmfReader::ExecuteInformation()
 {
+  vtkDebugMacro("ExecuteInformation");
   vtkIdType cc;
   char         *CurrentFileName;
   XdmfInt32    Rank;
@@ -1109,6 +1111,7 @@ int vtkXdmfReader::GetPointArrayStatus(const char* name)
 //----------------------------------------------------------------------------
 void vtkXdmfReader::SetPointArrayStatus(const char* name, int status)
 {
+  vtkDebugMacro("Set point array \"" << name << "\" status to: " << status);
   if(status)
     {
     this->PointDataArraySelection->EnableArray(name);
@@ -1122,6 +1125,7 @@ void vtkXdmfReader::SetPointArrayStatus(const char* name, int status)
 //----------------------------------------------------------------------------
 void vtkXdmfReader::EnableAllArrays()
 {
+  vtkDebugMacro("Enable all point and cell arrays");
   this->PointDataArraySelection->EnableAllArrays();
   this->CellDataArraySelection->EnableAllArrays();
 }
@@ -1129,6 +1133,7 @@ void vtkXdmfReader::EnableAllArrays()
 //----------------------------------------------------------------------------
 void vtkXdmfReader::DisableAllArrays()
 {
+  vtkDebugMacro("Disable all point and cell arrays");
   this->PointDataArraySelection->DisableAllArrays();
   this->CellDataArraySelection->DisableAllArrays();
 }
@@ -1154,6 +1159,7 @@ int vtkXdmfReader::GetCellArrayStatus(const char* name)
 //----------------------------------------------------------------------------
 void vtkXdmfReader::SetCellArrayStatus(const char* name, int status)
 {
+  vtkDebugMacro("Set cell array \"" << name << "\" status to: " << status);
   if(status)
     {
     this->CellDataArraySelection->EnableArray(name);
@@ -1205,6 +1211,7 @@ int vtkXdmfReader::GetGridIndex(const char* name)
 //----------------------------------------------------------------------------
 void vtkXdmfReader::EnableGrid(const char* name)
 {
+  vtkDebugMacro("Enable grid \"" << name << "\"");
   this->EnableGrid(this->GetGridIndex(name));
 }
 
@@ -1216,24 +1223,27 @@ void vtkXdmfReader::EnableGrid(int idx)
     vtkErrorMacro("Cannot enable grid. Grid " << idx << " does not exists.");
     return;
     }
+  vtkDebugMacro("Enable grid " << idx);
   this->Internals->SelectedGrids[idx] = 1;
   this->Modified();
+  this->UpdateInformation();
 }
 
 //----------------------------------------------------------------------------
 void vtkXdmfReader::EnableAllGrids()
 {
+  vtkDebugMacro("Enable all grids");
   int currentGrid;
   for ( currentGrid = 0; currentGrid < this->GetNumberOfGrids(); currentGrid ++ )
     {
-    this->Internals->SelectedGrids[currentGrid] = 1;
+    this->EnableGrid(currentGrid);
     }
-  this->Modified();
 }
 
 //----------------------------------------------------------------------------
 void vtkXdmfReader::DisableGrid(const char* name)
 {
+  vtkDebugMacro("Disable grid \"" << name << "\"");
   this->DisableGrid(this->GetGridIndex(name));
 }
 
@@ -1245,19 +1255,21 @@ void vtkXdmfReader::DisableGrid(int idx)
     vtkErrorMacro("Cannot disable grid. Grid " << idx << " does not exists.");
     return;
     }
+  vtkDebugMacro("Disable grid " << idx);
   this->Internals->SelectedGrids[idx] = 0;
   this->Modified();
+  this->UpdateInformation();
 }
 
 //----------------------------------------------------------------------------
 void vtkXdmfReader::DisableAllGrids()
 {
+  vtkDebugMacro("Disable all grids");
   int currentGrid;
   for ( currentGrid = 0; currentGrid < this->GetNumberOfGrids(); currentGrid ++ )
     {
-    this->Internals->SelectedGrids[currentGrid] = 0;
+    this->DisableGrid(currentGrid);
     }
-  this->Modified();
 }
 
 //----------------------------------------------------------------------------
