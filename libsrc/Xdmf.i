@@ -1,10 +1,12 @@
 /*
   To create C++ files:
+ICE_INCLUDES="-I${Xdmf_SOURCE_DIR} -I${Xdmf_SOURCE_DIR}/libsrc -I${Xdmf_BINARY_DIR}/libsrc -I${Xdmf_BINARY_DIR}/Ice/libsrc"
+
 XdmfTcl.cxx:
-swig -v -c++ -make_default -includeall -tcl -prefix Xdmf  -namespace $(ICE_INCLUDES) -o XdmfTcl.cxx ${srcdir}/Xdmf.i
+swig -v -c++ -make_default -includeall -tcl -prefix Xdmf  -namespace ${ICE_INCLUDES} -o XdmfTcl.cxx Xdmf.i
 
 XdmfPython.cxx:
-swig -v -c++ -make_default -includeall -shadow -python $(ICE_INCLUDES) -o XdmfPython.cxx ${srcdir}/Xdmf.i
+swig -v -c++ -make_default -includeall -python -shadow $(ICE_INCLUDES) -o XdmfPython.cxx ${srcdir}/Xdmf.i
 
 XdmfJava.cxx:
 swig -v -c++ -make_default -includeall -shadow -java $(ICE_INCLUDES) -o XdmfJava.cxx ${srcdir}/Xdmf.i;  
@@ -25,7 +27,6 @@ swig -v -c++ -make_default -includeall -shadow -java $(ICE_INCLUDES) -o XdmfJava
 #include <XdmfGeometry.h>
 #include <XdmfGrid.h>
 #include <XdmfHDF.h>
-#include <XdmfHDFSupport.h>
 #include <XdmfHeavyData.h>
 #include <XdmfLightData.h>
 #include <XdmfObject.h>
@@ -35,24 +36,28 @@ swig -v -c++ -make_default -includeall -shadow -java $(ICE_INCLUDES) -o XdmfJava
 #include <XdmfXNode.h>
 #include <XdmfNDGM.h>
 %}
-#include <XdmfArray.h>
-#include <XdmfAttribute.h>
-#include <XdmfCharArray.h>
-#include <XdmfDOM.h>
-#include <XdmfDataDesc.h>
-#include <XdmfExpression.h>
-#include <XdmfFormat.h>
-#include <XdmfFormatHDF.h>
-#include <XdmfFormatMulti.h>
-#include <XdmfFormatXML.h>
-#include <XdmfGeometry.h>
-#include <XdmfGrid.h>
-#include <XdmfHDF.h>
-#include <XdmfHeavyData.h>
-#include <XdmfLightData.h>
-#include <XdmfObject.h>
-#include <XdmfParameter.h>
-#include <XdmfTopology.h>
-#include <XdmfTransform.h>
-#include <XdmfXNode.h>
-#include <XdmfNDGM.h>
+
+%include std_string.i
+%include XdmfArray.h
+%include XdmfAttribute.h
+%include XdmfCharArray.h
+%include XdmfDOM.h
+%include XdmfDataDesc.h
+%include XdmfExpression.h
+%include XdmfFormat.h
+%include XdmfFormatHDF.h
+%include XdmfFormatMulti.h
+%include XdmfFormatXML.h
+%include XdmfGeometry.h
+%include XdmfGrid.h
+%include XdmfHDF.h
+%include XdmfHDFSupport.h
+%include XdmfHeavyData.h
+%include XdmfLightData.h
+%include XdmfObject.h
+%include XdmfParameter.h
+%include XdmfTopology.h
+%include XdmfTransform.h
+%include XdmfXNode.h
+%include XdmfNDGM.h
+
