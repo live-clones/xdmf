@@ -169,29 +169,10 @@ IF(NOT WIN32)
   ADD_DEFINITIONS(-D_HPUX_SOURCE)
 ENDIF(NOT WIN32)
 
+SET(XdmfSources ${XdmfFormatSource} ${XdmfExtraSource} ${XdmfModelSource})
+
 IF(XDMF_HAS_NDGM)
-  SET(XdmfSources ${XdmfFormatSource} ${XdmfExtraSource} ${XdmfModelSource} ${XdmfNdgmSource})
-  INSTALL_FILES(/include/Xdmf .h
-    XdmfConfig
-    Xdmf
-    XdmfArrayCopyMacro
-    XdmfDice
-    XdmfExport
-    XdmfExpr
-    ${XdmfFormatSource}
-    ${XdmfModelSource}
-    ${XdmfNdgmSource})
-ELSE(XDMF_HAS_NDGM)
-  SET(XdmfSources ${XdmfFormatSource} ${XdmfExtraSource} ${XdmfModelSource})
-  INSTALL_FILES(/include/Xdmf .h
-    XdmfConfig
-    Xdmf
-    XdmfArrayCopyMacro
-    XdmfDice
-    XdmfExport
-    XdmfExpr
-    ${XdmfFormatSource}
-    ${XdmfModelSource})
+  SET(XdmfSources ${XdmfSources} ${XdmfNdgmSource})
 ENDIF(XDMF_HAS_NDGM)
 
 IF(BUILD_SHARED_LIBS)
@@ -199,7 +180,6 @@ IF(BUILD_SHARED_LIBS)
 ELSE(BUILD_SHARED_LIBS)
   ADD_LIBRARY(Xdmf STATIC ${XdmfSources})
 ENDIF(BUILD_SHARED_LIBS)
-INSTALL_TARGETS(/lib Xdmf)
 
 IF(XDMF_HAS_NDGM)
   TARGET_LINK_LIBRARIES(Xdmf ${NDGM_LIBRARY} ${HDF5_LIBRARY} ${XDMF_MPI_LIBRARIES} ${XDMF_EXPAT_LIBRARIES} ${XDMF_ZLIB_LIBRARIES})
@@ -222,7 +202,6 @@ IF(XDMF_WRAP_PYTHON)
   IF(XDMF_HAS_NDGM)
     TARGET_LINK_LIBRARIES(_Xdmf ${NDGM_LIBRARY})
   ENDIF(XDMF_HAS_NDGM)
-  INSTALL_TARGETS(/lib _Xdmf)
   TARGET_LINK_LIBRARIES(_Xdmf Xdmf ${HDF5_LIBRARY} ${EXPAT_LIBRARY} ${XDMF_ZLIB_LIBRARIES})
   IF(WIN32)
     TARGET_LINK_LIBRARIES(_Xdmf ${PYTHON_LIBRARY})
@@ -238,7 +217,6 @@ IF(XDMF_WRAP_TCL)
   INCLUDE_DIRECTORIES(${TCL_INCLUDE_PATH})
   INCLUDE (${CMAKE_ROOT}/Modules/FindTCL.cmake)
   ADD_LIBRARY(XdmfTCL SHARED ${XdmfTclSource})
-  INSTALL_TARGETS(/lib XdmfTCL)
   IF(XDMF_HAS_NDGM)
     TARGET_LINK_LIBRARIES(XdmfTCL ${NDGM_LIBRARY})
   ENDIF(XDMF_HAS_NDGM)
@@ -250,3 +228,30 @@ ENDIF(XDMF_WRAP_TCL)
 IF(XDMF_BUILD_TESTING)
   SUBDIRS(Testing)
 ENDIF(XDMF_BUILD_TESTING)
+
+IF(NOT XDMF_NOT_INSTALL_INCLUDE_FILES)
+  INSTALL_FILES(/include/Xdmf .h
+    XdmfConfig
+    Xdmf
+    XdmfArrayCopyMacro
+    XdmfDice
+    XdmfExport
+    XdmfExpr
+    ${XdmfFormatSource}
+    ${XdmfModelSource})
+  IF(XDMF_HAS_NDGM)
+    INSTALL_FILES(/include/Xdmf .h
+      ${XdmfNdgmSource})
+  ENDIF(XDMF_HAS_NDGM)
+ENDIF(NOT XDMF_NOT_INSTALL_INCLUDE_FILES)
+
+IF(BUILD_SHARED_LIBS)
+  INSTALL_TARGETS(/lib Xdmf)
+  IF(XDMF_WRAP_PYTHON)
+    INSTALL_TARGETS(/lib _Xdmf)
+  ENDIF(XDMF_WRAP_PYTHON)
+  IF(XDMF_WRAP_TCL)
+    INSTALL_TARGETS(/lib XdmfTCL)
+  ENDIF(XDMF_WRAP_TCL)
+ENDIF(BUILD_SHARED_LIBS)
+
