@@ -77,7 +77,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vtkstd/vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.53");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.54");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -2099,6 +2099,15 @@ void vtkXdmfReader::UpdateGrids()
       }
     }
   this->GridsModified = 0;
+  this->SetNumberOfOutputPorts(this->GetNumberOfGrids());
+  int i;
+  vtkUnstructuredGrid *ugrid;
+  for (i = 0; i < this->GetNumberOfGrids(); i++)
+    {
+    ugrid = vtkUnstructuredGrid::New();
+    this->GetExecutive()->SetOutputData(i, ugrid);
+    ugrid->Delete();
+    }
 }
 
 //----------------------------------------------------------------------------
