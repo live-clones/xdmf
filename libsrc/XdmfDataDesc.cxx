@@ -32,13 +32,6 @@ XdmfDataDesc::XdmfDataDesc() {
   this->NextOffset = 0;
   this->Rank = 1;
   this->ShapeString = 0;
-
-  /*
-  if ( this == (void*)0x8104198 )
-    {
-    abort();
-    }
-    */
 }
 
 XdmfDataDesc::~XdmfDataDesc() {
@@ -781,27 +774,26 @@ return( Result );
 
 void
 XdmfDataDesc::Print( void ){
-
 hsize_t  i, Dimensions[ XDMF_MAX_DIMENSION ];
 hsize_t  Nelements = 0;
 XdmfInt32 rank = 0;
-if ( this->DataSpace != H5I_BADID )
-  {
+if ( this->DataSpace != H5I_BADID ) {
   rank = H5Sget_simple_extent_ndims(this->DataSpace );
   }
 
 cout << "Rank " << rank << endl;
-if ( this->DataSpace != H5I_BADID )
-  {
+if ( this->DataSpace != H5I_BADID ) {
   H5Sget_simple_extent_dims( this->DataSpace, Dimensions, NULL );
   }
-for( i = 0 ; static_cast<XdmfInt32>(i) < rank ; i++ ){
-  cout << "Dimension[" << (int)i << "] " << (int)Dimensions[i] << endl;
-  }
+
+XdmfInt32 ii;
+for( ii = 0 ; ii < rank ; ii++ ) {
+  cout << "Dimension[" << (int)ii << "] " << (int)Dimensions[ii] << endl;
+}
+
 cout << "Selection Type : " << this->GetSelectionTypeAsString() << endl;
 if( this->SelectionType == XDMF_COORDINATES ){
-  if ( this->DataSpace != H5I_BADID )
-    {
+  if ( this->DataSpace != H5I_BADID ) {
     Nelements = H5Sget_select_elem_npoints( this->DataSpace );
     }
   cout << "Selected Elements : " << (int)Nelements << endl;
@@ -820,10 +812,10 @@ if( this->SelectionType == XDMF_COORDINATES ){
   }
 }
 if( this->SelectionType == XDMF_HYPERSLAB ){
-int  k;
-for( k = 0 ; k < rank ; k++ ){
-  cout << k << " : Start " << (int)this->Start[k] << " Stride " <<
-    (int)this->Stride[k] << " Count " << (int)this->Count[k] << endl;
+  int  k;
+  for( k = 0 ; k < rank ; k++ ){
+    cout << k << " : Start " << (int)this->Start[k] << " Stride " <<
+      (int)this->Stride[k] << " Count " << (int)this->Count[k] << endl;
   }
 }
 }
