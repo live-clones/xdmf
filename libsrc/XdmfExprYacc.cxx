@@ -879,7 +879,7 @@ yydestruct (yytype, yyvaluep)
 {
   /* Pacify ``unused variable'' warnings.  */
   (void) yyvaluep;
-
+  (void) yytype;
 }
 
 
