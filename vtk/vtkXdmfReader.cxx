@@ -45,8 +45,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "vtkDataArraySelection.h"
 #include "vtkDataSet.h"
 #include "vtkDoubleArray.h"
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 #include "vtkRectilinearGrid.h"
+#include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkStructuredGrid.h"
 #include "vtkUnstructuredGrid.h"
 #include "vtkXdmfDataArray.h"
@@ -74,7 +77,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vtkstd/vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.50");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.51");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -115,12 +118,13 @@ vtkXdmfReader::vtkXdmfReader()
 
   // I have this flag because I do not want to change the initialization
   // of the output to the generic output.  It might break something;
-  this->SetOutput(vtkDataObject::New());
+  vtkStructuredGrid *output = vtkStructuredGrid::New();
+  this->SetOutput(output);
   this->OutputsInitialized = 0;
   // Releasing data for pipeline parallism.
   // Filters will know it is empty. 
-  this->Outputs[0]->ReleaseData();
-  this->Outputs[0]->Delete();
+  output->ReleaseData();
+  output->Delete();
 
   this->DOM = 0;
   this->FormatMulti = 0;
@@ -225,49 +229,51 @@ void vtkXdmfReader::SetStride(int x, int y, int z)
 void vtkXdmfReader::SetOutput(vtkDataSet *output)
 {
   this->OutputsInitialized = 1;
-  this->vtkSource::SetNthOutput(0, output);
+  this->GetExecutive()->SetOutputData(0, output);
 }
 
 //----------------------------------------------------------------------------
 void vtkXdmfReader::SetOutput(vtkDataObject *output)
 {
   this->OutputsInitialized = 1;
-  this->vtkSource::SetNthOutput(0, output);
+  this->GetExecutive()->SetOutputData(0, output);
 }
 
 //----------------------------------------------------------------------------
 vtkDataSet *vtkXdmfReader::GetOutput(int idx)
 {
-  if ( ! this->OutputsInitialized)
-    {
-    this->ExecuteInformation();
-    }
-  return static_cast<vtkDataSet *>( this->Superclass::GetOutput(idx) ); 
+  return vtkDataSet::SafeDownCast(
+    this->GetExecutive()->GetOutputData(idx) ); 
 }
 
 //----------------------------------------------------------------------------
-void vtkXdmfReader::Execute()
+int vtkXdmfReader::RequestData(
+  vtkInformation *,
+  vtkInformationVector **,
+  vtkInformationVector *outputVector)
 {
   vtkDebugMacro("Execute");
   if ( !this->FileName )
     {
     vtkErrorMacro("File name not set");
-    return;
+    return 1;
     }
 
   if ( !this->DOM )
     {
-    return;
+    return 1;
     }
   if ( !this->FormatMulti )
     {
-    return;
+    return 1;
     }
   if ( !this->Transform)
     {
-    return;
+    return 1;
     }
 
+  vtkInformation *outInfo;
+  vtkDataObject *output;
   int idx = 0;
   int currentGrid;
   for ( currentGrid = 0; currentGrid < this->GetNumberOfGrids(); currentGrid ++ )
@@ -325,8 +331,10 @@ void vtkXdmfReader::Execute()
 
     int upext[6];
     int whext[6];
-    this->Outputs[idx]->GetUpdateExtent(upext);
-    this->Outputs[idx]->GetWholeExtent(whext);
+    outInfo = outputVector->GetInformationObject(idx);
+    output = outInfo->Get(vtkDataObject::DATA_OBJECT());
+    outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(), upext);
+    outInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), whext);
 
     vtkDebugMacro( << "In Execute: Update Extents = " << upext[0] << ", " << upext[1] << ", " << upext[2] << ", " << upext[3] << ", " << upext[4] << ", " << upext[5]);
 
@@ -362,8 +370,7 @@ void vtkXdmfReader::Execute()
     // Read Topology for Unstructured Grid
     if( grid->GetClass() == XDMF_UNSTRUCTURED ) 
       {
-      vtkUnstructuredGrid  *vGrid = 
-        static_cast<vtkUnstructuredGrid *>(this->Outputs[idx]);
+      vtkUnstructuredGrid  *vGrid = static_cast<vtkUnstructuredGrid *>(output);
       vtkCellArray                *verts;
       XdmfInt32           vType;
       XdmfInt32           NodesPerElement;
@@ -406,7 +413,7 @@ void vtkXdmfReader::Execute()
         break;
       default :
         XdmfErrorMessage("Unknown Topology Type");
-        return;
+        return 1;
         }
       NodesPerElement = grid->GetNodesPerElement();
 
@@ -448,19 +455,19 @@ void vtkXdmfReader::Execute()
       grid->GetTopologyType() == XDMF_3DSMESH )
       {
       vtkDebugMacro( << "Setting Extents for vtkStructuredGrid");
-      vtkStructuredGrid  *vGrid = vtkStructuredGrid::SafeDownCast(this->Outputs[idx]);
+      vtkStructuredGrid  *vGrid = vtkStructuredGrid::SafeDownCast(output);
       vGrid->SetExtent(upext);    
       } 
     else if (grid->GetTopologyType() == XDMF_2DCORECTMESH ||
       grid->GetTopologyType() == XDMF_3DCORECTMESH ) 
       {
-      vtkImageData *idata = vtkImageData::SafeDownCast(this->Outputs[idx]);
+      vtkImageData *idata = vtkImageData::SafeDownCast(output);
       idata->SetExtent(upext);
       }
     else if ( grid->GetTopologyType() == XDMF_2DRECTMESH ||
       grid->GetTopologyType() == XDMF_3DRECTMESH )
       {
-      vtkRectilinearGrid *vGrid = vtkRectilinearGrid::SafeDownCast(this->Outputs[idx]);
+      vtkRectilinearGrid *vGrid = vtkRectilinearGrid::SafeDownCast(output);
       vGrid->SetExtent(upext);    
       }
     else
@@ -476,11 +483,11 @@ void vtkXdmfReader::Execute()
       {
       XdmfInt64   Length;
       vtkPoints   *Points;
-      vtkPointSet *Pointset = vtkPointSet::SafeDownCast(this->Outputs[idx]);
+      vtkPointSet *Pointset = vtkPointSet::SafeDownCast(output);
 
       // Special flag, for structured data
       int structured_grid = 0;
-      if ( vtkStructuredGrid::SafeDownCast(this->Outputs[idx]) )
+      if ( vtkStructuredGrid::SafeDownCast(output) )
         {
         structured_grid = 1;
         }
@@ -647,13 +654,13 @@ void vtkXdmfReader::Execute()
         else 
           {
           XdmfErrorMessage("Base Grid Has No Points");
-          return;
+          return 1;
           }
         } 
       else 
         {
         XdmfErrorMessage("No Points to Set");
-        return;
+        return 1;
         }
       if ( structured_grid )
         {
@@ -664,7 +671,7 @@ void vtkXdmfReader::Execute()
       }
     else if ( Geometry->GetGeometryType() == XDMF_GEOMETRY_ORIGIN_DXDYDZ )
       {
-      vtkImageData *vGrid = vtkImageData::SafeDownCast(this->Outputs[idx]);
+      vtkImageData *vGrid = vtkImageData::SafeDownCast(output);
       XdmfFloat64 *origin = Geometry->GetOrigin();
       vGrid->SetOrigin(origin[2], origin[1], origin[0]);
       XdmfFloat64 *spacing = Geometry->GetDxDyDz();
@@ -679,7 +686,7 @@ void vtkXdmfReader::Execute()
       // Special Rectilinear and CoRectilinear Geometries
       XdmfTopology        *Topology = grid;
       vtkIdType Index;
-      vtkRectilinearGrid *vGrid = vtkRectilinearGrid::SafeDownCast(this->Outputs[idx]);
+      vtkRectilinearGrid *vGrid = vtkRectilinearGrid::SafeDownCast(output);
       if ( vGrid )
         {
         vtkDoubleArray      *XCoord, *YCoord, *ZCoord;
@@ -780,7 +787,7 @@ void vtkXdmfReader::Execute()
         // vGrid->SetExtent(upext);    
         }
       }
-    vtkDataSet* dataSet = ( vtkDataSet * )this->Outputs[idx];
+    vtkDataSet* dataSet = ( vtkDataSet * )output;
     for ( cc = 0; cc < dataSet->GetPointData()->GetNumberOfArrays(); cc ++ )
       {
       dataSet->GetPointData()->RemoveArray(
@@ -1029,15 +1036,21 @@ void vtkXdmfReader::Execute()
     nameArray->SetName("Name");
     char *str = nameArray->WritePointer(0, strlen(name)+1);
     sprintf(str, "%s", name);
-    this->Outputs[idx]->GetFieldData()->AddArray(nameArray);
+    output->GetFieldData()->AddArray(nameArray);
     nameArray->Delete();
     idx ++;
     }
+
+  return 1;
 }
 
 //----------------------------------------------------------------------------
-void vtkXdmfReader::ExecuteInformation()
+int vtkXdmfReader::RequestInformation(
+  vtkInformation *,
+  vtkInformationVector **,
+  vtkInformationVector *outputVector)
 {
+  vtkInformation *outInfo;
   vtkDebugMacro("ExecuteInformation");
   vtkIdType cc;
   XdmfConstString CurrentFileName;
@@ -1048,7 +1061,7 @@ void vtkXdmfReader::ExecuteInformation()
   if ( !this->FileName )
     {
     vtkErrorMacro("File name not set");
-    return;
+    return 1;
     }
   // First make sure the file exists.  This prevents an empty file
   // from being created on older compilers.
@@ -1056,7 +1069,7 @@ void vtkXdmfReader::ExecuteInformation()
   if(stat(this->FileName, &fs) != 0)
     {
     vtkErrorMacro("Error opening file " << this->FileName);
-    return;
+    return 1;
     }
   if ( !this->DOM )
     {
@@ -1136,7 +1149,7 @@ void vtkXdmfReader::ExecuteInformation()
   if ( !domain )
     {
     vtkErrorMacro("Cannot find any domain...");
-    return;
+    return 1;
     }
 
   this->Internals->DomainPtr = domain;
@@ -1215,24 +1228,25 @@ void vtkXdmfReader::ExecuteInformation()
       vtkErrorMacro("Unknown topology type: " << grid->GetTopologyType());
       }
     int type_changed = 0;
+    outInfo = outputVector->GetInformationObject(idx);
     if ( vGrid )
       {
       // Put this here so that GetOutput 
       // does not call ExecuteInformation again.
       this->OutputsInitialized = 1;
-      if ( this->GetNumberOfOutputs() <= idx || this->Outputs[idx]->GetClassName() != vGrid->GetClassName() )
+      if ( this->GetNumberOfOutputPorts() <= idx || outInfo->Get(vtkDataObject::DATA_TYPE_NAME()) != vGrid->GetClassName() )
         {
-        if ( this->GetNumberOfOutputs() > idx && this->Outputs[idx] )
+        if ( this->GetNumberOfOutputPorts() > idx && this->GetOutput(idx) )
           {
-          vtkDebugMacro(<<"Type changed Output class name: " << this->Outputs[idx]->GetClassName() 
+          vtkDebugMacro(<<"Type changed Output class name: " << this->GetOutput(idx)->GetClassName() 
             << " <> " << vGrid->GetClassName());
-          if ( this->Outputs[idx]->GetClassName() != vGrid->GetClassName() )
+          if ( this->GetOutput(idx)->GetClassName() != vGrid->GetClassName() )
             {
             type_changed = 1;
             }
           }
-        this->SetNthOutput(idx, vGrid );
-        this->Outputs[idx]->ReleaseData();
+        this->GetExecutive()->SetOutputData(idx, vGrid );
+        this->GetOutput(idx)->ReleaseData();
         }
       vGrid->Delete();
       }
@@ -1326,10 +1340,8 @@ void vtkXdmfReader::ExecuteInformation()
     EndExtent[2] = vtkMAX(0, EndExtent[2]) / this->Stride[0];
     vtkDebugMacro( << "EndExtents = " << (vtkIdType)EndExtent[0] << ", " 
       << (vtkIdType)EndExtent[1] << ", " << (vtkIdType)EndExtent[2]);
-    this->Outputs[idx]->SetWholeExtent(
-      0, EndExtent[2],
-      0, EndExtent[1],
-      0, EndExtent[0]);
+    outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),
+                 0, EndExtent[2], 0, EndExtent[1], 0, EndExtent[0]);
     vtkDebugMacro( << "Grid Type = " << grid->GetTopologyTypeAsString() << " = " << grid->GetTopologyType());
     if( grid->GetClass() != XDMF_UNSTRUCTURED ) 
       {
@@ -1337,15 +1349,13 @@ void vtkXdmfReader::ExecuteInformation()
         (grid->GetTopologyType() == XDMF_3DSMESH ) )
         {
         vtkDebugMacro( << "Setting Extents for vtkStructuredGrid");
-        vtkStructuredGrid  *stvGrid = vtkStructuredGrid::SafeDownCast(this->Outputs[idx]);
+        vtkStructuredGrid  *stvGrid = vtkStructuredGrid::SafeDownCast(this->GetOutput(idx));
         stvGrid->SetDimensions(
           EndExtent[2] + 1,
           EndExtent[1] + 1,
           EndExtent[0] + 1);
-        stvGrid->SetWholeExtent(
-          0, EndExtent[2],
-          0, EndExtent[1],
-          0, EndExtent[0]);
+        outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),
+                     0, EndExtent[2], 0, EndExtent[1], 0, EndExtent[0]);
         stvGrid->SetExtent(
           0, EndExtent[2],
           0, EndExtent[1],
@@ -1355,13 +1365,12 @@ void vtkXdmfReader::ExecuteInformation()
         grid->GetTopologyType() == XDMF_3DCORECTMESH )
         {
         vtkDebugMacro( << "Setting Extents for vtkImageData");
-        vtkImageData* idvGrid = vtkImageData::SafeDownCast(this->Outputs[idx]);
+        vtkImageData* idvGrid = vtkImageData::SafeDownCast(this->GetOutput(idx));
         idvGrid->SetDimensions(EndExtent[2] + 1,
           EndExtent[1] + 1,
           EndExtent[0] + 1);
-        idvGrid->SetWholeExtent(0, EndExtent[2],
-          0, EndExtent[1],
-          0, EndExtent[0]);
+        outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),
+                     0, EndExtent[2], 0, EndExtent[1], 0, EndExtent[0]);
         idvGrid->SetExtent(0, EndExtent[2],
           0, EndExtent[1],
           0, EndExtent[0]);
@@ -1370,13 +1379,12 @@ void vtkXdmfReader::ExecuteInformation()
         grid->GetTopologyType() == XDMF_3DRECTMESH )
         {
         vtkDebugMacro( << "Setting Extents for vtkRectilinearGrid");
-        vtkRectilinearGrid *rgvGrid = vtkRectilinearGrid::SafeDownCast(this->Outputs[idx]);
+        vtkRectilinearGrid *rgvGrid = vtkRectilinearGrid::SafeDownCast(this->GetOutput(idx));
         rgvGrid->SetDimensions(EndExtent[2] + 1,
           EndExtent[1] + 1,
           EndExtent[0] + 1);
-        rgvGrid->SetWholeExtent(0, EndExtent[2],
-          0, EndExtent[1],
-          0, EndExtent[0]);
+        outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),
+                     0, EndExtent[2], 0, EndExtent[1], 0, EndExtent[0]);
         rgvGrid->SetExtent(0, EndExtent[2],
           0, EndExtent[1],
           0, EndExtent[0]);
@@ -1386,18 +1394,21 @@ void vtkXdmfReader::ExecuteInformation()
         vtkErrorMacro("Unknown topology type: " << grid->GetTopologyType());
         }
 
+      int uExt[6];
+      outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(), uExt);
       vtkDebugMacro( << "Update Extents: " << 
-                     this->Outputs[idx]->GetUpdateExtent()[0] << ", " <<
-                     this->Outputs[idx]->GetUpdateExtent()[1] << ", " <<
-                     this->Outputs[idx]->GetUpdateExtent()[2] << ", " <<
-                     this->Outputs[idx]->GetUpdateExtent()[3] << ", " <<
-                     this->Outputs[idx]->GetUpdateExtent()[4] << ", " <<
-                     this->Outputs[idx]->GetUpdateExtent()[5] );
+                     uExt[0] << ", " <<
+                     uExt[1] << ", " <<
+                     uExt[2] << ", " <<
+                     uExt[3] << ", " <<
+                     uExt[4] << ", " <<
+                     uExt[5] );
       }
 
     idx ++;
     }
   this->OutputsInitialized = 1;
+  return 1;
 }
 
 //----------------------------------------------------------------------------
@@ -2077,6 +2088,13 @@ void vtkXdmfReader::UpdateGrids()
 }
 
 //----------------------------------------------------------------------------
+int vtkXdmfReader::FillOutputPortInformation(int, vtkInformation *info)
+{
+  info->Set(vtkDataObject::DATA_TYPE_NAME(), "vtkDataSet");
+  return 1;
+}
+
+//----------------------------------------------------------------------------
 void vtkXdmfReader::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
@@ -2085,12 +2103,12 @@ void vtkXdmfReader::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "PointDataArraySelection: " << this->PointDataArraySelection 
      << endl;
   int cc;
-  os << indent << "Outputs: " << this->GetNumberOfOutputs() << endl;
-  for ( cc = 0; cc < this->GetNumberOfOutputs(); cc ++ )
+  os << indent << "Outputs: " << this->GetNumberOfOutputPorts() << endl;
+  for ( cc = 0; cc < this->GetNumberOfOutputPorts(); cc ++ )
     {
     vtkIndent nindent = indent.GetNextIndent();
-    os << nindent << "Output " << cc << " " << this->Outputs[cc]->GetClassName() << endl;
-    this->Outputs[cc]->PrintSelf(os, nindent.GetNextIndent());
+    os << nindent << "Output " << cc << " " << this->GetOutput(cc)->GetClassName() << endl;
+    this->GetOutput(cc)->PrintSelf(os, nindent.GetNextIndent());
     }
 }
 
