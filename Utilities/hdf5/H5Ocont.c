@@ -1,8 +1,18 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Copyright by the Board of Trustees of the University of Illinois.         *
+ * All rights reserved.                                                      *
+ *                                                                           *
+ * This file is part of HDF5.  The full HDF5 copyright notice, including     *
+ * terms governing use, modification, and redistribution, is contained in    *
+ * the files COPYING and Copyright.html.  COPYING can be found at the root   *
+ * of the source code distribution tree; Copyright.html can be found at the  *
+ * root level of an installed copy of the electronic HDF5 document set and   *
+ * is linked from the top-level documents page.  It can also be found at     *
+ * http://hdf.ncsa.uiuc.edu/HDF5/doc/Copyright.html.  If you do not have     *
+ * access to either file, you may request a copy from hdfhelp@ncsa.uiuc.edu. *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 /*-------------------------------------------------------------------------
- * Copyright (C) 1997   National Center for Supercomputing Applications.
- *                      All rights reserved.
- *
- *-------------------------------------------------------------------------
  *
  * Created:             H5Ocont.c
  *                      Aug  6 1997
@@ -18,33 +28,37 @@
  *-------------------------------------------------------------------------
  */
 
+#define H5O_PACKAGE		/*suppress error about including H5Opkg	  */
+
 #include "H5private.h"
 #include "H5Eprivate.h"
 #include "H5MMprivate.h"
-#include "H5Oprivate.h"
+#include "H5Opkg.h"             /* Object header functions                 */
 
 #define PABLO_MASK      H5O_cont_mask
 
 /* PRIVATE PROTOTYPES */
-static void *H5O_cont_decode(H5F_t *f, const uint8_t *p, H5O_shared_t *sh);
+static void *H5O_cont_decode(H5F_t *f, hid_t dxpl_id, const uint8_t *p, H5O_shared_t *sh);
 static herr_t H5O_cont_encode(H5F_t *f, uint8_t *p, const void *_mesg);
-static herr_t H5O_cont_debug(H5F_t *f, const void *_mesg, FILE * stream,
-                             int indent, int fwidth);
+static herr_t H5O_cont_debug(H5F_t *f, hid_t dxpl_id, const void *_mesg, FILE * stream,
+			     int indent, int fwidth);
 
 /* This message derives from H5O */
 const H5O_class_t H5O_CONT[1] = {{
-    H5O_CONT_ID,                /*message id number             */
-    "hdr continuation",         /*message name for debugging    */
-    sizeof(H5O_cont_t),         /*native message size           */
-    H5O_cont_decode,            /*decode message                */
-    H5O_cont_encode,            /*encode message                */
-    NULL,                       /*no copy method                */
-    NULL,                       /*no size method                */
-    NULL,                       /*default reset method          */
-    NULL,                           /* default free method                      */
-    NULL,                       /*get share method              */
-    NULL,                       /*set share method              */
-    H5O_cont_debug,             /*debugging                     */
+    H5O_CONT_ID,            	/*message id number             */
+    "hdr continuation",     	/*message name for debugging    */
+    sizeof(H5O_cont_t),     	/*native message size           */
+    H5O_cont_decode,        	/*decode message                */
+    H5O_cont_encode,        	/*encode message                */
+    NULL,                   	/*no copy method                */
+    NULL,                   	/*no size method                */
+    NULL,                   	/*reset method			*/
+    NULL,		        /* free method			*/
+    NULL,		        /* file delete method		*/
+    NULL,			/* link method			*/
+    NULL, 		    	/*get share method		*/
+    NULL,		    	/*set share method		*/
+    H5O_cont_debug,         	/*debugging                     */
 }};
 
 /* Interface initialization */
@@ -69,11 +83,12 @@ static int             interface_initialize_g = 0;
  *-------------------------------------------------------------------------
  */
 static void *
-H5O_cont_decode(H5F_t *f, const uint8_t *p, H5O_shared_t UNUSED *sh)
+H5O_cont_decode(H5F_t *f, hid_t UNUSED dxpl_id, const uint8_t *p, H5O_shared_t UNUSED *sh)
 {
     H5O_cont_t             *cont = NULL;
+    void                   *ret_value;
 
-    FUNC_ENTER(H5O_cont_decode, NULL);
+    FUNC_ENTER_NOAPI(H5O_cont_decode, NULL);
 
     /* check args */
     assert(f);
@@ -81,15 +96,18 @@ H5O_cont_decode(H5F_t *f, const uint8_t *p, H5O_shared_t UNUSED *sh)
     assert (!sh);
 
     /* decode */
-    if (NULL==(cont = H5MM_calloc(sizeof(H5O_cont_t)))) {
-        HRETURN_ERROR (H5E_RESOURCE, H5E_NOSPACE, NULL,
-                       "memory allocation failed");
-    }
+    if (NULL==(cont = H5MM_calloc(sizeof(H5O_cont_t))))
+	HGOTO_ERROR (H5E_RESOURCE, H5E_NOSPACE, NULL, "memory allocation failed");
     H5F_addr_decode(f, &p, &(cont->addr));
     H5F_DECODE_LENGTH(f, p, cont->size);
 
-    FUNC_LEAVE((void *) cont);
+    /* Set return value */
+    ret_value=cont;
+
+done:
+    FUNC_LEAVE_NOAPI(ret_value);
 }
+
 
 /*-------------------------------------------------------------------------
  * Function:    H5O_cont_encode
@@ -110,8 +128,9 @@ static herr_t
 H5O_cont_encode(H5F_t *f, uint8_t *p, const void *_mesg)
 {
     const H5O_cont_t       *cont = (const H5O_cont_t *) _mesg;
+    herr_t ret_value=SUCCEED;   /* Return value */
 
-    FUNC_ENTER(H5O_cont_encode, FAIL);
+    FUNC_ENTER_NOAPI(H5O_cont_encode, FAIL);
 
     /* check args */
     assert(f);
@@ -122,8 +141,10 @@ H5O_cont_encode(H5F_t *f, uint8_t *p, const void *_mesg)
     H5F_addr_encode(f, &p, cont->addr);
     H5F_ENCODE_LENGTH(f, p, cont->size);
 
-    FUNC_LEAVE(SUCCEED);
+done:
+    FUNC_LEAVE_NOAPI(ret_value);
 }
+
 
 /*-------------------------------------------------------------------------
  * Function:    H5O_cont_debug
@@ -141,12 +162,13 @@ H5O_cont_encode(H5F_t *f, uint8_t *p, const void *_mesg)
  *-------------------------------------------------------------------------
  */
 static herr_t
-H5O_cont_debug(H5F_t UNUSED *f, const void *_mesg, FILE * stream,
-               int indent, int fwidth)
+H5O_cont_debug(H5F_t UNUSED *f, hid_t UNUSED dxpl_id, const void *_mesg, FILE * stream,
+	       int indent, int fwidth)
 {
     const H5O_cont_t       *cont = (const H5O_cont_t *) _mesg;
+    herr_t ret_value=SUCCEED;   /* Return value */
 
-    FUNC_ENTER(H5O_cont_debug, FAIL);
+    FUNC_ENTER_NOAPI(H5O_cont_debug, FAIL);
 
     /* check args */
     assert(f);
@@ -156,14 +178,15 @@ H5O_cont_debug(H5F_t UNUSED *f, const void *_mesg, FILE * stream,
     assert(fwidth >= 0);
 
     HDfprintf(stream, "%*s%-*s %a\n", indent, "", fwidth,
-              "Continuation address:", cont->addr);
+	      "Continuation address:", cont->addr);
 
     HDfprintf(stream, "%*s%-*s %lu\n", indent, "", fwidth,
-              "Continuation size in bytes:",
-              (unsigned long) (cont->size));
+	      "Continuation size in bytes:",
+	      (unsigned long) (cont->size));
     HDfprintf(stream, "%*s%-*s %d\n", indent, "", fwidth,
-              "Points to chunk number:",
-              (int) (cont->chunkno));
+	      "Points to chunk number:",
+	      (int) (cont->chunkno));
 
-    FUNC_LEAVE(SUCCEED);
+done:
+    FUNC_LEAVE_NOAPI(ret_value);
 }

@@ -6,7 +6,7 @@
  * Author:  Thomas Radke <tradke@aei-potsdam.mpg.de>
  *          Tuesday, September 12, 2000
  *
- * Purpose:     The public header file for the Stream Virtual File Driver.
+ * Purpose:	The public header file for the Stream Virtual File Driver.
  *
  * Version: Header
  *
@@ -19,8 +19,6 @@
 #define H5FDstream_H
 
 #ifdef H5_HAVE_STREAM
-
-#include "H5Ipublic.h"
 
 /* check what sockets type we have (Unix or Windows sockets)
    Note that only MS compilers require to use Windows sockets
@@ -44,7 +42,7 @@
 
 #endif
 
-#define H5FD_STREAM     (H5FD_stream_init())
+#define H5FD_STREAM	(H5FD_stream_init())
 
 #ifdef __cplusplus
 extern "C" {
@@ -70,10 +68,10 @@ typedef struct H5FD_stream_fapl_t
 
 
 /* prototypes of exported functions */
-__DLL__ hid_t  H5FD_stream_init (void);
-__DLL__ herr_t H5Pset_fapl_stream (hid_t fapl_id,
+H5_DLL hid_t  H5FD_stream_init (void);
+H5_DLL herr_t H5Pset_fapl_stream (hid_t fapl_id,
                                    H5FD_stream_fapl_t *fapl);
-__DLL__ herr_t H5Pget_fapl_stream (hid_t fapl_id,
+H5_DLL herr_t H5Pget_fapl_stream (hid_t fapl_id,
                                    H5FD_stream_fapl_t *fapl /*out*/ );
 
 #ifdef __cplusplus

@@ -37,6 +37,17 @@ SIMPLE_TEST(struct tm tm; tm.tm_zone);
 
 #endif /* HAVE_TM_ZONE */
 
+#ifdef HAVE_STRUCT_TM_TM_ZONE
+
+#include <sys/types.h>
+#ifdef HAVE_SYS_TIME_H
+#include <sys/time.h>
+#endif
+#include <time.h>
+SIMPLE_TEST(struct tm tm; tm.tm_zone);
+
+#endif /* HAVE_STRUCT_TM_TM_ZONE */
+
 #ifdef HAVE_ATTRIBUTE
 
 SIMPLE_TEST(int __attribute__((unused)) x);
@@ -61,10 +72,7 @@ SIMPLE_TEST(struct tm tm; tm.tm_gmtoff=0);
 
 #ifdef HAVE_TIMEZONE
 
-#include <sys/types.h>
-#ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
-#endif
 #include <time.h>
 SIMPLE_TEST(timezone=0);
 
@@ -112,3 +120,63 @@ int main(void)
 }
 
 #endif /* PRINTF_LL_WIDTH */
+
+#ifdef SYSTEM_SCOPE_THREADS
+#include <stdlib.h>
+#include <pthread.h>
+
+int main(void)
+{
+    pthread_attr_t attribute;
+    int ret;
+
+    pthread_attr_init(&attribute);
+    ret=pthread_attr_setscope(&attribute, PTHREAD_SCOPE_SYSTEM);
+    exit(ret==0 ? 0 : 1);
+}
+
+#endif /* SYSTEM_SCOPE_THREADS */
+
+#ifdef HAVE_SOCKLEN_T
+
+#include <stdio.h>
+#include <stdlib.h>
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+#ifdef HAVE_SYS_SOCKET_H
+#include <sys/socket.h>
+#endif
+
+SIMPLE_TEST(socklen_t foo);
+
+#endif /* HAVE_SOCKLEN_T */
+
+#ifdef DEV_T_IS_SCALAR
+
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+
+int main ()
+{
+  dev_t d1, d2; 
+  if(d1==d2)
+    return 0;
+  return 1;
+}
+
+#endif /* DEV_T_IS_SCALAR */
+
+#if defined( INLINE_TEST_inline ) || defined( INLINE_TEST___inline__ ) || defined( INLINE_TEST___inline )
+#ifndef __cplusplus
+typedef int foo_t;
+static INLINE_TEST_INLINE foo_t static_foo () { return 0; }
+INLINE_TEST_INLINE foo_t foo () {return 0; }
+int main() { return 0; }
+#endif
+
+#endif /* INLINE_TEST */
