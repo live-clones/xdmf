@@ -17,6 +17,9 @@ SET(XDMF_USE_FILE "@XDMF_USE_FILE@")
 # The build settings file.
 SET(XDMF_BUILD_SETTINGS_FILE "@XDMF_BUILD_SETTINGS_FILE@")
 
+# The directory containing class list files for each kit.
+SET(XDMF_KITS_DIR "@XDMF_KITS_DIR@")
+
 # The names of utility libraries used by XDMF.
 SET(XDMF_HDF5_LIBRARIES "@XDMF_HDF5_LIBRARIES@")
 SET(XDMF_ZLIB_LIBRARIES "@XDMF_ZLIB_LIBRARIES@")
