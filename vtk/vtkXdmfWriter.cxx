@@ -107,7 +107,7 @@ struct vtkXdmfWriterInternal
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfWriter);
-vtkCxxRevisionMacro(vtkXdmfWriter, "1.15");
+vtkCxxRevisionMacro(vtkXdmfWriter, "1.16");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter::vtkXdmfWriter()
@@ -585,7 +585,8 @@ vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost,
 }
 
 //----------------------------------------------------------------------------
-int vtkXdmfWriter::WriteDataArray( ostream& ost, vtkDataArray* array, int dims[3], const char* Name, const char* Center, int type, const char* gridName )
+int vtkXdmfWriter::WriteDataArray( ostream& ost, vtkDataArray* array, int dims[3],
+  const char* Name, const char* Center, int type, const char* gridName, int active )
 {
   const char* arrayName = Name;
   if ( array->GetName() )
@@ -596,6 +597,11 @@ int vtkXdmfWriter::WriteDataArray( ostream& ost, vtkDataArray* array, int dims[3
   ost << "<Attribute";
   this->IncrementIndent();
   this->Indent(ost);
+  if ( active )
+    {
+    ost << " Active=\"1\"";
+    this->Indent(ost);
+    }
   switch ( type )
     {
   case XDMF_ATTRIBUTE_TYPE_SCALAR:
@@ -610,7 +616,10 @@ int vtkXdmfWriter::WriteDataArray( ostream& ost, vtkDataArray* array, int dims[3
   case XDMF_ATTRIBUTE_TYPE_MATRIX:
     ost << " Type=\"Matrix\"";
     break;
+  default:
+    ost << " Type=\"Unknown\"";
     }
+  this->Indent(ost);
   ost << " Center=\"" << Center << "\"";
   this->Indent(ost);
   ost << " Name=\"" << arrayName << "\">";
@@ -625,7 +634,8 @@ int vtkXdmfWriter::WriteDataArray( ostream& ost, vtkDataArray* array, int dims[3
 }
 
 //----------------------------------------------------------------------------
-int vtkXdmfWriter::WriteVTKArray( ostream& ost, vtkDataArray* array, int dims[3], const char* Name, const char* dataName, const char* gridName, int alllight )
+int vtkXdmfWriter::WriteVTKArray( ostream& ost, vtkDataArray* array, int dims[3],
+  const char* Name, const char* dataName, const char* gridName, int alllight )
 {
   vtkIdType res = -1;
   int int_type;
@@ -722,13 +732,24 @@ void vtkXdmfWriter::WriteAttributes( ostream& ost, vtkDataSet* ds, const char* g
         {
         type = XDMF_ATTRIBUTE_TYPE_SCALAR;
         }
-      if ( array == CellData->GetVectors() )
+      else if ( array == CellData->GetVectors() || array->GetNumberOfComponents() == 3 )
         {
         type = XDMF_ATTRIBUTE_TYPE_VECTOR;
         }
+      else if ( array == CellData->GetTensors() || array->GetNumberOfComponents() == 6 )
+        {
+        type = XDMF_ATTRIBUTE_TYPE_TENSOR;
+        }
+      int active = 0;
+      if ( array == CellData->GetScalars() ||
+        array == CellData->GetVectors() ||
+        array == CellData->GetTensors() )
+        {
+        active = 1;
+        }
       char buffer[100];
       sprintf(buffer, "UnnamedCellArray%d", cc);
-      this->WriteDataArray( ost, array, cdims, buffer, "Cell", type, gridName );
+      this->WriteDataArray( ost, array, cdims, buffer, "Cell", type, gridName, active );
       }
     }
   if( PointData )
@@ -737,21 +758,28 @@ void vtkXdmfWriter::WriteAttributes( ostream& ost, vtkDataSet* ds, const char* g
       {
       vtkDataArray* array = PointData->GetArray(cc);
       int type = XDMF_ATTRIBUTE_TYPE_NONE;
-      if ( array == CellData->GetScalars() )
+      if ( array == PointData->GetScalars() )
         {
         type = XDMF_ATTRIBUTE_TYPE_SCALAR;
         }
-      if ( array == CellData->GetVectors() )
+      else if ( array == PointData->GetVectors() || array->GetNumberOfComponents() == 3 )
         {
         type = XDMF_ATTRIBUTE_TYPE_VECTOR;
         }
-      if ( array == CellData->GetTensors() )
+      else if ( array == PointData->GetTensors() || array->GetNumberOfComponents() == 6 )
         {
         type = XDMF_ATTRIBUTE_TYPE_TENSOR;
         }
+      int active = 0;
+      if ( array == PointData->GetScalars() ||
+        array == PointData->GetVectors() ||
+        array == PointData->GetTensors() )
+        {
+        active = 1;
+        }
       char buffer[100];
       sprintf(buffer, "UnnamedNodeArray%d", cc);
-      this->WriteDataArray( ost, array, pdims, buffer, "Node", type, gridName);
+      this->WriteDataArray( ost, array, pdims, buffer, "Node", type, gridName, active );
       }
     }
 }

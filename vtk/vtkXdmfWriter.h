@@ -123,7 +123,8 @@ protected:
     void* mapofcells, const void *celltype );
   virtual int WritePoints( ostream& ost, vtkPoints *Points, const char* gridName );
   virtual int WriteDataArray( ostream& ost, vtkDataArray* array, 
-    int dims[3], const char* Name, const char* Center, int type, const char* gridName );
+    int dims[3], const char* Name, const char* Center, int type, const char* gridName,
+    int active );
   virtual int WriteVTKArray( ostream& ost, vtkDataArray* array, 
     int dims[3], const char* name, const char* dataName, const char* gridName, int alllight);
 
