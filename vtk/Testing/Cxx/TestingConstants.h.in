@@ -1,0 +1,6 @@
+#ifndef __TestingConstants__H_
+#define __TestingConstants__H_
+
+#define XDMF_DATA_DIR "@Xdmf_SOURCE_DIR@/Data"
+
+#endif //__TestingConstants__H_

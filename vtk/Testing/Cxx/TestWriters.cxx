@@ -8,6 +8,13 @@
 #include "vtkPointData.h"
 #include "vtkImageNoiseSource.h"
 #include "vtkImageData.h"
+#include "vtkXMLRectilinearGridReader.h"
+#include "vtkRectilinearGrid.h"
+#include "vtkDataArraySelection.h"
+#include "vtkStructuredGrid.h"
+#include "vtkXMLStructuredGridReader.h"
+
+#include "TestingConstants.h"  
 
 #define OutVector3(x) (x)[0] << "," << (x)[1] << "," << (x)[2]
 #define ABS(x) (((x)<0)?-(x):(x))
@@ -37,24 +44,25 @@ int CompareTwoItems(D1 i1, D2 i2)
 #define TestCompareTwoItems(x, y, str) \
   if ( !CompareTwoItems((x), (y)) ) \
     { \
-    cerr << __LINE__ << " " << str << " " << (x) << " <> " << (y) << endl; \
+    cerr << __LINE__ << ": " << str << " " << (x) << " <> " << (y) << endl; \
     return 0; \
     }
 #define TestCompareTwoSimilarItems(x, y, str) \
   if ( !CompareTwoSimilarItems((x), (y), MAX(ABS(x),ABS(y))) ) \
     { \
-    cerr << __LINE__ << " " << str << " " << (x) << " <> " << (y) << endl; \
+    cerr << __LINE__ << ": " << str << " " << (x) << " <> " << (y) << endl; \
     return 0; \
     }
 
 template<class InputDataType, class OutputDataType>
 OutputDataType* TestWriter(InputDataType* input, const char* fname, 
-  OutputDataType*, int alllight)
+  OutputDataType*, int alllight, const char* gridname)
 {
   vtkXdmfWriter *writer = vtkXdmfWriter::New();
   writer->SetFileName(fname);
   writer->SetInput(input);
   writer->SetAllLight(alllight);
+  writer->SetGridName(gridname);
   writer->Write();
   writer->Delete();
 
@@ -104,7 +112,6 @@ int CompareFieldData(vtkFieldData* da, vtkFieldData* db)
     db->GetNumberOfArrays(),
     "Number of arrays is not the same");
   vtkIdType array;
-  cout << "Found " << da->GetNumberOfArrays() << " arrays" << endl;
   for ( array = 0; array < da->GetNumberOfArrays(); array ++ )
     {
     const char* name = da->GetArrayName(array);
@@ -177,12 +184,10 @@ int CompareDataSets(vtkDataSet* pd, vtkDataSet* ug)
   pdCellPts->Delete();
   ugCellPts->Delete();
 
-  cout << "Point arrays" << endl;
   if ( !CompareFieldData(pd->GetPointData(), ug->GetPointData()) )
     {
     return 0;
     }
-  cout << "Cell arrays" << endl;
   if ( !CompareFieldData(pd->GetCellData(), ug->GetCellData()) )
     {
     return 0;
@@ -191,12 +196,12 @@ int CompareDataSets(vtkDataSet* pd, vtkDataSet* ug)
   return 1;
 }
 
-int TestPolyData(vtkPolyData* pd, const char* filename, int alllight)
+int TestPolyData(vtkPolyData* pd, const char* filename, int alllight, const char* gridname)
 {
   cout << "** Preform PolyData test" << endl;
   vtkUnstructuredGrid* ug 
     = ::TestWriter(pd, filename, (vtkUnstructuredGrid*)0,
-      alllight);
+      alllight, gridname);
   if ( !ug )
     {
     return 1;
@@ -214,11 +219,12 @@ int TestPolyData(vtkPolyData* pd, const char* filename, int alllight)
 }
 
 template<class DataType>
-int TestSimpleData(DataType* orData, const char* filename, int alllight)
+int TestSimpleData(DataType* orData, const char* filename, int alllight, 
+  const char* gridname)
 {
   cout << "** Preform simple data test" << endl;
   DataType* rdData = ::TestWriter(orData, filename, (DataType*)0,
-      alllight);
+      alllight, gridname);
   if ( !rdData )
     {
     return 1;
@@ -244,18 +250,37 @@ int main(int argc, char* argv[])
     }
   int res = 0;
 
+  char gridname[1024];
+
+  sprintf(gridname, "TestUnstructuredGrid");
   vtkSphereSource *sphere = vtkSphereSource::New();
-  res += ::TestPolyData(sphere->GetOutput(), argv[1], 0);
-  res += ::TestPolyData(sphere->GetOutput(), argv[1], 1);
+  res += ::TestPolyData(sphere->GetOutput(), argv[1], 0, gridname);
+  res += ::TestPolyData(sphere->GetOutput(), argv[1], 1, gridname);
   sphere->Delete();
 
+  sprintf(gridname, "TestImageData");
   vtkImageNoiseSource* noise= vtkImageNoiseSource::New();
   noise->SetWholeExtent(0, 5, 0, 12, 0, 17);
   noise->Update();
-  res += ::TestSimpleData(noise->GetOutput(), argv[1], 1);
-  res += ::TestSimpleData(noise->GetOutput(), argv[1], 0);
+  res += ::TestSimpleData(noise->GetOutput(), argv[1], 1, gridname);
+  res += ::TestSimpleData(noise->GetOutput(), argv[1], 0, gridname);
   noise->Delete();
+  
+  sprintf(gridname, "TestRectilinearGrid");
+  vtkXMLRectilinearGridReader* rect = vtkXMLRectilinearGridReader::New();
+  rect->SetFileName(XDMF_DATA_DIR "/Data/Testing/rectilinear_grid.vtr");
+  rect->Update();
+  res += ::TestSimpleData(rect->GetOutput(), argv[1], 1, gridname);
+  res += ::TestSimpleData(rect->GetOutput(), argv[1], 0, gridname);
+  rect->Delete();
 
+  sprintf(gridname, "TestStructuredGrid");
+  vtkXMLStructuredGridReader* sgrid = vtkXMLStructuredGridReader::New();
+  sgrid->SetFileName(XDMF_DATA_DIR "/Data/Testing/structured_grid.vts");
+  sgrid->Update();
+  res += ::TestSimpleData(sgrid->GetOutput(), argv[1], 1, gridname);
+  res += ::TestSimpleData(sgrid->GetOutput(), argv[1], 0, gridname);
+  sgrid->Delete();
 
   if ( res )
     {
