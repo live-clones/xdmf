@@ -79,14 +79,15 @@ C_GetXMLFromFile( XdmfString FileName ) {
 }
 
 XdmfDOM::XdmfDOM(){
+  this->LastDOMGet = 0;
   this->tree = NULL;
   this->xml = NULL;
   this->DocType = NULL;
   this->System = NULL;
-        this->Output = &cout;
-        this->Input = &cin;
-        strcpy(this->OutputFileName, "stdout" );
-        strcpy(this->InputFileName, "stdin" );
+  this->Output = &cout;
+  this->Input = &cin;
+  strcpy(this->OutputFileName, "stdout" );
+  strcpy(this->InputFileName, "stdin" );
   this->SetNdgmHost( "" );
   this->SetWorkingDirectory( "" );
 }
@@ -97,15 +98,19 @@ XdmfDOM::~XdmfDOM(){
   this->SetDocType(NULL);
   this->SetSystem(NULL);
   if( ( this->Output != &cout ) && ( this->Output != &cerr ) ) {
-          ofstream *OldOutput = ( ofstream *)this->Output;
-          OldOutput->close();
-        }
+    ofstream *OldOutput = ( ofstream *)this->Output;
+    OldOutput->close();
+  }
   if( this->Input != &cin ) {
-          ifstream *OldInput = ( ifstream *)this->Input;
-          OldInput->close();
-          delete this->Input;
-          this->Input = &cin;
-        }
+    ifstream *OldInput = ( ifstream *)this->Input;
+    OldInput->close();
+    delete this->Input;
+    this->Input = &cin;
+  }
+  if ( this->LastDOMGet )
+    {
+    delete [] this->LastDOMGet;
+    }
 }
 
 XdmfInt32
@@ -873,7 +878,13 @@ while( Param ){
   Param = this->FindElement( "Parameter", i, NULL );
 }
 
-return( FinalValue );
+if ( this->LastDOMGet) {
+  delete [] this->LastDOMGet;
+  this->LastDOMGet= 0;
+}
+this->LastDOMGet = FinalValue;
+
+return( this->LastDOMGet );
 }
 
 XdmfInt32
@@ -881,56 +892,66 @@ XdmfDOM::GetNumberType( XdmfXNode *Node ){
 
 XdmfConstString  Attribute;
 XdmfConstString  Precision;
+XdmfString sattribute = 0;
+XdmfString sprecision = 0;
 
 Attribute = this->Get( Node, "DataType" );
 if( !Attribute ) Attribute = this->Get( Node, "Type" );
+XDMF_STRING_DUPLICATE(sattribute, Attribute);
 Precision = this->Get( Node, "Precision" );
-if( XDMF_WORD_CMP( Attribute, "Int" ) ){
-  if( XDMF_WORD_CMP( Precision, "8" ) ) {
+XDMF_STRING_DUPLICATE(sprecision, Precision);
+
+XdmfInt32 res = GetNumberType( sattribute, sprecision);
+
+delete [] sprecision;
+delete [] sattribute;
+return res;
+}
+
+XdmfInt32
+XdmfDOM::GetNumberType( const char* attribute, const char* precision) {
+if( XDMF_WORD_CMP( attribute, "Int" ) ){
+  if( XDMF_WORD_CMP( precision, "8" ) ) {
     return XDMF_INT64_TYPE;
-  } else if( !Precision || XDMF_WORD_CMP( Precision, "4" ) ) {
+  } else if( !precision || XDMF_WORD_CMP( precision, "4" ) ) {
     return XDMF_INT32_TYPE;
-  } else if( XDMF_WORD_CMP( Precision, "2" ) ) {
+  } else if( XDMF_WORD_CMP( precision, "2" ) ) {
     return XDMF_INT16_TYPE;
-  } else if( XDMF_WORD_CMP( Precision, "1" ) ) {
+  } else if( XDMF_WORD_CMP( precision, "1" ) ) {
     return XDMF_INT8_TYPE;
   } else {
-    cerr << "Unknown int precision: " << Precision << endl;
-    abort();
-    return XDMF_INT32_TYPE;
+    cerr << "Unknown int precision: " << precision << endl;
+    return XDMF_UNKNOWN_TYPE;
   }
-} else if( XDMF_WORD_CMP( Attribute, "UInt" ) ){
-  if( !Precision || XDMF_WORD_CMP( Precision, "4" ) ) {
+} else if( XDMF_WORD_CMP( attribute, "UInt" ) ){
+  if( !precision || XDMF_WORD_CMP( precision, "4" ) ) {
     return XDMF_UINT32_TYPE;
-  } else if( XDMF_WORD_CMP( Precision, "2" ) ) {
+  } else if( XDMF_WORD_CMP( precision, "2" ) ) {
     return XDMF_UINT16_TYPE;
-  } else if( XDMF_WORD_CMP( Precision, "1" ) ) {
+  } else if( XDMF_WORD_CMP( precision, "1" ) ) {
     return XDMF_UINT8_TYPE;
   } else {
-    cerr << "Unknown unsigned int precision: " << Precision << endl;
-    abort();
-    return XDMF_INT32_TYPE;
+    cerr << "Unknown unsigned int precision: " << precision << endl;
+    return XDMF_UNKNOWN_TYPE;
   }
-} else if ( !Attribute ||  XDMF_WORD_CMP( Attribute, "Float" ) ){
-  if( XDMF_WORD_CMP( Precision, "8" ) ) {
+} else if ( !attribute ||  XDMF_WORD_CMP( attribute, "Float" ) ){
+  if( XDMF_WORD_CMP( precision, "8" ) ) {
     return XDMF_FLOAT64_TYPE;
   }
-  else if( !Precision || XDMF_WORD_CMP( Precision, "4" ) ) {
+  else if( !precision || XDMF_WORD_CMP( precision, "4" ) ) {
     return XDMF_FLOAT32_TYPE;
   }
-  cerr << "Unknown float precision: " << Precision << endl;
-  abort();
-  return XDMF_FLOAT32_TYPE;
-} else if( XDMF_WORD_CMP( Attribute, "Char" ) ){
+  cerr << "Unknown float precision: " << precision << endl;
+  return XDMF_UNKNOWN_TYPE;
+} else if( XDMF_WORD_CMP( attribute, "Char" ) ){
   return XDMF_INT8_TYPE;
-} else if( XDMF_WORD_CMP( Attribute, "UChar" ) ){
+} else if( XDMF_WORD_CMP( attribute, "UChar" ) ){
   return XDMF_UINT8_TYPE;
-} else if( XDMF_WORD_CMP( Attribute, "Compound" ) ){
+} else if( XDMF_WORD_CMP( attribute, "Compound" ) ){
   return XDMF_COMPOUND_TYPE;
 }
-cerr << "Unknown type: " << Attribute << endl;
-abort();
-return XDMF_FLOAT32_TYPE;
+cerr << "Unknown type: " << attribute << endl;
+return XDMF_UNKNOWN_TYPE;
 }
 
 
