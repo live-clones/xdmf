@@ -35,12 +35,14 @@ XdmfDataDesc::XdmfDataDesc() {
 }
 
 XdmfDataDesc::~XdmfDataDesc() {
+H5E_BEGIN_TRY {
   H5Tclose( this->DataType );
   if(( this->DataSpace != H5S_ALL ) &&
       ( this->DataSpace != H5I_BADID )){
            H5Sclose( this->DataSpace );
     this->DataSpace = H5I_BADID;
   }
+} H5E_END_TRY;
   this->SetShapeString(0);
 }
 
