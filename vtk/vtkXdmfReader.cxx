@@ -74,7 +74,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.38");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.39");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -1778,7 +1778,7 @@ int vtkXdmfReader::GetParameterIndex(int Index)
 int vtkXdmfReader::SetParameterIndex(const char *ParameterName, int CurrentIndex) 
 {
   XdmfParameter *Param;
-  int Status;
+  int Status=-1;
 
   if(!this->DOM) 
     {
