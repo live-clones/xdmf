@@ -25,9 +25,7 @@
 #ifndef __XdmfArray_h
 #define __XdmfArray_h
 
-#include "XdmfExport.h"
 #include "XdmfDataDesc.h"
-#include "XdmfArrayCopyMacro.h"
 
 #define XDMF_LONGEST_LENGTH     (XdmfInt64)~0
 #define XDMF_ARRAY_TAG_LENGTH  80

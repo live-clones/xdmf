@@ -23,7 +23,9 @@
 /*                                                                 */
 /*******************************************************************/
 #include "XdmfDOM.h"
+
 #include "XdmfCharArray.h"
+#include "XdmfParameter.h"
 
 XdmfDOM *HandleToXdmfDOM( char *Source ){
   XdmfObject  *TempObj;

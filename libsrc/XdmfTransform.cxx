@@ -23,9 +23,12 @@
 /*                                                                 */
 /*******************************************************************/
 #include "XdmfTransform.h"
+
 #include "XdmfFormatMulti.h"
 #include "XdmfExpression.h"
 #include "XdmfArray.h"
+#include "XdmfXNode.h"
+#include "XdmfDOM.h"
 
 XdmfTransform::XdmfTransform() {
   strcpy( this->DataTransform, "XML" );

@@ -26,10 +26,9 @@
 #define __XdmfGrid_h
 
 #include "XdmfTopology.h"
-#include "XdmfGeometry.h"
-#include "XdmfAttribute.h"
 
-#include "XdmfExport.h"
+class XdmfGeometry;
+class XdmfAttribute;
 
 class XDMF_EXPORT XdmfGrid : public XdmfTopology {
 

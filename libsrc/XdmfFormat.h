@@ -28,8 +28,6 @@
 
 #include "XdmfLightData.h"
 
-#include "XdmfExport.h"
-
 /*!
 This is the Base Object for Format Drivers.
 If the Data if embedded in the XML, this object
@@ -47,6 +45,9 @@ An XML Format Node Looks like :
   1.1 3.3 5.5 7.7 9.9 11 13.1 15
 </DataStructure>
 */
+
+class XdmfDataDesc;
+
 class XDMF_EXPORT XdmfFormat : public XdmfLightData {
 
 public :

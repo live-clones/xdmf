@@ -24,6 +24,10 @@
 /*******************************************************************/
 #include "XdmfGrid.h"
 
+#include "XdmfDOM.h"
+#include "XdmfGeometry.h"
+#include "XdmfAttribute.h"
+
 XdmfGrid *HandleToXdmfGrid( char *Source ){
   XdmfObject  *TempObj;
   XdmfGrid   *Grid;

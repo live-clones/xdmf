@@ -25,9 +25,7 @@
 #ifndef __XdmfAttribute_h
 #define __XdmfAttribute_h
 
-#include "XdmfTopology.h"
-
-#include "XdmfExport.h"
+#include "XdmfLightData.h"
 
 // Value Types
 #define XDMF_ATTRIBUTE_TYPE_NONE  0
@@ -43,6 +41,9 @@
 #define XDMF_ATTRIBUTE_CENTER_EDGE  3
 #define XDMF_ATTRIBUTE_CENTER_NODE  4
 
+class XdmfTopology;
+class XdmfDataDesc;
+class XdmfArray;
 
 class XDMF_EXPORT XdmfAttribute : public XdmfLightData {
 
@@ -64,7 +65,7 @@ public:
   XdmfSetValueMacro( AttributeCenter, XdmfInt32 );
   XdmfGetValueMacro( AttributeCenter, XdmfInt32 );
 
-  XdmfDataDesc *GetShapeDesc( void ) { return( &this->ShapeDesc ); };
+  XdmfDataDesc *GetShapeDesc( void ) { return( this->ShapeDesc ); };
 
   XdmfSetValueMacro( Values, XdmfArray *);
   XdmfGetValueMacro( Values, XdmfArray *);
@@ -80,7 +81,7 @@ protected:
 
   XdmfInt32  AttributeType;
   XdmfInt32  AttributeCenter;
-  XdmfDataDesc  ShapeDesc;
+  XdmfDataDesc  *ShapeDesc;
   XdmfInt32  ValuesAreMine;
   XdmfArray  *Values;
 };

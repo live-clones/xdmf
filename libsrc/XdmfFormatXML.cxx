@@ -23,6 +23,9 @@
 /*                                                                 */
 /*******************************************************************/
 #include "XdmfFormatXML.h"
+
+#include "XdmfDOM.h"
+#include "XdmfArray.h"
 #include "XdmfHDF.h"
 
 XdmfFormatXML::XdmfFormatXML() {

@@ -23,8 +23,12 @@
 /*                                                                 */
 /*******************************************************************/
 #include "XdmfGeometry.h"
+
 #include "XdmfTransform.h"
 #include "XdmfFormatMulti.h"
+#include "XdmfArray.h"
+#include "XdmfDOM.h"
+#include "XdmfHDF.h"
 
 XdmfGeometry *GetXdmfGeometryHandle( void *Pointer ){
   XdmfGeometry *tmp = (XdmfGeometry *)Pointer;

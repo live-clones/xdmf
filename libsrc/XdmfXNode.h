@@ -29,14 +29,9 @@
 
 #ifdef __cplusplus
 
-#include <stdio.h>
-// #include <string>
-
-extern "C" {
-#include "XdmfDice.h"
-}
-
 #include "XdmfObject.h"
+
+#include "XdmfDice.h"
 
 /*!
 XdmfXNode : XDMF Runtime Expandable Structure.

@@ -24,6 +24,8 @@
 /*******************************************************************/
 #include "XdmfArray.h"
 
+#include "XdmfArrayCopyMacro.h"
+
 #ifndef _WIN32
 #include <unistd.h>
 #endif

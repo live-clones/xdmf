@@ -24,6 +24,10 @@
 /*******************************************************************/
 #include "XdmfFormatMulti.h"
 
+#include "XdmfDOM.h"
+#include "XdmfFormatHDF.h"
+#include "XdmfFormatXML.h"
+
 XdmfFormatMulti::XdmfFormatMulti() {
   strcpy( this->DataFormat, "HDF" );
 }

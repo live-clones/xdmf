@@ -24,6 +24,11 @@
 /*******************************************************************/
 #include "XdmfFormat.h"
 
+#include "XdmfDataDesc.h"
+#include "XdmfArray.h"
+#include "XdmfXNode.h"
+#include "XdmfDOM.h"
+
 XdmfFormat::XdmfFormat() {
   strcpy( this->DataFormat, "XML" );
 }

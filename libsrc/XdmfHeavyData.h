@@ -27,14 +27,6 @@
 
 #include "XdmfArray.h"
 
-#ifndef SWIG
-extern "C" {
-#include "hdf5.h"
-}
-#endif
-
-#include "XdmfExport.h"
-
 /*!
 This is an abstract convenience object for reading and writing
 HeavyData Files. 

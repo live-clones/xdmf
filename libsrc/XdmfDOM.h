@@ -27,25 +27,13 @@
 
 
 #include "XdmfObject.h"
-#include "XdmfParameter.h"
 #include "XdmfXNode.h"
-#include "XdmfHDF.h"
-#include "XdmfArray.h"
 
 #ifndef SWIG
-
-extern "C" {
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <string.h>
-#include "expat.h"
-#include "XdmfDice.h"
-#include "XdmfXMLParser.h"
-}
-
+#  include "XdmfXMLParser.h"
 #endif
 
-#include "XdmfExport.h"
+class XdmfParameter;
 
 /*!
 This is the Base XML Parsing Object. A XdmfDOM will 

@@ -25,6 +25,10 @@
 #ifndef XDMF_LIST_INCLUDED
 #define XDMF_LIST_INCLUDED
 
+#if defined(__cplusplus)
+extern "C" {
+#endif 
+
 #include "ice.h"
 #include "stdio.h"
 #include "stdlib.h"
@@ -93,5 +97,9 @@ extern   ICE_32_INT  XdmfTree_walk(XDMF_TREE_NODE *this_node,
         ICE_32_INT (*node_list_call)(XDMF_TREE_NODE *, void *),
         void *clientdata);
 
+
+#if defined(__cplusplus)
+}
+#endif
 
 #endif /* XDMF_LIST_INCLUDED */

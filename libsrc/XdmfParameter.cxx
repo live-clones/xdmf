@@ -24,6 +24,9 @@
 /*******************************************************************/
 #include "XdmfParameter.h"
 
+#include "XdmfArray.h"
+#include "XdmfXNode.h"
+
 XdmfParameter::XdmfParameter() {
   this->CurrentIndex = 0;
   this->ParameterType = XDMF_PARAMETER_LIST_TYPE;

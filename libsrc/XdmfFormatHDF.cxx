@@ -24,6 +24,10 @@
 /*******************************************************************/
 #include "XdmfFormatHDF.h"
 
+#include "XdmfDOM.h"
+#include "XdmfHDF.h"
+#include "XdmfArray.h"
+#include "XdmfDataDesc.h"
 
 #ifndef _WIN32
 #include <unistd.h>
