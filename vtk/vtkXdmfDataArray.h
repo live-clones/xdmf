@@ -75,5 +75,7 @@ protected:
 private:
   vtkDataArray  *vtkArray;
   XdmfArray  *Array;
+  vtkXdmfDataArray(const vtkXdmfDataArray&); // Not implemented
+  void operator=(const vtkXdmfDataArray&); // Not implemented
 };
 #endif /* _vtkXdmfDataArray_h */

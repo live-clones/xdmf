@@ -73,7 +73,14 @@
 #ifdef __cplusplus
 /* Use ANSI C++ --------------------------------------------- */
 # ifndef SWIG
+#  ifdef _MSC_VER
+#   pragma warning (push, 1)
+#   pragma warning (disable: 4702)
+#  endif
 #  include <string>
+#  ifdef _MSC_VER
+#   pragma warning(pop)
+#  endif
 #  ifdef XDMF_USE_ANSI_STDLIB
 #   include <iostream>
 #   include <strstream>
