@@ -73,7 +73,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.31");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.32");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -471,7 +471,7 @@ void vtkXdmfReader::Execute()
         {
         if( Points )
           {
-          if ( Geometry->GetPoints()->GetDataType() == XDMF_FLOAT32_TYPE )
+          if ( Geometry->GetPoints()->GetNumberType() == XDMF_FLOAT32_TYPE )
             {
             if ( Points->GetData()->GetDataType() != VTK_FLOAT)
               {
