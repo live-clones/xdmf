@@ -69,7 +69,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.4");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.5");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -228,7 +228,7 @@ void vtkXdmfReader::Execute()
   XdmfInt64 start[4]  = { 0, 0, 0, 0 };
   XdmfInt64 stride[4] = { 1, 1, 1, 1 };
   XdmfInt64 count[4] = { 0, 0, 0, 0 };
-  XdmfInt64 end[4] = { 0, 0, 0, 0 };
+  // XdmfInt64 end[4] = { 0, 0, 0, 0 };
   this->DataDescription->GetShape(count);
 
   int *upext = this->GetOutput()->GetUpdateExtent();
@@ -1038,6 +1038,18 @@ void vtkXdmfReader::SetPointArrayStatus(const char* name, int status)
     }
 }
 
+//----------------------------------------------------------------------------
+void vtkXdmfReader::EnableAllArrays()
+{
+this->PointDataArraySelection->EnableAllArrays();
+this->CellDataArraySelection->EnableAllArrays();
+}
+//----------------------------------------------------------------------------
+void vtkXdmfReader::DisableAllArrays()
+{
+this->PointDataArraySelection->DisableAllArrays();
+this->CellDataArraySelection->DisableAllArrays();
+}
 //----------------------------------------------------------------------------
 int vtkXdmfReader::GetNumberOfCellArrays()
 {
