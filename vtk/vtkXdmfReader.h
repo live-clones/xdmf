@@ -201,6 +201,8 @@ protected:
   vtkXdmfReader();
   ~vtkXdmfReader();   
 
+  virtual int ProcessRequest(vtkInformation *, vtkInformationVector **,
+                             vtkInformationVector *);
   virtual int RequestData(vtkInformation *, vtkInformationVector **,
                           vtkInformationVector *);
   virtual int RequestInformation(vtkInformation *, vtkInformationVector **,
