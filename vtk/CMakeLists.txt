@@ -20,11 +20,16 @@ ENDIF(WIN32)
 SET( Xdmf_SRCS
 	vtkXdmfReader.cxx
   vtkXdmfWriter.cxx
-	vtkXdmfDataSetWriter.cxx
 	vtkXdmfDataArray.cxx
 	vtkXdmfOpenGLCamera.cxx
-	${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
-	)
+  ${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
+  )
+IF(NOT ParaViewComplete_BINARY_DIR)
+  SET( Xdmf_SRCS
+    ${Xdmf_SRCS}
+    vtkXdmfDataSetWriter.cxx
+    )
+ENDIF(NOT ParaViewComplete_BINARY_DIR)
 
 SET_SOURCE_FILES_PROPERTIES(
   vtkXdmfDataArray
@@ -67,5 +72,5 @@ IF (VTK_FOUND)
     SUBDIRS(Testing)
   ENDIF(XDMF_BUILD_TESTING)
 ELSE(VTK_FOUND)
-MESSAGE(STATUS "Can't find VTK ... no vtkXdmf interface can be built")
+  MESSAGE(STATUS "Can't find VTK ... no vtkXdmf interface can be built")
 ENDIF (VTK_FOUND)
