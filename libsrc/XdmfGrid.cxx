@@ -49,6 +49,7 @@ XdmfGrid::XdmfGrid() {
   this->Attribute = (XdmfAttribute **)calloc(1, sizeof( XdmfAttribute * ));
   this->AssignedAttribute = NULL;
   this->NumberOfAttributes = 0;
+  this->Collection = 0;
   }
 
 XdmfGrid::~XdmfGrid() {
@@ -59,6 +60,7 @@ XdmfGrid::~XdmfGrid() {
     delete this->Attribute[Index];
     }
   free(this->Attribute);
+  this->SetCollection(0);
   }
 
 XdmfInt32
@@ -150,6 +152,9 @@ if( attribute ) {
 } else {
   this->SetName( GetUnique("Grid_" ) );
 }
+// Request collection attribute. If collection is not specified, just set it to none.
+attribute = this->DOM->Get( Element, "Collection" );
+this->SetCollection( attribute );
 XdmfInt32 OldNumberOfAttributes = this->NumberOfAttributes;
 this->NumberOfAttributes = this->DOM->FindNumberOfElements("Attribute", Element );
 if( this->NumberOfAttributes > 0 ){
