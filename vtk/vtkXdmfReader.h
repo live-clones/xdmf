@@ -160,6 +160,8 @@ public:
   // Get number of domains and grids.
   int GetNumberOfDomains();
   int GetNumberOfGrids();
+
+  int GetNewNumberOfGrids();
   
   // Description:
   // Get the name of domain or grid at index.
@@ -212,6 +214,10 @@ protected:
   // Callback registered with the SelectionObserver.
   static void SelectionModifiedCallback(vtkObject* caller, unsigned long eid,
                                         void* clientdata, void* calldata);
+
+
+  int RequestSingleGridInformation(int currentGrid, int generateGrid,
+    vtkInformationVector* outputVector);
   
   // The array selections.
   vtkDataArraySelection* PointDataArraySelection;
