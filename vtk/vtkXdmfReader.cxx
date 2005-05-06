@@ -79,7 +79,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vtkstd/vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.55");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.56");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -1389,7 +1389,7 @@ int vtkXdmfReader::RequestSingleGridInformation(int currentGrid, int generateGri
   vtkInformation *outInfo;
 
   XdmfGrid* grid = this->Internals->Grids[currentGrid];
-  cout << "*** Grid collection is: " << grid->GetCollection() << endl;
+//  cout << "*** Grid collection is: " << grid->GetCollection() << endl;
 
   if( grid->GetClass() == XDMF_UNSTRUCTURED ) 
     {
