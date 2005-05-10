@@ -169,7 +169,7 @@ Read the cueently open dataset into and Array.
 */
   XdmfArray *Read( XdmfArray *Array = NULL );
 /*!
-Write to the cueently open dataset from and Array.
+Write to the curently open dataset from and Array.
 */
   XdmfArray *Write( XdmfArray *Array );
 
