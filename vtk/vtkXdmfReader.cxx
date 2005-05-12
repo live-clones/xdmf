@@ -79,7 +79,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vtkstd/vector>
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.57");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.58");
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__BORLANDC__))
 #  include <direct.h>
@@ -1428,7 +1428,7 @@ int vtkXdmfReader::RequestSingleGridInformation(int currentGrid, int generateGri
       {
       vtkDebugMacro(<<"Type changed Output class name: " << this->GetOutput(generateGrid)->GetClassName() 
         << " <> " << vGrid->GetClassName());
-      if ( this->GetOutput(generateGrid)->GetClassName() != vGrid->GetClassName() )
+      if ( strcmp(this->GetOutput(generateGrid)->GetClassName(), vGrid->GetClassName()) == 0 )
         {
         type_changed = 1;
         }
