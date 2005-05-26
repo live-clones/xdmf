@@ -9,13 +9,14 @@
 #######################
 # 
 SHELL=/bin/sh
-ICE_WITH_NDGM = NO
+ICE_WITH_NDGM = YES
 ICE_WITH_PYTHON = YES
 ICE_WITH_TCL = YES
 ICE_WITH_JAVA = NO
 
-srcdir=/vis/clarke/XdmfDevel03/Xdmf/libsrc
-SWIG=/vis/clarke/Swig/SWIG-1.3.19/swig
+srcdir=/vis/clarke/XdmfDevel05/Xdmf/libsrc
+SWIGDIR=/vis/clarke/Swig/SWIG-1_3_21_IRIXN32
+SWIG=$(SWIGDIR)/swig
 #
 #######################
 #
@@ -23,6 +24,8 @@ SWIG=/vis/clarke/Swig/SWIG-1.3.19/swig
 VPATH=${srcdir}
 
 ICE_INCLUDES = -I. \
+		-I$(SWIGDIR)/Lib \
+		-I$(SWIGDIR)/Lib/python \
 		-I/vis/clarke/XdmfDevel03/IRIX64/libsrc \
 		-I../Ice/libsrc \
 		-I/vis/clarke/XdmfDevel03/IRIX64/Ice/libsrc

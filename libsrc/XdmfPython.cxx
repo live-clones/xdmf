@@ -30,22 +30,22 @@ private:
 #include "Python.h"
 
 /*************************************************************** -*- c -*-
- * Tcl/precommon.swg
+ * python/precommon.swg
  *
  * Rename all exported symbols from common.swg, to avoid symbol
  * clashes if multiple interpreters are included
  *
  ************************************************************************/
 
-#define SWIG_TypeRegister    SWIG_Tcl_TypeRegister
-#define SWIG_TypeCheck       SWIG_Tcl_TypeCheck
-#define SWIG_TypeCast        SWIG_Tcl_TypeCast
-#define SWIG_TypeDynamicCast SWIG_Tcl_TypeDynamicCast
-#define SWIG_TypeName        SWIG_Tcl_TypeName
-#define SWIG_TypeQuery       SWIG_Tcl_TypeQuery
-#define SWIG_TypeClientData  SWIG_Tcl_TypeClientData
-#define SWIG_PackData        SWIG_Tcl_PackData 
-#define SWIG_UnpackData      SWIG_Tcl_UnpackData 
+#define SWIG_TypeRegister    SWIG_Python_TypeRegister
+#define SWIG_TypeCheck       SWIG_Python_TypeCheck
+#define SWIG_TypeCast        SWIG_Python_TypeCast
+#define SWIG_TypeDynamicCast SWIG_Python_TypeDynamicCast
+#define SWIG_TypeName        SWIG_Python_TypeName
+#define SWIG_TypeQuery       SWIG_Python_TypeQuery
+#define SWIG_TypeClientData  SWIG_Python_TypeClientData
+#define SWIG_PackData        SWIG_Python_PackData 
+#define SWIG_UnpackData      SWIG_Python_UnpackData 
 
 
 /***********************************************************************
@@ -9229,6 +9229,111 @@ static PyObject *_wrap_XdmfNDGM_BarrierPoll(PyObject *self, PyObject *args) {
 }
 
 
+static PyObject *_wrap_XdmfNDGM_ServerForever(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    XdmfNDGM *arg1 = (XdmfNDGM *) 0 ;
+    XdmfInt64 arg2 ;
+    XdmfInt32 result;
+    PyObject * obj0 = 0 ;
+    PyObject * obj1 = 0 ;
+    
+    if(!PyArg_ParseTuple(args,(char *)"OO:XdmfNDGM_ServerForever",&obj0,&obj1)) goto fail;
+    if ((SWIG_ConvertPtr(obj0,(void **) &arg1, SWIGTYPE_p_XdmfNDGM,SWIG_POINTER_EXCEPTION | 0 )) == -1) SWIG_fail;
+    arg2 = (XdmfInt64) PyLong_AsLongLong(obj1);
+    if (PyErr_Occurred()) SWIG_fail;
+    result = (XdmfInt32)(arg1)->ServerForever(arg2);
+    
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+    fail:
+    return NULL;
+}
+
+
+static PyObject *_wrap_XdmfNDGM_AddServerDescription(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    XdmfNDGM *arg1 = (XdmfNDGM *) 0 ;
+    XdmfInt64 arg2 ;
+    XdmfInt64 arg3 ;
+    XdmfInt64 arg4 ;
+    XdmfInt32 result;
+    PyObject * obj0 = 0 ;
+    PyObject * obj1 = 0 ;
+    PyObject * obj2 = 0 ;
+    PyObject * obj3 = 0 ;
+    
+    if(!PyArg_ParseTuple(args,(char *)"OOOO:XdmfNDGM_AddServerDescription",&obj0,&obj1,&obj2,&obj3)) goto fail;
+    if ((SWIG_ConvertPtr(obj0,(void **) &arg1, SWIGTYPE_p_XdmfNDGM,SWIG_POINTER_EXCEPTION | 0 )) == -1) SWIG_fail;
+    arg2 = (XdmfInt64) PyLong_AsLongLong(obj1);
+    if (PyErr_Occurred()) SWIG_fail;
+    arg3 = (XdmfInt64) PyLong_AsLongLong(obj2);
+    if (PyErr_Occurred()) SWIG_fail;
+    arg4 = (XdmfInt64) PyLong_AsLongLong(obj3);
+    if (PyErr_Occurred()) SWIG_fail;
+    result = (XdmfInt32)(arg1)->AddServerDescription(arg2,arg3,arg4);
+    
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+    fail:
+    return NULL;
+}
+
+
+static PyObject *_wrap_XdmfNDGM_InitClient(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    XdmfNDGM *arg1 = (XdmfNDGM *) 0 ;
+    XdmfInt32 result;
+    PyObject * obj0 = 0 ;
+    
+    if(!PyArg_ParseTuple(args,(char *)"O:XdmfNDGM_InitClient",&obj0)) goto fail;
+    if ((SWIG_ConvertPtr(obj0,(void **) &arg1, SWIGTYPE_p_XdmfNDGM,SWIG_POINTER_EXCEPTION | 0 )) == -1) SWIG_fail;
+    result = (XdmfInt32)(arg1)->InitClient();
+    
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+    fail:
+    return NULL;
+}
+
+
+static PyObject *_wrap_XdmfNDGM_TermServer(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    XdmfNDGM *arg1 = (XdmfNDGM *) 0 ;
+    XdmfInt64 arg2 ;
+    XdmfInt32 result;
+    PyObject * obj0 = 0 ;
+    PyObject * obj1 = 0 ;
+    
+    if(!PyArg_ParseTuple(args,(char *)"OO:XdmfNDGM_TermServer",&obj0,&obj1)) goto fail;
+    if ((SWIG_ConvertPtr(obj0,(void **) &arg1, SWIGTYPE_p_XdmfNDGM,SWIG_POINTER_EXCEPTION | 0 )) == -1) SWIG_fail;
+    arg2 = (XdmfInt64) PyLong_AsLongLong(obj1);
+    if (PyErr_Occurred()) SWIG_fail;
+    result = (XdmfInt32)(arg1)->TermServer(arg2);
+    
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+    fail:
+    return NULL;
+}
+
+
+static PyObject *_wrap_XdmfNDGM_Term(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    XdmfNDGM *arg1 = (XdmfNDGM *) 0 ;
+    XdmfInt32 result;
+    PyObject * obj0 = 0 ;
+    
+    if(!PyArg_ParseTuple(args,(char *)"O:XdmfNDGM_Term",&obj0)) goto fail;
+    if ((SWIG_ConvertPtr(obj0,(void **) &arg1, SWIGTYPE_p_XdmfNDGM,SWIG_POINTER_EXCEPTION | 0 )) == -1) SWIG_fail;
+    result = (XdmfInt32)(arg1)->Term();
+    
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+    fail:
+    return NULL;
+}
+
+
 static PyObject * XdmfNDGM_swigregister(PyObject *self, PyObject *args) {
     PyObject *obj;
     if (!PyArg_ParseTuple(args,(char*)"O", &obj)) return NULL;
@@ -9730,6 +9835,11 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfNDGM_BarrierWait", _wrap_XdmfNDGM_BarrierWait, METH_VARARGS },
 	 { (char *)"XdmfNDGM_BarrierAudit", _wrap_XdmfNDGM_BarrierAudit, METH_VARARGS },
 	 { (char *)"XdmfNDGM_BarrierPoll", _wrap_XdmfNDGM_BarrierPoll, METH_VARARGS },
+	 { (char *)"XdmfNDGM_ServerForever", _wrap_XdmfNDGM_ServerForever, METH_VARARGS },
+	 { (char *)"XdmfNDGM_AddServerDescription", _wrap_XdmfNDGM_AddServerDescription, METH_VARARGS },
+	 { (char *)"XdmfNDGM_InitClient", _wrap_XdmfNDGM_InitClient, METH_VARARGS },
+	 { (char *)"XdmfNDGM_TermServer", _wrap_XdmfNDGM_TermServer, METH_VARARGS },
+	 { (char *)"XdmfNDGM_Term", _wrap_XdmfNDGM_Term, METH_VARARGS },
 	 { (char *)"XdmfNDGM_swigregister", XdmfNDGM_swigregister, METH_VARARGS },
 	 { (char *)"XdmfGetNdgmEntries", _wrap_XdmfGetNdgmEntries, METH_VARARGS },
 	 { (char *)"XdmfDeleteAllNdgmEntries", _wrap_XdmfDeleteAllNdgmEntries, METH_VARARGS },

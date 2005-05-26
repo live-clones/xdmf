@@ -61,6 +61,7 @@ XdmfNDGM::XdmfNDGM() {
   this->NdgmMode = XDMF_NDGM_MSG_SERVER;
   this->NdgmNode = NULL;
   this->NdgmDriver = NDGM_SOC;
+  this->NdgmServerList = NULL;
 #endif
 
 }
@@ -340,3 +341,50 @@ if( this->NdgmNode ) {
 return( XDMF_FAIL );
 }
 
+XdmfInt32
+XdmfNDGM::ServerForever(XdmfInt64 MemoryLength)
+{
+#ifdef HAVE_NDGM
+    XdmfDebug("Starting MPI NDGM Server for " << MemoryLength << " bytes");
+    ndgm_mpi_server(ndgm_mpi_get_rank(), MemoryLength);
+    return(XDMF_SUCCESS);
+
+#else
+    return(XDMF_FAIL);
+#endif
+}
+
+XdmfInt32
+XdmfNDGM::AddServerDescription(XdmfInt64 Rank, XdmfInt64 Start, XdmfInt64 Length){
+#ifdef HAVE_NDGM
+    this->NdgmServerList = ndgm_mpi_add_server_desc(this->NdgmServerList, Rank, Start, Length);
+    if(this->NdgmServerList){
+        return(NDGM_SUCCESS);
+    }
+#endif
+    return(XDMF_FAIL);
+}
+
+XdmfInt32
+XdmfNDGM::InitClient(void){
+#ifdef HAVE_NDGM
+    return(ndgm_mpi_client_init(this->NdgmServerList));
+#endif
+    return(XDMF_FAIL);
+}
+
+XdmfInt32
+XdmfNDGM::TermServer(XdmfInt64 AtAddress){
+#ifdef HAVE_NDGM
+    return(ndgm_kill(AtAddress));
+#endif
+    return(XDMF_FAIL);
+}
+
+XdmfInt32
+XdmfNDGM::Term(void){
+#ifdef HAVE_NDGM
+    return(ndgm_term());
+#endif
+    return(XDMF_FAIL);
+}
