@@ -355,9 +355,9 @@ XdmfNDGM::ServerForever(XdmfInt64 MemoryLength)
 }
 
 XdmfInt32
-XdmfNDGM::AddServerDescription(XdmfInt64 Rank, XdmfInt64 Start, XdmfInt64 Length){
+XdmfNDGM::AddServerDescription(XdmfInt64 rank, XdmfInt64 start, XdmfInt64 length){
 #ifdef HAVE_NDGM
-    this->NdgmServerList = ndgm_mpi_add_server_desc(this->NdgmServerList, Rank, Start, Length);
+    this->NdgmServerList = ndgm_mpi_add_server_desc(this->NdgmServerList, rank, start, length);
     if(this->NdgmServerList){
         return(NDGM_SUCCESS);
     }

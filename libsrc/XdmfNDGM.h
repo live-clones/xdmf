@@ -178,7 +178,7 @@ Open a connection
    XdmfInt32  ServerForever(XdmfInt64 MemoryLength);
 
 //! Add an MPI NDGM Server to List
-   XdmfInt32  AddServerDescription(XdmfInt64 Rank, XdmfInt64 Start, XdmfInt64 Length);
+   XdmfInt32  AddServerDescription(XdmfInt64 rank, XdmfInt64 start, XdmfInt64 length);
 
 //! Initialize MPI NDGM. NDGM Id is returned
    XdmfInt32  InitClient(void);
