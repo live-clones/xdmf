@@ -9229,6 +9229,44 @@ static PyObject *_wrap_XdmfNDGM_BarrierPoll(PyObject *self, PyObject *args) {
 }
 
 
+static PyObject *_wrap_XdmfNDGM_InitServer(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    XdmfNDGM *arg1 = (XdmfNDGM *) 0 ;
+    XdmfInt64 arg2 ;
+    XdmfInt32 result;
+    PyObject * obj0 = 0 ;
+    PyObject * obj1 = 0 ;
+    
+    if(!PyArg_ParseTuple(args,(char *)"OO:XdmfNDGM_InitServer",&obj0,&obj1)) goto fail;
+    if ((SWIG_ConvertPtr(obj0,(void **) &arg1, SWIGTYPE_p_XdmfNDGM,SWIG_POINTER_EXCEPTION | 0 )) == -1) SWIG_fail;
+    arg2 = (XdmfInt64) PyLong_AsLongLong(obj1);
+    if (PyErr_Occurred()) SWIG_fail;
+    result = (XdmfInt32)(arg1)->InitServer(arg2);
+    
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+    fail:
+    return NULL;
+}
+
+
+static PyObject *_wrap_XdmfNDGM_LoopOnce(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    XdmfNDGM *arg1 = (XdmfNDGM *) 0 ;
+    XdmfInt32 result;
+    PyObject * obj0 = 0 ;
+    
+    if(!PyArg_ParseTuple(args,(char *)"O:XdmfNDGM_LoopOnce",&obj0)) goto fail;
+    if ((SWIG_ConvertPtr(obj0,(void **) &arg1, SWIGTYPE_p_XdmfNDGM,SWIG_POINTER_EXCEPTION | 0 )) == -1) SWIG_fail;
+    result = (XdmfInt32)(arg1)->LoopOnce();
+    
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+    fail:
+    return NULL;
+}
+
+
 static PyObject *_wrap_XdmfNDGM_ServerForever(PyObject *self, PyObject *args) {
     PyObject *resultobj;
     XdmfNDGM *arg1 = (XdmfNDGM *) 0 ;
@@ -9242,6 +9280,31 @@ static PyObject *_wrap_XdmfNDGM_ServerForever(PyObject *self, PyObject *args) {
     arg2 = (XdmfInt64) PyLong_AsLongLong(obj1);
     if (PyErr_Occurred()) SWIG_fail;
     result = (XdmfInt32)(arg1)->ServerForever(arg2);
+    
+    resultobj = PyInt_FromLong((long)result);
+    return resultobj;
+    fail:
+    return NULL;
+}
+
+
+static PyObject *_wrap_XdmfNDGM_InitBarrier(PyObject *self, PyObject *args) {
+    PyObject *resultobj;
+    XdmfNDGM *arg1 = (XdmfNDGM *) 0 ;
+    XdmfInt64 arg2 ;
+    XdmfInt64 arg3 ;
+    XdmfInt32 result;
+    PyObject * obj0 = 0 ;
+    PyObject * obj1 = 0 ;
+    PyObject * obj2 = 0 ;
+    
+    if(!PyArg_ParseTuple(args,(char *)"OOO:XdmfNDGM_InitBarrier",&obj0,&obj1,&obj2)) goto fail;
+    if ((SWIG_ConvertPtr(obj0,(void **) &arg1, SWIGTYPE_p_XdmfNDGM,SWIG_POINTER_EXCEPTION | 0 )) == -1) SWIG_fail;
+    arg2 = (XdmfInt64) PyLong_AsLongLong(obj1);
+    if (PyErr_Occurred()) SWIG_fail;
+    arg3 = (XdmfInt64) PyLong_AsLongLong(obj2);
+    if (PyErr_Occurred()) SWIG_fail;
+    result = (XdmfInt32)(arg1)->InitBarrier(arg2,arg3);
     
     resultobj = PyInt_FromLong((long)result);
     return resultobj;
@@ -9835,7 +9898,10 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfNDGM_BarrierWait", _wrap_XdmfNDGM_BarrierWait, METH_VARARGS },
 	 { (char *)"XdmfNDGM_BarrierAudit", _wrap_XdmfNDGM_BarrierAudit, METH_VARARGS },
 	 { (char *)"XdmfNDGM_BarrierPoll", _wrap_XdmfNDGM_BarrierPoll, METH_VARARGS },
+	 { (char *)"XdmfNDGM_InitServer", _wrap_XdmfNDGM_InitServer, METH_VARARGS },
+	 { (char *)"XdmfNDGM_LoopOnce", _wrap_XdmfNDGM_LoopOnce, METH_VARARGS },
 	 { (char *)"XdmfNDGM_ServerForever", _wrap_XdmfNDGM_ServerForever, METH_VARARGS },
+	 { (char *)"XdmfNDGM_InitBarrier", _wrap_XdmfNDGM_InitBarrier, METH_VARARGS },
 	 { (char *)"XdmfNDGM_AddServerDescription", _wrap_XdmfNDGM_AddServerDescription, METH_VARARGS },
 	 { (char *)"XdmfNDGM_InitClient", _wrap_XdmfNDGM_InitClient, METH_VARARGS },
 	 { (char *)"XdmfNDGM_TermServer", _wrap_XdmfNDGM_TermServer, METH_VARARGS },

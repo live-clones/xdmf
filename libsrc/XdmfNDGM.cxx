@@ -342,11 +342,42 @@ return( XDMF_FAIL );
 }
 
 XdmfInt32
+XdmfNDGM::InitServer(XdmfInt64 MemoryLength)
+{
+#ifdef HAVE_NDGM
+    XdmfDebug("Starting MPI NDGM Server for " << MemoryLength << " bytes");
+    this->NdgmServerNode = ndgm_mpi_server(ndgm_mpi_get_rank(), MemoryLength, 0);
+    return(XDMF_SUCCESS);
+
+#else
+    return(XDMF_FAIL);
+#endif
+}
+
+XdmfInt32
+XdmfNDGM::LoopOnce(void)
+{
+    NDGM_DEFAULT_INT Opcode;
+#ifdef HAVE_NDGM
+    XdmfDebug("Server Looping Once");
+    Opcode = ndgm_mpi_server_loop_once(this->NdgmServerNode);
+    if(Opcode != NDGM_CMD_TERM){
+        return(XDMF_SUCCESS);
+    }else{
+        return(XDMF_FAIL);
+    }
+
+#else
+    return(XDMF_FAIL);
+#endif
+}
+
+XdmfInt32
 XdmfNDGM::ServerForever(XdmfInt64 MemoryLength)
 {
 #ifdef HAVE_NDGM
     XdmfDebug("Starting MPI NDGM Server for " << MemoryLength << " bytes");
-    ndgm_mpi_server(ndgm_mpi_get_rank(), MemoryLength);
+    ndgm_mpi_server(ndgm_mpi_get_rank(), MemoryLength, 1);
     return(XDMF_SUCCESS);
 
 #else
@@ -371,6 +402,12 @@ XdmfNDGM::InitClient(void){
     return(ndgm_mpi_client_init(this->NdgmServerList));
 #endif
     return(XDMF_FAIL);
+}
+
+XdmfInt32
+XdmfNDGM::InitBarrier(XdmfInt64 Barrier, XdmfInt64 Value)
+{
+    return(ndgm_mpi_create_barrier(Barrier, Value));
 }
 
 XdmfInt32
