@@ -350,6 +350,7 @@ XdmfNDGM::InitServer(XdmfInt64 MemoryLength)
     return(XDMF_SUCCESS);
 
 #else
+    (void)MemoryLength;
     return(XDMF_FAIL);
 #endif
 }
@@ -357,8 +358,8 @@ XdmfNDGM::InitServer(XdmfInt64 MemoryLength)
 XdmfInt32
 XdmfNDGM::LoopOnce(void)
 {
-    NDGM_DEFAULT_INT Opcode;
 #ifdef HAVE_NDGM
+    NDGM_DEFAULT_INT Opcode;
     XdmfDebug("Server Looping Once");
     Opcode = ndgm_mpi_server_loop_once(this->NdgmServerNode);
     if(Opcode != NDGM_CMD_TERM){
@@ -381,6 +382,7 @@ XdmfNDGM::ServerForever(XdmfInt64 MemoryLength)
     return(XDMF_SUCCESS);
 
 #else
+    (void)MemoryLength;
     return(XDMF_FAIL);
 #endif
 }
@@ -393,6 +395,9 @@ XdmfNDGM::AddServerDescription(XdmfInt64 rank, XdmfInt64 start, XdmfInt64 length
         return(NDGM_SUCCESS);
     }
 #endif
+    (void)rank;
+    (void)start;
+    (void)length;
     return(XDMF_FAIL);
 }
 
@@ -407,7 +412,12 @@ XdmfNDGM::InitClient(void){
 XdmfInt32
 XdmfNDGM::InitBarrier(XdmfInt64 Barrier, XdmfInt64 Value)
 {
+#ifdef HAVE_NDGM
     return(ndgm_mpi_create_barrier(Barrier, Value));
+#endif
+    (void)Barrier;
+    (void)Value;
+    return(XDMF_FAIL);
 }
 
 XdmfInt32
@@ -415,6 +425,7 @@ XdmfNDGM::TermServer(XdmfInt64 AtAddress){
 #ifdef HAVE_NDGM
     return(ndgm_kill(AtAddress));
 #endif
+    (void)AtAddress;
     return(XDMF_FAIL);
 }
 
