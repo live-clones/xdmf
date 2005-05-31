@@ -173,10 +173,15 @@ Open a connection
       return(-1);
 #endif
       }
-
+//! Become an MPI NDGM Server and return
+   XdmfInt32  InitServer(XdmfInt64 MemoryLength);
+//! Loop Once thru Client nodes
+   XdmfInt32  LoopOnce(void);
 //! Become an MPI NDGM Server. This Loops until NDGM_TERM_CMD is received.
    XdmfInt32  ServerForever(XdmfInt64 MemoryLength);
 
+//! Initialize a Barrier
+   XdmfInt32 InitBarrier(XdmfInt64 Barrier, XdmfInt64 Value);
 //! Add an MPI NDGM Server to List
    XdmfInt32  AddServerDescription(XdmfInt64 rank, XdmfInt64 start, XdmfInt64 length);
 
@@ -196,6 +201,7 @@ protected:
   XdmfInt32  NdgmMode;
   NDGM_NODE  *NdgmNode;
   NDGM_NODE  *NdgmClient;
+  NDGM_NODE  *NdgmServerNode;
   NDGM_CLIENT *NdgmServerList;
 };
 
