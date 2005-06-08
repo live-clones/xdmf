@@ -41,6 +41,7 @@ class vtkRectilinearGrid;
 class vtkDataArraySelection;
 class vtkCallbackCommand;
 class vtkDataSet;
+class vtkMultiProcessController;
 
 //BTX
 class XdmfDOM;
@@ -62,11 +63,9 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
-  // Get and set the output of this reader.
-  vtkDataSet *GetOutput();
-  vtkDataSet *GetOutput(int idx);
-  void SetOutput(vtkDataSet *output);
-  void SetOutput(vtkDataObject *output);
+  // Get the output of this reader.
+  vtkDataObject *GetOutput();
+  vtkDataObject *GetOutput(int idx);
 
   // Description:
   // Get the data array selection tables used to configure which data
@@ -197,13 +196,25 @@ public:
   // Description:
   // Determine if the file can be readed with this reader.
   virtual int CanReadFile(const char* fname);
-
+  
+  // Description:
+  // Set the controller used to coordinate parallel reading.
+  void SetController(vtkMultiProcessController* controller);
+  
+  // Return the controller used to coordinate parallel reading. By default,
+  // it is the global controller.
+  vtkGetObjectMacro(Controller,vtkMultiProcessController);
+  
 protected:
   vtkXdmfReader();
   ~vtkXdmfReader();   
 
-  virtual int ProcessRequest(vtkInformation *, vtkInformationVector **,
-                             vtkInformationVector *);
+  virtual int ProcessRequest(vtkInformation *request,
+                             vtkInformationVector **inputVector,
+                             vtkInformationVector *outputVector);
+  
+  virtual int RequestDataObject(vtkInformationVector *outputVector);
+  
   virtual int RequestData(vtkInformation *, vtkInformationVector **,
                           vtkInformationVector *);
   virtual int RequestInformation(vtkInformation *, vtkInformationVector **,
@@ -237,6 +248,10 @@ protected:
 
   void UpdateGrids();
 
+  int NumberOfEnabledActualGrids;
+  
+  vtkMultiProcessController *Controller;
+  
 private:
   vtkXdmfReader(const vtkXdmfReader&); // Not implemented
   void operator=(const vtkXdmfReader&); // Not implemented  
