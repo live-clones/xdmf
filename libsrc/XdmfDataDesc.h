@@ -208,7 +208,11 @@ protected:
   XdmfInt32  Rank;
   XdmfInt64  NextOffset;
   XdmfInt64  Dimension[XDMF_MAX_DIMENSION];
+#if (H5_VERS_MAJOR >= 1) && (H5_VERS_MINOR >= 6) && (H5_VERS_RELEASE >= 4)
+  hsize_t  Start[XDMF_MAX_DIMENSION];
+#else
   hssize_t  Start[XDMF_MAX_DIMENSION];
+#endif
   hsize_t    Stride[XDMF_MAX_DIMENSION];
   hsize_t    Count[XDMF_MAX_DIMENSION];
 
