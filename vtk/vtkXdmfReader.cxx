@@ -87,7 +87,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.60");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.61");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -584,7 +584,7 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
         XdmfGrid *xdmfGrid=grid->XMGrid;
         if( xdmfGrid->GetClass() == XDMF_UNSTRUCTURED ) 
           {
-          vtkUnstructuredGrid *output=dynamic_cast<vtkUnstructuredGrid *>(info->Get(vtkDataObject::DATA_OBJECT()));
+          vtkUnstructuredGrid *output=vtkUnstructuredGrid::SafeDownCast(info->Get(vtkDataObject::DATA_OBJECT()));
           if(output==0)
             {
             someOutputChanged=1;
@@ -597,7 +597,7 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
         else if( xdmfGrid->GetTopologyType() == XDMF_2DSMESH ||
                  xdmfGrid->GetTopologyType() == XDMF_3DSMESH )
           {
-          vtkStructuredGrid *output=dynamic_cast<vtkStructuredGrid *>(info->Get(vtkDataObject::DATA_OBJECT()));
+          vtkStructuredGrid *output=vtkStructuredGrid::SafeDownCast(info->Get(vtkDataObject::DATA_OBJECT()));
           if(output==0)
             {
             someOutputChanged=1;
@@ -610,9 +610,9 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
                   xdmfGrid->GetTopologyType() == XDMF_3DCORECTMESH )
           {
 #ifdef USE_IMAGE_DATA
-          vtkImageData *output=dynamic_cast<vtkImageData *>(info->Get(vtkDataObject::DATA_OBJECT()));
+          vtkImageData *output=vtkImageData::SafeDownCast(info->Get(vtkDataObject::DATA_OBJECT()));
 #else
-          vtkUniformGrid *output=dynamic_cast<vtkUniformGrid *>(info->Get(vtkDataObject::DATA_OBJECT()));
+          vtkUniformGrid *output=vtkUniformGrid::SafeDownCast(info->Get(vtkDataObject::DATA_OBJECT()));
 #endif
           if(output==0)
             {
@@ -629,7 +629,7 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
         else if ( xdmfGrid->GetTopologyType() == XDMF_2DRECTMESH ||
                   xdmfGrid->GetTopologyType() == XDMF_3DRECTMESH )
           {
-          vtkRectilinearGrid *output=dynamic_cast<vtkRectilinearGrid *>(info->Get(vtkDataObject::DATA_OBJECT()));
+          vtkRectilinearGrid *output=vtkRectilinearGrid::SafeDownCast(info->Get(vtkDataObject::DATA_OBJECT()));
           if(output==0)
             {
             someOutputChanged=1;
@@ -649,7 +649,7 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
         }
       else // collection
         {        
-        vtkHierarchicalDataSet *output=dynamic_cast<vtkHierarchicalDataSet *>(info->Get(vtkCompositeDataSet::COMPOSITE_DATA_SET()));
+        vtkHierarchicalDataSet *output=vtkHierarchicalDataSet::SafeDownCast(info->Get(vtkCompositeDataSet::COMPOSITE_DATA_SET()));
         if(output==0)
           {
           someOutputChanged=1;
@@ -720,7 +720,7 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
             XdmfGrid *xdmfGrid=subgrid->XMGrid;
             if( xdmfGrid->GetClass() == XDMF_UNSTRUCTURED ) 
               {
-              vtkUnstructuredGrid *ds=dynamic_cast<vtkUnstructuredGrid *>(output->GetDataSet(0,datasetIdx));
+              vtkUnstructuredGrid *ds=vtkUnstructuredGrid::SafeDownCast(output->GetDataSet(0,datasetIdx));
               if(ds==0)
                 {
                 someOutputChanged=1;
@@ -733,7 +733,7 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
             else if( xdmfGrid->GetTopologyType() == XDMF_2DSMESH ||
                      xdmfGrid->GetTopologyType() == XDMF_3DSMESH )
               {
-              vtkStructuredGrid *ds=dynamic_cast<vtkStructuredGrid *>(output->GetDataSet(0,datasetIdx));
+              vtkStructuredGrid *ds=vtkStructuredGrid::SafeDownCast(output->GetDataSet(0,datasetIdx));
               if(ds==0)
                 {
                 someOutputChanged=1;
@@ -746,9 +746,9 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
                       xdmfGrid->GetTopologyType() == XDMF_3DCORECTMESH )
               {
 #ifdef USE_IMAGE_DATA
-              vtkImageData *ds=dynamic_cast<vtkImageData *>(output->GetDataSet(0,datasetIdx));
+              vtkImageData *ds=vtkImageData::SafeDownCast(output->GetDataSet(0,datasetIdx));
 #else
-              vtkUniformGrid *ds=dynamic_cast<vtkUniformGrid *>(output->GetDataSet(0,datasetIdx));
+              vtkUniformGrid *ds=vtkUniformGrid::SafeDownCast(output->GetDataSet(0,datasetIdx));
 #endif
               if(ds==0)
                 {
@@ -765,7 +765,7 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
             else if ( xdmfGrid->GetTopologyType() == XDMF_2DRECTMESH ||
                       xdmfGrid->GetTopologyType() == XDMF_3DRECTMESH )
               {
-              vtkRectilinearGrid *ds=dynamic_cast<vtkRectilinearGrid *>(output->GetDataSet(0,datasetIdx));
+              vtkRectilinearGrid *ds=vtkRectilinearGrid::SafeDownCast(output->GetDataSet(0,datasetIdx));
               if(ds==0)
                 {
                 someOutputChanged=1;
@@ -898,7 +898,7 @@ int vtkXdmfReaderInternal::RequestActualGridData(
     }
   else // Handle collection
     {
-    vtkHierarchicalDataSet *hd=dynamic_cast<vtkHierarchicalDataSet *>(outInfo->Get(vtkCompositeDataSet::COMPOSITE_DATA_SET()));
+    vtkHierarchicalDataSet *hd=vtkHierarchicalDataSet::SafeDownCast(outInfo->Get(vtkCompositeDataSet::COMPOSITE_DATA_SET()));
     
     vtkXdmfReaderGridCollection::SetOfGrids::iterator gridIt;
     vtkXdmfReaderGridCollection::SetOfGrids::iterator gridItEnd;
@@ -1810,7 +1810,7 @@ int vtkXdmfReaderInternal::RequestActualGridInformation(
     vtkDataObject *outputDataSet =info->Get(vtkCompositeDataSet::COMPOSITE_DATA_SET());
     
     
-    vtkHierarchicalDataSet *hd=dynamic_cast<vtkHierarchicalDataSet *>(outputDataSet);
+    vtkHierarchicalDataSet *hd=vtkHierarchicalDataSet::SafeDownCast(outputDataSet);
     
     assert("check: hd_exists" && hd!=0);
    
