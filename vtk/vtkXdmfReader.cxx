@@ -87,7 +87,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.62");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.63");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -118,28 +118,91 @@ public:
   XdmfGrid       *XMGrid;
   XdmfDataDesc   *DataDescription;
   vtkstd::string Name;
+  int Level;
 };
 
 //----------------------------------------------------------------------------
 class vtkXdmfReaderGridCollection
 {
 public:
-  vtkXdmfReaderGrid* GetXdmfGrid(const char* gridName);
+  vtkXdmfReaderGrid* GetXdmfGrid(const char* gridName,
+                                 int level);
 
   typedef vtkstd::map<vtkstd::string, vtkXdmfReaderGrid*> SetOfGrids;
   SetOfGrids Grids;
+  // Update number of levels and number of datasets.
+  void UpdateCounts();
+  
+  // Return the last number of levels computed by UpdateCounts.
+  int GetNumberOfLevels()
+    {
+      return this->NumberOfLevels;
+    }
+  // Return the last number of dataset for a given level
+  // computed by UpdateCounts.
+  int GetNumberOfDataSets(int level)
+    {
+      assert("pre: valid_level" && level>=0 && level<GetNumberOfLevels());
+      return this->NumberOfDataSets[level];
+    }
+  
+protected:
+  int NumberOfLevels;
+  vtkstd::vector<int> NumberOfDataSets;
 };
 
 //----------------------------------------------------------------------------
 vtkXdmfReaderGrid* vtkXdmfReaderGridCollection::GetXdmfGrid(
-  const char* gridName)
+  const char *gridName,
+  int level)
 {
   vtkXdmfReaderGridCollection::SetOfGrids::iterator it = this->Grids.find(gridName);
   if ( it == this->Grids.end() || it->second == 0 )
     {
     this->Grids[gridName] = new vtkXdmfReaderGrid;
     }
+  this->Grids[gridName]->Level=level;
   return this->Grids[gridName];
+}
+
+//----------------------------------------------------------------------------
+void vtkXdmfReaderGridCollection::UpdateCounts()
+{
+  // Update the number of levels.
+  vtkXdmfReaderGridCollection::SetOfGrids::iterator it;
+  vtkXdmfReaderGridCollection::SetOfGrids::iterator itEnd;
+  
+  int maxLevel=0;
+  it=this->Grids.begin();
+  itEnd=this->Grids.end();
+  while(it!=itEnd)
+    {
+    int level=it->second->Level;
+    if(level>maxLevel)
+      {
+      maxLevel=level;
+      }
+    ++it;
+    }
+  this->NumberOfLevels=maxLevel+1;
+  this->NumberOfDataSets.resize(this->NumberOfLevels);
+ 
+  // Update the number of datasets
+  int l=this->NumberOfLevels;
+  int i=0;
+  while(i<l)
+    {
+    this->NumberOfDataSets[i]=0;
+    ++i;
+    }
+  
+  it=this->Grids.begin();
+  while(it!=itEnd)
+    {
+    int level=it->second->Level;
+    ++this->NumberOfDataSets[level];
+    ++it;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -209,7 +272,8 @@ public:
   vtkXdmfReaderActualGrid* GetGrid(const char* gridName);
   vtkXdmfReaderActualGrid* GetGrid(int idx);
   vtkXdmfReaderGrid *GetXdmfGrid(const char *gridName,
-                                 const char *collectionName);
+                                 const char *collectionName,
+                                 const char *levelName);
 
   StringListType DomainList;
   XdmfXNode* DomainPtr;
@@ -244,8 +308,9 @@ vtkXdmfReaderGridCollection* vtkXdmfReaderInternal::GetCollection(
 
 //----------------------------------------------------------------------------
 vtkXdmfReaderGrid* vtkXdmfReaderInternal::GetXdmfGrid(
-  const char* gridName,
-  const char* collectionName)
+  const char *gridName,
+  const char *collectionName,
+  const char *levelName)
 {
   if ( !gridName )
     {
@@ -259,7 +324,23 @@ vtkXdmfReaderGrid* vtkXdmfReaderInternal::GetXdmfGrid(
       {
       return 0;
       }
-    return collection->GetXdmfGrid(gridName);
+    int level;
+    if(levelName==0)
+      {
+      level=0;
+      }
+    else
+      {
+      
+      istrstream s(levelName,strlen(levelName));
+      s>>level;
+      if(level<0)
+        {
+        cerr << "Expect a positive Level value" << endl;
+        return 0;
+        }
+      }
+    return collection->GetXdmfGrid(gridName,level);
     }
 
   vtkXdmfReaderActualGrid* grid = this->GetGrid(gridName);
@@ -773,8 +854,18 @@ int vtkXdmfReaderInternal::RequestActualGridData(
     vtkHierarchicalDataSet *hd=vtkHierarchicalDataSet::SafeDownCast(outInfo->Get(vtkCompositeDataSet::COMPOSITE_DATA_SET()));
     
     unsigned int numberOfDataSets=currentActualGrid->Collection->Grids.size();
-    hd->SetNumberOfLevels(1);
-    hd->SetNumberOfDataSets(0,numberOfDataSets);
+    
+    currentActualGrid->Collection->UpdateCounts();
+    int levels=currentActualGrid->Collection->GetNumberOfLevels();
+    hd->SetNumberOfLevels(levels);
+    
+    int level=0;
+    while(level<levels)
+      {
+      hd->SetNumberOfDataSets(level,currentActualGrid->Collection->GetNumberOfDataSets(level));
+      ++level;
+      }
+ 
     
     vtkXdmfReaderGridCollection::SetOfGrids::iterator gridIt;
     vtkXdmfReaderGridCollection::SetOfGrids::iterator gridItEnd;
@@ -804,28 +895,39 @@ int vtkXdmfReaderInternal::RequestActualGridData(
     
     vtkHierarchicalDataInformation *compInfo=vtkHierarchicalDataInformation::SafeDownCast(info->Get(vtkCompositeDataPipeline::COMPOSITE_DATA_INFORMATION()));
     
+    // currentIndex in each level.
+    vtkstd::vector<int> currentIndex(levels);
+    level=0;
+    while(level<levels)
+      {
+      currentIndex[level]=0;
+      ++level;
+      }
+    
     while(gridIt != gridItEnd && result)
       {
+      vtkXdmfReaderGrid *subgrid=gridIt->second;
+      level=subgrid->Level;
+      int index=currentIndex[level];
       if(datasetIdx<blockStart || datasetIdx>blockEnd)
         {
-        hd->SetDataSet(0,datasetIdx,0); // empty, on another processor
+        hd->SetDataSet(level,index,0); // empty, on another processor
         }
       else
         {
-        vtkXdmfReaderGrid *subgrid=gridIt->second;
         XdmfGrid *xdmfGrid=subgrid->XMGrid;
         if( xdmfGrid->GetClass() == XDMF_UNSTRUCTURED ) 
           {
           vtkUnstructuredGrid *ds=vtkUnstructuredGrid::New();
           ds->SetMaximumNumberOfPieces(1);
-          hd->SetDataSet(0,datasetIdx,ds);
+          hd->SetDataSet(level,index,ds);
           ds->Delete();
           } 
         else if( xdmfGrid->GetTopologyType() == XDMF_2DSMESH ||
                  xdmfGrid->GetTopologyType() == XDMF_3DSMESH )
           {
           vtkStructuredGrid *ds=vtkStructuredGrid::New();
-          hd->SetDataSet(0,datasetIdx,ds);
+          hd->SetDataSet(level,index,ds);
           ds->Delete();
           }
         else if ( xdmfGrid->GetTopologyType() == XDMF_2DCORECTMESH ||
@@ -836,14 +938,14 @@ int vtkXdmfReaderInternal::RequestActualGridData(
 #else
             vtkUniformGrid *ds=vtkUniformGrid::New();
 #endif
-            hd->SetDataSet(0,datasetIdx,ds);
+            hd->SetDataSet(level,index,ds);
             ds->Delete();
           }
         else if ( xdmfGrid->GetTopologyType() == XDMF_2DRECTMESH ||
                   xdmfGrid->GetTopologyType() == XDMF_3DRECTMESH )
           {
             vtkRectilinearGrid *ds=vtkRectilinearGrid::New();
-            hd->SetDataSet(0,datasetIdx,ds);
+            hd->SetDataSet(level,index,ds);
             ds->Delete();
           }
         else
@@ -851,10 +953,11 @@ int vtkXdmfReaderInternal::RequestActualGridData(
           // Unknown type for this sub grid. 
           return 0;
           }
-        vtkDataObject *ds=hd->GetDataSet(0,datasetIdx);
-        vtkInformation *subInfo=compInfo->GetInformation(0,datasetIdx);
+        vtkDataObject *ds=hd->GetDataSet(level,index);
+        vtkInformation *subInfo=compInfo->GetInformation(level,index);
         result=this->RequestSingleGridData("",gridIt->second,subInfo,ds,1);
         }
+      ++currentIndex[level];
       ++gridIt;
       ++datasetIdx;
       }
@@ -1697,9 +1800,20 @@ int vtkXdmfReaderInternal::RequestActualGridInformation(
     vtkInformation* info = outputVector->GetInformationObject(outputGrid);
       
     vtkHierarchicalDataInformation *compInfo=vtkHierarchicalDataInformation::New();
-    compInfo->SetNumberOfLevels(1);
+    
+    currentActualGrid->Collection->UpdateCounts();
+    int levels=currentActualGrid->Collection->GetNumberOfLevels();
+    compInfo->SetNumberOfLevels(levels);
+    
+    int level=0;
+    while(level<levels)
+      {
+      compInfo->SetNumberOfDataSets(level,currentActualGrid->Collection->GetNumberOfDataSets(level));
+      ++level;
+      }
+    
     unsigned int numberOfDataSets=currentActualGrid->Collection->Grids.size();
-    compInfo->SetNumberOfDataSets(0,numberOfDataSets);
+    
     info->Set(vtkCompositeDataPipeline::COMPOSITE_DATA_INFORMATION(),compInfo);
     compInfo->Delete();
     
@@ -1734,16 +1848,30 @@ int vtkXdmfReaderInternal::RequestActualGridInformation(
     int datasetIdx=0;
     gridIt=currentActualGrid->Collection->Grids.begin();
     gridItEnd=currentActualGrid->Collection->Grids.end();
+    
+    // currentIndex in each level.
+    vtkstd::vector<int> currentIndex(levels);
+    level=0;
+    while(level<levels)
+      {
+      currentIndex[level]=0;
+      ++level;
+      }
+    
     while(gridIt != gridItEnd && result)
       {
+      vtkXdmfReaderGrid *subgrid=gridIt->second;
+      level=subgrid->Level;
+      int index=currentIndex[level];
+      
       // the following actually create the info about the block.
-      vtkInformation *subInfo=compInfo->GetInformation(0,datasetIdx);
+      vtkInformation *subInfo=compInfo->GetInformation(level,index);
       
       if(datasetIdx>=blockStart && datasetIdx<=blockEnd)
         {      
-        result=this->RequestSingleGridInformation(gridIt->second,
-                                                  subInfo);
+        result=this->RequestSingleGridInformation(subgrid,subInfo);
         }
+      ++currentIndex[level];
       ++gridIt;
       ++datasetIdx;
       }
@@ -2583,7 +2711,22 @@ void vtkXdmfReader::UpdateGrids()
     gridName = str.str();
     XdmfConstString collectionName = this->DOM->Get( gridNode, "Collection" );
 
-    vtkXdmfReaderGrid* grid = this->Internals->GetXdmfGrid(gridName, collectionName);
+    // Copy collectionName because it is a pointer to an internal
+    // string that will reused and overwritten when we will call Get
+    // on "Level".
+    char *collName=0;
+    if(collectionName!=0)
+      {
+      collName=new char[strlen(collectionName)+1]; 
+      strcpy(collName,collectionName);
+      }
+    XdmfConstString levelName = this->DOM->Get( gridNode, "Level" );
+    
+    vtkXdmfReaderGrid* grid = this->Internals->GetXdmfGrid(gridName, collName,levelName);
+    if(collName!=0)
+      {
+      delete[] collName;
+      }
     if ( !grid )
       {
       // Error happened
