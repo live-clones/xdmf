@@ -87,7 +87,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.63");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.64");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -331,13 +331,19 @@ vtkXdmfReaderGrid* vtkXdmfReaderInternal::GetXdmfGrid(
       }
     else
       {
-      
-      istrstream s(levelName,strlen(levelName));
+      char *tmp=new char[strlen(levelName)+1];
+      strcpy(tmp,levelName);
+      istrstream s(tmp,strlen(tmp));
       s>>level;
       if(level<0)
         {
-        cerr << "Expect a positive Level value" << endl;
+        cerr << "Expect a positive Level value, level=" << level <<endl;
+        delete[] tmp;
         return 0;
+        }
+      else
+        {
+        delete[] tmp;
         }
       }
     return collection->GetXdmfGrid(gridName,level);
