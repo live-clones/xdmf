@@ -49,6 +49,12 @@ public:
   vtkGetMacro(AllLight, int);
 
   // Description:
+  // Make all data heavy, including rectilinear grid arrays.
+  vtkSetClampMacro(AllHeavy, int, 0, 1);
+  vtkBooleanMacro(AllHeavy, int);
+  vtkGetMacro(AllHeavy, int);
+
+  // Description:
   // Set or get the file name of the xdmf file.
   virtual void SetFileName(const char* fname);
   virtual const char* GetFileName();
@@ -62,6 +68,18 @@ public:
   // Set or ger the domain name.
   vtkSetStringMacro(DomainName);
   vtkGetStringMacro(DomainName);
+
+  // Description:
+  // Collection name defines collection grids belong to
+  vtkSetStringMacro(CollectionName);
+  vtkGetStringMacro(CollectionName);
+
+  // Description:
+  // If GridOnly is set, only the grid will be written and all the header
+  // information will be ignored
+  vtkSetClampMacro(GridOnly, int, 0, 1);
+  vtkBooleanMacro(GridOnly, int);
+  vtkGetMacro(GridOnly, int);
 
   // Description:
   // Set or get the name of the heavy data file name.
@@ -124,9 +142,10 @@ protected:
   virtual int WritePoints( ostream& ost, vtkPoints *Points, vtkDataSet* dataSet, const char* gridName );
   virtual int WriteDataArray( ostream& ost, vtkDataArray* array, vtkDataSet* ds,
     int dims[3], const char* Name, const char* Center, int type, const char* gridName,
-    int active );
+    int active, int cellData = 0 );
   virtual int WriteVTKArray( ostream& ost, vtkDataArray* array, vtkDataSet* dataSet,
-    int dims[3], int *extents, const char* name, const char* dataName, const char* gridName, int alllight);
+    int dims[3], int *extents, const char* name, const char* dataName, const char* gridName, int alllight,
+    int cellData = 0);
 
   vtkSetStringMacro(HeavyDataSetNameString);
   char    *HeavyDataSetNameString;
@@ -135,10 +154,14 @@ protected:
   char    *FileNameString;
   char    *GridName;
   char    *DomainName;
+  char    *CollectionName;
   
   int    AllLight;
+  int    AllHeavy;
 
   int CurrIndent;
+
+  int GridOnly;
 
   vtkSetStringMacro(HDF5ArrayName);
   char* HDF5ArrayName;

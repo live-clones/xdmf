@@ -110,7 +110,7 @@ struct vtkXdmfWriterInternal
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfWriter);
-vtkCxxRevisionMacro(vtkXdmfWriter, "1.21");
+vtkCxxRevisionMacro(vtkXdmfWriter, "1.22");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter::vtkXdmfWriter()
@@ -119,15 +119,19 @@ vtkXdmfWriter::vtkXdmfWriter()
   this->HeavyDataSetNameString = 0;
   this->GridName = 0;
   this->DomainName = 0;
+  this->CollectionName = 0;
   this->SetHeavyDataSetName( "XdmfData.h5" );
   this->SetGridName( "Unnamed" );
 
   this->AllLight = 0;
+  this->AllHeavy = 0;
   this->CurrIndent = 0;
 
   this->InputList = 0;
 
   this->HDF5ArrayName = 0;
+
+  this->GridOnly = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -193,6 +197,7 @@ void vtkXdmfWriter::SetHeavyDataSetName( const char *name)
   else
     {
     this->AllLight = 1;
+    this->AllHeavy = 0;
     }
   this->Modified();
 }
@@ -448,7 +453,8 @@ vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost,
   const char* dataName, const char* arrayName, const char* gridName,
   const char* scalar_type, NType value,
   int allLight, int type,
-  int dims[3])
+  int dims[3],
+  int cellData)
 {
   if ( !array )
     {
@@ -490,6 +496,14 @@ vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost,
         vtkStructuredGrid* grid = vtkStructuredGrid::SafeDownCast(dataSet);
         grid->GetUpdateExtent(updateExtent);
         grid->GetExtent(extent);
+        if ( cellData )
+          {
+          for ( cc = 0; cc < 3; cc ++ )
+            {
+            updateExtent[cc*2+1] -= 1;
+            extent[cc*2+1] -= 1;
+            }
+          }
         useExtents = 1;
         }
       break;
@@ -498,6 +512,17 @@ vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost,
         vtkRectilinearGrid* grid = vtkRectilinearGrid::SafeDownCast(dataSet);
         grid->GetUpdateExtent(updateExtent);
         grid->GetExtent(extent);
+        if ( cellData )
+          {
+          cout << "Fix for cell arrays" << endl;
+          cout << "Extent: " << extent[0] << " " << extent[1] << " " << extent[2] << " " << extent[3] << " " << extent[4] << " " << extent[5] << endl;
+          cout << "updateExtent: " << updateExtent[0] << " " << updateExtent[1] << " " << updateExtent[2] << " " << updateExtent[3] << " " << updateExtent[4] << " " << updateExtent[5] << endl;
+          for ( cc = 0; cc < 3; cc ++ )
+            {
+            updateExtent[cc*2+1] -= 1;
+            extent[cc*2+1] -= 1;
+            }
+          }
         useExtents = 1;
         }
       break;
@@ -507,6 +532,11 @@ vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost,
         grid->GetUpdateExtent(updateExtent);
         grid->GetExtent(extent);
         useExtents = 1;
+        for ( cc = 0; cc < 6; cc ++ )
+          {
+          updateExtent[cc*2+1] -= cellData;
+          extent[cc*2+1] -= cellData;
+          }
         }
       break;
     case VTK_IMAGE_DATA:
@@ -515,6 +545,11 @@ vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost,
         vtkImageData* grid = vtkImageData::SafeDownCast(dataSet);
         grid->GetUpdateExtent(updateExtent);
         grid->GetExtent(extent);
+        for ( cc = 0; cc < 6; cc ++ )
+          {
+          updateExtent[cc*2+1] -= cellData;
+          extent[cc*2+1] -= cellData;
+          }
         useExtents = 1;
         }
       break;
@@ -605,6 +640,17 @@ vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost,
       cout << "Use Extent" << endl;
       jj = 0;
       vtkIdType idx = 0;
+      vtkIdType size =
+        (updateExtent[1]-updateExtent[0] + 1) *
+        (updateExtent[3]-updateExtent[2] + 1) *
+        (updateExtent[5]-updateExtent[4] + 1);
+      cout << "Size: " << size << " " << array->GetNumberOfComponents() << endl;
+      if ( size != array->GetNumberOfTuples() )
+        {
+        // Error
+        vtkErrorWithObjectMacro(self, "Wrong number of tuples in the dataset. Found " << array->GetNumberOfTuples() << " expected: " << size);
+        }
+
       for ( zz = extent[4]; zz <= extent[5]; ++ zz)
         {
         for ( yy = extent[2]; yy <= extent[3]; ++ yy)
@@ -712,6 +758,16 @@ vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost,
       vtkIdType idx = 0;
       vtkIdType kk;
       vtkIdType xx, yy, zz;
+      vtkIdType size =
+        (updateExtent[1]-updateExtent[0] + 1) *
+        (updateExtent[3]-updateExtent[2] + 1) *
+        (updateExtent[5]-updateExtent[4] + 1);
+      cout << "Size: " << size << " " << array->GetNumberOfComponents() << endl;
+      if ( size != array->GetNumberOfTuples() )
+        {
+        // Error
+        vtkErrorWithObjectMacro(self, "Wrong number of tuples in the dataset. Found " << array->GetNumberOfTuples() << " expected: " << size);
+        }
       for ( zz = extent[4]; zz <= extent[5]; ++ zz)
         {
         for ( yy = extent[2]; yy <= extent[3]; ++ yy)
@@ -761,7 +817,7 @@ vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost,
 
 //----------------------------------------------------------------------------
 int vtkXdmfWriter::WriteDataArray( ostream& ost, vtkDataArray* array, vtkDataSet* dataSet,
-  int dims[3], const char* Name, const char* Center, int type, const char* gridName, int active )
+  int dims[3], const char* Name, const char* Center, int type, const char* gridName, int active, int cellData )
 {
   const char* arrayName = Name;
   if ( array->GetName() )
@@ -800,7 +856,7 @@ int vtkXdmfWriter::WriteDataArray( ostream& ost, vtkDataArray* array, vtkDataSet
   ost << " Name=\"" << arrayName << "\">";
   this->Indent(ost);
   vtkIdType res = this->WriteVTKArray( ost, array, dataSet, 0, dims, arrayName, 0, gridName,
-    this->AllLight );
+    this->AllLight, cellData );
   this->DecrementIndent();
   this->Indent(ost);
   ost << "</Attribute>";
@@ -811,7 +867,7 @@ int vtkXdmfWriter::WriteDataArray( ostream& ost, vtkDataArray* array, vtkDataSet
 //----------------------------------------------------------------------------
 int vtkXdmfWriter::WriteVTKArray( ostream& ost, vtkDataArray* array, vtkDataSet* dataSet, 
   int *scaledExtent, int dims[3], const char* Name, const char* dataName, const char* gridName,
-  int alllight )
+  int alllight, int cellData = 0 )
 {
   vtkIdType res = -1;
   int int_type;
@@ -828,42 +884,42 @@ int vtkXdmfWriter::WriteVTKArray( ostream& ost, vtkDataArray* array, vtkDataSet*
   case VTK_UNSIGNED_CHAR:
     res = vtkXdmfWriterWriteXMLScalar(this, ost, vtkUnsignedCharArray::SafeDownCast(array),
       dataSet, scaledExtent, dataName, Name, gridName, "UChar", static_cast<short>(0), alllight,
-      XDMF_UINT8_TYPE, dims);
+      XDMF_UINT8_TYPE, dims, cellData);
     break;
   case VTK_UNSIGNED_SHORT:
     res = vtkXdmfWriterWriteXMLScalar(this, ost, vtkUnsignedShortArray::SafeDownCast(array),
       dataSet, scaledExtent, dataName, Name, gridName, "UInt", static_cast<short>(0), alllight,
-      XDMF_UINT16_TYPE, dims);
+      XDMF_UINT16_TYPE, dims, cellData);
     break;
   case VTK_UNSIGNED_INT:
     res = vtkXdmfWriterWriteXMLScalar(this, ost, vtkUnsignedIntArray::SafeDownCast(array),
       dataSet, scaledExtent, dataName, Name, gridName, "UInt", static_cast<int>(0), alllight,
-      XDMF_UINT32_TYPE, dims);
+      XDMF_UINT32_TYPE, dims, cellData);
     break;
   case VTK_CHAR:
     res = vtkXdmfWriterWriteXMLScalar(this, ost, vtkCharArray::SafeDownCast(array),
       dataSet, scaledExtent, dataName, Name, gridName, "Char", static_cast<short>(0), alllight,
-      XDMF_INT8_TYPE, dims);
+      XDMF_INT8_TYPE, dims, cellData);
     break;
   case VTK_SHORT:
     res = vtkXdmfWriterWriteXMLScalar(this, ost, vtkShortArray::SafeDownCast(array),
       dataSet, scaledExtent, dataName, Name, gridName, "Int", static_cast<short>(0), alllight,
-      XDMF_INT16_TYPE, dims);
+      XDMF_INT16_TYPE, dims, cellData);
     break;
   case VTK_INT:
     res = vtkXdmfWriterWriteXMLScalar(this, ost, vtkIntArray::SafeDownCast(array),
       dataSet, scaledExtent, dataName, Name, gridName, "Int", static_cast<int>(0), alllight,
-      int_type, dims);
+      int_type, dims, cellData);
     break;
   case VTK_FLOAT:
     res = vtkXdmfWriterWriteXMLScalar(this, ost, vtkFloatArray::SafeDownCast(array),
       dataSet, scaledExtent, dataName, Name, gridName, "Float", static_cast<float>(0), alllight,
-      XDMF_FLOAT32_TYPE, dims);
+      XDMF_FLOAT32_TYPE, dims, cellData);
     break;
   case VTK_DOUBLE:
     res = vtkXdmfWriterWriteXMLScalar(this, ost, vtkDoubleArray::SafeDownCast(array),
       dataSet, scaledExtent, dataName, Name, gridName, "Float", static_cast<double>(0), alllight,
-      XDMF_FLOAT64_TYPE, dims);
+      XDMF_FLOAT64_TYPE, dims, cellData);
     break;
   default:
     vtkErrorMacro("Unknown scalar type: " << array->GetDataType());
@@ -933,7 +989,7 @@ void vtkXdmfWriter::WriteAttributes( ostream& ost, vtkDataSet* ds, const char* g
         }
       char buffer[100];
       sprintf(buffer, "UnnamedCellArray%d", cc);
-      this->WriteDataArray( ost, array, ds, cdims, buffer, "Cell", type, gridName, active );
+      this->WriteDataArray( ost, array, ds, cdims, buffer, "Cell", type, gridName, active, 1 );
       }
     }
   if( PointData )
@@ -963,7 +1019,7 @@ void vtkXdmfWriter::WriteAttributes( ostream& ost, vtkDataSet* ds, const char* g
         }
       char buffer[100];
       sprintf(buffer, "UnnamedNodeArray%d", cc);
-      this->WriteDataArray( ost, array, ds, pdims, buffer, "Node", type, gridName, active );
+      this->WriteDataArray( ost, array, ds, pdims, buffer, "Node", type, gridName, active, 0 );
       }
     }
 }
@@ -979,7 +1035,12 @@ int vtkXdmfWriter::WriteGrid( ostream& ost, const char* gridName, vtkDataSet* ds
     vtkErrorMacro("No Input Data Set");
     return( -1 );
     }
-  ost << "<Grid Name=\"" << gridName << "\">";
+  ost << "<Grid Name=\"" << gridName << "\"";
+  if ( this->CollectionName )
+    {
+    ost << " Collection=\"" << this->CollectionName << "\"";
+    }
+  ost << ">";
   this->IncrementIndent();
   this->Indent(ost);
   type = ds->GetDataObjectType();
@@ -1107,19 +1168,19 @@ int vtkXdmfWriter::WriteGrid( ostream& ost, const char* gridName, vtkDataSet* ds
     scaledExtent[0] = updateExtent[0] - extent[0];
     scaledExtent[1] = updateExtent[1] - extent[0];
     cout << "Scaled Extent: " << scaledExtent[0] << " " << scaledExtent[1] << endl;
-    this->WriteVTKArray( ost, Coord, ds, scaledExtent, dummydims, "X Coordinates", "X", gridName, 1);
+    this->WriteVTKArray( ost, Coord, ds, scaledExtent, dummydims, "X Coordinates", "X", gridName, !this->AllHeavy);
     this->Indent(ost);
     // Y Coordinated
     Coord = RGrid->GetYCoordinates();
     scaledExtent[0] = updateExtent[2] - extent[2];
     scaledExtent[1] = updateExtent[3] - extent[2];
-    this->WriteVTKArray( ost, Coord, ds, scaledExtent, dummydims, "Y Coordinates", "Y", gridName, 1);
+    this->WriteVTKArray( ost, Coord, ds, scaledExtent, dummydims, "Y Coordinates", "Y", gridName, !this->AllHeavy);
     this->Indent(ost);
     // Z Coordinated
     Coord = RGrid->GetZCoordinates();
     scaledExtent[0] = updateExtent[4] - extent[4];
     scaledExtent[1] = updateExtent[5] - extent[4];
-    this->WriteVTKArray( ost, Coord, ds, scaledExtent, dummydims, "Z Coordinates", "Z", gridName, 1);
+    this->WriteVTKArray( ost, Coord, ds, scaledExtent, dummydims, "Z Coordinates", "Z", gridName, !this->AllHeavy);
     this->EndGeometry(ost);
     }
   this->Indent(ost);
@@ -1135,6 +1196,12 @@ int vtkXdmfWriter::WriteGrid( ostream& ost, const char* gridName, vtkDataSet* ds
 //----------------------------------------------------------------------------
 void vtkXdmfWriter::Write()
 {
+  if ( this->AllLight && this->AllHeavy )
+    {
+    vtkErrorMacro("AllLight and AllHeavy are mutually exclusive. Please only select one.");
+    return;
+    }
+
   if ( !this->FileNameString )
     {
     vtkErrorMacro("No file name specified");
@@ -1156,14 +1223,17 @@ void vtkXdmfWriter::Write()
 
   cout << "Write to file: " << this->FileNameString << endl;
 
-  this->WriteHead(ofs);
   int cc;
-  ofs << "<Domain";
-  if ( this->DomainName )
+  if ( !this->GridOnly )
     {
-    ofs << " Name=\"" << this->DomainName << "\"";
+    this->WriteHead(ofs);
+    ofs << "<Domain";
+    if ( this->DomainName )
+      {
+      ofs << " Name=\"" << this->DomainName << "\"";
+      }
+    ofs << ">";
     }
-  ofs << ">";
   this->IncrementIndent();
   for ( cc = 0; cc < numberOfInputs; cc ++ )
     {
@@ -1227,9 +1297,12 @@ void vtkXdmfWriter::Write()
 
     }
   this->DecrementIndent();
-  this->Indent( ofs );
-  ofs << "</Domain>" << endl;
-  this->WriteTail(ofs);
+  if ( !this->GridOnly )
+    {
+    this->Indent( ofs );
+    ofs << "</Domain>" << endl;
+    this->WriteTail(ofs);
+    }
 }
 
 //----------------------------------------------------------------------------
