@@ -75,7 +75,7 @@ int main(int,char *[])
       Xdmf_BINARY_DIR "/CMakeCache.txt", 
       Xdmf_BINARY_DIR "/Ice/libsrc/IceConfig.h",
       Xdmf_BINARY_DIR "/libsrc/XdmfConfig.h.h",
-      Xdmf_BINARY_DIR "/CMakeError.log",
+      Xdmf_BINARY_DIR "/CMakeFiles/CMakeError.log",
       Xdmf_BINARY_DIR "/CMake/CMakeCache.txt", 
       Xdmf_BINARY_DIR "/XDMFBuildSettings.cmake",
       Xdmf_BINARY_DIR "/XDMFLibraryDepends.cmake",
