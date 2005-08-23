@@ -662,7 +662,7 @@ XdmfDebug("Using Domain " << this->Domain );
     } else if( STRCASECMP( this->Domain, "GASS" ) == 0 ) {
     } else {
 // Check for Parallel HDF5 ... MPI must already be initialized
-#if H5_HAVE_PARALLEL && (H5_VERS_MAJOR >= 1) && (H5_VERS_MINOR >= 6)
+#if H5_HAVE_PARALLEL && ((H5_VERS_MAJOR>1)||((H5_VERS_MAJOR==1)&&(H5_VERS_MINOR>=6)))
     if((!this->UseSerialFile) && (STRCASECMP( this->Domain, "SERIAL" ) != 0 )) {
       XdmfDebug("Using Parallel File Interface, Path = " << this->GetWorkingDirectory() );
 

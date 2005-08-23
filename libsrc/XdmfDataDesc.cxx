@@ -303,7 +303,7 @@ for( i = 0 ; i < this->Rank ; i++ ) {
 this->SelectionType = XDMF_HYPERSLAB;
 status = H5Sselect_hyperslab( this->DataSpace,
        H5S_SELECT_SET,
-#if (H5_VERS_MAJOR >= 1) && (H5_VERS_MINOR >= 6) && (H5_VERS_RELEASE >= 4)
+#if (H5_VERS_MAJOR>1)||((H5_VERS_MAJOR==1)&&((H5_VERS_MINOR>6)||((H5_VERS_MINOR==6)&&(H5_VERS_RELEASE>=4))))
        (const hsize_t *)this->Start, (const hsize_t *)this->Stride, (const hsize_t *)this->Count,
 #else
        (const hssize_t *)this->Start, (const hsize_t *)this->Stride, (const hsize_t *)this->Count,
@@ -317,11 +317,16 @@ return( XDMF_FAIL );
 
 XdmfInt32
 XdmfDataDesc::SelectCoordinates(  XdmfInt64 NumberOfElements, XdmfInt64 *Coordinates ){
-#if (H5_VERS_MAJOR >= 1) && (H5_VERS_MINOR >= 6) && (H5_VERS_RELEASE >= 4)
+
+/*#if (H5_VERS_MAJOR>1)||((H5_VERS_MAJOR==1)&&((H5_VERS_MINOR>6)||((H5_VERS_MINOR==6)&&(H5_VERS_RELEASE>=4))))
 hsize_t  *HCoordinates;
 #else
+*/
 hssize_t  *HCoordinates;
+/* 
 #endif
+*/
+
 XdmfInt32  status;
 XdmfInt64  i, rank = this->Rank;
 hssize_t  Length = NumberOfElements * rank;
@@ -338,7 +343,7 @@ HCoordinates = new hssize_t[ Length ];
 for( i = 0 ; i < Length ; i++ ){
   HCoordinates[i] = Coordinates[i];
   }
-#if (H5_VERS_MAJOR >= 1) && (H5_VERS_MINOR >= 6) && (H5_VERS_RELEASE >= 4)
+#if (H5_VERS_MAJOR>1)||((H5_VERS_MAJOR==1)&&((H5_VERS_MINOR>6)||((H5_VERS_MINOR==6)&&(H5_VERS_RELEASE>=4))))
 status = H5Sselect_elements( this->DataSpace,
         H5S_SELECT_SET,
          NElements,

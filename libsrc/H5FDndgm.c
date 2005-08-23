@@ -34,7 +34,7 @@
 #include "stdlib.h"
 #include "Ndgm/ndgm.h"
 #include "hdf5.h"
-#if (H5_VERS_MAJOR >= 1) && (H5_VERS_MINOR >= 6)
+#if (H5_VERS_MAJOR>1)||((H5_VERS_MAJOR==1)&&(H5_VERS_MINOR>=6))
 /*
 #include "H5Pprivate.h"
 */
@@ -123,7 +123,7 @@ typedef struct H5FD_ndgm_fapl_t {
  * REGION_OVERFLOW:  Checks whether an address and size pair describe data
  *      which can be addressed entirely in memory.
  */
-#if (H5_VERS_MAJOR >= 1) && (H5_VERS_MINOR >= 6)
+#if (H5_VERS_MAJOR>1)||((H5_VERS_MAJOR==1)&&(H5_VERS_MINOR>=6))
 #ifdef H5_HAVE_LSEEK64
 #   define file_offset_t        off64_t
 #   define file_seek            lseek64
@@ -168,38 +168,38 @@ static herr_t H5FD_ndgm_read(H5FD_t *_file, H5FD_mem_t type, hid_t fapl_id, hadd
 static herr_t H5FD_ndgm_write(H5FD_t *_file, H5FD_mem_t type, hid_t fapl_id, haddr_t addr,
             NDGM_HSIZE_T size, const void *buf);
 
-#if (H5_VERS_MAJOR >= 1) && (H5_VERS_MINOR >= 6)
+#if (H5_VERS_MAJOR>1)||((H5_VERS_MAJOR==1)&&(H5_VERS_MINOR>=6))
 
 static const H5FD_class_t H5FD_ndgm_g = {
-    "ndgm",					/*name			*/
-    MAXADDR,					/*maxaddr		*/
-    H5F_CLOSE_WEAK,				/*fc_degree		*/
-    NULL,					/*sb_size		*/
-    NULL,					/*sb_encode		*/
-    NULL,					/*sb_decode		*/
-    sizeof(H5FD_ndgm_fapl_t),			/*fapl_size		*/
-    H5FD_ndgm_fapl_get,				/*fapl_get		*/
-    NULL,					/*fapl_copy		*/
-    NULL, 					/*fapl_free		*/
-    0,						/*dxpl_size		*/
-    NULL,					/*dxpl_copy		*/
-    NULL,					/*dxpl_free		*/
-    H5FD_ndgm_open,				/*open			*/
-    H5FD_ndgm_close,				/*close			*/
-    H5FD_ndgm_cmp,				/*cmp			*/
-    NULL,				        /*query			*/
-    NULL,					/*alloc			*/
-    NULL,					/*free			*/
-    H5FD_ndgm_get_eoa,				/*get_eoa		*/
-    H5FD_ndgm_set_eoa, 				/*set_eoa		*/
-    H5FD_ndgm_get_eof,				/*get_eof		*/
-    NULL,		                       /*get_handle            */
-    H5FD_ndgm_read,				/*read			*/
-    H5FD_ndgm_write,				/*write			*/
-    NULL,					/*flush			*/
+    "ndgm",                 /*name          */
+    MAXADDR,                    /*maxaddr       */
+    H5F_CLOSE_WEAK,             /*fc_degree     */
+    NULL,                   /*sb_size       */
+    NULL,                   /*sb_encode     */
+    NULL,                   /*sb_decode     */
+    sizeof(H5FD_ndgm_fapl_t),           /*fapl_size     */
+    H5FD_ndgm_fapl_get,             /*fapl_get      */
+    NULL,                   /*fapl_copy     */
+    NULL,                   /*fapl_free     */
+    0,                      /*dxpl_size     */
+    NULL,                   /*dxpl_copy     */
+    NULL,                   /*dxpl_free     */
+    H5FD_ndgm_open,             /*open          */
+    H5FD_ndgm_close,                /*close         */
+    H5FD_ndgm_cmp,              /*cmp           */
+    NULL,                       /*query         */
+    NULL,                   /*alloc         */
+    NULL,                   /*free          */
+    H5FD_ndgm_get_eoa,              /*get_eoa       */
+    H5FD_ndgm_set_eoa,              /*set_eoa       */
+    H5FD_ndgm_get_eof,              /*get_eof       */
+    NULL,                              /*get_handle            */
+    H5FD_ndgm_read,             /*read          */
+    H5FD_ndgm_write,                /*write         */
+    NULL,                   /*flush         */
     NULL,                                       /*lock                  */
     NULL,                                       /*unlock                */
-    H5FD_FLMAP_SINGLE 				/*fl_map		*/
+    H5FD_FLMAP_SINGLE               /*fl_map        */
 };
 #else
 static const H5FD_class_t H5FD_ndgm_g = {
@@ -518,12 +518,12 @@ H5Pset_fapl_ndgm(hid_t fapl_id, size_t increment, const char *host )
     H5FD_ndgm_fapl_t  fa;
 
 #ifdef HDF_IO_DEBUG
-	printf("Setting fapl Increment = %d Host = <%s>\n", increment, host );
+    printf("Setting fapl Increment = %d Host = <%s>\n", increment, host );
 #endif
     fa.increment = increment;
     fa.host = NULL;
     if( host != NULL ){
-    	fa.host = strdup( host );
+        fa.host = strdup( host );
     }
 
     return H5Pset_driver(fapl_id, H5FD_NDGM, &fa);
@@ -898,8 +898,8 @@ printf("H5FD_ndgm_set_eoa Address OverFLow at %ld \n", addr);
 printf("H5FD_ndgm_set_eoa MAXADDR = %ld \n", MAXADDR);
 printf("H5FD_ndgm_set_eoa Address (addr) & ~(haddr_t)MAXADDR) = %ld \n", (addr) & ~(haddr_t)MAXADDR);
 #endif
-	 return -1;
-	}
+     return -1;
+    }
     file->eof = file->eoa = addr;
   H5FD_ndgm_UpdateEntry( file );
     return 0;
