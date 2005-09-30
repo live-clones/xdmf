@@ -61,7 +61,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "vtkXMLParser.h"
 #include "vtkImageData.h"
 #include "vtkUniformGrid.h"
-#include "vtkHierarchicalDataInformation.h"
+#include "vtkMultiGroupDataInformation.h"
 #include "vtkHierarchicalDataSet.h"
 #include "vtkCompositeDataPipeline.h"
 #include "vtkMultiProcessController.h"
@@ -87,7 +87,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.64");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.65");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -899,7 +899,7 @@ int vtkXdmfReaderInternal::RequestActualGridData(
     
     int datasetIdx=0;
     
-    vtkHierarchicalDataInformation *compInfo=vtkHierarchicalDataInformation::SafeDownCast(info->Get(vtkCompositeDataPipeline::COMPOSITE_DATA_INFORMATION()));
+    vtkMultiGroupDataInformation *compInfo=vtkMultiGroupDataInformation::SafeDownCast(info->Get(vtkCompositeDataPipeline::COMPOSITE_DATA_INFORMATION()));
     
     // currentIndex in each level.
     vtkstd::vector<int> currentIndex(levels);
@@ -1805,11 +1805,11 @@ int vtkXdmfReaderInternal::RequestActualGridInformation(
     { 
     vtkInformation* info = outputVector->GetInformationObject(outputGrid);
       
-    vtkHierarchicalDataInformation *compInfo=vtkHierarchicalDataInformation::New();
+    vtkMultiGroupDataInformation *compInfo=vtkMultiGroupDataInformation::New();
     
     currentActualGrid->Collection->UpdateCounts();
     int levels=currentActualGrid->Collection->GetNumberOfLevels();
-    compInfo->SetNumberOfLevels(levels);
+    compInfo->SetNumberOfGroups(levels);
     
     int level=0;
     while(level<levels)
@@ -2782,7 +2782,7 @@ void vtkXdmfReader::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Outputs: " << this->GetNumberOfOutputPorts() << endl;
   for ( cc = 0; cc < this->GetNumberOfOutputPorts(); cc ++ )
     {
-    vtkIndent nindent = indent.GetNextIndent();
+    //vtkIndent nindent = indent.GetNextIndent();
 //    os << nindent << "Output " << cc << " " << this->GetOutput(cc)->GetClassName() << endl;
 //    this->GetOutput(cc)->PrintSelf(os, nindent.GetNextIndent());
     }
