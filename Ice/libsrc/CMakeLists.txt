@@ -4,7 +4,7 @@ PROJECT(ICE)
 SET(ICE_YEAR 03)
 SET(ICE_MONTH 08)
 SET(ICE_VERSION
-  "${ICE_YEAR}.${ICE_MONTH)")
+  "${ICE_YEAR}.${ICE_MONTH}")
 
 # Platform configuration tests.
 INCLUDE(${CMAKE_ROOT}/Modules/CMakeBackwardCompatibilityC.cmake)
