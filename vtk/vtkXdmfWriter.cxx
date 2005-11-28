@@ -110,7 +110,7 @@ struct vtkXdmfWriterInternal
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfWriter);
-vtkCxxRevisionMacro(vtkXdmfWriter, "1.23");
+vtkCxxRevisionMacro(vtkXdmfWriter, "1.24");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter::vtkXdmfWriter()
@@ -253,6 +253,7 @@ int vtkXdmfWriter::WriteCellArray( ostream& ost, vtkDataSet *ds,
   ost << " Dimensions=\"" << il->GetNumberOfIds() << " " << PointsInPoly << "\"";
   this->Indent(ost);
   vtkIdList* cellPoints = vtkIdList::New();
+  vtkUnstructuredGrid* ug = vtkUnstructuredGrid::SafeDownCast(ds);
   if( this->AllLight )
     {
     ost << " Format=\"XML\">";
@@ -260,9 +261,32 @@ int vtkXdmfWriter::WriteCellArray( ostream& ost, vtkDataSet *ds,
       {
       this->Indent(ost);
       ds->GetCellPoints(il->GetId(i), cellPoints);
-      for( j = 0 ; j < PointsInPoly ; j++ )
+      if ( ct->VTKType == VTK_VOXEL )
         {
-        ost << " " << cellPoints->GetId(j);
+        // Hack for VTK_VOXEL
+        ost << " " << cellPoints->GetId(0);
+        ost << " " << cellPoints->GetId(1);
+        ost << " " << cellPoints->GetId(3);
+        ost << " " << cellPoints->GetId(2);
+        ost << " " << cellPoints->GetId(4);
+        ost << " " << cellPoints->GetId(5);
+        ost << " " << cellPoints->GetId(7);
+        ost << " " << cellPoints->GetId(6);
+        }
+      else if ( ct->VTKType == VTK_PIXEL )
+        {
+        // Hack for VTK_PIXEL
+        ost << " " << cellPoints->GetId(0);
+        ost << " " << cellPoints->GetId(1);
+        ost << " " << cellPoints->GetId(3);
+        ost << " " << cellPoints->GetId(2);
+        }
+      else
+        {
+        for( j = 0 ; j < PointsInPoly ; j++ )
+          {
+          ost << " " << cellPoints->GetId(j);
+          }
         }
       }
     } 
@@ -289,9 +313,32 @@ int vtkXdmfWriter::WriteCellArray( ostream& ost, vtkDataSet *ds,
       {
       vtkIdType cid = il->GetId(i);
       ds->GetCellPoints(cid, cellPoints);
-      for( j = 0 ; j < PointsInPoly ; j++ )
+      if ( ct->VTKType == VTK_VOXEL )
         {
-        *Dp++ = cellPoints->GetId(j);
+        // Hack for VTK_VOXEL
+        *Dp++ = cellPoints->GetId(0);
+        *Dp++ = cellPoints->GetId(1);
+        *Dp++ = cellPoints->GetId(3);
+        *Dp++ = cellPoints->GetId(2);
+        *Dp++ = cellPoints->GetId(4);
+        *Dp++ = cellPoints->GetId(5);
+        *Dp++ = cellPoints->GetId(7);
+        *Dp++ = cellPoints->GetId(6);
+        }
+      else if ( ct->VTKType == VTK_PIXEL )
+        {
+        // Hack for VTK_PIXEL
+        *Dp++ = cellPoints->GetId(0);
+        *Dp++ = cellPoints->GetId(1);
+        *Dp++ = cellPoints->GetId(3);
+        *Dp++ = cellPoints->GetId(2);
+        }
+      else
+        {
+        for( j = 0 ; j < PointsInPoly ; j++ )
+          {
+          *Dp++ = cellPoints->GetId(j);
+          }
         }
       }
     H5.CopyType( &Conns );
