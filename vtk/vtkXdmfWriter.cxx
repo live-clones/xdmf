@@ -110,7 +110,7 @@ struct vtkXdmfWriterInternal
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfWriter);
-vtkCxxRevisionMacro(vtkXdmfWriter, "1.24");
+vtkCxxRevisionMacro(vtkXdmfWriter, "1.25");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter::vtkXdmfWriter()
@@ -253,7 +253,6 @@ int vtkXdmfWriter::WriteCellArray( ostream& ost, vtkDataSet *ds,
   ost << " Dimensions=\"" << il->GetNumberOfIds() << " " << PointsInPoly << "\"";
   this->Indent(ost);
   vtkIdList* cellPoints = vtkIdList::New();
-  vtkUnstructuredGrid* ug = vtkUnstructuredGrid::SafeDownCast(ds);
   if( this->AllLight )
     {
     ost << " Format=\"XML\">";
