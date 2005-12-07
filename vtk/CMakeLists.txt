@@ -41,7 +41,7 @@ SET_SOURCE_FILES_PROPERTIES(
   )
 
 SET(VTK_BINARY_DIR "${Xdmf_BINARY_DIR}/vtk")
-INCLUDE(${VTK_SOURCE_DIR}/CMake/vtkExportKit.cmake)
+INCLUDE(${VTK_CMAKE_DIR}/vtkExportKit.cmake)
 VTK_EXPORT_KIT("Xdmf" "XDMF" "${Xdmf_SRCS}")
 
 # if vtk was found include the use vtk file
