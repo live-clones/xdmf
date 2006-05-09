@@ -56,6 +56,7 @@ IF (VTK_FOUND)
 
   # Create Tcl wrappers if VTK is wrapped in Tcl.
   IF(VTK_WRAP_TCL)
+    INCLUDE(${VTK_CMAKE_DIR}/vtkWrapTcl.cmake OPTIONAL)
     VTK_WRAP_TCL2(vtk${PROJECT_NAME}TCL XdmfTCL_SRCS ${Xdmf_SRCS})
     ADD_LIBRARY(vtk${PROJECT_NAME}TCL ${LIBTYPE} ${XdmfTCL_SRCS} ${Xdmf_SRCS})
     TARGET_LINK_LIBRARIES(vtk${PROJECT_NAME}TCL vtkIOTCL vtkRenderingTCL vtkParallelTCL Xdmf)
@@ -64,6 +65,7 @@ IF (VTK_FOUND)
 
   # Create Python wrappers if VTK is wrapped in Python.
   IF(VTK_WRAP_PYTHON)
+    INCLUDE(${VTK_CMAKE_DIR}/vtkWrapPython.cmake OPTIONAL)
     VTK_WRAP_PYTHON2(vtk${PROJECT_NAME}Python XdmfPython_SRCS ${Xdmf_SRCS})
     ADD_LIBRARY(vtk${PROJECT_NAME}Python SHARED ${XdmfPython_SRCS} ${Xdmf_SRCS})
     TARGET_LINK_LIBRARIES(vtk${PROJECT_NAME}Python vtkIOPython vtkRenderingPython vtkParallelPython Xdmf)
