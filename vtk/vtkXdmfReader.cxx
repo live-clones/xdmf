@@ -87,7 +87,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.66");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.67");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -1104,6 +1104,10 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
         return 1;
       }
     NodesPerElement = xdmfGrid->GetNodesPerElement();
+    if ( xdmfGrid->GetConnectivity()->GetRank() == 2 )
+      {
+      NodesPerElement = xdmfGrid->GetConnectivity()->GetDimension(1);
+      }
     
     /* Create Cell Type Array */
     Length = xdmfGrid->GetConnectivity()->GetNumberOfElements();
