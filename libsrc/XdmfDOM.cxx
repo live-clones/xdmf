@@ -95,6 +95,9 @@ XdmfDOM::XdmfDOM(){
   XDMF_STRING_DUPLICATE(this->InputFileName, "stdin");
   this->SetNdgmHost( "" );
   this->SetWorkingDirectory( "" );
+  this->SizeOfParameters = 10;
+  this->Parameters = new XdmfParameter*[this->SizeOfParameters];
+  this->NumberOfParameters = 0;
 }
 
 XdmfDOM::~XdmfDOM(){
@@ -126,6 +129,12 @@ XdmfDOM::~XdmfDOM(){
     {
     delete [] this->OutputFileName;
     }
+  XdmfInt32 idx;
+  for ( idx = 0; idx < this->NumberOfParameters; ++ idx )
+    {
+    delete this->Parameters[idx];
+    }
+  delete [] this->Parameters;
 }
 
 XdmfInt32
@@ -1010,9 +1019,33 @@ XdmfXNode    *ParamNode;
 NumberOfParameters = this->FindNumberOfParameters( Node );
 if( Index >= NumberOfParameters ) return( NULL );
 ParamNode = this->FindElement( "Parameter", Index, Node );
+
 if( ParamNode ) {
+  XdmfInt32 parIdx;
+  for ( parIdx = 0; parIdx < this->NumberOfParameters; ++ parIdx )
+    {
+    Param = *(this->Parameters + parIdx);
+    if ( Param->GetParameterNode() == ParamNode||
+      Param->GetParameterIndex() == Index )
+      {
+      return Param;
+      }
+    }
+
   Param = new XdmfParameter;
   Param->SetParameterNode( ParamNode );
-  }
+  Param->SetParameterIndex( Index );
+
+  if ( this->NumberOfParameters == this->SizeOfParameters - 1 )
+    {
+    XdmfParameter** newArray = new XdmfParameter*[this->SizeOfParameters*2];
+    memcpy(newArray, this->Parameters, this->SizeOfParameters*sizeof(XdmfParameter*));
+    delete [] this->Parameters;
+    this->Parameters = newArray;
+    this->SizeOfParameters = this->SizeOfParameters*2;
+    }
+  this->Parameters[this->NumberOfParameters] = Param;
+  this->NumberOfParameters++;
+}
 return( Param );
 }

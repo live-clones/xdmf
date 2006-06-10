@@ -35,6 +35,7 @@ XdmfParameter::XdmfParameter() {
   this->ParameterFormat[0] = '\0';
   this->ParameterArray = NULL;
   this->ParameterNode = NULL;
+  this->ParameterIndex = 0;
   }
 
 XdmfParameter::~XdmfParameter() {

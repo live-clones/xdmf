@@ -62,15 +62,15 @@ the following example we show a double substitution :
  Format="Data_%05d.h5:"
  Values="0 1 266"
  CurrentIndex="10" >
-	.
-	.
-	.
-	<DataStructure Type="HDF" ...
-		&HeavyData;:/Global Scalars/Pressure
-	</DataStructure>
-	.
-	.
-	.
+  .
+  .
+  .
+  <DataStructure Type="HDF" ...
+    &HeavyData;:/Global Scalars/Pressure
+  </DataStructure>
+  .
+  .
+  .
 </Parameter>
 
 \endverbatim
@@ -108,9 +108,9 @@ the Values :
  Format="Data_%f.h5:"
  Values="0.1 1.1 22.3"
  CurrentIndex="1" >
-	.
-	.
-	.
+  .
+  .
+  .
 \endverbatim
 
 Specifies Data_0.1.h5, Data_1.1.h5, and Data_22.3.h5 with Data_1.1.h5 being the default since
@@ -158,26 +158,34 @@ public:
 //! Set the Current XNode which came from a XdmfDom
   XdmfInt32 SetParameterNode( XdmfXNode *Node);
 
+//! Get the index of the Parameter within the node
+  XdmfGetValueMacro(ParameterIndex, XdmfInt32);
+//! Set the index of the Parameter within the node
+  void SetParameterIndex( XdmfInt32 Index)
+    {
+    this->ParameterIndex = Index;
+    }
+
 //! Get the Format String
   XdmfString GetFormat( void ) { return( this->ParameterFormat ) ; };
 //! Get the length. This is either the Count or the Length of the Array
 /*!
-	The \b NumberOfElements of a \b RANGE Parameter is the third number
-	specified in the \b Values attribute (the \b COUNT). For a \b LIST
-	Parameter, the \b NumberOfElements is the number of elements in the
-	\b Values attribute. In other words, this means "how many possible values are there ?"
+  The \b NumberOfElements of a \b RANGE Parameter is the third number
+  specified in the \b Values attribute (the \b COUNT). For a \b LIST
+  Parameter, the \b NumberOfElements is the number of elements in the
+  \b Values attribute. In other words, this means "how many possible values are there ?"
 */
   XdmfInt64 GetNumberOfElements( void );
 //! Get a handle to the internal array
 /*!
-	For a \b RANGE Parameter this will be 3 Values. For a \b LIST 
-	Parameter, this is all possible values.
+  For a \b RANGE Parameter this will be 3 Values. For a \b LIST 
+  Parameter, this is all possible values.
 */
   XdmfArray *GetArray( void ) { return ( this->ParameterArray ); };
 //! Get the current value of the parameter
 /*!
-	The substituion is performed and the resulting string is returned.
-	The substitution is performed with the value in \b CurrentIndex.
+  The substituion is performed and the resulting string is returned.
+  The substitution is performed with the value in \b CurrentIndex.
 */
   XdmfString GetParameterValue( void ) { return( this->ParameterValue ) ; };
 
@@ -195,7 +203,7 @@ protected:
   XdmfInt32  ParameterType;
   XdmfArray  *ParameterArray;
   XdmfXNode    *ParameterNode;
-  
+  XdmfInt32  ParameterIndex;
 };
 
 

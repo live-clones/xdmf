@@ -50,32 +50,32 @@ modified by adding or deleting nodes and then "serialized" to produce
 XML. For example, the following XML might be in MyFile.xml :
 \verbatim
 <Tag1 Name="First Parent">
-	<Tag2 Name="First Child" />
-	<Tag2 Name="Second Child">
-		Text for Second Child
-	</Tag2>
+  <Tag2 Name="First Child" />
+  <Tag2 Name="Second Child">
+    Text for Second Child
+  </Tag2>
 </Tag1>
 \endverbatim
 
 The DOM might manipulate the XML with :
 
 \code
-	XdmfDOM		*DOM = new XdmfDOM();
-	XdmfXNode	*Parent, *FirstChild, *SecondChild;
+  XdmfDOM    *DOM = new XdmfDOM();
+  XdmfXNode  *Parent, *FirstChild, *SecondChild;
 
-	// Parse the XML File
-	DOM->SetInputFileName("MyFile.xml");
-	DOM->Parse();
-	// Find the first element with TAG = Tag1
-	Parent = DOM->FindElement("Tag1");
-	// Find the first (zero based) Tag2 below Parent
-	FirstChild = DOM->FindElement("Tag2", 0, Parent);
-	cout << "The Name of the First Child is <" << DOM->Get(FirstChild, "Name") << ">" << endl;
-	// Find the second (zero based) Tag2 below Parent
-	SecondChild = DOM->FindElement("Tag2", 1, Parent);
-	DOM->Set(SecondChild, "Age", "10");
-	DOM->DeleteNode(FirstChild);
-	cout << endl << "XML = " << endl << DOM->Serialize(Parent) << endl;
+  // Parse the XML File
+  DOM->SetInputFileName("MyFile.xml");
+  DOM->Parse();
+  // Find the first element with TAG = Tag1
+  Parent = DOM->FindElement("Tag1");
+  // Find the first (zero based) Tag2 below Parent
+  FirstChild = DOM->FindElement("Tag2", 0, Parent);
+  cout << "The Name of the First Child is <" << DOM->Get(FirstChild, "Name") << ">" << endl;
+  // Find the second (zero based) Tag2 below Parent
+  SecondChild = DOM->FindElement("Tag2", 1, Parent);
+  DOM->Set(SecondChild, "Age", "10");
+  DOM->DeleteNode(FirstChild);
+  cout << endl << "XML = " << endl << DOM->Serialize(Parent) << endl;
 \endcode
 
 Would Procude the following Output:
@@ -84,9 +84,9 @@ The Name of the First Child is <First Child>
 
 XML =
 <Tag1 Name="First Parent">
-	<Tag2 Name="Second Child" Age="10">
-		Text for Second Child
-	</Tag2>
+  <Tag2 Name="Second Child" Age="10">
+    Text for Second Child
+  </Tag2>
 </Tag1>
 \endverbatim
 
@@ -300,6 +300,9 @@ XdmfString      LastDOMGet;
 void ExpandNode(XDMF_TREE_NODE *node, XdmfInt32 *size);
 void ReNew(XdmfInt32 *size);
 
+XdmfParameter   **Parameters;
+XdmfInt32       NumberOfParameters;
+XdmfInt32       SizeOfParameters;
 };
 
 extern XDMF_EXPORT int GetXNodeSize( XdmfXNode *Node );
