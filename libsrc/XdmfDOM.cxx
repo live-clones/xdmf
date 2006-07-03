@@ -990,13 +990,13 @@ XdmfParameter *
 XdmfDOM::FindParameter( XdmfConstString ParameterName, XdmfXNode *Node ) {
 
 XdmfString Attribute;
-XdmfInt32  i, NumberOfParameters;
+XdmfInt32  i, numberOfParameters;
 XdmfParameter  *Param = NULL;
 XdmfXNode    *ParamNode;
 
-NumberOfParameters = this->FindNumberOfParameters( Node );
-if( NumberOfParameters <= 0 ) return( NULL );
-for( i = 0 ; i < NumberOfParameters ; i++ ){
+numberOfParameters = this->FindNumberOfParameters( Node );
+if( numberOfParameters <= 0 ) return( NULL );
+for( i = 0 ; i < numberOfParameters ; i++ ){
   ParamNode = this->FindElement( "Parameter", i );
   Attribute = ParamNode->Get( "Name" );
   if(  XDMF_WORD_CMP( Attribute, ParameterName ) ) {
@@ -1012,12 +1012,12 @@ return( Param );
 XdmfParameter *
 XdmfDOM::GetParameter( XdmfInt32 Index, XdmfXNode *Node ) {
 
-XdmfInt32  NumberOfParameters;
+XdmfInt32  numberOfParameters;
 XdmfParameter  *Param = NULL;
 XdmfXNode    *ParamNode;
 
-NumberOfParameters = this->FindNumberOfParameters( Node );
-if( Index >= NumberOfParameters ) return( NULL );
+numberOfParameters = this->FindNumberOfParameters( Node );
+if( Index >= numberOfParameters ) return( NULL );
 ParamNode = this->FindElement( "Parameter", Index, Node );
 
 if( ParamNode ) {
