@@ -87,7 +87,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.67");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.68");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -645,6 +645,7 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
   if(c!=this->GetNumberOfOutputPorts())
     {
     this->SetNumberOfOutputPorts(c);
+
     // We have to refresh the outputVector with this new number of ports.
     // The one in argument was given by the executive.
     // The only way to do that, is to ask the output vector from the executive.
@@ -736,7 +737,7 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
         }
       else // collection
         {        
-        vtkHierarchicalDataSet *output=vtkHierarchicalDataSet::SafeDownCast(info->Get(vtkCompositeDataSet::COMPOSITE_DATA_SET()));
+        vtkHierarchicalDataSet *output=vtkHierarchicalDataSet::SafeDownCast(info->Get(vtkDataObject::DATA_OBJECT()));
         if(output==0)
           {
           someOutputChanged=1;
@@ -857,7 +858,7 @@ int vtkXdmfReaderInternal::RequestActualGridData(
     }
   else // Handle collection
     {
-    vtkHierarchicalDataSet *hd=vtkHierarchicalDataSet::SafeDownCast(outInfo->Get(vtkCompositeDataSet::COMPOSITE_DATA_SET()));
+    vtkHierarchicalDataSet *hd=vtkHierarchicalDataSet::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
     
     unsigned int numberOfDataSets=currentActualGrid->Collection->Grids.size();
     
@@ -1763,9 +1764,10 @@ int vtkXdmfReader::RequestInformation(
 {
   vtkDebugMacro("ExecuteInformation");
   
-  if(this->GetNumberOfOutputPorts()>0)
+  int numPorts = this->GetNumberOfOutputPorts();
+  for (int i=0; i<numPorts; i++)
     {
-    vtkInformation *info=outputVector->GetInformationObject(0);
+    vtkInformation *info = outputVector->GetInformationObject(i);
     info->Set(vtkStreamingDemandDrivenPipeline::MAXIMUM_NUMBER_OF_PIECES(),-1);
     }
   
@@ -2761,15 +2763,15 @@ int vtkXdmfReader::FillOutputPortInformation(int port,
                                              vtkInformation *info)
 { 
   vtkInformation* outInfo =this->GetExecutive()->GetOutputInformation()->GetInformationObject(port);
-  if(outInfo->Has(vtkCompositeDataSet::COMPOSITE_DATA_SET()))
+  if(outInfo->Has(vtkDataObject::DATA_OBJECT()))
     {
     info->Set(vtkCompositeDataPipeline::COMPOSITE_DATA_TYPE_NAME(), 
-              "vtkHierarchicalDataSet");
+              "vtkDataObject");
     info->Set(vtkDataObject::DATA_TYPE_NAME(), "vtkDataObject");
     }
   else
     {
-    info->Set(vtkDataObject::DATA_TYPE_NAME(), "vtkDataSet");
+    info->Set(vtkDataObject::DATA_TYPE_NAME(), "vtkDataObject");
     }
   return 1;
 }
