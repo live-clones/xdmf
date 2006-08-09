@@ -542,6 +542,11 @@ if( Node != NULL ){
     XdmfDebug("WorkingDirectory = " << Attribute );
     this->SetWorkingDirectory( Attribute );
     }
+  // See if there are any Parameters and set this->NumberOfParameters > 0 
+  // for faster GET()
+  if( this->GetParameter(0, Node) != NULL ){
+    XdmfDebug("DOM Contains " << this->FindNumberOfParameters() << " Parameters");
+  }
   }
 return( XDMF_SUCCESS );
 }
@@ -892,21 +897,23 @@ FinalValue = new char[ strlen( Value ) + 1 ];
 strcpy( FinalValue, Value );
 // FinalValue = Value;
 // Apply PARAMETERS
-i = 0;
-Param = this->FindElement( "Parameter", i, NULL );
-while( Param ){
-  XdmfParameter  Parameter;
-  if( ( this->IsChild( Node, Param ) > 0 ) && ( Node != Param ) ) {
-    XdmfString OldValue = FinalValue;
+if (this->NumberOfParameters > 0){
+    i = 0;
+    Param = this->FindElement( "Parameter", i, NULL );
+    while( Param ){
+        XdmfParameter  Parameter;
+        if( ( this->IsChild( Node, Param ) > 0 ) && ( Node != Param ) ) {
+            XdmfString OldValue = FinalValue;
 
-    Parameter.SetParameterNode( Param );
-    XdmfDebug("Applying Parameter " << Parameter.GetParameterName() );
-    Parameter.Update();
-    FinalValue = Parameter.Substitute( FinalValue );
-    delete [] OldValue;
-  }
-  i++;
-  Param = this->FindElement( "Parameter", i, NULL );
+            Parameter.SetParameterNode( Param );
+            XdmfDebug("Applying Parameter " << Parameter.GetParameterName() );
+            Parameter.Update();
+            FinalValue = Parameter.Substitute( FinalValue );
+            delete [] OldValue;
+          }
+          i++;
+          Param = this->FindElement( "Parameter", i, NULL );
+        }
 }
 
 if ( this->LastDOMGet) {
