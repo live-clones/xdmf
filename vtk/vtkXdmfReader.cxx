@@ -87,7 +87,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.69");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.70");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -829,6 +829,8 @@ int vtkXdmfReader::RequestData(
         currentGridIterator->first.c_str(),&currentGridIterator->second,
         outputGrid, outputVector);
       outputGrid++;
+      // cout << "Progress " << 1.0 * outputGrid / this->NumberOfEnabledActualGrids << endl;
+      this->UpdateProgress(1.0 * outputGrid / this->NumberOfEnabledActualGrids);
       }
     }
   
@@ -969,6 +971,8 @@ int vtkXdmfReaderInternal::RequestActualGridData(
       ++currentIndex[level];
       ++gridIt;
       ++datasetIdx;
+      // cout << "Progress " << 1.0 * datasetIdx / numberOfDataSets << endl;
+      this->Reader->UpdateProgress(1.0 * datasetIdx / numberOfDataSets);
       }
     return result;
     }
@@ -2696,6 +2700,7 @@ void vtkXdmfReader::SetDomainName(const char* domain)
 void vtkXdmfReader::UpdateGrids()
 {
   int done = 0;
+  int NGrid;
   vtkIdType currentGrid;
   XdmfXNode *gridNode = 0;
   XdmfXNode *domain = this->Internals->DomainPtr;
@@ -2712,6 +2717,7 @@ void vtkXdmfReader::UpdateGrids()
         return;
     }
 
+  NGrid = this->DOM->FindNumberOfElements("Grid", domain);
   for ( currentGrid = 0; !done; currentGrid ++ )
     {
     gridNode = this->DOM->FindElement("Grid", currentGrid, domain);
@@ -2763,6 +2769,9 @@ void vtkXdmfReader::UpdateGrids()
     grid->XMGrid->SetDOM(this->DOM);
     grid->XMGrid->InitGridFromElement( gridNode );
     str.rdbuf()->freeze(0);
+    // this->SetProgressText("XDMF Reader 0.1 ");
+    // this->SetProgress( 1.0 *  currentGrid / NGrid);
+    this->UpdateProgress(1.0 *  currentGrid / NGrid);
     }
   
   this->GridsModified = 0;
