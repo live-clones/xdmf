@@ -1,3 +1,5 @@
+#include "XdmfConfig.h"
+
 #line 2 "/home/andy/vtk/ParaView-shared/Utilities/Xdmf/libsrc/XdmfExprLex.cxx"
 
 #line 4 "/home/andy/vtk/ParaView-shared/Utilities/Xdmf/libsrc/XdmfExprLex.cxx"
