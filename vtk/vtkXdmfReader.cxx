@@ -87,7 +87,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.72");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.73");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -2779,7 +2779,7 @@ void vtkXdmfReader::UpdateGrids()
 
 //----------------------------------------------------------------------------
 
-int vtkXdmfReader::FillOutputPortInformation(int port,
+int vtkXdmfReader::FillOutputPortInformation(int,
                                              vtkInformation *info)
 { 
   info->Set(vtkDataObject::DATA_TYPE_NAME(), "vtkDataObject");
