@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 1.6)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
 PROJECT(Xdmf)
 
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${Xdmf_SOURCE_DIR}/CMake)
@@ -239,7 +239,15 @@ SET(XDMF_LIBRARY_DEPENDS_FILE ${Xdmf_BINARY_DIR}/XDMFLibraryDepends.cmake)
 CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/XDMFConfig.cmake.in
   ${Xdmf_BINARY_DIR}/XDMFConfig.cmake @ONLY IMMEDIATE)
 
+SET(XDMF_INSTALL_BIN_DIR "/lib")
 SET(XDMF_INSTALL_LIB_DIR "/lib")
 SET(XDMF_INSTALL_INCLUDE_DIR "/include")
 SET(XDMF_INSTALL_INCLUDE_VTK_DIR "/include")
+
+# Because INSTALL_* commands require a leading / and because INSTALL (cmake 2.4
+# and newer) requires no leading / to install under INSTALL_PREFIX, we
+# are stripping the leading /. In the future, there should be no leading
+# / in any install directory variables
+STRING(REGEX REPLACE "^/" "" VTK_INSTALL_LIB_DIR_CM24 "${XDMF_INSTALL_LIB_DIR}")
+STRING(REGEX REPLACE "^/" "" VTK_INSTALL_BIN_DIR_CM24 "${XDMF_INSTALL_BIN_DIR}")
 
