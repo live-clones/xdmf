@@ -97,6 +97,60 @@ GetGlobalDebug = _Xdmf.GetGlobalDebug
 SetGlobalDebug = _Xdmf.SetGlobalDebug
 XdmfObjectToHandle = _Xdmf.XdmfObjectToHandle
 HandleToXdmfObject = _Xdmf.HandleToXdmfObject
-
+class XdmfDOM(XdmfObject):
+    __swig_setmethods__ = {}
+    for _s in [XdmfObject]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfDOM, name, value)
+    __swig_getmethods__ = {}
+    for _s in [XdmfObject]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfDOM, name)
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        this = _Xdmf.new_XdmfDOM(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _Xdmf.delete_XdmfDOM
+    __del__ = lambda self : None;
+    def GetClassName(*args): return _Xdmf.XdmfDOM_GetClassName(*args)
+    def SetInputFileName(*args): return _Xdmf.XdmfDOM_SetInputFileName(*args)
+    def SetOutputFileName(*args): return _Xdmf.XdmfDOM_SetOutputFileName(*args)
+    def GetInputFileName(*args): return _Xdmf.XdmfDOM_GetInputFileName(*args)
+    def GetOutputFileName(*args): return _Xdmf.XdmfDOM_GetOutputFileName(*args)
+    def GetOutput(*args): return _Xdmf.XdmfDOM_GetOutput(*args)
+    def SetOutput(*args): return _Xdmf.XdmfDOM_SetOutput(*args)
+    def GetInput(*args): return _Xdmf.XdmfDOM_GetInput(*args)
+    def SetInput(*args): return _Xdmf.XdmfDOM_SetInput(*args)
+    def GenerateHead(*args): return _Xdmf.XdmfDOM_GenerateHead(*args)
+    def Puts(*args): return _Xdmf.XdmfDOM_Puts(*args)
+    def GenerateTail(*args): return _Xdmf.XdmfDOM_GenerateTail(*args)
+    def Gets(*args): return _Xdmf.XdmfDOM_Gets(*args)
+    def GetTree(*args): return _Xdmf.XdmfDOM_GetTree(*args)
+    def __Parse(*args): return _Xdmf.XdmfDOM___Parse(*args)
+    def Parse(*args): return _Xdmf.XdmfDOM_Parse(*args)
+    def GetRoot(*args): return _Xdmf.XdmfDOM_GetRoot(*args)
+    def GetNumberOfChildren(*args): return _Xdmf.XdmfDOM_GetNumberOfChildren(*args)
+    def GetChild(*args): return _Xdmf.XdmfDOM_GetChild(*args)
+    def GetNumberOfAttributes(*args): return _Xdmf.XdmfDOM_GetNumberOfAttributes(*args)
+    def GetAttribute(*args): return _Xdmf.XdmfDOM_GetAttribute(*args)
+    def IsChild(*args): return _Xdmf.XdmfDOM_IsChild(*args)
+    def Serialize(*args): return _Xdmf.XdmfDOM_Serialize(*args)
+    def Insert(*args): return _Xdmf.XdmfDOM_Insert(*args)
+    def InsertFromString(*args): return _Xdmf.XdmfDOM_InsertFromString(*args)
+    def DeleteNode(*args): return _Xdmf.XdmfDOM_DeleteNode(*args)
+    def FindElement(*args): return _Xdmf.XdmfDOM_FindElement(*args)
+    def FindElementByAttribute(*args): return _Xdmf.XdmfDOM_FindElementByAttribute(*args)
+    def FindNumberOfElements(*args): return _Xdmf.XdmfDOM_FindNumberOfElements(*args)
+    def FindNumberOfElementsByAttribute(*args): return _Xdmf.XdmfDOM_FindNumberOfElementsByAttribute(*args)
+    def GetNdgmHost(*args): return _Xdmf.XdmfDOM_GetNdgmHost(*args)
+    def SetNdgmHost(*args): return _Xdmf.XdmfDOM_SetNdgmHost(*args)
+    def GetWorkingDirectory(*args): return _Xdmf.XdmfDOM_GetWorkingDirectory(*args)
+    def SetWorkingDirectory(*args): return _Xdmf.XdmfDOM_SetWorkingDirectory(*args)
+    def Get(*args): return _Xdmf.XdmfDOM_Get(*args)
+    def Set(*args): return _Xdmf.XdmfDOM_Set(*args)
+XdmfDOM_swigregister = _Xdmf.XdmfDOM_swigregister
+XdmfDOM_swigregister(XdmfDOM)
 GetUnique = _Xdmf.GetUnique
+
+HandleToXdmfDOM = _Xdmf.HandleToXdmfDOM
+
 

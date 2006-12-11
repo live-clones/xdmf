@@ -27,11 +27,8 @@
 
 
 #include "XdmfObject.h"
-#include "XdmfXNode.h"
 
-#ifndef SWIG
-#  include "XdmfXMLParser.h"
-#endif
+typedef XdmfPointer XdmfXmlNode;
 
 class XdmfParameter;
 
@@ -61,7 +58,7 @@ The DOM might manipulate the XML with :
 
 \code
   XdmfDOM    *DOM = new XdmfDOM();
-  XdmfXNode  *Parent, *FirstChild, *SecondChild;
+  XdmfXmlNode  *Parent, *FirstChild, *SecondChild;
 
   // Parse the XML File
   DOM->SetInputFileName("MyFile.xml");
@@ -100,21 +97,6 @@ public :
 
   XdmfConstString GetClassName() { return("XdmfDOM"); } ;
 
-//! Sets the XMLVersion for the XML Document
-  XdmfSetValueMacro(XMLVersion, float);
-//! Get the XMLVersion from the XML Document
-  XdmfGetValueMacro(XMLVersion, float);
-
-//! Sets the DocType for the XML Document
-  XdmfSetStringMacro(DocType);
-//! Get the DocType from the XML Document
-  XdmfGetStringMacro(DocType);
-
-//! Sets the System for the XML Document
-  XdmfSetStringMacro(System);
-//! Get the System from the XML Document
-  XdmfGetStringMacro(System);
-
   //! Set the FileName of the XML Description : stdin or Filename
         XdmfInt32 SetInputFileName( XdmfConstString Filename );
 
@@ -150,36 +132,36 @@ public :
   XdmfConstString Gets( void );
 
 //! Return the Low Level root of the tree
-  XDMF_TREE_NODE *GetTree( void );
+  XdmfXmlNode GetTree( void ) {return(this->tree);} ;
 
   //! Parse XML without re-initializing entire DOM
-  XDMF_TREE_NODE *__Parse( XdmfConstString xml );
+  XdmfXmlNode __Parse( XdmfConstString xml );
 
   //! Re-Initialize and Parse 
   XdmfInt32 Parse(XdmfConstString xml = NULL );
 
 
 //! Get the Root Node
-  XdmfXNode *GetRoot( void );
+  XdmfXmlNode GetRoot( void );
 
   //! Get the Number of immediate Children
-  XdmfInt64 GetNumberOfChildren( XdmfXNode *node = NULL);
+  XdmfInt64 GetNumberOfChildren( XdmfXmlNode node = NULL);
   //! Get The N'th Child
-  XdmfXNode *GetChild( XdmfInt64 Index , XdmfXNode *Node );
+  XdmfXmlNode GetChild( XdmfInt64 Index , XdmfXmlNode Node );
   //! Get Number of Attribute in a Node
-  XdmfInt32 GetNumberOfAttributes( XdmfXNode *Node );
+  XdmfInt32 GetNumberOfAttributes( XdmfXmlNode Node );
   //! Get Attribute Name by Index
-  XdmfConstString GetAttribute( XdmfXNode *Node, XdmfInt32 Index );
-  //! Is the XdmfXNode a child of "Start" in this DOM
-  XdmfInt32  IsChild( XdmfXNode *ChildToCheck, XdmfXNode *Start = NULL );
+  XdmfConstString GetAttribute( XdmfXmlNode Node, XdmfInt32 Index );
+  //! Is the XdmfXmlNode a child of "Start" in this DOM
+  XdmfInt32  IsChild( XdmfXmlNode ChildToCheck, XdmfXmlNode Start = NULL );
   //! Convert DOM to XML String
-  XdmfConstString Serialize(XdmfXNode *node = NULL);
+  XdmfConstString Serialize(XdmfXmlNode node = NULL);
   //! Insert a node into a DOM
-  XdmfInt32 Insert(XdmfXNode *parent, XdmfXNode *node, XdmfInt32 Level = 0);
+  XdmfInt32 Insert(XdmfXmlNode parent, XdmfXmlNode node);
   //! Create a node from an XML string and insert it in the DOM
-  XdmfInt32 InsertFromString(XdmfXNode *parent, XdmfConstString xml );
+  XdmfInt32 InsertFromString(XdmfXmlNode parent, XdmfConstString xml );
   //! Delete a node
-  XdmfInt32 DeleteNode(XdmfXNode *node);
+  XdmfInt32 DeleteNode(XdmfXmlNode node);
   //! Find the n'th occurance of a certain node type
 /*!
 Walk the tree and find the first
@@ -188,28 +170,21 @@ Index ( 0 based ) can be used to find the n'th
 node that satisfies the criteria. The search can also
 tree starting at a particular node.
 */
-  XdmfXNode *FindElement(XdmfConstString TagName,
+  XdmfXmlNode FindElement(XdmfConstString TagName,
       XdmfInt32 Index= 0,
-      XdmfXNode *Node = NULL );
+      XdmfXmlNode Node = NULL );
 //! Find the Node that has Attribute="Value"
-  XdmfXNode *FindElementByAttribute(XdmfConstString Attribute,
+  XdmfXmlNode FindElementByAttribute(XdmfConstString Attribute,
       XdmfConstString Value,
       XdmfInt32 Index= 0,
-      XdmfXNode *Node = NULL );
+      XdmfXmlNode Node = NULL );
   //! Find the number of nodes of a certain type
   XdmfInt32 FindNumberOfElements(XdmfConstString TagName,
-      XdmfXNode *Node = NULL );
+      XdmfXmlNode Node = NULL );
 //! Find the number if Nodes that has Attribute="Value"
   XdmfInt32 FindNumberOfElementsByAttribute(XdmfConstString Attribute,
       XdmfConstString Value,
-      XdmfXNode *Node = NULL );
-  //! Find the n'th occurance of a certain type of PI
-  XdmfXNode *FindProcessingInstruction( XdmfConstString Target = NULL,
-      XdmfInt32 occurance = 0,
-      XdmfXNode *Node = NULL );
-  //! Find the number of PIs of a certain type
-  XdmfInt32 FindNumberOfProcessingInstructions( XdmfConstString Target = NULL,
-      XdmfXNode *Node = NULL );
+      XdmfXmlNode Node = NULL );
 
 //! Get the default NDGM Host to use for HDF5 files
   XdmfGetStringMacro( NdgmHost );
@@ -236,51 +211,11 @@ Dom->Get(Node, "Other")  // will return NULL ; there is none
 Dom->Get(Node, "CData")  // will return "file.h5" ; the Character Data
 \endcode
 
-The XdmfXNode can be parsed directly with :
-Node->Get( "Name" ); etc.
-
-The reason to use this get is to confirm that this node
-is in this DOM and to accomplish \b PARAMETER substiution via XdmfParameter.
 */
-  XdmfConstString  Get( XdmfXNode *Node, XdmfConstString Attribute );
+  XdmfConstString  Get( XdmfXmlNode Node, XdmfConstString Attribute );
 
-//! Set a Node's User Data
-  void    SetUserData( XdmfXNode *Node, XdmfPointer UserData ){
-        Node->SetUserData( UserData );
-        }
-//! Get a Node's User Data
-  XdmfPointer  GetUserData( XdmfXNode *Node ){
-        return( Node->GetUserData() );
-        }
 //! Set a new Attribute=Value in a Node
-  void    Set( XdmfXNode *Node, XdmfConstString Attribute, XdmfConstString Value ) {
-      if( !Node ) {
-        Node = this->FindElement( NULL, 0, NULL );
-        if( !Node ) {
-          return;
-          }
-        }
-      if( Value && ( STRCASECMP( Value, "NULL" ) == 0 )) {
-        Value = NULL;
-      }
-      Node->Set( Attribute, Value );
-      }
-
-/*!
-Return the number type of the node as set in the
-XML by : NuberType="Integer" Precision="4"
-*/
-  XdmfInt32 GetNumberType( XdmfXNode *Node );
-  XdmfInt32 GetNumberType( const char* attribute, const char* precision);
-
-//! Find the Number of XdmfParameters
-  XdmfInt32 FindNumberOfParameters( XdmfXNode *Node = NULL ) {
-      return( this->FindNumberOfElements( "Parameter", Node ) );
-      }
-//! Find the XdmfParameter with the specified ParameterName
-  XdmfParameter  *FindParameter( XdmfConstString ParameterName, XdmfXNode *Node = NULL );
-//! Retreive the i'th XdmfParameter
-  XdmfParameter  *GetParameter( XdmfInt32 Index = 0, XdmfXNode *Node = NULL );
+  void    Set( XdmfXmlNode Node, XdmfConstString Attribute, XdmfConstString Value );
 
 protected :
 
@@ -290,23 +225,12 @@ XdmfString      InputFileName;
 XdmfString      OutputFileName;
 ostream         *Output;
 istream         *Input;
-float           XMLVersion;
-XdmfString      DocType;
-XdmfString      System;
+XdmfPointer     Doc;
 XdmfString      xml;
-XDMF_TREE_NODE  *tree;
+XdmfXmlNode     tree;
 XdmfString      LastDOMGet;
 
-void ExpandNode(XDMF_TREE_NODE *node, XdmfInt32 *size);
-void ReNew(XdmfInt32 *size);
-
-XdmfParameter   **Parameters;
-XdmfInt32       NumberOfParameters;
-XdmfInt32       SizeOfParameters;
 };
 
-extern XDMF_EXPORT int GetXNodeSize( XdmfXNode *Node );
-extern XDMF_EXPORT XdmfConstString GetXNodeName(XdmfXNode *Node, int index);
-extern XDMF_EXPORT XdmfConstString GetXNodeData(XdmfXNode *Node, int index);
 extern XDMF_EXPORT XdmfDOM *HandleToXdmfDOM( XdmfConstString Source );
 #endif
