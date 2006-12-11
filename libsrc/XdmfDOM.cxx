@@ -230,10 +230,18 @@ XdmfDOM::GenerateTail() {
 }
 
 XdmfConstString
-XdmfDOM::Serialize(XdmfXmlNode node) {
+XdmfDOM::Serialize(XdmfXmlNode Node) {
 XdmfConstString XML = NULL;
-xmlBufferPtr BufPtr;
+xmlBufferPtr bufp;
+xmlNode *node;
 
+node = (xmlNode *)Node;
+if(!node) node = (xmlNode *)this->tree;
+if(!node) return(NULL);
+bufp = xmlBufferCreate();
+if( xmlNodeDump(bufp, (xmlDoc *)this->Doc, node, 0, 0) > 0 ){
+    XML = (XdmfConstString)bufp->content;
+}
 return(XML);
 }
 
@@ -338,7 +346,7 @@ if(!Node){
     Node = this->tree;
 }
 
-if(!Node) return(NULL);
+if(!Node) return(0);
 Child = (xmlNodePtrCAST Node)->children;
 while(Child){
     Child = XdmfGetNextElement(Child);
@@ -418,17 +426,17 @@ xmlNode *node, *child;
 XdmfInt32 Index = 0;
 
 if( !Node ) {
-    if(!this->tree) return(NULL);
+    if(!this->tree) return(XDMF_FAIL);
     Node = this->tree;
 }
 node = (xmlNode *)Node;
 child = node->children;
-if(!child) return(NULL);
+if(!child) return(0);
 while(child){
     if(XDMF_WORD_CMP(TagName, (const char *)child->name)){
         Index++;
     }
-    Child = XdmfGetNextElement(Child);
+    child = XdmfGetNextElement(child);
 }
 return(Index);
 }
