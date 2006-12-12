@@ -109,6 +109,11 @@ public :
   //! Get the FileName of the XML Description
          XdmfGetStringMacro( OutputFileName );
 
+  /*! Set Parser Options. See libxml documentation for values
+  Default = XML_PARSE_NONET | XML_PARSE_XINCLUDE
+  */
+        XdmfSetValueMacro(ParserOptions, XdmfInt32);
+
   //! Get the XML destination
         XdmfGetValueMacro( Output, ostream *);
   
@@ -128,11 +133,8 @@ public :
 //! Generate a Standard XDMF Tail i.e. </Xdmf>
   XdmfInt32 GenerateTail( void );
 
-//! Get the rest of the documant as a string
-  XdmfConstString Gets( void );
-
 //! Return the Low Level root of the tree
-  XdmfXmlNode GetTree( void ) {return(this->tree);} ;
+  XdmfXmlNode GetTree( void ) {return(this->Tree);} ;
 
   //! Parse XML without re-initializing entire DOM
   XdmfXmlNode __Parse( XdmfConstString xml );
@@ -151,9 +153,9 @@ public :
   //! Get Number of Attribute in a Node
   XdmfInt32 GetNumberOfAttributes( XdmfXmlNode Node );
   //! Get Attribute Name by Index
-  XdmfConstString GetAttribute( XdmfXmlNode Node, XdmfInt32 Index );
+  XdmfConstString GetAttributeName( XdmfXmlNode Node, XdmfInt32 Index );
   //! Is the XdmfXmlNode a child of "Start" in this DOM
-  XdmfInt32  IsChild( XdmfXmlNode ChildToCheck, XdmfXmlNode Start = NULL );
+  XdmfInt32  IsChild( XdmfXmlNode ChildToCheck, XdmfXmlNode Node = NULL );
   //! Convert DOM to XML String
   XdmfConstString Serialize(XdmfXmlNode node = NULL);
   //! Insert a node into a DOM
@@ -212,7 +214,12 @@ Dom->Get(Node, "CData")  // will return "file.h5" ; the Character Data
 \endcode
 
 */
-  XdmfConstString  Get( XdmfXmlNode Node, XdmfConstString Attribute );
+  XdmfConstString  Get(XdmfXmlNode Node, XdmfConstString Attribute);
+
+//! Get an Attribute. Does not check for CDATA so it's faster
+  XdmfConstString  GetAttribute(XdmfXmlNode Node, XdmfConstString Attribute);
+//! Get the CDATA of a Node
+  XdmfConstString  GetCData(XdmfXmlNode Node);
 
 //! Set a new Attribute=Value in a Node
   void    Set( XdmfXmlNode Node, XdmfConstString Attribute, XdmfConstString Value );
@@ -226,10 +233,9 @@ XdmfString      OutputFileName;
 ostream         *Output;
 istream         *Input;
 XdmfPointer     Doc;
-XdmfString      xml;
-XdmfXmlNode     tree;
+XdmfXmlNode     Tree;
 XdmfString      LastDOMGet;
-
+XdmfInt32       ParserOptions;
 };
 
 extern XDMF_EXPORT XdmfDOM *HandleToXdmfDOM( XdmfConstString Source );
