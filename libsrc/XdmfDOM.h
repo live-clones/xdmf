@@ -234,7 +234,7 @@ ostream         *Output;
 istream         *Input;
 XdmfPointer     Doc;
 XdmfXmlNode     Tree;
-XdmfString      LastDOMGet;
+XdmfPointer     StaticBuffer;
 XdmfInt32       ParserOptions;
 };
 
