@@ -130,7 +130,7 @@ public :
   XdmfInt32 GenerateHead( void );
 //! Output a String to the XML document
   XdmfInt32 Puts( XdmfConstString String );
-//! Generate a Standard XDMF Tail i.e. </Xdmf>
+//! Generate a Standard XDMF Tail
   XdmfInt32 GenerateTail( void );
 
 //! Return the Low Level root of the tree
