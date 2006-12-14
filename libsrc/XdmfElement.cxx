@@ -72,6 +72,11 @@ XdmfConstString XdmfElement::GetElementType(){
     return((XdmfConstString)node->name);
 }
 
+XdmfInt32 XdmfElement::UpdateDOM(){
+    this->Set("Name", this->GetName());
+    return(this->Set("Name", this->GetName()));
+}
+
 XdmfInt32 XdmfElement::Set(XdmfConstString Name, XdmfConstString Value){
     if(!this->DOM) {
         XdmfErrorMessage("No DOM has been set");
@@ -84,6 +89,7 @@ XdmfInt32 XdmfElement::Set(XdmfConstString Name, XdmfConstString Value){
     this->DOM->Set(this->Element, Name, Value);
     return(XDMF_SUCCESS);
 }
+
 
 XdmfConstString XdmfElement::Get(XdmfConstString Name){
     if(!this->DOM) {

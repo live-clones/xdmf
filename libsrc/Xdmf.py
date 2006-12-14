@@ -162,6 +162,7 @@ class XdmfDOM(XdmfLightData):
     def GetAttributeName(*args): return _Xdmf.XdmfDOM_GetAttributeName(*args)
     def IsChild(*args): return _Xdmf.XdmfDOM_IsChild(*args)
     def Serialize(*args): return _Xdmf.XdmfDOM_Serialize(*args)
+    def Write(*args): return _Xdmf.XdmfDOM_Write(*args)
     def Insert(*args): return _Xdmf.XdmfDOM_Insert(*args)
     def InsertFromString(*args): return _Xdmf.XdmfDOM_InsertFromString(*args)
     def DeleteNode(*args): return _Xdmf.XdmfDOM_DeleteNode(*args)
@@ -201,6 +202,7 @@ class XdmfElement(XdmfLightData):
     def GetElementType(*args): return _Xdmf.XdmfElement_GetElementType(*args)
     def UpdateInformation(*args): return _Xdmf.XdmfElement_UpdateInformation(*args)
     def Update(*args): return _Xdmf.XdmfElement_Update(*args)
+    def UpdateDOM(*args): return _Xdmf.XdmfElement_UpdateDOM(*args)
     def Set(*args): return _Xdmf.XdmfElement_Set(*args)
     def Get(*args): return _Xdmf.XdmfElement_Get(*args)
 XdmfElement_swigregister = _Xdmf.XdmfElement_swigregister
@@ -221,9 +223,9 @@ class XdmfInformation(XdmfElement):
     __swig_destroy__ = _Xdmf.delete_XdmfInformation
     __del__ = lambda self : None;
     def GetClassName(*args): return _Xdmf.XdmfInformation_GetClassName(*args)
-    def SetName(*args): return _Xdmf.XdmfInformation_SetName(*args)
-    def GetName(*args): return _Xdmf.XdmfInformation_GetName(*args)
     def UpdateInformation(*args): return _Xdmf.XdmfInformation_UpdateInformation(*args)
+    def SetValue(*args): return _Xdmf.XdmfInformation_SetValue(*args)
+    def UpdateDOM(*args): return _Xdmf.XdmfInformation_UpdateDOM(*args)
     def GetValue(*args): return _Xdmf.XdmfInformation_GetValue(*args)
 XdmfInformation_swigregister = _Xdmf.XdmfInformation_swigregister
 XdmfInformation_swigregister(XdmfInformation)

@@ -23,29 +23,35 @@
 /*                                                                 */
 /*******************************************************************/
 #include "XdmfInformation.h"
+#include "XdmfDOM.h"
 
 XdmfInformation::XdmfInformation() {
+    this->Value = NULL;
 }
 
 XdmfInformation::~XdmfInformation() {
 }
 
 XdmfInt32 XdmfInformation::UpdateInformation(){
-    const char *n;
-    XdmfElement::UpdateInformation();
-    n = this->Get("Name");
-    this->SetName(n);
-}
-
-XdmfConstString XdmfInformation::GetValue() {
     XdmfConstString Value;
 
+    XdmfElement::UpdateInformation();
+    Value = this->Get("Name");
+    if(Value) this->SetName(Value);
     Value = this->Get("Value");
     if(!Value) Value = this->Get("CDATA");
-    return(Value);
+    if(Value) this->SetValue(Value);
+    return(XDMF_SUCCESS);
 }
 
-XdmfInt32 XdmfInformation::SetName(XdmfConstString Value){
-    XdmfElement::SetName(Value);
-    return(this->Set("Name", Value));
+XdmfInt32 XdmfInformation::UpdateDOM(){
+    if(XdmfElement::UpdateDOM() != XDMF_SUCCESS) return(XDMF_FAIL);
+    // If Value isn't already an XML Attribute and
+    // the value is > 10 chars, put it in the CDATA
+    if((this->Get("Value") == NULL)  && (strlen(this->Value) > 10)){
+        this->Set("CDATA", this->Value);
+    }else{
+        this->Set("Value", this->Value);
+    }
+    return(XDMF_SUCCESS);
 }

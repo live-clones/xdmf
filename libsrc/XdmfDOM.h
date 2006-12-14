@@ -155,6 +155,10 @@ public :
   XdmfInt32  IsChild( XdmfXmlNode ChildToCheck, XdmfXmlNode Node = NULL );
   //! Convert DOM to XML String
   XdmfConstString Serialize(XdmfXmlNode node = NULL);
+  /*! Dump the XML contents 
+    \param Output FileName of Output. Default is to use current OutputFileName
+  */
+  XdmfInt32 Write(XdmfConstString Output = NULL);
   //! Insert a node into a DOM
   XdmfInt32 Insert(XdmfXmlNode parent, XdmfXmlNode node);
   //! Create a node from an XML string and insert it in the DOM

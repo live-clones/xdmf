@@ -200,8 +200,7 @@ XdmfDOM::SetInputFileName( XdmfConstString Filename ){
 XdmfInt32
 XdmfDOM::GenerateHead() {
   *this->Output << "<?xml version=\"1.0\" ?>" << endl 
-        << "<!DOCTYPE Xdmf SYSTEM \"Xdmf.dtd\">" << endl 
-        << "<Xdmf>" << endl;
+        << "<!DOCTYPE Xdmf SYSTEM \"Xdmf.dtd\" []>" << endl ;
   this->Output->flush();
   return( XDMF_SUCCESS );
 }
@@ -215,7 +214,6 @@ XdmfDOM::Puts( XdmfConstString String ){
 
 XdmfInt32
 XdmfDOM::GenerateTail() {
-  *this->Output << "</Xdmf>";
   this->Output->flush();
   return( XDMF_SUCCESS );
 }
@@ -232,6 +230,23 @@ if(!node) return(NULL);
 bufp = xmlBufferCreate();
 buflen = xmlNodeDump(bufp, (xmlDoc *)this->Doc, node, 0, 1);
 return(this->DupBuffer(bufp));
+}
+
+XdmfInt32 XdmfDOM::Write(XdmfConstString Output){
+    XdmfConstString OldOutputFileName;
+
+    if(Output){
+        this->SetOutputFileName(Output);
+        OldOutputFileName = this->GetOutputFileName();
+    }
+    if(!this->GenerateHead()) return(XDMF_FAIL);
+    if(!this->Puts(this->Serialize())) return(XDMF_FAIL);
+    if(Output){
+            ofstream *OutputStr = ( ofstream *)this->Output;
+            OutputStr->flush();
+            OutputStr->close();
+    }
+    return(XDMF_SUCCESS);
 }
 
 XdmfXmlNode 
