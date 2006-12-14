@@ -19,7 +19,9 @@ SET( XdmfFormatSource
 #  XdmfHeavyData
 #  XdmfHDF
 #  XdmfHDFSupport
-#  XdmfLightData
+  XdmfLightData
+  XdmfInformation
+  XdmfElement
   XdmfObject
 #  XdmfParameter
 #  XdmfXNode

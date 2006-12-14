@@ -54,16 +54,14 @@ return(NextElement);
 XdmfDOM::XdmfDOM(){
   this->WorkingDirectory = 0;
   this->NdgmHost = 0;
-  this->StaticBuffer = (XdmfPointer)xmlBufferCreateSize(1024);
   this->Tree = NULL;
   this->Output = &cout;
   this->Input = &cin;
   this->Doc = NULL;
 
   this->OutputFileName = 0;
-  this->InputFileName = 0;
   XDMF_STRING_DUPLICATE(this->OutputFileName, "stdout");
-  XDMF_STRING_DUPLICATE(this->InputFileName, "stdin");
+  this->SetFileName("stdin");
   this->SetNdgmHost( "" );
   this->SetWorkingDirectory( "" );
   // Allow Indenting on Serialization
@@ -84,14 +82,7 @@ XdmfDOM::~XdmfDOM(){
     delete this->Input;
     this->Input = &cin;
   }
-  if ( this->StaticBuffer) {
-    xmlBufferFree((xmlBuffer *)this->StaticBuffer);
-    }
-  this->SetWorkingDirectory(0);
   this->SetNdgmHost(0);
-  if ( this->InputFileName ) {
-    delete [] this->InputFileName;
-    }
   if ( this->OutputFileName ) {
     delete [] this->OutputFileName;
     }
@@ -178,7 +169,7 @@ XdmfDOM::SetOutputFileName( XdmfConstString Filename ){
     {
     delete [] this->OutputFileName;
     }
-  XDMF_STRING_DUPLICATE(this->InputFileName, Filename);
+  XDMF_STRING_DUPLICATE(this->OutputFileName, Filename);
   return( XDMF_SUCCESS );
 
 }
@@ -202,11 +193,7 @@ XdmfDOM::SetInputFileName( XdmfConstString Filename ){
     }
     this->Input = NewInput;
   }
-  if ( this->InputFileName )
-    {
-    delete [] this->InputFileName;
-    }
-  XDMF_STRING_DUPLICATE(this->InputFileName, Filename);
+  this->SetFileName(Filename);
   return( XDMF_SUCCESS );
 }
 
@@ -236,7 +223,6 @@ XdmfDOM::GenerateTail() {
 XdmfConstString
 XdmfDOM::Serialize(XdmfXmlNode Node) {
 int buflen;
-XdmfConstString XML = NULL;
 xmlBufferPtr bufp;
 xmlNode *node;
 
@@ -245,15 +231,7 @@ if(!node) node = (xmlNode *)this->Tree;
 if(!node) return(NULL);
 bufp = xmlBufferCreate();
 buflen = xmlNodeDump(bufp, (xmlDoc *)this->Doc, node, 0, 1);
-if( buflen > 0 ){
-    xmlBuffer *sbufp;
-    sbufp = (xmlBuffer *)this->StaticBuffer;
-    xmlBufferEmpty(sbufp);
-    xmlBufferCat(sbufp, bufp->content);
-    XML = (XdmfConstString)sbufp->content;
-    xmlBufferFree(bufp);
-}
-return(XML);
+return(this->DupBuffer(bufp));
 }
 
 XdmfXmlNode 
@@ -454,10 +432,13 @@ if( !Start) {
 if( !Start ) return( NULL );
 child = (xmlNodePtrCAST Start)->children;
 while(child){
-    if(XDMF_WORD_CMP((const char *)xmlGetProp(child, (xmlChar *)Attribute), (const char *)Value)){
+    xmlChar *txt = xmlGetProp(child, (xmlChar *)Attribute);
+    if(XDMF_WORD_CMP((const char *)txt, (const char *)Value)){
         if(Index <= 0){
+            xmlFree(txt);
             return(child);
         }
+        xmlFree(txt);
         Index--;
     }
     child = XdmfGetNextElement(child);
@@ -501,9 +482,12 @@ if( !Start) {
 if( !Start ) return(0);
 child = (xmlNodePtrCAST Start)->children;
 while(child){
-    if(XDMF_WORD_CMP((const char *)xmlGetProp(child, (xmlChar *)Attribute), (const char *)Value)){
+    xmlChar *txt;
+    txt = xmlGetProp(child, (xmlChar *)Attribute);
+    if(XDMF_WORD_CMP((const char *)txt, (const char *)Value)){
         NElements++;
     }
+    xmlFree(txt);
     child = XdmfGetNextElement(child);
 }
 return(0);
@@ -533,12 +517,7 @@ if( !Node ) {
 }
 node = xmlNodePtrCAST Node;
 txt = (char *)xmlNodeListGetString((xmlDoc *)this->Doc, node->xmlChildrenNode, 1);
-if(!txt) return(NULL);
-sbufp = (xmlBuffer *)this->StaticBuffer;
-xmlBufferEmpty(sbufp);
-xmlBufferCat(sbufp, (const xmlChar *)txt);
-xmlFree(txt);
-return((XdmfConstString)this->StaticBuffer);
+return(this->DupChars(txt));
 }
 
 XdmfConstString

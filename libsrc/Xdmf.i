@@ -20,6 +20,9 @@ swig -v -c++ -make_default -includeall -shadow -java $(ICE_INCLUDES) -o XdmfJava
 #include <XdmfCharArray.h>
     */
 #include <XdmfDOM.h>
+#include <XdmfLightData.h>
+#include <XdmfInformation.h>
+#include <XdmfElement.h>
     /*
 #include <XdmfDataDesc.h>
 #include <XdmfExpression.h>
@@ -31,7 +34,6 @@ swig -v -c++ -make_default -includeall -shadow -java $(ICE_INCLUDES) -o XdmfJava
 #include <XdmfGrid.h>
 #include <XdmfHDF.h>
 #include <XdmfHeavyData.h>
-#include <XdmfLightData.h>
     */
 #include <XdmfObject.h>
     /*
@@ -82,6 +84,9 @@ inline XDMF_LONG64 XDMF_strtoll(char *str, void*, int)
 %include XdmfCharArray.h
 */
 %include XdmfDOM.h
+%include XdmfLightData.h
+%include XdmfInformation.h
+%include XdmfElement.h
 /*
 %include XdmfDataDesc.h
 %include XdmfExpression.h
@@ -94,7 +99,6 @@ inline XDMF_LONG64 XDMF_strtoll(char *str, void*, int)
 %include XdmfHDF.h
 %include XdmfHDFSupport.h
 %include XdmfHeavyData.h
-%include XdmfLightData.h
 */
 %include XdmfObject.h
 /*

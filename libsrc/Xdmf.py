@@ -97,12 +97,40 @@ GetGlobalDebug = _Xdmf.GetGlobalDebug
 SetGlobalDebug = _Xdmf.SetGlobalDebug
 XdmfObjectToHandle = _Xdmf.XdmfObjectToHandle
 HandleToXdmfObject = _Xdmf.HandleToXdmfObject
-class XdmfDOM(XdmfObject):
+class XdmfLightData(XdmfObject):
     __swig_setmethods__ = {}
     for _s in [XdmfObject]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
-    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfDOM, name, value)
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfLightData, name, value)
     __swig_getmethods__ = {}
     for _s in [XdmfObject]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfLightData, name)
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        this = _Xdmf.new_XdmfLightData(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _Xdmf.delete_XdmfLightData
+    __del__ = lambda self : None;
+    def GetClassName(*args): return _Xdmf.XdmfLightData_GetClassName(*args)
+    def SetName(*args): return _Xdmf.XdmfLightData_SetName(*args)
+    def GetName(*args): return _Xdmf.XdmfLightData_GetName(*args)
+    def SetFileName(*args): return _Xdmf.XdmfLightData_SetFileName(*args)
+    def GetFileName(*args): return _Xdmf.XdmfLightData_GetFileName(*args)
+    def SetWorkingDirectory(*args): return _Xdmf.XdmfLightData_SetWorkingDirectory(*args)
+    def GetWorkingDirectory(*args): return _Xdmf.XdmfLightData_GetWorkingDirectory(*args)
+    def GetInitialized(*args): return _Xdmf.XdmfLightData_GetInitialized(*args)
+    def SetInitialized(*args): return _Xdmf.XdmfLightData_SetInitialized(*args)
+    def GetReturnBuffer(*args): return _Xdmf.XdmfLightData_GetReturnBuffer(*args)
+XdmfLightData_swigregister = _Xdmf.XdmfLightData_swigregister
+XdmfLightData_swigregister(XdmfLightData)
+GetUnique = _Xdmf.GetUnique
+
+class XdmfDOM(XdmfLightData):
+    __swig_setmethods__ = {}
+    for _s in [XdmfLightData]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfDOM, name, value)
+    __swig_getmethods__ = {}
+    for _s in [XdmfLightData]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
     __getattr__ = lambda self, name: _swig_getattr(self, XdmfDOM, name)
     __repr__ = _swig_repr
     def __init__(self, *args): 
@@ -143,16 +171,61 @@ class XdmfDOM(XdmfObject):
     def FindNumberOfElementsByAttribute(*args): return _Xdmf.XdmfDOM_FindNumberOfElementsByAttribute(*args)
     def GetNdgmHost(*args): return _Xdmf.XdmfDOM_GetNdgmHost(*args)
     def SetNdgmHost(*args): return _Xdmf.XdmfDOM_SetNdgmHost(*args)
-    def GetWorkingDirectory(*args): return _Xdmf.XdmfDOM_GetWorkingDirectory(*args)
-    def SetWorkingDirectory(*args): return _Xdmf.XdmfDOM_SetWorkingDirectory(*args)
     def Get(*args): return _Xdmf.XdmfDOM_Get(*args)
     def GetAttribute(*args): return _Xdmf.XdmfDOM_GetAttribute(*args)
     def GetCData(*args): return _Xdmf.XdmfDOM_GetCData(*args)
     def Set(*args): return _Xdmf.XdmfDOM_Set(*args)
 XdmfDOM_swigregister = _Xdmf.XdmfDOM_swigregister
 XdmfDOM_swigregister(XdmfDOM)
-GetUnique = _Xdmf.GetUnique
 
 HandleToXdmfDOM = _Xdmf.HandleToXdmfDOM
+class XdmfElement(XdmfLightData):
+    __swig_setmethods__ = {}
+    for _s in [XdmfLightData]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfElement, name, value)
+    __swig_getmethods__ = {}
+    for _s in [XdmfLightData]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfElement, name)
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        this = _Xdmf.new_XdmfElement(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _Xdmf.delete_XdmfElement
+    __del__ = lambda self : None;
+    def GetClassName(*args): return _Xdmf.XdmfElement_GetClassName(*args)
+    def SetDOM(*args): return _Xdmf.XdmfElement_SetDOM(*args)
+    def GetDOM(*args): return _Xdmf.XdmfElement_GetDOM(*args)
+    def SetElement(*args): return _Xdmf.XdmfElement_SetElement(*args)
+    def GetElement(*args): return _Xdmf.XdmfElement_GetElement(*args)
+    def UpdateInformation(*args): return _Xdmf.XdmfElement_UpdateInformation(*args)
+    def Update(*args): return _Xdmf.XdmfElement_Update(*args)
+    def Set(*args): return _Xdmf.XdmfElement_Set(*args)
+    def Get(*args): return _Xdmf.XdmfElement_Get(*args)
+XdmfElement_swigregister = _Xdmf.XdmfElement_swigregister
+XdmfElement_swigregister(XdmfElement)
+
+class XdmfInformation(XdmfElement):
+    __swig_setmethods__ = {}
+    for _s in [XdmfElement]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfInformation, name, value)
+    __swig_getmethods__ = {}
+    for _s in [XdmfElement]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfInformation, name)
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        this = _Xdmf.new_XdmfInformation(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _Xdmf.delete_XdmfInformation
+    __del__ = lambda self : None;
+    def GetClassName(*args): return _Xdmf.XdmfInformation_GetClassName(*args)
+    def SetName(*args): return _Xdmf.XdmfInformation_SetName(*args)
+    def GetName(*args): return _Xdmf.XdmfInformation_GetName(*args)
+    def UpdateInformation(*args): return _Xdmf.XdmfInformation_UpdateInformation(*args)
+    def GetValue(*args): return _Xdmf.XdmfInformation_GetValue(*args)
+XdmfInformation_swigregister = _Xdmf.XdmfInformation_swigregister
+XdmfInformation_swigregister(XdmfInformation)
+
 
 
