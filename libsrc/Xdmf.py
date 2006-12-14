@@ -198,6 +198,7 @@ class XdmfElement(XdmfLightData):
     def GetDOM(*args): return _Xdmf.XdmfElement_GetDOM(*args)
     def SetElement(*args): return _Xdmf.XdmfElement_SetElement(*args)
     def GetElement(*args): return _Xdmf.XdmfElement_GetElement(*args)
+    def GetElementType(*args): return _Xdmf.XdmfElement_GetElementType(*args)
     def UpdateInformation(*args): return _Xdmf.XdmfElement_UpdateInformation(*args)
     def Update(*args): return _Xdmf.XdmfElement_Update(*args)
     def Set(*args): return _Xdmf.XdmfElement_Set(*args)

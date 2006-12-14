@@ -65,6 +65,9 @@ public:
     */
     XdmfGetValueMacro(Element, XdmfXmlNode);
 
+    //! Get the Element type : Grid, Topology, etc.
+    XdmfConstString GetElementType();
+
     //! Initialize basic structure from XML
     XdmfInt32 UpdateInformation();
 

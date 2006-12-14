@@ -34,7 +34,6 @@ XdmfInt32 XdmfInformation::UpdateInformation(){
     const char *n;
     XdmfElement::UpdateInformation();
     n = this->Get("Name");
-    cout << "Name = " << n << endl;
     this->SetName(n);
 }
 
@@ -44,4 +43,9 @@ XdmfConstString XdmfInformation::GetValue() {
     Value = this->Get("Value");
     if(!Value) Value = this->Get("CDATA");
     return(Value);
+}
+
+XdmfInt32 XdmfInformation::SetName(XdmfConstString Value){
+    XdmfElement::SetName(Value);
+    return(this->Set("Name", Value));
 }

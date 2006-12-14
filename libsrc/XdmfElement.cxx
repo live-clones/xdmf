@@ -57,6 +57,21 @@ XdmfInt32 XdmfElement::Update(){
     return(XDMF_SUCCESS);
 }
 
+XdmfConstString XdmfElement::GetElementType(){
+    if(!this->DOM) {
+        XdmfErrorMessage("No DOM has been set");
+        return(NULL);
+    }
+    if(!this->Element){
+        XdmfErrorMessage("No XML Node has been set");
+        return(NULL);
+    }
+    xmlNode *node;
+    node = (xmlNode *)this->Element;
+    if(!node) return(NULL);
+    return((XdmfConstString)node->name);
+}
+
 XdmfInt32 XdmfElement::Set(XdmfConstString Name, XdmfConstString Value){
     if(!this->DOM) {
         XdmfErrorMessage("No DOM has been set");

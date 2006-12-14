@@ -29,14 +29,16 @@
 
 typedef XdmfPointer XdmfXmlNode;
 
-//! Base object for Light Data (XML)
-/*!
-This is an abstract convenience object for reading and writing
-Information Files. Information "points" to HeavyData ; the giga-terabytes of HPC simulations.
-
-A XdmfInformation Object is not used by itself. Rather one of the derived
-classes like XdmfGrid or XdmfFormatMulti is used and these derived methods
-are used from that class.
+/*! XdmfInformation represents a free form element in XML.
+It's used to represent Name = Value pairs. Applications that understand
+the Name can use the Value. Those that don't can ignore the element.
+Example :
+\verbatim
+    <Information Name="XBounds" Value="0.0 10.0"/>
+    <Information Name="Bounds"> 0.0 10.0 100.0 110.0 200.0 210.0 </Information>
+\endverbatim
+    If there is a Value= Attribute in  the XML it is used. Otherwise the CDATA
+    is used.
 */
 
 class XDMF_EXPORT XdmfInformation : public XdmfElement {
@@ -48,7 +50,7 @@ public:
   XdmfConstString GetClassName() { return ( "XdmfInformation" ) ; };
 
 //! Set the current name
-    XdmfSetStringMacro(Name);
+    XdmfInt32 SetName(XdmfConstString Value);
 //! Get the current name
     XdmfGetValueMacro(Name, XdmfConstString);
 
