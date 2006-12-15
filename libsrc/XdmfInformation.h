@@ -28,7 +28,6 @@
 #include "XdmfElement.h"
 
 
-typedef XdmfPointer XdmfXmlNode;
 /*! XdmfInformation represents a free form element in XML.
 It's used to represent Name = Value pairs. Applications that understand
 the Name can use the Value. Those that don't can ignore the element.

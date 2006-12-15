@@ -29,7 +29,6 @@
 #include <libxml/tree.h>
 #include <libxml/xinclude.h>
 
-#define xmlNodePtrCAST (xmlNode *)
 
 XdmfDOM *HandleToXdmfDOM( XdmfConstString Source ){
   XdmfObject  *TempObj;
@@ -40,10 +39,10 @@ XdmfDOM *HandleToXdmfDOM( XdmfConstString Source ){
   return( DOM );
   }
 
-static xmlNode *
-XdmfGetNextElement(xmlNode *Node){
+static XdmfXmlNode
+XdmfGetNextElement(XdmfXmlNode Node){
 
-xmlNode *NextElement = Node->next;
+XdmfXmlNode NextElement = Node->next;
 while(NextElement && (NextElement->type != XML_ELEMENT_NODE)){
     NextElement = NextElement->next;
 }
@@ -93,10 +92,9 @@ XdmfInt32
 XdmfDOM::GetNumberOfAttributes( XdmfXmlNode Node ){
 XdmfInt32  NumberOfAttributes = 0;
 xmlAttr *attr;
-xmlNode *node;
 
-node = xmlNodePtrCAST Node;
-attr = node->properties;
+if(!Node) return(0);
+attr = Node->properties;
 while(attr){
     attr = attr->next;
     NumberOfAttributes++;
@@ -108,11 +106,9 @@ XdmfConstString
 XdmfDOM::GetAttributeName( XdmfXmlNode Node, XdmfInt32 Index ){
 XdmfInt32  EIndex = 0;
 xmlAttr *attr;
-xmlNode *node;
 
-node = xmlNodePtrCAST Node;
-
-attr = node->properties;
+if(!Node) return(0);
+attr = Node->properties;
 while( attr && (EIndex < Index)){
     attr = attr->next;
     EIndex++;
@@ -125,19 +121,17 @@ return(NULL);
 
 XdmfInt32
 XdmfDOM::IsChild( XdmfXmlNode ChildToCheck, XdmfXmlNode Node) {
-xmlNode *node, *child, *nodeToCheck;
+XdmfXmlNode child, nodeToCheck;
 
-node = xmlNodePtrCAST Node;
-nodeToCheck = xmlNodePtrCAST ChildToCheck;
 // Check All Children
-for(child=node->xmlChildrenNode; child ; child=child->next){
+for(child=Node->xmlChildrenNode; child ; child=child->next){
     if(child->type = XML_ELEMENT_NODE) {
         // Is this it?
-        if(child == nodeToCheck) {
+        if(child == ChildToCheck) {
             return(XDMF_SUCCESS);
         }
         // Check Its children
-        if(this->IsChild((XdmfXmlNode)nodeToCheck, child) == XDMF_SUCCESS){
+        if(this->IsChild(ChildToCheck, child) == XDMF_SUCCESS){
             return(XDMF_SUCCESS);
         }
     }
@@ -147,7 +141,7 @@ return(XDMF_FAIL);
 }
 
 XdmfInt32
-XdmfDOM::SetOutputFileName( XdmfConstString Filename ){
+XdmfDOM::SetOutputFileName(XdmfConstString Filename){
 
   if( ( this->Output != &cout ) && ( this->Output != &cerr ) ) {
           ofstream *OldOutput = ( ofstream *)this->Output;
@@ -222,13 +216,11 @@ XdmfConstString
 XdmfDOM::Serialize(XdmfXmlNode Node) {
 int buflen;
 xmlBufferPtr bufp;
-xmlNode *node;
 
-node = (xmlNode *)Node;
-if(!node) node = (xmlNode *)this->Tree;
-if(!node) return(NULL);
+if(!Node) Node = this->Tree;
+if(!Node) return(NULL);
 bufp = xmlBufferCreate();
-buflen = xmlNodeDump(bufp, (xmlDoc *)this->Doc, node, 0, 1);
+buflen = xmlNodeDump(bufp, this->Doc, Node, 0, 1);
 return(this->DupBuffer(bufp));
 }
 
@@ -250,9 +242,10 @@ XdmfInt32 XdmfDOM::Write(XdmfConstString Output){
 }
 
 XdmfXmlNode 
-XdmfDOM::__Parse(XdmfConstString inxml) {
+XdmfDOM::__Parse(XdmfConstString inxml, XdmfXmlDoc *DocPtr) {
 
-xmlNode *Root = NULL;
+XdmfXmlNode Root = NULL;
+XdmfXmlDoc  Doc;
 int parserOptions;
 
 parserOptions = this->ParserOptions;
@@ -260,26 +253,26 @@ if(inxml) {
     // Is  this XML or a File Name
     if(inxml[0] == '<'){
         // It's XML
-        this->Doc = xmlReadMemory(inxml, strlen(inxml), NULL, NULL, parserOptions);
+        Doc = xmlReadMemory(inxml, strlen(inxml), NULL, NULL, parserOptions);
     }else{
         // It's a File Name
         this->SetInputFileName(inxml);
-        this->Doc = xmlReadFile(this->GetInputFileName(), NULL, parserOptions);
+        Doc = xmlReadFile(this->GetInputFileName(), NULL, parserOptions);
     }
 }else{
-    this->Doc = xmlReadFile(this->GetInputFileName(), NULL, parserOptions);
+    Doc = xmlReadFile(this->GetInputFileName(), NULL, parserOptions);
 }
 if(this->Doc){
     if(parserOptions & XML_PARSE_XINCLUDE){
-        if (xmlXIncludeProcess((xmlDoc *)this->Doc) < 0) {
-            xmlFreeDoc((xmlDoc *)this->Doc);
-            this->Doc = NULL;
+        if (xmlXIncludeProcess(Doc) < 0) {
+            xmlFreeDoc(Doc);
+            Doc = NULL;
         }
     }
-    Root = xmlDocGetRootElement((xmlDoc *)this->Doc);
+    Root = xmlDocGetRootElement(Doc);
 }
-
-return((XdmfXmlNode)Root);
+if(DocPtr) *DocPtr = Doc;
+return(Root);
 }
 
 XdmfInt32
@@ -293,7 +286,7 @@ XdmfConstString  Attribute;
 if(this->Doc) xmlFreeDoc((xmlDoc *)this->Doc);
 this->Tree = NULL;
 
-Root = this->__Parse(inxml);
+Root = this->__Parse(inxml, &this->Doc);
 if (Root) {
   this->Tree = Root;
 } else {
@@ -319,10 +312,9 @@ return( XDMF_SUCCESS );
 
 XdmfInt32
 XdmfDOM::DeleteNode(XdmfXmlNode Node) {
-xmlNode *node = xmlNodePtrCAST Node;
-if(!node) return(XDMF_FAIL);
-xmlUnlinkNode(node);
-xmlFreeNode(node);
+if(!Node) return(XDMF_FAIL);
+xmlUnlinkNode(Node);
+xmlFreeNode(Node);
 return(XDMF_SUCCESS);
 }
 
@@ -330,14 +322,14 @@ XdmfInt32
 XdmfDOM::InsertFromString(XdmfXmlNode Parent, XdmfConstString inxml) {
 
 XdmfXmlNode NewNode = NULL;
-xmlDoc *doc = NULL;
-xmlNode *root = NULL;
+XdmfXmlDoc doc = NULL;
+XdmfXmlNode root = NULL;
 int parserOptions = this->ParserOptions;
 
 doc = xmlReadMemory(inxml, strlen(inxml), NULL, NULL, parserOptions);
 if(doc){
     root = xmlDocGetRootElement(doc);
-    NewNode = (XdmfPointer)root;
+    NewNode = root;
 }
 if(NewNode){
     XdmfInt32 Status;
@@ -350,12 +342,9 @@ return(XDMF_FAIL);
 
 XdmfInt32
 XdmfDOM::Insert(XdmfXmlNode Parent, XdmfXmlNode Child) {
-xmlNode *parent, *child;
 
-parent = xmlNodePtrCAST Parent;
-child = xmlNodePtrCAST Child;
-if(parent && child){
-    if(xmlAddChildList(parent, xmlCopyNodeList(child))){
+if(Parent && Child){
+    if(xmlAddChildList(Parent, xmlCopyNodeList(Child))){
         return(XDMF_SUCCESS);
     }
 }
@@ -364,30 +353,27 @@ return(XDMF_FAIL);
 
 XdmfXmlNode
 XdmfDOM::GetChild( XdmfInt64 Index, XdmfXmlNode Node ){
-xmlNode *node, *child;
+XdmfXmlNode child;
 
-node = xmlNodePtrCAST Node;
-child = node->children;
+child = Node->children;
 while(child && Index){
     child = XdmfGetNextElement(child);
     Index--;
 }
-return((XdmfXmlNode)child);
+return(child);
 }
 
 
 XdmfInt64
 XdmfDOM::GetNumberOfChildren( XdmfXmlNode Node ){
 XdmfInt64 Index = 0;
-xmlNode *node, *child;
+XdmfXmlNode child;
 
-node = xmlNodePtrCAST Node;
-if(!node){
-    node = xmlNodePtrCAST this->Tree;
+if(!Node){
+    Node = this->Tree;
 }
-
-if(!node) return(0);
-child = node->children;
+if(!Node) return(0);
+child = Node->children;
 while(child){
     if(child->type == XML_ELEMENT_NODE) Index++;
     child = XdmfGetNextElement(child);
@@ -401,27 +387,24 @@ return(this->Tree);
 }
 
 XdmfXmlNode  
-XdmfDOM::FindElement(XdmfConstString TagName, XdmfInt32 Index, XdmfXmlNode Node ) {
+XdmfDOM::FindElement(XdmfConstString TagName, XdmfInt32 Index, XdmfXmlNode Node) {
 
 XdmfString type = (XdmfString )TagName;
-XdmfXmlNode Start;
-xmlNode *child;
+XdmfXmlNode child;
 
-Start = Node;
-if(!Start) {
+if(!Node) {
     if(!this->Tree) return( NULL );
-    Start = this->Tree;
+    Node = this->Tree;
 }
-child = (xmlNodePtrCAST Start)->children;
+child = Node->children;
 if(!child) return(NULL);
 if ( type ) {
   if( STRNCASECMP( type, "NULL", 4 ) == 0 ) type = NULL;
 }
 if ( !type ) {
-    return(this->GetChild(Index, Start));
+    return(this->GetChild(Index, Node));
 } else {
     while(child){
-        // cout << "Checking " << type << " against " << (xmlNodePtrCAST child)->name << endl;
         if(XDMF_WORD_CMP((const char *)type, (const char *)(child)->name)){
             if(Index <= 0){
                 return(child);
@@ -437,15 +420,13 @@ return(NULL);
 XdmfXmlNode  
 XdmfDOM::FindElementByAttribute(XdmfConstString Attribute,
     XdmfConstString Value, XdmfInt32 Index, XdmfXmlNode Node ) {
-XdmfXmlNode Start;
-xmlNode *child;
+XdmfXmlNode child;
 
-Start = Node;
-if( !Start) {
-  Start = this->Tree;
+if( !Node) {
+  Node = this->Tree;
 }
-if( !Start ) return( NULL );
-child = (xmlNodePtrCAST Start)->children;
+if( !Node ) return( NULL );
+child = Node->children;
 while(child){
     xmlChar *txt = xmlGetProp(child, (xmlChar *)Attribute);
     if(XDMF_WORD_CMP((const char *)txt, (const char *)Value)){
@@ -464,15 +445,14 @@ return(NULL);
 
 XdmfInt32
 XdmfDOM::FindNumberOfElements(XdmfConstString TagName, XdmfXmlNode Node ) {
-xmlNode *node, *child;
+XdmfXmlNode child;
 XdmfInt32 Index = 0;
 
 if( !Node ) {
     if(!this->Tree) return(XDMF_FAIL);
     Node = this->Tree;
 }
-node = xmlNodePtrCAST  Node;
-child = node->children;
+child = Node->children;
 if(!child) return(0);
 while(child){
     if(XDMF_WORD_CMP(TagName, (const char *)child->name)){
@@ -487,15 +467,13 @@ XdmfInt32
 XdmfDOM::FindNumberOfElementsByAttribute(XdmfConstString Attribute, 
     XdmfConstString Value, XdmfXmlNode Node ) {
 XdmfInt32 NElements = 0;
-XdmfXmlNode Start;
-xmlNode *child;
+XdmfXmlNode child;
 
-Start = Node;
-if( !Start) {
-  Start = this->Tree;
+if( !Node) {
+  Node = this->Tree;
 }
-if( !Start ) return(0);
-child = (xmlNodePtrCAST Start)->children;
+if(!Node) return(0);
+child = Node->children;
 while(child){
     xmlChar *txt;
     txt = xmlGetProp(child, (xmlChar *)Attribute);
@@ -511,33 +489,30 @@ return(0);
 XdmfConstString
 XdmfDOM::GetAttribute(XdmfXmlNode Node, XdmfConstString Attribute) {
 
-xmlNode *node;
-if( !Node ) {
-    if(!this->Tree) return(NULL);
+if(!Node) {
     Node = this->Tree;
 }
-node = xmlNodePtrCAST Node;
-return((XdmfConstString)xmlGetProp(node, (xmlChar *)Attribute));
+if(!Node) return(0);
+return((XdmfConstString)xmlGetProp(Node, (xmlChar *)Attribute));
 }
 
 XdmfConstString
 XdmfDOM::GetCData(XdmfXmlNode Node) {
-xmlNode *node;
 xmlBuffer *sbufp;
 char    *txt;
 
 if( !Node ) {
-    if(!this->Tree) return(NULL);
     Node = this->Tree;
 }
-node = xmlNodePtrCAST Node;
-txt = (char *)xmlNodeListGetString((xmlDoc *)this->Doc, node->xmlChildrenNode, 1);
+if(!Node) return(0);
+txt = (char *)xmlNodeListGetString(this->Doc, Node->xmlChildrenNode, 1);
 return(this->DupChars(txt));
 }
 
 XdmfConstString
 XdmfDOM::Get(XdmfXmlNode Node, XdmfConstString Attribute) {
 
+if(!Node) return(0);
 if( STRNCASECMP( Attribute, "CDATA", 5 ) == 0 ){
     return(this->GetCData(Node));
 }
@@ -549,23 +524,22 @@ XdmfDOM::Set( XdmfXmlNode Node, XdmfConstString Attribute, XdmfConstString Value
 
 if(!Node) return;
 if( STRNCASECMP( Attribute, "CDATA", 5 ) == 0 ){
-    xmlNode *node, *next, *text;
+    XdmfXmlNode  next, text;
 
     // Delete Existing CData
-    node = (xmlNodePtrCAST Node)->children;
-    while(node){
-        next = node->next;
-        if ((node->type == XML_TEXT_NODE) ||
-            (node->type == XML_CDATA_SECTION_NODE)) {
-            xmlUnlinkNode(node);
-            xmlFreeNode(node);
+    while(Node){
+        next = Node->next;
+        if ((Node->type == XML_TEXT_NODE) ||
+            (Node->type == XML_CDATA_SECTION_NODE)) {
+            xmlUnlinkNode(Node);
+            xmlFreeNode(Node);
         }
-        node = next;
+       Node = next;
     }
-    text = xmlNewDocText((xmlDoc *)this->Doc, (const xmlChar *)Value);
-    xmlAddChildList(xmlNodePtrCAST Node, text);
+    text = xmlNewDocText(this->Doc, (const xmlChar *)Value);
+    xmlAddChildList(Node, text);
 }else{
-    xmlSetProp(xmlNodePtrCAST Node, (xmlChar *)Attribute, (xmlChar *)Value);
+    xmlSetProp(Node, (xmlChar *)Attribute, (xmlChar *)Value);
 }
 }
 

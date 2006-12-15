@@ -27,7 +27,11 @@
 
 #include "XdmfObject.h"
 
-typedef XdmfPointer XdmfXmlNode;
+// typedef XdmfPointer XdmfXmlNode;
+class _xmlNode;
+typedef _xmlNode *XdmfXmlNode;
+class _xmlDoc;
+typedef _xmlDoc *XdmfXmlDoc;
 
 //! Base object for Light Data (XML)
 /*!

@@ -134,7 +134,7 @@ public :
   XdmfXmlNode GetTree( void ) {return(this->Tree);} ;
 
   //! Parse XML without re-initializing entire DOM
-  XdmfXmlNode __Parse( XdmfConstString xml );
+  XdmfXmlNode __Parse(XdmfConstString xml, XdmfXmlDoc *Doc=NULL);
 
   //! Re-Initialize and Parse 
   XdmfInt32 Parse(XdmfConstString xml = NULL );
@@ -226,7 +226,7 @@ XdmfString      NdgmHost;
 XdmfString      OutputFileName;
 ostream         *Output;
 istream         *Input;
-XdmfPointer     Doc;
+XdmfXmlDoc      Doc;
 XdmfXmlNode     Tree;
 XdmfInt32       ParserOptions;
 };

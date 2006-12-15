@@ -23,6 +23,7 @@
 /*                                                                 */
 /*******************************************************************/
 #include "XdmfElement.h"
+#include "XdmfDOM.h"
 #include <libxml/tree.h>
 
 XdmfElement::XdmfElement() {
@@ -66,10 +67,8 @@ XdmfConstString XdmfElement::GetElementType(){
         XdmfErrorMessage("No XML Node has been set");
         return(NULL);
     }
-    xmlNode *node;
-    node = (xmlNode *)this->Element;
-    if(!node) return(NULL);
-    return((XdmfConstString)node->name);
+    if(!this->Element) return(NULL);
+    return((XdmfConstString)this->Element->name);
 }
 
 XdmfInt32 XdmfElement::UpdateDOM(){

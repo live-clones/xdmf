@@ -25,8 +25,9 @@
 #ifndef __XdmfElement_h
 #define __XdmfElement_h
 
+#include "XdmfLightData.h"
+
 class XdmfDOM;
-#include "XdmfDOM.h"
 
 /*!
     XdmfElement represents an Element in the LightData. For example,
