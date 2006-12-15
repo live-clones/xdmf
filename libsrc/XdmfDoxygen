@@ -425,9 +425,12 @@ WARN_LOGFILE           =
 
 INPUT                  = \
                         XdmfDOM.h \
+                        XdmfArray.h \
+                        XdmfDataDesc.h \
                         XdmfLightData.h \
                         XdmfElement.h \
                         XdmfInformation.h \
+                        XdmfDataStructure.h \
                         XdmfObject.h
 
 # If the value of the INPUT tag contains directories, you can use the 

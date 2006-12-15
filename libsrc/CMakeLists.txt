@@ -7,10 +7,10 @@ CHECK_CXX_SOURCE_RUNS("${XDMF_REQUIRE_LARGE_FILE_SUPPORT_FILE}"
   XDMF_REQUIRE_LARGE_FILE_SUPPORT "Xdmf support for 64 bit file systems")
 
 SET( XdmfFormatSource
-#  XdmfArray
 #  XdmfCharArray
+  XdmfArray
   XdmfDOM
-#  XdmfDataDesc
+  XdmfDataDesc
 #  XdmfExpression
 #  XdmfFormat
 #  XdmfFormatMulti
@@ -18,9 +18,10 @@ SET( XdmfFormatSource
 #  XdmfFormatXML
 #  XdmfHeavyData
 #  XdmfHDF
-#  XdmfHDFSupport
+  XdmfHDFSupport
   XdmfLightData
   XdmfInformation
+  XdmfDataStructure
   XdmfElement
   XdmfObject
 #  XdmfParameter

@@ -472,6 +472,9 @@ public:
   void SetGlobalDebugOn() { XdmfObject::SetGlobalDebug( 1 ) ; };
   void SetGlobalDebugOff() { XdmfObject::SetGlobalDebug( 0 ) ; };
 
+  XdmfConstString GetUniqueName(XdmfConstString NameBase=NULL);
+
+
 
 protected:
   XdmfInt32 Debug;  

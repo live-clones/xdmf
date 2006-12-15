@@ -57,6 +57,11 @@ XdmfObject::SetGlobalDebug( XdmfInt32 Value ){
   GlobalDebugFlag = Value;
 }
 
+XdmfConstString
+XdmfObject::GetUniqueName(XdmfConstString NameBase){
+    return(GetUnique(NameBase));
+}
+
 XdmfInt32
 GetGlobalDebug(){
   return GlobalDebugFlag;

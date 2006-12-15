@@ -26,7 +26,6 @@
 #define __XdmfDOM_h
 
 
-#include "XdmfObject.h"
 #include "XdmfLightData.h"
 
 //! Class for XML Parsing using the Document Object Model

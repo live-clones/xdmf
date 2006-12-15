@@ -34,6 +34,18 @@ XdmfElement::XdmfElement() {
 XdmfElement::~XdmfElement() {
 }
 
+XdmfInt32 XdmfElement::InsertChildElement(XdmfXmlNode Child){
+    if(!this->DOM) {
+        XdmfErrorMessage("No DOM has been set");
+        return(XDMF_FAIL);
+    }
+    if(!this->Element) {
+        XdmfErrorMessage("Current Element is empty");
+        return(XDMF_FAIL);
+    }
+    return(this->DOM->Insert(this->Element, Child));
+}
+
 XdmfInt32 XdmfElement::UpdateInformation(){
     if(!this->DOM) {
         XdmfErrorMessage("No DOM has been set");
@@ -58,6 +70,17 @@ XdmfInt32 XdmfElement::Update(){
     return(XDMF_SUCCESS);
 }
 
+XdmfConstString XdmfElement::Serialize(){
+    if(!this->DOM) {
+        XdmfErrorMessage("No DOM has been set");
+        return(NULL);
+    }
+    if(!this->Element){
+        XdmfErrorMessage("No XML Node has been set");
+        return(NULL);
+    }
+    return(this->DOM->Serialize(this->Element));
+}
 XdmfConstString XdmfElement::GetElementType(){
     if(!this->DOM) {
         XdmfErrorMessage("No DOM has been set");
@@ -67,7 +90,6 @@ XdmfConstString XdmfElement::GetElementType(){
         XdmfErrorMessage("No XML Node has been set");
         return(NULL);
     }
-    if(!this->Element) return(NULL);
     return((XdmfConstString)this->Element->name);
 }
 

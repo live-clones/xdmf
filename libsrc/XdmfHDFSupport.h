@@ -22,35 +22,28 @@
 /*     for more information.                                       */
 /*                                                                 */
 /*******************************************************************/
-#include "XdmfInformation.h"
+#ifndef __XdmfHDFSupport_h
+#define __XdmfHDFSupport_h
 
-XdmfInformation::XdmfInformation() {
-    this->Value = NULL;
+#ifndef SWIG
+#include "XdmfObject.h"
+#include "H5public.h"
+
+#if (H5_VERS_MAJOR>1)||((H5_VERS_MAJOR==1)&&(H5_VERS_MINOR>=6))
+#include "hdf5.h"
+#else
+extern "C" {
+#include "hdf5.h"
 }
+#endif
 
-XdmfInformation::~XdmfInformation() {
-}
+#endif /* SWIG */
 
-XdmfInt32 XdmfInformation::UpdateInformation(){
-    XdmfConstString Value;
+extern XDMF_EXPORT hid_t    XdmfTypeToHDF5Type( XdmfInt32 XdmfType );
+extern XDMF_EXPORT XdmfInt32  HDF5TypeToXdmfType( hid_t HDF5Type );
+extern XDMF_EXPORT XdmfConstString  XdmfTypeToString( XdmfInt32 XdmfType );
+extern XDMF_EXPORT XdmfInt32  StringToXdmfType( XdmfConstString TypeName );
+extern XDMF_EXPORT XdmfConstString  XdmfTypeToClassString( XdmfInt32 XdmfType );
 
-    XdmfElement::UpdateInformation();
-    Value = this->Get("Name");
-    if(Value) this->SetName(Value);
-    Value = this->Get("Value");
-    if(!Value) Value = this->Get("CDATA");
-    if(Value) this->SetValue(Value);
-    return(XDMF_SUCCESS);
-}
 
-XdmfInt32 XdmfInformation::UpdateDOM(){
-    if(XdmfElement::UpdateDOM() != XDMF_SUCCESS) return(XDMF_FAIL);
-    // If Value isn't already an XML Attribute and
-    // the value is > 10 chars, put it in the CDATA
-    if((this->Get("Value") == NULL)  && (strlen(this->Value) > 10)){
-        this->Set("CDATA", this->Value);
-    }else{
-        this->Set("Value", this->Value);
-    }
-    return(XDMF_SUCCESS);
-}
+#endif // __XdmfHDFSupport_h
