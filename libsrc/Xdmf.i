@@ -25,6 +25,10 @@ swig -v -c++ -make_default -includeall -shadow -java $(ICE_INCLUDES) -o XdmfJava
 #include <XdmfElement.h>
 #include <XdmfDataDesc.h>
 #include <XdmfDataStructure.h>
+#include <XdmfHDF.h>
+#include <XdmfHeavyData.h>
+#include <XdmfValues.h>
+#include <XdmfValuesXML.h>
     /*
 #include <XdmfExpression.h>
 #include <XdmfFormat.h>
@@ -33,8 +37,6 @@ swig -v -c++ -make_default -includeall -shadow -java $(ICE_INCLUDES) -o XdmfJava
 #include <XdmfFormatXML.h>
 #include <XdmfGeometry.h>
 #include <XdmfGrid.h>
-#include <XdmfHDF.h>
-#include <XdmfHeavyData.h>
     */
 #include <XdmfObject.h>
     /*
@@ -90,6 +92,8 @@ inline XDMF_LONG64 XDMF_strtoll(char *str, void*, int)
 %include XdmfElement.h
 %include XdmfDataDesc.h
 %include XdmfDataStructure.h
+%include XdmfValues.h
+%include XdmfValuesXML.h
 /*
 %include XdmfExpression.h
 %include XdmfFormat.h
@@ -98,10 +102,10 @@ inline XDMF_LONG64 XDMF_strtoll(char *str, void*, int)
 %include XdmfFormatXML.h
 %include XdmfGeometry.h
 %include XdmfGrid.h
-%include XdmfHDF.h
 %include XdmfHDFSupport.h
-%include XdmfHeavyData.h
 */
+%include XdmfHeavyData.h
+%include XdmfHDF.h
 %include XdmfObject.h
 /*
 %include XdmfParameter.h

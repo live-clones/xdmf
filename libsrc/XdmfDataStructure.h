@@ -29,6 +29,7 @@
 
 class XdmfDataDesc;
 class XdmfArray;
+class XdmfValues;
 
 #define XDMF_FORMAT_XML 0
 #define XDMF_FORMAT_HDF 1
@@ -69,6 +70,9 @@ public:
 
   XdmfConstString GetClassName() { return ( "XdmfDataStructure" ) ; };
 
+//! Get the data values access object
+    XdmfGetValueMacro(Values, XdmfValues *);
+
 //! Get the format of the data. Usually XML | HDF
     XdmfGetValueMacro(Format, XdmfInt32);
 //! Set the format of the data. Usually XML | HDF. Default is XML.
@@ -102,7 +106,7 @@ public:
         array->GetValues(....)
         \endverbatim
     */
-    XdmfString  GetValues( XdmfInt64 Index = 0,
+    XdmfString  GetDataValues( XdmfInt64 Index = 0,
                     XdmfInt64 NumberOfValues = 0,
                     XdmfInt64 ArrayStride = 1);
 
@@ -113,7 +117,7 @@ public:
         array->SetValues(....)
         \endverbatim
     */
-    XdmfInt32  SetValues( XdmfInt64 Index, XdmfConstString Values,
+    XdmfInt32  SetDataValues( XdmfInt64 Index, XdmfConstString Values,
                     XdmfInt64 ArrayStride = 1,
                     XdmfInt64 ValuesStride = 1 );
 
@@ -138,6 +142,7 @@ protected:
     XdmfInt32       Format;
     XdmfDataDesc    *DataDesc;
     XdmfArray       *Array;
+    XdmfValues      *Values;
 };
 
 #endif // __XdmfDataStructure_h

@@ -16,8 +16,10 @@ SET( XdmfFormatSource
 #  XdmfFormatMulti
 #  XdmfFormatHDF
 #  XdmfFormatXML
-#  XdmfHeavyData
-#  XdmfHDF
+  XdmfValues
+  XdmfValuesXML
+  XdmfHeavyData
+  XdmfHDF
   XdmfHDFSupport
   XdmfLightData
   XdmfInformation

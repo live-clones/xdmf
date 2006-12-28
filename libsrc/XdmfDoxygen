@@ -431,6 +431,10 @@ INPUT                  = \
                         XdmfElement.h \
                         XdmfInformation.h \
                         XdmfDataStructure.h \
+                        XdmfHeavyData.h \
+                        XdmfHDF.h \
+                        XdmfValues.h \
+                        XdmfValuesXML.h \
                         XdmfObject.h
 
 # If the value of the INPUT tag contains directories, you can use the 

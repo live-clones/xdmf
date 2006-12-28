@@ -469,8 +469,11 @@ public:
   XdmfBoolean GetGlobalDebug();
   void SetGlobalDebug( XdmfBoolean Value );
 
-  void SetGlobalDebugOn() { XdmfObject::SetGlobalDebug( 1 ) ; };
-  void SetGlobalDebugOff() { XdmfObject::SetGlobalDebug( 0 ) ; };
+  void DebugOn() { XdmfObject::SetDebug( 1 ) ; };
+  void DebugOff() { XdmfObject::SetDebug( 0 ) ; };
+
+  void GlobalDebugOn() { XdmfObject::SetGlobalDebug( 1 ) ; };
+  void GlobalDebugOff() { XdmfObject::SetGlobalDebug( 0 ) ; };
 
   XdmfConstString GetUniqueName(XdmfConstString NameBase=NULL);
 

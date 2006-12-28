@@ -26,7 +26,11 @@
 #include "XdmfDataDesc.h"
 #include "XdmfArray.h"
 
+// Supported Xdmf Formats
+#include "XdmfValuesXML.h"
+
 XdmfDataStructure::XdmfDataStructure() {
+    this->Values = NULL;
     this->DataDesc = new XdmfDataDesc;
     this->Array = new XdmfArray;
     this->Array->SetNumberType(XDMF_FLOAT32_TYPE);
@@ -100,7 +104,12 @@ XdmfInt32 XdmfDataStructure::Update(){
             return(XDMF_FAIL);
             break;
         case XDMF_FORMAT_XML :
-            if(this->Array->SetValues(0, this->Get("CDATA")) != XDMF_SUCCESS) return(XDMF_FAIL);
+            XdmfValuesXML *Values;
+            if(this->Values) delete this->Values;
+            // this->Values = (XdmfValues *)new XdmfValuesXML();
+            Values = new XdmfValuesXML();
+            Values->SetDataStructure(this);
+            if(!Values->Read(this->Array)) return(XDMF_FAIL);
             break;
         default :
             XdmfErrorMessage("Unsupported Data Format");
@@ -109,12 +118,12 @@ XdmfInt32 XdmfDataStructure::Update(){
     return(XDMF_SUCCESS);
 }
 
-XdmfString XdmfDataStructure::GetValues(XdmfInt64 Index, XdmfInt64 NumberOfValues, XdmfInt64 ArrayStride){
+XdmfString XdmfDataStructure::GetDataValues(XdmfInt64 Index, XdmfInt64 NumberOfValues, XdmfInt64 ArrayStride){
     if(!this->Array) return(NULL);
     return(this->Array->GetValues(Index, NumberOfValues, ArrayStride));
 }
 
-XdmfInt32 XdmfDataStructure::SetValues(XdmfInt64 Index, XdmfConstString Values, XdmfInt64 ArrayStride, XdmfInt64 ValuesStride){
+XdmfInt32 XdmfDataStructure::SetDataValues(XdmfInt64 Index, XdmfConstString Values, XdmfInt64 ArrayStride, XdmfInt64 ValuesStride){
     if(!this->Array){
         XdmfErrorMessage("DataStructure has no XdmfArray");
         return(XDMF_FAIL);
@@ -187,7 +196,12 @@ XdmfInt32 XdmfDataStructure::UpdateDOM(){
             return(XDMF_FAIL);
             break;
         case XDMF_FORMAT_XML :
-            if(this->Set("CDATA", this->Array->GetValues(0)) != XDMF_SUCCESS) return(XDMF_FAIL);
+            XdmfValuesXML *Values;
+            if(this->Values) delete this->Values;
+            // this->Values = (XdmfValues *)new XdmfValuesXML();
+            Values = new XdmfValuesXML();
+            Values->SetDataStructure(this);
+            if(Values->Write(this->Array) != XDMF_SUCCESS) return(XDMF_FAIL);
             break;
         default :
             XdmfErrorMessage("Unsupported Data Format");

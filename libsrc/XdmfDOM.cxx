@@ -530,21 +530,21 @@ if(!Node) return;
 if( STRNCASECMP( Attribute, "CDATA", 5 ) == 0 ){
     XdmfXmlNode  child, next, text;
 
-    cout << "Setting CDATA to " << Value << endl;
+    // cout << "Setting CDATA to " << Value << endl;
     // Delete Existing CData
     child = Node->children;
     while(child){
-        cout << "Checking Node of type " << Node->type << endl;
+        // cout << "Checking Node of type " << Node->type << endl;
         next = child->next;
         if ((child->type == XML_TEXT_NODE) ||
             (child->type == XML_CDATA_SECTION_NODE)) {
-            cout << "Deleting Node" << endl;
+            // cout << "Deleting Node" << endl;
             xmlUnlinkNode(child);
             xmlFreeNode(child);
         }
        child = next;
     }
-    cout << "Adding Node" << endl;
+    // cout << "Adding Node" << endl;
     text = xmlNewDocText(this->Doc, (const xmlChar *)Value);
     xmlAddChildList(Node, text);
 }else{

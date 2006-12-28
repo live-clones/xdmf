@@ -94,8 +94,13 @@ XdmfConstString XdmfElement::GetElementType(){
 }
 
 XdmfInt32 XdmfElement::UpdateDOM(){
-    this->Set("Name", this->GetName());
-    return(this->Set("Name", this->GetName()));
+    XdmfConstString  name;
+
+    name = this->GetName();
+    if(name && (strlen(name) > 1)){
+        return(this->Set("Name", name));
+    }
+    return(XDMF_SUCCESS);
 }
 
 XdmfInt32 XdmfElement::Set(XdmfConstString Name, XdmfConstString Value){
