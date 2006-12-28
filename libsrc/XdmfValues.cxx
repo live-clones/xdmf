@@ -33,11 +33,13 @@ XdmfValues::XdmfValues() {
 XdmfValues::~XdmfValues() {
 }
 
+// Override this
 XdmfArray *
 XdmfValues::Read(XdmfArray *Array){
     return(NULL);
 }
 
+// Override this
 XdmfInt32 
 XdmfValues::Write(XdmfArray *Array){
     return(XDMF_FAIL);
