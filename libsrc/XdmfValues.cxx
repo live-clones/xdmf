@@ -27,10 +27,39 @@
 #include "XdmfArray.h"
 
 XdmfValues::XdmfValues() {
-    this->DataStructure = NULL;
+    this->Format = -1;
 }
 
 XdmfValues::~XdmfValues() {
+}
+
+XdmfInt32 
+XdmfValues::Inherit(XdmfDataStructure *DataStructure) {
+    if(!DataStructure){
+        XdmfErrorMessage("DataStructure to copy is NULL");
+        return(XDMF_FAIL);
+    }
+    if(this->SetDOM(DataStructure->GetDOM()) != XDMF_SUCCESS){
+        XdmfErrorMessage("Error Setting DOM");
+        return(XDMF_FAIL);
+    }
+    if(this->SetElement(DataStructure->GetElement()) != XDMF_SUCCESS){
+        XdmfErrorMessage("Error Setting Element");
+        return(XDMF_FAIL);
+    }
+    if(this->SetFormat(DataStructure->GetFormat()) != XDMF_SUCCESS){
+        XdmfErrorMessage("Error Setting Element");
+        return(XDMF_FAIL);
+    }
+    if(this->DataDesc && this->DataDescIsMine){
+        delete this->DataDesc;
+    }
+    this->DataDescIsMine = 0;
+    if(this->SetDataDesc(DataStructure->GetDataDesc()) != XDMF_SUCCESS){
+        XdmfErrorMessage("Error Setting DataDesc");
+        return(XDMF_FAIL);
+    }
+    return(XDMF_SUCCESS);
 }
 
 // Override this

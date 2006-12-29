@@ -32,13 +32,34 @@
 XdmfDataStructure::XdmfDataStructure() {
     this->Values = NULL;
     this->DataDesc = new XdmfDataDesc;
+    this->DataDescIsMine = 1;
     this->Array = new XdmfArray;
+    this->ArrayIsMine = 1;
     this->Array->SetNumberType(XDMF_FLOAT32_TYPE);
     this->Array->SetNumberOfElements(3);
     this->Format = XDMF_FORMAT_XML;
 }
 
 XdmfDataStructure::~XdmfDataStructure() {
+    if(this->Array && this->ArrayIsMine ) delete this->Array;
+    if(this->DataDesc && this->DataDescIsMine) delete this->DataDesc;
+    if(this->Values) delete this->Values;
+}
+
+XdmfInt32 
+XdmfDataStructure::SetArray(XdmfArray *Array){
+    if(this->Array && this->ArrayIsMine) delete this->Array;
+    this->ArrayIsMine = 0;
+    this->Array = Array;
+    return(XDMF_SUCCESS);
+}
+
+XdmfInt32 
+XdmfDataStructure::SetDataDesc(XdmfDataDesc *DataDesc){
+    if(this->DataDesc && this->DataDescIsMine) delete this->DataDesc;
+    this->DataDescIsMine = 0;
+    this->DataDesc = DataDesc;
+    return(XDMF_SUCCESS);
 }
 
 XdmfInt32 XdmfDataStructure::UpdateInformation(){
@@ -98,18 +119,20 @@ XdmfInt32 XdmfDataStructure::Update(){
     if(this->Array->CopyType(this->DataDesc) != XDMF_SUCCESS) return(XDMF_FAIL);
     if(this->Array->CopyShape(this->DataDesc) != XDMF_SUCCESS) return(XDMF_FAIL);
     if(this->Array->CopySelection(this->DataDesc) != XDMF_SUCCESS) return(XDMF_FAIL);
+    if(this->CheckValues(this->Format) != XDMF_SUCCESS){
+        XdmfErrorMessage("Error Accessing Internal XdmfValues");
+        return(XDMF_FAIL);
+    }
     switch (this->Format) {
         case XDMF_FORMAT_HDF :
             XdmfErrorMessage("HDF Data Format not yet coded");
             return(XDMF_FAIL);
             break;
         case XDMF_FORMAT_XML :
-            XdmfValuesXML *Values;
-            if(this->Values) delete this->Values;
-            // this->Values = (XdmfValues *)new XdmfValuesXML();
-            Values = new XdmfValuesXML();
-            Values->SetDataStructure(this);
-            if(!Values->Read(this->Array)) return(XDMF_FAIL);
+            if(!((XdmfValuesXML *)Values)->Read(this->Array)){
+                XdmfErrorMessage("Reading Values Failed");
+                return(XDMF_FAIL);
+            }
             break;
         default :
             XdmfErrorMessage("Unsupported Data Format");
@@ -190,22 +213,60 @@ XdmfInt32 XdmfDataStructure::UpdateDOM(){
         default :
             break;
     }
+    if(this->CheckValues(this->Format) != XDMF_SUCCESS){
+        XdmfErrorMessage("Error Accessing Internal XdmfValues");
+        return(XDMF_FAIL);
+    }
+    this->Values->SetDataDesc(DataDesc);
     switch (this->Format) {
         case XDMF_FORMAT_HDF :
             XdmfErrorMessage("HDF Data Format not yet coded");
             return(XDMF_FAIL);
             break;
         case XDMF_FORMAT_XML :
-            XdmfValuesXML *Values;
-            if(this->Values) delete this->Values;
-            // this->Values = (XdmfValues *)new XdmfValuesXML();
-            Values = new XdmfValuesXML();
-            Values->SetDataStructure(this);
-            if(Values->Write(this->Array) != XDMF_SUCCESS) return(XDMF_FAIL);
+            if(((XdmfValuesXML *)Values)->Write(this->Array) != XDMF_SUCCESS){
+                XdmfErrorMessage("Writing Values Failed");
+                return(XDMF_FAIL);
+            }
             break;
         default :
             XdmfErrorMessage("Unsupported Data Format");
             return(XDMF_FAIL);
+    }
+    return(XDMF_SUCCESS);
+}
+
+XdmfInt32
+XdmfDataStructure::CheckValues(XdmfInt32 Format){
+    if(this->Values){
+        // Exists
+        if(this->Values->Format != Format){
+            // Wrong Format
+            delete this->Values;
+            this->Values = NULL;
+        }
+    }
+    if(!this->Values){
+        // Create One of the Proper Format
+        switch (this->Format) {
+            case XDMF_FORMAT_HDF :
+                XdmfErrorMessage("HDF Data Format not yet coded");
+                return(XDMF_FAIL);
+            case XDMF_FORMAT_XML :
+                this->Values = (XdmfValues *)new XdmfValuesXML();
+            break;
+            default :
+                XdmfErrorMessage("Unsupported Data Format");
+                return(XDMF_FAIL);
+        }
+    }
+    if(!this->Values){
+        XdmfErrorMessage("Error Creating new XdmfValues");
+        return(XDMF_FAIL);
+    }
+    if(this->Values->Inherit(this) != XDMF_SUCCESS){
+        XdmfErrorMessage("Error Inheriting DOM, Element, and DataDesc");
+        return(XDMF_FAIL);
     }
     return(XDMF_SUCCESS);
 }

@@ -356,9 +356,9 @@ class XdmfElement(XdmfLightData):
     def GetClassName(*args): return _Xdmf.XdmfElement_GetClassName(*args)
     def SetDOM(*args): return _Xdmf.XdmfElement_SetDOM(*args)
     def GetDOM(*args): return _Xdmf.XdmfElement_GetDOM(*args)
-    def SetElement(*args): return _Xdmf.XdmfElement_SetElement(*args)
     def InsertChildElement(*args): return _Xdmf.XdmfElement_InsertChildElement(*args)
     def Serialize(*args): return _Xdmf.XdmfElement_Serialize(*args)
+    def SetElement(*args): return _Xdmf.XdmfElement_SetElement(*args)
     def GetElement(*args): return _Xdmf.XdmfElement_GetElement(*args)
     def GetElementType(*args): return _Xdmf.XdmfElement_GetElementType(*args)
     def UpdateInformation(*args): return _Xdmf.XdmfElement_UpdateInformation(*args)
@@ -445,8 +445,7 @@ class XdmfValues(XdmfDataStructure):
     __swig_destroy__ = _Xdmf.delete_XdmfValues
     __del__ = lambda self : None;
     def GetClassName(*args): return _Xdmf.XdmfValues_GetClassName(*args)
-    def GetDataStructure(*args): return _Xdmf.XdmfValues_GetDataStructure(*args)
-    def SetDataStructure(*args): return _Xdmf.XdmfValues_SetDataStructure(*args)
+    def Inherit(*args): return _Xdmf.XdmfValues_Inherit(*args)
     def Read(*args): return _Xdmf.XdmfValues_Read(*args)
     def Write(*args): return _Xdmf.XdmfValues_Write(*args)
 XdmfValues_swigregister = _Xdmf.XdmfValues_swigregister
@@ -467,8 +466,6 @@ class XdmfValuesXML(XdmfValues):
     __swig_destroy__ = _Xdmf.delete_XdmfValuesXML
     __del__ = lambda self : None;
     def GetClassName(*args): return _Xdmf.XdmfValuesXML_GetClassName(*args)
-    def GetDataStructure(*args): return _Xdmf.XdmfValuesXML_GetDataStructure(*args)
-    def SetDataStructure(*args): return _Xdmf.XdmfValuesXML_SetDataStructure(*args)
     def Read(*args): return _Xdmf.XdmfValuesXML_Read(*args)
     def Write(*args): return _Xdmf.XdmfValuesXML_Write(*args)
 XdmfValuesXML_swigregister = _Xdmf.XdmfValuesXML_swigregister

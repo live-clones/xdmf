@@ -58,17 +58,17 @@ public:
     XdmfSetValueMacro(DOM, XdmfDOM *);
     //! Get the current DOM
     XdmfGetValueMacro(DOM, XdmfDOM *);
-//! Set the XML Node from which to parse
-/*! 
-        \param Value is the low level node returned from XdmfDOM->FindElement() etc.
-*/
-    XdmfSetValueMacro(Element, XdmfXmlNode);
     //! Add a child Node
     XdmfInt32 InsertChildElement(XdmfXmlNode Child);
 
     //! Return the XML representation
     XdmfConstString Serialize();
 
+//! Set the XML Node from which to parse
+/*! 
+        \param Value is the low level node returned from XdmfDOM->FindElement() etc.
+*/
+    XdmfSetValueMacro(Element, XdmfXmlNode);
 //! Get the XML Node
     XdmfGetValueMacro(Element, XdmfXmlNode);
 

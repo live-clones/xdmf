@@ -69,17 +69,12 @@ public :
   ~XdmfValuesXML();
 
   XdmfConstString GetClassName() { return("XdmfValuesXML"); } ;
-  //! Get the Internal Data Structure Representation
-  XdmfGetValueMacro(DataStructure, XdmfDataStructure   *);
-  //! Set the Internal Data Structure Representation
-  XdmfSetValueMacro(DataStructure, XdmfDataStructure   *);
   //! Read the Array from the External Representation
   XdmfArray *Read(XdmfArray *Array=NULL);
   //! Write the Array to the External Representation
   XdmfInt32 Write(XdmfArray *Array);
 
 protected :
-    XdmfDataStructure   *DataStructure;
 };
 
 #endif

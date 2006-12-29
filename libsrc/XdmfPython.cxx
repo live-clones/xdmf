@@ -13388,37 +13388,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_XdmfElement_SetElement(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  XdmfElement *arg1 = (XdmfElement *) 0 ;
-  XdmfXmlNode arg2 = (XdmfXmlNode) 0 ;
-  XdmfInt32 result;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfElement_SetElement",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfElement, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfElement_SetElement" "', argument " "1"" of type '" "XdmfElement *""'"); 
-  }
-  arg1 = reinterpret_cast< XdmfElement * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p__xmlNode, 0 |  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfElement_SetElement" "', argument " "2"" of type '" "XdmfXmlNode""'"); 
-  }
-  arg2 = reinterpret_cast< XdmfXmlNode >(argp2);
-  result = (XdmfInt32)(arg1)->SetElement(arg2);
-  resultobj = SWIG_From_int(static_cast< int >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_XdmfElement_InsertChildElement(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   XdmfElement *arg1 = (XdmfElement *) 0 ;
@@ -13466,6 +13435,37 @@ SWIGINTERN PyObject *_wrap_XdmfElement_Serialize(PyObject *SWIGUNUSEDPARM(self),
   arg1 = reinterpret_cast< XdmfElement * >(argp1);
   result = (XdmfConstString)(arg1)->Serialize();
   resultobj = SWIG_FromCharPtr((const char *)result);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfElement_SetElement(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfElement *arg1 = (XdmfElement *) 0 ;
+  XdmfXmlNode arg2 = (XdmfXmlNode) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfElement_SetElement",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfElement, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfElement_SetElement" "', argument " "1"" of type '" "XdmfElement *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfElement * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p__xmlNode, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfElement_SetElement" "', argument " "2"" of type '" "XdmfXmlNode""'"); 
+  }
+  arg2 = reinterpret_cast< XdmfXmlNode >(argp2);
+  result = (XdmfInt32)(arg1)->SetElement(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
   return resultobj;
 fail:
   return NULL;
@@ -14891,29 +14891,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_XdmfValues_GetDataStructure(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  XdmfValues *arg1 = (XdmfValues *) 0 ;
-  XdmfDataStructure *result = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:XdmfValues_GetDataStructure",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfValues, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfValues_GetDataStructure" "', argument " "1"" of type '" "XdmfValues *""'"); 
-  }
-  arg1 = reinterpret_cast< XdmfValues * >(argp1);
-  result = (XdmfDataStructure *)(arg1)->GetDataStructure();
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_XdmfDataStructure, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_XdmfValues_SetDataStructure(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_XdmfValues_Inherit(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   XdmfValues *arg1 = (XdmfValues *) 0 ;
   XdmfDataStructure *arg2 = (XdmfDataStructure *) 0 ;
@@ -14925,18 +14903,18 @@ SWIGINTERN PyObject *_wrap_XdmfValues_SetDataStructure(PyObject *SWIGUNUSEDPARM(
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfValues_SetDataStructure",&obj0,&obj1)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfValues_Inherit",&obj0,&obj1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfValues, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfValues_SetDataStructure" "', argument " "1"" of type '" "XdmfValues *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfValues_Inherit" "', argument " "1"" of type '" "XdmfValues *""'"); 
   }
   arg1 = reinterpret_cast< XdmfValues * >(argp1);
   res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_XdmfDataStructure, 0 |  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfValues_SetDataStructure" "', argument " "2"" of type '" "XdmfDataStructure *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfValues_Inherit" "', argument " "2"" of type '" "XdmfDataStructure *""'"); 
   }
   arg2 = reinterpret_cast< XdmfDataStructure * >(argp2);
-  result = (XdmfInt32)(arg1)->SetDataStructure(arg2);
+  result = (XdmfInt32)(arg1)->Inherit(arg2);
   resultobj = SWIG_From_int(static_cast< int >(result));
   return resultobj;
 fail:
@@ -15126,59 +15104,6 @@ SWIGINTERN PyObject *_wrap_XdmfValuesXML_GetClassName(PyObject *SWIGUNUSEDPARM(s
   arg1 = reinterpret_cast< XdmfValuesXML * >(argp1);
   result = (XdmfConstString)(arg1)->GetClassName();
   resultobj = SWIG_FromCharPtr((const char *)result);
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_XdmfValuesXML_GetDataStructure(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  XdmfValuesXML *arg1 = (XdmfValuesXML *) 0 ;
-  XdmfDataStructure *result = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:XdmfValuesXML_GetDataStructure",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfValuesXML, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfValuesXML_GetDataStructure" "', argument " "1"" of type '" "XdmfValuesXML *""'"); 
-  }
-  arg1 = reinterpret_cast< XdmfValuesXML * >(argp1);
-  result = (XdmfDataStructure *)(arg1)->GetDataStructure();
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_XdmfDataStructure, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_XdmfValuesXML_SetDataStructure(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  XdmfValuesXML *arg1 = (XdmfValuesXML *) 0 ;
-  XdmfDataStructure *arg2 = (XdmfDataStructure *) 0 ;
-  XdmfInt32 result;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfValuesXML_SetDataStructure",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfValuesXML, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfValuesXML_SetDataStructure" "', argument " "1"" of type '" "XdmfValuesXML *""'"); 
-  }
-  arg1 = reinterpret_cast< XdmfValuesXML * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_XdmfDataStructure, 0 |  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfValuesXML_SetDataStructure" "', argument " "2"" of type '" "XdmfDataStructure *""'"); 
-  }
-  arg2 = reinterpret_cast< XdmfDataStructure * >(argp2);
-  result = (XdmfInt32)(arg1)->SetDataStructure(arg2);
-  resultobj = SWIG_From_int(static_cast< int >(result));
   return resultobj;
 fail:
   return NULL;
@@ -16989,9 +16914,9 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfElement_GetClassName", _wrap_XdmfElement_GetClassName, METH_VARARGS, NULL},
 	 { (char *)"XdmfElement_SetDOM", _wrap_XdmfElement_SetDOM, METH_VARARGS, NULL},
 	 { (char *)"XdmfElement_GetDOM", _wrap_XdmfElement_GetDOM, METH_VARARGS, NULL},
-	 { (char *)"XdmfElement_SetElement", _wrap_XdmfElement_SetElement, METH_VARARGS, NULL},
 	 { (char *)"XdmfElement_InsertChildElement", _wrap_XdmfElement_InsertChildElement, METH_VARARGS, NULL},
 	 { (char *)"XdmfElement_Serialize", _wrap_XdmfElement_Serialize, METH_VARARGS, NULL},
+	 { (char *)"XdmfElement_SetElement", _wrap_XdmfElement_SetElement, METH_VARARGS, NULL},
 	 { (char *)"XdmfElement_GetElement", _wrap_XdmfElement_GetElement, METH_VARARGS, NULL},
 	 { (char *)"XdmfElement_GetElementType", _wrap_XdmfElement_GetElementType, METH_VARARGS, NULL},
 	 { (char *)"XdmfElement_UpdateInformation", _wrap_XdmfElement_UpdateInformation, METH_VARARGS, NULL},
@@ -17034,16 +16959,13 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"new_XdmfValues", _wrap_new_XdmfValues, METH_VARARGS, NULL},
 	 { (char *)"delete_XdmfValues", _wrap_delete_XdmfValues, METH_VARARGS, NULL},
 	 { (char *)"XdmfValues_GetClassName", _wrap_XdmfValues_GetClassName, METH_VARARGS, NULL},
-	 { (char *)"XdmfValues_GetDataStructure", _wrap_XdmfValues_GetDataStructure, METH_VARARGS, NULL},
-	 { (char *)"XdmfValues_SetDataStructure", _wrap_XdmfValues_SetDataStructure, METH_VARARGS, NULL},
+	 { (char *)"XdmfValues_Inherit", _wrap_XdmfValues_Inherit, METH_VARARGS, NULL},
 	 { (char *)"XdmfValues_Read", _wrap_XdmfValues_Read, METH_VARARGS, NULL},
 	 { (char *)"XdmfValues_Write", _wrap_XdmfValues_Write, METH_VARARGS, NULL},
 	 { (char *)"XdmfValues_swigregister", XdmfValues_swigregister, METH_VARARGS, NULL},
 	 { (char *)"new_XdmfValuesXML", _wrap_new_XdmfValuesXML, METH_VARARGS, NULL},
 	 { (char *)"delete_XdmfValuesXML", _wrap_delete_XdmfValuesXML, METH_VARARGS, NULL},
 	 { (char *)"XdmfValuesXML_GetClassName", _wrap_XdmfValuesXML_GetClassName, METH_VARARGS, NULL},
-	 { (char *)"XdmfValuesXML_GetDataStructure", _wrap_XdmfValuesXML_GetDataStructure, METH_VARARGS, NULL},
-	 { (char *)"XdmfValuesXML_SetDataStructure", _wrap_XdmfValuesXML_SetDataStructure, METH_VARARGS, NULL},
 	 { (char *)"XdmfValuesXML_Read", _wrap_XdmfValuesXML_Read, METH_VARARGS, NULL},
 	 { (char *)"XdmfValuesXML_Write", _wrap_XdmfValuesXML_Write, METH_VARARGS, NULL},
 	 { (char *)"XdmfValuesXML_swigregister", XdmfValuesXML_swigregister, METH_VARARGS, NULL},

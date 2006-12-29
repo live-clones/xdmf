@@ -91,13 +91,13 @@ public:
     XdmfGetValueMacro(DataDesc, XdmfDataDesc *);
 
     //! Set the XdmfDataDesc.
-    XdmfSetValueMacro(DataDesc, XdmfDataDesc *);
+    XdmfInt32 SetDataDesc(XdmfDataDesc *DataDesc);
 
     //! Get the Internal Array
     XdmfGetValueMacro(Array, XdmfArray *);
 
     //! Set the Array
-    XdmfSetValueMacro(Array, XdmfArray *);
+    XdmfInt32   SetArray(XdmfArray *Array);
 
     //! Convenience Function to access Array
     /*! The more robust access is via :
@@ -140,9 +140,14 @@ public:
 
 protected:
     XdmfInt32       Format;
+    XdmfInt32       DataDescIsMine;
+    XdmfInt32       ArrayIsMine;
     XdmfDataDesc    *DataDesc;
     XdmfArray       *Array;
     XdmfValues      *Values;
+
+    //! Make sure this->Values is correct
+    XdmfInt32       CheckValues(XdmfInt32 Format);
 };
 
 #endif // __XdmfDataStructure_h
