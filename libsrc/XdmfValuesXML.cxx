@@ -72,13 +72,6 @@ XdmfValuesXML::Write(XdmfArray *Array){
         XdmfErrorMessage("Array to Write is NULL");
         return(XDMF_FAIL);
     }
-    /*
-    DataValues = Array->GetValues(0);
-    if(!DataValues){
-        XdmfErrorMessage("Error Getting Values from Array");
-        return(XDMF_FAIL);
-    }
-    */
     rank = this->DataDesc->GetShape(dims);
     for(i = 0 ; i < rank ; i++){
         idims[i] = dims[i];
@@ -87,29 +80,32 @@ XdmfValuesXML::Write(XdmfArray *Array){
     len = MIN(dims[rank - 1], 10);
     nelements = this->DataDesc->GetNumberOfElements();
     index = 0;
-    r = rank - 2;
     StringOutput << endl;
     while(nelements){
+        r = rank - 1;
         len = MIN(len, nelements);
         DataValues = Array->GetValues(index, len);
-        index += len;
         StringOutput << DataValues << endl;
+        index += len;
         nelements -= len;
-        if(nelements && (r >= 0)){
-            dims[r] -= 1;
-            if(dims[r] == 0){
-                StringOutput << endl;
-                // reset
-                dims[r] = idims[r];
-                while(r > 0){
-                    r--;
-                    if(dims[r]) dims[r] -= 1;
-                    if(dims[r] == 0){
-                        dims[r+1] = idims[r+1];
-                        StringOutput << "---" << endl;
-                    }
+        dims[r] -= len;
+        // End of Smallest dimension ?
+        if(nelements && r && (dims[r] <= 0)){
+            // Reset
+            dims[r] = idims[r];
+            // Go Backwards thru dimensions
+            while(r){
+                r--;
+                dims[r]--;
+                // Is dim now 0
+                if(dims[r] <= 0){
+                    // Add an Endl and keep going
+                    StringOutput << endl;
+                    dims[r] = idims[r];
+                }else{
+                    // Still some left
+                    break;
                 }
-                r = rank - 2;
             }
         }
     }
