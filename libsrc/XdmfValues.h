@@ -76,7 +76,7 @@ public :
   //! Read the Array from the External Representation
   virtual XdmfArray *Read(XdmfArray *Array=NULL);
   //! Write the Array to the External Representation
-  virtual XdmfInt32 Write(XdmfArray *Array);
+  virtual XdmfInt32 Write(XdmfArray *Array, XdmfConstString HeavyDataSetName=NULL);
 
 protected :
 };

@@ -28,6 +28,7 @@
 
 // Supported Xdmf Formats
 #include "XdmfValuesXML.h"
+#include "XdmfValuesHDF.h"
 
 XdmfDataStructure::XdmfDataStructure() {
     this->Values = NULL;
@@ -38,6 +39,7 @@ XdmfDataStructure::XdmfDataStructure() {
     this->Array->SetNumberType(XDMF_FLOAT32_TYPE);
     this->Array->SetNumberOfElements(3);
     this->Format = XDMF_FORMAT_XML;
+    this->HeavyDataSetName = NULL;
 }
 
 XdmfDataStructure::~XdmfDataStructure() {
@@ -125,8 +127,11 @@ XdmfInt32 XdmfDataStructure::Update(){
     }
     switch (this->Format) {
         case XDMF_FORMAT_HDF :
-            XdmfErrorMessage("HDF Data Format not yet coded");
-            return(XDMF_FAIL);
+            if(!((XdmfValuesHDF *)Values)->Read(this->Array)){
+                XdmfErrorMessage("Reading Values Failed");
+                return(XDMF_FAIL);
+            }
+            this->SetHeavyDataSetName(Values->GetHeavyDataSetName());
             break;
         case XDMF_FORMAT_XML :
             if(!((XdmfValuesXML *)Values)->Read(this->Array)){
@@ -220,8 +225,11 @@ XdmfInt32 XdmfDataStructure::UpdateDOM(){
     this->Values->SetDataDesc(DataDesc);
     switch (this->Format) {
         case XDMF_FORMAT_HDF :
-            XdmfErrorMessage("HDF Data Format not yet coded");
-            return(XDMF_FAIL);
+            Values->SetHeavyDataSetName(this->GetHeavyDataSetName());
+            if(((XdmfValuesHDF *)Values)->Write(this->Array) != XDMF_SUCCESS){
+                XdmfErrorMessage("Writing Values Failed");
+                return(XDMF_FAIL);
+            }
             break;
         case XDMF_FORMAT_XML :
             if(((XdmfValuesXML *)Values)->Write(this->Array) != XDMF_SUCCESS){

@@ -70,7 +70,7 @@ XdmfValues::Read(XdmfArray *Array){
 
 // Override this
 XdmfInt32 
-XdmfValues::Write(XdmfArray *Array){
+XdmfValues::Write(XdmfArray *Array, XdmfConstString HeavyDataSetName){
     return(XDMF_FAIL);
 }
 

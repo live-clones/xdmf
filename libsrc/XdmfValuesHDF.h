@@ -1,6 +1,6 @@
 /*******************************************************************/
 /*                               XDMF                              */
-/*                   eXtensible Data Model and ValuesXML              */
+/*                   eXtensible Data Model and ValuesHDF              */
 /*                                                                 */
 /*  Id : Id  */
 /*  Date : $Date$ */
@@ -22,53 +22,41 @@
 /*     for more information.                                       */
 /*                                                                 */
 /*******************************************************************/
-#ifndef __XdmfValuesXML_h
-#define __XdmfValuesXML_h
+#ifndef __XdmfValuesHDF_h
+#define __XdmfValuesHDF_h
 
 
 #include "XdmfValues.h"
 
 //!  Parent Class for handeling I/O of actual data for an XdmfDataStructure
 /*!
-This is the base class for access of values. By default, the
-ValuesXML are in XML and handled XdmfValuesXMLXML. Otherwise they're 
-handled by XdmfValuesXMLXXX (where XXX is the format).
 
-An XdmfDataStructure Node Looks like :
+An HDF XdmfDataStructure Node Looks like :
 
 \verbatim
 <DataStructure
   Rank="2"
   Dimensions="2 4"
   Precision="4"
-  DataType="Float">
-  1.1 3.3 5.5 7.7 9.9 11 13.1 15
-</DataStructure>
-     OR
-<DataStructure
-  Rank="2"
-  Dimensions="2 4"
-  Precision="4"
   DataType="Float"
   Format="HDF">
-    MyData.h5:/AllValuesXML/ThisArray
+    MyData.h5:/AllValuesHDF/ThisArray
 </DataStructure>
 \endverbatim
 
-XdmfValuesXML is used to access the "1.1 3.3 5.5 7.7 9.9 11 13.1 15" part wheather it's in the
-XML or in a file described in the XML.
-This class is overreidden for various formats supported by Xdmf (i.e. XML, HDF5, etc.)
+XdmfValuesHDF is used to access the "MyData.h5:/AllValuesHDF/ThisArray" part wheather it's in the
+HDF.
 */
 
 
-class XDMF_EXPORT XdmfValuesXML : public XdmfValues {
+class XDMF_EXPORT XdmfValuesHDF : public XdmfValues {
 
 public :
 
-  XdmfValuesXML();
-  ~XdmfValuesXML();
+  XdmfValuesHDF();
+  ~XdmfValuesHDF();
 
-  XdmfConstString GetClassName() { return("XdmfValuesXML"); } ;
+  XdmfConstString GetClassName() { return("XdmfValuesHDF"); } ;
   //! Read the Array from the External Representation
   XdmfArray *Read(XdmfArray *Array=NULL);
   //! Write the Array to the External Representation

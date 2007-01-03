@@ -57,7 +57,7 @@ XdmfValuesXML::Read(XdmfArray *Array){
 }
 
 XdmfInt32
-XdmfValuesXML::Write(XdmfArray *Array){
+XdmfValuesXML::Write(XdmfArray *Array, XdmfConstString HeavyDataSetName){
 
     XdmfConstString DataValues;
     ostrstream   StringOutput;
