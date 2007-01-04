@@ -183,7 +183,7 @@ Read the curently open dataset into and Array.
 /*!
 Write to the curently open dataset from and Array.
 */
-  XdmfArray *Write( XdmfArray *Array );
+  XdmfInt32 Write( XdmfArray *Array );
 
 //! Close the HDF5  File
   XdmfInt32 Close();

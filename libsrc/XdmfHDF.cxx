@@ -501,7 +501,7 @@ if ( status < 0 ) {
 return( Array );
 }
 
-XdmfArray *
+XdmfInt32
 XdmfHDF::Write( XdmfArray *Array ) {
 
 herr_t    status;
@@ -509,11 +509,11 @@ XDMF_HDF5_SIZE_T src_npts, dest_npts;
 
 if ( Array == NULL ){
   XdmfErrorMessage("No Array to Write");
-  return( NULL );
+  return(XDMF_FAIL);
   }
 if( Array->GetDataPointer() == NULL ){
   XdmfErrorMessage("Memory Object Array has no data storage");
-  return( NULL );
+  return(XDMF_FAIL);
   }
 if( this->Dataset == H5I_BADID ){
   XdmfDebug("Attempt Create");
@@ -521,7 +521,7 @@ if( this->Dataset == H5I_BADID ){
   this->CopyShape( Array );
   if( this->CreateDataset() != XDMF_SUCCESS ){
     XdmfErrorMessage("Unable to Create Dataset");
-    return( NULL );
+    return(XDMF_FAIL);
     }
   }
 
@@ -532,7 +532,7 @@ if( src_npts != dest_npts ) {
   XdmfErrorMessage("Source and Target Spaces specify different sizes for path: " << this->Path);
   XdmfErrorMessage("Source = " << XDMF_64BIT_CAST(src_npts) << " items");
   XdmfErrorMessage("Target = " << XDMF_64BIT_CAST(dest_npts) << " items");
-  return( NULL );
+  return(XDMF_FAIL);
 } else {
   XdmfDebug("Writing " << XDMF_64BIT_CAST(src_npts) << " items");
 }
@@ -545,9 +545,9 @@ status = H5Dwrite( this->Dataset,
       Array->GetDataPointer() );
 
 if ( status < 0 ) {
-  return( NULL );
+  return(XDMF_FAIL);
   }
-return( Array );
+return(XDMF_SUCCESS);
 }
 
 
@@ -821,7 +821,7 @@ if( Hdf.CreateDataset( str.str()) != XDMF_SUCCESS ){
   return( NULL );
   }
 str.rdbuf()->freeze(0);
-if( Hdf.Write( Source ) == NULL ){
+if( Hdf.Write( Source ) == XDMF_FAIL){
   XdmfErrorMessage("Can't Write Temp Dataset");
   if( NewArray ){
     delete NewArray;

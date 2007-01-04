@@ -52,12 +52,12 @@ public:
     XdmfInt32 UpdateInformation();
 
 /*! Set the internal value. This is not reflected in the DOM
-    Until UpdateDOM() is called.
+    Until Build() is called.
 */
     XdmfSetStringMacro(Value);
 
 //! Update the DOM
-    XdmfInt32 UpdateDOM();
+    XdmfInt32 Build();
 
 /*! Get the internal Value.
 */

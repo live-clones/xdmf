@@ -82,7 +82,7 @@ public:
     XdmfInt32 Update();
 
     //! Update the DOM from the Basic Structure
-    XdmfInt32 UpdateDOM();
+    XdmfInt32 Build();
 
     //! Set the Value of an Attribute (OUTPUT)
     XdmfInt32 Set(XdmfConstString Name, XdmfConstString Value);

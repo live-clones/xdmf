@@ -43,8 +43,8 @@ XdmfInt32 XdmfInformation::UpdateInformation(){
     return(XDMF_SUCCESS);
 }
 
-XdmfInt32 XdmfInformation::UpdateDOM(){
-    if(XdmfElement::UpdateDOM() != XDMF_SUCCESS) return(XDMF_FAIL);
+XdmfInt32 XdmfInformation::Build(){
+    if(XdmfElement::Build() != XDMF_SUCCESS) return(XDMF_FAIL);
     // If Value isn't already an XML Attribute and
     // the value is > 10 chars, put it in the CDATA
     if((this->Get("Value") == NULL)  && (strlen(this->Value) > 10)){

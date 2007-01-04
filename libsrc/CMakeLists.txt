@@ -18,6 +18,7 @@ SET( XdmfFormatSource
 #  XdmfFormatXML
   XdmfValues
   XdmfValuesXML
+  XdmfValuesHDF
   XdmfHeavyData
   XdmfHDF
   XdmfHDFSupport

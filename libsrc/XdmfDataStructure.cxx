@@ -199,9 +199,9 @@ XdmfConstString XdmfDataStructure::GetShapeAsString(){
     return(this->DataDesc->GetShapeAsString());
 }
 
-XdmfInt32 XdmfDataStructure::UpdateDOM(){
+XdmfInt32 XdmfDataStructure::Build(){
     XdmfDataDesc *DataDesc = this->DataDesc;
-    if(XdmfElement::UpdateDOM() != XDMF_SUCCESS) return(XDMF_FAIL);
+    if(XdmfElement::Build() != XDMF_SUCCESS) return(XDMF_FAIL);
     if(this->Array) DataDesc = this->Array;
     this->Set("Dimensions", DataDesc->GetShapeAsString());
     this->Set("Type", XdmfTypeToClassString(DataDesc->GetNumberType()));
@@ -225,17 +225,21 @@ XdmfInt32 XdmfDataStructure::UpdateDOM(){
     this->Values->SetDataDesc(DataDesc);
     switch (this->Format) {
         case XDMF_FORMAT_HDF :
+            XdmfDebug("Writing Values in HDF Format");
             Values->SetHeavyDataSetName(this->GetHeavyDataSetName());
             if(((XdmfValuesHDF *)Values)->Write(this->Array) != XDMF_SUCCESS){
                 XdmfErrorMessage("Writing Values Failed");
                 return(XDMF_FAIL);
             }
+            this->Set("Format", "HDF");
             break;
         case XDMF_FORMAT_XML :
+            XdmfDebug("Writing Values in XML Format");
             if(((XdmfValuesXML *)Values)->Write(this->Array) != XDMF_SUCCESS){
                 XdmfErrorMessage("Writing Values Failed");
                 return(XDMF_FAIL);
             }
+            this->Set("Format", "XML");
             break;
         default :
             XdmfErrorMessage("Unsupported Data Format");
@@ -250,6 +254,7 @@ XdmfDataStructure::CheckValues(XdmfInt32 Format){
         // Exists
         if(this->Values->Format != Format){
             // Wrong Format
+            XdmfDebug("CheckValues Changing Format");
             delete this->Values;
             this->Values = NULL;
         }
@@ -258,11 +263,11 @@ XdmfDataStructure::CheckValues(XdmfInt32 Format){
         // Create One of the Proper Format
         switch (this->Format) {
             case XDMF_FORMAT_HDF :
-                XdmfErrorMessage("HDF Data Format not yet coded");
-                return(XDMF_FAIL);
+                this->Values = (XdmfValues *)new XdmfValuesHDF();
+                break;
             case XDMF_FORMAT_XML :
                 this->Values = (XdmfValues *)new XdmfValuesXML();
-            break;
+                break;
             default :
                 XdmfErrorMessage("Unsupported Data Format");
                 return(XDMF_FAIL);

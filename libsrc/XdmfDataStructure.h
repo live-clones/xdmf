@@ -85,7 +85,7 @@ public:
     XdmfInt32 Update();
 
 //! Update the DOM (OUTPUT)
-    XdmfInt32 UpdateDOM();
+    XdmfInt32 Build();
 
     //! Get the Internal XdmfDataDesc
     XdmfGetValueMacro(DataDesc, XdmfDataDesc *);

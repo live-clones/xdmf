@@ -43,7 +43,10 @@ XdmfInt32 XdmfElement::InsertChildElement(XdmfXmlNode Child){
         XdmfErrorMessage("Current Element is empty");
         return(XDMF_FAIL);
     }
-    return(this->DOM->Insert(this->Element, Child));
+    if(this->DOM->Insert(this->Element, Child)){
+        return(XDMF_SUCCESS);
+    }
+    return(XDMF_FAIL);
 }
 
 XdmfInt32 XdmfElement::UpdateInformation(){
@@ -93,7 +96,7 @@ XdmfConstString XdmfElement::GetElementType(){
     return((XdmfConstString)this->Element->name);
 }
 
-XdmfInt32 XdmfElement::UpdateDOM(){
+XdmfInt32 XdmfElement::Build(){
     XdmfConstString  name;
 
     name = this->GetName();

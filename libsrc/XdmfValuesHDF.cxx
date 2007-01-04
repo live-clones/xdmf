@@ -44,7 +44,7 @@ XdmfValuesHDF::Read(XdmfArray *Array){
         XdmfErrorMessage("DataDesc has not been set");
         return(NULL);
     }
-    H5.SetWorkingDirectory(this->GetWorkingDirecory());
+    H5.SetWorkingDirectory(this->GetWorkingDirectory());
     XDMF_STRING_DUPLICATE(DataSetName, this->Get("CDATA"));
     if(!DataSetName || strlen(DataSetName) < 1){
         XdmfErrorMessage("Invalid HDF5 Dataset Name");
@@ -64,7 +64,7 @@ XdmfValuesHDF::Read(XdmfArray *Array){
         RetArray->CopySelection(this->DataDesc);
         RetArray->Allocate();
     }
-    if( H5.Open( NewData, "r" ) == XDMF_FAIL ) {
+    if( H5.Open( DataSetName, "r" ) == XDMF_FAIL ) {
         XdmfErrorMessage("Can't Open Dataset " << DataSetName);
         if(!Array) delete RetArray;
         RetArray = NULL;
@@ -103,7 +103,7 @@ XdmfValuesHDF::Read(XdmfArray *Array){
         }else{
             this->SetHeavyDataSetName(DataSetName);
         }
-    H5.Close()
+    H5.Close();
     }
     delete [] DataSetName;
     return(RetArray);
@@ -111,7 +111,14 @@ XdmfValuesHDF::Read(XdmfArray *Array){
 
 XdmfInt32
 XdmfValuesHDF::Write(XdmfArray *Array, XdmfConstString HeavyDataSetName){
+    char* heavyDataset;
+    XdmfHDF H5;
 
+    if(!HeavyDataSetName) HeavyDataSetName = this->GetHeavyDataSetName();
+    if(!HeavyDataSetName){
+        HeavyDataSetName = "Xdmf.h5:/Data";
+    }
+    XdmfDebug("Writing Values to " << HeavyDataSetName);
     if(!this->DataDesc ){
         XdmfErrorMessage("DataDesc has not been set");
         return(XDMF_FAIL);
@@ -120,4 +127,25 @@ XdmfValuesHDF::Write(XdmfArray *Array, XdmfConstString HeavyDataSetName){
         XdmfErrorMessage("Array to Write is NULL");
         return(XDMF_FAIL);
     }
+    heavyDataset = new char [ strlen(HeavyDataSetName) + 1 ];
+    strcpy(heavyDataset, HeavyDataSetName);
+    XDMF_WORD_TRIM( heavyDataset );
+    this->Set("CDATA", heavyDataset);
+    H5.CopyType(this->DataDesc);
+    H5.CopyShape(this->DataDesc);
+    H5.CopySelection(this->DataDesc);
+    if(H5.Open(heavyDataset, "rw") == XDMF_FAIL){
+        XdmfErrorMessage("Error Opening " << heavyDataset << " for Writing");
+        delete [] heavyDataset;
+        return(XDMF_FAIL);
+    }
+    if(H5.Write(Array) == XDMF_FAIL){
+        XdmfErrorMessage("Error Writing " << heavyDataset);
+        H5.Close();
+        delete [] heavyDataset;
+        return(XDMF_FAIL);
+    }
+    H5.Close();
+    delete [] heavyDataset;
+    return(XDMF_SUCCESS);
 }

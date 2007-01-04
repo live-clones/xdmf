@@ -29,6 +29,7 @@ swig -v -c++ -make_default -includeall -shadow -java $(ICE_INCLUDES) -o XdmfJava
 #include <XdmfHeavyData.h>
 #include <XdmfValues.h>
 #include <XdmfValuesXML.h>
+#include <XdmfValuesHDF.h>
     /*
 #include <XdmfExpression.h>
 #include <XdmfFormat.h>
@@ -94,6 +95,7 @@ inline XDMF_LONG64 XDMF_strtoll(char *str, void*, int)
 %include XdmfDataStructure.h
 %include XdmfValues.h
 %include XdmfValuesXML.h
+%include XdmfValuesHDF.h
 /*
 %include XdmfExpression.h
 %include XdmfFormat.h

@@ -318,7 +318,23 @@ xmlFreeNode(Node);
 return(XDMF_SUCCESS);
 }
 
-XdmfInt32
+XdmfXmlNode
+XdmfDOM::Create(XdmfConstString Version){
+    XdmfInt32   Status;
+    ostrstream  XmlString;
+
+    if(!Version) {
+        Version = "2.0";
+    }
+    XmlString << "<?xml version=\"1.0\" ?>" << endl << endl;
+    XmlString << "<Xdmf Version=\"" << Version << "\" >" << endl;
+    XmlString << "</Xdmf>" << endl;
+    Status = this->Parse(XmlString.str());
+    if(Status == XDMF_FAIL) return(NULL);
+    return(this->GetRoot());
+}
+
+XdmfXmlNode
 XdmfDOM::InsertFromString(XdmfXmlNode Parent, XdmfConstString inxml) {
 
 XdmfXmlNode NewNode = NULL;
@@ -332,23 +348,49 @@ if(doc){
     NewNode = root;
 }
 if(NewNode){
-    XdmfInt32 Status;
-    Status = this->Insert(Parent, NewNode);
+    XdmfXmlNode Child;
+    Child = this->Insert(Parent, NewNode);
     xmlFreeDoc(doc);
-    return(Status);
+    return(Child);
 }
-return(XDMF_FAIL);
+return(NULL);
 }
 
-XdmfInt32
+XdmfXmlNode
 XdmfDOM::Insert(XdmfXmlNode Parent, XdmfXmlNode Child) {
 
+XdmfXmlNode ChildCopy;
+
 if(Parent && Child){
-    if(xmlAddChildList(Parent, xmlCopyNodeList(Child))){
-        return(XDMF_SUCCESS);
+    if(Parent->doc == Child->doc){
+        XdmfDebug("Docs are same : Don't Copy Child");
+        ChildCopy = Child;
+    }else{
+        XdmfDebug("Docs are different : Copy Child");
+        ChildCopy = xmlCopyNodeList(Child);
+    }
+    if(xmlAddChildList(Parent, ChildCopy)){
+        return(ChildCopy);
     }
 }
-return(XDMF_FAIL);
+return(NULL);
+}
+
+XdmfXmlNode
+XdmfDOM::InsertNew(XdmfXmlNode Parent, XdmfConstString Type) {
+
+XdmfXmlNode Child;
+
+if(Parent){
+    Child = xmlNewNode(NULL, (const xmlChar *)Type);
+    if(Child) {
+        if(xmlAddChildList(Parent, Child)){
+            return(Child);
+        }
+        xmlFreeNode(Child);
+    }
+}
+return(NULL);
 }
 
 XdmfXmlNode
