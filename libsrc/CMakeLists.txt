@@ -11,7 +11,7 @@ SET( XdmfFormatSource
   XdmfArray
   XdmfDOM
   XdmfDataDesc
-#  XdmfExpression
+  XdmfExpression
 #  XdmfFormat
 #  XdmfFormatMulti
 #  XdmfFormatHDF
@@ -36,8 +36,8 @@ SET( XdmfFormatSource
 SET( XdmfExtraSource
 #  XdmfTree
 #  XdmfLlist
-#  XdmfExprLex
-#  XdmfExprYacc
+  XdmfExprLex
+  XdmfExprYacc
   )
 
 SET( XdmfModelSource

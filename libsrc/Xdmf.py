@@ -495,6 +495,9 @@ class XdmfValuesHDF(XdmfValues):
 XdmfValuesHDF_swigregister = _Xdmf.XdmfValuesHDF_swigregister
 XdmfValuesHDF_swigregister(XdmfValuesHDF)
 
+XdmfArrayExpr = _Xdmf.XdmfArrayExpr
+XdmfScalarExpr = _Xdmf.XdmfScalarExpr
+XdmfExpr = _Xdmf.XdmfExpr
 class XdmfHeavyData(XdmfDataDesc):
     __swig_setmethods__ = {}
     for _s in [XdmfDataDesc]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))

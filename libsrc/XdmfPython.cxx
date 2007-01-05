@@ -2601,8 +2601,8 @@ namespace swig {
 #include <XdmfValues.h>
 #include <XdmfValuesXML.h>
 #include <XdmfValuesHDF.h>
-    /*
 #include <XdmfExpression.h>
+    /*
 #include <XdmfFormat.h>
 #include <XdmfFormatHDF.h>
 #include <XdmfFormatMulti.h>
@@ -15901,6 +15901,115 @@ SWIGINTERN PyObject *XdmfValuesHDF_swigregister(PyObject *SWIGUNUSEDPARM(self), 
   return SWIG_Py_Void();
 }
 
+SWIGINTERN PyObject *_wrap_XdmfArrayExpr(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfArray *arg1 = (XdmfArray *) 0 ;
+  XdmfString arg2 = (XdmfString) 0 ;
+  XdmfArray *arg3 = (XdmfArray *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:XdmfArrayExpr",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfArray, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfArrayExpr" "', argument " "1"" of type '" "XdmfArray *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfArray * >(argp1);
+  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfArrayExpr" "', argument " "2"" of type '" "XdmfString""'");
+  }
+  arg2 = reinterpret_cast< XdmfString >(buf2);
+  res3 = SWIG_ConvertPtr(obj2, &argp3,SWIGTYPE_p_XdmfArray, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "XdmfArrayExpr" "', argument " "3"" of type '" "XdmfArray *""'"); 
+  }
+  arg3 = reinterpret_cast< XdmfArray * >(argp3);
+  XdmfArrayExpr(arg1,arg2,arg3);
+  resultobj = SWIG_Py_Void();
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfScalarExpr(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfArray *arg1 = (XdmfArray *) 0 ;
+  XdmfString arg2 = (XdmfString) 0 ;
+  XdmfFloat64 arg3 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  double val3 ;
+  int ecode3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:XdmfScalarExpr",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfArray, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfScalarExpr" "', argument " "1"" of type '" "XdmfArray *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfArray * >(argp1);
+  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfScalarExpr" "', argument " "2"" of type '" "XdmfString""'");
+  }
+  arg2 = reinterpret_cast< XdmfString >(buf2);
+  ecode3 = SWIG_AsVal_double(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "XdmfScalarExpr" "', argument " "3"" of type '" "XdmfFloat64""'");
+  } 
+  arg3 = static_cast< XdmfFloat64 >(val3);
+  XdmfScalarExpr(arg1,arg2,arg3);
+  resultobj = SWIG_Py_Void();
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfExpr(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfString arg1 = (XdmfString) 0 ;
+  XdmfArray *result = 0 ;
+  int res1 ;
+  char *buf1 = 0 ;
+  int alloc1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfExpr",&obj0)) SWIG_fail;
+  res1 = SWIG_AsCharPtrAndSize(obj0, &buf1, NULL, &alloc1);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfExpr" "', argument " "1"" of type '" "XdmfString""'");
+  }
+  arg1 = reinterpret_cast< XdmfString >(buf1);
+  result = (XdmfArray *)XdmfExpr(arg1);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_XdmfArray, 0 |  0 );
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
+  return resultobj;
+fail:
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_new_XdmfHeavyData(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   XdmfHeavyData *result = 0 ;
@@ -17639,6 +17748,9 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfValuesHDF_Read", _wrap_XdmfValuesHDF_Read, METH_VARARGS, NULL},
 	 { (char *)"XdmfValuesHDF_Write", _wrap_XdmfValuesHDF_Write, METH_VARARGS, NULL},
 	 { (char *)"XdmfValuesHDF_swigregister", XdmfValuesHDF_swigregister, METH_VARARGS, NULL},
+	 { (char *)"XdmfArrayExpr", _wrap_XdmfArrayExpr, METH_VARARGS, NULL},
+	 { (char *)"XdmfScalarExpr", _wrap_XdmfScalarExpr, METH_VARARGS, NULL},
+	 { (char *)"XdmfExpr", _wrap_XdmfExpr, METH_VARARGS, NULL},
 	 { (char *)"new_XdmfHeavyData", _wrap_new_XdmfHeavyData, METH_VARARGS, NULL},
 	 { (char *)"delete_XdmfHeavyData", _wrap_delete_XdmfHeavyData, METH_VARARGS, NULL},
 	 { (char *)"XdmfHeavyData_GetClassName", _wrap_XdmfHeavyData_GetClassName, METH_VARARGS, NULL},

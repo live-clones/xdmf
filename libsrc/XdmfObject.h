@@ -172,7 +172,7 @@ using std::hex;
 #define XDMF_MAX_STRING_LENGTH  1024
 
 /* #define XDMF_LIST_KEY  ICE_LIST_KEY */
-/* #define XDMF_BIG_INT  ICE_BIG_INT */
+#define XDMF_BIG_INT XDMF_64_INT 
 
 #define XDMF_DEFAULT_INDEX  -1
 

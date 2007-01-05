@@ -436,6 +436,7 @@ INPUT                  = \
                         XdmfValues.h \
                         XdmfValuesXML.h \
                         XdmfValuesHDF.h \
+                        XdmfExpression.h \
                         XdmfObject.h
 
 # If the value of the INPUT tag contains directories, you can use the 
