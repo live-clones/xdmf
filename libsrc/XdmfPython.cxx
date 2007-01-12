@@ -12877,6 +12877,40 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_XdmfDOM_FindElementByPath(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDOM *arg1 = (XdmfDOM *) 0 ;
+  XdmfConstString arg2 = (XdmfConstString) 0 ;
+  XdmfXmlNode result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfDOM_FindElementByPath",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDOM, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDOM_FindElementByPath" "', argument " "1"" of type '" "XdmfDOM *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDOM * >(argp1);
+  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfDOM_FindElementByPath" "', argument " "2"" of type '" "XdmfConstString""'");
+  }
+  arg2 = reinterpret_cast< XdmfConstString >(buf2);
+  result = (XdmfXmlNode)(arg1)->FindElementByPath(arg2);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p__xmlNode, 0 |  0 );
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_XdmfDOM_FindNumberOfElements__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   XdmfDOM *arg1 = (XdmfDOM *) 0 ;
@@ -17670,6 +17704,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfDOM_DeleteNode", _wrap_XdmfDOM_DeleteNode, METH_VARARGS, NULL},
 	 { (char *)"XdmfDOM_FindElement", _wrap_XdmfDOM_FindElement, METH_VARARGS, NULL},
 	 { (char *)"XdmfDOM_FindElementByAttribute", _wrap_XdmfDOM_FindElementByAttribute, METH_VARARGS, NULL},
+	 { (char *)"XdmfDOM_FindElementByPath", _wrap_XdmfDOM_FindElementByPath, METH_VARARGS, NULL},
 	 { (char *)"XdmfDOM_FindNumberOfElements", _wrap_XdmfDOM_FindNumberOfElements, METH_VARARGS, NULL},
 	 { (char *)"XdmfDOM_FindNumberOfElementsByAttribute", _wrap_XdmfDOM_FindNumberOfElementsByAttribute, METH_VARARGS, NULL},
 	 { (char *)"XdmfDOM_GetNdgmHost", _wrap_XdmfDOM_GetNdgmHost, METH_VARARGS, NULL},

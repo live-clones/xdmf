@@ -184,6 +184,8 @@ tree starting at a particular node.
       XdmfConstString Value,
       XdmfInt32 Index= 0,
       XdmfXmlNode Node = NULL );
+  //! Find an Node using XPath syntax
+  XdmfXmlNode FindElementByPath(XdmfConstString Path);
   //! Find the number of nodes of a certain type
   XdmfInt32 FindNumberOfElements(XdmfConstString TagName,
       XdmfXmlNode Node = NULL );

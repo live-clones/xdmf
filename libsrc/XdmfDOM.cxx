@@ -28,6 +28,8 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <libxml/xinclude.h>
+#include <libxml/xpath.h>
+#include <libxml/xpathInternals.h>
 
 
 XdmfDOM *HandleToXdmfDOM( XdmfConstString Source ){
@@ -488,6 +490,46 @@ while(child){
 return(NULL);
 }
 
+XdmfXmlNode 
+XdmfDOM::FindElementByPath(XdmfConstString Path){
+    // Use an XPath expression to return a Node
+    xmlXPathContextPtr xpathCtx;
+    xmlXPathObjectPtr xpathObj;
+    xmlNodeSetPtr nodes;
+    XdmfXmlNode child = NULL;
+    int i;
+
+    if(!this->Doc){
+        XdmfErrorMessage("XML must be parsed before XPath is available");
+        return(NULL);
+    }
+    // Create the context
+    xpathCtx = xmlXPathNewContext(this->Doc);
+    if(xpathCtx == NULL){
+        XdmfErrorMessage("Can't Create XPath Context");
+        return(NULL);
+    }
+    xpathObj = xmlXPathEvalExpression((const xmlChar *)Path, xpathCtx);
+    if(xpathObj == NULL){
+        XdmfErrorMessage("Can't evaluate XPath : " << Path);
+        return(NULL);
+    }
+    // Return the first XML_ELEMENT_NODE
+    nodes = xpathObj->nodesetval;
+    XdmfDebug("Found " << nodes->nodeNr << " Element that match XPath expression " << Path);
+    for(i=0 ; i < nodes->nodeNr ; i++){
+        child = nodes->nodeTab[i];
+        if(child->type == XML_ELEMENT_NODE){
+            // this is it
+            xmlXPathFreeObject(xpathObj);
+            xmlXPathFreeContext(xpathCtx);
+            return(child);
+        }
+    }
+xmlXPathFreeObject(xpathObj);
+xmlXPathFreeContext(xpathCtx);
+return(NULL);
+}
 
 XdmfInt32
 XdmfDOM::FindNumberOfElements(XdmfConstString TagName, XdmfXmlNode Node ) {

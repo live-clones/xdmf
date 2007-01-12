@@ -329,6 +329,7 @@ class XdmfDOM(XdmfLightData):
     def DeleteNode(*args): return _Xdmf.XdmfDOM_DeleteNode(*args)
     def FindElement(*args): return _Xdmf.XdmfDOM_FindElement(*args)
     def FindElementByAttribute(*args): return _Xdmf.XdmfDOM_FindElementByAttribute(*args)
+    def FindElementByPath(*args): return _Xdmf.XdmfDOM_FindElementByPath(*args)
     def FindNumberOfElements(*args): return _Xdmf.XdmfDOM_FindNumberOfElements(*args)
     def FindNumberOfElementsByAttribute(*args): return _Xdmf.XdmfDOM_FindNumberOfElementsByAttribute(*args)
     def GetNdgmHost(*args): return _Xdmf.XdmfDOM_GetNdgmHost(*args)
