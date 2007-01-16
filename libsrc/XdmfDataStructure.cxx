@@ -30,6 +30,8 @@
 #include "XdmfValuesXML.h"
 #include "XdmfValuesHDF.h"
 
+#include <libxml/tree.h>
+
 XdmfDataStructure::XdmfDataStructure() {
     this->Values = NULL;
     this->DataDesc = new XdmfDataDesc;
@@ -62,6 +64,31 @@ XdmfDataStructure::SetDataDesc(XdmfDataDesc *DataDesc){
     this->DataDescIsMine = 0;
     this->DataDesc = DataDesc;
     return(XDMF_SUCCESS);
+}
+
+XdmfInt32 XdmfDataStructure::Reference( XdmfXmlNode Element ){
+    XdmfDataStructure *ds;
+
+    if(Element->_private == 0x0){
+        XdmfDebug("Element has not been initialized as a DataStructure");
+        if(this->SetElement(Element) != XDMF_SUCCESS){
+            XdmfErrorMessage("Error Setting Element");
+            return(XDMF_FAIL);
+        }
+        this->SetIsReference(0);
+        return(XDMF_SUCCESS);
+    }
+    ds = (XdmfDataStructure *)Element->_private;
+    XdmfDebug("Referenceing Existing DataStructure at " << ds );
+    this->SetDOM(ds->GetDOM());
+    this->Element = Element;
+    this->SetDataDesc(ds->GetDataDesc());
+    this->SetArray(ds->GetArray());
+    this->SetHeavyDataSetName(ds->GetHeavyDataSetName());
+    this->SetFormat(ds->GetFormat());
+    this->SetIsReference(1);
+    return(XDMF_SUCCESS);
+
 }
 
 XdmfInt32 XdmfDataStructure::UpdateInformation(){

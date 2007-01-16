@@ -43,10 +43,16 @@ XdmfValues::Inherit(XdmfDataStructure *DataStructure) {
         XdmfErrorMessage("Error Setting DOM");
         return(XDMF_FAIL);
     }
-    if(this->SetElement(DataStructure->GetElement()) != XDMF_SUCCESS){
-        XdmfErrorMessage("Error Setting Element");
+    // if(this->SetElement(DataStructure->GetElement()) != XDMF_SUCCESS){
+    //     XdmfErrorMessage("Error Setting Element");
+    //     return(XDMF_FAIL);
+    // }
+    // Do it by hand so the _private member of the structure is maintained.
+    if(!DataStructure->GetElement()){
+        XdmfErrorMessage("Element is NULL");
         return(XDMF_FAIL);
     }
+    this->Element = DataStructure->GetElement();
     if(this->SetFormat(DataStructure->GetFormat()) != XDMF_SUCCESS){
         XdmfErrorMessage("Error Setting Element");
         return(XDMF_FAIL);

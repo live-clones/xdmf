@@ -58,6 +58,12 @@ public:
     XdmfSetValueMacro(DOM, XdmfDOM *);
     //! Get the current DOM
     XdmfGetValueMacro(DOM, XdmfDOM *);
+
+    //! Does this Element Reference Some Other Element
+    XdmfSetValueMacro(IsReference, XdmfInt32);
+    //! Does this Element Reference Some Other Element
+    XdmfGetValueMacro(IsReference, XdmfInt32);
+
     //! Add a child Node
     XdmfInt32 InsertChildElement(XdmfXmlNode Child);
 
@@ -68,7 +74,7 @@ public:
 /*! 
         \param Value is the low level node returned from XdmfDOM->FindElement() etc.
 */
-    XdmfSetValueMacro(Element, XdmfXmlNode);
+    XdmfInt32   SetElement(XdmfXmlNode Element);
 //! Get the XML Node
     XdmfGetValueMacro(Element, XdmfXmlNode);
 
@@ -93,5 +99,6 @@ public:
 protected:
     XdmfDOM     *DOM;
     XdmfXmlNode Element;
+    XdmfInt32   IsReference;
 };
 #endif // __XdmfElement_h
