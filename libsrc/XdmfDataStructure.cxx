@@ -25,6 +25,7 @@
 #include "XdmfDataStructure.h"
 #include "XdmfDataDesc.h"
 #include "XdmfArray.h"
+#include "XdmfDOM.h"
 
 // Supported Xdmf Formats
 #include "XdmfValuesXML.h"
@@ -66,85 +67,109 @@ XdmfDataStructure::SetDataDesc(XdmfDataDesc *DataDesc){
     return(XDMF_SUCCESS);
 }
 
-XdmfInt32 XdmfDataStructure::Reference( XdmfXmlNode Element ){
+XdmfInt32 XdmfDataStructure::SetReference( XdmfXmlNode Element ){
     XdmfDataStructure *ds;
 
-    if(Element->_private == 0x0){
-        XdmfDebug("Element has not been initialized as a DataStructure");
-        if(this->SetElement(Element) != XDMF_SUCCESS){
-            XdmfErrorMessage("Error Setting Element");
-            return(XDMF_FAIL);
-        }
-        this->SetIsReference(0);
-        return(XDMF_SUCCESS);
+    XdmfDebug("XdmfDataStructure::SetReference");
+    if(!Element){
+        XdmfErrorMessage("Element is NULL");
+        return(XDMF_FAIL);
     }
-    ds = (XdmfDataStructure *)Element->_private;
-    XdmfDebug("Referenceing Existing DataStructure at " << ds );
+    if(XdmfElement::SetReference(Element) == XDMF_FAIL){
+        // NULL Node or Wrong Class
+        XdmfDebug("Cannot Reference This XML Node");
+        return(XDMF_FAIL);
+    }
+    // Reference was successful. Is there an Associated Object ? 
+    ds = (XdmfDataStructure *)this->GetReferenceObject();
+    if(ds){
+        XdmfDebug("Referenceing Existing DataStructure at " << ds );
+        this->Copy(ds);
+    }else{
+        XdmfDebug("Referenced XML Node is Unitialized");
+    }
+    return(XDMF_SUCCESS);
+}
+
+XdmfInt32
+XdmfDataStructure::Copy(XdmfElement *Source){
+    XdmfDataStructure *ds;
+
+    ds = (XdmfDataStructure *)Source;
     this->SetDOM(ds->GetDOM());
-    this->Element = Element;
     this->SetDataDesc(ds->GetDataDesc());
     this->SetArray(ds->GetArray());
     this->SetHeavyDataSetName(ds->GetHeavyDataSetName());
     this->SetFormat(ds->GetFormat());
-    this->SetIsReference(1);
     return(XDMF_SUCCESS);
-
 }
 
 XdmfInt32 XdmfDataStructure::UpdateInformation(){
     XdmfConstString Value;
     XdmfInt32   Precision = 4;
+    XdmfDataStructure   *ds;
 
+    XdmfDebug("XdmfDataStructure::UpdateInformation()");
     if(XdmfElement::UpdateInformation() != XDMF_SUCCESS) return(XDMF_FAIL);
     Value = this->Get("Name");
     if(Value) this->SetName(Value);
-    Value = this->Get("Dimensions");
-    if(!Value) {
-        XdmfErrorMessage("Dimensions are not set in XML Element");
-        return(XDMF_FAIL);
-    }
-    if(!this->DataDesc) this->DataDesc = new XdmfDataDesc;
-    this->DataDesc->SetShapeFromString(Value);
-    Value = this->Get("Precision");
-    if(Value) Precision = atoi(Value);
-    Value = this->Get("Type");
-    // Only allow Simple for now.
-    if(XDMF_WORD_CMP(Value, "Char")){
-        this->DataDesc->SetNumberType(XDMF_INT8_TYPE);
-    } else if(XDMF_WORD_CMP(Value, "UChar")){
-        this->DataDesc->SetNumberType(XDMF_UINT8_TYPE);
-    } else if(XDMF_WORD_CMP(Value, "Int")){
-        if(Precision == 8){
-            this->DataDesc->SetNumberType(XDMF_INT64_TYPE);
-        }else{
-            this->DataDesc->SetNumberType(XDMF_INT32_TYPE);
+    if(this->GetIsReference() == 0){
+        Value = this->Get("Dimensions");
+        if(!Value) {
+            XdmfErrorMessage("Dimensions are not set in XML Element");
+            return(XDMF_FAIL);
         }
-    } else {
-        if(Precision == 8){
-            this->DataDesc->SetNumberType(XDMF_FLOAT64_TYPE);
-        }else{
-            this->DataDesc->SetNumberType(XDMF_FLOAT32_TYPE);
+        if(!this->DataDesc) this->DataDesc = new XdmfDataDesc;
+        this->DataDesc->SetShapeFromString(Value);
+        Value = this->Get("Precision");
+        if(Value) Precision = atoi(Value);
+        Value = this->Get("Type");
+        // Only allow Simple for now.
+        if(XDMF_WORD_CMP(Value, "Char")){
+            this->DataDesc->SetNumberType(XDMF_INT8_TYPE);
+        } else if(XDMF_WORD_CMP(Value, "UChar")){
+            this->DataDesc->SetNumberType(XDMF_UINT8_TYPE);
+        } else if(XDMF_WORD_CMP(Value, "Int")){
+            if(Precision == 8){
+                this->DataDesc->SetNumberType(XDMF_INT64_TYPE);
+            }else{
+                this->DataDesc->SetNumberType(XDMF_INT32_TYPE);
+            }
+        } else {
+            if(Precision == 8){
+                this->DataDesc->SetNumberType(XDMF_FLOAT64_TYPE);
+            }else{
+                this->DataDesc->SetNumberType(XDMF_FLOAT32_TYPE);
+            }
+        }
+        Value = this->Get("Format");
+        // Currently XML or HDF5
+        if(XDMF_WORD_CMP(Value, "HDF")){
+            this->SetFormat(XDMF_FORMAT_HDF);
+        } else if(XDMF_WORD_CMP(Value, "HDF5")){
+            this->SetFormat(XDMF_FORMAT_HDF);
+        } else if(XDMF_WORD_CMP(Value, "H5")){
+            this->SetFormat(XDMF_FORMAT_HDF);
+        } else if(XDMF_WORD_CMP(Value, "XML")){
+            this->SetFormat(XDMF_FORMAT_XML);
+        }else if(Value){
+            XdmfErrorMessage("Unsupported DataStructure Format :" << Value);
+            return(XDMF_FAIL);
         }
     }
-    Value = this->Get("Format");
-    // Currently XML or HDF5
-    if(XDMF_WORD_CMP(Value, "HDF")){
-        this->SetFormat(XDMF_FORMAT_HDF);
-    } else if(XDMF_WORD_CMP(Value, "HDF5")){
-        this->SetFormat(XDMF_FORMAT_HDF);
-    } else if(XDMF_WORD_CMP(Value, "H5")){
-        this->SetFormat(XDMF_FORMAT_HDF);
-    } else if(XDMF_WORD_CMP(Value, "XML")){
-        this->SetFormat(XDMF_FORMAT_XML);
-    }else if(Value){
-        XdmfErrorMessage("Unsupported DataStructure Format :" << Value);
-        return(XDMF_FAIL);
-    }
+    // All went well. Become available for future Reference.
+    this->SetReferenceObject((void *)this);
     return(XDMF_SUCCESS);
 }
 
 XdmfInt32 XdmfDataStructure::Update(){
     if(XdmfElement::Update() != XDMF_SUCCESS) return(XDMF_FAIL);
+    if(this->IsReference){
+        XdmfDebug("This is a Reference");
+        this->SetReference(this->ReferenceElement);
+    }else{
+        XdmfDebug("This is not a Reference");
+    }
     if(this->Array->CopyType(this->DataDesc) != XDMF_SUCCESS) return(XDMF_FAIL);
     if(this->Array->CopyShape(this->DataDesc) != XDMF_SUCCESS) return(XDMF_FAIL);
     if(this->Array->CopySelection(this->DataDesc) != XDMF_SUCCESS) return(XDMF_FAIL);
@@ -170,6 +195,8 @@ XdmfInt32 XdmfDataStructure::Update(){
             XdmfErrorMessage("Unsupported Data Format");
             return(XDMF_FAIL);
     }
+    // All went well. Become available for future Reference.
+    this->SetReferenceObject((void *)this);
     return(XDMF_SUCCESS);
 }
 

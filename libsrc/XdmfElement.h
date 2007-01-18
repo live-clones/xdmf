@@ -27,6 +27,10 @@
 
 #include "XdmfLightData.h"
 
+#define XDMF_ELEMENT_STATE_UNINITIALIZED 0
+#define XDMF_ELEMENT_STATE_LIGHT_PARSED  1
+#define XDMF_ELEMENT_STATE_HEAVY_READ    2
+
 class XdmfDOM;
 
 /*!
@@ -52,17 +56,28 @@ class XDMF_EXPORT XdmfElement : public XdmfLightData {
 public:
     XdmfElement();
     ~XdmfElement();
-    XdmfConstString GetClassName() { return("XdmfElement"); } ;
+    virtual XdmfConstString GetClassName() { return("XdmfElement"); } ;
 
     //! Set the DOM to use
     XdmfSetValueMacro(DOM, XdmfDOM *);
     //! Get the current DOM
     XdmfGetValueMacro(DOM, XdmfDOM *);
 
+    //! Set the current State
+    XdmfSetValueMacro(State, XdmfInt32 );
+    //! Get the current State
+    XdmfGetValueMacro(State, XdmfInt32 );
+
     //! Does this Element Reference Some Other Element
     XdmfSetValueMacro(IsReference, XdmfInt32);
     //! Does this Element Reference Some Other Element
     XdmfGetValueMacro(IsReference, XdmfInt32);
+
+    //! Reference another XML node
+    virtual XdmfInt32 SetReference(XdmfXmlNode Element);
+
+    //! Return Referenced Element
+    virtual XdmfXmlNode GetReference();
 
     //! Add a child Node
     XdmfInt32 InsertChildElement(XdmfXmlNode Child);
@@ -72,7 +87,7 @@ public:
 
 //! Set the XML Node from which to parse
 /*! 
-        \param Value is the low level node returned from XdmfDOM->FindElement() etc.
+        \param Element is the low level node returned from XdmfDOM->FindElement() etc.
 */
     XdmfInt32   SetElement(XdmfXmlNode Element);
 //! Get the XML Node
@@ -82,13 +97,13 @@ public:
     XdmfConstString GetElementType();
 
     //! Initialize basic structure from XML (INPUT)
-    XdmfInt32 UpdateInformation();
+    virtual XdmfInt32 UpdateInformation();
 
     //! Initialize all information. Possibly acessing Heavy Data. (INPUT)
-    XdmfInt32 Update();
+    virtual XdmfInt32 Update();
 
     //! Update the DOM from the Basic Structure
-    XdmfInt32 Build();
+    virtual XdmfInt32 Build();
 
     //! Set the Value of an Attribute (OUTPUT)
     XdmfInt32 Set(XdmfConstString Name, XdmfConstString Value);
@@ -96,9 +111,18 @@ public:
     //! Get the Value of An Attribute (INPUT)
     XdmfConstString Get(XdmfConstString Name);
 
+    //! Copy Information from Another Element. Overridden in Child Class
+    virtual XdmfInt32 Copy(XdmfElement *Source);
+
 protected:
+    void        SetReferenceObject(void *p);
+    void        *GetReferenceObject();
     XdmfDOM     *DOM;
+    XdmfInt32   State;
+    //! XML That Represents this
     XdmfXmlNode Element;
+    //! If this is a Reference XML, what is it referencing
+    XdmfXmlNode ReferenceElement;
     XdmfInt32   IsReference;
 };
 #endif // __XdmfElement_h

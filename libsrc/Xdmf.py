@@ -342,6 +342,9 @@ XdmfDOM_swigregister = _Xdmf.XdmfDOM_swigregister
 XdmfDOM_swigregister(XdmfDOM)
 
 HandleToXdmfDOM = _Xdmf.HandleToXdmfDOM
+XDMF_ELEMENT_STATE_UNINITIALIZED = _Xdmf.XDMF_ELEMENT_STATE_UNINITIALIZED
+XDMF_ELEMENT_STATE_LIGHT_PARSED = _Xdmf.XDMF_ELEMENT_STATE_LIGHT_PARSED
+XDMF_ELEMENT_STATE_HEAVY_READ = _Xdmf.XDMF_ELEMENT_STATE_HEAVY_READ
 class XdmfElement(XdmfLightData):
     __swig_setmethods__ = {}
     for _s in [XdmfLightData]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
@@ -359,8 +362,12 @@ class XdmfElement(XdmfLightData):
     def GetClassName(*args): return _Xdmf.XdmfElement_GetClassName(*args)
     def SetDOM(*args): return _Xdmf.XdmfElement_SetDOM(*args)
     def GetDOM(*args): return _Xdmf.XdmfElement_GetDOM(*args)
+    def SetState(*args): return _Xdmf.XdmfElement_SetState(*args)
+    def GetState(*args): return _Xdmf.XdmfElement_GetState(*args)
     def SetIsReference(*args): return _Xdmf.XdmfElement_SetIsReference(*args)
     def GetIsReference(*args): return _Xdmf.XdmfElement_GetIsReference(*args)
+    def SetReference(*args): return _Xdmf.XdmfElement_SetReference(*args)
+    def GetReference(*args): return _Xdmf.XdmfElement_GetReference(*args)
     def InsertChildElement(*args): return _Xdmf.XdmfElement_InsertChildElement(*args)
     def Serialize(*args): return _Xdmf.XdmfElement_Serialize(*args)
     def SetElement(*args): return _Xdmf.XdmfElement_SetElement(*args)
@@ -371,6 +378,7 @@ class XdmfElement(XdmfLightData):
     def Build(*args): return _Xdmf.XdmfElement_Build(*args)
     def Set(*args): return _Xdmf.XdmfElement_Set(*args)
     def Get(*args): return _Xdmf.XdmfElement_Get(*args)
+    def Copy(*args): return _Xdmf.XdmfElement_Copy(*args)
 XdmfElement_swigregister = _Xdmf.XdmfElement_swigregister
 XdmfElement_swigregister(XdmfElement)
 
@@ -419,7 +427,7 @@ class XdmfDataStructure(XdmfElement):
     def UpdateInformation(*args): return _Xdmf.XdmfDataStructure_UpdateInformation(*args)
     def Update(*args): return _Xdmf.XdmfDataStructure_Update(*args)
     def Build(*args): return _Xdmf.XdmfDataStructure_Build(*args)
-    def Reference(*args): return _Xdmf.XdmfDataStructure_Reference(*args)
+    def SetReference(*args): return _Xdmf.XdmfDataStructure_SetReference(*args)
     def GetDataDesc(*args): return _Xdmf.XdmfDataStructure_GetDataDesc(*args)
     def SetDataDesc(*args): return _Xdmf.XdmfDataStructure_SetDataDesc(*args)
     def GetArray(*args): return _Xdmf.XdmfDataStructure_GetArray(*args)
@@ -435,6 +443,7 @@ class XdmfDataStructure(XdmfElement):
     def SetDimensionsFromString(*args): return _Xdmf.XdmfDataStructure_SetDimensionsFromString(*args)
     def SetHeavyDataSetName(*args): return _Xdmf.XdmfDataStructure_SetHeavyDataSetName(*args)
     def GetHeavyDataSetName(*args): return _Xdmf.XdmfDataStructure_GetHeavyDataSetName(*args)
+    def Copy(*args): return _Xdmf.XdmfDataStructure_Copy(*args)
 XdmfDataStructure_swigregister = _Xdmf.XdmfDataStructure_swigregister
 XdmfDataStructure_swigregister(XdmfDataStructure)
 

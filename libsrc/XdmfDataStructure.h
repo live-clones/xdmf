@@ -88,7 +88,7 @@ public:
     XdmfInt32 Build();
 
     //! Reference Another DataStructure. Construct if Necessary
-    XdmfInt32 Reference( XdmfXmlNode Element );
+    XdmfInt32 SetReference( XdmfXmlNode Element );
     //! Get the Internal XdmfDataDesc
     XdmfGetValueMacro(DataDesc, XdmfDataDesc *);
 
@@ -143,6 +143,8 @@ public:
     XdmfSetStringMacro(HeavyDataSetName);
     //! Get the name of the Heavy Data Set (if applicable)
     XdmfGetValueMacro(HeavyDataSetName, XdmfConstString);
+    //! Copy Information from Another DataStructure
+    XdmfInt32 Copy(XdmfElement *Source);
 
 protected:
     XdmfInt32       Format;

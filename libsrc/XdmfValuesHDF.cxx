@@ -22,6 +22,7 @@
 /*     for more information.                                       */
 /*                                                                 */
 /*******************************************************************/
+#include "XdmfObject.h"
 #include "XdmfValuesHDF.h"
 #include "XdmfHDF.h"
 #include "XdmfDataStructure.h"
@@ -111,7 +112,7 @@ XdmfValuesHDF::Read(XdmfArray *Array){
 
 XdmfInt32
 XdmfValuesHDF::Write(XdmfArray *Array, XdmfConstString HeavyDataSetName){
-    char* heavyDataset;
+    char* hds;
     XdmfHDF H5;
 
     if(!HeavyDataSetName) HeavyDataSetName = this->GetHeavyDataSetName();
@@ -127,25 +128,24 @@ XdmfValuesHDF::Write(XdmfArray *Array, XdmfConstString HeavyDataSetName){
         XdmfErrorMessage("Array to Write is NULL");
         return(XDMF_FAIL);
     }
-    heavyDataset = new char [ strlen(HeavyDataSetName) + 1 ];
-    strcpy(heavyDataset, HeavyDataSetName);
-    XDMF_WORD_TRIM( heavyDataset );
-    this->Set("CDATA", heavyDataset);
+    XDMF_STRING_DUPLICATE(hds, HeavyDataSetName);
+    XDMF_WORD_TRIM( hds );
+    this->Set("CDATA", hds);
     H5.CopyType(this->DataDesc);
     H5.CopyShape(this->DataDesc);
     H5.CopySelection(this->DataDesc);
-    if(H5.Open(heavyDataset, "rw") == XDMF_FAIL){
-        XdmfErrorMessage("Error Opening " << heavyDataset << " for Writing");
-        delete [] heavyDataset;
+    if(H5.Open(hds, "rw") == XDMF_FAIL){
+        XdmfErrorMessage("Error Opening " << hds << " for Writing");
+        delete [] hds ;
         return(XDMF_FAIL);
     }
     if(H5.Write(Array) == XDMF_FAIL){
-        XdmfErrorMessage("Error Writing " << heavyDataset);
+        XdmfErrorMessage("Error Writing " << hds );
         H5.Close();
-        delete [] heavyDataset;
+        delete [] hds;
         return(XDMF_FAIL);
     }
     H5.Close();
-    delete [] heavyDataset;
+    delete [] hds;
     return(XDMF_SUCCESS);
 }
