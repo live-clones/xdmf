@@ -87,8 +87,6 @@ public:
 //! Update the DOM (OUTPUT)
     XdmfInt32 Build();
 
-    //! Reference Another DataStructure. Construct if Necessary
-    XdmfInt32 SetReference( XdmfXmlNode Element );
     //! Get the Internal XdmfDataDesc
     XdmfGetValueMacro(DataDesc, XdmfDataDesc *);
 

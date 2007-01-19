@@ -74,10 +74,10 @@ public:
     XdmfGetValueMacro(IsReference, XdmfInt32);
 
     //! Reference another XML node
-    virtual XdmfInt32 SetReference(XdmfXmlNode Element);
-
-    //! Return Referenced Element
-    virtual XdmfXmlNode GetReference();
+    /*!
+    \param Element is the head XML node of a potential reference chain
+    */
+    virtual XdmfXmlNode CheckForReference(XdmfXmlNode Element);
 
     //! Add a child Node
     XdmfInt32 InsertChildElement(XdmfXmlNode Child);
@@ -114,14 +114,17 @@ public:
     //! Copy Information from Another Element. Overridden in Child Class
     virtual XdmfInt32 Copy(XdmfElement *Source);
 
+    //! Follow a Refernce Chain one step, if it exists
+    XdmfXmlNode FollowReference(XdmfXmlNode Element);
+
 protected:
-    void        SetReferenceObject(void *p);
-    void        *GetReferenceObject();
+    void        SetReferenceObject(XdmfXmlNode Element, void *p);
+    void        *GetReferenceObject(XdmfXmlNode Element);
     XdmfDOM     *DOM;
     XdmfInt32   State;
-    //! XML That Represents this
+    //! Target XML That Represents this. In the case of a reference, this is the target XML not the Reference="XX" node.
     XdmfXmlNode Element;
-    //! If this is a Reference XML, what is it referencing
+    //! If this is a Reference XML, this is the head of the Reference chain (the Original XML node).
     XdmfXmlNode ReferenceElement;
     XdmfInt32   IsReference;
 };

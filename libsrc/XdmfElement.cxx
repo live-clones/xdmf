@@ -37,23 +37,35 @@ XdmfElement::XdmfElement() {
 }
 
 XdmfElement::~XdmfElement() {
+    if(this->ReferenceElement){
+        if(this->GetReferenceObject(this->ReferenceElement) == this){
+            this->SetReferenceObject(this->ReferenceElement, XDMF_ELEMENT_STATE_UNINITIALIZED);
+        }
+    }
+    if(this->Element){
+        if(this->GetReferenceObject(this->Element) == this){
+            this->SetReferenceObject(this->Element, XDMF_ELEMENT_STATE_UNINITIALIZED);
+        }
+    }
 }
 
-void XdmfElement::SetReferenceObject(void *p){
-    if(this->Element) this->Element->_private = p;
+void XdmfElement::SetReferenceObject(XdmfXmlNode Element, void *p){
+    XdmfDebug("Old Ref = " << Element->_private);
+    XdmfDebug("New Ref = " << p);
+    if(Element) Element->_private = p;
 }
 
 void *
-XdmfElement::GetReferenceObject(){
-    if(!this->ReferenceElement){
+XdmfElement::GetReferenceObject(XdmfXmlNode Element){
+    if(!Element){
         XdmfErrorMessage("NULL Reference Element");
         return(NULL);
     }
-    if(this->ReferenceElement->_private == XDMF_EMPTY_REFERENCE){
+    if(Element->_private == XDMF_EMPTY_REFERENCE){
         XdmfDebug("XML Node contains no initialized object");
         return(NULL);
     }
-    return(this->ReferenceElement->_private);
+    return(Element->_private);
 }
 
 XdmfInt32 XdmfElement::SetElement(XdmfXmlNode Element){
@@ -61,9 +73,9 @@ XdmfInt32 XdmfElement::SetElement(XdmfXmlNode Element){
         XdmfErrorMessage("Element is NULL");
         return(XDMF_FAIL);
     }
-    // Clear the application data of the underlying node
-    XdmfDebug("Clearing _private member of XML node");
-    Element->_private = XDMF_EMPTY_REFERENCE;
+    // Clear the ReferenceObject underlying node
+    XdmfDebug("Clearing ReferenceObject of XML node");
+    this->SetReferenceObject(Element, XDMF_EMPTY_REFERENCE);
     this->Element = Element;
     return(XDMF_SUCCESS);
 }
@@ -92,10 +104,9 @@ XdmfInt32 XdmfElement::UpdateInformation(){
     XdmfConstString Value;
     XdmfInt32   Status;
     XdmfElement *e;
-    XdmfXmlNode Original;
+    XdmfXmlNode ref, Original;
 
     XdmfDebug("XdmfElement::UpdateInformation()");
-    XdmfDebug("Class Name = " << this->GetClassName());
     if(!this->DOM) {
         XdmfErrorMessage("No DOM has been set");
         return(XDMF_FAIL);
@@ -104,67 +115,61 @@ XdmfInt32 XdmfElement::UpdateInformation(){
         XdmfErrorMessage("No XML Node has been set");
         return(XDMF_FAIL);
     }
-    Value = this->Get("Reference");
-    if(Value){
+    Value = this->Get("Name");
+    if(Value) this->SetName(Value);
+    ref = this->CheckForReference(this->Element);
+    if(ref){
         XdmfXmlNode node;
 
-        XdmfDebug("Element is a Reference");
-        node = this->DOM->FindElementByPath(Value);
-        if(!node){
-            XdmfErrorMessage("Can't find node of Path " << Value);
-            return(XDMF_FAIL);
-        }
-        XdmfDebug("Found Referenced Node");
-        if(this->SetReference(node) == XDMF_FAIL){
-            XdmfErrorMessage("Unable to Set Reference");
-            return(XDMF_FAIL);
-        }
-        e = (XdmfElement *)this->GetReferenceObject();
-        if(e){
-            if(e->GetState() < XDMF_ELEMENT_STATE_LIGHT_PARSED){
-                // Could cause a chain of events
-                e->UpdateInformation();
-            }
-            // Copy out Appropriate Info
-            this->Copy(e);
-        }else{
-            // Reference to Empty Reference
-            // Follow Reference and UpdateInformation
-            // from the target
-            while(Value){
-                Value = this->GetDOM()->Get(node, "Reference");
-                if(Value){
-                    XdmfDebug("Following Reference " << Value);
-                    node = this->DOM->FindElementByPath(Value);
-                    if(!node){
-                        XdmfErrorMessage("Can't find node of Path " << Value);
-                        return(XDMF_FAIL);
-                    }
+        // "this" is now the ReferenceObject for this->ReferenceElement
+        XdmfDebug("Setting ReferenceObject and Following Chain");
+        this->SetReferenceObject(this->ReferenceElement, this);
+        while(ref){
+            e = (XdmfElement *)this->GetReferenceObject(ref);
+            if(e && (e != this)){
+                XdmfDebug("Updating Information from another Object");
+                // XdmfDebug(e->Serialize());
+                // There if an Object associated with this node. UpdateInformation()?
+                if(e->GetState() < XDMF_ELEMENT_STATE_LIGHT_PARSED){
+                    // Could cause a chain of UpdateInformation() 
+                    XdmfDebug("Call UpdateInformation on ReferenceObject");
+                    e->UpdateInformation();
                 }
+                // Copy out appropriate information and return
+                XdmfDebug("Copying Information from Reference Object");
+                this->Element = e->Element;
+                return(this->Copy(e));
             }
-            // Temporarily SetElement() so the Child Class Parses the Correct XML Node
-            Original = this->Element;
-            this->Element = node;
-            this->IsReference = 0;
-            XdmfDebug("Update Information from Taget Element");
-            // cout << this->DOM->Serialize(node) << endl;;
-            // cout << this->Serialize() << endl;;
-            Status = this->UpdateInformation();
-            // Restore Original Element Reguardless of Success
-            // XXXXX This is flaky
-            // this->Element = Original;
-            this->IsReference = 1;
-            if(Status == XDMF_FAIL){
-                XdmfErrorMessage("Error Updating Information of Reference Node");
-                return(XDMF_FAIL);
+            // No ReferenceObject Set. Is this a Reference as well?
+            node = this->FollowReference(ref);
+            if(node){
+                ref = node;
+            }else{
+                // Not a Reference. Is it the right Type ?
+                if(STRCMP((const char *)ref->name, (const char *)this->ReferenceElement->name) != 0){
+                    XdmfErrorMessage("Reference node " << Value << " is a " << ref->name << " not " << ReferenceElement->name);
+                    return(XDMF_FAIL);
+                }
+                // If this is a derived Class, UpdateInformation will act on this target.
+                this->SetElement(ref);
+                // This is the end of the chain and there is no ReferenceObject for the XML node.
+                XdmfDebug("Setting Reference Object");
+                this->SetReferenceObject(ref, this);
+                ref = NULL;
             }
         }
+    }else{
+        XdmfDebug("Setting Reference Object");
+        this->SetReferenceObject(this->Element, this);
     }
     this->State = XDMF_ELEMENT_STATE_LIGHT_PARSED;
     return(XDMF_SUCCESS);
 }
 
 XdmfInt32 XdmfElement::Update(){
+    XdmfXmlNode node, ref;
+    XdmfElement *e;
+
     if(!this->DOM) {
         XdmfErrorMessage("No DOM has been set");
         return(XDMF_FAIL);
@@ -173,44 +178,89 @@ XdmfInt32 XdmfElement::Update(){
         XdmfErrorMessage("No XML Node has been set");
         return(XDMF_FAIL);
     }
-    // Don't do this until AFTER a successful Update or UpdateInformation
-    // XdmfDebug("Setting _private member of XML node");
-    // this->Element->_private = this;
+    if(this->GetIsReference()){
+        // Don't assume that state has not changed since last UpdateInformation()
+        ref = this->FollowReference(this->ReferenceElement);
+        while(ref){
+            e = (XdmfElement *)this->GetReferenceObject(ref);
+            if(e && (e != this)){
+                // Does it need Updating ?
+                if(e->GetState() < XDMF_ELEMENT_STATE_LIGHT_PARSED) e->UpdateInformation();
+                if(e->GetState() < XDMF_ELEMENT_STATE_HEAVY_READ) e->Update();
+                this->Element = e->Element;
+                return(this->Copy(e));
+            }
+            // No External Reference Object
+            node = this->FollowReference(ref);
+            if(node){
+                ref = node;
+            }else{
+                // No Reference Object and this is the end of the chain
+                // If this is a derived Class, Update will act on this target.
+                this->SetElement(ref);
+                // This is the end of the chain and there is no ReferenceObject for the XML node.
+                XdmfDebug("Setting Reference Object");
+                this->SetReferenceObject(ref, this);
+                ref = NULL;
+            }
+        }
+    }
     this->State = XDMF_ELEMENT_STATE_HEAVY_READ;
     return(XDMF_SUCCESS);
 }
 
-XdmfXmlNode XdmfElement::GetReference(){
-    return(this->ReferenceElement);
-    }
+XdmfXmlNode
+XdmfElement::FollowReference(XdmfXmlNode Element){
+    XdmfConstString Value;
+    XdmfXmlNode     ref = NULL;
 
-XdmfInt32 XdmfElement::SetReference(XdmfXmlNode Element){
+    if(!Element){
+        XdmfErrorMessage("Element is NULL");
+        return(NULL);
+    }
+    Value = this->DOM->Get(Element, "Reference");
+    if(Value){
+        if(STRCASECMP(Value, "XML") == 0){
+            Value = this->DOM->GetCData(Element);
+            if(!Value){
+                XdmfErrorMessage("Reference to CDATA is NULL");
+                return(NULL);
+            }
+        }
+        XdmfDebug("Following Reference to " << Value);
+        ref = this->DOM->FindElementByPath(Value);
+        if(!ref){
+            XdmfErrorMessage("Can't Find Node of Path " << Value);
+            return(NULL);
+        }
+    }
+    return(ref);
+}
+
+XdmfXmlNode
+XdmfElement::CheckForReference(XdmfXmlNode Element){
     XdmfElement *e;
+    XdmfXmlNode node;
 
-    XdmfDebug("XdmfElement::SetReference(XdmfXmlNode Element)");
-    if(!Element) return(XDMF_FAIL);
-    // if(Element->_private == XDMF_EMPTY_REFERENCE){
-    //     XdmfDebug("XML Node contains no initialized object");
-    //     this->SetIsReference(0);
-    //     return(XDMF_FAIL);
-    // }
-    // Is it the proper class ?
-    e = (XdmfElement *)Element->_private;
-    if(!e){
-        // Not Yet Parsed
-        XdmfDebug("No ReferenceObject in Element");
-        this->ReferenceElement = Element;
-        this->SetIsReference(1);
-        return(XDMF_SUCCESS);
-    }
-    if(STRCASECMP(this->GetClassName(), e->GetClassName()) == 0){
-        this->ReferenceElement = Element;
-        this->SetIsReference(1);
-        return(XDMF_SUCCESS);
+    XdmfDebug("XdmfElement::CheckForReference(XdmfXmlNode Element)");
+    if(!Element) return(NULL);
+    // Does the Referenced Node Exist and is it of the Same Type
+    node = this->FollowReference(Element);
+    if(node){
+        XdmfDebug("Element is a Reference");
+        // Check Type (low level XML "name") against this->Element
+        if(STRCMP((const char *)node->name, (const char *)Element->name) != 0){
+            XdmfErrorMessage("Reference node is a " << node->name << " not " << Element->name);
+            return(NULL);
+        }
     }else{
-        XdmfErrorMessage("Class Name Mismatch. Referenced node " << e->GetClassName() << " != " << this->GetClassName());
+        // This is not a Reference Node
+        return(NULL);
     }
-    return(XDMF_FAIL);
+    XdmfDebug("Setting ReferenceElement");
+    this->ReferenceElement = Element;
+    this->SetIsReference(1);
+    return(node);
 }
 
 XdmfConstString XdmfElement::Serialize(){
@@ -221,6 +271,9 @@ XdmfConstString XdmfElement::Serialize(){
     if(!this->Element){
         XdmfErrorMessage("No XML Node has been set");
         return(NULL);
+    }
+    if(this->GetIsReference()){
+        return(this->DOM->Serialize(this->ReferenceElement));
     }
     return(this->DOM->Serialize(this->Element));
 }
