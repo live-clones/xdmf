@@ -63,7 +63,7 @@ class XdmfDOM;
 </DataStructure>
 
 \endverbatim
-    This says that this DataStructure information can be found in the 2nd DataStructure under
+    This says that this DataStructure information can be found in the 2nd DataStructure (1 based) under
     the "Geometry" element, under the "Grid" element who's Name='Shot Points', under "Domain"
     under "Xdmf", in the current file. There are many expressions in XPath, see XPath documentation
     and Web pages for more.
