@@ -50,6 +50,29 @@ class XdmfDOM;
     In the first Element, Name is the one and only Attribute. The second
     Element is a child of the first and has the Attributes : Name and Value.
     November 28, 1962 is the CDATA of the first Element.
+
+    Elements can also reference other elements. This is particularly useful for
+    "DataStructure" elements to minimize the amount of I/O that is performed.
+    References are accomplished via the XML facility known as XPath. Consider :
+\verbatim
+
+<DataStructure Reference="/Xdmf/Domain/Grid[@Name='Shot Points']/Geometry/DataStructure[2]"/>
+                    OR
+<DataStructure Reference="XML">
+    /Xdmf/Domain/Grid[@Name="Shot Points"]/Geometry/DataStructure[2]
+</DataStructure>
+
+\endverbatim
+    This says that this DataStructure information can be found in the 2nd DataStructure under
+    the "Geometry" element, under the "Grid" element who's Name='Shot Points', under "Domain"
+    under "Xdmf", in the current file. There are many expressions in XPath, see XPath documentation
+    and Web pages for more.
+
+    If an XDMF Object has already the target node via UpdateInformation() / Update(), a Reference
+    node will point to the data of the original object. So each XML node that is Parsed will be
+    owned by some object.
+
+    References can point to other references to form a chain.
 */
 class XDMF_EXPORT XdmfElement : public XdmfLightData {
 
@@ -73,7 +96,7 @@ public:
     //! Does this Element Reference Some Other Element
     XdmfGetValueMacro(IsReference, XdmfInt32);
 
-    //! Reference another XML node
+    //! Check to see if Element references another XML node (which will then be returned)
     /*!
     \param Element is the head XML node of a potential reference chain
     */
