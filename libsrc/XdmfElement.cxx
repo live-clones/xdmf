@@ -34,6 +34,7 @@ XdmfElement::XdmfElement() {
     this->IsReference = 0;
     this->ReferenceElement = NULL;
     this->State = XDMF_ELEMENT_STATE_UNINITIALIZED;
+    this->CopyReferenceData = 1;
 }
 
 XdmfElement::~XdmfElement() {

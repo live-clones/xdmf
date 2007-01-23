@@ -74,11 +74,26 @@ XdmfDataStructure::Copy(XdmfElement *Source){
 
     XdmfDebug("XdmfDataStructure::Copy(XdmfElement *Source)");
     ds = (XdmfDataStructure *)Source;
-    this->SetDOM(ds->GetDOM());
-    this->SetDataDesc(ds->GetDataDesc());
-    this->SetArray(ds->GetArray());
-    this->SetHeavyDataSetName(ds->GetHeavyDataSetName());
+    // this->SetDOM(ds->GetDOM());
     this->SetFormat(ds->GetFormat());
+    this->SetHeavyDataSetName(ds->GetHeavyDataSetName());
+    this->DataDesc->CopyType(ds->GetDataDesc());
+    this->DataDesc->CopyShape(ds->GetDataDesc());
+    this->DataDesc->CopySelection(ds->GetDataDesc());
+    if(CopyReferenceData){
+        XdmfDebug("Copying Data From Array");
+        this->SetArray(ds->GetArray()->Clone());
+        if(!this->Array){
+            XdmfErrorMessage("Error Cloning Array");
+            return(XDMF_FAIL);
+        }
+        // Allow for future deletion
+        this->ArrayIsMine = 1;
+    }else{
+        XdmfDebug("Referenceing Data From Array");
+        // Problem if owner deletes
+        this->SetArray(ds->GetArray());
+    }
     return(XDMF_SUCCESS);
 }
 

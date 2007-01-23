@@ -371,6 +371,8 @@ class XdmfElement(XdmfLightData):
     def Serialize(*args): return _Xdmf.XdmfElement_Serialize(*args)
     def SetElement(*args): return _Xdmf.XdmfElement_SetElement(*args)
     def GetElement(*args): return _Xdmf.XdmfElement_GetElement(*args)
+    def SetCopyReferenceData(*args): return _Xdmf.XdmfElement_SetCopyReferenceData(*args)
+    def GetCopyReferenceData(*args): return _Xdmf.XdmfElement_GetCopyReferenceData(*args)
     def GetElementType(*args): return _Xdmf.XdmfElement_GetElementType(*args)
     def UpdateInformation(*args): return _Xdmf.XdmfElement_UpdateInformation(*args)
     def Update(*args): return _Xdmf.XdmfElement_Update(*args)
