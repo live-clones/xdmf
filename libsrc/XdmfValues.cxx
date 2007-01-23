@@ -23,7 +23,7 @@
 /*                                                                 */
 /*******************************************************************/
 #include "XdmfValues.h"
-#include "XdmfDataStructure.h"
+#include "XdmfDataItem.h"
 #include "XdmfArray.h"
 
 XdmfValues::XdmfValues() {
@@ -34,26 +34,26 @@ XdmfValues::~XdmfValues() {
 }
 
 XdmfInt32 
-XdmfValues::Inherit(XdmfDataStructure *DataStructure) {
-    if(!DataStructure){
-        XdmfErrorMessage("DataStructure to copy is NULL");
+XdmfValues::Inherit(XdmfDataItem *DataItem) {
+    if(!DataItem){
+        XdmfErrorMessage("DataItem to copy is NULL");
         return(XDMF_FAIL);
     }
-    if(this->SetDOM(DataStructure->GetDOM()) != XDMF_SUCCESS){
+    if(this->SetDOM(DataItem->GetDOM()) != XDMF_SUCCESS){
         XdmfErrorMessage("Error Setting DOM");
         return(XDMF_FAIL);
     }
-    // if(this->SetElement(DataStructure->GetElement()) != XDMF_SUCCESS){
+    // if(this->SetElement(DataItem->GetElement()) != XDMF_SUCCESS){
     //     XdmfErrorMessage("Error Setting Element");
     //     return(XDMF_FAIL);
     // }
     // Do it by hand so the _private member of the structure is maintained.
-    if(!DataStructure->GetElement()){
+    if(!DataItem->GetElement()){
         XdmfErrorMessage("Element is NULL");
         return(XDMF_FAIL);
     }
-    this->Element = DataStructure->GetElement();
-    if(this->SetFormat(DataStructure->GetFormat()) != XDMF_SUCCESS){
+    this->Element = DataItem->GetElement();
+    if(this->SetFormat(DataItem->GetFormat()) != XDMF_SUCCESS){
         XdmfErrorMessage("Error Setting Element");
         return(XDMF_FAIL);
     }
@@ -61,7 +61,7 @@ XdmfValues::Inherit(XdmfDataStructure *DataStructure) {
         delete this->DataDesc;
     }
     this->DataDescIsMine = 0;
-    if(this->SetDataDesc(DataStructure->GetDataDesc()) != XDMF_SUCCESS){
+    if(this->SetDataDesc(DataItem->GetDataDesc()) != XDMF_SUCCESS){
         XdmfErrorMessage("Error Setting DataDesc");
         return(XDMF_FAIL);
     }

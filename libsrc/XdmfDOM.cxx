@@ -516,6 +516,10 @@ XdmfDOM::FindElementByPath(XdmfConstString Path){
     }
     // Return the first XML_ELEMENT_NODE
     nodes = xpathObj->nodesetval;
+    if(!nodes){
+        XdmfErrorMessage("No Elements Match XPath Expression : " << Path);
+        return(NULL);
+    }
     XdmfDebug("Found " << nodes->nodeNr << " Element that match XPath expression " << Path);
     for(i=0 ; i < nodes->nodeNr ; i++){
         child = nodes->nodeTab[i];

@@ -22,8 +22,8 @@
 /*     for more information.                                       */
 /*                                                                 */
 /*******************************************************************/
-#ifndef __XdmfDataStructure_h
-#define __XdmfDataStructure_h
+#ifndef __XdmfDataItem_h
+#define __XdmfDataItem_h
 
 #include "XdmfElement.h"
 
@@ -35,15 +35,15 @@ class XdmfValues;
 #define XDMF_FORMAT_HDF 1
 
 
-/*! XdmfDataStructure represents an XdmfArray in XML. 
-    DataStructures have an optional name. Rank is also optional since it can be determined from the dimensions.
+/*! XdmfDataItem represents an XdmfArray in XML. 
+    DataItems have an optional name. Rank is also optional since it can be determined from the dimensions.
     Dimensions are listed with the slowest varying dimension first. (i.e. KDim JDim IDim). Type is 
     "Char | Float | Int | Compound" with the default being Float. Precision is BytesPerElement and defaults to
     4 for Ints and Floats. Format is any supported XDMF format but usually XML | HDF.
     Examples :
 \verbatim
     <!-- Fully Qualified -->
-    <DataStructure Name="MyDataStructure"
+    <DataItem Name="MyDataItem"
         Rank="3" Dimensions="2 3 4"
         Type="Float" Precision="8"
         Format="XML>
@@ -54,21 +54,21 @@ class XdmfValues;
         0 1 2 3
         4 5 6 7
         8 9 10 11
-    </DataStructure>
+    </DataItem>
     <!-- Minimalist -->
-    <DataStructure Dimensions="3">
+    <DataItem Dimensions="3">
     1 2 3
-    </DataStructure>
+    </DataItem>
 \endverbatim
 */
 
-class XDMF_EXPORT XdmfDataStructure : public XdmfElement {
+class XDMF_EXPORT XdmfDataItem : public XdmfElement {
 
 public:
-  XdmfDataStructure();
-  ~XdmfDataStructure();
+  XdmfDataItem();
+  ~XdmfDataItem();
 
-  XdmfConstString GetClassName() { return ( "XdmfDataStructure" ) ; };
+  XdmfConstString GetClassName() { return ( "XdmfDataItem" ) ; };
 
 //! Get the data values access object
     XdmfGetValueMacro(Values, XdmfValues *);
@@ -77,6 +77,11 @@ public:
     XdmfGetValueMacro(Format, XdmfInt32);
 //! Set the format of the data. Usually XML | HDF. Default is XML.
     XdmfSetValueMacro(Format, XdmfInt32);
+
+    //! Tells the DataItem is it owns the Array and is thus allowed  to delete it.
+    XdmfSetValueMacro(ArrayIsMine, XdmfInt32);
+    //! Get the Value it the DataItem owns the Array
+    XdmfGetValueMacro(ArrayIsMine, XdmfInt32);
 
 //! Update Structure From XML (INPUT)
     XdmfInt32 UpdateInformation();
@@ -96,13 +101,13 @@ public:
     //! Get the Internal Array
     XdmfGetValueMacro(Array, XdmfArray *);
 
-    //! Set the Array
+    //! Set the Array. Also sets ArrayIsMine = 0
     XdmfInt32   SetArray(XdmfArray *Array);
 
     //! Convenience Function to access Array
     /*! The more robust access is via :
         \verbatim
-        array = XdmfDataStructure->GetArray();
+        array = XdmfDataItem->GetArray();
         array->GetValues(....)
         \endverbatim
     */
@@ -113,7 +118,7 @@ public:
     //! Convenience Function to access Array
     /*! The more robust access is via :
         \verbatim
-        array = XdmfDataStructure->GetArray();
+        array = XdmfDataItem->GetArray();
         array->SetValues(....)
         \endverbatim
     */
@@ -141,7 +146,7 @@ public:
     XdmfSetStringMacro(HeavyDataSetName);
     //! Get the name of the Heavy Data Set (if applicable)
     XdmfGetValueMacro(HeavyDataSetName, XdmfConstString);
-    //! Copy Information from Another DataStructure
+    //! Copy Information from Another DataItem
     XdmfInt32 Copy(XdmfElement *Source);
 
 protected:
@@ -157,4 +162,4 @@ protected:
     XdmfInt32       CheckValues(XdmfInt32 Format);
 };
 
-#endif // __XdmfDataStructure_h
+#endif // __XdmfDataItem_h

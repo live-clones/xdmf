@@ -22,7 +22,7 @@
 /*     for more information.                                       */
 /*                                                                 */
 /*******************************************************************/
-#include "XdmfDataStructure.h"
+#include "XdmfDataItem.h"
 #include "XdmfDataDesc.h"
 #include "XdmfArray.h"
 #include "XdmfDOM.h"
@@ -33,7 +33,7 @@
 
 #include <libxml/tree.h>
 
-XdmfDataStructure::XdmfDataStructure() {
+XdmfDataItem::XdmfDataItem() {
     this->Values = NULL;
     this->DataDesc = new XdmfDataDesc;
     this->DataDescIsMine = 1;
@@ -45,14 +45,14 @@ XdmfDataStructure::XdmfDataStructure() {
     this->HeavyDataSetName = NULL;
 }
 
-XdmfDataStructure::~XdmfDataStructure() {
+XdmfDataItem::~XdmfDataItem() {
     if(this->Array && this->ArrayIsMine ) delete this->Array;
     if(this->DataDesc && this->DataDescIsMine) delete this->DataDesc;
     if(this->Values) delete this->Values;
 }
 
 XdmfInt32 
-XdmfDataStructure::SetArray(XdmfArray *Array){
+XdmfDataItem::SetArray(XdmfArray *Array){
     if(this->Array && this->ArrayIsMine) delete this->Array;
     this->ArrayIsMine = 0;
     this->Array = Array;
@@ -60,7 +60,7 @@ XdmfDataStructure::SetArray(XdmfArray *Array){
 }
 
 XdmfInt32 
-XdmfDataStructure::SetDataDesc(XdmfDataDesc *DataDesc){
+XdmfDataItem::SetDataDesc(XdmfDataDesc *DataDesc){
     if(this->DataDesc && this->DataDescIsMine) delete this->DataDesc;
     this->DataDescIsMine = 0;
     this->DataDesc = DataDesc;
@@ -69,11 +69,11 @@ XdmfDataStructure::SetDataDesc(XdmfDataDesc *DataDesc){
 
 // Derived version
 XdmfInt32
-XdmfDataStructure::Copy(XdmfElement *Source){
-    XdmfDataStructure *ds;
+XdmfDataItem::Copy(XdmfElement *Source){
+    XdmfDataItem *ds;
 
-    XdmfDebug("XdmfDataStructure::Copy(XdmfElement *Source)");
-    ds = (XdmfDataStructure *)Source;
+    XdmfDebug("XdmfDataItem::Copy(XdmfElement *Source)");
+    ds = (XdmfDataItem *)Source;
     // this->SetDOM(ds->GetDOM());
     this->SetFormat(ds->GetFormat());
     this->SetHeavyDataSetName(ds->GetHeavyDataSetName());
@@ -97,12 +97,12 @@ XdmfDataStructure::Copy(XdmfElement *Source){
     return(XDMF_SUCCESS);
 }
 
-XdmfInt32 XdmfDataStructure::UpdateInformation(){
+XdmfInt32 XdmfDataItem::UpdateInformation(){
     XdmfConstString Value;
     XdmfInt32   Precision = 4;
-    XdmfDataStructure   *ds;
+    XdmfDataItem   *ds;
 
-    XdmfDebug("XdmfDataStructure::UpdateInformation()");
+    XdmfDebug("XdmfDataItem::UpdateInformation()");
     if(XdmfElement::UpdateInformation() != XDMF_SUCCESS) return(XDMF_FAIL);
     // If this is a Reference, this->Element now points to the end of the chain. Continue?
     XdmfDebug("Back from XdmfElement::UpdateInformation() IsReference = " << this->GetIsReference());
@@ -112,7 +112,7 @@ XdmfInt32 XdmfDataStructure::UpdateInformation(){
     if(this->GetIsReference() && 
         (this->ReferenceElement != this->Element) &&
         (this->GetReferenceObject(this->Element) != this)){
-        XdmfDebug("Reference DataStructure Copied Info from another ReferenceObject");
+        XdmfDebug("Reference DataItem Copied Info from another ReferenceObject");
         return(XDMF_SUCCESS);
     }
     Value = this->Get("Dimensions");
@@ -154,13 +154,13 @@ XdmfInt32 XdmfDataStructure::UpdateInformation(){
     } else if(XDMF_WORD_CMP(Value, "XML")){
         this->SetFormat(XDMF_FORMAT_XML);
     }else if(Value){
-        XdmfErrorMessage("Unsupported DataStructure Format :" << Value);
+        XdmfErrorMessage("Unsupported DataItem Format :" << Value);
         return(XDMF_FAIL);
     }
     return(XDMF_SUCCESS);
 }
 
-XdmfInt32 XdmfDataStructure::Update(){
+XdmfInt32 XdmfDataItem::Update(){
     if(XdmfElement::Update() != XDMF_SUCCESS) return(XDMF_FAIL);
     if(this->IsReference){
         XdmfDebug("This is a Reference");
@@ -168,7 +168,7 @@ XdmfInt32 XdmfDataStructure::Update(){
         XdmfDebug("This is not a Reference");
     }
     if(this->GetIsReference() && (this->GetReferenceObject(this->Element) != this)){
-        XdmfDebug("Reference DataStructure Copied Info from another ReferenceObject");
+        XdmfDebug("Reference DataItem Copied Info from another ReferenceObject");
         return(XDMF_SUCCESS);
     }
     if(this->Array->CopyType(this->DataDesc) != XDMF_SUCCESS) return(XDMF_FAIL);
@@ -199,20 +199,20 @@ XdmfInt32 XdmfDataStructure::Update(){
     return(XDMF_SUCCESS);
 }
 
-XdmfString XdmfDataStructure::GetDataValues(XdmfInt64 Index, XdmfInt64 NumberOfValues, XdmfInt64 ArrayStride){
+XdmfString XdmfDataItem::GetDataValues(XdmfInt64 Index, XdmfInt64 NumberOfValues, XdmfInt64 ArrayStride){
     if(!this->Array) return(NULL);
     return(this->Array->GetValues(Index, NumberOfValues, ArrayStride));
 }
 
-XdmfInt32 XdmfDataStructure::SetDataValues(XdmfInt64 Index, XdmfConstString Values, XdmfInt64 ArrayStride, XdmfInt64 ValuesStride){
+XdmfInt32 XdmfDataItem::SetDataValues(XdmfInt64 Index, XdmfConstString Values, XdmfInt64 ArrayStride, XdmfInt64 ValuesStride){
     if(!this->Array){
-        XdmfErrorMessage("DataStructure has no XdmfArray");
+        XdmfErrorMessage("DataItem has no XdmfArray");
         return(XDMF_FAIL);
     }
     return(this->Array->SetValues(Index, Values, ArrayStride, ValuesStride));
 }
 
-XdmfInt32   XdmfDataStructure::GetRank() {
+XdmfInt32   XdmfDataItem::GetRank() {
     if(!this->DataDesc){
         XdmfErrorMessage("There is no XdmfDataDesc");
         return(XDMF_FAIL);
@@ -220,7 +220,7 @@ XdmfInt32   XdmfDataStructure::GetRank() {
     return(this->DataDesc->GetRank());
 }
 
-XdmfInt32 XdmfDataStructure::SetShape(XdmfInt32 Rank, XdmfInt64 *Dimensions){
+XdmfInt32 XdmfDataItem::SetShape(XdmfInt32 Rank, XdmfInt64 *Dimensions){
     if(!this->DataDesc){
         XdmfErrorMessage("There is no XdmfDataDesc");
         return(XDMF_FAIL);
@@ -228,7 +228,7 @@ XdmfInt32 XdmfDataStructure::SetShape(XdmfInt32 Rank, XdmfInt64 *Dimensions){
     return(this->DataDesc->SetShape(Rank, Dimensions));
 }
 
-XdmfInt32 XdmfDataStructure::GetShape(XdmfInt64 *Dimensions){
+XdmfInt32 XdmfDataItem::GetShape(XdmfInt64 *Dimensions){
     if(!this->DataDesc){
         XdmfErrorMessage("There is no XdmfDataDesc");
         return(XDMF_FAIL);
@@ -236,7 +236,7 @@ XdmfInt32 XdmfDataStructure::GetShape(XdmfInt64 *Dimensions){
     return(this->DataDesc->GetShape(Dimensions));
 }
 
-XdmfInt32 XdmfDataStructure::SetDimensionsFromString(XdmfConstString Dimensions){
+XdmfInt32 XdmfDataItem::SetDimensionsFromString(XdmfConstString Dimensions){
     if(!this->DataDesc){
         XdmfErrorMessage("There is no XdmfDataDesc");
         return(XDMF_FAIL);
@@ -244,7 +244,7 @@ XdmfInt32 XdmfDataStructure::SetDimensionsFromString(XdmfConstString Dimensions)
     return(this->DataDesc->SetShapeFromString(Dimensions));
 }
 
-XdmfConstString XdmfDataStructure::GetShapeAsString(){
+XdmfConstString XdmfDataItem::GetShapeAsString(){
     if(!this->DataDesc){
         XdmfErrorMessage("There is no XdmfDataDesc");
         return(NULL);
@@ -252,7 +252,7 @@ XdmfConstString XdmfDataStructure::GetShapeAsString(){
     return(this->DataDesc->GetShapeAsString());
 }
 
-XdmfInt32 XdmfDataStructure::Build(){
+XdmfInt32 XdmfDataItem::Build(){
     XdmfDataDesc *DataDesc = this->DataDesc;
     if(XdmfElement::Build() != XDMF_SUCCESS) return(XDMF_FAIL);
     if(this->Array) DataDesc = this->Array;
@@ -302,7 +302,7 @@ XdmfInt32 XdmfDataStructure::Build(){
 }
 
 XdmfInt32
-XdmfDataStructure::CheckValues(XdmfInt32 Format){
+XdmfDataItem::CheckValues(XdmfInt32 Format){
     if(this->Values){
         // Exists
         if(this->Values->Format != Format){

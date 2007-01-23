@@ -14391,6 +14391,59 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_XdmfDataStructure_SetArrayIsMine(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDataStructure *arg1 = (XdmfDataStructure *) 0 ;
+  XdmfInt32 arg2 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfDataStructure_SetArrayIsMine",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDataStructure, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDataStructure_SetArrayIsMine" "', argument " "1"" of type '" "XdmfDataStructure *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDataStructure * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfDataStructure_SetArrayIsMine" "', argument " "2"" of type '" "XdmfInt32""'");
+  } 
+  arg2 = static_cast< XdmfInt32 >(val2);
+  result = (XdmfInt32)(arg1)->SetArrayIsMine(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDataStructure_GetArrayIsMine(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDataStructure *arg1 = (XdmfDataStructure *) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfDataStructure_GetArrayIsMine",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDataStructure, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDataStructure_GetArrayIsMine" "', argument " "1"" of type '" "XdmfDataStructure *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDataStructure * >(argp1);
+  result = (XdmfInt32)(arg1)->GetArrayIsMine();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_XdmfDataStructure_UpdateInformation(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   XdmfDataStructure *arg1 = (XdmfDataStructure *) 0 ;
@@ -18037,6 +18090,8 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfDataStructure_GetValues", _wrap_XdmfDataStructure_GetValues, METH_VARARGS, NULL},
 	 { (char *)"XdmfDataStructure_GetFormat", _wrap_XdmfDataStructure_GetFormat, METH_VARARGS, NULL},
 	 { (char *)"XdmfDataStructure_SetFormat", _wrap_XdmfDataStructure_SetFormat, METH_VARARGS, NULL},
+	 { (char *)"XdmfDataStructure_SetArrayIsMine", _wrap_XdmfDataStructure_SetArrayIsMine, METH_VARARGS, NULL},
+	 { (char *)"XdmfDataStructure_GetArrayIsMine", _wrap_XdmfDataStructure_GetArrayIsMine, METH_VARARGS, NULL},
 	 { (char *)"XdmfDataStructure_UpdateInformation", _wrap_XdmfDataStructure_UpdateInformation, METH_VARARGS, NULL},
 	 { (char *)"XdmfDataStructure_Update", _wrap_XdmfDataStructure_Update, METH_VARARGS, NULL},
 	 { (char *)"XdmfDataStructure_Build", _wrap_XdmfDataStructure_Build, METH_VARARGS, NULL},

@@ -426,6 +426,8 @@ class XdmfDataStructure(XdmfElement):
     def GetValues(*args): return _Xdmf.XdmfDataStructure_GetValues(*args)
     def GetFormat(*args): return _Xdmf.XdmfDataStructure_GetFormat(*args)
     def SetFormat(*args): return _Xdmf.XdmfDataStructure_SetFormat(*args)
+    def SetArrayIsMine(*args): return _Xdmf.XdmfDataStructure_SetArrayIsMine(*args)
+    def GetArrayIsMine(*args): return _Xdmf.XdmfDataStructure_GetArrayIsMine(*args)
     def UpdateInformation(*args): return _Xdmf.XdmfDataStructure_UpdateInformation(*args)
     def Update(*args): return _Xdmf.XdmfDataStructure_Update(*args)
     def Build(*args): return _Xdmf.XdmfDataStructure_Build(*args)
