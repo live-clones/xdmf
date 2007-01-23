@@ -430,6 +430,7 @@ INPUT                  = \
                         XdmfLightData.h \
                         XdmfElement.h \
                         XdmfInformation.h \
+                        XdmfDataItem.h \
                         XdmfDataStructure.h \
                         XdmfHeavyData.h \
                         XdmfHDF.h \
