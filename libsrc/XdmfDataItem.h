@@ -34,8 +34,20 @@ class XdmfValues;
 #define XDMF_FORMAT_XML 0
 #define XDMF_FORMAT_HDF 1
 
+//!  Data Container Object.
+/*!
+An XdmfDataItem is a container for data. It is of one of three types :
+\verbatim
+    Uniform ..... A single DataStructure or DataTransform
+    Collection .. Contains an Array of 1 or more DataStructures or DataTransforms
+    Tree ........ A Hierarchical group of other DataItems
+\endverbatim
 
-/*! XdmfDataItem represents an XdmfArray in XML. 
+If not specified in the "ItemType" a Uniform item is assumed. 
+A Uniform DataItem is a XdmfDataStructure or an XdmfDataTransform. Both
+XdmfDataStructure and XdmfDataTransform are maintined for backwards compatibility.
+
+A Uniform XdmfDataItem represents an XdmfArray in XML. 
     DataItems have an optional name. Rank is also optional since it can be determined from the dimensions.
     Dimensions are listed with the slowest varying dimension first. (i.e. KDim JDim IDim). Type is 
     "Char | Float | Int | Compound" with the default being Float. Precision is BytesPerElement and defaults to
@@ -148,11 +160,16 @@ public:
     XdmfGetValueMacro(HeavyDataSetName, XdmfConstString);
     //! Copy Information from Another DataItem
     XdmfInt32 Copy(XdmfElement *Source);
+    //! Set the Type. One of : XDMF_UNIFORM, XDMF_COLLECTION, XDMF_TREE
+    XdmfSetValueMacro(ItemType, XdmfInt32);
+    //! Get the Type. One of : XDMF_UNIFORM, XDMF_COLLECTION, XDMF_TREE
+    XdmfGetValueMacro(ItemType, XdmfInt32);
 
 protected:
     XdmfInt32       Format;
     XdmfInt32       DataDescIsMine;
     XdmfInt32       ArrayIsMine;
+    XdmfInt32       ItemType;
     XdmfDataDesc    *DataDesc;
     XdmfArray       *Array;
     XdmfValues      *Values;

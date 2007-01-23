@@ -24,6 +24,7 @@ SET( XdmfFormatSource
   XdmfHDFSupport
   XdmfLightData
   XdmfInformation
+  XdmfDataItem
   XdmfDataStructure
   XdmfElement
   XdmfObject

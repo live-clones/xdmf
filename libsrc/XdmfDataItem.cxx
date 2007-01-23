@@ -43,6 +43,7 @@ XdmfDataItem::XdmfDataItem() {
     this->Array->SetNumberOfElements(3);
     this->Format = XDMF_FORMAT_XML;
     this->HeavyDataSetName = NULL;
+    this->ItemType = XDMF_UNIFORM;
 }
 
 XdmfDataItem::~XdmfDataItem() {
@@ -109,10 +110,34 @@ XdmfInt32 XdmfDataItem::UpdateInformation(){
     XdmfDebug("o = " << this->GetReferenceObject(this->Element) << " this = " << this);
     XdmfDebug("r = " << this->ReferenceElement << " e = " << this->Element);
     XdmfDebug(this->DOM->Serialize(this->ReferenceElement));
+    // Dtetermine type : Uniform, Collection, or Tree
+    Value = this->Get("ItemType");
+    if(!Value){
+        this->SetItemType(XDMF_UNIFORM);
+    }else{
+        if(STRCASECMP(Value, "Uniform") == 0){
+            this->SetItemType(XDMF_UNIFORM);
+        }else{
+            if(STRCASECMP(Value, "Collection") == 0){
+                this->SetItemType(XDMF_COLLECTION);
+            }else{
+                if(STRCASECMP(Value, "Tree") == 0){
+                    this->SetItemType(XDMF_TREE);
+                }else{
+                    XdmfErrorMessage("Unknown DataItem Type = " << Value);
+                    return(XDMF_FAIL);
+                }
+            }
+        }
+    }
     if(this->GetIsReference() && 
         (this->ReferenceElement != this->Element) &&
         (this->GetReferenceObject(this->Element) != this)){
         XdmfDebug("Reference DataItem Copied Info from another ReferenceObject");
+        return(XDMF_SUCCESS);
+    }
+    if((this->ItemType == XDMF_COLLECTION) || (this->ItemType == XDMF_TREE)){
+        XdmfDebug("Item Type is not XDMF_UNIFORM, Done");
         return(XDMF_SUCCESS);
     }
     Value = this->Get("Dimensions");
@@ -169,6 +194,10 @@ XdmfInt32 XdmfDataItem::Update(){
     }
     if(this->GetIsReference() && (this->GetReferenceObject(this->Element) != this)){
         XdmfDebug("Reference DataItem Copied Info from another ReferenceObject");
+        return(XDMF_SUCCESS);
+    }
+    if((this->ItemType == XDMF_COLLECTION) || (this->ItemType == XDMF_TREE)){
+        XdmfDebug("Item Type is not XDMF_UNIFORM, Done");
         return(XDMF_SUCCESS);
     }
     if(this->Array->CopyType(this->DataDesc) != XDMF_SUCCESS) return(XDMF_FAIL);

@@ -26,7 +26,7 @@
 #define __XdmfDataStructure_h
 
 
-#include "XdmfDataStructure.h"
+#include "XdmfDataItem.h"
 
 class XdmfArray;
 
