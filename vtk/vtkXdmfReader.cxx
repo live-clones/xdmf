@@ -87,7 +87,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.73");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.74");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -2292,9 +2292,24 @@ void vtkXdmfReader::DisableAllGrids()
     }
   if(changed)
     {
+    //don't keep stale array info around
+    this->PointDataArraySelection->RemoveAllArrays();
+    this->CellDataArraySelection->RemoveAllArrays();
     this->Modified();
     this->UpdateInformation();
     }
+}
+
+//----------------------------------------------------------------------------
+void vtkXdmfReader::RemoveAllGrids()
+{
+  vtkDebugMacro("Remove all grids");
+  vtkXdmfReaderInternal::MapOfActualGrids::iterator it;
+  this->Internals->ActualGrids.clear();
+  this->NumberOfEnabledActualGrids = 0;
+  this->GridsModified = 1;
+  this->Modified();
+  this->UpdateInformation();
 }
 
 //----------------------------------------------------------------------------
@@ -2710,11 +2725,11 @@ void vtkXdmfReader::UpdateGrids()
     return;
     }
 
-    // Modified by Jerry Clarke
-    if( !this->GridsModified )
+  // Modified by Jerry Clarke
+  if( !this->GridsModified )
     {
-        vtkDebugMacro( << "Skipping Grid Update : Not Modified");
-        return;
+    vtkDebugMacro( << "Skipping Grid Update : Not Modified");
+    return;
     }
 
   NGrid = this->DOM->FindNumberOfElements("Grid", domain);
