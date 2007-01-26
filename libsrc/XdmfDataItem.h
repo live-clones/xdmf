@@ -34,13 +34,27 @@ class XdmfValues;
 #define XDMF_FORMAT_XML 0
 #define XDMF_FORMAT_HDF 1
 
+// Organizations
+#define XDMF_ITEM_UNIFORM        0x00
+#define XDMF_ITEM_HYPERSLAB      0x01
+#define XDMF_ITEM_COORDINATES    0x02
+#define XDMF_ITEM_FUNCTION       0x03
+#define XDMF_ITEM_COLLECTION     0x14
+#define XDMF_ITEM_TREE           0x15
+
+#define XDMF_ITEM_MASK        0xF0    // Evaluates to a Single Array ?
+
+
 //!  Data Container Object.
 /*!
 An XdmfDataItem is a container for data. It is of one of three types :
 \verbatim
-    Uniform ..... A single DataStructure or DataTransform
-    Collection .. Contains an Array of 1 or more DataStructures or DataTransforms
-    Tree ........ A Hierarchical group of other DataItems
+    Uniform ...... A single DataStructure
+    HyperSlab .... A DataTransform that Subsamples some DataStructure
+    Coordinates .. A DataTransform that Subsamples via Parametric Coordinates
+    Function ..... A DataTransform described by some function
+    Collection ... Contains an Array of 1 or more DataStructures or DataTransforms
+    Tree ......... A Hierarchical group of other DataItems
 \endverbatim
 
 If not specified in the "ItemType" a Uniform item is assumed. 
@@ -160,10 +174,16 @@ public:
     XdmfGetValueMacro(HeavyDataSetName, XdmfConstString);
     //! Copy Information from Another DataItem
     XdmfInt32 Copy(XdmfElement *Source);
-    //! Set the Type. One of : XDMF_UNIFORM, XDMF_COLLECTION, XDMF_TREE
+    //! Set the Type. One of : XDMF_ITEM_UNIFORM, XDMF_ITEM_COLLECTION, XDMF_ITEM_TREE
     XdmfSetValueMacro(ItemType, XdmfInt32);
-    //! Get the Type. One of : XDMF_UNIFORM, XDMF_COLLECTION, XDMF_TREE
+    //! Get the Type. One of : XDMF_ITEM_UNIFORM, XDMF_ITEM_COLLECTION, XDMF_ITEM_TREE
     XdmfGetValueMacro(ItemType, XdmfInt32);
+    //! Get if ItemType evaluates to a Single or Multiple XdmfArray. Collection and tree are multiple.
+    XdmfInt32   GetIsMultiple() { return((this->ItemType & XDMF_ITEM_MASK) ? 1: 0); };
+    //! Set the Function String
+    XdmfSetStringMacro(Function);
+    //! Get the Function String
+    XdmfGetStringMacro(Function);
 
 protected:
     XdmfInt32       Format;
@@ -174,9 +194,15 @@ protected:
     XdmfArray       *Array;
     XdmfValues      *Values;
     XdmfString      HeavyDataSetName;
+    XdmfString      Function;
 
     //! Make sure this->Values is correct
     XdmfInt32       CheckValues(XdmfInt32 Format);
+    XdmfInt32       UpdateInformationUniform();
+    XdmfInt32       UpdateInformationCollection();
+    XdmfInt32       UpdateInformationTree();
+    XdmfInt32       UpdateInformationFunction(); // HpyerSlab, Coordinates or Function
+    XdmfInt32       UpdateFunction(); // HpyerSlab, Coordinates or Function
 };
 
 #endif // __XdmfDataItem_h

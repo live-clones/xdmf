@@ -256,9 +256,6 @@ XdmfArrayList_swigregister(XdmfArrayList)
 TagNameToArray = _Xdmf.TagNameToArray
 PrintAllXdmfArrays = _Xdmf.PrintAllXdmfArrays
 GetCurrentArrayTime = _Xdmf.GetCurrentArrayTime
-XDMF_UNIFORM = _Xdmf.XDMF_UNIFORM
-XDMF_COLLECTION = _Xdmf.XDMF_COLLECTION
-XDMF_TREE = _Xdmf.XDMF_TREE
 class XdmfLightData(XdmfObject):
     __swig_setmethods__ = {}
     for _s in [XdmfObject]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
@@ -411,6 +408,13 @@ XdmfInformation_swigregister(XdmfInformation)
 
 XDMF_FORMAT_XML = _Xdmf.XDMF_FORMAT_XML
 XDMF_FORMAT_HDF = _Xdmf.XDMF_FORMAT_HDF
+XDMF_ITEM_UNIFORM = _Xdmf.XDMF_ITEM_UNIFORM
+XDMF_ITEM_HYPERSLAB = _Xdmf.XDMF_ITEM_HYPERSLAB
+XDMF_ITEM_COORDINATES = _Xdmf.XDMF_ITEM_COORDINATES
+XDMF_ITEM_FUNCTION = _Xdmf.XDMF_ITEM_FUNCTION
+XDMF_ITEM_COLLECTION = _Xdmf.XDMF_ITEM_COLLECTION
+XDMF_ITEM_TREE = _Xdmf.XDMF_ITEM_TREE
+XDMF_ITEM_MASK = _Xdmf.XDMF_ITEM_MASK
 class XdmfDataItem(XdmfElement):
     __swig_setmethods__ = {}
     for _s in [XdmfElement]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
@@ -450,6 +454,11 @@ class XdmfDataItem(XdmfElement):
     def SetHeavyDataSetName(*args): return _Xdmf.XdmfDataItem_SetHeavyDataSetName(*args)
     def GetHeavyDataSetName(*args): return _Xdmf.XdmfDataItem_GetHeavyDataSetName(*args)
     def Copy(*args): return _Xdmf.XdmfDataItem_Copy(*args)
+    def SetItemType(*args): return _Xdmf.XdmfDataItem_SetItemType(*args)
+    def GetItemType(*args): return _Xdmf.XdmfDataItem_GetItemType(*args)
+    def GetIsMultiple(*args): return _Xdmf.XdmfDataItem_GetIsMultiple(*args)
+    def SetFunction(*args): return _Xdmf.XdmfDataItem_SetFunction(*args)
+    def GetFunction(*args): return _Xdmf.XdmfDataItem_GetFunction(*args)
 XdmfDataItem_swigregister = _Xdmf.XdmfDataItem_swigregister
 XdmfDataItem_swigregister(XdmfDataItem)
 
@@ -468,8 +477,6 @@ class XdmfDataStructure(XdmfDataItem):
     __swig_destroy__ = _Xdmf.delete_XdmfDataStructure
     __del__ = lambda self : None;
     def GetClassName(*args): return _Xdmf.XdmfDataStructure_GetClassName(*args)
-    def SetItemType(*args): return _Xdmf.XdmfDataStructure_SetItemType(*args)
-    def GetItemType(*args): return _Xdmf.XdmfDataStructure_GetItemType(*args)
     def UpdateInformation(*args): return _Xdmf.XdmfDataStructure_UpdateInformation(*args)
 XdmfDataStructure_swigregister = _Xdmf.XdmfDataStructure_swigregister
 XdmfDataStructure_swigregister(XdmfDataStructure)

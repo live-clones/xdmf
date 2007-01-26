@@ -53,18 +53,10 @@ public :
   ~XdmfDataStructure();
 
   XdmfConstString GetClassName() { return("XdmfDataStructure"); } ;
-  //! Set DOM and Element from another XdmfDataStructure
 
-    //! Set the Type. One of : XDMF_UNIFORM, XDMF_COLLECTION, XDMF_TREE
-    XdmfSetValueMacro(ItemType, XdmfInt32);
-    //! Get the Type. One of : XDMF_UNIFORM, XDMF_COLLECTION, XDMF_TREE
-    XdmfGetValueMacro(ItemType, XdmfInt32);
-
-    //! Update From Light Data
-    XdmfInt32 UpdateInformation();
+  XdmfInt32 UpdateInformation();
 
 protected :
-    XdmfInt32 ItemType;
 };
 
 #endif

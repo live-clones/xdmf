@@ -432,6 +432,7 @@ INPUT                  = \
                         XdmfInformation.h \
                         XdmfDataItem.h \
                         XdmfDataStructure.h \
+                        XdmfDataTransform.h \
                         XdmfHeavyData.h \
                         XdmfHDF.h \
                         XdmfValues.h \

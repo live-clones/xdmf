@@ -15394,6 +15394,137 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_XdmfDataItem_SetItemType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDataItem *arg1 = (XdmfDataItem *) 0 ;
+  XdmfInt32 arg2 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfDataItem_SetItemType",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDataItem, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDataItem_SetItemType" "', argument " "1"" of type '" "XdmfDataItem *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDataItem * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfDataItem_SetItemType" "', argument " "2"" of type '" "XdmfInt32""'");
+  } 
+  arg2 = static_cast< XdmfInt32 >(val2);
+  result = (XdmfInt32)(arg1)->SetItemType(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDataItem_GetItemType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDataItem *arg1 = (XdmfDataItem *) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfDataItem_GetItemType",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDataItem, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDataItem_GetItemType" "', argument " "1"" of type '" "XdmfDataItem *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDataItem * >(argp1);
+  result = (XdmfInt32)(arg1)->GetItemType();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDataItem_GetIsMultiple(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDataItem *arg1 = (XdmfDataItem *) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfDataItem_GetIsMultiple",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDataItem, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDataItem_GetIsMultiple" "', argument " "1"" of type '" "XdmfDataItem *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDataItem * >(argp1);
+  result = (XdmfInt32)(arg1)->GetIsMultiple();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDataItem_SetFunction(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDataItem *arg1 = (XdmfDataItem *) 0 ;
+  XdmfConstString arg2 = (XdmfConstString) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfDataItem_SetFunction",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDataItem, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDataItem_SetFunction" "', argument " "1"" of type '" "XdmfDataItem *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDataItem * >(argp1);
+  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfDataItem_SetFunction" "', argument " "2"" of type '" "XdmfConstString""'");
+  }
+  arg2 = reinterpret_cast< XdmfConstString >(buf2);
+  result = (XdmfInt32)(arg1)->SetFunction(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDataItem_GetFunction(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDataItem *arg1 = (XdmfDataItem *) 0 ;
+  XdmfConstString result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfDataItem_GetFunction",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDataItem, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDataItem_GetFunction" "', argument " "1"" of type '" "XdmfDataItem *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDataItem * >(argp1);
+  result = (XdmfConstString)(arg1)->GetFunction();
+  resultobj = SWIG_FromCharPtr((const char *)result);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *XdmfDataItem_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *obj;
   if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
@@ -15452,59 +15583,6 @@ SWIGINTERN PyObject *_wrap_XdmfDataStructure_GetClassName(PyObject *SWIGUNUSEDPA
   arg1 = reinterpret_cast< XdmfDataStructure * >(argp1);
   result = (XdmfConstString)(arg1)->GetClassName();
   resultobj = SWIG_FromCharPtr((const char *)result);
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_XdmfDataStructure_SetItemType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  XdmfDataStructure *arg1 = (XdmfDataStructure *) 0 ;
-  XdmfInt32 arg2 ;
-  XdmfInt32 result;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfDataStructure_SetItemType",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDataStructure, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDataStructure_SetItemType" "', argument " "1"" of type '" "XdmfDataStructure *""'"); 
-  }
-  arg1 = reinterpret_cast< XdmfDataStructure * >(argp1);
-  ecode2 = SWIG_AsVal_int(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfDataStructure_SetItemType" "', argument " "2"" of type '" "XdmfInt32""'");
-  } 
-  arg2 = static_cast< XdmfInt32 >(val2);
-  result = (XdmfInt32)(arg1)->SetItemType(arg2);
-  resultobj = SWIG_From_int(static_cast< int >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_XdmfDataStructure_GetItemType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  XdmfDataStructure *arg1 = (XdmfDataStructure *) 0 ;
-  XdmfInt32 result;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:XdmfDataStructure_GetItemType",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDataStructure, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDataStructure_GetItemType" "', argument " "1"" of type '" "XdmfDataStructure *""'"); 
-  }
-  arg1 = reinterpret_cast< XdmfDataStructure * >(argp1);
-  result = (XdmfInt32)(arg1)->GetItemType();
-  resultobj = SWIG_From_int(static_cast< int >(result));
   return resultobj;
 fail:
   return NULL;
@@ -18251,12 +18329,15 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfDataItem_SetHeavyDataSetName", _wrap_XdmfDataItem_SetHeavyDataSetName, METH_VARARGS, NULL},
 	 { (char *)"XdmfDataItem_GetHeavyDataSetName", _wrap_XdmfDataItem_GetHeavyDataSetName, METH_VARARGS, NULL},
 	 { (char *)"XdmfDataItem_Copy", _wrap_XdmfDataItem_Copy, METH_VARARGS, NULL},
+	 { (char *)"XdmfDataItem_SetItemType", _wrap_XdmfDataItem_SetItemType, METH_VARARGS, NULL},
+	 { (char *)"XdmfDataItem_GetItemType", _wrap_XdmfDataItem_GetItemType, METH_VARARGS, NULL},
+	 { (char *)"XdmfDataItem_GetIsMultiple", _wrap_XdmfDataItem_GetIsMultiple, METH_VARARGS, NULL},
+	 { (char *)"XdmfDataItem_SetFunction", _wrap_XdmfDataItem_SetFunction, METH_VARARGS, NULL},
+	 { (char *)"XdmfDataItem_GetFunction", _wrap_XdmfDataItem_GetFunction, METH_VARARGS, NULL},
 	 { (char *)"XdmfDataItem_swigregister", XdmfDataItem_swigregister, METH_VARARGS, NULL},
 	 { (char *)"new_XdmfDataStructure", _wrap_new_XdmfDataStructure, METH_VARARGS, NULL},
 	 { (char *)"delete_XdmfDataStructure", _wrap_delete_XdmfDataStructure, METH_VARARGS, NULL},
 	 { (char *)"XdmfDataStructure_GetClassName", _wrap_XdmfDataStructure_GetClassName, METH_VARARGS, NULL},
-	 { (char *)"XdmfDataStructure_SetItemType", _wrap_XdmfDataStructure_SetItemType, METH_VARARGS, NULL},
-	 { (char *)"XdmfDataStructure_GetItemType", _wrap_XdmfDataStructure_GetItemType, METH_VARARGS, NULL},
 	 { (char *)"XdmfDataStructure_UpdateInformation", _wrap_XdmfDataStructure_UpdateInformation, METH_VARARGS, NULL},
 	 { (char *)"XdmfDataStructure_swigregister", XdmfDataStructure_swigregister, METH_VARARGS, NULL},
 	 { (char *)"new_XdmfValues", _wrap_new_XdmfValues, METH_VARARGS, NULL},
@@ -19111,14 +19192,18 @@ SWIGEXPORT void SWIG_init(void) {
   SWIG_Python_SetConstant(d, "XDMF_HYPERSLAB",SWIG_From_int(static_cast< int >(1)));
   SWIG_Python_SetConstant(d, "XDMF_COORDINATES",SWIG_From_int(static_cast< int >(2)));
   SWIG_Python_SetConstant(d, "XDMF_ARRAY_TAG_LENGTH",SWIG_From_int(static_cast< int >(80)));
-  SWIG_Python_SetConstant(d, "XDMF_UNIFORM",SWIG_From_int(static_cast< int >(0)));
-  SWIG_Python_SetConstant(d, "XDMF_COLLECTION",SWIG_From_int(static_cast< int >(1)));
-  SWIG_Python_SetConstant(d, "XDMF_TREE",SWIG_From_int(static_cast< int >(2)));
   SWIG_Python_SetConstant(d, "XDMF_ELEMENT_STATE_UNINITIALIZED",SWIG_From_int(static_cast< int >(0)));
   SWIG_Python_SetConstant(d, "XDMF_ELEMENT_STATE_LIGHT_PARSED",SWIG_From_int(static_cast< int >(1)));
   SWIG_Python_SetConstant(d, "XDMF_ELEMENT_STATE_HEAVY_READ",SWIG_From_int(static_cast< int >(2)));
   SWIG_Python_SetConstant(d, "XDMF_FORMAT_XML",SWIG_From_int(static_cast< int >(0)));
   SWIG_Python_SetConstant(d, "XDMF_FORMAT_HDF",SWIG_From_int(static_cast< int >(1)));
+  SWIG_Python_SetConstant(d, "XDMF_ITEM_UNIFORM",SWIG_From_int(static_cast< int >(0x00)));
+  SWIG_Python_SetConstant(d, "XDMF_ITEM_HYPERSLAB",SWIG_From_int(static_cast< int >(0x01)));
+  SWIG_Python_SetConstant(d, "XDMF_ITEM_COORDINATES",SWIG_From_int(static_cast< int >(0x02)));
+  SWIG_Python_SetConstant(d, "XDMF_ITEM_FUNCTION",SWIG_From_int(static_cast< int >(0x03)));
+  SWIG_Python_SetConstant(d, "XDMF_ITEM_COLLECTION",SWIG_From_int(static_cast< int >(0x14)));
+  SWIG_Python_SetConstant(d, "XDMF_ITEM_TREE",SWIG_From_int(static_cast< int >(0x15)));
+  SWIG_Python_SetConstant(d, "XDMF_ITEM_MASK",SWIG_From_int(static_cast< int >(0xF0)));
   SWIG_Python_SetConstant(d, "XDMF_H5_OTHER",SWIG_From_int(static_cast< int >(0xFF)));
 }
 

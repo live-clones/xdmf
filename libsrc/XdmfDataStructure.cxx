@@ -26,7 +26,7 @@
 #include "XdmfArray.h"
 
 XdmfDataStructure::XdmfDataStructure() {
-    this->ItemType = XDMF_UNIFORM;
+    this->ItemType = XDMF_ITEM_UNIFORM;
 }
 
 XdmfDataStructure::~XdmfDataStructure() {

@@ -1,6 +1,6 @@
 /*******************************************************************/
 /*                               XDMF                              */
-/*                   eXtensible Data Model and ValuesXML              */
+/*                   eXtensible Data Model and Format              */
 /*                                                                 */
 /*  Id : Id  */
 /*  Date : $Date$ */

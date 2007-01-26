@@ -26,6 +26,7 @@ SET( XdmfFormatSource
   XdmfInformation
   XdmfDataItem
   XdmfDataStructure
+  XdmfDataTransform
   XdmfElement
   XdmfObject
 #  XdmfParameter

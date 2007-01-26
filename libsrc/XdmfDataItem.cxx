@@ -24,6 +24,7 @@
 /*******************************************************************/
 #include "XdmfDataItem.h"
 #include "XdmfDataDesc.h"
+#include "XdmfExpression.h"
 #include "XdmfArray.h"
 #include "XdmfDOM.h"
 
@@ -43,7 +44,8 @@ XdmfDataItem::XdmfDataItem() {
     this->Array->SetNumberOfElements(3);
     this->Format = XDMF_FORMAT_XML;
     this->HeavyDataSetName = NULL;
-    this->ItemType = XDMF_UNIFORM;
+    this->ItemType = XDMF_ITEM_UNIFORM;
+    this->Function = NULL;
 }
 
 XdmfDataItem::~XdmfDataItem() {
@@ -98,48 +100,37 @@ XdmfDataItem::Copy(XdmfElement *Source){
     return(XDMF_SUCCESS);
 }
 
-XdmfInt32 XdmfDataItem::UpdateInformation(){
+XdmfInt32 XdmfDataItem::UpdateInformationFunction(){
+    XdmfConstString Value;
+    switch(this->ItemType){
+        case XDMF_ITEM_FUNCTION :
+           Value = this->Get("Function");
+           this->SetFunction(Value);
+           break;
+        case XDMF_ITEM_HYPERSLAB :
+            XdmfInt64  Start[ XDMF_MAX_DIMENSION ];
+            XdmfInt64  Stride[ XDMF_MAX_DIMENSION ];
+            XdmfInt64  Count[ XDMF_MAX_DIMENSION ];
+            XdmfInt32  Index;
+            break;
+        case XDMF_ITEM_COORDINATES :
+            break;
+    }
+return(XDMF_SUCCESS);
+}
+
+XdmfInt32 XdmfDataItem::UpdateInformationCollection(){
+    return(XDMF_SUCCESS);
+}
+
+XdmfInt32 XdmfDataItem::UpdateInformationTree(){
+    return(XDMF_SUCCESS);
+}
+
+XdmfInt32 XdmfDataItem::UpdateInformationUniform(){
     XdmfConstString Value;
     XdmfInt32   Precision = 4;
-    XdmfDataItem   *ds;
 
-    XdmfDebug("XdmfDataItem::UpdateInformation()");
-    if(XdmfElement::UpdateInformation() != XDMF_SUCCESS) return(XDMF_FAIL);
-    // If this is a Reference, this->Element now points to the end of the chain. Continue?
-    XdmfDebug("Back from XdmfElement::UpdateInformation() IsReference = " << this->GetIsReference());
-    XdmfDebug("o = " << this->GetReferenceObject(this->Element) << " this = " << this);
-    XdmfDebug("r = " << this->ReferenceElement << " e = " << this->Element);
-    XdmfDebug(this->DOM->Serialize(this->ReferenceElement));
-    // Dtetermine type : Uniform, Collection, or Tree
-    Value = this->Get("ItemType");
-    if(!Value){
-        this->SetItemType(XDMF_UNIFORM);
-    }else{
-        if(STRCASECMP(Value, "Uniform") == 0){
-            this->SetItemType(XDMF_UNIFORM);
-        }else{
-            if(STRCASECMP(Value, "Collection") == 0){
-                this->SetItemType(XDMF_COLLECTION);
-            }else{
-                if(STRCASECMP(Value, "Tree") == 0){
-                    this->SetItemType(XDMF_TREE);
-                }else{
-                    XdmfErrorMessage("Unknown DataItem Type = " << Value);
-                    return(XDMF_FAIL);
-                }
-            }
-        }
-    }
-    if(this->GetIsReference() && 
-        (this->ReferenceElement != this->Element) &&
-        (this->GetReferenceObject(this->Element) != this)){
-        XdmfDebug("Reference DataItem Copied Info from another ReferenceObject");
-        return(XDMF_SUCCESS);
-    }
-    if((this->ItemType == XDMF_COLLECTION) || (this->ItemType == XDMF_TREE)){
-        XdmfDebug("Item Type is not XDMF_UNIFORM, Done");
-        return(XDMF_SUCCESS);
-    }
     Value = this->Get("Dimensions");
     if(!Value) {
         XdmfErrorMessage("Dimensions are not set in XML Element");
@@ -185,6 +176,154 @@ XdmfInt32 XdmfDataItem::UpdateInformation(){
     return(XDMF_SUCCESS);
 }
 
+XdmfInt32 XdmfDataItem::UpdateInformation(){
+    XdmfConstString Value;
+    XdmfInt32   Precision = 4;
+
+    XdmfDebug("XdmfDataItem::UpdateInformation()");
+    if(XdmfElement::UpdateInformation() != XDMF_SUCCESS) return(XDMF_FAIL);
+    // If this is a Reference, this->Element now points to the end of the chain. Continue?
+    XdmfDebug("Back from XdmfElement::UpdateInformation() IsReference = " << this->GetIsReference());
+    XdmfDebug("o = " << this->GetReferenceObject(this->Element) << " this = " << this);
+    XdmfDebug("r = " << this->ReferenceElement << " e = " << this->Element);
+    XdmfDebug(this->DOM->Serialize(this->ReferenceElement));
+    // Dtetermine type : Uniform, Collection, or Tree
+    Value = this->Get("ItemType");
+    if(!Value){
+        // Try Old "Type=XX" Style from Xdmf Version 1.0
+        Value = this->Get("Type");
+    }
+    if(!Value){
+        this->SetItemType(XDMF_ITEM_UNIFORM);
+    }else{
+        // Allow for "break";
+        do {
+            if(XDMF_WORD_CMP(Value, "Uniform")){
+                this->SetItemType(XDMF_ITEM_UNIFORM);
+                break;
+            }
+            if(XDMF_WORD_CMP(Value, "Collection")){
+                this->SetItemType(XDMF_ITEM_COLLECTION);
+                break;
+            }
+            if(XDMF_WORD_CMP(Value, "Tree")){
+                this->SetItemType(XDMF_ITEM_TREE);
+                break;
+            }
+            if(XDMF_WORD_CMP(Value, "HyperSlab")){
+                this->SetItemType(XDMF_ITEM_HYPERSLAB);
+                break;
+            }
+            if(XDMF_WORD_CMP(Value, "Coordinates")){
+                this->SetItemType(XDMF_ITEM_COORDINATES);
+                break;
+            }
+            if(XDMF_WORD_CMP(Value, "Function")){
+                this->SetItemType(XDMF_ITEM_FUNCTION);
+                break;
+            }
+            XdmfErrorMessage("Unknown DataItem Type = " << Value);
+            return(XDMF_FAIL);
+        } while(0);
+    }
+    if(this->GetIsReference() && 
+        (this->ReferenceElement != this->Element) &&
+        (this->GetReferenceObject(this->Element) != this)){
+        XdmfDebug("Reference DataItem Copied Info from another ReferenceObject");
+        return(XDMF_SUCCESS);
+    }
+    switch(this->ItemType){
+        case XDMF_ITEM_UNIFORM :
+            return(this->UpdateInformationUniform());
+            break;
+        case XDMF_ITEM_COLLECTION:
+            return(this->UpdateInformationCollection());
+            break;
+        case XDMF_ITEM_TREE:
+            return(this->UpdateInformationTree());
+            break;
+        case XDMF_ITEM_HYPERSLAB :
+        case XDMF_ITEM_COORDINATES :
+        case XDMF_ITEM_FUNCTION :
+            return(this->UpdateInformationFunction());
+            break;
+        default :
+            // Should Never get Here
+            XdmfErrorMessage("Unknown ItemType");
+            return(XDMF_FAIL);
+            break;
+    }
+    // Should Never get Here
+    return(XDMF_SUCCESS);
+}
+
+XdmfInt32 XdmfDataItem::UpdateFunction(){
+    if(this->ItemType == XDMF_ITEM_FUNCTION){
+        XdmfConstString  CData;
+        XdmfArray  *ReturnArray;
+        XdmfDataItem *ItemToDelete[100];
+        ostrstream  FunctionToEval;
+        XdmfInt32  Id, NTmp = 0;
+        char    c, *StreamString, *scdata;
+
+
+        if(!this->Function){
+                XdmfErrorMessage("Function is NULL");
+                return(XDMF_FAIL);
+        }
+        XDMF_STRING_DUPLICATE(scdata, this->Function);
+        XdmfDebug("Transform Function = " << scdata);
+        XdmfConstString ch = scdata;
+        while( (c = *ch++) ) {
+            if( c == '$' ) {
+                XdmfXmlNode  Argument;
+                XdmfArray  *TmpArray;
+                XdmfDataItem *TmpItem;
+                Id = atoi(ch);
+                while( (c = *ch++) ) {
+                    if( c > ' ') break;
+                }
+                Argument = this->DOM->FindElement( NULL, Id, this->Element );
+                TmpItem = new XdmfDataItem;
+                TmpItem->SetDOM(this->DOM);
+                TmpItem->SetElement(Argument);
+                TmpItem->UpdateInformation();
+                TmpItem->Update();
+                TmpArray = TmpItem->GetArray();
+                if( TmpArray->GetNumberOfElements() == 1 ){
+                    XdmfDebug("Using Scalar = " << TmpArray->GetValueAsFloat64( 0 ) );
+                    FunctionToEval << " " << TmpArray->GetValueAsFloat64( 0 ) << " ";
+                    delete TmpArray;
+                } else {
+                    ItemToDelete[ NTmp++ ] = TmpItem;
+                    FunctionToEval << " " << TmpArray->GetTagName() << " ";
+                }
+            } else {
+                FunctionToEval << c;
+            }
+        }
+        delete [] scdata;
+        FunctionToEval << ends;
+        StreamString = FunctionToEval.str();
+        XdmfDebug("Function Translation = " << StreamString );
+        ReturnArray = XdmfExpr(  StreamString );
+        CData = this->DOM->Get( Element, "Dimensions" );
+        if(CData && ReturnArray){
+            ReturnArray->ReformFromString(CData);
+        }
+        delete [] StreamString;
+        while( NTmp ){
+            NTmp--;
+            XdmfDebug("Deleteing DataItem #" << NTmp );
+            delete ItemToDelete[ NTmp ];
+        }
+        this->SetArray(ReturnArray);
+        // We'll need to delete this
+        this->ArrayIsMine = 1;
+        return( XDMF_SUCCESS);
+    }
+}
+
 XdmfInt32 XdmfDataItem::Update(){
     if(XdmfElement::Update() != XDMF_SUCCESS) return(XDMF_FAIL);
     if(this->IsReference){
@@ -196,9 +335,12 @@ XdmfInt32 XdmfDataItem::Update(){
         XdmfDebug("Reference DataItem Copied Info from another ReferenceObject");
         return(XDMF_SUCCESS);
     }
-    if((this->ItemType == XDMF_COLLECTION) || (this->ItemType == XDMF_TREE)){
-        XdmfDebug("Item Type is not XDMF_UNIFORM, Done");
+    if(this->GetIsMultiple()){
+        XdmfDebug("Item Type does not evaluate to a single array. Done");
         return(XDMF_SUCCESS);
+    }
+    if(this->ItemType != XDMF_ITEM_UNIFORM){
+        return(this->UpdateFunction());
     }
     if(this->Array->CopyType(this->DataDesc) != XDMF_SUCCESS) return(XDMF_FAIL);
     if(this->Array->CopyShape(this->DataDesc) != XDMF_SUCCESS) return(XDMF_FAIL);

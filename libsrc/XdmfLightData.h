@@ -27,10 +27,6 @@
 
 #include "XdmfObject.h"
 
-// Organizations
-#define XDMF_UNIFORM    0   // One Single Entitiy
-#define XDMF_COLLECTION 1   // An Array of Homogeneous Entities
-#define XDMF_TREE       2   // Group of Hierarchical Entities
 
 // typedef XdmfPointer XdmfXmlNode;
 class _xmlNode;
