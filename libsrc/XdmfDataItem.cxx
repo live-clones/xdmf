@@ -36,9 +36,9 @@
 
 XdmfDataItem::XdmfDataItem() {
     this->Values = NULL;
-    this->DataDesc = new XdmfDataDesc;
+    this->DataDesc = new XdmfDataDesc();
     this->DataDescIsMine = 1;
-    this->Array = new XdmfArray;
+    this->Array = new XdmfArray();
     this->ArrayIsMine = 1;
     this->Array->SetNumberType(XDMF_FLOAT32_TYPE);
     this->Array->SetNumberOfElements(3);
@@ -108,10 +108,6 @@ XdmfInt32 XdmfDataItem::UpdateInformationFunction(){
            this->SetFunction(Value);
            break;
         case XDMF_ITEM_HYPERSLAB :
-            XdmfInt64  Start[ XDMF_MAX_DIMENSION ];
-            XdmfInt64  Stride[ XDMF_MAX_DIMENSION ];
-            XdmfInt64  Count[ XDMF_MAX_DIMENSION ];
-            XdmfInt32  Index;
             break;
         case XDMF_ITEM_COORDINATES :
             break;
@@ -136,11 +132,15 @@ XdmfInt32 XdmfDataItem::UpdateInformationUniform(){
         XdmfErrorMessage("Dimensions are not set in XML Element");
         return(XDMF_FAIL);
     }
-    if(!this->DataDesc) this->DataDesc = new XdmfDataDesc;
+    if(!this->DataDesc) this->DataDesc = new XdmfDataDesc();
     this->DataDesc->SetShapeFromString(Value);
     Value = this->Get("Precision");
     if(Value) Precision = atoi(Value);
-    Value = this->Get("Type");
+    Value = this->Get("NumberType");
+    // Try DataType
+    if(!Value) Value = this->Get("DataType");
+    //! Try Old Style
+    if(!Value) Value = this->Get("Type");
     // Only allow Simple for now.
     if(XDMF_WORD_CMP(Value, "Char")){
         this->DataDesc->SetNumberType(XDMF_INT8_TYPE);
@@ -258,12 +258,51 @@ XdmfInt32 XdmfDataItem::UpdateInformation(){
 }
 
 XdmfInt32 XdmfDataItem::UpdateFunction(){
-    if(this->ItemType == XDMF_ITEM_FUNCTION){
-        XdmfConstString  CData;
+        XdmfConstString  Value;
         XdmfArray  *ReturnArray;
         XdmfDataItem *ItemToDelete[100];
-        ostrstream  FunctionToEval;
         XdmfInt32  Id, NTmp = 0;
+
+    if(this->ItemType == XDMF_ITEM_HYPERSLAB){
+        // $0 is Selection $1 is Data Source
+            XdmfXmlNode  Argument;
+            XdmfArray  *TmpArray;
+            XdmfDataItem *TmpItem, *SrcItem;
+            XdmfInt64   Rank;
+            XdmfInt64   Start[ XDMF_MAX_DIMENSION ];
+            XdmfInt64   Stride[ XDMF_MAX_DIMENSION ];
+            XdmfInt64   Count[ XDMF_MAX_DIMENSION ];
+
+            XdmfDebug("Updating HyperSlab");
+            Argument = this->DOM->FindElement(NULL, 0, this->Element);
+            TmpItem = new XdmfDataItem();
+            TmpItem->SetDOM(this->DOM);
+            TmpItem->SetElement(Argument);
+            TmpItem->UpdateInformation();
+            TmpItem->Update();
+            TmpArray = TmpItem->GetArray();
+            Rank = TmpArray->GetNumberOfElements() / 3; // Start, Stride, Count for each Source Dim
+            TmpArray->GetValues(0, Start, Rank);
+            TmpArray->GetValues(Rank, Stride, Rank);
+            TmpArray->GetValues(2 * Rank, Count, Rank);
+            XdmfDebug("Selection is " << TmpArray->GetValues());
+            // Now Access the Source Data
+            SrcItem = new XdmfDataItem();
+            Argument = this->DOM->FindElement(NULL, 1, this->Element);
+            SrcItem->SetDOM(this->DOM);
+            SrcItem->SetElement(Argument);
+            SrcItem->UpdateInformation();
+            SrcItem->GetDataDesc()->SelectHyperSlab( Start, Stride, Count );
+            SrcItem->Update();
+            // Steal The Array
+            ReturnArray = SrcItem->GetArray();
+            SrcItem->SetArrayIsMine(0);
+            ItemToDelete[ NTmp++ ] = TmpItem;
+            ItemToDelete[ NTmp++ ] = SrcItem;
+
+    }
+    if(this->ItemType == XDMF_ITEM_FUNCTION){
+        ostrstream  FunctionToEval;
         char    c, *StreamString, *scdata;
 
 
@@ -284,7 +323,7 @@ XdmfInt32 XdmfDataItem::UpdateFunction(){
                     if( c > ' ') break;
                 }
                 Argument = this->DOM->FindElement( NULL, Id, this->Element );
-                TmpItem = new XdmfDataItem;
+                TmpItem = new XdmfDataItem();
                 TmpItem->SetDOM(this->DOM);
                 TmpItem->SetElement(Argument);
                 TmpItem->UpdateInformation();
@@ -306,22 +345,23 @@ XdmfInt32 XdmfDataItem::UpdateFunction(){
         FunctionToEval << ends;
         StreamString = FunctionToEval.str();
         XdmfDebug("Function Translation = " << StreamString );
-        ReturnArray = XdmfExpr(  StreamString );
-        CData = this->DOM->Get( Element, "Dimensions" );
-        if(CData && ReturnArray){
-            ReturnArray->ReformFromString(CData);
-        }
+        ReturnArray = XdmfExpr(StreamString);
         delete [] StreamString;
-        while( NTmp ){
-            NTmp--;
-            XdmfDebug("Deleteing DataItem #" << NTmp );
-            delete ItemToDelete[ NTmp ];
-        }
-        this->SetArray(ReturnArray);
-        // We'll need to delete this
-        this->ArrayIsMine = 1;
-        return( XDMF_SUCCESS);
     }
+    // Reform and Cleanup
+    Value = this->DOM->Get( Element, "Dimensions" );
+    if(Value && ReturnArray){
+        ReturnArray->ReformFromString(Value);
+    }
+    while( NTmp ){
+        NTmp--;
+        XdmfDebug("Deleteing DataItem #" << NTmp );
+        delete ItemToDelete[ NTmp ];
+    }
+    this->SetArray(ReturnArray);
+    // We'll need to delete this
+    this->ArrayIsMine = 1;
+    return( XDMF_SUCCESS);
 }
 
 XdmfInt32 XdmfDataItem::Update(){
@@ -344,21 +384,24 @@ XdmfInt32 XdmfDataItem::Update(){
     }
     if(this->Array->CopyType(this->DataDesc) != XDMF_SUCCESS) return(XDMF_FAIL);
     if(this->Array->CopyShape(this->DataDesc) != XDMF_SUCCESS) return(XDMF_FAIL);
-    if(this->Array->CopySelection(this->DataDesc) != XDMF_SUCCESS) return(XDMF_FAIL);
+    // if(this->Array->CopySelection(this->DataDesc) != XDMF_SUCCESS) return(XDMF_FAIL);
     if(this->CheckValues(this->Format) != XDMF_SUCCESS){
         XdmfErrorMessage("Error Accessing Internal XdmfValues");
         return(XDMF_FAIL);
     }
+    if(this->Values->GetDataDesc()->CopySelection(this->DataDesc) != XDMF_SUCCESS) return(XDMF_FAIL);
     switch (this->Format) {
         case XDMF_FORMAT_HDF :
-            if(!((XdmfValuesHDF *)Values)->Read(this->Array)){
+            this->Values->SetDebug(this->GetDebug());
+            if(!((XdmfValuesHDF *)this->Values)->Read(this->Array)){
                 XdmfErrorMessage("Reading Values Failed");
                 return(XDMF_FAIL);
             }
             this->SetHeavyDataSetName(Values->GetHeavyDataSetName());
             break;
         case XDMF_FORMAT_XML :
-            if(!((XdmfValuesXML *)Values)->Read(this->Array)){
+            this->Values->SetDebug(this->GetDebug());
+            if(!((XdmfValuesXML *)this->Values)->Read(this->Array)){
                 XdmfErrorMessage("Reading Values Failed");
                 return(XDMF_FAIL);
             }

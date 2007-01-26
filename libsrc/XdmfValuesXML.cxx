@@ -25,6 +25,7 @@
 #include "XdmfValuesXML.h"
 #include "XdmfDataStructure.h"
 #include "XdmfArray.h"
+#include "XdmfHDF.h"
 
 XdmfValuesXML::XdmfValuesXML() {
     this->SetFormat(XDMF_FORMAT_XML);
@@ -46,12 +47,28 @@ XdmfValuesXML::Read(XdmfArray *Array){
         RetArray = new XdmfArray();
         RetArray->CopyType(this->DataDesc);
         RetArray->CopyShape(this->DataDesc);
-        RetArray->CopySelection(this->DataDesc);
+        // RetArray->CopySelection(this->DataDesc);
     }
+    XdmfDebug("Accessing XML CDATA");
     if(RetArray->SetValues(0, this->Get("CDATA")) != XDMF_SUCCESS){
         XdmfErrorMessage("Error Accessing Actual Data Values");
         if(!Array) delete RetArray;
         RetArray = NULL;
+    }
+    if(this->DataDesc->GetSelectionSize() != RetArray->GetNumberOfElements() ){
+        // Only Want Portion of Array
+        XdmfArray *SrcArray;
+        XdmfInt64  SelectionSize = this->DataDesc->GetSelectionSize();
+
+        XdmfDebug("Selecting " << SelectionSize << " elements of XML CDATA");
+        SrcArray = RetArray->Clone();
+        RetArray->SetShape(1, &SelectionSize);
+        RetArray->SelectAll();
+        SrcArray->CopySelection(this->DataDesc);
+        XdmfDebug("Original Values = " << SrcArray->GetValues());
+        CopyArray(SrcArray, RetArray);
+        XdmfDebug("New Values = " << RetArray->GetValues());
+        delete SrcArray;
     }
     return(RetArray);
 }
