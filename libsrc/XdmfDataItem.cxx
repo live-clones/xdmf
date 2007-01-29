@@ -184,9 +184,9 @@ XdmfInt32 XdmfDataItem::UpdateInformation(){
     if(XdmfElement::UpdateInformation() != XDMF_SUCCESS) return(XDMF_FAIL);
     // If this is a Reference, this->Element now points to the end of the chain. Continue?
     XdmfDebug("Back from XdmfElement::UpdateInformation() IsReference = " << this->GetIsReference());
-    XdmfDebug("o = " << this->GetReferenceObject(this->Element) << " this = " << this);
-    XdmfDebug("r = " << this->ReferenceElement << " e = " << this->Element);
-    XdmfDebug(this->DOM->Serialize(this->ReferenceElement));
+    // XdmfDebug("o = " << this->GetReferenceObject(this->Element) << " this = " << this);
+    // XdmfDebug("r = " << this->ReferenceElement << " e = " << this->Element);
+    // XdmfDebug(this->DOM->Serialize(this->ReferenceElement));
     // Dtetermine type : Uniform, Collection, or Tree
     Value = this->Get("ItemType");
     if(!Value){
@@ -263,6 +263,40 @@ XdmfInt32 XdmfDataItem::UpdateFunction(){
         XdmfDataItem *ItemToDelete[100];
         XdmfInt32  Id, NTmp = 0;
 
+    if(this->ItemType == XDMF_ITEM_COORDINATES){
+        // $0 is Selection $1 is Data Source
+            XdmfXmlNode  Argument;
+            XdmfArray  *TmpArray;
+            XdmfDataItem *TmpItem, *SrcItem;
+            XdmfInt64   NCoordinates, *Coordinates;
+
+            XdmfDebug("Updating Coordinate Selection");
+            Argument = this->DOM->FindElement(NULL, 0, this->Element);
+            TmpItem = new XdmfDataItem();
+            TmpItem->SetDOM(this->DOM);
+            TmpItem->SetElement(Argument);
+            TmpItem->UpdateInformation();
+            TmpItem->Update();
+            TmpArray = TmpItem->GetArray();
+            NCoordinates = TmpArray->GetNumberOfElements();
+            Coordinates = new XdmfInt64[NCoordinates];
+            TmpArray->GetValues( 0, Coordinates, NCoordinates );
+            // Now Access the Source Data
+            SrcItem = new XdmfDataItem();
+            Argument = this->DOM->FindElement(NULL, 1, this->Element);
+            SrcItem->SetDOM(this->DOM);
+            SrcItem->SetElement(Argument);
+            SrcItem->UpdateInformation();
+            NCoordinates /= SrcItem->GetRank();
+            SrcItem->GetDataDesc()->SelectCoordinates(NCoordinates, Coordinates);
+            SrcItem->Update();
+            // Steal The Array
+            ReturnArray = SrcItem->GetArray();
+            SrcItem->SetArrayIsMine(0);
+            ItemToDelete[ NTmp++ ] = TmpItem;
+            ItemToDelete[ NTmp++ ] = SrcItem;
+            delete Coordinates;
+    }
     if(this->ItemType == XDMF_ITEM_HYPERSLAB){
         // $0 is Selection $1 is Data Source
             XdmfXmlNode  Argument;
