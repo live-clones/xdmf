@@ -615,6 +615,117 @@ class XdmfHDF(XdmfHeavyData):
 XdmfHDF_swigregister = _Xdmf.XdmfHDF_swigregister
 XdmfHDF_swigregister(XdmfHDF)
 
-
+XDMF_MAX_ORDER = _Xdmf.XDMF_MAX_ORDER
+XDMF_STRUCTURED = _Xdmf.XDMF_STRUCTURED
+XDMF_UNSTRUCTURED = _Xdmf.XDMF_UNSTRUCTURED
+XDMF_NOTOPOLOGY = _Xdmf.XDMF_NOTOPOLOGY
+XDMF_POLYVERTEX = _Xdmf.XDMF_POLYVERTEX
+XDMF_POLYLINE = _Xdmf.XDMF_POLYLINE
+XDMF_POLYGON = _Xdmf.XDMF_POLYGON
+XDMF_TRI = _Xdmf.XDMF_TRI
+XDMF_QUAD = _Xdmf.XDMF_QUAD
+XDMF_TET = _Xdmf.XDMF_TET
+XDMF_PYRAMID = _Xdmf.XDMF_PYRAMID
+XDMF_WEDGE = _Xdmf.XDMF_WEDGE
+XDMF_HEX = _Xdmf.XDMF_HEX
+XDMF_2DSMESH = _Xdmf.XDMF_2DSMESH
+XDMF_2DRECTMESH = _Xdmf.XDMF_2DRECTMESH
+XDMF_2DCORECTMESH = _Xdmf.XDMF_2DCORECTMESH
+XDMF_3DSMESH = _Xdmf.XDMF_3DSMESH
+XDMF_3DRECTMESH = _Xdmf.XDMF_3DRECTMESH
+XDMF_3DCORECTMESH = _Xdmf.XDMF_3DCORECTMESH
+class XdmfTopology(XdmfElement):
+    __swig_setmethods__ = {}
+    for _s in [XdmfElement]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfTopology, name, value)
+    __swig_getmethods__ = {}
+    for _s in [XdmfElement]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfTopology, name)
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        this = _Xdmf.new_XdmfTopology(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _Xdmf.delete_XdmfTopology
+    __del__ = lambda self : None;
+    def GetClassName(*args): return _Xdmf.XdmfTopology_GetClassName(*args)
+    def GetClass(*args): return _Xdmf.XdmfTopology_GetClass(*args)
+    def GetClassAsString(*args): return _Xdmf.XdmfTopology_GetClassAsString(*args)
+    def SetTopologyType(*args): return _Xdmf.XdmfTopology_SetTopologyType(*args)
+    def SetTopologyTypeFromString(*args): return _Xdmf.XdmfTopology_SetTopologyTypeFromString(*args)
+    def GetTopologyType(*args): return _Xdmf.XdmfTopology_GetTopologyType(*args)
+    def GetTopologyTypeAsString(*args): return _Xdmf.XdmfTopology_GetTopologyTypeAsString(*args)
+    def GetOrder(*args): return _Xdmf.XdmfTopology_GetOrder(*args)
+    def GetOrderAsString(*args): return _Xdmf.XdmfTopology_GetOrderAsString(*args)
+    def SetOrderFromString(*args): return _Xdmf.XdmfTopology_SetOrderFromString(*args)
+    def SetOrder(*args): return _Xdmf.XdmfTopology_SetOrder(*args)
+    def SetNodesPerElement(*args): return _Xdmf.XdmfTopology_SetNodesPerElement(*args)
+    def GetNodesPerElement(*args): return _Xdmf.XdmfTopology_GetNodesPerElement(*args)
+    def SetBaseOffset(*args): return _Xdmf.XdmfTopology_SetBaseOffset(*args)
+    def GetBaseOffset(*args): return _Xdmf.XdmfTopology_GetBaseOffset(*args)
+    def GetShapeDesc(*args): return _Xdmf.XdmfTopology_GetShapeDesc(*args)
+    def GetNumberOfElements(*args): return _Xdmf.XdmfTopology_GetNumberOfElements(*args)
+    def GetConnectivity(*args): return _Xdmf.XdmfTopology_GetConnectivity(*args)
+    def SetConnectivity(*args): return _Xdmf.XdmfTopology_SetConnectivity(*args)
+    def Update(*args): return _Xdmf.XdmfTopology_Update(*args)
+    def UpdateInformation(*args): return _Xdmf.XdmfTopology_UpdateInformation(*args)
+XdmfTopology_swigregister = _Xdmf.XdmfTopology_swigregister
+XdmfTopology_swigregister(XdmfTopology)
 CopyArray = _Xdmf.CopyArray
+
+HandleToXdmfTopology = _Xdmf.HandleToXdmfTopology
+XDMF_GEOMETRY_NONE = _Xdmf.XDMF_GEOMETRY_NONE
+XDMF_GEOMETRY_XYZ = _Xdmf.XDMF_GEOMETRY_XYZ
+XDMF_GEOMETRY_XY = _Xdmf.XDMF_GEOMETRY_XY
+XDMF_GEOMETRY_X_Y_Z = _Xdmf.XDMF_GEOMETRY_X_Y_Z
+XDMF_GEOMETRY_X_Y = _Xdmf.XDMF_GEOMETRY_X_Y
+XDMF_GEOMETRY_VXVYVZ = _Xdmf.XDMF_GEOMETRY_VXVYVZ
+XDMF_GEOMETRY_ORIGIN_DXDYDZ = _Xdmf.XDMF_GEOMETRY_ORIGIN_DXDYDZ
+class XdmfGeometry(XdmfElement):
+    __swig_setmethods__ = {}
+    for _s in [XdmfElement]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfGeometry, name, value)
+    __swig_getmethods__ = {}
+    for _s in [XdmfElement]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfGeometry, name)
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        this = _Xdmf.new_XdmfGeometry(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _Xdmf.delete_XdmfGeometry
+    __del__ = lambda self : None;
+    def GetClassName(*args): return _Xdmf.XdmfGeometry_GetClassName(*args)
+    def SetNumberOfPoints(*args): return _Xdmf.XdmfGeometry_SetNumberOfPoints(*args)
+    def GetNumberOfPoints(*args): return _Xdmf.XdmfGeometry_GetNumberOfPoints(*args)
+    def SetGeometryType(*args): return _Xdmf.XdmfGeometry_SetGeometryType(*args)
+    def GetGeometryType(*args): return _Xdmf.XdmfGeometry_GetGeometryType(*args)
+    def GetGeometryTypeAsString(*args): return _Xdmf.XdmfGeometry_GetGeometryTypeAsString(*args)
+    def SetGeometryTypeFromString(*args): return _Xdmf.XdmfGeometry_SetGeometryTypeFromString(*args)
+    def Update(*args): return _Xdmf.XdmfGeometry_Update(*args)
+    def UpdateInformation(*args): return _Xdmf.XdmfGeometry_UpdateInformation(*args)
+    def SetPoints(*args): return _Xdmf.XdmfGeometry_SetPoints(*args)
+    def GetPoints(*args): return _Xdmf.XdmfGeometry_GetPoints(*args)
+    def GetOrigin(*args): return _Xdmf.XdmfGeometry_GetOrigin(*args)
+    def GetOriginX(*args): return _Xdmf.XdmfGeometry_GetOriginX(*args)
+    def GetOriginY(*args): return _Xdmf.XdmfGeometry_GetOriginY(*args)
+    def GetOriginZ(*args): return _Xdmf.XdmfGeometry_GetOriginZ(*args)
+    def SetOrigin(*args): return _Xdmf.XdmfGeometry_SetOrigin(*args)
+    def SetDxDyDz(*args): return _Xdmf.XdmfGeometry_SetDxDyDz(*args)
+    def GetDx(*args): return _Xdmf.XdmfGeometry_GetDx(*args)
+    def GetDy(*args): return _Xdmf.XdmfGeometry_GetDy(*args)
+    def GetDz(*args): return _Xdmf.XdmfGeometry_GetDz(*args)
+    def GetDxDyDz(*args): return _Xdmf.XdmfGeometry_GetDxDyDz(*args)
+    def GetVectorX(*args): return _Xdmf.XdmfGeometry_GetVectorX(*args)
+    def GetVectorY(*args): return _Xdmf.XdmfGeometry_GetVectorY(*args)
+    def GetVectorZ(*args): return _Xdmf.XdmfGeometry_GetVectorZ(*args)
+    def SetVectorX(*args): return _Xdmf.XdmfGeometry_SetVectorX(*args)
+    def SetVectorY(*args): return _Xdmf.XdmfGeometry_SetVectorY(*args)
+    def SetVectorZ(*args): return _Xdmf.XdmfGeometry_SetVectorZ(*args)
+    def HasData(*args): return _Xdmf.XdmfGeometry_HasData(*args)
+XdmfGeometry_swigregister = _Xdmf.XdmfGeometry_swigregister
+XdmfGeometry_swigregister(XdmfGeometry)
+
+GetXdmfGeometryHandle = _Xdmf.GetXdmfGeometryHandle
+
 

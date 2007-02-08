@@ -424,6 +424,8 @@ WARN_LOGFILE           =
 # with spaces.
 
 INPUT                  = \
+                        XdmfTopology.h \
+                        XdmfGeometry.h \
                         XdmfDOM.h \
                         XdmfArray.h \
                         XdmfDataDesc.h \
