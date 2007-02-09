@@ -27,13 +27,7 @@
 #include "XdmfDOM.h"
 #include "XdmfTopology.h"
 #include "XdmfGeometry.h"
-// #include "XdmfAttribute.h"
-
-class XdmfAttribute : public XdmfElement {
-    public :
-        XdmfAttribute() {};
-        ~XdmfAttribute() {};
-};
+#include "XdmfAttribute.h"
 
 XdmfGrid *HandleToXdmfGrid( XdmfString Source ){
   XdmfObject  *TempObj;

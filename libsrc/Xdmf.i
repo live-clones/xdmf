@@ -15,9 +15,9 @@ swig -v -c++ -make_default -includeall -shadow -java $(ICE_INCLUDES) -o XdmfJava
 %module Xdmf
 %{
     /*
-#include <XdmfAttribute.h>
 #include <XdmfCharArray.h>
     */
+#include <XdmfAttribute.h>
 #include <XdmfArray.h>
 #include <XdmfDOM.h>
 #include <XdmfLightData.h>
@@ -83,9 +83,9 @@ inline XDMF_LONG64 XDMF_strtoll(char *str, void*, int)
 
 %include std_string.i
 /*
-%include XdmfAttribute.h
 %include XdmfCharArray.h
 */
+%include XdmfAttribute.h
 %include XdmfArray.h
 %include XdmfDOM.h
 %include XdmfLightData.h

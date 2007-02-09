@@ -43,7 +43,7 @@ SET( XdmfExtraSource
   )
 
 SET( XdmfModelSource
-#  XdmfAttribute
+  XdmfAttribute
   XdmfGrid
   XdmfTopology
   XdmfGeometry

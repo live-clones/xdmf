@@ -427,6 +427,7 @@ INPUT                  = \
                         XdmfDataItem.h \
                         XdmfTopology.h \
                         XdmfGeometry.h \
+                        XdmfAttribute.h \
                         XdmfGrid.h \
                         XdmfDOM.h \
                         XdmfArray.h \
