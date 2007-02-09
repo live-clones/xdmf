@@ -33,6 +33,7 @@
 
 class XdmfDOM;
 
+//! Basic XML Based Element
 /*!
     XdmfElement represents an Element in the LightData. For example,
     XdmfInformation, XdmfGrid, XdmfTopology etc. are all elements.

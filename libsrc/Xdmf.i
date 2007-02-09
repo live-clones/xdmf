@@ -36,11 +36,11 @@ swig -v -c++ -make_default -includeall -shadow -java $(ICE_INCLUDES) -o XdmfJava
 #include <XdmfFormatHDF.h>
 #include <XdmfFormatMulti.h>
 #include <XdmfFormatXML.h>
-#include <XdmfGrid.h>
     */
 #include <XdmfObject.h>
 #include <XdmfTopology.h>
 #include <XdmfGeometry.h>
+#include <XdmfGrid.h>
     /*
 #include <XdmfParameter.h>
 #include <XdmfTransform.h>
@@ -102,7 +102,6 @@ inline XDMF_LONG64 XDMF_strtoll(char *str, void*, int)
 %include XdmfFormatHDF.h
 %include XdmfFormatMulti.h
 %include XdmfFormatXML.h
-%include XdmfGrid.h
 %include XdmfHDFSupport.h
 */
 %include XdmfHeavyData.h
@@ -110,6 +109,7 @@ inline XDMF_LONG64 XDMF_strtoll(char *str, void*, int)
 %include XdmfObject.h
 %include XdmfTopology.h
 %include XdmfGeometry.h
+%include XdmfGrid.h
 /*
 %include XdmfParameter.h
 %include XdmfTransform.h

@@ -727,5 +727,49 @@ XdmfGeometry_swigregister = _Xdmf.XdmfGeometry_swigregister
 XdmfGeometry_swigregister(XdmfGeometry)
 
 GetXdmfGeometryHandle = _Xdmf.GetXdmfGeometryHandle
+XDMF_GRID_UNIFORM = _Xdmf.XDMF_GRID_UNIFORM
+XDMF_GRID_COLLECTION = _Xdmf.XDMF_GRID_COLLECTION
+XDMF_GRID_TREE = _Xdmf.XDMF_GRID_TREE
+XDMF_GRID_UNSET = _Xdmf.XDMF_GRID_UNSET
+XDMF_GRID_MASK = _Xdmf.XDMF_GRID_MASK
+class XdmfGrid(XdmfElement):
+    __swig_setmethods__ = {}
+    for _s in [XdmfElement]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfGrid, name, value)
+    __swig_getmethods__ = {}
+    for _s in [XdmfElement]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfGrid, name)
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        this = _Xdmf.new_XdmfGrid(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _Xdmf.delete_XdmfGrid
+    __del__ = lambda self : None;
+    def GetClassName(*args): return _Xdmf.XdmfGrid_GetClassName(*args)
+    def SetGeometry(*args): return _Xdmf.XdmfGrid_SetGeometry(*args)
+    def GetGeometry(*args): return _Xdmf.XdmfGrid_GetGeometry(*args)
+    def SetTopology(*args): return _Xdmf.XdmfGrid_SetTopology(*args)
+    def GetTopology(*args): return _Xdmf.XdmfGrid_GetTopology(*args)
+    def GetGridTypeAsString(*args): return _Xdmf.XdmfGrid_GetGridTypeAsString(*args)
+    def GetGridType(*args): return _Xdmf.XdmfGrid_GetGridType(*args)
+    def SetGridType(*args): return _Xdmf.XdmfGrid_SetGridType(*args)
+    def GetNumberOfChildren(*args): return _Xdmf.XdmfGrid_GetNumberOfChildren(*args)
+    def SetNumberOfChildren(*args): return _Xdmf.XdmfGrid_SetNumberOfChildren(*args)
+    def IsUniform(*args): return _Xdmf.XdmfGrid_IsUniform(*args)
+    def GetNumberOfAttributes(*args): return _Xdmf.XdmfGrid_GetNumberOfAttributes(*args)
+    def GetAttribute(*args): return _Xdmf.XdmfGrid_GetAttribute(*args)
+    def AssignAttribute(*args): return _Xdmf.XdmfGrid_AssignAttribute(*args)
+    def AssignAttributeByIndex(*args): return _Xdmf.XdmfGrid_AssignAttributeByIndex(*args)
+    def AssignAttributeByName(*args): return _Xdmf.XdmfGrid_AssignAttributeByName(*args)
+    def GetAssignedAttribute(*args): return _Xdmf.XdmfGrid_GetAssignedAttribute(*args)
+    def GetAssignedAttributeIndex(*args): return _Xdmf.XdmfGrid_GetAssignedAttributeIndex(*args)
+    def UpdateInformation(*args): return _Xdmf.XdmfGrid_UpdateInformation(*args)
+    def Update(*args): return _Xdmf.XdmfGrid_Update(*args)
+    def GetChild(*args): return _Xdmf.XdmfGrid_GetChild(*args)
+XdmfGrid_swigregister = _Xdmf.XdmfGrid_swigregister
+XdmfGrid_swigregister(XdmfGrid)
+
+HandleToXdmfGrid = _Xdmf.HandleToXdmfGrid
 
 

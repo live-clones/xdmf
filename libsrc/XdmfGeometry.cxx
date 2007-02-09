@@ -159,13 +159,7 @@ if( Attribute ){
 } else {
   this->GeometryType = XDMF_GEOMETRY_XYZ;
 }
-
-Attribute = this->Get( "Name" );
-if( Attribute ) {
-  this->SetName( Attribute );
-} else {
-  this->SetName( GetUnique("Geometry_" ) );
-}
+if(!this->Name) this->SetName(GetUnique("Geometry_"));
 return( XDMF_SUCCESS );
 }
 

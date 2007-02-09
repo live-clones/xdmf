@@ -424,15 +424,16 @@ WARN_LOGFILE           =
 # with spaces.
 
 INPUT                  = \
+                        XdmfDataItem.h \
                         XdmfTopology.h \
                         XdmfGeometry.h \
+                        XdmfGrid.h \
                         XdmfDOM.h \
                         XdmfArray.h \
                         XdmfDataDesc.h \
                         XdmfLightData.h \
                         XdmfElement.h \
                         XdmfInformation.h \
-                        XdmfDataItem.h \
                         XdmfDataStructure.h \
                         XdmfDataTransform.h \
                         XdmfHeavyData.h \

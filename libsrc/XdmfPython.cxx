@@ -2467,38 +2467,40 @@ SWIG_Python_MustGetPtr(PyObject *obj, swig_type_info *ty, int argnum, int flags)
 
 #define SWIGTYPE_p_XdmfArray swig_types[0]
 #define SWIGTYPE_p_XdmfArrayList swig_types[1]
-#define SWIGTYPE_p_XdmfDOM swig_types[2]
-#define SWIGTYPE_p_XdmfDataDesc swig_types[3]
-#define SWIGTYPE_p_XdmfDataItem swig_types[4]
-#define SWIGTYPE_p_XdmfDataStructure swig_types[5]
-#define SWIGTYPE_p_XdmfElement swig_types[6]
-#define SWIGTYPE_p_XdmfGeometry swig_types[7]
-#define SWIGTYPE_p_XdmfHDF swig_types[8]
-#define SWIGTYPE_p_XdmfHeavyData swig_types[9]
-#define SWIGTYPE_p_XdmfInformation swig_types[10]
-#define SWIGTYPE_p_XdmfLightData swig_types[11]
-#define SWIGTYPE_p_XdmfObject swig_types[12]
-#define SWIGTYPE_p_XdmfTopology swig_types[13]
-#define SWIGTYPE_p_XdmfValues swig_types[14]
-#define SWIGTYPE_p_XdmfValuesHDF swig_types[15]
-#define SWIGTYPE_p_XdmfValuesXML swig_types[16]
-#define SWIGTYPE_p__xmlNode swig_types[17]
-#define SWIGTYPE_p_char swig_types[18]
-#define SWIGTYPE_p_double swig_types[19]
-#define SWIGTYPE_p_float swig_types[20]
-#define SWIGTYPE_p_hid_t swig_types[21]
-#define SWIGTYPE_p_int swig_types[22]
-#define SWIGTYPE_p_istream swig_types[23]
-#define SWIGTYPE_p_long_long swig_types[24]
-#define SWIGTYPE_p_ostream swig_types[25]
-#define SWIGTYPE_p_p__xmlDoc swig_types[26]
-#define SWIGTYPE_p_short swig_types[27]
-#define SWIGTYPE_p_unsigned_char swig_types[28]
-#define SWIGTYPE_p_unsigned_int swig_types[29]
-#define SWIGTYPE_p_unsigned_short swig_types[30]
-#define SWIGTYPE_p_void swig_types[31]
-static swig_type_info *swig_types[33];
-static swig_module_info swig_module = {swig_types, 32, 0, 0, 0, 0};
+#define SWIGTYPE_p_XdmfAttribute swig_types[2]
+#define SWIGTYPE_p_XdmfDOM swig_types[3]
+#define SWIGTYPE_p_XdmfDataDesc swig_types[4]
+#define SWIGTYPE_p_XdmfDataItem swig_types[5]
+#define SWIGTYPE_p_XdmfDataStructure swig_types[6]
+#define SWIGTYPE_p_XdmfElement swig_types[7]
+#define SWIGTYPE_p_XdmfGeometry swig_types[8]
+#define SWIGTYPE_p_XdmfGrid swig_types[9]
+#define SWIGTYPE_p_XdmfHDF swig_types[10]
+#define SWIGTYPE_p_XdmfHeavyData swig_types[11]
+#define SWIGTYPE_p_XdmfInformation swig_types[12]
+#define SWIGTYPE_p_XdmfLightData swig_types[13]
+#define SWIGTYPE_p_XdmfObject swig_types[14]
+#define SWIGTYPE_p_XdmfTopology swig_types[15]
+#define SWIGTYPE_p_XdmfValues swig_types[16]
+#define SWIGTYPE_p_XdmfValuesHDF swig_types[17]
+#define SWIGTYPE_p_XdmfValuesXML swig_types[18]
+#define SWIGTYPE_p__xmlNode swig_types[19]
+#define SWIGTYPE_p_char swig_types[20]
+#define SWIGTYPE_p_double swig_types[21]
+#define SWIGTYPE_p_float swig_types[22]
+#define SWIGTYPE_p_hid_t swig_types[23]
+#define SWIGTYPE_p_int swig_types[24]
+#define SWIGTYPE_p_istream swig_types[25]
+#define SWIGTYPE_p_long_long swig_types[26]
+#define SWIGTYPE_p_ostream swig_types[27]
+#define SWIGTYPE_p_p__xmlDoc swig_types[28]
+#define SWIGTYPE_p_short swig_types[29]
+#define SWIGTYPE_p_unsigned_char swig_types[30]
+#define SWIGTYPE_p_unsigned_int swig_types[31]
+#define SWIGTYPE_p_unsigned_short swig_types[32]
+#define SWIGTYPE_p_void swig_types[33]
+static swig_type_info *swig_types[35];
+static swig_module_info swig_module = {swig_types, 34, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -2610,11 +2612,11 @@ namespace swig {
 #include <XdmfFormatHDF.h>
 #include <XdmfFormatMulti.h>
 #include <XdmfFormatXML.h>
-#include <XdmfGrid.h>
     */
 #include <XdmfObject.h>
 #include <XdmfTopology.h>
 #include <XdmfGeometry.h>
+#include <XdmfGrid.h>
     /*
 #include <XdmfParameter.h>
 #include <XdmfTransform.h>
@@ -19557,6 +19559,619 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_new_XdmfGrid(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)":new_XdmfGrid")) SWIG_fail;
+  result = (XdmfGrid *)new XdmfGrid();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_XdmfGrid, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_XdmfGrid(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_XdmfGrid",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_XdmfGrid" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  delete arg1;
+  
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_GetClassName(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfConstString result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfGrid_GetClassName",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_GetClassName" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  result = (XdmfConstString)(arg1)->GetClassName();
+  resultobj = SWIG_FromCharPtr((const char *)result);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_SetGeometry(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfGeometry *arg2 = (XdmfGeometry *) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfGrid_SetGeometry",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_SetGeometry" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_XdmfGeometry, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfGrid_SetGeometry" "', argument " "2"" of type '" "XdmfGeometry *""'"); 
+  }
+  arg2 = reinterpret_cast< XdmfGeometry * >(argp2);
+  result = (XdmfInt32)(arg1)->SetGeometry(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_GetGeometry(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfGeometry *result = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfGrid_GetGeometry",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_GetGeometry" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  result = (XdmfGeometry *)(arg1)->GetGeometry();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_XdmfGeometry, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_SetTopology(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfTopology *arg2 = (XdmfTopology *) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfGrid_SetTopology",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_SetTopology" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_XdmfTopology, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfGrid_SetTopology" "', argument " "2"" of type '" "XdmfTopology *""'"); 
+  }
+  arg2 = reinterpret_cast< XdmfTopology * >(argp2);
+  result = (XdmfInt32)(arg1)->SetTopology(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_GetTopology(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfTopology *result = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfGrid_GetTopology",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_GetTopology" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  result = (XdmfTopology *)(arg1)->GetTopology();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_XdmfTopology, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_GetGridTypeAsString(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfConstString result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfGrid_GetGridTypeAsString",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_GetGridTypeAsString" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  result = (XdmfConstString)(arg1)->GetGridTypeAsString();
+  resultobj = SWIG_FromCharPtr((const char *)result);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_GetGridType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfGrid_GetGridType",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_GetGridType" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  result = (XdmfInt32)(arg1)->GetGridType();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_SetGridType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfInt32 arg2 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfGrid_SetGridType",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_SetGridType" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfGrid_SetGridType" "', argument " "2"" of type '" "XdmfInt32""'");
+  } 
+  arg2 = static_cast< XdmfInt32 >(val2);
+  result = (XdmfInt32)(arg1)->SetGridType(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_GetNumberOfChildren(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfGrid_GetNumberOfChildren",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_GetNumberOfChildren" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  result = (XdmfInt32)(arg1)->GetNumberOfChildren();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_SetNumberOfChildren(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfInt32 arg2 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfGrid_SetNumberOfChildren",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_SetNumberOfChildren" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfGrid_SetNumberOfChildren" "', argument " "2"" of type '" "XdmfInt32""'");
+  } 
+  arg2 = static_cast< XdmfInt32 >(val2);
+  result = (XdmfInt32)(arg1)->SetNumberOfChildren(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_IsUniform(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfGrid_IsUniform",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_IsUniform" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  result = (XdmfInt32)(arg1)->IsUniform();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_GetNumberOfAttributes(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfGrid_GetNumberOfAttributes",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_GetNumberOfAttributes" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  result = (XdmfInt32)(arg1)->GetNumberOfAttributes();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_GetAttribute(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfInt64 arg2 ;
+  XdmfAttribute *result = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  long long val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfGrid_GetAttribute",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_GetAttribute" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  ecode2 = SWIG_AsVal_long_SS_long(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfGrid_GetAttribute" "', argument " "2"" of type '" "XdmfInt64""'");
+  } 
+  arg2 = static_cast< XdmfInt64 >(val2);
+  result = (XdmfAttribute *)(arg1)->GetAttribute(arg2);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_XdmfAttribute, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_AssignAttribute(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfInt64 arg2 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  long long val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfGrid_AssignAttribute",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_AssignAttribute" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  ecode2 = SWIG_AsVal_long_SS_long(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfGrid_AssignAttribute" "', argument " "2"" of type '" "XdmfInt64""'");
+  } 
+  arg2 = static_cast< XdmfInt64 >(val2);
+  result = (XdmfInt32)(arg1)->AssignAttribute(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_AssignAttributeByIndex(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfInt64 arg2 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  long long val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfGrid_AssignAttributeByIndex",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_AssignAttributeByIndex" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  ecode2 = SWIG_AsVal_long_SS_long(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfGrid_AssignAttributeByIndex" "', argument " "2"" of type '" "XdmfInt64""'");
+  } 
+  arg2 = static_cast< XdmfInt64 >(val2);
+  result = (XdmfInt32)(arg1)->AssignAttributeByIndex(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_AssignAttributeByName(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfString arg2 = (XdmfString) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfGrid_AssignAttributeByName",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_AssignAttributeByName" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfGrid_AssignAttributeByName" "', argument " "2"" of type '" "XdmfString""'");
+  }
+  arg2 = reinterpret_cast< XdmfString >(buf2);
+  result = (XdmfInt32)(arg1)->AssignAttributeByName(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_GetAssignedAttribute(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfAttribute *result = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfGrid_GetAssignedAttribute",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_GetAssignedAttribute" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  result = (XdmfAttribute *)(arg1)->GetAssignedAttribute();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_XdmfAttribute, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_GetAssignedAttributeIndex(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfInt64 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfGrid_GetAssignedAttributeIndex",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_GetAssignedAttributeIndex" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  result = (XdmfInt64)(arg1)->GetAssignedAttributeIndex();
+  resultobj = SWIG_From_long_SS_long(static_cast< long long >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_UpdateInformation(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfGrid_UpdateInformation",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_UpdateInformation" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  result = (XdmfInt32)(arg1)->UpdateInformation();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_Update(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfGrid_Update",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_Update" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  result = (XdmfInt32)(arg1)->Update();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_GetChild(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfInt32 arg2 ;
+  XdmfGrid *result = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfGrid_GetChild",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_GetChild" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfGrid_GetChild" "', argument " "2"" of type '" "XdmfInt32""'");
+  } 
+  arg2 = static_cast< XdmfInt32 >(val2);
+  result = (XdmfGrid *)(arg1)->GetChild(arg2);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *XdmfGrid_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_XdmfGrid, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *_wrap_HandleToXdmfGrid(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfString arg1 = (XdmfString) 0 ;
+  XdmfGrid *result = 0 ;
+  int res1 ;
+  char *buf1 = 0 ;
+  int alloc1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:HandleToXdmfGrid",&obj0)) SWIG_fail;
+  res1 = SWIG_AsCharPtrAndSize(obj0, &buf1, NULL, &alloc1);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "HandleToXdmfGrid" "', argument " "1"" of type '" "XdmfString""'");
+  }
+  arg1 = reinterpret_cast< XdmfString >(buf1);
+  result = (XdmfGrid *)HandleToXdmfGrid(arg1);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
+  return resultobj;
+fail:
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
+  return NULL;
+}
+
+
 static PyMethodDef SwigMethods[] = {
 	 { (char *)"new_XdmfObject", _wrap_new_XdmfObject, METH_VARARGS, NULL},
 	 { (char *)"delete_XdmfObject", _wrap_delete_XdmfObject, METH_VARARGS, NULL},
@@ -19936,41 +20551,54 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfGeometry_HasData", _wrap_XdmfGeometry_HasData, METH_VARARGS, NULL},
 	 { (char *)"XdmfGeometry_swigregister", XdmfGeometry_swigregister, METH_VARARGS, NULL},
 	 { (char *)"GetXdmfGeometryHandle", _wrap_GetXdmfGeometryHandle, METH_VARARGS, NULL},
+	 { (char *)"new_XdmfGrid", _wrap_new_XdmfGrid, METH_VARARGS, NULL},
+	 { (char *)"delete_XdmfGrid", _wrap_delete_XdmfGrid, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_GetClassName", _wrap_XdmfGrid_GetClassName, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_SetGeometry", _wrap_XdmfGrid_SetGeometry, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_GetGeometry", _wrap_XdmfGrid_GetGeometry, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_SetTopology", _wrap_XdmfGrid_SetTopology, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_GetTopology", _wrap_XdmfGrid_GetTopology, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_GetGridTypeAsString", _wrap_XdmfGrid_GetGridTypeAsString, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_GetGridType", _wrap_XdmfGrid_GetGridType, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_SetGridType", _wrap_XdmfGrid_SetGridType, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_GetNumberOfChildren", _wrap_XdmfGrid_GetNumberOfChildren, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_SetNumberOfChildren", _wrap_XdmfGrid_SetNumberOfChildren, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_IsUniform", _wrap_XdmfGrid_IsUniform, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_GetNumberOfAttributes", _wrap_XdmfGrid_GetNumberOfAttributes, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_GetAttribute", _wrap_XdmfGrid_GetAttribute, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_AssignAttribute", _wrap_XdmfGrid_AssignAttribute, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_AssignAttributeByIndex", _wrap_XdmfGrid_AssignAttributeByIndex, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_AssignAttributeByName", _wrap_XdmfGrid_AssignAttributeByName, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_GetAssignedAttribute", _wrap_XdmfGrid_GetAssignedAttribute, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_GetAssignedAttributeIndex", _wrap_XdmfGrid_GetAssignedAttributeIndex, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_UpdateInformation", _wrap_XdmfGrid_UpdateInformation, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_Update", _wrap_XdmfGrid_Update, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_GetChild", _wrap_XdmfGrid_GetChild, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_swigregister", XdmfGrid_swigregister, METH_VARARGS, NULL},
+	 { (char *)"HandleToXdmfGrid", _wrap_HandleToXdmfGrid, METH_VARARGS, NULL},
 	 { NULL, NULL, 0, NULL }
 };
 
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
-static void *_p_XdmfElementTo_p_XdmfLightData(void *x) {
-    return (void *)((XdmfLightData *)  ((XdmfElement *) x));
+static void *_p_XdmfValuesXMLTo_p_XdmfValues(void *x) {
+    return (void *)((XdmfValues *)  ((XdmfValuesXML *) x));
 }
-static void *_p_XdmfInformationTo_p_XdmfLightData(void *x) {
-    return (void *)((XdmfLightData *) (XdmfElement *) ((XdmfInformation *) x));
+static void *_p_XdmfValuesHDFTo_p_XdmfValues(void *x) {
+    return (void *)((XdmfValues *)  ((XdmfValuesHDF *) x));
 }
-static void *_p_XdmfDataItemTo_p_XdmfLightData(void *x) {
-    return (void *)((XdmfLightData *) (XdmfElement *) ((XdmfDataItem *) x));
+static void *_p_XdmfDataStructureTo_p_XdmfDataItem(void *x) {
+    return (void *)((XdmfDataItem *)  ((XdmfDataStructure *) x));
 }
-static void *_p_XdmfDataStructureTo_p_XdmfLightData(void *x) {
-    return (void *)((XdmfLightData *) (XdmfElement *)(XdmfDataItem *) ((XdmfDataStructure *) x));
+static void *_p_XdmfValuesXMLTo_p_XdmfDataItem(void *x) {
+    return (void *)((XdmfDataItem *) (XdmfValues *) ((XdmfValuesXML *) x));
 }
-static void *_p_XdmfValuesXMLTo_p_XdmfLightData(void *x) {
-    return (void *)((XdmfLightData *) (XdmfElement *)(XdmfDataItem *)(XdmfValues *) ((XdmfValuesXML *) x));
+static void *_p_XdmfValuesTo_p_XdmfDataItem(void *x) {
+    return (void *)((XdmfDataItem *)  ((XdmfValues *) x));
 }
-static void *_p_XdmfTopologyTo_p_XdmfLightData(void *x) {
-    return (void *)((XdmfLightData *) (XdmfElement *) ((XdmfTopology *) x));
-}
-static void *_p_XdmfGeometryTo_p_XdmfLightData(void *x) {
-    return (void *)((XdmfLightData *) (XdmfElement *) ((XdmfGeometry *) x));
-}
-static void *_p_XdmfDOMTo_p_XdmfLightData(void *x) {
-    return (void *)((XdmfLightData *)  ((XdmfDOM *) x));
-}
-static void *_p_XdmfValuesTo_p_XdmfLightData(void *x) {
-    return (void *)((XdmfLightData *) (XdmfElement *)(XdmfDataItem *) ((XdmfValues *) x));
-}
-static void *_p_XdmfValuesHDFTo_p_XdmfLightData(void *x) {
-    return (void *)((XdmfLightData *) (XdmfElement *)(XdmfDataItem *)(XdmfValues *) ((XdmfValuesHDF *) x));
+static void *_p_XdmfValuesHDFTo_p_XdmfDataItem(void *x) {
+    return (void *)((XdmfDataItem *) (XdmfValues *) ((XdmfValuesHDF *) x));
 }
 static void *_p_XdmfLightDataTo_p_XdmfObject(void *x) {
     return (void *)((XdmfObject *)  ((XdmfLightData *) x));
@@ -19986,6 +20614,9 @@ static void *_p_XdmfInformationTo_p_XdmfObject(void *x) {
 }
 static void *_p_XdmfValuesHDFTo_p_XdmfObject(void *x) {
     return (void *)((XdmfObject *) (XdmfLightData *)(XdmfElement *)(XdmfDataItem *)(XdmfValues *) ((XdmfValuesHDF *) x));
+}
+static void *_p_XdmfGridTo_p_XdmfObject(void *x) {
+    return (void *)((XdmfObject *) (XdmfLightData *)(XdmfElement *) ((XdmfGrid *) x));
 }
 static void *_p_XdmfValuesXMLTo_p_XdmfObject(void *x) {
     return (void *)((XdmfObject *) (XdmfLightData *)(XdmfElement *)(XdmfDataItem *)(XdmfValues *) ((XdmfValuesXML *) x));
@@ -20017,41 +20648,50 @@ static void *_p_XdmfHDFTo_p_XdmfObject(void *x) {
 static void *_p_XdmfDataStructureTo_p_XdmfObject(void *x) {
     return (void *)((XdmfObject *) (XdmfLightData *)(XdmfElement *)(XdmfDataItem *) ((XdmfDataStructure *) x));
 }
-static void *_p_XdmfDataStructureTo_p_XdmfDataItem(void *x) {
-    return (void *)((XdmfDataItem *)  ((XdmfDataStructure *) x));
+static void *_p_XdmfElementTo_p_XdmfLightData(void *x) {
+    return (void *)((XdmfLightData *)  ((XdmfElement *) x));
 }
-static void *_p_XdmfValuesXMLTo_p_XdmfDataItem(void *x) {
-    return (void *)((XdmfDataItem *) (XdmfValues *) ((XdmfValuesXML *) x));
+static void *_p_XdmfInformationTo_p_XdmfLightData(void *x) {
+    return (void *)((XdmfLightData *) (XdmfElement *) ((XdmfInformation *) x));
 }
-static void *_p_XdmfValuesTo_p_XdmfDataItem(void *x) {
-    return (void *)((XdmfDataItem *)  ((XdmfValues *) x));
+static void *_p_XdmfDataItemTo_p_XdmfLightData(void *x) {
+    return (void *)((XdmfLightData *) (XdmfElement *) ((XdmfDataItem *) x));
 }
-static void *_p_XdmfValuesHDFTo_p_XdmfDataItem(void *x) {
-    return (void *)((XdmfDataItem *) (XdmfValues *) ((XdmfValuesHDF *) x));
+static void *_p_XdmfGridTo_p_XdmfLightData(void *x) {
+    return (void *)((XdmfLightData *) (XdmfElement *) ((XdmfGrid *) x));
+}
+static void *_p_XdmfDataStructureTo_p_XdmfLightData(void *x) {
+    return (void *)((XdmfLightData *) (XdmfElement *)(XdmfDataItem *) ((XdmfDataStructure *) x));
+}
+static void *_p_XdmfValuesXMLTo_p_XdmfLightData(void *x) {
+    return (void *)((XdmfLightData *) (XdmfElement *)(XdmfDataItem *)(XdmfValues *) ((XdmfValuesXML *) x));
+}
+static void *_p_XdmfTopologyTo_p_XdmfLightData(void *x) {
+    return (void *)((XdmfLightData *) (XdmfElement *) ((XdmfTopology *) x));
+}
+static void *_p_XdmfGeometryTo_p_XdmfLightData(void *x) {
+    return (void *)((XdmfLightData *) (XdmfElement *) ((XdmfGeometry *) x));
+}
+static void *_p_XdmfDOMTo_p_XdmfLightData(void *x) {
+    return (void *)((XdmfLightData *)  ((XdmfDOM *) x));
+}
+static void *_p_XdmfValuesTo_p_XdmfLightData(void *x) {
+    return (void *)((XdmfLightData *) (XdmfElement *)(XdmfDataItem *) ((XdmfValues *) x));
+}
+static void *_p_XdmfValuesHDFTo_p_XdmfLightData(void *x) {
+    return (void *)((XdmfLightData *) (XdmfElement *)(XdmfDataItem *)(XdmfValues *) ((XdmfValuesHDF *) x));
 }
 static void *_p_XdmfHDFTo_p_XdmfHeavyData(void *x) {
     return (void *)((XdmfHeavyData *)  ((XdmfHDF *) x));
-}
-static void *_p_XdmfValuesXMLTo_p_XdmfValues(void *x) {
-    return (void *)((XdmfValues *)  ((XdmfValuesXML *) x));
-}
-static void *_p_XdmfValuesHDFTo_p_XdmfValues(void *x) {
-    return (void *)((XdmfValues *)  ((XdmfValuesHDF *) x));
-}
-static void *_p_XdmfHeavyDataTo_p_XdmfDataDesc(void *x) {
-    return (void *)((XdmfDataDesc *)  ((XdmfHeavyData *) x));
-}
-static void *_p_XdmfArrayTo_p_XdmfDataDesc(void *x) {
-    return (void *)((XdmfDataDesc *)  ((XdmfArray *) x));
-}
-static void *_p_XdmfHDFTo_p_XdmfDataDesc(void *x) {
-    return (void *)((XdmfDataDesc *) (XdmfHeavyData *) ((XdmfHDF *) x));
 }
 static void *_p_XdmfInformationTo_p_XdmfElement(void *x) {
     return (void *)((XdmfElement *)  ((XdmfInformation *) x));
 }
 static void *_p_XdmfDataItemTo_p_XdmfElement(void *x) {
     return (void *)((XdmfElement *)  ((XdmfDataItem *) x));
+}
+static void *_p_XdmfGridTo_p_XdmfElement(void *x) {
+    return (void *)((XdmfElement *)  ((XdmfGrid *) x));
 }
 static void *_p_XdmfDataStructureTo_p_XdmfElement(void *x) {
     return (void *)((XdmfElement *) (XdmfDataItem *) ((XdmfDataStructure *) x));
@@ -20071,14 +20711,25 @@ static void *_p_XdmfValuesTo_p_XdmfElement(void *x) {
 static void *_p_XdmfValuesHDFTo_p_XdmfElement(void *x) {
     return (void *)((XdmfElement *) (XdmfDataItem *)(XdmfValues *) ((XdmfValuesHDF *) x));
 }
+static void *_p_XdmfHeavyDataTo_p_XdmfDataDesc(void *x) {
+    return (void *)((XdmfDataDesc *)  ((XdmfHeavyData *) x));
+}
+static void *_p_XdmfArrayTo_p_XdmfDataDesc(void *x) {
+    return (void *)((XdmfDataDesc *)  ((XdmfArray *) x));
+}
+static void *_p_XdmfHDFTo_p_XdmfDataDesc(void *x) {
+    return (void *)((XdmfDataDesc *) (XdmfHeavyData *) ((XdmfHDF *) x));
+}
 static swig_type_info _swigt__p_XdmfArray = {"_p_XdmfArray", "XdmfArray *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_XdmfArrayList = {"_p_XdmfArrayList", "XdmfArrayList *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_XdmfAttribute = {"_p_XdmfAttribute", "XdmfAttribute *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_XdmfDOM = {"_p_XdmfDOM", "XdmfDOM *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_XdmfDataDesc = {"_p_XdmfDataDesc", "XdmfDataDesc *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_XdmfDataItem = {"_p_XdmfDataItem", "XdmfDataItem *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_XdmfDataStructure = {"_p_XdmfDataStructure", "XdmfDataStructure *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_XdmfElement = {"_p_XdmfElement", "XdmfElement *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_XdmfGeometry = {"_p_XdmfGeometry", "XdmfGeometry *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_XdmfGrid = {"_p_XdmfGrid", "XdmfGrid *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_XdmfHDF = {"_p_XdmfHDF", "XdmfHDF *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_XdmfHeavyData = {"_p_XdmfHeavyData", "XdmfHeavyData *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_XdmfInformation = {"_p_XdmfInformation", "XdmfInformation *", 0, 0, (void*)0, 0};
@@ -20107,12 +20758,14 @@ static swig_type_info _swigt__p_void = {"_p_void", "void *|XdmfPointer", 0, 0, (
 static swig_type_info *swig_type_initial[] = {
   &_swigt__p_XdmfArray,
   &_swigt__p_XdmfArrayList,
+  &_swigt__p_XdmfAttribute,
   &_swigt__p_XdmfDOM,
   &_swigt__p_XdmfDataDesc,
   &_swigt__p_XdmfDataItem,
   &_swigt__p_XdmfDataStructure,
   &_swigt__p_XdmfElement,
   &_swigt__p_XdmfGeometry,
+  &_swigt__p_XdmfGrid,
   &_swigt__p_XdmfHDF,
   &_swigt__p_XdmfHeavyData,
   &_swigt__p_XdmfInformation,
@@ -20141,17 +20794,19 @@ static swig_type_info *swig_type_initial[] = {
 
 static swig_cast_info _swigc__p_XdmfArray[] = {  {&_swigt__p_XdmfArray, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfArrayList[] = {  {&_swigt__p_XdmfArrayList, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_XdmfAttribute[] = {  {&_swigt__p_XdmfAttribute, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfDOM[] = {  {&_swigt__p_XdmfDOM, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfDataDesc[] = {  {&_swigt__p_XdmfHeavyData, _p_XdmfHeavyDataTo_p_XdmfDataDesc, 0, 0},  {&_swigt__p_XdmfArray, _p_XdmfArrayTo_p_XdmfDataDesc, 0, 0},  {&_swigt__p_XdmfDataDesc, 0, 0, 0},  {&_swigt__p_XdmfHDF, _p_XdmfHDFTo_p_XdmfDataDesc, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfDataItem[] = {  {&_swigt__p_XdmfDataItem, 0, 0, 0},  {&_swigt__p_XdmfDataStructure, _p_XdmfDataStructureTo_p_XdmfDataItem, 0, 0},  {&_swigt__p_XdmfValuesXML, _p_XdmfValuesXMLTo_p_XdmfDataItem, 0, 0},  {&_swigt__p_XdmfValues, _p_XdmfValuesTo_p_XdmfDataItem, 0, 0},  {&_swigt__p_XdmfValuesHDF, _p_XdmfValuesHDFTo_p_XdmfDataItem, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfDataStructure[] = {  {&_swigt__p_XdmfDataStructure, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_XdmfElement[] = {  {&_swigt__p_XdmfElement, 0, 0, 0},  {&_swigt__p_XdmfInformation, _p_XdmfInformationTo_p_XdmfElement, 0, 0},  {&_swigt__p_XdmfDataItem, _p_XdmfDataItemTo_p_XdmfElement, 0, 0},  {&_swigt__p_XdmfDataStructure, _p_XdmfDataStructureTo_p_XdmfElement, 0, 0},  {&_swigt__p_XdmfValuesXML, _p_XdmfValuesXMLTo_p_XdmfElement, 0, 0},  {&_swigt__p_XdmfTopology, _p_XdmfTopologyTo_p_XdmfElement, 0, 0},  {&_swigt__p_XdmfGeometry, _p_XdmfGeometryTo_p_XdmfElement, 0, 0},  {&_swigt__p_XdmfValues, _p_XdmfValuesTo_p_XdmfElement, 0, 0},  {&_swigt__p_XdmfValuesHDF, _p_XdmfValuesHDFTo_p_XdmfElement, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_XdmfElement[] = {  {&_swigt__p_XdmfElement, 0, 0, 0},  {&_swigt__p_XdmfInformation, _p_XdmfInformationTo_p_XdmfElement, 0, 0},  {&_swigt__p_XdmfDataItem, _p_XdmfDataItemTo_p_XdmfElement, 0, 0},  {&_swigt__p_XdmfGrid, _p_XdmfGridTo_p_XdmfElement, 0, 0},  {&_swigt__p_XdmfDataStructure, _p_XdmfDataStructureTo_p_XdmfElement, 0, 0},  {&_swigt__p_XdmfValuesXML, _p_XdmfValuesXMLTo_p_XdmfElement, 0, 0},  {&_swigt__p_XdmfTopology, _p_XdmfTopologyTo_p_XdmfElement, 0, 0},  {&_swigt__p_XdmfGeometry, _p_XdmfGeometryTo_p_XdmfElement, 0, 0},  {&_swigt__p_XdmfValues, _p_XdmfValuesTo_p_XdmfElement, 0, 0},  {&_swigt__p_XdmfValuesHDF, _p_XdmfValuesHDFTo_p_XdmfElement, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfGeometry[] = {  {&_swigt__p_XdmfGeometry, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_XdmfGrid[] = {  {&_swigt__p_XdmfGrid, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfHDF[] = {  {&_swigt__p_XdmfHDF, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfHeavyData[] = {  {&_swigt__p_XdmfHeavyData, 0, 0, 0},  {&_swigt__p_XdmfHDF, _p_XdmfHDFTo_p_XdmfHeavyData, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfInformation[] = {  {&_swigt__p_XdmfInformation, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_XdmfLightData[] = {  {&_swigt__p_XdmfElement, _p_XdmfElementTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfInformation, _p_XdmfInformationTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfDataItem, _p_XdmfDataItemTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfLightData, 0, 0, 0},  {&_swigt__p_XdmfDataStructure, _p_XdmfDataStructureTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfValuesXML, _p_XdmfValuesXMLTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfTopology, _p_XdmfTopologyTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfGeometry, _p_XdmfGeometryTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfValues, _p_XdmfValuesTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfValuesHDF, _p_XdmfValuesHDFTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfDOM, _p_XdmfDOMTo_p_XdmfLightData, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_XdmfObject[] = {  {&_swigt__p_XdmfLightData, _p_XdmfLightDataTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDOM, _p_XdmfDOMTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfObject, 0, 0, 0},  {&_swigt__p_XdmfDataItem, _p_XdmfDataItemTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfInformation, _p_XdmfInformationTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfValuesHDF, _p_XdmfValuesHDFTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfValuesXML, _p_XdmfValuesXMLTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfHeavyData, _p_XdmfHeavyDataTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfValues, _p_XdmfValuesTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfTopology, _p_XdmfTopologyTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDataDesc, _p_XdmfDataDescTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfArray, _p_XdmfArrayTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfGeometry, _p_XdmfGeometryTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfElement, _p_XdmfElementTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfHDF, _p_XdmfHDFTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDataStructure, _p_XdmfDataStructureTo_p_XdmfObject, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_XdmfLightData[] = {  {&_swigt__p_XdmfElement, _p_XdmfElementTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfInformation, _p_XdmfInformationTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfDataItem, _p_XdmfDataItemTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfLightData, 0, 0, 0},  {&_swigt__p_XdmfGrid, _p_XdmfGridTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfDataStructure, _p_XdmfDataStructureTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfValuesXML, _p_XdmfValuesXMLTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfTopology, _p_XdmfTopologyTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfGeometry, _p_XdmfGeometryTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfValues, _p_XdmfValuesTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfValuesHDF, _p_XdmfValuesHDFTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfDOM, _p_XdmfDOMTo_p_XdmfLightData, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_XdmfObject[] = {  {&_swigt__p_XdmfLightData, _p_XdmfLightDataTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDOM, _p_XdmfDOMTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfObject, 0, 0, 0},  {&_swigt__p_XdmfDataItem, _p_XdmfDataItemTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfInformation, _p_XdmfInformationTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfValuesHDF, _p_XdmfValuesHDFTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfGrid, _p_XdmfGridTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfValuesXML, _p_XdmfValuesXMLTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfHeavyData, _p_XdmfHeavyDataTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfValues, _p_XdmfValuesTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfTopology, _p_XdmfTopologyTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDataDesc, _p_XdmfDataDescTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfArray, _p_XdmfArrayTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfGeometry, _p_XdmfGeometryTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfElement, _p_XdmfElementTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDataStructure, _p_XdmfDataStructureTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfHDF, _p_XdmfHDFTo_p_XdmfObject, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfTopology[] = {  {&_swigt__p_XdmfTopology, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfValues[] = {  {&_swigt__p_XdmfValuesXML, _p_XdmfValuesXMLTo_p_XdmfValues, 0, 0},  {&_swigt__p_XdmfValues, 0, 0, 0},  {&_swigt__p_XdmfValuesHDF, _p_XdmfValuesHDFTo_p_XdmfValues, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfValuesHDF[] = {  {&_swigt__p_XdmfValuesHDF, 0, 0, 0},{0, 0, 0, 0}};
@@ -20175,12 +20830,14 @@ static swig_cast_info _swigc__p_void[] = {  {&_swigt__p_void, 0, 0, 0},{0, 0, 0,
 static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_XdmfArray,
   _swigc__p_XdmfArrayList,
+  _swigc__p_XdmfAttribute,
   _swigc__p_XdmfDOM,
   _swigc__p_XdmfDataDesc,
   _swigc__p_XdmfDataItem,
   _swigc__p_XdmfDataStructure,
   _swigc__p_XdmfElement,
   _swigc__p_XdmfGeometry,
+  _swigc__p_XdmfGrid,
   _swigc__p_XdmfHDF,
   _swigc__p_XdmfHeavyData,
   _swigc__p_XdmfInformation,
@@ -20789,5 +21446,10 @@ SWIGEXPORT void SWIG_init(void) {
   SWIG_Python_SetConstant(d, "XDMF_GEOMETRY_X_Y",SWIG_From_int(static_cast< int >(4)));
   SWIG_Python_SetConstant(d, "XDMF_GEOMETRY_VXVYVZ",SWIG_From_int(static_cast< int >(5)));
   SWIG_Python_SetConstant(d, "XDMF_GEOMETRY_ORIGIN_DXDYDZ",SWIG_From_int(static_cast< int >(6)));
+  SWIG_Python_SetConstant(d, "XDMF_GRID_UNIFORM",SWIG_From_int(static_cast< int >(0x00000)));
+  SWIG_Python_SetConstant(d, "XDMF_GRID_COLLECTION",SWIG_From_int(static_cast< int >(0x10000)));
+  SWIG_Python_SetConstant(d, "XDMF_GRID_TREE",SWIG_From_int(static_cast< int >(0x20000)));
+  SWIG_Python_SetConstant(d, "XDMF_GRID_UNSET",SWIG_From_int(static_cast< int >(0x0FFFF)));
+  SWIG_Python_SetConstant(d, "XDMF_GRID_MASK",SWIG_From_int(static_cast< int >(0xF0000)));
 }
 
