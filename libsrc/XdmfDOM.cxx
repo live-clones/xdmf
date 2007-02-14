@@ -435,11 +435,17 @@ return(this->Tree);
 }
 
 XdmfXmlNode  
-XdmfDOM::FindElement(XdmfConstString TagName, XdmfInt32 Index, XdmfXmlNode Node) {
+XdmfDOM::FindElement(XdmfConstString TagName, XdmfInt32 Index, XdmfXmlNode Node, XdmfInt32 IgnoreInfo) {
 
 XdmfString type = (XdmfString )TagName;
 XdmfXmlNode child;
 
+this->SetDebug(1);
+if(TagName){
+    XdmfDebug("FindElement " << TagName << " Index = " << Index);
+}else{
+    XdmfDebug("FindElement NULL Index = " << Index);
+}
 if(!Node) {
     if(!this->Tree) return( NULL );
     Node = this->Tree;
@@ -450,16 +456,32 @@ if ( type ) {
   if( STRNCASECMP( type, "NULL", 4 ) == 0 ) type = NULL;
 }
 if ( !type ) {
-    return(this->GetChild(Index, Node));
+    if(IgnoreInfo){
+        while(child){
+            if(XDMF_WORD_CMP("Information", (const char *)(child)->name) == 0){
+                if(Index <= 0){
+                    return(child);
+                }
+                Index--;
+            }
+            child = XdmfGetNextElement(child);
+        }
+    }else{
+        return(this->GetChild(Index, Node));
+    }
 } else {
     while(child){
-        if(XDMF_WORD_CMP((const char *)type, (const char *)(child)->name)){
-            if(Index <= 0){
-                return(child);
+        if(IgnoreInfo && XDMF_WORD_CMP("Information", (const char *)(child)->name)){
+            child = XdmfGetNextElement(child);
+        }else{
+            if(XDMF_WORD_CMP((const char *)type, (const char *)(child)->name)){
+                if(Index <= 0){
+                    return(child);
+                }
+                Index--;
             }
-            Index--;
+            child = XdmfGetNextElement(child);
         }
-        child = XdmfGetNextElement(child);
     }
 }
 return(NULL);
