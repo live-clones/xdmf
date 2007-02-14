@@ -245,6 +245,8 @@ protected:
 
   int GridsModified;
 
+  void UpdateUniformGrid(void *GridNode, char *CollectionName);
+  void UpdateNonUniformGrid(void *GridNode, char *CollectionName);
   void UpdateGrids();
 
   int NumberOfEnabledActualGrids;

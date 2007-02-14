@@ -85,7 +85,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.1");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.2");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -524,7 +524,7 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
      (STRCASECMP(CurrentFileName, this->FileName) != 0 ))
     {
     this->DOM->SetInputFileName(this->FileName);
-    vtkDebugMacro( << "...............Preparing to Parse " << this->FileName);
+    vtkDebugMacro( << ".!!............Preparing to Parse " << this->FileName);
     this->DOM->Parse();
     // Added By Jerry Clarke
     this->GridsModified = 1;
@@ -661,6 +661,7 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
       }
       if((grid!=0) && XmGrid->IsUniform()) // single grid
         {
+        vtkDebugMacro("..... Grid is Uniform");
         XdmfGrid *xdmfGrid=grid->XMGrid;
         if( xdmfGrid->GetTopology()->GetClass() == XDMF_UNSTRUCTURED ) 
           {
@@ -730,6 +731,7 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
       else // collection
         {        
         vtkHierarchicalDataSet *output=vtkHierarchicalDataSet::SafeDownCast(info->Get(vtkDataObject::DATA_OBJECT()));
+        vtkDebugMacro("..... Grid is not Uniform");
         if(output==0)
           {
           someOutputChanged=1;
@@ -2725,6 +2727,90 @@ void vtkXdmfReader::SetDomainName(const char* domain)
 }
 
 //----------------------------------------------------------------------------
+void vtkXdmfReader::UpdateUniformGrid(void *GridNode, char * CollectionName)
+{
+
+XdmfConstString gridName = this->DOM->Get( (XdmfXmlNode)GridNode, "Name" );
+ostrstream str;
+if ( !gridName )
+  {
+  str << this->DOM->GetUniqueName("Grid") << ends;
+  }
+else
+  {
+  str << gridName << ends;
+  }
+gridName = str.str();
+vtkDebugMacro( << "Reading Light Data for " << gridName );
+XdmfConstString levelName = this->DOM->Get((XdmfXmlNode) GridNode, "Level" );
+
+vtkXdmfReaderGrid* grid = this->Internals->GetXdmfGrid(gridName, CollectionName,levelName);
+if ( !grid )
+  {
+  // Error happened
+  str.rdbuf()->freeze(0);
+  return;
+  }
+if ( !grid->XMGrid )
+  {
+  grid->XMGrid = new XdmfGrid;
+  }
+  vtkDebugMacro(" .... Setting Grid Information");
+grid->XMGrid->SetDOM(this->DOM);
+grid->XMGrid->SetElement((XdmfXmlNode)GridNode);
+grid->XMGrid->UpdateInformation();
+str.rdbuf()->freeze(0);
+this->GridsModified = 0;
+}
+//----------------------------------------------------------------------------
+void vtkXdmfReader::UpdateNonUniformGrid(void *GridNode, char * CollectionName)
+{
+  int done = 0;
+  int NGrid;
+  vtkIdType currentGrid;
+  XdmfXmlNode gridNode = 0;
+  XdmfXmlNode domain = this->Internals->DomainPtr;
+
+
+  NGrid = this->DOM->FindNumberOfElements("Grid", (XdmfXmlNode)GridNode);
+  for ( currentGrid = 0; !done; currentGrid ++ )
+    {
+        // Find the first level grids under Domain
+    gridNode = this->DOM->FindElement("Grid", currentGrid, (XdmfXmlNode)GridNode);
+    if ( !gridNode )
+      {
+      break;
+      }
+
+    XdmfConstString gridName = this->DOM->Get( gridNode, "Name" );
+    ostrstream str;
+    if ( !gridName )
+      {
+      str << "Grid" << currentGrid << ends;
+      }
+    else
+      {
+      str << gridName << ends;
+      }
+    gridName = str.str();
+    vtkDebugMacro( << "Reading Light Data for " << gridName );
+    // What Type of Grid
+    XdmfConstString gridType = this->DOM->Get(gridNode, "GridType");
+    if(XDMF_WORD_CMP(gridType, "Tree")){
+        vtkDebugMacro( << " Grid is a Tree ");
+        this->UpdateNonUniformGrid(gridNode, CollectionName);
+    } else if(XDMF_WORD_CMP(gridType, "Collection")){
+        // Collection : collName is gridName
+        vtkDebugMacro( << " Grid is a Collection");
+        this->UpdateNonUniformGrid(gridNode, CollectionName);
+    }else{
+        // It's a Uniform Grid
+        this->UpdateUniformGrid(gridNode, CollectionName);
+    }
+  }
+  this->GridsModified = 0;
+}
+//----------------------------------------------------------------------------
 void vtkXdmfReader::UpdateGrids()
 {
   int done = 0;
@@ -2748,6 +2834,7 @@ void vtkXdmfReader::UpdateGrids()
   NGrid = this->DOM->FindNumberOfElements("Grid", domain);
   for ( currentGrid = 0; !done; currentGrid ++ )
     {
+        // Find the first level grids under Domain
     gridNode = this->DOM->FindElement("Grid", currentGrid, domain);
     if ( !gridNode )
       {
@@ -2766,8 +2853,8 @@ void vtkXdmfReader::UpdateGrids()
       }
     gridName = str.str();
     vtkDebugMacro( << "Reading Light Data for " << gridName );
+    // Check for Old Style Collection
     XdmfConstString collectionName = this->DOM->Get( gridNode, "Collection" );
-
     // Copy collectionName because it is a pointer to an internal
     // string that will reused and overwritten when we will call Get
     // on "Level".
@@ -2777,31 +2864,29 @@ void vtkXdmfReader::UpdateGrids()
       collName=new char[strlen(collectionName)+1]; 
       strcpy(collName,collectionName);
       }
-    XdmfConstString levelName = this->DOM->Get( gridNode, "Level" );
-    
-    vtkXdmfReaderGrid* grid = this->Internals->GetXdmfGrid(gridName, collName,levelName);
-    if(collName!=0)
-      {
-      delete[] collName;
-      }
-    if ( !grid )
-      {
-      // Error happened
-      str.rdbuf()->freeze(0);
-      return;
-      }
-    if ( !grid->XMGrid )
-      {
-      grid->XMGrid = new XdmfGrid;
-      }
-    grid->XMGrid->SetDOM(this->DOM);
-    grid->XMGrid->SetElement(gridNode);
-    grid->XMGrid->UpdateInformation();
-    str.rdbuf()->freeze(0);
-    // this->SetProgressText("XDMF Reader 0.1 ");
-    // this->SetProgress( 1.0 *  currentGrid / NGrid);
-    this->UpdateProgress(1.0 *  currentGrid / NGrid);
+    // What Type of Grid
+    XdmfConstString gridType = this->DOM->Get(gridNode, "GridType");
+    if(XDMF_WORD_CMP(gridType, "Tree")){
+        // Tree : collName is gridName
+        vtkDebugMacro( << " Grid is a Tree ");
+        if(collName) delete [] collName;
+        collName=new char[strlen(gridName)+1]; 
+        strcpy(collName,  gridName);
+        this->UpdateNonUniformGrid(gridNode, collName);
+    } else if(XDMF_WORD_CMP(gridType, "Collection")){
+        // Collection : collName is gridName
+        vtkDebugMacro( << " Grid is a Collection");
+        if(collName) delete [] collName;
+        collName=new char[strlen(gridName)+1]; 
+        strcpy(collName,  gridName);
+        this->UpdateNonUniformGrid(gridNode, collName);
+    }else{
+        // It's a Uniform Grid
+        this->UpdateUniformGrid(gridNode, collName);
     }
+
+      if(collName) delete [] collName;
+  }
   
   this->GridsModified = 0;
 }
