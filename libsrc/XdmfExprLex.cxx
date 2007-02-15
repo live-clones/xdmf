@@ -501,7 +501,7 @@ char *dice_yytext;
 #include <XdmfArray.h>
 /* Geneated by bison */
 #include "XdmfExprYacc.tab.h"
-#include <ice.h>
+// #include <ice.h>
 #include <math.h>
 #define YY_NEVER_INTERACTIVE 1
 
