@@ -85,7 +85,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.2");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.3");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -110,7 +110,7 @@ public:
   vtkXdmfReaderGrid() : XMGrid(0), DataDescription(0) {}
   ~vtkXdmfReaderGrid()
     {
-    delete this->XMGrid;
+    ///// delete this->XMGrid;
     }
 
   XdmfGrid       *XMGrid;
@@ -228,7 +228,9 @@ public:
     {
     if ( this->DataItem )
       {
+      cout << "....Deleting DataItem " << this->DataItem << endl;
       delete this->DataItem;
+      cout << "....Back from Deleting DataItem " << this->DataItem << endl;
       this->DataItem = 0;
       }
     this->ArrayConverter->Delete();
@@ -512,6 +514,7 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
     {
     this->DOM = new XdmfDOM();
     }
+    this->DOM->GlobalDebugOn();
   if ( !this->Internals->DataItem )
     {
     this->Internals->DataItem = new XdmfDataItem();
@@ -1507,12 +1510,27 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
   for( cc = 0 ; cc < xdmfGrid->GetNumberOfAttributes() ; cc++ )
     {
     XdmfInt32 AttributeCenter;
+    XdmfInt32 AttributeType;
+    int       Components;
     XdmfAttribute       *Attribute;
     XdmfConstString NodeType;
     Attribute = xdmfGrid->GetAttribute( cc );
     const char *name = Attribute->GetName();
     int status = 1;
     AttributeCenter = Attribute->GetAttributeCenter();
+    AttributeType = Attribute->GetAttributeType();
+    Components = 1;
+    switch (AttributeType) {
+        case XDMF_ATTRIBUTE_TYPE_TENSOR :
+                Components = 9;
+                break;
+        case XDMF_ATTRIBUTE_TYPE_VECTOR:
+                Components = 3;
+                break;
+        default :
+                Components = 1;
+                break;
+    }
     if (name )
       {
       if ( AttributeCenter == XDMF_ATTRIBUTE_CENTER_GRID || 
@@ -1544,7 +1562,6 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
     if ( Attribute && status )
       {
       //Attribute->Update();
-      XdmfInt32 AttributeType;
       // XdmfDataItem dataItem;
       XdmfArray *values;
 
@@ -1601,12 +1618,11 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
       if ( values )
         {
         vtkDataArray* vtkValues = this->ArrayConverter->FromXdmfArray(
-          values->GetTagName(), 1, globalrank);
+          values->GetTagName(), 1, globalrank, Components);
         
         vtkDebugWithObjectMacro(this->Reader, << "Reading array: " << name );
         vtkValues->SetName(name);
         
-        AttributeType = Attribute->GetAttributeType();
         // Special Cases
         if( AttributeCenter == XDMF_ATTRIBUTE_CENTER_GRID ) 
           {
@@ -1621,7 +1637,7 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
                               values->GetValueAsFloat64(0) );
           vtkValues->Delete();
           this->ArrayConverter->SetVtkArray( NULL );
-          vtkValues=this->ArrayConverter->FromXdmfArray(tmpArray->GetTagName());
+          vtkValues=this->ArrayConverter->FromXdmfArray(tmpArray->GetTagName(), 1, 1, Components);
           if( !name )
             {
             name = values->GetTagName();
@@ -1690,8 +1706,8 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
           }
         if ( grid->DataDescription ) 
           {
-          delete grid->DataDescription;
-          grid->DataDescription = 0;
+          // delete grid->DataDescription;
+          // grid->DataDescription = 0;
           }
         }
       }

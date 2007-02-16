@@ -51,7 +51,7 @@ vtkXdmfDataArray::vtkXdmfDataArray()
 
 //----------------------------------------------------------------------------
 vtkDataArray *vtkXdmfDataArray::FromXdmfArray( char *ArrayName, int CopyShape,
-  int rank ){
+  int rank, int Components ){
   XdmfArray *array = this->Array;
   if ( ArrayName != NULL ) {
     array = TagNameToArray( ArrayName );
@@ -127,8 +127,11 @@ vtkDataArray *vtkXdmfDataArray::FromXdmfArray( char *ArrayName, int CopyShape,
       components = array->GetDimension( rank );
       }
     tuples = array->GetNumberOfElements() / components;
-    //cout << "Tuples: " << tuples << " components: " << components << endl;
-    //cout << "Rank: " << rank << endl;
+    /// this breaks
+    components = Components;
+    tuples = array->GetNumberOfElements() / components;
+    cout << "Tuples: " << tuples << " components: " << components << endl;
+    cout << "Rank: " << rank << endl;
     this->vtkArray->SetNumberOfComponents( components );
     this->vtkArray->SetNumberOfTuples( tuples );
     } 
