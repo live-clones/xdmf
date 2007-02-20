@@ -25,6 +25,7 @@
 #include "XdmfObject.h"
 #include "XdmfValuesHDF.h"
 #include "XdmfHDF.h"
+#include "XdmfDOM.h"
 #include "XdmfDataStructure.h"
 #include "XdmfArray.h"
 
@@ -45,7 +46,7 @@ XdmfValuesHDF::Read(XdmfArray *Array){
         XdmfErrorMessage("DataDesc has not been set");
         return(NULL);
     }
-    H5.SetWorkingDirectory(this->GetWorkingDirectory());
+    H5.SetWorkingDirectory(this->DOM->GetWorkingDirectory());
     XDMF_STRING_DUPLICATE(DataSetName, this->Get("CDATA"));
     if(!DataSetName || strlen(DataSetName) < 1){
         XdmfErrorMessage("Invalid HDF5 Dataset Name");
