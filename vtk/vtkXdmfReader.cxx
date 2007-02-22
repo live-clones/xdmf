@@ -85,7 +85,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.3");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.4");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -110,7 +110,7 @@ public:
   vtkXdmfReaderGrid() : XMGrid(0), DataDescription(0) {}
   ~vtkXdmfReaderGrid()
     {
-    ///// delete this->XMGrid;
+    delete this->XMGrid;
     }
 
   XdmfGrid       *XMGrid;
