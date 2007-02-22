@@ -238,7 +238,7 @@ if( this->NumberOfAttributes > 0 ){
     iattribute = new XdmfAttribute;
 
     this->Attribute[Index] = iattribute;
-    AttributeElement = this->DOM->FindElement( "Attribute", Index, Element );
+    AttributeElement = this->DOM->FindElement( "Attribute", Index, this->Element );
     iattribute->SetDOM( this->DOM );    
     iattribute->SetElement( AttributeElement );
     iattribute->UpdateInformation();

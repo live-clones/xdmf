@@ -49,7 +49,10 @@ XdmfDataItem::XdmfDataItem() {
 }
 
 XdmfDataItem::~XdmfDataItem() {
+    XdmfDebug(".... Deleteing DataItem " << this);
+    XdmfDebug("Deleteing array");
     if(this->Array && this->ArrayIsMine ) delete this->Array;
+    XdmfDebug("Done Deleteing array");
     if(this->DataDesc && this->DataDescIsMine) delete this->DataDesc;
     if(this->Values) delete this->Values;
 }
