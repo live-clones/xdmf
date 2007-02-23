@@ -130,8 +130,8 @@ vtkDataArray *vtkXdmfDataArray::FromXdmfArray( char *ArrayName, int CopyShape,
     /// this breaks
     components = Components;
     tuples = array->GetNumberOfElements() / components;
-    cout << "Tuples: " << tuples << " components: " << components << endl;
-    cout << "Rank: " << rank << endl;
+    // cout << "Tuples: " << tuples << " components: " << components << endl;
+    // cout << "Rank: " << rank << endl;
     this->vtkArray->SetNumberOfComponents( components );
     this->vtkArray->SetNumberOfTuples( tuples );
     } 

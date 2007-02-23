@@ -86,7 +86,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.6");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.7");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -635,12 +635,9 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
   
   this->UpdateGrids();
   
-  int c=this->NumberOfEnabledActualGrids;
-  // Jerry
-  c = 1;
-  if(c!=this->GetNumberOfOutputPorts())
+  if(1 !=this->GetNumberOfOutputPorts())
     {
-    this->SetNumberOfOutputPorts(c);
+    this->SetNumberOfOutputPorts(1);
 
     // We have to refresh the outputVector with this new number of ports.
     // The one in argument was given by the executive.
@@ -654,9 +651,7 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
   int i=0;
   
   int someOutputChanged=0;
-  // Jerry
   vtkInformation *jinfo=newOutputVector->GetInformationObject(0);
-  // vtkHierarchicalDataSet *output=vtkHierarchicalDataSet::SafeDownCast(jinfo->Get(vtkDataObject::DATA_OBJECT()));
   vtkMultiGroupDataSet *output=vtkMultiGroupDataSet::SafeDownCast(jinfo->Get(vtkDataObject::DATA_OBJECT()));
   if(output==0)
     {
@@ -767,23 +762,8 @@ int vtkXdmfReaderInternal::RequestActualGridData(
   int procId=info->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER());
   int nbProcs=info->Get(vtkStreamingDemandDrivenPipeline::UPDATE_NUMBER_OF_PIECES());
   
-  // Handle single grid
-  // vtkInformation *outInfo = outputVector->GetInformationObject(outputGrid);
-  // Jerry
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
-  if ( currentActualGrid->Grid )
-    {
-    // In multi-process mode, the grid is on every process otherwise
-    // there is some issue with UPDATE_EXTENT.
-    vtkDataObject *output = outInfo->Get(vtkDataObject::DATA_OBJECT());
-    
-    return this->RequestSingleGridData(currentGridName,
-                                       currentActualGrid->Grid,outInfo,
-                                       output,0);
-    }
-  else // Handle collection
-    {
-    vtkMultiGroupDataSet *mgd=vtkMultiGroupDataSet::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkMultiGroupDataSet *mgd=vtkMultiGroupDataSet::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
     
     unsigned int numberOfDataSets=currentActualGrid->Collection->Grids.size();
     
@@ -910,7 +890,6 @@ int vtkXdmfReaderInternal::RequestActualGridData(
       // mgd->Print(std::cout);
       // mgd->DebugOn();
     return result;
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -1712,8 +1691,6 @@ int vtkXdmfReader::RequestInformation(
   int numPorts = this->GetNumberOfOutputPorts();
   for (int i=0; i<numPorts; i++)
     {
-    // vtkInformation *info = outputVector->GetInformationObject(i);
-    // Jerry
     vtkInformation *info = outputVector->GetInformationObject(0);
     info->Set(vtkStreamingDemandDrivenPipeline::MAXIMUM_NUMBER_OF_PIECES(),-1);
     }
@@ -1745,22 +1722,8 @@ int vtkXdmfReaderInternal::RequestActualGridInformation(
   vtkInformationVector* outputVector)
 {
   // Handle single grid
-  if ( currentActualGrid->Grid )
-    {
-    // In multi-process mode, the grid is on every process otherwise
-    // there is some issue with UPDATE_EXTENT.
-    //vtkInformation* info = outputVector->GetInformationObject(outputGrid);
-    // Jerry
-    vtkInformation* info = outputVector->GetInformationObject(0);
- 
-    return this->RequestSingleGridInformation(currentActualGrid->Grid,info);
-                                           
-    }
-  // Handle collection
-  else if ( currentActualGrid->Collection )
+  if ( currentActualGrid->Collection )
     { 
-    // Jerry
-    // vtkInformation* info = outputVector->GetInformationObject(outputGrid);
     vtkInformation* info = outputVector->GetInformationObject(0);
       
     vtkMultiGroupDataInformation *compInfo=vtkMultiGroupDataInformation::New();
@@ -1842,11 +1805,9 @@ int vtkXdmfReaderInternal::RequestActualGridInformation(
       }
     return result;
     }
-  else
-    {
-    // neither a single grid, neither a collection.
-    return 0;
-    }
+// neither a single grid, neither a collection.
+vtkDebugWithObjectMacro(this->Reader, "Grid does not have a collection");
+return 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -2788,7 +2749,6 @@ void vtkXdmfReader::UpdateGrids()
     return;
     }
 
-    // Modified by Jerry Clarke
     if( !this->GridsModified )
     {
         vtkDebugMacro( << "Skipping Grid Update : Not Modified");
