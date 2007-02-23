@@ -86,7 +86,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.5");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.6");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -655,120 +655,20 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
   
   int someOutputChanged=0;
   // Jerry
-        vtkInformation *jinfo=newOutputVector->GetInformationObject(0);
-        // vtkHierarchicalDataSet *output=vtkHierarchicalDataSet::SafeDownCast(jinfo->Get(vtkDataObject::DATA_OBJECT()));
-        vtkMultiGroupDataSet *output=vtkMultiGroupDataSet::SafeDownCast(jinfo->Get(vtkDataObject::DATA_OBJECT()));
-        if(output==0)
-          {
-          someOutputChanged=1;
-          output=vtkMultiGroupDataSet::New();
-          output->SetPipelineInformation(jinfo);
-          output->Delete();
-          }
-          // Collapse on second level of Hierarchy
-          output->SetNumberOfGroups(this->NumberOfEnabledActualGrids);
+  vtkInformation *jinfo=newOutputVector->GetInformationObject(0);
+  // vtkHierarchicalDataSet *output=vtkHierarchicalDataSet::SafeDownCast(jinfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkMultiGroupDataSet *output=vtkMultiGroupDataSet::SafeDownCast(jinfo->Get(vtkDataObject::DATA_OBJECT()));
+  if(output==0)
+    {
+    someOutputChanged=1;
+    output=vtkMultiGroupDataSet::New();
+    output->SetPipelineInformation(jinfo);
+    output->Delete();
+    }
+    // Collapse on second level of Hierarchy
+  output->SetNumberOfGroups(this->NumberOfEnabledActualGrids);
   //
   //while(currentGridIterator != this->Internals->ActualGrids.end())
-  if(0)
-    {
-    vtkXdmfReaderActualGrid *currentActualGrid=&(currentGridIterator->second);
-    if (currentActualGrid->Enabled )
-      {
-      // vtkInformation *info=newOutputVector->GetInformationObject(i);
-      // Jerry
-      vtkInformation *info=newOutputVector->GetInformationObject(0);
-      XdmfGrid  *XmGrid;
-        
-      // get the grid type and safe downcast the output to this type
-      vtkXdmfReaderGrid *grid=currentActualGrid->Grid;
-      if(grid != 0){
-          XmGrid = grid->XMGrid;
-      }
-      if((grid!=0) && XmGrid->IsUniform()) // single grid
-        {
-        vtkDebugMacro("..... Grid is Uniform");
-        XdmfGrid *xdmfGrid=grid->XMGrid;
-        if( xdmfGrid->GetTopology()->GetClass() == XDMF_UNSTRUCTURED ) 
-          {
-          vtkUnstructuredGrid *output=vtkUnstructuredGrid::SafeDownCast(info->Get(vtkDataObject::DATA_OBJECT()));
-          if(output==0)
-            {
-            someOutputChanged=1;
-            output=vtkUnstructuredGrid::New();
-            output->SetMaximumNumberOfPieces(1);
-            output->SetPipelineInformation(info);
-            output->Delete();
-            }
-          } 
-        else if( xdmfGrid->GetTopology()->GetTopologyType() == XDMF_2DSMESH ||
-                 xdmfGrid->GetTopology()->GetTopologyType() == XDMF_3DSMESH )
-          {
-          vtkStructuredGrid *output=vtkStructuredGrid::SafeDownCast(info->Get(vtkDataObject::DATA_OBJECT()));
-          if(output==0)
-            {
-            someOutputChanged=1;
-            output=vtkStructuredGrid::New();
-            output->SetPipelineInformation(info);
-            output->Delete();
-            }
-          }
-        else if ( xdmfGrid->GetTopology()->GetTopologyType() == XDMF_2DCORECTMESH ||
-                  xdmfGrid->GetTopology()->GetTopologyType() == XDMF_3DCORECTMESH )
-          {
-#ifdef USE_IMAGE_DATA
-          vtkImageData *output=vtkImageData::SafeDownCast(info->Get(vtkDataObject::DATA_OBJECT()));
-#else
-          vtkUniformGrid *output=vtkUniformGrid::SafeDownCast(info->Get(vtkDataObject::DATA_OBJECT()));
-#endif
-          if(output==0)
-            {
-            someOutputChanged=1;
-#ifdef USE_IMAGE_DATA
-            output=vtkImageData::New();
-#else
-            output=vtkUniformGrid::New();
-#endif
-            output->SetPipelineInformation(info);
-            output->Delete();
-            }
-          }
-        else if ( xdmfGrid->GetTopology()->GetTopologyType() == XDMF_2DRECTMESH ||
-                  xdmfGrid->GetTopology()->GetTopologyType() == XDMF_3DRECTMESH )
-          {
-          vtkRectilinearGrid *output=vtkRectilinearGrid::SafeDownCast(info->Get(vtkDataObject::DATA_OBJECT()));
-          if(output==0)
-            {
-            someOutputChanged=1;
-            output=vtkRectilinearGrid::New();
-            output->SetPipelineInformation(info);
-            output->Delete();
-            }
-          }
-        else
-          {
-          vtkErrorMacro("Unknown type for this single grid.");
-          return 0;
-          }
-        // WARNING, in vtkDataSetAlgorithm, there is also this line:
-        // this->GetOutputPortInformation(0)->Set(
-        //  vtkDataObject::DATA_EXTENT_TYPE(), output->GetExtentType());
-        }
-      else // collection
-        {        
-        vtkMultiGroupDataSet *output=vtkMultiGroupDataSet::SafeDownCast(info->Get(vtkDataObject::DATA_OBJECT()));
-        vtkDebugMacro("..... Grid is not Uniform");
-        if(output==0)
-          {
-          someOutputChanged=1;
-          output=vtkMultiGroupDataSet::New();
-          output->SetPipelineInformation(info);
-          output->Delete();
-          }
-        }
-      ++i;
-      }
-    ++currentGridIterator;
-    }
   if(someOutputChanged)
     {
     this->GetPointDataArraySelection()->RemoveAllArrays();
@@ -883,21 +783,21 @@ int vtkXdmfReaderInternal::RequestActualGridData(
     }
   else // Handle collection
     {
-    vtkMultiGroupDataSet *hd=vtkMultiGroupDataSet::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
+    vtkMultiGroupDataSet *mgd=vtkMultiGroupDataSet::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
     
     unsigned int numberOfDataSets=currentActualGrid->Collection->Grids.size();
     
     currentActualGrid->Collection->UpdateCounts();
     int levels=currentActualGrid->Collection->GetNumberOfLevels();
-    // hd->SetNumberOfLevels(levels);
+    // mgd->SetNumberOfLevels(levels);
     // int levels = 1;
     
     int level=0;
-    cout << "hd->SetNumberOfDataSets(" << outputGrid << "," << currentActualGrid->Collection->GetNumberOfDataSets(level) << ")" << endl;
-    hd->SetNumberOfDataSets(outputGrid, currentActualGrid->Collection->GetNumberOfDataSets(level));
+    cout << "mgd->SetNumberOfDataSets(" << outputGrid << "," << currentActualGrid->Collection->GetNumberOfDataSets(level) << ")" << endl;
+    mgd->SetNumberOfDataSets(outputGrid, currentActualGrid->Collection->GetNumberOfDataSets(level));
     while(level<levels)
       {
-      // hd->SetNumberOfDataSets(level,currentActualGrid->Collection->GetNumberOfDataSets(level));
+      // mgd->SetNumberOfDataSets(level,currentActualGrid->Collection->GetNumberOfDataSets(level));
       ++level;
       }
  
@@ -946,9 +846,9 @@ int vtkXdmfReaderInternal::RequestActualGridData(
       int index=currentIndex[level];
       if(datasetIdx<blockStart || datasetIdx>blockEnd)
         {
-             cout << " hd->SetDataSet(0) for index " << index << " outputGrid " << outputGrid << " datasetIdx " << datasetIdx << endl;
-        // hd->SetDataSet(level,index,0); // empty, on another processor
-        hd->SetDataSet(outputGrid, index, 0); // empty, on another processor
+             cout << " mgd->SetDataSet(0) for index " << index << " outputGrid " << outputGrid << " datasetIdx " << datasetIdx << endl;
+        // mgd->SetDataSet(level,index,0); // empty, on another processor
+        mgd->SetDataSet(outputGrid, index, 0); // empty, on another processor
         }
       else
         {
@@ -957,18 +857,18 @@ int vtkXdmfReaderInternal::RequestActualGridData(
           {
           vtkUnstructuredGrid *ds=vtkUnstructuredGrid::New();
           ds->SetMaximumNumberOfPieces(1);
-             cout << " 1 hd->SetDataSet(ds) for index " << index << " outputGrid " << outputGrid << " datasetIdx " << datasetIdx << endl;
-          // hd->SetDataSet(level,index,ds);
-          hd->SetDataSet(outputGrid, index, ds);
+             cout << " 1 mgd->SetDataSet(ds) for index " << index << " outputGrid " << outputGrid << " datasetIdx " << datasetIdx << endl;
+          // mgd->SetDataSet(level,index,ds);
+          mgd->SetDataSet(outputGrid, index, ds);
           ds->Delete();
           } 
         else if( xdmfGrid->GetTopology()->GetTopologyType() == XDMF_2DSMESH ||
                  xdmfGrid->GetTopology()->GetTopologyType() == XDMF_3DSMESH )
           {
           vtkStructuredGrid *ds=vtkStructuredGrid::New();
-             cout << " 2 hd->SetDataSet(ds) for index " << index << " level " << level << " datasetIdx " << datasetIdx << endl;
-          // hd->SetDataSet(level,index,ds);
-          hd->SetDataSet(outputGrid, index, ds);
+             cout << " 2 mgd->SetDataSet(ds) for index " << index << " level " << level << " datasetIdx " << datasetIdx << endl;
+          // mgd->SetDataSet(level,index,ds);
+          mgd->SetDataSet(outputGrid, index, ds);
           ds->Delete();
           }
         else if ( xdmfGrid->GetTopology()->GetTopologyType() == XDMF_2DCORECTMESH ||
@@ -979,14 +879,14 @@ int vtkXdmfReaderInternal::RequestActualGridData(
 #else
             vtkUniformGrid *ds=vtkUniformGrid::New();
 #endif
-            hd->SetDataSet(level,index,ds);
+            mgd->SetDataSet(level,index,ds);
             ds->Delete();
           }
         else if ( xdmfGrid->GetTopology()->GetTopologyType() == XDMF_2DRECTMESH ||
                   xdmfGrid->GetTopology()->GetTopologyType() == XDMF_3DRECTMESH )
           {
             vtkRectilinearGrid *ds=vtkRectilinearGrid::New();
-            hd->SetDataSet(level,index,ds);
+            mgd->SetDataSet(level,index,ds);
             ds->Delete();
           }
         else
@@ -994,8 +894,8 @@ int vtkXdmfReaderInternal::RequestActualGridData(
           // Unknown type for this sub grid. 
           return 0;
           }
-        // vtkDataObject *ds=hd->GetDataSet(level,index);
-        vtkDataObject *ds=hd->GetDataSet(outputGrid,index);
+        // vtkDataObject *ds=mgd->GetDataSet(level,index);
+        vtkDataObject *ds=mgd->GetDataSet(outputGrid,index);
         vtkInformation *subInfo=compInfo->GetInformation(level,index);
         result=this->RequestSingleGridData("",gridIt->second,subInfo,ds,1);
         cout << "ds level " << level << " index " << index << " = " << endl;
@@ -1007,8 +907,8 @@ int vtkXdmfReaderInternal::RequestActualGridData(
       // cout << "Progress " << 1.0 * datasetIdx / numberOfDataSets << endl;
       this->Reader->UpdateProgress(1.0 * datasetIdx / numberOfDataSets);
       }
-      // hd->Print(std::cout);
-      // hd->DebugOn();
+      // mgd->Print(std::cout);
+      // mgd->DebugOn();
     return result;
     }
 }
@@ -2946,6 +2846,10 @@ void vtkXdmfReader::UpdateGrids()
         this->UpdateNonUniformGrid(gridNode, collName);
     }else{
         // It's a Uniform Grid
+        // All grids are treated the same so make it a collection
+        if(collName) delete [] collName;
+        collName=new char[strlen(gridName)+1]; 
+        strcpy(collName,  gridName);
         this->UpdateUniformGrid(gridNode, collName);
     }
 
