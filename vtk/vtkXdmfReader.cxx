@@ -62,7 +62,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "vtkImageData.h"
 #include "vtkUniformGrid.h"
 #include "vtkMultiGroupDataInformation.h"
-#include "vtkHierarchicalDataSet.h"
+#include "vtkMultiGroupDataSet.h"
+// #include "vtkHierarchicalDataSet.h"
 #include "vtkCompositeDataPipeline.h"
 #include "vtkMultiProcessController.h"
 
@@ -85,7 +86,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.4");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.5");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -248,6 +249,7 @@ public:
   int RequestActualGridData(const char* currentGridName,
                             vtkXdmfReaderActualGrid* currentActualGrid,
                             int outputGrid,
+                            int numberOfGrids,
                             vtkInformationVector *outputVector);
   
   // outInfo is null in the  multi-block case.
@@ -256,6 +258,7 @@ public:
 
   int RequestActualGridInformation(vtkXdmfReaderActualGrid* currentActualGrid,
                                    int outputGrid,
+                                    int numberOfGrids,
                                    vtkInformationVector* outputVector);
   
   typedef vtkstd::map<vtkstd::string,vtkXdmfReaderActualGrid> MapOfActualGrids;
@@ -514,7 +517,7 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
     {
     this->DOM = new XdmfDOM();
     }
-    this->DOM->GlobalDebugOn();
+    // this->DOM->GlobalDebugOn();
   if ( !this->Internals->DataItem )
     {
     this->Internals->DataItem = new XdmfDataItem();
@@ -633,6 +636,8 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
   this->UpdateGrids();
   
   int c=this->NumberOfEnabledActualGrids;
+  // Jerry
+  c = 1;
   if(c!=this->GetNumberOfOutputPorts())
     {
     this->SetNumberOfOutputPorts(c);
@@ -649,12 +654,29 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
   int i=0;
   
   int someOutputChanged=0;
-  while(currentGridIterator != this->Internals->ActualGrids.end())
+  // Jerry
+        vtkInformation *jinfo=newOutputVector->GetInformationObject(0);
+        // vtkHierarchicalDataSet *output=vtkHierarchicalDataSet::SafeDownCast(jinfo->Get(vtkDataObject::DATA_OBJECT()));
+        vtkMultiGroupDataSet *output=vtkMultiGroupDataSet::SafeDownCast(jinfo->Get(vtkDataObject::DATA_OBJECT()));
+        if(output==0)
+          {
+          someOutputChanged=1;
+          output=vtkMultiGroupDataSet::New();
+          output->SetPipelineInformation(jinfo);
+          output->Delete();
+          }
+          // Collapse on second level of Hierarchy
+          output->SetNumberOfGroups(this->NumberOfEnabledActualGrids);
+  //
+  //while(currentGridIterator != this->Internals->ActualGrids.end())
+  if(0)
     {
     vtkXdmfReaderActualGrid *currentActualGrid=&(currentGridIterator->second);
     if (currentActualGrid->Enabled )
       {
-      vtkInformation *info=newOutputVector->GetInformationObject(i);
+      // vtkInformation *info=newOutputVector->GetInformationObject(i);
+      // Jerry
+      vtkInformation *info=newOutputVector->GetInformationObject(0);
       XdmfGrid  *XmGrid;
         
       // get the grid type and safe downcast the output to this type
@@ -733,12 +755,12 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
         }
       else // collection
         {        
-        vtkHierarchicalDataSet *output=vtkHierarchicalDataSet::SafeDownCast(info->Get(vtkDataObject::DATA_OBJECT()));
+        vtkMultiGroupDataSet *output=vtkMultiGroupDataSet::SafeDownCast(info->Get(vtkDataObject::DATA_OBJECT()));
         vtkDebugMacro("..... Grid is not Uniform");
         if(output==0)
           {
           someOutputChanged=1;
-          output=vtkHierarchicalDataSet::New();
+          output=vtkMultiGroupDataSet::New();
           output->SetPipelineInformation(info);
           output->Delete();
           }
@@ -822,9 +844,9 @@ int vtkXdmfReader::RequestData(
       {
       this->Internals->RequestActualGridData(
         currentGridIterator->first.c_str(),&currentGridIterator->second,
-        outputGrid, outputVector);
+        outputGrid, this->NumberOfEnabledActualGrids, outputVector);
       outputGrid++;
-      // cout << "Progress " << 1.0 * outputGrid / this->NumberOfEnabledActualGrids << endl;
+       cout << "Progress " << 1.0 * outputGrid / this->NumberOfEnabledActualGrids << endl;
       this->UpdateProgress(1.0 * outputGrid / this->NumberOfEnabledActualGrids);
       }
     }
@@ -837,14 +859,18 @@ int vtkXdmfReaderInternal::RequestActualGridData(
   const char* currentGridName,
   vtkXdmfReaderActualGrid* currentActualGrid,
   int outputGrid,
+  int numberOfGrids,
   vtkInformationVector *outputVector)
 {
+    cout << " ........... In RequestActualGridData" << endl;
   vtkInformation *info=outputVector->GetInformationObject(0);
   int procId=info->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER());
   int nbProcs=info->Get(vtkStreamingDemandDrivenPipeline::UPDATE_NUMBER_OF_PIECES());
   
   // Handle single grid
-  vtkInformation *outInfo = outputVector->GetInformationObject(outputGrid);
+  // vtkInformation *outInfo = outputVector->GetInformationObject(outputGrid);
+  // Jerry
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
   if ( currentActualGrid->Grid )
     {
     // In multi-process mode, the grid is on every process otherwise
@@ -857,22 +883,25 @@ int vtkXdmfReaderInternal::RequestActualGridData(
     }
   else // Handle collection
     {
-    vtkHierarchicalDataSet *hd=vtkHierarchicalDataSet::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
+    vtkMultiGroupDataSet *hd=vtkMultiGroupDataSet::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
     
     unsigned int numberOfDataSets=currentActualGrid->Collection->Grids.size();
     
     currentActualGrid->Collection->UpdateCounts();
     int levels=currentActualGrid->Collection->GetNumberOfLevels();
-    hd->SetNumberOfLevels(levels);
+    // hd->SetNumberOfLevels(levels);
+    // int levels = 1;
     
     int level=0;
+    cout << "hd->SetNumberOfDataSets(" << outputGrid << "," << currentActualGrid->Collection->GetNumberOfDataSets(level) << ")" << endl;
+    hd->SetNumberOfDataSets(outputGrid, currentActualGrid->Collection->GetNumberOfDataSets(level));
     while(level<levels)
       {
-      hd->SetNumberOfDataSets(level,currentActualGrid->Collection->GetNumberOfDataSets(level));
+      // hd->SetNumberOfDataSets(level,currentActualGrid->Collection->GetNumberOfDataSets(level));
       ++level;
       }
  
-    
+   cout << "level = " << level << " levels = " << levels << " numberOfDataSets = " << numberOfDataSets << endl; 
     vtkXdmfReaderGridCollection::SetOfGrids::iterator gridIt;
     vtkXdmfReaderGridCollection::SetOfGrids::iterator gridItEnd;
     
@@ -917,7 +946,9 @@ int vtkXdmfReaderInternal::RequestActualGridData(
       int index=currentIndex[level];
       if(datasetIdx<blockStart || datasetIdx>blockEnd)
         {
-        hd->SetDataSet(level,index,0); // empty, on another processor
+             cout << " hd->SetDataSet(0) for index " << index << " outputGrid " << outputGrid << " datasetIdx " << datasetIdx << endl;
+        // hd->SetDataSet(level,index,0); // empty, on another processor
+        hd->SetDataSet(outputGrid, index, 0); // empty, on another processor
         }
       else
         {
@@ -926,14 +957,18 @@ int vtkXdmfReaderInternal::RequestActualGridData(
           {
           vtkUnstructuredGrid *ds=vtkUnstructuredGrid::New();
           ds->SetMaximumNumberOfPieces(1);
-          hd->SetDataSet(level,index,ds);
+             cout << " 1 hd->SetDataSet(ds) for index " << index << " outputGrid " << outputGrid << " datasetIdx " << datasetIdx << endl;
+          // hd->SetDataSet(level,index,ds);
+          hd->SetDataSet(outputGrid, index, ds);
           ds->Delete();
           } 
         else if( xdmfGrid->GetTopology()->GetTopologyType() == XDMF_2DSMESH ||
                  xdmfGrid->GetTopology()->GetTopologyType() == XDMF_3DSMESH )
           {
           vtkStructuredGrid *ds=vtkStructuredGrid::New();
-          hd->SetDataSet(level,index,ds);
+             cout << " 2 hd->SetDataSet(ds) for index " << index << " level " << level << " datasetIdx " << datasetIdx << endl;
+          // hd->SetDataSet(level,index,ds);
+          hd->SetDataSet(outputGrid, index, ds);
           ds->Delete();
           }
         else if ( xdmfGrid->GetTopology()->GetTopologyType() == XDMF_2DCORECTMESH ||
@@ -959,9 +994,12 @@ int vtkXdmfReaderInternal::RequestActualGridData(
           // Unknown type for this sub grid. 
           return 0;
           }
-        vtkDataObject *ds=hd->GetDataSet(level,index);
+        // vtkDataObject *ds=hd->GetDataSet(level,index);
+        vtkDataObject *ds=hd->GetDataSet(outputGrid,index);
         vtkInformation *subInfo=compInfo->GetInformation(level,index);
         result=this->RequestSingleGridData("",gridIt->second,subInfo,ds,1);
+        cout << "ds level " << level << " index " << index << " = " << endl;
+        // ds->Print(std::cout);
         }
       ++currentIndex[level];
       ++gridIt;
@@ -969,6 +1007,8 @@ int vtkXdmfReaderInternal::RequestActualGridData(
       // cout << "Progress " << 1.0 * datasetIdx / numberOfDataSets << endl;
       this->Reader->UpdateProgress(1.0 * datasetIdx / numberOfDataSets);
       }
+      // hd->Print(std::cout);
+      // hd->DebugOn();
     return result;
     }
 }
@@ -1772,7 +1812,9 @@ int vtkXdmfReader::RequestInformation(
   int numPorts = this->GetNumberOfOutputPorts();
   for (int i=0; i<numPorts; i++)
     {
-    vtkInformation *info = outputVector->GetInformationObject(i);
+    // vtkInformation *info = outputVector->GetInformationObject(i);
+    // Jerry
+    vtkInformation *info = outputVector->GetInformationObject(0);
     info->Set(vtkStreamingDemandDrivenPipeline::MAXIMUM_NUMBER_OF_PIECES(),-1);
     }
   
@@ -1786,7 +1828,7 @@ int vtkXdmfReader::RequestInformation(
       {
       vtkDebugMacro(<< "Processing grid: " << currentGridIterator->first.c_str() << " / " << outputGrid);
       if (this->Internals->RequestActualGridInformation(
-            &currentGridIterator->second, outputGrid, outputVector) )
+            &currentGridIterator->second, outputGrid, this->NumberOfEnabledActualGrids, outputVector) )
         {
         outputGrid ++;
         }
@@ -1799,6 +1841,7 @@ int vtkXdmfReader::RequestInformation(
 int vtkXdmfReaderInternal::RequestActualGridInformation(
   vtkXdmfReaderActualGrid* currentActualGrid,
   int outputGrid,
+  int numberOfGrids,
   vtkInformationVector* outputVector)
 {
   // Handle single grid
@@ -1806,7 +1849,9 @@ int vtkXdmfReaderInternal::RequestActualGridInformation(
     {
     // In multi-process mode, the grid is on every process otherwise
     // there is some issue with UPDATE_EXTENT.
-    vtkInformation* info = outputVector->GetInformationObject(outputGrid);
+    //vtkInformation* info = outputVector->GetInformationObject(outputGrid);
+    // Jerry
+    vtkInformation* info = outputVector->GetInformationObject(0);
  
     return this->RequestSingleGridInformation(currentActualGrid->Grid,info);
                                            
@@ -1814,12 +1859,15 @@ int vtkXdmfReaderInternal::RequestActualGridInformation(
   // Handle collection
   else if ( currentActualGrid->Collection )
     { 
-    vtkInformation* info = outputVector->GetInformationObject(outputGrid);
+    // Jerry
+    // vtkInformation* info = outputVector->GetInformationObject(outputGrid);
+    vtkInformation* info = outputVector->GetInformationObject(0);
       
     vtkMultiGroupDataInformation *compInfo=vtkMultiGroupDataInformation::New();
     
     currentActualGrid->Collection->UpdateCounts();
     int levels=currentActualGrid->Collection->GetNumberOfLevels();
+    // int levels = 1;
     compInfo->SetNumberOfGroups(levels);
     
     int level=0;
