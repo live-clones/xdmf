@@ -53,6 +53,11 @@ IF (VTK_FOUND)
   ENDIF(VTK_BUILD_SHARED_LIBS OR BUILD_SHARED_LIBS)
   ADD_LIBRARY(vtkXdmf ${LIBTYPE} ${Xdmf_SRCS})
   TARGET_LINK_LIBRARIES(vtkXdmf vtkIO Xdmf vtkRendering vtkParallel)
+  
+  IF (VTK_USE_MPI)
+    # Needed for mpich 2
+    ADD_DEFINITIONS("-DMPICH_IGNORE_CXX_SEEK")
+  ENDIF (VTK_USE_MPI)
 
   # Create Tcl wrappers if VTK is wrapped in Tcl.
   IF(VTK_WRAP_TCL)
