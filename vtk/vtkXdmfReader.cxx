@@ -86,7 +86,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.7");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.8");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -1021,44 +1021,129 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
       case  XDMF_HEX :
         vType = VTK_HEXAHEDRON;
         break;
+      case XDMF_MIXED :
+        vType = -1;
+        break;
       default :
-        XdmfErrorMessage("Unknown Topology Type");
+        XdmfErrorMessage("Unknown Topology Type = " << xdmfGrid->GetTopology()->GetTopologyType());
         return 1;
       }
-    NodesPerElement = xdmfGrid->GetTopology()->GetNodesPerElement();
-    if ( xdmfGrid->GetTopology()->GetConnectivity()->GetRank() == 2 )
-      {
-      NodesPerElement = xdmfGrid->GetTopology()->GetConnectivity()->GetDimension(1);
-      }
+      if( xdmfGrid->GetTopology()->GetTopologyType() != XDMF_MIXED){
+        NodesPerElement = xdmfGrid->GetTopology()->GetNodesPerElement();
+        if ( xdmfGrid->GetTopology()->GetConnectivity()->GetRank() == 2 )
+          {
+          NodesPerElement = xdmfGrid->GetTopology()->GetConnectivity()->GetDimension(1);
+          }
     
-    /* Create Cell Type Array */
-    Length = xdmfGrid->GetTopology()->GetConnectivity()->GetNumberOfElements();
-    Connections = new XdmfInt64[ Length ];
-    xdmfGrid->GetTopology()->GetConnectivity()->GetValues( 0, Connections, Length );
+        /* Create Cell Type Array */
+        Length = xdmfGrid->GetTopology()->GetConnectivity()->GetNumberOfElements();
+        Connections = new XdmfInt64[ Length ];
+        xdmfGrid->GetTopology()->GetConnectivity()->GetValues( 0, Connections, Length );
     
-    NumberOfElements = xdmfGrid->GetTopology()->GetShapeDesc()->GetNumberOfElements();
-    ctp = cell_types = new int[ NumberOfElements ];
+        NumberOfElements = xdmfGrid->GetTopology()->GetShapeDesc()->GetNumberOfElements();
+        ctp = cell_types = new int[ NumberOfElements ];
     
-    /* Create Cell Array */
-    verts = vtkCellArray::New();
+        /* Create Cell Array */
+        verts = vtkCellArray::New();
     
-    /* Get the pointer */
-    connections = verts->WritePointer(
-      NumberOfElements,
-      NumberOfElements * ( 1 + NodesPerElement ));
+        /* Get the pointer */
+        connections = verts->WritePointer(
+          NumberOfElements,
+          NumberOfElements * ( 1 + NodesPerElement ));
     
-    /* Connections : N p1 p2 ... pN */
-    /* i.e. Triangles : 3 0 1 2    3 3 4 5   3 6 7 8 */
-    index = 0;
-    for( j = 0 ; j < NumberOfElements; j++ )
-      {
-      *ctp++ = vType;
-      *connections++ = NodesPerElement;
-      for( i = 0 ; i < NodesPerElement; i++ )
-        {
-        *connections++ = Connections[index++];
-        }
-      }
+        /* Connections : N p1 p2 ... pN */
+        /* i.e. Triangles : 3 0 1 2    3 3 4 5   3 6 7 8 */
+        index = 0;
+        for( j = 0 ; j < NumberOfElements; j++ )
+          {
+          *ctp++ = vType;
+          *connections++ = NodesPerElement;
+          for( i = 0 ; i < NodesPerElement; i++ )
+            {
+            *connections++ = Connections[index++];
+            }
+          }
+    } else {
+        // Mixed Topology
+        /* Create Cell Type Array */
+        vtkIdTypeArray *IdArray;
+        vtkIdType RealSize;
+
+        Length = xdmfGrid->GetTopology()->GetConnectivity()->GetNumberOfElements();
+        Connections = new XdmfInt64[ Length ];
+        xdmfGrid->GetTopology()->GetConnectivity()->GetValues( 0, Connections, Length );
+        NumberOfElements = xdmfGrid->GetTopology()->GetShapeDesc()->GetNumberOfElements();
+        ctp = cell_types = new int[ NumberOfElements ];
+    
+        /* Create Cell Array */
+        verts = vtkCellArray::New();
+    
+        /* Get the pointer. Make it Big enough ... too big for now */
+        cout << "::::: Length = " << Length << endl;
+        connections = verts->WritePointer(
+          NumberOfElements,
+          Length);
+        //   Length);
+        /* Connections : N p1 p2 ... pN */
+        /* i.e. Triangles : 3 0 1 2    3 3 4 5   3 6 7 8 */
+        index = 0;
+        for( j = 0 ; j < NumberOfElements; j++ )
+          {
+            switch ( Connections[index++] )
+              {
+              case  XDMF_POLYVERTEX :
+                vType = VTK_POLY_VERTEX;
+                NodesPerElement = Connections[index++];
+                break;
+              case  XDMF_POLYLINE :
+                vType = VTK_POLY_LINE;
+                NodesPerElement = Connections[index++];
+                break;
+              case  XDMF_POLYGON :
+                vType = VTK_POLYGON;
+                NodesPerElement = Connections[index++];
+                break;
+              case  XDMF_TRI :
+                vType = VTK_TRIANGLE;
+                NodesPerElement = 3;
+                break;
+              case  XDMF_QUAD :
+                vType = VTK_QUAD;
+                NodesPerElement = 4;
+                break;
+              case  XDMF_TET :
+                vType = VTK_TETRA;
+                NodesPerElement = 4;
+                break;
+              case  XDMF_PYRAMID :
+                vType = VTK_PYRAMID;
+                NodesPerElement = 5;
+                break;
+              case  XDMF_WEDGE :
+                vType = VTK_WEDGE;
+                NodesPerElement = 6;
+                break;
+              case  XDMF_HEX :
+                vType = VTK_HEXAHEDRON;
+                NodesPerElement = 8;
+                break;
+              default :
+                XdmfErrorMessage("Unknown Topology Type");
+                return 1;
+              }
+          *ctp++ = vType;
+          *connections++ = NodesPerElement;
+          for( i = 0 ; i < NodesPerElement; i++ )
+            {
+            *connections++ = Connections[index++];
+            }
+          }
+    // Resize the Array to the Proper Size
+    IdArray = verts->GetData();
+    vtkDebugWithObjectMacro(this->Reader, "Resizing to " << index << " elements");
+    RealSize = index - 1;
+    IdArray->Resize(RealSize);
+    }
     delete [] Connections;
     vGrid->SetCells(cell_types, verts);
     /* OK, because of reference counting */
