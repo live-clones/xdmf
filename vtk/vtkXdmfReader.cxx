@@ -86,7 +86,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.8");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.9");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -229,9 +229,9 @@ public:
     {
     if ( this->DataItem )
       {
-      cout << "....Deleting DataItem " << this->DataItem << endl;
+      // cout << "....Deleting DataItem " << this->DataItem << endl;
       delete this->DataItem;
-      cout << "....Back from Deleting DataItem " << this->DataItem << endl;
+      // cout << "....Back from Deleting DataItem " << this->DataItem << endl;
       this->DataItem = 0;
       }
     this->ArrayConverter->Delete();
@@ -741,7 +741,7 @@ int vtkXdmfReader::RequestData(
         currentGridIterator->first.c_str(),&currentGridIterator->second,
         outputGrid, this->NumberOfEnabledActualGrids, outputVector);
       outputGrid++;
-       cout << "Progress " << 1.0 * outputGrid / this->NumberOfEnabledActualGrids << endl;
+       // cout << "Progress " << 1.0 * outputGrid / this->NumberOfEnabledActualGrids << endl;
       this->UpdateProgress(1.0 * outputGrid / this->NumberOfEnabledActualGrids);
       }
     }
@@ -757,7 +757,7 @@ int vtkXdmfReaderInternal::RequestActualGridData(
   int numberOfGrids,
   vtkInformationVector *outputVector)
 {
-    cout << " ........... In RequestActualGridData" << endl;
+    // cout << " ........... In RequestActualGridData" << endl;
   vtkInformation *info=outputVector->GetInformationObject(0);
   int procId=info->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER());
   int nbProcs=info->Get(vtkStreamingDemandDrivenPipeline::UPDATE_NUMBER_OF_PIECES());
@@ -773,7 +773,7 @@ int vtkXdmfReaderInternal::RequestActualGridData(
     // int levels = 1;
     
     int level=0;
-    cout << "mgd->SetNumberOfDataSets(" << outputGrid << "," << currentActualGrid->Collection->GetNumberOfDataSets(level) << ")" << endl;
+    // cout << "mgd->SetNumberOfDataSets(" << outputGrid << "," << currentActualGrid->Collection->GetNumberOfDataSets(level) << ")" << endl;
     mgd->SetNumberOfDataSets(outputGrid, currentActualGrid->Collection->GetNumberOfDataSets(level));
     while(level<levels)
       {
@@ -781,7 +781,7 @@ int vtkXdmfReaderInternal::RequestActualGridData(
       ++level;
       }
  
-   cout << "level = " << level << " levels = " << levels << " numberOfDataSets = " << numberOfDataSets << endl; 
+   // cout << "level = " << level << " levels = " << levels << " numberOfDataSets = " << numberOfDataSets << endl; 
     vtkXdmfReaderGridCollection::SetOfGrids::iterator gridIt;
     vtkXdmfReaderGridCollection::SetOfGrids::iterator gridItEnd;
     
@@ -826,7 +826,7 @@ int vtkXdmfReaderInternal::RequestActualGridData(
       int index=currentIndex[level];
       if(datasetIdx<blockStart || datasetIdx>blockEnd)
         {
-             cout << " mgd->SetDataSet(0) for index " << index << " outputGrid " << outputGrid << " datasetIdx " << datasetIdx << endl;
+             // cout << " mgd->SetDataSet(0) for index " << index << " outputGrid " << outputGrid << " datasetIdx " << datasetIdx << endl;
         // mgd->SetDataSet(level,index,0); // empty, on another processor
         mgd->SetDataSet(outputGrid, index, 0); // empty, on another processor
         }
@@ -837,7 +837,7 @@ int vtkXdmfReaderInternal::RequestActualGridData(
           {
           vtkUnstructuredGrid *ds=vtkUnstructuredGrid::New();
           ds->SetMaximumNumberOfPieces(1);
-             cout << " 1 mgd->SetDataSet(ds) for index " << index << " outputGrid " << outputGrid << " datasetIdx " << datasetIdx << endl;
+             // cout << " 1 mgd->SetDataSet(ds) for index " << index << " outputGrid " << outputGrid << " datasetIdx " << datasetIdx << endl;
           // mgd->SetDataSet(level,index,ds);
           mgd->SetDataSet(outputGrid, index, ds);
           ds->Delete();
@@ -846,7 +846,7 @@ int vtkXdmfReaderInternal::RequestActualGridData(
                  xdmfGrid->GetTopology()->GetTopologyType() == XDMF_3DSMESH )
           {
           vtkStructuredGrid *ds=vtkStructuredGrid::New();
-             cout << " 2 mgd->SetDataSet(ds) for index " << index << " level " << level << " datasetIdx " << datasetIdx << endl;
+             // cout << " 2 mgd->SetDataSet(ds) for index " << index << " level " << level << " datasetIdx " << datasetIdx << endl;
           // mgd->SetDataSet(level,index,ds);
           mgd->SetDataSet(outputGrid, index, ds);
           ds->Delete();
@@ -878,7 +878,7 @@ int vtkXdmfReaderInternal::RequestActualGridData(
         vtkDataObject *ds=mgd->GetDataSet(outputGrid,index);
         vtkInformation *subInfo=compInfo->GetInformation(level,index);
         result=this->RequestSingleGridData("",gridIt->second,subInfo,ds,1);
-        cout << "ds level " << level << " index " << index << " = " << endl;
+        // cout << "ds level " << level << " index " << index << " = " << endl;
         // ds->Print(std::cout);
         }
       ++currentIndex[level];
@@ -1079,7 +1079,7 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
         verts = vtkCellArray::New();
     
         /* Get the pointer. Make it Big enough ... too big for now */
-        cout << "::::: Length = " << Length << endl;
+        // cout << "::::: Length = " << Length << endl;
         connections = verts->WritePointer(
           NumberOfElements,
           Length);
@@ -1140,8 +1140,8 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
           }
     // Resize the Array to the Proper Size
     IdArray = verts->GetData();
-    vtkDebugWithObjectMacro(this->Reader, "Resizing to " << index << " elements");
     RealSize = index - 1;
+    vtkDebugWithObjectMacro(this->Reader, "Resizing to " << RealSize << " elements");
     IdArray->Resize(RealSize);
     }
     delete [] Connections;
