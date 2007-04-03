@@ -44,6 +44,7 @@
 #define XDMF_PYRAMID        7
 #define XDMF_WEDGE          8
 #define XDMF_HEX            9
+#define XDMF_MIXED          0x70
 #define XDMF_2DSMESH        0x0100
 #define XDMF_2DRECTMESH     0x0101
 #define XDMF_2DCORECTMESH   0x0102
@@ -67,6 +68,7 @@ Currently supported BASE topologies are :
       PYRAMID ............. 4 Triangles, QUADRILATERAL Base
       WEDGE ............... 2 Trianges, 2 QUADRILATERAL and QUADRILATERAL Base
       HEXAHEDRON .......... 6 QUADRILATERAL Faces
+      MIXED ............... A Mixture of Unstructured Base Topologies
       2DSMESH ............. General ( Curved )
       2DRECTMESH .......... Rectilinear
       2DCORECTMESH......... Co-Rectilinear
@@ -90,12 +92,22 @@ Currently supported BASE topologies are :
 <Topology Type="Tetrahedron"
  NumberOfElements="1838"
  BaseOffset="1" >
-    <DataStructure Format="HDF"
+    <DataItem Format="HDF"
      Dimensions="1838 4"
      DataType="Int" >
            Shapes.h5:/Block 1/Connections
    </DataStructure>
 </Topology>
+
+   For Mixed Topologies the DataItem for Connections defines a list that has
+   the cell types mixed in with the connectivity. Cell types POLYVERTEX, POLYLINE,
+   and POLYGON are followed by the number of entries. For example, the connectivity
+   for a TETRAHEDRON (cell type = 6) followed by a POLYGON (cell type = 3) with 5 points might look 
+   like this :
+
+   6 20 25 100 200  3 5 300 301 302 303 304
+
+   The Tet uses point index 20, 25, 100, and 200 while the polygon uses 300 - 304.
 \endverbatim
 */
 

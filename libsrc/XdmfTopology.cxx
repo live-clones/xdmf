@@ -94,6 +94,8 @@ if ( XDMF_WORD_CMP( topologyType, "NOTOPOLOGY") ){
   newTopologyType = XDMF_WEDGE;
 } else if( XDMF_WORD_CMP( topologyType, "HEXAHEDRON") ){
   newTopologyType = XDMF_HEX;
+} else if( XDMF_WORD_CMP( topologyType, "MIXED") ){
+  newTopologyType = XDMF_MIXED;
 } else if( XDMF_WORD_CMP( topologyType, "2DSMESH") ){
   newTopologyType = XDMF_2DSMESH;
 } else if( XDMF_WORD_CMP( topologyType, "2DRECTMESH") ){
@@ -139,6 +141,8 @@ XdmfTopology::GetTopologyTypeAsString( void ) {
       return("Wedge");
     case  XDMF_HEX :
       return("Hexahedron");
+    case XDMF_MIXED :
+      return("Mixed");
     case  XDMF_2DSMESH :
       return("2DSMesh");
     case  XDMF_2DRECTMESH :
@@ -191,6 +195,9 @@ XdmfInt32  nodesPerElement = 0;
       break;
     case  XDMF_HEX :
       nodesPerElement = 8;
+      break;
+    case  XDMF_MIXED :
+      nodesPerElement = 0;
       break;
     case  XDMF_2DSMESH :
       nodesPerElement = 1;
@@ -354,7 +361,11 @@ if( this->GetClass() == XDMF_UNSTRUCTURED ){
 
     if( this->BaseOffset ) {
       XdmfDebug("Adjusting due to BaseOffset");
-      *this->Connectivity -= this->BaseOffset;
+      if(this->TopologyType == XDMF_MIXED){
+        XdmfDebug("Cannot Adjust BaseOffset of Mixed Topology Yet");
+      } else {
+        *this->Connectivity -= this->BaseOffset;
+        }
       }
   } else {
     // Default Connectivity
