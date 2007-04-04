@@ -86,7 +86,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.11");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.12");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -1021,6 +1021,27 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
       case  XDMF_HEX :
         vType = VTK_HEXAHEDRON;
         break;
+      case  XDMF_EDGE_3 :
+        vType = VTK_QUADRATIC_EDGE ;
+        break;
+      case  XDMF_TRI_6 :
+        vType = VTK_QUADRATIC_TRIANGLE ;
+        break;
+      case  XDMF_QUAD_8 :
+        vType = VTK_QUADRATIC_QUAD ;
+        break;
+      case  XDMF_TET_10 :
+        vType = VTK_QUADRATIC_TETRA ;
+        break;
+      case  XDMF_PYRAMID_13 :
+        vType = VTK_QUADRATIC_PYRAMID ;
+        break;
+      case  XDMF_WEDGE_15 :
+        vType = VTK_QUADRATIC_WEDGE ;
+        break;
+      case  XDMF_HEX_20 :
+        vType = VTK_QUADRATIC_HEXAHEDRON ;
+        break;
       case XDMF_MIXED :
         vType = -1;
         break;
@@ -1126,6 +1147,34 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
               case  XDMF_HEX :
                 vType = VTK_HEXAHEDRON;
                 NodesPerElement = 8;
+                break;
+              case  XDMF_EDGE_3 :
+                vType = VTK_QUADRATIC_EDGE ;
+                NodesPerElement = 3;
+                break;
+              case  XDMF_TRI_6 :
+                vType = VTK_QUADRATIC_TRIANGLE ;
+                NodesPerElement = 6;
+                break;
+              case  XDMF_QUAD_8 :
+                vType = VTK_QUADRATIC_QUAD ;
+                NodesPerElement = 8;
+                break;
+              case  XDMF_TET_10 :
+                vType = VTK_QUADRATIC_TETRA ;
+                NodesPerElement = 10;
+                break;
+              case  XDMF_PYRAMID_13 :
+                vType = VTK_QUADRATIC_PYRAMID ;
+                NodesPerElement = 13;
+                break;
+              case  XDMF_WEDGE_15 :
+                vType = VTK_QUADRATIC_WEDGE ;
+                NodesPerElement = 15;
+                break;
+              case  XDMF_HEX_20 :
+                vType = VTK_QUADRATIC_HEXAHEDRON ;
+                NodesPerElement = 20;
                 break;
               default :
                 XdmfErrorMessage("Unknown Topology Type");

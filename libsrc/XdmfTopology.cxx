@@ -94,6 +94,20 @@ if ( XDMF_WORD_CMP( topologyType, "NOTOPOLOGY") ){
   newTopologyType = XDMF_WEDGE;
 } else if( XDMF_WORD_CMP( topologyType, "HEXAHEDRON") ){
   newTopologyType = XDMF_HEX;
+} else if( XDMF_WORD_CMP( topologyType, "EDGE_3") ){
+  newTopologyType = XDMF_EDGE_3;
+} else if( XDMF_WORD_CMP( topologyType, "TRI_6") ){
+  newTopologyType = XDMF_TRI_6;
+} else if( XDMF_WORD_CMP( topologyType, "QUAD_8") ){
+  newTopologyType = XDMF_QUAD_8;
+} else if( XDMF_WORD_CMP( topologyType, "TET_10") ){
+  newTopologyType = XDMF_TET_10;
+} else if( XDMF_WORD_CMP( topologyType, "PYRAMID_13") ){
+  newTopologyType = XDMF_PYRAMID_13;
+} else if( XDMF_WORD_CMP( topologyType, "WEDGE_15") ){
+  newTopologyType = XDMF_WEDGE_15;
+} else if( XDMF_WORD_CMP( topologyType, "HEX_20") ){
+  newTopologyType = XDMF_HEX_20;
 } else if( XDMF_WORD_CMP( topologyType, "MIXED") ){
   newTopologyType = XDMF_MIXED;
 } else if( XDMF_WORD_CMP( topologyType, "2DSMESH") ){
@@ -141,6 +155,20 @@ XdmfTopology::GetTopologyTypeAsString( void ) {
       return("Wedge");
     case  XDMF_HEX :
       return("Hexahedron");
+    case  XDMF_EDGE_3 :
+      return("Edge_3");
+    case  XDMF_TRI_6 :
+      return("Triangle_6");
+    case  XDMF_QUAD_8 :
+      return("Quadrilateral_8");
+    case  XDMF_TET_10 :
+      return("Tetrehedron_10");
+    case  XDMF_PYRAMID_13 :
+      return("Pyramid_13");
+    case  XDMF_WEDGE_15 :
+      return("Wedge_15");
+    case  XDMF_HEX_20 :
+      return("Hexahedron_20");
     case XDMF_MIXED :
       return("Mixed");
     case  XDMF_2DSMESH :
@@ -195,6 +223,27 @@ XdmfInt32  nodesPerElement = 0;
       break;
     case  XDMF_HEX :
       nodesPerElement = 8;
+      break;
+    case  XDMF_EDGE_3 :
+      nodesPerElement = 3;
+      break;
+    case  XDMF_TRI_6 :
+      nodesPerElement = 6;
+      break;
+    case  XDMF_QUAD_8 :
+      nodesPerElement = 8;
+      break;
+    case  XDMF_TET_10 :
+      nodesPerElement = 10;
+      break;
+    case  XDMF_PYRAMID_13 :
+      nodesPerElement = 13;
+      break;
+    case  XDMF_WEDGE_15 :
+      nodesPerElement = 15;
+      break;
+    case  XDMF_HEX_20 :
+      nodesPerElement = 20;
       break;
     case  XDMF_MIXED :
       nodesPerElement = 0;

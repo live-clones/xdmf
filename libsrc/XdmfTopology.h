@@ -34,17 +34,24 @@
 #define XDMF_UNSTRUCTURED   1
 
 // Topologies
-#define  XDMF_NOTOPOLOGY    0
-#define XDMF_POLYVERTEX     1
-#define XDMF_POLYLINE       2
-#define XDMF_POLYGON        3
-#define XDMF_TRI            4
-#define XDMF_QUAD           5
-#define XDMF_TET            6
-#define XDMF_PYRAMID        7
-#define XDMF_WEDGE          8
-#define XDMF_HEX            9
-#define XDMF_MIXED          0x70
+#define XDMF_NOTOPOLOGY     0x0
+#define XDMF_POLYVERTEX     0x1
+#define XDMF_POLYLINE       0x2
+#define XDMF_POLYGON        0x3
+#define XDMF_TRI            0x4
+#define XDMF_QUAD           0x5
+#define XDMF_TET            0x6
+#define XDMF_PYRAMID        0x7
+#define XDMF_WEDGE          0x8
+#define XDMF_HEX            0x9
+#define XDMF_EDGE_3         0x0022
+#define XDMF_TRI_6          0x0024
+#define XDMF_QUAD_8         0x0025
+#define XDMF_TET_10         0x0026
+#define XDMF_PYRAMID_13     0x0027
+#define XDMF_WEDGE_15       0x0028
+#define XDMF_HEX_20         0x0029
+#define XDMF_MIXED          0x0070
 #define XDMF_2DSMESH        0x0100
 #define XDMF_2DRECTMESH     0x0101
 #define XDMF_2DCORECTMESH   0x0102
@@ -68,6 +75,13 @@ Currently supported BASE topologies are :
       PYRAMID ............. 4 Triangles, QUADRILATERAL Base
       WEDGE ............... 2 Trianges, 2 QUADRILATERAL and QUADRILATERAL Base
       HEXAHEDRON .......... 6 QUADRILATERAL Faces
+      EDGE_3 .............. 3 Node High Order Line
+      TRIANGLE_6 .......... 6 Node High Order Triangle
+      QUADRILATERAL_8 ..... 8 Node High Order Quadrilateral
+      TETRAHEDRON_10 ...... 10 Node High Order Tetrahedron
+      PYRAMID_13 .......... 13 Node High Order Pyramid
+      WEDGE_15 ............ 15 Node High Order Wedge
+      HEXAHEDRON_20 ....... 20 Node High Order Hexahedron
       MIXED ............... A Mixture of Unstructured Base Topologies
       2DSMESH ............. General ( Curved )
       2DRECTMESH .......... Rectilinear
