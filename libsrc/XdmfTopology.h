@@ -261,6 +261,8 @@ public:
   XdmfArray *GetConnectivity( XdmfArray *Array = NULL );
 //! Set the connectivity
   XdmfInt32 SetConnectivity( XdmfArray *Array );
+//! Get the Offsets of each cell in the Connectivity Array
+  XdmfArray *GetCellOffsets(XdmfArray *Array = NULL);
 //! Update the Heavy Data
 /*!
 	If the Heavy Data is dynamic (i.e. stored in NDGM) or
@@ -283,6 +285,7 @@ protected:
   XdmfInt32  Order[ XDMF_MAX_ORDER ];
   XdmfInt32  NodesPerElement;
   XdmfArray  *Connectivity;
+  XdmfArray  *CellOffsets;
   XdmfInt32  OrderIsDefault;
   XdmfInt32  ConnectivityIsMine;
   XdmfInt32  BaseOffset;

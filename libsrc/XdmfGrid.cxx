@@ -25,6 +25,8 @@
 #include "XdmfGrid.h"
 
 #include "XdmfDOM.h"
+#include "XdmfDataItem.h"
+#include "XdmfArray.h"
 #include "XdmfTopology.h"
 #include "XdmfGeometry.h"
 #include "XdmfAttribute.h"
@@ -76,6 +78,8 @@ XdmfGrid::GetGridTypeAsString(){
                 return("Collection");
             case XDMF_GRID_TREE :
                 return("Tree");
+            case XDMF_GRID_SUBSET :
+                return("Subset");
             default :
                 XdmfErrorMessage("Unknown Grid Type");
                 return(0);
@@ -83,6 +87,22 @@ XdmfGrid::GetGridTypeAsString(){
     }else{
         return(this->Topology->GetTopologyTypeAsString());
     }
+}
+
+// Derived Version
+XdmfInt32
+XdmfGrid::Copy(XdmfElement *Source){
+    XdmfGrid *g;
+
+    XdmfDebug("XdmfGrid::Copy(XdmfElement *Source)");
+    g = (XdmfGrid *)Source;
+    cout << "Copy Grid Information from " << g << endl;
+    this->Topology = g->GetTopology();
+    this->TopologyIsMine = 0;
+    if( this->GeometryIsMine && this->Geometry ) delete this->Geometry;
+    this->Geometry = g->GetGeometry();
+    this->GeometryIsMine = 0;
+    return(XDMF_SUCCESS);
 }
 
 XdmfInt32
@@ -161,6 +181,8 @@ attribute = this->Get("GridType");
 if(!attribute) attribute = this->Get("Type");
 if( XDMF_WORD_CMP(attribute, "Collection") ){
     this->GridType = XDMF_GRID_COLLECTION;
+}else if( XDMF_WORD_CMP(attribute, "Subset") ){
+    this->GridType = XDMF_GRID_SUBSET;
 }else if( XDMF_WORD_CMP(attribute, "Tree") ){
     this->GridType = XDMF_GRID_TREE;
 }else if( XDMF_WORD_CMP(attribute, "Uniform") ){
@@ -174,11 +196,12 @@ if( XDMF_WORD_CMP(attribute, "Collection") ){
     this->GridType = XDMF_GRID_UNIFORM;
 }
 if( this->GridType |= XDMF_GRID_UNIFORM ){
-    // Tree or Collection
+    // SubSet Tree or Collection
     XdmfInt32  i, nchild;
     XdmfXmlNode node;
 
-    if (this->Children){
+    nchild = this->NumberOfChildren;
+    if (this->Children && nchild){
         for(i=0 ; i < nchild ; i++){
             delete this->Children[i];
         }
@@ -196,6 +219,36 @@ if( this->GridType |= XDMF_GRID_UNIFORM ){
         if(this->Children[i]->SetDOM(this->DOM) == XDMF_FAIL) return(XDMF_FAIL);
         if(this->Children[i]->SetElement(node) == XDMF_FAIL) return(XDMF_FAIL);
         if(this->Children[i]->UpdateInformation() == XDMF_FAIL) return(XDMF_FAIL);
+    }
+    if(this->GridType == XDMF_GRID_SUBSET){
+        // Selection is the First Element Under Grid
+        XdmfXmlNode select;
+
+        cout << "Getting SubGrid Selection " << endl;
+        select = this->DOM->FindElement(NULL, 0, this->Element);
+        if(select){
+            XdmfGrid        *target;
+            XdmfDataItem    *di = new XdmfDataItem;
+            XdmfDataDesc    *shape;
+            XdmfArray       *celloff;
+            XdmfInt64       i, o, len;
+
+            target = this->Children[0];
+            if(!target){
+                XdmfErrorMessage("No Target Grid Spceified for Subset");
+                return(XDMF_FAIL);
+            }
+            di->SetDOM(this->DOM);
+            di->SetElement(select);
+            di->UpdateInformation();
+            di->Update();
+            cout << "UpdateInfo - Select Cells : " << di->GetArray()->GetValues() << endl;
+            shape = this->Topology->GetShapeDesc();
+            shape->CopyShape(di->GetDataDesc());
+            this->Topology->SetTopologyType(target->GetTopology()->GetTopologyType());
+            this->Topology->SetNodesPerElement(target->GetTopology()->GetNodesPerElement());
+            delete di;
+        }
     }
     return(XDMF_SUCCESS);
 }
@@ -266,6 +319,58 @@ if(this->GridType != XDMF_GRID_UNIFORM){
         if(this->Children[i]->Update() == XDMF_FAIL){
             XdmfErrorMessage("Error in Update() of Child Grid " << i);
             return(XDMF_FAIL);
+        }
+    }
+    if(this->GridType == XDMF_GRID_SUBSET){
+        // Selection is the First Element Under Grid
+        XdmfXmlNode select;
+
+        cout << "Getting SubGrid Selection " << endl;
+        select = this->DOM->FindElement(NULL, 0, this->Element);
+        if(select){
+            XdmfGrid        *target;
+            XdmfDataItem    *di = new XdmfDataItem;
+            XdmfArray       *celloff, *newconn;
+            XdmfInt64       i, o, o1, len, total;
+            XdmfInt64       *cell, cellsize = 100;
+
+            target = this->Children[0];
+            cell = new XdmfInt64[ cellsize ];
+            di->SetDOM(this->DOM);
+            di->SetElement(select);
+            di->UpdateInformation();
+            di->Update();
+            cout << "Update - Select Cells : " << di->GetArray()->GetValues() << endl;
+            celloff = target->GetTopology()->GetCellOffsets();
+            newconn = new XdmfArray;
+            newconn->SetNumberOfElements(target->GetTopology()->GetConnectivity()->GetNumberOfElements());
+            total = 0;
+            for(i=0; i< di->GetArray()->GetNumberOfElements() ; i++){
+                o = celloff->GetValueAsInt64(di->GetArray()->GetValueAsInt64(i));
+                o1 = celloff->GetValueAsInt64(di->GetArray()->GetValueAsInt64(i) + 1);
+                cout << " Getting " << o << " thru " << o1 << endl;
+                len = o1 - o;
+                if(len > cellsize){
+                    cellsize = len + 1;
+                    delete cell;
+                    cell = new XdmfInt64[ cellsize ];
+                }
+                cout << " Conns = " << target->GetTopology()->GetConnectivity()->GetValues(o, len) << endl;
+                if(target->GetTopology()->GetConnectivity()->GetValues(o, cell, len) != XDMF_SUCCESS){
+                    XdmfErrorMessage("Error Getting Cell Connectivity " << o << " to " << o1 );
+                    return(XDMF_FAIL);
+                }
+                newconn->SetValues(total, cell, len);
+                cout << " Offset " << i << " = " << o << " len = " << len << " total " << total << endl;
+                total += len;
+
+            }
+            newconn->SetNumberOfElements(total);
+            this->Topology->SetConnectivity(newconn);
+            if( this->GeometryIsMine && this->Geometry ) delete this->Geometry;
+            this->Geometry = target->GetGeometry();
+            this->GeometryIsMine = 0;
+            delete cell;
         }
     }
     return(XDMF_SUCCESS);

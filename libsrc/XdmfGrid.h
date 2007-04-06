@@ -35,6 +35,7 @@ class XdmfAttribute;
 #define XDMF_GRID_UNIFORM       0x00000 // Type is XdmfTopology Type
 #define XDMF_GRID_COLLECTION    0x10000
 #define XDMF_GRID_TREE          0x20000
+#define XDMF_GRID_SUBSET        0x40000
 #define XDMF_GRID_UNSET         0x0FFFF
 
 #define XDMF_GRID_MASK          0xF0000
@@ -42,10 +43,11 @@ class XdmfAttribute;
 //! In memory representation of an XDMF Grid
 /*!
         XdmfGrid is the in memory representation of the Xdmf Grid
-        structure defined in the XML. XdmfGrids can be one of three 
-        types : \b Uniform , \b Collection or \b Tree. Uniform is a 
+        structure defined in the XML. XdmfGrids can be one of four 
+        types : \b Uniform , \b Collection \b Tree or \b Subset. Uniform is a 
         Homogeneous Single Grid (i.e. a group of triangles). A \b Collection
-        is an array of Uniform grids. A Tree is a Hierarchial group.
+        is an array of Uniform grids. A Subset specifies a cell selection
+        of a previously defined grid. A Tree is a Hierarchial group.
         Uniform XdmfGrids have \b Topolgy (i.e. 
         what type of grid and the connectivity if it's unstructured )
         \b Geometry ( the XYZ values for the grid nodes ) and zero
@@ -140,6 +142,9 @@ public:
   XdmfGetValueMacro( GridType, XdmfInt32);
   //! Set the Grid Type
   XdmfSetValueMacro( GridType, XdmfInt32);
+
+  //! Copy Information from Another DataItem
+  XdmfInt32 Copy(XdmfElement *Source);
 
   //! Get the Number of Children
   XdmfGetValueMacro( NumberOfChildren, XdmfInt32);

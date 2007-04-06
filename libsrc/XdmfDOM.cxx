@@ -440,7 +440,7 @@ XdmfDOM::FindElement(XdmfConstString TagName, XdmfInt32 Index, XdmfXmlNode Node,
 XdmfString type = (XdmfString )TagName;
 XdmfXmlNode child;
 
-this->SetDebug(1);
+// this->SetDebug(1);
 if(TagName){
     XdmfDebug("FindElement " << TagName << " Index = " << Index);
 }else{

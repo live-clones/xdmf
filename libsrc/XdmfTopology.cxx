@@ -45,6 +45,7 @@ XdmfTopology::XdmfTopology() {
   this->Shape = new XdmfDataDesc;
   this->Shape->SetShape( 1, &Dimensions );
   this->Connectivity = NULL;
+  this->CellOffsets = NULL;
   this->ConnectivityIsMine = 1;
   this->OrderIsDefault = 1;
   this->BaseOffset = 0;
@@ -52,6 +53,7 @@ XdmfTopology::XdmfTopology() {
 
 XdmfTopology::~XdmfTopology() {
   if( this->ConnectivityIsMine && this->Connectivity ) delete this->Connectivity;
+  if(this->CellOffsets) delete this->CellOffsets;
   delete this->Shape;
   }
 
@@ -326,6 +328,123 @@ return( XDMF_SUCCESS );
 
 
 XdmfArray *
+XdmfTopology::GetCellOffsets( XdmfArray *Array ){
+    XdmfInt64   *offsets;
+    XdmfInt64   *conns;
+
+    // Only Necessary for Mixed Topology but will work for any unstructured
+if(this->GetClass() == XDMF_STRUCTURED){
+    XdmfErrorMessage("Grid is Structured: No Connectivity");
+    return(NULL);
+}
+if(!this->Connectivity){
+    XdmfErrorMessage("Cannot get Cell Offsets without Connectivity");
+    return(NULL);
+}
+if(!this->CellOffsets){
+    this->CellOffsets = new XdmfArray;
+    this->CellOffsets->SetNumberType(XDMF_INT64_TYPE);
+    this->CellOffsets->SetNumberOfElements(1);
+}
+if((this->GetNumberOfElements() + 1)  != this->CellOffsets->GetNumberOfElements()){
+    this->CellOffsets->SetNumberOfElements(this->GetNumberOfElements() + 1);
+}else{
+    // Already done
+    if( Array ){
+      CopyArray( this->CellOffsets, Array );
+      return( Array );
+    }
+    return(this->CellOffsets);
+}
+// We don't know what number type Connectivity is 
+conns = new XdmfInt64[ this->Connectivity->GetNumberOfElements() ];
+this->Connectivity->GetValues(0, conns, this->Connectivity->GetNumberOfElements());
+offsets = (XdmfInt64 *)this->CellOffsets->GetDataPointer();
+if(this->TopologyType == XDMF_MIXED){
+    XdmfInt64   i, index = 0;
+    XdmfInt32   npe, celltype;
+    for(i=0;i<this->GetNumberOfElements();i++){
+        // cout << " index = " << index << " *conns = " << *conns << endl;
+        celltype = *conns;
+        *offsets++ = index;
+        // Skip Cell Type
+        index++;
+        conns++;
+        // cout << " celltype = " << celltype << endl;
+        switch ( celltype ){
+            case  XDMF_POLYVERTEX :
+            case  XDMF_POLYLINE :
+            case  XDMF_POLYGON :
+              npe = *conns++;
+              index++;
+              break;
+            case  XDMF_TRI :
+              npe = 3;
+              break;
+            case  XDMF_QUAD :
+              npe = 4;
+              break;
+            case  XDMF_TET :
+              npe = 4;
+              break;
+            case  XDMF_PYRAMID :
+              npe = 5;
+              break;
+            case  XDMF_WEDGE :
+              npe = 6;
+              break;
+            case  XDMF_HEX :
+              npe = 8;
+              break;
+            case  XDMF_EDGE_3 :
+              npe = 3;
+              break;
+            case  XDMF_TRI_6 :
+              npe = 6;
+              break;
+            case  XDMF_QUAD_8 :
+              npe = 8;
+              break;
+            case  XDMF_TET_10 :
+              npe = 10;
+              break;
+            case  XDMF_PYRAMID_13 :
+              npe = 13;
+              break;
+            case  XDMF_WEDGE_15 :
+              npe = 15;
+              break;
+            case  XDMF_HEX_20 :
+              npe = 20;
+              break;
+            default :
+                XdmfErrorMessage("Unknown Cell Type = " << celltype);
+                break;
+        }
+        // cout << " npe = " << npe << endl;
+        conns += npe;
+        index += npe;
+    }
+    *offsets = index; // index at nelements + 1
+}else{
+    // NodesPerElement are constant
+    XdmfInt64   i, index = 0;
+    XdmfInt32   npe, celltype;
+    for(i=0;i<this->GetNumberOfElements();i++){
+        *offsets++ = index;
+        index += this->NodesPerElement;
+    }
+    *offsets = index; // index at nelements + 1
+}
+if(conns) delete conns;
+if( Array ){
+  CopyArray( this->CellOffsets, Array );
+  return( Array );
+}
+return( this->CellOffsets );
+}
+
+XdmfArray *
 XdmfTopology::GetConnectivity( XdmfArray *Array ){
 if( this->Connectivity ) {
   if( Array ){
@@ -347,7 +466,8 @@ if( XDMF_WORD_CMP(this->GetElementType(), "Topology") == 0){
     XdmfErrorMessage("Element type" << this->GetElementType() << " is not of type 'Topology'");
     return(XDMF_FAIL);
 }
-Attribute = this->Get( "Type" );
+Attribute = this->Get( "TopologyType" );
+if(!Attribute) Attribute = this->Get( "Type" );
 if( this->SetTopologyTypeFromString( Attribute ) == XDMF_FAIL ){
   XdmfErrorMessage("Bad Topology Type : " << Attribute );
   return( XDMF_FAIL );
