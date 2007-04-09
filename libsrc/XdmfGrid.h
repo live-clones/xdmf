@@ -32,13 +32,18 @@ class XdmfGeometry;
 class XdmfTopology;
 class XdmfAttribute;
 
-#define XDMF_GRID_UNIFORM       0x00000 // Type is XdmfTopology Type
+#define XDMF_GRID_UNIFORM       0x00000 // Type xor XDMF_GRID_MASK = XdmfTopology Type
 #define XDMF_GRID_COLLECTION    0x10000
 #define XDMF_GRID_TREE          0x20000
 #define XDMF_GRID_SUBSET        0x40000
 #define XDMF_GRID_UNSET         0x0FFFF
 
 #define XDMF_GRID_MASK          0xF0000
+
+
+#define XDMF_GRID_SECTION_ALL           0x100000
+#define XDMF_GRID_SECTION_DATA_ITEM     0x200000
+#define XDMF_GRID_SECTION_MASK          0xF00000
 
 //! In memory representation of an XDMF Grid
 /*!
