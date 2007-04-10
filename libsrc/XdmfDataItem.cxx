@@ -133,6 +133,7 @@ XdmfInt32 XdmfDataItem::UpdateInformationUniform(){
     Value = this->Get("Dimensions");
     if(!Value) {
         XdmfErrorMessage("Dimensions are not set in XML Element");
+        cout  << this->DOM->Serialize(this->Element) << endl;
         return(XDMF_FAIL);
     }
     if(!this->DataDesc) this->DataDesc = new XdmfDataDesc();
@@ -274,7 +275,7 @@ XdmfInt32 XdmfDataItem::UpdateFunction(){
             XdmfInt64   NCoordinates, *Coordinates;
 
             XdmfDebug("Updating Coordinate Selection");
-            Argument = this->DOM->FindElement(NULL, 0, this->Element);
+            Argument = this->DOM->FindDataElement(0, this->Element);
             TmpItem = new XdmfDataItem();
             TmpItem->SetDOM(this->DOM);
             TmpItem->SetElement(Argument);
@@ -286,7 +287,7 @@ XdmfInt32 XdmfDataItem::UpdateFunction(){
             TmpArray->GetValues( 0, Coordinates, NCoordinates );
             // Now Access the Source Data
             SrcItem = new XdmfDataItem();
-            Argument = this->DOM->FindElement(NULL, 1, this->Element);
+            Argument = this->DOM->FindDataElement(1, this->Element);
             SrcItem->SetDOM(this->DOM);
             SrcItem->SetElement(Argument);
             SrcItem->UpdateInformation();
@@ -311,7 +312,7 @@ XdmfInt32 XdmfDataItem::UpdateFunction(){
             XdmfInt64   Count[ XDMF_MAX_DIMENSION ];
 
             XdmfDebug("Updating HyperSlab");
-            Argument = this->DOM->FindElement(NULL, 0, this->Element);
+            Argument = this->DOM->FindDataElement(0, this->Element);
             TmpItem = new XdmfDataItem();
             TmpItem->SetDOM(this->DOM);
             TmpItem->SetElement(Argument);
@@ -325,7 +326,7 @@ XdmfInt32 XdmfDataItem::UpdateFunction(){
             XdmfDebug("Selection is " << TmpArray->GetValues());
             // Now Access the Source Data
             SrcItem = new XdmfDataItem();
-            Argument = this->DOM->FindElement(NULL, 1, this->Element);
+            Argument = this->DOM->FindDataElement(1, this->Element);
             SrcItem->SetDOM(this->DOM);
             SrcItem->SetElement(Argument);
             SrcItem->UpdateInformation();
@@ -359,7 +360,7 @@ XdmfInt32 XdmfDataItem::UpdateFunction(){
                 while( (c = *ch++) ) {
                     if( c > ' ') break;
                 }
-                Argument = this->DOM->FindElement( NULL, Id, this->Element );
+                Argument = this->DOM->FindDataElement(Id, this->Element );
                 TmpItem = new XdmfDataItem();
                 TmpItem->SetDOM(this->DOM);
                 TmpItem->SetElement(Argument);

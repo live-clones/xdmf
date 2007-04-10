@@ -376,7 +376,7 @@ if((this->GridType & XDMF_GRID_MASK) != XDMF_GRID_UNIFORM){
         cout << " Done Getting SubSet all" << endl;
         }else if((this->GridType & XDMF_GRID_SECTION_MASK) == XDMF_GRID_SECTION_DATA_ITEM){
             cout << "Getting SubGrid Selection " << endl;
-            select = this->DOM->FindElement(NULL, 0, this->Element);
+            select = this->DOM->FindDataElement(0, this->Element);
             if(select){
                 XdmfDataItem    *di = new XdmfDataItem;
                 XdmfArray       *celloff, *newconn;

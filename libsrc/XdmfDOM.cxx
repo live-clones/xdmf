@@ -435,6 +435,35 @@ return(this->Tree);
 }
 
 XdmfXmlNode  
+XdmfDOM::FindDataElement(XdmfInt32 Index, XdmfXmlNode Node, XdmfInt32 IgnoreInfo) {
+XdmfXmlNode child;
+
+if(!Node) {
+    if(!this->Tree) return( NULL );
+    Node = this->Tree;
+}
+child = Node->children;
+if(!child) return(NULL);
+while(child){
+    if(IgnoreInfo && XDMF_WORD_CMP("Information", (const char *)(child)->name)){
+        child = XdmfGetNextElement(child);
+    }else{
+        if(XDMF_WORD_CMP("DataItem", (const char *)(child)->name) ||
+            XDMF_WORD_CMP("DataStructure", (const char *)(child)->name) ||
+            XDMF_WORD_CMP("DataTransform", (const char *)(child)->name)
+            ){
+            if(Index <= 0){
+                return(child);
+            }
+            Index--;
+        }
+        child = XdmfGetNextElement(child);
+    }
+}
+return(NULL);
+}
+
+XdmfXmlNode  
 XdmfDOM::FindElement(XdmfConstString TagName, XdmfInt32 Index, XdmfXmlNode Node, XdmfInt32 IgnoreInfo) {
 
 XdmfString type = (XdmfString )TagName;

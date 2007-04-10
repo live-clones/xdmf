@@ -181,6 +181,15 @@ the "Information" Elements not to be counted against Index.
       XdmfInt32 Index= 0,
       XdmfXmlNode Node = NULL,
       XdmfInt32 IgnoreInfo=1);
+/*! Find DataItem, DataStructure, or DataTransform
+    This is needed for backward compatibility but will
+    be removed in the future and XML will be forced
+    to use <DataItem ....
+*/
+  XdmfXmlNode FindDataElement(
+      XdmfInt32 Index= 0,
+      XdmfXmlNode Node = NULL,
+      XdmfInt32 IgnoreInfo=1);
 //! Find the Node that has Attribute="Value"
   XdmfXmlNode FindElementByAttribute(XdmfConstString Attribute,
       XdmfConstString Value,

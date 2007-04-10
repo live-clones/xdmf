@@ -190,7 +190,7 @@ if( ( this->GeometryType == XDMF_GEOMETRY_X_Y_Z ) ||
  do {
   // Read the Data
   XdmfDebug("Reading Points ( SubElement #" << ArrayIndex + 1 << " )" );
-  PointsElement = this->DOM->FindElement(NULL, ArrayIndex, Element );
+  PointsElement = this->DOM->FindDataElement( ArrayIndex, Element );
   if( PointsElement ){
     XdmfDataItem PointsItem;
     if(PointsItem.SetDOM( this->DOM ) == XDMF_FAIL) return(XDMF_FAIL);
@@ -265,7 +265,7 @@ if( ( this->GeometryType == XDMF_GEOMETRY_X_Y_Z ) ||
       XdmfDataItem PointsItem;
       PointsItem.SetDOM(this->DOM);
       XdmfDebug("Reading Origin and Dx, Dy, Dz" );
-      PointsElement = this->DOM->FindElement(NULL, 0, this->Element );
+      PointsElement = this->DOM->FindDataElement(0, this->Element );
       if( PointsElement ){
         if(PointsItem.SetElement(PointsElement) == XDMF_FAIL) return(XDMF_FAIL);
         if(PointsItem.UpdateInformation() == XDMF_FAIL) return(XDMF_FAIL);
@@ -274,7 +274,7 @@ if( ( this->GeometryType == XDMF_GEOMETRY_X_Y_Z ) ||
         if( TmpArray ){
             TmpArray->GetValues( 0, this->Origin, 3 );
         }
-      PointsElement = this->DOM->FindElement(NULL, 1, this->Element );
+      PointsElement = this->DOM->FindDataElement(1, this->Element );
       if( PointsElement ){
         if(PointsItem.SetElement(PointsElement) == XDMF_FAIL) return(XDMF_FAIL);
         if(PointsItem.UpdateInformation() == XDMF_FAIL) return(XDMF_FAIL);
@@ -293,7 +293,7 @@ if( ( this->GeometryType == XDMF_GEOMETRY_X_Y_Z ) ||
     }
   } else if( this->GeometryType == XDMF_GEOMETRY_VXVYVZ ) {
       XdmfDebug("Reading VectorX, VectorY, VectorZ" );
-      PointsElement = this->DOM->FindElement(NULL, 0, this->Element );
+      PointsElement = this->DOM->FindDataElement(0, this->Element );
       if( PointsElement ){
         XdmfDataItem PointsItem;
         PointsItem.SetDOM(this->DOM);
@@ -311,7 +311,7 @@ if( ( this->GeometryType == XDMF_GEOMETRY_X_Y_Z ) ||
       XdmfErrorMessage("No VectorX Specified");
       return( XDMF_FAIL );
       }
-      PointsElement = this->DOM->FindElement(NULL, 1, this->Element );
+      PointsElement = this->DOM->FindDataElement(1, this->Element );
       if( PointsElement ){
         XdmfDataItem PointsItem;
         PointsItem.SetDOM(this->DOM);
@@ -329,7 +329,7 @@ if( ( this->GeometryType == XDMF_GEOMETRY_X_Y_Z ) ||
       XdmfErrorMessage("No VectorY Specified");
       return( XDMF_FAIL );
       }
-      PointsElement = this->DOM->FindElement(NULL, 2, this->Element );
+      PointsElement = this->DOM->FindDataElement(2, this->Element );
       if( PointsElement ){
         XdmfDataItem PointsItem;
         PointsItem.SetDOM(this->DOM);
