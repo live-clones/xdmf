@@ -51,6 +51,19 @@ XdmfGeometry::~XdmfGeometry() {
   }
 
 XdmfInt32
+XdmfGeometry::Adopt( XdmfElement *Child){
+    if(Child && (
+        XDMF_WORD_CMP(Child->GetElementName(), "DataItem") ||
+        XDMF_WORD_CMP(Child->GetElementName(), "Information")
+        )){
+        return(XdmfElement::Adopt(Child));
+    }else{
+        XdmfErrorMessage("Geometry can only Adopt DataItem or Information elements");
+    }
+    return(XDMF_FAIL);
+}
+
+XdmfInt32
 XdmfGeometry::SetOrigin( XdmfFloat64 X, XdmfFloat64 Y, XdmfFloat64 Z ){
 
 this->Origin[0] = X;

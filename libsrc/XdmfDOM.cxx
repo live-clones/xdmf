@@ -331,7 +331,8 @@ XdmfDOM::Create(XdmfConstString Version){
     }
     XmlString << "<?xml version=\"1.0\" ?>" << endl << endl;
     XmlString << "<Xdmf Version=\"" << Version << "\" xmlns:xi=\"" << XmlNs << "\" >" << endl;
-    XmlString << "</Xdmf>" << endl;
+    XmlString << "</Xdmf>" << endl << ends;
+    XmlString.freeze();
     Status = this->Parse(XmlString.str());
     if(Status == XDMF_FAIL) return(NULL);
     return(this->GetRoot());
@@ -387,8 +388,10 @@ XdmfXmlNode Child;
 if(Parent){
     Child = xmlNewNode(NULL, (const xmlChar *)Type);
     if(Child) {
-        if(xmlAddChildList(Parent, Child)){
-            return(Child);
+        XdmfXmlNode RealChild;
+        RealChild = xmlAddChildList(Parent, Child);
+        if(RealChild){
+            return(RealChild);
         }
         xmlFreeNode(Child);
     }
@@ -405,6 +408,11 @@ if(!Node){
 }
 if(!Node) return(0);
 child = Node->children;
+if(Index == 0){
+    if(child->type != XML_ELEMENT_NODE){
+        child = XdmfGetNextElement(child);
+    }
+}
 while(child && Index){
     child = XdmfGetNextElement(child);
     Index--;

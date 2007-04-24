@@ -87,6 +87,8 @@ XDMF_GEOMETRY_ORIGIN_DXDYDZ : Xorigin, Yorigin, Zorigin, Dx, Dy, Dz
   XdmfString GetGeometryTypeAsString( void );
   XdmfInt32 SetGeometryTypeFromString( XdmfConstString GeometryType );
 
+//! Adopt an Element
+  XdmfInt32 Adopt(XdmfElement *Child);
   XdmfInt32 Update();
   XdmfInt32 UpdateInformation();
 

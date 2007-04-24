@@ -29,9 +29,34 @@
 #define XDMF_EMPTY_REFERENCE   0x00
 #define XDMF_ERROR_REFERENCE    -1
 
+#define XDMF_XML_PRIVATE_DATA(e) e->_private
+
+class XDMF_EXPORT XdmfElementData : public XdmfObject {
+    public :
+        XdmfElementData();
+        ~XdmfElementData();
+
+        XdmfSetValueMacro(ReferenceElement, XdmfElement *);
+        XdmfGetValueMacro(ReferenceElement, XdmfElement *);
+        XdmfSetValueMacro(CurrentXdmfElement, XdmfElement *);
+        XdmfGetValueMacro(CurrentXdmfElement, XdmfElement *);
+    protected :
+        XdmfElement     *ReferenceElement;
+        XdmfElement     *CurrentXdmfElement;
+};
+        
+XdmfElementData::XdmfElementData(){
+    this->ReferenceElement = NULL;
+    this->CurrentXdmfElement = NULL;
+}
+
+XdmfElementData::~XdmfElementData() {
+}
+
 XdmfElement::XdmfElement() {
     this->DOM = NULL;
     this->Element = NULL;
+    this->ElementName = NULL;
     this->IsReference = 0;
     this->ReferenceElement = NULL;
     this->State = XDMF_ELEMENT_STATE_UNINITIALIZED;
@@ -49,25 +74,76 @@ XdmfElement::~XdmfElement() {
             this->SetReferenceObject(this->Element, XDMF_ELEMENT_STATE_UNINITIALIZED);
         }
     }
+    if(this->ElementName) delete [] this->ElementName;
 }
 
 void XdmfElement::SetReferenceObject(XdmfXmlNode Element, void *p){
-    XdmfDebug("Old Ref = " << Element->_private);
+    XdmfElementData *PrivateData;
+    if(!Element){
+        XdmfErrorMessage("Element is NULL");
+        return;
+    }
+    if(XDMF_XML_PRIVATE_DATA(Element)){
+        PrivateData = (XdmfElementData *)XDMF_XML_PRIVATE_DATA(Element);
+    }else{
+        PrivateData = new XdmfElementData;
+        XDMF_XML_PRIVATE_DATA(Element) = (void *)PrivateData;
+    }
+    XdmfDebug("Old Ref = " << PrivateData->GetReferenceElement());
     XdmfDebug("New Ref = " << p);
-    if(Element) Element->_private = p;
+    PrivateData->SetReferenceElement((XdmfElement *)p);
 }
 
 void *
 XdmfElement::GetReferenceObject(XdmfXmlNode Element){
+    XdmfElementData *PrivateData;
     if(!Element){
         XdmfErrorMessage("NULL Reference Element");
         return(NULL);
     }
-    if(Element->_private == XDMF_EMPTY_REFERENCE){
+    if(XDMF_XML_PRIVATE_DATA(Element) == XDMF_EMPTY_REFERENCE){
         XdmfDebug("XML Node contains no initialized object");
         return(NULL);
     }
-    return(Element->_private);
+    PrivateData = (XdmfElementData *)XDMF_XML_PRIVATE_DATA(Element);
+    if(PrivateData->GetReferenceElement() == XDMF_EMPTY_REFERENCE){
+        XdmfDebug("XML Node contains no initialized object");
+        return(NULL);
+    }
+    return(PrivateData->GetReferenceElement());
+}
+
+void XdmfElement::SetCurrentXdmfElement(XdmfXmlNode Element, void *p){
+    XdmfElementData *PrivateData;
+    if(!Element){
+        XdmfErrorMessage("Element is NULL");
+        return;
+    }
+    if(XDMF_XML_PRIVATE_DATA(Element)){
+        PrivateData = (XdmfElementData *)XDMF_XML_PRIVATE_DATA(Element);
+    }else{
+        PrivateData = new XdmfElementData;
+        XDMF_XML_PRIVATE_DATA(Element) = (void *)PrivateData;
+    }
+    PrivateData->SetCurrentXdmfElement((XdmfElement *)p);
+}
+
+void *
+XdmfElement::GetCurrentXdmfElement(XdmfXmlNode Element){
+    XdmfElementData *PrivateData;
+    if(!Element){
+        XdmfErrorMessage("NULL Reference Element");
+        return(NULL);
+    }
+    PrivateData = (XdmfElementData *)XDMF_XML_PRIVATE_DATA(Element);
+    if(!PrivateData){
+        return(NULL);
+    }
+    if(PrivateData->GetCurrentXdmfElement() == XDMF_EMPTY_REFERENCE){
+        XdmfDebug("XML Node contains no initialized object");
+        return(NULL);
+    }
+    return(PrivateData->GetCurrentXdmfElement());
 }
 
 XdmfInt32 XdmfElement::SetElement(XdmfXmlNode Element){
@@ -75,9 +151,10 @@ XdmfInt32 XdmfElement::SetElement(XdmfXmlNode Element){
         XdmfErrorMessage("Element is NULL");
         return(XDMF_FAIL);
     }
-    // Clear the ReferenceObject underlying node
+    // Clear the ReferenceObject underlying node. This will also create PrivateData if necessary
     XdmfDebug("Clearing ReferenceObject of XML node");
     this->SetReferenceObject(Element, XDMF_EMPTY_REFERENCE);
+    this->SetCurrentXdmfElement(Element, this);
     this->Element = Element;
     return(XDMF_SUCCESS);
 }
@@ -95,6 +172,36 @@ XdmfInt32 XdmfElement::InsertChildElement(XdmfXmlNode Child){
         return(XDMF_SUCCESS);
     }
     return(XDMF_FAIL);
+}
+
+
+XdmfInt32
+XdmfElement::Adopt(XdmfElement *Child){
+    XdmfXmlNode element;
+
+    if(!this->DOM) {
+        XdmfErrorMessage("No DOM has not been set");
+        return(XDMF_FAIL);
+    }
+    if(!Child){
+        XdmfErrorMessage("Child Element is NULL");
+        return(XDMF_FAIL);
+    }
+    if(!Child->GetElementName()) {
+        XdmfErrorMessage("Child Element has no ElementName");
+        return(XDMF_FAIL);
+    }
+    Child->SetDOM(this->DOM);
+    element = this->GetDOM()->InsertNew(this->Element, Child->GetElementName());
+    if(!element){
+        XdmfErrorMessage("Failed to Insert New Child XML Node");
+        return(XDMF_FAIL);
+    }
+    if(Child->SetElement(element) != XDMF_SUCCESS){
+        XdmfErrorMessage("Failed to set child XML node");
+        return(XDMF_FAIL);
+    }
+    return(XDMF_SUCCESS);
 }
 
 XdmfInt32
@@ -301,10 +408,26 @@ XdmfConstString XdmfElement::GetElementType(){
 
 XdmfInt32 XdmfElement::Build(){
     XdmfConstString  name;
+    XdmfXmlNode      child;
+    XdmfInt32        i;
 
     name = this->GetName();
     if(name && (strlen(name) > 1)){
-        return(this->Set("Name", name));
+        this->Set("Name", name);
+    }
+    if(this->DOM){
+        XdmfXmlNode myelement = this->GetElement();
+        if(myelement){
+            XdmfXmlNode childnode;
+            XdmfElement *childelement;
+            for(i=0;i<this->DOM->GetNumberOfChildren(myelement);i++){
+                childnode = this->DOM->GetChild(i, myelement);
+                childelement = (XdmfElement *)this->GetCurrentXdmfElement(childnode);
+                if(childelement){
+                    childelement->Build();
+                }
+            }
+        }
     }
     return(XDMF_SUCCESS);
 }

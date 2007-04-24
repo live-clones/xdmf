@@ -47,6 +47,8 @@ public:
 //! Update From XML
     XdmfInt32 UpdateInformation();
 
+//! Adopt an Element
+  XdmfInt32 Adopt(XdmfElement *Child);
 /*! Set the Xdmf Version
     Until Build() is called.
 */

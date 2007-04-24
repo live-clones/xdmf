@@ -105,6 +105,8 @@ public:
 //! Set the format of the data. Usually XML | HDF. Default is XML.
     XdmfSetValueMacro(Format, XdmfInt32);
 
+//! Adopt an Element
+  XdmfInt32 Adopt(XdmfElement *Child);
     //! Tells the DataItem is it owns the Array and is thus allowed  to delete it.
     XdmfSetValueMacro(ArrayIsMine, XdmfInt32);
     //! Get the Value it the DataItem owns the Array

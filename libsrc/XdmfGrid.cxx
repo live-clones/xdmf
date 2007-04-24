@@ -69,6 +69,22 @@ XdmfGrid::~XdmfGrid() {
   free(this->Attribute);
   }
 
+XdmfInt32
+XdmfGrid::Adopt( XdmfElement *Child){
+    if(Child && (
+        XDMF_WORD_CMP(Child->GetElementName(), "Grid") ||
+        XDMF_WORD_CMP(Child->GetElementName(), "Geometry") ||
+        XDMF_WORD_CMP(Child->GetElementName(), "Topology") ||
+        XDMF_WORD_CMP(Child->GetElementName(), "DataItem") ||
+        XDMF_WORD_CMP(Child->GetElementName(), "Information")
+        )){
+        return(XdmfElement::Adopt(Child));
+    }else{
+        XdmfErrorMessage("Attribute can only Adopt Grid | Geometry | Topology | DataItem | Information elements");
+    }
+    return(XDMF_FAIL);
+}
+
 XdmfConstString
 XdmfGrid::GetGridTypeAsString(){
     if(this->GridType & XDMF_GRID_MASK){

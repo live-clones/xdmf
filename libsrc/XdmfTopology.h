@@ -133,6 +133,8 @@ public:
 
   XdmfConstString GetClassName() { return ( "XdmfTopology" ) ; };
 
+//! Adopt an Element
+  XdmfInt32 Adopt(XdmfElement *Child);
 //! Get General Class
 /*!
 	GetClass returns XDMF_UNSTRUCTURED or XDMF_STRUCTURED.

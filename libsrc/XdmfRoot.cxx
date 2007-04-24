@@ -43,6 +43,20 @@ XdmfInt32 XdmfRoot::UpdateInformation(){
     return(XDMF_SUCCESS);
 }
 
+XdmfInt32
+XdmfRoot::Adopt( XdmfElement *Child){
+    if(Child && (
+        XDMF_WORD_CMP(Child->GetElementName(), "Domain") ||
+        XDMF_WORD_CMP(Child->GetElementName(), "DataItem") ||
+        XDMF_WORD_CMP(Child->GetElementName(), "Information")
+        )){
+        return(XdmfElement::Adopt(Child));
+    }else{
+        XdmfErrorMessage("Attribute can only Adopt Domain | DataItem | Information elements");
+    }
+    return(XDMF_FAIL);
+}
+
 XdmfInt32 XdmfRoot::Build(){
     static char VersionBuf[80];
     ostrstream  Version(VersionBuf,80);

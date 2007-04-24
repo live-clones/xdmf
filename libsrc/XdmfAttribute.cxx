@@ -42,6 +42,21 @@ XdmfAttribute::~XdmfAttribute() {
   delete this->ShapeDesc;
   }
 
+
+XdmfInt32
+XdmfAttribute::Adopt( XdmfElement *Child){
+    if(Child && (
+        XDMF_WORD_CMP(Child->GetElementName(), "DataItem") ||
+        XDMF_WORD_CMP(Child->GetElementName(), "Information")
+        )){
+        return(XdmfElement::Adopt(Child));
+    }else{
+        XdmfErrorMessage("Attribute can only Adopt DataItem or Information elements");
+    }
+    return(XDMF_FAIL);
+}
+
+
 XdmfConstString
 XdmfAttribute::GetAttributeTypeAsString( void ){
   switch ( this->AttributeType ){

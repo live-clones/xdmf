@@ -143,6 +143,8 @@ public:
   //! Get the Grid Type as a string
   XdmfConstString GetGridTypeAsString();
 
+//! Adopt an Element
+  XdmfInt32 Adopt(XdmfElement *Child);
   //! Get the Grid Type
   XdmfGetValueMacro( GridType, XdmfInt32);
   //! Set the Grid Type

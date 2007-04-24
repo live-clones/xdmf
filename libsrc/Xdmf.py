@@ -49,6 +49,8 @@ del types
 
 
 _FILE_OFFSET_BITS = _Xdmf._FILE_OFFSET_BITS
+XDMF_VERSION = _Xdmf.XDMF_VERSION
+XDMF_VERSION_STRING = _Xdmf.XDMF_VERSION_STRING
 XDMF_SUCCESS = _Xdmf.XDMF_SUCCESS
 XDMF_FAIL = _Xdmf.XDMF_FAIL
 XDMF_TRUE = _Xdmf.XDMF_TRUE
@@ -159,6 +161,8 @@ class XdmfElement(XdmfLightData):
     def GetElement(*args): return _Xdmf.XdmfElement_GetElement(*args)
     def SetCopyReferenceData(*args): return _Xdmf.XdmfElement_SetCopyReferenceData(*args)
     def GetCopyReferenceData(*args): return _Xdmf.XdmfElement_GetCopyReferenceData(*args)
+    def GetElementName(*args): return _Xdmf.XdmfElement_GetElementName(*args)
+    def SetElementName(*args): return _Xdmf.XdmfElement_SetElementName(*args)
     def GetElementType(*args): return _Xdmf.XdmfElement_GetElementType(*args)
     def UpdateInformation(*args): return _Xdmf.XdmfElement_UpdateInformation(*args)
     def Update(*args): return _Xdmf.XdmfElement_Update(*args)
@@ -166,6 +170,7 @@ class XdmfElement(XdmfLightData):
     def Set(*args): return _Xdmf.XdmfElement_Set(*args)
     def Get(*args): return _Xdmf.XdmfElement_Get(*args)
     def Copy(*args): return _Xdmf.XdmfElement_Copy(*args)
+    def Adopt(*args): return _Xdmf.XdmfElement_Adopt(*args)
     def FollowReference(*args): return _Xdmf.XdmfElement_FollowReference(*args)
 XdmfElement_swigregister = _Xdmf.XdmfElement_swigregister
 XdmfElement_swigregister(XdmfElement)
@@ -198,6 +203,7 @@ class XdmfAttribute(XdmfElement):
     def SetAttributeType(*args): return _Xdmf.XdmfAttribute_SetAttributeType(*args)
     def GetAttributeType(*args): return _Xdmf.XdmfAttribute_GetAttributeType(*args)
     def GetActive(*args): return _Xdmf.XdmfAttribute_GetActive(*args)
+    def Adopt(*args): return _Xdmf.XdmfAttribute_Adopt(*args)
     def SetAttributeTypeFromString(*args): return _Xdmf.XdmfAttribute_SetAttributeTypeFromString(*args)
     def GetAttributeTypeAsString(*args): return _Xdmf.XdmfAttribute_GetAttributeTypeAsString(*args)
     def SetAttributeCenterFromString(*args): return _Xdmf.XdmfAttribute_SetAttributeCenterFromString(*args)
@@ -442,6 +448,7 @@ class XdmfInformation(XdmfElement):
     __swig_destroy__ = _Xdmf.delete_XdmfInformation
     __del__ = lambda self : None;
     def GetClassName(*args): return _Xdmf.XdmfInformation_GetClassName(*args)
+    def Adopt(*args): return _Xdmf.XdmfInformation_Adopt(*args)
     def UpdateInformation(*args): return _Xdmf.XdmfInformation_UpdateInformation(*args)
     def SetValue(*args): return _Xdmf.XdmfInformation_SetValue(*args)
     def Build(*args): return _Xdmf.XdmfInformation_Build(*args)
@@ -476,6 +483,7 @@ class XdmfDataItem(XdmfElement):
     def GetValues(*args): return _Xdmf.XdmfDataItem_GetValues(*args)
     def GetFormat(*args): return _Xdmf.XdmfDataItem_GetFormat(*args)
     def SetFormat(*args): return _Xdmf.XdmfDataItem_SetFormat(*args)
+    def Adopt(*args): return _Xdmf.XdmfDataItem_Adopt(*args)
     def SetArrayIsMine(*args): return _Xdmf.XdmfDataItem_SetArrayIsMine(*args)
     def GetArrayIsMine(*args): return _Xdmf.XdmfDataItem_GetArrayIsMine(*args)
     def UpdateInformation(*args): return _Xdmf.XdmfDataItem_UpdateInformation(*args)
@@ -674,6 +682,7 @@ class XdmfRoot(XdmfElement):
     __del__ = lambda self : None;
     def GetClassName(*args): return _Xdmf.XdmfRoot_GetClassName(*args)
     def UpdateInformation(*args): return _Xdmf.XdmfRoot_UpdateInformation(*args)
+    def Adopt(*args): return _Xdmf.XdmfRoot_Adopt(*args)
     def SetVersion(*args): return _Xdmf.XdmfRoot_SetVersion(*args)
     def SetXInclude(*args): return _Xdmf.XdmfRoot_SetXInclude(*args)
     def Build(*args): return _Xdmf.XdmfRoot_Build(*args)
@@ -725,6 +734,7 @@ class XdmfTopology(XdmfElement):
     __swig_destroy__ = _Xdmf.delete_XdmfTopology
     __del__ = lambda self : None;
     def GetClassName(*args): return _Xdmf.XdmfTopology_GetClassName(*args)
+    def Adopt(*args): return _Xdmf.XdmfTopology_Adopt(*args)
     def GetClass(*args): return _Xdmf.XdmfTopology_GetClass(*args)
     def GetClassAsString(*args): return _Xdmf.XdmfTopology_GetClassAsString(*args)
     def SetTopologyType(*args): return _Xdmf.XdmfTopology_SetTopologyType(*args)
@@ -778,6 +788,7 @@ class XdmfGeometry(XdmfElement):
     def GetGeometryType(*args): return _Xdmf.XdmfGeometry_GetGeometryType(*args)
     def GetGeometryTypeAsString(*args): return _Xdmf.XdmfGeometry_GetGeometryTypeAsString(*args)
     def SetGeometryTypeFromString(*args): return _Xdmf.XdmfGeometry_SetGeometryTypeFromString(*args)
+    def Adopt(*args): return _Xdmf.XdmfGeometry_Adopt(*args)
     def Update(*args): return _Xdmf.XdmfGeometry_Update(*args)
     def UpdateInformation(*args): return _Xdmf.XdmfGeometry_UpdateInformation(*args)
     def SetPoints(*args): return _Xdmf.XdmfGeometry_SetPoints(*args)
@@ -832,6 +843,7 @@ class XdmfGrid(XdmfElement):
     def SetTopology(*args): return _Xdmf.XdmfGrid_SetTopology(*args)
     def GetTopology(*args): return _Xdmf.XdmfGrid_GetTopology(*args)
     def GetGridTypeAsString(*args): return _Xdmf.XdmfGrid_GetGridTypeAsString(*args)
+    def Adopt(*args): return _Xdmf.XdmfGrid_Adopt(*args)
     def GetGridType(*args): return _Xdmf.XdmfGrid_GetGridType(*args)
     def SetGridType(*args): return _Xdmf.XdmfGrid_SetGridType(*args)
     def Copy(*args): return _Xdmf.XdmfGrid_Copy(*args)

@@ -57,6 +57,19 @@ XdmfTopology::~XdmfTopology() {
   delete this->Shape;
   }
 
+XdmfInt32
+XdmfTopology::Adopt( XdmfElement *Child){
+    if(Child && (
+        XDMF_WORD_CMP(Child->GetElementName(), "DataItem") ||
+        XDMF_WORD_CMP(Child->GetElementName(), "Information")
+        )){
+        return(XdmfElement::Adopt(Child));
+    }else{
+        XdmfErrorMessage("Topology can only Adopt DataItem or Information elements");
+    }
+    return(XDMF_FAIL);
+}
+
 XdmfInt64 XdmfTopology::GetNumberOfElements( void ) {
   return( this->Shape->GetNumberOfElements() );
   }

@@ -57,6 +57,19 @@ XdmfDataItem::~XdmfDataItem() {
     if(this->Values) delete this->Values;
 }
 
+XdmfInt32
+XdmfDataItem::Adopt( XdmfElement *Child){
+    if(Child && (
+        XDMF_WORD_CMP(Child->GetElementName(), "DataItem") ||
+        XDMF_WORD_CMP(Child->GetElementName(), "Information")
+        )){
+        return(XdmfElement::Adopt(Child));
+    }else{
+        XdmfErrorMessage("DataItem can only Adopt DataItem or Information elements");
+    }
+    return(XDMF_FAIL);
+}
+
 XdmfInt32 
 XdmfDataItem::SetArray(XdmfArray *Array){
     if(this->Array && this->ArrayIsMine) delete this->Array;

@@ -25,10 +25,21 @@
 #include "XdmfInformation.h"
 
 XdmfInformation::XdmfInformation() {
+    this->SetElementName("Information");
     this->Value = NULL;
 }
 
 XdmfInformation::~XdmfInformation() {
+}
+
+XdmfInt32
+XdmfInformation::Adopt( XdmfElement *Child){
+    if(Child && XDMF_WORD_CMP(Child->GetElementName(), "Information")){
+        return(XdmfElement::Adopt(Child));
+    }else{
+        XdmfErrorMessage("Information can only Adopt Information elements");
+    }
+    return(XDMF_FAIL);
 }
 
 XdmfInt32 XdmfInformation::UpdateInformation(){
