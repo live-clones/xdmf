@@ -161,6 +161,8 @@ using std::hex;
 
 #include "XdmfExport.h"
 
+#define XDMF_VERSION 2.1
+#define XDMF_VERSION_STRING "2.1"
 
 #define XDMF_SUCCESS  1
 #define XDMF_FAIL  -1

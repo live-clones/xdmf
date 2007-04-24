@@ -55,7 +55,7 @@ XdmfGrid::XdmfGrid() {
   this->NumberOfAttributes = 0;
   this->GridType = XDMF_GRID_UNSET;
   this->NumberOfChildren = 0;
-  this->Debug = 1;
+  this->Debug = 0;
   }
 
 XdmfGrid::~XdmfGrid() {
@@ -97,7 +97,7 @@ XdmfGrid::Copy(XdmfElement *Source){
 
     XdmfDebug("XdmfGrid::Copy(XdmfElement *Source)");
     g = (XdmfGrid *)Source;
-    cout << "Copy Grid Information from " << g << endl;
+//    cout << "Copy Grid Information from " << g << endl;
     this->Topology = g->GetTopology();
     this->TopologyIsMine = 0;
     if( this->GeometryIsMine && this->Geometry ) delete this->Geometry;
@@ -227,13 +227,13 @@ if( this->GridType & XDMF_GRID_MASK){
         XdmfGrid        *target;
         XdmfDataDesc    *shape;
 
-        cout << "Getting SubGrid Selection " << endl;
+//        cout << "Getting SubGrid Selection " << endl;
         attribute = this->Get("Section");
         if( XDMF_WORD_CMP(attribute, "All") ){
-            cout << ":::: Selecting ALL" << endl;
+//            cout << ":::: Selecting ALL" << endl;
             this->GridType |= XDMF_GRID_SECTION_ALL;
         }else if( XDMF_WORD_CMP(attribute, "DataItem") ){
-            cout << ":::: Selecting DataItem 1" << endl;
+//            cout << ":::: Selecting DataItem 1" << endl;
             this->GridType |= XDMF_GRID_SECTION_DATA_ITEM;
             select = this->DOM->FindElement("DataItem", 0, this->Element);
             if(!select){
@@ -242,7 +242,7 @@ if( this->GridType & XDMF_GRID_MASK){
             }
         }else{
             // default
-            cout << ":::: Selecting DataItem 2" << endl;
+//            cout << ":::: Selecting DataItem 2" << endl;
             select = this->DOM->FindElement("DataItem", 0, this->Element);
             if(select){
                 this->GridType |= XDMF_GRID_SECTION_DATA_ITEM;
@@ -274,7 +274,7 @@ if( this->GridType & XDMF_GRID_MASK){
             di->SetElement(select);
             di->UpdateInformation();
             di->Update();
-            cout << "UpdateInfo - Select Cells : " << di->GetArray()->GetValues() << endl;
+//            cout << "UpdateInfo - Select Cells : " << di->GetArray()->GetValues() << endl;
             shape = this->Topology->GetShapeDesc();
             shape->CopyShape(di->GetDataDesc());
             delete di;
@@ -339,7 +339,7 @@ XdmfGrid::Update() {
 XdmfInt32  Status = XDMF_FAIL;
 XdmfConstString  attribute;
 
-cout << " In Update" << endl;
+//cout << " In Update" << endl;
 if(XdmfElement::Update() != XDMF_SUCCESS) return(XDMF_FAIL);
 if(this->GridType == XDMF_GRID_UNSET) {
     if(this->UpdateInformation() == XDMF_FAIL){
@@ -361,21 +361,21 @@ if((this->GridType & XDMF_GRID_MASK) != XDMF_GRID_UNIFORM){
         XdmfXmlNode select;
         XdmfGrid        *target;
 
-        cout << " Getting SubSet" << endl;
+//        cout << " Getting SubSet" << endl;
         target = this->Children[0];
         if( this->GeometryIsMine && this->Geometry ) delete this->Geometry;
         this->Geometry = target->GetGeometry();
         this->GeometryIsMine = 0;
 
         if((this->GridType & XDMF_GRID_SECTION_MASK) == XDMF_GRID_SECTION_ALL){
-        cout << " Getting SubSet all" << endl;
+//        cout << " Getting SubSet all" << endl;
             if(this->TopologyIsMine && this->Topology) delete this->Topology;
             this->Topology = target->GetTopology();
             this->TopologyIsMine = 0;
-            cout << "Conns = " << this->Topology->GetConnectivity()->GetValues() << endl;
-        cout << " Done Getting SubSet all" << endl;
+//            cout << "Conns = " << this->Topology->GetConnectivity()->GetValues() << endl;
+//        cout << " Done Getting SubSet all" << endl;
         }else if((this->GridType & XDMF_GRID_SECTION_MASK) == XDMF_GRID_SECTION_DATA_ITEM){
-            cout << "Getting SubGrid Selection " << endl;
+//            cout << "Getting SubGrid Selection " << endl;
             select = this->DOM->FindDataElement(0, this->Element);
             if(select){
                 XdmfDataItem    *di = new XdmfDataItem;
@@ -388,7 +388,7 @@ if((this->GridType & XDMF_GRID_MASK) != XDMF_GRID_UNIFORM){
                 di->SetElement(select);
                 di->UpdateInformation();
                 di->Update();
-                cout << "Update - Select Cells : " << di->GetArray()->GetValues() << endl;
+//                cout << "Update - Select Cells : " << di->GetArray()->GetValues() << endl;
                 celloff = target->GetTopology()->GetCellOffsets();
                 newconn = new XdmfArray;
                 newconn->SetNumberOfElements(target->GetTopology()->GetConnectivity()->GetNumberOfElements());
@@ -396,20 +396,20 @@ if((this->GridType & XDMF_GRID_MASK) != XDMF_GRID_UNIFORM){
                 for(i=0; i< di->GetArray()->GetNumberOfElements() ; i++){
                     o = celloff->GetValueAsInt64(di->GetArray()->GetValueAsInt64(i));
                     o1 = celloff->GetValueAsInt64(di->GetArray()->GetValueAsInt64(i) + 1);
-                    cout << " Getting " << o << " thru " << o1 << endl;
+//                    cout << " Getting " << o << " thru " << o1 << endl;
                     len = o1 - o;
                     if(len > cellsize){
                         cellsize = len + 1;
                         delete cell;
                         cell = new XdmfInt64[ cellsize ];
                     }
-                    cout << " Conns = " << target->GetTopology()->GetConnectivity()->GetValues(o, len) << endl;
+//                    cout << " Conns = " << target->GetTopology()->GetConnectivity()->GetValues(o, len) << endl;
                     if(target->GetTopology()->GetConnectivity()->GetValues(o, cell, len) != XDMF_SUCCESS){
                         XdmfErrorMessage("Error Getting Cell Connectivity " << o << " to " << o1 );
                         return(XDMF_FAIL);
                     }
                     newconn->SetValues(total, cell, len);
-                    cout << " Offset " << i << " = " << o << " len = " << len << " total " << total << endl;
+//                    cout << " Offset " << i << " = " << o << " len = " << len << " total " << total << endl;
                     total += len;
 
                 }

@@ -411,6 +411,7 @@ class XdmfDOM(XdmfLightData):
     def InsertNew(*args): return _Xdmf.XdmfDOM_InsertNew(*args)
     def DeleteNode(*args): return _Xdmf.XdmfDOM_DeleteNode(*args)
     def FindElement(*args): return _Xdmf.XdmfDOM_FindElement(*args)
+    def FindDataElement(*args): return _Xdmf.XdmfDOM_FindDataElement(*args)
     def FindElementByAttribute(*args): return _Xdmf.XdmfDOM_FindElementByAttribute(*args)
     def FindElementByPath(*args): return _Xdmf.XdmfDOM_FindElementByPath(*args)
     def FindNumberOfElements(*args): return _Xdmf.XdmfDOM_FindNumberOfElements(*args)
@@ -657,6 +658,31 @@ class XdmfHDF(XdmfHeavyData):
 XdmfHDF_swigregister = _Xdmf.XdmfHDF_swigregister
 XdmfHDF_swigregister(XdmfHDF)
 
+class XdmfRoot(XdmfElement):
+    __swig_setmethods__ = {}
+    for _s in [XdmfElement]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfRoot, name, value)
+    __swig_getmethods__ = {}
+    for _s in [XdmfElement]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfRoot, name)
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        this = _Xdmf.new_XdmfRoot(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _Xdmf.delete_XdmfRoot
+    __del__ = lambda self : None;
+    def GetClassName(*args): return _Xdmf.XdmfRoot_GetClassName(*args)
+    def UpdateInformation(*args): return _Xdmf.XdmfRoot_UpdateInformation(*args)
+    def SetVersion(*args): return _Xdmf.XdmfRoot_SetVersion(*args)
+    def SetXInclude(*args): return _Xdmf.XdmfRoot_SetXInclude(*args)
+    def Build(*args): return _Xdmf.XdmfRoot_Build(*args)
+    def GetXInclude(*args): return _Xdmf.XdmfRoot_GetXInclude(*args)
+    def GetVersion(*args): return _Xdmf.XdmfRoot_GetVersion(*args)
+XdmfRoot_swigregister = _Xdmf.XdmfRoot_swigregister
+XdmfRoot_swigregister(XdmfRoot)
+CopyArray = _Xdmf.CopyArray
+
 XDMF_MAX_ORDER = _Xdmf.XDMF_MAX_ORDER
 XDMF_STRUCTURED = _Xdmf.XDMF_STRUCTURED
 XDMF_UNSTRUCTURED = _Xdmf.XDMF_UNSTRUCTURED
@@ -722,7 +748,6 @@ class XdmfTopology(XdmfElement):
     def UpdateInformation(*args): return _Xdmf.XdmfTopology_UpdateInformation(*args)
 XdmfTopology_swigregister = _Xdmf.XdmfTopology_swigregister
 XdmfTopology_swigregister(XdmfTopology)
-CopyArray = _Xdmf.CopyArray
 
 HandleToXdmfTopology = _Xdmf.HandleToXdmfTopology
 XDMF_GEOMETRY_NONE = _Xdmf.XDMF_GEOMETRY_NONE
@@ -781,8 +806,12 @@ GetXdmfGeometryHandle = _Xdmf.GetXdmfGeometryHandle
 XDMF_GRID_UNIFORM = _Xdmf.XDMF_GRID_UNIFORM
 XDMF_GRID_COLLECTION = _Xdmf.XDMF_GRID_COLLECTION
 XDMF_GRID_TREE = _Xdmf.XDMF_GRID_TREE
+XDMF_GRID_SUBSET = _Xdmf.XDMF_GRID_SUBSET
 XDMF_GRID_UNSET = _Xdmf.XDMF_GRID_UNSET
 XDMF_GRID_MASK = _Xdmf.XDMF_GRID_MASK
+XDMF_GRID_SECTION_ALL = _Xdmf.XDMF_GRID_SECTION_ALL
+XDMF_GRID_SECTION_DATA_ITEM = _Xdmf.XDMF_GRID_SECTION_DATA_ITEM
+XDMF_GRID_SECTION_MASK = _Xdmf.XDMF_GRID_SECTION_MASK
 class XdmfGrid(XdmfElement):
     __swig_setmethods__ = {}
     for _s in [XdmfElement]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))

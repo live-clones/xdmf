@@ -428,6 +428,7 @@ INPUT                  = \
                         XdmfTopology.h \
                         XdmfGeometry.h \
                         XdmfAttribute.h \
+                        XdmfRoot.h \
                         XdmfGrid.h \
                         XdmfDOM.h \
                         XdmfArray.h \

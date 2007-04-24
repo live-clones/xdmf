@@ -324,12 +324,13 @@ XdmfXmlNode
 XdmfDOM::Create(XdmfConstString Version){
     XdmfInt32   Status;
     ostrstream  XmlString;
+    const xmlChar *XmlNs = XINCLUDE_NS;
 
     if(!Version) {
-        Version = "2.0";
+        Version = XDMF_VERSION_STRING;
     }
     XmlString << "<?xml version=\"1.0\" ?>" << endl << endl;
-    XmlString << "<Xdmf Version=\"" << Version << "\" >" << endl;
+    XmlString << "<Xdmf Version=\"" << Version << "\" xmlns:xi=\"" << XmlNs << "\" >" << endl;
     XmlString << "</Xdmf>" << endl;
     Status = this->Parse(XmlString.str());
     if(Status == XDMF_FAIL) return(NULL);
