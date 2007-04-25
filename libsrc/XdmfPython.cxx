@@ -20549,6 +20549,28 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_XdmfGeometry_Build(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGeometry *arg1 = (XdmfGeometry *) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfGeometry_Build",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGeometry, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGeometry_Build" "', argument " "1"" of type '" "XdmfGeometry *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGeometry * >(argp1);
+  result = (XdmfInt32)(arg1)->Build();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_XdmfGeometry_Insert(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   XdmfGeometry *arg1 = (XdmfGeometry *) 0 ;
@@ -21337,6 +21359,40 @@ SWIGINTERN PyObject *_wrap_XdmfGrid_GetGridTypeAsString(PyObject *SWIGUNUSEDPARM
   resultobj = SWIG_FromCharPtr((const char *)result);
   return resultobj;
 fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_SetGridTypeFromString(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfConstString arg2 = (XdmfConstString) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfGrid_SetGridTypeFromString",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_SetGridTypeFromString" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfGrid_SetGridTypeFromString" "', argument " "2"" of type '" "XdmfConstString""'");
+  }
+  arg2 = reinterpret_cast< XdmfConstString >(buf2);
+  result = (XdmfInt32)(arg1)->SetGridTypeFromString(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
   return NULL;
 }
 
@@ -22256,6 +22312,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfGeometry_GetGeometryType", _wrap_XdmfGeometry_GetGeometryType, METH_VARARGS, NULL},
 	 { (char *)"XdmfGeometry_GetGeometryTypeAsString", _wrap_XdmfGeometry_GetGeometryTypeAsString, METH_VARARGS, NULL},
 	 { (char *)"XdmfGeometry_SetGeometryTypeFromString", _wrap_XdmfGeometry_SetGeometryTypeFromString, METH_VARARGS, NULL},
+	 { (char *)"XdmfGeometry_Build", _wrap_XdmfGeometry_Build, METH_VARARGS, NULL},
 	 { (char *)"XdmfGeometry_Insert", _wrap_XdmfGeometry_Insert, METH_VARARGS, NULL},
 	 { (char *)"XdmfGeometry_Update", _wrap_XdmfGeometry_Update, METH_VARARGS, NULL},
 	 { (char *)"XdmfGeometry_UpdateInformation", _wrap_XdmfGeometry_UpdateInformation, METH_VARARGS, NULL},
@@ -22288,6 +22345,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfGrid_SetTopology", _wrap_XdmfGrid_SetTopology, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_GetTopology", _wrap_XdmfGrid_GetTopology, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_GetGridTypeAsString", _wrap_XdmfGrid_GetGridTypeAsString, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_SetGridTypeFromString", _wrap_XdmfGrid_SetGridTypeFromString, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_Build", _wrap_XdmfGrid_Build, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_Insert", _wrap_XdmfGrid_Insert, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_GetGridType", _wrap_XdmfGrid_GetGridType, METH_VARARGS, NULL},

@@ -152,6 +152,8 @@ public:
   //! Get the Grid Type as a string
   XdmfConstString GetGridTypeAsString();
 
+  XdmfInt32 SetGridTypeFromString(XdmfConstString GridType);
+
   //! Build the XML (OUTPUT)
   XdmfInt32 Build();
 //! Insert an Element

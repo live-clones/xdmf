@@ -30,6 +30,7 @@
 #include "XdmfDOM.h"
 
 XdmfAttribute::XdmfAttribute() {
+  this->SetElementName("Attribute");
   this->AttributeType = XDMF_ATTRIBUTE_TYPE_NONE;
   this->ValuesAreMine = 1;
   this->Values = NULL;

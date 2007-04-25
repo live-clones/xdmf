@@ -76,10 +76,18 @@ XdmfGrid::Insert( XdmfElement *Child){
         XDMF_WORD_CMP(Child->GetElementName(), "Grid") ||
         XDMF_WORD_CMP(Child->GetElementName(), "Geometry") ||
         XDMF_WORD_CMP(Child->GetElementName(), "Topology") ||
+        XDMF_WORD_CMP(Child->GetElementName(), "Attribute") ||
         XDMF_WORD_CMP(Child->GetElementName(), "DataItem") ||
         XDMF_WORD_CMP(Child->GetElementName(), "Information")
         )){
-        return(XdmfElement::Insert(Child));
+        XdmfInt32   status = XdmfElement::Insert(Child);
+        if((status = XDMF_SUCCESS) && XDMF_WORD_CMP(Child->GetElementName(), "Grid")){
+            XdmfInt32 nchild = this->NumberOfChildren + 1;
+            this->Children = (XdmfGrid **)realloc(this->Children, nchild * sizeof(XdmfGrid *));
+            this->Children[this->NumberOfChildren] = (XdmfGrid *)Child;
+            this->NumberOfChildren = nchild;
+            return(XDMF_SUCCESS);
+        }
     }else{
         XdmfErrorMessage("Grid can only Insert Grid | Geometry | Topology | DataItem | Information elements, not a " << Child->GetElementName());
     }
@@ -105,6 +113,24 @@ XdmfGrid::Build(){
             this->Geometry->SetElement(node);
         } 
         this->Geometry->Build();
+    }else{
+    }
+    return(XDMF_SUCCESS);
+}
+
+XdmfInt32
+XdmfGrid::SetGridTypeFromString(XdmfConstString GridType){
+    if(XDMF_WORD_CMP(GridType, "Uniform")){
+        this->SetGridType(XDMF_GRID_UNIFORM);
+    }else if(XDMF_WORD_CMP(GridType, "Tree")){
+        this->SetGridType(XDMF_GRID_TREE);
+    }else if(XDMF_WORD_CMP(GridType, "Collection")){
+        this->SetGridType(XDMF_GRID_COLLECTION);
+    }else if(XDMF_WORD_CMP(GridType, "Subset")){
+        this->SetGridType(XDMF_GRID_SUBSET);
+    }else{
+        XdmfErrorMessage("Unknown Grid Type : " << GridType);
+        return(XDMF_FAIL);
     }
     return(XDMF_SUCCESS);
 }
