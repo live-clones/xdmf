@@ -78,6 +78,18 @@ XDMF_GEOMETRY_XYZ 	: X0,Y0,Z0,X1,Y1,Z1 ..... XN,YN,ZN  for every point
 XDMF_GEOMETRY_X_Y_Z	: X0,X1 ... XN,Y0,Y1 ... YN,Z0,Z1 ... ZN  for every point
 XDMF_GEOMETRY_VXVYVZ	: X0,X1 ... XN,Y0,Y1 ... YN,Z0,Z1 ... ZN for XAxis, YAxis, ZAxis
 XDMF_GEOMETRY_ORIGIN_DXDYDZ : Xorigin, Yorigin, Zorigin, Dx, Dy, Dz
+
+    XML Element : Grid
+    XML Attribute : Name = Any String
+    XML Attribute : GeometryType = XYZ* | XY | X_Y_Z | X_Y | VXVYVZ | ORIGIN_DXDYDZ
+
+    Example :
+        <Grid Name="Mesh" GridType="Uniform">
+            <Topology ...
+            <Geometry ...
+            <Attribute ...
+        </Grid>
+
 \endverbatim
 */
   XdmfSetValueMacro( GeometryType, XdmfInt32 );

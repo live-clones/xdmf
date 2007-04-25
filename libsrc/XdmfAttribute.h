@@ -51,6 +51,18 @@ class XdmfArray;
 	on an XdmfGrid. Values can be Scalar(1), Vector(3), Tensor(9)
 	or Matrix(NxM). They may be centered on the Node, Edge, Face,
 	Cell, or Grid. 
+
+    XML Element Name : Attribute
+    XML Attribute : Name
+    XML Attribute : AttributeType = Scalar* | Vector | Tensor | Tensor6 | Matrix
+    XML Attribute : Center = Node* | Cell | Grid | Face | Edge
+
+    Example :
+        <Attribute Name="Values" Center="Node">
+            <DataItem Format="XML" Dimensions="4" >
+                1 2 3 4
+            </DataItem>
+        </Attribute>
 */
 
 class XDMF_EXPORT XdmfAttribute : public XdmfElement{

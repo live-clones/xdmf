@@ -100,6 +100,15 @@ class XdmfAttribute;
     </Attribute>
 </Grid>
 
+
+
+    XML Element : Grid
+    XML Attribute : Name = Any String
+    XML Attribute : GridType = Uniform* | Collection | Tree | Subset
+    XML Attribute : Section = DataItem* | All  (Only Meaningful if GridType="Subset")
+
+\endverbatim
+
 \endverbatim
 
         Typical API usage might look like :

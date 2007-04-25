@@ -86,6 +86,15 @@ A Uniform XdmfDataItem represents an XdmfArray in XML.
     <DataItem Dimensions="3">
     1 2 3
     </DataItem>
+
+
+    XML Element : DataItem
+    XML Attribute : Name = Any String
+    XML Attribute : ItemType = Uniform* | Collection | Tree | HyperSlab | Coordinates | Function
+    XML Attribute : Dimensions = K J I 
+    XML Attribute : NumberType = Float* | Int | UInt | Char | UChar
+    XML Attribute : Precision = 1 | 4 | 8
+    XML Attribute : Format = XML* | HDF
 \endverbatim
 */
 

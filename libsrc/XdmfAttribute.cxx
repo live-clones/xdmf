@@ -151,7 +151,8 @@ if( XDMF_WORD_CMP(this->GetElementType(), "Attribute") == 0){
     return(XDMF_FAIL);
 }
 
-Attribute = this->Get( "Type" );
+Attribute = this->Get( "AttributeType" );
+if(!Attribute) Attribute = this->Get( "Type" );
 if( Attribute ){
   this->SetAttributeTypeFromString( Attribute );
 } else {

@@ -35,6 +35,11 @@ Example :
 \verbatim
     <Information Name="XBounds" Value="0.0 10.0"/>
     <Information Name="Bounds"> 0.0 10.0 100.0 110.0 200.0 210.0 </Information>
+
+
+    XML Element : Information
+    XML Attribute : Name = Any String
+    XML Attribute : Value = Any String
 \endverbatim
     If there is a Value= Attribute in  the XML it is used. Otherwise the CDATA
     is used.

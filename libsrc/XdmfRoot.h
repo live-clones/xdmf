@@ -34,6 +34,9 @@ Xdmf. In XML it is the Element :
 The Xdmf element may have Domain and DataItem Elements as children
 The NameSpace "http://www.w3.org/2003/XInclude" is defined in a 
 macro in libxml2, so it can change.
+
+    XML Element : Xdmf
+    XML Attribute : Version = Version #
 */
 
 class XDMF_EXPORT XdmfRoot : public XdmfElement {
