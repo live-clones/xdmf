@@ -329,10 +329,8 @@ XdmfDOM::Create(XdmfConstString Version){
     if(!Version) {
         Version = XDMF_VERSION_STRING;
     }
-    XmlString << "<?xml version=\"1.0\" ?>" << endl << endl;
-    XmlString << "<Xdmf Version=\"" << Version << "\" xmlns:xi=\"" << XmlNs << "\" >" << endl;
-    XmlString << "</Xdmf>" << endl << ends;
-    XmlString.freeze();
+    XmlString << "<?xml version=\"1.0\" ?>";
+    XmlString << "<Xdmf Version=\"" << Version << "\" xmlns:xi=\"" << XmlNs << "\" />" << ends;
     Status = this->Parse(XmlString.str());
     if(Status == XDMF_FAIL) return(NULL);
     return(this->GetRoot());
