@@ -74,8 +74,8 @@ public:
 //! Return the if the Attribute is Active
   XdmfGetValueMacro( Active, XdmfInt32 );
 
-//! Adopt an Element
-  XdmfInt32 Adopt(XdmfElement *Child);
+//! Insert an Element
+  XdmfInt32 Insert(XdmfElement *Child);
 
 //! Set the type using a String
   XdmfInt32 SetAttributeTypeFromString( XdmfConstString AttributeType );

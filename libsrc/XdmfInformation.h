@@ -48,8 +48,8 @@ public:
 
   XdmfConstString GetClassName() { return ( "XdmfInformation" ) ; };
 
-//! Adopt an Element
-  XdmfInt32 Adopt(XdmfElement *Child);
+//! Insert an Element
+  XdmfInt32 Insert (XdmfElement *Child);
 //! Update From XML
     XdmfInt32 UpdateInformation();
 

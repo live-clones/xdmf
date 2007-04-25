@@ -44,14 +44,14 @@ XdmfAttribute::~XdmfAttribute() {
 
 
 XdmfInt32
-XdmfAttribute::Adopt( XdmfElement *Child){
+XdmfAttribute::Insert( XdmfElement *Child){
     if(Child && (
         XDMF_WORD_CMP(Child->GetElementName(), "DataItem") ||
         XDMF_WORD_CMP(Child->GetElementName(), "Information")
         )){
-        return(XdmfElement::Adopt(Child));
+        return(XdmfElement::Insert(Child));
     }else{
-        XdmfErrorMessage("Attribute can only Adopt DataItem or Information elements");
+        XdmfErrorMessage("Attribute can only Insert DataItem or Information elements");
     }
     return(XDMF_FAIL);
 }

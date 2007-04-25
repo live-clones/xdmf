@@ -45,6 +45,7 @@ XdmfGrid *HandleToXdmfGrid( XdmfString Source ){
   }
 
 XdmfGrid::XdmfGrid() {
+  this->SetElementName("Grid");
   this->Geometry = new XdmfGeometry;
   this->GeometryIsMine = 1;
   this->Topology = new XdmfTopology;
@@ -70,7 +71,7 @@ XdmfGrid::~XdmfGrid() {
   }
 
 XdmfInt32
-XdmfGrid::Adopt( XdmfElement *Child){
+XdmfGrid::Insert( XdmfElement *Child){
     if(Child && (
         XDMF_WORD_CMP(Child->GetElementName(), "Grid") ||
         XDMF_WORD_CMP(Child->GetElementName(), "Geometry") ||
@@ -78,11 +79,34 @@ XdmfGrid::Adopt( XdmfElement *Child){
         XDMF_WORD_CMP(Child->GetElementName(), "DataItem") ||
         XDMF_WORD_CMP(Child->GetElementName(), "Information")
         )){
-        return(XdmfElement::Adopt(Child));
+        return(XdmfElement::Insert(Child));
     }else{
-        XdmfErrorMessage("Attribute can only Adopt Grid | Geometry | Topology | DataItem | Information elements");
+        XdmfErrorMessage("Grid can only Insert Grid | Geometry | Topology | DataItem | Information elements, not a " << Child->GetElementName());
     }
     return(XDMF_FAIL);
+}
+
+XdmfInt32
+XdmfGrid::Build(){
+    if(XdmfElement::Build() != XDMF_SUCCESS) return(XDMF_FAIL);
+    this->Set("GridType", this->GetGridTypeAsString());
+    if((this->GridType & XDMF_GRID_MASK) == XDMF_GRID_UNIFORM){
+        if(!this->Topology->GetElement()){
+            XdmfXmlNode node;
+            node = this->GetDOM()->InsertNew(this->GetElement(), "Topology");
+            this->Topology->SetDOM(this->GetDOM());
+            this->Topology->SetElement(node);
+        } 
+        this->Topology->Build();
+        if(!this->Geometry->GetElement()){
+            XdmfXmlNode node;
+            node = this->GetDOM()->InsertNew(this->GetElement(), "Geometry");
+            this->Geometry->SetDOM(this->GetDOM());
+            this->Geometry->SetElement(node);
+        } 
+        this->Geometry->Build();
+    }
+    return(XDMF_SUCCESS);
 }
 
 XdmfConstString
@@ -102,7 +126,7 @@ XdmfGrid::GetGridTypeAsString(){
                 return(0);
         }
     }else{
-        return(this->Topology->GetTopologyTypeAsString());
+        return("Uniform");
     }
 }
 

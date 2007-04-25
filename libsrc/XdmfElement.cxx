@@ -176,7 +176,7 @@ XdmfInt32 XdmfElement::InsertChildElement(XdmfXmlNode Child){
 
 
 XdmfInt32
-XdmfElement::Adopt(XdmfElement *Child){
+XdmfElement::Insert(XdmfElement *Child){
     XdmfXmlNode element;
 
     if(!this->DOM) {

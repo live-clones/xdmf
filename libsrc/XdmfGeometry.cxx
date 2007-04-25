@@ -36,6 +36,7 @@ XdmfGeometry *GetXdmfGeometryHandle( void *Pointer ){
   }
 
 XdmfGeometry::XdmfGeometry() {
+  this->SetElementName("Geometry");
   this->GeometryType = XDMF_GEOMETRY_NONE;
   this->Points = NULL;
   this->PointsAreMine = 1;
@@ -50,15 +51,42 @@ XdmfGeometry::~XdmfGeometry() {
   if( this->PointsAreMine && this->Points )  delete this->Points;
   }
 
+
 XdmfInt32
-XdmfGeometry::Adopt( XdmfElement *Child){
+XdmfGeometry::Build(){
+    if(XdmfElement::Build() != XDMF_SUCCESS) return(XDMF_FAIL);
+    this->Set("GeometryType", this->GetGeometryTypeAsString());
+    if(this->Points){
+        XdmfDataItem    *di = NULL;
+        XdmfXmlNode     node;
+        //! Is there already a DataItem
+        node = this->DOM->FindDataElement(0, this->GetElement());
+        if(node) {
+            di = (XdmfDataItem *)this->GetCurrentXdmfElement(node);
+        }
+        if(!di){
+            di = new XdmfDataItem;
+            node = this->DOM->InsertNew(this->GetElement(), "DataItem");
+            di->SetDOM(this->DOM);
+            di->SetElement(node);
+        }
+        di->SetArray(this->Points);
+        if(this->Points->GetNumberOfElements() > 100) di->SetFormat(XDMF_FORMAT_HDF);
+        di->Build();
+
+    }
+    return(XDMF_SUCCESS);
+}
+
+XdmfInt32
+XdmfGeometry::Insert( XdmfElement *Child){
     if(Child && (
         XDMF_WORD_CMP(Child->GetElementName(), "DataItem") ||
         XDMF_WORD_CMP(Child->GetElementName(), "Information")
         )){
-        return(XdmfElement::Adopt(Child));
+        return(XdmfElement::Insert(Child));
     }else{
-        XdmfErrorMessage("Geometry can only Adopt DataItem or Information elements");
+        XdmfErrorMessage("Geometry can only Insert DataItem or Information elements");
     }
     return(XDMF_FAIL);
 }
@@ -166,7 +194,10 @@ if( XDMF_WORD_CMP(this->GetElementType(), "Geometry") == 0){
     XdmfErrorMessage("Element type" << this->GetElementType() << " is not of type 'Geometry'");
     return(XDMF_FAIL);
 }
-Attribute = this->Get( "Type" );
+Attribute = this->Get( "GeometryType" );
+if(!Attribute){
+    Attribute = this->Get( "Type" );
+}
 if( Attribute ){
   this->SetGeometryTypeFromString( Attribute );
 } else {

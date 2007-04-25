@@ -33,11 +33,11 @@ XdmfInformation::~XdmfInformation() {
 }
 
 XdmfInt32
-XdmfInformation::Adopt( XdmfElement *Child){
+XdmfInformation::Insert( XdmfElement *Child){
     if(Child && XDMF_WORD_CMP(Child->GetElementName(), "Information")){
-        return(XdmfElement::Adopt(Child));
+        return(XdmfElement::Insert(Child));
     }else{
-        XdmfErrorMessage("Information can only Adopt Information elements");
+        XdmfErrorMessage("Information can only Insert Information elements");
     }
     return(XDMF_FAIL);
 }

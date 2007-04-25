@@ -126,5 +126,6 @@ XdmfValuesXML::Write(XdmfArray *Array, XdmfConstString HeavyDataSetName){
             }
         }
     }
+    StringOutput << ends;
     return(this->Set("CDATA", StringOutput.str()));
 }

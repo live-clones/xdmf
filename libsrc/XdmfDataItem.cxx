@@ -35,6 +35,7 @@
 #include <libxml/tree.h>
 
 XdmfDataItem::XdmfDataItem() {
+    this->SetElementName("DataItem");
     this->Values = NULL;
     this->DataDesc = new XdmfDataDesc();
     this->DataDescIsMine = 1;
@@ -58,14 +59,14 @@ XdmfDataItem::~XdmfDataItem() {
 }
 
 XdmfInt32
-XdmfDataItem::Adopt( XdmfElement *Child){
+XdmfDataItem::Insert( XdmfElement *Child){
     if(Child && (
         XDMF_WORD_CMP(Child->GetElementName(), "DataItem") ||
         XDMF_WORD_CMP(Child->GetElementName(), "Information")
         )){
-        return(XdmfElement::Adopt(Child));
+        return(XdmfElement::Insert(Child));
     }else{
-        XdmfErrorMessage("DataItem can only Adopt DataItem or Information elements");
+        XdmfErrorMessage("DataItem can only Insert DataItem or Information elements");
     }
     return(XDMF_FAIL);
 }
@@ -522,7 +523,7 @@ XdmfInt32 XdmfDataItem::Build(){
     if(XdmfElement::Build() != XDMF_SUCCESS) return(XDMF_FAIL);
     if(this->Array) DataDesc = this->Array;
     this->Set("Dimensions", DataDesc->GetShapeAsString());
-    this->Set("Type", XdmfTypeToClassString(DataDesc->GetNumberType()));
+    this->Set("NumberType", XdmfTypeToClassString(DataDesc->GetNumberType()));
     switch (DataDesc->GetElementSize()) {
         case 8 :
             this->Set("Precision", "8");
