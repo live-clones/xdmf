@@ -5071,6 +5071,28 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_XdmfAttribute_Build(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfAttribute *arg1 = (XdmfAttribute *) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfAttribute_Build",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfAttribute, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfAttribute_Build" "', argument " "1"" of type '" "XdmfAttribute *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfAttribute * >(argp1);
+  result = (XdmfInt32)(arg1)->Build();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *XdmfAttribute_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *obj;
   if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
@@ -21419,6 +21441,50 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_XdmfGrid_InsertTopology(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfGrid_InsertTopology",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_InsertTopology" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  result = (XdmfInt32)(arg1)->InsertTopology();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_InsertGeometry(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfGrid_InsertGeometry",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_InsertGeometry" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  result = (XdmfInt32)(arg1)->InsertGeometry();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_XdmfGrid_Insert(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   XdmfGrid *arg1 = (XdmfGrid *) 0 ;
@@ -21989,6 +22055,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfAttribute_GetValues", _wrap_XdmfAttribute_GetValues, METH_VARARGS, NULL},
 	 { (char *)"XdmfAttribute_UpdateInformation", _wrap_XdmfAttribute_UpdateInformation, METH_VARARGS, NULL},
 	 { (char *)"XdmfAttribute_Update", _wrap_XdmfAttribute_Update, METH_VARARGS, NULL},
+	 { (char *)"XdmfAttribute_Build", _wrap_XdmfAttribute_Build, METH_VARARGS, NULL},
 	 { (char *)"XdmfAttribute_swigregister", XdmfAttribute_swigregister, METH_VARARGS, NULL},
 	 { (char *)"XdmfTypeToHDF5Type", _wrap_XdmfTypeToHDF5Type, METH_VARARGS, NULL},
 	 { (char *)"HDF5TypeToXdmfType", _wrap_HDF5TypeToXdmfType, METH_VARARGS, NULL},
@@ -22347,6 +22414,8 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfGrid_GetGridTypeAsString", _wrap_XdmfGrid_GetGridTypeAsString, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_SetGridTypeFromString", _wrap_XdmfGrid_SetGridTypeFromString, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_Build", _wrap_XdmfGrid_Build, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_InsertTopology", _wrap_XdmfGrid_InsertTopology, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_InsertGeometry", _wrap_XdmfGrid_InsertGeometry, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_Insert", _wrap_XdmfGrid_Insert, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_GetGridType", _wrap_XdmfGrid_GetGridType, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_SetGridType", _wrap_XdmfGrid_SetGridType, METH_VARARGS, NULL},

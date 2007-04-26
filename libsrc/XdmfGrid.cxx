@@ -71,6 +71,29 @@ XdmfGrid::~XdmfGrid() {
   }
 
 XdmfInt32
+XdmfGrid::InsertTopology(){
+    if(!this->Topology->GetElement()){
+        XdmfXmlNode node;
+        node = this->GetDOM()->InsertNew(this->GetElement(), "Topology");
+        if(!node) return(XDMF_FAIL);
+        this->Topology->SetDOM(this->GetDOM());
+        if(this->Topology->SetElement(node) != XDMF_SUCCESS) return(XDMF_FAIL);
+    } 
+    return(XDMF_SUCCESS);
+}
+XdmfInt32
+XdmfGrid::InsertGeometry(){
+    if(!this->Geometry->GetElement()){
+        XdmfXmlNode node;
+        node = this->GetDOM()->InsertNew(this->GetElement(), "Geometry");
+        if(!node) return(XDMF_FAIL);
+        this->Geometry->SetDOM(this->GetDOM());
+        if(this->Geometry->SetElement(node) != XDMF_SUCCESS) return(XDMF_FAIL);
+    } 
+    return(XDMF_SUCCESS);
+}
+
+XdmfInt32
 XdmfGrid::Insert( XdmfElement *Child){
     if(Child && (
         XDMF_WORD_CMP(Child->GetElementName(), "Grid") ||
@@ -82,10 +105,15 @@ XdmfGrid::Insert( XdmfElement *Child){
         )){
         XdmfInt32   status = XdmfElement::Insert(Child);
         if((status = XDMF_SUCCESS) && XDMF_WORD_CMP(Child->GetElementName(), "Grid")){
+            XdmfGrid *ChildGrid = (XdmfGrid *)Child;
             XdmfInt32 nchild = this->NumberOfChildren + 1;
             this->Children = (XdmfGrid **)realloc(this->Children, nchild * sizeof(XdmfGrid *));
-            this->Children[this->NumberOfChildren] = (XdmfGrid *)Child;
+            this->Children[this->NumberOfChildren] = ChildGrid;
             this->NumberOfChildren = nchild;
+            if((ChildGrid->GridType & XDMF_GRID_MASK) == XDMF_GRID_UNIFORM){
+                if(ChildGrid->InsertTopology() != XDMF_SUCCESS) return(XDMF_FAIL);
+                if(ChildGrid->InsertGeometry() != XDMF_SUCCESS) return(XDMF_FAIL);
+            }
             return(XDMF_SUCCESS);
         }
     }else{
@@ -99,19 +127,9 @@ XdmfGrid::Build(){
     if(XdmfElement::Build() != XDMF_SUCCESS) return(XDMF_FAIL);
     this->Set("GridType", this->GetGridTypeAsString());
     if((this->GridType & XDMF_GRID_MASK) == XDMF_GRID_UNIFORM){
-        if(!this->Topology->GetElement()){
-            XdmfXmlNode node;
-            node = this->GetDOM()->InsertNew(this->GetElement(), "Topology");
-            this->Topology->SetDOM(this->GetDOM());
-            this->Topology->SetElement(node);
-        } 
+        if(this->InsertTopology() != XDMF_SUCCESS) return(XDMF_FAIL);
         this->Topology->Build();
-        if(!this->Geometry->GetElement()){
-            XdmfXmlNode node;
-            node = this->GetDOM()->InsertNew(this->GetElement(), "Geometry");
-            this->Geometry->SetDOM(this->GetDOM());
-            this->Geometry->SetElement(node);
-        } 
+        if(this->InsertGeometry() != XDMF_SUCCESS) return(XDMF_FAIL);
         this->Geometry->Build();
     }else{
     }

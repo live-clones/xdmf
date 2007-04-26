@@ -215,6 +215,7 @@ class XdmfAttribute(XdmfElement):
     def GetValues(*args): return _Xdmf.XdmfAttribute_GetValues(*args)
     def UpdateInformation(*args): return _Xdmf.XdmfAttribute_UpdateInformation(*args)
     def Update(*args): return _Xdmf.XdmfAttribute_Update(*args)
+    def Build(*args): return _Xdmf.XdmfAttribute_Build(*args)
 XdmfAttribute_swigregister = _Xdmf.XdmfAttribute_swigregister
 XdmfAttribute_swigregister(XdmfAttribute)
 
@@ -869,6 +870,8 @@ class XdmfGrid(XdmfElement):
     def GetGridTypeAsString(*args): return _Xdmf.XdmfGrid_GetGridTypeAsString(*args)
     def SetGridTypeFromString(*args): return _Xdmf.XdmfGrid_SetGridTypeFromString(*args)
     def Build(*args): return _Xdmf.XdmfGrid_Build(*args)
+    def InsertTopology(*args): return _Xdmf.XdmfGrid_InsertTopology(*args)
+    def InsertGeometry(*args): return _Xdmf.XdmfGrid_InsertGeometry(*args)
     def Insert(*args): return _Xdmf.XdmfGrid_Insert(*args)
     def GetGridType(*args): return _Xdmf.XdmfGrid_GetGridType(*args)
     def SetGridType(*args): return _Xdmf.XdmfGrid_SetGridType(*args)

@@ -52,6 +52,7 @@ class XdmfArray;
 	or Matrix(NxM). They may be centered on the Node, Edge, Face,
 	Cell, or Grid. 
 
+    \verbatim
     XML Element Name : Attribute
     XML Attribute : Name
     XML Attribute : AttributeType = Scalar* | Vector | Tensor | Tensor6 | Matrix
@@ -63,6 +64,7 @@ class XdmfArray;
                 1 2 3 4
             </DataItem>
         </Attribute>
+    \endverbatim
 */
 
 class XDMF_EXPORT XdmfAttribute : public XdmfElement{
@@ -111,7 +113,7 @@ public:
   XdmfDataDesc *GetShapeDesc( void ) { return( this->ShapeDesc ); };
 
 //! Sets the values for the Attribute
-  XdmfSetValueMacro( Values, XdmfArray *);
+  XdmfInt32 SetValues(XdmfArray *Values);
 //! Retreives the Values of the Attribute
   XdmfGetValueMacro( Values, XdmfArray *);
 
@@ -119,8 +121,8 @@ public:
   XdmfInt32 UpdateInformation();
 //! Initialize and Read the Heavy Data
   XdmfInt32 Update();
-
-//  XdmfInt32 SetBaseAttribute( XdmfTopology *Topology, XdmfPointer Grid );
+//! Build XML (output)
+  XdmfInt32 Build();
 
 protected:
 

@@ -156,6 +156,11 @@ public:
 
   //! Build the XML (OUTPUT)
   XdmfInt32 Build();
+
+//! Create a XML node for the Topology of a Uniform Grid
+  XdmfInt32 InsertTopology();
+//! Create a XML node for the Geometry of a Uniform Grid
+  XdmfInt32 InsertGeometry();
 //! Insert an Element
   XdmfInt32 Insert(XdmfElement *Child);
   //! Get the Grid Type

@@ -122,7 +122,7 @@ return( this->SetDxDyDz( dxDyDz[0], dxDyDz[1], dxDyDz[2] ) );
 
 XdmfInt32
 XdmfGeometry::SetPoints( XdmfArray *points ){
-    if( this->PointsAreMine && this->Points ) delete points;
+    if( this->PointsAreMine && this->Points ) delete this->Points;
     this->PointsAreMine = 0;
     this->Points = points;
     return( XDMF_SUCCESS );

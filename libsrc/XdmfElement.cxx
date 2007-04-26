@@ -180,7 +180,11 @@ XdmfElement::Insert(XdmfElement *Child){
     XdmfXmlNode element;
 
     if(!this->DOM) {
-        XdmfErrorMessage("No DOM has not been set");
+        XdmfErrorMessage("No DOM has not been set : Parent must have a DOM and Element before insertion makes sense");
+        return(XDMF_FAIL);
+    }
+    if(!this->GetElement()) {
+        XdmfErrorMessage("No Element has not been set : Parent must have a DOM and Element before insertion makes sense");
         return(XDMF_FAIL);
     }
     if(!Child){
