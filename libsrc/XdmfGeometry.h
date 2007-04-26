@@ -107,7 +107,7 @@ XDMF_GEOMETRY_ORIGIN_DXDYDZ : Xorigin, Yorigin, Zorigin, Dx, Dy, Dz
   XdmfInt32 UpdateInformation();
 
   XdmfInt32 SetPoints( XdmfArray *Points );
-  XdmfGetValueMacro( Points, XdmfArray *);
+  XdmfArray *GetPoints(XdmfInt32 Create=1);
 
 #ifndef SWIG
   XdmfInt32 SetOrigin( XdmfFloat64 *Origin );

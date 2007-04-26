@@ -278,7 +278,7 @@ public:
 	Returns the connectivity as an XdmfArray. No matter what
 	Base Offset has been specified, this array is zero based.
 */
-  XdmfArray *GetConnectivity( XdmfArray *Array = NULL );
+  XdmfArray *GetConnectivity( XdmfArray *Array = NULL, XdmfInt32 Create=1 );
 //! Set the connectivity
   XdmfInt32 SetConnectivity( XdmfArray *Array );
 //! Get the Offsets of each cell in the Connectivity Array

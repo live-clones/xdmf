@@ -170,10 +170,20 @@ return( XDMF_SUCCESS );
 
 XdmfInt32
 XdmfAttribute::SetValues(XdmfArray *Values){
+    if(Values == this->Values) return(XDMF_SUCCESS);
     if(this->ValuesAreMine && this->Values) delete this->Values;
     this->ValuesAreMine = 0;
     this->Values = Values;
     return(XDMF_SUCCESS);
+}
+
+XdmfArray *
+XdmfAttribute::GetValues(XdmfInt32 Create){
+    if(!this->Values && Create){
+        this->Values = new XdmfArray;
+        this->ValuesAreMine = 1;
+    }
+    return(this->Values);
 }
 
 XdmfInt32

@@ -120,8 +120,18 @@ return( this->SetDxDyDz( dxDyDz[0], dxDyDz[1], dxDyDz[2] ) );
 }
 
 
+XdmfArray *
+XdmfGeometry::GetPoints(XdmfInt32 Create){
+    if(!this->Points && Create){
+        this->Points = new XdmfArray;
+        this->PointsAreMine = 1;
+    }
+    return(this->Points);
+}
+
 XdmfInt32
 XdmfGeometry::SetPoints( XdmfArray *points ){
+    if(this->Points == points) return(XDMF_SUCCESS);
     if( this->PointsAreMine && this->Points ) delete this->Points;
     this->PointsAreMine = 0;
     this->Points = points;

@@ -114,8 +114,8 @@ public:
 
 //! Sets the values for the Attribute
   XdmfInt32 SetValues(XdmfArray *Values);
-//! Retreives the Values of the Attribute
-  XdmfGetValueMacro( Values, XdmfArray *);
+//! Retreives the Values of the Attribute, create one by default
+  XdmfArray *GetValues(XdmfInt32 Create=1);
 
 //! Initialize but don't read the Heavy Data
   XdmfInt32 UpdateInformation();

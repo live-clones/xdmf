@@ -5005,7 +5005,38 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_XdmfAttribute_GetValues(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_XdmfAttribute_GetValues__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfAttribute *arg1 = (XdmfAttribute *) 0 ;
+  XdmfInt32 arg2 ;
+  XdmfArray *result = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfAttribute_GetValues",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfAttribute, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfAttribute_GetValues" "', argument " "1"" of type '" "XdmfAttribute *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfAttribute * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfAttribute_GetValues" "', argument " "2"" of type '" "XdmfInt32""'");
+  } 
+  arg2 = static_cast< XdmfInt32 >(val2);
+  result = (XdmfArray *)(arg1)->GetValues(arg2);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_XdmfArray, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfAttribute_GetValues__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   XdmfAttribute *arg1 = (XdmfAttribute *) 0 ;
   XdmfArray *result = 0 ;
@@ -5023,6 +5054,47 @@ SWIGINTERN PyObject *_wrap_XdmfAttribute_GetValues(PyObject *SWIGUNUSEDPARM(self
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_XdmfArray, 0 |  0 );
   return resultobj;
 fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfAttribute_GetValues(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[3];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = PyObject_Length(args);
+  for (ii = 0; (ii < argc) && (ii < 2); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfAttribute, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_XdmfAttribute_GetValues__SWIG_1(self, args);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfAttribute, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_XdmfAttribute_GetValues__SWIG_0(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'XdmfAttribute_GetValues'.\n  Possible C/C++ prototypes are:\n    GetValues(XdmfInt32)\n    GetValues()\n");
   return NULL;
 }
 
@@ -20063,6 +20135,46 @@ SWIGINTERN PyObject *_wrap_XdmfTopology_GetConnectivity__SWIG_0(PyObject *SWIGUN
   PyObject *resultobj = 0;
   XdmfTopology *arg1 = (XdmfTopology *) 0 ;
   XdmfArray *arg2 = (XdmfArray *) 0 ;
+  XdmfInt32 arg3 ;
+  XdmfArray *result = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  int val3 ;
+  int ecode3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:XdmfTopology_GetConnectivity",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfTopology, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfTopology_GetConnectivity" "', argument " "1"" of type '" "XdmfTopology *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfTopology * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_XdmfArray, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfTopology_GetConnectivity" "', argument " "2"" of type '" "XdmfArray *""'"); 
+  }
+  arg2 = reinterpret_cast< XdmfArray * >(argp2);
+  ecode3 = SWIG_AsVal_int(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "XdmfTopology_GetConnectivity" "', argument " "3"" of type '" "XdmfInt32""'");
+  } 
+  arg3 = static_cast< XdmfInt32 >(val3);
+  result = (XdmfArray *)(arg1)->GetConnectivity(arg2,arg3);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_XdmfArray, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfTopology_GetConnectivity__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfTopology *arg1 = (XdmfTopology *) 0 ;
+  XdmfArray *arg2 = (XdmfArray *) 0 ;
   XdmfArray *result = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
@@ -20090,7 +20202,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_XdmfTopology_GetConnectivity__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_XdmfTopology_GetConnectivity__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   XdmfTopology *arg1 = (XdmfTopology *) 0 ;
   XdmfArray *result = 0 ;
@@ -20114,12 +20226,12 @@ fail:
 
 SWIGINTERN PyObject *_wrap_XdmfTopology_GetConnectivity(PyObject *self, PyObject *args) {
   int argc;
-  PyObject *argv[3];
+  PyObject *argv[4];
   int ii;
   
   if (!PyTuple_Check(args)) SWIG_fail;
   argc = PyObject_Length(args);
-  for (ii = 0; (ii < argc) && (ii < 2); ii++) {
+  for (ii = 0; (ii < argc) && (ii < 3); ii++) {
     argv[ii] = PyTuple_GET_ITEM(args,ii);
   }
   if (argc == 1) {
@@ -20128,7 +20240,7 @@ SWIGINTERN PyObject *_wrap_XdmfTopology_GetConnectivity(PyObject *self, PyObject
     int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfTopology, 0);
     _v = SWIG_CheckState(res);
     if (_v) {
-      return _wrap_XdmfTopology_GetConnectivity__SWIG_1(self, args);
+      return _wrap_XdmfTopology_GetConnectivity__SWIG_2(self, args);
     }
   }
   if (argc == 2) {
@@ -20141,13 +20253,33 @@ SWIGINTERN PyObject *_wrap_XdmfTopology_GetConnectivity(PyObject *self, PyObject
       int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_XdmfArray, 0);
       _v = SWIG_CheckState(res);
       if (_v) {
-        return _wrap_XdmfTopology_GetConnectivity__SWIG_0(self, args);
+        return _wrap_XdmfTopology_GetConnectivity__SWIG_1(self, args);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfTopology, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_XdmfArray, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        {
+          int res = SWIG_AsVal_int(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_XdmfTopology_GetConnectivity__SWIG_0(self, args);
+        }
       }
     }
   }
   
 fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'XdmfTopology_GetConnectivity'.\n  Possible C/C++ prototypes are:\n    GetConnectivity(XdmfArray *)\n    GetConnectivity()\n");
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'XdmfTopology_GetConnectivity'.\n  Possible C/C++ prototypes are:\n    GetConnectivity(XdmfArray *,XdmfInt32)\n    GetConnectivity(XdmfArray *)\n    GetConnectivity()\n");
   return NULL;
 }
 
@@ -20699,7 +20831,38 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_XdmfGeometry_GetPoints(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_XdmfGeometry_GetPoints__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGeometry *arg1 = (XdmfGeometry *) 0 ;
+  XdmfInt32 arg2 ;
+  XdmfArray *result = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfGeometry_GetPoints",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGeometry, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGeometry_GetPoints" "', argument " "1"" of type '" "XdmfGeometry *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGeometry * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfGeometry_GetPoints" "', argument " "2"" of type '" "XdmfInt32""'");
+  } 
+  arg2 = static_cast< XdmfInt32 >(val2);
+  result = (XdmfArray *)(arg1)->GetPoints(arg2);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_XdmfArray, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGeometry_GetPoints__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   XdmfGeometry *arg1 = (XdmfGeometry *) 0 ;
   XdmfArray *result = 0 ;
@@ -20717,6 +20880,47 @@ SWIGINTERN PyObject *_wrap_XdmfGeometry_GetPoints(PyObject *SWIGUNUSEDPARM(self)
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_XdmfArray, 0 |  0 );
   return resultobj;
 fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGeometry_GetPoints(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[3];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = PyObject_Length(args);
+  for (ii = 0; (ii < argc) && (ii < 2); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfGeometry, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_XdmfGeometry_GetPoints__SWIG_1(self, args);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfGeometry, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_XdmfGeometry_GetPoints__SWIG_0(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'XdmfGeometry_GetPoints'.\n  Possible C/C++ prototypes are:\n    GetPoints(XdmfInt32)\n    GetPoints()\n");
   return NULL;
 }
 
