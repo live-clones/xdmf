@@ -86,7 +86,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.12");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.13");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -1431,9 +1431,13 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
 #else
     vtkUniformGrid *vGrid = vtkUniformGrid::SafeDownCast(output);
 #endif
+    XdmfTopology        *Topology = xdmfGrid->GetTopology();
+    XdmfInt64   Dimensions[3] = { 0, 0, 0 };
     XdmfFloat64 *origin = Geometry->GetOrigin();
     vGrid->SetOrigin(origin[2], origin[1], origin[0]);
     XdmfFloat64 *spacing = Geometry->GetDxDyDz();
+    Topology->GetShapeDesc()->GetShape( Dimensions );
+    vGrid->SetDimensions(Dimensions[2], Dimensions[1], Dimensions[0]);
     stride[2] = readerStride[0];
     stride[1] = readerStride[1];
     stride[0] = readerStride[2];
