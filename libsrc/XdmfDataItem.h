@@ -137,7 +137,7 @@ public:
     XdmfInt32 SetDataDesc(XdmfDataDesc *DataDesc);
 
     //! Get the Internal Array
-    XdmfGetValueMacro(Array, XdmfArray *);
+    XdmfArray *GetArray(XdmfInt32 Create=1);
 
     //! Set the Array. Also sets ArrayIsMine = 0
     XdmfInt32   SetArray(XdmfArray *Array);

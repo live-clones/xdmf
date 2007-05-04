@@ -437,8 +437,6 @@ INPUT                  = \
                         XdmfLightData.h \
                         XdmfElement.h \
                         XdmfInformation.h \
-                        XdmfDataStructure.h \
-                        XdmfDataTransform.h \
                         XdmfHeavyData.h \
                         XdmfHDF.h \
                         XdmfValues.h \

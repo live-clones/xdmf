@@ -593,6 +593,18 @@ xmlXPathFreeContext(xpathCtx);
 return(NULL);
 }
 
+XdmfConstString
+XdmfDOM::GetPath(XdmfXmlNode Node){
+    char *txt;
+
+    if(!Node){
+        XdmfErrorMessage("Node == NULL");
+        return((XdmfConstString)NULL);
+    }
+    txt = (char *)xmlGetNodePath(Node);
+    return(this->DupChars(txt));
+}
+
 XdmfInt32
 XdmfDOM::FindNumberOfElements(XdmfConstString TagName, XdmfXmlNode Node ) {
 XdmfXmlNode child;

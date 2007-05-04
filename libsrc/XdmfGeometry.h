@@ -29,6 +29,7 @@
 #include "XdmfElement.h"
 
 class XdmfArray;
+class XdmfDataItem;
 
 #define XDMF_GEOMETRY_NONE          0
 #define XDMF_GEOMETRY_XYZ           1
@@ -140,6 +141,7 @@ XDMF_GEOMETRY_ORIGIN_DXDYDZ : Xorigin, Yorigin, Zorigin, Dx, Dy, Dz
     }
 
 protected:
+  XdmfDataItem *GetDataItem(XdmfInt32 Index, XdmfXmlNode Node);
 
   XdmfInt32  GeometryType;
   XdmfInt32  PointsAreMine;

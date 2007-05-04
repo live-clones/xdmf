@@ -423,6 +423,7 @@ class XdmfDOM(XdmfLightData):
     def FindElementByPath(*args): return _Xdmf.XdmfDOM_FindElementByPath(*args)
     def FindNumberOfElements(*args): return _Xdmf.XdmfDOM_FindNumberOfElements(*args)
     def FindNumberOfElementsByAttribute(*args): return _Xdmf.XdmfDOM_FindNumberOfElementsByAttribute(*args)
+    def GetPath(*args): return _Xdmf.XdmfDOM_GetPath(*args)
     def GetNdgmHost(*args): return _Xdmf.XdmfDOM_GetNdgmHost(*args)
     def SetNdgmHost(*args): return _Xdmf.XdmfDOM_SetNdgmHost(*args)
     def Get(*args): return _Xdmf.XdmfDOM_Get(*args)

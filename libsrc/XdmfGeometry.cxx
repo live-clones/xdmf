@@ -51,29 +51,81 @@ XdmfGeometry::~XdmfGeometry() {
   if( this->PointsAreMine && this->Points )  delete this->Points;
   }
 
+// Returns an existing DataItem or build a new one
+XdmfDataItem *
+XdmfGeometry::GetDataItem(XdmfInt32 Index, XdmfXmlNode Node){
+    XdmfDataItem *di = NULL;
+    XdmfXmlNode node;
+
+    node = this->DOM->FindDataElement(Index, Node);
+    if(node) {
+        di = (XdmfDataItem *)this->GetCurrentXdmfElement(node);
+    }
+    if(!di){
+        di = new XdmfDataItem;
+        node = this->DOM->InsertNew(this->GetElement(), "DataItem");
+        di->SetDOM(this->DOM);
+        di->SetElement(node);
+    }
+    return(di);
+}
 
 XdmfInt32
 XdmfGeometry::Build(){
+    XdmfDataItem    *di = NULL;
+    XdmfArray       *array;
+
     if(XdmfElement::Build() != XDMF_SUCCESS) return(XDMF_FAIL);
     this->Set("GeometryType", this->GetGeometryTypeAsString());
-    if(this->Points){
-        XdmfDataItem    *di = NULL;
-        XdmfXmlNode     node;
-        //! Is there already a DataItem
-        node = this->DOM->FindDataElement(0, this->GetElement());
-        if(node) {
-            di = (XdmfDataItem *)this->GetCurrentXdmfElement(node);
+    switch( this->GeometryType ){
+      case XDMF_GEOMETRY_VXVYVZ:
+            if(!this->VectorX || !this->VectorY || !this->VectorZ){
+                XdmfErrorMessage("Vx Vy and Vz must be set");
+                return(XDMF_FAIL);
+            }
+            // Vx
+            di = this->GetDataItem(0, this->GetElement());
+            di->SetArray(this->VectorX);
+            if(this->VectorX->GetNumberOfElements() > 100) di->SetFormat(XDMF_FORMAT_HDF);
+            di->Build();
+            // Vy
+            di = this->GetDataItem(1, this->GetElement());
+            di->SetArray(this->VectorY);
+            if(this->VectorY->GetNumberOfElements() > 100) di->SetFormat(XDMF_FORMAT_HDF);
+            di->Build();
+            // Vx
+            di = this->GetDataItem(3, this->GetElement());
+            di->SetArray(this->VectorZ);
+            if(this->VectorZ->GetNumberOfElements() > 100) di->SetFormat(XDMF_FORMAT_HDF);
+            di->Build();
+        break;
+      case XDMF_GEOMETRY_ORIGIN_DXDYDZ:
+            // Origin
+            di = this->GetDataItem(0, this->GetElement());
+            di->SetFormat(XDMF_FORMAT_XML);
+            array = di->GetArray();
+            array->SetNumberOfElements(3);
+            array->SetValues(0, this->Origin, 3);
+            di->Build();
+            // DxDyDz
+            di = this->GetDataItem(1, this->GetElement());
+            di->SetFormat(XDMF_FORMAT_XML);
+            array = di->GetArray();
+            array->SetNumberOfElements(3);
+            array->SetValues(0, this->DxDyDz, 3);
+            di->Build();
+        break;
+      default :
+        if(this->Points){
+            di = this->GetDataItem(0, this->GetElement());
+            di->SetArray(this->Points);
+            if(this->Points->GetNumberOfElements() > 100) di->SetFormat(XDMF_FORMAT_HDF);
+            di->Build();
+        }else{
+            XdmfErrorMessage("XdmfGeometry->Points must be set for Geometry Type " << this->GetGeometryTypeAsString());
+            return(XDMF_FAIL);
         }
-        if(!di){
-            di = new XdmfDataItem;
-            node = this->DOM->InsertNew(this->GetElement(), "DataItem");
-            di->SetDOM(this->DOM);
-            di->SetElement(node);
-        }
-        di->SetArray(this->Points);
-        if(this->Points->GetNumberOfElements() > 100) di->SetFormat(XDMF_FORMAT_HDF);
-        di->Build();
-
+        break;
     }
     return(XDMF_SUCCESS);
 }

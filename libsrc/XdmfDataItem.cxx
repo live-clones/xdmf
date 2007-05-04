@@ -71,6 +71,15 @@ XdmfDataItem::Insert( XdmfElement *Child){
     return(XDMF_FAIL);
 }
 
+XdmfArray *
+XdmfDataItem::GetArray(XdmfInt32 Create){
+    if(!this->Array && Create){
+        this->Array = new XdmfArray;
+        this->ArrayIsMine = 1;
+    }
+    return(this->Array);
+}
+
 XdmfInt32 
 XdmfDataItem::SetArray(XdmfArray *Array){
     if(this->Array && this->ArrayIsMine) delete this->Array;

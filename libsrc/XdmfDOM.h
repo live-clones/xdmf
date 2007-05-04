@@ -205,6 +205,8 @@ the "Information" Elements not to be counted against Index.
       XdmfConstString Value,
       XdmfXmlNode Node = NULL );
 
+//! Get XPath of a node
+    XdmfConstString GetPath(XdmfXmlNode Node);
 //! Get the default NDGM Host to use for HDF5 files
   XdmfGetStringMacro( NdgmHost );
 //! Set the default NDGM Host to use for HDF5 files

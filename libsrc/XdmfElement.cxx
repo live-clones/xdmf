@@ -89,8 +89,8 @@ void XdmfElement::SetReferenceObject(XdmfXmlNode Element, void *p){
         PrivateData = new XdmfElementData;
         XDMF_XML_PRIVATE_DATA(Element) = (void *)PrivateData;
     }
-    XdmfDebug("Old Ref = " << PrivateData->GetReferenceElement());
-    XdmfDebug("New Ref = " << p);
+    // XdmfDebug("Old Ref = " << PrivateData->GetReferenceElement());
+    // XdmfDebug("New Ref = " << p);
     PrivateData->SetReferenceElement((XdmfElement *)p);
 }
 

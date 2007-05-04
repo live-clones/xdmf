@@ -14878,6 +14878,37 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_XdmfDOM_GetPath(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDOM *arg1 = (XdmfDOM *) 0 ;
+  XdmfXmlNode arg2 = (XdmfXmlNode) 0 ;
+  XdmfConstString result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfDOM_GetPath",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDOM, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDOM_GetPath" "', argument " "1"" of type '" "XdmfDOM *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDOM * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p__xmlNode, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfDOM_GetPath" "', argument " "2"" of type '" "XdmfXmlNode""'"); 
+  }
+  arg2 = reinterpret_cast< XdmfXmlNode >(argp2);
+  result = (XdmfConstString)(arg1)->GetPath(arg2);
+  resultobj = SWIG_FromCharPtr((const char *)result);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_XdmfDOM_GetNdgmHost(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   XdmfDOM *arg1 = (XdmfDOM *) 0 ;
@@ -22407,6 +22438,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfDOM_FindElementByPath", _wrap_XdmfDOM_FindElementByPath, METH_VARARGS, NULL},
 	 { (char *)"XdmfDOM_FindNumberOfElements", _wrap_XdmfDOM_FindNumberOfElements, METH_VARARGS, NULL},
 	 { (char *)"XdmfDOM_FindNumberOfElementsByAttribute", _wrap_XdmfDOM_FindNumberOfElementsByAttribute, METH_VARARGS, NULL},
+	 { (char *)"XdmfDOM_GetPath", _wrap_XdmfDOM_GetPath, METH_VARARGS, NULL},
 	 { (char *)"XdmfDOM_GetNdgmHost", _wrap_XdmfDOM_GetNdgmHost, METH_VARARGS, NULL},
 	 { (char *)"XdmfDOM_SetNdgmHost", _wrap_XdmfDOM_SetNdgmHost, METH_VARARGS, NULL},
 	 { (char *)"XdmfDOM_Get", _wrap_XdmfDOM_Get, METH_VARARGS, NULL},

@@ -33,6 +33,11 @@ class XdmfArray;
 
 //!  Data Container Object.
 /*!
+XdmfDataStructure is being deprecated!!
+Use XdmfDataItem !!
+<DataStructure ... == <DataItem  ItemType="Uniform" ...
+
+
 An XdmfDataItem is a container for data. It is of one of three types :
 \verbatim
     Uniform ..... A single DataStructure or DataTransform
