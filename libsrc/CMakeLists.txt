@@ -53,6 +53,11 @@ SET( XdmfModelSource
 #  XdmfRuntime
   )
 
+SET( XdmfMpiSource
+    XdmfDsmComm
+    XdmfDsmCommMpi
+    )
+
 SET( XdmfNdgmSource
 #  H5FDndgm
   )
@@ -265,6 +270,7 @@ FIND_PATH(XDMF_HAVE_NETINET in.h /usr/include/netinet /usr/include /usr/include/
 FIND_PATH(XDMF_HAVE_MMAN mman.h /usr/include/sys /usr/include)
 MARK_AS_ADVANCED(XDMF_HAVE_FCNTL XDMF_HAVE_NETINET XDMF_HAVE_MMAN)
 
+
 ##
 CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/libsrc/XdmfConfig.h.in
   ${Xdmf_BINARY_DIR}/libsrc/XdmfConfig.h)
@@ -285,6 +291,12 @@ IF(NOT WIN32)
 ENDIF(NOT WIN32)
 
 SET(XdmfSources ${XdmfFormatSource} ${XdmfExtraSource} ${XdmfModelSource})
+## MPI ###
+IF(XDMF_BUILD_MPI)
+    SET(XdmfSources ${XdmfSources} ${XdmfMpiSource})
+ELSE(XDMF_BUILD_MPI)
+    ADD_DEFINITIONS("-DXDMF_NO_MPI")
+ENDIF(XDMF_BUILD_MPI)
 
 IF(XDMF_HAS_NDGM)
   SET(XdmfSources ${XdmfSources} ${XdmfNdgmSource})
