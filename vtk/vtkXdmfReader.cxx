@@ -87,7 +87,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.74");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.75");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -362,7 +362,11 @@ vtkXdmfReaderGrid* vtkXdmfReaderInternal::GetXdmfGrid(
 //----------------------------------------------------------------------------
 vtkXdmfReaderActualGrid* vtkXdmfReaderInternal::GetGrid(const char* gridName)
 {
-  return &this->ActualGrids[gridName];
+  if(gridName && strlen(gridName))
+    {
+    return &this->ActualGrids[gridName];
+    }
+  return NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -860,7 +864,7 @@ int vtkXdmfReaderInternal::RequestActualGridData(
                                        currentActualGrid->Grid,outInfo,
                                        output,0);
     }
-  else // Handle collection
+  else if(currentActualGrid->Collection) // Handle collection
     {
     vtkHierarchicalDataSet *hd=vtkHierarchicalDataSet::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
     
@@ -976,6 +980,7 @@ int vtkXdmfReaderInternal::RequestActualGridData(
       }
     return result;
     }
+  return 1;
 }
 
 //----------------------------------------------------------------------------
@@ -2786,7 +2791,7 @@ void vtkXdmfReader::UpdateGrids()
     str.rdbuf()->freeze(0);
     // this->SetProgressText("XDMF Reader 0.1 ");
     // this->SetProgress( 1.0 *  currentGrid / NGrid);
-    this->UpdateProgress(1.0 *  currentGrid / NGrid);
+    // this->UpdateProgress(1.0 *  currentGrid / NGrid);
     }
   
   this->GridsModified = 0;
