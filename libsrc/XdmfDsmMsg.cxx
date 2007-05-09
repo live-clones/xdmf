@@ -22,56 +22,11 @@
 /*     for more information.                                       */
 /*                                                                 */
 /*******************************************************************/
-#ifndef __XdmfDsmComm_h
-#define __XdmfDsmComm_h
-
-#include "XdmfObject.h"
+#include "XdmfDsmMsg.h"
 
 
-//! Base comm object for Distributed Shared Memory implementation
-/*!
-*/
+XdmfDsmMsg::XdmfDsmMsg() {
+}
 
-//! Macros to Shift to XDR if necessary (implement later)
-#define XDMF_SHIFT64(a)     (a)
-#define XDMF_SHIFT32(a)     (a)
-
-class XdmfDsmMsg;
-
-class XDMF_EXPORT XdmfDsmComm : public XdmfObject {
-
-public:
-  XdmfDsmComm();
-  ~XdmfDsmComm();
-
-  XdmfConstString GetClassName() { return ( "XdmfDsmComm" ) ; };
-
-
-//! Id 
-    XdmfGetValueMacro(Id, XdmfInt32);
-    XdmfSetValueMacro(Id, XdmfInt32);
-
-//! Total 
-    XdmfGetValueMacro(TotalSize, XdmfInt32);
-    XdmfSetValueMacro(TotalSize, XdmfInt32);
-
-    //! Message
-    XdmfDsmMsg *GetMsg();
-    XdmfInt32   SetMsg(XdmfDsmMsg *Msg);
-
-    virtual XdmfInt32   Init();
-    virtual XdmfInt32   Send(XdmfDsmMsg *Msg);
-    virtual XdmfInt32   Receive(XdmfDsmMsg *Msg);
-    virtual XdmfInt32   Check(XdmfDsmMsg *Msg);
-
-    // XdmfInt32   Send() { return(this->Send(this->Msg)); };
-    // XdmfInt32   Receive() { return(this->Receive(this->Msg)); };
-    // XdmfInt32   Check() { return(this->Check(this->Msg)); };
-
-protected:
-    XdmfInt32       Id;
-    XdmfInt32       TotalSize;
-    XdmfDsmMsg      *Msg;
-};
-
-#endif // __XdmfDsmComm_h
+XdmfDsmMsg::~XdmfDsmMsg() {
+}

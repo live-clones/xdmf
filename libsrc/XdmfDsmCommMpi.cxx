@@ -23,8 +23,7 @@
 /*                                                                 */
 /*******************************************************************/
 #include "XdmfDsmCommMpi.h"
-
-#define XDMF_MPI_DEFAULT_TAG    0x80
+#include "XdmfDsmMsg.h"
 
 XdmfDsmCommMpi::XdmfDsmCommMpi() {
     this->Comm = MPI_COMM_WORLD;
@@ -35,7 +34,14 @@ XdmfDsmCommMpi::~XdmfDsmCommMpi() {
 
 XdmfInt32
 XdmfDsmCommMpi::Init(){
+    int size, rank;
 
+    if(MPI_Comm_size(this->Comm, &size) != MPI_SUCCESS) return(XDMF_FAIL);
+    if(MPI_Comm_rank(this->Comm, &rank) != MPI_SUCCESS) return(XDMF_FAIL);
+
+    this->SetId(rank);
+    this->SetTotalSize(size);
+    return(XDMF_SUCCESS);
 }
 
 XdmfInt32

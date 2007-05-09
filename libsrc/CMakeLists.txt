@@ -54,7 +54,9 @@ SET( XdmfModelSource
   )
 
 SET( XdmfMpiSource
+    XdmfDsm
     XdmfDsmComm
+    XdmfDsmMsg
     XdmfDsmCommMpi
     )
 

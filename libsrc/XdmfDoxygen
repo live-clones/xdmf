@@ -434,6 +434,10 @@ INPUT                  = \
                         XdmfDOM.h \
                         XdmfArray.h \
                         XdmfDataDesc.h \
+                        XdmfDsmComm.h \
+                        XdmfDsm.h \
+                        XdmfDsmMsg.h \
+                        XdmfDsmCommMpi.h \
                         XdmfLightData.h \
                         XdmfElement.h \
                         XdmfInformation.h \
