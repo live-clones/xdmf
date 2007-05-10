@@ -32,6 +32,7 @@
 #include "XdmfDOM.h"
 #ifndef XDMF_NO_MPI
 #include "XdmfDsm.h"
+#include "XdmfDsmBuffer.h"
 #include "XdmfDsmComm.h"
 #include "XdmfDsmMsg.h"
 #include "XdmfDsmCommMpi.h"

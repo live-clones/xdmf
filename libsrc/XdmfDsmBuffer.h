@@ -22,46 +22,28 @@
 /*     for more information.                                       */
 /*                                                                 */
 /*******************************************************************/
-#ifndef __XdmfDsmMsg_h
-#define __XdmfDsmMsg_h
+#ifndef __XdmfDsmBuffer_h
+#define __XdmfDsmBuffer_h
 
-#include "XdmfObject.h"
+#include "XdmfDsm.h"
 
 
-//! Base comm message object for Distributed Shared Memory implementation
+//! Base comm object for Distributed Shared Memory implementation
 /*!
 */
 
-#define XDMF_DSM_DEFAULT_TAG    0x80
 
-#define XDMF_DSM_ANY_SOURCE     -1
+class XDMF_EXPORT XdmfDsmBuffer : public XdmfDsm {
 
-class XdmfDsmMsg : public XdmfObject {
+public:
+  XdmfDsmBuffer();
+  ~XdmfDsmBuffer();
 
-    public :
-        XdmfDsmMsg();
-        ~XdmfDsmMsg();
+  XdmfConstString GetClassName() { return ( "XdmfDsmBuffer" ) ; };
 
-        XdmfSetValueMacro(Source, XdmfInt32);
-        XdmfGetValueMacro(Source, XdmfInt32);
+    XdmfInt32   Put(XdmfInt64 Address, XdmfInt64 Length, void *Data);
 
-        XdmfSetValueMacro(Dest, XdmfInt32);
-        XdmfGetValueMacro(Dest, XdmfInt32);
-
-        XdmfSetValueMacro(Tag, XdmfInt32);
-        XdmfGetValueMacro(Tag, XdmfInt32);
-
-        XdmfSetValueMacro(Length, XdmfInt64);
-        XdmfGetValueMacro(Length, XdmfInt64);
-
-        XdmfSetValueMacro(Data, void *);
-        XdmfGetValueMacro(Data, void *);
-
-    XdmfInt32   Source;
-    XdmfInt32   Dest;
-    XdmfInt32   Tag;
-    XdmfInt64   Length;
-    void        *Data;
+protected:
 };
 
-#endif // __XdmfDsmMsg_h
+#endif // __XdmfDsmBuffer_h

@@ -26,6 +26,7 @@
 
 
 XdmfDsmMsg::XdmfDsmMsg() {
+    this->Tag = XDMF_DSM_DEFAULT_TAG;
 }
 
 XdmfDsmMsg::~XdmfDsmMsg() {

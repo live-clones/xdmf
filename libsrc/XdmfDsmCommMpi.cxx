@@ -53,7 +53,8 @@ XdmfDsmCommMpi::Check(XdmfDsmMsg *Msg){
     MPI_Iprobe(MPI_ANY_SOURCE, Msg->Tag, this->Comm, &flag, &Status);
     if(flag){
         nid = Status.MPI_SOURCE;
-        return(nid);
+        Msg->SetSource(nid);
+        return(XDMF_SUCCESS);
     }
     return(XDMF_FAIL);
 }
@@ -62,22 +63,26 @@ XdmfInt32
 XdmfDsmCommMpi::Receive(XdmfDsmMsg *Msg){
     int         MessageLength;
     XdmfInt32   status;
+    XdmfInt32   source = MPI_ANY_SOURCE;
     MPI_Status  SendRecvStatus;
 
 
     if(XdmfDsmComm::Receive(Msg) != XDMF_SUCCESS) return(XDMF_FAIL);
-    status = MPI_Recv(Msg->Data, Msg->Size, MPI_UNSIGNED_CHAR, Msg->Source, Msg->Tag, this->Comm, &SendRecvStatus);
+    if(Msg->Source >= 0) source = Msg->Source;
+    status = MPI_Recv(Msg->Data, Msg->Length, MPI_UNSIGNED_CHAR, source, Msg->Tag, this->Comm, &SendRecvStatus);
     if(status != MPI_SUCCESS){
-        XdmfErrorMessage("Id = " << this->Id << " MPI_Recv failed to receive " << Msg->Size << " Bytes from " << Msg->Source);
+        XdmfErrorMessage("Id = " << this->Id << " MPI_Recv failed to receive " << Msg->Length << " Bytes from " << Msg->Source);
         XdmfErrorMessage("MPI Error Code = " << SendRecvStatus.MPI_ERROR);
         return(XDMF_FAIL);
     }
     status = MPI_Get_count(&SendRecvStatus, MPI_UNSIGNED_CHAR, &MessageLength);
+    Msg->SetSource(SendRecvStatus.MPI_SOURCE);
+    Msg->SetLength(MessageLength);
     if(status != MPI_SUCCESS){
         XdmfErrorMessage("MPI_Get_count failed ");
         return(XDMF_FAIL);
     }
-    return(MessageLength);
+    return(XDMF_SUCCESS);
 }
 
 XdmfInt32
@@ -87,11 +92,11 @@ XdmfDsmCommMpi::Send(XdmfDsmMsg *Msg){
 
 
     if(XdmfDsmComm::Send(Msg) != XDMF_SUCCESS) return(XDMF_FAIL);
-    status = MPI_Send(Msg->Data, Msg->Size, MPI_UNSIGNED_CHAR, Msg->Dest, Msg->Tag, this->Comm);
+    status = MPI_Send(Msg->Data, Msg->Length, MPI_UNSIGNED_CHAR, Msg->Dest, Msg->Tag, this->Comm);
     if(status != MPI_SUCCESS){
-        XdmfErrorMessage("Id = " << this->Id << " MPI_Send failed to send " << Msg->Size << " Bytes to " << Msg->Dest);
+        XdmfErrorMessage("Id = " << this->Id << " MPI_Send failed to send " << Msg->Length << " Bytes to " << Msg->Dest);
         XdmfErrorMessage("MPI Error Code = " << SendRecvStatus.MPI_ERROR);
         return(XDMF_FAIL);
     }
-    return(Msg->Size);
+    return(XDMF_SUCCESS);
 }

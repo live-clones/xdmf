@@ -27,6 +27,15 @@
 #include "XdmfDsmMsg.h"
 #include "XdmfArray.h"
 
+// Align
+typedef struct {
+    XdmfInt64   Opcode;
+    XdmfInt64   Source;
+    XdmfInt64   Target;
+    XdmfInt64   Address;
+    XdmfInt64   Length;
+    XdmfInt64   Parameters[10];
+} XdmfDsmCommand;
 
 XdmfDsm::XdmfDsm() {
     this->DsmType = XDMF_DSM_TYPE_UNIFORM;
@@ -38,6 +47,7 @@ XdmfDsm::XdmfDsm() {
     this->EndAddress = this->StartAddress + this->Length - 1;
     this->Comm = 0;
     this->StartServerId = this->EndServerId = -1;
+    this->Msg = new XdmfDsmMsg;
 }
 
 XdmfDsm::~XdmfDsm() {
@@ -61,6 +71,7 @@ XdmfDsm::ConfigureUniform(XdmfDsmComm *Comm, XdmfInt64 Length, XdmfInt32 StartId
     }else{
         this->Length = Length;
     }
+    this->Msg->Source = this->Comm->GetId();
     return(XDMF_SUCCESS);
 }
 
@@ -92,7 +103,7 @@ XdmfDsm::AddressToId(XdmfInt64 Address){
             // All Servers have same length
             ServerId = this->StartServerId + (Address / this->Length);
             if(ServerId > this->EndServerId ){
-                XdmfErrorMessage("ServerId " << ServerId << " for Address " << Address << " is larger than EndServerId");
+                XdmfErrorMessage("ServerId " << ServerId << " for Address " << Address << " is larger than EndServerId " << this->EndServerId);
             }
             break;
         default :
@@ -115,25 +126,45 @@ XdmfDsm::SetLength(XdmfInt64 Length){
 }
 
 XdmfInt32
-XdmfDsm::Put(XdmfInt64 Address, XdmfInt64 Length, void *Data){
-    XdmfInt32   who, MyId = this->Comm->GetId();
-    XdmfInt64   astart, aend, len;
+XdmfDsm::SendCommandHeader(XdmfInt32 Opcode, XdmfInt32 Dest, XdmfInt64 Address, XdmfInt64 Length){
+    XdmfDsmCommand  Cmd;
+    XdmfInt32 Status;
 
-    while(Length){
-        who = this->AddressToId(Address);
-        cout << " who = " << who << endl;
-        if(who == XDMF_FAIL){
-            XdmfErrorMessage("Address Error");
-            return(XDMF_FAIL);
-        }
-        this->GetAddressRangeForId(who, &astart, &aend);
-        // cout << "astart = " << astart << " aend = " << aend << endl;
-        len = MIN(Length, aend - Address + 1);
-        // cout << "Put " << len << " Bytes to Address " << Address << " Id = " << who << endl;
-        // if(who == MyId) cout << "That's me!!" << endl;
-        Length -= len;
-        Address += len;
-        // cout << "Length = " << Length << " Address = " << Address << endl;
-    }
-    return(XDMF_SUCCESS);
+    Cmd.Opcode = Opcode;
+    Cmd.Source = this->Comm->GetId();
+    Cmd.Target = Dest;
+    Cmd.Address = Address;
+    Cmd.Length = Length;
+
+    this->Msg->SetDest(Dest);
+    this->Msg->SetLength(sizeof(Cmd));
+    this->Msg->SetData(&Cmd);
+
+    Status = this->Comm->Send(this->Msg);
+    return(Status);
 }
+
+XdmfInt32
+XdmfDsm::ReceiveCommandHeader(XdmfInt32 *Opcode, XdmfInt32 *Source, XdmfInt64 *Address, XdmfInt64 *Length, XdmfInt32 Block){
+    XdmfDsmCommand  Cmd;
+    XdmfInt32       status = XDMF_FAIL;
+
+    this->Msg->Source = XDMF_DSM_ANY_SOURCE;
+    this->Msg->SetLength(sizeof(Cmd));
+    this->Msg->SetData(&Cmd);
+
+    memset(&Cmd, 0, sizeof(XdmfDsmCommand));
+    status = this->Comm->Check(this->Msg);
+    if((status != XDMF_FAIL) || Block){
+        status  = this->Comm->Receive(this->Msg);
+        if(status != XDMF_FAIL){
+            *Opcode = Cmd.Opcode;
+            *Source = Cmd.Source;
+            *Address = Cmd.Address;
+            *Length = Cmd.Length;
+            status = XDMF_SUCCESS;
+        }
+    }
+    return(status);
+}
+

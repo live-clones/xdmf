@@ -22,46 +22,44 @@
 /*     for more information.                                       */
 /*                                                                 */
 /*******************************************************************/
-#ifndef __XdmfDsmMsg_h
-#define __XdmfDsmMsg_h
+#include "XdmfDsmBuffer.h"
+#include "XdmfDsmComm.h"
+#include "XdmfDsmMsg.h"
+#include "XdmfArray.h"
 
-#include "XdmfObject.h"
+#define XDMF_DSM_OPCODE_PUT     0x01
+#define XDMF_DSM_OPCODE_GET     0x02
 
 
-//! Base comm message object for Distributed Shared Memory implementation
-/*!
-*/
 
-#define XDMF_DSM_DEFAULT_TAG    0x80
 
-#define XDMF_DSM_ANY_SOURCE     -1
+XdmfDsmBuffer::XdmfDsmBuffer() {
+}
 
-class XdmfDsmMsg : public XdmfObject {
+XdmfDsmBuffer::~XdmfDsmBuffer() {
+}
 
-    public :
-        XdmfDsmMsg();
-        ~XdmfDsmMsg();
 
-        XdmfSetValueMacro(Source, XdmfInt32);
-        XdmfGetValueMacro(Source, XdmfInt32);
+XdmfInt32
+XdmfDsmBuffer::Put(XdmfInt64 Address, XdmfInt64 Length, void *Data){
+    XdmfInt32   who, MyId = this->Comm->GetId();
+    XdmfInt64   astart, aend, len;
 
-        XdmfSetValueMacro(Dest, XdmfInt32);
-        XdmfGetValueMacro(Dest, XdmfInt32);
-
-        XdmfSetValueMacro(Tag, XdmfInt32);
-        XdmfGetValueMacro(Tag, XdmfInt32);
-
-        XdmfSetValueMacro(Length, XdmfInt64);
-        XdmfGetValueMacro(Length, XdmfInt64);
-
-        XdmfSetValueMacro(Data, void *);
-        XdmfGetValueMacro(Data, void *);
-
-    XdmfInt32   Source;
-    XdmfInt32   Dest;
-    XdmfInt32   Tag;
-    XdmfInt64   Length;
-    void        *Data;
-};
-
-#endif // __XdmfDsmMsg_h
+    while(Length){
+        who = this->AddressToId(Address);
+        cout << " who = " << who << endl;
+        if(who == XDMF_FAIL){
+            XdmfErrorMessage("Address Error");
+            return(XDMF_FAIL);
+        }
+        this->GetAddressRangeForId(who, &astart, &aend);
+        // cout << "astart = " << astart << " aend = " << aend << endl;
+        len = MIN(Length, aend - Address + 1);
+        cout << "Put " << len << " Bytes to Address " << Address << " Id = " << who << endl;
+        if(who == MyId) cout << "That's me!!" << endl;
+        Length -= len;
+        Address += len;
+        // cout << "Length = " << Length << " Address = " << Address << endl;
+    }
+    return(XDMF_SUCCESS);
+}
