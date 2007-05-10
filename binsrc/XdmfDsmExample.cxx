@@ -31,38 +31,47 @@
 int
 main( int argc, char **argv ) {
 
-int	            i, size, rank, Data[256];
-XdmfInt32       status, who;
+int	            i, Data[256];
+XdmfInt32       rank, status, who;
+XdmfInt64       start, end;
 XdmfDsmCommMpi  *MyComm = new XdmfDsmCommMpi;
-XdmfDsmMsg      MyMsg;
+XdmfDsmBuffer         *MyDsm = new XdmfDsmBuffer;
 
 MPI_Init(&argc, &argv);
-MPI_Comm_size(MPI_COMM_WORLD, &size);
-MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-cout << "Hello from " << rank << " of " << size << endl;
-MyComm->SetId(rank);
-MyComm->SetTotalSize(size);
+// New Communicator
+MyComm->Init();
+cout << "Hello from " << MyComm->GetId() << " of " << MyComm->GetTotalSize() << endl;
+rank = MyComm->GetId();
 
-if(rank){
-    Data[0] = rank * 10;
-    MyMsg.Dest = 0;
-    MyMsg.Size = 256 * sizeof(int);
-    MyMsg.Data = Data;
-    MyComm->Send(&MyMsg);
+// MyDsm->ConfigureUniform(MyComm, 1000000, 2, 50);
+MyDsm->ConfigureUniform(MyComm, 1000000);
+
+who = MyDsm->AddressToId(1500000);
+MyDsm->GetAddressRangeForId(who, &start, &end);
+
+// cout << "Address Range for " << who << " = " << start << " - " << end << endl;
+// MyDsm->Put(0, 5000000, Data);
+if(rank == 0){
+    XdmfInt32   i, Opcode, Source;
+    XdmfInt64   Address, Length;
+    for(i=1;i<MyComm->GetTotalSize();i++){
+    status = MyDsm->ReceiveCommandHeader(&Opcode, &Source, &Address, &Length);
+    if(status = XDMF_SUCCESS){
+        cout << "Receive From " << Source << " Address " << Address << " Length " << Length << endl;
+    }else{
+        cout << "Receive Failed" << endl;
+    }
+    }
 }else{
-    i = size - 1;
-    while(i){
-        who = MyComm->Check(&MyMsg);
-        if(who != XDMF_FAIL){
-            MyMsg.Source = who;
-            Data[0] = -1;
-            MyMsg.Data = Data;
-            cout << "Receive from " << who << endl;
-            status = MyComm->Receive(&MyMsg);
-            cout << "Data[0] = " << Data[0] << endl;
-            i--;
-        }
+    XdmfInt32   Opcode, Dest = 0;
+    XdmfInt64   Address = 0, Length = 100;
+    Address = rank * 100;
+    status = MyDsm->SendCommandHeader(Opcode, Dest, Address, Length);
+    if(status == XDMF_SUCCESS){
+        cout << "Send Succeeded for " << Length << " bytes" << endl;
+    }else{
+        cout << "Send Failed" << endl;
     }
 }
 
