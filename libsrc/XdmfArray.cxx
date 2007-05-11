@@ -30,6 +30,7 @@
 #include <unistd.h>
 #endif
 
+
 static XdmfLength  GlobalTimeCntr = 0;
 // static  ostrstream  *StringOutput = NULL;
 
@@ -61,13 +62,17 @@ private:
 
 XdmfArrayListClass::~XdmfArrayListClass()
 {
+
   if ( this->List )
     {
-    while( this->ListIndex )
+    while( this->ListIndex > 0 )
       {
+      // cout << "Before this->ListIndex = " << this->ListIndex << endl;
       delete this->List[this->ListIndex-1].Array;
+      // cout << "After this->ListIndex = " << this->ListIndex << endl;
       }
     delete [] this->List;
+    this->List = 0;
     }
 }
 
