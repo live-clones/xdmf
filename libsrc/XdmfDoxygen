@@ -434,6 +434,7 @@ INPUT                  = \
                         XdmfDOM.h \
                         XdmfArray.h \
                         XdmfDataDesc.h \
+                        XdmfDsmBuffer.h \
                         XdmfDsmComm.h \
                         XdmfDsm.h \
                         XdmfDsmMsg.h \

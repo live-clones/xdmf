@@ -115,6 +115,25 @@ XdmfDsm::AddressToId(XdmfInt64 Address){
 }
 
 XdmfInt32
+XdmfDsm::SendDone(){
+    XdmfInt32   who, status = XDMF_SUCCESS;
+
+    switch(this->DsmType) {
+        case XDMF_DSM_TYPE_UNIFORM :
+        case XDMF_DSM_TYPE_UNIFORM_RANGE :
+            for(who = this->StartServerId ; who <= this->EndServerId ; who++){
+                status = this->SendCommandHeader(XDMF_DSM_OPCODE_DONE, who, 0, 0);
+            }
+            break;
+        default :
+            // Not Implemented
+            XdmfErrorMessage("DsmType " << this->DsmType << " not yet implemented");
+            break;
+    }
+    return(status);
+}
+
+XdmfInt32
 XdmfDsm::SetLength(XdmfInt64 Length){
     // Make it longer than actually needed for round off.
     if(this->Storage->SetNumberOfElements((Length / sizeof(XdmfInt64)) + 1) != XDMF_SUCCESS){
@@ -136,6 +155,7 @@ XdmfDsm::SendCommandHeader(XdmfInt32 Opcode, XdmfInt32 Dest, XdmfInt64 Address, 
     Cmd.Address = Address;
     Cmd.Length = Length;
 
+    this->Msg->SetSource(this->Comm->GetId());
     this->Msg->SetDest(Dest);
     this->Msg->SetLength(sizeof(Cmd));
     this->Msg->SetData(&Cmd);
@@ -157,7 +177,10 @@ XdmfDsm::ReceiveCommandHeader(XdmfInt32 *Opcode, XdmfInt32 *Source, XdmfInt64 *A
     status = this->Comm->Check(this->Msg);
     if((status != XDMF_FAIL) || Block){
         status  = this->Comm->Receive(this->Msg);
-        if(status != XDMF_FAIL){
+        if(status == XDMF_FAIL){
+            XdmfErrorMessage("Communicator Receive Failed");
+            return(XDMF_FAIL);
+        }else{
             *Opcode = Cmd.Opcode;
             *Source = Cmd.Source;
             *Address = Cmd.Address;
@@ -168,3 +191,30 @@ XdmfDsm::ReceiveCommandHeader(XdmfInt32 *Opcode, XdmfInt32 *Source, XdmfInt64 *A
     return(status);
 }
 
+XdmfInt32
+XdmfDsm::SendData(XdmfInt32 Dest, void *Data, XdmfInt64 Length){
+
+    this->Msg->SetSource(this->Comm->GetId());
+    this->Msg->SetDest(Dest);
+    this->Msg->SetLength(Length);
+    this->Msg->SetData(Data);
+    return(this->Comm->Send(this->Msg));
+}
+
+XdmfInt32
+XdmfDsm::ReceiveData(XdmfInt32 Source, void *Data, XdmfInt64 Length, XdmfInt32 Block){
+    XdmfInt32   Status = XDMF_FAIL;
+
+    this->Msg->SetSource(Source);
+    this->Msg->SetLength(Length);
+    this->Msg->SetData(Data);
+    if(Block){
+        Status = this->Comm->Receive(this->Msg);
+    }else{
+        Status = this->Comm->Check(this->Msg);
+        if(Status == XDMF_SUCCESS){
+            Status = this->Comm->Receive(this->Msg);
+        }
+    }
+    return(Status);
+}

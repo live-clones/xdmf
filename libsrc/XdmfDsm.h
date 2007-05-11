@@ -27,6 +27,7 @@
 
 #include "XdmfObject.h"
 
+#define XDMF_DSM_OPCODE_DONE    0xFF
 
 //! Base comm object for Distributed Shared Memory implementation
 /*!
@@ -95,6 +96,11 @@ public:
 
     XdmfInt32   SendCommandHeader(XdmfInt32 Opcode, XdmfInt32 Dest, XdmfInt64 Address, XdmfInt64 Length);
     XdmfInt32   ReceiveCommandHeader(XdmfInt32 *Opcode, XdmfInt32 *Source, XdmfInt64 *Address, XdmfInt64 *Length, XdmfInt32 Block=1);
+
+    XdmfInt32   SendData(XdmfInt32 Dest, void *Data, XdmfInt64 Length);
+    XdmfInt32   ReceiveData(XdmfInt32 Source, void *Data, XdmfInt64 Length, XdmfInt32 Block=1);
+
+    XdmfInt32   SendDone();
 
 protected:
     XdmfInt32   DsmType;

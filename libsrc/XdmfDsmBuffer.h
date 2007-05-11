@@ -43,6 +43,12 @@ public:
 
     XdmfInt32   Put(XdmfInt64 Address, XdmfInt64 Length, void *Data);
 
+    XdmfInt32   ServiceOnce(XdmfInt32 *ReturnOpcode=0);
+    XdmfInt32   ServiceUntilIdle(XdmfInt32 *ReturnOpcode=0);
+    XdmfInt32   ServiceLoop(XdmfInt32 *ReturnOpcode=0);
+    XdmfInt32   Service(XdmfInt32 *ReturnOpcode=0);
+
+
 protected:
 };
 

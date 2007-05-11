@@ -350,7 +350,6 @@ return( XDMF_SUCCESS );
 XdmfPointer XdmfArray::GetDataPointer( XdmfInt64 Index ) {
 
 XdmfByte  *Pointer;
-
 Pointer = ( XdmfByte *)this->DataPointer;
 Pointer += (this->GetElementSize() * Index );
 return( (XdmfPointer)Pointer );
