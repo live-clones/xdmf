@@ -45,6 +45,7 @@ public:
     }
   ~XdmfArrayListClass();
 
+  static XdmfArrayListClass *Instance();
   XdmfArrayList* AddArray();
   void RemoveArray(XdmfArray*);
 
@@ -58,16 +59,29 @@ public:
 
 private:
   XdmfLength  ListIndex;
+  static XdmfArrayListClass  *XdmfArrayListClassInstance;
 };
+
+XdmfArrayListClass *
+XdmfArrayListClass::Instance(){
+    if(XdmfArrayListClassInstance == 0){
+        // cout << "Creating XdmfArrayListClassInstance" << endl;
+        XdmfArrayListClassInstance = new XdmfArrayListClass;
+    }
+    // cout << "Return Instance = " << XdmfArrayListClassInstance << endl;
+    return(XdmfArrayListClassInstance);
+}
 
 XdmfArrayListClass::~XdmfArrayListClass()
 {
+    int i=0;
 
   if ( this->List )
     {
     while( this->ListIndex > 0 )
       {
       // cout << "Before this->ListIndex = " << this->ListIndex << endl;
+      // cout << "Delete Array #" << i++ << endl;
       delete this->List[this->ListIndex-1].Array;
       // cout << "After this->ListIndex = " << this->ListIndex << endl;
       }
@@ -107,7 +121,8 @@ for( i = 0 ; i < this->ListLength ; i++ ){
   }
 }
 
-static XdmfArrayListClass XDMFArrayList;
+// static XdmfArrayListClass XDMFArrayList;
+XdmfArrayListClass *XdmfArrayListClass::XdmfArrayListClassInstance;
 
 XdmfArray *
 TagNameToArray( XdmfString TagName ) {
@@ -115,6 +130,7 @@ TagNameToArray( XdmfString TagName ) {
 char    c;
 XdmfInt64  i, Id;
 istrstream   Tag(TagName, strlen(TagName));
+XdmfArrayListClass  *XDMFArrayList = XdmfArrayListClass::Instance();
 
 Tag >> c;
 if( c != '_' ) {
@@ -131,15 +147,9 @@ Tag >> Id;
 }
 #endif
 
-//cerr << "List = " << XDMFArrayList.List << endl;
-//cerr << "ListLength = " << XDMFArrayList.ListLength << endl;
-//cerr << "List[ 0 ]  = " << XDMFArrayList.List[ 0 ].timecntr << endl;
-// PrintAllXdmfArrays();
-for( i = 0 ; i < XDMFArrayList.ListLength ; i++ ){
-//  cerr << "XDMFArrayList.List[ i ].timecntr = " << XDMFArrayList.List[ i ].timecntr << endl;
-//  cerr << "Id = " << Id << endl;
-  if ( XDMFArrayList.List[ i ].timecntr == Id ){
-    return( XDMFArrayList.List[ i ].Array );
+for( i = 0 ; i < XDMFArrayList->ListLength ; i++ ){
+  if ( XDMFArrayList->List[ i ].timecntr == Id ){
+    return( XDMFArrayList->List[ i ].Array );
     }
   }
 XdmfErrorMessage("No Array found with Tag Name: " << TagName );
@@ -149,13 +159,14 @@ return( NULL );
 XdmfArray *
 GetNextOlderArray( XdmfLength Age, XdmfLength *AgeOfArray ) {
 XdmfLength i;
+XdmfArrayListClass  *XDMFArrayList = XdmfArrayListClass::Instance();
 
-for( i = 0 ; i < XDMFArrayList.GetNumberOfElements(); i++ ){
-  if( XDMFArrayList.List[ i ].timecntr > Age ) {
+for( i = 0 ; i < XDMFArrayList->GetNumberOfElements(); i++ ){
+  if( XDMFArrayList->List[ i ].timecntr > Age ) {
     if( AgeOfArray != NULL ){
-      *AgeOfArray = XDMFArrayList.List[ i ].timecntr;
+      *AgeOfArray = XDMFArrayList->List[ i ].timecntr;
       }
-    return( XDMFArrayList.List[ i ].Array );
+    return( XDMFArrayList->List[ i ].Array );
     }
 }
 return( NULL );
@@ -170,21 +181,23 @@ return (GlobalTimeCntr);
 extern void
 PrintAllXdmfArrays() {
 XdmfLength i;
+XdmfArrayListClass  *XDMFArrayList = XdmfArrayListClass::Instance();
 
-for( i = 0 ; i < XDMFArrayList.GetNumberOfElements(); i++ ){
+for( i = 0 ; i < XDMFArrayList->GetNumberOfElements(); i++ ){
   cerr << "XdmfArray " << XDMF_64BIT_CAST i << '\n';
-  cerr << "   NumberType " << XDMFArrayList.List[ i ].Array->GetNumberTypeAsString() << '\n';
-  cerr << "   Time = " << XDMF_64BIT_CAST XDMFArrayList.List[ i ].timecntr << '\n';
-  cerr << "   Size = " << XDMF_64BIT_CAST XDMFArrayList.List[ i ].Array->GetNumberOfElements() << '\n';
+  cerr << "   NumberType " << XDMFArrayList->List[ i ].Array->GetNumberTypeAsString() << '\n';
+  cerr << "   Time = " << XDMF_64BIT_CAST XDMFArrayList->List[ i ].timecntr << '\n';
+  cerr << "   Size = " << XDMF_64BIT_CAST XDMFArrayList->List[ i ].Array->GetNumberOfElements() << '\n';
   }
 }
 
 void 
 XdmfArray::AddArrayToList( void ) {
+XdmfArrayListClass  *XDMFArrayList = XdmfArrayListClass::Instance();
 
 ostrstream   Tag(this->TagName, XDMF_ARRAY_TAG_LENGTH);
 GlobalTimeCntr++;
-XdmfArrayList* array = XDMFArrayList.AddArray();
+XdmfArrayList* array = XDMFArrayList->AddArray();
 array->name = NULL;
 array->timecntr = GlobalTimeCntr;
 array->Array = this;
@@ -216,6 +229,7 @@ XdmfArray::XdmfArray( XdmfInt32 numberType, XdmfLength Length ) {
  }
 
 XdmfArray::~XdmfArray() {
+XdmfArrayListClass  *XDMFArrayList = XdmfArrayListClass::Instance();
   XdmfDebug("XdmfArray Destructor");
   if( ( this->DataIsMine ) && ( this->DataPointer != NULL ) ) {
     XdmfDebug(" Deleteing Data Array " << this->DataPointer );
@@ -227,7 +241,7 @@ XdmfArray::~XdmfArray() {
     XdmfDebug("Can't Delete Array : Data Pointer is not mine");
   }
   XdmfDebug(" Remove From Array List  " << this );
-  XDMFArrayList.RemoveArray(this);
+  XDMFArrayList->RemoveArray(this);
   XdmfDebug(" Done Remove From Array List  " << this );
 }
 
