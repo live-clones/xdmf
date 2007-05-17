@@ -22,6 +22,8 @@
 /*                                                                 */
 /*******************************************************************/
 #include "XdmfHDF.h"
+#include "XdmfDsmBuffer.h"
+#include "XdmfH5Driver.h"
 
 #ifdef HAVE_NDGM
 extern "C" {
@@ -51,6 +53,7 @@ XdmfHDF::XdmfHDF() {
   this->NumberOfChildren = 0;
   this->Compression = 0;
   this->UseSerialFile = 0;
+  this->DsmBuffer = 0;
   strcpy( this->CwdName, "" );
 }
 
@@ -657,6 +660,16 @@ XdmfDebug("Using Domain " << this->Domain );
       this->AccessPlist = H5Pcreate( H5P_FILE_ACCESS );
 //      H5Pset_fapl_core( this->AccessPlist, 1000000, 1 );
       H5Pset_fapl_core( this->AccessPlist, 1000000, 0 );
+    } else if( STRCASECMP( this->Domain, "DSM" ) == 0 ) {
+        XdmfDebug("Using DSM Interface");  
+        if(!this->DsmBuffer){
+            XdmfErrorMessage("Cannot Open a DSM HDF5 File Until DsmBuffer has been set");
+            return(XDMF_FAIL);
+        }
+        H5FD_dsm_init();
+        this->AccessPlist = H5Pcreate( H5P_FILE_ACCESS );
+        XdmfDebug("DsmBuffer = " << this->DsmBuffer);
+        H5Pset_fapl_dsm( this->AccessPlist, H5FD_DSM_INCREMENT, this->DsmBuffer);
     } else if( STRCASECMP( this->Domain, "NDGM" ) == 0 ) {
 #ifdef HAVE_NDGM
       XdmfDebug("Using NDGM Interface");  
@@ -720,6 +733,14 @@ if( this->File < 0 ){
       this->AccessPlist = H5Pcreate( H5P_FILE_ACCESS );
 //      H5Pset_fapl_core( this->AccessPlist, 1000000, 1);
       H5Pset_fapl_core( this->AccessPlist, 1000000, 0);
+    } else if( STRCASECMP( this->Domain, "DSM" ) == 0 ) {
+        if(!this->DsmBuffer){
+            XdmfErrorMessage("Cannot Open a DSM HDF5 File Until DsmBuffer has been set");
+            return(XDMF_FAIL);
+        }
+        H5FD_dsm_init();
+        this->AccessPlist = H5Pcreate( H5P_FILE_ACCESS );
+        H5Pset_fapl_dsm( this->AccessPlist, H5FD_DSM_INCREMENT, this->DsmBuffer);
     } else if( STRCASECMP( this->Domain, "NDGM" ) == 0 ) {
       XdmfDebug("Using NDGM Interface");  
 #ifdef HAVE_NDGM

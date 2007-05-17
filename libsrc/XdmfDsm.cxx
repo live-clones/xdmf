@@ -51,12 +51,14 @@ XdmfDsm::XdmfDsm() {
 }
 
 XdmfDsm::~XdmfDsm() {
+    if(this->Storage) delete this->Storage;
 }
 
 XdmfInt32
 XdmfDsm::ConfigureUniform(XdmfDsmComm *Comm, XdmfInt64 Length, XdmfInt32 StartId, XdmfInt32 EndId){
     if(StartId < 0) StartId = 0;
     if(EndId < 0) EndId = Comm->GetTotalSize() - 1;
+    // cout << "(" << Comm->GetId() << ") StartId " << StartId << " EndId " << EndId << endl;
     this->SetDsmType(XDMF_DSM_TYPE_UNIFORM_RANGE);
     if((StartId == 0) && (EndId == Comm->GetTotalSize() - 1)){
         this->SetDsmType(XDMF_DSM_TYPE_UNIFORM);
@@ -66,12 +68,14 @@ XdmfDsm::ConfigureUniform(XdmfDsmComm *Comm, XdmfInt64 Length, XdmfInt32 StartId
     this->SetComm(Comm);
     if((Comm->GetId() >= StartId) && (Comm->GetId() <= EndId)){
         this->SetLength(Length);
-        this->StartAddress = (StartId - Comm->GetId()) * Length;
+        this->StartAddress = (Comm->GetId() - StartId) * Length;
         this->EndAddress = this->StartAddress + Length - 1;
     }else{
         this->Length = Length;
     }
+    // cout << "(" << Comm->GetId() << ") start " << this->StartAddress << " end " << this->EndAddress << endl;
     this->Msg->Source = this->Comm->GetId();
+    this->TotalLength = Length * (EndId - StartId + 1);
     return(XDMF_SUCCESS);
 }
 

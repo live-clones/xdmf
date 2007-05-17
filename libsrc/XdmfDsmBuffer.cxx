@@ -113,6 +113,20 @@ XdmfDsmBuffer::Service(XdmfInt32 *ReturnOpcode){
             cout << "Serviced PUT request from " << who << " for " << Length << " bytes @ " << Address << endl;
             break;
         case XDMF_DSM_OPCODE_GET :
+            cout << "Get request from " << who << " for " << Length << " bytes @ " << Address << endl;
+            if(Length > (this->EndAddress - Address)){
+                XdmfErrorMessage("Length " << Length << " too long for address of len " << this->EndAddress - Address);
+                XdmfErrorMessage("Server Start = " << this->StartAddress << " End = " << this->EndAddress);
+                return(XDMF_FAIL);
+            }
+            datap = (XdmfByte *)this->Storage->GetDataPointer();
+            datap += Address - this->StartAddress;
+            status = this->SendData(who, datap, Length); 
+            if(status == XDMF_FAIL){
+                XdmfErrorMessage("SendData() failed");
+                return(XDMF_FAIL);
+            }
+            cout << "Serviced GET request from " << who << " for " << Length << " bytes @ " << Address << endl;
             break;
         case XDMF_DSM_OPCODE_DONE :
             break;
@@ -123,7 +137,6 @@ XdmfDsmBuffer::Service(XdmfInt32 *ReturnOpcode){
     if(ReturnOpcode) *ReturnOpcode = Opcode;
     return(XDMF_SUCCESS);
 }
-
 XdmfInt32
 XdmfDsmBuffer::Put(XdmfInt64 Address, XdmfInt64 Length, void *Data){
     XdmfInt32   who, MyId = this->Comm->GetId();
@@ -170,3 +183,51 @@ XdmfDsmBuffer::Put(XdmfInt64 Address, XdmfInt64 Length, void *Data){
     }
     return(XDMF_SUCCESS);
 }
+
+XdmfInt32
+XdmfDsmBuffer::Get(XdmfInt64 Address, XdmfInt64 Length, void *Data){
+    XdmfInt32   who, MyId = this->Comm->GetId();
+    XdmfInt64   astart, aend, len;
+    XdmfByte    *datap = (XdmfByte *)Data;
+
+    while(Length){
+        who = this->AddressToId(Address);
+        if(who == XDMF_FAIL){
+            XdmfErrorMessage("Address Error");
+            return(XDMF_FAIL);
+        }
+        this->GetAddressRangeForId(who, &astart, &aend);
+        // cout << "astart = " << astart << " aend = " << aend << endl;
+        len = MIN(Length, aend - Address + 1);
+        cout << "Get " << len << " Bytes from Address " << Address << " Id = " << who << endl;
+        if(who == MyId){
+            XdmfByte *dp;
+
+            cout << "That's me!!" << endl;
+            dp = (XdmfByte *)this->Storage->GetDataPointer();
+            dp += Address - this->StartAddress;
+            memcpy(datap, dp, len);
+
+        }else{
+            XdmfInt32   status;
+
+            status = this->SendCommandHeader(XDMF_DSM_OPCODE_GET, who, Address, len);
+            if(status == XDMF_FAIL){
+                XdmfErrorMessage("Failed to send PUT Header to " << who);
+                return(XDMF_FAIL);
+            }
+            status = this->ReceiveData(who, datap, len);
+            if(status == XDMF_FAIL){
+                XdmfErrorMessage("Failed to receive " << len << " bytes of data from " << who);
+                return(XDMF_FAIL);
+            }
+
+        }
+        Length -= len;
+        Address += len;
+        datap += len;
+        // cout << "Length = " << Length << " Address = " << Address << endl;
+    }
+    return(XDMF_SUCCESS);
+}
+

@@ -78,6 +78,10 @@ public:
     XdmfGetValueMacro(Length, XdmfInt64);
     XdmfInt32 SetLength(XdmfInt64 Length);
 
+//! totalLength
+    XdmfGetValueMacro(TotalLength, XdmfInt64);
+    XdmfSetValueMacro(TotalLength, XdmfInt64);
+
 //! Storage
     XdmfGetValueMacro(Storage, XdmfArray *);
     XdmfSetValueMacro(Storage, XdmfArray *);
@@ -109,6 +113,7 @@ protected:
     XdmfInt64   StartAddress;
     XdmfInt64   EndAddress;
     XdmfInt64   Length;
+    XdmfInt64   TotalLength;
     XdmfArray   *Storage;
     XdmfDsmComm *Comm;
     XdmfDsmMsg  *Msg;

@@ -22,35 +22,23 @@
 /*     for more information.                                       */
 /*                                                                 */
 /*******************************************************************/
-#ifndef __XdmfDsmBuffer_h
-#define __XdmfDsmBuffer_h
+#ifndef H5FDdsm_H
+#define H5FDdsm_H
+#include "XdmfDsmBuffer.h"
 
-#include "XdmfDsm.h"
+#include "H5Ipublic.h"
+#include "H5pubconf.h"
 
+#include "XdmfExport.h"
 
-//! Base comm object for Distributed Shared Memory implementation
-/*!
-*/
+#define H5FD_DSM  (H5FD_dsm_init())
+/* Allocate memory in multiples of this size by default */
+#define H5FD_DSM_INCREMENT    1000000
 
+extern "C" {
+XDMF_EXPORT hid_t H5FD_dsm_init(void);
+}
+XDMF_EXPORT herr_t H5Pset_fapl_dsm(hid_t fapl_id, size_t increment, XdmfDsmBuffer *buffer);
+XDMF_EXPORT herr_t H5Pget_fapl_dsm(hid_t fapl_id, size_t *increment/*out*/, XdmfDsmBuffer **buffer);
 
-class XDMF_EXPORT XdmfDsmBuffer : public XdmfDsm {
-
-public:
-  XdmfDsmBuffer();
-  ~XdmfDsmBuffer();
-
-  XdmfConstString GetClassName() { return ( "XdmfDsmBuffer" ) ; };
-
-    XdmfInt32   Put(XdmfInt64 Address, XdmfInt64 Length, void *Data);
-    XdmfInt32   Get(XdmfInt64 Address, XdmfInt64 Length, void *Data);
-
-    XdmfInt32   ServiceOnce(XdmfInt32 *ReturnOpcode=0);
-    XdmfInt32   ServiceUntilIdle(XdmfInt32 *ReturnOpcode=0);
-    XdmfInt32   ServiceLoop(XdmfInt32 *ReturnOpcode=0);
-    XdmfInt32   Service(XdmfInt32 *ReturnOpcode=0);
-
-
-protected:
-};
-
-#endif // __XdmfDsmBuffer_h
+#endif

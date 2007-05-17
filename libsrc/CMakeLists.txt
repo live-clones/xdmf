@@ -49,6 +49,7 @@ SET( XdmfModelSource
   XdmfGrid
   XdmfTopology
   XdmfGeometry
+  XdmfH5Driver
 #  XdmfNDGM
 #  XdmfRuntime
   )
