@@ -44,6 +44,8 @@ public:
     XdmfInt32   Put(XdmfInt64 Address, XdmfInt64 Length, void *Data);
     XdmfInt32   Get(XdmfInt64 Address, XdmfInt64 Length, void *Data);
 
+    XdmfInt32   Copy(XdmfDsmBuffer *Source);
+    XdmfInt32   ServiceInit();
     XdmfInt32   ServiceOnce(XdmfInt32 *ReturnOpcode=0);
     XdmfInt32   ServiceUntilIdle(XdmfInt32 *ReturnOpcode=0);
     XdmfInt32   ServiceLoop(XdmfInt32 *ReturnOpcode=0);

@@ -40,6 +40,7 @@ typedef struct {
 XdmfDsm::XdmfDsm() {
     this->DsmType = XDMF_DSM_TYPE_UNIFORM;
     this->Storage = new XdmfArray;
+    this->StorageIsMine = 1;
     // For Alignment
     this->Storage->SetNumberType(XDMF_INT64_TYPE);
     this->SetLength(XDMF_DSM_DEFAULT_LENGTH);
@@ -51,7 +52,31 @@ XdmfDsm::XdmfDsm() {
 }
 
 XdmfDsm::~XdmfDsm() {
-    if(this->Storage) delete this->Storage;
+    if(this->Storage && this->StorageIsMine) delete this->Storage;
+}
+
+XdmfInt32
+XdmfDsm::Copy(XdmfDsm *Source){
+    this->DsmType = Source->DsmType;
+    this->Storage = Source->GetStorage();
+    this->StorageIsMine = 0;
+    // For Alignment
+    this->Length = Source->Length;
+    this->StartAddress = Source->StartAddress;
+    this->EndAddress = Source->EndAddress;
+    this->Comm = Source->Comm;
+    this->StartServerId = Source->StartServerId;
+    this->EndServerId = Source->EndServerId;
+    // Alway make a new Message so there os no contention
+    this->Msg = new XdmfDsmMsg;
+    return(XDMF_SUCCESS);
+}
+
+XdmfInt32
+XdmfDsm::SetStorage(XdmfArray *Storage){
+    if(this->Storage && this->StorageIsMine) delete this->Storage;
+    this->Storage = Storage;
+    return(XDMF_SUCCESS);
 }
 
 XdmfInt32
@@ -161,10 +186,12 @@ XdmfDsm::SendCommandHeader(XdmfInt32 Opcode, XdmfInt32 Dest, XdmfInt64 Address, 
 
     this->Msg->SetSource(this->Comm->GetId());
     this->Msg->SetDest(Dest);
+    this->Msg->SetTag(XDMF_DSM_COMMAND_TAG);
     this->Msg->SetLength(sizeof(Cmd));
     this->Msg->SetData(&Cmd);
 
     Status = this->Comm->Send(this->Msg);
+    cout << "(" << this->Comm->GetId() << ") sent opcode " << Cmd.Opcode << endl;
     return(Status);
 }
 
@@ -175,6 +202,7 @@ XdmfDsm::ReceiveCommandHeader(XdmfInt32 *Opcode, XdmfInt32 *Source, XdmfInt64 *A
 
     this->Msg->Source = XDMF_DSM_ANY_SOURCE;
     this->Msg->SetLength(sizeof(Cmd));
+    this->Msg->SetTag(XDMF_DSM_COMMAND_TAG);
     this->Msg->SetData(&Cmd);
 
     memset(&Cmd, 0, sizeof(XdmfDsmCommand));
@@ -190,6 +218,7 @@ XdmfDsm::ReceiveCommandHeader(XdmfInt32 *Opcode, XdmfInt32 *Source, XdmfInt64 *A
             *Address = Cmd.Address;
             *Length = Cmd.Length;
             status = XDMF_SUCCESS;
+            cout << "(Server " << this->Comm->GetId() << ") got opcode " << Cmd.Opcode << endl;
         }
     }
     return(status);
@@ -201,6 +230,7 @@ XdmfDsm::SendData(XdmfInt32 Dest, void *Data, XdmfInt64 Length){
     this->Msg->SetSource(this->Comm->GetId());
     this->Msg->SetDest(Dest);
     this->Msg->SetLength(Length);
+    // this->Msg->SetTag(XDMF_DSM_RESPONSE_TAG);
     this->Msg->SetData(Data);
     return(this->Comm->Send(this->Msg));
 }
@@ -211,6 +241,7 @@ XdmfDsm::ReceiveData(XdmfInt32 Source, void *Data, XdmfInt64 Length, XdmfInt32 B
 
     this->Msg->SetSource(Source);
     this->Msg->SetLength(Length);
+    // this->Msg->SetTag(XDMF_DSM_RESPONSE_TAG);
     this->Msg->SetData(Data);
     if(Block){
         Status = this->Comm->Receive(this->Msg);

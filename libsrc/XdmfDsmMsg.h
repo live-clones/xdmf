@@ -33,6 +33,8 @@
 */
 
 #define XDMF_DSM_DEFAULT_TAG    0x80
+#define XDMF_DSM_COMMAND_TAG    0x81
+#define XDMF_DSM_RESPONSE_TAG   0x82
 
 #define XDMF_DSM_ANY_SOURCE     -1
 

@@ -27,20 +27,9 @@
 
 
 XdmfDsmComm::XdmfDsmComm() {
-    this->Msg = new XdmfDsmMsg;
 }
 
 XdmfDsmComm::~XdmfDsmComm() {
-}
-
-XdmfInt32
-XdmfDsmComm::SetMsg(XdmfDsmMsg *Msg){
-        this->Msg = Msg;
-    }
-
-XdmfDsmMsg *
-XdmfDsmComm::GetMsg(){
-    return(this->Msg);
 }
 
 XdmfInt32

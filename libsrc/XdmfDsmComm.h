@@ -55,10 +55,6 @@ public:
     XdmfGetValueMacro(TotalSize, XdmfInt32);
     XdmfSetValueMacro(TotalSize, XdmfInt32);
 
-    //! Message
-    XdmfDsmMsg *GetMsg();
-    XdmfInt32   SetMsg(XdmfDsmMsg *Msg);
-
     virtual XdmfInt32   Init();
     virtual XdmfInt32   Send(XdmfDsmMsg *Msg);
     virtual XdmfInt32   Receive(XdmfDsmMsg *Msg);
@@ -71,7 +67,6 @@ public:
 protected:
     XdmfInt32       Id;
     XdmfInt32       TotalSize;
-    XdmfDsmMsg      *Msg;
 };
 
 #endif // __XdmfDsmComm_h

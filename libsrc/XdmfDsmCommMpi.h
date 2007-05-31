@@ -47,6 +47,7 @@ public:
     //! Get the MPI Communicator
     XdmfGetValueMacro(Comm, MPI_Comm);
 
+    XdmfInt32   DupComm(MPI_Comm Source);
     XdmfInt32   Init();
     XdmfInt32   Send(XdmfDsmMsg *Msg);
     XdmfInt32   Receive(XdmfDsmMsg *Msg);

@@ -189,9 +189,8 @@ DsmUpdateEntry(H5FD_dsm_t *file){
     XdmfInt64   addr;
     DsmEntry    entry;
 
-cout << "(" << file->DsmBuffer->GetComm()->GetId() << ") DsmUpdateEntry()" << endl;
 #ifdef HDF_IO_DEBUG
-printf("DsmUpdateEntry()\n");
+cout << "(" << file->DsmBuffer->GetComm()->GetId() << ") DsmUpdateEntry()" << endl;
 #endif
     if(!file->DsmBuffer) return(XDMF_FAIL);
     file->end = MAX(((XdmfInt64)(file->start + file->eof)), file->end);
@@ -200,7 +199,8 @@ printf("DsmUpdateEntry()\n");
     entry.start = file->start;
     entry.end = file->end;
 #ifdef HDF_IO_DEBUG
-printf("DsmUpdateEntry() start = %ld end = %ld\n", file->start, file->end);
+cout << "(" << file->DsmBuffer->GetComm()->GetId() << ") DsmUpdateEntry start " <<
+        file->start << " end " << file->end << endl;
 #endif
     addr = file->DsmBuffer->GetTotalLength() - sizeof(entry) - sizeof(XdmfInt64) - 1;
     status = file->DsmBuffer->Put(addr, sizeof(entry), &entry); 
@@ -213,19 +213,24 @@ DsmGetEntry(H5FD_dsm_t *file){
     XdmfInt64   addr;
     DsmEntry    entry;
 
-cout << "(" << file->DsmBuffer->GetComm()->GetId() << ") DsmGetEntry()" << endl;
 #ifdef HDF_IO_DEBUG
-printf("DsmGetEntry()\n");
+cout << "(" << file->DsmBuffer->GetComm()->GetId() << ") DsmGetEntry()" << endl;
 #endif
     if(!file->DsmBuffer) return(XDMF_FAIL);
     addr = file->DsmBuffer->GetTotalLength() - sizeof(entry) - sizeof(XdmfInt64) - 1;
     status = file->DsmBuffer->Get(addr, sizeof(entry), &entry); 
-    if((status != XDMF_SUCCESS) || (entry.magic != XDMF_DSM_MAGIC)) return(XDMF_FAIL);
+    if((status != XDMF_SUCCESS) || (entry.magic != XDMF_DSM_MAGIC)){
 #ifdef HDF_IO_DEBUG
-printf("DsmGetEntry() found Entry\n");
+        cout << "(" << file->DsmBuffer->GetComm()->GetId() << ") DsmGetEntry Magic = " << entry.magic << endl;
 #endif
+        return(XDMF_FAIL);
+    }
     file->start = entry.start;
     file->end = entry.end;
+#ifdef HDF_IO_DEBUG
+cout << "(" << file->DsmBuffer->GetComm()->GetId() << ") DsmGetEntry start " <<
+        file->start << " end " << file->end << endl;
+#endif
     return(XDMF_SUCCESS);
 }
 

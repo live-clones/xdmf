@@ -84,11 +84,16 @@ public:
 
 //! Storage
     XdmfGetValueMacro(Storage, XdmfArray *);
-    XdmfSetValueMacro(Storage, XdmfArray *);
+    XdmfInt32   SetStorage(XdmfArray *Storage);
 
 //! Comm
     XdmfGetValueMacro(Comm, XdmfDsmComm *);
     XdmfSetValueMacro(Comm, XdmfDsmComm *);
+
+    //! Msg
+    XdmfGetValueMacro(Msg, XdmfDsmMsg *);
+    XdmfSetValueMacro(Msg, XdmfDsmMsg *);
+
 
     //! Address Range
     XdmfInt32 GetAddressRangeForId(XdmfInt32 Id, XdmfInt64 *Start, XdmfInt64 *End);
@@ -104,12 +109,15 @@ public:
     XdmfInt32   SendData(XdmfInt32 Dest, void *Data, XdmfInt64 Length);
     XdmfInt32   ReceiveData(XdmfInt32 Source, void *Data, XdmfInt64 Length, XdmfInt32 Block=1);
 
+    virtual XdmfInt32 Copy(XdmfDsm *Source);
+
     XdmfInt32   SendDone();
 
 protected:
     XdmfInt32   DsmType;
     XdmfInt32   StartServerId;
     XdmfInt32   EndServerId;
+    XdmfInt32   StorageIsMine;
     XdmfInt64   StartAddress;
     XdmfInt64   EndAddress;
     XdmfInt64   Length;
