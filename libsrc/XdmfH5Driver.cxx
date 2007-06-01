@@ -36,6 +36,7 @@
 #include "hdf5.h"
 
 #define HDF_IO_DEBUG 1
+#undef HDF_IO_DEBUG
 
 #ifndef FAIL
 #define FAIL -1
@@ -198,12 +199,19 @@ cout << "(" << file->DsmBuffer->GetComm()->GetId() << ") DsmUpdateEntry()" << en
     entry.magic = XDMF_DSM_MAGIC;
     entry.start = file->start;
     entry.end = file->end;
+    addr = file->DsmBuffer->GetTotalLength() - sizeof(entry) - sizeof(XdmfInt64);
 #ifdef HDF_IO_DEBUG
 cout << "(" << file->DsmBuffer->GetComm()->GetId() << ") DsmUpdateEntry start " <<
-        file->start << " end " << file->end << endl;
+        file->start <<
+        " end " << file->end <<
+        " addr " << addr << 
+        endl;
 #endif
-    addr = file->DsmBuffer->GetTotalLength() - sizeof(entry) - sizeof(XdmfInt64) - 1;
     status = file->DsmBuffer->Put(addr, sizeof(entry), &entry); 
+    if(status == XDMF_SUCCESS){
+        // Send is non blocking, make sure it's there
+        status = file->DsmBuffer->Get(addr, sizeof(entry), &entry); 
+    }
     return(status);
 }
 
@@ -217,7 +225,7 @@ DsmGetEntry(H5FD_dsm_t *file){
 cout << "(" << file->DsmBuffer->GetComm()->GetId() << ") DsmGetEntry()" << endl;
 #endif
     if(!file->DsmBuffer) return(XDMF_FAIL);
-    addr = file->DsmBuffer->GetTotalLength() - sizeof(entry) - sizeof(XdmfInt64) - 1;
+    addr = file->DsmBuffer->GetTotalLength() - sizeof(entry) - sizeof(XdmfInt64);
     status = file->DsmBuffer->Get(addr, sizeof(entry), &entry); 
     if((status != XDMF_SUCCESS) || (entry.magic != XDMF_DSM_MAGIC)){
 #ifdef HDF_IO_DEBUG
@@ -229,7 +237,10 @@ cout << "(" << file->DsmBuffer->GetComm()->GetId() << ") DsmGetEntry()" << endl;
     file->end = entry.end;
 #ifdef HDF_IO_DEBUG
 cout << "(" << file->DsmBuffer->GetComm()->GetId() << ") DsmGetEntry start " <<
-        file->start << " end " << file->end << endl;
+        file->start <<
+        " end " << file->end <<
+        " addr " << addr  <<
+        endl;
 #endif
     return(XDMF_SUCCESS);
 }
@@ -258,7 +269,7 @@ hid_t
 H5FD_dsm_init(void)
 {
 #ifdef HDF_IO_DEBUG
-printf("In H5FD_dsm_init()\n");
+cout << "In H5FD_dsm_init()" << endl;
 #endif
     if (H5I_VFL!=H5Iget_type(H5FD_DSM_g)) {
   H5FD_DSM_g = H5FDregister(&H5FD_dsm_g);
@@ -380,22 +391,19 @@ H5FD_dsm_open(const char *name, unsigned flags/*unused*/, hid_t fapl_id,
     XdmfInt32       status;
     XdmfInt64    addr;
     
-#ifdef HDF_IO_DEBUG
-printf("Opening %s ... Checking Args\n", name);
-#endif
     /* Check arguments */
     if (0==maxaddr || HADDR_UNDEF==maxaddr) return NULL;
 #ifdef HDF_IO_DEBUG
-printf("Opening %s ... Checking maxaddr \n", name);
+// printf("Opening %s ... Checking maxaddr \n", name);
 #endif
     if (ADDR_OVERFLOW(maxaddr)) return NULL;
 #ifdef HDF_IO_DEBUG
-printf("Opening %s .... Setting Driver\n", name);
+// printf("Opening %s .... Setting Driver\n", name);
 #endif
     if (H5P_DEFAULT!=fapl_id) fa = (H5FD_dsm_fapl_t *)H5Pget_driver_info(fapl_id);
 
 #ifdef HDF_IO_DEBUG
-printf("Opening %s\n", name);
+// printf("Opening %s\n", name);
 #endif
 
 // One HDF5 file @ Address 0
@@ -408,16 +416,22 @@ printf("Opening %s\n", name);
 
     /* See if it exists */
     file->DsmBuffer = fa->buffer;
+#ifdef HDF_IO_DEBUG
+cout << "(" << file->DsmBuffer->GetComm()->GetId() << ") Opening " << name << endl;
+#endif
     status = DsmGetEntry(file);
 #ifdef HDF_IO_DEBUG
 if( status == XDMF_SUCCESS ){
-  printf("HDF::Open Start %ld End %ld\n", file->start, file->end );
+    cout << "(" << file->DsmBuffer->GetComm()->GetId() << ") Opened from Entry  " << name <<
+        " Start " << file->start <<
+        " End " << file->end <<
+        endl;
 }
 #endif
   if(H5F_ACC_CREAT & flags){
     if (status == XDMF_FAIL){
 #ifdef HDF_IO_DEBUG
-printf("HDF::Creating\n");
+    cout << "(" << file->DsmBuffer->GetComm()->GetId() << ") Creating  " << name << endl;
 #endif
       DsmUpdateEntry(file);
     }
@@ -444,15 +458,18 @@ printf("HDF::Creating\n");
      */
     file->increment = (fa && fa->increment>0) ?
           fa->increment : H5FD_DSM_INCREMENT;
-
 #ifdef HDF_IO_DEBUG
-fprintf(stderr, "Open of %s was successful\n", name);
-fprintf(stderr, "File Start %ld End %ld\n", file->start, file->end );
-fprintf(stderr, "HDF::Open eoa = %ld eof = %ld\n", file->eoa, file->eof);
+cout << "(" << file->DsmBuffer->GetComm()->GetId() << ") Opened " << name <<
+    " Start " << file->start <<
+    " End " << file->end <<
+    " Eoa " << file->eoa <<
+    " Eof  " << file->eof <<
+    endl;
 #endif
+
   file->dirty = 0;
 #ifdef HDF_IO_DEBUG
-fprintf(stderr, "Returning (H5FD_t*)fil = <%p>\n", file);
+// fprintf(stderr, "Returning (H5FD_t*)fil = <%p>\n", file);
 #endif
     return (H5FD_t*)file;
 }
@@ -506,9 +523,11 @@ H5FD_dsm_close(H5FD_t *_file)
     int status;
 
 #ifdef HDF_IO_DEBUG
-  printf("Closing Entry <%s> at %ld, %ld - %ld \n",
-    file->entry, file->entry_addr,
-    file->start, file->end);
+cout << "(" << file->DsmBuffer->GetComm()->GetId() << ") Closing Start " << file->start <<
+    " End " << file->end <<
+    " Eoa " << file->eoa <<
+    " Eof " << file->eof <<
+    endl;
 #endif
         status = DsmUpdateEntry( file );
   if( status != XDMF_SUCCESS) return -1;
@@ -578,7 +597,7 @@ H5FD_dsm_get_eoa(H5FD_t *_file)
     H5FD_dsm_t  *file = (H5FD_dsm_t*)_file;
 
 #ifdef HDF_IO_DEBUG
-printf("H5FD_dsm_get_eoa Called\n");
+// printf("H5FD_dsm_get_eoa Called\n");
 #endif
     return file->eoa;
 }
@@ -607,13 +626,13 @@ H5FD_dsm_set_eoa(H5FD_t *_file, haddr_t addr)
 
 
 #ifdef HDF_IO_DEBUG
-printf("H5FD_dsm_set_eoa Called %ld \n", addr);
+// printf("H5FD_dsm_set_eoa Called %ld \n", addr);
 #endif
     if (ADDR_OVERFLOW(addr)){
 #ifdef HDF_IO_DEBUG
-printf("H5FD_dsm_set_eoa Address OverFLow at %ld \n", addr);
-printf("H5FD_dsm_set_eoa MAXADDR = %ld \n", MAXADDR);
-printf("H5FD_dsm_set_eoa Address (addr) & ~(haddr_t)MAXADDR) = %ld \n", (addr) & ~(haddr_t)MAXADDR);
+// printf("H5FD_dsm_set_eoa Address OverFLow at %ld \n", addr);
+// printf("H5FD_dsm_set_eoa MAXADDR = %ld \n", MAXADDR);
+// printf("H5FD_dsm_set_eoa Address (addr) & ~(haddr_t)MAXADDR) = %ld \n", (addr) & ~(haddr_t)MAXADDR);
 #endif
      return -1;
     }
@@ -647,7 +666,7 @@ H5FD_dsm_get_eof(H5FD_t *_file)
     H5FD_dsm_t  *file = (H5FD_dsm_t*)_file;
 
 #ifdef HDF_IO_DEBUG
-printf("H5FD_dsm_get_eoa Called %ld \n", MAX(file->eof, file->eoa) );
+// printf("H5FD_dsm_get_eoa Called %ld \n", MAX(file->eof, file->eoa) );
 #endif
     return MAX(file->eof, file->eoa);
 }
@@ -682,7 +701,13 @@ H5FD_dsm_read(H5FD_t *_file, H5FD_mem_t type, hid_t dxpl_id/*unused*/, haddr_t a
 (void)dxpl_id;
     
 #ifdef HDF_IO_DEBUG
-printf("Called H5FD_dsm_read at %ld size %ld\n", addr, size);
+cout << "(" << file->DsmBuffer->GetComm()->GetId() << ") Read Start " << file->start <<
+    " End " << file->end <<
+    " Addr " << addr  <<
+    " Size " << size  <<
+    " Eoa " << file->eoa <<
+    " Eof " << file->eof <<
+     endl;
 #endif
     assert(file && file->pub.cls);
     assert(buf);
@@ -749,8 +774,13 @@ H5FD_dsm_write(H5FD_t *_file, H5FD_mem_t type, hid_t dxpl_id/*unused*/, haddr_t 
     assert(buf);
 
 #ifdef HDF_IO_DEBUG
-printf("HDF::Write Start %ld End %ld addr %ld size %ld eoa %ld eof %ld\n",
-    file->start, file->end, addr, size, file->eoa, file->eof );
+cout << "(" << file->DsmBuffer->GetComm()->GetId() << ") Write Start " << file->start <<
+    " End " << file->end <<
+    " Addr " << addr  <<
+    " Size " << size  <<
+    " Eoa " << file->eoa <<
+    " Eof " << file->eof <<
+    endl;
 #endif
     /* Check for overflow conditions */
     if (REGION_OVERFLOW(addr, size)) return -1;
@@ -760,7 +790,7 @@ printf("HDF::Write Start %ld End %ld addr %ld size %ld eoa %ld eof %ld\n",
   size_t new_eof = file->increment * ((addr+size)/file->increment);
   if ((addr+size) % file->increment) new_eof += file->increment;
 #ifdef HDF_IO_DEBUG
-printf("HDF::Write New eof %ld\n", new_eof);
+// printf("HDF::Write New eof %ld\n", new_eof);
 #endif
   /* Blindly Grab more DSM for now */
   file->end = file->start + new_eof;

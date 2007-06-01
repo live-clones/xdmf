@@ -25,8 +25,6 @@
 #include "XdmfDsmCommMpi.h"
 #include "XdmfDsmMsg.h"
 
-#define SHOW_MSG_DEBUG 1
-
 XdmfDsmCommMpi::XdmfDsmCommMpi() {
     this->Comm = MPI_COMM_WORLD;
 }
@@ -79,9 +77,7 @@ XdmfDsmCommMpi::Receive(XdmfDsmMsg *Msg){
 
     if(XdmfDsmComm::Receive(Msg) != XDMF_SUCCESS) return(XDMF_FAIL);
     if(Msg->Source >= 0) source = Msg->Source;
-#ifdef SHOW_MSG_DEBUG
-    cout << "::::: (" << this->Id << ") Receiving " << Msg->Length << " bytes from " << source << " Tag = " << Msg->Tag << endl;
-#endif
+    XdmfDebug("::::: (" << this->Id << ") Receiving " << Msg->Length << " bytes from " << source << " Tag = " << Msg->Tag);
     status = MPI_Recv(Msg->Data, Msg->Length, MPI_UNSIGNED_CHAR, source, Msg->Tag, this->Comm, &SendRecvStatus);
     if(status != MPI_SUCCESS){
         XdmfErrorMessage("Id = " << this->Id << " MPI_Recv failed to receive " << Msg->Length << " Bytes from " << Msg->Source);
@@ -89,9 +85,7 @@ XdmfDsmCommMpi::Receive(XdmfDsmMsg *Msg){
         return(XDMF_FAIL);
     }
     status = MPI_Get_count(&SendRecvStatus, MPI_UNSIGNED_CHAR, &MessageLength);
-#ifdef SHOW_MSG_DEBUG
-    cout << "::::: (" << this->Id << ") Received " << MessageLength << " bytes from " << SendRecvStatus.MPI_SOURCE << endl;
-#endif
+    XdmfDebug("::::: (" << this->Id << ") Received " << MessageLength << " bytes from " << SendRecvStatus.MPI_SOURCE);
     Msg->SetSource(SendRecvStatus.MPI_SOURCE);
     Msg->SetLength(MessageLength);
     if(status != MPI_SUCCESS){
@@ -108,9 +102,7 @@ XdmfDsmCommMpi::Send(XdmfDsmMsg *Msg){
 
 
     if(XdmfDsmComm::Send(Msg) != XDMF_SUCCESS) return(XDMF_FAIL);
-#ifdef SHOW_MSG_DEBUG
-    cout << "::::: (" << this->Id << ") Sending " << Msg->Length << " bytes to " << Msg->Dest << " Tag = " << Msg->Tag << endl;
-#endif
+    XdmfDebug("::::: (" << this->Id << ") Sending " << Msg->Length << " bytes to " << Msg->Dest << " Tag = " << Msg->Tag);
     status = MPI_Send(Msg->Data, Msg->Length, MPI_UNSIGNED_CHAR, Msg->Dest, Msg->Tag, this->Comm);
     // status = MPI_Ssend(Msg->Data, Msg->Length, MPI_UNSIGNED_CHAR, Msg->Dest, Msg->Tag, this->Comm);
     if(status != MPI_SUCCESS){
@@ -118,8 +110,6 @@ XdmfDsmCommMpi::Send(XdmfDsmMsg *Msg){
         XdmfErrorMessage("MPI Error Code = " << SendRecvStatus.MPI_ERROR);
         return(XDMF_FAIL);
     }
-#ifdef SHOW_MSG_DEBUG
-    cout << "::::: (" << this->Id << ") Sent " << Msg->Length << " bytes to " << Msg->Dest << endl;
-#endif
+    XdmfDebug("::::: (" << this->Id << ") Sent " << Msg->Length << " bytes to " << Msg->Dest);
     return(XDMF_SUCCESS);
 }

@@ -83,7 +83,6 @@ XdmfInt32
 XdmfDsm::ConfigureUniform(XdmfDsmComm *Comm, XdmfInt64 Length, XdmfInt32 StartId, XdmfInt32 EndId){
     if(StartId < 0) StartId = 0;
     if(EndId < 0) EndId = Comm->GetTotalSize() - 1;
-    // cout << "(" << Comm->GetId() << ") StartId " << StartId << " EndId " << EndId << endl;
     this->SetDsmType(XDMF_DSM_TYPE_UNIFORM_RANGE);
     if((StartId == 0) && (EndId == Comm->GetTotalSize() - 1)){
         this->SetDsmType(XDMF_DSM_TYPE_UNIFORM);
@@ -98,7 +97,6 @@ XdmfDsm::ConfigureUniform(XdmfDsmComm *Comm, XdmfInt64 Length, XdmfInt32 StartId
     }else{
         this->Length = Length;
     }
-    // cout << "(" << Comm->GetId() << ") start " << this->StartAddress << " end " << this->EndAddress << endl;
     this->Msg->Source = this->Comm->GetId();
     this->TotalLength = Length * (EndId - StartId + 1);
     return(XDMF_SUCCESS);
@@ -191,7 +189,7 @@ XdmfDsm::SendCommandHeader(XdmfInt32 Opcode, XdmfInt32 Dest, XdmfInt64 Address, 
     this->Msg->SetData(&Cmd);
 
     Status = this->Comm->Send(this->Msg);
-    cout << "(" << this->Comm->GetId() << ") sent opcode " << Cmd.Opcode << endl;
+    XdmfDebug("(" << this->Comm->GetId() << ") sent opcode " << Cmd.Opcode);
     return(Status);
 }
 
@@ -218,7 +216,7 @@ XdmfDsm::ReceiveCommandHeader(XdmfInt32 *Opcode, XdmfInt32 *Source, XdmfInt64 *A
             *Address = Cmd.Address;
             *Length = Cmd.Length;
             status = XDMF_SUCCESS;
-            cout << "(Server " << this->Comm->GetId() << ") got opcode " << Cmd.Opcode << endl;
+            XdmfDebug("(Server " << this->Comm->GetId() << ") got opcode " << Cmd.Opcode);
         }
     }
     return(status);

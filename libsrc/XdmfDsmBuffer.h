@@ -27,6 +27,11 @@
 
 #include "XdmfDsm.h"
 
+//! Helper for pthread_create()
+extern "C" {
+void *
+XdmfDsmBufferServiceThread(void *DsmObj);
+}
 
 //! Base comm object for Distributed Shared Memory implementation
 /*!
@@ -41,6 +46,9 @@ public:
 
   XdmfConstString GetClassName() { return ( "XdmfDsmBuffer" ) ; };
 
+    XdmfGetValueMacro(ThreadDsmReady, XdmfInt32);
+    XdmfSetValueMacro(ThreadDsmReady, XdmfInt32);
+
     XdmfInt32   Put(XdmfInt64 Address, XdmfInt64 Length, void *Data);
     XdmfInt32   Get(XdmfInt64 Address, XdmfInt64 Length, void *Data);
 
@@ -50,9 +58,11 @@ public:
     XdmfInt32   ServiceUntilIdle(XdmfInt32 *ReturnOpcode=0);
     XdmfInt32   ServiceLoop(XdmfInt32 *ReturnOpcode=0);
     XdmfInt32   Service(XdmfInt32 *ReturnOpcode=0);
+    void *      ServiceThread();
 
 
 protected:
+    XdmfInt32   ThreadDsmReady;
 };
 
 #endif // __XdmfDsmBuffer_h
