@@ -26,10 +26,17 @@
 #include "mpi.h"
 #include "pthread.h"
 
+// Node 0 Creates the Structure for the DataSet
+// The DataSet is Size x JDIM x IDIM doubles
+// Each Node then Writes 1 K Plane of Data
+// The Last Node Reads the Corners of the DataSet and
+// reads one J Plane Half way up
 #define IDIM    15
 #define JDIM    30
 #define DataSetName "DSM:TestFile.h5:/TestDataSets/Values1"
 
+// Fill an array with Values
+// The Values corespond to the rank and position
 void
 FillArray(int rank, int size, XdmfArray *array){
     int i, j, cntr = 0;
@@ -45,6 +52,7 @@ FillArray(int rank, int size, XdmfArray *array){
     }
 }
 
+// MPI Barrier with a print
 void
 WaitForAll(int rank, int value, MPI_Comm comm){
 
@@ -70,7 +78,7 @@ XdmfInt64       Count[] = {1, JDIM, IDIM};
 XdmfHDF         *ExternalDataSet;
 XdmfArray       *InCoreCoordinates;
 int              i, k, provided;
-double    *DblPtr;
+double          *DblPtr;
 
 
 
@@ -111,6 +119,7 @@ if(rank == 0){
     XdmfArray   Dummy;
 
     if(ExternalDataSet->Open( DataSetName, "rw" ) == XDMF_FAIL){
+        // Shouldn't be necessary
         cout << "!! Node 0 Creating Dataset" << endl;
         ExternalDataSet->CreateDataset(DataSetName);
     }
