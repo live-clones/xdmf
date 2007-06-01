@@ -26,7 +26,22 @@
 
 #include "mpi.h"
 
+#include "pthread.h"
+
 //using namespace std;
+
+void *DoServer(void *ptr){
+    XdmfDsmBuffer   *MyDsm = (XdmfDsmBuffer *)ptr;
+    XdmfInt32   op = 0;
+
+    while(op != XDMF_DSM_OPCODE_DONE){
+        op = 0;
+        MyDsm->ServiceUntilIdle(&op);
+        if(op){
+            cout << endl << "MyServer Data = " << MyDsm->GetStorage()->GetValues(0, 100) << endl;
+        }
+    }
+}
 
 int
 main( int argc, char **argv ) {
@@ -53,6 +68,31 @@ MyDsm->GetAddressRangeForId(who, &start, &end);
 // cout << "Address Range for " << who << " = " << start << " - " << end << endl;
 // MyDsm->Put(0, 5000000, Data);
 if(rank == 0){
+    pthread_t thread1;
+
+    cout << "Starting Thread" << endl;
+    pthread_create( &thread1, NULL, DoServer, MyDsm);
+    pthread_join( thread1, NULL);
+    cout << "Thread Returned" << endl;
+}
+if(rank == 1000){
+    XdmfArray   Data;
+    XdmfInt32   op = 0;
+
+    Data.SetNumberType(XDMF_INT64_TYPE);
+    Data.SetNumberOfElements(100);
+    Data.Generate(rank + 10, rank + 110);
+    status = MyDsm->Put(0, Data.GetCoreLength(), Data.GetDataPointer());
+    cout << endl << "MyServer Data = " << MyDsm->GetStorage()->GetValues(0, 100) << endl;
+    while(op != XDMF_DSM_OPCODE_DONE){
+        op = 0;
+        MyDsm->ServiceUntilIdle(&op);
+        if(op){
+            cout << endl << "MyServer Data = " << MyDsm->GetStorage()->GetValues(0, 100) << endl;
+        }
+    }
+    
+    /*
     XdmfInt32   i, Opcode, Source;
     XdmfInt64   Address, Length;
     for(i=1;i<MyComm->GetTotalSize();i++){
@@ -63,15 +103,31 @@ if(rank == 0){
         cout << "Receive Failed" << endl;
     }
     }
+    */
 }else{
+    XdmfArray   Data;
+
+    if(rank == (MyComm->GetTotalSize() - 1)){
+        sleep(1);
+        MyDsm->SendDone();
+    }else{
+    Data.SetNumberType(XDMF_INT64_TYPE);
+    Data.SetNumberOfElements(100);
+    Data.Generate(rank + 10, rank + 110);
+    // cout << endl << "Client Data = " << Data.GetValues(0, 110) << endl;
+
+    status = MyDsm->Put(rank * 16, Data.GetCoreLength(), Data.GetDataPointer());
+    /*
     XdmfInt32   Opcode, Dest = 0;
     XdmfInt64   Address = 0, Length = 100;
     Address = rank * 100;
     status = MyDsm->SendCommandHeader(Opcode, Dest, Address, Length);
+    */
     if(status == XDMF_SUCCESS){
-        cout << "Send Succeeded for " << Length << " bytes" << endl;
+        cout << "Send Succeeded " << endl;
     }else{
         cout << "Send Failed" << endl;
+    }
     }
 }
 
