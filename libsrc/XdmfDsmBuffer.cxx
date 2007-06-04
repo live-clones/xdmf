@@ -133,7 +133,7 @@ XdmfDsmBuffer::Service(XdmfInt32 *ReturnOpcode){
     switch(Opcode){
         case XDMF_DSM_OPCODE_PUT :
             XdmfDebug("PUT request from " << who << " for " << Length << " bytes @ " << Address);
-            if(Length > (this->EndAddress - Address)){
+            if(Length > (this->EndAddress - Address + 1)){
                 XdmfErrorMessage("Length too long");
                 return(XDMF_FAIL);
             }
@@ -149,7 +149,7 @@ XdmfDsmBuffer::Service(XdmfInt32 *ReturnOpcode){
             break;
         case XDMF_DSM_OPCODE_GET :
             XdmfDebug("(Server " << this->Comm->GetId() << ") Get request from " << who << " for " << Length << " bytes @ " << Address);
-            if(Length > (this->EndAddress - Address)){
+            if(Length > (this->EndAddress - Address + 1)){
                 XdmfErrorMessage("Length " << Length << " too long for address of len " << this->EndAddress - Address);
                 XdmfErrorMessage("Server Start = " << this->StartAddress << " End = " << this->EndAddress);
                 return(XDMF_FAIL);
