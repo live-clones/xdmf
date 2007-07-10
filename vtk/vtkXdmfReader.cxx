@@ -86,7 +86,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.13");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.14");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -491,7 +491,6 @@ int vtkXdmfReader::ProcessRequest(vtkInformation* request,
 int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
 {
   // Set the number of outputs and the create the output data objects
-
   // needed because we may change the number of output ports
   // inside RequestDataObject. So we may change the output vector.
   vtkInformationVector *newOutputVector=outputVector;
@@ -757,14 +756,19 @@ int vtkXdmfReaderInternal::RequestActualGridData(
   int numberOfGrids,
   vtkInformationVector *outputVector)
 {
-    // cout << " ........... In RequestActualGridData" << endl;
+
   vtkInformation *info=outputVector->GetInformationObject(0);
   int procId=info->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER());
   int nbProcs=info->Get(vtkStreamingDemandDrivenPipeline::UPDATE_NUMBER_OF_PIECES());
   
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
   vtkMultiGroupDataSet *mgd=vtkMultiGroupDataSet::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
-    
+
+  if (!currentActualGrid->Collection)
+    {
+    return 0; //work around an undo/redo bug
+    }
+
     unsigned int numberOfDataSets=currentActualGrid->Collection->Grids.size();
     
     currentActualGrid->Collection->UpdateCounts();
@@ -879,7 +883,7 @@ int vtkXdmfReaderInternal::RequestActualGridData(
         vtkInformation *subInfo=compInfo->GetInformation(level,index);
         result=this->RequestSingleGridData("",gridIt->second,subInfo,ds,1);
         // cout << "ds level " << level << " index " << index << " = " << endl;
-        // ds->Print(std::cout);
+        // ds->Print(cout);
         }
       ++currentIndex[level];
       ++gridIt;
@@ -887,7 +891,7 @@ int vtkXdmfReaderInternal::RequestActualGridData(
       // cout << "Progress " << 1.0 * datasetIdx / numberOfDataSets << endl;
       this->Reader->UpdateProgress(1.0 * datasetIdx / numberOfDataSets);
       }
-      // mgd->Print(std::cout);
+      // mgd->Print(cout);
       // mgd->DebugOn();
     return result;
 }
@@ -2223,7 +2227,8 @@ int vtkXdmfReader::GetGridIndex(const char* name)
 void vtkXdmfReader::EnableGrid(const char* name)
 {
   vtkXdmfReaderActualGrid* grid = this->Internals->GetGrid(name);
-  if ( !grid )
+  if ( !grid || 
+       (!grid->Grid && !grid->Collection) ) //work around an undo/redo crash
     {
     return;
     }
@@ -2251,6 +2256,8 @@ void vtkXdmfReader::EnableGrid(int idx)
     {
     ++this->NumberOfEnabledActualGrids;
     grid->Enabled = 1;
+    this->PointDataArraySelection->RemoveAllArrays();
+    this->CellDataArraySelection->RemoveAllArrays();
     this->Modified();
     this->UpdateInformation();
     }
@@ -2275,6 +2282,8 @@ void vtkXdmfReader::EnableAllGrids()
     }
   if(changed)
     {
+    this->PointDataArraySelection->RemoveAllArrays();
+    this->CellDataArraySelection->RemoveAllArrays();
     this->Modified();
     this->UpdateInformation();
     }
@@ -2294,6 +2303,9 @@ void vtkXdmfReader::DisableGrid(const char* name)
     {
     grid->Enabled = 0;
     --this->NumberOfEnabledActualGrids;
+    this->PointDataArraySelection->RemoveAllArrays();
+    this->CellDataArraySelection->RemoveAllArrays();
+
     this->Modified();
     this->UpdateInformation();
     }
@@ -2313,6 +2325,8 @@ void vtkXdmfReader::DisableGrid(int idx)
     {
     grid->Enabled = 0;
     --this->NumberOfEnabledActualGrids;
+    this->PointDataArraySelection->RemoveAllArrays();
+    this->CellDataArraySelection->RemoveAllArrays();
     this->Modified();
     this->UpdateInformation();
     }
@@ -2337,9 +2351,25 @@ void vtkXdmfReader::DisableAllGrids()
     }
   if(changed)
     {
+    this->PointDataArraySelection->RemoveAllArrays();
+    this->CellDataArraySelection->RemoveAllArrays();
     this->Modified();
     this->UpdateInformation();
     }
+}
+
+//----------------------------------------------------------------------------
+void vtkXdmfReader::RemoveAllGrids()
+{
+  vtkDebugMacro("Remove all grids");
+  vtkXdmfReaderInternal::MapOfActualGrids::iterator it;
+  this->Internals->ActualGrids.clear();
+  this->NumberOfEnabledActualGrids = 0;
+  this->GridsModified = 1;
+  this->PointDataArraySelection->RemoveAllArrays();
+  this->CellDataArraySelection->RemoveAllArrays();
+  this->Modified();
+  this->UpdateInformation();
 }
 
 //----------------------------------------------------------------------------

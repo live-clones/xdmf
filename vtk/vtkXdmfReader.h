@@ -186,6 +186,7 @@ public:
   void DisableGrid(const char* name);
   void DisableGrid(int idx);
   void DisableAllGrids();
+  void RemoveAllGrids();
 
   // Description:
   // Get current enable/disable of the grid
