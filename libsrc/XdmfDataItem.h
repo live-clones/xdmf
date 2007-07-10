@@ -175,9 +175,9 @@ public:
     XdmfConstString GetShapeAsString();
 
     //! Convenience Function
-    XdmfConstString GetDimensions(){this->GetShapeAsString();};
+    XdmfConstString GetDimensions(){return this->GetShapeAsString();};
     //! Convenience Function
-    XdmfInt32 SetDimensions(XdmfInt32 Rank, XdmfInt64 *Dimensions){this->SetShape(Rank, Dimensions);};
+    XdmfInt32 SetDimensions(XdmfInt32 Rank, XdmfInt64 *Dimensions){return this->SetShape(Rank, Dimensions);};
     //! Convenience Function
     XdmfInt32 SetDimensionsFromString(XdmfConstString Dimensions);
     //! Set the name of the Heavy Data Set (if applicable)
