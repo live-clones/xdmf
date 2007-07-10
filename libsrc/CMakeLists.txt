@@ -49,10 +49,13 @@ SET( XdmfModelSource
   XdmfGrid
   XdmfTopology
   XdmfGeometry
-  XdmfH5Driver
 #  XdmfNDGM
 #  XdmfRuntime
   )
+
+IF(XDMF_BUILD_MPI)
+    SET(XdmfModelSource ${XdmfModelSource} XdmfH5Driver)
+ENDIF(XDMF_BUILD_MPI) 
 
 SET( XdmfMpiSource
     XdmfDsm

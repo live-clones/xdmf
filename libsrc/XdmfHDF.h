@@ -33,7 +33,9 @@
 #define XDMF_H5_OTHER    0xFF
 
 class XdmfArray;
+#ifndef XDMF_NO_MPI
 class XdmfDsmBuffer;
+#endif
 
 //! Class for Accessing HDF5 Data
 /*!
@@ -57,20 +59,20 @@ Filesystem.
 
 Example of Createing an HDF5 File :
 \code
-	XdmfHDF		*H5 = new XdmfHDF();
-	XdmfArray	*MyData = new XdmfArray();
-	XdmfConstString	DataSetNameConst;
+        XdmfHDF         *H5 = new XdmfHDF();
+        XdmfArray       *MyData = new XdmfArray();
+        XdmfConstString DataSetNameConst;
 
-	MyData->SetNumberType(XDMF_FLOAT32_TYPE);
-	MyData->SetNumberOfElements(100);
-	MyData->Generate(0, 99);
-	DataSetNameConst = "FILE:TestFile.h5:/TestDataSets/Values1";
-	H5->CopyType( MyData );
-	H5->CopyShape( MyData );
-	H5->Open( DataSetName, "rw" );
-	H5->Write( MyData );
-	H5->Close();
-	
+        MyData->SetNumberType(XDMF_FLOAT32_TYPE);
+        MyData->SetNumberOfElements(100);
+        MyData->Generate(0, 99);
+        DataSetNameConst = "FILE:TestFile.h5:/TestDataSets/Values1";
+        H5->CopyType( MyData );
+        H5->CopyShape( MyData );
+        H5->Open( DataSetName, "rw" );
+        H5->Write( MyData );
+        H5->Close();
+
 \endcode
 
 This would create an HDF5 file with one Group (TestDataSets) and one Dataset in
@@ -89,14 +91,14 @@ public:
 
 //! Set Compression Level to 0 - 9 . Level <= 0 is Off
 /*!
-	Compression level refers to the next dataset that is
-	created. Once a dataset is created, the compression
-	level does not change.
+        Compression level refers to the next dataset that is
+        created. Once a dataset is created, the compression
+        level does not change.
 
-	Compression Levels 1-9 are progressively slower but
-	result in much smaller HDF5 files. Compression uses
-	the libz compression and "CHUNKS" the HDF5 file
-	in the major dimension.
+        Compression Levels 1-9 are progressively slower but
+        result in much smaller HDF5 files. Compression uses
+        the libz compression and "CHUNKS" the HDF5 file
+        in the major dimension.
 */
   XdmfSetValueMacro(Compression, XdmfInt32);
 //! Get Compression Level
@@ -105,9 +107,11 @@ public:
   XdmfSetValueMacro(UseSerialFile, XdmfInt32);
 //! Get Value of Use Serial
   XdmfGetValueMacro(UseSerialFile, XdmfInt32);
+#ifndef XDMF_NO_MPI
 //! DSM Buffer
   XdmfGetValueMacro(DsmBuffer, XdmfDsmBuffer *);
   XdmfSetValueMacro(DsmBuffer, XdmfDsmBuffer *);
+#endif
 //! Set the current internal HDF "Group" for creation
   XdmfInt32 SetCwdName( XdmfConstString Directory );
 //! Get the current internal HDF "Group"
@@ -204,8 +208,9 @@ protected:
   XdmfInt32  UseSerialFile;
   XdmfInt64  NumberOfChildren;
   XdmfString  Child[1024];
+#ifndef XDMF_NO_MPI
   XdmfDsmBuffer *DsmBuffer;
-
+#endif
 };
 
 /*
