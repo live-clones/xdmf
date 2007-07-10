@@ -26,7 +26,7 @@
 #define __XdmfDsmCommMpi_h
 
 #include "XdmfDsmComm.h"
-#include "mpi.h"
+#include <mpi.h>
 
 //! Base comm object for Distributed Shared Memory implementation
 /*!
