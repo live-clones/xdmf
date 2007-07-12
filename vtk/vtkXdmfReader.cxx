@@ -86,7 +86,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.16");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.17");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -649,7 +649,7 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
   // for each output
   vtkXdmfReaderInternal::MapOfActualGrids::iterator currentGridIterator;
   currentGridIterator = this->Internals->ActualGrids.begin();
-  int i=0;
+
   
   int someOutputChanged=0;
   vtkInformation *jinfo=newOutputVector->GetInformationObject(0);
@@ -752,10 +752,10 @@ int vtkXdmfReader::RequestData(
 
 //----------------------------------------------------------------------------
 int vtkXdmfReaderInternal::RequestActualGridData(
-  const char* currentGridName,
+  const char* vtkNotUsed(currentGridName),
   vtkXdmfReaderActualGrid* currentActualGrid,
   int outputGrid,
-  int numberOfGrids,
+  int vtkNotUsed(numberOfGrids),
   vtkInformationVector *outputVector)
 {
 
@@ -1861,8 +1861,8 @@ int vtkXdmfReader::RequestInformation(
 //-----------------------------------------------------------------------------
 int vtkXdmfReaderInternal::RequestActualGridInformation(
   vtkXdmfReaderActualGrid* currentActualGrid,
-  int outputGrid,
-  int numberOfGrids,
+  int vtkNotUsed(outputGrid),
+  int vtkNotUsed(numberOfGrids),
   vtkInformationVector* outputVector)
 {
   // Handle single grid
@@ -2408,7 +2408,7 @@ int vtkXdmfReader::GetNumberOfParameters()
 }
 
 //----------------------------------------------------------------------------
-const char *vtkXdmfReader::GetParameterName(int index)
+const char *vtkXdmfReader::GetParameterName(int vtkNotUsed(index))
 {
     /*
   XdmfParameter *Param;
@@ -2431,7 +2431,7 @@ const char *vtkXdmfReader::GetParameterName(int index)
     return(0);
 }
 //----------------------------------------------------------------------------
-int vtkXdmfReader::GetParameterType(const char *parameterName)
+int vtkXdmfReader::GetParameterType(const char *vtkNotUsed(parameterName))
 {
     /*
   XdmfParameter *Param;
@@ -2454,7 +2454,7 @@ int vtkXdmfReader::GetParameterType(const char *parameterName)
     return(0);
 }
 //----------------------------------------------------------------------------
-const char *vtkXdmfReader::GetParameterTypeAsString(const char *parameterName)
+const char *vtkXdmfReader::GetParameterTypeAsString(const char *vtkNotUsed(parameterName))
 {
     /*
   if (this->GetParameterType(parameterName) == XDMF_PARAMETER_RANGE_TYPE) 
@@ -2465,7 +2465,7 @@ const char *vtkXdmfReader::GetParameterTypeAsString(const char *parameterName)
   return("LIST");
 }
 //----------------------------------------------------------------------------
-int vtkXdmfReader::GetParameterType(int index)
+int vtkXdmfReader::GetParameterType(int vtkNotUsed(index))
 {
     /*
   XdmfParameter *Param;
@@ -2489,7 +2489,7 @@ int vtkXdmfReader::GetParameterType(int index)
 }
 
 //----------------------------------------------------------------------------
-const char *vtkXdmfReader::GetParameterTypeAsString(int index)
+const char *vtkXdmfReader::GetParameterTypeAsString(int vtkNotUsed(index))
 {
   
   /*
@@ -2501,7 +2501,7 @@ const char *vtkXdmfReader::GetParameterTypeAsString(int index)
   return("LIST");
 }
 //----------------------------------------------------------------------------
-int vtkXdmfReader::GetParameterRange(int index, int Shape[3])
+int vtkXdmfReader::GetParameterRange(int vtkNotUsed(index), int vtkNotUsed(Shape)[3])
 {
     /*
   XdmfParameter *Param;
@@ -2532,7 +2532,7 @@ int vtkXdmfReader::GetParameterRange(int index, int Shape[3])
   return(0);
 }
 //----------------------------------------------------------------------------
-int vtkXdmfReader::GetParameterRange(const char *parameterName, int Shape[3])
+int vtkXdmfReader::GetParameterRange(const char *vtkNotUsed(parameterName), int vtkNotUsed(Shape)[3])
 {
   /*
   XdmfParameter *Param;
@@ -2565,7 +2565,7 @@ int vtkXdmfReader::GetParameterRange(const char *parameterName, int Shape[3])
 }
 
 //----------------------------------------------------------------------------
-const char *vtkXdmfReader::GetParameterRangeAsString(int index)
+const char *vtkXdmfReader::GetParameterRangeAsString(int vtkNotUsed(index))
 {
     /*
   int Range[3];
@@ -2583,7 +2583,7 @@ const char *vtkXdmfReader::GetParameterRangeAsString(int index)
   return(0);
 }
 //----------------------------------------------------------------------------
-const char *vtkXdmfReader::GetParameterRangeAsString(const char *parameterName)
+const char *vtkXdmfReader::GetParameterRangeAsString(const char *vtkNotUsed(parameterName))
 {
     /*
   int Range[3];
@@ -2601,7 +2601,7 @@ const char *vtkXdmfReader::GetParameterRangeAsString(const char *parameterName)
   return(0);
 }
 //----------------------------------------------------------------------------
-int vtkXdmfReader::SetParameterIndex(int Index, int CurrentIndex) 
+int vtkXdmfReader::SetParameterIndex(int vtkNotUsed(Index), int vtkNotUsed(CurrentIndex)) 
 {
   /*
   XdmfParameter *Param;
@@ -2623,7 +2623,7 @@ int vtkXdmfReader::SetParameterIndex(int Index, int CurrentIndex)
 }
 
 //----------------------------------------------------------------------------
-int vtkXdmfReader::GetParameterIndex(int Index) 
+int vtkXdmfReader::GetParameterIndex(int vtkNotUsed(Index)) 
 {
     /*
   XdmfParameter *Param;
@@ -2644,8 +2644,8 @@ int vtkXdmfReader::GetParameterIndex(int Index)
 }
 
 //----------------------------------------------------------------------------
-int vtkXdmfReader::SetParameterIndex(const char *ParameterName,
-                                     int CurrentIndex) 
+int vtkXdmfReader::SetParameterIndex(const char *vtkNotUsed(ParameterName),
+                                     int vtkNotUsed(CurrentIndex)) 
 {
     /*
   XdmfParameter *Param;
@@ -2678,7 +2678,7 @@ int vtkXdmfReader::SetParameterIndex(const char *ParameterName,
 }
 
 //----------------------------------------------------------------------------
-int vtkXdmfReader::GetParameterIndex(const char *parameterName) 
+int vtkXdmfReader::GetParameterIndex(const char *vtkNotUsed(parameterName)) 
 {
     /*
   XdmfParameter *Param;
@@ -2699,7 +2699,7 @@ int vtkXdmfReader::GetParameterIndex(const char *parameterName)
 }
 
 //----------------------------------------------------------------------------
-const char *vtkXdmfReader::GetParameterValue(const char *parameterName) 
+const char *vtkXdmfReader::GetParameterValue(const char *vtkNotUsed(parameterName)) 
 {
     /*
   XdmfParameter *Param;
@@ -2721,7 +2721,7 @@ const char *vtkXdmfReader::GetParameterValue(const char *parameterName)
 }
 
 //----------------------------------------------------------------------------
-const char *vtkXdmfReader::GetParameterValue(int index) 
+const char *vtkXdmfReader::GetParameterValue(int vtkNotUsed(index)) 
 {
     /*
   XdmfParameter *Param;
@@ -2744,7 +2744,7 @@ const char *vtkXdmfReader::GetParameterValue(int index)
 
 
 //----------------------------------------------------------------------------
-int vtkXdmfReader::GetParameterLength(int index)
+int vtkXdmfReader::GetParameterLength(int vtkNotUsed(index))
 {
     /*
   XdmfParameter *Param;
@@ -2768,7 +2768,7 @@ int vtkXdmfReader::GetParameterLength(int index)
 }
 
 //----------------------------------------------------------------------------
-int vtkXdmfReader::GetParameterLength(const char *parameterName)
+int vtkXdmfReader::GetParameterLength(const char *vtkNotUsed(parameterName))
 {
     /*
   XdmfParameter *Param;
@@ -2864,7 +2864,7 @@ void vtkXdmfReader::UpdateNonUniformGrid(void *GridNode, char * CollectionName)
   int NGrid;
   vtkIdType currentGrid;
   XdmfXmlNode gridNode = 0;
-  XdmfXmlNode domain = this->Internals->DomainPtr;
+
 
 
   NGrid = this->DOM->FindNumberOfElements("Grid", (XdmfXmlNode)GridNode);

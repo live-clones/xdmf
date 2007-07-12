@@ -77,17 +77,17 @@ XdmfElement::~XdmfElement() {
     if(this->ElementName) delete [] this->ElementName;
 }
 
-void XdmfElement::SetReferenceObject(XdmfXmlNode Element, void *p){
+void XdmfElement::SetReferenceObject(XdmfXmlNode anElement, void *p){
     XdmfElementData *PrivateData;
-    if(!Element){
+    if(!anElement){
         XdmfErrorMessage("Element is NULL");
         return;
     }
-    if(XDMF_XML_PRIVATE_DATA(Element)){
-        PrivateData = (XdmfElementData *)XDMF_XML_PRIVATE_DATA(Element);
+    if(XDMF_XML_PRIVATE_DATA(anElement)){
+        PrivateData = (XdmfElementData *)XDMF_XML_PRIVATE_DATA(anElement);
     }else{
         PrivateData = new XdmfElementData;
-        XDMF_XML_PRIVATE_DATA(Element) = (void *)PrivateData;
+        XDMF_XML_PRIVATE_DATA(anElement) = (void *)PrivateData;
     }
     // XdmfDebug("Old Ref = " << PrivateData->GetReferenceElement());
     // XdmfDebug("New Ref = " << p);
@@ -95,17 +95,17 @@ void XdmfElement::SetReferenceObject(XdmfXmlNode Element, void *p){
 }
 
 void *
-XdmfElement::GetReferenceObject(XdmfXmlNode Element){
+XdmfElement::GetReferenceObject(XdmfXmlNode anElement){
     XdmfElementData *PrivateData;
-    if(!Element){
+    if(!anElement){
         XdmfErrorMessage("NULL Reference Element");
         return(NULL);
     }
-    if(XDMF_XML_PRIVATE_DATA(Element) == XDMF_EMPTY_REFERENCE){
+    if(XDMF_XML_PRIVATE_DATA(anElement) == XDMF_EMPTY_REFERENCE){
         XdmfDebug("XML Node contains no initialized object");
         return(NULL);
     }
-    PrivateData = (XdmfElementData *)XDMF_XML_PRIVATE_DATA(Element);
+    PrivateData = (XdmfElementData *)XDMF_XML_PRIVATE_DATA(anElement);
     if(PrivateData->GetReferenceElement() == XDMF_EMPTY_REFERENCE){
         XdmfDebug("XML Node contains no initialized object");
         return(NULL);
@@ -113,29 +113,29 @@ XdmfElement::GetReferenceObject(XdmfXmlNode Element){
     return(PrivateData->GetReferenceElement());
 }
 
-void XdmfElement::SetCurrentXdmfElement(XdmfXmlNode Element, void *p){
+void XdmfElement::SetCurrentXdmfElement(XdmfXmlNode anElement, void *p){
     XdmfElementData *PrivateData;
-    if(!Element){
+    if(!anElement){
         XdmfErrorMessage("Element is NULL");
         return;
     }
-    if(XDMF_XML_PRIVATE_DATA(Element)){
-        PrivateData = (XdmfElementData *)XDMF_XML_PRIVATE_DATA(Element);
+    if(XDMF_XML_PRIVATE_DATA(anElement)){
+        PrivateData = (XdmfElementData *)XDMF_XML_PRIVATE_DATA(anElement);
     }else{
         PrivateData = new XdmfElementData;
-        XDMF_XML_PRIVATE_DATA(Element) = (void *)PrivateData;
+        XDMF_XML_PRIVATE_DATA(anElement) = (void *)PrivateData;
     }
     PrivateData->SetCurrentXdmfElement((XdmfElement *)p);
 }
 
 void *
-XdmfElement::GetCurrentXdmfElement(XdmfXmlNode Element){
+XdmfElement::GetCurrentXdmfElement(XdmfXmlNode anElement){
     XdmfElementData *PrivateData;
-    if(!Element){
+    if(!anElement){
         XdmfErrorMessage("NULL Reference Element");
         return(NULL);
     }
-    PrivateData = (XdmfElementData *)XDMF_XML_PRIVATE_DATA(Element);
+    PrivateData = (XdmfElementData *)XDMF_XML_PRIVATE_DATA(anElement);
     if(!PrivateData){
         return(NULL);
     }
@@ -146,16 +146,16 @@ XdmfElement::GetCurrentXdmfElement(XdmfXmlNode Element){
     return(PrivateData->GetCurrentXdmfElement());
 }
 
-XdmfInt32 XdmfElement::SetElement(XdmfXmlNode Element){
-    if(!Element) {
+XdmfInt32 XdmfElement::SetElement(XdmfXmlNode anElement){
+    if(!anElement) {
         XdmfErrorMessage("Element is NULL");
         return(XDMF_FAIL);
     }
     // Clear the ReferenceObject underlying node. This will also create PrivateData if necessary
     XdmfDebug("Clearing ReferenceObject of XML node");
-    this->SetReferenceObject(Element, XDMF_EMPTY_REFERENCE);
-    this->SetCurrentXdmfElement(Element, this);
-    this->Element = Element;
+    this->SetReferenceObject(anElement, XDMF_EMPTY_REFERENCE);
+    this->SetCurrentXdmfElement(anElement, this);
+    this->Element = anElement;
     return(XDMF_SUCCESS);
 }
 
@@ -209,7 +209,7 @@ XdmfElement::Insert(XdmfElement *Child){
 }
 
 XdmfInt32
-XdmfElement::Copy(XdmfElement *Source){
+XdmfElement::Copy(XdmfElement *){
     return(XDMF_SUCCESS);
 }
 
@@ -327,18 +327,18 @@ XdmfInt32 XdmfElement::Update(){
 }
 
 XdmfXmlNode
-XdmfElement::FollowReference(XdmfXmlNode Element){
+XdmfElement::FollowReference(XdmfXmlNode anElement){
     XdmfConstString Value;
     XdmfXmlNode     ref = NULL;
 
-    if(!Element){
+    if(!anElement){
         XdmfErrorMessage("Element is NULL");
         return((XdmfXmlNode)XDMF_ERROR_REFERENCE);
     }
-    Value = this->DOM->Get(Element, "Reference");
+    Value = this->DOM->Get(anElement, "Reference");
     if(Value){
         if(STRCASECMP(Value, "XML") == 0){
-            Value = this->DOM->GetCData(Element);
+            Value = this->DOM->GetCData(anElement);
             if(!Value){
                 XdmfErrorMessage("Reference to CDATA is NULL");
                 return((XdmfXmlNode)XDMF_ERROR_REFERENCE);
@@ -355,14 +355,14 @@ XdmfElement::FollowReference(XdmfXmlNode Element){
 }
 
 XdmfXmlNode
-XdmfElement::CheckForReference(XdmfXmlNode Element){
+XdmfElement::CheckForReference(XdmfXmlNode anElement){
 
     XdmfXmlNode node;
 
     XdmfDebug("XdmfElement::CheckForReference(XdmfXmlNode Element)");
-    if(!Element) return((XdmfXmlNode)XDMF_ERROR_REFERENCE);
+    if(!anElement) return((XdmfXmlNode)XDMF_ERROR_REFERENCE);
     // Does the Referenced Node Exist and is it of the Same Type
-    node = this->FollowReference(Element);
+    node = this->FollowReference(anElement);
     if(node == (XdmfXmlNode)XDMF_ERROR_REFERENCE){
         XdmfErrorMessage("Error Following Reference");
         return((XdmfXmlNode)XDMF_ERROR_REFERENCE);
@@ -370,8 +370,8 @@ XdmfElement::CheckForReference(XdmfXmlNode Element){
     if(node){
         XdmfDebug("Element is a Reference");
         // Check Type (low level XML "name") against this->Element
-        if(STRCMP((const char *)node->name, (const char *)Element->name) != 0){
-            XdmfErrorMessage("Reference node is a " << node->name << " not " << Element->name);
+        if(STRCMP((const char *)node->name, (const char *)anElement->name) != 0){
+            XdmfErrorMessage("Reference node is a " << node->name << " not " << anElement->name);
             return((XdmfXmlNode)XDMF_ERROR_REFERENCE);
         }
     }else{
@@ -379,7 +379,7 @@ XdmfElement::CheckForReference(XdmfXmlNode Element){
         return((XdmfXmlNode)XDMF_EMPTY_REFERENCE);
     }
     XdmfDebug("Setting ReferenceElement");
-    this->ReferenceElement = Element;
+    this->ReferenceElement = anElement;
     this->SetIsReference(1);
     return(node);
 }
@@ -436,7 +436,7 @@ XdmfInt32 XdmfElement::Build(){
     return(XDMF_SUCCESS);
 }
 
-XdmfInt32 XdmfElement::Set(XdmfConstString Name, XdmfConstString Value){
+XdmfInt32 XdmfElement::Set(XdmfConstString aName, XdmfConstString Value){
     if(!this->DOM) {
         XdmfErrorMessage("No DOM has been set");
         return(XDMF_FAIL);
@@ -445,12 +445,12 @@ XdmfInt32 XdmfElement::Set(XdmfConstString Name, XdmfConstString Value){
         XdmfErrorMessage("No XML Node has been set");
         return(XDMF_FAIL);
     }
-    this->DOM->Set(this->Element, Name, Value);
+    this->DOM->Set(this->Element, aName, Value);
     return(XDMF_SUCCESS);
 }
 
 
-XdmfConstString XdmfElement::Get(XdmfConstString Name){
+XdmfConstString XdmfElement::Get(XdmfConstString aName){
     if(!this->DOM) {
         XdmfErrorMessage("No DOM has been set");
         return(NULL);
@@ -459,5 +459,5 @@ XdmfConstString XdmfElement::Get(XdmfConstString Name){
         XdmfErrorMessage("No XML Node has been set");
         return(NULL);
     }
-    return(this->DOM->Get(this->Element, Name));
+    return(this->DOM->Get(this->Element, aName));
 }

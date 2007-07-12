@@ -61,7 +61,7 @@ XdmfRoot::Insert( XdmfElement *Child){
 
 XdmfInt32 XdmfRoot::Build(){
     static char VersionBuf[80];
-    ostrstream  Version(VersionBuf,80);
+    ostrstream  aVersion(VersionBuf,80);
 
     if(!this->GetElement()){
         if(this->GetDOM()){
@@ -73,7 +73,7 @@ XdmfInt32 XdmfRoot::Build(){
     }
     if(XdmfElement::Build() != XDMF_SUCCESS) return(XDMF_FAIL);
     // Version and XInclude
-    Version << this->Version << ends;
-    this->Set("Version", (XdmfConstString)Version.str());
+    aVersion << this->Version << ends;
+    this->Set("Version", (XdmfConstString)aVersion.str());
     return(XDMF_SUCCESS);
 }

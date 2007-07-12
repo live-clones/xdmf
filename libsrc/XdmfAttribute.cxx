@@ -169,11 +169,11 @@ return( XDMF_SUCCESS );
 }
 
 XdmfInt32
-XdmfAttribute::SetValues(XdmfArray *Values){
-    if(Values == this->Values) return(XDMF_SUCCESS);
+XdmfAttribute::SetValues(XdmfArray *someValues){
+    if(someValues == this->Values) return(XDMF_SUCCESS);
     if(this->ValuesAreMine && this->Values) delete this->Values;
     this->ValuesAreMine = 0;
-    this->Values = Values;
+    this->Values = someValues;
     return(XDMF_SUCCESS);
 }
 

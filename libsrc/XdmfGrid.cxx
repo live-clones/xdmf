@@ -137,17 +137,17 @@ XdmfGrid::Build(){
 }
 
 XdmfInt32
-XdmfGrid::SetGridTypeFromString(XdmfConstString GridType){
-    if(XDMF_WORD_CMP(GridType, "Uniform")){
+XdmfGrid::SetGridTypeFromString(XdmfConstString aGridType){
+    if(XDMF_WORD_CMP(aGridType, "Uniform")){
         this->SetGridType(XDMF_GRID_UNIFORM);
-    }else if(XDMF_WORD_CMP(GridType, "Tree")){
+    }else if(XDMF_WORD_CMP(aGridType, "Tree")){
         this->SetGridType(XDMF_GRID_TREE);
-    }else if(XDMF_WORD_CMP(GridType, "Collection")){
+    }else if(XDMF_WORD_CMP(aGridType, "Collection")){
         this->SetGridType(XDMF_GRID_COLLECTION);
-    }else if(XDMF_WORD_CMP(GridType, "Subset")){
+    }else if(XDMF_WORD_CMP(aGridType, "Subset")){
         this->SetGridType(XDMF_GRID_SUBSET);
     }else{
-        XdmfErrorMessage("Unknown Grid Type : " << GridType);
+        XdmfErrorMessage("Unknown Grid Type : " << aGridType);
         return(XDMF_FAIL);
     }
     return(XDMF_SUCCESS);
@@ -250,7 +250,7 @@ return(0);
 XdmfInt32
 XdmfGrid::UpdateInformation() {
 
-XdmfXmlNode Element;
+XdmfXmlNode anElement;
 XdmfInt32  Status = XDMF_FAIL;
 XdmfConstString  attribute;
 
@@ -369,20 +369,20 @@ if( this->GridType & XDMF_GRID_MASK){
 //    return(XDMF_SUCCESS);
 }else{
 // Handle Uniform Grid
-    Element = this->DOM->FindElement("Topology", 0, this->Element);
-    if(Element){
+    anElement = this->DOM->FindElement("Topology", 0, this->Element);
+    if(anElement){
         if(this->Topology->SetDOM( this->DOM ) == XDMF_FAIL) return(XDMF_FAIL);
-        if(this->Topology->SetElement(Element) == XDMF_FAIL) return(XDMF_FAIL);
+        if(this->Topology->SetElement(anElement) == XDMF_FAIL) return(XDMF_FAIL);
         Status = this->Topology->UpdateInformation();
         if( Status == XDMF_FAIL ){
             XdmfErrorMessage("Error Reading Topology");
             return( XDMF_FAIL );
         }
     }
-    Element = this->DOM->FindElement("Geometry", 0, this->Element);
-    if(Element){
+    anElement = this->DOM->FindElement("Geometry", 0, this->Element);
+    if(anElement){
         if(this->Geometry->SetDOM( this->DOM ) == XDMF_FAIL) return(XDMF_FAIL);
-        if(this->Geometry->SetElement(Element) == XDMF_FAIL) return(XDMF_FAIL);
+        if(this->Geometry->SetElement(anElement) == XDMF_FAIL) return(XDMF_FAIL);
         Status = this->Geometry->UpdateInformation();
         if( Status == XDMF_FAIL ){
             XdmfErrorMessage("Error Reading Geometry");
@@ -420,7 +420,7 @@ return( XDMF_SUCCESS );
 
 XdmfInt32
 XdmfGrid::Update() {
-XdmfInt32  Status = XDMF_FAIL;
+
 
 
 //cout << " In Update" << endl;
@@ -464,7 +464,7 @@ if((this->GridType & XDMF_GRID_MASK) != XDMF_GRID_UNIFORM){
             if(select){
                 XdmfDataItem    *di = new XdmfDataItem;
                 XdmfArray       *celloff, *newconn;
-                XdmfInt64       i, o, o1, len, total;
+                XdmfInt64       i1, o, o1, len, total;
                 XdmfInt64       *cell, cellsize = 100;
 
                 cell = new XdmfInt64[ cellsize ];
@@ -477,9 +477,9 @@ if((this->GridType & XDMF_GRID_MASK) != XDMF_GRID_UNIFORM){
                 newconn = new XdmfArray;
                 newconn->SetNumberOfElements(target->GetTopology()->GetConnectivity()->GetNumberOfElements());
                 total = 0;
-                for(i=0; i< di->GetArray()->GetNumberOfElements() ; i++){
-                    o = celloff->GetValueAsInt64(di->GetArray()->GetValueAsInt64(i));
-                    o1 = celloff->GetValueAsInt64(di->GetArray()->GetValueAsInt64(i) + 1);
+                for(i1=0; i1< di->GetArray()->GetNumberOfElements() ; i1++){
+                    o = celloff->GetValueAsInt64(di->GetArray()->GetValueAsInt64(i1));
+                    o1 = celloff->GetValueAsInt64(di->GetArray()->GetValueAsInt64(i1) + 1);
 //                    cout << " Getting " << o << " thru " << o1 << endl;
                     len = o1 - o;
                     if(len > cellsize){
@@ -493,7 +493,7 @@ if((this->GridType & XDMF_GRID_MASK) != XDMF_GRID_UNIFORM){
                         return(XDMF_FAIL);
                     }
                     newconn->SetValues(total, cell, len);
-//                    cout << " Offset " << i << " = " << o << " len = " << len << " total " << total << endl;
+//                    cout << " Offset " << i1 << " = " << o << " len = " << len << " total " << total << endl;
                     total += len;
 
                 }

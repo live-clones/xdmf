@@ -577,10 +577,10 @@ XdmfInt32 XdmfDataItem::Build(){
 }
 
 XdmfInt32
-XdmfDataItem::CheckValues(XdmfInt32 Format){
+XdmfDataItem::CheckValues(XdmfInt32 aFormat){
     if(this->Values){
         // Exists
-        if(this->Values->Format != Format){
+        if(this->Values->Format != aFormat){
             // Wrong Format
             XdmfDebug("CheckValues Changing Format");
             delete this->Values;
