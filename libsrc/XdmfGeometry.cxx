@@ -272,7 +272,7 @@ return( XDMF_SUCCESS );
 XdmfInt32
 XdmfGeometry::Update() {
 
-XdmfConstString  Attribute;
+
 XdmfInt32  ArrayIndex;
 XdmfInt64  Start[ XDMF_MAX_DIMENSION ];
 XdmfInt64  Stride[ XDMF_MAX_DIMENSION ];

@@ -350,8 +350,8 @@ if( this->GridType & XDMF_GRID_MASK){
             this->Topology = target->GetTopology();
             this->TopologyIsMine = 0;
         }else if(select){
-            XdmfArray       *celloff;
-            XdmfInt64       i, o, len;
+
+
 
             XdmfDataItem    *di = new XdmfDataItem;
             di->SetDOM(this->DOM);
@@ -421,7 +421,7 @@ return( XDMF_SUCCESS );
 XdmfInt32
 XdmfGrid::Update() {
 XdmfInt32  Status = XDMF_FAIL;
-XdmfConstString  attribute;
+
 
 //cout << " In Update" << endl;
 if(XdmfElement::Update() != XDMF_SUCCESS) return(XDMF_FAIL);

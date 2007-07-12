@@ -480,7 +480,7 @@ if(this->TopologyType == XDMF_MIXED){
 }else{
     // NodesPerElement are constant
     XdmfInt64   i, index = 0;
-    XdmfInt32   npe, celltype;
+
     for(i=0;i<this->GetNumberOfElements();i++){
         *offsets++ = index;
         index += this->NodesPerElement;
@@ -557,7 +557,7 @@ return( XDMF_SUCCESS );
 
 XdmfInt32
 XdmfTopology::Update() {
-XdmfConstString Attribute;
+
 XdmfXmlNode     ConnectionElement;
 
 if(XdmfElement::Update() != XDMF_SUCCESS) return(XDMF_FAIL);
