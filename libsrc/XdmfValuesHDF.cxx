@@ -37,8 +37,8 @@ XdmfValuesHDF::~XdmfValuesHDF() {
 }
 
 XdmfArray *
-XdmfValuesHDF::Read(XdmfArray *Array){
-    XdmfArray   *RetArray = Array;
+XdmfValuesHDF::Read(XdmfArray *anArray){
+    XdmfArray   *RetArray = anArray;
     XdmfString  DataSetName = 0;
     XdmfHDF     H5;
 
@@ -68,7 +68,7 @@ XdmfValuesHDF::Read(XdmfArray *Array){
     }
     if( H5.Open( DataSetName, "r" ) == XDMF_FAIL ) {
         XdmfErrorMessage("Can't Open Dataset " << DataSetName);
-        if(!Array) delete RetArray;
+        if(!anArray) delete RetArray;
         RetArray = NULL;
     }else{
         if(this->DataDesc->GetSelectionSize() != H5.GetNumberOfElements() ){
@@ -100,7 +100,7 @@ XdmfValuesHDF::Read(XdmfArray *Array){
 
         if( H5.Read(RetArray) == NULL ){
             XdmfErrorMessage("Can't Read Dataset " << DataSetName);
-            if(!Array) delete RetArray;
+            if(!anArray) delete RetArray;
             RetArray = NULL;
         }else{
             this->SetHeavyDataSetName(DataSetName);
@@ -112,24 +112,24 @@ XdmfValuesHDF::Read(XdmfArray *Array){
 }
 
 XdmfInt32
-XdmfValuesHDF::Write(XdmfArray *Array, XdmfConstString HeavyDataSetName){
+XdmfValuesHDF::Write(XdmfArray *anArray, XdmfConstString aHeavyDataSetName){
     char* hds;
     XdmfHDF H5;
 
-    if(!HeavyDataSetName) HeavyDataSetName = this->GetHeavyDataSetName();
-    if(!HeavyDataSetName){
-        HeavyDataSetName = "Xdmf.h5:/Data";
+    if(!aHeavyDataSetName) aHeavyDataSetName = this->GetHeavyDataSetName();
+    if(!aHeavyDataSetName){
+        aHeavyDataSetName = "Xdmf.h5:/Data";
     }
-    XdmfDebug("Writing Values to " << HeavyDataSetName);
+    XdmfDebug("Writing Values to " << aHeavyDataSetName);
     if(!this->DataDesc ){
         XdmfErrorMessage("DataDesc has not been set");
         return(XDMF_FAIL);
     }
-    if(!Array){
+    if(!anArray){
         XdmfErrorMessage("Array to Write is NULL");
         return(XDMF_FAIL);
     }
-    XDMF_STRING_DUPLICATE(hds, HeavyDataSetName);
+    XDMF_STRING_DUPLICATE(hds, aHeavyDataSetName);
     XDMF_WORD_TRIM( hds );
     this->Set("CDATA", hds);
     H5.CopyType(this->DataDesc);
@@ -140,7 +140,7 @@ XdmfValuesHDF::Write(XdmfArray *Array, XdmfConstString HeavyDataSetName){
         delete [] hds ;
         return(XDMF_FAIL);
     }
-    if(H5.Write(Array) == XDMF_FAIL){
+    if(H5.Write(anArray) == XDMF_FAIL){
         XdmfErrorMessage("Error Writing " << hds );
         H5.Close();
         delete [] hds;

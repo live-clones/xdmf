@@ -123,7 +123,7 @@ return(NULL);
 
 XdmfInt32
 XdmfDOM::IsChild( XdmfXmlNode ChildToCheck, XdmfXmlNode Node) {
-XdmfXmlNode child, nodeToCheck;
+XdmfXmlNode child;
 
 // Check All Children
 for(child=Node->xmlChildrenNode; child ; child=child->next){
@@ -226,16 +226,16 @@ buflen = xmlNodeDump(bufp, this->Doc, Node, 0, 1);
 return(this->DupBuffer(bufp));
 }
 
-XdmfInt32 XdmfDOM::Write(XdmfConstString Output){
+XdmfInt32 XdmfDOM::Write(XdmfConstString wOutput){
     XdmfConstString OldOutputFileName;
 
-    if(Output){
-        this->SetOutputFileName(Output);
+    if(wOutput){
+        this->SetOutputFileName(wOutput);
         OldOutputFileName = this->GetOutputFileName();
     }
     if(!this->GenerateHead()) return(XDMF_FAIL);
     if(!this->Puts(this->Serialize())) return(XDMF_FAIL);
-    if(Output){
+    if(wOutput){
             ofstream *OutputStr = ( ofstream *)this->Output;
             OutputStr->flush();
             OutputStr->close();
@@ -247,7 +247,7 @@ XdmfXmlNode
 XdmfDOM::__Parse(XdmfConstString inxml, XdmfXmlDoc *DocPtr) {
 
 XdmfXmlNode Root = NULL;
-XdmfXmlDoc  Doc;
+XdmfXmlDoc  pDoc;
 int parserOptions;
 
 parserOptions = this->ParserOptions;
@@ -255,25 +255,25 @@ if(inxml) {
     // Is  this XML or a File Name
     if(inxml[0] == '<'){
         // It's XML
-        Doc = xmlReadMemory(inxml, strlen(inxml), NULL, NULL, parserOptions);
+        pDoc = xmlReadMemory(inxml, strlen(inxml), NULL, NULL, parserOptions);
     }else{
         // It's a File Name
         this->SetInputFileName(inxml);
-        Doc = xmlReadFile(this->GetInputFileName(), NULL, parserOptions);
+        pDoc = xmlReadFile(this->GetInputFileName(), NULL, parserOptions);
     }
 }else{
-    Doc = xmlReadFile(this->GetInputFileName(), NULL, parserOptions);
+    pDoc = xmlReadFile(this->GetInputFileName(), NULL, parserOptions);
 }
-if(Doc){
+if(pDoc){
     if(parserOptions & XML_PARSE_XINCLUDE){
-        if (xmlXIncludeProcess(Doc) < 0) {
-            xmlFreeDoc(Doc);
-            Doc = NULL;
+        if (xmlXIncludeProcess(pDoc) < 0) {
+            xmlFreeDoc(pDoc);
+            pDoc = NULL;
         }
     }
-    Root = xmlDocGetRootElement(Doc);
+    Root = xmlDocGetRootElement(pDoc);
 }
-if(DocPtr) *DocPtr = Doc;
+if(DocPtr) *DocPtr = pDoc;
 return(Root);
 }
 
@@ -660,7 +660,7 @@ return((XdmfConstString)xmlGetProp(Node, (xmlChar *)Attribute));
 
 XdmfConstString
 XdmfDOM::GetCData(XdmfXmlNode Node) {
-xmlBuffer *sbufp;
+
 char    *txt;
 
 if( !Node ) {

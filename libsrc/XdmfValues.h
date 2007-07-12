@@ -68,7 +68,7 @@ class XDMF_EXPORT XdmfValues : public XdmfDataItem{
 public :
 
   XdmfValues();
-  ~XdmfValues();
+  virtual ~XdmfValues();
 
   XdmfConstString GetClassName() { return("XdmfValues"); } ;
   //! Set DOM and Element from another XdmfDataItem

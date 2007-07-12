@@ -49,7 +49,7 @@ class XDMF_EXPORT XdmfDsm : public XdmfObject {
 
 public:
   XdmfDsm();
-  ~XdmfDsm();
+  virtual ~XdmfDsm();
 
   XdmfConstString GetClassName() { return ( "XdmfDsm" ) ; };
 

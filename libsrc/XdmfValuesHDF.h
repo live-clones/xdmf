@@ -54,7 +54,7 @@ class XDMF_EXPORT XdmfValuesHDF : public XdmfValues {
 public :
 
   XdmfValuesHDF();
-  ~XdmfValuesHDF();
+  virtual ~XdmfValuesHDF();
 
   XdmfConstString GetClassName() { return("XdmfValuesHDF"); } ;
   //! Read the Array from the External Representation

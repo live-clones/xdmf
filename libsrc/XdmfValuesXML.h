@@ -66,7 +66,7 @@ class XDMF_EXPORT XdmfValuesXML : public XdmfValues {
 public :
 
   XdmfValuesXML();
-  ~XdmfValuesXML();
+  virtual ~XdmfValuesXML();
 
   XdmfConstString GetClassName() { return("XdmfValuesXML"); } ;
   //! Read the Array from the External Representation
