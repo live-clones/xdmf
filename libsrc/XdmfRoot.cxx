@@ -27,7 +27,7 @@
 
 XdmfRoot::XdmfRoot() {
     this->SetElementName("Xdmf");
-    this->Version = XDMF_VERSION;
+    this->Version = (XdmfFloat32)XDMF_VERSION;
     this->XInclude = 1;
 }
 
@@ -39,7 +39,7 @@ XdmfInt32 XdmfRoot::UpdateInformation(){
 
     XdmfElement::UpdateInformation();
     Value = this->Get("Version");
-    if(Value) this->SetVersion(atof(Value));
+    if(Value) this->SetVersion((XdmfFloat32)atof(Value));
     Value = this->Get("XInclude");
     if(!Value) this->SetXInclude(atoi(Value));
     return(XDMF_SUCCESS);

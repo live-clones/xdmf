@@ -234,7 +234,7 @@ XdmfInt32  Status;
 XdmfXmlNode  ValuesNode;
 XdmfDataItem ValueReader;
 
-XdmfConstString  Attribute;
+
 
 if(XdmfElement::Update() != XDMF_SUCCESS) return(XDMF_FAIL);
 if( this->AttributeType == XDMF_ATTRIBUTE_TYPE_NONE ){

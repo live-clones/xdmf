@@ -215,9 +215,9 @@ XdmfElement::Copy(XdmfElement *Source){
 
 XdmfInt32 XdmfElement::UpdateInformation(){
     XdmfConstString Value;
-    XdmfInt32   Status;
+
     XdmfElement *e;
-    XdmfXmlNode ref, Original;
+    XdmfXmlNode ref;
 
     XdmfDebug("XdmfElement::UpdateInformation()");
     if(!this->DOM) {
@@ -356,7 +356,7 @@ XdmfElement::FollowReference(XdmfXmlNode Element){
 
 XdmfXmlNode
 XdmfElement::CheckForReference(XdmfXmlNode Element){
-    XdmfElement *e;
+
     XdmfXmlNode node;
 
     XdmfDebug("XdmfElement::CheckForReference(XdmfXmlNode Element)");
@@ -412,7 +412,7 @@ XdmfConstString XdmfElement::GetElementType(){
 
 XdmfInt32 XdmfElement::Build(){
     XdmfConstString  name;
-    XdmfXmlNode      child;
+
     XdmfInt32        i;
 
     name = this->GetName();
