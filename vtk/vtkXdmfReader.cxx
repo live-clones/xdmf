@@ -86,7 +86,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.15");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.16");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -1576,7 +1576,7 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
     XdmfInt32 AttributeType;
     int       Components;
     XdmfAttribute       *Attribute;
-    XdmfConstString NodeType;
+
     Attribute = xdmfGrid->GetAttribute( cc );
     const char *name = Attribute->GetName();
     int status = 1;
