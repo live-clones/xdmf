@@ -70,13 +70,13 @@ XdmfValues::Inherit(XdmfDataItem *DataItem) {
 
 // Override this
 XdmfArray *
-XdmfValues::Read(XdmfArray *Array){
+XdmfValues::Read(XdmfArray */*anArray*/){
     return(NULL);
 }
 
 // Override this
 XdmfInt32 
-XdmfValues::Write(XdmfArray *Array, XdmfConstString HeavyDataSetName){
+XdmfValues::Write(XdmfArray */*anArray*/, XdmfConstString /*HeavyDataSetName*/){
     return(XDMF_FAIL);
 }
 

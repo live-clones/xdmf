@@ -55,7 +55,7 @@ class XDMF_EXPORT XdmfDataStructure : public XdmfDataItem{
 public :
 
   XdmfDataStructure();
-  ~XdmfDataStructure();
+  virtual ~XdmfDataStructure();
 
   XdmfConstString GetClassName() { return("XdmfDataStructure"); } ;
 

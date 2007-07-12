@@ -74,7 +74,7 @@ XdmfArrayListClass::Instance(){
 
 XdmfArrayListClass::~XdmfArrayListClass()
 {
-    int i=0;
+
 
   if ( this->List )
     {

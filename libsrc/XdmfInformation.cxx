@@ -43,14 +43,14 @@ XdmfInformation::Insert( XdmfElement *Child){
 }
 
 XdmfInt32 XdmfInformation::UpdateInformation(){
-    XdmfConstString Value;
+    XdmfConstString aValue;
 
     XdmfElement::UpdateInformation();
-    Value = this->Get("Name");
-    if(Value) this->SetName(Value);
-    Value = this->Get("Value");
-    if(!Value) Value = this->Get("CDATA");
-    if(Value) this->SetValue(Value);
+    aValue = this->Get("Name");
+    if(aValue) this->SetName(aValue);
+    aValue = this->Get("Value");
+    if(!aValue) aValue = this->Get("CDATA");
+    if(aValue) this->SetValue(aValue);
     return(XDMF_SUCCESS);
 }
 

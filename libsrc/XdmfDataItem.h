@@ -102,7 +102,7 @@ class XDMF_EXPORT XdmfDataItem : public XdmfElement {
 
 public:
   XdmfDataItem();
-  ~XdmfDataItem();
+  virtual ~XdmfDataItem();
 
   XdmfConstString GetClassName() { return ( "XdmfDataItem" ) ; };
 

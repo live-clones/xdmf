@@ -79,7 +79,7 @@ class XDMF_EXPORT XdmfElement : public XdmfLightData {
 
 public:
     XdmfElement();
-    ~XdmfElement();
+    virtual ~XdmfElement();
     virtual XdmfConstString GetClassName() { return("XdmfElement"); } ;
 
     //! Set the DOM to use

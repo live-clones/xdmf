@@ -81,18 +81,18 @@ XdmfDataItem::GetArray(XdmfInt32 Create){
 }
 
 XdmfInt32 
-XdmfDataItem::SetArray(XdmfArray *Array){
+XdmfDataItem::SetArray(XdmfArray *anArray){
     if(this->Array && this->ArrayIsMine) delete this->Array;
     this->ArrayIsMine = 0;
-    this->Array = Array;
+    this->Array = anArray;
     return(XDMF_SUCCESS);
 }
 
 XdmfInt32 
-XdmfDataItem::SetDataDesc(XdmfDataDesc *DataDesc){
+XdmfDataItem::SetDataDesc(XdmfDataDesc *aDataDesc){
     if(this->DataDesc && this->DataDescIsMine) delete this->DataDesc;
     this->DataDescIsMine = 0;
-    this->DataDesc = DataDesc;
+    this->DataDesc = aDataDesc;
     return(XDMF_SUCCESS);
 }
 
@@ -205,7 +205,7 @@ XdmfInt32 XdmfDataItem::UpdateInformationUniform(){
 
 XdmfInt32 XdmfDataItem::UpdateInformation(){
     XdmfConstString Value;
-    XdmfInt32   Precision = 4;
+
 
     XdmfDebug("XdmfDataItem::UpdateInformation()");
     if(XdmfElement::UpdateInformation() != XDMF_SUCCESS) return(XDMF_FAIL);
@@ -479,12 +479,12 @@ XdmfString XdmfDataItem::GetDataValues(XdmfInt64 Index, XdmfInt64 NumberOfValues
     return(this->Array->GetValues(Index, NumberOfValues, ArrayStride));
 }
 
-XdmfInt32 XdmfDataItem::SetDataValues(XdmfInt64 Index, XdmfConstString Values, XdmfInt64 ArrayStride, XdmfInt64 ValuesStride){
+XdmfInt32 XdmfDataItem::SetDataValues(XdmfInt64 Index, XdmfConstString someValues, XdmfInt64 ArrayStride, XdmfInt64 ValuesStride){
     if(!this->Array){
         XdmfErrorMessage("DataItem has no XdmfArray");
         return(XDMF_FAIL);
     }
-    return(this->Array->SetValues(Index, Values, ArrayStride, ValuesStride));
+    return(this->Array->SetValues(Index, someValues, ArrayStride, ValuesStride));
 }
 
 XdmfInt32   XdmfDataItem::GetRank() {
@@ -528,12 +528,12 @@ XdmfConstString XdmfDataItem::GetShapeAsString(){
 }
 
 XdmfInt32 XdmfDataItem::Build(){
-    XdmfDataDesc *DataDesc = this->DataDesc;
+    XdmfDataDesc *aDataDesc = this->DataDesc;
     if(XdmfElement::Build() != XDMF_SUCCESS) return(XDMF_FAIL);
-    if(this->Array) DataDesc = this->Array;
-    this->Set("Dimensions", DataDesc->GetShapeAsString());
-    this->Set("NumberType", XdmfTypeToClassString(DataDesc->GetNumberType()));
-    switch (DataDesc->GetElementSize()) {
+    if(this->Array) aDataDesc = this->Array;
+    this->Set("Dimensions", aDataDesc->GetShapeAsString());
+    this->Set("NumberType", XdmfTypeToClassString(aDataDesc->GetNumberType()));
+    switch (aDataDesc->GetElementSize()) {
         case 8 :
             this->Set("Precision", "8");
             break;
@@ -550,7 +550,7 @@ XdmfInt32 XdmfDataItem::Build(){
         XdmfErrorMessage("Error Accessing Internal XdmfValues");
         return(XDMF_FAIL);
     }
-    this->Values->SetDataDesc(DataDesc);
+    this->Values->SetDataDesc(aDataDesc);
     switch (this->Format) {
         case XDMF_FORMAT_HDF :
             XdmfDebug("Writing Values in HDF Format");

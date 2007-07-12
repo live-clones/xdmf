@@ -42,7 +42,7 @@ class XDMF_EXPORT XdmfDsmBuffer : public XdmfDsm {
 
 public:
   XdmfDsmBuffer();
-  ~XdmfDsmBuffer();
+  virtual ~XdmfDsmBuffer();
 
   XdmfConstString GetClassName() { return ( "XdmfDsmBuffer" ) ; };
 

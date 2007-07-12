@@ -35,14 +35,14 @@ XdmfValuesXML::~XdmfValuesXML() {
 }
 
 XdmfArray *
-XdmfValuesXML::Read(XdmfArray *Array){
-    XdmfArray   *RetArray = Array;
+XdmfValuesXML::Read(XdmfArray *anArray){
+    XdmfArray   *RetArray = anArray;
 
     if(!this->DataDesc){
         XdmfErrorMessage("DataDesc has not been set");
         return(NULL);
     }
-    // Allocate Array if Necessary
+    // Allocate anArray if Necessary
     if(!RetArray){
         RetArray = new XdmfArray();
         RetArray->CopyType(this->DataDesc);
@@ -52,11 +52,11 @@ XdmfValuesXML::Read(XdmfArray *Array){
     XdmfDebug("Accessing XML CDATA");
     if(RetArray->SetValues(0, this->Get("CDATA")) != XDMF_SUCCESS){
         XdmfErrorMessage("Error Accessing Actual Data Values");
-        if(!Array) delete RetArray;
+        if(!anArray) delete RetArray;
         RetArray = NULL;
     }
     if(this->DataDesc->GetSelectionSize() != RetArray->GetNumberOfElements() ){
-        // Only Want Portion of Array
+        // Only Want Portion of anArray
         XdmfArray *SrcArray;
         XdmfInt64  SelectionSize = this->DataDesc->GetSelectionSize();
 
@@ -74,7 +74,7 @@ XdmfValuesXML::Read(XdmfArray *Array){
 }
 
 XdmfInt32
-XdmfValuesXML::Write(XdmfArray *Array, XdmfConstString HeavyDataSetName){
+XdmfValuesXML::Write(XdmfArray *anArray, XdmfConstString /*HeavyDataSetName*/){
 
     XdmfConstString DataValues;
     ostrstream   StringOutput;
@@ -85,7 +85,7 @@ XdmfValuesXML::Write(XdmfArray *Array, XdmfConstString HeavyDataSetName){
         XdmfErrorMessage("DataDesc has not been set");
         return(XDMF_FAIL);
     }
-    if(!Array){
+    if(!anArray){
         XdmfErrorMessage("Array to Write is NULL");
         return(XDMF_FAIL);
     }
@@ -101,7 +101,7 @@ XdmfValuesXML::Write(XdmfArray *Array, XdmfConstString HeavyDataSetName){
     while(nelements){
         r = rank - 1;
         len = MIN(len, nelements);
-        DataValues = Array->GetValues(index, len);
+        DataValues = anArray->GetValues(index, len);
         StringOutput << DataValues << endl;
         index += len;
         nelements -= len;
