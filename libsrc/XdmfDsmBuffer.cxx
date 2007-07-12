@@ -48,12 +48,13 @@ XdmfDsmBuffer::XdmfDsmBuffer() {
 XdmfDsmBuffer::~XdmfDsmBuffer() {
 }
 
+/*
 XdmfInt32
 XdmfDsmBuffer::Copy(XdmfDsmBuffer *Source){
     if(XdmfDsm::Copy((XdmfDsm *)Source) != XDMF_SUCCESS) return(XDMF_FAIL);
     return(XDMF_SUCCESS);
 }
-
+*/
 
 void *
 XdmfDsmBuffer::ServiceThread(){

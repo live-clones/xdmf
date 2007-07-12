@@ -73,32 +73,32 @@ XdmfDsm::Copy(XdmfDsm *Source){
 }
 
 XdmfInt32
-XdmfDsm::SetStorage(XdmfArray *Storage){
+XdmfDsm::SetStorage(XdmfArray *aStorage){
     if(this->Storage && this->StorageIsMine) delete this->Storage;
-    this->Storage = Storage;
+    this->Storage = aStorage;
     return(XDMF_SUCCESS);
 }
 
 XdmfInt32
-XdmfDsm::ConfigureUniform(XdmfDsmComm *Comm, XdmfInt64 Length, XdmfInt32 StartId, XdmfInt32 EndId){
+XdmfDsm::ConfigureUniform(XdmfDsmComm *aComm, XdmfInt64 aLength, XdmfInt32 StartId, XdmfInt32 EndId){
     if(StartId < 0) StartId = 0;
-    if(EndId < 0) EndId = Comm->GetTotalSize() - 1;
+    if(EndId < 0) EndId = aComm->GetTotalSize() - 1;
     this->SetDsmType(XDMF_DSM_TYPE_UNIFORM_RANGE);
-    if((StartId == 0) && (EndId == Comm->GetTotalSize() - 1)){
+    if((StartId == 0) && (EndId == aComm->GetTotalSize() - 1)){
         this->SetDsmType(XDMF_DSM_TYPE_UNIFORM);
     }
     this->SetStartServerId(StartId);
     this->SetEndServerId(EndId);
-    this->SetComm(Comm);
-    if((Comm->GetId() >= StartId) && (Comm->GetId() <= EndId)){
-        this->SetLength(Length);
-        this->StartAddress = (Comm->GetId() - StartId) * Length;
-        this->EndAddress = this->StartAddress + Length - 1;
+    this->SetComm(aComm);
+    if((aComm->GetId() >= StartId) && (aComm->GetId() <= EndId)){
+        this->SetLength(aLength);
+        this->StartAddress = (aComm->GetId() - StartId) * aLength;
+        this->EndAddress = this->StartAddress + aLength - 1;
     }else{
-        this->Length = Length;
+        this->Length = aLength;
     }
     this->Msg->Source = this->Comm->GetId();
-    this->TotalLength = Length * (EndId - StartId + 1);
+    this->TotalLength = aLength * (EndId - StartId + 1);
     return(XDMF_SUCCESS);
 }
 
@@ -161,18 +161,18 @@ XdmfDsm::SendDone(){
 }
 
 XdmfInt32
-XdmfDsm::SetLength(XdmfInt64 Length){
+XdmfDsm::SetLength(XdmfInt64 aLength){
     // Make it longer than actually needed for round off.
-    if(this->Storage->SetNumberOfElements((Length / sizeof(XdmfInt64)) + 1) != XDMF_SUCCESS){
+    if(this->Storage->SetNumberOfElements((aLength / sizeof(XdmfInt64)) + 1) != XDMF_SUCCESS){
         XdmfErrorMessage("Cannot set Dsm Length to " << Length);
         return(XDMF_FAIL);
     }
-    this->Length = Length;
+    this->Length = aLength;
     return(XDMF_SUCCESS);
 }
 
 XdmfInt32
-XdmfDsm::SendCommandHeader(XdmfInt32 Opcode, XdmfInt32 Dest, XdmfInt64 Address, XdmfInt64 Length){
+XdmfDsm::SendCommandHeader(XdmfInt32 Opcode, XdmfInt32 Dest, XdmfInt64 Address, XdmfInt64 aLength){
     XdmfDsmCommand  Cmd;
     XdmfInt32 Status;
 
@@ -180,7 +180,7 @@ XdmfDsm::SendCommandHeader(XdmfInt32 Opcode, XdmfInt32 Dest, XdmfInt64 Address, 
     Cmd.Source = this->Comm->GetId();
     Cmd.Target = Dest;
     Cmd.Address = Address;
-    Cmd.Length = Length;
+    Cmd.Length = aLength;
 
     this->Msg->SetSource(this->Comm->GetId());
     this->Msg->SetDest(Dest);
@@ -194,7 +194,7 @@ XdmfDsm::SendCommandHeader(XdmfInt32 Opcode, XdmfInt32 Dest, XdmfInt64 Address, 
 }
 
 XdmfInt32
-XdmfDsm::ReceiveCommandHeader(XdmfInt32 *Opcode, XdmfInt32 *Source, XdmfInt64 *Address, XdmfInt64 *Length, XdmfInt32 Block){
+XdmfDsm::ReceiveCommandHeader(XdmfInt32 *Opcode, XdmfInt32 *Source, XdmfInt64 *Address, XdmfInt64 *aLength, XdmfInt32 Block){
     XdmfDsmCommand  Cmd;
     XdmfInt32       status = XDMF_FAIL;
 
@@ -214,7 +214,7 @@ XdmfDsm::ReceiveCommandHeader(XdmfInt32 *Opcode, XdmfInt32 *Source, XdmfInt64 *A
             *Opcode = Cmd.Opcode;
             *Source = Cmd.Source;
             *Address = Cmd.Address;
-            *Length = Cmd.Length;
+            *aLength = Cmd.Length;
             status = XDMF_SUCCESS;
             XdmfDebug("(Server " << this->Comm->GetId() << ") got opcode " << Cmd.Opcode);
         }
@@ -223,22 +223,22 @@ XdmfDsm::ReceiveCommandHeader(XdmfInt32 *Opcode, XdmfInt32 *Source, XdmfInt64 *A
 }
 
 XdmfInt32
-XdmfDsm::SendData(XdmfInt32 Dest, void *Data, XdmfInt64 Length){
+XdmfDsm::SendData(XdmfInt32 Dest, void *Data, XdmfInt64 aLength){
 
     this->Msg->SetSource(this->Comm->GetId());
     this->Msg->SetDest(Dest);
-    this->Msg->SetLength(Length);
+    this->Msg->SetLength(aLength);
     // this->Msg->SetTag(XDMF_DSM_RESPONSE_TAG);
     this->Msg->SetData(Data);
     return(this->Comm->Send(this->Msg));
 }
 
 XdmfInt32
-XdmfDsm::ReceiveData(XdmfInt32 Source, void *Data, XdmfInt64 Length, XdmfInt32 Block){
+XdmfDsm::ReceiveData(XdmfInt32 Source, void *Data, XdmfInt64 aLength, XdmfInt32 Block){
     XdmfInt32   Status = XDMF_FAIL;
 
     this->Msg->SetSource(Source);
-    this->Msg->SetLength(Length);
+    this->Msg->SetLength(aLength);
     // this->Msg->SetTag(XDMF_DSM_RESPONSE_TAG);
     this->Msg->SetData(Data);
     if(Block){
