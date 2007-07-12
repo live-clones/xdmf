@@ -389,7 +389,7 @@ H5FD_dsm_open(const char *name, unsigned flags/*unused*/, hid_t fapl_id,
     H5FD_dsm_t    *file=NULL;
     H5FD_dsm_fapl_t  *fa=NULL;
     XdmfInt32       status;
-    XdmfInt64    addr;
+    //XdmfInt64    addr;
     
     /* Check arguments */
     if (0==maxaddr || HADDR_UNDEF==maxaddr) return NULL;
