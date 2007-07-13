@@ -123,47 +123,47 @@ XdmfDsmBuffer::ServiceLoop(XdmfInt32 *ReturnOpcode){
 XdmfInt32
 XdmfDsmBuffer::Service(XdmfInt32 *ReturnOpcode){
     XdmfInt32   Opcode, who, status = XDMF_FAIL;
-    XdmfInt64   Length, Address;
+    XdmfInt64   aLength, Address;
     XdmfByte    *datap;
 
-    status = this->ReceiveCommandHeader(&Opcode, &who, &Address, &Length);
+    status = this->ReceiveCommandHeader(&Opcode, &who, &Address, &aLength);
     if(status == XDMF_FAIL){
         XdmfErrorMessage("Error Receiving Command Header");
         return(XDMF_FAIL);
     }
     switch(Opcode){
         case XDMF_DSM_OPCODE_PUT :
-            XdmfDebug("PUT request from " << who << " for " << Length << " bytes @ " << Address);
-            if(Length > (this->EndAddress - Address + 1)){
+            XdmfDebug("PUT request from " << who << " for " << aLength << " bytes @ " << Address);
+            if(aLength > (this->EndAddress - Address + 1)){
                 XdmfErrorMessage("Length too long");
                 return(XDMF_FAIL);
             }
             datap = (XdmfByte *)this->Storage->GetDataPointer();
             datap += Address - this->StartAddress;
             this->Msg->SetTag(XDMF_DSM_COMMAND_TAG);
-            status = this->ReceiveData(who, datap, Length); 
+            status = this->ReceiveData(who, datap, aLength); 
             if(status == XDMF_FAIL){
                 XdmfErrorMessage("ReceiveData() failed");
                 return(XDMF_FAIL);
             }
-            XdmfDebug("Serviced PUT request from " << who << " for " << Length << " bytes @ " << Address);
+            XdmfDebug("Serviced PUT request from " << who << " for " << aLength << " bytes @ " << Address);
             break;
         case XDMF_DSM_OPCODE_GET :
-            XdmfDebug("(Server " << this->Comm->GetId() << ") Get request from " << who << " for " << Length << " bytes @ " << Address);
-            if(Length > (this->EndAddress - Address + 1)){
-                XdmfErrorMessage("Length " << Length << " too long for address of len " << this->EndAddress - Address);
+            XdmfDebug("(Server " << this->Comm->GetId() << ") Get request from " << who << " for " << aLength << " bytes @ " << Address);
+            if(aLength > (this->EndAddress - Address + 1)){
+                XdmfErrorMessage("Length " << aLength << " too long for address of len " << this->EndAddress - Address);
                 XdmfErrorMessage("Server Start = " << this->StartAddress << " End = " << this->EndAddress);
                 return(XDMF_FAIL);
             }
             datap = (XdmfByte *)this->Storage->GetDataPointer();
             datap += Address - this->StartAddress;
             this->Msg->SetTag(XDMF_DSM_RESPONSE_TAG);
-            status = this->SendData(who, datap, Length); 
+            status = this->SendData(who, datap, aLength); 
             if(status == XDMF_FAIL){
                 XdmfErrorMessage("SendData() failed");
                 return(XDMF_FAIL);
             }
-            XdmfDebug("(Server " << this->Comm->GetId() << ") Serviced GET request from " << who << " for " << Length << " bytes @ " << Address);
+            XdmfDebug("(Server " << this->Comm->GetId() << ") Serviced GET request from " << who << " for " << aLength << " bytes @ " << Address);
             break;
         case XDMF_DSM_OPCODE_DONE :
             break;
@@ -175,19 +175,19 @@ XdmfDsmBuffer::Service(XdmfInt32 *ReturnOpcode){
     return(XDMF_SUCCESS);
 }
 XdmfInt32
-XdmfDsmBuffer::Put(XdmfInt64 Address, XdmfInt64 Length, void *Data){
+XdmfDsmBuffer::Put(XdmfInt64 Address, XdmfInt64 aLength, void *Data){
     XdmfInt32   who, MyId = this->Comm->GetId();
     XdmfInt64   astart, aend, len;
     XdmfByte    *datap = (XdmfByte *)Data;
 
-    while(Length){
+    while(aLength){
         who = this->AddressToId(Address);
         if(who == XDMF_FAIL){
             XdmfErrorMessage("Address Error");
             return(XDMF_FAIL);
         }
         this->GetAddressRangeForId(who, &astart, &aend);
-        len = MIN(Length, aend - Address + 1);
+        len = MIN(aLength, aend - Address + 1);
         XdmfDebug("Put " << len << " Bytes to Address " << Address << " Id = " << who);
         if(who == MyId){
             XdmfByte *dp;
@@ -213,7 +213,7 @@ XdmfDsmBuffer::Put(XdmfInt64 Address, XdmfInt64 Length, void *Data){
             }
 
         }
-        Length -= len;
+        aLength -= len;
         Address += len;
         datap += len;
     }
@@ -221,19 +221,19 @@ XdmfDsmBuffer::Put(XdmfInt64 Address, XdmfInt64 Length, void *Data){
 }
 
 XdmfInt32
-XdmfDsmBuffer::Get(XdmfInt64 Address, XdmfInt64 Length, void *Data){
+XdmfDsmBuffer::Get(XdmfInt64 Address, XdmfInt64 aLength, void *Data){
     XdmfInt32   who, MyId = this->Comm->GetId();
     XdmfInt64   astart, aend, len;
     XdmfByte    *datap = (XdmfByte *)Data;
 
-    while(Length){
+    while(aLength){
         who = this->AddressToId(Address);
         if(who == XDMF_FAIL){
             XdmfErrorMessage("Address Error");
             return(XDMF_FAIL);
         }
         this->GetAddressRangeForId(who, &astart, &aend);
-        len = MIN(Length, aend - Address + 1);
+        len = MIN(aLength, aend - Address + 1);
         XdmfDebug("Get " << len << " Bytes from Address " << Address << " Id = " << who);
         if(who == MyId){
             XdmfByte *dp;
@@ -259,7 +259,7 @@ XdmfDsmBuffer::Get(XdmfInt64 Address, XdmfInt64 Length, void *Data){
             }
 
         }
-        Length -= len;
+        aLength -= len;
         Address += len;
         datap += len;
     }
