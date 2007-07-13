@@ -127,7 +127,7 @@ XdmfXmlNode child;
 
 // Check All Children
 for(child=Node->xmlChildrenNode; child ; child=child->next){
-    if(child->type = XML_ELEMENT_NODE) {
+    if(child->type == XML_ELEMENT_NODE) {
         // Is this it?
         if(child == ChildToCheck) {
             return(XDMF_SUCCESS);
