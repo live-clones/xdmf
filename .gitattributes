@@ -1,5 +1,3 @@
 .git*            export-ignore
 
-CreateConverters.tcl  crlf=input
-JavaWrap.tcl     crlf=input
 SwigIt           crlf=input
