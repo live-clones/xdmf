@@ -7,38 +7,38 @@
   Version:   $Revision$
 
 
-Copyright (c) 1993-2001 Ken Martin, Will Schroeder, Bill Lorensen  
-All rights reserved.
+  Copyright (c) 1993-2001 Ken Martin, Will Schroeder, Bill Lorensen  
+  All rights reserved.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice,
-   this list of conditions and the following disclaimer.
+  * Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
 
- * Redistributions in binary form must reproduce the above copyright notice,
-   this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution.
+  * Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
 
- * Neither name of Ken Martin, Will Schroeder, or Bill Lorensen nor the names
-   of any contributors may be used to endorse or promote products derived
-   from this software without specific prior written permission.
+  * Neither name of Ken Martin, Will Schroeder, or Bill Lorensen nor the names
+  of any contributors may be used to endorse or promote products derived
+  from this software without specific prior written permission.
 
- * Modified source versions must be plainly marked as such, and must not be
-   misrepresented as being the original software.
+  * Modified source versions must be plainly marked as such, and must not be
+  misrepresented as being the original software.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR
-ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR
+  ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+  SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-=========================================================================*/
+  =========================================================================*/
 #include "vtkXdmfReader.h"
 
 #include "vtkCallbackCommand.h"
@@ -86,7 +86,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.17");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.18");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -111,7 +111,7 @@ public:
   vtkXdmfReaderGrid() : XMGrid(0), DataDescription(0) {}
   ~vtkXdmfReaderGrid()
     {
-    delete this->XMGrid;
+      delete this->XMGrid;
     }
 
   XdmfGrid       *XMGrid;
@@ -221,21 +221,21 @@ class vtkXdmfReaderInternal
 public:
   vtkXdmfReaderInternal()
     {
-    this->DataItem = 0;
-    this->ArrayConverter = vtkXdmfDataArray::New();
-    this->NumberOfEnabledActualGrids=0;
+      this->DataItem = 0;
+      this->ArrayConverter = vtkXdmfDataArray::New();
+      this->NumberOfEnabledActualGrids=0;
     }
   ~vtkXdmfReaderInternal()
     {
-    if ( this->DataItem )
-      {
-      // cout << "....Deleting DataItem " << this->DataItem << endl;
-      delete this->DataItem;
-      // cout << "....Back from Deleting DataItem " << this->DataItem << endl;
-      this->DataItem = 0;
-      }
-    this->ArrayConverter->Delete();
-    this->ArrayConverter = 0;
+      if ( this->DataItem )
+        {
+        // cout << "....Deleting DataItem " << this->DataItem << endl;
+        delete this->DataItem;
+        // cout << "....Back from Deleting DataItem " << this->DataItem << endl;
+        this->DataItem = 0;
+        }
+      this->ArrayConverter->Delete();
+      this->ArrayConverter = 0;
     }
 
   typedef vtkstd::vector<vtkstd::string> StringListType;
@@ -258,7 +258,7 @@ public:
 
   int RequestActualGridInformation(vtkXdmfReaderActualGrid* currentActualGrid,
                                    int outputGrid,
-                                    int numberOfGrids,
+                                   int numberOfGrids,
                                    vtkInformationVector* outputVector);
   
   typedef vtkstd::map<vtkstd::string,vtkXdmfReaderActualGrid> MapOfActualGrids;
@@ -371,8 +371,8 @@ vtkXdmfReaderActualGrid* vtkXdmfReaderInternal::GetGrid(int idx)
   vtkXdmfReaderInternal::MapOfActualGrids::iterator it;
   int cnt = 0;
   for ( it = this->ActualGrids.begin();
-    it != this->ActualGrids.end();
-    ++ it )
+        it != this->ActualGrids.end();
+        ++ it )
     {
     if ( cnt == idx )
       {
@@ -447,8 +447,8 @@ vtkXdmfReader::~vtkXdmfReader()
   
   vtkXdmfReaderInternal::MapOfActualGrids::iterator actualGridIt;
   for ( actualGridIt = this->Internals->ActualGrids.begin();
-    actualGridIt != this->Internals->ActualGrids.end();
-    ++ actualGridIt )
+        actualGridIt != this->Internals->ActualGrids.end();
+        ++ actualGridIt )
     {
     vtkXdmfReaderActualGrid* grid = &actualGridIt->second;
     if ( grid->Grid )
@@ -459,8 +459,8 @@ vtkXdmfReader::~vtkXdmfReader()
       {
       vtkXdmfReaderGridCollection::SetOfGrids::iterator gridIt;
       for ( gridIt = grid->Collection->Grids.begin();
-        gridIt != grid->Collection->Grids.end();
-        ++ gridIt )
+            gridIt != grid->Collection->Grids.end();
+            ++ gridIt )
         {
         delete gridIt->second;
         }
@@ -516,7 +516,7 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
     {
     this->DOM = new XdmfDOM();
     }
-    // this->DOM->GlobalDebugOn();
+  // this->DOM->GlobalDebugOn();
   if ( !this->Internals->DataItem )
     {
     this->Internals->DataItem = new XdmfDataItem();
@@ -538,7 +538,7 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
   XdmfXmlNode domain = 0;
   int done = 0;
   this->Internals->DomainList.erase(this->Internals->DomainList.begin(),
-    this->Internals->DomainList.end());
+                                    this->Internals->DomainList.end());
   for ( cc = 0; !done; cc ++ )
     {
     ostrstream str1, str2;
@@ -635,7 +635,7 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
   this->UpdateGrids();
 
 /*  
-  if(1 !=this->GetNumberOfOutputPorts())
+    if(1 !=this->GetNumberOfOutputPorts())
     {
     this->SetNumberOfOutputPorts(1);
 
@@ -661,7 +661,7 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
     output->SetPipelineInformation(jinfo);
     output->Delete();
     }
-    // Collapse on second level of Hierarchy
+  // Collapse on second level of Hierarchy
   output->SetNumberOfGroups(this->NumberOfEnabledActualGrids);
   //
   //while(currentGridIterator != this->Internals->ActualGrids.end())
@@ -696,7 +696,7 @@ void vtkXdmfReader::SetStride(int x, int y, int z)
     return;
     }
   vtkDebugMacro(<< this->GetClassName() << " (" << this 
-    << "): setting Stride to (" << x << "," << y << "," << z << ")");
+                << "): setting Stride to (" << x << "," << y << "," << z << ")");
   if ((this->Stride[0] != x)||(this->Stride[1] != y)||(this->Stride[2] != z))
     {
     this->Stride[0] = x;
@@ -733,8 +733,8 @@ int vtkXdmfReader::RequestData(
   int outputGrid = 0;
   vtkXdmfReaderInternal::MapOfActualGrids::iterator currentGridIterator;
   for ( currentGridIterator = this->Internals->ActualGrids.begin();
-    currentGridIterator != this->Internals->ActualGrids.end();
-    ++currentGridIterator )
+        currentGridIterator != this->Internals->ActualGrids.end();
+        ++currentGridIterator )
     {
     if (currentGridIterator->second.Enabled )
       {
@@ -742,7 +742,6 @@ int vtkXdmfReader::RequestData(
         currentGridIterator->first.c_str(),&currentGridIterator->second,
         outputGrid, this->NumberOfEnabledActualGrids, outputVector);
       outputGrid++;
-       // cout << "Progress " << 1.0 * outputGrid / this->NumberOfEnabledActualGrids << endl;
       this->UpdateProgress(1.0 * outputGrid / this->NumberOfEnabledActualGrids);
       }
     }
@@ -758,10 +757,11 @@ int vtkXdmfReaderInternal::RequestActualGridData(
   int vtkNotUsed(numberOfGrids),
   vtkInformationVector *outputVector)
 {
-
   vtkInformation *info=outputVector->GetInformationObject(0);
-  int procId=info->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER());
-  int nbProcs=info->Get(vtkStreamingDemandDrivenPipeline::UPDATE_NUMBER_OF_PIECES());
+  int procId=info->Get(
+    vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER());
+  int nbProcs=info->Get(
+    vtkStreamingDemandDrivenPipeline::UPDATE_NUMBER_OF_PIECES());
   
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
   vtkMultiGroupDataSet *mgd=vtkMultiGroupDataSet::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
@@ -771,131 +771,125 @@ int vtkXdmfReaderInternal::RequestActualGridData(
     return 0; //work around an undo/redo bug
     }
 
-    unsigned int numberOfDataSets=currentActualGrid->Collection->Grids.size();
+  unsigned int numberOfDataSets=currentActualGrid->Collection->Grids.size();
     
-    currentActualGrid->Collection->UpdateCounts();
-    int levels=currentActualGrid->Collection->GetNumberOfLevels();
-    // mgd->SetNumberOfLevels(levels);
-    // int levels = 1;
+  currentActualGrid->Collection->UpdateCounts();
+  int levels=currentActualGrid->Collection->GetNumberOfLevels();
+  // mgd->SetNumberOfLevels(levels);
+  // int levels = 1;
+  
+  int level=0;
+  mgd->SetNumberOfDataSets(outputGrid, currentActualGrid->Collection->GetNumberOfDataSets(level));
+  while(level<levels)
+    {
+    // mgd->SetNumberOfDataSets(level,currentActualGrid->Collection->GetNumberOfDataSets(level));
+    ++level;
+    }
+  
+  vtkXdmfReaderGridCollection::SetOfGrids::iterator gridIt;
+  vtkXdmfReaderGridCollection::SetOfGrids::iterator gridItEnd;
     
-    int level=0;
-    // cout << "mgd->SetNumberOfDataSets(" << outputGrid << "," << currentActualGrid->Collection->GetNumberOfDataSets(level) << ")" << endl;
-    mgd->SetNumberOfDataSets(outputGrid, currentActualGrid->Collection->GetNumberOfDataSets(level));
-    while(level<levels)
+  int numBlocksPerProcess=numberOfDataSets/nbProcs;
+  int leftOverBlocks=numberOfDataSets-(numBlocksPerProcess*nbProcs);
+    
+  int blockStart;
+  int blockEnd;
+    
+  if(procId<leftOverBlocks)
+    {
+    blockStart=(numBlocksPerProcess+1)*procId;
+    blockEnd=blockStart+(numBlocksPerProcess+1)-1;
+    }
+  else
+    {
+    blockStart=numBlocksPerProcess*procId+leftOverBlocks;
+    blockEnd=blockStart+numBlocksPerProcess-1;
+    }
+    
+  gridIt=currentActualGrid->Collection->Grids.begin();
+  gridItEnd=currentActualGrid->Collection->Grids.end();
+  int result=1;
+    
+  int datasetIdx=0;
+    
+  vtkMultiGroupDataInformation *compInfo =
+    vtkMultiGroupDataInformation::SafeDownCast(
+      info->Get(vtkCompositeDataPipeline::COMPOSITE_DATA_INFORMATION()));
+    
+  // currentIndex in each level.
+  vtkstd::vector<int> currentIndex(levels);
+  level=0;
+  while(level<levels)
+    {
+    currentIndex[level]=0;
+    ++level;
+    }
+    
+  while(gridIt != gridItEnd && result)
+    {
+    vtkXdmfReaderGrid *subgrid=gridIt->second;
+    level=subgrid->Level;
+    int index=currentIndex[level];
+    if(datasetIdx<blockStart || datasetIdx>blockEnd)
       {
-      // mgd->SetNumberOfDataSets(level,currentActualGrid->Collection->GetNumberOfDataSets(level));
-      ++level;
-      }
- 
-   // cout << "level = " << level << " levels = " << levels << " numberOfDataSets = " << numberOfDataSets << endl; 
-    vtkXdmfReaderGridCollection::SetOfGrids::iterator gridIt;
-    vtkXdmfReaderGridCollection::SetOfGrids::iterator gridItEnd;
-    
-    int numBlocksPerProcess=numberOfDataSets/nbProcs;
-    int leftOverBlocks=numberOfDataSets-(numBlocksPerProcess*nbProcs);
-    
-    int blockStart;
-    int blockEnd;
-    
-    if(procId<leftOverBlocks)
-      {
-      blockStart=(numBlocksPerProcess+1)*procId;
-      blockEnd=blockStart+(numBlocksPerProcess+1)-1;
+      // mgd->SetDataSet(level,index,0); // empty, on another processor
+      mgd->SetDataSet(outputGrid, index, 0); // empty, on another processor
       }
     else
       {
-      blockStart=numBlocksPerProcess*procId+leftOverBlocks;
-      blockEnd=blockStart+numBlocksPerProcess-1;
-      }
-    
-    gridIt=currentActualGrid->Collection->Grids.begin();
-    gridItEnd=currentActualGrid->Collection->Grids.end();
-    int result=1;
-    
-    int datasetIdx=0;
-    
-    vtkMultiGroupDataInformation *compInfo=vtkMultiGroupDataInformation::SafeDownCast(info->Get(vtkCompositeDataPipeline::COMPOSITE_DATA_INFORMATION()));
-    
-    // currentIndex in each level.
-    vtkstd::vector<int> currentIndex(levels);
-    level=0;
-    while(level<levels)
-      {
-      currentIndex[level]=0;
-      ++level;
-      }
-    
-    while(gridIt != gridItEnd && result)
-      {
-      vtkXdmfReaderGrid *subgrid=gridIt->second;
-      level=subgrid->Level;
-      int index=currentIndex[level];
-      if(datasetIdx<blockStart || datasetIdx>blockEnd)
+      XdmfGrid *xdmfGrid=subgrid->XMGrid;
+      if( xdmfGrid->GetTopology()->GetClass() == XDMF_UNSTRUCTURED ) 
         {
-             // cout << " mgd->SetDataSet(0) for index " << index << " outputGrid " << outputGrid << " datasetIdx " << datasetIdx << endl;
-        // mgd->SetDataSet(level,index,0); // empty, on another processor
-        mgd->SetDataSet(outputGrid, index, 0); // empty, on another processor
+        vtkUnstructuredGrid *ds=vtkUnstructuredGrid::New();
+        ds->SetMaximumNumberOfPieces(1);
+        // mgd->SetDataSet(level,index,ds);
+        mgd->SetDataSet(outputGrid, index, ds);
+        ds->Delete();
+        } 
+      else if( xdmfGrid->GetTopology()->GetTopologyType() == XDMF_2DSMESH ||
+               xdmfGrid->GetTopology()->GetTopologyType() == XDMF_3DSMESH )
+        {
+        vtkStructuredGrid *ds=vtkStructuredGrid::New();
+        // mgd->SetDataSet(level,index,ds);
+        mgd->SetDataSet(outputGrid, index, ds);
+        ds->Delete();
+        }
+      else if 
+        (xdmfGrid->GetTopology()->GetTopologyType() == XDMF_2DCORECTMESH ||
+         xdmfGrid->GetTopology()->GetTopologyType() == XDMF_3DCORECTMESH )
+        {
+#ifdef USE_IMAGE_DATA
+        vtkImageData *ds=vtkImageData::New();
+#else
+        vtkUniformGrid *ds=vtkUniformGrid::New();
+#endif
+        mgd->SetDataSet(level,index,ds);
+        ds->Delete();
+        }
+      else if ( 
+        xdmfGrid->GetTopology()->GetTopologyType() == XDMF_2DRECTMESH ||
+        xdmfGrid->GetTopology()->GetTopologyType() == XDMF_3DRECTMESH )
+        {
+        vtkRectilinearGrid *ds=vtkRectilinearGrid::New();
+        mgd->SetDataSet(level,index,ds);
+        ds->Delete();
         }
       else
         {
-        XdmfGrid *xdmfGrid=subgrid->XMGrid;
-        if( xdmfGrid->GetTopology()->GetClass() == XDMF_UNSTRUCTURED ) 
-          {
-          vtkUnstructuredGrid *ds=vtkUnstructuredGrid::New();
-          ds->SetMaximumNumberOfPieces(1);
-             // cout << " 1 mgd->SetDataSet(ds) for index " << index << " outputGrid " << outputGrid << " datasetIdx " << datasetIdx << endl;
-          // mgd->SetDataSet(level,index,ds);
-          mgd->SetDataSet(outputGrid, index, ds);
-          ds->Delete();
-          } 
-        else if( xdmfGrid->GetTopology()->GetTopologyType() == XDMF_2DSMESH ||
-                 xdmfGrid->GetTopology()->GetTopologyType() == XDMF_3DSMESH )
-          {
-          vtkStructuredGrid *ds=vtkStructuredGrid::New();
-             // cout << " 2 mgd->SetDataSet(ds) for index " << index << " level " << level << " datasetIdx " << datasetIdx << endl;
-          // mgd->SetDataSet(level,index,ds);
-          mgd->SetDataSet(outputGrid, index, ds);
-          ds->Delete();
-          }
-        else if ( xdmfGrid->GetTopology()->GetTopologyType() == XDMF_2DCORECTMESH ||
-                  xdmfGrid->GetTopology()->GetTopologyType() == XDMF_3DCORECTMESH )
-          {
-#ifdef USE_IMAGE_DATA
-            vtkImageData *ds=vtkImageData::New();
-#else
-            vtkUniformGrid *ds=vtkUniformGrid::New();
-#endif
-            mgd->SetDataSet(level,index,ds);
-            ds->Delete();
-          }
-        else if ( xdmfGrid->GetTopology()->GetTopologyType() == XDMF_2DRECTMESH ||
-                  xdmfGrid->GetTopology()->GetTopologyType() == XDMF_3DRECTMESH )
-          {
-            vtkRectilinearGrid *ds=vtkRectilinearGrid::New();
-            mgd->SetDataSet(level,index,ds);
-            ds->Delete();
-          }
-        else
-          {
-          // Unknown type for this sub grid. 
-          return 0;
-          }
-        // vtkDataObject *ds=mgd->GetDataSet(level,index);
-        vtkDataObject *ds=mgd->GetDataSet(outputGrid,index);
-        vtkInformation *subInfo=compInfo->GetInformation(level,index);
-        result=this->RequestSingleGridData("",gridIt->second,subInfo,ds,1);
-        // cout << "ds level " << level << " index " << index << " = " << endl;
-        // ds->Print(cout);
+        // Unknown type for this sub grid. 
+        return 0;
         }
-      ++currentIndex[level];
-      ++gridIt;
-      ++datasetIdx;
-      // cout << "Progress " << 1.0 * datasetIdx / numberOfDataSets << endl;
-      this->Reader->UpdateProgress(1.0 * datasetIdx / numberOfDataSets);
+      // vtkDataObject *ds=mgd->GetDataSet(level,index);
+      vtkDataObject *ds=mgd->GetDataSet(outputGrid,index);
+      vtkInformation *subInfo=compInfo->GetInformation(level,index);
+      result=this->RequestSingleGridData("",gridIt->second,subInfo,ds,1);
       }
-      // mgd->Print(cout);
-      // mgd->DebugOn();
-    return result;
+    ++currentIndex[level];
+    ++gridIt;
+    ++datasetIdx;
+    this->Reader->UpdateProgress(1.0 * datasetIdx / numberOfDataSets);
+    }
+  return result;
 }
 
 //----------------------------------------------------------------------------
@@ -908,8 +902,10 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
 {
   int *readerStride = this->Reader->GetStride();
 
-  vtkDataArraySelection* pointDataArraySelection = this->Reader->GetPointDataArraySelection();
-  vtkDataArraySelection* cellDataArraySelection = this->Reader->GetCellDataArraySelection();
+  vtkDataArraySelection* pointDataArraySelection = 
+    this->Reader->GetPointDataArraySelection();
+  vtkDataArraySelection* cellDataArraySelection = 
+    this->Reader->GetCellDataArraySelection();
 
   // Handle single grid
   XdmfGrid* xdmfGrid = grid->XMGrid;
@@ -921,7 +917,9 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
     //continue;
     }
   
-  vtkDebugWithObjectMacro( this->Reader, << "Reading Heavy Data for " << xdmfGrid->GetName());
+  vtkDebugWithObjectMacro(this->Reader, 
+                          << "Reading Heavy Data for " 
+                          << xdmfGrid->GetName());
   xdmfGrid->Update();
   
   // True for all 3d datasets except unstructured grids
@@ -996,8 +994,9 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
     vtkIdType           *connections;
     int                 *cell_types, *ctp;
     
-    vtkDebugWithObjectMacro(this->Reader,<< "Unstructured Topology is " 
-                            << xdmfGrid->GetTopology()->GetTopologyTypeAsString() );
+    vtkDebugWithObjectMacro(
+      this->Reader,<< "Unstructured Topology is " 
+      << xdmfGrid->GetTopology()->GetTopologyTypeAsString());
     switch ( xdmfGrid->GetTopology()->GetTopologyType() )
       {
       case  XDMF_POLYVERTEX :
@@ -1052,151 +1051,160 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
         vType = -1;
         break;
       default :
-        XdmfErrorMessage("Unknown Topology Type = " << xdmfGrid->GetTopology()->GetTopologyType());
+        XdmfErrorMessage("Unknown Topology Type = " 
+                         << xdmfGrid->GetTopology()->GetTopologyType());
         return 1;
       }
-      if( xdmfGrid->GetTopology()->GetTopologyType() != XDMF_MIXED){
-        NodesPerElement = xdmfGrid->GetTopology()->GetNodesPerElement();
-        if ( xdmfGrid->GetTopology()->GetConnectivity()->GetRank() == 2 )
-          {
-          NodesPerElement = xdmfGrid->GetTopology()->GetConnectivity()->GetDimension(1);
-          }
+    if( xdmfGrid->GetTopology()->GetTopologyType() != XDMF_MIXED){
+    NodesPerElement = xdmfGrid->GetTopology()->GetNodesPerElement();
+    if ( xdmfGrid->GetTopology()->GetConnectivity()->GetRank() == 2 )
+      {
+      NodesPerElement = 
+        xdmfGrid->GetTopology()->GetConnectivity()->GetDimension(1);
+      }
     
-        /* Create Cell Type Array */
-        Length = xdmfGrid->GetTopology()->GetConnectivity()->GetNumberOfElements();
-        Connections = new XdmfInt64[ Length ];
-        xdmfGrid->GetTopology()->GetConnectivity()->GetValues( 0, Connections, Length );
+    /* Create Cell Type Array */
+    Length = xdmfGrid->GetTopology()->GetConnectivity()->GetNumberOfElements();
+    Connections = new XdmfInt64[ Length ];
+    xdmfGrid->GetTopology()->GetConnectivity()->GetValues(0, 
+                                                          Connections, 
+                                                          Length);
     
-        NumberOfElements = xdmfGrid->GetTopology()->GetShapeDesc()->GetNumberOfElements();
-        ctp = cell_types = new int[ NumberOfElements ];
+    NumberOfElements = 
+      xdmfGrid->GetTopology()->GetShapeDesc()->GetNumberOfElements();
+    ctp = cell_types = new int[ NumberOfElements ];
     
-        /* Create Cell Array */
-        verts = vtkCellArray::New();
+    /* Create Cell Array */
+    verts = vtkCellArray::New();
     
-        /* Get the pointer */
-        connections = verts->WritePointer(
-          NumberOfElements,
-          NumberOfElements * ( 1 + NodesPerElement ));
+    /* Get the pointer */
+    connections = verts->WritePointer(
+      NumberOfElements,
+      NumberOfElements * ( 1 + NodesPerElement ));
     
-        /* Connections : N p1 p2 ... pN */
-        /* i.e. Triangles : 3 0 1 2    3 3 4 5   3 6 7 8 */
-        index = 0;
-        for( j = 0 ; j < NumberOfElements; j++ )
-          {
-          *ctp++ = vType;
-          *connections++ = NodesPerElement;
-          for( i = 0 ; i < NodesPerElement; i++ )
-            {
-            *connections++ = Connections[index++];
-            }
-          }
+    /* Connections : N p1 p2 ... pN */
+    /* i.e. Triangles : 3 0 1 2    3 3 4 5   3 6 7 8 */
+    index = 0;
+    for( j = 0 ; j < NumberOfElements; j++ )
+      {
+      *ctp++ = vType;
+      *connections++ = NodesPerElement;
+      for( i = 0 ; i < NodesPerElement; i++ )
+        {
+        *connections++ = Connections[index++];
+        }
+      }
     } else {
-        // Mixed Topology
-        /* Create Cell Type Array */
-        vtkIdTypeArray *IdArray;
-        vtkIdType RealSize;
+    // Mixed Topology
+    /* Create Cell Type Array */
+    vtkIdTypeArray *IdArray;
+    vtkIdType RealSize;
 
-        Length = xdmfGrid->GetTopology()->GetConnectivity()->GetNumberOfElements();
-        Connections = new XdmfInt64[ Length ];
-        xdmfGrid->GetTopology()->GetConnectivity()->GetValues( 0, Connections, Length );
-        NumberOfElements = xdmfGrid->GetTopology()->GetShapeDesc()->GetNumberOfElements();
-        ctp = cell_types = new int[ NumberOfElements ];
+    Length = xdmfGrid->GetTopology()->GetConnectivity()->GetNumberOfElements();
+    Connections = new XdmfInt64[ Length ];
+    xdmfGrid->GetTopology()->GetConnectivity()->GetValues(0, 
+                                                          Connections, 
+                                                          Length );
+    NumberOfElements = 
+      xdmfGrid->GetTopology()->GetShapeDesc()->GetNumberOfElements();
+    ctp = cell_types = new int[ NumberOfElements ];
     
-        /* Create Cell Array */
-        verts = vtkCellArray::New();
+    /* Create Cell Array */
+    verts = vtkCellArray::New();
     
-        /* Get the pointer. Make it Big enough ... too big for now */
-        // cout << "::::: Length = " << Length << endl;
-        connections = verts->WritePointer(
-          NumberOfElements,
-          Length);
-        //   Length);
-        /* Connections : N p1 p2 ... pN */
-        /* i.e. Triangles : 3 0 1 2    3 3 4 5   3 6 7 8 */
-        index = 0;
-        for( j = 0 ; j < NumberOfElements; j++ )
-          {
-            switch ( Connections[index++] )
-              {
-              case  XDMF_POLYVERTEX :
-                vType = VTK_POLY_VERTEX;
-                NodesPerElement = Connections[index++];
-                break;
-              case  XDMF_POLYLINE :
-                vType = VTK_POLY_LINE;
-                NodesPerElement = Connections[index++];
-                break;
-              case  XDMF_POLYGON :
-                vType = VTK_POLYGON;
-                NodesPerElement = Connections[index++];
-                break;
-              case  XDMF_TRI :
-                vType = VTK_TRIANGLE;
-                NodesPerElement = 3;
-                break;
-              case  XDMF_QUAD :
-                vType = VTK_QUAD;
-                NodesPerElement = 4;
-                break;
-              case  XDMF_TET :
-                vType = VTK_TETRA;
-                NodesPerElement = 4;
-                break;
-              case  XDMF_PYRAMID :
-                vType = VTK_PYRAMID;
-                NodesPerElement = 5;
-                break;
-              case  XDMF_WEDGE :
-                vType = VTK_WEDGE;
-                NodesPerElement = 6;
-                break;
-              case  XDMF_HEX :
-                vType = VTK_HEXAHEDRON;
-                NodesPerElement = 8;
-                break;
-              case  XDMF_EDGE_3 :
-                vType = VTK_QUADRATIC_EDGE ;
-                NodesPerElement = 3;
-                break;
-              case  XDMF_TRI_6 :
-                vType = VTK_QUADRATIC_TRIANGLE ;
-                NodesPerElement = 6;
-                break;
-              case  XDMF_QUAD_8 :
-                vType = VTK_QUADRATIC_QUAD ;
-                NodesPerElement = 8;
-                break;
-              case  XDMF_TET_10 :
-                vType = VTK_QUADRATIC_TETRA ;
-                NodesPerElement = 10;
-                break;
-              case  XDMF_PYRAMID_13 :
-                vType = VTK_QUADRATIC_PYRAMID ;
-                NodesPerElement = 13;
-                break;
-              case  XDMF_WEDGE_15 :
-                vType = VTK_QUADRATIC_WEDGE ;
-                NodesPerElement = 15;
-                break;
-              case  XDMF_HEX_20 :
-                vType = VTK_QUADRATIC_HEXAHEDRON ;
-                NodesPerElement = 20;
-                break;
-              default :
-                XdmfErrorMessage("Unknown Topology Type");
-                return 1;
-              }
-          *ctp++ = vType;
-          *connections++ = NodesPerElement;
-          for( i = 0 ; i < NodesPerElement; i++ )
-            {
-            *connections++ = Connections[index++];
-            }
-          }
+    /* Get the pointer. Make it Big enough ... too big for now */
+    // cout << "::::: Length = " << Length << endl;
+    connections = verts->WritePointer(
+      NumberOfElements,
+      Length);
+    //   Length);
+    /* Connections : N p1 p2 ... pN */
+    /* i.e. Triangles : 3 0 1 2    3 3 4 5   3 6 7 8 */
+    index = 0;
+    for( j = 0 ; j < NumberOfElements; j++ )
+      {
+      switch ( Connections[index++] )
+        {
+        case  XDMF_POLYVERTEX :
+          vType = VTK_POLY_VERTEX;
+          NodesPerElement = Connections[index++];
+          break;
+        case  XDMF_POLYLINE :
+          vType = VTK_POLY_LINE;
+          NodesPerElement = Connections[index++];
+          break;
+        case  XDMF_POLYGON :
+          vType = VTK_POLYGON;
+          NodesPerElement = Connections[index++];
+          break;
+        case  XDMF_TRI :
+          vType = VTK_TRIANGLE;
+          NodesPerElement = 3;
+          break;
+        case  XDMF_QUAD :
+          vType = VTK_QUAD;
+          NodesPerElement = 4;
+          break;
+        case  XDMF_TET :
+          vType = VTK_TETRA;
+          NodesPerElement = 4;
+          break;
+        case  XDMF_PYRAMID :
+          vType = VTK_PYRAMID;
+          NodesPerElement = 5;
+          break;
+        case  XDMF_WEDGE :
+          vType = VTK_WEDGE;
+          NodesPerElement = 6;
+          break;
+        case  XDMF_HEX :
+          vType = VTK_HEXAHEDRON;
+          NodesPerElement = 8;
+          break;
+        case  XDMF_EDGE_3 :
+          vType = VTK_QUADRATIC_EDGE ;
+          NodesPerElement = 3;
+          break;
+        case  XDMF_TRI_6 :
+          vType = VTK_QUADRATIC_TRIANGLE ;
+          NodesPerElement = 6;
+          break;
+        case  XDMF_QUAD_8 :
+          vType = VTK_QUADRATIC_QUAD ;
+          NodesPerElement = 8;
+          break;
+        case  XDMF_TET_10 :
+          vType = VTK_QUADRATIC_TETRA ;
+          NodesPerElement = 10;
+          break;
+        case  XDMF_PYRAMID_13 :
+          vType = VTK_QUADRATIC_PYRAMID ;
+          NodesPerElement = 13;
+          break;
+        case  XDMF_WEDGE_15 :
+          vType = VTK_QUADRATIC_WEDGE ;
+          NodesPerElement = 15;
+          break;
+        case  XDMF_HEX_20 :
+          vType = VTK_QUADRATIC_HEXAHEDRON ;
+          NodesPerElement = 20;
+          break;
+        default :
+          XdmfErrorMessage("Unknown Topology Type");
+          return 1;
+        }
+      *ctp++ = vType;
+      *connections++ = NodesPerElement;
+      for( i = 0 ; i < NodesPerElement; i++ )
+        {
+        *connections++ = Connections[index++];
+        }
+      }
     // Resize the Array to the Proper Size
     IdArray = verts->GetData();
     RealSize = index - 1;
-    vtkDebugWithObjectMacro(this->Reader, "Resizing to " << RealSize << " elements");
+    vtkDebugWithObjectMacro(this->Reader, 
+                            "Resizing to " << RealSize << " elements");
     IdArray->Resize(RealSize);
     }
     delete [] Connections;
@@ -1209,7 +1217,8 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
   else if( xdmfGrid->GetTopology()->GetTopologyType() == XDMF_2DSMESH ||
            xdmfGrid->GetTopology()->GetTopologyType() == XDMF_3DSMESH )
     {
-    vtkDebugWithObjectMacro(this->Reader, << "Setting Extents for vtkStructuredGrid");
+    vtkDebugWithObjectMacro(this->Reader, 
+                            << "Setting Extents for vtkStructuredGrid");
     vtkStructuredGrid  *vGrid = vtkStructuredGrid::SafeDownCast(output);
     vGrid->SetExtent(upext);    
     } 
@@ -1287,8 +1296,10 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
           }
         
         Length = Geometry->GetPoints()->GetNumberOfElements();
-        vtkDebugWithObjectMacro(this->Reader, << "Setting Array of " << (int)Length << " = " 
-                                << (int)Geometry->GetNumberOfPoints() << " Points");
+        vtkDebugWithObjectMacro(this->Reader, 
+                                << "Setting Array of " << (int)Length << " = " 
+                                << (int)Geometry->GetNumberOfPoints() 
+                                << " Points");
         vtkIdType iskip[3] = { 0, 0, 0 };
         vtkIdType eskip[3] = { 0, 0, 0 };
         int strides_or_extents = 0;
@@ -1349,7 +1360,7 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
           Geometry->GetPoints()->GetValues(
             0, 
             vtkDoubleArray::SafeDownCast(Points)->GetPointer(0), Length );
-            } 
+          } 
         else 
           {
           XdmfFloat64   *TmpPp;
@@ -1511,9 +1522,9 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
         Geometry->GetVectorY()->Generate(
           Origin[1],
           Origin[1] + ( Geometry->GetDy() * ( Dimensions[1] - 1 ) ) );
-          Geometry->GetVectorZ()->Generate(
-            Origin[2],
-            Origin[2] + ( Geometry->GetDz() * ( Dimensions[0] - 1 ) ) );
+        Geometry->GetVectorZ()->Generate(
+          Origin[2],
+          Origin[2] + ( Geometry->GetDz() * ( Dimensions[0] - 1 ) ) );
         }
       int sstart[3];
       sstart[0] = start[0];
@@ -1584,15 +1595,15 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
     AttributeType = Attribute->GetAttributeType();
     Components = 1;
     switch (AttributeType) {
-        case XDMF_ATTRIBUTE_TYPE_TENSOR :
-                Components = 9;
-                break;
-        case XDMF_ATTRIBUTE_TYPE_VECTOR:
-                Components = 3;
-                break;
-        default :
-                Components = 1;
-                break;
+    case XDMF_ATTRIBUTE_TYPE_TENSOR :
+      Components = 9;
+      break;
+    case XDMF_ATTRIBUTE_TYPE_VECTOR:
+      Components = 3;
+      break;
+    default :
+      Components = 1;
+      break;
     }
     if (name )
       {
@@ -1612,7 +1623,8 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
       }
     status = 1;
     vtkDebugWithObjectMacro(this->Reader,
-                            << "Array with name: " << name << " has status: " << status);
+                            << "Array with name: " 
+                            << name << " has status: " << status);
     // attrNode = this->DOM->FindElement("Attribute", cc);
     attrNode = Attribute->GetElement();
     // dataNode = this->DOM->FindElement("DataStructure", 0, attrNode);
@@ -1641,9 +1653,6 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
         realcount[1] ++;
         realcount[2] ++;
         }
-      //cout << "Start: " << start[0] << " " << start[1] << " " << start[2] << endl;
-      //cout << "Stride: " << stride[0] << " " << stride[1] << " " << stride[2] << endl;
-      //cout << "Realcount: " << realcount[0] << " " << realcount[1] << " " << realcount[2] << endl;
       /*
         XdmfArray *values = this->FormatMulti->ElementToArray( 
         dataNode, this->Internals->DataDescriptions[currentGrid] );
@@ -1659,13 +1668,9 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
           realcount[3] = realdims[3];
           }
         this->DataItem->GetDataDesc()->SelectHyperSlab(start, stride, realcount);
-        // vtkDebugMacro( << "Reading From Element " << this->DOM->Serialize(dataNode) );
-        // vtkDebugMacro( << "Dataset = " << this->DOM->Get(dataNode, "CData"));
         vtkDebugWithObjectMacro(this->Reader,
                                 << "Dims = " << ds->GetShapeAsString()
                                 << "Slab = " << ds->GetHyperSlabAsString());
-        //cout << "Dims = " << this->Internals->DataDescriptions[currentGrid]->GetShapeAsString() << endl;
-        //cout << "Slab = " << this->Internals->DataDescriptions[currentGrid]->GetHyperSlabAsString() << endl;
         // Only works for the structured and rectilinear grid
         vtkDebugWithObjectMacro(this->Reader, << "Preparing to Read :" 
                                 << xdmfDOM->Get(dataNode, "CData"));
@@ -1689,7 +1694,6 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
         // Special Cases
         if( AttributeCenter == XDMF_ATTRIBUTE_CENTER_GRID ) 
           {
-          //cout << "Center grid" << endl;
           // Implement XDMF_ATTRIBUTE_CENTER_GRID as PointData
           XdmfArray *tmpArray = new XdmfArray;
           
@@ -1714,7 +1718,6 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
           case XDMF_ATTRIBUTE_CENTER_NODE :
             dataSet->GetPointData()->RemoveArray(name);
             dataSet->GetPointData()->AddArray(vtkValues);
-            //cout << "Add point array: " << name << endl;
             if ( Attribute->GetActive() )
               {
               haveActive = 1;
@@ -1737,7 +1740,6 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
           case XDMF_ATTRIBUTE_CENTER_CELL :
             dataSet->GetCellData()->RemoveArray(name);
             dataSet->GetCellData()->AddArray(vtkValues);
-            //cout << "Add cell array: " << name << endl;
             if ( Attribute->GetActive() )
               {
               haveActive = 1;
@@ -1842,14 +1844,19 @@ int vtkXdmfReader::RequestInformation(
   int outputGrid = 0;
   vtkXdmfReaderInternal::MapOfActualGrids::iterator currentGridIterator;
   for ( currentGridIterator = this->Internals->ActualGrids.begin();
-    currentGridIterator != this->Internals->ActualGrids.end();
-    ++currentGridIterator )
+        currentGridIterator != this->Internals->ActualGrids.end();
+        ++currentGridIterator )
     {
     if ( currentGridIterator->second.Enabled )
       {
-      vtkDebugMacro(<< "Processing grid: " << currentGridIterator->first.c_str() << " / " << outputGrid);
+      vtkDebugMacro(<< "Processing grid: " 
+                    << currentGridIterator->first.c_str() 
+                    << " / " << outputGrid);
       if (this->Internals->RequestActualGridInformation(
-            &currentGridIterator->second, outputGrid, this->NumberOfEnabledActualGrids, outputVector) )
+            &currentGridIterator->second, 
+            outputGrid, 
+            this->NumberOfEnabledActualGrids, 
+            outputVector) )
         {
         outputGrid ++;
         }
@@ -1880,7 +1887,8 @@ int vtkXdmfReaderInternal::RequestActualGridInformation(
     int level=0;
     while(level<levels)
       {
-      compInfo->SetNumberOfDataSets(level,currentActualGrid->Collection->GetNumberOfDataSets(level));
+      compInfo->SetNumberOfDataSets(
+        level, currentActualGrid->Collection->GetNumberOfDataSets(level));
       ++level;
       }
     
@@ -1950,8 +1958,8 @@ int vtkXdmfReaderInternal::RequestActualGridInformation(
     return result;
     }
 // neither a single grid, neither a collection.
-vtkDebugWithObjectMacro(this->Reader, "Grid does not have a collection");
-return 0;
+  vtkDebugWithObjectMacro(this->Reader, "Grid does not have a collection");
+  return 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -1962,8 +1970,10 @@ int vtkXdmfReaderInternal::RequestSingleGridInformation(
   XdmfInt32    Rank;
   XdmfInt64    Dimensions[ XDMF_MAX_DIMENSION ];
   XdmfInt64    EndExtent[ XDMF_MAX_DIMENSION ];
-  vtkDataArraySelection* pointDataArraySelection = this->Reader->GetPointDataArraySelection();
-  vtkDataArraySelection* cellDataArraySelection = this->Reader->GetCellDataArraySelection();
+  vtkDataArraySelection* pointDataArraySelection = 
+    this->Reader->GetPointDataArraySelection();
+  vtkDataArraySelection* cellDataArraySelection = 
+    this->Reader->GetCellDataArraySelection();
   int *readerStride = this->Reader->GetStride();
 
   
@@ -1996,7 +2006,7 @@ int vtkXdmfReaderInternal::RequestSingleGridInformation(
       }
     }
   
-    // Revised Initial Setup
+  // Revised Initial Setup
   grid->DataDescription = xdmfGrid->GetTopology()->GetShapeDesc();
   Rank = grid->DataDescription->GetShape( Dimensions );
   int i;
@@ -2012,8 +2022,10 @@ int vtkXdmfReaderInternal::RequestSingleGridInformation(
   EndExtent[0] = vtkMAX(0, EndExtent[0]) / readerStride[2];
   EndExtent[1] = vtkMAX(0, EndExtent[1]) / readerStride[1];
   EndExtent[2] = vtkMAX(0, EndExtent[2]) / readerStride[0];
-  vtkDebugWithObjectMacro(this->Reader, << "EndExtents = " << (vtkIdType)EndExtent[0] << ", " 
-                          << (vtkIdType)EndExtent[1] << ", " << (vtkIdType)EndExtent[2]);
+  vtkDebugWithObjectMacro(this->Reader, << "EndExtents = " 
+                          << (vtkIdType)EndExtent[0] << ", " 
+                          << (vtkIdType)EndExtent[1] << ", " 
+                          << (vtkIdType)EndExtent[2]);
   
   outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),
                0, EndExtent[2], 0, EndExtent[1], 0, EndExtent[0]);
@@ -2024,12 +2036,13 @@ int vtkXdmfReaderInternal::RequestSingleGridInformation(
     if( (xdmfGrid->GetTopology()->GetTopologyType() == XDMF_2DSMESH ) ||
         (xdmfGrid->GetTopology()->GetTopologyType() == XDMF_3DSMESH ) )
       {
-      vtkDebugWithObjectMacro(this->Reader, << "Setting Extents for vtkStructuredGrid");
+      vtkDebugWithObjectMacro(this->Reader, 
+                              << "Setting Extents for vtkStructuredGrid");
       outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),
                    0, EndExtent[2], 0, EndExtent[1], 0, EndExtent[0]);
      
       }
-    else if ( xdmfGrid->GetTopology()->GetTopologyType() == XDMF_2DCORECTMESH || 
+    else if ( xdmfGrid->GetTopology()->GetTopologyType() == XDMF_2DCORECTMESH|| 
               xdmfGrid->GetTopology()->GetTopologyType() == XDMF_3DCORECTMESH )
       {
       outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),
@@ -2043,21 +2056,25 @@ int vtkXdmfReaderInternal::RequestSingleGridInformation(
         XdmfFloat64 *origin = Geometry->GetOrigin();
         XdmfFloat64 *spacing = Geometry->GetDxDyDz();
         
-        outInfo->Set(vtkDataObject::ORIGIN(), origin[2], origin[1], origin[0]);
-        outInfo->Set(vtkDataObject::SPACING(), spacing[2], spacing[1], spacing[0]);
+        outInfo->Set(vtkDataObject::ORIGIN(), 
+                     origin[2], origin[1], origin[0]);
+        outInfo->Set(vtkDataObject::SPACING(), 
+                     spacing[2], spacing[1], spacing[0]);
         }
       }
     else  if ( xdmfGrid->GetTopology()->GetTopologyType() == XDMF_2DRECTMESH ||
                xdmfGrid->GetTopology()->GetTopologyType() == XDMF_3DRECTMESH )
       {
-      vtkDebugWithObjectMacro(this->Reader, << "Setting Extents for vtkRectilinearGrid");
+      vtkDebugWithObjectMacro(this->Reader, 
+                              << "Setting Extents for vtkRectilinearGrid");
       outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),
                    0, EndExtent[2], 0, EndExtent[1], 0, EndExtent[0]);
       
       }
     else 
       {
-      vtkErrorWithObjectMacro(this->Reader,"Unknown topology type: " << xdmfGrid->GetTopology()->GetTopologyType());
+      vtkErrorWithObjectMacro(this->Reader,"Unknown topology type: " 
+                              << xdmfGrid->GetTopology()->GetTopologyType());
       }
     
     int uExt[6];
@@ -2077,7 +2094,7 @@ int vtkXdmfReaderInternal::RequestSingleGridInformation(
 
 //----------------------------------------------------------------------------
 void vtkXdmfReader::SelectionModifiedCallback(vtkObject*, unsigned long,
-                                             void* clientdata, void*)
+                                              void* clientdata, void*)
 {
   static_cast<vtkXdmfReader*>(clientdata)->Modified();
 }
@@ -2190,8 +2207,8 @@ const char* vtkXdmfReader::GetGridName(int idx)
   vtkXdmfReaderInternal::MapOfActualGrids::iterator it;
   int cnt = 0;
   for ( it = this->Internals->ActualGrids.begin();
-    it != this->Internals->ActualGrids.end();
-    ++ it )
+        it != this->Internals->ActualGrids.end();
+        ++ it )
     {
     if ( cnt == idx )
       {
@@ -2212,8 +2229,8 @@ int vtkXdmfReader::GetGridIndex(const char* name)
   vtkXdmfReaderInternal::MapOfActualGrids::iterator it;
   int cnt = 0;
   for ( it = this->Internals->ActualGrids.begin();
-    it != this->Internals->ActualGrids.end();
-    ++ it )
+        it != this->Internals->ActualGrids.end();
+        ++ it )
     {
     if ( it->first == name )
       {
@@ -2272,8 +2289,8 @@ void vtkXdmfReader::EnableAllGrids()
   vtkXdmfReaderInternal::MapOfActualGrids::iterator it;
   int changed=0;
   for ( it = this->Internals->ActualGrids.begin();
-    it != this->Internals->ActualGrids.end();
-    ++ it )
+        it != this->Internals->ActualGrids.end();
+        ++ it )
     {
     if(!it->second.Enabled)
       {
@@ -2341,8 +2358,8 @@ void vtkXdmfReader::DisableAllGrids()
   vtkXdmfReaderInternal::MapOfActualGrids::iterator it;
   int changed=0;
   for ( it = this->Internals->ActualGrids.begin();
-    it != this->Internals->ActualGrids.end();
-    ++ it )
+        it != this->Internals->ActualGrids.end();
+        ++ it )
     {
     if(it->second.Enabled)
       {
@@ -2410,82 +2427,82 @@ int vtkXdmfReader::GetNumberOfParameters()
 //----------------------------------------------------------------------------
 const char *vtkXdmfReader::GetParameterName(int vtkNotUsed(index))
 {
-    /*
-  XdmfParameter *Param;
+  /*
+    XdmfParameter *Param;
   
   
-  if(!this->DOM) 
+    if(!this->DOM) 
     {
     return(0);
     }
-  Param = this->DOM->GetParameter(index);
-  if(Param) 
+    Param = this->DOM->GetParameter(index);
+    if(Param) 
     {
     return(Param->GetParameterName());
     } 
-  else 
+    else 
     {
     return(0);
     }
-    */
-    return(0);
+  */
+  return(0);
 }
 //----------------------------------------------------------------------------
 int vtkXdmfReader::GetParameterType(const char *vtkNotUsed(parameterName))
 {
-    /*
-  XdmfParameter *Param;
+  /*
+    XdmfParameter *Param;
   
   
-  if(!this->DOM) 
+    if(!this->DOM) 
     {
     return(0);
     }
-  Param = this->DOM->FindParameter(parameterName);
-  if(Param) 
+    Param = this->DOM->FindParameter(parameterName);
+    if(Param) 
     {
     return(Param->GetParameterType());
     } 
-  else 
+    else 
     {
     return(0);
     }
-    */
-    return(0);
+  */
+  return(0);
 }
 //----------------------------------------------------------------------------
 const char *vtkXdmfReader::GetParameterTypeAsString(const char *vtkNotUsed(parameterName))
 {
-    /*
-  if (this->GetParameterType(parameterName) == XDMF_PARAMETER_RANGE_TYPE) 
+  /*
+    if (this->GetParameterType(parameterName) == XDMF_PARAMETER_RANGE_TYPE) 
     {
     return("RANGE");
     } 
-    */
+  */
   return("LIST");
 }
 //----------------------------------------------------------------------------
 int vtkXdmfReader::GetParameterType(int vtkNotUsed(index))
 {
-    /*
-  XdmfParameter *Param;
+  /*
+    XdmfParameter *Param;
   
   
-  if(!this->DOM) 
+    if(!this->DOM) 
     {
     return(0);
     }
-  Param = this->DOM->GetParameter(index);
-  if(Param) 
+    Param = this->DOM->GetParameter(index);
+    if(Param) 
     {
     return(Param->GetParameterType());
     } 
-  else 
+    else 
     {
     return(0);
     }
-    */
-    return(0);
+  */
+  return(0);
 }
 
 //----------------------------------------------------------------------------
@@ -2493,110 +2510,110 @@ const char *vtkXdmfReader::GetParameterTypeAsString(int vtkNotUsed(index))
 {
   
   /*
-  if (this->GetParameterType(index) == XDMF_PARAMETER_RANGE_TYPE) 
+    if (this->GetParameterType(index) == XDMF_PARAMETER_RANGE_TYPE) 
     {
     return("RANGE");
     } 
-    */
+  */
   return("LIST");
 }
 //----------------------------------------------------------------------------
 int vtkXdmfReader::GetParameterRange(int vtkNotUsed(index), int vtkNotUsed(Shape)[3])
 {
-    /*
-  XdmfParameter *Param;
-  XdmfArray  *Parray;
+  /*
+    XdmfParameter *Param;
+    XdmfArray  *Parray;
   
   
-  if(!this->DOM) 
+    if(!this->DOM) 
     {
     return(0);
     }
-  Param = this->DOM->GetParameter(index);
-  if(Param) 
+    Param = this->DOM->GetParameter(index);
+    if(Param) 
     {
     if( Param->GetParameterType() == XDMF_PARAMETER_RANGE_TYPE )
-      {
-      Parray = Param->GetArray();
-      Shape[0] = Parray->GetValueAsInt64(0);
-      Shape[1] = Parray->GetValueAsInt64(1);
-      Shape[2] = Parray->GetValueAsInt64(2);
-      } else {
-      Shape[0] = 0;
-      Shape[1] = 1;
-      Shape[2] = Param->GetNumberOfElements();
-      }
+    {
+    Parray = Param->GetArray();
+    Shape[0] = Parray->GetValueAsInt64(0);
+    Shape[1] = Parray->GetValueAsInt64(1);
+    Shape[2] = Parray->GetValueAsInt64(2);
+    } else {
+    Shape[0] = 0;
+    Shape[1] = 1;
+    Shape[2] = Param->GetNumberOfElements();
+    }
     return(Shape[2]);
     }
-    */
+  */
   return(0);
 }
 //----------------------------------------------------------------------------
 int vtkXdmfReader::GetParameterRange(const char *vtkNotUsed(parameterName), int vtkNotUsed(Shape)[3])
 {
   /*
-  XdmfParameter *Param;
-  XdmfArray  *Parray;
+    XdmfParameter *Param;
+    XdmfArray  *Parray;
   
-  if(!this->DOM) 
+    if(!this->DOM) 
     {
     return(0);
     }
-  Param = this->DOM->FindParameter(parameterName);
-  if(Param) 
+    Param = this->DOM->FindParameter(parameterName);
+    if(Param) 
     {
     if( Param->GetParameterType() == XDMF_PARAMETER_RANGE_TYPE )
-      {
-      Parray = Param->GetArray();
-      Shape[0] = Parray->GetValueAsInt64(0);
-      Shape[1] = Parray->GetValueAsInt64(1);
-      Shape[2] = Parray->GetValueAsInt64(2);
-      } 
+    {
+    Parray = Param->GetArray();
+    Shape[0] = Parray->GetValueAsInt64(0);
+    Shape[1] = Parray->GetValueAsInt64(1);
+    Shape[2] = Parray->GetValueAsInt64(2);
+    } 
     else 
-      {
-      Shape[0] = 0;
-      Shape[1] = 1;
-      Shape[2] = Param->GetNumberOfElements();
-      }
+    {
+    Shape[0] = 0;
+    Shape[1] = 1;
+    Shape[2] = Param->GetNumberOfElements();
+    }
     return(Shape[2]);
     }
-    */
+  */
   return(0);
 }
 
 //----------------------------------------------------------------------------
 const char *vtkXdmfReader::GetParameterRangeAsString(int vtkNotUsed(index))
 {
-    /*
-  int Range[3];
-  ostrstream StringOutput;
+  /*
+    int Range[3];
+    ostrstream StringOutput;
   
-  if(this->GetParameterRange(index, Range) <= 0)
+    if(this->GetParameterRange(index, Range) <= 0)
     {
     return(NULL);
     }
-  StringOutput << ICE_64BIT_CAST Range[0] << " ";
-  StringOutput << ICE_64BIT_CAST Range[1] << " ";
-  StringOutput << ICE_64BIT_CAST Range[2] << ends;
-  return(StringOutput.str());
+    StringOutput << ICE_64BIT_CAST Range[0] << " ";
+    StringOutput << ICE_64BIT_CAST Range[1] << " ";
+    StringOutput << ICE_64BIT_CAST Range[2] << ends;
+    return(StringOutput.str());
   */
   return(0);
 }
 //----------------------------------------------------------------------------
 const char *vtkXdmfReader::GetParameterRangeAsString(const char *vtkNotUsed(parameterName))
 {
-    /*
-  int Range[3];
-  ostrstream StringOutput;
+  /*
+    int Range[3];
+    ostrstream StringOutput;
   
-  if (this->GetParameterRange(parameterName, Range) <= 0) 
+    if (this->GetParameterRange(parameterName, Range) <= 0) 
     {
     return(NULL);
     }
-  StringOutput << ICE_64BIT_CAST Range[0] << " ";
-  StringOutput << ICE_64BIT_CAST Range[1] << " ";
-  StringOutput << ICE_64BIT_CAST Range[2] << ends;
-  return(StringOutput.str());
+    StringOutput << ICE_64BIT_CAST Range[0] << " ";
+    StringOutput << ICE_64BIT_CAST Range[1] << " ";
+    StringOutput << ICE_64BIT_CAST Range[2] << ends;
+    return(StringOutput.str());
   */
   return(0);
 }
@@ -2604,20 +2621,20 @@ const char *vtkXdmfReader::GetParameterRangeAsString(const char *vtkNotUsed(para
 int vtkXdmfReader::SetParameterIndex(int vtkNotUsed(Index), int vtkNotUsed(CurrentIndex)) 
 {
   /*
-  XdmfParameter *Param;
+    XdmfParameter *Param;
   
   
-  if(!this->DOM) 
+    if(!this->DOM) 
     {
     return(0);
     }
-  Param = this->DOM->GetParameter(Index);
-  if(!Param) 
+    Param = this->DOM->GetParameter(Index);
+    if(!Param) 
     {
     return(-1);
     }
-  this->Modified();
-  return(Param->SetCurrentIndex(CurrentIndex));
+    this->Modified();
+    return(Param->SetCurrentIndex(CurrentIndex));
   */
   return(0);
 }
@@ -2625,20 +2642,20 @@ int vtkXdmfReader::SetParameterIndex(int vtkNotUsed(Index), int vtkNotUsed(Curre
 //----------------------------------------------------------------------------
 int vtkXdmfReader::GetParameterIndex(int vtkNotUsed(Index)) 
 {
-    /*
-  XdmfParameter *Param;
+  /*
+    XdmfParameter *Param;
   
   
-  if(!this->DOM) 
+    if(!this->DOM) 
     {
     return(0);
     }
-  Param = this->DOM->GetParameter(Index);
-  if(!Param) 
+    Param = this->DOM->GetParameter(Index);
+    if(!Param) 
     {
     return(-1);
     }
-  return(Param->GetCurrentIndex());
+    return(Param->GetCurrentIndex());
   */
   return(0);
 }
@@ -2647,32 +2664,32 @@ int vtkXdmfReader::GetParameterIndex(int vtkNotUsed(Index))
 int vtkXdmfReader::SetParameterIndex(const char *vtkNotUsed(ParameterName),
                                      int vtkNotUsed(CurrentIndex)) 
 {
-    /*
-  XdmfParameter *Param;
-  int Status=-1;
+  /*
+    XdmfParameter *Param;
+    int Status=-1;
 
-  if(!this->DOM) 
+    if(!this->DOM) 
     {
     return(0);
     }
-  for(int i=0 ; i < this->DOM->FindNumberOfParameters() ;  i++)
+    for(int i=0 ; i < this->DOM->FindNumberOfParameters() ;  i++)
     {
     Param = this->DOM->GetParameter(i);
     if(!Param) 
-      {
-      return(-1);
-      }
-    if(XDMF_WORD_CMP(Param->GetParameterName(), ParameterName))
-      {
-      Status = Param->SetCurrentIndex(CurrentIndex);
-      this->Modified();
-      if(Status <= 0 ) 
-        {
-        return(Status);
-        }
-      }
+    {
+    return(-1);
     }
-  return(Status);
+    if(XDMF_WORD_CMP(Param->GetParameterName(), ParameterName))
+    {
+    Status = Param->SetCurrentIndex(CurrentIndex);
+    this->Modified();
+    if(Status <= 0 ) 
+    {
+    return(Status);
+    }
+    }
+    }
+    return(Status);
   */
   return(0);
 }
@@ -2680,20 +2697,20 @@ int vtkXdmfReader::SetParameterIndex(const char *vtkNotUsed(ParameterName),
 //----------------------------------------------------------------------------
 int vtkXdmfReader::GetParameterIndex(const char *vtkNotUsed(parameterName)) 
 {
-    /*
-  XdmfParameter *Param;
+  /*
+    XdmfParameter *Param;
   
   
-  if(!this->DOM) 
+    if(!this->DOM) 
     {
     return(0);
     }
-  Param = this->DOM->FindParameter(parameterName);
-  if(!Param) 
+    Param = this->DOM->FindParameter(parameterName);
+    if(!Param) 
     {
     return(-1);
     }
-  return(Param->GetCurrentIndex());
+    return(Param->GetCurrentIndex());
   */
   return(0);
 }
@@ -2701,21 +2718,21 @@ int vtkXdmfReader::GetParameterIndex(const char *vtkNotUsed(parameterName))
 //----------------------------------------------------------------------------
 const char *vtkXdmfReader::GetParameterValue(const char *vtkNotUsed(parameterName)) 
 {
-    /*
-  XdmfParameter *Param;
+  /*
+    XdmfParameter *Param;
   
   
-  if(!this->DOM) 
+    if(!this->DOM) 
     {
     return(0);
     }
-  Param = this->DOM->FindParameter(parameterName);
-  if(!Param) 
+    Param = this->DOM->FindParameter(parameterName);
+    if(!Param) 
     {
     return(0);
     }
-  Param->Update();
-  return(Param->GetParameterValue());
+    Param->Update();
+    return(Param->GetParameterValue());
   */
   return(0);
 }
@@ -2723,21 +2740,21 @@ const char *vtkXdmfReader::GetParameterValue(const char *vtkNotUsed(parameterNam
 //----------------------------------------------------------------------------
 const char *vtkXdmfReader::GetParameterValue(int vtkNotUsed(index)) 
 {
-    /*
-  XdmfParameter *Param;
+  /*
+    XdmfParameter *Param;
   
   
-  if(!this->DOM) 
+    if(!this->DOM) 
     {
     return(0);
     }
-  Param = this->DOM->GetParameter(index);
-  if(!Param) 
+    Param = this->DOM->GetParameter(index);
+    if(!Param) 
     {
     return(0);
     }
-  Param->Update();
-  return(Param->GetParameterValue());
+    Param->Update();
+    return(Param->GetParameterValue());
   */
   return(0);
 }
@@ -2746,55 +2763,55 @@ const char *vtkXdmfReader::GetParameterValue(int vtkNotUsed(index))
 //----------------------------------------------------------------------------
 int vtkXdmfReader::GetParameterLength(int vtkNotUsed(index))
 {
-    /*
-  XdmfParameter *Param;
+  /*
+    XdmfParameter *Param;
   
   
-  if(!this->DOM) 
+    if(!this->DOM) 
     {
     return(0);
     }
-  Param = this->DOM->GetParameter(index);
-  if(Param) 
+    Param = this->DOM->GetParameter(index);
+    if(Param) 
     {
     return(Param->GetNumberOfElements());
     } 
-  else 
+    else 
     {
     return(0);
     }
-    */
-    return(0);
+  */
+  return(0);
 }
 
 //----------------------------------------------------------------------------
 int vtkXdmfReader::GetParameterLength(const char *vtkNotUsed(parameterName))
 {
-    /*
-  XdmfParameter *Param;
+  /*
+    XdmfParameter *Param;
   
   
-  if(!this->DOM) 
+    if(!this->DOM) 
     {
     return(0);
     }
-  Param = this->DOM->FindParameter(parameterName);
-  if(Param) 
+    Param = this->DOM->FindParameter(parameterName);
+    if(Param) 
     {
     return(Param->GetNumberOfElements());
     } 
-  else 
+    else 
     {
     return(0);
     }
-    */
-    return(0);
+  */
+  return(0);
 }
 
 //----------------------------------------------------------------------------
 const char * vtkXdmfReader::GetXdmfDOMHandle() 
 {
- return( XdmfObjectToHandle( this->DOM ) );
+  return( XdmfObjectToHandle( this->DOM ) );
 }
 
 //----------------------------------------------------------------------------
@@ -2825,37 +2842,37 @@ void vtkXdmfReader::SetDomainName(const char* domain)
 void vtkXdmfReader::UpdateUniformGrid(void *GridNode, char * CollectionName)
 {
 
-XdmfConstString gridName = this->DOM->Get( (XdmfXmlNode)GridNode, "Name" );
-ostrstream str;
-if ( !gridName )
-  {
-  str << this->DOM->GetUniqueName("Grid") << ends;
-  }
-else
-  {
-  str << gridName << ends;
-  }
-gridName = str.str();
-vtkDebugMacro( << "Reading Light Data for " << gridName );
-XdmfConstString levelName = this->DOM->Get((XdmfXmlNode) GridNode, "Level" );
+  XdmfConstString gridName = this->DOM->Get( (XdmfXmlNode)GridNode, "Name" );
+  ostrstream str;
+  if ( !gridName )
+    {
+    str << this->DOM->GetUniqueName("Grid") << ends;
+    }
+  else
+    {
+    str << gridName << ends;
+    }
+  gridName = str.str();
+  vtkDebugMacro( << "Reading Light Data for " << gridName );
+  XdmfConstString levelName = this->DOM->Get((XdmfXmlNode) GridNode, "Level" );
 
-vtkXdmfReaderGrid* grid = this->Internals->GetXdmfGrid(gridName, CollectionName,levelName);
-if ( !grid )
-  {
-  // Error happened
-  str.rdbuf()->freeze(0);
-  return;
-  }
-if ( !grid->XMGrid )
-  {
-  grid->XMGrid = new XdmfGrid;
-  }
+  vtkXdmfReaderGrid* grid = this->Internals->GetXdmfGrid(gridName, CollectionName,levelName);
+  if ( !grid )
+    {
+    // Error happened
+    str.rdbuf()->freeze(0);
+    return;
+    }
+  if ( !grid->XMGrid )
+    {
+    grid->XMGrid = new XdmfGrid;
+    }
   vtkDebugMacro(" .... Setting Grid Information");
-grid->XMGrid->SetDOM(this->DOM);
-grid->XMGrid->SetElement((XdmfXmlNode)GridNode);
-grid->XMGrid->UpdateInformation();
-str.rdbuf()->freeze(0);
-this->GridsModified = 0;
+  grid->XMGrid->SetDOM(this->DOM);
+  grid->XMGrid->SetElement((XdmfXmlNode)GridNode);
+  grid->XMGrid->UpdateInformation();
+  str.rdbuf()->freeze(0);
+  this->GridsModified = 0;
 }
 //----------------------------------------------------------------------------
 void vtkXdmfReader::UpdateNonUniformGrid(void *GridNode, char * CollectionName)
@@ -2870,8 +2887,10 @@ void vtkXdmfReader::UpdateNonUniformGrid(void *GridNode, char * CollectionName)
   NGrid = this->DOM->FindNumberOfElements("Grid", (XdmfXmlNode)GridNode);
   for ( currentGrid = 0; !done; currentGrid ++ )
     {
-        // Find the first level grids under Domain
-    gridNode = this->DOM->FindElement("Grid", currentGrid, (XdmfXmlNode)GridNode);
+    // Find the first level grids under Domain
+    gridNode = this->DOM->FindElement("Grid", 
+                                      currentGrid, 
+                                      (XdmfXmlNode)GridNode);
     if ( !gridNode )
       {
       break;
@@ -2892,21 +2911,21 @@ void vtkXdmfReader::UpdateNonUniformGrid(void *GridNode, char * CollectionName)
     // What Type of Grid
     XdmfConstString gridType = this->DOM->Get(gridNode, "GridType");
     if(!gridType){
-        // Accept Old Style
-        gridType = this->DOM->Get(gridNode, "Type");
+    // Accept Old Style
+    gridType = this->DOM->Get(gridNode, "Type");
     }
     if(XDMF_WORD_CMP(gridType, "Tree")){
-        vtkDebugMacro( << " Grid is a Tree ");
-        this->UpdateNonUniformGrid(gridNode, CollectionName);
+    vtkDebugMacro( << " Grid is a Tree ");
+    this->UpdateNonUniformGrid(gridNode, CollectionName);
     } else if(XDMF_WORD_CMP(gridType, "Collection")){
-        // Collection : collName is gridName
-        vtkDebugMacro( << " Grid is a Collection");
-        this->UpdateNonUniformGrid(gridNode, CollectionName);
+    // Collection : collName is gridName
+    vtkDebugMacro( << " Grid is a Collection");
+    this->UpdateNonUniformGrid(gridNode, CollectionName);
     }else{
-        // It's a Uniform Grid
-        this->UpdateUniformGrid(gridNode, CollectionName);
+    // It's a Uniform Grid
+    this->UpdateUniformGrid(gridNode, CollectionName);
     }
-  }
+    }
   this->GridsModified = 0;
 }
 //----------------------------------------------------------------------------
@@ -2923,16 +2942,16 @@ void vtkXdmfReader::UpdateGrids()
     return;
     }
 
-    if( !this->GridsModified )
+  if( !this->GridsModified )
     {
-        vtkDebugMacro( << "Skipping Grid Update : Not Modified");
-        return;
+    vtkDebugMacro( << "Skipping Grid Update : Not Modified");
+    return;
     }
 
   NGrid = this->DOM->FindNumberOfElements("Grid", domain);
   for ( currentGrid = 0; !done; currentGrid ++ )
     {
-        // Find the first level grids under Domain
+    // Find the first level grids under Domain
     gridNode = this->DOM->FindElement("Grid", currentGrid, domain);
     if ( !gridNode )
       {
@@ -2965,36 +2984,36 @@ void vtkXdmfReader::UpdateGrids()
     // What Type of Grid
     XdmfConstString gridType = this->DOM->Get(gridNode, "GridType");
     if(!gridType){
-        // Accept Old Style
-        gridType = this->DOM->Get(gridNode, "Type");
+    // Accept Old Style
+    gridType = this->DOM->Get(gridNode, "Type");
     }
     if(XDMF_WORD_CMP(gridType, "Tree")){
-        // Tree : collName is gridName
-        vtkDebugMacro( << " Grid is a Tree ");
-        if(collName) delete [] collName;
-        collName=new char[strlen(gridName)+1]; 
-        strcpy(collName,  gridName);
-        this->UpdateNonUniformGrid(gridNode, collName);
+    // Tree : collName is gridName
+    vtkDebugMacro( << " Grid is a Tree ");
+    if(collName) delete [] collName;
+    collName=new char[strlen(gridName)+1]; 
+    strcpy(collName,  gridName);
+    this->UpdateNonUniformGrid(gridNode, collName);
     } else if(XDMF_WORD_CMP(gridType, "Collection")){
-        // Collection : collName is gridName
-        vtkDebugMacro( << " Grid is a Collection");
-        if(collName) delete [] collName;
-        collName=new char[strlen(gridName)+1]; 
-        strcpy(collName,  gridName);
-        this->UpdateNonUniformGrid(gridNode, collName);
+    // Collection : collName is gridName
+    vtkDebugMacro( << " Grid is a Collection");
+    if(collName) delete [] collName;
+    collName=new char[strlen(gridName)+1]; 
+    strcpy(collName,  gridName);
+    this->UpdateNonUniformGrid(gridNode, collName);
     }else{
-        // It's a Uniform Grid
-        // All grids are treated the same so make it a collection
-        // if(collName) delete [] collName;
-        if(!collName){
-            collName=new char[strlen(gridName)+1]; 
-            strcpy(collName,  gridName);
-            }
-        this->UpdateUniformGrid(gridNode, collName);
+    // It's a Uniform Grid
+    // All grids are treated the same so make it a collection
+    // if(collName) delete [] collName;
+    if(!collName){
+    collName=new char[strlen(gridName)+1]; 
+    strcpy(collName,  gridName);
+    }
+    this->UpdateUniformGrid(gridNode, collName);
     }
 
-      if(collName) delete [] collName;
-  }
+    if(collName) delete [] collName;
+    }
   
   this->GridsModified = 0;
 }
@@ -3022,7 +3041,7 @@ void vtkXdmfReader::PrintSelf(ostream& os, vtkIndent indent)
   for ( cc = 0; cc < this->GetNumberOfGrids(); ++ cc )
     {
     os << indent << " " << cc << ": " << this->GetGridName(cc) << " - "
-      << (this->GetGridSetting(cc)?"enabled":"disabled") << endl;
+       << (this->GetGridSetting(cc)?"enabled":"disabled") << endl;
     }
   os << indent << "Outputs: " << this->GetNumberOfOutputPorts() << endl;
   for ( cc = 0; cc < this->GetNumberOfOutputPorts(); cc ++ )
@@ -3041,43 +3060,43 @@ public:
   static vtkXdmfReaderTester* New();
   int TestReadFile()
     {
-    this->Valid = 0;
-    if(!this->FileName)
-      {
+      this->Valid = 0;
+      if(!this->FileName)
+        {
+        return 0;
+        }
+
+      ifstream inFile(this->FileName);
+      if(!inFile)
+        {
+        return 0;
+        }
+
+      this->SetStream(&inFile);
+      this->Done = 0;
+
+      this->Parse();
+
+      if(this->Done && this->Valid )
+        {
+        return 1;
+        }
       return 0;
-      }
-
-    ifstream inFile(this->FileName);
-    if(!inFile)
-      {
-      return 0;
-      }
-
-    this->SetStream(&inFile);
-    this->Done = 0;
-
-    this->Parse();
-
-    if(this->Done && this->Valid )
-      {
-      return 1;
-      }
-    return 0;
     }
   void StartElement(const char* name, const char**)
     {
-    this->Done = 1;
-    if(strcmp(name, "Xdmf") == 0)
-      {
-      this->Valid = 1;
-      }
+      this->Done = 1;
+      if(strcmp(name, "Xdmf") == 0)
+        {
+        this->Valid = 1;
+        }
     }
 
 protected:
   vtkXdmfReaderTester()
     {
-    this->Valid = 0;
-    this->Done = 0;
+      this->Valid = 0;
+      this->Done = 0;
     }
 
 private:
