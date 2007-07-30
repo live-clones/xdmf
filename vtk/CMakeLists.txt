@@ -1,39 +1,48 @@
-# Build vtkXdmf*RenderWindowInteractor.h
-IF(WIN32)
-  SET(XDMF_WINDOWINTERACTOR vtkWin32RenderWindowInteractor)
-  CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.h.in
-    ${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.h
-    @ONLY IMMEDIATE)
-  CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx.in
-    ${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
-    @ONLY IMMEDIATE)
-ELSE(WIN32)
-  IF(VTK_USE_X)
-    INCLUDE_DIRECTORIES(${X11_X11_INCLUDE_PATH})
-  ENDIF(VTK_USE_X)
-  SET(XDMF_WINDOWINTERACTOR vtkXRenderWindowInteractor)
-  CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.h.in
-    ${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.h
-    @ONLY IMMEDIATE)
-  CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx.in
-    ${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
-    @ONLY IMMEDIATE)
-ENDIF(WIN32)
-
 SET( Xdmf_SRCS
   vtkXdmfReader.cxx
   vtkXdmfWriter.cxx
   vtkXdmfDataArray.cxx
-  #vtkXdmfOpenGLCamera.cxx
-  #${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
-  #vtkXdmfDataSetWriter.cxx
+#vtkXdmfOpenGLCamera.cxx
+#${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
+#vtkXdmfDataSetWriter.cxx
   )
 
-IF (NOT APPLE)
+SET(USE_RENDER_WINDOW_INTERACTOR 1)
+IF (OSMESA_LIBRARY AND NOT OPENGL_gl_LIBRARY)
+  SET(USE_RENDER_WINDOW_INTERACTOR 0)
+ENDIF (OSMESA_LIBRARY AND NOT OPENGL_gl_LIBRARY)
+
+IF(APPLE)
+  SET(USE_RENDER_WINDOW_INTERACTOR 0)
+ENDIF(APPLE)
+
+IF(USE_RENDER_WINDOW_INTERACTOR)
+# Build vtkXdmf*RenderWindowInteractor.h
+  IF(WIN32)
+    SET(XDMF_WINDOWINTERACTOR vtkWin32RenderWindowInteractor)
+    CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.h.in
+      ${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.h
+      @ONLY IMMEDIATE)
+    CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx.in
+      ${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
+      @ONLY IMMEDIATE)
+  ELSE(WIN32)
+    IF(VTK_USE_X)
+      INCLUDE_DIRECTORIES(${X11_X11_INCLUDE_PATH})
+    ENDIF(VTK_USE_X)
+    SET(XDMF_WINDOWINTERACTOR vtkXRenderWindowInteractor)
+    CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.h.in
+      ${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.h
+      @ONLY IMMEDIATE)
+    CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx.in
+      ${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
+      @ONLY IMMEDIATE)
+  ENDIF(WIN32)
+
   SET(Xdmf_SRCS ${Xdmf_SRCS}
     ${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
     )
-ENDIF (NOT APPLE)
+ENDIF(USE_RENDER_WINDOW_INTERACTOR)
 
 SET_SOURCE_FILES_PROPERTIES(
   vtkXdmfDataArray
