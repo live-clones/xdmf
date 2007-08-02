@@ -86,7 +86,7 @@
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.18");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.19");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -863,7 +863,8 @@ int vtkXdmfReaderInternal::RequestActualGridData(
 #else
         vtkUniformGrid *ds=vtkUniformGrid::New();
 #endif
-        mgd->SetDataSet(level,index,ds);
+        //mgd->SetDataSet(level,index,ds);
+        mgd->SetDataSet(outputGrid,index,ds);
         ds->Delete();
         }
       else if ( 
@@ -871,7 +872,8 @@ int vtkXdmfReaderInternal::RequestActualGridData(
         xdmfGrid->GetTopology()->GetTopologyType() == XDMF_3DRECTMESH )
         {
         vtkRectilinearGrid *ds=vtkRectilinearGrid::New();
-        mgd->SetDataSet(level,index,ds);
+        //mgd->SetDataSet(level,index,ds);
+        mgd->SetDataSet(outputGrid,index,ds);
         ds->Delete();
         }
       else
