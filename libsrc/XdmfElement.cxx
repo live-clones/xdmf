@@ -69,11 +69,13 @@ XdmfElement::~XdmfElement() {
             this->SetReferenceObject(this->ReferenceElement, XDMF_ELEMENT_STATE_UNINITIALIZED);
         }
     }
+    this->ReferenceElement = NULL;
     if(this->Element){
         if(this->GetReferenceObject(this->Element) == this){
             this->SetReferenceObject(this->Element, XDMF_ELEMENT_STATE_UNINITIALIZED);
         }
     }
+    this->Element = NULL;
     if(this->ElementName) delete [] this->ElementName;
 }
 
