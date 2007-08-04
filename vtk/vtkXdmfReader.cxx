@@ -86,7 +86,7 @@
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.19");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.20");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -239,6 +239,8 @@ public:
     }
 
   typedef vtkstd::vector<vtkstd::string> StringListType;
+  StringListType DomainList;
+  XdmfXmlNode DomainPtr;
 
   int RequestSingleGridData(const char* currentGridName,
                             vtkXdmfReaderGrid *grid,
@@ -272,8 +274,6 @@ public:
                                  const char *collectionName,
                                  const char *levelName);
 
-  StringListType DomainList;
-  XdmfXmlNode DomainPtr;
   vtkXdmfReader* Reader;
   XdmfDataItem *DataItem;
 
@@ -289,7 +289,9 @@ vtkXdmfReaderGridCollection* vtkXdmfReaderInternal::GetCollection(
     {
     return 0;
     }
+
   vtkXdmfReaderActualGrid* actualGrid = &this->ActualGrids[collectionName];
+
   if ( !actualGrid->Collection )
     {
     if ( actualGrid->Grid )
@@ -299,6 +301,7 @@ vtkXdmfReaderGridCollection* vtkXdmfReaderInternal::GetCollection(
       }
     actualGrid->Collection = new vtkXdmfReaderGridCollection;
     }
+
   return actualGrid->Collection;
 }
 
@@ -351,7 +354,7 @@ vtkXdmfReaderGrid* vtkXdmfReaderInternal::GetXdmfGrid(
     cerr << "Trying to create a grid with the same name as an existing collection" << endl;
     return 0;
     }
-  grid->Grid = new vtkXdmfReaderGrid;
+  grid->Grid = new vtkXdmfReaderGrid; 
   return grid->Grid;
 }
 
@@ -432,11 +435,6 @@ vtkXdmfReader::vtkXdmfReader()
 //----------------------------------------------------------------------------
 vtkXdmfReader::~vtkXdmfReader()
 {
-  if ( this->DOM )
-    {
-    delete this->DOM;
-    }
-
   this->CellDataArraySelection->RemoveObserver(this->SelectionObserver);
   this->PointDataArraySelection->RemoveObserver(this->SelectionObserver);
   this->SelectionObserver->Delete();
@@ -458,17 +456,27 @@ vtkXdmfReader::~vtkXdmfReader()
     if ( grid->Collection )
       {
       vtkXdmfReaderGridCollection::SetOfGrids::iterator gridIt;
+      int i =0;
       for ( gridIt = grid->Collection->Grids.begin();
             gridIt != grid->Collection->Grids.end();
             ++ gridIt )
         {
         delete gridIt->second;
+        i++;
         }
+      grid->Collection->Grids.clear();
       delete grid->Collection;
       }
     }
+  this->Internals->ActualGrids.clear();
 
   delete this->Internals;
+
+  if ( this->DOM )
+    {
+    delete this->DOM;
+    }
+
   H5garbage_collect();
   
   this->SetController(0);
@@ -903,12 +911,12 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
   int isSubBlock)
 {
   int *readerStride = this->Reader->GetStride();
-
+  
   vtkDataArraySelection* pointDataArraySelection = 
     this->Reader->GetPointDataArraySelection();
   vtkDataArraySelection* cellDataArraySelection = 
     this->Reader->GetCellDataArraySelection();
-
+  
   // Handle single grid
   XdmfGrid* xdmfGrid = grid->XMGrid;
   XdmfDOM* xdmfDOM = xdmfGrid->GetDOM();
@@ -979,10 +987,10 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
     count[1] = upext[3] - upext[2];
     count[0] = upext[5] - upext[4];
     }
-
+  
   XdmfGeometry  *Geometry = xdmfGrid->GetGeometry();
-    
-    
+  
+  
   // Read Topology for Unstructured Grid
   if( xdmfGrid->GetTopology()->GetClass() == XDMF_UNSTRUCTURED ) 
     {
@@ -1057,158 +1065,164 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
                          << xdmfGrid->GetTopology()->GetTopologyType());
         return 1;
       }
-    if( xdmfGrid->GetTopology()->GetTopologyType() != XDMF_MIXED){
-    NodesPerElement = xdmfGrid->GetTopology()->GetNodesPerElement();
-    if ( xdmfGrid->GetTopology()->GetConnectivity()->GetRank() == 2 )
+    if( xdmfGrid->GetTopology()->GetTopologyType() != XDMF_MIXED)
       {
-      NodesPerElement = 
-        xdmfGrid->GetTopology()->GetConnectivity()->GetDimension(1);
-      }
-    
-    /* Create Cell Type Array */
-    Length = xdmfGrid->GetTopology()->GetConnectivity()->GetNumberOfElements();
-    Connections = new XdmfInt64[ Length ];
-    xdmfGrid->GetTopology()->GetConnectivity()->GetValues(0, 
-                                                          Connections, 
-                                                          Length);
-    
-    NumberOfElements = 
-      xdmfGrid->GetTopology()->GetShapeDesc()->GetNumberOfElements();
-    ctp = cell_types = new int[ NumberOfElements ];
-    
-    /* Create Cell Array */
-    verts = vtkCellArray::New();
-    
-    /* Get the pointer */
-    connections = verts->WritePointer(
-      NumberOfElements,
-      NumberOfElements * ( 1 + NodesPerElement ));
-    
-    /* Connections : N p1 p2 ... pN */
-    /* i.e. Triangles : 3 0 1 2    3 3 4 5   3 6 7 8 */
-    index = 0;
-    for( j = 0 ; j < NumberOfElements; j++ )
-      {
-      *ctp++ = vType;
-      *connections++ = NodesPerElement;
-      for( i = 0 ; i < NodesPerElement; i++ )
+      NodesPerElement = xdmfGrid->GetTopology()->GetNodesPerElement();
+      if ( xdmfGrid->GetTopology()->GetConnectivity()->GetRank() == 2 )
         {
-        *connections++ = Connections[index++];
+        NodesPerElement = 
+          xdmfGrid->GetTopology()->GetConnectivity()->GetDimension(1);
         }
+    
+      /* Create Cell Type Array */
+      Length = xdmfGrid->GetTopology()->GetConnectivity()->GetNumberOfElements();
+      Connections = new XdmfInt64[ Length ];
+      xdmfGrid->GetTopology()->GetConnectivity()->GetValues(
+        0, 
+        Connections, 
+        Length);
+      
+      NumberOfElements = 
+        xdmfGrid->GetTopology()->GetShapeDesc()->GetNumberOfElements();
+      ctp = cell_types = new int[ NumberOfElements ];
+      
+      /* Create Cell Array */
+      verts = vtkCellArray::New();
+      
+      /* Get the pointer */
+      connections = verts->WritePointer(
+        NumberOfElements,
+        NumberOfElements * ( 1 + NodesPerElement ));
+      
+      /* Connections : N p1 p2 ... pN */
+      /* i.e. Triangles : 3 0 1 2    3 3 4 5   3 6 7 8 */
+      index = 0;
+      for( j = 0 ; j < NumberOfElements; j++ )
+        {
+        *ctp++ = vType;
+        *connections++ = NodesPerElement;
+        for( i = 0 ; i < NodesPerElement; i++ )
+          {
+          *connections++ = Connections[index++];
+          }
+        }
+      } 
+    else 
+      {
+      // Mixed Topology
+      /* Create Cell Type Array */
+      vtkIdTypeArray *IdArray;
+      vtkIdType RealSize;
+      
+      Length = xdmfGrid->GetTopology()->GetConnectivity()->GetNumberOfElements();
+      Connections = new XdmfInt64[ Length ];
+      xdmfGrid->GetTopology()->GetConnectivity()->GetValues(
+        0, 
+        Connections, 
+        Length );
+      NumberOfElements = 
+        xdmfGrid->GetTopology()->GetShapeDesc()->GetNumberOfElements();
+      ctp = cell_types = new int[ NumberOfElements ];
+      
+      /* Create Cell Array */
+      verts = vtkCellArray::New();
+      
+      /* Get the pointer. Make it Big enough ... too big for now */
+      // cout << "::::: Length = " << Length << endl;
+      connections = verts->WritePointer(
+        NumberOfElements,
+        Length);
+      //   Length);
+      /* Connections : N p1 p2 ... pN */
+      /* i.e. Triangles : 3 0 1 2    3 3 4 5   3 6 7 8 */
+      index = 0;
+      for( j = 0 ; j < NumberOfElements; j++ )
+        {
+        switch ( Connections[index++] )
+          {
+          case  XDMF_POLYVERTEX :
+            vType = VTK_POLY_VERTEX;
+            NodesPerElement = Connections[index++];
+            break;
+          case  XDMF_POLYLINE :
+            vType = VTK_POLY_LINE;
+            NodesPerElement = Connections[index++];
+            break;
+          case  XDMF_POLYGON :
+            vType = VTK_POLYGON;
+            NodesPerElement = Connections[index++];
+            break;
+          case  XDMF_TRI :
+            vType = VTK_TRIANGLE;
+            NodesPerElement = 3;
+            break;
+          case  XDMF_QUAD :
+            vType = VTK_QUAD;
+            NodesPerElement = 4;
+            break;
+          case  XDMF_TET :
+            vType = VTK_TETRA;
+            NodesPerElement = 4;
+            break;
+          case  XDMF_PYRAMID :
+            vType = VTK_PYRAMID;
+            NodesPerElement = 5;
+            break;
+          case  XDMF_WEDGE :
+            vType = VTK_WEDGE;
+            NodesPerElement = 6;
+            break;
+          case  XDMF_HEX :
+            vType = VTK_HEXAHEDRON;
+            NodesPerElement = 8;
+            break;
+          case  XDMF_EDGE_3 :
+            vType = VTK_QUADRATIC_EDGE ;
+            NodesPerElement = 3;
+            break;
+          case  XDMF_TRI_6 :
+            vType = VTK_QUADRATIC_TRIANGLE ;
+            NodesPerElement = 6;
+            break;
+          case  XDMF_QUAD_8 :
+            vType = VTK_QUADRATIC_QUAD ;
+            NodesPerElement = 8;
+            break;
+          case  XDMF_TET_10 :
+            vType = VTK_QUADRATIC_TETRA ;
+            NodesPerElement = 10;
+            break;
+          case  XDMF_PYRAMID_13 :
+            vType = VTK_QUADRATIC_PYRAMID ;
+            NodesPerElement = 13;
+            break;
+          case  XDMF_WEDGE_15 :
+            vType = VTK_QUADRATIC_WEDGE ;
+            NodesPerElement = 15;
+            break;
+          case  XDMF_HEX_20 :
+            vType = VTK_QUADRATIC_HEXAHEDRON ;
+            NodesPerElement = 20;
+            break;
+          default :
+            XdmfErrorMessage("Unknown Topology Type");
+            return 1;
+          }
+        *ctp++ = vType;
+        *connections++ = NodesPerElement;
+        for( i = 0 ; i < NodesPerElement; i++ )
+          {
+          *connections++ = Connections[index++];
+          }
+        }
+      // Resize the Array to the Proper Size
+      IdArray = verts->GetData();
+      RealSize = index - 1;
+      vtkDebugWithObjectMacro(this->Reader, 
+                              "Resizing to " << RealSize << " elements");
+      IdArray->Resize(RealSize);
       }
-    } else {
-    // Mixed Topology
-    /* Create Cell Type Array */
-    vtkIdTypeArray *IdArray;
-    vtkIdType RealSize;
 
-    Length = xdmfGrid->GetTopology()->GetConnectivity()->GetNumberOfElements();
-    Connections = new XdmfInt64[ Length ];
-    xdmfGrid->GetTopology()->GetConnectivity()->GetValues(0, 
-                                                          Connections, 
-                                                          Length );
-    NumberOfElements = 
-      xdmfGrid->GetTopology()->GetShapeDesc()->GetNumberOfElements();
-    ctp = cell_types = new int[ NumberOfElements ];
-    
-    /* Create Cell Array */
-    verts = vtkCellArray::New();
-    
-    /* Get the pointer. Make it Big enough ... too big for now */
-    // cout << "::::: Length = " << Length << endl;
-    connections = verts->WritePointer(
-      NumberOfElements,
-      Length);
-    //   Length);
-    /* Connections : N p1 p2 ... pN */
-    /* i.e. Triangles : 3 0 1 2    3 3 4 5   3 6 7 8 */
-    index = 0;
-    for( j = 0 ; j < NumberOfElements; j++ )
-      {
-      switch ( Connections[index++] )
-        {
-        case  XDMF_POLYVERTEX :
-          vType = VTK_POLY_VERTEX;
-          NodesPerElement = Connections[index++];
-          break;
-        case  XDMF_POLYLINE :
-          vType = VTK_POLY_LINE;
-          NodesPerElement = Connections[index++];
-          break;
-        case  XDMF_POLYGON :
-          vType = VTK_POLYGON;
-          NodesPerElement = Connections[index++];
-          break;
-        case  XDMF_TRI :
-          vType = VTK_TRIANGLE;
-          NodesPerElement = 3;
-          break;
-        case  XDMF_QUAD :
-          vType = VTK_QUAD;
-          NodesPerElement = 4;
-          break;
-        case  XDMF_TET :
-          vType = VTK_TETRA;
-          NodesPerElement = 4;
-          break;
-        case  XDMF_PYRAMID :
-          vType = VTK_PYRAMID;
-          NodesPerElement = 5;
-          break;
-        case  XDMF_WEDGE :
-          vType = VTK_WEDGE;
-          NodesPerElement = 6;
-          break;
-        case  XDMF_HEX :
-          vType = VTK_HEXAHEDRON;
-          NodesPerElement = 8;
-          break;
-        case  XDMF_EDGE_3 :
-          vType = VTK_QUADRATIC_EDGE ;
-          NodesPerElement = 3;
-          break;
-        case  XDMF_TRI_6 :
-          vType = VTK_QUADRATIC_TRIANGLE ;
-          NodesPerElement = 6;
-          break;
-        case  XDMF_QUAD_8 :
-          vType = VTK_QUADRATIC_QUAD ;
-          NodesPerElement = 8;
-          break;
-        case  XDMF_TET_10 :
-          vType = VTK_QUADRATIC_TETRA ;
-          NodesPerElement = 10;
-          break;
-        case  XDMF_PYRAMID_13 :
-          vType = VTK_QUADRATIC_PYRAMID ;
-          NodesPerElement = 13;
-          break;
-        case  XDMF_WEDGE_15 :
-          vType = VTK_QUADRATIC_WEDGE ;
-          NodesPerElement = 15;
-          break;
-        case  XDMF_HEX_20 :
-          vType = VTK_QUADRATIC_HEXAHEDRON ;
-          NodesPerElement = 20;
-          break;
-        default :
-          XdmfErrorMessage("Unknown Topology Type");
-          return 1;
-        }
-      *ctp++ = vType;
-      *connections++ = NodesPerElement;
-      for( i = 0 ; i < NodesPerElement; i++ )
-        {
-        *connections++ = Connections[index++];
-        }
-      }
-    // Resize the Array to the Proper Size
-    IdArray = verts->GetData();
-    RealSize = index - 1;
-    vtkDebugWithObjectMacro(this->Reader, 
-                            "Resizing to " << RealSize << " elements");
-    IdArray->Resize(RealSize);
-    }
     delete [] Connections;
     vGrid->SetCells(cell_types, verts);
     /* OK, because of reference counting */
@@ -1261,7 +1275,7 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
       {
       structured_grid = 1;
       }
-
+    
     Points = Pointset->GetPoints();
     if( !Points )
       {
@@ -1271,7 +1285,7 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
       // OK Because of Reference Counting
       Points->Delete();
       }
-
+    
     if( Geometry->GetPoints() )
       {
       if( Points )
@@ -1589,24 +1603,25 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
     XdmfInt32 AttributeType;
     int       Components;
     XdmfAttribute       *Attribute;
-
+    
     Attribute = xdmfGrid->GetAttribute( cc );
     const char *name = Attribute->GetName();
     int status = 1;
     AttributeCenter = Attribute->GetAttributeCenter();
     AttributeType = Attribute->GetAttributeType();
     Components = 1;
-    switch (AttributeType) {
-    case XDMF_ATTRIBUTE_TYPE_TENSOR :
-      Components = 9;
-      break;
-    case XDMF_ATTRIBUTE_TYPE_VECTOR:
-      Components = 3;
-      break;
-    default :
-      Components = 1;
-      break;
-    }
+    switch (AttributeType) 
+      {
+      case XDMF_ATTRIBUTE_TYPE_TENSOR :
+        Components = 9;
+        break;
+      case XDMF_ATTRIBUTE_TYPE_VECTOR:
+        Components = 3;
+        break;
+      default :
+        Components = 1;
+        break;
+      }
     if (name )
       {
       if ( AttributeCenter == XDMF_ATTRIBUTE_CENTER_GRID || 
@@ -1824,7 +1839,7 @@ int vtkXdmfReaderInternal::RequestSingleGridData(
   sprintf(str, "%s", name);
   output->GetFieldData()->AddArray(nameArray);
   nameArray->Delete();
-    
+  
   return 1;
 }
 
@@ -2858,7 +2873,7 @@ void vtkXdmfReader::UpdateUniformGrid(void *GridNode, char * CollectionName)
   vtkDebugMacro( << "Reading Light Data for " << gridName );
   XdmfConstString levelName = this->DOM->Get((XdmfXmlNode) GridNode, "Level" );
 
-  vtkXdmfReaderGrid* grid = this->Internals->GetXdmfGrid(gridName, CollectionName,levelName);
+  vtkXdmfReaderGrid* grid = this->Internals->GetXdmfGrid(gridName, CollectionName,levelName); //leaks the collection this creates
   if ( !grid )
     {
     // Error happened
@@ -2912,21 +2927,27 @@ void vtkXdmfReader::UpdateNonUniformGrid(void *GridNode, char * CollectionName)
     vtkDebugMacro( << "Reading Light Data for " << gridName );
     // What Type of Grid
     XdmfConstString gridType = this->DOM->Get(gridNode, "GridType");
-    if(!gridType){
-    // Accept Old Style
-    gridType = this->DOM->Get(gridNode, "Type");
-    }
-    if(XDMF_WORD_CMP(gridType, "Tree")){
-    vtkDebugMacro( << " Grid is a Tree ");
-    this->UpdateNonUniformGrid(gridNode, CollectionName);
-    } else if(XDMF_WORD_CMP(gridType, "Collection")){
-    // Collection : collName is gridName
-    vtkDebugMacro( << " Grid is a Collection");
-    this->UpdateNonUniformGrid(gridNode, CollectionName);
-    }else{
-    // It's a Uniform Grid
-    this->UpdateUniformGrid(gridNode, CollectionName);
-    }
+    if(!gridType)
+      {
+      // Accept Old Style
+      gridType = this->DOM->Get(gridNode, "Type");
+      }
+    if(XDMF_WORD_CMP(gridType, "Tree"))
+      {
+      vtkDebugMacro( << " Grid is a Tree ");
+      this->UpdateNonUniformGrid(gridNode, CollectionName);
+      } 
+    else if(XDMF_WORD_CMP(gridType, "Collection"))
+      {
+      // Collection : collName is gridName
+      vtkDebugMacro( << " Grid is a Collection");
+      this->UpdateNonUniformGrid(gridNode, CollectionName);
+      }
+    else
+      {
+      // It's a Uniform Grid
+      this->UpdateUniformGrid(gridNode, CollectionName);
+      }
     }
   this->GridsModified = 0;
 }
@@ -2985,36 +3006,44 @@ void vtkXdmfReader::UpdateGrids()
       }
     // What Type of Grid
     XdmfConstString gridType = this->DOM->Get(gridNode, "GridType");
-    if(!gridType){
-    // Accept Old Style
-    gridType = this->DOM->Get(gridNode, "Type");
-    }
-    if(XDMF_WORD_CMP(gridType, "Tree")){
-    // Tree : collName is gridName
-    vtkDebugMacro( << " Grid is a Tree ");
+    if(!gridType)
+      {
+      // Accept Old Style
+      gridType = this->DOM->Get(gridNode, "Type");
+      }
+    if(XDMF_WORD_CMP(gridType, "Tree"))
+      {
+      // Tree : collName is gridName
+      vtkDebugMacro( << " Grid is a Tree ");
+      if(collName) delete [] collName;
+      collName=new char[strlen(gridName)+1]; 
+      strcpy(collName,  gridName);
+      this->UpdateNonUniformGrid(gridNode, collName);
+      } 
+    else if(XDMF_WORD_CMP(gridType, "Collection"))
+      {
+      // Collection : collName is gridName
+      vtkDebugMacro( << " Grid is a Collection");
+      if(collName) delete [] collName;
+      collName=new char[strlen(gridName)+1]; 
+      strcpy(collName,  gridName);
+      this->UpdateNonUniformGrid(gridNode, collName);
+      }
+    else
+      {
+      // It's a Uniform Grid
+      // All grids are treated the same so make it a collection
+      // if(collName) delete [] collName;
+      if(!collName)
+        {
+        collName=new char[strlen(gridName)+1]; 
+        strcpy(collName,  gridName);
+        }
+      this->UpdateUniformGrid(gridNode, collName);
+      }
+    
     if(collName) delete [] collName;
-    collName=new char[strlen(gridName)+1]; 
-    strcpy(collName,  gridName);
-    this->UpdateNonUniformGrid(gridNode, collName);
-    } else if(XDMF_WORD_CMP(gridType, "Collection")){
-    // Collection : collName is gridName
-    vtkDebugMacro( << " Grid is a Collection");
-    if(collName) delete [] collName;
-    collName=new char[strlen(gridName)+1]; 
-    strcpy(collName,  gridName);
-    this->UpdateNonUniformGrid(gridNode, collName);
-    }else{
-    // It's a Uniform Grid
-    // All grids are treated the same so make it a collection
-    // if(collName) delete [] collName;
-    if(!collName){
-    collName=new char[strlen(gridName)+1]; 
-    strcpy(collName,  gridName);
-    }
-    this->UpdateUniformGrid(gridNode, collName);
-    }
 
-    if(collName) delete [] collName;
     }
   
   this->GridsModified = 0;
