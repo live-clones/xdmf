@@ -110,7 +110,7 @@ struct vtkXdmfWriterInternal
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfWriter);
-vtkCxxRevisionMacro(vtkXdmfWriter, "1.1");
+vtkCxxRevisionMacro(vtkXdmfWriter, "1.2");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter::vtkXdmfWriter()
@@ -916,15 +916,6 @@ int vtkXdmfWriter::WriteVTKArray( ostream& ost, vtkDataArray* array, vtkDataSet*
   int alllight, int cellData )
 {
   vtkIdType res = -1;
-  int int_type;
-  if ( sizeof(long) == 4 )
-    {
-    int_type = XDMF_INT32_TYPE;
-    }
-  else
-    {
-    int_type = XDMF_INT64_TYPE;
-    }
   switch ( array->GetDataType() )
     {
   case VTK_UNSIGNED_CHAR:
@@ -955,7 +946,7 @@ int vtkXdmfWriter::WriteVTKArray( ostream& ost, vtkDataArray* array, vtkDataSet*
   case VTK_INT:
     res = vtkXdmfWriterWriteXMLScalar(this, ost, vtkIntArray::SafeDownCast(array),
       dataSet, scaledExtent, dataName, Name, gridName, "Int", static_cast<int>(0), alllight,
-      int_type, dims, cellData);
+      XDMF_INT32_TYPE, dims, cellData);
     break;
   case VTK_FLOAT:
     res = vtkXdmfWriterWriteXMLScalar(this, ost, vtkFloatArray::SafeDownCast(array),
@@ -966,6 +957,11 @@ int vtkXdmfWriter::WriteVTKArray( ostream& ost, vtkDataArray* array, vtkDataSet*
     res = vtkXdmfWriterWriteXMLScalar(this, ost, vtkDoubleArray::SafeDownCast(array),
       dataSet, scaledExtent, dataName, Name, gridName, "Float", static_cast<double>(0), alllight,
       XDMF_FLOAT64_TYPE, dims, cellData);
+    break;
+  case VTK_ID_TYPE:
+    res = vtkXdmfWriterWriteXMLScalar(this, ost, vtkIdTypeArray::SafeDownCast(array),
+      dataSet, scaledExtent, dataName, Name, gridName, "Int", static_cast<vtkIdType>(0), alllight,
+      sizeof(vtkIdType) == sizeof(int) ? XDMF_INT32_TYPE : XDMF_INT64_TYPE, dims, cellData);
     break;
   default:
     vtkErrorMacro("Unknown scalar type: " << array->GetDataType());
@@ -1292,8 +1288,7 @@ void vtkXdmfWriter::Write()
       vtkCharArray* nameArray = vtkCharArray::SafeDownCast(da);
       if ( nameArray )
         {
-        arrayName.assign(static_cast<char*>(nameArray->GetVoidPointer(0)),
-          nameArray->GetNumberOfTuples());
+        arrayName = static_cast<char*>(nameArray->GetVoidPointer(0));
         }
       }
     if ( arrayName.empty() )
