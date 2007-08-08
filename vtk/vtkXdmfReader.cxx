@@ -86,7 +86,7 @@
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.20");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.21");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -3043,7 +3043,7 @@ void vtkXdmfReader::UpdateGrids()
       }
     
     if(collName) delete [] collName;
-
+    str.rdbuf()->freeze(0);
     }
   
   this->GridsModified = 0;
