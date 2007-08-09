@@ -86,7 +86,7 @@
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.21");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.22");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -2948,6 +2948,7 @@ void vtkXdmfReader::UpdateNonUniformGrid(void *GridNode, char * CollectionName)
       // It's a Uniform Grid
       this->UpdateUniformGrid(gridNode, CollectionName);
       }
+    str.rdbuf()->freeze(0);
     }
   this->GridsModified = 0;
 }
