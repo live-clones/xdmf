@@ -98,8 +98,6 @@ XdmfDsmCommMpi::Receive(XdmfDsmMsg *Msg){
 XdmfInt32
 XdmfDsmCommMpi::Send(XdmfDsmMsg *Msg){
     XdmfInt32   status;
-    MPI_Status  SendRecvStatus;
-
 
     if(XdmfDsmComm::Send(Msg) != XDMF_SUCCESS) return(XDMF_FAIL);
     XdmfDebug("::::: (" << this->Id << ") Sending " << Msg->Length << " bytes to " << Msg->Dest << " Tag = " << Msg->Tag);
@@ -107,7 +105,6 @@ XdmfDsmCommMpi::Send(XdmfDsmMsg *Msg){
     // status = MPI_Ssend(Msg->Data, Msg->Length, MPI_UNSIGNED_CHAR, Msg->Dest, Msg->Tag, this->Comm);
     if(status != MPI_SUCCESS){
         XdmfErrorMessage("Id = " << this->Id << " MPI_Send failed to send " << Msg->Length << " Bytes to " << Msg->Dest);
-        XdmfErrorMessage("MPI Error Code = " << SendRecvStatus.MPI_ERROR);
         return(XDMF_FAIL);
     }
     XdmfDebug("::::: (" << this->Id << ") Sent " << Msg->Length << " bytes to " << Msg->Dest);
