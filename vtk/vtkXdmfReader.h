@@ -24,7 +24,7 @@
 // controlling the reading of the data file, see vtkDataReader for more
 // information.
 // .SECTION Caveats
-// used the XDMF API
+// uses the XDMF API
 // .SECTION See Also
 // vtkDataReader
 
@@ -33,25 +33,14 @@
 
 #include "vtkDataReader.h"
 
-class vtkDoubleArray;
-class vtkDataArray;
-class vtkRectilinearGrid;
 class vtkDataObject;
-class vtkRectilinearGrid;
 class vtkDataArraySelection;
 class vtkCallbackCommand;
-class vtkDataSet;
 class vtkMultiProcessController;
+class vtkXdmfReaderInternal;
 
 //BTX
 class XdmfDOM;
-class XdmfDataItem;
-class XdmfDataDesc;
-class XdmfGrid;
-class vtkXdmfDataArray;
-
-class vtkXdmfReaderInternal;
-
 //ETX
 
 class VTK_EXPORT vtkXdmfReader : public vtkDataReader
@@ -65,6 +54,8 @@ public:
   // Get the output of this reader.
   vtkDataObject *GetOutput();
   vtkDataObject *GetOutput(int idx);
+
+  // ATTRIBUTES ///////////////////////////////////////////////////////////////
 
   // Description:
   // Get the data array selection tables used to configure which data
@@ -82,6 +73,22 @@ public:
   // the input.
   const char* GetPointArrayName(int index);
   const char* GetCellArrayName(int index);
+
+  // Description:
+  // Get/Set whether the point or cell array with the given name is to
+  // be read.
+  int GetPointArrayStatus(const char* name);
+  int GetCellArrayStatus(const char* name);
+  void SetPointArrayStatus(const char* name, int status);  
+  void SetCellArrayStatus(const char* name, int status);  
+
+  // Description:
+  // Set whether the all point or cell arrays are to
+  // be read.
+  void EnableAllArrays();
+  void DisableAllArrays();
+
+  // PARAMETERS ///////////////////////////////////////////////////////////////
   
   // Description:
   // Get the number of Parameters
@@ -117,63 +124,37 @@ public:
   int GetParameterLength(const char *Name);
   int GetParameterLength(int index);
 
-
   // Description:
   // Get the Current Value of the Parameter
   const char *GetParameterValue(int index);
   const char *GetParameterValue(const char *Name);
 
+  // DOMAINS ///////////////////////////////////////////////////////////////
   // Description:
-  // Get/Set whether the point or cell array with the given name is to
-  // be read.
-  int GetPointArrayStatus(const char* name);
-  int GetCellArrayStatus(const char* name);
-  void SetPointArrayStatus(const char* name, int status);  
-  void SetCellArrayStatus(const char* name, int status);  
-
-  // Description:
-  // Set whether the all point or cell arrays are to
-  // be read.
-  void EnableAllArrays();
-  void DisableAllArrays();
-
-  // Description:
-  // Get the Low Level XdmfDOM
-  const char *GetXdmfDOMHandle();
-
-  // Description:
-  // Get the Low Level XdmfGrid
-  //Disable for now
-  //const char *GetXdmfGridHandle(int idx);
+  // Get number of domains.
+  int GetNumberOfDomains();
 
   // Description:
   // Get/Set the current domain name.
   virtual void SetDomainName(const char*);
   vtkGetStringMacro(DomainName);
 
+  // Get the name of domain at index.
+  const char* GetDomainName(int idx);
+
+  // GRIDS ///////////////////////////////////////////////////////////////////
+  // Description:
+  // Get number of grids in the current domain.
+  int GetNumberOfGrids();
+
   // Description:
   // Get/Set the current grid name.
   void SetGridName(const char*);
 
   // Description:
-  // Get number of domains and grids.
-  int GetNumberOfDomains();
-  int GetNumberOfGrids();
-
-  // Description:
-  // Get the name of domain or grid at index.
-  const char* GetDomainName(int idx);
+  // Get the name of grid at index.
   const char* GetGridName(int idx);
   int GetGridIndex(const char* name);
-
-  // Description:
-  // Set / get stride
-  void SetStride(int x, int y, int z);
-  void SetStride(int xyz[3])
-    {
-    this->SetStride(xyz[0], xyz[1], xyz[2]);
-    }
-  vtkGetVector3Macro(Stride, int);
 
   // Description:
   // Enable grids.
@@ -192,6 +173,26 @@ public:
   // Get current enable/disable of the grid
   int GetGridSetting(const char* name);
   int GetGridSetting(int idx);
+
+  // STRIDE ///////////////////////////////////////////////////////////////////
+  // Description:
+  // Set / get stride
+  void SetStride(int x, int y, int z);
+  void SetStride(int xyz[3])
+    {
+    this->SetStride(xyz[0], xyz[1], xyz[2]);
+    }
+  vtkGetVector3Macro(Stride, int);
+
+  // MISCELANEOUS /////////////////////////////////////////////////////////////
+  // Description:
+  // Get the Low Level XdmfDOM
+  const char *GetXdmfDOMHandle();
+
+  // Description:
+  // Get the Low Level XdmfGrid
+  //Disable for now
+  //const char *GetXdmfGridHandle(int idx);
 
   // Description:
   // Determine if the file can be readed with this reader.
@@ -221,39 +222,32 @@ protected:
                                  vtkInformationVector *);
   virtual int FillOutputPortInformation(int port, vtkInformation *info);
 
-  // Callback registered with the SelectionObserver.
-  static void SelectionModifiedCallback(vtkObject* caller, unsigned long eid,
-                                        void* clientdata, void* calldata);
-
-
-  // The array selections.
-  vtkDataArraySelection* PointDataArraySelection;
-  vtkDataArraySelection* CellDataArraySelection;
-
-  // The observer to modify this object when the array selections are
-  // modified.
-  vtkCallbackCommand* SelectionObserver;
-
-  XdmfDOM         *DOM;
-
-
-  char* DomainName;
-  char* GridName;
-
-  vtkXdmfReaderInternal* Internals;
-
-  int Stride[3];
-  int OutputsInitialized;
-
-  int GridsModified;
-
   void UpdateUniformGrid(void *GridNode, char *CollectionName);
   void UpdateNonUniformGrid(void *GridNode, char *CollectionName);
   void UpdateGrids();
 
+  vtkXdmfReaderInternal* Internals;
+
+  char* DomainName;
+
+  char* GridName;
+  int GridsModified;
   int NumberOfEnabledActualGrids;
-  
+
+  int Stride[3];
+
+  int OutputsInitialized;
+  XdmfDOM         *DOM;
   vtkMultiProcessController *Controller;
+
+  // Array selection helpers /////////////////////////////////////////////////
+  static void SelectionModifiedCallback(vtkObject* caller, unsigned long eid,
+                                        void* clientdata, void* calldata);
+
+  vtkDataArraySelection* PointDataArraySelection;
+  vtkDataArraySelection* CellDataArraySelection;
+
+  vtkCallbackCommand* SelectionObserver;
   
 private:
   vtkXdmfReader(const vtkXdmfReader&); // Not implemented
