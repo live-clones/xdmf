@@ -18,7 +18,7 @@
 // .NAME vtkXdmfReader - read eXtensible Data Model and Format files
 // .SECTION Description
 // vtkXdmfReader is a source object that reads XDMF data.
-// The output of this reader is a vtkMultiGroupDataSet with on group for
+// The output of this reader is a vtkMultiGroupDataSet with one group for
 // every enabled grid in the domain.
 // The superclass of this class, vtkDataReader, provides many methods for
 // controlling the reading of the data file, see vtkDataReader for more
