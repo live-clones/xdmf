@@ -84,7 +84,7 @@
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.24");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.25");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -210,7 +210,22 @@ class vtkXdmfReaderActualGrid
 {
 public:
   vtkXdmfReaderActualGrid() : Enabled(0), Grid(0), Collection(0) {}
-
+  ~vtkXdmfReaderActualGrid() 
+  {
+  if (this->Collection)
+    {
+    vtkXdmfReaderGridCollection::SetOfGrids::iterator it = this->Collection->Grids.begin();
+    while ( it != this->Collection->Grids.end() )
+      {
+      if (it->second)
+        {
+        delete it->second;
+        it->second = NULL;
+        }
+      it++;
+      }
+    };
+  }
   int Enabled;
   vtkXdmfReaderGrid* Grid;
   vtkXdmfReaderGridCollection* Collection;
