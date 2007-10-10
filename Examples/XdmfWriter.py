@@ -24,7 +24,20 @@ class DataParser :
                 99 : 'Unknown'
                 }
     def __init__(self) :
-        pass
+        self.DOM = XdmfDOM()
+        self.Root = XdmfRoot()
+        self.Root.SetDOM(self.DOM)
+        self.Root.SetVersion(2.0)
+        self.Root.Build()
+        self.Root.DebugOn()
+        self.Domain = XdmfDomain()
+        self.Root.Insert(self.Domain)
+        self.MainGrid = XdmfGrid()
+        self.MainGrid.SetName('Main Grid')
+        self.MainGrid.SetGridType(XDMF_GRID_TREE)
+        self.Domain.Insert(self.MainGrid)
+        self.Grids = []
+        self.Arrays = []
 
     def ParseUGrid(self, UGrid) :
         if UGrid.IsHomogeneous() :
@@ -95,6 +108,9 @@ class DataParser :
         print 'Values ',Xda.GetValues(0, 10)
         return Xda
 
+    def WriteIGrid(self, IGrid, Group, Index) :
+        print 'Homogeneous Image UGrid ', IGrid.GetDimensions()
+
     def WriteUGrid(self, UGrid, Group, Index) :
         if UGrid.IsHomogeneous() :
             print 'Homogeneous UGrid '
@@ -103,6 +119,10 @@ class DataParser :
                 NameArray = Fd.GetArray('Name')
                 print 'NameArray = ', NameArray
                 print 'name = ', NameArray.GetValue(0)
+            Xgrid = XdmfGrid()
+            Xgrid.SetName('Group %05d Index %05d' % (Group, Index))
+            self.MainGrid.Insert(Xgrid)
+            self.Grids.append(Xgrid)
             CellArray = UGrid.GetCells()
             Conns = CellArray.GetData()
             XConns = self.DataArrayToXdmfArray(Conns)
@@ -115,12 +135,21 @@ class DataParser :
             Stride = '1 1'
             Count = '%d %d' % (UGrid.GetNumberOfCells(), NodesPerElement)
             XConns.SelectHyperSlabFromString(Start, Stride, Count)
+            Xtop = Xgrid.GetTopology()
+            Xtop.SetTopologyTypeFromString(self.CellTypes[UGrid.GetCellType(0)])
+            Xtop.SetNumberOfElements(UGrid.GetNumberOfCells())
             H5 = XdmfHDF()
             H5.CopyType(XConns)
             H5.SetShapeFromString(Count)
-            H5.Open('Data.h5:Group %05d/Index %05d/Conns' % (Group, Index), 'rw')
+            H5.Open('CORE:Data.h5:Group %05d/Index %05d/Conns' % (Group, Index), 'rw')
             H5.Write(XConns)
+            JustConns = XdmfArray()
+            JustConns.CopyType(H5)
+            JustConns.CopyShape(H5)
+            H5.Read(JustConns)
+            Xtop.SetConnectivity(JustConns)
             H5.Close()
+            self.Arrays.append(JustConns)
             
             # for i in range(UGrid.GetNumberOfCells()) :
             #     print '(%d) %d = %s' % (i, UGrid.GetCellType(i), self.CellTypes[UGrid.GetCellType(i)])
@@ -128,12 +157,16 @@ class DataParser :
             pnts =  UGrid.GetPoints().GetData()
             # print "Points = ", pnts
             Xpnts = self.DataArrayToXdmfArray(pnts)
-            H5 = XdmfHDF()
-            H5.CopyType(Xpnts)
-            H5.CopyShape(Xpnts)
-            H5.Open('Data.h5:Group %05d/Index %05d/XYZ' % (Group, Index), 'rw')
-            H5.Write(Xpnts)
-            H5.Close()
+            Xgeo = Xgrid.GetGeometry()
+            Xgeo.SetGeometryType(XDMF_GEOMETRY_XYZ)
+            Xgeo.SetPoints(Xpnts)
+            self.Arrays.append(Xpnts)
+            # H5 = XdmfHDF()
+            # H5.CopyType(Xpnts)
+            # H5.CopyShape(Xpnts)
+            # H5.Open('Data.h5:Group %05d/Index %05d/XYZ' % (Group, Index), 'rw')
+            # H5.Write(Xpnts)
+            # H5.Close()
             # for i in range(UGrid.GetNumberOfPoints()) :
             #     x, y, z = UGrid.GetPoint(i)
             #     print '(%d) %f %f %f' % (i, x, y, z)
@@ -151,11 +184,31 @@ class DataParser :
             for i in range(Pd.GetNumberOfArrays()) :
                 Pa = Pd.GetArray(i)
                 Xpa = self.DataArrayToXdmfArray(Pa)
+                Xattr = XdmfAttribute()
+                Xattr.SetName("Point Attribute %d" %  i)
+                Xattr.SetAttributeCenter(XDMF_ATTRIBUTE_CENTER_NODE)
+                Xattr.SetAttributeType(XDMF_ATTRIBUTE_TYPE_SCALAR)
+                Xattr.SetValues(Xpa)
+                Xgrid.Insert(Xattr)
+                self.Arrays.append(Xpa)
+                self.Arrays.append(Xattr)
+                # self.Arrays.append(Xpa)
                 # print Pd.GetArrayName(i), ' = ',Pa
                 # for j in range(Pa.GetNumberOfTuples()) :
                    #  print '(%d) %f' % (j, Pa.GetValue(j))
             Cd = UGrid.GetCellData()
             print '# of Cell Attributes = %d' %  Cd.GetNumberOfArrays()
+            for i in range(Cd.GetNumberOfArrays()) :
+                Ca = Cd.GetArray(i)
+                Xca = self.DataArrayToXdmfArray(Ca)
+                Xattr = XdmfAttribute()
+                Xattr.SetName("Cell Attribute %d" %  i)
+                Xattr.SetAttributeCenter(XDMF_ATTRIBUTE_CENTER_CELL)
+                Xattr.SetAttributeType(XDMF_ATTRIBUTE_TYPE_SCALAR)
+                Xattr.SetValues(Xca)
+                Xgrid.Insert(Xattr)
+                self.Arrays.append(Xca)
+                self.Arrays.append(Xattr)
             # print UGrid
         else :
             print 'Heterogeneous UGrid'
@@ -173,6 +226,8 @@ class DataParser :
                 if ds.IsA('vtkUnstructuredGrid') :
                     self.ParseUGrid(ds)
                     self.WriteUGrid(ds, g, i)
+                if ds.IsA('vtkImageData') :
+                    self.WriteIGrid(ds, g, i)
                 else :
                     print 'Can not handle vtk class = ', ds.GetClassName()
 
@@ -185,19 +240,23 @@ class DataParser :
 
 
 if __name__ == '__main__' :
-    Reader = vtkXdmfReader()
-    Controller = vtkMPIController()
-    Reader.SetController(Controller)
-    ProcId = Reader.GetController().GetLocalProcessId()
-    NumProcs = Reader.GetController().GetNumberOfProcesses()
-    print 'Hello from %d of %d' % (ProcId, NumProcs)
-    Reader.SetFileName('Points1.xmf')
+    # Reader = vtkXdmfReader()
+    Reader = vtkXMLMultiGroupDataReader()
+    # Reader = vtkXMLDataReader()
+#    Controller = vtkMPIController()
+#    Reader.SetController(Controller)
+#    ProcId = Reader.GetController().GetLocalProcessId()
+#    NumProcs = Reader.GetController().GetNumberOfProcesses()
+#    print 'Hello from %d of %d' % (ProcId, NumProcs)
+    # Reader.SetFileName('Points1.xmf')
+    # Reader.SetFileName('VtkTest.pvd')
+    Reader.SetFileName('VtkMulti.vtm')
     Reader.UpdateInformation()
     # Reader.DisableAllGrids()
     # Reader.EnableGrid(2)
     # Reader.DebugOn()
-    Reader.EnableAllGrids()
-    Reader.EnableAllArrays()
+#    Reader.EnableAllGrids()
+#    Reader.EnableAllArrays()
 #    Reader.DisableGrid(0)
 #    Reader.DisableGrid(1)
     Reader.Update()
@@ -208,4 +267,7 @@ if __name__ == '__main__' :
         print 'Reading Output ', on
         Output = Reader.GetOutput(on)
         p.Parse(Output)
+    p.Root.Build()
+    print p.DOM.Serialize()
+    p.DOM.Write('junk.xmf')
 
