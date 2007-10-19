@@ -177,8 +177,8 @@ ELSE(CMAKE_NO_STD_NAMESPACE)
 ENDIF(CMAKE_NO_STD_NAMESPACE)
 
 #############################################################################
-# Now build xdmf library and executables
-SUBDIRS(libsrc binsrc)
+# Now build xdmf library
+SUBDIRS(libsrc)
 
 IF(XDMF_BUILD_VTK)
   SUBDIRS(vtk)
@@ -195,6 +195,13 @@ IF(XDMF_BUILD_TESTING)
   OPTION(VTK_USE_DISPLAY "Turn this option off and tests will not popup windows" ON)
   MARK_AS_ADVANCED(VTK_USE_DISPLAY)
 ENDIF(XDMF_BUILD_TESTING)
+
+#############################################################################
+# Examples
+OPTION(XDMF_BUILD_EXAMPLES "Build C++ Examples" OFF)
+IF(XDMF_BUILD_EXAMPLES)
+  SUBDIRS(Examples/Cxx)
+ENDIF(XDMF_BUILD_EXAMPLES)
 
 #############################################################################
 # Installation
