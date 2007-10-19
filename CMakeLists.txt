@@ -13,77 +13,56 @@ SET(CMAKE_REQUIRED_FLAGS ${CMAKE_ANSI_CFLAGS})
 INCLUDE(${CMAKE_ROOT}/Modules/CMakeBackwardCompatibilityC.cmake)
 INCLUDE(${CMAKE_ROOT}/Modules/CMakeBackwardCompatibilityCXX.cmake)
 
-INCLUDE_DIRECTORIES(${Xdmf_SOURCE_DIR}/Ice/libsrc)
-INCLUDE_DIRECTORIES(${Xdmf_SOURCE_DIR}/libsrc
-  ${Xdmf_BINARY_DIR}/libsrc
-  ${Xdmf_BINARY_DIR}/Ice/libsrc)
+INCLUDE_DIRECTORIES(
+  ${Xdmf_SOURCE_DIR}/Ice/libsrc
+  ${Xdmf_BINARY_DIR}/Ice/libsrc
+  ${Xdmf_SOURCE_DIR}/libsrc
+  ${Xdmf_BINARY_DIR}/libsrc)
 
-SET (LIBRARY_OUTPUT_PATH ${Xdmf_BINARY_DIR}/bin/ CACHE PATH "Single output directory for building all libraries.")
-SET (EXECUTABLE_OUTPUT_PATH ${Xdmf_BINARY_DIR}/bin/ CACHE PATH "Single output directory for building all executables.")
+SET (LIBRARY_OUTPUT_PATH ${Xdmf_BINARY_DIR}/bin/ CACHE PATH 
+  "Single output directory for building all libraries.")
+SET (EXECUTABLE_OUTPUT_PATH ${Xdmf_BINARY_DIR}/bin/ CACHE PATH 
+  "Single output directory for building all executables.")
 
 INCLUDE (${CMAKE_ROOT}/Modules/CheckLibraryExists.cmake)
 INCLUDE (${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake)
 
-# Build IceConfig.h
-# MESSAGE(STATUS "Configure IceConfig.h")
-# SUBDIRS(Ice/libsrc)
-
-SET(CMAKE_MODULE_PATH ${Xdmf_SOURCE_DIR}/CMake)
 SET(VTK_INSTALL_LIB_DIR "/lib")
 
-OPTION(XDMF_HAS_NDGM "XDMF has Network Distributed Global Memory (NDGM)" OFF)
-MARK_AS_ADVANCED(XDMF_HAS_NDGM)
-IF(XDMF_HAS_NDGM)
-  OPTION(XDMF_HAS_NDGM_SOURCE "XDMF has Network Distributed Global Memory (NDGM) Source" OFF)
-  IF(XDMF_HAS_NDGM_SOURCE)
-    FIND_PATH(NDGM_DIR BuildNDGM.cmake ${Xdmf_SOURCE_DIR}/../Ndgm "Root of Source for NDGM")
-    IF(NDGM_DIR)
-      MESSAGE(STATUS "......Process NDGM Source")
-      # INCLUDE(${NDGM_DIR}/BuildNDGM.cmake)
-      SUBDIRS(NDGM)
-      INCLUDE_DIRECTORIES(${NDGM_DIR}/libsrc)
-      SET(NDGM_LIBRARY ndgm) 
-      SET(NDGM_SERVER_LIBRARY ndgms) 
-    ENDIF(NDGM_DIR)
-  ELSE(XDMF_HAS_NDGM_SOURCE)
-    MESSAGE(STATUS "......Looking for NDGM_INCLUDE_DIR")
-    FIND_PATH(NDGM_INCLUDE_DIR Ndgm ${Xdmf_SOURCE_DIR}/../Ndgm/libsrc "Include Directory for NDGM; Resolves #include <Ndgm/ndgm.h>")
-    MESSAGE(STATUS "......Looking for NDGM_LIBRARY")
-    FIND_LIBRARY(NDGM_LIBRARY ndgm ${LIBRARY_OUTPUT_PATH})
-    FIND_LIBRARY(NDGM_SERVER_LIBRARY ndgms ${LIBRARY_OUTPUT_PATH})
-    INCLUDE_DIRECTORIES(${NDGM_INCLUDE_DIR})
-    SET(NDGM_LIBRARY ${NDGM_LIBRARY})
-    SET(NDGM_SERVER_LIBRARY ${NDGM_SERVER_LIBRARY})
-  ENDIF(XDMF_HAS_NDGM_SOURCE)
-  SET(HAVE_NDGM 1)
-ENDIF(XDMF_HAS_NDGM)
+#############################################################################
+# VTK READER/WRITER to use .xdmf files in vtk
+# and
+# ZLIB library
+# and
+# XML2 library
+
+#used by vtklibxml2
+INCLUDE(vtkThirdParty)
 
 OPTION(XDMF_BUILD_VTK "Build VTK reader" OFF)
-
 IF(XDMF_BUILD_VTK)
-  # include module to find vtk
+
   FIND_PACKAGE(VTK REQUIRED)
   IF(VTK_FOUND)
     INCLUDE(${VTK_USE_FILE})
   ENDIF(VTK_FOUND)
 
+  # ZLIB Library
   SET(XDMF_ZLIB_LIBRARIES ${VTK_ZLIB_LIBRARIES})
   SET(HDF5_ZLIB_INCLUDE_DIRS)
   IF(NOT VTK_USE_SYSTEM_ZLIB)
     SET(HDF5_ZLIB_HEADER "vtkzlib/zlib.h")
   ENDIF(NOT VTK_USE_SYSTEM_ZLIB)
-  IF(NOT VTK_USE_SYSTEM_EXPAT)
-    SET(XDMF_EXPAT_HEADER "vtkexpat/expat.h")
-  ENDIF(NOT VTK_USE_SYSTEM_EXPAT)
-  SET(XDMF_EXPAT_LIBRARIES ${VTK_EXPAT_LIBRARIES})
-  SET(XDMF_EXPAT_INCLUDE_DIRS)
-  IF (NOT ParaViewComplete_BINARY_DIR)
-    SET(vtkexpat_CMAKE_PATH "" CACHE INTERNAL "" FORCE)
-    SET(vtkzlib_CMAKE_PATH "" CACHE INTERNAL "" FORCE)
-  ENDIF (NOT ParaViewComplete_BINARY_DIR)
-  LINK_DIRECTORIES(${VTK_LIBRARY_DIRS})
+
+  # XML2 LIBRARY
+  SET(LIBXML2_LIBRARY vtklibxml2)
+  INCLUDE_DIRECTORIES(${vtklibxml2_BINARY_DIR})
+
 ELSE(XDMF_BUILD_VTK)
+
   SET(VTK_DIR)
+
+  # ZLIB Library
   OPTION(XDMF_USE_SYSTEM_ZLIB "Use system Zlib" OFF)
   IF(XDMF_USE_SYSTEM_ZLIB)
     FIND_PACKAGE(ZLIB)
@@ -95,43 +74,31 @@ ELSE(XDMF_BUILD_VTK)
     SET(HDF5_ZLIB_INCLUDE_DIRS "${Xdmf_SOURCE_DIR}/Utilities;${Xdmf_BINARY_DIR}/Utilities")
     SET(HDF5_ZLIB_HEADER "vtkzlib/zlib.h")
   ENDIF(XDMF_USE_SYSTEM_ZLIB)
-  OPTION(XDMF_USE_SYSTEM_EXPAT "Use system Expat" OFF)
-  IF(XDMF_USE_SYSTEM_EXPAT)
-    FIND_PACKAGE(EXPAT)
-    SET(XDMF_EXPAT_LIBRARIES ${EXPAT_LIBRARY})
-    SET(XDMF_EXPAT_INCLUDE_DIRS ${EXPAT_INCLUDE_DIR})
-  ELSE(XDMF_USE_SYSTEM_EXPAT)
-    SUBDIRS(Utilities/vtkexpat)
-    SET(XDMF_EXPAT_LIBRARIES vtkexpat)
-    SET(XDMF_EXPAT_INCLUDE_DIRS "${Xdmf_SOURCE_DIR}/Utilities;${Xdmf_BINARY_DIR}/Utilities")
-    SET(XDMF_EXPAT_HEADER "vtkexpat/expat.h")
-  ENDIF(XDMF_USE_SYSTEM_EXPAT)
+
+  # XML2 LIBRARY
+  OPTION(XDMF_SYSTEM_LIBXML2 "Use system libxml2" OFF)
+  IF(XDMF_SYSTEM_LIBXML2)
+    FIND_LIBRARY(LIBXML2_LIBRARY
+      xml2
+      /usr/lib64
+      /usr/lib
+      /usr/local/lib)
+    FIND_PATH(LIBXML2_INCLUDE_PATH
+      libxml
+      /usr/include/libxml2
+      /usr/include)
+    INCLUDE_DIRECTORIES(${LIBXML2_INCLUDE_PATH})
+  ELSE(XDMF_SYSTEM_LIBXML2)
+    SUBDIRS(Utilities/vtklibxml2)
+    INCLUDE_DIRECTORIES(${LIBXML2_INCLUDES})
+  ENDIF (XDMF_SYSTEM_LIBXML2)
+  SET(LIBXML2_LIBRARY ${LIBXML2_LIBS})
+
 ENDIF(XDMF_BUILD_VTK)
 
-IF(WIN32)
-  OPTION(XDMF_SYSTEM_HDF5 "Use sytstem HDF5" OFF)
-  OPTION(XDMF_SYSTEM_LIBXML2 "Use sytstem libxml2" ON)
-  OPTION(XDMF_BUILD_MPI "Build MPI Objects" ON)
-ELSE(WIN32)
-  OPTION(XDMF_SYSTEM_HDF5 "Use sytstem HDF5" OFF)
-  OPTION(XDMF_SYSTEM_LIBXML2 "Use sytstem libxml2" ON)
-  OPTION(XDMF_BUILD_MPI "Build MPI Objects" ON)
-ENDIF(WIN32)
-
-IF(XDMF_SYSTEM_LIBXML2)
-    FIND_LIBRARY(LIBXML2_LIBRARY
-        xml2
-        /usr/lib64
-        /usr/lib
-        /usr/local/lib)
-    FIND_PATH(LIBXML2_INCLUDE_PATH
-        libxml
-        /usr/include/libxml2
-        /usr/include)
-ENDIF (XDMF_SYSTEM_LIBXML2)
-INCLUDE_DIRECTORIES(${LIBXML2_INCLUDE_PATH})
-SET(LIBXML2_LIBRARY ${LIBXML2_LIBRARY})
-
+#############################################################################
+# MPI LIBRARY
+OPTION(XDMF_BUILD_MPI "Build MPI Objects" ON)
 SET(XDMF_MPI_LIBRARIES "")
 IF(XDMF_BUILD_MPI)
     INCLUDE (${CMAKE_ROOT}/Modules/FindMPI.cmake)
@@ -150,21 +117,12 @@ ELSE(XDMF_BUILD_MPI)
     ADD_DEFINITIONS("-DXDMF_NO_MPI")
 ENDIF(XDMF_BUILD_MPI)
 
+#############################################################################
+# HDF5 LIBRARY
+OPTION(XDMF_SYSTEM_HDF5 "Use system HDF5" OFF)
 IF(XDMF_SYSTEM_HDF5)
   OPTION(XDMF_SYSTEM_HDF5_IS_PARALLEL "HDF5 Built for MPI" OFF)
   IF (XDMF_SYSTEM_HDF5_IS_PARALLEL)
-#    INCLUDE (${CMAKE_ROOT}/Modules/FindMPI.cmake)
-#    IF (MPI_INCLUDE_PATH)
-#      INCLUDE_DIRECTORIES(${MPI_INCLUDE_PATH})
-#    ENDIF(MPI_INCLUDE_PATH)
-#    IF (MPI_LIBRARY)
-#      SET(XDMF_MPI_LIBRARIES ${XDMF_MPI_LIBRARIES} ${MPI_LIBRARY})
-#    ELSE (MPI_LIBRARY)
-#      MESSAGE("Could not find the required MPI libraries")
-#    ENDIF (MPI_LIBRARY)
-#    IF (MPI_EXTRA_LIBRARY)
-#      SET(XDMF_MPI_LIBRARIES ${XDMF_MPI_LIBRARIES} ${MPI_EXTRA_LIBRARY})
-#    ENDIF (MPI_EXTRA_LIBRARY)
   ENDIF (XDMF_SYSTEM_HDF5_IS_PARALLEL)
   FIND_LIBRARY(HDF5_LIBRARY
     hdf5
@@ -191,8 +149,8 @@ ELSE(XDMF_SYSTEM_HDF5)
   ENDIF(EXISTS "${HDF5_CONFIG}")
 ENDIF(XDMF_SYSTEM_HDF5)
 
-INCLUDE_DIRECTORIES(${XDMF_EXPAT_INCLUDE_DIRS})
-
+#############################################################################
+# stdlib and std namespace
 IF(XDMF_BUILD_VTK)
   SET(XDMF_USE_ANSI_STDLIB "${XDMF_USE_ANSI_STDLIB}" CACHE INTERNAL "store")
   SET(XDMF_USE_ANSI_STDLIB ${VTK_USE_ANSI_STDLIB})
@@ -218,7 +176,8 @@ ELSE(CMAKE_NO_STD_NAMESPACE)
   SET(XDMF_NO_STD_NAMESPACE 0)
 ENDIF(CMAKE_NO_STD_NAMESPACE)
 
-SUBDIRS(libsrc)
+#############################################################################
+# Now build xdmf library and executables
 SUBDIRS(libsrc binsrc)
 
 IF(XDMF_BUILD_VTK)
@@ -227,7 +186,8 @@ IF(XDMF_BUILD_VTK)
     ${Xdmf_BINARY_DIR}/vtk)
 ENDIF(XDMF_BUILD_VTK)
 
-# Add the testing directories
+#############################################################################
+# Testing
 OPTION(XDMF_BUILD_TESTING "Test the project" OFF)
 IF(XDMF_BUILD_TESTING)
   ENABLE_TESTING()
@@ -236,6 +196,8 @@ IF(XDMF_BUILD_TESTING)
   MARK_AS_ADVANCED(VTK_USE_DISPLAY)
 ENDIF(XDMF_BUILD_TESTING)
 
+#############################################################################
+# Installation
 # This code has to be duplicated for install tree
 SET(XDMF_INCLUDE_DIRS_CONFIG 
   ${Xdmf_SOURCE_DIR}/libsrc

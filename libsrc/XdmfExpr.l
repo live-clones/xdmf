@@ -18,18 +18,6 @@
 #  define isatty _isatty
 #endif
 
-#ifndef yylval
-#define yylval dice_yylval
-extern YYSTYPE dice_yylval;
-#endif
-#ifndef yywrap
-#define yywrap dice_yywrap
-#endif
-extern "C" int dice_yywrap(void);
-/*
-#define DiceExprDebug 1
-*/
-
 static int
 GetPointerFromString( char *_c, void **_ptr ){
 XDMF_BIG_INT	_p;
@@ -90,23 +78,14 @@ Index { return INDEX; }
 ">=" { return GE; }
 "!=" { return NE; }
 ([-+]?[0-9]+)	{
-#ifdef DiceExprDebug
-	printf(" Lex got a tokINTEGER\n");
-#endif
 	yylval.IntegerValue = atoi(yytext);
 	return tokINTEGER;
 	}
 ([-+]?[0-9]+|([-+]?[0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?) {
-#ifdef DiceExprDebug
-	printf(" Lex got a FLOAT\n");
-#endif
 	yylval.DoubleValue = atof(yytext);
 	return lFLOAT;
 	}
 _+[0-9a-zA-Z_]*"_"* {
-#ifdef DiceExprDebug
-	printf(" Lex got an tokARRAY pointer\n");
-#endif
 	if( GetPointerFromString( yytext, &yylval.ArrayPointer ) ){
 		printf("Bad Pointer Conversion\n");
 		yylval.ArrayPointer = NULL;
