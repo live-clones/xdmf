@@ -8,15 +8,10 @@ CHECK_CXX_SOURCE_RUNS("${XDMF_REQUIRE_LARGE_FILE_SUPPORT_FILE}"
 SET(XDMF_REQUIRE_LARGE_FILE_SUPPORT ${CMAKE_REQUIRE_LARGE_FILE_SUPPORT})
 
 SET( XdmfFormatSource
-#  XdmfCharArray
   XdmfArray
   XdmfDOM
   XdmfDataDesc
   XdmfExpression
-#  XdmfFormat
-#  XdmfFormatMulti
-#  XdmfFormatHDF
-#  XdmfFormatXML
   XdmfValues
   XdmfValuesXML
   XdmfValuesHDF
@@ -30,15 +25,9 @@ SET( XdmfFormatSource
   XdmfDataTransform
   XdmfElement
   XdmfObject
-#  XdmfParameter
-#  XdmfXNode
-#  XdmfTransform
-#  XdmfXMLParser
   )
 
 SET( XdmfExtraSource
-#  XdmfTree
-#  XdmfLlist
   XdmfExprLex
   XdmfExprYacc
   )
@@ -50,8 +39,6 @@ SET( XdmfModelSource
   XdmfGrid
   XdmfTopology
   XdmfGeometry
-#  XdmfNDGM
-#  XdmfRuntime
   )
 
 IF(XDMF_BUILD_MPI)
@@ -59,22 +46,15 @@ IF(XDMF_BUILD_MPI)
 ENDIF(XDMF_BUILD_MPI) 
 
 SET( XdmfMpiSource
-    XdmfDsm
-    XdmfDsmBuffer
-    XdmfDsmComm
-    XdmfDsmMsg
-    XdmfDsmCommMpi
-    )
-
-SET( XdmfNdgmSource
-#  H5FDndgm
+  XdmfDsm
+  XdmfDsmBuffer
+  XdmfDsmComm
+  XdmfDsmMsg
+  XdmfDsmCommMpi
   )
 
 SET( XdmfPythonSource
   XdmfPython
-  )
-SET( XdmfTclSource
-#  XdmfTcl
   )
 
 OPTION(XDMF_REGENERATE_WRAPPERS
@@ -198,12 +178,6 @@ CHECK_TYPE_SIZE("long long"    SIZEOF_LONG_LONG)
 INCLUDE (${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake)
 CHECK_INCLUDE_FILE(malloc.h XDMF_HAVE_MALLOC_H)
 
-## From Old IceConfig.h.in CMakeLists.txt
-
-# Platform configuration tests.
-# INCLUDE(${CMAKE_ROOT}/Modules/CMakeBackwardCompatibilityC.cmake)
-# INCLUDE(${CMAKE_ROOT}/Modules/CMakeBackwardCompatibilityCXX.cmake)
-
 # System to Build
 STRING(REGEX REPLACE "-" "_" XDMF_SYSTEM ${CMAKE_SYSTEM_NAME})
 
@@ -288,17 +262,6 @@ MARK_AS_ADVANCED(XDMF_HAVE_FCNTL XDMF_HAVE_NETINET XDMF_HAVE_MMAN)
 CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/libsrc/XdmfConfig.h.in
   ${Xdmf_BINARY_DIR}/libsrc/XdmfConfig.h)
 
-# IF(NOT XDMF_EXPAT_HEADER)
-#   IF(XDMF_BUILD_VTK)
-#     SET(XDMF_EXPAT_HEADER "vtk_expat.h")
-#   ELSE(XDMF_BUILD_VTK)
-#     SET(XDMF_EXPAT_HEADER "expat.h")
-#   ENDIF(XDMF_BUILD_VTK)
-# ENDIF(NOT XDMF_EXPAT_HEADER)
-
-# CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/libsrc/xdmf_expat.h.in
-#   ${Xdmf_BINARY_DIR}/libsrc/xdmf_expat.h)
-
 IF(NOT WIN32)
   ADD_DEFINITIONS(-D_HPUX_SOURCE)
 ENDIF(NOT WIN32)
@@ -310,10 +273,6 @@ IF(XDMF_BUILD_MPI)
 ELSE(XDMF_BUILD_MPI)
     ADD_DEFINITIONS("-DXDMF_NO_MPI")
 ENDIF(XDMF_BUILD_MPI)
-
-IF(XDMF_HAS_NDGM)
-  SET(XdmfSources ${XdmfSources} ${XdmfNdgmSource})
-ENDIF(XDMF_HAS_NDGM)
 
 IF(VTK_BUILD_SHARED_LIBS OR BUILD_SHARED_LIBS)
   SET(LIBTYPE SHARED)
@@ -330,11 +289,11 @@ IF(XDMF_BUILD_MPI)
   TARGET_LINK_LIBRARIES(Xdmf ${MPI_LIBRARY} )
 ENDIF(XDMF_BUILD_MPI)
 
-IF(XDMF_HAS_NDGM)
-  TARGET_LINK_LIBRARIES(Xdmf ${NDGM_LIBRARY} ${NDGM_SERVER_LIBRARY} ${HDF5_LIBRARY} ${XDMF_MPI_LIBRARIES} ${LIBXML2_LIBRARY} ${XDMF_EXPAT_LIBRARIES} ${XDMF_ZLIB_LIBRARIES})
-ELSE(XDMF_HAS_NDGM)
-  TARGET_LINK_LIBRARIES(Xdmf ${HDF5_LIBRARY} ${XDMF_MPI_LIBRARIES} ${LIBXML2_LIBRARY} ${XDMF_EXPAT_LIBRARIES} ${XDMF_ZLIB_LIBRARIES})
-ENDIF(XDMF_HAS_NDGM)
+TARGET_LINK_LIBRARIES(Xdmf 
+  ${HDF5_LIBRARY} 
+  ${XDMF_MPI_LIBRARIES} 
+  ${LIBXML2_LIBRARY} 
+  ${XDMF_ZLIB_LIBRARIES})
 
 OPTION(XDMF_WRAP_PYTHON "Build a Python wrapping interface" OFF)
 IF(XDMF_WRAP_PYTHON OR VTK_WRAP_PYTHON)
@@ -348,10 +307,7 @@ IF(XDMF_WRAP_PYTHON)
   ENDIF(NOT BUILD_SHARED_LIBS)
   INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
   ADD_LIBRARY(_Xdmf SHARED ${XdmfPythonSource})
-  IF(XDMF_HAS_NDGM)
-    TARGET_LINK_LIBRARIES(_Xdmf ${NDGM_LIBRARY} ${NDGM_SERVER_LIBRARY})
-  ENDIF(XDMF_HAS_NDGM)
-  TARGET_LINK_LIBRARIES(_Xdmf Xdmf ${HDF5_LIBRARY} ${EXPAT_LIBRARY} ${XDMF_ZLIB_LIBRARIES})
+  TARGET_LINK_LIBRARIES(_Xdmf Xdmf ${HDF5_LIBRARY} ${XDMF_ZLIB_LIBRARIES})
   IF(WIN32)
     TARGET_LINK_LIBRARIES(_Xdmf ${PYTHON_LIBRARY})
   ENDIF(WIN32)
@@ -367,10 +323,7 @@ IF(XDMF_WRAP_TCL)
   INCLUDE_DIRECTORIES(${TCL_INCLUDE_PATH})
   INCLUDE (${CMAKE_ROOT}/Modules/FindTCL.cmake)
   ADD_LIBRARY(XdmfTCL SHARED ${XdmfTclSource})
-  IF(XDMF_HAS_NDGM)
-    TARGET_LINK_LIBRARIES(XdmfTCL ${NDGM_LIBRARY} ${NDGM_SERVER_LIBRARY})
-  ENDIF(XDMF_HAS_NDGM)
-  TARGET_LINK_LIBRARIES(XdmfTCL Xdmf ${TCL_LIBRARY} ${HDF5_LIBRARY} ${EXPAT_LIBRARY} ${XDMF_ZLIB_LIBRARIES})
+  TARGET_LINK_LIBRARIES(XdmfTCL Xdmf ${TCL_LIBRARY} ${HDF5_LIBRARY} ${XDMF_ZLIB_LIBRARIES} )
   ADD_EXECUTABLE(DummyTCL dummy.cxx)
   TARGET_LINK_LIBRARIES(DummyTCL XdmfTCL)
   ADD_DEPENDENCIES(XdmfTCL Xdmf)
@@ -385,16 +338,10 @@ IF(NOT XDMF_INSTALL_NO_DEVELOPMENT)
     XdmfConfig
     Xdmf
     XdmfArrayCopyMacro
-    XdmfDice
     XdmfExport
-    xdmf_expat
     XdmfExpr
     ${XdmfFormatSource}
     ${XdmfModelSource})
-  IF(XDMF_HAS_NDGM)
-    INSTALL_FILES(${XDMF_INSTALL_INCLUDE_DIR} .h
-      ${XdmfNdgmSource})
-  ENDIF(XDMF_HAS_NDGM)
 ENDIF(NOT XDMF_INSTALL_NO_DEVELOPMENT)
 
 IF(NOT XDMF_INSTALL_NO_LIBRARIES)

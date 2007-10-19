@@ -27,12 +27,6 @@
 #include "XdmfH5Driver.h"
 #endif
 
-#ifdef HAVE_NDGM
-extern "C" {
-#include "H5FDndgm.h"
-}
-#endif
-
 #ifdef WIN32
 #define XDMF_HDF5_SIZE_T        ssize_t
 #else
@@ -600,7 +594,6 @@ if( DataSetName != NULL ) {
   *firstcolon = '\0';
   firstcolon++;
   if ( ( STRCASECMP( NewName, "FILE" ) == 0 ) ||
-    ( STRCASECMP( NewName, "NDGM" ) == 0 ) ||
     ( STRCASECMP( NewName, "GASS" ) == 0 ) ||
     ( STRCASECMP( NewName, "CORE" ) == 0 ) ||
     ( STRCASECMP( NewName, "DUMMY" ) == 0 ) ) {
@@ -680,20 +673,8 @@ XdmfDebug("Using Domain " << this->Domain );
       return( XDMF_FAIL );  
 #endif
     } else if( STRCASECMP( this->Domain, "NDGM" ) == 0 ) {
-#ifdef HAVE_NDGM
-      XdmfDebug("Using NDGM Interface");  
-      H5FD_ndgm_init();
-      this->AccessPlist = H5Pcreate( H5P_FILE_ACCESS );
-      XdmfDebug("Using NdgmHost " << this->GetNdgmHost() );
-      if( strlen( this->GetNdgmHost() ) < 2 ) {
-        H5Pset_fapl_ndgm( this->AccessPlist, 1000000, NULL);
-      } else {
-        H5Pset_fapl_ndgm( this->AccessPlist, 1000000, (char*)this->GetNdgmHost());
-      }
-#else
       XdmfErrorMessage("NDGM Interface is unavailable");
       return( XDMF_FAIL );  
-#endif
     } else if( STRCASECMP( this->Domain, "GASS" ) == 0 ) {
     } else {
 // Check for Parallel HDF5 ... MPI must already be initialized
@@ -756,20 +737,8 @@ if( this->File < 0 ){
       return( XDMF_FAIL );
 #endif
     } else if( STRCASECMP( this->Domain, "NDGM" ) == 0 ) {
-      XdmfDebug("Using NDGM Interface");  
-#ifdef HAVE_NDGM
-      H5FD_ndgm_init();
-      this->AccessPlist = H5Pcreate( H5P_FILE_ACCESS );
-      XdmfDebug("Using NdgmHost " << this->GetNdgmHost() );
-      if( strlen( this->GetNdgmHost() ) < 2 ) {
-        H5Pset_fapl_ndgm( this->AccessPlist, 1000000, NULL);
-      } else {
-        H5Pset_fapl_ndgm( this->AccessPlist, 1000000, (char*)this->GetNdgmHost() );
-      }
-#else
       XdmfErrorMessage("NDGM interface is unavailable");
       return( XDMF_FAIL );
-#endif
     } else if( STRCASECMP( this->Domain, "FILE" ) == 0 ) {
     }
     this->File = H5Fcreate(this->FileName,
