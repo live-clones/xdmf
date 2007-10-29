@@ -54,10 +54,6 @@ IF(XDMF_BUILD_VTK)
     SET(HDF5_ZLIB_HEADER "vtkzlib/zlib.h")
   ENDIF(NOT VTK_USE_SYSTEM_ZLIB)
 
-  # XML2 LIBRARY
-  SET(LIBXML2_LIBRARY vtklibxml2)
-  INCLUDE_DIRECTORIES(${vtklibxml2_BINARY_DIR})
-
 ELSE(XDMF_BUILD_VTK)
 
   SET(VTK_DIR)
@@ -77,28 +73,35 @@ ELSE(XDMF_BUILD_VTK)
     SET(HDF5_ZLIB_HEADER "vtkzlib/zlib.h")
   ENDIF(XDMF_USE_SYSTEM_ZLIB)
 
-  # XML2 LIBRARY
-  OPTION(XDMF_SYSTEM_LIBXML2 "Use system libxml2" OFF)
-  IF(XDMF_SYSTEM_LIBXML2)
-    FIND_LIBRARY(LIBXML2_LIBRARY
-      xml2
-      /usr/lib64
-      /usr/lib
-      /usr/local/lib)
-    FIND_PATH(LIBXML2_INCLUDE_PATH
-      libxml
-      /usr/include/libxml2
-      /usr/include)
-    INCLUDE_DIRECTORIES(${LIBXML2_INCLUDE_PATH})
-    SET(LIBXML2_LIBRARY ${LIBXML2_LIBS})
-
-  ELSE(XDMF_SYSTEM_LIBXML2)
-    SUBDIRS(Utilities/vtklibxml2)
-    SET(LIBXML2_LIBRARY vtklibxml2)
-    INCLUDE_DIRECTORIES(${Xdmf_BINARY_DIR}/Utilities/vtklibxml2)
-  ENDIF (XDMF_SYSTEM_LIBXML2)
-
 ENDIF(XDMF_BUILD_VTK)
+
+#############################################################################
+# XML2 LIBRARY
+OPTION(XDMF_SYSTEM_LIBXML2 "Use system libxml2" OFF)
+IF(NOT XDMF_SYSTEM_LIBXML2)
+
+  # Build our own vtklibxml2.
+  SUBDIRS(Utilities/vtklibxml2)
+  SET(LIBXML2_LIBRARY vtklibxml2)
+  INCLUDE_DIRECTORIES(${Xdmf_BINARY_DIR}/Utilities/vtklibxml2)
+
+ELSE(NOT XDMF_SYSTEM_LIBXML2)
+
+  # Use a libxml2 that is installed on the machine somewhere.
+  FIND_LIBRARY(LIBXML2_LIBRARY
+    xml2
+    /usr/lib64
+    /usr/lib
+    /usr/local/lib)
+  FIND_PATH(LIBXML2_INCLUDE_PATH
+    libxml
+    /usr/include/libxml2
+    /usr/include)
+  INCLUDE_DIRECTORIES(${LIBXML2_INCLUDE_PATH}
+    ${LIBXML2_INCLUDE_PATH}/libxml2)
+  SET(LIBXML2_LIBRARY ${LIBXML2_LIBS})
+
+ENDIF(NOT XDMF_SYSTEM_LIBXML2)
 
 #############################################################################
 # MPI LIBRARY
