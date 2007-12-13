@@ -569,7 +569,7 @@ if( this->TopologyType == XDMF_NOTOPOLOGY ){
   }
 if( this->GetClass() == XDMF_UNSTRUCTURED ){
   // Read Connection
-  ConnectionElement = this->DOM->FindElement( "DataItem", 0, this->Element );
+  ConnectionElement = this->DOM->FindDataElement(0, this->Element );
   if( ConnectionElement ){
       XdmfDataItem  Connections;
   
