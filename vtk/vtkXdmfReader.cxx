@@ -86,7 +86,7 @@
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.28");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.29");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -1195,10 +1195,6 @@ int vtkXdmfReader::UpdateDomains()
 //----------------------------------------------------------------------------
 void vtkXdmfReader::UpdateRootGrid()
 {
-  int done = 0;
-  int NGrid;
-  vtkIdType currentGrid;
-  XdmfXmlNode gridNode = 0;
   XdmfXmlNode domain = this->Internals->DomainPtr;
 
   if ( !domain )
@@ -1717,8 +1713,8 @@ int vtkXdmfReader::RequestInformation(
     case VTK_RECTILINEAR_GRID:
     case VTK_STRUCTURED_GRID:
     {
-    vtkXdmfReaderGrid *ptr = this->Internals->GetGrid(0);
-    this->Internals->RequestGridInformation(ptr, outInfo);
+    vtkXdmfReaderGrid *sptr = this->Internals->GetGrid(0);
+    this->Internals->RequestGridInformation(sptr, outInfo);
     }
     break;
     case VTK_MULTIBLOCK_DATA_SET:
@@ -1797,25 +1793,25 @@ int vtkXdmfReaderInternal::RequestGridData(
       vtkXdmfReaderGrid *child = it->second;
       //if ( it->second->Enabled ) only top level grids can be disabled
         {
-        vtkDataObject *output=
+        vtkDataObject *soutput=
           vtkDataObjectTypes::NewDataObject(child->vtkType);
-        outMB->SetDataSet(0, outputGrid, output);
+        outMB->SetDataSet(0, outputGrid, soutput);
         vtkDebugWithObjectMacro(
           this->Reader,
           "Recursively filling in ds " << outputGrid 
-          << " a " << output->GetClassName() 
+          << " a " << soutput->GetClassName() 
           << " from " << it->first.c_str());
         vtkInformation *subInfo = compInfo->GetInformation(0, outputGrid);
         this->RequestGridData(
           /*it->first.c_str(),*/
           child,
           subInfo,
-          output,
+          soutput,
           1,
           lprogressS,
           lprogressE
           );
-        output->Delete();
+        soutput->Delete();
         outputGrid++;
         }
       }
