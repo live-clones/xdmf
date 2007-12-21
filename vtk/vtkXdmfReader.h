@@ -38,6 +38,7 @@ class vtkDataArraySelection;
 class vtkCallbackCommand;
 class vtkMultiProcessController;
 class vtkXdmfReaderInternal;
+class vtkXdmfReaderGrid;
 
 //BTX
 class XdmfDOM;
@@ -49,85 +50,6 @@ public:
   static vtkXdmfReader* New();
   vtkTypeRevisionMacro(vtkXdmfReader, vtkDataReader);
   void PrintSelf(ostream& os, vtkIndent indent);
-
-  // Description:
-  // Get the output of this reader.
-  vtkDataObject *GetOutput();
-  vtkDataObject *GetOutput(int idx);
-
-  // ATTRIBUTES ///////////////////////////////////////////////////////////////
-
-  // Description:
-  // Get the data array selection tables used to configure which data
-  // arrays are loaded by the reader.
-  vtkGetObjectMacro(PointDataArraySelection, vtkDataArraySelection);
-  vtkGetObjectMacro(CellDataArraySelection, vtkDataArraySelection);
-  
-  // Description:  
-  // Get the number of point or cell arrays available in the input.
-  int GetNumberOfPointArrays();
-  int GetNumberOfCellArrays();
-  
-  // Description:
-  // Get the name of the point or cell array with the given index in
-  // the input.
-  const char* GetPointArrayName(int index);
-  const char* GetCellArrayName(int index);
-
-  // Description:
-  // Get/Set whether the point or cell array with the given name is to
-  // be read.
-  int GetPointArrayStatus(const char* name);
-  int GetCellArrayStatus(const char* name);
-  void SetPointArrayStatus(const char* name, int status);  
-  void SetCellArrayStatus(const char* name, int status);  
-
-  // Description:
-  // Set whether the all point or cell arrays are to
-  // be read.
-  void EnableAllArrays();
-  void DisableAllArrays();
-
-  // PARAMETERS ///////////////////////////////////////////////////////////////
-  
-  // Description:
-  // Get the number of Parameters
-  int GetNumberOfParameters();
-
-  // Description:
-  // Get Parameter Type
-  int GetParameterType(int index);
-  int GetParameterType(const char *Name);
-  const char *GetParameterTypeAsString(int index);
-  const char *GetParameterTypeAsString(const char *Name);
-
-  // Description:
-  // Get start, stride, count
-  int GetParameterRange(int index, int Shape[3]);
-  int GetParameterRange(const char *Name, int Shape[3]);
-  const char *GetParameterRangeAsString(int index);
-  const char *GetParameterRangeAsString(const char *Name);
-
-  // Description:
-  // Get Parameter Name
-  const char *GetParameterName(int index);
-
-  // Description:
-  // Set/Get Parameter Current Index
-  int SetParameterIndex(const char *Name, int CurrentIndex); 
-  int SetParameterIndex(int ParameterIndex, int CurrentIndex); 
-  int GetParameterIndex(const char *Name);
-  int GetParameterIndex(int index);
-
-  // Description:
-  // Get Length of Parameter
-  int GetParameterLength(const char *Name);
-  int GetParameterLength(int index);
-
-  // Description:
-  // Get the Current Value of the Parameter
-  const char *GetParameterValue(int index);
-  const char *GetParameterValue(const char *Name);
 
   // DOMAINS ///////////////////////////////////////////////////////////////
   // Description:
@@ -173,6 +95,78 @@ public:
   // Get current enable/disable of the grid
   int GetGridSetting(const char* name);
   int GetGridSetting(int idx);
+
+  // ATTRIBUTES ///////////////////////////////////////////////////////////////
+  // Description:
+  // Get the data array selection tables used to configure which data
+  // arrays are loaded by the reader.
+  vtkGetObjectMacro(PointDataArraySelection, vtkDataArraySelection);
+  vtkGetObjectMacro(CellDataArraySelection, vtkDataArraySelection);
+  
+  // Description:  
+  // Get the number of point or cell arrays available in the input.
+  int GetNumberOfPointArrays();
+  int GetNumberOfCellArrays();
+  
+  // Description:
+  // Get the name of the point or cell array with the given index in
+  // the input.
+  const char* GetPointArrayName(int index);
+  const char* GetCellArrayName(int index);
+
+  // Description:
+  // Get/Set whether the point or cell array with the given name is to
+  // be read.
+  int GetPointArrayStatus(const char* name);
+  int GetCellArrayStatus(const char* name);
+  void SetPointArrayStatus(const char* name, int status);  
+  void SetCellArrayStatus(const char* name, int status);  
+
+  // Description:
+  // Set whether the all point or cell arrays are to
+  // be read.
+  void EnableAllArrays();
+  void DisableAllArrays();
+
+  // PARAMETERS ///////////////////////////////////////////////////////////////
+  // Description:
+  // Get the number of Parameters
+  int GetNumberOfParameters();
+
+  // Description:
+  // Get Parameter Type
+  int GetParameterType(int index);
+  int GetParameterType(const char *Name);
+  const char *GetParameterTypeAsString(int index);
+  const char *GetParameterTypeAsString(const char *Name);
+
+  // Description:
+  // Get start, stride, count
+  int GetParameterRange(int index, int Shape[3]);
+  int GetParameterRange(const char *Name, int Shape[3]);
+  const char *GetParameterRangeAsString(int index);
+  const char *GetParameterRangeAsString(const char *Name);
+
+  // Description:
+  // Get Parameter Name
+  const char *GetParameterName(int index);
+
+  // Description:
+  // Set/Get Parameter Current Index
+  int SetParameterIndex(const char *Name, int CurrentIndex); 
+  int SetParameterIndex(int ParameterIndex, int CurrentIndex); 
+  int GetParameterIndex(const char *Name);
+  int GetParameterIndex(int index);
+
+  // Description:
+  // Get Length of Parameter
+  int GetParameterLength(const char *Name);
+  int GetParameterLength(int index);
+
+  // Description:
+  // Get the Current Value of the Parameter
+  const char *GetParameterValue(int index);
+  const char *GetParameterValue(const char *Name);
 
   // STRIDE ///////////////////////////////////////////////////////////////////
   // Description:
@@ -222,23 +216,9 @@ protected:
                                  vtkInformationVector *);
   virtual int FillOutputPortInformation(int port, vtkInformation *info);
 
-  void UpdateUniformGrid(void *GridNode, char *CollectionName);
-  void UpdateNonUniformGrid(void *GridNode, char *CollectionName);
-  void UpdateGrids();
-
-  vtkXdmfReaderInternal* Internals;
-
-  char* DomainName;
-
-  char* GridName;
-  int GridsModified;
-  int NumberOfEnabledActualGrids;
-
-  int Stride[3];
-
-  int OutputsInitialized;
-  XdmfDOM         *DOM;
-  vtkMultiProcessController *Controller;
+  int UpdateDomains();
+  void UpdateRootGrid();
+  void UpdateGrids(vtkXdmfReaderGrid *parent, void *GridNode);
 
   // Array selection helpers /////////////////////////////////////////////////
   static void SelectionModifiedCallback(vtkObject* caller, unsigned long eid,
@@ -248,7 +228,22 @@ protected:
   vtkDataArraySelection* CellDataArraySelection;
 
   vtkCallbackCommand* SelectionObserver;
-  
+
+  //
+  vtkXdmfReaderInternal* Internals;
+  XdmfDOM         *DOM;
+  vtkMultiProcessController *Controller;
+
+  char* DomainName;
+
+  char* GridName;
+  int NumberOfEnabledActualGrids;
+
+  int Stride[3];
+
+  int GridsModified;
+  int OutputsInitialized;
+  int OutputVTKType;
 private:
   vtkXdmfReader(const vtkXdmfReader&); // Not implemented
   void operator=(const vtkXdmfReader&); // Not implemented  
