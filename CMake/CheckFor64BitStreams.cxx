@@ -2,6 +2,7 @@
 # include <iostream.h>
 #else
 # include <iostream>
+using std::cin;
 #endif
 
 #if defined(SIZEOF_LONG_LONG)
