@@ -102,6 +102,7 @@ GetGlobalDebug = _Xdmf.GetGlobalDebug
 SetGlobalDebug = _Xdmf.SetGlobalDebug
 XdmfObjectToHandle = _Xdmf.XdmfObjectToHandle
 HandleToXdmfObject = _Xdmf.HandleToXdmfObject
+VoidPointerHandleToXdmfPointer = _Xdmf.VoidPointerHandleToXdmfPointer
 class XdmfLightData(XdmfObject):
     __swig_setmethods__ = {}
     for _s in [XdmfObject]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
@@ -648,6 +649,8 @@ class XdmfHDF(XdmfHeavyData):
     def GetCompression(*args): return _Xdmf.XdmfHDF_GetCompression(*args)
     def SetUseSerialFile(*args): return _Xdmf.XdmfHDF_SetUseSerialFile(*args)
     def GetUseSerialFile(*args): return _Xdmf.XdmfHDF_GetUseSerialFile(*args)
+    def GetDsmBuffer(*args): return _Xdmf.XdmfHDF_GetDsmBuffer(*args)
+    def SetDsmBuffer(*args): return _Xdmf.XdmfHDF_SetDsmBuffer(*args)
     def SetCwdName(*args): return _Xdmf.XdmfHDF_SetCwdName(*args)
     def GetCwdName(*args): return _Xdmf.XdmfHDF_GetCwdName(*args)
     def Cd(*args): return _Xdmf.XdmfHDF_Cd(*args)

@@ -244,6 +244,7 @@ ENDIF(${XDMF_SIZEOF_INT} MATCHES 4)
 
 INCLUDE(${CMAKE_ROOT}/Modules/TestForANSIStreamHeaders.cmake)
 INCLUDE(${Xdmf_SOURCE_DIR}/CMake/CheckFor64BitStreams.cmake)
+MESSAGE(STATUS "Checking for 64 Bit Streams")
 CHECK_FOR_64BIT_STREAMS(XDMF_HAVE_64BIT_STREAMS)
 
 # Find include files
