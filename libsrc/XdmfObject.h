@@ -496,6 +496,7 @@ XDMF_EXPORT void SetGlobalDebug( XdmfInt32 DebugLevel );
 XDMF_EXPORT XdmfString GetUnique( XdmfConstString Pattern = NULL );
 extern XDMF_EXPORT XdmfString XdmfObjectToHandle( XdmfObject *Source );
 extern XDMF_EXPORT XdmfObject *HandleToXdmfObject( XdmfConstString Source );
+extern XDMF_EXPORT XdmfPointer VoidPointerHandleToXdmfPointer(XdmfConstString Source);
 
 #ifndef SWIG
 extern XDMF_EXPORT istrstream& XDMF_READ_STREAM64(istrstream& istr, XDMF_64_INT& i);

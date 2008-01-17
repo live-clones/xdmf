@@ -32,7 +32,12 @@ istrstream& XDMF_READ_STREAM64(istrstream& istr, XDMF_64_INT& i)
 #if defined( XDMF_HAVE_64BIT_STREAMS )
     istr >>i;
 #else
-    double d = 0;
+    // a double here seems to not work 
+    // for hex characters so use an int.
+    // since XDMF_HAVE_64BIT_STREAMS is unset
+    // we don't have a long long.
+    // double d = 0;
+    unsigned int d = 0;
     istr >> d;
     i = (XDMF_64_INT)d;
 #endif
@@ -127,6 +132,32 @@ XDMF_READ_STREAM64(Handle, RealObjectPointer);
 // cout << "Source = " << Source << endl;
 // cout << "RealObjectPointer = " << RealObjectPointer << endl;
 *Rpt = reinterpret_cast<XdmfObject *>(RealObjectPointer);
+delete [] src;
+return( RealObject );
+}
+
+
+XdmfPointer
+VoidPointerHandleToXdmfPointer( XdmfConstString Source ){
+XdmfString src = new char[ strlen(Source) + 1 ];
+strcpy(src, Source);
+istrstream Handle( src, strlen(src));
+char  c;
+XDMF_64_INT RealObjectPointer;
+XdmfPointer RealObject = NULL, *Rpt = &RealObject;
+
+Handle >> c;
+if( c != '_' ) {
+  XdmfErrorMessage("Bad Handle " << Source );
+  delete [] src;
+  return( NULL );
+  }
+Handle.setf(ios::hex,ios::basefield);
+XDMF_READ_STREAM64(Handle, RealObjectPointer);
+// Handle >> RealObjectPointer;
+// cout << "Source = " << Source << endl;
+// cout << "RealObjectPointer = " << RealObjectPointer << endl;
+*Rpt = reinterpret_cast<XdmfPointer>(RealObjectPointer);
 delete [] src;
 return( RealObject );
 }
