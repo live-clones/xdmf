@@ -38,6 +38,7 @@ SET( XdmfModelSource
   XdmfAttribute
   XdmfGrid
   XdmfTopology
+  XdmfTime
   XdmfGeometry
   )
 
@@ -89,11 +90,19 @@ IF(XDMF_REGENERATE_WRAPPERS)
     FOREACH(LANGUAGE Python)
       STRING(TOLOWER ${LANGUAGE} lang)
       SET(swigtarget ${Xdmf_BINARY_DIR}/libsrc/Xdmf${LANGUAGE}.cxx)
-      ADD_CUSTOM_COMMAND(
-        OUTPUT ${swigtarget}
-        DEPENDS ${Xdmf_SOURCE_DIR}/libsrc/Xdmf.i
-        COMMAND ${SWIG_EXECUTABLE}
-        ARGS -v -c++ -make_default -includeall "-${lang}" ${swig_extra_args} ${XDMF_SWIG_INCLUDES} -o "${swigtarget}" Xdmf.i)
+      IF(XDMF_BUILD_MPI)
+        ADD_CUSTOM_COMMAND(
+         OUTPUT ${swigtarget}
+         DEPENDS ${Xdmf_SOURCE_DIR}/libsrc/Xdmf.i
+         COMMAND ${SWIG_EXECUTABLE}
+         ARGS -v -c++ -make_default -includeall "-${lang}" ${swig_extra_args} ${XDMF_SWIG_INCLUDES} -o "${swigtarget}" Xdmf.i)
+      ELSE(XDMF_BUILD_MPI) 
+        ADD_CUSTOM_COMMAND(
+         OUTPUT ${swigtarget}
+         DEPENDS ${Xdmf_SOURCE_DIR}/libsrc/Xdmf.i
+         COMMAND ${SWIG_EXECUTABLE}
+         ARGS -v -c++ -DXDMF_NO_MPI -make_default -includeall "-${lang}" ${swig_extra_args} ${XDMF_SWIG_INCLUDES} -o "${swigtarget}" Xdmf.i)
+      ENDIF(XDMF_BUILD_MPI) 
 
     ENDFOREACH(LANGUAGE)
     ADD_CUSTOM_TARGET(RerunSwig DEPENDS 
