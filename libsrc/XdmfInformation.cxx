@@ -45,7 +45,7 @@ XdmfInformation::Insert( XdmfElement *Child){
 XdmfInt32 XdmfInformation::UpdateInformation(){
     XdmfConstString aValue;
 
-    XdmfElement::UpdateInformation();
+    if(XdmfElement::UpdateInformation() != XDMF_SUCCESS) return(XDMF_FAIL);
     aValue = this->Get("Name");
     if(aValue) this->SetName(aValue);
     aValue = this->Get("Value");
