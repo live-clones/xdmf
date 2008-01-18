@@ -531,9 +531,6 @@ XdmfInt32 XdmfDataItem::Build(){
     XdmfDataDesc *aDataDesc = this->DataDesc;
     if(XdmfElement::Build() != XDMF_SUCCESS) return(XDMF_FAIL);
     if(this->Array) aDataDesc = this->Array;
-    XdmfDebug("aDataDesc = " << aDataDesc);
-    XdmfDebug("aDataDesc Dimensions = " << aDataDesc->GetShapeAsString());
-    XdmfDebug("aDataDesc NumberType = " << XdmfTypeToClassString(aDataDesc->GetNumberType()));
     this->Set("Dimensions", aDataDesc->GetShapeAsString());
     this->Set("NumberType", XdmfTypeToClassString(aDataDesc->GetNumberType()));
     switch (aDataDesc->GetElementSize()) {
