@@ -897,5 +897,32 @@ XdmfGrid_swigregister = _Xdmf.XdmfGrid_swigregister
 XdmfGrid_swigregister(XdmfGrid)
 
 HandleToXdmfGrid = _Xdmf.HandleToXdmfGrid
+class XdmfTime(XdmfElement):
+    __swig_setmethods__ = {}
+    for _s in [XdmfElement]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfTime, name, value)
+    __swig_getmethods__ = {}
+    for _s in [XdmfElement]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfTime, name)
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        this = _Xdmf.new_XdmfTime(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _Xdmf.delete_XdmfTime
+    __del__ = lambda self : None;
+    def GetClassName(*args): return _Xdmf.XdmfTime_GetClassName(*args)
+    def Insert(*args): return _Xdmf.XdmfTime_Insert(*args)
+    def UpdateInformation(*args): return _Xdmf.XdmfTime_UpdateInformation(*args)
+    def SetValue(*args): return _Xdmf.XdmfTime_SetValue(*args)
+    def Build(*args): return _Xdmf.XdmfTime_Build(*args)
+    def GetValue(*args): return _Xdmf.XdmfTime_GetValue(*args)
+    def GetArray(*args): return _Xdmf.XdmfTime_GetArray(*args)
+    def SetArray(*args): return _Xdmf.XdmfTime_SetArray(*args)
+    def GetDataItem(*args): return _Xdmf.XdmfTime_GetDataItem(*args)
+    def SetDataItem(*args): return _Xdmf.XdmfTime_SetDataItem(*args)
+XdmfTime_swigregister = _Xdmf.XdmfTime_swigregister
+XdmfTime_swigregister(XdmfTime)
+
 
 
