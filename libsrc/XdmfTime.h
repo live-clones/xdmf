@@ -25,12 +25,10 @@
 #ifndef __XdmfTime_h
 #define __XdmfTime_h
 
-#include "XdmfElement.h"
-
-
+//! Define time for Grid
 /*! XdmfTime represents a Time specification.
 Time is a child of the <Grid> element :
-
+\verbatim
 <Time TypeType="Single* | Uniform | HyperSlab | Function" 
     NumberOfIterations="1* | N"
     Value="(no default)">
@@ -41,7 +39,10 @@ Time is a child of the <Grid> element :
         Uniform - a Time Series
         HyperSlab - Start Stride Count
         Function - XdmfFloat64 *Function(GridIndex)
+\endverbatim
 */
+
+#include "XdmfElement.h"
 
 class XdmfDataItem;
 class XdmfArray;
