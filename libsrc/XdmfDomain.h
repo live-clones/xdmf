@@ -30,11 +30,13 @@
 
 /*! XdmfDomain represents the Domain Element in
 Xdmf. In XML it is the Element :
+\verbatim
 <Domain Name="DomainName">
 The Xdmf element may have Information and DataItem Elements as children
 
     XML Element : Domain
     XML Attribute : Name = Any String
+\endverbatim
 */
 
 class XDMF_EXPORT XdmfDomain : public XdmfElement {

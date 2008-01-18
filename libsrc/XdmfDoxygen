@@ -445,6 +445,7 @@ INPUT                  = \
                         XdmfHeavyData.h \
                         XdmfHDF.h \
                         XdmfH5Driver.h \
+                        XdmfTime.h \
                         XdmfValues.h \
                         XdmfValuesXML.h \
                         XdmfValuesHDF.h \

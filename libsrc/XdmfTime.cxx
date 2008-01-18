@@ -74,10 +74,12 @@ XdmfInt32 XdmfTime::UpdateInformation(){
         // Default
         this->TimeType = XDMF_TIME_SINGLE;
     }
+    // Type == Function ?
     attribute = this->Get("Function");
     if(attribute){
         this->TimeType = XDMF_TIME_FUNCTION;
         this->SetFunction(attribute);
+        return(XDMF_SUCCESS);
     }
     attribute = this->Get("Value");
     if(attribute){

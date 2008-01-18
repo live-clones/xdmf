@@ -109,8 +109,6 @@ class XdmfAttribute;
 
 \endverbatim
 
-\endverbatim
-
         Typical API usage might look like :
         \code
 
