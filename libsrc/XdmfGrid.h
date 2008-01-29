@@ -31,6 +31,7 @@
 class XdmfGeometry;
 class XdmfTopology;
 class XdmfAttribute;
+class XdmfTime;
 
 #define XDMF_GRID_UNIFORM       0x00000 // Type xor XDMF_GRID_MASK = XdmfTopology Type
 #define XDMF_GRID_COLLECTION    0x10000
@@ -146,6 +147,10 @@ public:
   XdmfSetValueMacro( Topology, XdmfTopology *);
 //! Get the XdmfTopology for an XdmfGrid
   XdmfGetValueMacro( Topology, XdmfTopology *);
+//! Explicitly set the XdmfTime for an XdmfGrid
+  XdmfSetValueMacro( Time, XdmfTime *);
+//! Get the XdmfTime for an XdmfGrid
+  XdmfGetValueMacro( Time, XdmfTime *);
 
   //! Get the Grid Type as a string
   XdmfConstString GetGridTypeAsString();
@@ -165,6 +170,10 @@ public:
   XdmfGetValueMacro( GridType, XdmfInt32);
   //! Set the Grid Type
   XdmfSetValueMacro( GridType, XdmfInt32);
+  //! Get Build Time Flag
+  XdmfGetValueMacro( BuildTime, XdmfInt32);
+  //! Set the Build Time Flag
+  XdmfSetValueMacro( BuildTime, XdmfInt32);
 
   //! Copy Information from Another DataItem
   XdmfInt32 Copy(XdmfElement *Source);
@@ -260,11 +269,14 @@ protected:
 
   XdmfGeometry  *Geometry;
   XdmfTopology  *Topology;
+  XdmfTime      *Time;
   XdmfInt32     GeometryIsMine;
   XdmfInt32     TopologyIsMine;
+  XdmfInt32     TimeIsMine;
   XdmfInt32     NumberOfAttributes;
   XdmfInt32     GridType;
   XdmfInt32     NumberOfChildren;
+  XdmfInt32     BuildTime;
   XdmfGrid      **Children;
   XdmfAttribute **Attribute;
   XdmfAttribute *AssignedAttribute;

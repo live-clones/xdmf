@@ -30,6 +30,7 @@
 #include "XdmfTopology.h"
 #include "XdmfGeometry.h"
 #include "XdmfAttribute.h"
+#include "XdmfTime.h"
 
 XdmfGrid *HandleToXdmfGrid( XdmfString Source ){
   XdmfObject  *TempObj;
@@ -50,6 +51,8 @@ XdmfGrid::XdmfGrid() {
   this->GeometryIsMine = 1;
   this->Topology = new XdmfTopology;
   this->TopologyIsMine = 1;
+  this->Time = new XdmfTime;
+  this->TimeIsMine = 1;
   this->Attribute = (XdmfAttribute **)calloc(1, sizeof( XdmfAttribute * ));
   this->Children = (XdmfGrid **)calloc(1, sizeof( XdmfGrid * ));
   this->AssignedAttribute = NULL;
@@ -63,6 +66,7 @@ XdmfGrid::~XdmfGrid() {
   XdmfInt32  Index;
   if( this->GeometryIsMine && this->Geometry ) delete this->Geometry;
   if( this->TopologyIsMine && this->Topology ) delete this->Topology;
+  if( this->TimeIsMine && this->Time ) delete this->Time;
   for ( Index = 0; Index < this->NumberOfAttributes; Index ++ )
     {
     delete this->Attribute[Index];
@@ -101,6 +105,7 @@ XdmfGrid::Insert( XdmfElement *Child){
         XDMF_WORD_CMP(Child->GetElementName(), "Topology") ||
         XDMF_WORD_CMP(Child->GetElementName(), "Attribute") ||
         XDMF_WORD_CMP(Child->GetElementName(), "DataItem") ||
+        XDMF_WORD_CMP(Child->GetElementName(), "Time") ||
         XDMF_WORD_CMP(Child->GetElementName(), "Information")
         )){
         XdmfInt32   status = XdmfElement::Insert(Child);
@@ -132,6 +137,9 @@ XdmfGrid::Build(){
         if(this->InsertGeometry() != XDMF_SUCCESS) return(XDMF_FAIL);
         this->Geometry->Build();
     }else{
+    }
+    if(this->BuildTime && this->Time){
+            if(this->Time->Build() != XDMF_SUCCESS) return(XDMF_FAIL);
     }
     return(XDMF_SUCCESS);
 }
@@ -294,6 +302,17 @@ if( this->GridType & XDMF_GRID_MASK){
     nchild = this->DOM->FindNumberOfElements("Grid", this->Element);
     this->NumberOfChildren = nchild;
     this->Children = (XdmfGrid **)realloc(this->Children, nchild * sizeof(XdmfGrid *));
+    anElement = this->DOM->FindElement("Time", 0, this->Element);
+    if(anElement){
+        if(this->Time->SetDOM( this->DOM ) == XDMF_FAIL) return(XDMF_FAIL);
+        if(this->Time->SetElement(anElement) == XDMF_FAIL) return(XDMF_FAIL);
+        Status = this->Time->UpdateInformation();
+        if( Status == XDMF_FAIL ){
+            XdmfErrorMessage("Error Reading Time");
+            return( XDMF_FAIL );
+        }
+    }
+    anElement = this->DOM->FindElement("Geometry", 0, this->Element);
     for(i=0 ; i < nchild ; i++){
         node = this->DOM->FindElement("Grid", i, this->Element);
         if(!node) {
@@ -304,6 +323,9 @@ if( this->GridType & XDMF_GRID_MASK){
         if(this->Children[i]->SetDOM(this->DOM) == XDMF_FAIL) return(XDMF_FAIL);
         if(this->Children[i]->SetElement(node) == XDMF_FAIL) return(XDMF_FAIL);
         if(this->Children[i]->UpdateInformation() == XDMF_FAIL) return(XDMF_FAIL);
+        if(this->Time->GetTimeType() != XDMF_TIME_UNSET){
+                if(this->Children[i]->GetTime()->SetTimeFromParent(this->Time, i) != XDMF_SUCCESS) return(XDMF_FAIL);
+        }
     }
     if((this->GridType & XDMF_GRID_MASK) == XDMF_GRID_SUBSET){
         // Selection is the First Element Under Grid

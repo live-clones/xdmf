@@ -33,7 +33,7 @@ XdmfTime::XdmfTime() {
     this->Value = 0.0;
     this->Array = NULL;
     this->DataItem = new XdmfDataItem;
-    this->TimeType = XDMF_TIME_SINGLE;
+    this->TimeType = XDMF_TIME_UNSET;
     this->Function = NULL;
 }
 
@@ -60,8 +60,10 @@ XdmfInt32 XdmfTime::UpdateInformation(){
     if(!attribute) attribute = this->Get("Type");
     if( XDMF_WORD_CMP(attribute, "Single") ){
         this->TimeType = XDMF_TIME_SINGLE;
-    }else if( XDMF_WORD_CMP(attribute, "Uniform") ){
-        this->TimeType = XDMF_TIME_UNIFORM;
+    }else if( XDMF_WORD_CMP(attribute, "List") ){
+        this->TimeType = XDMF_TIME_LIST;
+    }else if( XDMF_WORD_CMP(attribute, "Range") ){
+        this->TimeType = XDMF_TIME_RANGE;
     }else if( XDMF_WORD_CMP(attribute, "HyperSlab") ){
         this->TimeType = XDMF_TIME_HYPERSLAB;
     }else if( XDMF_WORD_CMP(attribute, "Function") ){
@@ -108,6 +110,7 @@ XdmfInt32 XdmfTime::UpdateInformation(){
 }
 
 XdmfInt32 XdmfTime::Build(){
+    if(this->TimeType == XDMF_TIME_UNSET) return(XDMF_SUCCESS);
     if(XdmfElement::Build() != XDMF_SUCCESS) return(XDMF_FAIL);
     this->Set("TimeType", this->GetTimeTypeAsString());
     if(this->TimeType == XDMF_TIME_FUNCTION){
@@ -146,11 +149,55 @@ XdmfInt32 XdmfTime::Build(){
     return(XDMF_SUCCESS);
 }
 
+XdmfInt32
+XdmfTime::SetTimeFromParent(XdmfTime *ParentTime, XdmfInt64 Index){
+    XdmfArray *TimeArray;
+
+    if(!ParentTime || (Index < 0)) return(XDMF_FAIL);
+    // this->DebugOn();
+    XdmfDebug("Setting Time from Type " << ParentTime->GetTimeTypeAsString() << " Index = " << Index);
+    switch(ParentTime->GetTimeType()){
+        case XDMF_TIME_SINGLE:
+            this->TimeType = XDMF_TIME_SINGLE;
+            this->Value = ParentTime->GetValue();
+            XdmfDebug("Setting Time Value to " << this->Value);
+            break;
+        case XDMF_TIME_HYPERSLAB :
+            TimeArray = ParentTime->GetArray();
+            if(!TimeArray){
+                XdmfErrorMessage("TimeType is HyperSlab but there is no array");
+                return(XDMF_FAIL);
+            }
+            this->TimeType = XDMF_TIME_SINGLE;
+            this->Value = TimeArray->GetValueAsFloat64(0) + (TimeArray->GetValueAsFloat64(1) * Index);
+            XdmfDebug("Setting Time Value to " << this->Value);
+            break;
+        case XDMF_TIME_LIST:
+            TimeArray = ParentTime->GetArray();
+            if(!TimeArray){
+                XdmfErrorMessage("TimeType is List but there is no array");
+                return(XDMF_FAIL);
+            }
+            this->TimeType = XDMF_TIME_SINGLE;
+            this->Value = TimeArray->GetValueAsFloat64(Index);
+            XdmfDebug("Setting Time Value to " << this->Value);
+            break;
+        default :
+            XdmfErrorMessage("Unknown or Invalid TimeType");
+            return(XDMF_FAIL);
+    }
+    return(XDMF_SUCCESS);
+}
+
 XdmfConstString
 XdmfTime::GetTimeTypeAsString(void){
     switch(this->TimeType){
-        case XDMF_TIME_UNIFORM :
-            return("Uniform");
+        case XDMF_TIME_UNSET:
+            return("Unset");
+        case XDMF_TIME_LIST:
+            return("List");
+        case XDMF_TIME_RANGE:
+            return("Range");
         case XDMF_TIME_HYPERSLAB:
             return("HyperSlab");
         case XDMF_TIME_FUNCTION:

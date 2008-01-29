@@ -573,10 +573,11 @@ if( this->GetClass() == XDMF_UNSTRUCTURED ){
   if( ConnectionElement ){
       XdmfDataItem  Connections;
   
+    // cout << "Connection DataItem = " << &Connections << endl;
     XdmfDebug("Reading Connections from DataItem");
     if(Connections.SetDOM(this->DOM) == XDMF_FAIL) return(XDMF_FAIL);
     if( this->ConnectivityIsMine && this->Connectivity ) delete this->Connectivity;
-    if(Connections.SetElement(ConnectionElement) == XDMF_FAIL) return(XDMF_FAIL);
+    if(Connections.SetElement(ConnectionElement, 0) == XDMF_FAIL) return(XDMF_FAIL);
     if(Connections.UpdateInformation() == XDMF_FAIL) return(XDMF_FAIL);
     if(Connections.Update() == XDMF_FAIL) return(XDMF_FAIL);
     // Steal the Array so it doesn't get deleted in the destructor of the DataItem
