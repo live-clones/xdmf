@@ -21751,6 +21751,59 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_XdmfGrid_SetTime(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfTime *arg2 = (XdmfTime *) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfGrid_SetTime",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_SetTime" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_XdmfTime, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfGrid_SetTime" "', argument " "2"" of type '" "XdmfTime *""'"); 
+  }
+  arg2 = reinterpret_cast< XdmfTime * >(argp2);
+  result = (XdmfInt32)(arg1)->SetTime(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_GetTime(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfTime *result = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfGrid_GetTime",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_GetTime" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  result = (XdmfTime *)(arg1)->GetTime();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_XdmfTime, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_XdmfGrid_GetGridTypeAsString(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   XdmfGrid *arg1 = (XdmfGrid *) 0 ;
@@ -21950,6 +22003,59 @@ SWIGINTERN PyObject *_wrap_XdmfGrid_SetGridType(PyObject *SWIGUNUSEDPARM(self), 
   } 
   arg2 = static_cast< XdmfInt32 >(val2);
   result = (XdmfInt32)(arg1)->SetGridType(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_GetBuildTime(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfGrid_GetBuildTime",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_GetBuildTime" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  result = (XdmfInt32)(arg1)->GetBuildTime();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_SetBuildTime(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfInt32 arg2 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfGrid_SetBuildTime",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_SetBuildTime" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfGrid_SetBuildTime" "', argument " "2"" of type '" "XdmfInt32""'");
+  } 
+  arg2 = static_cast< XdmfInt32 >(val2);
+  result = (XdmfInt32)(arg1)->SetBuildTime(arg2);
   resultobj = SWIG_From_int(static_cast< int >(result));
   return resultobj;
 fail:
@@ -22654,6 +22760,177 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_XdmfTime_GetTimeType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfTime *arg1 = (XdmfTime *) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfTime_GetTimeType",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfTime, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfTime_GetTimeType" "', argument " "1"" of type '" "XdmfTime *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfTime * >(argp1);
+  result = (XdmfInt32)(arg1)->GetTimeType();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfTime_GetTimeTypeAsString(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfTime *arg1 = (XdmfTime *) 0 ;
+  XdmfConstString result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfTime_GetTimeTypeAsString",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfTime, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfTime_GetTimeTypeAsString" "', argument " "1"" of type '" "XdmfTime *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfTime * >(argp1);
+  result = (XdmfConstString)(arg1)->GetTimeTypeAsString();
+  resultobj = SWIG_FromCharPtr((const char *)result);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfTime_SetTimeType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfTime *arg1 = (XdmfTime *) 0 ;
+  XdmfInt32 arg2 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfTime_SetTimeType",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfTime, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfTime_SetTimeType" "', argument " "1"" of type '" "XdmfTime *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfTime * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfTime_SetTimeType" "', argument " "2"" of type '" "XdmfInt32""'");
+  } 
+  arg2 = static_cast< XdmfInt32 >(val2);
+  result = (XdmfInt32)(arg1)->SetTimeType(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfTime_GetFunction(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfTime *arg1 = (XdmfTime *) 0 ;
+  XdmfConstString result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfTime_GetFunction",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfTime, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfTime_GetFunction" "', argument " "1"" of type '" "XdmfTime *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfTime * >(argp1);
+  result = (XdmfConstString)(arg1)->GetFunction();
+  resultobj = SWIG_FromCharPtr((const char *)result);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfTime_SetFunction(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfTime *arg1 = (XdmfTime *) 0 ;
+  XdmfConstString arg2 = (XdmfConstString) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfTime_SetFunction",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfTime, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfTime_SetFunction" "', argument " "1"" of type '" "XdmfTime *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfTime * >(argp1);
+  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfTime_SetFunction" "', argument " "2"" of type '" "XdmfConstString""'");
+  }
+  arg2 = reinterpret_cast< XdmfConstString >(buf2);
+  result = (XdmfInt32)(arg1)->SetFunction(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfTime_SetTimeFromParent(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfTime *arg1 = (XdmfTime *) 0 ;
+  XdmfTime *arg2 = (XdmfTime *) 0 ;
+  XdmfInt64 arg3 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  long long val3 ;
+  int ecode3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:XdmfTime_SetTimeFromParent",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfTime, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfTime_SetTimeFromParent" "', argument " "1"" of type '" "XdmfTime *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfTime * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_XdmfTime, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfTime_SetTimeFromParent" "', argument " "2"" of type '" "XdmfTime *""'"); 
+  }
+  arg2 = reinterpret_cast< XdmfTime * >(argp2);
+  ecode3 = SWIG_AsVal_long_SS_long(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "XdmfTime_SetTimeFromParent" "', argument " "3"" of type '" "XdmfInt64""'");
+  } 
+  arg3 = static_cast< XdmfInt64 >(val3);
+  result = (XdmfInt32)(arg1)->SetTimeFromParent(arg2,arg3);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *XdmfTime_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *obj;
   if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
@@ -23101,6 +23378,8 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfGrid_GetGeometry", _wrap_XdmfGrid_GetGeometry, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_SetTopology", _wrap_XdmfGrid_SetTopology, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_GetTopology", _wrap_XdmfGrid_GetTopology, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_SetTime", _wrap_XdmfGrid_SetTime, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_GetTime", _wrap_XdmfGrid_GetTime, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_GetGridTypeAsString", _wrap_XdmfGrid_GetGridTypeAsString, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_SetGridTypeFromString", _wrap_XdmfGrid_SetGridTypeFromString, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_Build", _wrap_XdmfGrid_Build, METH_VARARGS, NULL},
@@ -23109,6 +23388,8 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfGrid_Insert", _wrap_XdmfGrid_Insert, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_GetGridType", _wrap_XdmfGrid_GetGridType, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_SetGridType", _wrap_XdmfGrid_SetGridType, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_GetBuildTime", _wrap_XdmfGrid_GetBuildTime, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_SetBuildTime", _wrap_XdmfGrid_SetBuildTime, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_Copy", _wrap_XdmfGrid_Copy, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_GetNumberOfChildren", _wrap_XdmfGrid_GetNumberOfChildren, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_SetNumberOfChildren", _wrap_XdmfGrid_SetNumberOfChildren, METH_VARARGS, NULL},
@@ -23137,6 +23418,12 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfTime_SetArray", _wrap_XdmfTime_SetArray, METH_VARARGS, NULL},
 	 { (char *)"XdmfTime_GetDataItem", _wrap_XdmfTime_GetDataItem, METH_VARARGS, NULL},
 	 { (char *)"XdmfTime_SetDataItem", _wrap_XdmfTime_SetDataItem, METH_VARARGS, NULL},
+	 { (char *)"XdmfTime_GetTimeType", _wrap_XdmfTime_GetTimeType, METH_VARARGS, NULL},
+	 { (char *)"XdmfTime_GetTimeTypeAsString", _wrap_XdmfTime_GetTimeTypeAsString, METH_VARARGS, NULL},
+	 { (char *)"XdmfTime_SetTimeType", _wrap_XdmfTime_SetTimeType, METH_VARARGS, NULL},
+	 { (char *)"XdmfTime_GetFunction", _wrap_XdmfTime_GetFunction, METH_VARARGS, NULL},
+	 { (char *)"XdmfTime_SetFunction", _wrap_XdmfTime_SetFunction, METH_VARARGS, NULL},
+	 { (char *)"XdmfTime_SetTimeFromParent", _wrap_XdmfTime_SetTimeFromParent, METH_VARARGS, NULL},
 	 { (char *)"XdmfTime_swigregister", XdmfTime_swigregister, METH_VARARGS, NULL},
 	 { NULL, NULL, 0, NULL }
 };
@@ -24089,5 +24376,11 @@ SWIGEXPORT void SWIG_init(void) {
   SWIG_Python_SetConstant(d, "XDMF_GRID_SECTION_ALL",SWIG_From_int(static_cast< int >(0x100000)));
   SWIG_Python_SetConstant(d, "XDMF_GRID_SECTION_DATA_ITEM",SWIG_From_int(static_cast< int >(0x200000)));
   SWIG_Python_SetConstant(d, "XDMF_GRID_SECTION_MASK",SWIG_From_int(static_cast< int >(0xF00000)));
+  SWIG_Python_SetConstant(d, "XDMF_TIME_SINGLE",SWIG_From_int(static_cast< int >(0x00)));
+  SWIG_Python_SetConstant(d, "XDMF_TIME_LIST",SWIG_From_int(static_cast< int >(0x01)));
+  SWIG_Python_SetConstant(d, "XDMF_TIME_HYPERSLAB",SWIG_From_int(static_cast< int >(0x02)));
+  SWIG_Python_SetConstant(d, "XDMF_TIME_RANGE",SWIG_From_int(static_cast< int >(0x03)));
+  SWIG_Python_SetConstant(d, "XDMF_TIME_FUNCTION",SWIG_From_int(static_cast< int >(0x04)));
+  SWIG_Python_SetConstant(d, "XDMF_TIME_UNSET",SWIG_From_int(static_cast< int >(0x0FF)));
 }
 

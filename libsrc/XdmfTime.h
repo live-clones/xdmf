@@ -29,15 +29,16 @@
 /*! XdmfTime represents a Time specification.
 Time is a child of the <Grid> element :
 \verbatim
-<Time TypeType="Single* | Uniform | HyperSlab | Function" 
+<Time TypeType="Single* | List | HyperSlab | Range | Function" 
     NumberOfIterations="1* | N"
     Value="(no default)">
      <DataItem ....
 </Time>
     TimeType can be :
         Single - A Single Time for the entire Grid
-        Uniform - a Time Series
+        List - a Time Series
         HyperSlab - Start Stride Count
+        Range - Min Max
         Function - XdmfFloat64 *Function(GridIndex)
 \endverbatim
 */
@@ -46,11 +47,14 @@ Time is a child of the <Grid> element :
 
 class XdmfDataItem;
 class XdmfArray;
+class XdmfGrid;
 
 #define XDMF_TIME_SINGLE    0x00
-#define XDMF_TIME_UNIFORM   0x01
+#define XDMF_TIME_LIST      0x01
 #define XDMF_TIME_HYPERSLAB 0x02
-#define XDMF_TIME_FUNCTION  0x03
+#define XDMF_TIME_RANGE     0x03
+#define XDMF_TIME_FUNCTION  0x04
+#define XDMF_TIME_UNSET     0x0FF
 
 class XDMF_EXPORT XdmfTime : public XdmfElement {
 
@@ -94,6 +98,8 @@ public:
     XdmfGetStringMacro(Function);
     //! Set the Function
     XdmfSetStringMacro(Function);
+    //! Set Time From Parent Information
+    XdmfInt32 SetTimeFromParent(XdmfTime *ParentTime, XdmfInt64 Index);
 protected:
     XdmfInt32    TimeType;
     XdmfFloat64  Value;

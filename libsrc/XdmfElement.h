@@ -112,8 +112,9 @@ public:
 //! Set the XML Node from which to parse
 /*! 
         \param Element is the low level node returned from XdmfDOM->FindElement() etc.
+        \param AssociateElement Should the node in the DOM be associated with the XdmfElement (1)
 */
-    XdmfInt32   SetElement(XdmfXmlNode Element);
+    XdmfInt32   SetElement(XdmfXmlNode Element, XdmfInt32 AssociateElement=1);
 //! Get the XML Node
     XdmfGetValueMacro(Element, XdmfXmlNode);
 

@@ -300,7 +300,7 @@ if( ( this->GeometryType == XDMF_GEOMETRY_X_Y_Z ) ||
   if( PointsElement ){
     XdmfDataItem PointsItem;
     if(PointsItem.SetDOM( this->DOM ) == XDMF_FAIL) return(XDMF_FAIL);
-    if(PointsItem.SetElement(PointsElement) == XDMF_FAIL) return(XDMF_FAIL);
+    if(PointsItem.SetElement(PointsElement, 0) == XDMF_FAIL) return(XDMF_FAIL);
     if(PointsItem.UpdateInformation() == XDMF_FAIL) return(XDMF_FAIL);
     if(PointsItem.Update() == XDMF_FAIL) return(XDMF_FAIL);
     TmpArray = PointsItem.GetArray();
@@ -373,7 +373,7 @@ if( ( this->GeometryType == XDMF_GEOMETRY_X_Y_Z ) ||
       XdmfDebug("Reading Origin and Dx, Dy, Dz" );
       PointsElement = this->DOM->FindDataElement(0, this->Element );
       if( PointsElement ){
-        if(PointsItem.SetElement(PointsElement) == XDMF_FAIL) return(XDMF_FAIL);
+        if(PointsItem.SetElement(PointsElement, 0) == XDMF_FAIL) return(XDMF_FAIL);
         if(PointsItem.UpdateInformation() == XDMF_FAIL) return(XDMF_FAIL);
         if(PointsItem.Update() == XDMF_FAIL) return(XDMF_FAIL);
         TmpArray = PointsItem.GetArray();
@@ -382,7 +382,7 @@ if( ( this->GeometryType == XDMF_GEOMETRY_X_Y_Z ) ||
         }
       PointsElement = this->DOM->FindDataElement(1, this->Element );
       if( PointsElement ){
-        if(PointsItem.SetElement(PointsElement) == XDMF_FAIL) return(XDMF_FAIL);
+        if(PointsItem.SetElement(PointsElement, 0) == XDMF_FAIL) return(XDMF_FAIL);
         if(PointsItem.UpdateInformation() == XDMF_FAIL) return(XDMF_FAIL);
         if(PointsItem.Update() == XDMF_FAIL) return(XDMF_FAIL);
         TmpArray = PointsItem.GetArray();
@@ -403,7 +403,7 @@ if( ( this->GeometryType == XDMF_GEOMETRY_X_Y_Z ) ||
       if( PointsElement ){
         XdmfDataItem PointsItem;
         PointsItem.SetDOM(this->DOM);
-        if(PointsItem.SetElement(PointsElement) == XDMF_FAIL) return(XDMF_FAIL);
+        if(PointsItem.SetElement(PointsElement, 0) == XDMF_FAIL) return(XDMF_FAIL);
         if(PointsItem.UpdateInformation() == XDMF_FAIL) return(XDMF_FAIL);
         if(PointsItem.Update() == XDMF_FAIL) return(XDMF_FAIL);
         TmpArray = PointsItem.GetArray();
@@ -421,7 +421,7 @@ if( ( this->GeometryType == XDMF_GEOMETRY_X_Y_Z ) ||
       if( PointsElement ){
         XdmfDataItem PointsItem;
         PointsItem.SetDOM(this->DOM);
-        if(PointsItem.SetElement(PointsElement) == XDMF_FAIL) return(XDMF_FAIL);
+        if(PointsItem.SetElement(PointsElement, 0) == XDMF_FAIL) return(XDMF_FAIL);
         if(PointsItem.UpdateInformation() == XDMF_FAIL) return(XDMF_FAIL);
         if(PointsItem.Update() == XDMF_FAIL) return(XDMF_FAIL);
         TmpArray = PointsItem.GetArray();
@@ -439,7 +439,7 @@ if( ( this->GeometryType == XDMF_GEOMETRY_X_Y_Z ) ||
       if( PointsElement ){
         XdmfDataItem PointsItem;
         PointsItem.SetDOM(this->DOM);
-        if(PointsItem.SetElement(PointsElement) == XDMF_FAIL) return(XDMF_FAIL);
+        if(PointsItem.SetElement(PointsElement, 0) == XDMF_FAIL) return(XDMF_FAIL);
         if(PointsItem.UpdateInformation() == XDMF_FAIL) return(XDMF_FAIL);
         if(PointsItem.Update() == XDMF_FAIL) return(XDMF_FAIL);
         TmpArray = PointsItem.GetArray();

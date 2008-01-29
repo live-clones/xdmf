@@ -871,6 +871,8 @@ class XdmfGrid(XdmfElement):
     def GetGeometry(*args): return _Xdmf.XdmfGrid_GetGeometry(*args)
     def SetTopology(*args): return _Xdmf.XdmfGrid_SetTopology(*args)
     def GetTopology(*args): return _Xdmf.XdmfGrid_GetTopology(*args)
+    def SetTime(*args): return _Xdmf.XdmfGrid_SetTime(*args)
+    def GetTime(*args): return _Xdmf.XdmfGrid_GetTime(*args)
     def GetGridTypeAsString(*args): return _Xdmf.XdmfGrid_GetGridTypeAsString(*args)
     def SetGridTypeFromString(*args): return _Xdmf.XdmfGrid_SetGridTypeFromString(*args)
     def Build(*args): return _Xdmf.XdmfGrid_Build(*args)
@@ -879,6 +881,8 @@ class XdmfGrid(XdmfElement):
     def Insert(*args): return _Xdmf.XdmfGrid_Insert(*args)
     def GetGridType(*args): return _Xdmf.XdmfGrid_GetGridType(*args)
     def SetGridType(*args): return _Xdmf.XdmfGrid_SetGridType(*args)
+    def GetBuildTime(*args): return _Xdmf.XdmfGrid_GetBuildTime(*args)
+    def SetBuildTime(*args): return _Xdmf.XdmfGrid_SetBuildTime(*args)
     def Copy(*args): return _Xdmf.XdmfGrid_Copy(*args)
     def GetNumberOfChildren(*args): return _Xdmf.XdmfGrid_GetNumberOfChildren(*args)
     def SetNumberOfChildren(*args): return _Xdmf.XdmfGrid_SetNumberOfChildren(*args)
@@ -897,6 +901,12 @@ XdmfGrid_swigregister = _Xdmf.XdmfGrid_swigregister
 XdmfGrid_swigregister(XdmfGrid)
 
 HandleToXdmfGrid = _Xdmf.HandleToXdmfGrid
+XDMF_TIME_SINGLE = _Xdmf.XDMF_TIME_SINGLE
+XDMF_TIME_LIST = _Xdmf.XDMF_TIME_LIST
+XDMF_TIME_HYPERSLAB = _Xdmf.XDMF_TIME_HYPERSLAB
+XDMF_TIME_RANGE = _Xdmf.XDMF_TIME_RANGE
+XDMF_TIME_FUNCTION = _Xdmf.XDMF_TIME_FUNCTION
+XDMF_TIME_UNSET = _Xdmf.XDMF_TIME_UNSET
 class XdmfTime(XdmfElement):
     __swig_setmethods__ = {}
     for _s in [XdmfElement]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
@@ -921,6 +931,12 @@ class XdmfTime(XdmfElement):
     def SetArray(*args): return _Xdmf.XdmfTime_SetArray(*args)
     def GetDataItem(*args): return _Xdmf.XdmfTime_GetDataItem(*args)
     def SetDataItem(*args): return _Xdmf.XdmfTime_SetDataItem(*args)
+    def GetTimeType(*args): return _Xdmf.XdmfTime_GetTimeType(*args)
+    def GetTimeTypeAsString(*args): return _Xdmf.XdmfTime_GetTimeTypeAsString(*args)
+    def SetTimeType(*args): return _Xdmf.XdmfTime_SetTimeType(*args)
+    def GetFunction(*args): return _Xdmf.XdmfTime_GetFunction(*args)
+    def SetFunction(*args): return _Xdmf.XdmfTime_SetFunction(*args)
+    def SetTimeFromParent(*args): return _Xdmf.XdmfTime_SetTimeFromParent(*args)
 XdmfTime_swigregister = _Xdmf.XdmfTime_swigregister
 XdmfTime_swigregister(XdmfTime)
 
