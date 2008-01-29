@@ -118,7 +118,7 @@ XdmfValuesHDF::Write(XdmfArray *anArray, XdmfConstString aHeavyDataSetName){
 
     if(!aHeavyDataSetName) aHeavyDataSetName = this->GetHeavyDataSetName();
     if(!aHeavyDataSetName){
-        aHeavyDataSetName = "Xdmf.h5:/Data";
+        aHeavyDataSetName = this->GetUniqueName("Xdmf.h5:/Data");
     }
     XdmfDebug("Writing Values to " << aHeavyDataSetName);
     if(!this->DataDesc ){
