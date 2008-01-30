@@ -12135,6 +12135,62 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_XdmfArray_SetHeavyDataSetName(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfArray *arg1 = (XdmfArray *) 0 ;
+  XdmfConstString arg2 = (XdmfConstString) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfArray_SetHeavyDataSetName",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfArray, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfArray_SetHeavyDataSetName" "', argument " "1"" of type '" "XdmfArray *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfArray * >(argp1);
+  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfArray_SetHeavyDataSetName" "', argument " "2"" of type '" "XdmfConstString""'");
+  }
+  arg2 = reinterpret_cast< XdmfConstString >(buf2);
+  result = (XdmfInt32)(arg1)->SetHeavyDataSetName(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfArray_GetHeavyDataSetName(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfArray *arg1 = (XdmfArray *) 0 ;
+  XdmfConstString result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfArray_GetHeavyDataSetName",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfArray, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfArray_GetHeavyDataSetName" "', argument " "1"" of type '" "XdmfArray *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfArray * >(argp1);
+  result = (XdmfConstString)(arg1)->GetHeavyDataSetName();
+  resultobj = SWIG_FromCharPtr((const char *)result);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *XdmfArray_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *obj;
   if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
@@ -23402,6 +23458,8 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfArray_GetMean", _wrap_XdmfArray_GetMean, METH_VARARGS, NULL},
 	 { (char *)"XdmfArray_SetDataFromChars", _wrap_XdmfArray_SetDataFromChars, METH_VARARGS, NULL},
 	 { (char *)"XdmfArray_GetDataPointerAsCharPointer", _wrap_XdmfArray_GetDataPointerAsCharPointer, METH_VARARGS, NULL},
+	 { (char *)"XdmfArray_SetHeavyDataSetName", _wrap_XdmfArray_SetHeavyDataSetName, METH_VARARGS, NULL},
+	 { (char *)"XdmfArray_GetHeavyDataSetName", _wrap_XdmfArray_GetHeavyDataSetName, METH_VARARGS, NULL},
 	 { (char *)"XdmfArray_swigregister", XdmfArray_swigregister, METH_VARARGS, NULL},
 	 { (char *)"XdmfArrayList_name_set", _wrap_XdmfArrayList_name_set, METH_VARARGS, NULL},
 	 { (char *)"XdmfArrayList_name_get", _wrap_XdmfArrayList_name_get, METH_VARARGS, NULL},

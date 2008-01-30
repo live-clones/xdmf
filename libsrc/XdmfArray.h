@@ -375,6 +375,10 @@ public:
   XdmfString GetDataPointerAsCharPointer( void ) {
     return( (XdmfString)this->GetDataPointer() );
     };
+//! Set the name of the Heavy Data Set when written (if applicable)
+    XdmfSetStringMacro(HeavyDataSetName);
+//! Get the name of the Heavy Data Set when written (if applicable)
+    XdmfGetStringMacro(HeavyDataSetName);
 
 //! Copy Data From One Array to Another
 //  XdmfPointer MemCopy( XdmfLength StartOffset,
@@ -409,6 +413,7 @@ public:
 //    };
 
 protected:
+  XdmfString   HeavyDataSetName;
   XdmfPointer  DataPointer;
   XdmfBoolean  DataIsMine;
   char    TagName[XDMF_ARRAY_TAG_LENGTH];

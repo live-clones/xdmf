@@ -345,6 +345,8 @@ class XdmfArray(XdmfDataDesc):
     def GetMean(*args): return _Xdmf.XdmfArray_GetMean(*args)
     def SetDataFromChars(*args): return _Xdmf.XdmfArray_SetDataFromChars(*args)
     def GetDataPointerAsCharPointer(*args): return _Xdmf.XdmfArray_GetDataPointerAsCharPointer(*args)
+    def SetHeavyDataSetName(*args): return _Xdmf.XdmfArray_SetHeavyDataSetName(*args)
+    def GetHeavyDataSetName(*args): return _Xdmf.XdmfArray_GetHeavyDataSetName(*args)
 XdmfArray_swigregister = _Xdmf.XdmfArray_swigregister
 XdmfArray_swigregister(XdmfArray)
 
