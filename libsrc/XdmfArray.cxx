@@ -207,6 +207,7 @@ Tag << "_" << XDMF_64BIT_CAST GlobalTimeCntr << "_XdmfArray" << ends;
 XdmfArray::XdmfArray() {
   XdmfDebug("XdmfArray Constructor");
   this->DataPointer = NULL;
+  this->HeavyDataSetName = NULL;
   this->DataIsMine = 1;
   this->AddArrayToList();
  }
