@@ -27,6 +27,7 @@
 #include "XdmfDOM.h"
 #include "XdmfArray.h"
 #include "XdmfDataItem.h"
+#include "XdmfGrid.h"
 
 XdmfTime::XdmfTime() {
     this->SetElementName("Time");
@@ -150,6 +151,70 @@ XdmfInt32 XdmfTime::Build(){
 }
 
 XdmfInt32
+XdmfTime::Evaluate(XdmfGrid *Grid, XdmfArray *ArrayToFill, XdmfInt32 Append){
+    XdmfInt64   i, n, nelements;
+    XdmfTime    *gt;
+
+    if(!ArrayToFill){
+        XdmfErrorMessage("Array to fill is NULL");
+        return(XDMF_FAIL);
+    }
+    if(Append){
+        nelements = ArrayToFill->GetNumberOfElements();
+    }else{
+        nelements = 0;
+    }
+    gt = Grid->GetTime();
+    if(gt){
+        switch(gt->GetTimeType()){
+            case XDMF_TIME_SINGLE :
+                nelements += 1;
+                ArrayToFill->SetNumberOfElements(nelements);
+                ArrayToFill->SetValueFromFloat64(nelements - 1, gt->GetValue());
+                // cout << "Setting val " << nelements - 1 << " = " << gt->GetValue() << endl;
+                break;
+            case XDMF_TIME_RANGE :
+            case XDMF_TIME_LIST :
+                // cout << "Adding " << gt->GetArray()->GetValues() << endl;
+                n = gt->GetArray()->GetNumberOfElements();
+                nelements += n;
+                ArrayToFill->SetNumberOfElements(nelements);
+                for(i=0 ; i < n ; i++){
+                    ArrayToFill->SetValueFromFloat64(nelements - n + i, gt->GetArray()->GetValueAsFloat64(i));
+                }
+                // cout << "Array = " << ArrayToFill->GetValues() << endl;
+                break;
+            case XDMF_TIME_HYPERSLAB :
+                n = gt->GetArray()->GetValueAsInt64(2);
+                nelements += n;
+                ArrayToFill->SetNumberOfElements(nelements);
+                for(i=0 ; i < n ; i++){
+                    ArrayToFill->SetValueFromFloat64(nelements - n + i,
+                        gt->GetArray()->GetValueAsFloat64(0) + (gt->GetArray()->GetValueAsFloat64(1) * i));
+                }
+                // cout << "Array = " << ArrayToFill->GetValues() << endl;
+                break;
+            default :
+                break;
+        }
+    }
+    for(i=0 ; i < Grid->GetNumberOfChildren() ; i++){
+            // Append children's times
+            if(this->Evaluate(Grid->GetChild(i), ArrayToFill, 1) != XDMF_SUCCESS) return(XDMF_FAIL);
+    }
+    if(this->TimeType == XDMF_TIME_RANGE) {
+        XdmfFloat64 minval, maxval;
+
+        minval = ArrayToFill->GetMinAsFloat64();
+        maxval = ArrayToFill->GetMaxAsFloat64();
+        ArrayToFill->SetNumberOfElements(2);
+        ArrayToFill->SetValueFromFloat64(0, minval);
+        ArrayToFill->SetValueFromFloat64(1, maxval);
+    }
+return(XDMF_SUCCESS);
+}
+
+XdmfInt32
 XdmfTime::SetTimeFromParent(XdmfTime *ParentTime, XdmfInt64 Index){
     XdmfArray *TimeArray;
 
@@ -172,15 +237,19 @@ XdmfTime::SetTimeFromParent(XdmfTime *ParentTime, XdmfInt64 Index){
             this->Value = TimeArray->GetValueAsFloat64(0) + (TimeArray->GetValueAsFloat64(1) * Index);
             XdmfDebug("Setting Time Value to " << this->Value);
             break;
-        case XDMF_TIME_LIST:
+        case XDMF_TIME_LIST :
             TimeArray = ParentTime->GetArray();
             if(!TimeArray){
                 XdmfErrorMessage("TimeType is List but there is no array");
                 return(XDMF_FAIL);
             }
             this->TimeType = XDMF_TIME_SINGLE;
-            this->Value = TimeArray->GetValueAsFloat64(Index);
-            XdmfDebug("Setting Time Value to " << this->Value);
+            this->SetValue(TimeArray->GetValueAsFloat64(Index));
+            XdmfDebug("Setting Time Value to " << this->GetValue());
+            break;
+        case XDMF_TIME_RANGE :
+            this->TimeType = XDMF_TIME_RANGE;
+            this->Array = ParentTime->GetArray();
             break;
         default :
             XdmfErrorMessage("Unknown or Invalid TimeType");

@@ -937,6 +937,7 @@ class XdmfTime(XdmfElement):
     def GetFunction(*args): return _Xdmf.XdmfTime_GetFunction(*args)
     def SetFunction(*args): return _Xdmf.XdmfTime_SetFunction(*args)
     def SetTimeFromParent(*args): return _Xdmf.XdmfTime_SetTimeFromParent(*args)
+    def Evaluate(*args): return _Xdmf.XdmfTime_Evaluate(*args)
 XdmfTime_swigregister = _Xdmf.XdmfTime_swigregister
 XdmfTime_swigregister(XdmfTime)
 
