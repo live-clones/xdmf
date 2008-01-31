@@ -557,3 +557,56 @@ XdmfGrid::IsUniform(){
     if(this->GridType & XDMF_GRID_MASK) return(XDMF_FALSE);
     return(XDMF_TRUE);
 }
+
+XdmfInt32
+XdmfGrid::FindGridsAtTime(XdmfTime *Time, XdmfArray *ArrayToFill, XdmfFloat64 Range, XdmfInt32 Append){
+    XdmfInt64   i, n, index = 0, nchild;
+
+    nchild = this->GetNumberOfChildren();
+    if(!nchild) return(XDMF_FALSE);
+    if(Append){
+        index = ArrayToFill->GetNumberOfElements();
+        ArrayToFill->SetNumberOfElements(index + nchild);
+    }else{
+        index = 0;
+        ArrayToFill->SetNumberOfElements(nchild);
+    }
+    for(i=0 ; i < this->GetNumberOfChildren() ; i++){
+        // cout << "IsValid(" << i << ") = " << this->GetChild(i)->GetTime()->IsValid(Time, Range) << endl;
+        if(this->GetChild(i)->GetTime()->IsValid(Time, Range)){
+            ArrayToFill->SetValueFromInt64(index, i);
+            index++;
+        }
+    }
+    if(index){
+        // Squeeze
+        ArrayToFill->SetNumberOfElements(index);
+    }else{
+        return(XDMF_FAIL);
+    }
+return(XDMF_SUCCESS);
+}
+
+XdmfInt32
+XdmfGrid::FindGridsInTimeRange(XdmfFloat64 TimeMin, XdmfFloat64 TimeMax, XdmfArray *ArrayToFill){
+    XdmfInt64   i, n, index = 0, nchild;
+
+    nchild = this->GetNumberOfChildren();
+    if(!nchild) return(XDMF_FALSE);
+    ArrayToFill->SetNumberType(XDMF_INT64_TYPE);
+    ArrayToFill->SetNumberOfElements(nchild);
+    for(i=0 ; i < nchild ; i++){
+        // cout << "IsValid(" << i << ") = " << this->GetChild(i)->GetTime()->IsValid(TimeMin, TimeMax) << endl;
+        if(this->GetChild(i)->GetTime()->IsValid(TimeMin, TimeMax)){
+            ArrayToFill->SetValueFromInt64(index, i);
+            index++;
+        }
+    }
+    if(index){
+        // Squeeze
+        ArrayToFill->SetNumberOfElements(index);
+    }else{
+        return(XDMF_FAIL);
+    }
+return(XDMF_SUCCESS);
+}

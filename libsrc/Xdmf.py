@@ -899,6 +899,8 @@ class XdmfGrid(XdmfElement):
     def UpdateInformation(*args): return _Xdmf.XdmfGrid_UpdateInformation(*args)
     def Update(*args): return _Xdmf.XdmfGrid_Update(*args)
     def GetChild(*args): return _Xdmf.XdmfGrid_GetChild(*args)
+    def FindGridsInTimeRange(*args): return _Xdmf.XdmfGrid_FindGridsInTimeRange(*args)
+    def FindGridsAtTime(*args): return _Xdmf.XdmfGrid_FindGridsAtTime(*args)
 XdmfGrid_swigregister = _Xdmf.XdmfGrid_swigregister
 XdmfGrid_swigregister(XdmfGrid)
 
@@ -940,6 +942,7 @@ class XdmfTime(XdmfElement):
     def SetFunction(*args): return _Xdmf.XdmfTime_SetFunction(*args)
     def SetTimeFromParent(*args): return _Xdmf.XdmfTime_SetTimeFromParent(*args)
     def Evaluate(*args): return _Xdmf.XdmfTime_Evaluate(*args)
+    def IsValid(*args): return _Xdmf.XdmfTime_IsValid(*args)
 XdmfTime_swigregister = _Xdmf.XdmfTime_swigregister
 XdmfTime_swigregister(XdmfTime)
 
