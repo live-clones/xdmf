@@ -22584,6 +22584,294 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_XdmfGrid_FindGridsInTimeRange(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfFloat64 arg2 ;
+  XdmfFloat64 arg3 ;
+  XdmfArray *arg4 = (XdmfArray *) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  double val3 ;
+  int ecode3 = 0 ;
+  void *argp4 = 0 ;
+  int res4 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOO:XdmfGrid_FindGridsInTimeRange",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_FindGridsInTimeRange" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfGrid_FindGridsInTimeRange" "', argument " "2"" of type '" "XdmfFloat64""'");
+  } 
+  arg2 = static_cast< XdmfFloat64 >(val2);
+  ecode3 = SWIG_AsVal_double(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "XdmfGrid_FindGridsInTimeRange" "', argument " "3"" of type '" "XdmfFloat64""'");
+  } 
+  arg3 = static_cast< XdmfFloat64 >(val3);
+  res4 = SWIG_ConvertPtr(obj3, &argp4,SWIGTYPE_p_XdmfArray, 0 |  0 );
+  if (!SWIG_IsOK(res4)) {
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "XdmfGrid_FindGridsInTimeRange" "', argument " "4"" of type '" "XdmfArray *""'"); 
+  }
+  arg4 = reinterpret_cast< XdmfArray * >(argp4);
+  result = (XdmfInt32)(arg1)->FindGridsInTimeRange(arg2,arg3,arg4);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_FindGridsAtTime__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfTime *arg2 = (XdmfTime *) 0 ;
+  XdmfArray *arg3 = (XdmfArray *) 0 ;
+  XdmfFloat64 arg4 ;
+  XdmfInt32 arg5 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  double val4 ;
+  int ecode4 = 0 ;
+  int val5 ;
+  int ecode5 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  PyObject * obj4 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOOO:XdmfGrid_FindGridsAtTime",&obj0,&obj1,&obj2,&obj3,&obj4)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_FindGridsAtTime" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_XdmfTime, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfGrid_FindGridsAtTime" "', argument " "2"" of type '" "XdmfTime *""'"); 
+  }
+  arg2 = reinterpret_cast< XdmfTime * >(argp2);
+  res3 = SWIG_ConvertPtr(obj2, &argp3,SWIGTYPE_p_XdmfArray, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "XdmfGrid_FindGridsAtTime" "', argument " "3"" of type '" "XdmfArray *""'"); 
+  }
+  arg3 = reinterpret_cast< XdmfArray * >(argp3);
+  ecode4 = SWIG_AsVal_double(obj3, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "XdmfGrid_FindGridsAtTime" "', argument " "4"" of type '" "XdmfFloat64""'");
+  } 
+  arg4 = static_cast< XdmfFloat64 >(val4);
+  ecode5 = SWIG_AsVal_int(obj4, &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "XdmfGrid_FindGridsAtTime" "', argument " "5"" of type '" "XdmfInt32""'");
+  } 
+  arg5 = static_cast< XdmfInt32 >(val5);
+  result = (XdmfInt32)(arg1)->FindGridsAtTime(arg2,arg3,arg4,arg5);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_FindGridsAtTime__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfTime *arg2 = (XdmfTime *) 0 ;
+  XdmfArray *arg3 = (XdmfArray *) 0 ;
+  XdmfFloat64 arg4 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  double val4 ;
+  int ecode4 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOO:XdmfGrid_FindGridsAtTime",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_FindGridsAtTime" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_XdmfTime, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfGrid_FindGridsAtTime" "', argument " "2"" of type '" "XdmfTime *""'"); 
+  }
+  arg2 = reinterpret_cast< XdmfTime * >(argp2);
+  res3 = SWIG_ConvertPtr(obj2, &argp3,SWIGTYPE_p_XdmfArray, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "XdmfGrid_FindGridsAtTime" "', argument " "3"" of type '" "XdmfArray *""'"); 
+  }
+  arg3 = reinterpret_cast< XdmfArray * >(argp3);
+  ecode4 = SWIG_AsVal_double(obj3, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "XdmfGrid_FindGridsAtTime" "', argument " "4"" of type '" "XdmfFloat64""'");
+  } 
+  arg4 = static_cast< XdmfFloat64 >(val4);
+  result = (XdmfInt32)(arg1)->FindGridsAtTime(arg2,arg3,arg4);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_FindGridsAtTime__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfTime *arg2 = (XdmfTime *) 0 ;
+  XdmfArray *arg3 = (XdmfArray *) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:XdmfGrid_FindGridsAtTime",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_FindGridsAtTime" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_XdmfTime, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfGrid_FindGridsAtTime" "', argument " "2"" of type '" "XdmfTime *""'"); 
+  }
+  arg2 = reinterpret_cast< XdmfTime * >(argp2);
+  res3 = SWIG_ConvertPtr(obj2, &argp3,SWIGTYPE_p_XdmfArray, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "XdmfGrid_FindGridsAtTime" "', argument " "3"" of type '" "XdmfArray *""'"); 
+  }
+  arg3 = reinterpret_cast< XdmfArray * >(argp3);
+  result = (XdmfInt32)(arg1)->FindGridsAtTime(arg2,arg3);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_FindGridsAtTime(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[6];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = PyObject_Length(args);
+  for (ii = 0; (ii < argc) && (ii < 5); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 3) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfGrid, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_XdmfTime, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        void *vptr = 0;
+        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_XdmfArray, 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          return _wrap_XdmfGrid_FindGridsAtTime__SWIG_2(self, args);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfGrid, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_XdmfTime, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        void *vptr = 0;
+        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_XdmfArray, 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          {
+            int res = SWIG_AsVal_double(argv[3], NULL);
+            _v = SWIG_CheckState(res);
+          }
+          if (_v) {
+            return _wrap_XdmfGrid_FindGridsAtTime__SWIG_1(self, args);
+          }
+        }
+      }
+    }
+  }
+  if (argc == 5) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfGrid, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_XdmfTime, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        void *vptr = 0;
+        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_XdmfArray, 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          {
+            int res = SWIG_AsVal_double(argv[3], NULL);
+            _v = SWIG_CheckState(res);
+          }
+          if (_v) {
+            {
+              int res = SWIG_AsVal_int(argv[4], NULL);
+              _v = SWIG_CheckState(res);
+            }
+            if (_v) {
+              return _wrap_XdmfGrid_FindGridsAtTime__SWIG_0(self, args);
+            }
+          }
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'XdmfGrid_FindGridsAtTime'.\n  Possible C/C++ prototypes are:\n    FindGridsAtTime(XdmfTime *,XdmfArray *,XdmfFloat64,XdmfInt32)\n    FindGridsAtTime(XdmfTime *,XdmfArray *,XdmfFloat64)\n    FindGridsAtTime(XdmfTime *,XdmfArray *)\n");
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *XdmfGrid_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *obj;
   if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
@@ -23084,6 +23372,64 @@ SWIGINTERN PyObject *_wrap_XdmfTime_Evaluate__SWIG_0(PyObject *SWIGUNUSEDPARM(se
   XdmfGrid *arg2 = (XdmfGrid *) 0 ;
   XdmfArray *arg3 = (XdmfArray *) 0 ;
   XdmfInt32 arg4 ;
+  XdmfInt32 arg5 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  int val4 ;
+  int ecode4 = 0 ;
+  int val5 ;
+  int ecode5 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  PyObject * obj4 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOOO:XdmfTime_Evaluate",&obj0,&obj1,&obj2,&obj3,&obj4)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfTime, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfTime_Evaluate" "', argument " "1"" of type '" "XdmfTime *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfTime * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfTime_Evaluate" "', argument " "2"" of type '" "XdmfGrid *""'"); 
+  }
+  arg2 = reinterpret_cast< XdmfGrid * >(argp2);
+  res3 = SWIG_ConvertPtr(obj2, &argp3,SWIGTYPE_p_XdmfArray, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "XdmfTime_Evaluate" "', argument " "3"" of type '" "XdmfArray *""'"); 
+  }
+  arg3 = reinterpret_cast< XdmfArray * >(argp3);
+  ecode4 = SWIG_AsVal_int(obj3, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "XdmfTime_Evaluate" "', argument " "4"" of type '" "XdmfInt32""'");
+  } 
+  arg4 = static_cast< XdmfInt32 >(val4);
+  ecode5 = SWIG_AsVal_int(obj4, &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "XdmfTime_Evaluate" "', argument " "5"" of type '" "XdmfInt32""'");
+  } 
+  arg5 = static_cast< XdmfInt32 >(val5);
+  result = (XdmfInt32)(arg1)->Evaluate(arg2,arg3,arg4,arg5);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfTime_Evaluate__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfTime *arg1 = (XdmfTime *) 0 ;
+  XdmfGrid *arg2 = (XdmfGrid *) 0 ;
+  XdmfArray *arg3 = (XdmfArray *) 0 ;
+  XdmfInt32 arg4 ;
   XdmfInt32 result;
   void *argp1 = 0 ;
   int res1 = 0 ;
@@ -23127,7 +23473,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_XdmfTime_Evaluate__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_XdmfTime_Evaluate__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   XdmfTime *arg1 = (XdmfTime *) 0 ;
   XdmfGrid *arg2 = (XdmfGrid *) 0 ;
@@ -23167,7 +23513,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_XdmfTime_Evaluate__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_XdmfTime_Evaluate__SWIG_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   XdmfTime *arg1 = (XdmfTime *) 0 ;
   XdmfGrid *arg2 = (XdmfGrid *) 0 ;
@@ -23200,12 +23546,12 @@ fail:
 
 SWIGINTERN PyObject *_wrap_XdmfTime_Evaluate(PyObject *self, PyObject *args) {
   int argc;
-  PyObject *argv[5];
+  PyObject *argv[6];
   int ii;
   
   if (!PyTuple_Check(args)) SWIG_fail;
   argc = PyObject_Length(args);
-  for (ii = 0; (ii < argc) && (ii < 4); ii++) {
+  for (ii = 0; (ii < argc) && (ii < 5); ii++) {
     argv[ii] = PyTuple_GET_ITEM(args,ii);
   }
   if (argc == 2) {
@@ -23218,7 +23564,7 @@ SWIGINTERN PyObject *_wrap_XdmfTime_Evaluate(PyObject *self, PyObject *args) {
       int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_XdmfGrid, 0);
       _v = SWIG_CheckState(res);
       if (_v) {
-        return _wrap_XdmfTime_Evaluate__SWIG_2(self, args);
+        return _wrap_XdmfTime_Evaluate__SWIG_3(self, args);
       }
     }
   }
@@ -23236,7 +23582,7 @@ SWIGINTERN PyObject *_wrap_XdmfTime_Evaluate(PyObject *self, PyObject *args) {
         int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_XdmfArray, 0);
         _v = SWIG_CheckState(res);
         if (_v) {
-          return _wrap_XdmfTime_Evaluate__SWIG_1(self, args);
+          return _wrap_XdmfTime_Evaluate__SWIG_2(self, args);
         }
       }
     }
@@ -23260,7 +23606,38 @@ SWIGINTERN PyObject *_wrap_XdmfTime_Evaluate(PyObject *self, PyObject *args) {
             _v = SWIG_CheckState(res);
           }
           if (_v) {
-            return _wrap_XdmfTime_Evaluate__SWIG_0(self, args);
+            return _wrap_XdmfTime_Evaluate__SWIG_1(self, args);
+          }
+        }
+      }
+    }
+  }
+  if (argc == 5) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfTime, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_XdmfGrid, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        void *vptr = 0;
+        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_XdmfArray, 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          {
+            int res = SWIG_AsVal_int(argv[3], NULL);
+            _v = SWIG_CheckState(res);
+          }
+          if (_v) {
+            {
+              int res = SWIG_AsVal_int(argv[4], NULL);
+              _v = SWIG_CheckState(res);
+            }
+            if (_v) {
+              return _wrap_XdmfTime_Evaluate__SWIG_0(self, args);
+            }
           }
         }
       }
@@ -23268,7 +23645,190 @@ SWIGINTERN PyObject *_wrap_XdmfTime_Evaluate(PyObject *self, PyObject *args) {
   }
   
 fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'XdmfTime_Evaluate'.\n  Possible C/C++ prototypes are:\n    Evaluate(XdmfGrid *,XdmfArray *,XdmfInt32)\n    Evaluate(XdmfGrid *,XdmfArray *)\n    Evaluate(XdmfGrid *)\n");
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'XdmfTime_Evaluate'.\n  Possible C/C++ prototypes are:\n    Evaluate(XdmfGrid *,XdmfArray *,XdmfInt32,XdmfInt32)\n    Evaluate(XdmfGrid *,XdmfArray *,XdmfInt32)\n    Evaluate(XdmfGrid *,XdmfArray *)\n    Evaluate(XdmfGrid *)\n");
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfTime_IsValid__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfTime *arg1 = (XdmfTime *) 0 ;
+  XdmfTime *arg2 = (XdmfTime *) 0 ;
+  XdmfFloat64 arg3 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  double val3 ;
+  int ecode3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:XdmfTime_IsValid",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfTime, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfTime_IsValid" "', argument " "1"" of type '" "XdmfTime *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfTime * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_XdmfTime, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfTime_IsValid" "', argument " "2"" of type '" "XdmfTime *""'"); 
+  }
+  arg2 = reinterpret_cast< XdmfTime * >(argp2);
+  ecode3 = SWIG_AsVal_double(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "XdmfTime_IsValid" "', argument " "3"" of type '" "XdmfFloat64""'");
+  } 
+  arg3 = static_cast< XdmfFloat64 >(val3);
+  result = (XdmfInt32)(arg1)->IsValid(arg2,arg3);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfTime_IsValid__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfTime *arg1 = (XdmfTime *) 0 ;
+  XdmfTime *arg2 = (XdmfTime *) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfTime_IsValid",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfTime, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfTime_IsValid" "', argument " "1"" of type '" "XdmfTime *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfTime * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_XdmfTime, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfTime_IsValid" "', argument " "2"" of type '" "XdmfTime *""'"); 
+  }
+  arg2 = reinterpret_cast< XdmfTime * >(argp2);
+  result = (XdmfInt32)(arg1)->IsValid(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfTime_IsValid__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfTime *arg1 = (XdmfTime *) 0 ;
+  XdmfFloat64 arg2 ;
+  XdmfFloat64 arg3 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  double val3 ;
+  int ecode3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:XdmfTime_IsValid",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfTime, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfTime_IsValid" "', argument " "1"" of type '" "XdmfTime *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfTime * >(argp1);
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfTime_IsValid" "', argument " "2"" of type '" "XdmfFloat64""'");
+  } 
+  arg2 = static_cast< XdmfFloat64 >(val2);
+  ecode3 = SWIG_AsVal_double(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "XdmfTime_IsValid" "', argument " "3"" of type '" "XdmfFloat64""'");
+  } 
+  arg3 = static_cast< XdmfFloat64 >(val3);
+  result = (XdmfInt32)(arg1)->IsValid(arg2,arg3);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfTime_IsValid(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[4];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = PyObject_Length(args);
+  for (ii = 0; (ii < argc) && (ii < 3); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfTime, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_XdmfTime, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_XdmfTime_IsValid__SWIG_1(self, args);
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfTime, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_XdmfTime, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        {
+          int res = SWIG_AsVal_double(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_XdmfTime_IsValid__SWIG_0(self, args);
+        }
+      }
+    }
+  }
+  if (argc == 3) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfTime, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_double(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        {
+          int res = SWIG_AsVal_double(argv[2], NULL);
+          _v = SWIG_CheckState(res);
+        }
+        if (_v) {
+          return _wrap_XdmfTime_IsValid__SWIG_2(self, args);
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'XdmfTime_IsValid'.\n  Possible C/C++ prototypes are:\n    IsValid(XdmfTime *,XdmfFloat64)\n    IsValid(XdmfTime *)\n    IsValid(XdmfFloat64,XdmfFloat64)\n");
   return NULL;
 }
 
@@ -23748,6 +24308,8 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfGrid_UpdateInformation", _wrap_XdmfGrid_UpdateInformation, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_Update", _wrap_XdmfGrid_Update, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_GetChild", _wrap_XdmfGrid_GetChild, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_FindGridsInTimeRange", _wrap_XdmfGrid_FindGridsInTimeRange, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_FindGridsAtTime", _wrap_XdmfGrid_FindGridsAtTime, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_swigregister", XdmfGrid_swigregister, METH_VARARGS, NULL},
 	 { (char *)"HandleToXdmfGrid", _wrap_HandleToXdmfGrid, METH_VARARGS, NULL},
 	 { (char *)"new_XdmfTime", _wrap_new_XdmfTime, METH_VARARGS, NULL},
@@ -23769,6 +24331,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfTime_SetFunction", _wrap_XdmfTime_SetFunction, METH_VARARGS, NULL},
 	 { (char *)"XdmfTime_SetTimeFromParent", _wrap_XdmfTime_SetTimeFromParent, METH_VARARGS, NULL},
 	 { (char *)"XdmfTime_Evaluate", _wrap_XdmfTime_Evaluate, METH_VARARGS, NULL},
+	 { (char *)"XdmfTime_IsValid", _wrap_XdmfTime_IsValid, METH_VARARGS, NULL},
 	 { (char *)"XdmfTime_swigregister", XdmfTime_swigregister, METH_VARARGS, NULL},
 	 { NULL, NULL, 0, NULL }
 };

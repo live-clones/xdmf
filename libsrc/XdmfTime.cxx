@@ -151,7 +151,7 @@ XdmfInt32 XdmfTime::Build(){
 }
 
 XdmfInt32
-XdmfTime::Evaluate(XdmfGrid *Grid, XdmfArray *ArrayToFill, XdmfInt32 Append){
+XdmfTime::Evaluate(XdmfGrid *Grid, XdmfArray *ArrayToFill, XdmfInt32 Descend, XdmfInt32 Append){
     XdmfInt64   i, n, nelements;
     XdmfTime    *gt;
 
@@ -198,9 +198,11 @@ XdmfTime::Evaluate(XdmfGrid *Grid, XdmfArray *ArrayToFill, XdmfInt32 Append){
                 break;
         }
     }
-    for(i=0 ; i < Grid->GetNumberOfChildren() ; i++){
+    if(Descend){
+        for(i=0 ; i < Grid->GetNumberOfChildren() ; i++){
             // Append children's times
-            if(this->Evaluate(Grid->GetChild(i), ArrayToFill, 1) != XDMF_SUCCESS) return(XDMF_FAIL);
+            if(this->Evaluate(Grid->GetChild(i), ArrayToFill, Descend, 1) != XDMF_SUCCESS) return(XDMF_FAIL);
+        }
     }
     if(this->TimeType == XDMF_TIME_RANGE) {
         XdmfFloat64 minval, maxval;
@@ -274,4 +276,89 @@ XdmfTime::GetTimeTypeAsString(void){
         default :
             return("Single");
     }
+}
+
+XdmfInt32
+XdmfTime::IsValid(XdmfTime *TimeSpec, XdmfFloat64 Range){
+    XdmfFloat64 minval, maxval;
+
+    // cout << "this->TimeType = " << this->GetTimeTypeAsString() << endl;
+    // cout << "TimeSpec->TimeType = " << TimeSpec->GetTimeTypeAsString() << endl;
+    switch(TimeSpec->TimeType){
+        case XDMF_TIME_SINGLE :
+            minval = TimeSpec->GetValue() - Range;
+            maxval = TimeSpec->GetValue() + Range;
+            break;
+        case XDMF_TIME_LIST :
+            if(!TimeSpec->Array){
+                XdmfErrorMessage("XdmfTime has no Array");
+                return(XDMF_FALSE);
+            }
+            minval = TimeSpec->Array->GetMinAsFloat64() - Range;
+            maxval = TimeSpec->Array->GetMaxAsFloat64() + Range;
+            break;
+        case XDMF_TIME_RANGE :
+            if(!TimeSpec->Array){
+                XdmfErrorMessage("XdmfTime has no Array");
+                return(XDMF_FALSE);
+            }
+            minval = TimeSpec->Array->GetValueAsFloat64(0) - Range;
+            maxval = TimeSpec->Array->GetValueAsFloat64(1) + Range;
+            break;
+        case XDMF_TIME_HYPERSLAB :
+            if(!TimeSpec->Array){
+                XdmfErrorMessage("XdmfTime has no Array");
+                return(XDMF_FALSE);
+            }
+            minval = TimeSpec->Array->GetValueAsFloat64(0) - Range;
+            maxval = (TimeSpec->Array->GetValueAsFloat64(1) * (TimeSpec->Array->GetValueAsFloat64(2) - 1))  + Range;
+            break;
+        default :
+            return(XDMF_FALSE);
+    }
+ return(this->IsValid(minval, maxval));
+}
+
+XdmfInt32
+XdmfTime::IsValid(XdmfFloat64 TimeMin, XdmfFloat64 TimeMax){
+    switch(this->TimeType){
+        case XDMF_TIME_SINGLE :
+    // cout << "TimeMin, TimeMax, this->GetValue() = " << TimeMin << "," << TimeMax << "," << this->GetValue() << endl;
+            if((this->GetValue() >= TimeMin) && (this->GetValue() <= TimeMax)){
+                    // cout << "Time Test Passed" << endl;
+                    return(XDMF_TRUE);
+            }else{
+                    // cout << "Time Test Failed" << endl;
+            }
+            break;
+        case XDMF_TIME_LIST :
+            if(!this->Array){
+                XdmfErrorMessage("XdmfTime has no Array");
+                return(XDMF_FALSE);
+            }
+            if((this->Array->GetMinAsFloat64() >= TimeMin) && (this->Array->GetMaxAsFloat64() <= TimeMax)) return(XDMF_TRUE);
+            break;
+        case XDMF_TIME_RANGE :
+    // cout << "TimeMin, TimeMax, minmaxrange  = " << TimeMin << "," << TimeMax <<
+    //    "," << this->Array->GetValueAsFloat64(0) <<
+    //    "," << this->Array->GetValueAsFloat64(1) <<
+    //    endl;
+            if(!this->Array){
+                XdmfErrorMessage("XdmfTime has no Array");
+                return(XDMF_FALSE);
+            }
+            if((this->Array->GetValueAsFloat64(0) >= TimeMin) && (this->Array->GetValueAsFloat64(1) <= TimeMax)) return(XDMF_TRUE);
+            break;
+        case XDMF_TIME_HYPERSLAB :
+            if(!this->Array){
+                XdmfErrorMessage("XdmfTime has no Array");
+                return(XDMF_FALSE);
+            }
+            if((this->Array->GetValueAsFloat64(0) >= TimeMin) &&
+                    ((this->Array->GetValueAsFloat64(1) * (this->Array->GetValueAsFloat64(2) - 1)) <= TimeMax)) return(XDMF_TRUE);
+            break;
+        default :
+            return(XDMF_FALSE);
+    }
+return(XDMF_FALSE);
 }
