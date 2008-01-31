@@ -270,7 +270,7 @@ public:
  XdmfInt32 FindGridsInTimeRange(XdmfFloat64 TimeMin, XdmfFloat64 TimeMax, XdmfArray *ArrayToFill);
 
  //! Return indexes of first level children that are valid at a time
- XdmfInt32 FindGridsAtTime(XdmfTime *Time, XdmfArray *ArrayToFill, XdmfFloat64 Range = 0.0, XdmfInt32 Append=0);
+ XdmfInt32 FindGridsAtTime(XdmfTime *Time, XdmfArray *ArrayToFill, XdmfFloat64 Epsilon = 0.0, XdmfInt32 Append=0);
 
 protected:
 

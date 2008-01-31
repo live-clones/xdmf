@@ -23654,46 +23654,6 @@ SWIGINTERN PyObject *_wrap_XdmfTime_IsValid__SWIG_0(PyObject *SWIGUNUSEDPARM(sel
   PyObject *resultobj = 0;
   XdmfTime *arg1 = (XdmfTime *) 0 ;
   XdmfTime *arg2 = (XdmfTime *) 0 ;
-  XdmfFloat64 arg3 ;
-  XdmfInt32 result;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  double val3 ;
-  int ecode3 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOO:XdmfTime_IsValid",&obj0,&obj1,&obj2)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfTime, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfTime_IsValid" "', argument " "1"" of type '" "XdmfTime *""'"); 
-  }
-  arg1 = reinterpret_cast< XdmfTime * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_XdmfTime, 0 |  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfTime_IsValid" "', argument " "2"" of type '" "XdmfTime *""'"); 
-  }
-  arg2 = reinterpret_cast< XdmfTime * >(argp2);
-  ecode3 = SWIG_AsVal_double(obj2, &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "XdmfTime_IsValid" "', argument " "3"" of type '" "XdmfFloat64""'");
-  } 
-  arg3 = static_cast< XdmfFloat64 >(val3);
-  result = (XdmfInt32)(arg1)->IsValid(arg2,arg3);
-  resultobj = SWIG_From_int(static_cast< int >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_XdmfTime_IsValid__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  XdmfTime *arg1 = (XdmfTime *) 0 ;
-  XdmfTime *arg2 = (XdmfTime *) 0 ;
   XdmfInt32 result;
   void *argp1 = 0 ;
   int res1 = 0 ;
@@ -23721,7 +23681,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_XdmfTime_IsValid__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_XdmfTime_IsValid__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   XdmfTime *arg1 = (XdmfTime *) 0 ;
   XdmfFloat64 arg2 ;
@@ -23781,27 +23741,7 @@ SWIGINTERN PyObject *_wrap_XdmfTime_IsValid(PyObject *self, PyObject *args) {
       int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_XdmfTime, 0);
       _v = SWIG_CheckState(res);
       if (_v) {
-        return _wrap_XdmfTime_IsValid__SWIG_1(self, args);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfTime, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      void *vptr = 0;
-      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_XdmfTime, 0);
-      _v = SWIG_CheckState(res);
-      if (_v) {
-        {
-          int res = SWIG_AsVal_double(argv[2], NULL);
-          _v = SWIG_CheckState(res);
-        }
-        if (_v) {
-          return _wrap_XdmfTime_IsValid__SWIG_0(self, args);
-        }
+        return _wrap_XdmfTime_IsValid__SWIG_0(self, args);
       }
     }
   }
@@ -23821,14 +23761,67 @@ SWIGINTERN PyObject *_wrap_XdmfTime_IsValid(PyObject *self, PyObject *args) {
           _v = SWIG_CheckState(res);
         }
         if (_v) {
-          return _wrap_XdmfTime_IsValid__SWIG_2(self, args);
+          return _wrap_XdmfTime_IsValid__SWIG_1(self, args);
         }
       }
     }
   }
   
 fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'XdmfTime_IsValid'.\n  Possible C/C++ prototypes are:\n    IsValid(XdmfTime *,XdmfFloat64)\n    IsValid(XdmfTime *)\n    IsValid(XdmfFloat64,XdmfFloat64)\n");
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'XdmfTime_IsValid'.\n  Possible C/C++ prototypes are:\n    IsValid(XdmfTime *)\n    IsValid(XdmfFloat64,XdmfFloat64)\n");
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfTime_SetEpsilon(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfTime *arg1 = (XdmfTime *) 0 ;
+  XdmfFloat64 arg2 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfTime_SetEpsilon",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfTime, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfTime_SetEpsilon" "', argument " "1"" of type '" "XdmfTime *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfTime * >(argp1);
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfTime_SetEpsilon" "', argument " "2"" of type '" "XdmfFloat64""'");
+  } 
+  arg2 = static_cast< XdmfFloat64 >(val2);
+  result = (XdmfInt32)(arg1)->SetEpsilon(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfTime_GetEpsilon(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfTime *arg1 = (XdmfTime *) 0 ;
+  XdmfFloat64 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfTime_GetEpsilon",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfTime, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfTime_GetEpsilon" "', argument " "1"" of type '" "XdmfTime *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfTime * >(argp1);
+  result = (XdmfFloat64)(arg1)->GetEpsilon();
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
   return NULL;
 }
 
@@ -24332,6 +24325,8 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfTime_SetTimeFromParent", _wrap_XdmfTime_SetTimeFromParent, METH_VARARGS, NULL},
 	 { (char *)"XdmfTime_Evaluate", _wrap_XdmfTime_Evaluate, METH_VARARGS, NULL},
 	 { (char *)"XdmfTime_IsValid", _wrap_XdmfTime_IsValid, METH_VARARGS, NULL},
+	 { (char *)"XdmfTime_SetEpsilon", _wrap_XdmfTime_SetEpsilon, METH_VARARGS, NULL},
+	 { (char *)"XdmfTime_GetEpsilon", _wrap_XdmfTime_GetEpsilon, METH_VARARGS, NULL},
 	 { (char *)"XdmfTime_swigregister", XdmfTime_swigregister, METH_VARARGS, NULL},
 	 { NULL, NULL, 0, NULL }
 };

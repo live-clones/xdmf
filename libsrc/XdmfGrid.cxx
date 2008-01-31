@@ -322,6 +322,7 @@ if( this->GridType & XDMF_GRID_MASK){
         this->Children[i] = new XdmfGrid;
         if(this->Children[i]->SetDOM(this->DOM) == XDMF_FAIL) return(XDMF_FAIL);
         if(this->Children[i]->SetElement(node) == XDMF_FAIL) return(XDMF_FAIL);
+        // cout << "Calling update info for child " << i << endl;
         if(this->Children[i]->UpdateInformation() == XDMF_FAIL) return(XDMF_FAIL);
         if(this->Time->GetTimeType() != XDMF_TIME_UNSET){
                 if(this->Children[i]->GetTime()->SetTimeFromParent(this->Time, i) != XDMF_SUCCESS) return(XDMF_FAIL);
@@ -380,7 +381,7 @@ if( this->GridType & XDMF_GRID_MASK){
             di->SetElement(select);
             di->UpdateInformation();
             di->Update();
-//            cout << "UpdateInfo - Select Cells : " << di->GetArray()->GetValues() << endl;
+//          cout << "UpdateInfo - Select Cells : " << di->GetArray()->GetValues() << endl;
             shape = this->Topology->GetShapeDesc();
             shape->CopyShape(di->GetDataDesc());
             delete di;
@@ -391,6 +392,17 @@ if( this->GridType & XDMF_GRID_MASK){
 //    return(XDMF_SUCCESS);
 }else{
 // Handle Uniform Grid
+    // cout << "Update Uniform Grid" << endl;
+    anElement = this->DOM->FindElement("Time", 0, this->Element);
+    if(anElement){
+        if(this->Time->SetDOM( this->DOM ) == XDMF_FAIL) return(XDMF_FAIL);
+        if(this->Time->SetElement(anElement) == XDMF_FAIL) return(XDMF_FAIL);
+        Status = this->Time->UpdateInformation();
+        if( Status == XDMF_FAIL ){
+            XdmfErrorMessage("Error Reading Time");
+            return( XDMF_FAIL );
+        }
+    }
     anElement = this->DOM->FindElement("Topology", 0, this->Element);
     if(anElement){
         if(this->Topology->SetDOM( this->DOM ) == XDMF_FAIL) return(XDMF_FAIL);
@@ -559,7 +571,7 @@ XdmfGrid::IsUniform(){
 }
 
 XdmfInt32
-XdmfGrid::FindGridsAtTime(XdmfTime *Time, XdmfArray *ArrayToFill, XdmfFloat64 Range, XdmfInt32 Append){
+XdmfGrid::FindGridsAtTime(XdmfTime *Time, XdmfArray *ArrayToFill, XdmfFloat64 Epsilon, XdmfInt32 Append){
     XdmfInt64   i, n, index = 0, nchild;
 
     nchild = this->GetNumberOfChildren();
@@ -572,8 +584,8 @@ XdmfGrid::FindGridsAtTime(XdmfTime *Time, XdmfArray *ArrayToFill, XdmfFloat64 Ra
         ArrayToFill->SetNumberOfElements(nchild);
     }
     for(i=0 ; i < this->GetNumberOfChildren() ; i++){
-        // cout << "IsValid(" << i << ") = " << this->GetChild(i)->GetTime()->IsValid(Time, Range) << endl;
-        if(this->GetChild(i)->GetTime()->IsValid(Time, Range)){
+        // cout << "IsValid(" << i << ") = " << this->GetChild(i)->GetTime()->IsValid(Time) << endl;
+        if(this->GetChild(i)->GetTime()->IsValid(Time)){
             ArrayToFill->SetValueFromInt64(index, i);
             index++;
         }
