@@ -43,6 +43,12 @@ XdmfAttribute::~XdmfAttribute() {
   delete this->ShapeDesc;
   }
 
+XdmfInt32
+XdmfAttribute::Release(){
+  if( this->ValuesAreMine && this->Values )  delete this->Values;
+  this->Values = NULL;
+  return(XDMF_SUCCESS);
+}
 
 XdmfInt32
 XdmfAttribute::Insert( XdmfElement *Child){

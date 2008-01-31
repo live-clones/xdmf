@@ -196,6 +196,8 @@ public:
     XdmfSetStringMacro(Function);
     //! Get the Function String
     XdmfGetStringMacro(Function);
+    //! Release Large Data
+    XdmfInt32   Release();
 
 protected:
     XdmfInt32       Format;

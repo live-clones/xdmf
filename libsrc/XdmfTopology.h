@@ -292,6 +292,8 @@ public:
   XdmfInt32 Update( void );
 //! Intiailize the Topology but do not access the Heavy Data
   XdmfInt32 UpdateInformation(void);
+  //! Release Big Data
+  XdmfInt32 Release();
 #ifndef DOXYGEN_SKIP 
   // XdmfInt32 SetBaseConnectivity( XdmfPointer Grid );
 #endif

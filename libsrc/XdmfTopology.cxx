@@ -59,6 +59,15 @@ XdmfTopology::~XdmfTopology() {
   }
 
 XdmfInt32
+XdmfTopology::Release(){
+    if( this->ConnectivityIsMine && this->Connectivity ) delete this->Connectivity;
+    if(this->CellOffsets) delete this->CellOffsets;
+    this->Connectivity = NULL;
+    this->CellOffsets = NULL;
+    return(XDMF_SUCCESS);
+}
+
+XdmfInt32
 XdmfTopology::Build(){
     if(XdmfElement::Build() != XDMF_SUCCESS) return(XDMF_FAIL);
     this->Set("TopologyType", this->GetTopologyTypeAsString());
@@ -583,6 +592,7 @@ if( this->GetClass() == XDMF_UNSTRUCTURED ){
     // Steal the Array so it doesn't get deleted in the destructor of the DataItem
     this->Connectivity = Connections.GetArray();
     Connections.SetArrayIsMine(0);
+    this->ConnectivityIsMine = 1;
 
     if( this->BaseOffset ) {
       XdmfDebug("Adjusting due to BaseOffset");
