@@ -601,7 +601,7 @@ return(XDMF_SUCCESS);
 
 XdmfInt32
 XdmfGrid::FindGridsInTimeRange(XdmfFloat64 TimeMin, XdmfFloat64 TimeMax, XdmfArray *ArrayToFill){
-    XdmfInt64   i, n, index = 0, nchild;
+    XdmfInt64   i, index = 0, nchild;
 
     nchild = this->GetNumberOfChildren();
     if(!nchild) return(XDMF_FALSE);
