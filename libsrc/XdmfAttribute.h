@@ -123,7 +123,8 @@ public:
   XdmfInt32 Update();
 //! Build XML (output)
   XdmfInt32 Build();
-
+//! Release Big Data
+ XdmfInt32 Release();
 protected:
 
   XdmfInt32  AttributeType;

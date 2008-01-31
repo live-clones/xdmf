@@ -5284,6 +5284,28 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_XdmfAttribute_Release(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfAttribute *arg1 = (XdmfAttribute *) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfAttribute_Release",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfAttribute, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfAttribute_Release" "', argument " "1"" of type '" "XdmfAttribute *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfAttribute * >(argp1);
+  result = (XdmfInt32)(arg1)->Release();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *XdmfAttribute_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *obj;
   if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
@@ -16906,6 +16928,28 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_XdmfDataItem_Release(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDataItem *arg1 = (XdmfDataItem *) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfDataItem_Release",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDataItem, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDataItem_Release" "', argument " "1"" of type '" "XdmfDataItem *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDataItem * >(argp1);
+  result = (XdmfInt32)(arg1)->Release();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *XdmfDataItem_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *obj;
   if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
@@ -20783,6 +20827,28 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_XdmfTopology_Release(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfTopology *arg1 = (XdmfTopology *) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfTopology_Release",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfTopology, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfTopology_Release" "', argument " "1"" of type '" "XdmfTopology *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfTopology * >(argp1);
+  result = (XdmfInt32)(arg1)->Release();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *XdmfTopology_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *obj;
   if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
@@ -21252,6 +21318,28 @@ SWIGINTERN PyObject *_wrap_XdmfGeometry_GetPoints(PyObject *self, PyObject *args
   
 fail:
   SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'XdmfGeometry_GetPoints'.\n  Possible C/C++ prototypes are:\n    GetPoints(XdmfInt32)\n    GetPoints()\n");
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGeometry_Release(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGeometry *arg1 = (XdmfGeometry *) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfGeometry_Release",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGeometry, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGeometry_Release" "', argument " "1"" of type '" "XdmfGeometry *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGeometry * >(argp1);
+  result = (XdmfInt32)(arg1)->Release();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
   return NULL;
 }
 
@@ -22872,6 +22960,28 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_XdmfGrid_Release(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  XdmfInt32 result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfGrid_Release",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_Release" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  result = (XdmfInt32)(arg1)->Release();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *XdmfGrid_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *obj;
   if (!PyArg_ParseTuple(args,(char*)"O|swigregister", &obj)) return NULL;
@@ -23915,6 +24025,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfAttribute_UpdateInformation", _wrap_XdmfAttribute_UpdateInformation, METH_VARARGS, NULL},
 	 { (char *)"XdmfAttribute_Update", _wrap_XdmfAttribute_Update, METH_VARARGS, NULL},
 	 { (char *)"XdmfAttribute_Build", _wrap_XdmfAttribute_Build, METH_VARARGS, NULL},
+	 { (char *)"XdmfAttribute_Release", _wrap_XdmfAttribute_Release, METH_VARARGS, NULL},
 	 { (char *)"XdmfAttribute_swigregister", XdmfAttribute_swigregister, METH_VARARGS, NULL},
 	 { (char *)"XdmfTypeToHDF5Type", _wrap_XdmfTypeToHDF5Type, METH_VARARGS, NULL},
 	 { (char *)"HDF5TypeToXdmfType", _wrap_HDF5TypeToXdmfType, METH_VARARGS, NULL},
@@ -24115,6 +24226,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfDataItem_GetIsMultiple", _wrap_XdmfDataItem_GetIsMultiple, METH_VARARGS, NULL},
 	 { (char *)"XdmfDataItem_SetFunction", _wrap_XdmfDataItem_SetFunction, METH_VARARGS, NULL},
 	 { (char *)"XdmfDataItem_GetFunction", _wrap_XdmfDataItem_GetFunction, METH_VARARGS, NULL},
+	 { (char *)"XdmfDataItem_Release", _wrap_XdmfDataItem_Release, METH_VARARGS, NULL},
 	 { (char *)"XdmfDataItem_swigregister", XdmfDataItem_swigregister, METH_VARARGS, NULL},
 	 { (char *)"new_XdmfDataStructure", _wrap_new_XdmfDataStructure, METH_VARARGS, NULL},
 	 { (char *)"delete_XdmfDataStructure", _wrap_delete_XdmfDataStructure, METH_VARARGS, NULL},
@@ -24232,6 +24344,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfTopology_GetCellOffsets", _wrap_XdmfTopology_GetCellOffsets, METH_VARARGS, NULL},
 	 { (char *)"XdmfTopology_Update", _wrap_XdmfTopology_Update, METH_VARARGS, NULL},
 	 { (char *)"XdmfTopology_UpdateInformation", _wrap_XdmfTopology_UpdateInformation, METH_VARARGS, NULL},
+	 { (char *)"XdmfTopology_Release", _wrap_XdmfTopology_Release, METH_VARARGS, NULL},
 	 { (char *)"XdmfTopology_swigregister", XdmfTopology_swigregister, METH_VARARGS, NULL},
 	 { (char *)"HandleToXdmfTopology", _wrap_HandleToXdmfTopology, METH_VARARGS, NULL},
 	 { (char *)"new_XdmfGeometry", _wrap_new_XdmfGeometry, METH_VARARGS, NULL},
@@ -24249,6 +24362,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfGeometry_UpdateInformation", _wrap_XdmfGeometry_UpdateInformation, METH_VARARGS, NULL},
 	 { (char *)"XdmfGeometry_SetPoints", _wrap_XdmfGeometry_SetPoints, METH_VARARGS, NULL},
 	 { (char *)"XdmfGeometry_GetPoints", _wrap_XdmfGeometry_GetPoints, METH_VARARGS, NULL},
+	 { (char *)"XdmfGeometry_Release", _wrap_XdmfGeometry_Release, METH_VARARGS, NULL},
 	 { (char *)"XdmfGeometry_GetOrigin", _wrap_XdmfGeometry_GetOrigin, METH_VARARGS, NULL},
 	 { (char *)"XdmfGeometry_GetOriginX", _wrap_XdmfGeometry_GetOriginX, METH_VARARGS, NULL},
 	 { (char *)"XdmfGeometry_GetOriginY", _wrap_XdmfGeometry_GetOriginY, METH_VARARGS, NULL},
@@ -24303,6 +24417,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfGrid_GetChild", _wrap_XdmfGrid_GetChild, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_FindGridsInTimeRange", _wrap_XdmfGrid_FindGridsInTimeRange, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_FindGridsAtTime", _wrap_XdmfGrid_FindGridsAtTime, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_Release", _wrap_XdmfGrid_Release, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_swigregister", XdmfGrid_swigregister, METH_VARARGS, NULL},
 	 { (char *)"HandleToXdmfGrid", _wrap_HandleToXdmfGrid, METH_VARARGS, NULL},
 	 { (char *)"new_XdmfTime", _wrap_new_XdmfTime, METH_VARARGS, NULL},

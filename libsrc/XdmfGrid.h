@@ -272,6 +272,9 @@ public:
  //! Return indexes of first level children that are valid at a time
  XdmfInt32 FindGridsAtTime(XdmfTime *Time, XdmfArray *ArrayToFill, XdmfFloat64 Epsilon = 0.0, XdmfInt32 Append=0);
 
+ //! Release Big Data
+ XdmfInt32 Release();
+
 protected:
 
   XdmfGeometry  *Geometry;

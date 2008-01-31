@@ -217,6 +217,7 @@ class XdmfAttribute(XdmfElement):
     def UpdateInformation(*args): return _Xdmf.XdmfAttribute_UpdateInformation(*args)
     def Update(*args): return _Xdmf.XdmfAttribute_Update(*args)
     def Build(*args): return _Xdmf.XdmfAttribute_Build(*args)
+    def Release(*args): return _Xdmf.XdmfAttribute_Release(*args)
 XdmfAttribute_swigregister = _Xdmf.XdmfAttribute_swigregister
 XdmfAttribute_swigregister(XdmfAttribute)
 
@@ -515,6 +516,7 @@ class XdmfDataItem(XdmfElement):
     def GetIsMultiple(*args): return _Xdmf.XdmfDataItem_GetIsMultiple(*args)
     def SetFunction(*args): return _Xdmf.XdmfDataItem_SetFunction(*args)
     def GetFunction(*args): return _Xdmf.XdmfDataItem_GetFunction(*args)
+    def Release(*args): return _Xdmf.XdmfDataItem_Release(*args)
 XdmfDataItem_swigregister = _Xdmf.XdmfDataItem_swigregister
 XdmfDataItem_swigregister(XdmfDataItem)
 
@@ -786,6 +788,7 @@ class XdmfTopology(XdmfElement):
     def GetCellOffsets(*args): return _Xdmf.XdmfTopology_GetCellOffsets(*args)
     def Update(*args): return _Xdmf.XdmfTopology_Update(*args)
     def UpdateInformation(*args): return _Xdmf.XdmfTopology_UpdateInformation(*args)
+    def Release(*args): return _Xdmf.XdmfTopology_Release(*args)
 XdmfTopology_swigregister = _Xdmf.XdmfTopology_swigregister
 XdmfTopology_swigregister(XdmfTopology)
 
@@ -824,6 +827,7 @@ class XdmfGeometry(XdmfElement):
     def UpdateInformation(*args): return _Xdmf.XdmfGeometry_UpdateInformation(*args)
     def SetPoints(*args): return _Xdmf.XdmfGeometry_SetPoints(*args)
     def GetPoints(*args): return _Xdmf.XdmfGeometry_GetPoints(*args)
+    def Release(*args): return _Xdmf.XdmfGeometry_Release(*args)
     def GetOrigin(*args): return _Xdmf.XdmfGeometry_GetOrigin(*args)
     def GetOriginX(*args): return _Xdmf.XdmfGeometry_GetOriginX(*args)
     def GetOriginY(*args): return _Xdmf.XdmfGeometry_GetOriginY(*args)
@@ -901,6 +905,7 @@ class XdmfGrid(XdmfElement):
     def GetChild(*args): return _Xdmf.XdmfGrid_GetChild(*args)
     def FindGridsInTimeRange(*args): return _Xdmf.XdmfGrid_FindGridsInTimeRange(*args)
     def FindGridsAtTime(*args): return _Xdmf.XdmfGrid_FindGridsAtTime(*args)
+    def Release(*args): return _Xdmf.XdmfGrid_Release(*args)
 XdmfGrid_swigregister = _Xdmf.XdmfGrid_swigregister
 XdmfGrid_swigregister(XdmfGrid)
 

@@ -75,6 +75,17 @@ XdmfGrid::~XdmfGrid() {
   }
 
 XdmfInt32
+XdmfGrid::Release(){
+  XdmfInt32  Index;
+  if( this->GeometryIsMine && this->Geometry ) this->Geometry->Release();
+  if( this->TopologyIsMine && this->Topology ) this->Topology->Release();
+  for ( Index = 0; Index < this->NumberOfAttributes; Index ++ )
+    {
+    this->Attribute[Index]->Release();
+    }
+   return(XDMF_SUCCESS);
+}
+XdmfInt32
 XdmfGrid::InsertTopology(){
     if(!this->Topology->GetElement()){
         XdmfXmlNode node;
