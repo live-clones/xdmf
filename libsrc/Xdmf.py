@@ -943,6 +943,8 @@ class XdmfTime(XdmfElement):
     def SetTimeFromParent(*args): return _Xdmf.XdmfTime_SetTimeFromParent(*args)
     def Evaluate(*args): return _Xdmf.XdmfTime_Evaluate(*args)
     def IsValid(*args): return _Xdmf.XdmfTime_IsValid(*args)
+    def SetEpsilon(*args): return _Xdmf.XdmfTime_SetEpsilon(*args)
+    def GetEpsilon(*args): return _Xdmf.XdmfTime_GetEpsilon(*args)
 XdmfTime_swigregister = _Xdmf.XdmfTime_swigregister
 XdmfTime_swigregister(XdmfTime)
 

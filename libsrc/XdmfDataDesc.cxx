@@ -364,9 +364,10 @@ XdmfInt64
 XdmfDataDesc::GetNumberOfElements( void ) {
 hsize_t    i, Dimensions[ XDMF_MAX_DIMENSION ];
 XdmfInt64  Nelements = 0;
-XdmfInt32  rank = H5Sget_simple_extent_ndims(this->DataSpace );
+XdmfInt32  rank;
 
-this->Rank = rank;
+if(this->DataSpace == H5I_BADID) return(0);
+this->Rank = rank = H5Sget_simple_extent_ndims(this->DataSpace );
 H5Sget_simple_extent_dims( this->DataSpace, Dimensions, NULL );
 if(rank) {
   Nelements = this->Dimension[0] = Dimensions[0];
