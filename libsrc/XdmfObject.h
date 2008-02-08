@@ -32,8 +32,8 @@
 * The Data Format utilizes
 * the Hierarchical Data Format Version 5 (HDF5) , from NCSA, to store large amount of data
 * that can be accessed in a host independent fashion. The eXtensible Markup Language
-* (XML) is used to describe the high level organization of the data in HDF5. Finally, Network
-* Distributed Global Memory (NDGM) is used to allow distributed access to cooperating
+* (XML) is used to describe the high level organization of the data in HDF5. Finally
+* a built-in Distributed Shared Memory (DSM) system is used to allow distributed access to cooperating
 * applications.
 
 * Access to XDMF is provided via a C++ class library. 
