@@ -66,13 +66,8 @@ XdmfGeometry::Release()
   // this->NumberOfPoints = 0;
   Node = this->GetElement();
   node = this->DOM->FindDataElement(Index++, Node);
-  while(node) {
-      di = (XdmfDataItem *)this->GetCurrentXdmfElement(node);
-      if(di){
-          di->Release();
-          }
-      node = this->DOM->FindDataElement(Index++, Node);
-  }
+  // No Need to Release DataItems() since Data has been read 
+  // and Stored in Internal Points
   return(XDMF_SUCCESS);
 }
 // Returns an existing DataItem or build a new one

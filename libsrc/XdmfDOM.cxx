@@ -73,11 +73,13 @@ XdmfDOM::XdmfDOM(){
 }
 
 XdmfDOM::~XdmfDOM(){
+   XdmfDebug("Destroying DOM");
   if( ( this->Output != &cout ) && ( this->Output != &cerr ) ) {
     ofstream *OldOutput = ( ofstream *)this->Output;
     OldOutput->close();
   }
   if( this->Input != &cin ) {
+     XdmfDebug("Deleting Input");
     ifstream *OldInput = ( ifstream *)this->Input;
     OldInput->close();
     delete this->Input;
