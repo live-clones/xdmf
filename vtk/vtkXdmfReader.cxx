@@ -60,12 +60,11 @@
 #include "vtkXMLParser.h"
 #include "vtkImageData.h"
 #include "vtkUniformGrid.h"
-#include "vtkMultiGroupDataInformation.h"
-#include "vtkMultiGroupDataSet.h"
 #include "vtkMultiBlockDataSet.h"
 #include "vtkCompositeDataPipeline.h"
 #include "vtkMultiProcessController.h"
 #include "vtkDataObjectTypes.h"
+#include "vtkSmartPointer.h"
 
 #include "XdmfArray.h"
 #include "XdmfAttribute.h"
@@ -86,7 +85,7 @@
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.29");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.30");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -124,6 +123,14 @@ public:
 
   vtkXdmfReaderGrid* GetChild(const char *childName);
   vtkXdmfReaderGrid* GetChild(int idx);
+  vtkInformation* GetInformation()
+    {
+    if (!this->Information) 
+      {
+      this->Information = vtkSmartPointer<vtkInformation>::New();
+      }
+    return this->Information;
+    }
 
   XdmfGrid       *XMGrid;
   XdmfDataDesc   *DataDescription;
@@ -132,6 +139,7 @@ public:
   int vtkType;
 
   vtkstd::map<vtkstd::string, vtkXdmfReaderGrid*> Children;
+  vtkSmartPointer<vtkInformation> Information;
 };
 
 //----------------------------------------------------------------------------
@@ -204,12 +212,10 @@ public:
     vtkXdmfReaderGrid *parent,
     const char *gridName);
 
-  int RequestGridInformation(vtkXdmfReaderGrid *grid,
-                             vtkInformation *outInfo);
+  int RequestGridInformation(vtkXdmfReaderGrid *grid);
 
   int RequestGridData(/*const char* currentGridName,*/
     vtkXdmfReaderGrid *grid,
-    vtkInformation *outInfo,
     vtkDataObject *output,
     int isSubBlock,
     double progressS, double progressE);
@@ -1464,7 +1470,7 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
     if ( GETCWD(buffer, 1023) )
       {
       delete [] filename;
-      if ( buffer )
+      if ( buffer[0] )
         {
         filename = new char[ strlen(buffer)+ 1];
         strcpy(filename, buffer);
@@ -1524,8 +1530,7 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
 
 //-----------------------------------------------------------------------------
 int vtkXdmfReaderInternal::RequestGridInformation(
-  vtkXdmfReaderGrid *grid,
-  vtkInformation *outInfo)
+  vtkXdmfReaderGrid *grid)
 {
   if (grid->vtkType == VTK_MULTIBLOCK_DATA_SET)
     {
@@ -1533,12 +1538,6 @@ int vtkXdmfReaderInternal::RequestGridInformation(
     vtkDebugWithObjectMacro(this->Reader,
                             "Requesting info in collection or tree " 
                             << grid->Name.c_str());
-    vtkMultiGroupDataInformation *compInfo=vtkMultiGroupDataInformation::New();
-    compInfo->SetNumberOfGroups(1);
-    compInfo->SetNumberOfDataSets(0,grid->Children.size());
-    outInfo->Set(
-      vtkCompositeDataPipeline::COMPOSITE_DATA_INFORMATION(),compInfo);
-    int outputGrid = 0;
     vtkstd::map<vtkstd::string,vtkXdmfReaderGrid*>::iterator it;
     for ( it = grid->Children.begin();
           it != grid->Children.end();
@@ -1546,16 +1545,12 @@ int vtkXdmfReaderInternal::RequestGridInformation(
       {
       //if (it->second->Enabled ) //only top level grids can be disabled
         {
-        vtkInformation *subInfo = compInfo->GetInformation(0, outputGrid);
-        this->RequestGridInformation(
-          it->second, 
-          subInfo);
-        outputGrid ++;
+        this->RequestGridInformation(it->second);
         }
       }
-    compInfo->Delete();
     return 1;
     }
+  vtkInformation* outInfo = grid->GetInformation();
 
   XdmfInt32    Rank;
   XdmfInt64    Dimensions[ XDMF_MAX_DIMENSION ];
@@ -1714,17 +1709,12 @@ int vtkXdmfReader::RequestInformation(
     case VTK_STRUCTURED_GRID:
     {
     vtkXdmfReaderGrid *sptr = this->Internals->GetGrid(0);
-    this->Internals->RequestGridInformation(sptr, outInfo);
+    sptr->Information = outInfo;
+    this->Internals->RequestGridInformation(sptr);
     }
     break;
     case VTK_MULTIBLOCK_DATA_SET:
     {
-    vtkMultiGroupDataInformation *compInfo=vtkMultiGroupDataInformation::New();
-    compInfo->SetNumberOfGroups(1);
-    compInfo->SetNumberOfDataSets(0,ptr->Children.size());
-    outInfo->Set(
-      vtkCompositeDataPipeline::COMPOSITE_DATA_INFORMATION(),compInfo);
-    int outputGrid = 0;
     vtkstd::map<vtkstd::string,vtkXdmfReaderGrid*>::iterator it;
     for ( it = ptr->Children.begin();
           it != ptr->Children.end();
@@ -1732,14 +1722,9 @@ int vtkXdmfReader::RequestInformation(
       {
       if ( it->second->Enabled )
         {
-        vtkInformation *subInfo = compInfo->GetInformation(0, outputGrid);
-        this->Internals->RequestGridInformation(
-              it->second, 
-              subInfo);
-        outputGrid ++;
+        this->Internals->RequestGridInformation(it->second);
         }
       }
-    compInfo->Delete();
     }
     break;
     default:
@@ -1753,7 +1738,6 @@ int vtkXdmfReader::RequestInformation(
 int vtkXdmfReaderInternal::RequestGridData(
 /*  const char* currentGridName,*/
   vtkXdmfReaderGrid *grid,
-  vtkInformation *outInfo,
   vtkDataObject *output,
   int isSubBlock,
   double progressS,
@@ -1766,13 +1750,9 @@ int vtkXdmfReaderInternal::RequestGridData(
     //recurse inside composite datasets
     vtkDebugWithObjectMacro(this->Reader,
                             "Requesting data in collection or tree ");
-    
-    vtkMultiGroupDataInformation *compInfo=
-      vtkMultiGroupDataInformation::SafeDownCast(
-        outInfo->Get(vtkCompositeDataPipeline::COMPOSITE_DATA_INFORMATION()));
     vtkMultiBlockDataSet *outMB = 
       vtkMultiBlockDataSet::SafeDownCast(output);
-    if (!outMB || !compInfo)
+    if (!outMB)
       {
       vtkErrorWithObjectMacro(this->Reader,
                               "Wrong vtk output structure expected composite");
@@ -1795,17 +1775,23 @@ int vtkXdmfReaderInternal::RequestGridData(
         {
         vtkDataObject *soutput=
           vtkDataObjectTypes::NewDataObject(child->vtkType);
-        outMB->SetDataSet(0, outputGrid, soutput);
+        if (soutput && soutput->IsA("vtkMultiBlockDataSet"))
+          {
+          outMB->SetBlock(outputGrid, vtkMultiBlockDataSet::SafeDownCast(soutput));
+          }
+        else
+          {
+          outMB->SetBlock(outputGrid, vtkDataSet::SafeDownCast(soutput));
+          //outMB->SetMetaData(outputGrid, grid->GetInformation());
+          }
         vtkDebugWithObjectMacro(
           this->Reader,
           "Recursively filling in ds " << outputGrid 
           << " a " << soutput->GetClassName() 
           << " from " << it->first.c_str());
-        vtkInformation *subInfo = compInfo->GetInformation(0, outputGrid);
         this->RequestGridData(
           /*it->first.c_str(),*/
           child,
-          subInfo,
           soutput,
           1,
           lprogressS,
@@ -1822,6 +1808,7 @@ int vtkXdmfReaderInternal::RequestGridData(
     return 1;
     }
 
+  vtkInformation* outInfo = grid->GetInformation();
   int *readerStride = this->Reader->GetStride();
   
   vtkDataArraySelection* pointDataArraySelection = 
@@ -2815,18 +2802,15 @@ int vtkXdmfReader::RequestData(
     vtkDebugMacro("Filling in atomic " 
                   << outStructure->GetClassName() 
                   << " with " << ptr->Name.c_str());    
-    this->Internals->RequestGridData(ptr, outInfo, outStructure, 0,
+    this->Internals->RequestGridData(ptr, outStructure, 0,
                                            0.0, 1.0);
     }
     break;
     case VTK_MULTIBLOCK_DATA_SET:
     {
-    vtkMultiGroupDataInformation *compInfo=
-      vtkMultiGroupDataInformation::SafeDownCast(
-        outInfo->Get(vtkCompositeDataPipeline::COMPOSITE_DATA_INFORMATION()));
     vtkMultiBlockDataSet *outMB = 
       vtkMultiBlockDataSet::SafeDownCast(outStructure);
-    if (!outMB || !compInfo)
+    if (!outMB)
       {
       vtkErrorMacro(<< "Wrong output type");
       return 0;
@@ -2850,15 +2834,21 @@ int vtkXdmfReader::RequestData(
           {
           vtkDataObject *output =
             vtkDataObjectTypes::NewDataObject(child->vtkType);
-          outMB->SetDataSet(0, outputGrid, output);
+          if (output && output->IsA("vtkMultiBlockDataSet"))
+            {
+            outMB->SetBlock(outputGrid, vtkMultiBlockDataSet::SafeDownCast(output));
+            }
+          else
+            {
+            outMB->SetBlock(outputGrid, vtkDataSet::SafeDownCast(output));
+            //outMB->SetMetaData(outputGrid, grid->GetInformation());
+            }
           vtkDebugMacro(<< Rank << " filling in stripe " << outputGrid 
                         << " with a " << output->GetClassName() 
                         << " from " << it->first.c_str());
-          vtkInformation *subInfo = compInfo->GetInformation(0, outputGrid);
           this->Internals->RequestGridData(
             /*it->first.c_str(),*/
             child,
-            subInfo,
             output,
             1,
             progressS,
@@ -2870,7 +2860,8 @@ int vtkXdmfReader::RequestData(
           {
           vtkDebugMacro(<< Rank << " ignoring stripe " << outputGrid 
                         << " from " << it->first.c_str());
-          outMB->SetDataSet(0, outputGrid, NULL);
+          outMB->SetBlock(outputGrid, static_cast<vtkDataSet*>(NULL));
+          //outMB->SetMetaData(outputGrid, grid->GetInformation());
           }
         this->UpdateProgress(progressE);
         outputGrid++;
