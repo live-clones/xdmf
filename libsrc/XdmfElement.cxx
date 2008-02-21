@@ -61,6 +61,7 @@ XdmfElement::XdmfElement() {
     this->ReferenceElement = NULL;
     this->State = XDMF_ELEMENT_STATE_UNINITIALIZED;
     this->CopyReferenceData = 1;
+    this->DsmBuffer = NULL;
 }
 
 XdmfElement::~XdmfElement() {

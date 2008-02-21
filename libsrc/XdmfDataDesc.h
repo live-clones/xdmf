@@ -32,6 +32,11 @@
 #define XDMF_HYPERSLAB    1
 #define XDMF_COORDINATES  2
 
+#ifndef XDMF_NO_MPI
+class XdmfDsmBuffer;
+#endif
+
+
 //! Number Type and Shape
 /*!
     XdmfDataDesc is a class to operate of the \b TYPE and \b SHAPE of data.
@@ -189,6 +194,18 @@ public :
   XdmfConstString  GetMemberTypeAsString( XdmfInt64 Index );
 //! Get the member offset
   XdmfInt64  GetMemberOffset( XdmfInt64 Index );
+//! Set the name of the Heavy Data Set when written (if applicable)
+  XdmfSetStringMacro(HeavyDataSetName);
+//! Get the name of the Heavy Data Set when written (if applicable)
+  XdmfGetStringMacro(HeavyDataSetName);
+#ifndef XDMF_NO_MPI
+//! Get DSM Buffer
+  XdmfGetValueMacro(DsmBuffer, XdmfDsmBuffer *);
+//! Set DSM Buffer
+  XdmfSetValueMacro(DsmBuffer, XdmfDsmBuffer *);
+#endif
+
+
 
 
 //! Internal Method to Copy From Exiting Type and Space
@@ -218,6 +235,10 @@ protected:
 
   void SetShapeString(XdmfConstString shape);
   XdmfString ShapeString;
+  XdmfString   HeavyDataSetName;
+#ifndef XDMF_NO_MPI
+  XdmfDsmBuffer *DsmBuffer;
+#endif
 };
 
 #endif // __XdmfDataDesc_h

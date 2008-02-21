@@ -32,6 +32,7 @@ XdmfDataDesc::XdmfDataDesc() {
   this->NextOffset = 0;
   this->Rank = 1;
   this->ShapeString = 0;
+  this->DsmBuffer = NULL;
 }
 
 XdmfDataDesc::~XdmfDataDesc() {
