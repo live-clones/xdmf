@@ -85,7 +85,7 @@
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.30");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.31");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -959,7 +959,6 @@ void vtkXdmfReader::EnableGrid(const char* name)
   vtkXdmfReaderGrid* grid = this->Internals->GetGrid(name);
   if ( !grid ) //work around an undo/redo crash
     {
-    cerr << "HERE" << endl;
     return;
     }
   if(!grid->Enabled)
@@ -1711,6 +1710,8 @@ int vtkXdmfReader::RequestInformation(
     vtkXdmfReaderGrid *sptr = this->Internals->GetGrid(0);
     sptr->Information = outInfo;
     this->Internals->RequestGridInformation(sptr);
+    // release reference to meta info, we do not use it again so it is save for the vtkXdmfReaderGrid to get rid of it
+    sptr->Information = 0;
     }
     break;
     case VTK_MULTIBLOCK_DATA_SET:
@@ -1722,6 +1723,8 @@ int vtkXdmfReader::RequestInformation(
       {
       if ( it->second->Enabled )
         {
+        //composite data does not yet support meta info
+        //so we do not yet put the results into outInfo
         this->Internals->RequestGridInformation(it->second);
         }
       }
