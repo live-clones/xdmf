@@ -214,7 +214,9 @@ XdmfGrid::AssignAttribute( XdmfAttribute *attribute ){
 XdmfInt32 Status = 0;
 
 if( attribute ){
+#ifndef XDMF_NO_MPI
   if(!attribute->GetDsmBuffer()) attribute->SetDsmBuffer(this->DsmBuffer);
+#endif
   attribute->Update();
   // Status = attribute->SetBaseAttribute( this, this->BaseGrid );
   this->AssignedAttribute = attribute;
@@ -481,7 +483,9 @@ if((this->GridType & XDMF_GRID_MASK) != XDMF_GRID_UNIFORM){
     XdmfInt32   i;
     // SubSet, Tree or Collection
     for(i=0; i < this->NumberOfChildren ; i++){
+#ifndef XDMF_NO_MPI
         if(!this->Children[i]->GetDsmBuffer()) this->Children[i]->SetDsmBuffer(this->DsmBuffer);
+#endif
         if(this->Children[i]->Update() == XDMF_FAIL){
             XdmfErrorMessage("Error in Update() of Child Grid " << i);
             return(XDMF_FAIL);
@@ -552,12 +556,16 @@ if((this->GridType & XDMF_GRID_MASK) != XDMF_GRID_UNIFORM){
     }
     return(XDMF_SUCCESS);
 }
+#ifndef XDMF_NO_MPI
 if(!this->Topology->GetDsmBuffer()) this->Topology->SetDsmBuffer(this->DsmBuffer);
+#endif
 if(this->Topology->Update() == XDMF_FAIL){
     XdmfErrorMessage("Error in Update() of Topology");
     return(XDMF_FAIL);
 }
+#ifndef XDMF_NO_MPI
 if(!this->Geometry->GetDsmBuffer()) this->Geometry->SetDsmBuffer(this->DsmBuffer);
+#endif
 if(this->Geometry->Update() == XDMF_FAIL){
     XdmfErrorMessage("Error in Update() of Geometry");
     return(XDMF_FAIL);

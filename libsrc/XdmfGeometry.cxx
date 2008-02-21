@@ -321,7 +321,9 @@ if( ( this->GeometryType == XDMF_GEOMETRY_X_Y_Z ) ||
     if(PointsItem.SetDOM( this->DOM ) == XDMF_FAIL) return(XDMF_FAIL);
     if(PointsItem.SetElement(PointsElement, 0) == XDMF_FAIL) return(XDMF_FAIL);
     if(PointsItem.UpdateInformation() == XDMF_FAIL) return(XDMF_FAIL);
+#ifndef XDMF_NO_MPI
     PointsItem.SetDsmBuffer(this->DsmBuffer);
+#endif
     if(PointsItem.Update() == XDMF_FAIL) return(XDMF_FAIL);
     TmpArray = PointsItem.GetArray();
     if( TmpArray ){
@@ -390,7 +392,9 @@ if( ( this->GeometryType == XDMF_GEOMETRY_X_Y_Z ) ||
   if( this->GeometryType == XDMF_GEOMETRY_ORIGIN_DXDYDZ ) {
       XdmfDataItem PointsItem;
       PointsItem.SetDOM(this->DOM);
+#ifndef XDMF_NO_MPI
       PointsItem.SetDsmBuffer(this->DsmBuffer);
+#endif
       XdmfDebug("Reading Origin and Dx, Dy, Dz" );
       PointsElement = this->DOM->FindDataElement(0, this->Element );
       if( PointsElement ){
