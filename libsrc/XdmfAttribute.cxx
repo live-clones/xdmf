@@ -254,7 +254,9 @@ if( this->AttributeType == XDMF_ATTRIBUTE_TYPE_NONE ){
 ValuesNode = this->DOM->FindDataElement( 0, Element );
 if( ValuesNode ){
   ValueReader.SetDOM( this->DOM );
+#ifndef XDMF_NO_MPI
   ValueReader.SetDsmBuffer(this->DsmBuffer);
+#endif
   if( this->ValuesAreMine && this->Values ){
     delete this->Values;
     this->Values = NULL;
