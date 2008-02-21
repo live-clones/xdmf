@@ -585,7 +585,9 @@ if( this->GetClass() == XDMF_UNSTRUCTURED ){
     // cout << "Connection DataItem = " << &Connections << endl;
     XdmfDebug("Reading Connections from DataItem");
     if(Connections.SetDOM(this->DOM) == XDMF_FAIL) return(XDMF_FAIL);
+#ifndef XDMF_NO_MPI
     Connections.SetDsmBuffer(this->DsmBuffer);
+#endif
     if( this->ConnectivityIsMine && this->Connectivity ) delete this->Connectivity;
     if(Connections.SetElement(ConnectionElement, 0) == XDMF_FAIL) return(XDMF_FAIL);
     if(Connections.UpdateInformation() == XDMF_FAIL) return(XDMF_FAIL);
