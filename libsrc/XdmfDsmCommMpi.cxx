@@ -54,11 +54,12 @@ XdmfDsmCommMpi::Init(){
 
 XdmfInt32
 XdmfDsmCommMpi::Check(XdmfDsmMsg *Msg){
-    int         nid, flag;
+    int         nid, flag=0;
     MPI_Status  Status;
 
     if(XdmfDsmComm::Check(Msg) != XDMF_SUCCESS) return(XDMF_FAIL);
-    MPI_Iprobe(MPI_ANY_SOURCE, Msg->Tag, this->Comm, &flag, &Status);
+     MPI_Iprobe(MPI_ANY_SOURCE, Msg->Tag, this->Comm, &flag, &Status);
+     // cout << "MPI_Iprobe " << Msg->Tag << ", " << this->Comm << endl;
     if(flag){
         nid = Status.MPI_SOURCE;
         Msg->SetSource(nid);
