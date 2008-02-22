@@ -41,6 +41,7 @@ class vtkXdmfReaderInternal;
 class vtkXdmfReaderGrid;
 
 //BTX
+class XdmfDsmBuffer;
 class XdmfDOM;
 //ETX
 
@@ -199,6 +200,13 @@ public:
   // Return the controller used to coordinate parallel reading. By default,
   // it is the global controller.
   vtkGetObjectMacro(Controller,vtkMultiProcessController);
+
+  // Set DsmBubffer
+  void SetDsmBuffer(void *Bufp);
+  // Get DsmBubffer
+  void *GetDsmBuffer();
+
+  
   
 protected:
   vtkXdmfReader();
@@ -244,6 +252,7 @@ protected:
   int GridsModified;
   int OutputsInitialized;
   int OutputVTKType;
+  XdmfDsmBuffer *DsmBuffer;
 private:
   vtkXdmfReader(const vtkXdmfReader&); // Not implemented
   void operator=(const vtkXdmfReader&); // Not implemented  
