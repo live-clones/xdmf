@@ -85,7 +85,7 @@
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.31");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.32");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -188,6 +188,7 @@ public:
     this->ArrayConverter = vtkXdmfDataArray::New();
     this->DomainPtr = NULL;  
     this->Data = NULL;
+    this->DsmBuffer = NULL;
   }
 
   ~vtkXdmfReaderInternal()
@@ -227,6 +228,7 @@ public:
  
   vtkXdmfReader* Reader;
   XdmfDataItem *DataItem;
+  XdmfDsmBuffer *DsmBuffer;
 
   // For converting arrays from XDMF to VTK format
   vtkXdmfDataArray *ArrayConverter;
@@ -348,6 +350,7 @@ vtkXdmfReader::vtkXdmfReader()
   this->GridName = 0;
   this->GridsModified = 0;
   this->NumberOfEnabledActualGrids=0;
+  this->DsmBuffer = 0;
   
   for (int i = 0; i < 3; i ++ )
     {
@@ -393,6 +396,16 @@ vtkXdmfReader::~vtkXdmfReader()
 
   H5garbage_collect();  
   this->SetController(0);
+}
+
+void
+vtkXdmfReader::SetDsmBuffer(void *Bufp){
+    this->DsmBuffer = (XdmfDsmBuffer *)Bufp;
+}
+
+void *
+vtkXdmfReader::GetDsmBuffer(){
+    return(this->DsmBuffer);
 }
 
 //----------------------------------------------------------------------------
@@ -1426,20 +1439,33 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
   vtkIdType cc;
   XdmfConstString CurrentFileName;
 
-  // Parse the file...
-  if ( !this->FileName )
-    {
-    vtkErrorMacro("File name not set");
-    return 1;
+  // Reading from File or String
+  if(this->GetReadFromInputString()){
+    cout << "vtkXdmfReader Reading from String" << endl;
+    if ( !this->DOM ){
+        this->DOM = new XdmfDOM();
     }
-  // First make sure the file exists.  This prevents an empty file
-  // from being created on older compilers.
-  struct stat fs;
-  if(stat(this->FileName, &fs) != 0)
-    {
-    vtkErrorMacro("Error opening file " << this->FileName);
-    return 1;
+    if ( !this->Internals->DataItem ){
+        this->Internals->DataItem = new XdmfDataItem();
+        this->Internals->DataItem->SetDOM(this->DOM);
     }
+    this->DOM->Parse(this->GetInputString());
+    this->GridsModified = 1;
+  }else{
+    // Parse the file...
+    if ( !this->FileName )
+      {
+      vtkErrorMacro("File name not set");
+      return 1;
+      }
+    // First make sure the file exists.  This prevents an empty file
+    // from being created on older compilers.
+    struct stat fs;
+    if(stat(this->FileName, &fs) != 0)
+      {
+      vtkErrorMacro("Error opening file " << this->FileName);
+      return 1;
+      }
   if ( !this->DOM )
     {
     this->DOM = new XdmfDOM();
@@ -1496,6 +1522,7 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
     this->DOM->Parse();
     this->GridsModified = 1;
     }
+  }
 
   //TODO: avoid everything below if nothing has changed? Or is this taken 
   //care of by Modified.
@@ -1831,6 +1858,7 @@ int vtkXdmfReaderInternal::RequestGridData(
   
   vtkDebugWithObjectMacro(this->Reader, 
                           "Reading Heavy Data for " << xdmfGrid->GetName());
+  xdmfGrid->SetDsmBuffer(this->DsmBuffer);
   xdmfGrid->Update();
   
   // True for all 3d datasets except unstructured grids
@@ -2572,6 +2600,7 @@ int vtkXdmfReaderInternal::RequestGridData(
       vtkDebugWithObjectMacro(this->Reader, 
                               "Topology class: " 
                               << xdmfGrid->GetTopology()->GetClassAsString());
+     this->DataItem->SetDsmBuffer(this->DsmBuffer);
       if(xdmfGrid->GetTopology()->GetClass() != XDMF_UNSTRUCTURED)
         {
         XdmfDataDesc* ds = grid->DataDescription;
@@ -2750,9 +2779,9 @@ int vtkXdmfReader::RequestData(
   vtkInformationVector **vtkNotUsed(inputVector),
   vtkInformationVector *outputVector)
 {
-  if ( !this->FileName )
+  if ( !this->GetReadFromInputString() && !this->FileName )
     {
-    vtkErrorMacro("File name not set");
+    vtkErrorMacro("Not Reading from String and File name not set");
     return 0;
     }
   if ( !this->DOM )
@@ -2791,7 +2820,7 @@ int vtkXdmfReader::RequestData(
       outInfo->Get(
         vtkStreamingDemandDrivenPipeline::UPDATE_NUMBER_OF_PIECES());
     }
-
+  this->Internals->DsmBuffer = this->DsmBuffer;
   switch (this->OutputVTKType)
     {
     case VTK_POLY_DATA:
