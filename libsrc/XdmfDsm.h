@@ -122,6 +122,7 @@ protected:
     XdmfInt64   EndAddress;
     XdmfInt64   Length;
     XdmfInt64   TotalLength;
+    XdmfInt64   *Locks;
     XdmfArray   *Storage;
     XdmfDsmComm *Comm;
     XdmfDsmMsg  *Msg;

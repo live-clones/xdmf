@@ -173,6 +173,8 @@ class XdmfElement(XdmfLightData):
     def Copy(*args): return _Xdmf.XdmfElement_Copy(*args)
     def Insert(*args): return _Xdmf.XdmfElement_Insert(*args)
     def FollowReference(*args): return _Xdmf.XdmfElement_FollowReference(*args)
+    def GetDsmBuffer(*args): return _Xdmf.XdmfElement_GetDsmBuffer(*args)
+    def SetDsmBuffer(*args): return _Xdmf.XdmfElement_SetDsmBuffer(*args)
 XdmfElement_swigregister = _Xdmf.XdmfElement_swigregister
 XdmfElement_swigregister(XdmfElement)
 
@@ -287,6 +289,10 @@ class XdmfDataDesc(XdmfObject):
     def GetMemberType(*args): return _Xdmf.XdmfDataDesc_GetMemberType(*args)
     def GetMemberTypeAsString(*args): return _Xdmf.XdmfDataDesc_GetMemberTypeAsString(*args)
     def GetMemberOffset(*args): return _Xdmf.XdmfDataDesc_GetMemberOffset(*args)
+    def SetHeavyDataSetName(*args): return _Xdmf.XdmfDataDesc_SetHeavyDataSetName(*args)
+    def GetHeavyDataSetName(*args): return _Xdmf.XdmfDataDesc_GetHeavyDataSetName(*args)
+    def GetDsmBuffer(*args): return _Xdmf.XdmfDataDesc_GetDsmBuffer(*args)
+    def SetDsmBuffer(*args): return _Xdmf.XdmfDataDesc_SetDsmBuffer(*args)
 XdmfDataDesc_swigregister = _Xdmf.XdmfDataDesc_swigregister
 XdmfDataDesc_swigregister(XdmfDataDesc)
 
@@ -346,8 +352,6 @@ class XdmfArray(XdmfDataDesc):
     def GetMean(*args): return _Xdmf.XdmfArray_GetMean(*args)
     def SetDataFromChars(*args): return _Xdmf.XdmfArray_SetDataFromChars(*args)
     def GetDataPointerAsCharPointer(*args): return _Xdmf.XdmfArray_GetDataPointerAsCharPointer(*args)
-    def SetHeavyDataSetName(*args): return _Xdmf.XdmfArray_SetHeavyDataSetName(*args)
-    def GetHeavyDataSetName(*args): return _Xdmf.XdmfArray_GetHeavyDataSetName(*args)
 XdmfArray_swigregister = _Xdmf.XdmfArray_swigregister
 XdmfArray_swigregister(XdmfArray)
 
@@ -653,8 +657,6 @@ class XdmfHDF(XdmfHeavyData):
     def GetCompression(*args): return _Xdmf.XdmfHDF_GetCompression(*args)
     def SetUseSerialFile(*args): return _Xdmf.XdmfHDF_SetUseSerialFile(*args)
     def GetUseSerialFile(*args): return _Xdmf.XdmfHDF_GetUseSerialFile(*args)
-    def GetDsmBuffer(*args): return _Xdmf.XdmfHDF_GetDsmBuffer(*args)
-    def SetDsmBuffer(*args): return _Xdmf.XdmfHDF_SetDsmBuffer(*args)
     def SetCwdName(*args): return _Xdmf.XdmfHDF_SetCwdName(*args)
     def GetCwdName(*args): return _Xdmf.XdmfHDF_GetCwdName(*args)
     def Cd(*args): return _Xdmf.XdmfHDF_Cd(*args)
