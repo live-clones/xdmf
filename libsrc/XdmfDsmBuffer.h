@@ -27,6 +27,8 @@
 
 #include "XdmfDsm.h"
 
+#define XDMF_DSM_MAX_LOCKS 32
+
 //! Helper for pthread_create()
 extern "C" {
 void *
@@ -52,7 +54,12 @@ public:
     XdmfInt32   Put(XdmfInt64 Address, XdmfInt64 Length, void *Data);
     XdmfInt32   Get(XdmfInt64 Address, XdmfInt64 Length, void *Data);
 
-    //virtual XdmfInt32   Copy(XdmfDsmBuffer *Source);
+    XdmfInt32   Aquire(XdmfInt64 Index);
+    XdmfInt32   Release(XdmfInt64 Index);
+
+    /*
+    XdmfInt32   Copy(XdmfDsmBuffer *Source);
+    */
     XdmfInt32   ServiceInit();
     XdmfInt32   ServiceOnce(XdmfInt32 *ReturnOpcode=0);
     XdmfInt32   ServiceUntilIdle(XdmfInt32 *ReturnOpcode=0);

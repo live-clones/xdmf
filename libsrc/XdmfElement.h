@@ -193,5 +193,6 @@ protected:
 #ifndef XDMF_NO_MPI
         XdmfDsmBuffer *DsmBuffer;
 #endif
+    XdmfXmlNode RootWhenParsed;
 };
 #endif // __XdmfElement_h

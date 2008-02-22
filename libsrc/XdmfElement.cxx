@@ -61,22 +61,25 @@ XdmfElement::XdmfElement() {
     this->ReferenceElement = NULL;
     this->State = XDMF_ELEMENT_STATE_UNINITIALIZED;
     this->CopyReferenceData = 1;
+    this->RootWhenParsed = 0;
 #ifndef XDMF_NO_MPI
     this->DsmBuffer = NULL;
 #endif
 }
 
 XdmfElement::~XdmfElement() {
-    if(this->ReferenceElement){
-        if(this->GetReferenceObject(this->ReferenceElement) == this){
-            this->SetReferenceObject(this->ReferenceElement, XDMF_ELEMENT_STATE_UNINITIALIZED);
-        }
-    }
-    this->ReferenceElement = NULL;
-    if(this->Element){
-        if(this->GetReferenceObject(this->Element) == this){
-            this->SetReferenceObject(this->Element, XDMF_ELEMENT_STATE_UNINITIALIZED);
-        }
+    if(this->DOM && (this->DOM->GetTree() == this->RootWhenParsed)){
+        if(this->ReferenceElement){
+         if(this->GetReferenceObject(this->ReferenceElement) == this){
+             this->SetReferenceObject(this->ReferenceElement, XDMF_ELEMENT_STATE_UNINITIALIZED);
+         }
+     }
+     this->ReferenceElement = NULL;
+     if(this->Element){
+         if(this->GetReferenceObject(this->Element) == this){
+             this->SetReferenceObject(this->Element, XDMF_ELEMENT_STATE_UNINITIALIZED);
+         }
+     }
     }
     this->Element = NULL;
     if(this->ElementName) delete [] this->ElementName;
@@ -161,6 +164,9 @@ XdmfInt32 XdmfElement::SetElement(XdmfXmlNode anElement, XdmfInt32 AssociateElem
     this->SetReferenceObject(anElement, XDMF_EMPTY_REFERENCE);
     if(AssociateElement) this->SetCurrentXdmfElement(anElement, this);
     this->Element = anElement;
+    if(this->DOM){
+        this->RootWhenParsed = this->DOM->GetTree();
+    }
     return(XDMF_SUCCESS);
 }
 

@@ -41,6 +41,7 @@ XdmfDsm::XdmfDsm() {
     this->DsmType = XDMF_DSM_TYPE_UNIFORM;
     this->Storage = new XdmfArray;
     this->StorageIsMine = 1;
+    this->Locks = 0;
     // For Alignment
     this->Storage->SetNumberType(XDMF_INT64_TYPE);
     this->SetLength(XDMF_DSM_DEFAULT_LENGTH);
@@ -67,6 +68,7 @@ XdmfDsm::Copy(XdmfDsm *Source){
     this->Comm = Source->Comm;
     this->StartServerId = Source->StartServerId;
     this->EndServerId = Source->EndServerId;
+    this->Locks = Source->Locks;
     // Alway make a new Message so there os no contention
     this->Msg = new XdmfDsmMsg;
     return(XDMF_SUCCESS);
