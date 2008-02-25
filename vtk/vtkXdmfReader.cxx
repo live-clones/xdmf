@@ -85,7 +85,7 @@
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.33");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.34");
 
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
 
@@ -1441,8 +1441,9 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
 
   // Reading from File or String
   if(this->GetReadFromInputString()){
-    char InputTxt[this->InputStringLength + 1];
+    char    *InputTxt;
 
+    InputTxt = new char[this->InputStringLength + 1];
     if ( !this->DOM ){
         this->DOM = new XdmfDOM();
     }
@@ -1454,6 +1455,7 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
     InputTxt[this->InputStringLength] = 0;
     this->DOM->Parse(InputTxt);
     this->GridsModified = 1;
+    delete InputTxt;
   }else{
     // Parse the file...
     if ( !this->FileName )
