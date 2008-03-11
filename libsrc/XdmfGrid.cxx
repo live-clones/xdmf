@@ -58,6 +58,7 @@ XdmfGrid::XdmfGrid() {
   this->AssignedAttribute = NULL;
   this->NumberOfAttributes = 0;
   this->GridType = XDMF_GRID_UNSET;
+  this->CollectionType = XDMF_GRID_COLLECTION_UNSET;
   this->NumberOfChildren = 0;
   this->Debug = 0;
   }
@@ -156,6 +157,19 @@ XdmfGrid::Build(){
 }
 
 XdmfInt32
+XdmfGrid::SetCollectionTypeFromString(XdmfConstString aCollectionType){
+    if(XDMF_WORD_CMP(aCollectionType, "Temporal")){
+        this->SetCollectionType(XDMF_GRID_COLLECTION_TEMPORAL);
+    }else if(XDMF_WORD_CMP(aCollectionType, "Spatial")){
+        this->SetCollectionType(XDMF_GRID_COLLECTION_SPATIAL);
+    }else{
+        XdmfErrorMessage("Unknown Collection Type : " << aCollectionType);
+        return(XDMF_FAIL);
+    }
+    return(XDMF_SUCCESS);
+}
+
+XdmfInt32
 XdmfGrid::SetGridTypeFromString(XdmfConstString aGridType){
     if(XDMF_WORD_CMP(aGridType, "Uniform")){
         this->SetGridType(XDMF_GRID_UNIFORM);
@@ -170,6 +184,21 @@ XdmfGrid::SetGridTypeFromString(XdmfConstString aGridType){
         return(XDMF_FAIL);
     }
     return(XDMF_SUCCESS);
+}
+
+XdmfConstString
+XdmfGrid::GetCollectionTypeAsString(){
+    if((this->GridType & XDMF_GRID_MASK) == XDMF_GRID_COLLECTION){
+        switch(this->CollectionType){
+            case XDMF_GRID_COLLECTION_TEMPORAL :
+                return("Temporal");
+            case XDMF_GRID_COLLECTION_SPATIAL :
+                return("Spatial");
+            default :
+                return("Unset");
+        }
+    }
+    return(0);
 }
 
 XdmfConstString

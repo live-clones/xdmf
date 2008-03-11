@@ -47,6 +47,10 @@ class XdmfTime;
 #define XDMF_GRID_SECTION_DATA_ITEM     0x200000
 #define XDMF_GRID_SECTION_MASK          0xF00000
 
+#define XDMF_GRID_COLLECTION_TEMPORAL   0x0001
+#define XDMF_GRID_COLLECTION_SPATIAL    0x0002
+#define XDMF_GRID_COLLECTION_UNSET      0x0FFFF
+
 //! In memory representation of an XDMF Grid
 /*!
         XdmfGrid is the in memory representation of the Xdmf Grid
@@ -158,6 +162,11 @@ public:
 
   XdmfInt32 SetGridTypeFromString(XdmfConstString GridType);
 
+  //! Get the Collection Type as a string
+  XdmfConstString GetCollectionTypeAsString();
+  XdmfInt32 SetCollectionTypeFromString(XdmfConstString CollectionType);
+
+
   //! Build the XML (OUTPUT)
   XdmfInt32 Build();
 
@@ -171,6 +180,10 @@ public:
   XdmfGetValueMacro( GridType, XdmfInt32);
   //! Set the Grid Type
   XdmfSetValueMacro( GridType, XdmfInt32);
+  //! Get the Collection Type
+  XdmfGetValueMacro( CollectionType, XdmfInt32);
+  //! Set the Collection Type
+  XdmfSetValueMacro( CollectionType, XdmfInt32);
   //! Get Build Time Flag
   XdmfGetValueMacro( BuildTime, XdmfInt32);
   //! Set the Build Time Flag
@@ -285,6 +298,7 @@ protected:
   XdmfInt32     TimeIsMine;
   XdmfInt32     NumberOfAttributes;
   XdmfInt32     GridType;
+  XdmfInt32     CollectionType;
   XdmfInt32     NumberOfChildren;
   XdmfInt32     BuildTime;
   XdmfGrid      **Children;
