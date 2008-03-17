@@ -6,7 +6,7 @@
 #
 
 MACRO(CHECK_FOR_64BIT_STREAMS VARIABLE)
-  IF("HAVE_${VARIABLE}" MATCHES "^HAVE_${VARIABLE}$")
+  IF("${VARIABLE}" MATCHES "^${VARIABLE}$")
     SET(MACRO_CHECK_FOR_64BIT_STREAMS_FLAGS ${CMAKE_REQUIRED_FLAGS})
     IF(CMAKE_NO_ANSI_STREAM_HEADERS)
       SET(MACRO_CHECK_FOR_64BIT_STREAMS_FLAGS 
@@ -29,14 +29,14 @@ MACRO(CHECK_FOR_64BIT_STREAMS VARIABLE)
                OUTPUT_VARIABLE OUTPUT)
     IF(${VARIABLE})
       MESSAGE(STATUS "Check if system supports 64 bit streams - yes")
-      SET(${VARIABLE} 1 CACHE INTERNAL "Have include ${INCLUDE}")
+      SET(${VARIABLE} 1 CACHE INTERNAL "Whether streams support 64-bit types")
     ELSE(${VARIABLE})
       MESSAGE(STATUS "Check if system supports 64 bit streams - no")
-      SET(${VARIABLE} "" CACHE INTERNAL "Have include ${INCLUDE}")
+      SET(${VARIABLE} "" CACHE INTERNAL "Whether streams support 64-bit types")
       WRITE_FILE(${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log 
         "Determining if the system supports 64 bit streams "
         "failed with the following output:\n"
         "${OUTPUT}\n" APPEND)
     ENDIF(${VARIABLE})
-  ENDIF("HAVE_${VARIABLE}" MATCHES "^HAVE_${VARIABLE}$")
+  ENDIF("${VARIABLE}" MATCHES "^${VARIABLE}$")
 ENDMACRO(CHECK_FOR_64BIT_STREAMS)
