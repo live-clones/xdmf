@@ -45,6 +45,7 @@ XdmfDsm::XdmfDsm() {
     // For Alignment
     this->Storage->SetNumberType(XDMF_INT64_TYPE);
     this->SetLength(XDMF_DSM_DEFAULT_LENGTH);
+    this->DataPointer = (XdmfByte *)this->Storage->GetDataPointer();
     this->StartAddress = 0;
     this->EndAddress = this->StartAddress + this->Length - 1;
     this->Comm = 0;
@@ -61,6 +62,7 @@ XdmfDsm::Copy(XdmfDsm *Source){
     this->DsmType = Source->DsmType;
     this->Storage = Source->GetStorage();
     this->StorageIsMine = 0;
+    this->DataPointer = (XdmfByte *)this->Storage->GetDataPointer();
     // For Alignment
     this->Length = Source->Length;
     this->StartAddress = Source->StartAddress;
@@ -78,6 +80,7 @@ XdmfInt32
 XdmfDsm::SetStorage(XdmfArray *aStorage){
     if(this->Storage && this->StorageIsMine) delete this->Storage;
     this->Storage = aStorage;
+    this->DataPointer = (XdmfByte *)this->Storage->GetDataPointer();
     return(XDMF_SUCCESS);
 }
 
@@ -170,6 +173,7 @@ XdmfDsm::SetLength(XdmfInt64 aLength){
         return(XDMF_FAIL);
     }
     this->Length = aLength;
+    this->DataPointer = (XdmfByte *)this->Storage->GetDataPointer();
     return(XDMF_SUCCESS);
 }
 

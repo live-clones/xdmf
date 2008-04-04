@@ -46,6 +46,7 @@ XdmfDsmBufferServiceThread(void *DsmObj){
 XdmfDsmBuffer::XdmfDsmBuffer() {
     XdmfInt64 i;
     this->ThreadDsmReady = 0;
+    this->DataPointer = 0;
     this->Locks = new XdmfInt64[XDMF_DSM_MAX_LOCKS];
     for(i=0;i < XDMF_DSM_MAX_LOCKS;i++) this->Locks[i] = -1;
 }
@@ -147,7 +148,11 @@ XdmfDsmBuffer::Service(XdmfInt32 *ReturnOpcode){
                 XdmfErrorMessage("Length too long");
                 return(XDMF_FAIL);
             }
-            datap = (XdmfByte *)this->Storage->GetDataPointer();
+            // datap = (XdmfByte *)this->Storage->GetDataPointer();
+            // Stay out of HDF library. If it is threadsafe if will
+            // deadlock on mpi_recv. If it is not threadsafe it will
+            // get corrupted
+            datap = this->DataPointer;
             datap += Address - this->StartAddress;
             this->Msg->SetTag(XDMF_DSM_COMMAND_TAG);
             status = this->ReceiveData(who, datap, aLength); 
@@ -164,7 +169,11 @@ XdmfDsmBuffer::Service(XdmfInt32 *ReturnOpcode){
                 XdmfErrorMessage("Server Start = " << this->StartAddress << " End = " << this->EndAddress);
                 return(XDMF_FAIL);
             }
-            datap = (XdmfByte *)this->Storage->GetDataPointer();
+            // datap = (XdmfByte *)this->Storage->GetDataPointer();
+            // Stay out of HDF library. If it is threadsafe if will
+            // deadlock on mpi_recv. If it is not threadsafe it will
+            // get corrupted
+            datap = this->DataPointer;
             datap += Address - this->StartAddress;
             this->Msg->SetTag(XDMF_DSM_RESPONSE_TAG);
             status = this->SendData(who, datap, aLength); 
@@ -341,7 +350,11 @@ XdmfDsmBuffer::Put(XdmfInt64 Address, XdmfInt64 aLength, void *Data){
             XdmfByte *dp;
 
             // cout << "That's me!!" << endl;
-            dp = (XdmfByte *)this->Storage->GetDataPointer();
+            // dp = (XdmfByte *)this->Storage->GetDataPointer();
+            // Stay out of HDF library. If it is threadsafe if will
+            // deadlock on mpi_recv. If it is not threadsafe it will
+            // get corrupted
+            dp = this->DataPointer;
             dp += Address - this->StartAddress;
             memcpy(dp, datap, len);
 
@@ -387,7 +400,11 @@ XdmfDsmBuffer::Get(XdmfInt64 Address, XdmfInt64 aLength, void *Data){
             XdmfByte *dp;
 
             // cout << "That's me!!" << endl;
-            dp = (XdmfByte *)this->Storage->GetDataPointer();
+            // dp = (XdmfByte *)this->Storage->GetDataPointer();
+            // Stay out of HDF library. If it is threadsafe if will
+            // deadlock on mpi_recv. If it is not threadsafe it will
+            // get corrupted
+            dp = this->DataPointer;
             dp += Address - this->StartAddress;
             memcpy(datap, dp, len);
 

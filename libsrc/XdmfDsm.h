@@ -126,6 +126,7 @@ protected:
     XdmfArray   *Storage;
     XdmfDsmComm *Comm;
     XdmfDsmMsg  *Msg;
+    XdmfByte    *DataPointer;
 };
 
 #endif // __XdmfDsm_h
