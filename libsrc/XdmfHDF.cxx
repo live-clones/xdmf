@@ -49,6 +49,21 @@ XdmfHDF::XdmfHDF() {
   this->NumberOfChildren = 0;
   this->Compression = 0;
   this->UseSerialFile = 0;
+  // We may have been compiled with Parallel IO support, but be run only on a single
+  // machine without mpiexec. Disable parallel if just one process.
+#if H5_HAVE_PARALLEL && ((H5_VERS_MAJOR>1)||((H5_VERS_MAJOR==1)&&(H5_VERS_MINOR>=6)))
+  int valid, nprocs=0;
+  MPI_Initialized(&valid);
+  if (valid) 
+    {
+    MPI_Comm_size(MPI_COMM_WORLD,&nprocs);
+    }
+  if (nprocs<=1) 
+    {
+    this->UseSerialFile = 1;
+    }
+#endif
+
 #ifndef XDMF_NO_MPI
   this->DsmBuffer = 0;
 #endif
