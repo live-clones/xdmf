@@ -110,7 +110,7 @@ struct vtkXdmfWriterInternal
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfWriter);
-vtkCxxRevisionMacro(vtkXdmfWriter, "1.3");
+vtkCxxRevisionMacro(vtkXdmfWriter, "1.4");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter::vtkXdmfWriter()
@@ -1428,7 +1428,8 @@ void vtkXdmfWriter::Indent(ostream& os)
 }
 
 //----------------------------------------------------------------------------
-const char* vtkXdmfWriter::GenerateHDF5ArrayName(const char* gridName, const char* array)
+const char* vtkXdmfWriter::GenerateHDF5ArrayName(const char* gridName, 
+                                                 const char* array)
 {
   if ( !this->HeavyDataSetNameString )
     {
