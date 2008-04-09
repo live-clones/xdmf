@@ -215,8 +215,8 @@ protected:
     XdmfInt32       UpdateInformationUniform();
     XdmfInt32       UpdateInformationCollection();
     XdmfInt32       UpdateInformationTree();
-    XdmfInt32       UpdateInformationFunction(); // HpyerSlab, Coordinates or Function
-    XdmfInt32       UpdateFunction(); // HpyerSlab, Coordinates or Function
+    XdmfInt32       UpdateInformationFunction(); // HyperSlab, Coordinates or Function
+    XdmfInt32       UpdateFunction(); // HyperSlab, Coordinates or Function
 };
 
 #endif // __XdmfDataItem_h

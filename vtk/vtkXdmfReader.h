@@ -206,8 +206,18 @@ public:
   // Get DsmBubffer
   void *GetDsmBuffer();
 
-  
-  
+  // Set the Timestep to be read. This is provided for compatibility
+  // reasons only and should not be used. The correct way to
+  // request time is using the UPDATE_TIME_STEPS information key
+  // passed from downstream.
+  vtkSetMacro(TimeStep, int);
+  vtkGetMacro(TimeStep, int);
+
+  // Description:
+  // Save the range of valid timestep index values. This can be used by the PAraView GUI
+  int TimeStepRange[2];
+  vtkGetVector2Macro(TimeStepRange, int);
+
 protected:
   vtkXdmfReader();
   ~vtkXdmfReader();   
@@ -224,9 +234,10 @@ protected:
                                  vtkInformationVector *);
   virtual int FillOutputPortInformation(int port, vtkInformation *info);
 
-  int UpdateDomains();
+  int  UpdateDomains();
   void UpdateRootGrid();
   void UpdateGrids(vtkXdmfReaderGrid *parent, void *GridNode);
+  void FindTimeValues();
 
   // Array selection helpers /////////////////////////////////////////////////
   static void SelectionModifiedCallback(vtkObject* caller, unsigned long eid,
@@ -249,10 +260,13 @@ protected:
 
   int Stride[3];
 
-  int GridsModified;
-  int OutputsInitialized;
-  int OutputVTKType;
+  int            GridsModified;
+  int            OutputsInitialized;
+  int            OutputVTKType;
   XdmfDsmBuffer *DsmBuffer;
+  int            OutputTemporal;
+  unsigned int   ActualTimeStep;
+  int            TimeStep;
 private:
   vtkXdmfReader(const vtkXdmfReader&); // Not implemented
   void operator=(const vtkXdmfReader&); // Not implemented  
