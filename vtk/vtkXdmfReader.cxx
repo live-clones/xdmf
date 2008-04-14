@@ -90,7 +90,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.39");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.40");
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
@@ -1293,7 +1293,7 @@ void vtkXdmfReader::UpdateGrids(
     return;
     }
   
-  int usedIndexes = 0;
+
   int done = 0;
   int NGrid;
   XdmfXmlNode gridNode = 0;
@@ -2916,7 +2916,7 @@ int vtkXdmfReader::RequestData(
     return 0;
     }
   
-  long int starttime = this->GetMTime();
+  //long int starttime = this->GetMTime();
 
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
   vtkDataObject *outStructure = outInfo->Get(vtkDataObject::DATA_OBJECT());
@@ -2970,7 +2970,7 @@ int vtkXdmfReader::RequestData(
         - this->Internals->TimeValues.begin();
       }
     // last check to stop dodgy crashes
-    if (this->ActualTimeStep<0 || this->ActualTimeStep>=this->Internals->TimeValues.size()) {
+    if (this->ActualTimeStep>=this->Internals->TimeValues.size()) {
       this->ActualTimeStep = 0;
     }
     // If the time step changes, the information is invalid
@@ -3068,7 +3068,7 @@ int vtkXdmfReader::RequestData(
       return 0;
     }
 
-  long int endtime = this->GetMTime();
+  //long int endtime = this->GetMTime();
 
   return 1;
 }
