@@ -28,11 +28,19 @@
 
 #include "vtkProcessObject.h"
 
+// from "XdmfGrid.h"
+#define XDMF_GRID_COLLECTION_TEMPORAL   0x0001
+#define XDMF_GRID_COLLECTION_SPATIAL    0x0002
+#define XDMF_GRID_COLLECTION_UNSET      0x0FFFF
+
 class vtkDataSet;
 class vtkPoints;
 class vtkCellArray;
 class vtkDataArray;
 class vtkDataSetCollection;
+//BTX
+class XdmfDOM;
+//ETX
 
 class VTK_EXPORT vtkXdmfWriter : public vtkProcessObject
 {
@@ -91,6 +99,44 @@ public:
   virtual void SetInput(vtkDataSet* ds);
 
   // Description:
+  // If InputsArePieces is set, the onpuits are considered to be parts/pieces
+  // of a larger grid and are joined together inside the hdf5 file
+  vtkSetClampMacro(InputsArePieces, int, 0, 1);
+  vtkBooleanMacro(InputsArePieces, int);
+  vtkGetMacro(InputsArePieces, int);
+
+  // Description:
+  // When InputsArePieces is set, this is the true size of the data
+  vtkSetVector3Macro(FullGridSize, int);
+  vtkGetVectorMacro(FullGridSize, int, 3);
+
+  // Description:
+  // If appending many time steps together into a single file
+  // you should set CollectionType to "Temporal", 
+  // when appending grids into a multi-block type structure
+  // use collection type is "Spatial". By default, Collection type is Unset
+  vtkSetMacro(CollectionType, int);
+  vtkGetMacro(CollectionType, int);
+  void SetCollectionTypeToTemporal() { 
+    this->SetCollectionType(XDMF_GRID_COLLECTION_TEMPORAL); }
+  void SetCollectionTypeToSpatial()  { 
+    this->SetCollectionType(XDMF_GRID_COLLECTION_SPATIAL); }
+  void CloseCollection();
+    
+  // Description:
+  // Set the time value of this data
+  vtkSetMacro(TimeValue, double);
+  vtkGetMacro(TimeValue, double);
+
+  // Description:
+  // If AppendGridsToDomain is set, the existing xdmf xml file is opeded
+  // and new grid are added to the existing domain inside it.
+  // No checking is performed on the structuire of the file.
+  vtkSetClampMacro(AppendGridsToDomain, int, 0, 1);
+  vtkBooleanMacro(AppendGridsToDomain, int);
+  vtkGetMacro(AppendGridsToDomain, int);
+
+  // Description:
   // Write the XDMF file.
   void Write();
 
@@ -146,7 +192,10 @@ protected:
   virtual int WriteVTKArray( ostream& ost, vtkDataArray* array, vtkDataSet* dataSet,
     int dims[3], int *extents, const char* name, const char* dataName, const char* gridName, int alllight,
     int cellData = 0);
-
+  
+  virtual bool ReadDocument(const char* filename);
+  virtual int  ParseExistingFile(const char* filename);
+  
   vtkSetStringMacro(HeavyDataSetNameString);
   char    *HeavyDataSetNameString;
 
@@ -163,12 +212,24 @@ protected:
 
   int GridOnly;
 
+  int AppendGridsToDomain;
+  int InputsArePieces;
+  int FullGridSize[3];
+  double TimeValue;
+
   vtkSetStringMacro(HDF5ArrayName);
   char* HDF5ArrayName;
 
   // list of data sets to append together.
   // Here as a convenience.  It is a copy of the input array.
   vtkDataSetCollection *InputList;
+
+  char *DocString;
+  int   CollectionType;
+  XdmfDOM  *DOM;
+
+public:
+  int CurrentInputNumber;
 
 private:
   vtkXdmfWriter(const vtkXdmfWriter&); // Not implemented
