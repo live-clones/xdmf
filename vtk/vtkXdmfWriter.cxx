@@ -75,8 +75,25 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "XdmfHDF.h"
 #include "XdmfArray.h"
 #include "XdmfAttribute.h"
+#include "XdmfDOM.h"
+
+#include "H5Spublic.h"
 
 #include <vtkstd/map>
+#include <vtksys/SystemTools.hxx>
+
+//----------------------------------------------------------------------------
+  #define OUTPUTTEXT(a) vtkOutputWindowDisplayText(a);
+  #define vtkGenericDebugMacro(a)  \
+  { \
+    vtkOStreamWrapper::EndlType endl; \
+    vtkOStreamWrapper::UseEndl(endl); \
+    vtkOStrStreamWrapper vtkmsg; \
+    vtkmsg << " vtkXdmfWriter " a << "\n"; \
+    OUTPUTTEXT(vtkmsg.str()); \
+    vtkmsg.rdbuf()->freeze(0); \
+  }
+//---------------------------------------------------------------------------
 
 struct vtkXdmfWriterInternal
 {
@@ -110,7 +127,7 @@ struct vtkXdmfWriterInternal
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfWriter);
-vtkCxxRevisionMacro(vtkXdmfWriter, "1.4");
+vtkCxxRevisionMacro(vtkXdmfWriter, "1.5");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter::vtkXdmfWriter()
@@ -122,6 +139,7 @@ vtkXdmfWriter::vtkXdmfWriter()
   this->CollectionName = 0;
   this->SetHeavyDataSetName( "XdmfData.h5" );
   this->SetGridName( "Unnamed" );
+  this->CollectionType = XDMF_GRID_COLLECTION_UNSET;
 
   this->AllLight = 0;
   this->AllHeavy = 0;
@@ -132,6 +150,14 @@ vtkXdmfWriter::vtkXdmfWriter()
   this->HDF5ArrayName = 0;
 
   this->GridOnly = 0;
+  this->InputsArePieces = 0;
+  this->FullGridSize[0] = 0;
+  this->FullGridSize[1] = 0;
+  this->FullGridSize[2] = 0;
+  this->TimeValue = -1E99;
+  this->DocString = NULL;
+  this->AppendGridsToDomain = 0;
+  this->DOM = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -147,6 +173,10 @@ vtkXdmfWriter::~vtkXdmfWriter()
   this->SetHDF5ArrayName(0);
   this->SetDomainName(0);
   this->SetGridName(0);
+  if (this->DocString)
+  {
+    delete []this->DocString;
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -174,8 +204,7 @@ void vtkXdmfWriter::SetFileName(const char* fname)
       }
     strcat(hname, ".h5");
     this->SetHeavyDataSetName(hname);
-    vtkDebugMacro("Set Heavy Data Set Name: " << hname);
-    delete [] hname;
+    vtkDebugMacro(<< "Set Heavy Data Set Name: " << hname);
     }
   this->SetFileNameString(fname);
 }
@@ -209,12 +238,63 @@ const char* vtkXdmfWriter::GetHeavyDataSetName()
 }
 
 //----------------------------------------------------------------------------
+int vtkXdmfWriter::ParseExistingFile(const char* filename)
+{
+  XdmfConstString CurrentFileName;
+  vtkstd::string directory;
+
+  if (!filename)
+    {
+    vtkErrorMacro("File name not set");
+    return 1;
+    }
+
+  // First make sure the file exists.  This prevents an empty file
+  // from being created on older compilers.
+  if (!vtksys::SystemTools::FileExists(filename)) {
+    vtkErrorMacro("Error opening file " << filename);
+    return 1;
+    }
+
+  if ( !this->DOM )
+    {
+    this->DOM = new XdmfDOM();
+    }
+
+  //Tell the parser what the working directory is.
+  directory = vtksys::SystemTools::GetFilenamePath(filename) + "/";
+  if (directory == "")
+    {
+    directory = vtksys::SystemTools::GetCurrentWorkingDirectory() + "/";
+    }
+  directory = vtksys::SystemTools::ConvertToOutputPath(directory.c_str());
+  this->DOM->SetWorkingDirectory(directory.c_str());
+
+/*
+  if ( !this->Internals->DataItem )
+    {
+    this->Internals->DataItem = new XdmfDataItem();
+    this->Internals->DataItem->SetDOM(this->DOM);
+    }
+*/
+  CurrentFileName = this->DOM->GetInputFileName();  
+  // Only re-parse when necessary. Reparsing can be slow and can reset
+  // parameters and stride that we read from file but then allow user to 
+  // modify.
+  this->DOM->SetInputFileName(filename);
+  vtkDebugMacro(".!!............Preparing to Parse " << filename);
+  this->DOM->Parse(filename);
+
+  return 1;
+}
+
+//----------------------------------------------------------------------------
 int vtkXdmfWriter::WriteHead( ostream& ost )
 {
-  ost << "<?xml version=\"1.0\" ?>" << endl
-    << "<!DOCTYPE Xdmf SYSTEM \"Xdmf.dtd\" [" << endl
-    << "<!ENTITY HeavyData \"" << this->HeavyDataSetNameString << "\">" <<endl
-    << "]>" << endl << endl << endl;
+  ost << "<?xml version=\"1.0\" ?>" << "\n"
+    << "<!DOCTYPE Xdmf SYSTEM \"Xdmf.dtd\" [" << "\n"
+    << "<!ENTITY HeavyData \"" << this->HeavyDataSetNameString << "\">" <<"\n"
+    << "]>" << "\n" << "\n" << "\n";
   this->Indent(ost);
   ost << "<Xdmf>";
   this->IncrementIndent();
@@ -407,80 +487,80 @@ void vtkXdmfWriter::StartTopology( ostream& ost, int cellType, vtkIdType numVert
   switch( cellType ) 
     {
   case VTK_EMPTY_CELL :
-    vtkDebugMacro("Start Empty Cell");
+    vtkDebugMacro(<< "Start Empty Cell");
   case VTK_VERTEX :
-    vtkDebugMacro("Start " <<  " VERTEX");
+    vtkDebugMacro(<< "Start " <<  " VERTEX");
     ost << " Type=\"POLYVERTEX\"";
     this->Indent(ost);
     break;
   case VTK_POLY_VERTEX :
-    vtkDebugMacro("Start " <<  " POLY_VERTEX");
+    vtkDebugMacro(<< "Start " <<  " POLY_VERTEX");
     ost << " Type=\"POLYVERTEX\"";
     this->Indent(ost);
     break;
   case VTK_LINE :
-    vtkDebugMacro("Start " <<  " LINE");
+    vtkDebugMacro(<< "Start " <<  " LINE");
     ost << " Type=\"POLYLINE\"";
     this->Indent(ost);
     ost << " NodesPerElement=\"" << numVert << "\"";
     this->Indent(ost);
     break;
   case VTK_POLY_LINE :
-    vtkDebugMacro("Start " <<  " POLY_LINE");
+    vtkDebugMacro(<< "Start " <<  " POLY_LINE");
     ost << " Type=\"POLYLINE\"";
     this->Indent(ost);
     ost << " NodesPerElement=\"" << numVert << "\"";
     this->Indent(ost);
     break;
   case VTK_TRIANGLE :
-    vtkDebugMacro("Start " <<  " TRIANGLE");
+    vtkDebugMacro(<< "Start " <<  " TRIANGLE");
     ost << " Type=\"TRIANGLE\"";
     this->Indent(ost);
     break;
   case VTK_TRIANGLE_STRIP :
-    vtkDebugMacro("Start " <<  " TRIANGLE_STRIP");
+    vtkDebugMacro(<< "Start " <<  " TRIANGLE_STRIP");
     ost << " Type=\"TRIANGLE\"";
     this->Indent(ost);
     break;
   case VTK_POLYGON :
-    vtkDebugMacro("Start " <<  " POLYGON");
+    vtkDebugMacro(<< "Start " <<  " POLYGON");
     ost << " Type=\"POLYGON\"";
     this->Indent(ost);
     ost << " NodesPerElement=\"" << numVert << "\"";
     this->Indent(ost);
     break;
   case VTK_PIXEL :
-    vtkDebugMacro("Start " <<  " PIXEL");
+    vtkDebugMacro(<< "Start " <<  " PIXEL");
     ost << " Type=\"QUADRILATERAL\"";
     this->Indent(ost);
     break;
   case VTK_QUAD :
-    vtkDebugMacro("Start " <<  " QUAD");
+    vtkDebugMacro(<< "Start " <<  " QUAD");
     ost << " Type=\"QUADRILATERAL\"";
     this->Indent(ost);
     break;
   case VTK_TETRA :
-    vtkDebugMacro("Start " <<  " TETRA");
+    vtkDebugMacro(<< "Start " <<  " TETRA");
     ost << " Type=\"TETRAHEDRON\"";
     this->Indent(ost);
     break;
   case VTK_VOXEL :
-    vtkDebugMacro("Start " <<  " VOXEL");
+    vtkDebugMacro(<< "Start " <<  " VOXEL");
     ost << " Type=\"HEXAHEDRON\"";
     this->Indent(ost);
     break;
   case VTK_HEXAHEDRON :
-    vtkDebugMacro("Start " <<  " HEXAHEDRON");
+    vtkDebugMacro(<< "Start " <<  " HEXAHEDRON");
     ost << " Type=\"HEXAHEDRON\"";
     this->Indent(ost);
     break;
   case VTK_WEDGE :
-    vtkDebugMacro("Start " <<  " WEDGE");
+    vtkDebugMacro(<< "Start " <<  " WEDGE");
     ost << " Type=\"WEDGE\"";
     this->Indent(ost);
     break;
   case VTK_PYRAMID :
-    vtkDebugMacro("Start " <<  " PYRAMID");
+    vtkDebugMacro(<< "Start " <<  " PYRAMID");
     ost << " Type=\"PYRAMID\"";
     this->Indent(ost);
     break;
@@ -514,7 +594,7 @@ vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost,
   int useExtents = 0;
   int scaledDims[3] = { -1, -1, -1 };
 
-  cout << "Dataset: " << arrayName << endl;
+  vtkGenericDebugMacro(<< "Dataset: " << arrayName << "\n");
   int cc;
   if ( scaledExtent )
     {
@@ -560,9 +640,9 @@ vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost,
         grid->GetExtent(extent);
         if ( cellData )
           {
-          cout << "Fix for cell arrays" << endl;
-          cout << "Extent: " << extent[0] << " " << extent[1] << " " << extent[2] << " " << extent[3] << " " << extent[4] << " " << extent[5] << endl;
-          cout << "updateExtent: " << updateExtent[0] << " " << updateExtent[1] << " " << updateExtent[2] << " " << updateExtent[3] << " " << updateExtent[4] << " " << updateExtent[5] << endl;
+          vtkGenericDebugMacro(<< "Fix for cell arrays" << "\n");
+          vtkGenericDebugMacro(<< "Extent: " << extent[0] << " " << extent[1] << " " << extent[2] << " " << extent[3] << " " << extent[4] << " " << extent[5] << "\n");
+          vtkGenericDebugMacro(<< "updateExtent: " << updateExtent[0] << " " << updateExtent[1] << " " << updateExtent[2] << " " << updateExtent[3] << " " << updateExtent[4] << " " << updateExtent[5] << "\n");
           for ( cc = 0; cc < 3; cc ++ )
             {
             updateExtent[cc*2+1] -= 1;
@@ -591,7 +671,7 @@ vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost,
         vtkImageData* grid = vtkImageData::SafeDownCast(dataSet);
         grid->GetUpdateExtent(updateExtent);
         grid->GetExtent(extent);
-        for ( cc = 0; cc < 6; cc ++ )
+        for ( cc = 0; cc < 3; cc ++ )
           {
           updateExtent[cc*2+1] -= cellData;
           extent[cc*2+1] -= cellData;
@@ -606,74 +686,87 @@ vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost,
     {
     for ( cc = 0; cc < 3; cc ++ )
       {
-      cout << "Dims[" << cc << "]: " << dims[cc] << endl;
+      vtkGenericDebugMacro(<< "Dims[" << cc << "]: " << dims[cc] << "\n");
       }
     for ( cc = 0; cc < 3; cc ++ )
       {
-      cout << "UExt[" << cc << "]: " << updateExtent[cc*2] << " - " << updateExtent[cc*2+1] << endl;
+      vtkGenericDebugMacro(<< "UExt[" << cc << "]: " << updateExtent[cc*2] << " - " << updateExtent[cc*2+1] << "\n");
       }
     for ( cc = 0; cc < 3; cc ++ )
       {
-      cout << "RExt[" << cc << "]: " << extent[cc*2] << " - " << extent[cc*2+1] << endl;
+      vtkGenericDebugMacro(<< "RExt[" << cc << "]: " << extent[cc*2] << " - " << extent[cc*2+1] << "\n");
       }
     }
 
-  ost << "<DataStructure";
-  self->IncrementIndent();
-  if ( dataName )
+  if (!self->GetInputsArePieces() || (self->GetInputsArePieces() && self->CurrentInputNumber==0)) 
     {
-    self->Indent(ost);
-    ost << " Name=\"" << dataName << "\"";
-    }
-  self->Indent(ost);
-  ost << " DataType=\"" << scalar_type << "\"";
-  self->Indent(ost);
-  int precision = 1;
-  switch ( type )
-    {
-  case XDMF_FLOAT64_TYPE: case XDMF_INT64_TYPE:
-    precision = 8;
-    break;
-  case XDMF_FLOAT32_TYPE: case XDMF_INT32_TYPE: case XDMF_UINT32_TYPE:
-    precision = 4;
-    break;
-  case XDMF_INT16_TYPE: case XDMF_UINT16_TYPE:
-    precision = 2;
-    break;
-    }
-  if ( precision > 1 )
-    {
-    ost << " Precision=\"" << precision << "\"";
-    self->Indent(ost);
-    }
-  else if ( type == XDMF_FLOAT32_TYPE )
-    {
-    ost << " Precision=\"4\"";
-    self->Indent(ost);
-    }
-  ost << " Dimensions=\"";
-  
-  if ( dims[0] < 1 )
-    {
-    if ( scaledDims[0] < 1 )
+    ost << "<DataStructure";
+    self->IncrementIndent();
+    if ( dataName )
       {
-      ost << array->GetNumberOfTuples();
+      self->Indent(ost);
+      ost << " Name=\"" << dataName << "\"";
+      }
+    self->Indent(ost);
+    ost << " DataType=\"" << scalar_type << "\"";
+    self->Indent(ost);
+    int precision = 1;
+    switch ( type )
+      {
+      case XDMF_FLOAT64_TYPE: case XDMF_INT64_TYPE:
+        precision = 8;
+        break;
+      case XDMF_FLOAT32_TYPE: case XDMF_INT32_TYPE: case XDMF_UINT32_TYPE:
+        precision = 4;
+        break;
+      case XDMF_INT16_TYPE: case XDMF_UINT16_TYPE:
+        precision = 2;
+        break;
+      }
+    if ( precision > 1 )
+      {
+      ost << " Precision=\"" << precision << "\"";
+      self->Indent(ost);
+      }
+    else if ( type == XDMF_FLOAT32_TYPE )
+      {
+      ost << " Precision=\"4\"";
+      self->Indent(ost);
+      }
+    ost << " Dimensions=\"";
+  
+    if ( dims[0] < 1 )
+      {
+      if ( scaledDims[0] < 1 )
+        {
+        ost << array->GetNumberOfTuples();
+        }
+      else
+        {
+        ost << scaledDims[0];
+        }
       }
     else
       {
-      ost << scaledDims[0];
+      if (self->GetInputsArePieces()) 
+        {
+        vtkGenericDebugMacro(<< "Using Custom Disk Shape " << self->GetFullGridSize()[0] << " " << self->GetFullGridSize()[1] << " " << self->GetFullGridSize()[2] << "\n");
+        ost << self->GetFullGridSize()[0] << " " << self->GetFullGridSize()[1] << " " << self->GetFullGridSize()[2];
+        }
+      else
+        {
+        ost << dims[2] << " " << dims[1] << " " << dims[0];
+        }
       }
+    if ( array->GetNumberOfComponents() > 1 )
+      {
+      ost << " " << array->GetNumberOfComponents();
+      }
+    ost << "\"";
+    self->Indent(ost);
     }
-  else
-    {
-    ost << dims[2] << " " << dims[1] << " " << dims[0];
-    }
-  if ( array->GetNumberOfComponents() > 1 )
-    {
-    ost << " " << array->GetNumberOfComponents();
-    }
-  ost << "\"";
-  self->Indent(ost);
+
+  // if all light, piece writing is knackered
   NType val = value;
   if ( allLight )
     {
@@ -683,14 +776,14 @@ vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost,
     if ( useExtents )
       {
       int printOne = 0;
-      cout << "Use Extent" << endl;
+      vtkGenericDebugMacro(<< "Use Extent" << "\n");
       jj = 0;
       vtkIdType idx = 0;
       vtkIdType size =
         (updateExtent[1]-updateExtent[0] + 1) *
         (updateExtent[3]-updateExtent[2] + 1) *
         (updateExtent[5]-updateExtent[4] + 1);
-      cout << "Size: " << size << " " << array->GetNumberOfComponents() << endl;
+      vtkGenericDebugMacro(<< "Size: " << size << " " << array->GetNumberOfComponents() << "\n");
       if ( size != array->GetNumberOfTuples() )
         {
         // Error
@@ -754,10 +847,13 @@ vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost,
     int nh5dims = 0;
 
     DataSetName = self->GenerateHDF5ArrayName(gridName, arrayName);
-    ost << " Format=\"HDF\">";
-    self->Indent(ost);
-    ost << " " << DataSetName;
-    // self->Indent(ost);
+    if (!self->GetInputsArePieces() || (self->GetInputsArePieces() && self->CurrentInputNumber==0)) 
+      {
+      ost << " Format=\"HDF\">";
+      self->Indent(ost);
+      ost << " " << DataSetName;
+      // self->Indent(ost);
+      }
 
     if ( dims[0] < 1 )
       {
@@ -776,11 +872,11 @@ vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost,
         {
         nh5dims = 3;
         }
-      //cout << "Use dims: " << h5dims[0] << " " << h5dims[1] << " " << h5dims[2]<< " " << h5dims[3] << " (" << nh5dims << ")" << endl;
+      //vtkDebugMacro(<< "Use dims: " << h5dims[0] << " " << h5dims[1] << " " << h5dims[2]<< " " << h5dims[3] << " (" << nh5dims << ")" << "\n");
       }
 
     Data.SetNumberType(type);
-    //cout << "Data type: " << type << endl;
+    //vtkDebugMacro(<< "Data type: " << type << "\n");
     Data.SetShape(nh5dims, h5dims);
 
     /*  This is too slow
@@ -796,7 +892,7 @@ vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost,
       }
     */
 
-    cout << "Required: " << array->GetNumberOfTuples() << " * " << array->GetNumberOfComponents() << "(" << (array->GetNumberOfTuples() *  array->GetNumberOfComponents()) << ")" << endl;
+    vtkGenericDebugMacro(<< "Required: " << array->GetNumberOfTuples() << " * " << array->GetNumberOfComponents() << " =" << (array->GetNumberOfTuples() *  array->GetNumberOfComponents()) << "\n");
 
     if ( useExtents )
       {
@@ -808,7 +904,7 @@ vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost,
         (updateExtent[1]-updateExtent[0] + 1) *
         (updateExtent[3]-updateExtent[2] + 1) *
         (updateExtent[5]-updateExtent[4] + 1);
-      cout << "Size: " << size << " " << array->GetNumberOfComponents() << endl;
+      vtkGenericDebugMacro(<< "Size: " << size << " " << array->GetNumberOfComponents() << "\n");
       if ( size != array->GetNumberOfTuples() )
         {
         // Error
@@ -828,9 +924,8 @@ vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost,
               for ( kk = 0; kk < array->GetNumberOfComponents(); kk ++ )
                 {
                 val = array->GetValue(idx * array->GetNumberOfComponents() + kk);
-                Data.SetValue(jj, val);
+                Data.SetValue(jj++, val);
                 }
-              jj ++;
               }
             idx ++;
             }
@@ -841,8 +936,31 @@ vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost,
       {
       Data.SetValues(0, array->GetPointer(0), array->GetNumberOfTuples() * array->GetNumberOfComponents());
       }
+
     H5.CopyType( &Data );
-    H5.CopyShape( &Data );
+
+    int src_npts=-1;
+
+    if (self->GetInputsArePieces()) 
+      {
+      // Set the Full Array Shape
+      vtkGenericDebugMacro(<< "Using Custom Disk Shape " << "\n");
+      h5dims[0] = self->GetFullGridSize()[2];
+      h5dims[1] = self->GetFullGridSize()[1];
+      h5dims[2] = self->GetFullGridSize()[0];
+      H5.SetShape(nh5dims, h5dims);
+      // Set a hyperslab to define only our piece
+      XdmfInt64 start[4]  = {extent[4], extent[2], extent[0], 0};
+      XdmfInt64 stride[4] = {1,1,1,1};
+      XdmfInt64 count[4]  = {dims[2], dims[1], dims[0], h5dims[3]};
+      H5.SelectHyperSlab(start, stride, count);
+      src_npts = H5Sget_select_npoints( H5.GetDataSpace() );
+
+      } 
+    else
+      {
+      H5.CopyShape( &Data );
+      }
 
     if( H5.Open( DataSetName, "rw" ) == XDMF_FAIL )
       {
@@ -852,12 +970,49 @@ vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost,
         return( -1 );
         }
       }
+
+    // Set the DataSpace again as it may have been reset in Open Call
+    H5.CopyType( &Data );
+    src_npts=-1;
+
+    if (self->GetInputsArePieces()) 
+      {
+      // Set the Full Array Shape
+      vtkGenericDebugMacro(<< "Using Custom Disk Shape " << "\n");
+      h5dims[0] = self->GetFullGridSize()[2];
+      h5dims[1] = self->GetFullGridSize()[1];
+      h5dims[2] = self->GetFullGridSize()[0];
+      H5.SetShape(nh5dims, h5dims);
+      // Set a hyperslab to define only our piece
+      XdmfInt64 start[4]  = {
+        static_cast<XdmfInt64>(extent[4]), 
+        static_cast<XdmfInt64>(extent[2]), 
+        static_cast<XdmfInt64>(extent[0]), 
+        0};
+      XdmfInt64 stride[4] = {1,1,1,1};
+      XdmfInt64 count[4]  = {dims[2], dims[1], dims[0], h5dims[3]};
+      H5.SelectHyperSlab(start, stride, count);
+      src_npts = H5Sget_select_npoints( H5.GetDataSpace() );
+
+      } 
+    else
+      {
+      H5.CopyShape( &Data );
+      }
+
+
+    vtkGenericDebugMacro(<< "Writing Disk Shape (offset) " << extent[4] << " " << extent[2] << " " << extent[0] << "\n");
     H5.Write( &Data );
     H5.Close();
+
     }
-  self->DecrementIndent();
-  self->Indent( ost );
-  ost << "</DataStructure>";
+
+  if (!self->GetInputsArePieces() || (self->GetInputsArePieces() && self->CurrentInputNumber==0)) 
+    {
+    self->DecrementIndent();
+    self->Indent( ost );
+    ost << "</DataStructure>";
+   }
   return( array->GetNumberOfTuples() );
 }
 
@@ -871,42 +1026,51 @@ int vtkXdmfWriter::WriteDataArray( ostream& ost, vtkDataArray* array, vtkDataSet
     arrayName = array->GetName();
     }
 
-  ost << "<Attribute";
-  this->IncrementIndent();
-  this->Indent(ost);
-  if ( active )
+  if (!this->InputsArePieces || (this->InputsArePieces && this->CurrentInputNumber==0)) 
     {
-    ost << " Active=\"1\"";
+    ost << "<Attribute";
+    this->IncrementIndent();
+    this->Indent(ost);
+    if ( active )
+      {
+      ost << " Active=\"1\"";
+      this->Indent(ost);
+      }
+    switch ( type )
+      {
+    case XDMF_ATTRIBUTE_TYPE_SCALAR:
+      ost << " Type=\"Scalar\"";
+      break;
+    case XDMF_ATTRIBUTE_TYPE_VECTOR:
+      ost << " Type=\"Vector\"";
+      break;
+    case XDMF_ATTRIBUTE_TYPE_TENSOR:
+      ost << " Type=\"Tensor\"";
+      break;
+    case XDMF_ATTRIBUTE_TYPE_MATRIX:
+      ost << " Type=\"Matrix\"";
+      break;
+    default:
+      ost << " Type=\"Unknown\"";
+      }
+    this->Indent(ost);
+    ost << " Center=\"" << Center << "\"";
+    this->Indent(ost);
+    ost << " Name=\"" << arrayName << "\">";
     this->Indent(ost);
     }
-  switch ( type )
-    {
-  case XDMF_ATTRIBUTE_TYPE_SCALAR:
-    ost << " Type=\"Scalar\"";
-    break;
-  case XDMF_ATTRIBUTE_TYPE_VECTOR:
-    ost << " Type=\"Vector\"";
-    break;
-  case XDMF_ATTRIBUTE_TYPE_TENSOR:
-    ost << " Type=\"Tensor\"";
-    break;
-  case XDMF_ATTRIBUTE_TYPE_MATRIX:
-    ost << " Type=\"Matrix\"";
-    break;
-  default:
-    ost << " Type=\"Unknown\"";
-    }
-  this->Indent(ost);
-  ost << " Center=\"" << Center << "\"";
-  this->Indent(ost);
-  ost << " Name=\"" << arrayName << "\">";
-  this->Indent(ost);
+
   vtkIdType res = this->WriteVTKArray( ost, array, dataSet, 0, dims, arrayName, 0, gridName,
     this->AllLight, cellData );
-  this->DecrementIndent();
-  this->Indent(ost);
-  ost << "</Attribute>";
-  this->Indent(ost);
+
+  if (!this->InputsArePieces || (this->InputsArePieces && this->CurrentInputNumber==0)) 
+    {
+    this->DecrementIndent();
+    this->Indent(ost);
+    ost << "</Attribute>";
+    this->Indent(ost);
+    }
+
   return res;
 }
 
@@ -981,7 +1145,7 @@ void vtkXdmfWriter::WriteAttributes( ostream& ost, vtkDataSet* ds, const char* g
   int pdims[3] = { -1, -1, -1 };
 
   ds->GetUpdateExtent(extent);
-  //cout << "Extent: " << extent[0] << " "<< extent[1] << " "<< extent[2] << " "<< extent[3] << " "<< extent[4] << " " << extent[5] << endl;
+  //vtkDebugMacro(<< "Extent: " << extent[0] << " "<< extent[1] << " "<< extent[2] << " "<< extent[3] << " "<< extent[4] << " " << extent[5] << "\n");
   if ( extent[1] >= extent[0] && extent[3] >= extent[2] && extent[5] >= extent[4] )
     {
     cdims[0] = pdims[0] = extent[1] - extent[0] +1;
@@ -990,8 +1154,8 @@ void vtkXdmfWriter::WriteAttributes( ostream& ost, vtkDataSet* ds, const char* g
     cdims[0] --;
     cdims[1] --;
     cdims[2] --;
-    //cout << "pDims: " << pdims[0] << " " << pdims[1] << " " << pdims[2] << endl;
-    //cout << "CDims: " << cdims[0] << " " << cdims[1] << " " << cdims[2] << endl;
+    //vtkDebugMacro(<< "pDims: " << pdims[0] << " " << pdims[1] << " " << pdims[2] << "\n");
+    //vtkDebugMacro(<< "CDims: " << cdims[0] << " " << cdims[1] << " " << cdims[2] << "\n");
     if ( cdims[0] <= 0 && cdims[1] <= 0 && cdims[2] <= 0 )
       {
       // Bogus dimensions.
@@ -1006,7 +1170,7 @@ void vtkXdmfWriter::WriteAttributes( ostream& ost, vtkDataSet* ds, const char* g
 
   if( CellData )
     {
-    for ( cc = 0; cc < CellData->GetNumberOfArrays(); cc ++ )
+    for (cc=0; cc<CellData->GetNumberOfArrays(); cc++)
       {
       vtkDataArray* array = CellData->GetArray(cc);
       int type = XDMF_ATTRIBUTE_TYPE_NONE;
@@ -1036,7 +1200,7 @@ void vtkXdmfWriter::WriteAttributes( ostream& ost, vtkDataSet* ds, const char* g
     }
   if( PointData )
     {
-    for ( cc = 0; cc < PointData->GetNumberOfArrays(); cc ++ )
+    for (cc=0; cc<PointData->GetNumberOfArrays(); cc++)
       {
       vtkDataArray* array = PointData->GetArray(cc);
       int type = XDMF_ATTRIBUTE_TYPE_NONE;
@@ -1068,7 +1232,7 @@ void vtkXdmfWriter::WriteAttributes( ostream& ost, vtkDataSet* ds, const char* g
 
 //----------------------------------------------------------------------------
 int vtkXdmfWriter::WriteGrid( ostream& ost, const char* gridName, vtkDataSet* ds, 
-  void* mapofcell, const void* celltype /* = 0 */ )
+  void* mapofcell, const void* celltype /* = 0 */)
 {
   int type; 
 
@@ -1077,160 +1241,187 @@ int vtkXdmfWriter::WriteGrid( ostream& ost, const char* gridName, vtkDataSet* ds
     vtkErrorMacro("No Input Data Set");
     return( -1 );
     }
-  ost << "<Grid Name=\"" << gridName << "\"";
-  if ( this->CollectionName )
+  // Only do XMl for the first piece if these are pieces of data
+  if (!this->InputsArePieces || (this->InputsArePieces && this->CurrentInputNumber==0)) 
     {
-    ost << " Collection=\"" << this->CollectionName << "\"";
-    }
-  ost << ">";
-  this->IncrementIndent();
-  this->Indent(ost);
-  type = ds->GetDataObjectType();
-  if ( type == VTK_POLY_DATA || type == VTK_UNSTRUCTURED_GRID )
-    {
-    vtkPointSet *Polys = vtkPointSet::SafeDownCast(ds);
-    const vtkXdmfWriterInternal::CellType* ct = (vtkXdmfWriterInternal::CellType*)celltype;
-    vtkXdmfWriterInternal::MapOfCellTypes* mc = (vtkXdmfWriterInternal::MapOfCellTypes*)mapofcell;
-    if ( ct == 0 )
-      {
-      ct = &mc->begin()->first;
-      }
-    this->StartTopology( ost, ct->VTKType, ct->NumPoints, (*mc)[*ct]->GetNumberOfIds() );
-    this->WriteCellArray( ost, ds, gridName, mapofcell, ct );
-    this->EndTopology( ost );
-    this->Indent(ost);
-    this->StartGeometry( ost, "XYZ" );
-    this->WritePoints( ost, Polys->GetPoints(), ds, gridName);
-    this->EndGeometry( ost );
-    }
-  else if ( type == VTK_STRUCTURED_POINTS || type == VTK_IMAGE_DATA || type == VTK_UNIFORM_GRID )
-    {
-    int     Dims[3];
-    double Origin[3], Spacing[3];
-    //int     Extent[6];
-    int     updateExtent[6];
-    vtkImageData *SGrid = static_cast<vtkImageData *>(ds);
-    //SGrid->GetDimensions( Dims );
-    SGrid->GetOrigin( Origin );
-    SGrid->GetSpacing( Spacing );
-    //SGrid->GetExtent( Extent );
-    SGrid->GetUpdateExtent( updateExtent );
-    Dims[0] = updateExtent[1] - updateExtent[0] + 1;
-    Dims[1] = updateExtent[3] - updateExtent[2] + 1;
-    Dims[2] = updateExtent[5] - updateExtent[4] + 1;
-    this->StartTopology(ost, "3DCORECTMESH", 3, Dims);
-    this->EndTopology(ost);
-    this->Indent(ost);
-    this->StartGeometry( ost, "ORIGIN_DXDYDZ" );
-    this->Indent(ost);
 
-    int cc;
-    for ( cc = 0; cc < 3; cc ++ )
+    ost << "<Grid Name=\"" << gridName << "\"";
+    if ( this->CollectionName )
       {
-      Origin[cc] = Origin[cc] + Spacing[cc] * updateExtent[cc * 2];
+      ost << " Collection=\"" << this->CollectionName << "\"";
       }
-
-    // Origin
-    ost << "<DataStructure";
+    ost << ">";
     this->IncrementIndent();
     this->Indent(ost);
-    ost << " Name=\"Origin\"";
-    this->Indent(ost);
-    ost << " DataType=\"Float\"";
-    this->Indent(ost);
-    ost << " Dimensions=\"3\"";
-    this->Indent(ost);
-    ost << " Format=\"XML\">";
-    this->Indent(ost);
-    ost << Origin[2] << " " << Origin[1] << " " << Origin[0];
-    cout << "-- Origin: " << Origin[2] << " " << Origin[1] << " " << Origin[0] << endl;
-    this->DecrementIndent();
-    this->Indent(ost);
-    ost << "</DataStructure>";
-    this->Indent(ost);
+    type = ds->GetDataObjectType();
+    if ( type == VTK_POLY_DATA || type == VTK_UNSTRUCTURED_GRID )
+      {
+      vtkPointSet *Polys = vtkPointSet::SafeDownCast(ds);
+      const vtkXdmfWriterInternal::CellType* ct = (vtkXdmfWriterInternal::CellType*)celltype;
+      vtkXdmfWriterInternal::MapOfCellTypes* mc = (vtkXdmfWriterInternal::MapOfCellTypes*)mapofcell;
+      if ( ct == 0 )
+        {
+        ct = &mc->begin()->first;
+        }
+      this->StartTopology( ost, ct->VTKType, ct->NumPoints, (*mc)[*ct]->GetNumberOfIds() );
+      this->WriteCellArray( ost, ds, gridName, mapofcell, ct );
+      this->EndTopology( ost );
+      this->Indent(ost);
+      this->StartGeometry( ost, "XYZ" );
+      this->WritePoints( ost, Polys->GetPoints(), ds, gridName);
+      this->EndGeometry( ost );
+      }
+    else if ( type == VTK_STRUCTURED_POINTS || type == VTK_IMAGE_DATA || type == VTK_UNIFORM_GRID )
+      {
+      double Origin[3], Spacing[3];
+      //int     Extent[6];
+      int     updateExtent[6], wholeextent[6];
+      vtkImageData *SGrid = static_cast<vtkImageData *>(ds);
+      //SGrid->GetDimensions( Dims );
+      SGrid->GetOrigin( Origin );
+      SGrid->GetSpacing( Spacing );
+      SGrid->GetWholeExtent(wholeextent);
+      //SGrid->GetExtent( Extent );
+      SGrid->GetUpdateExtent( updateExtent );
+      if (this->InputsArePieces) 
+      {
+        this->StartTopology(ost, "3DCORECTMESH", 3, this->FullGridSize);
+      }
+      else {
+        int Dims[3];
+        Dims[0] = updateExtent[1] - updateExtent[0] + 1;
+        Dims[1] = updateExtent[3] - updateExtent[2] + 1;
+        Dims[2] = updateExtent[5] - updateExtent[4] + 1;
+        this->StartTopology(ost, "3DCORECTMESH", 3, Dims);
+      }
+      this->EndTopology(ost);
+      this->Indent(ost);
+      this->StartGeometry( ost, "ORIGIN_DXDYDZ" );
+      this->Indent(ost);
 
-    // DX DY DZ
-    ost << "<DataStructure";
-    this->IncrementIndent();
-    this->Indent(ost);
-    ost << " Name=\"Spacing\"";
-    this->Indent(ost);
-    ost << " DataType=\"Float\"";
-    this->Indent(ost);
-    ost << " Dimensions=\"3\"";
-    this->Indent(ost);
-    ost << " Format=\"XML\">";
-    this->Indent(ost);
-    ost << Spacing[2] << " " << Spacing[1] << " " << Spacing[0];
-    this->DecrementIndent();
-    this->Indent(ost);
-    ost << "</DataStructure>";
+      int cc;
+      for ( cc = 0; cc < 3; cc ++ )
+        {
+        Origin[cc] = Origin[cc] + Spacing[cc] * updateExtent[cc * 2];
+        }
 
-    this->EndGeometry( ost );
+      // Origin
+      ost << "<DataStructure";
+      this->IncrementIndent();
+      this->Indent(ost);
+      ost << " Name=\"Origin\"";
+      this->Indent(ost);
+      ost << " DataType=\"Float\"";
+      this->Indent(ost);
+      ost << " Dimensions=\"3\"";
+      this->Indent(ost);
+      ost << " Format=\"XML\">";
+      this->Indent(ost);
+      ost << Origin[2] << " " << Origin[1] << " " << Origin[0];
+      vtkDebugMacro(<< "-- Origin: " << Origin[2] << " " << Origin[1] << " " << Origin[0] << "\n");
+      this->DecrementIndent();
+      this->Indent(ost);
+      ost << "</DataStructure>";
+      this->Indent(ost);
+
+      // DX DY DZ
+      ost << "<DataStructure";
+      this->IncrementIndent();
+      this->Indent(ost);
+      ost << " Name=\"Spacing\"";
+      this->Indent(ost);
+      ost << " DataType=\"Float\"";
+      this->Indent(ost);
+      ost << " Dimensions=\"3\"";
+      this->Indent(ost);
+      ost << " Format=\"XML\">";
+      this->Indent(ost);
+      ost << Spacing[2] << " " << Spacing[1] << " " << Spacing[0];
+      this->DecrementIndent();
+      this->Indent(ost);
+      ost << "</DataStructure>";
+
+      this->EndGeometry( ost );
+      }
+    else if ( type == VTK_STRUCTURED_GRID )
+      {
+      int     Dims[3];
+      vtkStructuredGrid *SGrid = static_cast<vtkStructuredGrid *>(ds);
+      SGrid->GetDimensions( Dims );
+      this->StartTopology(ost, "3DSMESH", 3, Dims);
+      this->EndTopology(ost);
+      this->Indent(ost);
+      this->StartGeometry(ost, "XYZ");
+      this->WritePoints( ost, SGrid->GetPoints(), ds, gridName );
+      this->EndGeometry(ost);
+      }
+    else if ( type == VTK_RECTILINEAR_GRID )
+      {
+      int     Dims[3];
+      int     updateExtent[6];
+      vtkDataArray  *Coord;
+      vtkRectilinearGrid *RGrid = static_cast<vtkRectilinearGrid *>(ds);
+      RGrid->GetDimensions( Dims );
+      RGrid->GetUpdateExtent( updateExtent );
+      Dims[0] = updateExtent[1] - updateExtent[0] + 1;
+      Dims[1] = updateExtent[3] - updateExtent[2] + 1;
+      Dims[2] = updateExtent[5] - updateExtent[4] + 1;
+      this->StartTopology(ost, "3DRECTMESH", 3, Dims);
+      this->EndTopology( ost );
+      this->Indent(ost);
+      this->StartGeometry(ost, "VXVYVZ");
+      int dummydims[3];
+      dummydims[0] = dummydims[1] = dummydims[2] = -1;
+      // X Coordinated
+      int scaledExtent[6];
+      int extent[6];
+      scaledExtent[2] = scaledExtent[4] = 0;
+      scaledExtent[3] = scaledExtent[5] = 0;
+      RGrid->GetExtent(extent);
+      vtkDebugMacro(<< "Update extent: " << updateExtent[0] << " " << updateExtent[1] << " " << updateExtent[2] << " " << updateExtent[3] << " " << updateExtent[4]  << " " << updateExtent[5] << "\n");
+      vtkDebugMacro(<< "Extent:        " << extent[0] << " " << extent[1] << " " << extent[2] << " " << extent[3] << " " << extent[4]  << " " << extent[5] << "\n");
+      Coord = RGrid->GetXCoordinates();
+//      Coord->Print(co ut);
+      scaledExtent[0] = updateExtent[0] - extent[0];
+      scaledExtent[1] = updateExtent[1] - extent[0];
+      vtkDebugMacro(<< "Scaled Extent: " << scaledExtent[0] << " " << scaledExtent[1] << "\n");
+      this->WriteVTKArray( ost, Coord, ds, scaledExtent, dummydims, "X Coordinates", "X", gridName, !this->AllHeavy);
+      this->Indent(ost);
+      // Y Coordinated
+      Coord = RGrid->GetYCoordinates();
+      scaledExtent[0] = updateExtent[2] - extent[2];
+      scaledExtent[1] = updateExtent[3] - extent[2];
+      this->WriteVTKArray( ost, Coord, ds, scaledExtent, dummydims, "Y Coordinates", "Y", gridName, !this->AllHeavy);
+      this->Indent(ost);
+      // Z Coordinated
+      Coord = RGrid->GetZCoordinates();
+      scaledExtent[0] = updateExtent[4] - extent[4];
+      scaledExtent[1] = updateExtent[5] - extent[4];
+      this->WriteVTKArray( ost, Coord, ds, scaledExtent, dummydims, "Z Coordinates", "Z", gridName, !this->AllHeavy);
+      this->EndGeometry(ost);
+      }
+    this->Indent(ost);
     }
-  else if ( type == VTK_STRUCTURED_GRID )
-    {
-    int     Dims[3];
-    vtkStructuredGrid *SGrid = static_cast<vtkStructuredGrid *>(ds);
-    SGrid->GetDimensions( Dims );
-    this->StartTopology(ost, "3DSMESH", 3, Dims);
-    this->EndTopology(ost);
-    this->Indent(ost);
-    this->StartGeometry(ost, "XYZ");
-    this->WritePoints( ost, SGrid->GetPoints(), ds, gridName );
-    this->EndGeometry(ost);
+
+    if (!this->InputsArePieces || (this->InputsArePieces && this->CurrentInputNumber==0)) 
+      {
+      if (this->TimeValue!=-1E99) 
+        {
+        ost << "<Time Value=\"" << this->TimeValue << "\" />";
+        this->Indent(ost);
+        }
     }
-  else if ( type == VTK_RECTILINEAR_GRID )
-    {
-    int     Dims[3];
-    int     updateExtent[6];
-    vtkDataArray  *Coord;
-    vtkRectilinearGrid *RGrid = static_cast<vtkRectilinearGrid *>(ds);
-    RGrid->GetDimensions( Dims );
-    RGrid->GetUpdateExtent( updateExtent );
-    Dims[0] = updateExtent[1] - updateExtent[0] + 1;
-    Dims[1] = updateExtent[3] - updateExtent[2] + 1;
-    Dims[2] = updateExtent[5] - updateExtent[4] + 1;
-    this->StartTopology(ost, "3DRECTMESH", 3, Dims);
-    this->EndTopology( ost );
-    this->Indent(ost);
-    this->StartGeometry(ost, "VXVYVZ");
-    int dummydims[3];
-    dummydims[0] = dummydims[1] = dummydims[2] = -1;
-    // X Coordinated
-    int scaledExtent[6];
-    int extent[6];
-    scaledExtent[2] = scaledExtent[4] = 0;
-    scaledExtent[3] = scaledExtent[5] = 0;
-    RGrid->GetExtent(extent);
-    cout << "Update extent: " << updateExtent[0] << " " << updateExtent[1] << " " << updateExtent[2] << " " << updateExtent[3] << " " << updateExtent[4]  << " " << updateExtent[5] << endl;
-    cout << "Extent:        " << extent[0] << " " << extent[1] << " " << extent[2] << " " << extent[3] << " " << extent[4]  << " " << extent[5] << endl;
-    Coord = RGrid->GetXCoordinates();
-    Coord->Print(cout);
-    scaledExtent[0] = updateExtent[0] - extent[0];
-    scaledExtent[1] = updateExtent[1] - extent[0];
-    cout << "Scaled Extent: " << scaledExtent[0] << " " << scaledExtent[1] << endl;
-    this->WriteVTKArray( ost, Coord, ds, scaledExtent, dummydims, "X Coordinates", "X", gridName, !this->AllHeavy);
-    this->Indent(ost);
-    // Y Coordinated
-    Coord = RGrid->GetYCoordinates();
-    scaledExtent[0] = updateExtent[2] - extent[2];
-    scaledExtent[1] = updateExtent[3] - extent[2];
-    this->WriteVTKArray( ost, Coord, ds, scaledExtent, dummydims, "Y Coordinates", "Y", gridName, !this->AllHeavy);
-    this->Indent(ost);
-    // Z Coordinated
-    Coord = RGrid->GetZCoordinates();
-    scaledExtent[0] = updateExtent[4] - extent[4];
-    scaledExtent[1] = updateExtent[5] - extent[4];
-    this->WriteVTKArray( ost, Coord, ds, scaledExtent, dummydims, "Z Coordinates", "Z", gridName, !this->AllHeavy);
-    this->EndGeometry(ost);
-    }
-  this->Indent(ost);
+
+  // do this for all pieces
   this->WriteAttributes(ost, ds, gridName);
 
-  this->DecrementIndent();
-  this->Indent(ost);
-  ost << "</Grid>";
+  // Only do XMl for the first piece if these are pieces of data
+  if (!this->InputsArePieces || (this->InputsArePieces && this->CurrentInputNumber==0)) 
+    {
+    this->DecrementIndent();
+    this->Indent(ost);
+    ost << "</Grid>";
+    }
 
   return( 1 );
 }
@@ -1256,6 +1447,22 @@ void vtkXdmfWriter::Write()
     vtkErrorMacro("No input or input of the wrong type");
     return;
     }
+
+  bool exists = vtksys::SystemTools::FileExists(this->FileNameString);
+  bool readHeader = false;
+  if (this->AppendGridsToDomain && exists)
+    {
+/*
+      this->ParseExistingFile(this->FileNameString);
+      XdmfConstString test = this->DOM->Serialize(this->DOM->GetTree());
+      if (test) {
+        ofstream dummy("c:/xdmftest.xml");
+        dummy << test;
+      }
+*/
+      readHeader = this->ReadDocument(this->FileNameString);
+    }
+
   ofstream ofs(this->FileNameString);
   if ( !ofs )
     {
@@ -1263,24 +1470,62 @@ void vtkXdmfWriter::Write()
     return;
     }
 
-  cout << "Write to file: " << this->FileNameString << endl;
+  vtkDebugMacro(<< "Write to file: " << this->FileNameString << "\n");
 
-  int cc;
-  if ( !this->GridOnly )
+  //
+  // Write header or copy existing file contents
+  //
+  if (readHeader)
     {
-    this->WriteHead(ofs);
-    ofs << "<Domain";
-    if ( this->DomainName )
+    ofs << this->DocString;
+    this->IncrementIndent();
+    if (this->CollectionType != XDMF_GRID_COLLECTION_UNSET) 
       {
-      ofs << " Name=\"" << this->DomainName << "\"";
+      this->IncrementIndent();
       }
-    ofs << ">";
     }
-  this->IncrementIndent();
-  for ( cc = 0; cc < numberOfInputs; cc ++ )
+  else 
     {
-    vtkDataSet* ds = vtkDataSet::SafeDownCast(this->Inputs[cc]);
+    if ( !this->GridOnly )
+      {
+      this->WriteHead(ofs);
+      ofs << "<Domain";
+      if ( this->DomainName )
+        {
+        ofs << " Name=\"" << this->DomainName << "\"";
+        }
+      ofs << ">";
+      }
+    if (this->CollectionType != XDMF_GRID_COLLECTION_UNSET) 
+      {
+      this->IncrementIndent();
+      this->Indent(ofs);
+      ofs << "<Grid GridType=\"" << "Collection\"";
+      ofs << " CollectionType=\"";
+      switch (this->CollectionType) 
+        {
+        case XDMF_GRID_COLLECTION_TEMPORAL:
+          ofs << "Temporal\">"; break;
+        case XDMF_GRID_COLLECTION_SPATIAL:
+          ofs << "Spatial\">"; break;
+        case XDMF_GRID_COLLECTION_UNSET:
+          ofs << "Unset\">"; break;
+        }
+      }
+    }
+
+  //
+  // Write out grids
+  //
+  this->IncrementIndent();
+  for (this->CurrentInputNumber=0; 
+    this->CurrentInputNumber<numberOfInputs; 
+    this->CurrentInputNumber++)
+    {
+    //
+    vtkDataSet* ds = vtkDataSet::SafeDownCast(this->Inputs[this->CurrentInputNumber]);
     ds->Update();
+
     vtkstd::string arrayName;
     vtkDataArray* da = ds->GetFieldData()->GetArray("Name");
     if ( da )
@@ -1303,10 +1548,10 @@ void vtkXdmfWriter::Write()
         }
       }
 
-    if ( numberOfInputs > 1 )
+    if ( numberOfInputs>1 && !this->InputsArePieces)
       {
       char buffer[100];
-      sprintf(buffer, "%d", cc);
+      sprintf(buffer, "%d", this->CurrentInputNumber);
       arrayName += buffer;
       }
 
@@ -1317,7 +1562,10 @@ void vtkXdmfWriter::Write()
       vtkErrorMacro("Xdmf Writer only supports unstructured data of single cell type");
       continue;
       }
-    this->Indent(ofs);
+    if (!this->InputsArePieces || (this->InputsArePieces && this->CurrentInputNumber==0)) 
+      {
+      this->Indent(ofs);
+      }
     if ( cellTypes.size() > 1 )
       {
       vtkXdmfWriterInternal::MapOfCellTypes::iterator it;
@@ -1335,17 +1583,42 @@ void vtkXdmfWriter::Write()
       {
       this->WriteGrid(ofs, arrayName.c_str(), ds, &cellTypes, 0);
       }
-
     }
+
   this->DecrementIndent();
   if ( !this->GridOnly )
     {
     this->Indent( ofs );
-    ofs << "</Domain>" << endl;
+    ofs << "</Domain>" << "\n";
     this->WriteTail(ofs);
     }
 }
-
+//----------------------------------------------------------------------------
+void vtkXdmfWriter::CloseCollection()
+{
+  bool exists = vtksys::SystemTools::FileExists(this->FileNameString);
+  if (this->AppendGridsToDomain && exists)
+    {
+    this->ReadDocument(this->FileNameString);
+    ofstream ofs(this->FileNameString);
+    if ( !ofs )
+      {
+      vtkErrorMacro("Cannot open file: " << this->FileNameString);
+      return;
+      }
+    ofs << this->DocString;
+    this->IncrementIndent();
+    this->Indent( ofs );
+    ofs << "</Grid>" << "\n";
+    this->DecrementIndent();
+    if ( !this->GridOnly )
+      {
+      this->Indent( ofs );
+      ofs << "</Domain>" << "\n";
+      this->WriteTail(ofs);
+      }
+    }
+}
 //----------------------------------------------------------------------------
 void vtkXdmfWriter::SetInput(vtkDataSet* ds)
 {
@@ -1420,7 +1693,7 @@ void vtkXdmfWriter::Indent(ostream& os)
 {
   int cc;
 
-  os << endl;
+  os << "\n";
   for ( cc = 0; cc < this->CurrIndent; cc ++ )
     {
     os << "  ";
@@ -1458,6 +1731,31 @@ const char* vtkXdmfWriter::GenerateHDF5ArrayName(const char* gridName,
   return this->HDF5ArrayName;
 }
 
+//----------------------------------------------------------------------------
+bool vtkXdmfWriter::ReadDocument(const char* filename)
+{
+  if (!vtksys::SystemTools::FileExists(filename))
+  {
+    return false;
+  }
+  ostrstream temp;
+  ifstream infile(filename);
+  char linebuffer[512];
+  while (infile.good())
+    {
+    infile.getline(linebuffer,512); 
+    if (vtksys::SystemTools::StringEndsWith(linebuffer, "</Domain>"))
+      break;
+    temp << linebuffer << "\n";
+    }
+  temp << ends;
+  if (this->DocString)
+  {
+    delete []this->DocString;
+  }
+  this->DocString = strdup(temp.str());
+  return true;
+}
 //----------------------------------------------------------------------------
 void vtkXdmfWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
