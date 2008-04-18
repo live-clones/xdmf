@@ -90,7 +90,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.40");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.41");
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
@@ -292,7 +292,7 @@ vtkXdmfReaderGrid*
 //  vtkXdmfReaderGrid* grid = parent->GetChild(gridName);
 //  if ( !grid )
 //    {
-    vtkXdmfReaderGrid* grid = grid = new vtkXdmfReaderGrid; 
+    vtkXdmfReaderGrid* grid = new vtkXdmfReaderGrid; 
     grid->Name = gridName;
     parent->Children.push_back(grid);
 //    }
