@@ -90,7 +90,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.41");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.42");
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
@@ -1111,6 +1111,10 @@ void vtkXdmfReader::DisableAllGrids()
   vtkDebugMacro("Disable all grids");
   vtkstd::vector<vtkXdmfReaderGrid *>::iterator it;
   int changed=0;
+  if (!this->Internals->Data) 
+    {
+    return;
+    }
   for ( it = this->Internals->Data->Children.begin();
         it != this->Internals->Data->Children.end();
         ++ it )
