@@ -41,6 +41,7 @@
 #include "XdmfExpression.h"
 #include "XdmfGeometry.h"
 #include "XdmfGrid.h"
+#include "XdmfTime.h"
 #include "XdmfHDF.h"
 #include "XdmfHeavyData.h"
 #include "XdmfInformation.h"
