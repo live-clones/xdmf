@@ -77,6 +77,12 @@ XdmfTopology::Build(){
     if( this->OrderIsDefault == 0 ){
         this->Set("Order", this->GetOrderAsString());
     } 
+    if( this->BaseOffset != 0 ){
+        char Offset[80];
+        ostrstream OffsetStream(Offset, 80);
+        OffsetStream << this->BaseOffset << ends;
+        this->Set("BaseOffset", Offset);
+    }
     if(this->Connectivity){
         XdmfDataItem    *di = NULL;
         XdmfXmlNode     node;
