@@ -236,7 +236,7 @@ protected:
 
   int  UpdateDomains();
   void UpdateRootGrid();
-  void UpdateGrids(vtkXdmfReaderGrid *parent, void *GridNode);
+  void UpdateGrids(vtkXdmfReaderGrid *parent, void *ParentNode);
   void FindTimeValues();
 
   // Array selection helpers /////////////////////////////////////////////////
