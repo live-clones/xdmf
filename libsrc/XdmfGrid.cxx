@@ -317,6 +317,14 @@ attribute = this->Get("GridType");
 if(!attribute) attribute = this->Get("Type");
 if( XDMF_WORD_CMP(attribute, "Collection") ){
     this->GridType = XDMF_GRID_COLLECTION;
+    attribute = this->Get("CollectionType");
+    if(attribute){
+        if( XDMF_WORD_CMP(attribute, "Temporal") ){
+            this->SetCollectionType(XDMF_GRID_COLLECTION_TEMPORAL);
+        }else if( XDMF_WORD_CMP(attribute, "Spatial") ){
+            this->SetCollectionType(XDMF_GRID_COLLECTION_SPATIAL);
+        }
+    }
 }else if( XDMF_WORD_CMP(attribute, "Subset") ){
     this->GridType = XDMF_GRID_SUBSET;
 }else if( XDMF_WORD_CMP(attribute, "Tree") ){
