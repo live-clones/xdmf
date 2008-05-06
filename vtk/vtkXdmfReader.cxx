@@ -90,7 +90,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.42");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.43");
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
@@ -1289,31 +1289,60 @@ void vtkXdmfReader::UpdateRootGrid()
 }
 
 //----------------------------------------------------------------------------
-void vtkXdmfReader::UpdateGrids(
-  vtkXdmfReaderGrid *parent, void *GridNode)
+void vtkXdmfReader::UpdateGrids(vtkXdmfReaderGrid *parent, void *ParentNode)
 {
-  if (!parent || !GridNode)
+  if (!parent || !ParentNode)
     {
     return;
     }
   
 
   int done = 0;
+  int parentIsDomain = 0;
   int NGrid;
   XdmfXmlNode gridNode = 0;
-  NGrid = this->DOM->FindNumberOfElements("Grid", (XdmfXmlNode)GridNode);
+  XdmfGrid  *xGrid;
+
+  if(!parent->XMGrid){
+      parentIsDomain = 1;
+  }
+  NGrid = this->DOM->FindNumberOfElements("Grid", (XdmfXmlNode)ParentNode);
   for (vtkIdType currentGrid = 0; !done; currentGrid ++ )
     {
     // Find the subgrids grids under this one
     gridNode = this->DOM->FindElement("Grid", 
                                       currentGrid, 
-                                      (XdmfXmlNode)GridNode);
+                                      (XdmfXmlNode)ParentNode);
     if ( !gridNode )
       {
       break;
       }
 
-    XdmfConstString gridName = this->DOM->Get( gridNode, "Name" );
+    // If Parent is Domain, create an XdmfGrid and UpdateInformation()
+    // Otherwise since UpdateInformation() is recursive, there is
+    // alread an XdmfGrid built internally.
+    if(parentIsDomain){
+        xGrid = new XdmfGrid;
+        if(!xGrid){
+            vtkErrorMacro("Can't create new XdmfGrid");
+            break;
+        }
+        xGrid->SetDOM(this->DOM);
+        xGrid->SetElement(gridNode);
+        xGrid->UpdateInformation();
+    }
+    else
+    {
+        xGrid = parent->XMGrid->GetChild(currentGrid);
+        if(!xGrid){
+            vtkErrorMacro("parent->XMGrid is 0");
+            break;
+        }
+        // Don't need to UpdateInformation(); it's recursive
+    }
+    
+    // Make sure grid has a Name
+    XdmfConstString gridName = xGrid->GetName();
     ostrstream str;
     if ( !gridName )
       {
@@ -1327,25 +1356,20 @@ void vtkXdmfReader::UpdateGrids(
     
     vtkDebugMacro("Reading Light Data for " << gridName);
     // What Type of Grid
-    XdmfConstString gridType = this->DOM->Get(gridNode, "GridType");
-    if(!gridType)
-      {
-      // Accept Old Style
-      gridType = this->DOM->Get(gridNode, "Type");
-      }
-
+    XdmfInt32 gridType = xGrid->GetGridType();
     vtkXdmfReaderGrid *sub;
 
-    if(XDMF_WORD_CMP(gridType, "Tree")||
-       XDMF_WORD_CMP(gridType, "Collection"))
-      {
+    if(gridType & XDMF_GRID_MASK)
+    {
       vtkDebugMacro(" Grid is a Collection/Tree ");
       sub = this->Internals->AddGrid(parent, gridName);
+      sub->XMGrid = xGrid;
       this->UpdateGrids(sub, gridNode);
       sub->vtkType = VTK_MULTIBLOCK_DATA_SET;
       // If grid is a collection, is it a temporal one?
-      XdmfConstString collType = this->DOM->GetAttribute((XdmfXmlNode)gridNode, "CollectionType");
-      if(XDMF_WORD_CMP(collType, "Temporal"))
+      // cout << "Grid Type = " << xGrid->GetGridTypeAsString() << endl;
+      // cout << "Collection Type = " << xGrid->GetCollectionTypeAsString() << endl;
+      if(xGrid->GetCollectionType() == XDMF_GRID_COLLECTION_TEMPORAL)
         {
         vtkDebugMacro(" Grid is a TemporalDataSetCollection ");
         // we will not output a TemporalDataset, but use this as a flag for later
@@ -1358,14 +1382,12 @@ void vtkXdmfReader::UpdateGrids(
       sub = this->Internals->AddGrid(parent, gridName);
       if ( sub )
         {
+        sub->XMGrid = xGrid;
         if ( !sub->XMGrid )
           {
-          sub->XMGrid = new XdmfGrid;
+            vtkErrorMacro("sub->XMGrid is 0");
+            break;
           }
-        vtkDebugMacro(" .... Setting Grid Information");
-        sub->XMGrid->SetDOM(this->DOM);
-        sub->XMGrid->SetElement(gridNode);
-        sub->XMGrid->UpdateInformation();
         if (sub->XMGrid->GetTopology()->GetClass() == XDMF_UNSTRUCTURED ) 
           {
           sub->vtkType = VTK_UNSTRUCTURED_GRID;
@@ -1758,6 +1780,7 @@ void vtkXdmfReader::FindTimeValues()
   for (int i=0; i<T; i++) {
     vtkXdmfReaderGrid *child = ptr->GetChild(i);
     XdmfTime *time = child->XMGrid->GetTime();
+    // cout << "Child #" << i << " TimeType = " << time->GetTimeTypeAsString() << endl;
     this->Internals->TimeValues.push_back(time->GetValue());
   }
   this->TimeStepRange[0] = 0;
