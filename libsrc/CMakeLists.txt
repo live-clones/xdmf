@@ -54,6 +54,10 @@ SET( XdmfMpiSource
   XdmfDsmCommMpi
   )
 
+SET( XdmfMySQLSource
+    XdmfValuesMySQL
+    )
+
 SET( XdmfPythonSource
   XdmfPython
   )
@@ -111,6 +115,7 @@ IF(XDMF_REGENERATE_WRAPPERS)
   ENDIF(SWIG_EXECUTABLE)
 ENDIF(XDMF_REGENERATE_WRAPPERS)
 
+
 OPTION(XDMF_REGENERATE_YACCLEX
   "Regenerate XdmfExprYacc.cxx and XdmfExprLex.cxx" OFF)
 MARK_AS_ADVANCED(XDMF_REGENERATE_YACCLEX)
@@ -167,6 +172,7 @@ IF(XDMF_REGENERATE_YACCLEX)
   ENDIF(FLEX_EXECUTABLE)
 
 ENDIF(XDMF_REGENERATE_YACCLEX)
+
 
 IF (VTK_USE_MPI)
   # Needed for mpich 2
@@ -269,6 +275,28 @@ IF(NOT WIN32)
 ENDIF(NOT WIN32)
 
 SET(XdmfSources ${XdmfFormatSource} ${XdmfExtraSource} ${XdmfModelSource})
+
+OPTION(XDMF_USE_MYSQL
+    "Build Support for MySQL DataItems" OFF)
+MARK_AS_ADVANCED(XDMF_USE_MYSQL)
+IF(XDMF_USE_MYSQL)
+    FIND_PATH(MYSQL_INCLUDE_PATH
+        mysql.h
+        /usr/include
+        /usr/include/mysql
+        /usr/local/include
+        /usr/local/include/mysql)
+    FIND_LIBRARY(MYSQL_CLIENT_LIBRARY
+        mysqlclient
+        /usr/lib
+        /usr/lib/mysql
+        /usr/local/lib
+        /usr/local/lib/mysql)
+    SET(XdmfSources ${XdmfSources} ${XdmfMySQLSource})
+    ADD_DEFINITIONS("-DXDMF_USE_MYSQL")
+    INCLUDE_DIRECTORIES(${MYSQL_INCLUDE_PATH})
+ENDIF(XDMF_USE_MYSQL)
+
 ## MPI ###
 IF(XDMF_BUILD_MPI)
     SET(XdmfSources ${XdmfSources} ${XdmfMpiSource})
@@ -283,6 +311,12 @@ ELSE(VTK_BUILD_SHARED_LIBS OR BUILD_SHARED_LIBS)
 ENDIF(VTK_BUILD_SHARED_LIBS OR BUILD_SHARED_LIBS)
 
 ADD_LIBRARY(Xdmf ${LIBTYPE} ${XdmfSources})
+
+IF(XDMF_USE_MYSQL)
+    ADD_DEFINITIONS("-DXDMF_USE_MYSQL")
+    INCLUDE_DIRECTORIES(${MYSQL_INCLUDE_PATH})
+    TARGET_LINK_LIBRARIES(Xdmf ${MYSQL_CLIENT_LIBRARY} )
+ENDIF(XDMF_USE_MYSQL)
 
 IF(XDMF_BUILD_MPI)
   IF(MPI_EXTRA_LIBRARY)
