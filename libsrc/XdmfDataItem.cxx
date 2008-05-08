@@ -31,6 +31,9 @@
 // Supported Xdmf Formats
 #include "XdmfValuesXML.h"
 #include "XdmfValuesHDF.h"
+#ifdef XDMF_USE_MYSQL
+#include "XdmfValuesMySQL.h"
+#endif
 
 #include <libxml/tree.h>
 
@@ -208,6 +211,8 @@ XdmfInt32 XdmfDataItem::UpdateInformationUniform(){
         this->SetFormat(XDMF_FORMAT_HDF);
     } else if(XDMF_WORD_CMP(Value, "XML")){
         this->SetFormat(XDMF_FORMAT_XML);
+    } else if(XDMF_WORD_CMP(Value, "MYSQL")){
+        this->SetFormat(XDMF_FORMAT_MYSQL);
     }else if(Value){
         XdmfErrorMessage("Unsupported DataItem Format :" << Value);
         return(XDMF_FAIL);
@@ -484,6 +489,18 @@ XdmfInt32 XdmfDataItem::Update(){
                 return(XDMF_FAIL);
             }
             break;
+        case XDMF_FORMAT_MYSQL :
+            this->Values->SetDebug(this->GetDebug());
+#ifdef XDMF_USE_MYSQL
+            if(!((XdmfValuesMySQL *)this->Values)->Read(this->Array)){
+                XdmfErrorMessage("Reading Values Failed");
+                return(XDMF_FAIL);
+            }
+#else
+            XdmfErrorMessage("XdmfValuesMySQL not enabled in this Xdmf");
+            return(XDMF_FAIL);
+#endif
+            break;
         default :
             XdmfErrorMessage("Unsupported Data Format");
             return(XDMF_FAIL);
@@ -615,6 +632,14 @@ XdmfDataItem::CheckValues(XdmfInt32 aFormat){
                 break;
             case XDMF_FORMAT_XML :
                 this->Values = (XdmfValues *)new XdmfValuesXML();
+                break;
+            case XDMF_FORMAT_MYSQL :
+#ifdef XDMF_USE_MYSQL
+                this->Values = (XdmfValues *)new XdmfValuesMySQL();
+#else
+                XdmfErrorMessage("MySQL not supported in this Xdmf");
+                return(XDMF_FAIL);
+#endif
                 break;
             default :
                 XdmfErrorMessage("Unsupported Data Format");
