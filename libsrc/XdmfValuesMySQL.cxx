@@ -55,7 +55,6 @@ XdmfValuesMySQL::Read(XdmfArray *anArray){
     MYSQL_ROW       Row;
 
 
-    this->SetDebug(1);
     if(!this->DataDesc){
         XdmfErrorMessage("DataDesc has not been set");
         return(NULL);
