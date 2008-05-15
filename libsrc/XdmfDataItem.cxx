@@ -168,14 +168,6 @@ XdmfInt32 XdmfDataItem::UpdateInformationUniform(){
     XdmfConstString Value;
     XdmfInt32   Precision = 4;
 
-    Value = this->Get("Dimensions");
-    if(!Value) {
-        XdmfErrorMessage("Dimensions are not set in XML Element");
-        cout  << this->DOM->Serialize(this->Element) << endl;
-        return(XDMF_FAIL);
-    }
-    if(!this->DataDesc) this->DataDesc = new XdmfDataDesc();
-    this->DataDesc->SetShapeFromString(Value);
     Value = this->Get("Precision");
     if(Value) Precision = atoi(Value);
     Value = this->Get("NumberType");
@@ -276,6 +268,14 @@ XdmfInt32 XdmfDataItem::UpdateInformation(){
         XdmfDebug("Reference DataItem Copied Info from another ReferenceObject");
         return(XDMF_SUCCESS);
     }
+    Value = this->Get("Dimensions");
+    if(!Value) {
+        XdmfErrorMessage("Dimensions are not set in XML Element");
+        cout  << this->DOM->Serialize(this->Element) << endl;
+        return(XDMF_FAIL);
+    }
+    if(!this->DataDesc) this->DataDesc = new XdmfDataDesc();
+    this->DataDesc->SetShapeFromString(Value);
     switch(this->ItemType){
         case XDMF_ITEM_UNIFORM :
             return(this->UpdateInformationUniform());
