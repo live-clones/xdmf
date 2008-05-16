@@ -657,6 +657,14 @@ if(!Node) {
     Node = this->Tree;
 }
 if(!Node) return(0);
+/*
+cout << "For " << Attribute << " DOM Returning ";
+if((XdmfConstString)xmlGetProp(Node, (xmlChar *)Attribute)) {
+    cout << (XdmfConstString)xmlGetProp(Node, (xmlChar *)Attribute) << endl;
+    } else{
+        cout << " NULL " << endl;
+    }
+    */
 return((XdmfConstString)xmlGetProp(Node, (xmlChar *)Attribute));
 }
 

@@ -228,6 +228,19 @@ if( Attribute ){
 Attribute = this->Get( "Dimensions" );
 if( Attribute ){
   this->ShapeDesc->SetShapeFromString( Attribute );
+}else{
+    XdmfXmlNode  ValuesNode;
+    ValuesNode = this->DOM->FindDataElement( 0, Element );
+    if(!ValuesNode){
+        XdmfErrorMessage("Dimensions of Attribute not set in XML and no DataItem found");
+    }
+    Attribute = this->DOM->Get( ValuesNode, "Dimensions" );
+    if(!Attribute){
+        XdmfErrorMessage("Dimensions of Attribute not set in XML or DataItem");
+        return(XDMF_FAIL);
+    }else{
+        this->ShapeDesc->SetShapeFromString( Attribute );
+    }
 }
 if(!this->Name) this->SetName(GetUnique("Attribute_"));
 return( XDMF_SUCCESS );
