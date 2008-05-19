@@ -90,7 +90,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.43");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.44");
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
@@ -204,6 +204,7 @@ public:
     this->DomainPtr = NULL;  
     this->Data = NULL;
     this->DsmBuffer = NULL;
+    this->InputString = 0;
 
     this->UpdatePiece     = 0;
     this->UpdateNumPieces = 1;
@@ -248,6 +249,7 @@ public:
   vtkXdmfReader* Reader;
   XdmfDataItem *DataItem;
   XdmfDsmBuffer *DsmBuffer;
+  char *InputString;
 
   // For converting arrays from XDMF to VTK format
   vtkXdmfDataArray *ArrayConverter;
@@ -1523,9 +1525,25 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
       }
     memcpy(InputTxt, this->GetInputString(), this->InputStringLength);
     InputTxt[this->InputStringLength] = 0;
+    if(this->Internals->Data && this->Internals->InputString){
+       if(STRCASECMP(InputTxt, this->Internals->InputString) == 0 ){
+           // Don't re-parse
+           vtkDebugMacro("Input Text Unchanged ... skipping re-parse()");
+           return 1;
+       }
+       // else
+       vtkDebugMacro("Input Text Changed ...  re-parseing");
+       delete this->Internals->Data;
+       this->Internals->Data = 0;
+    }
+    // Initial Parse
     this->DOM->Parse(InputTxt);
     this->GridsModified = 1;
-    delete InputTxt;
+    // delete InputTxt;
+    if(this->Internals->InputString){
+        delete this->Internals->InputString;
+    }
+    this->Internals->InputString = InputTxt;
   }
   else 
   {
@@ -1584,7 +1602,8 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
   if (!this->UpdateDomains())
     {
     return 1;
-    }                    this->UpdateRootGrid();
+    }
+  this->UpdateRootGrid();
   vtkDebugMacro("My output is a "
                 << vtkDataObjectTypes::GetClassNameFromTypeId(
                   this->OutputVTKType) );
