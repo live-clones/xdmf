@@ -27,6 +27,7 @@
 #include "XdmfExpression.h"
 #include "XdmfArray.h"
 #include "XdmfDOM.h"
+#include "XdmfHDF.h"
 
 // Supported Xdmf Formats
 #include "XdmfValuesXML.h"
@@ -271,7 +272,7 @@ XdmfInt32 XdmfDataItem::UpdateInformation(){
     Value = this->Get("Dimensions");
     if(!Value) {
         XdmfErrorMessage("Dimensions are not set in XML Element");
-        cout  << this->DOM->Serialize(this->Element) << endl;
+        XdmfErrorMessage(this->DOM->Serialize(this->Element));
         return(XDMF_FAIL);
     }
     if(!this->DataDesc) this->DataDesc = new XdmfDataDesc();
@@ -430,6 +431,20 @@ XdmfInt32 XdmfDataItem::UpdateFunction(){
     Value = this->DOM->Get( Element, "Dimensions" );
     if(Value && ReturnArray){
         ReturnArray->ReformFromString(Value);
+    }
+    // If only a portion of the DataItem was requested
+    // the XdmfValues did not reflect this selection since
+    // DataDesc was used to select HyperSlad | Coordinates | Function
+    if(this->DataDesc->GetSelectionType() != XDMF_SELECTALL){
+            XdmfArray   *Portion;
+            XdmfInt64  SelectionSize = this->DataDesc->GetSelectionSize();
+
+            Portion = ReturnArray->Clone();
+            ReturnArray->SetShape(1, &SelectionSize);
+            ReturnArray->SelectAll();
+            Portion->CopySelection(this->DataDesc);
+            CopyArray(Portion, ReturnArray);
+            delete Portion;
     }
     while( NTmp ){
         NTmp--;
