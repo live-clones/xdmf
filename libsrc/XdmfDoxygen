@@ -449,6 +449,7 @@ INPUT                  = \
                         XdmfValues.h \
                         XdmfValuesXML.h \
                         XdmfValuesHDF.h \
+                        XdmfValuesMySQL.h \
                         XdmfExpression.h \
                         XdmfObject.h
 
