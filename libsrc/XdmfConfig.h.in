@@ -107,13 +107,13 @@
 #cmakedefine SIZEOF_LONG_LONG
 #endif
 
-#if defined( SIZEOF___INT64 )
-# define XDMF_64_INT __int64
-# define HAVE_64_INT
-#elif defined( SIZEOF_LONG_LONG )
+#if defined( SIZEOF_LONG_LONG )
 # define XDMF_64_INT long long
 # define HAVE_64_INT
 # define XDMF_have_64_bit_int
+#elif defined( SIZEOF___INT64 )
+# define XDMF_64_INT __int64
+# define HAVE_64_INT
 #else
 # error "64 bit long not defined"
 #endif
