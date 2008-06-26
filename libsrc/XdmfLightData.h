@@ -27,6 +27,7 @@
 
 #include "XdmfObject.h"
 
+#include <string.h> // strcmp, strlen, strcpy
 
 // typedef XdmfPointer XdmfXmlNode;
 struct _xmlNode;

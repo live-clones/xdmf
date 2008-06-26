@@ -25,6 +25,7 @@
 #include "XdmfElement.h"
 #include "XdmfDOM.h"
 #include <libxml/tree.h>
+#include <string.h>
 
 #define XDMF_EMPTY_REFERENCE   0x00
 #define XDMF_ERROR_REFERENCE    -1

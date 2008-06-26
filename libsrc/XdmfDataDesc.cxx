@@ -24,6 +24,8 @@
 /*******************************************************************/
 #include "XdmfDataDesc.h"
 
+#include <stdlib.h>
+
 XdmfDataDesc::XdmfDataDesc() {
   H5dont_atexit();
   this->DataSpace = H5I_BADID;
