@@ -24,6 +24,7 @@
 /*******************************************************************/
 #include "XdmfRoot.h"
 #include "XdmfDOM.h"
+#include <stdlib.h>
 
 XdmfRoot::XdmfRoot() {
     this->SetElementName("Xdmf");

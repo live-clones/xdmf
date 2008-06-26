@@ -44,6 +44,7 @@ of the array is the same type). Access to HDF5 files is
 accomplished directly thru XdmfArrays by the XdmfHDF class.
 */
 
+#include <stdlib.h>
 
 class XDMF_EXPORT XdmfArray : public XdmfDataDesc {
 

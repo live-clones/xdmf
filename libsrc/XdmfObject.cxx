@@ -23,6 +23,7 @@
 /*                                                                 */
 /*******************************************************************/
 #include "XdmfObject.h"
+#include <string.h>
 
 static XdmfInt32 GlobalDebugFlag = 0;
 static XdmfInt64 NameCntr = 0;
