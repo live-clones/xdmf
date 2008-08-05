@@ -90,7 +90,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.44");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.45");
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
@@ -113,7 +113,7 @@ class vtkXdmfReaderGrid
 public:
   //
   vtkXdmfReaderGrid() 
-    : XMGrid(0), DataDescription(0), Enabled(0), vtkType(-1)
+    : XMGrid(0), DataDescription(0), Enabled(0), vtkType(-1), Time(-1), TimeIndex(0), isTemporal(0)
   {
   }
 
@@ -140,6 +140,9 @@ public:
 
   XdmfGrid       *XMGrid;
   XdmfDataDesc   *DataDescription;
+  XdmfFloat64   Time;
+  XdmfInt32     TimeIndex;
+  XdmfInt32     isTemporal;
   vtkstd::string Name;
   int Enabled;
   int vtkType;
@@ -237,6 +240,7 @@ public:
   int RequestGridData(/*const char* currentGridName,*/
     vtkXdmfReaderGrid *grid,
     vtkDataObject *output,
+    int timeIndex,
     int isSubBlock,
     double progressS, double progressE);
   
@@ -1375,7 +1379,8 @@ void vtkXdmfReader::UpdateGrids(vtkXdmfReaderGrid *parent, void *ParentNode)
         {
         vtkDebugMacro(" Grid is a TemporalDataSetCollection ");
         // we will not output a TemporalDataset, but use this as a flag for later
-        sub->vtkType = VTK_TEMPORAL_DATA_SET;
+        // Jerry Change Me
+        // sub->vtkType = VTK_TEMPORAL_DATA_SET;
         }
       }
     else
@@ -1786,6 +1791,55 @@ int vtkXdmfReaderInternal::RequestGridInformation(
   return 1;
 }
 //-----------------------------------------------------------------------------
+void vtkXdmfReader::AssignTimeIndex(vtkXdmfReaderGrid *ptr)
+{
+  if (!ptr)
+    {
+    return;
+    }
+    int ActualTimeStep = vtkstd::find_if(
+          this->Internals->TimeValues.begin(), 
+          this->Internals->TimeValues.end(), 
+          vtkstd::bind2nd( vtkstd::greater_equal<double>( ), ptr->Time)) 
+          - this->Internals->TimeValues.begin();
+    // cout << "ActualTimeStep for " << ptr->Time << " = " << ActualTimeStep << endl;
+    ptr->TimeIndex = ActualTimeStep;
+  int T = ptr->Children.size();
+  // cout << "FindTimeValues : ptr has " << T << " children" << endl;
+  for (int i=0; i<T; i++) {
+    vtkXdmfReaderGrid *child = ptr->GetChild(i);
+    this->AssignTimeIndex(child);
+  }
+}
+
+void vtkXdmfReader::FindAllTimeValues(vtkXdmfReaderGrid *ptr)
+{
+    XdmfTime *time = 0;
+    // cout << "FindAllTimeValues" << endl;
+  if (!ptr)
+    {
+    return;
+    }
+    if(ptr->XMGrid){
+        // cout << "FindAllTimeValues getting time" << endl;
+        time = ptr->XMGrid->GetTime();
+    }
+    if(time && (time->GetTimeType() == XDMF_TIME_UNSET)){
+        // cout << "Time is present but unset" << endl;
+    }
+    if(time && (time->GetTimeType() != XDMF_TIME_UNSET)){
+        // cout << "FindAllTimeValues getting time value" << endl;
+        ptr->isTemporal = 1;
+        this->OutputTemporal = 1;
+        ptr->Time = time->GetValue();
+        this->Internals->TimeValues.push_back(ptr->Time);
+    }
+  int T = ptr->Children.size();
+  for (int i=0; i<T; i++) {
+    vtkXdmfReaderGrid *child = ptr->GetChild(i);
+    this->FindAllTimeValues(child);
+  }
+}
 void vtkXdmfReader::FindTimeValues()
 {
   vtkXdmfReaderGrid *ptr = this->Internals->Data;
@@ -1794,14 +1848,17 @@ void vtkXdmfReader::FindTimeValues()
     return;
     }
   this->Internals->TimeValues.clear();
-  ptr = ptr->GetChild(0);
-  int T = ptr->Children.size();
+  this->FindAllTimeValues(ptr);
+  // cout << "1. TimeValues has " << this->Internals->TimeValues.size() << " Values" << endl;
+  vtkstd::sort(this->Internals->TimeValues.begin(), this->Internals->TimeValues.end());
+  vtkstd::vector<XdmfFloat64>::iterator  new_end = vtkstd::unique(this->Internals->TimeValues.begin(), this->Internals->TimeValues.end());
+  this->Internals->TimeValues.erase(new_end, this->Internals->TimeValues.end());
+  // cout << "2. TimeValues has " << this->Internals->TimeValues.size() << " Values" << endl;
+  int T = this->Internals->TimeValues.size();
   for (int i=0; i<T; i++) {
-    vtkXdmfReaderGrid *child = ptr->GetChild(i);
-    XdmfTime *time = child->XMGrid->GetTime();
-    // cout << "Child #" << i << " TimeType = " << time->GetTimeTypeAsString() << endl;
-    this->Internals->TimeValues.push_back(time->GetValue());
+      // cout << "T[" << i << "] = " << this->Internals->TimeValues[i] << endl;
   }
+  this->AssignTimeIndex(this->Internals->Data);
   this->TimeStepRange[0] = 0;
   this->TimeStepRange[1] = this->Internals->TimeValues.size()-1;
 }
@@ -1872,8 +1929,8 @@ int vtkXdmfReader::RequestInformation(
 
   this->ActualTimeStep = this->TimeStep;
 
+  this->FindTimeValues();
   if (this->OutputTemporal) {
-    this->FindTimeValues();
     if (this->Internals->TimeValues.size()>0) {
       outInfo->Set(vtkStreamingDemandDrivenPipeline::TIME_STEPS(), 
                     &this->Internals->TimeValues[0], 
@@ -1905,13 +1962,20 @@ int vtkXdmfReaderInternal::RequestGridData(
 /*  const char* currentGridName,*/
   vtkXdmfReaderGrid *grid,
   vtkDataObject *output,
+    int timeIndex,
   int isSubBlock,
   double progressS,
   double progressE)
 {
   double totalProgFrac = progressE-progressS;
 
-  if (grid->vtkType == VTK_MULTIBLOCK_DATA_SET)
+  //cout << " ::: RequestGridData for " << grid->Name << endl;
+  //cout << "Time Index = " << timeIndex << " Grid Time Index = " << grid->TimeIndex << endl;
+  if(grid->isTemporal && (timeIndex != grid->TimeIndex)){
+      //cout << grid->Name << " is Temporal but time " << grid->TimeIndex << " != requested time " << timeIndex << endl;
+      return 1;
+  }
+  if ((grid->vtkType == VTK_MULTIBLOCK_DATA_SET) || (grid->vtkType == VTK_TEMPORAL_DATA_SET))
     {    
     //recurse inside composite datasets
     vtkDebugWithObjectMacro(this->Reader,
@@ -1939,8 +2003,13 @@ int vtkXdmfReaderInternal::RequestGridData(
       vtkXdmfReaderGrid *child = (*it);
       //if ( (*it)->Enabled ) only top level grids can be disabled
         {
+        int ChildType = child->vtkType;
+        if(ChildType == VTK_TEMPORAL_DATA_SET) ChildType = VTK_MULTIBLOCK_DATA_SET;
         vtkDataObject *soutput=
+          vtkDataObjectTypes::NewDataObject(ChildType);
+        /*
           vtkDataObjectTypes::NewDataObject(child->vtkType);
+          */
         if (soutput && soutput->IsA("vtkMultiBlockDataSet"))
           {
           outMB->SetBlock(outputGrid, vtkMultiBlockDataSet::SafeDownCast(soutput));
@@ -1959,6 +2028,7 @@ int vtkXdmfReaderInternal::RequestGridData(
           /*(*it)->Name.c_str(),*/
           child,
           soutput,
+          timeIndex,
           1,
           lprogressS,
           lprogressE
@@ -3021,10 +3091,13 @@ int vtkXdmfReader::RequestData(
     }
     // If the time step changes, the information is invalid
     vtkDebugMacro("Temporal Data Requested. Reset Information ");    
-    vtkXdmfReaderGrid *sptr = this->Internals->GetGrid(0)->GetChild(this->ActualTimeStep);
+    // Jerry
+    //cout << "Number of Grids = " << this->Internals->GetGrid(0)->Children.size() << endl;
+    // vtkXdmfReaderGrid *sptr = this->Internals->GetGrid(0)->GetChild(this->ActualTimeStep);
+    vtkXdmfReaderGrid *sptr = this->Internals->GetGrid(0);
     sptr->Information = outInfo;
     this->Internals->RequestGridInformation(sptr);
-    this->Internals->RequestGridData(sptr, outStructure, 0, 0.0, 1.0);
+    this->Internals->RequestGridData(sptr, outStructure, this->ActualTimeStep, 0, 0.0, 1.0);
     // Set the time step we are producing in the output information
     outStructure->GetInformation()->Set(vtkDataObject::DATA_TIME_STEPS(), 
       &this->Internals->TimeValues[this->ActualTimeStep], 1);
@@ -3042,7 +3115,7 @@ int vtkXdmfReader::RequestData(
     vtkDebugMacro("Filling in atomic " 
                   << outStructure->GetClassName() 
                   << " with " << ptr->Name.c_str());    
-    this->Internals->RequestGridData(ptr, outStructure, 0,
+    this->Internals->RequestGridData(ptr, outStructure, this->ActualTimeStep, 0,
                                            0.0, 1.0);
     }
     break;
@@ -3090,6 +3163,7 @@ int vtkXdmfReader::RequestData(
             /*(*it)->Name.c_str(),*/
             child,
             output,
+            this->ActualTimeStep,
             1,
             progressS,
             progressE

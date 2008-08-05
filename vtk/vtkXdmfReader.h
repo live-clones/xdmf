@@ -238,6 +238,8 @@ protected:
   void UpdateRootGrid();
   void UpdateGrids(vtkXdmfReaderGrid *parent, void *ParentNode);
   void FindTimeValues();
+  void FindAllTimeValues(vtkXdmfReaderGrid *ptr);
+  void AssignTimeIndex(vtkXdmfReaderGrid *ptr);
 
   // Array selection helpers /////////////////////////////////////////////////
   static void SelectionModifiedCallback(vtkObject* caller, unsigned long eid,
