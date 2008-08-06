@@ -90,7 +90,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.45");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.46");
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
@@ -113,8 +113,14 @@ class vtkXdmfReaderGrid
 public:
   //
   vtkXdmfReaderGrid() 
-    : XMGrid(0), DataDescription(0), Enabled(0), vtkType(-1), Time(-1), TimeIndex(0), isTemporal(0)
   {
+      this->XMGrid = 0;
+      this->DataDescription = 0;
+      this->Enabled = 0;
+      this->vtkType = -1;
+      this->Time = -1.0;
+      this->TimeIndex = 0;
+      this->isTemporal = 0;
   }
 
   ~vtkXdmfReaderGrid()
@@ -1797,13 +1803,13 @@ void vtkXdmfReader::AssignTimeIndex(vtkXdmfReaderGrid *ptr)
     {
     return;
     }
-    int ActualTimeStep = vtkstd::find_if(
+    int actualTimeStep = vtkstd::find_if(
           this->Internals->TimeValues.begin(), 
           this->Internals->TimeValues.end(), 
           vtkstd::bind2nd( vtkstd::greater_equal<double>( ), ptr->Time)) 
           - this->Internals->TimeValues.begin();
-    // cout << "ActualTimeStep for " << ptr->Time << " = " << ActualTimeStep << endl;
-    ptr->TimeIndex = ActualTimeStep;
+    // cout << "actualTimeStep for " << ptr->Time << " = " << actualTimeStep << endl;
+    ptr->TimeIndex = actualTimeStep;
   int T = ptr->Children.size();
   // cout << "FindTimeValues : ptr has " << T << " children" << endl;
   for (int i=0; i<T; i++) {
