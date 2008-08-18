@@ -90,7 +90,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.46");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.47");
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
@@ -117,10 +117,14 @@ public:
       this->XMGrid = 0;
       this->DataDescription = 0;
       this->Enabled = 0;
+
+      // this->Enabled = 1;
       this->vtkType = -1;
       this->Time = -1.0;
       this->TimeIndex = 0;
-      this->isTemporal = 0;
+      this->isTemporal = 0; // 1 if Temporal 2 if Tempoal Collection
+      this->isCollection = 0;
+
   }
 
   ~vtkXdmfReaderGrid()
@@ -149,6 +153,7 @@ public:
   XdmfFloat64   Time;
   XdmfInt32     TimeIndex;
   XdmfInt32     isTemporal;
+  XdmfInt32     isCollection;
   vtkstd::string Name;
   int Enabled;
   int vtkType;
@@ -214,9 +219,11 @@ public:
     this->Data = NULL;
     this->DsmBuffer = NULL;
     this->InputString = 0;
-
+    this->ParallelLevel = 0;
+    this->LargestLevel = 0;
     this->UpdatePiece     = 0;
     this->UpdateNumPieces = 1;
+    this->mostChildren = 0;
   }
 
   ~vtkXdmfReaderInternal()
@@ -242,6 +249,7 @@ public:
     const char *gridName);
 
   int RequestGridInformation(vtkXdmfReaderGrid *grid);
+  int FindParallelism(vtkXdmfReaderGrid *grid = 0);
 
   int RequestGridData(/*const char* currentGridName,*/
     vtkXdmfReaderGrid *grid,
@@ -255,11 +263,13 @@ public:
   vtkstd::vector<vtkstd::string> DomainList;
   XdmfXmlNode DomainPtr;
   vtkXdmfReaderGrid *Data;
- 
+  vtkXdmfReaderGrid *ParallelLevel;
+  vtkXdmfReaderGrid *LargestLevel;
   vtkXdmfReader* Reader;
   XdmfDataItem *DataItem;
   XdmfDsmBuffer *DsmBuffer;
   char *InputString;
+  int mostChildren;
 
   // For converting arrays from XDMF to VTK format
   vtkXdmfDataArray *ArrayConverter;
@@ -415,6 +425,7 @@ vtkXdmfReader::vtkXdmfReader()
   this->ActualTimeStep = 0;
   this->TimeStepRange[0] = 0;
   this->TimeStepRange[1] = 0;
+  // this->DebugOn();
 }
 
 //----------------------------------------------------------------------------
@@ -1278,20 +1289,24 @@ void vtkXdmfReader::UpdateRootGrid()
   if (!ptr)
     {
     ptr = new vtkXdmfReaderGrid;
+    ptr->Name = "DomainRoot";
     this->Internals->Data = ptr;
     }
   this->UpdateGrids(ptr, domain);
   int nchildren = ptr->Children.size();
   //vtkDebugMacro("Created " << nchildren << " top level grids.");
+  // cout << "Created " << nchildren << " top level grids." << endl;
   this->OutputTemporal = 0;
   if (nchildren == 1)
     {
     this->OutputVTKType = this->Internals->GetGrid(0)->vtkType;    
+    /*
     if (this->OutputVTKType==VTK_TEMPORAL_DATA_SET) 
       {
       this->OutputVTKType =  this->Internals->GetGrid(0)->GetChild(this->ActualTimeStep)->vtkType;
       this->OutputTemporal = 1;
       }
+    */
     }
   else
     {
@@ -1339,6 +1354,7 @@ void vtkXdmfReader::UpdateGrids(vtkXdmfReaderGrid *parent, void *ParentNode)
             vtkErrorMacro("Can't create new XdmfGrid");
             break;
         }
+        xGrid->SetName("DomainRoot");
         xGrid->SetDOM(this->DOM);
         xGrid->SetElement(gridNode);
         xGrid->UpdateInformation();
@@ -1376,6 +1392,7 @@ void vtkXdmfReader::UpdateGrids(vtkXdmfReaderGrid *parent, void *ParentNode)
       vtkDebugMacro(" Grid is a Collection/Tree ");
       sub = this->Internals->AddGrid(parent, gridName);
       sub->XMGrid = xGrid;
+      sub->isCollection = 1;
       this->UpdateGrids(sub, gridNode);
       sub->vtkType = VTK_MULTIBLOCK_DATA_SET;
       // If grid is a collection, is it a temporal one?
@@ -1384,10 +1401,14 @@ void vtkXdmfReader::UpdateGrids(vtkXdmfReaderGrid *parent, void *ParentNode)
       if(xGrid->GetCollectionType() == XDMF_GRID_COLLECTION_TEMPORAL)
         {
         vtkDebugMacro(" Grid is a TemporalDataSetCollection ");
+        sub->isTemporal = 1;
         // we will not output a TemporalDataset, but use this as a flag for later
         // Jerry Change Me
         // sub->vtkType = VTK_TEMPORAL_DATA_SET;
+        // cout << ":: child Grid Type = " << sub->GetChild(0)->vtkType << endl;
+        sub->vtkType = sub->GetChild(0)->vtkType;
         }
+        // cout << "Collection vtkType = " << sub->vtkType << endl;
       }
     else
       {
@@ -1428,8 +1449,12 @@ void vtkXdmfReader::UpdateGrids(vtkXdmfReaderGrid *parent, void *ParentNode)
           sub->vtkType = VTK_RECTILINEAR_GRID;
           }
         }
+        // cout << "Uniform vtkType = " << sub->vtkType << endl;
       }
-
+    if( sub && (!parentIsDomain)) {
+        // cout << "Enable Sub Grid " << sub->Name << endl;
+        sub->Enabled = 1;
+    }
     str.rdbuf()->freeze(0);
     }
 }
@@ -1636,6 +1661,50 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
   return 1;
 }
 
+//-----------------------------------------------------------------------------
+int vtkXdmfReaderInternal::FindParallelism(vtkXdmfReaderGrid *grid)
+{
+    int status = 0;
+    int topLevel = 0;
+
+    if(!grid){
+        this->ParallelLevel = 0;
+        this->LargestLevel = 0;
+        this->mostChildren = 0;
+        grid = this->Data;
+        topLevel = 1;
+    }
+    vtkstd::vector<vtkXdmfReaderGrid *>::iterator it;
+    // cout << "FindParallelism for " << grid->Name << " has " << grid->Children.size() << " children, I am node " << this->UpdatePiece << " of " << this->UpdateNumPieces << endl;
+    if((grid->Enabled) && (!grid->isTemporal) && (grid->Children.size() >= this->mostChildren)){
+        this->mostChildren = grid->Children.size();
+        this->LargestLevel = grid;
+    }
+    if((grid->Enabled) && (!grid->isTemporal) && (grid->Children.size() >= this->UpdateNumPieces)){
+        // cout << "Node " << this->UpdatePiece << " Found Parallelism in <" << grid->Name << ">" << endl;
+        this->ParallelLevel = grid;
+        return 1;
+    }
+    for ( it = grid->Children.begin();
+          it != grid->Children.end();
+          ++it )
+      {
+        {
+        status = this->FindParallelism((*it));
+        if(status) return 1;
+        }
+      }
+    if(topLevel){
+        if(this->LargestLevel){
+        // cout << "Insufficient Parallelism Found, using " << this->LargestLevel->Name << " with " << this->mostChildren << " grids" << endl;
+        this->ParallelLevel = this->LargestLevel;
+        }else{
+            // cout << "No Parallelism, No LargetLevel, Are  Grids enabled ?" << endl;
+        }
+    }
+    return 0;
+}
+//-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 int vtkXdmfReaderInternal::RequestGridInformation(
   vtkXdmfReaderGrid *grid)
@@ -1874,7 +1943,7 @@ int vtkXdmfReader::RequestInformation(
   vtkInformationVector **vtkNotUsed(inputVector),
   vtkInformationVector *outputVector)
 {
-  vtkDebugMacro("ExecuteInformation");
+  vtkDebugMacro("RequestInformation");
   
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
   //say we can produce as many pieces are are desired
@@ -1886,14 +1955,19 @@ int vtkXdmfReader::RequestInformation(
     return 1;
     }
 
+/*
   if (this->OutputTemporal) 
   {
     vtkXdmfReaderGrid *sptr = this->Internals->GetGrid(0)->GetChild(this->ActualTimeStep);
-    sptr->Information = outInfo;
-    this->Internals->RequestGridInformation(sptr);
+    cout << "sptr = " << sptr << endl;
+    if(sptr){
+        sptr->Information = outInfo;
+        this->Internals->RequestGridInformation(sptr);
+    }
 //    sptr->Information = 0;
   }
   else 
+*/
   switch (this->OutputVTKType)
     {
     case VTK_POLY_DATA:
@@ -1974,15 +2048,39 @@ int vtkXdmfReaderInternal::RequestGridData(
   double progressE)
 {
   double totalProgFrac = progressE-progressS;
+    vtkstd::vector<vtkXdmfReaderGrid *>::iterator it;
 
-  //cout << " ::: RequestGridData for " << grid->Name << endl;
+  // cout << " ::: RequestGridData for " << grid->Name << " vtkType = " << grid->vtkType << " output type = " << output->GetClassName() << " Enabled = " << grid->Enabled << endl;
   //cout << "Time Index = " << timeIndex << " Grid Time Index = " << grid->TimeIndex << endl;
-  if(grid->isTemporal && (timeIndex != grid->TimeIndex)){
-      //cout << grid->Name << " is Temporal but time " << grid->TimeIndex << " != requested time " << timeIndex << endl;
+  // Handle Tempral Collection
+  if(grid->isTemporal && grid->isCollection){
+      // cout << "Handling RequestGridData for Temporal Collection" << endl;
+    for ( it = grid->Children.begin();
+          it != grid->Children.end();
+          ++it )
+      {
+          if((*it)->TimeIndex == timeIndex){
+              // cout << "Found child with correct time index" << endl;
+                return(this->RequestGridData(
+                (*it),
+                output,
+                timeIndex,
+                1,
+                progressS,
+                progressE
+                ));
+          }
+      }
+
+  }
+  if((!grid->Enabled) || ((grid->isTemporal == 1) && (!grid->isCollection) && (timeIndex != grid->TimeIndex))){
+      //cout << grid->Name << " not enabled or is Temporal but time " << grid->TimeIndex << " != requested time " << timeIndex << endl;
       return 1;
   }
-  if ((grid->vtkType == VTK_MULTIBLOCK_DATA_SET) || (grid->vtkType == VTK_TEMPORAL_DATA_SET))
-    {    
+  // if ((grid->vtkType == VTK_MULTIBLOCK_DATA_SET) || (grid->vtkType == VTK_TEMPORAL_DATA_SET))
+  // cout << "Node " << this->UpdatePiece << " Reading Data for " << grid->Name << endl;
+  if (grid->vtkType == VTK_MULTIBLOCK_DATA_SET)
+    {
     //recurse inside composite datasets
     vtkDebugWithObjectMacro(this->Reader,
                             "Requesting data in collection or tree ");
@@ -1996,7 +2094,7 @@ int vtkXdmfReaderInternal::RequestGridData(
       }
     int outputGrid = 0;
     int nChildren = grid->Children.size();
-    vtkstd::vector<vtkXdmfReaderGrid *>::iterator it;
+    // cout << "RequestGridData for " << grid->Name << " has " << nChildren << " children, I am node " << this->UpdatePiece << " of " << this->UpdateNumPieces << endl;
     for ( it = grid->Children.begin();
           it != grid->Children.end();
           ++it )
@@ -2008,11 +2106,29 @@ int vtkXdmfReaderInternal::RequestGridData(
 
       vtkXdmfReaderGrid *child = (*it);
       //if ( (*it)->Enabled ) only top level grids can be disabled
+      // If this is a Temporal Collection OR a Spatial Collection with fewer Pieces than nodes OR node number == index
+      /*
+    cout << this->UpdatePiece << " UpdateGridData : NChild of " << grid->Name << " = " << nChildren << endl <<
+        " UpdateNumPieces = " << this->UpdateNumPieces << endl <<
+        " VTK_MULTIBLOCK_DATA_SET = " << VTK_MULTIBLOCK_DATA_SET << endl <<
+        " child->isTemporal = " << child->isTemporal << endl <<
+        " child->vtkType = " << child->vtkType << endl <<
+        " outputGrid = " << outputGrid << endl <<
+        " (outputGrid % this->UpdateNumPieces) = " << (outputGrid % this->UpdateNumPieces) <<
+        endl;
+        */
+      //if (((child->vtkType == VTK_MULTIBLOCK_DATA_SET) && (child->isTemporal)) || 
+      //    ((child->vtkType == VTK_MULTIBLOCK_DATA_SET) && (nChildren < this->UpdateNumPieces)) || 
+      //    ((outputGrid % this->UpdateNumPieces) == this->UpdatePiece)) 
+        if((this->ParallelLevel != grid) ||
+            ((this->ParallelLevel == grid) && ((outputGrid % this->UpdateNumPieces) == this->UpdatePiece)))
         {
-        int ChildType = child->vtkType;
-        if(ChildType == VTK_TEMPORAL_DATA_SET) ChildType = VTK_MULTIBLOCK_DATA_SET;
+        // int ChildType = child->vtkType;
+        // if(ChildType == VTK_TEMPORAL_DATA_SET) ChildType = VTK_MULTIBLOCK_DATA_SET;
+        // vtkDataObject *soutput=
+        //   vtkDataObjectTypes::NewDataObject(ChildType);
         vtkDataObject *soutput=
-          vtkDataObjectTypes::NewDataObject(ChildType);
+           vtkDataObjectTypes::NewDataObject(child->vtkType);
         /*
           vtkDataObjectTypes::NewDataObject(child->vtkType);
           */
@@ -2030,6 +2146,11 @@ int vtkXdmfReaderInternal::RequestGridData(
           "Recursively filling in ds " << outputGrid 
           << " a " << soutput->GetClassName() 
           << " from " << (*it)->Name.c_str());
+          /*
+          cout <<  this->UpdatePiece << " Recursively filling in ds " << outputGrid 
+          << " a " << soutput->GetClassName() 
+          << " from " << (*it)->Name.c_str() << endl;
+          */
         this->RequestGridData(
           /*(*it)->Name.c_str(),*/
           child,
@@ -2040,9 +2161,13 @@ int vtkXdmfReaderInternal::RequestGridData(
           lprogressE
           );
         soutput->Delete();
+        } else {
+          // cout << this->UpdatePiece << " ignoring stripe " << outputGrid << " from " << child->Name << endl;
+          outMB->SetBlock(outputGrid, static_cast<vtkDataSet*>(NULL));
+          //outMB->SetMetaData(outputGrid, grid->GetInformation());
+          }
         outputGrid++;
         }
-      }
     if (totalProgFrac>0.1)
       {
       this->Reader->UpdateProgress(progressE);
@@ -2147,6 +2272,7 @@ int vtkXdmfReaderInternal::RequestGridData(
       this->Reader,
       "Unstructured Topology is " 
       << xdmfGrid->GetTopology()->GetTopologyTypeAsString());
+      // cout << "Unstructured Topology is " << xdmfGrid->GetTopology()->GetTopologyTypeAsString() << endl;
     switch ( xdmfGrid->GetTopology()->GetTopologyType() )
       {
       case  XDMF_POLYVERTEX :
@@ -3040,6 +3166,7 @@ int vtkXdmfReader::RequestData(
   
   //long int starttime = this->GetMTime();
 
+ // cout << "Number of Top Level Grids = " << this->Internals->Data->Children.size() << endl;
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
   vtkDataObject *outStructure = outInfo->Get(vtkDataObject::DATA_OBJECT());
   if (!outStructure)
@@ -3102,13 +3229,23 @@ int vtkXdmfReader::RequestData(
     // vtkXdmfReaderGrid *sptr = this->Internals->GetGrid(0)->GetChild(this->ActualTimeStep);
     vtkXdmfReaderGrid *sptr = this->Internals->GetGrid(0);
     sptr->Information = outInfo;
-    this->Internals->RequestGridInformation(sptr);
-    this->Internals->RequestGridData(sptr, outStructure, this->ActualTimeStep, 0, 0.0, 1.0);
+    // this->Internals->RequestGridInformation(sptr);
+    // this->Internals->RequestGridData(sptr, outStructure, this->ActualTimeStep, 0, 0.0, 1.0);
     // Set the time step we are producing in the output information
     outStructure->GetInformation()->Set(vtkDataObject::DATA_TIME_STEPS(), 
       &this->Internals->TimeValues[this->ActualTimeStep], 1);
     }
-  else switch (this->OutputVTKType)
+  this->Internals->FindParallelism();
+  // cout << "Output Type = " << this->OutputVTKType << endl;
+  /*
+  return this->Internals->RequestGridData(this->Internals->GetGrid(0),
+            outStructure,
+            this->ActualTimeStep,
+            0,
+            0.0, 1.0);
+  */
+  // else switch (this->OutputVTKType)
+  switch (this->OutputVTKType)
     {
     case VTK_POLY_DATA:
     case VTK_UNSTRUCTURED_GRID:
@@ -3121,6 +3258,11 @@ int vtkXdmfReader::RequestData(
     vtkDebugMacro("Filling in atomic " 
                   << outStructure->GetClassName() 
                   << " with " << ptr->Name.c_str());    
+    /*
+    cout << "Filling in single atomic " 
+                  << outStructure->GetClassName() 
+                  << " with " << ptr->Name.c_str() << endl;    
+                  */
     this->Internals->RequestGridData(ptr, outStructure, this->ActualTimeStep, 0,
                                            0.0, 1.0);
     }
@@ -3149,10 +3291,12 @@ int vtkXdmfReader::RequestData(
 
       if ( (*it)->Enabled )
         {
-        if ((outputGrid%this->Internals->UpdateNumPieces) == this->Internals->UpdatePiece) 
+        // if ((outputGrid%this->Internals->UpdateNumPieces) == this->Internals->UpdatePiece) 
+        if(1)
           {
           vtkDataObject *output =
             vtkDataObjectTypes::NewDataObject(child->vtkType);
+            // cout << "Node " << this->Internals->UpdatePiece << " reading " << (*it)->Name << endl;
           if (output && output->IsA("vtkMultiBlockDataSet"))
             {
             outMB->SetBlock(outputGrid, vtkMultiBlockDataSet::SafeDownCast(output));
