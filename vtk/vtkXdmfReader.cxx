@@ -90,7 +90,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.49");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.50");
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
@@ -248,7 +248,7 @@ public:
     vtkXdmfReaderGrid *parent,
     const char *gridName);
 
-  int RequestGridInformation(vtkXdmfReaderGrid *grid);
+  int RequestGridInformation(vtkXdmfReaderGrid *grid, vtkInformation *destInfo);
   int FindParallelism(vtkXdmfReaderGrid *grid = 0);
 
   int RequestGridData(/*const char* currentGridName,*/
@@ -275,7 +275,7 @@ public:
   vtkXdmfDataArray *ArrayConverter;
 
   int UpdatePiece;
-  int UpdateNumPieces;
+  unsigned int UpdateNumPieces;
 
 };
 
@@ -1702,7 +1702,7 @@ int vtkXdmfReaderInternal::FindParallelism(vtkXdmfReaderGrid *grid)
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 int vtkXdmfReaderInternal::RequestGridInformation(
-  vtkXdmfReaderGrid *grid)
+  vtkXdmfReaderGrid *grid, vtkInformation *destInfo)
 {
   if (grid->Children.size()>0) 
     {
@@ -1717,12 +1717,12 @@ int vtkXdmfReaderInternal::RequestGridInformation(
       {
       //if ((*it)->Enabled ) //only top level grids can be disabled
         {
-        this->RequestGridInformation((*it));
+        this->RequestGridInformation((*it), destInfo);
         }
       }
     return 1;
     }
-  vtkInformation* gridInfo = grid->GetInformation();
+  vtkInformation *gridInfo = grid->GetInformation();
 
   XdmfInt32    Rank;
   XdmfInt64    Dimensions[ XDMF_MAX_DIMENSION ];
@@ -1785,6 +1785,8 @@ int vtkXdmfReaderInternal::RequestGridInformation(
   
   gridInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),
                0, EndExtent[2], 0, EndExtent[1], 0, EndExtent[0]);
+  destInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),
+               0, EndExtent[2], 0, EndExtent[1], 0, EndExtent[0]);
   
   vtkDebugWithObjectMacro(this->Reader, 
                           "Grid Type = " 
@@ -1798,16 +1800,18 @@ int vtkXdmfReaderInternal::RequestGridInformation(
       {
       vtkDebugWithObjectMacro(this->Reader, 
                               "Setting Extents for vtkStructuredGrid");
+/* did this a few lines above : why do it again?
       gridInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),
                    0, EndExtent[2], 0, EndExtent[1], 0, EndExtent[0]);
-     
+*/    
       }
     else if ( xdmfGrid->GetTopology()->GetTopologyType() == XDMF_2DCORECTMESH|| 
               xdmfGrid->GetTopology()->GetTopologyType() == XDMF_3DCORECTMESH )
       {
+/* did this a few lines above : why do it again?
       gridInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),
                    0, EndExtent[2], 0, EndExtent[1], 0, EndExtent[0]);
-    
+*/    
       XdmfGeometry  *Geometry = xdmfGrid->GetGeometry();
       if ( Geometry->GetGeometryType() == XDMF_GEOMETRY_ORIGIN_DXDYDZ )
         { 
@@ -1820,6 +1824,10 @@ int vtkXdmfReaderInternal::RequestGridInformation(
                      origin[2], origin[1], origin[0]);
         gridInfo->Set(vtkDataObject::SPACING(), 
                      spacing[2], spacing[1], spacing[0]);
+        destInfo->Set(vtkDataObject::ORIGIN(), 
+                     origin[2], origin[1], origin[0]);
+        destInfo->Set(vtkDataObject::SPACING(), 
+                     spacing[2], spacing[1], spacing[0]);
         }
       }
     else  if ( xdmfGrid->GetTopology()->GetTopologyType() == XDMF_2DRECTMESH ||
@@ -1827,9 +1835,10 @@ int vtkXdmfReaderInternal::RequestGridInformation(
       {
       vtkDebugWithObjectMacro(this->Reader, 
                               "Setting Extents for vtkRectilinearGrid");
+/* did this a few lines above : why do it again?
       gridInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),
                    0, EndExtent[2], 0, EndExtent[1], 0, EndExtent[0]);
-      
+*/    
       }
     else 
       {
@@ -1842,6 +1851,7 @@ int vtkXdmfReaderInternal::RequestGridInformation(
     if (gridInfo->Has(vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT()))
     {
       gridInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(), uExt);
+      destInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(), uExt);
     }
     else 
     {
@@ -1951,12 +1961,13 @@ int vtkXdmfReader::RequestInformation(
     case VTK_STRUCTURED_GRID:
     {
     vtkXdmfReaderGrid *sptr = this->Internals->GetGrid(0);
-    sptr->Information = outInfo;
-    this->Internals->RequestGridInformation(sptr);
+//    sptr->Information = outInfo; // not sure if we need to do this now
+    this->Internals->RequestGridInformation(sptr, outInfo);
     // release reference to meta info, we do not use it again so it is save for the vtkXdmfReaderGrid to get rid of it
-    // NO! - don't rlease it here, otherwise the null pointer is checked later and a new information object
+    // NO! - don't release it here, otherwise the null pointer is checked later and a new information object
     // gets created - and all the fields are reset.
 //    sptr->Information = 0;
+    // and maybe we can now release the hold of it.
     }
     break;
     case VTK_MULTIBLOCK_DATA_SET:
@@ -1970,7 +1981,7 @@ int vtkXdmfReader::RequestInformation(
         {
         //composite data does not yet support meta info
         //so we do not yet put the results into outInfo
-        this->Internals->RequestGridInformation((*it));
+        this->Internals->RequestGridInformation((*it), outInfo);
         }
       }
     }
@@ -2689,7 +2700,7 @@ int vtkXdmfReaderInternal::RequestGridData(
 
     }
     vGrid->SetOrigin(origin[2], origin[1], origin[0]);
-//    vGrid->SetDimensions(Dimensions[2], Dimensions[1], Dimensions[0]);
+    vGrid->SetDimensions(Dimensions[2], Dimensions[1], Dimensions[0]);
     stride[2] = readerStride[0];
     stride[1] = readerStride[1];
     stride[0] = readerStride[2];
