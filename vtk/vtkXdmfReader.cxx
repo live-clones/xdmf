@@ -90,7 +90,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.50");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.51");
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
@@ -1903,7 +1903,7 @@ void vtkXdmfReader::FindAllTimeValues(vtkXdmfReaderGrid *ptr)
     if(time && (time->GetTimeType() == XDMF_TIME_UNSET)){
     }
     if(time && (time->GetTimeType() != XDMF_TIME_UNSET)){
-        ptr->isTemporal = 1;
+        if(!ptr->isCollection) ptr->isTemporal = 1;
         this->OutputTemporal = 1;
         ptr->Time = time->GetValue();
         this->Internals->TimeValues.push_back(ptr->Time);
