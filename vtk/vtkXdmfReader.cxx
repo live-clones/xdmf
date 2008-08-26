@@ -90,7 +90,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.51");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.52");
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
@@ -2069,7 +2069,7 @@ int vtkXdmfReaderInternal::RequestGridData(
                               "Wrong vtk output structure expected composite");
       return 0;
       }
-    int outputGrid = 0;
+    unsigned int outputGrid = 0;
     int nChildren = grid->Children.size();
     for ( it = grid->Children.begin();
           it != grid->Children.end();
