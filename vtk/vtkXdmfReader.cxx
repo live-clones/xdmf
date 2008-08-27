@@ -90,7 +90,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.52");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.53");
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
@@ -274,7 +274,7 @@ public:
   // For converting arrays from XDMF to VTK format
   vtkXdmfDataArray *ArrayConverter;
 
-  int UpdatePiece;
+  unsigned int UpdatePiece;
   unsigned int UpdateNumPieces;
 
 };
