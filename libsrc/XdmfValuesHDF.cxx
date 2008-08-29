@@ -89,8 +89,12 @@ XdmfValuesHDF::Read(XdmfArray *anArray){
                 // Select the HyperSlab from HDF5
                 Rank = this->DataDesc->GetHyperSlab( Start, Stride, Count );
                 H5.SelectHyperSlab( Start, Stride, Count );
-                RetArray->SetShape(Rank, Count);
-                RetArray->SelectAll();
+                if(RetArray->GetSelectionSize() < H5.GetSelectionSize()){
+                    XdmfErrorMessage("Return Array No Large Enough to Hold Selected Data");
+                    RetArray->SetShapeFromSelection(&H5);
+                }
+                // RetArray->SetShape(Rank, Count);
+                // RetArray->SelectAll();
             } else {
                 XdmfInt64  NumberOfCoordinates;
                 XdmfInt64  *Coordinates;
@@ -104,7 +108,7 @@ XdmfValuesHDF::Read(XdmfArray *anArray){
                 delete Coordinates;
                 }
             }
-
+        XdmfDebug("Reading " << H5.GetSelectionSize() << " into Array of " << RetArray->GetSelectionSize() );
         if( H5.Read(RetArray) == NULL ){
             XdmfErrorMessage("Can't Read Dataset " << DataSetName);
             if(!anArray) delete RetArray;

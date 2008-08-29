@@ -206,6 +206,7 @@ Tag << "_" << XDMF_64BIT_CAST GlobalTimeCntr << "_XdmfArray" << ends;
 
 XdmfArray::XdmfArray() {
   XdmfDebug("XdmfArray Constructor");
+  this->AllowAllocate = 1;
   this->DataPointer = NULL;
   this->HeavyDataSetName = NULL;
   this->DataIsMine = 1;
@@ -283,9 +284,13 @@ return( RetVal );
 */
 
 XdmfInt32 XdmfArray::Allocate( void ){
-  XdmfDebug("Allocating " <<
+  XdmfDebug("Request Allocating " <<
     XDMF_64BIT_CAST (this->GetNumberOfElements() *  this->GetElementSize()) <<
     " Bytes");
+  if(!this->AllowAllocate){
+      XdmfDebug("AllowAllocate is Off");
+      return(XDMF_SUCCESS);
+  }
   if( this->DataIsMine ) {
     XdmfDebug("Data  " << XDMF_64BIT_CAST this->DataPointer << " is Mine");
     if( this->DataPointer ) {
@@ -317,12 +322,54 @@ XdmfInt32 XdmfArray::Reform( XdmfInt32 rank, XdmfInt64 *Dimensions ) {
 return( XDMF_SUCCESS );
 }
 
+XdmfInt32 XdmfArray::ReformFromSelection( XdmfDataDesc *DataDesc) {
+
+    XdmfDebug("Reform from Selection");
+
+    if(DataDesc->GetSelectionType() == XDMF_SELECTALL){
+        return(this->Reform(DataDesc));
+    }
+    if( DataDesc->GetSelectionType() == XDMF_HYPERSLAB ){
+        XdmfInt32  Rank;
+        XdmfInt64  Start[ XDMF_MAX_DIMENSION ];
+        XdmfInt64  Stride[ XDMF_MAX_DIMENSION ];
+        XdmfInt64  Count[ XDMF_MAX_DIMENSION ];
+
+        // Select the HyperSlab from HDF5
+        XdmfDebug("Reform from Hyperslab");
+        Rank = DataDesc->GetHyperSlab( Start, Stride, Count );
+        this->Reform(Rank, Count);
+        this->SelectAll();
+    } else {
+        XdmfInt64  NumberOfCoordinates;
+        XdmfInt64  *Coordinates;
+
+
+        // Select Parametric Coordinates from HDF5
+        XdmfDebug("Reform from Coordinates");
+        NumberOfCoordinates = DataDesc->GetSelectionSize();
+        XdmfDataDesc::SetNumberOfElements(NumberOfCoordinates);
+        this->SelectAll();
+        delete Coordinates;
+        }
+return( XDMF_SUCCESS );
+}
+
+XdmfInt32 XdmfArray::SetShapeFromSelection( XdmfDataDesc *DataDesc) {
+    this->ReformFromSelection(DataDesc);
+    if(this->Allocate() != XDMF_SUCCESS){
+        return(XDMF_FAIL);
+    }
+return( XDMF_SUCCESS );
+}
+
 XdmfInt32 XdmfArray::SetShape( XdmfInt32 rank, XdmfInt64 *Dimensions ) {
 
   XdmfDebug("Setting Shape and Allocating Memory");
   XdmfDataDesc::SetShape( rank, Dimensions );  
-  this->Allocate();
-
+  if(this->Allocate() != XDMF_SUCCESS){
+      return(XDMF_FAIL);
+  }
 return( XDMF_SUCCESS );
 }
 
@@ -330,7 +377,9 @@ XdmfInt32
 XdmfArray::CopyShape( hid_t dataSpace ){
   XdmfDebug("Setting Shape and Allocating Memory");
   XdmfDataDesc::CopyShape( dataSpace );  
-  this->Allocate();
+  if(this->Allocate() != XDMF_SUCCESS){
+      return(XDMF_FAIL);
+  }
   return( XDMF_SUCCESS );
 }
 
@@ -338,7 +387,9 @@ XdmfInt32
 XdmfArray::CopyShape( XdmfDataDesc *DataDesc ){
   XdmfDebug("Setting Shape and Allocating Memory");
   XdmfDataDesc::CopyShape( DataDesc );  
-  this->Allocate();
+  if(this->Allocate() != XDMF_SUCCESS){
+      return(XDMF_FAIL);
+  }
   return( XDMF_SUCCESS );
 }
 
@@ -353,8 +404,9 @@ XdmfInt32 XdmfArray::SetShapeFromString( XdmfConstString Dimensions ) {
 
   XdmfDebug("Setting Shape and Allocating Memory");
   XdmfDataDesc::SetShapeFromString( Dimensions );
-  this->Allocate();
-
+  if(this->Allocate() != XDMF_SUCCESS){
+      return(XDMF_FAIL);
+  }
 return( XDMF_SUCCESS );
 }
 

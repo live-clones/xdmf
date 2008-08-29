@@ -64,23 +64,30 @@ public:
   XdmfLength GetCoreLength( ) { return ( this->GetElementSize() * this->GetNumberOfElements() ) ; } ;
 
   XdmfInt32  Allocate( void );
+
+//! Allow for automatic allocation of data buffer
+  XdmfSetValueMacro(AllowAllocate, XdmfBoolean);
+  XdmfGetValueMacro(AllowAllocate, XdmfBoolean);
+
 //! Overloaded SetShape to Allocate space
   XdmfInt32       SetShape( XdmfInt32 Rank, XdmfInt64 *Dimensions );
   XdmfInt32       SetShapeFromString( XdmfConstString Dimensions );
+  XdmfInt32       SetShapeFromSelection( XdmfDataDesc *DataDesc);
   XdmfInt32  SetNumberOfElements( XdmfInt64 Length ) { 
         return( this->SetShape( 1, &Length ) );
         };
 
-//! Reshape without changing number of elements
+//! Reshape without changing (allocating) number of elements
   XdmfInt32       ReformFromString( XdmfConstString Dimensions );
+  XdmfInt32       ReformFromSelection( XdmfDataDesc *DataDesc);
 
-  XdmfInt32  CopyShape( XdmfDataDesc *DataDesc );
 
 #ifndef SWIG
   XdmfInt32  Reform( XdmfInt32 Rank, XdmfInt64 *Dimensions );
   XdmfInt32  Reform( XdmfDataDesc *DataDesc );
   XdmfInt32  CopyShape( hid_t DataSpace );
 #endif
+  XdmfInt32  CopyShape( XdmfDataDesc *DataDesc );
 
 //! Get the undelying data for fast access \b CAUTION !!
   XdmfPointer  GetDataPointer( XdmfInt64 Index  = 0 );
@@ -411,6 +418,7 @@ public:
 
 protected:
   XdmfPointer  DataPointer;
+  XdmfBoolean  AllowAllocate;
   XdmfBoolean  DataIsMine;
   char    TagName[XDMF_ARRAY_TAG_LENGTH];
 
