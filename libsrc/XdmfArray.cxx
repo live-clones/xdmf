@@ -342,7 +342,7 @@ XdmfInt32 XdmfArray::ReformFromSelection( XdmfDataDesc *DataDesc) {
         this->SelectAll();
     } else {
         XdmfInt64  NumberOfCoordinates;
-        XdmfInt64  *Coordinates;
+        // XdmfInt64  *Coordinates;
 
 
         // Select Parametric Coordinates from HDF5
@@ -350,7 +350,7 @@ XdmfInt32 XdmfArray::ReformFromSelection( XdmfDataDesc *DataDesc) {
         NumberOfCoordinates = DataDesc->GetSelectionSize();
         XdmfDataDesc::SetNumberOfElements(NumberOfCoordinates);
         this->SelectAll();
-        delete Coordinates;
+        // delete Coordinates;
         }
 return( XDMF_SUCCESS );
 }
