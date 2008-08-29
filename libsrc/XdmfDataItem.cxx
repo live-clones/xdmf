@@ -476,13 +476,15 @@ XdmfInt32 XdmfDataItem::Update(){
         return(this->UpdateFunction());
     }
     if(this->Array->CopyType(this->DataDesc) != XDMF_SUCCESS) return(XDMF_FAIL);
-    if(this->Array->CopyShape(this->DataDesc) != XDMF_SUCCESS) return(XDMF_FAIL);
+    // if(this->Array->CopyShape(this->DataDesc) != XDMF_SUCCESS) return(XDMF_FAIL);
     // if(this->Array->CopySelection(this->DataDesc) != XDMF_SUCCESS) return(XDMF_FAIL);
     if(this->CheckValues(this->Format) != XDMF_SUCCESS){
         XdmfErrorMessage("Error Accessing Internal XdmfValues");
         return(XDMF_FAIL);
     }
     if(this->Values->GetDataDesc()->CopySelection(this->DataDesc) != XDMF_SUCCESS) return(XDMF_FAIL);
+    XdmfDebug("Resize Array");
+    if(this->Array->SetShapeFromSelection(this->DataDesc) != XDMF_SUCCESS) return(XDMF_FAIL);
     switch (this->Format) {
         case XDMF_FORMAT_HDF :
             this->Values->SetDebug(this->GetDebug());
@@ -491,6 +493,7 @@ XdmfInt32 XdmfDataItem::Update(){
 #ifndef XDMF_NO_MPI
             this->Values->SetDsmBuffer(this->DsmBuffer);
 #endif
+            XdmfDebug("Reading Data");
             if(!((XdmfValuesHDF *)this->Values)->Read(this->Array)){
                 XdmfErrorMessage("Reading Values Failed");
                 return(XDMF_FAIL);
