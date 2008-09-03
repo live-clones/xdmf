@@ -330,15 +330,15 @@ XdmfInt32 XdmfArray::ReformFromSelection( XdmfDataDesc *DataDesc) {
         return(this->Reform(DataDesc));
     }
     if( DataDesc->GetSelectionType() == XDMF_HYPERSLAB ){
-        XdmfInt32  Rank;
-        XdmfInt64  Start[ XDMF_MAX_DIMENSION ];
-        XdmfInt64  Stride[ XDMF_MAX_DIMENSION ];
-        XdmfInt64  Count[ XDMF_MAX_DIMENSION ];
+        XdmfInt32  rank;
+        XdmfInt64  start[ XDMF_MAX_DIMENSION ];
+        XdmfInt64  stride[ XDMF_MAX_DIMENSION ];
+        XdmfInt64  count[ XDMF_MAX_DIMENSION ];
 
         // Select the HyperSlab from HDF5
         XdmfDebug("Reform from Hyperslab");
-        Rank = DataDesc->GetHyperSlab( Start, Stride, Count );
-        this->Reform(Rank, Count);
+        rank = DataDesc->GetHyperSlab( start, stride, count );
+        this->Reform(rank, count);
         this->SelectAll();
     } else {
         XdmfInt64  NumberOfCoordinates;
