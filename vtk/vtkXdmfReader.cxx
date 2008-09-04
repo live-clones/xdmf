@@ -90,7 +90,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.53");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.54");
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
@@ -1539,7 +1539,6 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
 // Parse the xmf file into an in memory structure
 // Produce an empty data object of the proper type for RequestData to fill 
 // in later.
-
   XdmfConstString CurrentFileName;
   vtkstd::string directory;
 
@@ -1800,18 +1799,10 @@ int vtkXdmfReaderInternal::RequestGridInformation(
       {
       vtkDebugWithObjectMacro(this->Reader, 
                               "Setting Extents for vtkStructuredGrid");
-/* did this a few lines above : why do it again?
-      gridInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),
-                   0, EndExtent[2], 0, EndExtent[1], 0, EndExtent[0]);
-*/    
       }
     else if ( xdmfGrid->GetTopology()->GetTopologyType() == XDMF_2DCORECTMESH|| 
               xdmfGrid->GetTopology()->GetTopologyType() == XDMF_3DCORECTMESH )
       {
-/* did this a few lines above : why do it again?
-      gridInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),
-                   0, EndExtent[2], 0, EndExtent[1], 0, EndExtent[0]);
-*/    
       XdmfGeometry  *Geometry = xdmfGrid->GetGeometry();
       if ( Geometry->GetGeometryType() == XDMF_GEOMETRY_ORIGIN_DXDYDZ )
         { 
@@ -1835,37 +1826,12 @@ int vtkXdmfReaderInternal::RequestGridInformation(
       {
       vtkDebugWithObjectMacro(this->Reader, 
                               "Setting Extents for vtkRectilinearGrid");
-/* did this a few lines above : why do it again?
-      gridInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),
-                   0, EndExtent[2], 0, EndExtent[1], 0, EndExtent[0]);
-*/    
       }
     else 
       {
       vtkErrorWithObjectMacro(this->Reader,"Unknown topology type: " 
                               << xdmfGrid->GetTopology()->GetTopologyType());
       }
-    
-    int uExt[6];
-    
-    if (gridInfo->Has(vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT()))
-    {
-      gridInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(), uExt);
-      destInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(), uExt);
-    }
-    else 
-    {
-      memcpy(uExt, EndExtent, sizeof(int)*6);
-    }
-    
-    vtkDebugWithObjectMacro(this->Reader,
-                            "Update Extents: " << 
-                            uExt[0] << ", " <<
-                            uExt[1] << ", " <<
-                            uExt[2] << ", " <<
-                            uExt[3] << ", " <<
-                            uExt[4] << ", " <<
-                            uExt[5] );
     }
 
   return 1;
@@ -2191,6 +2157,18 @@ int vtkXdmfReaderInternal::RequestGridData(
       memcpy(upext, whext, sizeof(int)*6);
       }
         
+   /*
+     cerr << "XDR(" << this << ") RD " 
+     << "WholeExt" <<
+     << whext[0] << ", " << whext[1] << " "
+     << whext[2] << ", " << whext[3] << " "
+     << whext[4] << ", " << whext[5] << endl;
+     cerr << "XDR(" << this << ") RD " 
+     << "UpdateExt" <<
+     << upext[0] << ", " << upext[1] << " "
+     << upext[2] << ", " << upext[3] << " "
+     << upext[4] << ", " << upext[5] << endl;
+   */
     start[2] = vtkMAX(0, upext[0]);
     start[1] = vtkMAX(0, upext[2]);
     start[0] = vtkMAX(0, upext[4]);
@@ -2686,21 +2664,21 @@ int vtkXdmfReaderInternal::RequestGridData(
     XdmfFloat64  *origin = Geometry->GetOrigin();
     XdmfFloat64 *spacing = Geometry->GetDxDyDz();
     Topology->GetShapeDesc()->GetShape( Dimensions );
-    //
-    if (this->UpdateNumPieces>1) {
-      Dimensions[2] = 1+upext[1]-upext[0];
-      Dimensions[1] = 1+upext[3]-upext[2];
-      Dimensions[0] = 1+upext[5]-upext[4];
-
-//      origin[0] = origin[0] + upext[4]*spacing[0];
-//      origin[1] = origin[1] + upext[2]*spacing[1];
-//      origin[2] = origin[2] + upext[0]*spacing[2];
-//      outInfo->Set(vtkDataObject::ORIGIN(), 
-//                   origin[2], origin[1], origin[0]);
-
-    }
-    vGrid->SetOrigin(origin[2], origin[1], origin[0]);
-    vGrid->SetDimensions(Dimensions[2], Dimensions[1], Dimensions[0]);
+    vGrid->SetDimensions(Dimensions[2], Dimensions[1], Dimensions[0]); //whole domain
+    vGrid->SetExtent(upext); //subextent of domain to fill
+    vGrid->SetOrigin(origin[2], origin[1], origin[0]); //xyz in space
+    /*
+    cerr << "XDR(" << this << ")::RGD Origin " 
+         << origin[0] << "," << origin[1] << "," << origin[2] << endl;
+    cerr << "XDR(" << this << ")::RGD Dimensions " 
+         << Dimensions[0] << "," << Dimensions[1] << "," << Dimensions[2] << endl;
+    cerr << "XDR(" << this << ")::RGD Spacing " 
+         << spacing[0] << "," << spacing[1] << "," << spacing[2] << endl;
+    cerr << "XDR(" << this << ")::RGD Extent " 
+         << upext[0] << "," << upext[1] << " "
+         << upext[2] << "," << upext[3] << " "
+         << upext[4] << "," << upext[5] << endl;
+    */
     stride[2] = readerStride[0];
     stride[1] = readerStride[1];
     stride[0] = readerStride[2];
@@ -3187,6 +3165,16 @@ int vtkXdmfReader::RequestData(
     case VTK_STRUCTURED_GRID:
     {
     ptr = this->Internals->GetGrid(0);
+    //let the grid know what part it needs to fill in on this processor
+    ptr->Information->CopyEntry(outInfo, 
+       vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT());
+    ptr->Information->CopyEntry(outInfo,
+       vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER());
+    ptr->Information->CopyEntry(outInfo,
+       vtkStreamingDemandDrivenPipeline::UPDATE_NUMBER_OF_PIECES());
+    ptr->Information->CopyEntry(outInfo,
+       vtkStreamingDemandDrivenPipeline::UPDATE_NUMBER_OF_GHOST_LEVELS());
+
     vtkDebugMacro("Filling in atomic " 
                   << outStructure->GetClassName() 
                   << " with " << ptr->Name.c_str());    
