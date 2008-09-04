@@ -54,7 +54,6 @@ XdmfGeometry::~XdmfGeometry() {
 XdmfInt32
 XdmfGeometry::Release()
 {
-  XdmfDataItem *di = NULL;
   XdmfXmlNode node;
   XdmfInt32 Index = 0;
   XdmfXmlNode Node;
