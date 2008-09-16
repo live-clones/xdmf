@@ -100,6 +100,16 @@ public:
         this->DataIsMine = 0;
         }
 
+  void    Reset( XdmfInt32 Free=0 ){
+        // XdmfInt64 Length = 1;
+        if( Free && this->DataIsMine && this->DataPointer ){
+          free( this->DataPointer );
+          }
+        this->DataPointer = 0;
+        this->DataIsMine = 1;
+        // this->Reform(1, &Length);
+        }
+
 /*! Methods to Set Values of Elements
 */
   XdmfInt32  SetValueFromFloat64( XdmfInt64 Index, XdmfFloat64 Value );
