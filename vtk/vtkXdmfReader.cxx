@@ -90,7 +90,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.54");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.55");
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
@@ -2920,7 +2920,7 @@ int vtkXdmfReaderInternal::RequestGridData(
       if ( values )
         {
         vtkDataArray* vtkValues = this->ArrayConverter->FromXdmfArray(
-          values->GetTagName(), 1, globalrank, Components);
+          values->GetTagName(), 1, globalrank, Components, 0);
         
         vtkDebugWithObjectMacro(this->Reader,
                                 "Reading array: " << name );
@@ -2940,7 +2940,7 @@ int vtkXdmfReaderInternal::RequestGridData(
                               values->GetValueAsFloat64(0) );
           vtkValues->Delete();
           this->ArrayConverter->SetVtkArray( NULL );
-          vtkValues=this->ArrayConverter->FromXdmfArray(tmpArray->GetTagName(), 1, 1, Components);
+          vtkValues=this->ArrayConverter->FromXdmfArray(tmpArray->GetTagName(), 1, 1, Components, 0);
           if( !name )
             {
             name = values->GetTagName();
