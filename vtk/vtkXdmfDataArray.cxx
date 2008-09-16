@@ -218,68 +218,84 @@ vtkDataArray *vtkXdmfDataArray::FromXdmfArray( char *ArrayName, int CopyShape,
   }else{
   switch( array->GetNumberType() ){
   case XDMF_INT8_TYPE :
+    {
     vtkCharArray *chara = vtkCharArray::SafeDownCast(this->vtkArray);
     if(!chara){
         XdmfErrorMessage("Cannot downcast data array");
         return(0);
     }
     chara->SetArray((char *)array->GetDataPointer(), components * tuples, 0);
+    }
     break;
   case XDMF_UINT8_TYPE :
+    {
     vtkUnsignedCharArray *uchara = vtkUnsignedCharArray::SafeDownCast(this->vtkArray);
     if(!uchara){
         XdmfErrorMessage("Cannot downcast ucharata array");
         return(0);
     }
     uchara->SetArray((unsigned char *)array->GetDataPointer(), components * tuples, 0);
+    }
     break;
   case XDMF_INT16_TYPE :
+    {
     vtkShortArray *shorta = vtkShortArray::SafeDownCast(this->vtkArray);
     if(!shorta){
         XdmfErrorMessage("Cannot downcast data array");
         return(0);
     }
     shorta->SetArray((short *)array->GetDataPointer(), tuples, 0);
+    }
     break;
   case XDMF_UINT16_TYPE :
+    {
     vtkUnsignedShortArray *ushorta = vtkUnsignedShortArray::SafeDownCast(this->vtkArray);
     if(!ushorta){
         XdmfErrorMessage("Cannot downcast ushortata array");
         return(0);
     }
     ushorta->SetArray((unsigned short *)array->GetDataPointer(), components * tuples, 0);
+    }
     break;
   case XDMF_INT32_TYPE :
+    {
     vtkIntArray *inta = vtkIntArray::SafeDownCast(this->vtkArray);
     if(!inta){
         XdmfErrorMessage("Cannot downcast intata array");
         return(0);
     }
     inta->SetArray((int *)array->GetDataPointer(), components * tuples, 0);
+    }
     break;
   case XDMF_UINT32_TYPE :
+    {
     vtkUnsignedIntArray *uinta = vtkUnsignedIntArray::SafeDownCast(this->vtkArray);
     if(!uinta){
         XdmfErrorMessage("Cannot downcast uintata array");
         return(0);
     }
     uinta->SetArray((unsigned int *)array->GetDataPointer(), components * tuples, 0);
+    }
     break;
   case XDMF_FLOAT32_TYPE :
+    {
     vtkFloatArray *floata = vtkFloatArray::SafeDownCast(this->vtkArray);
     if(!floata){
         XdmfErrorMessage("Cannot downcast floatata array");
         return(0);
     }
     floata->SetArray((float *)array->GetDataPointer(), components * tuples, 0);
+    }
     break;
   case XDMF_FLOAT64_TYPE :
+    {
     vtkDoubleArray *doublea = vtkDoubleArray::SafeDownCast(this->vtkArray);
     if(!doublea){
         XdmfErrorMessage("Cannot downcast doubleata array");
         return(0);
     }
     doublea->SetArray((double *)array->GetDataPointer(), components * tuples, 0);
+    }
     break;
   default :
     XdmfErrorMessage("Can't handle number type");
