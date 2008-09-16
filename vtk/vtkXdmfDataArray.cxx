@@ -271,11 +271,7 @@ vtkDataArray *vtkXdmfDataArray::FromXdmfArray( char *ArrayName, int CopyShape,
         XdmfErrorMessage("Cannot downcast floatata array");
         return(0);
     }
-    cout << "Using SetArray() for " <<  tuples << " values" << endl;
-    cout << "# vtk = " << this->vtkArray->GetNumberOfTuples() << endl;
-    cout << "Xdmf = " << array->GetDataPointer() <<  " vtk = " << this->vtkArray->GetVoidPointer( 0 ) << endl;
     floata->SetArray((float *)array->GetDataPointer(), components * tuples, 0);
-    cout << "Xdmf = " << array->GetDataPointer() << " vtk = " << this->vtkArray->GetVoidPointer( 0 ) << endl;
     break;
   case XDMF_FLOAT64_TYPE :
     vtkDoubleArray *doublea = vtkDoubleArray::SafeDownCast(this->vtkArray);
@@ -283,18 +279,13 @@ vtkDataArray *vtkXdmfDataArray::FromXdmfArray( char *ArrayName, int CopyShape,
         XdmfErrorMessage("Cannot downcast doubleata array");
         return(0);
     }
-    cout << "Using SetArray() for " <<  tuples << " values" << endl;
-    cout << "# vtk = " << this->vtkArray->GetNumberOfTuples() << endl;
-    cout << "Xdmf = " << array->GetDataPointer() <<  " vtk = " << this->vtkArray->GetVoidPointer( 0 ) << endl;
     doublea->SetArray((double *)array->GetDataPointer(), components * tuples, 0);
-    cout << "Xdmf = " << array->GetDataPointer() << " vtk = " << this->vtkArray->GetVoidPointer( 0 ) << endl;
     break;
   default :
     XdmfErrorMessage("Can't handle number type");
     return(0);
     break;
   }
-  cout << "..... Resetting Array" << endl;
   array->Reset();
   }
   return( this->vtkArray );
