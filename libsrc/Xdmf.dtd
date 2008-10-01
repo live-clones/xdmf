@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--Root element of dataset-->
-<!ELEMENT Xdmf (Information+, Domain+)>
+<!ELEMENT Xdmf (Information*, Domain+)>
 <!ATTLIST Xdmf
     Version CDATA #IMPLIED
 <!--Contains domain data information-->
-<!ELEMENT Domain (Information+, Grid+)>
+<!ELEMENT Domain (Information*, Grid+)>
 <!ATTLIST Domain
 	Name CDATA #IMPLIED
 >
 <!--Contains a collection of homogeneous elements-->
-<!ELEMENT Grid (Information+, Time, Topology, Geometry, Attribute+)>
+<!ELEMENT Grid (Information*, Time*, Grid*, Topology*, Geometry*, Attribute*)>
 <!ATTLIST Grid
 	Name CDATA #IMPLIED
 	GridType (Uniform | Collection | Tree | Subset) "Uniform"
@@ -17,13 +17,13 @@
     Section (DataItem | All) "All"
 >
 <!-- Described Temporal Relationship -->
-<!ELEMENT Time (Information+, DataItem)>
+<!ELEMENT Time (Information*, DataItem*)>
 <!ATTLIST Time
     TimeType (Single | HyperSlab | List | Range) "Single"
     Value CDATA #IMPLIED
 >
 <!--Describes the general organization of the data-->
-<!ELEMENT Topology (Information+, DataItem)>
+<!ELEMENT Topology (Information*, DataItem*)>
 <!ATTLIST Topology
 	TopologyType (Polyvertex | Polyline | Polygon | Triangle | Quadrilateral | Tetrahedron | Pyramid| Wedge | Hexahedron | Edge_3 | Triagle_6 | Quadrilateral_8 | Tetrahedron_10 | Pyramid_13 | Wedge_15 | Hexahedron_20 | Mixed | 2DSMesh | 2DRectMesh | 2DCoRectMesh | 3DSMesh | 3DRectMesh | 3DCoRectMesh) #REQUIRED
 	Dimension CDATA #IMPLIED
@@ -33,13 +33,13 @@
 	NumberOfElements CDATA #IMPLIED
 >
 <!--Describes the XYZ values of the mesh-->
-<!ELEMENT Geometry (Information+, DataItem+)>
+<!ELEMENT Geometry (Information*, DataItem+)>
 <!ATTLIST Geometry
 	Name CDATA #IMPLIED
 	GeometryType (XYZ | XY | X_Y_Z | VXVYVZ | ORIGIN_DXDYDZ) "XYZ"
 >
 <!--Lowest level element, describes the data that is present in the XDMF dataset-->
-<!ELEMENT DataItem (Information+)>
+<!ELEMENT DataItem (Information*, DataItem*)>
 <!ATTLIST DataItem
 	Name CDATA #REQUIRED
     ItemType (Uniform | Collection | Tree | HyperSlab | Coordinates | Function) "Uniform"
@@ -50,14 +50,14 @@
 	CData ENTITY #IMPLIED
 >
 <!--Describes the values on the mesh-->
-<!ELEMENT Attribute (Information+, DataItem)>
+<!ELEMENT Attribute (Information*, DataItem)>
 <!ATTLIST Attribute
 	Name CDATA #IMPLIED
 	Center (Node | Cell | Grid | Face | Edge) "Node"
 	AttributeType (Scalar | Vector | Tensor | Tensor6 | Matrix) "Scalar"
 >
 <!-- Application Dependent -->
-<!ELEMENT Information (Information+)>
+<!ELEMENT Information (Information*)>
 <!ATTLIST Information 
 	Name CDATA #IMPLIED
 	Value CDATA #IMPLIED
