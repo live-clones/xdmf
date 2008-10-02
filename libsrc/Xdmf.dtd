@@ -3,6 +3,7 @@
 <!ELEMENT Xdmf (Information*, Domain+)>
 <!ATTLIST Xdmf
     Version CDATA #IMPLIED
+>
 <!--Contains domain data information-->
 <!ELEMENT Domain (Information*, Grid+)>
 <!ATTLIST Domain
@@ -39,7 +40,7 @@
 	GeometryType (XYZ | XY | X_Y_Z | VXVYVZ | ORIGIN_DXDYDZ) "XYZ"
 >
 <!--Lowest level element, describes the data that is present in the XDMF dataset-->
-<!ELEMENT DataItem (Information*, DataItem*)>
+<!ELEMENT DataItem (#PCDATA, Information*, DataItem*)>
 <!ATTLIST DataItem
 	Name CDATA #REQUIRED
     ItemType (Uniform | Collection | Tree | HyperSlab | Coordinates | Function) "Uniform"
@@ -47,7 +48,6 @@
 	NumberType (Char | UChar | Float | Int | UInt) "Float"
 	Precision (1 | 4 | 8) "4"
 	Format (XML | HDF) "XML"
-	CData ENTITY #IMPLIED
 >
 <!--Describes the values on the mesh-->
 <!ELEMENT Attribute (Information*, DataItem)>
@@ -57,10 +57,9 @@
 	AttributeType (Scalar | Vector | Tensor | Tensor6 | Matrix) "Scalar"
 >
 <!-- Application Dependent -->
-<!ELEMENT Information (Information*)>
+<!ELEMENT Information (#PCDATA, Information*)>
 <!ATTLIST Information 
 	Name CDATA #IMPLIED
 	Value CDATA #IMPLIED
-    CData ENTITY #IMPLIED
 >
 
