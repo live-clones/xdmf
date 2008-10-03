@@ -40,7 +40,7 @@
 	GeometryType (XYZ | XY | X_Y_Z | VXVYVZ | ORIGIN_DXDYDZ) "XYZ"
 >
 <!--Lowest level element, describes the data that is present in the XDMF dataset-->
-<!ELEMENT DataItem (#PCDATA | DataItem*)>
+<!ELEMENT DataItem (#PCDATA | DataItem)*>
 <!ATTLIST DataItem
 	Name CDATA #REQUIRED
     ItemType (Uniform | Collection | Tree | HyperSlab | Coordinates | Function) "Uniform"
@@ -57,7 +57,7 @@
 	AttributeType (Scalar | Vector | Tensor | Tensor6 | Matrix) "Scalar"
 >
 <!-- Application Dependent -->
-<!ELEMENT Information (#PCDATA | Information* | EMPTY)>
+<!ELEMENT Information (#PCDATA | Information | EMPTY)*>
 <!ATTLIST Information 
 	Name CDATA #IMPLIED
 	Value CDATA #IMPLIED
