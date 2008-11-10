@@ -47,6 +47,7 @@
 	Dimensions CDATA #REQUIRED
 	NumberType (Char | UChar | Float | Int | UInt) "Float"
 	Precision (1 | 4 | 8) "4"
+	Reference CDATA #IMPLIED
 	Format (XML | HDF) "XML"
 >
 <!--Describes the values on the mesh-->
