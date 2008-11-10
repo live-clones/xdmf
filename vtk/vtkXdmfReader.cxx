@@ -90,7 +90,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.56");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.57");
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
@@ -2126,7 +2126,7 @@ int vtkXdmfReaderInternal::RequestGridData(
     //continue;
     }
   
-    cout << "RequestGridData Node " << this->Reader->GetController()->GetLocalProcessId() << " Reading data for " << xdmfGrid->GetName() << endl;
+    // cout << "RequestGridData Node " << this->Reader->GetController()->GetLocalProcessId() << " Reading data for " << xdmfGrid->GetName() << endl;
   vtkDebugWithObjectMacro(this->Reader, 
                           "Reading Heavy Data for " << xdmfGrid->GetName());
 #ifndef XDMF_NO_MPI
