@@ -90,7 +90,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.55");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.56");
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
@@ -124,6 +124,7 @@ public:
       this->TimeIndex = 0;
       this->isTemporal = 0; // 1 if Temporal 2 if Tempoal Collection
       this->isCollection = 0;
+      this->isParallel = 0;
 
   }
 
@@ -154,6 +155,7 @@ public:
   XdmfInt32     TimeIndex;
   XdmfInt32     isTemporal;
   XdmfInt32     isCollection;
+  XdmfInt32     isParallel; // Read in parallel if possible
   vtkstd::string Name;
   int Enabled;
   int vtkType;
@@ -219,7 +221,8 @@ public:
     this->Data = NULL;
     this->DsmBuffer = NULL;
     this->InputString = 0;
-    this->ParallelLevel = 0;
+    // this->ParallelLevel = 0;
+    this->ParallelLevels.clear();
     this->LargestLevel = 0;
     this->UpdatePiece     = 0;
     this->UpdateNumPieces = 1;
@@ -263,7 +266,8 @@ public:
   vtkstd::vector<vtkstd::string> DomainList;
   XdmfXmlNode DomainPtr;
   vtkXdmfReaderGrid *Data;
-  vtkXdmfReaderGrid *ParallelLevel;
+  // vtkXdmfReaderGrid *ParallelLevel;
+  vtkstd::vector<vtkXdmfReaderGrid*> ParallelLevels;
   vtkXdmfReaderGrid *LargestLevel;
   vtkXdmfReader* Reader;
   XdmfDataItem *DataItem;
@@ -1664,36 +1668,46 @@ int vtkXdmfReaderInternal::FindParallelism(vtkXdmfReaderGrid *grid)
     int status = 0;
     int topLevel = 0;
 
+    // Look for a level with enough parallelism
+    // If none is found use the largest level (most children)
     if(!grid){
-        this->ParallelLevel = 0;
+        this->ParallelLevels.clear();
         this->LargestLevel = 0;
         this->mostChildren = 0;
         grid = this->Data;
         topLevel = 1;
     }
     vtkstd::vector<vtkXdmfReaderGrid *>::iterator it;
-    if((grid->Enabled) && (!grid->isTemporal) && (grid->Children.size() >= this->mostChildren)){
-        this->mostChildren = grid->Children.size();
-        this->LargestLevel = grid;
-    }
+        if((grid->Enabled) && (!grid->isTemporal) && (grid->Children.size() >= this->mostChildren)){
+            this->mostChildren = grid->Children.size();
+            this->LargestLevel = grid;
+        }
     if((grid->Enabled) && (!grid->isTemporal) && (grid->Children.size() >= this->UpdateNumPieces)){
-        this->ParallelLevel = grid;
+        // Found Enough Paralelism: Stop looking
+        // this->ParallelLevel = grid;
+        this->ParallelLevels.push_back(grid);
+        grid->isParallel = 1;
         return 1;
     }
+    // Process Children
     for ( it = grid->Children.begin();
-          it != grid->Children.end();
-          ++it )
-      {
+        it != grid->Children.end();
+        ++it )
+    {
         {
         status = this->FindParallelism((*it));
-        if(status) return 1;
+        // if(status) return 1;
         }
-      }
-    if(topLevel){
+    }
+    if(topLevel && (this->ParallelLevels.size() == 0)){
+        // Didn't find enough parallelism
+        // Use largest
         if(this->LargestLevel){
-            this->ParallelLevel = this->LargestLevel;
+            // this->ParallelLevel = this->LargestLevel;
+            // this->ParallelLevels.push_back(this->LargestLevel);
+            this->LargestLevel->isParallel = 1;
         }else{
-            // cout << "No Parallelism, No LargetLevel, Are  Grids enabled ?" << endl;
+            // cout << "No Parallelism, No LargestLevel, Are  Grids enabled ?" << endl;
         }
     }
     return 0;
@@ -2036,6 +2050,7 @@ int vtkXdmfReaderInternal::RequestGridData(
       return 0;
       }
     unsigned int outputGrid = 0;
+    unsigned int IsParallel = 0;
     int nChildren = grid->Children.size();
     for ( it = grid->Children.begin();
           it != grid->Children.end();
@@ -2046,9 +2061,13 @@ int vtkXdmfReaderInternal::RequestGridData(
       double lprogressE = progressS 
         + totalProgFrac*(double)(outputGrid+1)/(double)nChildren;
 
+      IsParallel = grid->isParallel;
       vtkXdmfReaderGrid *child = (*it);
-        if((this->ParallelLevel != grid) ||
-            ((this->ParallelLevel == grid) && ((outputGrid % this->UpdateNumPieces) == this->UpdatePiece)))
+        // if((this->ParallelLevel != grid) ||
+        //     ((this->ParallelLevel == grid) && ((outputGrid % this->UpdateNumPieces) == this->UpdatePiece)))
+        // {
+        if(!IsParallel ||
+            (IsParallel && ((outputGrid % this->UpdateNumPieces) == this->UpdatePiece)))
         {
         vtkDataObject *soutput=
            vtkDataObjectTypes::NewDataObject(child->vtkType);
@@ -2107,6 +2126,7 @@ int vtkXdmfReaderInternal::RequestGridData(
     //continue;
     }
   
+    cout << "RequestGridData Node " << this->Reader->GetController()->GetLocalProcessId() << " Reading data for " << xdmfGrid->GetName() << endl;
   vtkDebugWithObjectMacro(this->Reader, 
                           "Reading Heavy Data for " << xdmfGrid->GetName());
 #ifndef XDMF_NO_MPI
