@@ -90,7 +90,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.57");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.58");
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
@@ -3080,6 +3080,8 @@ int vtkXdmfReaderInternal::RequestGridData(
   nameArray->Delete();
   */
 
+  // Release Duplicate Big Data 
+  grid->XMGrid->Release();
   return 1;
 }
 //----------------------------------------------------------------------------
