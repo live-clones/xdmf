@@ -90,7 +90,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.59");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.60");
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
@@ -2022,6 +2022,7 @@ int vtkXdmfReaderInternal::RequestGridData(
       {
           if((*it)->TimeIndex == timeIndex){
                 int hasUpdateExtent, childhasUpdateExtent;
+                int subBlock = isSubBlock;
                 hasUpdateExtent = grid->GetInformation()->Has(vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT());
                 childhasUpdateExtent = (*it)->GetInformation()->Has(vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT());
                 if( hasUpdateExtent && (!childhasUpdateExtent)){
@@ -2034,12 +2035,13 @@ int vtkXdmfReaderInternal::RequestGridData(
                             vtkStreamingDemandDrivenPipeline::UPDATE_NUMBER_OF_PIECES());
                         (*it)->GetInformation()->CopyEntry(grid->GetInformation(), 
                             vtkStreamingDemandDrivenPipeline::UPDATE_NUMBER_OF_GHOST_LEVELS());
+                        subBlock = 0;
                 }
                 return(this->RequestGridData(
                 (*it),
                 output,
                 timeIndex,
-                1,
+                subBlock,
                 progressS,
                 progressE
                 ));
