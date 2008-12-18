@@ -2,6 +2,11 @@ PROJECT(Xdmf)
 
 SET(CMAKE_C_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_C_FLAGS}")
 
+# Send VTK executables to the ParaView LIBRARY directory (not a mistake).
+# Send VTK include files to the ParaView include directory
+# Send VTK libraries to the ParaView library directory.
+SET(VTK_INSTALL_PACKAGE_DIR_CM24 ${PV_INSTALL_LIB_DIR})
+
 IF (PARAVIEW_USE_MPI)
   SET(XDMF_BUILD_MPI 1)
   INCLUDE_DIRECTORIES(${MPI_INCLUDE_PATH})
