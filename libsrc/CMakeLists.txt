@@ -54,6 +54,7 @@ SET( XdmfMpiSource
   XdmfDsmCommMpi
   )
 
+
 SET( XdmfMySQLSource
     XdmfValuesMySQL
     )
@@ -113,6 +114,10 @@ IF(XDMF_REGENERATE_WRAPPERS)
       ${Xdmf_BINARY_DIR}/libsrc/XdmfPython.cxx
       )
   ENDIF(SWIG_EXECUTABLE)
+  INSTALL(FILES ${Xdmf_BINARY_DIR}/libsrc/Xdmf.py 
+    DESTINATION ${XDMF_INSTALL_LIB_DIR_CM24}/python/site-packages/Xdmf
+    COMPONENT Runtime
+    )
 ENDIF(XDMF_REGENERATE_WRAPPERS)
 
 
@@ -354,6 +359,16 @@ IF(XDMF_WRAP_PYTHON)
   ENDIF(WIN32)
   SET_TARGET_PROPERTIES(_Xdmf PROPERTIES PREFIX "")
   ADD_DEPENDENCIES(_Xdmf Xdmf)
+  INSTALL(FILES ${Xdmf_SOURCE_DIR}/libsrc/__init__.py 
+      DESTINATION ${XDMF_INSTALL_LIB_DIR_CM24}/python/site-packages/Xdmf
+      COMPONENT Runtime
+      )
+  IF(NOT XDMF_REGENERATE_WRAPPERS)
+    INSTALL(FILES ${Xdmf_SOURCE_DIR}/libsrc/Xdmf.py 
+        DESTINATION ${XDMF_INSTALL_LIB_DIR_CM24}/python/site-packages/Xdmf
+        COMPONENT Runtime
+        )
+  ENDIF(NOT XDMF_REGENERATE_WRAPPERS)
 ENDIF(XDMF_WRAP_PYTHON)
 
 IF(XDMF_BUILD_TESTING)
