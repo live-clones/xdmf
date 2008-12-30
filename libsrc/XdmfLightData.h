@@ -27,7 +27,9 @@
 
 #include "XdmfObject.h"
 
+#ifndef SWIG
 #include <string.h> // strcmp, strlen, strcpy
+#endif
 
 // typedef XdmfPointer XdmfXmlNode;
 struct _xmlNode;
