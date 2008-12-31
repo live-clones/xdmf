@@ -6,6 +6,16 @@ FILE(READ "${CMAKE_CURRENT_SOURCE_DIR}/vtkRequireLargeFilesSupport.cxx"
 CHECK_CXX_SOURCE_RUNS("${XDMF_REQUIRE_LARGE_FILE_SUPPORT_FILE}"
   CMAKE_REQUIRE_LARGE_FILE_SUPPORT "Xdmf support for 64 bit file systems")
 SET(XDMF_REQUIRE_LARGE_FILE_SUPPORT ${CMAKE_REQUIRE_LARGE_FILE_SUPPORT})
+# This Needs to be done since Xdmf/CMakeLists.txt != PV/Utils/Xdmf2/CMakeLists.txt
+# Because INSTALL_* commands require a leading / and because INSTALL (cmake 2.4
+# and newer) requires no leading / to install under INSTALL_PREFIX, we
+# are stripping the leading /. In the future, there should be no leading
+# / in any install directory variables
+STRING(REGEX REPLACE "^/" "" VTK_INSTALL_LIB_DIR_CM24 "${XDMF_INSTALL_LIB_DIR}")
+STRING(REGEX REPLACE "^/" "" VTK_INSTALL_BIN_DIR_CM24 "${XDMF_INSTALL_BIN_DIR}")
+STRING(REGEX REPLACE "^/" "" VTK_INSTALL_INCLUDE_DIR_CM24 "${XDMF_INSTALL_INCLUDE_DIR}")
+STRING(REGEX REPLACE "^/" "" VTK_INSTALL_PACKAGE_DIR_CM24 "${XDMF_LIB_INCLUDE_DIR}/vtk")
+
 
 SET( XdmfFormatSource
   XdmfArray
