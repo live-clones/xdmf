@@ -161,7 +161,9 @@
 
 #cmakedefine XDMF_BUILD_MPI
 #ifndef XDMF_BUILD_MPI
+#ifndef XDMF_NO_MPI
 #define XDMF_NO_MPI
+#endif
 #endif
 
 #endif /* __XdmfConfig_h */
