@@ -159,4 +159,9 @@
 
 #cmakedefine XDMF_HAVE_MALLOC_H
 
+#cmakedefine XDMF_BUILD_MPI
+#ifndef XDMF_BUILD_MPI
+#define XDMF_NO_MPI
+#endif
+
 #endif /* __XdmfConfig_h */

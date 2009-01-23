@@ -26,7 +26,13 @@
 #define __XdmfDsmCommMpi_h
 
 #include "XdmfDsmComm.h"
+#ifndef XDMF_NO_MPI
+#ifndef SWIG
 #include <mpi.h>
+#endif // SWIG
+#else // XDMF_NO_MPI
+typedef int MPI_Comm;
+#endif // XDMF_NO_MPI
 
 //! Base comm object for Distributed Shared Memory implementation
 /*!
@@ -42,12 +48,14 @@ public:
   XdmfConstString GetClassName() { return ( "XdmfDsmCommMpi" ) ; };
 
 
+#ifndef SWIG
     //! Set the MPI Communicator
     XdmfSetValueMacro(Comm, MPI_Comm);
     //! Get the MPI Communicator
     XdmfGetValueMacro(Comm, MPI_Comm);
 
     XdmfInt32   DupComm(MPI_Comm Source);
+#endif
     XdmfInt32   Init();
     XdmfInt32   Send(XdmfDsmMsg *Msg);
     XdmfInt32   Receive(XdmfDsmMsg *Msg);

@@ -54,9 +54,7 @@ XdmfValuesHDF::Read(XdmfArray *anArray){
     }
     XDMF_WORD_TRIM(DataSetName);
     //! Possible Read from DSM. Make sure we're connected.
-#ifndef XDMF_NO_MPI
     if(!this->DsmBuffer) this->SetDsmBuffer(anArray->GetDsmBuffer());
-#endif
     XdmfDebug("Opening HDF5 Data for Reading : " << DataSetName);
     // Allocate Array if Necessary
     if(!RetArray){
@@ -70,9 +68,7 @@ XdmfValuesHDF::Read(XdmfArray *anArray){
         RetArray->CopySelection(this->DataDesc);
         RetArray->Allocate();
     }
-#ifndef XDMF_NO_MPI
     H5.SetDsmBuffer(this->DsmBuffer);
-#endif
     if( H5.Open( DataSetName, "r" ) == XDMF_FAIL ) {
         XdmfErrorMessage("Can't Open Dataset " << DataSetName);
         if(!anArray) delete RetArray;
@@ -136,9 +132,7 @@ XdmfValuesHDF::Write(XdmfArray *anArray, XdmfConstString aHeavyDataSetName){
         }
     }
     // Possible Write to DSM. Make sure we're connected
-#ifndef XDMF_NO_MPI
     if(!this->DsmBuffer) this->SetDsmBuffer(anArray->GetDsmBuffer());
-#endif
     XdmfDebug("Writing Values to " << aHeavyDataSetName);
     if(!this->DataDesc ){
         XdmfErrorMessage("DataDesc has not been set");
@@ -154,9 +148,7 @@ XdmfValuesHDF::Write(XdmfArray *anArray, XdmfConstString aHeavyDataSetName){
     H5.CopyType(this->DataDesc);
     H5.CopyShape(this->DataDesc);
     H5.CopySelection(this->DataDesc);
-#ifndef XDMF_NO_MPI
     H5.SetDsmBuffer(this->DsmBuffer);
-#endif
     if(H5.Open(hds, "rw") == XDMF_FAIL){
         XdmfErrorMessage("Error Opening " << hds << " for Writing");
         delete [] hds ;

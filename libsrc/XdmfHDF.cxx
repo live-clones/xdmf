@@ -22,10 +22,8 @@
 /*                                                                 */
 /*******************************************************************/
 #include "XdmfHDF.h"
-#ifndef XDMF_NO_MPI
 #include "XdmfDsmBuffer.h"
 #include "XdmfH5Driver.h"
-#endif
 
 #ifdef WIN32
 #define XDMF_HDF5_SIZE_T        ssize_t
@@ -64,9 +62,7 @@ XdmfHDF::XdmfHDF() {
     }
 #endif
 
-#ifndef XDMF_NO_MPI
   this->DsmBuffer = 0;
-#endif
   strcpy( this->CwdName, "" );
 }
 
@@ -673,7 +669,6 @@ XdmfDebug("Using Domain " << this->Domain );
 //      H5Pset_fapl_core( this->AccessPlist, 1000000, 1 );
       H5Pset_fapl_core( this->AccessPlist, 1000000, 0 );
     } else if( STRCASECMP( this->Domain, "DSM" ) == 0 ) {
-#ifndef XDMF_NO_MPI
         XdmfDebug("Using DSM Interface");  
         if(!this->DsmBuffer){
             XdmfErrorMessage("Cannot Open a DSM HDF5 File Until DsmBuffer has been set");
@@ -683,10 +678,6 @@ XdmfDebug("Using Domain " << this->Domain );
         this->AccessPlist = H5Pcreate( H5P_FILE_ACCESS );
         XdmfDebug("DsmBuffer = " << this->DsmBuffer);
         H5Pset_fapl_dsm( this->AccessPlist, H5FD_DSM_INCREMENT, this->DsmBuffer);
-#else
-      XdmfErrorMessage("DSM Interface is unavailable");
-      return( XDMF_FAIL );  
-#endif
     } else if( STRCASECMP( this->Domain, "NDGM" ) == 0 ) {
       XdmfErrorMessage("NDGM Interface is unavailable");
       return( XDMF_FAIL );  
@@ -739,7 +730,6 @@ if( this->File < 0 ){
 //      H5Pset_fapl_core( this->AccessPlist, 1000000, 1);
       H5Pset_fapl_core( this->AccessPlist, 1000000, 0);
     } else if( STRCASECMP( this->Domain, "DSM" ) == 0 ) {
-#ifndef XDMF_NO_MPI
         if(!this->DsmBuffer){
             XdmfErrorMessage("Cannot Open a DSM HDF5 File Until DsmBuffer has been set");
             return(XDMF_FAIL);
@@ -747,10 +737,6 @@ if( this->File < 0 ){
         H5FD_dsm_init();
         this->AccessPlist = H5Pcreate( H5P_FILE_ACCESS );
         H5Pset_fapl_dsm( this->AccessPlist, H5FD_DSM_INCREMENT, this->DsmBuffer);
-#else
-      XdmfErrorMessage("DSM interface is unavailable");
-      return( XDMF_FAIL );
-#endif
     } else if( STRCASECMP( this->Domain, "NDGM" ) == 0 ) {
       XdmfErrorMessage("NDGM interface is unavailable");
       return( XDMF_FAIL );

@@ -82,6 +82,13 @@ XdmfDsmBuffer::ServiceThread(){
 }
 
 XdmfInt32
+XdmfDsmBuffer::ServiceInit(){
+    XdmfInt32   status = XDMF_SUCCESS;
+
+    return(status);
+}
+
+XdmfInt32
 XdmfDsmBuffer::ServiceOnce(XdmfInt32 *ReturnOpcode){
     XdmfInt32   status = XDMF_FAIL;
 

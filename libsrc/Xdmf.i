@@ -50,6 +50,13 @@ swig -v -c++ -make_default -includeall -shadow -java $(ICE_INCLUDES) -o XdmfJava
 #include <XdmfXNode.h>
 #include <XdmfNDGM.h>
     */
+#include <XdmfDsm.h>
+#include <XdmfDsmMsg.h>
+#include <XdmfDsmBuffer.h>
+#include <XdmfDsmComm.h>
+#ifndef XDMF_NO_MPI
+#include <XdmfDsmCommMpi.h>
+#endif
 
 #ifndef HAVE_STRTOLL
 # define strtoll XDMF_strtoll
@@ -122,6 +129,13 @@ inline XDMF_LONG64 XDMF_strtoll(char *str, void*, int)
 %include XdmfXNode.h
 %include XdmfNDGM.h
 */
+%include XdmfDsm.h
+%include XdmfDsmMsg.h
+%include XdmfDsmBuffer.h
+%include XdmfDsmComm.h
+#ifndef XDMF_NO_MPI
+%include XdmfDsmCommMpi.h
+#endif
 
 #ifdef SWIGPYTHON
 %{

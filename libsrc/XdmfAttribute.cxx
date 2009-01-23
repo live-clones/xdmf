@@ -69,6 +69,24 @@ XdmfAttribute::Build(){
     if(XdmfElement::Build() != XDMF_SUCCESS) return(XDMF_FAIL);
     this->Set("AttributeType", this->GetAttributeTypeAsString());
     this->Set("Center", this->GetAttributeCenterAsString());
+    if(this->DataXml){
+        if(this->DOM){
+            if(this->InsertedDataXml == this->DataXml){
+                // Already done
+                return(XDMF_SUCCESS);
+            }
+            if(this->DOM->InsertFromString(this->GetElement(), this->DataXml)){
+                this->SetInsertedDataXml(this->DataXml);
+                return(XDMF_SUCCESS);
+            }else{
+                XdmfErrorMessage("Error Inserting Raw XML : " << endl << this->DataXml);
+                return(XDMF_FAIL);
+            }
+        }else{
+            XdmfErrorMessage("Can't insert raw XML sine DOM is not set");
+            return(XDMF_FAIL);
+        }
+    }
     if(this->Values){
         XdmfDataItem    *di = NULL;
         XdmfXmlNode     node;
@@ -267,9 +285,7 @@ if( this->AttributeType == XDMF_ATTRIBUTE_TYPE_NONE ){
 ValuesNode = this->DOM->FindDataElement( 0, Element );
 if( ValuesNode ){
   ValueReader.SetDOM( this->DOM );
-#ifndef XDMF_NO_MPI
   ValueReader.SetDsmBuffer(this->DsmBuffer);
-#endif
   if( this->ValuesAreMine && this->Values ){
     delete this->Values;
     this->Values = NULL;

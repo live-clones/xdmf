@@ -34,9 +34,7 @@ XdmfDataDesc::XdmfDataDesc() {
   this->NextOffset = 0;
   this->Rank = 1;
   this->ShapeString = 0;
-#ifndef XDMF_NO_MPI
   this->DsmBuffer = NULL;
-#endif
 }
 
 XdmfDataDesc::~XdmfDataDesc() {

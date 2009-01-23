@@ -63,9 +63,9 @@ XdmfElement::XdmfElement() {
     this->State = XDMF_ELEMENT_STATE_UNINITIALIZED;
     this->CopyReferenceData = 1;
     this->RootWhenParsed = 0;
-#ifndef XDMF_NO_MPI
     this->DsmBuffer = NULL;
-#endif
+    this->DataXml = 0;
+    this->InsertedDataXml = 0;
 }
 
 XdmfElement::~XdmfElement() {
@@ -84,6 +84,7 @@ XdmfElement::~XdmfElement() {
     }
     this->Element = NULL;
     if(this->ElementName) delete [] this->ElementName;
+    if(this->DataXml) delete [] this->DataXml;
 }
 
 void XdmfElement::SetReferenceObject(XdmfXmlNode anElement, void *p){

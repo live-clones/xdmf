@@ -56,17 +56,18 @@ SET( XdmfModelSource
   XdmfTopology
   XdmfTime
   XdmfGeometry
-  )
-
-IF(XDMF_BUILD_MPI)
-    SET(XdmfModelSource ${XdmfModelSource} XdmfH5Driver)
-ENDIF(XDMF_BUILD_MPI) 
-
-SET( XdmfMpiSource
+  XdmfH5Driver
   XdmfDsm
   XdmfDsmBuffer
   XdmfDsmComm
   XdmfDsmMsg
+  )
+
+# IF(XDMF_BUILD_MPI)
+#     SET(XdmfModelSource ${XdmfModelSource} XdmfH5Driver)
+# ENDIF(XDMF_BUILD_MPI) 
+
+SET( XdmfMpiSource
   XdmfDsmCommMpi
   )
 
