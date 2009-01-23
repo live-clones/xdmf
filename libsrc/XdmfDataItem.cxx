@@ -119,9 +119,7 @@ XdmfDataItem::Copy(XdmfElement *Source){
     // this->SetDOM(ds->GetDOM());
     this->SetFormat(ds->GetFormat());
     this->SetHeavyDataSetName(ds->GetHeavyDataSetName());
-#ifndef XDMF_NO_MPI
     this->SetDsmBuffer(ds->GetDsmBuffer());
-#endif
     this->DataDesc->CopyType(ds->GetDataDesc());
     this->DataDesc->CopyShape(ds->GetDataDesc());
     this->DataDesc->CopySelection(ds->GetDataDesc());
@@ -490,9 +488,7 @@ XdmfInt32 XdmfDataItem::Update(){
             this->Values->SetDebug(this->GetDebug());
             // this->SetDsmBuffer(this->Values->GetDsmBuffer());
             // cout << "Setting Values Dsm to " << this->DsmBuffer << endl;
-#ifndef XDMF_NO_MPI
             this->Values->SetDsmBuffer(this->DsmBuffer);
-#endif
             XdmfDebug("Reading Data");
             if(!((XdmfValuesHDF *)this->Values)->Read(this->Array)){
                 XdmfErrorMessage("Reading Values Failed");
@@ -598,6 +594,35 @@ XdmfInt32 XdmfDataItem::Build(){
         default :
             break;
     }
+    if(this->DataXml){
+        if(this->DOM){
+            if(this->InsertedDataXml == this->DataXml){
+                // Already done
+                return(XDMF_SUCCESS);
+            }
+            switch (this->Format) {
+                case XDMF_FORMAT_HDF :
+                    this->Set("Format", "HDF");
+                    break;
+                case XDMF_FORMAT_XML :
+                    this->Set("Format", "XML");
+                    break;
+                default :
+                    XdmfErrorMessage("Unsupported Data Format");
+                    return(XDMF_FAIL);
+            }
+            if(this->DOM->InsertFromString(this->GetElement(), this->DataXml)){
+                this->SetInsertedDataXml(this->DataXml);
+                return(XDMF_SUCCESS);
+            }else{
+                XdmfErrorMessage("Error Inserting Raw XML : " << endl << this->DataXml);
+                return(XDMF_FAIL);
+            }
+        }else{
+            XdmfErrorMessage("Can't insert raw XML sine DOM is not set");
+            return(XDMF_FAIL);
+        }
+    }
     if(this->CheckValues(this->Format) != XDMF_SUCCESS){
         XdmfErrorMessage("Error Accessing Internal XdmfValues");
         return(XDMF_FAIL);
@@ -607,9 +632,7 @@ XdmfInt32 XdmfDataItem::Build(){
         case XDMF_FORMAT_HDF :
             XdmfDebug("Writing Values in HDF Format");
             Values->SetHeavyDataSetName(this->GetHeavyDataSetName());
-#ifndef XDMF_NO_MPI
             Values->SetDsmBuffer(this->GetDsmBuffer());
-#endif
             if(((XdmfValuesHDF *)Values)->Write(this->Array) != XDMF_SUCCESS){
                 XdmfErrorMessage("Writing Values Failed");
                 return(XDMF_FAIL);
