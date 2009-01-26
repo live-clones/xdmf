@@ -594,35 +594,7 @@ XdmfInt32 XdmfDataItem::Build(){
         default :
             break;
     }
-    if(this->DataXml){
-        if(this->DOM){
-            if(this->InsertedDataXml == this->DataXml){
-                // Already done
-                return(XDMF_SUCCESS);
-            }
-            switch (this->Format) {
-                case XDMF_FORMAT_HDF :
-                    this->Set("Format", "HDF");
-                    break;
-                case XDMF_FORMAT_XML :
-                    this->Set("Format", "XML");
-                    break;
-                default :
-                    XdmfErrorMessage("Unsupported Data Format");
-                    return(XDMF_FAIL);
-            }
-            if(this->DOM->InsertFromString(this->GetElement(), this->DataXml)){
-                this->SetInsertedDataXml(this->DataXml);
-                return(XDMF_SUCCESS);
-            }else{
-                XdmfErrorMessage("Error Inserting Raw XML : " << endl << this->DataXml);
-                return(XDMF_FAIL);
-            }
-        }else{
-            XdmfErrorMessage("Can't insert raw XML sine DOM is not set");
-            return(XDMF_FAIL);
-        }
-    }
+    if(this->BuildFromDataXml(1) == XDMF_SUCCESS) return(XDMF_SUCCESS);
     if(this->CheckValues(this->Format) != XDMF_SUCCESS){
         XdmfErrorMessage("Error Accessing Internal XdmfValues");
         return(XDMF_FAIL);

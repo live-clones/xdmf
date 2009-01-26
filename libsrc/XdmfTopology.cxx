@@ -83,24 +83,7 @@ XdmfTopology::Build(){
         OffsetStream << this->BaseOffset << ends;
         this->Set("BaseOffset", Offset);
     }
-    if(this->DataXml){
-        if(this->DOM){
-            if(this->InsertedDataXml == this->DataXml){
-                // Already done
-                return(XDMF_SUCCESS);
-            }
-            if(this->DOM->InsertFromString(this->GetElement(), this->DataXml)){
-                this->SetInsertedDataXml(this->DataXml);
-                return(XDMF_SUCCESS);
-            }else{
-                XdmfErrorMessage("Error Inserting Raw XML : " << endl << this->DataXml);
-                return(XDMF_FAIL);
-            }
-        }else{
-            XdmfErrorMessage("Can't insert raw XML sine DOM is not set");
-            return(XDMF_FAIL);
-        }
-    }
+    if(this->BuildFromDataXml() == XDMF_SUCCESS) return(XDMF_SUCCESS);
     if(this->Connectivity){
         XdmfDataItem    *di = NULL;
         XdmfXmlNode     node;

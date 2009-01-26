@@ -28,20 +28,20 @@
 
 #include "XdmfValues.h"
 
-//!  Parent Class for handeling I/O of actual data for an XdmfDataStructure
+//!  Parent Class for handeling I/O of actual data for an XdmfDataItem
 /*!
 
-An HDF XdmfDataStructure Node Looks like :
+An HDF XdmfDataItem Node Looks like :
 
 \verbatim
-<DataStructure
+<DataItem
   Rank="2"
   Dimensions="2 4"
   Precision="4"
   DataType="Float"
   Format="HDF">
     MyData.h5:/AllValuesHDF/ThisArray
-</DataStructure>
+</DataItem>
 \endverbatim
 
 XdmfValuesHDF is used to access the "MyData.h5:/AllValuesHDF/ThisArray" part wheather it's in the
@@ -61,6 +61,8 @@ public :
   XdmfArray *Read(XdmfArray *Array=NULL);
   //! Write the Array to the External Representation
   XdmfInt32 Write(XdmfArray *Array, XdmfConstString HeavyDataSetName=NULL);
+  //! Produce Xml for an existing HDF5 Dataset
+  XdmfString DataItemFromHDF(XdmfConstString H5DataSet);
 
 protected :
 };

@@ -423,6 +423,42 @@ XdmfConstString XdmfElement::GetElementType(){
     return((XdmfConstString)this->Element->name);
 }
 
+
+XdmfInt32
+XdmfElement::BuildFromDataXml(XdmfInt32 AllowCData){
+    if(this->DataXml){
+        if(AllowCData){
+            char        first = 0;
+            XdmfInt64   i = 0;
+
+            while((first <= ' ') && (i < strlen(this->DataXml))){
+                first = this->DataXml[i++];
+                if((first > ' ') && (first != '<')){
+                    this->Set("CData", this->DataXml);
+                    return(XDMF_SUCCESS);
+                }
+            }
+        }
+        if(this->DOM){
+            if(this->InsertedDataXml == this->DataXml){
+                // Already done
+                return(XDMF_SUCCESS);
+            }
+            if(this->DOM->InsertFromString(this->GetElement(), this->DataXml)){
+                this->SetInsertedDataXml(this->DataXml);
+                return(XDMF_SUCCESS);
+            }else{
+                XdmfErrorMessage("Error Inserting Raw XML : " << endl << this->DataXml);
+                return(XDMF_FAIL);
+            }
+        }else{
+            XdmfErrorMessage("Can't insert raw XML sine DOM is not set");
+            return(XDMF_FAIL);
+        }
+    }
+    return(XDMF_SUCCESS);
+}
+
 XdmfInt32 XdmfElement::Build(){
     XdmfConstString  name;
 
