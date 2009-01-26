@@ -183,6 +183,7 @@ XdmfString XdmfValuesHDF::DataItemFromHDF(XdmfConstString H5DataSet){
     StringOutput << H5.GetShapeAsString();
     StringOutput << "\">" << H5DataSet << "</DataItem>";
     StringOutput << ends;
+    H5.Close();
 
     if ( ReturnString != NULL ) delete [] ReturnString;
     Ptr = StringOutput.str();
