@@ -164,3 +164,29 @@ XdmfValuesHDF::Write(XdmfArray *anArray, XdmfConstString aHeavyDataSetName){
     delete [] hds;
     return(XDMF_SUCCESS);
 }
+
+XdmfString XdmfValuesHDF::DataItemFromHDF(XdmfConstString H5DataSet){
+    XdmfHDF         H5;
+    ostrstream      StringOutput;
+    char            *Ptr;
+    static XdmfString ReturnString = NULL;
+
+    if(H5.Open(H5DataSet, "r") == XDMF_FAIL){
+        XdmfErrorMessage("Can't open H5 Dataset " << H5DataSet << " for reading");
+        return(NULL);
+    }
+    StringOutput << "<DataItem NumberType=\"";
+    StringOutput << XdmfTypeToClassString(H5.GetNumberType());
+    StringOutput << "\" Precision=\"";
+    StringOutput << H5.GetElementSize();
+    StringOutput << "\" Dimensions=\"";
+    StringOutput << H5.GetShapeAsString();
+    StringOutput << "\">" << H5DataSet << "</DataItem>";
+    StringOutput << ends;
+
+    if ( ReturnString != NULL ) delete [] ReturnString;
+    Ptr = StringOutput.str();
+    ReturnString = new char[strlen(Ptr) + 2 ];
+    strcpy( ReturnString, Ptr );
+    return(ReturnString);
+}

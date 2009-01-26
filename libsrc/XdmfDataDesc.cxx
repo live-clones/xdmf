@@ -191,10 +191,10 @@ ostrstream   StringOutput;
 XdmfInt64  i, rank, Dimensions[ XDMF_MAX_DIMENSION ];
 
 rank = this->GetShape( Dimensions );
-for( i = 0 ; i < rank ; i++ ){
+for( i = 0 ; i < rank - 1 ; i++ ){
   StringOutput << XDMF_64BIT_CAST Dimensions[i] << " ";
   }
-StringOutput << ends;
+StringOutput << XDMF_64BIT_CAST Dimensions[i] << ends;
 this->SetShapeString(StringOutput.str());
 StringOutput.rdbuf()->freeze(0);
 return( this->ShapeString );

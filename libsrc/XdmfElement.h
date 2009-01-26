@@ -148,6 +148,9 @@ public:
     //! Set the DataXml. This will override the Build() method and inject the raw XML
     XdmfInt32 SetInsertedDataXml(XdmfString Inserted){this->InsertedDataXml = Inserted; return(XDMF_SUCCESS);};
 
+    //! Build XML from user supplied DataXml
+    XdmfInt32 BuildFromDataXml(XdmfInt32 AllowCData = 0);
+
     //! Get the Element type : Grid, Topology, etc.
     XdmfConstString GetElementType();
 
