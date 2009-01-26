@@ -16,13 +16,8 @@ h5.CopyShape(arr)
 h5.Open('XdmfByHand.h5:/Mydata', 'w')
 h5.Write(arr)
 h5.Close()
-DataXml = """<DataItem
-    Dimensions="10 20 30"
-    NumberType="Float"
-    Precision="8"
-    Format="HDF">
-        XdmfByHand.h5:/Mydata
-    </DataItem>"""
+dv = XdmfValuesHDF()
+DataXml = dv.DataItemFromHDF('XdmfByHand.h5:/Mydata')
 #
 d = XdmfDOM() 
 
