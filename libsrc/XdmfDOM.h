@@ -163,7 +163,7 @@ public :
   //! Create a node from an XML string and insert it in the DOM
   XdmfXmlNode InsertFromString(XdmfXmlNode parent, XdmfConstString xml );
   //! Create a new document
-  XdmfXmlNode Create(XdmfConstString Version="2.0");
+  XdmfXmlNode Create(XdmfConstString RootElementName="Xdmf", XdmfConstString Version="2.0");
   //! Create a new node under an existing one
   XdmfXmlNode InsertNew(XdmfXmlNode Parent, XdmfConstString Type);
   //! Delete a node

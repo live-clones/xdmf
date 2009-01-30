@@ -323,7 +323,7 @@ return(XDMF_SUCCESS);
 }
 
 XdmfXmlNode
-XdmfDOM::Create(XdmfConstString Version){
+XdmfDOM::Create(XdmfConstString RootElementName, XdmfConstString Version){
     XdmfInt32   Status;
     ostrstream  XmlString;
     const xmlChar *XmlNs = XINCLUDE_NS;
@@ -332,7 +332,7 @@ XdmfDOM::Create(XdmfConstString Version){
         Version = XDMF_VERSION_STRING;
     }
     XmlString << "<?xml version=\"1.0\" ?>";
-    XmlString << "<Xdmf Version=\"" << Version << "\" xmlns:xi=\"" << XmlNs << "\" />" << ends;
+    XmlString << "<" << RootElementName <<  " Version=\"" << Version << "\" xmlns:xi=\"" << XmlNs << "\" />" << ends;
     Status = this->Parse(XmlString.str());
     if(Status == XDMF_FAIL) return(NULL);
     return(this->GetRoot());

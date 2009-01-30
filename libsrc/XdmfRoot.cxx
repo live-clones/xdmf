@@ -68,7 +68,7 @@ XdmfInt32 XdmfRoot::Build(){
         if(this->GetDOM()){
             XdmfXmlNode  node;
 
-            node = this->GetDOM()->Create();
+            node = this->GetDOM()->Create(this->GetElementName());
             this->SetElement(node);
         }
     }
