@@ -29,12 +29,13 @@ XdmfRegion::Release(){
 XdmfInt32
 XdmfRegion::Insert( XdmfElement *Child){
     if(Child && (
+        XDMF_WORD_CMP(Child->GetElementName(), "Attribute") ||
         XDMF_WORD_CMP(Child->GetElementName(), "DataItem") ||
         XDMF_WORD_CMP(Child->GetElementName(), "Information")
         )){
         return(XdmfElement::Insert(Child));
     }else{
-        XdmfErrorMessage("Region can only Insert DataItem or Information elements");
+        XdmfErrorMessage("Region can only Insert Attribute, DataItem or Information elements");
     }
     return(XDMF_FAIL);
 }
@@ -76,10 +77,13 @@ XdmfRegion::GetRegionTypeAsString( void ){
       return( "Edge" );
     case XDMF_REGION_TYPE_NODE :
       return( "Node" );
+    case XDMF_REGION_TYPE_UNSET :
+      return( "Unset" );
     default :
       break;
     }
-return( "Node" );
+    XdmfErrorMessage("Unknown RegionType = " << this->RegionType);
+    return(0);
 }
 
 
