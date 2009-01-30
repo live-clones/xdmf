@@ -116,6 +116,7 @@ XdmfGrid::Insert( XdmfElement *Child){
         XDMF_WORD_CMP(Child->GetElementName(), "Geometry") ||
         XDMF_WORD_CMP(Child->GetElementName(), "Topology") ||
         XDMF_WORD_CMP(Child->GetElementName(), "Attribute") ||
+        XDMF_WORD_CMP(Child->GetElementName(), "Region") ||
         XDMF_WORD_CMP(Child->GetElementName(), "DataItem") ||
         XDMF_WORD_CMP(Child->GetElementName(), "Time") ||
         XDMF_WORD_CMP(Child->GetElementName(), "Information")
@@ -134,7 +135,7 @@ XdmfGrid::Insert( XdmfElement *Child){
             return(XDMF_SUCCESS);
         }
     }else{
-        XdmfErrorMessage("Grid can only Insert Grid | Geometry | Topology | DataItem | Information elements, not a " << Child->GetElementName());
+        XdmfErrorMessage("Grid can only Insert Grid | Geometry | Topology | Attribute | Region | DataItem | Information elements, not a " << Child->GetElementName());
     }
     return(XDMF_FAIL);
 }
