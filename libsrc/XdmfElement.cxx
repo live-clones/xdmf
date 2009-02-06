@@ -456,7 +456,7 @@ XdmfElement::BuildFromDataXml(XdmfInt32 AllowCData){
             return(XDMF_FAIL);
         }
     }
-    return(XDMF_SUCCESS);
+    return(XDMF_FAIL);
 }
 
 XdmfInt32 XdmfElement::Build(){
