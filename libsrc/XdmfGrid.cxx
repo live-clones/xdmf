@@ -122,7 +122,7 @@ XdmfGrid::Insert( XdmfElement *Child){
         XDMF_WORD_CMP(Child->GetElementName(), "Information")
         )){
         XdmfInt32   status = XdmfElement::Insert(Child);
-        if((status = XDMF_SUCCESS) && XDMF_WORD_CMP(Child->GetElementName(), "Grid")){
+        if((status == XDMF_SUCCESS) && XDMF_WORD_CMP(Child->GetElementName(), "Grid")){
             XdmfGrid *ChildGrid = (XdmfGrid *)Child;
             XdmfInt32 nchild = this->NumberOfChildren + 1;
             this->Children = (XdmfGrid **)realloc(this->Children, nchild * sizeof(XdmfGrid *));
@@ -134,6 +134,7 @@ XdmfGrid::Insert( XdmfElement *Child){
             }
             return(XDMF_SUCCESS);
         }
+        if (status == XDMF_SUCCESS) return(XDMF_SUCCESS);        
     }else{
         XdmfErrorMessage("Grid can only Insert Grid | Geometry | Topology | Attribute | Region | DataItem | Information elements, not a " << Child->GetElementName());
     }
