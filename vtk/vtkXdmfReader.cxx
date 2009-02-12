@@ -90,7 +90,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.61");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.62");
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
@@ -2362,6 +2362,7 @@ int vtkXdmfReaderInternal::RequestGridData(
       /* Connections : N p1 p2 ... pN */
       /* i.e. Triangles : 3 0 1 2    3 3 4 5   3 6 7 8 */
       index = 0;
+      int sub = 0;
       for( j = 0 ; j < NumberOfElements; j++ )
         {
         switch ( Connections[index++] )
@@ -2369,14 +2370,17 @@ int vtkXdmfReaderInternal::RequestGridData(
           case  XDMF_POLYVERTEX :
             vType = VTK_POLY_VERTEX;
             NodesPerElement = Connections[index++];
+            sub++;
             break;
           case  XDMF_POLYLINE :
             vType = VTK_POLY_LINE;
             NodesPerElement = Connections[index++];
+            sub++;
             break;
           case  XDMF_POLYGON :
             vType = VTK_POLYGON;
             NodesPerElement = Connections[index++];
+            sub++;
             break;
           case  XDMF_TRI :
             vType = VTK_TRIANGLE;
@@ -2443,7 +2447,7 @@ int vtkXdmfReaderInternal::RequestGridData(
         }
       // Resize the Array to the Proper Size
       IdArray = verts->GetData();
-      RealSize = index - 1;
+      RealSize = index - sub;
       vtkDebugWithObjectMacro(this->Reader, 
                               "Resizing to " << RealSize << " elements");
       IdArray->Resize(RealSize);
