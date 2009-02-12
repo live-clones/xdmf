@@ -123,6 +123,7 @@ XdmfValuesHDF::Write(XdmfArray *anArray, XdmfConstString aHeavyDataSetName){
     char* hds;
     XdmfHDF H5;
 
+    H5.SetWorkingDirectory(this->DOM->GetWorkingDirectory());
     if(!aHeavyDataSetName) aHeavyDataSetName = this->GetHeavyDataSetName();
     if(!aHeavyDataSetName){
         if(anArray->GetHeavyDataSetName()){

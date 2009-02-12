@@ -742,7 +742,7 @@ if( this->File < 0 ){
       return( XDMF_FAIL );
     } else if( STRCASECMP( this->Domain, "FILE" ) == 0 ) {
     }
-    this->File = H5Fcreate(this->FileName,
+    this->File = H5Fcreate(FullFileName.str(),
       H5F_ACC_TRUNC,
       this->CreatePlist,
       this->AccessPlist);
