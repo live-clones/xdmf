@@ -42,7 +42,7 @@
 <!--Lowest level element, describes the data that is present in the XDMF dataset-->
 <!ELEMENT DataItem (#PCDATA | DataItem)*>
 <!ATTLIST DataItem
-	Name CDATA #REQUIRED
+	Name CDATA #IMPLIED
     ItemType (Uniform | Collection | Tree | HyperSlab | Coordinates | Function) "Uniform"
 	Dimensions CDATA #REQUIRED
 	NumberType (Char | UChar | Float | Int | UInt) "Float"
