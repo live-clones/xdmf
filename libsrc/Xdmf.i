@@ -45,6 +45,8 @@ swig -v -c++ -make_default -includeall -shadow -java $(ICE_INCLUDES) -o XdmfJava
 #include <XdmfGrid.h>
 #include <XdmfTime.h>
 #include <XdmfRegion.h>
+#include <XdmfSet.h>
+#include <XdmfMap.h>
     /*
 #include <XdmfParameter.h>
 #include <XdmfTransform.h>
@@ -125,6 +127,8 @@ inline XDMF_LONG64 XDMF_strtoll(char *str, void*, int)
 %include XdmfGrid.h
 %include XdmfTime.h
 %include XdmfRegion.h
+%include XdmfSet.h
+%include XdmfMap.h
 /*
 %include XdmfParameter.h
 %include XdmfTransform.h

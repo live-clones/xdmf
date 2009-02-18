@@ -181,6 +181,10 @@ public:
     XdmfGetValueMacro(DsmBuffer, XdmfDsmBuffer *);
     //! Set DSM Buffer
     XdmfSetValueMacro(DsmBuffer, XdmfDsmBuffer *);
+    //! Delete the Element when the XdmfGrid container is deleted. Default = 0
+    XdmfSetValueMacro(DeleteOnGridDelete, XdmfInt32);
+    //! Delete the Element when the XdmfGrid container is deleted. Default = 0
+    XdmfGetValueMacro(DeleteOnGridDelete, XdmfInt32);
 
 protected:
     void        SetReferenceObject(XdmfXmlNode Element, void *p);
@@ -203,5 +207,6 @@ protected:
     XdmfInt32   CopyReferenceData;
     XdmfDsmBuffer *DsmBuffer;
     XdmfXmlNode RootWhenParsed;
+    XdmfInt32   DeleteOnGridDelete;
 };
 #endif // __XdmfElement_h

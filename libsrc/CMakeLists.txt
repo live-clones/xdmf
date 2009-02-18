@@ -56,6 +56,8 @@ SET( XdmfModelSource
   XdmfTopology
   XdmfTime
   XdmfRegion
+  XdmfSet
+  XdmfMap
   XdmfGeometry
   XdmfH5Driver
   XdmfDsm

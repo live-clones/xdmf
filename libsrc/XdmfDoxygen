@@ -446,6 +446,8 @@ INPUT                  = \
                         XdmfHDF.h \
                         XdmfH5Driver.h \
                         XdmfRegion.h \
+                        XdmfMap.h \
+                        XdmfSet.h \
                         XdmfTime.h \
                         XdmfValues.h \
                         XdmfValuesXML.h \
