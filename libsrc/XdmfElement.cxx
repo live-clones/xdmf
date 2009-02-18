@@ -66,6 +66,7 @@ XdmfElement::XdmfElement() {
     this->DsmBuffer = NULL;
     this->DataXml = 0;
     this->InsertedDataXml = 0;
+    this->DeleteOnGridDelete = 0;
 }
 
 XdmfElement::~XdmfElement() {

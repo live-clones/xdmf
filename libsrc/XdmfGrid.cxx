@@ -31,6 +31,7 @@
 #include "XdmfGeometry.h"
 #include "XdmfAttribute.h"
 #include "XdmfTime.h"
+#include "XdmfSet.h"
 
 XdmfGrid *HandleToXdmfGrid( XdmfString Source ){
   XdmfObject  *TempObj;
@@ -53,9 +54,11 @@ XdmfGrid::XdmfGrid() {
   this->TopologyIsMine = 1;
   this->Time = new XdmfTime;
   this->TimeIsMine = 1;
+  this->Sets = (XdmfSet **)calloc(1, sizeof( XdmfSet * ));
   this->Attribute = (XdmfAttribute **)calloc(1, sizeof( XdmfAttribute * ));
   this->Children = (XdmfGrid **)calloc(1, sizeof( XdmfGrid * ));
   this->AssignedAttribute = NULL;
+  this->NumberOfSets = 0;
   this->NumberOfAttributes = 0;
   this->GridType = XDMF_GRID_UNSET;
   this->CollectionType = XDMF_GRID_COLLECTION_UNSET;
@@ -68,11 +71,24 @@ XdmfGrid::~XdmfGrid() {
   if( this->GeometryIsMine && this->Geometry ) delete this->Geometry;
   if( this->TopologyIsMine && this->Topology ) delete this->Topology;
   if( this->TimeIsMine && this->Time ) delete this->Time;
-  for ( Index = 0; Index < this->NumberOfAttributes; Index ++ )
-    {
-    delete this->Attribute[Index];
+  for ( Index = 0; Index < this->NumberOfAttributes; Index ++ ){
+    if (this->Attribute[Index]->GetDeleteOnGridDelete()){
+        delete this->Attribute[Index];
     }
+  }
   free(this->Attribute);
+  for ( Index = 0; Index < this->NumberOfChildren; Index ++ ){
+    if (this->Children[Index]->GetDeleteOnGridDelete()){
+        delete this->Children[Index];
+    }
+  }
+  free(this->Children);
+  for ( Index = 0; Index < this->NumberOfSets; Index ++ ){
+    if (this->Sets[Index]->GetDeleteOnGridDelete()){
+        delete this->Sets[Index];
+    }
+  }
+  free(this->Sets);
   }
 
 XdmfInt32
@@ -117,12 +133,35 @@ XdmfGrid::Insert( XdmfElement *Child){
         XDMF_WORD_CMP(Child->GetElementName(), "Topology") ||
         XDMF_WORD_CMP(Child->GetElementName(), "Attribute") ||
         XDMF_WORD_CMP(Child->GetElementName(), "Region") ||
+        XDMF_WORD_CMP(Child->GetElementName(), "Set") ||
         XDMF_WORD_CMP(Child->GetElementName(), "DataItem") ||
         XDMF_WORD_CMP(Child->GetElementName(), "Time") ||
         XDMF_WORD_CMP(Child->GetElementName(), "Information")
         )){
         XdmfInt32   status = XdmfElement::Insert(Child);
-        if((status == XDMF_SUCCESS) && XDMF_WORD_CMP(Child->GetElementName(), "Grid")){
+        if((status = XDMF_SUCCESS) && XDMF_WORD_CMP(Child->GetElementName(), "Set")){
+            XdmfSet *ChildSet = (XdmfSet *)Child;
+            this->NumberOfSets++;
+            this->Sets = ( XdmfSet **)realloc( this->Sets,
+                this->NumberOfSets * sizeof( XdmfSet * ));
+            if(!this->Sets) {
+                XdmfErrorMessage("Realloc of Set List Failed");
+                return(XDMF_FAIL);
+            }
+            this->Sets[this->NumberOfSets - 1] = ChildSet;
+            }
+        if((status = XDMF_SUCCESS) && XDMF_WORD_CMP(Child->GetElementName(), "Attribute")){
+            XdmfAttribute *ChildAttr = (XdmfAttribute *)Child;
+            this->NumberOfAttributes++;
+            this->Attribute = ( XdmfAttribute **)realloc( this->Attribute,
+                this->NumberOfAttributes * sizeof( XdmfAttribute * ));
+            if(!this->Attribute) {
+                XdmfErrorMessage("Realloc of Attribute List Failed");
+                return(XDMF_FAIL);
+            }
+            this->Attribute[this->NumberOfAttributes - 1] = ChildAttr;
+            }
+        if((status = XDMF_SUCCESS) && XDMF_WORD_CMP(Child->GetElementName(), "Grid")){
             XdmfGrid *ChildGrid = (XdmfGrid *)Child;
             XdmfInt32 nchild = this->NumberOfChildren + 1;
             this->Children = (XdmfGrid **)realloc(this->Children, nchild * sizeof(XdmfGrid *));
@@ -136,7 +175,7 @@ XdmfGrid::Insert( XdmfElement *Child){
         }
         if (status == XDMF_SUCCESS) return(XDMF_SUCCESS);        
     }else{
-        XdmfErrorMessage("Grid can only Insert Grid | Geometry | Topology | Attribute | Region | DataItem | Information elements, not a " << Child->GetElementName());
+        XdmfErrorMessage("Grid can only Insert Grid | Geometry | Topology | Attribute | Set | Region | DataItem | Information elements, not a " << Child->GetElementName());
     }
     return(XDMF_FAIL);
 }
@@ -145,6 +184,10 @@ XdmfInt32
 XdmfGrid::Build(){
     if(XdmfElement::Build() != XDMF_SUCCESS) return(XDMF_FAIL);
     this->Set("GridType", this->GetGridTypeAsString());
+    if(this->GridType == XDMF_GRID_COLLECTION){
+        this->Set("CollectionType", this->GetCollectionTypeAsString());
+    }
+    /*
     if((this->GridType & XDMF_GRID_MASK) == XDMF_GRID_UNIFORM){
         if(this->InsertTopology() != XDMF_SUCCESS) return(XDMF_FAIL);
         this->Topology->Build();
@@ -152,6 +195,7 @@ XdmfGrid::Build(){
         this->Geometry->Build();
     }else{
     }
+    */
     if(this->BuildTime && this->Time){
             if(this->Time->Build() != XDMF_SUCCESS) return(XDMF_FAIL);
     }
@@ -475,8 +519,8 @@ if( this->GridType & XDMF_GRID_MASK){
         }
     }
 }
-// Get Attributes
 if(!this->Name) this->SetName( GetUnique("Grid_" ) );
+// Get Attributes
 XdmfInt32 OldNumberOfAttributes = this->NumberOfAttributes;
 this->NumberOfAttributes = this->DOM->FindNumberOfElements("Attribute", this->Element );
 if( this->NumberOfAttributes > 0 ){
@@ -500,6 +544,31 @@ if( this->NumberOfAttributes > 0 ){
     iattribute->UpdateInformation();
     }
 }
+// Get Sets
+XdmfInt32 OldNumberOfSets = this->NumberOfSets;
+this->NumberOfSets = this->DOM->FindNumberOfElements("Set", this->Element );
+if( this->NumberOfSets > 0 ){
+  XdmfInt32  Index;
+  XdmfSet  *iSet;
+  XdmfXmlNode    SetElement;
+
+  for ( Index = 0; Index < OldNumberOfSets; Index ++ )
+    {
+    delete this->Sets[Index];
+    }
+  this->Sets = ( XdmfSet **)realloc( this->Sets,
+      this->NumberOfSets * sizeof( XdmfSet * ));
+  for( Index = 0 ; Index < this->NumberOfSets ; Index++ ){
+    iSet = new XdmfSet;
+
+    this->Sets[Index] = iSet;
+    SetElement = this->DOM->FindElement( "Set", Index, this->Element );
+    iSet->SetDOM( this->DOM );    
+    iSet->SetElement( SetElement );
+    iSet->UpdateInformation();
+    }
+}
+
 return( XDMF_SUCCESS );
 }
 
