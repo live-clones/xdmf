@@ -277,6 +277,16 @@ vtkDataArray *vtkXdmfDataArray::FromXdmfArray( char *ArrayName, int CopyShape,
     uinta->SetArray((unsigned int *)array->GetDataPointer(), components * tuples, 0);
     }
     break;
+  case XDMF_INT64_TYPE :
+    {
+    vtkLongArray *longa = vtkLongArray::SafeDownCast(this->vtkArray);
+    if(!longa){
+        XdmfErrorMessage("Cannot downcast longa array");
+        return(0);
+    }
+    longa->SetArray((long *)array->GetDataPointer(), components * tuples, 0);
+    }
+    break;
   case XDMF_FLOAT32_TYPE :
     {
     vtkFloatArray *floata = vtkFloatArray::SafeDownCast(this->vtkArray);
