@@ -3,6 +3,7 @@
 #include "XdmfDataItem.h"
 #include "XdmfDataDesc.h"
 #include "XdmfArray.h"
+#include "XdmfAttribute.h"
 #include "XdmfDOM.h"
 #include "XdmfMap.h"
 
@@ -18,8 +19,10 @@ XdmfSet::XdmfSet() {
   this->ShapeDesc = new XdmfDataDesc();
   this->Active = 0;
   this->Size = 0;
-  this->Maps == (XdmfMap **)calloc(1, sizeof(XdmfMap *));
+  this->Map = (XdmfMap **)calloc(1, sizeof(XdmfMap *));
   this->NumberOfMaps = 0;
+  this->Attribute = (XdmfAttribute **)calloc(1, sizeof(XdmfAttribute *));
+  this->NumberOfAttributes = 0;
   }
 
 XdmfSet::~XdmfSet() {
@@ -28,12 +31,18 @@ XdmfSet::~XdmfSet() {
   if( this->IdsAreMine && this->Ids )  delete this->Ids;
   if( this->CellIdsAreMine && this->CellIds )  delete this->CellIds;
   if( this->FaceIdsAreMine && this->FaceIds )  delete this->FaceIds;
-  for ( Index = 0; Index < this->NumberOfMaps; Index ++ ){
-      if (this->Maps[Index]->GetDeleteOnGridDelete()){
-          delete this->Maps[Index];
+  for ( Index = 0; Index < this->NumberOfAttributes; Index ++ ){
+      if (this->Attribute[Index]->GetDeleteOnGridDelete()){
+          delete this->Attribute[Index];
       }
   }
-  free(this->Maps);
+  free(this->Attribute);
+  for ( Index = 0; Index < this->NumberOfMaps; Index ++ ){
+      if (this->Map[Index]->GetDeleteOnGridDelete()){
+          delete this->Map[Index];
+      }
+  }
+  free(this->Map);
   delete this->ShapeDesc;
   }
 
@@ -60,13 +69,24 @@ XdmfSet::Insert( XdmfElement *Child){
         if((status = XDMF_SUCCESS) && XDMF_WORD_CMP(Child->GetElementName(), "Map")){
             XdmfMap *ChildMap = (XdmfMap *)Child;
             this->NumberOfMaps++;
-            this->Maps = ( XdmfMap **)realloc( this->Maps,
+            this->Map = ( XdmfMap **)realloc( this->Map,
                 this->NumberOfMaps * sizeof( XdmfMap * ));
-            if(!this->Maps) {
+            if(!this->Map) {
                 XdmfErrorMessage("Realloc of Map List Failed");
                 return(XDMF_FAIL);
             }
-            this->Maps[this->NumberOfMaps - 1] = ChildMap;
+            this->Map[this->NumberOfMaps - 1] = ChildMap;
+            }
+        if((status = XDMF_SUCCESS) && XDMF_WORD_CMP(Child->GetElementName(), "Attribute")){
+            XdmfAttribute *ChildAttribute = (XdmfAttribute *)Child;
+            this->NumberOfAttributes++;
+            this->Attribute = ( XdmfAttribute **)realloc( this->Attribute,
+                this->NumberOfAttributes * sizeof( XdmfAttribute * ));
+            if(!this->Attribute) {
+                XdmfErrorMessage("Realloc of Attribute List Failed");
+                return(XDMF_FAIL);
+            }
+            this->Attribute[this->NumberOfAttributes - 1] = ChildAttribute;
             }
     }else{
         XdmfErrorMessage("Set can only Insert Attribute, DataItem or Information elements");
@@ -241,6 +261,7 @@ if( Value ){
     }else{
         this->ShapeDesc->SetShapeFromString( Value );
     }
+    this->SetSize(this->ShapeDesc->GetNumberOfElements());
 }
 // Get Maps
 XdmfInt32 OldNumberOfMaps = this->NumberOfMaps;
@@ -252,18 +273,42 @@ if( this->NumberOfMaps > 0 ){
 
   for ( Index = 0; Index < OldNumberOfMaps; Index ++ )
     {
-    delete this->Maps[Index];
+    delete this->Map[Index];
     }
-  this->Maps = ( XdmfMap **)realloc( this->Maps,
+  this->Map = ( XdmfMap **)realloc( this->Map,
       this->NumberOfMaps * sizeof( XdmfMap * ));
   for( Index = 0 ; Index < this->NumberOfMaps ; Index++ ){
     iMap = new XdmfMap;
 
-    this->Maps[Index] = iMap;
+    this->Map[Index] = iMap;
     MapElement = this->DOM->FindElement( "Map", Index, this->Element );
     iMap->SetDOM( this->DOM );    
     iMap->SetElement( MapElement );
     iMap->UpdateInformation();
+    }
+}
+// Get Attributes
+XdmfInt32 OldNumberOfAttributes = this->NumberOfAttributes;
+this->NumberOfAttributes = this->DOM->FindNumberOfElements("Attribute", this->Element );
+if( this->NumberOfAttributes > 0 ){
+  XdmfInt32  Index;
+  XdmfAttribute  *iAttribute;
+  XdmfXmlNode    AttributeElement;
+
+  for ( Index = 0; Index < OldNumberOfAttributes; Index ++ )
+    {
+    delete this->Attribute[Index];
+    }
+  this->Attribute = ( XdmfAttribute **)realloc( this->Attribute,
+      this->NumberOfAttributes * sizeof( XdmfAttribute * ));
+  for( Index = 0 ; Index < this->NumberOfAttributes ; Index++ ){
+    iAttribute = new XdmfAttribute;
+
+    this->Attribute[Index] = iAttribute;
+    AttributeElement = this->DOM->FindElement( "Attribute", Index, this->Element );
+    iAttribute->SetDOM( this->DOM );    
+    iAttribute->SetElement( AttributeElement );
+    iAttribute->UpdateInformation();
     }
 }
 if(!this->Name) this->SetName(GetUnique("Set_"));
@@ -322,6 +367,9 @@ for(i=0 ; i < NumberOfDataItems ; i++){
             }else if(i == 1) {
                 Mine = &this->FaceIdsAreMine;
                 Array = &this->FaceIds;
+            }else if(i == 2){
+                Mine = &this->IdsAreMine;
+                Array = &this->Ids;
             }
             break;
         default :
