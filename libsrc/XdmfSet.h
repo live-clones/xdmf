@@ -18,6 +18,7 @@
 class XdmfTopology;
 class XdmfDataDesc;
 class XdmfArray;
+class XdmfAttribute;
 class XdmfMap;
 
 //! Class to support data side Sets.
@@ -103,7 +104,13 @@ public:
      XdmfGetValueMacro( NumberOfMaps, XdmfInt32 );
 
 //! Get Particular Map
-    XdmfGetIndexValueMacro( Maps, XdmfMap * );
+    XdmfGetIndexValueMacro( Map, XdmfMap * );
+
+//! Get the NumberOfAttributes
+     XdmfGetValueMacro( NumberOfAttributes, XdmfInt32 );
+
+//! Get Particular Attribute
+    XdmfGetIndexValueMacro( Attribute, XdmfAttribute * );
 
 //! Initialize but don't read the Heavy Data
   XdmfInt32 UpdateInformation();
@@ -125,7 +132,9 @@ protected:
   XdmfDataDesc  *ShapeDesc;
   XdmfInt32     IdsAreMine;
   XdmfInt32     NumberOfMaps;
-  XdmfMap       **Maps;
+  XdmfMap       **Map;
+  XdmfInt32     NumberOfAttributes;
+  XdmfAttribute **Attribute;
   XdmfArray     *Ids;
   XdmfInt32     CellIdsAreMine;
   XdmfArray     *CellIds;
