@@ -36,7 +36,7 @@ class XdmfArray;
 
     Example :
         <!--
-            Map nodes between two processors. Each Map Item is :
+            Map nodes between three processors. Each Map Item is :
                 LocalNodeId  RemoteProcessor RemoteNodeId
 
                     Proc #1    Proc #2
@@ -46,26 +46,33 @@ class XdmfArray;
                     | /     /  |
                     |/     /   |
                     3     1----2
+                       2
+                      / \
+                     /   \ 
+                    /     \
+                   1-------3
+                   Proc #3
 
-            This Map will map common nodes from Proc #1 to Proc #2.
+            This Map will map common nodes from Proc #1 to Proc #2 and Proc #3.
         -->
-        <Map Name="Proc1-Proc2" MapType="Node" ItemLength="3" MapLength="2">
+        <Map Name="FromProc1" MapType="Node" ItemLength="3" MapLength="2">
             <!-- 
                 Global Ids into Parent XdmfSet
                 If this is missing, use the entire XdmfSet
              -->
-            <DataItem Format="XML" Dimensions="4" >
+            <DataItem NumberType="Int" Format="XML" Dimensions="2" >
                101 340
             </DataItem>
             <!-- Index into Last DataItem. Start, NumberOfItems -->
-            <DataItem Format="XML" Dimensions="4" >
+            <DataItem NumberType="Int" Format="XML" Dimensions="4" >
                 0 1
-                1 1
+                1 2
             </DataItem>
             <!-- Map Data : LocalNodeId, RemoteProcessor, RemoteNodeId -->
-            <DataItem Format="XML" Dimensions="4" >
+            <DataItem NumberType="Int" Format="XML" Dimensions="9" >
                 2 2 3
                 3 2 1
+                3 3 2
             </DataItem>
         </Map>
     \endverbatim
@@ -92,9 +99,9 @@ public:
   XdmfGetValueMacro( MapType, XdmfInt32 );
 
 //! Get the length of each map item
-  XdmfGetValueMacro( ItemLength, XdmfInt64 );
+  XdmfGetValueMacro( ItemLength, XdmfInt32 );
 //! Set the length of each map item
-  XdmfSetValueMacro( ItemLength, XdmfInt64 );
+  XdmfSetValueMacro( ItemLength, XdmfInt32 );
 
 //! Get the Size (Length) of the Map
   XdmfGetValueMacro( MapLength, XdmfInt64 );
