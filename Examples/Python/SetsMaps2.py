@@ -63,6 +63,28 @@ txt = """<?xml version="1.0" ?>
                     100 200 400
                     </DataItem>
                 </Attribute>
+                <!-- Map for :  LocalNodeId  RemoteProcessor RemoteNodeId -->
+                <Map Name="FromProc1" MapType="Node" ItemLength="3" MapLength="2">
+                    <!-- 
+                    Global Ids into Parent XdmfSet
+                    If this is missing, use the entire XdmfSet
+                    Here we use the 2nd and 3rd node in the set
+                     -->
+                     <DataItem NumberType="Int" Format="XML" Dimensions="2" >
+                        1 2 
+                    </DataItem>
+                    <!-- Index into Last DataItem. Start, NumberOfItems -->
+                    <DataItem NumberType="Int" Format="XML" Dimensions="4" >
+                        0 1
+                        1 2
+                    </DataItem>
+                    <!-- Map Data : LocalNodeId, RemoteProcessor, RemoteNodeId -->
+                    <DataItem NumberType="Int" Format="XML" Dimensions="9" >
+                        2 2 3
+                        3 2 1
+                        3 3 2
+                    </DataItem>
+                </Map>
             </Set>
             <Set SetType="Face">
                 <DataItem NumberType="Int" Dimensions="2" Format="XML">
@@ -137,6 +159,28 @@ for i in range(g.GetNumberOfSets()) :
         a.Update()
         v = a.GetValues()
         print '         Attribute type: ', v.GetValues()
+    print '     #Maps: ', s.GetNumberOfMaps()
+    for j in range(s.GetNumberOfMaps()) :
+        m = s.GetMap(j)
+        print '         Map #', j
+        print '         Map Type : ', m.GetMapTypeAsString()
+        print '         Item Length :', m.GetItemLength()
+        print '         Map Length :', m.GetMapLength()
+        m.Update()
+        ival  = m.GetMapIndex()
+        print '         Map Index: ', ival.GetValues()
+        v = m.GetMapData()
+        print '         all Map Values : ', v.GetValues()
+        l = m.GetMapLength()
+        il = m.GetItemLength()
+        for k in range(l) :
+            start = ival.GetValueAsInt64(k * 2) * il
+            len1 = ival.GetValueAsInt64((k * 2) + 1) * il
+            mapvals = v.GetValues(start, len1)
+            imapvals = tuple(int(x) for x in mapvals.split())
+            for ii in range(len(imapvals) / il) :
+                index = ii * il
+                print '              Map Vals[', k, '] = ', imapvals[index:index+il]
 
 
 ns = XdmfSet()
@@ -148,6 +192,6 @@ a.SetNumberType(XDMF_INT32_TYPE)
 a.SetValues(0, "100 200 300 400")
 ns.SetIds(a)
 g.Insert(ns)
-ns.Build()
-print d.Serialize()
+# ns.Build()
+# print d.Serialize()
 
