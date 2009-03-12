@@ -594,6 +594,20 @@ XdmfInt32 XdmfDataItem::Build(){
         default :
             break;
     }
+    switch (this->Format) {
+        case XDMF_FORMAT_HDF :
+            this->Set("Format", "HDF");
+            break;
+        case XDMF_FORMAT_XML :
+            this->Set("Format", "XML");
+            break;
+        case XDMF_FORMAT_MYSQL :
+            this->Set("Format", "MYSQL");
+            break;
+        default :
+            XdmfErrorMessage("Unsupported Data Format");
+            return(XDMF_FAIL);
+    }
     if(this->BuildFromDataXml(1) == XDMF_SUCCESS) return(XDMF_SUCCESS);
     if(this->CheckValues(this->Format) != XDMF_SUCCESS){
         XdmfErrorMessage("Error Accessing Internal XdmfValues");
