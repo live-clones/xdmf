@@ -82,6 +82,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vtkstd/map>
 #include <vtksys/SystemTools.hxx>
 
+#define vtkMAX(x, y) (((x)>(y))?(x):(y))
+
 //----------------------------------------------------------------------------
   #define OUTPUTTEXT(a) vtkOutputWindowDisplayText(a);
   #define vtkGenericDebugMacro(a)  \
@@ -127,7 +129,7 @@ struct vtkXdmfWriterInternal
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfWriter);
-vtkCxxRevisionMacro(vtkXdmfWriter, "1.6");
+vtkCxxRevisionMacro(vtkXdmfWriter, "1.7");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter::vtkXdmfWriter()
@@ -446,7 +448,7 @@ int vtkXdmfWriter::WriteCellArray( ostream& ost, vtkDataSet *ds,
 int vtkXdmfWriter::WritePoints( ostream& ost, vtkPoints *Points, vtkDataSet* dataSet,
   const char* gridName )
 {
-  int dims[3] = { -1, -1, -1 };
+  int dims[3] = { -10, -10, -10 };
   return this->WriteVTKArray( ost, Points->GetData(), dataSet, 0, dims, "XYZ", 0, gridName, 
     this->AllLight );
 }
@@ -628,6 +630,8 @@ vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost,
             {
             updateExtent[cc*2+1] -= 1;
             extent[cc*2+1] -= 1;
+            updateExtent[cc*2+1] = vtkMAX(0, updateExtent[cc*2+1]);
+            extent[cc*2+1] = vtkMAX(0, extent[cc*2+1]);
             }
           }
         useExtents = 1;
@@ -647,6 +651,8 @@ vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost,
             {
             updateExtent[cc*2+1] -= 1;
             extent[cc*2+1] -= 1;
+            updateExtent[cc*2+1] = vtkMAX(0, updateExtent[cc*2+1]);
+            extent[cc*2+1] = vtkMAX(0, extent[cc*2+1]);
             }
           }
         useExtents = 1;
@@ -662,6 +668,8 @@ vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost,
           {
           updateExtent[cc*2+1] -= cellData;
           extent[cc*2+1] -= cellData;
+            updateExtent[cc*2+1] = vtkMAX(0, updateExtent[cc*2+1]);
+            extent[cc*2+1] = vtkMAX(0, extent[cc*2+1]);
           }
         }
       break;
@@ -675,6 +683,8 @@ vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost,
           {
           updateExtent[cc*2+1] -= cellData;
           extent[cc*2+1] -= cellData;
+            updateExtent[cc*2+1] = vtkMAX(0, updateExtent[cc*2+1]);
+            extent[cc*2+1] = vtkMAX(0, extent[cc*2+1]);
           }
         useExtents = 1;
         }
@@ -687,14 +697,17 @@ vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost,
     for ( cc = 0; cc < 3; cc ++ )
       {
       // vtkGenericDebugMacro(<< "Dims[" << cc << "]: " << dims[cc] << "\n");
+      // cout << "Dims[" << cc << "]: " << dims[cc] << endl;
       }
     for ( cc = 0; cc < 3; cc ++ )
       {
       // vtkGenericDebugMacro(<< "UExt[" << cc << "]: " << updateExtent[cc*2] << " - " << updateExtent[cc*2+1] << "\n");
+      // cout << "UExt[" << cc << "]: " << updateExtent[cc*2] << " - " << updateExtent[cc*2+1] << endl;
       }
     for ( cc = 0; cc < 3; cc ++ )
       {
       // vtkGenericDebugMacro(<< "RExt[" << cc << "]: " << extent[cc*2] << " - " << extent[cc*2+1] << "\n");
+      // cout << "RExt[" << cc << "]: " << extent[cc*2] << " - " << extent[cc*2+1] << endl;
       }
     }
 
@@ -735,6 +748,15 @@ vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost,
       }
     ost << " Dimensions=\"";
   
+    // WritePoints sets dims to -10 as a signal 
+    // But a single plane can set dims to -1
+    if(dims[0] > -2){
+        // cout << "Fixing Dims" << endl;
+        dims[0] = vtkMAX(1, dims[0]);
+        dims[1] = vtkMAX(1, dims[1]);
+        dims[2] = vtkMAX(1, dims[2]);
+        // cout << "New Dims = " << dims[0] << ", " << dims[1] << ", " << dims[2] << endl;
+    }
     if ( dims[0] < 1 )
       {
       if ( scaledDims[0] < 1 )
@@ -845,6 +867,9 @@ vtkIdType vtkXdmfWriterWriteXMLScalar(vtkXdmfWriter* self, ostream& ost,
     XdmfArray Data;
     XdmfInt64 h5dims[5];
     int nh5dims = 0;
+
+  // Jerry
+  // return( array->GetNumberOfTuples() );
 
     DataSetName = self->GenerateHDF5ArrayName(gridName, arrayName);
     if (!self->GetInputsArePieces() || (self->GetInputsArePieces() && self->CurrentInputNumber==0)) 
