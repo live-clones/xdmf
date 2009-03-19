@@ -77,8 +77,24 @@ SET_SOURCE_FILES_PROPERTIES(
   )
 
 SET(VTK_BINARY_DIR "${Xdmf_BINARY_DIR}/vtk")
-INCLUDE(${VTK_CMAKE_DIR}/vtkExportKit.cmake)
-VTK_EXPORT_KIT("Xdmf" "XDMF" "${Xdmf_SRCS}")
+# INCLUDE(${VTK_CMAKE_DIR}/vtkExportKit.cmake)
+# VTK_EXPORT_KIT("Xdmf" "XDMF" "${Xdmf_SRCS}")
+
+#find the vtkExportKit.cmake module
+FIND_FILE(VTK_EXPORT_KIT_FILE
+        NAMES vtkExportKit.cmake
+        PATHS ${VTK_CMAKE_DIR}/vtkExportKit.cmake)
+
+#check to see if we found the vtk export kit module
+IF(VTK_EXPORT_KIT_FILE)
+    SET(FOUND_VTK_EXPORT_KIT_FILE TRUE)
+ENDIF(VTK_EXPORT_KIT_FILE)
+
+#if the vtk export kit was found include it
+IF(FOUND_VTK_EXPORT_KIT_FILE)
+    INCLUDE(${VTK_CMAKE_DIR}/vtkExportKit.cmake)
+    VTK_EXPORT_KIT("Xdmf" "XDMF" "${Xdmf_SRCS}")
+ENDIF(FOUND_VTK_EXPORT_KIT_FILE)
 
 SET(VTK_BINARY_DIR "${Xdmf_BINARY_DIR}/vtk")
 # if vtk was found include the use vtk file
