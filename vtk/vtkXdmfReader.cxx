@@ -90,7 +90,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.63");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.64");
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
@@ -217,10 +217,10 @@ public:
   {
     this->DataItem = NULL;
     this->ArrayConverter = vtkXdmfDataArray::New();
-    this->DomainPtr = NULL;  
     this->Data = NULL;
     this->DsmBuffer = NULL;
     this->InputString = 0;
+    this->InputStringLength = 0;
     // this->ParallelLevel = 0;
     this->ParallelLevels.clear();
     this->LargestLevel = 0;
@@ -243,14 +243,40 @@ public:
       }
     this->ArrayConverter->Delete();
     this->ArrayConverter = NULL;
+    delete [] this->InputString;
+    this->InputString = 0;
   }
+
+
+  // Returns the domain node for the domain with given name. If none such domain
+  // exists, returns the 1st domain, if any.
+  XdmfXmlNode GetDomain(const char* domainName)
+    {
+    if (domainName)
+      {
+      vtkstd::map<vtkstd::string, XdmfXmlNode>::iterator iter =
+        this->DomainMap.find(domainName);
+      if (iter != this->DomainMap.end())
+        {
+        return iter->second;
+        }
+      }
+    if (this->DomainList.size() > 0)
+      {
+      return this->GetDomain(this->DomainList[0].c_str());
+      }
+    return 0;
+    }
 
   vtkXdmfReaderGrid* GetGrid(const char* gridName);
   vtkXdmfReaderGrid* GetGrid(int idx);
   vtkXdmfReaderGrid *AddGrid(
     vtkXdmfReaderGrid *parent,
     const char *gridName);
+  void DeleteChildren(vtkXdmfReaderGrid* parent);
 
+  // Temporary method to update the list of arrays provided by the grid.
+  int UpdateArrays(vtkXdmfReaderGrid *grid);
   int RequestGridInformation(vtkXdmfReaderGrid *grid, vtkInformation *destInfo);
   int FindParallelism(vtkXdmfReaderGrid *grid = 0);
 
@@ -264,7 +290,7 @@ public:
  
   vtkstd::vector<XdmfFloat64> TimeValues;
   vtkstd::vector<vtkstd::string> DomainList;
-  XdmfXmlNode DomainPtr;
+  vtkstd::map<vtkstd::string, XdmfXmlNode> DomainMap;
   vtkXdmfReaderGrid *Data;
   // vtkXdmfReaderGrid *ParallelLevel;
   vtkstd::vector<vtkXdmfReaderGrid*> ParallelLevels;
@@ -273,6 +299,7 @@ public:
   XdmfDataItem *DataItem;
   XdmfDsmBuffer *DsmBuffer;
   char *InputString;
+  unsigned int InputStringLength;
   unsigned int mostChildren;
 
   // For converting arrays from XDMF to VTK format
@@ -323,6 +350,20 @@ vtkXdmfReaderGrid*
     parent->Children.push_back(grid);
 //    }
   return grid;
+}
+void vtkXdmfReaderInternal::DeleteChildren(vtkXdmfReaderGrid* parent)
+{
+  if (!parent)
+    {
+    return;
+    }
+
+  vtkstd::vector<vtkXdmfReaderGrid*>::iterator it;
+  for (it = parent->Children.begin(); it != parent->Children.end(); it++)
+    {
+    delete *it;
+    }
+  parent->Children.clear();
 }
 
 //============================================================================
@@ -398,7 +439,6 @@ vtkXdmfReader::vtkXdmfReader()
 
   this->DomainName = 0;
   this->GridName = 0;
-  this->GridsModified = 0;
   this->NumberOfEnabledActualGrids=0;
   this->DsmBuffer = 0;
   
@@ -441,7 +481,8 @@ vtkXdmfReader::~vtkXdmfReader()
   this->CellDataArraySelection->Delete();
   this->PointDataArraySelection->Delete();
 
-  this->SetDomainName(0);
+  delete [] this->DomainName;
+  this->DomainName = 0;
   
   delete this->Internals;
 
@@ -940,17 +981,18 @@ void vtkXdmfReader::SetDomainName(const char* domain)
     {
     return;
     }
-  if ( this->DomainName )
-    {
-    delete [] this->DomainName;
-    this->DomainName = 0;
-    }
-  if ( domain )
+
+  delete [] this->DomainName;
+  this->DomainName = 0;
+  if (domain)
     {
     this->DomainName = new char [ strlen(domain) + 1 ];
     strcpy(this->DomainName, domain);
     }
-  this->GridsModified = 1;
+
+  // Since selected domain changed, we need to populate the grids available in
+  // this domain.
+  this->UpdateRootGrid();
 }
 
 //----------------------------------------------------------------------------
@@ -1038,7 +1080,7 @@ void vtkXdmfReader::EnableGrid(const char* name)
     ++this->NumberOfEnabledActualGrids;
     grid->Enabled = 1;
     this->Modified();
-    this->UpdateInformation();
+    //this->UpdateInformation();
     }
 }
 
@@ -1056,10 +1098,10 @@ void vtkXdmfReader::EnableGrid(int idx)
     {
     ++this->NumberOfEnabledActualGrids;
     grid->Enabled = 1;
-    this->PointDataArraySelection->RemoveAllArrays();
-    this->CellDataArraySelection->RemoveAllArrays();
+    //this->PointDataArraySelection->RemoveAllArrays();
+    //this->CellDataArraySelection->RemoveAllArrays();
     this->Modified();
-    this->UpdateInformation();
+    //this->UpdateInformation();
     }
 }
 
@@ -1082,10 +1124,10 @@ void vtkXdmfReader::EnableAllGrids()
     }
   if(changed)
     {
-    this->PointDataArraySelection->RemoveAllArrays();
-    this->CellDataArraySelection->RemoveAllArrays();
+    //this->PointDataArraySelection->RemoveAllArrays();
+    //this->CellDataArraySelection->RemoveAllArrays();
     this->Modified();
-    this->UpdateInformation();
+    //this->UpdateInformation();
     }
 }
 
@@ -1103,11 +1145,11 @@ void vtkXdmfReader::DisableGrid(const char* name)
     {
     grid->Enabled = 0;
     --this->NumberOfEnabledActualGrids;
-    this->PointDataArraySelection->RemoveAllArrays();
-    this->CellDataArraySelection->RemoveAllArrays();
+    //this->PointDataArraySelection->RemoveAllArrays();
+    //this->CellDataArraySelection->RemoveAllArrays();
 
     this->Modified();
-    this->UpdateInformation();
+    //this->UpdateInformation();
     }
 }
 
@@ -1125,10 +1167,10 @@ void vtkXdmfReader::DisableGrid(int idx)
     {
     grid->Enabled = 0;
     --this->NumberOfEnabledActualGrids;
-    this->PointDataArraySelection->RemoveAllArrays();
-    this->CellDataArraySelection->RemoveAllArrays();
+    //this->PointDataArraySelection->RemoveAllArrays();
+    //this->CellDataArraySelection->RemoveAllArrays();
     this->Modified();
-    this->UpdateInformation();
+    //this->UpdateInformation();
     }
 }
 
@@ -1155,10 +1197,10 @@ void vtkXdmfReader::DisableAllGrids()
     }
   if(changed)
     {
-    this->PointDataArraySelection->RemoveAllArrays();
-    this->CellDataArraySelection->RemoveAllArrays();
+    //this->PointDataArraySelection->RemoveAllArrays();
+    //this->CellDataArraySelection->RemoveAllArrays();
     this->Modified();
-    this->UpdateInformation();
+    //this->UpdateInformation();
     }
 }
 
@@ -1173,11 +1215,10 @@ void vtkXdmfReader::RemoveAllGrids()
     this->Internals->Data=NULL;
     }
   this->NumberOfEnabledActualGrids = 0;
-  this->GridsModified = 1;
-  this->PointDataArraySelection->RemoveAllArrays();
-  this->CellDataArraySelection->RemoveAllArrays();
+  //this->PointDataArraySelection->RemoveAllArrays();
+  //this->CellDataArraySelection->RemoveAllArrays();
   this->Modified();
-  this->UpdateInformation();
+  //this->UpdateInformation();
 }
 
 //----------------------------------------------------------------------------
@@ -1214,6 +1255,7 @@ int vtkXdmfReader::UpdateDomains()
   //clear list
   this->Internals->DomainList.erase(this->Internals->DomainList.begin(),
                                     this->Internals->DomainList.end());
+  this->Internals->DomainMap.clear();
   //populate list
   int cc;
   for ( cc = 0; !done; cc ++ )
@@ -1232,60 +1274,27 @@ int vtkXdmfReader::UpdateDomains()
       domainName = str.str();
       }
     this->Internals->DomainList.push_back(domainName);
+    this->Internals->DomainMap[domainName] = domain;
     str.rdbuf()->freeze(0);
     }
-  //find the one that the user chose
-  if ( this->DomainName )
-    {
-    for ( cc = 0; !done; cc ++ )
-      {
-      domain = this->DOM->FindElement("Domain", cc);
-      if ( !domain )
-        {
-        break;
-        }
-      XdmfConstString domainName = this->DOM->Get( domain, "Name" );
-      ostrstream str;
-      if ( !domainName )
-        {
-        str << "Domain" << cc << ends;
-        domainName = str.str();
-        }
-      if( domainName && strcmp(domainName, this->DomainName) == 0)
-        {
-        str.rdbuf()->freeze(0);
-        break;
-        }      
-      str.rdbuf()->freeze(0);
-      }
-    }
-  //If user hasn't chosen, pick the first one
-  if ( !domain )
-    {
-    domain = this->DOM->FindElement("Domain", 0); // 0 - domain index    
-    }
-  if ( !domain )
-    {
-    vtkErrorMacro("Cannot find any domain...");
-    return 0;
-    }
-  this->Internals->DomainPtr = domain;
+
   return 1;
 }
 
 //----------------------------------------------------------------------------
 void vtkXdmfReader::UpdateRootGrid()
 {
-  XdmfXmlNode domain = this->Internals->DomainPtr;
+  cout << "UpdateRootGrid" << endl;
+  if (!this->DomainName && this->GetNumberOfDomains() > 0)
+    {
+    vtkstd::string curDomain = this->GetDomainName(0);
+    this->DomainName = new char [curDomain.length() + 1];
+    strcpy(this->DomainName, curDomain.c_str());
+    }
+  XdmfXmlNode domain = this->Internals->GetDomain(this->DomainName);
 
   if ( !domain )
     {
-    return;
-    }
-
-  if( !this->GridsModified )
-    {
-    vtkDebugMacro("Skipping Grid Update : Not Modified");
     return;
     }
 
@@ -1296,9 +1305,11 @@ void vtkXdmfReader::UpdateRootGrid()
     ptr->Name = "DomainRoot";
     this->Internals->Data = ptr;
     }
+  this->Internals->DeleteChildren(ptr);
+  cout << "UpdateGrids Start" << endl;
   this->UpdateGrids(ptr, domain);
+  cout << "UpdateGrids End" << endl;
   int nchildren = ptr->Children.size();
-  //vtkDebugMacro("Created " << nchildren << " top level grids.");
   this->OutputTemporal = 0;
   if (nchildren == 1)
     {
@@ -1315,7 +1326,9 @@ void vtkXdmfReader::UpdateRootGrid()
     {
     this->OutputVTKType = VTK_MULTIBLOCK_DATA_SET;
     }
-  this->GridsModified = 0;
+
+  // Repopulate the list of arrays.
+  this->Internals->UpdateArrays(ptr);
 }
 
 //----------------------------------------------------------------------------
@@ -1327,22 +1340,16 @@ void vtkXdmfReader::UpdateGrids(vtkXdmfReaderGrid *parent, void *ParentNode)
     }
   
 
-  int done = 0;
   int parentIsDomain = 0;
-  int NGrid;
   XdmfXmlNode gridNode = 0;
   XdmfGrid  *xGrid;
 
   if(!parent->XMGrid){
       parentIsDomain = 1;
   }
-  NGrid = this->DOM->FindNumberOfElements("Grid", (XdmfXmlNode)ParentNode);
-  for (vtkIdType currentGrid = 0; !done; currentGrid ++ )
+  gridNode = this->DOM->FindElement("Grid", 0, (XdmfXmlNode)ParentNode);
+  for (vtkIdType currentGrid = 0; gridNode; currentGrid ++ )
     {
-    // Find the subgrids grids under this one
-    gridNode = this->DOM->FindElement("Grid", 
-                                      currentGrid, 
-                                      (XdmfXmlNode)ParentNode);
     if ( !gridNode )
       {
       break;
@@ -1458,6 +1465,9 @@ void vtkXdmfReader::UpdateGrids(vtkXdmfReaderGrid *parent, void *ParentNode)
         sub->Enabled = 1;
     }
     str.rdbuf()->freeze(0);
+
+    // Find the subgrids grids under this one
+    gridNode = this->DOM->FindNextElement("Grid", gridNode);
     }
 }
 
@@ -1538,119 +1548,141 @@ int vtkXdmfReader::ProcessRequest(vtkInformation* request,
 }
 
 //----------------------------------------------------------------------------
-int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
+bool vtkXdmfReader::ParseXML()
 {
-// Parse the xmf file into an in memory structure
-// Produce an empty data object of the proper type for RequestData to fill 
-// in later.
-  XdmfConstString CurrentFileName;
-  vtkstd::string directory;
-
-  // Reading from File or String
-  if (this->GetReadFromInputString()){
-    char    *InputTxt;
-
-    InputTxt = new char[this->InputStringLength + 1];
-    if ( !this->DOM )
-      {
-      this->DOM = new XdmfDOM();
-      }
-    if ( !this->Internals->DataItem )
-      {
-      this->Internals->DataItem = new XdmfDataItem();
-      this->Internals->DataItem->SetDOM(this->DOM);
-      }
-    memcpy(InputTxt, this->GetInputString(), this->InputStringLength);
-    InputTxt[this->InputStringLength] = 0;
-    if(this->Internals->Data && this->Internals->InputString){
-       if(STRCASECMP(InputTxt, this->Internals->InputString) == 0 ){
-           // Don't re-parse
-           vtkDebugMacro("Input Text Unchanged ... skipping re-parse()");
-           return 1;
-       }
-       // else
-       vtkDebugMacro("Input Text Changed ...  re-parseing");
-       delete this->Internals->Data;
-       this->Internals->Data = 0;
+  cout << "Begin Parsing" << endl;
+  // * Ensure that the required objects have been instantiated.
+  if (!this->DOM)
+    {
+    this->DOM = new XdmfDOM();
     }
-    // Initial Parse
-    this->DOM->Parse(InputTxt);
-    this->GridsModified = 1;
-    // delete InputTxt;
-    if(this->Internals->InputString){
-        delete this->Internals->InputString;
+  if ( !this->Internals->DataItem )
+    {
+    this->Internals->DataItem = new XdmfDataItem();
+    this->Internals->DataItem->SetDOM(this->DOM);
     }
-    this->Internals->InputString = InputTxt;
-  }
-  else 
-  {
+
+  // * Check if the XML file needs to be re-read.
+  bool modified = true;
+  if (this->GetReadFromInputString())
+    {
+    const char* data=0;
+    unsigned int data_length=0;
+    if (this->InputArray)
+      {
+      vtkDebugMacro(<< "Reading from InputArray");
+      data = this->InputArray->GetPointer(0);
+      data_length = static_cast<unsigned int>(
+        this->InputArray->GetNumberOfTuples()*
+        this->InputArray->GetNumberOfComponents());
+      }
+    else if (this->InputString)
+      {
+      data = this->InputString;
+      data_length = this->InputStringLength;
+      }
+    else
+      {
+      vtkErrorMacro("No input string specified");
+      return false;
+      }
+    if (data && this->Internals->Data &&
+      this->Internals->InputString &&
+      data_length == this->Internals->InputStringLength &&
+      STRNCASECMP(data, this->Internals->InputString, data_length) == 0)
+      {
+      modified = false;
+      vtkDebugMacro("Input Text Unchanged ... skipping re-parse()");
+      }
+    else
+      {
+      vtkDebugMacro("Input Text Changed ...  re-parseing");
+      delete this->Internals->Data;
+      this->Internals->Data = 0;
+      delete [] this->Internals->InputString;
+      this->Internals->InputString = new char[data_length+1];
+      memcpy(this->Internals->InputString, data, data_length);
+      this->Internals->InputString[data_length] = 0; 
+      this->Internals->InputStringLength = data_length;
+
+      this->DOM->SetInputFileName(0);
+      this->DOM->Parse(this->Internals->InputString);
+      }
+    }
+  else
+    {
     // Parse the file...
-    if ( !this->FileName )
+    if (!this->FileName )
       {
       vtkErrorMacro("File name not set");
-      return 1;
+      return false;
       }
 
     // First make sure the file exists.  This prevents an empty file
     // from being created on older compilers.
-    if (!vtksys::SystemTools::FileExists(this->FileName)) {
+    if (!vtksys::SystemTools::FileExists(this->FileName))
+      {
       vtkErrorMacro("Error opening file " << this->FileName);
-      return 1;
+      return false;
       }
 
-    if ( !this->DOM )
-      {
-      this->DOM = new XdmfDOM();
-      }
 
-    //Tell the parser what the working directory is.
-    directory = vtksys::SystemTools::GetFilenamePath(this->FileName) + "/";
-    if (directory == "")
+    if (this->DOM->GetInputFileName() &&
+      STRCASECMP(this->DOM->GetInputFileName(), this->FileName) == 0)
       {
-      directory = vtksys::SystemTools::GetCurrentWorkingDirectory() + "/";
+      vtkDebugMacro("Filename Unchanged ... skipping re-parse()");
+      modified = false;
       }
-//    directory = vtksys::SystemTools::ConvertToOutputPath(directory.c_str());
-    this->DOM->SetWorkingDirectory(directory.c_str());
+    else
+      {
+      vtkDebugMacro("Parsing file: " << this->FileName);
 
-    // this->DOM->GlobalDebugOn();
-    if ( !this->Internals->DataItem )
-      {
-      this->Internals->DataItem = new XdmfDataItem();
-      this->Internals->DataItem->SetDOM(this->DOM);
-      }
-    CurrentFileName = this->DOM->GetInputFileName();  
-    // Only re-parse when necessary. Reparsing can be slow and can reset
-    // parameters and stride that we read from file but then allow user to 
-    // modify.
-    if ((CurrentFileName == NULL) ||
-       (STRCASECMP(CurrentFileName, this->FileName) != 0 ))
-      {
+      //Tell the parser what the working directory is.
+      vtkstd::string directory =
+        vtksys::SystemTools::GetFilenamePath(this->FileName) + "/";
+      if (directory == "")
+        {
+        directory = vtksys::SystemTools::GetCurrentWorkingDirectory() + "/";
+        }
+      //    directory = vtksys::SystemTools::ConvertToOutputPath(directory.c_str());
+      this->DOM->SetWorkingDirectory(directory.c_str());
       this->DOM->SetInputFileName(this->FileName);
-      vtkDebugMacro(".!!............Preparing to Parse " << this->FileName);
       this->DOM->Parse(this->FileName);
-      this->GridsModified = 1;
       }
-  }
-
-  //TODO: avoid everything below if nothing has changed? Or is this taken 
-  //care of by Modified.
-
-  //Create the in memory data structures from the file to use later
-  if (!this->UpdateDomains())
-    {
-    return 1;
     }
-  this->UpdateRootGrid();
+  cout << "Done Parsing" << endl;
+
+  if (modified)
+    {
+    cout << "ParseXML" << endl;
+    // Since the DOM was re-parsed we need to update the cache for domains
+    // and re-populate the grids.
+    this->UpdateDomains();
+    this->UpdateRootGrid();
+    }
+  return true;
+}
+
+//----------------------------------------------------------------------------
+int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
+{
+  cout << "RequestDataObject: " << endl;
+  if (!this->ParseXML())
+    {
+    return 0;
+    }
+
   vtkDebugMacro("My output is a "
-                << vtkDataObjectTypes::GetClassNameFromTypeId(
-                  this->OutputVTKType) );
+    << vtkDataObjectTypes::GetClassNameFromTypeId(this->OutputVTKType));
 
   //Look at the in memory structures and create an empty vtkDataObject of the
-  //proper type for RequestData to fill in later.
-  vtkInformation *outInfo=outputVector->GetInformationObject(0);
-  vtkDataObject *output=vtkDataObjectTypes::NewDataObject(this->OutputVTKType);
-  if (output)
+  //proper type for RequestData to fill in later, if needed.
+
+  vtkDataObject *output= vtkDataObject::GetData(outputVector, 0);
+  if (!output || output->GetDataObjectType() != this->OutputVTKType)
     {
+    vtkInformation *outInfo=outputVector->GetInformationObject(0);
+    output = vtkDataObjectTypes::NewDataObject(this->OutputVTKType);
     output->SetPipelineInformation(outInfo);
     outInfo->Set(vtkDataObject::DATA_EXTENT_TYPE(), output->GetExtentType());
     outInfo->Set(vtkDataObject::DATA_OBJECT(), output);
@@ -1712,7 +1744,76 @@ int vtkXdmfReaderInternal::FindParallelism(vtkXdmfReaderGrid *grid)
     }
     return 0;
 }
+
+void vtkXdmfReaderInternalUpdateArraysInternal(vtkXdmfReaderGrid* grid,
+  vtkstd::set<vtkstd::string>& pointArrays, 
+  vtkstd::set<vtkstd::string>& cellArrays)
+{
+  if (!grid)
+    {
+    return;
+    }
+
+  if (grid->Children.size()>0) 
+    {
+    //recurse inside composite datasets
+    vtkstd::vector<vtkXdmfReaderGrid *>::iterator it;
+    for (it = grid->Children.begin(); it != grid->Children.end(); ++it)
+      {
+      vtkXdmfReaderInternalUpdateArraysInternal((*it), pointArrays, cellArrays);
+      }
+    return;
+    }
+
+  XdmfGrid* xdmfGrid = grid->XMGrid;
+  for (int kk=0; kk < xdmfGrid->GetNumberOfAttributes(); kk++)
+    {
+    XdmfAttribute *Attribute = xdmfGrid->GetAttribute(kk);
+    const char *name = Attribute->GetName();
+    if (name)
+      {
+      XdmfInt32 AttributeCenter = Attribute->GetAttributeCenter();
+      if (AttributeCenter == XDMF_ATTRIBUTE_CENTER_GRID || 
+        AttributeCenter == XDMF_ATTRIBUTE_CENTER_NODE)
+        {
+        pointArrays.insert(name);
+        }
+      else
+        {
+        cellArrays.insert(name);
+        }
+      }
+    }
+}
 //-----------------------------------------------------------------------------
+// Get list of arrays irrespective of their enable/disable states.
+int vtkXdmfReaderInternal::UpdateArrays(vtkXdmfReaderGrid* grid)
+{
+  vtkDataArraySelection* pointDataArraySelection = 
+    this->Reader->GetPointDataArraySelection();
+  vtkDataArraySelection* cellDataArraySelection = 
+    this->Reader->GetCellDataArraySelection();
+
+  pointDataArraySelection->RemoveAllArrays();
+  cellDataArraySelection->RemoveAllArrays();
+
+  vtkstd::set<vtkstd::string> pointArrays;
+  vtkstd::set<vtkstd::string> cellArrays;
+
+  vtkXdmfReaderInternalUpdateArraysInternal(grid, pointArrays, cellArrays);
+  vtkstd::set<vtkstd::string>::iterator iter;
+  for (iter = pointArrays.begin(); iter != pointArrays.end();++iter)
+    {
+    pointDataArraySelection->AddArray(iter->c_str());
+    }
+  for (iter = cellArrays.begin(); iter != cellArrays.end();++iter)
+    {
+    cellDataArraySelection->AddArray(iter->c_str());
+    }
+
+  return 1;
+}
+
 //-----------------------------------------------------------------------------
 int vtkXdmfReaderInternal::RequestGridInformation(
   vtkXdmfReaderGrid *grid, vtkInformation *destInfo)
@@ -1740,10 +1841,10 @@ int vtkXdmfReaderInternal::RequestGridInformation(
   XdmfInt32    Rank;
   XdmfInt64    Dimensions[ XDMF_MAX_DIMENSION ];
   XdmfInt64    EndExtent[ XDMF_MAX_DIMENSION ];
-  vtkDataArraySelection* pointDataArraySelection = 
-    this->Reader->GetPointDataArraySelection();
-  vtkDataArraySelection* cellDataArraySelection = 
-    this->Reader->GetCellDataArraySelection();
+  //vtkDataArraySelection* pointDataArraySelection = 
+  //  this->Reader->GetPointDataArraySelection();
+  //vtkDataArraySelection* cellDataArraySelection = 
+  //  this->Reader->GetCellDataArraySelection();
   int *readerStride = this->Reader->GetStride();
   
   XdmfGrid* xdmfGrid = grid->XMGrid;
@@ -1751,6 +1852,7 @@ int vtkXdmfReaderInternal::RequestGridInformation(
   int kk;
   for( kk = 0 ; kk < xdmfGrid->GetNumberOfAttributes() ; kk++ )
     {
+    /*
     XdmfAttribute       *Attribute;
     Attribute = xdmfGrid->GetAttribute( kk );
     const char *name = Attribute->GetName();
@@ -1763,6 +1865,7 @@ int vtkXdmfReaderInternal::RequestGridInformation(
         if ( !pointDataArraySelection->ArrayExists(name) )
           {
           pointDataArraySelection->AddArray(name);
+          cout << "Add Array: " << name << endl;
           }
         }
       else
@@ -1770,9 +1873,11 @@ int vtkXdmfReaderInternal::RequestGridInformation(
         if ( !cellDataArraySelection->ArrayExists(name) )
           {
           cellDataArraySelection->AddArray(name);
+          cout << "Add Cell Array: " << name << endl;
           }
         }
       }
+      */
     }
   
   // Revised Initial Setup

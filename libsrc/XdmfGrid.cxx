@@ -409,7 +409,12 @@ if( this->GridType & XDMF_GRID_MASK){
     }
     anElement = this->DOM->FindElement("Geometry", 0, this->Element);
     for(i=0 ; i < nchild ; i++){
-        node = this->DOM->FindElement("Grid", i, this->Element);
+        if (i==0) {
+          node = this->DOM->FindElement("Grid", i, this->Element);
+        } else {
+          node = this->DOM->FindNextElement("Grid", node);
+        }
+
         if(!node) {
             XdmfErrorMessage("Can't find Child Grid #" << i);
             return(XDMF_FAIL);
@@ -536,9 +541,12 @@ if( this->NumberOfAttributes > 0 ){
       this->NumberOfAttributes * sizeof( XdmfAttribute * ));
   for( Index = 0 ; Index < this->NumberOfAttributes ; Index++ ){
     iattribute = new XdmfAttribute;
-
     this->Attribute[Index] = iattribute;
-    AttributeElement = this->DOM->FindElement( "Attribute", Index, this->Element );
+    if (Index == 0) {
+      AttributeElement = this->DOM->FindElement( "Attribute", Index, this->Element );
+    } else {
+      AttributeElement = this->DOM->FindNextElement( "Attribute", AttributeElement);
+    }
     iattribute->SetDOM( this->DOM );    
     iattribute->SetElement( AttributeElement );
     iattribute->UpdateInformation();
@@ -562,7 +570,11 @@ if( this->NumberOfSets > 0 ){
     iSet = new XdmfSet;
 
     this->Sets[Index] = iSet;
-    SetElement = this->DOM->FindElement( "Set", Index, this->Element );
+    if (Index==0) {
+      SetElement = this->DOM->FindElement( "Set", Index, this->Element );
+    } else {
+      SetElement = this->DOM->FindNextElement( "Set", SetElement);
+    }
     iSet->SetDOM( this->DOM );    
     iSet->SetElement( SetElement );
     iSet->UpdateInformation();

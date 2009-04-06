@@ -181,6 +181,13 @@ the "Information" Elements not to be counted against Index.
       XdmfInt32 Index= 0,
       XdmfXmlNode Node = NULL,
       XdmfInt32 IgnoreInfo=1);
+/*!
+Find the next sibling for the node that is of a certain type. IgnoreInfo allows
+the "Information" elements to be skipped.
+*/
+  XdmfXmlNode FindNextElement(XdmfConstString TagName,
+    XdmfXmlNode Node,
+    XdmfInt32 IgnoreInfo=1);
 /*! Find DataItem, DataStructure, or DataTransform
     This is needed for backward compatibility but will
     be removed in the future and XML will be forced
