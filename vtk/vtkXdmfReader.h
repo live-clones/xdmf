@@ -58,12 +58,14 @@ public:
   int GetNumberOfDomains();
 
   // Description:
-  // Get/Set the current domain name.
-  virtual void SetDomainName(const char*);
-  vtkGetStringMacro(DomainName);
-
   // Get the name of domain at index.
   const char* GetDomainName(int idx);
+
+  // Description:
+  // Get/Set the current domain name. If none is set, the first domain will be
+  // used. 
+  virtual void SetDomainName(const char*);
+  vtkGetStringMacro(DomainName);
 
   // GRIDS ///////////////////////////////////////////////////////////////////
   // Description:
@@ -90,7 +92,7 @@ public:
   void DisableGrid(const char* name);
   void DisableGrid(int idx);
   void DisableAllGrids();
-  void RemoveAllGrids();
+  void RemoveAllGrids(); // <<--FIXME: remove me.
 
   // Description:
   // Get current enable/disable of the grid
@@ -220,7 +222,13 @@ public:
 
 protected:
   vtkXdmfReader();
-  ~vtkXdmfReader();   
+  ~vtkXdmfReader();
+
+  // Description:
+  // This methods parses the XML. Returns true on success. This method can be
+  // called repeatedly. It has checks to ensure that the XML parsing is done
+  // only if needed.
+  bool ParseXML();
 
   virtual int ProcessRequest(vtkInformation *request,
                              vtkInformationVector **inputVector,

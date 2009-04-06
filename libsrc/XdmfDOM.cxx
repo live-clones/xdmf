@@ -525,6 +525,43 @@ if ( !type ) {
 return(NULL);
 }
 
+
+XdmfXmlNode  
+XdmfDOM::FindNextElement(XdmfConstString TagName, XdmfXmlNode Node, XdmfInt32 IgnoreInfo) {
+
+XdmfString type = (XdmfString )TagName;
+XdmfXmlNode child;
+
+// this->SetDebug(1);
+if(TagName){
+    XdmfDebug("FindNextElement" << TagName);
+}else{
+    XdmfDebug("FindNextElement NULL");
+}
+if(!Node) {
+    if(!this->Tree) return( NULL );
+    Node = this->Tree->children;
+}
+if(!Node) return(NULL);
+if ( type ) {
+  if( STRNCASECMP( type, "NULL", 4 ) == 0 ) type = NULL;
+}
+
+child = XdmfGetNextElement(Node);
+while (child) {
+  if(IgnoreInfo && XDMF_WORD_CMP("Information", (const char *)(child)->name)){
+    // skip Information elements.
+  } else {
+    if(!type ||
+      (XDMF_WORD_CMP((const char *)type, (const char *)(child)->name))){
+      return child;
+    }
+  }
+  child = XdmfGetNextElement(child);
+}
+return (NULL);
+}
+
 XdmfXmlNode  
 XdmfDOM::FindElementByAttribute(XdmfConstString Attribute,
     XdmfConstString Value, XdmfInt32 Index, XdmfXmlNode Node ) {
