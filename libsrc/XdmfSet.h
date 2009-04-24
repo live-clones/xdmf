@@ -48,6 +48,14 @@ class XdmfMap;
                 </DataItem>
             </Attribute>
         </Set>
+
+        Or for Ghosr Cells
+
+        <Set Name="Proc3GhostCells" SetType="Cell" SetLength="2" Ghost="3">
+            <DataItem Format="XML" Dimensions="2" >
+                3 40
+            </DataItem>
+        </Set>
     \endverbatim
 */
 
@@ -75,6 +83,11 @@ public:
   XdmfGetValueMacro( Size, XdmfInt64 );
 //! Set the Size (Length) of the Set
   XdmfSetValueMacro( Size, XdmfInt64 );
+
+//! Get the Ghost Value of the Set
+  XdmfGetValueMacro( Ghost, XdmfInt64 );
+//! Set the Ghost Value of the Set
+  XdmfSetValueMacro( Ghost, XdmfInt64 );
 
 //! Returns the Shape of the attribute
   XdmfDataDesc *GetShapeDesc( void ) { return( this->ShapeDesc ); };
@@ -142,6 +155,7 @@ protected:
   XdmfArray     *FaceIds;
   XdmfInt32     Active;
   XdmfInt64     Size;
+  XdmfInt64     Ghost;
 };
 
 #endif // __XdmfSet_h
