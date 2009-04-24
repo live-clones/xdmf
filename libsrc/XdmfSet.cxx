@@ -19,6 +19,7 @@ XdmfSet::XdmfSet() {
   this->ShapeDesc = new XdmfDataDesc();
   this->Active = 0;
   this->Size = 0;
+  this->Ghost = 0;
   this->Map = (XdmfMap **)calloc(1, sizeof(XdmfMap *));
   this->NumberOfMaps = 0;
   this->Attribute = (XdmfAttribute **)calloc(1, sizeof(XdmfAttribute *));
