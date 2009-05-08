@@ -146,6 +146,7 @@ XdmfValuesHDF::Write(XdmfArray *anArray, XdmfConstString aHeavyDataSetName){
     XDMF_STRING_DUPLICATE(hds, aHeavyDataSetName);
     XDMF_WORD_TRIM( hds );
     this->Set("CDATA", hds);
+    H5.SetCompression(anArray->GetCompression());
     H5.CopyType(this->DataDesc);
     H5.CopyShape(this->DataDesc);
     H5.CopySelection(this->DataDesc);
