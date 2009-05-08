@@ -33,6 +33,7 @@ XdmfDataDesc::XdmfDataDesc() {
   this->SelectionType = XDMF_SELECTALL;
   this->NextOffset = 0;
   this->Rank = 1;
+  this->Compression = 0;
   this->ShapeString = 0;
   this->DsmBuffer = NULL;
 }
