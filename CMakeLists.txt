@@ -2,8 +2,8 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
 PROJECT(Xdmf)
 if(COMMAND cmake_policy)
-    # cmake_policy(SET CMP0003 NEW)
-    cmake_policy(SET CMP0003 OLD)
+    cmake_policy(SET CMP0003 NEW)
+#    cmake_policy(SET CMP0003 OLD)
 endif(COMMAND cmake_policy)
 include(CTest)
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${Xdmf_SOURCE_DIR}/CMake)
@@ -110,6 +110,12 @@ ELSE(NOT XDMF_SYSTEM_LIBXML2)
   SET(XDMF_LIBXML2_LIBRARIES_CONFIG  ${LIBXML2_LIBRARY})
 
 ENDIF(NOT XDMF_SYSTEM_LIBXML2)
+IF(MSVC_VERSION EQUAL 1400 OR MSVC_VERSION GREATER 1400)
+  ADD_DEFINITIONS(-D_CRT_SECURE_NO_DEPRECATE
+    -D_CRT_NONSTDC_NO_DEPRECATE 
+    -D_CRT_SECURE_NO_WARNINGS)
+  ADD_DEFINITIONS(-D_SCL_SECURE_NO_DEPRECATE)
+ENDIF(MSVC_VERSION EQUAL 1400 OR MSVC_VERSION GREATER 1400) 
 
 #############################################################################
 # MPI LIBRARY
@@ -124,7 +130,8 @@ IF(XDMF_BUILD_MPI)
     IF (MPI_LIBRARY)
       SET(XDMF_MPI_LIBRARIES ${XDMF_MPI_LIBRARIES} ${MPI_LIBRARY})
     ELSE (MPI_LIBRARY)
-      MESSAGE("Could not find the required MPI libraries")
+      MESSAGE(FATAL_ERROR 
+        "Could not find the required MPI libraries, install MPI, or set MPI_INCLUDE_PATH and MPI_LIBRARY and MPI_EXTRA_LIBRARY, or turn XDMF_BUILD_MPI to OFF")
     ENDIF (MPI_LIBRARY)
     IF (MPI_EXTRA_LIBRARY)
       SET(XDMF_MPI_LIBRARIES ${XDMF_MPI_LIBRARIES} ${MPI_EXTRA_LIBRARY})
@@ -172,21 +179,20 @@ ENDIF(XDMF_SYSTEM_HDF5)
 #############################################################################
 # stdlib and std namespace
 IF(XDMF_BUILD_VTK)
-  SET(XDMF_USE_ANSI_STDLIB "${XDMF_USE_ANSI_STDLIB}" CACHE INTERNAL "store")
-  SET(XDMF_USE_ANSI_STDLIB ${VTK_USE_ANSI_STDLIB})
+  # if using VTK, then copy the VTK value for VTK_USE_ANSI_STDLIB
+  SET(XDMF_USE_ANSI_STDLIB "${VTK_USE_ANSI_STDLIB}" CACHE INTERNAL
+    "ansi c++ stdlib flag")
 ELSE(XDMF_BUILD_VTK)
-  SET(XDMF_USE_ANSI_STDLIB "${XDMF_USE_ANSI_STDLIB}" CACHE BOOL "Ansi" FORCE)
-  IF(CMAKE_COMPILER_IS_GNUCXX)
-    OPTION(XDMF_USE_ANSI_STDLIB "Use the ANSI standard iostream library" ON)
-  ELSE(CMAKE_COMPILER_IS_GNUCXX)
-    IF(CMAKE_BUILD_TOOL MATCHES "devenv")
-      OPTION(XDMF_USE_ANSI_STDLIB "Use the ANSI standard iostream library" ON)
-    ELSE(CMAKE_BUILD_TOOL MATCHES "devenv")
-      OPTION(XDMF_USE_ANSI_STDLIB "Use the ANSI standard iostream library" OFF)
-    ENDIF(CMAKE_BUILD_TOOL MATCHES "devenv")
-  ENDIF(CMAKE_COMPILER_IS_GNUCXX)
+  # if not using VTK, then do the test for ansi stream headers
+  # here
+  INCLUDE(TestForANSIStreamHeaders)
+  IF(CMAKE_NO_ANSI_STREAM_HEADERS) 
+    SET(XDMF_USE_ANSI_STDLIB FALSE CACHE INTERNAL "ansi c++ stdlib flag")
+  ELSE(CMAKE_NO_ANSI_STREAM_HEADERS)
+    SET(XDMF_USE_ANSI_STDLIB TRUE CACHE INTERNAL "ansi c++ stdlib flag")
+  ENDIF(CMAKE_NO_ANSI_STREAM_HEADERS)
 ENDIF(XDMF_BUILD_VTK)
-INCLUDE(${CMAKE_ROOT}/Modules/TestForSTDNamespace.cmake)
+INCLUDE(TestForSTDNamespace)
 
 # Enforce 0/1 as only possible values.  Needed for the means by which
 # Configure.hxx is implemented.
