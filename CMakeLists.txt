@@ -5,7 +5,6 @@ if(COMMAND cmake_policy)
     cmake_policy(SET CMP0003 NEW)
 #    cmake_policy(SET CMP0003 OLD)
 endif(COMMAND cmake_policy)
-include(CTest)
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${Xdmf_SOURCE_DIR}/CMake)
 
 OPTION(BUILD_SHARED_LIBS "Build Shared XDMF Library" ON)
@@ -214,13 +213,11 @@ ENDIF(XDMF_BUILD_VTK)
 
 #############################################################################
 # Testing
-OPTION(XDMF_BUILD_TESTING "Test the project" OFF)
-IF(XDMF_BUILD_TESTING)
-  ENABLE_TESTING()
-  INCLUDE (${CMAKE_ROOT}/Modules/Dart.cmake)
-  OPTION(VTK_USE_DISPLAY "Turn this option off and tests will not popup windows" ON)
-  MARK_AS_ADVANCED(VTK_USE_DISPLAY)
-ENDIF(XDMF_BUILD_TESTING)
+ENABLE_TESTING()
+INCLUDE(CTest)
+OPTION(VTK_USE_DISPLAY 
+  "Turn this option off and tests will not popup windows" ON)
+MARK_AS_ADVANCED(VTK_USE_DISPLAY)
 
 #############################################################################
 # Examples
