@@ -8,7 +8,7 @@
 /*                                                                 */
 /*  Author:                                                        */
 /*     Kenneth Leiter
-/*     kleiter@arl.army.mil                                         */
+/*     kenneth.leiter@arl.army.mil                                 */
 /*     US Army Research Laboratory                                 */
 /*     Aberdeen Proving Ground, MD                                 */
 /*                                                                 */
