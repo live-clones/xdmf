@@ -214,6 +214,8 @@ ENDIF(XDMF_BUILD_VTK)
 #############################################################################
 # Testing
 ENABLE_TESTING()
+CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/CTestCustom.cmake.in 
+  ${Xdmf_BINARY_DIR}/CTestCustom.cmake @ONLY)
 INCLUDE(CTest)
 OPTION(VTK_USE_DISPLAY 
   "Turn this option off and tests will not popup windows" ON)
