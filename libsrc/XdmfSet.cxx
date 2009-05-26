@@ -67,7 +67,7 @@ XdmfSet::Insert( XdmfElement *Child){
         XDMF_WORD_CMP(Child->GetElementName(), "Information")
         )){
         XdmfInt32   status = XdmfElement::Insert(Child);
-        if((status = XDMF_SUCCESS) && XDMF_WORD_CMP(Child->GetElementName(), "Map")){
+        if((status == XDMF_SUCCESS) && XDMF_WORD_CMP(Child->GetElementName(), "Map")){
             XdmfMap *ChildMap = (XdmfMap *)Child;
             this->NumberOfMaps++;
             this->Map = ( XdmfMap **)realloc( this->Map,
@@ -78,7 +78,7 @@ XdmfSet::Insert( XdmfElement *Child){
             }
             this->Map[this->NumberOfMaps - 1] = ChildMap;
             }
-        if((status = XDMF_SUCCESS) && XDMF_WORD_CMP(Child->GetElementName(), "Attribute")){
+        if((status == XDMF_SUCCESS) && XDMF_WORD_CMP(Child->GetElementName(), "Attribute")){
             XdmfAttribute *ChildAttribute = (XdmfAttribute *)Child;
             this->NumberOfAttributes++;
             this->Attribute = ( XdmfAttribute **)realloc( this->Attribute,
