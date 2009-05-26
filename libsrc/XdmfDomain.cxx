@@ -46,7 +46,7 @@ XdmfDomain::Insert( XdmfElement *Child){
         XDMF_WORD_CMP(Child->GetElementName(), "Information")
         )){
         XdmfInt32 status = XdmfElement::Insert(Child);
-        if((status = XDMF_SUCCESS) && XDMF_WORD_CMP(Child->GetElementName(), "Grid")){
+        if((status == XDMF_SUCCESS) && XDMF_WORD_CMP(Child->GetElementName(), "Grid")){
             XdmfGrid *ChildGrid = (XdmfGrid *)Child;
             if((ChildGrid->GetGridType() & XDMF_GRID_MASK) == XDMF_GRID_UNIFORM){
                 if(ChildGrid->InsertTopology() != XDMF_SUCCESS) return(XDMF_FAIL);
