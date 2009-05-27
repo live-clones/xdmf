@@ -594,6 +594,9 @@ XdmfInt32 XdmfDataItem::Build(){
         case 4 :
             this->Set("Precision", "4");
             break;
+	case 2 :
+	    this->Set("Precision", "2");
+	    break;	
         case 1 :
             this->Set("Precision", "1");
             break;
