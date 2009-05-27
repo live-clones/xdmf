@@ -179,12 +179,18 @@ XdmfInt32 XdmfDataItem::UpdateInformationUniform(){
         this->DataDesc->SetNumberType(XDMF_INT8_TYPE);
     } else if(XDMF_WORD_CMP(Value, "UChar")){
         this->DataDesc->SetNumberType(XDMF_UINT8_TYPE);
+    } else if(XDMF_WORD_CMP(Value, "Short")){
+        this->DataDesc->SetNumberType(XDMF_INT16_TYPE);
+    } else if(XDMF_WORD_CMP(Value, "UShort")){
+        this->DataDesc->SetNumberType(XDMF_UINT16_TYPE);
     } else if(XDMF_WORD_CMP(Value, "Int")){
         if(Precision == 8){
             this->DataDesc->SetNumberType(XDMF_INT64_TYPE);
         }else{
             this->DataDesc->SetNumberType(XDMF_INT32_TYPE);
         }
+    } else if(XDMF_WORD_CMP(Value, "UInt")){
+        this->DataDesc->SetNumberType(XDMF_UINT32_TYPE);
     } else {
         if(Precision == 8){
             this->DataDesc->SetNumberType(XDMF_FLOAT64_TYPE);
