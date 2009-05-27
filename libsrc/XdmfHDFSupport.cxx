@@ -31,6 +31,10 @@ XdmfTypeToClassString( XdmfInt32 XdmfType ) {
       return( "Char");
     case XDMF_UINT8_TYPE :
       return( "UChar");
+    case XDMF_INT16_TYPE :
+      return( "Short");
+    case XDMF_UINT16_TYPE :
+      return( "UShort");
     case XDMF_UINT32_TYPE :
       return "UInt";
     case XDMF_INT32_TYPE :
