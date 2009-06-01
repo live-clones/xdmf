@@ -943,13 +943,23 @@ Values = new XdmfFloat64[ NumberOfValues + 10 ];
 this->GetValues( Index, Values, NumberOfValues, ArrayStride, 1 );
 i = 0;
 while( NumberOfValues-- ) {
-  // StringOutput << XDMF_64BIT_CAST Values[i++] << " ";
-#ifdef ICE_HAVE_64BIT_STREAMS
-  StringOutput << (double)(Values[i++]) << " ";
-#else
-  StringOutput << Values[i++] << " ";
-#endif
-  }
+	if( this->GetNumberType() == XDMF_INT8_TYPE || this->GetNumberType() == XDMF_INT16_TYPE || this->GetNumberType() == XDMF_INT32_TYPE || this->GetNumberType() == XDMF_INT64_TYPE || this->GetNumberType() == XDMF_UINT8_TYPE || this->GetNumberType() == XDMF_INT16_TYPE || this->GetNumberType() == XDMF_INT32_TYPE)
+	{
+		#ifdef ICE_HAVE_64BIT_STREAMS
+			StringOutput << (long long)(Values[i++]) << " ";
+		#else
+			StringOutput << (int)(Values[i++]) << " ";
+		#endif
+	}	
+	else
+	{
+		#ifdef ICE_HAVE_64BIT_STREAMS
+			StringOutput << (double)(Values[i++]) << " ";
+		#else
+			StringOutput << Values[i++] << " ";
+		#endif
+  	}
+}
 StringOutput << ends;
 Ptr = StringOutput.str();
 if ( ReturnString != NULL ) delete [] ReturnString;
