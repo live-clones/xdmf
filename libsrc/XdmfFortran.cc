@@ -1,28 +1,3 @@
-/*******************************************************************/
-/*                               XDMF                              */
-/*                   eXtensible Data Model and Format              */
-/*                                                                 */
-/*  Id : Id  */
-/*  Date : $Date$ */
-/*  Version : $Revision$ */
-/*                                                                 */
-/*  Author:                                                        */
-/*     Kenneth Leiter                                              */
-/*     kenneth.leiter@arl.army.mil                                 */
-/*     US Army Research Laboratory                                 */
-/*     Aberdeen Proving Ground, MD                                 */
-/*                                                                 */
-/*     Copyright @ 2009 US Army Research Laboratory                */
-/*     All Rights Reserved                                         */
-/*     See Copyright.txt or http://www.arl.hpc.mil/ice for details */
-/*                                                                 */
-/*     This software is distributed WITHOUT ANY WARRANTY; without  */
-/*     even the implied warranty of MERCHANTABILITY or FITNESS     */
-/*     FOR A PARTICULAR PURPOSE.  See the above copyright notice   */
-/*     for more information.                                       */
-/*                                                                 */
-/*******************************************************************/
-
 #include <Xdmf.h>
 #include <XdmfSet.h>
 
@@ -46,6 +21,7 @@
 #define XdmfWriteGrid xdmfwritegrid_
 #define XdmfWriteToFile xdmfwritetofile_
 #define XdmfSerialize xdmfserialize_
+#define XdmfGetDOM xdmfgetdom_
 
 XdmfFortran::XdmfFortran()
 {
@@ -68,6 +44,11 @@ XdmfFortran::~XdmfFortran()
 //
 extern "C" {
 
+	/**
+	 *
+	 * Initialize a new Xdmf file.
+	 *
+	 */
 	long XdmfInit(char *outputName)
 	{
 		XdmfFortran * myPointer = new(XdmfFortran);
@@ -78,6 +59,11 @@ extern "C" {
 		return (long)myPointer;
 	}
 
+	/**
+	 *
+	 * Helper function to write different datatypes to an XdmfArray.
+	 *
+	 */
 	void WriteToXdmfArray(XdmfArray * array, XdmfPointer * data)
 	{
 		switch(array->GetNumberType()){
@@ -114,12 +100,23 @@ extern "C" {
 		}
 	}
 
+	/**
+	 *
+	 * Set a time to be assigned to the next grid.
+	 *
+	 */
 	void XdmfSetTime(long * pointer, double * t)
 	{
 		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
 		myPointer->currentTime = *t;
 	}
 
+	/**
+	 *
+	 * Add a collection to the XdmfDOM.  Collections can be 'Spatial' or 'Temporal' type.
+	 * Nested collections are supported.
+	 *
+	 */
 	void XdmfAddCollection(long * pointer, char * collectionType)
 	{
 		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
@@ -139,6 +136,12 @@ extern "C" {
 		myPointer->inCollection = true;
 	}
 
+	/**
+	 *
+	 * Close the current open collection.  If within a nested collection, close
+	 * the most deeply nested collection.
+	 *
+	 */
 	void XdmfCloseCollection(long * pointer)
 	{
 		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
@@ -149,6 +152,12 @@ extern "C" {
 		}
 	}
 
+	/**
+	 *
+	 * Set the topology type to be assigned to the next grid.
+	 * Only XDMF_INT_32 type currently supported for Topology --> INTEGER*4
+	 *
+	 */
 	void XdmfSetGridTopology(long * pointer, char * topologyType, int * numberOfElements, XdmfInt32 * conns)
 	{
 		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
@@ -167,6 +176,11 @@ extern "C" {
 		myConnections->SetValues(0, conns, *numberOfElements * myPointer->myTopology->GetNodesPerElement());
 	}
 
+	/**
+	 *
+	 * Set the geometry type to be assigned to the next grid.
+	 *
+	 */
 	void XdmfSetGridGeometry(long * pointer, char * geometryType, char * numberType, int * numberOfPoints, XdmfPointer * points)
 	{
 		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
@@ -205,6 +219,12 @@ extern "C" {
 		WriteToXdmfArray(myPoints, points);
 	}
 
+	/**
+	 *
+	 * Add an attribute to be written to the next grid.  Multiple attributes can
+	 * be added and written to a single grid.
+	 *
+	 */
 	void XdmfAddGridAttribute(long * pointer, char * attributeName, char * numberType, char * attributeCenter, char * attributeType, int * numberOfPoints, XdmfPointer * data)
 	{
 		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
@@ -220,6 +240,12 @@ extern "C" {
 		myPointer->myAttributes.push_back(currAttribute);
 	}
 
+	/**
+	 *
+	 * Add an array to the XdmfDOM.  Arrays can be written within collections or
+	 * within the top level domain.
+	 *
+	 */
 	void XdmfAddArray(long * pointer, char * name, char * numberType, int * numberOfValues, XdmfPointer * data)
 	{
 		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
@@ -253,6 +279,14 @@ extern "C" {
         currSet->Build();
 	}
 
+
+	/**
+	 *
+	 * Add a grid to the XdmfDOM.  Assign the current topology, geometry, and grid attributes
+	 * to grid.  If within a collection, add grid to the collection, otherwise
+	 * add to the top level domain.  Assign time value if value is nonnegative.
+	 *
+	 */
 	void XdmfWriteGrid(long * pointer, char * gridName)
 	{
 		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
@@ -298,6 +332,7 @@ extern "C" {
 			t->SetTimeType(XDMF_TIME_SINGLE);
 			t->SetValue(myPointer->currentTime);
 			grid->Insert(t);
+			myPointer->currentTime = -1;
 		}
 
 		while(myPointer->myAttributes.size() > 0)
@@ -315,6 +350,11 @@ extern "C" {
 		grid->Build();
 	}
 
+	/**
+	 *
+	 * Write constructed Xdmf file to disk with filename created upon initialization
+	 *
+	 */
 	void XdmfWriteToFile(long * pointer)
 	{
 		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
@@ -323,9 +363,25 @@ extern "C" {
 		myPointer->myDOM->Write(dataName.str().c_str());
 	}
 
+	/**
+	 *
+	 * Print current XdmfDOM to console
+	 *
+	 */
 	void XdmfSerialize(long * pointer)
 	{
 		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
 		cout << myPointer->myDOM->Serialize() << endl;
+	}
+
+	/**
+	 *
+	 * Copy current XdmfDOM to memory pointed to by charPointer
+	 *
+	 */
+	void XdmfGetDOM(long * pointer, char * charPointer)
+	{
+		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
+		strcpy(charPointer, myPointer->myDOM->Serialize());
 	}
 }
