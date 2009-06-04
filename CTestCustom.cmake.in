@@ -3,3 +3,6 @@ SET(CTEST_CUSTOM_WARNING_EXCEPTION
   "remark:.*WAS VECTORIZED" 
   "PGC/x86-64 Linux 8.0-3: compilation completed with warnings"
   )
+SET(CTEST_CUSTOM_WARNING_MATCH
+  ${CTEST_CUSTOM_WARNING_MATCH}
+  "^PGC-W")
