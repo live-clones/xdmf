@@ -1,4 +1,5 @@
 SET(CTEST_CUSTOM_WARNING_EXCEPTION
   ${CTEST_CUSTOM_WARNING_EXCEPTION}
-  "remark:.*WAS VECTORIZED"
+  "remark:.*WAS VECTORIZED" 
+  "PGC/x86-64 Linux 8.0-3: compilation completed with warnings"
   )
