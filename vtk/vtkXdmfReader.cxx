@@ -75,6 +75,7 @@
 #include "XdmfTopology.h"
 #include "XdmfGeometry.h"
 #include "XdmfTime.h"
+#include "XdmfSet.h"
 
 #include <sys/stat.h>
 #include <vtkstd/set>
@@ -90,7 +91,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.64");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.65");
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
@@ -1784,6 +1785,23 @@ void vtkXdmfReaderInternalUpdateArraysInternal(vtkXdmfReaderGrid* grid,
         }
       }
     }
+  for (int kk=0; kk < xdmfGrid->GetNumberOfSets(); kk++)
+    {
+    XdmfSet *Set = xdmfGrid->GetSets(kk);
+    const char *name = Set->GetName();
+    if (name)
+      {
+      XdmfInt32 SetCenter = Set->GetSetType();
+      if (SetCenter == XDMF_SET_TYPE_NODE)
+        {
+        pointArrays.insert(name);
+        }
+      else
+        {
+        cellArrays.insert(name);
+        }
+      }
+    }
 }
 //-----------------------------------------------------------------------------
 // Get list of arrays irrespective of their enable/disable states.
@@ -2949,7 +2967,177 @@ int vtkXdmfReaderInternal::RequestGridData(
     dataSet->GetPointData()->RemoveArray(
       dataSet->GetPointData()->GetArrayName(cc));
     }
+    // Sets
   int haveActive = 0;
+  for( cc = 0 ; cc < xdmfGrid->GetNumberOfSets() ; cc++ )
+    {
+    XdmfInt32 SetType;
+    int       Components;
+    XdmfSet       *Set;
+    
+    Set = xdmfGrid->GetSets( cc );
+    const char *name = Set->GetName();
+    int status = 1;
+    SetType = Set->GetSetType();
+    Components = 1;
+    if (name )
+      {
+      if ( SetType == XDMF_SET_TYPE_NODE)
+        {
+        status = pointDataArraySelection->ArrayIsEnabled(name);
+        }
+      else
+        {
+        status = cellDataArraySelection->ArrayIsEnabled(name);
+        }
+      }
+    if ( !status )
+      {
+      continue;
+      }
+    status = 1;
+    vtkDebugWithObjectMacro(this->Reader,
+                            "Array with name: " 
+                            << name << " has status: " << status);
+    // attrNode = this->DOM->FindElement("Set", cc);
+    attrNode = Set->GetElement();
+    // dataNode = this->DOM->FindElement("DataStructure", 0, attrNode);
+    // Find the DataTransform or DataStructure below the <Set>
+    dataNode = xdmfDOM->FindDataElement(0, attrNode);
+    this->DataItem->SetElement(dataNode);
+    this->DataItem->UpdateInformation();
+    grid->DataDescription = this->DataItem->GetDataDesc();
+    
+    if ( Set && status )
+      {
+      //Set->Update();
+      // XdmfDataItem dataItem;
+      XdmfArray *values;
+      XdmfInt32  GhostValue = 1;
+
+      GhostValue = Set->GetGhost();
+      XdmfInt64 realcount[4] = { 0, 0, 0, 0 };
+      realcount[0] = count[0];
+      realcount[1] = count[1];
+      realcount[2] = count[2];
+      realcount[3] = count[3];
+      if ( SetType == XDMF_SET_TYPE_NODE )
+        {
+        // Point count is 1 + cell extent
+        realcount[0] ++;
+        realcount[1] ++;
+        realcount[2] ++;
+        }
+      /*
+        XdmfArray *values = this->FormatMulti->ElementToArray( 
+        dataNode, this->Internals->DataDescriptions[currentGrid] );
+      */
+      vtkDebugWithObjectMacro(this->Reader, 
+                              "Topology class: " 
+                              << xdmfGrid->GetTopology()->GetClassAsString());
+#ifndef XDMF_NO_MPI
+     this->DataItem->SetDsmBuffer(this->DsmBuffer);
+#endif
+      if(xdmfGrid->GetTopology()->GetClass() != XDMF_UNSTRUCTURED)
+        {
+            // Wrong ... Sets don't have all vales
+        XdmfDataDesc* ds = grid->DataDescription;
+        XdmfInt64 realdims[XDMF_MAX_DIMENSION];
+        XdmfInt32 realrank = ds->GetShape(realdims);
+        if ( realrank == 4 )
+          {
+          realcount[3] = realdims[3];
+          }
+        this->DataItem->GetDataDesc()->SelectHyperSlab(start, stride, realcount);
+        vtkDebugWithObjectMacro(this->Reader,
+                                "Dims = " << ds->GetShapeAsString()
+                                << "Slab = " << ds->GetHyperSlabAsString());
+        // Only works for the structured and rectilinear grid
+        vtkDebugWithObjectMacro(this->Reader,
+                                "Preparing to Read :" 
+                                << xdmfDOM->Get(dataNode, "CData"));
+        if (this->DataItem->Update()==XDMF_FAIL) 
+        {
+          vtkGenericWarningMacro(<<"Reading of HDF5 dataset failed");
+        }
+        values = this->DataItem->GetArray();
+        }
+      else 
+        {
+        this->DataItem->Update();
+        values = this->DataItem->GetArray();
+        }
+      this->ArrayConverter->SetVtkArray( NULL );
+      if ( values )
+        {
+            XdmfArray   SetArray;
+            XdmfArray   IndexArray;
+            XdmfInt32   *index, i;
+            vtkDataArray* vtkValues;
+
+
+            IndexArray.SetNumberType(XDMF_INT32_TYPE);
+            IndexArray.SetNumberOfElements(values->GetNumberOfElements());
+            IndexArray = *values;
+            // values are indexes into array to set values
+        
+        switch (SetType )
+          {
+          case XDMF_SET_TYPE_NODE :
+            SetArray.SetNumberType(XDMF_INT32_TYPE);
+            SetArray.SetNumberOfElements(dataSet->GetNumberOfPoints());
+            // Operator Overload
+            SetArray = (XdmfFloat64)0;
+            index = (XdmfInt32 *)IndexArray.GetDataPointer();
+            i = IndexArray.GetNumberOfElements();
+            while(i){
+                SetArray.SetValue(i--, GhostValue);
+            }
+            vtkValues = this->ArrayConverter->FromXdmfArray(
+                SetArray.GetTagName(), 1, globalrank, Components, 0);
+            vtkValues->SetName(name);
+            dataSet->GetPointData()->RemoveArray(name);
+            dataSet->GetPointData()->AddArray(vtkValues);
+            dataSet->GetPointData()->SetActiveScalars( name );
+            haveActive = 1;
+            break;
+          case XDMF_SET_TYPE_CELL :
+            SetArray.SetNumberType(XDMF_INT32_TYPE);
+            SetArray.SetNumberOfElements(dataSet->GetNumberOfCells());
+            // Operator Overload
+            SetArray = (XdmfFloat64)0;
+            index = (XdmfInt32 *)IndexArray.GetDataPointer();
+            i = IndexArray.GetNumberOfElements();
+            while(i){
+                SetArray.SetValue(i--, GhostValue);
+            }
+            vtkValues = this->ArrayConverter->FromXdmfArray(
+                SetArray.GetTagName(), 1, globalrank, Components, 0);
+            vtkValues->SetName(name);
+            dataSet->GetCellData()->RemoveArray(name);
+            dataSet->GetCellData()->AddArray(vtkValues);
+              haveActive = 1;
+              dataSet->GetCellData()->SetActiveScalars( name );
+            break;
+          default : 
+            vtkErrorWithObjectMacro(this->Reader,
+                                    << "Can't Handle Set Values  " );
+            break;
+          }
+        if ( vtkValues )
+          {
+          vtkValues->Delete();
+          }
+        if ( grid->DataDescription ) 
+          {
+          // delete grid->DataDescription;
+          // grid->DataDescription = 0;
+          }
+        }
+      }
+    }
+    // SET
+  //int haveActive = 0;
   for( cc = 0 ; cc < xdmfGrid->GetNumberOfAttributes() ; cc++ )
     {
     XdmfInt32 AttributeCenter;
