@@ -235,6 +235,11 @@ if ( Value ){
   }
 }
 
+Value = this->Get( "Ghost" );
+if(Value){
+    this->SetGhost(atoi(Value));
+    }
+
 Value = this->Get( "SetType" );
 if( Value ){
   this->SetSetTypeFromString( Value );
