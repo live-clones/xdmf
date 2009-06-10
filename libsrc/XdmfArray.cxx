@@ -919,7 +919,8 @@ XdmfString  XdmfArray::GetValues( XdmfInt64 Index,
         XdmfInt64 ArrayStride ) {
 
 XdmfInt64  i = 0, MemberLength;
-XdmfFloat64  *Values;
+XdmfInt64  *IntValues;
+XdmfFloat64 * FloatValues;
 ostrstream      StringOutput;
 XdmfString Ptr;
 static XdmfString ReturnString = NULL;
@@ -939,27 +940,24 @@ if( this->GetNumberType() == XDMF_COMPOUND_TYPE ){
   NumberOfValues *= MemberLength;
   XdmfDebug("New NumberOfValues  = " << XDMF_64BIT_CAST NumberOfValues );
 }
-Values = new XdmfFloat64[ NumberOfValues + 10 ];
-this->GetValues( Index, Values, NumberOfValues, ArrayStride, 1 );
-i = 0;
-while( NumberOfValues-- ) {
-	if( this->GetNumberType() == XDMF_INT8_TYPE || this->GetNumberType() == XDMF_INT16_TYPE || this->GetNumberType() == XDMF_INT32_TYPE || this->GetNumberType() == XDMF_INT64_TYPE || this->GetNumberType() == XDMF_UINT8_TYPE || this->GetNumberType() == XDMF_INT16_TYPE || this->GetNumberType() == XDMF_INT32_TYPE)
-	{
-		#ifdef ICE_HAVE_64BIT_STREAMS
-			StringOutput << (long long)(Values[i++]) << " ";
-		#else
-			StringOutput << (int)(Values[i++]) << " ";
-		#endif
-	}	
-	else
-	{
-		#ifdef ICE_HAVE_64BIT_STREAMS
-			StringOutput << (double)(Values[i++]) << " ";
-		#else
-			StringOutput << Values[i++] << " ";
-		#endif
-  	}
+
+if( this->GetNumberType() == XDMF_INT8_TYPE || this->GetNumberType() == XDMF_INT16_TYPE || this->GetNumberType() == XDMF_INT32_TYPE || this->GetNumberType() == XDMF_INT64_TYPE || this->GetNumberType() == XDMF_UINT8_TYPE || this->GetNumberType() == XDMF_UINT16_TYPE || this->GetNumberType() == XDMF_UINT32_TYPE) {
+  IntValues = new XdmfInt64[ NumberOfValues + 10 ];
+  this->GetValues( Index, IntValues, NumberOfValues, ArrayStride, 1 );
+  i = 0;
+  while( NumberOfValues-- ) {
+    StringOutput << (long)IntValues[i++] << " ";
+    }
 }
+else {
+  FloatValues = new XdmfFloat64[ NumberOfValues + 10];
+  this->GetValues( Index, FloatValues, NumberOfValues, ArrayStride, 1 );
+  i=0;
+  while( NumberOfValues-- ) {
+    StringOutput << (double)FloatValues[i++] << " ";
+  }
+}
+
 StringOutput << ends;
 Ptr = StringOutput.str();
 if ( ReturnString != NULL ) delete [] ReturnString;
