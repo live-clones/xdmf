@@ -329,7 +329,10 @@ if(!Attribute){
     Attribute = this->Get( "Type" );
 }
 if( Attribute ){
-  this->SetGeometryTypeFromString( Attribute );
+  if(this->SetGeometryTypeFromString( Attribute ) != XDMF_SUCCESS){
+      XdmfErrorMessage("No such Geometry Type : " << Attribute);
+      return(XDMF_FAIL);
+  }
 } else {
   this->GeometryType = XDMF_GEOMETRY_XYZ;
 }
