@@ -38,6 +38,8 @@ class XdmfDataItem;
 #define XDMF_GEOMETRY_X_Y           4
 #define XDMF_GEOMETRY_VXVYVZ        5
 #define XDMF_GEOMETRY_ORIGIN_DXDYDZ 6
+#define XDMF_GEOMETRY_VXVY          7
+#define XDMF_GEOMETRY_ORIGIN_DXDY   8
 
 
 //! Class to handle the XYZ positions of a Grid
