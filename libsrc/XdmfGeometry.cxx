@@ -121,6 +121,22 @@ XdmfGeometry::Build(){
             if(this->VectorZ->GetNumberOfElements() > 100) di->SetFormat(XDMF_FORMAT_HDF);
             di->Build();
         break;
+      case XDMF_GEOMETRY_VXVY:
+            if(!this->VectorX || !this->VectorY){
+                XdmfErrorMessage("Vx and Vy  must be set");
+                return(XDMF_FAIL);
+            }
+            // Vx
+            di = this->GetDataItem(0, this->GetElement());
+            di->SetArray(this->VectorX);
+            if(this->VectorX->GetNumberOfElements() > 100) di->SetFormat(XDMF_FORMAT_HDF);
+            di->Build();
+            // Vy
+            di = this->GetDataItem(1, this->GetElement());
+            di->SetArray(this->VectorY);
+            if(this->VectorY->GetNumberOfElements() > 100) di->SetFormat(XDMF_FORMAT_HDF);
+            di->Build();
+        break;
       case XDMF_GEOMETRY_ORIGIN_DXDYDZ:
             // Origin
             di = this->GetDataItem(0, this->GetElement());
@@ -135,6 +151,22 @@ XdmfGeometry::Build(){
             array = di->GetArray();
             array->SetNumberOfElements(3);
             array->SetValues(0, this->DxDyDz, 3);
+            di->Build();
+        break;
+      case XDMF_GEOMETRY_ORIGIN_DXDY:
+            // Origin
+            di = this->GetDataItem(0, this->GetElement());
+            di->SetFormat(XDMF_FORMAT_XML);
+            array = di->GetArray();
+            array->SetNumberOfElements(2);
+            array->SetValues(0, this->Origin, 2);
+            di->Build();
+            // DxDy
+            di = this->GetDataItem(1, this->GetElement());
+            di->SetFormat(XDMF_FORMAT_XML);
+            array = di->GetArray();
+            array->SetNumberOfElements(2);
+            array->SetValues(0, this->DxDyDz, 2);
             di->Build();
         break;
       default :
@@ -235,8 +267,16 @@ if( XDMF_WORD_CMP( geometryType, "ORIGIN_DXDYDZ" ) ){
   this->GeometryType = XDMF_GEOMETRY_ORIGIN_DXDYDZ;
   return(XDMF_SUCCESS);
   }
+if( XDMF_WORD_CMP( geometryType, "ORIGIN_DXDY" ) ){
+  this->GeometryType = XDMF_GEOMETRY_ORIGIN_DXDY;
+  return(XDMF_SUCCESS);
+  }
 if( XDMF_WORD_CMP( geometryType, "VXVYVZ" ) ){
   this->GeometryType = XDMF_GEOMETRY_VXVYVZ;
+  return(XDMF_SUCCESS);
+  }
+if( XDMF_WORD_CMP( geometryType, "VXVY" ) ){
+  this->GeometryType = XDMF_GEOMETRY_VXVY;
   return(XDMF_SUCCESS);
   }
 return( XDMF_FAIL );
@@ -250,8 +290,14 @@ switch( this->GeometryType ){
   case XDMF_GEOMETRY_VXVYVZ:
     strcpy( Value, "VXVYVZ" );
     break;
+  case XDMF_GEOMETRY_VXVY:
+    strcpy( Value, "VXVY" );
+    break;
   case XDMF_GEOMETRY_ORIGIN_DXDYDZ:
     strcpy( Value, "ORIGIN_DXDYDZ" );
+    break;
+  case XDMF_GEOMETRY_ORIGIN_DXDY:
+    strcpy( Value, "ORIGIN_DXDY" );
     break;
   case XDMF_GEOMETRY_X_Y_Z :
     strcpy( Value, "X_Y_Z" );
@@ -421,6 +467,37 @@ if( ( this->GeometryType == XDMF_GEOMETRY_X_Y_Z ) ||
       XdmfErrorMessage("No Origin Specified");
       return( XDMF_FAIL );
     }
+  } else if( this->GeometryType == XDMF_GEOMETRY_ORIGIN_DXDY ) {
+      XdmfDataItem PointsItem;
+      PointsItem.SetDOM(this->DOM);
+      PointsItem.SetDsmBuffer(this->DsmBuffer);
+      XdmfDebug("Reading Origin and Dx, Dy" );
+      PointsElement = this->DOM->FindDataElement(0, this->Element );
+      if( PointsElement ){
+        if(PointsItem.SetElement(PointsElement, 0) == XDMF_FAIL) return(XDMF_FAIL);
+        if(PointsItem.UpdateInformation() == XDMF_FAIL) return(XDMF_FAIL);
+        if(PointsItem.Update() == XDMF_FAIL) return(XDMF_FAIL);
+        TmpArray = PointsItem.GetArray();
+        if( TmpArray ){
+            TmpArray->GetValues( 0, this->Origin, 2 );
+        }
+      PointsElement = this->DOM->FindDataElement(1, this->Element );
+      if( PointsElement ){
+        if(PointsItem.SetElement(PointsElement, 0) == XDMF_FAIL) return(XDMF_FAIL);
+        if(PointsItem.UpdateInformation() == XDMF_FAIL) return(XDMF_FAIL);
+        if(PointsItem.Update() == XDMF_FAIL) return(XDMF_FAIL);
+        TmpArray = PointsItem.GetArray();
+        if( TmpArray ){
+          TmpArray->GetValues( 0, this->DxDyDz, 2 );
+        }
+      } else {
+        XdmfErrorMessage("No Dx, Dy Specified");
+        return( XDMF_FAIL );
+      }
+    } else {
+      XdmfErrorMessage("No Origin Specified");
+      return( XDMF_FAIL );
+    }
   } else if( this->GeometryType == XDMF_GEOMETRY_VXVYVZ ) {
       XdmfDebug("Reading VectorX, VectorY, VectorZ" );
       PointsElement = this->DOM->FindDataElement(0, this->Element );
@@ -475,6 +552,44 @@ if( ( this->GeometryType == XDMF_GEOMETRY_X_Y_Z ) ||
         PointsItem.SetArrayIsMine(0);
     } else {
       XdmfErrorMessage("No VectorZ Specified");
+      return( XDMF_FAIL );
+      }
+  } else if( this->GeometryType == XDMF_GEOMETRY_VXVY) {
+      XdmfDebug("Reading VectorX, VectorY" );
+      PointsElement = this->DOM->FindDataElement(0, this->Element );
+      if( PointsElement ){
+        XdmfDataItem PointsItem;
+        PointsItem.SetDOM(this->DOM);
+        if(PointsItem.SetElement(PointsElement, 0) == XDMF_FAIL) return(XDMF_FAIL);
+        if(PointsItem.UpdateInformation() == XDMF_FAIL) return(XDMF_FAIL);
+        if(PointsItem.Update() == XDMF_FAIL) return(XDMF_FAIL);
+        TmpArray = PointsItem.GetArray();
+        if(!TmpArray){
+            XdmfErrorMessage("Error Reading Points X Vector");
+            return(XDMF_FAIL);
+        }
+        this->VectorX = TmpArray;
+        PointsItem.SetArrayIsMine(0);
+    } else {
+      XdmfErrorMessage("No VectorX Specified");
+      return( XDMF_FAIL );
+      }
+      PointsElement = this->DOM->FindDataElement(1, this->Element );
+      if( PointsElement ){
+        XdmfDataItem PointsItem;
+        PointsItem.SetDOM(this->DOM);
+        if(PointsItem.SetElement(PointsElement, 0) == XDMF_FAIL) return(XDMF_FAIL);
+        if(PointsItem.UpdateInformation() == XDMF_FAIL) return(XDMF_FAIL);
+        if(PointsItem.Update() == XDMF_FAIL) return(XDMF_FAIL);
+        TmpArray = PointsItem.GetArray();
+        if(!TmpArray){
+            XdmfErrorMessage("Error Reading Points Y Vector");
+            return(XDMF_FAIL);
+        }
+        this->VectorY = TmpArray;
+        PointsItem.SetArrayIsMine(0);
+    } else {
+      XdmfErrorMessage("No VectorY Specified");
       return( XDMF_FAIL );
       }
   }
