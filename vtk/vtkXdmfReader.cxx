@@ -91,7 +91,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.65");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.66");
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
@@ -3073,7 +3073,7 @@ int vtkXdmfReaderInternal::RequestGridData(
             XdmfArray   SetArray;
             XdmfArray   IndexArray;
             XdmfInt32   *index, i;
-            vtkDataArray* vtkValues;
+            vtkDataArray* vtkValues = NULL;
 
 
             IndexArray.SetNumberType(XDMF_INT32_TYPE);
