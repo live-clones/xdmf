@@ -23,7 +23,7 @@
 /*                                                                 */
 /*******************************************************************/
 #include "XdmfArray.h"
-
+#include <string.h>
 #include "XdmfArrayCopyMacro.h"
 
 #ifndef _WIN32
