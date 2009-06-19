@@ -359,6 +359,11 @@ if( this->GeometryType == XDMF_GEOMETRY_NONE ){
   }
 }
 if(XdmfElement::Update() != XDMF_SUCCESS) return(XDMF_FAIL);
+for(ArrayIndex = 0 ; ArrayIndex < XDMF_MAX_DIMENSION ; ArrayIndex++){
+    Start[ArrayIndex] = 0;
+    Stride[ArrayIndex] = 1;
+    Count[ArrayIndex] = 0;
+}
 ArrayIndex = 0;
 if( ( this->GeometryType == XDMF_GEOMETRY_X_Y_Z ) ||
   ( this->GeometryType == XDMF_GEOMETRY_X_Y ) ||
@@ -387,12 +392,19 @@ if( ( this->GeometryType == XDMF_GEOMETRY_X_Y_Z ) ||
                 case XDMF_GEOMETRY_XY :
                     points = new XdmfArray;
                     points->CopyType( TmpArray );
-                    points->SetNumberOfElements( TmpArray->GetNumberOfElements() / 2 * 3 );
+                    // points->SetNumberOfElements( TmpArray->GetNumberOfElements() / 2 * 3 );
+                    Start[0] = TmpArray->GetNumberOfElements() / 2;
+                    Start[1] = 3;
+                    points->SetShape( 2 , Start );
+                    // operator '=' is overloaded
+                    *points = 0;
                     break;
                 case XDMF_GEOMETRY_X_Y :
                     points = new XdmfArray;
                     points->CopyType( TmpArray );
                     points->SetNumberOfElements( TmpArray->GetNumberOfElements() * 3 );
+                    // operator '=' is overloaded
+                    *points = 0;
                     break;
                 default :
                     points = TmpArray;
@@ -411,12 +423,9 @@ if( ( this->GeometryType == XDMF_GEOMETRY_X_Y_Z ) ||
                     this->NumberOfPoints = TmpArray->GetNumberOfElements();
                     break;
             case XDMF_GEOMETRY_XY :
-                    Start[0] = TmpArray->GetNumberOfElements();
-                    Start[1] = 3;
-                    points->SetShape( 2 , Start );
                     Stride[0] = 1;
-                    Stride[0] = 1;
-                    Count[0] = TmpArray->GetNumberOfElements();
+                    Stride[1] = 1;
+                    Count[0] = TmpArray->GetNumberOfElements() / 2;
                     Count[1] = 2;
                     points->SelectHyperSlab( NULL, Stride, Count);
                     CopyArray( TmpArray, points);
