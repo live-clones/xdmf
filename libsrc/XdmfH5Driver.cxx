@@ -132,9 +132,15 @@ static herr_t H5FD_dsm_close(H5FD_t *_file);
 static herr_t H5FD_dsm_flush(H5FD_t *_file);
 #endif
 static int H5FD_dsm_cmp(const H5FD_t *_f1, const H5FD_t *_f2);
+#if (H5_VERS_MAJOR>1)||((H5_VERS_MAJOR==1)&&(H5_VERS_MINOR>=8))
+static haddr_t H5FD_dsm_get_eoa(const H5FD_t *_file, H5FD_mem_t type);
+static herr_t H5FD_dsm_set_eoa(H5FD_t *_file, H5FD_mem_t type, haddr_t addr);
+static haddr_t H5FD_dsm_get_eof(const H5FD_t *_file);
+#else
 static haddr_t H5FD_dsm_get_eoa(H5FD_t *_file);
 static herr_t H5FD_dsm_set_eoa(H5FD_t *_file, haddr_t addr);
 static haddr_t H5FD_dsm_get_eof(H5FD_t *_file);
+#endif
 static herr_t H5FD_dsm_read(H5FD_t *_file, H5FD_mem_t type, hid_t fapl_id, haddr_t addr,
            DSM_HSIZE_T size, void *buf);
 static herr_t H5FD_dsm_write(H5FD_t *_file, H5FD_mem_t type, hid_t fapl_id, haddr_t addr,
@@ -159,6 +165,9 @@ static const H5FD_class_t H5FD_dsm_g = {
     H5FD_dsm_close,             /*close         */
     H5FD_dsm_cmp,               /*cmp           */
     NULL,                       /*query         */
+#if (H5_VERS_MAJOR>1)||((H5_VERS_MAJOR==1)&&(H5_VERS_MINOR>=8))
+    NULL,                       /* get_type_map */
+#endif
     NULL,                       /*alloc         */
     NULL,                       /*free          */
     H5FD_dsm_get_eoa,           /*get_eoa       */
@@ -168,6 +177,9 @@ static const H5FD_class_t H5FD_dsm_g = {
     H5FD_dsm_read,              /*read          */
     H5FD_dsm_write,             /*write         */
     NULL,                       /*flush         */
+#if (H5_VERS_MAJOR>1)||((H5_VERS_MAJOR==1)&&(H5_VERS_MINOR>=8))
+    NULL,                       /* truncate     */
+#endif
     NULL,                       /*lock          */
     NULL,                       /*unlock        */
     H5FD_FLMAP_SINGLE           /*fl_map        */
@@ -594,7 +606,11 @@ H5FD_dsm_cmp(const H5FD_t *_f1, const H5FD_t *_f2)
  *-------------------------------------------------------------------------
  */
 static haddr_t
+#if (H5_VERS_MAJOR>1)||((H5_VERS_MAJOR==1)&&(H5_VERS_MINOR>=8))
+H5FD_dsm_get_eoa(const H5FD_t *_file, H5FD_mem_t type)
+#else
 H5FD_dsm_get_eoa(H5FD_t *_file)
+#endif
 {
     H5FD_dsm_t  *file = (H5FD_dsm_t*)_file;
 
@@ -622,7 +638,11 @@ H5FD_dsm_get_eoa(H5FD_t *_file)
  *-------------------------------------------------------------------------
  */
 static herr_t
+#if (H5_VERS_MAJOR>1)||((H5_VERS_MAJOR==1)&&(H5_VERS_MINOR>=8))
+H5FD_dsm_set_eoa(H5FD_t *_file, H5FD_mem_t type, haddr_t addr)
+#else
 H5FD_dsm_set_eoa(H5FD_t *_file, haddr_t addr)
+#endif
 {
     H5FD_dsm_t  *file = (H5FD_dsm_t*)_file;
 
@@ -663,7 +683,11 @@ H5FD_dsm_set_eoa(H5FD_t *_file, haddr_t addr)
  *-------------------------------------------------------------------------
  */
 static haddr_t
+#if (H5_VERS_MAJOR>1)||((H5_VERS_MAJOR==1)&&(H5_VERS_MINOR>=8))
+H5FD_dsm_get_eof(const H5FD_t *_file)
+#else
 H5FD_dsm_get_eof(H5FD_t *_file)
+#endif
 {
     H5FD_dsm_t  *file = (H5FD_dsm_t*)_file;
 
