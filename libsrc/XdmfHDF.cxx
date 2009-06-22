@@ -124,6 +124,8 @@ if( slash == NULL ){
 return( Directory );
 }
 
+#if (H5_VERS_MAJOR>1)||((H5_VERS_MAJOR==1)&&(H5_VERS_MINOR>=8))
+#else
 /*
  * One often needs to temporarily disable automatic error reporting when
  * trying something that's likely or expected to fail.  For instance, to
@@ -157,7 +159,7 @@ extern "C" { typedef herr_t (*H5E_saved_efunc_type)(void*); }
 #define H5E_END_TRY                                                           \
     H5Eset_auto (H5E_saved_efunc, H5E_saved_edata);                           \
 }
-
+#endif
 //
 // Get Type of Object
 //
@@ -247,7 +249,11 @@ H5Giterate( this->Cwd,
     NULL,
     XdmfHDFList,
     this );
+#if (H5_VERS_MAJOR>1)||((H5_VERS_MAJOR==1)&&(H5_VERS_MINOR>=8))
+NewDirectory = H5Gopen2( this->Cwd, NewDirectoryName, H5P_DEFAULT );
+#else
 NewDirectory = H5Gopen( this->Cwd, NewDirectoryName );
+#endif
 H5Gclose( this->Cwd );
 this->Cwd = NewDirectory;
 
@@ -262,11 +268,19 @@ hid_t    NewDirectory = -1;
 
 XdmfDebug( " Checking for Existance of HDF Directory " << Name );
 H5E_BEGIN_TRY {
+#if (H5_VERS_MAJOR>1)||((H5_VERS_MAJOR==1)&&(H5_VERS_MINOR>=8))
+NewDirectory = H5Gopen( this->Cwd, Name, H5P_DEFAULT );
+#else
 NewDirectory = H5Gopen( this->Cwd, Name );
+#endif
 } H5E_END_TRY;
 if ( NewDirectory < 0 ) {
   XdmfDebug( " Creating HDF Directory " << Name );
-  H5Gcreate( this->Cwd, Name , 0);
+#if (H5_VERS_MAJOR>1)||((H5_VERS_MAJOR==1)&&(H5_VERS_MINOR>=8))
+  H5Gcreate(this->Cwd, Name , 0, H5P_DEFAULT, H5P_DEFAULT);
+#else
+  H5Gcreate(this->Cwd, Name , 0);
+#endif
 } else {
 XdmfDebug(Name << " Already exists");
 }
@@ -347,7 +361,11 @@ if( Slash != NULL ){
 
   // This is no necessarily an error
   H5E_BEGIN_TRY {
+#if (H5_VERS_MAJOR>1)||((H5_VERS_MAJOR==1)&&(H5_VERS_MINOR>=8))
+  Directory = H5Gopen( this->Cwd, Pathname, H5P_DEFAULT );
+#else
   Directory = H5Gopen( this->Cwd, Pathname );
+#endif
   } H5E_END_TRY;
   if( Directory < 0 ){
     // Create All Subdirectories
@@ -364,11 +382,19 @@ if( Slash != NULL ){
       if( *TmpSlash == '/' ){
         *TmpSlash = '\0';
         H5E_BEGIN_TRY {
+#if (H5_VERS_MAJOR>1)||((H5_VERS_MAJOR==1)&&(H5_VERS_MINOR>=8))
+        Directory = H5Gopen( this->Cwd, Pathname, H5P_DEFAULT );
+#else
         Directory = H5Gopen( this->Cwd, Pathname );
+#endif
         } H5E_END_TRY;
         if( Directory < 0 ){
           XdmfDebug("Creating Directory" << Pathname );
+#if (H5_VERS_MAJOR>1)||((H5_VERS_MAJOR==1)&&(H5_VERS_MINOR>=8))
+          Directory = H5Gcreate( this->Cwd, Pathname, 0, H5P_DEFAULT, H5P_DEFAULT);
+#else
           Directory = H5Gcreate( this->Cwd, Pathname, 0);
+#endif
           if( Directory < 0 ){
             XdmfErrorMessage("Can't Create " << Pathname );
             return( XDMF_FAIL ); 
@@ -390,16 +416,28 @@ if( Slash != NULL ){
 free( Pathname );
 XdmfDebug("Checking for existance of " << this->Path );
 H5E_BEGIN_TRY {
+#if (H5_VERS_MAJOR>1)||((H5_VERS_MAJOR==1)&&(H5_VERS_MINOR>=8))
+  this->Dataset = H5Dopen( this->Cwd, this->Path, H5P_DEFAULT );
+#else
   this->Dataset = H5Dopen( this->Cwd, this->Path );
+#endif
 } H5E_END_TRY;
 if( this->Dataset < 0 ) {
  if(this->Compression <= 0){
   XdmfDebug("Creating New Contiguous Dataset");
+#if (H5_VERS_MAJOR>1)||((H5_VERS_MAJOR==1)&&(H5_VERS_MINOR>=8))
+  this->Dataset = H5Dcreate(this->Cwd,
+      this->Path,
+      this->GetDataType(),
+      this->GetDataSpace(),
+      H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+#else
   this->Dataset = H5Dcreate(this->Cwd,
       this->Path,
       this->GetDataType(),
       this->GetDataSpace(),
       H5P_DEFAULT);
+#endif
   }else{
   hid_t  Prop;
   hsize_t ChunkDims[XDMF_MAX_DIMENSION];
@@ -429,11 +467,19 @@ if( this->Dataset < 0 ) {
   compression = MIN(this->Compression, 9);
   XdmfDebug("Compression Level = " << compression);
   H5Pset_deflate(Prop, compression);
+#if (H5_VERS_MAJOR>1)||((H5_VERS_MAJOR==1)&&(H5_VERS_MINOR>=8))
+  this->Dataset = H5Dcreate(this->Cwd,
+      this->Path,
+      this->GetDataType(),
+      this->GetDataSpace(),
+      Prop, H5P_DEFAULT, H5P_DEFAULT);
+#else
   this->Dataset = H5Dcreate(this->Cwd,
       this->Path,
       this->GetDataType(),
       this->GetDataSpace(),
       Prop);
+#endif
   }
 } else {
   XdmfDebug("Dataset Exists");
@@ -456,7 +502,11 @@ if( this->Dataset > 0 ) {
   H5Dclose(this->Dataset);
   }
 
+#if (H5_VERS_MAJOR>1)||((H5_VERS_MAJOR==1)&&(H5_VERS_MINOR>=8))
+this->Dataset = H5Dopen(this->Cwd, this->Path, H5P_DEFAULT);
+#else
 this->Dataset = H5Dopen(this->Cwd, this->Path);
+#endif
 if( this->Dataset < 0 ){
   XdmfErrorMessage("Cannot find dataset " << this->Cwd <<
     "/" << this->Path );
@@ -756,7 +806,11 @@ if( this->File < 0 ){
     return( XDMF_FAIL );  
     }
   }
+#if (H5_VERS_MAJOR>1)||((H5_VERS_MAJOR==1)&&(H5_VERS_MINOR>=8))
+this->Cwd = H5Gopen(this->File, "/", H5P_DEFAULT);
+#else
 this->Cwd = H5Gopen(this->File, "/");
+#endif
 XdmfDebug("File Open at /");
 
 status = XDMF_SUCCESS;
