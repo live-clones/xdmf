@@ -24,7 +24,11 @@
 /*******************************************************************/
 #include "XdmfHeavyData.h"
 
-XdmfHeavyData::XdmfHeavyData() {
+XdmfHeavyData::XdmfHeavyData() :
+  mOpenCB( NULL ),
+  mReadCB( NULL ),
+  mWriteCB( NULL ),
+  mCloseCB( NULL ) {
 
   // Defaults
   this->SetDomain( "FILE" );
@@ -85,5 +89,69 @@ void XdmfHeavyData::SetFileName( XdmfConstString String )
     this->FileName = new char [ strlen(String) + 1 ];
     strcpy(this->FileName, String);
     }
+}
+
+XdmfInt32 XdmfHeavyData::Open( XdmfConstString name, XdmfConstString access ) {
+  if ( mOpenCB ) {
+    return mOpenCB->DoOpen( this, name, access );
+  } else {
+    return DoOpen( name, access );
+  }
+}
+
+XdmfArray* XdmfHeavyData::Read( XdmfArray* array ) {
+  if ( mReadCB ) {
+    return mReadCB->DoRead( this, array );
+  } else {
+    return DoRead( array );
+  }
+}
+
+XdmfInt32 XdmfHeavyData::Write( XdmfArray* array ) {
+  if ( mWriteCB ) {
+    return mWriteCB->DoWrite( this, array );
+  } else {
+    return DoWrite( array );
+  }
+}
+
+XdmfInt32 XdmfHeavyData::Close() {
+  if ( mCloseCB ) {
+    return mCloseCB->DoClose( this );
+  } else {
+    return DoClose();
+  }
+}
+
+XdmfInt32 XdmfHeavyData::DoOpen( XdmfConstString, XdmfConstString ) {
+  return XDMF_FAIL;
+}
+
+XdmfArray* XdmfHeavyData::DoRead( XdmfArray* ) { 
+  return NULL;
+}
+
+XdmfInt32 XdmfHeavyData::DoWrite( XdmfArray* ) {
+  return XDMF_FAIL;
+}
+
+XdmfInt32 XdmfHeavyData::DoClose() {
+  return XDMF_FAIL;
+}
+
+void XdmfHeavyData::setOpenCallback( XdmfOpenCallback* cb ) {
+  mOpenCB = cb;
+}
+
+void XdmfHeavyData::setReadCallback( XdmfReadCallback* cb ) {
+  mReadCB = cb;
+}
+
+void XdmfHeavyData::setWriteCallback( XdmfWriteCallback* cb ) {
+  mWriteCB = cb;
+}
+
+void XdmfHeavyData::setCloseCallback( XdmfCloseCallback* cb ) {
+  mCloseCB = cb;
 }
 

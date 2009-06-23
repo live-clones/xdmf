@@ -290,7 +290,7 @@ return( this->SetCwdName( this->CwdName ) );
 }
 
 XdmfInt32
-XdmfHDF::Close() {
+XdmfHDF::DoClose() {
 
 XdmfDebug("Closing");
 H5E_BEGIN_TRY {
@@ -519,7 +519,7 @@ return( XDMF_SUCCESS );
 }
 
 XdmfArray *
-XdmfHDF::Read( XdmfArray *Array ) {
+XdmfHDF::DoRead( XdmfArray *Array ) {
 
 herr_t      status;
 XDMF_HDF5_SIZE_T  src_npts, dest_npts;
@@ -564,7 +564,7 @@ return( Array );
 }
 
 XdmfInt32
-XdmfHDF::Write( XdmfArray *Array ) {
+XdmfHDF::DoWrite( XdmfArray *Array ) {
 
 herr_t    status;
 XDMF_HDF5_SIZE_T src_npts, dest_npts;
@@ -614,7 +614,7 @@ return(XDMF_SUCCESS);
 
 
 XdmfInt32
-XdmfHDF::Open( XdmfConstString DataSetName, XdmfConstString access ) {
+XdmfHDF::DoOpen( XdmfConstString DataSetName, XdmfConstString access ) {
 
 // XdmfString Domain, *File, *Path;
 XdmfString lastcolon;
