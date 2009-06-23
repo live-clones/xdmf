@@ -579,7 +579,8 @@ XdmfInt32 XdmfDataItem::Update(){
 					return(XDMF_FAIL);
 			}
 
-			XdmfPointer ArrayPointer, ArrayPointerT;
+			// XdmfPointer ArrayPointer, ArrayPointerT;
+			XdmfPointer ArrayPointer;
 
 			for(int j=0; j<NJ; j++)
 			{
