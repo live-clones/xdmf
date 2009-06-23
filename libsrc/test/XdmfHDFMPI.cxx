@@ -1,7 +1,7 @@
+#include <mpi.h>
 #include <XdmfArray.h>
 #include <XdmfHDF.h>
 
-#include <mpi.h>
 
 /// Simple memory buffer implementation that keeps track of it's stream pointer.
 class Buffer {
@@ -40,10 +40,10 @@ public:
   /// Copy a single value into the buffer.
   template< typename T >
   T tell() {
-    std::size_t size = sizeof( T );
+    std::size_t tsize = sizeof( T );
     T tmp;
-    memcpy( &tmp, m_tell, size );
-    m_tell += size;
+    memcpy( &tmp, m_tell, tsize );
+    m_tell += tsize;
     return tmp;
   }
 
