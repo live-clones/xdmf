@@ -20,5 +20,7 @@ endmacro( XdmfMPITest )
 
 XdmfSerialTest( XdmfHDFRoundtrip TestXdmfHDF.cxx )
 
-XdmfMPITest( XdmfHDFMPI 4 XdmfHDFMPI.cxx )
+if(XDMF_BUILD_MPI)
+    XdmfMPITest( XdmfHDFMPI 4 XdmfHDFMPI.cxx )
+endif(XDMF_BUILD_MPI)
 
