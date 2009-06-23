@@ -215,6 +215,7 @@ XdmfArray::XdmfArray() {
 
 XdmfArray::XdmfArray( XdmfInt32 numberType ) {
   XdmfDebug("XdmfArray Constructor");
+  this->AllowAllocate = 1;
   this->DataPointer = NULL;
   this->DataIsMine = 1;
   this->SetNumberType( numberType );
@@ -223,6 +224,7 @@ XdmfArray::XdmfArray( XdmfInt32 numberType ) {
 
 XdmfArray::XdmfArray( XdmfInt32 numberType, XdmfLength Length ) {
   XdmfDebug("XdmfArray Constructor");
+  this->AllowAllocate = 1;
   this->DataPointer = NULL;
   this->DataIsMine = 1;
   this->SetNumberType( numberType );
