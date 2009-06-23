@@ -199,6 +199,10 @@ public:
     XdmfGetStringMacro(Function);
     //! Release Large Data
     XdmfInt32   Release();
+    XdmfGetValueMacro(ColumnMajor, XdmfInt32);
+    XdmfSetValueMacro(ColumnMajor, XdmfInt32);
+    XdmfGetValueMacro(TransposeInMemory, XdmfInt32);
+    XdmfSetValueMacro(TransposeInMemory, XdmfInt32);
 
 protected:
     XdmfInt32       Format;
@@ -210,6 +214,8 @@ protected:
     XdmfValues      *Values;
     XdmfString      HeavyDataSetName;
     XdmfString      Function;
+	XdmfInt32  ColumnMajor;
+	XdmfInt32  TransposeInMemory;
 
     //! Make sure this->Values is correct
     XdmfInt32       CheckValues(XdmfInt32 Format);
