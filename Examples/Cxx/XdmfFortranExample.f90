@@ -94,4 +94,5 @@
        CALL XDMFWRITEGRID(obj, 'TestGrid'//CHAR(0))
 	   CALL XDMFWRITETOFILE(obj)
        CALL XDMFSERIALIZE(obj)
+       CALL XDMFCLOSE(obj)
        END
