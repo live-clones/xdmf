@@ -1,3 +1,28 @@
+/*******************************************************************/
+/*                               XDMF                              */
+/*                   eXtensible Data Model and Format              */
+/*                                                                 */
+/*  Id : Id  */
+/*  Date : $Date$ */
+/*  Version : $Revision$ */
+/*                                                                 */
+/*  Author:                                                        */
+/*     Kenneth Leiter                                              */
+/*     kenneth.leiter@arl.army.mil                                 */
+/*     US Army Research Laboratory                                 */
+/*     Aberdeen Proving Ground, MD                                 */
+/*                                                                 */
+/*     Copyright @ 2009 US Army Research Laboratory                */
+/*     All Rights Reserved                                         */
+/*     See Copyright.txt or http://www.arl.hpc.mil/ice for details */
+/*                                                                 */
+/*     This software is distributed WITHOUT ANY WARRANTY; without  */
+/*     even the implied warranty of MERCHANTABILITY or FITNESS     */
+/*     FOR A PARTICULAR PURPOSE.  See the above copyright notice   */
+/*     for more information.                                       */
+/*                                                                 */
+/*******************************************************************/
+
 #include <Xdmf.h>
 #include <XdmfSet.h>
 
@@ -22,6 +47,7 @@
 #define XdmfWriteToFile xdmfwritetofile_
 #define XdmfSerialize xdmfserialize_
 #define XdmfGetDOM xdmfgetdom_
+#define XdmfClose xdmfclose_
 
 XdmfFortran::XdmfFortran()
 {
@@ -34,7 +60,20 @@ XdmfFortran::XdmfFortran()
 
 XdmfFortran::~XdmfFortran()
 {
+	delete myDOM;
+	delete myRoot;
+	delete myDomain;
+	while(!myCollections.empty())
+	{
+		delete myCollections.top();
+		myCollections.pop();
+	}
 
+	while(!myAttributes.empty())
+	{
+		delete myAttributes.back();
+		myAttributes.pop_back();
+	}
 }
 
 //
@@ -51,7 +90,7 @@ extern "C" {
 	 */
 	long XdmfInit(char *outputName)
 	{
-		XdmfFortran * myPointer = new(XdmfFortran);
+		XdmfFortran * myPointer = new XdmfFortran();
 		myPointer->myRoot->SetDOM(myPointer->myDOM);
 		myPointer->myRoot->Build();
 		myPointer->myRoot->Insert(myPointer->myDomain);
@@ -350,6 +389,7 @@ extern "C" {
 		grid->Build();
 	}
 
+
 	/**
 	 *
 	 * Write constructed Xdmf file to disk with filename created upon initialization
@@ -383,5 +423,16 @@ extern "C" {
 	{
 		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
 		strcpy(charPointer, myPointer->myDOM->Serialize());
+	}
+
+	/**
+	 *
+	 * Close XdmfFortran interface and clean memory
+	 *
+	 */
+	void XdmfClose(long * pointer)
+	{
+		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
+		delete myPointer;
 	}
 }
