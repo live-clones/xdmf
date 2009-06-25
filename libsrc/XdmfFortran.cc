@@ -54,6 +54,8 @@ XdmfFortran::XdmfFortran()
 	myDOM = new XdmfDOM();
 	myRoot = new XdmfRoot();
 	myDomain = new XdmfDomain();
+	myTopology = NULL;
+	myGeometry = NULL;
 	currentTime = -1;
 	inCollection = false;
 }
@@ -63,6 +65,9 @@ XdmfFortran::~XdmfFortran()
 	delete myDOM;
 	delete myRoot;
 	delete myDomain;
+	delete myGeometry;
+	delete myTopology;
+
 	while(!myCollections.empty())
 	{
 		delete myCollections.top();
@@ -186,8 +191,12 @@ extern "C" {
 		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
 		if(myPointer->inCollection)
 		{
-			myPointer->inCollection = false;
+			delete myPointer->myCollections.top();
 			myPointer->myCollections.pop();
+			if(myPointer->myCollections.empty())
+			{
+				myPointer->inCollection = false;
+			}
 		}
 	}
 
@@ -271,6 +280,7 @@ extern "C" {
 		currAttribute->SetName(attributeName);
 		currAttribute->SetAttributeCenterFromString(attributeCenter);
 		currAttribute->SetAttributeTypeFromString(attributeType);
+		currAttribute->SetDeleteOnGridDelete(true);
 
 		XdmfArray * array = currAttribute->GetValues();
 		array->SetNumberTypeFromString(numberType);
@@ -281,8 +291,8 @@ extern "C" {
 
 	/**
 	 *
-	 * Add an array to the XdmfDOM.  Arrays can be written within collections or
-	 * within the top level domain.
+	 * Write out "generic" data to XDMF.  This writes out data to the end of the top-level domain or the current collection.  It is independent of any grids.
+	 * Currently supports only writing a single dataitem.
 	 *
 	 */
 	void XdmfAddArray(long * pointer, char * name, char * numberType, int * numberOfValues, XdmfPointer * data)
@@ -293,6 +303,7 @@ extern "C" {
     	currSet->SetDOM(myPointer->myDOM);
        	currSet->SetSetType(XDMF_SET_TYPE_NODE);
        	currSet->SetName(name);
+       	currSet->SetDeleteOnGridDelete(true);
 
        	// Copy Elements from Set to XdmfArray
        	XdmfArray * array = currSet->GetIds();
@@ -306,6 +317,7 @@ extern "C" {
 		if (myPointer->inCollection)
 		{
 			myPointer->myCollections.top()->Insert(currSet);
+	        currSet->Build();
 		}
 		else
 		{
@@ -313,9 +325,9 @@ extern "C" {
 			myGrid->SetDOM(myPointer->myDOM);
 	        myGrid->SetElement(myPointer->myDOM->FindElement("Domain"));
 	        myGrid->Insert(currSet);
+	        currSet->Build();
+	        delete myGrid;
 		}
-
-        currSet->Build();
 	}
 
 
@@ -387,6 +399,9 @@ extern "C" {
 		}
 
 		grid->Build();
+		delete grid;
+		myPointer->myTopology = NULL;
+		myPointer->myGeometry = NULL;
 	}
 
 
