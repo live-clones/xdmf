@@ -123,9 +123,6 @@ XdmfDiff::~XdmfDiff()
  */
 XdmfDiff::XdmfDiff(XdmfDOM * refDOM, XdmfDOM * newDOM)
 {
-	myRefDOM = new XdmfDOM();
-	myNewDOM = new XdmfDOM();
-
 	myRefDOM = refDOM;
 	myNewDOM = newDOM;
 
@@ -150,6 +147,7 @@ void XdmfDiff::SetRelativeError(XdmfFloat64 relativeError)
 	myRelativeError = relativeError;
 	relErrorOn = true;
 	absErrorOn = false;
+	diffRun = false;
 }
 
 /*
@@ -164,6 +162,7 @@ void XdmfDiff::SetAbsoluteError(XdmfFloat64 absoluteError)
 	myAbsoluteError = absoluteError;
 	relErrorOn = false;
 	absErrorOn = true;
+	diffRun = false;
 }
 
 /*
@@ -175,6 +174,7 @@ void XdmfDiff::SetAbsoluteError(XdmfFloat64 absoluteError)
 void XdmfDiff::SetIgnoreTopology(XdmfBoolean value)
 {
 	ignoreTopology = value;
+	diffRun = false;
 }
 
 /*
@@ -186,6 +186,7 @@ void XdmfDiff::SetIgnoreTopology(XdmfBoolean value)
 void XdmfDiff::SetIgnoreGeometry(XdmfBoolean value)
 {
 	ignoreGeometry = value;
+	diffRun = false;
 }
 
 /*
@@ -197,6 +198,7 @@ void XdmfDiff::SetIgnoreGeometry(XdmfBoolean value)
 void XdmfDiff::SetIgnoreAllAttributes(XdmfBoolean value)
 {
 	ignoreAllAttributes = value;
+	diffRun = false;
 }
 
 /*
@@ -232,19 +234,18 @@ void XdmfDiff::DisplayFailuresOnly(XdmfBoolean value)
 std::string XdmfDiff::GetDiffs()
 {
 	areEquivalent = true;
+	diffRun = true;
 	std::stringstream toReturn;
 
 	XdmfXmlNode currDomain = myRefDOM->FindElement("Domain");
 	for (int i=0; i<myRefDOM->FindNumberOfElements("Grid", currDomain); i++)
 	{
-		XdmfGrid * grid = new XdmfGrid();
-		grid->SetDOM(myRefDOM);
-		grid->SetElement(myRefDOM->FindElement("Grid", i, currDomain));
-		grid->Update();
-		toReturn << this->GetDiffs(grid->GetName());
-		delete grid;
+		XdmfGrid grid;
+		grid.SetDOM(myRefDOM);
+		grid.SetElement(myRefDOM->FindElement("Grid", i, currDomain));
+		grid.Update();
+		toReturn << this->GetDiffs(grid.GetName());
 	}
-	diffRun = true;
 	return toReturn.str();
 }
 
@@ -1065,6 +1066,7 @@ void XdmfDiff::ParseSettingsFile(XdmfConstString settingsFile)
     		   }
     	   }
        }
+       diffRun = false;
        ifs.close();
 }
 
