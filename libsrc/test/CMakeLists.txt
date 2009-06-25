@@ -18,9 +18,18 @@ macro( XdmfMPITest testname num_procs )
     endif( MPI_FOUND )
 endmacro( XdmfMPITest )
 
+macro( XdmfDiffTest testname )
+    add_executable (${testname} ${ARGN} )
+    target_link_libraries( ${testname} XdmfUtils )
+    add_test( ${testname} ${EXECUTABLE_OUTPUT_PATH}/${testname} )
+endmacro()
+
 XdmfSerialTest( XdmfHDFRoundtrip TestXdmfHDF.cxx )
 
 if(XDMF_BUILD_MPI)
     XdmfMPITest( XdmfHDFMPI 4 XdmfHDFMPI.cxx )
 endif(XDMF_BUILD_MPI)
 
+if(XDMF_BUILD_UTILS)
+    XdmfDiffTest( XdmfDiffTest TestXdmfDiff.cc )
+endif(XDMF_BUILD_UTILS)
