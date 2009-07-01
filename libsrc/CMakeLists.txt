@@ -74,11 +74,8 @@ SET( XdmfMpiSource
   XdmfDsmCommMpi
   )
 
-SET(XdmfFortranSource
+SET( XdmfUtilSource
   XdmfFortran
-  )
-
-SET(XdmfDiffSource
   XdmfDiff
   )
 
@@ -374,9 +371,9 @@ TARGET_LINK_LIBRARIES(Xdmf
 
 OPTION(XDMF_BUILD_UTILS "Build Xdmf Utilities" OFF)
 IF(XDMF_BUILD_UTILS)
-   ADD_LIBRARY(XdmfUtils ${LIBTYPE} ${XdmfFortranSource} ${XdmfDiffSource})
+   ADD_LIBRARY(XdmfUtils ${LIBTYPE} ${XdmfUtilSource})
    TARGET_LINK_LIBRARIES(XdmfUtils Xdmf)
-   ADD_EXECUTABLE(XdmfDiff ${XdmfDiffSource})
+   ADD_EXECUTABLE(XdmfDiff XdmfDiffUtil)
    TARGET_LINK_LIBRARIES(XdmfDiff XdmfUtils)
 ENDIF(XDMF_BUILD_UTILS)
 
