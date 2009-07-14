@@ -93,7 +93,7 @@ extern "C" {
 	 * Initialize a new Xdmf file.
 	 *
 	 */
-	long XdmfInit(char *outputName)
+	long XdmfInit(char * outputName)
 	{
 		XdmfFortran * myPointer = new XdmfFortran();
 		myPointer->myRoot->SetDOM(myPointer->myDOM);
@@ -218,10 +218,13 @@ extern "C" {
 		//myPointer->myTopology->SetBaseOffset(1);
 
 		// If you haven't assigned an XdmfArray, GetConnectivity() will create one.
-		XdmfArray * myConnections = myPointer->myTopology->GetConnectivity();
-		myConnections->SetNumberOfElements(*numberOfElements * myPointer->myTopology->GetNodesPerElement());
-		myConnections->SetNumberType(XDMF_INT32_TYPE);
-		myConnections->SetValues(0, conns, *numberOfElements * myPointer->myTopology->GetNodesPerElement());
+		if (myPointer->myTopology->GetTopologyType() != XDMF_POLYVERTEX)
+		{
+			XdmfArray * myConnections = myPointer->myTopology->GetConnectivity();
+			myConnections->SetNumberOfElements(*numberOfElements * myPointer->myTopology->GetNodesPerElement());
+			myConnections->SetNumberType(XDMF_INT32_TYPE);
+			myConnections->SetValues(0, conns, *numberOfElements * myPointer->myTopology->GetNodesPerElement());
+		}
 	}
 
 	/**
@@ -300,14 +303,14 @@ extern "C" {
 		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
 
 		XdmfSet * currSet = new XdmfSet();
-    	currSet->SetDOM(myPointer->myDOM);
-       	currSet->SetSetType(XDMF_SET_TYPE_NODE);
-       	currSet->SetName(name);
-       	currSet->SetDeleteOnGridDelete(true);
+    		currSet->SetDOM(myPointer->myDOM);
+		currSet->SetSetType(XDMF_SET_TYPE_NODE);
+       		currSet->SetName(name);
+       		currSet->SetDeleteOnGridDelete(true);
 
-       	// Copy Elements from Set to XdmfArray
-       	XdmfArray * array = currSet->GetIds();
-       	array->SetNumberTypeFromString(numberType);
+       		// Copy Elements from Set to XdmfArray
+       		XdmfArray * array = currSet->GetIds();
+       		array->SetNumberTypeFromString(numberType);
 		array->SetNumberOfElements(*numberOfValues);
 		std::stringstream heavyDataName;
 		heavyDataName << myPointer->myName << ".h5:/" <<  name;;
@@ -317,16 +320,16 @@ extern "C" {
 		if (myPointer->inCollection)
 		{
 			myPointer->myCollections.top()->Insert(currSet);
-	        currSet->Build();
+	        	currSet->Build();
 		}
 		else
 		{
 			XdmfGrid * myGrid = new XdmfGrid();
 			myGrid->SetDOM(myPointer->myDOM);
-	        myGrid->SetElement(myPointer->myDOM->FindElement("Domain"));
-	        myGrid->Insert(currSet);
-	        currSet->Build();
-	        delete myGrid;
+	        	myGrid->SetElement(myPointer->myDOM->FindElement("Domain"));
+	        	myGrid->Insert(currSet);
+	        	currSet->Build();
+	        	delete myGrid;
 		}
 	}
 
@@ -356,17 +359,25 @@ extern "C" {
 		}
 
 		grid->SetName(totalGridName.str().c_str());
+		if (myPointer->myTopology != NULL)
+		{
+			if (myPointer->myTopology->GetTopologyType() != XDMF_POLYVERTEX)
+			{
+				//Modify HDF5 names so we aren't writing over top of our data!
+				std::stringstream topologyDataName;
+				topologyDataName << myPointer->myName << ".h5:/" <<  totalGridName.str() << "/Connections";
+				myPointer->myTopology->GetConnectivity()->SetHeavyDataSetName(topologyDataName.str().c_str());
+			}
+				grid->SetTopology(myPointer->myTopology);
+		}
 
-		//Modify HDF5 names so we aren't writing over top of our data!
-		std::stringstream topologyDataName;
-		topologyDataName << myPointer->myName << ".h5:/" <<  totalGridName.str() << "/Connections";
-		myPointer->myTopology->GetConnectivity()->SetHeavyDataSetName(topologyDataName.str().c_str());
-		grid->SetTopology(myPointer->myTopology);
-
-		std::stringstream geometryDataName;
-		geometryDataName << myPointer->myName << ".h5:/" <<  totalGridName.str() << "/XYZ";
-		myPointer->myGeometry->GetPoints()->SetHeavyDataSetName(geometryDataName.str().c_str());
-		grid->SetGeometry(myPointer->myGeometry);
+		if (myPointer->myGeometry != NULL)
+		{
+			std::stringstream geometryDataName;
+			geometryDataName << myPointer->myName << ".h5:/" <<  totalGridName.str() << "/XYZ";
+			myPointer->myGeometry->GetPoints()->SetHeavyDataSetName(geometryDataName.str().c_str());
+			grid->SetGeometry(myPointer->myGeometry);
+                }
 
 		if (myPointer->inCollection)
 		{

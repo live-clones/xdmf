@@ -46,7 +46,7 @@ public:
 	std::stack<XdmfGrid*> myCollections;
 	std::vector<XdmfAttribute*> myAttributes;
 	std::map<char*, int> myWrittenGrids;
-	char * myName;
+	std::string myName;
 	double currentTime;
 	bool inCollection;
 };
