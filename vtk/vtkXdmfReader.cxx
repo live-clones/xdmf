@@ -91,7 +91,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.66");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.67");
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
@@ -3268,9 +3268,11 @@ int vtkXdmfReaderInternal::RequestGridData(
           vtkDebugWithObjectMacro(this->Reader,
                                   "Setting Grid Centered Values");
           tmpArray->CopyType( values );
-          tmpArray->SetNumberOfElements( dataSet->GetNumberOfPoints() );
-          tmpArray->Generate( values->GetValueAsFloat64(0), 
-                              values->GetValueAsFloat64(0) );
+          tmpArray->SetNumberOfElements( dataSet->GetNumberOfPoints() * Components);
+          for (int i=0; i<dataSet->GetNumberOfPoints(); i++)
+          {
+             tmpArray->SetValues(i * Components, vtkValues->GetTuple(0), Components, 1, 1);
+          }
           vtkValues->Delete();
           this->ArrayConverter->SetVtkArray( NULL );
           vtkValues=this->ArrayConverter->FromXdmfArray(tmpArray->GetTagName(), 1, 1, Components, 0);
