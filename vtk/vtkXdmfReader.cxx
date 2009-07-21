@@ -91,7 +91,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.67");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.68");
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
@@ -3156,6 +3156,9 @@ int vtkXdmfReaderInternal::RequestGridData(
       case XDMF_ATTRIBUTE_TYPE_TENSOR :
         Components = 9;
         break;
+      case XDMF_ATTRIBUTE_TYPE_TENSOR6:
+        Components = 6;
+        break; 	
       case XDMF_ATTRIBUTE_TYPE_VECTOR:
         Components = 3;
         break;
@@ -3260,7 +3263,36 @@ int vtkXdmfReaderInternal::RequestGridData(
         vtkValues->SetName(name);
         
         // Special Cases
-        if( AttributeCenter == XDMF_ATTRIBUTE_CENTER_GRID ) 
+       if( AttributeType == XDMF_ATTRIBUTE_TYPE_TENSOR6 )
+       {
+          XdmfArray *tmpArray = new XdmfArray;
+          vtkDebugWithObjectMacro(this->Reader,
+                                  "Converting Tensor6 to Tensor");
+          tmpArray->CopyType( values );
+          tmpArray->SetNumberOfElements( values->GetNumberOfElements() * 3/2);
+          // Copy Symmetrical Tensor Values to Correct Positions in 3x3 matrix
+          for (int i=0; i<(tmpArray->GetNumberOfElements()/9); i++)
+          {
+	     tmpArray->SetValues((i*9)   , vtkValues->GetTuple(i), 3, 1, 1);
+  	     tmpArray->SetValues((i*9)+3 , vtkValues->GetTuple(i)+1, 1, 1, 1);
+             tmpArray->SetValues((i*9)+4 , vtkValues->GetTuple(i)+3, 2, 1, 1);
+             tmpArray->SetValues((i*9)+6 , vtkValues->GetTuple(i)+2, 1, 1, 1);
+	     tmpArray->SetValues((i*9)+7 , vtkValues->GetTuple(i)+4, 1, 1, 1);
+	     tmpArray->SetValues((i*9)+8 , vtkValues->GetTuple(i)+5, 1, 1, 1);
+          }
+          Components = 9;
+          AttributeType == XDMF_ATTRIBUTE_TYPE_TENSOR;
+          vtkValues->Delete();
+          this->ArrayConverter->SetVtkArray( NULL );
+          vtkValues=this->ArrayConverter->FromXdmfArray(tmpArray->GetTagName(), 1, 1, Components, 0);
+          if( !name )
+          {
+            name = values->GetTagName();
+          }
+          vtkValues->SetName( name );
+          delete tmpArray;
+      }
+      if( AttributeCenter == XDMF_ATTRIBUTE_CENTER_GRID ) 
           {
           // Implement XDMF_ATTRIBUTE_CENTER_GRID as PointData
           XdmfArray *tmpArray = new XdmfArray;
