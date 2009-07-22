@@ -91,7 +91,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.68");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.69");
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
@@ -1641,7 +1641,7 @@ bool vtkXdmfReader::ParseXML()
       //Tell the parser what the working directory is.
       vtkstd::string directory =
         vtksys::SystemTools::GetFilenamePath(this->FileName) + "/";
-      if (directory == "")
+      if (directory == "/")
         {
         directory = vtksys::SystemTools::GetCurrentWorkingDirectory() + "/";
         }
