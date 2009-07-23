@@ -6,12 +6,12 @@
   Date:      $Date$
   Version:   $Revision$
 
-  Copyright (c) 1993-2002 Ken Martin, Will Schroeder, Bill Lorensen 
+  Copyright (c) 1993-2002 Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
   See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
@@ -63,7 +63,7 @@ public:
 
   // Description:
   // Get/Set the current domain name. If none is set, the first domain will be
-  // used. 
+  // used.
   virtual void SetDomainName(const char*);
   vtkGetStringMacro(DomainName);
 
@@ -105,12 +105,12 @@ public:
   // arrays are loaded by the reader.
   vtkGetObjectMacro(PointDataArraySelection, vtkDataArraySelection);
   vtkGetObjectMacro(CellDataArraySelection, vtkDataArraySelection);
-  
-  // Description:  
+
+  // Description:
   // Get the number of point or cell arrays available in the input.
   int GetNumberOfPointArrays();
   int GetNumberOfCellArrays();
-  
+
   // Description:
   // Get the name of the point or cell array with the given index in
   // the input.
@@ -122,8 +122,8 @@ public:
   // be read.
   int GetPointArrayStatus(const char* name);
   int GetCellArrayStatus(const char* name);
-  void SetPointArrayStatus(const char* name, int status);  
-  void SetCellArrayStatus(const char* name, int status);  
+  void SetPointArrayStatus(const char* name, int status);
+  void SetCellArrayStatus(const char* name, int status);
 
   // Description:
   // Set whether the all point or cell arrays are to
@@ -156,8 +156,8 @@ public:
 
   // Description:
   // Set/Get Parameter Current Index
-  int SetParameterIndex(const char *Name, int CurrentIndex); 
-  int SetParameterIndex(int ParameterIndex, int CurrentIndex); 
+  int SetParameterIndex(const char *Name, int CurrentIndex);
+  int SetParameterIndex(int ParameterIndex, int CurrentIndex);
   int GetParameterIndex(const char *Name);
   int GetParameterIndex(int index);
 
@@ -194,14 +194,16 @@ public:
   // Description:
   // Determine if the file can be readed with this reader.
   virtual int CanReadFile(const char* fname);
-  
+
   // Description:
   // Set the controller used to coordinate parallel reading.
+//BTX
   void SetController(vtkMultiProcessController* controller);
-  
+
   // Return the controller used to coordinate parallel reading. By default,
   // it is the global controller.
   vtkGetObjectMacro(Controller,vtkMultiProcessController);
+//ETX
 
   // Set DsmBubffer
   void SetDsmBuffer(void *Bufp);
@@ -233,9 +235,9 @@ protected:
   virtual int ProcessRequest(vtkInformation *request,
                              vtkInformationVector **inputVector,
                              vtkInformationVector *outputVector);
-  
+
   virtual int RequestDataObject(vtkInformationVector *outputVector);
-  
+
   virtual int RequestData(vtkInformation *, vtkInformationVector **,
                           vtkInformationVector *);
   virtual int RequestInformation(vtkInformation *, vtkInformationVector **,
@@ -279,7 +281,7 @@ protected:
   int            TimeStep;
 private:
   vtkXdmfReader(const vtkXdmfReader&); // Not implemented
-  void operator=(const vtkXdmfReader&); // Not implemented  
+  void operator=(const vtkXdmfReader&); // Not implemented
 };
 
 #endif //__vtkXdmfReader_h
