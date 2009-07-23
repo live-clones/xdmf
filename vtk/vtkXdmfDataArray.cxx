@@ -135,8 +135,8 @@ vtkDataArray *vtkXdmfDataArray::FromXdmfArray( char *ArrayName, int CopyShape,
     /// this breaks
     components = Components;
     tuples = array->GetNumberOfElements() / components;
-    // cout << "Tuples: " << tuples << " components: " << components << endl;
-    // cout << "Rank: " << rank << endl;
+     //cout << "Tuples: " << tuples << " components: " << components << endl;
+     //cout << "Rank: " << rank << endl;
     this->vtkArray->SetNumberOfComponents( components );
     if(MakeCopy) this->vtkArray->SetNumberOfTuples( tuples );
     } 
@@ -244,7 +244,7 @@ vtkDataArray *vtkXdmfDataArray::FromXdmfArray( char *ArrayName, int CopyShape,
         XdmfErrorMessage("Cannot downcast data array");
         return(0);
     }
-    shorta->SetArray((short *)array->GetDataPointer(), tuples, 0);
+    shorta->SetArray((short *)array->GetDataPointer(), components * tuples, 0);
     }
     break;
   case XDMF_UINT16_TYPE :
