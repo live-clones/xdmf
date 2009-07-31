@@ -58,7 +58,7 @@ XdmfDataItem::XdmfDataItem() {
 XdmfDataItem::~XdmfDataItem() {
     XdmfDebug(".... Deleteing DataItem " << this);
     if(this->Array && this->ArrayIsMine ){
-        XdmfDebug("Deleteing array " << this->Array);
+        XdmfDebug("Deleting array " << this->Array);
         delete this->Array;
         XdmfDebug("Done Deleteing array");
     }
