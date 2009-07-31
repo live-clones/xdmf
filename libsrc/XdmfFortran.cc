@@ -166,8 +166,8 @@ void XdmfFortran::SetGridTopology(char * topologyType, int * numberOfElements, X
 	if (myTopology->GetTopologyType() != XDMF_POLYVERTEX)
 	{
 		XdmfArray * myConnections = myTopology->GetConnectivity();
-		myConnections->SetNumberOfElements(*numberOfElements * myTopology->GetNodesPerElement());
 		myConnections->SetNumberType(XDMF_INT32_TYPE);
+		myConnections->SetNumberOfElements(*numberOfElements * myTopology->GetNodesPerElement());
 		myConnections->SetValues(0, conns, *numberOfElements * myTopology->GetNodesPerElement());
 	}
 }
