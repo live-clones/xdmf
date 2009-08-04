@@ -99,6 +99,8 @@ private:
 	XdmfBoolean displayFailuresOnly;
 	XdmfBoolean areEquivalent;
 	XdmfBoolean diffRun;
+	XdmfBoolean refDOMIsMine;
+	XdmfBoolean newDOMIsMine;
 	std::set<std::string> includedGrids;
 	std::set<std::string> ignoredGrids;
 	std::set<std::string> includedAttributes;
