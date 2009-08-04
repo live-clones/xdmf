@@ -64,6 +64,7 @@ XdmfGrid::XdmfGrid() {
   this->CollectionType = XDMF_GRID_COLLECTION_UNSET;
   this->NumberOfChildren = 0;
   this->Debug = 0;
+  this->BuildTime = 0;
   }
 
 XdmfGrid::~XdmfGrid() {
