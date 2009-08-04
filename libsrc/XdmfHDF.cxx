@@ -92,13 +92,17 @@ XdmfHDF::GetHDFVersion(void){
     static char VersionBuf[80];
     ostrstream  Version(VersionBuf,80);
     unsigned major, minor, release;
+    XdmfConstString toReturn;
 
     if(H5get_libversion(&major, &minor, &release) >= 0 ){
         Version << major << "." << minor << "." << release << ends;
     } else {
         Version << "-1.0" << ends;
-    }
-return((XdmfConstString)Version.str());
+    } 
+
+    toReturn = (XdmfConstString)Version.str();
+    Version.rdbuf()->freeze(0);
+return(toReturn);
 }
 //
 // Get Directory Name from Dataset
@@ -796,6 +800,7 @@ if( this->File < 0 ){
       H5F_ACC_TRUNC,
       this->CreatePlist,
       this->AccessPlist);
+    FullFileName.rdbuf()->freeze(0);
     if( this->File < 0 ){
       XdmfErrorMessage( "Cannot create " << this->GetFileName() );
       return( XDMF_FAIL );  
