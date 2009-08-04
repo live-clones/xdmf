@@ -99,19 +99,25 @@ XdmfDiff::XdmfDiff(XdmfConstString refFileName, XdmfConstString newFileName)
 	myRefDOM->Parse(refFileName);
 	myNewDOM->Parse(newFileName);
 
+	myRelativeError = 0;
+	myAbsoluteError = 0;
 	relErrorOn = false;
 	absErrorOn = false;
-	this->SetIgnoreGeometry(false);
-	this->SetIgnoreGeometry(false);
-	this->SetIgnoreAllAttributes(false);
-	areEquivalent = false;
-	diffRun = false;
+        absErrorOn = false;
+        ignoreGeometry = false;
+        ignoreTopology = false;
+        ignoreAllAttributes = false;
+        displayFailuresOnly = false;
+        areEquivalent = false;
+        diffRun = false;
+        refDOMIsMine = true;
+        newDOMIsMine = true;
 }
 
 XdmfDiff::~XdmfDiff()
 {
-	delete myRefDOM;
-	delete myNewDOM;
+	if (this->refDOMIsMine) delete myRefDOM;
+	if (this->newDOMIsMine) delete myNewDOM;
 }
 
 /*
@@ -126,13 +132,19 @@ XdmfDiff::XdmfDiff(XdmfDOM * refDOM, XdmfDOM * newDOM)
 	myRefDOM = refDOM;
 	myNewDOM = newDOM;
 
-	relErrorOn = false;
-	absErrorOn = false;
-	this->SetIgnoreGeometry(false);
-	this->SetIgnoreGeometry(false);
-	this->SetIgnoreAllAttributes(false);
-	areEquivalent = false;
-	diffRun = false;
+        myRelativeError = 0;
+        myAbsoluteError = 0;
+        relErrorOn = false;
+        absErrorOn = false;
+        absErrorOn = false;
+        ignoreGeometry = false;
+        ignoreTopology = false;
+        ignoreAllAttributes = false;
+        displayFailuresOnly = false;
+        areEquivalent = false;
+        diffRun = false;
+        refDOMIsMine = false;
+        newDOMIsMine = false;
 }
 
 /*
@@ -240,10 +252,15 @@ std::string XdmfDiff::GetDiffs()
 	XdmfXmlNode currDomain = myRefDOM->FindElement("Domain");
 	for (int i=0; i<myRefDOM->FindNumberOfElements("Grid", currDomain); i++)
 	{
-		XdmfGrid grid;
+		XdmfGrid grid = XdmfGrid();
 		grid.SetDOM(myRefDOM);
 		grid.SetElement(myRefDOM->FindElement("Grid", i, currDomain));
 		grid.Update();
+		// Make sure we cleanup well
+		for (int j=0; j<grid.GetNumberOfAttributes(); j++)
+		{
+			grid.GetAttribute(j)->SetDeleteOnGridDelete(true);
+		}
 		toReturn << this->GetDiffs(grid.GetName());
 	}
 	return toReturn.str();
@@ -286,7 +303,7 @@ std::string XdmfDiff::GetDiffs(XdmfConstString gridName)
 
 	XdmfGrid * refGrid = this->GetGrid(gridName, myRefDOM);
 	XdmfGrid * newGrid = this->GetGrid(gridName, myNewDOM);
-
+        
 	if (refGrid == NULL)
 	{
 		areEquivalent = false;
