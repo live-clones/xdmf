@@ -91,7 +91,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.69");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.70");
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
@@ -3281,7 +3281,7 @@ int vtkXdmfReaderInternal::RequestGridData(
 	     tmpArray->SetValues((i*9)+8 , vtkValues->GetTuple(i)+5, 1, 1, 1);
           }
           Components = 9;
-          AttributeType == XDMF_ATTRIBUTE_TYPE_TENSOR;
+          AttributeType = XDMF_ATTRIBUTE_TYPE_TENSOR;
           vtkValues->Delete();
           this->ArrayConverter->SetVtkArray( NULL );
           vtkValues=this->ArrayConverter->FromXdmfArray(tmpArray->GetTagName(), 1, 1, Components, 0);
