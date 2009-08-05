@@ -36,12 +36,13 @@ XdmfAttribute::XdmfAttribute() {
   this->Values = NULL;
   this->ShapeDesc = new XdmfDataDesc();
   this->Active = 0;
+  this->LightDataLimit = 100;
   }
 
 XdmfAttribute::~XdmfAttribute() {
   if( this->ValuesAreMine && this->Values )  delete this->Values;
   delete this->ShapeDesc;
-  }
+}
 
 XdmfInt32
 XdmfAttribute::Release(){
@@ -63,6 +64,21 @@ XdmfAttribute::Insert( XdmfElement *Child){
     return(XDMF_FAIL);
 }
 
+XdmfDataItem * XdmfAttribute::GetDataItem(){
+    XdmfDataItem *di = NULL;
+    XdmfXmlNode Node = this->DOM->FindDataElement(0, this->GetElement());
+    
+    if(Node) {
+        di = (XdmfDataItem *)this->GetCurrentXdmfElement(Node);
+    } 
+    if(!di){
+        di = new XdmfDataItem;
+        Node = this->DOM->InsertNew(this->GetElement(), "DataItem");
+        di->SetDOM(this->DOM);
+        di->SetElement(Node);
+    }
+    return(di);
+}
 
 XdmfInt32
 XdmfAttribute::Build(){
@@ -71,21 +87,9 @@ XdmfAttribute::Build(){
     this->Set("Center", this->GetAttributeCenterAsString());
     if(this->BuildFromDataXml() == XDMF_SUCCESS) return(XDMF_SUCCESS);
     if(this->Values){
-        XdmfDataItem    *di = NULL;
-        XdmfXmlNode     node;
-        //! Is there already a DataItem
-        node = this->DOM->FindDataElement(0, this->GetElement());
-        if(node) {
-            di = (XdmfDataItem *)this->GetCurrentXdmfElement(node);
-        }
-        if(!di){
-            di = new XdmfDataItem;
-            node = this->DOM->InsertNew(this->GetElement(), "DataItem");
-            di->SetDOM(this->DOM);
-            di->SetElement(node);
-        }
+        XdmfDataItem * di = this->GetDataItem(); 
         di->SetArray(this->Values);
-        if(this->Values->GetNumberOfElements() > 100) di->SetFormat(XDMF_FORMAT_HDF);
+        if(this->Values->GetNumberOfElements() > this->LightDataLimit) di->SetFormat(XDMF_FORMAT_HDF);
         di->Build();
 
     }
