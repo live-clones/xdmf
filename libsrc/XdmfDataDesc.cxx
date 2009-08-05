@@ -35,6 +35,7 @@ XdmfDataDesc::XdmfDataDesc() {
   this->Rank = 1;
   this->Compression = 0;
   this->ShapeString = 0;
+  this->HeavyDataSetName = 0;
   this->DsmBuffer = NULL;
 }
 
@@ -47,7 +48,8 @@ H5E_BEGIN_TRY {
     this->DataSpace = H5I_BADID;
   }
 } H5E_END_TRY;
-  this->SetShapeString(0);
+  delete [] this->ShapeString;
+  delete [] this->HeavyDataSetName;
 }
 
 XdmfInt32
