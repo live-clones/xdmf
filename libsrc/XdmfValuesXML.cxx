@@ -125,7 +125,10 @@ XdmfValuesXML::Write(XdmfArray *anArray, XdmfConstString /*HeavyDataSetName*/){
                 }
             }
         }
+	delete [] DataValues;
     }
     StringOutput << ends;
-    return(this->Set("CDATA", StringOutput.str()));
+    XdmfString toReturn = StringOutput.str();
+    StringOutput.rdbuf()->freeze(0);
+    return(this->Set("CDATA", toReturn));
 }
