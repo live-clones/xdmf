@@ -44,6 +44,7 @@
 
 class XdmfTopology;
 class XdmfDataDesc;
+class XdmfDataItem;
 class XdmfArray;
 
 //! Class for Scalar, Vector, and Tensor Computed Data
@@ -86,6 +87,11 @@ public:
 //! Return the Attribute Type
   XdmfGetValueMacro( AttributeType, XdmfInt32 );
 
+//! Set the number of values to be written to Light Data before switching to Heavy Data
+  XdmfSetValueMacro(LightDataLimit, XdmfInt32)
+//! Gets the number of values to be written to Light Data before switching to Heavy Data
+  XdmfGetValueMacro(LightDataLimit, XdmfInt32)
+
 //! Return the if the Attribute is Active
   XdmfGetValueMacro( Active, XdmfInt32 );
 
@@ -127,6 +133,7 @@ public:
 //! Release Big Data
  XdmfInt32 Release();
 protected:
+  XdmfDataItem *GetDataItem();
 
   XdmfInt32  AttributeType;
   XdmfInt32  AttributeCenter;
@@ -134,6 +141,7 @@ protected:
   XdmfInt32  ValuesAreMine;
   XdmfArray  *Values;
   XdmfInt32  Active;
+  XdmfInt32  LightDataLimit;
 };
 
 #endif // __XdmfAttribute_h
