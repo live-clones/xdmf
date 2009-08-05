@@ -50,6 +50,7 @@ XdmfTopology::XdmfTopology() {
   this->ConnectivityIsMine = 1;
   this->OrderIsDefault = 1;
   this->BaseOffset = 0;
+  this->LightDataLimit = 100;
   }
 
 XdmfTopology::~XdmfTopology() {
@@ -66,6 +67,22 @@ XdmfTopology::Release(){
     this->CellOffsets = NULL;
     return(XDMF_SUCCESS);
 }
+
+XdmfDataItem * XdmfTopology::GetDataItem(){
+    XdmfDataItem *di = NULL;
+    XdmfXmlNode Node = this->DOM->FindDataElement(0, this->GetElement());
+
+    if(Node) {
+        di = (XdmfDataItem *)this->GetCurrentXdmfElement(Node);
+    }
+    if(!di){
+        di = new XdmfDataItem;
+        Node = this->DOM->InsertNew(this->GetElement(), "DataItem");
+        di->SetDOM(this->DOM);
+        di->SetElement(Node);
+    }
+    return(di);
+} 
 
 XdmfInt32
 XdmfTopology::Build(){
@@ -85,26 +102,14 @@ XdmfTopology::Build(){
     }
     if(this->BuildFromDataXml() == XDMF_SUCCESS) return(XDMF_SUCCESS);
     if(this->Connectivity){
-        XdmfDataItem    *di = NULL;
-        XdmfXmlNode     node;
-        //! Is there already a DataItem
-        node = this->DOM->FindDataElement(0, this->GetElement());
-        if(node) {
-            di = (XdmfDataItem *)this->GetCurrentXdmfElement(node);
-        }
-        if(!di){
-            di = new XdmfDataItem;
-            node = this->DOM->InsertNew(this->GetElement(), "DataItem");
-            di->SetDOM(this->DOM);
-            di->SetElement(node);
-        }
+        XdmfDataItem * di = this->GetDataItem();
         di->SetArray(this->Connectivity);
-        if(this->Connectivity->GetNumberOfElements() > 100) di->SetFormat(XDMF_FORMAT_HDF);
+        if(this->Connectivity->GetNumberOfElements() > this->LightDataLimit) di->SetFormat(XDMF_FORMAT_HDF);
         di->Build();
-
     }
     return(XDMF_SUCCESS);
 }
+
 XdmfInt32
 XdmfTopology::Insert( XdmfElement *Child){
     if(Child && (
