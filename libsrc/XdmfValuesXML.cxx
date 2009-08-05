@@ -125,7 +125,6 @@ XdmfValuesXML::Write(XdmfArray *anArray, XdmfConstString /*HeavyDataSetName*/){
                 }
             }
         }
-	delete [] DataValues;
     }
     StringOutput << ends;
     XdmfString toReturn = StringOutput.str();
