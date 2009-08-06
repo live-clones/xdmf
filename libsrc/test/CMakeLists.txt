@@ -25,7 +25,7 @@ macro( XdmfUtilsTest testname )
 endmacro()
 
 XdmfSerialTest( XdmfTestHDFRoundtrip TestXdmfHDF.cxx )
-XdmfSerialTest( XdmfTestArray TestXdmfArray.cc)
+#XdmfSerialTest( XdmfTestArray TestXdmfArray.cc)
 
 if(XDMF_BUILD_MPI)
     XdmfMPITest( XdmfTestHDFMPI 4 XdmfHDFMPI.cxx )
