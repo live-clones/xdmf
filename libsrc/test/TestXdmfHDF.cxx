@@ -21,6 +21,7 @@ int main( int argc, char* argv[] ) {
   XdmfHDF* H5In = new XdmfHDF();
   H5In->Open( kDatasetName, "r" );
   XdmfArray* result = H5In->Read();
+  H5In->Close();
 
   bool failure = false;
   for ( size_t i = 0; i < 100; ++i ) {
@@ -28,6 +29,11 @@ int main( int argc, char* argv[] ) {
     std::cout << i << " " << value << std::endl;
     failure = ( value != i );
   }
+
+  delete result;
+  delete MyData;
+  delete H5;
+  delete H5In;
 
   if ( failure ) {
     return -1;
