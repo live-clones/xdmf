@@ -41,36 +41,36 @@ XdmfDOM * createGrid(int * connections, double * points, double * nodeValues, do
 	myDomain->Insert(myGrid);
 
 	XdmfAttribute * currAttribute = new XdmfAttribute();
-    currAttribute->SetName("NodeValues");
-    currAttribute->SetAttributeCenter(XDMF_ATTRIBUTE_CENTER_NODE);
-    currAttribute->SetAttributeType(XDMF_ATTRIBUTE_TYPE_SCALAR);
-    currAttribute->SetDeleteOnGridDelete(true);
+	currAttribute->SetName("NodeValues");
+	currAttribute->SetAttributeCenter(XDMF_ATTRIBUTE_CENTER_NODE);
+	currAttribute->SetAttributeType(XDMF_ATTRIBUTE_TYPE_SCALAR);
+	currAttribute->SetDeleteOnGridDelete(true);
 
-    XdmfArray * array = currAttribute->GetValues();
-    array->SetHeavyDataSetName("output.h5:/NodeValues");
-    // For now only support the data we know we are writing
-    array->SetNumberType(XDMF_FLOAT64_TYPE);
-    array->SetNumberOfElements(12);
+	XdmfArray * array = currAttribute->GetValues();
+	array->SetHeavyDataSetName("output.h5:/NodeValues");
+	// For now only support the data we know we are writing
+	array->SetNumberType(XDMF_FLOAT64_TYPE);
+	array->SetNumberOfElements(12);
 
-    array->SetValues(0,nodeValues,12);
+	array->SetValues(0,nodeValues,12);
 
-    myGrid->Insert(currAttribute);
+	myGrid->Insert(currAttribute);
 
 	XdmfAttribute * cellAttribute = new XdmfAttribute();
-    cellAttribute->SetName("CellValues");
-    cellAttribute->SetAttributeCenter(XDMF_ATTRIBUTE_CENTER_CELL);
-    cellAttribute->SetAttributeType(XDMF_ATTRIBUTE_TYPE_SCALAR);
-    cellAttribute->SetDeleteOnGridDelete(true);
+	cellAttribute->SetName("CellValues");
+	cellAttribute->SetAttributeCenter(XDMF_ATTRIBUTE_CENTER_CELL);
+	cellAttribute->SetAttributeType(XDMF_ATTRIBUTE_TYPE_SCALAR);
+	cellAttribute->SetDeleteOnGridDelete(true);
 
-    XdmfArray * cellArray = cellAttribute->GetValues();
-    cellArray->SetHeavyDataSetName("output.h5:/CellValues");
-    // For now only support the data we know we are writing
-    cellArray->SetNumberType(XDMF_FLOAT64_TYPE);
-    cellArray->SetNumberOfElements(2);
+	XdmfArray * cellArray = cellAttribute->GetValues();
+	cellArray->SetHeavyDataSetName("output.h5:/CellValues");
+	// For now only support the data we know we are writing
+	cellArray->SetNumberType(XDMF_FLOAT64_TYPE);
+	cellArray->SetNumberOfElements(2);
 
-    cellArray->SetValues(0,cellValues,2);
+	cellArray->SetValues(0,cellValues,2);
 
-    myGrid->Insert(cellAttribute);
+	myGrid->Insert(cellAttribute);
 	myGrid->Build();
 
 	delete myGrid;
@@ -124,7 +124,7 @@ int main()
 	}
 
 	myDiff->SetRelativeError(0);
-	myDiff->SetIgnoreAllAttributes();
+	myDiff->SetIgnoreAllAttributes(true);
 	if (!myDiff->AreEquivalent())
 	{
 		return -1;
