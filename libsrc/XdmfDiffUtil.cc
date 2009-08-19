@@ -51,8 +51,9 @@
  *		IGNORE_ATTRIBUTE attr1 attr2
  *		IGNORE_ALL_ATTRIBUTES
  *		DISPLAY_FAILURES_ONLY
+ *		VERBOSE_OUTPUT
  *
- *		Settings are commented out with #
+ *		Settings can be commented out with #
  *
  *	For code testing purposes run XdmfDiff::AreEquivalent().
  */
@@ -118,7 +119,7 @@ int main(int argc, char* argv[]) {
 	   }
    }
 
-   std::string output = diffFramework->GetDiffs();
+   std::string output = diffFramework->GetDiffsAsString();
    cout << output << endl;
    delete diffFramework;
    return 0;
