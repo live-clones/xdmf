@@ -66,61 +66,61 @@
  */
 int main(int argc, char* argv[]) {
 
-   XdmfDiff * diffFramework;
+	XdmfDiff * diffFramework;
 
-   if (argc < 3)
-   {
-	   cout << "Improper Number Of Arguments Given" << endl;
-	   return 1;
-   }
+	if (argc < 3)
+	{
+		cout << "Improper Number Of Arguments Given" << endl;
+		return 1;
+	}
 
-   if (argc >= 3)
-   {
-	   FILE * refFile = fopen(argv[1],"r");
-	   if(refFile)
-	   {
-		   // Success
-		   fclose(refFile);
-	   }
-	   else
-	   {
-		   cout << "Cannot open: " << argv[1] << endl;
-		   return 1;
-	   }
+	if (argc >= 3)
+	{
+		FILE * refFile = fopen(argv[1],"r");
+		if(refFile)
+		{
+			// Success
+			fclose(refFile);
+		}
+		else
+		{
+			cout << "Cannot open: " << argv[1] << endl;
+			return 1;
+		}
 
-	   FILE * newFile = fopen(argv[2],"r");
-	   if(newFile)
-	   {
-		   // Success
-		   fclose(newFile);
-	   }
-	   else
-	   {
-		   cout << "Cannot open: " << argv[2] << endl;
-		   return 1;
-	   }
+		FILE * newFile = fopen(argv[2],"r");
+		if(newFile)
+		{
+			// Success
+			fclose(newFile);
+		}
+		else
+		{
+			cout << "Cannot open: " << argv[2] << endl;
+			return 1;
+		}
 
-	   diffFramework = new XdmfDiff(argv[1], argv[2]);
+		diffFramework = new XdmfDiff(argv[1], argv[2]);
 
-	   if(argc >= 4)
-	   {
-		   FILE * defFile = fopen(argv[3],"r");
-		   if(defFile)
-		   {
-			   // Success
-			   fclose(defFile);
-		   }
-		   else
-		   {
-			   cout << "Cannot open: " << argv[3] << endl;
-			   return 1;
-		   }
-		   diffFramework->ParseSettingsFile(argv[3]);
-	   }
-   }
+		if(argc >= 4)
+		{
+			FILE * defFile = fopen(argv[3],"r");
+			if(defFile)
+			{
+				// Success
+				fclose(defFile);
+			}
+			else
+			{
+				cout << "Cannot open: " << argv[3] << endl;
+				return 1;
+			}
+			diffFramework->ParseSettingsFile(argv[3]);
+		}
+	}
 
-   std::string output = diffFramework->GetDiffsAsString();
-   cout << output << endl;
-   delete diffFramework;
-   return 0;
+	std::string output = diffFramework->GetDiffsAsString();
+	cout << output << endl;
+	delete diffFramework;
+	return 0;
 }
