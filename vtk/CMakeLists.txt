@@ -28,6 +28,7 @@ STRING(REGEX REPLACE "^/" "" XDMF_INSTALL_INCLUDE_VTK_DIR_CM24 "${XDMF_INSTALL_I
 SET( Xdmf_SRCS
   vtkXdmfReader.cxx
   vtkXdmfWriter.cxx
+  vtkXdmfWriter2.cxx
   vtkXdmfDataArray.cxx
 #vtkXdmfOpenGLCamera.cxx
 #${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
@@ -168,4 +169,7 @@ IF (VTK_FOUND)
 #        INSTALL_TARGETS(${XDMF_INSTALL_LIB_DIR} vtk${PROJECT_NAME}Python)
     ENDIF(VTK_WRAP_PYTHON)
   ENDIF(NOT XDMF_INSTALL_NO_LIBRARIES)
+
+  ADD_SUBDIRECTORY(Testing)
+
 ENDIF (VTK_FOUND)
