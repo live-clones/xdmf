@@ -544,13 +544,10 @@ void XdmfDiff::CompareValues(XdmfDiffReport & errorReport, XdmfArray * refArray,
 
 	switch(refArray->GetNumberType())
 	{
-		case XDMF_INT8_TYPE:
+		case XDMF_FLOAT64_TYPE:
 		{
-			XdmfInt8 * refVals = new XdmfInt8[numValues];
-			XdmfInt8 * newVals = new XdmfInt8[numValues];
-
-			refArray->GetValues(startIndex, refVals, numValues, 1, 1);
-			newArray->GetValues(startIndex, newVals, numValues, 1, 1);
+			XdmfFloat64 * refVals = (XdmfFloat64*)refArray->GetDataPointer(startIndex);
+			XdmfFloat64 * newVals = (XdmfFloat64*)newArray->GetDataPointer(startIndex);
 
 			for (int i=0; i<numValues; i++)
 			{
@@ -578,131 +575,12 @@ void XdmfDiff::CompareValues(XdmfDiffReport & errorReport, XdmfArray * refArray,
 					i = (groupIndex * groupLength) + groupLength - 1;
 				}
 			}
-			delete [] refVals;
-			delete [] newVals;
-			return;
-		}
-		case XDMF_INT16_TYPE:
-		{
-			XdmfInt16 * refVals = new XdmfInt16[numValues];
-			XdmfInt16 * newVals = new XdmfInt16[numValues];
-
-			refArray->GetValues(startIndex, refVals, numValues, 1, 1);
-			newArray->GetValues(startIndex, newVals, numValues, 1, 1);
-
-			for (int i=0; i<numValues; i++)
-			{
-				XdmfFloat64 acceptableError = fabs(myAbsoluteError);
-				if (acceptableError == 0)
-				{
-					acceptableError = fabs(refVals[i] * myRelativeError);
-				}
-				if(fabs((double)(newVals[i] - refVals[i])) > acceptableError)
-				{
-					XdmfInt64 groupIndex = (int)((startIndex+i) / groupLength);
-					std::stringstream refValsReturn;
-					std::stringstream newValsReturn;
-					for (int j=0; j<groupLength; j++)
-					{
-						refValsReturn << refVals[(groupIndex * groupLength) + j];
-						newValsReturn << newVals[(groupIndex * groupLength) + j];
-						if (j+1 < groupLength)
-						{
-							refValsReturn << ", ";
-							newValsReturn << ", ";
-						}
-					}
-					errorReport.AddError("Values", groupIndex, refValsReturn.str(), newValsReturn.str());
-					i = (groupIndex * groupLength) + groupLength - 1;
-				}
-			}
-			delete [] refVals;
-			delete [] newVals;
-			return;
-		}
-		case XDMF_INT32_TYPE:
-		{
-			XdmfInt32 * refVals = new XdmfInt32[numValues];
-			XdmfInt32 * newVals = new XdmfInt32[numValues];
-
-			refArray->GetValues(startIndex, refVals, numValues, 1, 1);
-			newArray->GetValues(startIndex, newVals, numValues, 1, 1);
-
-			for (int i=0; i<numValues; i++)
-			{
-				XdmfFloat64 acceptableError = fabs(myAbsoluteError);
-				if (acceptableError == 0)
-				{
-					acceptableError = fabs(refVals[i] * myRelativeError);
-				}
-				if(fabs((double)(newVals[i] - refVals[i])) > acceptableError)
-				{
-					XdmfInt64 groupIndex = (int)((startIndex+i) / groupLength);
-					std::stringstream refValsReturn;
-					std::stringstream newValsReturn;
-					for (int j=0; j<groupLength; j++)
-					{
-						refValsReturn << refVals[(groupIndex * groupLength) + j];
-						newValsReturn << newVals[(groupIndex * groupLength) + j];
-						if (j+1 < groupLength)
-						{
-							refValsReturn << ", ";
-							newValsReturn << ", ";
-						}
-					}
-					errorReport.AddError("Values", groupIndex, refValsReturn.str(), newValsReturn.str());
-					i = (groupIndex * groupLength) + groupLength - 1;
-				}
-			}
-			delete [] refVals;
-			delete [] newVals;
-			return;
-		}
-		case XDMF_INT64_TYPE:
-		{
-			XdmfInt64 * refVals = new XdmfInt64[numValues];
-			XdmfInt64 * newVals = new XdmfInt64[numValues];
-
-			refArray->GetValues(startIndex, refVals, numValues, 1, 1);
-			newArray->GetValues(startIndex, newVals, numValues, 1, 1);
-
-			for (int i=0; i<numValues; i++)
-			{
-				XdmfFloat64 acceptableError = fabs(myAbsoluteError);
-				if (acceptableError == 0)
-				{
-					acceptableError = fabs(refVals[i] * myRelativeError);
-				}
-				if(fabs((double)(newVals[i] - refVals[i])) > acceptableError)
-				{
-					XdmfInt64 groupIndex = (int)((startIndex+i) / groupLength);
-					std::stringstream refValsReturn;
-					std::stringstream newValsReturn;
-					for (int j=0; j<groupLength; j++)
-					{
-						refValsReturn << refVals[(groupIndex * groupLength) + j];
-						newValsReturn << newVals[(groupIndex * groupLength) + j];
-						if (j+1 < groupLength)
-						{
-							refValsReturn << ", ";
-							newValsReturn << ", ";
-						}
-					}
-					errorReport.AddError("Values", groupIndex, refValsReturn.str(), newValsReturn.str());
-					i = (groupIndex * groupLength) + groupLength - 1;
-				}
-			}
-			delete [] refVals;
-			delete [] newVals;
 			return;
 		}
 		case XDMF_FLOAT32_TYPE:
 		{
-			XdmfFloat32 * refVals = new XdmfFloat32[numValues];
-			XdmfFloat32 * newVals = new XdmfFloat32[numValues];
-
-			refArray->GetValues(startIndex, refVals, numValues, 1, 1);
-			newArray->GetValues(startIndex, newVals, numValues, 1, 1);
+			XdmfFloat32 * refVals = (XdmfFloat32*)refArray->GetDataPointer(startIndex);
+			XdmfFloat32 * newVals = (XdmfFloat32*)newArray->GetDataPointer(startIndex);
 
 			for (int i=0; i<numValues; i++)
 			{
@@ -730,17 +608,12 @@ void XdmfDiff::CompareValues(XdmfDiffReport & errorReport, XdmfArray * refArray,
 					i = (groupIndex * groupLength) + groupLength - 1;
 				}
 			}
-			delete [] refVals;
-			delete [] newVals;
 			return;
 		}
-		case XDMF_FLOAT64_TYPE:
+		case XDMF_INT64_TYPE:
 		{
-			XdmfFloat64 * refVals = new XdmfFloat64[numValues];
-			XdmfFloat64 * newVals = new XdmfFloat64[numValues];
-
-			refArray->GetValues(startIndex, refVals, numValues, 1, 1);
-			newArray->GetValues(startIndex, newVals, numValues, 1, 1);
+			XdmfInt64 * refVals = (XdmfInt64*)refArray->GetDataPointer(startIndex);
+			XdmfInt64 * newVals = (XdmfInt64*)newArray->GetDataPointer(startIndex);
 
 			for (int i=0; i<numValues; i++)
 			{
@@ -768,17 +641,12 @@ void XdmfDiff::CompareValues(XdmfDiffReport & errorReport, XdmfArray * refArray,
 					i = (groupIndex * groupLength) + groupLength - 1;
 				}
 			}
-			delete [] refVals;
-			delete [] newVals;
 			return;
 		}
-		case XDMF_UINT8_TYPE:
+		case XDMF_INT32_TYPE:
 		{
-			XdmfUInt8 * refVals = new XdmfUInt8[numValues];
-			XdmfUInt8 * newVals = new XdmfUInt8[numValues];
-
-			refArray->GetValues(startIndex, refVals, numValues, 1, 1);
-			newArray->GetValues(startIndex, newVals, numValues, 1, 1);
+			XdmfInt32 * refVals = (XdmfInt32*)refArray->GetDataPointer(startIndex);
+			XdmfInt32 * newVals = (XdmfInt32*)newArray->GetDataPointer(startIndex);
 
 			for (int i=0; i<numValues; i++)
 			{
@@ -806,17 +674,12 @@ void XdmfDiff::CompareValues(XdmfDiffReport & errorReport, XdmfArray * refArray,
 					i = (groupIndex * groupLength) + groupLength - 1;
 				}
 			}
-			delete [] refVals;
-			delete [] newVals;
 			return;
 		}
-		case XDMF_UINT16_TYPE:
+		case XDMF_INT16_TYPE:
 		{
-			XdmfUInt16 * refVals = new XdmfUInt16[numValues];
-			XdmfUInt16 * newVals = new XdmfUInt16[numValues];
-
-			refArray->GetValues(startIndex, refVals, numValues, 1, 1);
-			newArray->GetValues(startIndex, newVals, numValues, 1, 1);
+			XdmfInt16 * refVals = (XdmfInt16*)refArray->GetDataPointer(startIndex);
+			XdmfInt16 * newVals = (XdmfInt16*)newArray->GetDataPointer(startIndex);
 
 			for (int i=0; i<numValues; i++)
 			{
@@ -844,14 +707,78 @@ void XdmfDiff::CompareValues(XdmfDiffReport & errorReport, XdmfArray * refArray,
 					i = (groupIndex * groupLength) + groupLength - 1;
 				}
 			}
-			delete [] refVals;
-			delete [] newVals;
+			return;
+		}
+		case XDMF_INT8_TYPE:
+		{
+			XdmfInt8 * refVals = (XdmfInt8*)refArray->GetDataPointer(startIndex);
+			XdmfInt8 * newVals = (XdmfInt8*)newArray->GetDataPointer(startIndex);
+
+			for (int i=0; i<numValues; i++)
+			{
+				XdmfFloat64 acceptableError = fabs(myAbsoluteError);
+				if (acceptableError == 0)
+				{
+					acceptableError = fabs(refVals[i] * myRelativeError);
+				}
+				if(fabs((double)(newVals[i] - refVals[i])) > acceptableError)
+				{
+					XdmfInt64 groupIndex = (int)((startIndex+i) / groupLength);
+					std::stringstream refValsReturn;
+					std::stringstream newValsReturn;
+					for (int j=0; j<groupLength; j++)
+					{
+						refValsReturn << refVals[(groupIndex * groupLength) + j];
+						newValsReturn << newVals[(groupIndex * groupLength) + j];
+						if (j+1 < groupLength)
+						{
+							refValsReturn << ", ";
+							newValsReturn << ", ";
+						}
+					}
+					errorReport.AddError("Values", groupIndex, refValsReturn.str(), newValsReturn.str());
+					i = (groupIndex * groupLength) + groupLength - 1;
+				}
+			}
 			return;
 		}
 		case XDMF_UINT32_TYPE:
 		{
-			XdmfUInt32 * refVals = new XdmfUInt32[numValues];
-			XdmfUInt32 * newVals = new XdmfUInt32[numValues];
+			XdmfUInt32 * refVals = (XdmfUInt32*)refArray->GetDataPointer(startIndex);
+			XdmfUInt32 * newVals = (XdmfUInt32*)newArray->GetDataPointer(startIndex);
+
+			for (int i=0; i<numValues; i++)
+			{
+				XdmfFloat64 acceptableError = fabs(myAbsoluteError);
+				if (acceptableError == 0)
+				{
+					acceptableError = fabs(refVals[i] * myRelativeError);
+				}
+				if(fabs((double)(newVals[i] - refVals[i])) > acceptableError)
+				{
+					XdmfInt64 groupIndex = (int)((startIndex+i) / groupLength);
+					std::stringstream refValsReturn;
+					std::stringstream newValsReturn;
+					for (int j=0; j<groupLength; j++)
+					{
+						refValsReturn << refVals[(groupIndex * groupLength) + j];
+						newValsReturn << newVals[(groupIndex * groupLength) + j];
+						if (j+1 < groupLength)
+						{
+							refValsReturn << ", ";
+							newValsReturn << ", ";
+						}
+					}
+					errorReport.AddError("Values", groupIndex, refValsReturn.str(), newValsReturn.str());
+					i = (groupIndex * groupLength) + groupLength - 1;
+				}
+			}
+			return;
+		}
+		case XDMF_UINT16_TYPE:
+		{
+			XdmfUInt16 * refVals = (XdmfUInt16*)refArray->GetDataPointer(startIndex);
+			XdmfUInt16 * newVals = (XdmfUInt16*)newArray->GetDataPointer(startIndex);
 
 			refArray->GetValues(startIndex, refVals, numValues, 1, 1);
 			newArray->GetValues(startIndex, newVals, numValues, 1, 1);
@@ -882,17 +809,45 @@ void XdmfDiff::CompareValues(XdmfDiffReport & errorReport, XdmfArray * refArray,
 					i = (groupIndex * groupLength) + groupLength - 1;
 				}
 			}
-			delete [] refVals;
-			delete [] newVals;
+			return;
+		}
+		case XDMF_UINT8_TYPE:
+		{
+			XdmfUInt8 * refVals = (XdmfUInt8*)refArray->GetDataPointer(startIndex);
+			XdmfUInt8 * newVals = (XdmfUInt8*)newArray->GetDataPointer(startIndex);
+
+			for (int i=0; i<numValues; i++)
+			{
+				XdmfFloat64 acceptableError = fabs(myAbsoluteError);
+				if (acceptableError == 0)
+				{
+					acceptableError = fabs(refVals[i] * myRelativeError);
+				}
+				if(fabs((double)(newVals[i] - refVals[i])) > acceptableError)
+				{
+					XdmfInt64 groupIndex = (int)((startIndex+i) / groupLength);
+					std::stringstream refValsReturn;
+					std::stringstream newValsReturn;
+					for (int j=0; j<groupLength; j++)
+					{
+						refValsReturn << refVals[(groupIndex * groupLength) + j];
+						newValsReturn << newVals[(groupIndex * groupLength) + j];
+						if (j+1 < groupLength)
+						{
+							refValsReturn << ", ";
+							newValsReturn << ", ";
+						}
+					}
+					errorReport.AddError("Values", groupIndex, refValsReturn.str(), newValsReturn.str());
+					i = (groupIndex * groupLength) + groupLength - 1;
+				}
+			}
 			return;
 		}
 		default:
 		{
-			XdmfFloat64 * refVals = new XdmfFloat64[numValues];
-			XdmfFloat64 * newVals = new XdmfFloat64[numValues];
-
-			refArray->GetValues(startIndex, refVals, numValues, 1, 1);
-			newArray->GetValues(startIndex, newVals, numValues, 1, 1);
+			XdmfFloat64 * refVals = (XdmfFloat64*)refArray->GetDataPointer(startIndex);
+			XdmfFloat64 * newVals = (XdmfFloat64*)newArray->GetDataPointer(startIndex);
 
 			for (int i=0; i<numValues; i++)
 			{
@@ -920,8 +875,6 @@ void XdmfDiff::CompareValues(XdmfDiffReport & errorReport, XdmfArray * refArray,
 					i = (groupIndex * groupLength) - 1;
 				}
 			}
-			delete [] refVals;
-			delete [] newVals;
 			return;
 		}
 	}
