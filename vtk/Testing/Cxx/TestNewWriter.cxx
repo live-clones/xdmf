@@ -18,7 +18,7 @@
 #include "vtkDataObjectGenerator.h"
 #include "vtkTimeSourceExample.h"
 
-int main (int ac, char **av)
+int main (int vtkNotUsed(ac), char **vtkNotUsed(av))
 {
   vtkDataObjectGenerator *dog = vtkDataObjectGenerator::New();
   //dog->SetProgram("ID1");
