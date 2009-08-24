@@ -780,9 +780,6 @@ void XdmfDiff::CompareValues(XdmfDiffReport & errorReport, XdmfArray * refArray,
 			XdmfUInt16 * refVals = (XdmfUInt16*)refArray->GetDataPointer(startIndex);
 			XdmfUInt16 * newVals = (XdmfUInt16*)newArray->GetDataPointer(startIndex);
 
-			refArray->GetValues(startIndex, refVals, numValues, 1, 1);
-			newArray->GetValues(startIndex, newVals, numValues, 1, 1);
-
 			for (int i=0; i<numValues; i++)
 			{
 				XdmfFloat64 acceptableError = fabs(myAbsoluteError);
