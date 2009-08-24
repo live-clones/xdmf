@@ -41,8 +41,8 @@
  * 			specified in the settingsFile.  All settings options are outlined below:
  *
  * Settings Options:
- *		WITH_RELATIVE_ERROR .15
- *		WITH_ABSOLUTE_ERROR 1
+ *		RELATIVE_ERROR .15
+ *		ABSOLUTE_ERROR 1
  *		INCLUDE_GRID grid1 grid2
  *		IGNORE_GRID grid1 grid2
  *		IGNORE_GEOMETRY
