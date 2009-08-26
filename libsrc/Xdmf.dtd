@@ -48,7 +48,8 @@
 	NumberType (Char | UChar | Float | Int | UInt) "Float"
 	Precision (1 | 4 | 8) "4"
 	Reference CDATA #IMPLIED
-	Format (XML | HDF) "XML"
+    Endian (Big | Little | Native) "Native"
+	Format (XML | HDF | Binary) "XML"
 >
 <!--Describes the values on the mesh-->
 <!ELEMENT Attribute (Information*, DataItem)>
