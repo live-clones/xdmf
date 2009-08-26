@@ -6,7 +6,7 @@
 /*  Date : $Date$ */
 /*  Version : $Revision$  */
 /*                                                                 */
-/*  Author:                                                        */
+/*  Author:Kenji Takizawa (Team for Advanced Flow Simulation and Modeling) */
 /*                                                                 */
 /*     Copyright @ 2008 US Army Research Laboratory                */
 /*     All Rights Reserved                                         */
