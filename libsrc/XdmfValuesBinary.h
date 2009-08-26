@@ -33,8 +33,7 @@ A Binary XdmfDataItem Node Looks like :
 
 \verbatim
 <DataItem
-  Rank="1"
-  Dimensions="300"
+  Dimensions="3 3 3"
   Precision="4"
   DataType="Float"
   Format="Binary"
@@ -42,7 +41,7 @@ A Binary XdmfDataItem Node Looks like :
   >
 </DataItem>
 \endverbatim
-
+Endian: Little, Big, otherwise Native
 Putting "<" in the CDATA, it may cause an error in the XML parser. 
 Here's an example of using "<" in the CDATA :
 
@@ -74,7 +73,10 @@ public :
   XdmfSetStringMacro(Endian);
 
 protected :
-    XdmfString  Endian;
+  bool needByteSwap();
+  XdmfString  Endian;
+private:
+  void byteSwap(XdmfArray * RetArray);
 };
 
 #endif

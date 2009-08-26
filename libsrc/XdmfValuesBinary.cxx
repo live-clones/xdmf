@@ -26,6 +26,58 @@
 
 //#include <sys/stat.h>
 //#include <cassert>
+template<size_t T>
+struct ByteSwaper {
+    static inline void swap(void*p){}
+    static inline void swap(void*p,XdmfInt64 length){
+        char* data = static_cast<char*>(p);
+        for(XdmfInt64 i=0;i<length;++i, data+=T){
+            ByteSwaper<T>::swap(data);
+        }
+    }
+};
+
+template<>
+void ByteSwaper<2>::swap(void*p){
+    char one_byte;
+    char* data = static_cast<char*>(p);
+    one_byte = data[0]; data[0] = data[1]; data[1] = one_byte;
+};
+template<>
+void ByteSwaper<4>::swap(void*p){
+    char one_byte;
+    char* data = static_cast<char*>(p);
+    one_byte = data[0]; data[0] = data[3]; data[3] = one_byte;
+    one_byte = data[1]; data[1] = data[2]; data[2] = one_byte;
+};
+template<>
+void ByteSwaper<8>::swap(void*p){
+    char one_byte;
+    char* data = static_cast<char*>(p);
+    one_byte = data[0]; data[0] = data[7]; data[7] = one_byte;
+    one_byte = data[1]; data[1] = data[6]; data[6] = one_byte;
+    one_byte = data[2]; data[2] = data[5]; data[5] = one_byte;
+    one_byte = data[3]; data[3] = data[4]; data[4] = one_byte;
+};
+void XdmfValuesBinary::byteSwap(XdmfArray * RetArray){
+    if(needByteSwap()){
+        switch(RetArray->GetElementSize()){
+        case 1:
+            break;
+        case 2:
+            ByteSwaper<2>::swap(RetArray->GetDataPointer(),RetArray->GetNumberOfElements());
+            break;
+        case 4:
+            ByteSwaper<4>::swap(RetArray->GetDataPointer(),RetArray->GetNumberOfElements());
+            break;
+        case 8:
+            ByteSwaper<8>::swap(RetArray->GetDataPointer(),RetArray->GetNumberOfElements());
+            break;
+        default:
+            break;
+        }
+    }
+}
 
 XdmfValuesBinary::XdmfValuesBinary() {
     this->Endian = NULL;
@@ -66,29 +118,72 @@ XdmfValuesBinary::Read(XdmfArray *anArray){
     }
     XdmfDebug("Data Size : " << total);
     XdmfDebug("Size[Byte]: " << RetArray->GetCoreLength());
-//check
-//    struct stat buf;
-//    stat(DataSetName, &buf);
-//    assert(buf.st_size == RetArray->GetCoreLength());
+    //check
+    //    struct stat buf;
+    //    stat(DataSetName, &buf);
+    //    assert(buf.st_size == RetArray->GetCoreLength());
 
     ifstream fs(DataSetName,std::ios::binary);
     if(!fs.good()){
         XdmfErrorMessage("Can't Open File " << DataSetName);
         return(NULL);
     }
-    if( Array->GetDataPointer() == NULL ){
+    if( RetArray->GetDataPointer() == NULL ){
         XdmfErrorMessage("Memory Object Array has no data storage");
         return( NULL );
     }
     fs.read(reinterpret_cast<char*>(RetArray->GetDataPointer()), RetArray->GetCoreLength());
-    //When endian is different to this system....
-    //
     fs.close();
+    //When endian is different to this system....
+    byteSwap(RetArray);
     return RetArray;
 }
-XdmfInt32
-XdmfValuesBinary::Write(XdmfArray *anArray, XdmfConstString /*HeavyDataSetName*/){
-    return 0;
-}
-// vim: expandtab sw=4 :
 
+
+XdmfInt32
+XdmfValuesBinary::Write(XdmfArray *anArray, XdmfConstString aHeavyDataSetName){
+    if(!aHeavyDataSetName) aHeavyDataSetName = this->GetHeavyDataSetName();
+    if(anArray->GetHeavyDataSetName()){
+        aHeavyDataSetName = (XdmfConstString)anArray->GetHeavyDataSetName();
+    }else{
+        return(XDMF_FAIL);
+    }
+    XdmfDebug("Writing Values to " << aHeavyDataSetName);
+    if(!this->DataDesc ){
+        XdmfErrorMessage("DataDesc has not been set");
+        return(XDMF_FAIL);
+    }
+    if(!anArray){
+        XdmfErrorMessage("Array to Write is NULL");
+        return(XDMF_FAIL);
+    }
+    char* hds;
+    XDMF_STRING_DUPLICATE(hds, aHeavyDataSetName);
+    XDMF_WORD_TRIM( hds );
+    this->Set("CDATA", hds);
+    byteSwap(anArray);
+    ofstream fs(aHeavyDataSetName,std::ios::binary);
+    if(!fs.good()){
+        XdmfErrorMessage("Can't Open File " << aHeavyDataSetName);
+        return(NULL);
+    }
+    if( anArray->GetDataPointer() == NULL ){
+        XdmfErrorMessage("Memory Object Array has no data storage");
+        return( NULL );
+    }
+    fs.write(reinterpret_cast<char*>(anArray->GetDataPointer()), anArray->GetCoreLength());
+    fs.close();
+    byteSwap(anArray);
+    delete [] hds;
+    return(XDMF_SUCCESS);
+}
+#ifdef CMAKE_WORDS_BIGENDIAN
+bool XdmfValuesBinary::needByteSwap(){
+    return XDMF_WORD_CMP(Endian, "Little");
+}
+#else
+bool XdmfValuesBinary::needByteSwap(){
+    return XDMF_WORD_CMP(Endian, "Big");
+}
+#endif
+// vim: expandtab sw=4 :
