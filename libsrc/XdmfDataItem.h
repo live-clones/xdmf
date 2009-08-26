@@ -34,6 +34,7 @@ class XdmfValues;
 #define XDMF_FORMAT_XML 0
 #define XDMF_FORMAT_HDF 1
 #define XDMF_FORMAT_MYSQL 2
+#define XDMF_FORMAT_BINARY 3
 
 // Organizations
 #define XDMF_ITEM_UNIFORM        0x00

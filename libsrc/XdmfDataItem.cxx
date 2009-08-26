@@ -35,6 +35,7 @@
 #ifdef XDMF_USE_MYSQL
 #include "XdmfValuesMySQL.h"
 #endif
+#include "XdmfValuesBinary.h"
 
 #include <libxml/tree.h>
 
@@ -212,6 +213,8 @@ XdmfInt32 XdmfDataItem::UpdateInformationUniform(){
         this->SetFormat(XDMF_FORMAT_XML);
     } else if(XDMF_WORD_CMP(Value, "MYSQL")){
         this->SetFormat(XDMF_FORMAT_MYSQL);
+    } else if(XDMF_WORD_CMP(Value, "BINARY")){
+        this->SetFormat(XDMF_FORMAT_BINARY);
     }else if(Value){
         XdmfErrorMessage("Unsupported DataItem Format :" << Value);
         return(XDMF_FAIL);
@@ -536,6 +539,14 @@ XdmfInt32 XdmfDataItem::Update(){
             XdmfErrorMessage("XdmfValuesMySQL not enabled in this Xdmf");
             return(XDMF_FAIL);
 #endif
+
+            break;
+        case XDMF_FORMAT_BINARY :
+            this->Values->SetDebug(this->GetDebug());
+            if(!((XdmfValuesBinary *)this->Values)->Read(this->Array)){
+                XdmfErrorMessage("Reading Values Failed");
+                return(XDMF_FAIL);
+            }
             break;
         default :
             XdmfErrorMessage("Unsupported Data Format");
@@ -745,6 +756,9 @@ XdmfInt32 XdmfDataItem::Build(){
         case XDMF_FORMAT_MYSQL :
             this->Set("Format", "MYSQL");
             break;
+        case XDMF_FORMAT_BINARY :
+            this->Set("Format", "BINARY");
+            break;
         default :
             XdmfErrorMessage("Unsupported Data Format");
             return(XDMF_FAIL);
@@ -808,6 +822,9 @@ XdmfDataItem::CheckValues(XdmfInt32 aFormat){
                 XdmfErrorMessage("MySQL not supported in this Xdmf");
                 return(XDMF_FAIL);
 #endif
+                break;
+            case XDMF_FORMAT_BINARY :
+                this->Values = (XdmfValues *)new XdmfValuesBinary();
                 break;
             default :
                 XdmfErrorMessage("Unsupported Data Format");
