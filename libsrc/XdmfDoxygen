@@ -453,6 +453,7 @@ INPUT                  = \
                         XdmfValuesXML.h \
                         XdmfValuesHDF.h \
                         XdmfValuesMySQL.h \
+                        XdmfValuesBinary.h \
                         XdmfExpression.h \
                         XdmfObject.h
 

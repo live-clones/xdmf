@@ -29,6 +29,7 @@ SET( XdmfFormatSource
   XdmfValues
   XdmfValuesXML
   XdmfValuesHDF
+  XdmfValuesBinary
   XdmfHeavyData
   XdmfHDF
   XdmfHDFSupport
