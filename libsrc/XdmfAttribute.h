@@ -34,6 +34,7 @@
 #define XDMF_ATTRIBUTE_TYPE_TENSOR  3
 #define XDMF_ATTRIBUTE_TYPE_MATRIX  4
 #define XDMF_ATTRIBUTE_TYPE_TENSOR6 5
+#define XDMF_ATTRIBUTE_TYPE_GLOBALID 6
 
 // Where Values are Assigned
 #define XDMF_ATTRIBUTE_CENTER_GRID  0
@@ -57,7 +58,7 @@ class XdmfArray;
     \verbatim
     XML Element Name : Attribute
     XML Attribute : Name
-    XML Attribute : AttributeType = Scalar* | Vector | Tensor | Tensor6 | Matrix
+    XML Attribute : AttributeType = Scalar* | Vector | Tensor | Tensor6 | Matrix | GlobalId
     XML Attribute : Center = Node* | Cell | Grid | Face | Edge
 
     Example :
@@ -92,6 +93,8 @@ public:
 //! Gets the number of values to be written to Light Data before switching to Heavy Data
   XdmfGetValueMacro(LightDataLimit, XdmfInt32)
 
+//! Sets if the Attribute is Active
+  XdmfSetValueMacro( Active, XdmfInt32 );
 //! Return the if the Attribute is Active
   XdmfGetValueMacro( Active, XdmfInt32 );
 
