@@ -170,6 +170,8 @@ XdmfGeometry::Build(){
             array->SetValues(0, this->DxDyDz, 2);
             di->Build();
         break;
+      case XDMF_GEOMETRY_NONE:
+        break;
       default :
         if(this->Points){
             di = this->GetDataItem(0, this->GetElement());
@@ -280,6 +282,11 @@ if( XDMF_WORD_CMP( geometryType, "VXVY" ) ){
   this->GeometryType = XDMF_GEOMETRY_VXVY;
   return(XDMF_SUCCESS);
   }
+if( XDMF_WORD_CMP( geometryType, "NONE" ) ){
+  this->GeometryType = XDMF_GEOMETRY_NONE;
+  return(XDMF_SUCCESS);
+  }
+
 return( XDMF_FAIL );
 }
 
@@ -308,6 +315,9 @@ switch( this->GeometryType ){
     break;
   case XDMF_GEOMETRY_XY :
     strcpy( Value, "XY" );
+    break;
+  case XDMF_GEOMETRY_NONE :
+    strcpy( Value, "NONE");
     break;
   default :
     strcpy( Value, "XYZ" );
