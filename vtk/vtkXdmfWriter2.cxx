@@ -39,6 +39,7 @@
 #include "vtkDataSetAttributes.h"
 #include "vtkPointData.h"
 #include "vtkCellData.h"
+#include "vtkTypeTraits.h"
 
 #include "XdmfDOM.h"
 #include "XdmfRoot.h"
@@ -51,6 +52,7 @@
 #include "XdmfArray.h"
 
 #include <vtkstd/map>
+#include <stdio.h>
 
 //==============================================================================
 
@@ -115,7 +117,7 @@ void vtkXdmfWriter2Internal::DetermineCellTypes(vtkPointSet * t, vtkXdmfWriter2I
 //==============================================================================
 
 vtkStandardNewMacro(vtkXdmfWriter2);
-vtkCxxRevisionMacro(vtkXdmfWriter2, "1.2");
+vtkCxxRevisionMacro(vtkXdmfWriter2, "1.3");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter2::vtkXdmfWriter2()
@@ -560,13 +562,17 @@ void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
           memcpy(ptr, pd->GetStrips()->GetData()->GetVoidPointer(0), sizes*sizeof(vtkIdType));
 
           char buf[100];
-          snprintf(buf, 100, "%d", sizev);
+          snprintf(buf, 100, vtkTypeTraits<vtkIdType>::ParseFormat(),
+                   vtkTypeTraits<vtkIdType>::PrintType(sizev));
           t->Set("VertSize",buf);
-          snprintf(buf, 100, "%d", sizel);
+          snprintf(buf, 100, vtkTypeTraits<vtkIdType>::ParseFormat(),
+                   vtkTypeTraits<vtkIdType>::PrintType(sizel));
           t->Set("LineSize",buf);
-          snprintf(buf, 100, "%d", sizep);
+          snprintf(buf, 100, vtkTypeTraits<vtkIdType>::ParseFormat(),
+                   vtkTypeTraits<vtkIdType>::PrintType(sizep));
           t->Set("PolySize",buf);
-          snprintf(buf, 100, "%d", sizes);
+          snprintf(buf, 100, vtkTypeTraits<vtkIdType>::ParseFormat(),
+                   vtkTypeTraits<vtkIdType>::PrintType(sizes));
           t->Set("StripSize",buf);
           }
         }
