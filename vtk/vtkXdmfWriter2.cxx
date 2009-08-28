@@ -54,6 +54,12 @@
 #include <vtkstd/map>
 #include <stdio.h>
 
+#if defined(_WIN32) && !defined(__CYGWIN__)
+# define SNPRINTF _snprintf
+#else
+# define SNPRINTF snprintf
+#endif
+
 //==============================================================================
 
 struct vtkXdmfWriter2Internal
@@ -117,7 +123,7 @@ void vtkXdmfWriter2Internal::DetermineCellTypes(vtkPointSet * t, vtkXdmfWriter2I
 //==============================================================================
 
 vtkStandardNewMacro(vtkXdmfWriter2);
-vtkCxxRevisionMacro(vtkXdmfWriter2, "1.3");
+vtkCxxRevisionMacro(vtkXdmfWriter2, "1.4");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter2::vtkXdmfWriter2()
@@ -561,17 +567,17 @@ void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
           ptr+=sizep;
           memcpy(ptr, pd->GetStrips()->GetData()->GetVoidPointer(0), sizes*sizeof(vtkIdType));
 
-          char buf[100];
-          snprintf(buf, 100, vtkTypeTraits<vtkIdType>::ParseFormat(),
+          char buf[20];
+          SNPRINTF(buf, 20, vtkTypeTraits<vtkIdType>::ParseFormat(),
                    vtkTypeTraits<vtkIdType>::PrintType(sizev));
           t->Set("VertSize",buf);
-          snprintf(buf, 100, vtkTypeTraits<vtkIdType>::ParseFormat(),
+          SNPRINTF(buf, 20, vtkTypeTraits<vtkIdType>::ParseFormat(),
                    vtkTypeTraits<vtkIdType>::PrintType(sizel));
           t->Set("LineSize",buf);
-          snprintf(buf, 100, vtkTypeTraits<vtkIdType>::ParseFormat(),
+          SNPRINTF(buf, 20, vtkTypeTraits<vtkIdType>::ParseFormat(),
                    vtkTypeTraits<vtkIdType>::PrintType(sizep));
           t->Set("PolySize",buf);
-          snprintf(buf, 100, vtkTypeTraits<vtkIdType>::ParseFormat(),
+          SNPRINTF(buf, 20, vtkTypeTraits<vtkIdType>::ParseFormat(),
                    vtkTypeTraits<vtkIdType>::PrintType(sizes));
           t->Set("StripSize",buf);
           }
