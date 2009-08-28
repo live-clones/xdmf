@@ -21,16 +21,18 @@
 int main (int vtkNotUsed(ac), char **vtkNotUsed(av))
 {
   vtkDataObjectGenerator *dog = vtkDataObjectGenerator::New();
-  //dog->SetProgram("ID1");
+  dog->SetProgram("ID1");
   //dog->SetProgram("UF1");
   //dog->SetProgram("RG1");
   //dog->SetProgram("SG1");
   dog->SetProgram("PD1");
+  //dog->SetProgram("PD2");
   //dog->SetProgram("UG1");
 
   //dog->SetProgram("MB{ }");
+  //dog->SetProgram("MB{ PD1 }");
   //dog->SetProgram("MB{ ID1 }");
-  //dog->SetProgram("MB{ ID1 ID1 }");
+  //dog->SetProgram("MB{ ID1 }");
   //dog->SetProgram("MB{ ID1 UF1 RG1 SG1 PD1 UG1 }");
   //dog->SetProgram("HB[ (UF1)(UF1)(UF1) ]");
 

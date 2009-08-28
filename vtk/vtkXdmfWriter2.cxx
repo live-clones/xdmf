@@ -36,6 +36,9 @@
 #include "vtkPolyData.h"
 #include "vtkGenericCell.h"
 #include "vtkCellArray.h"
+#include "vtkDataSetAttributes.h"
+#include "vtkPointData.h"
+#include "vtkCellData.h"
 
 #include "XdmfDOM.h"
 #include "XdmfRoot.h"
@@ -112,7 +115,7 @@ void vtkXdmfWriter2Internal::DetermineCellTypes(vtkPointSet * t, vtkXdmfWriter2I
 //==============================================================================
 
 vtkStandardNewMacro(vtkXdmfWriter2);
-vtkCxxRevisionMacro(vtkXdmfWriter2, "1.1");
+vtkCxxRevisionMacro(vtkXdmfWriter2, "1.2");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter2::vtkXdmfWriter2()
@@ -265,6 +268,7 @@ void vtkXdmfWriter2::WriteDataSet(vtkDataObject *dobj, XdmfGrid *grid)
 //------------------------------------------------------------------------------
 void vtkXdmfWriter2::WriteCompositeDataSet(vtkCompositeDataSet *dobj, XdmfGrid *grid)
 {
+
   cerr << "internal node " << dobj << " is a " << dobj->GetClassName() << endl;
   if (dobj->IsA("vtkMultiPieceDataSet"))
     {
@@ -278,7 +282,14 @@ void vtkXdmfWriter2::WriteCompositeDataSet(vtkCompositeDataSet *dobj, XdmfGrid *
     //vtkTemporalDataSet is internal to the VTK pipeline so I am ingnoring it
     grid->SetGridType(XDMF_GRID_TREE);
     }
+  
  
+  XdmfTopology *t = grid->GetTopology();
+  t->SetTopologyType(XDMF_NOTOPOLOGY);
+  XdmfGeometry *geo = grid->GetGeometry();
+  geo->SetGeometryType(XDMF_GEOMETRY_NONE);
+  //geo->SetPoints(NULL);
+
   vtkCompositeDataIterator* iter = dobj->NewIterator();
   iter->VisitOnlyLeavesOff();
   iter->TraverseSubTreeOff();
@@ -294,12 +305,14 @@ void vtkXdmfWriter2::WriteCompositeDataSet(vtkCompositeDataSet *dobj, XdmfGrid *
     iter->GoToNextItem();
     }
   iter->Delete();
+
   return;
 }
 
 //------------------------------------------------------------------------------
 void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
 {
+  cerr << "Writing " << dobj << " a " << dobj->GetClassName() << endl;
   vtkDataSet *ds = vtkDataSet::SafeDownCast(dobj);
   if (!ds)
     {
@@ -308,7 +321,6 @@ void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
     return;
     }
 
-  cerr << "Leaf node " << ds << " is a " << ds->GetClassName() << endl;
   grid->SetGridType(XDMF_GRID_UNIFORM);
 
   //Topology
@@ -364,15 +376,24 @@ void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
   case VTK_POLY_DATA:
   case VTK_UNSTRUCTURED_GRID:
     {
-    //TODO: flag polydata so it can be read back in as PD instead of UG
+    vtkUnstructuredGrid *ugrid = vtkUnstructuredGrid::SafeDownCast(ds);
+    if (!ugrid)
+      {
+      //flag polydata so vtkXdmfReader2 can be read back in as vtkPolyData
+      t->Set("Polygonal", "1");
+      }
     vtkXdmfWriter2Internal::MapOfCellTypes cellTypes;
     vtkXdmfWriter2Internal::DetermineCellTypes(vtkPointSet::SafeDownCast(ds), cellTypes);
+
     //TODO: When is it beneficial to take advantage of a homogenous topology?
-    //if no compelling reason not to used MIXED, then this should go away because
-    //this special case code is bound to cause problems and because 
-    //it requires and in memory copy instead of pointer reference
-    if ( cellTypes.size() == 1 && false)  
+    //If no compelling reason not to used MIXED, then this should go away.
+    //This special case code requires an in memory copy just to get rid of 
+    //each cell's preceeding number of points int.
+    //If don't have to do that, could use pointer sharing, and the
+    //and the extra code path is bound to cause problems eventually.
+    if ( cellTypes.size() == 1 )
       {
+      //cerr << "Homogeneous topology" << endl;
       const vtkXdmfWriter2Internal::CellType* ct = &cellTypes.begin()->first;
       vtkIdType ppCell = ct->NumPoints;
       switch(ct->VTKType) 
@@ -417,7 +438,14 @@ void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
           break;
         }
       XdmfArray *di = t->GetConnectivity();
-      di->SetNumberType(XDMF_INT32_TYPE); //TODO: What if 64 bit ids?
+      if (VTK_SIZEOF_ID_TYPE==sizeof(XDMF_64_INT))
+        {
+        di->SetNumberType(XDMF_INT64_TYPE);
+        }
+      else
+        {
+        di->SetNumberType(XDMF_INT32_TYPE);
+        }
       XdmfInt64 xppCell = ppCell;
       di->SetShape(ds->GetNumberOfCells(), &xppCell);
       vtkIdList* il = cellTypes[*ct].GetPointer();
@@ -458,14 +486,19 @@ void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
       } //homogenous
     else
       {
-      cerr << "NON HOMOGENEOUS" << endl;
+      //cerr << "Nonhomogeneous topology" << endl;
       //Non Homogeneous, used mixed topology type to dump them all
       t->SetTopologyType(XDMF_MIXED);
       XdmfArray *di = t->GetConnectivity();
-      di->SetNumberType(XDMF_INT32_TYPE); //TODO: What if 64 bit ids?
-      di->SetNumberOfElements(ds->GetNumberOfCells()); //TODO: Fill out dimensions in topology and full length here?
+      if (VTK_SIZEOF_ID_TYPE==sizeof(XDMF_64_INT))
+        {
+        di->SetNumberType(XDMF_INT64_TYPE);
+        }
+      else
+        {
+        di->SetNumberType(XDMF_INT32_TYPE);
+        }
       vtkIdTypeArray *da = NULL;
-      vtkUnstructuredGrid *ugrid = vtkUnstructuredGrid::SafeDownCast(ds);
       if (ugrid)
         {
         da = ugrid->GetCells()->GetData();
@@ -473,64 +506,75 @@ void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
         }
       else
         {
-        //TODO: add markers to record starting index of lines, polys and strips
         vtkPolyData *pd = vtkPolyData::SafeDownCast(ds);
-        vtkIdType vsize = pd->GetNumberOfVerts();
-        vtkIdType lsize = pd->GetNumberOfLines();
-        vtkIdType psize = pd->GetNumberOfPolys();
-        vtkIdType ssize = pd->GetNumberOfStrips();
-        vtkIdType total = vsize+lsize+psize+ssize;
-        cerr 
-          << vsize << " "
-          << lsize << " "
-          << psize << " "
-          << ssize << " "
-          << total << endl;
-        if (total == vsize)
+        vtkIdType numv = pd->GetNumberOfVerts();
+        vtkIdType numl = pd->GetNumberOfLines();
+        vtkIdType nump = pd->GetNumberOfPolys();
+        vtkIdType nums = pd->GetNumberOfStrips();
+        vtkIdType total = numv+numl+nump+nums;
+        if (total == numv)
           {
           da = pd->GetVerts()->GetData();
+          t->Set("AllVerts","1");
           }
-        else if (total == lsize)
+        else if (total == numl)
           {
           da = pd->GetLines()->GetData();
+          t->Set("AllLine","1");
           }
-        else if (total == psize)
+        else if (total == nump)
           {
           da = pd->GetPolys()->GetData();
+          t->Set("AllPolys","1");
           }
-        else if (total == ssize)
+        else if (total == nums)
           {
           da = pd->GetStrips()->GetData();
+          t->Set("AllStrips","1");
           }
         if (da != NULL)
           {
+          //cerr << "Single poly cell type" << endl;
           this->ConvertVToXArray(da, di);
           }
         else
           {
-          //more than one cell array, have to accumulate them together
-          //TODO: Is there a valid XDMF way of dumping each one independently? If so we could avoid the copies
-          vtkIdTypeArray *accum = vtkIdTypeArray::New();
-          accum->SetNumberOfComponents(1);
-          accum->SetNumberOfTuples(total);
-          vtkIdType *out = accum->GetPointer(0);
-          vtkIdType *ptr = out;
-          memcpy(ptr, pd->GetVerts()->GetPointer(), vsize*sizeof(vtkIdType));
-          ptr+=vsize;
-          memcpy(ptr, pd->GetLines()->GetPointer(), lsize*sizeof(vtkIdType));
-          ptr+=lsize;
-          memcpy(ptr, pd->GetPolys()->GetPointer(), psize*sizeof(vtkIdType));
-          ptr+=psize;
-          memcpy(ptr, pd->GetStrips()->GetPointer(), ssize*sizeof(vtkIdType));
-          this->ConvertVToXArray(accum, di);
-          //accum->Delete(); //TODO: Delete this, but not before it is used
+          //cerr << "Multiple poly cell types" << endl;
+          //more than one cell array, have to merge them into one array
+          //TODO: Can XdmfTopology have more than one Connectivity array?
+          //If so we could avoid copies and just pass pointers.
+          vtkIdType sizev = pd->GetVerts()->GetData()->GetNumberOfTuples();
+          vtkIdType sizel = pd->GetLines()->GetData()->GetNumberOfTuples();
+          vtkIdType sizep = pd->GetPolys()->GetData()->GetNumberOfTuples();
+          vtkIdType sizes = pd->GetStrips()->GetData()->GetNumberOfTuples();
+          vtkIdType rtotal = sizev+sizel+sizep+sizes;
+          di->SetNumberOfElements(rtotal);
+          vtkIdType *out = (vtkIdType*)di->GetDataPointer();
+          vtkIdType *ptr = out; 
+          memcpy(ptr, pd->GetVerts()->GetData()->GetVoidPointer(0), sizev*sizeof(vtkIdType));
+          ptr+=sizev;
+          memcpy(ptr, pd->GetLines()->GetData()->GetVoidPointer(0), sizel*sizeof(vtkIdType));
+          ptr+=sizel;
+          memcpy(ptr, pd->GetPolys()->GetData()->GetVoidPointer(0), sizep*sizeof(vtkIdType));
+          ptr+=sizep;
+          memcpy(ptr, pd->GetStrips()->GetData()->GetVoidPointer(0), sizes*sizeof(vtkIdType));
+
+          char buf[100];
+          snprintf(buf, 100, "%d", sizev);
+          t->Set("VertSize",buf);
+          snprintf(buf, 100, "%d", sizel);
+          t->Set("LineSize",buf);
+          snprintf(buf, 100, "%d", sizep);
+          t->Set("PolySize",buf);
+          snprintf(buf, 100, "%d", sizes);
+          t->Set("StripSize",buf);
           }
         }
       }
     }
     break;
   default:
-    t->SetTopologyType(XDMF_GEOMETRY_NONE);
+    t->SetTopologyType(XDMF_NOTOPOLOGY);
     cerr << "Unrecognized dataset type" << endl;
   }
   
@@ -587,39 +631,74 @@ void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
     
   //Attributes
   this->WriteArrays(ds->GetFieldData(),grid,XDMF_ATTRIBUTE_CENTER_GRID);
-  this->WriteArrays((vtkFieldData*)ds->GetCellData(),grid,XDMF_ATTRIBUTE_CENTER_CELL); //TODO: why do I need this cast?
-  this->WriteArrays((vtkFieldData*)ds->GetPointData(),grid,XDMF_ATTRIBUTE_CENTER_NODE); //TODO: why do I need this cast?
+  this->WriteArrays(ds->GetCellData(),grid,XDMF_ATTRIBUTE_CENTER_CELL);
+  this->WriteArrays(ds->GetPointData(),grid,XDMF_ATTRIBUTE_CENTER_NODE);
 }
 
 //----------------------------------------------------------------------------
-void vtkXdmfWriter2::WriteArrays(vtkFieldData* dsa, XdmfGrid *grid, int association )
+void vtkXdmfWriter2::WriteArrays(vtkFieldData* fd, XdmfGrid *grid, int association )
 {
-  if (dsa)
+  if (fd)
     {
-    for (int i = 0; i < dsa->GetNumberOfArrays(); i++)
+    vtkDataSetAttributes *dsa = vtkDataSetAttributes::SafeDownCast(fd);
+
+    for (int i = 0; i < fd->GetNumberOfArrays(); i++)
       {
-      vtkDataArray *da = dsa->GetArray(i);
+      vtkDataArray *da = fd->GetArray(i);
       if (!da)
         {
         //TODO: Dump non numeric arrays too
         continue;
         }
+
       XdmfAttribute *attr = new XdmfAttribute;    
       attr->SetName(da->GetName());
       attr->SetAttributeCenter(association);
 
-      //TODO: Mark the active scalar, vector, global id, etc
-      if ( da->GetNumberOfComponents() == 1 )
+      int attributeType = 0;
+      if (dsa)
         {
-        attr->SetAttributeType(XDMF_ATTRIBUTE_TYPE_SCALAR);
+        attributeType = dsa->IsArrayAnAttribute(i);
+        switch (attributeType) {
+        case vtkDataSetAttributes::SCALARS:
+          attributeType = XDMF_ATTRIBUTE_TYPE_SCALAR; //TODO: Is XDMF ok with 3 component(RGB) active scalars?
+          break;
+        case vtkDataSetAttributes::VECTORS:
+          attributeType = XDMF_ATTRIBUTE_TYPE_VECTOR; 
+          break;
+        case vtkDataSetAttributes::GLOBALIDS:
+          attributeType = XDMF_ATTRIBUTE_TYPE_GLOBALID; 
+          break;
+        case vtkDataSetAttributes::TENSORS: //TODO: vtk tensors are 9 component, xdmf tensors are 6?
+        case vtkDataSetAttributes::NORMALS: //TODO: mark as vectors?
+        case vtkDataSetAttributes::TCOORDS: //TODO: mark as vectors?
+        case vtkDataSetAttributes::PEDIGREEIDS: //TODO: ? type is variable
+        default:
+          attributeType = 0;
+          break;
         }
-      else if ( da->GetNumberOfComponents() == 3 )
-        {
-        attr->SetAttributeType(XDMF_ATTRIBUTE_TYPE_VECTOR);
         }
-      else if ( da->GetNumberOfComponents() == 6 )
+
+      if (attributeType != 0)
         {
-        attr->SetAttributeType(XDMF_ATTRIBUTE_TYPE_TENSOR);
+        attr->SetActive(1);
+        attr->SetAttributeType(attributeType);
+        }
+      else
+        {
+        //TODO: Mark the active scalar, vector, global id, etc
+        if ( da->GetNumberOfComponents() == 1 )
+          {
+          attr->SetAttributeType(XDMF_ATTRIBUTE_TYPE_SCALAR);
+          }
+        else if ( da->GetNumberOfComponents() == 3 )
+          {
+          attr->SetAttributeType(XDMF_ATTRIBUTE_TYPE_VECTOR);
+          }
+        else if ( da->GetNumberOfComponents() == 6 )
+          {
+          attr->SetAttributeType(XDMF_ATTRIBUTE_TYPE_TENSOR);
+          }
         }
 
       XdmfArray *xda = new XdmfArray;
@@ -633,7 +712,6 @@ void vtkXdmfWriter2::WriteArrays(vtkFieldData* dsa, XdmfGrid *grid, int associat
 //------------------------------------------------------------------------------
 void vtkXdmfWriter2::ConvertVToXArray(vtkDataArray *vda, XdmfArray *xda)
 {
-  xda->SetNumberOfElements(vda->GetNumberOfTuples() * vda->GetNumberOfComponents());
   switch (vda->GetDataType())
     {
     case VTK_DOUBLE:
@@ -642,8 +720,8 @@ void vtkXdmfWriter2::ConvertVToXArray(vtkDataArray *vda, XdmfArray *xda)
     case VTK_FLOAT:
       xda->SetNumberType(XDMF_FLOAT32_TYPE);
       break;
-    case VTK_ID_TYPE:
-      xda->SetNumberType(XDMF_INT64_TYPE); //TODO: This isn't always true, depends on use 64 bit ids eh?
+    case VTK_ID_TYPE:      
+      xda->SetNumberType((VTK_SIZEOF_ID_TYPE==sizeof(XDMF_64_INT)?XDMF_INT64_TYPE:XDMF_INT32_TYPE));
       break;
     case VTK_LONG:
       xda->SetNumberType(XDMF_INT64_TYPE);
@@ -662,7 +740,7 @@ void vtkXdmfWriter2::ConvertVToXArray(vtkDataArray *vda, XdmfArray *xda)
       break;
     case VTK_CHAR:
     case VTK_SIGNED_CHAR:
-      xda->SetNumberType(XDMF_INT8_TYPE); //TODO: Do we want unicode support?
+      xda->SetNumberType(XDMF_INT8_TYPE); //TODO: Do we ever want unicode?
       break;
     case VTK_UNSIGNED_CHAR:
       xda->SetNumberType(XDMF_UINT8_TYPE);
@@ -678,6 +756,10 @@ void vtkXdmfWriter2::ConvertVToXArray(vtkDataArray *vda, XdmfArray *xda)
       break;
       }
     }        
+  //Do not let xdmf allocate its own buffer. xdmf just borrows vtk's
+  xda->SetAllowAllocate(0); 
+
+  xda->SetNumberOfElements(vda->GetNumberOfTuples()*vda->GetNumberOfComponents());
   xda->SetDataPointer(vda->GetVoidPointer(0));
 }
 
