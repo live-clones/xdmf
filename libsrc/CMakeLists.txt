@@ -30,7 +30,6 @@ SET( XdmfFormatSource
   XdmfValuesXML
   XdmfValuesHDF
   XdmfValuesBinary
-  gzstream
   XdmfHeavyData
   XdmfHDF
   XdmfHDFSupport
@@ -65,6 +64,10 @@ SET( XdmfModelSource
   XdmfDsmComm
   XdmfDsmMsg
   )
+
+SET( XdmfGzipSource
+  gzstream
+   )
 
 # IF(XDMF_BUILD_MPI)
 #     SET(XdmfModelSource ${XdmfModelSource} XdmfH5Driver)
@@ -326,6 +329,11 @@ IF(XDMF_USE_MYSQL)
     ADD_DEFINITIONS("-DXDMF_USE_MYSQL")
     INCLUDE_DIRECTORIES(${MYSQL_INCLUDE_PATH})
 ENDIF(XDMF_USE_MYSQL)
+# gzip
+OPTION(XDMF_USE_GZIP "Build GZip Compression" OFF)
+IF(XDMF_USE_GZIP)
+    SET(XdmfSources ${XdmfSources} ${XdmfGzipSource})
+ENDIF(XDMF_USE_GZIP)
 # bz2lib
 OPTION(XDMF_USE_BZIP2 "Use bzip2" OFF)
 IF(XDMF_USE_BZIP2)
