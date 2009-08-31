@@ -49,6 +49,7 @@
 	Precision (1 | 4 | 8) "4"
 	Reference CDATA #IMPLIED
     Endian (Big | Little | Native) "Native"
+    Compression (Zlib |BZip2 | Raw) "Raw"
 	Format (XML | HDF | Binary) "XML"
 >
 <!--Describes the values on the mesh-->
