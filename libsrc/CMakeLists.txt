@@ -337,6 +337,7 @@ ENDIF(XDMF_USE_MYSQL)
 OPTION(XDMF_USE_GZIP "Build GZip Compression" OFF)
 IF(XDMF_USE_GZIP)
     SET(XdmfSources ${XdmfSources} ${XdmfGzipSource})
+    ADD_DEFINITIONS("-DXDMF_USE_GZIP")
 ENDIF(XDMF_USE_GZIP)
 # bz2lib
 OPTION(XDMF_USE_BZIP2 "Use bzip2" OFF)
