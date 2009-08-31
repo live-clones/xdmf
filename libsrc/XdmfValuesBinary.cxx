@@ -252,9 +252,9 @@ XdmfValuesBinary::Write(XdmfArray *anArray, XdmfConstString aHeavyDataSetName){
         return(XDMF_FAIL);
     }
     char* hds;
-    this->Set("CDATA", hds);
     XDMF_STRING_DUPLICATE(hds, aHeavyDataSetName);
     XDMF_WORD_TRIM( hds );
+    this->Set("CDATA", hds);
     byteSwap(anArray);
     ostream * fs = NULL;
     try{
