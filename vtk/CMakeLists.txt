@@ -31,6 +31,8 @@ SET( Xdmf_SRCS
   vtkXdmfWriter2.cxx
   vtkXdmfDataArray.cxx
 #vtkXdmfOpenGLCamera.cxx
+  vtkXdmfReader2.cxx
+  vtkSILBuilder.cxx
 #${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
 #vtkXdmfDataSetWriter.cxx
   )
@@ -89,7 +91,10 @@ IF (VTK_FOUND)
   ELSE(VTK_BUILD_SHARED_LIBS OR BUILD_SHARED_LIBS)
     SET(LIBTYPE STATIC)
   ENDIF(VTK_BUILD_SHARED_LIBS OR BUILD_SHARED_LIBS)
-  ADD_LIBRARY(vtkXdmf ${LIBTYPE} ${Xdmf_SRCS})
+  ADD_LIBRARY(vtkXdmf ${LIBTYPE} ${Xdmf_SRCS}
+    vtkXdmfReader2Internal.cxx
+    vtkXdmfHeavyData.cxx
+    )
   TARGET_LINK_LIBRARIES(vtkXdmf vtkIO Xdmf vtkRendering vtkParallel)
 
   IF (VTK_USE_MPI)
