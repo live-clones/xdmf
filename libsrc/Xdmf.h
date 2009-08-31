@@ -50,5 +50,7 @@
 #include "XdmfRoot.h"
 #include "XdmfTopology.h"
 #include "XdmfValues.h"
+#include "XdmfValuesBinary.h"
 #include "XdmfValuesHDF.h"
+#include "XdmfValuesMySQL.h"
 #include "XdmfValuesXML.h"
