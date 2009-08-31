@@ -141,7 +141,7 @@ void vtkXdmfDocument::UpdateDomains()
 //----------------------------------------------------------------------------
 bool vtkXdmfDocument::SetActiveDomain(const char* domainname)
 {
-  for (size_t cc=0; cc < this->Domains.size(); cc++)
+  for (int cc=0; cc < static_cast<int>(this->Domains.size()); cc++)
     {
     if (this->Domains[cc] == domainname)
       {
