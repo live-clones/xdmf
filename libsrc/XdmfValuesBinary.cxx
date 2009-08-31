@@ -24,6 +24,17 @@
 #include "XdmfHDF.h"
 
 
+
+#include <exception>
+#include "gzstream.h"
+
+#ifdef XDMF_USE_BZIP2
+#include "bz2stream.h"
+#endif
+
+
+
+
 //#include <sys/stat.h>
 //#include <cassert>
 template<size_t T>
@@ -78,9 +89,28 @@ void XdmfValuesBinary::byteSwap(XdmfArray * RetArray){
         }
     }
 }
+size_t XdmfValuesBinary::getSeek(){
+    if(this->Seek==NULL)return 0;
+    return static_cast<size_t>(atoi(this->Seek));
+}
 
+
+enum XdmfValuesBinary::CompressionType XdmfValuesBinary::getCompressionType(){
+    if(this->Compression==NULL||XDMF_WORD_CMP(Compression, "Raw")){
+        return Raw;
+    }
+    if(XDMF_WORD_CMP(Compression, "Zlib")){
+        return Zlib;
+    }
+    if(XDMF_WORD_CMP(Compression, "BZip2")){
+        return BZip2;
+    }
+    return Raw;
+}
 XdmfValuesBinary::XdmfValuesBinary() {
     this->Endian = NULL;
+    this->Seek = NULL;
+    this->Compression = NULL;
     this->SetFormat(XDMF_FORMAT_BINARY);
 }
 XdmfValuesBinary::~XdmfValuesBinary() {
@@ -100,12 +130,31 @@ XdmfValuesBinary::Read(XdmfArray *anArray){
         RetArray->CopyShape(this->DataDesc);
     }
     XdmfDebug("Accessing Binary CDATA");
-    XdmfConstString Value = this->Get("Endian");
-    if(Value){
-        this->SetEndian(Value);
-    }else{
-        this->Endian = NULL;
+    {
+        XdmfConstString Value = this->Get("Endian");
+        if(Value){
+            this->SetEndian(Value);
+        }else{
+            this->Endian = NULL;
+        }
     }
+    {
+        XdmfConstString Value = this->Get("Seek");
+        if(Value){
+            this->SetSeek(Value);
+        }else{
+            this->Seek = NULL;
+        }
+    }
+    {
+        XdmfConstString Value = this->Get("Compression");
+        if(Value){
+            this->SetCompression(Value);
+        }else{
+            this->Compression = NULL;
+        }
+    }
+
     XdmfString  DataSetName = 0;
     XDMF_STRING_DUPLICATE(DataSetName, this->Get("CDATA"));
     XDMF_WORD_TRIM(DataSetName);
@@ -123,18 +172,53 @@ XdmfValuesBinary::Read(XdmfArray *anArray){
     //    stat(DataSetName, &buf);
     //    assert(buf.st_size == RetArray->GetCoreLength());
 
-    ifstream fs(DataSetName,std::ios::binary);
-    if(!fs.good()){
-        XdmfErrorMessage("Can't Open File " << DataSetName);
-        return(NULL);
-    }
+    //ifstream fs(DataSetName,std::ios::binary);
     if( RetArray->GetDataPointer() == NULL ){
         XdmfErrorMessage("Memory Object Array has no data storage");
         return( NULL );
     }
-    fs.read(reinterpret_cast<char*>(RetArray->GetDataPointer()), RetArray->GetCoreLength());
-    fs.close();
-    //When endian is different to this system....
+    istream * fs = NULL;
+    try{
+        size_t seek = this->getSeek();
+        switch(getCompressionType()){
+        case Zlib:
+            XdmfDebug("Compression: Zlib");
+            //fs = gzip(fs);
+            fs = new igzstream(DataSetName, std::ios::binary|std::ios::in);
+            if(seek!=0){
+                XdmfDebug("Seek has not supported with Zlib.");
+            }
+            break;
+        case BZip2:
+            XdmfDebug("Compression: Bzip2");
+#ifdef XDMF_USE_BZIP2
+            fs = new ibz2stream(DataSetName);//, std::ios::binary|std::ios::in);
+            if(seek!=0){
+                XdmfDebug("Seek has not supported with Bzip2.");
+            }
+            break;
+#else
+                XdmfDebug("BZIP2 LIBRARY IS NEEDED.");
+#endif
+        default:
+            fs = new ifstream(DataSetName, std::ios::binary);
+            fs->seekg(seek);
+            XdmfDebug("Seek: " << seek);
+            break;
+        }
+        fs->exceptions( ios::failbit | ios::badbit );
+        if(!fs->good()){
+            XdmfErrorMessage("Can't Open File " << DataSetName);
+            //return(NULL);
+        }
+        fs->read(reinterpret_cast<char*>(RetArray->GetDataPointer()), RetArray->GetCoreLength());
+    } catch( std::exception& ){
+        delete fs;
+        return( NULL );
+    }
+
+    //fs->close();?
+    delete fs;
     byteSwap(RetArray);
     return RetArray;
 }
@@ -157,23 +241,52 @@ XdmfValuesBinary::Write(XdmfArray *anArray, XdmfConstString aHeavyDataSetName){
         XdmfErrorMessage("Array to Write is NULL");
         return(XDMF_FAIL);
     }
-    char* hds;
-    XDMF_STRING_DUPLICATE(hds, aHeavyDataSetName);
-    XDMF_WORD_TRIM( hds );
-    this->Set("CDATA", hds);
-    byteSwap(anArray);
-    ofstream fs(aHeavyDataSetName,std::ios::binary);
-    if(!fs.good()){
-        XdmfErrorMessage("Can't Open File " << aHeavyDataSetName);
-        return(NULL);
-    }
     if( anArray->GetDataPointer() == NULL ){
         XdmfErrorMessage("Memory Object Array has no data storage");
-        return( NULL );
+        return(XDMF_FAIL);
     }
-    fs.write(reinterpret_cast<char*>(anArray->GetDataPointer()), anArray->GetCoreLength());
-    fs.close();
+    char* hds;
+    this->Set("CDATA", hds);
+    XDMF_STRING_DUPLICATE(hds, aHeavyDataSetName);
+    XDMF_WORD_TRIM( hds );
     byteSwap(anArray);
+    ostream * fs = NULL;
+    try{
+        //ofstream fs(aHeavyDataSetName,std::ios::binary);
+        switch(getCompressionType()){
+        case Zlib:
+            XdmfDebug("Compression: ZLIB");
+            //fs = gzip(fs);
+            fs = new ogzstream(aHeavyDataSetName, std::ios::binary|std::ios::out);
+            break;
+        case BZip2:
+            XdmfDebug("Compression: BZIP2");
+#ifdef XDMF_USE_BZIP2
+            fs = new obz2stream(aHeavyDataSetName);//, std::ios::binary|std::ios::out);
+            break;
+#else
+                XdmfDebug("BZIP2 LIBRARY IS NEEDED.");
+#endif
+        default:
+            fs = new ofstream(aHeavyDataSetName, std::ios::binary);
+            //fs->seekg(seek);
+            //XdmfDebug("Seek: " << seek);
+            break;
+        }
+        fs->exceptions( ios::failbit | ios::badbit );
+        if(!fs->good()){
+            XdmfErrorMessage("Can't Open File " << aHeavyDataSetName);
+        }
+        fs->write(reinterpret_cast<char*>(anArray->GetDataPointer()), anArray->GetCoreLength());
+    }catch( std::exception& ){
+        //fs.close();
+        byteSwap(anArray);
+        delete [] fs;
+        delete [] hds;
+        return(XDMF_FAIL);
+    }
+    byteSwap(anArray);
+    delete [] fs;
     delete [] hds;
     return(XDMF_SUCCESS);
 }

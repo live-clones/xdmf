@@ -37,11 +37,14 @@ A Binary XdmfDataItem Node Looks like :
   Precision="4"
   DataType="Float"
   Format="Binary"
+  Seek="2"
+  Compression="BZip2"
   Endian="Little"
   >
 </DataItem>
 \endverbatim
 Endian: Little, Big, otherwise Native
+Seak: unit is byte
 Putting "<" in the CDATA, it may cause an error in the XML parser. 
 Here's an example of using "<" in the CDATA :
 
@@ -72,11 +75,27 @@ public :
   //! Set Endian Name
   XdmfSetStringMacro(Endian);
 
+  //! Get Seek
+  XdmfGetStringMacro(Seek);
+  //! Set Seek
+  XdmfSetStringMacro(Seek);
+
+  //! Get Compression
+  XdmfGetStringMacro(Compression);
+  //! Set Compression
+  XdmfSetStringMacro(Compression);
+
+
 protected :
   bool needByteSwap();
   XdmfString  Endian;
+  XdmfString  Seek;
+  XdmfString  Compression;
 private:
   void byteSwap(XdmfArray * RetArray);
+  size_t getSeek();
+  enum CompressionType {Raw, Zlib, BZip2};
+  enum CompressionType getCompressionType();
 };
 
 #endif
