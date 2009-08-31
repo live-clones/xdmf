@@ -5502,6 +5502,37 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_XdmfAttribute_SetActive(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfAttribute *arg1 = (XdmfAttribute *) 0 ;
+  XdmfInt32 arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  XdmfInt32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfAttribute_SetActive",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfAttribute, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfAttribute_SetActive" "', argument " "1"" of type '" "XdmfAttribute *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfAttribute * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfAttribute_SetActive" "', argument " "2"" of type '" "XdmfInt32""'");
+  } 
+  arg2 = static_cast< XdmfInt32 >(val2);
+  result = (XdmfInt32)(arg1)->SetActive(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_XdmfAttribute_GetActive(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   XdmfAttribute *arg1 = (XdmfAttribute *) 0 ;
@@ -31858,6 +31889,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfAttribute_GetAttributeType", _wrap_XdmfAttribute_GetAttributeType, METH_VARARGS, NULL},
 	 { (char *)"XdmfAttribute_SetLightDataLimit", _wrap_XdmfAttribute_SetLightDataLimit, METH_VARARGS, NULL},
 	 { (char *)"XdmfAttribute_GetLightDataLimit", _wrap_XdmfAttribute_GetLightDataLimit, METH_VARARGS, NULL},
+	 { (char *)"XdmfAttribute_SetActive", _wrap_XdmfAttribute_SetActive, METH_VARARGS, NULL},
 	 { (char *)"XdmfAttribute_GetActive", _wrap_XdmfAttribute_GetActive, METH_VARARGS, NULL},
 	 { (char *)"XdmfAttribute_Insert", _wrap_XdmfAttribute_Insert, METH_VARARGS, NULL},
 	 { (char *)"XdmfAttribute_SetAttributeTypeFromString", _wrap_XdmfAttribute_SetAttributeTypeFromString, METH_VARARGS, NULL},
@@ -33556,6 +33588,7 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "XDMF_ATTRIBUTE_TYPE_TENSOR",SWIG_From_int(static_cast< int >(3)));
   SWIG_Python_SetConstant(d, "XDMF_ATTRIBUTE_TYPE_MATRIX",SWIG_From_int(static_cast< int >(4)));
   SWIG_Python_SetConstant(d, "XDMF_ATTRIBUTE_TYPE_TENSOR6",SWIG_From_int(static_cast< int >(5)));
+  SWIG_Python_SetConstant(d, "XDMF_ATTRIBUTE_TYPE_GLOBALID",SWIG_From_int(static_cast< int >(6)));
   SWIG_Python_SetConstant(d, "XDMF_ATTRIBUTE_CENTER_GRID",SWIG_From_int(static_cast< int >(0)));
   SWIG_Python_SetConstant(d, "XDMF_ATTRIBUTE_CENTER_CELL",SWIG_From_int(static_cast< int >(1)));
   SWIG_Python_SetConstant(d, "XDMF_ATTRIBUTE_CENTER_FACE",SWIG_From_int(static_cast< int >(2)));
@@ -33568,6 +33601,7 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "XDMF_FORMAT_XML",SWIG_From_int(static_cast< int >(0)));
   SWIG_Python_SetConstant(d, "XDMF_FORMAT_HDF",SWIG_From_int(static_cast< int >(1)));
   SWIG_Python_SetConstant(d, "XDMF_FORMAT_MYSQL",SWIG_From_int(static_cast< int >(2)));
+  SWIG_Python_SetConstant(d, "XDMF_FORMAT_BINARY",SWIG_From_int(static_cast< int >(3)));
   SWIG_Python_SetConstant(d, "XDMF_ITEM_UNIFORM",SWIG_From_int(static_cast< int >(0x00)));
   SWIG_Python_SetConstant(d, "XDMF_ITEM_HYPERSLAB",SWIG_From_int(static_cast< int >(0x01)));
   SWIG_Python_SetConstant(d, "XDMF_ITEM_COORDINATES",SWIG_From_int(static_cast< int >(0x02)));
