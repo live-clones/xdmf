@@ -185,7 +185,7 @@ XdmfValuesBinary::Read(XdmfArray *anArray){
         switch(getCompressionType()){
         case Zlib:
             XdmfDebug("Compression: Zlib");
-#ifdef XDMF_USE_BZIP2
+#ifdef XDMF_USE_GZIP
             //fs = gzip(fs);
             fs = new igzstream(DataSetName, std::ios::binary|std::ios::in);
             if(seek!=0){
