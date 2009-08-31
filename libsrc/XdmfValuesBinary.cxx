@@ -26,7 +26,9 @@
 
 
 #include <exception>
+#ifdef XDMF_USE_GZIP
 #include "gzstream.h"
+#endif
 
 #ifdef XDMF_USE_BZIP2
 #include "bz2stream.h"
@@ -183,12 +185,16 @@ XdmfValuesBinary::Read(XdmfArray *anArray){
         switch(getCompressionType()){
         case Zlib:
             XdmfDebug("Compression: Zlib");
+#ifdef XDMF_USE_BZIP2
             //fs = gzip(fs);
             fs = new igzstream(DataSetName, std::ios::binary|std::ios::in);
             if(seek!=0){
                 XdmfDebug("Seek has not supported with Zlib.");
             }
             break;
+#else
+            XdmfDebug("GZip Lib is needed.");
+#endif
         case BZip2:
             XdmfDebug("Compression: Bzip2");
 #ifdef XDMF_USE_BZIP2
@@ -256,9 +262,13 @@ XdmfValuesBinary::Write(XdmfArray *anArray, XdmfConstString aHeavyDataSetName){
         switch(getCompressionType()){
         case Zlib:
             XdmfDebug("Compression: ZLIB");
+#ifdef XDMF_USE_GZIP
             //fs = gzip(fs);
             fs = new ogzstream(aHeavyDataSetName, std::ios::binary|std::ios::out);
             break;
+#else
+                XdmfDebug("GZIP LIBRARY IS NEEDED.");
+#endif
         case BZip2:
             XdmfDebug("Compression: BZIP2");
 #ifdef XDMF_USE_BZIP2
