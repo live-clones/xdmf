@@ -227,8 +227,9 @@ vtkDataObject* vtkXdmfHeavyData::ReadTemporalCollection(
   else if (child_data_objects.size() > 1)
     {
     vtkMultiBlockDataSet* mb = vtkMultiBlockDataSet::New();
-    mb->SetNumberOfBlocks(child_data_objects.size());
-    for (size_t cc=0; cc < child_data_objects.size(); cc++)
+    mb->SetNumberOfBlocks(static_cast<unsigned int>(child_data_objects.size()));
+    for (unsigned int cc=0;
+      cc < static_cast<unsigned int>(child_data_objects.size()); cc++)
       {
       mb->SetBlock(cc, child_data_objects[cc]);
       }

@@ -25,7 +25,7 @@
 #include "vtkObjectFactory.h"
 
 vtkStandardNewMacro(vtkXdmfReader2);
-vtkCxxRevisionMacro(vtkXdmfReader2, "1.1");
+vtkCxxRevisionMacro(vtkXdmfReader2, "1.2");
 //----------------------------------------------------------------------------
 vtkXdmfReader2::vtkXdmfReader2()
 {
@@ -231,7 +231,7 @@ int vtkXdmfReader2::RequestInformation(vtkInformation *, vtkInformationVector **
   if (time_steps.size() > 0)
     {
     outInfo->Set(vtkStreamingDemandDrivenPipeline::TIME_STEPS(), 
-      &time_steps[0], time_steps.size());
+      &time_steps[0], static_cast<int>(time_steps.size()));
     double timeRange[2];
     timeRange[0] = time_steps.front();
     timeRange[1] = time_steps.back();
