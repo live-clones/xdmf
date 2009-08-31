@@ -94,6 +94,10 @@ SET( XdmfPythonSource
   XdmfPython
   )
 
+SET( XdmfPythonSourceNoMpi
+  XdmfPythonNoMpi
+  )
+
 SET(XDMF_PYTHON_FILE ${Xdmf_SOURCE_DIR}/libsrc/Xdmf.py)
 OPTION(XDMF_REGENERATE_WRAPPERS
   "Regenerate XdmfPython.cxx" OFF)
@@ -413,7 +417,11 @@ IF(XDMF_WRAP_PYTHON)
     MESSAGE("Python wrapping only works on shared libraries")
   ENDIF(NOT BUILD_SHARED_LIBS)
   INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
-  ADD_LIBRARY(_Xdmf MODULE ${XdmfPythonSource})
+  IF(XDMF_BUILD_MPI)
+    ADD_LIBRARY(_Xdmf MODULE ${XdmfPythonSource})
+  ELSE(XDMF_BUILD_MPI)
+    ADD_LIBRARY(_Xdmf MODULE ${XdmfPythonSourceNoMpi})
+  ENDIF(XDMF_BUILD_MPI)
   TARGET_LINK_LIBRARIES(_Xdmf Xdmf ${HDF5_LIBRARY} ${XDMF_ZLIB_LIBRARIES} ${XDMF_BZIP2_LIBRARIES})
   IF(WIN32 OR APPLE)
     TARGET_LINK_LIBRARIES(_Xdmf ${PYTHON_LIBRARY})
