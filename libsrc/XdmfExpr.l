@@ -11,6 +11,12 @@
 #include <math.h>
 #define YY_NEVER_INTERACTIVE 1
 
+#ifndef yylval
+#define yylval dice_yylval
+extern YYSTYPE dice_yylval;
+#endif
+
+
 #if defined( _WIN32 ) && !defined( __CYGWIN__ )
 /* Handle Windows properly */
 #  include <io.h>

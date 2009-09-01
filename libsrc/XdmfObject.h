@@ -366,7 +366,7 @@ need to make sure ....
   }
 
 #define XDMF_WORD_TRIM( a ) { \
-  int             StringLength; \
+  size_t          StringLength; \
   char            *fp; \
   char            *st; \
   char            *ed; \

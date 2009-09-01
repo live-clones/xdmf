@@ -719,9 +719,9 @@ extern "C" {
 #endif
 
 char	InputBuffer[ 512 ];
-int	InputBufferPtr = 0, InputBufferEnd = 0;
+size_t InputBufferPtr = 0, InputBufferEnd = 0;
 char	OutputBuffer[ 512 ];
-int	OutputBufferPtr = 0;
+size_t OutputBufferPtr = 0;
 /* static int OutputBufferEnd = 511; */
 
 int
