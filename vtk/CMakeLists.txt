@@ -124,7 +124,7 @@ ENDIF(XDMF_BUILD_MPI)
     VTK_WRAP_PYTHON2(vtk${PROJECT_NAME}Python XdmfPython_SRCS ${Xdmf_SRCS})
     ADD_LIBRARY(vtk${PROJECT_NAME}Python MODULE ${XdmfPython_SRCS} ${Xdmf_SRCS})
     TARGET_LINK_LIBRARIES(vtk${PROJECT_NAME}Python vtkIOPythonD
-      vtkRenderingPythonD vtkParallelPythonD Xdmf)
+      vtkRenderingPythonD vtkParallelPythonD Xdmf vtkXdmf)
     ADD_DEPENDENCIES(vtk${PROJECT_NAME}Python vtk${PROJECT_NAME})
   ENDIF(VTK_WRAP_PYTHON)
   IF(XDMF_BUILD_TESTING)
