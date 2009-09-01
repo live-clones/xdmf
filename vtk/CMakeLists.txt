@@ -32,10 +32,18 @@ SET( Xdmf_SRCS
   vtkXdmfDataArray.cxx
 #vtkXdmfOpenGLCamera.cxx
   vtkXdmfReader2.cxx
+  vtkXdmfReader2Internal.cxx
+  vtkXdmfHeavyData.cxx
   vtkSILBuilder.cxx
 #${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
 #vtkXdmfDataSetWriter.cxx
   )
+SET_SOURCE_FILES_PROPERTIES(
+  vtkXdmfReader2Internal
+  vtkXdmfHeavyData
+  WRAP_EXCLUDE
+)
+
 
 SET(USE_RENDER_WINDOW_INTERACTOR 1)
 IF (OSMESA_LIBRARY AND NOT OPENGL_gl_LIBRARY)
@@ -91,10 +99,7 @@ IF (VTK_FOUND)
   ELSE(VTK_BUILD_SHARED_LIBS OR BUILD_SHARED_LIBS)
     SET(LIBTYPE STATIC)
   ENDIF(VTK_BUILD_SHARED_LIBS OR BUILD_SHARED_LIBS)
-  ADD_LIBRARY(vtkXdmf ${LIBTYPE} ${Xdmf_SRCS}
-    vtkXdmfReader2Internal.cxx
-    vtkXdmfHeavyData.cxx
-    )
+  ADD_LIBRARY(vtkXdmf ${LIBTYPE} ${Xdmf_SRCS})
   TARGET_LINK_LIBRARIES(vtkXdmf vtkIO Xdmf vtkRendering vtkParallel)
 
   IF (VTK_USE_MPI)
@@ -124,7 +129,7 @@ ENDIF(XDMF_BUILD_MPI)
     VTK_WRAP_PYTHON2(vtk${PROJECT_NAME}Python XdmfPython_SRCS ${Xdmf_SRCS})
     ADD_LIBRARY(vtk${PROJECT_NAME}Python MODULE ${XdmfPython_SRCS} ${Xdmf_SRCS})
     TARGET_LINK_LIBRARIES(vtk${PROJECT_NAME}Python vtkIOPythonD
-      vtkRenderingPythonD vtkParallelPythonD Xdmf vtkXdmf)
+      vtkRenderingPythonD vtkParallelPythonD Xdmf)
     ADD_DEPENDENCIES(vtk${PROJECT_NAME}Python vtk${PROJECT_NAME})
   ENDIF(VTK_WRAP_PYTHON)
   IF(XDMF_BUILD_TESTING)
