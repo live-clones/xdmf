@@ -25,7 +25,7 @@
 #include "vtkObjectFactory.h"
 
 vtkStandardNewMacro(vtkXdmfReader2);
-vtkCxxRevisionMacro(vtkXdmfReader2, "1.2");
+vtkCxxRevisionMacro(vtkXdmfReader2, "1.3");
 //----------------------------------------------------------------------------
 vtkXdmfReader2::vtkXdmfReader2()
 {
@@ -335,6 +335,14 @@ int vtkXdmfReader2::ChooseTimeStep(vtkInformation* outInfo)
 }
 
 //----------------------------------------------------------------------------
+int vtkXdmfReader2::GetNumberOfGrids()
+{
+  return
+    this->XdmfDocument->GetActiveDomain()->GetGridSelection()->
+    GetNumberOfArrays();
+}
+
+//----------------------------------------------------------------------------
 void vtkXdmfReader2::SetGridStatus(const char* gridname, int status)
 {
   if (status)
@@ -346,6 +354,99 @@ void vtkXdmfReader2::SetGridStatus(const char* gridname, int status)
     this->XdmfDocument->GetActiveDomain()->GetGridSelection()->DisableArray(gridname);
     }
   this->Modified();
+}
+
+//----------------------------------------------------------------------------
+int vtkXdmfReader2::GetGridStatus(const char* arrayname)
+{
+  return this->XdmfDocument->GetActiveDomain()->GetGridSelection()->
+    GetArraySetting(arrayname);
+}
+
+
+//----------------------------------------------------------------------------
+const char* vtkXdmfReader2::GetGridName(int index)
+{
+  return this->XdmfDocument->GetActiveDomain()->GetGridSelection()->
+    GetArrayName(index);
+}
+
+//----------------------------------------------------------------------------
+int vtkXdmfReader2::GetNumberOfPointArrays()
+{
+  return
+    this->XdmfDocument->GetActiveDomain()->GetPointArraySelection()->
+    GetNumberOfArrays();
+}
+
+//----------------------------------------------------------------------------
+void vtkXdmfReader2::SetPointArrayStatus(const char* arrayname, int status)
+{
+  if (status)
+    {
+    this->XdmfDocument->GetActiveDomain()->GetPointArraySelection()->
+      EnableArray(arrayname);
+    }
+  else
+    {
+    this->XdmfDocument->GetActiveDomain()->GetPointArraySelection()->
+      DisableArray(arrayname);
+    }
+  this->Modified();
+}
+
+//----------------------------------------------------------------------------
+int vtkXdmfReader2::GetPointArrayStatus(const char* arrayname)
+{
+  return this->XdmfDocument->GetActiveDomain()->GetPointArraySelection()->
+    GetArraySetting(arrayname);
+}
+
+
+//----------------------------------------------------------------------------
+const char* vtkXdmfReader2::GetPointArrayName(int index)
+{
+  return this->XdmfDocument->GetActiveDomain()->GetPointArraySelection()->
+    GetArrayName(index);
+}
+
+//----------------------------------------------------------------------------
+int vtkXdmfReader2::GetNumberOfCellArrays()
+{
+  return
+    this->XdmfDocument->GetActiveDomain()->GetCellArraySelection()->
+    GetNumberOfArrays();
+}
+
+//----------------------------------------------------------------------------
+void vtkXdmfReader2::SetCellArrayStatus(const char* arrayname, int status)
+{
+  if (status)
+    {
+    this->XdmfDocument->GetActiveDomain()->GetCellArraySelection()->
+      EnableArray(arrayname);
+    }
+  else
+    {
+    this->XdmfDocument->GetActiveDomain()->GetCellArraySelection()->
+      DisableArray(arrayname);
+    }
+  this->Modified();
+}
+
+//----------------------------------------------------------------------------
+int vtkXdmfReader2::GetCellArrayStatus(const char* arrayname)
+{
+  return this->XdmfDocument->GetActiveDomain()->GetCellArraySelection()->
+    GetArraySetting(arrayname);
+}
+
+
+//----------------------------------------------------------------------------
+const char* vtkXdmfReader2::GetCellArrayName(int index)
+{
+  return this->XdmfDocument->GetActiveDomain()->GetCellArraySelection()->
+    GetArrayName(index);
 }
 
 //----------------------------------------------------------------------------

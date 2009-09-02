@@ -831,6 +831,10 @@ bool vtkXdmfHeavyData::ReadAttributes(
       break;
 
     case XDMF_ATTRIBUTE_CENTER_NODE:
+      if (!this->Domain->GetPointArraySelection()->ArrayIsEnabled(attrName))
+        {
+        continue;
+        }
       fieldData = dataSet->GetPointData();
       break;
 
