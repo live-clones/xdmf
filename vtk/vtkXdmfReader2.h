@@ -44,13 +44,12 @@ public:
   vtkTypeRevisionMacro(vtkXdmfReader2, vtkDataReader);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  /*
-  // Description:
-  // Returns the number of domains present in the data file. This in valid after
-  // the filename has been set and UpdateInformation() has been called .i.e. the
-  // RequestInformation pipeline pass has happened.
-  unsigned int GetNumberOfDomains();
-  */
+  // Until needed, multiple domains are not supported.
+  //// Description:
+  //// Returns the number of domains present in the data file. This in valid after
+  //// the filename has been set and UpdateInformation() has been called .i.e. the
+  //// RequestInformation pipeline pass has happened.
+  //unsigned int GetNumberOfDomains();
 
   // Description:
   // Set the active domain. Only one domain can be selected at a time. By
@@ -61,12 +60,11 @@ public:
   vtkSetStringMacro(DomainName);
   vtkGetStringMacro(DomainName);
 
-  // Description:
-  // Returns the name for the active domain. Note that this may be different
-  // from what GetDomainName() returns if DomainName is NULL or invalid.
+  //// Description:
+  //// Returns the name for the active domain. Note that this may be different
+  //// from what GetDomainName() returns if DomainName is NULL or invalid.
   // vtkGetStringMacro(ActiveDomainName);
 
-  /*
   // Description:
   // Get information about point-based arrays. As is typical with readers this
   // in only valid after the filename is set and UpdateInformation() has been
@@ -79,9 +77,7 @@ public:
   const char* GetPointArrayName(int index);
 
   // Description:
-  // Returns the index for the point array with given name. Returns -1 if no
-  // such array exists.
-  int GetPointArrayIndex(const char* name);
+  // Get/Set the point array status.
   int GetPointArrayStatus(const char* name);
   void SetPointArrayStatus(const char* name, int status);
 
@@ -91,17 +87,17 @@ public:
   // called.
   int GetNumberOfCellArrays();
   const char* GetCellArrayName(int index);
-  int GetCellArrayIndex(const char* name);
   void SetCellArrayStatus(const char* name, int status);
   int GetCellArrayStatus(const char* name);
-  */
 
   // Description:
-  // Get/Set information about grids.
-  //int GetNumberOfGrids();
-  //const char* GetGridName(int index);
+  // Get/Set information about grids. As is typical with readers this is valid
+  // only after the filename as been set and UpdateInformation() has been
+  // called.
+  int GetNumberOfGrids();
+  const char* GetGridName(int index);
   void SetGridStatus(const char* gridname, int status);
-  //int GetGridStatus(const char* gridname, int status);
+  int GetGridStatus(const char* gridname);
  
   // Description:
   // Get/Set the stride used to skip points when reading structured datasets.
