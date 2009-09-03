@@ -187,10 +187,10 @@ vtkXdmfDomain::vtkXdmfDomain(XdmfDOM* xmlDom, int domain_index)
   this->SILBuilder = vtkSILBuilder::New();
   this->SILBuilder->SetSIL(this->SIL);
 
-  this->PointArrays = vtkDataArraySelection::New();
-  this->CellArrays = vtkDataArraySelection::New();
-  this->Grids = vtkDataArraySelection::New();
-  this->Sets = vtkDataArraySelection::New();
+  this->PointArrays = new vtkXdmfArraySelection;
+  this->CellArrays = new vtkXdmfArraySelection;
+  this->Grids = new vtkXdmfArraySelection;
+  this->Sets = new vtkXdmfArraySelection;
 
   this->XMLDomain = xmlDom->FindElement("Domain", domain_index);
   if (!this->XMLDomain)
@@ -236,14 +236,10 @@ vtkXdmfDomain::~vtkXdmfDomain()
   this->SIL = 0;
   this->SILBuilder->Delete();
   this->SILBuilder = 0;
-  this->PointArrays->Delete();
-  this->PointArrays = 0;
-  this->CellArrays->Delete();
-  this->CellArrays = 0;
-  this->Grids->Delete();
-  this->Grids = 0;
-  this->Sets->Delete();
-  this->Sets = 0;
+  delete this->PointArrays;
+  delete this->CellArrays;
+  delete this->Grids;
+  delete this->Sets;;
 }
 
 //----------------------------------------------------------------------------
@@ -554,7 +550,7 @@ void vtkXdmfDomain::CollectLeafMetaData(XdmfGrid* xmfGrid, vtkIdType silParent)
 {
   vtkIdType silVertex = this->SILBuilder->AddVertex(xmfGrid->GetName());
   this->SILBuilder->AddChildEdge(silParent, silVertex);
-  // this->Grids->AddArray(xmfGrid->GetName());
+  this->Grids->AddArray(xmfGrid->GetName());
 
   // Collect attribute arrays information.
   XdmfInt32 numAttributes = xmfGrid->GetNumberOfAttributes();
@@ -588,26 +584,27 @@ void vtkXdmfDomain::CollectLeafMetaData(XdmfGrid* xmfGrid, vtkIdType silParent)
     }
 
   // Collect sets information
-  XdmfInt32 numSets = xmfGrid->GetNumberOfSets();
-  for (XdmfInt32 kk=0; kk < numSets; kk++)
-    {
-    XdmfSet *xmfSet = xmfGrid->GetSets(kk);
-    const char *name = xmfSet->GetName();
-    if (!name)
-      {
-      continue;
-      }
+  // TODO: Need better handling of sets.
+  //XdmfInt32 numSets = xmfGrid->GetNumberOfSets();
+  //for (XdmfInt32 kk=0; kk < numSets; kk++)
+  //  {
+  //  XdmfSet *xmfSet = xmfGrid->GetSets(kk);
+  //  const char *name = xmfSet->GetName();
+  //  if (!name)
+  //    {
+  //    continue;
+  //    }
 
-    XdmfInt32 setCenter = xmfSet->GetSetType();
-    if (setCenter == XDMF_SET_TYPE_NODE)
-      {
-      this->PointArrays->AddArray(name);
-      }
-    else
-      {
-      this->CellArrays->AddArray(name);
-      }
-    }
+  //  XdmfInt32 setCenter = xmfSet->GetSetType();
+  //  if (setCenter == XDMF_SET_TYPE_NODE)
+  //    {
+  //    this->PointArrays->AddArray(name);
+  //    }
+  //  else
+  //    {
+  //    this->CellArrays->AddArray(name);
+  //    }
+  //  }
 
   // A leaf node may have a single value time.
   XdmfTime* xmfTime = xmfGrid->GetTime();
