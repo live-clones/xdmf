@@ -21,14 +21,15 @@
 #include "XdmfValuesBinary.h"
 #include "XdmfDataStructure.h"
 #include "XdmfArray.h"
-#include "XdmfHDF.h"
+//#include "XdmfHDF.h"
+#include "XdmfDOM.h"
 
 
 
 #include <exception>
-#ifdef XDMF_USE_GZIP
+//#ifdef XDMF_USE_GZIP
 #include "gzstream.h"
-#endif
+//#endif
 
 #ifdef XDMF_USE_BZIP2
 #include "bz2stream.h"
@@ -180,34 +181,36 @@ XdmfValuesBinary::Read(XdmfArray *anArray){
         return( NULL );
     }
     istream * fs = NULL;
+    char * path = new char [ strlen(this->DOM->GetWorkingDirectory())+strlen(DataSetName) + 1 ];
+    strcpy(path, this->DOM->GetWorkingDirectory());
+    strcpy(path+strlen(this->DOM->GetWorkingDirectory()), DataSetName);
     try{
         size_t seek = this->getSeek();
         switch(getCompressionType()){
         case Zlib:
             XdmfDebug("Compression: Zlib");
-#ifdef XDMF_USE_GZIP
-            //fs = gzip(fs);
-            fs = new igzstream(DataSetName, std::ios::binary|std::ios::in);
+            //#ifdef XDMF_USE_GZIP
+            fs = new igzstream(path, std::ios::binary|std::ios::in);
             if(seek!=0){
                 XdmfDebug("Seek has not supported with Zlib.");
             }
             break;
-#else
-            XdmfDebug("GZip Lib is needed.");
-#endif
+            //#else
+            //            XdmfDebug("GZip Lib is needed.");
+            //#endif
         case BZip2:
             XdmfDebug("Compression: Bzip2");
 #ifdef XDMF_USE_BZIP2
-            fs = new ibz2stream(DataSetName);//, std::ios::binary|std::ios::in);
+            fs = new ibz2stream(path);//, std::ios::binary|std::ios::in);
             if(seek!=0){
                 XdmfDebug("Seek has not supported with Bzip2.");
             }
             break;
 #else
-                XdmfDebug("BZIP2 LIBRARY IS NEEDED.");
+            XdmfDebug("BZIP2 LIBRARY IS NEEDED.");
 #endif
         default:
-            fs = new ifstream(DataSetName, std::ios::binary);
+            fs = new ifstream(path, std::ios::binary);
             fs->seekg(seek);
             XdmfDebug("Seek: " << seek);
             break;
@@ -220,11 +223,13 @@ XdmfValuesBinary::Read(XdmfArray *anArray){
         fs->read(reinterpret_cast<char*>(RetArray->GetDataPointer()), RetArray->GetCoreLength());
     } catch( std::exception& ){
         delete fs;
+        delete path;
         return( NULL );
     }
 
     //fs->close();?
     delete fs;
+    delete path;
     byteSwap(RetArray);
     return RetArray;
 }
@@ -257,28 +262,31 @@ XdmfValuesBinary::Write(XdmfArray *anArray, XdmfConstString aHeavyDataSetName){
     this->Set("CDATA", hds);
     byteSwap(anArray);
     ostream * fs = NULL;
+    char * path = new char [ strlen(this->DOM->GetWorkingDirectory())+strlen(aHeavyDataSetName) + 1 ];
+    strcpy(path, this->DOM->GetWorkingDirectory());
+    strcpy(path+strlen(this->DOM->GetWorkingDirectory()), aHeavyDataSetName);
     try{
         //ofstream fs(aHeavyDataSetName,std::ios::binary);
         switch(getCompressionType()){
         case Zlib:
             XdmfDebug("Compression: ZLIB");
-#ifdef XDMF_USE_GZIP
+            //#ifdef XDMF_USE_GZIP
             //fs = gzip(fs);
-            fs = new ogzstream(aHeavyDataSetName, std::ios::binary|std::ios::out);
+            fs = new ogzstream(path, std::ios::binary|std::ios::out);
             break;
-#else
-                XdmfDebug("GZIP LIBRARY IS NEEDED.");
-#endif
+            //#else
+            //                XdmfDebug("GZIP LIBRARY IS NEEDED.");
+            //#endif
         case BZip2:
             XdmfDebug("Compression: BZIP2");
 #ifdef XDMF_USE_BZIP2
-            fs = new obz2stream(aHeavyDataSetName);//, std::ios::binary|std::ios::out);
+            fs = new obz2stream(path);//, std::ios::binary|std::ios::out);
             break;
 #else
-                XdmfDebug("BZIP2 LIBRARY IS NEEDED.");
+            XdmfDebug("BZIP2 LIBRARY IS NEEDED.");
 #endif
         default:
-            fs = new ofstream(aHeavyDataSetName, std::ios::binary);
+            fs = new ofstream(path, std::ios::binary);
             //fs->seekg(seek);
             //XdmfDebug("Seek: " << seek);
             break;
@@ -293,11 +301,13 @@ XdmfValuesBinary::Write(XdmfArray *anArray, XdmfConstString aHeavyDataSetName){
         byteSwap(anArray);
         delete [] fs;
         delete [] hds;
+        delete [] path;
         return(XDMF_FAIL);
     }
     byteSwap(anArray);
     delete [] fs;
     delete [] hds;
+    delete [] path;
     return(XDMF_SUCCESS);
 }
 #ifdef CMAKE_WORDS_BIGENDIAN
