@@ -23,9 +23,72 @@
 #include "vtkInformationVector.h"
 #include "vtkMultiBlockDataSet.h"
 #include "vtkObjectFactory.h"
+#include "vtkXMLParser.h"
+
+//============================================================================
+class vtkXdmfReader2Tester : public vtkXMLParser
+{
+public:
+  vtkTypeMacro(vtkXdmfReader2Tester, vtkXMLParser);
+  static vtkXdmfReader2Tester* New();
+  int TestReadFile()
+    {
+      this->Valid = 0;
+      if(!this->FileName)
+        {
+        return 0;
+        }
+
+      ifstream inFile(this->FileName);
+      if(!inFile)
+        {
+        return 0;
+        }
+
+      this->SetStream(&inFile);
+      this->Done = 0;
+
+      this->Parse();
+
+      if(this->Done && this->Valid )
+        {
+        return 1;
+        }
+      return 0;
+    }
+  void StartElement(const char* name, const char**)
+    {
+      this->Done = 1;
+      if(strcmp(name, "Xdmf") == 0)
+        {
+        this->Valid = 1;
+        }
+    }
+
+protected:
+  vtkXdmfReader2Tester()
+    {
+      this->Valid = 0;
+      this->Done = 0;
+    }
+
+private:
+  void ReportStrayAttribute(const char*, const char*, const char*) {}
+  void ReportMissingAttribute(const char*, const char*) {}
+  void ReportBadAttribute(const char*, const char*, const char*) {}
+  void ReportUnknownElement(const char*) {}
+  void ReportXmlParseError() {}
+
+  int ParsingComplete() { return this->Done; }
+  int Valid;
+  int Done;
+  vtkXdmfReader2Tester(const vtkXdmfReader2Tester&); // Not implemented
+  void operator=(const vtkXdmfReader2Tester&); // Not implemented
+};
+vtkStandardNewMacro(vtkXdmfReader2Tester);
 
 vtkStandardNewMacro(vtkXdmfReader2);
-vtkCxxRevisionMacro(vtkXdmfReader2, "1.4");
+vtkCxxRevisionMacro(vtkXdmfReader2, "1.5");
 //----------------------------------------------------------------------------
 vtkXdmfReader2::vtkXdmfReader2()
 {
@@ -47,8 +110,11 @@ vtkXdmfReader2::~vtkXdmfReader2()
 //----------------------------------------------------------------------------
 int vtkXdmfReader2::CanReadFile(const char* filename)
 {
-  vtkXdmfDocument doc;
-  return doc.Parse(filename)? 1 : 0;
+  vtkXdmfReader2Tester* tester = vtkXdmfReader2Tester::New();
+  tester->SetFileName(filename);
+  int res = tester->TestReadFile();
+  tester->Delete();
+  return res;
 }
 
 //----------------------------------------------------------------------------
