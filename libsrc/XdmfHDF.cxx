@@ -22,8 +22,8 @@
 /*                                                                 */
 /*******************************************************************/
 #include "XdmfHDF.h"
-#include "XdmfDsmBuffer.h"
-#include "XdmfH5Driver.h"
+  #include "XdmfDsmBuffer.h"
+  #include "XdmfH5Driver.h"
 
 #ifdef WIN32
 #define XDMF_HDF5_SIZE_T        ssize_t
@@ -377,7 +377,7 @@ if( Slash != NULL ){
     if( Directory > 0  ) {
       H5Gclose( Directory );
     }
-    XdmfDebug("Createing Subdirectories ...");
+    XdmfDebug("Creating Subdirectories ...");
     if( *TmpSlash == '/' ){
       // Skip Leading Slash
       TmpSlash++;
@@ -570,50 +570,49 @@ return( Array );
 XdmfInt32
 XdmfHDF::DoWrite( XdmfArray *Array ) {
 
-herr_t    status;
-XDMF_HDF5_SIZE_T src_npts, dest_npts;
+  herr_t    status;
+  XDMF_HDF5_SIZE_T src_npts, dest_npts;
 
-if ( Array == NULL ){
-  XdmfErrorMessage("No Array to Write");
-  return(XDMF_FAIL);
-  }
-if( Array->GetDataPointer() == NULL ){
-  XdmfErrorMessage("Memory Object Array has no data storage");
-  return(XDMF_FAIL);
-  }
-if( this->Dataset == H5I_BADID ){
-  XdmfDebug("Attempt Create");
-  this->CopyType( Array );
-  this->CopyShape( Array );
-  if( this->CreateDataset() != XDMF_SUCCESS ){
-    XdmfErrorMessage("Unable to Create Dataset");
+  if ( Array == NULL ) {
+    XdmfErrorMessage("No Array to Write");
     return(XDMF_FAIL);
     }
+  if( Array->GetDataPointer() == NULL ) {
+    XdmfErrorMessage("Memory Object Array has no data storage");
+    return(XDMF_FAIL);
+    }
+  if( this->Dataset == H5I_BADID ) {
+    XdmfDebug("Attempt Create");
+    this->CopyType( Array );
+    this->CopyShape( Array );
+    if( this->CreateDataset() != XDMF_SUCCESS ) {
+      XdmfErrorMessage("Unable to Create Dataset");
+      return(XDMF_FAIL);
+      }
+    }
+
+  src_npts = H5Sget_select_npoints( this->GetDataSpace() );
+  dest_npts = H5Sget_select_npoints( Array->GetDataSpace() );
+  if( src_npts != dest_npts ) {
+    XdmfErrorMessage("Source and Target Spaces specify different sizes for path: " << this->Path);
+    XdmfErrorMessage("Source = " << XDMF_64BIT_CAST(src_npts) << " items");
+    XdmfErrorMessage("Target = " << XDMF_64BIT_CAST(dest_npts) << " items");
+    return(XDMF_FAIL);
+  } else {
+    XdmfDebug("Writing " << XDMF_64BIT_CAST(src_npts) << " items to " << Array->GetHeavyDataSetName());
   }
 
+  status = H5Dwrite( this->Dataset,
+    Array->GetDataType(),
+    Array->GetDataSpace(),
+    this->GetDataSpace(),
+    H5P_DEFAULT,
+    Array->GetDataPointer() );
 
-src_npts = H5Sget_select_npoints( this->GetDataSpace() );
-dest_npts = H5Sget_select_npoints( Array->GetDataSpace() );
-if( src_npts != dest_npts ) {
-  XdmfErrorMessage("Source and Target Spaces specify different sizes for path: " << this->Path);
-  XdmfErrorMessage("Source = " << XDMF_64BIT_CAST(src_npts) << " items");
-  XdmfErrorMessage("Target = " << XDMF_64BIT_CAST(dest_npts) << " items");
-  return(XDMF_FAIL);
-} else {
-  XdmfDebug("Writing " << XDMF_64BIT_CAST(src_npts) << " items");
-}
-
-status = H5Dwrite( this->Dataset,
-      Array->GetDataType(),
-      Array->GetDataSpace(),
-      this->GetDataSpace(),
-      H5P_DEFAULT,
-      Array->GetDataPointer() );
-
-if ( status < 0 ) {
-  return(XDMF_FAIL);
+  if ( status < 0 ) {
+    return(XDMF_FAIL);
   }
-return(XDMF_SUCCESS);
+  return(XDMF_SUCCESS);
 }
 
 
@@ -761,13 +760,13 @@ FullFileName << this->FileName << ends;
 
 // printf("Opening %s flags 0x%X\n", this->FileName, flags );
 // Turn of Errors if Creation is Allowed
-if( AllowCreate ) {
-  H5E_BEGIN_TRY {
-  this->File = H5Fopen(FullFileName.str(), flags, this->AccessPlist);
-  } H5E_END_TRY;
-} else {
-  this->File = H5Fopen(FullFileName.str(), flags, this->AccessPlist);
-}
+  if( AllowCreate ) {
+    H5E_BEGIN_TRY {
+      this->File = H5Fopen(FullFileName.str(), flags, this->AccessPlist);
+    } H5E_END_TRY;
+  } else {
+    this->File = H5Fopen(FullFileName.str(), flags, this->AccessPlist);
+  }
 XdmfDebug("this->File = " << this->File);
 FullFileName.rdbuf()->freeze(0);
 if( this->File < 0 ){

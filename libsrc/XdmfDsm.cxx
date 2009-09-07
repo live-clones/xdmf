@@ -55,11 +55,13 @@ XdmfDsm::XdmfDsm() {
 
 XdmfDsm::~XdmfDsm() {
     if(this->Storage && this->StorageIsMine) delete this->Storage;
+    if(this->Msg) delete this->Msg;
 }
 
 XdmfInt32
 XdmfDsm::Copy(XdmfDsm *Source){
     this->DsmType = Source->DsmType;
+    if (this->Storage) delete this->Storage;
     this->Storage = Source->GetStorage();
     this->StorageIsMine = 0;
     this->DataPointer = (XdmfByte *)this->Storage->GetDataPointer();
@@ -71,7 +73,8 @@ XdmfDsm::Copy(XdmfDsm *Source){
     this->StartServerId = Source->StartServerId;
     this->EndServerId = Source->EndServerId;
     this->Locks = Source->Locks;
-    // Alway make a new Message so there os no contention
+    // Always make a new Message so there is no contention
+    if (this->Msg) delete this->Msg;
     this->Msg = new XdmfDsmMsg;
     return(XDMF_SUCCESS);
 }

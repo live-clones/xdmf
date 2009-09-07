@@ -59,6 +59,7 @@ public:
     virtual XdmfInt32   Send(XdmfDsmMsg *Msg);
     virtual XdmfInt32   Receive(XdmfDsmMsg *Msg);
     virtual XdmfInt32   Check(XdmfDsmMsg *Msg);
+    virtual XdmfInt32   Barrier();
 
     // XdmfInt32   Send() { return(this->Send(this->Msg)); };
     // XdmfInt32   Receive() { return(this->Receive(this->Msg)); };

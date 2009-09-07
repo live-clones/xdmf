@@ -70,3 +70,9 @@ XdmfDsmComm::Send(XdmfDsmMsg *Msg){
     }
     return(XDMF_SUCCESS);
 }
+
+XdmfInt32
+XdmfDsmComm::Barrier(){
+    return(XDMF_SUCCESS);
+}
+

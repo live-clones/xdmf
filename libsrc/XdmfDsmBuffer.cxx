@@ -52,7 +52,7 @@ XdmfDsmBuffer::XdmfDsmBuffer() {
 }
 
 XdmfDsmBuffer::~XdmfDsmBuffer() {
-    if(this->StorageIsMine) delete this->Locks;
+    if(this->StorageIsMine) delete[] this->Locks;
 }
 
 /*
@@ -72,6 +72,7 @@ XdmfDsmBuffer::ServiceThread(){
     // Create a copy of myself to get a Unique XdmfDsmMessage
     XdmfDsmBuffer   UniqueBuffer;
 
+    if (UniqueBuffer.Locks) delete[] UniqueBuffer.Locks;
     UniqueBuffer.Copy(this);
     XdmfDebug("Starting DSM Service on node " << UniqueBuffer.GetComm()->GetId());
     this->ThreadDsmReady = 1;
@@ -420,7 +421,7 @@ XdmfDsmBuffer::Get(XdmfInt64 Address, XdmfInt64 aLength, void *Data){
 
             status = this->SendCommandHeader(XDMF_DSM_OPCODE_GET, who, Address, len);
             if(status == XDMF_FAIL){
-                XdmfErrorMessage("Failed to send PUT Header to " << who);
+                XdmfErrorMessage("Failed to send GET Header to " << who);
                 return(XDMF_FAIL);
             }
             this->Msg->SetTag(XDMF_DSM_RESPONSE_TAG);
