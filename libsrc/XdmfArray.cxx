@@ -88,6 +88,10 @@ XdmfArrayListClass::~XdmfArrayListClass()
     delete [] this->List;
     this->List = 0;
     }
+  if ( XdmfArrayListClassInstance ) 
+    {
+    delete XdmfArrayListClassInstance;
+    }
 }
 
 XdmfArrayList* XdmfArrayListClass::AddArray()

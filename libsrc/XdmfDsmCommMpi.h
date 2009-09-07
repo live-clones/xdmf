@@ -60,7 +60,7 @@ public:
     XdmfInt32   Send(XdmfDsmMsg *Msg);
     XdmfInt32   Receive(XdmfDsmMsg *Msg);
     XdmfInt32   Check(XdmfDsmMsg *Msg);
-
+    XdmfInt32   Barrier();
 
 protected:
     MPI_Comm    Comm;

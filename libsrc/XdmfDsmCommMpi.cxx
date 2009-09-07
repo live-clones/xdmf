@@ -122,3 +122,11 @@ XdmfDsmCommMpi::Send(XdmfDsmMsg *Msg){
     XdmfDebug("::::: (" << this->Id << ") Sent " << Msg->Length << " bytes to " << Msg->Dest);
     return(XDMF_SUCCESS);
 }
+
+XdmfInt32
+XdmfDsmCommMpi::Barrier() {
+  MPI_Barrier(this->Comm);
+
+  return XDMF_SUCCESS;
+}
+
