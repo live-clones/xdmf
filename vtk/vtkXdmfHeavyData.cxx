@@ -459,9 +459,9 @@ vtkUnstructuredGrid* vtkXdmfHeavyData::ReadUnstructuredGrid(XdmfGrid* xmfGrid)
     int sub = 0;
     for(vtkIdType cc = 0 ; cc < numCells; cc++ )
       {
-      int vtk_cell_type = this->GetVTKCellType(xmfConnections[index++]);
+      int vtk_cell_typeI = this->GetVTKCellType(xmfConnections[index++]);
       XdmfInt32 numPointsPerCell =
-        this->GetNumberOfPointsPerCell(vtk_cell_type);
+        this->GetNumberOfPointsPerCell(vtk_cell_typeI);
       if (numPointsPerCell==-1)
         {
         // encountered an unknown cell.
@@ -479,7 +479,7 @@ vtkUnstructuredGrid* vtkXdmfHeavyData::ReadUnstructuredGrid(XdmfGrid* xmfGrid)
         sub--; // used to shrink the cells array at the end.
         }
 
-      cell_types[cc] = vtk_cell_type;
+      cell_types[cc] = vtk_cell_typeI;
       *cells_ptr++ = numPointsPerCell;
       for(vtkIdType i = 0 ; i < numPointsPerCell; i++ )
         {
