@@ -22,6 +22,7 @@
 #include "vtkCompositeDataSet.h"
 #include "vtkCompositeDataIterator.h"
 #include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkFieldData.h"
 #include "vtkDataSet.h"
 #include "vtkPointSet.h"
@@ -123,7 +124,7 @@ void vtkXdmfWriter2Internal::DetermineCellTypes(vtkPointSet * t, vtkXdmfWriter2I
 //==============================================================================
 
 vtkStandardNewMacro(vtkXdmfWriter2);
-vtkCxxRevisionMacro(vtkXdmfWriter2, "1.4");
+vtkCxxRevisionMacro(vtkXdmfWriter2, "1.5");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter2::vtkXdmfWriter2()
@@ -132,6 +133,7 @@ vtkXdmfWriter2::vtkXdmfWriter2()
   this->DOM = NULL;
   this->Piece = 0;  //for parallel
   this->NumberOfPieces = 1;
+  this->LightDataLimit = 100;
 }
 
 //----------------------------------------------------------------------------
@@ -143,7 +145,6 @@ vtkXdmfWriter2::~vtkXdmfWriter2()
     delete this->DOM;
     this->DOM = NULL;
     }
-
   //TODO: Verify memory isn't leaking
 }
 
@@ -159,6 +160,8 @@ void vtkXdmfWriter2::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os,indent);
   os << indent << "FileName: " <<
     (this->FileName ? this->FileName : "(none)") << "\n";
+  os << indent << "LightDataLimit: " <<
+    this->LightDataLimit << "\n";
 }
 
 //------------------------------------------------------------------------------
@@ -184,58 +187,21 @@ int vtkXdmfWriter2::FillInputPortInformation(int, vtkInformation *info)
 
 //------------------------------------------------------------------------------
 void vtkXdmfWriter2::WriteData()
-{
-  //TODO: Time isn't being recognized properly yet
-  vtkInformation *inInfo = this->GetInputPortInformation(0);
-  int nTimes = 0;
-  double *times = NULL;
-  if (inInfo->Has(vtkStreamingDemandDrivenPipeline::TIME_STEPS()))
-    {    
-    times = inInfo->Get(vtkStreamingDemandDrivenPipeline::TIME_STEPS());
-    nTimes = inInfo->Length(vtkStreamingDemandDrivenPipeline::TIME_STEPS());
-    }
-  
+{  
+  //TODO: Specify name of heavy data companion file
+  //TODO: Respect time
+
   if (!this->DOM)
     {
     this->DOM = new XdmfDOM();
     }
 
-  //TODO: Create the companion hdf5 heavy data file
-/*
-  h5 = XdmfHDF()
-  h5.CopyType(arr)
-  h5.CopyShape(arr)
-  h5.Open('XdmfByHand.h5:/Mydata', 'w')
-  h5.Write(arr)
-  h5.Close()
-  dv = XdmfValuesHDF()
-  DataXml = dv.DataItemFromHDF('XdmfByHand.h5:/Mydata')
-*/
-
   XdmfRoot root;
-  root.SetDOM(this->DOM);
+  root.SetDOM(this->DOM);  
   root.SetVersion(2.2);
   root.Build();
   XdmfDomain *domain = new XdmfDomain();
   root.Insert(domain);
-
-  if (nTimes > 0)
-    {
-    //TODO: For time 
-    //make a new top level collection grid of type temporal
-    //iterate myself to get data at each point
-    //call what lies below this for each one
-    cerr << "In times are: [";
-    for (int i = 0; i < nTimes; i++)
-      {
-      cerr << times[i] << ",";
-      }
-    cerr << "]" << endl;
-    }  
-  else
-    {
-    cerr << "Input data is static" << endl;
-    }
 
   XdmfGrid *grid = new XdmfGrid();
   domain->Insert(grid);
@@ -251,10 +217,9 @@ void vtkXdmfWriter2::WriteDataSet(vtkDataObject *dobj, XdmfGrid *grid)
 {
   //TODO:
   // respect parallelism
-
   if (!dobj)
     {
-    cerr << "Null DS, someone else will take care of it" << endl;
+    //cerr << "Null DS, someone else will take care of it" << endl;
     return;
     }
   if (!grid)
@@ -277,7 +242,7 @@ void vtkXdmfWriter2::WriteDataSet(vtkDataObject *dobj, XdmfGrid *grid)
 void vtkXdmfWriter2::WriteCompositeDataSet(vtkCompositeDataSet *dobj, XdmfGrid *grid)
 {
 
-  cerr << "internal node " << dobj << " is a " << dobj->GetClassName() << endl;
+  //cerr << "internal node " << dobj << " is a " << dobj->GetClassName() << endl;
   if (dobj->IsA("vtkMultiPieceDataSet"))
     {
     grid->SetGridType(XDMF_GRID_COLLECTION);
@@ -320,7 +285,7 @@ void vtkXdmfWriter2::WriteCompositeDataSet(vtkCompositeDataSet *dobj, XdmfGrid *
 //------------------------------------------------------------------------------
 void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
 {
-  cerr << "Writing " << dobj << " a " << dobj->GetClassName() << endl;
+  //cerr << "Writing " << dobj << " a " << dobj->GetClassName() << endl;
   vtkDataSet *ds = vtkDataSet::SafeDownCast(dobj);
   if (!ds)
     {
@@ -339,9 +304,10 @@ void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
   case VTK_UNIFORM_GRID:
     {
     t->SetTopologyType(XDMF_3DCORECTMESH);
+    t->SetLightDataLimit(this->LightDataLimit);
     vtkImageData *id = vtkImageData::SafeDownCast(ds);
     int wExtent[6];
-    id->GetWholeExtent(wExtent);
+    id->GetExtent(wExtent);
     XdmfInt64 Dims[3];
     Dims[0] = wExtent[1] - wExtent[0] + 1;
     Dims[1] = wExtent[3] - wExtent[2] + 1;
@@ -356,7 +322,7 @@ void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
     t->SetTopologyType(XDMF_3DCORECTMESH);
     vtkRectilinearGrid *rgrid = vtkRectilinearGrid::SafeDownCast(ds);
     int wExtent[6];
-    rgrid->GetWholeExtent(wExtent);
+    rgrid->GetExtent(wExtent);
     XdmfInt64 Dims[3];
     Dims[0] = wExtent[1] - wExtent[0] + 1;
     Dims[1] = wExtent[3] - wExtent[2] + 1;
@@ -371,7 +337,7 @@ void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
     t->SetTopologyType(XDMF_3DSMESH);
     vtkStructuredGrid *sgrid = vtkStructuredGrid::SafeDownCast(ds);
     int wExtent[6];
-    sgrid->GetWholeExtent(wExtent);
+    sgrid->GetExtent(wExtent);
     XdmfInt64 Dims[3];
     Dims[0] = wExtent[1] - wExtent[0] + 1;
     Dims[1] = wExtent[3] - wExtent[2] + 1;
@@ -592,6 +558,7 @@ void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
   
   //Geometry
   XdmfGeometry *geo = grid->GetGeometry();
+  geo->SetLightDataLimit(this->LightDataLimit);
   switch (ds->GetDataObjectType()) {
   case VTK_STRUCTURED_POINTS:
   case VTK_IMAGE_DATA:
@@ -664,6 +631,7 @@ void vtkXdmfWriter2::WriteArrays(vtkFieldData* fd, XdmfGrid *grid, int associati
         }
 
       XdmfAttribute *attr = new XdmfAttribute;    
+      attr->SetLightDataLimit(this->LightDataLimit);
       attr->SetName(da->GetName());
       attr->SetAttributeCenter(association);
 
@@ -698,7 +666,7 @@ void vtkXdmfWriter2::WriteArrays(vtkFieldData* fd, XdmfGrid *grid, int associati
         }
       else
         {
-        //TODO: Mark the active scalar, vector, global id, etc
+        //vtk doesn't mark it as a special array, use width to tell xdmf what to call it
         if ( da->GetNumberOfComponents() == 1 )
           {
           attr->SetAttributeType(XDMF_ATTRIBUTE_TYPE_SCALAR);

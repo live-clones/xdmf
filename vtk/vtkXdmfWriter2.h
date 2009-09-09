@@ -31,6 +31,8 @@ class vtkCompositeDataSet;
 class vtkDataObject;
 class vtkFieldData;
 class vtkDataArray;
+class vtkInformation;
+class vtkInformationVector;
 
 //BTX
 class XdmfDOM;
@@ -60,13 +62,17 @@ public:
   vtkSetMacro(Piece, int);
   vtkSetMacro(NumberOfPieces, int);
 
+  // Description:
+  // Topology Geometry and Attribute arrays smaller than this are written in line into the XML.
+  // Default is 100.
+  vtkSetMacro(LightDataLimit, int);
+  vtkGetMacro(LightDataLimit, int);
+
+  //TODO: control choice of heavy data format (xml, hdf5, sql, raw)
+
   //TODO: These controls are available in vtkXdmfWriter, but are not used here.
-  //AllLight/AllHeavy
   //GridsOnly
   //Append to Domain
-
-  //TODO: I think there is a limit in the XDMF library about when hdf is used for heavy data and when it is in XML
-  //In any case we need to be able to choose the heavy data format (xml, hdf5, sql) somehow
 
 protected:
   vtkXdmfWriter2();
@@ -90,6 +96,8 @@ protected:
 
   int Piece;
   int NumberOfPieces;
+
+  int LightDataLimit;
 private:
   vtkXdmfWriter2(const vtkXdmfWriter2&); // Not implemented
   void operator=(const vtkXdmfWriter2&); // Not implemented
