@@ -125,6 +125,12 @@ public:
     return true;
     }
 
+  bool HasArray(const char* name)
+    {
+    vtkXdmfArraySelection::iterator iter = this->find(name);
+    return (iter != this->end());
+    }
+
   int GetArraySetting(const char* name)
     {
     return this->ArrayIsEnabled(name)? 1 : 0;
