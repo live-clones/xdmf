@@ -564,9 +564,20 @@ void vtkXdmfDomain::CollectNonLeafMetaData(XdmfGrid* xmfGrid,
 //----------------------------------------------------------------------------
 void vtkXdmfDomain::CollectLeafMetaData(XdmfGrid* xmfGrid, vtkIdType silParent)
 {
+  vtkstd::string gridName = xmfGrid->GetName();
+  unsigned int count=1;
+  while (this->Grids->HasArray(gridName.c_str()))
+    {
+    vtksys_ios::ostringstream str;
+    str << xmfGrid->GetName() << "[" << count << "]";
+    gridName = str.str();
+    count++;
+    }
+  xmfGrid->SetName(gridName.c_str());
+  this->Grids->AddArray(gridName.c_str());
+
   vtkIdType silVertex = this->SILBuilder->AddVertex(xmfGrid->GetName());
   this->SILBuilder->AddChildEdge(silParent, silVertex);
-  this->Grids->AddArray(xmfGrid->GetName());
 
   // Collect attribute arrays information.
   XdmfInt32 numAttributes = xmfGrid->GetNumberOfAttributes();
