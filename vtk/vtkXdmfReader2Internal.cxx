@@ -425,7 +425,23 @@ bool vtkXdmfDomain::GetOriginAndSpacing(XdmfGrid* xmfGrid,
     spacing[2] = xmfSpacing[0];
     return true;
     }
+  else if (xmfGeometry->GetGeometryType() == XDMF_GEOMETRY_ORIGIN_DXDY)
+    {
+    // Update geometry so that origin and spacing are read
+    xmfGeometry->Update(); // read heavy-data for the geometry.
+    XdmfFloat64 *xmfOrigin = xmfGeometry->GetOrigin();
+    XdmfFloat64 *xmfSpacing = xmfGeometry->GetDxDyDz();
+    origin[0] = 0.0;
+    origin[1] = xmfOrigin[1];
+    origin[2] = xmfOrigin[0];
 
+    spacing[0] = 1.0;
+    spacing[1] = xmfSpacing[1];
+    spacing[2] = xmfSpacing[0];
+    return true;
+    }
+  origin[0] = origin[1] = origin[2] = 0.0;
+  spacing[0] = spacing[1] = spacing[2] = 1.0;
   return false;
 }
 
