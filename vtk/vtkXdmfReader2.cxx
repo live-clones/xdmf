@@ -88,7 +88,7 @@ private:
 vtkStandardNewMacro(vtkXdmfReader2Tester);
 
 vtkStandardNewMacro(vtkXdmfReader2);
-vtkCxxRevisionMacro(vtkXdmfReader2, "1.5");
+vtkCxxRevisionMacro(vtkXdmfReader2, "1.6");
 //----------------------------------------------------------------------------
 vtkXdmfReader2::vtkXdmfReader2()
 {
@@ -206,7 +206,13 @@ bool vtkXdmfReader2::PrepareDocument()
     {
     this->XdmfDocument->SetActiveDomain(static_cast<int>(0));
     }
-  this->SILUpdateStamp++;
+
+  if (this->XdmfDocument->GetActiveDomain() &&
+    this->XdmfDocument->GetActiveDomain()->GetSIL()->GetMTime() >
+    this->GetMTime())
+    {
+    this->SILUpdateStamp++;
+    }
 
   this->LastTimeIndex = 0; // reset time index when the file changes.
   return (this->XdmfDocument->GetActiveDomain() != 0);
