@@ -173,6 +173,7 @@ private:
   XdmfXmlNode XMLDomain;
   XdmfDOM* XMLDOM;
 
+  vtkIdType SILBlocksRoot;
   vtkSILBuilder* SILBuilder;
   vtkMutableDirectedGraph* SIL;
   vtkXdmfArraySelection* PointArrays;
