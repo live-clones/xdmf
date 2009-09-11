@@ -493,12 +493,16 @@ int vtkXdmfDomain::GetDataDimensionality(XdmfGrid* xmfGrid)
 void vtkXdmfDomain::CollectMetaData()
 {
   this->SILBuilder->Initialize();
-  vtkIdType gridsRoot = this->SILBuilder->AddVertex("Grids");
-  this->SILBuilder->AddChildEdge(this->SILBuilder->GetRootVertex(), gridsRoot);
+  vtkIdType blocksRoot = this->SILBuilder->AddVertex("Blocks");
+  vtkIdType hierarchyRoot = this->SILBuilder->AddVertex("Hierarchy");
+  this->SILBuilder->AddChildEdge(this->SILBuilder->GetRootVertex(), blocksRoot);
+  this->SILBuilder->AddChildEdge(this->SILBuilder->GetRootVertex(),
+    hierarchyRoot);
+  this->SILBlocksRoot = blocksRoot;
 
   for (XdmfInt64 cc=0; cc < this->NumberOfGrids; cc++)
     {
-    this->CollectMetaData(&this->XMFGrids[cc], gridsRoot);
+    this->CollectMetaData(&this->XMFGrids[cc], hierarchyRoot);
     }
 }
 
@@ -564,6 +568,7 @@ void vtkXdmfDomain::CollectNonLeafMetaData(XdmfGrid* xmfGrid,
 //----------------------------------------------------------------------------
 void vtkXdmfDomain::CollectLeafMetaData(XdmfGrid* xmfGrid, vtkIdType silParent)
 {
+  vtkstd::string originalGridName = xmfGrid->GetName();
   vtkstd::string gridName = xmfGrid->GetName();
   unsigned int count=1;
   while (this->Grids->HasArray(gridName.c_str()))
@@ -577,7 +582,11 @@ void vtkXdmfDomain::CollectLeafMetaData(XdmfGrid* xmfGrid, vtkIdType silParent)
   this->Grids->AddArray(gridName.c_str());
 
   vtkIdType silVertex = this->SILBuilder->AddVertex(xmfGrid->GetName());
-  this->SILBuilder->AddChildEdge(silParent, silVertex);
+  this->SILBuilder->AddChildEdge(this->SILBlocksRoot, silVertex);
+
+  vtkIdType hierarchyVertex = this->SILBuilder->AddVertex(originalGridName.c_str());
+  this->SILBuilder->AddChildEdge(silParent, hierarchyVertex);
+  this->SILBuilder->AddCrossEdge(hierarchyVertex, silVertex);
 
   // Collect attribute arrays information.
   XdmfInt32 numAttributes = xmfGrid->GetNumberOfAttributes();
