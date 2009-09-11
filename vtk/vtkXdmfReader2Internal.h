@@ -173,7 +173,13 @@ private:
   XdmfXmlNode XMLDomain;
   XdmfDOM* XMLDOM;
 
+  unsigned int GridsOverflowCounter;
+  // these are node indices used when building the SIL.
   vtkIdType SILBlocksRoot;
+  vtkstd::map<vtkstd::string, vtkIdType> GridCenteredAttrbuteRoots;
+  vtkstd::map<vtkIdType,
+    vtkstd::map<XdmfInt64, vtkIdType> > GridCenteredAttrbuteValues;
+
   vtkSILBuilder* SILBuilder;
   vtkMutableDirectedGraph* SIL;
   vtkXdmfArraySelection* PointArrays;
@@ -313,6 +319,12 @@ private:
 
   // Used by CollectMetaData().
   void CollectLeafMetaData(XdmfGrid* xmfGrid, vtkIdType silParent);
+
+  // Description:
+  // Use this to add an association with the grid attribute with the node for
+  // the grid in the SIL if applicable. Returns true if the attribute was added.
+  bool UpdateGridAttributeInSIL(
+    XdmfAttribute* xmfAttribute, vtkIdType gridSILId);
 };
 
 #endif

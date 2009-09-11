@@ -97,6 +97,15 @@ vtkDataObject* vtkXdmfHeavyData::ReadData()
     if (!child_is_leaf || !distribute_leaf_nodes || 
       (number_of_leaf_nodes % this->NumberOfPieces) == this->Piece)
       {
+      // it's possible that the data has way too many blocks, in which case the
+      // reader didn't present the user with capabilities to select the actual
+      // leaf node blocks as is the norm, instead only top-level grids were
+      // shown. In that case we need to ensure that we skip grids the user
+      // wanted us to skip explicitly.
+      if (!this->Domain->GetGridSelection()->ArrayIsEnabled(xmfChild->GetName()))
+        {
+        continue;
+        }
       vtkDataObject* childDO = this->ReadData(xmfChild);
       if (childDO)
         {

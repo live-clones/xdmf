@@ -14,6 +14,16 @@
 =========================================================================*/
 #include "vtkXdmfReader2Internal.h"
 
+#include "vtkDataArray.h"
+#include "vtkSmartPointer.h"
+#include "vtkVariant.h"
+#include "vtkXdmfDataArray.h"
+
+// As soon as num-grids (sub-grids and all) grows beyond this number, we assume
+// that the grids are way too numerous for the user to select individually and
+// hence only the top-level grids are made accessible.
+#define MAX_COLLECTABLE_NUMBER_OF_GRIDS 1000
+
 template <class T>
 T vtkMAX(T a, T b) { return (a>b? a : b); }
 
@@ -493,6 +503,8 @@ int vtkXdmfDomain::GetDataDimensionality(XdmfGrid* xmfGrid)
 void vtkXdmfDomain::CollectMetaData()
 {
   this->SILBuilder->Initialize();
+  this->GridsOverflowCounter = 0;
+
   vtkIdType blocksRoot = this->SILBuilder->AddVertex("Blocks");
   vtkIdType hierarchyRoot = this->SILBuilder->AddVertex("Hierarchy");
   this->SILBuilder->AddChildEdge(this->SILBuilder->GetRootVertex(), blocksRoot);
@@ -503,6 +515,47 @@ void vtkXdmfDomain::CollectMetaData()
   for (XdmfInt64 cc=0; cc < this->NumberOfGrids; cc++)
     {
     this->CollectMetaData(&this->XMFGrids[cc], hierarchyRoot);
+    }
+
+  if (this->GridsOverflowCounter >= MAX_COLLECTABLE_NUMBER_OF_GRIDS)
+    {
+    this->Grids->clear();
+
+    // We have aborted collecting grids information since it was too numerous to
+    // be of any use to the user. 
+    this->SILBuilder->Initialize();
+    blocksRoot = this->SILBuilder->AddVertex("Blocks");
+    hierarchyRoot = this->SILBuilder->AddVertex("Hierarchy");
+    this->SILBuilder->AddChildEdge(this->SILBuilder->GetRootVertex(), blocksRoot);
+    this->SILBuilder->AddChildEdge(this->SILBuilder->GetRootVertex(),
+      hierarchyRoot);
+    this->SILBlocksRoot = blocksRoot;
+
+    // add only the top-level grids.
+    for (XdmfInt64 cc=0; cc < this->NumberOfGrids; cc++)
+      {
+      XdmfGrid * xmfGrid = &this->XMFGrids[cc];
+
+      vtkstd::string originalGridName = xmfGrid->GetName();
+      vtkstd::string gridName = xmfGrid->GetName();
+      unsigned int count=1;
+      while (this->Grids->HasArray(gridName.c_str()))
+        {
+        vtksys_ios::ostringstream str;
+        str << xmfGrid->GetName() << "[" << count << "]";
+        gridName = str.str();
+        count++;
+        }
+      xmfGrid->SetName(gridName.c_str());
+      this->Grids->AddArray(gridName.c_str());
+
+      vtkIdType silVertex = this->SILBuilder->AddVertex(xmfGrid->GetName());
+      this->SILBuilder->AddChildEdge(this->SILBlocksRoot, silVertex);
+
+      vtkIdType hierarchyVertex = this->SILBuilder->AddVertex(originalGridName.c_str());
+      this->SILBuilder->AddChildEdge(hierarchyRoot, hierarchyVertex);
+      this->SILBuilder->AddCrossEdge(hierarchyVertex, silVertex);
+      }
     }
 }
 
@@ -535,9 +588,17 @@ void vtkXdmfDomain::CollectMetaData(XdmfGrid* xmfGrid, vtkIdType silParent)
 void vtkXdmfDomain::CollectNonLeafMetaData(XdmfGrid* xmfGrid,
   vtkIdType silParent)
 {
-  // FIXME: how to reflect temporal collections in the SIL?
-  vtkIdType silVertex = this->SILBuilder->AddVertex(xmfGrid->GetName());
-  this->SILBuilder->AddChildEdge(silParent, silVertex);
+  vtkIdType silVertex = -1;
+  if (silParent != -1 &&
+    this->GridsOverflowCounter < MAX_COLLECTABLE_NUMBER_OF_GRIDS)
+    {
+    // stop building SIL as soon as we have too many blocks--not worth it.
+    this->GridsOverflowCounter++;
+
+    // FIXME: how to reflect temporal collections in the SIL?
+    silVertex = this->SILBuilder->AddVertex(xmfGrid->GetName());
+    this->SILBuilder->AddChildEdge(silParent, silVertex);
+    }
 
   XdmfInt32 numChildren = xmfGrid->GetNumberOfChildren();
   for (XdmfInt32 cc=0; cc < numChildren; cc++)
@@ -568,25 +629,32 @@ void vtkXdmfDomain::CollectNonLeafMetaData(XdmfGrid* xmfGrid,
 //----------------------------------------------------------------------------
 void vtkXdmfDomain::CollectLeafMetaData(XdmfGrid* xmfGrid, vtkIdType silParent)
 {
-  vtkstd::string originalGridName = xmfGrid->GetName();
-  vtkstd::string gridName = xmfGrid->GetName();
-  unsigned int count=1;
-  while (this->Grids->HasArray(gridName.c_str()))
+  vtkIdType silVertex = -1;
+  if (silParent != -1 &&
+    this->GridsOverflowCounter < MAX_COLLECTABLE_NUMBER_OF_GRIDS)
     {
-    vtksys_ios::ostringstream str;
-    str << xmfGrid->GetName() << "[" << count << "]";
-    gridName = str.str();
-    count++;
+    vtkstd::string originalGridName = xmfGrid->GetName();
+    vtkstd::string gridName = xmfGrid->GetName();
+    unsigned int count=1;
+    while (this->Grids->HasArray(gridName.c_str()))
+      {
+      vtksys_ios::ostringstream str;
+      str << xmfGrid->GetName() << "[" << count << "]";
+      gridName = str.str();
+      count++;
+      }
+    xmfGrid->SetName(gridName.c_str());
+    this->Grids->AddArray(gridName.c_str());
+
+    silVertex = this->SILBuilder->AddVertex(xmfGrid->GetName());
+    this->SILBuilder->AddChildEdge(this->SILBlocksRoot, silVertex);
+
+    vtkIdType hierarchyVertex = this->SILBuilder->AddVertex(originalGridName.c_str());
+    this->SILBuilder->AddChildEdge(silParent, hierarchyVertex);
+    this->SILBuilder->AddCrossEdge(hierarchyVertex, silVertex);
+
+    this->GridsOverflowCounter++;
     }
-  xmfGrid->SetName(gridName.c_str());
-  this->Grids->AddArray(gridName.c_str());
-
-  vtkIdType silVertex = this->SILBuilder->AddVertex(xmfGrid->GetName());
-  this->SILBuilder->AddChildEdge(this->SILBlocksRoot, silVertex);
-
-  vtkIdType hierarchyVertex = this->SILBuilder->AddVertex(originalGridName.c_str());
-  this->SILBuilder->AddChildEdge(silParent, hierarchyVertex);
-  this->SILBuilder->AddCrossEdge(hierarchyVertex, silVertex);
 
   // Collect attribute arrays information.
   XdmfInt32 numAttributes = xmfGrid->GetNumberOfAttributes();
@@ -607,15 +675,9 @@ void vtkXdmfDomain::CollectLeafMetaData(XdmfGrid* xmfGrid, vtkIdType silParent)
       {
       this->CellArrays->AddArray(name);
       }
-    else if (attributeCenter== XDMF_ATTRIBUTE_CENTER_GRID)
+    else if (attributeCenter== XDMF_ATTRIBUTE_CENTER_GRID && silVertex != -1)
       {
-      // I am not sure if grid centered should become SIL information, or simply
-      // field data information.
-      // For now, I am putting it in field-data since there's no way to
-      // distinguish between "classification" data (such as material type) and
-      // arbitrary data (such as units).
-      // grid centered data is always read if the grid is read, so no array
-      // selection logic required.
+      this->UpdateGridAttributeInSIL(xmfAttribute, silVertex);
       }
     }
 
@@ -651,5 +713,80 @@ void vtkXdmfDomain::CollectLeafMetaData(XdmfGrid* xmfGrid, vtkIdType silParent)
 }
 
 //----------------------------------------------------------------------------
+bool vtkXdmfDomain::UpdateGridAttributeInSIL(
+    XdmfAttribute* xmfAttribute, vtkIdType silVertex)
+{
+  // Check if the grid centered attribute is an single component integeral
+  // value, (or a string, in future). If that's the case, then these become
+  // part of the SIL.
+  XdmfDataItem xmfDataItem;
+  xmfDataItem.SetDOM(xmfAttribute->GetDOM());
+  xmfDataItem.SetElement(xmfAttribute->GetDOM()->FindDataElement(0,
+      xmfAttribute->GetElement()));
+  xmfDataItem.UpdateInformation();
+  xmfDataItem.Update();
+
+  vtkXdmfDataArray* xmfConvertor = vtkXdmfDataArray::New();
+  vtkSmartPointer<vtkDataArray> dataArray;
+  dataArray.TakeReference(xmfConvertor->FromXdmfArray(
+      xmfDataItem.GetArray()->GetTagName(), 1, 1, 1, 0));
+  xmfConvertor->Delete();
+
+  if (dataArray->GetNumberOfTuples() != 1 ||
+    dataArray->GetNumberOfComponents() != 1)
+    {
+    // only single valued arrays are of concern.
+    return false;
+    }
+
+  switch (dataArray->GetDataType())
+    {
+  case VTK_CHAR :
+  case VTK_UNSIGNED_CHAR :
+  case VTK_SHORT :
+  case VTK_UNSIGNED_SHORT :
+  case VTK_INT :
+  case VTK_UNSIGNED_INT :
+  case VTK_LONG :
+  case VTK_UNSIGNED_LONG :
+    break;
+
+  default:
+    return false; // skip non-integeral types.
+    }
+
+  const char* name = xmfAttribute->GetName();
+  vtkIdType arrayRoot;
+  if (this->GridCenteredAttrbuteRoots.find(name) ==
+    this->GridCenteredAttrbuteRoots.end())
+    {
+    arrayRoot = this->SILBuilder->AddVertex(name);
+    this->SILBuilder->AddChildEdge(this->SILBuilder->GetRootVertex(),
+      arrayRoot);
+    this->GridCenteredAttrbuteRoots[name] = arrayRoot;
+    }
+  else
+    {
+    arrayRoot = this->GridCenteredAttrbuteRoots[name];
+    }
+
+  vtkVariant variantValue = dataArray->GetVariantValue(0);
+  XdmfInt64 value = variantValue.ToTypeInt64();
+  vtkIdType valueRoot;
+  if (this->GridCenteredAttrbuteValues[arrayRoot].find(value) ==
+    this->GridCenteredAttrbuteValues[arrayRoot].end())
+    {
+    valueRoot = this->SILBuilder->AddVertex(variantValue.ToString().c_str());
+    this->SILBuilder->AddChildEdge(arrayRoot, valueRoot);
+    this->GridCenteredAttrbuteValues[arrayRoot][value] = valueRoot;
+    }
+  else
+    {
+    valueRoot = this->GridCenteredAttrbuteValues[arrayRoot][value];
+    }
+  this->SILBuilder->AddCrossEdge(valueRoot, silVertex);
+  return true;
+}
+
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
