@@ -27,7 +27,7 @@
 <!ELEMENT Topology (Information*, DataItem*)>
 <!ATTLIST Topology
 	TopologyType (Polyvertex | Polyline | Polygon | Triangle | Quadrilateral | Tetrahedron | Pyramid| Wedge | Hexahedron | Edge_3 | Triagle_6 | Quadrilateral_8 | Tetrahedron_10 | Pyramid_13 | Wedge_15 | Hexahedron_20 | Mixed | 2DSMesh | 2DRectMesh | 2DCoRectMesh | 3DSMesh | 3DRectMesh | 3DCoRectMesh) #REQUIRED
-	Dimension CDATA #IMPLIED
+	Dimensions CDATA #IMPLIED
 	Order CDATA #IMPLIED
     BaseOffset CDATA "0"
 	NodesPerElement CDATA #IMPLIED
