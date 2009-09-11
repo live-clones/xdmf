@@ -27,6 +27,7 @@
 
 
 #include <exception>
+#include <cassert>
 #ifdef XDMF_USE_GZIP
 #include "gzstream.h"
 #endif
@@ -40,6 +41,7 @@
 
 //#include <sys/stat.h>
 //#include <cassert>
+//Internal Classes
 template<size_t T>
 struct ByteSwaper {
     static inline void swap(void*p){}
@@ -92,6 +94,97 @@ void XdmfValuesBinary::byteSwap(XdmfArray * RetArray){
         }
     }
 }
+class HyperSlabReader:public XdmfObject{//
+    XdmfInt64 ncontiguous;//byte
+    XdmfInt64 start[XDMF_MAX_DIMENSION];//byte
+    XdmfInt64 stride[XDMF_MAX_DIMENSION];//byte
+    XdmfInt64 last[XDMF_MAX_DIMENSION];//byte
+    XdmfInt64 count[XDMF_MAX_DIMENSION];//size
+    XdmfInt64 rank;
+
+    void toTotal(const XdmfInt64 * dims, XdmfInt32 byte, XdmfInt64 * data){
+        data[this->rank-1] *= byte;
+        for(XdmfInt32 i = 1; i< this->rank; ++i){
+            for(XdmfInt32 j=i; j<this->rank; ++j){
+                data[i-1] *= dims[j];
+            }
+            data[i-1] *= byte;
+        }
+    }
+    void read(XdmfInt32 k, char *& pointer, istream &is){
+        is.seekg(this->start[k], std::ios::cur);
+        //XdmfDebug("Skip: " << this->start[k]<<", "<<k );
+        if(k==rank-1){
+            XdmfDebug("Read: " << ncontiguous);
+            is.read(pointer, ncontiguous);
+            pointer += ncontiguous;
+            for(XdmfInt64 i=1,l=this->count[k];i<l;++i){
+                //XdmfDebug("Skip: " << this->stride[k] <<", " << k );
+                is.seekg(this->stride[k], std::ios::cur);
+                is.read(pointer, ncontiguous);
+                //XdmfDebug("Read: " << ncontiguous);
+                pointer += ncontiguous;
+            }
+        }else{
+            read(k+1,pointer,is);
+            for(XdmfInt64 i=1,l=this->count[k];i<l;++i){
+                is.seekg(this->stride[k], std::ios::cur);
+                //XdmfDebug("Skip: " << this->stride[k] << ", "<< k);
+                read(k+1,pointer,is);
+            }
+        }
+        //XdmfDebug("Skip: " << this->last[k] << ", " << k);
+        is.seekg(this->last[k], std::ios::cur);
+    }
+
+public:
+    HyperSlabReader(XdmfInt32 rank, XdmfInt32 byte, const XdmfInt64 * dims, const XdmfInt64 * start, const XdmfInt64 * stride, const XdmfInt64 * count){
+        assert(rank>0 && rank<XDMF_MAX_DIMENSION);
+        this->rank = rank;
+        XdmfInt64 d[XDMF_MAX_DIMENSION];
+        for(XdmfInt32 i =0;i<rank;++i){
+            this->start[i] = start[i];
+            this->stride[i] = stride[i]-1;
+            this->count[i] = count[i];
+            d[i] = dims[i];
+        }
+        //reduce rank
+        for(XdmfInt32 i =rank-1;i>0;--i){
+            if(this->start[i]==0 && this->stride[i]==0 && this->count[i]==dims[i]){
+                --this->rank;
+            }else{
+                break;
+            }
+        }
+        if(this->rank != rank){
+            XdmfDebug("Reduce Rank: " << rank << " to " << this->rank);
+            XdmfInt32 k = this->rank-1;
+            for(XdmfInt32 i = this->rank;i<rank;++i){
+                byte *= count[i];
+            }
+        }
+        for(XdmfInt32 i =0;i<this->rank;++i){
+            this->last[i] = d[i] - (this->start[i] + (this->stride[i]+1)*(this->count[i]-1) + 1);
+        }
+        toTotal(d,byte, this->start);
+        toTotal(d,byte, this->stride);
+        toTotal(d,byte, this->last);
+
+        ncontiguous=byte;
+        if(this->stride[this->rank-1]==0){
+            ncontiguous *= this->count[this->rank-1];
+            this->count[this->rank-1] = 1;
+        }
+        XdmfDebug("Contiguous byte: " << ncontiguous);
+    }
+    ~HyperSlabReader(){
+    }
+    void read(char * pointer, istream &is){
+        read(static_cast<XdmfInt32>(0),pointer,is);
+    }
+};
+
+
 size_t XdmfValuesBinary::getSeek(){
     if(this->Seek==NULL)return 0;
     return static_cast<size_t>(atoi(this->Seek));
@@ -131,6 +224,8 @@ XdmfValuesBinary::Read(XdmfArray *anArray){
         RetArray = new XdmfArray();
         RetArray->CopyType(this->DataDesc);
         RetArray->CopyShape(this->DataDesc);
+        RetArray->CopySelection(this->DataDesc);
+        RetArray->Allocate();
     }
     XdmfDebug("Accessing Binary CDATA");
     {
@@ -169,7 +264,9 @@ XdmfValuesBinary::Read(XdmfArray *anArray){
         total *= dims[i];
     }
     XdmfDebug("Data Size : " << total);
+    XdmfInt32 byte = RetArray->GetCoreLength()/total;
     XdmfDebug("Size[Byte]: " << RetArray->GetCoreLength());
+    XdmfDebug("     Byte   " << RetArray->GetElementSize());
     //check
     //    struct stat buf;
     //    stat(DataSetName, &buf);
@@ -220,8 +317,21 @@ XdmfValuesBinary::Read(XdmfArray *anArray){
             XdmfErrorMessage("Can't Open File " << DataSetName);
             //return(NULL);
         }
-        fs->read(reinterpret_cast<char*>(RetArray->GetDataPointer()), RetArray->GetCoreLength());
-    } catch( std::exception& ){
+        if( this->DataDesc->GetSelectionType() == XDMF_HYPERSLAB ){
+            XdmfDebug("Hyperslab data");
+            XdmfInt32  Rank;
+            XdmfInt64  Start[ XDMF_MAX_DIMENSION ];
+            XdmfInt64  Stride[ XDMF_MAX_DIMENSION ];
+            XdmfInt64  Count[ XDMF_MAX_DIMENSION ];
+            Rank = this->DataDesc->GetHyperSlab( Start, Stride, Count );
+            HyperSlabReader wrapper(Rank,RetArray->GetElementSize(),dims,Start,Stride, Count);
+            wrapper.read(reinterpret_cast<char*>(RetArray->GetDataPointer()), *fs);
+        }else{
+            XdmfDebug("Regular data");
+            fs->read(reinterpret_cast<char*>(RetArray->GetDataPointer()), RetArray->GetCoreLength());
+        }
+    } catch( std::exception& e){
+        XdmfErrorMessage(e.what());
         delete fs;
         delete path;
         return( NULL );
