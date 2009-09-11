@@ -30,6 +30,7 @@
 
 class XdmfGeometry;
 class XdmfTopology;
+class XdmfInformation;
 class XdmfAttribute;
 class XdmfArray;
 class XdmfTime;
@@ -212,6 +213,9 @@ public:
 //! Get Number of Sets
   XdmfGetValueMacro( NumberOfSets, XdmfInt32 );
 
+//! Get Number of Informations
+  XdmfGetValueMacro( NumberOfInformations, XdmfInt32 );
+
 //! Retreive a particilar XdmfAttribute
 /*!
         Returns the Xdmf Attribute from the grid.
@@ -287,6 +291,9 @@ public:
  //! Get one of the child Grids from a Collection or Tree
   XdmfGrid  *GetChild(XdmfInt32 Index);
 
+ //! Get one of the child Grids from a Collection or Tree
+  XdmfInformation  *GetInformation(XdmfInt32 Index);
+
  //! Return indexes of first level children that are valid at a time
  XdmfInt32 FindGridsInTimeRange(XdmfFloat64 TimeMin, XdmfFloat64 TimeMax, XdmfArray *ArrayToFill);
 
@@ -305,6 +312,7 @@ protected:
   XdmfInt32     TopologyIsMine;
   XdmfInt32     TimeIsMine;
   XdmfInt32     NumberOfAttributes;
+  XdmfInt32	NumberOfInformations;
   XdmfInt32     NumberOfSets;
   XdmfInt32     GridType;
   XdmfInt32     CollectionType;
@@ -313,6 +321,7 @@ protected:
   XdmfGrid      **Children;
   XdmfSet       **Sets;
   XdmfAttribute **Attribute;
+  XdmfInformation **Informations;
   XdmfAttribute *AssignedAttribute;
 };
 

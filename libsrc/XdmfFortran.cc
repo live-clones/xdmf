@@ -26,6 +26,7 @@
 #include <Xdmf.h>
 #include <XdmfSet.h>
 
+#include <stdio.h>
 #include <sstream>
 #include <map>
 #include <stack>
@@ -42,13 +43,19 @@
 #define XdmfSetGridTopology xdmfsetgridtopology_
 #define XdmfSetGridGeometry xdmfsetgridgeometry_
 #define XdmfAddGridAttribute xdmfaddgridattribute_
+#define XdmfAddGridInformation xdmfaddgridinformation_
+#define XdmfAddCollectionAttribute xdmfaddcollectionattribute_
+#define XdmfAddCollectionInformation xdmfaddcollectioninformation_
 #define XdmfAddArray xdmfaddarray_
 #define XdmfReadFile xdmfreadfile_
 #define XdmfReadGrid xdmfreadgrid_
+#define XdmfReadGridAtIndex xdmfreadgridatindex_
+#define XdmfGetNumberOfGrids xdmfgetnumberofgrids_
 #define XdmfGetNumberOfPoints xdmfgetnumberofpoints_
 #define XdmfReadPointValues xdmfreadpointvalues_
 #define XdmfGetNumberOfAttributeValues xdmfgetnumberofattributevalues_
 #define XdmfReadAttributeValues xdmfreadattributevalues_
+#define XdmfReadInformationValue xdmfreadinformationvalue_
 #define XdmfGetTime xdmfgettime_
 #define XdmfWriteGrid xdmfwritegrid_
 #define XdmfWriteToFile xdmfwritetofile_
@@ -78,13 +85,28 @@ XdmfFortran::XdmfFortran(char * outputName)
 
 XdmfFortran::~XdmfFortran()
 {
+	this->Destroy();
+}
+
+void XdmfFortran::Destroy()
+{
+	currentTime = -1;
+
 	delete myGeometry;
+	myGeometry = NULL;
 	delete myTopology;
+	myTopology = NULL;
 
 	while(!myAttributes.empty())
 	{
 		delete myAttributes.back();
 		myAttributes.pop_back();
+	}
+
+	while(!myInformations.empty())
+	{
+		delete myInformations.back();
+		myInformations.pop_back();
 	}
 
 	while(!myCollections.empty())
@@ -237,6 +259,70 @@ void XdmfFortran::AddGridAttribute(char * attributeName, char * numberType, char
 
 /**
  *
+ * Add an attribute to be written to the next grid.  Multiple attributes can
+ * be added and written to a single grid.
+ *
+ */
+void XdmfFortran::AddGridInformation(char * informationName, char * value)
+{
+	XdmfInformation * currInfo = new XdmfInformation();
+	currInfo->SetName(informationName);
+	currInfo->SetValue(value);
+	currInfo->SetDeleteOnGridDelete(true);
+
+	myInformations.push_back(currInfo);
+}
+
+/**
+ *
+ * Add an attribute to the current collection.  If we are not within a collection do nothing!
+ *
+ */
+void XdmfFortran::AddCollectionAttribute(char * attributeName, char * numberType, char * attributeCenter, char * attributeType, int * numberOfPoints, XdmfPointer * data)
+{
+	if (!myCollections.empty())
+	{
+		XdmfAttribute * currAttribute = new XdmfAttribute();
+		currAttribute->SetName(attributeName);
+		currAttribute->SetAttributeCenterFromString(attributeCenter);
+		currAttribute->SetAttributeTypeFromString(attributeType);
+		currAttribute->SetDeleteOnGridDelete(true);
+
+		XdmfArray * array = currAttribute->GetValues();
+		array->SetNumberTypeFromString(numberType);
+		array->SetNumberOfElements(*numberOfPoints);
+		WriteToXdmfArray(array, data);
+		myCollections.top()->Insert(currAttribute);
+		myCollections.top()->Build();
+	}
+}
+
+/**
+ *
+ * Add an attribute to the current collection.  If we are not within a collection add to the top level domain
+ *
+ */
+void XdmfFortran::AddCollectionInformation(char * informationName, char * value)
+{
+	XdmfInformation * currInfo = new XdmfInformation();
+	currInfo->SetName(informationName);
+	currInfo->SetValue(value);
+	currInfo->SetDeleteOnGridDelete(true);
+	if (!myCollections.empty())
+	{
+
+		myCollections.top()->Insert(currInfo);
+		myCollections.top()->Build();
+	}
+	else
+	{
+		myDomain->Insert(currInfo);
+		myDomain->Build();
+	}
+}
+
+/**
+ *
  * Write out "generic" data to XDMF.  This writes out data to the end of the top-level domain or the current collection.  It is independent of any grids.
  * Currently supports only writing a single dataitem.
  *
@@ -282,13 +368,60 @@ void XdmfFortran::AddArray(char * name, char * numberType, int * numberOfValues,
  */
 void XdmfFortran::ReadFile(char * filePath)
 {
+	// Clear state and start over before reading file
+	this->Destroy();
+
+	myDOM = new XdmfDOM();
+	myRoot = new XdmfRoot();
+	myDomain = new XdmfDomain();
+
 	myDOM->Parse(filePath);
 	myDomain->SetElement(myDOM->FindElement("Domain"));
+	myRoot->SetElement(myDOM->GetRoot());
+
 	// Perhaps we should support collections more on this part?
 	while(!myCollections.empty())
 	{
 		delete myCollections.top();
 		myCollections.pop();
+	}
+	myGridPaths.clear();
+	myGridNames.clear();
+	this->ReadFilePriv(myDomain->GetElement());
+}
+
+void XdmfFortran::ReadFilePriv(XdmfXmlNode currElement)
+{
+	XdmfGrid currGrid = XdmfGrid();
+	for (int i=0; i<myDOM->FindNumberOfElements("Grid",currElement); i++)
+	{
+		currGrid.SetDOM(myDOM);
+	    currGrid.SetElement(myDOM->FindElement("Grid", i, currElement));
+	    currGrid.Update();
+	    if (currGrid.GetGridType() != XDMF_GRID_COLLECTION)
+	    {
+	    	myGridPaths.push_back(myDOM->GetPath(currGrid.GetElement()));
+	    	std::string gridName = currGrid.GetName();
+	    	if (gridName.find_last_of("_") != std::string::npos)
+	    	{
+	    		try{
+	    			atoi(gridName.substr(gridName.find_last_of("_") + 1, gridName.size() - gridName.find_last_of("_")).c_str());
+	    			gridName = gridName.substr(0, gridName.find_last_of("_"));
+	    		}
+	    		catch (int e)
+	    		{
+	    		}
+	    	}
+	    	if(myGridNames.find(gridName.c_str()) == myGridNames.end())
+	    	{
+	    		myGridNames[gridName.c_str()] = 1;
+	    	}
+	    	else
+	    	{
+	    		myGridNames[gridName.c_str()]++;
+	    	}
+	    }
+	    this->ReadFilePriv(currGrid.GetElement());
 	}
 }
 
@@ -300,8 +433,18 @@ void XdmfFortran::ReadFile(char * filePath)
  */
 void XdmfFortran::ReadGrid(char * gridName)
 {
-	XdmfXmlNode currElement = myDOM->FindElement("Domain");
-	ReadGridPriv(gridName, currElement);
+	ReadGridPriv(gridName, myDomain->GetElement());
+}
+
+/**
+ *
+ * Read a grid in the current XdmfDOM into XdmfGeometry, XdmfTopology, and XdmfAttribute elements.
+ * An XdmfReadGrid() followed by a XdmfWriteGrid() will make a copy of the grid.
+ *
+ */
+void XdmfFortran::ReadGridAtIndex(int * gridIndex)
+{
+	ReadGridPriv(myGridPaths[*gridIndex].c_str());
 }
 
 /**
@@ -320,43 +463,78 @@ void XdmfFortran::ReadGridPriv(char * gridName, XdmfXmlNode currElement)
 	    currGrid.Update();
 	    if (currGrid.GetGridType() != XDMF_GRID_COLLECTION)
 	    {
-			if (strcmp(currGrid.GetName(), gridName) == 0)
-			{
-				delete myGeometry;
-				delete myTopology;
-
-				myGeometry = new XdmfGeometry();
-				myGeometry->SetGeometryType(currGrid.GetGeometry()->GetGeometryType());
-				myGeometry->SetNumberOfPoints(currGrid.GetGeometry()->GetNumberOfPoints());
-				myGeometry->SetPoints(currGrid.GetGeometry()->GetPoints()->Clone());
-
-				myTopology = new XdmfTopology();
-				myTopology->SetTopologyType(currGrid.GetTopology()->GetTopologyType());
-				myTopology->SetNumberOfElements(currGrid.GetTopology()->GetNumberOfElements());
-				myTopology->SetConnectivity(currGrid.GetTopology()->GetConnectivity()->Clone());
-
-				while(!myAttributes.empty())
-				{
-					delete myAttributes.back();
-					myAttributes.pop_back();
-				}
-
-				for (int j=0; j < currGrid.GetNumberOfAttributes(); j++)
-				{
-					currGrid.GetAttribute(j)->Update();
-					XdmfAttribute * currAttribute = new XdmfAttribute();
-					currAttribute->SetName(currGrid.GetAttribute(j)->GetName());
-					currAttribute->SetAttributeCenter(currGrid.GetAttribute(j)->GetAttributeCenter());
-					currAttribute->SetAttributeType(currGrid.GetAttribute(j)->GetAttributeType());
-					currAttribute->SetDeleteOnGridDelete(true);
-					currAttribute->SetValues(currGrid.GetAttribute(j)->GetValues()->Clone());
-					myAttributes.push_back(currAttribute);
-				}
-				return;
-			}
+	    	if (strcmp(gridName, currGrid.GetName()) == 0)
+	    	{
+	    		return this->ReadGridPriv(myDOM->GetPath(currGrid.GetElement()));
+	    	}
 	    }
 	    this->ReadGridPriv(gridName, currGrid.GetElement());
 	}
+}
+
+/**
+ *
+ * Helper function for XdmfReadGrid.  Ensures that all grids are traversed and that the method works
+ * even within collections.
+ *
+ */
+void XdmfFortran::ReadGridPriv(XdmfConstString gridPath)
+{
+	XdmfGrid currGrid = XdmfGrid();
+	currGrid.SetDOM(myDOM);
+	currGrid.SetElement(myDOM->FindElementByPath(gridPath));
+	currGrid.Update();
+
+	delete myGeometry;
+	delete myTopology;
+
+	myGeometry = new XdmfGeometry();
+	myGeometry->SetGeometryType(currGrid.GetGeometry()->GetGeometryType());
+	myGeometry->SetNumberOfPoints(currGrid.GetGeometry()->GetNumberOfPoints());
+	myGeometry->SetPoints(currGrid.GetGeometry()->GetPoints()->Clone());
+
+	myTopology = new XdmfTopology();
+	myTopology->SetTopologyType(currGrid.GetTopology()->GetTopologyType());
+	myTopology->SetNumberOfElements(currGrid.GetTopology()->GetNumberOfElements());
+	myTopology->SetConnectivity(currGrid.GetTopology()->GetConnectivity()->Clone());
+
+	while(!myAttributes.empty())
+	{
+		delete myAttributes.back();
+		myAttributes.pop_back();
+	}
+
+	for (int j=0; j < currGrid.GetNumberOfAttributes(); j++)
+	{
+		currGrid.GetAttribute(j)->Update();
+		XdmfAttribute * currAttribute = new XdmfAttribute();
+		currAttribute->SetName(currGrid.GetAttribute(j)->GetName());
+		currAttribute->SetAttributeCenter(currGrid.GetAttribute(j)->GetAttributeCenter());
+		currAttribute->SetAttributeType(currGrid.GetAttribute(j)->GetAttributeType());
+		currAttribute->SetDeleteOnGridDelete(true);
+		currAttribute->SetValues(currGrid.GetAttribute(j)->GetValues()->Clone());
+		myAttributes.push_back(currAttribute);
+	}
+
+	for (int j=0; j < currGrid.GetNumberOfInformations(); j++)
+	{
+		currGrid.GetInformation(j)->UpdateInformation();
+		XdmfInformation * currInformation = new XdmfInformation();
+		currInformation->SetName(currGrid.GetInformation(j)->GetName());
+		currInformation->SetValue(currGrid.GetInformation(j)->GetValue());
+		currInformation->SetDeleteOnGridDelete(true);
+		myInformations.push_back(currInformation);
+	}
+}
+
+/**
+ *
+ * Returns the number of grids in the current open file.  This ignores collections.
+ *
+ */
+void XdmfFortran::GetNumberOfGrids(XdmfInt32 * toReturn)
+{
+	*toReturn = myGridPaths.size();
 }
 
 /**
@@ -429,6 +607,38 @@ void XdmfFortran::ReadAttributeValues(char * attributeName, char * numberType, X
 
 /**
  *
+ * Reads the values from the specified information element into the passed const string pointer.  If the information element cannot be found,
+ * no values are passed.  Information elements at the top level domain are searched first, followed by the currently loaded grid.
+ *
+ */
+void XdmfFortran::ReadInformationValue(char * informationName, char * toReturn)
+{
+	// TODO: Make this work better for collections as well!
+	for (unsigned int i=0; i<myInformations.size(); i++)
+	{
+		if (strcmp(informationName, myInformations[i]->GetName()) == 0)
+		{
+			strcpy(toReturn, myInformations[i]->GetValue());
+			return;
+		}
+	}
+
+	for (int i=0; i<myDOM->FindNumberOfElements("Information",myDomain->GetElement()); i++)
+	{
+		XdmfInformation currInfo = XdmfInformation();
+		currInfo.SetDOM(myDOM);
+		currInfo.SetElement(myDOM->FindElement("Information", i, myDomain->GetElement(), 0));
+		currInfo.UpdateInformation();
+		if (strcmp(informationName, currInfo.GetName()) == 0)
+		{
+			strcpy(toReturn, currInfo.GetValue());
+			return;
+		}
+	}
+}
+
+/**
+ *
  * Return the currentTime
  *
  */
@@ -460,19 +670,19 @@ void XdmfFortran::WriteGrid(char * gridName)
 		cout << "Must set a geometry before the grid can be written" << endl;
 		delete grid;
 		return;
-    }
+	}
 
 	// If we try to write over the same grid, modify the grid name...
 	std::stringstream totalGridName;
-	if(myWrittenGrids.find(gridName) == myWrittenGrids.end())
+	if(myGridNames.find(gridName) == myGridNames.end())
 	{
-		myWrittenGrids[gridName] = 1;
+		myGridNames[gridName] = 1;
 		totalGridName << gridName;
 	}
 	else
 	{
-		myWrittenGrids[gridName]++;
-		totalGridName << gridName << "_" << myWrittenGrids[gridName];
+		myGridNames[gridName]++;
+		totalGridName << gridName << "_" << myGridNames[gridName];
 	}
 
 	grid->SetName(totalGridName.str().c_str());
@@ -511,6 +721,12 @@ void XdmfFortran::WriteGrid(char * gridName)
 		currentTime = -1;
 	}
 
+	while(myInformations.size() > 0)
+	{
+		grid->Insert(myInformations.back());
+		myInformations.pop_back();
+	}
+
 	while(myAttributes.size() > 0)
 	{
 		XdmfAttribute * currAttribute = myAttributes.back();
@@ -523,6 +739,8 @@ void XdmfFortran::WriteGrid(char * gridName)
 	}
 
 	grid->Build();
+
+	myGridPaths.push_back(myDOM->GetPath(grid->GetElement()));
 
 	// If we are within a collection this will be deleted on collection deletion
 	if (myCollections.empty())
@@ -703,6 +921,24 @@ extern "C" {
 		myPointer->AddGridAttribute(attributeName, numberType, attributeCenter, attributeType, numberOfPoints, data);
 	}
 
+	void XdmfAddCollectionAttribute(long * pointer, char * attributeName, char * numberType, char * attributeCenter, char * attributeType, int * numberOfPoints, XdmfPointer * data)
+	{
+		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
+		myPointer->AddCollectionAttribute(attributeName, numberType, attributeCenter, attributeType, numberOfPoints, data);
+	}
+
+	void XdmfAddGridInformation(long * pointer, char * informationName, char * value)
+	{
+		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
+		myPointer->AddGridInformation(informationName, value);
+	}
+
+	void XdmfAddCollectionInformation(long * pointer, char * informationName, char * value)
+	{
+		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
+		myPointer->AddCollectionInformation(informationName, value);
+	}
+
 	void XdmfAddArray(long * pointer, char * name, char * numberType, int * numberOfValues, XdmfPointer * data)
 	{
 		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
@@ -719,6 +955,18 @@ extern "C" {
     {
     	XdmfFortran * myPointer = (XdmfFortran *)*pointer;
     	myPointer->ReadGrid(gridName);
+    }
+
+    void XdmfReadGridAtIndex(long * pointer, int * gridIndex)
+    {
+    	XdmfFortran * myPointer = (XdmfFortran *)*pointer;
+        myPointer->ReadGridAtIndex(gridIndex);
+    }
+
+    void XdmfGetNumberOfGrids(long * pointer, XdmfInt32 * toReturn)
+    {
+        XdmfFortran * myPointer = (XdmfFortran *)*pointer;
+        myPointer->GetNumberOfGrids(toReturn);
     }
 
     void XdmfGetNumberOfPoints(long * pointer, XdmfInt32 * toReturn)
@@ -743,6 +991,12 @@ extern "C" {
     {
     	XdmfFortran * myPointer = (XdmfFortran *)*pointer;
     	myPointer->ReadAttributeValues(attributeName, numberType, startIndex, arrayToFill, numberOfValues, arrayStride, valuesStride);
+    }
+
+    void XdmfReadInformationValue(long * pointer, char * informationName, char * valueToReturn)
+    {
+    	XdmfFortran * myPointer = (XdmfFortran *)*pointer;
+    	myPointer->ReadInformationValue(informationName, valueToReturn);
     }
 
     void XdmfGetTime(long * pointer, XdmfFloat64 * toReturn)
