@@ -95,7 +95,7 @@ XdmfGeometry::Build(){
     XdmfDataItem    *di = NULL;
     XdmfArray       *array;
 
-    cout << "Building Geometry" << endl;
+    //cout << "Building Geometry" << endl;
     if(XdmfElement::Build() != XDMF_SUCCESS) return(XDMF_FAIL);
     this->Set("GeometryType", this->GetGeometryTypeAsString());
     // Build Children from String , if provided

@@ -42,15 +42,16 @@
 #include "vtkCellData.h"
 #include "vtkTypeTraits.h"
 
-#include "XdmfDOM.h"
-#include "XdmfRoot.h"
-#include "XdmfDomain.h"
-#include "XdmfGrid.h"
-#include "XdmfTopology.h"
-#include "XdmfDataDesc.h"
-#include "XdmfGeometry.h"
-#include "XdmfAttribute.h"
 #include "XdmfArray.h"
+#include "XdmfAttribute.h"
+#include "XdmfDataDesc.h"
+#include "XdmfDOM.h"
+#include "XdmfDomain.h"
+#include "XdmfGeometry.h"
+#include "XdmfGrid.h"
+#include "XdmfRoot.h"
+#include "XdmfTime.h"
+#include "XdmfTopology.h"
 
 #include <vtkstd/map>
 #include <stdio.h>
@@ -124,7 +125,7 @@ void vtkXdmfWriter2Internal::DetermineCellTypes(vtkPointSet * t, vtkXdmfWriter2I
 //==============================================================================
 
 vtkStandardNewMacro(vtkXdmfWriter2);
-vtkCxxRevisionMacro(vtkXdmfWriter2, "1.5");
+vtkCxxRevisionMacro(vtkXdmfWriter2, "1.6");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter2::vtkXdmfWriter2()
@@ -134,6 +135,11 @@ vtkXdmfWriter2::vtkXdmfWriter2()
   this->Piece = 0;  //for parallel
   this->NumberOfPieces = 1;
   this->LightDataLimit = 100;
+  this->WriteAllTimeSteps = 0;
+  this->NumberOfTimeSteps = 1;
+  this->CurrentTimeIndex = 0;
+  this->Domain = NULL;
+  this->TopTemporalGrid = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -145,6 +151,17 @@ vtkXdmfWriter2::~vtkXdmfWriter2()
     delete this->DOM;
     this->DOM = NULL;
     }
+  if (this->Domain)
+    {
+    delete this->Domain;
+    this->Domain = NULL;
+    }
+  if (this->TopTemporalGrid)
+    {
+    delete this->TopTemporalGrid;
+    this->TopTemporalGrid = NULL;
+    }
+
   //TODO: Verify memory isn't leaking
 }
 
@@ -159,9 +176,11 @@ void vtkXdmfWriter2::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
   os << indent << "FileName: " <<
-    (this->FileName ? this->FileName : "(none)") << "\n";
+    (this->FileName ? this->FileName : "(none)") << endl;
   os << indent << "LightDataLimit: " <<
-    this->LightDataLimit << "\n";
+    this->LightDataLimit << endl;
+  os << indent << "WriteAllTimeSteps: " <<
+    (this->WriteAllTimeSteps?"ON":"OFF") << endl;
 }
 
 //------------------------------------------------------------------------------
@@ -185,12 +204,22 @@ int vtkXdmfWriter2::FillInputPortInformation(int, vtkInformation *info)
   return 1;
 }
 
-//------------------------------------------------------------------------------
-void vtkXdmfWriter2::WriteData()
-{  
-  //TODO: Specify name of heavy data companion file
-  //TODO: Respect time
 
+//------------------------------------------------------------------------------
+int vtkXdmfWriter2::Write()
+{
+  // Make sure we have input.
+  if (this->GetNumberOfInputConnections(0) < 1)
+    {
+    vtkErrorMacro("No input provided!");
+    return 0;
+    }
+
+  // always write even if the data hasn't changed
+  this->Modified();
+
+  //TODO: Specify name of heavy data companion file?
+  //TODO: Respect time
   if (!this->DOM)
     {
     this->DOM = new XdmfDOM();
@@ -200,18 +229,146 @@ void vtkXdmfWriter2::WriteData()
   root.SetDOM(this->DOM);  
   root.SetVersion(2.2);
   root.Build();
-  XdmfDomain *domain = new XdmfDomain();
-  root.Insert(domain);
 
-  XdmfGrid *grid = new XdmfGrid();
-  domain->Insert(grid);
-  this->WriteDataSet(this->GetInput(), grid);
+  if (this->Domain)
+    {
+    delete this->Domain;
+    }
+  this->Domain = new XdmfDomain();
+  root.Insert(this->Domain);
+//  this->Domain->Build();
+
+  this->Update();
+
   root.Build();
   this->DOM->Write(this->FileName);
-  delete grid;
-  delete domain;
+  delete this->Domain;
+  this->Domain = NULL;
+
+  return 1;
 }
 
+//----------------------------------------------------------------------------
+int vtkXdmfWriter2::RequestInformation(
+  vtkInformation* vtkNotUsed(request),
+  vtkInformationVector** inputVector,
+  vtkInformationVector* vtkNotUsed(outputVector))
+{
+  // Does the input have timesteps?
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  if ( inInfo->Has(vtkStreamingDemandDrivenPipeline::TIME_STEPS()) )
+    {
+    this->NumberOfTimeSteps = 
+      inInfo->Length( vtkStreamingDemandDrivenPipeline::TIME_STEPS() );
+    }
+  else
+    {
+    this->NumberOfTimeSteps = 1;
+    }
+
+  return 1;
+}
+
+//----------------------------------------------------------------------------
+int vtkXdmfWriter2::RequestUpdateExtent(
+  vtkInformation* vtkNotUsed(request),
+  vtkInformationVector** inputVector,
+  vtkInformationVector* vtkNotUsed(outputVector))
+{
+  double *inTimes = inputVector[0]->GetInformationObject(0)->Get(
+      vtkStreamingDemandDrivenPipeline::TIME_STEPS());
+  if (inTimes && this->WriteAllTimeSteps)
+    {
+    //TODO:? Add a user ivar to specify a particular time, 
+    //which is different from current time. Can do it by updating
+    //to a particular time then writing without writealltimesteps, 
+    //but that is annoying.
+    double timeReq = inTimes[this->CurrentTimeIndex];
+    inputVector[0]->GetInformationObject(0)->Set( 
+        vtkStreamingDemandDrivenPipeline::UPDATE_TIME_STEPS(), 
+        &timeReq, 1);
+    }
+
+  return 1;  
+}
+
+//----------------------------------------------------------------------------
+int vtkXdmfWriter2::RequestData(
+  vtkInformation* request,
+  vtkInformationVector** inputVector,
+  vtkInformationVector* outputVector)
+{
+  if (this->CurrentTimeIndex == 0 && this->WriteAllTimeSteps)
+    {
+    // Tell the pipeline to start looping.
+    request->Set(vtkStreamingDemandDrivenPipeline::CONTINUE_EXECUTING(), 1);
+    
+    // make a top level temporal grid just under domain
+    if (this->TopTemporalGrid)
+      {
+      delete this->TopTemporalGrid;
+      this->TopTemporalGrid = NULL;
+      }
+
+    XdmfGrid *tgrid = new XdmfGrid();
+    tgrid->SetGridType(XDMF_GRID_COLLECTION);
+    tgrid->SetCollectionType(XDMF_GRID_COLLECTION_TEMPORAL);
+    XdmfTopology *t = tgrid->GetTopology();
+    t->SetTopologyType(XDMF_NOTOPOLOGY);
+    XdmfGeometry *geo = tgrid->GetGeometry();
+    geo->SetGeometryType(XDMF_GEOMETRY_NONE);
+
+    this->Domain->Insert(tgrid);    
+
+    this->TopTemporalGrid = tgrid;
+//    cerr << "BUILDING TGRID" << endl;
+//    this->TopTemporalGrid->Build();
+    }
+
+  XdmfGrid *grid = new XdmfGrid();
+  if (this->TopTemporalGrid)
+    {
+    this->TopTemporalGrid->Insert(grid);
+    }
+  else
+    {
+    this->Domain->Insert(grid);
+    }
+
+  vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
+  vtkDataObject* input = inInfo->Get(vtkDataObject::DATA_OBJECT());
+  vtkInformation *inDataInfo = input->GetInformation();
+  if (inDataInfo->Has(vtkDataObject::DATA_TIME_STEPS()))
+    {
+    //I am assuming we are not given a temporal data object and getting just one time.
+    double *dataT = input->GetInformation()->Get(vtkDataObject::DATA_TIME_STEPS());
+    //cerr << "Writing " << this->CurrentTimeIndex << " " << *dataT << endl;
+
+    //TODO: Shouldn't grid->GetTime be used instead of making my own here?
+    XdmfTime *xT = new XdmfTime();
+    xT->SetTimeType(XDMF_TIME_SINGLE);
+    xT->SetValue(*dataT);
+    grid->Insert(xT);
+    }
+
+  this->WriteDataSet(input, grid);
+  //cerr << "BUILDING GRID" << endl;
+  //grid->Build();
+  //delete grid; //domain takes care of it?
+
+  this->CurrentTimeIndex++;
+  if (this->CurrentTimeIndex >= this->NumberOfTimeSteps && 
+      this->WriteAllTimeSteps)
+    {
+    // Tell the pipeline to stop looping.
+    request->Remove(vtkStreamingDemandDrivenPipeline::CONTINUE_EXECUTING());
+    this->CurrentTimeIndex = 0;
+    this->TopTemporalGrid = NULL; //domain takes care of it deletion?
+    }
+
+  return 1;
+}
+ 
 //------------------------------------------------------------------------------
 void vtkXdmfWriter2::WriteDataSet(vtkDataObject *dobj, XdmfGrid *grid)
 {
@@ -632,7 +789,14 @@ void vtkXdmfWriter2::WriteArrays(vtkFieldData* fd, XdmfGrid *grid, int associati
 
       XdmfAttribute *attr = new XdmfAttribute;    
       attr->SetLightDataLimit(this->LightDataLimit);
-      attr->SetName(da->GetName());
+      if (da->GetName())
+        {
+        attr->SetName(da->GetName());
+        }
+      else
+        {
+        attr->SetName("ANONYMOUS");
+        }
       attr->SetAttributeCenter(association);
 
       int attributeType = 0;
@@ -736,10 +900,22 @@ void vtkXdmfWriter2::ConvertVToXArray(vtkDataArray *vda, XdmfArray *xda)
       break;
       }
     }        
-  //Do not let xdmf allocate its own buffer. xdmf just borrows vtk's
-  xda->SetAllowAllocate(0); 
 
-  xda->SetNumberOfElements(vda->GetNumberOfTuples()*vda->GetNumberOfComponents());
-  xda->SetDataPointer(vda->GetVoidPointer(0));
+  //TODO: Pass by reference is preferable, but we have to be sure data sticks around until write occurs.
+  if (!this->TopTemporalGrid)
+    {
+    //Do not let xdmf allocate its own buffer. xdmf just borrows vtk's and doesn't double mem size.
+    xda->SetAllowAllocate(0); 
+    xda->SetNumberOfElements(vda->GetNumberOfTuples()*vda->GetNumberOfComponents());
+    xda->SetDataPointer(vda->GetVoidPointer(0));
+    }
+  else
+    {
+    //Unfortunately data doesn't stick around with temporal updates, which is exactly when you want it most.
+    xda->SetAllowAllocate(1);  
+    xda->SetNumberOfElements(vda->GetNumberOfTuples()*vda->GetNumberOfComponents());
+    void *p = xda->GetDataPointer();
+    memcpy(p, vda->GetVoidPointer(0), vda->GetNumberOfTuples()*vda->GetNumberOfComponents()*vda->GetElementComponentSize());
+    }
 }
 

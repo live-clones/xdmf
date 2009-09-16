@@ -23,7 +23,7 @@
 #ifndef _vtkXdmfWriter2_h
 #define _vtkXdmfWriter2_h
 
-#include "vtkWriter.h"
+#include "vtkDataObjectAlgorithm.h"
 
 class vtkExecutive;
 
@@ -36,15 +36,16 @@ class vtkInformationVector;
 
 //BTX
 class XdmfDOM;
+class XdmfDomain;
 class XdmfGrid;
 class XdmfArray;
 //ETX
 
-class VTK_EXPORT vtkXdmfWriter2 : public vtkWriter
+class VTK_EXPORT vtkXdmfWriter2 : public vtkDataObjectAlgorithm
 {
 public:
   static vtkXdmfWriter2 *New();
-  vtkTypeRevisionMacro(vtkXdmfWriter2,vtkWriter);
+  vtkTypeRevisionMacro(vtkXdmfWriter2,vtkDataObjectAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
@@ -68,18 +69,41 @@ public:
   vtkSetMacro(LightDataLimit, int);
   vtkGetMacro(LightDataLimit, int);
 
+
+  // Description:
+  // Write data to output. Method executes subclasses WriteData() method, as 
+  // well as StartMethod() and EndMethod() methods.
+  // Returns 1 on success and 0 on failure.
+  virtual int Write();
+
   //TODO: control choice of heavy data format (xml, hdf5, sql, raw)
 
   //TODO: These controls are available in vtkXdmfWriter, but are not used here.
   //GridsOnly
   //Append to Domain
 
+  //Description:
+  //Controls whether writer automatically writes all input time steps, or 
+  //just the timestep that is currently on the input.
+  vtkSetMacro(WriteAllTimeSteps, int);
+  vtkGetMacro(WriteAllTimeSteps, int);
+  vtkBooleanMacro(WriteAllTimeSteps, int);
+
 protected:
   vtkXdmfWriter2();
   ~vtkXdmfWriter2();
 
+  virtual int RequestInformation(vtkInformation*, 
+                                 vtkInformationVector**, 
+                                 vtkInformationVector*);
+  virtual int RequestUpdateExtent(vtkInformation*, 
+                                  vtkInformationVector**, 
+                                  vtkInformationVector*);
+  virtual int RequestData(vtkInformation*, 
+                          vtkInformationVector**, 
+                          vtkInformationVector*);
+  
   // Does the work
-  virtual void WriteData();
   virtual void WriteDataSet(vtkDataObject *dobj, XdmfGrid *grid);
   virtual void WriteCompositeDataSet(vtkCompositeDataSet *dobj, XdmfGrid *grid);
   virtual void WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid);
@@ -93,16 +117,20 @@ protected:
 
   char *FileName;
   XdmfDOM *DOM;
+  XdmfDomain *Domain;
+  XdmfGrid *TopTemporalGrid;
 
   int Piece;
   int NumberOfPieces;
+
+  int WriteAllTimeSteps;
+  int NumberOfTimeSteps;
+  int CurrentTimeIndex;
 
   int LightDataLimit;
 private:
   vtkXdmfWriter2(const vtkXdmfWriter2&); // Not implemented
   void operator=(const vtkXdmfWriter2&); // Not implemented
-
-  vtkDataObject *InDataNow;
 };
 
 #endif /* _vtkXdmfWriter2_h */
