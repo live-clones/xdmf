@@ -18,16 +18,11 @@
 #include "vtkDataObjectGenerator.h"
 #include "vtkTimeSourceExample.h"
 #include "vtkTemporalFractal.h"
-#include "vtkCompositeDataPipeline.h"
 
 #include "vtkImageData.h"
 
 int main (int vtkNotUsed(ac), char **vtkNotUsed(av))
 {
-//  vtkCompositeDataPipeline *cdp = vtkCompositeDataPipeline::New();
-//  vtkAlgorithm::SetDefaultExecutivePrototype(cdp);
-//  cdp->Delete();
-
   vtkDataObjectGenerator *dog = vtkDataObjectGenerator::New();
   dog->SetProgram("ID1");
   dog->SetProgram("UF1");
@@ -71,8 +66,6 @@ int main (int vtkNotUsed(ac), char **vtkNotUsed(av))
   //TODO:
   //Verify result file exists, verify it is sane, to make a pass/fail return code
   //Delete result file if test passed
-
-  // vtkAlgorithm::SetDefaultExecutivePrototype(NULL); //needed or cdp is never freed
 
   return 0;
 }

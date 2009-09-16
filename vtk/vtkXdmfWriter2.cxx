@@ -125,7 +125,7 @@ void vtkXdmfWriter2Internal::DetermineCellTypes(vtkPointSet * t, vtkXdmfWriter2I
 //==============================================================================
 
 vtkStandardNewMacro(vtkXdmfWriter2);
-vtkCxxRevisionMacro(vtkXdmfWriter2, "1.6");
+vtkCxxRevisionMacro(vtkXdmfWriter2, "1.7");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter2::vtkXdmfWriter2()
@@ -219,7 +219,6 @@ int vtkXdmfWriter2::Write()
   this->Modified();
 
   //TODO: Specify name of heavy data companion file?
-  //TODO: Respect time
   if (!this->DOM)
     {
     this->DOM = new XdmfDOM();
@@ -236,7 +235,6 @@ int vtkXdmfWriter2::Write()
     }
   this->Domain = new XdmfDomain();
   root.Insert(this->Domain);
-//  this->Domain->Build();
 
   this->Update();
 
@@ -520,7 +518,7 @@ void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
     //If no compelling reason not to used MIXED, then this should go away.
     //This special case code requires an in memory copy just to get rid of 
     //each cell's preceeding number of points int.
-    //If don't have to do that, could use pointer sharing, and the
+    //If don't have to do that, could use pointer sharing,
     //and the extra code path is bound to cause problems eventually.
     if ( cellTypes.size() == 1 )
       {
@@ -784,6 +782,7 @@ void vtkXdmfWriter2::WriteArrays(vtkFieldData* fd, XdmfGrid *grid, int associati
       if (!da)
         {
         //TODO: Dump non numeric arrays too
+        cerr << "xdmfwriter can not convert non-numeric arrays yet." << endl;
         continue;
         }
 
