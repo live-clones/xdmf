@@ -125,7 +125,7 @@ void vtkXdmfWriter2Internal::DetermineCellTypes(vtkPointSet * t, vtkXdmfWriter2I
 //==============================================================================
 
 vtkStandardNewMacro(vtkXdmfWriter2);
-vtkCxxRevisionMacro(vtkXdmfWriter2, "1.7");
+vtkCxxRevisionMacro(vtkXdmfWriter2, "1.8");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter2::vtkXdmfWriter2()
@@ -294,7 +294,7 @@ int vtkXdmfWriter2::RequestUpdateExtent(
 int vtkXdmfWriter2::RequestData(
   vtkInformation* request,
   vtkInformationVector** inputVector,
-  vtkInformationVector* outputVector)
+  vtkInformationVector* vtkNotUsed(outputVector))
 {
   if (this->CurrentTimeIndex == 0 && this->WriteAllTimeSteps)
     {
