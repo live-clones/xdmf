@@ -38,7 +38,7 @@
 
 #define XDMF_DSM_ANY_SOURCE     -1
 
-class XdmfDsmMsg : public XdmfObject {
+class XDMF_EXPORT XdmfDsmMsg : public XdmfObject {
 
     public :
         XdmfDsmMsg();

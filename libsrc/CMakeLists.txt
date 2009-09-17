@@ -65,6 +65,55 @@ SET( XdmfModelSource
   XdmfDsmMsg
   )
 
+SET(CSHARP_SOURCES 
+	SWIGTYPE_p_double.cs
+	SWIGTYPE_p_float.cs
+	SWIGTYPE_p_hid_t.cs
+	SWIGTYPE_p_int.cs
+	SWIGTYPE_p_istream.cs
+	SWIGTYPE_p_long_long.cs
+	SWIGTYPE_p_ostream.cs
+	SWIGTYPE_p_p__xmlDoc.cs
+	SWIGTYPE_p_void.cs
+	SWIGTYPE_p__xmlNode.cs
+	XdmfArray.cs
+	XdmfArrayList.cs
+	XdmfAttribute.cs
+	XdmfCSharp.cs
+	XdmfCSharpPINVOKE.cs
+	XdmfDataDesc.cs
+	XdmfDataItem.cs
+	XdmfDataStructure.cs
+	XdmfDomain.cs
+	XdmfDOM.cs
+	XdmfDsmComm.cs
+	XdmfDsmCommMpi.cs
+	XdmfDsm.cs
+	XdmfElement.cs
+	XdmfGeometry.cs
+	XdmfGrid.cs
+	XdmfHDF.cs
+	XdmfHeavyData.cs
+	XdmfInformation.cs
+	XdmfLightData.cs
+	XdmfMap.cs
+	XdmfObject.cs
+	XdmfRegion.cs
+	XdmfRoot.cs
+	XdmfSet.cs
+	XdmfTime.cs
+	XdmfTopology.cs
+	XdmfValues.cs
+	XdmfValuesHDF.cs
+	XdmfValuesXML.cs
+ 	XdmfDsmBuffer.cs
+	XdmfDsmMsg.cs
+	XdmfOpenCallback.cs
+	XdmfCloseCallback.cs
+	XdmfReadCallback.cs
+	XdmfWriteCallback.cs 
+	)
+
 SET( XdmfGzipSource
   gzstream
    )
@@ -448,6 +497,66 @@ IF(XDMF_WRAP_PYTHON)
         COMPONENT Runtime
         )
 ENDIF(XDMF_WRAP_PYTHON)
+
+OPTION(XDMF_WRAP_CSHARP "Build a C# wrapping interface" OFF)
+IF(XDMF_WRAP_CSHARP)
+  IF(NOT BUILD_SHARED_LIBS)
+    MESSAGE("C# wrapping only works on shared libraries")
+  ENDIF(NOT BUILD_SHARED_LIBS)
+
+  FIND_PROGRAM(SWIG_EXECUTABLE 
+    NAMES swig-1.3 swig
+    PATHS /usr/bin
+    DOC "Swig executable for generating wrapped files")
+  MARK_AS_ADVANCED(SWIG_EXECUTABLE)
+  SET(SWIG_WRAPPER_CXX ${Xdmf_BINARY_DIR}/libsrc/XdmfCSharp.cxx)
+  IF(SWIG_EXECUTABLE)
+    SET(XDMF_SWIG_INCLUDES 
+      -I${Xdmf_SOURCE_DIR} 
+      -I${Xdmf_SOURCE_DIR}/libsrc 
+      -I${Xdmf_BINARY_DIR}/libsrc 
+      -I${Xdmf_SOURCE_DIR}/Ice/libsrc
+      -I${Xdmf_BINARY_DIR}/Ice/libsrc
+      )
+    GET_FILENAME_COMPONENT(SWIG_EXE_PATH ${SWIG_EXECUTABLE}
+      PATH)
+    SET(SWIG_LIB_PATH "${SWIG_EXE_PATH}/Lib")
+    IF(EXISTS "${SWIG_LIB_PATH}")
+      SET(XDMF_SWIG_INCLUDES
+        ${XDMF_SWIG_INCLUDES}
+        -I${SWIG_LIB_PATH}
+        )
+    ENDIF(EXISTS "${SWIG_LIB_PATH}")
+	IF(XDMF_BUILD_MPI)
+	  ADD_CUSTOM_COMMAND(
+	   OUTPUT ${SWIG_WRAPPER_CXX}
+	   DEPENDS ${Xdmf_SOURCE_DIR}/libsrc/Xdmf.i
+	   COMMAND ${SWIG_EXECUTABLE}
+	   ARGS -module XdmfCSharp -namespace Xdmf  -v -c++ -make_default -includeall "-csharp" ${swig_extra_args} ${XDMF_SWIG_INCLUDES} -o "${SWIG_WRAPPER_CXX}"  Xdmf.i)
+	ELSE(XDMF_BUILD_MPI) 
+	  ADD_CUSTOM_COMMAND(
+	   OUTPUT ${SWIG_WRAPPER_CXX}
+	   DEPENDS ${Xdmf_SOURCE_DIR}/libsrc/Xdmf.i
+	   COMMAND ${SWIG_EXECUTABLE}
+	   ARGS -module XdmfCSharp -namespace Xdmf   -v -c++ -DXDMF_NO_MPI -make_default -includeall "-csharp" ${swig_extra_args} ${XDMF_SWIG_INCLUDES} -o "${SWIG_WRAPPER_CXX}" Xdmf.i)
+	ENDIF(XDMF_BUILD_MPI) 
+	
+    ADD_CUSTOM_TARGET(RerunSwigCSharp DEPENDS 
+      ${SWIG_WRAPPER_CXX}
+      )
+
+  ELSE(SWIG_EXECUTABLE)
+    MESSAGE("Wrappers generation is disabled, because SWIG executable is not found")
+  ENDIF(SWIG_EXECUTABLE)
+
+  ADD_LIBRARY(XdmfCSharp SHARED ${SWIG_WRAPPER_CXX})
+  TARGET_LINK_LIBRARIES(XdmfCSharp Xdmf ${HDF5_LIBRARY} ${XDMF_ZLIB_LIBRARIES})
+  ADD_CUSTOM_COMMAND (TARGET XdmfCSharp
+										  POST_BUILD
+										 COMMAND csc -target:library -out:../bin/XmdfCSharpBindings.dll ${CSHARP_SOURCES}
+										 WORKING_DIRECTORY ${XDMF_INSTALL_DIR})
+  ADD_DEPENDENCIES(XdmfCSharp Xdmf)
+ENDIF(XDMF_WRAP_CSHARP)
 
 IF(XDMF_BUILD_TESTING)
   SUBDIRS(Testing)
