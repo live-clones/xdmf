@@ -119,6 +119,13 @@ public:
 //! Returns the Center of the Attribute
   XdmfGetValueMacro( AttributeCenter, XdmfInt32 );
 
+// PATCH September 09, Ian Curington, HR Wallingford Ltd.
+//! Get the Units
+    XdmfGetStringMacro(Units);
+//! Set the Units
+    XdmfSetStringMacro(Units);
+// end patch
+
 //! Returns the Shape of the attribute
   XdmfDataDesc *GetShapeDesc( void ) { return( this->ShapeDesc ); };
 
@@ -145,6 +152,7 @@ protected:
   XdmfArray  *Values;
   XdmfInt32  Active;
   XdmfInt32  LightDataLimit;
+  XdmfString Units;      // Ian Curington, HR Wallingford Ltd.
 };
 
 #endif // __XdmfAttribute_h

@@ -31,7 +31,7 @@
 
 //! Helper for pthread_create()
 extern "C" {
-void *
+XDMF_EXPORT void *
 XdmfDsmBufferServiceThread(void *DsmObj);
 }
 

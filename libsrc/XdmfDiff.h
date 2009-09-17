@@ -68,7 +68,23 @@
 #include <set>
 #include <vector>
 
-class XdmfDiff{
+#if defined(WIN32) && !defined(XDMFSTATIC)
+
+// Windows and DLL configuration
+#if defined(XdmfUtils_EXPORTS)
+    #define XDMF_UTILS_DLL __declspec(dllexport)
+#else
+    #define XDMF_UTILS_DLL __declspec(dllimport)
+#endif
+
+#else
+
+// Linux or static configuration
+#define XDMF_UTILS_DLL 
+
+#endif
+
+class XDMF_UTILS_DLL XdmfDiff{
 public:
 
 	class XdmfDiffReport{

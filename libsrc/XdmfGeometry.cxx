@@ -46,11 +46,14 @@ XdmfGeometry::XdmfGeometry() {
   this->SetOrigin( 0, 0, 0 );
   this->SetDxDyDz( 0, 0, 0 );
   this->LightDataLimit = 100;
+  this->Units = NULL;       // Ian Curington, HR Wallingford Ltd.
   }
 
-XdmfGeometry::~XdmfGeometry() {
+XdmfGeometry::~XdmfGeometry() 
+{
   if( this->PointsAreMine && this->Points )  delete this->Points;
-  }
+  if(this->Units) delete [] this->Units;    // Ian Curington, HR Wallingford Ltd.
+}
 
 XdmfInt32
 XdmfGeometry::Release()
@@ -184,6 +187,14 @@ XdmfGeometry::Build(){
         }
         break;
     }
+
+// PATCH September 09,  Ian Curington, HR Wallingford Ltd.
+	if(this->Units)
+	{
+		this->Set("Units", this->GetUnits());
+	}
+// end patch
+
     return(XDMF_SUCCESS);
 }
 
@@ -335,6 +346,17 @@ if( XDMF_WORD_CMP(this->GetElementType(), "Geometry") == 0){
     XdmfErrorMessage("Element type" << this->GetElementType() << " is not of type 'Geometry'");
     return(XDMF_FAIL);
 }
+
+// PATCH September 09, Ian Curington, HR Wallingford Ltd.
+Attribute = this->Get( "Units" );
+if( Attribute ){
+  this->SetUnits( Attribute );
+} else {
+  if(this->Units) delete [] this->Units;
+  this->Units = NULL;
+}
+// end patch
+
 Attribute = this->Get( "GeometryType" );
 if(!Attribute){
     Attribute = this->Get( "Type" );

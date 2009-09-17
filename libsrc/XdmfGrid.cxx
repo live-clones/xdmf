@@ -214,6 +214,12 @@ XdmfGrid::Build(){
     }
     */
     if(this->BuildTime && this->Time){
+            if(!this->Time->GetDOM()){
+                if(this->Insert(this->Time) != XDMF_SUCCESS){
+                    XdmfErrorMessage("Grid Cannot Insert current XdmfTime");
+                    return(XDMF_FAIL);
+                }
+            }
             if(this->Time->Build() != XDMF_SUCCESS) return(XDMF_FAIL);
     }
     return(XDMF_SUCCESS);

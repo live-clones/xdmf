@@ -26,6 +26,7 @@
 #include "XdmfDsmComm.h"
 #include "XdmfDsmMsg.h"
 #include "XdmfArray.h"
+#include "XdmfExport.h"
 
 #define XDMF_DSM_OPCODE_PUT     0x01
 #define XDMF_DSM_OPCODE_GET     0x02
@@ -34,7 +35,7 @@
 
 
 extern "C"{
-void *
+XDMF_EXPORT void *
 XdmfDsmBufferServiceThread(void *DsmObj){
     XdmfDsmBuffer *Dsm = (XdmfDsmBuffer *)DsmObj;
     return(Dsm->ServiceThread());

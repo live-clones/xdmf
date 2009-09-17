@@ -291,6 +291,16 @@ need to make sure ....
 //  }
 #endif /* SWIGTCL */
 
+#ifdef SWIGCSHARP
+%echo "Applying Special C# Typemaps .... "
+%typemap(cscode) XdmfObject %{
+  // Ensure that the GC doesn't collect any inserted XdmfElement instance set from C#
+  public void setCMemOwn(bool val) {
+    swigCMemOwn = val;
+  }
+%}
+#endif
+
 #ifdef SWIGPYTHON
 %echo "Applying Python Typemaps ..... "
 %include typemaps.i

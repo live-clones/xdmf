@@ -34,7 +34,23 @@ using std::cout;
 using std::cin;
 using std::endl;
 
-class XdmfFortran{
+#if defined(WIN32) && !defined(XDMFSTATIC)
+
+// Windows and DLL configuration
+#if defined(XdmfUtils_EXPORTS)
+    #define XDMF_UTILS_DLL __declspec(dllexport)
+#else
+    #define XDMF_UTILS_DLL __declspec(dllimport)
+#endif
+
+#else
+
+// Linux or static configuration
+#define XDMF_UTILS_DLL 
+
+#endif
+
+class XDMF_UTILS_DLL XdmfFortran{
 public:
 	XdmfFortran(char * outputName);
 	~XdmfFortran();
