@@ -25,13 +25,14 @@
 
 class vtkDataArray;
 class vtkDataObject;
+class vtkDataSet;
 class vtkImageData;
+class vtkMultiBlockDataSet;
 class vtkPoints;
 class vtkRectilinearGrid;
 class vtkStructuredGrid;
 class vtkUnstructuredGrid;
 class vtkXdmfDomain;
-class vtkDataSet;
 
 // vtkXdmfHeavyData helps in reading heavy data from Xdmf and putting that into
 // vtkDataObject subclasses.
@@ -87,7 +88,7 @@ private:
   // Description:
   // Reads the topology and geometry for an unstructured grid. Does not read any
   // data attributes or geometry.
-  vtkUnstructuredGrid* ReadUnstructuredGrid(XdmfGrid* xmfGrid);
+  vtkDataObject* ReadUnstructuredGrid(XdmfGrid* xmfGrid);
 
   // Description:
   // Read the image data. Simply initializes the extents and origin and spacing
@@ -113,8 +114,8 @@ private:
     int *whole_extents=NULL);
 
   // Description:
-  // Read attributes.
-  bool ReadAttributes(vtkDataSet* dataSet, XdmfGrid* xmfGrid,
+  // Read attributes. xmfGridOrSet can be either an XdmfGrid* or XdmfSet*.
+  bool ReadAttributes(vtkDataSet* dataSet, XdmfElement* xmfGridOrSet,
     int* update_extents=0);
 
   // Description:
@@ -129,6 +130,22 @@ private:
   // marking the cells as such.
   bool ReadGhostSets(vtkDataSet* ds, XdmfGrid* xmfGrid,
     int* update_extents=0);
+
+  vtkMultiBlockDataSet* ReadSets(vtkDataSet* dataSet, XdmfGrid* xmfGrid,
+    int *update_extents=0);
+
+  // Description:
+  // Used when reading node-sets.
+  // Creates a new dataset with points with given ids extracted from  the input
+  // dataset.
+  vtkDataSet* ExtractPoints(XdmfSet* xmfSet, vtkDataSet* dataSet);
+
+  // Description:
+  // Used when reading cell-sets.
+  // Creates a new dataset with cells with the given ids extracted from the
+  // input dataset.
+  vtkDataSet* ExtractCells(XdmfSet* xmfSet, vtkDataSet* dataSet);
+
 };
 
 #endif
