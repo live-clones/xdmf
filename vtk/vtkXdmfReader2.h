@@ -98,6 +98,24 @@ public:
   const char* GetGridName(int index);
   void SetGridStatus(const char* gridname, int status);
   int GetGridStatus(const char* gridname);
+
+  // Description:
+  // Get/Set information about sets. As is typical with readers this is valid
+  // only after the filename as been set and UpdateInformation() has been
+  // called. Note that sets with non-zero Ghost value are not treated as sets
+  // that the user can select using this API.
+  int GetNumberOfSets();
+  const char* GetSetName(int index);
+  void SetSetStatus(const char* gridname, int status);
+  int GetSetStatus(const char* gridname);
+
+  // Description:
+  // These methods are provided to make it easier to use the Sets in ParaView.
+  int GetNumberOfSetArrays() { return this->GetNumberOfSets(); }
+  const char* GetSetArrayName(int index)
+    { return this->GetSetName(index); }
+  int GetSetArrayStatus(const char* name)
+    { return this->GetSetStatus(name); }
  
   // Description:
   // Get/Set the stride used to skip points when reading structured datasets.

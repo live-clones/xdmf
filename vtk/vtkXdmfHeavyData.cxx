@@ -19,12 +19,15 @@
 #include "vtkCellTypes.h"
 #include "vtkDataObjectTypes.h"
 #include "vtkDoubleArray.h"
+#include "vtkExtractSelectedIds.h"
 #include "vtkFloatArray.h"
 #include "vtkInformation.h"
 #include "vtkMultiBlockDataSet.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
 #include "vtkRectilinearGrid.h"
+#include "vtkSelection.h"
+#include "vtkSelectionNode.h"
 #include "vtkSmartPointer.h"
 #include "vtkStructuredData.h"
 #include "vtkStructuredGrid.h"
@@ -386,7 +389,7 @@ int vtkXdmfHeavyData::GetVTKCellType(XdmfInt32 topologyType)
 }
 
 //----------------------------------------------------------------------------
-vtkUnstructuredGrid* vtkXdmfHeavyData::ReadUnstructuredGrid(XdmfGrid* xmfGrid)
+vtkDataObject* vtkXdmfHeavyData::ReadUnstructuredGrid(XdmfGrid* xmfGrid)
 {
   vtkSmartPointer<vtkUnstructuredGrid> ugData =
     vtkSmartPointer<vtkUnstructuredGrid>::New();
@@ -519,6 +522,13 @@ vtkUnstructuredGrid* vtkXdmfHeavyData::ReadUnstructuredGrid(XdmfGrid* xmfGrid)
 
   // Read ghost cell/point information.
   this->ReadGhostSets(ugData, xmfGrid);
+
+  // If this grid has sets defined on it, then we need to read those as well
+  vtkMultiBlockDataSet* sets = this->ReadSets(ugData, xmfGrid);
+  if (sets)
+    {
+    return sets;
+    }
 
   ugData->Register(NULL);
   return ugData;
@@ -814,12 +824,26 @@ vtkPoints* vtkXdmfHeavyData::ReadPoints(XdmfGeometry* xmfGeometry,
 
 //-----------------------------------------------------------------------------
 bool vtkXdmfHeavyData::ReadAttributes(
-  vtkDataSet* dataSet, XdmfGrid* xmfGrid, int* update_extents)
+  vtkDataSet* dataSet, XdmfElement* xmfElement, int* update_extents)
 {
-  int data_dimensionality = this->Domain->GetDataDimensionality(xmfGrid);
-  for (int cc=0; cc < xmfGrid->GetNumberOfAttributes(); cc++)
+  XdmfGrid* xmfGrid = dynamic_cast<XdmfGrid*>(xmfElement);
+  XdmfSet* xmfSet = dynamic_cast<XdmfSet*>(xmfElement);
+  if (!xmfGrid && !xmfSet)
     {
-    XdmfAttribute* xmfAttribute = xmfGrid->GetAttribute(cc);
+    cerr << "ReadAttributes can only be called for XdmfSet or XdmfGrid" << endl;
+    return false;
+    }
+
+  int data_dimensionality = xmfGrid?
+    this->Domain->GetDataDimensionality(xmfGrid) : 1;
+
+  int numAttributes = xmfGrid? xmfGrid->GetNumberOfAttributes() :
+    xmfSet->GetNumberOfAttributes();
+
+  for (int cc=0; cc < numAttributes; cc++)
+    {
+    XdmfAttribute* xmfAttribute = xmfGrid? xmfGrid->GetAttribute(cc) :
+      xmfSet->GetAttribute(cc);
     const char* attrName = xmfAttribute->GetName();
     int attrCenter = xmfAttribute->GetAttributeCenter();
     if (!attrName)
@@ -1102,7 +1126,10 @@ bool vtkXdmfHeavyData::ReadGhostSets(vtkDataSet* dataSet, XdmfGrid* xmfGrid,
     XdmfArray* xmfIds = xmfSet->GetIds();
     XdmfInt64 numIds = xmfIds->GetNumberOfElements();
     XdmfInt64 *ids = new XdmfInt64[numIds+1];
-    xmfIds->GetValues(0, ids, numIds); 
+    xmfIds->GetValues(0, ids, numIds);
+
+    // release the heavy data that was read.
+    xmfSet->Release();
 
     for (vtkIdType kk=0; kk < numIds; kk++)
       {
@@ -1114,9 +1141,188 @@ bool vtkXdmfHeavyData::ReadGhostSets(vtkDataSet* dataSet, XdmfGrid* xmfGrid,
       ptrGhostLevels[ids[kk]] = ghost_value;
       }
     delete []ids;
-
-    // release the heavy data that was read.
-    xmfSet->Release();
     }
   return true;
 }
+
+
+//-----------------------------------------------------------------------------
+vtkMultiBlockDataSet* vtkXdmfHeavyData::ReadSets(
+  vtkDataSet* dataSet, XdmfGrid* xmfGrid, int *vtkNotUsed(update_extents)/*=0*/)
+{
+  unsigned int number_of_sets = 0;
+  for (int cc=0; cc < xmfGrid->GetNumberOfSets(); cc++)
+    {
+    XdmfSet *xmfSet = xmfGrid->GetSets(cc);
+    int ghost_value = xmfSet->GetGhost();
+    if (ghost_value != 0)
+      {
+      // skip ghost-sets.
+      continue;
+      }
+    number_of_sets++;
+    }
+  if (number_of_sets == 0)
+    {
+    return NULL;
+    }
+
+  vtkMultiBlockDataSet* mb = vtkMultiBlockDataSet::New();
+  mb->SetNumberOfBlocks(1+number_of_sets);
+  mb->SetBlock(0, dataSet);
+  mb->GetMetaData(static_cast<unsigned int>(0))->Set(vtkCompositeDataSet::NAME(), "Data");
+
+  unsigned int current_set_index = 1;
+  for (int cc=0; cc < xmfGrid->GetNumberOfSets(); cc++)
+    {
+    XdmfSet *xmfSet = xmfGrid->GetSets(cc);
+    int ghost_value = xmfSet->GetGhost();
+    if (ghost_value != 0)
+      {
+      // skip ghost-sets.
+      continue;
+      }
+
+    const char* setName = xmfSet->GetName();
+    mb->GetMetaData(current_set_index)->Set(vtkCompositeDataSet::NAME(),
+      setName);
+    if (!this->Domain->GetSetsSelection()->ArrayIsEnabled(setName))
+      {
+      continue;
+      }
+
+    // Okay now we have an enabled set. Create a new dataset for it
+    vtkDataSet* set = 0; 
+
+    XdmfInt32 setType = xmfSet->GetSetType();
+    switch (setType)
+      {
+    case XDMF_SET_TYPE_NODE:
+      set = this->ExtractPoints(xmfSet, dataSet);
+      break;
+
+    case XDMF_SET_TYPE_CELL:
+      set = this->ExtractCells(xmfSet, dataSet);
+      break;
+
+    case XDMF_SET_TYPE_FACE:
+      break;
+
+    case XDMF_SET_TYPE_EDGE:
+      break;
+      }
+
+    if (set)
+      {
+      // We now should read the attributes that may be defined on the sets, if
+      // any.
+      this->ReadAttributes(set, xmfSet);
+      mb->SetBlock(current_set_index, set);
+      set->Delete();
+      }
+    current_set_index++;
+    }
+  return mb;
+}
+
+//-----------------------------------------------------------------------------
+vtkDataSet* vtkXdmfHeavyData::ExtractPoints(XdmfSet* xmfSet,
+  vtkDataSet* dataSet)
+{
+  // TODO: How to handle structured datasets with update_extents/strides etc.
+  // Do they too always produce vtkUniformGrid or do we want to produce
+  // structured dataset 
+
+  // Read heavy data. We cannot do anything smart if update_extents or stride
+  // is specified here. We have to read the entire set and then prune it.
+  xmfSet->Update();
+
+  XdmfArray* xmfIds = xmfSet->GetIds();
+  XdmfInt64 numIds = xmfIds->GetNumberOfElements();
+  XdmfInt64 *ids = new XdmfInt64[numIds+1];
+  xmfIds->GetValues(0, ids, numIds);
+
+  // release heavy data.
+  xmfSet->Release();
+
+  vtkUnstructuredGrid* output = vtkUnstructuredGrid::New();
+  vtkPoints* outputPoints = vtkPoints::New();
+  outputPoints->SetNumberOfPoints(numIds);
+  output->SetPoints(outputPoints);
+  outputPoints->Delete();
+
+  vtkIdType numInPoints = dataSet->GetNumberOfPoints();
+  for (vtkIdType kk=0; kk < numIds; kk++)
+    {
+    if (ids[kk] < 0 || ids[kk] > numInPoints)
+      {
+      cerr << "No such cell or point exists: " << ids[kk] << endl;
+      continue;
+      }
+    double point_location[3];
+    dataSet->GetPoint(ids[kk], point_location);
+    outputPoints->SetPoint(kk, point_location);
+    }
+  delete []ids;
+  ids = NULL;
+
+  vtkIdType *vtk_cell_ids = new vtkIdType[numIds];
+  for (vtkIdType cc=0; cc < numIds; cc++)
+    {
+    vtk_cell_ids[cc] = cc;
+    }
+  output->InsertNextCell(VTK_POLY_VERTEX, numIds, vtk_cell_ids);
+  delete []vtk_cell_ids;
+  vtk_cell_ids = NULL;
+
+  return output;
+}
+
+//-----------------------------------------------------------------------------
+vtkDataSet* vtkXdmfHeavyData::ExtractCells(XdmfSet* xmfSet,
+  vtkDataSet* dataSet)
+{
+  // TODO: How to handle structured datasets with update_extents/strides etc.
+  // Do they too always produce vtkUniformGrid or do we want to produce
+  // structured dataset 
+
+  // Read heavy data. 
+  xmfSet->Update();
+
+  XdmfArray* xmfIds = xmfSet->GetIds();
+  XdmfInt64 numIds = xmfIds->GetNumberOfElements();
+
+  vtkIdTypeArray* ids = vtkIdTypeArray::New();
+  ids->SetNumberOfComponents(1);
+  ids->SetNumberOfTuples(numIds);
+  xmfIds->GetValues(0, ids->GetPointer(0), numIds);
+
+  // release heavy data.
+  xmfSet->Release();
+
+  // We directly use vtkExtractSelectedIds for extract cells since the logic to
+  // extract cells it no trivial (like extracting points).
+  vtkSelectionNode* selNode = vtkSelectionNode::New();
+  selNode->SetContentType(vtkSelectionNode::INDICES);
+  selNode->SetFieldType(vtkSelectionNode::CELL);
+  selNode->SetSelectionList(ids);
+
+  vtkSelection* sel = vtkSelection::New();
+  sel->AddNode(selNode);
+  selNode->Delete();
+
+  vtkExtractSelectedIds* extractCells = vtkExtractSelectedIds::New();
+  extractCells->SetInputConnection(0, dataSet->GetProducerPort());
+  extractCells->SetInputConnection(1, sel->GetProducerPort());
+  extractCells->Update();
+
+  vtkDataSet* output = vtkDataSet::SafeDownCast(
+    extractCells->GetOutput()->NewInstance());
+  output->ShallowCopy(extractCells->GetOutput());
+
+  sel->Delete();
+  extractCells->Delete();
+  ids->Delete();
+  return output;
+}
+
