@@ -895,6 +895,12 @@ bool vtkXdmfHeavyData::ReadAttributes(
             attributes->SetActiveTensors(attrName);
             }
           break;
+
+        case XDMF_ATTRIBUTE_TYPE_GLOBALID:
+          if (is_active || attributes->GetGlobalIds() == NULL)
+            {
+            attributes->SetActiveGlobalIds(attrName);
+            }
           }
         }
       array->Delete();
