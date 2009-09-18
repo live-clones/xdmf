@@ -703,7 +703,7 @@ void vtkXdmfDomain::CollectLeafMetaData(XdmfGrid* xmfGrid, vtkIdType silParent)
       continue;
       }
 
-    XdmfInt32 setCenter = xmfSet->GetSetType();
+    // XdmfInt32 setCenter = xmfSet->GetSetType();
     // Not sure if we want to create separate lists for different types of sets
     // or just treat all the sets as same. For now, we are treating them as 
     // the same.
