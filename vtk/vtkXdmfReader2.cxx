@@ -88,7 +88,7 @@ private:
 vtkStandardNewMacro(vtkXdmfReader2Tester);
 
 vtkStandardNewMacro(vtkXdmfReader2);
-vtkCxxRevisionMacro(vtkXdmfReader2, "1.6");
+vtkCxxRevisionMacro(vtkXdmfReader2, "1.7");
 //----------------------------------------------------------------------------
 vtkXdmfReader2::vtkXdmfReader2()
 {
@@ -227,6 +227,12 @@ int vtkXdmfReader2::RequestDataObject(vtkInformationVector *outputVector)
     }
 
   int vtk_type = this->XdmfDocument->GetActiveDomain()->GetVTKDataType();
+  if (this->XdmfDocument->GetActiveDomain()->GetSetsSelection()->
+     GetNumberOfArrays() > 0)
+    {
+    // if the data has any sets, then we are forced to using multiblock.
+    vtk_type = VTK_MULTIBLOCK_DATA_SET;
+    }
 
   vtkDataObject* output = vtkDataObject::GetData(outputVector, 0);
   if (!output || output->GetDataObjectType() != vtk_type)
@@ -263,7 +269,8 @@ int vtkXdmfReader2::RequestInformation(vtkInformation *, vtkInformationVector **
 
   // * If producing structured dataset put information about whole extents etc.
   if (domain->GetNumberOfGrids() == 1 &&
-    domain->IsStructured(domain->GetGrid(0)))
+    domain->IsStructured(domain->GetGrid(0)) &&
+    domain->GetSetsSelection()->GetNumberOfArrays() == 0)
     {
     XdmfGrid* xmfGrid = domain->GetGrid(0);
     // just in the case the top-level grid is a temporal collection, then pick
