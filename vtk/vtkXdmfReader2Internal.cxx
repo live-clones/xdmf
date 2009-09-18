@@ -66,10 +66,12 @@ bool vtkXdmfDocument::Parse(const char* xmffilename)
   this->LastReadFilename = vtkstd::string();
 
   this->XMLDOM.SetInputFileName(xmffilename);
+  cout << "Parse XMF" << endl;
   if (!this->XMLDOM.Parse())
     {
     return false;
     }
+  cout << "Done Parse XMF" << endl;
 
   //Tell the parser what the working directory is.
   vtkstd::string directory =
@@ -214,6 +216,7 @@ vtkXdmfDomain::vtkXdmfDomain(XdmfDOM* xmlDom, int domain_index)
   this->NumberOfGrids = this->XMLDOM->FindNumberOfElements("Grid", this->XMLDomain);
   this->XMFGrids = new XdmfGrid[this->NumberOfGrids+1];
 
+  cout << "Begin Xmf core reading (this cannot be optimized)" << endl;
   XdmfXmlNode xmlGrid = this->XMLDOM->FindElement("Grid", 0, this->XMLDomain); 
   XdmfInt64 cc=0;
   while (xmlGrid)
@@ -227,13 +230,16 @@ vtkXdmfDomain::vtkXdmfDomain(XdmfDOM* xmlDom, int domain_index)
     xmlGrid = this->XMLDOM->FindNextElement("Grid", xmlGrid);
     cc++;
     }
+  cout << "Done Xmf core reading" << endl;
 
   // There are a few meta-information that we need to collect from the domain
   // * number of data-arrays so that the user can choose which to load.
   // * grid-structure so that the user can choose the hierarchy
   // * time information so that reader can report the number of timesteps
   //   available.
+  cout << "Begin CollectMetaData" << endl;
   this->CollectMetaData();
+  cout << "End CollectMetaData" << endl;
 }
 
 //----------------------------------------------------------------------------
@@ -682,27 +688,27 @@ void vtkXdmfDomain::CollectLeafMetaData(XdmfGrid* xmfGrid, vtkIdType silParent)
     }
 
   // Collect sets information
-  // TODO: Need better handling of sets.
-  //XdmfInt32 numSets = xmfGrid->GetNumberOfSets();
-  //for (XdmfInt32 kk=0; kk < numSets; kk++)
-  //  {
-  //  XdmfSet *xmfSet = xmfGrid->GetSets(kk);
-  //  const char *name = xmfSet->GetName();
-  //  if (!name)
-  //    {
-  //    continue;
-  //    }
+  XdmfInt32 numSets = xmfGrid->GetNumberOfSets();
+  for (XdmfInt32 kk=0; kk < numSets; kk++)
+    {
+    XdmfSet *xmfSet = xmfGrid->GetSets(kk);
+    const char *name = xmfSet->GetName();
 
-  //  XdmfInt32 setCenter = xmfSet->GetSetType();
-  //  if (setCenter == XDMF_SET_TYPE_NODE)
-  //    {
-  //    this->PointArrays->AddArray(name);
-  //    }
-  //  else
-  //    {
-  //    this->CellArrays->AddArray(name);
-  //    }
-  //  }
+    // if the set is a ghost-cell/node set, then it's not treated as a set for
+    // which a new vtkDataSet is created (nor can the user enable-disable it
+    // [ofcourse the pipeline will, by using the UPDATE_NUMBER_OF_GHOST_LEVELS()
+    // in the request]).
+    if (!name || xmfSet->GetGhost() != 0)
+      {
+      continue;
+      }
+
+    XdmfInt32 setCenter = xmfSet->GetSetType();
+    // Not sure if we want to create separate lists for different types of sets
+    // or just treat all the sets as same. For now, we are treating them as 
+    // the same.
+    this->Sets->AddArray(name);
+    }
 
   // A leaf node may have a single value time.
   XdmfTime* xmfTime = xmfGrid->GetTime();

@@ -143,7 +143,7 @@ vtkDataObject* vtkXdmfHeavyData::ReadData(XdmfGrid* xmfGrid)
     }
 
   // grid is a primitive grid, so read the data.
-  return this->ReadPrimitiveData(xmfGrid);
+  return this->ReadUniformData(xmfGrid);
 }
 
 //----------------------------------------------------------------------------
@@ -249,7 +249,9 @@ vtkDataObject* vtkXdmfHeavyData::ReadTemporalCollection(
 }
 
 //----------------------------------------------------------------------------
-vtkDataObject* vtkXdmfHeavyData::ReadPrimitiveData(XdmfGrid* xmfGrid)
+// Read a non-composite grid. Note here uniform has nothing to do with
+// vtkUniformGrid but to what Xdmf's GridType="Uniform".
+vtkDataObject* vtkXdmfHeavyData::ReadUniformData(XdmfGrid* xmfGrid)
 {
   assert(xmfGrid->IsUniform() && "Input must be a uniform xdmf grid.");
 
@@ -514,6 +516,9 @@ vtkUnstructuredGrid* vtkXdmfHeavyData::ReadUnstructuredGrid(XdmfGrid* xmfGrid)
   points->Delete();
 
   this->ReadAttributes(ugData, xmfGrid);
+
+  // Read ghost cell/point information.
+  this->ReadGhostSets(ugData, xmfGrid);
 
   ugData->Register(NULL);
   return ugData;
@@ -1030,4 +1035,82 @@ vtkDataArray* vtkXdmfHeavyData::ReadAttribute(XdmfAttribute* xmfAttribute,
     return tensor;
     }
   return dataArray;
+}
+
+//-----------------------------------------------------------------------------
+// Read ghost cell/point information. This is simply loaded info a
+// vtkGhostLevels attribute array.
+bool vtkXdmfHeavyData::ReadGhostSets(vtkDataSet* dataSet, XdmfGrid* xmfGrid,
+  int *vtkNotUsed(update_extents)/*=0*/)
+{
+  //int data_dimensionality = this->Domain->GetDataDimensionality(xmfGrid);
+  for (int cc=0; cc < xmfGrid->GetNumberOfSets(); cc++)
+    {
+    XdmfSet *xmfSet = xmfGrid->GetSets(cc);
+    int ghost_value = xmfSet->GetGhost();
+    if (ghost_value <= 0)
+      {
+      // not a ghost-set, simply continue.
+      continue;
+      }
+    XdmfInt32 setCenter = xmfSet->GetSetType();
+    vtkIdType numElems = 0;
+    vtkDataSetAttributes* dsa = 0;
+    switch (setCenter)
+      {
+    case XDMF_SET_TYPE_NODE:
+      dsa = dataSet->GetPointData();
+      numElems = dataSet->GetNumberOfPoints();
+      break;
+
+    case XDMF_SET_TYPE_CELL:
+      dsa = dataSet->GetCellData();
+      numElems = dataSet->GetNumberOfCells();
+      break;
+
+    default:
+      cerr << "Only ghost-cells and ghost-nodes are currently supported."
+        << endl;
+      continue;
+      }
+
+    vtkUnsignedCharArray* ghostLevels = vtkUnsignedCharArray::SafeDownCast(
+      dsa->GetArray("vtkGhostLevels"));
+    if (!ghostLevels)
+      {
+      ghostLevels = vtkUnsignedCharArray::New();
+      ghostLevels->SetName("vtkGhostLevels");
+      ghostLevels->SetNumberOfComponents(1);
+      ghostLevels->SetNumberOfTuples(numElems);
+      ghostLevels->FillComponent(0, 0);
+      dsa->AddArray(ghostLevels);
+      ghostLevels->Delete();
+      }
+
+    unsigned char* ptrGhostLevels = ghostLevels->GetPointer(0);
+
+    // Read heavy data. We cannot do anything smart if update_extents or stride
+    // is specified here. We have to read the entire set and then prune it.
+    xmfSet->Update();
+
+    XdmfArray* xmfIds = xmfSet->GetIds();
+    XdmfInt64 numIds = xmfIds->GetNumberOfElements();
+    XdmfInt64 *ids = new XdmfInt64[numIds+1];
+    xmfIds->GetValues(0, ids, numIds); 
+
+    for (vtkIdType kk=0; kk < numIds; kk++)
+      {
+      if (ids[kk] < 0 || ids[kk] > numElems)
+        {
+        cerr << "No such cell or point exists: " << ids[kk] << endl;
+        continue;
+        }
+      ptrGhostLevels[ids[kk]] = ghost_value;
+      }
+    delete []ids;
+
+    // release the heavy data that was read.
+    xmfSet->Release();
+    }
+  return true;
 }

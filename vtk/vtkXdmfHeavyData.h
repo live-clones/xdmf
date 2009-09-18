@@ -80,8 +80,9 @@ private:
   vtkDataObject* ReadComposite(XdmfGrid* xmfColOrTree);
 
   // Description:
-  // Read a non-composite grid.
-  vtkDataObject* ReadPrimitiveData(XdmfGrid* xmfGrid);
+  // Read a non-composite grid. Note here uniform has nothing to do with
+  // vtkUniformGrid but to what Xdmf's GridType="Uniform".
+  vtkDataObject* ReadUniformData(XdmfGrid* xmfGrid);
 
   // Description:
   // Reads the topology and geometry for an unstructured grid. Does not read any
@@ -122,6 +123,12 @@ private:
   // and we read only the sub-set specified by update_extents.
   vtkDataArray* ReadAttribute(XdmfAttribute* xmfAttribute,
     int data_dimensionality, int* update_extents=0);
+
+  // Description:
+  // Read sets that mark ghost cells/nodes and then create attribute arrays for
+  // marking the cells as such.
+  bool ReadGhostSets(vtkDataSet* ds, XdmfGrid* xmfGrid,
+    int* update_extents=0);
 };
 
 #endif
