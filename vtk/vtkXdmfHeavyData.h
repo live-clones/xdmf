@@ -114,8 +114,8 @@ private:
     int *whole_extents=NULL);
 
   // Description:
-  // Read attributes. xmfGridOrSet can be either an XdmfGrid* or XdmfSet*.
-  bool ReadAttributes(vtkDataSet* dataSet, XdmfElement* xmfGridOrSet,
+  // Read attributes. 
+  bool ReadAttributes(vtkDataSet* dataSet, XdmfGrid* xmfGrid,
     int* update_extents=0);
 
   // Description:
@@ -145,6 +145,18 @@ private:
   // Creates a new dataset with cells with the given ids extracted from the
   // input dataset.
   vtkDataSet* ExtractCells(XdmfSet* xmfSet, vtkDataSet* dataSet);
+
+  // Description:
+  // Used when reading face-sets.
+  // Creates a new dataset with faces selected by the set, extracting them from
+  // the input dataset.
+  vtkDataSet* ExtractFaces(XdmfSet* xmfSet, vtkDataSet* dataSet);
+
+  // Description:
+  // Used when reading edge-sets.
+  // Creates a new dataset with egdes selected by the set, extracting them from
+  // the input dataset.
+  vtkDataSet* ExtractEdges(XdmfSet* xmfSet, vtkDataSet* dataSet);
 
 };
 

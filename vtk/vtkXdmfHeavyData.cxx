@@ -22,9 +22,11 @@
 #include "vtkExtractSelectedIds.h"
 #include "vtkFloatArray.h"
 #include "vtkInformation.h"
+#include "vtkMergePoints.h"
 #include "vtkMultiBlockDataSet.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
+#include "vtkPolyData.h"
 #include "vtkRectilinearGrid.h"
 #include "vtkSelection.h"
 #include "vtkSelectionNode.h"
@@ -824,26 +826,14 @@ vtkPoints* vtkXdmfHeavyData::ReadPoints(XdmfGeometry* xmfGeometry,
 
 //-----------------------------------------------------------------------------
 bool vtkXdmfHeavyData::ReadAttributes(
-  vtkDataSet* dataSet, XdmfElement* xmfElement, int* update_extents)
+  vtkDataSet* dataSet, XdmfGrid* xmfGrid, int* update_extents)
 {
-  XdmfGrid* xmfGrid = dynamic_cast<XdmfGrid*>(xmfElement);
-  XdmfSet* xmfSet = dynamic_cast<XdmfSet*>(xmfElement);
-  if (!xmfGrid && !xmfSet)
-    {
-    cerr << "ReadAttributes can only be called for XdmfSet or XdmfGrid" << endl;
-    return false;
-    }
+  int data_dimensionality = this->Domain->GetDataDimensionality(xmfGrid);
 
-  int data_dimensionality = xmfGrid?
-    this->Domain->GetDataDimensionality(xmfGrid) : 1;
-
-  int numAttributes = xmfGrid? xmfGrid->GetNumberOfAttributes() :
-    xmfSet->GetNumberOfAttributes();
-
+  int numAttributes = xmfGrid->GetNumberOfAttributes();
   for (int cc=0; cc < numAttributes; cc++)
     {
-    XdmfAttribute* xmfAttribute = xmfGrid? xmfGrid->GetAttribute(cc) :
-      xmfSet->GetAttribute(cc);
+    XdmfAttribute* xmfAttribute = xmfGrid->GetAttribute(cc);
     const char* attrName = xmfAttribute->GetName();
     int attrCenter = xmfAttribute->GetAttributeCenter();
     if (!attrName)
@@ -1206,17 +1196,16 @@ vtkMultiBlockDataSet* vtkXdmfHeavyData::ReadSets(
       break;
 
     case XDMF_SET_TYPE_FACE:
+      set = this->ExtractFaces(xmfSet, dataSet);
       break;
 
     case XDMF_SET_TYPE_EDGE:
+      set = this->ExtractEdges(xmfSet, dataSet);
       break;
       }
 
     if (set)
       {
-      // We now should read the attributes that may be defined on the sets, if
-      // any.
-      this->ReadAttributes(set, xmfSet);
       mb->SetBlock(current_set_index, set);
       set->Delete();
       }
@@ -1265,6 +1254,27 @@ vtkDataSet* vtkXdmfHeavyData::ExtractPoints(XdmfSet* xmfSet,
     }
   delete []ids;
   ids = NULL;
+
+  // Read node-centered attributes that may be defined on this set.
+  int numAttributes = xmfSet->GetNumberOfAttributes();
+  for (int cc=0; cc < numAttributes; cc++)
+    {
+    XdmfAttribute* xmfAttribute = xmfSet->GetAttribute(cc);
+    const char* attrName = xmfAttribute->GetName();
+    int attrCenter = xmfAttribute->GetAttributeCenter();
+    if (attrCenter != XDMF_ATTRIBUTE_CENTER_NODE)
+      {
+      continue;
+      }
+    vtkDataArray* array = this->ReadAttribute(xmfAttribute,
+      1, NULL);
+    if (array)
+      {
+      array->SetName(attrName);
+      output->GetPointData()->AddArray(array);
+      array->Delete();
+      }
+    }
 
   vtkIdType *vtk_cell_ids = new vtkIdType[numIds];
   for (vtkIdType cc=0; cc < numIds; cc++)
@@ -1318,11 +1328,215 @@ vtkDataSet* vtkXdmfHeavyData::ExtractCells(XdmfSet* xmfSet,
 
   vtkDataSet* output = vtkDataSet::SafeDownCast(
     extractCells->GetOutput()->NewInstance());
-  output->ShallowCopy(extractCells->GetOutput());
+  output->CopyStructure(vtkDataSet::SafeDownCast(extractCells->GetOutput()));
 
   sel->Delete();
   extractCells->Delete();
   ids->Delete();
+
+  // Read cell-centered attributes that may be defined on this set.
+  int numAttributes = xmfSet->GetNumberOfAttributes();
+  for (int cc=0; cc < numAttributes; cc++)
+    {
+    XdmfAttribute* xmfAttribute = xmfSet->GetAttribute(cc);
+    const char* attrName = xmfAttribute->GetName();
+    int attrCenter = xmfAttribute->GetAttributeCenter();
+    if (attrCenter != XDMF_ATTRIBUTE_CENTER_CELL)
+      {
+      continue;
+      }
+    vtkDataArray* array = this->ReadAttribute(xmfAttribute, 1, NULL);
+    if (array)
+      {
+      array->SetName(attrName);
+      output->GetCellData()->AddArray(array);
+      array->Delete();
+      }
+    }
+
   return output;
 }
 
+//-----------------------------------------------------------------------------
+vtkDataSet* vtkXdmfHeavyData::ExtractFaces(XdmfSet* xmfSet, vtkDataSet* dataSet)
+{
+  xmfSet->Update();
+
+  XdmfArray* xmfIds = xmfSet->GetIds();
+  XdmfArray* xmfCellIds = xmfSet->GetCellIds();
+
+  XdmfInt64 numFaces = xmfIds->GetNumberOfElements();
+
+  // ids is a 2 component array were each tuple is (cell-id, face-id).
+  vtkIdTypeArray* ids = vtkIdTypeArray::New();
+  ids->SetNumberOfComponents(2);
+  ids->SetNumberOfTuples(numFaces);
+  xmfCellIds->GetValues(0, ids->GetPointer(0), numFaces, 1, 2);
+  xmfIds->GetValues(0, ids->GetPointer(1), numFaces, 1, 2);
+
+  vtkPolyData* output = vtkPolyData::New();
+  vtkCellArray* polys = vtkCellArray::New();
+  output->SetPolys(polys);
+  polys->Delete();
+
+  vtkPoints* outPoints = vtkPoints::New();
+  output->SetPoints(outPoints);
+  outPoints->Delete();
+
+  vtkMergePoints* mergePoints = vtkMergePoints::New();
+  mergePoints->InitPointInsertion(outPoints,
+    dataSet->GetBounds());
+
+  for (vtkIdType cc=0; cc < numFaces; cc++)
+    {
+    vtkIdType cellId = ids->GetValue(cc*2);
+    vtkIdType faceId = ids->GetValue(cc*2+1);
+    vtkCell* cell = dataSet->GetCell(cellId);
+    if (!cell)
+      {
+      cerr << "Invalid cellId: " << cellId << endl;
+      continue;
+      }
+    vtkCell* face = cell->GetFace(faceId);
+    if (!face)
+      {
+      cerr << "Invalid faceId " << faceId << " on cell " << cellId << endl;
+      continue;
+      }
+    
+    // Now insert this face a new cell in the output dataset.
+    vtkIdType numPoints = face->GetNumberOfPoints();
+    vtkPoints* facePoints = face->GetPoints();
+    vtkIdType* outputPts = new vtkIdType[numPoints+1];
+    for (vtkIdType cc=0; cc < numPoints; cc++)
+      {
+      mergePoints->InsertUniquePoint(
+        facePoints->GetPoint(cc), outputPts[cc]);
+      }
+    polys->InsertNextCell(numPoints, outputPts);
+    delete [] outputPts; 
+    }
+
+  ids->Delete();
+  xmfSet->Release();
+  mergePoints->Delete();
+
+  // Read cell-centered attributes that may be defined on this set.
+  int numAttributes = xmfSet->GetNumberOfAttributes();
+  for (int cc=0; cc < numAttributes; cc++)
+    {
+    XdmfAttribute* xmfAttribute = xmfSet->GetAttribute(cc);
+    const char* attrName = xmfAttribute->GetName();
+    int attrCenter = xmfAttribute->GetAttributeCenter();
+    if (attrCenter != XDMF_ATTRIBUTE_CENTER_FACE)
+      {
+      continue;
+      }
+    vtkDataArray* array = this->ReadAttribute(xmfAttribute, 1, NULL);
+    if (array)
+      {
+      array->SetName(attrName);
+      output->GetCellData()->AddArray(array);
+      array->Delete();
+      }
+    }
+ 
+  return output;
+}
+
+//-----------------------------------------------------------------------------
+vtkDataSet* vtkXdmfHeavyData::ExtractEdges(XdmfSet* xmfSet, vtkDataSet* dataSet)
+{
+  xmfSet->Update();
+
+  XdmfArray* xmfIds = xmfSet->GetIds();
+  XdmfArray* xmfCellIds = xmfSet->GetCellIds();
+  XdmfArray* xmfFaceIds = xmfSet->GetFaceIds();
+
+  XdmfInt64 numEdges = xmfIds->GetNumberOfElements();
+
+  // ids is a 3 component array were each tuple is (cell-id, face-id, edge-id).
+  vtkIdTypeArray* ids = vtkIdTypeArray::New();
+  ids->SetNumberOfComponents(3);
+  ids->SetNumberOfTuples(numEdges);
+  xmfCellIds->GetValues(0, ids->GetPointer(0), numEdges, 1, 3);
+  xmfFaceIds->GetValues(0, ids->GetPointer(1), numEdges, 1, 3);
+  xmfIds->GetValues(0, ids->GetPointer(2), numEdges, 1, 3);
+
+  vtkPolyData* output = vtkPolyData::New();
+  vtkCellArray* lines = vtkCellArray::New();
+  output->SetLines(lines);
+  lines->Delete();
+
+  vtkPoints* outPoints = vtkPoints::New();
+  output->SetPoints(outPoints);
+  outPoints->Delete();
+
+  vtkMergePoints* mergePoints = vtkMergePoints::New();
+  mergePoints->InitPointInsertion(outPoints,
+    dataSet->GetBounds());
+
+  for (vtkIdType cc=0; cc < numEdges; cc++)
+    {
+    vtkIdType cellId = ids->GetValue(cc*3);
+    vtkIdType faceId = ids->GetValue(cc*3+1);
+    vtkIdType edgeId = ids->GetValue(cc*3+2);
+    vtkCell* cell = dataSet->GetCell(cellId);
+    if (!cell)
+      {
+      cerr << "Invalid cellId: " << cellId << endl;
+      continue;
+      }
+    vtkCell* face = cell->GetFace(faceId);
+    if (!face)
+      {
+      cerr << "Invalid faceId " << faceId << " on cell " << cellId << endl;
+      continue;
+      }
+    vtkCell* edge = cell->GetEdge(edgeId);
+    if (!edge)
+      {
+      cerr << "Invalid edgeId " << edgeId << " on face "
+        << faceId << " on cell " << cellId << endl;
+      continue;
+      }
+    
+    // Now insert this edge as a new cell in the output dataset.
+    vtkIdType numPoints = edge->GetNumberOfPoints();
+    vtkPoints* edgePoints = edge->GetPoints();
+    vtkIdType* outputPts = new vtkIdType[numPoints+1];
+    for (vtkIdType cc=0; cc < numPoints; cc++)
+      {
+      mergePoints->InsertUniquePoint(
+        edgePoints->GetPoint(cc), outputPts[cc]);
+      }
+    lines->InsertNextCell(numPoints, outputPts);
+    delete [] outputPts; 
+    }
+
+  ids->Delete();
+  xmfSet->Release();
+  mergePoints->Delete();
+
+  // Read cell-centered attributes that may be defined on this set.
+  int numAttributes = xmfSet->GetNumberOfAttributes();
+  for (int cc=0; cc < numAttributes; cc++)
+    {
+    XdmfAttribute* xmfAttribute = xmfSet->GetAttribute(cc);
+    const char* attrName = xmfAttribute->GetName();
+    int attrCenter = xmfAttribute->GetAttributeCenter();
+    if (attrCenter != XDMF_ATTRIBUTE_CENTER_EDGE)
+      {
+      continue;
+      }
+    vtkDataArray* array = this->ReadAttribute(xmfAttribute, 1, NULL);
+    if (array)
+      {
+      array->SetName(attrName);
+      output->GetCellData()->AddArray(array);
+      array->Delete();
+      }
+    }
+ 
+  return output;
+}
