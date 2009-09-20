@@ -171,7 +171,7 @@ bool TestXDMFConversion(vtkDataObject*input, char *prefix)
   return fail;
 }
 
-int main (int ac, char **av)
+int main (int vtkNotUsed(ac), char **vtkNotUsed(av))
 {
 
   bool fail = false; 
