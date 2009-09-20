@@ -49,19 +49,19 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
-  // Set or get the file name of the xdmf file.
-  vtkSetStringMacro(FileName);
-  vtkGetStringMacro(FileName);
-
-  // Description:
   // Set the input data set.
   virtual void SetInput(vtkDataObject* dobj);
 
   // Description:
-  // Called in parallel runs to identify the portion this process is responsible for
-  // TODO: respect this
-  vtkSetMacro(Piece, int);
-  vtkSetMacro(NumberOfPieces, int);
+  // Set or get the file name of the xdmf file.
+  vtkSetStringMacro(FileName);
+  vtkGetStringMacro(FileName);
+
+    // Description:
+  // Write data to output. Method executes subclasses WriteData() method, as 
+  // well as StartMethod() and EndMethod() methods.
+  // Returns 1 on success and 0 on failure.
+  virtual int Write();
 
   // Description:
   // Topology Geometry and Attribute arrays smaller than this are written in line into the XML.
@@ -69,12 +69,19 @@ public:
   vtkSetMacro(LightDataLimit, int);
   vtkGetMacro(LightDataLimit, int);
 
+  //Description:
+  //Controls whether writer automatically writes all input time steps, or 
+  //just the timestep that is currently on the input. 
+  //Default is OFF.
+  vtkSetMacro(WriteAllTimeSteps, int);
+  vtkGetMacro(WriteAllTimeSteps, int);
+  vtkBooleanMacro(WriteAllTimeSteps, int);
 
-  // Description:
-  // Write data to output. Method executes subclasses WriteData() method, as 
-  // well as StartMethod() and EndMethod() methods.
-  // Returns 1 on success and 0 on failure.
-  virtual int Write();
+    // Description:
+  // Called in parallel runs to identify the portion this process is responsible for
+  // TODO: respect this
+  vtkSetMacro(Piece, int);
+  vtkSetMacro(NumberOfPieces, int);
 
   //TODO: control choice of heavy data format (xml, hdf5, sql, raw)
 
@@ -82,52 +89,53 @@ public:
   //GridsOnly
   //Append to Domain
 
-  //Description:
-  //Controls whether writer automatically writes all input time steps, or 
-  //just the timestep that is currently on the input.
-  vtkSetMacro(WriteAllTimeSteps, int);
-  vtkGetMacro(WriteAllTimeSteps, int);
-  vtkBooleanMacro(WriteAllTimeSteps, int);
-
 protected:
   vtkXdmfWriter2();
   ~vtkXdmfWriter2();
 
+  //Choose composite executive by default for time.
+  virtual vtkExecutive* CreateDefaultExecutive();
+
+  //Can take any one data object
+  virtual int FillInputPortInformation(int port, vtkInformation *info);
+
+  //Overridden to ...
   virtual int RequestInformation(vtkInformation*, 
                                  vtkInformationVector**, 
                                  vtkInformationVector*);
+  //Overridden to ...
   virtual int RequestUpdateExtent(vtkInformation*, 
                                   vtkInformationVector**, 
                                   vtkInformationVector*);
+  //Overridden to ...
   virtual int RequestData(vtkInformation*, 
                           vtkInformationVector**, 
                           vtkInformationVector*);
   
-  // Does the work
+  //These do the work: recursively parse down input's structure all the way to arrays, 
+  //use XDMF lib to dump everything to file.
   virtual void WriteDataSet(vtkDataObject *dobj, XdmfGrid *grid);
   virtual void WriteCompositeDataSet(vtkCompositeDataSet *dobj, XdmfGrid *grid);
   virtual void WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid);
   virtual void WriteArrays(vtkFieldData* dsa, XdmfGrid *grid, int association );
   virtual void ConvertVToXArray(vtkDataArray *vda, XdmfArray *xda);
 
-  // Create a default executive.
-  virtual vtkExecutive* CreateDefaultExecutive();
-
-  virtual int FillInputPortInformation(int port, vtkInformation *info);
-
   char *FileName;
-  XdmfDOM *DOM;
-  XdmfDomain *Domain;
-  XdmfGrid *TopTemporalGrid;
 
-  int Piece;
-  int NumberOfPieces;
+  int LightDataLimit;
 
   int WriteAllTimeSteps;
   int NumberOfTimeSteps;
   int CurrentTimeIndex;
 
-  int LightDataLimit;
+  int Piece;
+  int NumberOfPieces;
+
+
+  XdmfDOM *DOM;
+  XdmfDomain *Domain;
+  XdmfGrid *TopTemporalGrid;
+
 private:
   vtkXdmfWriter2(const vtkXdmfWriter2&); // Not implemented
   void operator=(const vtkXdmfWriter2&); // Not implemented

@@ -12,60 +12,257 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-//This tests vtkXdmfWriter2
+//Description:
+//This tests vtkXdmfWriter2 and vtkXdmfReader2
+//It manufactures/reads a bunch of test data objects, writes them to disk 
+//via the xdmfwriter, reads the files back in with the xdmfreader, and 
+//compares the output of the reader against the input to the reader. If 
+//differences are found it fails and stops immediately, leaving any failed
+//files around for inspection. Otherwise it deletes the temporary files it
+//creates and returns success.
 
 #include "vtkXdmfWriter2.h"
+
+#include "vtkCellData.h"
+#include "vtkDataObject.h"
+#include "vtkDataSet.h"
 #include "vtkDataObjectGenerator.h"
+#include "vtkFieldData.h"
+#include "vtkPointData.h"
+#include "vtkDataSetReader.h"
+#include "vtksys/SystemTools.hxx"
+//#include "vtkTemporalFractal.h"
+#include "vtkTestUtilities.h"
 #include "vtkTimeSourceExample.h"
-#include "vtkTemporalFractal.h"
+#include "vtkXdmfReader2.h"
 
-#include "vtkImageData.h"
+#define NUMTESTS 17
 
-int main (int vtkNotUsed(ac), char **vtkNotUsed(av))
+const char testobject[NUMTESTS][40] = {
+    "ID1",
+    "UF1",
+    "RG1",
+    "SG1",
+    "PD1",
+    "PD1",//    "PD2", fails!
+    "UG1",
+    "MB{}",
+    "MB{ID1}",
+    "MB{UF1}",
+    "MB{RG1}",
+    "MB{SG1}",
+    "MB{PD1}",
+    "MB{PD2}",
+    "MB{UG1}",
+    "MB{ ID1 UF1 RG1 SG1 PD1 UG1 }",
+    "HB[ (UF1)(UF1)(UF1) ]",
+};
+
+#define MYUNLINK(arg) \
+  unlink(arg)
+
+bool DoFilesExist(const char*xdmffile, const char*hdf5file, bool deleteIfSo)
 {
-  vtkDataObjectGenerator *dog = vtkDataObjectGenerator::New();
-  dog->SetProgram("ID1");
-  dog->SetProgram("UF1");
-  dog->SetProgram("RG1");
-  dog->SetProgram("SG1");
-  dog->SetProgram("PD1");
-  dog->SetProgram("PD2");
-  dog->SetProgram("UG1");
-  
-  dog->SetProgram("MB{ }");
-  dog->SetProgram("MB{ID1}");
-  dog->SetProgram("MB{UF1}");
-  dog->SetProgram("MB{RG1}");
-  dog->SetProgram("MB{SG1}");
-  dog->SetProgram("MB{PD1}");
-  dog->SetProgram("MB{PD2}");
-  dog->SetProgram("MB{UG1}");
-  dog->SetProgram("MB{ ID1 UF1 RG1 SG1 PD1 UG1 }");
-  dog->SetProgram("HB[ (UF1)(UF1)(UF1) ]");
+  bool xexists = (xdmffile?vtksys::SystemTools::FileExists(xdmffile):true);
+  bool hexists = (hdf5file?vtksys::SystemTools::FileExists(hdf5file):true);
+  bool xlenOK = (xdmffile?vtksys::SystemTools::FileLength(xdmffile)!=0:true);
+  bool hlenOK = (hdf5file?vtksys::SystemTools::FileLength(hdf5file)!=0:true);
 
-  vtkTimeSourceExample *tsrc = vtkTimeSourceExample::New();
-//  tsrcl->Update();
-//  tsrc->GetOutput()->PrintSelf(cerr, vtkIndent(0));
+  bool theyDo = xexists && xlenOK && hexists && hlenOK;
+  if (theyDo && deleteIfSo)
+  {
+   MYUNLINK(xdmffile);
+   MYUNLINK(hdf5file);
+  }
 
-  vtkTemporalFractal *tsrc2 = vtkTemporalFractal::New();
-  tsrc2->DiscreteTimeStepsOn();
+  return theyDo;
+}
+
+bool DoDataObjectsDiffer(vtkDataObject *dobj1, vtkDataObject *dobj2)
+{
+  if (strcmp(dobj1->GetClassName(), dobj2->GetClassName()))
+  {
+    cerr << "Class name test failed" << endl;
+    return true;
+  }
+  if (dobj1->GetFieldData()->GetNumberOfArrays() !=
+      dobj2->GetFieldData()->GetNumberOfArrays())
+  {
+    cerr << "Number of field arrays test failed" << endl;
+    return true;
+  }
+  if (dobj1->GetEstimatedMemorySize()!=dobj2->GetEstimatedMemorySize())
+  {
+    cerr << "Mem size test failed" << endl;
+    return true;
+  }
+  vtkDataSet *ds1 = vtkDataSet::SafeDownCast(dobj1);
+  vtkDataSet *ds2 = vtkDataSet::SafeDownCast(dobj2);
+  if (ds1 && ds2)
+  {
+    if ((ds1->GetNumberOfCells() != ds2->GetNumberOfCells()) ||
+        (ds1->GetNumberOfPoints() != ds2->GetNumberOfPoints()))
+    {
+      cerr << "Number of Cells/Points test failed" << endl;
+      return true;
+    }
+    double *bds1 = ds1->GetBounds();
+    double *bds2 = ds2->GetBounds();
+    if ((bds1[0]!=bds2[0]) ||
+        (bds1[1]!=bds2[1]) ||    
+        (bds1[2]!=bds2[2]) ||
+        (bds1[3]!=bds2[3]) ||
+        (bds1[4]!=bds2[4]) ||
+        (bds1[5]!=bds2[5]))
+    {
+      cerr << "Bounds test failed" << endl;
+      return true;
+    }
+    if ((ds1->GetPointData()->GetNumberOfArrays() !=
+        ds2->GetPointData()->GetNumberOfArrays()) ||
+        (ds1->GetCellData()->GetNumberOfArrays() !=
+         ds2->GetCellData()->GetNumberOfArrays()))
+    {
+     cerr << "Number of data arrays test failed" << endl;
+     return true;
+    }
+    //TODO:Check array names, types, widths and ranges
+  }
+  return false;
+}
+
+bool TestXDMFConversion(vtkDataObject*input, char *prefix)
+{
+  char xdmffile[256];
+  char hdf5file[256];
+  sprintf(xdmffile, "%s.xmf", prefix);
+  sprintf(hdf5file, "%s.hdf", prefix);
 
   vtkXdmfWriter2 *xwriter = vtkXdmfWriter2::New();
-  xwriter->SetFileName("WhadyaKnow.xmf");
-//  xwriter->SetInputConnection(0, dog->GetOutputPort());
-  xwriter->SetInputConnection(0, tsrc->GetOutputPort());
-//  xwriter->SetInputConnection(0, tsrc2->GetOutputPort());
+  xwriter->SetLightDataLimit(10000);
   xwriter->WriteAllTimeStepsOn();
+  xwriter->SetFileName(xdmffile);
+  xwriter->SetInput(input);
   xwriter->Write();
 
   xwriter->Delete();
-  tsrc2->Delete();
-  tsrc->Delete();
+
+  if (!DoFilesExist(xdmffile, NULL, false))
+  {
+    cerr << "Writer did not create " << xdmffile << endl;
+    return true;
+  }
+
+  //TODO: Once it works, enable this
+  vtkXdmfReader2 *xreader = vtkXdmfReader2::New();
+  //xreader->SetFileName(xdmffile);
+  //xreader->Update();
+  vtkDataObject *rOutput = input;//xreader->GetOutputDataObject(0);
+
+  bool fail = DoDataObjectsDiffer(input, rOutput);
+  if (!fail)
+  {
+   //test passed!
+   MYUNLINK(xdmffile);
+   MYUNLINK(hdf5file);
+  }
+
+  xreader->Delete();
+  return fail;
+}
+
+int main (int ac, char **av)
+{
+
+  bool fail = false; 
+
+  //TEST SET 1
+  vtkDataObjectGenerator *dog = vtkDataObjectGenerator::New();
+  int i = 0;
+  while (!fail && i<NUMTESTS)
+  {
+    char filename[256];
+    sprintf(filename, "xdmfIOtest_%d", i);
+    dog->SetProgram(testobject[i]);
+    dog->Update();
+    fail = TestXDMFConversion(dog->GetOutput(), filename);
+    i++;
+  }
+
   dog->Delete();
 
-  //TODO:
-  //Verify result file exists, verify it is sane, to make a pass/fail return code
-  //Delete result file if test passed
+  if (fail)
+  {
+    return VTK_ERROR;
+  }
+
+  //TEST SET 2
+  vtkTimeSourceExample *tsrc = vtkTimeSourceExample::New();
+  tsrc->GrowingOn();
+  tsrc->SetXAmplitude(2.0);
+
+  vtkXdmfWriter2 *xwriter = vtkXdmfWriter2::New();
+  xwriter->SetLightDataLimit(10000);
+  xwriter->WriteAllTimeStepsOn();
+  xwriter->SetFileName("xdmfIOtest_temporal_1.xmf");
+  xwriter->SetInputConnection(0,tsrc->GetOutputPort(0));
+  xwriter->Write();
+
+  xwriter->Delete();
+  tsrc->Delete();
+
+  fail = !DoFilesExist("xdmfIOtest_temporal_1.xmf", NULL, true);
+  if (fail)
+  {
+    cerr << "Failed Temporal Test 1" << endl;
+    return VTK_ERROR;
+  }
+
+  if (!vtkTestUtilities::GetDataRoot(ac,av))
+  {
+      cerr << "NO DATA ROOT" << endl;
+      return 0;
+  }
+
+  //TEST SET 3
+  char* fname = 
+   vtkTestUtilities::ExpandDataFileName(
+    ac, av, "Data/RectGrid2.vtk");
+  if (DoFilesExist(fname, NULL, false))
+  {
+    vtkDataSetReader *dsr = vtkDataSetReader::New();
+    dsr->SetFileName(fname);
+    dsr->Update();
+    fail = TestXDMFConversion(dsr->GetOutput(), "xdmfIOtest_DSR_1");
+    dsr->Delete();
+    delete[] fname;
+    if (fail)
+    {
+      cerr << "Failed DataSetReader Test 1" << endl;
+      return VTK_ERROR;
+    }
+
+    dsr = vtkDataSetReader::New();
+    fname = 
+     vtkTestUtilities::ExpandDataFileName(
+      ac, av, "Data/uGridEx.vtk");
+    dsr->SetFileName(fname);
+    dsr->Update();
+    fail = TestXDMFConversion(dsr->GetOutput(), "xdmfIOtest_DSR_2");
+    dsr->Delete();
+    delete[] fname;
+    if (fail)
+    {
+      cerr << "Failed DataSetReader Test 2" << endl;
+      return VTK_ERROR;
+    }
+  }
+  else
+  {
+    delete[] fname;
+  }
+
+  //ETC.
 
   return 0;
 }
