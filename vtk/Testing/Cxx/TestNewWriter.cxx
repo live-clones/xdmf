@@ -32,7 +32,7 @@
 #include "vtkDataSetReader.h"
 #include "vtksys/SystemTools.hxx"
 //#include "vtkTemporalFractal.h"
-#include "vtkTestUtilities.h"
+//#include "vtkTestUtilities.h"
 #include "vtkTimeSourceExample.h"
 #include "vtkXdmfReader2.h"
 
@@ -218,6 +218,7 @@ int main (int ac, char **av)
     return VTK_ERROR;
   }
 
+#if 0
   if (!vtkTestUtilities::GetDataRoot(ac,av))
   {
       cerr << "NO DATA ROOT" << endl;
@@ -262,8 +263,9 @@ int main (int ac, char **av)
     delete[] fname;
   }
 
-  //ETC.
+#endif
 
+  //ETC.
   return 0;
 }
 
