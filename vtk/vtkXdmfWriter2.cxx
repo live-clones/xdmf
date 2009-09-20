@@ -125,7 +125,7 @@ void vtkXdmfWriter2Internal::DetermineCellTypes(vtkPointSet * t, vtkXdmfWriter2I
 //==============================================================================
 
 vtkStandardNewMacro(vtkXdmfWriter2);
-vtkCxxRevisionMacro(vtkXdmfWriter2, "1.8");
+vtkCxxRevisionMacro(vtkXdmfWriter2, "1.9");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter2::vtkXdmfWriter2()
@@ -240,6 +240,7 @@ int vtkXdmfWriter2::Write()
 
   root.Build();
   this->DOM->Write(this->FileName);
+
   delete this->Domain;
   this->Domain = NULL;
 
@@ -296,7 +297,9 @@ int vtkXdmfWriter2::RequestData(
   vtkInformationVector** inputVector,
   vtkInformationVector* vtkNotUsed(outputVector))
 {
-  if (this->CurrentTimeIndex == 0 && this->WriteAllTimeSteps)
+  if (this->CurrentTimeIndex == 0 && 
+      this->WriteAllTimeSteps &&
+      this->NumberOfTimeSteps > 1)
     {
     // Tell the pipeline to start looping.
     request->Set(vtkStreamingDemandDrivenPipeline::CONTINUE_EXECUTING(), 1);
@@ -319,8 +322,6 @@ int vtkXdmfWriter2::RequestData(
     this->Domain->Insert(tgrid);    
 
     this->TopTemporalGrid = tgrid;
-//    cerr << "BUILDING TGRID" << endl;
-//    this->TopTemporalGrid->Build();
     }
 
   XdmfGrid *grid = new XdmfGrid();
@@ -350,8 +351,6 @@ int vtkXdmfWriter2::RequestData(
     }
 
   this->WriteDataSet(input, grid);
-  //cerr << "BUILDING GRID" << endl;
-  //grid->Build();
   //delete grid; //domain takes care of it?
 
   this->CurrentTimeIndex++;
@@ -361,7 +360,8 @@ int vtkXdmfWriter2::RequestData(
     // Tell the pipeline to stop looping.
     request->Remove(vtkStreamingDemandDrivenPipeline::CONTINUE_EXECUTING());
     this->CurrentTimeIndex = 0;
-    this->TopTemporalGrid = NULL; //domain takes care of it deletion?
+    //delete this->TopTemporalGrid; //domain takes care of it?
+    this->TopTemporalGrid = NULL; 
     }
 
   return 1;
@@ -396,7 +396,6 @@ void vtkXdmfWriter2::WriteDataSet(vtkDataObject *dobj, XdmfGrid *grid)
 //------------------------------------------------------------------------------
 void vtkXdmfWriter2::WriteCompositeDataSet(vtkCompositeDataSet *dobj, XdmfGrid *grid)
 {
-
   //cerr << "internal node " << dobj << " is a " << dobj->GetClassName() << endl;
   if (dobj->IsA("vtkMultiPieceDataSet"))
     {
@@ -411,13 +410,11 @@ void vtkXdmfWriter2::WriteCompositeDataSet(vtkCompositeDataSet *dobj, XdmfGrid *
     grid->SetGridType(XDMF_GRID_TREE);
     }
   
- 
   XdmfTopology *t = grid->GetTopology();
   t->SetTopologyType(XDMF_NOTOPOLOGY);
   XdmfGeometry *geo = grid->GetGeometry();
   geo->SetGeometryType(XDMF_GEOMETRY_NONE);
-  //geo->SetPoints(NULL);
-
+ 
   vtkCompositeDataIterator* iter = dobj->NewIterator();
   iter->VisitOnlyLeavesOff();
   iter->TraverseSubTreeOff();
@@ -429,7 +426,7 @@ void vtkXdmfWriter2::WriteCompositeDataSet(vtkCompositeDataSet *dobj, XdmfGrid *
     grid->Insert(childsGrid);    
     vtkDataObject* ds = iter->GetCurrentDataObject();
     this->WriteDataSet(ds, childsGrid);
-    //delete childsGrid; //parent deletes children in Xdmf. Doing so here segfaults.
+    //delete childsGrid; //parent deletes children in Xdmf
     iter->GoToNextItem();
     }
   iter->Delete();
@@ -759,7 +756,7 @@ void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
     break;
   default:
     geo->SetGeometryType(XDMF_GEOMETRY_NONE);
-    //TODO: Support non-canonical vtkDataSets (callout)
+    //TODO: Support non-canonical vtkDataSets (via a callout for extensibility)
     cerr << "Unrecognized dataset type" << endl;
   }
     
