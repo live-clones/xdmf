@@ -1421,7 +1421,7 @@ vtkDataSet* vtkXdmfHeavyData::ExtractFaces(XdmfSet* xmfSet, vtkDataSet* dataSet)
   xmfSet->Release();
   mergePoints->Delete();
 
-  // Read cell-centered attributes that may be defined on this set.
+  // Read face-centered attributes that may be defined on this set.
   int numAttributes = xmfSet->GetNumberOfAttributes();
   for (int cc=0; cc < numAttributes; cc++)
     {
@@ -1518,7 +1518,7 @@ vtkDataSet* vtkXdmfHeavyData::ExtractEdges(XdmfSet* xmfSet, vtkDataSet* dataSet)
   xmfSet->Release();
   mergePoints->Delete();
 
-  // Read cell-centered attributes that may be defined on this set.
+  // Read edge-centered attributes that may be defined on this set.
   int numAttributes = xmfSet->GetNumberOfAttributes();
   for (int cc=0; cc < numAttributes; cc++)
     {
