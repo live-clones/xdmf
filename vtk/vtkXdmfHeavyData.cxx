@@ -562,7 +562,8 @@ inline bool vtkExtentsAreEqual(int *exts1, int *exts2)
 //-----------------------------------------------------------------------------
 vtkRectilinearGrid* vtkXdmfHeavyData::RequestRectilinearGrid(XdmfGrid* xmfGrid)
 {
-  vtkRectilinearGrid* rg = vtkRectilinearGrid::New();
+  vtkSmartPointer<vtkRectilinearGrid> rg =
+    vtkSmartPointer<vtkRectilinearGrid>::New();
   int whole_extents[6];
   int update_extents[6];
   this->Domain->GetWholeExtent(xmfGrid, whole_extents);
@@ -605,37 +606,62 @@ vtkRectilinearGrid* vtkXdmfHeavyData::RequestRectilinearGrid(XdmfGrid* xmfGrid)
   rg->SetYCoordinates(yarray);
   rg->SetZCoordinates(zarray);
 
-  if (xmfGeometry->GetGeometryType() == XDMF_GEOMETRY_ORIGIN_DXDYDZ)
+  switch (xmfGeometry->GetGeometryType())
     {
-    XdmfFloat64* origin = xmfGeometry->GetOrigin();
-    XdmfFloat64* dxdydz = xmfGeometry->GetDxDyDz();
-    for (int cc= scaled_extents[0]; cc <= scaled_extents[1]; cc++)
+  case XDMF_GEOMETRY_ORIGIN_DXDY:
+  case XDMF_GEOMETRY_ORIGIN_DXDYDZ:
       {
-      xarray->GetPointer(0)[cc - scaled_extents[0]] =
-        origin[0] + (dxdydz[0] * cc * this->Stride[0]);
+      XdmfFloat64* origin = xmfGeometry->GetOrigin();
+      XdmfFloat64* dxdydz = xmfGeometry->GetDxDyDz();
+      for (int cc= scaled_extents[0]; cc <= scaled_extents[1]; cc++)
+        {
+        xarray->GetPointer(0)[cc - scaled_extents[0]] =
+          origin[0] + (dxdydz[0] * cc * this->Stride[0]);
+        }
+      for (int cc= scaled_extents[2]; cc <= scaled_extents[3]; cc++)
+        {
+        yarray->GetPointer(0)[cc - scaled_extents[2]] =
+          origin[1] + (dxdydz[1] * cc * this->Stride[1]);
+        }
+      for (int cc= scaled_extents[4]; cc <= scaled_extents[5]; cc++)
+        {
+        zarray->GetPointer(0)[cc - scaled_extents[4]] =
+          origin[2] + (dxdydz[2] * cc * this->Stride[2]);
+        }
       }
-    for (int cc= scaled_extents[2]; cc <= scaled_extents[3]; cc++)
+    break;
+
+
+  case XDMF_GEOMETRY_VXVY:
       {
-      yarray->GetPointer(0)[cc - scaled_extents[2]] =
-        origin[1] + (dxdydz[1] * cc * this->Stride[1]);
+      xarray->FillComponent(0, 0);
+      xmfGeometry->GetVectorY()->GetValues(update_extents[2],
+        yarray->GetPointer(0), scaled_dims[1], this->Stride[1]);
+      xmfGeometry->GetVectorX()->GetValues(update_extents[4],
+        zarray->GetPointer(0), scaled_dims[2], this->Stride[2]);
       }
-    for (int cc= scaled_extents[4]; cc <= scaled_extents[5]; cc++)
+    break;
+
+  case XDMF_GEOMETRY_VXVYVZ:
       {
-      zarray->GetPointer(0)[cc - scaled_extents[4]] =
-        origin[2] + (dxdydz[2] * cc * this->Stride[2]);
+      xmfGeometry->GetVectorX()->GetValues(update_extents[0],
+        xarray->GetPointer(0), scaled_dims[0], this->Stride[0]);
+      xmfGeometry->GetVectorY()->GetValues(update_extents[2],
+        yarray->GetPointer(0), scaled_dims[1], this->Stride[1]);
+      xmfGeometry->GetVectorZ()->GetValues(update_extents[4],
+        zarray->GetPointer(0), scaled_dims[2], this->Stride[2]);
       }
-    }
-  else
-    {
-    xmfGeometry->GetVectorX()->GetValues(update_extents[0],
-      xarray->GetPointer(0), scaled_dims[0], this->Stride[0]);
-    xmfGeometry->GetVectorY()->GetValues(update_extents[2],
-      yarray->GetPointer(0), scaled_dims[1], this->Stride[1]);
-    xmfGeometry->GetVectorZ()->GetValues(update_extents[4],
-      zarray->GetPointer(0), scaled_dims[2], this->Stride[2]);
+    break;
+
+  default:
+    cerr << "Geometry type : "
+      << xmfGeometry->GetGeometryTypeAsString() << " is not supported for "
+      << xmfGrid->GetTopology()->GetTopologyTypeAsString() << endl;
+    return NULL;
     }
 
   this->ReadAttributes(rg, xmfGrid, update_extents);
+  rg->Register(NULL);
   return rg;
 }
 
