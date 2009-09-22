@@ -1434,10 +1434,10 @@ vtkDataSet* vtkXdmfHeavyData::ExtractFaces(XdmfSet* xmfSet, vtkDataSet* dataSet)
     vtkIdType numPoints = face->GetNumberOfPoints();
     vtkPoints* facePoints = face->GetPoints();
     vtkIdType* outputPts = new vtkIdType[numPoints+1];
-    for (vtkIdType cc=0; cc < numPoints; cc++)
+    for (vtkIdType kk=0; kk < numPoints; kk++)
       {
       mergePoints->InsertUniquePoint(
-        facePoints->GetPoint(cc), outputPts[cc]);
+        facePoints->GetPoint(kk), outputPts[kk]);
       }
     polys->InsertNextCell(numPoints, outputPts);
     delete [] outputPts; 
@@ -1531,10 +1531,10 @@ vtkDataSet* vtkXdmfHeavyData::ExtractEdges(XdmfSet* xmfSet, vtkDataSet* dataSet)
     vtkIdType numPoints = edge->GetNumberOfPoints();
     vtkPoints* edgePoints = edge->GetPoints();
     vtkIdType* outputPts = new vtkIdType[numPoints+1];
-    for (vtkIdType cc=0; cc < numPoints; cc++)
+    for (vtkIdType kk=0; kk < numPoints; kk++)
       {
       mergePoints->InsertUniquePoint(
-        edgePoints->GetPoint(cc), outputPts[cc]);
+        edgePoints->GetPoint(kk), outputPts[kk]);
       }
     lines->InsertNextCell(numPoints, outputPts);
     delete [] outputPts; 
