@@ -25,8 +25,9 @@
 
 #include "vtkCellData.h"
 #include "vtkDataObject.h"
-#include "vtkDataSet.h"
 #include "vtkDataObjectGenerator.h"
+#include "vtkDataSet.h"
+#include "vtkDataSetWriter.h"
 #include "vtkFieldData.h"
 #include "vtkPointData.h"
 #include "vtkDataSetReader.h"
@@ -44,7 +45,7 @@ const char testobject[NUMTESTS][40] = {
     "RG1",
     "SG1",
     "PD1",
-    "PD1",//    "PD2", fails!
+    "PD2",
     "UG1",
     "MB{}",
     "MB{ID1}",
@@ -82,8 +83,8 @@ bool DoDataObjectsDiffer(vtkDataObject *dobj1, vtkDataObject *dobj2)
 {
   if (strcmp(dobj1->GetClassName(), dobj2->GetClassName()))
   {
-    cerr << "Class name test failed" << endl;
-    return true;
+    cerr << "Class name test failed " << dobj1->GetClassName() << " != " << dobj2->GetClassName() << endl;
+    //return true;
   }
   if (dobj1->GetFieldData()->GetNumberOfArrays() !=
       dobj2->GetFieldData()->GetNumberOfArrays())
@@ -135,8 +136,10 @@ bool TestXDMFConversion(vtkDataObject*input, char *prefix)
 {
   char xdmffile[256];
   char hdf5file[256];
+  char vtkfile[256];
   sprintf(xdmffile, "%s.xmf", prefix);
   sprintf(hdf5file, "%s.hdf", prefix);
+  sprintf(vtkfile, "%s.vtk", prefix);
 
   vtkXdmfWriter2 *xwriter = vtkXdmfWriter2::New();
   xwriter->SetLightDataLimit(10000);
@@ -146,6 +149,15 @@ bool TestXDMFConversion(vtkDataObject*input, char *prefix)
   xwriter->Write();
 
   xwriter->Delete();
+  vtkDataSet *ds = vtkDataSet::SafeDownCast(input);
+  if (ds)
+    {    
+    vtkDataSetWriter *dsw = vtkDataSetWriter::New();
+    dsw->SetFileName(vtkfile);
+    dsw->SetInput(ds);
+    dsw->Write();
+    dsw->Delete();
+    }
 
   if (!DoFilesExist(xdmffile, NULL, false))
   {
@@ -155,9 +167,9 @@ bool TestXDMFConversion(vtkDataObject*input, char *prefix)
 
   //TODO: Once it works, enable this
   vtkXdmfReader2 *xreader = vtkXdmfReader2::New();
-  //xreader->SetFileName(xdmffile);
-  //xreader->Update();
-  vtkDataObject *rOutput = input;//xreader->GetOutputDataObject(0);
+  xreader->SetFileName(xdmffile);
+  xreader->Update();
+  vtkDataObject *rOutput = xreader->GetOutputDataObject(0);
 
   bool fail = DoDataObjectsDiffer(input, rOutput);
   if (!fail)
@@ -165,6 +177,7 @@ bool TestXDMFConversion(vtkDataObject*input, char *prefix)
    //test passed!
    MYUNLINK(xdmffile);
    MYUNLINK(hdf5file);
+   MYUNLINK(vtkfile);
   }
 
   xreader->Delete();
