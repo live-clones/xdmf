@@ -125,7 +125,7 @@ void vtkXdmfWriter2Internal::DetermineCellTypes(vtkPointSet * t, vtkXdmfWriter2I
 //==============================================================================
 
 vtkStandardNewMacro(vtkXdmfWriter2);
-vtkCxxRevisionMacro(vtkXdmfWriter2, "1.10");
+vtkCxxRevisionMacro(vtkXdmfWriter2, "1.11");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter2::vtkXdmfWriter2()
@@ -895,7 +895,7 @@ void vtkXdmfWriter2::WriteArrays(vtkFieldData* fd, XdmfGrid *grid, int associati
 void vtkXdmfWriter2::ConvertVToXArray(vtkDataArray *vda, XdmfArray *xda, vtkIdType rank, vtkIdType *dims)
 {
   XdmfInt32 lRank = rank;
-  XdmfInt64 lDims[rank+1];
+  XdmfInt64 *lDims = new XdmfInt64[rank+1];
   for (vtkIdType i = 0; i < rank; i++)
     {
     lDims[i] = dims[i];
@@ -968,5 +968,7 @@ void vtkXdmfWriter2::ConvertVToXArray(vtkDataArray *vda, XdmfArray *xda, vtkIdTy
     void *p = xda->GetDataPointer();
     memcpy(p, vda->GetVoidPointer(0), vda->GetNumberOfTuples()*vda->GetNumberOfComponents()*vda->GetElementComponentSize());
     }
+
+  delete[] lDims;
 }
 
