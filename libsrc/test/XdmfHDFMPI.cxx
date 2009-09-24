@@ -12,9 +12,9 @@ private:
   char* m_tell;
 
 public:
-  Buffer( std::size_t size ) :
-    m_size( size ),
-    m_data( new char[size] ),
+  Buffer( std::size_t lsize ) :
+    m_size( lsize ),
+    m_data( new char[lsize] ),
     m_put( m_data ),
     m_tell( m_data )
   {}
@@ -26,15 +26,15 @@ public:
   /// put a single value into the buffer
   template< typename T > 
   void put( const T& t ) {
-    std::size_t size = sizeof( T );
-    memcpy( m_put, &t, size );
-    m_put += size;
+    std::size_t lsize = sizeof( T );
+    memcpy( m_put, &t, lsize );
+    m_put += lsize;
   }
 
   /// copy a contiguous block into the buffer
-  void put( void* data, std::size_t size ) {
-    memcpy( m_put, data, size );
-    m_put += size;
+  void put( void* data, std::size_t lsize ) {
+    memcpy( m_put, data, lsize );
+    m_put += lsize;
   }
 
   /// Copy a single value into the buffer.
@@ -49,9 +49,9 @@ public:
 
   /// copy a contiguous block of data from the buffer to an already allocated
   /// location
-  void tell( void* out, std::size_t size ) {
-    memcpy( out, m_tell, size );
-    m_tell += size;
+  void tell( void* out, std::size_t lsize ) {
+    memcpy( out, m_tell, lsize );
+    m_tell += lsize;
   }
 
   std::size_t size() const {

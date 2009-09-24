@@ -156,7 +156,7 @@ XdmfGrid::Insert( XdmfElement *Child){
             }
             this->Sets[this->NumberOfSets - 1] = ChildSet;
             }
-	if((status == XDMF_SUCCESS) && XDMF_WORD_CMP(Child->GetElementName(), "Information")){
+        if((status == XDMF_SUCCESS) && XDMF_WORD_CMP(Child->GetElementName(), "Information")){
             XdmfInformation *ChildInfo = (XdmfInformation *)Child;
             this->NumberOfInformations++;
             this->Informations = ( XdmfInformation **)realloc( this->Informations,
@@ -581,7 +581,7 @@ this->NumberOfSets = this->DOM->FindNumberOfElements("Set", this->Element );
 if( this->NumberOfSets > 0 ){
   XdmfInt32  Index;
   XdmfSet  *iSet;
-  XdmfXmlNode    SetElement;
+  XdmfXmlNode    lSetElement;
 
   for ( Index = 0; Index < OldNumberOfSets; Index ++ )
     {
@@ -594,12 +594,12 @@ if( this->NumberOfSets > 0 ){
 
     this->Sets[Index] = iSet;
     if (Index==0) {
-      SetElement = this->DOM->FindElement( "Set", Index, this->Element );
+      lSetElement = this->DOM->FindElement( "Set", Index, this->Element );
     } else {
-      SetElement = this->DOM->FindNextElement( "Set", SetElement);
+      lSetElement = this->DOM->FindNextElement( "Set", lSetElement);
     }
     iSet->SetDOM( this->DOM );    
-    iSet->SetElement( SetElement );
+    iSet->SetElement( lSetElement );
     iSet->UpdateInformation();
     }
 }
