@@ -138,14 +138,14 @@ class HyperSlabReader:public XdmfObject{//
     }
 
 public:
-    HyperSlabReader(XdmfInt32 rank, XdmfInt32 byte, const XdmfInt64 * dims, const XdmfInt64 * start, const XdmfInt64 * stride, const XdmfInt64 * count){
+    HyperSlabReader(XdmfInt32 rank, XdmfInt32 byte, const XdmfInt64 * dims, const XdmfInt64 * start, const XdmfInt64 * lstride, const XdmfInt64 * lcount){
         assert(rank>0 && rank<XDMF_MAX_DIMENSION);
         this->rank = rank;
         XdmfInt64 d[XDMF_MAX_DIMENSION];
         for(XdmfInt32 i =0;i<rank;++i){
             this->start[i] = start[i];
-            this->stride[i] = stride[i]-1;
-            this->count[i] = count[i];
+            this->stride[i] = lstride[i]-1;
+            this->count[i] = lcount[i];
             d[i] = dims[i];
         }
         //reduce rank
@@ -158,9 +158,8 @@ public:
         }
         if(this->rank != rank){
             XdmfDebug("Reduce Rank: " << rank << " to " << this->rank);
-            XdmfInt32 k = this->rank-1;
             for(XdmfInt32 i = this->rank;i<rank;++i){
-                byte *= count[i];
+                byte *= lcount[i];
             }
         }
         for(XdmfInt32 i =0;i<this->rank;++i){
@@ -264,7 +263,6 @@ XdmfValuesBinary::Read(XdmfArray *anArray){
         total *= dims[i];
     }
     XdmfDebug("Data Size : " << total);
-    XdmfInt32 byte = RetArray->GetCoreLength()/total;
     XdmfDebug("Size[Byte]: " << RetArray->GetCoreLength());
     XdmfDebug("     Byte   " << RetArray->GetElementSize());
     //check
