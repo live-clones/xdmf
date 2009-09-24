@@ -34,6 +34,7 @@ class XdmfMap;
     XML Element Name : Set
     XML Set : Name
     XML Set : SetType = Node* | Cell | Grid | Face | Edge
+    XML Set : Ghost = #  Ghost level; usually 1
     XML Set : FaceOrder = "0 1 ..." Mapping to Default Order
     XML Set : EdgeOrder = "0 1 ..." Mapping to Default Order
 
