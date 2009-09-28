@@ -21,8 +21,6 @@
 #include "XdmfDataItem.h"
 #include "XdmfGrid.h"
 
-#include "vtkDataArraySelection.h"
-
 class vtkDataArray;
 class vtkDataObject;
 class vtkDataSet;
@@ -33,6 +31,7 @@ class vtkRectilinearGrid;
 class vtkStructuredGrid;
 class vtkUnstructuredGrid;
 class vtkXdmfDomain;
+class vtkXdmfReader2;
 
 // vtkXdmfHeavyData helps in reading heavy data from Xdmf and putting that into
 // vtkDataObject subclasses.
@@ -40,7 +39,7 @@ class vtkXdmfHeavyData
 {
   vtkXdmfDomain* Domain;
   XdmfDataItem DataItem;
-
+  vtkXdmfReader2* Reader;
 public:
   // These must be set before using this class.
   int Piece;
@@ -52,7 +51,7 @@ public:
   XdmfFloat64 Time;
 
 public:
-  vtkXdmfHeavyData(vtkXdmfDomain* domain);
+  vtkXdmfHeavyData(vtkXdmfDomain* domain, vtkXdmfReader2* reader);
   ~vtkXdmfHeavyData();
 
   // Description:

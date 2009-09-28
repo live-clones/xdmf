@@ -66,12 +66,10 @@ bool vtkXdmfDocument::Parse(const char* xmffilename)
   this->LastReadFilename = vtkstd::string();
 
   this->XMLDOM.SetInputFileName(xmffilename);
-  cout << "Parse XMF" << endl;
   if (!this->XMLDOM.Parse())
     {
     return false;
     }
-  cout << "Done Parse XMF" << endl;
 
   //Tell the parser what the working directory is.
   vtkstd::string directory =
@@ -216,7 +214,6 @@ vtkXdmfDomain::vtkXdmfDomain(XdmfDOM* xmlDom, int domain_index)
   this->NumberOfGrids = this->XMLDOM->FindNumberOfElements("Grid", this->XMLDomain);
   this->XMFGrids = new XdmfGrid[this->NumberOfGrids+1];
 
-  cout << "Begin Xmf core reading (this cannot be optimized)" << endl;
   XdmfXmlNode xmlGrid = this->XMLDOM->FindElement("Grid", 0, this->XMLDomain); 
   XdmfInt64 cc=0;
   while (xmlGrid)
@@ -230,16 +227,13 @@ vtkXdmfDomain::vtkXdmfDomain(XdmfDOM* xmlDom, int domain_index)
     xmlGrid = this->XMLDOM->FindNextElement("Grid", xmlGrid);
     cc++;
     }
-  cout << "Done Xmf core reading" << endl;
 
   // There are a few meta-information that we need to collect from the domain
   // * number of data-arrays so that the user can choose which to load.
   // * grid-structure so that the user can choose the hierarchy
   // * time information so that reader can report the number of timesteps
   //   available.
-  cout << "Begin CollectMetaData" << endl;
   this->CollectMetaData();
-  cout << "End CollectMetaData" << endl;
 }
 
 //----------------------------------------------------------------------------

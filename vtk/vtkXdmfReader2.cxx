@@ -88,7 +88,7 @@ private:
 vtkStandardNewMacro(vtkXdmfReader2Tester);
 
 vtkStandardNewMacro(vtkXdmfReader2);
-vtkCxxRevisionMacro(vtkXdmfReader2, "1.8");
+vtkCxxRevisionMacro(vtkXdmfReader2, "1.9");
 //----------------------------------------------------------------------------
 vtkXdmfReader2::vtkXdmfReader2()
 {
@@ -360,7 +360,7 @@ int vtkXdmfReader2::RequestData(vtkInformation *, vtkInformationVector **,
 
   this->LastTimeIndex = this->ChooseTimeStep(outInfo);
 
-  vtkXdmfHeavyData dataReader(this->XdmfDocument->GetActiveDomain());
+  vtkXdmfHeavyData dataReader(this->XdmfDocument->GetActiveDomain(), this);
   dataReader.Piece = updatePiece;
   dataReader.NumberOfPieces = updateNumPieces;
   dataReader.GhostLevels = ghost_levels;
