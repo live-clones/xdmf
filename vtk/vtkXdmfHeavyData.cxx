@@ -36,6 +36,7 @@
 #include "vtkUniformGrid.h"
 #include "vtkUnstructuredGrid.h"
 #include "vtkXdmfDataArray.h"
+#include "vtkXdmfReader2.h"
 #include "vtkXdmfReader2Internal.h"
 
 #include <vtkstd/deque>
@@ -59,8 +60,10 @@ static void vtkGetDims(int exts[6], int dims[3])
 }
 
 //----------------------------------------------------------------------------
-vtkXdmfHeavyData::vtkXdmfHeavyData(vtkXdmfDomain* domain)
+vtkXdmfHeavyData::vtkXdmfHeavyData(vtkXdmfDomain* domain,
+  vtkXdmfReader2* reader)
 {
+  this->Reader = reader;
   this->Piece = 0;
   this->NumberOfPieces = 0;
   this->GhostLevels = 0;
@@ -654,9 +657,10 @@ vtkRectilinearGrid* vtkXdmfHeavyData::RequestRectilinearGrid(XdmfGrid* xmfGrid)
     break;
 
   default:
-    cerr << "Geometry type : "
+    vtkErrorWithObjectMacro(this->Reader,
+      "Geometry type : "
       << xmfGeometry->GetGeometryTypeAsString() << " is not supported for "
-      << xmfGrid->GetTopology()->GetTopologyTypeAsString() << endl;
+      << xmfGrid->GetTopology()->GetTopologyTypeAsString());
     return NULL;
     }
 
@@ -864,7 +868,8 @@ bool vtkXdmfHeavyData::ReadAttributes(
     int attrCenter = xmfAttribute->GetAttributeCenter();
     if (!attrName)
       {
-      cerr << "Skipping unnamed attributes." << endl;
+      vtkWarningWithObjectMacro(this->Reader,
+        "Skipping unnamed attributes.");
       continue;
       }
 
@@ -895,8 +900,9 @@ bool vtkXdmfHeavyData::ReadAttributes(
     case XDMF_ATTRIBUTE_CENTER_FACE:
     case XDMF_ATTRIBUTE_CENTER_EDGE:
     default:
-      cerr << "Skipping attribute " << attrName << " at " <<
-        xmfAttribute->GetAttributeCenterAsString() << endl;
+      vtkWarningWithObjectMacro(this->Reader,
+        "Skipping attribute " << attrName << " at " <<
+        xmfAttribute->GetAttributeCenterAsString());
       continue; // unhandled.
       }
 
@@ -1013,13 +1019,14 @@ vtkDataArray* vtkXdmfHeavyData::ReadAttribute(XdmfAttribute* xmfAttribute,
     // shape.
     if (data_rank < 0)
       {
-      cerr << "Unsupported attribute rank: " << data_rank << endl;
+      vtkErrorWithObjectMacro(this->Reader,
+        "Unsupported attribute rank: " << data_rank);
       return NULL;
       }
     if (data_rank > (data_dimensionality + 1))
       {
-      cerr << "The data_dimensionality and topology dimensionality mismatch"
-        << endl;
+      vtkErrorWithObjectMacro(this->Reader,
+        "The data_dimensionality and topology dimensionality mismatch");
       return NULL;
       }
     XdmfInt64 start[4] = { update_extents[4], update_extents[2], update_extents[0], 0 };
@@ -1050,7 +1057,7 @@ vtkDataArray* vtkXdmfHeavyData::ReadAttribute(XdmfAttribute* xmfAttribute,
 
   if (xmfDataItem.Update()==XDMF_FAIL)
     {
-    cerr << "Failed to read attribute data" << endl;
+    vtkErrorWithObjectMacro(this->Reader, "Failed to read attribute data");
     return 0;
     }
 
@@ -1115,8 +1122,8 @@ bool vtkXdmfHeavyData::ReadGhostSets(vtkDataSet* dataSet, XdmfGrid* xmfGrid,
       break;
 
     default:
-      cerr << "Only ghost-cells and ghost-nodes are currently supported."
-        << endl;
+      vtkWarningWithObjectMacro(this->Reader,
+        "Only ghost-cells and ghost-nodes are currently supported.");
       continue;
       }
 
@@ -1151,7 +1158,8 @@ bool vtkXdmfHeavyData::ReadGhostSets(vtkDataSet* dataSet, XdmfGrid* xmfGrid,
       {
       if (ids[kk] < 0 || ids[kk] > numElems)
         {
-        cerr << "No such cell or point exists: " << ids[kk] << endl;
+        vtkWarningWithObjectMacro(this->Reader,
+          "No such cell or point exists: " << ids[kk]);
         continue;
         }
       ptrGhostLevels[ids[kk]] = ghost_value;
@@ -1271,7 +1279,8 @@ vtkDataSet* vtkXdmfHeavyData::ExtractPoints(XdmfSet* xmfSet,
     {
     if (ids[kk] < 0 || ids[kk] > numInPoints)
       {
-      cerr << "No such cell or point exists: " << ids[kk] << endl;
+      vtkWarningWithObjectMacro(this->Reader,
+        "No such cell or point exists: " << ids[kk]);
       continue;
       }
     double point_location[3];
@@ -1420,13 +1429,15 @@ vtkDataSet* vtkXdmfHeavyData::ExtractFaces(XdmfSet* xmfSet, vtkDataSet* dataSet)
     vtkCell* cell = dataSet->GetCell(cellId);
     if (!cell)
       {
-      cerr << "Invalid cellId: " << cellId << endl;
+      vtkWarningWithObjectMacro(
+        this->Reader, "Invalid cellId: " << cellId)
       continue;
       }
     vtkCell* face = cell->GetFace(faceId);
     if (!face)
       {
-      cerr << "Invalid faceId " << faceId << " on cell " << cellId << endl;
+      vtkWarningWithObjectMacro(this->Reader,
+        "Invalid faceId " << faceId << " on cell " << cellId);
       continue;
       }
     
@@ -1510,20 +1521,23 @@ vtkDataSet* vtkXdmfHeavyData::ExtractEdges(XdmfSet* xmfSet, vtkDataSet* dataSet)
     vtkCell* cell = dataSet->GetCell(cellId);
     if (!cell)
       {
-      cerr << "Invalid cellId: " << cellId << endl;
+      vtkWarningWithObjectMacro(this->Reader,
+        "Invalid cellId: " << cellId);
       continue;
       }
     vtkCell* face = cell->GetFace(faceId);
     if (!face)
       {
-      cerr << "Invalid faceId " << faceId << " on cell " << cellId << endl;
+      vtkWarningWithObjectMacro(this->Reader,
+        "Invalid faceId " << faceId << " on cell " << cellId);
       continue;
       }
     vtkCell* edge = cell->GetEdge(edgeId);
     if (!edge)
       {
-      cerr << "Invalid edgeId " << edgeId << " on face "
-        << faceId << " on cell " << cellId << endl;
+      vtkWarningWithObjectMacro(this->Reader,
+        "Invalid edgeId " << edgeId << " on face "
+        << faceId << " on cell " << cellId);
       continue;
       }
     
