@@ -125,7 +125,7 @@ void vtkXdmfWriter2Internal::DetermineCellTypes(vtkPointSet * t, vtkXdmfWriter2I
 //==============================================================================
 
 vtkStandardNewMacro(vtkXdmfWriter2);
-vtkCxxRevisionMacro(vtkXdmfWriter2, "1.11");
+vtkCxxRevisionMacro(vtkXdmfWriter2, "1.12");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter2::vtkXdmfWriter2()
@@ -223,6 +223,7 @@ int vtkXdmfWriter2::Write()
     {
     this->DOM = new XdmfDOM();
     }
+  this->DOM->SetOutputFileName(this->FileName);
 
   XdmfRoot root;
   root.SetDOM(this->DOM);  
@@ -239,7 +240,7 @@ int vtkXdmfWriter2::Write()
   this->Update();
 
   root.Build();
-  this->DOM->Write(this->FileName);
+  this->DOM->Write();
 
   delete this->Domain;
   this->Domain = NULL;
@@ -468,9 +469,9 @@ void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
     int wExtent[6];
     id->GetExtent(wExtent);
     XdmfInt64 Dims[3];
-    Dims[0] = wExtent[1] - wExtent[0] + 1;
+    Dims[2] = wExtent[1] - wExtent[0] + 1;
     Dims[1] = wExtent[3] - wExtent[2] + 1;
-    Dims[2] = wExtent[5] - wExtent[4] + 1;
+    Dims[0] = wExtent[5] - wExtent[4] + 1;
     XdmfDataDesc *dd = t->GetShapeDesc();
     dd->SetShape(3, Dims);
     //TODO: verify row/column major ordering
@@ -490,9 +491,9 @@ void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
     int wExtent[6];
     rgrid->GetExtent(wExtent);
     XdmfInt64 Dims[3];
-    Dims[0] = wExtent[1] - wExtent[0] + 1;
+    Dims[2] = wExtent[1] - wExtent[0] + 1;
     Dims[1] = wExtent[3] - wExtent[2] + 1;
-    Dims[2] = wExtent[5] - wExtent[4] + 1;
+    Dims[0] = wExtent[5] - wExtent[4] + 1;
     XdmfDataDesc *dd = t->GetShapeDesc();
     dd->SetShape(3, Dims);
     //TODO: verify row/column major ordering
@@ -512,9 +513,9 @@ void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
     int wExtent[6];
     sgrid->GetExtent(wExtent);
     XdmfInt64 Dims[3];
-    Dims[0] = wExtent[1] - wExtent[0] + 1;
+    Dims[2] = wExtent[1] - wExtent[0] + 1;
     Dims[1] = wExtent[3] - wExtent[2] + 1;
-    Dims[2] = wExtent[5] - wExtent[4] + 1;
+    Dims[0] = wExtent[5] - wExtent[4] + 1;
     XdmfDataDesc *dd = t->GetShapeDesc();
     dd->SetShape(3, Dims); 
     //TODO: verify row/column major ordering
@@ -552,6 +553,7 @@ void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
     if ( cellTypes.size() == 1 )
       {
       //cerr << "Homogeneous topology" << endl;
+      t->SetNumberOfElements(ds->GetNumberOfCells());
       const vtkXdmfWriter2Internal::CellType* ct = &cellTypes.begin()->first;
       vtkIdType ppCell = ct->NumPoints;
       switch(ct->VTKType) 
@@ -604,8 +606,10 @@ void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
         {
         di->SetNumberType(XDMF_INT32_TYPE);
         }
-      XdmfInt64 xppCell = ppCell;
-      di->SetShape(ds->GetNumberOfCells(), &xppCell);
+      XdmfInt64 hDim[2];
+      hDim[0] = ds->GetNumberOfCells();
+      hDim[1] = ppCell;
+      di->SetShape(2, hDim);
       vtkIdList* il = cellTypes[*ct].GetPointer();
       vtkIdList* cellPoints = vtkIdList::New();
       vtkIdType cvnt=0;
