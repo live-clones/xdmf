@@ -37,16 +37,20 @@
 #include "vtkTimeSourceExample.h"
 #include "vtkXdmfReader2.h"
 
-#define NUMTESTS 17
+#define NUMTESTS 21
 
 const char testobject[NUMTESTS][40] = {
     "ID1",
+    "ID2",
     "UF1",
     "RG1",
     "SG1",
     "PD1",
-    "PD1",//"PD2", //disable for now
+    "PD1", //"PD2", disable for now
     "UG1",
+    "UG2",
+    "UG3",
+    "UG3", //"UG4", disable for now
     "MB{}",
     "MB{ID1}",
     "MB{UF1}",
@@ -138,7 +142,7 @@ bool TestXDMFConversion(vtkDataObject*input, char *prefix)
   char hdf5file[256];
   char vtkfile[256];
   sprintf(xdmffile, "%s.xmf", prefix);
-  sprintf(hdf5file, "%s.hdf", prefix);
+  sprintf(hdf5file, "%s.h5", prefix);
   sprintf(vtkfile, "%s.vtk", prefix);
 
   vtkXdmfWriter2 *xwriter = vtkXdmfWriter2::New();
@@ -196,6 +200,7 @@ int main (int vtkNotUsed(ac), char **vtkNotUsed(av))
   {
     char filename[256];
     sprintf(filename, "xdmfIOtest_%d", i);
+    cerr << "Test vtk object " << testobject[i] << endl;
     dog->SetProgram(testobject[i]);
     dog->Update();
     fail = TestXDMFConversion(dog->GetOutput(), filename);
@@ -210,6 +215,7 @@ int main (int vtkNotUsed(ac), char **vtkNotUsed(av))
   }
 
   //TEST SET 2
+  cerr << "Test temporal data" << endl;
   vtkTimeSourceExample *tsrc = vtkTimeSourceExample::New();
   tsrc->GrowingOn();
   tsrc->SetXAmplitude(2.0);
