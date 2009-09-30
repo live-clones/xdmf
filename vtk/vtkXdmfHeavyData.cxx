@@ -729,7 +729,17 @@ vtkImageData* vtkXdmfHeavyData::RequestImageData(XdmfGrid* xmfGrid,
   imageData->SetExtent(scaled_extents);
 
   double origin[3], spacing[3];
-  this->Domain->GetOriginAndSpacing(xmfGrid, origin, spacing);
+  if (!this->Domain->GetOriginAndSpacing(xmfGrid, origin, spacing))
+    {
+    vtkErrorWithObjectMacro(this->Reader,
+      "Could not determine image-data origin and spacing. "
+      "Required geometry type is ORIGIN_DXDY or ORIGIN_DXDYDZ. "
+      "The specified geometry type is : " <<
+      xmfGrid->GetGeometry()->GetGeometryTypeAsString());
+    // release image data.
+    imageData->Delete();
+    return NULL;
+    }
   imageData->SetOrigin(origin);
   imageData->SetSpacing(
     spacing[0] * this->Stride[0],
