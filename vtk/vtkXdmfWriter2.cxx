@@ -125,7 +125,7 @@ void vtkXdmfWriter2Internal::DetermineCellTypes(vtkPointSet * t, vtkXdmfWriter2I
 //==============================================================================
 
 vtkStandardNewMacro(vtkXdmfWriter2);
-vtkCxxRevisionMacro(vtkXdmfWriter2, "1.12");
+vtkCxxRevisionMacro(vtkXdmfWriter2, "1.13");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter2::vtkXdmfWriter2()
@@ -535,12 +535,6 @@ void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
     PDims[0] = ds->GetNumberOfPoints();
     CRank = 1;
     CDims[0] = ds->GetNumberOfCells();
-    vtkUnstructuredGrid *ugrid = vtkUnstructuredGrid::SafeDownCast(ds);
-    if (!ugrid)
-      {
-      //flag polydata so vtkXdmfReader2 can be read back in as vtkPolyData
-      t->Set("Polygonal", "1");
-      }
     vtkXdmfWriter2Internal::MapOfCellTypes cellTypes;
     vtkXdmfWriter2Internal::DetermineCellTypes(vtkPointSet::SafeDownCast(ds), cellTypes);
 
@@ -651,6 +645,8 @@ void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
       //cerr << "Nonhomogeneous topology" << endl;
       //Non Homogeneous, used mixed topology type to dump them all
       t->SetTopologyType(XDMF_MIXED);
+      vtkIdType numCells = ds->GetNumberOfCells();
+      t->SetNumberOfElements(numCells);
       XdmfArray *di = t->GetConnectivity();
       if (VTK_SIZEOF_ID_TYPE==sizeof(XDMF_64_INT))
         {
@@ -660,83 +656,105 @@ void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
         {
         di->SetNumberType(XDMF_INT32_TYPE);
         }
-      vtkIdTypeArray *da = NULL;
+      vtkIdTypeArray *da = vtkIdTypeArray::New();
+      da->SetNumberOfComponents(1);
+      vtkUnstructuredGrid *ugrid = vtkUnstructuredGrid::SafeDownCast(ds);
+      const int ESTIMATE=4; /*celltype+numids+id0+id1 or celtype+id0+id1+id2*/
       if (ugrid)
         {
-        da = ugrid->GetCells()->GetData();
-        vtkIdType len = da->GetNumberOfTuples();
-        this->ConvertVToXArray(da, di, 1, &len);
+        da->Allocate(ugrid->GetCells()->GetSize()*ESTIMATE);
         }
       else
         {
         vtkPolyData *pd = vtkPolyData::SafeDownCast(ds);
-        vtkIdType numv = pd->GetNumberOfVerts();
-        vtkIdType numl = pd->GetNumberOfLines();
-        vtkIdType nump = pd->GetNumberOfPolys();
-        vtkIdType nums = pd->GetNumberOfStrips();
-        vtkIdType total = numv+numl+nump+nums;
-        if (total == numv)
-          {
-          da = pd->GetVerts()->GetData();
-          t->Set("AllVerts","1");
-          }
-        else if (total == numl)
-          {
-          da = pd->GetLines()->GetData();
-          t->Set("AllLine","1");
-          }
-        else if (total == nump)
-          {
-          da = pd->GetPolys()->GetData();
-          t->Set("AllPolys","1");
-          }
-        else if (total == nums)
-          {
-          da = pd->GetStrips()->GetData();
-          t->Set("AllStrips","1");
-          }
-        if (da != NULL)
-          {
-          //cerr << "Single poly cell type" << endl;
-          this->ConvertVToXArray(da, di, 1, &total);
-          }
-        else
-          {
-          //cerr << "Multiple poly cell types" << endl;
-          //more than one cell array, have to merge them into one array
-          //TODO: Can XdmfTopology have more than one Connectivity array?
-          //If so we could avoid copies and just pass pointers.
-          vtkIdType sizev = pd->GetVerts()->GetData()->GetNumberOfTuples();
-          vtkIdType sizel = pd->GetLines()->GetData()->GetNumberOfTuples();
-          vtkIdType sizep = pd->GetPolys()->GetData()->GetNumberOfTuples();
-          vtkIdType sizes = pd->GetStrips()->GetData()->GetNumberOfTuples();
-          vtkIdType rtotal = sizev+sizel+sizep+sizes;
-          di->SetNumberOfElements(rtotal);
-          vtkIdType *out = (vtkIdType*)di->GetDataPointer();
-          vtkIdType *ptr = out; 
-          memcpy(ptr, pd->GetVerts()->GetData()->GetVoidPointer(0), sizev*sizeof(vtkIdType));
-          ptr+=sizev;
-          memcpy(ptr, pd->GetLines()->GetData()->GetVoidPointer(0), sizel*sizeof(vtkIdType));
-          ptr+=sizel;
-          memcpy(ptr, pd->GetPolys()->GetData()->GetVoidPointer(0), sizep*sizeof(vtkIdType));
-          ptr+=sizep;
-          memcpy(ptr, pd->GetStrips()->GetData()->GetVoidPointer(0), sizes*sizeof(vtkIdType));
+        vtkIdType sizev = pd->GetVerts()->GetSize();
+        vtkIdType sizel = pd->GetLines()->GetSize();
+        vtkIdType sizep = pd->GetPolys()->GetSize();
+        vtkIdType sizes = pd->GetStrips()->GetSize();
+        vtkIdType rtotal = sizev+sizel+sizep+sizes;
+        da->Allocate(rtotal*ESTIMATE); 
+        }
 
-          char buf[20];
-          SNPRINTF(buf, 20, vtkTypeTraits<vtkIdType>::ParseFormat(),
-                   vtkTypeTraits<vtkIdType>::PrintType(sizev));
-          t->Set("VertSize",buf);
-          SNPRINTF(buf, 20, vtkTypeTraits<vtkIdType>::ParseFormat(),
-                   vtkTypeTraits<vtkIdType>::PrintType(sizel));
-          t->Set("LineSize",buf);
-          SNPRINTF(buf, 20, vtkTypeTraits<vtkIdType>::ParseFormat(),
-                   vtkTypeTraits<vtkIdType>::PrintType(sizep));
-          t->Set("PolySize",buf);
-          SNPRINTF(buf, 20, vtkTypeTraits<vtkIdType>::ParseFormat(),
-                   vtkTypeTraits<vtkIdType>::PrintType(sizes));
-          t->Set("StripSize",buf);
+      vtkIdType cntr = 0;
+      for (vtkIdType cid=0 ; cid < numCells; cid++)
+        {
+        vtkCell *cell = ds->GetCell(cid);
+        vtkIdType cellType = ds->GetCellType(cid);
+        vtkIdType numPts = cell->GetNumberOfPoints();     
+        switch(cellType) 
+          {
+          case VTK_VERTEX :
+          case VTK_POLY_VERTEX :
+            da->InsertValue(cntr++, XDMF_POLYVERTEX);
+            da->InsertValue(cntr++, numPts);
+            break;
+          case VTK_LINE : 
+          case VTK_POLY_LINE :
+            da->InsertValue(cntr++, XDMF_POLYLINE);
+            da->InsertValue(cntr++, cell->GetNumberOfPoints());
+            break;
+          //case VTK_TRIANGLE_STRIP :
+          //TODO: Split tri strips into triangles
+          //t->SetTopologyType(XDMF_TRI);
+          //break;
+          case VTK_TRIANGLE :
+            da->InsertValue(cntr++, XDMF_TRI);
+            break;
+          case VTK_POLYGON :
+            da->InsertValue(cntr++, XDMF_POLYGON);
+            da->InsertValue(cntr++, cell->GetNumberOfPoints());
+            break;
+          case VTK_PIXEL :
+          case VTK_QUAD :
+            da->InsertValue(cntr++, XDMF_POLYGON);
+            break;
+          case VTK_TETRA :
+            da->InsertValue(cntr++, XDMF_TET);
+            break;
+          case VTK_VOXEL :
+            da->InsertValue(cntr++, XDMF_HEX);
+            break;
+          case VTK_HEXAHEDRON :
+            da->InsertValue(cntr++, XDMF_HEX);
+            break;
+          case VTK_WEDGE :
+            da->InsertValue(cntr++, XDMF_WEDGE);
+          break;
+          case VTK_PYRAMID :
+            da->InsertValue(cntr++, XDMF_PYRAMID);
+          break;
+          default :
+            da->InsertValue(cntr++,XDMF_NOTOPOLOGY);
+            break;
+          }
+        if ( cellType == VTK_VOXEL )
+          {
+          // Hack for VTK_VOXEL          
+          da->InsertValue(cntr++, cell->GetPointId(0));
+          da->InsertValue(cntr++, cell->GetPointId(1));
+          da->InsertValue(cntr++, cell->GetPointId(3));
+          da->InsertValue(cntr++, cell->GetPointId(2));
+          da->InsertValue(cntr++, cell->GetPointId(4));
+          da->InsertValue(cntr++, cell->GetPointId(5));
+          da->InsertValue(cntr++, cell->GetPointId(7));
+          da->InsertValue(cntr++, cell->GetPointId(6));
+          }
+        else if ( cellType == VTK_PIXEL )
+          {
+          // Hack for VTK_PIXEL
+          da->InsertValue(cntr++, cell->GetPointId(0));
+          da->InsertValue(cntr++, cell->GetPointId(1));
+          da->InsertValue(cntr++, cell->GetPointId(3));
+          da->InsertValue(cntr++, cell->GetPointId(2));
+          }
+        for (vtkIdType pid=0; pid < numPts; pid++)
+          {
+          da->InsertValue(cntr++, cell->GetPointId(pid));
           }
         }
+
+      this->ConvertVToXArray(da, di, 1, &cntr, 2);
+      da->Delete();
       }
     }
     break;
@@ -755,8 +773,17 @@ void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
     {
     geo->SetGeometryType(XDMF_GEOMETRY_ORIGIN_DXDYDZ);
     vtkImageData *id = vtkImageData::SafeDownCast(ds);
-    geo->SetOrigin(id->GetOrigin());
-    geo->SetDxDyDz(id->GetSpacing());
+    double orig[3], spacing[3];
+    id->GetOrigin(orig);
+    double tmp = orig[2];
+    orig[2] = orig[0];
+    orig[0] = tmp;
+    tmp = spacing[2];
+    spacing[2] = spacing[0];
+    spacing[0] = tmp;
+    id->GetSpacing(spacing);
+    geo->SetOrigin(orig);
+    geo->SetDxDyDz(spacing);
     }
     break;
   case VTK_RECTILINEAR_GRID:
@@ -768,18 +795,18 @@ void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
     da = rgrid->GetXCoordinates();
     len = da->GetNumberOfTuples();
     XdmfArray *xdax = new XdmfArray;
-    this->ConvertVToXArray(da, xdax, 1, &len);
-    geo->SetVectorX(xdax);
+    this->ConvertVToXArray(da, xdax, 1, &len, 0);
+    geo->SetVectorZ(xdax);
     da = rgrid->GetYCoordinates();
     len = da->GetNumberOfTuples();
     XdmfArray *xday = new XdmfArray;
-    this->ConvertVToXArray(da, xday, 1, &len);
+    this->ConvertVToXArray(da, xday, 1, &len, 0);
     geo->SetVectorY(xday);
     da = rgrid->GetZCoordinates();
     len = da->GetNumberOfTuples();
     XdmfArray *xdaz = new XdmfArray;
-    this->ConvertVToXArray(da, xdaz, 1, &len);
-    geo->SetVectorZ(xdaz);
+    this->ConvertVToXArray(da, xdaz, 1, &len, 0);
+    geo->SetVectorX(xdaz);
     }
     break;
   case VTK_STRUCTURED_GRID:
@@ -794,7 +821,7 @@ void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
     vtkIdType shape[2];
     shape[0] = da->GetNumberOfTuples();
     shape[1] = 3;
-    this->ConvertVToXArray(da, xda, 2, shape);
+    this->ConvertVToXArray(da, xda, 2, shape, 0);
     geo->SetPoints(xda);
     }
     break;
@@ -888,7 +915,7 @@ void vtkXdmfWriter2::WriteArrays(vtkFieldData* fd, XdmfGrid *grid, int associati
         }
 
       XdmfArray *xda = new XdmfArray;      
-      this->ConvertVToXArray(da, xda, rank, dims);
+      this->ConvertVToXArray(da, xda, rank, dims, 0);
       attr->SetValues(xda);
       grid->Insert(attr);
       }
@@ -896,7 +923,9 @@ void vtkXdmfWriter2::WriteArrays(vtkFieldData* fd, XdmfGrid *grid, int associati
 }
 
 //------------------------------------------------------------------------------
-void vtkXdmfWriter2::ConvertVToXArray(vtkDataArray *vda, XdmfArray *xda, vtkIdType rank, vtkIdType *dims)
+void vtkXdmfWriter2::ConvertVToXArray(vtkDataArray *vda, 
+                                      XdmfArray *xda, vtkIdType rank, 
+                                      vtkIdType *dims, int allocStrategy)
 {
   XdmfInt32 lRank = rank;
   XdmfInt64 *lDims = new XdmfInt64[rank+1];
@@ -905,6 +934,8 @@ void vtkXdmfWriter2::ConvertVToXArray(vtkDataArray *vda, XdmfArray *xda, vtkIdTy
     lDims[i] = dims[i];
     }
   vtkIdType nc = vda->GetNumberOfComponents();
+  //add additional dimension to the xdmf array to match the vtk arrays width,
+  //ex coordinate arrays have xyz, so add [3]
   if (nc != 1)
     {
     lDims[rank]=nc;
@@ -956,21 +987,24 @@ void vtkXdmfWriter2::ConvertVToXArray(vtkDataArray *vda, XdmfArray *xda, vtkIdTy
       }
     }        
 
-  //TODO: Pass by reference is preferable, but we have to be sure data sticks around until write occurs.
-  if (!this->TopTemporalGrid)
+  //TODO: if we can make xdmf write out immediately, then wouldn't have to keep around
+  //arrays when working with temporal data
+  if ((allocStrategy==0 && !this->TopTemporalGrid) || allocStrategy==1)
     {
     //Do not let xdmf allocate its own buffer. xdmf just borrows vtk's and doesn't double mem size.
     xda->SetAllowAllocate(0); 
     xda->SetShape(lRank, lDims);
     xda->SetDataPointer(vda->GetVoidPointer(0));
     }
-  else
+  else //(allocStrategy==0 && this->TopTemporalGrid) || allocStrategy==2)
     {
     //Unfortunately data doesn't stick around with temporal updates, which is exactly when you want it most.
     xda->SetAllowAllocate(1);  
     xda->SetShape(lRank, lDims);
-    void *p = xda->GetDataPointer();
-    memcpy(p, vda->GetVoidPointer(0), vda->GetNumberOfTuples()*vda->GetNumberOfComponents()*vda->GetElementComponentSize());
+    memcpy(xda->GetDataPointer(), vda->GetVoidPointer(0), 
+           vda->GetNumberOfTuples()*
+           vda->GetNumberOfComponents()*
+           vda->GetElementComponentSize());
     }
 
   delete[] lDims;

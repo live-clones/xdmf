@@ -37,7 +37,7 @@
 #include "vtkTimeSourceExample.h"
 #include "vtkXdmfReader2.h"
 
-#define NUMTESTS 21
+#define NUMTESTS 20
 
 const char testobject[NUMTESTS][40] = {
     "ID1",
@@ -46,25 +46,23 @@ const char testobject[NUMTESTS][40] = {
     "RG1",
     "SG1",
     "PD1",
-    "PD1", //"PD2", disable for now
+    "PD2",
     "UG1",
     "UG2",
     "UG3",
-    "UG3", //"UG4", disable for now
+    "UG4",
     "MB{}",
     "MB{ID1}",
     "MB{UF1}",
     "MB{RG1}",
     "MB{SG1}",
     "MB{PD1}",
-    "MB{PD1}", //"MB{PD2}", //disable for now
     "MB{UG1}",
     "MB{ ID1 UF1 RG1 SG1 PD1 UG1 }",
     "HB[ (UF1)(UF1)(UF1) ]",
 };
 
-#define MYUNLINK(arg) \
-  unlink(arg)
+bool CleanUpGood = true;
 
 bool DoFilesExist(const char*xdmffile, const char*hdf5file, bool deleteIfSo)
 {
@@ -74,11 +72,11 @@ bool DoFilesExist(const char*xdmffile, const char*hdf5file, bool deleteIfSo)
   bool hlenOK = (hdf5file?vtksys::SystemTools::FileLength(hdf5file)!=0:true);
 
   bool theyDo = xexists && xlenOK && hexists && hlenOK;
-  if (theyDo && deleteIfSo)
-  {
-   MYUNLINK(xdmffile);
-   MYUNLINK(hdf5file);
-  }
+  if (theyDo && deleteIfSo && CleanUpGood)
+    {
+    unlink(xdmffile);
+    unlink(hdf5file);
+    }
 
   return theyDo;
 }
@@ -176,20 +174,28 @@ bool TestXDMFConversion(vtkDataObject*input, char *prefix)
   vtkDataObject *rOutput = xreader->GetOutputDataObject(0);
 
   bool fail = DoDataObjectsDiffer(input, rOutput);
-  if (!fail)
+  if (!fail && CleanUpGood)
   {
    //test passed!
-   MYUNLINK(xdmffile);
-   MYUNLINK(hdf5file);
-   MYUNLINK(vtkfile);
+   unlink(xdmffile);
+   unlink(hdf5file);
+   unlink(vtkfile);
   }
 
   xreader->Delete();
   return fail;
 }
 
-int main (int vtkNotUsed(ac), char **vtkNotUsed(av))
+int main (int ac, char **av)
 {
+  
+  for (int i = 1; i < ac; i++)
+    {
+    if (!strcmp(av[i], "--dont-clean"))
+      {
+      CleanUpGood = false;
+      }
+    }
 
   bool fail = false; 
 
