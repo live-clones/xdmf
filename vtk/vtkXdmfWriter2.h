@@ -119,7 +119,9 @@ protected:
   virtual void WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid);
   virtual void WriteArrays(vtkFieldData* dsa, XdmfGrid *grid, int association,
                            vtkIdType rank, vtkIdType *dims);
-  virtual void ConvertVToXArray(vtkDataArray *vda, XdmfArray *xda, vtkIdType rank, vtkIdType *dims);
+  virtual void ConvertVToXArray(vtkDataArray *vda, XdmfArray *xda, 
+                                vtkIdType rank, vtkIdType *dims,
+                                int AllocStrategy);
 
   char *FileName;
 
