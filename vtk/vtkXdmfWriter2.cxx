@@ -125,7 +125,7 @@ void vtkXdmfWriter2Internal::DetermineCellTypes(vtkPointSet * t, vtkXdmfWriter2I
 //==============================================================================
 
 vtkStandardNewMacro(vtkXdmfWriter2);
-vtkCxxRevisionMacro(vtkXdmfWriter2, "1.14");
+vtkCxxRevisionMacro(vtkXdmfWriter2, "1.15");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter2::vtkXdmfWriter2()
@@ -486,7 +486,7 @@ void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
     break;
   case VTK_RECTILINEAR_GRID:
     {
-    t->SetTopologyType(XDMF_3DCORECTMESH);
+    t->SetTopologyType(XDMF_3DRECTMESH);
     vtkRectilinearGrid *rgrid = vtkRectilinearGrid::SafeDownCast(ds);
     int wExtent[6];
     rgrid->GetExtent(wExtent);
@@ -796,7 +796,7 @@ void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
     len = da->GetNumberOfTuples();
     XdmfArray *xdax = new XdmfArray;
     this->ConvertVToXArray(da, xdax, 1, &len, 0);
-    geo->SetVectorZ(xdax);
+    geo->SetVectorX(xdax);
     da = rgrid->GetYCoordinates();
     len = da->GetNumberOfTuples();
     XdmfArray *xday = new XdmfArray;
@@ -806,7 +806,7 @@ void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
     len = da->GetNumberOfTuples();
     XdmfArray *xdaz = new XdmfArray;
     this->ConvertVToXArray(da, xdaz, 1, &len, 0);
-    geo->SetVectorX(xdaz);
+    geo->SetVectorZ(xdaz);
     }
     break;
   case VTK_STRUCTURED_GRID:
