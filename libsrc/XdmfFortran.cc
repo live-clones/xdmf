@@ -36,6 +36,7 @@
 
 // This works with g77. Different compilers require different
 // name mangling.
+#if !defined(WIN32)
 #define XdmfInit xdmfinit_
 #define XdmfSetTime xdmfsettime_
 #define XdmfAddCollection xdmfaddcollection_
@@ -62,7 +63,7 @@
 #define XdmfSerialize xdmfserialize_
 #define XdmfGetDOM xdmfgetdom_
 #define XdmfClose xdmfclose_
-
+#endif
 /**
  *
  * Initialize a new Xdmf file.
@@ -408,7 +409,7 @@ void XdmfFortran::ReadFilePriv(XdmfXmlNode currElement)
 	    			atoi(gridName.substr(gridName.find_last_of("_") + 1, gridName.size() - gridName.find_last_of("_")).c_str());
 	    			gridName = gridName.substr(0, gridName.find_last_of("_"));
 	    		}
-	    		catch (int e)
+	    		catch (int)
 	    		{
 	    		}
 	    	}
@@ -879,151 +880,153 @@ extern "C" {
 	 * Initialize a new Xdmf file.
 	 *
 	 */
-	void XdmfInit(long * pointer, char * outputName)
+	void XDMF_UTILS_DLL XdmfInit(long * pointer, char * outputName)
 	{
+		printf("Inside XdmfInit - outputName is: %s\n",outputName);
+
 		XdmfFortran * myPointer = new XdmfFortran(outputName);
 		*pointer = (long)myPointer;
 	}
 
-	void XdmfSetTime(long * pointer, double * t)
+	void XDMF_UTILS_DLL XdmfSetTime(long * pointer, double * t)
 	{
 		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
 		myPointer->SetTime(t);
 	}
 
-	void XdmfAddCollection(long * pointer, char * collectionType)
+	void XDMF_UTILS_DLL XdmfAddCollection(long * pointer, char * collectionType)
 	{
 		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
 		myPointer->AddCollection(collectionType);
 	}
 
-	void XdmfCloseCollection(long * pointer)
+	void XDMF_UTILS_DLL XdmfCloseCollection(long * pointer)
 	{
 		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
 		myPointer->CloseCollection();
 	}
 
-	void XdmfSetGridTopology(long * pointer, char * topologyType, int * numberOfElements, XdmfInt32 * conns)
+	void XDMF_UTILS_DLL XdmfSetGridTopology(long * pointer, char * topologyType, int * numberOfElements, XdmfInt32 * conns)
 	{
 		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
 		myPointer->SetGridTopology(topologyType, numberOfElements, conns);
 	}
 
-	void XdmfSetGridGeometry(long * pointer, char * geometryType, char * numberType, int * numberOfPoints, XdmfPointer * points)
+	void XDMF_UTILS_DLL XdmfSetGridGeometry(long * pointer, char * geometryType, char * numberType, int * numberOfPoints, XdmfPointer * points)
 	{
 		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
 		myPointer->SetGridGeometry(geometryType, numberType, numberOfPoints, points);
 	}
 
-	void XdmfAddGridAttribute(long * pointer, char * attributeName, char * numberType, char * attributeCenter, char * attributeType, int * numberOfPoints, XdmfPointer * data)
+	void XDMF_UTILS_DLL XdmfAddGridAttribute(long * pointer, char * attributeName, char * numberType, char * attributeCenter, char * attributeType, int * numberOfPoints, XdmfPointer * data)
 	{
 		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
 		myPointer->AddGridAttribute(attributeName, numberType, attributeCenter, attributeType, numberOfPoints, data);
 	}
 
-	void XdmfAddCollectionAttribute(long * pointer, char * attributeName, char * numberType, char * attributeCenter, char * attributeType, int * numberOfPoints, XdmfPointer * data)
+	void XDMF_UTILS_DLL XdmfAddCollectionAttribute(long * pointer, char * attributeName, char * numberType, char * attributeCenter, char * attributeType, int * numberOfPoints, XdmfPointer * data)
 	{
 		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
 		myPointer->AddCollectionAttribute(attributeName, numberType, attributeCenter, attributeType, numberOfPoints, data);
 	}
 
-	void XdmfAddGridInformation(long * pointer, char * informationName, char * value)
+	void XDMF_UTILS_DLL XdmfAddGridInformation(long * pointer, char * informationName, char * value)
 	{
 		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
 		myPointer->AddGridInformation(informationName, value);
 	}
 
-	void XdmfAddCollectionInformation(long * pointer, char * informationName, char * value)
+	void XDMF_UTILS_DLL XdmfAddCollectionInformation(long * pointer, char * informationName, char * value)
 	{
 		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
 		myPointer->AddCollectionInformation(informationName, value);
 	}
 
-	void XdmfAddArray(long * pointer, char * name, char * numberType, int * numberOfValues, XdmfPointer * data)
+	void XDMF_UTILS_DLL XdmfAddArray(long * pointer, char * name, char * numberType, int * numberOfValues, XdmfPointer * data)
 	{
 		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
 		myPointer->AddArray(name, numberType, numberOfValues,data);
 	}
 
-    void XdmfReadFile(long * pointer, char * filePath)
+    void XDMF_UTILS_DLL XdmfReadFile(long * pointer, char * filePath)
     {
     	XdmfFortran * myPointer = (XdmfFortran *)*pointer;
     	myPointer->ReadFile(filePath);
     }
 
-    void XdmfReadGrid(long * pointer, char * gridName)
+    void XDMF_UTILS_DLL XdmfReadGrid(long * pointer, char * gridName)
     {
     	XdmfFortran * myPointer = (XdmfFortran *)*pointer;
     	myPointer->ReadGrid(gridName);
     }
 
-    void XdmfReadGridAtIndex(long * pointer, int * gridIndex)
+    void XDMF_UTILS_DLL XdmfReadGridAtIndex(long * pointer, int * gridIndex)
     {
     	XdmfFortran * myPointer = (XdmfFortran *)*pointer;
         myPointer->ReadGridAtIndex(gridIndex);
     }
 
-    void XdmfGetNumberOfGrids(long * pointer, XdmfInt32 * toReturn)
+    void XDMF_UTILS_DLL XdmfGetNumberOfGrids(long * pointer, XdmfInt32 * toReturn)
     {
         XdmfFortran * myPointer = (XdmfFortran *)*pointer;
         myPointer->GetNumberOfGrids(toReturn);
     }
 
-    void XdmfGetNumberOfPoints(long * pointer, XdmfInt32 * toReturn)
+    void XDMF_UTILS_DLL XdmfGetNumberOfPoints(long * pointer, XdmfInt32 * toReturn)
     {
     	XdmfFortran * myPointer = (XdmfFortran *)*pointer;
     	myPointer->GetNumberOfPoints(toReturn);
     }
 
-    void XdmfReadPointValues(long * pointer, char * numberType, XdmfInt32 * startIndex, XdmfPointer * arrayToFill, XdmfInt32 * numberOfValues, XdmfInt32 * arrayStride, XdmfInt32 * valuesStride)
+    void XDMF_UTILS_DLL XdmfReadPointValues(long * pointer, char * numberType, XdmfInt32 * startIndex, XdmfPointer * arrayToFill, XdmfInt32 * numberOfValues, XdmfInt32 * arrayStride, XdmfInt32 * valuesStride)
     {
     	XdmfFortran * myPointer = (XdmfFortran *)*pointer;
     	myPointer->ReadPointValues(numberType, startIndex, arrayToFill, numberOfValues, arrayStride, valuesStride);
     }
 
-    void XdmfGetNumberOfAttributeValues(long * pointer, char * attributeName, XdmfInt32 * toReturn)
+    void XDMF_UTILS_DLL XdmfGetNumberOfAttributeValues(long * pointer, char * attributeName, XdmfInt32 * toReturn)
     {
     	XdmfFortran * myPointer = (XdmfFortran *)*pointer;
 		myPointer->GetNumberOfAttributeValues(attributeName, toReturn);
     }
 
-    void XdmfReadAttributeValues(long * pointer, char * attributeName, char * numberType, XdmfInt32 * startIndex, XdmfPointer * arrayToFill, XdmfInt32 * numberOfValues, XdmfInt32 * arrayStride, XdmfInt32 * valuesStride)
+    void XDMF_UTILS_DLL XdmfReadAttributeValues(long * pointer, char * attributeName, char * numberType, XdmfInt32 * startIndex, XdmfPointer * arrayToFill, XdmfInt32 * numberOfValues, XdmfInt32 * arrayStride, XdmfInt32 * valuesStride)
     {
     	XdmfFortran * myPointer = (XdmfFortran *)*pointer;
     	myPointer->ReadAttributeValues(attributeName, numberType, startIndex, arrayToFill, numberOfValues, arrayStride, valuesStride);
     }
 
-    void XdmfReadInformationValue(long * pointer, char * informationName, char * valueToReturn)
+    void XDMF_UTILS_DLL XdmfReadInformationValue(long * pointer, char * informationName, char * valueToReturn)
     {
     	XdmfFortran * myPointer = (XdmfFortran *)*pointer;
     	myPointer->ReadInformationValue(informationName, valueToReturn);
     }
 
-    void XdmfGetTime(long * pointer, XdmfFloat64 * toReturn)
+    void XDMF_UTILS_DLL XdmfGetTime(long * pointer, XdmfFloat64 * toReturn)
     {
     	XdmfFortran * myPointer = (XdmfFortran *)*pointer;
     	myPointer->GetTime(toReturn);
     }
 
-	void XdmfWriteGrid(long * pointer, char * gridName)
+	void XDMF_UTILS_DLL XdmfWriteGrid(long * pointer, char * gridName)
 	{
 		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
 		myPointer->WriteGrid(gridName);
 	}
 
-	void XdmfWriteToFile(long * pointer)
+	void XDMF_UTILS_DLL XdmfWriteToFile(long * pointer)
 	{
 		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
 		myPointer->WriteToFile();
 	}
 
-	void XdmfSerialize(long * pointer)
+	void XDMF_UTILS_DLL XdmfSerialize(long * pointer)
 	{
 		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
 		myPointer->Serialize();
 	}
 
-	void XdmfGetDOM(long * pointer, char * charPointer)
+	void XDMF_UTILS_DLL XdmfGetDOM(long * pointer, char * charPointer)
 	{
 		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
 		myPointer->GetDOM(charPointer);
@@ -1034,7 +1037,7 @@ extern "C" {
 	 * Close XdmfFortran interface and clean memory
 	 *
 	 */
-	void XdmfClose(long * pointer)
+	void XDMF_UTILS_DLL XdmfClose(long * pointer)
 	{
 		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
 		delete myPointer;
