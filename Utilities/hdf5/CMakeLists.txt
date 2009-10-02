@@ -5,6 +5,7 @@ endif(COMMAND cmake_policy)
 PROJECT(VTKHDF5 C)
 INCLUDE_REGULAR_EXPRESSION("^.*\\.[ch]$")
 
+# Comment
 # EXPORT() will be in cmake 2.6, add an empty macro so older cmake versions still work
 IF(NOT COMMAND EXPORT)
   MACRO(EXPORT)
