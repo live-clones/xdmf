@@ -8,12 +8,25 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
        PROGRAM XdmfFortranExample
-
-       INTEGER*8 xdmfinit, obj
+       
+       !DEC$ ATTRIBUTES DLLIMPORT, ALIAS:'_XdmfInit'::XdmfInit
+       !DEC$ ATTRIBUTES DLLIMPORT, ALIAS:'_XdmfSetGridTopology'::XdmfSetGridTopology
+       !DEC$ ATTRIBUTES DLLIMPORT, ALIAS:'_XdmfSetGridGeometry'::XdmfSetGridGeometry
+       !DEC$ ATTRIBUTES DLLIMPORT, ALIAS:'_XdmfSetGridAttribute'::XdmfSetGridAttribute
+       !DEC$ ATTRIBUTES DLLIMPORT, ALIAS:'_XdmfAddGridAttribute'::XdmfAddGridAttribute
+       !DEC$ ATTRIBUTES DLLIMPORT, ALIAS:'_XdmfWriteGrid'::XdmfWriteGrid
+       !DEC$ ATTRIBUTES DLLIMPORT, ALIAS:'_XdmfWriteToFile'::XdmfWriteToFile
+       !DEC$ ATTRIBUTES DLLIMPORT, ALIAS:'_XdmfSerialize'::XdmfSerialize
+       !DEC$ ATTRIBUTES DLLIMPORT, ALIAS:'_XdmfClose'::XdmfClose
+       
+       INTEGER*8 obj
+       character*256 filename
        REAL*4 myPoints(3,3,4)
        INTEGER myConnections(8,2)
        REAL*8 myCellAttribute(2), myNodeAttribute(3,4)
-
+       
+       filename = 'my_output'//CHAR(0)
+       
 	   myPoints(1,1,1) = 0
 	   myPoints(2,1,1) = 0
 	   myPoints(3,1,1) = 1
@@ -84,7 +97,7 @@
 	   myCellAttribute(1) = 100
 	   myCellAttribute(2) = 200
 
-       obj = XDMFINIT('output'//CHAR(0))
+       CALL XDMFINIT(obj, filename)
        CALL XDMFSETGRIDTOPOLOGY(obj, 'Hexahedron'//CHAR(0), 2, myConnections)
        CALL XDMFSETGRIDGEOMETRY(obj, 'XYZ'//CHAR(0), 'XDMF_FLOAT32_TYPE'//CHAR(0), 12, myPoints)
        CALL XDMFADDGRIDATTRIBUTE(obj, 'NodeValues'//CHAR(0),'XDMF_FLOAT64_TYPE'//CHAR(0), 'NODE'//CHAR(0), &
