@@ -185,14 +185,16 @@ IF(XDMF_REGENERATE_WRAPPERS)
     ENDIF(EXISTS "${SWIG_LIB_PATH}")
     FOREACH(LANGUAGE Python)
       STRING(TOLOWER ${LANGUAGE} lang)
-      SET(swigtarget ${Xdmf_BINARY_DIR}/libsrc/Xdmf${LANGUAGE}.cxx)
+#      SET(swigtarget ${Xdmf_BINARY_DIR}/libsrc/Xdmf${LANGUAGE}.cxx)
       IF(XDMF_BUILD_MPI)
+        SET(swigtarget ${Xdmf_BINARY_DIR}/libsrc/Xdmf${LANGUAGE}.cxx)
         ADD_CUSTOM_COMMAND(
          OUTPUT ${swigtarget}
          DEPENDS ${Xdmf_SOURCE_DIR}/libsrc/Xdmf.i
          COMMAND ${SWIG_EXECUTABLE}
          ARGS -v -c++ -make_default -includeall "-${lang}" ${swig_extra_args} ${XDMF_SWIG_INCLUDES} -o "${swigtarget}" Xdmf.i)
       ELSE(XDMF_BUILD_MPI) 
+        SET(swigtarget ${Xdmf_BINARY_DIR}/libsrc/Xdmf${LANGUAGE}NoMpi.cxx)
         ADD_CUSTOM_COMMAND(
          OUTPUT ${swigtarget}
          DEPENDS ${Xdmf_SOURCE_DIR}/libsrc/Xdmf.i
