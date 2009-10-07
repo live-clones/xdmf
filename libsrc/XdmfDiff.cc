@@ -30,6 +30,8 @@
  * testing purposes.
  *
  * Command Line:
+ * 		Write a script to access the swig wrapped diff utility
+ *
  * 		There are two ways to run the command line utility:
  *
  * 		XdmfDiff referenceFile newFile
@@ -67,18 +69,446 @@
 #include <XdmfTopology.h>
 
 #include <cmath>
-
 #include <sstream>
 #include <string>
+#include <vector>
+#include <set>
+#include <map>
 
-/*
- * Constructs an XdmfDiff object to compare two Xdmf Files
- *
- * @param refFileName the path to an Xdmf file to compare
- * @param newFileName the path to an Xdmf file to compare
- *
- */
+class XdmfDiffInternal
+{
+public:
+	class XdmfDiffReport
+	{
+	public:
+
+		class XdmfDiffEntry{
+		public:
+			XdmfDiffEntry(std::string errorDescription, XdmfInt64 loc, std::string refVals, std::string newVals)
+			{
+				description = errorDescription;
+				location = loc;
+				refValues = refVals;
+				newValues = newVals;
+			}
+			~XdmfDiffEntry(){}
+			friend std::ostream &operator<<(std::ostream & toReturn, const XdmfDiffEntry &diffEntry)
+			{
+				if (diffEntry.location == -1)
+				{
+					toReturn << "For " << diffEntry.description << " | Expected : " << diffEntry.refValues << " | Got : " << diffEntry.newValues;
+				}
+				else
+				{
+					toReturn << "For " << diffEntry.description << " | At Tuple " << diffEntry.location << " | Expected : " << diffEntry.refValues << " | Got : " << diffEntry.newValues;
+				}
+				return toReturn;
+			}
+		private:
+			XdmfInt64 location;
+			std::string refValues;
+			std::string newValues;
+			std::string description;
+		};
+
+		XdmfDiffReport(std::string type)
+		{
+			valType = type;
+		}
+		~XdmfDiffReport(){}
+		void AddError(std::string errorDescription, std::string refVals, std::string newVals)
+		{
+			this->AddError(errorDescription, -1, refVals, newVals);
+		}
+		void AddError(std::string errorDescription, XdmfInt64 loc, std::string refVals, std::string newVals)
+		{
+			errors.push_back(XdmfDiffEntry(errorDescription, loc, refVals, newVals));
+		}
+		void AddError(std::string warning)
+		{
+			warnings.push_back(warning);
+		}
+		XdmfInt64 GetNumberOfErrors()
+		{
+			return errors.size() + warnings.size();
+		}
+
+		friend std::ostream &operator<<(std::ostream & toReturn, const XdmfDiffReport &diffReport)
+		{
+			toReturn << diffReport.valType << "\n";
+			for (unsigned int i=0; i<diffReport.warnings.size(); i++)
+			{
+				toReturn << "\t\t" << diffReport.warnings[i] << "\n";
+			}
+			for (unsigned int i=0; i<diffReport.errors.size(); i++)
+			{
+				toReturn << "\t\t" << diffReport.errors[i] << "\n";
+			}
+			return toReturn;
+		}
+
+	private:
+		std::vector<XdmfDiffEntry> errors;
+		std::vector<std::string> warnings;
+		std::string valType;
+	};
+
+	class XdmfDiffReportCollection{
+	public:
+		XdmfDiffReportCollection(XdmfBoolean failuresOnly, XdmfBoolean verbose)
+		{
+			displayFailuresOnly = failuresOnly;
+			verboseOutput = verbose;
+		}
+		~XdmfDiffReportCollection(){}
+		void AddReport(std::string gridName, XdmfDiffReport report)
+		{
+			reports[gridName].push_back(report);
+		}
+		XdmfInt64 GetNumberOfErrors()
+		{
+			int numErrors = 0;
+			for (std::map<std::string, std::vector<XdmfDiffReport> >::const_iterator iter = reports.begin(); iter!= reports.end(); iter++)
+			{
+				for (unsigned int i=0; i<iter->second.size(); i++)
+				{
+					std::vector<XdmfDiffReport> report = iter->second;
+					numErrors += report[i].GetNumberOfErrors();
+				}
+			}
+			return numErrors;
+		}
+		friend std::ostream &operator<<(std::ostream & toReturn, const XdmfDiffReportCollection &diffCollection)
+		{
+			for (std::map<std::string, std::vector<XdmfDiffReport> >::const_iterator iter = diffCollection.reports.begin(); iter!= diffCollection.reports.end(); iter++)
+			{
+				int numGridErrors = 0;
+				for (unsigned int i=0; i<iter->second.size(); i++)
+				{
+					std::vector<XdmfDiffReport> report = iter->second;
+					if (report[i].GetNumberOfErrors() > 0)
+					{
+						if (numGridErrors == 0 || diffCollection.verboseOutput)
+						{
+							toReturn << "|FAIL|  Grid Name: " << iter->first << "\n";
+						}
+						toReturn << "\t" << report[i];
+						numGridErrors += report[i].GetNumberOfErrors();
+					}
+					else if (diffCollection.verboseOutput && !diffCollection.displayFailuresOnly)
+					{
+						toReturn << "|PASS|  Grid Name: " << iter->first;
+						toReturn << "\t" << report[i];
+					}
+				}
+				if (numGridErrors == 0 && !diffCollection.displayFailuresOnly && !diffCollection.verboseOutput)
+				{
+					toReturn << "|PASS|  Grid Name: " << iter->first << "\n";
+				}
+			}
+			return toReturn;
+		}
+	private:
+		std::map<std::string, std::vector<XdmfDiffReport> > reports;
+		XdmfBoolean displayFailuresOnly;
+		XdmfBoolean verboseOutput;
+	};
+
+	XdmfDiffInternal(XdmfConstString refFileName, XdmfConstString newFileName);
+	XdmfDiffInternal(XdmfDOM * refDOM, XdmfDOM * newDOM);
+	void Init();
+	~XdmfDiffInternal();
+	std::string GetDiffs();
+	std::string GetDiffs(XdmfConstString gridName);
+	XdmfInt32 SetRelativeError(XdmfFloat64 & relativeError);
+	XdmfInt32 SetAbsoluteError(XdmfFloat64 & absoluteError);
+	XdmfInt32 SetDiffFileName(XdmfString name);
+	XdmfString GetDiffFileName();
+	XdmfBoolean AreEquivalent();
+	XdmfInt32 IncludeGrid(XdmfString gridName);
+	XdmfInt32 IgnoreGrid(XdmfString gridName);
+	XdmfInt32 IncludeAttribute(XdmfString attributeName);
+	XdmfInt32 IgnoreAttribute(XdmfString attributeName);
+	XdmfInt32 ParseSettingsFile(XdmfConstString settingsFile);
+
+    XdmfSetValueMacro(IgnoreTime, XdmfBoolean);
+    XdmfGetValueMacro(IgnoreTime, XdmfBoolean);
+    XdmfSetValueMacro(IgnoreGeometry, XdmfBoolean);
+    XdmfGetValueMacro(IgnoreGeometry, XdmfBoolean);
+    XdmfSetValueMacro(IgnoreTopology, XdmfBoolean);
+    XdmfGetValueMacro(IgnoreTopology, XdmfBoolean);
+    XdmfSetValueMacro(IgnoreAllAttributes, XdmfBoolean);
+    XdmfGetValueMacro(IgnoreAllAttributes, XdmfBoolean);
+    XdmfSetValueMacro(DisplayFailuresOnly, XdmfBoolean);
+    XdmfGetValueMacro(DisplayFailuresOnly, XdmfBoolean);
+    XdmfSetValueMacro(VerboseOutput, XdmfBoolean);
+    XdmfGetValueMacro(VerboseOutput, XdmfBoolean);
+    XdmfSetValueMacro(CreateDiffFile, XdmfBoolean);
+    XdmfGetValueMacro(CreateDiffFile, XdmfBoolean);
+    XdmfGetValueMacro(AbsoluteError, XdmfFloat64);
+    XdmfGetValueMacro(RelativeError, XdmfFloat64);
+
+private:
+
+	/*
+	 * Returns the differences between the two XDMF files.  Compares each grid in the
+	 * reference file to the grid of the same name in the second file.  Stuffs the results
+	 * of the comparison in the error report
+	 *
+	 * @param errorReports an XdmfDiffReportCollection that collects all difference reports during the comparison
+	 *
+	 */
+	void GetDiffs(XdmfDiffReportCollection & errorReports);
+
+	/*
+	 * Returns the differences between two grids.
+	 *
+	 * @param refGrid the reference grid to compare (new grid is searched for using the reference grid's name)
+	 * @param errorReports an XdmfDiffReportCollection that collects all difference reports during the comparison
+	 *
+	 */
+	void GetDiffs(XdmfGrid & refGrid, XdmfDiffReportCollection & errorReports);
+
+	/*
+	 * Returns the differences in values between two XdmfGeometries
+	 *
+	 * @param refGeometry an XdmfGeometry to compare
+	 * @param newGeometry an XdmfGeometry to compare
+	 *
+	 * @return an XdmfDiffReport containing differences in values
+	 *
+	 */
+	XdmfDiffReport GetGeometryDiffs(XdmfGeometry * refGeometry, XdmfGeometry * newGeometry);
+
+	/*
+	 * Returns the differences in values between two XdmfTopologies
+	 *
+	 * @param refTopology an XdmfTopology to compare
+	 * @param newTopology an XdmfTopology to compare
+	 *
+	 * @return an XdmfDiffReport containing differences in values
+	 *
+	 */
+	XdmfDiffReport GetTopologyDiffs(XdmfTopology * refTopology, XdmfTopology * newTopology);
+
+	/*
+	 * Returns the differences in values between two XdmfAttributes
+	 *
+	 * @param refAttribute an XdmfAttribute to compare
+	 * @param newAttribute an XdmfAttribute to compare
+	 *
+	 * @return an XdmfDiffReport containing differences in values
+	 *
+	 */
+	XdmfDiffReport GetAttributeDiffs(XdmfAttribute * refAttribute, XdmfAttribute * newAttribute);
+
+	/*
+	 * Entry point for array comparisons ---> passes to templated private function based on number type to do actual value comparisons
+	 *
+	 * @param errorReport an XdmfDiffReport to add comparison results to
+	 * @param refArray an XdmfArray containing values to compare
+	 * @param newArray an XdmfArray containing values to compare
+	 * @param startIndex an index to start comparison at
+	 * @param numValues the number of values to compare
+	 * @param groupLength how many values are contained together.
+	 * 		  Useful for reporting changes in multiple values i.e. XYZ geometry (default: 1)
+	 *
+	 */
+	XdmfArray * CompareValues(XdmfDiffReport & errorReport, XdmfArray * refArray, XdmfArray * newArray, XdmfInt64 startIndex, XdmfInt64 numValues, XdmfInt64 groupLength = 1);
+
+	/*
+	 * Compares values between two XdmfArrays
+	 *
+	 * @param errorReport an XdmfDiffReport to add comparison results to
+	 * @param refArray an XdmfArray containing values to compare
+	 * @param newArray an XdmfArray containing values to compare
+	 * @param startIndex an index to start comparison at
+	 * @param numValues the number of values to compare
+	 * @param groupLength how many values are contained together.
+	 * 		  Useful for reporting changes in multiple values i.e. XYZ geometry (default: 1)
+	 *
+	 */
+	template <class XdmfType> XdmfArray * CompareValuesPriv(XdmfDiffReport & errorReport, XdmfArray * refArray, XdmfArray * newArray, XdmfInt64 startIndex, XdmfInt64 numValues, XdmfInt64 groupLength = 1);
+
+	std::set<std::string> includedGrids;
+	std::set<std::string> ignoredGrids;
+	std::set<std::string> includedAttributes;
+	std::set<std::string> ignoredAttributes;
+	XdmfDOM * myRefDOM;
+	XdmfDOM * myNewDOM;
+	XdmfFloat64 RelativeError;
+	XdmfFloat64 AbsoluteError;
+	XdmfBoolean IgnoreTime;
+	XdmfBoolean IgnoreGeometry;
+	XdmfBoolean IgnoreTopology;
+	XdmfBoolean IgnoreAllAttributes;
+	XdmfBoolean DisplayFailuresOnly;
+	XdmfBoolean VerboseOutput;
+	XdmfBoolean refDOMIsMine;
+	XdmfBoolean newDOMIsMine;
+	XdmfBoolean CreateDiffFile;
+	XdmfGrid * diffGrid;
+	XdmfElement * diffGridParent;
+	std::string diffName;
+	std::string diffHeavyName;
+};
+
 XdmfDiff::XdmfDiff(XdmfConstString refFileName, XdmfConstString newFileName)
+{
+	myInternal = new XdmfDiffInternal(refFileName, newFileName);
+}
+
+XdmfDiff::XdmfDiff(XdmfDOM * refDOM, XdmfDOM * newDOM)
+{
+	myInternal = new XdmfDiffInternal(refDOM, newDOM);
+}
+
+XdmfDiff::~XdmfDiff()
+{
+	delete myInternal;
+}
+
+std::string XdmfDiff::GetDiffs()
+{
+	return myInternal->GetDiffs();
+}
+
+std::string XdmfDiff::GetDiffs(XdmfConstString gridName)
+{
+	return myInternal->GetDiffs(gridName);
+}
+
+XdmfInt32 XdmfDiff::SetIgnoreTime(XdmfBoolean value)
+{
+	return myInternal->SetIgnoreTime(value);
+}
+
+XdmfInt32 XdmfDiff::GetIgnoreTime()
+{
+	return myInternal->GetIgnoreTime();
+}
+
+XdmfInt32 XdmfDiff::SetIgnoreGeometry(XdmfBoolean value)
+{
+	return myInternal->SetIgnoreGeometry(value);
+}
+
+XdmfInt32 XdmfDiff::GetIgnoreGeometry()
+{
+	return myInternal->GetIgnoreGeometry();
+}
+
+XdmfInt32 XdmfDiff::SetIgnoreTopology(XdmfBoolean value)
+{
+	return myInternal->SetIgnoreTopology(value);
+}
+
+XdmfInt32 XdmfDiff::GetIgnoreTopology()
+{
+	return myInternal->GetIgnoreTopology();
+}
+
+XdmfInt32 XdmfDiff::SetIgnoreAllAttributes(XdmfBoolean value)
+{
+	return myInternal->SetIgnoreAllAttributes(value);
+}
+
+XdmfInt32 XdmfDiff::GetIgnoreAllAttributes()
+{
+	return myInternal->GetIgnoreAllAttributes();
+}
+
+XdmfInt32 XdmfDiff::SetDisplayFailuresOnly(XdmfBoolean value)
+{
+	return myInternal->SetDisplayFailuresOnly(value);
+}
+
+XdmfInt32 XdmfDiff::GetDisplayFailuresOnly()
+{
+	return myInternal->GetDisplayFailuresOnly();
+}
+
+XdmfInt32 XdmfDiff::SetVerboseOutput(XdmfBoolean value)
+{
+	return myInternal->SetVerboseOutput(value);
+}
+
+XdmfInt32 XdmfDiff::GetVerboseOutput()
+{
+	return myInternal->GetVerboseOutput();
+}
+
+XdmfInt32 XdmfDiff::SetCreateDiffFile(XdmfBoolean value)
+{
+	return myInternal->SetCreateDiffFile(value);
+}
+
+XdmfInt32 XdmfDiff::GetCreateDiffFile()
+{
+	return myInternal->GetCreateDiffFile();
+}
+
+XdmfInt32 XdmfDiff::SetDiffFileName(XdmfString value)
+{
+	return myInternal->SetDiffFileName(value);
+}
+
+XdmfString XdmfDiff::GetDiffFileName()
+{
+	return myInternal->GetDiffFileName();
+}
+
+XdmfInt32 XdmfDiff::SetRelativeError(XdmfFloat64 relativeError)
+{
+	return myInternal->SetRelativeError(relativeError);
+}
+
+XdmfFloat64 XdmfDiff::GetRelativeError()
+{
+	return myInternal->GetRelativeError();
+}
+
+XdmfInt32 XdmfDiff::SetAbsoluteError(XdmfFloat64 absoluteError)
+{
+	return myInternal->SetAbsoluteError(absoluteError);
+}
+
+XdmfFloat64 XdmfDiff::GetAbsoluteError()
+{
+	return myInternal->GetAbsoluteError();
+}
+
+XdmfInt32 XdmfDiff::IncludeGrid(XdmfString gridName)
+{
+	return myInternal->IncludeGrid(gridName);
+}
+
+XdmfInt32 XdmfDiff::IgnoreGrid(XdmfString gridName)
+{
+	return myInternal->IgnoreGrid(gridName);
+}
+
+XdmfInt32 XdmfDiff::IncludeAttribute(XdmfString attributeName)
+{
+	return myInternal->IncludeAttribute(attributeName);
+}
+
+XdmfInt32 XdmfDiff::IgnoreAttribute(XdmfString attributeName)
+{
+	return myInternal->IgnoreAttribute(attributeName);
+}
+
+XdmfBoolean XdmfDiff::AreEquivalent()
+{
+	return myInternal->AreEquivalent();
+}
+
+XdmfInt32 XdmfDiff::ParseSettingsFile(XdmfConstString settingsFile)
+{
+	return myInternal->ParseSettingsFile(settingsFile);
+}
+
+XdmfDiffInternal::XdmfDiffInternal(XdmfConstString refFileName, XdmfConstString newFileName)
 {
 	myRefDOM = new XdmfDOM();
 	myNewDOM = new XdmfDOM();
@@ -100,90 +530,107 @@ XdmfDiff::XdmfDiff(XdmfConstString refFileName, XdmfConstString newFileName)
 	myRefDOM->Parse(refFileName);
 	myNewDOM->Parse(newFileName);
 
-	XdmfDiff(myRefDOM, myNewDOM);
+	refDOMIsMine = true;
+	newDOMIsMine = true;
 
-    refDOMIsMine = true;
-    newDOMIsMine = true;
-
+	this->Init();
 }
 
-XdmfDiff::~XdmfDiff()
+XdmfDiffInternal::XdmfDiffInternal(XdmfDOM * refDOM, XdmfDOM * newDOM)
+{
+	myRefDOM = refDOM;
+	myNewDOM = newDOM;
+
+	refDOMIsMine = false;
+    newDOMIsMine = false;
+
+	this->Init();
+}
+
+void XdmfDiffInternal::Init()
+{
+	RelativeError = 0;
+	AbsoluteError = 0;
+	IgnoreTime = false;
+	IgnoreGeometry = false;
+	IgnoreTopology = false;
+	IgnoreAllAttributes = false;
+	DisplayFailuresOnly = false;
+	VerboseOutput = false;
+	CreateDiffFile = false;
+	diffGrid - NULL;
+	diffGridParent = NULL;
+	std::string path = myRefDOM->GetFileName();
+	int endPath = path.find_last_of("/\\") + 1;
+	int begSuffix = path.find_last_of(".");
+	diffHeavyName = path.substr(endPath, begSuffix-endPath) + "-diff.h5";
+	diffName = path.substr(endPath, begSuffix-endPath) + "-diff.xmf";
+}
+
+XdmfDiffInternal::~XdmfDiffInternal()
 {
 	if (this->refDOMIsMine) delete myRefDOM;
 	if (this->newDOMIsMine) delete myNewDOM;
 }
 
-/*
- * Constructs an XdmfDiff object to compare two Xdmf Files
- *
- * @param refDOM an XdmfDOM to compare
- * @param newDOM an XdmfDOM to compare
- *
- */
-XdmfDiff::XdmfDiff(XdmfDOM * refDOM, XdmfDOM * newDOM)
+
+XdmfInt32 XdmfDiffInternal::SetRelativeError(XdmfFloat64 & relativeError)
 {
-	myRefDOM = refDOM;
-	myNewDOM = newDOM;
-	myRelativeError = 0;
-    myAbsoluteError = 0;
-	IgnoreTime = false;
-    IgnoreGeometry = false;
-    IgnoreTopology = false;
-    IgnoreAllAttributes = false;
-    DisplayFailuresOnly = false;
-    VerboseOutput = false;
-    refDOMIsMine = false;
-    newDOMIsMine = false;
+	RelativeError = relativeError;
+	AbsoluteError = 0;
 }
 
-/*
- * Sets the acceptable relative error between values.  Relative Errors and Absolute Errors
- * can not be used at the same time.
- *
- * @param relativeError the acceptable relative error in decimal form
- *
- */
-void XdmfDiff::SetRelativeError(XdmfFloat64 relativeError)
+XdmfInt32 XdmfDiffInternal::SetAbsoluteError(XdmfFloat64 & absoluteError)
 {
-	myRelativeError = relativeError;
-	myAbsoluteError = 0;
+	AbsoluteError = absoluteError;
+	RelativeError = 0;
 }
 
-/*
- * Sets the acceptable absolute error between values.  Relative Errors and Absolute Errors
- * can not be used at the same time.
- *
- * @param absoluteError the acceptable absolute error
- *
- */
-void XdmfDiff::SetAbsoluteError(XdmfFloat64 absoluteError)
+XdmfInt32 XdmfDiffInternal::SetDiffFileName(XdmfString name)
 {
-	myAbsoluteError = absoluteError;
-	myRelativeError = 0;
-}
-
-/*
- * Determines whether the two files are equivalent.
- *
- * @return an XdmfBoolean true = equivalent, false = nonequivalent
- *
- */
-XdmfBoolean XdmfDiff::AreEquivalent()
-{
-	XdmfDiffReportCollection myErrors = XdmfDiffReportCollection(DisplayFailuresOnly, VerboseOutput);
-	this->GetDiffs(myErrors);
-	if (myErrors.GetNumberOfErrors() == 0)
+	if(name)
 	{
-		return true;
+		diffName = name;
+		diffHeavyName = diffName.substr(0, diffName.find_last_of(".")) + ".h5";
+		return XDMF_SUCCESS;
 	}
-	return false;
+	return XDMF_FAIL;
 }
 
-/*
- * Get the differences between the two Xdmf files as a string
- *
- */
-std::string XdmfDiff::GetDiffsAsString()
+XdmfString XdmfDiffInternal::GetDiffFileName()
+{
+	return (XdmfString)diffName.c_str();
+}
+
+XdmfInt32 XdmfDiffInternal::IncludeGrid(XdmfString gridName)
+{
+	ignoredGrids.erase(gridName);
+	includedGrids.insert(gridName);
+	return XDMF_SUCCESS;
+}
+
+XdmfInt32 XdmfDiffInternal::IgnoreGrid(XdmfString gridName)
+{
+	includedGrids.erase(gridName);
+	ignoredGrids.insert(gridName);
+	return XDMF_SUCCESS;
+}
+
+XdmfInt32 XdmfDiffInternal::IncludeAttribute(XdmfString attributeName)
+{
+	ignoredAttributes.erase(attributeName);
+	includedAttributes.insert(attributeName);
+	return XDMF_SUCCESS;
+}
+
+XdmfInt32 XdmfDiffInternal::IgnoreAttribute(XdmfString attributeName)
+{
+	includedAttributes.erase(attributeName);
+	ignoredAttributes.insert(attributeName);
+	return XDMF_SUCCESS;
+}
+
+std::string XdmfDiffInternal::GetDiffs()
 {
 	std::stringstream toReturn;
 	XdmfDiffReportCollection myErrors = XdmfDiffReportCollection(DisplayFailuresOnly, VerboseOutput);
@@ -192,13 +639,7 @@ std::string XdmfDiff::GetDiffsAsString()
 	return toReturn.str();
 }
 
-/*
- * Get the differences between a grid in the two Xdmf files as a string
- *
- * @param gridName the name of the grid to compare
- *
- */
-std::string XdmfDiff::GetDiffsAsString(XdmfConstString gridName)
+std::string XdmfDiffInternal::GetDiffs(XdmfConstString gridName)
 {
 	std::stringstream toReturn;
 	XdmfXmlNode currDomain = myRefDOM->FindElement("Domain");
@@ -210,7 +651,7 @@ std::string XdmfDiff::GetDiffsAsString(XdmfConstString gridName)
 			grid.Update();
 			if (strcmp(grid.GetName(), gridName) == 0)
 			{
-				XdmfDiffReportCollection errorReports = XdmfDiffReportCollection(DisplayFailuresOnly, VerboseOutput);
+				XdmfDiffInternal::XdmfDiffReportCollection errorReports = XdmfDiffInternal::XdmfDiffReportCollection(DisplayFailuresOnly, VerboseOutput);
 				this->GetDiffs(errorReports);
 				toReturn << errorReports;
 				return toReturn.str();
@@ -220,16 +661,25 @@ std::string XdmfDiff::GetDiffsAsString(XdmfConstString gridName)
 	return toReturn.str();
 }
 
-/*
- * Returns the differences between the two XDMF files.  Compares each grid in the
- * reference file to the grid of the same name in the second file.  Stuffs the results
- * of the comparison in the error report
- *
- * @param errorReports an XdmfDiffReportCollection that collects all difference reports during the comparison
- *
- */
-void XdmfDiff::GetDiffs(XdmfDiff::XdmfDiffReportCollection & errorReports)
+void XdmfDiffInternal::GetDiffs(XdmfDiffInternal::XdmfDiffReportCollection & errorReports)
 {
+	XdmfRoot * diffRoot;
+	XdmfDomain * diffDomain;
+	XdmfDOM * diffDOM;
+
+	if (CreateDiffFile)
+	{
+		diffRoot = new XdmfRoot();
+		diffDomain = new XdmfDomain();
+		diffDOM = new XdmfDOM();
+
+		diffRoot->SetDOM(diffDOM);
+		diffRoot->Build();
+		diffRoot->Insert(diffDomain);
+
+		diffGridParent = diffDomain;
+	}
+
 	XdmfXmlNode currDomain = myRefDOM->FindElement("Domain");
 	for (int i=0; i<myRefDOM->FindNumberOfElements("Grid", currDomain); i++)
 	{
@@ -237,6 +687,7 @@ void XdmfDiff::GetDiffs(XdmfDiff::XdmfDiffReportCollection & errorReports)
 		grid.SetDOM(myRefDOM);
 		grid.SetElement(myRefDOM->FindElement("Grid", i, currDomain));
 		grid.Update();
+		//grid.Build();
 		// Make sure we cleanup well
 		for (int j=0; j<grid.GetNumberOfAttributes(); j++)
 		{
@@ -244,16 +695,17 @@ void XdmfDiff::GetDiffs(XdmfDiff::XdmfDiffReportCollection & errorReports)
 		}
 		this->GetDiffs(grid, errorReports);
 	}
+
+	if (CreateDiffFile)
+	{
+		diffDOM->Write(diffName.c_str());
+		delete diffRoot;
+		delete diffDomain;
+		delete diffDOM;
+	}
 }
 
-/*
- * Returns the differences between two grids.
- *
- * @param refGrid the reference grid to compare (new grid is searched for using the reference grid's name)
- * @param errorReports an XdmfDiffReportCollection that collects all difference reports during the comparison
- *
- */
-void XdmfDiff::GetDiffs(XdmfGrid & refGrid, XdmfDiff::XdmfDiffReportCollection & errorReports)
+void XdmfDiffInternal::GetDiffs(XdmfGrid & refGrid, XdmfDiffInternal::XdmfDiffReportCollection & errorReports)
 {
 	// Check for user specified grid includes / excludes
 	if (includedGrids.size() != 0)
@@ -305,6 +757,45 @@ void XdmfDiff::GetDiffs(XdmfGrid & refGrid, XdmfDiff::XdmfDiffReportCollection &
 		diffReport.AddError("Grid Type", refGrid.GetGridTypeAsString(), newGrid.GetGridTypeAsString());
 	}
 	errorReports.AddReport(refGrid.GetName(), diffReport);
+
+	if (CreateDiffFile && diffGridParent)
+	{
+		diffGrid = new XdmfGrid();
+		diffGrid->SetGridType(refGrid.GetGridType());
+		diffGrid->SetCollectionType(refGrid.GetCollectionType());
+		diffGrid->SetName(refGrid.GetName());
+		XdmfGeometry * geom = new XdmfGeometry();
+		geom->SetGeometryType(refGrid.GetGeometry()->GetGeometryType());
+		geom->SetNumberOfPoints(refGrid.GetGeometry()->GetNumberOfPoints());
+		geom->SetPoints(refGrid.GetGeometry()->GetPoints());
+		geom->SetDeleteOnGridDelete(true);
+		if (refGrid.GetGeometry()->GetPoints()->GetHeavyDataSetName())
+		{
+			std::string currHeavyName = refGrid.GetGeometry()->GetPoints()->GetHeavyDataSetName();
+			currHeavyName = diffHeavyName + currHeavyName.substr(currHeavyName.find(":/"), currHeavyName.size() - currHeavyName.find(":/"));
+			geom->GetPoints()->SetHeavyDataSetName(currHeavyName.c_str());
+		}
+		diffGrid->SetGeometry(geom);
+		XdmfTopology * top = new XdmfTopology();
+		top->SetTopologyType(refGrid.GetTopology()->GetTopologyType());
+		top->SetNodesPerElement(refGrid.GetTopology()->GetNodesPerElement());
+		top->SetNumberOfElements(refGrid.GetTopology()->GetNumberOfElements());
+		top->SetConnectivity(refGrid.GetTopology()->GetConnectivity());
+		top->SetDeleteOnGridDelete(true);
+		if (refGrid.GetTopology()->GetConnectivity()->GetHeavyDataSetName())
+		{
+			std::string currHeavyName = refGrid.GetTopology()->GetConnectivity()->GetHeavyDataSetName();
+			currHeavyName = diffHeavyName + currHeavyName.substr(currHeavyName.find(":/"), currHeavyName.size() - currHeavyName.find(":/"));
+			top->GetConnectivity()->SetHeavyDataSetName(currHeavyName.c_str());
+		}
+		diffGrid->SetTopology(top);
+		diffGridParent->Insert(diffGrid);
+		diffGrid->Build();
+		if (refGrid.GetTime()->GetTimeType() != XDMF_TIME_UNSET)
+		{
+			diffGrid->Insert(refGrid.GetTime());
+		}
+	}
 
 	if (refGrid.GetGridType() == XDMF_GRID_COLLECTION)
 	{
@@ -384,9 +875,9 @@ void XdmfDiff::GetDiffs(XdmfGrid & refGrid, XdmfDiff::XdmfDiffReportCollection &
 
 	if (!IgnoreTime)
 	{
-		XdmfDiffReport diffReport = XdmfDiffReport("Time");
 		if (refGrid.GetTime()->GetValue() != newGrid.GetTime()->GetValue())
 		{
+			XdmfDiffReport diffReport = XdmfDiffReport("Time");
 			std::stringstream refTime;
 			std::stringstream newTime;
 			refTime << refGrid.GetTime()->GetValue();
@@ -396,26 +887,29 @@ void XdmfDiff::GetDiffs(XdmfGrid & refGrid, XdmfDiff::XdmfDiffReportCollection &
 		}
 	}
 
-	for (int i=0; i<refGrid.GetNumberOfChildren(); i++)
+	if (CreateDiffFile && diffGridParent)
 	{
-		XdmfGrid grid = XdmfGrid();
-		grid.SetDOM(myRefDOM);
-		grid.SetElement(refGrid.GetChild(i)->GetElement());
-		grid.Update();
-		this->GetDiffs(grid, errorReports);
+		diffGrid->Build();
+	}
+
+	if (refGrid.GetNumberOfChildren() > 0)
+	{
+		if (CreateDiffFile && diffGridParent)
+		{
+			diffGridParent = diffGrid;
+		}
+		for (int i=0; i<refGrid.GetNumberOfChildren(); i++)
+		{
+			XdmfGrid grid = XdmfGrid();
+			grid.SetDOM(myRefDOM);
+			grid.SetElement(refGrid.GetChild(i)->GetElement());
+			grid.Update();
+			this->GetDiffs(grid, errorReports);
+		}
 	}
 }
 
-/*
- * Returns the differences in values between two XdmfGeometries
- *
- * @param refGeometry an XdmfGeometry to compare
- * @param newGeometry an XdmfGeometry to compare
- *
- * @return an XdmfDiffReport containing differences in values
- *
- */
-XdmfDiff::XdmfDiffReport XdmfDiff::GetGeometryDiffs(XdmfGeometry * refGeometry, XdmfGeometry * newGeometry)
+XdmfDiffInternal::XdmfDiffReport XdmfDiffInternal::GetGeometryDiffs(XdmfGeometry * refGeometry, XdmfGeometry * newGeometry)
 {
 	XdmfDiffReport diffReport = XdmfDiffReport("Geometry");
 
@@ -439,16 +933,7 @@ XdmfDiff::XdmfDiffReport XdmfDiff::GetGeometryDiffs(XdmfGeometry * refGeometry, 
 	return diffReport;
 }
 
-/*
- * Returns the differences in values between two XdmfTopologies
- *
- * @param refTopology an XdmfTopology to compare
- * @param newTopology an XdmfTopology to compare
- *
- * @return an XdmfDiffReport containing differences in values
- *
- */
-XdmfDiff::XdmfDiffReport XdmfDiff::GetTopologyDiffs(XdmfTopology * refTopology, XdmfTopology * newTopology)
+XdmfDiffInternal::XdmfDiffReport XdmfDiffInternal::GetTopologyDiffs(XdmfTopology * refTopology, XdmfTopology * newTopology)
 {
 	XdmfDiffReport diffReport = XdmfDiffReport("Topology");
 
@@ -458,19 +943,11 @@ XdmfDiff::XdmfDiffReport XdmfDiff::GetTopologyDiffs(XdmfTopology * refTopology, 
 	}
 
 	this->CompareValues(diffReport, refTopology->GetConnectivity(), newTopology->GetConnectivity(), 0, refTopology->GetNumberOfElements(), refTopology->GetNodesPerElement());
+
 	return diffReport;
 }
 
-/*
- * Returns the differences in values between two XdmfAttributes
- *
- * @param refAttribute an XdmfAttribute to compare
- * @param newAttribute an XdmfAttribute to compare
- *
- * @return an XdmfDiffReport containing differences in values
- *
- */
-XdmfDiff::XdmfDiffReport XdmfDiff::GetAttributeDiffs(XdmfAttribute * refAttribute, XdmfAttribute * newAttribute)
+XdmfDiffInternal::XdmfDiffReport XdmfDiffInternal::GetAttributeDiffs(XdmfAttribute * refAttribute, XdmfAttribute * newAttribute)
 {
 	std::stringstream valType;
 	valType << "Attribute " << refAttribute->GetName();
@@ -504,32 +981,64 @@ XdmfDiff::XdmfDiffReport XdmfDiff::GetAttributeDiffs(XdmfAttribute * refAttribut
 		diffReport.AddError("Attribute Type", refAttribute->GetAttributeTypeAsString(), newAttribute->GetAttributeTypeAsString());
 	}
 
-	this->CompareValues(diffReport, refAttribute->GetValues(), newAttribute->GetValues(), 0, refAttribute->GetValues()->GetNumberOfElements(), numValsPerNode);
+	XdmfArray * diffs = this->CompareValues(diffReport, refAttribute->GetValues(), newAttribute->GetValues(), 0, refAttribute->GetValues()->GetNumberOfElements(), numValsPerNode);
+
+	if(CreateDiffFile && diffs && diffGrid)
+	{
+		XdmfAttribute * attr = new XdmfAttribute();
+		attr->SetName(refAttribute->GetName());
+		attr->SetAttributeType(refAttribute->GetAttributeType());
+		attr->SetAttributeCenter(refAttribute->GetAttributeCenter());
+		attr->SetValues(diffs);
+		attr->SetDeleteOnGridDelete(true);
+		diffGrid->Insert(attr);
+	}
+
 	return diffReport;
 }
 
-/*
- * Compares values between two XdmfArrays
- *
- * @param errorReport an XdmfDiffReport to add comparison results to
- * @param refArray an XdmfArray containing values to compare
- * @param newArray an XdmfArray containing values to compare
- * @param startIndex an index to start comparison at
- * @param numValues the number of values to compare
- * @param groupLength how many values are contained together.
- * 		  Useful for reporting changes in multiple values i.e. XYZ geometry (default: 1)
- *
- */
-void XdmfDiff::CompareValues(XdmfDiffReport & errorReport, XdmfArray * refArray, XdmfArray * newArray, XdmfInt64 startIndex, XdmfInt64 numValues, XdmfInt64 groupLength)
+XdmfArray * XdmfDiffInternal::CompareValues(XdmfDiffReport & errorReport, XdmfArray * refArray, XdmfArray * newArray, XdmfInt64 startIndex, XdmfInt64 numValues, XdmfInt64 groupLength)
 {
+	switch (refArray->GetNumberType()) {
+		case XDMF_FLOAT64_TYPE:
+			return this->CompareValuesPriv<XdmfFloat64>(errorReport, refArray,newArray, startIndex, numValues, groupLength);
+		case XDMF_FLOAT32_TYPE:
+			return this->CompareValuesPriv<XdmfFloat32>(errorReport, refArray,newArray, startIndex, numValues, groupLength);
+		case XDMF_INT64_TYPE:
+			return this->CompareValuesPriv<XdmfInt64>(errorReport, refArray,newArray, startIndex, numValues, groupLength);
+		case XDMF_INT32_TYPE:
+			return this->CompareValuesPriv<XdmfInt32>(errorReport, refArray,newArray, startIndex, numValues, groupLength);
+		case XDMF_INT16_TYPE:
+			return this->CompareValuesPriv<XdmfInt16>(errorReport, refArray,newArray, startIndex, numValues, groupLength);
+		case XDMF_INT8_TYPE:
+			return this->CompareValuesPriv<XdmfInt8>(errorReport, refArray,newArray, startIndex, numValues, groupLength);
+		case XDMF_UINT32_TYPE:
+			return this->CompareValuesPriv<XdmfUInt32>(errorReport, refArray,newArray, startIndex, numValues, groupLength);
+		case XDMF_UINT16_TYPE:
+			return this->CompareValuesPriv<XdmfUInt16>(errorReport, refArray,newArray, startIndex, numValues, groupLength);
+		case XDMF_UINT8_TYPE:
+			return this->CompareValuesPriv<XdmfUInt8>(errorReport, refArray,newArray, startIndex, numValues, groupLength);
+		default:
+			return this->CompareValuesPriv<XdmfFloat64>(errorReport, refArray,newArray, startIndex, numValues, groupLength);
+	}
+	return NULL;
+}
+
+template <class XdmfType> XdmfArray * XdmfDiffInternal::CompareValuesPriv(XdmfDiffReport & errorReport, XdmfArray * refArray, XdmfArray * newArray, XdmfInt64 startIndex, XdmfInt64 numValues, XdmfInt64 groupLength)
+{
+
 	if (groupLength < 1)
 	{
-		return;
+		return NULL;
 	}
 
 	if (refArray->GetNumberOfElements() != newArray->GetNumberOfElements())
 	{
-		errorReport.AddError("Number of Elements" , refArray->GetNumberOfElements() + "", refArray->GetNumberOfElements() + "");
+		std::stringstream refArrayElem;
+		std::stringstream newArrayElem;
+		refArrayElem << refArray->GetNumberOfElements();
+		newArrayElem << newArray->GetNumberOfElements();
+		errorReport.AddError("Number of Elements" , refArrayElem.str(), newArrayElem.str());
 	}
 
 	if (strcmp(refArray->GetShapeAsString(), newArray->GetShapeAsString()) != 0)
@@ -542,340 +1051,64 @@ void XdmfDiff::CompareValues(XdmfDiffReport & errorReport, XdmfArray * refArray,
 		errorReport.AddError("Number Type" , refArray->GetNumberTypeAsString(), newArray->GetNumberTypeAsString());
 	}
 
-	switch(refArray->GetNumberType())
+	XdmfType * refVals = (XdmfType*)refArray->GetDataPointer(startIndex);
+	XdmfType * newVals = (XdmfType*)newArray->GetDataPointer(startIndex);
+
+	XdmfArray * toReturn = new XdmfArray();
+	if (refArray->GetHeavyDataSetName())
 	{
-		case XDMF_FLOAT64_TYPE:
-		{
-			XdmfFloat64 * refVals = (XdmfFloat64*)refArray->GetDataPointer(startIndex);
-			XdmfFloat64 * newVals = (XdmfFloat64*)newArray->GetDataPointer(startIndex);
+		std::string currHeavyName = refArray->GetHeavyDataSetName();
+		currHeavyName = diffHeavyName + currHeavyName.substr(currHeavyName.find(":/"), currHeavyName.size() - currHeavyName.find(":/"));
+		toReturn->SetHeavyDataSetName(currHeavyName.c_str());
+	}
+	toReturn->SetNumberType(refArray->GetNumberType());
+	toReturn->SetNumberOfElements(refArray->GetNumberOfElements());
+	XdmfType * toReturnArray = (XdmfType*)toReturn->GetDataPointer(startIndex);
 
-			for (int i=0; i<numValues; i++)
-			{
-				XdmfFloat64 acceptableError = fabs(myAbsoluteError);
-				if (acceptableError == 0)
-				{
-					acceptableError = fabs(refVals[i] * myRelativeError);
-				}
-				if(fabs((double)(newVals[i] - refVals[i])) > acceptableError)
-				{
-					XdmfInt64 groupIndex = (int)((startIndex+i) / groupLength);
-					std::stringstream refValsReturn;
-					std::stringstream newValsReturn;
-					for (int j=0; j<groupLength; j++)
-					{
-						refValsReturn << refVals[(groupIndex * groupLength) + j];
-						newValsReturn << newVals[(groupIndex * groupLength) + j];
-						if (j+1 < groupLength)
-						{
-							refValsReturn << ", ";
-							newValsReturn << ", ";
-						}
-					}
-					errorReport.AddError("Values", groupIndex, refValsReturn.str(), newValsReturn.str());
-					i = (groupIndex * groupLength) + groupLength - 1;
-				}
-			}
-			return;
+	for (int i=0; i<numValues; i++)
+	{
+		double acceptableError = fabs(AbsoluteError);
+		if (acceptableError == 0)
+		{
+			acceptableError = fabs(refVals[startIndex + i] * RelativeError);
 		}
-		case XDMF_FLOAT32_TYPE:
+		XdmfType diff = newVals[startIndex + i] - refVals[startIndex + i];
+		toReturnArray[startIndex + i] = diff;
+		if(fabs(diff) > acceptableError)
 		{
-			XdmfFloat32 * refVals = (XdmfFloat32*)refArray->GetDataPointer(startIndex);
-			XdmfFloat32 * newVals = (XdmfFloat32*)newArray->GetDataPointer(startIndex);
-
-			for (int i=0; i<numValues; i++)
+			XdmfInt64 groupIndex = (int)((startIndex+i) / groupLength);
+			std::stringstream refValsReturn;
+			std::stringstream newValsReturn;
+			for (int j=0; j<groupLength; j++)
 			{
-				XdmfFloat64 acceptableError = fabs(myAbsoluteError);
-				if (acceptableError == 0)
+				refValsReturn << refVals[startIndex + i + j];
+				newValsReturn << newVals[startIndex + i + j];
+				if (j>0)
 				{
-					acceptableError = fabs(refVals[i] * myRelativeError);
+					toReturnArray[startIndex + i + j] = newVals[startIndex + i + j] - refVals[startIndex + i + j];
 				}
-				if(fabs((double)(newVals[i] - refVals[i])) > acceptableError)
+				if (j+1 < groupLength)
 				{
-					XdmfInt64 groupIndex = (int)((startIndex+i) / groupLength);
-					std::stringstream refValsReturn;
-					std::stringstream newValsReturn;
-					for (int j=0; j<groupLength; j++)
-					{
-						refValsReturn << refVals[(groupIndex * groupLength) + j];
-						newValsReturn << newVals[(groupIndex * groupLength) + j];
-						if (j+1 < groupLength)
-						{
-							refValsReturn << ", ";
-							newValsReturn << ", ";
-						}
-					}
-					errorReport.AddError("Values", groupIndex, refValsReturn.str(), newValsReturn.str());
-					i = (groupIndex * groupLength) + groupLength - 1;
+					refValsReturn << ", ";
+					newValsReturn << ", ";
 				}
 			}
-			return;
-		}
-		case XDMF_INT64_TYPE:
-		{
-			XdmfInt64 * refVals = (XdmfInt64*)refArray->GetDataPointer(startIndex);
-			XdmfInt64 * newVals = (XdmfInt64*)newArray->GetDataPointer(startIndex);
-
-			for (int i=0; i<numValues; i++)
-			{
-				XdmfFloat64 acceptableError = fabs(myAbsoluteError);
-				if (acceptableError == 0)
-				{
-					acceptableError = fabs(refVals[i] * myRelativeError);
-				}
-				if(fabs((double)(newVals[i] - refVals[i])) > acceptableError)
-				{
-					XdmfInt64 groupIndex = (int)((startIndex+i) / groupLength);
-					std::stringstream refValsReturn;
-					std::stringstream newValsReturn;
-					for (int j=0; j<groupLength; j++)
-					{
-						refValsReturn << refVals[(groupIndex * groupLength) + j];
-						newValsReturn << newVals[(groupIndex * groupLength) + j];
-						if (j+1 < groupLength)
-						{
-							refValsReturn << ", ";
-							newValsReturn << ", ";
-						}
-					}
-					errorReport.AddError("Values", groupIndex, refValsReturn.str(), newValsReturn.str());
-					i = (groupIndex * groupLength) + groupLength - 1;
-				}
-			}
-			return;
-		}
-		case XDMF_INT32_TYPE:
-		{
-			XdmfInt32 * refVals = (XdmfInt32*)refArray->GetDataPointer(startIndex);
-			XdmfInt32 * newVals = (XdmfInt32*)newArray->GetDataPointer(startIndex);
-
-			for (int i=0; i<numValues; i++)
-			{
-				XdmfFloat64 acceptableError = fabs(myAbsoluteError);
-				if (acceptableError == 0)
-				{
-					acceptableError = fabs(refVals[i] * myRelativeError);
-				}
-				if(fabs((double)(newVals[i] - refVals[i])) > acceptableError)
-				{
-					XdmfInt64 groupIndex = (int)((startIndex+i) / groupLength);
-					std::stringstream refValsReturn;
-					std::stringstream newValsReturn;
-					for (int j=0; j<groupLength; j++)
-					{
-						refValsReturn << refVals[(groupIndex * groupLength) + j];
-						newValsReturn << newVals[(groupIndex * groupLength) + j];
-						if (j+1 < groupLength)
-						{
-							refValsReturn << ", ";
-							newValsReturn << ", ";
-						}
-					}
-					errorReport.AddError("Values", groupIndex, refValsReturn.str(), newValsReturn.str());
-					i = (groupIndex * groupLength) + groupLength - 1;
-				}
-			}
-			return;
-		}
-		case XDMF_INT16_TYPE:
-		{
-			XdmfInt16 * refVals = (XdmfInt16*)refArray->GetDataPointer(startIndex);
-			XdmfInt16 * newVals = (XdmfInt16*)newArray->GetDataPointer(startIndex);
-
-			for (int i=0; i<numValues; i++)
-			{
-				XdmfFloat64 acceptableError = fabs(myAbsoluteError);
-				if (acceptableError == 0)
-				{
-					acceptableError = fabs(refVals[i] * myRelativeError);
-				}
-				if(fabs((double)(newVals[i] - refVals[i])) > acceptableError)
-				{
-					XdmfInt64 groupIndex = (int)((startIndex+i) / groupLength);
-					std::stringstream refValsReturn;
-					std::stringstream newValsReturn;
-					for (int j=0; j<groupLength; j++)
-					{
-						refValsReturn << refVals[(groupIndex * groupLength) + j];
-						newValsReturn << newVals[(groupIndex * groupLength) + j];
-						if (j+1 < groupLength)
-						{
-							refValsReturn << ", ";
-							newValsReturn << ", ";
-						}
-					}
-					errorReport.AddError("Values", groupIndex, refValsReturn.str(), newValsReturn.str());
-					i = (groupIndex * groupLength) + groupLength - 1;
-				}
-			}
-			return;
-		}
-		case XDMF_INT8_TYPE:
-		{
-			XdmfInt8 * refVals = (XdmfInt8*)refArray->GetDataPointer(startIndex);
-			XdmfInt8 * newVals = (XdmfInt8*)newArray->GetDataPointer(startIndex);
-
-			for (int i=0; i<numValues; i++)
-			{
-				XdmfFloat64 acceptableError = fabs(myAbsoluteError);
-				if (acceptableError == 0)
-				{
-					acceptableError = fabs(refVals[i] * myRelativeError);
-				}
-				if(fabs((double)(newVals[i] - refVals[i])) > acceptableError)
-				{
-					XdmfInt64 groupIndex = (int)((startIndex+i) / groupLength);
-					std::stringstream refValsReturn;
-					std::stringstream newValsReturn;
-					for (int j=0; j<groupLength; j++)
-					{
-						refValsReturn << refVals[(groupIndex * groupLength) + j];
-						newValsReturn << newVals[(groupIndex * groupLength) + j];
-						if (j+1 < groupLength)
-						{
-							refValsReturn << ", ";
-							newValsReturn << ", ";
-						}
-					}
-					errorReport.AddError("Values", groupIndex, refValsReturn.str(), newValsReturn.str());
-					i = (groupIndex * groupLength) + groupLength - 1;
-				}
-			}
-			return;
-		}
-		case XDMF_UINT32_TYPE:
-		{
-			XdmfUInt32 * refVals = (XdmfUInt32*)refArray->GetDataPointer(startIndex);
-			XdmfUInt32 * newVals = (XdmfUInt32*)newArray->GetDataPointer(startIndex);
-
-			for (int i=0; i<numValues; i++)
-			{
-				XdmfFloat64 acceptableError = fabs(myAbsoluteError);
-				if (acceptableError == 0)
-				{
-					acceptableError = fabs(refVals[i] * myRelativeError);
-				}
-				if(fabs((double)(newVals[i] - refVals[i])) > acceptableError)
-				{
-					XdmfInt64 groupIndex = (int)((startIndex+i) / groupLength);
-					std::stringstream refValsReturn;
-					std::stringstream newValsReturn;
-					for (int j=0; j<groupLength; j++)
-					{
-						refValsReturn << refVals[(groupIndex * groupLength) + j];
-						newValsReturn << newVals[(groupIndex * groupLength) + j];
-						if (j+1 < groupLength)
-						{
-							refValsReturn << ", ";
-							newValsReturn << ", ";
-						}
-					}
-					errorReport.AddError("Values", groupIndex, refValsReturn.str(), newValsReturn.str());
-					i = (groupIndex * groupLength) + groupLength - 1;
-				}
-			}
-			return;
-		}
-		case XDMF_UINT16_TYPE:
-		{
-			XdmfUInt16 * refVals = (XdmfUInt16*)refArray->GetDataPointer(startIndex);
-			XdmfUInt16 * newVals = (XdmfUInt16*)newArray->GetDataPointer(startIndex);
-
-			for (int i=0; i<numValues; i++)
-			{
-				XdmfFloat64 acceptableError = fabs(myAbsoluteError);
-				if (acceptableError == 0)
-				{
-					acceptableError = fabs(refVals[i] * myRelativeError);
-				}
-				if(fabs((double)(newVals[i] - refVals[i])) > acceptableError)
-				{
-					XdmfInt64 groupIndex = (int)((startIndex+i) / groupLength);
-					std::stringstream refValsReturn;
-					std::stringstream newValsReturn;
-					for (int j=0; j<groupLength; j++)
-					{
-						refValsReturn << refVals[(groupIndex * groupLength) + j];
-						newValsReturn << newVals[(groupIndex * groupLength) + j];
-						if (j+1 < groupLength)
-						{
-							refValsReturn << ", ";
-							newValsReturn << ", ";
-						}
-					}
-					errorReport.AddError("Values", groupIndex, refValsReturn.str(), newValsReturn.str());
-					i = (groupIndex * groupLength) + groupLength - 1;
-				}
-			}
-			return;
-		}
-		case XDMF_UINT8_TYPE:
-		{
-			XdmfUInt8 * refVals = (XdmfUInt8*)refArray->GetDataPointer(startIndex);
-			XdmfUInt8 * newVals = (XdmfUInt8*)newArray->GetDataPointer(startIndex);
-
-			for (int i=0; i<numValues; i++)
-			{
-				XdmfFloat64 acceptableError = fabs(myAbsoluteError);
-				if (acceptableError == 0)
-				{
-					acceptableError = fabs(refVals[i] * myRelativeError);
-				}
-				if(fabs((double)(newVals[i] - refVals[i])) > acceptableError)
-				{
-					XdmfInt64 groupIndex = (int)((startIndex+i) / groupLength);
-					std::stringstream refValsReturn;
-					std::stringstream newValsReturn;
-					for (int j=0; j<groupLength; j++)
-					{
-						refValsReturn << refVals[(groupIndex * groupLength) + j];
-						newValsReturn << newVals[(groupIndex * groupLength) + j];
-						if (j+1 < groupLength)
-						{
-							refValsReturn << ", ";
-							newValsReturn << ", ";
-						}
-					}
-					errorReport.AddError("Values", groupIndex, refValsReturn.str(), newValsReturn.str());
-					i = (groupIndex * groupLength) + groupLength - 1;
-				}
-			}
-			return;
-		}
-		default:
-		{
-			XdmfFloat64 * refVals = (XdmfFloat64*)refArray->GetDataPointer(startIndex);
-			XdmfFloat64 * newVals = (XdmfFloat64*)newArray->GetDataPointer(startIndex);
-
-			for (int i=0; i<numValues; i++)
-			{
-				XdmfFloat64 acceptableError = fabs(myAbsoluteError);
-				if (acceptableError == 0)
-				{
-					acceptableError = fabs(refVals[i] * myRelativeError);
-				}
-				if(fabs((double)(newVals[i] - refVals[i])) > acceptableError)
-				{
-					XdmfInt64 groupIndex = (int)((startIndex+i) / groupLength);
-					std::stringstream refValsReturn;
-					std::stringstream newValsReturn;
-					for (int j=0; j<groupLength; j++)
-					{
-						refValsReturn << refVals[(groupIndex * groupLength) + j];
-						newValsReturn << newVals[(groupIndex * groupLength) + j];
-						if (j+1 < groupLength)
-						{
-							refValsReturn << ", ";
-							newValsReturn << ", ";
-						}
-					}
-					errorReport.AddError("Values", groupIndex, refValsReturn.str(), newValsReturn.str());
-					i = (groupIndex * groupLength) - 1;
-				}
-			}
-			return;
+			errorReport.AddError("Values", groupIndex, refValsReturn.str(), newValsReturn.str());
+			i = startIndex + i + groupLength - 1;
 		}
 	}
-	return;
+	return toReturn;
+}
+
+XdmfBoolean XdmfDiffInternal::AreEquivalent()
+{
+	XdmfDiffReportCollection myErrors = XdmfDiffReportCollection(DisplayFailuresOnly, VerboseOutput);
+	this->GetDiffs(myErrors);
+	if (myErrors.GetNumberOfErrors() == 0)
+	{
+		return true;
+	}
+	return false;
 }
 
 /**
@@ -886,7 +1119,8 @@ void XdmfDiff::CompareValues(XdmfDiffReport & errorReport, XdmfArray * refArray,
  * @param settingsFile the file path to the settings file
  *
  */
-void XdmfDiff::ParseSettingsFile(XdmfConstString settingsFile)
+
+XdmfInt32 XdmfDiffInternal::ParseSettingsFile(XdmfConstString settingsFile)
 {
 
 	std::string str;
@@ -986,4 +1220,5 @@ void XdmfDiff::ParseSettingsFile(XdmfConstString settingsFile)
     	}
     }
     ifs.close();
+    return XDMF_SUCCESS;
 }

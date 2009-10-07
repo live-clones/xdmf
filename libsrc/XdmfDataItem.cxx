@@ -96,7 +96,7 @@ XdmfDataItem::GetArray(XdmfInt32 Create){
     return(this->Array);
 }
 
-XdmfInt32 
+XdmfInt32
 XdmfDataItem::SetArray(XdmfArray *anArray){
     if(this->Array && this->ArrayIsMine) delete this->Array;
     this->ArrayIsMine = 0;
@@ -104,7 +104,7 @@ XdmfDataItem::SetArray(XdmfArray *anArray){
     return(XDMF_SUCCESS);
 }
 
-XdmfInt32 
+XdmfInt32
 XdmfDataItem::SetDataDesc(XdmfDataDesc *aDataDesc){
     if(this->DataDesc && this->DataDescIsMine) delete this->DataDesc;
     this->DataDescIsMine = 0;
@@ -239,7 +239,7 @@ XdmfInt32 XdmfDataItem::UpdateInformation(){
 		}
 	}
 	XdmfDebug("Major = " << this->ColumnMajor);
-	
+
     XdmfDebug("XdmfDataItem::UpdateInformation()");
     if(XdmfElement::UpdateInformation() != XDMF_SUCCESS) return(XDMF_FAIL);
     // If this is a Reference, this->Element now points to the end of the chain. Continue?
@@ -286,7 +286,7 @@ XdmfInt32 XdmfDataItem::UpdateInformation(){
             return(XDMF_FAIL);
         } while(0);
     }
-    if(this->GetIsReference() && 
+    if(this->GetIsReference() &&
         (this->ReferenceElement != this->Element) &&
         (this->GetReferenceObject(this->Element) != this)){
         XdmfDebug("Reference DataItem Copied Info from another ReferenceObject");
@@ -520,6 +520,7 @@ XdmfInt32 XdmfDataItem::Update(){
                 return(XDMF_FAIL);
             }
             this->SetHeavyDataSetName(this->Values->GetHeavyDataSetName());
+            this->Array->SetHeavyDataSetName(this->Values->GetHeavyDataSetName());
             break;
         case XDMF_FORMAT_XML :
             this->Values->SetDebug(this->GetDebug());
@@ -552,7 +553,7 @@ XdmfInt32 XdmfDataItem::Update(){
             XdmfErrorMessage("Unsupported Data Format");
             return(XDMF_FAIL);
     }
-    
+
 	// Support for Fortran matrices (2D arrays) added by Dominik Szczerba, June 2009.
 	// Can be further optimized by e.g. in situ transpose methods
 	// discussed on http://en.wikipedia.org/wiki/In-place_matrix_transposition
@@ -617,7 +618,7 @@ XdmfInt32 XdmfDataItem::Update(){
 					}
 				}
 			}
-			
+
 			std::swap(dims[0], dims[1]);
 			Array->Reform(rank,dims);
 
@@ -654,7 +655,7 @@ XdmfInt32 XdmfDataItem::Update(){
 					XdmfErrorMessage("unknown data type");
 					return(XDMF_FAIL);
 			}
-			
+
 			XdmfDebug("done transpose");
 
 		}
@@ -665,9 +666,8 @@ XdmfInt32 XdmfDataItem::Update(){
 		}
 
 
-		
 	}
-	
+
     return(XDMF_SUCCESS);
 }
 
@@ -739,7 +739,7 @@ XdmfInt32 XdmfDataItem::Build(){
             break;
 	case 2 :
 	    this->Set("Precision", "2");
-	    break;	
+	    break;
         case 1 :
             this->Set("Precision", "1");
             break;

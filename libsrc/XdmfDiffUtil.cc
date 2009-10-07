@@ -119,7 +119,8 @@ int main(int argc, char* argv[]) {
 		}
 	}
 
-	std::string output = diffFramework->GetDiffsAsString();
+	//diffFramework->SetCreateDiffFile(true);
+	std::string output = diffFramework->GetDiffs();
 	cout << output << endl;
 	delete diffFramework;
 	return 0;
