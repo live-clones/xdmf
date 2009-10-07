@@ -64,9 +64,10 @@
 #include <XdmfArray.h>
 #include <XdmfGrid.h>
 #include <XdmfDOM.h>
-#include <map>
-#include <set>
-#include <vector>
+#include <XdmfDomain.h>
+#include <XdmfRoot.h>
+
+class XdmfDiffInternal;
 
 #if defined(WIN32) && !defined(XDMFSTATIC)
 
@@ -80,189 +81,107 @@
 #else
 
 // Linux or static configuration
-#define XDMF_UTILS_DLL 
+#define XDMF_UTILS_DLL
 
 #endif
 
 class XDMF_UTILS_DLL XdmfDiff{
 public:
 
-	class XdmfDiffReport{
-	public:
-
-		class XdmfDiffEntry{
-		public:
-			XdmfDiffEntry(std::string errorDescription, XdmfInt64 loc, std::string refVals, std::string newVals)
-			{
-				description = errorDescription;
-				location = loc;
-				refValues = refVals;
-				newValues = newVals;
-			}
-			~XdmfDiffEntry(){}
-			friend std::ostream &operator<<(std::ostream & toReturn, const XdmfDiffEntry &diffEntry)
-			{
-				if (diffEntry.location == -1)
-				{
-					toReturn << "For " << diffEntry.description << " | Expected : " << diffEntry.refValues << " | Got : " << diffEntry.newValues;
-				}
-				else
-				{
-					toReturn << "For " << diffEntry.description << " | At Tuple " << diffEntry.location << " | Expected : " << diffEntry.refValues << " | Got : " << diffEntry.newValues;
-				}
-				return toReturn;
-			}
-		private:
-			XdmfInt64 location;
-			std::string refValues;
-			std::string newValues;
-			std::string description;
-		};
-
-		XdmfDiffReport(std::string type)
-		{
-			valType = type;
-		}
-		~XdmfDiffReport(){}
-		void AddError(std::string errorDescription, std::string refVals, std::string newVals)
-		{
-			this->AddError(errorDescription, -1, refVals, newVals);
-		}
-		void AddError(std::string errorDescription, XdmfInt64 loc, std::string refVals, std::string newVals)
-		{
-			errors.push_back(XdmfDiffEntry(errorDescription, loc, refVals, newVals));
-		}
-		void AddError(std::string warning)
-		{
-			warnings.push_back(warning);
-		}
-		XdmfInt64 GetNumberOfErrors()
-		{
-			return errors.size() + warnings.size();
-		}
-
-		friend std::ostream &operator<<(std::ostream & toReturn, const XdmfDiffReport &diffReport)
-		{
-			toReturn << diffReport.valType << "\n";
-			for (unsigned int i=0; i<diffReport.warnings.size(); i++)
-			{
-				toReturn << "\t\t" << diffReport.warnings[i] << "\n";
-			}
-			for (unsigned int i=0; i<diffReport.errors.size(); i++)
-			{
-				toReturn << "\t\t" << diffReport.errors[i] << "\n";
-			}
-			return toReturn;
-		}
-
-	private:
-		std::vector<XdmfDiffEntry> errors;
-		std::vector<std::string> warnings;
-		std::string valType;
-	};
-
-	class XdmfDiffReportCollection{
-	public:
-		XdmfDiffReportCollection(XdmfBoolean failuresOnly, XdmfBoolean verbose)
-		{
-			displayFailuresOnly = failuresOnly;
-			verboseOutput = verbose;
-		}
-		~XdmfDiffReportCollection(){}
-		void AddReport(std::string gridName, XdmfDiffReport report)
-		{
-			reports[gridName].push_back(report);
-		}
-		XdmfInt64 GetNumberOfErrors()
-		{
-			int numErrors = 0;
-			for (std::map<std::string, std::vector<XdmfDiffReport> >::const_iterator iter = reports.begin(); iter!= reports.end(); iter++)
-			{
-				for (unsigned int i=0; i<iter->second.size(); i++)
-				{
-					std::vector<XdmfDiffReport> report = iter->second;
-					numErrors += report[i].GetNumberOfErrors();
-				}
-			}
-			return numErrors;
-		}
-		friend std::ostream &operator<<(std::ostream & toReturn, const XdmfDiffReportCollection &diffCollection)
-		{
-			for (std::map<std::string, std::vector<XdmfDiffReport> >::const_iterator iter = diffCollection.reports.begin(); iter!= diffCollection.reports.end(); iter++)
-			{
-				int numGridErrors = 0;
-				for (unsigned int i=0; i<iter->second.size(); i++)
-				{
-					std::vector<XdmfDiffReport> report = iter->second;
-					if (report[i].GetNumberOfErrors() > 0)
-					{
-						if (numGridErrors == 0 || diffCollection.verboseOutput)
-						{
-							toReturn << "|FAIL|  Grid Name: " << iter->first << "\n";
-						}
-						toReturn << "\t" << report[i];
-						numGridErrors += report[i].GetNumberOfErrors();
-					}
-					else if (diffCollection.verboseOutput && !diffCollection.displayFailuresOnly)
-					{
-						toReturn << "|PASS|  Grid Name: " << iter->first;
-						toReturn << "\t" << report[i];
-					}
-				}
-				if (numGridErrors == 0 && !diffCollection.displayFailuresOnly && !diffCollection.verboseOutput)
-				{
-					toReturn << "|PASS|  Grid Name: " << iter->first << "\n";
-				}
-			}
-			return toReturn;
-		}
-	private:
-		std::map<std::string, std::vector<XdmfDiffReport> > reports;
-		XdmfBoolean displayFailuresOnly;
-		XdmfBoolean verboseOutput;
-	};
-
+	/*
+	 * Constructs an XdmfDiff object to compare two Xdmf Files
+	 *
+	 * @param refFileName the path to an Xdmf file to compare
+	 * @param newFileName the path to an Xdmf file to compare
+	 *
+	 */
 	XdmfDiff(XdmfConstString refFileName, XdmfConstString newFileName);
+
+	/*
+	 * Constructs an XdmfDiff object to compare two Xdmf Files
+	 *
+	 * @param refDOM an XdmfDOM to compare
+	 * @param newDOM an XdmfDOM to compare
+	 *
+	 */
 	XdmfDiff(XdmfDOM * refDOM, XdmfDOM * newDOM);
+
+	/*
+	 * Destructor
+	 *
+	 */
 	~XdmfDiff();
 
-	std::string GetDiffsAsString();
-	std::string GetDiffsAsString(XdmfConstString gridName);
-	void ParseSettingsFile(XdmfConstString settingsFile);
-	void SetRelativeError(XdmfFloat64 relativeError);
-	void SetAbsoluteError(XdmfFloat64 absoluteError);
-	XdmfSetValueMacro(IgnoreTime, XdmfBoolean);
-	XdmfSetValueMacro(IgnoreGeometry, XdmfBoolean);
-	XdmfSetValueMacro(IgnoreTopology, XdmfBoolean);
-	XdmfSetValueMacro(IgnoreAllAttributes, XdmfBoolean);
-	XdmfSetValueMacro(DisplayFailuresOnly, XdmfBoolean);
-	XdmfSetValueMacro(VerboseOutput, XdmfBoolean);
+	/*
+	 * Get the differences between two Xdmf files
+	 *
+	 * @return an XdmfConstString of differences between the files
+	 */
+	std::string GetDiffs();
+
+	/*
+	 * Get the differences between grids in two Xdmf files
+	 *
+	 * @param gridName the name of the grid to compare
+	 *
+	 * @return an XdmfConstString of differences between the grids
+	 */
+	std::string GetDiffs(XdmfConstString gridName);
+
+
+	XdmfInt32 SetIgnoreTime(XdmfBoolean value = true);
+	XdmfInt32 GetIgnoreTime();
+	XdmfInt32 SetIgnoreGeometry(XdmfBoolean value = true);
+	XdmfInt32 GetIgnoreGeometry();
+	XdmfInt32 SetIgnoreTopology(XdmfBoolean value = true);
+	XdmfInt32 GetIgnoreTopology();
+	XdmfInt32 SetIgnoreAllAttributes(XdmfBoolean value = true);
+	XdmfInt32 GetIgnoreAllAttributes();
+	XdmfInt32 SetDisplayFailuresOnly(XdmfBoolean value = true);
+	XdmfInt32 GetDisplayFailuresOnly();
+	XdmfInt32 SetVerboseOutput(XdmfBoolean value = true);
+	XdmfInt32 GetVerboseOutput();
+	XdmfInt32 SetCreateDiffFile(XdmfBoolean value = true);
+	XdmfInt32 GetCreateDiffFile();
+	XdmfInt32 SetDiffFileName(XdmfString value);
+	XdmfString GetDiffFileName();
+
+	/*
+	 * Sets the acceptable relative error between values.  Relative Errors and Absolute Errors
+	 * can not be used at the same time.
+	 *
+	 * @param relativeError the acceptable relative error in decimal form
+	 *
+	 */
+	XdmfInt32 SetRelativeError(XdmfFloat64 relativeError);
+	XdmfFloat64 GetRelativeError();
+
+	/*
+	 * Sets the acceptable absolute error between values.  Relative Errors and Absolute Errors
+	 * can not be used at the same time.
+	 *
+	 * @param absoluteError the acceptable absolute error
+	 *
+	 */
+	XdmfInt32 SetAbsoluteError(XdmfFloat64 absoluteError);
+	XdmfFloat64 GetAbsoluteError();
+	XdmfInt32 IncludeGrid(XdmfString gridName);
+	XdmfInt32 IgnoreGrid(XdmfString gridName);
+	XdmfInt32 IncludeAttribute(XdmfString attributeName);
+	XdmfInt32 IgnoreAttribute(XdmfString attributeName);
+
+	XdmfInt32 ParseSettingsFile(XdmfConstString settingsFile);
+
+	/*
+	 * Determines whether the two files are equivalent.
+	 *
+	 * @return an XdmfBoolean true = equivalent, false = nonequivalent
+	 *
+	 */
 	XdmfBoolean AreEquivalent();
 
 private:
-	void GetDiffs(XdmfDiffReportCollection & errorReports);
-	void GetDiffs(XdmfGrid & grid, XdmfDiffReportCollection & errorReports);
-	void GetDiffs(XdmfConstString gridName, XdmfDiffReportCollection & errorReports);
-	XdmfDiffReport GetGeometryDiffs(XdmfGeometry * refGeometry, XdmfGeometry * newGeometry);
-	XdmfDiffReport GetTopologyDiffs(XdmfTopology * refTopology, XdmfTopology * newTopology);
-	XdmfDiffReport GetAttributeDiffs(XdmfAttribute * refAttribute, XdmfAttribute * newAttribute);
-	void CompareValues(XdmfDiffReport & errorReport, XdmfArray * refArray, XdmfArray * newArray, XdmfInt64 startIndex, XdmfInt64 numValues, XdmfInt64 groupLength = 1);
-	XdmfDOM * myRefDOM;
-	XdmfDOM * myNewDOM;
-	XdmfFloat64 myRelativeError;
-	XdmfFloat64 myAbsoluteError;
-	XdmfBoolean IgnoreTime;
-	XdmfBoolean IgnoreGeometry;
-	XdmfBoolean IgnoreTopology;
-	XdmfBoolean IgnoreAllAttributes;
-	XdmfBoolean DisplayFailuresOnly;
-	XdmfBoolean VerboseOutput;
-	XdmfBoolean refDOMIsMine;
-	XdmfBoolean newDOMIsMine;
-	std::set<std::string> includedGrids;
-	std::set<std::string> ignoredGrids;
-	std::set<std::string> includedAttributes;
-	std::set<std::string> ignoredAttributes;
+	XdmfDiffInternal * myInternal;
 };
 
 #endif /* XDMFDIFF_H_ */
