@@ -8,7 +8,7 @@
 /*                                                                 */
 /*  Author:                                                        */
 /*     Kenneth Leiter
-/*     kenneth.leiter@arl.army.mil                                 */
+/*     kleiter@arl.army.mil                                         */
 /*     US Army Research Laboratory                                 */
 /*     Aberdeen Proving Ground, MD                                 */
 /*                                                                 */
@@ -58,12 +58,14 @@ TODO:
 #include <XdmfAttribute.h>
 #include <XdmfDOM.h>
 #include <XdmfGrid.h>
+#include <XdmfMap.h>
 #include <XdmfSet.h>
 
 #include <vector>
 #include <deque>
 #include <list>
 #include <set>
+#include <sstream>
 
 class XdmfSTLConverter {
 
@@ -73,10 +75,10 @@ class XdmfSTLConverter {
 		inline ~XdmfSTLConverter();
 
 		template <template <typename> class Container, class T>
-		void inline writeSetToXdmf(Container<T> const& myContainer, XdmfDOM * myDOM, std::string myName);
+		void inline writeSetToXdmf(Container<T> const& myContainer, XdmfElement * parent, std::string myName, std::string heavyName = "Xdmf.h5");
 
 		template <template <typename, typename> class Container, class T, class U>
-		void inline writeMapToXdmf(Container<T, U> const& myContainer, XdmfDOM * myDOM, std::string myName);
+		void inline writeMapToXdmf(Container<T, U> const& myContainer, XdmfElement * parent, std::string myName, std::string heavyName = "Xdmf.h5");
 
 		template <template <typename> class Container, class T>
 		void inline getSetFromXdmf(Container<T> &myContainer, XdmfSet * currSet);
@@ -139,36 +141,47 @@ class XdmfSTLConverter {
 
 	}
 
+	XdmfSTLConverter::~XdmfSTLConverter()
+	{
+
+	}
+
 	// FOR NON-ASSOCIATIVE SETS
 	template <template <typename> class Container, class T>
-	void XdmfSTLConverter::writeSetToXdmf(Container<T> const& myContainer, XdmfDOM * myDOM, std::string myName)
+	void XdmfSTLConverter::writeSetToXdmf(Container<T> const& myContainer, XdmfElement * parent, std::string myName, std::string heavyName)
 	{
      	XdmfSet * currSet = new XdmfSet();
-       	currSet->SetDOM(myDOM);
        	currSet->SetSetType(XDMF_SET_TYPE_NODE);
        	currSet->SetName(myName.c_str());
+       	currSet->SetDeleteOnGridDelete(true);
 
        	// Copy Elements from Set to XdmfArray
-       	XdmfArray * currentArray = new XdmfArray();
-		generateXdmfArray(currentArray, myContainer);
+       	std::stringstream name;
+       	name << heavyName;
+       	if (heavyName.length() >= 3)
+       	{
+           	if(heavyName.substr(heavyName.length() - 3).compare(".h5") == 0)
+           	{
+           		name << ":";
+           	}
+       	}
+       	name << "/" << myName;
+       	currSet->GetIds()->SetHeavyDataSetName(name.str().c_str());
+		generateXdmfArray(currSet->GetIds(), myContainer);
 
-        XdmfGrid * myGrid = new XdmfGrid();
-        myGrid->SetDOM(myDOM);
-        myGrid->SetElement(myDOM->FindElement("Domain"));
-        myGrid->Insert(currSet);
-        currSet->SetIds(currentArray);
+        parent->Insert(currSet);
         currSet->Build();
 	}
 
 	// FOR ASSOCIATIVE SETS (Maps)
 	// Writing values as set attributes with keys as set dataitems...
 	template <template <typename, typename> class Container, class T, class U>
-	void XdmfSTLConverter::writeMapToXdmf(Container<T, U> const& myContainer, XdmfDOM * myDOM, std::string myName)
+	void XdmfSTLConverter::writeMapToXdmf(Container<T, U> const& myContainer, XdmfElement * parent, std::string myName, std::string heavyName)
 	{
 		XdmfSet * currSet = new XdmfSet();
-		currSet->SetDOM(myDOM);
 		currSet->SetSetType(XDMF_SET_TYPE_NODE);
 		currSet->SetName(myName.c_str());
+		currSet->SetDeleteOnGridDelete(true);
 
 		// Store Keys and Values in Separate Sets
 		std::vector<T> keys (myContainer.size());
@@ -183,36 +196,49 @@ class XdmfSTLConverter {
 			index++;
 		}
 
-		// Copy Elements from each vector to XdmfArrays
-		XdmfArray * keyArray = new XdmfArray();
-		generateXdmfArray(keyArray, keys);
-		XdmfArray * valArray = new XdmfArray();
-		generateXdmfArray(valArray, vals);
-
-		XdmfGrid * myGrid = new XdmfGrid();
-		myGrid->SetDOM(myDOM);
-		myGrid->SetElement(myDOM->FindElement("Domain"));
-		myGrid->Insert(currSet);
-
 		XdmfAttribute * myAttribute = new XdmfAttribute();
 		myAttribute->SetName("Values");
 		myAttribute->SetAttributeCenter(XDMF_ATTRIBUTE_CENTER_NODE);
 		myAttribute->SetAttributeType(XDMF_ATTRIBUTE_TYPE_SCALAR);
-		myAttribute->SetValues(valArray);
+		myAttribute->SetDeleteOnGridDelete(true);
+
+		// Copy Elements from each vector to XdmfArrays
+		std::stringstream keyName;
+		std::stringstream valName;
+       	keyName << heavyName;
+       	valName << heavyName;
+
+       	if (heavyName.length() >= 3)
+       	{
+           	if(heavyName.substr(heavyName.length() - 3).compare(".h5") == 0)
+           	{
+           		keyName << ":";
+           		valName << ":";
+           	}
+       	}
+       	keyName << "/" << myName << "/Keys";
+       	valName << "/" << myName << "/Vals";
+
+		currSet->GetIds()->SetHeavyDataSetName(keyName.str().c_str());
+		myAttribute->GetValues()->SetHeavyDataSetName(valName.str().c_str());
+		generateXdmfArray(currSet->GetIds(), keys);
+		generateXdmfArray(myAttribute->GetValues(), vals);
+
+        parent->Insert(currSet);
+
 		currSet->Insert(myAttribute);
-		currSet->SetIds(keyArray);
 		currSet->Build();
 	}
 
 	template <template <typename> class Container, class T>
-	void XdmfSTLConverter::getSetFromXdmf(Container<T> &myContainer, XdmfSet * currSet)
+	void XdmfSTLConverter::getSetFromXdmf(Container<T> & myContainer, XdmfSet * currSet)
 	{
 		XdmfArray * myIds = currSet->GetIds();
 		copyFromXdmfArray(myContainer, myIds);
 	}
 
 	template <template <typename, typename> class Container, class T, class U>
-	void XdmfSTLConverter::getMapFromXdmf(Container<T, U> &myContainer, XdmfSet * currSet)
+	void XdmfSTLConverter::getMapFromXdmf(Container<T, U> & myContainer, XdmfSet * currSet)
 	{
 		XdmfArray * myKeys = currSet->GetIds();
 		XdmfAttribute * myAttribute = currSet->GetAttribute(0);
@@ -261,7 +287,7 @@ class XdmfSTLConverter {
 	}
 
 	template <class T>
-	void XdmfSTLConverter::copyFromXdmfArray(std::multiset<T> &myContainer, XdmfArray * myIds)
+	void XdmfSTLConverter::copyFromXdmfArray(std::multiset<T> & myContainer, XdmfArray * myIds)
 	{
 		for (int j=0; j<myIds->GetNumberOfElements(); j++)
 		{
@@ -270,70 +296,70 @@ class XdmfSTLConverter {
 	}
 
 	template <template <typename> class Container>
-	void XdmfSTLConverter::generateXdmfArray(XdmfArray * currentArray,  const Container<char> &myContainer)
+	void XdmfSTLConverter::generateXdmfArray(XdmfArray * currentArray,  const Container<char> & myContainer)
 	{
 		currentArray->SetNumberType(XDMF_INT8_TYPE);
 	    writeArrayValues(currentArray, myContainer);
 	}
 
 	template <template <typename> class Container>
-	void XdmfSTLConverter::generateXdmfArray(XdmfArray * currentArray,  const Container<short> &myContainer)
+	void XdmfSTLConverter::generateXdmfArray(XdmfArray * currentArray,  const Container<short> & myContainer)
 	{
 		currentArray->SetNumberType(XDMF_INT16_TYPE);
 		writeArrayValues(currentArray, myContainer);
 	}
 
 	template <template <typename> class Container>
-	void XdmfSTLConverter::generateXdmfArray(XdmfArray * currentArray,  const Container<int> &myContainer)
+	void XdmfSTLConverter::generateXdmfArray(XdmfArray * currentArray,  const Container<int> & myContainer)
     {
        	currentArray->SetNumberType(XDMF_INT32_TYPE);
        	writeArrayValues(currentArray, myContainer);
     }
 
 	template <template <typename> class Container>
-	void XdmfSTLConverter::generateXdmfArray(XdmfArray * currentArray,  const Container<long long> &myContainer)
+	void XdmfSTLConverter::generateXdmfArray(XdmfArray * currentArray,  const Container<long long> & myContainer)
 	{
 		currentArray->SetNumberType(XDMF_INT64_TYPE);
 		writeArrayValues(currentArray, myContainer);
 	}
 
 	template <template <typename> class Container>
-	void XdmfSTLConverter::generateXdmfArray(XdmfArray * currentArray,  const Container<float> &myContainer)
+	void XdmfSTLConverter::generateXdmfArray(XdmfArray * currentArray,  const Container<float> & myContainer)
     {
        	currentArray->SetNumberType(XDMF_FLOAT32_TYPE);
        	writeArrayValues(currentArray, myContainer);
     }
 
 	template <template <typename> class Container>
-	void XdmfSTLConverter::generateXdmfArray(XdmfArray * currentArray,  const Container<double> &myContainer)
+	void XdmfSTLConverter::generateXdmfArray(XdmfArray * currentArray,  const Container<double> & myContainer)
     {
        	currentArray->SetNumberType(XDMF_FLOAT64_TYPE);
        	writeArrayValues(currentArray, myContainer);
     }
 
 	template <template <typename> class Container>
-	void XdmfSTLConverter::generateXdmfArray(XdmfArray * currentArray,  const Container<unsigned char> &myContainer)
+	void XdmfSTLConverter::generateXdmfArray(XdmfArray * currentArray,  const Container<unsigned char> & myContainer)
 	{
 		currentArray->SetNumberType(XDMF_UINT8_TYPE);
 	    writeArrayValues(currentArray, myContainer);
 	}
 
 	template <template <typename> class Container>
-	void XdmfSTLConverter::generateXdmfArray(XdmfArray * currentArray,  const Container<unsigned short> &myContainer)
+	void XdmfSTLConverter::generateXdmfArray(XdmfArray * currentArray,  const Container<unsigned short> & myContainer)
 	{
 		currentArray->SetNumberType(XDMF_UINT16_TYPE);
 		writeArrayValues(currentArray, myContainer);
 	}
 
 	template <template <typename> class Container>
-	void XdmfSTLConverter::generateXdmfArray(XdmfArray * currentArray,  const Container<unsigned int> &myContainer)
+	void XdmfSTLConverter::generateXdmfArray(XdmfArray * currentArray,  const Container<unsigned int> & myContainer)
     {
        	currentArray->SetNumberType(XDMF_UINT32_TYPE);
        	writeArrayValues(currentArray, myContainer);
     }
 
 	template <template <typename> class Container, class T>
-	void XdmfSTLConverter::writeArrayValues(XdmfArray * currentArray,  const Container<T> &myContainer)
+	void XdmfSTLConverter::writeArrayValues(XdmfArray * currentArray,  const Container<T> & myContainer)
 	{
 		currentArray->SetNumberOfElements(myContainer.size());
 		int index = 0;
