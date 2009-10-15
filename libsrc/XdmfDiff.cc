@@ -578,12 +578,14 @@ XdmfInt32 XdmfDiffInternal::SetRelativeError(XdmfFloat64 & relativeError)
 {
 	RelativeError = relativeError;
 	AbsoluteError = 0;
+    return(XDMF_SUCCESS);
 }
 
 XdmfInt32 XdmfDiffInternal::SetAbsoluteError(XdmfFloat64 & absoluteError)
 {
 	AbsoluteError = absoluteError;
 	RelativeError = 0;
+    return(XDMF_SUCCESS);
 }
 
 XdmfInt32 XdmfDiffInternal::SetDiffFileName(XdmfString name)
@@ -1074,7 +1076,7 @@ template <class XdmfType> XdmfArray * XdmfDiffInternal::CompareValuesPriv(XdmfDi
 		}
 		XdmfType diff = newVals[startIndex + i] - refVals[startIndex + i];
 		toReturnArray[startIndex + i] = diff;
-		if(fabs(diff) > acceptableError)
+		if(fabs((float)diff) > acceptableError)
 		{
 			XdmfInt64 groupIndex = (int)((startIndex+i) / groupLength);
 			std::stringstream refValsReturn;
