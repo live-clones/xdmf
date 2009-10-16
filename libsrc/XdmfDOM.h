@@ -124,6 +124,13 @@ public :
 
 //! Generate a Standard XDMF Header
   XdmfInt32 GenerateHead( void );
+
+//! Check status of Xdmf.dtd inclusion in the XML header
+        XdmfGetValueMacro( DTD, XdmfInt32 );
+
+//! Set the status of the Xdmf.dtd inclusion in the XML header
+        XdmfSetValueMacro( DTD, XdmfInt32 );
+
 //! Output a String to the XML document
   XdmfInt32 Puts( XdmfConstString String );
 //! Generate a Standard XDMF Tail
@@ -254,6 +261,7 @@ istream         *Input;
 XdmfXmlDoc      Doc;
 XdmfXmlNode     Tree;
 XdmfInt32       ParserOptions;
+XdmfInt32       DTD;
 };
 
 extern XDMF_EXPORT XdmfDOM *HandleToXdmfDOM( XdmfConstString Source );
