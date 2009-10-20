@@ -125,7 +125,7 @@ void vtkXdmfWriter2Internal::DetermineCellTypes(vtkPointSet * t, vtkXdmfWriter2I
 //==============================================================================
 
 vtkStandardNewMacro(vtkXdmfWriter2);
-vtkCxxRevisionMacro(vtkXdmfWriter2, "1.15");
+vtkCxxRevisionMacro(vtkXdmfWriter2, "1.16");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter2::vtkXdmfWriter2()
@@ -298,6 +298,12 @@ int vtkXdmfWriter2::RequestData(
   vtkInformationVector** inputVector,
   vtkInformationVector* vtkNotUsed(outputVector))
 {
+  if (!this->Domain)
+    {
+    //call Write instead of this directly. That does setup first, then calls this.
+    return 1;
+    }
+
   if (this->CurrentTimeIndex == 0 && 
       this->WriteAllTimeSteps &&
       this->NumberOfTimeSteps > 1)
