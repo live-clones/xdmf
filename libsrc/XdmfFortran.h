@@ -46,7 +46,7 @@ using std::endl;
 #else
 
 // Linux or static configuration
-#define XDMF_UTILS_DLL 
+#define XDMF_UTILS_DLL
 
 #endif
 
@@ -58,6 +58,7 @@ public:
 	void AddCollection(char * collectionType);
 	void CloseCollection();
 	void SetGridTopology(char * topologyType, int * numberOfElements, XdmfInt32 * conns);
+	void SetGridTopologyFromShape(char * topologyType, char * shape, XdmfInt32 * conns);
 	void SetGridGeometry(char * geometryType, char * numberType, int * numberOfPoints, XdmfPointer * points);
 	void AddGridAttribute(char * attributeName, char * numberType, char * attributeCenter, char * attributeType, int * numberOfPoints, XdmfPointer * data);
 	void AddGridInformation(char * informationName, char * value);
