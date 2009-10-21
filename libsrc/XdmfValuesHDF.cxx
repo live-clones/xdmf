@@ -126,11 +126,26 @@ XdmfValuesHDF::Write(XdmfArray *anArray, XdmfConstString aHeavyDataSetName){
     H5.SetWorkingDirectory(this->DOM->GetWorkingDirectory());
     if(!aHeavyDataSetName) aHeavyDataSetName = this->GetHeavyDataSetName();
     if(!aHeavyDataSetName){
-        if(anArray->GetHeavyDataSetName()){
-            aHeavyDataSetName = (XdmfConstString)anArray->GetHeavyDataSetName();
-        }else{
+        if(anArray->GetHeavyDataSetName())
+          {
+          aHeavyDataSetName = (XdmfConstString)anArray->GetHeavyDataSetName();
+          }
+        else
+          {
+          static char FName[256];
+          sprintf(FName, "%s", this->DOM->GetOutputFileName());
+          char *ext = strstr(FName, ".xmf");
+          const char *NewExt = ".h5:/Data";
+          if (ext && ext < FName+(256-strlen(NewExt)))
+            {
+            sprintf(ext, NewExt);
+            aHeavyDataSetName = this->GetUniqueName(FName);
+            }
+          else
+            {
             aHeavyDataSetName = this->GetUniqueName("Xdmf.h5:/Data");
-        }
+            }
+          }
     }
     // Possible Write to DSM. Make sure we're connected
     if(!this->DsmBuffer) this->SetDsmBuffer(anArray->GetDsmBuffer());
