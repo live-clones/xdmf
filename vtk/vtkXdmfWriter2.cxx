@@ -125,7 +125,7 @@ void vtkXdmfWriter2Internal::DetermineCellTypes(vtkPointSet * t, vtkXdmfWriter2I
 //==============================================================================
 
 vtkStandardNewMacro(vtkXdmfWriter2);
-vtkCxxRevisionMacro(vtkXdmfWriter2, "1.17");
+vtkCxxRevisionMacro(vtkXdmfWriter2, "1.18");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter2::vtkXdmfWriter2()
@@ -826,8 +826,7 @@ void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
     XdmfArray *xda = new XdmfArray;
     vtkIdType shape[2];
     shape[0] = da->GetNumberOfTuples();
-    shape[1] = 3;
-    this->ConvertVToXArray(da, xda, 2, shape, 0);
+    this->ConvertVToXArray(da, xda, 1, shape, 0);
     geo->SetPoints(xda);
     }
     break;
@@ -995,7 +994,7 @@ void vtkXdmfWriter2::ConvertVToXArray(vtkDataArray *vda,
 
   //TODO: if we can make xdmf write out immediately, then wouldn't have to keep around
   //arrays when working with temporal data
-  if ((allocStrategy==0 && !this->TopTemporalGrid) || allocStrategy==1)
+  if (false)//(allocStrategy==0 && !this->TopTemporalGrid) || allocStrategy==1)
     {
     //Do not let xdmf allocate its own buffer. xdmf just borrows vtk's and doesn't double mem size.
     xda->SetAllowAllocate(0); 
