@@ -125,7 +125,7 @@ void vtkXdmfWriter2Internal::DetermineCellTypes(vtkPointSet * t, vtkXdmfWriter2I
 //==============================================================================
 
 vtkStandardNewMacro(vtkXdmfWriter2);
-vtkCxxRevisionMacro(vtkXdmfWriter2, "1.16");
+vtkCxxRevisionMacro(vtkXdmfWriter2, "1.17");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter2::vtkXdmfWriter2()
@@ -945,7 +945,7 @@ void vtkXdmfWriter2::ConvertVToXArray(vtkDataArray *vda,
   if (nc != 1)
     {
     lDims[rank]=nc;
-    rank++;
+    lRank+=1;
     }
 
   switch (vda->GetDataType())
