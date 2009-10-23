@@ -179,7 +179,7 @@ void XdmfFortran::CloseCollection()
 void XdmfFortran::SetGridTopology(char * topologyType, int * numberOfElements, XdmfInt32 * conns)
 {
 	std::stringstream shape;
-	shape << numberOfElements;
+	shape << *numberOfElements;
 	this->SetGridTopologyFromShape(topologyType, (char*)shape.str().c_str(), conns);
 }
 
@@ -195,13 +195,9 @@ void XdmfFortran::SetGridTopologyFromShape(char * topologyType, char * shape, Xd
 	myTopology->SetTopologyTypeFromString(topologyType);
 	myTopology->GetShapeDesc()->SetShapeFromString(shape);
 
-	// Fortran is 1 based while c++ is 0 based so
-	// Either subtract 1 from all connections or specify a BaseOffset
-	//myPointer->myTopology->SetBaseOffset(1);
-
-	// If you haven't assigned an XdmfArray, GetConnectivity() will create one.
 	if (myTopology->GetClass() != XDMF_STRUCTURED && myTopology->GetTopologyType() != XDMF_POLYVERTEX)
 	{
+
 		XdmfArray * myConnections = myTopology->GetConnectivity();
 		myConnections->SetNumberType(XDMF_INT32_TYPE);
 		myConnections->SetNumberOfElements(myTopology->GetNumberOfElements() * myTopology->GetNodesPerElement());
@@ -703,7 +699,7 @@ void XdmfFortran::WriteGrid(char * gridName)
 	grid->SetName(totalGridName.str().c_str());
 
 	// Set Topology
-	if (myTopology->GetTopologyType() != XDMF_POLYVERTEX)
+	if (myTopology->GetClass() != XDMF_STRUCTURED && myTopology->GetTopologyType() != XDMF_POLYVERTEX)
 	{
 		//Modify HDF5 names so we aren't writing over top of our data!
 		std::stringstream topologyDataName;
