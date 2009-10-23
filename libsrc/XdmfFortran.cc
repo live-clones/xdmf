@@ -200,7 +200,7 @@ void XdmfFortran::SetGridTopologyFromShape(char * topologyType, char * shape, Xd
 	//myPointer->myTopology->SetBaseOffset(1);
 
 	// If you haven't assigned an XdmfArray, GetConnectivity() will create one.
-	if (conns != NULL && myTopology->GetTopologyType() != XDMF_POLYVERTEX)
+	if (myTopology->GetClass() != XDMF_STRUCTURED && myTopology->GetTopologyType() != XDMF_POLYVERTEX)
 	{
 		XdmfArray * myConnections = myTopology->GetConnectivity();
 		myConnections->SetNumberType(XDMF_INT32_TYPE);
