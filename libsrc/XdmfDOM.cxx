@@ -58,7 +58,7 @@ XdmfDOM::XdmfDOM(){
   this->Output = &cout;
   this->Input = &cin;
   this->Doc = NULL;
-
+	this->DTD = 1;
   this->OutputFileName = 0;
   XDMF_STRING_DUPLICATE(this->OutputFileName, "stdout");
   this->SetFileName("stdin");
@@ -196,8 +196,12 @@ XdmfDOM::SetInputFileName( XdmfConstString Filename ){
 
 XdmfInt32
 XdmfDOM::GenerateHead() {
-  *this->Output << "<?xml version=\"1.0\" ?>" << endl 
+	if(this->DTD){
+  	*this->Output << "<?xml version=\"1.0\" ?>" << endl 
         << "<!DOCTYPE Xdmf SYSTEM \"Xdmf.dtd\" []>" << endl ;
+	} else {
+  	*this->Output << "<?xml version=\"1.0\" ?>" << endl;
+	} 
   this->Output->flush();
   return( XDMF_SUCCESS );
 }
