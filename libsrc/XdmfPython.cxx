@@ -2653,49 +2653,50 @@ SWIG_Python_MustGetPtr(PyObject *obj, swig_type_info *ty, int argnum, int flags)
 #define SWIGTYPE_p_XdmfDataDesc swig_types[5]
 #define SWIGTYPE_p_XdmfDataItem swig_types[6]
 #define SWIGTYPE_p_XdmfDataStructure swig_types[7]
-#define SWIGTYPE_p_XdmfDomain swig_types[8]
-#define SWIGTYPE_p_XdmfDsm swig_types[9]
-#define SWIGTYPE_p_XdmfDsmBuffer swig_types[10]
-#define SWIGTYPE_p_XdmfDsmComm swig_types[11]
-#define SWIGTYPE_p_XdmfDsmCommMpi swig_types[12]
-#define SWIGTYPE_p_XdmfDsmMsg swig_types[13]
-#define SWIGTYPE_p_XdmfElement swig_types[14]
-#define SWIGTYPE_p_XdmfGeometry swig_types[15]
-#define SWIGTYPE_p_XdmfGrid swig_types[16]
-#define SWIGTYPE_p_XdmfHDF swig_types[17]
-#define SWIGTYPE_p_XdmfHeavyData swig_types[18]
-#define SWIGTYPE_p_XdmfInformation swig_types[19]
-#define SWIGTYPE_p_XdmfLightData swig_types[20]
-#define SWIGTYPE_p_XdmfMap swig_types[21]
-#define SWIGTYPE_p_XdmfObject swig_types[22]
-#define SWIGTYPE_p_XdmfOpenCallback swig_types[23]
-#define SWIGTYPE_p_XdmfReadCallback swig_types[24]
-#define SWIGTYPE_p_XdmfRegion swig_types[25]
-#define SWIGTYPE_p_XdmfRoot swig_types[26]
-#define SWIGTYPE_p_XdmfSet swig_types[27]
-#define SWIGTYPE_p_XdmfTime swig_types[28]
-#define SWIGTYPE_p_XdmfTopology swig_types[29]
-#define SWIGTYPE_p_XdmfValues swig_types[30]
-#define SWIGTYPE_p_XdmfValuesHDF swig_types[31]
-#define SWIGTYPE_p_XdmfValuesXML swig_types[32]
-#define SWIGTYPE_p_XdmfWriteCallback swig_types[33]
-#define SWIGTYPE_p__xmlNode swig_types[34]
-#define SWIGTYPE_p_char swig_types[35]
-#define SWIGTYPE_p_double swig_types[36]
-#define SWIGTYPE_p_float swig_types[37]
-#define SWIGTYPE_p_hid_t swig_types[38]
-#define SWIGTYPE_p_int swig_types[39]
-#define SWIGTYPE_p_istream swig_types[40]
-#define SWIGTYPE_p_long_long swig_types[41]
-#define SWIGTYPE_p_ostream swig_types[42]
-#define SWIGTYPE_p_p__xmlDoc swig_types[43]
-#define SWIGTYPE_p_short swig_types[44]
-#define SWIGTYPE_p_unsigned_char swig_types[45]
-#define SWIGTYPE_p_unsigned_int swig_types[46]
-#define SWIGTYPE_p_unsigned_short swig_types[47]
-#define SWIGTYPE_p_void swig_types[48]
-static swig_type_info *swig_types[50];
-static swig_module_info swig_module = {swig_types, 49, 0, 0, 0, 0};
+#define SWIGTYPE_p_XdmfDiff swig_types[8]
+#define SWIGTYPE_p_XdmfDomain swig_types[9]
+#define SWIGTYPE_p_XdmfDsm swig_types[10]
+#define SWIGTYPE_p_XdmfDsmBuffer swig_types[11]
+#define SWIGTYPE_p_XdmfDsmComm swig_types[12]
+#define SWIGTYPE_p_XdmfDsmCommMpi swig_types[13]
+#define SWIGTYPE_p_XdmfDsmMsg swig_types[14]
+#define SWIGTYPE_p_XdmfElement swig_types[15]
+#define SWIGTYPE_p_XdmfGeometry swig_types[16]
+#define SWIGTYPE_p_XdmfGrid swig_types[17]
+#define SWIGTYPE_p_XdmfHDF swig_types[18]
+#define SWIGTYPE_p_XdmfHeavyData swig_types[19]
+#define SWIGTYPE_p_XdmfInformation swig_types[20]
+#define SWIGTYPE_p_XdmfLightData swig_types[21]
+#define SWIGTYPE_p_XdmfMap swig_types[22]
+#define SWIGTYPE_p_XdmfObject swig_types[23]
+#define SWIGTYPE_p_XdmfOpenCallback swig_types[24]
+#define SWIGTYPE_p_XdmfReadCallback swig_types[25]
+#define SWIGTYPE_p_XdmfRegion swig_types[26]
+#define SWIGTYPE_p_XdmfRoot swig_types[27]
+#define SWIGTYPE_p_XdmfSet swig_types[28]
+#define SWIGTYPE_p_XdmfTime swig_types[29]
+#define SWIGTYPE_p_XdmfTopology swig_types[30]
+#define SWIGTYPE_p_XdmfValues swig_types[31]
+#define SWIGTYPE_p_XdmfValuesHDF swig_types[32]
+#define SWIGTYPE_p_XdmfValuesXML swig_types[33]
+#define SWIGTYPE_p_XdmfWriteCallback swig_types[34]
+#define SWIGTYPE_p__xmlNode swig_types[35]
+#define SWIGTYPE_p_char swig_types[36]
+#define SWIGTYPE_p_double swig_types[37]
+#define SWIGTYPE_p_float swig_types[38]
+#define SWIGTYPE_p_hid_t swig_types[39]
+#define SWIGTYPE_p_int swig_types[40]
+#define SWIGTYPE_p_istream swig_types[41]
+#define SWIGTYPE_p_long_long swig_types[42]
+#define SWIGTYPE_p_ostream swig_types[43]
+#define SWIGTYPE_p_p__xmlDoc swig_types[44]
+#define SWIGTYPE_p_short swig_types[45]
+#define SWIGTYPE_p_unsigned_char swig_types[46]
+#define SWIGTYPE_p_unsigned_int swig_types[47]
+#define SWIGTYPE_p_unsigned_short swig_types[48]
+#define SWIGTYPE_p_void swig_types[49]
+static swig_type_info *swig_types[51];
+static swig_module_info swig_module = {swig_types, 50, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -3219,6 +3220,17 @@ SWIG_AsVal_float (PyObject * obj, float *val)
     }
   }  
   return res;
+}
+
+
+SWIGINTERNINLINE PyObject *
+SWIG_From_std_string  (const std::string& s)
+{
+  if (s.size()) {
+    return SWIG_FromCharPtrAndSize(s.data(), s.size());
+  } else {
+    return SWIG_FromCharPtrAndSize(s.c_str(), 0);
+  }
 }
 
 
@@ -28764,6 +28776,1433 @@ SWIGINTERN PyObject *XdmfMap_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObje
   return SWIG_Py_Void();
 }
 
+SWIGINTERN PyObject *_wrap_new_XdmfDiff__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfConstString arg1 = (XdmfConstString) 0 ;
+  XdmfConstString arg2 = (XdmfConstString) 0 ;
+  int res1 ;
+  char *buf1 = 0 ;
+  int alloc1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  XdmfDiff *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:new_XdmfDiff",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_AsCharPtrAndSize(obj0, &buf1, NULL, &alloc1);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_XdmfDiff" "', argument " "1"" of type '" "XdmfConstString""'");
+  }
+  arg1 = reinterpret_cast< XdmfConstString >(buf1);
+  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "new_XdmfDiff" "', argument " "2"" of type '" "XdmfConstString""'");
+  }
+  arg2 = reinterpret_cast< XdmfConstString >(buf2);
+  result = (XdmfDiff *)new XdmfDiff(arg1,arg2);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_XdmfDiff, SWIG_POINTER_NEW |  0 );
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_XdmfDiff__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDOM *arg1 = (XdmfDOM *) 0 ;
+  XdmfDOM *arg2 = (XdmfDOM *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  XdmfDiff *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:new_XdmfDiff",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDOM, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_XdmfDiff" "', argument " "1"" of type '" "XdmfDOM *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDOM * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_XdmfDOM, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "new_XdmfDiff" "', argument " "2"" of type '" "XdmfDOM *""'"); 
+  }
+  arg2 = reinterpret_cast< XdmfDOM * >(argp2);
+  result = (XdmfDiff *)new XdmfDiff(arg1,arg2);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_XdmfDiff, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_XdmfDiff(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[3];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = (int)PyObject_Length(args);
+  for (ii = 0; (ii < argc) && (ii < 2); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfDOM, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_XdmfDOM, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_new_XdmfDiff__SWIG_1(self, args);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    int res = SWIG_AsCharPtrAndSize(argv[0], 0, NULL, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_AsCharPtrAndSize(argv[1], 0, NULL, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_new_XdmfDiff__SWIG_0(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'new_XdmfDiff'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    XdmfDiff(XdmfConstString,XdmfConstString)\n"
+    "    XdmfDiff(XdmfDOM *,XdmfDOM *)\n");
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_XdmfDiff(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_XdmfDiff",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_XdmfDiff" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  delete arg1;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_GetDiffs__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  std::string result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfDiff_GetDiffs",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_GetDiffs" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  result = (arg1)->GetDiffs();
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_GetDiffs__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  XdmfConstString arg2 = (XdmfConstString) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  std::string result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfDiff_GetDiffs",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_GetDiffs" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfDiff_GetDiffs" "', argument " "2"" of type '" "XdmfConstString""'");
+  }
+  arg2 = reinterpret_cast< XdmfConstString >(buf2);
+  result = (arg1)->GetDiffs(arg2);
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_GetDiffs(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[3];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = (int)PyObject_Length(args);
+  for (ii = 0; (ii < argc) && (ii < 2); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfDiff, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_XdmfDiff_GetDiffs__SWIG_0(self, args);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfDiff, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      int res = SWIG_AsCharPtrAndSize(argv[1], 0, NULL, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        return _wrap_XdmfDiff_GetDiffs__SWIG_1(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'XdmfDiff_GetDiffs'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    GetDiffs(XdmfDiff *)\n"
+    "    GetDiffs(XdmfDiff *,XdmfConstString)\n");
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_SetIgnoreTime__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  XdmfBoolean arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  XdmfInt32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfDiff_SetIgnoreTime",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_SetIgnoreTime" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfDiff_SetIgnoreTime" "', argument " "2"" of type '" "XdmfBoolean""'");
+  } 
+  arg2 = static_cast< XdmfBoolean >(val2);
+  result = (XdmfInt32)(arg1)->SetIgnoreTime(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_SetIgnoreTime__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  XdmfInt32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfDiff_SetIgnoreTime",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_SetIgnoreTime" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  result = (XdmfInt32)(arg1)->SetIgnoreTime();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_SetIgnoreTime(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[3];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = (int)PyObject_Length(args);
+  for (ii = 0; (ii < argc) && (ii < 2); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfDiff, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_XdmfDiff_SetIgnoreTime__SWIG_1(self, args);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfDiff, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_XdmfDiff_SetIgnoreTime__SWIG_0(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'XdmfDiff_SetIgnoreTime'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    SetIgnoreTime(XdmfDiff *,XdmfBoolean)\n"
+    "    SetIgnoreTime(XdmfDiff *)\n");
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_GetIgnoreTime(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  XdmfInt32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfDiff_GetIgnoreTime",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_GetIgnoreTime" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  result = (XdmfInt32)(arg1)->GetIgnoreTime();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_SetIgnoreGeometry__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  XdmfBoolean arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  XdmfInt32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfDiff_SetIgnoreGeometry",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_SetIgnoreGeometry" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfDiff_SetIgnoreGeometry" "', argument " "2"" of type '" "XdmfBoolean""'");
+  } 
+  arg2 = static_cast< XdmfBoolean >(val2);
+  result = (XdmfInt32)(arg1)->SetIgnoreGeometry(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_SetIgnoreGeometry__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  XdmfInt32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfDiff_SetIgnoreGeometry",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_SetIgnoreGeometry" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  result = (XdmfInt32)(arg1)->SetIgnoreGeometry();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_SetIgnoreGeometry(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[3];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = (int)PyObject_Length(args);
+  for (ii = 0; (ii < argc) && (ii < 2); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfDiff, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_XdmfDiff_SetIgnoreGeometry__SWIG_1(self, args);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfDiff, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_XdmfDiff_SetIgnoreGeometry__SWIG_0(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'XdmfDiff_SetIgnoreGeometry'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    SetIgnoreGeometry(XdmfDiff *,XdmfBoolean)\n"
+    "    SetIgnoreGeometry(XdmfDiff *)\n");
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_GetIgnoreGeometry(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  XdmfInt32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfDiff_GetIgnoreGeometry",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_GetIgnoreGeometry" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  result = (XdmfInt32)(arg1)->GetIgnoreGeometry();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_SetIgnoreTopology__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  XdmfBoolean arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  XdmfInt32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfDiff_SetIgnoreTopology",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_SetIgnoreTopology" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfDiff_SetIgnoreTopology" "', argument " "2"" of type '" "XdmfBoolean""'");
+  } 
+  arg2 = static_cast< XdmfBoolean >(val2);
+  result = (XdmfInt32)(arg1)->SetIgnoreTopology(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_SetIgnoreTopology__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  XdmfInt32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfDiff_SetIgnoreTopology",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_SetIgnoreTopology" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  result = (XdmfInt32)(arg1)->SetIgnoreTopology();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_SetIgnoreTopology(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[3];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = (int)PyObject_Length(args);
+  for (ii = 0; (ii < argc) && (ii < 2); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfDiff, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_XdmfDiff_SetIgnoreTopology__SWIG_1(self, args);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfDiff, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_XdmfDiff_SetIgnoreTopology__SWIG_0(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'XdmfDiff_SetIgnoreTopology'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    SetIgnoreTopology(XdmfDiff *,XdmfBoolean)\n"
+    "    SetIgnoreTopology(XdmfDiff *)\n");
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_GetIgnoreTopology(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  XdmfInt32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfDiff_GetIgnoreTopology",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_GetIgnoreTopology" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  result = (XdmfInt32)(arg1)->GetIgnoreTopology();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_SetIgnoreAllAttributes__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  XdmfBoolean arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  XdmfInt32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfDiff_SetIgnoreAllAttributes",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_SetIgnoreAllAttributes" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfDiff_SetIgnoreAllAttributes" "', argument " "2"" of type '" "XdmfBoolean""'");
+  } 
+  arg2 = static_cast< XdmfBoolean >(val2);
+  result = (XdmfInt32)(arg1)->SetIgnoreAllAttributes(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_SetIgnoreAllAttributes__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  XdmfInt32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfDiff_SetIgnoreAllAttributes",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_SetIgnoreAllAttributes" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  result = (XdmfInt32)(arg1)->SetIgnoreAllAttributes();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_SetIgnoreAllAttributes(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[3];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = (int)PyObject_Length(args);
+  for (ii = 0; (ii < argc) && (ii < 2); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfDiff, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_XdmfDiff_SetIgnoreAllAttributes__SWIG_1(self, args);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfDiff, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_XdmfDiff_SetIgnoreAllAttributes__SWIG_0(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'XdmfDiff_SetIgnoreAllAttributes'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    SetIgnoreAllAttributes(XdmfDiff *,XdmfBoolean)\n"
+    "    SetIgnoreAllAttributes(XdmfDiff *)\n");
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_GetIgnoreAllAttributes(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  XdmfInt32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfDiff_GetIgnoreAllAttributes",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_GetIgnoreAllAttributes" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  result = (XdmfInt32)(arg1)->GetIgnoreAllAttributes();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_SetDisplayFailuresOnly__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  XdmfBoolean arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  XdmfInt32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfDiff_SetDisplayFailuresOnly",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_SetDisplayFailuresOnly" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfDiff_SetDisplayFailuresOnly" "', argument " "2"" of type '" "XdmfBoolean""'");
+  } 
+  arg2 = static_cast< XdmfBoolean >(val2);
+  result = (XdmfInt32)(arg1)->SetDisplayFailuresOnly(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_SetDisplayFailuresOnly__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  XdmfInt32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfDiff_SetDisplayFailuresOnly",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_SetDisplayFailuresOnly" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  result = (XdmfInt32)(arg1)->SetDisplayFailuresOnly();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_SetDisplayFailuresOnly(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[3];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = (int)PyObject_Length(args);
+  for (ii = 0; (ii < argc) && (ii < 2); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfDiff, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_XdmfDiff_SetDisplayFailuresOnly__SWIG_1(self, args);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfDiff, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_XdmfDiff_SetDisplayFailuresOnly__SWIG_0(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'XdmfDiff_SetDisplayFailuresOnly'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    SetDisplayFailuresOnly(XdmfDiff *,XdmfBoolean)\n"
+    "    SetDisplayFailuresOnly(XdmfDiff *)\n");
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_GetDisplayFailuresOnly(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  XdmfInt32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfDiff_GetDisplayFailuresOnly",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_GetDisplayFailuresOnly" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  result = (XdmfInt32)(arg1)->GetDisplayFailuresOnly();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_SetVerboseOutput__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  XdmfBoolean arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  XdmfInt32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfDiff_SetVerboseOutput",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_SetVerboseOutput" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfDiff_SetVerboseOutput" "', argument " "2"" of type '" "XdmfBoolean""'");
+  } 
+  arg2 = static_cast< XdmfBoolean >(val2);
+  result = (XdmfInt32)(arg1)->SetVerboseOutput(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_SetVerboseOutput__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  XdmfInt32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfDiff_SetVerboseOutput",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_SetVerboseOutput" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  result = (XdmfInt32)(arg1)->SetVerboseOutput();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_SetVerboseOutput(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[3];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = (int)PyObject_Length(args);
+  for (ii = 0; (ii < argc) && (ii < 2); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfDiff, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_XdmfDiff_SetVerboseOutput__SWIG_1(self, args);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfDiff, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_XdmfDiff_SetVerboseOutput__SWIG_0(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'XdmfDiff_SetVerboseOutput'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    SetVerboseOutput(XdmfDiff *,XdmfBoolean)\n"
+    "    SetVerboseOutput(XdmfDiff *)\n");
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_GetVerboseOutput(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  XdmfInt32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfDiff_GetVerboseOutput",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_GetVerboseOutput" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  result = (XdmfInt32)(arg1)->GetVerboseOutput();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_SetCreateDiffFile__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  XdmfBoolean arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  XdmfInt32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfDiff_SetCreateDiffFile",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_SetCreateDiffFile" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfDiff_SetCreateDiffFile" "', argument " "2"" of type '" "XdmfBoolean""'");
+  } 
+  arg2 = static_cast< XdmfBoolean >(val2);
+  result = (XdmfInt32)(arg1)->SetCreateDiffFile(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_SetCreateDiffFile__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  XdmfInt32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfDiff_SetCreateDiffFile",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_SetCreateDiffFile" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  result = (XdmfInt32)(arg1)->SetCreateDiffFile();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_SetCreateDiffFile(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[3];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = (int)PyObject_Length(args);
+  for (ii = 0; (ii < argc) && (ii < 2); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 1) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfDiff, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      return _wrap_XdmfDiff_SetCreateDiffFile__SWIG_1(self, args);
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfDiff, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_XdmfDiff_SetCreateDiffFile__SWIG_0(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'XdmfDiff_SetCreateDiffFile'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    SetCreateDiffFile(XdmfDiff *,XdmfBoolean)\n"
+    "    SetCreateDiffFile(XdmfDiff *)\n");
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_GetCreateDiffFile(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  XdmfInt32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfDiff_GetCreateDiffFile",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_GetCreateDiffFile" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  result = (XdmfInt32)(arg1)->GetCreateDiffFile();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_SetDiffFileName(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  XdmfString arg2 = (XdmfString) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  XdmfInt32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfDiff_SetDiffFileName",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_SetDiffFileName" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfDiff_SetDiffFileName" "', argument " "2"" of type '" "XdmfString""'");
+  }
+  arg2 = reinterpret_cast< XdmfString >(buf2);
+  result = (XdmfInt32)(arg1)->SetDiffFileName(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_GetDiffFileName(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  XdmfString result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfDiff_GetDiffFileName",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_GetDiffFileName" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  result = (XdmfString)(arg1)->GetDiffFileName();
+  resultobj = SWIG_FromCharPtr((const char *)result);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_SetRelativeError(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  XdmfFloat64 arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  XdmfInt32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfDiff_SetRelativeError",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_SetRelativeError" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfDiff_SetRelativeError" "', argument " "2"" of type '" "XdmfFloat64""'");
+  } 
+  arg2 = static_cast< XdmfFloat64 >(val2);
+  result = (XdmfInt32)(arg1)->SetRelativeError(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_GetRelativeError(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  XdmfFloat64 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfDiff_GetRelativeError",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_GetRelativeError" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  result = (XdmfFloat64)(arg1)->GetRelativeError();
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_SetAbsoluteError(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  XdmfFloat64 arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  double val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  XdmfInt32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfDiff_SetAbsoluteError",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_SetAbsoluteError" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  ecode2 = SWIG_AsVal_double(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfDiff_SetAbsoluteError" "', argument " "2"" of type '" "XdmfFloat64""'");
+  } 
+  arg2 = static_cast< XdmfFloat64 >(val2);
+  result = (XdmfInt32)(arg1)->SetAbsoluteError(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_GetAbsoluteError(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  XdmfFloat64 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfDiff_GetAbsoluteError",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_GetAbsoluteError" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  result = (XdmfFloat64)(arg1)->GetAbsoluteError();
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_IncludeGrid(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  XdmfString arg2 = (XdmfString) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  XdmfInt32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfDiff_IncludeGrid",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_IncludeGrid" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfDiff_IncludeGrid" "', argument " "2"" of type '" "XdmfString""'");
+  }
+  arg2 = reinterpret_cast< XdmfString >(buf2);
+  result = (XdmfInt32)(arg1)->IncludeGrid(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_IgnoreGrid(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  XdmfString arg2 = (XdmfString) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  XdmfInt32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfDiff_IgnoreGrid",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_IgnoreGrid" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfDiff_IgnoreGrid" "', argument " "2"" of type '" "XdmfString""'");
+  }
+  arg2 = reinterpret_cast< XdmfString >(buf2);
+  result = (XdmfInt32)(arg1)->IgnoreGrid(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_IncludeAttribute(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  XdmfString arg2 = (XdmfString) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  XdmfInt32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfDiff_IncludeAttribute",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_IncludeAttribute" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfDiff_IncludeAttribute" "', argument " "2"" of type '" "XdmfString""'");
+  }
+  arg2 = reinterpret_cast< XdmfString >(buf2);
+  result = (XdmfInt32)(arg1)->IncludeAttribute(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_IgnoreAttribute(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  XdmfString arg2 = (XdmfString) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  XdmfInt32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfDiff_IgnoreAttribute",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_IgnoreAttribute" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfDiff_IgnoreAttribute" "', argument " "2"" of type '" "XdmfString""'");
+  }
+  arg2 = reinterpret_cast< XdmfString >(buf2);
+  result = (XdmfInt32)(arg1)->IgnoreAttribute(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_ParseSettingsFile(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  XdmfConstString arg2 = (XdmfConstString) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  XdmfInt32 result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfDiff_ParseSettingsFile",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_ParseSettingsFile" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfDiff_ParseSettingsFile" "', argument " "2"" of type '" "XdmfConstString""'");
+  }
+  arg2 = reinterpret_cast< XdmfConstString >(buf2);
+  result = (XdmfInt32)(arg1)->ParseSettingsFile(arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfDiff_AreEquivalent(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfDiff *arg1 = (XdmfDiff *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  XdmfBoolean result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfDiff_AreEquivalent",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfDiff, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfDiff_AreEquivalent" "', argument " "1"" of type '" "XdmfDiff *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfDiff * >(argp1);
+  result = (XdmfBoolean)(arg1)->AreEquivalent();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *XdmfDiff_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_XdmfDiff, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
 SWIGINTERN PyObject *_wrap_new_XdmfDsm(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   XdmfDsm *result = 0 ;
@@ -32658,6 +34097,36 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfMap_Build", _wrap_XdmfMap_Build, METH_VARARGS, NULL},
 	 { (char *)"XdmfMap_Release", _wrap_XdmfMap_Release, METH_VARARGS, NULL},
 	 { (char *)"XdmfMap_swigregister", XdmfMap_swigregister, METH_VARARGS, NULL},
+	 { (char *)"new_XdmfDiff", _wrap_new_XdmfDiff, METH_VARARGS, NULL},
+	 { (char *)"delete_XdmfDiff", _wrap_delete_XdmfDiff, METH_VARARGS, NULL},
+	 { (char *)"XdmfDiff_GetDiffs", _wrap_XdmfDiff_GetDiffs, METH_VARARGS, NULL},
+	 { (char *)"XdmfDiff_SetIgnoreTime", _wrap_XdmfDiff_SetIgnoreTime, METH_VARARGS, NULL},
+	 { (char *)"XdmfDiff_GetIgnoreTime", _wrap_XdmfDiff_GetIgnoreTime, METH_VARARGS, NULL},
+	 { (char *)"XdmfDiff_SetIgnoreGeometry", _wrap_XdmfDiff_SetIgnoreGeometry, METH_VARARGS, NULL},
+	 { (char *)"XdmfDiff_GetIgnoreGeometry", _wrap_XdmfDiff_GetIgnoreGeometry, METH_VARARGS, NULL},
+	 { (char *)"XdmfDiff_SetIgnoreTopology", _wrap_XdmfDiff_SetIgnoreTopology, METH_VARARGS, NULL},
+	 { (char *)"XdmfDiff_GetIgnoreTopology", _wrap_XdmfDiff_GetIgnoreTopology, METH_VARARGS, NULL},
+	 { (char *)"XdmfDiff_SetIgnoreAllAttributes", _wrap_XdmfDiff_SetIgnoreAllAttributes, METH_VARARGS, NULL},
+	 { (char *)"XdmfDiff_GetIgnoreAllAttributes", _wrap_XdmfDiff_GetIgnoreAllAttributes, METH_VARARGS, NULL},
+	 { (char *)"XdmfDiff_SetDisplayFailuresOnly", _wrap_XdmfDiff_SetDisplayFailuresOnly, METH_VARARGS, NULL},
+	 { (char *)"XdmfDiff_GetDisplayFailuresOnly", _wrap_XdmfDiff_GetDisplayFailuresOnly, METH_VARARGS, NULL},
+	 { (char *)"XdmfDiff_SetVerboseOutput", _wrap_XdmfDiff_SetVerboseOutput, METH_VARARGS, NULL},
+	 { (char *)"XdmfDiff_GetVerboseOutput", _wrap_XdmfDiff_GetVerboseOutput, METH_VARARGS, NULL},
+	 { (char *)"XdmfDiff_SetCreateDiffFile", _wrap_XdmfDiff_SetCreateDiffFile, METH_VARARGS, NULL},
+	 { (char *)"XdmfDiff_GetCreateDiffFile", _wrap_XdmfDiff_GetCreateDiffFile, METH_VARARGS, NULL},
+	 { (char *)"XdmfDiff_SetDiffFileName", _wrap_XdmfDiff_SetDiffFileName, METH_VARARGS, NULL},
+	 { (char *)"XdmfDiff_GetDiffFileName", _wrap_XdmfDiff_GetDiffFileName, METH_VARARGS, NULL},
+	 { (char *)"XdmfDiff_SetRelativeError", _wrap_XdmfDiff_SetRelativeError, METH_VARARGS, NULL},
+	 { (char *)"XdmfDiff_GetRelativeError", _wrap_XdmfDiff_GetRelativeError, METH_VARARGS, NULL},
+	 { (char *)"XdmfDiff_SetAbsoluteError", _wrap_XdmfDiff_SetAbsoluteError, METH_VARARGS, NULL},
+	 { (char *)"XdmfDiff_GetAbsoluteError", _wrap_XdmfDiff_GetAbsoluteError, METH_VARARGS, NULL},
+	 { (char *)"XdmfDiff_IncludeGrid", _wrap_XdmfDiff_IncludeGrid, METH_VARARGS, NULL},
+	 { (char *)"XdmfDiff_IgnoreGrid", _wrap_XdmfDiff_IgnoreGrid, METH_VARARGS, NULL},
+	 { (char *)"XdmfDiff_IncludeAttribute", _wrap_XdmfDiff_IncludeAttribute, METH_VARARGS, NULL},
+	 { (char *)"XdmfDiff_IgnoreAttribute", _wrap_XdmfDiff_IgnoreAttribute, METH_VARARGS, NULL},
+	 { (char *)"XdmfDiff_ParseSettingsFile", _wrap_XdmfDiff_ParseSettingsFile, METH_VARARGS, NULL},
+	 { (char *)"XdmfDiff_AreEquivalent", _wrap_XdmfDiff_AreEquivalent, METH_VARARGS, NULL},
+	 { (char *)"XdmfDiff_swigregister", XdmfDiff_swigregister, METH_VARARGS, NULL},
 	 { (char *)"new_XdmfDsm", _wrap_new_XdmfDsm, METH_VARARGS, NULL},
 	 { (char *)"delete_XdmfDsm", _wrap_delete_XdmfDsm, METH_VARARGS, NULL},
 	 { (char *)"XdmfDsm_GetClassName", _wrap_XdmfDsm_GetClassName, METH_VARARGS, NULL},
@@ -32989,6 +34458,7 @@ static swig_type_info _swigt__p_XdmfDOM = {"_p_XdmfDOM", "XdmfDOM *", 0, 0, (voi
 static swig_type_info _swigt__p_XdmfDataDesc = {"_p_XdmfDataDesc", "XdmfDataDesc *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_XdmfDataItem = {"_p_XdmfDataItem", "XdmfDataItem *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_XdmfDataStructure = {"_p_XdmfDataStructure", "XdmfDataStructure *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_XdmfDiff = {"_p_XdmfDiff", "XdmfDiff *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_XdmfDomain = {"_p_XdmfDomain", "XdmfDomain *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_XdmfDsm = {"_p_XdmfDsm", "XdmfDsm *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_XdmfDsmBuffer = {"_p_XdmfDsmBuffer", "XdmfDsmBuffer *", 0, 0, (void*)0, 0};
@@ -33040,6 +34510,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_XdmfDataDesc,
   &_swigt__p_XdmfDataItem,
   &_swigt__p_XdmfDataStructure,
+  &_swigt__p_XdmfDiff,
   &_swigt__p_XdmfDomain,
   &_swigt__p_XdmfDsm,
   &_swigt__p_XdmfDsmBuffer,
@@ -33091,6 +34562,7 @@ static swig_cast_info _swigc__p_XdmfDOM[] = {  {&_swigt__p_XdmfDOM, 0, 0, 0},{0,
 static swig_cast_info _swigc__p_XdmfDataDesc[] = {  {&_swigt__p_XdmfHeavyData, _p_XdmfHeavyDataTo_p_XdmfDataDesc, 0, 0},  {&_swigt__p_XdmfArray, _p_XdmfArrayTo_p_XdmfDataDesc, 0, 0},  {&_swigt__p_XdmfDataDesc, 0, 0, 0},  {&_swigt__p_XdmfHDF, _p_XdmfHDFTo_p_XdmfDataDesc, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfDataItem[] = {  {&_swigt__p_XdmfDataItem, 0, 0, 0},  {&_swigt__p_XdmfDataStructure, _p_XdmfDataStructureTo_p_XdmfDataItem, 0, 0},  {&_swigt__p_XdmfValuesXML, _p_XdmfValuesXMLTo_p_XdmfDataItem, 0, 0},  {&_swigt__p_XdmfValues, _p_XdmfValuesTo_p_XdmfDataItem, 0, 0},  {&_swigt__p_XdmfValuesHDF, _p_XdmfValuesHDFTo_p_XdmfDataItem, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfDataStructure[] = {  {&_swigt__p_XdmfDataStructure, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_XdmfDiff[] = {  {&_swigt__p_XdmfDiff, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfDomain[] = {  {&_swigt__p_XdmfDomain, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfDsm[] = {  {&_swigt__p_XdmfDsmBuffer, _p_XdmfDsmBufferTo_p_XdmfDsm, 0, 0},  {&_swigt__p_XdmfDsm, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfDsmBuffer[] = {  {&_swigt__p_XdmfDsmBuffer, 0, 0, 0},{0, 0, 0, 0}};
@@ -33142,6 +34614,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_XdmfDataDesc,
   _swigc__p_XdmfDataItem,
   _swigc__p_XdmfDataStructure,
+  _swigc__p_XdmfDiff,
   _swigc__p_XdmfDomain,
   _swigc__p_XdmfDsm,
   _swigc__p_XdmfDsmBuffer,
