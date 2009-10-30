@@ -28,6 +28,7 @@
 class vtkExecutive;
 
 class vtkCompositeDataSet;
+class vtkDataSet;
 class vtkDataObject;
 class vtkFieldData;
 class vtkDataArray;
@@ -57,7 +58,19 @@ public:
   vtkSetStringMacro(FileName);
   vtkGetStringMacro(FileName);
 
-    // Description:
+  // Description:
+  // Set or get the file name of the hdf5 file.
+  // Note that if the File name is not specified, then the group name is ignore
+  vtkSetStringMacro(HeavyDataFileName);
+  vtkGetStringMacro(HeavyDataFileName);
+
+  // Description:
+  // Set or get the group name into which data will be written
+  // it may contain nested groups as in "/Proc0/Block0"
+  vtkSetStringMacro(HeavyDataGroupName);
+  vtkGetStringMacro(HeavyDataGroupName);
+
+  // Description:
   // Write data to output. Method executes subclasses WriteData() method, as 
   // well as StartMethod() and EndMethod() methods.
   // Returns 1 on success and 0 on failure.
@@ -114,16 +127,22 @@ protected:
   
   //These do the work: recursively parse down input's structure all the way to arrays, 
   //use XDMF lib to dump everything to file.
+
+  virtual void CreateTopology(vtkDataSet *ds, XdmfGrid *grid, vtkIdType PDims[3], vtkIdType CDims[3], vtkIdType &PRank, vtkIdType &CRank, void *staticdata);
+  virtual void CreateGeometry(vtkDataSet *ds, XdmfGrid *grid, vtkIdType PDims[3], vtkIdType CDims[3], vtkIdType &PRank, vtkIdType &CRank, void *staticdata);
+
   virtual void WriteDataSet(vtkDataObject *dobj, XdmfGrid *grid);
   virtual void WriteCompositeDataSet(vtkCompositeDataSet *dobj, XdmfGrid *grid);
   virtual void WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid);
   virtual void WriteArrays(vtkFieldData* dsa, XdmfGrid *grid, int association,
-                           vtkIdType rank, vtkIdType *dims);
+                           vtkIdType rank, vtkIdType *dims, const char *name);
   virtual void ConvertVToXArray(vtkDataArray *vda, XdmfArray *xda, 
                                 vtkIdType rank, vtkIdType *dims,
-                                int AllocStrategy);
+                                int AllocStrategy, const char *heavyprefix);
 
   char *FileName;
+  char *HeavyDataFileName;
+  char *HeavyDataGroupName;
 
   int LightDataLimit;
 
