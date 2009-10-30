@@ -495,7 +495,7 @@ vtkDataObject* vtkXdmfHeavyData::ReadUnstructuredGrid(XdmfGrid* xmfGrid)
         // cell type does not have a fixed number of points in which case the
         // next entry in xmfConnections tells us the number of points.
         numPointsPerCell = xmfConnections[index++];
-        sub--; // used to shrink the cells array at the end.
+        sub++; // used to shrink the cells array at the end.
         }
 
       cell_types[cc] = vtk_cell_typeI;
@@ -1058,9 +1058,9 @@ vtkDataArray* vtkXdmfHeavyData::ReadAttribute(XdmfAttribute* xmfAttribute,
     if (attrCenter == XDMF_ATTRIBUTE_CENTER_NODE)
       {
       // Point count is 1 + cell extent if not a single layer
-      count[0] += (update_extents[5] - update_extents[4] > 0)? 1 : 0;
-      count[1] += (update_extents[3] - update_extents[2] > 0)? 1 : 0;
-      count[2] += (update_extents[1] - update_extents[0] > 0)? 1 : 0;
+      count[0] += (update_extents[5] - update_extents[4] > 0)? 1 : 1;
+      count[1] += (update_extents[3] - update_extents[2] > 0)? 1 : 1;
+      count[2] += (update_extents[1] - update_extents[0] > 0)? 1 : 1;
       }
     xmfDataItem.GetDataDesc()->SelectHyperSlab(start, stride, count);
     }
