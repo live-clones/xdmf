@@ -125,7 +125,7 @@ void vtkXdmfWriter2Internal::DetermineCellTypes(vtkPointSet * t, vtkXdmfWriter2I
 //==============================================================================
 
 vtkStandardNewMacro(vtkXdmfWriter2);
-vtkCxxRevisionMacro(vtkXdmfWriter2, "1.20");
+vtkCxxRevisionMacro(vtkXdmfWriter2, "1.21");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter2::vtkXdmfWriter2()
@@ -772,7 +772,7 @@ void vtkXdmfWriter2::CreateTopology(vtkDataSet *ds, XdmfGrid *grid, vtkIdType PD
 }
 
 //----------------------------------------------------------------------------
-void vtkXdmfWriter2::CreateGeometry(vtkDataSet *ds, XdmfGrid *grid, vtkIdType PDims[3], vtkIdType CDims[3], vtkIdType &PRank, vtkIdType &CRank, void *staticdata)
+void vtkXdmfWriter2::CreateGeometry(vtkDataSet *ds, XdmfGrid *grid, void *staticdata)
 {
   //Geometry
   XdmfGeometry *geo = grid->GetGeometry();
@@ -875,7 +875,7 @@ void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
   vtkIdType PDims[3];
 
   this->CreateTopology(ds, grid, PDims, CDims, PRank, CRank, NULL);
-  this->CreateGeometry(ds, grid, PDims, CDims, PRank, CRank, NULL);
+  this->CreateGeometry(ds, grid, NULL);
     
   FDims[0] = ds->GetFieldData()->GetNumberOfTuples();
   this->WriteArrays(ds->GetFieldData(),grid,XDMF_ATTRIBUTE_CENTER_GRID, FRank, FDims, "Field");

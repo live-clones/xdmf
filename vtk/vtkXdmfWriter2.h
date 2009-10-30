@@ -129,7 +129,7 @@ protected:
   //use XDMF lib to dump everything to file.
 
   virtual void CreateTopology(vtkDataSet *ds, XdmfGrid *grid, vtkIdType PDims[3], vtkIdType CDims[3], vtkIdType &PRank, vtkIdType &CRank, void *staticdata);
-  virtual void CreateGeometry(vtkDataSet *ds, XdmfGrid *grid, vtkIdType PDims[3], vtkIdType CDims[3], vtkIdType &PRank, vtkIdType &CRank, void *staticdata);
+  virtual void CreateGeometry(vtkDataSet *ds, XdmfGrid *grid, void *staticdata);
 
   virtual void WriteDataSet(vtkDataObject *dobj, XdmfGrid *grid);
   virtual void WriteCompositeDataSet(vtkCompositeDataSet *dobj, XdmfGrid *grid);
