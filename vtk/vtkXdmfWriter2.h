@@ -40,6 +40,14 @@ class XdmfDOM;
 class XdmfDomain;
 class XdmfGrid;
 class XdmfArray;
+struct  _xmlNode;
+typedef _xmlNode *XdmfXmlNode;
+struct vtkXW2NodeHelp {
+  XdmfDOM     *DOM;
+  XdmfXmlNode  node;
+  bool         staticFlag;
+  vtkXW2NodeHelp(XdmfDOM *d, XdmfXmlNode n, bool f) : DOM(d), node(n), staticFlag(f) {};
+};
 //ETX
 
 class VTK_EXPORT vtkXdmfWriter2 : public vtkDataObjectAlgorithm

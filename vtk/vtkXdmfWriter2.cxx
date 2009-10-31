@@ -55,6 +55,7 @@
 
 #include <vtkstd/map>
 #include <stdio.h>
+#include <libxml/tree.h> // always after vtkstd::blah stuff
 
 #if defined(_WIN32) && !defined(__CYGWIN__)
 # define SNPRINTF _snprintf
@@ -125,7 +126,7 @@ void vtkXdmfWriter2Internal::DetermineCellTypes(vtkPointSet * t, vtkXdmfWriter2I
 //==============================================================================
 
 vtkStandardNewMacro(vtkXdmfWriter2);
-vtkCxxRevisionMacro(vtkXdmfWriter2, "1.21");
+vtkCxxRevisionMacro(vtkXdmfWriter2, "1.22");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter2::vtkXdmfWriter2()
@@ -462,8 +463,32 @@ void vtkXdmfWriter2::CreateTopology(vtkDataSet *ds, XdmfGrid *grid, vtkIdType PD
     heavyName = heavyDataSetName.c_str();
     }
 
-  //Topology
   XdmfTopology *t = grid->GetTopology();
+
+  //
+  // If the topology is unchanged from last grid written, we can reuse the XML
+  // and avoid writing any heavy data. We must still compute dimensions etc
+  // otherwise the attribute arrays don't get initialized properly
+  //
+  bool reusing_topology = false;
+  vtkXW2NodeHelp *staticnode = (vtkXW2NodeHelp*)staticdata;
+  if (staticnode->staticFlag) {
+    grid->Set("TopologyConstant", "True");
+  }
+  if (staticnode->DOM && staticnode->node) {
+    XdmfXmlNode       staticTopo = staticnode->DOM->FindElement("Topology", 0, staticnode->node);
+    XdmfConstString      xmltext = staticnode->DOM->Serialize(staticTopo->children);
+    XdmfConstString   dimensions = staticnode->DOM->Get(staticTopo, "Dimensions");
+    XdmfConstString topologyType = staticnode->DOM->Get(staticTopo, "TopologyType");
+    //
+    t->SetTopologyTypeFromString(topologyType);
+    t->SetNumberOfElements(atoi(dimensions));
+    t->SetDataXml(xmltext);
+    reusing_topology = true;
+    // @TODO : t->SetNodesPerElement(ppCell);
+  }
+
+  //Topology
   switch (ds->GetDataObjectType()) {
   case VTK_STRUCTURED_POINTS:
   case VTK_IMAGE_DATA:
@@ -541,6 +566,12 @@ void vtkXdmfWriter2::CreateTopology(vtkDataSet *ds, XdmfGrid *grid, vtkIdType PD
     PDims[0] = ds->GetNumberOfPoints();
     CRank = 1;
     CDims[0] = ds->GetNumberOfCells();
+    if (reusing_topology)
+      {
+      // don't need to do all this again
+      // @TODO : t->SetNodesPerElement(ppCell);
+      break;
+      }
     vtkXdmfWriter2Internal::MapOfCellTypes cellTypes;
     vtkXdmfWriter2Internal::DetermineCellTypes(vtkPointSet::SafeDownCast(ds), cellTypes);
 
@@ -789,6 +820,17 @@ void vtkXdmfWriter2::CreateGeometry(vtkDataSet *ds, XdmfGrid *grid, void *static
       }
     heavyName = heavyDataSetName.c_str();
     }
+
+  vtkXW2NodeHelp *staticnode = (vtkXW2NodeHelp*)staticdata;
+  if (staticnode->staticFlag) {
+    grid->Set("GeometryConstant", "True");
+  }
+  if (staticnode->DOM && staticnode->node) {
+    XdmfXmlNode staticGeom = staticnode->DOM->FindElement("Geometry", 0, staticnode->node);
+    XdmfConstString text = staticnode->DOM->Serialize(staticGeom->children);
+    geo->SetDataXml(text);
+    return;
+  }
 
   switch (ds->GetDataObjectType()) {
   case VTK_STRUCTURED_POINTS:
