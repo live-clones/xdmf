@@ -54,6 +54,7 @@
 #include "XdmfTopology.h"
 
 #include <vtkstd/map>
+#include <vtkstd/algorithm>
 #include <stdio.h>
 #include <libxml/tree.h> // always after vtkstd::blah stuff
 
@@ -126,7 +127,7 @@ void vtkXdmfWriter2Internal::DetermineCellTypes(vtkPointSet * t, vtkXdmfWriter2I
 //==============================================================================
 
 vtkStandardNewMacro(vtkXdmfWriter2);
-vtkCxxRevisionMacro(vtkXdmfWriter2, "1.22");
+vtkCxxRevisionMacro(vtkXdmfWriter2, "1.23");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter2::vtkXdmfWriter2()
@@ -472,20 +473,22 @@ void vtkXdmfWriter2::CreateTopology(vtkDataSet *ds, XdmfGrid *grid, vtkIdType PD
   //
   bool reusing_topology = false;
   vtkXW2NodeHelp *staticnode = (vtkXW2NodeHelp*)staticdata;
-  if (staticnode->staticFlag) {
-    grid->Set("TopologyConstant", "True");
-  }
-  if (staticnode->DOM && staticnode->node) {
-    XdmfXmlNode       staticTopo = staticnode->DOM->FindElement("Topology", 0, staticnode->node);
-    XdmfConstString      xmltext = staticnode->DOM->Serialize(staticTopo->children);
-    XdmfConstString   dimensions = staticnode->DOM->Get(staticTopo, "Dimensions");
-    XdmfConstString topologyType = staticnode->DOM->Get(staticTopo, "TopologyType");
-    //
-    t->SetTopologyTypeFromString(topologyType);
-    t->SetNumberOfElements(atoi(dimensions));
-    t->SetDataXml(xmltext);
-    reusing_topology = true;
-    // @TODO : t->SetNodesPerElement(ppCell);
+  if (staticnode) {
+    if (staticnode->staticFlag) {
+      grid->Set("TopologyConstant", "True");
+    }
+    if (staticnode->DOM && staticnode->node) {
+      XdmfXmlNode       staticTopo = staticnode->DOM->FindElement("Topology", 0, staticnode->node);
+      XdmfConstString      xmltext = staticnode->DOM->Serialize(staticTopo->children);
+      XdmfConstString   dimensions = staticnode->DOM->Get(staticTopo, "Dimensions");
+      XdmfConstString topologyType = staticnode->DOM->Get(staticTopo, "TopologyType");
+      //
+      t->SetTopologyTypeFromString(topologyType);
+      t->SetNumberOfElements(atoi(dimensions));
+      t->SetDataXml(xmltext);
+      reusing_topology = true;
+      // @TODO : t->SetNodesPerElement(ppCell);
+    }
   }
 
   //Topology
@@ -822,14 +825,16 @@ void vtkXdmfWriter2::CreateGeometry(vtkDataSet *ds, XdmfGrid *grid, void *static
     }
 
   vtkXW2NodeHelp *staticnode = (vtkXW2NodeHelp*)staticdata;
-  if (staticnode->staticFlag) {
-    grid->Set("GeometryConstant", "True");
-  }
-  if (staticnode->DOM && staticnode->node) {
-    XdmfXmlNode staticGeom = staticnode->DOM->FindElement("Geometry", 0, staticnode->node);
-    XdmfConstString text = staticnode->DOM->Serialize(staticGeom->children);
-    geo->SetDataXml(text);
-    return;
+  if (staticnode) {
+    if (staticnode->staticFlag) {
+      grid->Set("GeometryConstant", "True");
+    }
+    if (staticnode->DOM && staticnode->node) {
+      XdmfXmlNode staticGeom = staticnode->DOM->FindElement("Geometry", 0, staticnode->node);
+      XdmfConstString text = staticnode->DOM->Serialize(staticGeom->children);
+      geo->SetDataXml(text);
+      return;
+    }
   }
 
   switch (ds->GetDataObjectType()) {
@@ -918,7 +923,7 @@ void vtkXdmfWriter2::WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid)
 
   this->CreateTopology(ds, grid, PDims, CDims, PRank, CRank, NULL);
   this->CreateGeometry(ds, grid, NULL);
-    
+
   FDims[0] = ds->GetFieldData()->GetNumberOfTuples();
   this->WriteArrays(ds->GetFieldData(),grid,XDMF_ATTRIBUTE_CENTER_GRID, FRank, FDims, "Field");
   this->WriteArrays(ds->GetCellData(), grid,XDMF_ATTRIBUTE_CENTER_CELL, CRank, CDims, "Cell");
@@ -933,21 +938,31 @@ void vtkXdmfWriter2::WriteArrays(vtkFieldData* fd, XdmfGrid *grid, int associati
     {
     vtkDataSetAttributes *dsa = vtkDataSetAttributes::SafeDownCast(fd);
 
-  const char *heavyName = NULL;
-  vtkstd::string heavyDataSetName;
-  if (this->HeavyDataFileName) 
-    {
-    heavyDataSetName = vtkstd::string(this->HeavyDataFileName) + ":";
-    if (this->HeavyDataGroupName) 
+    const char *heavyName = NULL;
+    vtkstd::string heavyDataSetName;
+    if (this->HeavyDataFileName) 
       {
-      heavyDataSetName = heavyDataSetName + vtkstd::string(HeavyDataGroupName) + "/" + name;
+      heavyDataSetName = vtkstd::string(this->HeavyDataFileName) + ":";
+      if (this->HeavyDataGroupName) 
+        {
+        heavyDataSetName = heavyDataSetName + vtkstd::string(HeavyDataGroupName) + "/" + name;
+        }
+      heavyName = heavyDataSetName.c_str();
       }
-    heavyName = heavyDataSetName.c_str();
-    }
 
-    for (int i = 0; i < fd->GetNumberOfArrays(); i++)
+    //
+    // Sort alphabetically to avoid potential bad ordering problems
+    //
+    vtkstd::vector<vtkstd::string> AttributeNames;
+    for (int i=0; i<fd->GetNumberOfArrays(); i++) {
+      vtkDataArray *scalars = fd->GetArray(i);
+      AttributeNames.push_back(scalars->GetName());
+    }
+    vtkstd::sort(AttributeNames.begin(), AttributeNames.end());
+
+    for (unsigned int i = 0; i < AttributeNames.size(); i++)
       {
-      vtkDataArray *da = fd->GetArray(i);
+      vtkDataArray *da = fd->GetArray(AttributeNames[i].c_str());
       if (!da)
         {
         //TODO: Dump non numeric arrays too
