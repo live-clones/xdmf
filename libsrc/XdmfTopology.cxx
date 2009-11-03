@@ -236,7 +236,7 @@ XdmfTopology::GetTopologyTypeAsString( void ) {
     case  XDMF_QUAD_8 :
       return("Quadrilateral_8");
     case  XDMF_TET_10 :
-      return("Tetrehedron_10");
+      return("Tetrahedron_10");
     case  XDMF_PYRAMID_13 :
       return("Pyramid_13");
     case  XDMF_WEDGE_15 :
