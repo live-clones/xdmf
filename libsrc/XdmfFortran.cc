@@ -45,6 +45,7 @@
 #define XdmfSetGridTopologyFromShape xdmfsetgridtopologyfromshape_
 #define XdmfSetGridGeometry xdmfsetgridgeometry_
 #define XdmfAddGridAttribute xdmfaddgridattribute_
+#define XdmfAddGridAttributeFromShape xdmfaddgridattributefromshape_
 #define XdmfAddGridInformation xdmfaddgridinformation_
 #define XdmfAddCollectionAttribute xdmfaddcollectionattribute_
 #define XdmfAddCollectionInformation xdmfaddcollectioninformation_
@@ -266,6 +267,29 @@ void XdmfFortran::AddGridAttribute(char * attributeName, char * numberType, char
 	array->SetNumberOfElements(*numberOfPoints);
 	WriteToXdmfArray(array, data);
 	myAttributes.push_back(currAttribute);
+}
+
+/**
+ *
+ * Add an attribute with shape to be written to the next grid.  Multiple attributes can
+ * be added and written to a single grid. Dimensions are specified using shape string rather than int.
+ * Extra argument supports setting units string of attribute.
+ *
+ */
+void XdmfFortran::AddGridAttributeFromShape(char * attributeName, char * numberType, char * attributeCenter, char * attributeType, char * shape, char * units, XdmfPointer * data)
+{
+        XdmfAttribute * currAttribute = new XdmfAttribute();
+        currAttribute->SetName(attributeName);
+        currAttribute->SetUnits(units);
+        currAttribute->SetAttributeCenterFromString(attributeCenter);
+        currAttribute->SetAttributeTypeFromString(attributeType);
+        currAttribute->SetDeleteOnGridDelete(true);
+
+        XdmfArray * array = currAttribute->GetValues();
+        array->SetNumberTypeFromString(numberType);
+        array->SetShapeFromString(shape);   // dims via shape string
+        WriteToXdmfArray(array, data);
+        myAttributes.push_back(currAttribute);
 }
 
 /**
@@ -940,6 +964,12 @@ extern "C" {
 		myPointer->AddGridAttribute(attributeName, numberType, attributeCenter, attributeType, numberOfPoints, data);
 	}
 
+        void XDMF_UTILS_DLL XdmfAddGridAttributeFromShape(long * pointer, char * attributeName, char * numberType, char * attributeCenter, char * attributeType, char * shape, char * units, XdmfPointer * data)
+        {
+                XdmfFortran * myPointer = (XdmfFortran *)*pointer;
+                myPointer->AddGridAttributeFromShape(attributeName, numberType, attributeCenter, attributeType, shape, units, data);
+        }
+
 	void XDMF_UTILS_DLL XdmfAddCollectionAttribute(long * pointer, char * attributeName, char * numberType, char * attributeCenter, char * attributeType, int * numberOfPoints, XdmfPointer * data)
 	{
 		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
@@ -964,17 +994,17 @@ extern "C" {
 		myPointer->AddArray(name, numberType, numberOfValues,data);
 	}
 
-    void XDMF_UTILS_DLL XdmfReadFile(long * pointer, char * filePath)
-    {
-    	XdmfFortran * myPointer = (XdmfFortran *)*pointer;
-    	myPointer->ReadFile(filePath);
-    }
+	void XDMF_UTILS_DLL XdmfReadFile(long * pointer, char * filePath)
+	{
+    		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
+	    	myPointer->ReadFile(filePath);
+    	}
 
-    void XDMF_UTILS_DLL XdmfReadGrid(long * pointer, char * gridName)
-    {
-    	XdmfFortran * myPointer = (XdmfFortran *)*pointer;
-    	myPointer->ReadGrid(gridName);
-    }
+	void XDMF_UTILS_DLL XdmfReadGrid(long * pointer, char * gridName)
+    	{
+    		XdmfFortran * myPointer = (XdmfFortran *)*pointer;
+	    	myPointer->ReadGrid(gridName);
+	}
 
     void XDMF_UTILS_DLL XdmfReadGridAtIndex(long * pointer, int * gridIndex)
     {
