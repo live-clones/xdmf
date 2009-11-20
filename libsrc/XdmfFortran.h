@@ -61,6 +61,7 @@ public:
 	void SetGridTopologyFromShape(char * topologyType, char * shape, XdmfInt32 * conns);
 	void SetGridGeometry(char * geometryType, char * numberType, int * numberOfPoints, XdmfPointer * points);
 	void AddGridAttribute(char * attributeName, char * numberType, char * attributeCenter, char * attributeType, int * numberOfPoints, XdmfPointer * data);
+        void AddGridAttributeFromShape(char * attributeName, char * numberType, char * attributeCenter, char * attributeType, char * shape, char * units, XdmfPointer * data);
 	void AddGridInformation(char * informationName, char * value);
 	void AddCollectionAttribute(char * attributeName, char * numberType, char * attributeCenter, char * attributeType, int * numberOfPoints, XdmfPointer * data);
 	void AddCollectionInformation(char * informationName, char * value);
