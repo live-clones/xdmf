@@ -52,7 +52,7 @@
 #include "XdmfRoot.h"
 #include "XdmfTime.h"
 #include "XdmfTopology.h"
-
+#include <vector>
 #include <vtkstd/map>
 #include <vtkstd/algorithm>
 #include <stdio.h>
@@ -127,7 +127,7 @@ void vtkXdmfWriter2Internal::DetermineCellTypes(vtkPointSet * t, vtkXdmfWriter2I
 //==============================================================================
 
 vtkStandardNewMacro(vtkXdmfWriter2);
-vtkCxxRevisionMacro(vtkXdmfWriter2, "1.23");
+vtkCxxRevisionMacro(vtkXdmfWriter2, "1.24");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter2::vtkXdmfWriter2()
