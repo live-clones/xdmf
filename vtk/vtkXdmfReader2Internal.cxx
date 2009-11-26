@@ -19,6 +19,8 @@
 #include "vtkVariant.h"
 #include "vtkXdmfDataArray.h"
 
+#define USE_IMAGE_DATA // otherwise uniformgrid
+
 // As soon as num-grids (sub-grids and all) grows beyond this number, we assume
 // that the grids are way too numerous for the user to select individually and
 // hence only the top-level grids are made accessible.
