@@ -38,12 +38,12 @@ class XdmfDsmBuffer;
 //! Number Type and Shape
 /*!
     XdmfDataDesc is a class to operate of the \b TYPE and \b SHAPE of data.
-    The \b TYPE refers to wheather the data is Interger or Floating Point
-    and its percision (i.e. 64 bit floats, 32 bit ints). The \b SHAPE refers to
+    The \b TYPE refers to whether the data is Integer or Floating Point
+    and its precision (i.e. 64 bit floats, 32 bit ints). The \b SHAPE refers to
     the \b rank and \b dimensions of the data. The \b rank is the number of
     dimensions. The \b dimensions are the length of each extent. For example,
     if we have an array that is 10x20x30 then the rank is 3 and the dimensions
-    are 10,20,30. Data is specified with it's slowest changing dimension listed 
+    are 10,20,30. Data is specified with its slowest changing dimension listed 
     first. So for a datset with IDim = 100, JDim = 200, and KDim = 300, the
     shape would be (300, 200, 100).
 
