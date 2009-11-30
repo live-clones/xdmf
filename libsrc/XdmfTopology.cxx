@@ -172,15 +172,23 @@ if ( XDMF_WORD_CMP( topologyType, "NOTOPOLOGY") ){
   newTopologyType = XDMF_EDGE_3;
 } else if( XDMF_WORD_CMP( topologyType, "TRI_6") ){
   newTopologyType = XDMF_TRI_6;
+} else if( XDMF_WORD_CMP( topologyType, "TRIANGLE_6") ){
+  newTopologyType = XDMF_TRI_6;
 } else if( XDMF_WORD_CMP( topologyType, "QUAD_8") ){
   newTopologyType = XDMF_QUAD_8;
+} else if( XDMF_WORD_CMP( topologyType, "QUADRILATERAL_8") ){
+  newTopologyType = XDMF_QUAD_8;
 } else if( XDMF_WORD_CMP( topologyType, "TET_10") ){
+  newTopologyType = XDMF_TET_10;
+} else if( XDMF_WORD_CMP( topologyType, "TETRAHEDRON_10") ){
   newTopologyType = XDMF_TET_10;
 } else if( XDMF_WORD_CMP( topologyType, "PYRAMID_13") ){
   newTopologyType = XDMF_PYRAMID_13;
 } else if( XDMF_WORD_CMP( topologyType, "WEDGE_15") ){
   newTopologyType = XDMF_WEDGE_15;
 } else if( XDMF_WORD_CMP( topologyType, "HEX_20") ){
+  newTopologyType = XDMF_HEX_20;
+} else if( XDMF_WORD_CMP( topologyType, "HEXAHEDRON_20") ){
   newTopologyType = XDMF_HEX_20;
 } else if( XDMF_WORD_CMP( topologyType, "MIXED") ){
   newTopologyType = XDMF_MIXED;
