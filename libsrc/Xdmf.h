@@ -52,5 +52,7 @@
 #include "XdmfValues.h"
 #include "XdmfValuesBinary.h"
 #include "XdmfValuesHDF.h"
+#ifdef XDMF_USE_MYSQL
 #include "XdmfValuesMySQL.h"
+#endif
 #include "XdmfValuesXML.h"
