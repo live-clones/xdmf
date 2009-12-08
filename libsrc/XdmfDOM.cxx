@@ -759,7 +759,11 @@ if( STRNCASECMP( Attribute, "CDATA", 5 ) == 0 ){
     text = xmlNewDocText(this->Doc, (const xmlChar *)Value);
     xmlAddChildList(Node, text);
 }else{
-    xmlSetProp(Node, (xmlChar *)Attribute, (xmlChar *)Value);
+    if(Value){
+        xmlSetProp(Node, (xmlChar *)Attribute, (xmlChar *)Value);
+    }else{
+        xmlUnsetProp(Node, (xmlChar *)Attribute);
+    }
 }
 }
 
