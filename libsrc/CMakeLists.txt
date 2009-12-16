@@ -132,14 +132,14 @@ SET( XdmfMpiSource
   XdmfDsmCommMpi
   )
 
-SET( XdmfUtilSource
-  XdmfFortran
-  XdmfDiff
-  )
+#SET( XdmfUtilSource
+#  XdmfFortran
+#  XdmfDiff
+#  )
 
-SET( XdmfSTLConverterSource
-    XdmfSTLConverter
-    )
+#SET( XdmfSTLConverterSource
+#    XdmfSTLConverter
+#    )
 
 SET( XdmfMySQLSource
     XdmfValuesMySQL
@@ -155,11 +155,13 @@ SET( XdmfPythonSourceNoMpi
 
 OPTION(XDMF_BUILD_UTILS "Build Xdmf Utilities" OFF)
 IF(XDMF_BUILD_UTILS)
-   SET(swig_extra_args ${swig_extra_args} "-DXDMF_BUILD_UTILS")
-   ADD_LIBRARY(XdmfUtils ${LIBTYPE} ${XdmfUtilSource})
-   TARGET_LINK_LIBRARIES(XdmfUtils Xdmf)
-   ADD_EXECUTABLE(XdmfDiff XdmfDiffUtil)
-   TARGET_LINK_LIBRARIES(XdmfDiff XdmfUtils)
+   INCLUDE_DIRECTORIES(${Xdmf_SOURCE_DIR}/libsrc/utils)
+   ADD_SUBDIRECTORY(${Xdmf_SOURCE_DIR}/libsrc/utils)
+   #SET(swig_extra_args ${swig_extra_args} "-DXDMF_BUILD_UTILS")
+   #ADD_LIBRARY(XdmfUtils ${LIBTYPE} ${XdmfUtilSource})
+   #TARGET_LINK_LIBRARIES(XdmfUtils Xdmf)
+   #ADD_EXECUTABLE(XdmfDiff XdmfDiffUtil)
+   #TARGET_LINK_LIBRARIES(XdmfDiff XdmfUtils)
 ENDIF(XDMF_BUILD_UTILS)
 
 SET(XDMF_PYTHON_FILE ${Xdmf_SOURCE_DIR}/libsrc/Xdmf.py)
@@ -589,12 +591,12 @@ IF(NOT XDMF_INSTALL_NO_LIBRARIES)
         DESTINATION
         ${XDMF_WRAP_PYTHON_INSTALL_LIB_DIR})
   ENDIF(XDMF_WRAP_PYTHON)
-  IF(XDMF_BUILD_UTILS)
-  INSTALL(TARGETS XdmfDiff XdmfUtils
-    RUNTIME DESTINATION ${XDMF_INSTALL_BIN_DIR_CM24} COMPONENT Runtime
-    LIBRARY DESTINATION ${XDMF_INSTALL_LIB_DIR_CM24} COMPONENT Runtime
-    ARCHIVE DESTINATION ${XDMF_INSTALL_LIB_DIR_CM24} COMPONENT Development)
-  ENDIF(XDMF_BUILD_UTILS)
+  #IF(XDMF_BUILD_UTILS)
+  #INSTALL(TARGETS XdmfDiff XdmfUtils
+  #  RUNTIME DESTINATION ${XDMF_INSTALL_BIN_DIR_CM24} COMPONENT Runtime
+  #  LIBRARY DESTINATION ${XDMF_INSTALL_LIB_DIR_CM24} COMPONENT Runtime
+  #  ARCHIVE DESTINATION ${XDMF_INSTALL_LIB_DIR_CM24} COMPONENT Development)
+  #ENDIF(XDMF_BUILD_UTILS)
 ENDIF(NOT XDMF_INSTALL_NO_LIBRARIES)
 
 ADD_SUBDIRECTORY(test)
