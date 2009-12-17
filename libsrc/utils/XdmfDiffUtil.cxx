@@ -74,7 +74,7 @@ main(int argc, char* argv[])
 
   XdmfDiff * diffFramework;
 
-  std::string usage = "Compares Xdmf files for equality: \n \n Usage: \n \n   XdmfDiff <path-to-reference-xdmf-file> <path-to-xdmf-file> (Optional: <path-to-setting-file>)";
+  std::string usage = "Compares Xdmf files for equality: \n \n Usage: \n \n   XdmfDiff <path-to-reference-xdmf-file> <path-to-xdmf-file> (Optional: <path-to-settings-file>)";
 
   if (argc < 3)
   {
