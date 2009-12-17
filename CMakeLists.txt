@@ -234,13 +234,15 @@ ENDIF(XDMF_BUILD_VTK)
 
 #############################################################################
 # Testing
-ENABLE_TESTING()
-CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/CTestCustom.cmake.in 
-  ${Xdmf_BINARY_DIR}/CTestCustom.cmake @ONLY)
-INCLUDE(CTest)
-OPTION(VTK_USE_DISPLAY 
-  "Turn this option off and tests will not popup windows" ON)
-MARK_AS_ADVANCED(VTK_USE_DISPLAY)
+IF(BUILD_TESTING)
+  ENABLE_TESTING()
+  CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/CTestCustom.cmake.in 
+    ${Xdmf_BINARY_DIR}/CTestCustom.cmake @ONLY)
+  INCLUDE(CTest)
+  OPTION(VTK_USE_DISPLAY 
+    "Turn this option off and tests will not popup windows" ON)
+  MARK_AS_ADVANCED(VTK_USE_DISPLAY)
+ENDIF(BUILD_TESTING)
 
 #############################################################################
 # Examples
@@ -250,8 +252,28 @@ IF(XDMF_BUILD_EXAMPLES)
 ENDIF(XDMF_BUILD_EXAMPLES)
 
 #############################################################################
+# RPATH Handling
+OPTION(XDMF_USE_RPATH "Build Xdmf with RPaths flag" OFF)
+IF(XDMF_USE_RPATH)
+  # use, i.e. don't skip the full RPATH for the build tree
+  SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
+
+  # when building, don't use the install RPATH already
+  # (but later on when installing)
+  SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
+
+  # the RPATH to be used when installing
+  SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+
+  # add the automatically determined parts of the RPATH
+  # which point to directories outside the build tree to the install RPATH
+  SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+ENDIF(XDMF_USE_RPATH)
+
+#############################################################################
 # Installation
 # This code has to be duplicated for install tree
+
 SET(XDMF_INCLUDE_DIRS_CONFIG 
   ${Xdmf_SOURCE_DIR}/libsrc
   ${Xdmf_BINARY_DIR}/libsrc
