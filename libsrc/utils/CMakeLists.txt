@@ -7,7 +7,7 @@ SET( XdmfSTLConverterSource
     XdmfSTLConverter
     )
 
-SET(swig_extra_args ${swig_extra_args} "-DXDMF_BUILD_UTILS")
+#SET(swig_extra_args ${swig_extra_args} "-DXDMF_BUILD_UTILS")
    	
 ADD_LIBRARY(XdmfUtils ${LIBTYPE} ${XdmfUtilSource})
 TARGET_LINK_LIBRARIES(XdmfUtils Xdmf)
