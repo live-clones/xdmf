@@ -31,10 +31,6 @@ if(XDMF_BUILD_MPI)
     XdmfMPITest( XdmfTestHDFMPI 4 XdmfHDFMPI.cxx )
 endif(XDMF_BUILD_MPI)
 
-if(XDMF_BUILD_UTILS)
-    XdmfUtilsTest( XdmfTestDiff TestXdmfDiff.cc )
-endif(XDMF_BUILD_UTILS)
-
 if(XDMF_WRAP_PYTHON)
   if(PYTHON_EXECUTABLE)
     SET(PYTHON_TESTS

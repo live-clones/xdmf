@@ -234,6 +234,7 @@ ENDIF(XDMF_BUILD_VTK)
 
 #############################################################################
 # Testing
+OPTION(BUILD_TESTING ON)
 IF(BUILD_TESTING)
   ENABLE_TESTING()
   CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/CTestCustom.cmake.in 
