@@ -8,7 +8,7 @@
 #endif
 
 #if defined(WIN32) && !defined(XDMFSTATIC)
-#  if defined(Xdmf_EXPORTS) || defined(Xdmf_EXPORTS)
+#  if defined(Xdmf_EXPORTS)
 #    define XDMF_EXPORT __declspec( dllexport ) 
 #  else
 #    define XDMF_EXPORT __declspec( dllimport ) 

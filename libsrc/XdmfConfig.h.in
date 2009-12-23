@@ -36,62 +36,62 @@
 
 #cmakedefine XDMF_VOID_VALID
 #ifndef XDMF_VOID_VALID
-	/* Force an Error */
-#error	XDMF_VOID not defined
+    /* Force an Error */
+#error  XDMF_VOID not defined
 #endif
 #define XDMF_VOID @XDMF_VOID@
 
 #cmakedefine XDMF_PTR_VALID
 #ifndef XDMF_PTR_VALID
-	/* Force an Error */
-#error	XDMF_PTR not defined
+    /* Force an Error */
+#error  XDMF_PTR not defined
 #endif
 #define XDMF_PTR @XDMF_PTR@
 
 #cmakedefine XDMF_CHAR_VALID
 #ifndef XDMF_CHAR_VALID
-	/* Force an Error */
-#error	XDMF_CHAR not defined
+    /* Force an Error */
+#error  XDMF_CHAR not defined
 #endif
 #define XDMF_CHAR @XDMF_CHAR@
 
 #cmakedefine XDMF_8_INT_VALID
 #ifndef XDMF_8_INT_VALID
-	/* Force an Error */
-#error	XDMF_8_INT not defined
+    /* Force an Error */
+#error  XDMF_8_INT not defined
 #endif
-#define XDMF_8_INT 	@XDMF_8_INT@
-#define XDMF_8_U_INT 	@XDMF_8_U_INT@
+#define XDMF_8_INT   @XDMF_8_INT@
+#define XDMF_8_U_INT   @XDMF_8_U_INT@
 
 #cmakedefine XDMF_16_INT_VALID
 #ifndef XDMF_16_INT_VALID
-	/* Force an Error */
-#error	XDMF_16_INT not defined
+    /* Force an Error */
+#error  XDMF_16_INT not defined
 #endif
-#define XDMF_16_INT 	@XDMF_16_INT@
-#define XDMF_16_U_INT 	@XDMF_16_U_INT@
+#define XDMF_16_INT   @XDMF_16_INT@
+#define XDMF_16_U_INT   @XDMF_16_U_INT@
 
 #cmakedefine XDMF_32_INT_VALID
 #ifndef XDMF_32_INT_VALID
-	/* Force an Error */
-#error	XDMF_32_INT not defined
+    /* Force an Error */
+#error  XDMF_32_INT not defined
 #endif
-#define XDMF_32_INT 	@XDMF_32_INT@
-#define XDMF_32_U_INT	@XDMF_32_U_INT@
-#define XDMF_32_S_INT	@XDMF_32_S_INT@
+#define XDMF_32_INT   @XDMF_32_INT@
+#define XDMF_32_U_INT  @XDMF_32_U_INT@
+#define XDMF_32_S_INT  @XDMF_32_S_INT@
 
 #cmakedefine XDMF_32_FLOAT_VALID
 #ifndef XDMF_32_FLOAT_VALID
-	/* Force an Error */
-#error	XDMF_32_FLOAT not defined
+    /* Force an Error */
+#error  XDMF_32_FLOAT not defined
 #endif
 #define XDMF_32_FLOAT @XDMF_32_FLOAT@
 #define XDMF_FLOAT @XDMF_32_FLOAT@
 
 #cmakedefine XDMF_64_FLOAT_VALID
 #ifndef XDMF_64_FLOAT_VALID
-	/* Force an Error */
-#error	XDMF_64_FLOAT not defined
+    /* Force an Error */
+#error  XDMF_64_FLOAT not defined
 #endif
 #define XDMF_64_FLOAT @XDMF_64_FLOAT@
 #define XDMF_DOUBLE @XDMF_64_FLOAT@
@@ -104,7 +104,7 @@
 #cmakedefine HAVE_STRTOLL
 
 #ifndef SIZEOF_LONG_LONG
-#cmakedefine SIZEOF_LONG_LONG
+#cmakedefine SIZEOF_LONG_LONG @SIZEOF_LONG_LONG@
 #endif
 
 #if defined( SIZEOF_LONG_LONG )
@@ -138,10 +138,6 @@
 #cmakedefine SIZEOF___INT64
 #endif
 
-#ifndef SIZEOF_LONG_LONG
-#cmakedefine SIZEOF_LONG_LONG @SIZEOF_LONG_LONG@
-#endif
-
 #if defined( SIZEOF___INT64 )
 # define XDMF_LONG64 __int64
 #elif defined( SIZEOF_LONG_LONG )
@@ -164,6 +160,11 @@
 #ifndef XDMF_NO_MPI
 #define XDMF_NO_MPI
 #endif
+#endif
+
+#cmakedefine Xdmf_EXPORTS
+#ifndef Xdmf_EXPORTS
+# define Xdmf_EXPORTS
 #endif
 
 #endif /* __XdmfConfig_h */

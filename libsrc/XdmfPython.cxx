@@ -143,10 +143,27 @@ template <typename T> T SwigValueInit() {
 # define _SCL_SECURE_NO_DEPRECATE
 #endif
 
-
-
 /* Python.h has to appear first */
-#include <Python.h>
+/* The following logic gets around the python library linking error while building
+*  Debug version of the Xdmf library with visual studio, which is a well-know python "bug/feature" 
+*  If python wrapping is on, and XDMF_REGENERATE_WRAPPER is turned on in CMake, 
+*  the generated XdmfPython.cxx in binary directory needs to be modified as follows 
+*  to get around the link error. */
+#if defined(WIN32)
+# ifdef _DEBUG
+#  undef _DEBUG
+#  if defined(_MSC_VER) && _MSC_VER >= 1400
+#    define _CRT_NOFORCE_MANIFEST 1
+#  endif
+#  include <Python.h>
+#  define _DEBUG
+# else
+#  include <Python.h>
+# endif
+#else
+# include <Python.h>
+#endif
+
 
 /* -----------------------------------------------------------------------------
  * swigrun.swg
