@@ -89,7 +89,9 @@
 # endif
 
 # if defined(WIN32) && !defined(__CYGWIN__)
-#  include "winsock.h"
+/* winsock.h seems not being used in Xdmf, but
+*  will cause conflicts with projects that includes "winsock2.h" */
+/* #  include "winsock.h" */
 /* String comparison routine. */
 #  define STRCASECMP _stricmp
 #  define STRNCASECMP _strnicmp
