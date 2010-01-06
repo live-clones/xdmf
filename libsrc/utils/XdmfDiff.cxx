@@ -64,6 +64,8 @@
 
 #include "XdmfDiff.h"
 
+#ifndef BUILD_EXE
+
 #include <XdmfAttribute.h>
 #include <XdmfGrid.h>
 #include <XdmfGeometry.h>
@@ -1410,3 +1412,78 @@ XdmfDiffInternal::ParseSettingsFile(XdmfConstString settingsFile)
   ifs.close();
   return XDMF_SUCCESS;
 }
+
+#else
+
+/**
+ * Entry point for command line utility
+ *
+ */
+int
+main(int argc, char* argv[])
+{
+
+  XdmfDiff * diffFramework;
+
+  std::string usage = "Compares Xdmf files for equality: \n \n Usage: \n \n   XdmfDiff <path-to-reference-xdmf-file> <path-to-xdmf-file> (Optional: <path-to-settings-file>)";
+
+  if (argc < 3)
+  {
+    cout << usage << endl;
+    return 1;
+  }
+
+  if (argc >= 3)
+  {
+    FILE * refFile = fopen(argv[1], "r");
+    if (refFile)
+    {
+      // Success
+      fclose(refFile);
+    }
+    else
+    {
+      cout << "Cannot open: " << argv[1] << endl;
+      return 1;
+    }
+
+    FILE * newFile = fopen(argv[2], "r");
+    if (newFile)
+    {
+      // Success
+      fclose(newFile);
+    }
+    else
+    {
+      cout << "Cannot open: " << argv[2] << endl;
+      return 1;
+    }
+
+    diffFramework = new XdmfDiff(argv[1], argv[2]);
+
+    if (argc >= 4)
+    {
+      FILE * defFile = fopen(argv[3], "r");
+      if (defFile)
+      {
+        // Success
+        fclose(defFile);
+      }
+      else
+      {
+        cout << "Cannot open: " << argv[3] << endl;
+        delete diffFramework;
+        return 1;
+      }
+      diffFramework->ParseSettingsFile(argv[3]);
+    }
+  }
+
+  //diffFramework.SetCreateDiffFile(true);
+  std::string output = diffFramework->GetDiffs();
+  cout << output << endl;
+  delete diffFramework;
+  return 0;
+}
+
+#endif // BUILD_EXE

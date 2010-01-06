@@ -138,7 +138,7 @@ XdmfValuesHDF::Write(XdmfArray *anArray, XdmfConstString aHeavyDataSetName){
           const char *NewExt = ".h5:/Data";
           if (ext && ext < FName+(256-strlen(NewExt)))
             {
-            sprintf(ext, NewExt);
+            sprintf(ext, "%s", NewExt);
             aHeavyDataSetName = this->GetUniqueName(FName);
             }
           else

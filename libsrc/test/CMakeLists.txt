@@ -33,14 +33,18 @@ endif(XDMF_BUILD_MPI)
 
 if(XDMF_WRAP_PYTHON)
   if(PYTHON_EXECUTABLE)
+    CONFIGURE_FILE(PythonTestDriver.cmake.in PythonTestDriver.cmake @ONLY)
     SET(PYTHON_TESTS
         TestXdmfArrayPython
 	TestXdmfWriteGridsToFilePython	
        )
     FOREACH(PYTHON_TEST ${PYTHON_TESTS})
-      SET(XDMF_CURRENT_PYTHON_TEST "${CMAKE_CURRENT_SOURCE_DIR}/${PYTHON_TEST}.py")
-      CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/RunPythonTest.cmake.in" "${EXECUTABLE_OUTPUT_PATH}/${PYTHON_TEST}.cmake" @ONLY)
-      ADD_TEST("${PYTHON_TEST}" ${CMAKE_COMMAND} "-P" "${EXECUTABLE_OUTPUT_PATH}/${PYTHON_TEST}.cmake") 
+      CONFIGURE_FILE(${PYTHON_TEST}.py ${PYTHON_TEST}.py COPYONLY)
+      # Run all python tests by calling a cmake script that sets correct
+      # environment variables --- python script to run and appropraite arguments
+      # are set in ARGV and passed to the cmake script
+      SET(ARGV ${CMAKE_CURRENT_BINARY_DIR}/${PYTHON_TEST}.py)
+      ADD_TEST("${PYTHON_TEST}" ${CMAKE_COMMAND} "-D" ARGV=${ARGV} "-P" ${CMAKE_CURRENT_BINARY_DIR}/PythonTestDriver.cmake) 
     ENDFOREACH(PYTHON_TEST)
   endif(PYTHON_EXECUTABLE)
 endif(XDMF_WRAP_PYTHON)

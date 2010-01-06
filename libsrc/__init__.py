@@ -1,2 +1,1 @@
-from Xdmf import *
-
+@XDMF_PYTHON_INIT_COMMANDS@

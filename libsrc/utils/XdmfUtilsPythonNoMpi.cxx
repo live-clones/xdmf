@@ -2696,38 +2696,37 @@ SWIG_Python_MustGetPtr(PyObject *obj, swig_type_info *ty, int argnum, int flags)
 #define SWIGTYPE_p_XdmfDsm swig_types[9]
 #define SWIGTYPE_p_XdmfDsmBuffer swig_types[10]
 #define SWIGTYPE_p_XdmfDsmComm swig_types[11]
-#define SWIGTYPE_p_XdmfDsmCommMpi swig_types[12]
-#define SWIGTYPE_p_XdmfDsmMsg swig_types[13]
-#define SWIGTYPE_p_XdmfElement swig_types[14]
-#define SWIGTYPE_p_XdmfExodusReader swig_types[15]
-#define SWIGTYPE_p_XdmfGeometry swig_types[16]
-#define SWIGTYPE_p_XdmfGrid swig_types[17]
-#define SWIGTYPE_p_XdmfHDF swig_types[18]
-#define SWIGTYPE_p_XdmfHeavyData swig_types[19]
-#define SWIGTYPE_p_XdmfInformation swig_types[20]
-#define SWIGTYPE_p_XdmfLightData swig_types[21]
-#define SWIGTYPE_p_XdmfMap swig_types[22]
-#define SWIGTYPE_p_XdmfObject swig_types[23]
-#define SWIGTYPE_p_XdmfRegion swig_types[24]
-#define SWIGTYPE_p_XdmfRoot swig_types[25]
-#define SWIGTYPE_p_XdmfSet swig_types[26]
-#define SWIGTYPE_p_XdmfTime swig_types[27]
-#define SWIGTYPE_p_XdmfTopology swig_types[28]
-#define SWIGTYPE_p_XdmfValues swig_types[29]
-#define SWIGTYPE_p_XdmfValuesBinary swig_types[30]
-#define SWIGTYPE_p_XdmfValuesHDF swig_types[31]
-#define SWIGTYPE_p_XdmfValuesXML swig_types[32]
-#define SWIGTYPE_p_char swig_types[33]
-#define SWIGTYPE_p_double swig_types[34]
-#define SWIGTYPE_p_float swig_types[35]
-#define SWIGTYPE_p_int swig_types[36]
-#define SWIGTYPE_p_long_long swig_types[37]
-#define SWIGTYPE_p_short swig_types[38]
-#define SWIGTYPE_p_unsigned_char swig_types[39]
-#define SWIGTYPE_p_unsigned_int swig_types[40]
-#define SWIGTYPE_p_unsigned_short swig_types[41]
-static swig_type_info *swig_types[43];
-static swig_module_info swig_module = {swig_types, 42, 0, 0, 0, 0};
+#define SWIGTYPE_p_XdmfDsmMsg swig_types[12]
+#define SWIGTYPE_p_XdmfElement swig_types[13]
+#define SWIGTYPE_p_XdmfExodusReader swig_types[14]
+#define SWIGTYPE_p_XdmfGeometry swig_types[15]
+#define SWIGTYPE_p_XdmfGrid swig_types[16]
+#define SWIGTYPE_p_XdmfHDF swig_types[17]
+#define SWIGTYPE_p_XdmfHeavyData swig_types[18]
+#define SWIGTYPE_p_XdmfInformation swig_types[19]
+#define SWIGTYPE_p_XdmfLightData swig_types[20]
+#define SWIGTYPE_p_XdmfMap swig_types[21]
+#define SWIGTYPE_p_XdmfObject swig_types[22]
+#define SWIGTYPE_p_XdmfRegion swig_types[23]
+#define SWIGTYPE_p_XdmfRoot swig_types[24]
+#define SWIGTYPE_p_XdmfSet swig_types[25]
+#define SWIGTYPE_p_XdmfTime swig_types[26]
+#define SWIGTYPE_p_XdmfTopology swig_types[27]
+#define SWIGTYPE_p_XdmfValues swig_types[28]
+#define SWIGTYPE_p_XdmfValuesBinary swig_types[29]
+#define SWIGTYPE_p_XdmfValuesHDF swig_types[30]
+#define SWIGTYPE_p_XdmfValuesXML swig_types[31]
+#define SWIGTYPE_p_char swig_types[32]
+#define SWIGTYPE_p_double swig_types[33]
+#define SWIGTYPE_p_float swig_types[34]
+#define SWIGTYPE_p_int swig_types[35]
+#define SWIGTYPE_p_long_long swig_types[36]
+#define SWIGTYPE_p_short swig_types[37]
+#define SWIGTYPE_p_unsigned_char swig_types[38]
+#define SWIGTYPE_p_unsigned_int swig_types[39]
+#define SWIGTYPE_p_unsigned_short swig_types[40]
+static swig_type_info *swig_types[42];
+static swig_module_info swig_module = {swig_types, 41, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -5348,9 +5347,6 @@ static void *_p_XdmfInformationTo_p_XdmfObject(void *x, int *SWIGUNUSEDPARM(newm
 static void *_p_XdmfMapTo_p_XdmfObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((XdmfObject *) (XdmfLightData *)(XdmfElement *) ((XdmfMap *) x));
 }
-static void *_p_XdmfDsmCommMpiTo_p_XdmfObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
-    return (void *)((XdmfObject *) (XdmfDsmComm *) ((XdmfDsmCommMpi *) x));
-}
 static void *_p_XdmfValuesHDFTo_p_XdmfObject(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((XdmfObject *) (XdmfLightData *)(XdmfElement *)(XdmfDataItem *)(XdmfValues *) ((XdmfValuesHDF *) x));
 }
@@ -5522,7 +5518,6 @@ static swig_type_info _swigt__p_XdmfGrid = {"_p_XdmfGrid", "XdmfGrid *", 0, 0, (
 static swig_type_info _swigt__p_XdmfLightData = {"_p_XdmfLightData", "XdmfLightData *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_XdmfObject = {"_p_XdmfObject", "XdmfObject *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_XdmfDsmMsg = {"_p_XdmfDsmMsg", 0, 0, 0, 0, 0};
-static swig_type_info _swigt__p_XdmfDsmCommMpi = {"_p_XdmfDsmCommMpi", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_XdmfHeavyData = {"_p_XdmfHeavyData", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_XdmfDataDesc = {"_p_XdmfDataDesc", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_XdmfDsm = {"_p_XdmfDsm", 0, 0, 0, 0, 0};
@@ -5554,7 +5549,6 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_XdmfDsm,
   &_swigt__p_XdmfDsmBuffer,
   &_swigt__p_XdmfDsmComm,
-  &_swigt__p_XdmfDsmCommMpi,
   &_swigt__p_XdmfDsmMsg,
   &_swigt__p_XdmfElement,
   &_swigt__p_XdmfExodusReader,
@@ -5609,14 +5603,13 @@ static swig_cast_info _swigc__p_XdmfExodusReader[] = {  {&_swigt__p_XdmfExodusRe
 static swig_cast_info _swigc__p_XdmfGrid[] = {  {&_swigt__p_XdmfGrid, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfLightData[] = {  {&_swigt__p_XdmfDataTransform, _p_XdmfDataTransformTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfLightData, 0, 0, 0},  {&_swigt__p_XdmfDOM, _p_XdmfDOMTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfMap, _p_XdmfMapTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfDataItem, _p_XdmfDataItemTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfInformation, _p_XdmfInformationTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfValuesHDF, _p_XdmfValuesHDFTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfGrid, _p_XdmfGridTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfValuesXML, _p_XdmfValuesXMLTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfSet, _p_XdmfSetTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfAttribute, _p_XdmfAttributeTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfValues, _p_XdmfValuesTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfValuesBinary, _p_XdmfValuesBinaryTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfDomain, _p_XdmfDomainTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfRoot, _p_XdmfRootTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfTime, _p_XdmfTimeTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfTopology, _p_XdmfTopologyTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfGeometry, _p_XdmfGeometryTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfElement, _p_XdmfElementTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfRegion, _p_XdmfRegionTo_p_XdmfLightData, 0, 0},  {&_swigt__p_XdmfDataStructure, _p_XdmfDataStructureTo_p_XdmfLightData, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfDsmMsg[] = {{&_swigt__p_XdmfDsmMsg, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_XdmfDsmCommMpi[] = {{&_swigt__p_XdmfDsmCommMpi, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfHeavyData[] = {{&_swigt__p_XdmfHeavyData, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfDataDesc[] = {{&_swigt__p_XdmfDataDesc, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfDsm[] = {{&_swigt__p_XdmfDsm, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfDsmComm[] = {{&_swigt__p_XdmfDsmComm, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfHDF[] = {{&_swigt__p_XdmfHDF, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfDsmBuffer[] = {{&_swigt__p_XdmfDsmBuffer, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_XdmfObject[] = {  {&_swigt__p_XdmfDataTransform, _p_XdmfDataTransformTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfLightData, _p_XdmfLightDataTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDOM, _p_XdmfDOMTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfObject, 0, 0, 0},  {&_swigt__p_XdmfDsmMsg, _p_XdmfDsmMsgTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfMap, _p_XdmfMapTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDataItem, _p_XdmfDataItemTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfInformation, _p_XdmfInformationTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDsmCommMpi, _p_XdmfDsmCommMpiTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfValuesHDF, _p_XdmfValuesHDFTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfGrid, _p_XdmfGridTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfValuesXML, _p_XdmfValuesXMLTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfSet, _p_XdmfSetTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfHeavyData, _p_XdmfHeavyDataTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfAttribute, _p_XdmfAttributeTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfValues, _p_XdmfValuesTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfValuesBinary, _p_XdmfValuesBinaryTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDomain, _p_XdmfDomainTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfRoot, _p_XdmfRootTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfTime, _p_XdmfTimeTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfTopology, _p_XdmfTopologyTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDataDesc, _p_XdmfDataDescTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDsm, _p_XdmfDsmTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfArray, _p_XdmfArrayTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDsmComm, _p_XdmfDsmCommTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfGeometry, _p_XdmfGeometryTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfElement, _p_XdmfElementTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfRegion, _p_XdmfRegionTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDataStructure, _p_XdmfDataStructureTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfHDF, _p_XdmfHDFTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDsmBuffer, _p_XdmfDsmBufferTo_p_XdmfObject, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_XdmfObject[] = {  {&_swigt__p_XdmfDataTransform, _p_XdmfDataTransformTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfLightData, _p_XdmfLightDataTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDOM, _p_XdmfDOMTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfObject, 0, 0, 0},  {&_swigt__p_XdmfDsmMsg, _p_XdmfDsmMsgTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfMap, _p_XdmfMapTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDataItem, _p_XdmfDataItemTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfInformation, _p_XdmfInformationTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfValuesHDF, _p_XdmfValuesHDFTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfGrid, _p_XdmfGridTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfValuesXML, _p_XdmfValuesXMLTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfSet, _p_XdmfSetTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfHeavyData, _p_XdmfHeavyDataTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfAttribute, _p_XdmfAttributeTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfValues, _p_XdmfValuesTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfValuesBinary, _p_XdmfValuesBinaryTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDomain, _p_XdmfDomainTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfRoot, _p_XdmfRootTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfTime, _p_XdmfTimeTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfTopology, _p_XdmfTopologyTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDataDesc, _p_XdmfDataDescTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDsm, _p_XdmfDsmTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfArray, _p_XdmfArrayTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDsmComm, _p_XdmfDsmCommTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfGeometry, _p_XdmfGeometryTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfElement, _p_XdmfElementTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfRegion, _p_XdmfRegionTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDataStructure, _p_XdmfDataStructureTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfHDF, _p_XdmfHDFTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDsmBuffer, _p_XdmfDsmBufferTo_p_XdmfObject, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfValues[] = {  {&_swigt__p_XdmfValuesXML, _p_XdmfValuesXMLTo_p_XdmfValues, 0, 0},  {&_swigt__p_XdmfValuesBinary, _p_XdmfValuesBinaryTo_p_XdmfValues, 0, 0},  {&_swigt__p_XdmfValues, 0, 0, 0},  {&_swigt__p_XdmfValuesHDF, _p_XdmfValuesHDFTo_p_XdmfValues, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfValuesBinary[] = {  {&_swigt__p_XdmfValuesBinary, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
@@ -5642,7 +5635,6 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_XdmfDsm,
   _swigc__p_XdmfDsmBuffer,
   _swigc__p_XdmfDsmComm,
-  _swigc__p_XdmfDsmCommMpi,
   _swigc__p_XdmfDsmMsg,
   _swigc__p_XdmfElement,
   _swigc__p_XdmfExodusReader,
