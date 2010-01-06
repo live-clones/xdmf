@@ -16,6 +16,8 @@ swig -v -c++ -make_default -includeall -java ${ICE_INCLUDES} -o XdmfUtilsJava.cx
 %{
 
 #include <XdmfDiff.h>
+#include <XdmfExodusReader.h>
+#include <Xdmf.h>
 
 #ifndef HAVE_STRTOLL
 # define strtoll XDMF_strtoll
@@ -50,9 +52,10 @@ inline XDMF_LONG64 XDMF_strtoll(char *str, void*, int)
 
 %}
 
+%import Xdmf.i // import typedefs etc. from xdmf lib --- this should keep us from regenerating the same code
 %include std_string.i
-
 %include XdmfDiff.h
+%include XdmfExodusReader.h
 
 #ifdef SWIGPYTHON
 %{

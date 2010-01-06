@@ -30,11 +30,11 @@
 #include "XdmfDataTransform.h"
 #include "XdmfDomain.h"
 #include "XdmfDOM.h"
-#ifndef XDMF_NO_MPI
 #include "XdmfDsm.h"
 #include "XdmfDsmBuffer.h"
 #include "XdmfDsmComm.h"
 #include "XdmfDsmMsg.h"
+#ifndef XDMF_NO_MPI
 #include "XdmfDsmCommMpi.h"
 #endif /* XDMF_NO_MPI */
 #include "XdmfElement.h"
@@ -46,8 +46,11 @@
 #include "XdmfHeavyData.h"
 #include "XdmfInformation.h"
 #include "XdmfLightData.h"
+#include "XdmfMap.h"
 #include "XdmfObject.h"
+#include "XdmfRegion.h"
 #include "XdmfRoot.h"
+#include "XdmfSet.h"
 #include "XdmfTopology.h"
 #include "XdmfValues.h"
 #include "XdmfValuesBinary.h"
