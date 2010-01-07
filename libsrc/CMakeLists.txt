@@ -501,6 +501,11 @@ IF(XDMF_WRAP_PYTHON)
       DESTINATION ${XDMF_WRAP_PYTHON_INSTALL_DIR}
       COMPONENT Runtime
       RENAME Xdmf.py) # always named the same regardless of build with or without mpi
+
+  # Compile Byte Code
+  INSTALL(CODE "EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} ${Xdmf_SOURCE_DIR}/CMake/CompileXdmfByteCode.py 
+    ${CMAKE_INSTALL_PREFIX}/${XDMF_WRAP_PYTHON_INSTALL_PY_DIR})")
+  
 ENDIF(XDMF_WRAP_PYTHON)
 
 OPTION(XDMF_WRAP_CSHARP "Build a C# wrapping interface" OFF)
