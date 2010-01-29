@@ -1,7 +1,13 @@
+
+set(_Executable_Output_Path ${EXECUTABLE_OUTPUT_PATH})
+IF(WIN32)
+  SET(EXECUTABLE_OUTPUT_PATH ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_BUILD_TYPE})
+ENDIF(WIN32)
+
 macro( XdmfSerialTest testname )
     add_executable( ${testname} ${ARGN} )
     target_link_libraries( ${testname} Xdmf )
-    add_test( ${testname} ${EXECUTABLE_OUTPUT_PATH}/${testname} )
+    add_test( ${testname} ${_Executable_Output_Path}/${testname} )
 endmacro()
 
 macro( XdmfMPITest testname num_procs )
@@ -13,7 +19,7 @@ macro( XdmfMPITest testname num_procs )
         add_test( ${testname} 
             ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${num_procs}
             ${MPI_EXEC_PREFLAGS}
-            ${EXECUTABLE_OUTPUT_PATH}/${testname}
+            ${_Executable_Output_Path}/${testname}
             ${MPI_EXEC_POSTFLAGS} )
     endif( MPI_FOUND )
 endmacro( XdmfMPITest )
@@ -21,7 +27,7 @@ endmacro( XdmfMPITest )
 macro( XdmfUtilsTest testname )
     add_executable (${testname} ${ARGN} )
     target_link_libraries( ${testname} XdmfUtils )
-    add_test( ${testname} ${EXECUTABLE_OUTPUT_PATH}/${testname} )
+    add_test( ${testname} ${_Executable_Output_Path}/${testname} )
 endmacro()
 
 XdmfSerialTest( XdmfTestHDFRoundtrip TestXdmfHDF.cxx )
@@ -36,7 +42,7 @@ if(XDMF_WRAP_PYTHON)
     CONFIGURE_FILE(PythonTestDriver.cmake.in PythonTestDriver.cmake @ONLY)
     SET(PYTHON_TESTS
         TestXdmfArrayPython
-	TestXdmfWriteGridsToFilePython	
+        TestXdmfWriteGridsToFilePython
        )
     FOREACH(PYTHON_TEST ${PYTHON_TESTS})
       CONFIGURE_FILE(${PYTHON_TEST}.py ${PYTHON_TEST}.py COPYONLY)
