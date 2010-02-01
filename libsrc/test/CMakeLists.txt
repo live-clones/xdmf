@@ -1,7 +1,7 @@
 
 set(_Executable_Output_Path ${EXECUTABLE_OUTPUT_PATH})
 IF(WIN32)
-  SET(EXECUTABLE_OUTPUT_PATH ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_BUILD_TYPE})
+  set(_Executable_Output_Path ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_BUILD_TYPE})
 ENDIF(WIN32)
 
 macro( XdmfSerialTest testname )
