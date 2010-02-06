@@ -109,6 +109,10 @@ class XdmfGeometryPtr(_object):
     __swig_destroy__ = _Xdmf.delete_XdmfGeometryPtr
     __del__ = lambda self : None;
     def New(self): return _Xdmf.XdmfGeometryPtr_New(self)
+    def getGeometryType(self): return _Xdmf.XdmfGeometryPtr_getGeometryType(self)
+    def setGeometryType(self, *args): return _Xdmf.XdmfGeometryPtr_setGeometryType(self, *args)
+    def getGeometryTypeAsString(self): return _Xdmf.XdmfGeometryPtr_getGeometryTypeAsString(self)
+    def getDimensions(self): return _Xdmf.XdmfGeometryPtr_getDimensions(self)
     def printSelf(self): return _Xdmf.XdmfGeometryPtr_printSelf(self)
 XdmfGeometryPtr_swigregister = _Xdmf.XdmfGeometryPtr_swigregister
 XdmfGeometryPtr_swigregister(XdmfGeometryPtr)
@@ -135,6 +139,23 @@ class XdmfGridPtr(_object):
 XdmfGridPtr_swigregister = _Xdmf.XdmfGridPtr_swigregister
 XdmfGridPtr_swigregister(XdmfGridPtr)
 
+class XdmfItemPtr(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfItemPtr, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfItemPtr, name)
+    __repr__ = _swig_repr
+    def __deref__(self): return _Xdmf.XdmfItemPtr___deref__(self)
+    def __init__(self): 
+        this = _Xdmf.new_XdmfItemPtr()
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _Xdmf.delete_XdmfItemPtr
+    __del__ = lambda self : None;
+    def printSelf(self): return _Xdmf.XdmfItemPtr_printSelf(self)
+XdmfItemPtr_swigregister = _Xdmf.XdmfItemPtr_swigregister
+XdmfItemPtr_swigregister(XdmfItemPtr)
+
 class XdmfObjPtr(_object):
     __swig_setmethods__ = {}
     __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfObjPtr, name, value)
@@ -148,7 +169,6 @@ class XdmfObjPtr(_object):
         except: self.this = this
     __swig_destroy__ = _Xdmf.delete_XdmfObjPtr
     __del__ = lambda self : None;
-    def New(self): return _Xdmf.XdmfObjPtr_New(self)
     def printSelf(self): return _Xdmf.XdmfObjPtr_printSelf(self)
 XdmfObjPtr_swigregister = _Xdmf.XdmfObjPtr_swigregister
 XdmfObjPtr_swigregister(XdmfObjPtr)
@@ -167,41 +187,117 @@ class XdmfTopologyPtr(_object):
     __swig_destroy__ = _Xdmf.delete_XdmfTopologyPtr
     __del__ = lambda self : None;
     def New(self): return _Xdmf.XdmfTopologyPtr_New(self)
-    def getXdmfTopologyType(self): return _Xdmf.XdmfTopologyPtr_getXdmfTopologyType(self)
+    def getTopologyType(self): return _Xdmf.XdmfTopologyPtr_getTopologyType(self)
     def setTopologyType(self, *args): return _Xdmf.XdmfTopologyPtr_setTopologyType(self, *args)
     def getTopologyTypeAsString(self): return _Xdmf.XdmfTopologyPtr_getTopologyTypeAsString(self)
+    def getNodesPerElement(self): return _Xdmf.XdmfTopologyPtr_getNodesPerElement(self)
     def printSelf(self): return _Xdmf.XdmfTopologyPtr_printSelf(self)
 XdmfTopologyPtr_swigregister = _Xdmf.XdmfTopologyPtr_swigregister
 XdmfTopologyPtr_swigregister(XdmfTopologyPtr)
+
+class XdmfVisitorPtr(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfVisitorPtr, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfVisitorPtr, name)
+    __repr__ = _swig_repr
+    def __deref__(self): return _Xdmf.XdmfVisitorPtr___deref__(self)
+    def __init__(self): 
+        this = _Xdmf.new_XdmfVisitorPtr()
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _Xdmf.delete_XdmfVisitorPtr
+    __del__ = lambda self : None;
+    def New(self): return _Xdmf.XdmfVisitorPtr_New(self)
+    def printSelf(self): return _Xdmf.XdmfVisitorPtr_printSelf(self)
+XdmfVisitorPtr_swigregister = _Xdmf.XdmfVisitorPtr_swigregister
+XdmfVisitorPtr_swigregister(XdmfVisitorPtr)
 
 class XdmfObject(_object):
     __swig_setmethods__ = {}
     __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfObject, name, value)
     __swig_getmethods__ = {}
     __getattr__ = lambda self, name: _swig_getattr(self, XdmfObject, name)
-    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined - class is abstract")
     __repr__ = _swig_repr
-    __swig_getmethods__["New"] = lambda x: _Xdmf.XdmfObject_New
-    if _newclass:New = staticmethod(_Xdmf.XdmfObject_New)
     def printSelf(self): return _Xdmf.XdmfObject_printSelf(self)
 XdmfObject_swigregister = _Xdmf.XdmfObject_swigregister
 XdmfObject_swigregister(XdmfObject)
 
-def XdmfObject_New():
-  return _Xdmf.XdmfObject_New()
-XdmfObject_New = _Xdmf.XdmfObject_New
-
-class XdmfGeometry(XdmfObject):
+class XdmfItem(XdmfObject):
     __swig_setmethods__ = {}
     for _s in [XdmfObject]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
-    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfGeometry, name, value)
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfItem, name, value)
     __swig_getmethods__ = {}
     for _s in [XdmfObject]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfItem, name)
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined - class is abstract")
+    __repr__ = _swig_repr
+XdmfItem_swigregister = _Xdmf.XdmfItem_swigregister
+XdmfItem_swigregister(XdmfItem)
+
+class XdmfVisitor(XdmfObject):
+    __swig_setmethods__ = {}
+    for _s in [XdmfObject]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfVisitor, name, value)
+    __swig_getmethods__ = {}
+    for _s in [XdmfObject]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfVisitor, name)
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
+    __repr__ = _swig_repr
+    __swig_getmethods__["New"] = lambda x: _Xdmf.XdmfVisitor_New
+    if _newclass:New = staticmethod(_Xdmf.XdmfVisitor_New)
+    def printSelf(self): return _Xdmf.XdmfVisitor_printSelf(self)
+XdmfVisitor_swigregister = _Xdmf.XdmfVisitor_swigregister
+XdmfVisitor_swigregister(XdmfVisitor)
+
+def XdmfVisitor_New():
+  return _Xdmf.XdmfVisitor_New()
+XdmfVisitor_New = _Xdmf.XdmfVisitor_New
+
+class XdmfGeometryType(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfGeometryType, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfGeometryType, name)
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
+    __repr__ = _swig_repr
+    __swig_getmethods__["dimensions"] = _Xdmf.XdmfGeometryType_dimensions_get
+    if _newclass:dimensions = _swig_property(_Xdmf.XdmfGeometryType_dimensions_get)
+    __swig_getmethods__["name"] = _Xdmf.XdmfGeometryType_name_get
+    if _newclass:name = _swig_property(_Xdmf.XdmfGeometryType_name_get)
+    def __eq__(self, *args): return _Xdmf.XdmfGeometryType___eq__(self, *args)
+    def __ne__(self, *args): return _Xdmf.XdmfGeometryType___ne__(self, *args)
+    __swig_destroy__ = _Xdmf.delete_XdmfGeometryType
+    __del__ = lambda self : None;
+XdmfGeometryType_swigregister = _Xdmf.XdmfGeometryType_swigregister
+XdmfGeometryType_swigregister(XdmfGeometryType)
+cvar = _Xdmf.cvar
+XdmfGeometryType.NoGeometry = _Xdmf.cvar.XdmfGeometryType_NoGeometry
+XdmfGeometryType.XYZ = _Xdmf.cvar.XdmfGeometryType_XYZ
+XdmfGeometryType.XY = _Xdmf.cvar.XdmfGeometryType_XY
+XdmfGeometryType.X_Y_Z = _Xdmf.cvar.XdmfGeometryType_X_Y_Z
+XdmfGeometryType.X_Y = _Xdmf.cvar.XdmfGeometryType_X_Y
+XdmfGeometryType.VXVYVZ = _Xdmf.cvar.XdmfGeometryType_VXVYVZ
+XdmfGeometryType.Origin_DXDYDZ = _Xdmf.cvar.XdmfGeometryType_Origin_DXDYDZ
+XdmfGeometryType.VXVY = _Xdmf.cvar.XdmfGeometryType_VXVY
+XdmfGeometryType.Origin_DXDY = _Xdmf.cvar.XdmfGeometryType_Origin_DXDY
+
+class XdmfGeometry(XdmfItem):
+    __swig_setmethods__ = {}
+    for _s in [XdmfItem]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfGeometry, name, value)
+    __swig_getmethods__ = {}
+    for _s in [XdmfItem]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
     __getattr__ = lambda self, name: _swig_getattr(self, XdmfGeometry, name)
     def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
     __swig_getmethods__["New"] = lambda x: _Xdmf.XdmfGeometry_New
     if _newclass:New = staticmethod(_Xdmf.XdmfGeometry_New)
+    def getGeometryType(self): return _Xdmf.XdmfGeometry_getGeometryType(self)
+    def setGeometryType(self, *args): return _Xdmf.XdmfGeometry_setGeometryType(self, *args)
+    def getGeometryTypeAsString(self): return _Xdmf.XdmfGeometry_getGeometryTypeAsString(self)
+    def getDimensions(self): return _Xdmf.XdmfGeometry_getDimensions(self)
     def printSelf(self): return _Xdmf.XdmfGeometry_printSelf(self)
 XdmfGeometry_swigregister = _Xdmf.XdmfGeometry_swigregister
 XdmfGeometry_swigregister(XdmfGeometry)
@@ -210,12 +306,12 @@ def XdmfGeometry_New():
   return _Xdmf.XdmfGeometry_New()
 XdmfGeometry_New = _Xdmf.XdmfGeometry_New
 
-class XdmfGrid(XdmfObject):
+class XdmfGrid(XdmfItem):
     __swig_setmethods__ = {}
-    for _s in [XdmfObject]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
+    for _s in [XdmfItem]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfGrid, name, value)
     __swig_getmethods__ = {}
-    for _s in [XdmfObject]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
+    for _s in [XdmfItem]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
     __getattr__ = lambda self, name: _swig_getattr(self, XdmfGrid, name)
     def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
@@ -240,17 +336,23 @@ class XdmfTopologyType(_object):
     __getattr__ = lambda self, name: _swig_getattr(self, XdmfTopologyType, name)
     def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
-    __swig_getmethods__["numberVertices"] = _Xdmf.XdmfTopologyType_numberVertices_get
-    if _newclass:numberVertices = _swig_property(_Xdmf.XdmfTopologyType_numberVertices_get)
+    NoCellType = _Xdmf.XdmfTopologyType_NoCellType
+    Linear = _Xdmf.XdmfTopologyType_Linear
+    Quadratic = _Xdmf.XdmfTopologyType_Quadratic
+    Arbitrary = _Xdmf.XdmfTopologyType_Arbitrary
+    Structured = _Xdmf.XdmfTopologyType_Structured
+    __swig_getmethods__["nodesPerElement"] = _Xdmf.XdmfTopologyType_nodesPerElement_get
+    if _newclass:nodesPerElement = _swig_property(_Xdmf.XdmfTopologyType_nodesPerElement_get)
     __swig_getmethods__["name"] = _Xdmf.XdmfTopologyType_name_get
     if _newclass:name = _swig_property(_Xdmf.XdmfTopologyType_name_get)
+    __swig_getmethods__["cellType"] = _Xdmf.XdmfTopologyType_cellType_get
+    if _newclass:cellType = _swig_property(_Xdmf.XdmfTopologyType_cellType_get)
     def __eq__(self, *args): return _Xdmf.XdmfTopologyType___eq__(self, *args)
     def __ne__(self, *args): return _Xdmf.XdmfTopologyType___ne__(self, *args)
     __swig_destroy__ = _Xdmf.delete_XdmfTopologyType
     __del__ = lambda self : None;
 XdmfTopologyType_swigregister = _Xdmf.XdmfTopologyType_swigregister
 XdmfTopologyType_swigregister(XdmfTopologyType)
-cvar = _Xdmf.cvar
 XdmfTopologyType.NoTopology = _Xdmf.cvar.XdmfTopologyType_NoTopology
 XdmfTopologyType.Polyvertex = _Xdmf.cvar.XdmfTopologyType_Polyvertex
 XdmfTopologyType.Polyline = _Xdmf.cvar.XdmfTopologyType_Polyline
@@ -276,20 +378,21 @@ XdmfTopologyType.ThreeDSMesh = _Xdmf.cvar.XdmfTopologyType_ThreeDSMesh
 XdmfTopologyType.ThreeDRectMesh = _Xdmf.cvar.XdmfTopologyType_ThreeDRectMesh
 XdmfTopologyType.ThreeDCoRectMesh = _Xdmf.cvar.XdmfTopologyType_ThreeDCoRectMesh
 
-class XdmfTopology(XdmfObject):
+class XdmfTopology(XdmfItem):
     __swig_setmethods__ = {}
-    for _s in [XdmfObject]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
+    for _s in [XdmfItem]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfTopology, name, value)
     __swig_getmethods__ = {}
-    for _s in [XdmfObject]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
+    for _s in [XdmfItem]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
     __getattr__ = lambda self, name: _swig_getattr(self, XdmfTopology, name)
     def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
     __swig_getmethods__["New"] = lambda x: _Xdmf.XdmfTopology_New
     if _newclass:New = staticmethod(_Xdmf.XdmfTopology_New)
-    def getXdmfTopologyType(self): return _Xdmf.XdmfTopology_getXdmfTopologyType(self)
+    def getTopologyType(self): return _Xdmf.XdmfTopology_getTopologyType(self)
     def setTopologyType(self, *args): return _Xdmf.XdmfTopology_setTopologyType(self, *args)
     def getTopologyTypeAsString(self): return _Xdmf.XdmfTopology_getTopologyTypeAsString(self)
+    def getNodesPerElement(self): return _Xdmf.XdmfTopology_getNodesPerElement(self)
     def printSelf(self): return _Xdmf.XdmfTopology_printSelf(self)
 XdmfTopology_swigregister = _Xdmf.XdmfTopology_swigregister
 XdmfTopology_swigregister(XdmfTopology)

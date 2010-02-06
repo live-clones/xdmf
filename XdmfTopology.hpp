@@ -8,16 +8,22 @@
 #ifndef XDMFTOPOLOGY_HPP_
 #define XDMFTOPOLOGY_HPP_
 
-#include "XdmfObject.hpp"
+#include "XdmfItem.hpp"
 
 class XdmfTopologyType {
 
 public:
 
-	const int numberVertices;
+	enum CellType {
+		NoCellType, Linear, Quadratic, Arbitrary, Structured
+	};
+
+	const int nodesPerElement;
 	const std::string name;
+	const CellType cellType;
 
 	// Supported Xdmf Topology Type
+	// TODO: How do we deal with Polygon datatypes and others that can have variable nodesPerElement?
 	static const XdmfTopologyType NoTopology;
 	static const XdmfTopologyType Polyvertex;
 	static const XdmfTopologyType Polyline;
@@ -43,11 +49,25 @@ public:
 	static const XdmfTopologyType ThreeDRectMesh;
 	static const XdmfTopologyType ThreeDCoRectMesh;
 
+	/*
+	 * Compare two XdmfTopology types for equality. Each topology type has a single static instance meaning that
+	 * equality can be determined by determining if they have the same pointer value.
+	 *
+	 * @param an XdmfTopologyType to compare equality to.
+	 * @return true iff the XdmfTopologyTypes are equal.
+	 */
 	bool operator==(const XdmfTopologyType& top) const
 	{
 		return (this == &top) ? true : false;
 	}
 
+	/**
+	 * Compare two XdmfTopology types for inequality. Each topology type has a single static instance meaning that
+	 * equality can be determined by determining if they have the same pointer value.
+	 *
+	 * @param XdmfTopologyType to compare inequality to.
+	 * @return true iff the XdmfTopologyTypes are not equal.
+	 */
 	bool operator!=(const XdmfTopologyType& top) const
 	{
 		return (this != &top) ? true : false;
@@ -55,9 +75,14 @@ public:
 
 protected:
 
-	XdmfTopologyType(const int & numberVertices, const std::string & name) :
-		numberVertices(numberVertices),
-		name(name)
+	/**
+	 * Protected constructor for XdmfTopologyType.  The constructor is protected because all topology types supported
+	 * by Xdmf should be accessed through static public instances of XdmfTopologyType - i.e. XdmfTopologyType::Tetrahedron.
+	 */
+	XdmfTopologyType(const int& nodesPerElement, const std::string& name, const CellType& cellType) :
+		nodesPerElement(nodesPerElement),
+		name(name),
+		cellType(cellType)
 	{};
 
 private:
@@ -67,25 +92,43 @@ private:
 
 };
 
-class XdmfTopology : public XdmfObject {
+class XdmfTopology : public XdmfItem {
 
 public:
 
 	XdmfNewMacro(XdmfTopology);
 
-	// Get the topology type for this topology
-	const XdmfTopologyType & getXdmfTopologyType() const
-	{
-		return *mTopologyType;
-	}
-	// Set the topology type for this topology
-	void setTopologyType(const XdmfTopologyType & topType)
-	{
-		mTopologyType = &topType;
-	}
+	/**
+	 * Get the XdmfTopologyType associated with this Topology.
+	 *
+	 * @return XdmfTopologyType.
+	 */
+	const XdmfTopologyType& getTopologyType() const;
 
+	/**
+	 * Set the XdmfTopologyType associated with this Topology.
+	 *
+	 * @param XdmfTopologyType to set.
+	 */
+	void setTopologyType(const XdmfTopologyType&);
+
+	/**
+	 * Get the name of the TopologyType associated with this Topology.
+	 *
+	 * @return std::string containing name of the TopologyType.
+	 */
 	const std::string getTopologyTypeAsString() const;
 
+	/**
+	 * Get the number of nodes per element for this Topology.
+	 *
+	 * @return int of number of nodes per element.
+	 */
+	const int getNodesPerElement() const;
+
+	/**
+	 *
+	 */
 	virtual const std::string printSelf() const;
 
 protected:

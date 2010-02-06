@@ -8,9 +8,9 @@
 #ifndef XDMFATTRIBUTE_HPP_
 #define XDMFATTRIBUTE_HPP_
 
-#include "XdmfObject.hpp"
+#include "XdmfItem.hpp"
 
-class XdmfAttribute : public XdmfObject {
+class XdmfAttribute : public XdmfItem {
 
 	XdmfNewMacro(XdmfAttribute);
 

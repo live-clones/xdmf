@@ -36,8 +36,7 @@ class XdmfObject {
 
 public:
 
-	XdmfNewMacro(XdmfObject);
-	virtual const std::string printSelf() const;
+	virtual const std::string printSelf() const = 0;
 
 protected:
 

@@ -9,11 +9,11 @@
 #include "XdmfGeometry.hpp"
 #include "XdmfTopology.hpp"
 
-XdmfGrid::XdmfGrid()
+XdmfGrid::XdmfGrid() :
+mGeometry(XdmfGeometry::New()),
+mTopology(XdmfTopology::New())
 {
 	std::cout << "Created Grid " << this << std::endl;
-	mGeometry = XdmfGeometry::New();
-	mTopology = XdmfTopology::New();
 }
 
 XdmfGrid::~XdmfGrid()

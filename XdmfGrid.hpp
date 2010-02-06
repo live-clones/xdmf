@@ -6,16 +6,15 @@
 
 // Forward Declarations
 class XdmfAttribute;
-class XdmfAttributeVector;
 class XdmfGeometry;
 class XdmfTopology;
+class XdmfVisitor;
 
 // Includes
-#include "XdmfObject.hpp"
-
+#include "XdmfItem.hpp"
 #include <vector>
 
-class XdmfGrid : public XdmfObject {
+class XdmfGrid : public XdmfItem {
 
 public:
 
@@ -30,6 +29,8 @@ public:
 	XdmfGetValueMacro(Topology, boost::shared_ptr<XdmfTopology>);
 	// Set the XdmfTopology for this grid
 	XdmfSetValueMacro(Topology, boost::shared_ptr<XdmfTopology>);
+
+	//virtual void write(XdmfVisitor&) const;
 
 	virtual const std::string printSelf() const;
 

@@ -25,9 +25,9 @@ int main(int argc, char* argv[])
 	top->setTopologyType(XdmfTopologyType::Hexahedron);
 	std::cout << top->getTopologyTypeAsString() << std::endl;
 
-	if (top->getXdmfTopologyType() != XdmfTopologyType::Polygon)
+	if (top->getTopologyType() != XdmfTopologyType::Polygon)
 	{
 		top->setTopologyType(XdmfTopologyType::Polygon);
 	}
-	std::cout << top->getXdmfTopologyType().name << std::endl;
+	std::cout << top->getTopologyType().name << std::endl;
 }
