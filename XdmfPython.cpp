@@ -2689,15 +2689,16 @@ SWIG_Python_MustGetPtr(PyObject *obj, swig_type_info *ty, int argnum, int flags)
 #define SWIGTYPE_p_XdmfGrid swig_types[1]
 #define SWIGTYPE_p_XdmfObject swig_types[2]
 #define SWIGTYPE_p_XdmfTopology swig_types[3]
-#define SWIGTYPE_p_boost__shared_ptrT_XdmfGeometry_t swig_types[4]
-#define SWIGTYPE_p_boost__shared_ptrT_XdmfGrid_t swig_types[5]
-#define SWIGTYPE_p_boost__shared_ptrT_XdmfObject_t swig_types[6]
-#define SWIGTYPE_p_boost__shared_ptrT_XdmfTopology_t swig_types[7]
-#define SWIGTYPE_p_char swig_types[8]
-#define SWIGTYPE_p_std__invalid_argument swig_types[9]
-#define SWIGTYPE_p_swig__SwigPyIterator swig_types[10]
-static swig_type_info *swig_types[12];
-static swig_module_info swig_module = {swig_types, 11, 0, 0, 0, 0};
+#define SWIGTYPE_p_XdmfTopologyType swig_types[4]
+#define SWIGTYPE_p_boost__shared_ptrT_XdmfGeometry_t swig_types[5]
+#define SWIGTYPE_p_boost__shared_ptrT_XdmfGrid_t swig_types[6]
+#define SWIGTYPE_p_boost__shared_ptrT_XdmfObject_t swig_types[7]
+#define SWIGTYPE_p_boost__shared_ptrT_XdmfTopology_t swig_types[8]
+#define SWIGTYPE_p_char swig_types[9]
+#define SWIGTYPE_p_std__invalid_argument swig_types[10]
+#define SWIGTYPE_p_swig__SwigPyIterator swig_types[11]
+static swig_type_info *swig_types[13];
+static swig_module_info swig_module = {swig_types, 12, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -3187,43 +3188,17 @@ SWIG_From_std_string  (const std::string& s)
 }
 
 
+        #include <XdmfGeometry.hpp>
+        #include <XdmfGrid.hpp>
+        #include <XdmfObject.hpp>
+        #include <XdmfTopology.hpp>
+
+
 SWIGINTERNINLINE PyObject *
 SWIG_From_int  (int value)
 {    
   return SWIG_From_long  (value);
 }
-
-
-#include <limits.h>
-#if !defined(SWIG_NO_LLONG_MAX)
-# if !defined(LLONG_MAX) && defined(__GNUC__) && defined (__LONG_LONG_MAX__)
-#   define LLONG_MAX __LONG_LONG_MAX__
-#   define LLONG_MIN (-LLONG_MAX - 1LL)
-#   define ULLONG_MAX (LLONG_MAX * 2ULL + 1ULL)
-# endif
-#endif
-
-
-SWIGINTERN int
-SWIG_AsVal_int (PyObject * obj, int *val)
-{
-  long v;
-  int res = SWIG_AsVal_long (obj, &v);
-  if (SWIG_IsOK(res)) {
-    if ((v < INT_MIN || v > INT_MAX)) {
-      return SWIG_OverflowError;
-    } else {
-      if (val) *val = static_cast< int >(v);
-    }
-  }  
-  return res;
-}
-
-
-        #include <XdmfGeometry.hpp>
-        #include <XdmfGrid.hpp>
-        #include <XdmfObject.hpp>
-        #include <XdmfTopology.hpp>
 
 #ifdef __cplusplus
 extern "C" {
@@ -4299,10 +4274,10 @@ SWIGINTERN PyObject *_wrap_XdmfGridPtr_setGeometry(PyObject *SWIGUNUSEDPARM(self
   {
     res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_boost__shared_ptrT_XdmfGeometry_t,  0  | 0);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfGridPtr_setGeometry" "', argument " "2"" of type '" "boost::shared_ptr< XdmfGeometry >""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfGridPtr_setGeometry" "', argument " "2"" of type '" "boost::shared_ptr< XdmfGeometry > const""'"); 
     }  
     if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "XdmfGridPtr_setGeometry" "', argument " "2"" of type '" "boost::shared_ptr< XdmfGeometry >""'");
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "XdmfGridPtr_setGeometry" "', argument " "2"" of type '" "boost::shared_ptr< XdmfGeometry > const""'");
     } else {
       boost::shared_ptr< XdmfGeometry > * temp = reinterpret_cast< boost::shared_ptr< XdmfGeometry > * >(argp2);
       arg2 = *temp;
@@ -4359,10 +4334,10 @@ SWIGINTERN PyObject *_wrap_XdmfGridPtr_setTopology(PyObject *SWIGUNUSEDPARM(self
   {
     res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_boost__shared_ptrT_XdmfTopology_t,  0  | 0);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfGridPtr_setTopology" "', argument " "2"" of type '" "boost::shared_ptr< XdmfTopology >""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfGridPtr_setTopology" "', argument " "2"" of type '" "boost::shared_ptr< XdmfTopology > const""'"); 
     }  
     if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "XdmfGridPtr_setTopology" "', argument " "2"" of type '" "boost::shared_ptr< XdmfTopology >""'");
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "XdmfGridPtr_setTopology" "', argument " "2"" of type '" "boost::shared_ptr< XdmfTopology > const""'");
     } else {
       boost::shared_ptr< XdmfTopology > * temp = reinterpret_cast< boost::shared_ptr< XdmfTopology > * >(argp2);
       arg2 = *temp;
@@ -4591,22 +4566,22 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_XdmfTopologyPtr_getTopologyType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_XdmfTopologyPtr_getXdmfTopologyType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   boost::shared_ptr< XdmfTopology > *arg1 = (boost::shared_ptr< XdmfTopology > *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject * obj0 = 0 ;
-  XdmfTopologyType result;
+  XdmfTopologyType *result = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)"O:XdmfTopologyPtr_getTopologyType",&obj0)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfTopologyPtr_getXdmfTopologyType",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_boost__shared_ptrT_XdmfTopology_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfTopologyPtr_getTopologyType" "', argument " "1"" of type '" "boost::shared_ptr< XdmfTopology > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfTopologyPtr_getXdmfTopologyType" "', argument " "1"" of type '" "boost::shared_ptr< XdmfTopology > const *""'"); 
   }
   arg1 = reinterpret_cast< boost::shared_ptr< XdmfTopology > * >(argp1);
-  result = (XdmfTopologyType)(*arg1)->getTopologyType();
-  resultobj = SWIG_From_int(static_cast< int >(result));
+  result = (XdmfTopologyType *) &(*arg1)->getXdmfTopologyType();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_XdmfTopologyType, 0 |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -4616,11 +4591,11 @@ fail:
 SWIGINTERN PyObject *_wrap_XdmfTopologyPtr_setTopologyType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   boost::shared_ptr< XdmfTopology > *arg1 = (boost::shared_ptr< XdmfTopology > *) 0 ;
-  XdmfTopologyType arg2 ;
+  XdmfTopologyType *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -4630,12 +4605,15 @@ SWIGINTERN PyObject *_wrap_XdmfTopologyPtr_setTopologyType(PyObject *SWIGUNUSEDP
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfTopologyPtr_setTopologyType" "', argument " "1"" of type '" "boost::shared_ptr< XdmfTopology > *""'"); 
   }
   arg1 = reinterpret_cast< boost::shared_ptr< XdmfTopology > * >(argp1);
-  ecode2 = SWIG_AsVal_int(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfTopologyPtr_setTopologyType" "', argument " "2"" of type '" "XdmfTopologyType""'");
-  } 
-  arg2 = static_cast< XdmfTopologyType >(val2);
-  (*arg1)->setTopologyType(arg2);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_XdmfTopologyType,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfTopologyPtr_setTopologyType" "', argument " "2"" of type '" "XdmfTopologyType const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "XdmfTopologyPtr_setTopologyType" "', argument " "2"" of type '" "XdmfTopologyType const &""'"); 
+  }
+  arg2 = reinterpret_cast< XdmfTopologyType * >(argp2);
+  (*arg1)->setTopologyType((XdmfTopologyType const &)*arg2);
   resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
@@ -4654,7 +4632,7 @@ SWIGINTERN PyObject *_wrap_XdmfTopologyPtr_getTopologyTypeAsString(PyObject *SWI
   if (!PyArg_ParseTuple(args,(char *)"O:XdmfTopologyPtr_getTopologyTypeAsString",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_boost__shared_ptrT_XdmfTopology_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfTopologyPtr_getTopologyTypeAsString" "', argument " "1"" of type '" "boost::shared_ptr< XdmfTopology > *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfTopologyPtr_getTopologyTypeAsString" "', argument " "1"" of type '" "boost::shared_ptr< XdmfTopology > const *""'"); 
   }
   arg1 = reinterpret_cast< boost::shared_ptr< XdmfTopology > * >(argp1);
   result = (*arg1)->getTopologyTypeAsString();
@@ -4833,10 +4811,10 @@ SWIGINTERN PyObject *_wrap_XdmfGrid_setGeometry(PyObject *SWIGUNUSEDPARM(self), 
   {
     res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_boost__shared_ptrT_XdmfGeometry_t,  0  | 0);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfGrid_setGeometry" "', argument " "2"" of type '" "boost::shared_ptr< XdmfGeometry >""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfGrid_setGeometry" "', argument " "2"" of type '" "boost::shared_ptr< XdmfGeometry > const""'"); 
     }  
     if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "XdmfGrid_setGeometry" "', argument " "2"" of type '" "boost::shared_ptr< XdmfGeometry >""'");
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "XdmfGrid_setGeometry" "', argument " "2"" of type '" "boost::shared_ptr< XdmfGeometry > const""'");
     } else {
       boost::shared_ptr< XdmfGeometry > * temp = reinterpret_cast< boost::shared_ptr< XdmfGeometry > * >(argp2);
       arg2 = *temp;
@@ -4893,10 +4871,10 @@ SWIGINTERN PyObject *_wrap_XdmfGrid_setTopology(PyObject *SWIGUNUSEDPARM(self), 
   {
     res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_boost__shared_ptrT_XdmfTopology_t,  0  | 0);
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfGrid_setTopology" "', argument " "2"" of type '" "boost::shared_ptr< XdmfTopology >""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfGrid_setTopology" "', argument " "2"" of type '" "boost::shared_ptr< XdmfTopology > const""'"); 
     }  
     if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "XdmfGrid_setTopology" "', argument " "2"" of type '" "boost::shared_ptr< XdmfTopology >""'");
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "XdmfGrid_setTopology" "', argument " "2"" of type '" "boost::shared_ptr< XdmfTopology > const""'");
     } else {
       boost::shared_ptr< XdmfTopology > * temp = reinterpret_cast< boost::shared_ptr< XdmfTopology > * >(argp2);
       arg2 = *temp;
@@ -4940,6 +4918,482 @@ SWIGINTERN PyObject *XdmfGrid_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObj
   return SWIG_Py_Void();
 }
 
+SWIGINTERN PyObject *_wrap_XdmfTopologyType_numberVertices_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfTopologyType *arg1 = (XdmfTopologyType *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  int result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfTopologyType_numberVertices_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfTopologyType, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfTopologyType_numberVertices_get" "', argument " "1"" of type '" "XdmfTopologyType *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfTopologyType * >(argp1);
+  result = (int)(int) ((arg1)->numberVertices);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfTopologyType_name_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfTopologyType *arg1 = (XdmfTopologyType *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  std::string *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfTopologyType_name_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfTopologyType, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfTopologyType_name_get" "', argument " "1"" of type '" "XdmfTopologyType *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfTopologyType * >(argp1);
+  result = (std::string *) & ((arg1)->name);
+  resultobj = SWIG_From_std_string(static_cast< std::string >(*result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN int Swig_var_XdmfTopologyType_NoTopology_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable XdmfTopologyType_NoTopology is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_XdmfTopologyType_NoTopology_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&XdmfTopologyType::NoTopology), SWIGTYPE_p_XdmfTopologyType,  0 );
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_XdmfTopologyType_Polyvertex_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable XdmfTopologyType_Polyvertex is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_XdmfTopologyType_Polyvertex_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&XdmfTopologyType::Polyvertex), SWIGTYPE_p_XdmfTopologyType,  0 );
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_XdmfTopologyType_Polyline_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable XdmfTopologyType_Polyline is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_XdmfTopologyType_Polyline_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&XdmfTopologyType::Polyline), SWIGTYPE_p_XdmfTopologyType,  0 );
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_XdmfTopologyType_Polygon_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable XdmfTopologyType_Polygon is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_XdmfTopologyType_Polygon_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&XdmfTopologyType::Polygon), SWIGTYPE_p_XdmfTopologyType,  0 );
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_XdmfTopologyType_Triangle_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable XdmfTopologyType_Triangle is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_XdmfTopologyType_Triangle_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&XdmfTopologyType::Triangle), SWIGTYPE_p_XdmfTopologyType,  0 );
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_XdmfTopologyType_Quadrilateral_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable XdmfTopologyType_Quadrilateral is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_XdmfTopologyType_Quadrilateral_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&XdmfTopologyType::Quadrilateral), SWIGTYPE_p_XdmfTopologyType,  0 );
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_XdmfTopologyType_Tetrahedron_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable XdmfTopologyType_Tetrahedron is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_XdmfTopologyType_Tetrahedron_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&XdmfTopologyType::Tetrahedron), SWIGTYPE_p_XdmfTopologyType,  0 );
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_XdmfTopologyType_Pyramid_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable XdmfTopologyType_Pyramid is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_XdmfTopologyType_Pyramid_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&XdmfTopologyType::Pyramid), SWIGTYPE_p_XdmfTopologyType,  0 );
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_XdmfTopologyType_Wedge_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable XdmfTopologyType_Wedge is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_XdmfTopologyType_Wedge_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&XdmfTopologyType::Wedge), SWIGTYPE_p_XdmfTopologyType,  0 );
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_XdmfTopologyType_Hexahedron_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable XdmfTopologyType_Hexahedron is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_XdmfTopologyType_Hexahedron_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&XdmfTopologyType::Hexahedron), SWIGTYPE_p_XdmfTopologyType,  0 );
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_XdmfTopologyType_Edge_3_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable XdmfTopologyType_Edge_3 is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_XdmfTopologyType_Edge_3_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&XdmfTopologyType::Edge_3), SWIGTYPE_p_XdmfTopologyType,  0 );
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_XdmfTopologyType_Triangle_6_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable XdmfTopologyType_Triangle_6 is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_XdmfTopologyType_Triangle_6_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&XdmfTopologyType::Triangle_6), SWIGTYPE_p_XdmfTopologyType,  0 );
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_XdmfTopologyType_Quadrilateral_8_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable XdmfTopologyType_Quadrilateral_8 is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_XdmfTopologyType_Quadrilateral_8_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&XdmfTopologyType::Quadrilateral_8), SWIGTYPE_p_XdmfTopologyType,  0 );
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_XdmfTopologyType_Tetrahedron_10_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable XdmfTopologyType_Tetrahedron_10 is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_XdmfTopologyType_Tetrahedron_10_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&XdmfTopologyType::Tetrahedron_10), SWIGTYPE_p_XdmfTopologyType,  0 );
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_XdmfTopologyType_Pyramid_13_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable XdmfTopologyType_Pyramid_13 is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_XdmfTopologyType_Pyramid_13_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&XdmfTopologyType::Pyramid_13), SWIGTYPE_p_XdmfTopologyType,  0 );
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_XdmfTopologyType_Wedge_15_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable XdmfTopologyType_Wedge_15 is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_XdmfTopologyType_Wedge_15_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&XdmfTopologyType::Wedge_15), SWIGTYPE_p_XdmfTopologyType,  0 );
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_XdmfTopologyType_Hexahedron_20_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable XdmfTopologyType_Hexahedron_20 is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_XdmfTopologyType_Hexahedron_20_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&XdmfTopologyType::Hexahedron_20), SWIGTYPE_p_XdmfTopologyType,  0 );
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_XdmfTopologyType_Mixed_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable XdmfTopologyType_Mixed is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_XdmfTopologyType_Mixed_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&XdmfTopologyType::Mixed), SWIGTYPE_p_XdmfTopologyType,  0 );
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_XdmfTopologyType_TwoDSMesh_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable XdmfTopologyType_TwoDSMesh is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_XdmfTopologyType_TwoDSMesh_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&XdmfTopologyType::TwoDSMesh), SWIGTYPE_p_XdmfTopologyType,  0 );
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_XdmfTopologyType_TwoDRectMesh_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable XdmfTopologyType_TwoDRectMesh is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_XdmfTopologyType_TwoDRectMesh_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&XdmfTopologyType::TwoDRectMesh), SWIGTYPE_p_XdmfTopologyType,  0 );
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_XdmfTopologyType_TwoDCoRectMesh_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable XdmfTopologyType_TwoDCoRectMesh is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_XdmfTopologyType_TwoDCoRectMesh_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&XdmfTopologyType::TwoDCoRectMesh), SWIGTYPE_p_XdmfTopologyType,  0 );
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_XdmfTopologyType_ThreeDSMesh_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable XdmfTopologyType_ThreeDSMesh is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_XdmfTopologyType_ThreeDSMesh_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&XdmfTopologyType::ThreeDSMesh), SWIGTYPE_p_XdmfTopologyType,  0 );
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_XdmfTopologyType_ThreeDRectMesh_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable XdmfTopologyType_ThreeDRectMesh is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_XdmfTopologyType_ThreeDRectMesh_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&XdmfTopologyType::ThreeDRectMesh), SWIGTYPE_p_XdmfTopologyType,  0 );
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_XdmfTopologyType_ThreeDCoRectMesh_set(PyObject *) {
+  SWIG_Error(SWIG_AttributeError,"Variable XdmfTopologyType_ThreeDCoRectMesh is read-only.");
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_XdmfTopologyType_ThreeDCoRectMesh_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&XdmfTopologyType::ThreeDCoRectMesh), SWIGTYPE_p_XdmfTopologyType,  0 );
+  return pyobj;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfTopologyType___eq__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfTopologyType *arg1 = (XdmfTopologyType *) 0 ;
+  XdmfTopologyType *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  bool result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfTopologyType___eq__",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfTopologyType, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfTopologyType___eq__" "', argument " "1"" of type '" "XdmfTopologyType const *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfTopologyType * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_XdmfTopologyType,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfTopologyType___eq__" "', argument " "2"" of type '" "XdmfTopologyType const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "XdmfTopologyType___eq__" "', argument " "2"" of type '" "XdmfTopologyType const &""'"); 
+  }
+  arg2 = reinterpret_cast< XdmfTopologyType * >(argp2);
+  result = (bool)((XdmfTopologyType const *)arg1)->operator ==((XdmfTopologyType const &)*arg2);
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfTopologyType___ne__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfTopologyType *arg1 = (XdmfTopologyType *) 0 ;
+  XdmfTopologyType *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  bool result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfTopologyType___ne__",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfTopologyType, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfTopologyType___ne__" "', argument " "1"" of type '" "XdmfTopologyType const *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfTopologyType * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_XdmfTopologyType,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfTopologyType___ne__" "', argument " "2"" of type '" "XdmfTopologyType const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "XdmfTopologyType___ne__" "', argument " "2"" of type '" "XdmfTopologyType const &""'"); 
+  }
+  arg2 = reinterpret_cast< XdmfTopologyType * >(argp2);
+  result = (bool)((XdmfTopologyType const *)arg1)->operator !=((XdmfTopologyType const &)*arg2);
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_XdmfTopologyType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfTopologyType *arg1 = (XdmfTopologyType *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_XdmfTopologyType",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfTopologyType, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_XdmfTopologyType" "', argument " "1"" of type '" "XdmfTopologyType *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfTopologyType * >(argp1);
+  delete arg1;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *XdmfTopologyType_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_XdmfTopologyType, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
 SWIGINTERN PyObject *_wrap_XdmfTopology_New(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   boost::shared_ptr< XdmfTopology > result;
@@ -4953,22 +5407,22 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_XdmfTopology_getTopologyType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_XdmfTopology_getXdmfTopologyType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   XdmfTopology *arg1 = (XdmfTopology *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   PyObject * obj0 = 0 ;
-  XdmfTopologyType result;
+  XdmfTopologyType *result = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)"O:XdmfTopology_getTopologyType",&obj0)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfTopology_getXdmfTopologyType",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfTopology, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfTopology_getTopologyType" "', argument " "1"" of type '" "XdmfTopology *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfTopology_getXdmfTopologyType" "', argument " "1"" of type '" "XdmfTopology const *""'"); 
   }
   arg1 = reinterpret_cast< XdmfTopology * >(argp1);
-  result = (XdmfTopologyType)(arg1)->getTopologyType();
-  resultobj = SWIG_From_int(static_cast< int >(result));
+  result = (XdmfTopologyType *) &((XdmfTopology const *)arg1)->getXdmfTopologyType();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_XdmfTopologyType, 0 |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -4978,11 +5432,11 @@ fail:
 SWIGINTERN PyObject *_wrap_XdmfTopology_setTopologyType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   XdmfTopology *arg1 = (XdmfTopology *) 0 ;
-  XdmfTopologyType arg2 ;
+  XdmfTopologyType *arg2 = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
@@ -4992,12 +5446,15 @@ SWIGINTERN PyObject *_wrap_XdmfTopology_setTopologyType(PyObject *SWIGUNUSEDPARM
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfTopology_setTopologyType" "', argument " "1"" of type '" "XdmfTopology *""'"); 
   }
   arg1 = reinterpret_cast< XdmfTopology * >(argp1);
-  ecode2 = SWIG_AsVal_int(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfTopology_setTopologyType" "', argument " "2"" of type '" "XdmfTopologyType""'");
-  } 
-  arg2 = static_cast< XdmfTopologyType >(val2);
-  (arg1)->setTopologyType(arg2);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_XdmfTopologyType,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfTopology_setTopologyType" "', argument " "2"" of type '" "XdmfTopologyType const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "XdmfTopology_setTopologyType" "', argument " "2"" of type '" "XdmfTopologyType const &""'"); 
+  }
+  arg2 = reinterpret_cast< XdmfTopologyType * >(argp2);
+  (arg1)->setTopologyType((XdmfTopologyType const &)*arg2);
   resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
@@ -5016,10 +5473,10 @@ SWIGINTERN PyObject *_wrap_XdmfTopology_getTopologyTypeAsString(PyObject *SWIGUN
   if (!PyArg_ParseTuple(args,(char *)"O:XdmfTopology_getTopologyTypeAsString",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfTopology, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfTopology_getTopologyTypeAsString" "', argument " "1"" of type '" "XdmfTopology *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfTopology_getTopologyTypeAsString" "', argument " "1"" of type '" "XdmfTopology const *""'"); 
   }
   arg1 = reinterpret_cast< XdmfTopology * >(argp1);
-  result = (arg1)->getTopologyTypeAsString();
+  result = ((XdmfTopology const *)arg1)->getTopologyTypeAsString();
   resultobj = SWIG_From_std_string(static_cast< std::string >(result));
   return resultobj;
 fail:
@@ -5102,7 +5559,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"new_XdmfTopologyPtr", _wrap_new_XdmfTopologyPtr, METH_VARARGS, NULL},
 	 { (char *)"delete_XdmfTopologyPtr", _wrap_delete_XdmfTopologyPtr, METH_VARARGS, NULL},
 	 { (char *)"XdmfTopologyPtr_New", _wrap_XdmfTopologyPtr_New, METH_VARARGS, NULL},
-	 { (char *)"XdmfTopologyPtr_getTopologyType", _wrap_XdmfTopologyPtr_getTopologyType, METH_VARARGS, NULL},
+	 { (char *)"XdmfTopologyPtr_getXdmfTopologyType", _wrap_XdmfTopologyPtr_getXdmfTopologyType, METH_VARARGS, NULL},
 	 { (char *)"XdmfTopologyPtr_setTopologyType", _wrap_XdmfTopologyPtr_setTopologyType, METH_VARARGS, NULL},
 	 { (char *)"XdmfTopologyPtr_getTopologyTypeAsString", _wrap_XdmfTopologyPtr_getTopologyTypeAsString, METH_VARARGS, NULL},
 	 { (char *)"XdmfTopologyPtr_printSelf", _wrap_XdmfTopologyPtr_printSelf, METH_VARARGS, NULL},
@@ -5120,8 +5577,14 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfGrid_setTopology", _wrap_XdmfGrid_setTopology, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_printSelf", _wrap_XdmfGrid_printSelf, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_swigregister", XdmfGrid_swigregister, METH_VARARGS, NULL},
+	 { (char *)"XdmfTopologyType_numberVertices_get", _wrap_XdmfTopologyType_numberVertices_get, METH_VARARGS, NULL},
+	 { (char *)"XdmfTopologyType_name_get", _wrap_XdmfTopologyType_name_get, METH_VARARGS, NULL},
+	 { (char *)"XdmfTopologyType___eq__", _wrap_XdmfTopologyType___eq__, METH_VARARGS, NULL},
+	 { (char *)"XdmfTopologyType___ne__", _wrap_XdmfTopologyType___ne__, METH_VARARGS, NULL},
+	 { (char *)"delete_XdmfTopologyType", _wrap_delete_XdmfTopologyType, METH_VARARGS, NULL},
+	 { (char *)"XdmfTopologyType_swigregister", XdmfTopologyType_swigregister, METH_VARARGS, NULL},
 	 { (char *)"XdmfTopology_New", _wrap_XdmfTopology_New, METH_VARARGS, NULL},
-	 { (char *)"XdmfTopology_getTopologyType", _wrap_XdmfTopology_getTopologyType, METH_VARARGS, NULL},
+	 { (char *)"XdmfTopology_getXdmfTopologyType", _wrap_XdmfTopology_getXdmfTopologyType, METH_VARARGS, NULL},
 	 { (char *)"XdmfTopology_setTopologyType", _wrap_XdmfTopology_setTopologyType, METH_VARARGS, NULL},
 	 { (char *)"XdmfTopology_getTopologyTypeAsString", _wrap_XdmfTopology_getTopologyTypeAsString, METH_VARARGS, NULL},
 	 { (char *)"XdmfTopology_printSelf", _wrap_XdmfTopology_printSelf, METH_VARARGS, NULL},
@@ -5145,6 +5608,7 @@ static swig_type_info _swigt__p_XdmfGeometry = {"_p_XdmfGeometry", "XdmfGeometry
 static swig_type_info _swigt__p_XdmfGrid = {"_p_XdmfGrid", "XdmfGrid *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_XdmfObject = {"_p_XdmfObject", "XdmfObject *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_XdmfTopology = {"_p_XdmfTopology", "XdmfTopology *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_XdmfTopologyType = {"_p_XdmfTopologyType", "XdmfTopologyType *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_boost__shared_ptrT_XdmfGeometry_t = {"_p_boost__shared_ptrT_XdmfGeometry_t", "boost::shared_ptr< XdmfGeometry > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_boost__shared_ptrT_XdmfGrid_t = {"_p_boost__shared_ptrT_XdmfGrid_t", "boost::shared_ptr< XdmfGrid > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_boost__shared_ptrT_XdmfObject_t = {"_p_boost__shared_ptrT_XdmfObject_t", "boost::shared_ptr< XdmfObject > *", 0, 0, (void*)0, 0};
@@ -5158,6 +5622,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_XdmfGrid,
   &_swigt__p_XdmfObject,
   &_swigt__p_XdmfTopology,
+  &_swigt__p_XdmfTopologyType,
   &_swigt__p_boost__shared_ptrT_XdmfGeometry_t,
   &_swigt__p_boost__shared_ptrT_XdmfGrid_t,
   &_swigt__p_boost__shared_ptrT_XdmfObject_t,
@@ -5171,6 +5636,7 @@ static swig_cast_info _swigc__p_XdmfGeometry[] = {  {&_swigt__p_XdmfGeometry, 0,
 static swig_cast_info _swigc__p_XdmfGrid[] = {  {&_swigt__p_XdmfGrid, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfObject[] = {  {&_swigt__p_XdmfGrid, _p_XdmfGridTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfTopology, _p_XdmfTopologyTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfObject, 0, 0, 0},  {&_swigt__p_XdmfGeometry, _p_XdmfGeometryTo_p_XdmfObject, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfTopology[] = {  {&_swigt__p_XdmfTopology, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_XdmfTopologyType[] = {  {&_swigt__p_XdmfTopologyType, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_boost__shared_ptrT_XdmfGeometry_t[] = {  {&_swigt__p_boost__shared_ptrT_XdmfGeometry_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_boost__shared_ptrT_XdmfGrid_t[] = {  {&_swigt__p_boost__shared_ptrT_XdmfGrid_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_boost__shared_ptrT_XdmfObject_t[] = {  {&_swigt__p_boost__shared_ptrT_XdmfObject_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -5184,6 +5650,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_XdmfGrid,
   _swigc__p_XdmfObject,
   _swigc__p_XdmfTopology,
+  _swigc__p_XdmfTopologyType,
   _swigc__p_boost__shared_ptrT_XdmfGeometry_t,
   _swigc__p_boost__shared_ptrT_XdmfGrid_t,
   _swigc__p_boost__shared_ptrT_XdmfObject_t,
@@ -5784,30 +6251,31 @@ SWIG_init(void) {
   SWIG_InstallConstants(d,swig_const_table);
   
   
-  SWIG_Python_SetConstant(d, "XDMF_NOTOPOLOGY",SWIG_From_int(static_cast< int >(XDMF_NOTOPOLOGY)));
-  SWIG_Python_SetConstant(d, "XDMF_POLYVERTEX",SWIG_From_int(static_cast< int >(XDMF_POLYVERTEX)));
-  SWIG_Python_SetConstant(d, "XDMF_POLYLINE",SWIG_From_int(static_cast< int >(XDMF_POLYLINE)));
-  SWIG_Python_SetConstant(d, "XDMF_POLYGON",SWIG_From_int(static_cast< int >(XDMF_POLYGON)));
-  SWIG_Python_SetConstant(d, "XDMF_TRI",SWIG_From_int(static_cast< int >(XDMF_TRI)));
-  SWIG_Python_SetConstant(d, "XDMF_QUAD",SWIG_From_int(static_cast< int >(XDMF_QUAD)));
-  SWIG_Python_SetConstant(d, "XDMF_TET",SWIG_From_int(static_cast< int >(XDMF_TET)));
-  SWIG_Python_SetConstant(d, "XDMF_PYRAMID",SWIG_From_int(static_cast< int >(XDMF_PYRAMID)));
-  SWIG_Python_SetConstant(d, "XDMF_WEDGE",SWIG_From_int(static_cast< int >(XDMF_WEDGE)));
-  SWIG_Python_SetConstant(d, "XDMF_HEX",SWIG_From_int(static_cast< int >(XDMF_HEX)));
-  SWIG_Python_SetConstant(d, "XDMF_EDGE_3",SWIG_From_int(static_cast< int >(XDMF_EDGE_3)));
-  SWIG_Python_SetConstant(d, "XDMF_TRI_6",SWIG_From_int(static_cast< int >(XDMF_TRI_6)));
-  SWIG_Python_SetConstant(d, "XDMF_QUAD_8",SWIG_From_int(static_cast< int >(XDMF_QUAD_8)));
-  SWIG_Python_SetConstant(d, "XDMF_TET_10",SWIG_From_int(static_cast< int >(XDMF_TET_10)));
-  SWIG_Python_SetConstant(d, "XDMF_PYRAMID_13",SWIG_From_int(static_cast< int >(XDMF_PYRAMID_13)));
-  SWIG_Python_SetConstant(d, "XDMF_WEDGE_15",SWIG_From_int(static_cast< int >(XDMF_WEDGE_15)));
-  SWIG_Python_SetConstant(d, "XDMF_HEX_20",SWIG_From_int(static_cast< int >(XDMF_HEX_20)));
-  SWIG_Python_SetConstant(d, "XDMF_MIXED",SWIG_From_int(static_cast< int >(XDMF_MIXED)));
-  SWIG_Python_SetConstant(d, "XDMF_2DSMESH",SWIG_From_int(static_cast< int >(XDMF_2DSMESH)));
-  SWIG_Python_SetConstant(d, "XDMF_2DRECTMESH",SWIG_From_int(static_cast< int >(XDMF_2DRECTMESH)));
-  SWIG_Python_SetConstant(d, "XDMF_2DCORECTMESH",SWIG_From_int(static_cast< int >(XDMF_2DCORECTMESH)));
-  SWIG_Python_SetConstant(d, "XDMF_3DSMESH",SWIG_From_int(static_cast< int >(XDMF_3DSMESH)));
-  SWIG_Python_SetConstant(d, "XDMF_3DRECTMESH",SWIG_From_int(static_cast< int >(XDMF_3DRECTMESH)));
-  SWIG_Python_SetConstant(d, "XDMF_3DCORECTMESH",SWIG_From_int(static_cast< int >(XDMF_3DCORECTMESH)));
+  PyDict_SetItemString(d,(char*)"cvar", SWIG_globals());
+  SWIG_addvarlink(SWIG_globals(),(char*)"XdmfTopologyType_NoTopology",Swig_var_XdmfTopologyType_NoTopology_get, Swig_var_XdmfTopologyType_NoTopology_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"XdmfTopologyType_Polyvertex",Swig_var_XdmfTopologyType_Polyvertex_get, Swig_var_XdmfTopologyType_Polyvertex_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"XdmfTopologyType_Polyline",Swig_var_XdmfTopologyType_Polyline_get, Swig_var_XdmfTopologyType_Polyline_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"XdmfTopologyType_Polygon",Swig_var_XdmfTopologyType_Polygon_get, Swig_var_XdmfTopologyType_Polygon_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"XdmfTopologyType_Triangle",Swig_var_XdmfTopologyType_Triangle_get, Swig_var_XdmfTopologyType_Triangle_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"XdmfTopologyType_Quadrilateral",Swig_var_XdmfTopologyType_Quadrilateral_get, Swig_var_XdmfTopologyType_Quadrilateral_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"XdmfTopologyType_Tetrahedron",Swig_var_XdmfTopologyType_Tetrahedron_get, Swig_var_XdmfTopologyType_Tetrahedron_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"XdmfTopologyType_Pyramid",Swig_var_XdmfTopologyType_Pyramid_get, Swig_var_XdmfTopologyType_Pyramid_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"XdmfTopologyType_Wedge",Swig_var_XdmfTopologyType_Wedge_get, Swig_var_XdmfTopologyType_Wedge_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"XdmfTopologyType_Hexahedron",Swig_var_XdmfTopologyType_Hexahedron_get, Swig_var_XdmfTopologyType_Hexahedron_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"XdmfTopologyType_Edge_3",Swig_var_XdmfTopologyType_Edge_3_get, Swig_var_XdmfTopologyType_Edge_3_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"XdmfTopologyType_Triangle_6",Swig_var_XdmfTopologyType_Triangle_6_get, Swig_var_XdmfTopologyType_Triangle_6_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"XdmfTopologyType_Quadrilateral_8",Swig_var_XdmfTopologyType_Quadrilateral_8_get, Swig_var_XdmfTopologyType_Quadrilateral_8_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"XdmfTopologyType_Tetrahedron_10",Swig_var_XdmfTopologyType_Tetrahedron_10_get, Swig_var_XdmfTopologyType_Tetrahedron_10_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"XdmfTopologyType_Pyramid_13",Swig_var_XdmfTopologyType_Pyramid_13_get, Swig_var_XdmfTopologyType_Pyramid_13_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"XdmfTopologyType_Wedge_15",Swig_var_XdmfTopologyType_Wedge_15_get, Swig_var_XdmfTopologyType_Wedge_15_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"XdmfTopologyType_Hexahedron_20",Swig_var_XdmfTopologyType_Hexahedron_20_get, Swig_var_XdmfTopologyType_Hexahedron_20_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"XdmfTopologyType_Mixed",Swig_var_XdmfTopologyType_Mixed_get, Swig_var_XdmfTopologyType_Mixed_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"XdmfTopologyType_TwoDSMesh",Swig_var_XdmfTopologyType_TwoDSMesh_get, Swig_var_XdmfTopologyType_TwoDSMesh_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"XdmfTopologyType_TwoDRectMesh",Swig_var_XdmfTopologyType_TwoDRectMesh_get, Swig_var_XdmfTopologyType_TwoDRectMesh_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"XdmfTopologyType_TwoDCoRectMesh",Swig_var_XdmfTopologyType_TwoDCoRectMesh_get, Swig_var_XdmfTopologyType_TwoDCoRectMesh_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"XdmfTopologyType_ThreeDSMesh",Swig_var_XdmfTopologyType_ThreeDSMesh_get, Swig_var_XdmfTopologyType_ThreeDSMesh_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"XdmfTopologyType_ThreeDRectMesh",Swig_var_XdmfTopologyType_ThreeDRectMesh_get, Swig_var_XdmfTopologyType_ThreeDRectMesh_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"XdmfTopologyType_ThreeDCoRectMesh",Swig_var_XdmfTopologyType_ThreeDCoRectMesh_get, Swig_var_XdmfTopologyType_ThreeDCoRectMesh_set);
 #if PY_VERSION_HEX >= 0x03000000
   return m;
 #else

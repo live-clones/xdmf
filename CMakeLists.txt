@@ -25,10 +25,14 @@ set(XdmfSources
 
 add_library(Xdmf ${XdmfSources})
 
-#add_library(_Xdmf MODULE XdmfPython)
-#set_target_properties(_Xdmf PROPERTIES PREFIX "")
-#target_link_libraries(_Xdmf Xdmf)
-#configure_file(Xdmf.py Xdmf.py COPYONLY)
+add_library(_Xdmf MODULE XdmfPython)
+set_target_properties(_Xdmf PROPERTIES PREFIX "")
+target_link_libraries(_Xdmf Xdmf)
+if(WIN32 OR APPLE)
+	target_link_libraries(_Xdmf ${PYTHON_LIBRARY})
+endif(WIN32 OR APPLE)
+
+configure_file(Xdmf.py Xdmf.py COPYONLY)
 
 option(BUILD_TESTING OFF)
 if(BUILD_TESTING)

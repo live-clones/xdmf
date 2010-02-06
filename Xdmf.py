@@ -167,7 +167,7 @@ class XdmfTopologyPtr(_object):
     __swig_destroy__ = _Xdmf.delete_XdmfTopologyPtr
     __del__ = lambda self : None;
     def New(self): return _Xdmf.XdmfTopologyPtr_New(self)
-    def getTopologyType(self): return _Xdmf.XdmfTopologyPtr_getTopologyType(self)
+    def getXdmfTopologyType(self): return _Xdmf.XdmfTopologyPtr_getXdmfTopologyType(self)
     def setTopologyType(self, *args): return _Xdmf.XdmfTopologyPtr_setTopologyType(self, *args)
     def getTopologyTypeAsString(self): return _Xdmf.XdmfTopologyPtr_getTopologyTypeAsString(self)
     def printSelf(self): return _Xdmf.XdmfTopologyPtr_printSelf(self)
@@ -233,30 +233,49 @@ def XdmfGrid_New():
   return _Xdmf.XdmfGrid_New()
 XdmfGrid_New = _Xdmf.XdmfGrid_New
 
-XDMF_NOTOPOLOGY = _Xdmf.XDMF_NOTOPOLOGY
-XDMF_POLYVERTEX = _Xdmf.XDMF_POLYVERTEX
-XDMF_POLYLINE = _Xdmf.XDMF_POLYLINE
-XDMF_POLYGON = _Xdmf.XDMF_POLYGON
-XDMF_TRI = _Xdmf.XDMF_TRI
-XDMF_QUAD = _Xdmf.XDMF_QUAD
-XDMF_TET = _Xdmf.XDMF_TET
-XDMF_PYRAMID = _Xdmf.XDMF_PYRAMID
-XDMF_WEDGE = _Xdmf.XDMF_WEDGE
-XDMF_HEX = _Xdmf.XDMF_HEX
-XDMF_EDGE_3 = _Xdmf.XDMF_EDGE_3
-XDMF_TRI_6 = _Xdmf.XDMF_TRI_6
-XDMF_QUAD_8 = _Xdmf.XDMF_QUAD_8
-XDMF_TET_10 = _Xdmf.XDMF_TET_10
-XDMF_PYRAMID_13 = _Xdmf.XDMF_PYRAMID_13
-XDMF_WEDGE_15 = _Xdmf.XDMF_WEDGE_15
-XDMF_HEX_20 = _Xdmf.XDMF_HEX_20
-XDMF_MIXED = _Xdmf.XDMF_MIXED
-XDMF_2DSMESH = _Xdmf.XDMF_2DSMESH
-XDMF_2DRECTMESH = _Xdmf.XDMF_2DRECTMESH
-XDMF_2DCORECTMESH = _Xdmf.XDMF_2DCORECTMESH
-XDMF_3DSMESH = _Xdmf.XDMF_3DSMESH
-XDMF_3DRECTMESH = _Xdmf.XDMF_3DRECTMESH
-XDMF_3DCORECTMESH = _Xdmf.XDMF_3DCORECTMESH
+class XdmfTopologyType(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfTopologyType, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfTopologyType, name)
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
+    __repr__ = _swig_repr
+    __swig_getmethods__["numberVertices"] = _Xdmf.XdmfTopologyType_numberVertices_get
+    if _newclass:numberVertices = _swig_property(_Xdmf.XdmfTopologyType_numberVertices_get)
+    __swig_getmethods__["name"] = _Xdmf.XdmfTopologyType_name_get
+    if _newclass:name = _swig_property(_Xdmf.XdmfTopologyType_name_get)
+    def __eq__(self, *args): return _Xdmf.XdmfTopologyType___eq__(self, *args)
+    def __ne__(self, *args): return _Xdmf.XdmfTopologyType___ne__(self, *args)
+    __swig_destroy__ = _Xdmf.delete_XdmfTopologyType
+    __del__ = lambda self : None;
+XdmfTopologyType_swigregister = _Xdmf.XdmfTopologyType_swigregister
+XdmfTopologyType_swigregister(XdmfTopologyType)
+cvar = _Xdmf.cvar
+XdmfTopologyType.NoTopology = _Xdmf.cvar.XdmfTopologyType_NoTopology
+XdmfTopologyType.Polyvertex = _Xdmf.cvar.XdmfTopologyType_Polyvertex
+XdmfTopologyType.Polyline = _Xdmf.cvar.XdmfTopologyType_Polyline
+XdmfTopologyType.Polygon = _Xdmf.cvar.XdmfTopologyType_Polygon
+XdmfTopologyType.Triangle = _Xdmf.cvar.XdmfTopologyType_Triangle
+XdmfTopologyType.Quadrilateral = _Xdmf.cvar.XdmfTopologyType_Quadrilateral
+XdmfTopologyType.Tetrahedron = _Xdmf.cvar.XdmfTopologyType_Tetrahedron
+XdmfTopologyType.Pyramid = _Xdmf.cvar.XdmfTopologyType_Pyramid
+XdmfTopologyType.Wedge = _Xdmf.cvar.XdmfTopologyType_Wedge
+XdmfTopologyType.Hexahedron = _Xdmf.cvar.XdmfTopologyType_Hexahedron
+XdmfTopologyType.Edge_3 = _Xdmf.cvar.XdmfTopologyType_Edge_3
+XdmfTopologyType.Triangle_6 = _Xdmf.cvar.XdmfTopologyType_Triangle_6
+XdmfTopologyType.Quadrilateral_8 = _Xdmf.cvar.XdmfTopologyType_Quadrilateral_8
+XdmfTopologyType.Tetrahedron_10 = _Xdmf.cvar.XdmfTopologyType_Tetrahedron_10
+XdmfTopologyType.Pyramid_13 = _Xdmf.cvar.XdmfTopologyType_Pyramid_13
+XdmfTopologyType.Wedge_15 = _Xdmf.cvar.XdmfTopologyType_Wedge_15
+XdmfTopologyType.Hexahedron_20 = _Xdmf.cvar.XdmfTopologyType_Hexahedron_20
+XdmfTopologyType.Mixed = _Xdmf.cvar.XdmfTopologyType_Mixed
+XdmfTopologyType.TwoDSMesh = _Xdmf.cvar.XdmfTopologyType_TwoDSMesh
+XdmfTopologyType.TwoDRectMesh = _Xdmf.cvar.XdmfTopologyType_TwoDRectMesh
+XdmfTopologyType.TwoDCoRectMesh = _Xdmf.cvar.XdmfTopologyType_TwoDCoRectMesh
+XdmfTopologyType.ThreeDSMesh = _Xdmf.cvar.XdmfTopologyType_ThreeDSMesh
+XdmfTopologyType.ThreeDRectMesh = _Xdmf.cvar.XdmfTopologyType_ThreeDRectMesh
+XdmfTopologyType.ThreeDCoRectMesh = _Xdmf.cvar.XdmfTopologyType_ThreeDCoRectMesh
+
 class XdmfTopology(XdmfObject):
     __swig_setmethods__ = {}
     for _s in [XdmfObject]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
@@ -268,7 +287,7 @@ class XdmfTopology(XdmfObject):
     __repr__ = _swig_repr
     __swig_getmethods__["New"] = lambda x: _Xdmf.XdmfTopology_New
     if _newclass:New = staticmethod(_Xdmf.XdmfTopology_New)
-    def getTopologyType(self): return _Xdmf.XdmfTopology_getTopologyType(self)
+    def getXdmfTopologyType(self): return _Xdmf.XdmfTopology_getXdmfTopologyType(self)
     def setTopologyType(self, *args): return _Xdmf.XdmfTopology_setTopologyType(self, *args)
     def getTopologyTypeAsString(self): return _Xdmf.XdmfTopology_getTopologyTypeAsString(self)
     def printSelf(self): return _Xdmf.XdmfTopology_printSelf(self)
