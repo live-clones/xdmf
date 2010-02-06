@@ -21,7 +21,7 @@ XdmfGrid::~XdmfGrid()
   std::cout << "Deleted Grid " << this << std::endl;
 }
 
-std::string XdmfGrid::printSelf() const
+const std::string XdmfGrid::printSelf() const
 {
 	return "XdmfGrid containing a " + mGeometry->printSelf() + " and a " + mTopology->printSelf();
 }

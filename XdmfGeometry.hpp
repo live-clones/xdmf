@@ -15,7 +15,7 @@ class XdmfGeometry : public XdmfObject {
 public:
 
 	XdmfNewMacro(XdmfGeometry);
-	virtual std::string printSelf() const;
+	virtual const std::string printSelf() const;
 
 protected:
 

@@ -20,14 +20,14 @@ static boost::shared_ptr<type> New() \
 	return p; \
 }
 
-#define XdmfGetValueMacro(var,type) \
+#define XdmfGetValueMacro(var, type) \
 type get##var () \
 { \
   return ( this->m##var ); \
 }
 
 #define XdmfSetValueMacro(var,type) \
-void set##var (type _arg) \
+void set##var (const type _arg) \
 { \
   this->m##var = _arg; \
 }
@@ -37,7 +37,7 @@ class XdmfObject {
 public:
 
 	XdmfNewMacro(XdmfObject);
-	virtual std::string printSelf() const;
+	virtual const std::string printSelf() const;
 
 protected:
 

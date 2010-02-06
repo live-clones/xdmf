@@ -1,0 +1,2 @@
+add_executable(TestXdmfTopologyType TestXdmfTopologyType)
+target_link_libraries(TestXdmfTopologyType Xdmf)

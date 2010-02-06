@@ -17,7 +17,7 @@ XdmfGeometry::~XdmfGeometry()
 	std::cout << "Deleted Geometry " << this << std::endl;
 }
 
-std::string XdmfGeometry::printSelf() const
+const std::string XdmfGeometry::printSelf() const
 {
 	return "XdmfGeometry";
 }

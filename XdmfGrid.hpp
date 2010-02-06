@@ -31,7 +31,7 @@ public:
 	// Set the XdmfTopology for this grid
 	XdmfSetValueMacro(Topology, boost::shared_ptr<XdmfTopology>);
 
-	virtual std::string printSelf() const;
+	virtual const std::string printSelf() const;
 
 protected:
 

@@ -17,7 +17,7 @@ XdmfObject::~XdmfObject()
 
 }
 
-std::string XdmfObject::printSelf() const
+const std::string XdmfObject::printSelf() const
 {
 	return "XdmfObject";
 }
