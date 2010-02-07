@@ -98,6 +98,8 @@ public:
 
 	XdmfNewMacro(XdmfTopology);
 
+	virtual void write(boost::shared_ptr<XdmfVisitor>) const;
+
 	/**
 	 * Get the XdmfTopologyType associated with this Topology.
 	 *

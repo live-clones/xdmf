@@ -19,7 +19,7 @@ class XdmfItem : public XdmfObject {
 public:
 
 	//virtual const std::string printSelf() const = 0;
-	//virtual void write(XdmfVisitor&) const = 0;
+	virtual void write(boost::shared_ptr<XdmfVisitor>) const = 0;
 
 protected:
 

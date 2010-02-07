@@ -1,5 +1,10 @@
-add_executable(TestXdmfTopology TestXdmfTopology)
-target_link_libraries(TestXdmfTopology Xdmf)
+set(XdmfTests
+	TestXdmfGeometry
+	TestXdmfTopology
+	TestXdmfVisitor
+)
 
-add_executable(TestXdmfGeometry TestXdmfGeometry)
-target_link_libraries(TestXdmfGeometry Xdmf)
+foreach(test ${XdmfTests})
+	add_executable(${test} ${test})
+	target_link_libraries(${test} Xdmf)
+endforeach(test XdmfTests)

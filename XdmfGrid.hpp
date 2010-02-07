@@ -20,6 +20,8 @@ public:
 
 	XdmfNewMacro(XdmfGrid);
 
+	virtual void write(boost::shared_ptr<XdmfVisitor>) const;
+
 	// Get the XdmfGeometry for this grid
 	XdmfGetValueMacro(Geometry, boost::shared_ptr<XdmfGeometry>);
 	// Set the XdmfGeometry for this grid

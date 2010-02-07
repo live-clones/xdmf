@@ -6,6 +6,7 @@
  */
 
 #include "XdmfTopology.hpp"
+#include "XdmfVisitor.hpp"
 
 const XdmfTopologyType XdmfTopologyType::NoTopology(0, "NoTopology", NoCellType);
 const XdmfTopologyType XdmfTopologyType::Polyvertex(1, "Polyvertex", Linear);
@@ -41,6 +42,11 @@ mTopologyType(&XdmfTopologyType::NoTopology)
 XdmfTopology::~XdmfTopology()
 {
 	std::cout << "Deleted Topology " << this << std::endl;
+}
+
+void XdmfTopology::write(boost::shared_ptr<XdmfVisitor> visitor) const
+{
+	visitor->visit(this);
 }
 
 const XdmfTopologyType & XdmfTopology::getTopologyType() const

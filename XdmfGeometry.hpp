@@ -76,6 +76,8 @@ public:
 
 	XdmfNewMacro(XdmfGeometry);
 
+	virtual void write(boost::shared_ptr<XdmfVisitor>) const;
+
 	/**
 	 * Get the XdmfGeometryType associated with this Geometry.
 	 *

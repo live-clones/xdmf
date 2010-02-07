@@ -29,6 +29,11 @@ XdmfGeometry::~XdmfGeometry()
 	std::cout << "Deleted Geometry " << this << std::endl;
 }
 
+void XdmfGeometry::write(boost::shared_ptr<XdmfVisitor>) const
+{
+
+}
+
 const XdmfGeometryType& XdmfGeometry::getGeometryType() const
 {
 	return *mGeometryType;
