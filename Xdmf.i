@@ -14,6 +14,7 @@ namespace boost {
   };
 }
 
+%template(XdmfAttributePtr) boost::shared_ptr<XdmfAttribute>;
 %template(XdmfGeometryPtr) boost::shared_ptr<XdmfGeometry>;
 %template(XdmfGridPtr) boost::shared_ptr<XdmfGrid>;
 %template(XdmfItemPtr) boost::shared_ptr<XdmfItem>;
@@ -23,6 +24,7 @@ namespace boost {
 
 %module Xdmf
 %{
+  #include <XdmfAttribute.hpp>
   #include <XdmfGeometry.hpp>
   #include <XdmfGrid.hpp>
   #include <XdmfItem.hpp>
@@ -36,6 +38,7 @@ namespace boost {
 %include XdmfItem.hpp
 %include XdmfVisitor.hpp
 
+%include XdmfAttribute.hpp
 %include XdmfGeometry.hpp
 %include XdmfGrid.hpp
 %include XdmfTopology.hpp

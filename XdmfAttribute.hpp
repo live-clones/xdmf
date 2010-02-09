@@ -10,9 +10,123 @@
 
 #include "XdmfItem.hpp"
 
+class XdmfAttributeType {
+
+public:
+
+	// Supported Xdmf Attribute Types
+	static XdmfAttributeType NoAttributeType();
+	static XdmfAttributeType Scalar();
+	static XdmfAttributeType Vector();
+	static XdmfAttributeType Tensor();
+	static XdmfAttributeType Matrix();
+	static XdmfAttributeType Tensor6();
+	static XdmfAttributeType GlobalId();
+
+	/**
+	 * Get the name of this attribute type
+	 *
+	 * @return a string containing the name.
+	 */
+	std::string getName() const;
+
+	/*
+	 * Compare two XdmfAttribute types for equality.
+	 *
+	 * @param an XdmfAttributeType to compare equality to.
+	 * @return true iff the XdmfAttributeTypes are equal.
+	 */
+	bool operator==(const XdmfAttributeType& top) const
+	{
+		return mName.compare(top.mName) == 0;
+	}
+
+	/**
+	 * Compare two XdmfAttribute types for inequality.
+	 *
+	 * @param XdmfAttributeType to compare inequality to.
+	 * @return true iff the XdmfAttributeTypes are not equal.
+	 */
+	bool operator!=(const XdmfAttributeType& top) const
+	{
+		return !this->operator ==(top);
+	}
+
+	XdmfAttributeType(const XdmfAttributeType&);
+	XdmfAttributeType& operator=(const XdmfAttributeType&);
+
+protected:
+
+	/**
+	 * Protected constructor for XdmfAttributeType.  The constructor is protected because all attribute types supported
+	 * by Xdmf should be accessed through more specific static methods that construct XdmfAttributeTypes - i.e. XdmfAttributeType::Scalar().
+	 */
+	XdmfAttributeType(const std::string& name) :
+		mName(name)
+	{};
+
+private:
+
+	std::string mName;
+};
+
 class XdmfAttribute : public XdmfItem {
 
+public:
+
 	XdmfNewMacro(XdmfAttribute);
+
+	/**
+	 * Get the name of the attribute.
+	 *
+	 * @return a string containing the name of the attribute.
+	 */
+	std::string getName() const;
+
+	/**
+	 * Set the name of the attribute.
+	 *
+	 * @param a string containing the name to set.
+	 */
+	void setName(const std::string&);
+
+	/**
+	 * Get the XdmfAttributeType associated with this Attribute.
+	 *
+	 * @return XdmfAttributeType.
+	 */
+	XdmfAttributeType getAttributeType() const;
+
+	/**
+	 * Get the name of the AttributeType associated with this Attribute.
+	 *
+	 * @return std::string containing name of the AttributeType.
+	 */
+	std::string getAttributeTypeAsString() const;
+
+	/**
+	 * Set the XdmfAttributeType associated with this Attribute.
+	 *
+	 * @param XdmfAttributeType to set.
+	 */
+	void setAttributeType(const XdmfAttributeType&);
+
+	void write(boost::shared_ptr<XdmfVisitor> visitor) const;
+
+	virtual const std::string printSelf() const;
+
+protected:
+
+	XdmfAttribute();
+	virtual ~XdmfAttribute();
+
+private:
+
+	XdmfAttribute(const XdmfAttribute&);  // Not implemented.
+	void operator=(const XdmfAttribute&);  // Not implemented.
+
+	std::string mName;
+	XdmfAttributeType mAttributeType;
 
 };
 

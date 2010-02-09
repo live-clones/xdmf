@@ -20,6 +20,7 @@ if(XDMF_WRAP_PYTHON)
 endif(XDMF_WRAP_PYTHON)
 
 set(XdmfSources
+	XdmfAttribute
 	XdmfGeometry
 	XdmfGrid
 	XdmfItem
@@ -43,6 +44,7 @@ configure_file(Xdmf.py Xdmf.py COPYONLY)
 
 option(BUILD_TESTING OFF)
 if(BUILD_TESTING)
+	enable_testing()
 	add_subdirectory(tests)
 	add_executable(XdmfTest test.cpp)
 	target_link_libraries(XdmfTest Xdmf)

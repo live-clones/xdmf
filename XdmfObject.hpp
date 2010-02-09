@@ -20,18 +20,6 @@ static boost::shared_ptr<type> New() \
 	return p; \
 }
 
-#define XdmfGetValueMacro(var, type) \
-type get##var () \
-{ \
-  return ( this->m##var ); \
-}
-
-#define XdmfSetValueMacro(var,type) \
-void set##var (const type _arg) \
-{ \
-  this->m##var = _arg; \
-}
-
 class XdmfObject {
 
 public:

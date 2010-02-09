@@ -9,11 +9,11 @@ int main(int argc, char* argv[])
 	assert(XdmfGeometryType::XYZ != XdmfGeometryType::XY);
 
 	boost::shared_ptr<XdmfGeometry> geom = XdmfGeometry::New();
-	assert(geom->getGeometryType() == XdmfGeometryType::NoGeometry);
-	assert(geom->getGeometryType().name.compare("NONE") == 0);
-	assert(geom->getGeometryType().dimensions == 0);
-	geom->setGeometryType(XdmfGeometryType::XYZ);
-	assert(geom->getGeometryType() == XdmfGeometryType::XYZ);
+	assert(geom->getGeometryType() == XdmfGeometryType::NoGeometryType());
+	assert(geom->getGeometryType().getName().compare("NONE") == 0);
+	assert(geom->getGeometryType().getDimensions() == 0);
+	geom->setGeometryType(XdmfGeometryType::XYZ());
+	assert(geom->getGeometryType() == XdmfGeometryType::XYZ());
 	assert(geom->getGeometryTypeAsString().compare("XYZ") == 0);
 	assert(geom->getDimensions() == 3);
 

@@ -5,7 +5,10 @@
 #define XDMFVISITOR_HPP_
 
 // Forward Declarations
-class XdmfItem;
+class XdmfAttribute;
+class XdmfGeometry;
+class XdmfGrid;
+class XdmfTopology;
 
 // Includes
 #include <sstream>
@@ -17,7 +20,13 @@ public:
 
 	XdmfNewMacro(XdmfVisitor);
 
-	virtual void visit(const XdmfItem * const);
+	virtual void visit(const XdmfAttribute * const attribute);
+
+	virtual void visit(const XdmfGeometry * const geometry);
+
+	virtual void visit(const XdmfGrid * const grid);
+
+	virtual void visit(const XdmfTopology * const topology);
 
 	const std::string printSelf() const;
 
@@ -28,10 +37,13 @@ protected:
 
 private:
 
+	XdmfVisitor(const XdmfVisitor&);  // Not implemented.
+	void operator=(const XdmfVisitor&);  // Not implemented.
+
+	int mTabIndex;
 	std::stringstream xmlData;
 
-  XdmfVisitor(const XdmfVisitor&);  // Not implemented.
-  void operator=(const XdmfVisitor&);  // Not implemented.
+
 
 };
 

@@ -22,12 +22,8 @@ int main(int argc, char* argv[])
 	boost::shared_ptr<XdmfTopology> top = XdmfTopology::New();
 	std::cout << *top << std::endl;
 	std::cout << top->getTopologyTypeAsString() << std::endl;
-	top->setTopologyType(XdmfTopologyType::Hexahedron);
+	top->setTopologyType(XdmfTopologyType::Hexahedron());
 	std::cout << top->getTopologyTypeAsString() << std::endl;
 
-	if (top->getTopologyType() != XdmfTopologyType::Polygon)
-	{
-		top->setTopologyType(XdmfTopologyType::Polygon);
-	}
-	std::cout << top->getTopologyType().name << std::endl;
+	std::cout << top->getTopologyType().getName() << std::endl;
 }

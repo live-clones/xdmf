@@ -18,7 +18,6 @@ class XdmfItem : public XdmfObject {
 
 public:
 
-	//virtual const std::string printSelf() const = 0;
 	virtual void write(boost::shared_ptr<XdmfVisitor>) const = 0;
 
 protected:
@@ -28,8 +27,8 @@ protected:
 
 private:
 
-  //XdmfItem(const XdmfItem&);  // Not implemented.
-  //void operator=(const XdmfItem&);  // Not implemented.
+  XdmfItem(const XdmfItem&);  // Not implemented.
+  void operator=(const XdmfItem&);  // Not implemented.
 
 };
 

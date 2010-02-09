@@ -8,7 +8,6 @@
 class XdmfAttribute;
 class XdmfGeometry;
 class XdmfTopology;
-class XdmfVisitor;
 
 // Includes
 #include "XdmfItem.hpp"
@@ -20,21 +19,65 @@ public:
 
 	XdmfNewMacro(XdmfGrid);
 
-	virtual void write(boost::shared_ptr<XdmfVisitor>) const;
+	/**
+	 * Get the geometry associated with this grid.
+	 *
+	 * @return a smart pointer to the geometry.
+	 */
+	boost::shared_ptr<XdmfGeometry> getGeometry();
 
-	// Get the XdmfGeometry for this grid
-	XdmfGetValueMacro(Geometry, boost::shared_ptr<XdmfGeometry>);
-	// Set the XdmfGeometry for this grid
-	XdmfSetValueMacro(Geometry, boost::shared_ptr<XdmfGeometry>);
+	/**
+	 * Get the geometry associated with this grid (const version).
+	 *
+	 * @return a smart pointer to the geometry.
+	 */
+	boost::shared_ptr<const XdmfGeometry> getGeometry() const;
 
-	// Get the XdmfTopology for this grid
-	XdmfGetValueMacro(Topology, boost::shared_ptr<XdmfTopology>);
-	// Set the XdmfTopology for this grid
-	XdmfSetValueMacro(Topology, boost::shared_ptr<XdmfTopology>);
+	/**
+	 * Set the geometry associated with this grid.
+	 *
+	 * @param a smart pointer to the geometry to attach to this grid.
+	 */
+	void setGeometry(boost::shared_ptr<XdmfGeometry>);
 
-	//virtual void write(XdmfVisitor&) const;
+	/**
+	 * Get the topology associated with this grid.
+	 *
+	 * @return a smart pointer to the topology.
+	 */
+	boost::shared_ptr<XdmfTopology> getTopology();
+
+	/**
+	 * Get the topology associated with this grid (const version).
+	 *
+	 * @return a smart pointer to the topology.
+	 */
+	boost::shared_ptr<const XdmfTopology> getTopology() const;
+
+	/**
+	 * Set the geometry associated with this grid.
+	 *
+	 * @param a smart pointer to the topology to attach to this grid.
+	 */
+	void setTopology(boost::shared_ptr<XdmfTopology>);
+
+	/**
+	 * Get the name of the grid.
+	 *
+	 * @return a string containing the name of the grid.
+	 */
+	std::string getName() const;
+
+	/**
+	 * Set the name of the grid.
+	 *
+	 * @param a string containing the name to set.
+	 */
+	void setName(const std::string&);
 
 	virtual const std::string printSelf() const;
+
+	virtual void write(boost::shared_ptr<XdmfVisitor> visitor) const;
 
 protected:
 
@@ -43,13 +86,13 @@ protected:
 
 private:
 
-  XdmfGrid(const XdmfGrid&);  // Not implemented.
-  void operator=(const XdmfGrid&);  // Not implemented.
+	XdmfGrid(const XdmfGrid&);  // Not implemented.
+	void operator=(const XdmfGrid&);  // Not implemented.
 
 	boost::shared_ptr<XdmfGeometry> mGeometry;
 	boost::shared_ptr<XdmfTopology> mTopology;
 	std::vector<boost::shared_ptr<XdmfAttribute> > mAttributes;
-
+	std::string mName;
 };
 
 #endif /* XDMFGRID_HPP_ */
