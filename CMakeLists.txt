@@ -29,6 +29,7 @@ set(XdmfSources
 	XdmfItem
 	XdmfObject
 	XdmfTopology
+	XdmfTopologyType
 	XdmfVisitor
 )
 

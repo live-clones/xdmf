@@ -33,6 +33,7 @@ namespace boost {
   #include <XdmfItem.hpp>
   #include <XdmfObject.hpp>
   #include <XdmfTopology.hpp>
+  #include <XdmfTopologyType.hpp>
   #include <XdmfVisitor.hpp>
 %}
 
@@ -48,3 +49,4 @@ namespace boost {
 %include XdmfGeometryType.hpp
 %include XdmfGrid.hpp
 %include XdmfTopology.hpp
+%include XdmfTopologyType.hpp

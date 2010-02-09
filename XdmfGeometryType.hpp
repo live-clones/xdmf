@@ -72,4 +72,4 @@ private:
 	std::string mName;
 };
 
-#endif /* XDMFATTRIBUTETYPE_HPP_ */
+#endif /* XDMFGEOMETRYTYPE_HPP_ */

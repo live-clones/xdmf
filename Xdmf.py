@@ -552,6 +552,32 @@ def XdmfGrid_New():
   return _Xdmf.XdmfGrid_New()
 XdmfGrid_New = _Xdmf.XdmfGrid_New
 
+class XdmfTopology(XdmfItem):
+    __swig_setmethods__ = {}
+    for _s in [XdmfItem]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfTopology, name, value)
+    __swig_getmethods__ = {}
+    for _s in [XdmfItem]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfTopology, name)
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
+    __repr__ = _swig_repr
+    __swig_getmethods__["New"] = lambda x: _Xdmf.XdmfTopology_New
+    if _newclass:New = staticmethod(_Xdmf.XdmfTopology_New)
+    def getTopologyType(self): return _Xdmf.XdmfTopology_getTopologyType(self)
+    def setTopologyType(self, *args): return _Xdmf.XdmfTopology_setTopologyType(self, *args)
+    def getNumberElements(self): return _Xdmf.XdmfTopology_getNumberElements(self)
+    def setNumberElements(self, *args): return _Xdmf.XdmfTopology_setNumberElements(self, *args)
+    def getTopologyTypeAsString(self): return _Xdmf.XdmfTopology_getTopologyTypeAsString(self)
+    def getNodesPerElement(self): return _Xdmf.XdmfTopology_getNodesPerElement(self)
+    def printSelf(self): return _Xdmf.XdmfTopology_printSelf(self)
+    def write(self, *args): return _Xdmf.XdmfTopology_write(self, *args)
+XdmfTopology_swigregister = _Xdmf.XdmfTopology_swigregister
+XdmfTopology_swigregister(XdmfTopology)
+
+def XdmfTopology_New():
+  return _Xdmf.XdmfTopology_New()
+XdmfTopology_New = _Xdmf.XdmfTopology_New
+
 class XdmfTopologyType(_object):
     __swig_setmethods__ = {}
     __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfTopologyType, name, value)
@@ -720,32 +746,6 @@ XdmfTopologyType_ThreeDRectMesh = _Xdmf.XdmfTopologyType_ThreeDRectMesh
 def XdmfTopologyType_ThreeDCoRectMesh():
   return _Xdmf.XdmfTopologyType_ThreeDCoRectMesh()
 XdmfTopologyType_ThreeDCoRectMesh = _Xdmf.XdmfTopologyType_ThreeDCoRectMesh
-
-class XdmfTopology(XdmfItem):
-    __swig_setmethods__ = {}
-    for _s in [XdmfItem]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
-    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfTopology, name, value)
-    __swig_getmethods__ = {}
-    for _s in [XdmfItem]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
-    __getattr__ = lambda self, name: _swig_getattr(self, XdmfTopology, name)
-    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
-    __repr__ = _swig_repr
-    __swig_getmethods__["New"] = lambda x: _Xdmf.XdmfTopology_New
-    if _newclass:New = staticmethod(_Xdmf.XdmfTopology_New)
-    def getTopologyType(self): return _Xdmf.XdmfTopology_getTopologyType(self)
-    def setTopologyType(self, *args): return _Xdmf.XdmfTopology_setTopologyType(self, *args)
-    def getNumberElements(self): return _Xdmf.XdmfTopology_getNumberElements(self)
-    def setNumberElements(self, *args): return _Xdmf.XdmfTopology_setNumberElements(self, *args)
-    def getTopologyTypeAsString(self): return _Xdmf.XdmfTopology_getTopologyTypeAsString(self)
-    def getNodesPerElement(self): return _Xdmf.XdmfTopology_getNodesPerElement(self)
-    def printSelf(self): return _Xdmf.XdmfTopology_printSelf(self)
-    def write(self, *args): return _Xdmf.XdmfTopology_write(self, *args)
-XdmfTopology_swigregister = _Xdmf.XdmfTopology_swigregister
-XdmfTopology_swigregister(XdmfTopology)
-
-def XdmfTopology_New():
-  return _Xdmf.XdmfTopology_New()
-XdmfTopology_New = _Xdmf.XdmfTopology_New
 
 
 
