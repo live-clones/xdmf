@@ -2,6 +2,7 @@
 // Xdmf Smart Pointer Test
 
 #include "XdmfAttribute.hpp"
+#include "XdmfDataItem.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGrid.hpp"
 #include "XdmfTopology.hpp"
@@ -25,6 +26,11 @@ void XdmfVisitor::visit(const XdmfAttribute * const attribute)
 {
 	xmlData << std::setw(mTabIndex) << "" << "<Attribute> Name=\"" << attribute->getName() << "\" AttributeType=\"" << attribute->getAttributeTypeAsString() << "\" Center=\"" << attribute->getAttributeCenterAsString() << "\">\n";
 	xmlData << std::setw(mTabIndex) << "" << "</Attribute>\n";
+}
+
+void XdmfVisitor::visit(const XdmfDataItem * const dataItem)
+{
+
 }
 
 void XdmfVisitor::visit(const XdmfGeometry * const geometry)
