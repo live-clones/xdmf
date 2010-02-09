@@ -39,7 +39,7 @@ int XdmfGeometry::getDimensions() const
 	return mGeometryType.getDimensions();
 }
 
-const std::string XdmfGeometry::printSelf() const
+std::string XdmfGeometry::printSelf() const
 {
 	return "XdmfGeometry";
 }

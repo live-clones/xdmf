@@ -27,8 +27,8 @@ protected:
 
 private:
 
-  XdmfItem(const XdmfItem&);  // Not implemented.
-  void operator=(const XdmfItem&);  // Not implemented.
+	XdmfItem(const XdmfItem&);  // Not implemented.
+	void operator=(const XdmfItem&);  // Not implemented.
 
 };
 

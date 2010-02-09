@@ -53,7 +53,7 @@ void XdmfVisitor::visit(const XdmfTopology * const topology)
 	xmlData << std::setw(mTabIndex) << "" << "</Topology>\n";
 }
 
-const std::string XdmfVisitor::printSelf() const
+std::string XdmfVisitor::printSelf() const
 {
 	return "XdmfVisitor:\n" + xmlData.str();
 }

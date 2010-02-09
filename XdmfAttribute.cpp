@@ -66,7 +66,7 @@ void XdmfAttribute::write(boost::shared_ptr<XdmfVisitor> visitor) const
 	visitor->visit(this);
 }
 
-const std::string XdmfAttribute::printSelf() const
+std::string XdmfAttribute::printSelf() const
 {
 	return "<XdmfAttribute>";
 }

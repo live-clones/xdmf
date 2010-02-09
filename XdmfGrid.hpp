@@ -101,7 +101,7 @@ public:
 	 */
 	unsigned int getNumberOfAttribute() const;
 
-	virtual const std::string printSelf() const;
+	virtual std::string printSelf() const;
 
 	virtual void write(boost::shared_ptr<XdmfVisitor> visitor) const;
 

@@ -103,7 +103,7 @@ unsigned int XdmfGrid::getNumberOfAttribute() const
 	return mAttributes.size();
 }
 
-const std::string XdmfGrid::printSelf() const
+std::string XdmfGrid::printSelf() const
 {
 	return "XdmfGrid containing a " + mGeometry->printSelf() + " and a " + mTopology->printSelf();
 }

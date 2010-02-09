@@ -28,7 +28,7 @@ public:
 
 	virtual void visit(const XdmfTopology * const topology);
 
-	const std::string printSelf() const;
+	virtual std::string printSelf() const;
 
 protected:
 

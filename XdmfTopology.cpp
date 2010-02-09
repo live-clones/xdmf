@@ -50,7 +50,7 @@ std::string XdmfTopology::getTopologyTypeAsString() const
 	return mTopologyType.getName();
 }
 
-const std::string XdmfTopology::printSelf() const
+std::string XdmfTopology::printSelf() const
 {
 	return "XdmfTopology";
 }

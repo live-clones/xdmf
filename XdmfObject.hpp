@@ -24,7 +24,7 @@ class XdmfObject {
 
 public:
 
-	virtual const std::string printSelf() const = 0;
+	virtual std::string printSelf() const = 0;
 
 protected:
 
