@@ -2649,31 +2649,32 @@ SWIG_Python_MustGetPtr(PyObject *obj, swig_type_info *ty, int argnum, int flags)
 /* -------- TYPES TABLE (BEGIN) -------- */
 
 #define SWIGTYPE_p_XdmfAttribute swig_types[0]
-#define SWIGTYPE_p_XdmfAttributeType swig_types[1]
-#define SWIGTYPE_p_XdmfGeometry swig_types[2]
-#define SWIGTYPE_p_XdmfGeometryType swig_types[3]
-#define SWIGTYPE_p_XdmfGrid swig_types[4]
-#define SWIGTYPE_p_XdmfItem swig_types[5]
-#define SWIGTYPE_p_XdmfObject swig_types[6]
-#define SWIGTYPE_p_XdmfTopology swig_types[7]
-#define SWIGTYPE_p_XdmfTopologyType swig_types[8]
-#define SWIGTYPE_p_XdmfVisitor swig_types[9]
-#define SWIGTYPE_p_boost__shared_ptrT_XdmfAttribute_const_t swig_types[10]
-#define SWIGTYPE_p_boost__shared_ptrT_XdmfAttribute_t swig_types[11]
-#define SWIGTYPE_p_boost__shared_ptrT_XdmfGeometry_const_t swig_types[12]
-#define SWIGTYPE_p_boost__shared_ptrT_XdmfGeometry_t swig_types[13]
-#define SWIGTYPE_p_boost__shared_ptrT_XdmfGrid_t swig_types[14]
-#define SWIGTYPE_p_boost__shared_ptrT_XdmfItem_t swig_types[15]
-#define SWIGTYPE_p_boost__shared_ptrT_XdmfObject_t swig_types[16]
-#define SWIGTYPE_p_boost__shared_ptrT_XdmfTopology_const_t swig_types[17]
-#define SWIGTYPE_p_boost__shared_ptrT_XdmfTopology_t swig_types[18]
-#define SWIGTYPE_p_boost__shared_ptrT_XdmfVisitor_t swig_types[19]
-#define SWIGTYPE_p_char swig_types[20]
-#define SWIGTYPE_p_int swig_types[21]
-#define SWIGTYPE_p_std__invalid_argument swig_types[22]
-#define SWIGTYPE_p_swig__SwigPyIterator swig_types[23]
-static swig_type_info *swig_types[25];
-static swig_module_info swig_module = {swig_types, 24, 0, 0, 0, 0};
+#define SWIGTYPE_p_XdmfAttributeCenter swig_types[1]
+#define SWIGTYPE_p_XdmfAttributeType swig_types[2]
+#define SWIGTYPE_p_XdmfGeometry swig_types[3]
+#define SWIGTYPE_p_XdmfGeometryType swig_types[4]
+#define SWIGTYPE_p_XdmfGrid swig_types[5]
+#define SWIGTYPE_p_XdmfItem swig_types[6]
+#define SWIGTYPE_p_XdmfObject swig_types[7]
+#define SWIGTYPE_p_XdmfTopology swig_types[8]
+#define SWIGTYPE_p_XdmfTopologyType swig_types[9]
+#define SWIGTYPE_p_XdmfVisitor swig_types[10]
+#define SWIGTYPE_p_boost__shared_ptrT_XdmfAttribute_const_t swig_types[11]
+#define SWIGTYPE_p_boost__shared_ptrT_XdmfAttribute_t swig_types[12]
+#define SWIGTYPE_p_boost__shared_ptrT_XdmfGeometry_const_t swig_types[13]
+#define SWIGTYPE_p_boost__shared_ptrT_XdmfGeometry_t swig_types[14]
+#define SWIGTYPE_p_boost__shared_ptrT_XdmfGrid_t swig_types[15]
+#define SWIGTYPE_p_boost__shared_ptrT_XdmfItem_t swig_types[16]
+#define SWIGTYPE_p_boost__shared_ptrT_XdmfObject_t swig_types[17]
+#define SWIGTYPE_p_boost__shared_ptrT_XdmfTopology_const_t swig_types[18]
+#define SWIGTYPE_p_boost__shared_ptrT_XdmfTopology_t swig_types[19]
+#define SWIGTYPE_p_boost__shared_ptrT_XdmfVisitor_t swig_types[20]
+#define SWIGTYPE_p_char swig_types[21]
+#define SWIGTYPE_p_int swig_types[22]
+#define SWIGTYPE_p_std__invalid_argument swig_types[23]
+#define SWIGTYPE_p_swig__SwigPyIterator swig_types[24]
+static swig_type_info *swig_types[26];
+static swig_module_info swig_module = {swig_types, 25, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -4340,28 +4341,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_XdmfAttributePtr_getAttributeTypeAsString(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  boost::shared_ptr< XdmfAttribute > *arg1 = (boost::shared_ptr< XdmfAttribute > *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  std::string result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:XdmfAttributePtr_getAttributeTypeAsString",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_boost__shared_ptrT_XdmfAttribute_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfAttributePtr_getAttributeTypeAsString" "', argument " "1"" of type '" "boost::shared_ptr< XdmfAttribute > const *""'"); 
-  }
-  arg1 = reinterpret_cast< boost::shared_ptr< XdmfAttribute > * >(argp1);
-  result = (*arg1)->getAttributeTypeAsString();
-  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_XdmfAttributePtr_setAttributeType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   boost::shared_ptr< XdmfAttribute > *arg1 = (boost::shared_ptr< XdmfAttribute > *) 0 ;
@@ -4389,6 +4368,105 @@ SWIGINTERN PyObject *_wrap_XdmfAttributePtr_setAttributeType(PyObject *SWIGUNUSE
   arg2 = reinterpret_cast< XdmfAttributeType * >(argp2);
   (*arg1)->setAttributeType((XdmfAttributeType const &)*arg2);
   resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfAttributePtr_getAttributeTypeAsString(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  boost::shared_ptr< XdmfAttribute > *arg1 = (boost::shared_ptr< XdmfAttribute > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  std::string result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfAttributePtr_getAttributeTypeAsString",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_boost__shared_ptrT_XdmfAttribute_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfAttributePtr_getAttributeTypeAsString" "', argument " "1"" of type '" "boost::shared_ptr< XdmfAttribute > const *""'"); 
+  }
+  arg1 = reinterpret_cast< boost::shared_ptr< XdmfAttribute > * >(argp1);
+  result = (*arg1)->getAttributeTypeAsString();
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfAttributePtr_getAttributeCenter(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  boost::shared_ptr< XdmfAttribute > *arg1 = (boost::shared_ptr< XdmfAttribute > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  SwigValueWrapper< XdmfAttributeCenter > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfAttributePtr_getAttributeCenter",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_boost__shared_ptrT_XdmfAttribute_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfAttributePtr_getAttributeCenter" "', argument " "1"" of type '" "boost::shared_ptr< XdmfAttribute > const *""'"); 
+  }
+  arg1 = reinterpret_cast< boost::shared_ptr< XdmfAttribute > * >(argp1);
+  result = (*arg1)->getAttributeCenter();
+  resultobj = SWIG_NewPointerObj((new XdmfAttributeCenter(static_cast< const XdmfAttributeCenter& >(result))), SWIGTYPE_p_XdmfAttributeCenter, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfAttributePtr_setAttributeCenter(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  boost::shared_ptr< XdmfAttribute > *arg1 = (boost::shared_ptr< XdmfAttribute > *) 0 ;
+  XdmfAttributeCenter *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfAttributePtr_setAttributeCenter",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_boost__shared_ptrT_XdmfAttribute_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfAttributePtr_setAttributeCenter" "', argument " "1"" of type '" "boost::shared_ptr< XdmfAttribute > *""'"); 
+  }
+  arg1 = reinterpret_cast< boost::shared_ptr< XdmfAttribute > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_XdmfAttributeCenter,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfAttributePtr_setAttributeCenter" "', argument " "2"" of type '" "XdmfAttributeCenter const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "XdmfAttributePtr_setAttributeCenter" "', argument " "2"" of type '" "XdmfAttributeCenter const &""'"); 
+  }
+  arg2 = reinterpret_cast< XdmfAttributeCenter * >(argp2);
+  (*arg1)->setAttributeCenter((XdmfAttributeCenter const &)*arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfAttributePtr_getAttributeCenterAsString(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  boost::shared_ptr< XdmfAttribute > *arg1 = (boost::shared_ptr< XdmfAttribute > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  std::string result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfAttributePtr_getAttributeCenterAsString",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_boost__shared_ptrT_XdmfAttribute_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfAttributePtr_getAttributeCenterAsString" "', argument " "1"" of type '" "boost::shared_ptr< XdmfAttribute > const *""'"); 
+  }
+  arg1 = reinterpret_cast< boost::shared_ptr< XdmfAttribute > * >(argp1);
+  result = (*arg1)->getAttributeCenterAsString();
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
   return resultobj;
 fail:
   return NULL;
@@ -6448,6 +6526,214 @@ SWIGINTERN PyObject *XdmfVisitor_swigregister(PyObject *SWIGUNUSEDPARM(self), Py
   return SWIG_Py_Void();
 }
 
+SWIGINTERN PyObject *_wrap_XdmfAttributeCenter_Grid(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  SwigValueWrapper< XdmfAttributeCenter > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)":XdmfAttributeCenter_Grid")) SWIG_fail;
+  result = XdmfAttributeCenter::Grid();
+  resultobj = SWIG_NewPointerObj((new XdmfAttributeCenter(static_cast< const XdmfAttributeCenter& >(result))), SWIGTYPE_p_XdmfAttributeCenter, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfAttributeCenter_Cell(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  SwigValueWrapper< XdmfAttributeCenter > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)":XdmfAttributeCenter_Cell")) SWIG_fail;
+  result = XdmfAttributeCenter::Cell();
+  resultobj = SWIG_NewPointerObj((new XdmfAttributeCenter(static_cast< const XdmfAttributeCenter& >(result))), SWIGTYPE_p_XdmfAttributeCenter, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfAttributeCenter_Face(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  SwigValueWrapper< XdmfAttributeCenter > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)":XdmfAttributeCenter_Face")) SWIG_fail;
+  result = XdmfAttributeCenter::Face();
+  resultobj = SWIG_NewPointerObj((new XdmfAttributeCenter(static_cast< const XdmfAttributeCenter& >(result))), SWIGTYPE_p_XdmfAttributeCenter, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfAttributeCenter_Edge(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  SwigValueWrapper< XdmfAttributeCenter > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)":XdmfAttributeCenter_Edge")) SWIG_fail;
+  result = XdmfAttributeCenter::Edge();
+  resultobj = SWIG_NewPointerObj((new XdmfAttributeCenter(static_cast< const XdmfAttributeCenter& >(result))), SWIGTYPE_p_XdmfAttributeCenter, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfAttributeCenter_Node(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  SwigValueWrapper< XdmfAttributeCenter > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)":XdmfAttributeCenter_Node")) SWIG_fail;
+  result = XdmfAttributeCenter::Node();
+  resultobj = SWIG_NewPointerObj((new XdmfAttributeCenter(static_cast< const XdmfAttributeCenter& >(result))), SWIGTYPE_p_XdmfAttributeCenter, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfAttributeCenter_getName(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfAttributeCenter *arg1 = (XdmfAttributeCenter *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  std::string result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfAttributeCenter_getName",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfAttributeCenter, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfAttributeCenter_getName" "', argument " "1"" of type '" "XdmfAttributeCenter const *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfAttributeCenter * >(argp1);
+  result = ((XdmfAttributeCenter const *)arg1)->getName();
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfAttributeCenter___eq__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfAttributeCenter *arg1 = (XdmfAttributeCenter *) 0 ;
+  XdmfAttributeCenter *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  bool result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfAttributeCenter___eq__",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfAttributeCenter, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfAttributeCenter___eq__" "', argument " "1"" of type '" "XdmfAttributeCenter const *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfAttributeCenter * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_XdmfAttributeCenter,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfAttributeCenter___eq__" "', argument " "2"" of type '" "XdmfAttributeCenter const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "XdmfAttributeCenter___eq__" "', argument " "2"" of type '" "XdmfAttributeCenter const &""'"); 
+  }
+  arg2 = reinterpret_cast< XdmfAttributeCenter * >(argp2);
+  result = (bool)((XdmfAttributeCenter const *)arg1)->operator ==((XdmfAttributeCenter const &)*arg2);
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfAttributeCenter___ne__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfAttributeCenter *arg1 = (XdmfAttributeCenter *) 0 ;
+  XdmfAttributeCenter *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  bool result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfAttributeCenter___ne__",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfAttributeCenter, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfAttributeCenter___ne__" "', argument " "1"" of type '" "XdmfAttributeCenter const *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfAttributeCenter * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_XdmfAttributeCenter,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfAttributeCenter___ne__" "', argument " "2"" of type '" "XdmfAttributeCenter const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "XdmfAttributeCenter___ne__" "', argument " "2"" of type '" "XdmfAttributeCenter const &""'"); 
+  }
+  arg2 = reinterpret_cast< XdmfAttributeCenter * >(argp2);
+  result = (bool)((XdmfAttributeCenter const *)arg1)->operator !=((XdmfAttributeCenter const &)*arg2);
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_XdmfAttributeCenter(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfAttributeCenter *arg1 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  XdmfAttributeCenter *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:new_XdmfAttributeCenter",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_XdmfAttributeCenter,  0  | 0);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_XdmfAttributeCenter" "', argument " "1"" of type '" "XdmfAttributeCenter const &""'"); 
+  }
+  if (!argp1) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_XdmfAttributeCenter" "', argument " "1"" of type '" "XdmfAttributeCenter const &""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfAttributeCenter * >(argp1);
+  result = (XdmfAttributeCenter *)new XdmfAttributeCenter((XdmfAttributeCenter const &)*arg1);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_XdmfAttributeCenter, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_XdmfAttributeCenter(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfAttributeCenter *arg1 = (XdmfAttributeCenter *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_XdmfAttributeCenter",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfAttributeCenter, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_XdmfAttributeCenter" "', argument " "1"" of type '" "XdmfAttributeCenter *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfAttributeCenter * >(argp1);
+  delete arg1;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *XdmfAttributeCenter_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_XdmfAttributeCenter, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
 SWIGINTERN PyObject *_wrap_XdmfAttributeType_NoAttributeType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   SwigValueWrapper< XdmfAttributeType > result;
@@ -6776,28 +7062,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_XdmfAttribute_getAttributeTypeAsString(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  XdmfAttribute *arg1 = (XdmfAttribute *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  std::string result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:XdmfAttribute_getAttributeTypeAsString",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfAttribute, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfAttribute_getAttributeTypeAsString" "', argument " "1"" of type '" "XdmfAttribute const *""'"); 
-  }
-  arg1 = reinterpret_cast< XdmfAttribute * >(argp1);
-  result = ((XdmfAttribute const *)arg1)->getAttributeTypeAsString();
-  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_XdmfAttribute_setAttributeType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   XdmfAttribute *arg1 = (XdmfAttribute *) 0 ;
@@ -6825,6 +7089,105 @@ SWIGINTERN PyObject *_wrap_XdmfAttribute_setAttributeType(PyObject *SWIGUNUSEDPA
   arg2 = reinterpret_cast< XdmfAttributeType * >(argp2);
   (arg1)->setAttributeType((XdmfAttributeType const &)*arg2);
   resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfAttribute_getAttributeTypeAsString(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfAttribute *arg1 = (XdmfAttribute *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  std::string result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfAttribute_getAttributeTypeAsString",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfAttribute, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfAttribute_getAttributeTypeAsString" "', argument " "1"" of type '" "XdmfAttribute const *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfAttribute * >(argp1);
+  result = ((XdmfAttribute const *)arg1)->getAttributeTypeAsString();
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfAttribute_getAttributeCenter(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfAttribute *arg1 = (XdmfAttribute *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  SwigValueWrapper< XdmfAttributeCenter > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfAttribute_getAttributeCenter",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfAttribute, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfAttribute_getAttributeCenter" "', argument " "1"" of type '" "XdmfAttribute const *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfAttribute * >(argp1);
+  result = ((XdmfAttribute const *)arg1)->getAttributeCenter();
+  resultobj = SWIG_NewPointerObj((new XdmfAttributeCenter(static_cast< const XdmfAttributeCenter& >(result))), SWIGTYPE_p_XdmfAttributeCenter, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfAttribute_setAttributeCenter(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfAttribute *arg1 = (XdmfAttribute *) 0 ;
+  XdmfAttributeCenter *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfAttribute_setAttributeCenter",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfAttribute, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfAttribute_setAttributeCenter" "', argument " "1"" of type '" "XdmfAttribute *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfAttribute * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_XdmfAttributeCenter,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfAttribute_setAttributeCenter" "', argument " "2"" of type '" "XdmfAttributeCenter const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "XdmfAttribute_setAttributeCenter" "', argument " "2"" of type '" "XdmfAttributeCenter const &""'"); 
+  }
+  arg2 = reinterpret_cast< XdmfAttributeCenter * >(argp2);
+  (arg1)->setAttributeCenter((XdmfAttributeCenter const &)*arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfAttribute_getAttributeCenterAsString(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfAttribute *arg1 = (XdmfAttribute *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  std::string result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfAttribute_getAttributeCenterAsString",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfAttribute, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfAttribute_getAttributeCenterAsString" "', argument " "1"" of type '" "XdmfAttribute const *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfAttribute * >(argp1);
+  result = ((XdmfAttribute const *)arg1)->getAttributeCenterAsString();
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
   return resultobj;
 fail:
   return NULL;
@@ -8681,8 +9044,11 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfAttributePtr_getName", _wrap_XdmfAttributePtr_getName, METH_VARARGS, NULL},
 	 { (char *)"XdmfAttributePtr_setName", _wrap_XdmfAttributePtr_setName, METH_VARARGS, NULL},
 	 { (char *)"XdmfAttributePtr_getAttributeType", _wrap_XdmfAttributePtr_getAttributeType, METH_VARARGS, NULL},
-	 { (char *)"XdmfAttributePtr_getAttributeTypeAsString", _wrap_XdmfAttributePtr_getAttributeTypeAsString, METH_VARARGS, NULL},
 	 { (char *)"XdmfAttributePtr_setAttributeType", _wrap_XdmfAttributePtr_setAttributeType, METH_VARARGS, NULL},
+	 { (char *)"XdmfAttributePtr_getAttributeTypeAsString", _wrap_XdmfAttributePtr_getAttributeTypeAsString, METH_VARARGS, NULL},
+	 { (char *)"XdmfAttributePtr_getAttributeCenter", _wrap_XdmfAttributePtr_getAttributeCenter, METH_VARARGS, NULL},
+	 { (char *)"XdmfAttributePtr_setAttributeCenter", _wrap_XdmfAttributePtr_setAttributeCenter, METH_VARARGS, NULL},
+	 { (char *)"XdmfAttributePtr_getAttributeCenterAsString", _wrap_XdmfAttributePtr_getAttributeCenterAsString, METH_VARARGS, NULL},
 	 { (char *)"XdmfAttributePtr_write", _wrap_XdmfAttributePtr_write, METH_VARARGS, NULL},
 	 { (char *)"XdmfAttributePtr_printSelf", _wrap_XdmfAttributePtr_printSelf, METH_VARARGS, NULL},
 	 { (char *)"XdmfAttributePtr_swigregister", XdmfAttributePtr_swigregister, METH_VARARGS, NULL},
@@ -8752,6 +9118,17 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfVisitor_visit", _wrap_XdmfVisitor_visit, METH_VARARGS, NULL},
 	 { (char *)"XdmfVisitor_printSelf", _wrap_XdmfVisitor_printSelf, METH_VARARGS, NULL},
 	 { (char *)"XdmfVisitor_swigregister", XdmfVisitor_swigregister, METH_VARARGS, NULL},
+	 { (char *)"XdmfAttributeCenter_Grid", _wrap_XdmfAttributeCenter_Grid, METH_VARARGS, NULL},
+	 { (char *)"XdmfAttributeCenter_Cell", _wrap_XdmfAttributeCenter_Cell, METH_VARARGS, NULL},
+	 { (char *)"XdmfAttributeCenter_Face", _wrap_XdmfAttributeCenter_Face, METH_VARARGS, NULL},
+	 { (char *)"XdmfAttributeCenter_Edge", _wrap_XdmfAttributeCenter_Edge, METH_VARARGS, NULL},
+	 { (char *)"XdmfAttributeCenter_Node", _wrap_XdmfAttributeCenter_Node, METH_VARARGS, NULL},
+	 { (char *)"XdmfAttributeCenter_getName", _wrap_XdmfAttributeCenter_getName, METH_VARARGS, NULL},
+	 { (char *)"XdmfAttributeCenter___eq__", _wrap_XdmfAttributeCenter___eq__, METH_VARARGS, NULL},
+	 { (char *)"XdmfAttributeCenter___ne__", _wrap_XdmfAttributeCenter___ne__, METH_VARARGS, NULL},
+	 { (char *)"new_XdmfAttributeCenter", _wrap_new_XdmfAttributeCenter, METH_VARARGS, NULL},
+	 { (char *)"delete_XdmfAttributeCenter", _wrap_delete_XdmfAttributeCenter, METH_VARARGS, NULL},
+	 { (char *)"XdmfAttributeCenter_swigregister", XdmfAttributeCenter_swigregister, METH_VARARGS, NULL},
 	 { (char *)"XdmfAttributeType_NoAttributeType", _wrap_XdmfAttributeType_NoAttributeType, METH_VARARGS, NULL},
 	 { (char *)"XdmfAttributeType_Scalar", _wrap_XdmfAttributeType_Scalar, METH_VARARGS, NULL},
 	 { (char *)"XdmfAttributeType_Vector", _wrap_XdmfAttributeType_Vector, METH_VARARGS, NULL},
@@ -8769,8 +9146,11 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfAttribute_getName", _wrap_XdmfAttribute_getName, METH_VARARGS, NULL},
 	 { (char *)"XdmfAttribute_setName", _wrap_XdmfAttribute_setName, METH_VARARGS, NULL},
 	 { (char *)"XdmfAttribute_getAttributeType", _wrap_XdmfAttribute_getAttributeType, METH_VARARGS, NULL},
-	 { (char *)"XdmfAttribute_getAttributeTypeAsString", _wrap_XdmfAttribute_getAttributeTypeAsString, METH_VARARGS, NULL},
 	 { (char *)"XdmfAttribute_setAttributeType", _wrap_XdmfAttribute_setAttributeType, METH_VARARGS, NULL},
+	 { (char *)"XdmfAttribute_getAttributeTypeAsString", _wrap_XdmfAttribute_getAttributeTypeAsString, METH_VARARGS, NULL},
+	 { (char *)"XdmfAttribute_getAttributeCenter", _wrap_XdmfAttribute_getAttributeCenter, METH_VARARGS, NULL},
+	 { (char *)"XdmfAttribute_setAttributeCenter", _wrap_XdmfAttribute_setAttributeCenter, METH_VARARGS, NULL},
+	 { (char *)"XdmfAttribute_getAttributeCenterAsString", _wrap_XdmfAttribute_getAttributeCenterAsString, METH_VARARGS, NULL},
 	 { (char *)"XdmfAttribute_write", _wrap_XdmfAttribute_write, METH_VARARGS, NULL},
 	 { (char *)"XdmfAttribute_printSelf", _wrap_XdmfAttribute_printSelf, METH_VARARGS, NULL},
 	 { (char *)"XdmfAttribute_swigregister", XdmfAttribute_swigregister, METH_VARARGS, NULL},
@@ -8890,6 +9270,7 @@ static void *_p_XdmfGeometryTo_p_XdmfItem(void *x, int *SWIGUNUSEDPARM(newmemory
     return (void *)((XdmfItem *)  ((XdmfGeometry *) x));
 }
 static swig_type_info _swigt__p_XdmfAttribute = {"_p_XdmfAttribute", "XdmfAttribute *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_XdmfAttributeCenter = {"_p_XdmfAttributeCenter", "XdmfAttributeCenter *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_XdmfAttributeType = {"_p_XdmfAttributeType", "XdmfAttributeType *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_XdmfGeometry = {"_p_XdmfGeometry", "XdmfGeometry *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_XdmfGeometryType = {"_p_XdmfGeometryType", "XdmfGeometryType *", 0, 0, (void*)0, 0};
@@ -8916,6 +9297,7 @@ static swig_type_info _swigt__p_swig__SwigPyIterator = {"_p_swig__SwigPyIterator
 
 static swig_type_info *swig_type_initial[] = {
   &_swigt__p_XdmfAttribute,
+  &_swigt__p_XdmfAttributeCenter,
   &_swigt__p_XdmfAttributeType,
   &_swigt__p_XdmfGeometry,
   &_swigt__p_XdmfGeometryType,
@@ -8942,6 +9324,7 @@ static swig_type_info *swig_type_initial[] = {
 };
 
 static swig_cast_info _swigc__p_XdmfAttribute[] = {  {&_swigt__p_XdmfAttribute, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_XdmfAttributeCenter[] = {  {&_swigt__p_XdmfAttributeCenter, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfAttributeType[] = {  {&_swigt__p_XdmfAttributeType, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfGeometry[] = {  {&_swigt__p_XdmfGeometry, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfGeometryType[] = {  {&_swigt__p_XdmfGeometryType, 0, 0, 0},{0, 0, 0, 0}};
@@ -8968,6 +9351,7 @@ static swig_cast_info _swigc__p_swig__SwigPyIterator[] = {  {&_swigt__p_swig__Sw
 
 static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_XdmfAttribute,
+  _swigc__p_XdmfAttributeCenter,
   _swigc__p_XdmfAttributeType,
   _swigc__p_XdmfGeometry,
   _swigc__p_XdmfGeometryType,

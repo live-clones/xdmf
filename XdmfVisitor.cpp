@@ -23,7 +23,7 @@ XdmfVisitor::~XdmfVisitor()
 
 void XdmfVisitor::visit(const XdmfAttribute * const attribute)
 {
-	xmlData << std::setw(mTabIndex) << "" << "<Attribute> Name=\"" << attribute->getName() << "\" AttributeType=\"" << attribute->getAttributeTypeAsString() << "\" Center=\"Node\">\n";
+	xmlData << std::setw(mTabIndex) << "" << "<Attribute> Name=\"" << attribute->getName() << "\" AttributeType=\"" << attribute->getAttributeTypeAsString() << "\" Center=\"" << attribute->getAttributeCenterAsString() << "\">\n";
 	xmlData << std::setw(mTabIndex) << "" << "</Attribute>\n";
 }
 

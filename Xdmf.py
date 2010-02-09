@@ -106,8 +106,11 @@ class XdmfAttributePtr(_object):
     def getName(self): return _Xdmf.XdmfAttributePtr_getName(self)
     def setName(self, *args): return _Xdmf.XdmfAttributePtr_setName(self, *args)
     def getAttributeType(self): return _Xdmf.XdmfAttributePtr_getAttributeType(self)
-    def getAttributeTypeAsString(self): return _Xdmf.XdmfAttributePtr_getAttributeTypeAsString(self)
     def setAttributeType(self, *args): return _Xdmf.XdmfAttributePtr_setAttributeType(self, *args)
+    def getAttributeTypeAsString(self): return _Xdmf.XdmfAttributePtr_getAttributeTypeAsString(self)
+    def getAttributeCenter(self): return _Xdmf.XdmfAttributePtr_getAttributeCenter(self)
+    def setAttributeCenter(self, *args): return _Xdmf.XdmfAttributePtr_setAttributeCenter(self, *args)
+    def getAttributeCenterAsString(self): return _Xdmf.XdmfAttributePtr_getAttributeCenterAsString(self)
     def write(self, *args): return _Xdmf.XdmfAttributePtr_write(self, *args)
     def printSelf(self): return _Xdmf.XdmfAttributePtr_printSelf(self)
 XdmfAttributePtr_swigregister = _Xdmf.XdmfAttributePtr_swigregister
@@ -287,6 +290,54 @@ def XdmfVisitor_New():
   return _Xdmf.XdmfVisitor_New()
 XdmfVisitor_New = _Xdmf.XdmfVisitor_New
 
+class XdmfAttributeCenter(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfAttributeCenter, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfAttributeCenter, name)
+    __repr__ = _swig_repr
+    __swig_getmethods__["Grid"] = lambda x: _Xdmf.XdmfAttributeCenter_Grid
+    if _newclass:Grid = staticmethod(_Xdmf.XdmfAttributeCenter_Grid)
+    __swig_getmethods__["Cell"] = lambda x: _Xdmf.XdmfAttributeCenter_Cell
+    if _newclass:Cell = staticmethod(_Xdmf.XdmfAttributeCenter_Cell)
+    __swig_getmethods__["Face"] = lambda x: _Xdmf.XdmfAttributeCenter_Face
+    if _newclass:Face = staticmethod(_Xdmf.XdmfAttributeCenter_Face)
+    __swig_getmethods__["Edge"] = lambda x: _Xdmf.XdmfAttributeCenter_Edge
+    if _newclass:Edge = staticmethod(_Xdmf.XdmfAttributeCenter_Edge)
+    __swig_getmethods__["Node"] = lambda x: _Xdmf.XdmfAttributeCenter_Node
+    if _newclass:Node = staticmethod(_Xdmf.XdmfAttributeCenter_Node)
+    def getName(self): return _Xdmf.XdmfAttributeCenter_getName(self)
+    def __eq__(self, *args): return _Xdmf.XdmfAttributeCenter___eq__(self, *args)
+    def __ne__(self, *args): return _Xdmf.XdmfAttributeCenter___ne__(self, *args)
+    def __init__(self, *args): 
+        this = _Xdmf.new_XdmfAttributeCenter(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _Xdmf.delete_XdmfAttributeCenter
+    __del__ = lambda self : None;
+XdmfAttributeCenter_swigregister = _Xdmf.XdmfAttributeCenter_swigregister
+XdmfAttributeCenter_swigregister(XdmfAttributeCenter)
+
+def XdmfAttributeCenter_Grid():
+  return _Xdmf.XdmfAttributeCenter_Grid()
+XdmfAttributeCenter_Grid = _Xdmf.XdmfAttributeCenter_Grid
+
+def XdmfAttributeCenter_Cell():
+  return _Xdmf.XdmfAttributeCenter_Cell()
+XdmfAttributeCenter_Cell = _Xdmf.XdmfAttributeCenter_Cell
+
+def XdmfAttributeCenter_Face():
+  return _Xdmf.XdmfAttributeCenter_Face()
+XdmfAttributeCenter_Face = _Xdmf.XdmfAttributeCenter_Face
+
+def XdmfAttributeCenter_Edge():
+  return _Xdmf.XdmfAttributeCenter_Edge()
+XdmfAttributeCenter_Edge = _Xdmf.XdmfAttributeCenter_Edge
+
+def XdmfAttributeCenter_Node():
+  return _Xdmf.XdmfAttributeCenter_Node()
+XdmfAttributeCenter_Node = _Xdmf.XdmfAttributeCenter_Node
+
 class XdmfAttributeType(_object):
     __swig_setmethods__ = {}
     __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfAttributeType, name, value)
@@ -361,8 +412,11 @@ class XdmfAttribute(XdmfItem):
     def getName(self): return _Xdmf.XdmfAttribute_getName(self)
     def setName(self, *args): return _Xdmf.XdmfAttribute_setName(self, *args)
     def getAttributeType(self): return _Xdmf.XdmfAttribute_getAttributeType(self)
-    def getAttributeTypeAsString(self): return _Xdmf.XdmfAttribute_getAttributeTypeAsString(self)
     def setAttributeType(self, *args): return _Xdmf.XdmfAttribute_setAttributeType(self, *args)
+    def getAttributeTypeAsString(self): return _Xdmf.XdmfAttribute_getAttributeTypeAsString(self)
+    def getAttributeCenter(self): return _Xdmf.XdmfAttribute_getAttributeCenter(self)
+    def setAttributeCenter(self, *args): return _Xdmf.XdmfAttribute_setAttributeCenter(self, *args)
+    def getAttributeCenterAsString(self): return _Xdmf.XdmfAttribute_getAttributeCenterAsString(self)
     def write(self, *args): return _Xdmf.XdmfAttribute_write(self, *args)
     def printSelf(self): return _Xdmf.XdmfAttribute_printSelf(self)
 XdmfAttribute_swigregister = _Xdmf.XdmfAttribute_swigregister

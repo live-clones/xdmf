@@ -8,31 +8,82 @@
 #include "XdmfAttribute.hpp"
 #include "XdmfVisitor.hpp"
 
+// Supported XdmfAttribut
+XdmfAttributeCenter XdmfAttributeCenter::Grid()
+{
+	return XdmfAttributeCenter("Grid");
+}
+
+XdmfAttributeCenter XdmfAttributeCenter::Cell()
+{
+	return XdmfAttributeCenter("Cell");
+}
+
+XdmfAttributeCenter XdmfAttributeCenter::Face()
+{
+	return XdmfAttributeCenter("Face");
+}
+
+XdmfAttributeCenter XdmfAttributeCenter::Edge()
+{
+	return XdmfAttributeCenter("Edge");
+}
+
+XdmfAttributeCenter XdmfAttributeCenter::Node()
+{
+	return XdmfAttributeCenter("Node");
+}
+
+XdmfAttributeCenter::XdmfAttributeCenter(const XdmfAttributeCenter& attributeCenter):
+	mName(attributeCenter.mName)
+{
+}
+
+XdmfAttributeCenter& XdmfAttributeCenter::operator=(const XdmfAttributeCenter& attributeCenter)
+{
+	if(this != &attributeCenter)
+	{
+		mName = attributeCenter.mName;
+	}
+	return *this;
+}
+
+std::string XdmfAttributeCenter::getName() const
+{
+	return mName;
+}
+
 // Supported XdmfAttributeTypes
 XdmfAttributeType XdmfAttributeType::NoAttributeType()
 {
 	return XdmfAttributeType("None");
 }
+
 XdmfAttributeType XdmfAttributeType::Scalar()
 {
 	return XdmfAttributeType("Scalar");
 }
+
 XdmfAttributeType XdmfAttributeType::Vector()
 {
 	return XdmfAttributeType("Vector");
 }
+
 XdmfAttributeType XdmfAttributeType::Tensor()
 {
 	return XdmfAttributeType("Tensor");
 }
+
 XdmfAttributeType XdmfAttributeType::Matrix()
 {
 	return XdmfAttributeType("Matrix");
 }
+
 XdmfAttributeType XdmfAttributeType::Tensor6()
 {
 	return XdmfAttributeType("Tensor6");
 }
+
 XdmfAttributeType XdmfAttributeType::GlobalId()
 {
 	return XdmfAttributeType("GlobalId");
@@ -58,7 +109,9 @@ std::string XdmfAttributeType::getName() const
 }
 
 XdmfAttribute::XdmfAttribute() :
-mAttributeType(XdmfAttributeType::NoAttributeType())
+mName(""),
+mAttributeType(XdmfAttributeType::NoAttributeType()),
+mAttributeCenter(XdmfAttributeCenter::Grid())
 {
 	std::cout << "Created Attribute " << this << std::endl;
 }
@@ -73,14 +126,29 @@ XdmfAttributeType XdmfAttribute::getAttributeType() const
 	return mAttributeType;
 }
 
+void XdmfAttribute::setAttributeType(const XdmfAttributeType& attributeType)
+{
+	mAttributeType = attributeType;
+}
+
 std::string XdmfAttribute::getAttributeTypeAsString() const
 {
 	return mAttributeType.getName();
 }
 
-void XdmfAttribute::setAttributeType(const XdmfAttributeType& attributeType)
+XdmfAttributeCenter XdmfAttribute::getAttributeCenter() const
 {
-	mAttributeType = attributeType;
+	return mAttributeCenter;
+}
+
+void XdmfAttribute::setAttributeCenter(const XdmfAttributeCenter& attributeCenter)
+{
+	mAttributeCenter = attributeCenter;
+}
+
+std::string XdmfAttribute::getAttributeCenterAsString() const
+{
+	return mAttributeCenter.getName();
 }
 
 std::string XdmfAttribute::getName() const
