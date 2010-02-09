@@ -1,5 +1,5 @@
 /*
- * XdmfAttribute.cpp
+ * XdmfAttributeType.cpp
  *
  *  Created on: Jan 29, 2010
  *      Author: kleiter

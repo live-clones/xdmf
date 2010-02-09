@@ -21,6 +21,7 @@ endif(XDMF_WRAP_PYTHON)
 
 set(XdmfSources
 	XdmfAttribute
+	XdmfAttributeCenter
 	XdmfAttributeType
 	XdmfGeometry
 	XdmfGrid

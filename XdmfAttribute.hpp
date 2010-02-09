@@ -10,64 +10,7 @@
 
 #include "XdmfItem.hpp"
 #include "XdmfAttributeType.hpp"
-
-class XdmfAttributeCenter {
-
-public:
-
-	// Supported Xdmf Attribute Centers
-	static XdmfAttributeCenter Grid();
-	static XdmfAttributeCenter Cell();
-	static XdmfAttributeCenter Face();
-	static XdmfAttributeCenter Edge();
-	static XdmfAttributeCenter Node();
-
-	/**
-	 * Get the name of this center type
-	 *
-	 * @return a string containing the name.
-	 */
-	std::string getName() const;
-
-	/*
-	 * Compare two XdmfAttributeCenters for equality.
-	 *
-	 * @param an XdmfAttributeCenter to compare equality to.
-	 * @return true iff the XdmfAttributeCenters are equal.
-	 */
-	bool operator==(const XdmfAttributeCenter& attributeCenter) const
-	{
-		return mName.compare(attributeCenter.mName) == 0;
-	}
-
-	/**
-	 * Compare two XdmfAttributeCenters for inequality.
-	 *
-	 * @param XdmfAttributeCenter to compare inequality to.
-	 * @return true iff the XdmfAttributeCenters are not equal.
-	 */
-	bool operator!=(const XdmfAttributeCenter& attributeCenter) const
-	{
-		return !this->operator==(attributeCenter);
-	}
-
-	XdmfAttributeCenter(const XdmfAttributeCenter&);
-	XdmfAttributeCenter& operator=(const XdmfAttributeCenter&);
-
-protected:
-
-	/**
-	 * Protected constructor for XdmfAttributeCenter.  The constructor is protected because all attribute centers supported
-	 * by Xdmf should be accessed through more specific static methods that construct XdmfAttributeCenters - i.e. XdmfAttributeCenter::Node().
-	 */
-	XdmfAttributeCenter(const std::string& name) :
-		mName(name)
-	{};
-
-private:
-
-	std::string mName;
-};
+#include "XdmfAttributeCenter.hpp"
 
 class XdmfAttribute : public XdmfItem {
 

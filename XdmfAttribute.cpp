@@ -8,51 +8,6 @@
 #include "XdmfAttribute.hpp"
 #include "XdmfVisitor.hpp"
 
-// Supported XdmfAttribut
-XdmfAttributeCenter XdmfAttributeCenter::Grid()
-{
-	return XdmfAttributeCenter("Grid");
-}
-
-XdmfAttributeCenter XdmfAttributeCenter::Cell()
-{
-	return XdmfAttributeCenter("Cell");
-}
-
-XdmfAttributeCenter XdmfAttributeCenter::Face()
-{
-	return XdmfAttributeCenter("Face");
-}
-
-XdmfAttributeCenter XdmfAttributeCenter::Edge()
-{
-	return XdmfAttributeCenter("Edge");
-}
-
-XdmfAttributeCenter XdmfAttributeCenter::Node()
-{
-	return XdmfAttributeCenter("Node");
-}
-
-XdmfAttributeCenter::XdmfAttributeCenter(const XdmfAttributeCenter& attributeCenter):
-	mName(attributeCenter.mName)
-{
-}
-
-XdmfAttributeCenter& XdmfAttributeCenter::operator=(const XdmfAttributeCenter& attributeCenter)
-{
-	if(this != &attributeCenter)
-	{
-		mName = attributeCenter.mName;
-	}
-	return *this;
-}
-
-std::string XdmfAttributeCenter::getName() const
-{
-	return mName;
-}
-
 XdmfAttribute::XdmfAttribute() :
 mName(""),
 mAttributeType(XdmfAttributeType::NoAttributeType()),

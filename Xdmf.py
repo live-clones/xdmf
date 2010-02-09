@@ -290,6 +290,34 @@ def XdmfVisitor_New():
   return _Xdmf.XdmfVisitor_New()
 XdmfVisitor_New = _Xdmf.XdmfVisitor_New
 
+class XdmfAttribute(XdmfItem):
+    __swig_setmethods__ = {}
+    for _s in [XdmfItem]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfAttribute, name, value)
+    __swig_getmethods__ = {}
+    for _s in [XdmfItem]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfAttribute, name)
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
+    __repr__ = _swig_repr
+    __swig_getmethods__["New"] = lambda x: _Xdmf.XdmfAttribute_New
+    if _newclass:New = staticmethod(_Xdmf.XdmfAttribute_New)
+    def getName(self): return _Xdmf.XdmfAttribute_getName(self)
+    def setName(self, *args): return _Xdmf.XdmfAttribute_setName(self, *args)
+    def getAttributeType(self): return _Xdmf.XdmfAttribute_getAttributeType(self)
+    def setAttributeType(self, *args): return _Xdmf.XdmfAttribute_setAttributeType(self, *args)
+    def getAttributeTypeAsString(self): return _Xdmf.XdmfAttribute_getAttributeTypeAsString(self)
+    def getAttributeCenter(self): return _Xdmf.XdmfAttribute_getAttributeCenter(self)
+    def setAttributeCenter(self, *args): return _Xdmf.XdmfAttribute_setAttributeCenter(self, *args)
+    def getAttributeCenterAsString(self): return _Xdmf.XdmfAttribute_getAttributeCenterAsString(self)
+    def write(self, *args): return _Xdmf.XdmfAttribute_write(self, *args)
+    def printSelf(self): return _Xdmf.XdmfAttribute_printSelf(self)
+XdmfAttribute_swigregister = _Xdmf.XdmfAttribute_swigregister
+XdmfAttribute_swigregister(XdmfAttribute)
+
+def XdmfAttribute_New():
+  return _Xdmf.XdmfAttribute_New()
+XdmfAttribute_New = _Xdmf.XdmfAttribute_New
+
 class XdmfAttributeCenter(_object):
     __swig_setmethods__ = {}
     __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfAttributeCenter, name, value)
@@ -337,34 +365,6 @@ XdmfAttributeCenter_Edge = _Xdmf.XdmfAttributeCenter_Edge
 def XdmfAttributeCenter_Node():
   return _Xdmf.XdmfAttributeCenter_Node()
 XdmfAttributeCenter_Node = _Xdmf.XdmfAttributeCenter_Node
-
-class XdmfAttribute(XdmfItem):
-    __swig_setmethods__ = {}
-    for _s in [XdmfItem]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
-    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfAttribute, name, value)
-    __swig_getmethods__ = {}
-    for _s in [XdmfItem]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
-    __getattr__ = lambda self, name: _swig_getattr(self, XdmfAttribute, name)
-    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
-    __repr__ = _swig_repr
-    __swig_getmethods__["New"] = lambda x: _Xdmf.XdmfAttribute_New
-    if _newclass:New = staticmethod(_Xdmf.XdmfAttribute_New)
-    def getName(self): return _Xdmf.XdmfAttribute_getName(self)
-    def setName(self, *args): return _Xdmf.XdmfAttribute_setName(self, *args)
-    def getAttributeType(self): return _Xdmf.XdmfAttribute_getAttributeType(self)
-    def setAttributeType(self, *args): return _Xdmf.XdmfAttribute_setAttributeType(self, *args)
-    def getAttributeTypeAsString(self): return _Xdmf.XdmfAttribute_getAttributeTypeAsString(self)
-    def getAttributeCenter(self): return _Xdmf.XdmfAttribute_getAttributeCenter(self)
-    def setAttributeCenter(self, *args): return _Xdmf.XdmfAttribute_setAttributeCenter(self, *args)
-    def getAttributeCenterAsString(self): return _Xdmf.XdmfAttribute_getAttributeCenterAsString(self)
-    def write(self, *args): return _Xdmf.XdmfAttribute_write(self, *args)
-    def printSelf(self): return _Xdmf.XdmfAttribute_printSelf(self)
-XdmfAttribute_swigregister = _Xdmf.XdmfAttribute_swigregister
-XdmfAttribute_swigregister(XdmfAttribute)
-
-def XdmfAttribute_New():
-  return _Xdmf.XdmfAttribute_New()
-XdmfAttribute_New = _Xdmf.XdmfAttribute_New
 
 class XdmfAttributeType(_object):
     __swig_setmethods__ = {}
