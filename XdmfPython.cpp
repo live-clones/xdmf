@@ -3309,6 +3309,7 @@ SWIG_From_unsigned_SS_int  (unsigned int value)
   #include <XdmfAttributeCenter.hpp>
   #include <XdmfAttributeType.hpp>
   #include <XdmfGeometry.hpp>
+  #include <XdmfGeometryType.hpp>
   #include <XdmfGrid.hpp>
   #include <XdmfItem.hpp>
   #include <XdmfObject.hpp>
@@ -7263,6 +7264,185 @@ SWIGINTERN PyObject *XdmfAttributeType_swigregister(PyObject *SWIGUNUSEDPARM(sel
   return SWIG_Py_Void();
 }
 
+SWIGINTERN PyObject *_wrap_XdmfGeometry_New(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  boost::shared_ptr< XdmfGeometry > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)":XdmfGeometry_New")) SWIG_fail;
+  result = XdmfGeometry::New();
+  resultobj = SWIG_NewPointerObj((new boost::shared_ptr< XdmfGeometry >(static_cast< const boost::shared_ptr< XdmfGeometry >& >(result))), SWIGTYPE_p_boost__shared_ptrT_XdmfGeometry_t, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGeometry_getGeometryType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGeometry *arg1 = (XdmfGeometry *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  SwigValueWrapper< XdmfGeometryType > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfGeometry_getGeometryType",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGeometry, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGeometry_getGeometryType" "', argument " "1"" of type '" "XdmfGeometry const *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGeometry * >(argp1);
+  result = ((XdmfGeometry const *)arg1)->getGeometryType();
+  resultobj = SWIG_NewPointerObj((new XdmfGeometryType(static_cast< const XdmfGeometryType& >(result))), SWIGTYPE_p_XdmfGeometryType, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGeometry_setGeometryType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGeometry *arg1 = (XdmfGeometry *) 0 ;
+  XdmfGeometryType *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfGeometry_setGeometryType",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGeometry, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGeometry_setGeometryType" "', argument " "1"" of type '" "XdmfGeometry *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGeometry * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_XdmfGeometryType,  0  | 0);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfGeometry_setGeometryType" "', argument " "2"" of type '" "XdmfGeometryType const &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "XdmfGeometry_setGeometryType" "', argument " "2"" of type '" "XdmfGeometryType const &""'"); 
+  }
+  arg2 = reinterpret_cast< XdmfGeometryType * >(argp2);
+  (arg1)->setGeometryType((XdmfGeometryType const &)*arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGeometry_getGeometryTypeAsString(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGeometry *arg1 = (XdmfGeometry *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  std::string result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfGeometry_getGeometryTypeAsString",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGeometry, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGeometry_getGeometryTypeAsString" "', argument " "1"" of type '" "XdmfGeometry const *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGeometry * >(argp1);
+  result = ((XdmfGeometry const *)arg1)->getGeometryTypeAsString();
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGeometry_getDimensions(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGeometry *arg1 = (XdmfGeometry *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  int result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfGeometry_getDimensions",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGeometry, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGeometry_getDimensions" "', argument " "1"" of type '" "XdmfGeometry const *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGeometry * >(argp1);
+  result = (int)((XdmfGeometry const *)arg1)->getDimensions();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGeometry_printSelf(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGeometry *arg1 = (XdmfGeometry *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  std::string result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfGeometry_printSelf",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGeometry, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGeometry_printSelf" "', argument " "1"" of type '" "XdmfGeometry const *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGeometry * >(argp1);
+  result = ((XdmfGeometry const *)arg1)->printSelf();
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGeometry_write(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGeometry *arg1 = (XdmfGeometry *) 0 ;
+  boost::shared_ptr< XdmfVisitor > arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfGeometry_write",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGeometry, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGeometry_write" "', argument " "1"" of type '" "XdmfGeometry const *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGeometry * >(argp1);
+  {
+    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_boost__shared_ptrT_XdmfVisitor_t,  0  | 0);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfGeometry_write" "', argument " "2"" of type '" "boost::shared_ptr< XdmfVisitor >""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "XdmfGeometry_write" "', argument " "2"" of type '" "boost::shared_ptr< XdmfVisitor >""'");
+    } else {
+      boost::shared_ptr< XdmfVisitor > * temp = reinterpret_cast< boost::shared_ptr< XdmfVisitor > * >(argp2);
+      arg2 = *temp;
+      if (SWIG_IsNewObj(res2)) delete temp;
+    }
+  }
+  ((XdmfGeometry const *)arg1)->write(arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *XdmfGeometry_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_XdmfGeometry, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
 SWIGINTERN PyObject *_wrap_XdmfGeometryType_NoGeometryType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   SwigValueWrapper< XdmfGeometryType > result;
@@ -7542,185 +7722,6 @@ SWIGINTERN PyObject *XdmfGeometryType_swigregister(PyObject *SWIGUNUSEDPARM(self
   PyObject *obj;
   if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
   SWIG_TypeNewClientData(SWIGTYPE_p_XdmfGeometryType, SWIG_NewClientData(obj));
-  return SWIG_Py_Void();
-}
-
-SWIGINTERN PyObject *_wrap_XdmfGeometry_New(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  boost::shared_ptr< XdmfGeometry > result;
-  
-  if (!PyArg_ParseTuple(args,(char *)":XdmfGeometry_New")) SWIG_fail;
-  result = XdmfGeometry::New();
-  resultobj = SWIG_NewPointerObj((new boost::shared_ptr< XdmfGeometry >(static_cast< const boost::shared_ptr< XdmfGeometry >& >(result))), SWIGTYPE_p_boost__shared_ptrT_XdmfGeometry_t, SWIG_POINTER_OWN |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_XdmfGeometry_getGeometryType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  XdmfGeometry *arg1 = (XdmfGeometry *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  SwigValueWrapper< XdmfGeometryType > result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:XdmfGeometry_getGeometryType",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGeometry, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGeometry_getGeometryType" "', argument " "1"" of type '" "XdmfGeometry const *""'"); 
-  }
-  arg1 = reinterpret_cast< XdmfGeometry * >(argp1);
-  result = ((XdmfGeometry const *)arg1)->getGeometryType();
-  resultobj = SWIG_NewPointerObj((new XdmfGeometryType(static_cast< const XdmfGeometryType& >(result))), SWIGTYPE_p_XdmfGeometryType, SWIG_POINTER_OWN |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_XdmfGeometry_setGeometryType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  XdmfGeometry *arg1 = (XdmfGeometry *) 0 ;
-  XdmfGeometryType *arg2 = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfGeometry_setGeometryType",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGeometry, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGeometry_setGeometryType" "', argument " "1"" of type '" "XdmfGeometry *""'"); 
-  }
-  arg1 = reinterpret_cast< XdmfGeometry * >(argp1);
-  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_XdmfGeometryType,  0  | 0);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfGeometry_setGeometryType" "', argument " "2"" of type '" "XdmfGeometryType const &""'"); 
-  }
-  if (!argp2) {
-    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "XdmfGeometry_setGeometryType" "', argument " "2"" of type '" "XdmfGeometryType const &""'"); 
-  }
-  arg2 = reinterpret_cast< XdmfGeometryType * >(argp2);
-  (arg1)->setGeometryType((XdmfGeometryType const &)*arg2);
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_XdmfGeometry_getGeometryTypeAsString(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  XdmfGeometry *arg1 = (XdmfGeometry *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  std::string result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:XdmfGeometry_getGeometryTypeAsString",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGeometry, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGeometry_getGeometryTypeAsString" "', argument " "1"" of type '" "XdmfGeometry const *""'"); 
-  }
-  arg1 = reinterpret_cast< XdmfGeometry * >(argp1);
-  result = ((XdmfGeometry const *)arg1)->getGeometryTypeAsString();
-  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_XdmfGeometry_getDimensions(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  XdmfGeometry *arg1 = (XdmfGeometry *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  int result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:XdmfGeometry_getDimensions",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGeometry, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGeometry_getDimensions" "', argument " "1"" of type '" "XdmfGeometry const *""'"); 
-  }
-  arg1 = reinterpret_cast< XdmfGeometry * >(argp1);
-  result = (int)((XdmfGeometry const *)arg1)->getDimensions();
-  resultobj = SWIG_From_int(static_cast< int >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_XdmfGeometry_printSelf(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  XdmfGeometry *arg1 = (XdmfGeometry *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  std::string result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:XdmfGeometry_printSelf",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGeometry, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGeometry_printSelf" "', argument " "1"" of type '" "XdmfGeometry const *""'"); 
-  }
-  arg1 = reinterpret_cast< XdmfGeometry * >(argp1);
-  result = ((XdmfGeometry const *)arg1)->printSelf();
-  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_XdmfGeometry_write(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  XdmfGeometry *arg1 = (XdmfGeometry *) 0 ;
-  boost::shared_ptr< XdmfVisitor > arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfGeometry_write",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGeometry, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGeometry_write" "', argument " "1"" of type '" "XdmfGeometry const *""'"); 
-  }
-  arg1 = reinterpret_cast< XdmfGeometry * >(argp1);
-  {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_boost__shared_ptrT_XdmfVisitor_t,  0  | 0);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfGeometry_write" "', argument " "2"" of type '" "boost::shared_ptr< XdmfVisitor >""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "XdmfGeometry_write" "', argument " "2"" of type '" "boost::shared_ptr< XdmfVisitor >""'");
-    } else {
-      boost::shared_ptr< XdmfVisitor > * temp = reinterpret_cast< boost::shared_ptr< XdmfVisitor > * >(argp2);
-      arg2 = *temp;
-      if (SWIG_IsNewObj(res2)) delete temp;
-    }
-  }
-  ((XdmfGeometry const *)arg1)->write(arg2);
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *XdmfGeometry_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *obj;
-  if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
-  SWIG_TypeNewClientData(SWIGTYPE_p_XdmfGeometry, SWIG_NewClientData(obj));
   return SWIG_Py_Void();
 }
 
@@ -9156,6 +9157,14 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"new_XdmfAttributeType", _wrap_new_XdmfAttributeType, METH_VARARGS, NULL},
 	 { (char *)"delete_XdmfAttributeType", _wrap_delete_XdmfAttributeType, METH_VARARGS, NULL},
 	 { (char *)"XdmfAttributeType_swigregister", XdmfAttributeType_swigregister, METH_VARARGS, NULL},
+	 { (char *)"XdmfGeometry_New", _wrap_XdmfGeometry_New, METH_VARARGS, NULL},
+	 { (char *)"XdmfGeometry_getGeometryType", _wrap_XdmfGeometry_getGeometryType, METH_VARARGS, NULL},
+	 { (char *)"XdmfGeometry_setGeometryType", _wrap_XdmfGeometry_setGeometryType, METH_VARARGS, NULL},
+	 { (char *)"XdmfGeometry_getGeometryTypeAsString", _wrap_XdmfGeometry_getGeometryTypeAsString, METH_VARARGS, NULL},
+	 { (char *)"XdmfGeometry_getDimensions", _wrap_XdmfGeometry_getDimensions, METH_VARARGS, NULL},
+	 { (char *)"XdmfGeometry_printSelf", _wrap_XdmfGeometry_printSelf, METH_VARARGS, NULL},
+	 { (char *)"XdmfGeometry_write", _wrap_XdmfGeometry_write, METH_VARARGS, NULL},
+	 { (char *)"XdmfGeometry_swigregister", XdmfGeometry_swigregister, METH_VARARGS, NULL},
 	 { (char *)"XdmfGeometryType_NoGeometryType", _wrap_XdmfGeometryType_NoGeometryType, METH_VARARGS, NULL},
 	 { (char *)"XdmfGeometryType_XYZ", _wrap_XdmfGeometryType_XYZ, METH_VARARGS, NULL},
 	 { (char *)"XdmfGeometryType_XY", _wrap_XdmfGeometryType_XY, METH_VARARGS, NULL},
@@ -9172,14 +9181,6 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"new_XdmfGeometryType", _wrap_new_XdmfGeometryType, METH_VARARGS, NULL},
 	 { (char *)"delete_XdmfGeometryType", _wrap_delete_XdmfGeometryType, METH_VARARGS, NULL},
 	 { (char *)"XdmfGeometryType_swigregister", XdmfGeometryType_swigregister, METH_VARARGS, NULL},
-	 { (char *)"XdmfGeometry_New", _wrap_XdmfGeometry_New, METH_VARARGS, NULL},
-	 { (char *)"XdmfGeometry_getGeometryType", _wrap_XdmfGeometry_getGeometryType, METH_VARARGS, NULL},
-	 { (char *)"XdmfGeometry_setGeometryType", _wrap_XdmfGeometry_setGeometryType, METH_VARARGS, NULL},
-	 { (char *)"XdmfGeometry_getGeometryTypeAsString", _wrap_XdmfGeometry_getGeometryTypeAsString, METH_VARARGS, NULL},
-	 { (char *)"XdmfGeometry_getDimensions", _wrap_XdmfGeometry_getDimensions, METH_VARARGS, NULL},
-	 { (char *)"XdmfGeometry_printSelf", _wrap_XdmfGeometry_printSelf, METH_VARARGS, NULL},
-	 { (char *)"XdmfGeometry_write", _wrap_XdmfGeometry_write, METH_VARARGS, NULL},
-	 { (char *)"XdmfGeometry_swigregister", XdmfGeometry_swigregister, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_New", _wrap_XdmfGrid_New, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_getGeometry", _wrap_XdmfGrid_getGeometry, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_setGeometry", _wrap_XdmfGrid_setGeometry, METH_VARARGS, NULL},

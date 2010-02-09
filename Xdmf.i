@@ -28,6 +28,7 @@ namespace boost {
   #include <XdmfAttributeCenter.hpp>
   #include <XdmfAttributeType.hpp>
   #include <XdmfGeometry.hpp>
+  #include <XdmfGeometryType.hpp>
   #include <XdmfGrid.hpp>
   #include <XdmfItem.hpp>
   #include <XdmfObject.hpp>
@@ -44,5 +45,6 @@ namespace boost {
 %include XdmfAttributeCenter.hpp
 %include XdmfAttributeType.hpp
 %include XdmfGeometry.hpp
+%include XdmfGeometryType.hpp
 %include XdmfGrid.hpp
 %include XdmfTopology.hpp

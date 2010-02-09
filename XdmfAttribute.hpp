@@ -9,8 +9,8 @@
 #define XDMFATTRIBUTE_HPP_
 
 #include "XdmfItem.hpp"
-#include "XdmfAttributeType.hpp"
 #include "XdmfAttributeCenter.hpp"
+#include "XdmfAttributeType.hpp"
 
 class XdmfAttribute : public XdmfItem {
 
@@ -44,7 +44,7 @@ public:
 	 *
 	 * @param XdmfAttributeType to set.
 	 */
-	void setAttributeType(const XdmfAttributeType&);
+	void setAttributeType(const XdmfAttributeType& attributeType);
 
 	/**
 	 * Get the name of the AttributeType associated with this Attribute.
@@ -65,7 +65,7 @@ public:
 	 *
 	 * @param XdmfAttributeCenter to set.
 	 */
-	void setAttributeCenter(const XdmfAttributeCenter&);
+	void setAttributeCenter(const XdmfAttributeCenter& attributeCenter);
 
 	/**
 	 * Get the name of the AttributeCenter associated with this Attribute.

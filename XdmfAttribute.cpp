@@ -9,9 +9,9 @@
 #include "XdmfVisitor.hpp"
 
 XdmfAttribute::XdmfAttribute() :
-mName(""),
-mAttributeType(XdmfAttributeType::NoAttributeType()),
-mAttributeCenter(XdmfAttributeCenter::Grid())
+	mName(""),
+	mAttributeType(XdmfAttributeType::NoAttributeType()),
+	mAttributeCenter(XdmfAttributeCenter::Grid())
 {
 	std::cout << "Created Attribute " << this << std::endl;
 }

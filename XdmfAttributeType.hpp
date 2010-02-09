@@ -46,8 +46,8 @@ public:
 	 */
 	bool operator!=(const XdmfAttributeType& top) const;
 
-	XdmfAttributeType(const XdmfAttributeType&);
-	XdmfAttributeType& operator=(const XdmfAttributeType&);
+	XdmfAttributeType(const XdmfAttributeType& attributeType);
+	XdmfAttributeType& operator=(const XdmfAttributeType& attributeType);
 
 protected:
 

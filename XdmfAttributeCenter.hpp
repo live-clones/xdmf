@@ -44,8 +44,8 @@ public:
 	 */
 	bool operator!=(const XdmfAttributeCenter& attributeCenter) const;
 
-	XdmfAttributeCenter(const XdmfAttributeCenter&);
-	XdmfAttributeCenter& operator=(const XdmfAttributeCenter&);
+	XdmfAttributeCenter(const XdmfAttributeCenter& attributeCenter);
+	XdmfAttributeCenter& operator=(const XdmfAttributeCenter& attributeCenter);
 
 protected:
 
