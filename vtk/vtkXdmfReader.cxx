@@ -91,7 +91,7 @@
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.71");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.72");
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkXdmfReader,Controller,vtkMultiProcessController);
@@ -3024,9 +3024,9 @@ int vtkXdmfReaderInternal::RequestGridData(
       if ( SetType == XDMF_SET_TYPE_NODE )
         {
         // Point count is 1 + cell extent
-        realcount[0] ++;
-        realcount[1] ++;
-        realcount[2] ++;
+        if (upext[5] - upext[4] > 0) realcount[0] ++;
+        if (upext[3] - upext[2] > 0) realcount[1] ++;
+        if (upext[1] - upext[0] > 0) realcount[2] ++;
         }
       /*
         XdmfArray *values = this->FormatMulti->ElementToArray( 
