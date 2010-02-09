@@ -2658,21 +2658,22 @@ SWIG_Python_MustGetPtr(PyObject *obj, swig_type_info *ty, int argnum, int flags)
 #define SWIGTYPE_p_XdmfTopology swig_types[7]
 #define SWIGTYPE_p_XdmfTopologyType swig_types[8]
 #define SWIGTYPE_p_XdmfVisitor swig_types[9]
-#define SWIGTYPE_p_boost__shared_ptrT_XdmfAttribute_t swig_types[10]
-#define SWIGTYPE_p_boost__shared_ptrT_XdmfGeometry_const_t swig_types[11]
-#define SWIGTYPE_p_boost__shared_ptrT_XdmfGeometry_t swig_types[12]
-#define SWIGTYPE_p_boost__shared_ptrT_XdmfGrid_t swig_types[13]
-#define SWIGTYPE_p_boost__shared_ptrT_XdmfItem_t swig_types[14]
-#define SWIGTYPE_p_boost__shared_ptrT_XdmfObject_t swig_types[15]
-#define SWIGTYPE_p_boost__shared_ptrT_XdmfTopology_const_t swig_types[16]
-#define SWIGTYPE_p_boost__shared_ptrT_XdmfTopology_t swig_types[17]
-#define SWIGTYPE_p_boost__shared_ptrT_XdmfVisitor_t swig_types[18]
-#define SWIGTYPE_p_char swig_types[19]
-#define SWIGTYPE_p_int swig_types[20]
-#define SWIGTYPE_p_std__invalid_argument swig_types[21]
-#define SWIGTYPE_p_swig__SwigPyIterator swig_types[22]
-static swig_type_info *swig_types[24];
-static swig_module_info swig_module = {swig_types, 23, 0, 0, 0, 0};
+#define SWIGTYPE_p_boost__shared_ptrT_XdmfAttribute_const_t swig_types[10]
+#define SWIGTYPE_p_boost__shared_ptrT_XdmfAttribute_t swig_types[11]
+#define SWIGTYPE_p_boost__shared_ptrT_XdmfGeometry_const_t swig_types[12]
+#define SWIGTYPE_p_boost__shared_ptrT_XdmfGeometry_t swig_types[13]
+#define SWIGTYPE_p_boost__shared_ptrT_XdmfGrid_t swig_types[14]
+#define SWIGTYPE_p_boost__shared_ptrT_XdmfItem_t swig_types[15]
+#define SWIGTYPE_p_boost__shared_ptrT_XdmfObject_t swig_types[16]
+#define SWIGTYPE_p_boost__shared_ptrT_XdmfTopology_const_t swig_types[17]
+#define SWIGTYPE_p_boost__shared_ptrT_XdmfTopology_t swig_types[18]
+#define SWIGTYPE_p_boost__shared_ptrT_XdmfVisitor_t swig_types[19]
+#define SWIGTYPE_p_char swig_types[20]
+#define SWIGTYPE_p_int swig_types[21]
+#define SWIGTYPE_p_std__invalid_argument swig_types[22]
+#define SWIGTYPE_p_swig__SwigPyIterator swig_types[23]
+static swig_type_info *swig_types[25];
+static swig_module_info swig_module = {swig_types, 24, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -3262,15 +3263,6 @@ SWIG_From_int  (int value)
 }
 
 
-  #include <XdmfAttribute.hpp>
-  #include <XdmfGeometry.hpp>
-  #include <XdmfGrid.hpp>
-  #include <XdmfItem.hpp>
-  #include <XdmfObject.hpp>
-  #include <XdmfTopology.hpp>
-  #include <XdmfVisitor.hpp>
-
-
 #include <limits.h>
 #if !defined(SWIG_NO_LLONG_MAX)
 # if !defined(LLONG_MAX) && defined(__GNUC__) && defined (__LONG_LONG_MAX__)
@@ -3279,6 +3271,46 @@ SWIG_From_int  (int value)
 #   define ULLONG_MAX (LLONG_MAX * 2ULL + 1ULL)
 # endif
 #endif
+
+
+SWIGINTERN int
+SWIG_AsVal_unsigned_SS_int (PyObject * obj, unsigned int *val)
+{
+  unsigned long v;
+  int res = SWIG_AsVal_unsigned_SS_long (obj, &v);
+  if (SWIG_IsOK(res)) {
+    if ((v > UINT_MAX)) {
+      return SWIG_OverflowError;
+    } else {
+      if (val) *val = static_cast< unsigned int >(v);
+    }
+  }  
+  return res;
+}
+
+
+SWIGINTERNINLINE PyObject* 
+SWIG_From_unsigned_SS_long  (unsigned long value)
+{
+  return (value > LONG_MAX) ?
+    PyLong_FromUnsignedLong(value) : PyInt_FromLong(static_cast< long >(value)); 
+}
+
+
+SWIGINTERNINLINE PyObject *
+SWIG_From_unsigned_SS_int  (unsigned int value)
+{    
+  return SWIG_From_unsigned_SS_long  (value);
+}
+
+
+  #include <XdmfAttribute.hpp>
+  #include <XdmfGeometry.hpp>
+  #include <XdmfGrid.hpp>
+  #include <XdmfItem.hpp>
+  #include <XdmfObject.hpp>
+  #include <XdmfTopology.hpp>
+  #include <XdmfVisitor.hpp>
 
 
 SWIGINTERN int
@@ -5047,6 +5079,178 @@ SWIGINTERN PyObject *_wrap_XdmfGridPtr_setName(PyObject *SWIGUNUSEDPARM(self), P
   return resultobj;
 fail:
   if (SWIG_IsNewObj(res2)) delete arg2;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGridPtr_insert(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  boost::shared_ptr< XdmfGrid > *arg1 = (boost::shared_ptr< XdmfGrid > *) 0 ;
+  boost::shared_ptr< XdmfAttribute > arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfGridPtr_insert",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_boost__shared_ptrT_XdmfGrid_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGridPtr_insert" "', argument " "1"" of type '" "boost::shared_ptr< XdmfGrid > *""'"); 
+  }
+  arg1 = reinterpret_cast< boost::shared_ptr< XdmfGrid > * >(argp1);
+  {
+    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_boost__shared_ptrT_XdmfAttribute_t,  0  | 0);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfGridPtr_insert" "', argument " "2"" of type '" "boost::shared_ptr< XdmfAttribute >""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "XdmfGridPtr_insert" "', argument " "2"" of type '" "boost::shared_ptr< XdmfAttribute >""'");
+    } else {
+      boost::shared_ptr< XdmfAttribute > * temp = reinterpret_cast< boost::shared_ptr< XdmfAttribute > * >(argp2);
+      arg2 = *temp;
+      if (SWIG_IsNewObj(res2)) delete temp;
+    }
+  }
+  (*arg1)->insert(arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGridPtr_getAttribute__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  boost::shared_ptr< XdmfGrid > *arg1 = (boost::shared_ptr< XdmfGrid > *) 0 ;
+  unsigned int arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  boost::shared_ptr< XdmfAttribute > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfGridPtr_getAttribute",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_boost__shared_ptrT_XdmfGrid_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGridPtr_getAttribute" "', argument " "1"" of type '" "boost::shared_ptr< XdmfGrid > *""'"); 
+  }
+  arg1 = reinterpret_cast< boost::shared_ptr< XdmfGrid > * >(argp1);
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfGridPtr_getAttribute" "', argument " "2"" of type '" "unsigned int""'");
+  } 
+  arg2 = static_cast< unsigned int >(val2);
+  result = (*arg1)->getAttribute(arg2);
+  resultobj = SWIG_NewPointerObj((new boost::shared_ptr< XdmfAttribute >(static_cast< const boost::shared_ptr< XdmfAttribute >& >(result))), SWIGTYPE_p_boost__shared_ptrT_XdmfAttribute_t, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGridPtr_getAttribute__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  boost::shared_ptr< XdmfGrid > *arg1 = (boost::shared_ptr< XdmfGrid > *) 0 ;
+  unsigned int arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  SwigValueWrapper< boost::shared_ptr< XdmfAttribute const > > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfGridPtr_getAttribute",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_boost__shared_ptrT_XdmfGrid_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGridPtr_getAttribute" "', argument " "1"" of type '" "boost::shared_ptr< XdmfGrid > const *""'"); 
+  }
+  arg1 = reinterpret_cast< boost::shared_ptr< XdmfGrid > * >(argp1);
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfGridPtr_getAttribute" "', argument " "2"" of type '" "unsigned int""'");
+  } 
+  arg2 = static_cast< unsigned int >(val2);
+  result = (*arg1)->getAttribute(arg2);
+  resultobj = SWIG_NewPointerObj((new boost::shared_ptr< XdmfAttribute const >(static_cast< const boost::shared_ptr< XdmfAttribute const >& >(result))), SWIGTYPE_p_boost__shared_ptrT_XdmfAttribute_const_t, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGridPtr_getAttribute(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[3];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = (int)PyObject_Length(args);
+  for (ii = 0; (ii < argc) && (ii < 2); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_boost__shared_ptrT_XdmfGrid_t, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_unsigned_SS_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_XdmfGridPtr_getAttribute__SWIG_0(self, args);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_boost__shared_ptrT_XdmfGrid_t, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_unsigned_SS_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_XdmfGridPtr_getAttribute__SWIG_1(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'XdmfGridPtr_getAttribute'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    getAttribute(boost::shared_ptr< XdmfGrid > *,unsigned int)\n"
+    "    getAttribute(boost::shared_ptr< XdmfGrid > const *,unsigned int)\n");
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGridPtr_getNumberOfAttribute(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  boost::shared_ptr< XdmfGrid > *arg1 = (boost::shared_ptr< XdmfGrid > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  unsigned int result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfGridPtr_getNumberOfAttribute",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_boost__shared_ptrT_XdmfGrid_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGridPtr_getNumberOfAttribute" "', argument " "1"" of type '" "boost::shared_ptr< XdmfGrid > const *""'"); 
+  }
+  arg1 = reinterpret_cast< boost::shared_ptr< XdmfGrid > * >(argp1);
+  result = (unsigned int)(*arg1)->getNumberOfAttribute();
+  resultobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(result));
+  return resultobj;
+fail:
   return NULL;
 }
 
@@ -7467,6 +7671,178 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_XdmfGrid_insert(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  boost::shared_ptr< XdmfAttribute > arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfGrid_insert",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_insert" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  {
+    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_boost__shared_ptrT_XdmfAttribute_t,  0  | 0);
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfGrid_insert" "', argument " "2"" of type '" "boost::shared_ptr< XdmfAttribute >""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "XdmfGrid_insert" "', argument " "2"" of type '" "boost::shared_ptr< XdmfAttribute >""'");
+    } else {
+      boost::shared_ptr< XdmfAttribute > * temp = reinterpret_cast< boost::shared_ptr< XdmfAttribute > * >(argp2);
+      arg2 = *temp;
+      if (SWIG_IsNewObj(res2)) delete temp;
+    }
+  }
+  (arg1)->insert(arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_getAttribute__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  unsigned int arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  boost::shared_ptr< XdmfAttribute > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfGrid_getAttribute",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_getAttribute" "', argument " "1"" of type '" "XdmfGrid *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfGrid_getAttribute" "', argument " "2"" of type '" "unsigned int""'");
+  } 
+  arg2 = static_cast< unsigned int >(val2);
+  result = (arg1)->getAttribute(arg2);
+  resultobj = SWIG_NewPointerObj((new boost::shared_ptr< XdmfAttribute >(static_cast< const boost::shared_ptr< XdmfAttribute >& >(result))), SWIGTYPE_p_boost__shared_ptrT_XdmfAttribute_t, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_getAttribute__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  unsigned int arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  SwigValueWrapper< boost::shared_ptr< XdmfAttribute const > > result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfGrid_getAttribute",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_getAttribute" "', argument " "1"" of type '" "XdmfGrid const *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "XdmfGrid_getAttribute" "', argument " "2"" of type '" "unsigned int""'");
+  } 
+  arg2 = static_cast< unsigned int >(val2);
+  result = ((XdmfGrid const *)arg1)->getAttribute(arg2);
+  resultobj = SWIG_NewPointerObj((new boost::shared_ptr< XdmfAttribute const >(static_cast< const boost::shared_ptr< XdmfAttribute const >& >(result))), SWIGTYPE_p_boost__shared_ptrT_XdmfAttribute_const_t, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_getAttribute(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[3];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = (int)PyObject_Length(args);
+  for (ii = 0; (ii < argc) && (ii < 2); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfGrid, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_unsigned_SS_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_XdmfGrid_getAttribute__SWIG_0(self, args);
+      }
+    }
+  }
+  if (argc == 2) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfGrid, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      {
+        int res = SWIG_AsVal_unsigned_SS_int(argv[1], NULL);
+        _v = SWIG_CheckState(res);
+      }
+      if (_v) {
+        return _wrap_XdmfGrid_getAttribute__SWIG_1(self, args);
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'XdmfGrid_getAttribute'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    getAttribute(XdmfGrid *,unsigned int)\n"
+    "    getAttribute(XdmfGrid const *,unsigned int)\n");
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfGrid_getNumberOfAttribute(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfGrid *arg1 = (XdmfGrid *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  unsigned int result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfGrid_getNumberOfAttribute",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfGrid_getNumberOfAttribute" "', argument " "1"" of type '" "XdmfGrid const *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfGrid * >(argp1);
+  result = (unsigned int)((XdmfGrid const *)arg1)->getNumberOfAttribute();
+  resultobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_XdmfGrid_printSelf(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   XdmfGrid *arg1 = (XdmfGrid *) 0 ;
@@ -8331,6 +8707,9 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfGridPtr_setTopology", _wrap_XdmfGridPtr_setTopology, METH_VARARGS, NULL},
 	 { (char *)"XdmfGridPtr_getName", _wrap_XdmfGridPtr_getName, METH_VARARGS, NULL},
 	 { (char *)"XdmfGridPtr_setName", _wrap_XdmfGridPtr_setName, METH_VARARGS, NULL},
+	 { (char *)"XdmfGridPtr_insert", _wrap_XdmfGridPtr_insert, METH_VARARGS, NULL},
+	 { (char *)"XdmfGridPtr_getAttribute", _wrap_XdmfGridPtr_getAttribute, METH_VARARGS, NULL},
+	 { (char *)"XdmfGridPtr_getNumberOfAttribute", _wrap_XdmfGridPtr_getNumberOfAttribute, METH_VARARGS, NULL},
 	 { (char *)"XdmfGridPtr_printSelf", _wrap_XdmfGridPtr_printSelf, METH_VARARGS, NULL},
 	 { (char *)"XdmfGridPtr_write", _wrap_XdmfGridPtr_write, METH_VARARGS, NULL},
 	 { (char *)"XdmfGridPtr_swigregister", XdmfGridPtr_swigregister, METH_VARARGS, NULL},
@@ -8426,6 +8805,9 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfGrid_setTopology", _wrap_XdmfGrid_setTopology, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_getName", _wrap_XdmfGrid_getName, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_setName", _wrap_XdmfGrid_setName, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_insert", _wrap_XdmfGrid_insert, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_getAttribute", _wrap_XdmfGrid_getAttribute, METH_VARARGS, NULL},
+	 { (char *)"XdmfGrid_getNumberOfAttribute", _wrap_XdmfGrid_getNumberOfAttribute, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_printSelf", _wrap_XdmfGrid_printSelf, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_write", _wrap_XdmfGrid_write, METH_VARARGS, NULL},
 	 { (char *)"XdmfGrid_swigregister", XdmfGrid_swigregister, METH_VARARGS, NULL},
@@ -8517,6 +8899,7 @@ static swig_type_info _swigt__p_XdmfObject = {"_p_XdmfObject", "XdmfObject *", 0
 static swig_type_info _swigt__p_XdmfTopology = {"_p_XdmfTopology", "XdmfTopology *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_XdmfTopologyType = {"_p_XdmfTopologyType", "XdmfTopologyType *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_XdmfVisitor = {"_p_XdmfVisitor", "XdmfVisitor *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_boost__shared_ptrT_XdmfAttribute_const_t = {"_p_boost__shared_ptrT_XdmfAttribute_const_t", "boost::shared_ptr< XdmfAttribute const > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_boost__shared_ptrT_XdmfAttribute_t = {"_p_boost__shared_ptrT_XdmfAttribute_t", "boost::shared_ptr< XdmfAttribute > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_boost__shared_ptrT_XdmfGeometry_const_t = {"_p_boost__shared_ptrT_XdmfGeometry_const_t", "boost::shared_ptr< XdmfGeometry const > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_boost__shared_ptrT_XdmfGeometry_t = {"_p_boost__shared_ptrT_XdmfGeometry_t", "boost::shared_ptr< XdmfGeometry > *", 0, 0, (void*)0, 0};
@@ -8542,6 +8925,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_XdmfTopology,
   &_swigt__p_XdmfTopologyType,
   &_swigt__p_XdmfVisitor,
+  &_swigt__p_boost__shared_ptrT_XdmfAttribute_const_t,
   &_swigt__p_boost__shared_ptrT_XdmfAttribute_t,
   &_swigt__p_boost__shared_ptrT_XdmfGeometry_const_t,
   &_swigt__p_boost__shared_ptrT_XdmfGeometry_t,
@@ -8567,6 +8951,7 @@ static swig_cast_info _swigc__p_XdmfObject[] = {  {&_swigt__p_XdmfItem, _p_XdmfI
 static swig_cast_info _swigc__p_XdmfTopology[] = {  {&_swigt__p_XdmfTopology, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfTopologyType[] = {  {&_swigt__p_XdmfTopologyType, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfVisitor[] = {  {&_swigt__p_XdmfVisitor, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_boost__shared_ptrT_XdmfAttribute_const_t[] = {  {&_swigt__p_boost__shared_ptrT_XdmfAttribute_const_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_boost__shared_ptrT_XdmfAttribute_t[] = {  {&_swigt__p_boost__shared_ptrT_XdmfAttribute_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_boost__shared_ptrT_XdmfGeometry_const_t[] = {  {&_swigt__p_boost__shared_ptrT_XdmfGeometry_const_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_boost__shared_ptrT_XdmfGeometry_t[] = {  {&_swigt__p_boost__shared_ptrT_XdmfGeometry_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -8592,6 +8977,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_XdmfTopology,
   _swigc__p_XdmfTopologyType,
   _swigc__p_XdmfVisitor,
+  _swigc__p_boost__shared_ptrT_XdmfAttribute_const_t,
   _swigc__p_boost__shared_ptrT_XdmfAttribute_t,
   _swigc__p_boost__shared_ptrT_XdmfGeometry_const_t,
   _swigc__p_boost__shared_ptrT_XdmfGeometry_t,

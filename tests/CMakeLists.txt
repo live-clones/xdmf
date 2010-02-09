@@ -1,4 +1,5 @@
 set(XdmfTests
+	TestXdmfAttribute
 	TestXdmfGeometry
 	TestXdmfGrid
 	TestXdmfTopology

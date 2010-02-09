@@ -75,6 +75,32 @@ public:
 	 */
 	void setName(const std::string&);
 
+	/**
+	 * Insert an attribute into the grid
+	 */
+	void insert(boost::shared_ptr<XdmfAttribute>);
+
+	/**
+	 * Get an attribute attached to this grid.
+	 *
+	 * @param index of the attribute to retrieve
+	 * @return pointer to the attribute attached to this grid
+	 */
+	boost::shared_ptr<XdmfAttribute> getAttribute(unsigned int index);
+
+	/**
+	 * Get an attribute attached to this grid (const version).
+	 *
+	 * @param index of the attribute to retrieve
+	 * @return pointer to the attribute attached to this grid
+	 */
+	boost::shared_ptr<const XdmfAttribute> getAttribute(unsigned int index) const;
+
+	/**
+	 * Get the number of attributes attached to this grid
+	 */
+	unsigned int getNumberOfAttribute() const;
+
 	virtual const std::string printSelf() const;
 
 	virtual void write(boost::shared_ptr<XdmfVisitor> visitor) const;

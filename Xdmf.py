@@ -156,6 +156,9 @@ class XdmfGridPtr(_object):
     def setTopology(self, *args): return _Xdmf.XdmfGridPtr_setTopology(self, *args)
     def getName(self): return _Xdmf.XdmfGridPtr_getName(self)
     def setName(self, *args): return _Xdmf.XdmfGridPtr_setName(self, *args)
+    def insert(self, *args): return _Xdmf.XdmfGridPtr_insert(self, *args)
+    def getAttribute(self, *args): return _Xdmf.XdmfGridPtr_getAttribute(self, *args)
+    def getNumberOfAttribute(self): return _Xdmf.XdmfGridPtr_getNumberOfAttribute(self)
     def printSelf(self): return _Xdmf.XdmfGridPtr_printSelf(self)
     def write(self, *args): return _Xdmf.XdmfGridPtr_write(self, *args)
 XdmfGridPtr_swigregister = _Xdmf.XdmfGridPtr_swigregister
@@ -483,6 +486,9 @@ class XdmfGrid(XdmfItem):
     def setTopology(self, *args): return _Xdmf.XdmfGrid_setTopology(self, *args)
     def getName(self): return _Xdmf.XdmfGrid_getName(self)
     def setName(self, *args): return _Xdmf.XdmfGrid_setName(self, *args)
+    def insert(self, *args): return _Xdmf.XdmfGrid_insert(self, *args)
+    def getAttribute(self, *args): return _Xdmf.XdmfGrid_getAttribute(self, *args)
+    def getNumberOfAttribute(self): return _Xdmf.XdmfGrid_getNumberOfAttribute(self)
     def printSelf(self): return _Xdmf.XdmfGrid_printSelf(self)
     def write(self, *args): return _Xdmf.XdmfGrid_write(self, *args)
 XdmfGrid_swigregister = _Xdmf.XdmfGrid_swigregister

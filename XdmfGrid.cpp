@@ -73,6 +73,36 @@ void XdmfGrid::setName(const std::string& name)
 	mName= name;
 }
 
+void XdmfGrid::insert(boost::shared_ptr<XdmfAttribute> attribute)
+{
+	mAttributes.push_back(attribute);
+}
+
+boost::shared_ptr<XdmfAttribute> XdmfGrid::getAttribute(unsigned int index)
+{
+	if(index >= mAttributes.size())
+	{
+		assert(false);
+		// Out of range --- should we throw exceptions?
+	}
+	return mAttributes[index];
+}
+
+boost::shared_ptr<const XdmfAttribute> XdmfGrid::getAttribute(unsigned int index) const
+{
+	if(index >= mAttributes.size())
+	{
+		assert(false);
+		// Out of range --- should we throw exceptions?
+	}
+	return mAttributes[index];
+}
+
+unsigned int XdmfGrid::getNumberOfAttribute() const
+{
+	return mAttributes.size();
+}
+
 const std::string XdmfGrid::printSelf() const
 {
 	return "XdmfGrid containing a " + mGeometry->printSelf() + " and a " + mTopology->printSelf();

@@ -3,10 +3,10 @@
 int main(int argc, char* argv[])
 {
 	// Test != and == operators
-	assert(XdmfGeometryType::XYZ == XdmfGeometryType::XYZ);
-	assert(XdmfGeometryType::XYZ == XdmfGeometryType::XY == false);
-	assert(XdmfGeometryType::XYZ != XdmfGeometryType::XYZ == false);
-	assert(XdmfGeometryType::XYZ != XdmfGeometryType::XY);
+	assert(XdmfGeometryType::XYZ() == XdmfGeometryType::XYZ());
+	assert(XdmfGeometryType::XYZ() == XdmfGeometryType::XY() == false);
+	assert(XdmfGeometryType::XYZ() != XdmfGeometryType::XYZ() == false);
+	assert(XdmfGeometryType::XYZ() != XdmfGeometryType::XY());
 
 	boost::shared_ptr<XdmfGeometry> geom = XdmfGeometry::New();
 	assert(geom->getGeometryType() == XdmfGeometryType::NoGeometryType());

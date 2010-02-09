@@ -39,6 +39,10 @@ void XdmfVisitor::visit(const XdmfGrid * const grid)
 	mTabIndex++;
 	visit(grid->getGeometry().get());
 	visit(grid->getTopology().get());
+	for(unsigned int i=0; i<grid->getNumberOfAttribute(); i++)
+	{
+		visit(grid->getAttribute(i).get());
+	}
 	mTabIndex--;
 	xmlData << std::setw(mTabIndex) << "" << "</Grid>\n";
 }
