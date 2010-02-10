@@ -8,6 +8,9 @@
 #ifndef XDMFTOPOLOGY_HPP_
 #define XDMFTOPOLOGY_HPP_
 
+// Forward Declarations
+class XdmfDataItem;
+
 // Includes
 #include "XdmfItem.hpp"
 #include "XdmfTopologyType.hpp"
@@ -44,7 +47,7 @@ public:
 	 *
 	 * @param int of number elements to set.
 	 */
-	void setNumberElements(int&);
+	void setNumberElements(int numberElements);
 
 	/**
 	 * Get the name of the TopologyType associated with this Topology.
@@ -59,6 +62,21 @@ public:
 	 * @return int of number of nodes per element.
 	 */
 	int getNodesPerElement() const;
+
+	/**
+	 * Get the point data associated with this Topology;
+	 */
+	boost::shared_ptr<XdmfDataItem> getData();
+
+	/**
+	 * Get the data associated with this Topology (const version)
+	 */
+	boost::shared_ptr<const XdmfDataItem> getData() const;
+
+	/**
+	 * Set the point data associated with this Topology
+	 */
+	void setData(boost::shared_ptr<XdmfDataItem> connectivityData);
 
 	/**
 	 *
@@ -79,6 +97,7 @@ private:
 
 	XdmfTopologyType mTopologyType;
 	int mNumberElements;
+	boost::shared_ptr<XdmfDataItem> mConnectivityData;
 };
 
 #endif /* XDMFTOPOLOGY_HPP_ */

@@ -136,6 +136,8 @@ class XdmfDataItemPtr(_object):
     __swig_destroy__ = _Xdmf.delete_XdmfDataItemPtr
     __del__ = lambda self : None;
     def New(self): return _Xdmf.XdmfDataItemPtr_New(self)
+    def getNumberValues(self): return _Xdmf.XdmfDataItemPtr_getNumberValues(self)
+    def setNumberValues(self, *args): return _Xdmf.XdmfDataItemPtr_setNumberValues(self, *args)
     def printSelf(self): return _Xdmf.XdmfDataItemPtr_printSelf(self)
     def write(self, *args): return _Xdmf.XdmfDataItemPtr_write(self, *args)
 XdmfDataItemPtr_swigregister = _Xdmf.XdmfDataItemPtr_swigregister
@@ -159,6 +161,8 @@ class XdmfGeometryPtr(_object):
     def setGeometryType(self, *args): return _Xdmf.XdmfGeometryPtr_setGeometryType(self, *args)
     def getGeometryTypeAsString(self): return _Xdmf.XdmfGeometryPtr_getGeometryTypeAsString(self)
     def getDimensions(self): return _Xdmf.XdmfGeometryPtr_getDimensions(self)
+    def getData(self, *args): return _Xdmf.XdmfGeometryPtr_getData(self, *args)
+    def setData(self, *args): return _Xdmf.XdmfGeometryPtr_setData(self, *args)
     def printSelf(self): return _Xdmf.XdmfGeometryPtr_printSelf(self)
     def write(self, *args): return _Xdmf.XdmfGeometryPtr_write(self, *args)
 XdmfGeometryPtr_swigregister = _Xdmf.XdmfGeometryPtr_swigregister
@@ -247,6 +251,8 @@ class XdmfTopologyPtr(_object):
     def setNumberElements(self, *args): return _Xdmf.XdmfTopologyPtr_setNumberElements(self, *args)
     def getTopologyTypeAsString(self): return _Xdmf.XdmfTopologyPtr_getTopologyTypeAsString(self)
     def getNodesPerElement(self): return _Xdmf.XdmfTopologyPtr_getNodesPerElement(self)
+    def getData(self, *args): return _Xdmf.XdmfTopologyPtr_getData(self, *args)
+    def setData(self, *args): return _Xdmf.XdmfTopologyPtr_setData(self, *args)
     def printSelf(self): return _Xdmf.XdmfTopologyPtr_printSelf(self)
     def write(self, *args): return _Xdmf.XdmfTopologyPtr_write(self, *args)
 XdmfTopologyPtr_swigregister = _Xdmf.XdmfTopologyPtr_swigregister
@@ -462,6 +468,8 @@ class XdmfDataItem(XdmfItem):
     __repr__ = _swig_repr
     __swig_getmethods__["New"] = lambda x: _Xdmf.XdmfDataItem_New
     if _newclass:New = staticmethod(_Xdmf.XdmfDataItem_New)
+    def getNumberValues(self): return _Xdmf.XdmfDataItem_getNumberValues(self)
+    def setNumberValues(self, *args): return _Xdmf.XdmfDataItem_setNumberValues(self, *args)
     def printSelf(self): return _Xdmf.XdmfDataItem_printSelf(self)
     def write(self, *args): return _Xdmf.XdmfDataItem_write(self, *args)
 XdmfDataItem_swigregister = _Xdmf.XdmfDataItem_swigregister
@@ -564,6 +572,8 @@ class XdmfGeometry(XdmfItem):
     def setGeometryType(self, *args): return _Xdmf.XdmfGeometry_setGeometryType(self, *args)
     def getGeometryTypeAsString(self): return _Xdmf.XdmfGeometry_getGeometryTypeAsString(self)
     def getDimensions(self): return _Xdmf.XdmfGeometry_getDimensions(self)
+    def getData(self, *args): return _Xdmf.XdmfGeometry_getData(self, *args)
+    def setData(self, *args): return _Xdmf.XdmfGeometry_setData(self, *args)
     def printSelf(self): return _Xdmf.XdmfGeometry_printSelf(self)
     def write(self, *args): return _Xdmf.XdmfGeometry_write(self, *args)
 XdmfGeometry_swigregister = _Xdmf.XdmfGeometry_swigregister
@@ -692,6 +702,8 @@ class XdmfTopology(XdmfItem):
     def setNumberElements(self, *args): return _Xdmf.XdmfTopology_setNumberElements(self, *args)
     def getTopologyTypeAsString(self): return _Xdmf.XdmfTopology_getTopologyTypeAsString(self)
     def getNodesPerElement(self): return _Xdmf.XdmfTopology_getNodesPerElement(self)
+    def getData(self, *args): return _Xdmf.XdmfTopology_getData(self, *args)
+    def setData(self, *args): return _Xdmf.XdmfTopology_setData(self, *args)
     def printSelf(self): return _Xdmf.XdmfTopology_printSelf(self)
     def write(self, *args): return _Xdmf.XdmfTopology_write(self, *args)
 XdmfTopology_swigregister = _Xdmf.XdmfTopology_swigregister

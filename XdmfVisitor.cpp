@@ -30,12 +30,30 @@ void XdmfVisitor::visit(const XdmfAttribute * const attribute)
 
 void XdmfVisitor::visit(const XdmfDataItem * const dataItem)
 {
-
+	xmlData << std::setw(mTabIndex) << "" << "<DataItem Format=\"XML\" DataType=\"Int\" Precision=\"4\" Dimensions=\"" << dataItem->getNumberValues() << "\">";
+	const int* const intPointer = dataItem->getData<int>();
+	mTabIndex++;
+	for (unsigned int i=0; i<dataItem->getNumberValues(); ++i)
+	{
+		if (i % 10 == 0)
+		{
+			xmlData << "\n" << std::setw(mTabIndex) << "" << intPointer[i] << " ";
+		}
+		else
+		{
+			xmlData << intPointer[i] << " ";
+		}
+	}
+	mTabIndex--;
+	xmlData << "\n" << std::setw(mTabIndex) << "" << "</DataItem>\n";
 }
 
 void XdmfVisitor::visit(const XdmfGeometry * const geometry)
 {
 	xmlData << std::setw(mTabIndex) << "" << "<Geometry GeometryType=\"" << geometry->getGeometryTypeAsString() << "\">\n";
+	mTabIndex++;
+	visit(geometry->getData().get());
+	mTabIndex--;
 	xmlData << std::setw(mTabIndex) << "" << "</Geometry>\n";
 }
 
@@ -55,7 +73,10 @@ void XdmfVisitor::visit(const XdmfGrid * const grid)
 
 void XdmfVisitor::visit(const XdmfTopology * const topology)
 {
-	xmlData << std::setw(mTabIndex) << "" << "<Topology TopologyType=\"" << topology->getTopologyTypeAsString() << "\" NumberOfElements=" << topology->getNumberElements() << "\">\n";
+	xmlData << std::setw(mTabIndex) << "" << "<Topology TopologyType=\"" << topology->getTopologyTypeAsString() << "\" NumberOfElements=\"" << topology->getNumberElements() << "\">\n";
+	mTabIndex++;
+	visit(topology->getData().get());
+	mTabIndex--;
 	xmlData << std::setw(mTabIndex) << "" << "</Topology>\n";
 }
 

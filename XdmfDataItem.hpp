@@ -20,7 +20,13 @@ public:
 
 	template <typename T> void setData(T * dataPointer);
 
-	//int setData(int * dataPointer)
+	template <typename T> T* getData();
+
+	template <typename T> const T* const getData() const;
+
+	int getNumberValues() const;
+
+	void setNumberValues(int numValues);
 
 	std::string printSelf() const;
 
@@ -38,6 +44,7 @@ private:
 
 	int* mDataPointer;
 	XdmfDataItemType mDataType;
+	int mNumberValues;
 };
 
 #endif /* XDMFDATAITEM_HPP_ */

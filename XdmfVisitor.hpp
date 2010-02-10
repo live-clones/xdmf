@@ -45,9 +45,6 @@ private:
 
 	int mTabIndex;
 	std::stringstream xmlData;
-
-
-
 };
 
 #endif /* XDMFVISITOR_HPP_ */
