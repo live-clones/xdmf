@@ -7,6 +7,7 @@
 // Forward Declarations
 class XdmfAttribute;
 class XdmfDataItem;
+class XdmfDomain;
 class XdmfGeometry;
 class XdmfGrid;
 class XdmfTopology;
@@ -24,6 +25,8 @@ public:
 	virtual void visit(const XdmfAttribute * const attribute);
 
 	virtual void visit(const XdmfDataItem * const geometry);
+
+	virtual void visit(const XdmfDomain * const domain);
 
 	virtual void visit(const XdmfGeometry * const geometry);
 

@@ -3,6 +3,7 @@
 
 #include "XdmfAttribute.hpp"
 #include "XdmfDataItem.hpp"
+#include "XdmfDomain.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGrid.hpp"
 #include "XdmfTopology.hpp"
@@ -51,6 +52,18 @@ void XdmfVisitor::visit(const XdmfDataItem * const dataItem)
 	xmlData << "\n" << std::setw(mTabIndex) << "" << "</DataItem>\n";
 }
 
+void XdmfVisitor::visit(const XdmfDomain * const domain)
+{
+	xmlData << std::setw(mTabIndex) << "" << "<Domain>\n";
+	mTabIndex++;
+	for(unsigned int i=0; i<domain->getNumberOfGrids(); ++i)
+	{
+		visit(domain->getGrid(i).get());
+	}
+	mTabIndex--;
+	xmlData << std::setw(mTabIndex) << "" << "</Domain>\n";
+}
+
 void XdmfVisitor::visit(const XdmfGeometry * const geometry)
 {
 	xmlData << std::setw(mTabIndex) << "" << "<Geometry GeometryType=\"" << geometry->getGeometryTypeAsString() << "\">\n";
@@ -66,7 +79,7 @@ void XdmfVisitor::visit(const XdmfGrid * const grid)
 	mTabIndex++;
 	visit(grid->getGeometry().get());
 	visit(grid->getTopology().get());
-	for(unsigned int i=0; i<grid->getNumberOfAttribute(); i++)
+	for(unsigned int i=0; i<grid->getNumberOfAttributes(); i++)
 	{
 		visit(grid->getAttribute(i).get());
 	}

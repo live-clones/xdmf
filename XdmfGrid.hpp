@@ -99,7 +99,7 @@ public:
 	/**
 	 * Get the number of attributes attached to this grid
 	 */
-	unsigned int getNumberOfAttribute() const;
+	unsigned int getNumberOfAttributes() const;
 
 	virtual std::string printSelf() const;
 

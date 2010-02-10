@@ -60,21 +60,6 @@ public:
 	 */
 	int getNodesPerElement() const;
 
-/*	*
-	 * Get the point data associated with this Topology;
-
-	boost::shared_ptr<XdmfDataItem> getData();
-
-	*
-	 * Get the data associated with this Topology (const version)
-
-	boost::shared_ptr<const XdmfDataItem> getData() const;
-
-	*
-	 * Set the point data associated with this Topology
-
-	void setData(boost::shared_ptr<XdmfDataItem> connectivityData);*/
-
 	/**
 	 *
 	 */

@@ -1,5 +1,6 @@
 #include "XdmfAttribute.hpp"
 #include "XdmfDataItem.hpp"
+#include "XdmfDomain.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGrid.hpp"
 #include "XdmfTopology.hpp"
@@ -45,7 +46,11 @@ int main(int argc, char* argv[])
 
 	grid->insert(nodalAttribute);
 	grid->insert(cellAttribute);
-	grid->write(visitor3);
+
+	boost::shared_ptr<XdmfDomain> domain = XdmfDomain::New();
+	domain->insert(grid);
+	domain->write(visitor3);
+
 	std::cout << visitor3->printSelf() << std::endl;
 
 	return 0;

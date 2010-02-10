@@ -98,7 +98,7 @@ boost::shared_ptr<const XdmfAttribute> XdmfGrid::getAttribute(unsigned int index
 	return mAttributes[index];
 }
 
-unsigned int XdmfGrid::getNumberOfAttribute() const
+unsigned int XdmfGrid::getNumberOfAttributes() const
 {
 	return mAttributes.size();
 }

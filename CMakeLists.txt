@@ -25,6 +25,7 @@ set(XdmfSources
 	XdmfAttributeType
 	XdmfDataItem
 	XdmfDataItemType
+	XdmfDomain
 	XdmfGeometry
 	XdmfGeometryType
 	XdmfGrid

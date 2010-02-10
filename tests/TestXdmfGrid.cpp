@@ -12,9 +12,9 @@ int main(int argc, char* argv[])
 
 	boost::shared_ptr<XdmfAttribute> attr = XdmfAttribute::New();
 	attr->setName("Attr1");
-	assert(grid->getNumberOfAttribute() == 0);
+	assert(grid->getNumberOfAttributes() == 0);
 	grid->insert(attr);
-	assert(grid->getNumberOfAttribute() == 1);
+	assert(grid->getNumberOfAttributes() == 1);
 	assert(grid->getAttribute(0) == attr);
 
 	return 0;

@@ -68,7 +68,7 @@ public:
 	void setAttributeCenter(const XdmfAttributeCenter& attributeCenter);
 
 	/**
-	 * Get the name of the AttributeCenter associated with this Attribute.
+	 * Get the name of the XdmfAttributeCenter associated with this Attribute.
 	 *
 	 * @return std::string containing name of the AttributeCenter.
 	 */

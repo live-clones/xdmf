@@ -144,6 +144,28 @@ class XdmfDataItemPtr(_object):
 XdmfDataItemPtr_swigregister = _Xdmf.XdmfDataItemPtr_swigregister
 XdmfDataItemPtr_swigregister(XdmfDataItemPtr)
 
+class XdmfDomainPtr(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfDomainPtr, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfDomainPtr, name)
+    __repr__ = _swig_repr
+    def __deref__(self): return _Xdmf.XdmfDomainPtr___deref__(self)
+    def __init__(self): 
+        this = _Xdmf.new_XdmfDomainPtr()
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _Xdmf.delete_XdmfDomainPtr
+    __del__ = lambda self : None;
+    def New(self): return _Xdmf.XdmfDomainPtr_New(self)
+    def insert(self, *args): return _Xdmf.XdmfDomainPtr_insert(self, *args)
+    def getGrid(self, *args): return _Xdmf.XdmfDomainPtr_getGrid(self, *args)
+    def getNumberOfGrids(self): return _Xdmf.XdmfDomainPtr_getNumberOfGrids(self)
+    def printSelf(self): return _Xdmf.XdmfDomainPtr_printSelf(self)
+    def write(self, *args): return _Xdmf.XdmfDomainPtr_write(self, *args)
+XdmfDomainPtr_swigregister = _Xdmf.XdmfDomainPtr_swigregister
+XdmfDomainPtr_swigregister(XdmfDomainPtr)
+
 class XdmfGeometryPtr(_object):
     __swig_setmethods__ = {}
     __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfGeometryPtr, name, value)
@@ -191,7 +213,7 @@ class XdmfGridPtr(_object):
     def setName(self, *args): return _Xdmf.XdmfGridPtr_setName(self, *args)
     def insert(self, *args): return _Xdmf.XdmfGridPtr_insert(self, *args)
     def getAttribute(self, *args): return _Xdmf.XdmfGridPtr_getAttribute(self, *args)
-    def getNumberOfAttribute(self): return _Xdmf.XdmfGridPtr_getNumberOfAttribute(self)
+    def getNumberOfAttributes(self): return _Xdmf.XdmfGridPtr_getNumberOfAttributes(self)
     def printSelf(self): return _Xdmf.XdmfGridPtr_printSelf(self)
     def write(self, *args): return _Xdmf.XdmfGridPtr_write(self, *args)
 XdmfGridPtr_swigregister = _Xdmf.XdmfGridPtr_swigregister
@@ -557,6 +579,29 @@ def XdmfAttributeType_GlobalId():
   return _Xdmf.XdmfAttributeType_GlobalId()
 XdmfAttributeType_GlobalId = _Xdmf.XdmfAttributeType_GlobalId
 
+class XdmfDomain(XdmfItem):
+    __swig_setmethods__ = {}
+    for _s in [XdmfItem]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfDomain, name, value)
+    __swig_getmethods__ = {}
+    for _s in [XdmfItem]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfDomain, name)
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
+    __repr__ = _swig_repr
+    __swig_getmethods__["New"] = lambda x: _Xdmf.XdmfDomain_New
+    if _newclass:New = staticmethod(_Xdmf.XdmfDomain_New)
+    def insert(self, *args): return _Xdmf.XdmfDomain_insert(self, *args)
+    def getGrid(self, *args): return _Xdmf.XdmfDomain_getGrid(self, *args)
+    def getNumberOfGrids(self): return _Xdmf.XdmfDomain_getNumberOfGrids(self)
+    def printSelf(self): return _Xdmf.XdmfDomain_printSelf(self)
+    def write(self, *args): return _Xdmf.XdmfDomain_write(self, *args)
+XdmfDomain_swigregister = _Xdmf.XdmfDomain_swigregister
+XdmfDomain_swigregister(XdmfDomain)
+
+def XdmfDomain_New():
+  return _Xdmf.XdmfDomain_New()
+XdmfDomain_New = _Xdmf.XdmfDomain_New
+
 class XdmfGeometry(XdmfDataItem):
     __swig_setmethods__ = {}
     for _s in [XdmfDataItem]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
@@ -674,7 +719,7 @@ class XdmfGrid(XdmfItem):
     def setName(self, *args): return _Xdmf.XdmfGrid_setName(self, *args)
     def insert(self, *args): return _Xdmf.XdmfGrid_insert(self, *args)
     def getAttribute(self, *args): return _Xdmf.XdmfGrid_getAttribute(self, *args)
-    def getNumberOfAttribute(self): return _Xdmf.XdmfGrid_getNumberOfAttribute(self)
+    def getNumberOfAttributes(self): return _Xdmf.XdmfGrid_getNumberOfAttributes(self)
     def printSelf(self): return _Xdmf.XdmfGrid_printSelf(self)
     def write(self, *args): return _Xdmf.XdmfGrid_write(self, *args)
 XdmfGrid_swigregister = _Xdmf.XdmfGrid_swigregister
