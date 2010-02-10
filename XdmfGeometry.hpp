@@ -8,13 +8,11 @@
 #ifndef XDMFGEOMETRY_HPP_
 #define XDMFGEOMETRY_HPP_
 
-class XdmfDataItem;
-
 // Includes
-#include "XdmfItem.hpp"
+#include "XdmfDataItem.hpp"
 #include "XdmfGeometryType.hpp"
 
-class XdmfGeometry : public XdmfItem {
+class XdmfGeometry : public XdmfDataItem {
 
 public:
 
@@ -48,20 +46,7 @@ public:
 	 */
 	int getDimensions() const;
 
-	/**
-	 * Get the point data associated with this Geometry;
-	 */
-	boost::shared_ptr<XdmfDataItem> getData();
-
-	/**
-	 * Get the data associated with this Geometry (const version)
-	 */
-	boost::shared_ptr<const XdmfDataItem> getData() const;
-
-	/**
-	 * Set the point data associated with this Geometry
-	 */
-	void setData(boost::shared_ptr<XdmfDataItem> pointData);
+	void setNumberPoints(int numberPoints);
 
 	virtual std::string printSelf() const;
 
@@ -78,8 +63,7 @@ private:
 	void operator=(const XdmfGeometry&);  // Not implemented.
 
 	XdmfGeometryType mGeometryType;
-	boost::shared_ptr<XdmfDataItem> mPointData;
-
+	int mNumberPoints;
 };
 
 #endif /* XDMFGEOMETRY_HPP_ */

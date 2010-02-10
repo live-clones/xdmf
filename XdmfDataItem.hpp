@@ -26,13 +26,13 @@ public:
 
 	int getNumberValues() const;
 
-	void setNumberValues(int numValues);
-
 	std::string printSelf() const;
 
 	void write(boost::shared_ptr<XdmfVisitor> visitor) const;
 
 protected:
+
+	int mNumberValues;
 
 	XdmfDataItem();
 	virtual ~XdmfDataItem();
@@ -44,7 +44,6 @@ private:
 
 	int* mDataPointer;
 	XdmfDataItemType mDataType;
-	int mNumberValues;
 };
 
 #endif /* XDMFDATAITEM_HPP_ */

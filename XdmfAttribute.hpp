@@ -8,11 +8,11 @@
 #ifndef XDMFATTRIBUTE_HPP_
 #define XDMFATTRIBUTE_HPP_
 
-#include "XdmfItem.hpp"
 #include "XdmfAttributeCenter.hpp"
 #include "XdmfAttributeType.hpp"
+#include "XdmfDataItem.hpp"
 
-class XdmfAttribute : public XdmfItem {
+class XdmfAttribute : public XdmfDataItem {
 
 public:
 
@@ -77,6 +77,8 @@ public:
 	void write(boost::shared_ptr<XdmfVisitor> visitor) const;
 
 	virtual std::string printSelf() const;
+
+	void setNumberValues(int numValues);
 
 protected:
 

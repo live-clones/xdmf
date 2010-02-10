@@ -13,23 +13,38 @@ int main(int argc, char* argv[])
 	grid->setName("test");
 
 	// Set Geometry
-	int points[] = { 0, 0, 1, 1, 0, 1, 3, 0, 2, 0, 1, 1, 1, 1, 1, 3, 2, 2,
+	int points[] = {0, 0, 1, 1, 0, 1, 3, 0, 2, 0, 1, 1, 1, 1, 1, 3, 2, 2,
 			0, 0, -1, 1, 0, -1, 3, 0, -2, 0, 1, -1, 1, 1, -1, 3, 2, -2};
+	grid->getGeometry()->setNumberPoints(12);
 	grid->getGeometry()->setGeometryType(XdmfGeometryType::XYZ());
-	grid->getGeometry()->getData()->setData(points);
-	grid->getGeometry()->getData()->setNumberValues(36);
+	grid->getGeometry()->setData(points);
 
 	// Set Topology
-	grid->getTopology()->setTopologyType(XdmfTopologyType::Hexahedron());
+	int connectivity[] = {0, 1, 7, 6, 3, 4, 10, 9, 1, 2, 8, 7, 4, 5, 11, 10};
 	grid->getTopology()->setNumberElements(2);
-	int connectivity[] = { 0, 1, 7, 6, 3, 4, 10, 9, 1, 2, 8, 7, 4, 5, 11, 10};
-	grid->getTopology()->getData()->setNumberValues(16);
-	grid->getTopology()->getData()->setData(connectivity);
+	grid->getTopology()->setTopologyType(XdmfTopologyType::Hexahedron());
+	grid->getTopology()->setData(connectivity);
 
-	boost::shared_ptr<XdmfAttribute> attr = XdmfAttribute::New();
-	attr->setName("Attr1");
-	attr->setAttributeType(XdmfAttributeType::Scalar());
-	grid->insert(attr);
+	// Add Node Attribute
+	boost::shared_ptr<XdmfAttribute> nodalAttribute = XdmfAttribute::New();
+	int nodeValues[] = {100, 200, 300, 300, 400, 500, 300, 400, 500, 500, 600, 700};
+	nodalAttribute->setName("Nodal Attribute");
+	nodalAttribute->setNumberValues(12);
+	nodalAttribute->setAttributeType(XdmfAttributeType::Scalar());
+	nodalAttribute->setAttributeCenter(XdmfAttributeCenter::Node());
+	nodalAttribute->setData(nodeValues);
+
+	// Add Cell Attribute
+	boost::shared_ptr<XdmfAttribute> cellAttribute = XdmfAttribute::New();
+	int cellValues[] = {100, 200};
+	cellAttribute->setName("Cell Attribute");
+	cellAttribute->setNumberValues(2);
+	cellAttribute->setAttributeType(XdmfAttributeType::Scalar());
+	cellAttribute->setAttributeCenter(XdmfAttributeCenter::Cell());
+	cellAttribute->setData(cellValues);
+
+	grid->insert(nodalAttribute);
+	grid->insert(cellAttribute);
 	grid->write(visitor3);
 	std::cout << visitor3->printSelf() << std::endl;
 

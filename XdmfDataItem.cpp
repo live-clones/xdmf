@@ -49,11 +49,6 @@ int XdmfDataItem::getNumberValues() const
 	return mNumberValues;
 }
 
-void XdmfDataItem::setNumberValues(int numValues)
-{
-	mNumberValues = numValues;
-}
-
 void XdmfDataItem::write(boost::shared_ptr<XdmfVisitor> visitor) const
 {
 	visitor->visit(this);

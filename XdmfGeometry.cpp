@@ -5,13 +5,12 @@
  *      Author: kleiter
  */
 
-#include "XdmfDataItem.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfVisitor.hpp"
 
 XdmfGeometry::XdmfGeometry() :
-	mPointData(XdmfDataItem::New()),
-	mGeometryType(XdmfGeometryType::NoGeometryType())
+	mGeometryType(XdmfGeometryType::NoGeometryType()),
+	mNumberPoints(0)
 {
 	std::cout << "Created Geometry " << this << std::endl;
 }
@@ -29,6 +28,7 @@ XdmfGeometryType XdmfGeometry::getGeometryType() const
 void XdmfGeometry::setGeometryType(const XdmfGeometryType& geomType)
 {
 	mGeometryType = geomType;
+	mNumberValues = mNumberPoints * mGeometryType.getDimensions();
 }
 
 std::string XdmfGeometry::getGeometryTypeAsString() const
@@ -41,19 +41,10 @@ int XdmfGeometry::getDimensions() const
 	return mGeometryType.getDimensions();
 }
 
-boost::shared_ptr<XdmfDataItem> XdmfGeometry::getData()
+void XdmfGeometry::setNumberPoints(int numberPoints)
 {
-	return mPointData;
-}
-
-boost::shared_ptr<const XdmfDataItem> XdmfGeometry::getData() const
-{
-	return mPointData;
-}
-
-void XdmfGeometry::setData(boost::shared_ptr<XdmfDataItem> pointData)
-{
-	mPointData = pointData;
+	mNumberPoints = numberPoints;
+	mNumberValues = mNumberPoints * mGeometryType.getDimensions();
 }
 
 std::string XdmfGeometry::printSelf() const
