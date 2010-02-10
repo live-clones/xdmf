@@ -45,11 +45,12 @@ namespace boost {
 %include XdmfItem.hpp
 %include XdmfVisitor.hpp
 
+%include XdmfDataItem.hpp
+%include XdmfDataItemType.hpp
+
 %include XdmfAttribute.hpp
 %include XdmfAttributeCenter.hpp
 %include XdmfAttributeType.hpp
-%include XdmfDataItem.hpp
-%include XdmfDataItemType.hpp
 %include XdmfGeometry.hpp
 %include XdmfGeometryType.hpp
 %include XdmfGrid.hpp

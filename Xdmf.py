@@ -119,6 +119,8 @@ class XdmfAttributePtr(_object):
     def getAttributeCenterAsString(self): return _Xdmf.XdmfAttributePtr_getAttributeCenterAsString(self)
     def write(self, *args): return _Xdmf.XdmfAttributePtr_write(self, *args)
     def printSelf(self): return _Xdmf.XdmfAttributePtr_printSelf(self)
+    def setNumberValues(self, *args): return _Xdmf.XdmfAttributePtr_setNumberValues(self, *args)
+    def getNumberValues(self): return _Xdmf.XdmfAttributePtr_getNumberValues(self)
 XdmfAttributePtr_swigregister = _Xdmf.XdmfAttributePtr_swigregister
 XdmfAttributePtr_swigregister(XdmfAttributePtr)
 
@@ -137,7 +139,6 @@ class XdmfDataItemPtr(_object):
     __del__ = lambda self : None;
     def New(self): return _Xdmf.XdmfDataItemPtr_New(self)
     def getNumberValues(self): return _Xdmf.XdmfDataItemPtr_getNumberValues(self)
-    def setNumberValues(self, *args): return _Xdmf.XdmfDataItemPtr_setNumberValues(self, *args)
     def printSelf(self): return _Xdmf.XdmfDataItemPtr_printSelf(self)
     def write(self, *args): return _Xdmf.XdmfDataItemPtr_write(self, *args)
 XdmfDataItemPtr_swigregister = _Xdmf.XdmfDataItemPtr_swigregister
@@ -161,10 +162,10 @@ class XdmfGeometryPtr(_object):
     def setGeometryType(self, *args): return _Xdmf.XdmfGeometryPtr_setGeometryType(self, *args)
     def getGeometryTypeAsString(self): return _Xdmf.XdmfGeometryPtr_getGeometryTypeAsString(self)
     def getDimensions(self): return _Xdmf.XdmfGeometryPtr_getDimensions(self)
-    def getData(self, *args): return _Xdmf.XdmfGeometryPtr_getData(self, *args)
-    def setData(self, *args): return _Xdmf.XdmfGeometryPtr_setData(self, *args)
+    def setNumberPoints(self, *args): return _Xdmf.XdmfGeometryPtr_setNumberPoints(self, *args)
     def printSelf(self): return _Xdmf.XdmfGeometryPtr_printSelf(self)
     def write(self, *args): return _Xdmf.XdmfGeometryPtr_write(self, *args)
+    def getNumberValues(self): return _Xdmf.XdmfGeometryPtr_getNumberValues(self)
 XdmfGeometryPtr_swigregister = _Xdmf.XdmfGeometryPtr_swigregister
 XdmfGeometryPtr_swigregister(XdmfGeometryPtr)
 
@@ -251,10 +252,9 @@ class XdmfTopologyPtr(_object):
     def setNumberElements(self, *args): return _Xdmf.XdmfTopologyPtr_setNumberElements(self, *args)
     def getTopologyTypeAsString(self): return _Xdmf.XdmfTopologyPtr_getTopologyTypeAsString(self)
     def getNodesPerElement(self): return _Xdmf.XdmfTopologyPtr_getNodesPerElement(self)
-    def getData(self, *args): return _Xdmf.XdmfTopologyPtr_getData(self, *args)
-    def setData(self, *args): return _Xdmf.XdmfTopologyPtr_setData(self, *args)
     def printSelf(self): return _Xdmf.XdmfTopologyPtr_printSelf(self)
     def write(self, *args): return _Xdmf.XdmfTopologyPtr_write(self, *args)
+    def getNumberValues(self): return _Xdmf.XdmfTopologyPtr_getNumberValues(self)
 XdmfTopologyPtr_swigregister = _Xdmf.XdmfTopologyPtr_swigregister
 XdmfTopologyPtr_swigregister(XdmfTopologyPtr)
 
@@ -321,12 +321,111 @@ def XdmfVisitor_New():
   return _Xdmf.XdmfVisitor_New()
 XdmfVisitor_New = _Xdmf.XdmfVisitor_New
 
-class XdmfAttribute(XdmfItem):
+class XdmfDataItem(XdmfItem):
     __swig_setmethods__ = {}
     for _s in [XdmfItem]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
-    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfAttribute, name, value)
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfDataItem, name, value)
     __swig_getmethods__ = {}
     for _s in [XdmfItem]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfDataItem, name)
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
+    __repr__ = _swig_repr
+    __swig_getmethods__["New"] = lambda x: _Xdmf.XdmfDataItem_New
+    if _newclass:New = staticmethod(_Xdmf.XdmfDataItem_New)
+    def getNumberValues(self): return _Xdmf.XdmfDataItem_getNumberValues(self)
+    def printSelf(self): return _Xdmf.XdmfDataItem_printSelf(self)
+    def write(self, *args): return _Xdmf.XdmfDataItem_write(self, *args)
+XdmfDataItem_swigregister = _Xdmf.XdmfDataItem_swigregister
+XdmfDataItem_swigregister(XdmfDataItem)
+
+def XdmfDataItem_New():
+  return _Xdmf.XdmfDataItem_New()
+XdmfDataItem_New = _Xdmf.XdmfDataItem_New
+
+class XdmfDataItemType(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfDataItemType, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfDataItemType, name)
+    __repr__ = _swig_repr
+    __swig_getmethods__["Unknown"] = lambda x: _Xdmf.XdmfDataItemType_Unknown
+    if _newclass:Unknown = staticmethod(_Xdmf.XdmfDataItemType_Unknown)
+    __swig_getmethods__["Int8"] = lambda x: _Xdmf.XdmfDataItemType_Int8
+    if _newclass:Int8 = staticmethod(_Xdmf.XdmfDataItemType_Int8)
+    __swig_getmethods__["Int16"] = lambda x: _Xdmf.XdmfDataItemType_Int16
+    if _newclass:Int16 = staticmethod(_Xdmf.XdmfDataItemType_Int16)
+    __swig_getmethods__["Int32"] = lambda x: _Xdmf.XdmfDataItemType_Int32
+    if _newclass:Int32 = staticmethod(_Xdmf.XdmfDataItemType_Int32)
+    __swig_getmethods__["Int64"] = lambda x: _Xdmf.XdmfDataItemType_Int64
+    if _newclass:Int64 = staticmethod(_Xdmf.XdmfDataItemType_Int64)
+    __swig_getmethods__["Float32"] = lambda x: _Xdmf.XdmfDataItemType_Float32
+    if _newclass:Float32 = staticmethod(_Xdmf.XdmfDataItemType_Float32)
+    __swig_getmethods__["Float64"] = lambda x: _Xdmf.XdmfDataItemType_Float64
+    if _newclass:Float64 = staticmethod(_Xdmf.XdmfDataItemType_Float64)
+    __swig_getmethods__["UInt8"] = lambda x: _Xdmf.XdmfDataItemType_UInt8
+    if _newclass:UInt8 = staticmethod(_Xdmf.XdmfDataItemType_UInt8)
+    __swig_getmethods__["UInt16"] = lambda x: _Xdmf.XdmfDataItemType_UInt16
+    if _newclass:UInt16 = staticmethod(_Xdmf.XdmfDataItemType_UInt16)
+    __swig_getmethods__["UInt32"] = lambda x: _Xdmf.XdmfDataItemType_UInt32
+    if _newclass:UInt32 = staticmethod(_Xdmf.XdmfDataItemType_UInt32)
+    def getName(self): return _Xdmf.XdmfDataItemType_getName(self)
+    def __eq__(self, *args): return _Xdmf.XdmfDataItemType___eq__(self, *args)
+    def __ne__(self, *args): return _Xdmf.XdmfDataItemType___ne__(self, *args)
+    def __init__(self, *args): 
+        this = _Xdmf.new_XdmfDataItemType(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _Xdmf.delete_XdmfDataItemType
+    __del__ = lambda self : None;
+XdmfDataItemType_swigregister = _Xdmf.XdmfDataItemType_swigregister
+XdmfDataItemType_swigregister(XdmfDataItemType)
+
+def XdmfDataItemType_Unknown():
+  return _Xdmf.XdmfDataItemType_Unknown()
+XdmfDataItemType_Unknown = _Xdmf.XdmfDataItemType_Unknown
+
+def XdmfDataItemType_Int8():
+  return _Xdmf.XdmfDataItemType_Int8()
+XdmfDataItemType_Int8 = _Xdmf.XdmfDataItemType_Int8
+
+def XdmfDataItemType_Int16():
+  return _Xdmf.XdmfDataItemType_Int16()
+XdmfDataItemType_Int16 = _Xdmf.XdmfDataItemType_Int16
+
+def XdmfDataItemType_Int32():
+  return _Xdmf.XdmfDataItemType_Int32()
+XdmfDataItemType_Int32 = _Xdmf.XdmfDataItemType_Int32
+
+def XdmfDataItemType_Int64():
+  return _Xdmf.XdmfDataItemType_Int64()
+XdmfDataItemType_Int64 = _Xdmf.XdmfDataItemType_Int64
+
+def XdmfDataItemType_Float32():
+  return _Xdmf.XdmfDataItemType_Float32()
+XdmfDataItemType_Float32 = _Xdmf.XdmfDataItemType_Float32
+
+def XdmfDataItemType_Float64():
+  return _Xdmf.XdmfDataItemType_Float64()
+XdmfDataItemType_Float64 = _Xdmf.XdmfDataItemType_Float64
+
+def XdmfDataItemType_UInt8():
+  return _Xdmf.XdmfDataItemType_UInt8()
+XdmfDataItemType_UInt8 = _Xdmf.XdmfDataItemType_UInt8
+
+def XdmfDataItemType_UInt16():
+  return _Xdmf.XdmfDataItemType_UInt16()
+XdmfDataItemType_UInt16 = _Xdmf.XdmfDataItemType_UInt16
+
+def XdmfDataItemType_UInt32():
+  return _Xdmf.XdmfDataItemType_UInt32()
+XdmfDataItemType_UInt32 = _Xdmf.XdmfDataItemType_UInt32
+
+class XdmfAttribute(XdmfDataItem):
+    __swig_setmethods__ = {}
+    for _s in [XdmfDataItem]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfAttribute, name, value)
+    __swig_getmethods__ = {}
+    for _s in [XdmfDataItem]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
     __getattr__ = lambda self, name: _swig_getattr(self, XdmfAttribute, name)
     def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
@@ -342,6 +441,7 @@ class XdmfAttribute(XdmfItem):
     def getAttributeCenterAsString(self): return _Xdmf.XdmfAttribute_getAttributeCenterAsString(self)
     def write(self, *args): return _Xdmf.XdmfAttribute_write(self, *args)
     def printSelf(self): return _Xdmf.XdmfAttribute_printSelf(self)
+    def setNumberValues(self, *args): return _Xdmf.XdmfAttribute_setNumberValues(self, *args)
 XdmfAttribute_swigregister = _Xdmf.XdmfAttribute_swigregister
 XdmfAttribute_swigregister(XdmfAttribute)
 
@@ -457,112 +557,12 @@ def XdmfAttributeType_GlobalId():
   return _Xdmf.XdmfAttributeType_GlobalId()
 XdmfAttributeType_GlobalId = _Xdmf.XdmfAttributeType_GlobalId
 
-class XdmfDataItem(XdmfItem):
+class XdmfGeometry(XdmfDataItem):
     __swig_setmethods__ = {}
-    for _s in [XdmfItem]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
-    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfDataItem, name, value)
-    __swig_getmethods__ = {}
-    for _s in [XdmfItem]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
-    __getattr__ = lambda self, name: _swig_getattr(self, XdmfDataItem, name)
-    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
-    __repr__ = _swig_repr
-    __swig_getmethods__["New"] = lambda x: _Xdmf.XdmfDataItem_New
-    if _newclass:New = staticmethod(_Xdmf.XdmfDataItem_New)
-    def getNumberValues(self): return _Xdmf.XdmfDataItem_getNumberValues(self)
-    def setNumberValues(self, *args): return _Xdmf.XdmfDataItem_setNumberValues(self, *args)
-    def printSelf(self): return _Xdmf.XdmfDataItem_printSelf(self)
-    def write(self, *args): return _Xdmf.XdmfDataItem_write(self, *args)
-XdmfDataItem_swigregister = _Xdmf.XdmfDataItem_swigregister
-XdmfDataItem_swigregister(XdmfDataItem)
-
-def XdmfDataItem_New():
-  return _Xdmf.XdmfDataItem_New()
-XdmfDataItem_New = _Xdmf.XdmfDataItem_New
-
-class XdmfDataItemType(_object):
-    __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfDataItemType, name, value)
-    __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, XdmfDataItemType, name)
-    __repr__ = _swig_repr
-    __swig_getmethods__["Unknown"] = lambda x: _Xdmf.XdmfDataItemType_Unknown
-    if _newclass:Unknown = staticmethod(_Xdmf.XdmfDataItemType_Unknown)
-    __swig_getmethods__["Int8"] = lambda x: _Xdmf.XdmfDataItemType_Int8
-    if _newclass:Int8 = staticmethod(_Xdmf.XdmfDataItemType_Int8)
-    __swig_getmethods__["Int16"] = lambda x: _Xdmf.XdmfDataItemType_Int16
-    if _newclass:Int16 = staticmethod(_Xdmf.XdmfDataItemType_Int16)
-    __swig_getmethods__["Int32"] = lambda x: _Xdmf.XdmfDataItemType_Int32
-    if _newclass:Int32 = staticmethod(_Xdmf.XdmfDataItemType_Int32)
-    __swig_getmethods__["Int64"] = lambda x: _Xdmf.XdmfDataItemType_Int64
-    if _newclass:Int64 = staticmethod(_Xdmf.XdmfDataItemType_Int64)
-    __swig_getmethods__["Float32"] = lambda x: _Xdmf.XdmfDataItemType_Float32
-    if _newclass:Float32 = staticmethod(_Xdmf.XdmfDataItemType_Float32)
-    __swig_getmethods__["Float64"] = lambda x: _Xdmf.XdmfDataItemType_Float64
-    if _newclass:Float64 = staticmethod(_Xdmf.XdmfDataItemType_Float64)
-    __swig_getmethods__["UInt8"] = lambda x: _Xdmf.XdmfDataItemType_UInt8
-    if _newclass:UInt8 = staticmethod(_Xdmf.XdmfDataItemType_UInt8)
-    __swig_getmethods__["UInt16"] = lambda x: _Xdmf.XdmfDataItemType_UInt16
-    if _newclass:UInt16 = staticmethod(_Xdmf.XdmfDataItemType_UInt16)
-    __swig_getmethods__["UInt32"] = lambda x: _Xdmf.XdmfDataItemType_UInt32
-    if _newclass:UInt32 = staticmethod(_Xdmf.XdmfDataItemType_UInt32)
-    def getName(self): return _Xdmf.XdmfDataItemType_getName(self)
-    def __eq__(self, *args): return _Xdmf.XdmfDataItemType___eq__(self, *args)
-    def __ne__(self, *args): return _Xdmf.XdmfDataItemType___ne__(self, *args)
-    def __init__(self, *args): 
-        this = _Xdmf.new_XdmfDataItemType(*args)
-        try: self.this.append(this)
-        except: self.this = this
-    __swig_destroy__ = _Xdmf.delete_XdmfDataItemType
-    __del__ = lambda self : None;
-XdmfDataItemType_swigregister = _Xdmf.XdmfDataItemType_swigregister
-XdmfDataItemType_swigregister(XdmfDataItemType)
-
-def XdmfDataItemType_Unknown():
-  return _Xdmf.XdmfDataItemType_Unknown()
-XdmfDataItemType_Unknown = _Xdmf.XdmfDataItemType_Unknown
-
-def XdmfDataItemType_Int8():
-  return _Xdmf.XdmfDataItemType_Int8()
-XdmfDataItemType_Int8 = _Xdmf.XdmfDataItemType_Int8
-
-def XdmfDataItemType_Int16():
-  return _Xdmf.XdmfDataItemType_Int16()
-XdmfDataItemType_Int16 = _Xdmf.XdmfDataItemType_Int16
-
-def XdmfDataItemType_Int32():
-  return _Xdmf.XdmfDataItemType_Int32()
-XdmfDataItemType_Int32 = _Xdmf.XdmfDataItemType_Int32
-
-def XdmfDataItemType_Int64():
-  return _Xdmf.XdmfDataItemType_Int64()
-XdmfDataItemType_Int64 = _Xdmf.XdmfDataItemType_Int64
-
-def XdmfDataItemType_Float32():
-  return _Xdmf.XdmfDataItemType_Float32()
-XdmfDataItemType_Float32 = _Xdmf.XdmfDataItemType_Float32
-
-def XdmfDataItemType_Float64():
-  return _Xdmf.XdmfDataItemType_Float64()
-XdmfDataItemType_Float64 = _Xdmf.XdmfDataItemType_Float64
-
-def XdmfDataItemType_UInt8():
-  return _Xdmf.XdmfDataItemType_UInt8()
-XdmfDataItemType_UInt8 = _Xdmf.XdmfDataItemType_UInt8
-
-def XdmfDataItemType_UInt16():
-  return _Xdmf.XdmfDataItemType_UInt16()
-XdmfDataItemType_UInt16 = _Xdmf.XdmfDataItemType_UInt16
-
-def XdmfDataItemType_UInt32():
-  return _Xdmf.XdmfDataItemType_UInt32()
-XdmfDataItemType_UInt32 = _Xdmf.XdmfDataItemType_UInt32
-
-class XdmfGeometry(XdmfItem):
-    __swig_setmethods__ = {}
-    for _s in [XdmfItem]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
+    for _s in [XdmfDataItem]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfGeometry, name, value)
     __swig_getmethods__ = {}
-    for _s in [XdmfItem]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
+    for _s in [XdmfDataItem]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
     __getattr__ = lambda self, name: _swig_getattr(self, XdmfGeometry, name)
     def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
@@ -572,8 +572,7 @@ class XdmfGeometry(XdmfItem):
     def setGeometryType(self, *args): return _Xdmf.XdmfGeometry_setGeometryType(self, *args)
     def getGeometryTypeAsString(self): return _Xdmf.XdmfGeometry_getGeometryTypeAsString(self)
     def getDimensions(self): return _Xdmf.XdmfGeometry_getDimensions(self)
-    def getData(self, *args): return _Xdmf.XdmfGeometry_getData(self, *args)
-    def setData(self, *args): return _Xdmf.XdmfGeometry_setData(self, *args)
+    def setNumberPoints(self, *args): return _Xdmf.XdmfGeometry_setNumberPoints(self, *args)
     def printSelf(self): return _Xdmf.XdmfGeometry_printSelf(self)
     def write(self, *args): return _Xdmf.XdmfGeometry_write(self, *args)
 XdmfGeometry_swigregister = _Xdmf.XdmfGeometry_swigregister
@@ -685,12 +684,12 @@ def XdmfGrid_New():
   return _Xdmf.XdmfGrid_New()
 XdmfGrid_New = _Xdmf.XdmfGrid_New
 
-class XdmfTopology(XdmfItem):
+class XdmfTopology(XdmfDataItem):
     __swig_setmethods__ = {}
-    for _s in [XdmfItem]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
+    for _s in [XdmfDataItem]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
     __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfTopology, name, value)
     __swig_getmethods__ = {}
-    for _s in [XdmfItem]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
+    for _s in [XdmfDataItem]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
     __getattr__ = lambda self, name: _swig_getattr(self, XdmfTopology, name)
     def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
@@ -702,8 +701,6 @@ class XdmfTopology(XdmfItem):
     def setNumberElements(self, *args): return _Xdmf.XdmfTopology_setNumberElements(self, *args)
     def getTopologyTypeAsString(self): return _Xdmf.XdmfTopology_getTopologyTypeAsString(self)
     def getNodesPerElement(self): return _Xdmf.XdmfTopology_getNodesPerElement(self)
-    def getData(self, *args): return _Xdmf.XdmfTopology_getData(self, *args)
-    def setData(self, *args): return _Xdmf.XdmfTopology_setData(self, *args)
     def printSelf(self): return _Xdmf.XdmfTopology_printSelf(self)
     def write(self, *args): return _Xdmf.XdmfTopology_write(self, *args)
 XdmfTopology_swigregister = _Xdmf.XdmfTopology_swigregister
