@@ -219,7 +219,7 @@ XdmfGrid * XdmfExodusReader::read(const char * fileName, XdmfElement * parentEle
   int num_dim, num_nodes, num_elem, num_elem_blk, num_node_sets, num_side_sets;
   ex_get_init (exodusHandle, title, &num_dim, &num_nodes, &num_elem, &num_elem_blk, &num_node_sets, &num_side_sets);
 
-  /* 
+  /*  
   cout << "Title: " << title <<
     "\nNum Dim: " << num_dim <<
     "\nNum Nodes: " << num_nodes <<
@@ -229,7 +229,6 @@ XdmfGrid * XdmfExodusReader::read(const char * fileName, XdmfElement * parentEle
     "\nNum Side Sets: " << num_side_sets << endl;
   */
 
-
   // Read geometry values
   double * x = new double[num_nodes];
   double * y = new double[num_nodes];
@@ -237,20 +236,37 @@ XdmfGrid * XdmfExodusReader::read(const char * fileName, XdmfElement * parentEle
 
   ex_get_coord(exodusHandle, x, y, z);
 
-  // In the future we may want to do XDMF_GEOMETRY_X_Y_Z?
   XdmfGeometry * geom = grid->GetGeometry();
-  geom->SetGeometryType(XDMF_GEOMETRY_XYZ);
+  if(num_dim < 2 || num_dim > 3)
+  {
+    // Xdmf does not support geometries with less than 2 dimensions
+		std::cout << "Exodus File contains geometry of dimension " << num_dim << "which is unsupported by Xdmf" << std::endl;
+  	return NULL;
+	}
+	
+  // In the future we may want to do XDMF_GEOMETRY_X_Y_Z?
+  if(num_dim == 2)
+  {
+    geom->SetGeometryType(XDMF_GEOMETRY_XY);
+  }
+  else
+  {
+    geom->SetGeometryType(XDMF_GEOMETRY_XYZ);
+  }
   geom->SetNumberOfPoints(num_nodes);
   geom->SetDeleteOnGridDelete(true);
       
   XdmfArray * points = geom->GetPoints();
   points->SetNumberType(XDMF_FLOAT64_TYPE);
-  points->SetNumberOfElements(num_nodes * 3);
+  points->SetNumberOfElements(num_nodes * num_dim);
   for (int j=0; j<num_nodes; j++)
   {
-    points->SetValue((j*3), x[j]);
-    points->SetValue((j*3)+1, y[j]);
-    points->SetValue((j*3)+2, z[j]);
+    points->SetValue((j * num_dim), x[j]);
+    points->SetValue((j * num_dim) + 1, y[j]);
+    if(num_dim == 3)
+    {
+   	  points->SetValue((j * num_dim) + 2, z[j]);
+    }
   }
   delete [] x, y, z;     
 
