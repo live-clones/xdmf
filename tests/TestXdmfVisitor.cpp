@@ -8,7 +8,8 @@
 
 int main(int argc, char* argv[])
 {
-	boost::shared_ptr<XdmfVisitor> visitor3 = XdmfVisitor::New();
+	boost::shared_ptr<XdmfVisitor> visitor = XdmfVisitor::New();
+	visitor->setLightDataLimit(10);
 	boost::shared_ptr<XdmfGrid> grid = XdmfGrid::New();
 
 	grid->setName("test");
@@ -49,9 +50,9 @@ int main(int argc, char* argv[])
 
 	boost::shared_ptr<XdmfDomain> domain = XdmfDomain::New();
 	domain->insert(grid);
-	domain->write(visitor3);
+	domain->write(visitor);
 
-	std::cout << visitor3->printSelf() << std::endl;
+	std::cout << visitor->printSelf() << std::endl;
 
 	return 0;
 }

@@ -14,7 +14,7 @@
 XdmfVisitor::XdmfVisitor() :
 	mTabIndex(0),
 	xmlData(),
-	mLightDataLimit(0),
+	mLightDataLimit(100),
 	mHeavyFileName("output.h5"),
 	hdf5Handle(H5Fcreate("output.h5", H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT))
 {
@@ -155,6 +155,16 @@ void XdmfVisitor::visit(const XdmfTopology * const topology)
 std::string XdmfVisitor::printSelf() const
 {
 	return "XdmfVisitor:\n" + xmlData.str();
+}
+
+int XdmfVisitor::getLightDataLimit() const
+{
+	return mLightDataLimit;
+}
+
+void XdmfVisitor::setLightDataLimit(int numValues)
+{
+	mLightDataLimit = numValues;
 }
 
 std::string XdmfVisitor::getHDF5GroupName()

@@ -38,6 +38,20 @@ public:
 
 	virtual std::string printSelf() const;
 
+	/**
+	 * Get the number of values that this visitor writes to light data (XML) before switching to a heavy data format.
+	 *
+	 * @return an int containing the number of values.
+	 */
+	int getLightDataLimit() const;
+
+	/**
+	 * Set the number of values that this visitor writes to light data (XML) before switching to a heavy data format.
+	 *
+	 * @param an int containing the number of values
+	 */
+	void setLightDataLimit(int numValues);
+
 protected:
 
 	XdmfVisitor();
@@ -54,8 +68,8 @@ private:
 	std::stringstream xmlData;
 	hid_t hdf5Handle;
 	std::vector<std::string> dataHierarchy;
-	int mLightDataLimit;
 	std::string mHeavyFileName;
+	int mLightDataLimit;
 
 };
 
