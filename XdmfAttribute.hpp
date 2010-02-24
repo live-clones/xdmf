@@ -47,9 +47,9 @@ public:
 	void setAttributeType(const XdmfAttributeType& attributeType);
 
 	/**
-	 * Get the name of the AttributeType associated with this Attribute.
+	 * Get the name of the XdmfAttributeType associated with this Attribute.
 	 *
-	 * @return std::string containing name of the AttributeType.
+	 * @return std::string containing name of the XdmfAttributeType.
 	 */
 	std::string getAttributeTypeAsString() const;
 
@@ -70,15 +70,20 @@ public:
 	/**
 	 * Get the name of the XdmfAttributeCenter associated with this Attribute.
 	 *
-	 * @return std::string containing name of the AttributeCenter.
+	 * @return std::string containing name of the XdmfAttributeCenter.
 	 */
 	std::string getAttributeCenterAsString() const;
+
+	/**
+	 * Set the number of values this attribute contains.
+	 *
+	 * @param an int giving the number of values.
+	 */
+	void setNumberValues(int numValues);
 
 	void write(boost::shared_ptr<XdmfVisitor> visitor) const;
 
 	virtual std::string printSelf() const;
-
-	void setNumberValues(int numValues);
 
 protected:
 

@@ -16,19 +16,19 @@ class XdmfDataItem : public XdmfItem {
 
 public:
 
-	XdmfNewMacro(XdmfDataItem);
+	//XdmfNewMacro(XdmfDataItem);
 
-	template <typename T> void setData(T * dataPointer);
+	template <typename T> void setValues(T * dataPointer);
 
-	template <typename T> T* getData();
+	template <typename T> T* getValues();
 
-	template <typename T> const T* const getData() const;
+	template <typename T> const T* const getValues() const;
 
 	int getNumberValues() const;
 
 	std::string printSelf() const;
 
-	void write(boost::shared_ptr<XdmfVisitor> visitor) const;
+	void write(boost::shared_ptr<XdmfVisitor> visitor) const = 0;
 
 protected:
 
@@ -42,7 +42,7 @@ private:
 	XdmfDataItem(const XdmfDataItem&);  // Not implemented.
 	void operator=(const XdmfDataItem&);  // Not implemented.
 
-	int* mDataPointer;
+	void* mDataPointer;
 	XdmfDataItemType mDataType;
 };
 

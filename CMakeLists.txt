@@ -8,8 +8,12 @@ set(BUILD_SHARED_LIBS true)
 find_package(Boost REQUIRED)
 if(Boost_FOUND)
 	include_directories(${Boost_INCLUDE_DIRS})
-	message(${Boost_INCLUDE_DIRS})
 endif(Boost_FOUND)
+
+find_package(HDF5 REQUIRED)
+if(HDF5_FOUND)
+	include_directories(${HDF5_INCLUDE_DIR})
+endif(HDF5_FOUND)
 
 option(XDMF_WRAP_PYTHON ON)
 if(XDMF_WRAP_PYTHON)
@@ -37,6 +41,7 @@ set(XdmfSources
 )
 
 add_library(Xdmf ${XdmfSources})
+target_link_libraries(Xdmf ${HDF5_LIBRARIES})
 
 if(XDMF_WRAP_PYTHON)
 	add_library(_Xdmf MODULE XdmfPython)

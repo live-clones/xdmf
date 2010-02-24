@@ -62,6 +62,8 @@ protected:
 
 private:
 
+	static XdmfDataItemType* UnknownPtr;
+
 	std::string mName;
 };
 

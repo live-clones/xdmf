@@ -1,6 +1,6 @@
 /**
- * An XdmfItem replaces the XdmfElement class in the previous version of Xdmf.  An XdmfElement represents and item that can be
- * visited by an XdmfLightDataVisitor and have it's contents added to an XdmfFile.  These include XdmfGrids, XdmfSets,
+ * An XdmfItem replaces the XdmfElement class in the previous version of Xdmf.  An XdmfItem represents an item that can be
+ * visited by an XdmfVisitor and have it's contents added to an xdmf file.  These include XdmfGrids, XdmfSets,
  * XdmfTopologies, etc.
  *
  * This is an abstract base class.
