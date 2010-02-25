@@ -45,9 +45,9 @@ void XdmfVisitor::visit(const XdmfDataItem * const dataItem)
 	{
 		format = "HDF";
 	}
-	xmlData << std::setw(mTabIndex) << "" << "<DataItem Format=\"" << format << "\" DataType=\"Int\" Precision=\"4\" Dimensions=\"" << dataItem->getNumberValues() << "\">";
+	xmlData << std::setw(mTabIndex) << "" << "<DataItem Format=\"" << format << "\" DataType=\"" << dataItem->getName() << "\" Precision=\"" << dataItem->getPrecision() << "\" Dimensions=\"" << dataItem->getNumberValues() << "\">";
 
-	const int* const intPointer = dataItem->getValues<int>();
+	const void* const pointer = dataItem->getValues();
 	mTabIndex++;
 	if(dataItem->getNumberValues() > mLightDataLimit)
 	{
@@ -78,25 +78,25 @@ void XdmfVisitor::visit(const XdmfDataItem * const dataItem)
 				handle = H5Gcreate(hdf5Handle, groupName.c_str(), H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 			}
 		}
-		hid_t dataset = H5Dcreate(handle, dataHierarchy.back().c_str(), H5T_NATIVE_INT, dataspace, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+		hid_t dataset = H5Dcreate(handle, dataHierarchy.back().c_str(), dataItem->getHDF5DataType(), dataspace, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 		xmlData << "\n" << std::setw(mTabIndex) << "" << mHeavyFileName << ":" << groupName << "/" << dataHierarchy.back();
-		status = H5Dwrite(dataset, H5T_NATIVE_INT, H5S_ALL, H5S_ALL, H5P_DEFAULT, dataItem->getValues<int>());
+		status = H5Dwrite(dataset, dataItem->getHDF5DataType(), H5S_ALL, H5S_ALL, H5P_DEFAULT, dataItem->getValues());
 		status = H5Dclose(dataset);
 		status = H5Sclose(dataspace);
 	}
 	else
 	{
-		for (unsigned int i=0; i<dataItem->getNumberValues(); ++i)
-		{
-			if (i % 10 == 0)
-			{
-				xmlData << "\n" << std::setw(mTabIndex) << "" << intPointer[i] << " ";
-			}
-			else
-			{
-				xmlData << intPointer[i] << " ";
-			}
-		}
+		//for (unsigned int i=0; i<dataItem->getNumberValues(); ++i)
+		//{
+		//	if (i % 10 == 0)
+		//	{
+		//		xmlData << "\n" << std::setw(mTabIndex) << "" << pointer[i] << " ";
+		//	}
+		//	else
+		//	{
+		//		xmlData << pointer[i] << " ";
+		//	}
+		//}
 	}
 	mTabIndex--;
 	xmlData << "\n" << std::setw(mTabIndex) << "" << "</DataItem>\n";

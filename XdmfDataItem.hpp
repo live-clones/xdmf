@@ -20,9 +20,17 @@ public:
 
 	template <typename T> void setValues(T * dataPointer);
 
-	template <typename T> T* getValues();
+	//template <typename T> T* getValues();
+	void* getValues();
 
-	template <typename T> const T* const getValues() const;
+	//template <typename T> const T* const getValues() const;
+	const void* const getValues() const;
+
+	hid_t getHDF5DataType() const;
+
+	std::string getName() const;
+
+	int getPrecision() const;
 
 	int getNumberValues() const;
 
@@ -43,7 +51,7 @@ private:
 	void operator=(const XdmfDataItem&);  // Not implemented.
 
 	void* mDataPointer;
-	XdmfDataItemType mDataType;
+	XdmfDataItemType mDataItemType;
 };
 
 #endif /* XDMFDATAITEM_HPP_ */

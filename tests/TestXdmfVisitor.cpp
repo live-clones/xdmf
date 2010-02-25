@@ -15,8 +15,8 @@ int main(int argc, char* argv[])
 	grid->setName("test");
 
 	// Set Geometry
-	int points[] = {0, 0, 1, 1, 0, 1, 3, 0, 2, 0, 1, 1, 1, 1, 1, 3, 2, 2,
-			0, 0, -1, 1, 0, -1, 3, 0, -2, 0, 1, -1, 1, 1, -1, 3, 2, -2};
+	double points[] = {0.1, 0.1, 1.1, 1.1, 0.1, 1.1, 3.1, 0.1, 2.1, 0.1, 1.1, 1.1, 1.1, 1.1, 1.1, 3.1, 2.1, 2.1,
+			0.1, 0.1, -1.1, 1.1, 0.1, -1.1, 3.1, 0.1, -2.1, 0.1, 1.1, -1.1, 1.1, 1.1, -1.1, 3.1, 2.1, -2.1};
 	grid->getGeometry()->setNumberPoints(12);
 	grid->getGeometry()->setGeometryType(XdmfGeometryType::XYZ());
 	grid->getGeometry()->setValues(points);
