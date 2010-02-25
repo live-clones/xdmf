@@ -15,6 +15,11 @@ if(HDF5_FOUND)
 	include_directories(${HDF5_INCLUDE_DIR})
 endif(HDF5_FOUND)
 
+find_package(LibXml2 REQUIRED)
+if(LIBXML2_FOUND)
+  include_directories(${LIBXML2_INCLUDE_DIR})
+endif(LIBXML2_FOUND)
+
 option(XDMF_WRAP_PYTHON ON)
 if(XDMF_WRAP_PYTHON)
 	find_package(PythonLibs REQUIRED)
@@ -41,7 +46,7 @@ set(XdmfSources
 )
 
 add_library(Xdmf ${XdmfSources})
-target_link_libraries(Xdmf ${HDF5_LIBRARIES})
+target_link_libraries(Xdmf ${HDF5_LIBRARIES} ${LIBXML2_LIBRARIES})
 
 if(XDMF_WRAP_PYTHON)
 	add_library(_Xdmf MODULE XdmfPython)

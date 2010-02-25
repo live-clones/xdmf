@@ -12,46 +12,63 @@
 #include <iomanip>
 
 XdmfVisitor::XdmfVisitor() :
-	mTabIndex(0),
-	xmlData(),
 	mLightDataLimit(100),
 	mHeavyFileName("output.h5"),
-	hdf5Handle(H5Fcreate("output.h5", H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT))
+	hdf5Handle(H5Fcreate("output.h5", H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT)),
+	xmlDocument(xmlNewDoc((xmlChar*)"1.0")),
+	xmlCurrentNode(xmlNewNode(NULL, (xmlChar*)"Xdmf"))
 {
+	xmlDocSetRootElement(xmlDocument, xmlCurrentNode);
 	std::cout << "Created Visitor " << this << std::endl;
 }
 
 XdmfVisitor::~XdmfVisitor()
 {
+	xmlSaveFormatFile("output.xmf", xmlDocument, 1);
+	xmlFreeDoc(xmlDocument);
 	herr_t status = H5Fclose(hdf5Handle);
 	std::cout << "Deleted Visitor " << this << std::endl;
 }
 
 void XdmfVisitor::visit(const XdmfAttribute * const attribute)
 {
-	xmlData << std::setw(mTabIndex) << "" << "<Attribute Name=\"" << attribute->getName() << "\" AttributeType=\"" << attribute->getAttributeTypeAsString() << "\" Center=\"" << attribute->getAttributeCenterAsString() << "\">\n";
-	mTabIndex++;
+	xmlNodePtr parentNode = xmlCurrentNode;
+	xmlCurrentNode = xmlNewChild(xmlCurrentNode, NULL, (xmlChar*)"Attribute", NULL);
+	xmlNewProp(xmlCurrentNode, (xmlChar*)"Name", (xmlChar*)attribute->getName().c_str());
+	xmlNewProp(xmlCurrentNode, (xmlChar*)"AttributeType", (xmlChar*)attribute->getAttributeTypeAsString().c_str());
+	xmlNewProp(xmlCurrentNode, (xmlChar*)"Center", (xmlChar*)attribute->getAttributeCenterAsString().c_str());
+
 	dataHierarchy.push_back(attribute->getName());
 	visit((XdmfDataItem*)attribute);
 	dataHierarchy.pop_back();
-	mTabIndex--;
-	xmlData << std::setw(mTabIndex) << "" << "</Attribute>\n";
+
+	xmlCurrentNode = parentNode;
 }
 
 void XdmfVisitor::visit(const XdmfDataItem * const dataItem)
 {
+	xmlNodePtr parentNode = xmlCurrentNode;
+	xmlCurrentNode = xmlNewChild(xmlCurrentNode, NULL, (xmlChar*)"DataItem", NULL);
+
 	std::string format = "XML";
 	if(dataItem->getNumberValues() > mLightDataLimit)
 	{
 		format = "HDF";
 	}
-	xmlData << std::setw(mTabIndex) << "" << "<DataItem Format=\"" << format << "\" DataType=\"" << dataItem->getName() << "\" Precision=\"" << dataItem->getPrecision() << "\" Dimensions=\"" << dataItem->getNumberValues() << "\">";
+
+	xmlNewProp(xmlCurrentNode, (xmlChar*)"Format", (xmlChar*)format.c_str());
+	xmlNewProp(xmlCurrentNode, (xmlChar*)"DataType", (xmlChar*)dataItem->getName().c_str());
+	std::stringstream precisionString;
+	precisionString << dataItem->getPrecision();
+	xmlNewProp(xmlCurrentNode, (xmlChar*)"Precision", (xmlChar*)precisionString.str().c_str());
+	std::stringstream dimensionString;
+	dimensionString << dataItem->getNumberValues();
+	xmlNewProp(xmlCurrentNode, (xmlChar*)"Dimensions", (xmlChar*)dimensionString.str().c_str());
 
 	const void* const pointer = dataItem->getValues();
-	mTabIndex++;
+	std::stringstream xmlTextValues;
 	if(dataItem->getNumberValues() > mLightDataLimit)
 	{
-		std::cout << hdf5Handle << std::endl;
 		herr_t status;
 		hsize_t size = dataItem->getNumberValues();
 		hid_t dataspace = H5Screate_simple(1, &size, NULL);
@@ -79,56 +96,62 @@ void XdmfVisitor::visit(const XdmfDataItem * const dataItem)
 			}
 		}
 		hid_t dataset = H5Dcreate(handle, dataHierarchy.back().c_str(), dataItem->getHDF5DataType(), dataspace, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-		xmlData << "\n" << std::setw(mTabIndex) << "" << mHeavyFileName << ":" << groupName << "/" << dataHierarchy.back();
+		xmlTextValues << mHeavyFileName << ":" << groupName << "/" << dataHierarchy.back();
 		status = H5Dwrite(dataset, dataItem->getHDF5DataType(), H5S_ALL, H5S_ALL, H5P_DEFAULT, dataItem->getValues());
 		status = H5Dclose(dataset);
 		status = H5Sclose(dataspace);
 	}
 	else
 	{
-		//for (unsigned int i=0; i<dataItem->getNumberValues(); ++i)
-		//{
-		//	if (i % 10 == 0)
-		//	{
-		//		xmlData << "\n" << std::setw(mTabIndex) << "" << pointer[i] << " ";
-		//	}
-		//	else
-		//	{
-		//		xmlData << pointer[i] << " ";
-		//	}
-		//}
+		for (unsigned int i=0; i<dataItem->getNumberValues(); ++i)
+		{
+			if (i % 10 == 9)
+			{
+				xmlTextValues << ((int*)pointer)[i] << "\n";
+			}
+			else
+			{
+				xmlTextValues << ((int*)pointer)[i] << " ";
+			}
+		}
 	}
-	mTabIndex--;
-	xmlData << "\n" << std::setw(mTabIndex) << "" << "</DataItem>\n";
+
+	xmlAddChild(xmlCurrentNode, xmlNewText((xmlChar*)xmlTextValues.str().c_str()));
+	xmlCurrentNode = parentNode;
 }
 
 void XdmfVisitor::visit(const XdmfDomain * const domain)
 {
-	xmlData << std::setw(mTabIndex) << "" << "<Domain>\n";
-	mTabIndex++;
+	xmlNodePtr parentNode = xmlCurrentNode;
+	xmlCurrentNode = xmlNewChild(xmlCurrentNode, NULL, (xmlChar*)"Domain", NULL);
+
 	for(unsigned int i=0; i<domain->getNumberOfGrids(); ++i)
 	{
 		visit(domain->getGrid(i).get());
 	}
-	mTabIndex--;
-	xmlData << std::setw(mTabIndex) << "" << "</Domain>\n";
+
+	xmlCurrentNode = parentNode;
 }
 
 void XdmfVisitor::visit(const XdmfGeometry * const geometry)
 {
-	xmlData << std::setw(mTabIndex) << "" << "<Geometry GeometryType=\"" << geometry->getGeometryTypeAsString() << "\">\n";
-	mTabIndex++;
+	xmlNodePtr parentNode = xmlCurrentNode;
+	xmlCurrentNode = xmlNewChild(xmlCurrentNode, NULL, (xmlChar*)"Geometry", NULL);
+	xmlNewProp(xmlCurrentNode, (xmlChar*)"GeometryType", (xmlChar*)geometry->getGeometryTypeAsString().c_str());
+
 	dataHierarchy.push_back("XYZ");
 	visit((XdmfDataItem*)geometry);
 	dataHierarchy.pop_back();
-	mTabIndex--;
-	xmlData << std::setw(mTabIndex) << "" << "</Geometry>\n";
+
+	xmlCurrentNode = parentNode;
 }
 
 void XdmfVisitor::visit(const XdmfGrid * const grid)
 {
-	xmlData << std::setw(mTabIndex) << "" << "<Grid Name=\"" << grid->getName() <<"\">\n";
-	mTabIndex++;
+	xmlNodePtr parentNode = xmlCurrentNode;
+    xmlCurrentNode = xmlNewChild(xmlCurrentNode, NULL, (xmlChar*)"Grid", NULL);
+	xmlNewProp(xmlCurrentNode, (xmlChar*)"Name", (xmlChar*)grid->getName().c_str());
+
 	dataHierarchy.push_back(grid->getName());
 	visit(grid->getGeometry().get());
 	visit(grid->getTopology().get());
@@ -137,24 +160,29 @@ void XdmfVisitor::visit(const XdmfGrid * const grid)
 		visit(grid->getAttribute(i).get());
 	}
 	dataHierarchy.pop_back();
-	mTabIndex--;
-	xmlData << std::setw(mTabIndex) << "" << "</Grid>\n";
+
+	xmlCurrentNode = parentNode;
 }
 
 void XdmfVisitor::visit(const XdmfTopology * const topology)
 {
-	xmlData << std::setw(mTabIndex) << "" << "<Topology TopologyType=\"" << topology->getTopologyTypeAsString() << "\" NumberOfElements=\"" << topology->getNumberElements() << "\">\n";
-	mTabIndex++;
+	xmlNodePtr parentNode = xmlCurrentNode;
+	xmlCurrentNode = xmlNewChild(xmlCurrentNode, NULL, (xmlChar*)"Topology", NULL);
+	xmlNewProp(xmlCurrentNode, (xmlChar*)"TopologyType", (xmlChar*)topology->getTopologyTypeAsString().c_str());
+	std::stringstream numberElementsString;
+	numberElementsString << topology->getNumberElements();
+	xmlNewProp(xmlCurrentNode, (xmlChar*)"NumberOfElements", (xmlChar*)numberElementsString.str().c_str());
+
 	dataHierarchy.push_back("Connectivity");
 	visit((XdmfDataItem*)topology);
 	dataHierarchy.pop_back();
-	mTabIndex--;
-	xmlData << std::setw(mTabIndex) << "" << "</Topology>\n";
+
+	xmlCurrentNode = parentNode;
 }
 
 std::string XdmfVisitor::printSelf() const
 {
-	return "XdmfVisitor:\n" + xmlData.str();
+	return "XdmfVisitor";
 }
 
 int XdmfVisitor::getLightDataLimit() const
@@ -174,6 +202,5 @@ std::string XdmfVisitor::getHDF5GroupName()
 	{
 		datasetName << "/" << dataHierarchy[i];
 	}
-	std::cout << datasetName.str() << std::endl;
 	return datasetName.str();
 }

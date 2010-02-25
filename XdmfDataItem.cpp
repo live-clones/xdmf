@@ -125,6 +125,11 @@ int XdmfDataItem::getPrecision() const
 	return mDataItemType.getPrecision();
 }
 
+//std::string getValuesAsString() const
+//{
+
+//}
+
 /*
 template <typename T>
 T* XdmfDataItem::getValues()

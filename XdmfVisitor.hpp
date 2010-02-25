@@ -14,6 +14,7 @@ class XdmfTopology;
 
 // Includes
 #include <hdf5.h>
+#include <libxml/tree.h>
 #include <sstream>
 #include <vector>
 #include "XdmfObject.hpp"
@@ -64,12 +65,12 @@ private:
 
 	std::string getHDF5GroupName();
 
-	int mTabIndex;
-	std::stringstream xmlData;
 	hid_t hdf5Handle;
 	std::vector<std::string> dataHierarchy;
 	std::string mHeavyFileName;
 	int mLightDataLimit;
+	xmlDocPtr xmlDocument;
+	xmlNodePtr xmlCurrentNode;
 
 };
 
