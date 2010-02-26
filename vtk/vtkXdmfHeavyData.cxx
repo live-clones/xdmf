@@ -36,8 +36,8 @@
 #include "vtkUniformGrid.h"
 #include "vtkUnstructuredGrid.h"
 #include "vtkXdmfDataArray.h"
-#include "vtkXdmfReader2.h"
-#include "vtkXdmfReader2Internal.h"
+#include "vtkXdmfReader.h"
+#include "vtkXdmfReaderInternal.h"
 
 #include <vtkstd/deque>
 #include <assert.h>
@@ -61,7 +61,7 @@ static void vtkGetDims(int exts[6], int dims[3])
 
 //----------------------------------------------------------------------------
 vtkXdmfHeavyData::vtkXdmfHeavyData(vtkXdmfDomain* domain,
-  vtkXdmfReader2* reader)
+  vtkXdmfReader* reader)
 {
   this->Reader = reader;
   this->Piece = 0;
