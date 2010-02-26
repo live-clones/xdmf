@@ -15,16 +15,18 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-// .NAME vtkXdmfReader - read eXtensible Data Model and Format files
+// .NAME vtkXdmfReader - Reads <tt>eXtensible Data Model and Format</tt> files
 // .SECTION Description
-// vtkXdmfReader is a source object that reads XDMF data.
-// The output of this reader is a vtkMultiGroupDataSet with one group for
-// every enabled grid in the domain.
-// The superclass of this class, vtkDataReader, provides many methods for
-// controlling the reading of the data file, see vtkDataReader for more
-// information.
+// vtkXdmfReader reads XDMF data files so that they can be visualized using
+// VTK. The output data produced by this reader depends on the number of grids
+// in the data file. If the data file has a single domain with a single grid,
+// then the output type is a vtkDataSet subclass of the appropriate type,
+// otherwise it's a vtkMultiBlockDataSet.
+//
+// Refer to vtkDataReader which provides many methods for controlling the
+// reading of the data file.
 // .SECTION Caveats
-// uses the XDMF API
+// Uses the XDMF API (http://www.xdmf.org)
 // .SECTION See Also
 // vtkDataReader
 
@@ -33,17 +35,7 @@
 
 #include "vtkDataReader.h"
 
-class vtkDataObject;
-class vtkDataArraySelection;
-class vtkCallbackCommand;
-class vtkMultiProcessController;
-class vtkXdmfReaderInternal;
-class vtkXdmfReaderGrid;
-
-//BTX
-class XdmfDsmBuffer;
-class XdmfDOM;
-//ETX
+class vtkXdmfDocument;
 
 class VTK_EXPORT vtkXdmfReader : public vtkDataReader
 {
@@ -52,236 +44,132 @@ public:
   vtkTypeRevisionMacro(vtkXdmfReader, vtkDataReader);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // DOMAINS ///////////////////////////////////////////////////////////////
-  // Description:
-  // Get number of domains.
-  int GetNumberOfDomains();
+  // Until needed, multiple domains are not supported.
+  //// Description:
+  //// Returns the number of domains present in the data file. This in valid after
+  //// the filename has been set and UpdateInformation() has been called .i.e. the
+  //// RequestInformation pipeline pass has happened.
+  //unsigned int GetNumberOfDomains();
 
   // Description:
-  // Get the name of domain at index.
-  const char* GetDomainName(int idx);
-
-  // Description:
-  // Get/Set the current domain name. If none is set, the first domain will be
-  // used.
-  virtual void SetDomainName(const char*);
+  // Set the active domain. Only one domain can be selected at a time. By
+  // default the first domain in the datafile is chosen. Setting this to null
+  // results in the domain being automatically chosen. Note that if the domain
+  // name is changed, you should explicitly call UpdateInformation() before
+  // accessing information about grids, data arrays etc.
+  vtkSetStringMacro(DomainName);
   vtkGetStringMacro(DomainName);
 
-  // GRIDS ///////////////////////////////////////////////////////////////////
-  // Description:
-  // Get number of grids in the current domain.
-  int GetNumberOfGrids();
+  //// Description:
+  //// Returns the name for the active domain. Note that this may be different
+  //// from what GetDomainName() returns if DomainName is NULL or invalid.
+  // vtkGetStringMacro(ActiveDomainName);
 
   // Description:
-  // Get/Set the current grid name.
-  void SetGridName(const char*);
-
-  // Description:
-  // Get the name of grid at index.
-  const char* GetGridName(int idx);
-  int GetGridIndex(const char* name);
-
-  // Description:
-  // Enable grids.
-  void EnableGrid(const char* name);
-  void EnableGrid(int idx);
-  void EnableAllGrids();
-
-  // Description:
-  // Disable grids
-  void DisableGrid(const char* name);
-  void DisableGrid(int idx);
-  void DisableAllGrids();
-  void RemoveAllGrids(); // <<--FIXME: remove me.
-
-  // Description:
-  // Get current enable/disable of the grid
-  int GetGridSetting(const char* name);
-  int GetGridSetting(int idx);
-
-  // ATTRIBUTES ///////////////////////////////////////////////////////////////
-  // Description:
-  // Get the data array selection tables used to configure which data
-  // arrays are loaded by the reader.
-  vtkGetObjectMacro(PointDataArraySelection, vtkDataArraySelection);
-  vtkGetObjectMacro(CellDataArraySelection, vtkDataArraySelection);
-
-  // Description:
-  // Get the number of point or cell arrays available in the input.
+  // Get information about point-based arrays. As is typical with readers this
+  // in only valid after the filename is set and UpdateInformation() has been
+  // called.
   int GetNumberOfPointArrays();
-  int GetNumberOfCellArrays();
 
   // Description:
-  // Get the name of the point or cell array with the given index in
-  // the input.
+  // Returns the name of point array at the give index. Returns NULL if index is
+  // invalid.
   const char* GetPointArrayName(int index);
-  const char* GetCellArrayName(int index);
 
   // Description:
-  // Get/Set whether the point or cell array with the given name is to
-  // be read.
+  // Get/Set the point array status.
   int GetPointArrayStatus(const char* name);
-  int GetCellArrayStatus(const char* name);
   void SetPointArrayStatus(const char* name, int status);
+
+  // Description:
+  // Get information about cell-based arrays.  As is typical with readers this
+  // in only valid after the filename is set and UpdateInformation() has been
+  // called.
+  int GetNumberOfCellArrays();
+  const char* GetCellArrayName(int index);
   void SetCellArrayStatus(const char* name, int status);
+  int GetCellArrayStatus(const char* name);
 
   // Description:
-  // Set whether the all point or cell arrays are to
-  // be read.
-  void EnableAllArrays();
-  void DisableAllArrays();
-
-  // PARAMETERS ///////////////////////////////////////////////////////////////
-  // Description:
-  // Get the number of Parameters
-  int GetNumberOfParameters();
+  // Get/Set information about grids. As is typical with readers this is valid
+  // only after the filename as been set and UpdateInformation() has been
+  // called.
+  int GetNumberOfGrids();
+  const char* GetGridName(int index);
+  void SetGridStatus(const char* gridname, int status);
+  int GetGridStatus(const char* gridname);
 
   // Description:
-  // Get Parameter Type
-  int GetParameterType(int index);
-  int GetParameterType(const char *Name);
-  const char *GetParameterTypeAsString(int index);
-  const char *GetParameterTypeAsString(const char *Name);
+  // Get/Set information about sets. As is typical with readers this is valid
+  // only after the filename as been set and UpdateInformation() has been
+  // called. Note that sets with non-zero Ghost value are not treated as sets
+  // that the user can select using this API.
+  int GetNumberOfSets();
+  const char* GetSetName(int index);
+  void SetSetStatus(const char* gridname, int status);
+  int GetSetStatus(const char* gridname);
 
   // Description:
-  // Get start, stride, count
-  int GetParameterRange(int index, int Shape[3]);
-  int GetParameterRange(const char *Name, int Shape[3]);
-  const char *GetParameterRangeAsString(int index);
-  const char *GetParameterRangeAsString(const char *Name);
-
+  // These methods are provided to make it easier to use the Sets in ParaView.
+  int GetNumberOfSetArrays() { return this->GetNumberOfSets(); }
+  const char* GetSetArrayName(int index)
+    { return this->GetSetName(index); }
+  int GetSetArrayStatus(const char* name)
+    { return this->GetSetStatus(name); }
+ 
   // Description:
-  // Get Parameter Name
-  const char *GetParameterName(int index);
-
-  // Description:
-  // Set/Get Parameter Current Index
-  int SetParameterIndex(const char *Name, int CurrentIndex);
-  int SetParameterIndex(int ParameterIndex, int CurrentIndex);
-  int GetParameterIndex(const char *Name);
-  int GetParameterIndex(int index);
-
-  // Description:
-  // Get Length of Parameter
-  int GetParameterLength(const char *Name);
-  int GetParameterLength(int index);
-
-  // Description:
-  // Get the Current Value of the Parameter
-  const char *GetParameterValue(int index);
-  const char *GetParameterValue(const char *Name);
-
-  // STRIDE ///////////////////////////////////////////////////////////////////
-  // Description:
-  // Set / get stride
-  void SetStride(int x, int y, int z);
-  void SetStride(int xyz[3])
-    {
-    this->SetStride(xyz[0], xyz[1], xyz[2]);
-    }
+  // Get/Set the stride used to skip points when reading structured datasets.
+  // This affects all grids being read.
+  vtkSetVector3Macro(Stride, int);
   vtkGetVector3Macro(Stride, int);
 
-  // MISCELANEOUS /////////////////////////////////////////////////////////////
   // Description:
-  // Get the Low Level XdmfDOM
-  const char *GetXdmfDOMHandle();
+  // Determine if the file can be read with this reader.
+  virtual int CanReadFile(const char* filename);
 
   // Description:
-  // Get the Low Level XdmfGrid
-  //Disable for now
-  //const char *GetXdmfGridHandle(int idx);
+  // Every time the SIL is updated a this will return a different value.
+  vtkGetMacro(SILUpdateStamp, int);
 
-  // Description:
-  // Determine if the file can be readed with this reader.
-  virtual int CanReadFile(const char* fname);
-
-  // Description:
-  // Set the controller used to coordinate parallel reading.
 //BTX
-  void SetController(vtkMultiProcessController* controller);
-
-  // Return the controller used to coordinate parallel reading. By default,
-  // it is the global controller.
-  vtkGetObjectMacro(Controller,vtkMultiProcessController);
-//ETX
-
-  // Set DsmBubffer
-  void SetDsmBuffer(void *Bufp);
-  // Get DsmBubffer
-  void *GetDsmBuffer();
-
-  // Set the Timestep to be read. This is provided for compatibility
-  // reasons only and should not be used. The correct way to
-  // request time is using the UPDATE_TIME_STEPS information key
-  // passed from downstream.
-  vtkSetMacro(TimeStep, int);
-  vtkGetMacro(TimeStep, int);
-
-  // Description:
-  // Save the range of valid timestep index values. This can be used by the PAraView GUI
-  int TimeStepRange[2];
-  vtkGetVector2Macro(TimeStepRange, int);
-
 protected:
   vtkXdmfReader();
   ~vtkXdmfReader();
 
-  // Description:
-  // This methods parses the XML. Returns true on success. This method can be
-  // called repeatedly. It has checks to ensure that the XML parsing is done
-  // only if needed.
-  bool ParseXML();
-
   virtual int ProcessRequest(vtkInformation *request,
-                             vtkInformationVector **inputVector,
-                             vtkInformationVector *outputVector);
-
+    vtkInformationVector **inputVector,
+    vtkInformationVector *outputVector);
   virtual int RequestDataObject(vtkInformationVector *outputVector);
-
   virtual int RequestData(vtkInformation *, vtkInformationVector **,
-                          vtkInformationVector *);
+    vtkInformationVector *);
   virtual int RequestInformation(vtkInformation *, vtkInformationVector **,
-                                 vtkInformationVector *);
+    vtkInformationVector *);
   virtual int FillOutputPortInformation(int port, vtkInformation *info);
 
-  int  UpdateDomains();
-  void UpdateRootGrid();
-  void UpdateGrids(vtkXdmfReaderGrid *parent, void *ParentNode);
-  void FindTimeValues();
-  void FindAllTimeValues(vtkXdmfReaderGrid *ptr);
-  void AssignTimeIndex(vtkXdmfReaderGrid *ptr);
-
-  // Array selection helpers /////////////////////////////////////////////////
-  static void SelectionModifiedCallback(vtkObject* caller, unsigned long eid,
-                                        void* clientdata, void* calldata);
-
-  vtkDataArraySelection* PointDataArraySelection;
-  vtkDataArraySelection* CellDataArraySelection;
-
-  vtkCallbackCommand* SelectionObserver;
-
-  //
-  vtkXdmfReaderInternal* Internals;
-  XdmfDOM         *DOM;
-  vtkMultiProcessController *Controller;
 
   char* DomainName;
-
-  char* GridName;
-  int NumberOfEnabledActualGrids;
-
+  // char* ActiveDomainName;
   int Stride[3];
+  unsigned int LastTimeIndex;
 
-  int            GridsModified;
-  int            OutputsInitialized;
-  int            OutputVTKType;
-  XdmfDsmBuffer *DsmBuffer;
-  int            OutputTemporal;
-  unsigned int   ActualTimeStep;
-  int            TimeStep;
+  vtkXdmfDocument* XdmfDocument;
+
+  int SILUpdateStamp;
+private:
+  // Description:
+  // Prepares the XdmfDocument.
+  bool PrepareDocument();
+
+  // Description:
+  // Returns the time-step index requested using the UPDATE_TIME_STEPS from the
+  // information.
+  int ChooseTimeStep(vtkInformation* outInfo);
+
 private:
   vtkXdmfReader(const vtkXdmfReader&); // Not implemented
   void operator=(const vtkXdmfReader&); // Not implemented
+//ETX
 };
 
-#endif //__vtkXdmfReader_h
+#endif
+

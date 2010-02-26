@@ -26,20 +26,19 @@ STRING(REGEX REPLACE "^/" "" XDMF_INSTALL_INCLUDE_VTK_DIR_CM24 "${XDMF_INSTALL_I
 
 
 SET( Xdmf_SRCS
-  vtkXdmfReader.cxx
-  vtkXdmfWriter.cxx
-  vtkXdmfWriter2.cxx
-  vtkXdmfDataArray.cxx
-#vtkXdmfOpenGLCamera.cxx
-  vtkXdmfReader2.cxx
-  vtkXdmfReader2Internal.cxx
-  vtkXdmfHeavyData.cxx
   vtkSILBuilder.cxx
+  vtkXdmfDataArray.cxx
+  vtkXdmfHeavyData.cxx
+#vtkXdmfOpenGLCamera.cxx
+  vtkXdmfReader.cxx
+  vtkXdmfReaderInternal.cxx
+  vtkXdmfWriter2.cxx
+  vtkXdmfWriter.cxx
 #${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
 #vtkXdmfDataSetWriter.cxx
   )
 SET_SOURCE_FILES_PROPERTIES(
-  vtkXdmfReader2Internal
+  vtkXdmfReaderInternal
   vtkXdmfHeavyData
   WRAP_EXCLUDE
 )

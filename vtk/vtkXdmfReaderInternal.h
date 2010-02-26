@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    vtkXdmfReader2Internal.h
+  Module:    vtkXdmfReaderInternal.h
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
@@ -12,11 +12,11 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-// .NAME vtkXdmfReader2Internal -- private class(es) used by vtkXdmfReader2
+// .NAME vtkXdmfReaderInternal -- private class(es) used by vtkXdmfReader
 // .SECTION Description
 
-#ifndef __vtkXdmfReader2Internal_h
-#define __vtkXdmfReader2Internal_h
+#ifndef __vtkXdmfReaderInternal_h
+#define __vtkXdmfReaderInternal_h
 
 // NAMING CONVENTION *********************************************************
 // * all member variables of the type XdmfXml* begin with XML eg. XMLNode

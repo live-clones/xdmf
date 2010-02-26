@@ -13,7 +13,7 @@
 
 =========================================================================*/
 //Description:
-//This tests vtkXdmfWriter2 and vtkXdmfReader2
+//This tests vtkXdmfWriter2 and vtkXdmfReader
 //It manufactures/reads a bunch of test data objects, writes them to disk 
 //via the xdmfwriter, reads the files back in with the xdmfreader, and 
 //compares the output of the reader against the input to the reader. If 
@@ -35,7 +35,7 @@
 //#include "vtkTemporalFractal.h"
 //#include "vtkTestUtilities.h"
 #include "vtkTimeSourceExample.h"
-#include "vtkXdmfReader2.h"
+#include "vtkXdmfReader.h"
 
 #define NUMTESTS 20
 
@@ -168,7 +168,7 @@ bool TestXDMFConversion(vtkDataObject*input, char *prefix)
   }
 
   //TODO: Once it works, enable this
-  vtkXdmfReader2 *xreader = vtkXdmfReader2::New();
+  vtkXdmfReader *xreader = vtkXdmfReader::New();
   xreader->SetFileName(xdmffile);
   xreader->Update();
   vtkDataObject *rOutput = xreader->GetOutputDataObject(0);
