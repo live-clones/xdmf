@@ -1073,7 +1073,7 @@ vtkDataArray* vtkXdmfHeavyData::ReadAttribute(XdmfAttribute* xmfAttribute,
 
   vtkXdmfDataArray* xmfConvertor = vtkXdmfDataArray::New();
   vtkDataArray* dataArray = xmfConvertor->FromXdmfArray(
-    xmfDataItem.GetArray()->GetTagName(), 1, data_dimensionality, numComponents, 0);
+    xmfDataItem.GetArray()->GetTagName(), 1, data_rank, numComponents, 0);
   xmfConvertor->Delete();
   
   if (attrType == XDMF_ATTRIBUTE_TYPE_TENSOR6)
