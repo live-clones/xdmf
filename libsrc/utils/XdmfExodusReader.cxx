@@ -66,6 +66,8 @@ XdmfInt32 XdmfExodusReader::DetermineXdmfCellType(char * exoElemType, int numPoi
   }
   else if (elemType.substr(0,3) == "SHE" && numPointsPerCell == 9)
   { 
+    // VTK_QUADRATIC_QUAD with 9 points
+    // Currently unsupported in Xdmf
     return XDMF_QUAD_8;
   }
   else if (elemType.substr(0,3) == "TET" && numPointsPerCell == 10)
@@ -74,15 +76,23 @@ XdmfInt32 XdmfExodusReader::DetermineXdmfCellType(char * exoElemType, int numPoi
   }
   else if (elemType.substr(0,3) == "TET" && numPointsPerCell == 11)
   { 
-    return XDMF_TET_10;
+    // VTK_QUADRATIC_TETRA with 11 points
+    // Currently unsupported in Xdmf
+    return XDMF_NOTOPOLOGY;
+  }
+  else if (elemType.substr(0,3) == "WED" && numPointsPerCell == 15)
+  {
+    return XDMF_WEDGE_15;
   }
   else if (elemType.substr(0,3) == "HEX" && numPointsPerCell == 20)
   { 
     return XDMF_HEX_20;
   }
   else if (elemType.substr(0,3) == "HEX" && numPointsPerCell == 21)
-  { 
-    return XDMF_HEX_20;
+  {
+    // VTK_QUADRATIC_HEXAHEDRON with 21 points
+    // Currently unsupported in Xdmf 
+    return XDMF_NOTOPOLOGY;
   }
   else if (elemType.substr(0,3) == "HEX" && numPointsPerCell == 27)
   {
@@ -219,7 +229,7 @@ XdmfGrid * XdmfExodusReader::read(const char * fileName, XdmfElement * parentEle
   int num_dim, num_nodes, num_elem, num_elem_blk, num_node_sets, num_side_sets;
   ex_get_init (exodusHandle, title, &num_dim, &num_nodes, &num_elem, &num_elem_blk, &num_node_sets, &num_side_sets);
 
-  /*  
+  /*
   cout << "Title: " << title <<
     "\nNum Dim: " << num_dim <<
     "\nNum Nodes: " << num_nodes <<
@@ -227,7 +237,7 @@ XdmfGrid * XdmfExodusReader::read(const char * fileName, XdmfElement * parentEle
     "\nNum Elem Blk: " << num_elem_blk <<
     "\nNum Node Sets: " << num_node_sets <<
     "\nNum Side Sets: " << num_side_sets << endl;
-  */
+  */ 
 
   // Read geometry values
   double * x = new double[num_nodes];
@@ -268,7 +278,9 @@ XdmfGrid * XdmfExodusReader::read(const char * fileName, XdmfElement * parentEle
    	  points->SetValue((j * num_dim) + 2, z[j]);
     }
   }
-  delete [] x, y, z;     
+  delete [] x;
+  delete [] y;
+  delete [] z;     
 
   int * blockIds = new int[num_elem_blk];
   ex_get_elem_blk_ids(exodusHandle, blockIds);
@@ -307,14 +319,61 @@ XdmfGrid * XdmfExodusReader::read(const char * fileName, XdmfElement * parentEle
   XdmfInt32 topType;
   int * conn = new int[totalConns];
   int elemIndex = 0;
-  for (int j=0; j<num_elem_blk; j++)
+  for (int j=0; j<num_elem_blk; ++j)
   {
     if (topTypeInBlock[j] != XDMF_NOTOPOLOGY)
     {
       topType = topTypeInBlock[j];
-
       ex_get_elem_conn(exodusHandle, blockIds[j], &conn[elemIndex]);
       elemIndex = elemIndex + numElemsInBlock[j] * numNodesPerElemInBlock[j];
+    }
+  }
+
+  // This is taken from VTK's vtkExodusIIReader and adapted to fit Xdmf element types, which have the same ordering as VTK.
+  if(topType == XDMF_HEX_20)
+  {
+    int * ptr = conn;
+    int k;
+    int itmp[4];
+
+    // Exodus Node ordering does not match Xdmf, we must convert.
+    for (int i=0; i<totalNumElem; i++)
+    {
+      ptr += 12;
+
+      for ( k = 0; k < 4; ++k, ++ptr)
+      {
+        itmp[k] = *ptr;
+        *ptr = ptr[4];
+      }
+
+      for ( k = 0; k < 4; ++k, ++ptr )
+      {
+        *ptr = itmp[k];
+      }
+    }
+  }
+  else if (topType == XDMF_WEDGE_15)
+  {
+    int * ptr = conn;
+    int k;
+    int itmp[3];
+ 
+    // Exodus Node ordering does not match Xdmf, we must convert.
+    for (int i=0; i<totalNumElem; i++)
+    {
+      ptr += 9;
+        
+      for (k = 0; k < 3; ++k, ++ptr)
+      {
+        itmp[k] = *ptr;
+        *ptr = ptr[3];
+      }
+
+      for (k = 0; k < 3; ++k, ++ptr)
+      {
+        *ptr = itmp[k];
+      }
     }
   }
 
@@ -526,7 +585,12 @@ XdmfGrid * XdmfExodusReader::read(const char * fileName, XdmfElement * parentEle
   }
   
   ex_close(exodusHandle);
-  delete [] title, blockIds, numElemsInBlock, numNodesPerElemInBlock, numElemAttrInBlock, topTypeInBlock;
+  delete [] title;
+  delete [] blockIds;
+  delete [] numElemsInBlock;
+  delete [] numNodesPerElemInBlock;
+  delete [] numElemAttrInBlock;
+  delete [] topTypeInBlock;
   return grid;
 }
 
@@ -541,8 +605,6 @@ XdmfGrid * XdmfExodusReader::read(const char * fileName, XdmfElement * parentEle
 int
 main(int argc, char* argv[])
 {
-
-  XdmfExodusReader reader = XdmfExodusReader();
   std::string usage = "Converts an Exodus II file to XDMF: \n \n Usage: \n \n   XdmfExodusConverter <path-to-exodus-file> (Optional: <path-to-output-file>)";
   std::string meshName = "";
 
@@ -581,7 +643,8 @@ main(int argc, char* argv[])
   root.SetDOM(&dom);
   root.Build();
   root.Insert(&domain);
- 
+
+  XdmfExodusReader reader = XdmfExodusReader();
   XdmfGrid * mesh = reader.read(argv[1], &domain);
  
   if(meshName.find_last_of("/\\") != std::string::npos)
