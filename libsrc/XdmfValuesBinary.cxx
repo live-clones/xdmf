@@ -218,6 +218,7 @@ XdmfValuesBinary::Read(XdmfArray *anArray){
         return(NULL);
     }
     XdmfArray   *RetArray = anArray;
+    ostrstream FullFileName;
     // Allocate anArray if Necessary
     if(!RetArray){
         RetArray = new XdmfArray();
@@ -255,7 +256,6 @@ XdmfValuesBinary::Read(XdmfArray *anArray){
     XdmfString  DataSetName = 0;
     XDMF_STRING_DUPLICATE(DataSetName, this->Get("CDATA"));
     XDMF_WORD_TRIM(DataSetName);
-    XdmfDebug("Opening Binary Data for Reading : " << DataSetName);
     XdmfInt64 dims[XDMF_MAX_DIMENSION];
     XdmfInt32 rank = this->DataDesc->GetShape(dims);
     XdmfInt64 total = 1;
@@ -276,9 +276,18 @@ XdmfValuesBinary::Read(XdmfArray *anArray){
         return( NULL );
     }
     istream * fs = NULL;
-    char * path = new char [ strlen(this->DOM->GetWorkingDirectory())+strlen(DataSetName) + 1 ];
-    strcpy(path, this->DOM->GetWorkingDirectory());
-    strcpy(path+strlen(this->DOM->GetWorkingDirectory()), DataSetName);
+    if( ( strlen( this->GetWorkingDirectory() ) > 0 ) && 
+      ( DataSetName[0] != '/' ) ){
+        FullFileName << this->GetWorkingDirectory() << "/";
+    }
+    FullFileName << DataSetName << ends;
+    char * path = FullFileName.rdbuf()->str();
+    XdmfDebug("Opening Binary Data for Reading : " << FullFileName);
+
+
+    //char * path = new char [ strlen(this->DOM->GetWorkingDirectory())+strlen(DataSetName) + 1 ];
+    //strcpy(path, this->DOM->GetWorkingDirectory());
+    //strcpy(path+strlen(this->DOM->GetWorkingDirectory()), DataSetName);
     try{
         size_t seek = this->getSeek();
         switch(getCompressionType()){
@@ -331,13 +340,13 @@ XdmfValuesBinary::Read(XdmfArray *anArray){
     } catch( std::exception& e){
         XdmfErrorMessage(e.what());
         delete fs;
-        delete path;
+        //delete path;
         return( NULL );
     }
 
     //fs->close();?
     delete fs;
-    delete path;
+    //delete path;
     byteSwap(RetArray);
     return RetArray;
 }
@@ -407,7 +416,7 @@ XdmfValuesBinary::Write(XdmfArray *anArray, XdmfConstString aHeavyDataSetName){
     }catch( std::exception& ){
         //fs.close();
         byteSwap(anArray);
-        delete [] fs;
+        delete fs;
         delete [] hds;
         delete [] path;
         return(XDMF_FAIL);
