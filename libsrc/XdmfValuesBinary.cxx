@@ -276,9 +276,9 @@ XdmfValuesBinary::Read(XdmfArray *anArray){
         return( NULL );
     }
     istream * fs = NULL;
-    if( ( strlen( this->GetWorkingDirectory() ) > 0 ) && 
+    if( ( strlen( this->DOM->GetWorkingDirectory() ) > 0 ) && 
       ( DataSetName[0] != '/' ) ){
-        FullFileName << this->GetWorkingDirectory() << "/";
+        FullFileName << this->DOM->GetWorkingDirectory() << "/";
     }
     FullFileName << DataSetName << ends;
     char * path = FullFileName.rdbuf()->str();
