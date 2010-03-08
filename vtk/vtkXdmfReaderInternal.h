@@ -108,6 +108,15 @@ private:
 class vtkXdmfArraySelection : public vtkstd::map<vtkstd::string, bool>
 {
 public:
+  void Merge(const vtkXdmfArraySelection& other)
+    {
+    vtkXdmfArraySelection::const_iterator iter = other.begin();
+    for (; iter != other.end(); ++iter)
+      {
+      (*this)[iter->first] = iter->second;
+      }
+    }
+
   void AddArray(const char* name, bool status=true)
     {
     (*this)[name] = status;

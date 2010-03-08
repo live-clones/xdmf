@@ -88,7 +88,7 @@ private:
 vtkStandardNewMacro(vtkXdmfReaderTester);
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.73");
+vtkCxxRevisionMacro(vtkXdmfReader, "1.74");
 //----------------------------------------------------------------------------
 vtkXdmfReader::vtkXdmfReader()
 {
@@ -97,6 +97,11 @@ vtkXdmfReader::vtkXdmfReader()
   this->XdmfDocument = new vtkXdmfDocument();
   this->LastTimeIndex = 0;
   this->SILUpdateStamp = 0;
+
+  this->PointArraysCache = new vtkXdmfArraySelection;
+  this->CellArraysCache = new vtkXdmfArraySelection;
+  this->GridsCache = new vtkXdmfArraySelection;
+  this->SetsCache = new vtkXdmfArraySelection;
 }
 
 //----------------------------------------------------------------------------
@@ -105,6 +110,11 @@ vtkXdmfReader::~vtkXdmfReader()
   this->SetDomainName(0);
   delete this->XdmfDocument;
   this->XdmfDocument = 0;
+
+  delete this->PointArraysCache;
+  delete this->CellArraysCache;
+  delete this->GridsCache;
+  delete this->SetsCache;
 }
 
 //----------------------------------------------------------------------------
@@ -254,6 +264,9 @@ int vtkXdmfReader::RequestInformation(vtkInformation *, vtkInformationVector **,
     {
     return 0;
     }
+
+  // Pass any cached user-selections to the active domain.
+  this->PassCachedSelections();
 
   vtkInformation* outInfo = outputVector->GetInformationObject(0);
   vtkXdmfDomain* domain = this->XdmfDocument->GetActiveDomain();
@@ -414,125 +427,155 @@ int vtkXdmfReader::ChooseTimeStep(vtkInformation* outInfo)
 }
 
 //----------------------------------------------------------------------------
+vtkXdmfArraySelection* vtkXdmfReader::GetPointArraySelection()
+{
+  return this->XdmfDocument->GetActiveDomain()?
+    this->XdmfDocument->GetActiveDomain()->GetPointArraySelection() :
+    this->PointArraysCache;
+}
+
+//----------------------------------------------------------------------------
+vtkXdmfArraySelection* vtkXdmfReader::GetCellArraySelection()
+{
+  return this->XdmfDocument->GetActiveDomain()?
+    this->XdmfDocument->GetActiveDomain()->GetCellArraySelection() :
+    this->CellArraysCache;
+}
+
+//----------------------------------------------------------------------------
+vtkXdmfArraySelection* vtkXdmfReader::GetGridSelection()
+{
+  return this->XdmfDocument->GetActiveDomain()?
+    this->XdmfDocument->GetActiveDomain()->GetGridSelection() :
+    this->GridsCache;
+}
+
+//----------------------------------------------------------------------------
+vtkXdmfArraySelection* vtkXdmfReader::GetSetsSelection()
+{
+  return this->XdmfDocument->GetActiveDomain()?
+    this->XdmfDocument->GetActiveDomain()->GetSetsSelection() :
+    this->SetsCache;
+}
+
+//----------------------------------------------------------------------------
 int vtkXdmfReader::GetNumberOfGrids()
 {
-  return
-    this->XdmfDocument->GetActiveDomain()->GetGridSelection()->
-    GetNumberOfArrays();
+  return this->GetGridSelection()->GetNumberOfArrays();
 }
 
 //----------------------------------------------------------------------------
 void vtkXdmfReader::SetGridStatus(const char* gridname, int status)
 {
-  this->XdmfDocument->GetActiveDomain()->GetGridSelection()->SetArrayStatus(
-    gridname, status !=0);
+  this->GetGridSelection()->SetArrayStatus(gridname, status !=0);
   this->Modified();
 }
 
 //----------------------------------------------------------------------------
 int vtkXdmfReader::GetGridStatus(const char* arrayname)
 {
-  return this->XdmfDocument->GetActiveDomain()->GetGridSelection()->
-    GetArraySetting(arrayname);
+  return this->GetGridSelection()->GetArraySetting(arrayname);
 }
-
 
 //----------------------------------------------------------------------------
 const char* vtkXdmfReader::GetGridName(int index)
 {
-  return this->XdmfDocument->GetActiveDomain()->GetGridSelection()->
-    GetArrayName(index);
+  return this->GetGridSelection()->GetArrayName(index);
 }
 
 //----------------------------------------------------------------------------
 int vtkXdmfReader::GetNumberOfPointArrays()
 {
-  return
-    this->XdmfDocument->GetActiveDomain()->GetPointArraySelection()->
-    GetNumberOfArrays();
+  return this->GetPointArraySelection()->GetNumberOfArrays();
 }
 
 //----------------------------------------------------------------------------
 void vtkXdmfReader::SetPointArrayStatus(const char* arrayname, int status)
 {
-  this->XdmfDocument->GetActiveDomain()->GetPointArraySelection()->
-    SetArrayStatus(arrayname, status != 0);
+  this->GetPointArraySelection()->SetArrayStatus(arrayname, status != 0);
   this->Modified();
 }
 
 //----------------------------------------------------------------------------
 int vtkXdmfReader::GetPointArrayStatus(const char* arrayname)
 {
-  return this->XdmfDocument->GetActiveDomain()->GetPointArraySelection()->
-    GetArraySetting(arrayname);
+  return this->GetPointArraySelection()->GetArraySetting(arrayname);
 }
-
 
 //----------------------------------------------------------------------------
 const char* vtkXdmfReader::GetPointArrayName(int index)
 {
-  return this->XdmfDocument->GetActiveDomain()->GetPointArraySelection()->
-    GetArrayName(index);
+  return this->GetPointArraySelection()->GetArrayName(index);
 }
 
 //----------------------------------------------------------------------------
 int vtkXdmfReader::GetNumberOfCellArrays()
 {
-  return
-    this->XdmfDocument->GetActiveDomain()->GetCellArraySelection()->
-    GetNumberOfArrays();
+  return this->GetCellArraySelection()->GetNumberOfArrays();
 }
 
 //----------------------------------------------------------------------------
 void vtkXdmfReader::SetCellArrayStatus(const char* arrayname, int status)
 {
-  this->XdmfDocument->GetActiveDomain()->GetCellArraySelection()->
-    SetArrayStatus(arrayname, status != 0);
+  this->GetCellArraySelection()->SetArrayStatus(arrayname, status != 0);
   this->Modified();
 }
 
 //----------------------------------------------------------------------------
 int vtkXdmfReader::GetCellArrayStatus(const char* arrayname)
 {
-  return this->XdmfDocument->GetActiveDomain()->GetCellArraySelection()->
-    GetArraySetting(arrayname);
+  return this->GetCellArraySelection()->GetArraySetting(arrayname);
 }
 
 //----------------------------------------------------------------------------
 const char* vtkXdmfReader::GetCellArrayName(int index)
 {
-  return this->XdmfDocument->GetActiveDomain()->GetCellArraySelection()->
-    GetArrayName(index);
+  return this->GetCellArraySelection()->GetArrayName(index);
 }
 
 //----------------------------------------------------------------------------
 int vtkXdmfReader::GetNumberOfSets()
 {
-  return
-    this->XdmfDocument->GetActiveDomain()->GetSetsSelection()->
-    GetNumberOfArrays();
+  return this->GetSetsSelection()->GetNumberOfArrays();
 }
 
 //----------------------------------------------------------------------------
 void vtkXdmfReader::SetSetStatus(const char* arrayname, int status)
 {
-  this->XdmfDocument->GetActiveDomain()->GetSetsSelection()->
-    SetArrayStatus(arrayname, status != 0);
+  this->GetSetsSelection()->SetArrayStatus(arrayname, status != 0);
   this->Modified();
 }
 
 //----------------------------------------------------------------------------
 int vtkXdmfReader::GetSetStatus(const char* arrayname)
 {
-  return this->XdmfDocument->GetActiveDomain()->GetSetsSelection()->
-    GetArraySetting(arrayname);
+  return this->GetSetsSelection()->GetArraySetting(arrayname);
 }
 
 //----------------------------------------------------------------------------
 const char* vtkXdmfReader::GetSetName(int index)
 {
-  return this->XdmfDocument->GetActiveDomain()->GetSetsSelection()->
-    GetArrayName(index);
+  return this->GetSetsSelection()->GetArrayName(index);
+}
+
+//----------------------------------------------------------------------------
+void vtkXdmfReader::PassCachedSelections()
+{
+  if (!this->XdmfDocument->GetActiveDomain())
+    {
+    return;
+    }
+
+  this->GetPointArraySelection()->Merge(*this->PointArraysCache);
+  this->GetCellArraySelection()->Merge(*this->CellArraysCache);
+  this->GetGridSelection()->Merge(*this->GridsCache);
+  this->GetSetsSelection()->Merge(*this->SetsCache);
+
+  // Clear the cache.
+  this->PointArraysCache->clear();
+  this->CellArraysCache->clear();
+  this->GridsCache->clear();
+  this->SetsCache->clear();
 }
 
 //----------------------------------------------------------------------------

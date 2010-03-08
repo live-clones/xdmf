@@ -35,6 +35,7 @@
 
 #include "vtkDataReader.h"
 
+class vtkXdmfArraySelection;
 class vtkXdmfDocument;
 
 class VTK_EXPORT vtkXdmfReader : public vtkDataReader
@@ -146,13 +147,32 @@ protected:
     vtkInformationVector *);
   virtual int FillOutputPortInformation(int port, vtkInformation *info);
 
-
+  vtkXdmfArraySelection* GetPointArraySelection();
+  vtkXdmfArraySelection* GetCellArraySelection();
+  vtkXdmfArraySelection* GetGridSelection();
+  vtkXdmfArraySelection* GetSetsSelection();
+  void PassCachedSelections();
+  
   char* DomainName;
   // char* ActiveDomainName;
   int Stride[3];
   unsigned int LastTimeIndex;
 
   vtkXdmfDocument* XdmfDocument;
+
+  // Until RequestInformation() is called, the active domain is not set
+  // correctly. If SetGridStatus() etc. are called before that happens, then we
+  // have no place to save the user choices. So we cache them in these temporary
+  // caches. These are passed on to the actual vtkXdmfArraySelection instances
+  // used by the active vtkXdmfDomain in RequestInformation().
+  // Note that these are only used until the first domain is setup, once that
+  // happens, the information set in these is passed to the domain and  these
+  // are cleared an no longer used, until the active domain becomes invalid
+  // again.
+  vtkXdmfArraySelection* PointArraysCache;
+  vtkXdmfArraySelection* CellArraysCache;
+  vtkXdmfArraySelection* GridsCache;
+  vtkXdmfArraySelection* SetsCache;
 
   int SILUpdateStamp;
 private:
