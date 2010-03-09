@@ -450,6 +450,28 @@ XdmfGrid * XdmfExodusReader::read(const char * fileName, XdmfElement * parentEle
       // Subtract all node ids by 1 since exodus indices start at 1
       *ids - 1;
       grid->Insert(set);
+      
+      /*
+      if(num_df_in_set > 0)
+      {
+        double * node_set_distribution_factors = new double[num_df_in_set];
+        ex_get_node_set_dist_fact(exodusHandle, nodeSetIds[j], node_set_distribution_factors);
+
+        XdmfAttribute * attr = new XdmfAttribute();
+        attr->SetName("SetAttribute");
+        attr->SetAttributeType(XDMF_ATTRIBUTE_TYPE_SCALAR);
+        attr->SetAttributeCenter(XDMF_ATTRIBUTE_CENTER_NODE);
+        attr->SetDeleteOnGridDelete(true);
+
+        XdmfArray * attrVals = attr->GetValues();
+        attrVals->SetNumberType(XDMF_FLOAT32_TYPE);
+        attrVals->SetNumberOfElements(num_df_in_set);
+        attrVals->SetValues(0, node_set_distribution_factors, num_df_in_set, 1, 1);
+        set->Insert(attr);
+        delete [] node_set_distribution_factors;
+      }
+      */
+
       delete [] node_set_node_list;
     }
     delete [] node_set_names[j];
