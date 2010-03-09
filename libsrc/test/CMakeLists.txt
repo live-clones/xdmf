@@ -1,3 +1,20 @@
+# In CMake version 2.8 we can used a much nicer $<CONFIGURATION> arguments for specifying 
+# the configuration type of the build For now I have added this new functionality to these 
+# batch tests but it will only work on dashboards using 2.8. This check can be removed when
+# ParaView officially requires CMake 2.8."
+SET(GENERATOR_EXPRESSIONS_SUPPORTED)
+IF("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" LESS 2.8)
+  SET(GENERATOR_EXPRESSIONS_SUPPORTED OFF)
+ELSE("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" LESS 2.8)
+  SET(GENERATOR_EXPRESSIONS_SUPPORTED ON)
+ENDIF("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" LESS 2.8)
+
+SET(TEST_EXECUTABLE_PATH ${EXECUTABLE_OUTPUT_PATH})
+
+# We don't want the <CONFIGURATION> as part of the path on non windows systems.
+IF(WIN32 AND GENERATOR_EXPRESSIONS_SUPPORTED)
+  SET(TEST_EXECUTABLE_PATH ${EXECUTABLE_OUTPUT_PATH}/\$<CONFIGURATION>)
+ENDIF(WIN32 AND GENERATOR_EXPRESSIONS_SUPPORTED)
 
 macro( XdmfSerialTest testname )
     add_executable( ${testname} ${ARGN} )
@@ -7,16 +24,16 @@ endmacro()
 
 macro( XdmfMPITest testname num_procs )
     find_package( MPI )
-    if( MPI_FOUND )
+    if( MPI_FOUND AND GENERATOR_EXPRESSIONS_SUPPORTED)
         include_directories( MPI_INCLUDE_PATH )
         add_executable( ${testname} ${ARGN} )
         target_link_libraries( ${testname} Xdmf ${MPI_LIBRARIES} )
-        add_test( ${testname} 
-            ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${num_procs}
+        add_test(NAME ${testname} 
+          COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${num_procs}
             ${MPI_EXEC_PREFLAGS}
-            ${EXECUTABLE_OUTPUT_PATH}/${testname}
+            ${TEST_EXECUTABLE_PATH}/${testname}
             ${MPI_EXEC_POSTFLAGS} )
-    endif( MPI_FOUND )
+    endif( MPI_FOUND AND GENERATOR_EXPRESSIONS_SUPPORTED)
 endmacro( XdmfMPITest )
 
 macro( XdmfUtilsTest testname )
