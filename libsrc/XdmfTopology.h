@@ -50,7 +50,10 @@
 #define XDMF_TET_10         0x0026
 #define XDMF_PYRAMID_13     0x0027
 #define XDMF_WEDGE_15       0x0028
-#define XDMF_HEX_20         0x0029
+#define XDMF_WEDGE_18       0x0029
+#define XDMF_HEX_20         0x0030
+#define XDMF_HEX_24         0x0031
+#define XDMF_HEX_27         0x0032
 #define XDMF_MIXED          0x0070
 #define XDMF_2DSMESH        0x0100
 #define XDMF_2DRECTMESH     0x0101
@@ -81,8 +84,11 @@ Currently supported BASE topologies are :
       QUADRILATERAL_8 ..... 8 Node High Order Quadrilateral
       TETRAHEDRON_10 ...... 10 Node High Order Tetrahedron
       PYRAMID_13 .......... 13 Node High Order Pyramid
-      WEDGE_15 ............ 15 Node High Order Wedge
-      HEXAHEDRON_20 ....... 20 Node High Order Hexahedron
+      WEDGE_15 ............ 15 Node High Order Wedge (Quadratic Wedge)
+      WEDGE_18 ............ 18 Node High Order Wedge (Bi-Quadratic Wedge)
+      HEXAHEDRON_20 ....... 20 Node High Order Hexahedron (Quadratic Hexahedron)
+      HEXAHEDRON_24 ....... 24 Node High Order Hexahedron (Bi-Quadratic Hexahedron)
+      HEXAHEDRON_27 ....... 27 Node High Order Hexahedron (Tri-Quadratic Hexahedron)
       MIXED ............... A Mixture of Unstructured Base Topologies
       2DSMESH ............. General ( Curved )
       2DRECTMESH .......... Rectilinear
@@ -128,8 +134,8 @@ Currently supported BASE topologies are :
    XML Attribute : Name = Any String
    XML Attribute : TopologyType = Polyvertex | Polyline | Polygon |
                                   Triangle | Quadrilateral | Tetrahedron | Pyramid| Wedge | Hexahedron |
-                                  Edge_3 | Triagle_6 | Quadrilateral_8 | Tetrahedron_10 | Pyramid_13 |
-                                  Wedge_15 | Hexahedron_20 |
+                                  Edge_3 | Triangle_6 | Quadrilateral_8 | Tetrahedron_10 | Pyramid_13 |
+                                  Wedge_15 | Wedge_18 | Hexahedron_20 | Hexahedron_24 | Hexahedron_27 |
                                   Mixed |
                                   2DSMesh | 2DRectMesh | 2DCoRectMesh |
                                   3DSMesh | 3DRectMesh | 3DCoRectMesh

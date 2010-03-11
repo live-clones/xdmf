@@ -186,10 +186,16 @@ if ( XDMF_WORD_CMP( topologyType, "NOTOPOLOGY") ){
   newTopologyType = XDMF_PYRAMID_13;
 } else if( XDMF_WORD_CMP( topologyType, "WEDGE_15") ){
   newTopologyType = XDMF_WEDGE_15;
+} else if( XDMF_WORD_CMP( topologyType, "WEDGE_18") ){
+  newTopologyType = XDMF_WEDGE_18;
 } else if( XDMF_WORD_CMP( topologyType, "HEX_20") ){
   newTopologyType = XDMF_HEX_20;
 } else if( XDMF_WORD_CMP( topologyType, "HEXAHEDRON_20") ){
   newTopologyType = XDMF_HEX_20;
+} else if( XDMF_WORD_CMP( topologyType, "HEXAHEDRON_24") ){
+  newTopologyType = XDMF_HEX_24;
+} else if( XDMF_WORD_CMP( topologyType, "HEXAHEDRON_27") ){
+  newTopologyType = XDMF_HEX_27;
 } else if( XDMF_WORD_CMP( topologyType, "MIXED") ){
   newTopologyType = XDMF_MIXED;
 } else if( XDMF_WORD_CMP( topologyType, "2DSMESH") ){
@@ -249,8 +255,14 @@ XdmfTopology::GetTopologyTypeAsString( void ) {
       return("Pyramid_13");
     case  XDMF_WEDGE_15 :
       return("Wedge_15");
+    case  XDMF_WEDGE_18 :
+      return("Wedge_18");
     case  XDMF_HEX_20 :
       return("Hexahedron_20");
+    case  XDMF_HEX_24 :
+      return("Hexahedron_24");
+    case  XDMF_HEX_27 :
+      return("Hexahedron_27");  
     case XDMF_MIXED :
       return("Mixed");
     case  XDMF_2DSMESH :
@@ -324,8 +336,17 @@ XdmfInt32  nodesPerElement = 0;
     case  XDMF_WEDGE_15 :
       nodesPerElement = 15;
       break;
+    case  XDMF_WEDGE_18 :
+      nodesPerElement = 18;
+      break;
     case  XDMF_HEX_20 :
       nodesPerElement = 20;
+      break;
+    case  XDMF_HEX_24 :
+      nodesPerElement = 24;
+      break;
+    case  XDMF_HEX_27 :
+      nodesPerElement = 27;
       break;
     case  XDMF_MIXED :
       nodesPerElement = 0;
@@ -494,8 +515,17 @@ if(this->TopologyType == XDMF_MIXED){
             case  XDMF_WEDGE_15 :
               npe = 15;
               break;
+            case  XDMF_WEDGE_18 :
+              npe = 18;
+              break;
             case  XDMF_HEX_20 :
               npe = 20;
+              break;
+            case  XDMF_HEX_24 :
+              npe = 24;
+              break;
+            case  XDMF_HEX_27 :
+              npe = 27;
               break;
             default :
                 XdmfErrorMessage("Unknown Cell Type = " << celltype);
