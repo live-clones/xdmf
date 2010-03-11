@@ -96,9 +96,7 @@ XdmfInt32 XdmfExodusReader::DetermineXdmfCellType(char * exoElemType, int numPoi
   }
   else if (elemType.substr(0,3) == "HEX" && numPointsPerCell == 27)
   {
-    // VTK_TRIQUADRATIC_HEXAHEDRON;
-    // Currently unsupported in Xdmf
-    return XDMF_NOTOPOLOGY;
+    return XDMF_HEX_27;
   }
   else if (elemType.substr(0,3) == "QUA" && numPointsPerCell == 8)
   { 
@@ -330,7 +328,7 @@ XdmfGrid * XdmfExodusReader::read(const char * fileName, XdmfElement * parentEle
   }
 
   // This is taken from VTK's vtkExodusIIReader and adapted to fit Xdmf element types, which have the same ordering as VTK.
-  if(topType == XDMF_HEX_20)
+  if(topType == XDMF_HEX_20 || topType == XDMF_HEX_27)
   {
     int * ptr = conn;
     int k;
@@ -351,9 +349,21 @@ XdmfGrid * XdmfExodusReader::read(const char * fileName, XdmfElement * parentEle
       {
         *ptr = itmp[k];
       }
+
+      if(topType == XDMF_HEX_27)
+      {
+        for ( k = 0; k < 4; ++k, ++ptr )
+        {
+          itmp[k] = *ptr;
+          *ptr = ptr[3];
+        }
+        *(ptr++) = itmp[1];
+        *(ptr++) = itmp[2];
+        *(ptr++) = itmp[0];
+      }
     }
   }
-  else if (topType == XDMF_WEDGE_15)
+  else if (topType == XDMF_WEDGE_15 || topType == XDMF_WEDGE_18)
   {
     int * ptr = conn;
     int k;
@@ -373,6 +383,16 @@ XdmfGrid * XdmfExodusReader::read(const char * fileName, XdmfElement * parentEle
       for (k = 0; k < 3; ++k, ++ptr)
       {
         *ptr = itmp[k];
+      }
+
+      if(topType == XDMF_WEDGE_18)
+      {
+        itmp[0] = *(ptr);
+        itmp[1] = *(ptr+1);
+        itmp[2] = *(ptr+2);
+        *(ptr++) = itmp[1];
+        *(ptr++) = itmp[2];
+        *(ptr++) = itmp[0];
       }
     }
   }

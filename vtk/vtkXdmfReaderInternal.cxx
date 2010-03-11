@@ -483,7 +483,10 @@ int vtkXdmfDomain::GetDataDimensionality(XdmfGrid* xmfGrid)
   case XDMF_TET_10      :
   case XDMF_PYRAMID_13  :
   case XDMF_WEDGE_15    :
+  case XDMF_WEDGE_18    :
   case XDMF_HEX_20      :
+  case XDMF_HEX_24      :
+  case XDMF_HEX_27      :
   case XDMF_MIXED       :
     return 1; // unstructured data-sets have no inherent dimensionality.
 
