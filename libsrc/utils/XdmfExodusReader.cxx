@@ -124,7 +124,6 @@ XdmfInt32 XdmfExodusReader::DetermineXdmfCellType(char * exoElemType, int numPoi
   { 
     return XDMF_EDGE_3;
   }
-
   // Check for regular elements
   else if (elemType.substr(0,3) == "CIR")
   {
