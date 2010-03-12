@@ -97,7 +97,7 @@ XdmfAttribute::Build(){
         di->SetArray(this->Values);
         if(this->Values->GetNumberOfElements() > this->LightDataLimit) di->SetFormat(XDMF_FORMAT_HDF);
         di->Build();
-
+        delete di;
     }
 // PATCH September 09, Ian Curington, HR Wallingford Ltd.
 	if(this->Units)
@@ -238,6 +238,7 @@ if( Attribute ){
 } else {
   this->AttributeType = XDMF_ATTRIBUTE_TYPE_SCALAR;
 }
+delete [] Attribute;
 
 // PATCH September 09, Ian Curinton HR Wallingford Ltd.
 Attribute = this->Get( "Units" );
@@ -248,6 +249,7 @@ if( Attribute ){
   this->Units = NULL;
 }
 // end patch
+delete [] Attribute;
 
 Attribute = this->Get( "Active" );
 this->Active = 0;
@@ -256,6 +258,7 @@ if ( Attribute ){
     this->Active = 1;
   }
 }
+delete [] Attribute;
 
 Attribute = this->Get( "Center" );
 if( Attribute ){
@@ -263,6 +266,8 @@ if( Attribute ){
 } else {
   this->AttributeCenter = XDMF_ATTRIBUTE_CENTER_NODE;
 }
+delete [] Attribute;
+
 Attribute = this->Get( "Dimensions" );
 if( Attribute ){
   this->ShapeDesc->SetShapeFromString( Attribute );
@@ -275,12 +280,14 @@ if( Attribute ){
     Attribute = this->DOM->Get( ValuesNode, "Dimensions" );
     if(!Attribute){
         XdmfErrorMessage("Dimensions of Attribute not set in XML or DataItem");
+        delete [] Attribute;
         return(XDMF_FAIL);
     }else{
         this->ShapeDesc->SetShapeFromString( Attribute );
     }
 }
 if(!this->Name) this->SetName(GetUnique("Attribute_"));
+delete [] Attribute;
 return( XDMF_SUCCESS );
 }
 

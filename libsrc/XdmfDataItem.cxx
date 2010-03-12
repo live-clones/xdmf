@@ -52,8 +52,8 @@ XdmfDataItem::XdmfDataItem() {
     this->HeavyDataSetName = NULL;
     this->ItemType = XDMF_ITEM_UNIFORM;
     this->Function = NULL;
-	this->ColumnMajor = 0;
-	this->TransposeInMemory = 1;
+    this->ColumnMajor = 0;
+    this->TransposeInMemory = 1;
 }
 
 XdmfDataItem::~XdmfDataItem() {
@@ -65,6 +65,7 @@ XdmfDataItem::~XdmfDataItem() {
     }
     if(this->DataDesc && this->DataDescIsMine) delete this->DataDesc;
     if(this->Values) delete this->Values;
+    delete [] this->HeavyDataSetName;
 }
 
 XdmfInt32
@@ -155,6 +156,7 @@ XdmfInt32 XdmfDataItem::UpdateInformationFunction(){
         case XDMF_ITEM_COORDINATES :
             break;
     }
+delete [] Value;
 return(XDMF_SUCCESS);
 }
 
@@ -172,6 +174,7 @@ XdmfInt32 XdmfDataItem::UpdateInformationUniform(){
 
     Value = this->Get("Precision");
     if(Value) Precision = atoi(Value);
+    delete [] Value;
     Value = this->Get("NumberType");
     // Try DataType
     if(!Value) Value = this->Get("DataType");
@@ -201,6 +204,7 @@ XdmfInt32 XdmfDataItem::UpdateInformationUniform(){
             this->DataDesc->SetNumberType(XDMF_FLOAT32_TYPE);
         }
     }
+    delete [] Value;
     Value = this->Get("Format");
     // Currently XML or HDF5
     if(XDMF_WORD_CMP(Value, "HDF")){
@@ -217,8 +221,10 @@ XdmfInt32 XdmfDataItem::UpdateInformationUniform(){
         this->SetFormat(XDMF_FORMAT_BINARY);
     }else if(Value){
         XdmfErrorMessage("Unsupported DataItem Format :" << Value);
+        delete [] Value;
         return(XDMF_FAIL);
     }
+    delete [] Value;
     return(XDMF_SUCCESS);
 }
 
@@ -235,6 +241,7 @@ XdmfInt32 XdmfDataItem::UpdateInformation(){
 		else
 		{
         XdmfErrorMessage("invalid major");
+        delete [] Value;
         return(XDMF_FAIL);
 		}
 	}
@@ -248,6 +255,7 @@ XdmfInt32 XdmfDataItem::UpdateInformation(){
     // XdmfDebug("r = " << this->ReferenceElement << " e = " << this->Element);
     // XdmfDebug(this->DOM->Serialize(this->ReferenceElement));
     // Dtetermine type : Uniform, Collection, or Tree
+    delete [] Value;
     Value = this->Get("ItemType");
     if(!Value){
         // Try Old "Type=XX" Style from Xdmf Version 1.0
@@ -292,6 +300,7 @@ XdmfInt32 XdmfDataItem::UpdateInformation(){
         XdmfDebug("Reference DataItem Copied Info from another ReferenceObject");
         return(XDMF_SUCCESS);
     }
+    delete [] Value;
     Value = this->Get("Dimensions");
     if(!Value) {
         XdmfErrorMessage("Dimensions are not set in XML Element");
@@ -300,6 +309,7 @@ XdmfInt32 XdmfDataItem::UpdateInformation(){
     }
     if(!this->DataDesc) this->DataDesc = new XdmfDataDesc();
     this->DataDesc->SetShapeFromString(Value);
+    delete [] Value;
     switch(this->ItemType){
         case XDMF_ITEM_UNIFORM :
             return(this->UpdateInformationUniform());

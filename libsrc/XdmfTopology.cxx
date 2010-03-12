@@ -106,6 +106,7 @@ XdmfTopology::Build(){
         di->SetArray(this->Connectivity);
         if(this->Connectivity->GetNumberOfElements() > this->LightDataLimit) di->SetFormat(XDMF_FORMAT_HDF);
         di->Build();
+        delete di;
     }
     return(XDMF_SUCCESS);
 }
@@ -584,17 +585,21 @@ Attribute = this->Get( "TopologyType" );
 if(!Attribute) Attribute = this->Get( "Type" );
 if( this->SetTopologyTypeFromString( Attribute ) == XDMF_FAIL ){
   XdmfErrorMessage("Bad Topology Type : " << Attribute );
+  delete [] Attribute;
   return( XDMF_FAIL );
   }
+delete [] Attribute;
 // Set Shape Either Way
 Attribute = this->Get( "NumberOfElements" );
 if( Attribute ){
   this->GetShapeDesc()->SetShapeFromString( Attribute );
   }
+delete [] Attribute;
 Attribute = this->Get( "Dimensions" );
 if( Attribute ){
   this->GetShapeDesc()->SetShapeFromString( Attribute );
 }
+delete [] Attribute;
 Attribute = this->Get( "NodesPerElement" );
 if( Attribute ){
   XdmfInt64 nodesPerElement;
@@ -602,14 +607,17 @@ if( Attribute ){
   nodesPerElement = strtol( Attribute, (XdmfString *)NULL, 0 );
   this->SetNodesPerElement( nodesPerElement );
   }
+delete [] Attribute;
 Attribute = this->Get( "Order" );
 if( Attribute ){
   this->SetOrderFromString( Attribute );
   }
+delete [] Attribute;
 Attribute = this->Get( "BaseOffset" );
 if( Attribute ){
   this->BaseOffset = strtol( Attribute, (XdmfString *)NULL, 0);
   }
+delete [] Attribute;
 if(!this->Name) this->SetName(GetUnique("Topology_"));
 return( XDMF_SUCCESS );
 }

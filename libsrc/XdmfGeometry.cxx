@@ -185,6 +185,7 @@ XdmfGeometry::Build(){
           di->SetArray(this->Points);
           if(this->Points->GetNumberOfElements() > this->LightDataLimit) di->SetFormat(XDMF_FORMAT_HDF);
           di->Build();
+          delete di;
         }else{
           XdmfErrorMessage("XdmfGeometry->Points must be set for Geometry Type " << this->GetGeometryTypeAsString());
           return(XDMF_FAIL);
@@ -360,7 +361,7 @@ XdmfGeometry::UpdateInformation() {
     this->Units = NULL;
   }
   // end patch
-
+  delete [] Attribute;
   Attribute = this->Get( "GeometryType" );
   if(!Attribute){
     Attribute = this->Get( "Type" );
@@ -368,12 +369,14 @@ XdmfGeometry::UpdateInformation() {
   if( Attribute ){
     if(this->SetGeometryTypeFromString( Attribute ) != XDMF_SUCCESS){
       XdmfErrorMessage("No such Geometry Type : " << Attribute);
+      delete [] Attribute;
       return(XDMF_FAIL);
     }
   } else {
     this->GeometryType = XDMF_GEOMETRY_XYZ;
   }
   if(!this->Name) this->SetName(GetUnique("Geometry_"));
+  delete[] Attribute;
   return( XDMF_SUCCESS );
 }
 

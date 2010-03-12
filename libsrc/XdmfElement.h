@@ -208,5 +208,6 @@ protected:
     XdmfDsmBuffer *DsmBuffer;
     XdmfXmlNode RootWhenParsed;
     XdmfInt32   DeleteOnGridDelete;
+    void        *PrivateData;
 };
 #endif // __XdmfElement_h

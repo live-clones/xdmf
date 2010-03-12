@@ -401,11 +401,13 @@ if( XDMF_WORD_CMP(attribute, "Collection") ){
 }else{
     if(attribute){
         XdmfErrorMessage("Unknown Grid Type " << attribute);
+        delete [] attribute;
         return(XDMF_FAIL);
     }
     // If Type is NULL use default
     this->GridType = XDMF_GRID_UNIFORM;
 }
+delete [] attribute;
 if( this->GridType & XDMF_GRID_MASK){
     // SubSet Tree or Collection
     XdmfInt32  i, nchild;
@@ -468,6 +470,7 @@ if( this->GridType & XDMF_GRID_MASK){
             select = this->DOM->FindElement("DataItem", 0, this->Element);
             if(!select){
                 XdmfErrorMessage("Section = DataItem but DataItem == 0");
+                delete [] attribute;
                 return(XDMF_FAIL);
             }
         }else{
@@ -481,6 +484,7 @@ if( this->GridType & XDMF_GRID_MASK){
             }
 
         }
+        delete [] attribute;
         target = this->Children[0];
         if(!target){
             XdmfErrorMessage("No Target Grid Spceified for Subset");
@@ -564,6 +568,7 @@ if( this->NumberOfAttributes > 0 ){
       this->NumberOfAttributes * sizeof( XdmfAttribute * ));
   for( Index = 0 ; Index < this->NumberOfAttributes ; Index++ ){
     iattribute = new XdmfAttribute;
+    iattribute->SetDeleteOnGridDelete(true);
     this->Attribute[Index] = iattribute;
     if (Index == 0) {
       AttributeElement = this->DOM->FindElement( "Attribute", Index, this->Element );

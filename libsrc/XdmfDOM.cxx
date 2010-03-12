@@ -58,7 +58,7 @@ XdmfDOM::XdmfDOM(){
   this->Output = &cout;
   this->Input = &cin;
   this->Doc = NULL;
-	this->DTD = 1;
+  this->DTD = 1;
   this->OutputFileName = 0;
   XDMF_STRING_DUPLICATE(this->OutputFileName, "stdout");
   this->SetFileName("stdin");
@@ -76,6 +76,7 @@ XdmfDOM::~XdmfDOM(){
   if( ( this->Output != &cout ) && ( this->Output != &cerr ) ) {
     ofstream *OldOutput = ( ofstream *)this->Output;
     OldOutput->close();
+    delete OldOutput;
   }
   if( this->Input != &cin ) {
      XdmfDebug("Deleting Input");
