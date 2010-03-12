@@ -57,14 +57,15 @@ XdmfValues::Inherit(XdmfDataItem *DataItem) {
         XdmfErrorMessage("Error Setting Element");
         return(XDMF_FAIL);
     }
-    if(this->DataDesc && this->DataDescIsMine){
-        delete this->DataDesc;
-    }
-    this->DataDescIsMine = 0;
+    //if(this->DataDesc && this->DataDescIsMine){
+    //    delete this->DataDesc;
+    //}
+    //this->DataDescIsMine = 0;
     if(this->SetDataDesc(DataItem->GetDataDesc()) != XDMF_SUCCESS){
         XdmfErrorMessage("Error Setting DataDesc");
         return(XDMF_FAIL);
     }
+    //this->DataDescIsMine = 0;
     return(XDMF_SUCCESS);
 }
 

@@ -954,6 +954,7 @@ if( this->GetNumberType() == XDMF_INT8_TYPE || this->GetNumberType() == XDMF_INT
   while( NumberOfValues-- ) {
     StringOutput << (long)IntValues[i++] << " ";
     }
+  delete [] IntValues;
 }
 else {
   FloatValues = new XdmfFloat64[ NumberOfValues + 10];
@@ -962,6 +963,7 @@ else {
   while( NumberOfValues-- ) {
     StringOutput << (double)FloatValues[i++] << " ";
   }
+  delete [] FloatValues;
 }
 
 StringOutput << ends;

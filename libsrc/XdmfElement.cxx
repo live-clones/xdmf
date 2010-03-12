@@ -45,7 +45,7 @@ class XDMF_EXPORT XdmfElementData : public XdmfObject {
         XdmfElement     *ReferenceElement;
         XdmfElement     *CurrentXdmfElement;
 };
-        
+
 XdmfElementData::XdmfElementData(){
     this->ReferenceElement = NULL;
     this->CurrentXdmfElement = NULL;
@@ -67,6 +67,7 @@ XdmfElement::XdmfElement() {
     this->DataXml = 0;
     this->InsertedDataXml = 0;
     this->DeleteOnGridDelete = 0;
+    this->PrivateData = NULL;
 }
 
 XdmfElement::~XdmfElement() {
@@ -83,31 +84,33 @@ XdmfElement::~XdmfElement() {
          }
      }
     }
+    if(this->PrivateData) delete this->PrivateData;
     this->Element = NULL;
     if(this->ElementName) delete [] this->ElementName;
     if(this->DataXml) delete [] this->DataXml;
 }
 
 void XdmfElement::SetReferenceObject(XdmfXmlNode anElement, void *p){
-    XdmfElementData *PrivateData;
+    XdmfElementData *ElementPrivateData;
     if(!anElement){
         XdmfErrorMessage("Element is NULL");
         return;
     }
     if(XDMF_XML_PRIVATE_DATA(anElement)){
-        PrivateData = (XdmfElementData *)XDMF_XML_PRIVATE_DATA(anElement);
+        ElementPrivateData = (XdmfElementData *)XDMF_XML_PRIVATE_DATA(anElement);
     }else{
-        PrivateData = new XdmfElementData;
-        XDMF_XML_PRIVATE_DATA(anElement) = (void *)PrivateData;
+        ElementPrivateData = new XdmfElementData;
+        XDMF_XML_PRIVATE_DATA(anElement) = (void *)ElementPrivateData;
+        this->PrivateData = ElementPrivateData;
     }
-    // XdmfDebug("Old Ref = " << PrivateData->GetReferenceElement());
+    // XdmfDebug("Old Ref = " << ElementPrivateData->GetReferenceElement());
     // XdmfDebug("New Ref = " << p);
-    PrivateData->SetReferenceElement((XdmfElement *)p);
+    ElementPrivateData->SetReferenceElement((XdmfElement *)p);
 }
 
 void *
 XdmfElement::GetReferenceObject(XdmfXmlNode anElement){
-    XdmfElementData *PrivateData;
+    XdmfElementData *ElementPrivateData;
     if(!anElement){
         XdmfErrorMessage("NULL Reference Element");
         return(NULL);
@@ -116,45 +119,46 @@ XdmfElement::GetReferenceObject(XdmfXmlNode anElement){
         XdmfDebug("XML Node contains no initialized object");
         return(NULL);
     }
-    PrivateData = (XdmfElementData *)XDMF_XML_PRIVATE_DATA(anElement);
-    if(PrivateData->GetReferenceElement() == XDMF_EMPTY_REFERENCE){
+    ElementPrivateData = (XdmfElementData *)XDMF_XML_PRIVATE_DATA(anElement);
+    if(ElementPrivateData->GetReferenceElement() == XDMF_EMPTY_REFERENCE){
         XdmfDebug("XML Node contains no initialized object");
         return(NULL);
     }
-    return(PrivateData->GetReferenceElement());
+    return(ElementPrivateData->GetReferenceElement());
 }
 
 void XdmfElement::SetCurrentXdmfElement(XdmfXmlNode anElement, void *p){
-    XdmfElementData *PrivateData;
+    XdmfElementData *ElementPrivateData;
     if(!anElement){
         XdmfErrorMessage("Element is NULL");
         return;
     }
     if(XDMF_XML_PRIVATE_DATA(anElement)){
-        PrivateData = (XdmfElementData *)XDMF_XML_PRIVATE_DATA(anElement);
+        ElementPrivateData = (XdmfElementData *)XDMF_XML_PRIVATE_DATA(anElement);
     }else{
-        PrivateData = new XdmfElementData;
-        XDMF_XML_PRIVATE_DATA(anElement) = (void *)PrivateData;
+        ElementPrivateData = new XdmfElementData;
+        XDMF_XML_PRIVATE_DATA(anElement) = (void *)ElementPrivateData;
+        this->PrivateData = ElementPrivateData;
     }
-    PrivateData->SetCurrentXdmfElement((XdmfElement *)p);
+    ElementPrivateData->SetCurrentXdmfElement((XdmfElement *)p);
 }
 
 void *
 XdmfElement::GetCurrentXdmfElement(XdmfXmlNode anElement){
-    XdmfElementData *PrivateData;
+    XdmfElementData *ElementPrivateData;
     if(!anElement){
         XdmfErrorMessage("NULL Reference Element");
         return(NULL);
     }
-    PrivateData = (XdmfElementData *)XDMF_XML_PRIVATE_DATA(anElement);
-    if(!PrivateData){
+    ElementPrivateData = (XdmfElementData *)XDMF_XML_PRIVATE_DATA(anElement);
+    if(!ElementPrivateData){
         return(NULL);
     }
-    if(PrivateData->GetCurrentXdmfElement() == XDMF_EMPTY_REFERENCE){
+    if(ElementPrivateData->GetCurrentXdmfElement() == XDMF_EMPTY_REFERENCE){
         XdmfDebug("XML Node contains no initialized object");
         return(NULL);
     }
-    return(PrivateData->GetCurrentXdmfElement());
+    return(ElementPrivateData->GetCurrentXdmfElement());
 }
 
 XdmfInt32 XdmfElement::SetElement(XdmfXmlNode anElement, XdmfInt32 AssociateElement){
@@ -162,7 +166,7 @@ XdmfInt32 XdmfElement::SetElement(XdmfXmlNode anElement, XdmfInt32 AssociateElem
         XdmfErrorMessage("Element is NULL");
         return(XDMF_FAIL);
     }
-    // Clear the ReferenceObject underlying node. This will also create PrivateData if necessary
+    // Clear the ReferenceObject underlying node. This will also create ElementPrivateData if necessary
     XdmfDebug("Clearing ReferenceObject of XML node");
     this->SetReferenceObject(anElement, XDMF_EMPTY_REFERENCE);
     if(AssociateElement) this->SetCurrentXdmfElement(anElement, this);
@@ -247,6 +251,7 @@ XdmfInt32 XdmfElement::UpdateInformation(){
     ref = this->CheckForReference(this->Element);
     if(ref == (XdmfXmlNode)XDMF_ERROR_REFERENCE){
         XdmfErrorMessage("Error Checking Reference");
+        delete [] Value;
         return(XDMF_FAIL);
     }
     if(ref){
@@ -269,6 +274,7 @@ XdmfInt32 XdmfElement::UpdateInformation(){
                 // Copy out appropriate information and return
                 XdmfDebug("Copying Information from Reference Object");
                 this->Element = e->Element;
+                delete [] Value;
                 return(this->Copy(e));
             }
             // No ReferenceObject Set. Is this a Reference as well?
@@ -279,6 +285,7 @@ XdmfInt32 XdmfElement::UpdateInformation(){
                 // Not a Reference. Is it the right Type ?
                 if(STRCMP((const char *)ref->name, (const char *)this->ReferenceElement->name) != 0){
                     XdmfErrorMessage("Reference node " << Value << " is a " << ref->name << " not " << ReferenceElement->name);
+                    delete [] Value;
                     return(XDMF_FAIL);
                 }
                 // If this is a derived Class, UpdateInformation will act on this target.
@@ -293,6 +300,7 @@ XdmfInt32 XdmfElement::UpdateInformation(){
         XdmfDebug("Setting Reference Object");
         this->SetReferenceObject(this->Element, this);
     }
+    delete [] Value;
     this->State = XDMF_ELEMENT_STATE_LIGHT_PARSED;
     return(XDMF_SUCCESS);
 }
