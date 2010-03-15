@@ -84,7 +84,8 @@ XdmfElement::~XdmfElement() {
          }
      }
     }
-    if(this->PrivateData) delete this->PrivateData;
+    //if(this->PrivateData) delete (XdmfElementData*)this->PrivateData;
+    //this->PrivateData = NULL;
     this->Element = NULL;
     if(this->ElementName) delete [] this->ElementName;
     if(this->DataXml) delete [] this->DataXml;
