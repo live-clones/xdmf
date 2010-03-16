@@ -23,6 +23,7 @@
 /*                                                                 */
 /*******************************************************************/
 #include "XdmfDOM.h"
+#include "XdmfElement.h"
 
 #include <libxml/globals.h>
 #include <libxml/parser.h>
@@ -30,7 +31,6 @@
 #include <libxml/xinclude.h>
 #include <libxml/xpath.h>
 #include <libxml/xpathInternals.h>
-
 
 XdmfDOM *HandleToXdmfDOM( XdmfConstString Source ){
   XdmfObject  *TempObj;
@@ -89,7 +89,27 @@ XdmfDOM::~XdmfDOM(){
   if ( this->OutputFileName ) {
     delete [] this->OutputFileName;
     }
-    if(this->Doc) xmlFreeDoc((xmlDoc *)this->Doc);
+    if(this->Doc) this->FreeDoc(this->Doc);
+}
+
+void XdmfDOM::FreePrivateData(XdmfXmlNode node)
+{
+	for(XdmfXmlNode currNode = node; currNode != NULL; currNode = currNode->next)
+	{
+		if(currNode->type == XML_ELEMENT_NODE)
+		{
+			delete (XdmfElementData*)currNode->_private;
+		}
+		FreePrivateData(currNode->children);
+	}
+}
+
+void XdmfDOM::FreeDoc(XdmfXmlDoc doc)
+{
+	xmlNode* rootElement = xmlDocGetRootElement(doc);
+	this->FreePrivateData(rootElement);
+	xmlFreeDoc(doc);
+  xmlCleanupParser();
 }
 
 XdmfInt32
@@ -273,7 +293,7 @@ if(inxml) {
 if(pDoc){
     if(parserOptions & XML_PARSE_XINCLUDE){
         if (xmlXIncludeProcess(pDoc) < 0) {
-            xmlFreeDoc(pDoc);
+        	this->FreeDoc(pDoc);
             pDoc = NULL;
         }
     }
@@ -291,7 +311,7 @@ XdmfXmlNode Node;
 XdmfConstString  Attribute;
 
 // Remove Previous Data
-if(this->Doc) xmlFreeDoc((xmlDoc *)this->Doc);
+if(this->Doc) this->FreeDoc(this->Doc);
 this->Tree = NULL;
 
 Root = this->__Parse(inxml, &this->Doc);
@@ -322,6 +342,7 @@ XdmfInt32
 XdmfDOM::DeleteNode(XdmfXmlNode Node) {
 if(!Node) return(XDMF_FAIL);
 xmlUnlinkNode(Node);
+this->FreePrivateData(Node);
 xmlFreeNode(Node);
 return(XDMF_SUCCESS);
 }
@@ -361,7 +382,7 @@ if(doc){
 if(NewNode){
     XdmfXmlNode Child;
     Child = this->Insert(Parent, NewNode);
-    xmlFreeDoc(doc);
+    this->FreeDoc(doc);
     return(Child);
 }
 return(NULL);
@@ -400,6 +421,7 @@ if(Parent){
         if(RealChild){
             return(RealChild);
         }
+        this->FreePrivateData(Child);
         xmlFreeNode(Child);
     }
 }
@@ -752,6 +774,7 @@ if( STRNCASECMP( Attribute, "CDATA", 5 ) == 0 ){
             (child->type == XML_CDATA_SECTION_NODE)) {
             // cout << "Deleting Node" << endl;
             xmlUnlinkNode(child);
+            this->FreePrivateData(child);
             xmlFreeNode(child);
         }
        child = next;

@@ -585,21 +585,21 @@ Attribute = this->Get( "TopologyType" );
 if(!Attribute) Attribute = this->Get( "Type" );
 if( this->SetTopologyTypeFromString( Attribute ) == XDMF_FAIL ){
   XdmfErrorMessage("Bad Topology Type : " << Attribute );
-  delete [] Attribute;
+  free((void*)Attribute);
   return( XDMF_FAIL );
   }
-delete [] Attribute;
+free((void*)Attribute);
 // Set Shape Either Way
 Attribute = this->Get( "NumberOfElements" );
 if( Attribute ){
   this->GetShapeDesc()->SetShapeFromString( Attribute );
   }
-delete [] Attribute;
+free((void*)Attribute);
 Attribute = this->Get( "Dimensions" );
 if( Attribute ){
   this->GetShapeDesc()->SetShapeFromString( Attribute );
 }
-delete [] Attribute;
+free((void*)Attribute);
 Attribute = this->Get( "NodesPerElement" );
 if( Attribute ){
   XdmfInt64 nodesPerElement;
@@ -607,17 +607,17 @@ if( Attribute ){
   nodesPerElement = strtol( Attribute, (XdmfString *)NULL, 0 );
   this->SetNodesPerElement( nodesPerElement );
   }
-delete [] Attribute;
+free((void*)Attribute);
 Attribute = this->Get( "Order" );
 if( Attribute ){
   this->SetOrderFromString( Attribute );
   }
-delete [] Attribute;
+free((void*)Attribute);
 Attribute = this->Get( "BaseOffset" );
 if( Attribute ){
   this->BaseOffset = strtol( Attribute, (XdmfString *)NULL, 0);
   }
-delete [] Attribute;
+free((void*)Attribute);
 if(!this->Name) this->SetName(GetUnique("Topology_"));
 return( XDMF_SUCCESS );
 }

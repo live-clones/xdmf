@@ -47,12 +47,18 @@ XdmfGeometry::XdmfGeometry() {
   this->SetDxDyDz( 0, 0, 0 );
   this->LightDataLimit = 100;
   this->Units = NULL;       // Ian Curington, HR Wallingford Ltd.
+  this->VectorXIsMine = 0;
+  this->VectorYIsMine = 0;
+  this->VectorZIsMine = 0;
 }
 
 XdmfGeometry::~XdmfGeometry() 
 {
   if( this->PointsAreMine && this->Points )  delete this->Points;
   if(this->Units) delete [] this->Units;    // Ian Curington, HR Wallingford Ltd.
+  if(this->VectorX && this->VectorXIsMine) delete this->VectorX;
+  if(this->VectorY && this->VectorYIsMine) delete this->VectorY;
+  if(this->VectorZ && this->VectorZIsMine) delete this->VectorZ;
 }
 
 XdmfInt32
@@ -114,16 +120,19 @@ XdmfGeometry::Build(){
         di->SetArray(this->VectorX);
         if(this->VectorX->GetNumberOfElements() > this->LightDataLimit) di->SetFormat(XDMF_FORMAT_HDF);
         di->Build();
+        delete di;
         // Vy
         di = this->GetDataItem(1, this->GetElement());
         di->SetArray(this->VectorY);
         if(this->VectorY->GetNumberOfElements() > this->LightDataLimit) di->SetFormat(XDMF_FORMAT_HDF);
         di->Build();
+        delete di;
         // Vx
         di = this->GetDataItem(2, this->GetElement());
         di->SetArray(this->VectorZ);
         if(this->VectorZ->GetNumberOfElements() > this->LightDataLimit) di->SetFormat(XDMF_FORMAT_HDF);
         di->Build();
+        delete di;
         break;
       case XDMF_GEOMETRY_VXVY:
         if(!this->VectorX || !this->VectorY){
@@ -135,11 +144,13 @@ XdmfGeometry::Build(){
         di->SetArray(this->VectorX);
         if(this->VectorX->GetNumberOfElements() > this->LightDataLimit) di->SetFormat(XDMF_FORMAT_HDF);
         di->Build();
+        delete di;
         // Vy
         di = this->GetDataItem(1, this->GetElement());
         di->SetArray(this->VectorY);
         if(this->VectorY->GetNumberOfElements() > this->LightDataLimit) di->SetFormat(XDMF_FORMAT_HDF);
         di->Build();
+        delete di;
         break;
       case XDMF_GEOMETRY_ORIGIN_DXDYDZ:
         // Origin
@@ -150,6 +161,7 @@ XdmfGeometry::Build(){
         array->SetNumberOfElements(3);
         array->SetValues(0, this->Origin, 3);
         di->Build();
+        delete di;
         // DxDyDz
         di = this->GetDataItem(1, this->GetElement());
         di->SetFormat(XDMF_FORMAT_XML);
@@ -158,6 +170,7 @@ XdmfGeometry::Build(){
         array->SetNumberOfElements(3);
         array->SetValues(0, this->DxDyDz, 3);
         di->Build();
+        delete di;
         break;
       case XDMF_GEOMETRY_ORIGIN_DXDY:
         // Origin
@@ -168,6 +181,7 @@ XdmfGeometry::Build(){
         array->SetNumberOfElements(2);
         array->SetValues(0, this->Origin, 2);
         di->Build();
+        delete di;
         // DxDy
         di = this->GetDataItem(1, this->GetElement());
         di->SetFormat(XDMF_FORMAT_XML);
@@ -176,6 +190,7 @@ XdmfGeometry::Build(){
         array->SetNumberOfElements(2);
         array->SetValues(0, this->DxDyDz, 2);
         di->Build();
+        delete di;
         break;
       case XDMF_GEOMETRY_NONE:
         break;
@@ -361,7 +376,7 @@ XdmfGeometry::UpdateInformation() {
     this->Units = NULL;
   }
   // end patch
-  delete [] Attribute;
+  free((void*)Attribute);
   Attribute = this->Get( "GeometryType" );
   if(!Attribute){
     Attribute = this->Get( "Type" );
@@ -369,14 +384,14 @@ XdmfGeometry::UpdateInformation() {
   if( Attribute ){
     if(this->SetGeometryTypeFromString( Attribute ) != XDMF_SUCCESS){
       XdmfErrorMessage("No such Geometry Type : " << Attribute);
-      delete [] Attribute;
+      free((void*)Attribute);
       return(XDMF_FAIL);
     }
   } else {
     this->GeometryType = XDMF_GEOMETRY_XYZ;
   }
   if(!this->Name) this->SetName(GetUnique("Geometry_"));
-  delete[] Attribute;
+  free((void*)Attribute);
   return( XDMF_SUCCESS );
 }
 
@@ -565,6 +580,7 @@ XdmfGeometry::Update() {
           return(XDMF_FAIL);
         }
         this->VectorX = TmpArray;
+        this->VectorXIsMine = 1;
         PointsItem.SetArrayIsMine(0);
       } else {
         XdmfErrorMessage("No VectorX Specified");
@@ -583,6 +599,7 @@ XdmfGeometry::Update() {
           return(XDMF_FAIL);
         }
         this->VectorY = TmpArray;
+        this->VectorYIsMine = 1;
         PointsItem.SetArrayIsMine(0);
       } else {
         XdmfErrorMessage("No VectorY Specified");
@@ -601,6 +618,7 @@ XdmfGeometry::Update() {
           return(XDMF_FAIL);
         }
         this->VectorZ = TmpArray;
+        this->VectorZIsMine = 1;
         PointsItem.SetArrayIsMine(0);
       } else {
         XdmfErrorMessage("No VectorZ Specified");
@@ -621,6 +639,7 @@ XdmfGeometry::Update() {
           return(XDMF_FAIL);
         }
         this->VectorX = TmpArray;
+        this->VectorXIsMine = 1;
         PointsItem.SetArrayIsMine(0);
       } else {
         XdmfErrorMessage("No VectorX Specified");
@@ -639,6 +658,7 @@ XdmfGeometry::Update() {
           return(XDMF_FAIL);
         }
         this->VectorY = TmpArray;
+        this->VectorYIsMine = 1;
         PointsItem.SetArrayIsMine(0);
       } else {
         XdmfErrorMessage("No VectorY Specified");
