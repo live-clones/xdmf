@@ -262,6 +262,10 @@ XdmfXmlDoc      Doc;
 XdmfXmlNode     Tree;
 XdmfInt32       ParserOptions;
 XdmfInt32       DTD;
+
+    void FreePrivateData(XdmfXmlNode node);
+    void FreeDoc(XdmfXmlDoc doc);
+
 };
 
 extern XDMF_EXPORT XdmfDOM *HandleToXdmfDOM( XdmfConstString Source );

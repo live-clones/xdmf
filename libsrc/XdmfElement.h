@@ -208,6 +208,20 @@ protected:
     XdmfDsmBuffer *DsmBuffer;
     XdmfXmlNode RootWhenParsed;
     XdmfInt32   DeleteOnGridDelete;
-    void        *PrivateData;
 };
+
+class XDMF_EXPORT XdmfElementData : public XdmfObject {
+    public :
+        XdmfElementData();
+        ~XdmfElementData();
+
+        XdmfSetValueMacro(ReferenceElement, XdmfElement *);
+        XdmfGetValueMacro(ReferenceElement, XdmfElement *);
+        XdmfSetValueMacro(CurrentXdmfElement, XdmfElement *);
+        XdmfGetValueMacro(CurrentXdmfElement, XdmfElement *);
+    protected :
+        XdmfElement     *ReferenceElement;
+        XdmfElement     *CurrentXdmfElement;
+};
+
 #endif // __XdmfElement_h

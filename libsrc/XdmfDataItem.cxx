@@ -156,8 +156,8 @@ XdmfInt32 XdmfDataItem::UpdateInformationFunction(){
         case XDMF_ITEM_COORDINATES :
             break;
     }
-delete [] Value;
-return(XDMF_SUCCESS);
+    delete Value;
+    return(XDMF_SUCCESS);
 }
 
 XdmfInt32 XdmfDataItem::UpdateInformationCollection(){
@@ -174,7 +174,7 @@ XdmfInt32 XdmfDataItem::UpdateInformationUniform(){
 
     Value = this->Get("Precision");
     if(Value) Precision = atoi(Value);
-    delete [] Value;
+    free((void*)Value);
     Value = this->Get("NumberType");
     // Try DataType
     if(!Value) Value = this->Get("DataType");
@@ -204,7 +204,7 @@ XdmfInt32 XdmfDataItem::UpdateInformationUniform(){
             this->DataDesc->SetNumberType(XDMF_FLOAT32_TYPE);
         }
     }
-    delete [] Value;
+    free((void*)Value);;
     Value = this->Get("Format");
     // Currently XML or HDF5
     if(XDMF_WORD_CMP(Value, "HDF")){
@@ -221,10 +221,10 @@ XdmfInt32 XdmfDataItem::UpdateInformationUniform(){
         this->SetFormat(XDMF_FORMAT_BINARY);
     }else if(Value){
         XdmfErrorMessage("Unsupported DataItem Format :" << Value);
-        delete [] Value;
+        free((void*)Value);
         return(XDMF_FAIL);
     }
-    delete [] Value;
+    free((void*)Value);
     return(XDMF_SUCCESS);
 }
 
@@ -241,10 +241,11 @@ XdmfInt32 XdmfDataItem::UpdateInformation(){
 		else
 		{
         XdmfErrorMessage("invalid major");
-        delete [] Value;
+        free((void*)Value);
         return(XDMF_FAIL);
 		}
 	}
+	free((void*)Value);
 	XdmfDebug("Major = " << this->ColumnMajor);
 
     XdmfDebug("XdmfDataItem::UpdateInformation()");
@@ -255,7 +256,6 @@ XdmfInt32 XdmfDataItem::UpdateInformation(){
     // XdmfDebug("r = " << this->ReferenceElement << " e = " << this->Element);
     // XdmfDebug(this->DOM->Serialize(this->ReferenceElement));
     // Dtetermine type : Uniform, Collection, or Tree
-    delete [] Value;
     Value = this->Get("ItemType");
     if(!Value){
         // Try Old "Type=XX" Style from Xdmf Version 1.0
@@ -291,16 +291,17 @@ XdmfInt32 XdmfDataItem::UpdateInformation(){
                 break;
             }
             XdmfErrorMessage("Unknown DataItem Type = " << Value);
+            free((void*)Value);
             return(XDMF_FAIL);
         } while(0);
     }
+    free((void*)Value);
     if(this->GetIsReference() &&
         (this->ReferenceElement != this->Element) &&
         (this->GetReferenceObject(this->Element) != this)){
         XdmfDebug("Reference DataItem Copied Info from another ReferenceObject");
         return(XDMF_SUCCESS);
     }
-    delete [] Value;
     Value = this->Get("Dimensions");
     if(!Value) {
         XdmfErrorMessage("Dimensions are not set in XML Element");
@@ -309,7 +310,7 @@ XdmfInt32 XdmfDataItem::UpdateInformation(){
     }
     if(!this->DataDesc) this->DataDesc = new XdmfDataDesc();
     this->DataDesc->SetShapeFromString(Value);
-    delete [] Value;
+    free((void*)Value);;
     switch(this->ItemType){
         case XDMF_ITEM_UNIFORM :
             return(this->UpdateInformationUniform());
@@ -465,6 +466,7 @@ XdmfInt32 XdmfDataItem::UpdateFunction(){
     if(Value && ReturnArray){
         ReturnArray->ReformFromString(Value);
     }
+    free((void*)Value);;
     // If only a portion of the DataItem was requested
     // the XdmfValues did not reflect this selection since
     // DataDesc was used to select HyperSlad | Coordinates | Function

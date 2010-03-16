@@ -383,6 +383,7 @@ if( XDMF_WORD_CMP(this->GetElementType(), "Grid") == 0){
 attribute = this->Get("GridType");
 if(!attribute) attribute = this->Get("Type");
 if( XDMF_WORD_CMP(attribute, "Collection") ){
+    free((void*)attribute);
     this->GridType = XDMF_GRID_COLLECTION;
     attribute = this->Get("CollectionType");
     if(attribute){
@@ -401,13 +402,13 @@ if( XDMF_WORD_CMP(attribute, "Collection") ){
 }else{
     if(attribute){
         XdmfErrorMessage("Unknown Grid Type " << attribute);
-        delete [] attribute;
+        free((void*)attribute);
         return(XDMF_FAIL);
     }
     // If Type is NULL use default
     this->GridType = XDMF_GRID_UNIFORM;
 }
-delete [] attribute;
+free((void*)attribute);
 if( this->GridType & XDMF_GRID_MASK){
     // SubSet Tree or Collection
     XdmfInt32  i, nchild;
@@ -445,12 +446,25 @@ if( this->GridType & XDMF_GRID_MASK){
             return(XDMF_FAIL);
         }
         this->Children[i] = new XdmfGrid;
-        if(this->Children[i]->SetDOM(this->DOM) == XDMF_FAIL) return(XDMF_FAIL);
-        if(this->Children[i]->SetElement(node) == XDMF_FAIL) return(XDMF_FAIL);
+        this->Children[i]->SetDeleteOnGridDelete(true);
+        if(this->Children[i]->SetDOM(this->DOM) == XDMF_FAIL) {
+          delete this->Children[i]; 
+          return(XDMF_FAIL);
+        }
+        if(this->Children[i]->SetElement(node) == XDMF_FAIL) {
+          delete this->Children[i];
+          return(XDMF_FAIL);
+        }
         // cout << "Calling update info for child " << i << endl;
-        if(this->Children[i]->UpdateInformation() == XDMF_FAIL) return(XDMF_FAIL);
-        if(this->Time->GetTimeType() != XDMF_TIME_UNSET){
-                if(this->Children[i]->GetTime()->SetTimeFromParent(this->Time, i) != XDMF_SUCCESS) return(XDMF_FAIL);
+        if(this->Children[i]->UpdateInformation() == XDMF_FAIL) {
+          delete this->Children[i];
+          return(XDMF_FAIL);
+        }
+        if(this->Time->GetTimeType() != XDMF_TIME_UNSET) {
+          if(this->Children[i]->GetTime()->SetTimeFromParent(this->Time, i) != XDMF_SUCCESS) {
+            delete this->Children[i];
+            return(XDMF_FAIL);
+          }
         }
     }
     if((this->GridType & XDMF_GRID_MASK) == XDMF_GRID_SUBSET){
@@ -470,7 +484,7 @@ if( this->GridType & XDMF_GRID_MASK){
             select = this->DOM->FindElement("DataItem", 0, this->Element);
             if(!select){
                 XdmfErrorMessage("Section = DataItem but DataItem == 0");
-                delete [] attribute;
+                free((void*)attribute);
                 return(XDMF_FAIL);
             }
         }else{
@@ -484,7 +498,7 @@ if( this->GridType & XDMF_GRID_MASK){
             }
 
         }
-        delete [] attribute;
+        free((void*)attribute);
         target = this->Children[0];
         if(!target){
             XdmfErrorMessage("No Target Grid Spceified for Subset");
@@ -679,7 +693,7 @@ if((this->GridType & XDMF_GRID_MASK) != XDMF_GRID_UNIFORM){
                     len = o1 - o;
                     if(len > cellsize){
                         cellsize = len + 1;
-                        delete cell;
+                        delete [] cell;
                         cell = new XdmfInt64[ cellsize ];
                     }
 //                    cout << " Conns = " << target->GetTopology()->GetConnectivity()->GetValues(o, len) << endl;
@@ -694,7 +708,7 @@ if((this->GridType & XDMF_GRID_MASK) != XDMF_GRID_UNIFORM){
                 }
                 newconn->SetNumberOfElements(total);
                 this->Topology->SetConnectivity(newconn);
-                delete cell;
+                delete [] cell;
             }
         }
     }

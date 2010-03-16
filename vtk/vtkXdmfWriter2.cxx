@@ -45,14 +45,14 @@
 #include "XdmfArray.h"
 #include "XdmfAttribute.h"
 #include "XdmfDataDesc.h"
-#include "XdmfDOM.h"
 #include "XdmfDomain.h"
+#include "XdmfDOM.h"
 #include "XdmfGeometry.h"
 #include "XdmfGrid.h"
 #include "XdmfRoot.h"
 #include "XdmfTime.h"
 #include "XdmfTopology.h"
-#include <vector>
+#include <vtkstd/vector>
 #include <vtkstd/map>
 #include <vtkstd/algorithm>
 #include <stdio.h>
@@ -63,6 +63,35 @@
 #else
 # define SNPRINTF snprintf
 #endif
+
+class vtkXdmfWriter2DomainMemoryHandler
+{
+  public:
+    vtkXdmfWriter2DomainMemoryHandler() 
+      {
+        domain = new XdmfDomain(); 
+      }
+    ~vtkXdmfWriter2DomainMemoryHandler()
+      {
+        for(vtkstd::vector<XdmfGrid*>::iterator iter = domainGrids.begin(); iter != domainGrids.end(); ++iter)
+        {
+          delete *iter;
+        }
+        delete domain;
+      }
+    void InsertGrid(XdmfGrid* grid)
+      {
+        domain->Insert(grid);
+        domainGrids.push_back(grid);
+      }
+    void InsertIntoRoot(XdmfRoot& root)
+      {
+        root.Insert(domain);
+      }
+  private:
+    XdmfDomain* domain;
+    vtkstd::vector<XdmfGrid*> domainGrids;
+};
 
 //==============================================================================
 
@@ -127,7 +156,7 @@ void vtkXdmfWriter2Internal::DetermineCellTypes(vtkPointSet * t, vtkXdmfWriter2I
 //==============================================================================
 
 vtkStandardNewMacro(vtkXdmfWriter2);
-vtkCxxRevisionMacro(vtkXdmfWriter2, "1.24");
+vtkCxxRevisionMacro(vtkXdmfWriter2, "1.25");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter2::vtkXdmfWriter2()
@@ -142,8 +171,8 @@ vtkXdmfWriter2::vtkXdmfWriter2()
   this->WriteAllTimeSteps = 0;
   this->NumberOfTimeSteps = 1;
   this->CurrentTimeIndex = 0;
-  this->Domain = NULL;
   this->TopTemporalGrid = NULL;
+  this->DomainMemoryHandler = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -157,16 +186,16 @@ vtkXdmfWriter2::~vtkXdmfWriter2()
     delete this->DOM;
     this->DOM = NULL;
     }
-  if (this->Domain)
+  if (this->DomainMemoryHandler)
     {
-    delete this->Domain;
-    this->Domain = NULL;
+    delete this->DomainMemoryHandler;
     }
   if (this->TopTemporalGrid)
     {
     delete this->TopTemporalGrid;
     this->TopTemporalGrid = NULL;
     }
+  delete this->DomainMemoryHandler;
 
   //TODO: Verify memory isn't leaking
 }
@@ -235,20 +264,20 @@ int vtkXdmfWriter2::Write()
   root.SetVersion(2.2);
   root.Build();
 
-  if (this->Domain)
+  if (this->DomainMemoryHandler)
     {
-    delete this->Domain;
+    delete this->DomainMemoryHandler;
     }
-  this->Domain = new XdmfDomain();
-  root.Insert(this->Domain);
+  this->DomainMemoryHandler = new vtkXdmfWriter2DomainMemoryHandler();
+  this->DomainMemoryHandler->InsertIntoRoot(root);
 
   this->Update();
 
   root.Build();
   this->DOM->Write();
 
-  delete this->Domain;
-  this->Domain = NULL;
+  delete this->DomainMemoryHandler;
+  this->DomainMemoryHandler = NULL;
 
   return 1;
 }
@@ -303,7 +332,7 @@ int vtkXdmfWriter2::RequestData(
   vtkInformationVector** inputVector,
   vtkInformationVector* vtkNotUsed(outputVector))
 {
-  if (!this->Domain)
+  if (!this->DomainMemoryHandler)
     {
     //call Write instead of this directly. That does setup first, then calls this.
     return 1;
@@ -324,6 +353,7 @@ int vtkXdmfWriter2::RequestData(
       }
 
     XdmfGrid *tgrid = new XdmfGrid();
+    tgrid->SetDeleteOnGridDelete(true);
     tgrid->SetGridType(XDMF_GRID_COLLECTION);
     tgrid->SetCollectionType(XDMF_GRID_COLLECTION_TEMPORAL);
     XdmfTopology *t = tgrid->GetTopology();
@@ -331,19 +361,20 @@ int vtkXdmfWriter2::RequestData(
     XdmfGeometry *geo = tgrid->GetGeometry();
     geo->SetGeometryType(XDMF_GEOMETRY_NONE);
 
-    this->Domain->Insert(tgrid);    
+    this->DomainMemoryHandler->InsertGrid(tgrid);    
 
     this->TopTemporalGrid = tgrid;
     }
 
   XdmfGrid *grid = new XdmfGrid();
+  grid->SetDeleteOnGridDelete(true);
   if (this->TopTemporalGrid)
     {
     this->TopTemporalGrid->Insert(grid);
     }
   else
     {
-    this->Domain->Insert(grid);
+    this->DomainMemoryHandler->InsertGrid(grid);
     }
 
   vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
@@ -355,8 +386,8 @@ int vtkXdmfWriter2::RequestData(
     double *dataT = input->GetInformation()->Get(vtkDataObject::DATA_TIME_STEPS());
     //cerr << "Writing " << this->CurrentTimeIndex << " " << *dataT << endl;
 
-    //TODO: Shouldn't grid->GetTime be used instead of making my own here?
-    XdmfTime *xT = new XdmfTime();
+    XdmfTime *xT = grid->GetTime();
+    xT->SetDeleteOnGridDelete(true);
     xT->SetTimeType(XDMF_TIME_SINGLE);
     xT->SetValue(*dataT);
     grid->Insert(xT);
@@ -434,7 +465,7 @@ void vtkXdmfWriter2::WriteCompositeDataSet(vtkCompositeDataSet *dobj, XdmfGrid *
   while (!iter->IsDoneWithTraversal())
     {
     XdmfGrid *childsGrid = new XdmfGrid();
-    childsGrid->SetDeleteOnGridDelete(1);
+    childsGrid->SetDeleteOnGridDelete(true);
     grid->Insert(childsGrid);    
     vtkDataObject* ds = iter->GetCurrentDataObject();
     this->WriteDataSet(ds, childsGrid);
@@ -867,17 +898,17 @@ void vtkXdmfWriter2::CreateGeometry(vtkDataSet *ds, XdmfGrid *grid, void *static
     len = da->GetNumberOfTuples();
     XdmfArray *xdax = new XdmfArray;
     this->ConvertVToXArray(da, xdax, 1, &len, 0, heavyName);
-    geo->SetVectorX(xdax);
+    geo->SetVectorX(xdax, 1);
     da = rgrid->GetYCoordinates();
     len = da->GetNumberOfTuples();
     XdmfArray *xday = new XdmfArray;
     this->ConvertVToXArray(da, xday, 1, &len, 0, heavyName);
-    geo->SetVectorY(xday);
+    geo->SetVectorY(xday, 1);
     da = rgrid->GetZCoordinates();
     len = da->GetNumberOfTuples();
     XdmfArray *xdaz = new XdmfArray;
     this->ConvertVToXArray(da, xdaz, 1, &len, 0, heavyName);
-    geo->SetVectorZ(xdaz);
+    geo->SetVectorZ(xdaz, 1);
     }
     break;
   case VTK_STRUCTURED_GRID:
@@ -888,7 +919,7 @@ void vtkXdmfWriter2::CreateGeometry(vtkDataSet *ds, XdmfGrid *grid, void *static
     vtkPointSet *pset = vtkPointSet::SafeDownCast(ds);
     vtkPoints *pts = pset->GetPoints();
     vtkDataArray *da = pts->GetData();
-    XdmfArray *xda = new XdmfArray;
+    XdmfArray *xda = geo->GetPoints();
     vtkIdType shape[2];
     shape[0] = da->GetNumberOfTuples();
     this->ConvertVToXArray(da, xda, 1, shape, 0, heavyName);
@@ -972,6 +1003,7 @@ void vtkXdmfWriter2::WriteArrays(vtkFieldData* fd, XdmfGrid *grid, int associati
 
       XdmfAttribute *attr = new XdmfAttribute;    
       attr->SetLightDataLimit(this->LightDataLimit);
+      attr->SetDeleteOnGridDelete(true);
       if (da->GetName())
         {
         attr->SetName(da->GetName());
@@ -1028,7 +1060,7 @@ void vtkXdmfWriter2::WriteArrays(vtkFieldData* fd, XdmfGrid *grid, int associati
           }
         }
 
-      XdmfArray *xda = new XdmfArray;      
+      XdmfArray *xda = attr->GetValues();
       this->ConvertVToXArray(da, xda, rank, dims, 0, heavyName);
       attr->SetValues(xda);
       grid->Insert(attr);

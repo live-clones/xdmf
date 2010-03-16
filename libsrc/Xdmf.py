@@ -222,6 +222,27 @@ class XdmfElement(XdmfLightData):
 XdmfElement_swigregister = _Xdmf.XdmfElement_swigregister
 XdmfElement_swigregister(XdmfElement)
 
+class XdmfElementData(XdmfObject):
+    __swig_setmethods__ = {}
+    for _s in [XdmfObject]: __swig_setmethods__.update(getattr(_s,'__swig_setmethods__',{}))
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfElementData, name, value)
+    __swig_getmethods__ = {}
+    for _s in [XdmfObject]: __swig_getmethods__.update(getattr(_s,'__swig_getmethods__',{}))
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfElementData, name)
+    __repr__ = _swig_repr
+    def __init__(self): 
+        this = _Xdmf.new_XdmfElementData()
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _Xdmf.delete_XdmfElementData
+    __del__ = lambda self : None;
+    def SetReferenceElement(self, *args): return _Xdmf.XdmfElementData_SetReferenceElement(self, *args)
+    def GetReferenceElement(self): return _Xdmf.XdmfElementData_GetReferenceElement(self)
+    def SetCurrentXdmfElement(self, *args): return _Xdmf.XdmfElementData_SetCurrentXdmfElement(self, *args)
+    def GetCurrentXdmfElement(self): return _Xdmf.XdmfElementData_GetCurrentXdmfElement(self)
+XdmfElementData_swigregister = _Xdmf.XdmfElementData_swigregister
+XdmfElementData_swigregister(XdmfElementData)
+
 XDMF_ATTRIBUTE_TYPE_NONE = _Xdmf.XDMF_ATTRIBUTE_TYPE_NONE
 XDMF_ATTRIBUTE_TYPE_SCALAR = _Xdmf.XDMF_ATTRIBUTE_TYPE_SCALAR
 XDMF_ATTRIBUTE_TYPE_VECTOR = _Xdmf.XDMF_ATTRIBUTE_TYPE_VECTOR

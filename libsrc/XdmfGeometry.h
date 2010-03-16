@@ -145,9 +145,9 @@ XDMF_GEOMETRY_ORIGIN_DXDYDZ : Xorigin, Yorigin, Zorigin, Dx, Dy, Dz
   XdmfArray *GetVectorX( void ) { return( this->VectorX ); };
   XdmfArray *GetVectorY( void ) { return( this->VectorY ); };
   XdmfArray *GetVectorZ( void ) { return( this->VectorZ ); };
-  void SetVectorX( XdmfArray *Array ) { this->VectorX = Array; }; 
-  void SetVectorY( XdmfArray *Array ) { this->VectorY = Array; }; 
-  void SetVectorZ( XdmfArray *Array ) { this->VectorZ = Array; }; 
+  void SetVectorX( XdmfArray *Array, XdmfBoolean isMine = 0) { this->VectorX = Array; this->VectorXIsMine = isMine;};
+  void SetVectorY( XdmfArray *Array, XdmfBoolean isMine = 0 ) { this->VectorY = Array; this->VectorYIsMine = isMine;}; 
+  void SetVectorZ( XdmfArray *Array, XdmfBoolean isMine = 0 ) { this->VectorZ = Array; this->VectorZIsMine = isMine;}; 
 
   XdmfInt32 HasData( void ) {
     if ( this->Points || ( this->VectorX && this->VectorY && this->VectorZ )){
@@ -170,6 +170,9 @@ protected:
   XdmfArray  *VectorY;
   XdmfArray  *VectorZ;
   XdmfString Units;     // Ian Curington, HR Wallingford Ltd.
+  XdmfBoolean VectorXIsMine;
+  XdmfBoolean VectorYIsMine;
+  XdmfBoolean VectorZIsMine;
 };
 
 extern XDMF_EXPORT XdmfGeometry *GetXdmfGeometryHandle( void *Pointer );

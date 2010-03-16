@@ -24,6 +24,7 @@
 #define _vtkXdmfWriter2_h
 
 #include "vtkDataObjectAlgorithm.h"
+#include <vector>
 
 class vtkExecutive;
 
@@ -34,10 +35,10 @@ class vtkFieldData;
 class vtkDataArray;
 class vtkInformation;
 class vtkInformationVector;
+class vtkXdmfWriter2DomainMemoryHandler;
 
 //BTX
 class XdmfDOM;
-class XdmfDomain;
 class XdmfGrid;
 class XdmfArray;
 struct  _xmlNode;
@@ -161,10 +162,10 @@ protected:
   int Piece;
   int NumberOfPieces;
 
-
   XdmfDOM *DOM;
-  XdmfDomain *Domain;
   XdmfGrid *TopTemporalGrid;
+
+  vtkXdmfWriter2DomainMemoryHandler *DomainMemoryHandler;
 
 private:
   vtkXdmfWriter2(const vtkXdmfWriter2&); // Not implemented
