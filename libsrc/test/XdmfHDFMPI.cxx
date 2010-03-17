@@ -150,7 +150,7 @@ public:
           MPI_ANY_SOURCE,
           0,
           MPI_COMM_WORLD,
-          stat );
+          &stat );
         processes_received++;
 
         // pull the information from the buffer
