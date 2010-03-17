@@ -108,6 +108,7 @@ public:
 
   XdmfInt32 DoWrite( XdmfHeavyData* ds, XdmfArray* array )
   {
+    MPI_Status stat;
     // this is a really bad implementation that assumes rank 0 has the same data
     // size as everyone else, but we're really just going for a simple
     // example here.  The real coalescing implementation will require a few more
@@ -149,7 +150,7 @@ public:
           MPI_ANY_SOURCE,
           0,
           MPI_COMM_WORLD,
-          0 );
+          stat );
         processes_received++;
 
         // pull the information from the buffer
