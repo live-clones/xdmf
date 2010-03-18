@@ -27,7 +27,9 @@
 #include <stdlib.h>
 
 XdmfDataDesc::XdmfDataDesc() {
+#ifndef XDMF_MEMORY_DEBUG
   H5dont_atexit();
+#endif
   this->DataSpace = H5I_BADID;
   this->DataType = H5Tcopy(H5T_NATIVE_FLOAT);
   this->SelectionType = XDMF_SELECTALL;
@@ -573,6 +575,7 @@ dataType =  H5Tget_member_type( this->DataType, Index );
 if( HDF5TypeToXdmfType(dataType) == XDMF_COMPOUND_TYPE ) {
   rank = H5Tget_array_ndims( dataType );
   if( rank <= 0 ){
+    H5Tclose(dataType);
     return( XDMF_FAIL );
     }
 #if (H5_VERS_MAJOR>1)||((H5_VERS_MAJOR==1)&&(H5_VERS_MINOR>=8))
@@ -587,6 +590,7 @@ if( HDF5TypeToXdmfType(dataType) == XDMF_COMPOUND_TYPE ) {
   rank =  1;
   Dimensions[0] = 1;
 }
+H5Tclose(dataType);
 return( rank );
 }
 
@@ -638,7 +642,9 @@ if( Index >  ( H5Tget_nmembers( this->DataType ) - 1 ) ){
   XdmfErrorMessage("Index is Greater than Number of Members");
   return( 0 );
   }
-Length =  H5Tget_size( H5Tget_member_type( this->DataType, Index ) );
+hid_t dataType = H5Tget_member_type( this->DataType, Index );
+Length =  H5Tget_size(dataType);
+H5Tclose(dataType);
 if( Length <= 0 ){
   XdmfErrorMessage("Error Getting Length");
   RetVal = XDMF_FAIL;

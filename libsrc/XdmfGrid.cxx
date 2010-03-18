@@ -610,7 +610,7 @@ if( this->NumberOfSets > 0 ){
       this->NumberOfSets * sizeof( XdmfSet * ));
   for( Index = 0 ; Index < this->NumberOfSets ; Index++ ){
     iSet = new XdmfSet;
-
+    iSet->SetDeleteOnGridDelete(true);
     this->Sets[Index] = iSet;
     if (Index==0) {
       lSetElement = this->DOM->FindElement( "Set", Index, this->Element );

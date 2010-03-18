@@ -234,12 +234,12 @@ if ( Value ){
     this->Active = 1;
   }
 }
-
+free((void*)Value);
 Value = this->Get( "Ghost" );
 if(Value){
     this->SetGhost(atoi(Value));
     }
-
+free((void*)Value);
 Value = this->Get( "SetType" );
 if( Value ){
   this->SetSetTypeFromString( Value );
@@ -248,12 +248,14 @@ if( Value ){
 }
 
 // Allow Size | Length | Dimensions
+free((void*)Value);
 Value = this->Get( "Size" );
 if(!Value) Value = this->Get("Length");
 if(!Value) Value = this->Get("Dimensions");
 if( Value ){
   this->ShapeDesc->SetShapeFromString( Value );
   this->SetSize( this->ShapeDesc->GetNumberOfElements());
+  free((void*)Value);
 }else{
     XdmfXmlNode  IdsNode;
     IdsNode = this->DOM->FindDataElement( 0, Element );
@@ -266,6 +268,7 @@ if( Value ){
         return(XDMF_FAIL);
     }else{
         this->ShapeDesc->SetShapeFromString( Value );
+        free((void*)Value);
     }
     this->SetSize(this->ShapeDesc->GetNumberOfElements());
 }
