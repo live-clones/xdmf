@@ -317,9 +317,9 @@ void XdmfExodusWriter::write(const char * fileName, XdmfGrid * gridToWrite)
         itmp[0] = *(ptr);
         itmp[1] = *(ptr+1);
         itmp[2] = *(ptr+2);
-        *(ptr++) = itmp[1];
         *(ptr++) = itmp[2];
         *(ptr++) = itmp[0];
+        *(ptr++) = itmp[1];
       }
     }
   }
