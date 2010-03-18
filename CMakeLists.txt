@@ -36,6 +36,12 @@ INCLUDE (${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake)
 
 SET(VTK_INSTALL_LIB_DIR "/lib")
 
+OPTION(XDMF_MEMORY_DEBUG "Enable Memory Debugging in Xdmf" OFF)
+IF(XDMF_MEMORY_DEBUG)
+  SET(CMAKE_BUILD_TYPE "Debug")
+  ADD_DEFINITIONS(-DH5_USING_PURIFY -DXDMF_MEMORY_DEBUG)
+ENDIF(XDMF_MEMORY_DEBUG)
+
 #############################################################################
 # VTK READER/WRITER to use .xdmf files in vtk
 

@@ -6,6 +6,7 @@ SET(XdmfUtilSource
     XdmfFortran
     XdmfDiff
     XdmfExodusReader
+    XdmfExodusWriter
 )
 
 IF(XDMF_BUILD_MPI)
@@ -67,8 +68,8 @@ ADD_LIBRARY(XdmfUtils ${LIBTYPE} ${XdmfUtilSource})
 TARGET_LINK_LIBRARIES(XdmfUtils Xdmf ${XDMF_EXODUSII_LIBRARIES} ${XDMF_NETCDF_LIBRARIES})
 
 ADD_EXECUTABLE(XdmfDiff XdmfDiff)
-ADD_EXECUTABLE(XdmfExodusConverter XdmfExodusReader)
-SET_TARGET_PROPERTIES(XdmfDiff XdmfExodusConverter PROPERTIES COMPILE_FLAGS -DBUILD_EXE)
+ADD_EXECUTABLE(XdmfExodusConverter XdmfExodusConverter)
+SET_TARGET_PROPERTIES(XdmfDiff PROPERTIES COMPILE_FLAGS -DBUILD_EXE)
 TARGET_LINK_LIBRARIES(XdmfDiff XdmfUtils)
 TARGET_LINK_LIBRARIES(XdmfExodusConverter XdmfUtils)
 

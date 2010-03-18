@@ -24,9 +24,6 @@
 /*******************************************************************/
 
 #include "XdmfExodusReader.h"
-
-#ifndef BUILD_EXE
-
 #include <exodusII.h>
 
 //
@@ -61,21 +58,21 @@ XdmfInt32 XdmfExodusReader::DetermineXdmfCellType(char * exoElemType, int numPoi
     return XDMF_TRI_6;
   }
   else if (elemType.substr(0,3) == "SHE" && numPointsPerCell == 8)
-  { 
+  {
     return XDMF_QUAD_8;
   }
   else if (elemType.substr(0,3) == "SHE" && numPointsPerCell == 9)
-  { 
+  {
     // VTK_QUADRATIC_QUAD with 9 points
     // Currently unsupported in Xdmf
     return XDMF_QUAD_8;
   }
   else if (elemType.substr(0,3) == "TET" && numPointsPerCell == 10)
-  { 
+  {
     return XDMF_TET_10;
   }
   else if (elemType.substr(0,3) == "TET" && numPointsPerCell == 11)
-  { 
+  {
     // VTK_QUADRATIC_TETRA with 11 points
     // Currently unsupported in Xdmf
     return XDMF_NOTOPOLOGY;
@@ -85,13 +82,13 @@ XdmfInt32 XdmfExodusReader::DetermineXdmfCellType(char * exoElemType, int numPoi
     return XDMF_WEDGE_15;
   }
   else if (elemType.substr(0,3) == "HEX" && numPointsPerCell == 20)
-  { 
+  {
     return XDMF_HEX_20;
   }
   else if (elemType.substr(0,3) == "HEX" && numPointsPerCell == 21)
   {
     // VTK_QUADRATIC_HEXAHEDRON with 21 points
-    // Currently unsupported in Xdmf 
+    // Currently unsupported in Xdmf
     return XDMF_NOTOPOLOGY;
   }
   else if (elemType.substr(0,3) == "HEX" && numPointsPerCell == 27)
@@ -99,29 +96,29 @@ XdmfInt32 XdmfExodusReader::DetermineXdmfCellType(char * exoElemType, int numPoi
     return XDMF_HEX_27;
   }
   else if (elemType.substr(0,3) == "QUA" && numPointsPerCell == 8)
-  { 
+  {
     return XDMF_QUAD_8;
   }
   else if (elemType.substr(0,3) == "QUA" && numPointsPerCell == 9)
-  { 
+  {
     // VTK_BIQUADRATIC_QUAD;
     // Currently unsupported in Xdmf
     return XDMF_NOTOPOLOGY;
   }
   else if (elemType.substr(0,3) == "TRU" && numPointsPerCell == 3)
-  { 
+  {
     return XDMF_EDGE_3;
   }
   else if (elemType.substr(0,3) == "BEA" && numPointsPerCell == 3)
-  { 
+  {
     return XDMF_EDGE_3;
   }
   else if (elemType.substr(0,3) == "BAR" && numPointsPerCell == 3)
-  { 
+  {
     return XDMF_EDGE_3;
   }
   else if (elemType.substr(0,3) == "EDG" && numPointsPerCell == 3)
-  { 
+  {
     return XDMF_EDGE_3;
   }
   // Check for regular elements
@@ -131,57 +128,57 @@ XdmfInt32 XdmfExodusReader::DetermineXdmfCellType(char * exoElemType, int numPoi
     // Currently unsupported in Xdmf
     return XDMF_NOTOPOLOGY;
   }
-  else if (elemType.substr(0,3) == "SPH") 
+  else if (elemType.substr(0,3) == "SPH")
   {
     // VTK_VERTEX;
     // Currently unsupported in Xdmf
     return XDMF_NOTOPOLOGY;
   }
-  else if (elemType.substr(0,3) == "BAR") 
+  else if (elemType.substr(0,3) == "BAR")
   {
     // VTK_LINE;
     // Currently unsupported in Xdmf
     return XDMF_NOTOPOLOGY;
   }
-  else if (elemType.substr(0,3) == "TRU") 
+  else if (elemType.substr(0,3) == "TRU")
   {
     // VTK_LINE;
     // Currently unsupported in Xdmf
     return XDMF_NOTOPOLOGY;
   }
-  else if (elemType.substr(0,3) == "BEA") 
+  else if (elemType.substr(0,3) == "BEA")
   {
     // VTK_LINE;
     // Currently unsupported in Xdmf
     return XDMF_NOTOPOLOGY;
   }
-  else if (elemType.substr(0,3) == "EDG") 
+  else if (elemType.substr(0,3) == "EDG")
   {
     // VTK_LINE;
     // Currently unsupported in Xdmf
     return XDMF_NOTOPOLOGY;
   }
-  else if (elemType.substr(0,3) == "TRI") 
+  else if (elemType.substr(0,3) == "TRI")
   {
     return XDMF_TRI;
   }
-  else if (elemType.substr(0,3) == "QUA") 
+  else if (elemType.substr(0,3) == "QUA")
   {
     return XDMF_QUAD;
   }
-  else if (elemType.substr(0,3) == "TET") 
+  else if (elemType.substr(0,3) == "TET")
   {
     return XDMF_TET;
   }
-  else if (elemType.substr(0,3) == "PYR") 
+  else if (elemType.substr(0,3) == "PYR")
   {
     return XDMF_PYRAMID;
   }
-  else if (elemType.substr(0,3) == "WED") 
+  else if (elemType.substr(0,3) == "WED")
   {
     return XDMF_WEDGE;
   }
-  else if (elemType.substr(0,3) == "HEX") 
+  else if (elemType.substr(0,3) == "HEX")
   {
     return XDMF_HEX;
   }
@@ -221,7 +218,7 @@ XdmfGrid * XdmfExodusReader::read(const char * fileName, XdmfElement * parentEle
   int CPU_word_size = sizeof(double);
   int IO_word_size = 0; // Get from file
   int exodusHandle = ex_open(fileName, EX_READ, &CPU_word_size, &IO_word_size, &version);
-      
+
   char * title = new char[MAX_LINE_LENGTH+1];
   int num_dim, num_nodes, num_elem, num_elem_blk, num_node_sets, num_side_sets;
   ex_get_init (exodusHandle, title, &num_dim, &num_nodes, &num_elem, &num_elem_blk, &num_node_sets, &num_side_sets);
@@ -234,7 +231,7 @@ XdmfGrid * XdmfExodusReader::read(const char * fileName, XdmfElement * parentEle
     "\nNum Elem Blk: " << num_elem_blk <<
     "\nNum Node Sets: " << num_node_sets <<
     "\nNum Side Sets: " << num_side_sets << endl;
-  */ 
+  */
 
   // Read geometry values
   double * x = new double[num_nodes];
@@ -250,7 +247,7 @@ XdmfGrid * XdmfExodusReader::read(const char * fileName, XdmfElement * parentEle
 		std::cout << "Exodus File contains geometry of dimension " << num_dim << "which is unsupported by Xdmf" << std::endl;
   	return NULL;
 	}
-	
+
   // In the future we may want to do XDMF_GEOMETRY_X_Y_Z?
   if(num_dim == 2)
   {
@@ -262,7 +259,7 @@ XdmfGrid * XdmfExodusReader::read(const char * fileName, XdmfElement * parentEle
   }
   geom->SetNumberOfPoints(num_nodes);
   geom->SetDeleteOnGridDelete(true);
-      
+
   XdmfArray * points = geom->GetPoints();
   points->SetNumberType(XDMF_FLOAT64_TYPE);
   points->SetNumberOfElements(num_nodes * num_dim);
@@ -277,7 +274,7 @@ XdmfGrid * XdmfExodusReader::read(const char * fileName, XdmfElement * parentEle
   }
   delete [] x;
   delete [] y;
-  delete [] z;     
+  delete [] z;
 
   int * blockIds = new int[num_elem_blk];
   ex_get_elem_blk_ids(exodusHandle, blockIds);
@@ -293,7 +290,7 @@ XdmfGrid * XdmfExodusReader::read(const char * fileName, XdmfElement * parentEle
     char * elem_type = new char[MAX_STR_LENGTH+1];
     int num_nodes_per_elem, num_elem_this_blk, num_attr;
     ex_get_elem_block(exodusHandle, blockIds[j], elem_type, &num_elem_this_blk, &num_nodes_per_elem, &num_attr);
-    
+
     /*
     cout << "Block Id: " << blockIds[j] <<
       "\nElem Type: " << elem_type <<
@@ -367,12 +364,12 @@ XdmfGrid * XdmfExodusReader::read(const char * fileName, XdmfElement * parentEle
     int * ptr = conn;
     int k;
     int itmp[3];
- 
+
     // Exodus Node ordering does not match Xdmf, we must convert.
     for (int i=0; i<totalNumElem; i++)
     {
       ptr += 9;
-        
+
       for (k = 0; k < 3; ++k, ++ptr)
       {
         itmp[k] = *ptr;
@@ -400,7 +397,7 @@ XdmfGrid * XdmfExodusReader::read(const char * fileName, XdmfElement * parentEle
   topology->SetTopologyType(topType);
   topology->SetNumberOfElements(totalNumElem);
   topology->SetDeleteOnGridDelete(true);
-      
+
   XdmfArray * connections = topology->GetConnectivity();
   connections->SetNumberType(XDMF_INT32_TYPE);
   connections->SetNumberOfElements(totalConns);
@@ -438,15 +435,15 @@ XdmfGrid * XdmfExodusReader::read(const char * fileName, XdmfElement * parentEle
     node_set_names[j] = new char[MAX_STR_LENGTH+1];
   }
   ex_get_names(exodusHandle, EX_NODE_SET, node_set_names);
- 
+
   for (int j=0; j<num_node_sets; j++)
   {
     int num_nodes_in_set, num_df_in_set;
     ex_get_node_set_param(exodusHandle, nodeSetIds[j], &num_nodes_in_set, &num_df_in_set);
-      
+
     /*
     cout << "Node Set Id: " << nodeSetIds[j] <<
-      "\nNode Set Name: " << node_set_names[j] << 
+      "\nNode Set Name: " << node_set_names[j] <<
       "\nNum Nodes in Set: "<< num_nodes_in_set <<
       "\nNum Distrub Factors: " << num_df_in_set << endl;
     */
@@ -461,7 +458,7 @@ XdmfGrid * XdmfExodusReader::read(const char * fileName, XdmfElement * parentEle
       set->SetSetType(XDMF_SET_TYPE_NODE);
       set->SetSize(num_nodes_in_set);
       set->SetDeleteOnGridDelete(true);
-  
+
       XdmfArray * ids = set->GetIds();
       ids->SetNumberType(XDMF_INT32_TYPE);
       ids->SetNumberOfElements(num_nodes_in_set);
@@ -469,7 +466,7 @@ XdmfGrid * XdmfExodusReader::read(const char * fileName, XdmfElement * parentEle
       // Subtract all node ids by 1 since exodus indices start at 1
       *ids - 1;
       grid->Insert(set);
-      
+
       /*
       if(num_df_in_set > 0)
       {
@@ -502,7 +499,7 @@ XdmfGrid * XdmfExodusReader::read(const char * fileName, XdmfElement * parentEle
   ex_get_var_param(exodusHandle, "g", &num_global_vars);
   ex_get_var_param(exodusHandle, "n", &num_nodal_vars);
   ex_get_var_param(exodusHandle, "e", &num_elem_vars);
-  
+
   /*
   cout << "Num Global Vars: " << num_global_vars <<
     "\nNum Nodal Vars: " << num_nodal_vars <<
@@ -527,7 +524,7 @@ XdmfGrid * XdmfExodusReader::read(const char * fileName, XdmfElement * parentEle
   ex_get_var_names(exodusHandle, "g", num_global_vars, global_var_names);
   ex_get_var_names(exodusHandle, "n", num_nodal_vars, nodal_var_names);
   ex_get_var_names(exodusHandle, "e", num_elem_vars, elem_var_names);
- 
+
   /*
   cout << "Global Vars Names: " << endl;
   for (int j=0; j<num_global_vars; j++)
@@ -546,7 +543,7 @@ XdmfGrid * XdmfExodusReader::read(const char * fileName, XdmfElement * parentEle
   }
   */
 
-  // Get variable data 
+  // Get variable data
   // TODO: do this for all timesteps?
 
   // Global variable data
@@ -580,7 +577,7 @@ XdmfGrid * XdmfExodusReader::read(const char * fileName, XdmfElement * parentEle
     {
       double * nodal_var_vals = new double[num_nodes];
       ex_get_nodal_var(exodusHandle, 1, j+1, num_nodes, nodal_var_vals);
- 
+
       // Write nodal attribute to xdmf
       XdmfAttribute * attr = new XdmfAttribute();
       attr->SetName(nodal_var_names[j]);
@@ -608,7 +605,7 @@ XdmfGrid * XdmfExodusReader::read(const char * fileName, XdmfElement * parentEle
       ex_get_elem_var(exodusHandle, 1, j+1, blockIds[k], numElemsInBlock[j], &elem_var_vals[elemIndex]);
       elemIndex = elemIndex + numElemsInBlock[j];
     }
-    
+
     // Write element attribute to xdmf
     XdmfAttribute * attr = new XdmfAttribute();
     attr->SetName(elem_var_names[j]);
@@ -624,7 +621,7 @@ XdmfGrid * XdmfExodusReader::read(const char * fileName, XdmfElement * parentEle
     delete [] elem_var_vals;
     delete [] elem_var_names[j];
   }
-  
+
   ex_close(exodusHandle);
   delete [] title;
   delete [] blockIds;
@@ -634,108 +631,3 @@ XdmfGrid * XdmfExodusReader::read(const char * fileName, XdmfElement * parentEle
   delete [] topTypeInBlock;
   return grid;
 }
-
-#else
-
-#include <sstream>
-
-/**
- * Entry point for command line utility
- *
- */
-int
-main(int argc, char* argv[])
-{
-  std::string usage = "Converts an Exodus II file to XDMF: \n \n Usage: \n \n   XdmfExodusConverter <path-to-exodus-file> (Optional: <path-to-output-file>)";
-  std::string meshName = "";
-
-  if (argc < 2)
-  {
-    cout << usage << endl;
-    return 1;
-  }
-
-  if (argc >= 2)
-  {
-    FILE * refFile = fopen(argv[1], "r");
-    if (refFile)
-    {
-      // Success
-      meshName = argv[1];
-      fclose(refFile);
-    }
-    else
-    {
-      cout << "Cannot open: " << argv[1] << endl;
-      return 1;
-    }
-    
-    if (argc >= 3)
-    {
-      meshName = argv[2];
-    }
-  }
-
-  // Initialize xdmf file
-  XdmfDOM dom = XdmfDOM();
-  XdmfRoot root = XdmfRoot();
-  XdmfDomain domain = XdmfDomain();
-
-  root.SetDOM(&dom);
-  root.Build();
-  root.Insert(&domain);
-
-  XdmfExodusReader reader = XdmfExodusReader();
-  XdmfGrid * mesh = reader.read(argv[1], &domain);
- 
-  if(meshName.find_last_of("/\\") != std::string::npos)
-  {
-    meshName = meshName.substr(meshName.find_last_of("/\\")+1, meshName.length());
-  }
-
-  if (meshName.rfind(".") != std::string::npos)
-  {
-    meshName = meshName.substr(0, meshName.rfind("."));
-  }
-
-  std::stringstream outputFileStream;
-  outputFileStream << meshName << ".xmf";
-  std::string outputFile = outputFileStream.str();
-
-  // Set heavy data set names for geometry and topology
-  mesh->SetName(meshName.c_str());
-
-  std::stringstream heavyPointName;
-  heavyPointName << meshName << ".h5:/XYZ";
-  mesh->GetGeometry()->GetPoints()->SetHeavyDataSetName(heavyPointName.str().c_str());
-
-  std::stringstream heavyConnName;
-  heavyConnName << meshName << ".h5:/Connections";
-  mesh->GetTopology()->GetConnectivity()->SetHeavyDataSetName(heavyConnName.str().c_str());
-
-  // Set heavy data set names for mesh attributes and sets
-  for(int i=0; i<mesh->GetNumberOfAttributes(); i++)
-  {
-    std::stringstream heavyAttrName;
-    heavyAttrName << meshName << ".h5:/Attribute/" << mesh->GetAttribute(i)->GetAttributeCenterAsString() << "/" << mesh->GetAttribute(i)->GetName();
-    mesh->GetAttribute(i)->GetValues()->SetHeavyDataSetName(heavyAttrName.str().c_str());
-  }
-
-  for(int i=0; i<mesh->GetNumberOfSets(); i++)
-  {
-    std::stringstream heavySetName;
-    heavySetName << meshName << ".h5:/Set/" << mesh->GetSets(i)->GetSetTypeAsString() << "/" << mesh->GetSets(i)->GetName();
-    mesh->GetSets(i)->GetIds()->SetHeavyDataSetName(heavySetName.str().c_str());
-  }
-
-  mesh->Build();
-  dom.Write(outputFile.c_str());
-  
-  cout << "Wrote: " << outputFile << endl;
-
-  // cleanup
-  delete mesh;
-  return 0;
-}
-
-#endif // BUILD_EXE
