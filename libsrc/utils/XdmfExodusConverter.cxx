@@ -4,7 +4,7 @@
 /*                                                                 */
 /*  Id : Id  */
 /*  Date : $Date$ */
-/*  Version : $ */
+/*  Version : $ $ */
 /*                                                                 */
 /*  Author:                                                        */
 /*     Kenneth Leiter                                              */
