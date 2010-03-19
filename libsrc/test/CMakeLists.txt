@@ -30,7 +30,7 @@ macro( XdmfMPITest testname num_procs )
         target_link_libraries( ${testname} Xdmf ${MPI_LIBRARIES} )
         add_test(NAME ${testname} 
           COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${num_procs}
-            ${MPI_EXEC_PREFLAGS}
+            ${MPIEXEC_PREFLAGS}
             ${TEST_EXECUTABLE_PATH}/${testname}
             ${MPI_EXEC_POSTFLAGS} )
     endif( MPI_FOUND AND GENERATOR_EXPRESSIONS_SUPPORTED)
