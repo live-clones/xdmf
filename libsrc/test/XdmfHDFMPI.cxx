@@ -90,20 +90,29 @@ public:
     XdmfConstString name, 
     XdmfConstString access ) 
   {
+  // If HDF5 is compiled with Parallel IO, we must use collective open
+#ifndef H5_HAVE_PARALLEL
     if ( mCommRank == 0 ) {
       return ds->DoOpen( name, access );
     } else {
       return XDMF_SUCCESS;
     }
+#else
+    return ds->DoOpen( name, access );
+#endif
   }
 
   XdmfInt32 DoClose( XdmfHeavyData* ds )
   {
+#ifndef H5_HAVE_PARALLEL
     if ( mCommRank == 0 ) {
       return ds->DoClose();
     } else {
       return XDMF_SUCCESS;
     }
+#else
+    return ds->DoClose();
+#endif
   }
 
   XdmfInt32 DoWrite( XdmfHeavyData* ds, XdmfArray* array )
@@ -230,13 +239,13 @@ int main( int argc, char* argv[] ) {
     }
   }
 
-  MPI_Finalize();
-
   delete H5;
   delete cb;
   delete MyData;
   delete H5In;
   delete result;
+
+  MPI_Finalize();
 
   if ( failure ) {
     return -1;
