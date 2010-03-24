@@ -180,5 +180,21 @@ class XdmfExodusWriter(_object):
 XdmfExodusWriter_swigregister = _XdmfUtils.XdmfExodusWriter_swigregister
 XdmfExodusWriter_swigregister(XdmfExodusWriter)
 
+class XdmfPartitioner(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfPartitioner, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfPartitioner, name)
+    __repr__ = _swig_repr
+    def __init__(self): 
+        this = _XdmfUtils.new_XdmfPartitioner()
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _XdmfUtils.delete_XdmfPartitioner
+    __del__ = lambda self : None;
+    def Partition(self, *args): return _XdmfUtils.XdmfPartitioner_Partition(self, *args)
+XdmfPartitioner_swigregister = _XdmfUtils.XdmfPartitioner_swigregister
+XdmfPartitioner_swigregister(XdmfPartitioner)
+
 
 

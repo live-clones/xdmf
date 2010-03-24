@@ -118,6 +118,12 @@ public:
   XdmfInt32  SetValueFromInt64( XdmfInt64 Index, XdmfInt64 Value );
 
 
+XdmfInt32 SetValues( XdmfInt64 Index, XdmfArray *Values,
+        XdmfInt64 NumberOfValues,
+        XdmfInt64 ValuesStart = 0,
+        XdmfInt64 ArrayStride = 1,
+        XdmfInt64 ValuesStride = 1 );
+
 #ifndef SWIG
 /*! The Following Methods are NOT directly available via SWIG
 */
@@ -130,6 +136,7 @@ public:
   XdmfInt32  SetValue( XdmfInt64 Index, XdmfInt64 Value );
   XdmfInt32  SetValue( XdmfInt64 Index, XdmfFloat32 Value );
   XdmfInt32  SetValue( XdmfInt64 Index, XdmfFloat64 Value );
+
   XdmfInt32  SetValues( XdmfInt64 Index, XdmfUInt8 *Values,
         XdmfInt64 NumberOfValues,
         XdmfInt64 ArrayStride = 1,

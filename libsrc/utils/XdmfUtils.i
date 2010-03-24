@@ -18,6 +18,7 @@ swig -v -c++ -make_default -includeall -java ${ICE_INCLUDES} -o XdmfUtilsJava.cx
 #include <XdmfDiff.h>
 #include <XdmfExodusReader.h>
 #include <XdmfExodusWriter.h>
+#include <XdmfPartitioner.h>
 #include <Xdmf.h>
 
 #ifndef HAVE_STRTOLL
@@ -58,6 +59,7 @@ inline XDMF_LONG64 XDMF_strtoll(char *str, void*, int)
 %include XdmfDiff.h
 %include XdmfExodusReader.h
 %include XdmfExodusWriter.h
+%include XdmfPartitioner.h
 
 #ifdef SWIGPYTHON
 %{
