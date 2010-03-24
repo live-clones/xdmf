@@ -2671,26 +2671,27 @@ SWIG_Python_MustGetPtr(PyObject *obj, swig_type_info *ty, int argnum, int flags)
 #define SWIGTYPE_p_XdmfLightData swig_types[23]
 #define SWIGTYPE_p_XdmfMap swig_types[24]
 #define SWIGTYPE_p_XdmfObject swig_types[25]
-#define SWIGTYPE_p_XdmfRegion swig_types[26]
-#define SWIGTYPE_p_XdmfRoot swig_types[27]
-#define SWIGTYPE_p_XdmfSet swig_types[28]
-#define SWIGTYPE_p_XdmfTime swig_types[29]
-#define SWIGTYPE_p_XdmfTopology swig_types[30]
-#define SWIGTYPE_p_XdmfValues swig_types[31]
-#define SWIGTYPE_p_XdmfValuesBinary swig_types[32]
-#define SWIGTYPE_p_XdmfValuesHDF swig_types[33]
-#define SWIGTYPE_p_XdmfValuesXML swig_types[34]
-#define SWIGTYPE_p_char swig_types[35]
-#define SWIGTYPE_p_double swig_types[36]
-#define SWIGTYPE_p_float swig_types[37]
-#define SWIGTYPE_p_int swig_types[38]
-#define SWIGTYPE_p_long_long swig_types[39]
-#define SWIGTYPE_p_short swig_types[40]
-#define SWIGTYPE_p_unsigned_char swig_types[41]
-#define SWIGTYPE_p_unsigned_int swig_types[42]
-#define SWIGTYPE_p_unsigned_short swig_types[43]
-static swig_type_info *swig_types[45];
-static swig_module_info swig_module = {swig_types, 44, 0, 0, 0, 0};
+#define SWIGTYPE_p_XdmfPartitioner swig_types[26]
+#define SWIGTYPE_p_XdmfRegion swig_types[27]
+#define SWIGTYPE_p_XdmfRoot swig_types[28]
+#define SWIGTYPE_p_XdmfSet swig_types[29]
+#define SWIGTYPE_p_XdmfTime swig_types[30]
+#define SWIGTYPE_p_XdmfTopology swig_types[31]
+#define SWIGTYPE_p_XdmfValues swig_types[32]
+#define SWIGTYPE_p_XdmfValuesBinary swig_types[33]
+#define SWIGTYPE_p_XdmfValuesHDF swig_types[34]
+#define SWIGTYPE_p_XdmfValuesXML swig_types[35]
+#define SWIGTYPE_p_char swig_types[36]
+#define SWIGTYPE_p_double swig_types[37]
+#define SWIGTYPE_p_float swig_types[38]
+#define SWIGTYPE_p_int swig_types[39]
+#define SWIGTYPE_p_long_long swig_types[40]
+#define SWIGTYPE_p_short swig_types[41]
+#define SWIGTYPE_p_unsigned_char swig_types[42]
+#define SWIGTYPE_p_unsigned_int swig_types[43]
+#define SWIGTYPE_p_unsigned_short swig_types[44]
+static swig_type_info *swig_types[46];
+static swig_module_info swig_module = {swig_types, 45, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -2791,6 +2792,7 @@ namespace swig {
 #include <XdmfDiff.h>
 #include <XdmfExodusReader.h>
 #include <XdmfExodusWriter.h>
+#include <XdmfPartitioner.h>
 #include <Xdmf.h>
 
 #ifndef HAVE_STRTOLL
@@ -5241,6 +5243,96 @@ SWIGINTERN PyObject *XdmfExodusWriter_swigregister(PyObject *SWIGUNUSEDPARM(self
   return SWIG_Py_Void();
 }
 
+SWIGINTERN PyObject *_wrap_new_XdmfPartitioner(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfPartitioner *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)":new_XdmfPartitioner")) SWIG_fail;
+  result = (XdmfPartitioner *)new XdmfPartitioner();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_XdmfPartitioner, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_XdmfPartitioner(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfPartitioner *arg1 = (XdmfPartitioner *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_XdmfPartitioner",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfPartitioner, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_XdmfPartitioner" "', argument " "1"" of type '" "XdmfPartitioner *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfPartitioner * >(argp1);
+  delete arg1;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfPartitioner_Partition(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfPartitioner *arg1 = (XdmfPartitioner *) 0 ;
+  XdmfGrid *arg2 = (XdmfGrid *) 0 ;
+  int arg3 ;
+  XdmfElement *arg4 = (XdmfElement *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  int val3 ;
+  int ecode3 = 0 ;
+  void *argp4 = 0 ;
+  int res4 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  XdmfGrid *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOO:XdmfPartitioner_Partition",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfPartitioner, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfPartitioner_Partition" "', argument " "1"" of type '" "XdmfPartitioner *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfPartitioner * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfPartitioner_Partition" "', argument " "2"" of type '" "XdmfGrid *""'"); 
+  }
+  arg2 = reinterpret_cast< XdmfGrid * >(argp2);
+  ecode3 = SWIG_AsVal_int(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "XdmfPartitioner_Partition" "', argument " "3"" of type '" "int""'");
+  } 
+  arg3 = static_cast< int >(val3);
+  res4 = SWIG_ConvertPtr(obj3, &argp4,SWIGTYPE_p_XdmfElement, 0 |  0 );
+  if (!SWIG_IsOK(res4)) {
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "XdmfPartitioner_Partition" "', argument " "4"" of type '" "XdmfElement *""'"); 
+  }
+  arg4 = reinterpret_cast< XdmfElement * >(argp4);
+  result = (XdmfGrid *)(arg1)->Partition(arg2,arg3,arg4);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *XdmfPartitioner_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_XdmfPartitioner, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
 static PyMethodDef SwigMethods[] = {
 	 { (char *)"SWIG_PyInstanceMethod_New", (PyCFunction)SWIG_PyInstanceMethod_New, METH_O, NULL},
 	 { (char *)"new_XdmfDiff", _wrap_new_XdmfDiff, METH_VARARGS, NULL},
@@ -5298,6 +5390,10 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"delete_XdmfExodusWriter", _wrap_delete_XdmfExodusWriter, METH_VARARGS, NULL},
 	 { (char *)"XdmfExodusWriter_write", _wrap_XdmfExodusWriter_write, METH_VARARGS, NULL},
 	 { (char *)"XdmfExodusWriter_swigregister", XdmfExodusWriter_swigregister, METH_VARARGS, NULL},
+	 { (char *)"new_XdmfPartitioner", _wrap_new_XdmfPartitioner, METH_VARARGS, NULL},
+	 { (char *)"delete_XdmfPartitioner", _wrap_delete_XdmfPartitioner, METH_VARARGS, NULL},
+	 { (char *)"XdmfPartitioner_Partition", _wrap_XdmfPartitioner_Partition, METH_VARARGS, NULL},
+	 { (char *)"XdmfPartitioner_swigregister", XdmfPartitioner_swigregister, METH_VARARGS, NULL},
 	 { NULL, NULL, 0, NULL }
 };
 
@@ -5571,6 +5667,7 @@ static swig_type_info _swigt__p_XdmfDsm = {"_p_XdmfDsm", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_XdmfDsmComm = {"_p_XdmfDsmComm", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_XdmfHDF = {"_p_XdmfHDF", 0, 0, 0, 0, 0};
 static swig_type_info _swigt__p_XdmfDsmBuffer = {"_p_XdmfDsmBuffer", 0, 0, 0, 0, 0};
+static swig_type_info _swigt__p_XdmfPartitioner = {"_p_XdmfPartitioner", "XdmfPartitioner *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_XdmfValues = {"_p_XdmfValues", "XdmfValues *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_XdmfValuesBinary = {"_p_XdmfValuesBinary", "XdmfValuesBinary *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_char = {"_p_char", "char *|XdmfInt8 *", 0, 0, (void*)0, 0};
@@ -5610,6 +5707,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_XdmfLightData,
   &_swigt__p_XdmfMap,
   &_swigt__p_XdmfObject,
+  &_swigt__p_XdmfPartitioner,
   &_swigt__p_XdmfRegion,
   &_swigt__p_XdmfRoot,
   &_swigt__p_XdmfSet,
@@ -5663,6 +5761,7 @@ static swig_cast_info _swigc__p_XdmfDsmComm[] = {{&_swigt__p_XdmfDsmComm, 0, 0, 
 static swig_cast_info _swigc__p_XdmfHDF[] = {{&_swigt__p_XdmfHDF, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfDsmBuffer[] = {{&_swigt__p_XdmfDsmBuffer, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfObject[] = {  {&_swigt__p_XdmfDataTransform, _p_XdmfDataTransformTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfLightData, _p_XdmfLightDataTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDOM, _p_XdmfDOMTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfObject, 0, 0, 0},  {&_swigt__p_XdmfDsmMsg, _p_XdmfDsmMsgTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfMap, _p_XdmfMapTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDataItem, _p_XdmfDataItemTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfInformation, _p_XdmfInformationTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDsmCommMpi, _p_XdmfDsmCommMpiTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfValuesHDF, _p_XdmfValuesHDFTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfGrid, _p_XdmfGridTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfValuesXML, _p_XdmfValuesXMLTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfSet, _p_XdmfSetTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfHeavyData, _p_XdmfHeavyDataTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfAttribute, _p_XdmfAttributeTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfValues, _p_XdmfValuesTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfValuesBinary, _p_XdmfValuesBinaryTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDomain, _p_XdmfDomainTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfRoot, _p_XdmfRootTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfTime, _p_XdmfTimeTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfTopology, _p_XdmfTopologyTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfElementData, _p_XdmfElementDataTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDataDesc, _p_XdmfDataDescTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDsm, _p_XdmfDsmTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfArray, _p_XdmfArrayTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDsmComm, _p_XdmfDsmCommTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfGeometry, _p_XdmfGeometryTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfElement, _p_XdmfElementTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfRegion, _p_XdmfRegionTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDataStructure, _p_XdmfDataStructureTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfHDF, _p_XdmfHDFTo_p_XdmfObject, 0, 0},  {&_swigt__p_XdmfDsmBuffer, _p_XdmfDsmBufferTo_p_XdmfObject, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_XdmfPartitioner[] = {  {&_swigt__p_XdmfPartitioner, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfValues[] = {  {&_swigt__p_XdmfValuesXML, _p_XdmfValuesXMLTo_p_XdmfValues, 0, 0},  {&_swigt__p_XdmfValuesBinary, _p_XdmfValuesBinaryTo_p_XdmfValues, 0, 0},  {&_swigt__p_XdmfValues, 0, 0, 0},  {&_swigt__p_XdmfValuesHDF, _p_XdmfValuesHDFTo_p_XdmfValues, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_XdmfValuesBinary[] = {  {&_swigt__p_XdmfValuesBinary, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
@@ -5702,6 +5801,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_XdmfLightData,
   _swigc__p_XdmfMap,
   _swigc__p_XdmfObject,
+  _swigc__p_XdmfPartitioner,
   _swigc__p_XdmfRegion,
   _swigc__p_XdmfRoot,
   _swigc__p_XdmfSet,

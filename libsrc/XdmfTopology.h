@@ -258,6 +258,17 @@ public:
   XdmfSetValueMacro( NodesPerElement, XdmfInt32 );
 //! Get the number of nodes in a Cell
   XdmfGetValueMacro( NodesPerElement, XdmfInt32 );
+
+/*!
+  Get the number of edges per element for this particular topology type
+*/
+  XdmfInt32 GetEdgesPerElement();
+
+/*!
+  Get the number of faces per element for this particular topology type
+*/
+  XdmfInt32 GetFacesPerElement();
+
 //! Specify Base offset other than zero for connectivity
 /*!
 	Sometimes it is convenient to specify connectivity

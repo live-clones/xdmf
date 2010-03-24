@@ -992,6 +992,8 @@ class XdmfTopology(XdmfElement):
     def GetLightDataLimit(self): return _Xdmf.XdmfTopology_GetLightDataLimit(self)
     def SetNodesPerElement(self, *args): return _Xdmf.XdmfTopology_SetNodesPerElement(self, *args)
     def GetNodesPerElement(self): return _Xdmf.XdmfTopology_GetNodesPerElement(self)
+    def GetEdgesPerElement(self): return _Xdmf.XdmfTopology_GetEdgesPerElement(self)
+    def GetFacesPerElement(self): return _Xdmf.XdmfTopology_GetFacesPerElement(self)
     def SetBaseOffset(self, *args): return _Xdmf.XdmfTopology_SetBaseOffset(self, *args)
     def GetBaseOffset(self): return _Xdmf.XdmfTopology_GetBaseOffset(self)
     def GetShapeDesc(self): return _Xdmf.XdmfTopology_GetShapeDesc(self)

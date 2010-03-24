@@ -12,7 +12,7 @@
 /*     US Army Research Laboratory                                 */
 /*     Aberdeen Proving Ground, MD                                 */
 /*                                                                 */
-/*     Copyright @ 2009 US Army Research Laboratory                */
+/*     Copyright @ 2010 US Army Research Laboratory                */
 /*     All Rights Reserved                                         */
 /*     See Copyright.txt or http://www.arl.hpc.mil/ice for details */
 /*                                                                 */
@@ -23,45 +23,40 @@
 /*                                                                 */
 /*******************************************************************/
 
-#include <Xdmf.h>
-
-class XdmfExodusWriterNameHandler;
+#include "Xdmf.h"
 
 /*!
- * @brief XdmfExodusWriter class encapsulates the operation of writing an
- *        ExodusII file from an Xdmf file.
+ * @brief XdmfPartitioner partitions an XdmfGrid into a number of XdmfGrids using the metis library.  A pointer to an 
+ * XdmfGrid spatial collection is returned containing the partitioned grids.
  */
 
-class XdmfExodusWriter
+class XdmfPartitioner
 {
   public:
     /*!
      * Constructor.
      */
-    XdmfExodusWriter();
+    XdmfPartitioner();
 
     /*!
      * Destructor.
      */
-    ~XdmfExodusWriter();
+    ~XdmfPartitioner();
 
     /*!
-     * Write XdmfGrid to exodus file
+     * 
+     * Partitions an XdmfGrid into a number of partitions using the metis library.  Currently supported topology types are:
      *
-     * @param fileName a const char * containing the path of the exodus ii file to write
-     * @param gridToWrite Pointer to XdmfGrid to write.
+     * XDMF_TRI, XDMF_TRI_6, XDMF_QUAD, XDMF_QUAD_8, XDMF_TET, XDMF_TET_10, XDMF_HEX, XDMF_HEX_20, XDMF_HEX_24, XDMF_HEX_27
      *
+     * The routine splits the XdmfGrid and also splits all attributes and sets into their proper partitions.  An attribute named
+     * "GlobalNodeId" is added that serves to map child node ids to their global id for the entire spatial collection.
+     *
+     * @param grid a XdmfGrid* to partition
+     * @param numPartitions the number of partitions to split the grid into
+     * @param parentElement the parent XdmfElement* to insert the created spatial collection of partitioned grids.
+     *
+     * @return XdmfGrid* a spatial collection containing partitioned grids.
      */
-    void write(const char * fileName, XdmfGrid * gridToWrite);
-
-  private:
-    /*!
-     * Convert from xdmf to exodus ii cell types
-     *
-     * @param XdmfInt32 containing the xdmf topology to convert
-     *
-     * @return a std::string of the exodus ii topology type equivalent to the xdmf topology type.
-     */
-    std::string DetermineExodusCellType(XdmfInt32 xdmfElementType);
-    XdmfExodusWriterNameHandler * nameHandler;
+    XdmfGrid * Partition(XdmfGrid * grid, int numPartitions, XdmfElement * parentElement);
 };

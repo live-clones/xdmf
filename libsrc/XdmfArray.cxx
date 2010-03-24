@@ -547,6 +547,38 @@ XDMF_ARRAY_COPY( ArrayPointer, this->GetNumberType(), 1,
 return( XDMF_SUCCESS );
 }
 
+XdmfInt32 XdmfArray::SetValues( XdmfInt64 Index, XdmfArray *Values,
+        XdmfInt64 NumberOfValues,
+        XdmfInt64 ValuesStart,
+        XdmfInt64 ArrayStride,
+        XdmfInt64 ValuesStride ) 
+{
+  switch(Values->GetNumberType())
+  {
+    case(XDMF_INT8_TYPE):
+      return this->SetValues(Index, (XdmfInt8*)Values->GetDataPointer(ValuesStart), NumberOfValues, ArrayStride, ValuesStride);
+    case(XDMF_INT16_TYPE):
+      return this->SetValues(Index, (XdmfInt16*)Values->GetDataPointer(ValuesStart), NumberOfValues, ArrayStride, ValuesStride);
+    case(XDMF_INT32_TYPE):
+      return this->SetValues(Index, (XdmfInt32*)Values->GetDataPointer(ValuesStart), NumberOfValues, ArrayStride, ValuesStride);
+    case(XDMF_INT64_TYPE):
+      return this->SetValues(Index, (XdmfInt64*)Values->GetDataPointer(ValuesStart), NumberOfValues, ArrayStride, ValuesStride);
+    case(XDMF_FLOAT32_TYPE):
+      return this->SetValues(Index, (XdmfFloat32*)Values->GetDataPointer(ValuesStart), NumberOfValues, ArrayStride, ValuesStride);
+    case(XDMF_FLOAT64_TYPE):
+      return this->SetValues(Index, (XdmfFloat64*)Values->GetDataPointer(ValuesStart), NumberOfValues, ArrayStride, ValuesStride);
+    case(XDMF_UINT8_TYPE):
+      return this->SetValues(Index, (XdmfUInt8*)Values->GetDataPointer(ValuesStart), NumberOfValues, ArrayStride, ValuesStride);
+    case(XDMF_UINT16_TYPE):
+      return this->SetValues(Index, (XdmfUInt16*)Values->GetDataPointer(ValuesStart), NumberOfValues, ArrayStride, ValuesStride);
+    case(XDMF_UINT32_TYPE):
+      return this->SetValues(Index, (XdmfUInt32*)Values->GetDataPointer(ValuesStart), NumberOfValues, ArrayStride, ValuesStride);
+    default:
+      return this->SetValues(Index, (XdmfFloat64*)Values->GetDataPointer(ValuesStart), NumberOfValues, ArrayStride, ValuesStride);
+  }
+  return XDMF_FAIL;
+}
+
 XdmfInt32 XdmfArray::SetValues( XdmfInt64 Index, XdmfConstString Values,
         XdmfInt64 ArrayStride,
         XdmfInt64 ValuesStride ) {

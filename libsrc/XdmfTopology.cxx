@@ -701,3 +701,109 @@ if( this->GetClass() == XDMF_UNSTRUCTURED ){
 }
 return( XDMF_SUCCESS );
 }
+
+XdmfInt32
+XdmfTopology::GetEdgesPerElement() {
+
+  switch ( this->TopologyType ){
+    case  XDMF_NOTOPOLOGY :
+      return 0;
+    case  XDMF_POLYVERTEX :
+      return 0;
+    case  XDMF_POLYLINE :
+      return this->NodesPerElement - 1;
+    case  XDMF_POLYGON :
+      return this->NodesPerElement;
+    case  XDMF_TRI :
+      return 3;
+    case  XDMF_QUAD :
+      return 4;
+    case  XDMF_TET :
+      return 6;
+    case  XDMF_PYRAMID :
+      return 8;
+    case  XDMF_WEDGE :
+      return 9;
+    case  XDMF_HEX :
+      return 12;
+    case  XDMF_EDGE_3 :
+      return 1;
+    case  XDMF_TRI_6 :
+      return 3;
+    case  XDMF_QUAD_8 :
+      return 4;
+    case  XDMF_TET_10 :
+      return 6;
+    case  XDMF_PYRAMID_13 :
+      return 8;
+    case  XDMF_WEDGE_15 :
+    case  XDMF_WEDGE_18 :
+      return 9;
+    case  XDMF_HEX_20 :
+    case  XDMF_HEX_24 :
+    case  XDMF_HEX_27 :
+      return 12;
+    case  XDMF_MIXED :
+    case  XDMF_2DSMESH :
+    case  XDMF_2DRECTMESH :
+    case  XDMF_2DCORECTMESH :
+    case  XDMF_3DSMESH :
+    case  XDMF_3DRECTMESH :
+    case  XDMF_3DCORECTMESH :
+    default :
+      return 0;
+  }
+}
+
+XdmfInt32
+XdmfTopology::GetFacesPerElement() {
+
+  switch ( this->TopologyType ){
+    case  XDMF_NOTOPOLOGY :
+      return 0;
+    case  XDMF_POLYVERTEX :
+      return 0;
+    case  XDMF_POLYLINE :
+      return 0;
+    case  XDMF_POLYGON :
+      return 1;
+    case  XDMF_TRI :
+      return 1;
+    case  XDMF_QUAD :
+      return 1;
+    case  XDMF_TET :
+      return 4;
+    case  XDMF_PYRAMID :
+      return 5;
+    case  XDMF_WEDGE :
+      return 5;
+    case  XDMF_HEX :
+      return 6;
+    case  XDMF_EDGE_3 :
+      return 0;
+    case  XDMF_TRI_6 :
+      return 1;
+    case  XDMF_QUAD_8 :
+      return 1;
+    case  XDMF_TET_10 :
+      return 4;
+    case  XDMF_PYRAMID_13 :
+      return 5;
+    case  XDMF_WEDGE_15 :
+    case  XDMF_WEDGE_18 :
+      return 5;
+    case  XDMF_HEX_20 :
+    case  XDMF_HEX_24 :
+    case  XDMF_HEX_27 :
+      return 6;
+    case  XDMF_MIXED :
+    case  XDMF_2DSMESH :
+    case  XDMF_2DRECTMESH :
+    case  XDMF_2DCORECTMESH :
+    case  XDMF_3DSMESH :
+    case  XDMF_3DRECTMESH :
+    case  XDMF_3DCORECTMESH :
+    default :
+      return 0;
+  }
+}
