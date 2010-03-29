@@ -116,7 +116,8 @@ XdmfSet::Build(){
         di->SetArray(this->Ids);
         if(this->Ids->GetNumberOfElements() > 100) di->SetFormat(XDMF_FORMAT_HDF);
         di->Build();
-	delete di;
+        this->SetCurrentXdmfElement(di->GetElement(), NULL);
+        delete di;
     }
     return(XDMF_SUCCESS);
 }
