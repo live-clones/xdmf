@@ -106,6 +106,7 @@ XdmfTopology::Build(){
         di->SetArray(this->Connectivity);
         if(this->Connectivity->GetNumberOfElements() > this->LightDataLimit) di->SetFormat(XDMF_FORMAT_HDF);
         di->Build();
+        this->SetCurrentXdmfElement(di->GetElement(), NULL);
         delete di;
     }
     return(XDMF_SUCCESS);

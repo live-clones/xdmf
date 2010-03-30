@@ -97,13 +97,14 @@ XdmfAttribute::Build(){
         di->SetArray(this->Values);
         if(this->Values->GetNumberOfElements() > this->LightDataLimit) di->SetFormat(XDMF_FORMAT_HDF);
         di->Build();
+        this->SetCurrentXdmfElement(di->GetElement(), NULL);
         delete di;
     }
 // PATCH September 09, Ian Curington, HR Wallingford Ltd.
-	if(this->Units)
-	{
-		this->Set("Units", this->GetUnits());
-	}
+  if(this->Units)
+  {
+    this->Set("Units", this->GetUnits());
+  }
 // end patch
 
     return(XDMF_SUCCESS);
