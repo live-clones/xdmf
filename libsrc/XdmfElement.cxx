@@ -456,7 +456,7 @@ XdmfInt32 XdmfElement::Build(){
     XdmfInt32        i;
 
     name = this->GetName();
-    if(name && (strlen(name) > 1)){
+    if(name && (strlen(name) > 0)){
         this->Set("Name", name);
     }
     if(this->DOM){
