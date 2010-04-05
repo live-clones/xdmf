@@ -143,8 +143,6 @@ XdmfInt32 XdmfTime::Build(){
         }
         XdmfDebug("Building DataItem");
         di->Build();
-        this->SetCurrentXdmfElement(di->GetElement(), NULL);
-        delete di;
     }else{
         ostrstream   StringOutput;
         StringOutput << this->Value << ends;

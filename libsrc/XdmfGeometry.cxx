@@ -120,21 +120,18 @@ XdmfGeometry::Build(){
         di->SetArray(this->VectorX);
         if(this->VectorX->GetNumberOfElements() > this->LightDataLimit) di->SetFormat(XDMF_FORMAT_HDF);
         di->Build();
-        this->SetCurrentXdmfElement(di->GetElement(), NULL);
         delete di;
         // Vy
         di = this->GetDataItem(1, this->GetElement());
         di->SetArray(this->VectorY);
         if(this->VectorY->GetNumberOfElements() > this->LightDataLimit) di->SetFormat(XDMF_FORMAT_HDF);
         di->Build();
-        this->SetCurrentXdmfElement(di->GetElement(), NULL);
         delete di;
         // Vx
         di = this->GetDataItem(2, this->GetElement());
         di->SetArray(this->VectorZ);
         if(this->VectorZ->GetNumberOfElements() > this->LightDataLimit) di->SetFormat(XDMF_FORMAT_HDF);
         di->Build();
-        this->SetCurrentXdmfElement(di->GetElement(), NULL);
         delete di;
         break;
       case XDMF_GEOMETRY_VXVY:
@@ -147,14 +144,12 @@ XdmfGeometry::Build(){
         di->SetArray(this->VectorX);
         if(this->VectorX->GetNumberOfElements() > this->LightDataLimit) di->SetFormat(XDMF_FORMAT_HDF);
         di->Build();
-        this->SetCurrentXdmfElement(di->GetElement(), NULL);
         delete di;
         // Vy
         di = this->GetDataItem(1, this->GetElement());
         di->SetArray(this->VectorY);
         if(this->VectorY->GetNumberOfElements() > this->LightDataLimit) di->SetFormat(XDMF_FORMAT_HDF);
         di->Build();
-        this->SetCurrentXdmfElement(di->GetElement(), NULL);
         delete di;
         break;
       case XDMF_GEOMETRY_ORIGIN_DXDYDZ:
@@ -166,7 +161,6 @@ XdmfGeometry::Build(){
         array->SetNumberOfElements(3);
         array->SetValues(0, this->Origin, 3);
         di->Build();
-        this->SetCurrentXdmfElement(di->GetElement(), NULL);
         delete di;
         // DxDyDz
         di = this->GetDataItem(1, this->GetElement());
@@ -176,7 +170,6 @@ XdmfGeometry::Build(){
         array->SetNumberOfElements(3);
         array->SetValues(0, this->DxDyDz, 3);
         di->Build();
-        this->SetCurrentXdmfElement(di->GetElement(), NULL);
         delete di;
         break;
       case XDMF_GEOMETRY_ORIGIN_DXDY:
@@ -188,7 +181,6 @@ XdmfGeometry::Build(){
         array->SetNumberOfElements(2);
         array->SetValues(0, this->Origin, 2);
         di->Build();
-        this->SetCurrentXdmfElement(di->GetElement(), NULL);
         delete di;
         // DxDy
         di = this->GetDataItem(1, this->GetElement());
@@ -198,7 +190,6 @@ XdmfGeometry::Build(){
         array->SetNumberOfElements(2);
         array->SetValues(0, this->DxDyDz, 2);
         di->Build();
-        this->SetCurrentXdmfElement(di->GetElement(), NULL);
         delete di;
         break;
       case XDMF_GEOMETRY_NONE:
@@ -209,7 +200,6 @@ XdmfGeometry::Build(){
           di->SetArray(this->Points);
           if(this->Points->GetNumberOfElements() > this->LightDataLimit) di->SetFormat(XDMF_FORMAT_HDF);
           di->Build();
-          this->SetCurrentXdmfElement(di->GetElement(), NULL);
           delete di;
         }else{
           XdmfErrorMessage("XdmfGeometry->Points must be set for Geometry Type " << this->GetGeometryTypeAsString());
