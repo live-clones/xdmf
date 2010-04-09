@@ -14,6 +14,26 @@
 #include <hdf5.h>
 #include <vector>
 
+template <typename T>
+class XdmfArrayGetValues : public boost::static_visitor <boost::shared_ptr<std::vector<T> > > {
+public:
+
+    XdmfArrayGetValues()
+    {
+    }
+
+    boost::shared_ptr<std::vector<T> > operator()(const boost::shared_ptr<std::vector<T> > array) const
+    {
+        return array;
+    }
+
+    template <typename U>
+    boost::shared_ptr<std::vector<T> > operator()(const boost::shared_ptr<std::vector<U> > array) const
+    {
+        // Not implemented
+    }
+};
+
 template<typename T>
 class XdmfArraySetValues : public boost::static_visitor <void> {
 public:
@@ -99,18 +119,22 @@ public:
 	virtual int getSize() const;
 
 	/**
-	 * Get the values stored in this array as a string.
+	 * Get a smart pointer to the values stored in this array
 	 *
-	 * @return a string containing the contents of the array.
+	 * @return a smart pointer to the internal vector of values stored in this array
 	 */
-	virtual std::string getValues() const;
+	template <typename T>
+	boost::shared_ptr<std::vector<T> > getValues()
+	{
+		return boost::apply_visitor( XdmfArrayGetValues<T>(), mArray);
+	}
 
 	/**
-	 * Get a pointer to the values stored in this array.
+	 * Get a smart pointer to the values stored in this array (const version)
 	 *
-	 * @return a void pointer to the first value stored in this array.
+	 * @return a smart pointer to the internal vector of values stored in this array
 	 */
-	virtual void* getValuesPointer();
+	//virtual const boost::shared_ptr<std::vector<void> > getValues() const;
 
 	/**
 	 * Get a pointer to the values stored in this array (const version).
@@ -118,6 +142,13 @@ public:
 	 * @return a void pointer to the first value stored in this array.
 	 */
 	virtual const void* const getValuesPointer() const;
+
+	/**
+	 * Get the values stored in this array as a string.
+	 *
+	 * @return a string containing the contents of the array.
+	 */
+	virtual std::string getValuesString() const;
 
 	/**
 	 * Insert the values from a pointer into this array.

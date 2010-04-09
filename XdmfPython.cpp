@@ -6879,51 +6879,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_XdmfArrayPtr_getValues(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  boost::shared_ptr< XdmfArray > *arg1 = (boost::shared_ptr< XdmfArray > *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  std::string result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:XdmfArrayPtr_getValues",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_boost__shared_ptrT_XdmfArray_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfArrayPtr_getValues" "', argument " "1"" of type '" "boost::shared_ptr< XdmfArray > const *""'"); 
-  }
-  arg1 = reinterpret_cast< boost::shared_ptr< XdmfArray > * >(argp1);
-  result = (*arg1)->getValues();
-  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_XdmfArrayPtr_getValuesPointer__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  boost::shared_ptr< XdmfArray > *arg1 = (boost::shared_ptr< XdmfArray > *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  void *result = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:XdmfArrayPtr_getValuesPointer",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_boost__shared_ptrT_XdmfArray_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfArrayPtr_getValuesPointer" "', argument " "1"" of type '" "boost::shared_ptr< XdmfArray > *""'"); 
-  }
-  arg1 = reinterpret_cast< boost::shared_ptr< XdmfArray > * >(argp1);
-  result = (void *)(*arg1)->getValuesPointer();
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_void, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_XdmfArrayPtr_getValuesPointer__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_XdmfArrayPtr_getValuesPointer(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   boost::shared_ptr< XdmfArray > *arg1 = (boost::shared_ptr< XdmfArray > *) 0 ;
   void *argp1 = 0 ;
@@ -6945,40 +6901,24 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_XdmfArrayPtr_getValuesPointer(PyObject *self, PyObject *args) {
-  int argc;
-  PyObject *argv[2];
-  int ii;
+SWIGINTERN PyObject *_wrap_XdmfArrayPtr_getValuesString(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  boost::shared_ptr< XdmfArray > *arg1 = (boost::shared_ptr< XdmfArray > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  std::string result;
   
-  if (!PyTuple_Check(args)) SWIG_fail;
-  argc = (int)PyObject_Length(args);
-  for (ii = 0; (ii < argc) && (ii < 1); ii++) {
-    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfArrayPtr_getValuesString",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_boost__shared_ptrT_XdmfArray_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfArrayPtr_getValuesString" "', argument " "1"" of type '" "boost::shared_ptr< XdmfArray > const *""'"); 
   }
-  if (argc == 1) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_boost__shared_ptrT_XdmfArray_t, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      return _wrap_XdmfArrayPtr_getValuesPointer__SWIG_0(self, args);
-    }
-  }
-  if (argc == 1) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_boost__shared_ptrT_XdmfArray_t, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      return _wrap_XdmfArrayPtr_getValuesPointer__SWIG_1(self, args);
-    }
-  }
-  
+  arg1 = reinterpret_cast< boost::shared_ptr< XdmfArray > * >(argp1);
+  result = (*arg1)->getValuesString();
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  return resultobj;
 fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'XdmfArrayPtr_getValuesPointer'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    getValuesPointer(boost::shared_ptr< XdmfArray > *)\n"
-    "    getValuesPointer(boost::shared_ptr< XdmfArray > const *)\n");
   return NULL;
 }
 
@@ -11560,51 +11500,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_XdmfArray_getValues(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  XdmfArray *arg1 = (XdmfArray *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  std::string result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:XdmfArray_getValues",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfArray, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfArray_getValues" "', argument " "1"" of type '" "XdmfArray const *""'"); 
-  }
-  arg1 = reinterpret_cast< XdmfArray * >(argp1);
-  result = ((XdmfArray const *)arg1)->getValues();
-  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_XdmfArray_getValuesPointer__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  XdmfArray *arg1 = (XdmfArray *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  void *result = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:XdmfArray_getValuesPointer",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfArray, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfArray_getValuesPointer" "', argument " "1"" of type '" "XdmfArray *""'"); 
-  }
-  arg1 = reinterpret_cast< XdmfArray * >(argp1);
-  result = (void *)(arg1)->getValuesPointer();
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_void, 0 |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_XdmfArray_getValuesPointer__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_XdmfArray_getValuesPointer(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   XdmfArray *arg1 = (XdmfArray *) 0 ;
   void *argp1 = 0 ;
@@ -11626,40 +11522,24 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_XdmfArray_getValuesPointer(PyObject *self, PyObject *args) {
-  int argc;
-  PyObject *argv[2];
-  int ii;
+SWIGINTERN PyObject *_wrap_XdmfArray_getValuesString(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfArray *arg1 = (XdmfArray *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  std::string result;
   
-  if (!PyTuple_Check(args)) SWIG_fail;
-  argc = (int)PyObject_Length(args);
-  for (ii = 0; (ii < argc) && (ii < 1); ii++) {
-    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfArray_getValuesString",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfArray, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfArray_getValuesString" "', argument " "1"" of type '" "XdmfArray const *""'"); 
   }
-  if (argc == 1) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfArray, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      return _wrap_XdmfArray_getValuesPointer__SWIG_0(self, args);
-    }
-  }
-  if (argc == 1) {
-    int _v;
-    void *vptr = 0;
-    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfArray, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      return _wrap_XdmfArray_getValuesPointer__SWIG_1(self, args);
-    }
-  }
-  
+  arg1 = reinterpret_cast< XdmfArray * >(argp1);
+  result = ((XdmfArray const *)arg1)->getValuesString();
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  return resultobj;
 fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'XdmfArray_getValuesPointer'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    getValuesPointer(XdmfArray *)\n"
-    "    getValuesPointer(XdmfArray const *)\n");
   return NULL;
 }
 
@@ -29708,8 +29588,8 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfArrayPtr_getHDF5Type", _wrap_XdmfArrayPtr_getHDF5Type, METH_VARARGS, NULL},
 	 { (char *)"XdmfArrayPtr_getPrecision", _wrap_XdmfArrayPtr_getPrecision, METH_VARARGS, NULL},
 	 { (char *)"XdmfArrayPtr_getSize", _wrap_XdmfArrayPtr_getSize, METH_VARARGS, NULL},
-	 { (char *)"XdmfArrayPtr_getValues", _wrap_XdmfArrayPtr_getValues, METH_VARARGS, NULL},
 	 { (char *)"XdmfArrayPtr_getValuesPointer", _wrap_XdmfArrayPtr_getValuesPointer, METH_VARARGS, NULL},
+	 { (char *)"XdmfArrayPtr_getValuesString", _wrap_XdmfArrayPtr_getValuesString, METH_VARARGS, NULL},
 	 { (char *)"XdmfArrayPtr_printSelf", _wrap_XdmfArrayPtr_printSelf, METH_VARARGS, NULL},
 	 { (char *)"XdmfArrayPtr_write", _wrap_XdmfArrayPtr_write, METH_VARARGS, NULL},
 	 { (char *)"XdmfArrayPtr_copyValues", _wrap_XdmfArrayPtr_copyValues, METH_VARARGS, NULL},
@@ -29851,8 +29731,8 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfArray_getHDF5Type", _wrap_XdmfArray_getHDF5Type, METH_VARARGS, NULL},
 	 { (char *)"XdmfArray_getPrecision", _wrap_XdmfArray_getPrecision, METH_VARARGS, NULL},
 	 { (char *)"XdmfArray_getSize", _wrap_XdmfArray_getSize, METH_VARARGS, NULL},
-	 { (char *)"XdmfArray_getValues", _wrap_XdmfArray_getValues, METH_VARARGS, NULL},
 	 { (char *)"XdmfArray_getValuesPointer", _wrap_XdmfArray_getValuesPointer, METH_VARARGS, NULL},
+	 { (char *)"XdmfArray_getValuesString", _wrap_XdmfArray_getValuesString, METH_VARARGS, NULL},
 	 { (char *)"XdmfArray_printSelf", _wrap_XdmfArray_printSelf, METH_VARARGS, NULL},
 	 { (char *)"XdmfArray_write", _wrap_XdmfArray_write, METH_VARARGS, NULL},
 	 { (char *)"XdmfArray_copyValues", _wrap_XdmfArray_copyValues, METH_VARARGS, NULL},

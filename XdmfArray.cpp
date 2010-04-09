@@ -178,10 +178,23 @@ public:
 	}
 };
 
-class XdmfArrayGetValues : public boost::static_visitor <std::string> {
+class XdmfArrayGetValuesPointer : public boost::static_visitor <const void* const> {
 public:
 
-	XdmfArrayGetValues()
+	XdmfArrayGetValuesPointer()
+	{
+	}
+
+	template<typename T> const void* const operator()(const boost::shared_ptr<std::vector<T> > array) const
+	{
+		return &array->operator[](0);
+	}
+};
+
+class XdmfArrayGetValuesString : public boost::static_visitor <std::string> {
+public:
+
+	XdmfArrayGetValuesString()
 	{
 	}
 
@@ -203,31 +216,6 @@ public:
 			toReturn << array->operator[](i) << " ";
 		}
 		return toReturn.str();
-	}
-};
-
-class XdmfArrayGetValuesPointer : public boost::static_visitor <void*> {
-public:
-	XdmfArrayGetValuesPointer()
-	{
-	}
-
-	template<typename T> void* operator()(boost::shared_ptr<std::vector<T> > array) const
-	{
-		return &array->operator[](0);
-	}
-};
-
-class XdmfArrayGetValuesPointerConst : public boost::static_visitor <const void* const> {
-public:
-
-	XdmfArrayGetValuesPointerConst()
-	{
-	}
-
-	template<typename T> const void* const operator()(const boost::shared_ptr<std::vector<T> > array) const
-	{
-		return &array->operator[](0);
 	}
 };
 
@@ -262,19 +250,19 @@ std::string XdmfArray::getType() const
 	return boost::apply_visitor( XdmfArrayGetType(), mArray);
 }
 
-std::string XdmfArray::getValues() const
-{
-	return boost::apply_visitor( XdmfArrayGetValues(), mArray);
-}
+//const boost::shared_ptr<std::vector<void> > getValues() const
+//{
+	//return boost::apply_visitor( XdmfArrayGetValues(), mArray);
+//}
 
-void* XdmfArray::getValuesPointer()
+const void* const XdmfArray::getValuesPointer() const
 {
 	return boost::apply_visitor( XdmfArrayGetValuesPointer(), mArray);
 }
 
-const void* const XdmfArray::getValuesPointer() const
+std::string XdmfArray::getValuesString() const
 {
-	return boost::apply_visitor( XdmfArrayGetValuesPointerConst(), mArray);
+	return boost::apply_visitor( XdmfArrayGetValuesString(), mArray);
 }
 
 std::string XdmfArray::printSelf() const
