@@ -15,6 +15,7 @@ namespace boost {
 }
 
 %template(XdmfAttributePtr) boost::shared_ptr<XdmfAttribute>;
+%template(XdmfArrayPtr) boost::shared_ptr<XdmfArray>;
 %template(XdmfDataItemPtr) boost::shared_ptr<XdmfDataItem>;
 %template(XdmfDomainPtr) boost::shared_ptr<XdmfDomain>;
 %template(XdmfGeometryPtr) boost::shared_ptr<XdmfGeometry>;
@@ -26,11 +27,11 @@ namespace boost {
 
 %module Xdmf
 %{
+  #include <XdmfArray.hpp>
   #include <XdmfAttribute.hpp>
   #include <XdmfAttributeCenter.hpp>
   #include <XdmfAttributeType.hpp>
   #include <XdmfDataItem.hpp>
-  #include <XdmfDataItemType.hpp>
   #include <XdmfDomain.hpp>
   #include <XdmfGeometry.hpp>
   #include <XdmfGeometryType.hpp>
@@ -48,14 +49,36 @@ namespace boost {
 %include XdmfVisitor.hpp
 
 %include XdmfDataItem.hpp
-%include XdmfDataItemType.hpp
 
 %include XdmfAttribute.hpp
 %include XdmfAttributeCenter.hpp
 %include XdmfAttributeType.hpp
+%include XdmfArray.hpp
 %include XdmfDomain.hpp
 %include XdmfGeometry.hpp
 %include XdmfGeometryType.hpp
 %include XdmfGrid.hpp
 %include XdmfTopology.hpp
 %include XdmfTopologyType.hpp
+
+%template(CharVector) std::vector<char>;
+%template(ShortVector) std::vector<short>;
+%template(IntVector) std::vector<int>;
+%template(LongVector) std::vector<long>;
+%template(FloatVector) std::vector<float>;
+%template(DoubleVector) std::vector<double>;
+%template(UCharVector) std::vector<unsigned char>;
+%template(UShortVector) std::vector<unsigned short>;
+%template(UIntVector) std::vector<unsigned int>;
+
+%extend XdmfArray {
+  %template(setValues) setValues<char>;
+  %template(setValues) setValues<short>;
+  %template(setValues) setValues<int>;
+  %template(setValues) setValues<long>;
+  %template(setValues) setValues<float>;
+  %template(setValues) setValues<double>;
+  %template(setValues) setValues<unsigned char>;
+  %template(setValues) setValues<unsigned short>;
+  %template(setValues) setValues<unsigned int>;
+};

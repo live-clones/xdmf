@@ -1,6 +1,7 @@
 project(Xdmf2)
 cmake_minimum_required(VERSION 2.6)
 
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake ${CMAKE_MODULE_PATH})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 set(BUILD_SHARED_LIBS true)
@@ -29,12 +30,12 @@ if(XDMF_WRAP_PYTHON)
 endif(XDMF_WRAP_PYTHON)
 
 set(XdmfSources
+	XdmfArray
 	XdmfAttribute
 	XdmfAttributeCenter
 	XdmfAttributeType
 	XdmfDataItem
-	XdmfDataItemType
-	XdmfDomain
+  XdmfDomain
 	XdmfGeometry
 	XdmfGeometryType
 	XdmfGrid
@@ -63,6 +64,4 @@ option(BUILD_TESTING OFF)
 if(BUILD_TESTING)
 	enable_testing()
 	add_subdirectory(tests)
-	add_executable(XdmfTest test.cpp)
-	target_link_libraries(XdmfTest Xdmf)
 endif(BUILD_TESTING)

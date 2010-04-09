@@ -1,14 +1,5 @@
-set(XdmfTests
-	TestXdmfAttribute
-	TestXdmfDataItem
-	TestXdmfGeometry
-	TestXdmfGrid
-	TestXdmfTopology
-	TestXdmfVisitor
-)
+add_subdirectory(Cxx)
 
-foreach(test ${XdmfTests})
-	add_executable(${test} ${test})
-	target_link_libraries(${test} Xdmf)
-	add_test(${test} ${test})
-endforeach(test XdmfTests)
+if(XDMF_WRAP_PYTHON)
+	add_subdirectory(Python)
+endif(XDMF_WRAP_PYTHON)

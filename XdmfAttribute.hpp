@@ -8,6 +8,7 @@
 #ifndef XDMFATTRIBUTE_HPP_
 #define XDMFATTRIBUTE_HPP_
 
+// Includes
 #include "XdmfAttributeCenter.hpp"
 #include "XdmfAttributeType.hpp"
 #include "XdmfDataItem.hpp"
@@ -73,13 +74,6 @@ public:
 	 * @return std::string containing name of the XdmfAttributeCenter.
 	 */
 	std::string getAttributeCenterAsString() const;
-
-	/**
-	 * Set the number of values this attribute contains.
-	 *
-	 * @param an int giving the number of values.
-	 */
-	void setNumberValues(int numValues);
 
 	void write(boost::shared_ptr<XdmfVisitor> visitor) const;
 

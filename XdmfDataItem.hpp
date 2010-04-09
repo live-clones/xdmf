@@ -9,38 +9,42 @@
 #ifndef XDMFDATAITEM_HPP_
 #define XDMFDATAITEM_HPP_
 
-#include "XdmfDataItemType.hpp"
+// Forward Declarations
+class XdmfArray;
+
+// Includes
 #include "XdmfItem.hpp"
 
 class XdmfDataItem : public XdmfItem {
 
 public:
 
-	//XdmfNewMacro(XdmfDataItem);
+	/**
+	 * Attach an array to this dataitem.
+	 *
+	 * @param a smart pointer to the array.
+	 */
+	void setArray(boost::shared_ptr<XdmfArray> array);
 
-	template <typename T> void setValues(T * dataPointer);
+	/**
+	 * Get the array attached to this dataitem.
+	 *
+	 * @return a smart pointer to the array.
+	 */
+	boost::shared_ptr<XdmfArray> getArray();
 
-	//template <typename T> T* getValues();
-	void* getValues();
-
-	//template <typename T> const T* const getValues() const;
-	const void* const getValues() const;
-
-	hid_t getHDF5DataType() const;
-
-	std::string getName() const;
-
-	int getPrecision() const;
-
-	int getNumberValues() const;
+	/**
+	 * Get the array attached to this dataitem (const version).
+	 *
+	 * @return a smart pointer to the array.
+	 */
+	boost::shared_ptr<const XdmfArray> getArray() const;
 
 	std::string printSelf() const;
 
 	void write(boost::shared_ptr<XdmfVisitor> visitor) const = 0;
 
 protected:
-
-	int mNumberValues;
 
 	XdmfDataItem();
 	virtual ~XdmfDataItem();
@@ -50,8 +54,7 @@ private:
 	XdmfDataItem(const XdmfDataItem&);  // Not implemented.
 	void operator=(const XdmfDataItem&);  // Not implemented.
 
-	void* mDataPointer;
-	XdmfDataItemType mDataItemType;
+	boost::shared_ptr<XdmfArray> mArray;
 };
 
 #endif /* XDMFDATAITEM_HPP_ */

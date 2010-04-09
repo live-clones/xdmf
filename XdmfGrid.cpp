@@ -12,9 +12,9 @@
 #include <sstream>
 
 XdmfGrid::XdmfGrid() :
-mGeometry(XdmfGeometry::New()),
-mTopology(XdmfTopology::New()),
-mName("Grid")
+	mGeometry(XdmfGeometry::New()),
+	mTopology(XdmfTopology::New()),
+	mName("Grid")
 {
 	std::cout << "Created Grid " << this << std::endl;
 }

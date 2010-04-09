@@ -40,13 +40,6 @@ public:
 	int getNumberElements() const;
 
 	/**
-	 * Set the number of elements this Topology contains.
-	 *
-	 * @param int of number elements to set.
-	 */
-	void setNumberElements(int numberElements);
-
-	/**
 	 * Get the name of the TopologyType associated with this Topology.
 	 *
 	 * @return std::string containing name of the TopologyType.

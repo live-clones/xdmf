@@ -1,8 +1,8 @@
 // Kenneth Leiter
 // Xdmf Smart Pointer Test
 
+#include "XdmfArray.hpp"
 #include "XdmfAttribute.hpp"
-#include "XdmfDataItem.hpp"
 #include "XdmfDomain.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGrid.hpp"
@@ -26,6 +26,7 @@ XdmfVisitor::~XdmfVisitor()
 {
 	xmlSaveFormatFile("output.xmf", xmlDocument, 1);
 	xmlFreeDoc(xmlDocument);
+	xmlCleanupParser();
 	herr_t status = H5Fclose(hdf5Handle);
 	std::cout << "Deleted Visitor " << this << std::endl;
 }
@@ -39,38 +40,37 @@ void XdmfVisitor::visit(const XdmfAttribute * const attribute)
 	xmlNewProp(xmlCurrentNode, (xmlChar*)"Center", (xmlChar*)attribute->getAttributeCenterAsString().c_str());
 
 	dataHierarchy.push_back(attribute->getName());
-	visit((XdmfDataItem*)attribute);
+	visit(attribute->getArray().get());
 	dataHierarchy.pop_back();
 
 	xmlCurrentNode = parentNode;
 }
 
-void XdmfVisitor::visit(const XdmfDataItem * const dataItem)
+void XdmfVisitor::visit(const XdmfArray * const array)
 {
 	xmlNodePtr parentNode = xmlCurrentNode;
 	xmlCurrentNode = xmlNewChild(xmlCurrentNode, NULL, (xmlChar*)"DataItem", NULL);
 
 	std::string format = "XML";
-	if(dataItem->getNumberValues() > mLightDataLimit)
+	if(array->getSize() > mLightDataLimit)
 	{
 		format = "HDF";
 	}
 
 	xmlNewProp(xmlCurrentNode, (xmlChar*)"Format", (xmlChar*)format.c_str());
-	xmlNewProp(xmlCurrentNode, (xmlChar*)"DataType", (xmlChar*)dataItem->getName().c_str());
+	xmlNewProp(xmlCurrentNode, (xmlChar*)"DataType", (xmlChar*)array->getType().c_str());
 	std::stringstream precisionString;
-	precisionString << dataItem->getPrecision();
+	precisionString << array->getPrecision();
 	xmlNewProp(xmlCurrentNode, (xmlChar*)"Precision", (xmlChar*)precisionString.str().c_str());
 	std::stringstream dimensionString;
-	dimensionString << dataItem->getNumberValues();
+	dimensionString << array->getSize();
 	xmlNewProp(xmlCurrentNode, (xmlChar*)"Dimensions", (xmlChar*)dimensionString.str().c_str());
 
-	const void* const pointer = dataItem->getValues();
 	std::stringstream xmlTextValues;
-	if(dataItem->getNumberValues() > mLightDataLimit)
+	if(array->getSize() > mLightDataLimit)
 	{
 		herr_t status;
-		hsize_t size = dataItem->getNumberValues();
+		hsize_t size = array->getSize();
 		hid_t dataspace = H5Screate_simple(1, &size, NULL);
 		hid_t handle = hdf5Handle;
 		std::string groupName = getHDF5GroupName();
@@ -95,25 +95,15 @@ void XdmfVisitor::visit(const XdmfDataItem * const dataItem)
 				handle = H5Gcreate(hdf5Handle, groupName.c_str(), H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 			}
 		}
-		hid_t dataset = H5Dcreate(handle, dataHierarchy.back().c_str(), dataItem->getHDF5DataType(), dataspace, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+		hid_t dataset = H5Dcreate(handle, dataHierarchy.back().c_str(), array->getHDF5Type(), dataspace, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 		xmlTextValues << mHeavyFileName << ":" << groupName << "/" << dataHierarchy.back();
-		status = H5Dwrite(dataset, dataItem->getHDF5DataType(), H5S_ALL, H5S_ALL, H5P_DEFAULT, dataItem->getValues());
+		status = H5Dwrite(dataset, array->getHDF5Type(), H5S_ALL, H5S_ALL, H5P_DEFAULT, array->getValuesPointer());
 		status = H5Dclose(dataset);
 		status = H5Sclose(dataspace);
 	}
 	else
 	{
-		for (unsigned int i=0; i<dataItem->getNumberValues(); ++i)
-		{
-			if (i % 10 == 9)
-			{
-				xmlTextValues << ((int*)pointer)[i] << "\n";
-			}
-			else
-			{
-				xmlTextValues << ((int*)pointer)[i] << " ";
-			}
-		}
+		xmlTextValues << array->getValues();
 	}
 
 	xmlAddChild(xmlCurrentNode, xmlNewText((xmlChar*)xmlTextValues.str().c_str()));
@@ -140,7 +130,7 @@ void XdmfVisitor::visit(const XdmfGeometry * const geometry)
 	xmlNewProp(xmlCurrentNode, (xmlChar*)"GeometryType", (xmlChar*)geometry->getGeometryTypeAsString().c_str());
 
 	dataHierarchy.push_back("XYZ");
-	visit((XdmfDataItem*)geometry);
+	visit(geometry->getArray().get());
 	dataHierarchy.pop_back();
 
 	xmlCurrentNode = parentNode;
@@ -174,7 +164,7 @@ void XdmfVisitor::visit(const XdmfTopology * const topology)
 	xmlNewProp(xmlCurrentNode, (xmlChar*)"NumberOfElements", (xmlChar*)numberElementsString.str().c_str());
 
 	dataHierarchy.push_back("Connectivity");
-	visit((XdmfDataItem*)topology);
+	visit(topology->getArray().get());
 	dataHierarchy.pop_back();
 
 	xmlCurrentNode = parentNode;

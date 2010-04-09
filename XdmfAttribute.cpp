@@ -61,11 +61,6 @@ void XdmfAttribute::setName(const std::string& name)
 	mName= name;
 }
 
-void XdmfAttribute::setNumberValues(int numValues)
-{
-	mNumberValues = numValues;
-}
-
 void XdmfAttribute::write(boost::shared_ptr<XdmfVisitor> visitor) const
 {
 	visitor->visit(this);

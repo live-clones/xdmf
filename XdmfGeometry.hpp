@@ -46,8 +46,6 @@ public:
 	 */
 	int getDimensions() const;
 
-	void setNumberPoints(int numberPoints);
-
 	virtual std::string printSelf() const;
 
 	virtual void write(boost::shared_ptr<XdmfVisitor> visitor) const;

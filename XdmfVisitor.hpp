@@ -5,8 +5,8 @@
 #define XDMFVISITOR_HPP_
 
 // Forward Declarations
+class XdmfArray;
 class XdmfAttribute;
-class XdmfDataItem;
 class XdmfDomain;
 class XdmfGeometry;
 class XdmfGrid;
@@ -25,9 +25,9 @@ public:
 
 	XdmfNewMacro(XdmfVisitor);
 
-	virtual void visit(const XdmfAttribute * const attribute);
+	virtual void visit(const XdmfArray * const array);
 
-	virtual void visit(const XdmfDataItem * const dataItem);
+	virtual void visit(const XdmfAttribute * const attribute);
 
 	virtual void visit(const XdmfDomain * const domain);
 

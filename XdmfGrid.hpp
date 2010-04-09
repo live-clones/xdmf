@@ -1,5 +1,4 @@
 // Kenneth Leiter
-// Xdmf Smart Pointer Test
 
 #ifndef XDMFGRID_HPP_
 #define XDMFGRID_HPP_

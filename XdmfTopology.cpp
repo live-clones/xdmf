@@ -5,6 +5,7 @@
  *      Author: kleiter
  */
 
+#include "XdmfArray.hpp"
 #include "XdmfTopology.hpp"
 #include "XdmfVisitor.hpp"
 
@@ -28,7 +29,6 @@ XdmfTopologyType XdmfTopology::getTopologyType() const
 void XdmfTopology::setTopologyType(const XdmfTopologyType& topType)
 {
 	mTopologyType = topType;
-	mNumberValues = mNumberElements * mTopologyType.getNodesPerElement();
 }
 
 int XdmfTopology::getNodesPerElement() const
@@ -38,13 +38,7 @@ int XdmfTopology::getNodesPerElement() const
 
 int XdmfTopology::getNumberElements() const
 {
-	return mNumberElements;
-}
-
-void XdmfTopology::setNumberElements(int numberElements)
-{
-	mNumberElements = numberElements;
-	mNumberValues = mNumberElements * mTopologyType.getNodesPerElement();
+	return this->getArray()->getSize() / this->getNodesPerElement();
 }
 
 std::string XdmfTopology::getTopologyTypeAsString() const

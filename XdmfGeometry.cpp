@@ -28,7 +28,6 @@ XdmfGeometryType XdmfGeometry::getGeometryType() const
 void XdmfGeometry::setGeometryType(const XdmfGeometryType& geomType)
 {
 	mGeometryType = geomType;
-	mNumberValues = mNumberPoints * mGeometryType.getDimensions();
 }
 
 std::string XdmfGeometry::getGeometryTypeAsString() const
@@ -39,12 +38,6 @@ std::string XdmfGeometry::getGeometryTypeAsString() const
 int XdmfGeometry::getDimensions() const
 {
 	return mGeometryType.getDimensions();
-}
-
-void XdmfGeometry::setNumberPoints(int numberPoints)
-{
-	mNumberPoints = numberPoints;
-	mNumberValues = mNumberPoints * mGeometryType.getDimensions();
 }
 
 std::string XdmfGeometry::printSelf() const
