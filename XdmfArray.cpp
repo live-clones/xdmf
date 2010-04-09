@@ -9,53 +9,105 @@
 #include "XdmfVisitor.hpp"
 #include <sstream>
 
+class XdmfArrayGetHDF5Type : public boost::static_visitor <hid_t> {
+public:
+	XdmfArrayGetHDF5Type()
+	{
+	}
+
+	hid_t operator()(const boost::shared_ptr<std::vector<char> > array) const
+	{
+		return H5T_NATIVE_CHAR;
+	}
+
+	hid_t operator()(const boost::shared_ptr<std::vector<short> > array) const
+	{
+		return H5T_NATIVE_SHORT;
+	}
+
+	hid_t operator()(const boost::shared_ptr<std::vector<int> > array) const
+	{
+		return H5T_NATIVE_INT;
+	}
+
+	hid_t operator()(const boost::shared_ptr<std::vector<long> > array) const
+	{
+		return H5T_NATIVE_LONG;
+	}
+
+	hid_t operator()(const boost::shared_ptr<std::vector<float> > array) const
+	{
+		return H5T_NATIVE_FLOAT;
+	}
+
+	hid_t operator()(const boost::shared_ptr<std::vector<double> > array) const
+	{
+		return H5T_NATIVE_DOUBLE;
+	}
+
+	hid_t operator()(const boost::shared_ptr<std::vector<unsigned char> > array) const
+	{
+		return H5T_NATIVE_UCHAR;
+	}
+
+	hid_t operator()(const boost::shared_ptr<std::vector<unsigned short> > array) const
+	{
+		return H5T_NATIVE_USHORT;
+	}
+
+	hid_t operator()(const boost::shared_ptr<std::vector<unsigned int> > array) const
+	{
+		return H5T_NATIVE_UINT;
+	}
+};
+
 class XdmfArrayGetPrecision : public boost::static_visitor <int> {
 public:
 	XdmfArrayGetPrecision()
 	{
 	}
 
-	int operator()(const std::vector<char> & array) const
+	int operator()(const boost::shared_ptr<std::vector<char> > array) const
 	{
 		return 1;
 	}
 
-	int operator()(const std::vector<short> & array) const
+	int operator()(const boost::shared_ptr<std::vector<short> > array) const
 	{
 		return 2;
 	}
 
-	int operator()(const std::vector<int> & array) const
+	int operator()(const boost::shared_ptr<std::vector<int> > array) const
 	{
 		return 4;
 	}
 
-	int operator()(const std::vector<long> & array) const
+	int operator()(const boost::shared_ptr<std::vector<long> > array) const
 	{
 		return 8;
 	}
 
-	int operator()(const std::vector<float> & array) const
+	int operator()(const boost::shared_ptr<std::vector<float> > array) const
 	{
 		return 4;
 	}
 
-	int operator()(const std::vector<double> & array) const
+	int operator()(const boost::shared_ptr<std::vector<double> > array) const
 	{
 		return 8;
 	}
 
-	int operator()(const std::vector<unsigned char> & array) const
+	int operator()(const boost::shared_ptr<std::vector<unsigned char> > array) const
 	{
 		return 1;
 	}
 
-	int operator()(const std::vector<unsigned short> & array) const
+	int operator()(const boost::shared_ptr<std::vector<unsigned short> > array) const
 	{
 		return 2;
 	}
 
-	int operator()(const std::vector<unsigned int> & array) const
+	int operator()(const boost::shared_ptr<std::vector<unsigned int> > array) const
 	{
 		return 4;
 	}
@@ -67,101 +119,49 @@ public:
 	{
 	}
 
-	std::string operator()(const std::vector<char> & array) const
+	std::string operator()(const boost::shared_ptr<std::vector<char> > array) const
 	{
 		return "Char";
 	}
 
-	std::string operator()(const std::vector<short> & array) const
+	std::string operator()(const boost::shared_ptr<std::vector<short> > array) const
 	{
 		return "Short";
 	}
 
-	std::string operator()(const std::vector<int> & array) const
+	std::string operator()(const boost::shared_ptr<std::vector<int> > array) const
 	{
 		return "Int";
 	}
 
-	std::string operator()(const std::vector<long> & array) const
+	std::string operator()(const boost::shared_ptr<std::vector<long> > array) const
 	{
 		return "Int";
 	}
 
-	std::string operator()(const std::vector<float> & array) const
+	std::string operator()(const boost::shared_ptr<std::vector<float> > array) const
 	{
 		return "Float";
 	}
 
-	std::string operator()(const std::vector<double> & array) const
+	std::string operator()(const boost::shared_ptr<std::vector<double> > array) const
 	{
 		return "Float";
 	}
 
-	std::string operator()(const std::vector<unsigned char> & array) const
+	std::string operator()(const boost::shared_ptr<std::vector<unsigned char> > array) const
 	{
 		return "UChar";
 	}
 
-	std::string operator()(const std::vector<unsigned short> & array) const
+	std::string operator()(const boost::shared_ptr<std::vector<unsigned short> > array) const
 	{
 		return "UShort";
 	}
 
-	std::string operator()(const std::vector<unsigned int> & array) const
+	std::string operator()(const boost::shared_ptr<std::vector<unsigned int> > array) const
 	{
 		return "UInt";
-	}
-};
-
-class XdmfArrayGetHDF5Type : public boost::static_visitor <hid_t> {
-public:
-	XdmfArrayGetHDF5Type()
-	{
-	}
-
-	hid_t operator()(const std::vector<char> & array) const
-	{
-		return H5T_NATIVE_CHAR;
-	}
-
-	hid_t operator()(const std::vector<short> & array) const
-	{
-		return H5T_NATIVE_SHORT;
-	}
-
-	hid_t operator()(const std::vector<int> & array) const
-	{
-		return H5T_NATIVE_INT;
-	}
-
-	hid_t operator()(const std::vector<long> & array) const
-	{
-		return H5T_NATIVE_LONG;
-	}
-
-	hid_t operator()(const std::vector<float> & array) const
-	{
-		return H5T_NATIVE_FLOAT;
-	}
-
-	hid_t operator()(const std::vector<double> & array) const
-	{
-		return H5T_NATIVE_DOUBLE;
-	}
-
-	hid_t operator()(const std::vector<unsigned char> & array) const
-	{
-		return H5T_NATIVE_UCHAR;
-	}
-
-	hid_t operator()(const std::vector<unsigned short> & array) const
-	{
-		return H5T_NATIVE_USHORT;
-	}
-
-	hid_t operator()(const std::vector<unsigned int> & array) const
-	{
-		return H5T_NATIVE_UINT;
 	}
 };
 
@@ -172,9 +172,9 @@ public:
 	{
 	}
 
-	template<typename T> int operator()(const std::vector<T> & array) const
+	template<typename T> int operator()(const boost::shared_ptr<std::vector<T> > array) const
 	{
-		return array.size();
+		return array->size();
 	}
 };
 
@@ -185,22 +185,22 @@ public:
 	{
 	}
 
-	std::string operator()(const std::vector<char> & array) const
+	std::string operator()(const boost::shared_ptr<std::vector<char> > array) const
 	{
 		std::stringstream toReturn;
-		for(int i=0; i<array.size(); ++i)
+		for(int i=0; i<array->size(); ++i)
 		{
-			toReturn << (int)(array[i]) << " ";
+			toReturn << (int)(array->operator[](i)) << " ";
 		}
 		return toReturn.str();
 	}
 
-	template<typename T> std::string operator()(const std::vector<T> & array) const
+	template<typename T> std::string operator()(const boost::shared_ptr<std::vector<T> > array) const
 	{
 		std::stringstream toReturn;
-		for(int i=0; i<array.size(); ++i)
+		for(int i=0; i<array->size(); ++i)
 		{
-			toReturn << array[i] << " ";
+			toReturn << array->operator[](i) << " ";
 		}
 		return toReturn.str();
 	}
@@ -212,9 +212,9 @@ public:
 	{
 	}
 
-	template<typename T> void* operator()(std::vector<T> & array) const
+	template<typename T> void* operator()(boost::shared_ptr<std::vector<T> > array) const
 	{
-		return &array[0];
+		return &array->operator[](0);
 	}
 };
 
@@ -225,9 +225,9 @@ public:
 	{
 	}
 
-	template<typename T> const void* const operator()(const std::vector<T> & array) const
+	template<typename T> const void* const operator()(const boost::shared_ptr<std::vector<T> > array) const
 	{
-		return &array[0];
+		return &array->operator[](0);
 	}
 };
 

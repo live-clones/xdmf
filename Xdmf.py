@@ -137,10 +137,10 @@ class XdmfArrayPtr(_object):
     def getPrecision(self): return _Xdmf.XdmfArrayPtr_getPrecision(self)
     def getSize(self): return _Xdmf.XdmfArrayPtr_getSize(self)
     def getValues(self): return _Xdmf.XdmfArrayPtr_getValues(self)
-    def getValuesPointer(self): return _Xdmf.XdmfArrayPtr_getValuesPointer(self)
+    def getValuesPointer(self, *args): return _Xdmf.XdmfArrayPtr_getValuesPointer(self, *args)
     def printSelf(self): return _Xdmf.XdmfArrayPtr_printSelf(self)
     def write(self, *args): return _Xdmf.XdmfArrayPtr_write(self, *args)
-    def setValues(self, *args): return _Xdmf.XdmfArrayPtr_setValues(self, *args)
+    def copyValues(self, *args): return _Xdmf.XdmfArrayPtr_copyValues(self, *args)
 XdmfArrayPtr_swigregister = _Xdmf.XdmfArrayPtr_swigregister
 XdmfArrayPtr_swigregister(XdmfArrayPtr)
 
@@ -535,10 +535,10 @@ class XdmfArray(XdmfItem):
     def getPrecision(self): return _Xdmf.XdmfArray_getPrecision(self)
     def getSize(self): return _Xdmf.XdmfArray_getSize(self)
     def getValues(self): return _Xdmf.XdmfArray_getValues(self)
-    def getValuesPointer(self): return _Xdmf.XdmfArray_getValuesPointer(self)
+    def getValuesPointer(self, *args): return _Xdmf.XdmfArray_getValuesPointer(self, *args)
     def printSelf(self): return _Xdmf.XdmfArray_printSelf(self)
     def write(self, *args): return _Xdmf.XdmfArray_write(self, *args)
-    def setValues(self, *args): return _Xdmf.XdmfArray_setValues(self, *args)
+    def copyValues(self, *args): return _Xdmf.XdmfArray_copyValues(self, *args)
 XdmfArray_swigregister = _Xdmf.XdmfArray_swigregister
 XdmfArray_swigregister(XdmfArray)
 

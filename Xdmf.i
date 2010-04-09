@@ -72,13 +72,13 @@ namespace boost {
 %template(UIntVector) std::vector<unsigned int>;
 
 %extend XdmfArray {
-  %template(setValues) setValues<char>;
-  %template(setValues) setValues<short>;
-  %template(setValues) setValues<int>;
-  %template(setValues) setValues<long>;
-  %template(setValues) setValues<float>;
-  %template(setValues) setValues<double>;
-  %template(setValues) setValues<unsigned char>;
-  %template(setValues) setValues<unsigned short>;
-  %template(setValues) setValues<unsigned int>;
+  %template(copyValues) copyValues<char>;
+  %template(copyValues) copyValues<short>;
+  %template(copyValues) copyValues<int>;
+  %template(copyValues) copyValues<long>;
+  %template(copyValues) copyValues<float>;
+  %template(copyValues) copyValues<double>;
+  %template(copyValues) copyValues<unsigned char>;
+  %template(copyValues) copyValues<unsigned short>;
+  %template(copyValues) copyValues<unsigned int>;
 };

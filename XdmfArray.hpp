@@ -27,20 +27,20 @@ public:
 	{
 	}
 
-	template<typename U> void operator()(std::vector<U> & array) const
+	template<typename U> void operator()(boost::shared_ptr<std::vector<U> > array) const
 	{
 		int size = mStartIndex + mNumValues;
 		if(mArrayStride > 1)
 		{
 			size = mStartIndex + mNumValues * mArrayStride - 1;
 		}
-		if(array.size() < size)
+		if(array->size() < size)
 		{
-			array.resize(size);
+			array->resize(size);
 		}
 		for(int i=0; i<mNumValues; ++i)
 		{
-			array[mStartIndex + i*mArrayStride] = (U)mValuesPointer[i*mValuesStride];
+			array->operator[](mStartIndex + i*mArrayStride) = (U)mValuesPointer[i*mValuesStride];
 		}
 	}
 
@@ -57,6 +57,17 @@ class XdmfArray : public XdmfItem {
 public:
 
 	XdmfNewMacro(XdmfArray);
+
+	/**
+	 * Copy the values from a vector into this array
+	 *
+	 * @param array the vector to copy into this array.
+	 */
+    template<typename T> void copyValues(std::vector<T> & array)
+    {
+    	boost::shared_ptr<std::vector<T> > newArray(new std::vector<T>(array));
+    	mArray = newArray;
+    }
 
 	/**
      * Get the data type of this array.
@@ -108,10 +119,8 @@ public:
 	 */
 	virtual const void* const getValuesPointer() const;
 
-	virtual std::string printSelf() const;
-
 	/**
-	 * Copy the values from a pointer into this array.
+	 * Insert the values from a pointer into this array.
 	 *
 	 * @param startIndex the index in this array to begin insertion.
 	 * @param valuesPointer a pointer to the values to copy into this array.
@@ -119,23 +128,27 @@ public:
 	 * @param arrayStride number of values to stride in this array between each copy.
 	 * @param valuesStride number of values to stride in the pointer between each copy.
 	 */
-	template<typename T> void setValues(int startIndex, T* valuesPointer, int numValues = 1, int arrayStride = 1, int valuesStride = 1)
+	template<typename T> void insertValues(int startIndex, T* valuesPointer, int numValues = 1, int arrayStride = 1, int valuesStride = 1)
 	{
 		if(!mInitialized)
 		{
 			// Set type of variant to type of pointer
-			mArray = std::vector<T>();
+			boost::shared_ptr<std::vector<T> > newArray(new std::vector<T>());
+			mArray = newArray;
 			mInitialized = true;
-	    }
-	    boost::apply_visitor( XdmfArraySetValues<T>(startIndex, valuesPointer, numValues, arrayStride, valuesStride), mArray);
+		}
+		boost::apply_visitor( XdmfArraySetValues<T>(startIndex, valuesPointer, numValues, arrayStride, valuesStride), mArray);
 	}
 
+	virtual std::string printSelf() const;
+
 	/**
-	 * Copy the values from a vector into this array
+	 * Sets the values of this array to the values stored in the vector.  No copy is made.  This array shares ownership with
+	 * other references to the smart pointer.
 	 *
-	 * @param array the vector to copy into this array.
+	 * @param a smart pointer to a vector to store in this array.
 	 */
-	template<typename T> void setValues(std::vector<T> & array)
+	template<typename T> void setValues(boost::shared_ptr<std::vector<T> > array)
 	{
 		mArray = array;
 	}
@@ -151,15 +164,15 @@ private:
 
 	bool mInitialized;
 
-	boost::variant<std::vector<char>,
-				   std::vector<short>,
-				   std::vector<int>,
-				   std::vector<long>,
-				   std::vector<float>,
-				   std::vector<double>,
-				   std::vector<unsigned char>,
-				   std::vector<unsigned short>,
-				   std::vector<unsigned int> > mArray;
+	boost::variant<boost::shared_ptr<std::vector<char> >,
+				   boost::shared_ptr<std::vector<short> >,
+				   boost::shared_ptr<std::vector<int> >,
+				   boost::shared_ptr<std::vector<long> >,
+				   boost::shared_ptr<std::vector<float> >,
+				   boost::shared_ptr<std::vector<double> >,
+				   boost::shared_ptr<std::vector<unsigned char> >,
+				   boost::shared_ptr<std::vector<unsigned short> >,
+				   boost::shared_ptr<std::vector<unsigned int> > > mArray;
 };
 
 #endif /* XDMFARRAY_HPP_ */
