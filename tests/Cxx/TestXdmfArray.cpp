@@ -20,7 +20,6 @@ int main(int argc, char* argv[])
 	{
 		assert(*iter == values[i]);
 	}
-
 	// Now modify original array
 	values[0] = 0;
 	assert(array->getValuesString().compare("1.1 2.2 3.3 4.4 5.5 6.6 7.7 8.8 9.9 ") == 0);
@@ -37,6 +36,13 @@ int main(int argc, char* argv[])
 	assert(array2->getType().compare("Int") == 0);
 	assert(array2->getPrecision() == 4);
 	assert(array2->getValuesString().compare("100 200 ") == 0);
+	// Assert we copied values correctly
+	boost::shared_ptr<std::vector<int> > storedValues2 = array2->getValues<int>();
+	i = 0;
+	for(std::vector<int>::const_iterator iter = storedValues2->begin(); iter!= storedValues2->end(); ++iter, ++i)
+	{
+		assert(*iter == values2[i]);
+	}
 	// Now modify original array
 	values2.push_back(300);
 	assert(array2->getSize() == 2);
@@ -63,6 +69,13 @@ int main(int argc, char* argv[])
 	values3->push_back(8);
 	assert(array3->getSize() == 6);
 	assert(array3->getValuesString().compare("-2 -1 0 1 2 8 ") == 0);
+	// Assert we have the same values!
+	boost::shared_ptr<std::vector<char> > storedValues3 = array3->getValues<char>();
+	assert(storedValues3 == values3);
+
+	// Assert that we can't get a smart pointer to an int vector
+	boost::shared_ptr<std::vector<int> > storedValues3Int = array3->getValues<int>();
+	assert(storedValues3Int == NULL);
 
 	return 0;
 }

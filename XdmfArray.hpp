@@ -30,7 +30,7 @@ public:
     template <typename U>
     boost::shared_ptr<std::vector<T> > operator()(const boost::shared_ptr<std::vector<U> > array) const
     {
-        // Not implemented
+        return boost::shared_ptr<std::vector<T> >();
     }
 };
 
