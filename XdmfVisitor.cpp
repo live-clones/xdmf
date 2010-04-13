@@ -31,7 +31,7 @@ XdmfVisitor::~XdmfVisitor()
 	std::cout << "Deleted Visitor " << this << std::endl;
 }
 
-void XdmfVisitor::visit(const XdmfAttribute * const attribute)
+void XdmfVisitor::visit(const XdmfAttribute * const attribute, boost::shared_ptr<XdmfVisitor> visitor)
 {
 	xmlNodePtr parentNode = xmlCurrentNode;
 	xmlCurrentNode = xmlNewChild(xmlCurrentNode, NULL, (xmlChar*)"Attribute", NULL);
@@ -40,13 +40,13 @@ void XdmfVisitor::visit(const XdmfAttribute * const attribute)
 	xmlNewProp(xmlCurrentNode, (xmlChar*)"Center", (xmlChar*)attribute->getAttributeCenterAsString().c_str());
 
 	dataHierarchy.push_back(attribute->getName());
-	visit(attribute->getArray().get());
+	attribute->traverse(visitor);
 	dataHierarchy.pop_back();
 
 	xmlCurrentNode = parentNode;
 }
 
-void XdmfVisitor::visit(const XdmfArray * const array)
+void XdmfVisitor::visit(const XdmfArray * const array, boost::shared_ptr<XdmfVisitor> visitor)
 {
 	xmlNodePtr parentNode = xmlCurrentNode;
 	xmlCurrentNode = xmlNewChild(xmlCurrentNode, NULL, (xmlChar*)"DataItem", NULL);
@@ -110,51 +110,43 @@ void XdmfVisitor::visit(const XdmfArray * const array)
 	xmlCurrentNode = parentNode;
 }
 
-void XdmfVisitor::visit(const XdmfDomain * const domain)
+void XdmfVisitor::visit(const XdmfDomain * const domain, boost::shared_ptr<XdmfVisitor> visitor)
 {
 	xmlNodePtr parentNode = xmlCurrentNode;
 	xmlCurrentNode = xmlNewChild(xmlCurrentNode, NULL, (xmlChar*)"Domain", NULL);
 
-	for(unsigned int i=0; i<domain->getNumberOfGrids(); ++i)
-	{
-		visit(domain->getGrid(i).get());
-	}
+	domain->traverse(visitor);
 
 	xmlCurrentNode = parentNode;
 }
 
-void XdmfVisitor::visit(const XdmfGeometry * const geometry)
+void XdmfVisitor::visit(const XdmfGeometry * const geometry, boost::shared_ptr<XdmfVisitor> visitor)
 {
 	xmlNodePtr parentNode = xmlCurrentNode;
 	xmlCurrentNode = xmlNewChild(xmlCurrentNode, NULL, (xmlChar*)"Geometry", NULL);
 	xmlNewProp(xmlCurrentNode, (xmlChar*)"GeometryType", (xmlChar*)geometry->getGeometryTypeAsString().c_str());
 
 	dataHierarchy.push_back("XYZ");
-	visit(geometry->getArray().get());
+	geometry->traverse(visitor);
 	dataHierarchy.pop_back();
 
 	xmlCurrentNode = parentNode;
 }
 
-void XdmfVisitor::visit(const XdmfGrid * const grid)
+void XdmfVisitor::visit(const XdmfGrid * const grid, boost::shared_ptr<XdmfVisitor> visitor)
 {
 	xmlNodePtr parentNode = xmlCurrentNode;
     xmlCurrentNode = xmlNewChild(xmlCurrentNode, NULL, (xmlChar*)"Grid", NULL);
 	xmlNewProp(xmlCurrentNode, (xmlChar*)"Name", (xmlChar*)grid->getName().c_str());
 
 	dataHierarchy.push_back(grid->getName());
-	visit(grid->getGeometry().get());
-	visit(grid->getTopology().get());
-	for(unsigned int i=0; i<grid->getNumberOfAttributes(); ++i)
-	{
-		visit(grid->getAttribute(i).get());
-	}
+	grid->traverse(visitor);
 	dataHierarchy.pop_back();
 
 	xmlCurrentNode = parentNode;
 }
 
-void XdmfVisitor::visit(const XdmfTopology * const topology)
+void XdmfVisitor::visit(const XdmfTopology * const topology, boost::shared_ptr<XdmfVisitor> visitor)
 {
 	xmlNodePtr parentNode = xmlCurrentNode;
 	xmlCurrentNode = xmlNewChild(xmlCurrentNode, NULL, (xmlChar*)"Topology", NULL);
@@ -164,7 +156,7 @@ void XdmfVisitor::visit(const XdmfTopology * const topology)
 	xmlNewProp(xmlCurrentNode, (xmlChar*)"NumberOfElements", (xmlChar*)numberElementsString.str().c_str());
 
 	dataHierarchy.push_back("Connectivity");
-	visit(topology->getArray().get());
+	topology->traverse(visitor);
 	dataHierarchy.pop_back();
 
 	xmlCurrentNode = parentNode;

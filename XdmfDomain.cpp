@@ -6,6 +6,7 @@
  */
 
 #include "XdmfDomain.hpp"
+#include "XdmfGrid.hpp"
 #include "XdmfVisitor.hpp"
 
 XdmfDomain::XdmfDomain()
@@ -53,7 +54,15 @@ std::string XdmfDomain::printSelf() const
 	return "XdmfDomain";
 }
 
+void XdmfDomain::traverse(boost::shared_ptr<XdmfVisitor> visitor) const
+{
+	for(std::vector<boost::shared_ptr<XdmfGrid> >::const_iterator iter = mGrids.begin(); iter != mGrids.end(); ++iter)
+	{
+		(*iter)->write(visitor);
+	}
+}
+
 void XdmfDomain::write(boost::shared_ptr<XdmfVisitor> visitor) const
 {
-	visitor->visit(this);
+	visitor->visit(this, visitor);
 }

@@ -42,7 +42,7 @@ public:
 
 	std::string printSelf() const;
 
-	void write(boost::shared_ptr<XdmfVisitor> visitor) const = 0;
+	virtual void traverse(boost::shared_ptr<XdmfVisitor> visitor) const;
 
 protected:
 

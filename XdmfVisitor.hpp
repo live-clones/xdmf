@@ -25,17 +25,17 @@ public:
 
 	XdmfNewMacro(XdmfVisitor);
 
-	virtual void visit(const XdmfArray * const array);
+	virtual void visit(const XdmfArray * const array, boost::shared_ptr<XdmfVisitor> visitor);
 
-	virtual void visit(const XdmfAttribute * const attribute);
+	virtual void visit(const XdmfAttribute * const attribute, boost::shared_ptr<XdmfVisitor> visitor);
 
-	virtual void visit(const XdmfDomain * const domain);
+	virtual void visit(const XdmfDomain * const domain, boost::shared_ptr<XdmfVisitor> visitor);
 
-	virtual void visit(const XdmfGeometry * const geometry);
+	virtual void visit(const XdmfGeometry * const geometry, boost::shared_ptr<XdmfVisitor> visitor);
 
-	virtual void visit(const XdmfGrid * const grid);
+	virtual void visit(const XdmfGrid * const grid, boost::shared_ptr<XdmfVisitor> visitor);
 
-	virtual void visit(const XdmfTopology * const topology);
+	virtual void visit(const XdmfTopology * const topology, boost::shared_ptr<XdmfVisitor> visitor);
 
 	virtual std::string printSelf() const;
 

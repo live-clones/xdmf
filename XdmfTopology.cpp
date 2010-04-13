@@ -53,5 +53,5 @@ std::string XdmfTopology::printSelf() const
 
 void XdmfTopology::write(boost::shared_ptr<XdmfVisitor> visitor) const
 {
-	visitor->visit(this);
+	visitor->visit(this, visitor);
 }

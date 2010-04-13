@@ -102,6 +102,8 @@ public:
 
 	virtual std::string printSelf() const;
 
+	virtual void traverse(boost::shared_ptr<XdmfVisitor> visitor) const;
+
 	virtual void write(boost::shared_ptr<XdmfVisitor> visitor) const;
 
 protected:

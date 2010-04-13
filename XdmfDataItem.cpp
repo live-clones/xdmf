@@ -38,3 +38,8 @@ boost::shared_ptr<const XdmfArray> XdmfDataItem::getArray() const
 {
 	return mArray;
 }
+
+void XdmfDataItem::traverse(boost::shared_ptr<XdmfVisitor> visitor) const
+{
+	mArray->write(visitor);
+}

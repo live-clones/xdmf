@@ -63,7 +63,7 @@ void XdmfAttribute::setName(const std::string& name)
 
 void XdmfAttribute::write(boost::shared_ptr<XdmfVisitor> visitor) const
 {
-	visitor->visit(this);
+	visitor->visit(this, visitor);
 }
 
 std::string XdmfAttribute::printSelf() const

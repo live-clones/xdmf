@@ -284,5 +284,5 @@ std::string XdmfArray::printSelf() const
 
 void XdmfArray::write(boost::shared_ptr<XdmfVisitor> visitor) const
 {
-	visitor->visit(this);
+	visitor->visit(this, visitor);
 }

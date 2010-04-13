@@ -47,5 +47,5 @@ std::string XdmfGeometry::printSelf() const
 
 void XdmfGeometry::write(boost::shared_ptr<XdmfVisitor> visitor) const
 {
-	visitor->visit(this);
+	visitor->visit(this, visitor);
 }

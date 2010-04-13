@@ -5,6 +5,7 @@
  *      Author: kleiter
  */
 
+#include "XdmfAttribute.hpp"
 #include "XdmfGrid.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfTopology.hpp"
@@ -108,7 +109,17 @@ std::string XdmfGrid::printSelf() const
 	return "XdmfGrid containing a " + mGeometry->printSelf() + " and a " + mTopology->printSelf();
 }
 
+void XdmfGrid::traverse(boost::shared_ptr<XdmfVisitor> visitor) const
+{
+	mGeometry->write(visitor);
+	mTopology->write(visitor);
+	for(std::vector<boost::shared_ptr<XdmfAttribute> >::const_iterator iter = mAttributes.begin(); iter != mAttributes.end(); ++iter)
+	{
+		(*iter)->write(visitor);
+	}
+}
+
 void XdmfGrid::write(boost::shared_ptr<XdmfVisitor> visitor) const
 {
-	visitor->visit(this);
+	visitor->visit(this, visitor);
 }
