@@ -60,6 +60,11 @@ endif(XDMF_WRAP_PYTHON)
 
 configure_file(Xdmf.py Xdmf.py COPYONLY)
 
+option(BUILD_DOCUMENTATION OFF)
+if(BUILD_DOCUMENTATION)
+	add_subdirectory(doc)
+endif(BUILD_DOCUMENTATION)
+
 option(BUILD_TESTING OFF)
 if(BUILD_TESTING)
 	enable_testing()
