@@ -103,7 +103,7 @@ void XdmfVisitor::visit(const XdmfArray * const array, boost::shared_ptr<XdmfVis
 	}
 	else
 	{
-		xmlTextValues << array->getValues();
+		xmlTextValues << array->getValuesString();
 	}
 
 	xmlAddChild(xmlCurrentNode, xmlNewText((xmlChar*)xmlTextValues.str().c_str()));

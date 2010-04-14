@@ -126,6 +126,42 @@ class XdmfArrayPtr(_object):
     __getattr__ = lambda self, name: _swig_getattr(self, XdmfArrayPtr, name)
     __repr__ = _swig_repr
     def __deref__(self): return _Xdmf.XdmfArrayPtr___deref__(self)
+    def copyValuesAsChar(self, startIndex, values):
+      for i in range(0, len(values)):
+        self.copyValueAsChar(i+startIndex, values[i])
+
+    def copyValuesAsShort(self, startIndex, values):
+      for i in range(0, len(values)):
+        self.copyValueAsShort(i+startIndex, values[i])
+
+    def copyValuesAsInt(self, startIndex, values):
+      for i in range(0, len(values)):
+        self.copyValueAsInt(i+startIndex, values[i])
+
+    def copyValuesAsLong(self, startIndex, values):
+      for i in range(0, len(values)):
+        self.copyValueAsLong(i+startIndex, values[i])
+
+    def copyValuesAsFloat(self, startIndex, values):
+      for i in range(0, len(values)):
+        self.copyValueAsFloat(i+startIndex, values[i])
+
+    def copyValuesAsDouble(self, startIndex, values):
+      for i in range(0, len(values)):
+        self.copyValueAsDouble(i+startIndex, values[i])
+
+    def copyValuesAsUChar(self, startIndex, values):
+      for i in range(0, len(values)):
+        self.copyValueAsUChar(i+startIndex, values[i])
+
+    def copyValuesAsUShort(self, startIndex, values):
+      for i in range(0, len(values)):
+        self.copyValueAsUShort(i+startIndex, values[i])
+
+    def copyValuesAsUInt(self, startIndex, values):
+      for i in range(0, len(values)):
+        self.copyValueAsUInt(i+startIndex, values[i])
+
     def __init__(self): 
         this = _Xdmf.new_XdmfArrayPtr()
         try: self.this.append(this)
@@ -133,15 +169,25 @@ class XdmfArrayPtr(_object):
     __swig_destroy__ = _Xdmf.delete_XdmfArrayPtr
     __del__ = lambda self : None;
     def New(self): return _Xdmf.XdmfArrayPtr_New(self)
+    def copyValues(self, *args): return _Xdmf.XdmfArrayPtr_copyValues(self, *args)
+    def clear(self): return _Xdmf.XdmfArrayPtr_clear(self)
     def getType(self): return _Xdmf.XdmfArrayPtr_getType(self)
     def getHDF5Type(self): return _Xdmf.XdmfArrayPtr_getHDF5Type(self)
     def getPrecision(self): return _Xdmf.XdmfArrayPtr_getPrecision(self)
     def getSize(self): return _Xdmf.XdmfArrayPtr_getSize(self)
-    def getValues(self): return _Xdmf.XdmfArrayPtr_getValues(self)
-    def getValuesPointer(self, *args): return _Xdmf.XdmfArrayPtr_getValuesPointer(self, *args)
+    def getValuesPointer(self): return _Xdmf.XdmfArrayPtr_getValuesPointer(self)
+    def getValuesString(self): return _Xdmf.XdmfArrayPtr_getValuesString(self)
     def printSelf(self): return _Xdmf.XdmfArrayPtr_printSelf(self)
     def write(self, *args): return _Xdmf.XdmfArrayPtr_write(self, *args)
-    def setValues(self, *args): return _Xdmf.XdmfArrayPtr_setValues(self, *args)
+    def copyValueAsChar(self, *args): return _Xdmf.XdmfArrayPtr_copyValueAsChar(self, *args)
+    def copyValueAsShort(self, *args): return _Xdmf.XdmfArrayPtr_copyValueAsShort(self, *args)
+    def copyValueAsInt(self, *args): return _Xdmf.XdmfArrayPtr_copyValueAsInt(self, *args)
+    def copyValueAsLong(self, *args): return _Xdmf.XdmfArrayPtr_copyValueAsLong(self, *args)
+    def copyValueAsFloat(self, *args): return _Xdmf.XdmfArrayPtr_copyValueAsFloat(self, *args)
+    def copyValueAsDouble(self, *args): return _Xdmf.XdmfArrayPtr_copyValueAsDouble(self, *args)
+    def copyValueAsUChar(self, *args): return _Xdmf.XdmfArrayPtr_copyValueAsUChar(self, *args)
+    def copyValueAsUShort(self, *args): return _Xdmf.XdmfArrayPtr_copyValueAsUShort(self, *args)
+    def copyValueAsUInt(self, *args): return _Xdmf.XdmfArrayPtr_copyValueAsUInt(self, *args)
     def traverse(self, *args): return _Xdmf.XdmfArrayPtr_traverse(self, *args)
 XdmfArrayPtr_swigregister = _Xdmf.XdmfArrayPtr_swigregister
 XdmfArrayPtr_swigregister(XdmfArrayPtr)
@@ -539,15 +585,25 @@ class XdmfArray(XdmfItem):
     __repr__ = _swig_repr
     __swig_getmethods__["New"] = lambda x: _Xdmf.XdmfArray_New
     if _newclass:New = staticmethod(_Xdmf.XdmfArray_New)
+    def copyValues(self, *args): return _Xdmf.XdmfArray_copyValues(self, *args)
+    def clear(self): return _Xdmf.XdmfArray_clear(self)
     def getType(self): return _Xdmf.XdmfArray_getType(self)
     def getHDF5Type(self): return _Xdmf.XdmfArray_getHDF5Type(self)
     def getPrecision(self): return _Xdmf.XdmfArray_getPrecision(self)
     def getSize(self): return _Xdmf.XdmfArray_getSize(self)
-    def getValues(self): return _Xdmf.XdmfArray_getValues(self)
-    def getValuesPointer(self, *args): return _Xdmf.XdmfArray_getValuesPointer(self, *args)
+    def getValuesPointer(self): return _Xdmf.XdmfArray_getValuesPointer(self)
+    def getValuesString(self): return _Xdmf.XdmfArray_getValuesString(self)
     def printSelf(self): return _Xdmf.XdmfArray_printSelf(self)
     def write(self, *args): return _Xdmf.XdmfArray_write(self, *args)
-    def setValues(self, *args): return _Xdmf.XdmfArray_setValues(self, *args)
+    def copyValueAsChar(self, *args): return _Xdmf.XdmfArray_copyValueAsChar(self, *args)
+    def copyValueAsShort(self, *args): return _Xdmf.XdmfArray_copyValueAsShort(self, *args)
+    def copyValueAsInt(self, *args): return _Xdmf.XdmfArray_copyValueAsInt(self, *args)
+    def copyValueAsLong(self, *args): return _Xdmf.XdmfArray_copyValueAsLong(self, *args)
+    def copyValueAsFloat(self, *args): return _Xdmf.XdmfArray_copyValueAsFloat(self, *args)
+    def copyValueAsDouble(self, *args): return _Xdmf.XdmfArray_copyValueAsDouble(self, *args)
+    def copyValueAsUChar(self, *args): return _Xdmf.XdmfArray_copyValueAsUChar(self, *args)
+    def copyValueAsUShort(self, *args): return _Xdmf.XdmfArray_copyValueAsUShort(self, *args)
+    def copyValueAsUInt(self, *args): return _Xdmf.XdmfArray_copyValueAsUInt(self, *args)
 XdmfArray_swigregister = _Xdmf.XdmfArray_swigregister
 XdmfArray_swigregister(XdmfArray)
 
@@ -899,429 +955,6 @@ XdmfTopologyType_ThreeDRectMesh = _Xdmf.XdmfTopologyType_ThreeDRectMesh
 def XdmfTopologyType_ThreeDCoRectMesh():
   return _Xdmf.XdmfTopologyType_ThreeDCoRectMesh()
 XdmfTopologyType_ThreeDCoRectMesh = _Xdmf.XdmfTopologyType_ThreeDCoRectMesh
-
-class CharVector(_object):
-    __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, CharVector, name, value)
-    __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, CharVector, name)
-    __repr__ = _swig_repr
-    def iterator(self): return _Xdmf.CharVector_iterator(self)
-    def __iter__(self): return self.iterator()
-    def __nonzero__(self): return _Xdmf.CharVector___nonzero__(self)
-    def __bool__(self): return _Xdmf.CharVector___bool__(self)
-    def __len__(self): return _Xdmf.CharVector___len__(self)
-    def pop(self): return _Xdmf.CharVector_pop(self)
-    def __getslice__(self, *args): return _Xdmf.CharVector___getslice__(self, *args)
-    def __setslice__(self, *args): return _Xdmf.CharVector___setslice__(self, *args)
-    def __delslice__(self, *args): return _Xdmf.CharVector___delslice__(self, *args)
-    def __delitem__(self, *args): return _Xdmf.CharVector___delitem__(self, *args)
-    def __getitem__(self, *args): return _Xdmf.CharVector___getitem__(self, *args)
-    def __setitem__(self, *args): return _Xdmf.CharVector___setitem__(self, *args)
-    def append(self, *args): return _Xdmf.CharVector_append(self, *args)
-    def empty(self): return _Xdmf.CharVector_empty(self)
-    def size(self): return _Xdmf.CharVector_size(self)
-    def clear(self): return _Xdmf.CharVector_clear(self)
-    def swap(self, *args): return _Xdmf.CharVector_swap(self, *args)
-    def get_allocator(self): return _Xdmf.CharVector_get_allocator(self)
-    def begin(self): return _Xdmf.CharVector_begin(self)
-    def end(self): return _Xdmf.CharVector_end(self)
-    def rbegin(self): return _Xdmf.CharVector_rbegin(self)
-    def rend(self): return _Xdmf.CharVector_rend(self)
-    def pop_back(self): return _Xdmf.CharVector_pop_back(self)
-    def erase(self, *args): return _Xdmf.CharVector_erase(self, *args)
-    def __init__(self, *args): 
-        this = _Xdmf.new_CharVector(*args)
-        try: self.this.append(this)
-        except: self.this = this
-    def push_back(self, *args): return _Xdmf.CharVector_push_back(self, *args)
-    def front(self): return _Xdmf.CharVector_front(self)
-    def back(self): return _Xdmf.CharVector_back(self)
-    def assign(self, *args): return _Xdmf.CharVector_assign(self, *args)
-    def resize(self, *args): return _Xdmf.CharVector_resize(self, *args)
-    def insert(self, *args): return _Xdmf.CharVector_insert(self, *args)
-    def reserve(self, *args): return _Xdmf.CharVector_reserve(self, *args)
-    def capacity(self): return _Xdmf.CharVector_capacity(self)
-    __swig_destroy__ = _Xdmf.delete_CharVector
-    __del__ = lambda self : None;
-CharVector_swigregister = _Xdmf.CharVector_swigregister
-CharVector_swigregister(CharVector)
-
-class ShortVector(_object):
-    __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, ShortVector, name, value)
-    __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, ShortVector, name)
-    __repr__ = _swig_repr
-    def iterator(self): return _Xdmf.ShortVector_iterator(self)
-    def __iter__(self): return self.iterator()
-    def __nonzero__(self): return _Xdmf.ShortVector___nonzero__(self)
-    def __bool__(self): return _Xdmf.ShortVector___bool__(self)
-    def __len__(self): return _Xdmf.ShortVector___len__(self)
-    def pop(self): return _Xdmf.ShortVector_pop(self)
-    def __getslice__(self, *args): return _Xdmf.ShortVector___getslice__(self, *args)
-    def __setslice__(self, *args): return _Xdmf.ShortVector___setslice__(self, *args)
-    def __delslice__(self, *args): return _Xdmf.ShortVector___delslice__(self, *args)
-    def __delitem__(self, *args): return _Xdmf.ShortVector___delitem__(self, *args)
-    def __getitem__(self, *args): return _Xdmf.ShortVector___getitem__(self, *args)
-    def __setitem__(self, *args): return _Xdmf.ShortVector___setitem__(self, *args)
-    def append(self, *args): return _Xdmf.ShortVector_append(self, *args)
-    def empty(self): return _Xdmf.ShortVector_empty(self)
-    def size(self): return _Xdmf.ShortVector_size(self)
-    def clear(self): return _Xdmf.ShortVector_clear(self)
-    def swap(self, *args): return _Xdmf.ShortVector_swap(self, *args)
-    def get_allocator(self): return _Xdmf.ShortVector_get_allocator(self)
-    def begin(self): return _Xdmf.ShortVector_begin(self)
-    def end(self): return _Xdmf.ShortVector_end(self)
-    def rbegin(self): return _Xdmf.ShortVector_rbegin(self)
-    def rend(self): return _Xdmf.ShortVector_rend(self)
-    def pop_back(self): return _Xdmf.ShortVector_pop_back(self)
-    def erase(self, *args): return _Xdmf.ShortVector_erase(self, *args)
-    def __init__(self, *args): 
-        this = _Xdmf.new_ShortVector(*args)
-        try: self.this.append(this)
-        except: self.this = this
-    def push_back(self, *args): return _Xdmf.ShortVector_push_back(self, *args)
-    def front(self): return _Xdmf.ShortVector_front(self)
-    def back(self): return _Xdmf.ShortVector_back(self)
-    def assign(self, *args): return _Xdmf.ShortVector_assign(self, *args)
-    def resize(self, *args): return _Xdmf.ShortVector_resize(self, *args)
-    def insert(self, *args): return _Xdmf.ShortVector_insert(self, *args)
-    def reserve(self, *args): return _Xdmf.ShortVector_reserve(self, *args)
-    def capacity(self): return _Xdmf.ShortVector_capacity(self)
-    __swig_destroy__ = _Xdmf.delete_ShortVector
-    __del__ = lambda self : None;
-ShortVector_swigregister = _Xdmf.ShortVector_swigregister
-ShortVector_swigregister(ShortVector)
-
-class IntVector(_object):
-    __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, IntVector, name, value)
-    __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, IntVector, name)
-    __repr__ = _swig_repr
-    def iterator(self): return _Xdmf.IntVector_iterator(self)
-    def __iter__(self): return self.iterator()
-    def __nonzero__(self): return _Xdmf.IntVector___nonzero__(self)
-    def __bool__(self): return _Xdmf.IntVector___bool__(self)
-    def __len__(self): return _Xdmf.IntVector___len__(self)
-    def pop(self): return _Xdmf.IntVector_pop(self)
-    def __getslice__(self, *args): return _Xdmf.IntVector___getslice__(self, *args)
-    def __setslice__(self, *args): return _Xdmf.IntVector___setslice__(self, *args)
-    def __delslice__(self, *args): return _Xdmf.IntVector___delslice__(self, *args)
-    def __delitem__(self, *args): return _Xdmf.IntVector___delitem__(self, *args)
-    def __getitem__(self, *args): return _Xdmf.IntVector___getitem__(self, *args)
-    def __setitem__(self, *args): return _Xdmf.IntVector___setitem__(self, *args)
-    def append(self, *args): return _Xdmf.IntVector_append(self, *args)
-    def empty(self): return _Xdmf.IntVector_empty(self)
-    def size(self): return _Xdmf.IntVector_size(self)
-    def clear(self): return _Xdmf.IntVector_clear(self)
-    def swap(self, *args): return _Xdmf.IntVector_swap(self, *args)
-    def get_allocator(self): return _Xdmf.IntVector_get_allocator(self)
-    def begin(self): return _Xdmf.IntVector_begin(self)
-    def end(self): return _Xdmf.IntVector_end(self)
-    def rbegin(self): return _Xdmf.IntVector_rbegin(self)
-    def rend(self): return _Xdmf.IntVector_rend(self)
-    def pop_back(self): return _Xdmf.IntVector_pop_back(self)
-    def erase(self, *args): return _Xdmf.IntVector_erase(self, *args)
-    def __init__(self, *args): 
-        this = _Xdmf.new_IntVector(*args)
-        try: self.this.append(this)
-        except: self.this = this
-    def push_back(self, *args): return _Xdmf.IntVector_push_back(self, *args)
-    def front(self): return _Xdmf.IntVector_front(self)
-    def back(self): return _Xdmf.IntVector_back(self)
-    def assign(self, *args): return _Xdmf.IntVector_assign(self, *args)
-    def resize(self, *args): return _Xdmf.IntVector_resize(self, *args)
-    def insert(self, *args): return _Xdmf.IntVector_insert(self, *args)
-    def reserve(self, *args): return _Xdmf.IntVector_reserve(self, *args)
-    def capacity(self): return _Xdmf.IntVector_capacity(self)
-    __swig_destroy__ = _Xdmf.delete_IntVector
-    __del__ = lambda self : None;
-IntVector_swigregister = _Xdmf.IntVector_swigregister
-IntVector_swigregister(IntVector)
-
-class LongVector(_object):
-    __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, LongVector, name, value)
-    __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, LongVector, name)
-    __repr__ = _swig_repr
-    def iterator(self): return _Xdmf.LongVector_iterator(self)
-    def __iter__(self): return self.iterator()
-    def __nonzero__(self): return _Xdmf.LongVector___nonzero__(self)
-    def __bool__(self): return _Xdmf.LongVector___bool__(self)
-    def __len__(self): return _Xdmf.LongVector___len__(self)
-    def pop(self): return _Xdmf.LongVector_pop(self)
-    def __getslice__(self, *args): return _Xdmf.LongVector___getslice__(self, *args)
-    def __setslice__(self, *args): return _Xdmf.LongVector___setslice__(self, *args)
-    def __delslice__(self, *args): return _Xdmf.LongVector___delslice__(self, *args)
-    def __delitem__(self, *args): return _Xdmf.LongVector___delitem__(self, *args)
-    def __getitem__(self, *args): return _Xdmf.LongVector___getitem__(self, *args)
-    def __setitem__(self, *args): return _Xdmf.LongVector___setitem__(self, *args)
-    def append(self, *args): return _Xdmf.LongVector_append(self, *args)
-    def empty(self): return _Xdmf.LongVector_empty(self)
-    def size(self): return _Xdmf.LongVector_size(self)
-    def clear(self): return _Xdmf.LongVector_clear(self)
-    def swap(self, *args): return _Xdmf.LongVector_swap(self, *args)
-    def get_allocator(self): return _Xdmf.LongVector_get_allocator(self)
-    def begin(self): return _Xdmf.LongVector_begin(self)
-    def end(self): return _Xdmf.LongVector_end(self)
-    def rbegin(self): return _Xdmf.LongVector_rbegin(self)
-    def rend(self): return _Xdmf.LongVector_rend(self)
-    def pop_back(self): return _Xdmf.LongVector_pop_back(self)
-    def erase(self, *args): return _Xdmf.LongVector_erase(self, *args)
-    def __init__(self, *args): 
-        this = _Xdmf.new_LongVector(*args)
-        try: self.this.append(this)
-        except: self.this = this
-    def push_back(self, *args): return _Xdmf.LongVector_push_back(self, *args)
-    def front(self): return _Xdmf.LongVector_front(self)
-    def back(self): return _Xdmf.LongVector_back(self)
-    def assign(self, *args): return _Xdmf.LongVector_assign(self, *args)
-    def resize(self, *args): return _Xdmf.LongVector_resize(self, *args)
-    def insert(self, *args): return _Xdmf.LongVector_insert(self, *args)
-    def reserve(self, *args): return _Xdmf.LongVector_reserve(self, *args)
-    def capacity(self): return _Xdmf.LongVector_capacity(self)
-    __swig_destroy__ = _Xdmf.delete_LongVector
-    __del__ = lambda self : None;
-LongVector_swigregister = _Xdmf.LongVector_swigregister
-LongVector_swigregister(LongVector)
-
-class FloatVector(_object):
-    __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, FloatVector, name, value)
-    __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, FloatVector, name)
-    __repr__ = _swig_repr
-    def iterator(self): return _Xdmf.FloatVector_iterator(self)
-    def __iter__(self): return self.iterator()
-    def __nonzero__(self): return _Xdmf.FloatVector___nonzero__(self)
-    def __bool__(self): return _Xdmf.FloatVector___bool__(self)
-    def __len__(self): return _Xdmf.FloatVector___len__(self)
-    def pop(self): return _Xdmf.FloatVector_pop(self)
-    def __getslice__(self, *args): return _Xdmf.FloatVector___getslice__(self, *args)
-    def __setslice__(self, *args): return _Xdmf.FloatVector___setslice__(self, *args)
-    def __delslice__(self, *args): return _Xdmf.FloatVector___delslice__(self, *args)
-    def __delitem__(self, *args): return _Xdmf.FloatVector___delitem__(self, *args)
-    def __getitem__(self, *args): return _Xdmf.FloatVector___getitem__(self, *args)
-    def __setitem__(self, *args): return _Xdmf.FloatVector___setitem__(self, *args)
-    def append(self, *args): return _Xdmf.FloatVector_append(self, *args)
-    def empty(self): return _Xdmf.FloatVector_empty(self)
-    def size(self): return _Xdmf.FloatVector_size(self)
-    def clear(self): return _Xdmf.FloatVector_clear(self)
-    def swap(self, *args): return _Xdmf.FloatVector_swap(self, *args)
-    def get_allocator(self): return _Xdmf.FloatVector_get_allocator(self)
-    def begin(self): return _Xdmf.FloatVector_begin(self)
-    def end(self): return _Xdmf.FloatVector_end(self)
-    def rbegin(self): return _Xdmf.FloatVector_rbegin(self)
-    def rend(self): return _Xdmf.FloatVector_rend(self)
-    def pop_back(self): return _Xdmf.FloatVector_pop_back(self)
-    def erase(self, *args): return _Xdmf.FloatVector_erase(self, *args)
-    def __init__(self, *args): 
-        this = _Xdmf.new_FloatVector(*args)
-        try: self.this.append(this)
-        except: self.this = this
-    def push_back(self, *args): return _Xdmf.FloatVector_push_back(self, *args)
-    def front(self): return _Xdmf.FloatVector_front(self)
-    def back(self): return _Xdmf.FloatVector_back(self)
-    def assign(self, *args): return _Xdmf.FloatVector_assign(self, *args)
-    def resize(self, *args): return _Xdmf.FloatVector_resize(self, *args)
-    def insert(self, *args): return _Xdmf.FloatVector_insert(self, *args)
-    def reserve(self, *args): return _Xdmf.FloatVector_reserve(self, *args)
-    def capacity(self): return _Xdmf.FloatVector_capacity(self)
-    __swig_destroy__ = _Xdmf.delete_FloatVector
-    __del__ = lambda self : None;
-FloatVector_swigregister = _Xdmf.FloatVector_swigregister
-FloatVector_swigregister(FloatVector)
-
-class DoubleVector(_object):
-    __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, DoubleVector, name, value)
-    __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, DoubleVector, name)
-    __repr__ = _swig_repr
-    def iterator(self): return _Xdmf.DoubleVector_iterator(self)
-    def __iter__(self): return self.iterator()
-    def __nonzero__(self): return _Xdmf.DoubleVector___nonzero__(self)
-    def __bool__(self): return _Xdmf.DoubleVector___bool__(self)
-    def __len__(self): return _Xdmf.DoubleVector___len__(self)
-    def pop(self): return _Xdmf.DoubleVector_pop(self)
-    def __getslice__(self, *args): return _Xdmf.DoubleVector___getslice__(self, *args)
-    def __setslice__(self, *args): return _Xdmf.DoubleVector___setslice__(self, *args)
-    def __delslice__(self, *args): return _Xdmf.DoubleVector___delslice__(self, *args)
-    def __delitem__(self, *args): return _Xdmf.DoubleVector___delitem__(self, *args)
-    def __getitem__(self, *args): return _Xdmf.DoubleVector___getitem__(self, *args)
-    def __setitem__(self, *args): return _Xdmf.DoubleVector___setitem__(self, *args)
-    def append(self, *args): return _Xdmf.DoubleVector_append(self, *args)
-    def empty(self): return _Xdmf.DoubleVector_empty(self)
-    def size(self): return _Xdmf.DoubleVector_size(self)
-    def clear(self): return _Xdmf.DoubleVector_clear(self)
-    def swap(self, *args): return _Xdmf.DoubleVector_swap(self, *args)
-    def get_allocator(self): return _Xdmf.DoubleVector_get_allocator(self)
-    def begin(self): return _Xdmf.DoubleVector_begin(self)
-    def end(self): return _Xdmf.DoubleVector_end(self)
-    def rbegin(self): return _Xdmf.DoubleVector_rbegin(self)
-    def rend(self): return _Xdmf.DoubleVector_rend(self)
-    def pop_back(self): return _Xdmf.DoubleVector_pop_back(self)
-    def erase(self, *args): return _Xdmf.DoubleVector_erase(self, *args)
-    def __init__(self, *args): 
-        this = _Xdmf.new_DoubleVector(*args)
-        try: self.this.append(this)
-        except: self.this = this
-    def push_back(self, *args): return _Xdmf.DoubleVector_push_back(self, *args)
-    def front(self): return _Xdmf.DoubleVector_front(self)
-    def back(self): return _Xdmf.DoubleVector_back(self)
-    def assign(self, *args): return _Xdmf.DoubleVector_assign(self, *args)
-    def resize(self, *args): return _Xdmf.DoubleVector_resize(self, *args)
-    def insert(self, *args): return _Xdmf.DoubleVector_insert(self, *args)
-    def reserve(self, *args): return _Xdmf.DoubleVector_reserve(self, *args)
-    def capacity(self): return _Xdmf.DoubleVector_capacity(self)
-    __swig_destroy__ = _Xdmf.delete_DoubleVector
-    __del__ = lambda self : None;
-DoubleVector_swigregister = _Xdmf.DoubleVector_swigregister
-DoubleVector_swigregister(DoubleVector)
-
-class UCharVector(_object):
-    __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, UCharVector, name, value)
-    __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, UCharVector, name)
-    __repr__ = _swig_repr
-    def iterator(self): return _Xdmf.UCharVector_iterator(self)
-    def __iter__(self): return self.iterator()
-    def __nonzero__(self): return _Xdmf.UCharVector___nonzero__(self)
-    def __bool__(self): return _Xdmf.UCharVector___bool__(self)
-    def __len__(self): return _Xdmf.UCharVector___len__(self)
-    def pop(self): return _Xdmf.UCharVector_pop(self)
-    def __getslice__(self, *args): return _Xdmf.UCharVector___getslice__(self, *args)
-    def __setslice__(self, *args): return _Xdmf.UCharVector___setslice__(self, *args)
-    def __delslice__(self, *args): return _Xdmf.UCharVector___delslice__(self, *args)
-    def __delitem__(self, *args): return _Xdmf.UCharVector___delitem__(self, *args)
-    def __getitem__(self, *args): return _Xdmf.UCharVector___getitem__(self, *args)
-    def __setitem__(self, *args): return _Xdmf.UCharVector___setitem__(self, *args)
-    def append(self, *args): return _Xdmf.UCharVector_append(self, *args)
-    def empty(self): return _Xdmf.UCharVector_empty(self)
-    def size(self): return _Xdmf.UCharVector_size(self)
-    def clear(self): return _Xdmf.UCharVector_clear(self)
-    def swap(self, *args): return _Xdmf.UCharVector_swap(self, *args)
-    def get_allocator(self): return _Xdmf.UCharVector_get_allocator(self)
-    def begin(self): return _Xdmf.UCharVector_begin(self)
-    def end(self): return _Xdmf.UCharVector_end(self)
-    def rbegin(self): return _Xdmf.UCharVector_rbegin(self)
-    def rend(self): return _Xdmf.UCharVector_rend(self)
-    def pop_back(self): return _Xdmf.UCharVector_pop_back(self)
-    def erase(self, *args): return _Xdmf.UCharVector_erase(self, *args)
-    def __init__(self, *args): 
-        this = _Xdmf.new_UCharVector(*args)
-        try: self.this.append(this)
-        except: self.this = this
-    def push_back(self, *args): return _Xdmf.UCharVector_push_back(self, *args)
-    def front(self): return _Xdmf.UCharVector_front(self)
-    def back(self): return _Xdmf.UCharVector_back(self)
-    def assign(self, *args): return _Xdmf.UCharVector_assign(self, *args)
-    def resize(self, *args): return _Xdmf.UCharVector_resize(self, *args)
-    def insert(self, *args): return _Xdmf.UCharVector_insert(self, *args)
-    def reserve(self, *args): return _Xdmf.UCharVector_reserve(self, *args)
-    def capacity(self): return _Xdmf.UCharVector_capacity(self)
-    __swig_destroy__ = _Xdmf.delete_UCharVector
-    __del__ = lambda self : None;
-UCharVector_swigregister = _Xdmf.UCharVector_swigregister
-UCharVector_swigregister(UCharVector)
-
-class UShortVector(_object):
-    __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, UShortVector, name, value)
-    __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, UShortVector, name)
-    __repr__ = _swig_repr
-    def iterator(self): return _Xdmf.UShortVector_iterator(self)
-    def __iter__(self): return self.iterator()
-    def __nonzero__(self): return _Xdmf.UShortVector___nonzero__(self)
-    def __bool__(self): return _Xdmf.UShortVector___bool__(self)
-    def __len__(self): return _Xdmf.UShortVector___len__(self)
-    def pop(self): return _Xdmf.UShortVector_pop(self)
-    def __getslice__(self, *args): return _Xdmf.UShortVector___getslice__(self, *args)
-    def __setslice__(self, *args): return _Xdmf.UShortVector___setslice__(self, *args)
-    def __delslice__(self, *args): return _Xdmf.UShortVector___delslice__(self, *args)
-    def __delitem__(self, *args): return _Xdmf.UShortVector___delitem__(self, *args)
-    def __getitem__(self, *args): return _Xdmf.UShortVector___getitem__(self, *args)
-    def __setitem__(self, *args): return _Xdmf.UShortVector___setitem__(self, *args)
-    def append(self, *args): return _Xdmf.UShortVector_append(self, *args)
-    def empty(self): return _Xdmf.UShortVector_empty(self)
-    def size(self): return _Xdmf.UShortVector_size(self)
-    def clear(self): return _Xdmf.UShortVector_clear(self)
-    def swap(self, *args): return _Xdmf.UShortVector_swap(self, *args)
-    def get_allocator(self): return _Xdmf.UShortVector_get_allocator(self)
-    def begin(self): return _Xdmf.UShortVector_begin(self)
-    def end(self): return _Xdmf.UShortVector_end(self)
-    def rbegin(self): return _Xdmf.UShortVector_rbegin(self)
-    def rend(self): return _Xdmf.UShortVector_rend(self)
-    def pop_back(self): return _Xdmf.UShortVector_pop_back(self)
-    def erase(self, *args): return _Xdmf.UShortVector_erase(self, *args)
-    def __init__(self, *args): 
-        this = _Xdmf.new_UShortVector(*args)
-        try: self.this.append(this)
-        except: self.this = this
-    def push_back(self, *args): return _Xdmf.UShortVector_push_back(self, *args)
-    def front(self): return _Xdmf.UShortVector_front(self)
-    def back(self): return _Xdmf.UShortVector_back(self)
-    def assign(self, *args): return _Xdmf.UShortVector_assign(self, *args)
-    def resize(self, *args): return _Xdmf.UShortVector_resize(self, *args)
-    def insert(self, *args): return _Xdmf.UShortVector_insert(self, *args)
-    def reserve(self, *args): return _Xdmf.UShortVector_reserve(self, *args)
-    def capacity(self): return _Xdmf.UShortVector_capacity(self)
-    __swig_destroy__ = _Xdmf.delete_UShortVector
-    __del__ = lambda self : None;
-UShortVector_swigregister = _Xdmf.UShortVector_swigregister
-UShortVector_swigregister(UShortVector)
-
-class UIntVector(_object):
-    __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, UIntVector, name, value)
-    __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, UIntVector, name)
-    __repr__ = _swig_repr
-    def iterator(self): return _Xdmf.UIntVector_iterator(self)
-    def __iter__(self): return self.iterator()
-    def __nonzero__(self): return _Xdmf.UIntVector___nonzero__(self)
-    def __bool__(self): return _Xdmf.UIntVector___bool__(self)
-    def __len__(self): return _Xdmf.UIntVector___len__(self)
-    def pop(self): return _Xdmf.UIntVector_pop(self)
-    def __getslice__(self, *args): return _Xdmf.UIntVector___getslice__(self, *args)
-    def __setslice__(self, *args): return _Xdmf.UIntVector___setslice__(self, *args)
-    def __delslice__(self, *args): return _Xdmf.UIntVector___delslice__(self, *args)
-    def __delitem__(self, *args): return _Xdmf.UIntVector___delitem__(self, *args)
-    def __getitem__(self, *args): return _Xdmf.UIntVector___getitem__(self, *args)
-    def __setitem__(self, *args): return _Xdmf.UIntVector___setitem__(self, *args)
-    def append(self, *args): return _Xdmf.UIntVector_append(self, *args)
-    def empty(self): return _Xdmf.UIntVector_empty(self)
-    def size(self): return _Xdmf.UIntVector_size(self)
-    def clear(self): return _Xdmf.UIntVector_clear(self)
-    def swap(self, *args): return _Xdmf.UIntVector_swap(self, *args)
-    def get_allocator(self): return _Xdmf.UIntVector_get_allocator(self)
-    def begin(self): return _Xdmf.UIntVector_begin(self)
-    def end(self): return _Xdmf.UIntVector_end(self)
-    def rbegin(self): return _Xdmf.UIntVector_rbegin(self)
-    def rend(self): return _Xdmf.UIntVector_rend(self)
-    def pop_back(self): return _Xdmf.UIntVector_pop_back(self)
-    def erase(self, *args): return _Xdmf.UIntVector_erase(self, *args)
-    def __init__(self, *args): 
-        this = _Xdmf.new_UIntVector(*args)
-        try: self.this.append(this)
-        except: self.this = this
-    def push_back(self, *args): return _Xdmf.UIntVector_push_back(self, *args)
-    def front(self): return _Xdmf.UIntVector_front(self)
-    def back(self): return _Xdmf.UIntVector_back(self)
-    def assign(self, *args): return _Xdmf.UIntVector_assign(self, *args)
-    def resize(self, *args): return _Xdmf.UIntVector_resize(self, *args)
-    def insert(self, *args): return _Xdmf.UIntVector_insert(self, *args)
-    def reserve(self, *args): return _Xdmf.UIntVector_reserve(self, *args)
-    def capacity(self): return _Xdmf.UIntVector_capacity(self)
-    __swig_destroy__ = _Xdmf.delete_UIntVector
-    __del__ = lambda self : None;
-UIntVector_swigregister = _Xdmf.UIntVector_swigregister
-UIntVector_swigregister(UIntVector)
 
 
 
