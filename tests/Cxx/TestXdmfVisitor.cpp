@@ -18,12 +18,12 @@ int main(int argc, char* argv[])
 	double points[] = {0.1, 0.1, 1.1, 1.1, 0.1, 1.1, 3.1, 0.1, 2.1, 0.1, 1.1, 1.1, 1.1, 1.1, 1.1, 3.1, 2.1, 2.1,
 			0.1, 0.1, -1.1, 1.1, 0.1, -1.1, 3.1, 0.1, -2.1, 0.1, 1.1, -1.1, 1.1, 1.1, -1.1, 3.1, 2.1, -2.1};
 	grid->getGeometry()->setGeometryType(XdmfGeometryType::XYZ());
-	grid->getGeometry()->getArray()->insertValues(0, &points[0], 36);
+	grid->getGeometry()->getArray()->copyValues(0, &points[0], 36);
 
 	// Set Topology
 	int connectivity[] = {0, 1, 7, 6, 3, 4, 10, 9, 1, 2, 8, 7, 4, 5, 11, 10};
 	grid->getTopology()->setTopologyType(XdmfTopologyType::Hexahedron());
-	grid->getTopology()->getArray()->insertValues(0, &connectivity[0], 16);
+	grid->getTopology()->getArray()->copyValues(0, &connectivity[0], 16);
 
 	// Add Node Attribute
 	boost::shared_ptr<XdmfAttribute> nodalAttribute = XdmfAttribute::New();
@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
 	nodalAttribute->setName("Nodal Attribute");
 	nodalAttribute->setAttributeType(XdmfAttributeType::Scalar());
 	nodalAttribute->setAttributeCenter(XdmfAttributeCenter::Node());
-	nodalAttribute->getArray()->insertValues(0, &nodeValues[0], 12);
+	nodalAttribute->getArray()->copyValues(0, &nodeValues[0], 12);
 
 	// Add Cell Attribute
 	boost::shared_ptr<XdmfAttribute> cellAttribute = XdmfAttribute::New();
@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
 	cellAttribute->setName("Cell Attribute");
 	cellAttribute->setAttributeType(XdmfAttributeType::Scalar());
 	cellAttribute->setAttributeCenter(XdmfAttributeCenter::Cell());
-	cellAttribute->getArray()->insertValues(0, &cellValues[0], 2);
+	cellAttribute->getArray()->copyValues(0, &cellValues[0], 2);
 
 	grid->insert(nodalAttribute);
 	grid->insert(cellAttribute);

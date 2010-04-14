@@ -14,31 +14,11 @@
 #include <hdf5.h>
 #include <vector>
 
-template <typename T>
-class XdmfArrayGetValues : public boost::static_visitor <boost::shared_ptr<std::vector<T> > > {
-public:
-
-    XdmfArrayGetValues()
-    {
-    }
-
-    boost::shared_ptr<std::vector<T> > operator()(const boost::shared_ptr<std::vector<T> > array) const
-    {
-        return array;
-    }
-
-    template <typename U>
-    boost::shared_ptr<std::vector<T> > operator()(const boost::shared_ptr<std::vector<U> > array) const
-    {
-        return boost::shared_ptr<std::vector<T> >();
-    }
-};
-
 template<typename T>
-class XdmfArraySetValues : public boost::static_visitor <void> {
+class XdmfArrayCopyValues : public boost::static_visitor <void> {
 public:
 
-	XdmfArraySetValues(int startIndex, T* valuesPointer, int numValues, int arrayStride = 1, int valuesStride = 1) :
+	XdmfArrayCopyValues(int startIndex, T* valuesPointer, int numValues = 1, int arrayStride = 1, int valuesStride = 1) :
 		mStartIndex(startIndex),
 		mValuesPointer(valuesPointer),
 		mNumValues(numValues),
@@ -73,21 +53,87 @@ private:
 	int mValuesStride;
 };
 
+template <typename T>
+class XdmfArrayGetValues : public boost::static_visitor <boost::shared_ptr<std::vector<T> > > {
+public:
+
+    XdmfArrayGetValues()
+    {
+    }
+
+    boost::shared_ptr<std::vector<T> > operator()(const boost::shared_ptr<std::vector<T> > array) const
+    {
+        return array;
+    }
+
+    template <typename U>
+    boost::shared_ptr<std::vector<T> > operator()(const boost::shared_ptr<std::vector<U> > array) const
+    {
+        return boost::shared_ptr<std::vector<T> >();
+    }
+};
+
+template <typename T>
+class XdmfArrayGetValuesConst : public boost::static_visitor <const boost::shared_ptr<const std::vector<T> > > {
+public:
+
+    XdmfArrayGetValuesConst()
+    {
+    }
+
+    const boost::shared_ptr<const std::vector<T> > operator()(const boost::shared_ptr<const std::vector<T> > array) const
+    {
+        return array;
+    }
+
+    template <typename U>
+    const boost::shared_ptr<const std::vector<T> > operator()(const boost::shared_ptr<const std::vector<U> > array) const
+    {
+        return boost::shared_ptr<std::vector<T> >();
+    }
+};
+
 class XdmfArray : public XdmfItem {
 public:
 
 	XdmfNewMacro(XdmfArray);
 
 	/**
-	 * Copy the values from a vector into this array
+	 * Copy values from an XdmfArray into this array.
 	 *
-	 * @param array the vector to copy into this array.
+	 * @param startIndex the index in this array to begin insertion.
+	 * @param values a shared pointer to an XdmfArray to copy into this array.
+	 * @param numValues the number of values to copy into this array.
+	 * @param arrayStride number of values to stride in this array between each copy.
+	 * @param valuesStride number of values to stride in the XdmfArray between each copy.
 	 */
-    template<typename T> void copyValues(std::vector<T> & array)
-    {
-    	boost::shared_ptr<std::vector<T> > newArray(new std::vector<T>(array));
-    	mArray = newArray;
-    }
+	void copyValues(int startIndex, boost::shared_ptr<XdmfArray> values, int valuesStartIndex= 0, int numValues = 1, int arrayStride = 1, int valuesStride = 1);
+
+	/**
+	 * Copy values from an array into this array.
+	 *
+	 * @param startIndex the index in this array to begin insertion.
+	 * @param valuesPointer a pointer to the values to copy into this array.
+	 * @param numValues the number of values to copy into this array.
+	 * @param arrayStride number of values to stride in this array between each copy.
+	 * @param valuesStride number of values to stride in the pointer between each copy.
+	 */
+	template<typename T> void copyValues(int startIndex, T* valuesPointer, int numValues = 1, int arrayStride = 1, int valuesStride = 1)
+	{
+		if(!mInitialized)
+		{
+			// Set type of variant to type of pointer
+			boost::shared_ptr<std::vector<T> > newArray(new std::vector<T>());
+			mArray = newArray;
+			mInitialized = true;
+		}
+		boost::apply_visitor( XdmfArrayCopyValues<T>(startIndex, valuesPointer, numValues, arrayStride, valuesStride), mArray);
+	}
+
+	/**
+	 * Clears all values from this array
+	 */
+	virtual void clear();
 
 	/**
      * Get the data type of this array.
@@ -134,7 +180,11 @@ public:
 	 *
 	 * @return a smart pointer to the internal vector of values stored in this array
 	 */
-	//virtual const boost::shared_ptr<std::vector<void> > getValues() const;
+	template <typename T>
+	const boost::shared_ptr<const std::vector<T> > getValues() const
+	{
+		return boost::apply_visitor( XdmfArrayGetValuesConst<T>(), mArray);
+	}
 
 	/**
 	 * Get a pointer to the values stored in this array (const version).
@@ -149,27 +199,6 @@ public:
 	 * @return a string containing the contents of the array.
 	 */
 	virtual std::string getValuesString() const;
-
-	/**
-	 * Insert the values from a pointer into this array.
-	 *
-	 * @param startIndex the index in this array to begin insertion.
-	 * @param valuesPointer a pointer to the values to copy into this array.
-	 * @param numValues the number of values to copy into this array.
-	 * @param arrayStride number of values to stride in this array between each copy.
-	 * @param valuesStride number of values to stride in the pointer between each copy.
-	 */
-	template<typename T> void insertValues(int startIndex, T* valuesPointer, int numValues = 1, int arrayStride = 1, int valuesStride = 1)
-	{
-		if(!mInitialized)
-		{
-			// Set type of variant to type of pointer
-			boost::shared_ptr<std::vector<T> > newArray(new std::vector<T>());
-			mArray = newArray;
-			mInitialized = true;
-		}
-		boost::apply_visitor( XdmfArraySetValues<T>(startIndex, valuesPointer, numValues, arrayStride, valuesStride), mArray);
-	}
 
 	virtual std::string printSelf() const;
 
@@ -193,17 +222,24 @@ protected:
 
 private:
 
-	bool mInitialized;
+	typedef boost::variant<
+		boost::shared_ptr<std::vector<char> >,
+		boost::shared_ptr<std::vector<short> >,
+		boost::shared_ptr<std::vector<int> >,
+		boost::shared_ptr<std::vector<long> >,
+		boost::shared_ptr<std::vector<float> >,
+		boost::shared_ptr<std::vector<double> >,
+		boost::shared_ptr<std::vector<unsigned char> >,
+		boost::shared_ptr<std::vector<unsigned short> >,
+		boost::shared_ptr<std::vector<unsigned int> > > ArrayVariant;
 
-	boost::variant<boost::shared_ptr<std::vector<char> >,
-				   boost::shared_ptr<std::vector<short> >,
-				   boost::shared_ptr<std::vector<int> >,
-				   boost::shared_ptr<std::vector<long> >,
-				   boost::shared_ptr<std::vector<float> >,
-				   boost::shared_ptr<std::vector<double> >,
-				   boost::shared_ptr<std::vector<unsigned char> >,
-				   boost::shared_ptr<std::vector<unsigned short> >,
-				   boost::shared_ptr<std::vector<unsigned int> > > mArray;
+	const ArrayVariant getVariant() const
+	{
+		return mArray;
+	}
+
+	ArrayVariant mArray;
+	bool mInitialized;
 };
 
 #endif /* XDMFARRAY_HPP_ */

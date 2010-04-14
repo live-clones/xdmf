@@ -61,24 +61,81 @@ namespace boost {
 %include XdmfTopology.hpp
 %include XdmfTopologyType.hpp
 
-%template(CharVector) std::vector<char>;
-%template(ShortVector) std::vector<short>;
-%template(IntVector) std::vector<int>;
-%template(LongVector) std::vector<long>;
-%template(FloatVector) std::vector<float>;
-%template(DoubleVector) std::vector<double>;
-%template(UCharVector) std::vector<unsigned char>;
-%template(UShortVector) std::vector<unsigned short>;
-%template(UIntVector) std::vector<unsigned int>;
-
+// Provide accessors from python lists to XdmfArrays
 %extend XdmfArray {
-  %template(copyValues) copyValues<char>;
-  %template(copyValues) copyValues<short>;
-  %template(copyValues) copyValues<int>;
-  %template(copyValues) copyValues<long>;
-  %template(copyValues) copyValues<float>;
-  %template(copyValues) copyValues<double>;
-  %template(copyValues) copyValues<unsigned char>;
-  %template(copyValues) copyValues<unsigned short>;
-  %template(copyValues) copyValues<unsigned int>;
+  void copyValueAsChar(int index, char value) {
+    $self->copyValues(index, &value);
+  }
+
+  void copyValueAsShort(int index, short value) {
+    $self->copyValues(index, &value);
+  }
+
+  void copyValueAsInt(int index, int value) {
+    $self->copyValues(index, &value);
+  }
+
+  void copyValueAsLong(int index, long value) {
+    $self->copyValues(index, &value);
+  }
+
+  void copyValueAsFloat(int index, float value) {
+    $self->copyValues(index, &value);
+  }
+  
+  void copyValueAsDouble(int index, double value) {
+    $self->copyValues(index, &value);
+  }
+
+  void copyValueAsUChar(int index, unsigned char value) {
+    $self->copyValues(index, &value);
+  }
+
+  void copyValueAsUShort(int index, unsigned short value) {
+    $self->copyValues(index, &value);
+  }
+
+  void copyValueAsUInt(int index, unsigned int value) {
+    $self->copyValues(index, &value);
+  }
+};
+
+%extend boost::shared_ptr<XdmfArray> {
+  %pythoncode {
+    def copyValuesAsChar(self, startIndex, values):
+      for i in range(0, len(values)):
+        self.copyValueAsChar(i+startIndex, values[i])
+
+    def copyValuesAsShort(self, startIndex, values):
+      for i in range(0, len(values)):
+        self.copyValueAsShort(i+startIndex, values[i])
+
+    def copyValuesAsInt(self, startIndex, values):
+      for i in range(0, len(values)):
+        self.copyValueAsInt(i+startIndex, values[i])
+
+    def copyValuesAsLong(self, startIndex, values):
+      for i in range(0, len(values)):
+        self.copyValueAsLong(i+startIndex, values[i])
+
+    def copyValuesAsFloat(self, startIndex, values):
+      for i in range(0, len(values)):
+        self.copyValueAsFloat(i+startIndex, values[i])
+
+    def copyValuesAsDouble(self, startIndex, values):
+      for i in range(0, len(values)):
+        self.copyValueAsDouble(i+startIndex, values[i])
+
+    def copyValuesAsUChar(self, startIndex, values):
+      for i in range(0, len(values)):
+        self.copyValueAsUChar(i+startIndex, values[i])
+
+    def copyValuesAsUShort(self, startIndex, values):
+      for i in range(0, len(values)):
+        self.copyValueAsUShort(i+startIndex, values[i])
+
+    def copyValuesAsUInt(self, startIndex, values):
+      for i in range(0, len(values)):
+        self.copyValueAsUInt(i+startIndex, values[i])
+  };
 };

@@ -4,11 +4,11 @@ int main(int argc, char* argv[])
 {
 
 	/**
-	 * Test simple copy from array
+	 * Copy from array
 	 */
 	double values[] = {1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9};
 	boost::shared_ptr<XdmfArray> array = XdmfArray::New();
-	array->insertValues(0, &values[0], 9);
+	array->copyValues(0, &values[0], 9);
 	assert(array->getSize() == 9);
 	assert(array->getType().compare("Float") == 0);
 	assert(array->getPrecision() == 8);
@@ -25,13 +25,13 @@ int main(int argc, char* argv[])
 	assert(array->getValuesString().compare("1.1 2.2 3.3 4.4 5.5 6.6 7.7 8.8 9.9 ") == 0);
 
 	/**
-	 * Test simple copy from vector
+	 * Copy from vector
 	 */
 	std::vector<int> values2;
 	values2.push_back(100);
 	values2.push_back(200);
 	boost::shared_ptr<XdmfArray> array2 = XdmfArray::New();
-	array2->copyValues(values2);
+	array2->copyValues(0, &values2[0], 2);
 	assert(array2->getSize() == 2);
 	assert(array2->getType().compare("Int") == 0);
 	assert(array2->getPrecision() == 4);
@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
 	assert(array2->getValuesString().compare("100 200 ") == 0);
 
 	/**
-	 * Test shared vector assignment
+	 * Shared vector assignment
 	 */
 	boost::shared_ptr<std::vector<char> > values3(new std::vector<char>());
 	values3->push_back(-2);
@@ -76,6 +76,21 @@ int main(int argc, char* argv[])
 	// Assert that we can't get a smart pointer to an int vector
 	boost::shared_ptr<std::vector<int> > storedValues3Int = array3->getValues<int>();
 	assert(storedValues3Int == NULL);
+
+	/**
+	 * Copy values from another XdmfArray
+	 */
+	boost::shared_ptr<XdmfArray> array4 = XdmfArray::New();
+	array4->copyValues(0, array, 1, 4);
+	assert(array4->getSize() == 4);
+	assert(array4->getType().compare("Float") == 0);
+	assert(array4->getPrecision() == 8);
+	boost::shared_ptr<std::vector<double> > storedValues4 = array4->getValues<double>();
+	i = 1;
+	for(std::vector<double>::const_iterator iter = storedValues4->begin(); iter!= storedValues4->end(); ++iter, ++i)
+	{
+		assert((*iter) == storedValues->operator[](i));
+	}
 
 	return 0;
 }
