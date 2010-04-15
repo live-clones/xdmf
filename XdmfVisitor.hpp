@@ -22,7 +22,6 @@ class XdmfTopology;
  * XdmfVisitor visits each node of an Xdmf graph structure and writes the data to disk.  Xdmf files are written to disk
  * by performing a visitor operation.  Writing begins by calling the write() operation on any XdmfItem and supplying an
  * XdmfVisitor as the parameter.  The XdmfItem as well as all children attached to the XdmfItem are written to disk.
- *
  */
 class XdmfVisitor : public XdmfObject {
 

@@ -117,7 +117,7 @@ protected:
 	 * by Xdmf should be accessed through more specific static methods that construct XdmfTopologyType -
 	 * i.e. XdmfTopologyType::Tetrahedron()
 	 */
-	XdmfTopologyType(const int& nodesPerElement, const std::string& name, const CellType& cellType);
+	XdmfTopologyType(const int & nodesPerElement, const std::string & name, const CellType & cellType);
 
 private:
 
