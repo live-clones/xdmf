@@ -300,11 +300,11 @@ void XdmfArray::copyValues(int startIndex, boost::shared_ptr<XdmfArray> values, 
 	if(!mInitialized)
 	{
 		// Copy the values variant in order to get the type (only taking smart pointer so no worries about large copies)
-		mArray = values->getVariant();
+		mArray = values->mArray;
 		// Reinitialize variant array to contain new array with same type.
 		boost::apply_visitor( XdmfArrayNewArray(), mArray);
 	}
-	boost::apply_visitor( XdmfArrayCopyArrayValues(startIndex, valuesStartIndex, numValues, arrayStride, valuesStride), mArray, values->getVariant());
+	boost::apply_visitor( XdmfArrayCopyArrayValues(startIndex, valuesStartIndex, numValues, arrayStride, valuesStride), mArray, values->mArray);
 }
 
 void XdmfArray::clear()

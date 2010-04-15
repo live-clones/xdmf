@@ -5406,28 +5406,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_XdmfArrayPtr_getType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  boost::shared_ptr< XdmfArray > *arg1 = (boost::shared_ptr< XdmfArray > *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  std::string result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:XdmfArrayPtr_getType",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_boost__shared_ptrT_XdmfArray_t, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfArrayPtr_getType" "', argument " "1"" of type '" "boost::shared_ptr< XdmfArray > const *""'"); 
-  }
-  arg1 = reinterpret_cast< boost::shared_ptr< XdmfArray > * >(argp1);
-  result = (*arg1)->getType();
-  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_XdmfArrayPtr_getHDF5Type(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   boost::shared_ptr< XdmfArray > *arg1 = (boost::shared_ptr< XdmfArray > *) 0 ;
@@ -5488,6 +5466,28 @@ SWIGINTERN PyObject *_wrap_XdmfArrayPtr_getSize(PyObject *SWIGUNUSEDPARM(self), 
   arg1 = reinterpret_cast< boost::shared_ptr< XdmfArray > * >(argp1);
   result = (int)(*arg1)->getSize();
   resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfArrayPtr_getType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  boost::shared_ptr< XdmfArray > *arg1 = (boost::shared_ptr< XdmfArray > *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  std::string result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfArrayPtr_getType",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_boost__shared_ptrT_XdmfArray_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfArrayPtr_getType" "', argument " "1"" of type '" "boost::shared_ptr< XdmfArray > const *""'"); 
+  }
+  arg1 = reinterpret_cast< boost::shared_ptr< XdmfArray > * >(argp1);
+  result = (*arg1)->getType();
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
   return resultobj;
 fail:
   return NULL;
@@ -10914,28 +10914,6 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_XdmfArray_getType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  XdmfArray *arg1 = (XdmfArray *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  std::string result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:XdmfArray_getType",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfArray, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfArray_getType" "', argument " "1"" of type '" "XdmfArray const *""'"); 
-  }
-  arg1 = reinterpret_cast< XdmfArray * >(argp1);
-  result = ((XdmfArray const *)arg1)->getType();
-  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_XdmfArray_getHDF5Type(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   XdmfArray *arg1 = (XdmfArray *) 0 ;
@@ -10996,6 +10974,28 @@ SWIGINTERN PyObject *_wrap_XdmfArray_getSize(PyObject *SWIGUNUSEDPARM(self), PyO
   arg1 = reinterpret_cast< XdmfArray * >(argp1);
   result = (int)((XdmfArray const *)arg1)->getSize();
   resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfArray_getType(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfArray *arg1 = (XdmfArray *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  std::string result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:XdmfArray_getType",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfArray, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfArray_getType" "', argument " "1"" of type '" "XdmfArray const *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfArray * >(argp1);
+  result = ((XdmfArray const *)arg1)->getType();
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
   return resultobj;
 fail:
   return NULL;
@@ -13469,10 +13469,10 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfArrayPtr_New", _wrap_XdmfArrayPtr_New, METH_VARARGS, NULL},
 	 { (char *)"XdmfArrayPtr_copyValues", _wrap_XdmfArrayPtr_copyValues, METH_VARARGS, NULL},
 	 { (char *)"XdmfArrayPtr_clear", _wrap_XdmfArrayPtr_clear, METH_VARARGS, NULL},
-	 { (char *)"XdmfArrayPtr_getType", _wrap_XdmfArrayPtr_getType, METH_VARARGS, NULL},
 	 { (char *)"XdmfArrayPtr_getHDF5Type", _wrap_XdmfArrayPtr_getHDF5Type, METH_VARARGS, NULL},
 	 { (char *)"XdmfArrayPtr_getPrecision", _wrap_XdmfArrayPtr_getPrecision, METH_VARARGS, NULL},
 	 { (char *)"XdmfArrayPtr_getSize", _wrap_XdmfArrayPtr_getSize, METH_VARARGS, NULL},
+	 { (char *)"XdmfArrayPtr_getType", _wrap_XdmfArrayPtr_getType, METH_VARARGS, NULL},
 	 { (char *)"XdmfArrayPtr_getValuesPointer", _wrap_XdmfArrayPtr_getValuesPointer, METH_VARARGS, NULL},
 	 { (char *)"XdmfArrayPtr_getValuesString", _wrap_XdmfArrayPtr_getValuesString, METH_VARARGS, NULL},
 	 { (char *)"XdmfArrayPtr_printSelf", _wrap_XdmfArrayPtr_printSelf, METH_VARARGS, NULL},
@@ -13625,10 +13625,10 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfArray_New", _wrap_XdmfArray_New, METH_VARARGS, NULL},
 	 { (char *)"XdmfArray_copyValues", _wrap_XdmfArray_copyValues, METH_VARARGS, NULL},
 	 { (char *)"XdmfArray_clear", _wrap_XdmfArray_clear, METH_VARARGS, NULL},
-	 { (char *)"XdmfArray_getType", _wrap_XdmfArray_getType, METH_VARARGS, NULL},
 	 { (char *)"XdmfArray_getHDF5Type", _wrap_XdmfArray_getHDF5Type, METH_VARARGS, NULL},
 	 { (char *)"XdmfArray_getPrecision", _wrap_XdmfArray_getPrecision, METH_VARARGS, NULL},
 	 { (char *)"XdmfArray_getSize", _wrap_XdmfArray_getSize, METH_VARARGS, NULL},
+	 { (char *)"XdmfArray_getType", _wrap_XdmfArray_getType, METH_VARARGS, NULL},
 	 { (char *)"XdmfArray_getValuesPointer", _wrap_XdmfArray_getValuesPointer, METH_VARARGS, NULL},
 	 { (char *)"XdmfArray_getValuesString", _wrap_XdmfArray_getValuesString, METH_VARARGS, NULL},
 	 { (char *)"XdmfArray_printSelf", _wrap_XdmfArray_printSelf, METH_VARARGS, NULL},

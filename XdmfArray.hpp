@@ -77,14 +77,6 @@ public:
 	virtual void clear();
 
 	/**
-     * Get the data type of this array.
-     *
-     * @return a string containing the Xdmf data type for the array, this is one of
-     *      Char, Short, Int, Float, UChar, UShort, UInt.
-     */
-	virtual std::string getType() const;
-
-	/**
 	 * Get the hdf5 data type of this array.
 	 *
 	 * @return a hid_t value containing the hdf5 data type for the array.
@@ -104,6 +96,14 @@ public:
 	 * @return an int containing the number of values stored in this array.
 	 */
 	virtual int getSize() const;
+
+	/**
+     * Get the data type of this array.
+     *
+     * @return a string containing the Xdmf data type for the array, this is one of
+     *      Char, Short, Int, Float, UChar, UShort, UInt.
+     */
+	virtual std::string getType() const;
 
 	/**
 	 * Get a smart pointer to the values stored in this array
@@ -165,11 +165,6 @@ private:
 		boost::shared_ptr<std::vector<unsigned char> >,
 		boost::shared_ptr<std::vector<unsigned short> >,
 		boost::shared_ptr<std::vector<unsigned int> > > ArrayVariant;
-
-	const ArrayVariant getVariant() const
-	{
-		return mArray;
-	}
 
 	ArrayVariant mArray;
 	bool mInitialized;
