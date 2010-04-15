@@ -1,10 +1,3 @@
-/*
- * XdmfObject.hpp
- *
- *  Created on: Feb 1, 2010
- *      Author: kleiter
- */
-
 #ifndef XDMFOBJECT_HPP_
 #define XDMFOBJECT_HPP_
 
@@ -20,6 +13,11 @@ static boost::shared_ptr<type> New() \
 	return p; \
 }
 
+/**
+ * @brief Root Xdmf Class.
+ *
+ * XdmfObject is the root Xdmf class which all Xdmf classes are derived from.
+ */
 class XdmfObject {
 
 public:

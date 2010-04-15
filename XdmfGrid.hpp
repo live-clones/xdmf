@@ -1,5 +1,3 @@
-// Kenneth Leiter
-
 #ifndef XDMFGRID_HPP_
 #define XDMFGRID_HPP_
 
@@ -12,6 +10,13 @@ class XdmfTopology;
 #include "XdmfItem.hpp"
 #include <vector>
 
+/**
+ * @brief A mesh that consists of elements, points, and values attached to the mesh.
+ *
+ * XdmfGrid represents a mesh.  It is required to contain two other Xdmf data structures, an XdmfGeometry
+ * that stores point locations and an XdmfTopology that store connectivity information.  XdmfAttributes can be inserted
+ * into the XdmfGrid to specify values attached at various parts of the mesh.
+ */
 class XdmfGrid : public XdmfItem {
 
 public:
@@ -19,46 +24,34 @@ public:
 	XdmfNewMacro(XdmfGrid);
 
 	/**
-	 * Get the geometry associated with this grid.
+	 * Get an XdmfAttribute attached to this grid.
 	 *
-	 * @return a smart pointer to the geometry.
+	 * @param index of the XdmfAttribute to retrieve.
+	 * @return smart pointer to the XdmfAttribute attached to this grid.
+	 */
+	boost::shared_ptr<XdmfAttribute> getAttribute(unsigned int index);
+
+	/**
+	 * Get an XdmfAttribute attached to this grid (const version).
+	 *
+	 * @param index of the XdmfAttribute to retrieve.
+	 * @return pointer to the XdmfAttribute attached to this grid.
+	 */
+	boost::shared_ptr<const XdmfAttribute> getAttribute(unsigned int index) const;
+
+	/**
+	 * Get the XdmfGeometry associated with this grid.
+	 *
+	 * @return a smart pointer to the XdmfGeometry.
 	 */
 	boost::shared_ptr<XdmfGeometry> getGeometry();
 
 	/**
-	 * Get the geometry associated with this grid (const version).
+	 * Get the XdmfGeometry associated with this grid (const version).
 	 *
-	 * @return a smart pointer to the geometry.
+	 * @return a smart pointer to the XdmfGeometry.
 	 */
 	boost::shared_ptr<const XdmfGeometry> getGeometry() const;
-
-	/**
-	 * Set the geometry associated with this grid.
-	 *
-	 * @param a smart pointer to the geometry to attach to this grid.
-	 */
-	void setGeometry(boost::shared_ptr<XdmfGeometry>);
-
-	/**
-	 * Get the topology associated with this grid.
-	 *
-	 * @return a smart pointer to the topology.
-	 */
-	boost::shared_ptr<XdmfTopology> getTopology();
-
-	/**
-	 * Get the topology associated with this grid (const version).
-	 *
-	 * @return a smart pointer to the topology.
-	 */
-	boost::shared_ptr<const XdmfTopology> getTopology() const;
-
-	/**
-	 * Set the geometry associated with this grid.
-	 *
-	 * @param a smart pointer to the topology to attach to this grid.
-	 */
-	void setTopology(boost::shared_ptr<XdmfTopology>);
 
 	/**
 	 * Get the name of the grid.
@@ -68,39 +61,55 @@ public:
 	std::string getName() const;
 
 	/**
-	 * Set the name of the grid.
+	 * Get the number of XdmfAttributes attached to this grid.
 	 *
-	 * @param a string containing the name to set.
-	 */
-	void setName(const std::string&);
-
-	/**
-	 * Insert an attribute into the grid
-	 */
-	void insert(boost::shared_ptr<XdmfAttribute>);
-
-	/**
-	 * Get an attribute attached to this grid.
-	 *
-	 * @param index of the attribute to retrieve
-	 * @return pointer to the attribute attached to this grid
-	 */
-	boost::shared_ptr<XdmfAttribute> getAttribute(unsigned int index);
-
-	/**
-	 * Get an attribute attached to this grid (const version).
-	 *
-	 * @param index of the attribute to retrieve
-	 * @return pointer to the attribute attached to this grid
-	 */
-	boost::shared_ptr<const XdmfAttribute> getAttribute(unsigned int index) const;
-
-	/**
-	 * Get the number of attributes attached to this grid
+	 * @return an unsigned int containing the number of XdmfAttributes attached to this grid.
 	 */
 	unsigned int getNumberOfAttributes() const;
 
+	/**
+	 * Get the XdmfTopology associated with this grid.
+	 *
+	 * @return a smart pointer to the XdmfTopology.
+	 */
+	boost::shared_ptr<XdmfTopology> getTopology();
+
+	/**
+	 * Get the XdmfTopology associated with this grid (const version).
+	 *
+	 * @return a smart pointer to the XdmfTopology.
+	 */
+	boost::shared_ptr<const XdmfTopology> getTopology() const;
+
+	/**
+	 * Insert an XdmfAttribute into the grid.
+	 *
+	 * @param attribute a smart pointer to the XdmfAttribute to attach to this grid.
+	 */
+	void insert(boost::shared_ptr<XdmfAttribute> attribute);
+
 	virtual std::string printSelf() const;
+
+	/**
+	 * Set the XdmfGeometry associated with this grid.
+	 *
+	 * @param geometry a smart pointer to the XdmfGeometry to attach to this grid.
+	 */
+	void setGeometry(boost::shared_ptr<XdmfGeometry> geometry);
+
+	/**
+	 * Set the XdmfTopology associated with this grid.
+	 *
+	 * @param topology a smart pointer to the XdmfTopology to attach to this grid.
+	 */
+	void setTopology(boost::shared_ptr<XdmfTopology> topology);
+
+	/**
+	 * Set the name of the grid.
+	 *
+	 * @param name a string containing the name to set.
+	 */
+	void setName(const std::string & name);
 
 	virtual void traverse(boost::shared_ptr<XdmfVisitor> visitor) const;
 
@@ -113,12 +122,12 @@ protected:
 
 private:
 
-	XdmfGrid(const XdmfGrid&);  // Not implemented.
-	void operator=(const XdmfGrid&);  // Not implemented.
+	XdmfGrid(const XdmfGrid & grid);  // Not implemented.
+	void operator=(const XdmfGrid & grid);  // Not implemented.
 
+	std::vector<boost::shared_ptr<XdmfAttribute> > mAttributes;
 	boost::shared_ptr<XdmfGeometry> mGeometry;
 	boost::shared_ptr<XdmfTopology> mTopology;
-	std::vector<boost::shared_ptr<XdmfAttribute> > mAttributes;
 	std::string mName;
 };
 

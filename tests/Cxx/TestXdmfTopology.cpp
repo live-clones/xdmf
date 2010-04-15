@@ -3,7 +3,7 @@
 void setPolyTopology(boost::shared_ptr<XdmfTopology> polyTop)
 {
 	polyTop->setTopologyType(XdmfTopologyType::Polygon(6));
-	std::cout << polyTop->getTopologyTypeAsString() << std::endl;
+	std::cout << polyTop->getTopologyType().getName() << std::endl;
 }
 
 int main(int argc, char* argv[])
@@ -31,8 +31,8 @@ int main(int argc, char* argv[])
 
 	top->setTopologyType(XdmfTopologyType::Hexahedron());
 	assert(top->getTopologyType() == XdmfTopologyType::Hexahedron());
-	assert(top->getTopologyTypeAsString().compare("Hexahedron") == 0);
-	assert(top->getNodesPerElement() == 8);
+	assert(top->getTopologyType().getName().compare("Hexahedron") == 0);
+	assert(top->getTopologyType().getNodesPerElement() == 8);
 
 	XdmfTopologyType polygon = XdmfTopologyType::Polygon(6);
 	XdmfTopologyType polygon6 = XdmfTopologyType::Polygon(6);
@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
 
 	boost::shared_ptr<XdmfTopology> polyTop = XdmfTopology::New();
 	setPolyTopology(polyTop);
-	assert(polyTop->getTopologyTypeAsString().compare("Polygon") == 0);
+	assert(polyTop->getTopologyType().getName().compare("Polygon") == 0);
 
 	return 0;
 }

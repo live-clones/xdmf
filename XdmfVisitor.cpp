@@ -36,8 +36,8 @@ void XdmfVisitor::visit(const XdmfAttribute * const attribute, boost::shared_ptr
 	xmlNodePtr parentNode = xmlCurrentNode;
 	xmlCurrentNode = xmlNewChild(xmlCurrentNode, NULL, (xmlChar*)"Attribute", NULL);
 	xmlNewProp(xmlCurrentNode, (xmlChar*)"Name", (xmlChar*)attribute->getName().c_str());
-	xmlNewProp(xmlCurrentNode, (xmlChar*)"AttributeType", (xmlChar*)attribute->getAttributeTypeAsString().c_str());
-	xmlNewProp(xmlCurrentNode, (xmlChar*)"Center", (xmlChar*)attribute->getAttributeCenterAsString().c_str());
+	xmlNewProp(xmlCurrentNode, (xmlChar*)"AttributeType", (xmlChar*)attribute->getAttributeType().getName().c_str());
+	xmlNewProp(xmlCurrentNode, (xmlChar*)"Center", (xmlChar*)attribute->getAttributeCenter().getName().c_str());
 
 	dataHierarchy.push_back(attribute->getName());
 	attribute->traverse(visitor);
@@ -124,7 +124,7 @@ void XdmfVisitor::visit(const XdmfGeometry * const geometry, boost::shared_ptr<X
 {
 	xmlNodePtr parentNode = xmlCurrentNode;
 	xmlCurrentNode = xmlNewChild(xmlCurrentNode, NULL, (xmlChar*)"Geometry", NULL);
-	xmlNewProp(xmlCurrentNode, (xmlChar*)"GeometryType", (xmlChar*)geometry->getGeometryTypeAsString().c_str());
+	xmlNewProp(xmlCurrentNode, (xmlChar*)"GeometryType", (xmlChar*)geometry->getGeometryType().getName().c_str());
 
 	dataHierarchy.push_back("XYZ");
 	geometry->traverse(visitor);
@@ -150,7 +150,7 @@ void XdmfVisitor::visit(const XdmfTopology * const topology, boost::shared_ptr<X
 {
 	xmlNodePtr parentNode = xmlCurrentNode;
 	xmlCurrentNode = xmlNewChild(xmlCurrentNode, NULL, (xmlChar*)"Topology", NULL);
-	xmlNewProp(xmlCurrentNode, (xmlChar*)"TopologyType", (xmlChar*)topology->getTopologyTypeAsString().c_str());
+	xmlNewProp(xmlCurrentNode, (xmlChar*)"TopologyType", (xmlChar*)topology->getTopologyType().getName().c_str());
 	std::stringstream numberElementsString;
 	numberElementsString << topology->getNumberElements();
 	xmlNewProp(xmlCurrentNode, (xmlChar*)"NumberOfElements", (xmlChar*)numberElementsString.str().c_str());
@@ -167,12 +167,12 @@ std::string XdmfVisitor::printSelf() const
 	return "XdmfVisitor";
 }
 
-int XdmfVisitor::getLightDataLimit() const
+unsigned int XdmfVisitor::getLightDataLimit() const
 {
 	return mLightDataLimit;
 }
 
-void XdmfVisitor::setLightDataLimit(int numValues)
+void XdmfVisitor::setLightDataLimit(unsigned int numValues)
 {
 	mLightDataLimit = numValues;
 }

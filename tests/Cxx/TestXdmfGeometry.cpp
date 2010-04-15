@@ -14,8 +14,8 @@ int main(int argc, char* argv[])
 	assert(geom->getGeometryType().getDimensions() == 0);
 	geom->setGeometryType(XdmfGeometryType::XYZ());
 	assert(geom->getGeometryType() == XdmfGeometryType::XYZ());
-	assert(geom->getGeometryTypeAsString().compare("XYZ") == 0);
-	assert(geom->getDimensions() == 3);
+	assert(geom->getGeometryType().getName().compare("XYZ") == 0);
+	assert(geom->getGeometryType().getDimensions() == 3);
 
 	return 0;
 }

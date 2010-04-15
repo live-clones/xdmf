@@ -25,24 +25,15 @@ XdmfGeometryType XdmfGeometry::getGeometryType() const
 	return mGeometryType;
 }
 
-void XdmfGeometry::setGeometryType(const XdmfGeometryType& geomType)
-{
-	mGeometryType = geomType;
-}
-
-std::string XdmfGeometry::getGeometryTypeAsString() const
-{
-	return mGeometryType.getName();
-}
-
-int XdmfGeometry::getDimensions() const
-{
-	return mGeometryType.getDimensions();
-}
 
 std::string XdmfGeometry::printSelf() const
 {
 	return "XdmfGeometry";
+}
+
+void XdmfGeometry::setGeometryType(const XdmfGeometryType & geometryType)
+{
+	mGeometryType = geometryType;
 }
 
 void XdmfGeometry::write(boost::shared_ptr<XdmfVisitor> visitor) const

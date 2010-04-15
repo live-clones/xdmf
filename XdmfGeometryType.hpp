@@ -1,15 +1,27 @@
-/*
- * XdmfGeometryType.hpp
- *
- *  Created on: Jan 25, 2010
- *      Author: kleiter
- */
-
 #ifndef XDMFGEOMETRYTYPE_HPP_
 #define XDMFGEOMETRYTYPE_HPP_
 
+// Includes
 #include <string>
 
+/**
+ * @brief Property describing the types of coordinate values stored in an XdmfGeometry.
+ *
+ * XdmfGeometryType is a property used by XdmfGeometry to specify the type of coordinate values
+ * stored in the XdmfGeometry.  A specific XdmfGeometryType can be created by calling on of the static methods
+ * in the class, i.e. XdmfAttributeType::XYZ().
+ *
+ * Xdmf supports the following geometry types:
+ * 	NoGeometryType
+ * 	XYZ
+ * 	XY
+ * 	X_Y_Z
+ * 	X_Y
+ * 	VXVYVZ
+ * 	Origin_DXDYDZ
+ * 	VXVY
+ * 	Origin_DXDY
+ */
 class XdmfGeometryType {
 
 public:
@@ -42,29 +54,33 @@ public:
 	/*
 	 * Compare two XdmfGeometry types for equality.
 	 *
-	 * @param an XdmfGeometryType to compare equality to.
-	 * @return true iff the XdmfGeometryTypes are equal.
+	 * @param geometryType a XdmfGeometryType to compare equality to.
+	 * @return true if the XdmfGeometryTypes are equal.
 	 */
-	bool operator==(const XdmfGeometryType& geometryType) const;
+	bool operator==(const XdmfGeometryType & geometryType) const;
 
 	/**
 	 * Compare two XdmfGeometry types for inequality.
 	 *
-	 * @param XdmfGeometryType to compare inequality to.
-	 * @return true iff the XdmfGeometryTypes are not equal.
+	 * @param geometryType a XdmfGeometryType to compare inequality to.
+	 * @return true if the XdmfGeometryTypes are not equal.
 	 */
-	bool operator!=(const XdmfGeometryType& geometryType) const;
+	bool operator!=(const XdmfGeometryType & geometryType) const;
 
-	XdmfGeometryType(const XdmfGeometryType& geometryType);
-	XdmfGeometryType& operator=(const XdmfGeometryType& geometryType);
+	XdmfGeometryType(const XdmfGeometryType & geometryType);
+	XdmfGeometryType& operator=(const XdmfGeometryType & geometryType);
 
 protected:
 
 	/**
 	 * Protected constructor for XdmfGeometryType.  The constructor is protected because all geometry types supported
-	 * by Xdmf should be accessed through more specific static methods that construct XdmfGeometryTypes - i.e. XdmfGeometryType::XYZ().
+	 * by Xdmf should be accessed through more specific static methods that construct XdmfGeometryTypes -
+	 * i.e. XdmfGeometryType::XYZ().
+	 *
+	 * @param name a std::string containing the name of the XdmfGeometryType.
+	 * @param dimensions an int containing the dimensions of the XdmfGeometryType.
 	 */
-	XdmfGeometryType(const std::string& name, const int& dimensions);
+	XdmfGeometryType(const std::string & name, const int & dimensions);
 
 private:
 

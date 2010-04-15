@@ -33,32 +33,32 @@ XdmfAttributeCenter XdmfAttributeCenter::Node()
 	return XdmfAttributeCenter("Node");
 }
 
-XdmfAttributeCenter::XdmfAttributeCenter(const std::string& name) :
+XdmfAttributeCenter::XdmfAttributeCenter(const std::string & name) :
 	mName(name)
 {};
 
-XdmfAttributeCenter::XdmfAttributeCenter(const XdmfAttributeCenter& attributeCenter):
-	mName(attributeCenter.mName)
+XdmfAttributeCenter::XdmfAttributeCenter(const XdmfAttributeCenter & attributeCenter):
+  mName(attributeCenter.mName)
 {
 }
 
-XdmfAttributeCenter& XdmfAttributeCenter::operator=(const XdmfAttributeCenter& attributeCenter)
+XdmfAttributeCenter& XdmfAttributeCenter::operator=(const XdmfAttributeCenter & attributeCenter)
 {
-	if(this != &attributeCenter)
-	{
-		mName = attributeCenter.mName;
-	}
-	return *this;
+  if(this != &attributeCenter)
+  {
+    mName = attributeCenter.mName;
+  }
+  return *this;
 }
 
-bool XdmfAttributeCenter::operator==(const XdmfAttributeCenter& attributeCenter) const
+bool XdmfAttributeCenter::operator==(const XdmfAttributeCenter & attributeCenter) const
 {
-	return mName.compare(attributeCenter.mName) == 0;
+  return mName.compare(attributeCenter.mName) == 0;
 }
 
-bool XdmfAttributeCenter::operator!=(const XdmfAttributeCenter& attributeCenter) const
+bool XdmfAttributeCenter::operator!=(const XdmfAttributeCenter & attributeCenter) const
 {
-	return !this->operator==(attributeCenter);
+  return !this->operator==(attributeCenter);
 }
 
 std::string XdmfAttributeCenter::getName() const

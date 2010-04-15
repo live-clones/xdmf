@@ -1,15 +1,23 @@
-/*
- * XdmfAttributeCenter.hpp
- *
- *  Created on: Jan 25, 2010
- *      Author: kleiter
- */
-
 #ifndef XDMFATTRIBUTECENTER_HPP_
 #define XDMFATTRIBUTECENTER_HPP_
 
+// Includes
 #include <string>
 
+/**
+ * @brief Property describing where XdmfAttribute values are centered.
+ *
+ * XdmfAttributeCenter is a property used by XdmfAttribute to specify where its values are centered
+ * on the XdmfGrid.  A specific XdmfAttributeCenter can be created by calling on of the static methods
+ * in the class, i.e. XdmfAttributeCenter::Cell().
+ *
+ * Xdmf supports the following attribute centers:
+ * 	Grid
+ * 	Cell
+ * 	Face
+ * 	Edge
+ * 	Node
+ */
 class XdmfAttributeCenter {
 
 public:
@@ -22,38 +30,42 @@ public:
 	static XdmfAttributeCenter Node();
 
 	/**
-	 * Get the name of this center type
+	 * Create the name of this attribute center.
 	 *
 	 * @return a string containing the name.
 	 */
 	std::string getName() const;
 
-	/*
+	/**
 	 * Compare two XdmfAttributeCenters for equality.
 	 *
-	 * @param an XdmfAttributeCenter to compare equality to.
-	 * @return true iff the XdmfAttributeCenters are equal.
+	 * @param attributeCenter an XdmfAttributeCenter to compare equality to.
+	 * @return true if the XdmfAttributeCenters are equal.
 	 */
-	bool operator==(const XdmfAttributeCenter& attributeCenter) const;
+	bool operator==(const XdmfAttributeCenter & attributeCenter) const;
 
 	/**
 	 * Compare two XdmfAttributeCenters for inequality.
 	 *
-	 * @param XdmfAttributeCenter to compare inequality to.
-	 * @return true iff the XdmfAttributeCenters are not equal.
+	 * @param attributeCenter an XdmfAttributeCenter to compare inequality to.
+	 * @return true if the XdmfAttributeCenters are not equal.
 	 */
-	bool operator!=(const XdmfAttributeCenter& attributeCenter) const;
+	bool operator!=(const XdmfAttributeCenter & attributeCenter) const;
 
-	XdmfAttributeCenter(const XdmfAttributeCenter& attributeCenter);
-	XdmfAttributeCenter& operator=(const XdmfAttributeCenter& attributeCenter);
+	XdmfAttributeCenter(const XdmfAttributeCenter & attributeCenter);
+	XdmfAttributeCenter& operator=(const XdmfAttributeCenter & attributeCenter);
+
 
 protected:
 
 	/**
 	 * Protected constructor for XdmfAttributeCenter.  The constructor is protected because all attribute centers supported
-	 * by Xdmf should be accessed through more specific static methods that construct XdmfAttributeCenters - i.e. XdmfAttributeCenter::Node().
+	 * by Xdmf should be accessed through more specific static methods that construct XdmfAttributeCenters - i.e.
+	 * XdmfAttributeCenter::Node().
+	 *
+	 * @param name the name of the XdmfAttributeCenter to construct.
 	 */
-	XdmfAttributeCenter(const std::string& name);
+	XdmfAttributeCenter(const std::string & name);
 
 private:
 

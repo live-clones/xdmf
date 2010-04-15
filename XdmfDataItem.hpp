@@ -1,11 +1,3 @@
-/*
- * XdmfDataItem.hpp
- *
- *
- *  Created on: Jan 25, 2010
- *      Author: kleiter
- */
-
 #ifndef XDMFDATAITEM_HPP_
 #define XDMFDATAITEM_HPP_
 
@@ -15,34 +7,41 @@ class XdmfArray;
 // Includes
 #include "XdmfItem.hpp"
 
+/**
+ * @brief A type of XdmfItem that holds data values in an XdmfArray.
+ *
+ * XdmfDataItem is an abstract base class.  Any part of the Xdmf graph structure that holds values
+ * in an XdmfArray inherits from this.  XdmfDataItem imbues the ability to store and retrieve XdmfArrays.
+ */
 class XdmfDataItem : public XdmfItem {
 
 public:
 
 	/**
-	 * Attach an array to this dataitem.
+	 * Get the XdmfArray attached to this XdmfDataItem.
 	 *
-	 * @param a smart pointer to the array.
-	 */
-	void setArray(boost::shared_ptr<XdmfArray> array);
-
-	/**
-	 * Get the array attached to this dataitem.
-	 *
-	 * @return a smart pointer to the array.
+	 * @return a smart pointer to the XdmfArray.
 	 */
 	boost::shared_ptr<XdmfArray> getArray();
 
 	/**
-	 * Get the array attached to this dataitem (const version).
+	 * Get the XdmfArray attached to this XdmfDataItem (const version).
 	 *
-	 * @return a smart pointer to the array.
+	 * @return a smart pointer to the XdmfArray.
 	 */
 	boost::shared_ptr<const XdmfArray> getArray() const;
 
 	std::string printSelf() const;
 
+	/**
+	 * Attach an XdmfArray to this XdmfDataItem.
+	 *
+	 * @param array a smart pointer to the XdmfArray.
+	 */
+	void setArray(boost::shared_ptr<XdmfArray> array);
+
 	virtual void traverse(boost::shared_ptr<XdmfVisitor> visitor) const;
+	virtual void write(boost::shared_ptr<XdmfVisitor> visitor) const = 0;
 
 protected:
 
@@ -51,8 +50,8 @@ protected:
 
 private:
 
-	XdmfDataItem(const XdmfDataItem&);  // Not implemented.
-	void operator=(const XdmfDataItem&);  // Not implemented.
+	XdmfDataItem(const XdmfDataItem & dataItem);  // Not implemented.
+	void operator=(const XdmfDataItem & dataItem);  // Not implemented.
 
 	boost::shared_ptr<XdmfArray> mArray;
 };

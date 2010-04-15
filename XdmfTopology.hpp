@@ -1,10 +1,3 @@
-/*
- * XdmfTopology.hpp
- *
- *  Created on: Jan 25, 2010
- *      Author: kleiter
- */
-
 #ifndef XDMFTOPOLOGY_HPP_
 #define XDMFTOPOLOGY_HPP_
 
@@ -12,6 +5,13 @@
 #include "XdmfDataItem.hpp"
 #include "XdmfTopologyType.hpp"
 
+/**
+ * @brief Handles the connectivity information in an XdmfGrid.
+ *
+ * XdmfTopology is a required part of an XdmfGrid.  It stores the connectivty information
+ * between all points contained in an XdmfGrid.  XdmfTopology contains an XdmfTopologyType property
+ * which should be set that specifies the element type stored.
+ */
 class XdmfTopology : public XdmfDataItem {
 
 public:
@@ -19,44 +19,27 @@ public:
 	XdmfNewMacro(XdmfTopology);
 
 	/**
-	 * Get the XdmfTopologyType associated with this Topology.
-	 *
-	 * @return XdmfTopologyType.
-	 */
-	XdmfTopologyType getTopologyType() const;
-
-	/**
-	 * Set the XdmfTopologyType associated with this Topology.
-	 *
-	 * @param XdmfTopologyType to set.
-	 */
-	void setTopologyType(const XdmfTopologyType& topType);
-
-	/**
 	 * Get the number of elements this Topology contains.
 	 *
 	 * @return int of number elements in the Topology.
 	 */
-	int getNumberElements() const;
+	unsigned int getNumberElements() const;
 
 	/**
-	 * Get the name of the TopologyType associated with this Topology.
+	 * Get the XdmfTopologyType associated with this topology.
 	 *
-	 * @return std::string containing name of the TopologyType.
+	 * @return XdmfTopologyType of the topology.
 	 */
-	std::string getTopologyTypeAsString() const;
+	XdmfTopologyType getTopologyType() const;
 
-	/**
-	 * Get the number of nodes per element for this Topology.
-	 *
-	 * @return int of number of nodes per element.
-	 */
-	int getNodesPerElement() const;
-
-	/**
-	 *
-	 */
 	virtual std::string printSelf() const;
+
+	/**
+	 * Set the XdmfTopologyType associated with this topology.
+	 *
+	 * @param topologyType the XdmfTopologyType to set.
+	 */
+	void setTopologyType(const XdmfTopologyType & topologyType);
 
 	virtual void write(boost::shared_ptr<XdmfVisitor> visitor) const;
 
@@ -67,11 +50,11 @@ protected:
 
 private:
 
-	XdmfTopology(const XdmfTopology&);  // Not implemented.
-	void operator=(const XdmfTopology&);  // Not implemented.
+	XdmfTopology(const XdmfTopology & topology);  // Not implemented.
+	void operator=(const XdmfTopology & topology);  // Not implemented.
 
-	XdmfTopologyType mTopologyType;
 	int mNumberElements;
+	XdmfTopologyType mTopologyType;
 };
 
 #endif /* XDMFTOPOLOGY_HPP_ */

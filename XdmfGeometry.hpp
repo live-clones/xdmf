@@ -1,10 +1,3 @@
-/*
- * XdmfGeometry.hpp
- *
- *  Created on: Jan 25, 2010
- *      Author: kleiter
- */
-
 #ifndef XDMFGEOMETRY_HPP_
 #define XDMFGEOMETRY_HPP_
 
@@ -12,6 +5,13 @@
 #include "XdmfDataItem.hpp"
 #include "XdmfGeometryType.hpp"
 
+/**
+ * @brief Handles the coordinate positions of points in an XdmfGrid.
+ *
+ * XdmfGeometry is a required part of an XdmfGrid.  It stores the coordinate values
+ * of all points contained in an XdmfGrid.  XdmfGeometry contains an XdmfGeometryType property
+ * which should be set that specifies the types of coordinate values stored.
+ */
 class XdmfGeometry : public XdmfDataItem {
 
 public:
@@ -19,32 +19,18 @@ public:
 	XdmfNewMacro(XdmfGeometry);
 
 	/**
-	 * Get the XdmfGeometryType associated with this Geometry.
+	 * Get the XdmfGeometryType associated with this geometry.
 	 *
-	 * @return XdmfGeometryType.
+	 * @return XdmfGeometryType of this geometry.
 	 */
 	XdmfGeometryType getGeometryType() const;
 
 	/**
-	 * Set the XdmfGeometryType associated with this Geometry.
+	 * Set the XdmfGeometryType associated with this geometry.
 	 *
-	 * @param XdmfGeometryType to set.
+	 * @param geometryType the XdmfGeometryType to set.
 	 */
-	void setGeometryType(const XdmfGeometryType&);
-
-	/**
-	 * Get the name of the XdmfGeometryType associated with this Geometry.
-	 *
-	 * @return std::string containing name of the GeometryType.
-	 */
-	std::string getGeometryTypeAsString() const;
-
-	/**
-	 * Get the number of dimensions associated with this Geometry.
-	 *
-	 * @return int giving number of dimensions: i.e. XY = 2, XYZ = 3.
-	 */
-	int getDimensions() const;
+	void setGeometryType(const XdmfGeometryType & geometryType);
 
 	virtual std::string printSelf() const;
 
@@ -57,8 +43,8 @@ protected:
 
 private:
 
-	XdmfGeometry(const XdmfGeometry&);  // Not implemented.
-	void operator=(const XdmfGeometry&);  // Not implemented.
+	XdmfGeometry(const XdmfGeometry & geometry);  // Not implemented.
+	void operator=(const XdmfGeometry & geometry);  // Not implemented.
 
 	XdmfGeometryType mGeometryType;
 	int mNumberPoints;

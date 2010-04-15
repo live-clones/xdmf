@@ -21,34 +21,14 @@ XdmfAttribute::~XdmfAttribute()
 	std::cout << "Deleted Attribute " << this << std::endl;
 }
 
-XdmfAttributeType XdmfAttribute::getAttributeType() const
-{
-	return mAttributeType;
-}
-
-void XdmfAttribute::setAttributeType(const XdmfAttributeType& attributeType)
-{
-	mAttributeType = attributeType;
-}
-
-std::string XdmfAttribute::getAttributeTypeAsString() const
-{
-	return mAttributeType.getName();
-}
-
 XdmfAttributeCenter XdmfAttribute::getAttributeCenter() const
 {
 	return mAttributeCenter;
 }
 
-void XdmfAttribute::setAttributeCenter(const XdmfAttributeCenter& attributeCenter)
+XdmfAttributeType XdmfAttribute::getAttributeType() const
 {
-	mAttributeCenter = attributeCenter;
-}
-
-std::string XdmfAttribute::getAttributeCenterAsString() const
-{
-	return mAttributeCenter.getName();
+	return mAttributeType;
 }
 
 std::string XdmfAttribute::getName() const
@@ -56,7 +36,22 @@ std::string XdmfAttribute::getName() const
 	return mName;
 }
 
-void XdmfAttribute::setName(const std::string& name)
+std::string XdmfAttribute::printSelf() const
+{
+	return "<XdmfAttribute>";
+}
+
+void XdmfAttribute::setAttributeCenter(const XdmfAttributeCenter & attributeCenter)
+{
+	mAttributeCenter = attributeCenter;
+}
+
+void XdmfAttribute::setAttributeType(const XdmfAttributeType & attributeType)
+{
+	mAttributeType = attributeType;
+}
+
+void XdmfAttribute::setName(const std::string & name)
 {
 	mName= name;
 }
@@ -64,9 +59,4 @@ void XdmfAttribute::setName(const std::string& name)
 void XdmfAttribute::write(boost::shared_ptr<XdmfVisitor> visitor) const
 {
 	visitor->visit(this, visitor);
-}
-
-std::string XdmfAttribute::printSelf() const
-{
-	return "<XdmfAttribute>";
 }

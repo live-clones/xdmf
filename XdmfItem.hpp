@@ -9,11 +9,18 @@
 #ifndef XDMFITEM_HPP_
 #define XDMFITEM_HPP_
 
+// Forward Declarations
 class XdmfVisitor;
 
 // Includes
 #include "XdmfObject.hpp"
 
+/**
+ * @brief Base class of any object that is able to be added to an Xdmf structure.
+ *
+ * XdmfItem is an abstract base class.  It represents any item that can be visited and traversed by an XdmfVisitor
+ * and have its contents added to an Xdmf file.
+ */
 class XdmfItem : public XdmfObject {
 
 public:

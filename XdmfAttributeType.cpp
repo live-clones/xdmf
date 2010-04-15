@@ -43,16 +43,16 @@ XdmfAttributeType XdmfAttributeType::GlobalId()
 	return XdmfAttributeType("GlobalId");
 }
 
-XdmfAttributeType::XdmfAttributeType(const std::string& name) :
+XdmfAttributeType::XdmfAttributeType(const std::string & name) :
 	mName(name)
 {};
 
-XdmfAttributeType::XdmfAttributeType(const XdmfAttributeType& attributeType):
+XdmfAttributeType::XdmfAttributeType(const XdmfAttributeType & attributeType):
 	mName(attributeType.mName)
 {
 }
 
-XdmfAttributeType& XdmfAttributeType::operator=(const XdmfAttributeType& attributeType)
+XdmfAttributeType& XdmfAttributeType::operator=(const XdmfAttributeType & attributeType)
 {
 	if(this != &attributeType)
 	{
@@ -61,12 +61,12 @@ XdmfAttributeType& XdmfAttributeType::operator=(const XdmfAttributeType& attribu
 	return *this;
 }
 
-bool XdmfAttributeType::operator==(const XdmfAttributeType& attributeType) const
+bool XdmfAttributeType::operator==(const XdmfAttributeType & attributeType) const
 {
 	return mName.compare(attributeType.mName) == 0;
 }
 
-bool XdmfAttributeType::operator!=(const XdmfAttributeType& attributeType) const
+bool XdmfAttributeType::operator!=(const XdmfAttributeType & attributeType) const
 {
 	return !this->operator==(attributeType);
 }

@@ -1,15 +1,41 @@
-/*
- * XdmfTopologyType.hpp
- *
- *  Created on: Jan 25, 2010
- *      Author: kleiter
- */
-
 #ifndef XDMFTOPOLOGYTYPE_HPP_
 #define XDMFTOPOLOGYTYPE_HPP_
 
+// Includes
 #include <string>
 
+/**
+ * @brief Property describing the types of elements stored in an XdmfTopology.
+ *
+ * XdmfTopologyType is a property used by XdmfTopology to specify the element types stored in the XdmfTopology.
+ * A specific XdmfTopologyType can be created by calling on of the static methods in the class, i.e.
+ * XdmfTopologyType::Tetrahedron().
+ *
+ * Xdmf supports the following topology types:
+ * 	NoTopologyType
+ * 	Polyvertex
+ * 	Polyline
+ * 	Polygon
+ * 	Triangle
+ * 	Quadrilateral
+ * 	Tetrahedron
+ * 	Wedge
+ * 	Hexahedron
+ * 	Edge_3
+ * 	Triangle_6
+ * 	Quadrilateral_8
+ * 	Tetrahedron_10
+ * 	Pyramid_13
+ * 	Wedge_15
+ * 	Hexahedron_20
+ * 	Mixed
+ * 	TwoDSMesh
+ * 	TwoDRectMesh
+ * 	TwoDCoRectMesh
+ * 	ThreeDSMesh
+ * 	ThreeDRectMesh
+ *	ThreeDCoRectMesh
+ */
 class XdmfTopologyType {
 
 public:
@@ -22,7 +48,7 @@ public:
 	static XdmfTopologyType NoTopologyType();
 	static XdmfTopologyType Polyvertex();
 	static XdmfTopologyType Polyline();
-	static XdmfTopologyType Polygon(const int&);
+	static XdmfTopologyType Polygon(const int & numNodes);
 	static XdmfTopologyType Triangle();
 	static XdmfTopologyType Quadrilateral();
 	static XdmfTopologyType Tetrahedron();
@@ -45,11 +71,11 @@ public:
 	static XdmfTopologyType ThreeDCoRectMesh();
 
 	/**
-	 * Get the number of nodes per element associated with this topology type.
+	 * Get the cell type associated with this topology type
 	 *
-	 * @return an int containing number of nodes per element.
+	 * @return a CellType containing the cell type.
 	 */
-	int getNodesPerElement() const;
+	CellType getCellType() const;
 
 	/**
 	 * Get the name of this topology type
@@ -59,44 +85,45 @@ public:
 	std::string getName() const;
 
 	/**
-	 * Get the cell type associated with this topology type
+	 * Get the number of nodes per element associated with this topology type.
 	 *
-	 * @return a CellType containing the cell type.
+	 * @return an unsinged int containing number of nodes per element.
 	 */
-	CellType getCellType() const;
+	unsigned int getNodesPerElement() const;
 
 	/*
 	 * Compare two XdmfTopologyTypes for equality.
 	 *
-	 * @param an XdmfTopologyType to compare equality to.
-	 * @return true iff the XdmfTopologyTypes are equal.
+	 * @param topologyType an XdmfTopologyType to compare equality to.
+	 * @return true if the XdmfTopologyTypes are equal.
 	 */
-	bool operator==(const XdmfTopologyType& topologyType) const;
+	bool operator==(const XdmfTopologyType & topologyType) const;
 
 	/**
 	 * Compare two XdmfTopologyTypes for inequality
 	 *
-	 * @param XdmfTopologyType to compare inequality to.
-	 * @return true iff the XdmfTopologyTypes are not equal.
+	 * @param topologyType XdmfTopologyType to compare inequality to.
+	 * @return true if the XdmfTopologyTypes are not equal.
 	 */
-	bool operator!=(const XdmfTopologyType& topologyType) const;
+	bool operator!=(const XdmfTopologyType & topologyType) const;
 
-	XdmfTopologyType(const XdmfTopologyType& topologyType);
-	XdmfTopologyType& operator=(const XdmfTopologyType& topologyType);
+	XdmfTopologyType(const XdmfTopologyType & topologyType);
+	XdmfTopologyType& operator=(const XdmfTopologyType & topologyType);
 
 protected:
 
 	/**
 	 * Protected constructor for XdmfTopologyType.  The constructor is protected because all topology types supported
-	 * by Xdmf should be accessed through more specific static methods that construct XdmfTopologyType - i.e. XdmfTopologyType::Tetrahedron()
+	 * by Xdmf should be accessed through more specific static methods that construct XdmfTopologyType -
+	 * i.e. XdmfTopologyType::Tetrahedron()
 	 */
 	XdmfTopologyType(const int& nodesPerElement, const std::string& name, const CellType& cellType);
 
 private:
 
-	int mNodesPerElement;
-	std::string mName;
 	CellType mCellType;
+	std::string mName;
+	int mNodesPerElement;
 };
 
 #endif /* XDMFTOPOLOGYTYPE_HPP_ */

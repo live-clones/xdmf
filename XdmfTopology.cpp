@@ -21,34 +21,24 @@ XdmfTopology::~XdmfTopology()
 	std::cout << "Deleted Topology " << this << std::endl;
 }
 
+unsigned int XdmfTopology::getNumberElements() const
+{
+	return this->getArray()->getSize() / this->getTopologyType().getNodesPerElement();
+}
+
 XdmfTopologyType XdmfTopology::getTopologyType() const
 {
 	return mTopologyType;
 }
 
-void XdmfTopology::setTopologyType(const XdmfTopologyType& topType)
-{
-	mTopologyType = topType;
-}
-
-int XdmfTopology::getNodesPerElement() const
-{
-	return mTopologyType.getNodesPerElement();
-}
-
-int XdmfTopology::getNumberElements() const
-{
-	return this->getArray()->getSize() / this->getNodesPerElement();
-}
-
-std::string XdmfTopology::getTopologyTypeAsString() const
-{
-	return mTopologyType.getName();
-}
-
 std::string XdmfTopology::printSelf() const
 {
 	return "XdmfTopology";
+}
+
+void XdmfTopology::setTopologyType(const XdmfTopologyType & topologyType)
+{
+	mTopologyType = topologyType;
 }
 
 void XdmfTopology::write(boost::shared_ptr<XdmfVisitor> visitor) const

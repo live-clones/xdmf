@@ -162,9 +162,9 @@ bool XdmfTopologyType::operator!=(const XdmfTopologyType& topologyType) const
 	return !this->operator==(topologyType);
 }
 
-int XdmfTopologyType::getNodesPerElement() const
+XdmfTopologyType::CellType XdmfTopologyType::getCellType() const
 {
-	return mNodesPerElement;
+	return mCellType;
 }
 
 std::string XdmfTopologyType::getName() const
@@ -172,7 +172,7 @@ std::string XdmfTopologyType::getName() const
 	return mName;
 }
 
-XdmfTopologyType::CellType XdmfTopologyType::getCellType() const
+unsigned int XdmfTopologyType::getNodesPerElement() const
 {
-	return mCellType;
+	return mNodesPerElement;
 }

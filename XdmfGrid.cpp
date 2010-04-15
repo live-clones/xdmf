@@ -25,60 +25,6 @@ XdmfGrid::~XdmfGrid()
   std::cout << "Deleted Grid " << this << std::endl;
 }
 
-
-/**
- * Set the geometry associated with this grid.
- *
- * @param a smart pointer to the geometry to attach
- */
-void setGeometry(boost::shared_ptr<const XdmfGeometry>);
-
-
-boost::shared_ptr<XdmfGeometry> XdmfGrid::getGeometry()
-{
-	return mGeometry;
-}
-
-boost::shared_ptr<const XdmfGeometry> XdmfGrid::getGeometry() const
-{
-	return mGeometry;
-}
-
-void XdmfGrid::setGeometry(boost::shared_ptr<XdmfGeometry> geometry)
-{
-	mGeometry = geometry;
-}
-
-boost::shared_ptr<XdmfTopology> XdmfGrid::getTopology()
-{
-	return mTopology;
-}
-
-boost::shared_ptr<const XdmfTopology> XdmfGrid::getTopology() const
-{
-	return mTopology;
-}
-
-void XdmfGrid::setTopology(boost::shared_ptr<XdmfTopology> topology)
-{
-	mTopology = topology;
-}
-
-std::string XdmfGrid::getName() const
-{
-	return mName;
-}
-
-void XdmfGrid::setName(const std::string& name)
-{
-	mName= name;
-}
-
-void XdmfGrid::insert(boost::shared_ptr<XdmfAttribute> attribute)
-{
-	mAttributes.push_back(attribute);
-}
-
 boost::shared_ptr<XdmfAttribute> XdmfGrid::getAttribute(unsigned int index)
 {
 	if(index >= mAttributes.size())
@@ -99,14 +45,61 @@ boost::shared_ptr<const XdmfAttribute> XdmfGrid::getAttribute(unsigned int index
 	return mAttributes[index];
 }
 
+boost::shared_ptr<XdmfGeometry> XdmfGrid::getGeometry()
+{
+	return mGeometry;
+}
+
+boost::shared_ptr<const XdmfGeometry> XdmfGrid::getGeometry() const
+{
+	return mGeometry;
+}
+
+std::string XdmfGrid::getName() const
+{
+	return mName;
+}
+
+
 unsigned int XdmfGrid::getNumberOfAttributes() const
 {
 	return mAttributes.size();
 }
 
+boost::shared_ptr<XdmfTopology> XdmfGrid::getTopology()
+{
+	return mTopology;
+}
+
+boost::shared_ptr<const XdmfTopology> XdmfGrid::getTopology() const
+{
+	return mTopology;
+}
+
+
+void XdmfGrid::insert(boost::shared_ptr<XdmfAttribute> attribute)
+{
+	mAttributes.push_back(attribute);
+}
+
 std::string XdmfGrid::printSelf() const
 {
 	return "XdmfGrid containing a " + mGeometry->printSelf() + " and a " + mTopology->printSelf();
+}
+
+void XdmfGrid::setGeometry(boost::shared_ptr<XdmfGeometry> geometry)
+{
+	mGeometry = geometry;
+}
+
+void XdmfGrid::setName(const std::string & name)
+{
+	mName= name;
+}
+
+void XdmfGrid::setTopology(boost::shared_ptr<XdmfTopology> topology)
+{
+	mTopology = topology;
 }
 
 void XdmfGrid::traverse(boost::shared_ptr<XdmfVisitor> visitor) const

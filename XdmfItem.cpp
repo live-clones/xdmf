@@ -1,4 +1,3 @@
-
 #include "XdmfItem.hpp"
 #include "XdmfVisitor.hpp"
 

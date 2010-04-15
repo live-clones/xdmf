@@ -103,18 +103,16 @@ class XdmfAttributePtr(_object):
     __swig_destroy__ = _Xdmf.delete_XdmfAttributePtr
     __del__ = lambda self : None;
     def New(self): return _Xdmf.XdmfAttributePtr_New(self)
-    def getName(self): return _Xdmf.XdmfAttributePtr_getName(self)
-    def setName(self, *args): return _Xdmf.XdmfAttributePtr_setName(self, *args)
-    def getAttributeType(self): return _Xdmf.XdmfAttributePtr_getAttributeType(self)
-    def setAttributeType(self, *args): return _Xdmf.XdmfAttributePtr_setAttributeType(self, *args)
-    def getAttributeTypeAsString(self): return _Xdmf.XdmfAttributePtr_getAttributeTypeAsString(self)
     def getAttributeCenter(self): return _Xdmf.XdmfAttributePtr_getAttributeCenter(self)
-    def setAttributeCenter(self, *args): return _Xdmf.XdmfAttributePtr_setAttributeCenter(self, *args)
-    def getAttributeCenterAsString(self): return _Xdmf.XdmfAttributePtr_getAttributeCenterAsString(self)
-    def write(self, *args): return _Xdmf.XdmfAttributePtr_write(self, *args)
+    def getAttributeType(self): return _Xdmf.XdmfAttributePtr_getAttributeType(self)
+    def getName(self): return _Xdmf.XdmfAttributePtr_getName(self)
     def printSelf(self): return _Xdmf.XdmfAttributePtr_printSelf(self)
-    def setArray(self, *args): return _Xdmf.XdmfAttributePtr_setArray(self, *args)
+    def setAttributeCenter(self, *args): return _Xdmf.XdmfAttributePtr_setAttributeCenter(self, *args)
+    def setAttributeType(self, *args): return _Xdmf.XdmfAttributePtr_setAttributeType(self, *args)
+    def setName(self, *args): return _Xdmf.XdmfAttributePtr_setName(self, *args)
+    def write(self, *args): return _Xdmf.XdmfAttributePtr_write(self, *args)
     def getArray(self, *args): return _Xdmf.XdmfAttributePtr_getArray(self, *args)
+    def setArray(self, *args): return _Xdmf.XdmfAttributePtr_setArray(self, *args)
     def traverse(self, *args): return _Xdmf.XdmfAttributePtr_traverse(self, *args)
 XdmfAttributePtr_swigregister = _Xdmf.XdmfAttributePtr_swigregister
 XdmfAttributePtr_swigregister(XdmfAttributePtr)
@@ -205,9 +203,9 @@ class XdmfDataItemPtr(_object):
         except: self.this = this
     __swig_destroy__ = _Xdmf.delete_XdmfDataItemPtr
     __del__ = lambda self : None;
-    def setArray(self, *args): return _Xdmf.XdmfDataItemPtr_setArray(self, *args)
     def getArray(self, *args): return _Xdmf.XdmfDataItemPtr_getArray(self, *args)
     def printSelf(self): return _Xdmf.XdmfDataItemPtr_printSelf(self)
+    def setArray(self, *args): return _Xdmf.XdmfDataItemPtr_setArray(self, *args)
     def traverse(self, *args): return _Xdmf.XdmfDataItemPtr_traverse(self, *args)
     def write(self, *args): return _Xdmf.XdmfDataItemPtr_write(self, *args)
 XdmfDataItemPtr_swigregister = _Xdmf.XdmfDataItemPtr_swigregister
@@ -227,8 +225,8 @@ class XdmfDomainPtr(_object):
     __swig_destroy__ = _Xdmf.delete_XdmfDomainPtr
     __del__ = lambda self : None;
     def New(self): return _Xdmf.XdmfDomainPtr_New(self)
-    def insert(self, *args): return _Xdmf.XdmfDomainPtr_insert(self, *args)
     def getGrid(self, *args): return _Xdmf.XdmfDomainPtr_getGrid(self, *args)
+    def insert(self, *args): return _Xdmf.XdmfDomainPtr_insert(self, *args)
     def getNumberOfGrids(self): return _Xdmf.XdmfDomainPtr_getNumberOfGrids(self)
     def printSelf(self): return _Xdmf.XdmfDomainPtr_printSelf(self)
     def traverse(self, *args): return _Xdmf.XdmfDomainPtr_traverse(self, *args)
@@ -252,12 +250,10 @@ class XdmfGeometryPtr(_object):
     def New(self): return _Xdmf.XdmfGeometryPtr_New(self)
     def getGeometryType(self): return _Xdmf.XdmfGeometryPtr_getGeometryType(self)
     def setGeometryType(self, *args): return _Xdmf.XdmfGeometryPtr_setGeometryType(self, *args)
-    def getGeometryTypeAsString(self): return _Xdmf.XdmfGeometryPtr_getGeometryTypeAsString(self)
-    def getDimensions(self): return _Xdmf.XdmfGeometryPtr_getDimensions(self)
     def printSelf(self): return _Xdmf.XdmfGeometryPtr_printSelf(self)
     def write(self, *args): return _Xdmf.XdmfGeometryPtr_write(self, *args)
-    def setArray(self, *args): return _Xdmf.XdmfGeometryPtr_setArray(self, *args)
     def getArray(self, *args): return _Xdmf.XdmfGeometryPtr_getArray(self, *args)
+    def setArray(self, *args): return _Xdmf.XdmfGeometryPtr_setArray(self, *args)
     def traverse(self, *args): return _Xdmf.XdmfGeometryPtr_traverse(self, *args)
 XdmfGeometryPtr_swigregister = _Xdmf.XdmfGeometryPtr_swigregister
 XdmfGeometryPtr_swigregister(XdmfGeometryPtr)
@@ -276,16 +272,16 @@ class XdmfGridPtr(_object):
     __swig_destroy__ = _Xdmf.delete_XdmfGridPtr
     __del__ = lambda self : None;
     def New(self): return _Xdmf.XdmfGridPtr_New(self)
-    def getGeometry(self, *args): return _Xdmf.XdmfGridPtr_getGeometry(self, *args)
-    def setGeometry(self, *args): return _Xdmf.XdmfGridPtr_setGeometry(self, *args)
-    def getTopology(self, *args): return _Xdmf.XdmfGridPtr_getTopology(self, *args)
-    def setTopology(self, *args): return _Xdmf.XdmfGridPtr_setTopology(self, *args)
-    def getName(self): return _Xdmf.XdmfGridPtr_getName(self)
-    def setName(self, *args): return _Xdmf.XdmfGridPtr_setName(self, *args)
-    def insert(self, *args): return _Xdmf.XdmfGridPtr_insert(self, *args)
     def getAttribute(self, *args): return _Xdmf.XdmfGridPtr_getAttribute(self, *args)
+    def getGeometry(self, *args): return _Xdmf.XdmfGridPtr_getGeometry(self, *args)
+    def getName(self): return _Xdmf.XdmfGridPtr_getName(self)
     def getNumberOfAttributes(self): return _Xdmf.XdmfGridPtr_getNumberOfAttributes(self)
+    def getTopology(self, *args): return _Xdmf.XdmfGridPtr_getTopology(self, *args)
+    def insert(self, *args): return _Xdmf.XdmfGridPtr_insert(self, *args)
     def printSelf(self): return _Xdmf.XdmfGridPtr_printSelf(self)
+    def setGeometry(self, *args): return _Xdmf.XdmfGridPtr_setGeometry(self, *args)
+    def setTopology(self, *args): return _Xdmf.XdmfGridPtr_setTopology(self, *args)
+    def setName(self, *args): return _Xdmf.XdmfGridPtr_setName(self, *args)
     def traverse(self, *args): return _Xdmf.XdmfGridPtr_traverse(self, *args)
     def write(self, *args): return _Xdmf.XdmfGridPtr_write(self, *args)
 XdmfGridPtr_swigregister = _Xdmf.XdmfGridPtr_swigregister
@@ -341,15 +337,13 @@ class XdmfTopologyPtr(_object):
     __swig_destroy__ = _Xdmf.delete_XdmfTopologyPtr
     __del__ = lambda self : None;
     def New(self): return _Xdmf.XdmfTopologyPtr_New(self)
-    def getTopologyType(self): return _Xdmf.XdmfTopologyPtr_getTopologyType(self)
-    def setTopologyType(self, *args): return _Xdmf.XdmfTopologyPtr_setTopologyType(self, *args)
     def getNumberElements(self): return _Xdmf.XdmfTopologyPtr_getNumberElements(self)
-    def getTopologyTypeAsString(self): return _Xdmf.XdmfTopologyPtr_getTopologyTypeAsString(self)
-    def getNodesPerElement(self): return _Xdmf.XdmfTopologyPtr_getNodesPerElement(self)
+    def getTopologyType(self): return _Xdmf.XdmfTopologyPtr_getTopologyType(self)
     def printSelf(self): return _Xdmf.XdmfTopologyPtr_printSelf(self)
+    def setTopologyType(self, *args): return _Xdmf.XdmfTopologyPtr_setTopologyType(self, *args)
     def write(self, *args): return _Xdmf.XdmfTopologyPtr_write(self, *args)
-    def setArray(self, *args): return _Xdmf.XdmfTopologyPtr_setArray(self, *args)
     def getArray(self, *args): return _Xdmf.XdmfTopologyPtr_getArray(self, *args)
+    def setArray(self, *args): return _Xdmf.XdmfTopologyPtr_setArray(self, *args)
     def traverse(self, *args): return _Xdmf.XdmfTopologyPtr_traverse(self, *args)
 XdmfTopologyPtr_swigregister = _Xdmf.XdmfTopologyPtr_swigregister
 XdmfTopologyPtr_swigregister(XdmfTopologyPtr)
@@ -368,10 +362,10 @@ class XdmfVisitorPtr(_object):
     __swig_destroy__ = _Xdmf.delete_XdmfVisitorPtr
     __del__ = lambda self : None;
     def New(self): return _Xdmf.XdmfVisitorPtr_New(self)
-    def visit(self, *args): return _Xdmf.XdmfVisitorPtr_visit(self, *args)
-    def printSelf(self): return _Xdmf.XdmfVisitorPtr_printSelf(self)
     def getLightDataLimit(self): return _Xdmf.XdmfVisitorPtr_getLightDataLimit(self)
+    def printSelf(self): return _Xdmf.XdmfVisitorPtr_printSelf(self)
     def setLightDataLimit(self, *args): return _Xdmf.XdmfVisitorPtr_setLightDataLimit(self, *args)
+    def visit(self, *args): return _Xdmf.XdmfVisitorPtr_visit(self, *args)
 XdmfVisitorPtr_swigregister = _Xdmf.XdmfVisitorPtr_swigregister
 XdmfVisitorPtr_swigregister(XdmfVisitorPtr)
 
@@ -411,10 +405,10 @@ class XdmfVisitor(XdmfObject):
     __repr__ = _swig_repr
     __swig_getmethods__["New"] = lambda x: _Xdmf.XdmfVisitor_New
     if _newclass:New = staticmethod(_Xdmf.XdmfVisitor_New)
-    def visit(self, *args): return _Xdmf.XdmfVisitor_visit(self, *args)
-    def printSelf(self): return _Xdmf.XdmfVisitor_printSelf(self)
     def getLightDataLimit(self): return _Xdmf.XdmfVisitor_getLightDataLimit(self)
+    def printSelf(self): return _Xdmf.XdmfVisitor_printSelf(self)
     def setLightDataLimit(self, *args): return _Xdmf.XdmfVisitor_setLightDataLimit(self, *args)
+    def visit(self, *args): return _Xdmf.XdmfVisitor_visit(self, *args)
 XdmfVisitor_swigregister = _Xdmf.XdmfVisitor_swigregister
 XdmfVisitor_swigregister(XdmfVisitor)
 
@@ -431,10 +425,11 @@ class XdmfDataItem(XdmfItem):
     __getattr__ = lambda self, name: _swig_getattr(self, XdmfDataItem, name)
     def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined")
     __repr__ = _swig_repr
-    def setArray(self, *args): return _Xdmf.XdmfDataItem_setArray(self, *args)
     def getArray(self, *args): return _Xdmf.XdmfDataItem_getArray(self, *args)
     def printSelf(self): return _Xdmf.XdmfDataItem_printSelf(self)
+    def setArray(self, *args): return _Xdmf.XdmfDataItem_setArray(self, *args)
     def traverse(self, *args): return _Xdmf.XdmfDataItem_traverse(self, *args)
+    def write(self, *args): return _Xdmf.XdmfDataItem_write(self, *args)
 XdmfDataItem_swigregister = _Xdmf.XdmfDataItem_swigregister
 XdmfDataItem_swigregister(XdmfDataItem)
 
@@ -449,16 +444,14 @@ class XdmfAttribute(XdmfDataItem):
     __repr__ = _swig_repr
     __swig_getmethods__["New"] = lambda x: _Xdmf.XdmfAttribute_New
     if _newclass:New = staticmethod(_Xdmf.XdmfAttribute_New)
-    def getName(self): return _Xdmf.XdmfAttribute_getName(self)
-    def setName(self, *args): return _Xdmf.XdmfAttribute_setName(self, *args)
-    def getAttributeType(self): return _Xdmf.XdmfAttribute_getAttributeType(self)
-    def setAttributeType(self, *args): return _Xdmf.XdmfAttribute_setAttributeType(self, *args)
-    def getAttributeTypeAsString(self): return _Xdmf.XdmfAttribute_getAttributeTypeAsString(self)
     def getAttributeCenter(self): return _Xdmf.XdmfAttribute_getAttributeCenter(self)
-    def setAttributeCenter(self, *args): return _Xdmf.XdmfAttribute_setAttributeCenter(self, *args)
-    def getAttributeCenterAsString(self): return _Xdmf.XdmfAttribute_getAttributeCenterAsString(self)
-    def write(self, *args): return _Xdmf.XdmfAttribute_write(self, *args)
+    def getAttributeType(self): return _Xdmf.XdmfAttribute_getAttributeType(self)
+    def getName(self): return _Xdmf.XdmfAttribute_getName(self)
     def printSelf(self): return _Xdmf.XdmfAttribute_printSelf(self)
+    def setAttributeCenter(self, *args): return _Xdmf.XdmfAttribute_setAttributeCenter(self, *args)
+    def setAttributeType(self, *args): return _Xdmf.XdmfAttribute_setAttributeType(self, *args)
+    def setName(self, *args): return _Xdmf.XdmfAttribute_setName(self, *args)
+    def write(self, *args): return _Xdmf.XdmfAttribute_write(self, *args)
 XdmfAttribute_swigregister = _Xdmf.XdmfAttribute_swigregister
 XdmfAttribute_swigregister(XdmfAttribute)
 
@@ -622,8 +615,8 @@ class XdmfDomain(XdmfItem):
     __repr__ = _swig_repr
     __swig_getmethods__["New"] = lambda x: _Xdmf.XdmfDomain_New
     if _newclass:New = staticmethod(_Xdmf.XdmfDomain_New)
-    def insert(self, *args): return _Xdmf.XdmfDomain_insert(self, *args)
     def getGrid(self, *args): return _Xdmf.XdmfDomain_getGrid(self, *args)
+    def insert(self, *args): return _Xdmf.XdmfDomain_insert(self, *args)
     def getNumberOfGrids(self): return _Xdmf.XdmfDomain_getNumberOfGrids(self)
     def printSelf(self): return _Xdmf.XdmfDomain_printSelf(self)
     def traverse(self, *args): return _Xdmf.XdmfDomain_traverse(self, *args)
@@ -648,8 +641,6 @@ class XdmfGeometry(XdmfDataItem):
     if _newclass:New = staticmethod(_Xdmf.XdmfGeometry_New)
     def getGeometryType(self): return _Xdmf.XdmfGeometry_getGeometryType(self)
     def setGeometryType(self, *args): return _Xdmf.XdmfGeometry_setGeometryType(self, *args)
-    def getGeometryTypeAsString(self): return _Xdmf.XdmfGeometry_getGeometryTypeAsString(self)
-    def getDimensions(self): return _Xdmf.XdmfGeometry_getDimensions(self)
     def printSelf(self): return _Xdmf.XdmfGeometry_printSelf(self)
     def write(self, *args): return _Xdmf.XdmfGeometry_write(self, *args)
 XdmfGeometry_swigregister = _Xdmf.XdmfGeometry_swigregister
@@ -743,16 +734,16 @@ class XdmfGrid(XdmfItem):
     __repr__ = _swig_repr
     __swig_getmethods__["New"] = lambda x: _Xdmf.XdmfGrid_New
     if _newclass:New = staticmethod(_Xdmf.XdmfGrid_New)
-    def getGeometry(self, *args): return _Xdmf.XdmfGrid_getGeometry(self, *args)
-    def setGeometry(self, *args): return _Xdmf.XdmfGrid_setGeometry(self, *args)
-    def getTopology(self, *args): return _Xdmf.XdmfGrid_getTopology(self, *args)
-    def setTopology(self, *args): return _Xdmf.XdmfGrid_setTopology(self, *args)
-    def getName(self): return _Xdmf.XdmfGrid_getName(self)
-    def setName(self, *args): return _Xdmf.XdmfGrid_setName(self, *args)
-    def insert(self, *args): return _Xdmf.XdmfGrid_insert(self, *args)
     def getAttribute(self, *args): return _Xdmf.XdmfGrid_getAttribute(self, *args)
+    def getGeometry(self, *args): return _Xdmf.XdmfGrid_getGeometry(self, *args)
+    def getName(self): return _Xdmf.XdmfGrid_getName(self)
     def getNumberOfAttributes(self): return _Xdmf.XdmfGrid_getNumberOfAttributes(self)
+    def getTopology(self, *args): return _Xdmf.XdmfGrid_getTopology(self, *args)
+    def insert(self, *args): return _Xdmf.XdmfGrid_insert(self, *args)
     def printSelf(self): return _Xdmf.XdmfGrid_printSelf(self)
+    def setGeometry(self, *args): return _Xdmf.XdmfGrid_setGeometry(self, *args)
+    def setTopology(self, *args): return _Xdmf.XdmfGrid_setTopology(self, *args)
+    def setName(self, *args): return _Xdmf.XdmfGrid_setName(self, *args)
     def traverse(self, *args): return _Xdmf.XdmfGrid_traverse(self, *args)
     def write(self, *args): return _Xdmf.XdmfGrid_write(self, *args)
 XdmfGrid_swigregister = _Xdmf.XdmfGrid_swigregister
@@ -773,12 +764,10 @@ class XdmfTopology(XdmfDataItem):
     __repr__ = _swig_repr
     __swig_getmethods__["New"] = lambda x: _Xdmf.XdmfTopology_New
     if _newclass:New = staticmethod(_Xdmf.XdmfTopology_New)
-    def getTopologyType(self): return _Xdmf.XdmfTopology_getTopologyType(self)
-    def setTopologyType(self, *args): return _Xdmf.XdmfTopology_setTopologyType(self, *args)
     def getNumberElements(self): return _Xdmf.XdmfTopology_getNumberElements(self)
-    def getTopologyTypeAsString(self): return _Xdmf.XdmfTopology_getTopologyTypeAsString(self)
-    def getNodesPerElement(self): return _Xdmf.XdmfTopology_getNodesPerElement(self)
+    def getTopologyType(self): return _Xdmf.XdmfTopology_getTopologyType(self)
     def printSelf(self): return _Xdmf.XdmfTopology_printSelf(self)
+    def setTopologyType(self, *args): return _Xdmf.XdmfTopology_setTopologyType(self, *args)
     def write(self, *args): return _Xdmf.XdmfTopology_write(self, *args)
 XdmfTopology_swigregister = _Xdmf.XdmfTopology_swigregister
 XdmfTopology_swigregister(XdmfTopology)
@@ -846,9 +835,9 @@ class XdmfTopologyType(_object):
     if _newclass:ThreeDRectMesh = staticmethod(_Xdmf.XdmfTopologyType_ThreeDRectMesh)
     __swig_getmethods__["ThreeDCoRectMesh"] = lambda x: _Xdmf.XdmfTopologyType_ThreeDCoRectMesh
     if _newclass:ThreeDCoRectMesh = staticmethod(_Xdmf.XdmfTopologyType_ThreeDCoRectMesh)
-    def getNodesPerElement(self): return _Xdmf.XdmfTopologyType_getNodesPerElement(self)
-    def getName(self): return _Xdmf.XdmfTopologyType_getName(self)
     def getCellType(self): return _Xdmf.XdmfTopologyType_getCellType(self)
+    def getName(self): return _Xdmf.XdmfTopologyType_getName(self)
+    def getNodesPerElement(self): return _Xdmf.XdmfTopologyType_getNodesPerElement(self)
     def __eq__(self, *args): return _Xdmf.XdmfTopologyType___eq__(self, *args)
     def __ne__(self, *args): return _Xdmf.XdmfTopologyType___ne__(self, *args)
     def __init__(self, *args): 

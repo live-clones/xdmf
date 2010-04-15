@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
 	assert(attribute->getAttributeType().getName().compare("None") == 0);
 	attribute->setAttributeType(XdmfAttributeType::Scalar());
 	assert(attribute->getAttributeType() == XdmfAttributeType::Scalar());
-	assert(attribute->getAttributeTypeAsString().compare("Scalar") == 0);
+	assert(attribute->getAttributeType().getName().compare("Scalar") == 0);
 
 	return 0;
 }

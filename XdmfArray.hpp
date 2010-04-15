@@ -1,10 +1,3 @@
-/*
- * XdmfArray.hpp
- *
- *  Created on: Jan 25, 2010
- *      Author: kleiter
- */
-
 #ifndef XDMFARRAY_HPP_
 #define XDMFARRAY_HPP_
 
@@ -18,7 +11,7 @@ template<typename T>
 class XdmfArrayCopyValues : public boost::static_visitor <void> {
 public:
 
-	XdmfArrayCopyValues(int startIndex, T* valuesPointer, int numValues = 1, int arrayStride = 1, int valuesStride = 1) :
+	XdmfArrayCopyValues(int startIndex, T * valuesPointer, int numValues = 1, int arrayStride = 1, int valuesStride = 1) :
 		mStartIndex(startIndex),
 		mValuesPointer(valuesPointer),
 		mNumValues(numValues),
@@ -27,7 +20,7 @@ public:
 	{
 	}
 
-	template<typename U> void operator()(boost::shared_ptr<std::vector<U> > array) const
+	template<typename U> void operator()(boost::shared_ptr<std::vector<U> > & array) const
 	{
 		int size = mStartIndex + mNumValues;
 		if(mArrayStride > 1)
@@ -61,13 +54,13 @@ public:
     {
     }
 
-    boost::shared_ptr<std::vector<T> > operator()(const boost::shared_ptr<std::vector<T> > array) const
+    boost::shared_ptr<std::vector<T> > operator()(const boost::shared_ptr<std::vector<T> > & array) const
     {
         return array;
     }
 
     template <typename U>
-    boost::shared_ptr<std::vector<T> > operator()(const boost::shared_ptr<std::vector<U> > array) const
+    boost::shared_ptr<std::vector<T> > operator()(const boost::shared_ptr<std::vector<U> > & array) const
     {
         return boost::shared_ptr<std::vector<T> >();
     }
@@ -81,18 +74,53 @@ public:
     {
     }
 
-    const boost::shared_ptr<const std::vector<T> > operator()(const boost::shared_ptr<const std::vector<T> > array) const
+    const boost::shared_ptr<const std::vector<T> > operator()(const boost::shared_ptr<const std::vector<T> > & array) const
     {
         return array;
     }
 
     template <typename U>
-    const boost::shared_ptr<const std::vector<T> > operator()(const boost::shared_ptr<const std::vector<U> > array) const
+    const boost::shared_ptr<const std::vector<T> > operator()(const boost::shared_ptr<const std::vector<U> > & array) const
     {
         return boost::shared_ptr<std::vector<T> >();
     }
 };
 
+/**
+ * @brief Provides a single interface for storing a wide variety of data types.
+ *
+ * XdmfArray stores data values that are read in or will be written to heavy data on disk. The
+ * data type stored is determined by the type initially inserted into the XdmfArray.  XdmfArray
+ * allows for insertion and retrieval of data in two fundamental ways:
+ *
+ * By Copy:
+ *
+ *  copyValues
+ * 	getCopyValues
+ *
+ * 	XdmfArray stores its own copy of the data.  Modifications to the data stored in the XdmfArray will
+ * 	not change values stored in the original array.
+ *
+ * By Shared Reference:
+ *
+ * 	setValues
+ * 	getValues
+ *
+ * 	XdmfArray shares a reference to the data.  No copy is made. XdmfArray holds a shared pointer to the original
+ * 	data.  Modifications to the data stored in the XdmfArray also causes modification to values stored in the original
+ * 	array.
+ *
+ * Xdmf supports the following datatypes:
+ * 	Char
+ * 	Short
+ * 	Int
+ * 	Long
+ * 	Float
+ * 	Double
+ * 	Unsigned Char
+ * 	Unsigned Short
+ * 	Unsigned Int
+ */
 class XdmfArray : public XdmfItem {
 public:
 
@@ -103,6 +131,7 @@ public:
 	 *
 	 * @param startIndex the index in this array to begin insertion.
 	 * @param values a shared pointer to an XdmfArray to copy into this array.
+	 * @param valuesStartIndex the index in the XdmfArray to begin copying.
 	 * @param numValues the number of values to copy into this array.
 	 * @param arrayStride number of values to stride in this array between each copy.
 	 * @param valuesStride number of values to stride in the XdmfArray between each copy.
@@ -118,7 +147,7 @@ public:
 	 * @param arrayStride number of values to stride in this array between each copy.
 	 * @param valuesStride number of values to stride in the pointer between each copy.
 	 */
-	template<typename T> void copyValues(int startIndex, T* valuesPointer, int numValues = 1, int arrayStride = 1, int valuesStride = 1)
+	template<typename T> void copyValues(int startIndex, T * valuesPointer, int numValues = 1, int arrayStride = 1, int valuesStride = 1)
 	{
 		if(!mInitialized)
 		{
@@ -131,7 +160,7 @@ public:
 	}
 
 	/**
-	 * Clears all values from this array
+	 * Remove all values from this array
 	 */
 	virtual void clear();
 
@@ -153,14 +182,14 @@ public:
 	/**
 	 * Get the precision, in bytes, of the data type of this array.
 	 *
-	 * @return a int containing the precision, in bytes, of the data type of this array.
+	 * @return an int containing the precision, in bytes, of the data type of this array.
 	 */
 	virtual int getPrecision() const;
 
 	/**
 	 * Get the number of values stored in this array.
 	 *
-	 * @return a int containing the number of values stored in this array.
+	 * @return an int containing the number of values stored in this array.
 	 */
 	virtual int getSize() const;
 
@@ -187,7 +216,7 @@ public:
 	}
 
 	/**
-	 * Get a pointer to the values stored in this array (const version).
+	 * Get a pointer to the values stored in this array.
 	 *
 	 * @return a void pointer to the first value stored in this array.
 	 */
@@ -206,7 +235,7 @@ public:
 	 * Sets the values of this array to the values stored in the vector.  No copy is made.  This array shares ownership with
 	 * other references to the smart pointer.
 	 *
-	 * @param a smart pointer to a vector to store in this array.
+	 * @param array a smart pointer to a vector to store in this array.
 	 */
 	template<typename T> void setValues(boost::shared_ptr<std::vector<T> > array)
 	{
