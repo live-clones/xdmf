@@ -5560,6 +5560,39 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_XdmfArrayPtr_swap(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  boost::shared_ptr< XdmfArray > *arg1 = (boost::shared_ptr< XdmfArray > *) 0 ;
+  boost::shared_ptr< XdmfArray > *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfArrayPtr_swap",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_boost__shared_ptrT_XdmfArray_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfArrayPtr_swap" "', argument " "1"" of type '" "boost::shared_ptr< XdmfArray > *""'"); 
+  }
+  arg1 = reinterpret_cast< boost::shared_ptr< XdmfArray > * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_boost__shared_ptrT_XdmfArray_t,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfArrayPtr_swap" "', argument " "2"" of type '" "boost::shared_ptr< XdmfArray > &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "XdmfArrayPtr_swap" "', argument " "2"" of type '" "boost::shared_ptr< XdmfArray > &""'"); 
+  }
+  arg2 = reinterpret_cast< boost::shared_ptr< XdmfArray > * >(argp2);
+  (*arg1)->swap(*arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_XdmfArrayPtr_write(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   boost::shared_ptr< XdmfArray > *arg1 = (boost::shared_ptr< XdmfArray > *) 0 ;
@@ -11068,6 +11101,39 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_XdmfArray_swap(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfArray *arg1 = (XdmfArray *) 0 ;
+  boost::shared_ptr< XdmfArray > *arg2 = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:XdmfArray_swap",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfArray, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfArray_swap" "', argument " "1"" of type '" "XdmfArray *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfArray * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_boost__shared_ptrT_XdmfArray_t,  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfArray_swap" "', argument " "2"" of type '" "boost::shared_ptr< XdmfArray > &""'"); 
+  }
+  if (!argp2) {
+    SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "XdmfArray_swap" "', argument " "2"" of type '" "boost::shared_ptr< XdmfArray > &""'"); 
+  }
+  arg2 = reinterpret_cast< boost::shared_ptr< XdmfArray > * >(argp2);
+  (arg1)->swap(*arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_XdmfArray_write(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   XdmfArray *arg1 = (XdmfArray *) 0 ;
@@ -13476,6 +13542,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfArrayPtr_getValuesPointer", _wrap_XdmfArrayPtr_getValuesPointer, METH_VARARGS, NULL},
 	 { (char *)"XdmfArrayPtr_getValuesString", _wrap_XdmfArrayPtr_getValuesString, METH_VARARGS, NULL},
 	 { (char *)"XdmfArrayPtr_printSelf", _wrap_XdmfArrayPtr_printSelf, METH_VARARGS, NULL},
+	 { (char *)"XdmfArrayPtr_swap", _wrap_XdmfArrayPtr_swap, METH_VARARGS, NULL},
 	 { (char *)"XdmfArrayPtr_write", _wrap_XdmfArrayPtr_write, METH_VARARGS, NULL},
 	 { (char *)"XdmfArrayPtr_copyValueAsChar", _wrap_XdmfArrayPtr_copyValueAsChar, METH_VARARGS, NULL},
 	 { (char *)"XdmfArrayPtr_copyValueAsShort", _wrap_XdmfArrayPtr_copyValueAsShort, METH_VARARGS, NULL},
@@ -13632,6 +13699,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"XdmfArray_getValuesPointer", _wrap_XdmfArray_getValuesPointer, METH_VARARGS, NULL},
 	 { (char *)"XdmfArray_getValuesString", _wrap_XdmfArray_getValuesString, METH_VARARGS, NULL},
 	 { (char *)"XdmfArray_printSelf", _wrap_XdmfArray_printSelf, METH_VARARGS, NULL},
+	 { (char *)"XdmfArray_swap", _wrap_XdmfArray_swap, METH_VARARGS, NULL},
 	 { (char *)"XdmfArray_write", _wrap_XdmfArray_write, METH_VARARGS, NULL},
 	 { (char *)"XdmfArray_copyValueAsChar", _wrap_XdmfArray_copyValueAsChar, METH_VARARGS, NULL},
 	 { (char *)"XdmfArray_copyValueAsShort", _wrap_XdmfArray_copyValueAsShort, METH_VARARGS, NULL},

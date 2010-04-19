@@ -303,12 +303,14 @@ void XdmfArray::copyValues(int startIndex, boost::shared_ptr<XdmfArray> values, 
 		mArray = values->mArray;
 		// Reinitialize variant array to contain new array with same type.
 		boost::apply_visitor( XdmfArrayNewArray(), mArray);
+		mInitialized = true;
 	}
 	boost::apply_visitor( XdmfArrayCopyArrayValues(startIndex, valuesStartIndex, numValues, arrayStride, valuesStride), mArray, values->mArray);
 }
 
 void XdmfArray::clear()
 {
+	mInitialized = false;
 	return boost::apply_visitor( XdmfArrayClear(), mArray);
 }
 
@@ -345,6 +347,14 @@ std::string XdmfArray::getValuesString() const
 std::string XdmfArray::printSelf() const
 {
 	return "";
+}
+
+void XdmfArray::swap(boost::shared_ptr<XdmfArray> & array)
+{
+	array->mArray.swap(mArray);
+	bool initialized = array->mInitialized;
+	array->mInitialized = mInitialized;
+	mInitialized = initialized;
 }
 
 void XdmfArray::write(boost::shared_ptr<XdmfVisitor> visitor) const

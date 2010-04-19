@@ -98,11 +98,11 @@ public:
 	virtual int getSize() const;
 
 	/**
-     * Get the data type of this array.
-     *
-     * @return a string containing the Xdmf data type for the array, this is one of
-     *      Char, Short, Int, Float, UChar, UShort, UInt.
-     */
+	 * Get the data type of this array.
+	 *
+	 * @return a string containing the Xdmf data type for the array, this is one of
+	 *      Char, Short, Int, Float, UChar, UShort, UInt.
+	 */
 	virtual std::string getType() const;
 
 	/**
@@ -146,6 +146,34 @@ public:
 	template<typename T>
 	void setValues(boost::shared_ptr<std::vector<T> > array);
 
+	/**
+	 * Exchange the contents of the vector with the contents of this XdmfArray.  No copy is made.  The internal arrays are swapped.
+	 *
+	 * @param array a vector to exchange values with.
+	 * @return bool whether the swap was successful.
+	 */
+	template<typename T>
+	bool swap(std::vector<T> & array);
+
+	/**
+	 * Exchange the contents of the vector with the contents of this XdmfArray.  No copy is made.  The internal arrays are swapped.
+	 *
+	 * @param array a smart pointer to a vector to exchange values with.
+	 */
+	template<typename T>
+	bool swap(boost::shared_ptr<std::vector<T> > array);
+
+	/**
+	 * Exchange the contents of an XdmfArray with the contents of this XdmfArray.  No copy is made.  The internal arrays are swapped.
+	 *
+	 * @param array a smart pointer to a vector to exchange values with.
+	 * @return bool whether the swap was successful.
+	 */
+	void swap(boost::shared_ptr<XdmfArray> & array);
+
+	/**
+	 *
+	 */
 	virtual void write(boost::shared_ptr<XdmfVisitor>) const;
 
 protected:

@@ -92,5 +92,51 @@ int main(int argc, char* argv[])
 		assert((*iter) == storedValues->operator[](i));
 	}
 
+	/**
+	 * Swap values from a vector
+	 */
+	std::vector<short> values4;
+	values4.push_back(-1);
+	values4.push_back(0);
+	values4.push_back(1);
+	boost::shared_ptr<XdmfArray> array5 = XdmfArray::New();
+	array5->swap(values4);
+	assert(values4.size() == 0);
+	assert(array5->getSize() == 3);
+	assert(array5->getType().compare("Short") == 0);
+	assert(array5->getPrecision() == 2);
+	boost::shared_ptr<std::vector<short> > storedValues5 = array5->getValues<short>();
+	assert((*storedValues5)[0] == -1);
+	assert((*storedValues5)[1] == 0);
+	assert((*storedValues5)[2] == 1);
+
+	/**
+	 * Swap values from a shared vector
+	 */
+	array5->clear();
+	array5->swap(storedValues3);
+	assert(storedValues3->size() == 0);
+	assert(array5->getSize() == 6);
+
+	/**
+	 * Swap values from an XdmfArray
+	 */
+	array5->clear();
+	array5->swap(array4);
+	assert(array4->getSize() == 0);
+	assert(array5->getSize() == 4);
+
+	/**
+	 * Get values via swap
+	 */
+	std::vector<int> valsInt;
+	bool success = array5->swap(valsInt);
+	assert(success == false);
+	std::vector<double> valsDouble;
+	success = array5->swap(valsDouble);
+	assert(success == true);
+	assert(valsDouble.size() == 4);
+	assert(array5->getSize() == 0);
+
 	return 0;
 }

@@ -40,46 +40,6 @@ private:
 	int mValuesStride;
 };
 
-template <typename T>
-class XdmfArrayGetValues : public boost::static_visitor <boost::shared_ptr<std::vector<T> > > {
-public:
-
-    XdmfArrayGetValues()
-    {
-    }
-
-    boost::shared_ptr<std::vector<T> > operator()(const boost::shared_ptr<std::vector<T> > & array) const
-    {
-        return array;
-    }
-
-    template <typename U>
-    boost::shared_ptr<std::vector<T> > operator()(const boost::shared_ptr<std::vector<U> > & array) const
-    {
-        return boost::shared_ptr<std::vector<T> >();
-    }
-};
-
-template <typename T>
-class XdmfArrayGetValuesConst : public boost::static_visitor <const boost::shared_ptr<const std::vector<T> > > {
-public:
-
-    XdmfArrayGetValuesConst()
-    {
-    }
-
-    const boost::shared_ptr<const std::vector<T> > operator()(const boost::shared_ptr<const std::vector<T> > & array) const
-    {
-        return array;
-    }
-
-    template <typename U>
-    const boost::shared_ptr<const std::vector<T> > operator()(const boost::shared_ptr<const std::vector<U> > & array) const
-    {
-        return boost::shared_ptr<std::vector<T> >();
-    }
-};
-
 template<typename T>
 void XdmfArray::copyValues(int startIndex, T * valuesPointer, int numValues, int arrayStride, int valuesStride)
 {
@@ -96,17 +56,66 @@ void XdmfArray::copyValues(int startIndex, T * valuesPointer, int numValues, int
 template <typename T>
 boost::shared_ptr<std::vector<T> > XdmfArray::getValues()
 {
-	return boost::apply_visitor( XdmfArrayGetValues<T>(), mArray);
+	try
+	{
+		boost::shared_ptr<std::vector<T> > currArray = boost::get<boost::shared_ptr<std::vector<T> > >(mArray);
+		return currArray;
+	}
+	catch(const boost::bad_get& exception)
+	{
+		return boost::shared_ptr<std::vector<T> >();
+	}
 }
 
 template <typename T>
 const boost::shared_ptr<const std::vector<T> > XdmfArray::getValues() const
 {
-	return boost::apply_visitor( XdmfArrayGetValuesConst<T>(), mArray);
+	try
+	{
+		boost::shared_ptr<std::vector<T> > currArray = boost::get<boost::shared_ptr<std::vector<T> > >(mArray);
+		return currArray;
+	}
+	catch(const boost::bad_get& exception)
+	{
+		return boost::shared_ptr<std::vector<T> >();
+	}
 }
 
 template<typename T>
 void XdmfArray::setValues(boost::shared_ptr<std::vector<T> > array)
 {
 	mArray = array;
+	mInitialized = true;
+}
+
+template<typename T>
+bool XdmfArray::swap(std::vector<T> & array)
+{
+	if(!mInitialized)
+	{
+		// Set type of variant to type of pointer
+		boost::shared_ptr<std::vector<T> > newArray(new std::vector<T>());
+		mArray = newArray;
+		mInitialized = true;
+	}
+	try
+	{
+		boost::shared_ptr<std::vector<T> > currArray = boost::get<boost::shared_ptr<std::vector<T> > >(mArray);
+		currArray->swap(array);
+		if(currArray->size() == 0)
+		{
+			mInitialized = false;
+		}
+		return true;
+	}
+	catch(const boost::bad_get& exception)
+	{
+		return false;
+	}
+}
+
+template<typename T>
+bool XdmfArray::swap(boost::shared_ptr<std::vector<T> > array)
+{
+	return this->swap(*array.get());
 }

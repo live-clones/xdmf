@@ -2,7 +2,7 @@ set(XdmfCxxTests
 	TestXdmfAttribute
 	TestXdmfArray
 	TestXdmfDataItem
-  TestXdmfGeometry
+	TestXdmfGeometry
 	TestXdmfGrid
 	TestXdmfTopology
 	TestXdmfVisitor
