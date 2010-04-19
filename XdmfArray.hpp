@@ -135,6 +135,12 @@ public:
 	 */
 	virtual std::string getValuesString() const;
 
+	/**
+	 * Initializes the array to contain an empty container of a particular type.
+	 */
+	template <typename T>
+	void initialize();
+
 	virtual std::string printSelf() const;
 
 	/**

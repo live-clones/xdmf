@@ -45,10 +45,7 @@ void XdmfArray::copyValues(int startIndex, T * valuesPointer, int numValues, int
 {
 	if(!mInitialized)
 	{
-		// Set type of variant to type of pointer
-		boost::shared_ptr<std::vector<T> > newArray(new std::vector<T>());
-		mArray = newArray;
-		mInitialized = true;
+		initialize<T>();
 	}
 	boost::apply_visitor( XdmfArrayCopyValues<T>(startIndex, valuesPointer, numValues, arrayStride, valuesStride), mArray);
 }
@@ -81,6 +78,15 @@ const boost::shared_ptr<const std::vector<T> > XdmfArray::getValues() const
 	}
 }
 
+template <typename T>
+void XdmfArray::initialize()
+{
+	// Set type of variant to type of pointer
+	boost::shared_ptr<std::vector<T> > newArray(new std::vector<T>());
+	mArray = newArray;
+	mInitialized = true;
+}
+
 template<typename T>
 void XdmfArray::setValues(boost::shared_ptr<std::vector<T> > array)
 {
@@ -93,10 +99,7 @@ bool XdmfArray::swap(std::vector<T> & array)
 {
 	if(!mInitialized)
 	{
-		// Set type of variant to type of pointer
-		boost::shared_ptr<std::vector<T> > newArray(new std::vector<T>());
-		mArray = newArray;
-		mInitialized = true;
+		initialize<T>();
 	}
 	try
 	{
