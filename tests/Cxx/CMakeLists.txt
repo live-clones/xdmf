@@ -6,6 +6,7 @@ set(XdmfCxxTests
 	TestXdmfGrid
 	TestXdmfTopology
 	TestXdmfVisitor
+	TestXdmfVisitorValueCounter
 )
 
 foreach(test ${XdmfCxxTests})
