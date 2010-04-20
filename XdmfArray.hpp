@@ -106,17 +106,17 @@ public:
 	virtual std::string getType() const;
 
 	/**
-	 * Get a smart pointer to the values stored in this array
+	 * Get a smart pointer to the values stored in this array.
 	 *
-	 * @return a smart pointer to the internal vector of values stored in this array
+	 * @return a smart pointer to the internal vector of values stored in this array.
 	 */
 	template <typename T>
 	boost::shared_ptr<std::vector<T> > getValues();
 
 	/**
-	 * Get a smart pointer to the values stored in this array (const version)
+	 * Get a smart pointer to the values stored in this array (const version).
 	 *
-	 * @return a smart pointer to the internal vector of values stored in this array
+	 * @return a smart pointer to the internal vector of values stored in this array.
 	 */
 	template <typename T>
 	const boost::shared_ptr<const std::vector<T> > getValues() const;
@@ -137,11 +137,22 @@ public:
 
 	/**
 	 * Initializes the array to contain an empty container of a particular type.
+	 *
+	 * @return a smart pointer to the internal vector of values initialized in this array.
 	 */
 	template <typename T>
-	void initialize();
+	boost::shared_ptr<std::vector<T> > initialize();
 
 	virtual std::string printSelf() const;
+
+	/**
+	 * Sets the values of this array to the values stored in the vector.  No copy is made.  The caller of this method retains
+	 * ownership of the data and must ensure that the array is still valid for the entire time Xdmf needs it.
+	 *
+	 * @param array a vector to store in this array.
+	 */
+	template<typename T>
+	void setValues(std::vector<T> & array);
 
 	/**
 	 * Sets the values of this array to the values stored in the vector.  No copy is made.  This array shares ownership with
@@ -175,7 +186,7 @@ public:
 	 * @param array a smart pointer to a vector to exchange values with.
 	 * @return bool whether the swap was successful.
 	 */
-	void swap(boost::shared_ptr<XdmfArray> & array);
+	void swap(boost::shared_ptr<XdmfArray> array);
 
 	/**
 	 *

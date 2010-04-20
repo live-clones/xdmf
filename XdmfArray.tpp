@@ -40,6 +40,13 @@ private:
 	int mValuesStride;
 };
 
+struct XdmfArrayNullDeleter
+{
+    void operator()(void const *) const
+    {
+    }
+};
+
 template<typename T>
 void XdmfArray::copyValues(int startIndex, T * valuesPointer, int numValues, int arrayStride, int valuesStride)
 {
@@ -79,10 +86,19 @@ const boost::shared_ptr<const std::vector<T> > XdmfArray::getValues() const
 }
 
 template <typename T>
-void XdmfArray::initialize()
+boost::shared_ptr<std::vector<T> > XdmfArray::initialize()
 {
 	// Set type of variant to type of pointer
 	boost::shared_ptr<std::vector<T> > newArray(new std::vector<T>());
+	mArray = newArray;
+	mInitialized = true;
+	return newArray;
+}
+
+template<typename T>
+void XdmfArray::setValues(std::vector<T> & array)
+{
+	boost::shared_ptr<std::vector<T> > newArray(&array, XdmfArrayNullDeleter());
 	mArray = newArray;
 	mInitialized = true;
 }

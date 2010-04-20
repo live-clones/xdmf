@@ -21,12 +21,15 @@ if(LIBXML2_FOUND)
   include_directories(${LIBXML2_INCLUDE_DIR})
 endif(LIBXML2_FOUND)
 
-option(XDMF_WRAP_PYTHON ON)
+option(XDMF_WRAP_PYTHON OFF)
 if(XDMF_WRAP_PYTHON)
+	find_package(SWIG REQUIRED)
+	include(${SWIG_USE_FILE})
 	find_package(PythonLibs REQUIRED)
-	if(PYTHONLIBS_FOUND)
-		include_directories(${PYTHON_INCLUDE_DIRS})
-	endif(PYTHONLIBS_FOUND)
+	include_directories(${PYTHON_INCLUDE_DIRS})
+	set_source_files_properties(Xdmf.i PROPERTIES CPLUSPLUS ON)
+	swig_add_module(Xdmf python Xdmf.i)
+	swig_link_libraries(Xdmf Xdmf ${PYTHON_LIBRARIES})
 endif(XDMF_WRAP_PYTHON)
 
 set(XdmfSources
@@ -48,17 +51,6 @@ set(XdmfSources
 
 add_library(Xdmf ${XdmfSources})
 target_link_libraries(Xdmf ${HDF5_LIBRARIES} ${LIBXML2_LIBRARIES})
-
-if(XDMF_WRAP_PYTHON)
-	add_library(_Xdmf MODULE XdmfPython)
-	set_target_properties(_Xdmf PROPERTIES PREFIX "")
-	target_link_libraries(_Xdmf Xdmf)
-	if(WIN32 OR APPLE)
-		target_link_libraries(_Xdmf ${PYTHON_LIBRARY})
-	endif(WIN32 OR APPLE)
-endif(XDMF_WRAP_PYTHON)
-
-configure_file(Xdmf.py Xdmf.py COPYONLY)
 
 option(BUILD_DOCUMENTATION OFF)
 if(BUILD_DOCUMENTATION)

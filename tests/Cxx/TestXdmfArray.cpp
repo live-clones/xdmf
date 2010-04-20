@@ -93,19 +93,29 @@ int main(int argc, char* argv[])
 	}
 
 	/**
+	 * Set values from vector
+	 */
+	boost::shared_ptr<XdmfArray> array5 = XdmfArray::New();
+	std::vector<long> values4;
+	values4.push_back(-100);
+	values4.push_back(0);
+	values4.push_back(500);
+	array5->setValues(values4);
+
+	/**
 	 * Swap values from a vector
 	 */
-	std::vector<short> values4;
-	values4.push_back(-1);
-	values4.push_back(0);
-	values4.push_back(1);
-	boost::shared_ptr<XdmfArray> array5 = XdmfArray::New();
-	array5->swap(values4);
-	assert(values4.size() == 0);
-	assert(array5->getSize() == 3);
-	assert(array5->getType().compare("Short") == 0);
-	assert(array5->getPrecision() == 2);
-	boost::shared_ptr<std::vector<short> > storedValues5 = array5->getValues<short>();
+	std::vector<short> values5;
+	values5.push_back(-1);
+	values5.push_back(0);
+	values5.push_back(1);
+	boost::shared_ptr<XdmfArray> array6 = XdmfArray::New();
+	array6->swap(values5);
+	assert(values5.size() == 0);
+	assert(array6->getSize() == 3);
+	assert(array6->getType().compare("Short") == 0);
+	assert(array6->getPrecision() == 2);
+	boost::shared_ptr<std::vector<short> > storedValues5 = array6->getValues<short>();
 	assert((*storedValues5)[0] == -1);
 	assert((*storedValues5)[1] == 0);
 	assert((*storedValues5)[2] == 1);
@@ -113,30 +123,30 @@ int main(int argc, char* argv[])
 	/**
 	 * Swap values from a shared vector
 	 */
-	array5->clear();
-	array5->swap(storedValues3);
+	array6->clear();
+	array6->swap(storedValues3);
 	assert(storedValues3->size() == 0);
-	assert(array5->getSize() == 6);
+	assert(array6->getSize() == 6);
 
 	/**
 	 * Swap values from an XdmfArray
 	 */
-	array5->clear();
-	array5->swap(array4);
+	array6->clear();
+	array6->swap(array4);
 	assert(array4->getSize() == 0);
-	assert(array5->getSize() == 4);
+	assert(array6->getSize() == 4);
 
 	/**
 	 * Get values via swap
 	 */
 	std::vector<int> valsInt;
-	bool success = array5->swap(valsInt);
+	bool success = array6->swap(valsInt);
 	assert(success == false);
 	std::vector<double> valsDouble;
-	success = array5->swap(valsDouble);
+	success = array6->swap(valsDouble);
 	assert(success == true);
 	assert(valsDouble.size() == 4);
-	assert(array5->getSize() == 0);
+	assert(array6->getSize() == 0);
 
 	return 0;
 }

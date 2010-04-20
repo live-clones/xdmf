@@ -349,7 +349,7 @@ std::string XdmfArray::printSelf() const
 	return "";
 }
 
-void XdmfArray::swap(boost::shared_ptr<XdmfArray> & array)
+void XdmfArray::swap(boost::shared_ptr<XdmfArray> array)
 {
 	array->mArray.swap(mArray);
 	bool initialized = array->mInitialized;
