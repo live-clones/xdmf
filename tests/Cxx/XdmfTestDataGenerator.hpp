@@ -15,11 +15,7 @@ public:
 	 * 	Cell Attributes = 1
 	 * 	Nodal Attributes = 1
 	 * Total Number of Values = 66
-	 *
 	 */
-	//
-	//
-
 	static boost::shared_ptr<XdmfGrid> createHexahedron()
 	{
 		boost::shared_ptr<XdmfGrid> grid = XdmfGrid::New();
