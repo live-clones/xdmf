@@ -174,6 +174,7 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
     
       XdmfGrid * partition = new XdmfGrid();
       partition->SetName(name.str().c_str());
+      partition->SetDeleteOnGridDelete(true);
 
       int numDimensions = 3;
       if(grid->GetGeometry()->GetGeometryType() == XDMF_GEOMETRY_XY || grid->GetGeometry()->GetGeometryType() == XDMF_GEOMETRY_X_Y)
@@ -237,7 +238,10 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
       for(int j=0; j<grid->GetNumberOfAttributes(); ++j)
       {
         XdmfAttribute * currAttribute = grid->GetAttribute(j);
-        currAttribute->Update();
+        if(currAttribute->GetValues()->GetNumberOfElements() == 0)
+        {
+          currAttribute->Update();
+        }
         switch(currAttribute->GetAttributeCenter())
         {
           case(XDMF_ATTRIBUTE_CENTER_GRID):
@@ -295,7 +299,10 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
       for(int j=0; j<grid->GetNumberOfSets(); ++j)
       {
         XdmfSet * currSet = grid->GetSets(j);
-        currSet->Update();
+				if(currSet->GetIds()->GetNumberOfElements() == 0)
+        {
+	        currSet->Update();
+        }
         switch(currSet->GetSetType())
         {
           case(XDMF_SET_TYPE_CELL):
@@ -359,10 +366,8 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
           }
         }
       }
-      std::cout << "HERE" << std::endl;
     }
   }
-
   return collection;
 }
 
