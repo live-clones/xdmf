@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    vtkXdmfReaderInternal.h
+  Module:    $RCSfile: vtkXdmfReaderInternal.h,v $
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
@@ -307,6 +307,14 @@ public:
     { return this->Grids; }
   vtkXdmfArraySelection* GetSetsSelection()
     { return this->Sets; }
+
+  std::vector<std::string> GetAttributeNames(XdmfGrid* xmfGrid, int attrIndex);
+  int GetNumberOfCellComponents(XdmfGrid* grid, XdmfAttribute* attribute);
+  int GetNumberOfComponents(XdmfGrid* grid, XdmfAttribute* attribute);
+  int GetNumberOfExpectedComponents(XdmfAttribute* xmfAttribute);
+  int GetNumberOfNodeComponents(XdmfGrid * grid, XdmfAttribute * attribute);
+  int GetNumberOfPoints(XdmfGrid * grid);
+  int GetNumberOfValues(XdmfElement * element);
 
 private:
   // Description:

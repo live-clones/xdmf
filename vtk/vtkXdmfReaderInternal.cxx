@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    vtkXdmfReaderInternal.cxx
+  Module:    $RCSfile: vtkXdmfReaderInternal.cxx,v $
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
@@ -18,6 +18,8 @@
 #include "vtkSmartPointer.h"
 #include "vtkVariant.h"
 #include "vtkXdmfDataArray.h"
+
+#include <vtkstd/iterator>
 
 #define USE_IMAGE_DATA // otherwise uniformgrid
 
@@ -666,23 +668,25 @@ void vtkXdmfDomain::CollectLeafMetaData(XdmfGrid* xmfGrid, vtkIdType silParent)
   for (XdmfInt32 kk=0; kk < numAttributes; kk++)
     {
     XdmfAttribute *xmfAttribute = xmfGrid->GetAttribute(kk);
-    const char *name = xmfAttribute->GetName();
-    if (!name)
-      {
-      continue;
-      }
+    std::vector<std::string> names = this->GetAttributeNames(xmfGrid, kk);
     XdmfInt32 attributeCenter = xmfAttribute->GetAttributeCenter();
     if (attributeCenter== XDMF_ATTRIBUTE_CENTER_NODE)
       {
-      this->PointArrays->AddArray(name);
+      for(std::vector<std::string>::const_iterator iter = names.begin(); iter != names.end(); ++iter)
+        {
+        this->PointArrays->AddArray((*iter).c_str());
+        }
       }
     else if (attributeCenter == XDMF_ATTRIBUTE_CENTER_CELL)
       {
-      this->CellArrays->AddArray(name);
+       for(std::vector<std::string>::const_iterator iter = names.begin(); iter != names.end(); ++iter)
+        {
+        this->CellArrays->AddArray((*iter).c_str());
+        }
       }
     else if (attributeCenter== XDMF_ATTRIBUTE_CENTER_GRID && silVertex != -1)
       {
-      this->UpdateGridAttributeInSIL(xmfAttribute, silVertex);
+        this->UpdateGridAttributeInSIL(xmfAttribute, silVertex);
       }
     }
 
@@ -734,7 +738,7 @@ bool vtkXdmfDomain::UpdateGridAttributeInSIL(
   vtkXdmfDataArray* xmfConvertor = vtkXdmfDataArray::New();
   vtkSmartPointer<vtkDataArray> dataArray;
   dataArray.TakeReference(xmfConvertor->FromXdmfArray(
-      xmfDataItem.GetArray()->GetTagName(), 1, 1, 1, 0));
+      xmfDataItem.GetArray()->GetTagName(), 1, 1, 0, 0));
   xmfConvertor->Delete();
 
   if (dataArray->GetNumberOfTuples() != 1 ||
@@ -791,6 +795,247 @@ bool vtkXdmfDomain::UpdateGridAttributeInSIL(
     }
   this->SILBuilder->AddCrossEdge(valueRoot, silVertex);
   return true;
+}
+
+//----------------------------------------------------------------------------
+std::vector<std::string> vtkXdmfDomain::GetAttributeNames(XdmfGrid* xmfGrid, int attrIndex)
+{
+  XdmfAttribute *xmfAttribute = xmfGrid->GetAttribute(attrIndex);
+  const char *name = xmfAttribute->GetName();
+  // Need to split attributes that don't comform to VTK number of components --- for instance
+  // we may want 6 component vectors, but VTK only supports 3 component vectors (x, y, z)
+  // now we need to calculate the expected number of values in the vtk data array to determine
+  // if we should split this attribute into individual components.
+  int numberComponents = this->GetNumberOfComponents(xmfGrid, xmfAttribute);
+  int expectedNumberComponents = this->GetNumberOfExpectedComponents(xmfAttribute);
+
+  std::vector<std::string> names;
+
+  if(expectedNumberComponents == 0)
+    {
+    return names;
+    }
+
+  int tensorLength = 0;
+  if(xmfAttribute->GetAttributeType() == XDMF_ATTRIBUTE_TYPE_TENSOR)
+  {
+    tensorLength = (int)sqrt(numberComponents);
+  }
+
+  if(numberComponents > expectedNumberComponents)
+    {
+    // Need to split!
+    for(int i=0; i<numberComponents; ++i)
+      {
+        std::stringstream newName;
+        newName << setfill('0');
+        if(xmfAttribute->GetAttributeType() == XDMF_ATTRIBUTE_TYPE_TENSOR)
+        {
+          int padding = (int)log10(tensorLength)+1;
+          newName << name << "-" <<  setw(padding) << (int)(i / tensorLength) + 1 << "-" << setw(padding) << (i % tensorLength) + 1;
+        }
+        else
+        {
+          newName << name << "-" << setw((int)log10(numberComponents)+1) << i + 1;
+        }
+        names.push_back(newName.str());
+      }
+    }
+  else
+    {
+      std::string newName = name;
+      names.push_back(newName);
+    }
+}
+
+//-----------------------------------------------------------------------------------
+int vtkXdmfDomain::GetNumberOfCellComponents(XdmfGrid* grid, XdmfAttribute* attribute)
+{
+    int numValues = this->GetNumberOfValues(attribute);
+    int numCells = 0;
+
+    const char * numCellsString = grid->GetTopology()->GetDOM()->GetAttribute(grid->GetTopology()->GetElement(),
+            "NumberOfElements");
+
+    if (numCellsString == NULL) {
+        numCellsString = grid->GetTopology()->GetDOM()->GetAttribute(grid->GetTopology()->GetElement(), "Dimensions");
+
+        if (numCellsString == NULL) {
+            return 0;
+        }
+        numCells = 1;
+
+        std::stringstream stream(numCellsString);
+        std::istream_iterator<std::string> it(stream);
+        std::istream_iterator<std::string> end;
+        std::vector<std::string> tokens(it, end);
+        std::vector<std::string>::const_iterator iter = tokens.begin();
+        for (iter; iter != tokens.end(); ++iter) {
+            int val = atoi((*iter).c_str());
+            if (grid->GetTopology()->GetClass() == XDMF_STRUCTURED) {
+                if (val - 1 > 0) {
+                    numCells *= (val - 1);
+                }
+            }
+            else {
+                if (val > 0) {
+                    numCells *= val;
+                }
+            }
+        }
+    }
+    else {
+        numCells = atoi(numCellsString);
+    }
+    if (numCells == 0 || numValues % numCells != 0) {
+        return 0;
+    }
+    return numValues / numCells;
+}
+
+//----------------------------------------------------------------------------
+int vtkXdmfDomain::GetNumberOfComponents(XdmfGrid* grid, XdmfAttribute* attribute)
+{
+    if (attribute->GetAttributeCenter() == XDMF_ATTRIBUTE_CENTER_NODE) {
+        return this->GetNumberOfNodeComponents(grid, attribute);
+    }
+    else if (attribute->GetAttributeCenter() == XDMF_ATTRIBUTE_CENTER_CELL) {
+        return this->GetNumberOfCellComponents(grid, attribute);
+    }
+    return 0;
+}
+
+//-----------------------------------------------------------------------------
+int vtkXdmfDomain::GetNumberOfNodeComponents(XdmfGrid * grid, XdmfAttribute * attribute)
+{
+    int numValues = this->GetNumberOfValues(attribute);
+    int numPoints = this->GetNumberOfPoints(grid);
+
+    if(numPoints == 0 || numValues % numPoints != 0)
+    {
+        return 0;
+    }
+    return numValues / numPoints;
+}
+
+//-----------------------------------------------------------------------------
+int vtkXdmfDomain::GetNumberOfPoints(XdmfGrid * grid)
+{
+    int numGeometryDataItems = grid->GetGeometry()->GetDOM()->FindNumberOfElements("DataItem",
+            grid->GetGeometry()->GetElement());
+
+    if (numGeometryDataItems == 0) {
+        return 0;
+    }
+
+    int numPoints = 1;
+
+    if (grid->GetGeometry()->GetGeometryType() == XDMF_GEOMETRY_VXVY ||
+        grid->GetGeometry()->GetGeometryType() == XDMF_GEOMETRY_VXVYVZ) {
+        // numPoints = Product of Geometry Shape
+        for (int i = 0; i < numGeometryDataItems; ++i) {
+            XdmfDataItem xmfDataItem;
+            xmfDataItem.SetDOM(grid->GetGeometry()->GetDOM());
+            xmfDataItem.SetElement(grid->GetGeometry()->GetDOM()->FindDataElement(i, grid->GetGeometry()->GetElement()));
+            xmfDataItem.UpdateInformation();
+            int rank = xmfDataItem.GetRank();
+            if (rank < 1) {
+                continue;
+            }
+            XdmfInt64 * shape = new XdmfInt64[rank];
+            xmfDataItem.GetShape(shape);
+            for (int j = 0; j < rank; ++j) {
+                numPoints *= shape[j];
+            }
+            delete[] shape;
+        }
+    }
+    else if (grid->GetGeometry()->GetGeometryType() == XDMF_GEOMETRY_ORIGIN_DXDY
+            || grid->GetGeometry()->GetGeometryType() == XDMF_GEOMETRY_ORIGIN_DXDYDZ) {
+        // numPoints = Product of Topology Shape
+        const char * numCellsString = grid->GetTopology()->GetDOM()->GetAttribute(grid->GetTopology()->GetElement(),
+                "Dimensions");
+        if (numCellsString == NULL) {
+            return 0;
+        }
+        std::stringstream stream(numCellsString);
+        std::istream_iterator<std::string> it(stream);
+        std::istream_iterator<std::string> end;
+        std::vector<std::string> tokens(it, end);
+        std::vector<std::string>::const_iterator iter = tokens.begin();
+        for (iter; iter != tokens.end(); ++iter) {
+            int val = atoi((*iter).c_str());
+            if (val > 0) {
+                numPoints *= val;
+            }
+        }
+    }
+    else {
+        // numPoints = numberOfDataItemValues / numValuesPerPoints
+        numPoints = this->GetNumberOfValues(grid->GetGeometry());
+        if (grid->GetGeometry()->GetGeometryType() == XDMF_GEOMETRY_XY ||
+            grid->GetGeometry()->GetGeometryType() == XDMF_GEOMETRY_X_Y) {
+            numPoints = numPoints / 2;
+        }
+        else {
+            numPoints = numPoints / 3;
+        }
+    }
+    return numPoints;
+}
+
+//----------------------------------------------------------------------------
+int vtkXdmfDomain::GetNumberOfExpectedComponents(XdmfAttribute* xmfAttribute)
+{
+  XdmfInt32 attributeType = xmfAttribute->GetAttributeType();
+  int expectedNumberComponents = 0;
+
+  if(attributeType == XDMF_ATTRIBUTE_TYPE_SCALAR)
+    {
+    expectedNumberComponents = 1;
+    }
+  else if(attributeType == XDMF_ATTRIBUTE_TYPE_VECTOR)
+    {
+    expectedNumberComponents = 3;
+    }
+  else if(attributeType == XDMF_ATTRIBUTE_TYPE_TENSOR)
+    {
+    expectedNumberComponents = 9;
+    }
+  else if(attributeType == XDMF_ATTRIBUTE_TYPE_TENSOR6)
+    {
+    expectedNumberComponents = 6;
+    }
+  else if(attributeType == XDMF_ATTRIBUTE_TYPE_GLOBALID)
+    {
+    expectedNumberComponents = 1;
+    }
+  return expectedNumberComponents;
+}
+
+//---------------------------------------------------------------------------
+int vtkXdmfDomain::GetNumberOfValues(XdmfElement * element)
+{
+    int numVals = 0;
+    for (int i = 0; i < element->GetDOM()->FindNumberOfElements("DataItem", element->GetElement()); ++i) {
+        int currNumVals = 1;
+        XdmfDataItem xmfDataItem;
+        xmfDataItem.SetDOM(element->GetDOM());
+        xmfDataItem.SetElement(element->GetDOM()->FindDataElement(i, element->GetElement()));
+        xmfDataItem.UpdateInformation();
+        int rank = xmfDataItem.GetRank();
+        if (rank < 1) {
+            return 0;
+        }
+        XdmfInt64 * shape = new XdmfInt64[rank];
+        xmfDataItem.GetShape(shape);
+        for (int j = 0; j < rank; ++j) {
+            currNumVals *= shape[j];
+        }
+        delete[] shape;
+        numVals += currNumVals;
+    }
+    return numVals;
 }
 
 //----------------------------------------------------------------------------

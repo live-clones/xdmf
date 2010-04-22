@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    vtkXdmfHeavyData.cxx
+  Module:    $RCSfile: vtkXdmfHeavyData.cxx,v $
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
@@ -38,6 +38,7 @@
 #include "vtkXdmfDataArray.h"
 #include "vtkXdmfReader.h"
 #include "vtkXdmfReaderInternal.h"
+#include "vtkXMLUnstructuredGridWriter.h"
 
 #include <vtkstd/deque>
 #include <assert.h>
@@ -350,7 +351,7 @@ int vtkXdmfHeavyData::GetNumberOfPointsPerCell(int vtk_cell_type)
   case VTK_BIQUADRATIC_QUADRATIC_HEXAHEDRON:
     return 24;
   case VTK_TRIQUADRATIC_HEXAHEDRON:
-    return 24;
+    return 27;
     }
   return -1;
 }
@@ -535,6 +536,12 @@ vtkDataObject* vtkXdmfHeavyData::ReadUnstructuredGrid(XdmfGrid* xmfGrid)
   ugData->SetPoints(points);
   points->Delete();
 
+  vtkXMLUnstructuredGridWriter * writer = vtkXMLUnstructuredGridWriter::New();
+  writer->SetDataModeToAscii();
+  writer->SetFileName("output.vtu");
+  writer->SetInput(ugData);
+  writer->Write();
+ 
   this->ReadAttributes(ugData, xmfGrid);
 
   // Read ghost cell/point information.
@@ -886,92 +893,120 @@ bool vtkXdmfHeavyData::ReadAttributes(
   for (int cc=0; cc < numAttributes; cc++)
     {
     XdmfAttribute* xmfAttribute = xmfGrid->GetAttribute(cc);
-    const char* attrName = xmfAttribute->GetName();
+    std::vector<std::string> attributeNames = this->Domain->GetAttributeNames(xmfGrid, cc);
     int attrCenter = xmfAttribute->GetAttributeCenter();
-    if (!attrName)
+    int i = 0;
+    int numXdmfComponents = attributeNames.size();
+    if(attributeNames.size() == 1)
+    {
+      numXdmfComponents = this->Domain->GetNumberOfComponents(xmfGrid, xmfAttribute); 
+    }
+    for(std::vector<std::string>::const_iterator iter = attributeNames.begin(); iter != attributeNames.end(); ++iter, ++i)
       {
-      vtkWarningWithObjectMacro(this->Reader,
-        "Skipping unnamed attributes.");
-      continue;
-      }
+      //if (!iter)
+      //  {
+      //  vtkWarningWithObjectMacro(this->Reader,
+      //    "Skipping unnamed attributes.");
+      //  continue;
+      //  }
 
-    vtkFieldData * fieldData = 0;
-    // skip disabled arrays.
-    switch (attrCenter)
-      {
-    case XDMF_ATTRIBUTE_CENTER_GRID:
-      fieldData = dataSet->GetFieldData();
-      break;
-
-    case XDMF_ATTRIBUTE_CENTER_CELL:
-      if (!this->Domain->GetCellArraySelection()->ArrayIsEnabled(attrName))
+      vtkFieldData * fieldData = 0;
+      // skip disabled arrays.
+      switch (attrCenter)
         {
-        continue;
-        }
-      fieldData = dataSet->GetCellData();
-      break;
+      case XDMF_ATTRIBUTE_CENTER_GRID:
+        fieldData = dataSet->GetFieldData();
+        break;
 
-    case XDMF_ATTRIBUTE_CENTER_NODE:
-      if (!this->Domain->GetPointArraySelection()->ArrayIsEnabled(attrName))
-        {
-        continue;
-        }
-      fieldData = dataSet->GetPointData();
-      break;
-
-    case XDMF_ATTRIBUTE_CENTER_FACE:
-    case XDMF_ATTRIBUTE_CENTER_EDGE:
-    default:
-      vtkWarningWithObjectMacro(this->Reader,
-        "Skipping attribute " << attrName << " at " <<
-        xmfAttribute->GetAttributeCenterAsString());
-      continue; // unhandled.
-      }
-
-    vtkDataArray* array = this->ReadAttribute(xmfAttribute,
-      data_dimensionality, update_extents);
-    if (array)
-      {
-      array->SetName(attrName);
-      fieldData->AddArray(array);
-      bool is_active = xmfAttribute->GetActive() != 0;
-      vtkDataSetAttributes* attributes =
-        vtkDataSetAttributes::SafeDownCast(fieldData);
-      if (attributes)
-        {
-        // make attribute active.
-        switch (xmfAttribute->GetAttributeType())
+      case XDMF_ATTRIBUTE_CENTER_CELL:
+        if (!this->Domain->GetCellArraySelection()->ArrayIsEnabled((*iter).c_str()))
           {
-        case XDMF_ATTRIBUTE_TYPE_SCALAR:
-          if (is_active || attributes->GetScalars() == NULL)
-            {
-            attributes->SetActiveScalars(attrName);
-            }
-          break;
+          continue;
+          }
+        fieldData = dataSet->GetCellData();
+        break;
 
-        case XDMF_ATTRIBUTE_TYPE_VECTOR:
-          if (is_active || attributes->GetVectors() == NULL)
-            {
-            attributes->SetActiveVectors(attrName);
-            }
-          break;
+      case XDMF_ATTRIBUTE_CENTER_NODE:
+        if (!this->Domain->GetPointArraySelection()->ArrayIsEnabled((*iter).c_str()))
+          {
+          continue;
+          }
+        fieldData = dataSet->GetPointData();
+        break;
 
-        case XDMF_ATTRIBUTE_TYPE_TENSOR:
-        case XDMF_ATTRIBUTE_TYPE_TENSOR6:
-          if (is_active || attributes->GetTensors() == NULL)
-            {
-            attributes->SetActiveTensors(attrName);
+      case XDMF_ATTRIBUTE_CENTER_FACE:
+      case XDMF_ATTRIBUTE_CENTER_EDGE:
+      default:
+        vtkWarningWithObjectMacro(this->Reader,
+          "Skipping attribute " << *iter << " at " <<
+          xmfAttribute->GetAttributeCenterAsString());
+        continue; // unhandled.
+        }
+      if(numXdmfComponents == 0)
+      {
+       vtkWarningWithObjectMacro(this->Reader,
+          "Skipping attribute " << xmfAttribute->GetName() << " which contains an incorrect number of values");
+       continue;
+      }
+      vtkDataArray* array;
+      if(attributeNames.size() == 1)
+      {
+        array = this->ReadAttribute(xmfAttribute, data_dimensionality, -1, numXdmfComponents, update_extents);
+      }
+      else
+      {
+        array = this->ReadAttribute(xmfAttribute, data_dimensionality, i, numXdmfComponents, update_extents);
+      }
+      if (array)
+        {
+        array->SetName((*iter).c_str());
+        fieldData->AddArray(array);
+        bool is_active = xmfAttribute->GetActive() != 0;
+        vtkDataSetAttributes* attributes =
+          vtkDataSetAttributes::SafeDownCast(fieldData);
+        if (attributes)
+          {
+          if(attributeNames.size() > 1)
+            { 
+            attributes->SetActiveScalars((*iter).c_str());
             }
-          break;
+          else
+           {
+            // make attribute active.
+            switch (xmfAttribute->GetAttributeType())
+              {
+            case XDMF_ATTRIBUTE_TYPE_SCALAR:
+              if (is_active || attributes->GetScalars() == NULL)
+                {
+                attributes->SetActiveScalars((*iter).c_str());
+                }
+              break;
 
-        case XDMF_ATTRIBUTE_TYPE_GLOBALID:
-          if (is_active || attributes->GetGlobalIds() == NULL)
-            {
-            attributes->SetActiveGlobalIds(attrName);
+            case XDMF_ATTRIBUTE_TYPE_VECTOR:
+              if (is_active || attributes->GetVectors() == NULL)
+                {
+                attributes->SetActiveVectors((*iter).c_str());
+                }
+              break;
+
+            case XDMF_ATTRIBUTE_TYPE_TENSOR:
+            case XDMF_ATTRIBUTE_TYPE_TENSOR6:
+              if (is_active || attributes->GetTensors() == NULL)
+                {
+                attributes->SetActiveTensors((*iter).c_str());
+                }
+              break;
+
+            case XDMF_ATTRIBUTE_TYPE_GLOBALID:
+              if (is_active || attributes->GetGlobalIds() == NULL)
+                {
+                attributes->SetActiveGlobalIds((*iter).c_str());
+                }
+              }
             }
           }
+        array->Delete();
         }
-      array->Delete();
       }
     }
   return true;
@@ -999,7 +1034,7 @@ void vtkConvertTensor6(T* source, T* dest, vtkIdType numTensors)
 
 //-----------------------------------------------------------------------------
 vtkDataArray* vtkXdmfHeavyData::ReadAttribute(XdmfAttribute* xmfAttribute,
-  int data_dimensionality, int* update_extents/*=0*/)
+  int data_dimensionality, int componentIndex, int numXdmfComponents, int* update_extents/*=0*/)
 {
   if (!xmfAttribute)
     {
@@ -1008,23 +1043,15 @@ vtkDataArray* vtkXdmfHeavyData::ReadAttribute(XdmfAttribute* xmfAttribute,
 
   int attrType = xmfAttribute->GetAttributeType();
   int attrCenter = xmfAttribute->GetAttributeCenter();
-  int numComponents = 1;
 
-  switch (attrType) 
-    {
-  case XDMF_ATTRIBUTE_TYPE_TENSOR :
-    numComponents = 9;
-    break;
-  case XDMF_ATTRIBUTE_TYPE_TENSOR6:
-    numComponents = 6;
-    break;
-  case XDMF_ATTRIBUTE_TYPE_VECTOR:
-    numComponents = 3;
-    break;
-  default :
-    numComponents = 1; 
-    break;
-    }
+  int numVTKComponents = 1;
+  
+  if(componentIndex < 0)
+  {
+    numVTKComponents = this->Domain->GetNumberOfExpectedComponents(xmfAttribute);
+    // Always start at 0
+    componentIndex = 0;
+  }
 
   XdmfDataItem xmfDataItem;
   xmfDataItem.SetDOM(xmfAttribute->GetDOM());
@@ -1084,10 +1111,11 @@ vtkDataArray* vtkXdmfHeavyData::ReadAttribute(XdmfAttribute* xmfAttribute,
     }
 
   vtkXdmfDataArray* xmfConvertor = vtkXdmfDataArray::New();
-  vtkDataArray* dataArray = xmfConvertor->FromXdmfArray(
-    xmfDataItem.GetArray()->GetTagName(), 1, data_rank, numComponents, 0);
-  xmfConvertor->Delete();
   
+  vtkDataArray* dataArray = xmfConvertor->FromXdmfArray(
+    xmfDataItem.GetArray()->GetTagName(), numVTKComponents, numXdmfComponents, componentIndex, 1);
+  xmfConvertor->Delete();
+
   if (attrType == XDMF_ATTRIBUTE_TYPE_TENSOR6)
     {
     // convert Tensor6 to Tensor.
@@ -1323,8 +1351,7 @@ vtkDataSet* vtkXdmfHeavyData::ExtractPoints(XdmfSet* xmfSet,
       {
       continue;
       }
-    vtkDataArray* array = this->ReadAttribute(xmfAttribute,
-      1, NULL);
+    vtkDataArray* array = this->ReadAttribute(xmfAttribute, 1, -1, 1, NULL);
     if (array)
       {
       array->SetName(attrName);
@@ -1402,7 +1429,7 @@ vtkDataSet* vtkXdmfHeavyData::ExtractCells(XdmfSet* xmfSet,
       {
       continue;
       }
-    vtkDataArray* array = this->ReadAttribute(xmfAttribute, 1, NULL);
+    vtkDataArray* array = this->ReadAttribute(xmfAttribute, 1, -1, 1, NULL);
     if (array)
       {
       array->SetName(attrName);
@@ -1491,7 +1518,7 @@ vtkDataSet* vtkXdmfHeavyData::ExtractFaces(XdmfSet* xmfSet, vtkDataSet* dataSet)
       {
       continue;
       }
-    vtkDataArray* array = this->ReadAttribute(xmfAttribute, 1, NULL);
+    vtkDataArray* array = this->ReadAttribute(xmfAttribute, 1, -1, 1, NULL);
     if (array)
       {
       array->SetName(attrName);
@@ -1591,7 +1618,7 @@ vtkDataSet* vtkXdmfHeavyData::ExtractEdges(XdmfSet* xmfSet, vtkDataSet* dataSet)
       {
       continue;
       }
-    vtkDataArray* array = this->ReadAttribute(xmfAttribute, 1, NULL);
+    vtkDataArray* array = this->ReadAttribute(xmfAttribute, 1, -1, 1, NULL);
     if (array)
       {
       array->SetName(attrName);

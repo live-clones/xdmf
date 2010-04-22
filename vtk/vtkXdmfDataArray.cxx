@@ -2,9 +2,9 @@
 /*                               XDMF                              */
 /*                   eXtensible Data Model and Format              */
 /*                                                                 */
-/*  Id : Id  */
-/*  Date : $Date$ */
-/*  Version : $Revision$ */
+/*  Id : $Id: vtkXdmfDataArray.cxx,v 1.9 2009-07-23 21:23:22 kwleiter Exp $  */
+/*  Date : $Date: 2009-07-23 21:23:22 $ */
+/*  Version : $Revision: 1.9 $ */
 /*                                                                 */
 /*  Author:                                                        */
 /*     Jerry A. Clarke                                             */
@@ -38,7 +38,8 @@
 #include "vtkUnsignedShortArray.h"
 
 #include <XdmfArray.h>
-
+#include <XdmfDataItem.h>
+#include <XdmfDOM.h>
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfDataArray);
 
@@ -49,13 +50,12 @@ vtkXdmfDataArray::vtkXdmfDataArray()
   this->vtkArray = NULL;
 }
 
-
 //----------------------------------------------------------------------------
-vtkDataArray *vtkXdmfDataArray::FromXdmfArray( char *ArrayName, int CopyShape,
-  int rank, int Components, int MakeCopy ){
+vtkDataArray *vtkXdmfDataArray::FromXdmfArray( char *ArrayName, int numVTKComponents,
+  int numXDMFComponents, int xdmfComponentStartIndex, int MakeCopy ){
   XdmfArray *array = this->Array;
-    XdmfInt64 components = 1;
-    XdmfInt64 tuples = 0;
+ // XdmfInt64 components = 1;
+  //XdmfInt64 tuples = 0;
   if ( ArrayName != NULL ) {
     array = TagNameToArray( ArrayName );
   }
@@ -118,104 +118,69 @@ vtkDataArray *vtkXdmfDataArray::FromXdmfArray( char *ArrayName, int CopyShape,
     vtkErrorMacro("Cannot create VTK data array: " << array->GetNumberType());
     return 0;
   }
-  if ( CopyShape )
+
+  this->vtkArray->SetNumberOfComponents(numVTKComponents);
+  int numComponentsToCopy = numVTKComponents;
+  if(numVTKComponents > numXDMFComponents)
+  {
+    this->vtkArray->SetNumberOfTuples(array->GetNumberOfElements() / numXDMFComponents);
+    for(int i=numXDMFComponents; i<numVTKComponents; ++i)
     {
-    if  ( array->GetRank() > rank + 1 )
-      {
-      this->vtkArray->Delete();
-      this->vtkArray = 0;
-      vtkErrorMacro("Rank of Xdmf array is more than 1 + rank of dataset");
-      return 0;
-      }
-    if ( array->GetRank() > rank ) 
-      {
-      components = array->GetDimension( rank );
-      }
-    tuples = array->GetNumberOfElements() / components;
-    /// this breaks
-    components = Components;
-    tuples = array->GetNumberOfElements() / components;
-     //cout << "Tuples: " << tuples << " components: " << components << endl;
-     //cout << "Rank: " << rank << endl;
-    this->vtkArray->SetNumberOfComponents( components );
-    if(MakeCopy) this->vtkArray->SetNumberOfTuples( tuples );
-    } 
-  else 
-    {
-    this->vtkArray->SetNumberOfComponents( 1 );
-    if(MakeCopy) this->vtkArray->SetNumberOfTuples( array->GetNumberOfElements() );
+      this->vtkArray->FillComponent(i, 0);
     }
-  //cout << "Number type: " << array->GetNumberType() << endl;
+    numComponentsToCopy = numXDMFComponents;
+  }
+  else
+  {
+    this->vtkArray->SetNumberOfTuples(array->GetNumberOfElements() / numXDMFComponents);
+  }
+
+  int numVTKValues = this->vtkArray->GetNumberOfComponents() * this->vtkArray->GetNumberOfTuples();
+  int xdmfStartIndex = xdmfComponentStartIndex;
+  int xdmfStride = numXDMFComponents;
+
+  // We can't take the pointer --- some rearranging must be done.
+  if(numVTKComponents != numXDMFComponents)
+  {
+    MakeCopy = 1;
+  }
+
   if(MakeCopy){
   switch( array->GetNumberType() ){
   case XDMF_INT8_TYPE :
-    array->GetValues( 0,
-      ( XDMF_8_INT*)this->vtkArray->GetVoidPointer( 0 ),
-      array->GetNumberOfElements() );  
+    this->CopyXdmfArray<XdmfInt8>(vtkArray, array, xdmfStartIndex, xdmfStride, numComponentsToCopy);
     break;
   case XDMF_UINT8_TYPE :
-    array->GetValues( 0,
-      ( XDMF_8_U_INT*)this->vtkArray->GetVoidPointer( 0 ),
-      array->GetNumberOfElements() );  
+    this->CopyXdmfArray<XdmfUInt8>(vtkArray, array, xdmfStartIndex, xdmfStride, numComponentsToCopy);
     break;
   case XDMF_INT16_TYPE :
-    array->GetValues( 0,
-      ( XDMF_16_INT*)this->vtkArray->GetVoidPointer( 0 ),
-      array->GetNumberOfElements() );  
+    this->CopyXdmfArray<XdmfInt16>(vtkArray, array, xdmfStartIndex, xdmfStride, numComponentsToCopy);
     break;
   case XDMF_UINT16_TYPE :
-    array->GetValues( 0,
-      ( XDMF_16_U_INT*)this->vtkArray->GetVoidPointer( 0 ),
-      array->GetNumberOfElements() );  
+    this->CopyXdmfArray<XdmfUInt16>(vtkArray, array, xdmfStartIndex, xdmfStride, numComponentsToCopy);
     break;
   case XDMF_INT32_TYPE :
-    array->GetValues( 0,
-      (XDMF_32_INT *)this->vtkArray->GetVoidPointer( 0 ),
-      array->GetNumberOfElements() );  
+    this->CopyXdmfArray<XdmfInt32>(vtkArray, array, xdmfStartIndex, xdmfStride, numComponentsToCopy);
     break;
   case XDMF_UINT32_TYPE :
-    array->GetValues( 0,
-      (XDMF_32_U_INT *)this->vtkArray->GetVoidPointer( 0 ),
-      array->GetNumberOfElements() );  
+    this->CopyXdmfArray<XdmfUInt32>(vtkArray, array, xdmfStartIndex, xdmfStride, numComponentsToCopy);
     break;
   case XDMF_INT64_TYPE :
-    array->GetValues( 0,
-      (XDMF_64_INT *)this->vtkArray->GetVoidPointer( 0 ),
-      array->GetNumberOfElements() );  
+    this->CopyXdmfArray<XdmfInt64>(vtkArray, array, xdmfStartIndex, xdmfStride, numComponentsToCopy);
     break;
   case XDMF_FLOAT32_TYPE :
-    array->GetValues( 0,
-      ( float *)this->vtkArray->GetVoidPointer( 0 ),
-      array->GetNumberOfElements() );  
+    this->CopyXdmfArray<XdmfFloat32>(vtkArray, array, xdmfStartIndex, xdmfStride, numComponentsToCopy);
     break;
   case XDMF_FLOAT64_TYPE :
-    array->GetValues( 0,
-      ( double *)this->vtkArray->GetVoidPointer( 0 ),
-      array->GetNumberOfElements() );  
+    this->CopyXdmfArray<XdmfFloat64>(vtkArray, array, xdmfStartIndex, xdmfStride, numComponentsToCopy);
     break;
   default :
-    if ( array->GetNumberOfElements() > 0 )
-      {
-      //cout << "Manual idx" << endl;
-      //cout << "Tuples: " << vtkArray->GetNumberOfTuples() << endl;
-      //cout << "Components: " << vtkArray->GetNumberOfComponents() << endl;
-      //cout << "Elements: " << array->GetNumberOfElements() << endl;
-      vtkIdType jj, kk;
-      vtkIdType idx = 0;
-      for ( jj = 0; jj < vtkArray->GetNumberOfTuples(); jj ++ )
-        {
-        for ( kk = 0; kk < vtkArray->GetNumberOfComponents(); kk ++ )
-          {
-          double val = array->GetValueAsFloat64(idx);
-          //cout << "Value: " << val << endl;
-          vtkArray->SetComponent(jj, kk, val);
-          idx ++;
-          }
-        }
-      }
+    this->CopyXdmfArray<XdmfFloat64>(vtkArray, array, xdmfStartIndex, xdmfStride, numComponentsToCopy);
     break;
+    }
   }
-  }else{
+  else
+  {
   switch( array->GetNumberType() ){
   case XDMF_INT8_TYPE :
     {
@@ -224,7 +189,7 @@ vtkDataArray *vtkXdmfDataArray::FromXdmfArray( char *ArrayName, int CopyShape,
         XdmfErrorMessage("Cannot downcast data array");
         return(0);
     }
-    chara->SetArray((char *)array->GetDataPointer(), components * tuples, 0);
+    chara->SetArray((char *)array->GetDataPointer(), numVTKValues, 0);
     }
     break;
   case XDMF_UINT8_TYPE :
@@ -234,7 +199,7 @@ vtkDataArray *vtkXdmfDataArray::FromXdmfArray( char *ArrayName, int CopyShape,
         XdmfErrorMessage("Cannot downcast ucharata array");
         return(0);
     }
-    uchara->SetArray((unsigned char *)array->GetDataPointer(), components * tuples, 0);
+    uchara->SetArray((unsigned char *)array->GetDataPointer(), numVTKValues, 0);
     }
     break;
   case XDMF_INT16_TYPE :
@@ -244,17 +209,17 @@ vtkDataArray *vtkXdmfDataArray::FromXdmfArray( char *ArrayName, int CopyShape,
         XdmfErrorMessage("Cannot downcast data array");
         return(0);
     }
-    shorta->SetArray((short *)array->GetDataPointer(), components * tuples, 0);
+    shorta->SetArray((short *)array->GetDataPointer(), numVTKValues, 0);
     }
     break;
   case XDMF_UINT16_TYPE :
     {
-    vtkUnsignedShortArray *ushorta = vtkUnsignedShortArray::SafeDownCast(this->vtkArray);
-    if(!ushorta){
-        XdmfErrorMessage("Cannot downcast ushortata array");
+    vtkUnsignedCharArray *uchara = vtkUnsignedCharArray::SafeDownCast(this->vtkArray);
+    if(!uchara){
+        XdmfErrorMessage("Cannot downcast ucharata array");
         return(0);
     }
-    ushorta->SetArray((unsigned short *)array->GetDataPointer(), components * tuples, 0);
+    uchara->SetArray((unsigned char *)array->GetDataPointer(), numVTKValues, 0);
     }
     break;
   case XDMF_INT32_TYPE :
@@ -264,7 +229,7 @@ vtkDataArray *vtkXdmfDataArray::FromXdmfArray( char *ArrayName, int CopyShape,
         XdmfErrorMessage("Cannot downcast intata array");
         return(0);
     }
-    inta->SetArray((int *)array->GetDataPointer(), components * tuples, 0);
+    inta->SetArray((int *)array->GetDataPointer(), numVTKValues, 0);
     }
     break;
   case XDMF_UINT32_TYPE :
@@ -274,7 +239,7 @@ vtkDataArray *vtkXdmfDataArray::FromXdmfArray( char *ArrayName, int CopyShape,
         XdmfErrorMessage("Cannot downcast uintata array");
         return(0);
     }
-    uinta->SetArray((unsigned int *)array->GetDataPointer(), components * tuples, 0);
+    uinta->SetArray((unsigned int *)array->GetDataPointer(), numVTKValues, 0);
     }
     break;
   case XDMF_INT64_TYPE :
@@ -284,7 +249,7 @@ vtkDataArray *vtkXdmfDataArray::FromXdmfArray( char *ArrayName, int CopyShape,
         XdmfErrorMessage("Cannot downcast longa array");
         return(0);
     }
-    longa->SetArray((long *)array->GetDataPointer(), components * tuples, 0);
+    longa->SetArray((long *)array->GetDataPointer(), numVTKValues, 0);
     }
     break;
   case XDMF_FLOAT32_TYPE :
@@ -294,7 +259,7 @@ vtkDataArray *vtkXdmfDataArray::FromXdmfArray( char *ArrayName, int CopyShape,
         XdmfErrorMessage("Cannot downcast floatata array");
         return(0);
     }
-    floata->SetArray((float *)array->GetDataPointer(), components * tuples, 0);
+    floata->SetArray((float *)array->GetDataPointer(), numVTKValues, 0);
     }
     break;
   case XDMF_FLOAT64_TYPE :
@@ -304,7 +269,7 @@ vtkDataArray *vtkXdmfDataArray::FromXdmfArray( char *ArrayName, int CopyShape,
         XdmfErrorMessage("Cannot downcast doubleata array");
         return(0);
     }
-    doublea->SetArray((double *)array->GetDataPointer(), components * tuples, 0);
+    doublea->SetArray((double *)array->GetDataPointer(), numVTKValues, 0);
     }
     break;
   default :
@@ -315,6 +280,24 @@ vtkDataArray *vtkXdmfDataArray::FromXdmfArray( char *ArrayName, int CopyShape,
   array->Reset();
   }
   return( this->vtkArray );
+}
+
+//----------------------------------------------------------------------------
+template <typename T>
+void vtkXdmfDataArray::CopyXdmfArray(vtkDataArray * vtkArray, XdmfArray * xdmfArray, int xdmfStartIndex, int xdmfStride, int numComponentsToCopy)
+{
+  int idx = xdmfStartIndex; 
+  for ( vtkIdType jj = 0; jj < vtkArray->GetNumberOfTuples(); jj ++ )
+    {
+    for ( vtkIdType kk = 0; kk < numComponentsToCopy; kk ++ )
+      {
+      T val;
+      xdmfArray->GetValues(idx+kk, &val, 1);
+      //cout << "Value: " << val << endl;
+      vtkArray->SetComponent(jj, kk, val);
+      }
+      idx+=xdmfStride;
+    }
 }
 
 //----------------------------------------------------------------------------

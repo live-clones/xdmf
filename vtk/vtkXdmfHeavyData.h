@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    vtkXdmfHeavyData.h
+  Module:    $RCSfile: vtkXdmfHeavyData.h,v $
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
@@ -20,6 +20,9 @@
 
 #include "XdmfDataItem.h"
 #include "XdmfGrid.h"
+
+#include <string>
+#include <vector>
 
 class vtkDataArray;
 class vtkDataObject;
@@ -121,8 +124,8 @@ private:
   // Reads an attribute.
   // If update_extents are non-null, then we are reading structured attributes
   // and we read only the sub-set specified by update_extents.
-  vtkDataArray* ReadAttribute(XdmfAttribute* xmfAttribute,
-    int data_dimensionality, int* update_extents=0);
+  vtkDataArray* ReadAttribute(XdmfAttribute* xmfAttribute, int data_dimensionality,
+    int componentIndex, int numXdmfComponents, int* update_extents=0);
 
   // Description:
   // Read sets that mark ghost cells/nodes and then create attribute arrays for

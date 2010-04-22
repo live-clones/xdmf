@@ -2,9 +2,9 @@
 /*                               XDMF                              */
 /*                   eXtensible Data Model and Format              */
 /*                                                                 */
-/*  Id : Id  */
-/*  Date : $Date$ */
-/*  Version : $Revision$ */
+/*  Id : $Id: vtkXdmfDataArray.h,v 1.3 2008-09-16 12:52:12 clarke Exp $  */
+/*  Date : $Date: 2008-09-16 12:52:12 $ */
+/*  Version : $Revision: 1.3 $ */
 /*                                                                 */
 /*  Author:                                                        */
 /*     Jerry A. Clarke                                             */
@@ -26,6 +26,7 @@
 #define _vtkXdmfDataArray_h
 
 #include <XdmfArray.h>
+#include <XdmfElement.h>
 #include <vtkDataArray.h>
 #include <vtkFloatArray.h>
 
@@ -42,8 +43,9 @@ public:
   char *ToArray( void ) {
     return( this->ToXdmfArray() );
     }
-  vtkDataArray *FromXdmfArray( char *ArrayName = NULL, int CopyShape = 1, 
-   int rank = 1, int Components = 1 , int MakeCopy = 1);
+  vtkDataArray *FromXdmfArray( char *ArrayName = NULL, int numVTKComponents = 1,
+    int numXDMFComponents = 1, int xdmfComponentStartIndex = 0, int MakeCopy = 1 );
+
   char *ToXdmfArray( vtkDataArray *DataArray = NULL, int CopyShape = 1 );
 
   void SetArray( char *TagName ) {
@@ -77,5 +79,6 @@ private:
   XdmfArray  *Array;
   vtkXdmfDataArray(const vtkXdmfDataArray&); // Not implemented
   void operator=(const vtkXdmfDataArray&); // Not implemented
+  template<typename T> void CopyXdmfArray(vtkDataArray * vtkArray, XdmfArray * xdmfArray, int xdmfStartIndex, int xdmfStride, int numComponentsToCopy);
 };
 #endif /* _vtkXdmfDataArray_h */
