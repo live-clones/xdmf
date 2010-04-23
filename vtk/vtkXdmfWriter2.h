@@ -55,7 +55,7 @@ class VTK_EXPORT vtkXdmfWriter2 : public vtkDataObjectAlgorithm
 {
 public:
   static vtkXdmfWriter2 *New();
-  vtkTypeRevisionMacro(vtkXdmfWriter2,vtkDataObjectAlgorithm);
+  vtkTypeMacro(vtkXdmfWriter2,vtkDataObjectAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:

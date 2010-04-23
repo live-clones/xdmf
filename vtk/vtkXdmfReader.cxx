@@ -88,7 +88,6 @@ private:
 vtkStandardNewMacro(vtkXdmfReaderTester);
 
 vtkStandardNewMacro(vtkXdmfReader);
-vtkCxxRevisionMacro(vtkXdmfReader, "1.74");
 //----------------------------------------------------------------------------
 vtkXdmfReader::vtkXdmfReader()
 {
