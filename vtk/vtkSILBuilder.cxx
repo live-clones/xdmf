@@ -21,7 +21,6 @@
 #include "vtkDataSetAttributes.h"
 
 vtkStandardNewMacro(vtkSILBuilder);
-vtkCxxRevisionMacro(vtkSILBuilder, "1.1");
 vtkCxxSetObjectMacro(vtkSILBuilder, SIL, vtkMutableDirectedGraph);
 //----------------------------------------------------------------------------
 vtkSILBuilder::vtkSILBuilder()

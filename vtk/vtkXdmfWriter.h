@@ -46,7 +46,7 @@ class VTK_EXPORT vtkXdmfWriter : public vtkProcessObject
 {
 public:
   static vtkXdmfWriter *New();
-  vtkTypeRevisionMacro(vtkXdmfWriter,vtkProcessObject);
+  vtkTypeMacro(vtkXdmfWriter,vtkProcessObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:

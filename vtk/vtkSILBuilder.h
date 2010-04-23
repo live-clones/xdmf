@@ -34,7 +34,7 @@ class VTK_EXPORT vtkSILBuilder : public vtkObject
 {
 public:
   static vtkSILBuilder* New();
-  vtkTypeRevisionMacro(vtkSILBuilder, vtkObject);
+  vtkTypeMacro(vtkSILBuilder, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description

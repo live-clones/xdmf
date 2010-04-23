@@ -129,7 +129,6 @@ struct vtkXdmfWriterInternal
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkXdmfWriter);
-vtkCxxRevisionMacro(vtkXdmfWriter, "1.7");
 
 //----------------------------------------------------------------------------
 vtkXdmfWriter::vtkXdmfWriter()

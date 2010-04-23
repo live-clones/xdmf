@@ -42,7 +42,7 @@ class VTK_EXPORT vtkXdmfReader : public vtkDataReader
 {
 public:
   static vtkXdmfReader* New();
-  vtkTypeRevisionMacro(vtkXdmfReader, vtkDataReader);
+  vtkTypeMacro(vtkXdmfReader, vtkDataReader);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Until needed, multiple domains are not supported.
