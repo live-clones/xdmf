@@ -41,6 +41,28 @@ private:
 	const int mValuesStride;
 };
 
+template<typename T>
+class XdmfArray::Resize : public boost::static_visitor <void> {
+public:
+
+	Resize(const unsigned int numValues, const T & val) :
+		mNumValues(numValues),
+		mVal(val)
+	{
+	}
+
+	template<typename U>
+	void operator()(boost::shared_ptr<std::vector<U> > & array) const
+	{
+		array->resize(mNumValues, (U)mVal);
+	}
+
+private:
+
+	const unsigned int mNumValues;
+	const T & mVal;
+};
+
 struct XdmfArray::NullDeleter
 {
     void operator()(void const *) const
@@ -106,6 +128,20 @@ boost::shared_ptr<std::vector<T> > XdmfArray::initialize()
 	mArray = newArray;
 	mHaveArray = true;
 	return newArray;
+}
+
+template<typename T>
+void XdmfArray::resize(const unsigned int numValues, const T & val)
+{
+	if(mHaveArrayPointer)
+	{
+		internalizeArrayPointer();
+	}
+	if(!mHaveArray)
+	{
+		initialize<T>();
+	}
+	return boost::apply_visitor(Resize<T>(numValues, val), mArray);
 }
 
 template<typename T>
@@ -176,10 +212,6 @@ bool XdmfArray::swap(std::vector<T> & array)
 	{
 		boost::shared_ptr<std::vector<T> > currArray = boost::get<boost::shared_ptr<std::vector<T> > >(mArray);
 		currArray->swap(array);
-		//if(currArray->size() == 0)
-		//{
-		//	mHaveArray = false;
-		//}
 		return true;
 	}
 	catch(const boost::bad_get& exception)

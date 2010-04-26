@@ -147,13 +147,23 @@ public:
 	virtual std::string printSelf() const;
 
 	/**
-	 * Releases all data held by this XdmfArray.
+	 * Release all data held by this XdmfArray.
 	 */
 	void releaseData()
 	{
 		releaseArray();
 		releaseArrayPointer();
 	}
+
+	/**
+	 * Resizes the XdmfArray to contain numValues.  If numValues is larger than the current size, append values to end equal
+	 * to val.  If numValues is less than the current size, values at indices larger than numValues are removed.
+	 *
+	 * @param numValues the number of values to resize this array to.
+	 * @param val the number to initialized newly created values to, if needed.
+	 */
+	template<typename T>
+	void resize(const unsigned int numValues, const T & val);
 
 	/**
 	 * Sets the values of this array to the values stored in the arrayPointer array.  No copy is made.  Modifications to the array are
@@ -243,6 +253,10 @@ private:
 	class GetValuesString;
 	class InternalizeArrayPointer;
 	class NewArray;
+
+	template<typename T>
+	class Resize;
+
 
 	struct NullDeleter;
 

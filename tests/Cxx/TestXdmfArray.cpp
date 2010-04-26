@@ -222,5 +222,17 @@ int main(int argc, char* argv[])
 	assert(array5->getSize() == 0);
 	assert(array7->getSize() == 3);
 
+	//
+	// Various STL like functions
+	//
+	boost::shared_ptr<XdmfArray> array8 = XdmfArray::New();
+	array8->copyValues(0, &values[0], 4, 1, 1);
+	array8->resize(5, 0);
+	assert(array8->getValuesString().compare("1 2 3 4 0 ") == 0);
+	array8->resize(3, 0);
+	assert(array8->getValuesString().compare("1 2 3 ") == 0);
+	array8->resize(8, 1.1);
+	assert(array8->getValuesString().compare("1 2 3 1 1 1 1 1 ") == 0);
+
 	return 0;
 }
