@@ -62,6 +62,20 @@ private:
 	const int mValuesStride;
 };
 
+class XdmfArray::GetCapacity : public boost::static_visitor <unsigned int> {
+public:
+
+	GetCapacity()
+	{
+	}
+
+	template<typename T>
+	unsigned int operator()(const boost::shared_ptr<std::vector<T> > & array) const
+	{
+		return array->capacity();
+	}
+};
+
 class XdmfArray::GetHDF5Type : public boost::static_visitor <hid_t> {
 public:
 
@@ -374,10 +388,30 @@ public:
 	}
 };
 
+class XdmfArray::Reserve : public boost::static_visitor <void> {
+public:
+
+	Reserve(const unsigned int size):
+		mSize(size)
+	{
+	}
+
+	template<typename T>
+	void operator()(boost::shared_ptr<std::vector<T> > & array) const
+	{
+		array->reserve(mSize);
+	}
+
+private:
+
+	const unsigned int mSize;
+};
+
 XdmfArray::XdmfArray() :
 	mHaveArray(false),
 	mHaveArrayPointer(false),
-	mArrayPointerNumValues(0)
+	mArrayPointerNumValues(0),
+	mTmpReserveSize(0)
 {
 	std::cout << "Created Array " << this << std::endl;
 }
@@ -410,6 +444,15 @@ void XdmfArray::clear()
 	{
 		return boost::apply_visitor(Clear(), mArray);
 	}
+}
+
+unsigned int XdmfArray::getCapacity() const
+{
+	if(mHaveArray)
+	{
+		return boost::apply_visitor(GetCapacity(), mArray);
+	}
+	return 0;
 }
 
 hid_t XdmfArray::getHDF5Type() const
@@ -515,6 +558,22 @@ void XdmfArray::releaseArrayPointer()
 	boost::shared_array<const char> emptyArrayPointer;
 	mArrayPointer = emptyArrayPointer;
 	mHaveArrayPointer = false;
+}
+
+void XdmfArray::reserve(const unsigned int size)
+{
+	if(mHaveArrayPointer)
+	{
+		internalizeArrayPointer();
+	}
+	if(!mHaveArray)
+	{
+		mTmpReserveSize = size;
+	}
+	else
+	{
+		boost::apply_visitor(Reserve(size), mArray);
+	}
 }
 
 void XdmfArray::swap(boost::shared_ptr<XdmfArray> array)

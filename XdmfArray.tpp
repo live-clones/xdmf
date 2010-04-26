@@ -125,6 +125,11 @@ boost::shared_ptr<std::vector<T> > XdmfArray::initialize()
 	}
 	// Set type of variant to type of pointer
 	boost::shared_ptr<std::vector<T> > newArray(new std::vector<T>());
+	if(mTmpReserveSize > 0)
+	{
+		newArray->reserve(mTmpReserveSize);
+		mTmpReserveSize = 0;
+	}
 	mArray = newArray;
 	mHaveArray = true;
 	return newArray;

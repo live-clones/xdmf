@@ -225,6 +225,10 @@ int main(int argc, char* argv[])
 	//
 	// Various STL like functions
 	//
+
+	/**
+	 * Resize
+	 */
 	boost::shared_ptr<XdmfArray> array8 = XdmfArray::New();
 	array8->copyValues(0, &values[0], 4, 1, 1);
 	array8->resize(5, 0);
@@ -233,6 +237,12 @@ int main(int argc, char* argv[])
 	assert(array8->getValuesString().compare("1 2 3 ") == 0);
 	array8->resize(8, 1.1);
 	assert(array8->getValuesString().compare("1 2 3 1 1 1 1 1 ") == 0);
+
+	/**
+	 * Reserve / Capacity
+	 */
+	array8->reserve(50);
+	assert(array8->getCapacity() >= 50);
 
 	return 0;
 }

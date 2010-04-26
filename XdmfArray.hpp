@@ -78,6 +78,11 @@ public:
 	virtual void clear();
 
 	/**
+	 * Get the capacity of this array (the number of values this array can store without reallocation).
+	 */
+	unsigned int getCapacity() const;
+
+	/**
 	 * Get the hdf5 data type of this array.
 	 *
 	 * @return a hid_t value containing the hdf5 data type for the array.
@@ -154,6 +159,13 @@ public:
 		releaseArray();
 		releaseArrayPointer();
 	}
+
+	/**
+	 * Set the capacity of the XdmfArray to at least size.
+	 *
+	 * @param size the capacity to set this XdmfArray to.
+	 */
+	void reserve(const unsigned int size);
 
 	/**
 	 * Resizes the XdmfArray to contain numValues.  If numValues is larger than the current size, append values to end equal
@@ -245,6 +257,7 @@ private:
 	template<typename T>
 	class CopyValues;
 
+	class GetCapacity;
 	class GetHDF5Type;
 	class GetPrecision;
 	class GetSize;
@@ -253,10 +266,10 @@ private:
 	class GetValuesString;
 	class InternalizeArrayPointer;
 	class NewArray;
+	class Reserve;
 
 	template<typename T>
 	class Resize;
-
 
 	struct NullDeleter;
 
@@ -305,6 +318,7 @@ private:
 	int mArrayPointerNumValues;
 	bool mHaveArray;
 	bool mHaveArrayPointer;
+	int mTmpReserveSize;
 };
 
 #include "XdmfArray.tpp"
