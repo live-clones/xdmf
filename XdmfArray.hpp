@@ -58,7 +58,7 @@ public:
 	 * @param arrayStride number of values to stride in this array between each copy.
 	 * @param valuesStride number of values to stride in the XdmfArray between each copy.
 	 */
-	void copyValues(const int startIndex, const boost::shared_ptr<const XdmfArray> values, const int valuesStartIndex= 0, const int numValues = 1, const int arrayStride = 1, const int valuesStride = 1);
+	void copyValues(const unsigned int startIndex, const boost::shared_ptr<const XdmfArray> values, const unsigned int valuesStartIndex= 0, const unsigned int numValues = 1, const unsigned int arrayStride = 1, const unsigned int valuesStride = 1);
 
 	/**
 	 * Copy values from an array into this array.
@@ -70,7 +70,7 @@ public:
 	 * @param valuesStride number of values to stride in the pointer between each copy.
 	 */
 	template<typename T>
-	void copyValues(const int startIndex, const T * const valuesPointer, const int numValues = 1, const int arrayStride = 1, const int valuesStride = 1);
+	void copyValues(const unsigned int startIndex, const T * const valuesPointer, const unsigned int numValues = 1, const unsigned int arrayStride = 1, const unsigned int valuesStride = 1);
 
 	/**
 	 * Remove all values from this array
@@ -79,29 +79,31 @@ public:
 
 	/**
 	 * Get the capacity of this array (the number of values this array can store without reallocation).
+	 *
+	 * @return the capacity of this array.
 	 */
 	unsigned int getCapacity() const;
 
 	/**
 	 * Get the hdf5 data type of this array.
 	 *
-	 * @return a hid_t value containing the hdf5 data type for the array.
+	 * @return the hdf5 data type for the array.
 	 */
 	virtual hid_t getHDF5Type() const;
 
 	/**
 	 * Get the precision, in bytes, of the data type of this array.
 	 *
-	 * @return an int containing the precision, in bytes, of the data type of this array.
+	 * @return the precision, in bytes, of the data type of this array.
 	 */
-	virtual int getPrecision() const;
+	virtual unsigned int getPrecision() const;
 
 	/**
 	 * Get the number of values stored in this array.
 	 *
-	 * @return an int containing the number of values stored in this array.
+	 * @return the number of values stored in this array.
 	 */
-	virtual int getSize() const;
+	virtual unsigned int getSize() const;
 
 	/**
 	 * Get the data type of this array.
@@ -192,7 +194,7 @@ public:
 	 * @param transferOwnership whether to transfer responsibility for deletion of the array to XdmfArray.
 	 */
 	template<typename T>
-	void setValues(const T * const arrayPointer, const int numValues, const bool transferOwnership = 0);
+	void setValues(const T * const arrayPointer, const unsigned int numValues, const bool transferOwnership = 0);
 
 	/**
 	 * Sets the values of this array to the values stored in the vector.  No copy is made.  The caller of this method retains
@@ -315,10 +317,10 @@ private:
 
 	ArrayVariant mArray;
 	ArrayPointerVariant mArrayPointer;
-	int mArrayPointerNumValues;
+	unsigned int mArrayPointerNumValues;
 	bool mHaveArray;
 	bool mHaveArrayPointer;
-	int mTmpReserveSize;
+	unsigned int mTmpReserveSize;
 };
 
 #include "XdmfArray.tpp"

@@ -26,7 +26,7 @@ public:
 class XdmfArray::CopyArrayValues : public boost::static_visitor <void> {
 public:
 
-	CopyArrayValues(const int startIndex, const int valuesStartIndex, const int numValues, const int arrayStride, const int valuesStride) :
+	CopyArrayValues(const unsigned int startIndex, const unsigned int valuesStartIndex, const unsigned int numValues, const unsigned int arrayStride, const unsigned int valuesStride) :
 		mStartIndex(startIndex),
 		mValuesStartIndex(valuesStartIndex),
 		mNumValues(numValues),
@@ -38,7 +38,7 @@ public:
 	template<typename T, typename U>
 	void operator()(const boost::shared_ptr<std::vector<T> > & array, const boost::shared_ptr<std::vector<U> > & arrayToCopy) const
 	{
-		int size = mStartIndex + mNumValues;
+		unsigned int size = mStartIndex + mNumValues;
 		if(mArrayStride > 1)
 		{
 			size = mStartIndex + mNumValues * mArrayStride - 1;
@@ -55,11 +55,11 @@ public:
 
 private:
 
-	const int mStartIndex;
-	const int mValuesStartIndex;
-	const int mNumValues;
-	const int mArrayStride;
-	const int mValuesStride;
+	const unsigned int mStartIndex;
+	const unsigned int mValuesStartIndex;
+	const unsigned int mNumValues;
+	const unsigned int mArrayStride;
+	const unsigned int mValuesStride;
 };
 
 class XdmfArray::GetCapacity : public boost::static_visitor <unsigned int> {
@@ -141,66 +141,66 @@ public:
 	}
 };
 
-class XdmfArray::GetPrecision : public boost::static_visitor <int> {
+class XdmfArray::GetPrecision : public boost::static_visitor <unsigned int> {
 public:
 
 	GetPrecision()
 	{
 	}
 
-	int getPrecision(const char * const) const
+	unsigned int getPrecision(const char * const) const
 	{
 		return 1;
 	}
 
-	int getPrecision(const short * const) const
+	unsigned int getPrecision(const short * const) const
 	{
 		return 2;
 	}
 
-	int getPrecision(const int * const) const
+	unsigned int getPrecision(const int * const) const
 	{
 		return 4;
 	}
 
-	int getPrecision(const long * const) const
+	unsigned int getPrecision(const long * const) const
 	{
 		return 8;
 	}
 
-	int getPrecision(const float * const) const
+	unsigned int getPrecision(const float * const) const
 	{
 		return 4;
 	}
 
-	int getPrecision(const double * const) const
+	unsigned int getPrecision(const double * const) const
 	{
 		return 8;
 	}
 
-	int getPrecision(const unsigned char * const) const
+	unsigned int getPrecision(const unsigned char * const) const
 	{
 		return 1;
 	}
 
-	int getPrecision(const unsigned short * const) const
+	unsigned int getPrecision(const unsigned short * const) const
 	{
 		return 2;
 	}
 
-	int getPrecision(const unsigned int * const) const
+	unsigned int getPrecision(const unsigned int * const) const
 	{
 		return 4;
 	}
 
 	template<typename T>
-	int operator()(const boost::shared_ptr<std::vector<T> > & array) const
+	unsigned int operator()(const boost::shared_ptr<std::vector<T> > & array) const
 	{
 		return this->getPrecision(&(array.get()->operator[](0)));
 	}
 
 	template<typename T>
-	int operator()(const boost::shared_array<const T> & array) const
+	unsigned int operator()(const boost::shared_array<const T> & array) const
 	{
 		return this->getPrecision(array.get());
 	}
@@ -271,7 +271,7 @@ public:
 	}
 };
 
-class XdmfArray::GetSize : public boost::static_visitor <int> {
+class XdmfArray::GetSize : public boost::static_visitor <unsigned int> {
 public:
 
 	GetSize()
@@ -279,7 +279,7 @@ public:
 	}
 
 	template<typename T>
-	int operator()(const boost::shared_ptr<std::vector<T> > & array) const
+	unsigned int operator()(const boost::shared_ptr<std::vector<T> > & array) const
 	{
 		return array->size();
 	}
@@ -348,7 +348,7 @@ public:
 
 private:
 
-	const int mArrayPointerNumValues;
+	const unsigned int mArrayPointerNumValues;
 };
 
 class XdmfArray::InternalizeArrayPointer : public boost::static_visitor <void> {
@@ -421,7 +421,7 @@ XdmfArray::~XdmfArray()
 	std::cout << "Deleted Array " << this << std::endl;
 }
 
-void XdmfArray::copyValues(const int startIndex, const boost::shared_ptr<const XdmfArray> values, const int valuesStartIndex, const int numValues, const int arrayStride, const int valuesStride)
+void XdmfArray::copyValues(const unsigned int startIndex, const boost::shared_ptr<const XdmfArray> values, const unsigned int valuesStartIndex, const unsigned int numValues, const unsigned int arrayStride, const unsigned int valuesStride)
 {
 	if(mHaveArrayPointer)
 	{
@@ -468,7 +468,7 @@ hid_t XdmfArray::getHDF5Type() const
 	return -1;
 }
 
-int XdmfArray::getPrecision() const
+unsigned int XdmfArray::getPrecision() const
 {
 	if(mHaveArray)
 	{
@@ -481,7 +481,7 @@ int XdmfArray::getPrecision() const
 	return 0;
 }
 
-int XdmfArray::getSize() const
+unsigned int XdmfArray::getSize() const
 {
 	if(mHaveArray)
 	{

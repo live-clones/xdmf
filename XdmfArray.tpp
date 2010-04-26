@@ -5,7 +5,7 @@ template<typename T>
 class XdmfArray::CopyValues : public boost::static_visitor <void> {
 public:
 
-	CopyValues(const int startIndex, const T * const valuesPointer, const int numValues, const int arrayStride, const int valuesStride) :
+	CopyValues(const unsigned int startIndex, const T * const valuesPointer, const unsigned int numValues, const unsigned int arrayStride, const unsigned int valuesStride) :
 		mStartIndex(startIndex),
 		mValuesPointer(valuesPointer),
 		mNumValues(numValues),
@@ -17,7 +17,7 @@ public:
 	template<typename U>
 	void operator()(boost::shared_ptr<std::vector<U> > & array) const
 	{
-		int size = mStartIndex + mNumValues;
+		unsigned int size = mStartIndex + mNumValues;
 		if(mArrayStride > 1)
 		{
 			size = mStartIndex + mNumValues * mArrayStride - 1;
@@ -34,11 +34,11 @@ public:
 
 private:
 
-	const int mStartIndex;
+	const unsigned int mStartIndex;
 	const T * const mValuesPointer;
-	const int mNumValues;
-	const int mArrayStride;
-	const int mValuesStride;
+	const unsigned int mNumValues;
+	const unsigned int mArrayStride;
+	const unsigned int mValuesStride;
 };
 
 template<typename T>
@@ -71,7 +71,7 @@ struct XdmfArray::NullDeleter
 };
 
 template<typename T>
-void XdmfArray::copyValues(const int startIndex, const T * const valuesPointer, const int numValues, const int arrayStride, const int valuesStride)
+void XdmfArray::copyValues(const unsigned int startIndex, const T * const valuesPointer, const unsigned int numValues, const unsigned int arrayStride, const unsigned int valuesStride)
 {
 	if(mHaveArrayPointer)
 	{
@@ -150,7 +150,7 @@ void XdmfArray::resize(const unsigned int numValues, const T & val)
 }
 
 template<typename T>
-void XdmfArray::setValues(const T * const arrayPointer, const int numValues, const bool transferOwnership)
+void XdmfArray::setValues(const T * const arrayPointer, const unsigned int numValues, const bool transferOwnership)
 {
 	// Remove contents of internal array.
 	if(mHaveArray)
