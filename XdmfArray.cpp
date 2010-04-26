@@ -26,7 +26,7 @@ public:
 class XdmfArray::CopyArrayValues : public boost::static_visitor <void> {
 public:
 
-	CopyArrayValues(int startIndex, int valuesStartIndex, int numValues, int arrayStride, int valuesStride) :
+	CopyArrayValues(const int startIndex, const int valuesStartIndex, const int numValues, const int arrayStride, const int valuesStride) :
 		mStartIndex(startIndex),
 		mValuesStartIndex(valuesStartIndex),
 		mNumValues(numValues),
@@ -55,11 +55,11 @@ public:
 
 private:
 
-	int mStartIndex;
-	int mValuesStartIndex;
-	int mNumValues;
-	int mArrayStride;
-	int mValuesStride;
+	const int mStartIndex;
+	const int mValuesStartIndex;
+	const int mNumValues;
+	const int mArrayStride;
+	const int mValuesStride;
 };
 
 class XdmfArray::GetHDF5Type : public boost::static_visitor <hid_t> {

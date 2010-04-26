@@ -57,7 +57,7 @@ public:
 	 * @param arrayStride number of values to stride in this array between each copy.
 	 * @param valuesStride number of values to stride in the XdmfArray between each copy.
 	 */
-	void copyValues(int startIndex, boost::shared_ptr<XdmfArray> values, int valuesStartIndex= 0, int numValues = 1, int arrayStride = 1, int valuesStride = 1);
+	void copyValues(const int startIndex, const boost::shared_ptr<XdmfArray> values, const int valuesStartIndex= 0, const int numValues = 1, const int arrayStride = 1, const int valuesStride = 1);
 
 	/**
 	 * Copy values from an array into this array.
@@ -69,7 +69,7 @@ public:
 	 * @param valuesStride number of values to stride in the pointer between each copy.
 	 */
 	template<typename T>
-	void copyValues(int startIndex, T * valuesPointer, int numValues = 1, int arrayStride = 1, int valuesStride = 1);
+	void copyValues(const int startIndex, const T * const valuesPointer, const int numValues = 1, const int arrayStride = 1, const int valuesStride = 1);
 
 	/**
 	 * Remove all values from this array

@@ -5,7 +5,7 @@ template<typename T>
 class XdmfArray::CopyValues : public boost::static_visitor <void> {
 public:
 
-	CopyValues(int startIndex, T * valuesPointer, int numValues = 1, int arrayStride = 1, int valuesStride = 1) :
+	CopyValues(const int startIndex, const T * const valuesPointer, const int numValues, const int arrayStride, const int valuesStride) :
 		mStartIndex(startIndex),
 		mValuesPointer(valuesPointer),
 		mNumValues(numValues),
@@ -34,11 +34,11 @@ public:
 
 private:
 
-	int mStartIndex;
-	T* mValuesPointer;
-	int mNumValues;
-	int mArrayStride;
-	int mValuesStride;
+	const int mStartIndex;
+	const T * const mValuesPointer;
+	const int mNumValues;
+	const int mArrayStride;
+	const int mValuesStride;
 };
 
 struct XdmfArray::NullDeleter
@@ -49,7 +49,7 @@ struct XdmfArray::NullDeleter
 };
 
 template<typename T>
-void XdmfArray::copyValues(int startIndex, T * valuesPointer, int numValues, int arrayStride, int valuesStride)
+void XdmfArray::copyValues(const int startIndex, const T * const valuesPointer, const int numValues, const int arrayStride, const int valuesStride)
 {
 	if(!mInitialized)
 	{
