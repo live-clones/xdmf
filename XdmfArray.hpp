@@ -177,9 +177,10 @@ public:
 	 * ownership of the data and must ensure that the array is still valid for the entire time Xdmf needs it.
 	 *
 	 * @param array a vector to store in this array.
+	 * @param transferOwnership whether to transfer responsibility for deletion of the array to XdmfArray.
 	 */
 	template<typename T>
-	void setValues(std::vector<T> & array);
+	void setValues(std::vector<T> & array, const bool transferOwnership = 0);
 
 	/**
 	 * Sets the values of this array to the values stored in the vector.  No copy is made.  This array shares ownership with

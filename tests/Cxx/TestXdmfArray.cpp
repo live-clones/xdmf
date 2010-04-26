@@ -119,6 +119,19 @@ int main(int argc, char* argv[])
 	assert(array5->getSize() == 4);
 	assert(array5->getValuesString().compare("2 3 4 0 ") == 0);
 
+	/**
+	 * Set and Ownership transfer
+	 */
+	double * doubleValues = new double[3];
+	doubleValues[0] = 0;
+	doubleValues[1] = 1.1;
+	doubleValues[2] = 10.1;
+	array5->setValues(doubleValues, 3, 1);
+	assert(array5->getSize() == 3);
+	assert(array5->getType().compare("Float") == 0);
+	assert(array5->getPrecision() == 8);
+	assert(array5->getValuesString().compare("0 1.1 10.1 ") == 0);
+
 	//
 	// SHARED ASSIGNMENTS
 	//

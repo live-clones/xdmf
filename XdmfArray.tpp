@@ -131,14 +131,22 @@ void XdmfArray::setValues(const T * const arrayPointer, const int numValues, con
 }
 
 template<typename T>
-void XdmfArray::setValues(std::vector<T> & array)
+void XdmfArray::setValues(std::vector<T> & array, const bool transferOwnership)
 {
 	if(mHaveArrayPointer)
 	{
 		releaseArrayPointer();
 	}
-	boost::shared_ptr<std::vector<T> > newArray(&array, NullDeleter());
-	mArray = newArray;
+	if(transferOwnership)
+	{
+		boost::shared_ptr<std::vector<T> > newArray(&array);
+		mArray = newArray;
+	}
+	else
+	{
+		boost::shared_ptr<std::vector<T> > newArray(&array, NullDeleter());
+		mArray = newArray;
+	}
 	mHaveArray = true;
 }
 
