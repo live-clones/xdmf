@@ -200,6 +200,23 @@ protected:
 
 private:
 
+	// Variant Visitor Operations
+	class Clear;
+	class CopyArrayValues;
+
+	template<typename T>
+	class CopyValues;
+
+	class GetHDF5Type;
+	class GetPrecision;
+	class GetSize;
+	class GetType;
+	class GetValuesPointer;
+	class GetValuesString;
+	class NewArray;
+
+	struct NullDeleter;
+
 	typedef boost::variant<
 		boost::shared_ptr<std::vector<char> >,
 		boost::shared_ptr<std::vector<short> >,

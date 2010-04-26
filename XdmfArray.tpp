@@ -2,10 +2,10 @@
 #include "XdmfArray.hpp"
 
 template<typename T>
-class XdmfArrayCopyValues : public boost::static_visitor <void> {
+class XdmfArray::CopyValues : public boost::static_visitor <void> {
 public:
 
-	XdmfArrayCopyValues(int startIndex, T * valuesPointer, int numValues = 1, int arrayStride = 1, int valuesStride = 1) :
+	CopyValues(int startIndex, T * valuesPointer, int numValues = 1, int arrayStride = 1, int valuesStride = 1) :
 		mStartIndex(startIndex),
 		mValuesPointer(valuesPointer),
 		mNumValues(numValues),
@@ -14,7 +14,8 @@ public:
 	{
 	}
 
-	template<typename U> void operator()(boost::shared_ptr<std::vector<U> > & array) const
+	template<typename U>
+	void operator()(boost::shared_ptr<std::vector<U> > & array) const
 	{
 		int size = mStartIndex + mNumValues;
 		if(mArrayStride > 1)
@@ -40,7 +41,7 @@ private:
 	int mValuesStride;
 };
 
-struct XdmfArrayNullDeleter
+struct XdmfArray::NullDeleter
 {
     void operator()(void const *) const
     {
@@ -54,7 +55,7 @@ void XdmfArray::copyValues(int startIndex, T * valuesPointer, int numValues, int
 	{
 		initialize<T>();
 	}
-	boost::apply_visitor( XdmfArrayCopyValues<T>(startIndex, valuesPointer, numValues, arrayStride, valuesStride), mArray);
+	boost::apply_visitor( CopyValues<T>(startIndex, valuesPointer, numValues, arrayStride, valuesStride), mArray);
 }
 
 template <typename T>
@@ -98,7 +99,7 @@ boost::shared_ptr<std::vector<T> > XdmfArray::initialize()
 template<typename T>
 void XdmfArray::setValues(std::vector<T> & array)
 {
-	boost::shared_ptr<std::vector<T> > newArray(&array, XdmfArrayNullDeleter());
+	boost::shared_ptr<std::vector<T> > newArray(&array, NullDeleter());
 	mArray = newArray;
 	mInitialized = true;
 }

@@ -9,23 +9,24 @@
 #include "XdmfVisitor.hpp"
 #include <sstream>
 
-class XdmfArrayClear : public boost::static_visitor <void> {
+class XdmfArray::Clear : public boost::static_visitor <void> {
 public:
 
-	XdmfArrayClear()
+	Clear()
 	{
 	}
 
-	template<typename T> void operator()(const boost::shared_ptr<std::vector<T> > & array) const
+	template<typename T>
+	void operator()(const boost::shared_ptr<std::vector<T> > & array) const
 	{
 		return array->clear();
 	}
 };
 
-class XdmfArrayCopyArrayValues : public boost::static_visitor <void> {
+class XdmfArray::CopyArrayValues : public boost::static_visitor <void> {
 public:
 
-	XdmfArrayCopyArrayValues(int startIndex, int valuesStartIndex, int numValues, int arrayStride, int valuesStride) :
+	CopyArrayValues(int startIndex, int valuesStartIndex, int numValues, int arrayStride, int valuesStride) :
 		mStartIndex(startIndex),
 		mValuesStartIndex(valuesStartIndex),
 		mNumValues(numValues),
@@ -34,7 +35,8 @@ public:
 	{
 	}
 
-	template<typename T, typename U> void operator()(const boost::shared_ptr<std::vector<T> > & array, const boost::shared_ptr<std::vector<U> > & arrayToCopy) const
+	template<typename T, typename U>
+	void operator()(const boost::shared_ptr<std::vector<T> > & array, const boost::shared_ptr<std::vector<U> > & arrayToCopy) const
 	{
 		int size = mStartIndex + mNumValues;
 		if(mArrayStride > 1)
@@ -60,9 +62,9 @@ private:
 	int mValuesStride;
 };
 
-class XdmfArrayGetHDF5Type : public boost::static_visitor <hid_t> {
+class XdmfArray::GetHDF5Type : public boost::static_visitor <hid_t> {
 public:
-	XdmfArrayGetHDF5Type()
+	GetHDF5Type()
 	{
 	}
 
@@ -112,9 +114,9 @@ public:
 	}
 };
 
-class XdmfArrayGetPrecision : public boost::static_visitor <int> {
+class XdmfArray::GetPrecision : public boost::static_visitor <int> {
 public:
-	XdmfArrayGetPrecision()
+	GetPrecision()
 	{
 	}
 
@@ -164,9 +166,9 @@ public:
 	}
 };
 
-class XdmfArrayGetType : public boost::static_visitor <std::string> {
+class XdmfArray::GetType : public boost::static_visitor <std::string> {
 public:
-	XdmfArrayGetType()
+	GetType()
 	{
 	}
 
@@ -216,36 +218,38 @@ public:
 	}
 };
 
-class XdmfArrayGetSize : public boost::static_visitor <int> {
+class XdmfArray::GetSize : public boost::static_visitor <int> {
 public:
 
-	XdmfArrayGetSize()
+	GetSize()
 	{
 	}
 
-	template<typename T> int operator()(const boost::shared_ptr<std::vector<T> > & array) const
+	template<typename T>
+	int operator()(const boost::shared_ptr<std::vector<T> > & array) const
 	{
 		return array->size();
 	}
 };
 
-class XdmfArrayGetValuesPointer : public boost::static_visitor <const void* const> {
+class XdmfArray::GetValuesPointer : public boost::static_visitor <const void* const> {
 public:
 
-	XdmfArrayGetValuesPointer()
+	GetValuesPointer()
 	{
 	}
 
-	template<typename T> const void* const operator()(const boost::shared_ptr<std::vector<T> > & array) const
+	template<typename T>
+	const void* const operator()(const boost::shared_ptr<std::vector<T> > & array) const
 	{
 		return &array->operator[](0);
 	}
 };
 
-class XdmfArrayGetValuesString : public boost::static_visitor <std::string> {
+class XdmfArray::GetValuesString : public boost::static_visitor <std::string> {
 public:
 
-	XdmfArrayGetValuesString()
+	GetValuesString()
 	{
 	}
 
@@ -259,7 +263,8 @@ public:
 		return toReturn.str();
 	}
 
-	template<typename T> std::string operator()(const boost::shared_ptr<std::vector<T> > & array) const
+	template<typename T>
+	std::string operator()(const boost::shared_ptr<std::vector<T> > & array) const
 	{
 		std::stringstream toReturn;
 		for(int i=0; i<array->size(); ++i)
@@ -270,14 +275,15 @@ public:
 	}
 };
 
-class XdmfArrayNewArray : public boost::static_visitor <void> {
+class XdmfArray::NewArray : public boost::static_visitor <void> {
 public:
 
-	XdmfArrayNewArray()
+	NewArray()
 	{
 	}
 
-	template<typename T> void operator()(boost::shared_ptr<std::vector<T> > & array) const
+	template<typename T>
+	void operator()(boost::shared_ptr<std::vector<T> > & array) const
 	{
 		boost::shared_ptr<std::vector<T> > newArray(new std::vector<T>());
 		array = newArray;
@@ -302,46 +308,46 @@ void XdmfArray::copyValues(int startIndex, boost::shared_ptr<XdmfArray> values, 
 		// Copy the values variant in order to get the type (only taking smart pointer so no worries about large copies)
 		mArray = values->mArray;
 		// Reinitialize variant array to contain new array with same type.
-		boost::apply_visitor( XdmfArrayNewArray(), mArray);
+		boost::apply_visitor( NewArray(), mArray);
 		mInitialized = true;
 	}
-	boost::apply_visitor( XdmfArrayCopyArrayValues(startIndex, valuesStartIndex, numValues, arrayStride, valuesStride), mArray, values->mArray);
+	boost::apply_visitor( CopyArrayValues(startIndex, valuesStartIndex, numValues, arrayStride, valuesStride), mArray, values->mArray);
 }
 
 void XdmfArray::clear()
 {
 	mInitialized = false;
-	return boost::apply_visitor( XdmfArrayClear(), mArray);
+	return boost::apply_visitor( Clear(), mArray);
 }
 
 hid_t XdmfArray::getHDF5Type() const
 {
-	return boost::apply_visitor( XdmfArrayGetHDF5Type(), mArray);
+	return boost::apply_visitor( GetHDF5Type(), mArray);
 }
 
 int XdmfArray::getPrecision() const
 {
-	return boost::apply_visitor( XdmfArrayGetPrecision(), mArray);
+	return boost::apply_visitor( GetPrecision(), mArray);
 }
 
 int XdmfArray::getSize() const
 {
-	return boost::apply_visitor( XdmfArrayGetSize(), mArray);
+	return boost::apply_visitor( GetSize(), mArray);
 }
 
 std::string XdmfArray::getType() const
 {
-	return boost::apply_visitor( XdmfArrayGetType(), mArray);
+	return boost::apply_visitor( GetType(), mArray);
 }
 
 const void* const XdmfArray::getValuesPointer() const
 {
-	return boost::apply_visitor( XdmfArrayGetValuesPointer(), mArray);
+	return boost::apply_visitor( GetValuesPointer(), mArray);
 }
 
 std::string XdmfArray::getValuesString() const
 {
-	return boost::apply_visitor( XdmfArrayGetValuesString(), mArray);
+	return boost::apply_visitor( GetValuesString(), mArray);
 }
 
 std::string XdmfArray::printSelf() const
