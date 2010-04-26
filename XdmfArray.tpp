@@ -51,7 +51,11 @@ struct XdmfArray::NullDeleter
 template<typename T>
 void XdmfArray::copyValues(const int startIndex, const T * const valuesPointer, const int numValues, const int arrayStride, const int valuesStride)
 {
-	if(!mInitialized)
+	if(mHaveArrayPointer)
+	{
+		internalizeArrayPointer();
+	}
+	if(!mHaveArray)
 	{
 		initialize<T>();
 	}
@@ -61,6 +65,10 @@ void XdmfArray::copyValues(const int startIndex, const T * const valuesPointer, 
 template <typename T>
 boost::shared_ptr<std::vector<T> > XdmfArray::getValues()
 {
+	if(mHaveArrayPointer)
+	{
+		internalizeArrayPointer();
+	}
 	try
 	{
 		boost::shared_ptr<std::vector<T> > currArray = boost::get<boost::shared_ptr<std::vector<T> > >(mArray);
@@ -72,49 +80,87 @@ boost::shared_ptr<std::vector<T> > XdmfArray::getValues()
 	}
 }
 
-template <typename T>
-const boost::shared_ptr<const std::vector<T> > XdmfArray::getValues() const
-{
-	try
-	{
-		boost::shared_ptr<std::vector<T> > currArray = boost::get<boost::shared_ptr<std::vector<T> > >(mArray);
-		return currArray;
-	}
-	catch(const boost::bad_get& exception)
-	{
-		return boost::shared_ptr<std::vector<T> >();
-	}
-}
+//template <typename T>
+//const boost::shared_ptr<const std::vector<T> > XdmfArray::getValues() const
+//{
+//	try
+//	{
+//		boost::shared_ptr<std::vector<T> > currArray = boost::get<boost::shared_ptr<std::vector<T> > >(mArray);
+//		return currArray;
+//	}
+//	catch(const boost::bad_get& exception)
+//	{
+//		return boost::shared_ptr<std::vector<T> >();
+//	}
+//}
 
 template <typename T>
 boost::shared_ptr<std::vector<T> > XdmfArray::initialize()
 {
+	if(mHaveArrayPointer)
+	{
+		releaseArrayPointer();
+	}
 	// Set type of variant to type of pointer
 	boost::shared_ptr<std::vector<T> > newArray(new std::vector<T>());
 	mArray = newArray;
-	mInitialized = true;
+	mHaveArray = true;
 	return newArray;
+}
+
+template<typename T>
+void XdmfArray::setValues(const T * const arrayPointer, const int numValues, const bool transferOwnership)
+{
+	// Remove contents of internal array.
+	if(mHaveArray)
+	{
+		releaseArray();
+	}
+	if(transferOwnership)
+	{
+		const boost::shared_array<const T> newArrayPointer(arrayPointer);
+		mArrayPointer = newArrayPointer;
+	}
+	else
+	{
+		const boost::shared_array<const T> newArrayPointer(arrayPointer, NullDeleter());
+		mArrayPointer = newArrayPointer;
+	}
+	mHaveArrayPointer = true;
+	mArrayPointerNumValues = numValues;
 }
 
 template<typename T>
 void XdmfArray::setValues(std::vector<T> & array)
 {
+	if(mHaveArrayPointer)
+	{
+		releaseArrayPointer();
+	}
 	boost::shared_ptr<std::vector<T> > newArray(&array, NullDeleter());
 	mArray = newArray;
-	mInitialized = true;
+	mHaveArray = true;
 }
 
 template<typename T>
 void XdmfArray::setValues(boost::shared_ptr<std::vector<T> > array)
 {
+	if(mHaveArrayPointer)
+	{
+		releaseArrayPointer();
+	}
 	mArray = array;
-	mInitialized = true;
+	mHaveArray = true;
 }
 
 template<typename T>
 bool XdmfArray::swap(std::vector<T> & array)
 {
-	if(!mInitialized)
+	if(mHaveArrayPointer)
+	{
+		internalizeArrayPointer();
+	}
+	if(!mHaveArray)
 	{
 		initialize<T>();
 	}
@@ -122,10 +168,10 @@ bool XdmfArray::swap(std::vector<T> & array)
 	{
 		boost::shared_ptr<std::vector<T> > currArray = boost::get<boost::shared_ptr<std::vector<T> > >(mArray);
 		currArray->swap(array);
-		if(currArray->size() == 0)
-		{
-			mInitialized = false;
-		}
+		//if(currArray->size() == 0)
+		//{
+		//	mHaveArray = false;
+		//}
 		return true;
 	}
 	catch(const boost::bad_get& exception)

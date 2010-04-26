@@ -3,6 +3,7 @@
 
 // Includes
 #include "XdmfItem.hpp"
+#include <boost/shared_array.hpp>
 #include <boost/variant.hpp>
 #include <hdf5.h>
 #include <vector>
@@ -57,7 +58,7 @@ public:
 	 * @param arrayStride number of values to stride in this array between each copy.
 	 * @param valuesStride number of values to stride in the XdmfArray between each copy.
 	 */
-	void copyValues(const int startIndex, const boost::shared_ptr<XdmfArray> values, const int valuesStartIndex= 0, const int numValues = 1, const int arrayStride = 1, const int valuesStride = 1);
+	void copyValues(const int startIndex, const boost::shared_ptr<const XdmfArray> values, const int valuesStartIndex= 0, const int numValues = 1, const int arrayStride = 1, const int valuesStride = 1);
 
 	/**
 	 * Copy values from an array into this array.
@@ -118,8 +119,8 @@ public:
 	 *
 	 * @return a smart pointer to the internal vector of values stored in this array.
 	 */
-	template <typename T>
-	const boost::shared_ptr<const std::vector<T> > getValues() const;
+	//template <typename T>
+	//const boost::shared_ptr<const std::vector<T> > getValues() const;
 
 	/**
 	 * Get a pointer to the values stored in this array.
@@ -144,6 +145,32 @@ public:
 	boost::shared_ptr<std::vector<T> > initialize();
 
 	virtual std::string printSelf() const;
+
+	/**
+	 * Releases all data held by this XdmfArray.
+	 */
+	void releaseData()
+	{
+		releaseArray();
+		releaseArrayPointer();
+	}
+
+	/**
+	 * Sets the values of this array to the values stored in the arrayPointer array.  No copy is made.  Modifications to the array are
+	 * not permitted through the XdmfArray API.  Any calls through the XdmfArray API to modify the array (i.e. any non-const function)
+	 * will result in the array being copied into internal storage.  The internal copy is then modified.
+	 * This prevents situations where a realloc of the pointer could cause other references to become invalid.
+	 * The caller of this method can continue to modify the values stored in arrayPointer on its own.
+	 * This function is meant for applications that have their own array data structures that merely use Xdmf to output the data,
+	 * an operation that should not require a copy.  Other applications that use Xdmf for in memory data storage should avoid
+	 * this function.
+	 *
+	 * @param arrayPointer a pointer to an array to store in this XdmfArray.
+	 * @param numValues the number of values in the array.
+	 * @param transferOwnership whether to transfer responsibility for deletion of the array to XdmfArray.
+	 */
+	template<typename T>
+	void setValues(const T * const arrayPointer, const int numValues, const bool transferOwnership = 0);
 
 	/**
 	 * Sets the values of this array to the values stored in the vector.  No copy is made.  The caller of this method retains
@@ -213,9 +240,28 @@ private:
 	class GetType;
 	class GetValuesPointer;
 	class GetValuesString;
+	class InternalizeArrayPointer;
 	class NewArray;
 
 	struct NullDeleter;
+
+	/**
+	 * After setValues(const T * const array) is called, XdmfArray stores a pointer that is not allowed to be modified through
+	 * the XdmfArray API.  If the user desires to modify the contents of the pointer, they must do so without calling any
+	 * non-const functions of XdmfArray.  If they do call non-const functions of XdmfArray, we try to accommodate by copying
+	 * the array pointer into internal data structures.
+	 */
+	void internalizeArrayPointer();
+
+	/**
+	 * Release references to internal data.
+	 */
+	void releaseArray();
+
+	/**
+	 * Release references to held array pointer internal data;
+	 */
+	void releaseArrayPointer();
 
 	typedef boost::variant<
 		boost::shared_ptr<std::vector<char> >,
@@ -228,8 +274,22 @@ private:
 		boost::shared_ptr<std::vector<unsigned short> >,
 		boost::shared_ptr<std::vector<unsigned int> > > ArrayVariant;
 
+	  typedef boost::variant<
+	    boost::shared_array<const char>,
+	    boost::shared_array<const short>,
+	    boost::shared_array<const int>,
+	    boost::shared_array<const long>,
+	    boost::shared_array<const float>,
+	    boost::shared_array<const double>,
+	    boost::shared_array<const unsigned char>,
+	    boost::shared_array<const unsigned short>,
+	    boost::shared_array<const unsigned int> > ArrayPointerVariant;
+
 	ArrayVariant mArray;
-	bool mInitialized;
+	ArrayPointerVariant mArrayPointer;
+	int mArrayPointerNumValues;
+	bool mHaveArray;
+	bool mHaveArrayPointer;
 };
 
 #include "XdmfArray.tpp"
