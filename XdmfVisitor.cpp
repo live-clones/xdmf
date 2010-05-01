@@ -162,11 +162,6 @@ void XdmfVisitor::visit(const XdmfTopology * const topology, boost::shared_ptr<X
 	xmlCurrentNode = parentNode;
 }
 
-std::string XdmfVisitor::printSelf() const
-{
-	return "XdmfVisitor";
-}
-
 unsigned int XdmfVisitor::getLightDataLimit() const
 {
 	return mLightDataLimit;

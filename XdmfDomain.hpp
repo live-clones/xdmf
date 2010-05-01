@@ -52,8 +52,6 @@ public:
 	 */
 	unsigned int getNumberOfGrids() const;
 
-	virtual std::string printSelf() const;
-
 	virtual void traverse(boost::shared_ptr<XdmfVisitor> visitor) const;
 
 protected:

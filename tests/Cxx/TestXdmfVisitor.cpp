@@ -13,7 +13,5 @@ int main(int argc, char* argv[])
 	domain->insert(grid);
 	domain->accept(visitor);
 
-	std::cout << visitor->printSelf() << std::endl;
-
 	return 0;
 }

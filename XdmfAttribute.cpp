@@ -41,11 +41,6 @@ std::string XdmfAttribute::getName() const
 	return mName;
 }
 
-std::string XdmfAttribute::printSelf() const
-{
-	return "<XdmfAttribute>";
-}
-
 void XdmfAttribute::setAttributeCenter(const XdmfAttributeCenter & attributeCenter)
 {
 	mAttributeCenter = attributeCenter;

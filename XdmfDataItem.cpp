@@ -29,11 +29,6 @@ boost::shared_ptr<const XdmfArray> XdmfDataItem::getArray() const
 	return mArray;
 }
 
-std::string XdmfDataItem::printSelf() const
-{
-	return "XdmfDataItem";
-}
-
 void XdmfDataItem::setArray(boost::shared_ptr<XdmfArray> array)
 {
 	mArray = array;

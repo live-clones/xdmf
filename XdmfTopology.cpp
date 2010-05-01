@@ -36,11 +36,6 @@ XdmfTopologyType XdmfTopology::getTopologyType() const
 	return mTopologyType;
 }
 
-std::string XdmfTopology::printSelf() const
-{
-	return "XdmfTopology";
-}
-
 void XdmfTopology::setTopologyType(const XdmfTopologyType & topologyType)
 {
 	mTopologyType = topologyType;

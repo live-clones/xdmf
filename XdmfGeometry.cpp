@@ -30,11 +30,6 @@ XdmfGeometryType XdmfGeometry::getGeometryType() const
 	return mGeometryType;
 }
 
-std::string XdmfGeometry::printSelf() const
-{
-	return "XdmfGeometry";
-}
-
 void XdmfGeometry::setGeometryType(const XdmfGeometryType & geometryType)
 {
 	mGeometryType = geometryType;

@@ -34,8 +34,6 @@ public:
 	 */
 	XdmfTopologyType getTopologyType() const;
 
-	virtual std::string printSelf() const;
-
 	/**
 	 * Set the XdmfTopologyType associated with this topology.
 	 *

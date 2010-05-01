@@ -41,8 +41,6 @@ public:
 	 */
 	std::string getName() const;
 
-	virtual std::string printSelf() const;
-
 	/**
 	 * Set the XdmfAttributeCenter associated with this attribute.
 	 *

@@ -34,8 +34,6 @@ public:
 	 */
 	void setGeometryType(const XdmfGeometryType & geometryType);
 
-	virtual std::string printSelf() const;
-
 protected:
 
 	XdmfGeometry();

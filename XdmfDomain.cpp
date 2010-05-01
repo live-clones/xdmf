@@ -54,11 +54,6 @@ unsigned int XdmfDomain::getNumberOfGrids() const
 	return mGrids.size();
 }
 
-std::string XdmfDomain::printSelf() const
-{
-	return "XdmfDomain";
-}
-
 void XdmfDomain::traverse(boost::shared_ptr<XdmfVisitor> visitor) const
 {
 	for(std::vector<boost::shared_ptr<XdmfGrid> >::const_iterator iter = mGrids.begin(); iter != mGrids.end(); ++iter)

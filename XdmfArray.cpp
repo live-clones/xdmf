@@ -546,11 +546,6 @@ void XdmfArray::internalizeArrayPointer()
 	}
 }
 
-std::string XdmfArray::printSelf() const
-{
-	return "";
-}
-
 void XdmfArray::releaseArray()
 {
 	boost::shared_ptr<std::vector<char> > emptyArray;

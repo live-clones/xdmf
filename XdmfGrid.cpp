@@ -85,11 +85,6 @@ void XdmfGrid::insert(boost::shared_ptr<XdmfAttribute> attribute)
 	mAttributes.push_back(attribute);
 }
 
-std::string XdmfGrid::printSelf() const
-{
-	return "XdmfGrid containing a " + mGeometry->printSelf() + " and a " + mTopology->printSelf();
-}
-
 void XdmfGrid::setGeometry(boost::shared_ptr<XdmfGeometry> geometry)
 {
 	mGeometry = geometry;

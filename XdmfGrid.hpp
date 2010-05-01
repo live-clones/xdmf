@@ -90,8 +90,6 @@ public:
 	 */
 	void insert(boost::shared_ptr<XdmfAttribute> attribute);
 
-	virtual std::string printSelf() const;
-
 	/**
 	 * Set the XdmfGeometry associated with this grid.
 	 *

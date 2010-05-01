@@ -36,8 +36,6 @@ public:
 	 */
 	unsigned int getLightDataLimit() const;
 
-	virtual std::string printSelf() const;
-
 	/**
 	 * Set the number of values that this visitor writes to light data (XML) before switching to a heavy data format.
 	 *

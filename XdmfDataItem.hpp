@@ -31,8 +31,6 @@ public:
 	 */
 	boost::shared_ptr<const XdmfArray> getArray() const;
 
-	std::string printSelf() const;
-
 	/**
 	 * Attach an XdmfArray to this XdmfDataItem.
 	 *

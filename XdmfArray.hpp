@@ -156,8 +156,6 @@ public:
 	template <typename T>
 	boost::shared_ptr<std::vector<T> > initialize();
 
-	virtual std::string printSelf() const;
-
 	/**
 	 * Release all data held by this XdmfArray.
 	 */
