@@ -41,7 +41,6 @@ public:
 	void setArray(boost::shared_ptr<XdmfArray> array);
 
 	virtual void traverse(boost::shared_ptr<XdmfVisitor> visitor) const;
-	virtual void write(boost::shared_ptr<XdmfVisitor> visitor) const = 0;
 
 protected:
 

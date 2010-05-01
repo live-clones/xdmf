@@ -25,8 +25,8 @@ class XdmfItem : public XdmfObject {
 
 public:
 
+	virtual void accept(boost::shared_ptr<XdmfVisitor> visitor) const = 0;
 	virtual void traverse(boost::shared_ptr<XdmfVisitor> visitor) const;
-	virtual void write(boost::shared_ptr<XdmfVisitor> visitor) const = 0;
 
 protected:
 

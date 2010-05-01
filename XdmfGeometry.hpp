@@ -18,6 +18,8 @@ public:
 
 	XdmfNewMacro(XdmfGeometry);
 
+	virtual void accept(boost::shared_ptr<XdmfVisitor> visitor) const;
+
 	/**
 	 * Get the XdmfGeometryType associated with this geometry.
 	 *
@@ -33,8 +35,6 @@ public:
 	void setGeometryType(const XdmfGeometryType & geometryType);
 
 	virtual std::string printSelf() const;
-
-	virtual void write(boost::shared_ptr<XdmfVisitor> visitor) const;
 
 protected:
 

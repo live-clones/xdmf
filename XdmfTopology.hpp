@@ -18,6 +18,8 @@ public:
 
 	XdmfNewMacro(XdmfTopology);
 
+	virtual void accept(boost::shared_ptr<XdmfVisitor> visitor) const;
+
 	/**
 	 * Get the number of elements this Topology contains.
 	 *
@@ -40,8 +42,6 @@ public:
 	 * @param topologyType the XdmfTopologyType to set.
 	 */
 	void setTopologyType(const XdmfTopologyType & topologyType);
-
-	virtual void write(boost::shared_ptr<XdmfVisitor> visitor) const;
 
 protected:
 

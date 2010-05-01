@@ -11,7 +11,7 @@ int main(int argc, char* argv[])
 
 	boost::shared_ptr<XdmfDomain> domain = XdmfDomain::New();
 	domain->insert(grid);
-	domain->write(visitor);
+	domain->accept(visitor);
 
 	std::cout << visitor->printSelf() << std::endl;
 

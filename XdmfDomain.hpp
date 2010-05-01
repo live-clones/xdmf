@@ -20,6 +20,8 @@ public:
 
 	XdmfNewMacro(XdmfDomain);
 
+	virtual void accept(boost::shared_ptr<XdmfVisitor> visitor) const;
+
 	/**
 	 * Get a XdmfGrid attached to the domain.
 	 *
@@ -53,7 +55,6 @@ public:
 	virtual std::string printSelf() const;
 
 	virtual void traverse(boost::shared_ptr<XdmfVisitor> visitor) const;
-	virtual void write(boost::shared_ptr<XdmfVisitor> visitor) const;
 
 protected:
 

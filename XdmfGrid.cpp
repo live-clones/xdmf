@@ -25,6 +25,11 @@ XdmfGrid::~XdmfGrid()
   std::cout << "Deleted Grid " << this << std::endl;
 }
 
+void XdmfGrid::accept(boost::shared_ptr<XdmfVisitor> visitor) const
+{
+	visitor->visit(this, visitor);
+}
+
 boost::shared_ptr<XdmfAttribute> XdmfGrid::getAttribute(unsigned int index)
 {
 	if(index >= mAttributes.size())
@@ -60,7 +65,6 @@ std::string XdmfGrid::getName() const
 	return mName;
 }
 
-
 unsigned int XdmfGrid::getNumberOfAttributes() const
 {
 	return mAttributes.size();
@@ -75,7 +79,6 @@ boost::shared_ptr<const XdmfTopology> XdmfGrid::getTopology() const
 {
 	return mTopology;
 }
-
 
 void XdmfGrid::insert(boost::shared_ptr<XdmfAttribute> attribute)
 {
@@ -104,15 +107,10 @@ void XdmfGrid::setTopology(boost::shared_ptr<XdmfTopology> topology)
 
 void XdmfGrid::traverse(boost::shared_ptr<XdmfVisitor> visitor) const
 {
-	mGeometry->write(visitor);
-	mTopology->write(visitor);
+	mGeometry->accept(visitor);
+	mTopology->accept(visitor);
 	for(std::vector<boost::shared_ptr<XdmfAttribute> >::const_iterator iter = mAttributes.begin(); iter != mAttributes.end(); ++iter)
 	{
-		(*iter)->write(visitor);
+		(*iter)->accept(visitor);
 	}
-}
-
-void XdmfGrid::write(boost::shared_ptr<XdmfVisitor> visitor) const
-{
-	visitor->visit(this, visitor);
 }

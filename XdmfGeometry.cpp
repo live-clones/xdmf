@@ -20,11 +20,15 @@ XdmfGeometry::~XdmfGeometry()
 	std::cout << "Deleted Geometry " << this << std::endl;
 }
 
+void XdmfGeometry::accept(boost::shared_ptr<XdmfVisitor> visitor) const
+{
+	visitor->visit(this, visitor);
+}
+
 XdmfGeometryType XdmfGeometry::getGeometryType() const
 {
 	return mGeometryType;
 }
-
 
 std::string XdmfGeometry::printSelf() const
 {
@@ -34,9 +38,4 @@ std::string XdmfGeometry::printSelf() const
 void XdmfGeometry::setGeometryType(const XdmfGeometryType & geometryType)
 {
 	mGeometryType = geometryType;
-}
-
-void XdmfGeometry::write(boost::shared_ptr<XdmfVisitor> visitor) const
-{
-	visitor->visit(this, visitor);
 }

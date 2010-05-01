@@ -36,4 +36,4 @@ if __name__ == "__main__":
 
 	domain = XdmfDomain.New()
 	domain.insert(grid)
-	domain.write(visitor)
+	domain.accept(visitor)

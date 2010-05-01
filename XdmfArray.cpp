@@ -421,6 +421,11 @@ XdmfArray::~XdmfArray()
 	std::cout << "Deleted Array " << this << std::endl;
 }
 
+void XdmfArray::accept(boost::shared_ptr<XdmfVisitor> visitor) const
+{
+	visitor->visit(this, visitor);
+}
+
 void XdmfArray::copyValues(const unsigned int startIndex, const boost::shared_ptr<const XdmfArray> values, const unsigned int valuesStartIndex, const unsigned int numValues, const unsigned int arrayStride, const unsigned int valuesStride)
 {
 	if(mHaveArrayPointer)
@@ -560,6 +565,12 @@ void XdmfArray::releaseArrayPointer()
 	mHaveArrayPointer = false;
 }
 
+void XdmfArray::releaseData()
+{
+	releaseArray();
+	releaseArrayPointer();
+}
+
 void XdmfArray::reserve(const unsigned int size)
 {
 	if(mHaveArrayPointer)
@@ -595,9 +606,4 @@ void XdmfArray::swap(boost::shared_ptr<XdmfArray> array)
 	mArrayPointerNumValues = tmpArrayPointerNumValues;
 	mHaveArray = tmpHaveArray;
 	mHaveArrayPointer = tmpHaveArrayPointer;
-}
-
-void XdmfArray::write(boost::shared_ptr<XdmfVisitor> visitor) const
-{
-	visitor->visit(this, visitor);
 }

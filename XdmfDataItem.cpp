@@ -41,5 +41,5 @@ void XdmfDataItem::setArray(boost::shared_ptr<XdmfArray> array)
 
 void XdmfDataItem::traverse(boost::shared_ptr<XdmfVisitor> visitor) const
 {
-	mArray->write(visitor);
+	mArray->accept(visitor);
 }

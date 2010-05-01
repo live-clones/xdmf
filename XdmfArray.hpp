@@ -49,6 +49,11 @@ public:
 	XdmfNewMacro(XdmfArray);
 
 	/**
+	 *
+	 */
+	virtual void accept(boost::shared_ptr<XdmfVisitor>) const;
+
+	/**
 	 * Copy values from an XdmfArray into this array.
 	 *
 	 * @param startIndex the index in this array to begin insertion.
@@ -156,11 +161,7 @@ public:
 	/**
 	 * Release all data held by this XdmfArray.
 	 */
-	void releaseData()
-	{
-		releaseArray();
-		releaseArrayPointer();
-	}
+	void releaseData();
 
 	/**
 	 * Set the capacity of the XdmfArray to at least size.
@@ -239,11 +240,6 @@ public:
 	 * @return bool whether the swap was successful.
 	 */
 	void swap(boost::shared_ptr<XdmfArray> array);
-
-	/**
-	 *
-	 */
-	virtual void write(boost::shared_ptr<XdmfVisitor>) const;
 
 protected:
 

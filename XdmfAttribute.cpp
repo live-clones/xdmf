@@ -21,6 +21,11 @@ XdmfAttribute::~XdmfAttribute()
 	std::cout << "Deleted Attribute " << this << std::endl;
 }
 
+void XdmfAttribute::accept(boost::shared_ptr<XdmfVisitor> visitor) const
+{
+	visitor->visit(this, visitor);
+}
+
 XdmfAttributeCenter XdmfAttribute::getAttributeCenter() const
 {
 	return mAttributeCenter;
@@ -54,9 +59,4 @@ void XdmfAttribute::setAttributeType(const XdmfAttributeType & attributeType)
 void XdmfAttribute::setName(const std::string & name)
 {
 	mName= name;
-}
-
-void XdmfAttribute::write(boost::shared_ptr<XdmfVisitor> visitor) const
-{
-	visitor->visit(this, visitor);
 }

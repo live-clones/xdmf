@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
 	boost::shared_ptr<XdmfVisitorValueCounter> visitor = XdmfVisitorValueCounter::New();
 	boost::shared_ptr<XdmfGrid> grid = XdmfTestDataGenerator::createHexahedron();
 
-	grid->write(visitor);
+	grid->accept(visitor);
 
 	assert(visitor->getCount() == 66);
 

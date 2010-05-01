@@ -18,6 +18,8 @@ public:
 
 	XdmfNewMacro(XdmfAttribute);
 
+	void accept(boost::shared_ptr<XdmfVisitor> visitor) const;
+
 	/**
 	 * Get the XdmfAttributeCenter associated with this attribute.
 	 *
@@ -61,8 +63,6 @@ public:
 	 * @param name a string containing the name to set.
 	 */
 	void setName(const std::string & name);
-
-	void write(boost::shared_ptr<XdmfVisitor> visitor) const;
 
 protected:
 
