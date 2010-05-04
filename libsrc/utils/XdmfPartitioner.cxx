@@ -108,16 +108,16 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
       }
     }
   }
- 
+
   int startIndex = 0;
   int numCutEdges = 0;
 
   idxtype * elementsPartition = new idxtype[numElements];
   idxtype * nodesPartition = new idxtype[numNodes];
 
-  //METIS_PartMeshDual(&numElements, &numNodes, metisConnectivity, &metisElementType, &startIndex, &numPartitions, &numCutEdges, elementsPartition, nodesPartition);
   std::cout << "Entered METIS" << std::endl;
-  METIS_PartMeshNodal(&numElements, &numNodes, metisConnectivity, &metisElementType, &startIndex, &numPartitions, &numCutEdges, elementsPartition, nodesPartition);
+  METIS_PartMeshDual(&numElements, &numNodes, metisConnectivity, &metisElementType, &startIndex, &numPartitions, &numCutEdges, elementsPartition, nodesPartition);
+  //METIS_PartMeshNodal(&numElements, &numNodes, metisConnectivity, &metisElementType, &startIndex, &numPartitions, &numCutEdges, elementsPartition, nodesPartition);
   std::cout << "Exited METIS" << std::endl;
 
   delete [] metisConnectivity;
@@ -152,7 +152,17 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
     globalToLocalElementIdMap[elementsPartition[i]][i] = globalToLocalElementIdMap[elementsPartition[i]].size() - 1;
   }
 
+  delete [] conn;
   delete [] elementsPartition;
+
+  bool addGlobalNodeId = true;
+  for(int i=0; i<grid->GetNumberOfAttributes(); ++i)
+  {
+    if(strcmp(grid->GetAttribute(i)->GetName(), "GlobalNodeId") == 0)
+    {
+      addGlobalNodeId = false;
+    }
+  }
 
   XdmfGrid * collection = new XdmfGrid();
   collection->SetName("Collection");
@@ -161,6 +171,8 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
   collection->SetDeleteOnGridDelete(true);
 
   parentElement->Insert(collection);
+
+  std::vector<XdmfGrid*> partitions;
 
   for(int i=0; i<numPartitions; ++i)
   {
@@ -171,10 +183,11 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
     {
       std::stringstream name;
       name << grid->GetName() << "_" << i;
-    
+
       XdmfGrid * partition = new XdmfGrid();
       partition->SetName(name.str().c_str());
       partition->SetDeleteOnGridDelete(true);
+      partitions.push_back(partition);
 
       int numDimensions = 3;
       if(grid->GetGeometry()->GetGeometryType() == XDMF_GEOMETRY_XY || grid->GetGeometry()->GetGeometryType() == XDMF_GEOMETRY_X_Y)
@@ -186,7 +199,7 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
       geom->SetGeometryType(grid->GetGeometry()->GetGeometryType());
       geom->SetNumberOfPoints(currNodeMap.size());
       geom->SetDeleteOnGridDelete(true);
-    
+
       XdmfArray * points = geom->GetPoints();
       points->SetNumberType(grid->GetGeometry()->GetPoints()->GetNumberType());
       points->SetNumberOfElements(currNodeMap.size() * numDimensions);
@@ -194,12 +207,12 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
       {
         points->SetValues(iter->second * numDimensions, grid->GetGeometry()->GetPoints(), numDimensions, iter->first * 3);
       }
- 
+
       XdmfTopology * top = partition->GetTopology();
       top->SetTopologyType(grid->GetTopology()->GetTopologyType());
       top->SetNumberOfElements(currElemMap.size());
       top->SetDeleteOnGridDelete(true);
-    
+
       XdmfArray * connections = top->GetConnectivity();
       connections->SetNumberType(grid->GetTopology()->GetConnectivity()->GetNumberType());
       connections->SetNumberOfElements(currElemMap.size() * grid->GetTopology()->GetNodesPerElement());
@@ -219,29 +232,48 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
       collection->Insert(partition);
 
       // Add GlobalNodeId Attribute
-      XdmfAttribute * globalIds = new XdmfAttribute();
-      globalIds->SetName("GlobalNodeId");
-      globalIds->SetAttributeType(XDMF_ATTRIBUTE_TYPE_SCALAR);
-      globalIds->SetAttributeCenter(XDMF_ATTRIBUTE_CENTER_NODE);
-      globalIds->SetDeleteOnGridDelete(true);
+      if(addGlobalNodeId)
+      {
+        XdmfAttribute * globalIds = new XdmfAttribute();
+        globalIds->SetName("GlobalNodeId");
+        globalIds->SetAttributeType(XDMF_ATTRIBUTE_TYPE_SCALAR);
+        globalIds->SetAttributeCenter(XDMF_ATTRIBUTE_CENTER_NODE);
+        globalIds->SetDeleteOnGridDelete(true);
 
-      XdmfArray * globalNodeIdVals = globalIds->GetValues();
-      globalNodeIdVals->SetNumberType(XDMF_INT32_TYPE);
-      globalNodeIdVals->SetNumberOfElements(currNodeMap.size());
-      for(std::map<XdmfInt32, XdmfInt32>::const_iterator iter = currNodeMap.begin(); iter != currNodeMap.end(); ++iter)
-      {
-        globalNodeIdVals->SetValues(iter->second, (XdmfInt32*)&iter->first, 1);
-      }
-      partition->Insert(globalIds);
- 
-      // Split attributes and add to grid
-      for(int j=0; j<grid->GetNumberOfAttributes(); ++j)
-      {
-        XdmfAttribute * currAttribute = grid->GetAttribute(j);
-        if(currAttribute->GetValues()->GetNumberOfElements() == 0)
+        XdmfArray * globalNodeIdVals = globalIds->GetValues();
+        globalNodeIdVals->SetNumberType(XDMF_INT32_TYPE);
+        globalNodeIdVals->SetNumberOfElements(currNodeMap.size());
+        for(std::map<XdmfInt32, XdmfInt32>::const_iterator iter = currNodeMap.begin(); iter != currNodeMap.end(); ++iter)
         {
-          currAttribute->Update();
+          globalNodeIdVals->SetValues(iter->second, (XdmfInt32*)&iter->first, 1);
         }
+        partition->Insert(globalIds);
+      }
+    }
+  } 
+
+  grid->GetGeometry()->Release();
+  grid->GetTopology()->Release();
+
+  for(int j=0; j<grid->GetNumberOfAttributes(); ++j)
+  {
+    XdmfAttribute * currAttribute = grid->GetAttribute(j);
+    // If data wasn't read in before, make sure it's released after processing
+    bool releaseData = 0;
+    if(currAttribute->GetValues()->GetNumberOfElements() == 0)
+    {
+      currAttribute->Update();
+      releaseData = 1;
+    }
+    int partitionId = 0;
+    for(int i=0; i<numPartitions; ++i)
+    {
+      std::map<XdmfInt32, XdmfInt32> currNodeMap = globalToLocalNodeIdMap[i];
+      std::map<XdmfInt32, XdmfInt32> currElemMap = globalToLocalElementIdMap[i];
+      if(currNodeMap.size() > 0)
+      {
+        XdmfGrid * partition = partitions[partitionId];
+        partitionId++;
         switch(currAttribute->GetAttributeCenter())
         {
           case(XDMF_ATTRIBUTE_CENTER_GRID):
@@ -294,15 +326,33 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
           }
         }
       }
+    }
+    if(releaseData)
+    {
+      currAttribute->Release();
+    }
+  }
 
-      // Split sets and add to grid
-      for(int j=0; j<grid->GetNumberOfSets(); ++j)
+  // Split sets and add to grid
+  for(int j=0; j<grid->GetNumberOfSets(); ++j)
+  {
+    XdmfSet * currSet = grid->GetSets(j);
+    // If data wasn't read in before, make sure it's released after processing
+    bool releaseData = 0;
+    if(currSet->GetIds()->GetNumberOfElements() == 0)
+    {
+      currSet->Update();
+      releaseData = 1;
+    }
+    int partitionId = 0;
+    for(int i=0; i<numPartitions; ++i)
+    {
+      std::map<XdmfInt32, XdmfInt32> currNodeMap = globalToLocalNodeIdMap[i];
+      std::map<XdmfInt32, XdmfInt32> currElemMap = globalToLocalElementIdMap[i];
+      if(currNodeMap.size() > 0)
       {
-        XdmfSet * currSet = grid->GetSets(j);
-				if(currSet->GetIds()->GetNumberOfElements() == 0)
-        {
-	        currSet->Update();
-        }
+        XdmfGrid * partition = partitions[partitionId];
+        partitionId++;
         switch(currSet->GetSetType())
         {
           case(XDMF_SET_TYPE_CELL):
@@ -366,6 +416,10 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
           }
         }
       }
+    }
+    if(releaseData)
+    {
+      currSet->Release();
     }
   }
   return collection;
@@ -457,6 +511,7 @@ int main(int argc, char* argv[])
 
   XdmfPartitioner partitioner;
   XdmfGrid * partitionedGrid = partitioner.Partition(grid, numPartitions, &newDomain);
+  delete grid;
 
   for(int i=0; i<partitionedGrid->GetNumberOfChildren(); ++i)
   {
@@ -493,7 +548,8 @@ int main(int argc, char* argv[])
   outputFileName << meshName << ".xmf";
   
   newDOM.Write(outputFileName.str().c_str());
-  
+ 
+  delete partitionedGrid; 
   std::cout << "Wrote: " << outputFileName.str().c_str() << std::endl;
 }
 
