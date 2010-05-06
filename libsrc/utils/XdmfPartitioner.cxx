@@ -484,6 +484,14 @@ int main(int argc, char* argv[])
   
   XdmfDOM dom;
   XdmfInt32 error = dom.Parse(argv[1]);
+
+  std::string fileName = argv[1];
+  size_t fileNameFound = fileName.find_last_of("/\\");
+  if (fileNameFound != std::string::npos)
+  {
+    dom.SetWorkingDirectory(fileName.substr(0, fileNameFound).substr().c_str());
+  }
+
   if(error == XDMF_FAIL)
   {
     std::cout << "File does not appear to be a valid Xdmf file" << std::endl;
