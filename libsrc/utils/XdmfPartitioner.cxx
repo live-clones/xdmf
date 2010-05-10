@@ -48,65 +48,67 @@ XdmfPartitioner::~XdmfPartitioner()
 XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfElement * parentElement)
 {
   int metisElementType;  
-  int numElementsPerNode;
+  int numNodesPerElement;
   switch(grid->GetTopology()->GetTopologyType())
   {
     case(XDMF_TRI):
     case(XDMF_TRI_6):
       metisElementType = 1;
-      numElementsPerNode = 3;
+      numNodesPerElement = 3;
       break;
     case(XDMF_QUAD):
     case(XDMF_QUAD_8):
       metisElementType = 4;
-      numElementsPerNode = 4;
+      numNodesPerElement = 4;
       break;
     case(XDMF_TET):
     case(XDMF_TET_10):
       metisElementType = 2;
-      numElementsPerNode = 4;
+      numNodesPerElement = 4;
       break;
     case(XDMF_HEX):
     case(XDMF_HEX_20):
     case(XDMF_HEX_24):
     case(XDMF_HEX_27):
       metisElementType = 3;
-      numElementsPerNode = 8;
+      numNodesPerElement = 8;
       break;
     default:
       std::cout << "Cannot partition grid with element type: " << grid->GetTopology()->GetTopologyTypeAsString() << std::endl;
       return NULL;
   }
 
-  int numNodes = grid->GetGeometry()->GetNumberOfPoints() / (grid->GetTopology()->GetNodesPerElement() / numElementsPerNode);
   int numElements = grid->GetTopology()->GetNumberOfElements();
 
-  idxtype * metisConnectivity = new idxtype[numElementsPerNode * numElements];
+  idxtype * metisConnectivity = new idxtype[numNodesPerElement * numElements];
   for(int i=0; i<numElements; ++i)
   {
-    grid->GetTopology()->GetConnectivity()->GetValues(i*grid->GetTopology()->GetNodesPerElement(), &metisConnectivity[i*numElementsPerNode], numElementsPerNode); 
+    grid->GetTopology()->GetConnectivity()->GetValues(i*grid->GetTopology()->GetNodesPerElement(), &metisConnectivity[i*numNodesPerElement], numNodesPerElement);
   }
 
-  // Need to remap connectivity for quadratic elements so that metis handles it properly
-  std::map<idxtype, idxtype> xdmfConnIdxToMetisConnIdx;
-  if(numNodes != grid->GetGeometry()->GetNumberOfPoints())
+  int numNodes = grid->GetGeometry()->GetNumberOfPoints();
+
+  // Need to remap connectivity for nonlinear elements so that metis handles it properly
+  std::map<idxtype, idxtype> xdmfIdToMetisId;
+  if(numNodesPerElement != grid->GetTopology()->GetNodesPerElement())
   {
     int index = 0;
-    for(int i=0; i<numElements * numElementsPerNode; ++i)
+    for(int i=0; i<numElements * numNodesPerElement; ++i)
     {
-      std::map<idxtype, idxtype>::const_iterator val = xdmfConnIdxToMetisConnIdx.find(metisConnectivity[i]);
-      if(val != xdmfConnIdxToMetisConnIdx.end())
+      std::map<idxtype, idxtype>::const_iterator val = xdmfIdToMetisId.find(metisConnectivity[i]);
+      if(val != xdmfIdToMetisId.end())
       {
         metisConnectivity[i] = val->second;
       }
       else  
       {
         // Haven't seen this id before, map to index and set to new id
-        xdmfConnIdxToMetisConnIdx[metisConnectivity[i]] = index;
+        xdmfIdToMetisId[metisConnectivity[i]] = index;
         metisConnectivity[i] = index;
         index++;
       }
     }
+    numNodes = index;
   }
 
   int startIndex = 0;
@@ -123,36 +125,35 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
   delete [] metisConnectivity;
   delete [] nodesPartition;
 
-  // Initialize sets to hold globalNodeIds for each partition.
+  // For each partition, map global to local node id
   std::vector<std::map<XdmfInt32, XdmfInt32> > globalToLocalNodeIdMap;
-  std::vector<std::map<XdmfInt32, XdmfInt32> > globalToLocalElementIdMap;
+  // For each partition, list global element id.
+  std::vector<std::vector<XdmfInt32> > globalElementIds;
   for(int i=0; i<numPartitions; ++i)
   {
     std::map<XdmfInt32, XdmfInt32> nodeMap;
     globalToLocalNodeIdMap.push_back(nodeMap);
-    std::map<XdmfInt32, XdmfInt32> elemMap;
-    globalToLocalElementIdMap.push_back(elemMap);
+    std::vector<XdmfInt32> elementIds;
+    globalElementIds.push_back(elementIds);
   }
 
   // Fill in globalNodeId for each partition
-  XdmfInt32 * conn = new XdmfInt32[numElements * grid->GetTopology()->GetNodesPerElement()];
-  grid->GetTopology()->GetConnectivity()->GetValues(0, conn, numElements * grid->GetTopology()->GetNodesPerElement());
-  int totalIndex = 0;
+  XdmfInt32 globalNodeId;
   for(int i=0; i<numElements; ++i)
   {
     for(int j=0; j<grid->GetTopology()->GetNodesPerElement(); ++j)
     {
-      if(globalToLocalNodeIdMap[elementsPartition[i]].count(conn[totalIndex]) == 0)
+      grid->GetTopology()->GetConnectivity()->GetValues(i*grid->GetTopology()->GetNodesPerElement() + j, &globalNodeId, 1);
+      if(globalToLocalNodeIdMap[elementsPartition[i]].count(globalNodeId) == 0)
       {
         // Have not seen this node, need to add to map
-        globalToLocalNodeIdMap[elementsPartition[i]][conn[totalIndex]] = globalToLocalNodeIdMap[elementsPartition[i]].size() - 1;
+        int size = globalToLocalNodeIdMap[elementsPartition[i]].size();
+        globalToLocalNodeIdMap[elementsPartition[i]][globalNodeId] = size;
       }
-      totalIndex++;
     }
-    globalToLocalElementIdMap[elementsPartition[i]][i] = globalToLocalElementIdMap[elementsPartition[i]].size() - 1;
+    globalElementIds[elementsPartition[i]].push_back(i);
   }
 
-  delete [] conn;
   delete [] elementsPartition;
 
   bool addGlobalNodeId = true;
@@ -177,9 +178,9 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
   for(int i=0; i<numPartitions; ++i)
   {
     std::map<XdmfInt32, XdmfInt32> currNodeMap = globalToLocalNodeIdMap[i];
-    std::map<XdmfInt32, XdmfInt32> currElemMap = globalToLocalElementIdMap[i];
+    std::vector<XdmfInt32> currElemIds = globalElementIds[i];
 
-    if(currNodeMap.size() > 0)
+    if(currElemIds.size() > 0)
     {
       std::stringstream name;
       name << grid->GetName() << "_" << i;
@@ -205,30 +206,29 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
       points->SetNumberOfElements(currNodeMap.size() * numDimensions);
       for(std::map<XdmfInt32, XdmfInt32>::const_iterator iter = currNodeMap.begin(); iter != currNodeMap.end(); ++iter)
       {
-        points->SetValues(iter->second * numDimensions, grid->GetGeometry()->GetPoints(), numDimensions, iter->first * 3);
+        points->SetValues(iter->second * numDimensions, grid->GetGeometry()->GetPoints(), numDimensions, iter->first * numDimensions);
       }
 
       XdmfTopology * top = partition->GetTopology();
       top->SetTopologyType(grid->GetTopology()->GetTopologyType());
-      top->SetNumberOfElements(currElemMap.size());
+      top->SetNumberOfElements(currElemIds.size());
       top->SetDeleteOnGridDelete(true);
 
       XdmfArray * connections = top->GetConnectivity();
       connections->SetNumberType(grid->GetTopology()->GetConnectivity()->GetNumberType());
-      connections->SetNumberOfElements(currElemMap.size() * grid->GetTopology()->GetNodesPerElement());
-      XdmfInt32 * tmpConn = new XdmfInt32[grid->GetTopology()->GetNodesPerElement()];
-      for(std::map<XdmfInt32, XdmfInt32>::const_iterator iter = currElemMap.begin(); iter != currElemMap.end(); ++iter)
+      connections->SetNumberOfElements(currElemIds.size() * grid->GetTopology()->GetNodesPerElement());
+      XdmfInt32 currGlobalNodeId;
+      int index = 0;
+      for(std::vector<XdmfInt32>::const_iterator iter = currElemIds.begin(); iter != currElemIds.end(); ++iter)
       {
-        // Get global connectivity values for this element
-        grid->GetTopology()->GetConnectivity()->GetValues(iter->first * grid->GetTopology()->GetNodesPerElement(), tmpConn, grid->GetTopology()->GetNodesPerElement());
-        // Translate these global points to local node ids
+        // Translate these global node ids to local node ids
         for(int j=0; j<grid->GetTopology()->GetNodesPerElement(); ++j)
         {
-          tmpConn[j] = currNodeMap[tmpConn[j]];
+          grid->GetTopology()->GetConnectivity()->GetValues(*iter * grid->GetTopology()->GetNodesPerElement() + j, &currGlobalNodeId, 1);
+          connections->SetValues(index, &currNodeMap[currGlobalNodeId], 1);
+          index++;
         }
-        connections->SetValues(iter->second * grid->GetTopology()->GetNodesPerElement(), tmpConn, grid->GetTopology()->GetNodesPerElement());
       }
-      delete [] tmpConn;
       collection->Insert(partition);
 
       // Add GlobalNodeId Attribute
@@ -269,8 +269,8 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
     for(int i=0; i<numPartitions; ++i)
     {
       std::map<XdmfInt32, XdmfInt32> currNodeMap = globalToLocalNodeIdMap[i];
-      std::map<XdmfInt32, XdmfInt32> currElemMap = globalToLocalElementIdMap[i];
-      if(currNodeMap.size() > 0)
+      std::vector<XdmfInt32> currElemIds = globalElementIds[i];
+      if(currElemIds.size() > 0)
       {
         XdmfGrid * partition = partitions[partitionId];
         partitionId++;
@@ -279,7 +279,10 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
           case(XDMF_ATTRIBUTE_CENTER_GRID):
           {
             // Will continue to be true for entire collection - so insert at top level
-            collection->Insert(currAttribute);
+            if(partitionId == 0)
+            {
+              collection->Insert(currAttribute);
+            }
             break;
           }
           case(XDMF_ATTRIBUTE_CENTER_CELL):
@@ -294,10 +297,11 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
             XdmfArray * attributeVals = attribute->GetValues();
             attributeVals->SetNumberType(currAttribute->GetValues()->GetNumberType());
             int numValsPerComponent = currAttribute->GetValues()->GetNumberOfElements() / grid->GetTopology()->GetNumberOfElements();
-            attributeVals->SetNumberOfElements(currElemMap.size() * numValsPerComponent);
-            for(std::map<XdmfInt32, XdmfInt32>::const_iterator iter = currElemMap.begin(); iter != currElemMap.end(); ++iter)
+            attributeVals->SetNumberOfElements(currElemIds.size() * numValsPerComponent);
+            int index = 0;
+            for(std::vector<XdmfInt32>::const_iterator iter = currElemIds.begin(); iter != currElemIds.end(); ++iter, ++index)
             {
-              attributeVals->SetValues(iter->second * numValsPerComponent, currAttribute->GetValues(), numValsPerComponent, iter->first * numValsPerComponent);
+              attributeVals->SetValues(index * numValsPerComponent, currAttribute->GetValues(), numValsPerComponent, *iter * numValsPerComponent);
             }
             partition->Insert(attribute);
             break;
@@ -348,8 +352,8 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
     for(int i=0; i<numPartitions; ++i)
     {
       std::map<XdmfInt32, XdmfInt32> currNodeMap = globalToLocalNodeIdMap[i];
-      std::map<XdmfInt32, XdmfInt32> currElemMap = globalToLocalElementIdMap[i];
-      if(currNodeMap.size() > 0)
+      std::vector<XdmfInt32> currElemIds = globalElementIds[i];
+      if(currElemIds.size() > 0)
       {
         XdmfGrid * partition = partitions[partitionId];
         partitionId++;
@@ -360,12 +364,12 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
           case(XDMF_SET_TYPE_EDGE):
           {
             std::vector<XdmfInt32> myIds;
-            for(int j=0; j<currSet->GetIds()->GetNumberOfElements(); j++)
+            for(int j=0; j<currSet->GetIds()->GetNumberOfElements(); ++j)
             {
-              std::map<XdmfInt32, XdmfInt32>::const_iterator val = currElemMap.find(currSet->GetIds()->GetValueAsInt32(j));
-              if(val != currNodeMap.end())
+              std::vector<XdmfInt32>::const_iterator val = std::find(currElemIds.begin(), currElemIds.end(), currSet->GetIds()->GetValueAsInt32(j));
+              if(val != currElemIds.end())
               {
-                myIds.push_back(val->second);
+                myIds.push_back(val - currElemIds.begin());
               }
             }
             if(myIds.size() != 0)
