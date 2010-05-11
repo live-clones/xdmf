@@ -206,7 +206,7 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
       points->SetNumberOfElements(currNodeMap.size() * numDimensions);
       for(std::map<XdmfInt32, XdmfInt32>::const_iterator iter = currNodeMap.begin(); iter != currNodeMap.end(); ++iter)
       {
-        points->SetValues(iter->second * numDimensions, grid->GetGeometry()->GetPoints(), numDimensions, iter->first * numDimensions);
+        points->SetValues(iter->second * numDimensions, grid->GetGeometry()->GetPoints(), numDimensions, iter->first * 3);
       }
 
       XdmfTopology * top = partition->GetTopology();
