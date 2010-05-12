@@ -17,8 +17,7 @@ class XdmfTopology : public XdmfDataItem {
 public:
 
 	XdmfNewMacro(XdmfTopology);
-
-	virtual void accept(boost::shared_ptr<XdmfVisitor> visitor) const;
+	LOKI_DEFINE_VISITABLE(XdmfTopology, XdmfDataItem)
 
 	/**
 	 * Get the number of elements this Topology contains.

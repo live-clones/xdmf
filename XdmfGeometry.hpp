@@ -17,8 +17,7 @@ class XdmfGeometry : public XdmfDataItem {
 public:
 
 	XdmfNewMacro(XdmfGeometry);
-
-	virtual void accept(boost::shared_ptr<XdmfVisitor> visitor) const;
+	LOKI_DEFINE_VISITABLE(XdmfGeometry, XdmfDataItem)
 
 	/**
 	 * Get the XdmfGeometryType associated with this geometry.

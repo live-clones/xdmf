@@ -21,13 +21,12 @@ XdmfTopology::~XdmfTopology()
 	std::cout << "Deleted Topology " << this << std::endl;
 }
 
-void XdmfTopology::accept(boost::shared_ptr<XdmfVisitor> visitor) const
-{
-	visitor->visit(this, visitor);
-}
-
 unsigned int XdmfTopology::getNumberElements() const
 {
+	if(this->getTopologyType().getNodesPerElement() == 0)
+	{
+		return 0;
+	}
 	return this->getArray()->getSize() / this->getTopologyType().getNodesPerElement();
 }
 

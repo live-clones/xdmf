@@ -2,8 +2,8 @@ from Xdmf import *
 
 if __name__ == "__main__":
 
-	visitor = XdmfVisitor.New()
-	visitor.setLightDataLimit(10)
+	writer = XdmfWriter.New()
+	writer.setLightDataLimit(10)
 
 	grid = XdmfGrid.New()
 	grid.setName("test")
@@ -36,4 +36,4 @@ if __name__ == "__main__":
 
 	domain = XdmfDomain.New()
 	domain.insert(grid)
-	domain.accept(visitor)
+	domain.accept(writer)

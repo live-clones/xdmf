@@ -2,7 +2,7 @@ include(UsePythonTest)
 
 set(XdmfPythonTests
 	TestXdmfArray.py
-	TestXdmfVisitor.py
+	TestXdmfWriter.py
 )
 
 foreach(test ${XdmfPythonTests})

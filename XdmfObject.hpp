@@ -2,8 +2,8 @@
 #define XDMFOBJECT_HPP_
 
 // Includes
-#include "boost/shared_ptr.hpp"
-#include <iostream>
+#include <boost/shared_ptr.hpp>
+
 
 #define XdmfNewMacro(type) \
 template <typename T> friend void boost::checked_delete(T * x); \

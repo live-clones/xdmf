@@ -22,8 +22,7 @@ class XdmfGrid : public XdmfItem {
 public:
 
 	XdmfNewMacro(XdmfGrid);
-
-	virtual void accept(boost::shared_ptr<XdmfVisitor> visitor) const;
+	LOKI_DEFINE_VISITABLE(XdmfGrid, XdmfItem)
 
 	/**
 	 * Get an XdmfAttribute attached to this grid.
@@ -111,7 +110,7 @@ public:
 	 */
 	void setName(const std::string & name);
 
-	virtual void traverse(boost::shared_ptr<XdmfVisitor> visitor) const;
+	virtual void traverse(boost::shared_ptr<Loki::BaseVisitor> visitor);
 
 protected:
 

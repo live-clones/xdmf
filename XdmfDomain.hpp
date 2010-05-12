@@ -19,8 +19,7 @@ class XdmfDomain : public XdmfItem {
 public:
 
 	XdmfNewMacro(XdmfDomain);
-
-	virtual void accept(boost::shared_ptr<XdmfVisitor> visitor) const;
+	LOKI_DEFINE_VISITABLE(XdmfDomain, XdmfItem)
 
 	/**
 	 * Get a XdmfGrid attached to the domain.
@@ -52,7 +51,7 @@ public:
 	 */
 	unsigned int getNumberOfGrids() const;
 
-	virtual void traverse(boost::shared_ptr<XdmfVisitor> visitor) const;
+	virtual void traverse(boost::shared_ptr<Loki::BaseVisitor> visitor);
 
 protected:
 

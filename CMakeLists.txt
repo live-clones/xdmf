@@ -18,7 +18,7 @@ endif(HDF5_FOUND)
 
 find_package(LibXml2 REQUIRED)
 if(LIBXML2_FOUND)
-  include_directories(${LIBXML2_INCLUDE_DIR})
+	include_directories(${LIBXML2_INCLUDE_DIR})
 endif(LIBXML2_FOUND)
 
 option(XDMF_WRAP_PYTHON OFF)
@@ -38,7 +38,7 @@ set(XdmfSources
 	XdmfAttributeCenter
 	XdmfAttributeType
 	XdmfDataItem
-  XdmfDomain
+	XdmfDomain
 	XdmfGeometry
 	XdmfGeometryType
 	XdmfGrid
@@ -47,6 +47,7 @@ set(XdmfSources
 	XdmfTopology
 	XdmfTopologyType
 	XdmfVisitor
+	XdmfWriter
 )
 
 add_library(Xdmf ${XdmfSources})

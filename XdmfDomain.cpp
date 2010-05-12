@@ -19,11 +19,6 @@ XdmfDomain::~XdmfDomain()
   std::cout << "Deleted Domain " << this << std::endl;
 }
 
-void XdmfDomain::accept(boost::shared_ptr<XdmfVisitor> visitor) const
-{
-	visitor->visit(this, visitor);
-}
-
 void XdmfDomain::insert(boost::shared_ptr<XdmfGrid> grid)
 {
 	mGrids.push_back(grid);
@@ -54,7 +49,7 @@ unsigned int XdmfDomain::getNumberOfGrids() const
 	return mGrids.size();
 }
 
-void XdmfDomain::traverse(boost::shared_ptr<XdmfVisitor> visitor) const
+void XdmfDomain::traverse(boost::shared_ptr<Loki::BaseVisitor> visitor)
 {
 	for(std::vector<boost::shared_ptr<XdmfGrid> >::const_iterator iter = mGrids.begin(); iter != mGrids.end(); ++iter)
 	{

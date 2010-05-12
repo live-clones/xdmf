@@ -25,11 +25,6 @@ XdmfGrid::~XdmfGrid()
   std::cout << "Deleted Grid " << this << std::endl;
 }
 
-void XdmfGrid::accept(boost::shared_ptr<XdmfVisitor> visitor) const
-{
-	visitor->visit(this, visitor);
-}
-
 boost::shared_ptr<XdmfAttribute> XdmfGrid::getAttribute(unsigned int index)
 {
 	if(index >= mAttributes.size())
@@ -100,7 +95,7 @@ void XdmfGrid::setTopology(boost::shared_ptr<XdmfTopology> topology)
 	mTopology = topology;
 }
 
-void XdmfGrid::traverse(boost::shared_ptr<XdmfVisitor> visitor) const
+void XdmfGrid::traverse(boost::shared_ptr<Loki::BaseVisitor> visitor)
 {
 	mGeometry->accept(visitor);
 	mTopology->accept(visitor);

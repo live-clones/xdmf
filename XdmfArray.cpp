@@ -421,11 +421,6 @@ XdmfArray::~XdmfArray()
 	std::cout << "Deleted Array " << this << std::endl;
 }
 
-void XdmfArray::accept(boost::shared_ptr<XdmfVisitor> visitor) const
-{
-	visitor->visit(this, visitor);
-}
-
 void XdmfArray::copyValues(const unsigned int startIndex, const boost::shared_ptr<const XdmfArray> values, const unsigned int valuesStartIndex, const unsigned int numValues, const unsigned int arrayStride, const unsigned int valuesStride)
 {
 	if(mHaveArrayPointer)

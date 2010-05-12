@@ -13,6 +13,7 @@
 class XdmfVisitor;
 
 // Includes
+#include <loki/Visitor.h>
 #include "XdmfObject.hpp"
 
 /**
@@ -21,12 +22,13 @@ class XdmfVisitor;
  * XdmfItem is an abstract base class.  It represents any item that can be visited and traversed by an XdmfVisitor
  * and have its contents added to an Xdmf file.
  */
-class XdmfItem : public XdmfObject {
+class XdmfItem : public XdmfObject,
+	public Loki::BaseVisitable<void> {
 
 public:
 
-	virtual void accept(boost::shared_ptr<XdmfVisitor> visitor) const = 0;
-	virtual void traverse(boost::shared_ptr<XdmfVisitor> visitor) const;
+	LOKI_DEFINE_VISITABLE_BASE()
+	virtual void traverse(boost::shared_ptr<Loki::BaseVisitor> visitor);
 
 protected:
 
@@ -35,9 +37,8 @@ protected:
 
 private:
 
-	XdmfItem(const XdmfItem&);  // Not implemented.
-	void operator=(const XdmfItem&);  // Not implemented.
-
+	XdmfItem(const XdmfItem & item);  // Not implemented.
+	void operator=(const XdmfItem & item);  // Not implemented.
 };
 
 #endif /* XDMFITEM_HPP_ */

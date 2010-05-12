@@ -1,9 +1,11 @@
-#include "XdmfVisitor.hpp"
-
 #include "XdmfTestDataGenerator.hpp"
+#include "XdmfVisitor.hpp"
+#include "XdmfGrid.hpp"
 
 // Make a new XdmfVisitor that simply counts number of values
-class XdmfVisitorValueCounter : public XdmfVisitor {
+class XdmfVisitorValueCounter : public XdmfVisitor,
+	public Loki::Visitor<XdmfArray> {
+
 public:
 
 	XdmfNewMacro(XdmfVisitorValueCounter);
@@ -13,9 +15,9 @@ public:
 		return mCount;
 	}
 
-	virtual void visit(const XdmfArray * const array, boost::shared_ptr<XdmfVisitor> visitor)
+	void visit(XdmfArray & array, boost::shared_ptr<Loki::BaseVisitor> visitor)
 	{
-		mCount += array->getSize();
+		mCount += array.getSize();
 	}
 
 protected:

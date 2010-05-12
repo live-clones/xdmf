@@ -17,8 +17,7 @@ class XdmfAttribute : public XdmfDataItem {
 public:
 
 	XdmfNewMacro(XdmfAttribute);
-
-	void accept(boost::shared_ptr<XdmfVisitor> visitor) const;
+	LOKI_DEFINE_VISITABLE(XdmfAttribute, XdmfDataItem)
 
 	/**
 	 * Get the XdmfAttributeCenter associated with this attribute.

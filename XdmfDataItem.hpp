@@ -17,6 +17,8 @@ class XdmfDataItem : public XdmfItem {
 
 public:
 
+	LOKI_DEFINE_VISITABLE(XdmfDataItem, XdmfItem)
+
 	/**
 	 * Get the XdmfArray attached to this XdmfDataItem.
 	 *
@@ -38,7 +40,7 @@ public:
 	 */
 	void setArray(boost::shared_ptr<XdmfArray> array);
 
-	virtual void traverse(boost::shared_ptr<XdmfVisitor> visitor) const;
+	virtual void traverse(boost::shared_ptr<Loki::BaseVisitor> visitor);
 
 protected:
 

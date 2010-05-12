@@ -47,11 +47,7 @@ class XdmfArray : public XdmfItem {
 public:
 
 	XdmfNewMacro(XdmfArray);
-
-	/**
-	 *
-	 */
-	virtual void accept(boost::shared_ptr<XdmfVisitor>) const;
+	LOKI_DEFINE_VISITABLE(XdmfArray, XdmfItem)
 
 	/**
 	 * Copy values from an XdmfArray into this array.
@@ -246,6 +242,9 @@ protected:
 
 private:
 
+	XdmfArray(const XdmfArray & array);  // Not implemented.
+	void operator=(const XdmfArray & array);  // Not implemented.
+
 	// Variant Visitor Operations
 	class Clear;
 	class CopyArrayValues;
@@ -298,16 +297,16 @@ private:
 		boost::shared_ptr<std::vector<unsigned short> >,
 		boost::shared_ptr<std::vector<unsigned int> > > ArrayVariant;
 
-	  typedef boost::variant<
-	    boost::shared_array<const char>,
-	    boost::shared_array<const short>,
-	    boost::shared_array<const int>,
-	    boost::shared_array<const long>,
-	    boost::shared_array<const float>,
-	    boost::shared_array<const double>,
-	    boost::shared_array<const unsigned char>,
-	    boost::shared_array<const unsigned short>,
-	    boost::shared_array<const unsigned int> > ArrayPointerVariant;
+	typedef boost::variant<
+		boost::shared_array<const char>,
+		boost::shared_array<const short>,
+		boost::shared_array<const int>,
+		boost::shared_array<const long>,
+		boost::shared_array<const float>,
+		boost::shared_array<const double>,
+		boost::shared_array<const unsigned char>,
+		boost::shared_array<const unsigned short>,
+		boost::shared_array<const unsigned int> > ArrayPointerVariant;
 
 	ArrayVariant mArray;
 	ArrayPointerVariant mArrayPointer;
