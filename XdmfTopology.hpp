@@ -21,6 +21,8 @@ public:
 
 	std::map<std::string, std::string> getItemProperties() const;
 
+	std::string getItemTag() const;
+
 	/**
 	 * Get the number of elements this Topology contains.
 	 *

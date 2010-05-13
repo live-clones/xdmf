@@ -31,6 +31,11 @@ public:
 	LOKI_DEFINE_VISITABLE_BASE()
 
 	/**
+	 * Get the tag for this XdmfItem.  This is equivalent to tags in XML parlance.
+	 */
+	virtual std::string getItemTag() const = 0;
+
+	/**
 	 * Get the key/value property pairs for this XdmfItem.  These are equivalent to attributes in XML parlance.
 	 *
 	 * @return a map of key/value properties associated with this XdmfItem.

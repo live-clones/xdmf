@@ -28,6 +28,8 @@ public:
 
 	std::map<std::string, std::string> getItemProperties() const;
 
+	std::string getItemTag() const;
+
 	/**
 	 * Set the XdmfGeometryType associated with this geometry.
 	 *

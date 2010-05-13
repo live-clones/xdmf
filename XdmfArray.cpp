@@ -478,6 +478,11 @@ std::map<std::string, std::string> XdmfArray::getItemProperties() const
 	return arrayProperties;
 }
 
+std::string XdmfArray::getItemTag() const
+{
+	return "DataItem";
+}
+
 unsigned int XdmfArray::getPrecision() const
 {
 	if(mHaveArray)

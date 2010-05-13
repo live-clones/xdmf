@@ -39,6 +39,8 @@ public:
 
 	std::map<std::string, std::string> getItemProperties() const;
 
+	std::string getItemTag() const;
+
 	/**
 	 * Get the number of XdmfGrids attached to this domain.
 	 *

@@ -21,6 +21,11 @@ XdmfTopology::~XdmfTopology()
 	std::cout << "Deleted Topology " << this << std::endl;
 }
 
+std::string XdmfTopology::getItemTag() const
+{
+	return "Topology";
+}
+
 std::map<std::string, std::string> XdmfTopology::getItemProperties() const
 {
 	std::map<std::string, std::string> topologyProperties;

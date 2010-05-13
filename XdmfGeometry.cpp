@@ -32,6 +32,11 @@ std::map<std::string, std::string> XdmfGeometry::getItemProperties() const
 	return geometryProperties;
 }
 
+std::string XdmfGeometry::getItemTag() const
+{
+	return "Geometry";
+}
+
 void XdmfGeometry::setGeometryType(const XdmfGeometryType & geometryType)
 {
 	mGeometryType = geometryType;

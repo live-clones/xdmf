@@ -62,6 +62,11 @@ std::map<std::string, std::string> XdmfGrid::getItemProperties() const
 	return gridProperties;
 }
 
+std::string XdmfGrid::getItemTag() const
+{
+	return "Grid";
+}
+
 std::string XdmfGrid::getName() const
 {
 	return mName;

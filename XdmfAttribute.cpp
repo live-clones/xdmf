@@ -40,6 +40,11 @@ std::map<std::string, std::string> XdmfAttribute::getItemProperties() const
 	return attributeProperties;
 }
 
+std::string XdmfAttribute::getItemTag() const
+{
+	return "Attribute";
+}
+
 std::string XdmfAttribute::getName() const
 {
 	return mName;

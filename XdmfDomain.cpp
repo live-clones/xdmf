@@ -50,6 +50,11 @@ std::map<std::string, std::string> XdmfDomain::getItemProperties() const
 	return domainProperties;
 }
 
+std::string XdmfDomain::getItemTag() const
+{
+	return "Domain";
+}
+
 unsigned int XdmfDomain::getNumberOfGrids() const
 {
 	return mGrids.size();

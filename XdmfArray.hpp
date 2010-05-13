@@ -94,6 +94,8 @@ public:
 
 	std::map<std::string, std::string> getItemProperties() const;
 
+	std::string getItemTag() const;
+
 	/**
 	 * Get the precision, in bytes, of the data type of this array.
 	 *
