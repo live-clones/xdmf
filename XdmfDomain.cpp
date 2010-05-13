@@ -44,6 +44,12 @@ boost::shared_ptr<const XdmfGrid> XdmfDomain::getGrid(unsigned int index) const
 	return mGrids[index];
 }
 
+std::map<std::string, std::string> XdmfDomain::getItemProperties() const
+{
+	std::map<std::string, std::string> domainProperties;
+	return domainProperties;
+}
+
 unsigned int XdmfDomain::getNumberOfGrids() const
 {
 	return mGrids.size();

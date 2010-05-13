@@ -21,6 +21,13 @@ XdmfTopology::~XdmfTopology()
 	std::cout << "Deleted Topology " << this << std::endl;
 }
 
+std::map<std::string, std::string> XdmfTopology::getItemProperties() const
+{
+	std::map<std::string, std::string> topologyProperties;
+	mTopologyType.getProperties(topologyProperties);
+	return topologyProperties;
+}
+
 unsigned int XdmfTopology::getNumberElements() const
 {
 	if(this->getTopologyType().getNodesPerElement() == 0)

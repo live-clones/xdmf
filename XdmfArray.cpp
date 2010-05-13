@@ -468,6 +468,16 @@ hid_t XdmfArray::getHDF5Type() const
 	return -1;
 }
 
+std::map<std::string, std::string> XdmfArray::getItemProperties() const
+{
+	std::map<std::string, std::string> arrayProperties;
+	arrayProperties["Format"] = "HDF";
+	arrayProperties["DataType"] = this->getType();
+	arrayProperties["Precision"] = this->getPrecision();
+	arrayProperties["Dimensions"] = this->getSize();
+	return arrayProperties;
+}
+
 unsigned int XdmfArray::getPrecision() const
 {
 	if(mHaveArray)

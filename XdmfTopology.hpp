@@ -19,6 +19,8 @@ public:
 	XdmfNewMacro(XdmfTopology);
 	LOKI_DEFINE_VISITABLE(XdmfTopology, XdmfDataItem)
 
+	std::map<std::string, std::string> getItemProperties() const;
+
 	/**
 	 * Get the number of elements this Topology contains.
 	 *

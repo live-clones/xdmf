@@ -85,3 +85,8 @@ std::string XdmfGeometryType::getName() const
 {
 	return mName;
 }
+
+void XdmfGeometryType::getProperties(std::map<std::string, std::string> & collectedProperties) const
+{
+	collectedProperties["GeometryType"] = this->mName;
+}

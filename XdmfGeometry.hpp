@@ -26,6 +26,8 @@ public:
 	 */
 	XdmfGeometryType getGeometryType() const;
 
+	std::map<std::string, std::string> getItemProperties() const;
+
 	/**
 	 * Set the XdmfGeometryType associated with this geometry.
 	 *

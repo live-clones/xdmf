@@ -33,6 +33,8 @@ public:
 	 */
 	XdmfAttributeType getAttributeType() const;
 
+	std::map<std::string, std::string> getItemProperties() const;
+
 	/**
 	 * Get the name of the attribute.
 	 *

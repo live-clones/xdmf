@@ -75,3 +75,8 @@ std::string XdmfAttributeType::getName() const
 {
 	return mName;
 }
+
+void XdmfAttributeType::getProperties(std::map<std::string, std::string> & collectedProperties) const
+{
+	collectedProperties["AttributeType"] = this->mName;
+}

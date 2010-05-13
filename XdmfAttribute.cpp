@@ -31,6 +31,15 @@ XdmfAttributeType XdmfAttribute::getAttributeType() const
 	return mAttributeType;
 }
 
+std::map<std::string, std::string> XdmfAttribute::getItemProperties() const
+{
+	std::map<std::string, std::string> attributeProperties;
+	attributeProperties["Name"] = mName;
+	mAttributeType.getProperties(attributeProperties);
+	mAttributeCenter.getProperties(attributeProperties);
+	return attributeProperties;
+}
+
 std::string XdmfAttribute::getName() const
 {
 	return mName;

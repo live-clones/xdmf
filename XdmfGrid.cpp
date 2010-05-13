@@ -55,6 +55,13 @@ boost::shared_ptr<const XdmfGeometry> XdmfGrid::getGeometry() const
 	return mGeometry;
 }
 
+std::map<std::string, std::string> XdmfGrid::getItemProperties() const
+{
+	std::map<std::string, std::string> gridProperties;
+	gridProperties["Name"] = mName;
+	return gridProperties;
+}
+
 std::string XdmfGrid::getName() const
 {
 	return mName;

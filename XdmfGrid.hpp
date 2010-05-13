@@ -54,6 +54,8 @@ public:
 	 */
 	boost::shared_ptr<const XdmfGeometry> getGeometry() const;
 
+	std::map<std::string, std::string> getItemProperties() const;
+
 	/**
 	 * Get the name of the grid.
 	 *

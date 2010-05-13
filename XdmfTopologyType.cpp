@@ -23,7 +23,7 @@ XdmfTopologyType XdmfTopologyType::Polyline()
 	return XdmfTopologyType(1, "Polyline", Linear);
 }
 
-XdmfTopologyType XdmfTopologyType::Polygon(const int& nodesPerElement)
+XdmfTopologyType XdmfTopologyType::Polygon(const int nodesPerElement)
 {
 	return XdmfTopologyType(nodesPerElement, "Polygon", Linear);
 }
@@ -175,4 +175,13 @@ std::string XdmfTopologyType::getName() const
 unsigned int XdmfTopologyType::getNodesPerElement() const
 {
 	return mNodesPerElement;
+}
+
+void XdmfTopologyType::getProperties(std::map<std::string, std::string> & collectedProperties) const
+{
+	collectedProperties["TopologyType"] = this->mName;
+	if(this->getName().compare("Polygon") == 0)
+	{
+		collectedProperties["NodesPerElement"] = this->mNodesPerElement;
+	}
 }

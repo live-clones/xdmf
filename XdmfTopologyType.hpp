@@ -2,8 +2,7 @@
 #define XDMFTOPOLOGYTYPE_HPP_
 
 // Includes
-#include <string>
-
+#include "XdmfItemProperty.hpp"
 /**
  * @brief Property describing the types of elements stored in an XdmfTopology.
  *
@@ -36,7 +35,7 @@
  * 	ThreeDRectMesh
  *	ThreeDCoRectMesh
  */
-class XdmfTopologyType {
+class XdmfTopologyType : public XdmfItemProperty {
 
 public:
 
@@ -48,7 +47,7 @@ public:
 	static XdmfTopologyType NoTopologyType();
 	static XdmfTopologyType Polyvertex();
 	static XdmfTopologyType Polyline();
-	static XdmfTopologyType Polygon(const int & numNodes);
+	static XdmfTopologyType Polygon(const int numNodes);
 	static XdmfTopologyType Triangle();
 	static XdmfTopologyType Quadrilateral();
 	static XdmfTopologyType Tetrahedron();
@@ -90,6 +89,8 @@ public:
 	 * @return an unsinged int containing number of nodes per element.
 	 */
 	unsigned int getNodesPerElement() const;
+
+	void getProperties(std::map<std::string, std::string> & collectedProperties) const;
 
 	/*
 	 * Compare two XdmfTopologyTypes for equality.

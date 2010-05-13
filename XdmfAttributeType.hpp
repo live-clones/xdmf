@@ -2,7 +2,7 @@
 #define XDMFATTRIBUTETYPE_HPP_
 
 // Includes
-#include <string>
+#include "XdmfItemProperty.hpp"
 
 /**
  * @brief Property describing what types of values an XdmfAttribute contains.
@@ -20,7 +20,7 @@
  * 	Tensor6
  * 	GlobalId
  */
-class XdmfAttributeType {
+class XdmfAttributeType : public XdmfItemProperty {
 
 public:
 
@@ -39,6 +39,8 @@ public:
 	 * @return a string containing the name.
 	 */
 	std::string getName() const;
+
+	void getProperties(std::map<std::string, std::string> & collectedProperties) const;
 
 	/*
 	 * Compare two XdmfAttributeTypes for equality.

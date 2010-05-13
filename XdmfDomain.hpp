@@ -37,12 +37,7 @@ public:
 	 */
 	boost::shared_ptr<const XdmfGrid> getGrid(unsigned int index) const;
 
-	/**
-	 * Insert a XdmfGrid into the domain.
-	 *
-	 * @param grid a shared pointer to an XdmfGrid to insert into the domain.
-	 */
-	void insert(boost::shared_ptr<XdmfGrid> grid);
+	std::map<std::string, std::string> getItemProperties() const;
 
 	/**
 	 * Get the number of XdmfGrids attached to this domain.
@@ -50,6 +45,13 @@ public:
 	 * @return unsigned int containing the number of XdmfGrids attached to this domain.
 	 */
 	unsigned int getNumberOfGrids() const;
+
+	/**
+	 * Insert a XdmfGrid into the domain.
+	 *
+	 * @param grid a shared pointer to an XdmfGrid to insert into the domain.
+	 */
+	void insert(boost::shared_ptr<XdmfGrid> grid);
 
 	virtual void traverse(boost::shared_ptr<Loki::BaseVisitor> visitor);
 

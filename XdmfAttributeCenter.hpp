@@ -2,7 +2,7 @@
 #define XDMFATTRIBUTECENTER_HPP_
 
 // Includes
-#include <string>
+#include "XdmfItemProperty.hpp"
 
 /**
  * @brief Property describing where XdmfAttribute values are centered.
@@ -18,7 +18,7 @@
  * 	Edge
  * 	Node
  */
-class XdmfAttributeCenter {
+class XdmfAttributeCenter : public XdmfItemProperty {
 
 public:
 
@@ -30,11 +30,13 @@ public:
 	static XdmfAttributeCenter Node();
 
 	/**
-	 * Create the name of this attribute center.
+	 * Get the name of this attribute center.
 	 *
 	 * @return a string containing the name.
 	 */
 	std::string getName() const;
+
+	void getProperties(std::map<std::string, std::string> & collectedProperties) const;
 
 	/**
 	 * Compare two XdmfAttributeCenters for equality.
@@ -54,7 +56,6 @@ public:
 
 	XdmfAttributeCenter(const XdmfAttributeCenter & attributeCenter);
 	XdmfAttributeCenter& operator=(const XdmfAttributeCenter & attributeCenter);
-
 
 protected:
 

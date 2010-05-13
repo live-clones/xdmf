@@ -43,6 +43,7 @@ set(XdmfSources
 	XdmfGeometryType
 	XdmfGrid
 	XdmfItem
+	XdmfItemProperty
 	XdmfObject
 	XdmfTopology
 	XdmfTopologyType

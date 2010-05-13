@@ -25,6 +25,13 @@ XdmfGeometryType XdmfGeometry::getGeometryType() const
 	return mGeometryType;
 }
 
+std::map<std::string, std::string> XdmfGeometry::getItemProperties() const
+{
+	std::map<std::string, std::string> geometryProperties;
+	mGeometryType.getProperties(geometryProperties);
+	return geometryProperties;
+}
+
 void XdmfGeometry::setGeometryType(const XdmfGeometryType & geometryType)
 {
 	mGeometryType = geometryType;

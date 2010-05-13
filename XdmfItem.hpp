@@ -14,6 +14,7 @@ class XdmfVisitor;
 
 // Includes
 #include <loki/Visitor.h>
+#include <map>
 #include "XdmfObject.hpp"
 
 /**
@@ -28,6 +29,19 @@ class XdmfItem : public XdmfObject,
 public:
 
 	LOKI_DEFINE_VISITABLE_BASE()
+
+	/**
+	 * Get the key/value property pairs for this XdmfItem.  These are equivalent to attributes in XML parlance.
+	 *
+	 * @return a map of key/value properties associated with this XdmfItem.
+	 */
+	virtual std::map<std::string, std::string> getItemProperties() const = 0;
+
+	/**
+	 * Traverse this XdmfItem by passing the visitor to its children XdmfItems.
+	 *
+	 * @param a visitor to pass to this XdmfItem's children.
+	 */
 	virtual void traverse(boost::shared_ptr<Loki::BaseVisitor> visitor);
 
 protected:

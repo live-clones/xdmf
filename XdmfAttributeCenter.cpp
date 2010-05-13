@@ -65,3 +65,8 @@ std::string XdmfAttributeCenter::getName() const
 {
 	return mName;
 }
+
+void XdmfAttributeCenter::getProperties(std::map<std::string, std::string> & collectedProperties) const
+{
+	collectedProperties["Center"] = this->mName;
+}

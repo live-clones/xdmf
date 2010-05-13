@@ -2,7 +2,7 @@
 #define XDMFGEOMETRYTYPE_HPP_
 
 // Includes
-#include <string>
+#include "XdmfItemProperty.hpp"
 
 /**
  * @brief Property describing the types of coordinate values stored in an XdmfGeometry.
@@ -22,7 +22,7 @@
  * 	VXVY
  * 	Origin_DXDY
  */
-class XdmfGeometryType {
+class XdmfGeometryType : public XdmfItemProperty {
 
 public:
 
@@ -50,6 +50,8 @@ public:
 	 * @return a string containing the name.
 	 */
 	std::string getName() const;
+
+	void getProperties(std::map<std::string, std::string> & collectedProperties) const;
 
 	/*
 	 * Compare two XdmfGeometry types for equality.
