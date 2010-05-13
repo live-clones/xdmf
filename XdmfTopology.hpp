@@ -8,7 +8,7 @@
 /**
  * @brief Handles the connectivity information in an XdmfGrid.
  *
- * XdmfTopology is a required part of an XdmfGrid.  It stores the connectivty information
+ * XdmfTopology is a required part of an XdmfGrid.  It stores the connectivity information
  * between all points contained in an XdmfGrid.  XdmfTopology contains an XdmfTopologyType property
  * which should be set that specifies the element type stored.
  */

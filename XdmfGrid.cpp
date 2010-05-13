@@ -9,8 +9,6 @@
 #include "XdmfGrid.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfTopology.hpp"
-#include "XdmfVisitor.hpp"
-#include <sstream>
 
 XdmfGrid::XdmfGrid() :
 	mGeometry(XdmfGeometry::New()),

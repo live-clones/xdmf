@@ -5,8 +5,8 @@
 class XdmfGrid;
 
 // Includes
-#include "XdmfItem.hpp"
 #include <vector>
+#include "XdmfItem.hpp"
 
 /**
  * @brief The root XdmfItem that contains XdmfGrids.

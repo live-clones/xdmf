@@ -2,7 +2,6 @@
 #define XDMFITEMPROPERTY_HPP_
 
 // Includes
-#include <string>
 #include <map>
 #include "XdmfObject.hpp"
 

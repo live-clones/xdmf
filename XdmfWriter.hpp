@@ -3,16 +3,10 @@
 
 // Forward Declarations
 class XdmfArray;
-class XdmfAttribute;
-class XdmfDomain;
-class XdmfGeometry;
-class XdmfGrid;
-class XdmfTopology;
 
 // Includes
 #include <hdf5.h>
 #include <libxml/tree.h>
-#include <sstream>
 #include <vector>
 #include "XdmfVisitor.hpp"
 
@@ -24,12 +18,7 @@ class XdmfTopology;
  * The XdmfItem as well as all children attached to the XdmfItem are written to disk.
  */
 class XdmfWriter : public XdmfVisitor,
-	public Loki::Visitor<XdmfArray>,
-	public Loki::Visitor<XdmfAttribute>,
-	public Loki::Visitor<XdmfDomain>,
-	public Loki::Visitor<XdmfGeometry>,
-	public Loki::Visitor<XdmfGrid>,
-	public Loki::Visitor<XdmfTopology> {
+	public Loki::Visitor<XdmfArray> {
 
 public:
 
@@ -58,44 +47,12 @@ public:
 	void visit(XdmfArray & array, boost::shared_ptr<Loki::BaseVisitor> visitor);
 
 	/**
-	 * Write an XdmfAttribute to disk
+	 * Write an XdmfItem to disk
 	 *
-	 * @param attribute a pointer to an XdmfAttribute to write to disk.
+	 * @param item a pointer to an XdmfItem to write to disk.
 	 * @param visitor a smart pointer to this XdmfVisitor --- aids in grid traversal.
 	 */
-	void visit(XdmfAttribute & attribute, boost::shared_ptr<Loki::BaseVisitor> visitor);
-
-	/**
-	 * Write an XdmfDomain to disk
-	 *
-	 * @param domain a pointer to an XdmfDomain to write to disk.
-	 * @param visitor a smart pointer to this XdmfVisitor --- aids in grid traversal.
-	 */
-	void visit(XdmfDomain & domain, boost::shared_ptr<Loki::BaseVisitor> visitor);
-
-	/**
-	 * Write an XdmfGeometry to disk
-	 *
-	 * @param geometry a pointer to an XdmfGeometry to write to disk.
-	 * @param visitor a smart pointer to this XdmfVisitor --- aids in grid traversal.
-	 */
-	void visit(XdmfGeometry & geometry, boost::shared_ptr<Loki::BaseVisitor> visitor);
-
-	/**
-	 * Write an XdmfGrid to disk
-	 *
-	 * @param grid a pointer to an XdmfGrid to write to disk.
-	 * @param visitor a smart pointer to this XdmfVisitor --- aids in grid traversal.
-	 */
-	void visit(XdmfGrid & grid, boost::shared_ptr<Loki::BaseVisitor> visitor);
-
-	/**
-	 * Write an XdmfTopology to disk
-	 *
-	 * @param topology a pointer to an XdmfTopology to write to disk.
-	 * @param visitor a smart pointer to this XdmfVisitor --- aids in grid traversal.
-	 */
-	void visit(XdmfTopology & topology, boost::shared_ptr<Loki::BaseVisitor> visitor);
+	void visit(XdmfItem & item, boost::shared_ptr<Loki::BaseVisitor> visitor);
 
 protected:
 
@@ -108,18 +65,30 @@ private:
 	void operator=(const XdmfWriter & writer);  // Not implemented.
 
 	/**
-	 * Uses the dataHierarchy to construct an appropriate hdf5 group name at the current point in writing.
+	 * Create a new HDF5 group if needed based on the dataHierarchy.  This is a recursive function used by getHDF5GroupHandle to construct
+	 * new hdf5 groups.
 	 *
-	 * @return a string containing the hdf5 group name.
+	 * @param groupPath the current place in the dataHierarchy being processed.
+	 * @param index the index in the dataHierarchy being processed.
+	 *
+	 * @return a string containing the path to the created group.
 	 */
-	std::string getHDF5GroupName();
+	std::string createHDF5Group(std::stringstream & groupPath, int index = 0);
 
-	std::vector<std::string> dataHierarchy;
-	hid_t hdf5Handle;
+	/**
+	 * Get a handle to a hdf5 group to write into.  Uses the dataHierarchy to construct an appropriate hdf5 group name
+	 * at the current point in writing.
+	 *
+	 * @return a string containing the path to the created group.
+	 */
+	std::string getHDF5GroupHandle();
+
+	std::vector<std::string> mDataHierarchy;
+	hid_t mHDF5Handle;
 	std::string mHeavyFileName;
 	unsigned int mLightDataLimit;
-	xmlDocPtr xmlDocument;
-	xmlNodePtr xmlCurrentNode;
+	xmlDocPtr mXMLDocument;
+	xmlNodePtr mXMLCurrentNode;
 };
 
 #endif /* XDMFWRITER_HPP_ */

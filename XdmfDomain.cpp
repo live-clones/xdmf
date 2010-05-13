@@ -7,7 +7,6 @@
 
 #include "XdmfDomain.hpp"
 #include "XdmfGrid.hpp"
-#include "XdmfVisitor.hpp"
 
 XdmfDomain::XdmfDomain()
 {

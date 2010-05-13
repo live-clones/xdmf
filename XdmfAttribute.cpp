@@ -6,7 +6,6 @@
  */
 
 #include "XdmfAttribute.hpp"
-#include "XdmfVisitor.hpp"
 
 XdmfAttribute::XdmfAttribute() :
 	mName(""),

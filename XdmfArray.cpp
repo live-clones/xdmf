@@ -473,8 +473,12 @@ std::map<std::string, std::string> XdmfArray::getItemProperties() const
 	std::map<std::string, std::string> arrayProperties;
 	arrayProperties["Format"] = "HDF";
 	arrayProperties["DataType"] = this->getType();
-	arrayProperties["Precision"] = this->getPrecision();
-	arrayProperties["Dimensions"] = this->getSize();
+	std::stringstream precision;
+	precision <<  this->getPrecision();
+	arrayProperties["Precision"] = precision.str();
+	std::stringstream size;
+	size <<  this->getSize();
+	arrayProperties["Dimensions"] = size.str();
 	return arrayProperties;
 }
 

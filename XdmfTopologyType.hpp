@@ -2,6 +2,7 @@
 #define XDMFTOPOLOGYTYPE_HPP_
 
 // Includes
+#include <string>
 #include "XdmfItemProperty.hpp"
 /**
  * @brief Property describing the types of elements stored in an XdmfTopology.

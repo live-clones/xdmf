@@ -5,9 +5,9 @@
  *      Author: kleiter
  */
 
+#include <sstream>
 #include "XdmfArray.hpp"
 #include "XdmfTopology.hpp"
-#include "XdmfVisitor.hpp"
 
 XdmfTopology::XdmfTopology() :
 	mTopologyType(XdmfTopologyType::NoTopologyType()),
@@ -30,6 +30,9 @@ std::map<std::string, std::string> XdmfTopology::getItemProperties() const
 {
 	std::map<std::string, std::string> topologyProperties;
 	mTopologyType.getProperties(topologyProperties);
+	std::stringstream numElements;
+	numElements << this->getNumberElements();
+	topologyProperties["Dimensions"] = numElements.str();
 	return topologyProperties;
 }
 

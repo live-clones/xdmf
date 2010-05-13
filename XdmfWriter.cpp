@@ -1,171 +1,70 @@
 // Kenneth Leiter
 // Xdmf Smart Pointer Test
 
+#include <sstream>
 #include "XdmfArray.hpp"
-#include "XdmfAttribute.hpp"
-#include "XdmfDomain.hpp"
-#include "XdmfGeometry.hpp"
-#include "XdmfGrid.hpp"
-#include "XdmfTopology.hpp"
+#include "XdmfItem.hpp"
 #include "XdmfWriter.hpp"
-
-//#include <iomanip>
 
 XdmfWriter::XdmfWriter() :
 	mLightDataLimit(100),
 	mHeavyFileName("output.h5"),
-	hdf5Handle(H5Fcreate("output.h5", H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT)),
-	xmlDocument(xmlNewDoc((xmlChar*)"1.0")),
-	xmlCurrentNode(xmlNewNode(NULL, (xmlChar*)"Xdmf"))
+	mHDF5Handle(H5Fcreate("output.h5", H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT)),
+	mXMLDocument(xmlNewDoc((xmlChar*)"1.0")),
+	mXMLCurrentNode(xmlNewNode(NULL, (xmlChar*)"Xdmf"))
 {
-	xmlDocSetRootElement(xmlDocument, xmlCurrentNode);
+	xmlDocSetRootElement(mXMLDocument, mXMLCurrentNode);
 	std::cout << "Created visitor " << this << std::endl;
 }
 
 XdmfWriter::~XdmfWriter()
 {
-	xmlSaveFormatFile("output.xmf", xmlDocument, 1);
-	xmlFreeDoc(xmlDocument);
+	xmlSaveFormatFile("output.xmf", mXMLDocument, 1);
+	xmlFreeDoc(mXMLDocument);
 	xmlCleanupParser();
-	herr_t status = H5Fclose(hdf5Handle);
+	herr_t status = H5Fclose(mHDF5Handle);
 	std::cout << "Deleted visitor " << this << std::endl;
 }
 
-void XdmfWriter::visit(XdmfAttribute & attribute, boost::shared_ptr<Loki::BaseVisitor> visitor)
+std::string XdmfWriter::createHDF5Group(std::stringstream & groupPath, int index)
 {
-	std::cout << "Writing Attribute" << std::endl;
-	xmlNodePtr parentNode = xmlCurrentNode;
-	xmlCurrentNode = xmlNewChild(xmlCurrentNode, NULL, (xmlChar*)"Attribute", NULL);
-	xmlNewProp(xmlCurrentNode, (xmlChar*)"Name", (xmlChar*)attribute.getName().c_str());
-	xmlNewProp(xmlCurrentNode, (xmlChar*)"AttributeType", (xmlChar*)attribute.getAttributeType().getName().c_str());
-	xmlNewProp(xmlCurrentNode, (xmlChar*)"Center", (xmlChar*)attribute.getAttributeCenter().getName().c_str());
-
-	dataHierarchy.push_back(attribute.getName());
-	attribute.traverse(visitor);
-	dataHierarchy.pop_back();
-
-	xmlCurrentNode = parentNode;
-}
-
-void XdmfWriter::visit(XdmfArray & array, boost::shared_ptr<Loki::BaseVisitor> visitor)
-{
-	std::cout << "Writing Array" << std::endl;
-	xmlNodePtr parentNode = xmlCurrentNode;
-	xmlCurrentNode = xmlNewChild(xmlCurrentNode, NULL, (xmlChar*)"DataItem", NULL);
-
-	std::string format = "XML";
-	if(array.getSize() > mLightDataLimit)
+	groupPath << "/" << mDataHierarchy[index];
+	hid_t handle = H5Gopen(mHDF5Handle, groupPath.str().c_str(), H5P_DEFAULT);
+	if(handle < 0)
 	{
-		format = "HDF";
+		// Open failed, create a new group
+		handle = H5Gcreate(mHDF5Handle, groupPath.str().c_str(), H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 	}
+	H5Gclose(handle);
 
-	xmlNewProp(xmlCurrentNode, (xmlChar*)"Format", (xmlChar*)format.c_str());
-	xmlNewProp(xmlCurrentNode, (xmlChar*)"DataType", (xmlChar*)array.getType().c_str());
-	std::stringstream precisionString;
-	precisionString << array.getPrecision();
-	xmlNewProp(xmlCurrentNode, (xmlChar*)"Precision", (xmlChar*)precisionString.str().c_str());
-	std::stringstream dimensionString;
-	dimensionString << array.getSize();
-	xmlNewProp(xmlCurrentNode, (xmlChar*)"Dimensions", (xmlChar*)dimensionString.str().c_str());
-
-	std::stringstream xmlTextValues;
-	if(array.getSize() > mLightDataLimit)
+	// + 2 because we ignore last value in mDataHierarchy (== dataset name)
+	if(index + 2 < mDataHierarchy.size())
 	{
-		herr_t status;
-		hsize_t size = array.getSize();
-		hid_t dataspace = H5Screate_simple(1, &size, NULL);
-		hid_t handle = hdf5Handle;
-		std::string groupName = getHDF5GroupName();
-		// Need to make sure this group exists before we add to it.
-		if(dataHierarchy.size() > 1)
-		{
-			// Save old error handler
-			H5E_auto_t old_func;
-			void* old_client_data;
-			H5Eget_auto(0, &old_func, &old_client_data);
+		return createHDF5Group(groupPath, index + 1);
 
-			// Turn off error handling
-			H5Eset_auto2(0, NULL, NULL);
-
-			// Probe. May fail, but that's okay
-			handle = H5Gopen(hdf5Handle, groupName.c_str(), H5P_DEFAULT);
-
-			// Restore previous error handler
-			H5Eset_auto2(0, old_func, old_client_data);
-			if(handle < 0)
-			{
-				handle = H5Gcreate(hdf5Handle, groupName.c_str(), H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-			}
-		}
-		hid_t dataset = H5Dcreate(handle, dataHierarchy.back().c_str(), array.getHDF5Type(), dataspace, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-		xmlTextValues << mHeavyFileName << ":" << groupName << "/" << dataHierarchy.back();
-		status = H5Dwrite(dataset, array.getHDF5Type(), H5S_ALL, H5S_ALL, H5P_DEFAULT, array.getValuesPointer());
-		status = H5Dclose(dataset);
-		status = H5Sclose(dataspace);
 	}
-	else
+	return groupPath.str().c_str();
+}
+
+std::string XdmfWriter::getHDF5GroupHandle()
+{
+	if(mDataHierarchy.size() > 1)
 	{
-		xmlTextValues << array.getValuesString();
+		// Save old error handler and turn off error handling for now
+		H5E_auto_t old_func;
+		void* old_client_data;
+		H5Eget_auto(0, &old_func, &old_client_data);
+		H5Eset_auto2(0, NULL, NULL);
+
+		std::stringstream emptyPath;
+		std::string handle = createHDF5Group(emptyPath);
+
+		// Restore previous error handler
+		H5Eset_auto2(0, old_func, old_client_data);
+
+		return handle;
 	}
-
-	xmlAddChild(xmlCurrentNode, xmlNewText((xmlChar*)xmlTextValues.str().c_str()));
-	xmlCurrentNode = parentNode;
-}
-
-void XdmfWriter::visit(XdmfDomain & domain, boost::shared_ptr<Loki::BaseVisitor> visitor)
-{
-	std::cout << "Writing Domain" << std::endl;
-	xmlNodePtr parentNode = xmlCurrentNode;
-	xmlCurrentNode = xmlNewChild(xmlCurrentNode, NULL, (xmlChar*)"Domain", NULL);
-
-	domain.traverse(visitor);
-
-	xmlCurrentNode = parentNode;
-}
-
-void XdmfWriter::visit(XdmfGeometry & geometry, boost::shared_ptr<Loki::BaseVisitor> visitor)
-{
-	std::cout << "Writing Geometry" << std::endl;
-	xmlNodePtr parentNode = xmlCurrentNode;
-	xmlCurrentNode = xmlNewChild(xmlCurrentNode, NULL, (xmlChar*)"Geometry", NULL);
-	xmlNewProp(xmlCurrentNode, (xmlChar*)"GeometryType", (xmlChar*)geometry.getGeometryType().getName().c_str());
-
-	dataHierarchy.push_back("XYZ");
-	geometry.traverse(visitor);
-	dataHierarchy.pop_back();
-
-	xmlCurrentNode = parentNode;
-}
-
-void XdmfWriter::visit(XdmfGrid & grid, boost::shared_ptr<Loki::BaseVisitor> visitor)
-{
-	std::cout << "Writing Grid" << std::endl;
-	xmlNodePtr parentNode = xmlCurrentNode;
-    xmlCurrentNode = xmlNewChild(xmlCurrentNode, NULL, (xmlChar*)"Grid", NULL);
-	xmlNewProp(xmlCurrentNode, (xmlChar*)"Name", (xmlChar*)grid.getName().c_str());
-
-	dataHierarchy.push_back(grid.getName());
-	grid.traverse(visitor);
-	dataHierarchy.pop_back();
-
-	xmlCurrentNode = parentNode;
-}
-
-void XdmfWriter::visit(XdmfTopology & topology, boost::shared_ptr<Loki::BaseVisitor> visitor)
-{
-	std::cout << "Writing Topology" << std::endl;
-	xmlNodePtr parentNode = xmlCurrentNode;
-	xmlCurrentNode = xmlNewChild(xmlCurrentNode, NULL, (xmlChar*)"Topology", NULL);
-	xmlNewProp(xmlCurrentNode, (xmlChar*)"TopologyType", (xmlChar*)topology.getTopologyType().getName().c_str());
-	std::stringstream numberElementsString;
-	numberElementsString << topology.getNumberElements();
-	xmlNewProp(xmlCurrentNode, (xmlChar*)"NumberOfElements", (xmlChar*)numberElementsString.str().c_str());
-
-	dataHierarchy.push_back("Connectivity");
-	topology.traverse(visitor);
-	dataHierarchy.pop_back();
-
-	xmlCurrentNode = parentNode;
+	return "";
 }
 
 unsigned int XdmfWriter::getLightDataLimit() const
@@ -178,12 +77,65 @@ void XdmfWriter::setLightDataLimit(unsigned int numValues)
 	mLightDataLimit = numValues;
 }
 
-std::string XdmfWriter::getHDF5GroupName()
+void XdmfWriter::visit(XdmfArray & array, boost::shared_ptr<Loki::BaseVisitor> visitor)
 {
-	std::stringstream datasetName;
-	for(unsigned int i=0; i<dataHierarchy.size() - 1; ++i)
+	this->visit(dynamic_cast<XdmfItem &>(array), visitor);
+
+	xmlNodePtr parentNode = mXMLCurrentNode;
+	mXMLCurrentNode = mXMLCurrentNode->children;
+
+	std::stringstream xmlTextValues;
+	if(array.getSize() > mLightDataLimit)
 	{
-		datasetName << "/" << dataHierarchy[i];
+		herr_t status;
+		hsize_t size = array.getSize();
+		hid_t dataspace = H5Screate_simple(1, &size, NULL);
+		hid_t handle = mHDF5Handle;
+		std::string groupName = getHDF5GroupHandle();
+		if(groupName.compare("") != 0)
+		{
+			handle = H5Gopen(mHDF5Handle, groupName.c_str(), H5P_DEFAULT);
+		}
+		hid_t dataset = H5Dcreate(handle, mDataHierarchy.back().c_str(), array.getHDF5Type(), dataspace, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+		xmlTextValues << mHeavyFileName << ":" << groupName << "/" << mDataHierarchy.back();
+		status = H5Dwrite(dataset, array.getHDF5Type(), H5S_ALL, H5S_ALL, H5P_DEFAULT, array.getValuesPointer());
+		if(groupName.compare("") != 0)
+		{
+			H5Gclose(handle);
+		}
+		status = H5Dclose(dataset);
+		status = H5Sclose(dataspace);
 	}
-	return datasetName.str();
+	else
+	{
+		xmlTextValues << array.getValuesString();
+	}
+
+	xmlAddChild(mXMLCurrentNode, xmlNewText((xmlChar*)xmlTextValues.str().c_str()));
+	mXMLCurrentNode = parentNode;
+}
+
+void XdmfWriter::visit(XdmfItem & item, boost::shared_ptr<Loki::BaseVisitor> visitor)
+{
+	xmlNodePtr parentNode = mXMLCurrentNode;
+	mXMLCurrentNode = xmlNewChild(mXMLCurrentNode, NULL, (xmlChar*)item.getItemTag().c_str(), NULL);
+	const std::map<std::string, std::string> itemProperties = item.getItemProperties();
+	bool pushedHDF5Name = false;
+	for(std::map<std::string, std::string>::const_iterator iter = itemProperties.begin(); iter != itemProperties.end(); ++iter)
+	{
+		if(iter->first.compare("Name") == 0)
+		{
+			mDataHierarchy.push_back(iter->second);
+			pushedHDF5Name = true;
+		}
+		xmlNewProp(mXMLCurrentNode, (xmlChar*)iter->first.c_str(), (xmlChar*)iter->second.c_str());
+	}
+	if(!pushedHDF5Name)
+	{
+		mDataHierarchy.push_back(item.getItemTag());
+	}
+
+	item.traverse(visitor);
+	mXMLCurrentNode = parentNode;
+	mDataHierarchy.pop_back();
 }

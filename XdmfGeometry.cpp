@@ -6,7 +6,6 @@
  */
 
 #include "XdmfGeometry.hpp"
-#include "XdmfVisitor.hpp"
 
 XdmfGeometry::XdmfGeometry() :
 	mGeometryType(XdmfGeometryType::NoGeometryType()),

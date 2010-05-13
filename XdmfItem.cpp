@@ -1,5 +1,4 @@
 #include "XdmfItem.hpp"
-#include "XdmfVisitor.hpp"
 
 XdmfItem::XdmfItem()
 {
