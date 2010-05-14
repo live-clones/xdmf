@@ -19,7 +19,12 @@ class XdmfHDF5Writer : public XdmfVisitor,
 
 public:
 
-	XdmfNewMacro(XdmfHDF5Writer);
+	template <typename T> friend void boost::checked_delete(T * x);
+	static boost::shared_ptr<XdmfHDF5Writer> New(std::string hdf5FilePath)
+	{
+		boost::shared_ptr<XdmfHDF5Writer> p(new XdmfHDF5Writer(hdf5FilePath));
+		return p;
+	}
 
 	/**
 	 * Pop a string from the data hierarchy.  This should be called whenever an XdmfItem is finished
@@ -58,7 +63,12 @@ public:
 
 protected:
 
-	XdmfHDF5Writer();
+	/**
+	 * Construct XdmfHDF5Writer
+	 *
+	 * @param hdf5FilePath the location of the hdf5 file to output to on disk.
+	 */
+	XdmfHDF5Writer(std::string & hdf5FilePath);
 	virtual ~XdmfHDF5Writer();
 
 private:
@@ -67,6 +77,9 @@ private:
 	 * PIMPL
 	 */
 	class XdmfHDF5WriterImpl;
+
+	// Variant Visitor Operation
+	class GetHDF5Type;
 
 	XdmfHDF5Writer(const XdmfHDF5Writer & hdf5Writer);  // Not implemented.
 	void operator=(const XdmfHDF5Writer & hdf5Writer);  // Not implemented.

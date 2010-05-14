@@ -17,14 +17,12 @@ int main(int argc, char* argv[])
 	assert(array->getType() == "");
 	assert(array->getPrecision() == 0);
 	assert(array->getValuesString() == "");
-	assert(array->getHDF5Type() == -1);
 	assert(array->getValuesPointer() == NULL);
 	array->copyValues(0, &values[0], 4, 1, 1);
 	assert(array->getSize() == 4);
 	assert(array->getType().compare("Int") == 0);
 	assert(array->getPrecision() == 4);
 	assert(array->getValuesString().compare("1 2 3 4 ") == 0);
-	assert(array->getHDF5Type() == H5T_NATIVE_INT);
 	const int * const arrayPointer = (const int * const)array->getValuesPointer();
 	assert(arrayPointer[0] == 1);
 	assert(arrayPointer[1] == 2);
@@ -103,7 +101,6 @@ int main(int argc, char* argv[])
 	assert(array5->getType().compare("Int") == 0);
 	assert(array5->getPrecision() == 4);
 	assert(array5->getValuesString().compare("1 2 ") == 0);
-	assert(array5->getHDF5Type() == H5T_NATIVE_INT);
 	const int * const array5Pointer = (const int * const)array5->getValuesPointer();
 	assert(array5Pointer[0] == 1);
 	assert(array5Pointer[1] == 2);

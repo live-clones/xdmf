@@ -14,7 +14,7 @@ class XdmfHDF5Writer::XdmfHDF5WriterImpl {
 
 public:
 
-	XdmfHDF5WriterImpl() :
+	XdmfHDF5WriterImpl(std::string & hdf5FilePath) :
 		mHDF5Handle(H5Fcreate("output.h5", H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT)),
 		mHeavyFileName("output.h5")
 	{
@@ -28,8 +28,73 @@ public:
 	std::string mHeavyFileName;
 };
 
-XdmfHDF5Writer::XdmfHDF5Writer() :
-	mImpl(new XdmfHDF5WriterImpl())
+class XdmfHDF5Writer::GetHDF5Type : public boost::static_visitor <hid_t> {
+public:
+
+	GetHDF5Type()
+	{
+	}
+
+	hid_t getHDF5Type(const char * const) const
+	{
+		return H5T_NATIVE_CHAR;
+	}
+
+	hid_t getHDF5Type(const short * const) const
+	{
+		return H5T_NATIVE_SHORT;
+	}
+
+	hid_t getHDF5Type(const int * const) const
+	{
+		return H5T_NATIVE_INT;
+	}
+
+	hid_t getHDF5Type(const long * const) const
+	{
+		return H5T_NATIVE_LONG;
+	}
+
+	hid_t getHDF5Type(const float * const) const
+	{
+		return H5T_NATIVE_FLOAT;
+	}
+
+	hid_t getHDF5Type(const double * const) const
+	{
+		return H5T_NATIVE_DOUBLE;
+	}
+
+	hid_t getHDF5Type(const unsigned char * const) const
+	{
+		return H5T_NATIVE_UCHAR;
+	}
+
+	hid_t getHDF5Type(const unsigned short * const) const
+	{
+		return H5T_NATIVE_USHORT;
+	}
+
+	hid_t getHDF5Type(const unsigned int * const) const
+	{
+		return H5T_NATIVE_UINT;
+	}
+
+	template<typename T>
+	hid_t operator()(const boost::shared_ptr<std::vector<T> > & array) const
+	{
+		return this->getHDF5Type(&(array.get()->operator[](0)));
+	}
+
+	template<typename T>
+	hid_t operator()(const boost::shared_array<const T> & array) const
+	{
+		return this->getHDF5Type(array.get());
+	}
+};
+
+XdmfHDF5Writer::XdmfHDF5Writer(std::string & hdf5FilePath) :
+	mImpl(new XdmfHDF5WriterImpl(hdf5FilePath))
 {
 	std::cout << "Created XdmfHDF5Writer " << this << std::endl;
 }
@@ -101,27 +166,42 @@ void XdmfHDF5Writer::pushDataHierarchy(const XdmfItem & item)
 
 std::string XdmfHDF5Writer::visit(XdmfArray & array, boost::shared_ptr<Loki::BaseVisitor> visitor)
 {
-	herr_t status;
-	hsize_t size = array.getSize();
-	hid_t dataspace = H5Screate_simple(1, &size, NULL);
-	hid_t handle = mImpl->mHDF5Handle;
-	std::string groupName = getHDF5GroupHandle();
-	if(groupName.compare("") != 0)
+	hid_t datatype = -1;
+	if(array.mHaveArray)
 	{
-		handle = H5Gopen(mImpl->mHDF5Handle, groupName.c_str(), H5P_DEFAULT);
+		datatype = boost::apply_visitor(GetHDF5Type(), array.mArray);
 	}
-	hid_t dataset = H5Dcreate(handle, mImpl->mDataHierarchy.back().c_str(), array.getHDF5Type(), dataspace, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-	status = H5Dwrite(dataset, array.getHDF5Type(), H5S_ALL, H5S_ALL, H5P_DEFAULT, array.getValuesPointer());
-	if(groupName.compare("") != 0)
+	else if(array.mHaveArrayPointer)
 	{
-		H5Gclose(handle);
+		datatype = boost::apply_visitor(GetHDF5Type(), array.mArrayPointer);
 	}
-	status = H5Dclose(dataset);
-	status = H5Sclose(dataspace);
 
-	std::stringstream dataSetName;
-	dataSetName << mImpl->mHeavyFileName << ":" << groupName << "/" << mImpl->mDataHierarchy.back();
-	return dataSetName.str();
+	if(datatype != -1)
+	{
+		herr_t status;
+		hsize_t size = array.getSize();
+		hid_t dataspace = H5Screate_simple(1, &size, NULL);
+		hid_t handle = mImpl->mHDF5Handle;
+		std::string groupName = getHDF5GroupHandle();
+		if(groupName.compare("") != 0)
+		{
+			handle = H5Gopen(mImpl->mHDF5Handle, groupName.c_str(), H5P_DEFAULT);
+		}
+
+		hid_t dataset = H5Dcreate(handle, mImpl->mDataHierarchy.back().c_str(), datatype, dataspace, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+		status = H5Dwrite(dataset, datatype, H5S_ALL, H5S_ALL, H5P_DEFAULT, array.getValuesPointer());
+		if(groupName.compare("") != 0)
+		{
+			H5Gclose(handle);
+		}
+		status = H5Dclose(dataset);
+		status = H5Sclose(dataspace);
+
+		std::stringstream dataSetName;
+		dataSetName << mImpl->mHeavyFileName << ":" << groupName << "/" << mImpl->mDataHierarchy.back();
+		return dataSetName.str();
+	}
+	return "";
 }
 
 void XdmfHDF5Writer::visit(XdmfItem & item, boost::shared_ptr<Loki::BaseVisitor> visitor)

@@ -16,7 +16,7 @@ class XdmfWriter::XdmfWriterImpl {
 public:
 
 	XdmfWriterImpl() :
-		mHDF5Writer(XdmfHDF5Writer::New()),
+		mHDF5Writer(XdmfHDF5Writer::New("output.h5")),
 		mLightDataLimit(100),
 		mXMLDocument(xmlNewDoc((xmlChar*)"1.0")),
 		mXMLCurrentNode(xmlNewNode(NULL, (xmlChar*)"Xdmf"))

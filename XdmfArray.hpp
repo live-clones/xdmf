@@ -5,7 +5,6 @@
 #include "XdmfItem.hpp"
 #include <boost/shared_array.hpp>
 #include <boost/variant.hpp>
-#include <hdf5.h>
 #include <vector>
 
 /**
@@ -48,6 +47,7 @@ public:
 
 	XdmfNewMacro(XdmfArray);
 	LOKI_DEFINE_VISITABLE(XdmfArray, XdmfItem)
+	friend class XdmfHDF5Writer;
 
 	/**
 	 * Copy values from an XdmfArray into this array.
@@ -84,13 +84,6 @@ public:
 	 * @return the capacity of this array.
 	 */
 	unsigned int getCapacity() const;
-
-	/**
-	 * Get the hdf5 data type of this array.
-	 *
-	 * @return the hdf5 data type for the array.
-	 */
-	virtual hid_t getHDF5Type() const;
 
 	std::map<std::string, std::string> getItemProperties() const;
 

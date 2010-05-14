@@ -76,71 +76,6 @@ public:
 	}
 };
 
-class XdmfArray::GetHDF5Type : public boost::static_visitor <hid_t> {
-public:
-
-	GetHDF5Type()
-	{
-	}
-
-	hid_t getHDF5Type(const char * const) const
-	{
-		return H5T_NATIVE_CHAR;
-	}
-
-	hid_t getHDF5Type(const short * const) const
-	{
-		return H5T_NATIVE_SHORT;
-	}
-
-	hid_t getHDF5Type(const int * const) const
-	{
-		return H5T_NATIVE_INT;
-	}
-
-	hid_t getHDF5Type(const long * const) const
-	{
-		return H5T_NATIVE_LONG;
-	}
-
-	hid_t getHDF5Type(const float * const) const
-	{
-		return H5T_NATIVE_FLOAT;
-	}
-
-	hid_t getHDF5Type(const double * const) const
-	{
-		return H5T_NATIVE_DOUBLE;
-	}
-
-	hid_t getHDF5Type(const unsigned char * const) const
-	{
-		return H5T_NATIVE_UCHAR;
-	}
-
-	hid_t getHDF5Type(const unsigned short * const) const
-	{
-		return H5T_NATIVE_USHORT;
-	}
-
-	hid_t getHDF5Type(const unsigned int * const) const
-	{
-		return H5T_NATIVE_UINT;
-	}
-
-	template<typename T>
-	hid_t operator()(const boost::shared_ptr<std::vector<T> > & array) const
-	{
-		return this->getHDF5Type(&(array.get()->operator[](0)));
-	}
-
-	template<typename T>
-	hid_t operator()(const boost::shared_array<const T> & array) const
-	{
-		return this->getHDF5Type(array.get());
-	}
-};
-
 class XdmfArray::GetPrecision : public boost::static_visitor <unsigned int> {
 public:
 
@@ -453,19 +388,6 @@ unsigned int XdmfArray::getCapacity() const
 		return boost::apply_visitor(GetCapacity(), mArray);
 	}
 	return 0;
-}
-
-hid_t XdmfArray::getHDF5Type() const
-{
-	if(mHaveArray)
-	{
-		return boost::apply_visitor(GetHDF5Type(), mArray);
-	}
-	else if(mHaveArrayPointer)
-	{
-		return boost::apply_visitor(GetHDF5Type(), mArrayPointer);
-	}
-	return -1;
 }
 
 std::map<std::string, std::string> XdmfArray::getItemProperties() const
