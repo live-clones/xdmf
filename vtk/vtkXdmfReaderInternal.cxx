@@ -846,6 +846,7 @@ std::vector<std::string> vtkXdmfDomain::GetAttributeNames(XdmfGrid* xmfGrid, int
       std::string newName = name;
       names.push_back(newName);
     }
+    return names;
 }
 
 //-----------------------------------------------------------------------------------
