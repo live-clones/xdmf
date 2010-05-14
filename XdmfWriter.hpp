@@ -3,11 +3,8 @@
 
 // Forward Declarations
 class XdmfArray;
-class XdmfHDF5Writer;
 
 // Includes
-#include <libxml/tree.h>
-#include <vector>
 #include "XdmfVisitor.hpp"
 
 /**
@@ -62,14 +59,15 @@ protected:
 
 private:
 
+	/**
+	 * PIMPL
+	 */
+	class XdmfWriterImpl;
+
 	XdmfWriter(const XdmfWriter & writer);  // Not implemented.
 	void operator=(const XdmfWriter & writer);  // Not implemented.
 
-	boost::shared_ptr<XdmfHDF5Writer> mHDF5Writer;
-	std::string mHeavyFileName;
-	unsigned int mLightDataLimit;
-	xmlDocPtr mXMLDocument;
-	xmlNodePtr mXMLCurrentNode;
+	XdmfWriterImpl * mImpl;
 };
 
 #endif /* XDMFWRITER_HPP_ */

@@ -5,7 +5,6 @@
 class XdmfArray;
 
 // Includes
-#include <hdf5.h>
 #include "XdmfVisitor.hpp"
 
 /**
@@ -64,6 +63,11 @@ protected:
 
 private:
 
+	/**
+	 * PIMPL
+	 */
+	class XdmfHDF5WriterImpl;
+
 	XdmfHDF5Writer(const XdmfHDF5Writer & hdf5Writer);  // Not implemented.
 	void operator=(const XdmfHDF5Writer & hdf5Writer);  // Not implemented.
 
@@ -86,9 +90,7 @@ private:
 	 */
 	std::string getHDF5GroupHandle();
 
-	std::vector<std::string> mDataHierarchy;
-	hid_t mHDF5Handle;
-	std::string mHeavyFileName;
+	XdmfHDF5WriterImpl * mImpl;
 };
 
-#endif /* XDMFWRITER_HPP_ */
+#endif /* XDMFHDF5WRITER_HPP_ */
