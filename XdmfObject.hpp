@@ -4,9 +4,9 @@
 // Includes
 #include <boost/shared_ptr.hpp>
 
-#define XdmfNewMacro(type) \
+#define XdmfNewMacro(type, ...) \
 template <typename T> friend void boost::checked_delete(T * x); \
-static boost::shared_ptr<type> New() \
+static boost::shared_ptr<type> New(__VA_ARGS__) \
 { \
 	boost::shared_ptr<type> p(new type()); \
 	return p; \

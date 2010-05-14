@@ -14,7 +14,9 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 	#include <XdmfGeometry.hpp>
 	#include <XdmfGeometryType.hpp>
 	#include <XdmfGrid.hpp>
+	#include <XdmfHDF5Writer.hpp>
 	#include <XdmfItem.hpp>
+	#include <XdmfItemProperty.hpp>
 	#include <XdmfObject.hpp>
 	#include <XdmfTopology.hpp>
 	#include <XdmfTopologyType.hpp>
@@ -51,6 +53,7 @@ namespace boost {
 %template(XdmfDomainPtr) boost::shared_ptr<XdmfDomain>;
 %template(XdmfGeometryPtr) boost::shared_ptr<XdmfGeometry>;
 %template(XdmfGridPtr) boost::shared_ptr<XdmfGrid>;
+%template(XdmfHDF5WriterPtr) boost::shared_ptr<XdmfHDF5Writer>;
 %template(XdmfItemPtr) boost::shared_ptr<XdmfItem>;
 %template(XdmfObjPtr) boost::shared_ptr<XdmfObject>;
 %template(XdmfTopologyPtr) boost::shared_ptr<XdmfTopology>;
@@ -94,6 +97,7 @@ SWIG_SHARED_PTR_DERIVED(XdmfWriter, XdmfObject);
 %include XdmfObject.hpp
 
 %include XdmfItem.hpp
+%include XdmfItemProperty.hpp
 %include XdmfVisitor.hpp
 %include XdmfWriter.hpp
 
