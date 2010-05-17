@@ -70,6 +70,7 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
     case(XDMF_HEX_20):
     case(XDMF_HEX_24):
     case(XDMF_HEX_27):
+    case(XDMF_HEX_64):
       metisElementType = 3;
       numNodesPerElement = 8;
       break;

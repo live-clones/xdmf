@@ -111,9 +111,6 @@ XdmfGrid * XdmfHex64Generator::Generate(XdmfGrid * grid)
       grid->GetGeometry()->GetPoints()->GetValues(grid->GetTopology()->GetConnectivity()->GetValueAsInt64(8*i + j) * 3, &localNodes[j][0], 3);
     }
 
-    std::cout << localNodes[0][0] << " " << localNodes[0][1] << " " << localNodes[0][2] << std::endl;
-    std::cout << localNodes[1][0] << " " << localNodes[1][1] << " " << localNodes[1][2] << std::endl;
-
     // Add old connectivity information to newConnectivity.
     int startIndex = newConnectivity.size();
     newConnectivity.resize(newConnectivity.size() + 8);
@@ -126,8 +123,6 @@ XdmfGrid * XdmfHex64Generator::Generate(XdmfGrid * grid)
         case 0:
         {
           ComputeInteriorPoints(midpoint1, midpoint2, localNodes[0], localNodes[1]);
-          std::cout << midpoint1[0] << " " << midpoint1[1] << " " << midpoint1[2] << std::endl;
-          std::cout << midpoint2[0] << " " << midpoint2[1] << " " << midpoint2[2] << std::endl;
           localNodes.push_back(midpoint1);
           localNodes.push_back(midpoint2);
           break;
@@ -432,7 +427,7 @@ XdmfGrid * XdmfHex64Generator::Generate(XdmfGrid * grid)
  */
 int main(int argc, char* argv[])
 {
-  std::string usage = "Generates Tri-Cubic Hexahedron XDMF grids from Linear Hexahedron Grids: \n \n Usage: \n \n   XdmfHex64Generator <path-of-file-containing-linear-hexahedron> (Optional: <path-to-output-file>)";
+  std::string usage = "Generates Tri-Cubic Hexahedron Xdmf grids from Linear Hexahedron Grids: \n \n Usage: \n \n   XdmfHex64Generator <path-of-file-containing-linear-hexahedron> (Optional: <path-to-output-file>)";
   std::string meshName = "";
 
   if (argc < 2)
@@ -492,6 +487,7 @@ int main(int argc, char* argv[])
   
   XdmfHex64Generator generator;
   XdmfGrid * mesh = generator.Generate(grid);
+  delete grid;
 
   // Set heavy data set names for geometry and topology
   std::stringstream heavyPointName;
