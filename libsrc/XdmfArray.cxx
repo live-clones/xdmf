@@ -23,8 +23,9 @@
 /*                                                                 */
 /*******************************************************************/
 #include "XdmfArray.h"
-
 #include "XdmfArrayCopyMacro.h"
+
+#include <cstring>
 
 #ifndef _WIN32
 #include <unistd.h>

@@ -24,6 +24,8 @@
 /*******************************************************************/
 #include "XdmfExpression.h"
 
+#include <cstring>
+
 extern XdmfArray *XdmfExprParse( XdmfString string );
 
 XdmfArray *

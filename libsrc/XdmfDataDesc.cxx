@@ -24,6 +24,7 @@
 /*******************************************************************/
 #include "XdmfDataDesc.h"
 
+#include <cstring>
 #include <stdlib.h>
 
 XdmfDataDesc::XdmfDataDesc() {
