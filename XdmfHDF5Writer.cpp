@@ -15,8 +15,9 @@ class XdmfHDF5Writer::XdmfHDF5WriterImpl {
 public:
 
 	XdmfHDF5WriterImpl(std::string & hdf5FilePath) :
-		mHDF5Handle(H5Fcreate("output.h5", H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT)),
-		mHeavyFileName("output.h5")
+		mHDF5Handle(H5Fcreate(hdf5FilePath.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT)),
+		mHeavyFileName(hdf5FilePath),
+		mLastWrittenDataSet("")
 	{
 	};
 	~XdmfHDF5WriterImpl()
@@ -26,6 +27,7 @@ public:
 	std::vector<std::string> mDataHierarchy;
 	hid_t mHDF5Handle;
 	std::string mHeavyFileName;
+	std::string mLastWrittenDataSet;
 };
 
 class XdmfHDF5Writer::GetHDF5Type : public boost::static_visitor <hid_t> {
@@ -145,6 +147,11 @@ std::string XdmfHDF5Writer::getHDF5GroupHandle()
 	return "";
 }
 
+std::string XdmfHDF5Writer::getLastWrittenDataSet() const
+{
+	return mImpl->mLastWrittenDataSet;
+}
+
 void XdmfHDF5Writer::popDataHierarchy()
 {
 	mImpl->mDataHierarchy.pop_back();
@@ -164,7 +171,7 @@ void XdmfHDF5Writer::pushDataHierarchy(const XdmfItem & item)
 	}
 }
 
-std::string XdmfHDF5Writer::visit(XdmfArray & array, boost::shared_ptr<Loki::BaseVisitor> visitor)
+void XdmfHDF5Writer::visit(XdmfArray & array, boost::shared_ptr<Loki::BaseVisitor> visitor)
 {
 	hid_t datatype = -1;
 	if(array.mHaveArray)
@@ -199,9 +206,9 @@ std::string XdmfHDF5Writer::visit(XdmfArray & array, boost::shared_ptr<Loki::Bas
 
 		std::stringstream dataSetName;
 		dataSetName << mImpl->mHeavyFileName << ":" << groupName << "/" << mImpl->mDataHierarchy.back();
-		return dataSetName.str();
+		mImpl->mLastWrittenDataSet = dataSetName.str();
 	}
-	return "";
+	mImpl->mLastWrittenDataSet = "";
 }
 
 void XdmfHDF5Writer::visit(XdmfItem & item, boost::shared_ptr<Loki::BaseVisitor> visitor)

@@ -2,6 +2,7 @@ include(UsePythonTest)
 
 set(XdmfPythonTests
 	TestXdmfArray.py
+	TestXdmfHDF5Writer.py
 	TestXdmfWriter.py
 )
 

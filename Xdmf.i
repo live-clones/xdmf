@@ -84,6 +84,9 @@ SWIG_SHARED_PTR_DERIVED(XdmfGeometry, XdmfItem);
 SWIG_SHARED_PTR_DERIVED(XdmfGeometry, XdmfObject);
 SWIG_SHARED_PTR_DERIVED(XdmfGrid, XdmfItem);
 SWIG_SHARED_PTR_DERIVED(XdmfGrid, XdmfObject);
+SWIG_SHARED_PTR_DERIVED(XdmfHDF5Writer, XdmfVisitor);
+SWIG_SHARED_PTR_DERIVED(XdmfHDF5Writer, Loki::BaseVisitor);
+SWIG_SHARED_PTR_DERIVED(XdmfHDF5Writer, XdmfObject);
 SWIG_SHARED_PTR_DERIVED(XdmfItem, XdmfObject);
 SWIG_SHARED_PTR_DERIVED(XdmfTopology, XdmfDataItem);
 SWIG_SHARED_PTR_DERIVED(XdmfTopology, XdmfItem);
@@ -99,6 +102,8 @@ SWIG_SHARED_PTR_DERIVED(XdmfWriter, XdmfObject);
 %include XdmfItem.hpp
 %include XdmfItemProperty.hpp
 %include XdmfVisitor.hpp
+
+%include XdmfHDF5Writer.hpp
 %include XdmfWriter.hpp
 
 %include XdmfDataItem.hpp

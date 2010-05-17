@@ -15,7 +15,7 @@ class XdmfArray;
  * as the parameter.
  */
 class XdmfHDF5Writer : public XdmfVisitor,
-	public Loki::Visitor<XdmfArray, std::string> {
+	public Loki::Visitor<XdmfArray> {
 
 public:
 
@@ -25,6 +25,13 @@ public:
 		boost::shared_ptr<XdmfHDF5Writer> p(new XdmfHDF5Writer(hdf5FilePath));
 		return p;
 	}
+
+	/**
+	 * Get the path to the last written data set written by this writer.
+	 *
+	 * @return the path to the last written data set.
+	 */
+	std::string getLastWrittenDataSet() const;
 
 	/**
 	 * Pop a string from the data hierarchy.  This should be called whenever an XdmfItem is finished
@@ -48,10 +55,8 @@ public:
 	 *
 	 * @param array an XdmfArray to write to HDF5.
 	 * @param visitor a smart pointer to this visitor --- aids in grid traversal.
-	 *
-	 * @return a string containing the path to the hdf5 dataset written.
 	 */
-	std::string visit(XdmfArray & array, boost::shared_ptr<Loki::BaseVisitor> visitor);
+	void visit(XdmfArray & array, boost::shared_ptr<Loki::BaseVisitor> visitor);
 
 	/**
 	 * Traverse an XdmfItem structure in order to find XdmfArrays to write to HDF5.

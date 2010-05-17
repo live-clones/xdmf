@@ -69,7 +69,8 @@ void XdmfWriter::visit(XdmfArray & array, boost::shared_ptr<Loki::BaseVisitor> v
 	std::stringstream xmlTextValues;
 	if(array.getSize() > mImpl->mLightDataLimit)
 	{
-		xmlTextValues << mImpl->mHDF5Writer->visit(array, mImpl->mHDF5Writer);
+		mImpl->mHDF5Writer->visit(array, mImpl->mHDF5Writer);
+		xmlTextValues << mImpl->mHDF5Writer->getLastWrittenDataSet();
 	}
 	else
 	{
