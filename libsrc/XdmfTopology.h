@@ -54,6 +54,7 @@
 #define XDMF_HEX_20         0x0030
 #define XDMF_HEX_24         0x0031
 #define XDMF_HEX_27         0x0032
+#define XDMF_HEX_64         0x0033
 #define XDMF_MIXED          0x0070
 #define XDMF_2DSMESH        0x0100
 #define XDMF_2DRECTMESH     0x0101
@@ -89,6 +90,7 @@ Currently supported BASE topologies are :
       HEXAHEDRON_20 ....... 20 Node High Order Hexahedron (Quadratic Hexahedron)
       HEXAHEDRON_24 ....... 24 Node High Order Hexahedron (Bi-Quadratic Hexahedron)
       HEXAHEDRON_27 ....... 27 Node High Order Hexahedron (Tri-Quadratic Hexahedron)
+      HEXAHEDRON_64 ....... 64 Node High Order Hexahedron (Tri-Cubic Hexahedron)
       MIXED ............... A Mixture of Unstructured Base Topologies
       2DSMESH ............. General ( Curved )
       2DRECTMESH .......... Rectilinear

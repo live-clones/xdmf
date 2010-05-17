@@ -7,6 +7,7 @@ SET(XdmfUtilSource
     XdmfExodusReader
     XdmfExodusWriter
     XdmfFortran
+    XdmfHex64Generator
     XdmfPartitioner
 )
 
@@ -72,10 +73,12 @@ ${XDMF_NETCDF_LIBRARIES} metis)
 ADD_EXECUTABLE(XdmfDiff XdmfDiff)
 ADD_EXECUTABLE(XdmfExodusConverter XdmfExodusConverter)
 ADD_EXECUTABLE(XdmfPartitioner XdmfPartitioner)
-SET_TARGET_PROPERTIES(XdmfDiff XdmfPartitioner PROPERTIES COMPILE_FLAGS -DBUILD_EXE)
+ADD_EXECUTABLE(XdmfHex64Generator XdmfHex64Generator)
+SET_TARGET_PROPERTIES(XdmfDiff XdmfPartitioner XdmfHex64Generator PROPERTIES COMPILE_FLAGS -DBUILD_EXE)
 TARGET_LINK_LIBRARIES(XdmfDiff XdmfUtils)
 TARGET_LINK_LIBRARIES(XdmfExodusConverter XdmfUtils)
 TARGET_LINK_LIBRARIES(XdmfPartitioner XdmfUtils)
+TARGET_LINK_LIBRARIES(XdmfHex64Generator XdmfUtils)
 
 IF(NOT XDMF_INSTALL_NO_DEVELOPMENT)
   FILE(GLOB devFiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.h")
