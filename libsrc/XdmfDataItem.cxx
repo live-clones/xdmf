@@ -169,7 +169,7 @@ XdmfInt32 XdmfDataItem::UpdateInformationTree(){
 }
 
 XdmfInt32 XdmfDataItem::UpdateInformationUniform(){
-    XdmfConstString Value;
+    XdmfConstString Value = 0;
     XdmfInt32   Precision = 4;
 
     Value = this->Get("Precision");
