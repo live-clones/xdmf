@@ -35,6 +35,7 @@
 #include "assert.h"
 #include "hdf5.h"
 
+#include <cstring>
 #include <stdlib.h>
 
 #define HDF_IO_DEBUG 1

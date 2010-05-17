@@ -25,6 +25,8 @@
 #include "XdmfDsmBuffer.h"
 #include "XdmfH5Driver.h"
 
+#include <cstring>
+
 #ifdef WIN32
 #define XDMF_HDF5_SIZE_T        ssize_t
 #else

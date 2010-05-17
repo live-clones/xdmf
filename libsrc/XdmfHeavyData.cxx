@@ -24,6 +24,8 @@
 /*******************************************************************/
 #include "XdmfHeavyData.h"
 
+#include <cstring>
+
 XdmfHeavyData::XdmfHeavyData() :
   mOpenCB( NULL ),
   mReadCB( NULL ),

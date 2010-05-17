@@ -28,6 +28,8 @@
 #include "XdmfArray.h"
 #include "XdmfExport.h"
 
+#include <cstring>
+
 #define XDMF_DSM_OPCODE_PUT     0x01
 #define XDMF_DSM_OPCODE_GET     0x02
 #define XDMF_DSM_SEMA_AQUIRE    0x03
