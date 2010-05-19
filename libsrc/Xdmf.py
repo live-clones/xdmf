@@ -954,6 +954,7 @@ XDMF_WEDGE_18 = _Xdmf.XDMF_WEDGE_18
 XDMF_HEX_20 = _Xdmf.XDMF_HEX_20
 XDMF_HEX_24 = _Xdmf.XDMF_HEX_24
 XDMF_HEX_27 = _Xdmf.XDMF_HEX_27
+XDMF_HEX_64 = _Xdmf.XDMF_HEX_64
 XDMF_MIXED = _Xdmf.XDMF_MIXED
 XDMF_2DSMESH = _Xdmf.XDMF_2DSMESH
 XDMF_2DRECTMESH = _Xdmf.XDMF_2DRECTMESH
@@ -1320,6 +1321,23 @@ class XdmfMap(XdmfElement):
     def Release(self): return _Xdmf.XdmfMap_Release(self)
 XdmfMap_swigregister = _Xdmf.XdmfMap_swigregister
 XdmfMap_swigregister(XdmfMap)
+
+class XdmfHex64Generator(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfHex64Generator, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfHex64Generator, name)
+    __repr__ = _swig_repr
+    def __init__(self): 
+        this = _Xdmf.new_XdmfHex64Generator()
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _Xdmf.delete_XdmfHex64Generator
+    __del__ = lambda self : None;
+    def Generate(self, *args): return _Xdmf.XdmfHex64Generator_Generate(self, *args)
+    def Split(self, *args): return _Xdmf.XdmfHex64Generator_Split(self, *args)
+XdmfHex64Generator_swigregister = _Xdmf.XdmfHex64Generator_swigregister
+XdmfHex64Generator_swigregister(XdmfHex64Generator)
 
 XDMF_DSM_OPCODE_DONE = _Xdmf.XDMF_DSM_OPCODE_DONE
 XDMF_DSM_TYPE_UNIFORM = _Xdmf.XDMF_DSM_TYPE_UNIFORM

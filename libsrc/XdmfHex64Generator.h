@@ -23,8 +23,9 @@
 /*                                                                 */
 /*******************************************************************/
 
-#include <Xdmf.h>
-#include <vector>
+class XdmfGrid;
+
+#include "XdmfObject.h"
 
 /*!
  * @brief XdmfHex64Generator generates a 64-noded tri-cubic hexahedron
@@ -46,35 +47,25 @@ public:
     ~XdmfHex64Generator();
 
     /*!
-     * Computes points dividing a line joined by two points point1 and point2
-     * in the ratio 1/3 and 2/3 respectively.
-     */
-    inline void ComputeInteriorPoints(std::vector<XdmfFloat64> & midpoint1, std::vector<XdmfFloat64> & midpoint2, std::vector<XdmfFloat64> & point1, std::vector<XdmfFloat64> & point2);
-
-    /*!
-     * Computes points dividing a line joined by two points point1 and point2
-     * in the ratio 1/3.
-     */
-    inline void ComputeOneThirdPoint(std::vector<XdmfFloat64> & midpoint1, std::vector<XdmfFloat64> & point1, std::vector<XdmfFloat64> & point2);
-
-    /*!
-     * Computes points dividing a line joined by two points point1 and point2
-     * in the ratio 2/3.
-     */
-    inline void ComputeTwoThirdPoint(std::vector<XdmfFloat64> & midpoint1, std::vector<XdmfFloat64> & point1, std::vector<XdmfFloat64> & point2);
- 
-    /*!
      * Take an XdmfGrid containing linear hexahedron elements and convert to
      * 64-noded tri-cubic hexahedron elements.
      *
-     * @param grid an XdmfGrid to convert.
+     * @param grid an XdmfGrid containing XDMF_HEX topoology to convert.
+     * @param parentElement the XdmfElement to insert the grid into.
      *
-     * @return a pointer to the converted XdmfGrid
+     * @return a pointer to the converted XdmfGrid.
      */
-    XdmfGrid * Generate(XdmfGrid * grid);
+    XdmfGrid * Generate(XdmfGrid * grid, XdmfElement * parentElement);
 
-private:
-
-    void GenerateNewPoints(XdmfGeometry * geometry);
+    /*!
+     * Take an XdmfGrid containing tri-cubic hexahedron elements and convert to
+     * linear hexahedron grid (split each tri-cubic element into 27 linear hexahedron elements).
+     *
+     * @param grid an XdmfGrid containing XDMF_HEX_64 topology to split.
+     * @param parentElement the XdmfElement to insert the grid into.
+     *
+     * @return a pointer to the split XdmfGrid.
+     */
+    XdmfGrid * Split(XdmfGrid * grid, XdmfElement * parentElement);
 
 };
