@@ -90,8 +90,6 @@ void XdmfWriter::visit(XdmfItem & item, boost::shared_ptr<Loki::BaseVisitor> vis
 	{
 		xmlNewProp(mImpl->mXMLCurrentNode, (xmlChar*)iter->first.c_str(), (xmlChar*)iter->second.c_str());
 	}
-	mImpl->mHDF5Writer->pushDataHierarchy(item);
 	item.traverse(visitor);
-	mImpl->mHDF5Writer->popDataHierarchy();
 	mImpl->mXMLCurrentNode = parentNode;
 }
