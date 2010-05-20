@@ -2,9 +2,9 @@
 /*                               XDMF                              */
 /*                   eXtensible Data Model and Format              */
 /*                                                                 */
-/*  Id : $Id: vtkXdmfDataArray.h,v 1.3 2008-09-16 12:52:12 clarke Exp $  */
-/*  Date : $Date: 2008-09-16 12:52:12 $ */
-/*  Version : $Revision: 1.3 $ */
+/*  Id : Id                                                        */
+/*  Date : $Date$                                                  */
+/*  Version : $Revision$                                           */
 /*                                                                 */
 /*  Author:                                                        */
 /*     Jerry A. Clarke                                             */

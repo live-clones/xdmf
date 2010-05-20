@@ -2,9 +2,9 @@
 /*                               XDMF                              */
 /*                   eXtensible Data Model and Format              */
 /*                                                                 */
-/*  Id : $Id: vtkXdmfDataArray.cxx,v 1.9 2009-07-23 21:23:22 kwleiter Exp $  */
-/*  Date : $Date: 2009-07-23 21:23:22 $ */
-/*  Version : $Revision: 1.9 $ */
+/*  Id : Id                                                        */
+/*  Date : $Date$                                                  */
+/*  Version : $Revision$                                           */
 /*                                                                 */
 /*  Author:                                                        */
 /*     Jerry A. Clarke                                             */
