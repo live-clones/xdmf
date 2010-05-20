@@ -421,6 +421,11 @@ XdmfHDF::CreateDataset( XdmfConstString path ) {
 
   free( Pathname );
   XdmfDebug("Checking for existance of " << this->Path );
+  if ( this->Dataset != H5I_BADID ){
+    XdmfDebug("Closing Dataset");
+    H5Dclose(this->Dataset);
+    this->Dataset=H5I_BADID;
+    }
   H5E_BEGIN_TRY {
 #if (!H5_USE_16_API && ((H5_VERS_MAJOR>1)||((H5_VERS_MAJOR==1)&&(H5_VERS_MINOR>=8))))
     this->Dataset = H5Dopen( this->Cwd, this->Path, H5P_DEFAULT );
