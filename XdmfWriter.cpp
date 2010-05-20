@@ -15,11 +15,12 @@ class XdmfWriter::XdmfWriterImpl {
 
 public:
 
-	XdmfWriterImpl() :
-		mHDF5Writer(XdmfHDF5Writer::New("output.h5")),
+	XdmfWriterImpl(const std::string & xmlFilePath, boost::shared_ptr<XdmfHDF5Writer> hdf5Writer) :
+		mHDF5Writer(hdf5Writer),
 		mLightDataLimit(100),
 		mXMLDocument(xmlNewDoc((xmlChar*)"1.0")),
-		mXMLCurrentNode(xmlNewNode(NULL, (xmlChar*)"Xdmf"))
+		mXMLCurrentNode(xmlNewNode(NULL, (xmlChar*)"Xdmf")),
+		mXMLFilePath(xmlFilePath)
 	{
 		xmlDocSetRootElement(mXMLDocument, mXMLCurrentNode);
 	};
@@ -30,15 +31,31 @@ public:
 		xmlCleanupParser();
 	};
 	boost::shared_ptr<XdmfHDF5Writer> mHDF5Writer;
-	std::string mHeavyFileName;
 	unsigned int mLightDataLimit;
 	xmlDocPtr mXMLDocument;
 	xmlNodePtr mXMLCurrentNode;
-
+	std::string mXMLFilePath;
 };
 
-XdmfWriter::XdmfWriter() :
-	mImpl(new XdmfWriterImpl())
+XdmfWriter::XdmfWriter(const std::string & xmlFilePath)
+{
+	std::stringstream heavyFileName;
+	size_t extension = xmlFilePath.rfind(".");
+	if(extension != std::string::npos)
+	{
+		heavyFileName << xmlFilePath.substr(0, extension) << ".h5";
+	}
+	else
+	{
+		heavyFileName << xmlFilePath << ".h5";
+	}
+	boost::shared_ptr<XdmfHDF5Writer> hdf5Writer = XdmfHDF5Writer::New(heavyFileName.str());
+	mImpl = new XdmfWriterImpl(xmlFilePath, hdf5Writer);
+	std::cout << "Created XdmfWriter " << this << std::endl;
+}
+
+XdmfWriter::XdmfWriter(const std::string & xmlFilePath, boost::shared_ptr<XdmfHDF5Writer> hdf5Writer) :
+	mImpl(new XdmfWriterImpl(xmlFilePath, hdf5Writer))
 {
 	std::cout << "Created XdmfWriter " << this << std::endl;
 }
@@ -67,7 +84,7 @@ void XdmfWriter::visit(XdmfArray & array, boost::shared_ptr<Loki::BaseVisitor> v
 	mImpl->mXMLCurrentNode = mImpl->mXMLCurrentNode->children;
 
 	std::stringstream xmlTextValues;
-	if(array.getSize() > mImpl->mLightDataLimit)
+	if(array.getHDF5Controller() || array.getSize() > mImpl->mLightDataLimit)
 	{
 		mImpl->mHDF5Writer->visit(array, mImpl->mHDF5Writer);
 		xmlTextValues << mImpl->mHDF5Writer->getLastWrittenDataSet();

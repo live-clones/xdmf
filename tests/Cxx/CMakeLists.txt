@@ -8,6 +8,7 @@ set(XdmfCxxTests
 	TestXdmfTopology
 	TestXdmfVisitorValueCounter
 	TestXdmfWriter
+	TestXdmfWriterHDF5ThenXML
 )
 
 foreach(test ${XdmfCxxTests})

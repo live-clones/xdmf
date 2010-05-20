@@ -6,6 +6,7 @@
  */
 
 #include "XdmfArray.hpp"
+#include "XdmfHDF5Controller.hpp"
 #include "XdmfVisitor.hpp"
 #include <sstream>
 
@@ -346,6 +347,7 @@ XdmfArray::XdmfArray() :
 	mHaveArray(false),
 	mHaveArrayPointer(false),
 	mArrayPointerNumValues(0),
+	mHDF5Controller(boost::shared_ptr<XdmfHDF5Controller>()),
 	mTmpReserveSize(0)
 {
 	std::cout << "Created Array " << this << std::endl;
@@ -390,6 +392,16 @@ unsigned int XdmfArray::getCapacity() const
 	return 0;
 }
 
+boost::shared_ptr<XdmfHDF5Controller> XdmfArray::getHDF5Controller()
+{
+	return mHDF5Controller;
+}
+
+const boost::shared_ptr<const XdmfHDF5Controller> XdmfArray::getHDF5Controller() const
+{
+	return mHDF5Controller;
+}
+
 std::map<std::string, std::string> XdmfArray::getItemProperties() const
 {
 	std::map<std::string, std::string> arrayProperties;
@@ -419,6 +431,10 @@ unsigned int XdmfArray::getPrecision() const
 	{
 		return boost::apply_visitor(GetPrecision(), mArrayPointer);
 	}
+	else if(mHDF5Controller)
+	{
+		return mHDF5Controller->getPrecision();
+	}
 	return 0;
 }
 
@@ -432,6 +448,10 @@ unsigned int XdmfArray::getSize() const
 	{
 		return mArrayPointerNumValues;
 	}
+	else if(mHDF5Controller)
+	{
+		return mHDF5Controller->getSize();
+	}
 	return 0;
 }
 
@@ -444,6 +464,10 @@ std::string XdmfArray::getType() const
 	else if(mHaveArrayPointer)
 	{
 		return boost::apply_visitor(GetType(), mArrayPointer);
+	}
+	else if(mHDF5Controller)
+	{
+		return mHDF5Controller->getType();
 	}
 	return "";
 }
@@ -482,6 +506,12 @@ void XdmfArray::internalizeArrayPointer()
 	}
 }
 
+void XdmfArray::release()
+{
+	releaseArray();
+	releaseArrayPointer();
+}
+
 void XdmfArray::releaseArray()
 {
 	boost::shared_ptr<std::vector<char> > emptyArray;
@@ -494,12 +524,6 @@ void XdmfArray::releaseArrayPointer()
 	boost::shared_array<const char> emptyArrayPointer;
 	mArrayPointer = emptyArrayPointer;
 	mHaveArrayPointer = false;
-}
-
-void XdmfArray::releaseData()
-{
-	releaseArray();
-	releaseArrayPointer();
 }
 
 void XdmfArray::reserve(const unsigned int size)
@@ -516,6 +540,11 @@ void XdmfArray::reserve(const unsigned int size)
 	{
 		boost::apply_visitor(Reserve(size), mArray);
 	}
+}
+
+void XdmfArray::setHDF5Controller(boost::shared_ptr<XdmfHDF5Controller> hdf5Controller)
+{
+	mHDF5Controller = hdf5Controller;
 }
 
 void XdmfArray::swap(boost::shared_ptr<XdmfArray> array)

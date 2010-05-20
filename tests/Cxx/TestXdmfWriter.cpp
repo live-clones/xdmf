@@ -4,7 +4,7 @@
 
 int main(int argc, char* argv[])
 {
-	boost::shared_ptr<XdmfWriter> writer = XdmfWriter::New();
+	boost::shared_ptr<XdmfWriter> writer = XdmfWriter::New("output.xmf");
 	writer->setLightDataLimit(10);
 
 	boost::shared_ptr<XdmfGrid> grid = XdmfTestDataGenerator::createHexahedron();

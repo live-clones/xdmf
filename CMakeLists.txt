@@ -42,6 +42,7 @@ set(XdmfSources
 	XdmfGeometry
 	XdmfGeometryType
 	XdmfGrid
+	XdmfHDF5Controller
 	XdmfHDF5Writer
 	XdmfItem
 	XdmfItemProperty

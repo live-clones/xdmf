@@ -20,7 +20,13 @@ class XdmfHDF5Writer : public XdmfVisitor,
 public:
 
 	template <typename T> friend void boost::checked_delete(T * x);
-	static boost::shared_ptr<XdmfHDF5Writer> New(std::string hdf5FilePath)
+
+	/**
+	 * Construct XdmfHDF5Writer
+	 *
+	 * @param hdf5FilePath the location of the hdf5 file to output to on disk.
+	 */
+	static boost::shared_ptr<XdmfHDF5Writer> New(const std::string & hdf5FilePath)
 	{
 		boost::shared_ptr<XdmfHDF5Writer> p(new XdmfHDF5Writer(hdf5FilePath));
 		return p;
@@ -43,12 +49,7 @@ public:
 
 protected:
 
-	/**
-	 * Construct XdmfHDF5Writer
-	 *
-	 * @param hdf5FilePath the location of the hdf5 file to output to on disk.
-	 */
-	XdmfHDF5Writer(std::string & hdf5FilePath);
+	XdmfHDF5Writer(const std::string & hdf5FilePath);
 	virtual ~XdmfHDF5Writer();
 
 private:

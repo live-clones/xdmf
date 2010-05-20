@@ -4,7 +4,7 @@
 #include <hdf5.h>
 #include <sstream>
 #include "XdmfArray.hpp"
-#include "XdmfItem.hpp"
+#include "XdmfHDF5Controller.hpp"
 #include "XdmfHDF5Writer.hpp"
 
 /**
@@ -14,7 +14,7 @@ class XdmfHDF5Writer::XdmfHDF5WriterImpl {
 
 public:
 
-	XdmfHDF5WriterImpl(std::string & hdf5FilePath) :
+	XdmfHDF5WriterImpl(const std::string & hdf5FilePath) :
 		mHDF5Handle(H5Fcreate(hdf5FilePath.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT)),
 		mHeavyFileName(hdf5FilePath),
 		mLastWrittenDataSet("")
@@ -97,7 +97,7 @@ public:
 	}
 };
 
-XdmfHDF5Writer::XdmfHDF5Writer(std::string & hdf5FilePath) :
+XdmfHDF5Writer::XdmfHDF5Writer(const std::string & hdf5FilePath) :
 	mImpl(new XdmfHDF5WriterImpl(hdf5FilePath))
 {
 	std::cout << "Created XdmfHDF5Writer " << this << std::endl;
@@ -117,6 +117,8 @@ std::string XdmfHDF5Writer::getLastWrittenDataSet() const
 void XdmfHDF5Writer::visit(XdmfArray & array, boost::shared_ptr<Loki::BaseVisitor> visitor)
 {
 	hid_t datatype = -1;
+	mImpl->mLastWrittenDataSet = "";
+
 	if(array.mHaveArray)
 	{
 		datatype = boost::apply_visitor(GetHDF5Type(), array.mArray);
@@ -124,6 +126,10 @@ void XdmfHDF5Writer::visit(XdmfArray & array, boost::shared_ptr<Loki::BaseVisito
 	else if(array.mHaveArrayPointer)
 	{
 		datatype = boost::apply_visitor(GetHDF5Type(), array.mArrayPointer);
+	}
+	else if(array.mHDF5Controller)
+	{
+		mImpl->mLastWrittenDataSet = array.mHDF5Controller->getDataSetPath();
 	}
 
 	if(datatype != -1)
@@ -140,13 +146,12 @@ void XdmfHDF5Writer::visit(XdmfArray & array, boost::shared_ptr<Loki::BaseVisito
 		status = H5Dclose(dataset);
 		status = H5Sclose(dataspace);
 
-		std::stringstream writtenDataSetName;
-		writtenDataSetName << mImpl->mHeavyFileName << ":" << dataSetName.str();
-		mImpl->mLastWrittenDataSet = writtenDataSetName.str();
+		std::stringstream writtenDataSetPath;
+		writtenDataSetPath << mImpl->mHeavyFileName << ":" << dataSetName.str();
+		mImpl->mLastWrittenDataSet = writtenDataSetPath.str();
 		mImpl->mDataSetId++;
-	}
-	else
-	{
-		mImpl->mLastWrittenDataSet = "";
+
+		boost::shared_ptr<XdmfHDF5Controller> newDataSetController = XdmfHDF5Controller::New(writtenDataSetPath.str(), array.getPrecision(), array.getSize(), array.getType());
+		array.setHDF5Controller(newDataSetController);
 	}
 }

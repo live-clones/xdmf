@@ -194,7 +194,7 @@ int main(int argc, char* argv[])
 	/**
 	 * Swap values from a shared vector
 	 */
-	array7->releaseData();
+	array7->release();
 	array7->swap(values2);
 	assert(storedValues2->size() == 0);
 	assert(array7->getSize() == 6);
@@ -204,7 +204,7 @@ int main(int argc, char* argv[])
 	/**
 	 * Swap values from an XdmfArray (with copy)
 	 */
-	array7->releaseData();
+	array7->release();
 	array7->swap(array4);
 	assert(array4->getSize() == 0);
 	assert(array7->getSize() == 3);
@@ -214,7 +214,7 @@ int main(int argc, char* argv[])
 	 */
 	array5->setValues(&values[1], 3, 0);
 	assert(array5->getSize() == 3);
-	array7->releaseData();
+	array7->release();
 	array7->swap(array5);
 	assert(array5->getSize() == 0);
 	assert(array7->getSize() == 3);

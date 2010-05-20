@@ -1,6 +1,9 @@
 #ifndef XDMFARRAY_HPP_
 #define XDMFARRAY_HPP_
 
+// Forward Declarations
+class XdmfHDF5Controller;
+
 // Includes
 #include "XdmfItem.hpp"
 #include <boost/shared_array.hpp>
@@ -90,6 +93,20 @@ public:
 	std::string getItemTag() const;
 
 	/**
+	 * Get the hdf5 controller attached to this XdmfArray.
+	 *
+	 * @return the hdf5 controller attached to this XdmfArray.
+	 */
+	boost::shared_ptr<XdmfHDF5Controller> getHDF5Controller();
+
+	/**
+	 * Get the hdf5 controller attached to this XdmfArray (const version).
+	 *
+	 * @return the hdf5 controller attached to this XdmfArray.
+	 */
+	const boost::shared_ptr<const XdmfHDF5Controller> getHDF5Controller() const;
+
+	/**
 	 * Get the precision, in bytes, of the data type of this array.
 	 *
 	 * @return the precision, in bytes, of the data type of this array.
@@ -132,7 +149,7 @@ public:
 	 *
 	 * @return a void pointer to the first value stored in this array.
 	 */
-	virtual const void* const getValuesPointer() const;
+	virtual const void * const getValuesPointer() const;
 
 	/**
 	 * Get the values stored in this array as a string.
@@ -152,7 +169,7 @@ public:
 	/**
 	 * Release all data held by this XdmfArray.
 	 */
-	void releaseData();
+	void release();
 
 	/**
 	 * Set the capacity of the XdmfArray to at least size.
@@ -170,6 +187,13 @@ public:
 	 */
 	template<typename T>
 	void resize(const unsigned int numValues, const T & val);
+
+	/**
+	 * Attach an hdf5 controller to this XdmfArray.
+	 *
+	 * @param hdf5Controller the hdf5 controller to attach to this XdmfArray.
+	 */
+	void setHDF5Controller(boost::shared_ptr<XdmfHDF5Controller> hdf5Controller);
 
 	/**
 	 * Sets the values of this array to the values stored in the arrayPointer array.  No copy is made.  Modifications to the array are
@@ -310,6 +334,7 @@ private:
 	unsigned int mArrayPointerNumValues;
 	bool mHaveArray;
 	bool mHaveArrayPointer;
+	boost::shared_ptr<XdmfHDF5Controller> mHDF5Controller;
 	unsigned int mTmpReserveSize;
 };
 
