@@ -2,7 +2,7 @@ from Xdmf import *
 
 if __name__ == "__main__":
 
-	writer = XdmfWriter.New()
+	writer = XdmfWriter.New("output.xmf")
 	writer.setLightDataLimit(10)
 
 	grid = XdmfGrid.New()

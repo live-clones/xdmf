@@ -1,6 +1,9 @@
 #ifndef XDMFHDF5CONTROLLER_HPP_
 #define XDMFHDF5CONTROLLER_HPP_
 
+// Forward Declarations
+class XdmfArray;
+
 // Includes
 #include <string>
 #include "XdmfObject.hpp"
@@ -23,10 +26,10 @@ public:
 	 *
 	 * @param dataSetPath the path to the hdf5 data set on disk.
 	 */
-	static boost::shared_ptr<XdmfHDF5Controller> New(const std::string & dataSetPath, const int precision,
-			const int size, const std::string & type)
+	static boost::shared_ptr<XdmfHDF5Controller> New(const std::string & hdf5FilePath, const std::string & dataSetName,
+			const int precision, const int size, const std::string & type)
 	{
-		boost::shared_ptr<XdmfHDF5Controller> p(new XdmfHDF5Controller(dataSetPath, precision, size, type));
+		boost::shared_ptr<XdmfHDF5Controller> p(new XdmfHDF5Controller(hdf5FilePath, dataSetName, precision, size, type));
 		return p;
 	}
 
@@ -58,9 +61,16 @@ public:
 	 */
 	std::string getType() const;
 
+	/**
+	 * Read data owned by this controller on disk into the passed XdmfArray.
+	 *
+	 * @param array and XdmfArray to read data into.
+	 */
+	void read(XdmfArray * const array);
+
 protected:
 
-	XdmfHDF5Controller(const std::string & dataSetPath, const int precision, const int size,
+	XdmfHDF5Controller(const std::string & hdf5FilePath, const std::string & dataSetName, const int precision, const int size,
 			const std::string & type);
 	virtual ~XdmfHDF5Controller();
 
@@ -69,7 +79,8 @@ private:
 	XdmfHDF5Controller(const XdmfHDF5Controller & hdf5Controller);  // Not implemented.
 	void operator=(const XdmfHDF5Controller & hdf5Controller);  // Not implemented.
 
-	std::string mDataSetPath;
+	std::string mDataSetName;
+	std::string mHDF5FilePath;
 	int mPrecision;
 	int mSize;
 	std::string mType;

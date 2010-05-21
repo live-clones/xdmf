@@ -42,6 +42,46 @@ private:
 };
 
 template<typename T>
+class XdmfArray::GetValuesCopy : public boost::static_visitor <void> {
+public:
+
+	GetValuesCopy(const unsigned int startIndex, T * valuesPointer, const unsigned int numValues, const unsigned int arrayStride, const unsigned int valuesStride) :
+		mStartIndex(startIndex),
+		mValuesPointer(valuesPointer),
+		mNumValues(numValues),
+		mArrayStride(arrayStride),
+		mValuesStride(valuesStride)
+	{
+	}
+
+	template<typename U>
+	void operator()(const boost::shared_array<const U> & array) const
+	{
+		for(int i=0; i<mNumValues; ++i)
+		{
+			mValuesPointer[i*mValuesStride] = (T)array[mStartIndex + i*mArrayStride];
+		}
+	}
+
+	template<typename U>
+	void operator()(const boost::shared_ptr<std::vector<U> > & array) const
+	{
+		for(int i=0; i<mNumValues; ++i)
+		{
+			mValuesPointer[i*mValuesStride] = (T)array->operator[](mStartIndex + i*mArrayStride);
+		}
+	}
+
+private:
+
+	const unsigned int mStartIndex;
+	T * mValuesPointer;
+	const unsigned int mNumValues;
+	const unsigned int mArrayStride;
+	const unsigned int mValuesStride;
+};
+
+template<typename T>
 class XdmfArray::Resize : public boost::static_visitor <void> {
 public:
 
@@ -115,6 +155,24 @@ boost::shared_ptr<std::vector<T> > XdmfArray::getValues()
 //		return boost::shared_ptr<std::vector<T> >();
 //	}
 //}
+
+template <typename T>
+void XdmfArray::getValuesCopy(const unsigned int startIndex, T * valuesPointer, const unsigned int numValues, const unsigned int arrayStride, const unsigned int valuesStride) const
+{
+	if(mHaveArray)
+	{
+		boost::apply_visitor(GetValuesCopy<T>(startIndex, valuesPointer, numValues, arrayStride, valuesStride), mArray);
+	}
+	else if(mHaveArrayPointer)
+	{
+		boost::apply_visitor(GetValuesCopy<T>(startIndex, valuesPointer, numValues, arrayStride, valuesStride), mArrayPointer);
+	}
+	else if(mHDF5Controller)
+	{
+		assert("Need to complete");
+	}
+	assert("Throw Exception No Data");
+}
 
 template <typename T>
 boost::shared_ptr<std::vector<T> > XdmfArray::initialize()

@@ -1,6 +1,7 @@
 set(XdmfCxxTests
-	TestXdmfAttribute
 	TestXdmfArray
+	TestXdmfArrayWriteRead
+	TestXdmfAttribute
 	TestXdmfDataItem
 	TestXdmfGeometry
 	TestXdmfGrid

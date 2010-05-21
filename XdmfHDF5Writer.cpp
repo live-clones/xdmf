@@ -15,17 +15,14 @@ class XdmfHDF5Writer::XdmfHDF5WriterImpl {
 public:
 
 	XdmfHDF5WriterImpl(const std::string & hdf5FilePath) :
-		mHDF5Handle(H5Fcreate(hdf5FilePath.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT)),
-		mHeavyFileName(hdf5FilePath),
+		mHDF5FilePath(hdf5FilePath),
 		mLastWrittenDataSet("")
 	{
 	};
 	~XdmfHDF5WriterImpl()
 	{
-		herr_t status = H5Fclose(mHDF5Handle);
 	};
-	hid_t mHDF5Handle;
-	std::string mHeavyFileName;
+	std::string mHDF5FilePath;
 	std::string mLastWrittenDataSet;
 	static int mDataSetId;
 };
@@ -140,18 +137,41 @@ void XdmfHDF5Writer::visit(XdmfArray & array, boost::shared_ptr<Loki::BaseVisito
 		// Open a hdf5 dataset and write to it on disk.
 		herr_t status;
 		hsize_t size = array.getSize();
-		hid_t dataspace = H5Screate_simple(1, &size, NULL);
-		hid_t dataset = H5Dcreate(mImpl->mHDF5Handle, dataSetName.str().c_str(), datatype, dataspace, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+		hid_t hdf5Handle;
+
+		// Save old error handler and turn off error handling for now
+		H5E_auto_t old_func;
+		void * old_client_data;
+		H5Eget_auto(0, &old_func, &old_client_data);
+		H5Eset_auto2(0, NULL, NULL);
+
+		if(H5Fis_hdf5(mImpl->mHDF5FilePath.c_str()) > 0)
+		{
+			hdf5Handle = H5Fopen(mImpl->mHDF5FilePath.c_str(), H5F_ACC_RDWR, H5P_DEFAULT);
+		}
+		else
+		{
+			hdf5Handle = H5Fcreate(mImpl->mHDF5FilePath.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+		}
+		hid_t dataset = H5Dopen(hdf5Handle, dataSetName.str().c_str(), H5P_DEFAULT);
+		if(dataset < 0)
+		{
+			hid_t dataspace = H5Screate_simple(1, &size, NULL);
+			dataset = H5Dcreate(hdf5Handle, dataSetName.str().c_str(), datatype, dataspace, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+			status = H5Sclose(dataspace);
+		}
 		status = H5Dwrite(dataset, datatype, H5S_ALL, H5S_ALL, H5P_DEFAULT, array.getValuesPointer());
 		status = H5Dclose(dataset);
-		status = H5Sclose(dataspace);
+		status = H5Fclose(hdf5Handle);
 
-		std::stringstream writtenDataSetPath;
-		writtenDataSetPath << mImpl->mHeavyFileName << ":" << dataSetName.str();
-		mImpl->mLastWrittenDataSet = writtenDataSetPath.str();
-		mImpl->mDataSetId++;
+		// Restore previous error handler
+		H5Eset_auto2(0, old_func, old_client_data);
 
-		boost::shared_ptr<XdmfHDF5Controller> newDataSetController = XdmfHDF5Controller::New(writtenDataSetPath.str(), array.getPrecision(), array.getSize(), array.getType());
+		boost::shared_ptr<XdmfHDF5Controller> newDataSetController = XdmfHDF5Controller::New(mImpl->mHDF5FilePath, dataSetName.str(),
+				array.getPrecision(), array.getSize(), array.getType());
 		array.setHDF5Controller(newDataSetController);
+
+		mImpl->mLastWrittenDataSet = newDataSetController->getDataSetPath();
+		mImpl->mDataSetId++;
 	}
 }

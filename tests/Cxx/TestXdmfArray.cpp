@@ -34,6 +34,13 @@ int main(int argc, char* argv[])
 	assert((*storedValues)[1] == 2);
 	assert((*storedValues)[2] == 3);
 	assert((*storedValues)[3] == 4);
+	// Assert we can copy values out correctly
+	std::vector<int> outValues(4);
+	array->getValuesCopy(0, &outValues[0], 4);
+	for(int i=0; i<outValues.size(); ++i)
+	{
+		assert(outValues[i] == values[i]);
+	}
 
 	/**
 	 * Array stride = 2, Values stride = 1
@@ -104,6 +111,9 @@ int main(int argc, char* argv[])
 	const int * const array5Pointer = (const int * const)array5->getValuesPointer();
 	assert(array5Pointer[0] == 1);
 	assert(array5Pointer[1] == 2);
+	// Assert we can copy values out correctly
+	array->getValuesCopy(1, &outValues[0], 4);
+	assert(outValues[0] == values[1]);
 
 	/**
 	 * Copy after Set

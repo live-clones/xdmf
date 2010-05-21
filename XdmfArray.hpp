@@ -67,10 +67,10 @@ public:
 	/**
 	 * Copy values from an array into this array.
 	 *
-	 * @param startIndex the index in this array to begin insertion.
-	 * @param valuesPointer a pointer to the values to copy into this array.
+	 * @param startIndex the index in this XdmfArray to begin insertion.
+	 * @param valuesPointer a pointer to the values to copy into this XdmfArray.
 	 * @param numValues the number of values to copy into this array.
-	 * @param arrayStride number of values to stride in this array between each copy.
+	 * @param arrayStride number of values to stride in this XdmfArray between each copy.
 	 * @param valuesStride number of values to stride in the pointer between each copy.
 	 */
 	template<typename T>
@@ -79,7 +79,7 @@ public:
 	/**
 	 * Remove all values from this array
 	 */
-	virtual void clear();
+	void clear();
 
 	/**
 	 * Get the capacity of this array (the number of values this array can store without reallocation).
@@ -104,21 +104,21 @@ public:
 	 *
 	 * @return the hdf5 controller attached to this XdmfArray.
 	 */
-	const boost::shared_ptr<const XdmfHDF5Controller> getHDF5Controller() const;
+	boost::shared_ptr<const XdmfHDF5Controller> getHDF5Controller() const;
 
 	/**
 	 * Get the precision, in bytes, of the data type of this array.
 	 *
 	 * @return the precision, in bytes, of the data type of this array.
 	 */
-	virtual unsigned int getPrecision() const;
+	unsigned int getPrecision() const;
 
 	/**
 	 * Get the number of values stored in this array.
 	 *
 	 * @return the number of values stored in this array.
 	 */
-	virtual unsigned int getSize() const;
+	unsigned int getSize() const;
 
 	/**
 	 * Get the data type of this array.
@@ -126,7 +126,7 @@ public:
 	 * @return a string containing the Xdmf data type for the array, this is one of
 	 *      Char, Short, Int, Float, UChar, UShort, UInt.
 	 */
-	virtual std::string getType() const;
+	std::string getType() const;
 
 	/**
 	 * Get a smart pointer to the values stored in this array.
@@ -137,6 +137,18 @@ public:
 	boost::shared_ptr<std::vector<T> > getValues();
 
 	/**
+	 * Get a copy of the values stored in this array
+	 *
+	 * @param startIndex the index in this XdmfArray to begin copying from.
+	 * @param valuesPointer a pointer to an array to copy into.
+	 * @param numValues the number of values to copy.
+	 * @param arrayStride number of values to stride in this XdmfArray between each copy.
+	 * @param valuesStride number of values to stride in the pointer between each copy.
+	 */
+	template <typename T>
+	void getValuesCopy(const unsigned int startIndex, T * valuesPointer, const unsigned int numValues = 1, const unsigned int arrayStride = 1, const unsigned int valuesStride = 1) const;
+
+	/**
 	 * Get a smart pointer to the values stored in this array (const version).
 	 *
 	 * @return a smart pointer to the internal vector of values stored in this array.
@@ -145,18 +157,18 @@ public:
 	//const boost::shared_ptr<const std::vector<T> > getValues() const;
 
 	/**
-	 * Get a pointer to the values stored in this array.
+	 * Get a pointer to the values stored in this array (const version).
 	 *
 	 * @return a void pointer to the first value stored in this array.
 	 */
-	virtual const void * const getValuesPointer() const;
+	const void * const getValuesPointer() const;
 
 	/**
 	 * Get the values stored in this array as a string.
 	 *
 	 * @return a string containing the contents of the array.
 	 */
-	virtual std::string getValuesString() const;
+	std::string getValuesString() const;
 
 	/**
 	 * Initializes the array to contain an empty container of a particular type.
@@ -165,6 +177,11 @@ public:
 	 */
 	template <typename T>
 	boost::shared_ptr<std::vector<T> > initialize();
+
+	/**
+	 * Read data from disk into memory.
+	 */
+	void read();
 
 	/**
 	 * Release all data held by this XdmfArray.
@@ -179,14 +196,14 @@ public:
 	void reserve(const unsigned int size);
 
 	/**
-	 * Resizes the XdmfArray to contain numValues.  If numValues is larger than the current size, append values to end equal
+	 * Resizes the XdmfArray to contain numValues.  If numValues is larger than the current size, append values to the end equal
 	 * to val.  If numValues is less than the current size, values at indices larger than numValues are removed.
 	 *
 	 * @param numValues the number of values to resize this array to.
-	 * @param val the number to initialized newly created values to, if needed.
+	 * @param val the number to initialize newly created values to, if needed.
 	 */
 	template<typename T>
-	void resize(const unsigned int numValues, const T & val);
+	void resize(const unsigned int numValues, const T & val = 0);
 
 	/**
 	 * Attach an hdf5 controller to this XdmfArray.
@@ -278,6 +295,10 @@ private:
 	class GetPrecision;
 	class GetSize;
 	class GetType;
+
+	template<typename T>
+	class GetValuesCopy;
+
 	class GetValuesPointer;
 	class GetValuesString;
 	class InternalizeArrayPointer;

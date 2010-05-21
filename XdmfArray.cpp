@@ -221,7 +221,7 @@ public:
 	}
 };
 
-class XdmfArray::GetValuesPointer : public boost::static_visitor <const void* const> {
+class XdmfArray::GetValuesPointer : public boost::static_visitor <const void * const> {
 public:
 
 	GetValuesPointer()
@@ -229,13 +229,13 @@ public:
 	}
 
 	template<typename T>
-	const void* const operator()(const boost::shared_ptr<std::vector<T> > & array) const
+	const void * const operator()(const boost::shared_ptr<std::vector<T> > & array) const
 	{
 		return &array->operator[](0);
 	}
 
 	template<typename T>
-	const void* const operator()(const boost::shared_array<const T> & array) const
+	const void * const operator()(const boost::shared_array<const T> & array) const
 	{
 		return array.get();
 	}
@@ -243,6 +243,11 @@ public:
 
 class XdmfArray::GetValuesString : public boost::static_visitor <std::string> {
 public:
+
+	GetValuesString() :
+		mArrayPointerNumValues(0)
+	{
+	}
 
 	GetValuesString(const int arrayPointerNumValues) :
 		mArrayPointerNumValues(arrayPointerNumValues)
@@ -397,7 +402,7 @@ boost::shared_ptr<XdmfHDF5Controller> XdmfArray::getHDF5Controller()
 	return mHDF5Controller;
 }
 
-const boost::shared_ptr<const XdmfHDF5Controller> XdmfArray::getHDF5Controller() const
+boost::shared_ptr<const XdmfHDF5Controller> XdmfArray::getHDF5Controller() const
 {
 	return mHDF5Controller;
 }
@@ -472,7 +477,7 @@ std::string XdmfArray::getType() const
 	return "";
 }
 
-const void* const XdmfArray::getValuesPointer() const
+const void * const XdmfArray::getValuesPointer() const
 {
 	if(mHaveArray)
 	{
@@ -489,7 +494,7 @@ std::string XdmfArray::getValuesString() const
 {
 	if(mHaveArray)
 	{
-		return boost::apply_visitor(GetValuesString(mArrayPointerNumValues), mArray);
+		return boost::apply_visitor(GetValuesString(), mArray);
 	}
 	else if(mHaveArrayPointer)
 	{
@@ -503,6 +508,14 @@ void XdmfArray::internalizeArrayPointer()
 	if(mHaveArrayPointer)
 	{
 		boost::apply_visitor(InternalizeArrayPointer(this), mArrayPointer);
+	}
+}
+
+void XdmfArray::read()
+{
+	if(mHDF5Controller)
+	{
+		mHDF5Controller->read(this);
 	}
 }
 
