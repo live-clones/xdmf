@@ -6,6 +6,7 @@
 #include "XdmfDomain.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGrid.hpp"
+#include "XdmfSet.hpp"
 #include "XdmfTopology.hpp"
 
 
@@ -50,6 +51,10 @@ public:
 		else if(itemTag.compare(XdmfGrid::ItemTag) == 0)
 		{
 			newItem = XdmfGrid::New();
+		}
+		else if(itemTag.compare(XdmfSet::ItemTag) == 0)
+		{
+			newItem = XdmfSet::New();
 		}
 		else if(itemTag.compare(XdmfTopology::ItemTag) == 0)
 		{

@@ -257,7 +257,7 @@ XdmfTopologyType XdmfTopologyType::New(const std::map<std::string, std::string> 
 	assert(false);
 }
 
-XdmfTopologyType& XdmfTopologyType::operator=(const XdmfTopologyType& topologyType)
+XdmfTopologyType & XdmfTopologyType::operator=(const XdmfTopologyType& topologyType)
 {
 	if(this != &topologyType)
 	{
@@ -281,11 +281,6 @@ bool XdmfTopologyType::operator!=(const XdmfTopologyType& topologyType) const
 XdmfTopologyType::CellType XdmfTopologyType::getCellType() const
 {
 	return mCellType;
-}
-
-std::string XdmfTopologyType::getName() const
-{
-	return mName;
 }
 
 unsigned int XdmfTopologyType::getNodesPerElement() const

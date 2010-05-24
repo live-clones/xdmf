@@ -80,13 +80,6 @@ public:
 	CellType getCellType() const;
 
 	/**
-	 * Get the name of this topology type
-	 *
-	 * @return a string containing the name.
-	 */
-	std::string getName() const;
-
-	/**
 	 * Get the number of nodes per element associated with this topology type.
 	 *
 	 * @return an unsinged int containing number of nodes per element.
@@ -112,7 +105,7 @@ public:
 	bool operator!=(const XdmfTopologyType & topologyType) const;
 
 	XdmfTopologyType(const XdmfTopologyType & topologyType);
-	XdmfTopologyType& operator=(const XdmfTopologyType & topologyType);
+	XdmfTopologyType & operator=(const XdmfTopologyType & topologyType);
 
 protected:
 

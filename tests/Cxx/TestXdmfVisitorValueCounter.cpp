@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
 
 	grid->accept(visitor);
 
-	assert(visitor->getCount() == 66);
+	assert(visitor->getCount() == 69);
 
 	return 0;
 }

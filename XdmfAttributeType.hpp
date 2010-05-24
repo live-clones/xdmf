@@ -36,13 +36,6 @@ public:
 	static XdmfAttributeType Tensor6();
 	static XdmfAttributeType GlobalId();
 
-	/**
-	 * Get the name of this attribute type
-	 *
-	 * @return a string containing the name.
-	 */
-	std::string getName() const;
-
 	void getProperties(std::map<std::string, std::string> & collectedProperties) const;
 
 	/*
@@ -62,7 +55,7 @@ public:
 	bool operator!=(const XdmfAttributeType & attributeType) const;
 
 	XdmfAttributeType(const XdmfAttributeType & attributeType);
-	XdmfAttributeType& operator=(const XdmfAttributeType & attributeType);
+	XdmfAttributeType & operator=(const XdmfAttributeType & attributeType);
 
 protected:
 

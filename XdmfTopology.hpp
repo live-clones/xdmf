@@ -51,7 +51,6 @@ protected:
 	virtual ~XdmfTopology();
 	virtual void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems);
 
-
 private:
 
 	XdmfTopology(const XdmfTopology & topology);  // Not implemented.

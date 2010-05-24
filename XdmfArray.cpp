@@ -558,6 +558,11 @@ void XdmfArray::initialize(const std::string & type, const unsigned int precisio
 	}
 }
 
+bool XdmfArray::isInitialized()
+{
+	return mHaveArray || mHaveArrayPointer;
+}
+
 void XdmfArray::internalizeArrayPointer()
 {
 	if(mHaveArrayPointer)

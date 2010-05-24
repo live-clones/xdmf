@@ -20,6 +20,8 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 	#include <XdmfItemProperty.hpp>
 	#include <XdmfObject.hpp>
 	#include <XdmfReader.hpp>
+	#include <XdmfSet.hpp>
+	#include <XdmfSetType.hpp>
 	#include <XdmfTopology.hpp>
 	#include <XdmfTopologyType.hpp>
 	#include <XdmfVisitor.hpp>
@@ -60,6 +62,7 @@ namespace boost {
 %template(XdmfItemPtr) boost::shared_ptr<XdmfItem>;
 %template(XdmfObjPtr) boost::shared_ptr<XdmfObject>;
 %template(XdmfReaderPtr) boost::shared_ptr<XdmfReader>;
+%template(XdmfSetPtr) boost::shared_ptr<XdmfSet>;
 %template(XdmfTopologyPtr) boost::shared_ptr<XdmfTopology>;
 %template(XdmfVisitorPtr) boost::shared_ptr<XdmfVisitor>;
 %template(XdmfWriterPtr) boost::shared_ptr<XdmfWriter>;
@@ -94,6 +97,9 @@ SWIG_SHARED_PTR_DERIVED(XdmfHDF5Writer, Loki::BaseVisitor);
 SWIG_SHARED_PTR_DERIVED(XdmfHDF5Writer, XdmfObject);
 SWIG_SHARED_PTR_DERIVED(XdmfItem, XdmfObject);
 SWIG_SHARED_PTR_DERIVED(XdmfReader, XdmfObject);
+SWIG_SHARED_PTR_DERIVED(XdmfSet, XdmfDataItem);
+SWIG_SHARED_PTR_DERIVED(XdmfSet, XdmfItem);
+SWIG_SHARED_PTR_DERIVED(XdmfSet, XdmfObject);
 SWIG_SHARED_PTR_DERIVED(XdmfTopology, XdmfDataItem);
 SWIG_SHARED_PTR_DERIVED(XdmfTopology, XdmfItem);
 SWIG_SHARED_PTR_DERIVED(XdmfTopology, XdmfObject);
@@ -123,6 +129,8 @@ SWIG_SHARED_PTR_DERIVED(XdmfWriter, XdmfObject);
 %include XdmfGeometry.hpp
 %include XdmfGeometryType.hpp
 %include XdmfGrid.hpp
+%include XdmfSet.hpp
+%include XdmfSetType.hpp
 %include XdmfTopology.hpp
 %include XdmfTopologyType.hpp
 

@@ -3,6 +3,7 @@
 #include "XdmfDomain.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGrid.hpp"
+#include "XdmfSet.hpp"
 #include "XdmfTopology.hpp"
 
 class XdmfTestDataGenerator {
@@ -14,7 +15,9 @@ public:
 	 * Number of Attributes = 2
 	 * 	Cell Attributes = 1
 	 * 	Nodal Attributes = 1
-	 * Total Number of Values = 66
+	 * Number of Sets = 1
+	 *  Nodal Set = 1
+	 * Total Number of Values = 69
 	 */
 	static boost::shared_ptr<XdmfGrid> createHexahedron()
 	{
@@ -48,8 +51,16 @@ public:
 		cellAttribute->setAttributeCenter(XdmfAttributeCenter::Cell());
 		cellAttribute->getArray()->copyValues(0, &cellValues[0], 2);
 
+		// Add Node Set
+		boost::shared_ptr<XdmfSet> nodeSet = XdmfSet::New();
+		int nodeIds[] = {0, 1, 2};
+		nodeSet->setName("Node Set");
+		nodeSet->setSetType(XdmfSetType::Node());
+		nodeSet->getArray()->copyValues(0, &nodeIds[0], 3);
+
 		grid->insert(nodalAttribute);
 		grid->insert(cellAttribute);
+		grid->insert(nodeSet);
 		return grid;
 	}
 

@@ -77,7 +77,7 @@ XdmfAttributeCenter XdmfAttributeCenter::New(const std::map<std::string, std::st
 	assert(false);
 }
 
-XdmfAttributeCenter& XdmfAttributeCenter::operator=(const XdmfAttributeCenter & attributeCenter)
+XdmfAttributeCenter & XdmfAttributeCenter::operator=(const XdmfAttributeCenter & attributeCenter)
 {
   if(this != &attributeCenter)
   {
@@ -94,11 +94,6 @@ bool XdmfAttributeCenter::operator==(const XdmfAttributeCenter & attributeCenter
 bool XdmfAttributeCenter::operator!=(const XdmfAttributeCenter & attributeCenter) const
 {
   return !this->operator==(attributeCenter);
-}
-
-std::string XdmfAttributeCenter::getName() const
-{
-	return mName;
 }
 
 void XdmfAttributeCenter::getProperties(std::map<std::string, std::string> & collectedProperties) const

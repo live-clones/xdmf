@@ -8,6 +8,7 @@
 #include "XdmfAttribute.hpp"
 #include "XdmfGrid.hpp"
 #include "XdmfGeometry.hpp"
+#include "XdmfSet.hpp"
 #include "XdmfTopology.hpp"
 
 XdmfGrid::XdmfGrid() :
@@ -30,7 +31,6 @@ boost::shared_ptr<XdmfAttribute> XdmfGrid::getAttribute(unsigned int index)
 	if(index >= mAttributes.size())
 	{
 		assert(false);
-		// Out of range --- should we throw exceptions?
 	}
 	return mAttributes[index];
 }
@@ -40,7 +40,6 @@ boost::shared_ptr<const XdmfAttribute> XdmfGrid::getAttribute(unsigned int index
 	if(index >= mAttributes.size())
 	{
 		assert(false);
-		// Out of range --- should we throw exceptions?
 	}
 	return mAttributes[index];
 }
@@ -77,6 +76,29 @@ unsigned int XdmfGrid::getNumberOfAttributes() const
 	return mAttributes.size();
 }
 
+unsigned int XdmfGrid::getNumberOfSets() const
+{
+	return mSets.size();
+}
+
+boost::shared_ptr<XdmfSet> XdmfGrid::getSet(unsigned int index)
+{
+	if(index >= mSets.size())
+	{
+		assert(false);
+	}
+	return mSets[index];
+}
+
+boost::shared_ptr<const XdmfSet> XdmfGrid::getSet(unsigned int index) const
+{
+	if(index >= mSets.size())
+	{
+		assert(false);
+	}
+	return mSets[index];
+}
+
 boost::shared_ptr<XdmfTopology> XdmfGrid::getTopology()
 {
 	return mTopology;
@@ -90,6 +112,11 @@ boost::shared_ptr<const XdmfTopology> XdmfGrid::getTopology() const
 void XdmfGrid::insert(boost::shared_ptr<XdmfAttribute> attribute)
 {
 	mAttributes.push_back(attribute);
+}
+
+void XdmfGrid::insert(boost::shared_ptr<XdmfSet> set)
+{
+	mSets.push_back(set);
 }
 
 void XdmfGrid::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems)
@@ -112,6 +139,10 @@ void XdmfGrid::populateItem(const std::map<std::string, std::string> & itemPrope
 		else if(boost::shared_ptr<XdmfGeometry> geometry = boost::shared_dynamic_cast<XdmfGeometry>(*iter))
 		{
 			mGeometry = geometry;
+		}
+		if(boost::shared_ptr<XdmfSet> set = boost::shared_dynamic_cast<XdmfSet>(*iter))
+		{
+			this->insert(set);
 		}
 		else if(boost::shared_ptr<XdmfTopology> topology = boost::shared_dynamic_cast<XdmfTopology>(*iter))
 		{
@@ -140,6 +171,10 @@ void XdmfGrid::traverse(boost::shared_ptr<Loki::BaseVisitor> visitor)
 	mGeometry->accept(visitor);
 	mTopology->accept(visitor);
 	for(std::vector<boost::shared_ptr<XdmfAttribute> >::const_iterator iter = mAttributes.begin(); iter != mAttributes.end(); ++iter)
+	{
+		(*iter)->accept(visitor);
+	}
+	for(std::vector<boost::shared_ptr<XdmfSet> >::const_iterator iter = mSets.begin(); iter != mSets.end(); ++iter)
 	{
 		(*iter)->accept(visitor);
 	}

@@ -47,17 +47,10 @@ public:
 	 */
 	int getDimensions() const;
 
-	/**
-	 * Get the name of this geometry type
-	 *
-	 * @return a string containing the name.
-	 */
-	std::string getName() const;
-
 	void getProperties(std::map<std::string, std::string> & collectedProperties) const;
 
 	/*
-	 * Compare two XdmfGeometry types for equality.
+	 * Compare two XdmfGeometryTypes for equality.
 	 *
 	 * @param geometryType a XdmfGeometryType to compare equality to.
 	 * @return true if the XdmfGeometryTypes are equal.
@@ -65,7 +58,7 @@ public:
 	bool operator==(const XdmfGeometryType & geometryType) const;
 
 	/**
-	 * Compare two XdmfGeometry types for inequality.
+	 * Compare two XdmfGeometryTypes for inequality.
 	 *
 	 * @param geometryType a XdmfGeometryType to compare inequality to.
 	 * @return true if the XdmfGeometryTypes are not equal.
@@ -73,7 +66,7 @@ public:
 	bool operator!=(const XdmfGeometryType & geometryType) const;
 
 	XdmfGeometryType(const XdmfGeometryType & geometryType);
-	XdmfGeometryType& operator=(const XdmfGeometryType & geometryType);
+	XdmfGeometryType & operator=(const XdmfGeometryType & geometryType);
 
 protected:
 

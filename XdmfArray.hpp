@@ -180,6 +180,11 @@ public:
 	boost::shared_ptr<std::vector<T> > initialize();
 
 	/**
+	 * Returns whether the array is initialized (contains values in memory).
+	 */
+	bool isInitialized();
+
+	/**
 	 * Copy a value to the back of this array
 	 */
 	template <typename T>

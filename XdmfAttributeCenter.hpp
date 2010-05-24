@@ -32,13 +32,6 @@ public:
 	static XdmfAttributeCenter Edge();
 	static XdmfAttributeCenter Node();
 
-	/**
-	 * Get the name of this attribute center.
-	 *
-	 * @return a string containing the name.
-	 */
-	std::string getName() const;
-
 	void getProperties(std::map<std::string, std::string> & collectedProperties) const;
 
 	/**
@@ -58,7 +51,7 @@ public:
 	bool operator!=(const XdmfAttributeCenter & attributeCenter) const;
 
 	XdmfAttributeCenter(const XdmfAttributeCenter & attributeCenter);
-	XdmfAttributeCenter& operator=(const XdmfAttributeCenter & attributeCenter);
+	XdmfAttributeCenter & operator=(const XdmfAttributeCenter & attributeCenter);
 
 protected:
 

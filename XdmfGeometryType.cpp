@@ -116,7 +116,7 @@ XdmfGeometryType XdmfGeometryType::New(const std::map<std::string, std::string> 
 	assert(false);
 }
 
-XdmfGeometryType& XdmfGeometryType::operator=(const XdmfGeometryType& geometryType)
+XdmfGeometryType & XdmfGeometryType::operator=(const XdmfGeometryType& geometryType)
 {
 	if(this != &geometryType)
 	{
@@ -139,11 +139,6 @@ bool XdmfGeometryType::operator!=(const XdmfGeometryType& geometryType) const
 int XdmfGeometryType::getDimensions() const
 {
 	return mDimensions;
-}
-
-std::string XdmfGeometryType::getName() const
-{
-	return mName;
 }
 
 void XdmfGeometryType::getProperties(std::map<std::string, std::string> & collectedProperties) const

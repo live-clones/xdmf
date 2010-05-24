@@ -95,7 +95,7 @@ XdmfAttributeType XdmfAttributeType::New(const std::map<std::string, std::string
 	assert(false);
 }
 
-XdmfAttributeType& XdmfAttributeType::operator=(const XdmfAttributeType & attributeType)
+XdmfAttributeType & XdmfAttributeType::operator=(const XdmfAttributeType & attributeType)
 {
 	if(this != &attributeType)
 	{
@@ -112,11 +112,6 @@ bool XdmfAttributeType::operator==(const XdmfAttributeType & attributeType) cons
 bool XdmfAttributeType::operator!=(const XdmfAttributeType & attributeType) const
 {
 	return !this->operator==(attributeType);
-}
-
-std::string XdmfAttributeType::getName() const
-{
-	return mName;
 }
 
 void XdmfAttributeType::getProperties(std::map<std::string, std::string> & collectedProperties) const
