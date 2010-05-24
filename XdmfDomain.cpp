@@ -18,6 +18,8 @@ XdmfDomain::~XdmfDomain()
   std::cout << "Deleted Domain " << this << std::endl;
 }
 
+std::string XdmfDomain::ItemTag = "Domain";
+
 void XdmfDomain::insert(boost::shared_ptr<XdmfGrid> grid)
 {
 	mGrids.push_back(grid);
@@ -51,12 +53,20 @@ std::map<std::string, std::string> XdmfDomain::getItemProperties() const
 
 std::string XdmfDomain::getItemTag() const
 {
-	return "Domain";
+	return ItemTag;
 }
 
 unsigned int XdmfDomain::getNumberOfGrids() const
 {
 	return mGrids.size();
+}
+
+void XdmfDomain::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems)
+{
+	for(std::vector<boost::shared_ptr<XdmfItem> >::const_iterator iter = childItems.begin(); iter != childItems.end(); ++iter)
+	{
+		this->insert(boost::shared_dynamic_cast<XdmfGrid>(*iter));
+	}
 }
 
 void XdmfDomain::traverse(boost::shared_ptr<Loki::BaseVisitor> visitor)

@@ -23,6 +23,8 @@ XdmfGrid::~XdmfGrid()
   std::cout << "Deleted Grid " << this << std::endl;
 }
 
+std::string XdmfGrid::ItemTag = "Grid";
+
 boost::shared_ptr<XdmfAttribute> XdmfGrid::getAttribute(unsigned int index)
 {
 	if(index >= mAttributes.size())
@@ -62,7 +64,7 @@ std::map<std::string, std::string> XdmfGrid::getItemProperties() const
 
 std::string XdmfGrid::getItemTag() const
 {
-	return "Grid";
+	return ItemTag;
 }
 
 std::string XdmfGrid::getName() const
@@ -88,6 +90,34 @@ boost::shared_ptr<const XdmfTopology> XdmfGrid::getTopology() const
 void XdmfGrid::insert(boost::shared_ptr<XdmfAttribute> attribute)
 {
 	mAttributes.push_back(attribute);
+}
+
+void XdmfGrid::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems)
+{
+	std::map<std::string, std::string>::const_iterator name = itemProperties.find("Name");
+	if(name != itemProperties.end())
+	{
+		mName = name->second;
+	}
+	else
+	{
+		assert(false);
+	}
+	for(std::vector<boost::shared_ptr<XdmfItem> >::const_iterator iter = childItems.begin(); iter != childItems.end(); ++iter)
+	{
+		if(boost::shared_ptr<XdmfAttribute> attribute = boost::shared_dynamic_cast<XdmfAttribute>(*iter))
+		{
+			this->insert(attribute);
+		}
+		else if(boost::shared_ptr<XdmfGeometry> geometry = boost::shared_dynamic_cast<XdmfGeometry>(*iter))
+		{
+			mGeometry = geometry;
+		}
+		else if(boost::shared_ptr<XdmfTopology> topology = boost::shared_dynamic_cast<XdmfTopology>(*iter))
+		{
+			mTopology = topology;
+		}
+	}
 }
 
 void XdmfGrid::setGeometry(boost::shared_ptr<XdmfGeometry> geometry)

@@ -6,6 +6,7 @@ set(XdmfCxxTests
 	TestXdmfGeometry
 	TestXdmfGrid
 	TestXdmfHDF5Writer
+	TestXdmfReader
 	TestXdmfTopology
 	TestXdmfVisitorValueCounter
 	TestXdmfWriter

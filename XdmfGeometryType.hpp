@@ -27,6 +27,8 @@ class XdmfGeometryType : public XdmfItemProperty {
 
 public:
 
+	friend class XdmfGeometry;
+
 	// Supported Xdmf Geometry Types
 	static XdmfGeometryType NoGeometryType();
 	static XdmfGeometryType XYZ();
@@ -86,6 +88,8 @@ protected:
 	XdmfGeometryType(const std::string & name, const int & dimensions);
 
 private:
+
+	static XdmfGeometryType New(const std::map<std::string, std::string> & itemProperties);
 
 	int mDimensions;
 	std::string mName;

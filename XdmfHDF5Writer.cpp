@@ -167,11 +167,14 @@ void XdmfHDF5Writer::visit(XdmfArray & array, boost::shared_ptr<Loki::BaseVisito
 		// Restore previous error handler
 		H5Eset_auto2(0, old_func, old_client_data);
 
-		boost::shared_ptr<XdmfHDF5Controller> newDataSetController = XdmfHDF5Controller::New(mImpl->mHDF5FilePath, dataSetName.str(),
-				array.getPrecision(), array.getSize(), array.getType());
-		array.setHDF5Controller(newDataSetController);
+		std::stringstream writtenDataSet;
+		writtenDataSet << mImpl->mHDF5FilePath << ":" << dataSetName.str();
 
-		mImpl->mLastWrittenDataSet = newDataSetController->getDataSetPath();
+		mImpl->mLastWrittenDataSet = writtenDataSet.str();
 		mImpl->mDataSetId++;
+
+		boost::shared_ptr<XdmfHDF5Controller> newDataSetController = XdmfHDF5Controller::New(writtenDataSet.str(), array.getPrecision(),
+				array.getSize(), array.getType());
+		array.setHDF5Controller(newDataSetController);
 	}
 }

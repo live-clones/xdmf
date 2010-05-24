@@ -5,10 +5,12 @@
  *      Author: kleiter
  */
 
+#include <boost/foreach.hpp>
+#include <boost/tokenizer.hpp>
+#include <sstream>
 #include "XdmfArray.hpp"
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfVisitor.hpp"
-#include <sstream>
 
 class XdmfArray::Clear : public boost::static_visitor <void> {
 public:
@@ -363,6 +365,8 @@ XdmfArray::~XdmfArray()
 	std::cout << "Deleted Array " << this << std::endl;
 }
 
+std::string XdmfArray::ItemTag = "DataItem";
+
 void XdmfArray::copyValues(const unsigned int startIndex, const boost::shared_ptr<const XdmfArray> values, const unsigned int valuesStartIndex, const unsigned int numValues, const unsigned int arrayStride, const unsigned int valuesStride)
 {
 	if(mHaveArrayPointer)
@@ -410,7 +414,14 @@ boost::shared_ptr<const XdmfHDF5Controller> XdmfArray::getHDF5Controller() const
 std::map<std::string, std::string> XdmfArray::getItemProperties() const
 {
 	std::map<std::string, std::string> arrayProperties;
-	arrayProperties["Format"] = "HDF";
+	if(mHDF5Controller)
+	{
+		arrayProperties["Format"] = "HDF";
+	}
+	else
+	{
+		arrayProperties["Format"] = "XML";
+	}
 	arrayProperties["DataType"] = this->getType();
 	std::stringstream precision;
 	precision <<  this->getPrecision();
@@ -423,7 +434,7 @@ std::map<std::string, std::string> XdmfArray::getItemProperties() const
 
 std::string XdmfArray::getItemTag() const
 {
-	return "DataItem";
+	return ItemTag;
 }
 
 unsigned int XdmfArray::getPrecision() const
@@ -503,11 +514,128 @@ std::string XdmfArray::getValuesString() const
 	return "";
 }
 
+void XdmfArray::initialize(const std::string & type, const unsigned int precision)
+{
+	if(type.compare("Char") == 0 && precision == 1)
+	{
+		this->initialize<char>();
+	}
+	else if(type.compare("Short") == 0 && precision == 2)
+	{
+		this->initialize<short>();
+	}
+	else if(type.compare("Int") == 0 && precision == 4)
+	{
+		this->initialize<int>();
+	}
+	else if(type.compare("Long") == 0 && precision == 8)
+	{
+		this->initialize<long>();
+	}
+	else if(type.compare("Float") == 0 && precision == 4)
+	{
+		this->initialize<float>();
+	}
+	else if(type.compare("Double") == 0 && precision == 8)
+	{
+		this->initialize<double>();
+	}
+	else if(type.compare("UChar") == 0 && precision == 8)
+	{
+		this->initialize<unsigned char>();
+	}
+	else if(type.compare("UShort") == 0 && precision == 8)
+	{
+		this->initialize<unsigned short>();
+	}
+	else if(type.compare("UInt") == 0 && precision == 8)
+	{
+		this->initialize<unsigned int>();
+	}
+	else
+	{
+		assert(false);
+	}
+}
+
 void XdmfArray::internalizeArrayPointer()
 {
 	if(mHaveArrayPointer)
 	{
 		boost::apply_visitor(InternalizeArrayPointer(this), mArrayPointer);
+	}
+}
+
+void XdmfArray::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems)
+{
+	std::string contentVal;
+	int precisionVal;
+	int sizeVal;
+	std::string typeVal;
+
+	std::map<std::string, std::string>::const_iterator content = itemProperties.find("Content");
+	if(content != itemProperties.end())
+	{
+		contentVal = content->second;
+	}
+	else
+	{
+		assert(false);
+	}
+	std::map<std::string, std::string>::const_iterator precision = itemProperties.find("Precision");
+	if(precision != itemProperties.end())
+	{
+		precisionVal = atoi(precision->second.c_str());
+	}
+	else
+	{
+		assert(false);
+	}
+	std::map<std::string, std::string>::const_iterator size = itemProperties.find("Dimensions");
+	if(size != itemProperties.end())
+	{
+		sizeVal = atoi(size->second.c_str());
+	}
+	else
+	{
+		assert(false);
+	}
+	std::map<std::string, std::string>::const_iterator type = itemProperties.find("DataType");
+	if(type != itemProperties.end())
+	{
+		typeVal = type->second;
+	}
+	else
+	{
+		assert(false);
+	}
+	std::map<std::string, std::string>::const_iterator format = itemProperties.find("Format");
+	if(format != itemProperties.end())
+	{
+		if(format->second.compare("HDF") == 0)
+		{
+			mHDF5Controller = XdmfHDF5Controller::New(contentVal, precisionVal, sizeVal, typeVal);
+		}
+		else if(format->second.compare("XML") == 0)
+		{
+			this->initialize(typeVal, precisionVal);
+			this->reserve(sizeVal);
+			boost::char_separator<char> sep(" ");
+			boost::tokenizer<boost::char_separator<char> > tokens(contentVal, sep);
+			BOOST_FOREACH(std::string t, tokens)
+			{
+				double val = atof(t.c_str());
+				this->pushBack(val);
+			}
+		}
+		else
+		{
+			assert(false);
+		}
+	}
+	else
+	{
+		assert(false);
 	}
 }
 

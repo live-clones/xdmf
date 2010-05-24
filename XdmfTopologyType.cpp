@@ -132,13 +132,129 @@ XdmfTopologyType::XdmfTopologyType(const int& nodesPerElement, const std::string
 	mNodesPerElement(nodesPerElement),
 	mName(name),
 	mCellType(cellType)
-{}
+{
+}
 
 XdmfTopologyType::XdmfTopologyType(const XdmfTopologyType& topologyType):
 	mNodesPerElement(topologyType.mNodesPerElement),
 	mName(topologyType.mName),
 	mCellType(topologyType.mCellType)
 {
+}
+
+XdmfTopologyType XdmfTopologyType::New(const std::map<std::string, std::string> & itemProperties)
+{
+	std::map<std::string, std::string>::const_iterator type = itemProperties.find("TopologyType");
+	std::map<std::string, std::string>::const_iterator nodesPerElement = itemProperties.find("NodesPerElement");
+	if(type != itemProperties.end())
+	{
+		const std::string typeVal = type->second;
+		if(typeVal.compare("NoTopology") == 0)
+		{
+			return NoTopologyType();
+		}
+		else if(typeVal.compare("Polyvertex") == 0)
+		{
+			return Polyvertex();
+		}
+		else if(typeVal.compare("Polyline") == 0)
+		{
+			return Polyline();
+		}
+		else if(typeVal.compare("Polygon") == 0)
+		{
+			if(nodesPerElement != itemProperties.end())
+			{
+				return Polygon(atoi(nodesPerElement->second.c_str()));
+			}
+			assert(false);
+		}
+		else if(typeVal.compare("Triangle") == 0)
+		{
+			return Triangle();
+		}
+		else if(typeVal.compare("Quadrilateral") == 0)
+		{
+			return Quadrilateral();
+		}
+		else if(typeVal.compare("Tetrahedron") == 0)
+		{
+			return Tetrahedron();
+		}
+		else if(typeVal.compare("Pyramid") == 0)
+		{
+			return Pyramid();
+		}
+		else if(typeVal.compare("Wedge") == 0)
+		{
+			return Wedge();
+		}
+		else if(typeVal.compare("Hexahedron") == 0)
+		{
+			return Hexahedron();
+		}
+		else if(typeVal.compare("Edge_3") == 0)
+		{
+			return Edge_3();
+		}
+		else if(typeVal.compare("Triangle_6") == 0)
+		{
+			return Triangle_6();
+		}
+		else if(typeVal.compare("Quadrilateral_8") == 0)
+		{
+			return Quadrilateral_8();
+		}
+		else if(typeVal.compare("Tetrahedron_10") == 0)
+		{
+			return Tetrahedron_10();
+		}
+		else if(typeVal.compare("Pyramid_13") == 0)
+		{
+			return Pyramid_13();
+		}
+		else if(typeVal.compare("Wedge_15") == 0)
+		{
+			return Wedge_15();
+		}
+		else if(typeVal.compare("Hexahedron_20") == 0)
+		{
+			return Hexahedron_20();
+		}
+		else if(typeVal.compare("Mixed") == 0)
+		{
+			return Mixed();
+		}
+		else if(typeVal.compare("2DSMesh") == 0)
+		{
+			return TwoDSMesh();
+		}
+		else if(typeVal.compare("2DRectMesh") == 0)
+		{
+			return TwoDRectMesh();
+		}
+		else if(typeVal.compare("2DCoRectMesh") == 0)
+		{
+			return TwoDCoRectMesh();
+		}
+		else if(typeVal.compare("3DSMesh") == 0)
+		{
+			return ThreeDSMesh();
+		}
+		else if(typeVal.compare("3DRectMesh") == 0)
+		{
+			return ThreeDRectMesh();
+		}
+		else if(typeVal.compare("3DCoRectMesh") == 0)
+		{
+			return ThreeDCoRectMesh();
+		}
+		else
+		{
+			assert(false);
+		}
+	}
+	assert(false);
 }
 
 XdmfTopologyType& XdmfTopologyType::operator=(const XdmfTopologyType& topologyType)
@@ -180,7 +296,7 @@ unsigned int XdmfTopologyType::getNodesPerElement() const
 void XdmfTopologyType::getProperties(std::map<std::string, std::string> & collectedProperties) const
 {
 	collectedProperties["TopologyType"] = this->mName;
-	if(this->getName().compare("Polygon") == 0)
+	if(mName.compare("Polygon") == 0)
 	{
 		collectedProperties["NodesPerElement"] = this->mNodesPerElement;
 	}

@@ -1,7 +1,7 @@
 // Includes
 #include "XdmfArray.hpp"
 
-template<typename T>
+template <typename T>
 class XdmfArray::CopyValues : public boost::static_visitor <void> {
 public:
 
@@ -41,7 +41,7 @@ private:
 	const unsigned int mValuesStride;
 };
 
-template<typename T>
+template <typename T>
 class XdmfArray::GetValuesCopy : public boost::static_visitor <void> {
 public:
 
@@ -81,7 +81,27 @@ private:
 	const unsigned int mValuesStride;
 };
 
-template<typename T>
+template <typename T>
+class XdmfArray::PushBack : public boost::static_visitor <void> {
+public:
+
+	PushBack(const T & val) :
+		mVal(val)
+	{
+	}
+
+	template<typename U>
+	void operator()(boost::shared_ptr<std::vector<U> > & array) const
+	{
+		array->push_back((U)mVal);
+	}
+
+private:
+
+	const T & mVal;
+};
+
+template <typename T>
 class XdmfArray::Resize : public boost::static_visitor <void> {
 public:
 
@@ -110,7 +130,7 @@ struct XdmfArray::NullDeleter
     }
 };
 
-template<typename T>
+template <typename T>
 void XdmfArray::copyValues(const unsigned int startIndex, const T * const valuesPointer, const unsigned int numValues, const unsigned int arrayStride, const unsigned int valuesStride)
 {
 	if(mHaveArrayPointer)
@@ -121,7 +141,7 @@ void XdmfArray::copyValues(const unsigned int startIndex, const T * const values
 	{
 		initialize<T>();
 	}
-	boost::apply_visitor( CopyValues<T>(startIndex, valuesPointer, numValues, arrayStride, valuesStride), mArray);
+	boost::apply_visitor(CopyValues<T>(startIndex, valuesPointer, numValues, arrayStride, valuesStride), mArray);
 }
 
 template <typename T>
@@ -167,11 +187,7 @@ void XdmfArray::getValuesCopy(const unsigned int startIndex, T * valuesPointer, 
 	{
 		boost::apply_visitor(GetValuesCopy<T>(startIndex, valuesPointer, numValues, arrayStride, valuesStride), mArrayPointer);
 	}
-	else if(mHDF5Controller)
-	{
-		assert("Need to complete");
-	}
-	assert("Throw Exception No Data");
+	assert(false);
 }
 
 template <typename T>
@@ -193,8 +209,18 @@ boost::shared_ptr<std::vector<T> > XdmfArray::initialize()
 	return newArray;
 }
 
+template <typename T>
+void XdmfArray::pushBack(T & value)
+{
+	if(mHaveArrayPointer)
+	{
+		internalizeArrayPointer();
+	}
+	return boost::apply_visitor(PushBack<T>(value), mArray);
+}
+
 template<typename T>
-void XdmfArray::resize(const unsigned int numValues, const T & val)
+void XdmfArray::resize(const unsigned int numValues, const T & value)
 {
 	if(mHaveArrayPointer)
 	{
@@ -204,10 +230,10 @@ void XdmfArray::resize(const unsigned int numValues, const T & val)
 	{
 		initialize<T>();
 	}
-	return boost::apply_visitor(Resize<T>(numValues, val), mArray);
+	return boost::apply_visitor(Resize<T>(numValues, value), mArray);
 }
 
-template<typename T>
+template <typename T>
 void XdmfArray::setValues(const T * const arrayPointer, const unsigned int numValues, const bool transferOwnership)
 {
 	// Remove contents of internal array.
@@ -229,7 +255,7 @@ void XdmfArray::setValues(const T * const arrayPointer, const unsigned int numVa
 	mArrayPointerNumValues = numValues;
 }
 
-template<typename T>
+template <typename T>
 void XdmfArray::setValues(std::vector<T> & array, const bool transferOwnership)
 {
 	if(mHaveArrayPointer)
@@ -249,7 +275,7 @@ void XdmfArray::setValues(std::vector<T> & array, const bool transferOwnership)
 	mHaveArray = true;
 }
 
-template<typename T>
+template <typename T>
 void XdmfArray::setValues(boost::shared_ptr<std::vector<T> > array)
 {
 	if(mHaveArrayPointer)
@@ -260,7 +286,7 @@ void XdmfArray::setValues(boost::shared_ptr<std::vector<T> > array)
 	mHaveArray = true;
 }
 
-template<typename T>
+template <typename T>
 bool XdmfArray::swap(std::vector<T> & array)
 {
 	if(mHaveArrayPointer)
@@ -283,7 +309,7 @@ bool XdmfArray::swap(std::vector<T> & array)
 	}
 }
 
-template<typename T>
+template <typename T>
 bool XdmfArray::swap(boost::shared_ptr<std::vector<T> > array)
 {
 	return this->swap(*array.get());

@@ -29,6 +29,17 @@ boost::shared_ptr<const XdmfArray> XdmfDataItem::getArray() const
 	return mArray;
 }
 
+void XdmfDataItem::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems)
+{
+	for(std::vector<boost::shared_ptr<XdmfItem> >::const_iterator iter = childItems.begin(); iter != childItems.end(); ++iter)
+	{
+		if(boost::shared_ptr<XdmfArray> array = boost::shared_dynamic_cast<XdmfArray>(*iter))
+		{
+			this->setArray(array);
+		}
+	}
+}
+
 void XdmfDataItem::setArray(boost::shared_ptr<XdmfArray> array)
 {
 	mArray = array;

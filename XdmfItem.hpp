@@ -1,6 +1,6 @@
 /**
  * An XdmfItem replaces the XdmfElement class in the previous version of Xdmf.  An XdmfItem represents an item that can be
- * visited by an XdmfVisitor and have it's contents added to an xdmf file.  These include XdmfGrids, XdmfSets,
+ * visited by an XdmfVisitor and have it's contents added to an Xdmf file.  These include XdmfGrids, XdmfSets,
  * XdmfTopologies, etc.
  *
  * This is an abstract base class.
@@ -15,6 +15,7 @@ class XdmfVisitor;
 // Includes
 #include <loki/Visitor.h>
 #include <map>
+#include <vector>
 #include "XdmfObject.hpp"
 
 /**
@@ -29,6 +30,7 @@ class XdmfItem : public XdmfObject,
 public:
 
 	LOKI_DEFINE_VISITABLE_BASE()
+	friend class XdmfReader;
 
 	/**
 	 * Get the tag for this XdmfItem.  This is equivalent to tags in XML parlance.
@@ -54,10 +56,20 @@ protected:
 	XdmfItem();
 	virtual ~XdmfItem();
 
+	/**
+	 * Populates an item using a map of key/value property pairs and a vector of its child items.  This is intended to be used to
+	 * support generic reading of XdmfItems from disk.
+	 *
+	 * @param itemProperties a map of key/value properties associated with this XdmfItem.
+	 * @param childItems a vector of child items to be added to this XdmfItem.
+	 */
+	virtual void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem > > & childItems) = 0;
+
 private:
 
 	XdmfItem(const XdmfItem & item);  // Not implemented.
 	void operator=(const XdmfItem & item);  // Not implemented.
+
 };
 
 #endif /* XDMFITEM_HPP_ */

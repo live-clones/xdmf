@@ -25,6 +25,8 @@ class XdmfAttributeType : public XdmfItemProperty {
 
 public:
 
+	friend class XdmfAttribute;
+
 	// Supported Xdmf Attribute Types
 	static XdmfAttributeType NoAttributeType();
 	static XdmfAttributeType Scalar();
@@ -74,6 +76,8 @@ protected:
 	XdmfAttributeType(const std::string & name);
 
 private:
+
+	static XdmfAttributeType New(const std::map<std::string, std::string> & itemProperties);
 
 	std::string mName;
 };

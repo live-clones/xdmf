@@ -51,6 +51,7 @@ public:
 	XdmfNewMacro(XdmfArray);
 	LOKI_DEFINE_VISITABLE(XdmfArray, XdmfItem)
 	friend class XdmfHDF5Writer;
+	static std::string ItemTag;
 
 	/**
 	 * Copy values from an XdmfArray into this array.
@@ -179,12 +180,18 @@ public:
 	boost::shared_ptr<std::vector<T> > initialize();
 
 	/**
+	 * Copy a value to the back of this array
+	 */
+	template <typename T>
+	void pushBack(T & value);
+
+	/**
 	 * Read data from disk into memory.
 	 */
 	void read();
 
 	/**
-	 * Release all data held by this XdmfArray.
+	 * Release all data from currently held in memory.
 	 */
 	void release();
 
@@ -200,10 +207,10 @@ public:
 	 * to val.  If numValues is less than the current size, values at indices larger than numValues are removed.
 	 *
 	 * @param numValues the number of values to resize this array to.
-	 * @param val the number to initialize newly created values to, if needed.
+	 * @param value the number to initialize newly created values to, if needed.
 	 */
 	template<typename T>
-	void resize(const unsigned int numValues, const T & val = 0);
+	void resize(const unsigned int numValues, const T & value = 0);
 
 	/**
 	 * Attach an hdf5 controller to this XdmfArray.
@@ -277,6 +284,7 @@ protected:
 
 	XdmfArray();
 	virtual ~XdmfArray();
+	virtual void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems);
 
 private:
 
@@ -287,7 +295,7 @@ private:
 	class Clear;
 	class CopyArrayValues;
 
-	template<typename T>
+	template <typename T>
 	class CopyValues;
 
 	class GetCapacity;
@@ -296,19 +304,25 @@ private:
 	class GetSize;
 	class GetType;
 
-	template<typename T>
+	template <typename T>
 	class GetValuesCopy;
 
 	class GetValuesPointer;
 	class GetValuesString;
 	class InternalizeArrayPointer;
 	class NewArray;
+
+	template <typename T>
+	class PushBack;
+
 	class Reserve;
 
-	template<typename T>
+	template <typename T>
 	class Resize;
 
 	struct NullDeleter;
+
+	void initialize(const std::string & type, const unsigned int precision);
 
 	/**
 	 * After setValues(const T * const array) is called, XdmfArray stores a pointer that is not allowed to be modified through

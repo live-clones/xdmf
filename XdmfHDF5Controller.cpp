@@ -7,14 +7,28 @@
 #include "XdmfArray.hpp"
 #include "XdmfHDF5Controller.hpp"
 
-XdmfHDF5Controller::XdmfHDF5Controller(const std::string & hdf5FilePath, const std::string & dataSetName, const int precision,
-	const int size, const std::string & type) :
-		mHDF5FilePath(hdf5FilePath),
-		mDataSetName(dataSetName),
+XdmfHDF5Controller::XdmfHDF5Controller(const std::string & hdf5DataSetPath, const int precision, const int size, const std::string & type) :
 		mPrecision(precision),
 		mSize(size),
 		mType(type)
 {
+	size_t colonLocation = hdf5DataSetPath.find(":");
+	if(colonLocation != std::string::npos)
+	{
+		mHDF5FilePath = hdf5DataSetPath.substr(0, colonLocation);
+		if(colonLocation + 1  != mHDF5FilePath.size())
+		{
+			mDataSetName = hdf5DataSetPath.substr(colonLocation + 1, mHDF5FilePath.size());
+		}
+		else
+		{
+			assert(false);
+		}
+	}
+	else
+	{
+		assert(false);
+	}
 }
 
 XdmfHDF5Controller::~XdmfHDF5Controller()
@@ -108,7 +122,7 @@ void XdmfHDF5Controller::read(XdmfArray * const array)
 	}
 	else
 	{
-		assert("Unsupported HDF5 Data Type");
+		assert(false);
 	}
 
 	H5Dread(dataset, datatype, H5S_ALL, H5S_ALL, H5P_DEFAULT, valuesPointer);

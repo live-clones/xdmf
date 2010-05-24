@@ -18,19 +18,15 @@ public:
 	XdmfWriterImpl(const std::string & xmlFilePath, boost::shared_ptr<XdmfHDF5Writer> hdf5Writer) :
 		mHDF5Writer(hdf5Writer),
 		mLightDataLimit(100),
-		mXMLDocument(xmlNewDoc((xmlChar*)"1.0")),
-		mXMLCurrentNode(xmlNewNode(NULL, (xmlChar*)"Xdmf")),
-		mXMLFilePath(xmlFilePath)
+		mXMLFilePath(xmlFilePath),
+		mTraverseLevel(0)
 	{
-		xmlDocSetRootElement(mXMLDocument, mXMLCurrentNode);
 	};
 	~XdmfWriterImpl()
 	{
-		xmlSaveFormatFile("output.xmf", mXMLDocument, 1);
-		xmlFreeDoc(mXMLDocument);
-		xmlCleanupParser();
 	};
 	boost::shared_ptr<XdmfHDF5Writer> mHDF5Writer;
+	unsigned int mTraverseLevel;
 	unsigned int mLightDataLimit;
 	xmlDocPtr mXMLDocument;
 	xmlNodePtr mXMLCurrentNode;
@@ -66,9 +62,23 @@ XdmfWriter::~XdmfWriter()
 	std::cout << "Deleted XdmfWriter " << this << std::endl;
 }
 
+void XdmfWriter::closeFile()
+{
+	xmlSaveFormatFile(mImpl->mXMLFilePath.c_str(), mImpl->mXMLDocument, 1);
+	xmlFreeDoc(mImpl->mXMLDocument);
+	xmlCleanupParser();
+}
+
 unsigned int XdmfWriter::getLightDataLimit() const
 {
 	return mImpl->mLightDataLimit;
+}
+
+void XdmfWriter::openFile()
+{
+	mImpl->mXMLDocument = xmlNewDoc((xmlChar*)"1.0");
+	mImpl->mXMLCurrentNode = xmlNewNode(NULL, (xmlChar*)"Xdmf");
+	xmlDocSetRootElement(mImpl->mXMLDocument, mImpl->mXMLCurrentNode);
 }
 
 void XdmfWriter::setLightDataLimit(unsigned int numValues)
@@ -78,11 +88,6 @@ void XdmfWriter::setLightDataLimit(unsigned int numValues)
 
 void XdmfWriter::visit(XdmfArray & array, boost::shared_ptr<Loki::BaseVisitor> visitor)
 {
-	this->visit(dynamic_cast<XdmfItem &>(array), visitor);
-
-	xmlNodePtr parentNode = mImpl->mXMLCurrentNode;
-	mImpl->mXMLCurrentNode = mImpl->mXMLCurrentNode->children;
-
 	std::stringstream xmlTextValues;
 	if(array.getHDF5Controller() || array.getSize() > mImpl->mLightDataLimit)
 	{
@@ -94,12 +99,17 @@ void XdmfWriter::visit(XdmfArray & array, boost::shared_ptr<Loki::BaseVisitor> v
 		xmlTextValues << array.getValuesString();
 	}
 
-	xmlAddChild(mImpl->mXMLCurrentNode, xmlNewText((xmlChar*)xmlTextValues.str().c_str()));
-	mImpl->mXMLCurrentNode = parentNode;
+	this->visit(dynamic_cast<XdmfItem &>(array), visitor);
+	xmlAddChild(mImpl->mXMLCurrentNode->children, xmlNewText((xmlChar*)xmlTextValues.str().c_str()));
 }
 
 void XdmfWriter::visit(XdmfItem & item, boost::shared_ptr<Loki::BaseVisitor> visitor)
 {
+	if(mImpl->mTraverseLevel == 0)
+	{
+		this->openFile();
+	}
+	mImpl->mTraverseLevel++;
 	xmlNodePtr parentNode = mImpl->mXMLCurrentNode;
 	mImpl->mXMLCurrentNode = xmlNewChild(mImpl->mXMLCurrentNode, NULL, (xmlChar*)item.getItemTag().c_str(), NULL);
 	const std::map<std::string, std::string> itemProperties = item.getItemProperties();
@@ -109,4 +119,9 @@ void XdmfWriter::visit(XdmfItem & item, boost::shared_ptr<Loki::BaseVisitor> vis
 	}
 	item.traverse(visitor);
 	mImpl->mXMLCurrentNode = parentNode;
+	mImpl->mTraverseLevel--;
+	if(mImpl->mTraverseLevel == 0)
+	{
+		this->closeFile();
+	}
 }

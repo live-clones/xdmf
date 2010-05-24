@@ -80,6 +80,7 @@ public:
 	 */
 	void visit(XdmfItem & item, boost::shared_ptr<Loki::BaseVisitor> visitor);
 
+
 protected:
 
 	XdmfWriter(const std::string & xmlFilePath);
@@ -95,6 +96,9 @@ private:
 
 	XdmfWriter(const XdmfWriter & writer);  // Not implemented.
 	void operator=(const XdmfWriter & writer);  // Not implemented.
+
+	void closeFile();
+	void openFile();
 
 	XdmfWriterImpl * mImpl;
 };

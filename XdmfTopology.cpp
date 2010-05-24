@@ -21,9 +21,11 @@ XdmfTopology::~XdmfTopology()
 	std::cout << "Deleted Topology " << this << std::endl;
 }
 
+std::string XdmfTopology::ItemTag = "Topology";
+
 std::string XdmfTopology::getItemTag() const
 {
-	return "Topology";
+	return ItemTag;
 }
 
 std::map<std::string, std::string> XdmfTopology::getItemProperties() const
@@ -48,6 +50,12 @@ unsigned int XdmfTopology::getNumberElements() const
 XdmfTopologyType XdmfTopology::getTopologyType() const
 {
 	return mTopologyType;
+}
+
+void XdmfTopology::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems)
+{
+	mTopologyType = XdmfTopologyType::New(itemProperties);
+	XdmfDataItem::populateItem(itemProperties, childItems);
 }
 
 void XdmfTopology::setTopologyType(const XdmfTopologyType & topologyType)

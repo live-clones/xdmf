@@ -40,6 +40,8 @@ class XdmfTopologyType : public XdmfItemProperty {
 
 public:
 
+	friend class XdmfTopology;
+
 	enum CellType {
 		NoCellType, Linear, Quadratic, Arbitrary, Structured
 	};
@@ -122,6 +124,8 @@ protected:
 	XdmfTopologyType(const int & nodesPerElement, const std::string & name, const CellType & cellType);
 
 private:
+
+	static XdmfTopologyType New(const std::map<std::string, std::string> & itemProperties);
 
 	CellType mCellType;
 	std::string mName;

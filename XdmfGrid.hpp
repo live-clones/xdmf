@@ -23,6 +23,7 @@ public:
 
 	XdmfNewMacro(XdmfGrid);
 	LOKI_DEFINE_VISITABLE(XdmfGrid, XdmfItem)
+	static std::string ItemTag;
 
 	/**
 	 * Get an XdmfAttribute attached to this grid.
@@ -120,6 +121,7 @@ protected:
 
 	XdmfGrid();
 	virtual ~XdmfGrid();
+	virtual void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems);
 
 private:
 

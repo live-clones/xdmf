@@ -2,6 +2,7 @@
 #define XDMFOBJECT_HPP_
 
 // Includes
+#include <iostream>
 #include <boost/shared_ptr.hpp>
 
 #define XdmfNewMacro(type) \

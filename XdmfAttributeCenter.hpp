@@ -23,6 +23,8 @@ class XdmfAttributeCenter : public XdmfItemProperty {
 
 public:
 
+	friend class XdmfAttribute;
+
 	// Supported Xdmf Attribute Centers
 	static XdmfAttributeCenter Grid();
 	static XdmfAttributeCenter Cell();
@@ -70,6 +72,8 @@ protected:
 	XdmfAttributeCenter(const std::string & name);
 
 private:
+
+	static XdmfAttributeCenter New(const std::map<std::string, std::string> & itemProperties);
 
 	std::string mName;
 };

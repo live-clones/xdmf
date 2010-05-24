@@ -47,6 +47,7 @@ set(XdmfSources
 	XdmfItem
 	XdmfItemProperty
 	XdmfObject
+	XdmfReader
 	XdmfTopology
 	XdmfTopologyType
 	XdmfVisitor

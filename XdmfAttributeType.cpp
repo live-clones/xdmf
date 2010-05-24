@@ -45,11 +45,54 @@ XdmfAttributeType XdmfAttributeType::GlobalId()
 
 XdmfAttributeType::XdmfAttributeType(const std::string & name) :
 	mName(name)
-{};
+{
+}
 
 XdmfAttributeType::XdmfAttributeType(const XdmfAttributeType & attributeType):
 	mName(attributeType.mName)
 {
+}
+
+XdmfAttributeType XdmfAttributeType::New(const std::map<std::string, std::string> & itemProperties)
+{
+	std::map<std::string, std::string>::const_iterator type = itemProperties.find("AttributeType");
+	if(type != itemProperties.end())
+	{
+		const std::string typeVal = type->second;
+		if(typeVal.compare("None") == 0)
+		{
+			return NoAttributeType();
+		}
+		else if(typeVal.compare("Scalar") == 0)
+		{
+			return Scalar();
+		}
+		else if(typeVal.compare("Vector") == 0)
+		{
+			return Vector();
+		}
+		else if(typeVal.compare("Tensor") == 0)
+		{
+			return Tensor();
+		}
+		else if(typeVal.compare("Matrix") == 0)
+		{
+			return Matrix();
+		}
+		else if(typeVal.compare("Tensor6") == 0)
+		{
+			return Tensor6();
+		}
+		else if(typeVal.compare("GlobalId") == 0)
+		{
+			return GlobalId();
+		}
+		else
+		{
+			assert(false);
+		}
+	}
+	assert(false);
 }
 
 XdmfAttributeType& XdmfAttributeType::operator=(const XdmfAttributeType & attributeType)
@@ -78,5 +121,5 @@ std::string XdmfAttributeType::getName() const
 
 void XdmfAttributeType::getProperties(std::map<std::string, std::string> & collectedProperties) const
 {
-	collectedProperties["AttributeType"] = this->mName;
+	collectedProperties["AttributeType"] = mName;
 }

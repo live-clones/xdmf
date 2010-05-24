@@ -20,6 +20,7 @@ public:
 
 	XdmfNewMacro(XdmfDomain);
 	LOKI_DEFINE_VISITABLE(XdmfDomain, XdmfItem)
+	static std::string ItemTag;
 
 	/**
 	 * Get a XdmfGrid attached to the domain.
@@ -61,6 +62,7 @@ protected:
 
 	XdmfDomain();
 	virtual ~XdmfDomain();
+	virtual void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems);
 
 private:
 

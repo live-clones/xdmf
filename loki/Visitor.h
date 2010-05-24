@@ -20,7 +20,6 @@
 #ifndef LOKI_VISITOR_INC_
 #define LOKI_VISITOR_INC_
 
-#include <iostream>
 #include <boost/shared_ptr.hpp>
 #include "Typelist.h"
 #include "HierarchyGenerators.h"
@@ -309,7 +308,6 @@ struct DefaultCatchAll
     { \
         if (Loki::Visitor<my_class,ReturnType>* p = dynamic_cast<Loki::Visitor<my_class,ReturnType>*>(guest.get())) \
         { \
-        	std::cout << "HERE" << std::endl; \
             return p->visit(*this, guest); \
         } \
         else \

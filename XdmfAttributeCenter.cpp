@@ -35,11 +35,46 @@ XdmfAttributeCenter XdmfAttributeCenter::Node()
 
 XdmfAttributeCenter::XdmfAttributeCenter(const std::string & name) :
 	mName(name)
-{};
+{
+}
 
 XdmfAttributeCenter::XdmfAttributeCenter(const XdmfAttributeCenter & attributeCenter):
   mName(attributeCenter.mName)
 {
+}
+
+XdmfAttributeCenter XdmfAttributeCenter::New(const std::map<std::string, std::string> & itemProperties)
+{
+	std::map<std::string, std::string>::const_iterator center = itemProperties.find("Center");
+	if(center != itemProperties.end())
+	{
+		const std::string centerVal = center->second;
+		if(centerVal.compare("Grid") == 0)
+		{
+			return Grid();
+		}
+		else if(centerVal.compare("Cell") == 0)
+		{
+			return Cell();
+		}
+		else if(centerVal.compare("Face") == 0)
+		{
+			return Face();
+		}
+		else if(centerVal.compare("Edge") == 0)
+		{
+			return Edge();
+		}
+		else if(centerVal.compare("Node") == 0)
+		{
+			return Node();
+		}
+		else
+		{
+			assert(false);
+		}
+	}
+	assert(false);
 }
 
 XdmfAttributeCenter& XdmfAttributeCenter::operator=(const XdmfAttributeCenter & attributeCenter)
@@ -68,5 +103,5 @@ std::string XdmfAttributeCenter::getName() const
 
 void XdmfAttributeCenter::getProperties(std::map<std::string, std::string> & collectedProperties) const
 {
-	collectedProperties["Center"] = this->mName;
+	collectedProperties["Center"] = mName;
 }

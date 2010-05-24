@@ -20,6 +20,8 @@ XdmfAttribute::~XdmfAttribute()
 	std::cout << "Deleted Attribute " << this << std::endl;
 }
 
+std::string XdmfAttribute::ItemTag = "Attribute";
+
 XdmfAttributeCenter XdmfAttribute::getAttributeCenter() const
 {
 	return mAttributeCenter;
@@ -41,12 +43,29 @@ std::map<std::string, std::string> XdmfAttribute::getItemProperties() const
 
 std::string XdmfAttribute::getItemTag() const
 {
-	return "Attribute";
+	return ItemTag;
 }
 
 std::string XdmfAttribute::getName() const
 {
 	return mName;
+}
+
+void XdmfAttribute::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems)
+{
+	std::map<std::string, std::string>::const_iterator name = itemProperties.find("Name");
+	if(name != itemProperties.end())
+	{
+		mName = name->second;
+	}
+	else
+	{
+		assert(false);
+	}
+	mAttributeCenter = XdmfAttributeCenter::New(itemProperties);
+	mAttributeType = XdmfAttributeType::New(itemProperties);
+
+	XdmfDataItem::populateItem(itemProperties, childItems);
 }
 
 void XdmfAttribute::setAttributeCenter(const XdmfAttributeCenter & attributeCenter)
