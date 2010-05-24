@@ -33,7 +33,7 @@ public:
 	 * @param index of the XdmfAttribute to retrieve.
 	 * @return smart pointer to the XdmfAttribute attached to this grid.
 	 */
-	boost::shared_ptr<XdmfAttribute> getAttribute(unsigned int index);
+	boost::shared_ptr<XdmfAttribute> getAttribute(const unsigned int index);
 
 	/**
 	 * Get an XdmfAttribute attached to this grid (const version).
@@ -41,7 +41,7 @@ public:
 	 * @param index of the XdmfAttribute to retrieve.
 	 * @return pointer to the XdmfAttribute attached to this grid.
 	 */
-	boost::shared_ptr<const XdmfAttribute> getAttribute(unsigned int index) const;
+	boost::shared_ptr<const XdmfAttribute> getAttribute(const unsigned int index) const;
 
 	/**
 	 * Get the XdmfGeometry associated with this grid.
@@ -88,7 +88,7 @@ public:
 	 * @param index of the XdmfSet to retrieve.
 	 * @return pointer to the XdmfSet attached to this grid.
 	 */
-	boost::shared_ptr<XdmfSet> getSet(unsigned int index);
+	boost::shared_ptr<XdmfSet> getSet(const unsigned int index);
 
 	/**
 	 * Get an XdmfSet attached to this grid (const version).
@@ -96,7 +96,7 @@ public:
 	 * @param index of the XdmfSet to retrieve.
 	 * @return pointer to the XdmfSet attached to this grid.
 	 */
-	boost::shared_ptr<const XdmfSet> getSet(unsigned int index) const;
+	boost::shared_ptr<const XdmfSet> getSet(const unsigned int index) const;
 
 	/**
 	 * Get the XdmfTopology associated with this grid.
@@ -125,6 +125,20 @@ public:
 	 * @param set an XdmfSet to attach to this grid.
 	 */
 	void insert(boost::shared_ptr<XdmfSet> set);
+
+	/**
+	 * Remove an XdmfAttribute from the grid.
+	 *
+	 * @param index of the XdmfAttribute to remove.
+	 */
+	void removeAttribute(const unsigned int index);
+
+	/**
+	 * Remove an XdmfSet from the grid.
+	 *
+	 * @param index of the XdmfSet to remove.
+	 */
+	void removeSet(const unsigned int index);
 
 	/**
 	 * Set the XdmfGeometry associated with this grid.
