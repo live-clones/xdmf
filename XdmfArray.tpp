@@ -187,7 +187,6 @@ void XdmfArray::getValuesCopy(const unsigned int startIndex, T * valuesPointer, 
 	{
 		boost::apply_visitor(GetValuesCopy<T>(startIndex, valuesPointer, numValues, arrayStride, valuesStride), mArrayPointer);
 	}
-	assert(false);
 }
 
 template <typename T>
