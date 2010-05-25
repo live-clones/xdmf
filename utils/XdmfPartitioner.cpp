@@ -30,11 +30,12 @@
 
 extern "C"
 {
-#include <metis.h>
+	#include <metis.h>
 }
 
 #include <sstream>
 #include "XdmfArray.hpp"
+#include "XdmfAttribute.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGrid.hpp"
 #include "XdmfGridCollection.hpp"
@@ -166,9 +167,8 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(boost::shared_p
 	}
 	delete[] elementsPartition;
 
-
-	boost::shared_ptr<XdmfAttribute> globalNodeId = gridToPartition->getAttribute("GlobalNodeId");
-	bool generateGlobalNodeId = (globalNodeId == NULL);
+	boost::shared_ptr<XdmfAttribute> globalNodeIds = gridToPartition->getAttribute("GlobalNodeId");
+	bool generateGlobalNodeIds = (globalNodeIds == NULL);
 
 	boost::shared_ptr<XdmfGridCollection> partitionedGrids = XdmfGridCollection::New();
 	partitionedGrids->setGridCollectionType(XdmfGridCollectionType::Spatial());
@@ -180,8 +180,8 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(boost::shared_p
 
 	for(unsigned int i=0; i<numberOfPartitions; ++i)
 	{
-		std::map<unsigned int, unsigned int> currNodeMap = globalToLocalNodeIdMap[i];
-		std::vector<unsigned int> currElemIds = globalElementIds[i];
+		std::map<unsigned int, unsigned int> & currNodeMap = globalToLocalNodeIdMap[i];
+		std::vector<unsigned int> & currElemIds = globalElementIds[i];
 
 		if(currElemIds.size() > 0)
 		{
@@ -231,153 +231,103 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(boost::shared_p
 				topologyVals->accept(heavyDataWriter);
 				topologyVals->release();
 			}
+
+			if (generateGlobalNodeIds)
+			{
+				globalNodeIds = XdmfAttribute::New();
+				globalNodeIds->setName("GlobalNodeId");
+				globalNodeIds->setAttributeType(XdmfAttributeType::GlobalId());
+				globalNodeIds->setAttributeCenter(XdmfAttributeCenter::Node());
+
+				boost::shared_ptr<XdmfArray> globalNodeIdsVals = globalNodeIds->getArray();
+				globalNodeIdsVals->reserve(currNodeMap.size());
+				for (std::map<unsigned int, unsigned int>::const_iterator iter = currNodeMap.begin(); iter != currNodeMap.end(); ++iter)
+				{
+					globalNodeIdsVals->copyValues(iter->second, &iter->first, 1);
+				}
+				partitioned->insert(globalNodeIds);
+
+				if(heavyDataWriter)
+				{
+					globalNodeIdsVals->accept(heavyDataWriter);
+					globalNodeIdsVals->release();
+				}
+			}
 		}
+	}
+
+	gridToPartition->getGeometry()->getArray()->release();
+	gridToPartition->getTopology()->getArray()->release();
+
+	for(unsigned int i=0; i<gridToPartition->getNumberOfAttributes(); ++i)
+	{
+		boost::shared_ptr<XdmfAttribute> currAttribute = gridToPartition->getAttribute(i);
+		if(!currAttribute->getArray()->isInitialized())
+		{
+			currAttribute->getArray()->read();
+		}
+		unsigned int partitionId = 0;
+		for(unsigned int j=0; j<numberOfPartitions; ++j)
+		{
+			std::map<unsigned int, unsigned int> & currNodeMap = globalToLocalNodeIdMap[j];
+			std::vector<unsigned int> & currElemIds = globalElementIds[j];
+			if(currElemIds.size() > 0)
+			{
+				boost::shared_ptr<XdmfGrid> partitioned = partitionedGrids->getGrid(partitionId);
+				partitionId++;
+				boost::shared_ptr<XdmfAttribute> createdAttribute;
+				if(currAttribute->getAttributeCenter() == XdmfAttributeCenter::Grid())
+				{
+					if(partitionId == 0)
+					{
+						createdAttribute = currAttribute;
+					}
+				}
+				else if(currAttribute->getAttributeCenter() == XdmfAttributeCenter::Cell() ||
+						currAttribute->getAttributeCenter() == XdmfAttributeCenter::Face() ||
+						currAttribute->getAttributeCenter() == XdmfAttributeCenter::Edge())
+				{
+					createdAttribute = XdmfAttribute::New();
+					createdAttribute->setName(currAttribute->getName());
+					createdAttribute->setAttributeCenter(currAttribute->getAttributeCenter());
+					createdAttribute->setAttributeType(currAttribute->getAttributeType());
+					unsigned int index = 0;
+					unsigned int numValsPerComponent = currAttribute->getArray()->getSize() / gridToPartition->getTopology()->getNumberElements();
+					createdAttribute->getArray()->reserve(currElemIds.size() * numValsPerComponent);
+					for(std::vector<unsigned int>::const_iterator iter = currElemIds.begin(); iter != currElemIds.end(); ++iter)
+					{
+						createdAttribute->getArray()->copyValues(index, currAttribute->getArray(), *iter * numValsPerComponent, numValsPerComponent);
+						index += numValsPerComponent;
+					}
+				}
+				else if(currAttribute->getAttributeCenter() == XdmfAttributeCenter::Node())
+				{
+					createdAttribute = XdmfAttribute::New();
+					createdAttribute->setName(currAttribute->getName());
+					createdAttribute->setAttributeCenter(currAttribute->getAttributeCenter());
+					createdAttribute->setAttributeType(currAttribute->getAttributeType());
+					createdAttribute->getArray()->reserve(currNodeMap.size());
+					for(std::map<unsigned int, unsigned int>::const_iterator iter = currNodeMap.begin(); iter != currNodeMap.end(); ++iter)
+					{
+						createdAttribute->getArray()->copyValues(iter->second, currAttribute->getArray(), iter->first, 1);
+					}
+				}
+				if(createdAttribute != NULL)
+				{
+					partitioned->insert(createdAttribute);
+					if(heavyDataWriter)
+					{
+						createdAttribute->getArray()->accept(heavyDataWriter);
+						createdAttribute->getArray()->release();
+					}
+				}
+			}
+		}
+		currAttribute->getArray()->release();
 	}
 
 	return partitionedGrids;
 /*
-
-
-  std::vector<XdmfGrid*> partitions;
-
-  for(int i=0; i<numPartitions; ++i)
-  {
-    std::map<XdmfInt32, XdmfInt32> currNodeMap = globalToLocalNodeIdMap[i];
-    std::vector<XdmfInt32> currElemIds = globalElementIds[i];
-
-    if(currElemIds.size() > 0)
-    {
-      std::stringstream name;
-      name << grid->GetName() << "_" << i;
-
-
-      XdmfTopology * top = partition->GetTopology();
-      top->SetTopologyType(grid->GetTopology()->GetTopologyType());
-      top->SetNumberOfElements(currElemIds.size());
-      top->SetDeleteOnGridDelete(true);
-
-      XdmfArray * connections = top->GetConnectivity();
-      connections->SetNumberType(grid->GetTopology()->GetConnectivity()->GetNumberType());
-      connections->SetNumberOfElements();
-      XdmfInt32 currGlobalNodeId;
-      int index = 0;
-      for(std::vector<XdmfInt32>::const_iterator iter = currElemIds.begin(); iter != currElemIds.end(); ++iter)
-      {
-        // Translate these global node ids to local node ids
-        for(int j=0; j<grid->GetTopology()->GetNodesPerElement(); ++j)
-        {
-          grid->GetTopology()->GetConnectivity()->GetValues(*iter * grid->GetTopology()->GetNodesPerElement() + j, &currGlobalNodeId, 1);
-          connections->SetValues(index, &currNodeMap[currGlobalNodeId], 1);
-          index++;
-        }
-      }
-      collection->Insert(partition);
-
-      // Add GlobalNodeId Attribute
-      if(addGlobalNodeId)
-      {
-        XdmfAttribute * globalIds = new XdmfAttribute();
-        globalIds->SetName("GlobalNodeId");
-        globalIds->SetAttributeType(XDMF_ATTRIBUTE_TYPE_SCALAR);
-        globalIds->SetAttributeCenter(XDMF_ATTRIBUTE_CENTER_NODE);
-        globalIds->SetDeleteOnGridDelete(true);
-
-        XdmfArray * globalNodeIdVals = globalIds->GetValues();
-        globalNodeIdVals->SetNumberType(XDMF_INT32_TYPE);
-        globalNodeIdVals->SetNumberOfElements(currNodeMap.size());
-        for(std::map<XdmfInt32, XdmfInt32>::const_iterator iter = currNodeMap.begin(); iter != currNodeMap.end(); ++iter)
-        {
-          globalNodeIdVals->SetValues(iter->second, (XdmfInt32*)&iter->first, 1);
-        }
-        partition->Insert(globalIds);
-      }
-    }
-  } 
-
-  grid->GetGeometry()->Release();
-  grid->GetTopology()->Release();
-
-  for(int j=0; j<grid->GetNumberOfAttributes(); ++j)
-  {
-    XdmfAttribute * currAttribute = grid->GetAttribute(j);
-    // If data wasn't read in before, make sure it's released after processing
-    bool releaseData = 0;
-    if(currAttribute->GetValues()->GetNumberOfElements() == 0)
-    {
-      currAttribute->Update();
-      releaseData = 1;
-    }
-    int partitionId = 0;
-    for(int i=0; i<numPartitions; ++i)
-    {
-      std::map<XdmfInt32, XdmfInt32> currNodeMap = globalToLocalNodeIdMap[i];
-      std::vector<XdmfInt32> currElemIds = globalElementIds[i];
-      if(currElemIds.size() > 0)
-      {
-        XdmfGrid * partition = partitions[partitionId];
-        partitionId++;
-        switch(currAttribute->GetAttributeCenter())
-        {
-          case(XDMF_ATTRIBUTE_CENTER_GRID):
-          {
-            // Will continue to be true for entire collection - so insert at top level
-            if(partitionId == 0)
-            {
-              collection->Insert(currAttribute);
-            }
-            break;
-          }
-          case(XDMF_ATTRIBUTE_CENTER_CELL):
-          case(XDMF_ATTRIBUTE_CENTER_FACE):
-          case(XDMF_ATTRIBUTE_CENTER_EDGE):
-          {
-            XdmfAttribute * attribute = new XdmfAttribute();
-            attribute->SetName(currAttribute->GetName());
-            attribute->SetAttributeType(currAttribute->GetAttributeType());
-            attribute->SetAttributeCenter(currAttribute->GetAttributeCenter());
-            attribute->SetDeleteOnGridDelete(true);
-            XdmfArray * attributeVals = attribute->GetValues();
-            attributeVals->SetNumberType(currAttribute->GetValues()->GetNumberType());
-            int numValsPerComponent = currAttribute->GetValues()->GetNumberOfElements() / grid->GetTopology()->GetNumberOfElements();
-            attributeVals->SetNumberOfElements(currElemIds.size() * numValsPerComponent);
-            int index = 0;
-            for(std::vector<XdmfInt32>::const_iterator iter = currElemIds.begin(); iter != currElemIds.end(); ++iter, ++index)
-            {
-              attributeVals->SetValues(index * numValsPerComponent, currAttribute->GetValues(), numValsPerComponent, *iter * numValsPerComponent);
-            }
-            partition->Insert(attribute);
-            break;
-          }
-          case(XDMF_ATTRIBUTE_CENTER_NODE):
-          {
-            XdmfAttribute * attribute = new XdmfAttribute();
-            attribute->SetName(currAttribute->GetName());
-            attribute->SetAttributeType(currAttribute->GetAttributeType());
-            attribute->SetAttributeCenter(currAttribute->GetAttributeCenter());
-            attribute->SetDeleteOnGridDelete(true);
-            XdmfArray * attributeVals = attribute->GetValues();
-            attributeVals->SetNumberType(currAttribute->GetValues()->GetNumberType());
-            attributeVals->SetNumberOfElements(currNodeMap.size());
-            for(std::map<XdmfInt32, XdmfInt32>::const_iterator iter = currNodeMap.begin(); iter != currNodeMap.end(); ++iter)
-            {
-              attributeVals->SetValues(iter->second, currAttribute->GetValues(), 1, iter->first);
-            }
-            partition->Insert(attribute);
-            break;
-          }
-          default:
-          {
-            std::cout << "Unknown attribute center encountered: " << currAttribute->GetAttributeCenterAsString() << std::endl;
-            break;
-          }
-        }
-      }
-    }
-    if(releaseData)
-    {
-      currAttribute->Release();
-    }
-  }
 
   // Split sets and add to grid
   for(int j=0; j<grid->GetNumberOfSets(); ++j)
