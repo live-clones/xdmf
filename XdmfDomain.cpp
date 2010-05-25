@@ -69,6 +69,15 @@ void XdmfDomain::populateItem(const std::map<std::string, std::string> & itemPro
 	}
 }
 
+void XdmfDomain::removeGrid(const unsigned int index)
+{
+	if(index >= mGrids.size())
+	{
+		assert(false);
+	}
+	mGrids.erase(mGrids.begin() + index);
+}
+
 void XdmfDomain::traverse(boost::shared_ptr<Loki::BaseVisitor> visitor)
 {
 	for(std::vector<boost::shared_ptr<XdmfGrid> >::const_iterator iter = mGrids.begin(); iter != mGrids.end(); ++iter)

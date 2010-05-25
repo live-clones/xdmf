@@ -2,7 +2,6 @@
 #define XDMFGEOMETRYTYPE_HPP_
 
 // Includes
-#include <string>
 #include "XdmfItemProperty.hpp"
 
 /**

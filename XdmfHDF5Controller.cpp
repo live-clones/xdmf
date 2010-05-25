@@ -3,7 +3,6 @@
 
 #include <hdf5.h>
 #include <sstream>
-#include <vector>
 #include "XdmfArray.hpp"
 #include "XdmfHDF5Controller.hpp"
 

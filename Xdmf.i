@@ -14,6 +14,8 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 	#include <XdmfGeometry.hpp>
 	#include <XdmfGeometryType.hpp>
 	#include <XdmfGrid.hpp>
+	#include <XdmfGridCollection.hpp>
+	#include <XdmfGridCollectionType.hpp>
 	#include <XdmfHDF5Controller.hpp>
 	#include <XdmfHDF5Writer.hpp>
 	#include <XdmfItem.hpp>
@@ -57,6 +59,7 @@ namespace boost {
 %template(XdmfDomainPtr) boost::shared_ptr<XdmfDomain>;
 %template(XdmfGeometryPtr) boost::shared_ptr<XdmfGeometry>;
 %template(XdmfGridPtr) boost::shared_ptr<XdmfGrid>;
+%template(XdmfGridCollectionPtr) boost::shared_ptr<XdmfGridCollection>;
 %template(XdmfHDF5ControllerPtr) boost::shared_ptr<XdmfHDF5Controller>;
 %template(XdmfHDF5WriterPtr) boost::shared_ptr<XdmfHDF5Writer>;
 %template(XdmfItemPtr) boost::shared_ptr<XdmfItem>;
@@ -91,6 +94,9 @@ SWIG_SHARED_PTR_DERIVED(XdmfGeometry, XdmfItem);
 SWIG_SHARED_PTR_DERIVED(XdmfGeometry, XdmfObject);
 SWIG_SHARED_PTR_DERIVED(XdmfGrid, XdmfItem);
 SWIG_SHARED_PTR_DERIVED(XdmfGrid, XdmfObject);
+SWIG_SHARED_PTR_DERIVED(XdmfGridCollection, XdmfGrid);
+SWIG_SHARED_PTR_DERIVED(XdmfGridCollection, XdmfItem);
+SWIG_SHARED_PTR_DERIVED(XdmfGridCollection, XdmfObject);
 SWIG_SHARED_PTR_DERIVED(XdmfHDF5Controller, XdmfObject);
 SWIG_SHARED_PTR_DERIVED(XdmfHDF5Writer, XdmfVisitor);
 SWIG_SHARED_PTR_DERIVED(XdmfHDF5Writer, Loki::BaseVisitor);
@@ -133,6 +139,9 @@ SWIG_SHARED_PTR_DERIVED(XdmfWriter, XdmfObject);
 %include XdmfSetType.hpp
 %include XdmfTopology.hpp
 %include XdmfTopologyType.hpp
+
+%include XdmfGridCollection.hpp
+%include XdmfGridCollectionType.hpp
 
 // Provide accessors from python lists to XdmfArrays
 %extend XdmfArray {

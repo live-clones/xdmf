@@ -9,7 +9,6 @@ class XdmfTopology;
 
 // Includes
 #include "XdmfItem.hpp"
-#include <vector>
 
 /**
  * @brief A mesh that consists of elements, points, and values attached to the mesh.
@@ -169,6 +168,8 @@ protected:
 	virtual ~XdmfGrid();
 	virtual void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems);
 
+	std::string mName;
+
 private:
 
 	XdmfGrid(const XdmfGrid & grid);  // Not implemented.
@@ -178,7 +179,6 @@ private:
 	boost::shared_ptr<XdmfGeometry> mGeometry;
 	std::vector<boost::shared_ptr<XdmfSet> > mSets;
 	boost::shared_ptr<XdmfTopology> mTopology;
-	std::string mName;
 };
 
 #endif /* XDMFGRID_HPP_ */

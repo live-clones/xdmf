@@ -57,7 +57,7 @@ protected:
 	virtual ~XdmfItem();
 
 	/**
-	 * Populates an item using a map of key/value property pairs and a vector of its child items.  This is intended to be used to
+	 * Populates an item using a map of key/value property pairs and a vector of its child items.  This is used to
 	 * support generic reading of XdmfItems from disk.
 	 *
 	 * @param itemProperties a map of key/value properties associated with this XdmfItem.

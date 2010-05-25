@@ -11,7 +11,6 @@
 
 
 #include <libxml/xmlreader.h>
-#include <map>
 #include "XdmfReader.hpp"
 
 /**

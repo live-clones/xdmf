@@ -5,7 +5,6 @@
 class XdmfArray;
 
 // Includes
-#include <string>
 #include "XdmfObject.hpp"
 
 /**

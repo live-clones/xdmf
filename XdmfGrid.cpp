@@ -140,13 +140,17 @@ void XdmfGrid::populateItem(const std::map<std::string, std::string> & itemPrope
 		{
 			mGeometry = geometry;
 		}
-		if(boost::shared_ptr<XdmfSet> set = boost::shared_dynamic_cast<XdmfSet>(*iter))
+		else if(boost::shared_ptr<XdmfSet> set = boost::shared_dynamic_cast<XdmfSet>(*iter))
 		{
 			this->insert(set);
 		}
 		else if(boost::shared_ptr<XdmfTopology> topology = boost::shared_dynamic_cast<XdmfTopology>(*iter))
 		{
 			mTopology = topology;
+		}
+		else
+		{
+			assert(false);
 		}
 	}
 }

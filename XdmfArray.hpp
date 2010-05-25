@@ -8,7 +8,6 @@ class XdmfHDF5Controller;
 #include "XdmfItem.hpp"
 #include <boost/shared_array.hpp>
 #include <boost/variant.hpp>
-#include <vector>
 
 /**
  * @brief Provides a single interface for storing a wide variety of data types.
@@ -46,6 +45,7 @@ class XdmfHDF5Controller;
  * 	Unsigned Int
  */
 class XdmfArray : public XdmfItem {
+
 public:
 
 	XdmfNewMacro(XdmfArray);

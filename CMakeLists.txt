@@ -42,6 +42,8 @@ set(XdmfSources
 	XdmfGeometry
 	XdmfGeometryType
 	XdmfGrid
+	XdmfGridCollection
+	XdmfGridCollectionType
 	XdmfHDF5Controller
 	XdmfHDF5Writer
 	XdmfItem
@@ -70,3 +72,8 @@ if(BUILD_TESTING)
 	include(CTest)
 	add_subdirectory(tests)
 endif(BUILD_TESTING)
+
+option(BUILD_UTILS OFF)
+if(BUILD_UTILS)
+  add_subdirectory(utils)
+endif(BUILD_UTILS)

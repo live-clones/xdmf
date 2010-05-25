@@ -5,7 +5,6 @@
 class XdmfGrid;
 
 // Includes
-#include <vector>
 #include "XdmfItem.hpp"
 
 /**
@@ -55,6 +54,13 @@ public:
 	 * @param grid a shared pointer to an XdmfGrid to insert into the domain.
 	 */
 	void insert(boost::shared_ptr<XdmfGrid> grid);
+
+	/**
+	 * Remove an XdmfGrid from the domain.
+	 *
+	 * @param index of the XdmfGrid to remove.
+	 */
+	void removeGrid(const unsigned int index);
 
 	virtual void traverse(boost::shared_ptr<Loki::BaseVisitor> visitor);
 

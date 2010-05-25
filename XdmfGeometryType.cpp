@@ -5,7 +5,6 @@
  *      Author: kleiter
  */
 
-#include <map>
 #include "XdmfGeometryType.hpp"
 
 // Supported XdmfGeometryTypes
