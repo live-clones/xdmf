@@ -5,6 +5,7 @@ set(XdmfCxxTests
 	TestXdmfDataItem
 	TestXdmfGeometry
 	TestXdmfGrid
+	TestXdmfGridCollection
 	TestXdmfHDF5Writer
 	TestXdmfReader
 	TestXdmfSet

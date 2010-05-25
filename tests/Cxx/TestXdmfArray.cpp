@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
 	 */
 	boost::shared_ptr<XdmfArray> array = XdmfArray::New();
 	assert(array->getSize() == 0);
-	assert(array->getType() == "");
+	assert(array->getType() == "None");
 	assert(array->getPrecision() == 0);
 	assert(array->getValuesString() == "");
 	assert(array->getValuesPointer() == NULL);

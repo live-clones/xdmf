@@ -150,7 +150,7 @@ void XdmfGrid::populateItem(const std::map<std::string, std::string> & itemPrope
 		}
 		else
 		{
-			assert(false);
+			//assert(false);
 		}
 	}
 }

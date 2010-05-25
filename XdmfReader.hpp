@@ -19,7 +19,7 @@ public:
 
 	XdmfNewMacro(XdmfReader);
 
-	boost::shared_ptr<XdmfDomain> read(const std::string & fileName) const;
+	boost::shared_ptr<XdmfItem> read(const std::string & fileName) const;
 
 protected:
 

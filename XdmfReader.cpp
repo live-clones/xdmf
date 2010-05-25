@@ -6,6 +6,7 @@
 #include "XdmfDomain.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGrid.hpp"
+#include "XdmfGridCollection.hpp"
 #include "XdmfSet.hpp"
 #include "XdmfTopology.hpp"
 
@@ -49,7 +50,15 @@ public:
 		}
 		else if(itemTag.compare(XdmfGrid::ItemTag) == 0)
 		{
-			newItem = XdmfGrid::New();
+			std::map<std::string, std::string>::const_iterator gridType = itemProperties.find("GridType");
+			if(gridType->second.compare("Collection") == 0)
+			{
+				newItem = XdmfGridCollection::New();
+			}
+			else
+			{
+				newItem = XdmfGrid::New();
+			}
 		}
 		else if(itemTag.compare(XdmfSet::ItemTag) == 0)
 		{
@@ -76,7 +85,15 @@ public:
 			if(currNode->type == XML_ELEMENT_NODE)
 			{
 				std::map<std::string, std::string> itemProperties;
-				itemProperties["Content"] = (const char *)currNode->children->content;
+				std::cout << currNode->name << std::endl;
+				if(currNode->children != NULL)
+				{
+					itemProperties["Content"] = (const char *)currNode->children->content;
+				}
+				else
+				{
+					itemProperties["Content"] = "";
+				}
 				xmlAttrPtr currAttribute = currNode->properties;
 				while(currAttribute != NULL)
 				{
@@ -104,7 +121,7 @@ XdmfReader::~XdmfReader()
 	std::cout << "Deleted XdmfReader " << this << std::endl;
 }
 
-boost::shared_ptr<XdmfDomain> XdmfReader::read(const std::string & filePath) const
+boost::shared_ptr<XdmfItem> XdmfReader::read(const std::string & filePath) const
 {
 	xmlDocPtr document;
 	xmlNodePtr currNode;
@@ -121,7 +138,7 @@ boost::shared_ptr<XdmfDomain> XdmfReader::read(const std::string & filePath) con
 	xmlFreeDoc(document);
 	xmlCleanupParser();
 
-	return boost::shared_dynamic_cast<XdmfDomain>(toReturn[0]);
+	return toReturn[0];
 }
 
 

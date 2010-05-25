@@ -1,4 +1,6 @@
 #include <fstream>
+#include <sstream>
+#include "XdmfItem.hpp"
 #include "XdmfReader.hpp"
 #include "XdmfWriter.hpp"
 
@@ -16,26 +18,26 @@ int main(int argc, char* argv[])
 	domain->accept(writer);
 
 	boost::shared_ptr<XdmfReader> reader = XdmfReader::New();
-	boost::shared_ptr<XdmfDomain> readDomain = reader->read("TestXdmfReader1.xmf");
+	boost::shared_ptr<XdmfDomain> readDomain = boost::shared_dynamic_cast<XdmfDomain>(reader->read("TestXdmfReader1.xmf"));
 
 	boost::shared_ptr<XdmfWriter> writer2 = XdmfWriter::New("TestXdmfReader2.xmf");
 	readDomain->accept(writer2);
 
+	// Compare two files for equality
 	std::ifstream firstFile("TestXdmfReader1.xmf");
 	std::ifstream secondFile("TestXdmfReader2.xmf");
 
-	std::string firstLine;
-	std::string secondLine;
+	std::stringstream firstBuffer;
+	std::stringstream secondBuffer;
 
-	while(!firstFile.eof())
-	{
-		std::getline(firstFile, firstLine);
-		std::getline(secondFile, secondLine);
-		if(firstLine.compare(secondLine) != 0)
-		{
-			assert(false);
-		}
-	}
+	firstBuffer << firstFile.rdbuf();
+	secondBuffer << secondFile.rdbuf();
+
+	std::string firstContents(firstBuffer.str());
+	std::string secondContents(secondBuffer.str());
+
+	assert(firstContents.compare(secondContents) == 0);
+
 
 	return 0;
 }

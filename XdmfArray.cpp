@@ -485,7 +485,7 @@ std::string XdmfArray::getType() const
 	{
 		return mHDF5Controller->getType();
 	}
-	return "";
+	return "None";
 }
 
 const void * const XdmfArray::getValuesPointer() const
@@ -536,21 +536,25 @@ void XdmfArray::initialize(const std::string & type, const unsigned int precisio
 	{
 		this->initialize<float>();
 	}
-	else if(type.compare("Double") == 0 && precision == 8)
+	else if(type.compare("Float") == 0 && precision == 8)
 	{
 		this->initialize<double>();
 	}
-	else if(type.compare("UChar") == 0 && precision == 8)
+	else if(type.compare("UChar") == 0 && precision == 1)
 	{
 		this->initialize<unsigned char>();
 	}
-	else if(type.compare("UShort") == 0 && precision == 8)
+	else if(type.compare("UShort") == 0 && precision == 2)
 	{
 		this->initialize<unsigned short>();
 	}
-	else if(type.compare("UInt") == 0 && precision == 8)
+	else if(type.compare("UInt") == 0 && precision == 4)
 	{
 		this->initialize<unsigned int>();
+	}
+	else if(type.compare("None") == 0)
+	{
+		// No-op uninitialized!
 	}
 	else
 	{
