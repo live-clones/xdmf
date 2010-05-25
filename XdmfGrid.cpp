@@ -37,11 +37,24 @@ boost::shared_ptr<XdmfAttribute> XdmfGrid::getAttribute(const unsigned int index
 
 boost::shared_ptr<const XdmfAttribute> XdmfGrid::getAttribute(const unsigned int index) const
 {
-	if(index >= mAttributes.size())
+	return boost::const_pointer_cast<XdmfAttribute>(static_cast<const XdmfGrid &>(*this).getAttribute(index));
+}
+
+boost::shared_ptr<XdmfAttribute> XdmfGrid::getAttribute(const std::string & attributeName)
+{
+	for(std::vector<boost::shared_ptr<XdmfAttribute> >::const_iterator iter = mAttributes.begin(); iter != mAttributes.end(); ++iter)
 	{
-		assert(false);
+		if((*iter)->getName().compare(attributeName) == 0)
+		{
+			return *iter;
+		}
 	}
-	return mAttributes[index];
+	return boost::shared_ptr<XdmfAttribute>();
+}
+
+boost::shared_ptr<const XdmfAttribute> XdmfGrid::getAttribute(const std::string & attributeName) const
+{
+	return boost::const_pointer_cast<XdmfAttribute>(static_cast<const XdmfGrid &>(*this).getAttribute(attributeName));
 }
 
 boost::shared_ptr<XdmfGeometry> XdmfGrid::getGeometry()
@@ -51,7 +64,7 @@ boost::shared_ptr<XdmfGeometry> XdmfGrid::getGeometry()
 
 boost::shared_ptr<const XdmfGeometry> XdmfGrid::getGeometry() const
 {
-	return mGeometry;
+	return boost::const_pointer_cast<XdmfGeometry>(static_cast<const XdmfGrid &>(*this).getGeometry());
 }
 
 std::map<std::string, std::string> XdmfGrid::getItemProperties() const
@@ -92,11 +105,7 @@ boost::shared_ptr<XdmfSet> XdmfGrid::getSet(const unsigned int index)
 
 boost::shared_ptr<const XdmfSet> XdmfGrid::getSet(const unsigned int index) const
 {
-	if(index >= mSets.size())
-	{
-		assert(false);
-	}
-	return mSets[index];
+	return boost::const_pointer_cast<XdmfSet>(static_cast<const XdmfGrid &>(*this).getSet(index));
 }
 
 boost::shared_ptr<XdmfTopology> XdmfGrid::getTopology()
@@ -106,7 +115,7 @@ boost::shared_ptr<XdmfTopology> XdmfGrid::getTopology()
 
 boost::shared_ptr<const XdmfTopology> XdmfGrid::getTopology() const
 {
-	return mTopology;
+	return boost::const_pointer_cast<XdmfTopology>(static_cast<const XdmfGrid &>(*this).getTopology());
 }
 
 void XdmfGrid::insert(boost::shared_ptr<XdmfAttribute> attribute)

@@ -5,6 +5,7 @@
  *      Author: kleiter
  */
 
+#include "XdmfArray.hpp"
 #include "XdmfGeometry.hpp"
 
 XdmfGeometry::XdmfGeometry() :
@@ -36,6 +37,15 @@ std::map<std::string, std::string> XdmfGeometry::getItemProperties() const
 std::string XdmfGeometry::getItemTag() const
 {
 	return ItemTag;
+}
+
+unsigned int XdmfGeometry::getNumberPoints() const
+{
+	if(mGeometryType.getDimensions() == 0)
+	{
+		return 0;
+	}
+	return this->getArray()->getSize() / mGeometryType.getDimensions();
 }
 
 void XdmfGeometry::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems)

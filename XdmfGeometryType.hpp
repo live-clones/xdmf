@@ -44,7 +44,7 @@ public:
 	 *
 	 * @return an int containing number of dimensions.
 	 */
-	int getDimensions() const;
+	unsigned int getDimensions() const;
 
 	void getProperties(std::map<std::string, std::string> & collectedProperties) const;
 
@@ -83,7 +83,7 @@ private:
 
 	static XdmfGeometryType New(const std::map<std::string, std::string> & itemProperties);
 
-	int mDimensions;
+	unsigned int mDimensions;
 	std::string mName;
 };
 

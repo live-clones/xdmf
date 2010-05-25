@@ -3,16 +3,11 @@
 
 // Forward Declarations
 class XdmfGrid;
+class XdmfGridCollection;
+class XdmfHDF5Writer;
 
 // Includes
 #include "XdmfObject.hpp"
-
-/**
- * @brief Handles computed values attached to an XdmfGrid.
- *
- * XdmfAttribute contains two properties that should be set, XdmfAttributeCenter and XdmfAttributeType.
- * XdmfAttribute is a subclass of XdmfDataItem, meaning it contains an XdmfArray to store values
-
 
 /*!
  * @brief XdmfPartitioner partitions an XdmfGrid using the metis library.
@@ -45,10 +40,12 @@ public:
 	 *
 	 * @param gridToPartition an XdmfGrid to partition.
 	 * @param numberOfPartitions the number of pieces to partition the grid into.
+	 * @param heavyDataWriter an XdmfHDF5Writer to write the partitioned mesh to.
 	 *
-	 * @return XdmfGrid* a spatial collection containing partitioned grids.
+	 * @return a spatial collection containing partitioned grids.
 	 */
-	boost::shared_ptr<XdmfGrid> partition(boost::shared_ptr<XdmfGrid> gridToPartition, const unsigned int numberOfPartitions);
+	boost::shared_ptr<XdmfGridCollection> partition(boost::shared_ptr<XdmfGrid> gridToPartition, const unsigned int numberOfPartitions,
+			boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter);
 
 protected:
 

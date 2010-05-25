@@ -135,7 +135,7 @@ bool XdmfGeometryType::operator!=(const XdmfGeometryType& geometryType) const
 	return !this->operator==(geometryType);
 }
 
-int XdmfGeometryType::getDimensions() const
+unsigned int XdmfGeometryType::getDimensions() const
 {
 	return mDimensions;
 }

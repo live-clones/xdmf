@@ -93,6 +93,21 @@ XdmfTopologyType XdmfTopologyType::Hexahedron_20()
 	return XdmfTopologyType(20, "Hexahedron_20", Quadratic);
 }
 
+XdmfTopologyType XdmfTopologyType::Hexahedron_24()
+{
+	return XdmfTopologyType(20, "Hexahedron_24", Quadratic);
+}
+
+XdmfTopologyType XdmfTopologyType::Hexahedron_27()
+{
+	return XdmfTopologyType(20, "Hexahedron_27", Quadratic);
+}
+
+XdmfTopologyType XdmfTopologyType::Hexahedron_64()
+{
+	return XdmfTopologyType(20, "Hexahedron_64", Cubic);
+}
+
 XdmfTopologyType XdmfTopologyType::Mixed()
 {
 	return XdmfTopologyType(0, "Mixed", Arbitrary);
@@ -220,6 +235,18 @@ XdmfTopologyType XdmfTopologyType::New(const std::map<std::string, std::string> 
 		else if(typeVal.compare("Hexahedron_20") == 0)
 		{
 			return Hexahedron_20();
+		}
+		else if(typeVal.compare("Hexahedron_24") == 0)
+		{
+			return Hexahedron_24();
+		}
+		else if(typeVal.compare("Hexahedron_27") == 0)
+		{
+			return Hexahedron_27();
+		}
+		else if(typeVal.compare("Hexahedron_64") == 0)
+		{
+			return Hexahedron_64();
 		}
 		else if(typeVal.compare("Mixed") == 0)
 		{

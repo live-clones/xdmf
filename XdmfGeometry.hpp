@@ -32,6 +32,11 @@ public:
 	std::string getItemTag() const;
 
 	/**
+	 * Get the number of points stored in this geometry.
+	 */
+	unsigned int getNumberPoints() const;
+
+	/**
 	 * Set the XdmfGeometryType associated with this geometry.
 	 *
 	 * @param geometryType the XdmfGeometryType to set.

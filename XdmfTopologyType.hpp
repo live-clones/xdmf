@@ -42,7 +42,7 @@ public:
 	friend class XdmfTopology;
 
 	enum CellType {
-		NoCellType, Linear, Quadratic, Arbitrary, Structured
+		NoCellType, Linear, Quadratic, Cubic, Arbitrary, Structured
 	};
 
 	// Supported Xdmf Topology Types
@@ -63,6 +63,9 @@ public:
 	static XdmfTopologyType Pyramid_13();
 	static XdmfTopologyType Wedge_15();
 	static XdmfTopologyType Hexahedron_20();
+	static XdmfTopologyType Hexahedron_24();
+	static XdmfTopologyType Hexahedron_27();
+	static XdmfTopologyType Hexahedron_64();
 	static XdmfTopologyType Mixed();
 	static XdmfTopologyType TwoDSMesh();
 	static XdmfTopologyType TwoDRectMesh();

@@ -43,6 +43,22 @@ public:
 	boost::shared_ptr<const XdmfAttribute> getAttribute(const unsigned int index) const;
 
 	/**
+	 * Get an XdmfAttribute attached to this grid by name.
+	 *
+	 * @param attributeName the name of the XdmfAttribute to retrieve.
+	 * @return requested XdmfAttribute, if not found a NULL pointer is returned.
+	 */
+	boost::shared_ptr<XdmfAttribute> getAttribute(const std::string & attributeName);
+
+	/**
+	 * Get an XdmfAttribute attached to this grid by name (const version).
+	 *
+	 * @param attributeName the name of the XdmfAttribute to retrieve.
+	 * @return requested XdmfAttribute, if not found a NULL pointer is returned.
+	 */
+	boost::shared_ptr<const XdmfAttribute> getAttribute(const std::string & attributeName) const;
+
+	/**
 	 * Get the XdmfGeometry associated with this grid.
 	 *
 	 * @return a smart pointer to the XdmfGeometry.

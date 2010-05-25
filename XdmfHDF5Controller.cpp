@@ -17,7 +17,7 @@ XdmfHDF5Controller::XdmfHDF5Controller(const std::string & hdf5DataSetPath, cons
 		mHDF5FilePath = hdf5DataSetPath.substr(0, colonLocation);
 		if(colonLocation + 1  != mHDF5FilePath.size())
 		{
-			mDataSetName = hdf5DataSetPath.substr(colonLocation + 1, mHDF5FilePath.size());
+			mDataSetName = hdf5DataSetPath.substr(colonLocation + 1, hdf5DataSetPath.size());
 		}
 		else
 		{

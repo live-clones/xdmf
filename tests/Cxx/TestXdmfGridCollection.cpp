@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
 	gridCollection->insert(childGrid2);
 
 	gridCollection->setGridCollectionType(XdmfGridCollectionType::Temporal());
-
+	assert(gridCollection->getGridCollectionType() == XdmfGridCollectionType::Temporal());
 
 	boost::shared_ptr<XdmfWriter> writer = XdmfWriter::New("TestXdmfGridCollection1.xmf");
 	gridCollection->accept(writer);

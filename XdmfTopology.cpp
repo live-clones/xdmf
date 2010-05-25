@@ -40,11 +40,11 @@ std::map<std::string, std::string> XdmfTopology::getItemProperties() const
 
 unsigned int XdmfTopology::getNumberElements() const
 {
-	if(this->getTopologyType().getNodesPerElement() == 0)
+	if(mTopologyType.getNodesPerElement() == 0)
 	{
 		return 0;
 	}
-	return this->getArray()->getSize() / this->getTopologyType().getNodesPerElement();
+	return this->getArray()->getSize() / mTopologyType.getNodesPerElement();
 }
 
 XdmfTopologyType XdmfTopology::getTopologyType() const

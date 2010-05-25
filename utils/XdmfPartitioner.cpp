@@ -33,7 +33,13 @@ extern "C"
 #include <metis.h>
 }
 
+#include <sstream>
+#include "XdmfArray.hpp"
+#include "XdmfGeometry.hpp"
 #include "XdmfGrid.hpp"
+#include "XdmfGridCollection.hpp"
+#include "XdmfHDF5Writer.hpp"
+#include "XdmfTopology.hpp"
 
 XdmfPartitioner::XdmfPartitioner()
 {
@@ -43,134 +49,194 @@ XdmfPartitioner::~XdmfPartitioner()
 {
 }
 
-boost::shared_ptr<XdmfGrid> XdmfPartitioner::partition(boost::shared_ptr<XdmfGrid> gridToPartition, const unsigned int numberOfPartitions)
+boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(boost::shared_ptr<XdmfGrid> gridToPartition, const unsigned int numberOfPartitions,
+		boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter)
 {
-  /*int metisElementType;
-  int numNodesPerElement;
-  switch(grid->GetTopology()->GetTopologyType())
-  {
-    case(XDMF_TRI):
-    case(XDMF_TRI_6):
-      metisElementType = 1;
-      numNodesPerElement = 3;
-      break;
-    case(XDMF_QUAD):
-    case(XDMF_QUAD_8):
-      metisElementType = 4;
-      numNodesPerElement = 4;
-      break;
-    case(XDMF_TET):
-    case(XDMF_TET_10):
-      metisElementType = 2;
-      numNodesPerElement = 4;
-      break;
-    case(XDMF_HEX):
-    case(XDMF_HEX_20):
-    case(XDMF_HEX_24):
-    case(XDMF_HEX_27):
-    case(XDMF_HEX_64):
-      metisElementType = 3;
-      numNodesPerElement = 8;
-      break;
-    default:
-      std::cout << "Cannot partition grid with element type: " << grid->GetTopology()->GetTopologyTypeAsString() << std::endl;
-      return NULL;
-  }
+	int metisElementType;
+	int numNodesPerElement;
 
-  int numElements = grid->GetTopology()->GetNumberOfElements();
+	XdmfTopologyType topologyType = gridToPartition->getTopology()->getTopologyType();
+	if(topologyType == XdmfTopologyType::Triangle() || topologyType == XdmfTopologyType::Triangle_6())
+	{
+		metisElementType = 1;
+		numNodesPerElement = 3;
+	}
+	else if(topologyType == XdmfTopologyType::Quadrilateral() || topologyType == XdmfTopologyType::Quadrilateral_8())
+	{
+		metisElementType = 4;
+		numNodesPerElement = 4;
+	}
+	else if(topologyType == XdmfTopologyType::Tetrahedron() || topologyType == XdmfTopologyType::Tetrahedron_10())
+	{
+		metisElementType = 2;
+		numNodesPerElement = 4;
+	}
+	else if(topologyType == XdmfTopologyType::Hexahedron() || topologyType == XdmfTopologyType::Hexahedron_20() ||
+			topologyType == XdmfTopologyType::Hexahedron_24() || topologyType == XdmfTopologyType::Hexahedron_27() ||
+			topologyType == XdmfTopologyType::Hexahedron_64())
+	{
+		metisElementType = 3;
+		numNodesPerElement = 8;
+	}
+	else
+	{
+		assert(false);
+	}
 
-  idxtype * metisConnectivity = new idxtype[numNodesPerElement * numElements];
-  for(int i=0; i<numElements; ++i)
-  {
-    grid->GetTopology()->GetConnectivity()->GetValues(i*grid->GetTopology()->GetNodesPerElement(), &metisConnectivity[i*numNodesPerElement], numNodesPerElement);
-  }
+	if(!gridToPartition->getTopology()->getArray()->isInitialized())
+	{
+		gridToPartition->getTopology()->getArray()->read();
+	}
 
-  int numNodes = grid->GetGeometry()->GetNumberOfPoints();
+	int numElements = gridToPartition->getTopology()->getNumberElements();
+	idxtype * metisConnectivity = new idxtype[numNodesPerElement * numElements];
+	for(unsigned int i=0; i<numElements; ++i)
+	{
+		gridToPartition->getTopology()->getArray()->getValuesCopy(i*topologyType.getNodesPerElement(), &metisConnectivity[i*numNodesPerElement], numNodesPerElement);
+	}
 
-  // Need to remap connectivity for nonlinear elements so that metis handles it properly
-  std::map<idxtype, idxtype> xdmfIdToMetisId;
-  if(numNodesPerElement != grid->GetTopology()->GetNodesPerElement())
-  {
-    int index = 0;
-    for(int i=0; i<numElements * numNodesPerElement; ++i)
-    {
-      std::map<idxtype, idxtype>::const_iterator val = xdmfIdToMetisId.find(metisConnectivity[i]);
-      if(val != xdmfIdToMetisId.end())
-      {
-        metisConnectivity[i] = val->second;
-      }
-      else  
-      {
-        // Haven't seen this id before, map to index and set to new id
-        xdmfIdToMetisId[metisConnectivity[i]] = index;
-        metisConnectivity[i] = index;
-        index++;
-      }
-    }
-    numNodes = index;
-  }
+	int numNodes = gridToPartition->getGeometry()->getNumberPoints();
 
-  int startIndex = 0;
-  int numCutEdges = 0;
+	// Need to remap connectivity for nonlinear elements so that metis handles it properly.
+	std::map<idxtype, idxtype> xdmfIdToMetisId;
+	if(numNodesPerElement != topologyType.getNodesPerElement())
+	{
+		int index = 0;
+		for (unsigned int i=0; i<numElements * numNodesPerElement; ++i)
+		{
+			std::map<idxtype, idxtype>::const_iterator val = xdmfIdToMetisId.find(metisConnectivity[i]);
+			if (val != xdmfIdToMetisId.end())
+			{
+				metisConnectivity[i] = val->second;
+			}
+			else
+			{
+				// Haven't seen this id before, map to index and set to new id
+				xdmfIdToMetisId[metisConnectivity[i]] = index;
+				metisConnectivity[i] = index;
+				index++;
+			}
+		}
+		numNodes = index;
+	}
 
-  idxtype * elementsPartition = new idxtype[numElements];
-  idxtype * nodesPartition = new idxtype[numNodes];
+	int startIndex = 0;
+	int numCutEdges = 0;
 
-  std::cout << "Entered METIS" << std::endl;
-  METIS_PartMeshDual(&numElements, &numNodes, metisConnectivity, &metisElementType, &startIndex, &numPartitions, &numCutEdges, elementsPartition, nodesPartition);
-  //METIS_PartMeshNodal(&numElements, &numNodes, metisConnectivity, &metisElementType, &startIndex, &numPartitions, &numCutEdges, elementsPartition, nodesPartition);
-  std::cout << "Exited METIS" << std::endl;
+	idxtype * elementsPartition = new idxtype[numElements];
+	idxtype * nodesPartition = new idxtype[numNodes];
 
-  delete [] metisConnectivity;
-  delete [] nodesPartition;
+	std::cout << "Entered METIS" << std::endl;
+	METIS_PartMeshDual(&numElements, &numNodes, metisConnectivity, &metisElementType, &startIndex, (int*)&numberOfPartitions, &numCutEdges, elementsPartition, nodesPartition);
+	//METIS_PartMeshNodal(&numElements, &numNodes, metisConnectivity, &metisElementType, &startIndex, &numPartitions, &numCutEdges, elementsPartition, nodesPartition);
+	std::cout << "Exited METIS" << std::endl;
 
-  // For each partition, map global to local node id
-  std::vector<std::map<XdmfInt32, XdmfInt32> > globalToLocalNodeIdMap;
-  // For each partition, list global element id.
-  std::vector<std::vector<XdmfInt32> > globalElementIds;
-  for(int i=0; i<numPartitions; ++i)
-  {
-    std::map<XdmfInt32, XdmfInt32> nodeMap;
-    globalToLocalNodeIdMap.push_back(nodeMap);
-    std::vector<XdmfInt32> elementIds;
-    globalElementIds.push_back(elementIds);
-  }
+	delete [] metisConnectivity;
+	delete [] nodesPartition;
 
-  // Fill in globalNodeId for each partition
-  XdmfInt32 globalNodeId;
-  for(int i=0; i<numElements; ++i)
-  {
-    for(int j=0; j<grid->GetTopology()->GetNodesPerElement(); ++j)
-    {
-      grid->GetTopology()->GetConnectivity()->GetValues(i*grid->GetTopology()->GetNodesPerElement() + j, &globalNodeId, 1);
-      if(globalToLocalNodeIdMap[elementsPartition[i]].count(globalNodeId) == 0)
-      {
-        // Have not seen this node, need to add to map
-        int size = globalToLocalNodeIdMap[elementsPartition[i]].size();
-        globalToLocalNodeIdMap[elementsPartition[i]][globalNodeId] = size;
-      }
-    }
-    globalElementIds[elementsPartition[i]].push_back(i);
-  }
+	// For each partition, map global to local node id
+	std::vector<std::map<unsigned int, unsigned int> > globalToLocalNodeIdMap;
+	// For each partition, list global element id.
+	std::vector<std::vector<unsigned int> > globalElementIds;
+	for(unsigned int i=0; i<numberOfPartitions; ++i)
+	{
+		std::map<unsigned int, unsigned int> nodeMap;
+		globalToLocalNodeIdMap.push_back(nodeMap);
+		std::vector<unsigned int> elementIds;
+		globalElementIds.push_back(elementIds);
+	}
 
-  delete [] elementsPartition;
+	// Fill in globalNodeId for each partition
+	unsigned int totalIndex = 0;
+	for (unsigned int i=0; i<numElements; ++i)
+	{
+		unsigned int partitionId = elementsPartition[i];
+		for (unsigned int j=0; j<topologyType.getNodesPerElement(); ++j)
+		{
+			unsigned int globalNodeId = gridToPartition->getTopology()->getArray()->getValueCopy<unsigned int>(totalIndex);
+			if (globalToLocalNodeIdMap[partitionId].count(globalNodeId) == 0)
+			{
+				// Have not seen this node, need to add to map
+				int size = globalToLocalNodeIdMap[partitionId].size();
+				globalToLocalNodeIdMap[partitionId][globalNodeId] = size;
+			}
+			totalIndex++;
+		}
+		globalElementIds[partitionId].push_back(i);
+	}
+	delete[] elementsPartition;
 
-  bool addGlobalNodeId = true;
-  for(int i=0; i<grid->GetNumberOfAttributes(); ++i)
-  {
-    if(strcmp(grid->GetAttribute(i)->GetName(), "GlobalNodeId") == 0)
-    {
-      addGlobalNodeId = false;
-    }
-  }
 
-  XdmfGrid * collection = new XdmfGrid();
-  collection->SetName("Collection");
-  collection->SetGridType(XDMF_GRID_COLLECTION);
-  collection->SetCollectionType(XDMF_GRID_COLLECTION_SPATIAL);
-  collection->SetDeleteOnGridDelete(true);
+	boost::shared_ptr<XdmfAttribute> globalNodeId = gridToPartition->getAttribute("GlobalNodeId");
+	bool generateGlobalNodeId = (globalNodeId == NULL);
 
-  parentElement->Insert(collection);
+	boost::shared_ptr<XdmfGridCollection> partitionedGrids = XdmfGridCollection::New();
+	partitionedGrids->setGridCollectionType(XdmfGridCollectionType::Spatial());
+
+	if(!gridToPartition->getGeometry()->getArray()->isInitialized())
+	{
+		gridToPartition->getGeometry()->getArray()->read();
+	}
+
+	for(unsigned int i=0; i<numberOfPartitions; ++i)
+	{
+		std::map<unsigned int, unsigned int> currNodeMap = globalToLocalNodeIdMap[i];
+		std::vector<unsigned int> currElemIds = globalElementIds[i];
+
+		if(currElemIds.size() > 0)
+		{
+			std::stringstream name;
+			name << gridToPartition->getName() << "_" << i;
+
+			boost::shared_ptr<XdmfGrid> partitioned = XdmfGrid::New();
+			partitioned->setName(name.str());
+			partitionedGrids->insert(partitioned);
+
+			// Fill in geometry for this partition
+			partitioned->getGeometry()->setGeometryType(gridToPartition->getGeometry()->getGeometryType());
+			boost::shared_ptr<XdmfArray> geometryVals = partitioned->getGeometry()->getArray();
+			unsigned int numDimensions = partitioned->getGeometry()->getGeometryType().getDimensions();
+			geometryVals->reserve(currNodeMap.size() * numDimensions);
+
+			for(std::map<unsigned int, unsigned int>::const_iterator iter = currNodeMap.begin(); iter != currNodeMap.end(); ++iter)
+			{
+				geometryVals->copyValues(iter->second * numDimensions, gridToPartition->getGeometry()->getArray(), iter->first * numDimensions, numDimensions);
+			}
+
+			if(heavyDataWriter)
+			{
+				geometryVals->accept(heavyDataWriter);
+				geometryVals->release();
+			}
+
+			// Fill in topology for this partition
+			partitioned->getTopology()->setTopologyType(gridToPartition->getTopology()->getTopologyType());
+			boost::shared_ptr<XdmfArray> topologyVals = partitioned->getTopology()->getArray();
+			topologyVals->reserve(currElemIds.size() * topologyType.getNodesPerElement());
+
+			unsigned int index = 0;
+			for(std::vector<unsigned int>::const_iterator iter = currElemIds.begin(); iter != currElemIds.end(); ++iter)
+			{
+				// Translate these global node ids to local node ids
+				for(unsigned int j=0; j<topologyType.getNodesPerElement(); ++j)
+				{
+					unsigned int globalNodeId = currNodeMap[gridToPartition->getTopology()->getArray()->getValueCopy<unsigned int>(*iter * topologyType.getNodesPerElement() + j)];
+					topologyVals->copyValues(index, &globalNodeId, 1);
+					index++;
+				}
+			}
+
+			if(heavyDataWriter)
+			{
+				topologyVals->accept(heavyDataWriter);
+				topologyVals->release();
+			}
+		}
+	}
+
+	return partitionedGrids;
+/*
+
 
   std::vector<XdmfGrid*> partitions;
 
@@ -184,29 +250,6 @@ boost::shared_ptr<XdmfGrid> XdmfPartitioner::partition(boost::shared_ptr<XdmfGri
       std::stringstream name;
       name << grid->GetName() << "_" << i;
 
-      XdmfGrid * partition = new XdmfGrid();
-      partition->SetName(name.str().c_str());
-      partition->SetDeleteOnGridDelete(true);
-      partitions.push_back(partition);
-
-      int numDimensions = 3;
-      if(grid->GetGeometry()->GetGeometryType() == XDMF_GEOMETRY_XY || grid->GetGeometry()->GetGeometryType() == XDMF_GEOMETRY_X_Y)
-      {
-        numDimensions = 2;
-      }
-
-      XdmfGeometry * geom = partition->GetGeometry();
-      geom->SetGeometryType(grid->GetGeometry()->GetGeometryType());
-      geom->SetNumberOfPoints(currNodeMap.size());
-      geom->SetDeleteOnGridDelete(true);
-
-      XdmfArray * points = geom->GetPoints();
-      points->SetNumberType(grid->GetGeometry()->GetPoints()->GetNumberType());
-      points->SetNumberOfElements(currNodeMap.size() * numDimensions);
-      for(std::map<XdmfInt32, XdmfInt32>::const_iterator iter = currNodeMap.begin(); iter != currNodeMap.end(); ++iter)
-      {
-        points->SetValues(iter->second * numDimensions, grid->GetGeometry()->GetPoints(), numDimensions, iter->first * 3);
-      }
 
       XdmfTopology * top = partition->GetTopology();
       top->SetTopologyType(grid->GetTopology()->GetTopologyType());
@@ -215,7 +258,7 @@ boost::shared_ptr<XdmfGrid> XdmfPartitioner::partition(boost::shared_ptr<XdmfGri
 
       XdmfArray * connections = top->GetConnectivity();
       connections->SetNumberType(grid->GetTopology()->GetConnectivity()->GetNumberType());
-      connections->SetNumberOfElements(currElemIds.size() * grid->GetTopology()->GetNodesPerElement());
+      connections->SetNumberOfElements();
       XdmfInt32 currGlobalNodeId;
       int index = 0;
       for(std::vector<XdmfInt32>::const_iterator iter = currElemIds.begin(); iter != currElemIds.end(); ++iter)
@@ -428,7 +471,14 @@ boost::shared_ptr<XdmfGrid> XdmfPartitioner::partition(boost::shared_ptr<XdmfGri
   return collection;*/
 }
 
-//#else
+#else
+
+#include <sstream>
+#include "XdmfDomain.hpp"
+#include "XdmfGridCollection.hpp"
+#include "XdmfHDF5Writer.hpp"
+#include "XdmfReader.hpp"
+#include "XdmfWriter.hpp"
 
 /**
  * XdmfPartitioner is a command line utility for partitioning Xdmf grids.
@@ -439,129 +489,155 @@ boost::shared_ptr<XdmfGrid> XdmfPartitioner::partition(boost::shared_ptr<XdmfGri
  *     XdmfPartitioner <path-of-file-to-partition> <num-partitions> (Optional: <path-to-output-file>)
  *
  */
-/*int main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
-  std::string usage = "Partitions an XDMF grid using the metis library: \n \n Usage: \n \n   XdmfPartitioner <path-of-file-to-partition> <num-partitions> (Optional: <path-to-output-file>)";
-  std::string meshName = "";
 
-  if (argc < 3)
-  {
-    cout << usage << endl;
-    return 1;
-  }
+	std::string usage = "Partitions an Xdmf grid using the metis library: \n \n Usage: \n \n   XdmfPartitioner <path-of-file-to-partition> <num-partitions> (Optional: <path-to-output-file>)";
+	std::string meshName = "";
 
-  FILE * refFile = fopen(argv[1], "r");
-  if (refFile)
-  {
-    // Success
-    meshName = argv[1];
-    fclose(refFile);
-  }
-  else
-  {
-    cout << "Cannot open file: " << argv[1] << endl;
-    return 1;
-  }
+	if (argc < 3)
+	{
+		std::cout << usage << std::endl;
+		return 1;
+	}
 
-  int numPartitions = atoi(argv[2]);
+	FILE * refFile = fopen(argv[1], "r");
+	if (refFile)
+	{
+		// Success
+		meshName = argv[1];
+		fclose(refFile);
+	}
+	else
+	{
+		std::cout << "Cannot open file: " << argv[1] << std::endl;
+		return 1;
+	}
 
-  if (argc >= 4)
-  {
-    meshName = argv[3];
-  }
-  
-  if(meshName.find_last_of("/\\") != std::string::npos)
-  {
-    meshName = meshName.substr(meshName.find_last_of("/\\")+1, meshName.length());
-  }
+	unsigned int numPartitions = atoi(argv[2]);
 
-  if (meshName.rfind(".") != std::string::npos)
-  {
-    meshName = meshName.substr(0, meshName.rfind("."));
-  }
+	if (argc >= 4)
+	{
+		meshName = argv[3];
+	}
 
-  if(argc < 4)
-  {
-    meshName = meshName + "-partitioned";
-  }
-  
-  XdmfDOM dom;
-  XdmfInt32 error = dom.Parse(argv[1]);
+	if(meshName.find_last_of("/\\") != std::string::npos)
+	{
+		meshName = meshName.substr(meshName.find_last_of("/\\")+1, meshName.length());
+	}
 
-  std::string fileName = argv[1];
-  size_t fileNameFound = fileName.find_last_of("/\\");
-  if (fileNameFound != std::string::npos)
-  {
-    dom.SetWorkingDirectory(fileName.substr(0, fileNameFound).substr().c_str());
-  }
+	if (meshName.rfind(".") != std::string::npos)
+	{
+		meshName = meshName.substr(0, meshName.rfind("."));
+	}
 
-  if(error == XDMF_FAIL)
-  {
-    std::cout << "File does not appear to be a valid Xdmf file" << std::endl;
-    return 1;
-  }
-  XdmfXmlNode gridElement = dom.FindElementByPath("/Xdmf/Domain/Grid");
-  if(gridElement == NULL)
-  {
-    std::cout << "Cannot parse Xdmf file!" << std::endl;
-    return 1;
-  }
+	if(argc < 4)
+	{
+		meshName = meshName + "-partitioned";
+	}
 
-  XdmfGrid * grid = new XdmfGrid();
-  grid->SetDOM(&dom);
-  grid->SetElement(gridElement);
-  grid->Update();
+	boost::shared_ptr<XdmfReader> reader = XdmfReader::New();
+	boost::shared_ptr<XdmfDomain> domain = boost::shared_dynamic_cast<XdmfDomain>(reader->read(argv[1]));
 
-  XdmfDOM newDOM;
-  XdmfRoot newRoot;
-  XdmfDomain newDomain;
+	if(domain->getNumberOfGrids() <= 0)
+	{
+		std::cout << "No grids to partition" << std::endl;
+		return 1;
+	}
 
-  newRoot.SetDOM(&newDOM);
-  newRoot.Build();
-  newRoot.Insert(&newDomain);
+	std::stringstream heavyFileName;
+	heavyFileName << meshName << ".h5";
+	boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter = XdmfHDF5Writer::New(heavyFileName.str());
 
-  XdmfPartitioner partitioner;
-  XdmfGrid * partitionedGrid = partitioner.Partition(grid, numPartitions, &newDomain);
-  delete grid;
+	boost::shared_ptr<XdmfPartitioner> partitioner = XdmfPartitioner::New();
+	boost::shared_ptr<XdmfGridCollection> toWrite = partitioner->partition(domain->getGrid(0), numPartitions, heavyDataWriter);
 
-  for(int i=0; i<partitionedGrid->GetNumberOfChildren(); ++i)
-  {
-    XdmfGrid * child = partitionedGrid->GetChild(i);
-    
-    // Set heavy data set names for geometry and topology
-    std::stringstream heavyPointName;
-    heavyPointName << meshName << ".h5:/" << child->GetName() << "/XYZ";
-    child->GetGeometry()->GetPoints()->SetHeavyDataSetName(heavyPointName.str().c_str());
+	boost::shared_ptr<XdmfDomain> newDomain = XdmfDomain::New();
+	newDomain->insert(toWrite);
 
-    std::stringstream heavyConnName;
-    heavyConnName << meshName << ".h5:/" << child->GetName() << "/Connections";
-    child->GetTopology()->GetConnectivity()->SetHeavyDataSetName(heavyConnName.str().c_str());
+	std::stringstream xmlFileName;
+	xmlFileName << meshName << ".xmf";
+	boost::shared_ptr<XdmfWriter> writer = XdmfWriter::New(xmlFileName.str(), heavyDataWriter);
+	newDomain->accept(writer);
 
-    // Set heavy data set names for mesh attributes and sets
-    for(int i=0; i<child->GetNumberOfAttributes(); i++)
-    {
-      std::stringstream heavyAttrName;
-      heavyAttrName << meshName << ".h5:/" << child->GetName() << "/Attribute/" << child->GetAttribute(i)->GetAttributeCenterAsString() << "/" << child->GetAttribute(i)->GetName();
-      child->GetAttribute(i)->GetValues()->SetHeavyDataSetName(heavyAttrName.str().c_str());
-    }
 
-    for(int i=0; i<child->GetNumberOfSets(); i++)
-    {
-      std::stringstream heavySetName;
-      heavySetName << meshName << ".h5:/" << child->GetName() << "/Set/" << child->GetSets(i)->GetSetTypeAsString() << "/" << child->GetSets(i)->GetName();
-      child->GetSets(i)->GetIds()->SetHeavyDataSetName(heavySetName.str().c_str());
-    }
-  }
+	/*XdmfDOM dom;
+	XdmfInt32 error = dom.Parse(argv[1]);
 
-  partitionedGrid->Build();
- 
-  std::stringstream outputFileName;
-  outputFileName << meshName << ".xmf";
-  
-  newDOM.Write(outputFileName.str().c_str());
- 
-  delete partitionedGrid; 
-  std::cout << "Wrote: " << outputFileName.str().c_str() << std::endl;
-}*/
+	std::string fileName = argv[1];
+	size_t fileNameFound = fileName.find_last_of("/\\");
+	if (fileNameFound != std::string::npos)
+	{
+		dom.SetWorkingDirectory(fileName.substr(0, fileNameFound).substr().c_str());
+	}
+
+	if(error == XDMF_FAIL)
+	{
+		std::cout << "File does not appear to be a valid Xdmf file" << std::endl;
+		return 1;
+	}
+	XdmfXmlNode gridElement = dom.FindElementByPath("/Xdmf/Domain/Grid");
+	if(gridElement == NULL)
+	{
+		std::cout << "Cannot parse Xdmf file!" << std::endl;
+		return 1;
+	}
+
+	XdmfGrid * grid = new XdmfGrid();
+	grid->SetDOM(&dom);
+	grid->SetElement(gridElement);
+	grid->Update();
+
+	XdmfDOM newDOM;
+	XdmfRoot newRoot;
+	XdmfDomain newDomain;
+
+	newRoot.SetDOM(&newDOM);
+	newRoot.Build();
+	newRoot.Insert(&newDomain);
+
+	XdmfPartitioner partitioner;
+	XdmfGrid * partitionedGrid = partitioner.Partition(grid, numPartitions, &newDomain);
+	delete grid;
+
+	for(int i=0; i<partitionedGrid->GetNumberOfChildren(); ++i)
+	{
+		XdmfGrid * child = partitionedGrid->GetChild(i);
+
+		// Set heavy data set names for geometry and topology
+		std::stringstream heavyPointName;
+		heavyPointName << meshName << ".h5:/" << child->GetName() << "/XYZ";
+		child->GetGeometry()->GetPoints()->SetHeavyDataSetName(heavyPointName.str().c_str());
+
+		std::stringstream heavyConnName;
+		heavyConnName << meshName << ".h5:/" << child->GetName() << "/Connections";
+		child->GetTopology()->GetConnectivity()->SetHeavyDataSetName(heavyConnName.str().c_str());
+
+		// Set heavy data set names for mesh attributes and sets
+		for(int i=0; i<child->GetNumberOfAttributes(); i++)
+		{
+			std::stringstream heavyAttrName;
+			heavyAttrName << meshName << ".h5:/" << child->GetName() << "/Attribute/" << child->GetAttribute(i)->GetAttributeCenterAsString() << "/" << child->GetAttribute(i)->GetName();
+			child->GetAttribute(i)->GetValues()->SetHeavyDataSetName(heavyAttrName.str().c_str());
+		}
+
+		for(int i=0; i<child->GetNumberOfSets(); i++)
+		{
+			std::stringstream heavySetName;
+			heavySetName << meshName << ".h5:/" << child->GetName() << "/Set/" << child->GetSets(i)->GetSetTypeAsString() << "/" << child->GetSets(i)->GetName();
+			child->GetSets(i)->GetIds()->SetHeavyDataSetName(heavySetName.str().c_str());
+		}
+	}
+
+	partitionedGrid->Build();
+
+	std::stringstream outputFileName;
+	outputFileName << meshName << ".xmf";
+
+	newDOM.Write(outputFileName.str().c_str());
+
+	delete partitionedGrid;
+	std::cout << "Wrote: " << outputFileName.str().c_str() << std::endl;*/
+}
 
 #endif //BUILD_EXE

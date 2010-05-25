@@ -130,12 +130,28 @@ public:
 	std::string getType() const;
 
 	/**
+	 * Get a copy of a single value stored in this array.
+	 *
+	 * @return the requested value.
+	 */
+	template <typename T>
+	T getValueCopy(const unsigned int index) const;
+
+	/**
 	 * Get a smart pointer to the values stored in this array.
 	 *
 	 * @return a smart pointer to the internal vector of values stored in this array.
 	 */
 	template <typename T>
 	boost::shared_ptr<std::vector<T> > getValues();
+
+	/**
+	 * Get a smart pointer to the values stored in this array (const version).
+	 *
+	 * @return a smart pointer to the internal vector of values stored in this array.
+	 */
+	//template <typename T>
+	//const boost::shared_ptr<const std::vector<T> > getValues() const;
 
 	/**
 	 * Get a copy of the values stored in this array
@@ -148,14 +164,6 @@ public:
 	 */
 	template <typename T>
 	void getValuesCopy(const unsigned int startIndex, T * valuesPointer, const unsigned int numValues = 1, const unsigned int arrayStride = 1, const unsigned int valuesStride = 1) const;
-
-	/**
-	 * Get a smart pointer to the values stored in this array (const version).
-	 *
-	 * @return a smart pointer to the internal vector of values stored in this array.
-	 */
-	//template <typename T>
-	//const boost::shared_ptr<const std::vector<T> > getValues() const;
 
 	/**
 	 * Get a pointer to the values stored in this array (const version).

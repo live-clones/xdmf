@@ -145,6 +145,14 @@ void XdmfArray::copyValues(const unsigned int startIndex, const T * const values
 }
 
 template <typename T>
+T XdmfArray::getValueCopy(const unsigned int index) const
+{
+	T toReturn;
+	this->getValuesCopy(index, &toReturn, 1);
+	return toReturn;
+}
+
+template <typename T>
 boost::shared_ptr<std::vector<T> > XdmfArray::getValues()
 {
 	if(mHaveArrayPointer)
