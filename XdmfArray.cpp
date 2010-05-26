@@ -5,7 +5,6 @@
  *      Author: kleiter
  */
 
-#include <boost/foreach.hpp>
 #include <boost/tokenizer.hpp>
 #include <sstream>
 #include "XdmfArray.hpp"
@@ -629,12 +628,12 @@ void XdmfArray::populateItem(const std::map<std::string, std::string> & itemProp
 		{
 			this->initialize(typeVal, precisionVal);
 			this->reserve(sizeVal);
-			boost::char_separator<char> sep(" ");
+			boost::char_separator<char> sep(" \t\n");
 			boost::tokenizer<boost::char_separator<char> > tokens(contentVal, sep);
-			BOOST_FOREACH(std::string t, tokens)
+			for(boost::tokenizer<boost::char_separator<char> >::const_iterator iter = tokens.begin(); iter != tokens.end(); ++iter)
 			{
-				double val = atof(t.c_str());
-				this->pushBack(val);
+				this->pushBack(atof((*iter).c_str()));
+
 			}
 		}
 		else

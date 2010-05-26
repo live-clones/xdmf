@@ -217,11 +217,15 @@ boost::shared_ptr<std::vector<T> > XdmfArray::initialize()
 }
 
 template <typename T>
-void XdmfArray::pushBack(T & value)
+void XdmfArray::pushBack(const T & value)
 {
 	if(mHaveArrayPointer)
 	{
 		internalizeArrayPointer();
+	}
+	if(!mHaveArray)
+	{
+		initialize<T>();
 	}
 	return boost::apply_visitor(PushBack<T>(value), mArray);
 }

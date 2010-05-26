@@ -97,6 +97,14 @@ int main(int argc, char* argv[])
 	assert(array->getSize() == 4);
 
 	//
+	// PUSHBACK
+	//
+	boost::shared_ptr<XdmfArray> pushBackArray = XdmfArray::New();
+	assert(pushBackArray->getSize() == 0);
+	pushBackArray->pushBack(10);
+	assert(pushBackArray->getSize() == 1);
+
+	//
 	// SETS
 	//
 

@@ -33,6 +33,7 @@ public:
 	 * XdmfTopologyType::Hexahedron_20
 	 * XdmfTopologyType::Hexahedron_24
 	 * XdmfTopologyType::Hexahedron_27
+	 * XdmfTopologyType::Hexahedron_64
 	 *
 	 * The partitioner splits the XdmfGrid and all attached XdmfAttributes and XdmfSets into their proper partition.
 	 * An XdmfAttribute named "GlobalNodeId" is added to each partitioned grid to map partitioned node ids to their

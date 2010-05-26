@@ -40,6 +40,7 @@ extern "C"
 #include "XdmfGrid.hpp"
 #include "XdmfGridCollection.hpp"
 #include "XdmfHDF5Writer.hpp"
+#include "XdmfSet.hpp"
 #include "XdmfTopology.hpp"
 
 XdmfPartitioner::XdmfPartitioner()
@@ -178,6 +179,7 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(boost::shared_p
 		gridToPartition->getGeometry()->getArray()->read();
 	}
 
+	// Split geometry and topology into proper partitions
 	for(unsigned int i=0; i<numberOfPartitions; ++i)
 	{
 		std::map<unsigned int, unsigned int> & currNodeMap = globalToLocalNodeIdMap[i];
@@ -259,6 +261,7 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(boost::shared_p
 	gridToPartition->getGeometry()->getArray()->release();
 	gridToPartition->getTopology()->getArray()->release();
 
+	// Split attributes into proper partitions
 	for(unsigned int i=0; i<gridToPartition->getNumberOfAttributes(); ++i)
 	{
 		boost::shared_ptr<XdmfAttribute> currAttribute = gridToPartition->getAttribute(i);
@@ -326,99 +329,65 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(boost::shared_p
 		currAttribute->getArray()->release();
 	}
 
+	// Split sets into proper partitions
+	for(unsigned int i=0; i<gridToPartition->getNumberOfSets(); ++i)
+	{
+		boost::shared_ptr<XdmfSet> currSet = gridToPartition->getSet(i);
+		if(!currSet->getArray()->isInitialized())
+		{
+			currSet->getArray()->read();
+		}
+		unsigned int partitionId = 0;
+		for(unsigned int j=0; j<numberOfPartitions; ++j)
+		{
+			std::map<unsigned int, unsigned int> & currNodeMap = globalToLocalNodeIdMap[j];
+			std::vector<unsigned int> & currElemIds = globalElementIds[j];
+			if(currElemIds.size() > 0)
+			{
+				boost::shared_ptr<XdmfGrid> partitioned = partitionedGrids->getGrid(partitionId);
+				partitionId++;
+				boost::shared_ptr<XdmfArray> setVals = XdmfArray::New();
+				if(currSet->getSetType() == XdmfSetType::Cell() || currSet->getSetType() == XdmfSetType::Face() || currSet->getSetType() == XdmfSetType::Edge())
+				{
+					for(unsigned int k=0; k<currSet->getArray()->getSize(); ++k)
+					{
+						std::vector<unsigned int>::const_iterator val = std::find(currElemIds.begin(), currElemIds.end(), currSet->getArray()->getValueCopy<unsigned int>(k));
+						if(val != currElemIds.end())
+						{
+							unsigned int valToPush = val - currElemIds.begin();
+							setVals->pushBack(valToPush);
+						}
+					}
+				}
+				else if(currSet->getSetType() == XdmfSetType::Node())
+				{
+					for(unsigned int k=0; k<currSet->getArray()->getSize(); ++k)
+					{
+						std::map<unsigned int, unsigned int>::const_iterator val = currNodeMap.find(currSet->getArray()->getValueCopy<unsigned int>(k));
+						if(val != currNodeMap.end())
+						{
+							setVals->pushBack(val->second);
+						}
+					}
+				}
+				if(setVals->getSize() > 0)
+				{
+					boost::shared_ptr<XdmfSet> createdSet = XdmfSet::New();
+					createdSet->setName(currSet->getName());
+					createdSet->setSetType(currSet->getSetType());
+					createdSet->setArray(setVals);
+					partitioned->insert(createdSet);
+					if(heavyDataWriter)
+					{
+						createdSet->getArray()->accept(heavyDataWriter);
+						createdSet->getArray()->release();
+					}
+				}
+			}
+		}
+		currSet->getArray()->release();
+	}
 	return partitionedGrids;
-/*
-
-  // Split sets and add to grid
-  for(int j=0; j<grid->GetNumberOfSets(); ++j)
-  {
-    XdmfSet * currSet = grid->GetSets(j);
-    // If data wasn't read in before, make sure it's released after processing
-    bool releaseData = 0;
-    if(currSet->GetIds()->GetNumberOfElements() == 0)
-    {
-      currSet->Update();
-      releaseData = 1;
-    }
-    int partitionId = 0;
-    for(int i=0; i<numPartitions; ++i)
-    {
-      std::map<XdmfInt32, XdmfInt32> currNodeMap = globalToLocalNodeIdMap[i];
-      std::vector<XdmfInt32> currElemIds = globalElementIds[i];
-      if(currElemIds.size() > 0)
-      {
-        XdmfGrid * partition = partitions[partitionId];
-        partitionId++;
-        switch(currSet->GetSetType())
-        {
-          case(XDMF_SET_TYPE_CELL):
-          case(XDMF_SET_TYPE_FACE):
-          case(XDMF_SET_TYPE_EDGE):
-          {
-            std::vector<XdmfInt32> myIds;
-            for(int j=0; j<currSet->GetIds()->GetNumberOfElements(); ++j)
-            {
-              std::vector<XdmfInt32>::const_iterator val = std::find(currElemIds.begin(), currElemIds.end(), currSet->GetIds()->GetValueAsInt32(j));
-              if(val != currElemIds.end())
-              {
-                myIds.push_back(val - currElemIds.begin());
-              }
-            }
-            if(myIds.size() != 0)
-            {
-              XdmfSet * set = new XdmfSet();
-              set->SetName(currSet->GetName());
-              set->SetSetType(currSet->GetSetType());
-              set->SetSize(myIds.size());
-              set->SetDeleteOnGridDelete(true);
-              XdmfArray * ids = set->GetIds();
-              ids->SetNumberType(XDMF_INT32_TYPE);
-              ids->SetNumberOfElements(myIds.size());
-              ids->SetValues(0, &myIds[0], myIds.size());
-              partition->Insert(set);
-            }
-            break;
-          }
-          case(XDMF_SET_TYPE_NODE):
-          {
-            std::vector<XdmfInt32> myIds;
-            for(int j=0; j<currSet->GetIds()->GetNumberOfElements(); j++)
-            {
-              std::map<XdmfInt32, XdmfInt32>::const_iterator val = currNodeMap.find(currSet->GetIds()->GetValueAsInt32(j));
-              if(val != currNodeMap.end())
-              {
-                myIds.push_back(val->second);
-              }
-            }
-            if(myIds.size() != 0)
-            {
-              XdmfSet * set = new XdmfSet();
-              set->SetName(currSet->GetName());
-              set->SetSetType(currSet->GetSetType());
-              set->SetSize(myIds.size());
-              set->SetDeleteOnGridDelete(true);
-              XdmfArray * ids = set->GetIds();
-              ids->SetNumberType(XDMF_INT32_TYPE);
-              ids->SetNumberOfElements(myIds.size());
-              ids->SetValues(0, &myIds[0], myIds.size());
-              partition->Insert(set);
-            }
-            break;
-          }
-          default:
-          {
-            std::cout << "Unknown set type encountered: " << currSet->GetSetTypeAsString() << std::endl;  
-            break;
-          }
-        }
-      }
-    }
-    if(releaseData)
-    {
-      currSet->Release();
-    }
-  }
-  return collection;*/
 }
 
 #else
@@ -510,84 +479,7 @@ int main(int argc, char* argv[])
 	boost::shared_ptr<XdmfWriter> writer = XdmfWriter::New(xmlFileName.str(), heavyDataWriter);
 	newDomain->accept(writer);
 
-
-	/*XdmfDOM dom;
-	XdmfInt32 error = dom.Parse(argv[1]);
-
-	std::string fileName = argv[1];
-	size_t fileNameFound = fileName.find_last_of("/\\");
-	if (fileNameFound != std::string::npos)
-	{
-		dom.SetWorkingDirectory(fileName.substr(0, fileNameFound).substr().c_str());
-	}
-
-	if(error == XDMF_FAIL)
-	{
-		std::cout << "File does not appear to be a valid Xdmf file" << std::endl;
-		return 1;
-	}
-	XdmfXmlNode gridElement = dom.FindElementByPath("/Xdmf/Domain/Grid");
-	if(gridElement == NULL)
-	{
-		std::cout << "Cannot parse Xdmf file!" << std::endl;
-		return 1;
-	}
-
-	XdmfGrid * grid = new XdmfGrid();
-	grid->SetDOM(&dom);
-	grid->SetElement(gridElement);
-	grid->Update();
-
-	XdmfDOM newDOM;
-	XdmfRoot newRoot;
-	XdmfDomain newDomain;
-
-	newRoot.SetDOM(&newDOM);
-	newRoot.Build();
-	newRoot.Insert(&newDomain);
-
-	XdmfPartitioner partitioner;
-	XdmfGrid * partitionedGrid = partitioner.Partition(grid, numPartitions, &newDomain);
-	delete grid;
-
-	for(int i=0; i<partitionedGrid->GetNumberOfChildren(); ++i)
-	{
-		XdmfGrid * child = partitionedGrid->GetChild(i);
-
-		// Set heavy data set names for geometry and topology
-		std::stringstream heavyPointName;
-		heavyPointName << meshName << ".h5:/" << child->GetName() << "/XYZ";
-		child->GetGeometry()->GetPoints()->SetHeavyDataSetName(heavyPointName.str().c_str());
-
-		std::stringstream heavyConnName;
-		heavyConnName << meshName << ".h5:/" << child->GetName() << "/Connections";
-		child->GetTopology()->GetConnectivity()->SetHeavyDataSetName(heavyConnName.str().c_str());
-
-		// Set heavy data set names for mesh attributes and sets
-		for(int i=0; i<child->GetNumberOfAttributes(); i++)
-		{
-			std::stringstream heavyAttrName;
-			heavyAttrName << meshName << ".h5:/" << child->GetName() << "/Attribute/" << child->GetAttribute(i)->GetAttributeCenterAsString() << "/" << child->GetAttribute(i)->GetName();
-			child->GetAttribute(i)->GetValues()->SetHeavyDataSetName(heavyAttrName.str().c_str());
-		}
-
-		for(int i=0; i<child->GetNumberOfSets(); i++)
-		{
-			std::stringstream heavySetName;
-			heavySetName << meshName << ".h5:/" << child->GetName() << "/Set/" << child->GetSets(i)->GetSetTypeAsString() << "/" << child->GetSets(i)->GetName();
-			child->GetSets(i)->GetIds()->SetHeavyDataSetName(heavySetName.str().c_str());
-		}
-	}
-
-	partitionedGrid->Build();
-
-	std::stringstream outputFileName;
-	outputFileName << meshName << ".xmf";
-
-	newDOM.Write(outputFileName.str().c_str());
-
-	delete partitionedGrid;
-	std::cout << "Wrote: " << outputFileName.str().c_str() << std::endl;*/
+	std::cout << "Wrote: " << xmlFileName.str() << std::endl;
 }
 
 #endif //BUILD_EXE

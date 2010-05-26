@@ -196,7 +196,7 @@ public:
 	 * Copy a value to the back of this array
 	 */
 	template <typename T>
-	void pushBack(T & value);
+	void pushBack(const T & value);
 
 	/**
 	 * Read data from disk into memory.
