@@ -178,8 +178,8 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
 
   for(int i=0; i<numPartitions; ++i)
   {
-    std::map<XdmfInt32, XdmfInt32> currNodeMap = globalToLocalNodeIdMap[i];
-    std::vector<XdmfInt32> currElemIds = globalElementIds[i];
+    std::map<XdmfInt32, XdmfInt32> & currNodeMap = globalToLocalNodeIdMap[i];
+    std::vector<XdmfInt32> & currElemIds = globalElementIds[i];
 
     if(currElemIds.size() > 0)
     {
@@ -269,8 +269,8 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
     int partitionId = 0;
     for(int i=0; i<numPartitions; ++i)
     {
-      std::map<XdmfInt32, XdmfInt32> currNodeMap = globalToLocalNodeIdMap[i];
-      std::vector<XdmfInt32> currElemIds = globalElementIds[i];
+      std::map<XdmfInt32, XdmfInt32> & currNodeMap = globalToLocalNodeIdMap[i];
+      std::vector<XdmfInt32> & currElemIds = globalElementIds[i];
       if(currElemIds.size() > 0)
       {
         XdmfGrid * partition = partitions[partitionId];
@@ -352,8 +352,8 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
     int partitionId = 0;
     for(int i=0; i<numPartitions; ++i)
     {
-      std::map<XdmfInt32, XdmfInt32> currNodeMap = globalToLocalNodeIdMap[i];
-      std::vector<XdmfInt32> currElemIds = globalElementIds[i];
+      std::map<XdmfInt32, XdmfInt32> & currNodeMap = globalToLocalNodeIdMap[i];
+      std::vector<XdmfInt32> & currElemIds = globalElementIds[i];
       if(currElemIds.size() > 0)
       {
         XdmfGrid * partition = partitions[partitionId];
@@ -365,9 +365,9 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
           case(XDMF_SET_TYPE_EDGE):
           {
             std::vector<XdmfInt32> myIds;
-            for(int j=0; j<currSet->GetIds()->GetNumberOfElements(); ++j)
+            for(int k=0; k<currSet->GetIds()->GetNumberOfElements(); ++k)
             {
-              std::vector<XdmfInt32>::const_iterator val = std::find(currElemIds.begin(), currElemIds.end(), currSet->GetIds()->GetValueAsInt32(j));
+              std::vector<XdmfInt32>::const_iterator val = std::find(currElemIds.begin(), currElemIds.end(), currSet->GetIds()->GetValueAsInt32(k));
               if(val != currElemIds.end())
               {
                 myIds.push_back(val - currElemIds.begin());
@@ -391,9 +391,9 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
           case(XDMF_SET_TYPE_NODE):
           {
             std::vector<XdmfInt32> myIds;
-            for(int j=0; j<currSet->GetIds()->GetNumberOfElements(); j++)
+            for(int k=0; k<currSet->GetIds()->GetNumberOfElements(); k++)
             {
-              std::map<XdmfInt32, XdmfInt32>::const_iterator val = currNodeMap.find(currSet->GetIds()->GetValueAsInt32(j));
+              std::map<XdmfInt32, XdmfInt32>::const_iterator val = currNodeMap.find(currSet->GetIds()->GetValueAsInt32(k));
               if(val != currNodeMap.end())
               {
                 myIds.push_back(val->second);
