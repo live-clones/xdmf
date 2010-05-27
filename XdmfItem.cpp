@@ -8,7 +8,7 @@ XdmfItem::~XdmfItem()
 {
 }
 
-void XdmfItem::traverse(boost::shared_ptr<Loki::BaseVisitor> visitor)
+void XdmfItem::traverse(boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
 	return;
 }

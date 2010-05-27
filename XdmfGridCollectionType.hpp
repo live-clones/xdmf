@@ -21,11 +21,12 @@ class XdmfGridCollectionType : public XdmfItemProperty {
 public:
 
 	friend class XdmfGridCollection;
+	template <typename T> friend void boost::checked_delete(T * x);
 
 	// Supported XdmfGridCollectionTypes
-	static XdmfGridCollectionType NoCollectionType();
-	static XdmfGridCollectionType Spatial();
-	static XdmfGridCollectionType Temporal();
+	static boost::shared_ptr<const XdmfGridCollectionType> NoCollectionType();
+	static boost::shared_ptr<const XdmfGridCollectionType> Spatial();
+	static boost::shared_ptr<const XdmfGridCollectionType> Temporal();
 
 	void getProperties(std::map<std::string, std::string> & collectedProperties) const;
 
@@ -45,9 +46,6 @@ public:
 	 */
 	bool operator!=(const XdmfGridCollectionType & collectionType) const;
 
-	XdmfGridCollectionType(const XdmfGridCollectionType & collectionType);
-	XdmfGridCollectionType & operator=(const XdmfGridCollectionType & collectionType);
-
 protected:
 
 	/**
@@ -61,7 +59,10 @@ protected:
 
 private:
 
-	static XdmfGridCollectionType New(const std::map<std::string, std::string> & itemProperties);
+	XdmfGridCollectionType(const XdmfGridCollectionType & collectionType); // Not implemented.
+	void operator=(const XdmfGridCollectionType & collectionType); // Not implemented.
+
+	static boost::shared_ptr<const XdmfGridCollectionType> New(const std::map<std::string, std::string> & itemProperties);
 
 	std::string mName;
 };

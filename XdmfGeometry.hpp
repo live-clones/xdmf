@@ -1,9 +1,11 @@
 #ifndef XDMFGEOMETRY_HPP_
 #define XDMFGEOMETRY_HPP_
 
+// Forward Declarations
+class XdmfGeometryType;
+
 // Includes
 #include "XdmfDataItem.hpp"
-#include "XdmfGeometryType.hpp"
 
 /**
  * @brief Handles the coordinate positions of points in an XdmfGrid.
@@ -25,7 +27,7 @@ public:
 	 *
 	 * @return XdmfGeometryType of this geometry.
 	 */
-	XdmfGeometryType getGeometryType() const;
+	boost::shared_ptr<const XdmfGeometryType> getGeometryType() const;
 
 	std::map<std::string, std::string> getItemProperties() const;
 
@@ -41,7 +43,7 @@ public:
 	 *
 	 * @param geometryType the XdmfGeometryType to set.
 	 */
-	void setGeometryType(const XdmfGeometryType & geometryType);
+	void setGeometryType(const boost::shared_ptr<const XdmfGeometryType> geometryType);
 
 protected:
 
@@ -54,7 +56,7 @@ private:
 	XdmfGeometry(const XdmfGeometry & geometry);  // Not implemented.
 	void operator=(const XdmfGeometry & geometry);  // Not implemented.
 
-	XdmfGeometryType mGeometryType;
+	boost::shared_ptr<const XdmfGeometryType> mGeometryType;
 	int mNumberPoints;
 };
 

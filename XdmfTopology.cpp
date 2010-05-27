@@ -8,6 +8,7 @@
 #include <sstream>
 #include "XdmfArray.hpp"
 #include "XdmfTopology.hpp"
+#include "XdmfTopologyType.hpp"
 
 XdmfTopology::XdmfTopology() :
 	mTopologyType(XdmfTopologyType::NoTopologyType()),
@@ -31,7 +32,7 @@ std::string XdmfTopology::getItemTag() const
 std::map<std::string, std::string> XdmfTopology::getItemProperties() const
 {
 	std::map<std::string, std::string> topologyProperties;
-	mTopologyType.getProperties(topologyProperties);
+	mTopologyType->getProperties(topologyProperties);
 	std::stringstream numElements;
 	numElements << this->getNumberElements();
 	topologyProperties["Dimensions"] = numElements.str();
@@ -40,14 +41,14 @@ std::map<std::string, std::string> XdmfTopology::getItemProperties() const
 
 unsigned int XdmfTopology::getNumberElements() const
 {
-	if(mTopologyType.getNodesPerElement() == 0)
+	if(mTopologyType->getNodesPerElement() == 0)
 	{
 		return 0;
 	}
-	return this->getArray()->getSize() / mTopologyType.getNodesPerElement();
+	return this->getArray()->getSize() / mTopologyType->getNodesPerElement();
 }
 
-XdmfTopologyType XdmfTopology::getTopologyType() const
+boost::shared_ptr<const XdmfTopologyType> XdmfTopology::getTopologyType() const
 {
 	return mTopologyType;
 }
@@ -58,7 +59,7 @@ void XdmfTopology::populateItem(const std::map<std::string, std::string> & itemP
 	XdmfDataItem::populateItem(itemProperties, childItems);
 }
 
-void XdmfTopology::setTopologyType(const XdmfTopologyType & topologyType)
+void XdmfTopology::setTopologyType(const boost::shared_ptr<const XdmfTopologyType> topologyType)
 {
 	mTopologyType = topologyType;
 }

@@ -27,17 +27,18 @@ class XdmfGeometryType : public XdmfItemProperty {
 public:
 
 	friend class XdmfGeometry;
+	template <typename T> friend void boost::checked_delete(T * x);
 
 	// Supported Xdmf Geometry Types
-	static XdmfGeometryType NoGeometryType();
-	static XdmfGeometryType XYZ();
-	static XdmfGeometryType XY();
-	static XdmfGeometryType X_Y_Z();
-	static XdmfGeometryType X_Y();
-	static XdmfGeometryType VXVYVZ();
-	static XdmfGeometryType Origin_DXDYDZ();
-	static XdmfGeometryType VXVY();
-	static XdmfGeometryType Origin_DXDY();
+	static boost::shared_ptr<const XdmfGeometryType> NoGeometryType();
+	static boost::shared_ptr<const XdmfGeometryType> XYZ();
+	static boost::shared_ptr<const XdmfGeometryType> XY();
+	static boost::shared_ptr<const XdmfGeometryType> X_Y_Z();
+	static boost::shared_ptr<const XdmfGeometryType> X_Y();
+	static boost::shared_ptr<const XdmfGeometryType> VXVYVZ();
+	static boost::shared_ptr<const XdmfGeometryType> Origin_DXDYDZ();
+	static boost::shared_ptr<const XdmfGeometryType> VXVY();
+	static boost::shared_ptr<const XdmfGeometryType> Origin_DXDY();
 
 	/**
 	 * Get the dimensions of this geometry type - i.e. XYZ = 3.
@@ -64,9 +65,6 @@ public:
 	 */
 	bool operator!=(const XdmfGeometryType & geometryType) const;
 
-	XdmfGeometryType(const XdmfGeometryType & geometryType);
-	XdmfGeometryType & operator=(const XdmfGeometryType & geometryType);
-
 protected:
 
 	/**
@@ -81,7 +79,10 @@ protected:
 
 private:
 
-	static XdmfGeometryType New(const std::map<std::string, std::string> & itemProperties);
+	XdmfGeometryType(const XdmfGeometryType & geometryType); // Not implemented.
+	void operator=(const XdmfGeometryType & geometryType); // Not implemented.
+
+	static boost::shared_ptr<const XdmfGeometryType> New(const std::map<std::string, std::string> & itemProperties);
 
 	unsigned int mDimensions;
 	std::string mName;

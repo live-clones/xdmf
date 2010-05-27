@@ -7,6 +7,7 @@
 
 #include "XdmfArray.hpp"
 #include "XdmfGeometry.hpp"
+#include "XdmfGeometryType.hpp"
 
 XdmfGeometry::XdmfGeometry() :
 	mGeometryType(XdmfGeometryType::NoGeometryType()),
@@ -22,7 +23,7 @@ XdmfGeometry::~XdmfGeometry()
 
 std::string XdmfGeometry::ItemTag = "Geometry";
 
-XdmfGeometryType XdmfGeometry::getGeometryType() const
+boost::shared_ptr<const XdmfGeometryType> XdmfGeometry::getGeometryType() const
 {
 	return mGeometryType;
 }
@@ -30,7 +31,7 @@ XdmfGeometryType XdmfGeometry::getGeometryType() const
 std::map<std::string, std::string> XdmfGeometry::getItemProperties() const
 {
 	std::map<std::string, std::string> geometryProperties;
-	mGeometryType.getProperties(geometryProperties);
+	mGeometryType->getProperties(geometryProperties);
 	return geometryProperties;
 }
 
@@ -41,11 +42,11 @@ std::string XdmfGeometry::getItemTag() const
 
 unsigned int XdmfGeometry::getNumberPoints() const
 {
-	if(mGeometryType.getDimensions() == 0)
+	if(mGeometryType->getDimensions() == 0)
 	{
 		return 0;
 	}
-	return this->getArray()->getSize() / mGeometryType.getDimensions();
+	return this->getArray()->getSize() / mGeometryType->getDimensions();
 }
 
 void XdmfGeometry::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems)
@@ -54,7 +55,7 @@ void XdmfGeometry::populateItem(const std::map<std::string, std::string> & itemP
 	XdmfDataItem::populateItem(itemProperties, childItems);
 }
 
-void XdmfGeometry::setGeometryType(const XdmfGeometryType & geometryType)
+void XdmfGeometry::setGeometryType(const boost::shared_ptr<const XdmfGeometryType> geometryType)
 {
 	mGeometryType = geometryType;
 }

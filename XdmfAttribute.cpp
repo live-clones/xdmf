@@ -6,6 +6,8 @@
  */
 
 #include "XdmfAttribute.hpp"
+#include "XdmfAttributeCenter.hpp"
+#include "XdmfAttributeType.hpp"
 
 XdmfAttribute::XdmfAttribute() :
 	mName(""),
@@ -22,12 +24,12 @@ XdmfAttribute::~XdmfAttribute()
 
 std::string XdmfAttribute::ItemTag = "Attribute";
 
-XdmfAttributeCenter XdmfAttribute::getAttributeCenter() const
+boost::shared_ptr<const XdmfAttributeCenter> XdmfAttribute::getAttributeCenter() const
 {
 	return mAttributeCenter;
 }
 
-XdmfAttributeType XdmfAttribute::getAttributeType() const
+boost::shared_ptr<const XdmfAttributeType> XdmfAttribute::getAttributeType() const
 {
 	return mAttributeType;
 }
@@ -36,8 +38,8 @@ std::map<std::string, std::string> XdmfAttribute::getItemProperties() const
 {
 	std::map<std::string, std::string> attributeProperties;
 	attributeProperties["Name"] = mName;
-	mAttributeType.getProperties(attributeProperties);
-	mAttributeCenter.getProperties(attributeProperties);
+	mAttributeType->getProperties(attributeProperties);
+	mAttributeCenter->getProperties(attributeProperties);
 	return attributeProperties;
 }
 
@@ -68,12 +70,12 @@ void XdmfAttribute::populateItem(const std::map<std::string, std::string> & item
 	XdmfDataItem::populateItem(itemProperties, childItems);
 }
 
-void XdmfAttribute::setAttributeCenter(const XdmfAttributeCenter & attributeCenter)
+void XdmfAttribute::setAttributeCenter(const boost::shared_ptr<const XdmfAttributeCenter> attributeCenter)
 {
 	mAttributeCenter = attributeCenter;
 }
 
-void XdmfAttribute::setAttributeType(const XdmfAttributeType & attributeType)
+void XdmfAttribute::setAttributeType(const boost::shared_ptr<const XdmfAttributeType> attributeType)
 {
 	mAttributeType = attributeType;
 }

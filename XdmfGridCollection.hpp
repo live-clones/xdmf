@@ -1,9 +1,11 @@
 #ifndef XDMFGRIDCOLLECTION_HPP_
 #define XDMFGRIDCOLLECTION_HPP_
 
+// Forward Declarations
+class XdmfGridCollectionType;
+
 // Includes
 #include "XdmfGrid.hpp"
-#include "XdmfGridCollectionType.hpp"
 
 /**
  * @brief A spatial or temporal collection of XdmfGrids.
@@ -42,7 +44,7 @@ public:
 	 *
 	 * @return XdmfGridCollectionType of this collection.
 	 */
-	XdmfGridCollectionType getGridCollectionType() const;
+	boost::shared_ptr<const XdmfGridCollectionType> getGridCollectionType() const;
 
 	std::map<std::string, std::string> getItemProperties() const;
 
@@ -72,9 +74,9 @@ public:
 	 *
 	 * @param collectionType the XdmfGridCollectionType to set.
 	 */
-	void setGridCollectionType(const XdmfGridCollectionType & collectionType);
+	void setGridCollectionType(const boost::shared_ptr<const XdmfGridCollectionType> collectionType);
 
-	virtual void traverse(boost::shared_ptr<Loki::BaseVisitor> visitor);
+	virtual void traverse(boost::shared_ptr<XdmfBaseVisitor> visitor);
 
 protected:
 
@@ -87,7 +89,7 @@ private:
 	XdmfGridCollection(const XdmfGridCollection & collection);  // Not implemented.
 	void operator=(const XdmfGridCollection & collection);  // Not implemented.
 
-	XdmfGridCollectionType mCollectionType;
+	boost::shared_ptr<const XdmfGridCollectionType> mCollectionType;
 	std::vector<boost::shared_ptr<XdmfGrid> > mGrids;
 };
 

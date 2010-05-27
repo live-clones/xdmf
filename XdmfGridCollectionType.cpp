@@ -8,19 +8,22 @@
 #include "XdmfGridCollectionType.hpp"
 
 // Supported XdmfGridCollectionTypes
-XdmfGridCollectionType XdmfGridCollectionType::NoCollectionType()
+boost::shared_ptr<const XdmfGridCollectionType> XdmfGridCollectionType::NoCollectionType()
 {
-	return XdmfGridCollectionType("None");
+	static boost::shared_ptr<const XdmfGridCollectionType> p(new XdmfGridCollectionType("None"));
+	return p;
 }
 
-XdmfGridCollectionType XdmfGridCollectionType::Spatial()
+boost::shared_ptr<const XdmfGridCollectionType> XdmfGridCollectionType::Spatial()
 {
-	return XdmfGridCollectionType("Spatial");
+	static boost::shared_ptr<const XdmfGridCollectionType> p(new XdmfGridCollectionType("Spatial"));
+	return p;
 }
 
-XdmfGridCollectionType XdmfGridCollectionType::Temporal()
+boost::shared_ptr<const XdmfGridCollectionType> XdmfGridCollectionType::Temporal()
 {
-	return XdmfGridCollectionType("Temporal");
+	static boost::shared_ptr<const XdmfGridCollectionType> p(new XdmfGridCollectionType("Temporal"));
+	return p;
 }
 
 XdmfGridCollectionType::XdmfGridCollectionType(const std::string & name) :
@@ -28,12 +31,7 @@ XdmfGridCollectionType::XdmfGridCollectionType(const std::string & name) :
 {
 }
 
-XdmfGridCollectionType::XdmfGridCollectionType(const XdmfGridCollectionType & collectionType):
-	mName(collectionType.mName)
-{
-}
-
-XdmfGridCollectionType XdmfGridCollectionType::New(const std::map<std::string, std::string> & itemProperties)
+boost::shared_ptr<const XdmfGridCollectionType> XdmfGridCollectionType::New(const std::map<std::string, std::string> & itemProperties)
 {
 	std::map<std::string, std::string>::const_iterator type = itemProperties.find("CollectionType");
 	if(type != itemProperties.end())
@@ -57,15 +55,6 @@ XdmfGridCollectionType XdmfGridCollectionType::New(const std::map<std::string, s
 		}
 	}
 	assert(false);
-}
-
-XdmfGridCollectionType & XdmfGridCollectionType::operator=(const XdmfGridCollectionType & collectionType)
-{
-	if(this != &collectionType)
-	{
-		mName = collectionType.mName;
-	}
-	return *this;
 }
 
 bool XdmfGridCollectionType::operator==(const XdmfGridCollectionType & collectionType) const

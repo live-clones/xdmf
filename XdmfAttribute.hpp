@@ -1,9 +1,11 @@
 #ifndef XDMFATTRIBUTE_HPP_
 #define XDMFATTRIBUTE_HPP_
 
+// Forward Declarations
+class XdmfAttributeCenter;
+class XdmfAttributeType;
+
 // Includes
-#include "XdmfAttributeCenter.hpp"
-#include "XdmfAttributeType.hpp"
 #include "XdmfDataItem.hpp"
 
 /**
@@ -25,14 +27,14 @@ public:
 	 *
 	 * @return XdmfAttributeCenter of the attribute.
 	 */
-	XdmfAttributeCenter getAttributeCenter() const;
+	boost::shared_ptr<const XdmfAttributeCenter> getAttributeCenter() const;
 
 	/**
 	 * Get the XdmfAttributeType associated with this attribute.
 	 *
 	 * @return XdmfAttributeType of the attribute.
 	 */
-	XdmfAttributeType getAttributeType() const;
+	boost::shared_ptr<const XdmfAttributeType> getAttributeType() const;
 
 	std::map<std::string, std::string> getItemProperties() const;
 
@@ -50,14 +52,14 @@ public:
 	 *
 	 * @param attributeCenter the XdmfAttributeCenter to set.
 	 */
-	void setAttributeCenter(const XdmfAttributeCenter & attributeCenter);
+	void setAttributeCenter(const boost::shared_ptr<const XdmfAttributeCenter> attributeCenter);
 
 	/**
 	 * Set the XdmfAttributeType associated with this attribute.
 	 *
 	 * @param attributeType XdmfAttributeType to set.
 	 */
-	void setAttributeType(const XdmfAttributeType & attributeType);
+	void setAttributeType(const boost::shared_ptr<const XdmfAttributeType> attributeType);
 
 	/**
 	 * Set the name of the attribute.
@@ -78,8 +80,8 @@ private:
 	void operator=(const XdmfAttribute & attribute);  // Not implemented.
 
 	std::string mName;
-	XdmfAttributeType mAttributeType;
-	XdmfAttributeCenter mAttributeCenter;
+	boost::shared_ptr<const XdmfAttributeType> mAttributeType;
+	boost::shared_ptr<const XdmfAttributeCenter> mAttributeCenter;
 };
 
 #endif /* XDMFATTRIBUTE_HPP_ */

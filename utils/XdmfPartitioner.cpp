@@ -25,7 +25,6 @@
 
 #include "XdmfPartitioner.hpp"
 
-
 #ifndef BUILD_EXE
 
 extern "C"
@@ -36,12 +35,18 @@ extern "C"
 #include <sstream>
 #include "XdmfArray.hpp"
 #include "XdmfAttribute.hpp"
+#include "XdmfAttributeCenter.hpp"
+#include "XdmfAttributeType.hpp"
 #include "XdmfGeometry.hpp"
+#include "XdmfGeometryType.hpp"
 #include "XdmfGrid.hpp"
 #include "XdmfGridCollection.hpp"
+#include "XdmfGridCollectionType.hpp"
 #include "XdmfHDF5Writer.hpp"
 #include "XdmfSet.hpp"
+#include "XdmfSetType.hpp"
 #include "XdmfTopology.hpp"
+#include "XdmfTopologyType.hpp"
 
 XdmfPartitioner::XdmfPartitioner()
 {
@@ -57,7 +62,7 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(boost::shared_p
 	int metisElementType;
 	int numNodesPerElement;
 
-	XdmfTopologyType topologyType = gridToPartition->getTopology()->getTopologyType();
+	boost::shared_ptr<const XdmfTopologyType> topologyType = gridToPartition->getTopology()->getTopologyType();
 	if(topologyType == XdmfTopologyType::Triangle() || topologyType == XdmfTopologyType::Triangle_6())
 	{
 		metisElementType = 1;
@@ -94,14 +99,14 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(boost::shared_p
 	idxtype * metisConnectivity = new idxtype[numNodesPerElement * numElements];
 	for(unsigned int i=0; i<numElements; ++i)
 	{
-		gridToPartition->getTopology()->getArray()->getValuesCopy(i*topologyType.getNodesPerElement(), &metisConnectivity[i*numNodesPerElement], numNodesPerElement);
+		gridToPartition->getTopology()->getArray()->getValuesCopy(i*topologyType->getNodesPerElement(), &metisConnectivity[i*numNodesPerElement], numNodesPerElement);
 	}
 
 	int numNodes = gridToPartition->getGeometry()->getNumberPoints();
 
 	// Need to remap connectivity for nonlinear elements so that metis handles it properly.
 	std::map<idxtype, idxtype> xdmfIdToMetisId;
-	if(numNodesPerElement != topologyType.getNodesPerElement())
+	if(numNodesPerElement != topologyType->getNodesPerElement())
 	{
 		int index = 0;
 		for (unsigned int i=0; i<numElements * numNodesPerElement; ++i)
@@ -153,7 +158,7 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(boost::shared_p
 	for (unsigned int i=0; i<numElements; ++i)
 	{
 		unsigned int partitionId = elementsPartition[i];
-		for (unsigned int j=0; j<topologyType.getNodesPerElement(); ++j)
+		for (unsigned int j=0; j<topologyType->getNodesPerElement(); ++j)
 		{
 			unsigned int globalNodeId = gridToPartition->getTopology()->getArray()->getValueCopy<unsigned int>(totalIndex);
 			if (globalToLocalNodeIdMap[partitionId].count(globalNodeId) == 0)
@@ -197,7 +202,7 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(boost::shared_p
 			// Fill in geometry for this partition
 			partitioned->getGeometry()->setGeometryType(gridToPartition->getGeometry()->getGeometryType());
 			boost::shared_ptr<XdmfArray> geometryVals = partitioned->getGeometry()->getArray();
-			unsigned int numDimensions = partitioned->getGeometry()->getGeometryType().getDimensions();
+			unsigned int numDimensions = partitioned->getGeometry()->getGeometryType()->getDimensions();
 			geometryVals->reserve(currNodeMap.size() * numDimensions);
 
 			for(std::map<unsigned int, unsigned int>::const_iterator iter = currNodeMap.begin(); iter != currNodeMap.end(); ++iter)
@@ -214,15 +219,15 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(boost::shared_p
 			// Fill in topology for this partition
 			partitioned->getTopology()->setTopologyType(gridToPartition->getTopology()->getTopologyType());
 			boost::shared_ptr<XdmfArray> topologyVals = partitioned->getTopology()->getArray();
-			topologyVals->reserve(currElemIds.size() * topologyType.getNodesPerElement());
+			topologyVals->reserve(currElemIds.size() * topologyType->getNodesPerElement());
 
 			unsigned int index = 0;
 			for(std::vector<unsigned int>::const_iterator iter = currElemIds.begin(); iter != currElemIds.end(); ++iter)
 			{
 				// Translate these global node ids to local node ids
-				for(unsigned int j=0; j<topologyType.getNodesPerElement(); ++j)
+				for(unsigned int j=0; j<topologyType->getNodesPerElement(); ++j)
 				{
-					unsigned int globalNodeId = currNodeMap[gridToPartition->getTopology()->getArray()->getValueCopy<unsigned int>(*iter * topologyType.getNodesPerElement() + j)];
+					unsigned int globalNodeId = currNodeMap[gridToPartition->getTopology()->getArray()->getValueCopy<unsigned int>(*iter * topologyType->getNodesPerElement() + j)];
 					topologyVals->copyValues(index, &globalNodeId, 1);
 					index++;
 				}

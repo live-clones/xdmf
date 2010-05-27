@@ -45,7 +45,7 @@ void XdmfDataItem::setArray(boost::shared_ptr<XdmfArray> array)
 	mArray = array;
 }
 
-void XdmfDataItem::traverse(boost::shared_ptr<Loki::BaseVisitor> visitor)
+void XdmfDataItem::traverse(boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
 	mArray->accept(visitor);
 }

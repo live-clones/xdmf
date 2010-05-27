@@ -70,7 +70,7 @@ public:
 	 * @param array an XdmfArray to write to disk.
 	 * @param visitor a smart pointer to this visitor --- aids in grid traversal.
 	 */
-	void visit(XdmfArray & array, boost::shared_ptr<Loki::BaseVisitor> visitor);
+	void visit(XdmfArray & array, boost::shared_ptr<XdmfBaseVisitor> visitor);
 
 	/**
 	 * Write an XdmfItem to disk
@@ -78,7 +78,7 @@ public:
 	 * @param item an XdmfItem to write to disk.
 	 * @param visitor a smart pointer to this visitor --- aids in grid traversal.
 	 */
-	void visit(XdmfItem & item, boost::shared_ptr<Loki::BaseVisitor> visitor);
+	void visit(XdmfItem & item, boost::shared_ptr<XdmfBaseVisitor> visitor);
 
 
 protected:

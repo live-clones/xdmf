@@ -40,39 +40,40 @@ class XdmfTopologyType : public XdmfItemProperty {
 public:
 
 	friend class XdmfTopology;
+	template <typename T> friend void boost::checked_delete(T * x);
 
 	enum CellType {
 		NoCellType, Linear, Quadratic, Cubic, Arbitrary, Structured
 	};
 
 	// Supported Xdmf Topology Types
-	static XdmfTopologyType NoTopologyType();
-	static XdmfTopologyType Polyvertex();
-	static XdmfTopologyType Polyline();
-	static XdmfTopologyType Polygon(const int numNodes);
-	static XdmfTopologyType Triangle();
-	static XdmfTopologyType Quadrilateral();
-	static XdmfTopologyType Tetrahedron();
-	static XdmfTopologyType Pyramid();
-	static XdmfTopologyType Wedge();
-	static XdmfTopologyType Hexahedron();
-	static XdmfTopologyType Edge_3();
-	static XdmfTopologyType Triangle_6();
-	static XdmfTopologyType Quadrilateral_8();
-	static XdmfTopologyType Tetrahedron_10();
-	static XdmfTopologyType Pyramid_13();
-	static XdmfTopologyType Wedge_15();
-	static XdmfTopologyType Hexahedron_20();
-	static XdmfTopologyType Hexahedron_24();
-	static XdmfTopologyType Hexahedron_27();
-	static XdmfTopologyType Hexahedron_64();
-	static XdmfTopologyType Mixed();
-	static XdmfTopologyType TwoDSMesh();
-	static XdmfTopologyType TwoDRectMesh();
-	static XdmfTopologyType TwoDCoRectMesh();
-	static XdmfTopologyType ThreeDSMesh();
-	static XdmfTopologyType ThreeDRectMesh();
-	static XdmfTopologyType ThreeDCoRectMesh();
+	static boost::shared_ptr<const XdmfTopologyType> NoTopologyType();
+	static boost::shared_ptr<const XdmfTopologyType> Polyvertex();
+	static boost::shared_ptr<const XdmfTopologyType> Polyline();
+	static boost::shared_ptr<const XdmfTopologyType> Polygon(const unsigned int nodesPerElement);
+	static boost::shared_ptr<const XdmfTopologyType> Triangle();
+	static boost::shared_ptr<const XdmfTopologyType> Quadrilateral();
+	static boost::shared_ptr<const XdmfTopologyType> Tetrahedron();
+	static boost::shared_ptr<const XdmfTopologyType> Pyramid();
+	static boost::shared_ptr<const XdmfTopologyType> Wedge();
+	static boost::shared_ptr<const XdmfTopologyType> Hexahedron();
+	static boost::shared_ptr<const XdmfTopologyType> Edge_3();
+	static boost::shared_ptr<const XdmfTopologyType> Triangle_6();
+	static boost::shared_ptr<const XdmfTopologyType> Quadrilateral_8();
+	static boost::shared_ptr<const XdmfTopologyType> Tetrahedron_10();
+	static boost::shared_ptr<const XdmfTopologyType> Pyramid_13();
+	static boost::shared_ptr<const XdmfTopologyType> Wedge_15();
+	static boost::shared_ptr<const XdmfTopologyType> Hexahedron_20();
+	static boost::shared_ptr<const XdmfTopologyType> Hexahedron_24();
+	static boost::shared_ptr<const XdmfTopologyType> Hexahedron_27();
+	static boost::shared_ptr<const XdmfTopologyType> Hexahedron_64();
+	static boost::shared_ptr<const XdmfTopologyType> Mixed();
+	static boost::shared_ptr<const XdmfTopologyType> TwoDSMesh();
+	static boost::shared_ptr<const XdmfTopologyType> TwoDRectMesh();
+	static boost::shared_ptr<const XdmfTopologyType> TwoDCoRectMesh();
+	static boost::shared_ptr<const XdmfTopologyType> ThreeDSMesh();
+	static boost::shared_ptr<const XdmfTopologyType> ThreeDRectMesh();
+	static boost::shared_ptr<const XdmfTopologyType> ThreeDCoRectMesh();
 
 	/**
 	 * Get the cell type associated with this topology type
@@ -106,9 +107,6 @@ public:
 	 */
 	bool operator!=(const XdmfTopologyType & topologyType) const;
 
-	XdmfTopologyType(const XdmfTopologyType & topologyType);
-	XdmfTopologyType & operator=(const XdmfTopologyType & topologyType);
-
 protected:
 
 	/**
@@ -120,7 +118,10 @@ protected:
 
 private:
 
-	static XdmfTopologyType New(const std::map<std::string, std::string> & itemProperties);
+	XdmfTopologyType(const XdmfTopologyType & topologyType); // Not implemented.
+	void operator=(const XdmfTopologyType & topologyType); // Not implemented.
+
+	static boost::shared_ptr<const XdmfTopologyType> New(const std::map<std::string, std::string> & itemProperties);
 
 	CellType mCellType;
 	std::string mName;

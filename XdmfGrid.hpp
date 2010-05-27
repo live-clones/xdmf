@@ -176,7 +176,7 @@ public:
 	 */
 	void setName(const std::string & name);
 
-	virtual void traverse(boost::shared_ptr<Loki::BaseVisitor> visitor);
+	virtual void traverse(boost::shared_ptr<XdmfBaseVisitor> visitor);
 
 protected:
 

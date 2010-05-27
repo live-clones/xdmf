@@ -6,6 +6,7 @@
  */
 
 #include "XdmfSet.hpp"
+#include "XdmfSetType.hpp"
 
 XdmfSet::XdmfSet() :
 	mSetType(XdmfSetType::NoSetType()),
@@ -26,7 +27,7 @@ std::string XdmfSet::getName() const
 	return mName;
 }
 
-XdmfSetType XdmfSet::getSetType() const
+boost::shared_ptr<const XdmfSetType> XdmfSet::getSetType() const
 {
 	return mSetType;
 }
@@ -35,7 +36,7 @@ std::map<std::string, std::string> XdmfSet::getItemProperties() const
 {
 	std::map<std::string, std::string> setProperties;
 	setProperties["Name"] = mName;
-	mSetType.getProperties(setProperties);
+	mSetType->getProperties(setProperties);
 	return setProperties;
 }
 
@@ -64,7 +65,7 @@ void XdmfSet::setName(const std::string & name)
 	mName= name;
 }
 
-void XdmfSet::setSetType(const XdmfSetType & setType)
+void XdmfSet::setSetType(const boost::shared_ptr<const XdmfSetType> setType)
 {
 	mSetType = setType;
 }

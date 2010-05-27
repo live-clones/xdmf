@@ -8,34 +8,34 @@
 #include "XdmfSetType.hpp"
 
 // Supported XdmfSetTypes
-XdmfSetType XdmfSetType::NoSetType()
+boost::shared_ptr<const XdmfSetType> XdmfSetType::NoSetType()
 {
-	return XdmfSetType("None");
+	static boost::shared_ptr<const XdmfSetType> p(new XdmfSetType("None"));
+	return p;
 }
 
-XdmfSetType XdmfSetType::Node()
+boost::shared_ptr<const XdmfSetType> XdmfSetType::Node()
 {
-	return XdmfSetType("Node");
+	static boost::shared_ptr<const XdmfSetType> p(new XdmfSetType("Node"));
+	return p;
 }
 
-XdmfSetType XdmfSetType::Cell()
+boost::shared_ptr<const XdmfSetType> XdmfSetType::Cell()
 {
-	return XdmfSetType("Cell");
+	static boost::shared_ptr<const XdmfSetType> p(new XdmfSetType("Cell"));
+	return p;
 }
 
-XdmfSetType XdmfSetType::Face()
+boost::shared_ptr<const XdmfSetType> XdmfSetType::Face()
 {
-	return XdmfSetType("Face");
+	static boost::shared_ptr<const XdmfSetType> p(new XdmfSetType("Face"));
+	return p;
 }
 
-XdmfSetType XdmfSetType::Edge()
+boost::shared_ptr<const XdmfSetType> XdmfSetType::Edge()
 {
-	return XdmfSetType("Edge");
-}
-
-XdmfSetType::XdmfSetType(const XdmfSetType & setType):
-	mName(setType.mName)
-{
+	static boost::shared_ptr<const XdmfSetType> p(new XdmfSetType("Edge"));
+	return p;
 }
 
 XdmfSetType::XdmfSetType(const std::string & name) :
@@ -43,7 +43,7 @@ XdmfSetType::XdmfSetType(const std::string & name) :
 {
 }
 
-XdmfSetType XdmfSetType::New(const std::map<std::string, std::string> & itemProperties)
+boost::shared_ptr<const XdmfSetType> XdmfSetType::New(const std::map<std::string, std::string> & itemProperties)
 {
 	std::map<std::string, std::string>::const_iterator type = itemProperties.find("SetType");
 	if(type != itemProperties.end())
@@ -75,15 +75,6 @@ XdmfSetType XdmfSetType::New(const std::map<std::string, std::string> & itemProp
 		}
 	}
 	assert(false);
-}
-
-XdmfSetType & XdmfSetType::operator=(const XdmfSetType & setType)
-{
-	if(this != &setType)
-	{
-		mName = setType.mName;
-	}
-	return *this;
 }
 
 bool XdmfSetType::operator==(const XdmfSetType & setType) const

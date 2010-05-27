@@ -8,29 +8,34 @@
 #include "XdmfAttributeCenter.hpp"
 
 // Supported XdmfAttributeCenters
-XdmfAttributeCenter XdmfAttributeCenter::Grid()
+boost::shared_ptr<const XdmfAttributeCenter> XdmfAttributeCenter::Grid()
 {
-	return XdmfAttributeCenter("Grid");
+	static boost::shared_ptr<const XdmfAttributeCenter> p(new XdmfAttributeCenter("Grid"));
+	return p;
 }
 
-XdmfAttributeCenter XdmfAttributeCenter::Cell()
+boost::shared_ptr<const XdmfAttributeCenter> XdmfAttributeCenter::Cell()
 {
-	return XdmfAttributeCenter("Cell");
+	static boost::shared_ptr<const XdmfAttributeCenter> p(new XdmfAttributeCenter("Cell"));
+	return p;
 }
 
-XdmfAttributeCenter XdmfAttributeCenter::Face()
+boost::shared_ptr<const XdmfAttributeCenter> XdmfAttributeCenter::Face()
 {
-	return XdmfAttributeCenter("Face");
+	static boost::shared_ptr<const XdmfAttributeCenter> p(new XdmfAttributeCenter("Face"));
+	return p;
 }
 
-XdmfAttributeCenter XdmfAttributeCenter::Edge()
+boost::shared_ptr<const XdmfAttributeCenter> XdmfAttributeCenter::Edge()
 {
-	return XdmfAttributeCenter("Edge");
+	static boost::shared_ptr<const XdmfAttributeCenter> p(new XdmfAttributeCenter("Edge"));
+	return p;
 }
 
-XdmfAttributeCenter XdmfAttributeCenter::Node()
+boost::shared_ptr<const XdmfAttributeCenter> XdmfAttributeCenter::Node()
 {
-	return XdmfAttributeCenter("Node");
+	static boost::shared_ptr<const XdmfAttributeCenter> p(new XdmfAttributeCenter("Node"));
+	return p;
 }
 
 XdmfAttributeCenter::XdmfAttributeCenter(const std::string & name) :
@@ -38,12 +43,11 @@ XdmfAttributeCenter::XdmfAttributeCenter(const std::string & name) :
 {
 }
 
-XdmfAttributeCenter::XdmfAttributeCenter(const XdmfAttributeCenter & attributeCenter):
-  mName(attributeCenter.mName)
+XdmfAttributeCenter::~XdmfAttributeCenter()
 {
 }
 
-XdmfAttributeCenter XdmfAttributeCenter::New(const std::map<std::string, std::string> & itemProperties)
+boost::shared_ptr<const XdmfAttributeCenter> XdmfAttributeCenter::New(const std::map<std::string, std::string> & itemProperties)
 {
 	std::map<std::string, std::string>::const_iterator center = itemProperties.find("Center");
 	if(center != itemProperties.end())
@@ -75,15 +79,6 @@ XdmfAttributeCenter XdmfAttributeCenter::New(const std::map<std::string, std::st
 		}
 	}
 	assert(false);
-}
-
-XdmfAttributeCenter & XdmfAttributeCenter::operator=(const XdmfAttributeCenter & attributeCenter)
-{
-  if(this != &attributeCenter)
-  {
-    mName = attributeCenter.mName;
-  }
-  return *this;
 }
 
 bool XdmfAttributeCenter::operator==(const XdmfAttributeCenter & attributeCenter) const

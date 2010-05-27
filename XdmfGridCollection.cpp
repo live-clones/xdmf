@@ -6,6 +6,7 @@
  */
 
 #include "XdmfGridCollection.hpp"
+#include "XdmfGridCollectionType.hpp"
 
 XdmfGridCollection::XdmfGridCollection() :
 	mCollectionType(XdmfGridCollectionType::NoCollectionType())
@@ -39,7 +40,7 @@ boost::shared_ptr<const XdmfGrid> XdmfGridCollection::getGrid(unsigned int index
 	return mGrids[index];
 }
 
-XdmfGridCollectionType XdmfGridCollection::getGridCollectionType() const
+boost::shared_ptr<const XdmfGridCollectionType> XdmfGridCollection::getGridCollectionType() const
 {
 	return mCollectionType;
 }
@@ -49,7 +50,7 @@ std::map<std::string, std::string> XdmfGridCollection::getItemProperties() const
 	std::map<std::string, std::string> collectionProperties;
 	collectionProperties["Name"] = mName;
 	collectionProperties["GridType"] = "Collection";
-	mCollectionType.getProperties(collectionProperties);
+	mCollectionType->getProperties(collectionProperties);
 	return collectionProperties;
 }
 
@@ -89,12 +90,12 @@ void XdmfGridCollection::removeGrid(const unsigned int index)
 	mGrids.erase(mGrids.begin() + index);
 }
 
-void XdmfGridCollection::setGridCollectionType(const XdmfGridCollectionType & collectionType)
+void XdmfGridCollection::setGridCollectionType(const boost::shared_ptr<const XdmfGridCollectionType> collectionType)
 {
 	mCollectionType = collectionType;
 }
 
-void XdmfGridCollection::traverse(boost::shared_ptr<Loki::BaseVisitor> visitor)
+void XdmfGridCollection::traverse(boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
 	for(std::vector<boost::shared_ptr<XdmfGrid> >::const_iterator iter = mGrids.begin(); iter != mGrids.end(); ++iter)
 	{

@@ -1,4 +1,5 @@
 #include "XdmfGeometry.hpp"
+#include "XdmfGeometryType.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -10,10 +11,10 @@ int main(int argc, char* argv[])
 
 	boost::shared_ptr<XdmfGeometry> geom = XdmfGeometry::New();
 	assert(geom->getGeometryType() == XdmfGeometryType::NoGeometryType());
-	assert(geom->getGeometryType().getDimensions() == 0);
+	assert(geom->getGeometryType()->getDimensions() == 0);
 	geom->setGeometryType(XdmfGeometryType::XYZ());
 	assert(geom->getGeometryType() == XdmfGeometryType::XYZ());
-	assert(geom->getGeometryType().getDimensions() == 3);
+	assert(geom->getGeometryType()->getDimensions() == 3);
 
 	return 0;
 }

@@ -86,7 +86,7 @@ void XdmfWriter::setLightDataLimit(unsigned int numValues)
 	mImpl->mLightDataLimit = numValues;
 }
 
-void XdmfWriter::visit(XdmfArray & array, boost::shared_ptr<Loki::BaseVisitor> visitor)
+void XdmfWriter::visit(XdmfArray & array, boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
 	std::stringstream xmlTextValues;
 	if(array.getHDF5Controller() || array.getSize() > mImpl->mLightDataLimit)
@@ -103,7 +103,7 @@ void XdmfWriter::visit(XdmfArray & array, boost::shared_ptr<Loki::BaseVisitor> v
 	xmlAddChild(mImpl->mXMLCurrentNode->children, xmlNewText((xmlChar*)xmlTextValues.str().c_str()));
 }
 
-void XdmfWriter::visit(XdmfItem & item, boost::shared_ptr<Loki::BaseVisitor> visitor)
+void XdmfWriter::visit(XdmfItem & item, boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
 	if(mImpl->mTraverseLevel == 0)
 	{

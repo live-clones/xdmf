@@ -40,7 +40,7 @@ public:
 	 */
 	void setArray(boost::shared_ptr<XdmfArray> array);
 
-	virtual void traverse(boost::shared_ptr<Loki::BaseVisitor> visitor);
+	virtual void traverse(boost::shared_ptr<XdmfBaseVisitor> visitor);
 
 protected:
 

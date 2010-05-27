@@ -22,13 +22,14 @@ class XdmfSetType : public XdmfItemProperty {
 public:
 
 	friend class XdmfSet;
+	template <typename T> friend void boost::checked_delete(T * x);
 
 	// Supported Xdmf Set Types
-	static XdmfSetType NoSetType();
-	static XdmfSetType Node();
-	static XdmfSetType Cell();
-	static XdmfSetType Face();
-	static XdmfSetType Edge();
+	static boost::shared_ptr<const XdmfSetType> NoSetType();
+	static boost::shared_ptr<const XdmfSetType> Node();
+	static boost::shared_ptr<const XdmfSetType> Cell();
+	static boost::shared_ptr<const XdmfSetType> Face();
+	static boost::shared_ptr<const XdmfSetType> Edge();
 
 	void getProperties(std::map<std::string, std::string> & collectedProperties) const;
 
@@ -48,9 +49,6 @@ public:
 	 */
 	bool operator!=(const XdmfSetType & setType) const;
 
-	XdmfSetType(const XdmfSetType & setType);
-	XdmfSetType & operator=(const XdmfSetType & setType);
-
 protected:
 
 	/**
@@ -64,7 +62,10 @@ protected:
 
 private:
 
-	static XdmfSetType New(const std::map<std::string, std::string> & itemProperties);
+	XdmfSetType(const XdmfSetType & setType); // Not implemented.
+	void operator=(const XdmfSetType & setType); // Not implemented.
+
+	static boost::shared_ptr<const XdmfSetType> New(const std::map<std::string, std::string> & itemProperties);
 
 	std::string mName;
 };

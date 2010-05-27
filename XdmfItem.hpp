@@ -49,7 +49,7 @@ public:
 	 *
 	 * @param a visitor to pass to this XdmfItem's children.
 	 */
-	virtual void traverse(boost::shared_ptr<Loki::BaseVisitor> visitor);
+	virtual void traverse(boost::shared_ptr<XdmfBaseVisitor> visitor);
 
 protected:
 

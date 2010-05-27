@@ -8,52 +8,60 @@
 #include "XdmfAttributeType.hpp"
 
 // Supported XdmfAttributeTypes
-XdmfAttributeType XdmfAttributeType::NoAttributeType()
+boost::shared_ptr<const XdmfAttributeType> XdmfAttributeType::NoAttributeType()
 {
-	return XdmfAttributeType("None");
+	static boost::shared_ptr<const XdmfAttributeType> p(new XdmfAttributeType("None"));
+	return p;
 }
 
-XdmfAttributeType XdmfAttributeType::Scalar()
+boost::shared_ptr<const XdmfAttributeType> XdmfAttributeType::Scalar()
 {
-	return XdmfAttributeType("Scalar");
+	static boost::shared_ptr<const XdmfAttributeType> p(new XdmfAttributeType("Scalar"));
+	return p;
 }
 
-XdmfAttributeType XdmfAttributeType::Vector()
+boost::shared_ptr<const XdmfAttributeType> XdmfAttributeType::Vector()
 {
-	return XdmfAttributeType("Vector");
+	static boost::shared_ptr<const XdmfAttributeType> p(new XdmfAttributeType("Vector"));
+	return p;
 }
 
-XdmfAttributeType XdmfAttributeType::Tensor()
+boost::shared_ptr<const XdmfAttributeType> XdmfAttributeType::Tensor()
 {
-	return XdmfAttributeType("Tensor");
+	static boost::shared_ptr<const XdmfAttributeType> p(new XdmfAttributeType("Tensor"));
+	return p;
 }
 
-XdmfAttributeType XdmfAttributeType::Matrix()
+boost::shared_ptr<const XdmfAttributeType> XdmfAttributeType::Matrix()
 {
-	return XdmfAttributeType("Matrix");
+	static boost::shared_ptr<const XdmfAttributeType> p(new XdmfAttributeType("Matrix"));
+	return p;
 }
 
-XdmfAttributeType XdmfAttributeType::Tensor6()
+boost::shared_ptr<const XdmfAttributeType> XdmfAttributeType::Tensor6()
 {
-	return XdmfAttributeType("Tensor6");
+	static boost::shared_ptr<const XdmfAttributeType> p(new XdmfAttributeType("Tensor6"));
+	return p;
 }
 
-XdmfAttributeType XdmfAttributeType::GlobalId()
+boost::shared_ptr<const XdmfAttributeType> XdmfAttributeType::GlobalId()
 {
-	return XdmfAttributeType("GlobalId");
+	static boost::shared_ptr<const XdmfAttributeType> p(new XdmfAttributeType("GlobalId"));
+	return p;
 }
 
 XdmfAttributeType::XdmfAttributeType(const std::string & name) :
 	mName(name)
 {
+	std::cout << "CRRRRREATED" << std::endl;
 }
 
-XdmfAttributeType::XdmfAttributeType(const XdmfAttributeType & attributeType):
-	mName(attributeType.mName)
+XdmfAttributeType::~XdmfAttributeType()
 {
+	std::cout << "DEEEELETED" << std::endl;
 }
 
-XdmfAttributeType XdmfAttributeType::New(const std::map<std::string, std::string> & itemProperties)
+boost::shared_ptr<const XdmfAttributeType> XdmfAttributeType::New(const std::map<std::string, std::string> & itemProperties)
 {
 	std::map<std::string, std::string>::const_iterator type = itemProperties.find("AttributeType");
 	if(type != itemProperties.end())
@@ -93,15 +101,6 @@ XdmfAttributeType XdmfAttributeType::New(const std::map<std::string, std::string
 		}
 	}
 	assert(false);
-}
-
-XdmfAttributeType & XdmfAttributeType::operator=(const XdmfAttributeType & attributeType)
-{
-	if(this != &attributeType)
-	{
-		mName = attributeType.mName;
-	}
-	return *this;
 }
 
 bool XdmfAttributeType::operator==(const XdmfAttributeType & attributeType) const

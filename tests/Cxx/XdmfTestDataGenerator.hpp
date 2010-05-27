@@ -1,10 +1,15 @@
 #include "XdmfAttribute.hpp"
+#include "XdmfAttributeCenter.hpp"
+#include "XdmfAttributeType.hpp"
 #include "XdmfArray.hpp"
 #include "XdmfDomain.hpp"
 #include "XdmfGeometry.hpp"
+#include "XdmfGeometryType.hpp"
 #include "XdmfGrid.hpp"
 #include "XdmfSet.hpp"
+#include "XdmfSetType.hpp"
 #include "XdmfTopology.hpp"
+#include "XdmfTopologyType.hpp"
 
 class XdmfTestDataGenerator {
 public:

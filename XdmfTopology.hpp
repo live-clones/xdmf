@@ -1,9 +1,11 @@
 #ifndef XDMFTOPOLOGY_HPP_
 #define XDMFTOPOLOGY_HPP_
 
+// Forward Declarations
+class XdmfTopologyType;
+
 // Includes
 #include "XdmfDataItem.hpp"
-#include "XdmfTopologyType.hpp"
 
 /**
  * @brief Handles the connectivity information in an XdmfGrid.
@@ -36,14 +38,14 @@ public:
 	 *
 	 * @return XdmfTopologyType of the topology.
 	 */
-	XdmfTopologyType getTopologyType() const;
+	boost::shared_ptr<const XdmfTopologyType> getTopologyType() const;
 
 	/**
 	 * Set the XdmfTopologyType associated with this topology.
 	 *
 	 * @param topologyType the XdmfTopologyType to set.
 	 */
-	void setTopologyType(const XdmfTopologyType & topologyType);
+	void setTopologyType(const boost::shared_ptr<const XdmfTopologyType> topologyType);
 
 protected:
 
@@ -57,7 +59,7 @@ private:
 	void operator=(const XdmfTopology & topology);  // Not implemented.
 
 	int mNumberElements;
-	XdmfTopologyType mTopologyType;
+	boost::shared_ptr<const XdmfTopologyType> mTopologyType;
 };
 
 #endif /* XDMFTOPOLOGY_HPP_ */

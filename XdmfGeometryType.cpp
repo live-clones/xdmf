@@ -8,55 +8,58 @@
 #include "XdmfGeometryType.hpp"
 
 // Supported XdmfGeometryTypes
-XdmfGeometryType XdmfGeometryType::NoGeometryType()
+boost::shared_ptr<const XdmfGeometryType> XdmfGeometryType::NoGeometryType()
 {
-	return XdmfGeometryType("NONE", 0);
+	static boost::shared_ptr<const XdmfGeometryType> p(new XdmfGeometryType("None", 0));
+	return p;
 }
 
-XdmfGeometryType XdmfGeometryType::XYZ()
+boost::shared_ptr<const XdmfGeometryType> XdmfGeometryType::XYZ()
 {
-	return XdmfGeometryType("XYZ", 3);
+	static boost::shared_ptr<const XdmfGeometryType> p(new XdmfGeometryType("XYZ", 3));
+	return p;
 }
 
-XdmfGeometryType XdmfGeometryType::XY()
+boost::shared_ptr<const XdmfGeometryType> XdmfGeometryType::XY()
 {
-	return XdmfGeometryType("XY", 2);
+	static boost::shared_ptr<const XdmfGeometryType> p(new XdmfGeometryType("XY", 2));
+	return p;
 }
 
-XdmfGeometryType XdmfGeometryType::X_Y_Z()
+boost::shared_ptr<const XdmfGeometryType> XdmfGeometryType::X_Y_Z()
 {
-	return XdmfGeometryType("X_Y_Z", 3);
+	static boost::shared_ptr<const XdmfGeometryType> p(new XdmfGeometryType("X_Y_Z", 3));
+	return p;
 }
 
-XdmfGeometryType XdmfGeometryType::X_Y()
+boost::shared_ptr<const XdmfGeometryType> XdmfGeometryType::X_Y()
 {
-	return XdmfGeometryType("X_Y", 2);
+	static boost::shared_ptr<const XdmfGeometryType> p(new XdmfGeometryType("X_Y", 2));
+	return p;
 }
 
-XdmfGeometryType XdmfGeometryType::VXVYVZ()
+boost::shared_ptr<const XdmfGeometryType> XdmfGeometryType::VXVYVZ()
 {
-	return XdmfGeometryType("VXVYVZ", 3);
+	static boost::shared_ptr<const XdmfGeometryType> p(new XdmfGeometryType("VXVYVZ", 3));
+	return p;
 }
 
-XdmfGeometryType XdmfGeometryType::Origin_DXDYDZ()
+boost::shared_ptr<const XdmfGeometryType> XdmfGeometryType::Origin_DXDYDZ()
 {
-	return XdmfGeometryType("ORIGIN_DXDYDZ", 3);
+	static boost::shared_ptr<const XdmfGeometryType> p(new XdmfGeometryType("ORIGIN_DXDYDZ", 3));
+	return p;
 }
 
-XdmfGeometryType XdmfGeometryType::VXVY()
+boost::shared_ptr<const XdmfGeometryType> XdmfGeometryType::VXVY()
 {
-	return XdmfGeometryType("VXVY", 2);
+	static boost::shared_ptr<const XdmfGeometryType> p(new XdmfGeometryType("VXVY", 2));
+	return p;
 }
 
-XdmfGeometryType XdmfGeometryType::Origin_DXDY()
+boost::shared_ptr<const XdmfGeometryType> XdmfGeometryType::Origin_DXDY()
 {
-	return XdmfGeometryType("ORIGIN_DXDY", 2);
-}
-
-XdmfGeometryType::XdmfGeometryType(const XdmfGeometryType& geometryType):
-	mDimensions(geometryType.mDimensions),
-	mName(geometryType.mName)
-{
+	static boost::shared_ptr<const XdmfGeometryType> p(new XdmfGeometryType("ORIGIN_DXDY", 2));
+	return p;
 }
 
 XdmfGeometryType::XdmfGeometryType(const std::string& name, const int& dimensions) :
@@ -65,13 +68,13 @@ XdmfGeometryType::XdmfGeometryType(const std::string& name, const int& dimension
 {
 }
 
-XdmfGeometryType XdmfGeometryType::New(const std::map<std::string, std::string> & itemProperties)
+boost::shared_ptr<const XdmfGeometryType> XdmfGeometryType::New(const std::map<std::string, std::string> & itemProperties)
 {
 	std::map<std::string, std::string>::const_iterator type = itemProperties.find("GeometryType");
 	if(type != itemProperties.end())
 	{
 		const std::string typeVal = type->second;
-		if(typeVal.compare("NONE") == 0)
+		if(typeVal.compare("None") == 0)
 		{
 			return NoGeometryType();
 		}
@@ -113,16 +116,6 @@ XdmfGeometryType XdmfGeometryType::New(const std::map<std::string, std::string> 
 		}
 	}
 	assert(false);
-}
-
-XdmfGeometryType & XdmfGeometryType::operator=(const XdmfGeometryType& geometryType)
-{
-	if(this != &geometryType)
-	{
-		mDimensions = geometryType.mDimensions;
-		mName = geometryType.mName;
-	}
-	return *this;
 }
 
 bool XdmfGeometryType::operator==(const XdmfGeometryType& geometryType) const

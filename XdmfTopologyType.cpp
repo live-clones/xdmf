@@ -5,142 +5,177 @@
  *      Author: kleiter
  */
 
+#include <map>
 #include "XdmfTopologyType.hpp"
 
 // Supported XdmfTopologyTypes
-XdmfTopologyType XdmfTopologyType::NoTopologyType()
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::NoTopologyType()
 {
-	return XdmfTopologyType(0, "NoTopology", NoCellType);
+	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(0, "NoTopology", NoCellType));
+	return p;
 }
 
-XdmfTopologyType XdmfTopologyType::Polyvertex()
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Polyvertex()
 {
-	return XdmfTopologyType(1, "Polyvertex", Linear);
+	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(1, "Polyvertex", Linear));
+	return p;
 }
 
-XdmfTopologyType XdmfTopologyType::Polyline()
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Polyline()
 {
-	return XdmfTopologyType(1, "Polyline", Linear);
+	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(1, "Polyline", Linear));
+	return p;
 }
 
-XdmfTopologyType XdmfTopologyType::Polygon(const int nodesPerElement)
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Polygon(const unsigned int nodesPerElement)
 {
-	return XdmfTopologyType(nodesPerElement, "Polygon", Linear);
+	static std::map<unsigned int, boost::shared_ptr<const XdmfTopologyType> > previousTypes;
+	std::map<unsigned int, boost::shared_ptr<const XdmfTopologyType> >::const_iterator type = previousTypes.find(nodesPerElement);
+	if(type != previousTypes.end())
+	{
+		return type->second;
+	}
+	boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(nodesPerElement, "Polygon", Linear));
+	previousTypes[nodesPerElement] = p;
+	return p;
 }
 
-XdmfTopologyType XdmfTopologyType::Triangle()
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Triangle()
 {
-	return XdmfTopologyType(3, "Triangle", Linear);
+	boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(3, "Triangle", Linear));
+	return p;
 }
 
-XdmfTopologyType XdmfTopologyType::Quadrilateral()
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Quadrilateral()
 {
-	return XdmfTopologyType(4, "Quadrilateral", Linear);
+	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(4, "Quadrilateral", Linear));
+	return p;
 }
 
-XdmfTopologyType XdmfTopologyType::Tetrahedron()
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Tetrahedron()
 {
-	return XdmfTopologyType(4, "Tetrahedron", Linear);
+	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(4, "Tetrahedron", Linear));
+	return p;
 }
 
-XdmfTopologyType XdmfTopologyType::Pyramid()
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Pyramid()
 {
-	return XdmfTopologyType(5, "Pyramid", Linear);
+	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(5, "Pyramid", Linear));
+	return p;
 }
 
-XdmfTopologyType XdmfTopologyType::Wedge()
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Wedge()
 {
-	return XdmfTopologyType(6, "Wedge", Linear);
+	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(6, "Wedge", Linear));
+	return p;
 }
 
-XdmfTopologyType XdmfTopologyType::Hexahedron()
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Hexahedron()
 {
-	return XdmfTopologyType(8, "Hexahedron", Linear);
+	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(8, "Hexahedron", Linear));
+	return p;
 }
 
-XdmfTopologyType XdmfTopologyType::Edge_3()
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Edge_3()
 {
-	return XdmfTopologyType(3, "Edge_3", Quadratic);
+	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(3, "Edge_3", Quadratic));
+	return p;
 }
 
-XdmfTopologyType XdmfTopologyType::Triangle_6()
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Triangle_6()
 {
-	return XdmfTopologyType(6, "Triangle_6", Quadratic);
+	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(6, "Triangle_6", Quadratic));
+	return p;
 }
 
-XdmfTopologyType XdmfTopologyType::Quadrilateral_8()
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Quadrilateral_8()
 {
-	return XdmfTopologyType(8, "Quadrilateral_8", Quadratic);
+	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(8, "Quadrilateral_8", Quadratic));
+	return p;
 }
 
-XdmfTopologyType XdmfTopologyType::Tetrahedron_10()
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Tetrahedron_10()
 {
-	return XdmfTopologyType(10, "Tetrahedron_10", Quadratic);
+	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(10, "Tetrahedron_10", Quadratic));
+	return p;
 }
 
-XdmfTopologyType XdmfTopologyType::Pyramid_13()
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Pyramid_13()
 {
-	return XdmfTopologyType(13, "Pyramid_13", Quadratic);
+	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(13, "Pyramid_13", Quadratic));
+	return p;
 }
 
-XdmfTopologyType XdmfTopologyType::Wedge_15()
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Wedge_15()
 {
-	return XdmfTopologyType(15, "Wedge_15", Quadratic);
+	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(15, "Wedge_15", Quadratic));
+	return p;
 }
 
-XdmfTopologyType XdmfTopologyType::Hexahedron_20()
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Hexahedron_20()
 {
-	return XdmfTopologyType(20, "Hexahedron_20", Quadratic);
+	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(20, "Hexahedron_20", Quadratic));
+	return p;
 }
 
-XdmfTopologyType XdmfTopologyType::Hexahedron_24()
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Hexahedron_24()
 {
-	return XdmfTopologyType(20, "Hexahedron_24", Quadratic);
+	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(24, "Hexahedron_24", Quadratic));
+	return p;
 }
 
-XdmfTopologyType XdmfTopologyType::Hexahedron_27()
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Hexahedron_27()
 {
-	return XdmfTopologyType(20, "Hexahedron_27", Quadratic);
+	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(27, "Hexahedron_27", Quadratic));
+	return p;
 }
 
-XdmfTopologyType XdmfTopologyType::Hexahedron_64()
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Hexahedron_64()
 {
-	return XdmfTopologyType(20, "Hexahedron_64", Cubic);
+	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(64, "Hexahedron_64", Cubic));
+	return p;
 }
 
-XdmfTopologyType XdmfTopologyType::Mixed()
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Mixed()
 {
-	return XdmfTopologyType(0, "Mixed", Arbitrary);
+	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(0, "Mixed", Arbitrary));
+	return p;
 }
 
-XdmfTopologyType XdmfTopologyType::TwoDSMesh()
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::TwoDSMesh()
 {
-	return XdmfTopologyType(1, "2DSMesh", Structured);
+	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(1, "2DSMesh", Structured));
+	return p;
 }
 
-XdmfTopologyType XdmfTopologyType::TwoDRectMesh()
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::TwoDRectMesh()
 {
-	return XdmfTopologyType(1, "2DRectMesh", Structured);
+	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(1, "2DRectMesh", Structured));
+	return p;
 }
 
-XdmfTopologyType XdmfTopologyType::TwoDCoRectMesh()
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::TwoDCoRectMesh()
 {
-	return XdmfTopologyType(1, "2DCoRectMesh", Structured);
+	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(1, "2DCoRectMesh", Structured));
+	return p;
 }
 
-XdmfTopologyType XdmfTopologyType::ThreeDSMesh()
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::ThreeDSMesh()
 {
-	return XdmfTopologyType(1, "3DSMesh", Structured);
+	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(1, "3DSMesh", Structured));
+	return p;
 }
 
-XdmfTopologyType XdmfTopologyType::ThreeDRectMesh()
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::ThreeDRectMesh()
 {
-	return XdmfTopologyType(1, "3DRectMesh", Structured);
+	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(1, "3DRectMesh", Structured));
+	return p;
 }
 
-XdmfTopologyType XdmfTopologyType::ThreeDCoRectMesh()
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::ThreeDCoRectMesh()
 {
-	return XdmfTopologyType(1, "3DCoRectMesh", Structured);
+	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(1, "3DCoRectMesh", Structured));
+	return p;
 }
 
 XdmfTopologyType::XdmfTopologyType(const int& nodesPerElement, const std::string& name, const CellType& cellType) :
@@ -150,14 +185,7 @@ XdmfTopologyType::XdmfTopologyType(const int& nodesPerElement, const std::string
 {
 }
 
-XdmfTopologyType::XdmfTopologyType(const XdmfTopologyType& topologyType):
-	mNodesPerElement(topologyType.mNodesPerElement),
-	mName(topologyType.mName),
-	mCellType(topologyType.mCellType)
-{
-}
-
-XdmfTopologyType XdmfTopologyType::New(const std::map<std::string, std::string> & itemProperties)
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::New(const std::map<std::string, std::string> & itemProperties)
 {
 	std::map<std::string, std::string>::const_iterator type = itemProperties.find("TopologyType");
 	std::map<std::string, std::string>::const_iterator nodesPerElement = itemProperties.find("NodesPerElement");
@@ -282,17 +310,6 @@ XdmfTopologyType XdmfTopologyType::New(const std::map<std::string, std::string> 
 		}
 	}
 	assert(false);
-}
-
-XdmfTopologyType & XdmfTopologyType::operator=(const XdmfTopologyType& topologyType)
-{
-	if(this != &topologyType)
-	{
-		mNodesPerElement = topologyType.mNodesPerElement;
-		mName = topologyType.mName;
-		mCellType = topologyType.mCellType;
-	}
-	return *this;
 }
 
 bool XdmfTopologyType::operator==(const XdmfTopologyType& topologyType) const

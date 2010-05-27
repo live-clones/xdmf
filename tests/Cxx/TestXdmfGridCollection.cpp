@@ -1,6 +1,7 @@
 #include <fstream>
 #include <sstream>
 #include "XdmfGridCollection.hpp"
+#include "XdmfGridCollectionType.hpp"
 #include "XdmfReader.hpp"
 #include "XdmfWriter.hpp"
 

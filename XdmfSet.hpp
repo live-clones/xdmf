@@ -1,9 +1,11 @@
 #ifndef XDMFSET_HPP_
 #define XDMFSET_HPP_
 
+// Forward Declarations
+class XdmfSetType;
+
 // Includes
 #include "XdmfDataItem.hpp"
-#include "XdmfSetType.hpp"
 
 /**
  * @brief Holds a collection of individual nodes, cells, faces, or edges that are part of an XdmfGrid.
@@ -26,7 +28,7 @@ public:
 	 *
 	 * @return XdmfSetType of this set.
 	 */
-	XdmfSetType getSetType() const;
+	boost::shared_ptr<const XdmfSetType> getSetType() const;
 
 	std::map<std::string, std::string> getItemProperties() const;
 
@@ -51,7 +53,7 @@ public:
 	 *
 	 * @param setType the XdmfSetType to set.
 	 */
-	void setSetType(const XdmfSetType & setType);
+	void setSetType(const boost::shared_ptr<const XdmfSetType> setType);
 
 protected:
 
@@ -65,7 +67,7 @@ private:
 	void operator=(const XdmfSet & set);  // Not implemented.
 
 	std::string mName;
-	XdmfSetType mSetType;
+	boost::shared_ptr<const XdmfSetType> mSetType;
 };
 
 #endif /* XDMFSET_HPP_ */

@@ -39,7 +39,7 @@ namespace Loki
     public:
         virtual ~BaseVisitor() {}
     };
-    
+
 ////////////////////////////////////////////////////////////////////////////////
 /// \class Visitor
 ///
@@ -361,6 +361,8 @@ struct DefaultCatchAll
     { return guest.GenericVisit(*this); }
 
 } // namespace Loki
+
+typedef Loki::BaseVisitor XdmfBaseVisitor;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Change log:

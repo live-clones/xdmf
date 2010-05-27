@@ -111,7 +111,7 @@ std::string XdmfHDF5Writer::getLastWrittenDataSet() const
 	return mImpl->mLastWrittenDataSet;
 }
 
-void XdmfHDF5Writer::visit(XdmfArray & array, boost::shared_ptr<Loki::BaseVisitor> visitor)
+void XdmfHDF5Writer::visit(XdmfArray & array, boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
 	hid_t datatype = -1;
 	mImpl->mLastWrittenDataSet = "";

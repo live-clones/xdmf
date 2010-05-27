@@ -37,7 +37,7 @@ public:
 	 *
 	 * The partitioner splits the XdmfGrid and all attached XdmfAttributes and XdmfSets into their proper partition.
 	 * An XdmfAttribute named "GlobalNodeId" is added to each partitioned grid to map partitioned node ids to their
-	 * original unpartitioned id.  This could allow grids to be combined and repartitioned.
+	 * original unpartitioned id.  This could allow grids to be recombined.
 	 *
 	 * @param gridToPartition an XdmfGrid to partition.
 	 * @param numberOfPartitions the number of pieces to partition the grid into.

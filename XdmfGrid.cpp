@@ -197,7 +197,7 @@ void XdmfGrid::setTopology(boost::shared_ptr<XdmfTopology> topology)
 	mTopology = topology;
 }
 
-void XdmfGrid::traverse(boost::shared_ptr<Loki::BaseVisitor> visitor)
+void XdmfGrid::traverse(boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
 	mGeometry->accept(visitor);
 	mTopology->accept(visitor);

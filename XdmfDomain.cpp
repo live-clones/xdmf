@@ -78,7 +78,7 @@ void XdmfDomain::removeGrid(const unsigned int index)
 	mGrids.erase(mGrids.begin() + index);
 }
 
-void XdmfDomain::traverse(boost::shared_ptr<Loki::BaseVisitor> visitor)
+void XdmfDomain::traverse(boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
 	for(std::vector<boost::shared_ptr<XdmfGrid> >::const_iterator iter = mGrids.begin(); iter != mGrids.end(); ++iter)
 	{

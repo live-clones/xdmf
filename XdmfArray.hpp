@@ -204,7 +204,7 @@ public:
 	void read();
 
 	/**
-	 * Release all data from currently held in memory.
+	 * Release all data currently held in memory.
 	 */
 	void release();
 

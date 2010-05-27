@@ -25,15 +25,16 @@ class XdmfAttributeType : public XdmfItemProperty {
 public:
 
 	friend class XdmfAttribute;
+	template <typename T> friend void boost::checked_delete(T * x);
 
 	// Supported Xdmf Attribute Types
-	static XdmfAttributeType NoAttributeType();
-	static XdmfAttributeType Scalar();
-	static XdmfAttributeType Vector();
-	static XdmfAttributeType Tensor();
-	static XdmfAttributeType Matrix();
-	static XdmfAttributeType Tensor6();
-	static XdmfAttributeType GlobalId();
+	static boost::shared_ptr<const XdmfAttributeType> NoAttributeType();
+	static boost::shared_ptr<const XdmfAttributeType> Scalar();
+	static boost::shared_ptr<const XdmfAttributeType> Vector();
+	static boost::shared_ptr<const XdmfAttributeType> Tensor();
+	static boost::shared_ptr<const XdmfAttributeType> Matrix();
+	static boost::shared_ptr<const XdmfAttributeType> Tensor6();
+	static boost::shared_ptr<const XdmfAttributeType> GlobalId();
 
 	void getProperties(std::map<std::string, std::string> & collectedProperties) const;
 
@@ -53,9 +54,6 @@ public:
 	 */
 	bool operator!=(const XdmfAttributeType & attributeType) const;
 
-	XdmfAttributeType(const XdmfAttributeType & attributeType);
-	XdmfAttributeType & operator=(const XdmfAttributeType & attributeType);
-
 protected:
 
 	/**
@@ -66,10 +64,14 @@ protected:
 	 * @param name the name of the XdmfAttributeType to construct.
 	 */
 	XdmfAttributeType(const std::string & name);
+	~XdmfAttributeType();
 
 private:
 
-	static XdmfAttributeType New(const std::map<std::string, std::string> & itemProperties);
+	XdmfAttributeType(const XdmfAttributeType & attributeType); // Not implemented.
+	void operator=(const XdmfAttributeType & attributeType); // Not implemented.
+
+	static boost::shared_ptr<const XdmfAttributeType> New(const std::map<std::string, std::string> & itemProperties);
 
 	std::string mName;
 };

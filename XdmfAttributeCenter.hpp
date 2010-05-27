@@ -23,13 +23,14 @@ class XdmfAttributeCenter : public XdmfItemProperty {
 public:
 
 	friend class XdmfAttribute;
+	template <typename T> friend void boost::checked_delete(T * x);
 
 	// Supported Xdmf Attribute Centers
-	static XdmfAttributeCenter Grid();
-	static XdmfAttributeCenter Cell();
-	static XdmfAttributeCenter Face();
-	static XdmfAttributeCenter Edge();
-	static XdmfAttributeCenter Node();
+	static boost::shared_ptr<const XdmfAttributeCenter> Grid();
+	static boost::shared_ptr<const XdmfAttributeCenter> Cell();
+	static boost::shared_ptr<const XdmfAttributeCenter> Face();
+	static boost::shared_ptr<const XdmfAttributeCenter> Edge();
+	static boost::shared_ptr<const XdmfAttributeCenter> Node();
 
 	void getProperties(std::map<std::string, std::string> & collectedProperties) const;
 
@@ -49,9 +50,6 @@ public:
 	 */
 	bool operator!=(const XdmfAttributeCenter & attributeCenter) const;
 
-	XdmfAttributeCenter(const XdmfAttributeCenter & attributeCenter);
-	XdmfAttributeCenter & operator=(const XdmfAttributeCenter & attributeCenter);
-
 protected:
 
 	/**
@@ -62,10 +60,14 @@ protected:
 	 * @param name the name of the XdmfAttributeCenter to construct.
 	 */
 	XdmfAttributeCenter(const std::string & name);
+	~XdmfAttributeCenter();
 
 private:
 
-	static XdmfAttributeCenter New(const std::map<std::string, std::string> & itemProperties);
+	XdmfAttributeCenter(const XdmfAttributeCenter & attributeCenter); // Not implemented.
+	void operator=(const XdmfAttributeCenter & attributeCenter); // Not implemented.
+
+	static boost::shared_ptr<const XdmfAttributeCenter> New(const std::map<std::string, std::string> & itemProperties);
 
 	std::string mName;
 };

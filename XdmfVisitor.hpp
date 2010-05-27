@@ -15,12 +15,12 @@ class XdmfItem;
  * involve writing to disk or modifying the structure in some way.
  */
 class XdmfVisitor : public XdmfObject,
-	public Loki::BaseVisitor,
+	public XdmfBaseVisitor,
 	public Loki::Visitor<XdmfItem> {
 
 public:
 
-	virtual void visit(XdmfItem & item, boost::shared_ptr<Loki::BaseVisitor> visitor);
+	virtual void visit(XdmfItem & item, boost::shared_ptr<XdmfBaseVisitor> visitor);
 
 protected:
 
