@@ -21,7 +21,7 @@ XdmfDataItem::~XdmfDataItem()
 
 boost::shared_ptr<XdmfArray> XdmfDataItem::getArray()
 {
-	return mArray;
+	return boost::const_pointer_cast<XdmfArray>(static_cast<const XdmfDataItem &>(*this).getArray());
 }
 
 boost::shared_ptr<const XdmfArray> XdmfDataItem::getArray() const

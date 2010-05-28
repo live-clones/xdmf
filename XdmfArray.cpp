@@ -64,6 +64,25 @@ private:
 	const unsigned int mValuesStride;
 };
 
+class XdmfArray::Erase : public boost::static_visitor <void> {
+public:
+
+	Erase(const unsigned int index) :
+		mIndex(index)
+	{
+	}
+
+	template<typename T>
+	void operator()(const boost::shared_ptr<std::vector<T> > & array) const
+	{
+		array->erase(array->begin() + mIndex);
+	}
+
+private:
+
+	const unsigned int mIndex;
+};
+
 class XdmfArray::GetCapacity : public boost::static_visitor <unsigned int> {
 public:
 
@@ -366,6 +385,14 @@ XdmfArray::~XdmfArray()
 
 std::string XdmfArray::ItemTag = "DataItem";
 
+void XdmfArray::clear()
+{
+	if(mHaveArray)
+	{
+		return boost::apply_visitor(Clear(), mArray);
+	}
+}
+
 void XdmfArray::copyValues(const unsigned int startIndex, const boost::shared_ptr<const XdmfArray> values, const unsigned int valuesStartIndex, const unsigned int numValues, const unsigned int arrayStride, const unsigned int valuesStride)
 {
 	if(mHaveArrayPointer)
@@ -383,11 +410,11 @@ void XdmfArray::copyValues(const unsigned int startIndex, const boost::shared_pt
 	boost::apply_visitor(CopyArrayValues(startIndex, valuesStartIndex, numValues, arrayStride, valuesStride), mArray, values->mArray);
 }
 
-void XdmfArray::clear()
+void XdmfArray::erase(const unsigned int index)
 {
 	if(mHaveArray)
 	{
-		return boost::apply_visitor(Clear(), mArray);
+		return boost::apply_visitor(Erase(index), mArray);
 	}
 }
 

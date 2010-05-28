@@ -28,6 +28,11 @@ std::string XdmfGrid::ItemTag = "Grid";
 
 boost::shared_ptr<XdmfAttribute> XdmfGrid::getAttribute(const unsigned int index)
 {
+	return boost::const_pointer_cast<XdmfAttribute>(static_cast<const XdmfGrid &>(*this).getAttribute(index));
+}
+
+boost::shared_ptr<const XdmfAttribute> XdmfGrid::getAttribute(const unsigned int index) const
+{
 	if(index >= mAttributes.size())
 	{
 		assert(false);
@@ -35,12 +40,12 @@ boost::shared_ptr<XdmfAttribute> XdmfGrid::getAttribute(const unsigned int index
 	return mAttributes[index];
 }
 
-boost::shared_ptr<const XdmfAttribute> XdmfGrid::getAttribute(const unsigned int index) const
+boost::shared_ptr<XdmfAttribute> XdmfGrid::getAttribute(const std::string & attributeName)
 {
-	return boost::const_pointer_cast<XdmfAttribute>(static_cast<const XdmfGrid &>(*this).getAttribute(index));
+	return boost::const_pointer_cast<XdmfAttribute>(static_cast<const XdmfGrid &>(*this).getAttribute(attributeName));
 }
 
-boost::shared_ptr<XdmfAttribute> XdmfGrid::getAttribute(const std::string & attributeName)
+boost::shared_ptr<const XdmfAttribute> XdmfGrid::getAttribute(const std::string & attributeName) const
 {
 	for(std::vector<boost::shared_ptr<XdmfAttribute> >::const_iterator iter = mAttributes.begin(); iter != mAttributes.end(); ++iter)
 	{
@@ -52,19 +57,14 @@ boost::shared_ptr<XdmfAttribute> XdmfGrid::getAttribute(const std::string & attr
 	return boost::shared_ptr<XdmfAttribute>();
 }
 
-boost::shared_ptr<const XdmfAttribute> XdmfGrid::getAttribute(const std::string & attributeName) const
-{
-	return boost::const_pointer_cast<XdmfAttribute>(static_cast<const XdmfGrid &>(*this).getAttribute(attributeName));
-}
-
 boost::shared_ptr<XdmfGeometry> XdmfGrid::getGeometry()
 {
-	return mGeometry;
+	return boost::const_pointer_cast<XdmfGeometry>(static_cast<const XdmfGrid &>(*this).getGeometry());
 }
 
 boost::shared_ptr<const XdmfGeometry> XdmfGrid::getGeometry() const
 {
-	return boost::const_pointer_cast<XdmfGeometry>(static_cast<const XdmfGrid &>(*this).getGeometry());
+	return mGeometry;
 }
 
 std::map<std::string, std::string> XdmfGrid::getItemProperties() const
@@ -96,6 +96,11 @@ unsigned int XdmfGrid::getNumberOfSets() const
 
 boost::shared_ptr<XdmfSet> XdmfGrid::getSet(const unsigned int index)
 {
+	return boost::const_pointer_cast<XdmfSet>(static_cast<const XdmfGrid &>(*this).getSet(index));
+}
+
+boost::shared_ptr<const XdmfSet> XdmfGrid::getSet(const unsigned int index) const
+{
 	if(index >= mSets.size())
 	{
 		assert(false);
@@ -103,19 +108,14 @@ boost::shared_ptr<XdmfSet> XdmfGrid::getSet(const unsigned int index)
 	return mSets[index];
 }
 
-boost::shared_ptr<const XdmfSet> XdmfGrid::getSet(const unsigned int index) const
-{
-	return boost::const_pointer_cast<XdmfSet>(static_cast<const XdmfGrid &>(*this).getSet(index));
-}
-
 boost::shared_ptr<XdmfTopology> XdmfGrid::getTopology()
 {
-	return mTopology;
+	return boost::const_pointer_cast<XdmfTopology>(static_cast<const XdmfGrid &>(*this).getTopology());
 }
 
 boost::shared_ptr<const XdmfTopology> XdmfGrid::getTopology() const
 {
-	return boost::const_pointer_cast<XdmfTopology>(static_cast<const XdmfGrid &>(*this).getTopology());
+	return mTopology;
 }
 
 void XdmfGrid::insert(const boost::shared_ptr<XdmfAttribute> attribute)

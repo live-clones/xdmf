@@ -51,6 +51,20 @@ public:
 	}
 
 	/**
+	 * Get the hdf5 writer that this XdmfWriter uses to write heavy data to disk.
+	 *
+	 * @return the requested hdf5 writer.
+	 */
+	boost::shared_ptr<XdmfHDF5Writer> getHDF5Writer();
+
+	/**
+	 * Get the hdf5 writer that this XdmfWriter uses to write heavy data to disk (const version).
+	 *
+	 * @return the requested hdf5 writer.
+	 */
+	boost::shared_ptr<const XdmfHDF5Writer> getHDF5Writer() const;
+
+	/**
 	 * Get the number of values that this writer writes to light data (XML) before switching to a heavy data format.
 	 *
 	 * @return an unsigned int containing the number of values.

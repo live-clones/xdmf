@@ -24,11 +24,7 @@ std::string XdmfGridCollection::ItemTag = "Grid";
 
 boost::shared_ptr<XdmfGrid> XdmfGridCollection::getGrid(const unsigned int index)
 {
-	if(index >= mGrids.size())
-	{
-		assert(false);
-	}
-	return mGrids[index];
+	return boost::const_pointer_cast<XdmfGrid>(static_cast<const XdmfGridCollection &>(*this).getGrid(index));
 }
 
 boost::shared_ptr<const XdmfGrid> XdmfGridCollection::getGrid(const unsigned int index) const

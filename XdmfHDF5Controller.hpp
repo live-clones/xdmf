@@ -23,11 +23,18 @@ public:
 	/**
 	 * Create a new controller for an hdf5 data set on disk.
 	 */
-	static boost::shared_ptr<XdmfHDF5Controller> New(const std::string & hdf5DataSetPath, const unsigned int precision, const unsigned int size, const std::string & type)
+	static boost::shared_ptr<XdmfHDF5Controller> New(const std::string & dataSetPath, const unsigned int precision, const unsigned int size, const std::string & type)
 	{
-		boost::shared_ptr<XdmfHDF5Controller> p(new XdmfHDF5Controller(hdf5DataSetPath, precision, size, type));
+		boost::shared_ptr<XdmfHDF5Controller> p(new XdmfHDF5Controller(dataSetPath, precision, size, type));
 		return p;
 	}
+
+	/**
+	 * Get the name of the data set owned by this controller.
+	 *
+	 * @return a std::string containing the name of the data set.
+	 */
+	std::string getDataSetName() const;
 
 	/**
 	 * Get the path to the hdf5 data set on disk owned by this controller.
@@ -35,6 +42,13 @@ public:
 	 * @return a std::string to the hdf5 data set location on disk.
 	 */
 	std::string getDataSetPath() const;
+
+	/**
+	 * Get the path to the hdf5 file on disk where the data set owned by this controller resides.
+	 *
+	 * @return a std::string containing the path to the hdf5 file.
+	 */
+	std::string getHDF5FilePath() const;
 
 	/**
 	 * Get the precision of the hdf5 data set owned by this controller.
@@ -66,7 +80,7 @@ public:
 
 protected:
 
-	XdmfHDF5Controller(const std::string & hdf5DataSetPath, const unsigned int precision, const unsigned int size, const std::string & type);
+	XdmfHDF5Controller(const std::string & dataSetPath, const unsigned int precision, const unsigned int size, const std::string & type);
 	virtual ~XdmfHDF5Controller();
 
 private:

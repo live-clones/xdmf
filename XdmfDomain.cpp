@@ -27,12 +27,7 @@ void XdmfDomain::insert(const boost::shared_ptr<XdmfGrid> grid)
 
 boost::shared_ptr<XdmfGrid> XdmfDomain::getGrid(const unsigned int index)
 {
-	if(index >= mGrids.size())
-	{
-		assert(false);
-		// Out of range --- should we throw exceptions?
-	}
-	return mGrids[index];
+	return boost::const_pointer_cast<XdmfGrid>(static_cast<const XdmfDomain &>(*this).getGrid(index));
 }
 
 boost::shared_ptr<const XdmfGrid> XdmfDomain::getGrid(const unsigned int index) const

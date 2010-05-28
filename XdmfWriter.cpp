@@ -69,6 +69,16 @@ void XdmfWriter::closeFile()
 	xmlCleanupParser();
 }
 
+boost::shared_ptr<XdmfHDF5Writer> XdmfWriter::getHDF5Writer()
+{
+	return boost::const_pointer_cast<XdmfHDF5Writer>(static_cast<const XdmfWriter &>(*this).getHDF5Writer());
+}
+
+boost::shared_ptr<const XdmfHDF5Writer> XdmfWriter::getHDF5Writer() const
+{
+	return mImpl->mHDF5Writer;
+}
+
 unsigned int XdmfWriter::getLightDataLimit() const
 {
 	return mImpl->mLightDataLimit;

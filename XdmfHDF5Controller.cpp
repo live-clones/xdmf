@@ -6,18 +6,18 @@
 #include "XdmfArray.hpp"
 #include "XdmfHDF5Controller.hpp"
 
-XdmfHDF5Controller::XdmfHDF5Controller(const std::string & hdf5DataSetPath, const unsigned int precision, const unsigned int size, const std::string & type) :
+XdmfHDF5Controller::XdmfHDF5Controller(const std::string & dataSetPath, const unsigned int precision, const unsigned int size, const std::string & type) :
 		mPrecision(precision),
 		mSize(size),
 		mType(type)
 {
-	size_t colonLocation = hdf5DataSetPath.find(":");
+	size_t colonLocation = dataSetPath.find(":");
 	if(colonLocation != std::string::npos)
 	{
-		mHDF5FilePath = hdf5DataSetPath.substr(0, colonLocation);
+		mHDF5FilePath = dataSetPath.substr(0, colonLocation);
 		if(colonLocation + 1  != mHDF5FilePath.size())
 		{
-			mDataSetName = hdf5DataSetPath.substr(colonLocation + 1, hdf5DataSetPath.size());
+			mDataSetName = dataSetPath.substr(colonLocation + 1, dataSetPath.size());
 		}
 		else
 		{
@@ -34,11 +34,21 @@ XdmfHDF5Controller::~XdmfHDF5Controller()
 {
 }
 
+std::string XdmfHDF5Controller::getDataSetName() const
+{
+	return mDataSetName;
+}
+
 std::string XdmfHDF5Controller::getDataSetPath() const
 {
 	std::stringstream toReturn;
 	toReturn << mHDF5FilePath << ":" << mDataSetName;
 	return toReturn.str();
+}
+
+std::string XdmfHDF5Controller::getHDF5FilePath() const
+{
+	return mHDF5FilePath;
 }
 
 unsigned int XdmfHDF5Controller::getPrecision() const

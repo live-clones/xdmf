@@ -83,6 +83,11 @@ public:
 	void clear();
 
 	/**
+	 * Remove a value from this array.
+	 */
+	void erase(const unsigned int index);
+
+	/**
 	 * Get the capacity of this array (the number of values this array can store without reallocation).
 	 *
 	 * @return the capacity of this array.
@@ -311,6 +316,7 @@ private:
 	template <typename T>
 	class CopyValues;
 
+	class Erase;
 	class GetCapacity;
 	class GetHDF5Type;
 	class GetPrecision;
