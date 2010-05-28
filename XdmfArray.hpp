@@ -163,7 +163,7 @@ public:
 	 * @param valuesStride number of values to stride in the pointer between each copy.
 	 */
 	template <typename T>
-	void getValuesCopy(const unsigned int startIndex, T * valuesPointer, const unsigned int numValues = 1, const unsigned int arrayStride = 1, const unsigned int valuesStride = 1) const;
+	void getValuesCopy(const unsigned int startIndex, T * const valuesPointer, const unsigned int numValues = 1, const unsigned int arrayStride = 1, const unsigned int valuesStride = 1) const;
 
 	/**
 	 * Get a pointer to the values stored in this array (const version).
@@ -230,7 +230,7 @@ public:
 	 *
 	 * @param hdf5Controller the hdf5 controller to attach to this XdmfArray.
 	 */
-	void setHDF5Controller(boost::shared_ptr<XdmfHDF5Controller> hdf5Controller);
+	void setHDF5Controller(const boost::shared_ptr<XdmfHDF5Controller> hdf5Controller);
 
 	/**
 	 * Sets the values of this array to the values stored in the arrayPointer array.  No copy is made.  Modifications to the array are
@@ -266,7 +266,7 @@ public:
 	 * @param array a smart pointer to a vector to store in this array.
 	 */
 	template<typename T>
-	void setValues(boost::shared_ptr<std::vector<T> > array);
+	void setValues(const boost::shared_ptr<std::vector<T> > array);
 
 	/**
 	 * Exchange the contents of the vector with the contents of this XdmfArray.  No copy is made.  The internal arrays are swapped.
@@ -283,7 +283,7 @@ public:
 	 * @param array a smart pointer to a vector to exchange values with.
 	 */
 	template<typename T>
-	bool swap(boost::shared_ptr<std::vector<T> > array);
+	bool swap(const boost::shared_ptr<std::vector<T> > array);
 
 	/**
 	 * Exchange the contents of an XdmfArray with the contents of this XdmfArray.  No copy is made.  The internal arrays are swapped.
@@ -291,7 +291,7 @@ public:
 	 * @param array a smart pointer to a vector to exchange values with.
 	 * @return bool whether the swap was successful.
 	 */
-	void swap(boost::shared_ptr<XdmfArray> array);
+	void swap(const boost::shared_ptr<XdmfArray> array);
 
 protected:
 

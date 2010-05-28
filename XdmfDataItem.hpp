@@ -38,9 +38,9 @@ public:
 	 *
 	 * @param array a smart pointer to the XdmfArray.
 	 */
-	void setArray(boost::shared_ptr<XdmfArray> array);
+	void setArray(const boost::shared_ptr<XdmfArray> array);
 
-	virtual void traverse(boost::shared_ptr<XdmfBaseVisitor> visitor);
+	virtual void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor) const;
 
 protected:
 

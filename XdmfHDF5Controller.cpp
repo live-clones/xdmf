@@ -6,7 +6,7 @@
 #include "XdmfArray.hpp"
 #include "XdmfHDF5Controller.hpp"
 
-XdmfHDF5Controller::XdmfHDF5Controller(const std::string & hdf5DataSetPath, const int precision, const int size, const std::string & type) :
+XdmfHDF5Controller::XdmfHDF5Controller(const std::string & hdf5DataSetPath, const unsigned int precision, const unsigned int size, const std::string & type) :
 		mPrecision(precision),
 		mSize(size),
 		mType(type)
@@ -41,12 +41,12 @@ std::string XdmfHDF5Controller::getDataSetPath() const
 	return toReturn.str();
 }
 
-int XdmfHDF5Controller::getPrecision() const
+unsigned int XdmfHDF5Controller::getPrecision() const
 {
 	return mPrecision;
 }
 
-int XdmfHDF5Controller::getSize() const
+unsigned int XdmfHDF5Controller::getSize() const
 {
 	return mSize;
 }

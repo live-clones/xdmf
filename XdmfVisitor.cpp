@@ -12,7 +12,7 @@ XdmfVisitor::~XdmfVisitor()
 {
 }
 
-void XdmfVisitor::visit(XdmfItem & item, boost::shared_ptr<XdmfBaseVisitor> visitor)
+void XdmfVisitor::visit(XdmfItem & item, const boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
 	std::cout << "Writing in base" << std::endl;
 	item.traverse(visitor);

@@ -132,14 +132,14 @@ public:
 	 *
 	 * @param attribute an XdmfAttribute to attach to this grid.
 	 */
-	void insert(boost::shared_ptr<XdmfAttribute> attribute);
+	void insert(const boost::shared_ptr<XdmfAttribute> attribute);
 
 	/**
 	 * Insert an XdmfSet into the grid.
 	 *
 	 * @param set an XdmfSet to attach to this grid.
 	 */
-	void insert(boost::shared_ptr<XdmfSet> set);
+	void insert(const boost::shared_ptr<XdmfSet> set);
 
 	/**
 	 * Remove an XdmfAttribute from the grid.
@@ -160,14 +160,14 @@ public:
 	 *
 	 * @param geometry an XdmfGeometry to attach to this grid.
 	 */
-	void setGeometry(boost::shared_ptr<XdmfGeometry> geometry);
+	void setGeometry(const boost::shared_ptr<XdmfGeometry> geometry);
 
 	/**
 	 * Set the XdmfTopology associated with this grid.
 	 *
 	 * @param topology an XdmfTopology to attach to this grid.
 	 */
-	void setTopology(boost::shared_ptr<XdmfTopology> topology);
+	void setTopology(const boost::shared_ptr<XdmfTopology> topology);
 
 	/**
 	 * Set the name of the grid.
@@ -176,7 +176,7 @@ public:
 	 */
 	void setName(const std::string & name);
 
-	virtual void traverse(boost::shared_ptr<XdmfBaseVisitor> visitor);
+	virtual void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor) const;
 
 protected:
 

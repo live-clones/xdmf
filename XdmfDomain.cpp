@@ -20,12 +20,12 @@ XdmfDomain::~XdmfDomain()
 
 std::string XdmfDomain::ItemTag = "Domain";
 
-void XdmfDomain::insert(boost::shared_ptr<XdmfGrid> grid)
+void XdmfDomain::insert(const boost::shared_ptr<XdmfGrid> grid)
 {
 	mGrids.push_back(grid);
 }
 
-boost::shared_ptr<XdmfGrid> XdmfDomain::getGrid(unsigned int index)
+boost::shared_ptr<XdmfGrid> XdmfDomain::getGrid(const unsigned int index)
 {
 	if(index >= mGrids.size())
 	{
@@ -35,7 +35,7 @@ boost::shared_ptr<XdmfGrid> XdmfDomain::getGrid(unsigned int index)
 	return mGrids[index];
 }
 
-boost::shared_ptr<const XdmfGrid> XdmfDomain::getGrid(unsigned int index) const
+boost::shared_ptr<const XdmfGrid> XdmfDomain::getGrid(const unsigned int index) const
 {
 	if(index >= mGrids.size())
 	{
@@ -78,7 +78,7 @@ void XdmfDomain::removeGrid(const unsigned int index)
 	mGrids.erase(mGrids.begin() + index);
 }
 
-void XdmfDomain::traverse(boost::shared_ptr<XdmfBaseVisitor> visitor)
+void XdmfDomain::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor) const
 {
 	for(std::vector<boost::shared_ptr<XdmfGrid> >::const_iterator iter = mGrids.begin(); iter != mGrids.end(); ++iter)
 	{

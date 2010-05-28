@@ -8,7 +8,7 @@ XdmfItem::~XdmfItem()
 {
 }
 
-void XdmfItem::traverse(boost::shared_ptr<XdmfBaseVisitor> visitor)
+void XdmfItem::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor) const
 {
 	return;
 }

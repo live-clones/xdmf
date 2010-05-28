@@ -29,7 +29,7 @@ public:
 	 * @param index of grid to retrieve.
 	 * @return the requested XdmfGrid.
 	 */
-	boost::shared_ptr<XdmfGrid> getGrid(unsigned int index);
+	boost::shared_ptr<XdmfGrid> getGrid(const unsigned int index);
 
 	/**
 	 * Get a grid from this collection (const version).
@@ -37,7 +37,7 @@ public:
 	 * @param index of the grid to retrieve.
 	 * @return the requested XdmfGrid.
 	 */
-	boost::shared_ptr<const XdmfGrid> getGrid(unsigned int index) const;
+	boost::shared_ptr<const XdmfGrid> getGrid(const unsigned int index) const;
 
 	/**
 	 * Get the XdmfGridCollectionType associated with this grid collection.
@@ -60,7 +60,7 @@ public:
 	 *
 	 * @param grid an XdmfGrid to insert into this collection.
 	 */
-	void insert(boost::shared_ptr<XdmfGrid> grid);
+	void insert(const boost::shared_ptr<XdmfGrid> grid);
 
 	/**
 	 * Remove a grid from this collection.
@@ -76,7 +76,7 @@ public:
 	 */
 	void setGridCollectionType(const boost::shared_ptr<const XdmfGridCollectionType> collectionType);
 
-	virtual void traverse(boost::shared_ptr<XdmfBaseVisitor> visitor);
+	virtual void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor) const;
 
 protected:
 

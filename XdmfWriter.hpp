@@ -44,7 +44,7 @@ public:
 	 * @param hdf5Writer the heavy data writer to use when writing.
 	 * @return the new XdmfWriter.
 	 */
-	static boost::shared_ptr<XdmfWriter> New(const std::string & xmlFilePath, boost::shared_ptr<XdmfHDF5Writer> hdf5Writer)
+	static boost::shared_ptr<XdmfWriter> New(const std::string & xmlFilePath, const boost::shared_ptr<XdmfHDF5Writer> hdf5Writer)
 	{
 		boost::shared_ptr<XdmfWriter> p(new XdmfWriter(xmlFilePath, hdf5Writer));
 		return p;
@@ -62,7 +62,7 @@ public:
 	 *
 	 * @param numValues an unsigned int containing the number of values.
 	 */
-	void setLightDataLimit(unsigned int numValues);
+	void setLightDataLimit(const unsigned int numValues);
 
 	/**
 	 * Write an XdmfArray to disk
@@ -70,7 +70,7 @@ public:
 	 * @param array an XdmfArray to write to disk.
 	 * @param visitor a smart pointer to this visitor --- aids in grid traversal.
 	 */
-	void visit(XdmfArray & array, boost::shared_ptr<XdmfBaseVisitor> visitor);
+	void visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisitor> visitor);
 
 	/**
 	 * Write an XdmfItem to disk
@@ -78,7 +78,7 @@ public:
 	 * @param item an XdmfItem to write to disk.
 	 * @param visitor a smart pointer to this visitor --- aids in grid traversal.
 	 */
-	void visit(XdmfItem & item, boost::shared_ptr<XdmfBaseVisitor> visitor);
+	void visit(XdmfItem & item, const boost::shared_ptr<XdmfBaseVisitor> visitor);
 
 
 protected:

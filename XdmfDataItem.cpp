@@ -40,12 +40,12 @@ void XdmfDataItem::populateItem(const std::map<std::string, std::string> & itemP
 	}
 }
 
-void XdmfDataItem::setArray(boost::shared_ptr<XdmfArray> array)
+void XdmfDataItem::setArray(const boost::shared_ptr<XdmfArray> array)
 {
 	mArray = array;
 }
 
-void XdmfDataItem::traverse(boost::shared_ptr<XdmfBaseVisitor> visitor)
+void XdmfDataItem::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor) const
 {
 	mArray->accept(visitor);
 }

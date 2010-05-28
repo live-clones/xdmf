@@ -691,12 +691,12 @@ void XdmfArray::reserve(const unsigned int size)
 	}
 }
 
-void XdmfArray::setHDF5Controller(boost::shared_ptr<XdmfHDF5Controller> hdf5Controller)
+void XdmfArray::setHDF5Controller(const boost::shared_ptr<XdmfHDF5Controller> hdf5Controller)
 {
 	mHDF5Controller = hdf5Controller;
 }
 
-void XdmfArray::swap(boost::shared_ptr<XdmfArray> array)
+void XdmfArray::swap(const boost::shared_ptr<XdmfArray> array)
 {
 	ArrayVariant tmpArray = array->mArray;
 	ArrayPointerVariant tmpArrayPointer = array->mArrayPointer;

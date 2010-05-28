@@ -118,12 +118,12 @@ boost::shared_ptr<const XdmfTopology> XdmfGrid::getTopology() const
 	return boost::const_pointer_cast<XdmfTopology>(static_cast<const XdmfGrid &>(*this).getTopology());
 }
 
-void XdmfGrid::insert(boost::shared_ptr<XdmfAttribute> attribute)
+void XdmfGrid::insert(const boost::shared_ptr<XdmfAttribute> attribute)
 {
 	mAttributes.push_back(attribute);
 }
 
-void XdmfGrid::insert(boost::shared_ptr<XdmfSet> set)
+void XdmfGrid::insert(const boost::shared_ptr<XdmfSet> set)
 {
 	mSets.push_back(set);
 }
@@ -182,7 +182,7 @@ void XdmfGrid::removeSet(const unsigned int index)
 	mSets.erase(mSets.begin() + index);
 }
 
-void XdmfGrid::setGeometry(boost::shared_ptr<XdmfGeometry> geometry)
+void XdmfGrid::setGeometry(const boost::shared_ptr<XdmfGeometry> geometry)
 {
 	mGeometry = geometry;
 }
@@ -192,12 +192,12 @@ void XdmfGrid::setName(const std::string & name)
 	mName= name;
 }
 
-void XdmfGrid::setTopology(boost::shared_ptr<XdmfTopology> topology)
+void XdmfGrid::setTopology(const boost::shared_ptr<XdmfTopology> topology)
 {
 	mTopology = topology;
 }
 
-void XdmfGrid::traverse(boost::shared_ptr<XdmfBaseVisitor> visitor)
+void XdmfGrid::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor) const
 {
 	mGeometry->accept(visitor);
 	mTopology->accept(visitor);

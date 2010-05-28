@@ -27,7 +27,7 @@ public:
 	 * @param index an unsigned int of the grid to retrieve.
 	 * @return smart pointer to the grid at the specified index attached to this domain.
 	 */
-	boost::shared_ptr<XdmfGrid> getGrid(unsigned int index);
+	boost::shared_ptr<XdmfGrid> getGrid(const unsigned int index);
 
 	/**
 	 * Get a XdmfGrid attached to this domain (const version).
@@ -35,7 +35,7 @@ public:
 	 * @param index of the grid to retrieve.
 	 * @return pointer to the grid attached to this domain.
 	 */
-	boost::shared_ptr<const XdmfGrid> getGrid(unsigned int index) const;
+	boost::shared_ptr<const XdmfGrid> getGrid(const unsigned int index) const;
 
 	std::map<std::string, std::string> getItemProperties() const;
 
@@ -53,7 +53,7 @@ public:
 	 *
 	 * @param grid a shared pointer to an XdmfGrid to insert into the domain.
 	 */
-	void insert(boost::shared_ptr<XdmfGrid> grid);
+	void insert(const boost::shared_ptr<XdmfGrid> grid);
 
 	/**
 	 * Remove an XdmfGrid from the domain.
@@ -62,7 +62,7 @@ public:
 	 */
 	void removeGrid(const unsigned int index);
 
-	virtual void traverse(boost::shared_ptr<XdmfBaseVisitor> visitor);
+	virtual void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor) const;
 
 protected:
 

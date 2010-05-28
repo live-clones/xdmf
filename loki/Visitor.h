@@ -255,12 +255,12 @@ struct DefaultCatchAll
     public:
         typedef R ReturnType;
         virtual ~BaseVisitable() {}
-        virtual ReturnType accept(boost::shared_ptr<BaseVisitor>) = 0;
+        virtual ReturnType accept(const boost::shared_ptr<BaseVisitor>) = 0;
         
     protected: // give access only to the hierarchy
 
         template <class T>
-        static ReturnType acceptImpl(T& visited, boost::shared_ptr<BaseVisitor> guest)
+        static ReturnType acceptImpl(T& visited, const boost::shared_ptr<BaseVisitor> guest)
         {
             // Apply the Acyclic Visitor
             if (Visitor<T,R>* p = dynamic_cast<Visitor<T,R>*>(guest.get()))
@@ -281,7 +281,7 @@ struct DefaultCatchAll
         
     protected: // give access only to the hierarchy
         template <class T>
-        static ReturnType acceptImpl(const T& visited, boost::shared_ptr<BaseVisitor> guest)
+        static ReturnType acceptImpl(const T& visited, const boost::shared_ptr<BaseVisitor> guest)
         {
             // Apply the Acyclic Visitor
             if (Visitor<T,R,true>* p = dynamic_cast<Visitor<T,R,true>*>(guest.get))
@@ -300,11 +300,11 @@ struct DefaultCatchAll
 ////////////////////////////////////////////////////////////////////////////////
 
 #define LOKI_DEFINE_VISITABLE_BASE() \
-    virtual ReturnType accept(boost::shared_ptr<Loki::BaseVisitor> guest) \
+    virtual ReturnType accept(const boost::shared_ptr<Loki::BaseVisitor> guest) \
     { return acceptImpl(*this, guest); }
 
 #define LOKI_DEFINE_VISITABLE(my_class, my_base) \
-    virtual ReturnType accept(boost::shared_ptr<Loki::BaseVisitor> guest) \
+    virtual ReturnType accept(const boost::shared_ptr<Loki::BaseVisitor> guest) \
     { \
         if (Loki::Visitor<my_class,ReturnType>* p = dynamic_cast<Loki::Visitor<my_class,ReturnType>*>(guest.get())) \
         { \
@@ -324,7 +324,7 @@ struct DefaultCatchAll
 ////////////////////////////////////////////////////////////////////////////////
 
 #define LOKI_DEFINE_CONST_VISITABLE() \
-    virtual ReturnType accept(boost::shared_ptr<::Loki::BaseVisitor> guest) const \
+    virtual ReturnType accept(const boost::shared_ptr<::Loki::BaseVisitor> guest) const \
     { return acceptImpl(*this, guest); }
 
 ////////////////////////////////////////////////////////////////////////////////

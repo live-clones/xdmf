@@ -185,7 +185,7 @@ boost::shared_ptr<std::vector<T> > XdmfArray::getValues()
 //}
 
 template <typename T>
-void XdmfArray::getValuesCopy(const unsigned int startIndex, T * valuesPointer, const unsigned int numValues, const unsigned int arrayStride, const unsigned int valuesStride) const
+void XdmfArray::getValuesCopy(const unsigned int startIndex, T * const valuesPointer, const unsigned int numValues, const unsigned int arrayStride, const unsigned int valuesStride) const
 {
 	if(mHaveArray)
 	{
@@ -287,7 +287,7 @@ void XdmfArray::setValues(std::vector<T> & array, const bool transferOwnership)
 }
 
 template <typename T>
-void XdmfArray::setValues(boost::shared_ptr<std::vector<T> > array)
+void XdmfArray::setValues(const boost::shared_ptr<std::vector<T> > array)
 {
 	if(mHaveArrayPointer)
 	{
@@ -321,7 +321,7 @@ bool XdmfArray::swap(std::vector<T> & array)
 }
 
 template <typename T>
-bool XdmfArray::swap(boost::shared_ptr<std::vector<T> > array)
+bool XdmfArray::swap(const boost::shared_ptr<std::vector<T> > array)
 {
 	return this->swap(*array.get());
 }

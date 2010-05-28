@@ -22,7 +22,7 @@ XdmfGridCollection::~XdmfGridCollection()
 
 std::string XdmfGridCollection::ItemTag = "Grid";
 
-boost::shared_ptr<XdmfGrid> XdmfGridCollection::getGrid(unsigned int index)
+boost::shared_ptr<XdmfGrid> XdmfGridCollection::getGrid(const unsigned int index)
 {
 	if(index >= mGrids.size())
 	{
@@ -31,7 +31,7 @@ boost::shared_ptr<XdmfGrid> XdmfGridCollection::getGrid(unsigned int index)
 	return mGrids[index];
 }
 
-boost::shared_ptr<const XdmfGrid> XdmfGridCollection::getGrid(unsigned int index) const
+boost::shared_ptr<const XdmfGrid> XdmfGridCollection::getGrid(const unsigned int index) const
 {
 	if(index >= mGrids.size())
 	{
@@ -59,7 +59,7 @@ unsigned int XdmfGridCollection::getNumberOfGrids() const
 	return mGrids.size();
 }
 
-void XdmfGridCollection::insert(boost::shared_ptr<XdmfGrid> grid)
+void XdmfGridCollection::insert(const boost::shared_ptr<XdmfGrid> grid)
 {
 	mGrids.push_back(grid);
 }
@@ -95,7 +95,7 @@ void XdmfGridCollection::setGridCollectionType(const boost::shared_ptr<const Xdm
 	mCollectionType = collectionType;
 }
 
-void XdmfGridCollection::traverse(boost::shared_ptr<XdmfBaseVisitor> visitor)
+void XdmfGridCollection::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor) const
 {
 	for(std::vector<boost::shared_ptr<XdmfGrid> >::const_iterator iter = mGrids.begin(); iter != mGrids.end(); ++iter)
 	{

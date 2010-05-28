@@ -45,7 +45,7 @@ public:
 	 * @param array an XdmfArray to write to HDF5.
 	 * @param visitor a smart pointer to this visitor --- aids in grid traversal.
 	 */
-	void visit(XdmfArray & array, boost::shared_ptr<XdmfBaseVisitor> visitor);
+	void visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisitor> visitor);
 
 protected:
 
