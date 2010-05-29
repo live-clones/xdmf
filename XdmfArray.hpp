@@ -2,6 +2,7 @@
 #define XDMFARRAY_HPP_
 
 // Forward Declarations
+class XdmfArrayType;
 class XdmfHDF5Controller;
 
 // Includes
@@ -113,13 +114,6 @@ public:
 	boost::shared_ptr<const XdmfHDF5Controller> getHDF5Controller() const;
 
 	/**
-	 * Get the precision, in bytes, of the data type of this array.
-	 *
-	 * @return the precision, in bytes, of the data type of this array.
-	 */
-	unsigned int getPrecision() const;
-
-	/**
 	 * Get the number of values stored in this array.
 	 *
 	 * @return the number of values stored in this array.
@@ -132,7 +126,7 @@ public:
 	 * @return a string containing the Xdmf data type for the array, this is one of
 	 *      Char, Short, Int, Float, UChar, UShort, UInt.
 	 */
-	std::string getType() const;
+	boost::shared_ptr<const XdmfArrayType> getType() const;
 
 	/**
 	 * Get a copy of a single value stored in this array.
@@ -191,6 +185,11 @@ public:
 	 */
 	template <typename T>
 	boost::shared_ptr<std::vector<T> > initialize();
+
+	/**
+	 * Initializes the array to contain an empty container of a particular XdmfArrayType.
+	 */
+	void initialize(const boost::shared_ptr<const XdmfArrayType> arrayType);
 
 	/**
 	 * Returns whether the array is initialized (contains values in memory).
@@ -319,7 +318,6 @@ private:
 	class Erase;
 	class GetCapacity;
 	class GetHDF5Type;
-	class GetPrecision;
 	class GetSize;
 	class GetType;
 
@@ -340,8 +338,6 @@ private:
 	class Resize;
 
 	struct NullDeleter;
-
-	void initialize(const std::string & type, const unsigned int precision);
 
 	/**
 	 * After setValues(const T * const array) is called, XdmfArray stores a pointer that is not allowed to be modified through

@@ -2,7 +2,7 @@
 #include "XdmfArray.hpp"
 
 template <typename T>
-class XdmfArray::CopyValues : public boost::static_visitor <void> {
+class XdmfArray::CopyValues : public boost::static_visitor<void> {
 public:
 
 	CopyValues(const unsigned int startIndex, const T * const valuesPointer, const unsigned int numValues, const unsigned int arrayStride, const unsigned int valuesStride) :
@@ -42,7 +42,7 @@ private:
 };
 
 template <typename T>
-class XdmfArray::GetValuesCopy : public boost::static_visitor <void> {
+class XdmfArray::GetValuesCopy : public boost::static_visitor<void> {
 public:
 
 	GetValuesCopy(const unsigned int startIndex, T * valuesPointer, const unsigned int numValues, const unsigned int arrayStride, const unsigned int valuesStride) :
@@ -82,7 +82,7 @@ private:
 };
 
 template <typename T>
-class XdmfArray::PushBack : public boost::static_visitor <void> {
+class XdmfArray::PushBack : public boost::static_visitor<void> {
 public:
 
 	PushBack(const T & val) :
@@ -102,7 +102,7 @@ private:
 };
 
 template <typename T>
-class XdmfArray::Resize : public boost::static_visitor <void> {
+class XdmfArray::Resize : public boost::static_visitor<void> {
 public:
 
 	Resize(const unsigned int numValues, const T & val) :

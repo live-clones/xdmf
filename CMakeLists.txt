@@ -34,6 +34,7 @@ endif(XDMF_WRAP_PYTHON)
 
 set(XdmfSources
 	XdmfArray
+	XdmfArrayType
 	XdmfAttribute
 	XdmfAttributeCenter
 	XdmfAttributeType
@@ -61,19 +62,19 @@ set(XdmfSources
 add_library(Xdmf ${XdmfSources})
 target_link_libraries(Xdmf ${HDF5_LIBRARIES} ${LIBXML2_LIBRARIES})
 
-option(BUILD_DOCUMENTATION OFF)
-if(BUILD_DOCUMENTATION)
+option(XDMF_BUILD_DOCUMENTATION OFF)
+if(XDMF_BUILD_DOCUMENTATION)
 	add_subdirectory(doc)
-endif(BUILD_DOCUMENTATION)
+endif(XDMF_BUILD_DOCUMENTATION)
 
-option(BUILD_TESTING OFF)
-if(BUILD_TESTING)
+option(XDMF_BUILD_TESTING OFF)
+if(XDMF_BUILD_TESTING)
 	enable_testing()
 	include(CTest)
 	add_subdirectory(tests)
-endif(BUILD_TESTING)
+endif(XDMF_BUILD_TESTING)
 
-option(BUILD_UTILS OFF)
-if(BUILD_UTILS)
+option(XDMF_BUILD_UTILS OFF)
+if(XDMF_BUILD_UTILS)
   add_subdirectory(utils)
-endif(BUILD_UTILS)
+endif(XDMF_BUILD_UTILS)

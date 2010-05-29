@@ -6,6 +6,7 @@
  */
 
 #include <map>
+#include <sstream>
 #include "XdmfTopologyType.hpp"
 
 // Supported XdmfTopologyTypes
@@ -334,9 +335,11 @@ unsigned int XdmfTopologyType::getNodesPerElement() const
 
 void XdmfTopologyType::getProperties(std::map<std::string, std::string> & collectedProperties) const
 {
-	collectedProperties["TopologyType"] = this->mName;
+	collectedProperties["TopologyType"] = mName;
 	if(mName.compare("Polygon") == 0)
 	{
-		collectedProperties["NodesPerElement"] = this->mNodesPerElement;
+		std::stringstream nodesPerElement;
+		nodesPerElement << mNodesPerElement;
+		collectedProperties["NodesPerElement"] = nodesPerElement.str();
 	}
 }

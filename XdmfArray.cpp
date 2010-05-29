@@ -8,10 +8,11 @@
 #include <boost/tokenizer.hpp>
 #include <sstream>
 #include "XdmfArray.hpp"
+#include "XdmfArrayType.hpp"
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfVisitor.hpp"
 
-class XdmfArray::Clear : public boost::static_visitor <void> {
+class XdmfArray::Clear : public boost::static_visitor<void> {
 public:
 
 	Clear()
@@ -25,7 +26,7 @@ public:
 	}
 };
 
-class XdmfArray::CopyArrayValues : public boost::static_visitor <void> {
+class XdmfArray::CopyArrayValues : public boost::static_visitor<void> {
 public:
 
 	CopyArrayValues(const unsigned int startIndex, const unsigned int valuesStartIndex, const unsigned int numValues, const unsigned int arrayStride, const unsigned int valuesStride) :
@@ -64,7 +65,7 @@ private:
 	const unsigned int mValuesStride;
 };
 
-class XdmfArray::Erase : public boost::static_visitor <void> {
+class XdmfArray::Erase : public boost::static_visitor<void> {
 public:
 
 	Erase(const unsigned int index) :
@@ -83,7 +84,7 @@ private:
 	const unsigned int mIndex;
 };
 
-class XdmfArray::GetCapacity : public boost::static_visitor <unsigned int> {
+class XdmfArray::GetCapacity : public boost::static_visitor<unsigned int> {
 public:
 
 	GetCapacity()
@@ -97,137 +98,72 @@ public:
 	}
 };
 
-class XdmfArray::GetPrecision : public boost::static_visitor <unsigned int> {
-public:
-
-	GetPrecision()
-	{
-	}
-
-	unsigned int getPrecision(const char * const) const
-	{
-		return 1;
-	}
-
-	unsigned int getPrecision(const short * const) const
-	{
-		return 2;
-	}
-
-	unsigned int getPrecision(const int * const) const
-	{
-		return 4;
-	}
-
-	unsigned int getPrecision(const long * const) const
-	{
-		return 8;
-	}
-
-	unsigned int getPrecision(const float * const) const
-	{
-		return 4;
-	}
-
-	unsigned int getPrecision(const double * const) const
-	{
-		return 8;
-	}
-
-	unsigned int getPrecision(const unsigned char * const) const
-	{
-		return 1;
-	}
-
-	unsigned int getPrecision(const unsigned short * const) const
-	{
-		return 2;
-	}
-
-	unsigned int getPrecision(const unsigned int * const) const
-	{
-		return 4;
-	}
-
-	template<typename T>
-	unsigned int operator()(const boost::shared_ptr<std::vector<T> > & array) const
-	{
-		return this->getPrecision(&(array.get()->operator[](0)));
-	}
-
-	template<typename T>
-	unsigned int operator()(const boost::shared_array<const T> & array) const
-	{
-		return this->getPrecision(array.get());
-	}
-};
-
-class XdmfArray::GetType : public boost::static_visitor <std::string> {
+class XdmfArray::GetType : public boost::static_visitor<boost::shared_ptr<const XdmfArrayType> > {
 public:
 
 	GetType()
 	{
 	}
 
-	std::string getType(const char * const) const
+	boost::shared_ptr<const XdmfArrayType> getType(const char * const) const
 	{
-		return "Char";
+		return XdmfArrayType::Int8();
 	}
 
-	std::string getType(const short * const) const
+	boost::shared_ptr<const XdmfArrayType> getType(const short * const) const
 	{
-		return "Short";
+		return XdmfArrayType::Int16();
 	}
 
-	std::string getType(const int * const) const
+	boost::shared_ptr<const XdmfArrayType> getType(const int * const) const
 	{
-		return "Int";
+		return XdmfArrayType::Int32();
 	}
 
-	std::string getType(const long * const) const
+	boost::shared_ptr<const XdmfArrayType> getType(const long * const) const
 	{
-		return "Int";
+		return XdmfArrayType::Int64();
 	}
 
-	std::string getType(const float * const) const
+	boost::shared_ptr<const XdmfArrayType> getType(const float * const) const
 	{
-		return "Float";
+		return XdmfArrayType::Float32();
 	}
 
-	std::string getType(const double * const) const
+	boost::shared_ptr<const XdmfArrayType> getType(const double * const) const
 	{
-		return "Float";
+		return XdmfArrayType::Float64();
 	}
 
-	std::string getType(const unsigned char * const) const
+	boost::shared_ptr<const XdmfArrayType> getType(const unsigned char * const) const
 	{
-		return "UChar";
+		return XdmfArrayType::UInt8();
 	}
 
-	std::string getType(const unsigned short * const) const
+	boost::shared_ptr<const XdmfArrayType> getType(const unsigned short * const) const
 	{
-		return "UShort";
+		return XdmfArrayType::UInt16();
 	}
 
-	std::string getType(const unsigned int * const) const
+	boost::shared_ptr<const XdmfArrayType> getType(const unsigned int * const) const
 	{
-		return "UInt";
+		return XdmfArrayType::UInt32();
 	}
 
 	template<typename T>
-	std::string operator()(const boost::shared_ptr<std::vector<T> > & array) const
+	boost::shared_ptr<const XdmfArrayType> operator()(const boost::shared_ptr<std::vector<T> > & array) const
 	{
 		return this->getType(&(array.get()->operator[](0)));
 	}
 
 	template<typename T>
-	std::string operator()(const boost::shared_array<const T> & array) const
+	boost::shared_ptr<const XdmfArrayType> operator()(const boost::shared_array<const T> & array) const
 	{
 		return this->getType(array.get());
 	}
 };
 
-class XdmfArray::GetSize : public boost::static_visitor <unsigned int> {
+class XdmfArray::GetSize : public boost::static_visitor<unsigned int> {
 public:
 
 	GetSize()
@@ -241,7 +177,7 @@ public:
 	}
 };
 
-class XdmfArray::GetValuesPointer : public boost::static_visitor <const void * const> {
+class XdmfArray::GetValuesPointer : public boost::static_visitor<const void * const> {
 public:
 
 	GetValuesPointer()
@@ -261,7 +197,7 @@ public:
 	}
 };
 
-class XdmfArray::GetValuesString : public boost::static_visitor <std::string> {
+class XdmfArray::GetValuesString : public boost::static_visitor<std::string> {
 public:
 
 	GetValuesString() :
@@ -312,7 +248,7 @@ private:
 	const unsigned int mArrayPointerNumValues;
 };
 
-class XdmfArray::InternalizeArrayPointer : public boost::static_visitor <void> {
+class XdmfArray::InternalizeArrayPointer : public boost::static_visitor<void> {
 public:
 
 	InternalizeArrayPointer(XdmfArray * const array) :
@@ -334,7 +270,7 @@ private:
 	XdmfArray * const mArray;
 };
 
-class XdmfArray::NewArray : public boost::static_visitor <void> {
+class XdmfArray::NewArray : public boost::static_visitor<void> {
 public:
 
 	NewArray()
@@ -349,7 +285,7 @@ public:
 	}
 };
 
-class XdmfArray::Reserve : public boost::static_visitor <void> {
+class XdmfArray::Reserve : public boost::static_visitor<void> {
 public:
 
 	Reserve(const unsigned int size):
@@ -448,36 +384,17 @@ std::map<std::string, std::string> XdmfArray::getItemProperties() const
 	{
 		arrayProperties["Format"] = "XML";
 	}
-	arrayProperties["DataType"] = this->getType();
-	std::stringstream precision;
-	precision <<  this->getPrecision();
-	arrayProperties["Precision"] = precision.str();
+	boost::shared_ptr<const XdmfArrayType> type = this->getType();
 	std::stringstream size;
 	size <<  this->getSize();
 	arrayProperties["Dimensions"] = size.str();
+	type->getProperties(arrayProperties);
 	return arrayProperties;
 }
 
 std::string XdmfArray::getItemTag() const
 {
 	return ItemTag;
-}
-
-unsigned int XdmfArray::getPrecision() const
-{
-	if(mHaveArray)
-	{
-		return boost::apply_visitor(GetPrecision(), mArray);
-	}
-	else if(mHaveArrayPointer)
-	{
-		return boost::apply_visitor(GetPrecision(), mArrayPointer);
-	}
-	else if(mHDF5Controller)
-	{
-		return mHDF5Controller->getPrecision();
-	}
-	return 0;
 }
 
 unsigned int XdmfArray::getSize() const
@@ -497,7 +414,7 @@ unsigned int XdmfArray::getSize() const
 	return 0;
 }
 
-std::string XdmfArray::getType() const
+boost::shared_ptr<const XdmfArrayType> XdmfArray::getType() const
 {
 	if(mHaveArray)
 	{
@@ -511,7 +428,7 @@ std::string XdmfArray::getType() const
 	{
 		return mHDF5Controller->getType();
 	}
-	return "None";
+	return XdmfArrayType::Uninitialized();
 }
 
 const void * const XdmfArray::getValuesPointer() const
@@ -540,47 +457,47 @@ std::string XdmfArray::getValuesString() const
 	return "";
 }
 
-void XdmfArray::initialize(const std::string & type, const unsigned int precision)
+void XdmfArray::initialize(const boost::shared_ptr<const XdmfArrayType> arrayType)
 {
-	if(type.compare("Char") == 0 && precision == 1)
+	if(arrayType == XdmfArrayType::Int8())
 	{
 		this->initialize<char>();
 	}
-	else if(type.compare("Short") == 0 && precision == 2)
+	else if(arrayType == XdmfArrayType::Int16())
 	{
 		this->initialize<short>();
 	}
-	else if(type.compare("Int") == 0 && precision == 4)
+	else if(arrayType == XdmfArrayType::Int32())
 	{
 		this->initialize<int>();
 	}
-	else if(type.compare("Long") == 0 && precision == 8)
+	else if(arrayType == XdmfArrayType::Int64())
 	{
 		this->initialize<long>();
 	}
-	else if(type.compare("Float") == 0 && precision == 4)
+	else if(arrayType == XdmfArrayType::Float32())
 	{
 		this->initialize<float>();
 	}
-	else if(type.compare("Float") == 0 && precision == 8)
+	else if(arrayType == XdmfArrayType::Float64())
 	{
 		this->initialize<double>();
 	}
-	else if(type.compare("UChar") == 0 && precision == 1)
+	else if(arrayType == XdmfArrayType::UInt8())
 	{
 		this->initialize<unsigned char>();
 	}
-	else if(type.compare("UShort") == 0 && precision == 2)
+	else if(arrayType == XdmfArrayType::UInt16())
 	{
 		this->initialize<unsigned short>();
 	}
-	else if(type.compare("UInt") == 0 && precision == 4)
+	else if(arrayType == XdmfArrayType::Int32())
 	{
 		this->initialize<unsigned int>();
 	}
-	else if(type.compare("None") == 0)
+	else if(arrayType == XdmfArrayType::Uninitialized())
 	{
-		// No-op uninitialized!
+		this->release();
 	}
 	else
 	{
@@ -604,23 +521,13 @@ void XdmfArray::internalizeArrayPointer()
 void XdmfArray::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems)
 {
 	std::string contentVal;
-	int precisionVal;
-	int sizeVal;
-	std::string typeVal;
+	unsigned int sizeVal;
 
+	const boost::shared_ptr<const XdmfArrayType> arrayType = XdmfArrayType::New(itemProperties);
 	std::map<std::string, std::string>::const_iterator content = itemProperties.find("Content");
 	if(content != itemProperties.end())
 	{
 		contentVal = content->second;
-	}
-	else
-	{
-		assert(false);
-	}
-	std::map<std::string, std::string>::const_iterator precision = itemProperties.find("Precision");
-	if(precision != itemProperties.end())
-	{
-		precisionVal = atoi(precision->second.c_str());
 	}
 	else
 	{
@@ -635,25 +542,16 @@ void XdmfArray::populateItem(const std::map<std::string, std::string> & itemProp
 	{
 		assert(false);
 	}
-	std::map<std::string, std::string>::const_iterator type = itemProperties.find("DataType");
-	if(type != itemProperties.end())
-	{
-		typeVal = type->second;
-	}
-	else
-	{
-		assert(false);
-	}
 	std::map<std::string, std::string>::const_iterator format = itemProperties.find("Format");
 	if(format != itemProperties.end())
 	{
 		if(format->second.compare("HDF") == 0)
 		{
-			mHDF5Controller = XdmfHDF5Controller::New(contentVal, precisionVal, sizeVal, typeVal);
+			mHDF5Controller = XdmfHDF5Controller::New(contentVal, sizeVal, arrayType);
 		}
 		else if(format->second.compare("XML") == 0)
 		{
-			this->initialize(typeVal, precisionVal);
+			this->initialize(arrayType);
 			this->reserve(sizeVal);
 			boost::char_separator<char> sep(" \t\n");
 			boost::tokenizer<boost::char_separator<char> > tokens(contentVal, sep);

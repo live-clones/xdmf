@@ -233,8 +233,8 @@ void XdmfHDF5Writer::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVi
 		// Attach a new controller to the array if needed.
 		if(mImpl->mMode == Default || !array.mHDF5Controller)
 		{
-			boost::shared_ptr<XdmfHDF5Controller> newDataSetController = XdmfHDF5Controller::New(writtenDataSet.str(), array.getPrecision(),
-				array.getSize(), array.getType());
+			boost::shared_ptr<XdmfHDF5Controller> newDataSetController = XdmfHDF5Controller::New(writtenDataSet.str(),
+					array.getSize(), array.getType());
 			array.setHDF5Controller(newDataSetController);
 			mImpl->mDataSetId++;
 		}

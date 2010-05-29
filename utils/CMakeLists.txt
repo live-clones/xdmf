@@ -1,10 +1,10 @@
-option(BUILD_PARTITIONER OFF)
+option(XDMF_BUILD_PARTITIONER OFF)
 
 set(XdmfUtilsExectutables)
 set(XdmfUtilsSources)
 set(XdmfUtilsLinkLibraries Xdmf)
 
-if(BUILD_PARTITIONER)
+if(XDMF_BUILD_PARTITIONER)
 	find_package(Metis REQUIRED)
 	if(METIS_FOUND)
 		include_directories(${METIS_INCLUDE_DIR})
@@ -12,7 +12,7 @@ if(BUILD_PARTITIONER)
 	set(XdmfUtilsExectutables ${XdmfUtilsExectutables} XdmfPartitioner)
 	set(XdmfUtilsSources ${XdmfUtilsSources} XdmfPartitioner)
 	set(XdmfUtilsLinkLibraries ${XdmfUtilsLinkLibraries} ${METIS_LIBRARIES})
-endif(BUILD_PARTITIONER)
+endif(XDMF_BUILD_PARTITIONER)
 
 add_library(XdmfUtils ${XdmfUtilsSources})
 target_link_libraries(XdmfUtils ${XdmfUtilsLinkLibraries})

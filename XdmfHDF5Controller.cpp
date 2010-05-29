@@ -4,10 +4,10 @@
 #include <hdf5.h>
 #include <sstream>
 #include "XdmfArray.hpp"
+#include "XdmfArrayType.hpp"
 #include "XdmfHDF5Controller.hpp"
 
-XdmfHDF5Controller::XdmfHDF5Controller(const std::string & dataSetPath, const unsigned int precision, const unsigned int size, const std::string & type) :
-		mPrecision(precision),
+XdmfHDF5Controller::XdmfHDF5Controller(const std::string & dataSetPath, const unsigned int size, const boost::shared_ptr<const XdmfArrayType> type) :
 		mSize(size),
 		mType(type)
 {
@@ -51,17 +51,12 @@ std::string XdmfHDF5Controller::getHDF5FilePath() const
 	return mHDF5FilePath;
 }
 
-unsigned int XdmfHDF5Controller::getPrecision() const
-{
-	return mPrecision;
-}
-
 unsigned int XdmfHDF5Controller::getSize() const
 {
 	return mSize;
 }
 
-std::string XdmfHDF5Controller::getType() const
+boost::shared_ptr<const XdmfArrayType> XdmfHDF5Controller::getType() const
 {
 	return mType;
 }

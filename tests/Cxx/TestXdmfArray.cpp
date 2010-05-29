@@ -1,4 +1,5 @@
 #include "XdmfArray.hpp"
+#include "XdmfArrayType.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -14,14 +15,12 @@ int main(int argc, char* argv[])
 	 */
 	boost::shared_ptr<XdmfArray> array = XdmfArray::New();
 	assert(array->getSize() == 0);
-	assert(array->getType() == "None");
-	assert(array->getPrecision() == 0);
+	assert(array->getType() == XdmfArrayType::Uninitialized());
 	assert(array->getValuesString() == "");
 	assert(array->getValuesPointer() == NULL);
 	array->copyValues(0, &values[0], 4, 1, 1);
 	assert(array->getSize() == 4);
-	assert(array->getType().compare("Int") == 0);
-	assert(array->getPrecision() == 4);
+	assert(array->getType() == XdmfArrayType::Int32());
 	assert(array->getValuesString().compare("1 2 3 4 ") == 0);
 	const int * const arrayPointer = (const int * const)array->getValuesPointer();
 	assert(arrayPointer[0] == 1);
@@ -48,8 +47,7 @@ int main(int argc, char* argv[])
 	boost::shared_ptr<XdmfArray> array2 = XdmfArray::New();
 	array2->copyValues(0, &values[0], 2, 2, 1);
 	assert(array2->getSize() == 3);
-	assert(array2->getType().compare("Int") == 0);
-	assert(array2->getPrecision() == 4);
+	assert(array2->getType() == XdmfArrayType::Int32());
 	assert(array2->getValuesString().compare("1 0 2 ") == 0);
 	storedValues = array2->getValues<int>();
 	assert((*storedValues)[0] == 1);
@@ -62,8 +60,7 @@ int main(int argc, char* argv[])
 	boost::shared_ptr<XdmfArray> array3 = XdmfArray::New();
 	array3->copyValues(0, &values[0], 2, 1, 2);
 	assert(array3->getSize() == 2);
-	assert(array3->getType().compare("Int") == 0);
-	assert(array3->getPrecision() == 4);
+	assert(array3->getType() == XdmfArrayType::Int32());
 	assert(array3->getValuesString().compare("1 3 ") == 0);
 	storedValues = array3->getValues<int>();
 	assert((*storedValues)[0] == 1);
@@ -75,8 +72,6 @@ int main(int argc, char* argv[])
 	boost::shared_ptr<XdmfArray> array4 = XdmfArray::New();
 	array4->copyValues(0, &values[0], 2, 2, 2);
 	assert(array4->getSize() == 3);
-	assert(array4->getType().compare("Int") == 0);
-	assert(array4->getPrecision() == 4);
 	assert(array4->getValuesString().compare("1 0 3 ") == 0);
 	storedValues = array4->getValues<int>();
 	assert((*storedValues)[0] == 1);
@@ -90,8 +85,6 @@ int main(int argc, char* argv[])
 	boost::shared_ptr<XdmfArray> array5 = XdmfArray::New();
 	array5->copyValues(0, array, 1, 3);
 	assert(array5->getSize() == 3);
-	assert(array5->getType().compare("Int") == 0);
-	assert(array5->getPrecision() == 4);
 	storedValues = array5->getValues<int>();
 	assert(array5->getSize() == 3);
 	assert(array->getSize() == 4);
@@ -113,8 +106,7 @@ int main(int argc, char* argv[])
 	 */
 	array5->setValues(values, 2, 0);
 	assert(array5->getSize() == 2);
-	assert(array5->getType().compare("Int") == 0);
-	assert(array5->getPrecision() == 4);
+	assert(array5->getType() == XdmfArrayType::Int32());
 	assert(array5->getValuesString().compare("1 2 ") == 0);
 	const int * const array5Pointer = (const int * const)array5->getValuesPointer();
 	assert(array5Pointer[0] == 1);
@@ -143,8 +135,7 @@ int main(int argc, char* argv[])
 	doubleValues[2] = 10.1;
 	array5->setValues(doubleValues, 3, 1);
 	assert(array5->getSize() == 3);
-	assert(array5->getType().compare("Float") == 0);
-	assert(array5->getPrecision() == 8);
+	assert(array5->getType() == XdmfArrayType::Float64());
 	assert(array5->getValuesString().compare("0 1.1 10.1 ") == 0);
 
 	//
@@ -163,8 +154,7 @@ int main(int argc, char* argv[])
 	boost::shared_ptr<XdmfArray> array6 = XdmfArray::New();
 	array6->setValues(values2);
 	assert(array6->getSize() == 5);
-	assert(array6->getType().compare("Char") == 0);
-	assert(array6->getPrecision() == 1);
+	assert(array6->getType() == XdmfArrayType::Int8());
 	assert(array6->getValuesString().compare("-2 -1 0 1 2 ") == 0);
 	// Assert we have the same values!
 	boost::shared_ptr<std::vector<char> > storedValues2 = array6->getValues<char>();
@@ -202,8 +192,7 @@ int main(int argc, char* argv[])
 	array7->swap(values3);
 	assert(values3.size() == 0);
 	assert(array7->getSize() == 3);
-	assert(array7->getType().compare("Short") == 0);
-	assert(array7->getPrecision() == 2);
+	assert(array7->getType() == XdmfArrayType::Int16());
 	boost::shared_ptr<std::vector<short> > storedValues3 = array7->getValues<short>();
 	assert((*storedValues3)[0] == -1);
 	assert((*storedValues3)[1] == 0);
@@ -216,8 +205,7 @@ int main(int argc, char* argv[])
 	array7->swap(values2);
 	assert(storedValues2->size() == 0);
 	assert(array7->getSize() == 6);
-	assert(array7->getType().compare("Char") == 0);
-	assert(array7->getPrecision() == 1);
+	assert(array7->getType() == XdmfArrayType::Int8());
 
 	/**
 	 * Swap values from an XdmfArray (with copy)

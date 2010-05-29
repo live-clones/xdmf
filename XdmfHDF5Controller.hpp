@@ -3,6 +3,7 @@
 
 // Forward Declarations
 class XdmfArray;
+class XdmfArrayType;
 
 // Includes
 #include "XdmfObject.hpp"
@@ -23,9 +24,9 @@ public:
 	/**
 	 * Create a new controller for an hdf5 data set on disk.
 	 */
-	static boost::shared_ptr<XdmfHDF5Controller> New(const std::string & dataSetPath, const unsigned int precision, const unsigned int size, const std::string & type)
+	static boost::shared_ptr<XdmfHDF5Controller> New(const std::string & dataSetPath, const unsigned int size, const boost::shared_ptr<const XdmfArrayType> type)
 	{
-		boost::shared_ptr<XdmfHDF5Controller> p(new XdmfHDF5Controller(dataSetPath, precision, size, type));
+		boost::shared_ptr<XdmfHDF5Controller> p(new XdmfHDF5Controller(dataSetPath, size, type));
 		return p;
 	}
 
@@ -51,13 +52,6 @@ public:
 	std::string getHDF5FilePath() const;
 
 	/**
-	 * Get the precision of the hdf5 data set owned by this controller.
-	 *
-	 * @return a int containing the precision of the hdf5 data set.
-	 */
-	unsigned int getPrecision() const;
-
-	/**
 	 * Get the size of the hdf5 data set owned by this controller.
 	 *
 	 * @return a int containing the size of the hdf5 data set.
@@ -65,11 +59,11 @@ public:
 	unsigned int getSize() const;
 
 	/**
-	 * Get the data type of the hdf5 data set owned by this controller.
+	 * Get the array type of the hdf5 data set owned by this controller.
 	 *
-	 * @return a std::string containing the name of the data type of the hdf5 data set.
+	 * @return an XdmfArrayType containing the array type of the hdf5 data set.
 	 */
-	std::string getType() const;
+	boost::shared_ptr<const XdmfArrayType> getType() const;
 
 	/**
 	 * Read data owned by this controller on disk into the passed XdmfArray.
@@ -80,7 +74,7 @@ public:
 
 protected:
 
-	XdmfHDF5Controller(const std::string & dataSetPath, const unsigned int precision, const unsigned int size, const std::string & type);
+	XdmfHDF5Controller(const std::string & dataSetPath, const unsigned int size, const boost::shared_ptr<const XdmfArrayType> type);
 	virtual ~XdmfHDF5Controller();
 
 private:
@@ -90,9 +84,8 @@ private:
 
 	std::string mDataSetName;
 	std::string mHDF5FilePath;
-	unsigned int mPrecision;
 	unsigned int mSize;
-	std::string mType;
+	boost::shared_ptr<const XdmfArrayType> mType;
 };
 
 #endif /* XDMFHDF5CONTROLLER_HPP_ */
