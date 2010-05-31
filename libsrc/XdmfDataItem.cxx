@@ -145,7 +145,7 @@ XdmfDataItem::Copy(XdmfElement *Source){
 }
 
 XdmfInt32 XdmfDataItem::UpdateInformationFunction(){
-    XdmfConstString Value;
+    XdmfConstString Value = 0;
     switch(this->ItemType){
         case XDMF_ITEM_FUNCTION :
            Value = this->Get("Function");
