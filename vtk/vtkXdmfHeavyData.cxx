@@ -38,7 +38,6 @@
 #include "vtkXdmfDataArray.h"
 #include "vtkXdmfReader.h"
 #include "vtkXdmfReaderInternal.h"
-#include "vtkXMLUnstructuredGridWriter.h"
 
 #include <vtkstd/deque>
 #include <assert.h>
@@ -536,12 +535,6 @@ vtkDataObject* vtkXdmfHeavyData::ReadUnstructuredGrid(XdmfGrid* xmfGrid)
   ugData->SetPoints(points);
   points->Delete();
 
-  vtkXMLUnstructuredGridWriter * writer = vtkXMLUnstructuredGridWriter::New();
-  writer->SetDataModeToAscii();
-  writer->SetFileName("output.vtu");
-  writer->SetInput(ugData);
-  writer->Write();
- 
   this->ReadAttributes(ugData, xmfGrid);
 
   // Read ghost cell/point information.
