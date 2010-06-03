@@ -903,6 +903,9 @@ int vtkXdmfDomain::GetNumberOfComponents(XdmfGrid* grid, XdmfAttribute* attribut
     else if (attribute->GetAttributeCenter() == XDMF_ATTRIBUTE_CENTER_CELL) {
         return this->GetNumberOfCellComponents(grid, attribute);
     }
+    else if(attribute->GetAttributeCenter() == XDMF_ATTRIBUTE_CENTER_GRID) {
+        return this->GetNumberOfValues(attribute);
+    }
     return 0;
 }
 
