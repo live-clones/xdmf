@@ -145,18 +145,18 @@ XdmfDataItem::Copy(XdmfElement *Source){
 }
 
 XdmfInt32 XdmfDataItem::UpdateInformationFunction(){
-    XdmfConstString Value = 0;
     switch(this->ItemType){
         case XDMF_ITEM_FUNCTION :
+           XdmfConstString Value;
            Value = this->Get("Function");
            this->SetFunction(Value);
+           delete Value;
            break;
         case XDMF_ITEM_HYPERSLAB :
             break;
         case XDMF_ITEM_COORDINATES :
             break;
     }
-    delete Value;
     return(XDMF_SUCCESS);
 }
 
@@ -231,22 +231,22 @@ XdmfInt32 XdmfDataItem::UpdateInformationUniform(){
 XdmfInt32 XdmfDataItem::UpdateInformation(){
     XdmfConstString Value;
 
-	Value = this->Get("Major");
-	if(Value)
-	{
-		if(XDMF_WORD_CMP(Value,"Column"))
-			this->ColumnMajor = 1;
-		else if(XDMF_WORD_CMP(Value,"Row"))
-			this->ColumnMajor = 0;
-		else
-		{
+  Value = this->Get("Major");
+  if(Value)
+  {
+    if(XDMF_WORD_CMP(Value,"Column"))
+      this->ColumnMajor = 1;
+    else if(XDMF_WORD_CMP(Value,"Row"))
+      this->ColumnMajor = 0;
+    else
+    {
         XdmfErrorMessage("invalid major");
         free((void*)Value);
         return(XDMF_FAIL);
-		}
-	}
-	free((void*)Value);
-	XdmfDebug("Major = " << this->ColumnMajor);
+    }
+  }
+  free((void*)Value);
+  XdmfDebug("Major = " << this->ColumnMajor);
 
     XdmfDebug("XdmfDataItem::UpdateInformation()");
     if(XdmfElement::UpdateInformation() != XDMF_SUCCESS) return(XDMF_FAIL);
@@ -566,119 +566,119 @@ XdmfInt32 XdmfDataItem::Update(){
             return(XDMF_FAIL);
     }
 
-	// Support for Fortran matrices (2D arrays) added by Dominik Szczerba, June 2009.
-	// Can be further optimized by e.g. in situ transpose methods
-	// discussed on http://en.wikipedia.org/wiki/In-place_matrix_transposition
-	if(ColumnMajor)
-	{
-		if(TransposeInMemory)
-		{
-			XdmfDebug("Transposing Array " << this->GetHeavyDataSetName());
-			XdmfInt32 rank = 0;
-			XdmfInt64 dims[XDMF_MAX_DIMENSION];
-			rank = GetShape(dims);
-			XdmfDebug("rank = " << rank);
-			if(rank!=2)
-			{
-				XdmfErrorMessage("transpose is only implemented for rank 2 arrays");
-				return(XDMF_FAIL);
-			}
-			// for(int i=0; i<rank; i++)
-				// cerr << "DEBUG: dims[" << i << "] = " << dims[i] << endl;
+  // Support for Fortran matrices (2D arrays) added by Dominik Szczerba, June 2009.
+  // Can be further optimized by e.g. in situ transpose methods
+  // discussed on http://en.wikipedia.org/wiki/In-place_matrix_transposition
+  if(ColumnMajor)
+  {
+    if(TransposeInMemory)
+    {
+      XdmfDebug("Transposing Array " << this->GetHeavyDataSetName());
+      XdmfInt32 rank = 0;
+      XdmfInt64 dims[XDMF_MAX_DIMENSION];
+      rank = GetShape(dims);
+      XdmfDebug("rank = " << rank);
+      if(rank!=2)
+      {
+        XdmfErrorMessage("transpose is only implemented for rank 2 arrays");
+        return(XDMF_FAIL);
+      }
+      // for(int i=0; i<rank; i++)
+        // cerr << "DEBUG: dims[" << i << "] = " << dims[i] << endl;
 
-			const int NI = dims[0], NJ = dims[1];
+      const int NI = dims[0], NJ = dims[1];
 
-			void* ArrayT;
-			switch(this->Array->GetNumberType())
-			{
-				case XDMF_FLOAT64_TYPE:
-					ArrayT = (XdmfFloat64*)new XdmfFloat64[NI*NJ];
-					break;
-				case XDMF_INT32_TYPE:
-					ArrayT = (XdmfInt32*)new XdmfInt32[NI*NJ];
-					break;
-				// TODO implement the other types
-				default:
-					XdmfErrorMessage("unknown data type");
-					return(XDMF_FAIL);
-			}
+      void* ArrayT;
+      switch(this->Array->GetNumberType())
+      {
+        case XDMF_FLOAT64_TYPE:
+          ArrayT = (XdmfFloat64*)new XdmfFloat64[NI*NJ];
+          break;
+        case XDMF_INT32_TYPE:
+          ArrayT = (XdmfInt32*)new XdmfInt32[NI*NJ];
+          break;
+        // TODO implement the other types
+        default:
+          XdmfErrorMessage("unknown data type");
+          return(XDMF_FAIL);
+      }
 
-			// XdmfPointer ArrayPointer, ArrayPointerT;
-			XdmfPointer ArrayPointer;
+      // XdmfPointer ArrayPointer, ArrayPointerT;
+      XdmfPointer ArrayPointer;
 
-			for(int j=0; j<NJ; j++)
-			{
-				for(int i=0; i<NI; i++)
-				{
-					const int idx  = NI*j+i;
-					const int idxT = NJ*i+j;
-					// cerr << "DEBUG: idx/idxT = " << idx << " " << idxT << endl;
-					switch(this->Array->GetNumberType())
-					{
-						case XDMF_FLOAT64_TYPE:
-							ArrayPointer = (XdmfFloat64*)this->Array->GetDataPointer(idxT);
-							((XdmfFloat64*)ArrayT)[idx] = *(XdmfFloat64*)ArrayPointer;
-							break;
-						case XDMF_INT32_TYPE:
-							ArrayPointer = (XdmfInt32*)this->Array->GetDataPointer(idxT);
-							((XdmfInt32*)ArrayT)[idx] = *(XdmfInt32*)ArrayPointer;
-							break;
-						// TODO implement the other types
-						default:
-							XdmfErrorMessage("unknown data type");
-							return(XDMF_FAIL);
-					}
-				}
-			}
+      for(int j=0; j<NJ; j++)
+      {
+        for(int i=0; i<NI; i++)
+        {
+          const int idx  = NI*j+i;
+          const int idxT = NJ*i+j;
+          // cerr << "DEBUG: idx/idxT = " << idx << " " << idxT << endl;
+          switch(this->Array->GetNumberType())
+          {
+            case XDMF_FLOAT64_TYPE:
+              ArrayPointer = (XdmfFloat64*)this->Array->GetDataPointer(idxT);
+              ((XdmfFloat64*)ArrayT)[idx] = *(XdmfFloat64*)ArrayPointer;
+              break;
+            case XDMF_INT32_TYPE:
+              ArrayPointer = (XdmfInt32*)this->Array->GetDataPointer(idxT);
+              ((XdmfInt32*)ArrayT)[idx] = *(XdmfInt32*)ArrayPointer;
+              break;
+            // TODO implement the other types
+            default:
+              XdmfErrorMessage("unknown data type");
+              return(XDMF_FAIL);
+          }
+        }
+      }
 
-			std::swap(dims[0], dims[1]);
-			Array->Reform(rank,dims);
+      std::swap(dims[0], dims[1]);
+      Array->Reform(rank,dims);
 
-			for(int l=0; l<NI*NJ; l++)
-			{
-				switch(this->Array->GetNumberType())
-				{
-					case XDMF_FLOAT64_TYPE:
-						// cerr << "DEBUG: l = " << l  << " " << ((XdmfFloat64*)ArrayT)[l] << endl;
-						this->Array->SetValue(l,((XdmfFloat64*)ArrayT)[l]);
-						break;
-					case XDMF_INT32_TYPE:
-						// cerr << "DEBUG: l = " << l << " " << ((XdmfInt32*)ArrayT)[l] << endl;
-						this->Array->SetValue(l,((XdmfInt32*)ArrayT)[l]);
-						break;
-					// TODO implement the other types
-					default:
-						XdmfErrorMessage("unknown data type");
-						return(XDMF_FAIL);
-				}
-			}
+      for(int l=0; l<NI*NJ; l++)
+      {
+        switch(this->Array->GetNumberType())
+        {
+          case XDMF_FLOAT64_TYPE:
+            // cerr << "DEBUG: l = " << l  << " " << ((XdmfFloat64*)ArrayT)[l] << endl;
+            this->Array->SetValue(l,((XdmfFloat64*)ArrayT)[l]);
+            break;
+          case XDMF_INT32_TYPE:
+            // cerr << "DEBUG: l = " << l << " " << ((XdmfInt32*)ArrayT)[l] << endl;
+            this->Array->SetValue(l,((XdmfInt32*)ArrayT)[l]);
+            break;
+          // TODO implement the other types
+          default:
+            XdmfErrorMessage("unknown data type");
+            return(XDMF_FAIL);
+        }
+      }
 
-			// delete [] ArrayT;
-			switch(this->Array->GetNumberType())
-			{
-				case XDMF_FLOAT64_TYPE:
-					delete [] (XdmfFloat64*)ArrayT;
-					break;
-				case XDMF_INT32_TYPE:
-					delete [] (XdmfInt32*)ArrayT;
-					break;
-				// TODO implement the other types
-				default:
-					XdmfErrorMessage("unknown data type");
-					return(XDMF_FAIL);
-			}
+      // delete [] ArrayT;
+      switch(this->Array->GetNumberType())
+      {
+        case XDMF_FLOAT64_TYPE:
+          delete [] (XdmfFloat64*)ArrayT;
+          break;
+        case XDMF_INT32_TYPE:
+          delete [] (XdmfInt32*)ArrayT;
+          break;
+        // TODO implement the other types
+        default:
+          XdmfErrorMessage("unknown data type");
+          return(XDMF_FAIL);
+      }
 
-			XdmfDebug("done transpose");
+      XdmfDebug("done transpose");
 
-		}
-		else
-		{
-			XdmfErrorMessage("out-of-core transpose not implemented yet");
-			return(XDMF_FAIL);
-		}
+    }
+    else
+    {
+      XdmfErrorMessage("out-of-core transpose not implemented yet");
+      return(XDMF_FAIL);
+    }
 
 
-	}
+  }
 
     return(XDMF_SUCCESS);
 }
@@ -749,9 +749,9 @@ XdmfInt32 XdmfDataItem::Build(){
         case 4 :
             this->Set("Precision", "4");
             break;
-	case 2 :
-	    this->Set("Precision", "2");
-	    break;
+  case 2 :
+      this->Set("Precision", "2");
+      break;
         case 1 :
             this->Set("Precision", "1");
             break;
