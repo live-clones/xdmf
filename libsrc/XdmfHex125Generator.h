@@ -28,26 +28,26 @@ class XdmfGrid;
 #include "XdmfObject.h"
 
 /*!
- * @brief XdmfHex64Generator generates a 64-noded tri-cubic hexahedron
+ * @brief XdmfHex125Generator generates a 125-noded tri-quartic hexahedron
  *        mesh from an XdmfGrid containing linear hexahedron elements.
  */
 
-class XdmfHex64Generator
+class XdmfHex125Generator
 {
 public:
     /*!
      * Constructor.
      */
-    XdmfHex64Generator();
+    XdmfHex125Generator();
 
     /*!
      * Destructor.
      */
-    ~XdmfHex64Generator();
+    ~XdmfHex125Generator();
 
     /*!
      * Take an XdmfGrid containing linear hexahedron elements and convert to
-     * 64-noded tri-cubic hexahedron elements.
+     * 125-noded tri-quartic hexahedron elements.
      *
      * @param grid an XdmfGrid containing XDMF_HEX topoology to convert.
      * @param parentElement the XdmfElement to insert the grid into.
@@ -57,10 +57,10 @@ public:
     XdmfGrid * Generate(XdmfGrid * grid, XdmfElement * parentElement);
 
     /*!
-     * Take an XdmfGrid containing tri-cubic hexahedron elements and convert to
-     * linear hexahedron grid (split each tri-cubic element into 27 linear hexahedron elements).
+     * Take an XdmfGrid containing tri-quartic hexahedron elements and convert to
+     * linear hexahedron grid (split each tri-quartic element into linear hexahedron elements).
      *
-     * @param grid an XdmfGrid containing XDMF_HEX_64 topology to split.
+     * @param grid an XdmfGrid containing XDMF_HEX_125 topology to split.
      * @param parentElement the XdmfElement to insert the grid into.
      *
      * @return a pointer to the split XdmfGrid.

@@ -64,6 +64,7 @@ SET( XdmfModelSource
   XdmfDsmComm
   XdmfDsmMsg
   XdmfHex64Generator
+  XdmfHex125Generator
   )
 
 SET(CSHARP_SOURCES 

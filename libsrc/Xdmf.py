@@ -955,6 +955,7 @@ XDMF_HEX_20 = _Xdmf.XDMF_HEX_20
 XDMF_HEX_24 = _Xdmf.XDMF_HEX_24
 XDMF_HEX_27 = _Xdmf.XDMF_HEX_27
 XDMF_HEX_64 = _Xdmf.XDMF_HEX_64
+XDMF_HEX_125 = _Xdmf.XDMF_HEX_125
 XDMF_MIXED = _Xdmf.XDMF_MIXED
 XDMF_2DSMESH = _Xdmf.XDMF_2DSMESH
 XDMF_2DRECTMESH = _Xdmf.XDMF_2DRECTMESH
@@ -1338,6 +1339,23 @@ class XdmfHex64Generator(_object):
     def Split(self, *args): return _Xdmf.XdmfHex64Generator_Split(self, *args)
 XdmfHex64Generator_swigregister = _Xdmf.XdmfHex64Generator_swigregister
 XdmfHex64Generator_swigregister(XdmfHex64Generator)
+
+class XdmfHex125Generator(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, XdmfHex125Generator, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, XdmfHex125Generator, name)
+    __repr__ = _swig_repr
+    def __init__(self): 
+        this = _Xdmf.new_XdmfHex125Generator()
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _Xdmf.delete_XdmfHex125Generator
+    __del__ = lambda self : None;
+    def Generate(self, *args): return _Xdmf.XdmfHex125Generator_Generate(self, *args)
+    def Split(self, *args): return _Xdmf.XdmfHex125Generator_Split(self, *args)
+XdmfHex125Generator_swigregister = _Xdmf.XdmfHex125Generator_swigregister
+XdmfHex125Generator_swigregister(XdmfHex125Generator)
 
 XDMF_DSM_OPCODE_DONE = _Xdmf.XDMF_DSM_OPCODE_DONE
 XDMF_DSM_TYPE_UNIFORM = _Xdmf.XDMF_DSM_TYPE_UNIFORM

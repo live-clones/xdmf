@@ -36,27 +36,27 @@
 #include <map>
 #include <vector>
 
+struct PointComparison {
+  bool operator()(const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2) const
+  {
+    double epsilon = 1e-6;
+    for(int i=0; i<3; ++i)
+    {
+      if(fabs(point1[i] - point2[i]) > epsilon)
+      {
+        return point1[i] < point2[i];
+      }
+    }
+    return false;
+  }
+};
+
 XdmfHex64Generator::XdmfHex64Generator()
 {
 }
 
 XdmfHex64Generator::~XdmfHex64Generator()
 {
-}
-
-inline int Compare(XdmfFloat64 * pt1, XdmfFloat64 * pt2)
-{
-  if (fabs(pt1[0] - pt2[0]) <= 1e-6)
-  {
-    if (fabs(pt1[1] - pt2[1]) <= 1e-6)
-    {
-      if (fabs(pt1[2] - pt2[2]) <= 1e-6)
-      {
-        return 1;
-      }
-    }
-  }
-  return 0;
 }
 
 inline void ComputeInteriorPoints(std::vector<XdmfFloat64> & midpoint1, std::vector<XdmfFloat64> & midpoint2, std::vector<XdmfFloat64> & point1, std::vector<XdmfFloat64> & point2)
@@ -106,7 +106,7 @@ XdmfGrid * XdmfHex64Generator::Generate(XdmfGrid * grid, XdmfElement * parentEle
   std::vector<XdmfFloat64> midpoint1(3);
   std::vector<XdmfFloat64> midpoint2(3);
 
-  std::map<std::vector<XdmfFloat64> , XdmfInt32> coordToIdMap;
+  std::map<std::vector<XdmfFloat64>, XdmfInt32, PointComparison> coordToIdMap;
 
   // Iterate over all elements, for each element compute new coordinate points and insert those values into newGeometry and newConnectivity.
   for(int i=0; i<grid->GetTopology()->GetNumberOfElements(); ++i)
@@ -115,6 +115,7 @@ XdmfGrid * XdmfHex64Generator::Generate(XdmfGrid * grid, XdmfElement * parentEle
 
     // Fill localNodes with original coordinate information.
     std::vector<std::vector<XdmfFloat64> > localNodes(8);
+    localNodes.reserve(64);
     for(int j=0; j<8; ++j)
     {
       localNodes[j] = std::vector<XdmfFloat64>(3);
@@ -159,6 +160,7 @@ XdmfGrid * XdmfHex64Generator::Generate(XdmfGrid * grid, XdmfElement * parentEle
           break;
         }
         case 4:
+
         {
           ComputeInteriorPoints(midpoint1, midpoint2, localNodes[4], localNodes[5]);
           localNodes.push_back(midpoint1);
@@ -347,10 +349,10 @@ XdmfGrid * XdmfHex64Generator::Generate(XdmfGrid * grid, XdmfElement * parentEle
           break;
         }
       }
-
       std::map<std::vector<XdmfFloat64>, XdmfInt32>::const_iterator iter = coordToIdMap.find(midpoint1);
       if(iter == coordToIdMap.end())
       {
+        // Not inserted before
         XdmfInt32 newId = newPoints.size() / 3;
         coordToIdMap[midpoint1] = newId;
         newConnectivity.push_back(newId);
@@ -458,7 +460,7 @@ XdmfGrid * XdmfHex64Generator::Split(XdmfGrid * grid, XdmfElement * parentElemen
 
   for(int i=0; i<grid->GetTopology()->GetNumberOfElements(); ++i)
   {
-    newConnectivity->SetValues(i*216, oldConnectivity, 1, 0 + 64 * i);
+    newConnectivity->SetValues(i*216 + 0, oldConnectivity, 1, 0 + 64 * i);
     newConnectivity->SetValues(i*216 + 1, oldConnectivity, 1, 8 + 64 * i);
     newConnectivity->SetValues(i*216 + 2, oldConnectivity, 1, 48 + 64 * i);
     newConnectivity->SetValues(i*216 + 3, oldConnectivity, 1, 15 + 64 * i);

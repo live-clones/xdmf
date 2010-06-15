@@ -48,6 +48,7 @@ swig -v -c++ -make_default -includeall -shadow -java $(ICE_INCLUDES) -o XdmfJava
 #include <XdmfSet.h>
 #include <XdmfMap.h>
 #include <XdmfHex64Generator.h>
+#include <XdmfHex125Generator.h>
     /*
 #include <XdmfParameter.h>
 #include <XdmfTransform.h>
@@ -132,6 +133,7 @@ inline XDMF_LONG64 XDMF_strtoll(char *str, void*, int)
 %include XdmfSet.h
 %include XdmfMap.h
 %include XdmfHex64Generator.h
+%include XdmfHex125Generator.h
 /*
 %include XdmfParameter.h
 %include XdmfTransform.h
