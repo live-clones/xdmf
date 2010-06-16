@@ -59,13 +59,8 @@ struct PointComparison {
   }
 };
 
-inline void ComputeInteriorPoints(std::vector<XdmfFloat64> & quarterPoint, std::vector<XdmfFloat64> & midPoint, std::vector<XdmfFloat64> & threeQuarterPoint, const std::vector<XdmfFloat64> & point1,
-  const std::vector<XdmfFloat64> & point2, bool & quarter_point_creation, bool & mid_point_creation, bool & three_quarter_point_creation)
+inline void ComputeInteriorPoints(std::vector<XdmfFloat64> & quarterPoint, std::vector<XdmfFloat64> & midPoint, std::vector<XdmfFloat64> & threeQuarterPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2)
 {
-  quarter_point_creation = true;
-  mid_point_creation = true;
-  three_quarter_point_creation = true;
-
   quarterPoint[0] = (1.0/4.0)*(point2[0] + 3*point1[0]);
   quarterPoint[1] = (1.0/4.0)*(point2[1] + 3*point1[1]);
   quarterPoint[2] = (1.0/4.0)*(point2[2] + 3*point1[2]);
@@ -79,40 +74,50 @@ inline void ComputeInteriorPoints(std::vector<XdmfFloat64> & quarterPoint, std::
   threeQuarterPoint[2] = (1.0/4.0)*(3.0*point2[2] + point1[2]);
 }
 
-inline void ComputeQuarterPoint (std::vector<XdmfFloat64> & quarterPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2, bool & quarter_point_creation, bool & mid_point_creation, 
-  bool & three_quarter_point_creation)
+inline void ComputeQuarterPoint (std::vector<XdmfFloat64> & quarterPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2)
 {
-    quarter_point_creation = true;
-    mid_point_creation = false;
-    three_quarter_point_creation = false;
-
-    quarterPoint[0] = (1.0/4.0)*(point2[0] + 3*point1[0]);
-    quarterPoint[1] = (1.0/4.0)*(point2[1] + 3*point1[1]);
-    quarterPoint[2] = (1.0/4.0)*(point2[2] + 3*point1[2]);
+  quarterPoint[0] = (1.0/4.0)*(point2[0] + 3*point1[0]);
+  quarterPoint[1] = (1.0/4.0)*(point2[1] + 3*point1[1]);
+  quarterPoint[2] = (1.0/4.0)*(point2[2] + 3*point1[2]);
 }
 
-inline void ComputeMidPoint(std::vector<XdmfFloat64> & midPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2, bool & quarter_point_creation, bool & mid_point_creation,
-  bool & three_quarter_point_creation)
+inline void ComputeMidPoint(std::vector<XdmfFloat64> & midPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2)
 {
-  quarter_point_creation = false;
-  mid_point_creation = true;
-  three_quarter_point_creation = false;
-
   midPoint[0] = (1.0/2.0)*(point2[0] + point1[0]);
   midPoint[1] = (1.0/2.0)*(point2[1] + point1[1]);
   midPoint[2] = (1.0/2.0)*(point2[2] + point1[2]);
 }
 
-inline void ComputeThreeQuarterPoint(std::vector<XdmfFloat64> & threeQuarterPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2, bool & quarter_point_creation,
-  bool & mid_point_creation, bool & three_quarter_point_creation)
+inline void ComputeThreeQuarterPoint(std::vector<XdmfFloat64> & threeQuarterPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2)
 {
-     quarter_point_creation = false;
-     mid_point_creation = false;
-     three_quarter_point_creation = true;
+  threeQuarterPoint[0] = (1.0/4.0)*(3.0*point2[0] + point1[0]);
+  threeQuarterPoint[1] = (1.0/4.0)*(3.0*point2[1] + point1[1]);
+  threeQuarterPoint[2] = (1.0/4.0)*(3.0*point2[2] + point1[2]);
+}
 
-     threeQuarterPoint[0] = (1.0/4.0)*(3.0*point2[0] + point1[0]);
-     threeQuarterPoint[1] = (1.0/4.0)*(3.0*point2[1] + point1[1]);
-     threeQuarterPoint[2] = (1.0/4.0)*(3.0*point2[2] + point1[2]);
+inline void InsertPointWithoutCheck(std::vector<XdmfFloat64> & newPoint, std::map<std::vector<XdmfFloat64>, XdmfInt32, PointComparison> & coordToIdMap, std::vector<XdmfInt32> & newConnectivity, std::vector<XdmfFloat64> & newPoints)
+{
+  XdmfInt32 newId = newPoints.size() / 3;
+  newConnectivity.push_back(newId);
+  newPoints.push_back(newPoint[0]);
+  newPoints.push_back(newPoint[1]);
+  newPoints.push_back(newPoint[2]);
+}
+
+inline void InsertPointWithCheck(std::vector<XdmfFloat64> & newPoint, std::map<std::vector<XdmfFloat64>, XdmfInt32, PointComparison> & coordToIdMap, std::vector<XdmfInt32> & newConnectivity, std::vector<XdmfFloat64> & newPoints)
+{
+  std::map<std::vector<XdmfFloat64>, XdmfInt32>::const_iterator iter = coordToIdMap.find(newPoint);
+  if(iter == coordToIdMap.end())
+  {
+    // Not inserted before
+    XdmfInt32 newId = newPoints.size() / 3;
+    coordToIdMap[newPoint] = newId;
+    InsertPointWithoutCheck(newPoint, coordToIdMap, newConnectivity, newPoints);
+  }
+  else
+  {
+    newConnectivity.push_back(iter->second);
+  }
 }
 
 XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentElement)
@@ -137,11 +142,10 @@ XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentEl
   std::vector<XdmfFloat64> quarterPoint(3);
   std::vector<XdmfFloat64> midPoint(3);
   std::vector<XdmfFloat64> threeQuarterPoint(3);
-  bool quarter_point_creation;
-  bool mid_point_creation;
-  bool three_quarter_point_creation;
 
   std::map<std::vector<XdmfFloat64>, XdmfInt32, PointComparison> coordToIdMap;
+
+  clock_t start = clock();
 
   // Iterate over all elements, for each element compute new coordinate points and insert those values into newGeometry and newConnectivity.
   for(int i=0; i<grid->GetTopology()->GetNumberOfElements(); ++i)
@@ -150,7 +154,7 @@ XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentEl
 
     // Fill localNodes with original coordinate information.
     std::vector<std::vector<XdmfFloat64> > localNodes(8);
-    localNodes.reserve(125);
+    localNodes.reserve(80);
     for(int j=0; j<8; ++j)
     {
       localNodes[j] = std::vector<XdmfFloat64>(3);
@@ -162,466 +166,369 @@ XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentEl
     newConnectivity.resize(newConnectivity.size() + 8);
     grid->GetTopology()->GetConnectivity()->GetValues(8*i, &newConnectivity[startIndex], 8);
     
-    for(int j=0; j<57; ++j)
-    {
-      switch(j)
-      {
-        case 0:
-        {
-          ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[0], localNodes[1], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          localNodes.push_back(midPoint);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 1:
-        {
-          ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[1], localNodes[2], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          localNodes.push_back(midPoint);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 2:
-        {
-          ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[2], localNodes[3], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          localNodes.push_back(midPoint);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 3:
-        {
-          ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[3], localNodes[0], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          localNodes.push_back(midPoint);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 4:
-        {
-          ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[4], localNodes[5], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          localNodes.push_back(midPoint);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 5:
-        {
-          ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[5], localNodes[6], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          localNodes.push_back(midPoint);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 6:
-        {
-          ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[6], localNodes[7], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          localNodes.push_back(midPoint);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 7:
-        {
-          ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[7], localNodes[4], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          localNodes.push_back(midPoint);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 8:
-        {
-          ComputeQuarterPoint(quarterPoint, localNodes[0], localNodes[4], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          break;
-        }
-        case 9:
-        {
-          ComputeQuarterPoint(quarterPoint, localNodes[1], localNodes[5], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          break;
-        }
-        case 10:
-        {
-          ComputeQuarterPoint(quarterPoint, localNodes[2], localNodes[6], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          break;
-        }
-        case 11:
-        {
-          ComputeQuarterPoint(quarterPoint, localNodes[3], localNodes[7], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          break;
-        }
-        case 12:
-        {
-          ComputeThreeQuarterPoint(threeQuarterPoint, localNodes[0], localNodes[4], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 13:
-        {
-          ComputeThreeQuarterPoint(threeQuarterPoint, localNodes[1], localNodes[5], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 14:
-        {
-          ComputeThreeQuarterPoint(threeQuarterPoint, localNodes[2], localNodes[6], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 15:
-        {
-          ComputeThreeQuarterPoint(threeQuarterPoint, localNodes[3], localNodes[7], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 16:
-        {
-          ComputeMidPoint(midPoint, localNodes[0], localNodes[4], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(midPoint);
-          break;
-        }
-        case 17:
-        {
-          ComputeMidPoint(midPoint, localNodes[1], localNodes[5], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(midPoint);
-          break;
-        }
-        case 18:
-        {
-          ComputeMidPoint(midPoint, localNodes[2], localNodes[6], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(midPoint);
-          break;
-        }
-        case 19:
-        {
-          ComputeMidPoint(midPoint, localNodes[3], localNodes[7], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(midPoint);
-          break;
-        }
-        case 20:
-        {
-          ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[32], localNodes[33], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          localNodes.push_back(midPoint);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 21:
-        {
-          ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[33], localNodes[34], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          localNodes.push_back(midPoint);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 22:
-        {
-          ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[34], localNodes[35], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          localNodes.push_back(midPoint);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 23:
-        {
-          ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[35], localNodes[32], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          localNodes.push_back(midPoint);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 24:
-        {
-          ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[36], localNodes[37], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          localNodes.push_back(midPoint);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 25:
-        {
-          ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[37], localNodes[38], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          localNodes.push_back(midPoint);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 26:
-        {
-          ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[38], localNodes[39], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          localNodes.push_back(midPoint);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 27:
-        {
-          ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[39], localNodes[36], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          localNodes.push_back(midPoint);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 28:
-        {
-          ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[40], localNodes[41], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          localNodes.push_back(midPoint);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 29:
-        {
-          ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[41], localNodes[42], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          localNodes.push_back(midPoint);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 30:
-        {
-          ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[42], localNodes[43], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          localNodes.push_back(midPoint);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 31:
-        {
-          ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[43], localNodes[40], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          localNodes.push_back(midPoint);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 32:
-        {
-          ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[19], localNodes[11], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          localNodes.push_back(midPoint);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 33:
-        {
-          ComputeMidPoint(midPoint, localNodes[10], localNodes[14], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(midPoint);
-          break;
-        }
-        case 34:
-        {
-          ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[13], localNodes[17], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          localNodes.push_back(midPoint);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 35:
-        {
-          ComputeMidPoint(midPoint, localNodes[16], localNodes[8], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(midPoint);
-          break;
-        }
-        case 36:
-        {
-          ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[31], localNodes[23], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          localNodes.push_back(midPoint);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 37:
-        {
-          ComputeMidPoint(midPoint, localNodes[22], localNodes[26], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(midPoint);
-          break;
-        }
-        case 38:
-        {
-          ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[25], localNodes[29], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          localNodes.push_back(midPoint);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 39:
-        {
-          ComputeMidPoint(midPoint, localNodes[28], localNodes[20], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(midPoint);
-          break;
-        }
-        case 40:
-        {
-          ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[55], localNodes[47], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          localNodes.push_back(midPoint);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 41:
-        {
-          ComputeMidPoint(midPoint, localNodes[46], localNodes[50], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(midPoint);
-          break;
-        }
-        case 42:
-        {
-          ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[49], localNodes[53], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          localNodes.push_back(midPoint);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 43:
-        {
-          ComputeMidPoint(midPoint, localNodes[52], localNodes[44], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(midPoint);
-          break;
-        }
-        case 44:
-        {
-          ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[67], localNodes[59], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          localNodes.push_back(midPoint);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 45:
-        {
-          ComputeMidPoint(midPoint, localNodes[62], localNodes[58], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(midPoint);
-          break;
-        }
-        case 46:
-        {
-          ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[61], localNodes[65], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          localNodes.push_back(midPoint);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 47:
-        {
-          ComputeMidPoint(midPoint, localNodes[56], localNodes[64], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(midPoint);
-          break;
-        }
-        case 48:
-        {
-          ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[79], localNodes[71], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          localNodes.push_back(midPoint);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 49:
-        {
-          ComputeMidPoint(midPoint, localNodes[70], localNodes[74], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(midPoint);
-          break;
-        }
-        case 50:
-        {
-          ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[73], localNodes[77], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(quarterPoint);
-          localNodes.push_back(midPoint);
-          localNodes.push_back(threeQuarterPoint);
-          break;
-        }
-        case 51:
-        {
-          ComputeMidPoint(midPoint, localNodes[76], localNodes[68], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(midPoint);
-          break;
-        }
-        case 52:
-        {
-          ComputeMidPoint(midPoint, localNodes[12], localNodes[18], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(midPoint);
-          break;
-        }
-        case 53:
-        {
-          ComputeMidPoint(midPoint, localNodes[24], localNodes[30], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(midPoint);
-          break;
-        }
-        case 54:
-        {
-          ComputeMidPoint(midPoint, localNodes[48], localNodes[54], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(midPoint);
-          break;
-        }
-        case 55:
-        {
-          ComputeMidPoint(midPoint, localNodes[60], localNodes[66], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(midPoint);
-          break;
-        }
-        case 56:
-        {
-          ComputeMidPoint(midPoint, localNodes[72], localNodes[78], quarter_point_creation, mid_point_creation, three_quarter_point_creation);
-          localNodes.push_back(midPoint);
-          break;
-        }
-      }
-      if(quarter_point_creation)
-      {
-        std::map<std::vector<XdmfFloat64>, XdmfInt32>::const_iterator iter = coordToIdMap.find(quarterPoint);
-        if(iter == coordToIdMap.end())
-        {
-          XdmfInt32 newId = newPoints.size() / 3;
-          coordToIdMap[quarterPoint] = newId;
-          newConnectivity.push_back(newId);
-          newPoints.push_back(quarterPoint[0]);
-          newPoints.push_back(quarterPoint[1]);
-          newPoints.push_back(quarterPoint[2]);
-        }
-        else
-        {
-          newConnectivity.push_back(iter->second);
-        }
-      }
-      if(mid_point_creation)
-      {
-        std::map<std::vector<XdmfFloat64>, XdmfInt32>::const_iterator iter = coordToIdMap.find(midPoint);
-        if(iter == coordToIdMap.end())
-        {
-          XdmfInt32 newId = newPoints.size() / 3;
-          coordToIdMap[midPoint] = newId;
-          newConnectivity.push_back(newId);
-          newPoints.push_back(midPoint[0]);
-          newPoints.push_back(midPoint[1]);
-          newPoints.push_back(midPoint[2]);
-        }
-        else
-        {
-          newConnectivity.push_back(iter->second);
-        }
-      }
-      if(three_quarter_point_creation)
-      {
-        std::map<std::vector<XdmfFloat64>, XdmfInt32>::const_iterator iter = coordToIdMap.find(threeQuarterPoint);
-        if(iter == coordToIdMap.end())
-        {
-          XdmfInt32 newId = newPoints.size() / 3;
-          coordToIdMap[threeQuarterPoint] = newId;
-          newConnectivity.push_back(newId);
-          newPoints.push_back(threeQuarterPoint[0]);
-          newPoints.push_back(threeQuarterPoint[1]);
-          newPoints.push_back(threeQuarterPoint[2]);
-        }
-        else
-        {
-          newConnectivity.push_back(iter->second);
-        }
-      }
-    }
+    // Case 0
+    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[0], localNodes[1]);
+    localNodes.push_back(quarterPoint);
+    localNodes.push_back(midPoint);
+    localNodes.push_back(threeQuarterPoint);
+    InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 1
+    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[1], localNodes[2]);
+    localNodes.push_back(quarterPoint);
+    localNodes.push_back(midPoint);
+    localNodes.push_back(threeQuarterPoint);
+    InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 2
+    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[2], localNodes[3]);
+    localNodes.push_back(quarterPoint);
+    localNodes.push_back(midPoint);
+    localNodes.push_back(threeQuarterPoint);
+    InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 3
+    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[3], localNodes[0]);
+    localNodes.push_back(quarterPoint);
+    localNodes.push_back(midPoint);
+    localNodes.push_back(threeQuarterPoint);
+    InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 4
+    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[4], localNodes[5]);
+    localNodes.push_back(quarterPoint);
+    localNodes.push_back(midPoint);
+    localNodes.push_back(threeQuarterPoint);
+    InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 5
+    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[5], localNodes[6]);
+    localNodes.push_back(quarterPoint);
+    localNodes.push_back(midPoint);
+    localNodes.push_back(threeQuarterPoint);
+    InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 6
+    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[6], localNodes[7]);
+    localNodes.push_back(quarterPoint);
+    localNodes.push_back(midPoint);
+    localNodes.push_back(threeQuarterPoint);
+    InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 7
+    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[7], localNodes[4]);
+    localNodes.push_back(quarterPoint);
+    localNodes.push_back(midPoint);
+    localNodes.push_back(threeQuarterPoint);
+    InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 8
+    ComputeQuarterPoint(quarterPoint, localNodes[0], localNodes[4]);
+    localNodes.push_back(quarterPoint);
+    InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 9
+    ComputeQuarterPoint(quarterPoint, localNodes[1], localNodes[5]);
+    localNodes.push_back(quarterPoint);
+    InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 10
+    ComputeQuarterPoint(quarterPoint, localNodes[2], localNodes[6]);
+    localNodes.push_back(quarterPoint);
+    InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 11
+    ComputeQuarterPoint(quarterPoint, localNodes[3], localNodes[7]);
+    localNodes.push_back(quarterPoint);
+    InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 12
+    ComputeThreeQuarterPoint(threeQuarterPoint, localNodes[0], localNodes[4]);
+    localNodes.push_back(threeQuarterPoint);
+    InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 13
+    ComputeThreeQuarterPoint(threeQuarterPoint, localNodes[1], localNodes[5]);
+    localNodes.push_back(threeQuarterPoint);
+    InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 14
+    ComputeThreeQuarterPoint(threeQuarterPoint, localNodes[2], localNodes[6]);
+    localNodes.push_back(threeQuarterPoint);
+    InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 15
+    ComputeThreeQuarterPoint(threeQuarterPoint, localNodes[3], localNodes[7]);
+    localNodes.push_back(threeQuarterPoint);
+    InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 16
+    ComputeMidPoint(midPoint, localNodes[0], localNodes[4]);
+    localNodes.push_back(midPoint);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 17
+    ComputeMidPoint(midPoint, localNodes[1], localNodes[5]);
+    localNodes.push_back(midPoint);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 18
+    ComputeMidPoint(midPoint, localNodes[2], localNodes[6]);
+    localNodes.push_back(midPoint);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 19
+    ComputeMidPoint(midPoint, localNodes[3], localNodes[7]);
+    localNodes.push_back(midPoint);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 20
+    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[32], localNodes[33]);
+    localNodes.push_back(quarterPoint);
+    localNodes.push_back(midPoint);
+    localNodes.push_back(threeQuarterPoint);
+    InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 21
+    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[33], localNodes[34]);
+    localNodes.push_back(quarterPoint);
+    localNodes.push_back(midPoint);
+    localNodes.push_back(threeQuarterPoint);
+    InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 22
+    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[34], localNodes[35]);
+    localNodes.push_back(quarterPoint);
+    localNodes.push_back(midPoint);
+    localNodes.push_back(threeQuarterPoint);
+    InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 23
+    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[35], localNodes[32]);
+    localNodes.push_back(quarterPoint);
+    localNodes.push_back(midPoint);
+    localNodes.push_back(threeQuarterPoint);
+    InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 24
+    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[36], localNodes[37]);
+    localNodes.push_back(quarterPoint);
+    localNodes.push_back(midPoint);
+    localNodes.push_back(threeQuarterPoint);
+    InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 25
+    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[37], localNodes[38]);
+    localNodes.push_back(quarterPoint);
+    localNodes.push_back(midPoint);
+    localNodes.push_back(threeQuarterPoint);
+    InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 26
+    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[38], localNodes[39]);
+    localNodes.push_back(quarterPoint);
+    localNodes.push_back(midPoint);
+    localNodes.push_back(threeQuarterPoint);
+    InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 27
+    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[39], localNodes[36]);
+    localNodes.push_back(quarterPoint);
+    localNodes.push_back(midPoint);
+    localNodes.push_back(threeQuarterPoint);
+    InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 28
+    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[40], localNodes[41]);
+    localNodes.push_back(quarterPoint);
+    localNodes.push_back(midPoint);
+    localNodes.push_back(threeQuarterPoint);
+    InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 29
+    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[41], localNodes[42]);
+    localNodes.push_back(quarterPoint);
+    localNodes.push_back(midPoint);
+    localNodes.push_back(threeQuarterPoint);
+    InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 30
+    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[42], localNodes[43]);
+    localNodes.push_back(quarterPoint);
+    localNodes.push_back(midPoint);
+    localNodes.push_back(threeQuarterPoint);
+    InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 31
+    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[43], localNodes[40]);
+    localNodes.push_back(quarterPoint);
+    localNodes.push_back(midPoint);
+    localNodes.push_back(threeQuarterPoint);
+    InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 32
+    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[19], localNodes[11]);
+    InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 33
+    ComputeMidPoint(midPoint, localNodes[10], localNodes[14]);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 34
+    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[13], localNodes[17]);
+    InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 35
+    ComputeMidPoint(midPoint, localNodes[16], localNodes[8]);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 36
+    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[31], localNodes[23]);
+    InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 37
+    ComputeMidPoint(midPoint, localNodes[22], localNodes[26]);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 38
+    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[25], localNodes[29]);
+    InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 39
+    ComputeMidPoint(midPoint, localNodes[28], localNodes[20]);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 40
+    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[55], localNodes[47]);
+    InsertPointWithoutCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 41
+    ComputeMidPoint(midPoint, localNodes[46], localNodes[50]);
+    InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 42
+    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[49], localNodes[53]);
+    InsertPointWithoutCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 43
+    ComputeMidPoint(midPoint, localNodes[52], localNodes[44]);
+    InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 44
+    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[67], localNodes[59]);
+    InsertPointWithoutCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 45
+    ComputeMidPoint(midPoint, localNodes[62], localNodes[58]);
+    InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 46
+    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[61], localNodes[65]);
+    InsertPointWithoutCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 47
+    ComputeMidPoint(midPoint, localNodes[56], localNodes[64]);
+    InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 48
+    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[79], localNodes[71]);
+    InsertPointWithoutCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 49
+    ComputeMidPoint(midPoint, localNodes[70], localNodes[74]);
+    InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 50
+    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[73], localNodes[77]);
+    InsertPointWithoutCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 51
+    ComputeMidPoint(midPoint, localNodes[76], localNodes[68]);
+    InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 52
+    ComputeMidPoint(midPoint, localNodes[12], localNodes[18]);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 53
+    ComputeMidPoint(midPoint, localNodes[24], localNodes[30]);
+    InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 54
+    ComputeMidPoint(midPoint, localNodes[48], localNodes[54]);
+    InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 55
+    ComputeMidPoint(midPoint, localNodes[60], localNodes[66]);
+    InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+
+    // Case 56
+    ComputeMidPoint(midPoint, localNodes[72], localNodes[78]);
+    InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
   }
+
+  double time = ((double)clock() - start) / CLOCKS_PER_SEC;
+  std::cout << time << std::endl;
 
   XdmfGrid * newGrid = new XdmfGrid();
   newGrid->SetDeleteOnGridDelete(true);
