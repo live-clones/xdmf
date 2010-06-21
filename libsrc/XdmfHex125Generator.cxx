@@ -29,6 +29,7 @@
 #include "XdmfHex125Generator.h"
 #include "XdmfGeometry.h"
 #include "XdmfGrid.h"
+#include "XdmfInformation.h"
 #include "XdmfSet.h"
 #include "XdmfTopology.h"
 
@@ -59,7 +60,35 @@ struct PointComparison {
   }
 };
 
-inline void ComputeInteriorPoints(std::vector<XdmfFloat64> & quarterPoint, std::vector<XdmfFloat64> & midPoint, std::vector<XdmfFloat64> & threeQuarterPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2)
+class XdmfHex125Generator::Operations
+{
+public:
+  virtual void ComputeInteriorPoints(std::vector<XdmfFloat64> & quarterPoint, std::vector<XdmfFloat64> & midPoint, std::vector<XdmfFloat64> & threeQuarterPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2) = 0;
+  virtual void ComputeQuarterPoint (std::vector<XdmfFloat64> & quarterPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2) = 0;
+  virtual void ComputeMidPoint(std::vector<XdmfFloat64> & midPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2) = 0;
+  virtual void ComputeThreeQuarterPoint(std::vector<XdmfFloat64> & threeQuarterPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2) = 0;
+};
+
+class XdmfHex125Generator::NormalOperations : public XdmfHex125Generator::Operations
+{
+public:
+  void ComputeInteriorPoints(std::vector<XdmfFloat64> & quarterPoint, std::vector<XdmfFloat64> & midPoint, std::vector<XdmfFloat64> & threeQuarterPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2);
+  void ComputeQuarterPoint (std::vector<XdmfFloat64> & quarterPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2);
+  void ComputeMidPoint(std::vector<XdmfFloat64> & midPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2);
+  void ComputeThreeQuarterPoint(std::vector<XdmfFloat64> & threeQuarterPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2);
+};
+
+class XdmfHex125Generator::SpectralOperations : public XdmfHex125Generator::Operations
+{
+public:
+  static const double C = 0.65465367070797709; // sqrt(3/7)
+  void ComputeInteriorPoints(std::vector<XdmfFloat64> & quarterPoint, std::vector<XdmfFloat64> & midPoint, std::vector<XdmfFloat64> & threeQuarterPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2);
+  void ComputeQuarterPoint (std::vector<XdmfFloat64> & quarterPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2);
+  void ComputeMidPoint(std::vector<XdmfFloat64> & midPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2);
+  void ComputeThreeQuarterPoint(std::vector<XdmfFloat64> & threeQuarterPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2);
+};
+
+inline void XdmfHex125Generator::NormalOperations::ComputeInteriorPoints(std::vector<XdmfFloat64> & quarterPoint, std::vector<XdmfFloat64> & midPoint, std::vector<XdmfFloat64> & threeQuarterPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2)
 {
   quarterPoint[0] = (1.0/4.0)*(point2[0] + 3*point1[0]);
   quarterPoint[1] = (1.0/4.0)*(point2[1] + 3*point1[1]);
@@ -74,25 +103,61 @@ inline void ComputeInteriorPoints(std::vector<XdmfFloat64> & quarterPoint, std::
   threeQuarterPoint[2] = (1.0/4.0)*(3.0*point2[2] + point1[2]);
 }
 
-inline void ComputeQuarterPoint (std::vector<XdmfFloat64> & quarterPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2)
+inline void XdmfHex125Generator::NormalOperations::ComputeQuarterPoint (std::vector<XdmfFloat64> & quarterPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2)
 {
   quarterPoint[0] = (1.0/4.0)*(point2[0] + 3*point1[0]);
   quarterPoint[1] = (1.0/4.0)*(point2[1] + 3*point1[1]);
   quarterPoint[2] = (1.0/4.0)*(point2[2] + 3*point1[2]);
 }
 
-inline void ComputeMidPoint(std::vector<XdmfFloat64> & midPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2)
+inline void XdmfHex125Generator::NormalOperations::ComputeMidPoint(std::vector<XdmfFloat64> & midPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2)
 {
   midPoint[0] = (1.0/2.0)*(point2[0] + point1[0]);
   midPoint[1] = (1.0/2.0)*(point2[1] + point1[1]);
   midPoint[2] = (1.0/2.0)*(point2[2] + point1[2]);
 }
 
-inline void ComputeThreeQuarterPoint(std::vector<XdmfFloat64> & threeQuarterPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2)
+inline void XdmfHex125Generator::NormalOperations::ComputeThreeQuarterPoint(std::vector<XdmfFloat64> & threeQuarterPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2)
 {
   threeQuarterPoint[0] = (1.0/4.0)*(3.0*point2[0] + point1[0]);
   threeQuarterPoint[1] = (1.0/4.0)*(3.0*point2[1] + point1[1]);
   threeQuarterPoint[2] = (1.0/4.0)*(3.0*point2[2] + point1[2]);
+}
+
+inline void XdmfHex125Generator::SpectralOperations::ComputeInteriorPoints(std::vector<XdmfFloat64> & quarterPoint, std::vector<XdmfFloat64> & midPoint, std::vector<XdmfFloat64> & threeQuarterPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2)
+{
+  quarterPoint[0] = (1.0/2.0)*((1 - C) * point2[0] + (1 + C) * point1[0]);
+  quarterPoint[1] = (1.0/2.0)*((1 - C) * point2[1] + (1 + C) * point1[1]);
+  quarterPoint[2] = (1.0/2.0)*((1 - C) * point2[2] + (1 + C) * point1[2]);
+
+  midPoint[0] = (1.0/2.0)*(point2[0] + point1[0]);
+  midPoint[1] = (1.0/2.0)*(point2[1] + point1[1]);
+  midPoint[2] = (1.0/2.0)*(point2[2] + point1[2]);
+
+  threeQuarterPoint[0] = (1.0/2.0)*((1 + C) * point2[0] + (1 - C) * point1[0]);
+  threeQuarterPoint[1] = (1.0/2.0)*((1 + C) * point2[1] + (1 - C) * point1[1]);
+  threeQuarterPoint[2] = (1.0/2.0)*((1 + C) * point2[2] + (1 - C) * point1[2]);
+}
+
+inline void XdmfHex125Generator::SpectralOperations::ComputeQuarterPoint (std::vector<XdmfFloat64> & quarterPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2)
+{
+  quarterPoint[0] = (1.0/2.0)*((1 - C) * point2[0] + (1 + C) * point1[0]);
+  quarterPoint[1] = (1.0/2.0)*((1 - C) * point2[1] + (1 + C) * point1[1]);
+  quarterPoint[2] = (1.0/2.0)*((1 - C) * point2[2] + (1 + C) * point1[2]);
+}
+
+inline void XdmfHex125Generator::SpectralOperations::ComputeMidPoint(std::vector<XdmfFloat64> & midPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2)
+{
+  midPoint[0] = (1.0/2.0)*(point2[0] + point1[0]);
+  midPoint[1] = (1.0/2.0)*(point2[1] + point1[1]);
+  midPoint[2] = (1.0/2.0)*(point2[2] + point1[2]);
+}
+
+inline void XdmfHex125Generator::SpectralOperations::ComputeThreeQuarterPoint(std::vector<XdmfFloat64> & threeQuarterPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2)
+{
+  threeQuarterPoint[0] = (1.0/2.0)*((1 + C) * point2[0] + (1 - C) * point1[0]);
+  threeQuarterPoint[1] = (1.0/2.0)*((1 + C) * point2[1] + (1 - C) * point1[1]);
+  threeQuarterPoint[2] = (1.0/2.0)*((1 + C) * point2[2] + (1 - C) * point1[2]);
 }
 
 inline void InsertPointWithoutCheck(std::vector<XdmfFloat64> & newPoint, std::map<std::vector<XdmfFloat64>, XdmfInt32, PointComparison> & coordToIdMap, std::vector<XdmfInt32> & newConnectivity, std::vector<XdmfFloat64> & newPoints)
@@ -120,7 +185,7 @@ inline void InsertPointWithCheck(std::vector<XdmfFloat64> & newPoint, std::map<s
   }
 }
 
-XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentElement)
+XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentElement, Type type)
 {
   if(grid->GetTopology()->GetTopologyType() != XDMF_HEX)
   {
@@ -134,6 +199,21 @@ XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentEl
     return NULL;
   }
   
+  Operations * operation = NULL;
+  XdmfInformation * elementGenerationType = new XdmfInformation();
+  elementGenerationType->SetDeleteOnGridDelete(true);
+  elementGenerationType->SetName("ElementGenerationType");
+  if(type == Normal)
+  {
+    operation = new NormalOperations();
+    elementGenerationType->SetValue("Normal");
+  }
+  else if(type == Spectral)
+  {
+    operation = new SpectralOperations();
+    elementGenerationType->SetValue("Spectral");
+  }
+
   // Copy all coordinate values into new geometry.
   std::vector<XdmfFloat64> newPoints(grid->GetGeometry()->GetPoints()->GetNumberOfElements());
   grid->GetGeometry()->GetPoints()->GetValues(0, &newPoints[0], grid->GetGeometry()->GetPoints()->GetNumberOfElements());
@@ -144,8 +224,6 @@ XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentEl
   std::vector<XdmfFloat64> threeQuarterPoint(3);
 
   std::map<std::vector<XdmfFloat64>, XdmfInt32, PointComparison> coordToIdMap;
-
-  clock_t start = clock();
 
   // Iterate over all elements, for each element compute new coordinate points and insert those values into newGeometry and newConnectivity.
   for(int i=0; i<grid->GetTopology()->GetNumberOfElements(); ++i)
@@ -167,7 +245,7 @@ XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentEl
     grid->GetTopology()->GetConnectivity()->GetValues(8*i, &newConnectivity[startIndex], 8);
     
     // Case 0
-    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[0], localNodes[1]);
+    operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[0], localNodes[1]);
     localNodes.push_back(quarterPoint);
     localNodes.push_back(midPoint);
     localNodes.push_back(threeQuarterPoint);
@@ -176,7 +254,7 @@ XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentEl
     InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 1
-    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[1], localNodes[2]);
+    operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[1], localNodes[2]);
     localNodes.push_back(quarterPoint);
     localNodes.push_back(midPoint);
     localNodes.push_back(threeQuarterPoint);
@@ -185,7 +263,7 @@ XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentEl
     InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 2
-    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[2], localNodes[3]);
+    operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[2], localNodes[3]);
     localNodes.push_back(quarterPoint);
     localNodes.push_back(midPoint);
     localNodes.push_back(threeQuarterPoint);
@@ -194,7 +272,7 @@ XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentEl
     InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 3
-    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[3], localNodes[0]);
+    operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[3], localNodes[0]);
     localNodes.push_back(quarterPoint);
     localNodes.push_back(midPoint);
     localNodes.push_back(threeQuarterPoint);
@@ -203,7 +281,7 @@ XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentEl
     InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 4
-    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[4], localNodes[5]);
+    operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[4], localNodes[5]);
     localNodes.push_back(quarterPoint);
     localNodes.push_back(midPoint);
     localNodes.push_back(threeQuarterPoint);
@@ -212,7 +290,7 @@ XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentEl
     InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 5
-    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[5], localNodes[6]);
+    operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[5], localNodes[6]);
     localNodes.push_back(quarterPoint);
     localNodes.push_back(midPoint);
     localNodes.push_back(threeQuarterPoint);
@@ -221,7 +299,7 @@ XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentEl
     InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 6
-    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[6], localNodes[7]);
+    operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[6], localNodes[7]);
     localNodes.push_back(quarterPoint);
     localNodes.push_back(midPoint);
     localNodes.push_back(threeQuarterPoint);
@@ -230,7 +308,7 @@ XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentEl
     InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 7
-    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[7], localNodes[4]);
+    operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[7], localNodes[4]);
     localNodes.push_back(quarterPoint);
     localNodes.push_back(midPoint);
     localNodes.push_back(threeQuarterPoint);
@@ -239,67 +317,67 @@ XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentEl
     InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 8
-    ComputeQuarterPoint(quarterPoint, localNodes[0], localNodes[4]);
+    operation->ComputeQuarterPoint(quarterPoint, localNodes[0], localNodes[4]);
     localNodes.push_back(quarterPoint);
     InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 9
-    ComputeQuarterPoint(quarterPoint, localNodes[1], localNodes[5]);
+    operation->ComputeQuarterPoint(quarterPoint, localNodes[1], localNodes[5]);
     localNodes.push_back(quarterPoint);
     InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 10
-    ComputeQuarterPoint(quarterPoint, localNodes[2], localNodes[6]);
+    operation->ComputeQuarterPoint(quarterPoint, localNodes[2], localNodes[6]);
     localNodes.push_back(quarterPoint);
     InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 11
-    ComputeQuarterPoint(quarterPoint, localNodes[3], localNodes[7]);
+    operation->ComputeQuarterPoint(quarterPoint, localNodes[3], localNodes[7]);
     localNodes.push_back(quarterPoint);
     InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 12
-    ComputeThreeQuarterPoint(threeQuarterPoint, localNodes[0], localNodes[4]);
+    operation->ComputeThreeQuarterPoint(threeQuarterPoint, localNodes[0], localNodes[4]);
     localNodes.push_back(threeQuarterPoint);
     InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 13
-    ComputeThreeQuarterPoint(threeQuarterPoint, localNodes[1], localNodes[5]);
+    operation->ComputeThreeQuarterPoint(threeQuarterPoint, localNodes[1], localNodes[5]);
     localNodes.push_back(threeQuarterPoint);
     InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 14
-    ComputeThreeQuarterPoint(threeQuarterPoint, localNodes[2], localNodes[6]);
+    operation->ComputeThreeQuarterPoint(threeQuarterPoint, localNodes[2], localNodes[6]);
     localNodes.push_back(threeQuarterPoint);
     InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 15
-    ComputeThreeQuarterPoint(threeQuarterPoint, localNodes[3], localNodes[7]);
+    operation->ComputeThreeQuarterPoint(threeQuarterPoint, localNodes[3], localNodes[7]);
     localNodes.push_back(threeQuarterPoint);
     InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 16
-    ComputeMidPoint(midPoint, localNodes[0], localNodes[4]);
+    operation->ComputeMidPoint(midPoint, localNodes[0], localNodes[4]);
     localNodes.push_back(midPoint);
     InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 17
-    ComputeMidPoint(midPoint, localNodes[1], localNodes[5]);
+    operation->ComputeMidPoint(midPoint, localNodes[1], localNodes[5]);
     localNodes.push_back(midPoint);
     InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 18
-    ComputeMidPoint(midPoint, localNodes[2], localNodes[6]);
+    operation->ComputeMidPoint(midPoint, localNodes[2], localNodes[6]);
     localNodes.push_back(midPoint);
     InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 19
-    ComputeMidPoint(midPoint, localNodes[3], localNodes[7]);
+    operation->ComputeMidPoint(midPoint, localNodes[3], localNodes[7]);
     localNodes.push_back(midPoint);
     InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 20
-    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[32], localNodes[33]);
+    operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[32], localNodes[33]);
     localNodes.push_back(quarterPoint);
     localNodes.push_back(midPoint);
     localNodes.push_back(threeQuarterPoint);
@@ -308,7 +386,7 @@ XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentEl
     InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 21
-    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[33], localNodes[34]);
+    operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[33], localNodes[34]);
     localNodes.push_back(quarterPoint);
     localNodes.push_back(midPoint);
     localNodes.push_back(threeQuarterPoint);
@@ -317,7 +395,7 @@ XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentEl
     InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 22
-    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[34], localNodes[35]);
+    operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[34], localNodes[35]);
     localNodes.push_back(quarterPoint);
     localNodes.push_back(midPoint);
     localNodes.push_back(threeQuarterPoint);
@@ -326,7 +404,7 @@ XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentEl
     InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 23
-    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[35], localNodes[32]);
+    operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[35], localNodes[32]);
     localNodes.push_back(quarterPoint);
     localNodes.push_back(midPoint);
     localNodes.push_back(threeQuarterPoint);
@@ -335,7 +413,7 @@ XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentEl
     InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 24
-    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[36], localNodes[37]);
+    operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[36], localNodes[37]);
     localNodes.push_back(quarterPoint);
     localNodes.push_back(midPoint);
     localNodes.push_back(threeQuarterPoint);
@@ -344,7 +422,7 @@ XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentEl
     InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 25
-    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[37], localNodes[38]);
+    operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[37], localNodes[38]);
     localNodes.push_back(quarterPoint);
     localNodes.push_back(midPoint);
     localNodes.push_back(threeQuarterPoint);
@@ -353,7 +431,7 @@ XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentEl
     InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 26
-    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[38], localNodes[39]);
+    operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[38], localNodes[39]);
     localNodes.push_back(quarterPoint);
     localNodes.push_back(midPoint);
     localNodes.push_back(threeQuarterPoint);
@@ -362,7 +440,7 @@ XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentEl
     InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 27
-    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[39], localNodes[36]);
+    operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[39], localNodes[36]);
     localNodes.push_back(quarterPoint);
     localNodes.push_back(midPoint);
     localNodes.push_back(threeQuarterPoint);
@@ -371,7 +449,7 @@ XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentEl
     InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 28
-    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[40], localNodes[41]);
+    operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[40], localNodes[41]);
     localNodes.push_back(quarterPoint);
     localNodes.push_back(midPoint);
     localNodes.push_back(threeQuarterPoint);
@@ -380,7 +458,7 @@ XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentEl
     InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 29
-    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[41], localNodes[42]);
+    operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[41], localNodes[42]);
     localNodes.push_back(quarterPoint);
     localNodes.push_back(midPoint);
     localNodes.push_back(threeQuarterPoint);
@@ -389,7 +467,7 @@ XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentEl
     InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 30
-    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[42], localNodes[43]);
+    operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[42], localNodes[43]);
     localNodes.push_back(quarterPoint);
     localNodes.push_back(midPoint);
     localNodes.push_back(threeQuarterPoint);
@@ -398,7 +476,7 @@ XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentEl
     InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 31
-    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[43], localNodes[40]);
+    operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[43], localNodes[40]);
     localNodes.push_back(quarterPoint);
     localNodes.push_back(midPoint);
     localNodes.push_back(threeQuarterPoint);
@@ -407,128 +485,127 @@ XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentEl
     InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 32
-    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[19], localNodes[11]);
+    operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[19], localNodes[11]);
     InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
     InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
     InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 33
-    ComputeMidPoint(midPoint, localNodes[10], localNodes[14]);
+    operation->ComputeMidPoint(midPoint, localNodes[10], localNodes[14]);
     InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 34
-    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[13], localNodes[17]);
+    operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[13], localNodes[17]);
     InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
     InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
     InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 35
-    ComputeMidPoint(midPoint, localNodes[16], localNodes[8]);
+    operation->ComputeMidPoint(midPoint, localNodes[16], localNodes[8]);
     InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 36
-    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[31], localNodes[23]);
+    operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[31], localNodes[23]);
     InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
     InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
     InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 37
-    ComputeMidPoint(midPoint, localNodes[22], localNodes[26]);
+    operation->ComputeMidPoint(midPoint, localNodes[22], localNodes[26]);
     InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 38
-    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[25], localNodes[29]);
+    operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[25], localNodes[29]);
     InsertPointWithCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
     InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
     InsertPointWithCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 39
-    ComputeMidPoint(midPoint, localNodes[28], localNodes[20]);
+    operation->ComputeMidPoint(midPoint, localNodes[28], localNodes[20]);
     InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 40
-    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[55], localNodes[47]);
+    operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[55], localNodes[47]);
     InsertPointWithoutCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
     InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
     InsertPointWithoutCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 41
-    ComputeMidPoint(midPoint, localNodes[46], localNodes[50]);
+    operation->ComputeMidPoint(midPoint, localNodes[46], localNodes[50]);
     InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 42
-    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[49], localNodes[53]);
+    operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[49], localNodes[53]);
     InsertPointWithoutCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
     InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
     InsertPointWithoutCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 43
-    ComputeMidPoint(midPoint, localNodes[52], localNodes[44]);
+    operation->ComputeMidPoint(midPoint, localNodes[52], localNodes[44]);
     InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 44
-    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[67], localNodes[59]);
+    operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[67], localNodes[59]);
     InsertPointWithoutCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
     InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
     InsertPointWithoutCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 45
-    ComputeMidPoint(midPoint, localNodes[62], localNodes[58]);
+    operation->ComputeMidPoint(midPoint, localNodes[62], localNodes[58]);
     InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 46
-    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[61], localNodes[65]);
+    operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[61], localNodes[65]);
     InsertPointWithoutCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
     InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
     InsertPointWithoutCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 47
-    ComputeMidPoint(midPoint, localNodes[56], localNodes[64]);
+    operation->ComputeMidPoint(midPoint, localNodes[56], localNodes[64]);
     InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 48
-    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[79], localNodes[71]);
+    operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[79], localNodes[71]);
     InsertPointWithoutCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
     InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
     InsertPointWithoutCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 49
-    ComputeMidPoint(midPoint, localNodes[70], localNodes[74]);
+    operation->ComputeMidPoint(midPoint, localNodes[70], localNodes[74]);
     InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 50
-    ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[73], localNodes[77]);
+    operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[73], localNodes[77]);
     InsertPointWithoutCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
     InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
     InsertPointWithoutCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 51
-    ComputeMidPoint(midPoint, localNodes[76], localNodes[68]);
+    operation->ComputeMidPoint(midPoint, localNodes[76], localNodes[68]);
     InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 52
-    ComputeMidPoint(midPoint, localNodes[12], localNodes[18]);
+    operation->ComputeMidPoint(midPoint, localNodes[12], localNodes[18]);
     InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 53
-    ComputeMidPoint(midPoint, localNodes[24], localNodes[30]);
+    operation->ComputeMidPoint(midPoint, localNodes[24], localNodes[30]);
     InsertPointWithCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 54
-    ComputeMidPoint(midPoint, localNodes[48], localNodes[54]);
+    operation->ComputeMidPoint(midPoint, localNodes[48], localNodes[54]);
     InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 55
-    ComputeMidPoint(midPoint, localNodes[60], localNodes[66]);
+    operation->ComputeMidPoint(midPoint, localNodes[60], localNodes[66]);
     InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
 
     // Case 56
-    ComputeMidPoint(midPoint, localNodes[72], localNodes[78]);
+    operation->ComputeMidPoint(midPoint, localNodes[72], localNodes[78]);
     InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
   }
 
-  double time = ((double)clock() - start) / CLOCKS_PER_SEC;
-  std::cout << time << std::endl;
+  delete operation;
 
   XdmfGrid * newGrid = new XdmfGrid();
   newGrid->SetDeleteOnGridDelete(true);
@@ -559,6 +636,9 @@ XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentEl
       currSet->SetDeleteOnGridDelete(false);
     }
   }
+
+  newGrid->Insert(elementGenerationType);
+
   return newGrid;
 }
 

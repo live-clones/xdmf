@@ -35,6 +35,9 @@ class XdmfGrid;
 class XdmfHex64Generator
 {
 public:
+
+    enum Type { Normal, Spectral };
+
     /*!
      * Constructor.
      */
@@ -54,7 +57,7 @@ public:
      *
      * @return a pointer to the converted XdmfGrid.
      */
-    XdmfGrid * Generate(XdmfGrid * grid, XdmfElement * parentElement);
+    XdmfGrid * Generate(XdmfGrid * grid, XdmfElement * parentElement, Type type = Normal);
 
     /*!
      * Take an XdmfGrid containing tri-cubic hexahedron elements and convert to
@@ -67,4 +70,10 @@ public:
      */
     XdmfGrid * Split(XdmfGrid * grid, XdmfElement * parentElement);
 
+private:
+
+    // Operations used to generate elements
+    class Operations;
+    class NormalOperations;
+    class SpectralOperations;
 };

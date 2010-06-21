@@ -1329,6 +1329,8 @@ class XdmfHex64Generator(_object):
     __swig_getmethods__ = {}
     __getattr__ = lambda self, name: _swig_getattr(self, XdmfHex64Generator, name)
     __repr__ = _swig_repr
+    Normal = _Xdmf.XdmfHex64Generator_Normal
+    Spectral = _Xdmf.XdmfHex64Generator_Spectral
     def __init__(self): 
         this = _Xdmf.new_XdmfHex64Generator()
         try: self.this.append(this)
@@ -1346,6 +1348,8 @@ class XdmfHex125Generator(_object):
     __swig_getmethods__ = {}
     __getattr__ = lambda self, name: _swig_getattr(self, XdmfHex125Generator, name)
     __repr__ = _swig_repr
+    Normal = _Xdmf.XdmfHex125Generator_Normal
+    Spectral = _Xdmf.XdmfHex125Generator_Spectral
     def __init__(self): 
         this = _Xdmf.new_XdmfHex125Generator()
         try: self.this.append(this)

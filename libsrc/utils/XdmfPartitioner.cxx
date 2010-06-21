@@ -428,6 +428,14 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
       currSet->Release();
     }
   }
+
+  // Add information to top of collection
+  std::cout << grid->GetNumberOfInformations() << std::endl;
+  for(int j=0; j<grid->GetNumberOfInformations(); ++j)
+  {
+    collection->Insert(grid->GetInformation(j));
+  }
+
   return collection;
 }
 

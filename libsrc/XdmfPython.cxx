@@ -29666,7 +29666,56 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_XdmfHex64Generator_Generate(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_XdmfHex64Generator_Generate__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfHex64Generator *arg1 = (XdmfHex64Generator *) 0 ;
+  XdmfGrid *arg2 = (XdmfGrid *) 0 ;
+  XdmfElement *arg3 = (XdmfElement *) 0 ;
+  XdmfHex64Generator::Type arg4 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  int val4 ;
+  int ecode4 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  XdmfGrid *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOO:XdmfHex64Generator_Generate",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfHex64Generator, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfHex64Generator_Generate" "', argument " "1"" of type '" "XdmfHex64Generator *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfHex64Generator * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfHex64Generator_Generate" "', argument " "2"" of type '" "XdmfGrid *""'"); 
+  }
+  arg2 = reinterpret_cast< XdmfGrid * >(argp2);
+  res3 = SWIG_ConvertPtr(obj2, &argp3,SWIGTYPE_p_XdmfElement, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "XdmfHex64Generator_Generate" "', argument " "3"" of type '" "XdmfElement *""'"); 
+  }
+  arg3 = reinterpret_cast< XdmfElement * >(argp3);
+  ecode4 = SWIG_AsVal_int(obj3, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "XdmfHex64Generator_Generate" "', argument " "4"" of type '" "XdmfHex64Generator::Type""'");
+  } 
+  arg4 = static_cast< XdmfHex64Generator::Type >(val4);
+  result = (XdmfGrid *)(arg1)->Generate(arg2,arg3,arg4);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfHex64Generator_Generate__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   XdmfHex64Generator *arg1 = (XdmfHex64Generator *) 0 ;
   XdmfGrid *arg2 = (XdmfGrid *) 0 ;
@@ -29702,6 +29751,70 @@ SWIGINTERN PyObject *_wrap_XdmfHex64Generator_Generate(PyObject *SWIGUNUSEDPARM(
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_XdmfGrid, 0 |  0 );
   return resultobj;
 fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfHex64Generator_Generate(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[5];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = (int)PyObject_Length(args);
+  for (ii = 0; (ii < argc) && (ii < 4); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 3) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfHex64Generator, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_XdmfGrid, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        void *vptr = 0;
+        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_XdmfElement, 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          return _wrap_XdmfHex64Generator_Generate__SWIG_1(self, args);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfHex64Generator, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_XdmfGrid, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        void *vptr = 0;
+        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_XdmfElement, 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          {
+            int res = SWIG_AsVal_int(argv[3], NULL);
+            _v = SWIG_CheckState(res);
+          }
+          if (_v) {
+            return _wrap_XdmfHex64Generator_Generate__SWIG_0(self, args);
+          }
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'XdmfHex64Generator_Generate'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Generate(XdmfHex64Generator *,XdmfGrid *,XdmfElement *,XdmfHex64Generator::Type)\n"
+    "    Generate(XdmfHex64Generator *,XdmfGrid *,XdmfElement *)\n");
   return NULL;
 }
 
@@ -29787,7 +29900,56 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_XdmfHex125Generator_Generate(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_XdmfHex125Generator_Generate__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  XdmfHex125Generator *arg1 = (XdmfHex125Generator *) 0 ;
+  XdmfGrid *arg2 = (XdmfGrid *) 0 ;
+  XdmfElement *arg3 = (XdmfElement *) 0 ;
+  XdmfHex125Generator::Type arg4 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  int val4 ;
+  int ecode4 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  XdmfGrid *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOO:XdmfHex125Generator_Generate",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_XdmfHex125Generator, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "XdmfHex125Generator_Generate" "', argument " "1"" of type '" "XdmfHex125Generator *""'"); 
+  }
+  arg1 = reinterpret_cast< XdmfHex125Generator * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "XdmfHex125Generator_Generate" "', argument " "2"" of type '" "XdmfGrid *""'"); 
+  }
+  arg2 = reinterpret_cast< XdmfGrid * >(argp2);
+  res3 = SWIG_ConvertPtr(obj2, &argp3,SWIGTYPE_p_XdmfElement, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "XdmfHex125Generator_Generate" "', argument " "3"" of type '" "XdmfElement *""'"); 
+  }
+  arg3 = reinterpret_cast< XdmfElement * >(argp3);
+  ecode4 = SWIG_AsVal_int(obj3, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "XdmfHex125Generator_Generate" "', argument " "4"" of type '" "XdmfHex125Generator::Type""'");
+  } 
+  arg4 = static_cast< XdmfHex125Generator::Type >(val4);
+  result = (XdmfGrid *)(arg1)->Generate(arg2,arg3,arg4);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_XdmfGrid, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfHex125Generator_Generate__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   XdmfHex125Generator *arg1 = (XdmfHex125Generator *) 0 ;
   XdmfGrid *arg2 = (XdmfGrid *) 0 ;
@@ -29823,6 +29985,70 @@ SWIGINTERN PyObject *_wrap_XdmfHex125Generator_Generate(PyObject *SWIGUNUSEDPARM
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_XdmfGrid, 0 |  0 );
   return resultobj;
 fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_XdmfHex125Generator_Generate(PyObject *self, PyObject *args) {
+  int argc;
+  PyObject *argv[5];
+  int ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = (int)PyObject_Length(args);
+  for (ii = 0; (ii < argc) && (ii < 4); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 3) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfHex125Generator, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_XdmfGrid, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        void *vptr = 0;
+        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_XdmfElement, 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          return _wrap_XdmfHex125Generator_Generate__SWIG_1(self, args);
+        }
+      }
+    }
+  }
+  if (argc == 4) {
+    int _v;
+    void *vptr = 0;
+    int res = SWIG_ConvertPtr(argv[0], &vptr, SWIGTYPE_p_XdmfHex125Generator, 0);
+    _v = SWIG_CheckState(res);
+    if (_v) {
+      void *vptr = 0;
+      int res = SWIG_ConvertPtr(argv[1], &vptr, SWIGTYPE_p_XdmfGrid, 0);
+      _v = SWIG_CheckState(res);
+      if (_v) {
+        void *vptr = 0;
+        int res = SWIG_ConvertPtr(argv[2], &vptr, SWIGTYPE_p_XdmfElement, 0);
+        _v = SWIG_CheckState(res);
+        if (_v) {
+          {
+            int res = SWIG_AsVal_int(argv[3], NULL);
+            _v = SWIG_CheckState(res);
+          }
+          if (_v) {
+            return _wrap_XdmfHex125Generator_Generate__SWIG_0(self, args);
+          }
+        }
+      }
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'XdmfHex125Generator_Generate'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    Generate(XdmfHex125Generator *,XdmfGrid *,XdmfElement *,XdmfHex125Generator::Type)\n"
+    "    Generate(XdmfHex125Generator *,XdmfGrid *,XdmfElement *)\n");
   return NULL;
 }
 
@@ -35047,6 +35273,10 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "XDMF_MAP_TYPE_CELL",SWIG_From_int(static_cast< int >(2)));
   SWIG_Python_SetConstant(d, "XDMF_MAP_TYPE_FACE",SWIG_From_int(static_cast< int >(3)));
   SWIG_Python_SetConstant(d, "XDMF_MAP_TYPE_EDGE",SWIG_From_int(static_cast< int >(4)));
+  SWIG_Python_SetConstant(d, "XdmfHex64Generator_Normal",SWIG_From_int(static_cast< int >(XdmfHex64Generator::Normal)));
+  SWIG_Python_SetConstant(d, "XdmfHex64Generator_Spectral",SWIG_From_int(static_cast< int >(XdmfHex64Generator::Spectral)));
+  SWIG_Python_SetConstant(d, "XdmfHex125Generator_Normal",SWIG_From_int(static_cast< int >(XdmfHex125Generator::Normal)));
+  SWIG_Python_SetConstant(d, "XdmfHex125Generator_Spectral",SWIG_From_int(static_cast< int >(XdmfHex125Generator::Spectral)));
   SWIG_Python_SetConstant(d, "XDMF_DSM_OPCODE_DONE",SWIG_From_int(static_cast< int >(0xFF)));
   SWIG_Python_SetConstant(d, "XDMF_DSM_TYPE_UNIFORM",SWIG_From_int(static_cast< int >(0)));
   SWIG_Python_SetConstant(d, "XDMF_DSM_TYPE_UNIFORM_RANGE",SWIG_From_int(static_cast< int >(1)));

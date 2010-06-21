@@ -622,6 +622,35 @@ if( this->NumberOfSets > 0 ){
     iSet->UpdateInformation();
     }
 }
+// Get Informations
+// Get Attributes
+XdmfInt32 OldNumberOfInformations = this->NumberOfInformations;
+this->NumberOfInformations = this->DOM->FindNumberOfElements("Information", this->Element );
+if( this->NumberOfInformations > 0 ){
+  XdmfInt32  Index;
+  XdmfInformation  *iInformation;
+  XdmfXmlNode    InformationElement;
+
+  for ( Index = 0; Index < OldNumberOfInformations; Index ++ )
+    {
+    delete this->Informations[Index];
+    }
+  this->Informations = ( XdmfInformation **)realloc( this->Informations,
+      this->NumberOfInformations * sizeof( XdmfInformation * ));
+  for( Index = 0 ; Index < this->NumberOfInformations ; Index++ ){
+    iInformation = new XdmfInformation;
+    iInformation->SetDeleteOnGridDelete(true);
+    this->Informations[Index] = iInformation;
+    if (Index == 0) {
+      InformationElement = this->DOM->FindElement( "Information", Index, this->Element, false);
+    } else {
+      InformationElement = this->DOM->FindNextElement( "Information", InformationElement, false);
+    }
+    iInformation->SetDOM( this->DOM );
+    iInformation->SetElement( InformationElement );
+    iInformation->UpdateInformation();
+    }
+}
 
 return( XDMF_SUCCESS );
 }
