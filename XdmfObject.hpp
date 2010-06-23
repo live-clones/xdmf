@@ -6,7 +6,6 @@
 #include <boost/shared_ptr.hpp>
 
 #define XdmfNewMacro(type) \
-template <typename T> friend void boost::checked_delete(T * x); \
 static boost::shared_ptr<type> New() \
 { \
 	boost::shared_ptr<type> p(new type()); \
@@ -22,10 +21,11 @@ class XdmfObject {
 
 public:
 
+	virtual ~XdmfObject();
+
 protected:
 
 	XdmfObject();
-	virtual ~XdmfObject();
 
 };
 

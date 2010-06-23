@@ -9,6 +9,9 @@ class XdmfVisitorValueCounter : public XdmfVisitor,
 public:
 
 	XdmfNewMacro(XdmfVisitorValueCounter);
+	~XdmfVisitorValueCounter()
+	{
+	};
 
 	int getCount()
 	{
@@ -26,10 +29,6 @@ protected:
 		mCount(0)
 	{
 	}
-
-	~XdmfVisitorValueCounter()
-	{
-	};
 
 private:
 

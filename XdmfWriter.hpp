@@ -21,7 +21,7 @@ class XdmfWriter : public XdmfVisitor,
 
 public:
 
-	template <typename T> friend void boost::checked_delete(T * x);
+	virtual ~XdmfWriter();
 
 	/**
 	 * Create a new XdmfWriter to write Xdmf data to disk.  This will create its own hdf5 writer based on the xmlFileName.
@@ -99,7 +99,6 @@ protected:
 
 	XdmfWriter(const std::string & xmlFilePath);
 	XdmfWriter(const std::string & xmlFilePath, boost::shared_ptr<XdmfHDF5Writer> hdf5Writer);
-	virtual ~XdmfWriter();
 
 private:
 

@@ -21,8 +21,9 @@ class XdmfSetType : public XdmfItemProperty {
 
 public:
 
+	virtual ~XdmfSetType();
+
 	friend class XdmfSet;
-	template <typename T> friend void boost::checked_delete(T * x);
 
 	// Supported Xdmf Set Types
 	static boost::shared_ptr<const XdmfSetType> NoSetType();

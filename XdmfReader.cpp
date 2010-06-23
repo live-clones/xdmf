@@ -10,7 +10,6 @@
 #include "XdmfSet.hpp"
 #include "XdmfTopology.hpp"
 
-
 #include <libxml/xmlreader.h>
 #include "XdmfReader.hpp"
 

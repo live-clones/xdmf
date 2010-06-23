@@ -6,6 +6,7 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 %module Xdmf
 %{
 	#include <XdmfArray.hpp>
+	#include <XdmfArrayType.hpp>
 	#include <XdmfAttribute.hpp>
 	#include <XdmfAttributeCenter.hpp>
 	#include <XdmfAttributeType.hpp>
@@ -30,58 +31,38 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 	#include <XdmfWriter.hpp>
 %}
 
-namespace boost {
-	template<class T> class shared_ptr
-	{
-	public:
-		T * operator-> () const;
-	};
-}
-
-// Macro for defining shared pointer templates:
-%define SWIG_SHARED_PTR_TEMPLATE(CLASS...)
-%template(CLASS ## _Ptr) boost::shared_ptr< CLASS >;
-%template(CLASS ## _ConstPtr) boost::shared_ptr< const CLASS >;
-%enddef
-
-// Macro for defining shared pointer inheritances:
-%define SWIG_SHARED_PTR_DERIVED(CLASS, BASECLASS...)
-%types(boost::shared_ptr< CLASS > = boost::shared_ptr< BASECLASS > ) %{
-  boost::shared_ptr< BASECLASS > p = *(boost::shared_ptr< CLASS >*)$from;
-  boost::shared_ptr< BASECLASS > * pPtr = &p;
-  return pPtr;
-%}
-%enddef
-
+%include boost_shared_ptr.i
 %include std_string.i
 %include std_vector.i
 %include loki/Visitor.h
 
 // Shared Pointer Templates
-SWIG_SHARED_PTR_TEMPLATE(XdmfArray);
-SWIG_SHARED_PTR_TEMPLATE(XdmfAttribute);
-SWIG_SHARED_PTR_TEMPLATE(XdmfAttributeCenter);
-SWIG_SHARED_PTR_TEMPLATE(XdmfAttributeType);
-SWIG_SHARED_PTR_TEMPLATE(XdmfBaseVisitor);
-SWIG_SHARED_PTR_TEMPLATE(XdmfDataItem);
-SWIG_SHARED_PTR_TEMPLATE(XdmfDomain);
-SWIG_SHARED_PTR_TEMPLATE(XdmfGeometry);
-SWIG_SHARED_PTR_TEMPLATE(XdmfGeometryType);
-SWIG_SHARED_PTR_TEMPLATE(XdmfGrid);
-SWIG_SHARED_PTR_TEMPLATE(XdmfGridCollection);
-SWIG_SHARED_PTR_TEMPLATE(XdmfGridCollectionType);
-SWIG_SHARED_PTR_TEMPLATE(XdmfHDF5Controller);
-SWIG_SHARED_PTR_TEMPLATE(XdmfHDF5Writer);
-SWIG_SHARED_PTR_TEMPLATE(XdmfItem);
-SWIG_SHARED_PTR_TEMPLATE(XdmfItemProperty);
-SWIG_SHARED_PTR_TEMPLATE(XdmfObject);
-SWIG_SHARED_PTR_TEMPLATE(XdmfReader);
-SWIG_SHARED_PTR_TEMPLATE(XdmfSet);
-SWIG_SHARED_PTR_TEMPLATE(XdmfSetType);
-SWIG_SHARED_PTR_TEMPLATE(XdmfTopology);
-SWIG_SHARED_PTR_TEMPLATE(XdmfTopologyType);
-SWIG_SHARED_PTR_TEMPLATE(XdmfVisitor);
-SWIG_SHARED_PTR_TEMPLATE(XdmfWriter);
+%shared_ptr(XdmfArray)
+%shared_ptr(XdmfAttribute)
+%shared_ptr(XdmfBaseVisitor)
+%shared_ptr(XdmfDataItem)
+%shared_ptr(XdmfDomain)
+%shared_ptr(XdmfGeometry)
+%shared_ptr(XdmfGrid)
+%shared_ptr(XdmfGridCollection)
+%shared_ptr(XdmfHDF5Controller)
+%shared_ptr(XdmfHDF5Writer)
+%shared_ptr(XdmfItem)
+%shared_ptr(XdmfItemProperty)
+%shared_ptr(XdmfObject)
+%shared_ptr(XdmfReader)
+%shared_ptr(XdmfSet)
+%shared_ptr(XdmfTopology)
+%shared_ptr(XdmfVisitor)
+%shared_ptr(XdmfWriter)
+
+%shared_ptr(XdmfArrayType)
+%shared_ptr(XdmfAttributeCenter)
+%shared_ptr(XdmfAttributeType)
+%shared_ptr(XdmfGeometryType)
+%shared_ptr(XdmfGridCollectionType)
+%shared_ptr(XdmfSetType)
+%shared_ptr(XdmfTopologyType)
 
 // Abstract Base Classes
 %template() Loki::BaseVisitable<void>;
@@ -92,54 +73,6 @@ SWIG_SHARED_PTR_TEMPLATE(XdmfWriter);
 %template() Loki::Visitor<XdmfGrid>;
 %template() Loki::Visitor<XdmfItem>;
 %template() Loki::Visitor<XdmfTopology>;
-
-SWIG_SHARED_PTR_DERIVED(XdmfArray, XdmfItem);
-SWIG_SHARED_PTR_DERIVED(XdmfArray, XdmfObject);
-SWIG_SHARED_PTR_DERIVED(XdmfAttribute, XdmfDataItem);
-SWIG_SHARED_PTR_DERIVED(XdmfAttribute, XdmfItem);
-SWIG_SHARED_PTR_DERIVED(XdmfAttribute, XdmfObject);
-SWIG_SHARED_PTR_DERIVED(XdmfAttributeCenter, XdmfItemProperty)
-SWIG_SHARED_PTR_DERIVED(XdmfAttributeCenter, XdmfObject)
-SWIG_SHARED_PTR_DERIVED(XdmfAttributeType, XdmfItemProperty)
-SWIG_SHARED_PTR_DERIVED(XdmfAttributeType, XdmfObject)
-SWIG_SHARED_PTR_DERIVED(XdmfDataItem, XdmfItem);
-SWIG_SHARED_PTR_DERIVED(XdmfDataItem, XdmfObject);
-SWIG_SHARED_PTR_DERIVED(XdmfDomain, XdmfItem);
-SWIG_SHARED_PTR_DERIVED(XdmfDomain, XdmfObject);
-SWIG_SHARED_PTR_DERIVED(XdmfGeometry, XdmfDataItem);
-SWIG_SHARED_PTR_DERIVED(XdmfGeometry, XdmfItem);
-SWIG_SHARED_PTR_DERIVED(XdmfGeometry, XdmfObject);
-SWIG_SHARED_PTR_DERIVED(XdmfGeometryType, XdmfItemProperty)
-SWIG_SHARED_PTR_DERIVED(XdmfGeometryType, XdmfObject)
-SWIG_SHARED_PTR_DERIVED(XdmfGrid, XdmfItem);
-SWIG_SHARED_PTR_DERIVED(XdmfGrid, XdmfObject);
-SWIG_SHARED_PTR_DERIVED(XdmfGridCollection, XdmfGrid);
-SWIG_SHARED_PTR_DERIVED(XdmfGridCollection, XdmfItem);
-SWIG_SHARED_PTR_DERIVED(XdmfGridCollection, XdmfObject);
-SWIG_SHARED_PTR_DERIVED(XdmfGridCollectionType, XdmfItemProperty)
-SWIG_SHARED_PTR_DERIVED(XdmfGridCollectionType, XdmfObject)
-SWIG_SHARED_PTR_DERIVED(XdmfHDF5Controller, XdmfObject);
-SWIG_SHARED_PTR_DERIVED(XdmfHDF5Writer, XdmfVisitor);
-SWIG_SHARED_PTR_DERIVED(XdmfHDF5Writer, Loki::BaseVisitor);
-SWIG_SHARED_PTR_DERIVED(XdmfHDF5Writer, XdmfObject);
-SWIG_SHARED_PTR_DERIVED(XdmfItem, XdmfObject);
-SWIG_SHARED_PTR_DERIVED(XdmfItemProperty, XdmfObject)
-SWIG_SHARED_PTR_DERIVED(XdmfReader, XdmfObject);
-SWIG_SHARED_PTR_DERIVED(XdmfSet, XdmfDataItem);
-SWIG_SHARED_PTR_DERIVED(XdmfSet, XdmfItem);
-SWIG_SHARED_PTR_DERIVED(XdmfSet, XdmfObject);
-SWIG_SHARED_PTR_DERIVED(XdmfSetType, XdmfItemProperty)
-SWIG_SHARED_PTR_DERIVED(XdmfSetType, XdmfObject)
-SWIG_SHARED_PTR_DERIVED(XdmfTopology, XdmfDataItem);
-SWIG_SHARED_PTR_DERIVED(XdmfTopology, XdmfItem);
-SWIG_SHARED_PTR_DERIVED(XdmfTopology, XdmfObject);
-SWIG_SHARED_PTR_DERIVED(XdmfTopologyType, XdmfItemProperty)
-SWIG_SHARED_PTR_DERIVED(XdmfTopologyType, XdmfObject)
-SWIG_SHARED_PTR_DERIVED(XdmfVisitor, XdmfBaseVisitor);
-SWIG_SHARED_PTR_DERIVED(XdmfVisitor, XdmfObject);
-SWIG_SHARED_PTR_DERIVED(XdmfWriter, XdmfVisitor);
-SWIG_SHARED_PTR_DERIVED(XdmfWriter, XdmfBaseVisitor);
-SWIG_SHARED_PTR_DERIVED(XdmfWriter, XdmfObject);
 
 %include XdmfObject.hpp
 
@@ -157,6 +90,7 @@ SWIG_SHARED_PTR_DERIVED(XdmfWriter, XdmfObject);
 %include XdmfAttributeCenter.hpp
 %include XdmfAttributeType.hpp
 %include XdmfArray.hpp
+%include XdmfArrayType.hpp
 %include XdmfDomain.hpp
 %include XdmfGeometry.hpp
 %include XdmfGeometryType.hpp
@@ -169,81 +103,111 @@ SWIG_SHARED_PTR_DERIVED(XdmfWriter, XdmfObject);
 %include XdmfGridCollection.hpp
 %include XdmfGridCollectionType.hpp
 
+%template(getValueCopyAsInt8) XdmfArray::getValueCopy<char>;
+%template(getValueCopyAsInt16) XdmfArray::getValueCopy<short>;
+%template(getValueCopyAsInt32) XdmfArray::getValueCopy<int>;
+%template(getValueCopyAsInt64) XdmfArray::getValueCopy<long>;
+%template(getValueCopyAsFloat32) XdmfArray::getValueCopy<float>;
+%template(getValueCopyAsFloat64) XdmfArray::getValueCopy<double>;
+%template(getValueCopyAsUInt8) XdmfArray::getValueCopy<unsigned char>;
+%template(getValueCopyAsUInt16) XdmfArray::getValueCopy<unsigned short>;
+%template(getValueCopyAsUInt32) XdmfArray::getValueCopy<unsigned int>;
+
+%template(pushBackAsInt8) XdmfArray::pushBack<char>;
+%template(pushBackAsInt16) XdmfArray::pushBack<short>;
+%template(pushBackAsInt32) XdmfArray::pushBack<int>;
+%template(pushBackAsInt64) XdmfArray::pushBack<long>;
+%template(pushBackAsFloat32) XdmfArray::pushBack<float>;
+%template(pushBackAsFloat64) XdmfArray::pushBack<double>;
+%template(pushBackAsUInt8) XdmfArray::pushBack<unsigned char>;
+%template(pushBackAsUInt16) XdmfArray::pushBack<unsigned short>;
+%template(pushBackAsUInt32) XdmfArray::pushBack<unsigned int>;
+
+%template(resizeAsInt8) XdmfArray::resize<char>;
+%template(resizeAsInt16) XdmfArray::resize<short>;
+%template(resizeAsInt32) XdmfArray::resize<int>;
+%template(resizeAsInt64) XdmfArray::resize<long>;
+%template(resizeAsFloat32) XdmfArray::resize<float>;
+%template(resizeAsFloat64) XdmfArray::resize<double>;
+%template(resizeAsUInt8) XdmfArray::resize<unsigned char>;
+%template(resizeAsUInt16) XdmfArray::resize<unsigned short>;
+%template(resizeAsUInt32) XdmfArray::resize<unsigned int>;
+
 // Provide accessors from python lists to XdmfArrays
 %extend XdmfArray {
-	void copyValueAsChar(int index, char value) {
+	void copyValueAsInt8(int index, char value) {
 		$self->copyValues(index, &value);
 	}
 
-	void copyValueAsShort(int index, short value) {
+	void copyValueAsInt16(int index, short value) {
 		$self->copyValues(index, &value);
 	}
 
-	void copyValueAsInt(int index, int value) {
+	void copyValueAsInt32(int index, int value) {
 		$self->copyValues(index, &value);
 	}
 
-	void copyValueAsLong(int index, long value) {
+	void copyValueAsInt64(int index, long value) {
 		$self->copyValues(index, &value);
 	}
 
-	void copyValueAsFloat(int index, float value) {
+	void copyValueAsFloat32(int index, float value) {
 		$self->copyValues(index, &value);
 	}
 
-	void copyValueAsDouble(int index, double value) {
+	void copyValueAsFloat64(int index, double value) {
 		$self->copyValues(index, &value);
 	}
 
-	void copyValueAsUChar(int index, unsigned char value) {
+	void copyValueAsUInt8(int index, unsigned char value) {
 		$self->copyValues(index, &value);
 	}
 
-	void copyValueAsUShort(int index, unsigned short value) {
+	void copyValueAsUInt16(int index, unsigned short value) {
 		$self->copyValues(index, &value);
 	}
 
-	void copyValueAsUInt(int index, unsigned int value) {
+	void copyValueAsUInt32(int index, unsigned int value) {
 		$self->copyValues(index, &value);
 	}
 };
 
-%extend boost::shared_ptr<XdmfArray> {
+%extend XdmfArray {
 	%pythoncode {
-		def copyValuesAsChar(self, startIndex, values):
+		def copyValuesAsInt8(self, startIndex, values):
 			for i in range(0, len(values)):
-				self.copyValueAsChar(i+startIndex, values[i])
+				self.copyValueAsInt8(i+startIndex, values[i])
 
-		def copyValuesAsShort(self, startIndex, values):
+		def copyValuesAsInt16(self, startIndex, values):
 			for i in range(0, len(values)):
-				self.copyValueAsShort(i+startIndex, values[i])
+				self.copyValueAsInt16(i+startIndex, values[i])
 
-		def copyValuesAsInt(self, startIndex, values):
+		def copyValuesAsInt32(self, startIndex, values):
 			for i in range(0, len(values)):
-				self.copyValueAsInt(i+startIndex, values[i])
+				self.copyValueAsInt32(i+startIndex, values[i])
 
-		def copyValuesAsLong(self, startIndex, values):
+		def copyValuesAsInt64(self, startIndex, values):
 			for i in range(0, len(values)):
-				self.copyValueAsLong(i+startIndex, values[i])
+				self.copyValueAsInt64(i+startIndex, values[i])
 
-		def copyValuesAsFloat(self, startIndex, values):
+		def copyValuesAsFloat32(self, startIndex, values):
 			for i in range(0, len(values)):
-				self.copyValueAsFloat(i+startIndex, values[i])
+				self.copyValueAsFloat32(i+startIndex, values[i])
 
-		def copyValuesAsDouble(self, startIndex, values):
+		def copyValuesAsFloat64(self, startIndex, values):
 			for i in range(0, len(values)):
-				self.copyValueAsDouble(i+startIndex, values[i])
+				self.copyValueAsFloat64(i+startIndex, values[i])
 
-		def copyValuesAsUChar(self, startIndex, values):
+		def copyValuesAsUInt8(self, startIndex, values):
 			for i in range(0, len(values)):
-				self.copyValueAsUChar(i+startIndex, values[i])
+				self.copyValueAsUInt8(i+startIndex, values[i])
 
-		def copyValuesAsUShort(self, startIndex, values):
+		def copyValuesAsUInt16(self, startIndex, values):
 			for i in range(0, len(values)):
-				self.copyValueAsUShort(i+startIndex, values[i])
+				self.copyValueAsUInt16(i+startIndex, values[i])
 
-		def copyValuesAsUInt(self, startIndex, values):
+		def copyValuesAsUInt32(self, startIndex, values):
 			for i in range(0, len(values)):
-				self.copyValueAsUInt(i+startIndex, values[i])
+				self.copyValueAsUInt32(i+startIndex, values[i])
 	};
 };

@@ -39,8 +39,9 @@ class XdmfTopologyType : public XdmfItemProperty {
 
 public:
 
+	virtual ~XdmfTopologyType();
+
 	friend class XdmfTopology;
-	template <typename T> friend void boost::checked_delete(T * x);
 
 	enum CellType {
 		NoCellType, Linear, Quadratic, Cubic, Arbitrary, Structured

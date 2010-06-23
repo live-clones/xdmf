@@ -24,8 +24,9 @@ class XdmfAttributeType : public XdmfItemProperty {
 
 public:
 
+	virtual ~XdmfAttributeType();
+
 	friend class XdmfAttribute;
-	template <typename T> friend void boost::checked_delete(T * x);
 
 	// Supported Xdmf Attribute Types
 	static boost::shared_ptr<const XdmfAttributeType> NoAttributeType();
@@ -64,7 +65,6 @@ protected:
 	 * @param name the name of the XdmfAttributeType to construct.
 	 */
 	XdmfAttributeType(const std::string & name);
-	~XdmfAttributeType();
 
 private:
 

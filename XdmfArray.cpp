@@ -431,7 +431,12 @@ boost::shared_ptr<const XdmfArrayType> XdmfArray::getType() const
 	return XdmfArrayType::Uninitialized();
 }
 
-const void * const XdmfArray::getValuesPointer() const
+void * XdmfArray::getValuesPointer()
+{
+	return const_cast<void *>(static_cast<const XdmfArray &>(*this).getValuesPointer());
+}
+
+const void * XdmfArray::getValuesPointer() const
 {
 	if(mHaveArray)
 	{

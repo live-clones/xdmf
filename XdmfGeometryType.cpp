@@ -68,6 +68,10 @@ XdmfGeometryType::XdmfGeometryType(const std::string& name, const int& dimension
 {
 }
 
+XdmfGeometryType::~XdmfGeometryType()
+{
+}
+
 boost::shared_ptr<const XdmfGeometryType> XdmfGeometryType::New(const std::map<std::string, std::string> & itemProperties)
 {
 	std::map<std::string, std::string>::const_iterator type = itemProperties.find("GeometryType");

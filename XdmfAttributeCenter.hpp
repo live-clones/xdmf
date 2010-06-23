@@ -22,8 +22,9 @@ class XdmfAttributeCenter : public XdmfItemProperty {
 
 public:
 
+	virtual ~XdmfAttributeCenter();
+
 	friend class XdmfAttribute;
-	template <typename T> friend void boost::checked_delete(T * x);
 
 	// Supported Xdmf Attribute Centers
 	static boost::shared_ptr<const XdmfAttributeCenter> Grid();
@@ -60,7 +61,6 @@ protected:
 	 * @param name the name of the XdmfAttributeCenter to construct.
 	 */
 	XdmfAttributeCenter(const std::string & name);
-	~XdmfAttributeCenter();
 
 private:
 

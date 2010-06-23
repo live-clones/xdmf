@@ -31,6 +31,10 @@ XdmfGridCollectionType::XdmfGridCollectionType(const std::string & name) :
 {
 }
 
+XdmfGridCollectionType::~XdmfGridCollectionType()
+{
+}
+
 boost::shared_ptr<const XdmfGridCollectionType> XdmfGridCollectionType::New(const std::map<std::string, std::string> & itemProperties)
 {
 	std::map<std::string, std::string>::const_iterator type = itemProperties.find("CollectionType");

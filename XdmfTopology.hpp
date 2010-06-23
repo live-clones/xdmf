@@ -19,6 +19,8 @@ class XdmfTopology : public XdmfDataItem {
 public:
 
 	XdmfNewMacro(XdmfTopology);
+	virtual ~XdmfTopology();
+
 	LOKI_DEFINE_VISITABLE(XdmfTopology, XdmfDataItem)
 	static std::string ItemTag;
 
@@ -50,7 +52,6 @@ public:
 protected:
 
 	XdmfTopology();
-	virtual ~XdmfTopology();
 	virtual void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems);
 
 private:

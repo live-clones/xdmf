@@ -18,6 +18,8 @@ class XdmfDomain : public XdmfItem {
 public:
 
 	XdmfNewMacro(XdmfDomain);
+	virtual ~XdmfDomain();
+
 	LOKI_DEFINE_VISITABLE(XdmfDomain, XdmfItem)
 	static std::string ItemTag;
 
@@ -67,7 +69,6 @@ public:
 protected:
 
 	XdmfDomain();
-	virtual ~XdmfDomain();
 	virtual void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems);
 
 private:

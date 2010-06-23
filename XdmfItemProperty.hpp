@@ -18,6 +18,8 @@ class XdmfItemProperty : public XdmfObject {
 
 public:
 
+	virtual ~XdmfItemProperty();
+
 	/**
 	 * Retrieve the key/value pairs that this XdmfItemProperty contains by inserting into the passed vector.
 	 *
@@ -28,7 +30,6 @@ public:
 protected:
 
 	XdmfItemProperty();
-	virtual ~XdmfItemProperty();
 
 private:
 

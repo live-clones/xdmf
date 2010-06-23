@@ -27,8 +27,9 @@ class XdmfArrayType : public XdmfItemProperty {
 
 public:
 
+	virtual ~XdmfArrayType();
+
 	friend class XdmfArray;
-	template <typename T> friend void boost::checked_delete(T * x);
 
 	// Supported XdmfArrayTypes
 	static boost::shared_ptr<const XdmfArrayType> Uninitialized();
@@ -71,7 +72,6 @@ protected:
 	 * @param precision the precision, in bytes, of the XdmfArrayType to construct.
 	 */
 	XdmfArrayType(const std::string & name, const unsigned int precision);
-	~XdmfArrayType();
 
 private:
 

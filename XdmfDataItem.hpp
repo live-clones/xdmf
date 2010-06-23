@@ -17,6 +17,8 @@ class XdmfDataItem : public XdmfItem {
 
 public:
 
+	virtual ~XdmfDataItem();
+
 	LOKI_DEFINE_VISITABLE(XdmfDataItem, XdmfItem)
 
 	/**
@@ -45,7 +47,6 @@ public:
 protected:
 
 	XdmfDataItem();
-	virtual ~XdmfDataItem();
 	virtual void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem > > & childItems);
 
 private:

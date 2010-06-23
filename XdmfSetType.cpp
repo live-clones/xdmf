@@ -43,6 +43,10 @@ XdmfSetType::XdmfSetType(const std::string & name) :
 {
 }
 
+XdmfSetType::~XdmfSetType()
+{
+}
+
 boost::shared_ptr<const XdmfSetType> XdmfSetType::New(const std::map<std::string, std::string> & itemProperties)
 {
 	std::map<std::string, std::string>::const_iterator type = itemProperties.find("SetType");

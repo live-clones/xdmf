@@ -28,11 +28,11 @@ class XdmfHDF5Writer : public XdmfVisitor,
 
 public:
 
+	virtual ~XdmfHDF5Writer();
+
 	enum Mode {
 		Default, Overwrite, Append
 	};
-
-	template <typename T> friend void boost::checked_delete(T * x);
 
 	/**
 	 * Construct XdmfHDF5Writer
@@ -65,7 +65,6 @@ public:
 protected:
 
 	XdmfHDF5Writer(const std::string & hdf5FilePath);
-	virtual ~XdmfHDF5Writer();
 
 private:
 

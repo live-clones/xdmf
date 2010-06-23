@@ -26,8 +26,9 @@ class XdmfGeometryType : public XdmfItemProperty {
 
 public:
 
+	virtual ~XdmfGeometryType();
+
 	friend class XdmfGeometry;
-	template <typename T> friend void boost::checked_delete(T * x);
 
 	// Supported Xdmf Geometry Types
 	static boost::shared_ptr<const XdmfGeometryType> NoGeometryType();

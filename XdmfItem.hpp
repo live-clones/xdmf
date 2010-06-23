@@ -29,6 +29,8 @@ class XdmfItem : public XdmfObject,
 
 public:
 
+	virtual ~XdmfItem();
+
 	LOKI_DEFINE_VISITABLE_BASE()
 	friend class XdmfReader;
 
@@ -54,7 +56,6 @@ public:
 protected:
 
 	XdmfItem();
-	virtual ~XdmfItem();
 
 	/**
 	 * Populates an item using a map of key/value property pairs and a vector of its child items.  This is used to

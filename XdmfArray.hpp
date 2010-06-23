@@ -20,7 +20,7 @@ class XdmfHDF5Controller;
  * By Copy:
  *
  *  copyValues
- * 	getCopyValues
+ * 	getValuesCopy
  *
  * 	XdmfArray stores its own copy of the data.  Modifications to the data stored in the XdmfArray will
  * 	not change values stored in the original array.
@@ -35,21 +35,23 @@ class XdmfHDF5Controller;
  * 	array.
  *
  * Xdmf supports the following datatypes:
- * 	Char
- * 	Short
- * 	Int
- * 	Long
- * 	Float
- * 	Double
- * 	Unsigned Char
- * 	Unsigned Short
- * 	Unsigned Int
+ * 	Int8
+ * 	Int16
+ * 	Int32
+ * 	Int64
+ * 	Float32
+ * 	Float64
+ * 	UInt8
+ * 	UInt16
+ * 	UInt32
  */
 class XdmfArray : public XdmfItem {
 
 public:
 
 	XdmfNewMacro(XdmfArray);
+	virtual ~XdmfArray();
+
 	LOKI_DEFINE_VISITABLE(XdmfArray, XdmfItem)
 	friend class XdmfHDF5Writer;
 	static std::string ItemTag;
@@ -67,7 +69,7 @@ public:
 	void copyValues(const unsigned int startIndex, const boost::shared_ptr<const XdmfArray> values, const unsigned int valuesStartIndex= 0, const unsigned int numValues = 1, const unsigned int arrayStride = 1, const unsigned int valuesStride = 1);
 
 	/**
-	 * Copy values from an array into this array.
+	 * Copy values into this array.
 	 *
 	 * @param startIndex the index in this XdmfArray to begin insertion.
 	 * @param valuesPointer a pointer to the values to copy into this XdmfArray.
@@ -145,14 +147,6 @@ public:
 	boost::shared_ptr<std::vector<T> > getValues();
 
 	/**
-	 * Get a smart pointer to the values stored in this array (const version).
-	 *
-	 * @return a smart pointer to the internal vector of values stored in this array.
-	 */
-	//template <typename T>
-	//const boost::shared_ptr<const std::vector<T> > getValues() const;
-
-	/**
 	 * Get a copy of the values stored in this array
 	 *
 	 * @param startIndex the index in this XdmfArray to begin copying from.
@@ -165,11 +159,18 @@ public:
 	void getValuesCopy(const unsigned int startIndex, T * const valuesPointer, const unsigned int numValues = 1, const unsigned int arrayStride = 1, const unsigned int valuesStride = 1) const;
 
 	/**
+	 * Get a pointer to the values stored in this array.
+	 *
+	 * @return a void pointer to the first value stored in this array.
+	 */
+	void * getValuesPointer();
+
+	/**
 	 * Get a pointer to the values stored in this array (const version).
 	 *
 	 * @return a void pointer to the first value stored in this array.
 	 */
-	const void * const getValuesPointer() const;
+	const void * getValuesPointer() const;
 
 	/**
 	 * Get the values stored in this array as a string.
@@ -300,7 +301,6 @@ public:
 protected:
 
 	XdmfArray();
-	virtual ~XdmfArray();
 	virtual void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems);
 
 private:

@@ -186,6 +186,10 @@ XdmfTopologyType::XdmfTopologyType(const int& nodesPerElement, const std::string
 {
 }
 
+XdmfTopologyType::~XdmfTopologyType()
+{
+}
+
 boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::New(const std::map<std::string, std::string> & itemProperties)
 {
 	std::map<std::string, std::string>::const_iterator type = itemProperties.find("TopologyType");

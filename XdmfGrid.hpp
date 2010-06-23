@@ -23,6 +23,8 @@ class XdmfGrid : public XdmfItem {
 public:
 
 	XdmfNewMacro(XdmfGrid);
+	virtual ~XdmfGrid();
+
 	LOKI_DEFINE_VISITABLE(XdmfGrid, XdmfItem)
 	static std::string ItemTag;
 
@@ -181,7 +183,6 @@ public:
 protected:
 
 	XdmfGrid();
-	virtual ~XdmfGrid();
 	virtual void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems);
 
 	std::string mName;

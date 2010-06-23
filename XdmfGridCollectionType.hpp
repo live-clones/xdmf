@@ -20,8 +20,9 @@ class XdmfGridCollectionType : public XdmfItemProperty {
 
 public:
 
+	virtual ~XdmfGridCollectionType();
+
 	friend class XdmfGridCollection;
-	template <typename T> friend void boost::checked_delete(T * x);
 
 	// Supported XdmfGridCollectionTypes
 	static boost::shared_ptr<const XdmfGridCollectionType> NoCollectionType();

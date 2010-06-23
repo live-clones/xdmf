@@ -19,7 +19,7 @@ class XdmfHDF5Controller : public XdmfObject {
 
 public:
 
-	template <typename T> friend void boost::checked_delete(T * x);
+	virtual ~XdmfHDF5Controller();
 
 	/**
 	 * Create a new controller for an hdf5 data set on disk.
@@ -75,7 +75,6 @@ public:
 protected:
 
 	XdmfHDF5Controller(const std::string & dataSetPath, const unsigned int size, const boost::shared_ptr<const XdmfArrayType> type);
-	virtual ~XdmfHDF5Controller();
 
 private:
 
