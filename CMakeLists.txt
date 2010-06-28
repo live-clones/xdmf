@@ -32,35 +32,43 @@ if(XDMF_WRAP_PYTHON)
 	swig_link_libraries(Xdmf Xdmf ${PYTHON_LIBRARIES})
 endif(XDMF_WRAP_PYTHON)
 
-set(XdmfSources
+set(XdmfCoreSources
 	XdmfArray
 	XdmfArrayType
+	XdmfCoreItemFactory
+	XdmfCoreReader
+	XdmfDataItem
+	XdmfHDF5Controller
+	XdmfHDF5Writer
+	XdmfItem
+	XdmfItemProperty
+	XdmfObject
+	XdmfVisitor
+	XdmfWriter
+)
+
+set(XdmfSources
 	XdmfAttribute
 	XdmfAttributeCenter
 	XdmfAttributeType
-	XdmfDataItem
 	XdmfDomain
 	XdmfGeometry
 	XdmfGeometryType
 	XdmfGrid
 	XdmfGridCollection
 	XdmfGridCollectionType
-	XdmfHDF5Controller
-	XdmfHDF5Writer
-	XdmfItem
-	XdmfItemProperty
-	XdmfObject
+	XdmfItemFactory
 	XdmfReader
 	XdmfSet
 	XdmfSetType
 	XdmfTopology
 	XdmfTopologyType
-	XdmfVisitor
-	XdmfWriter
 )
 
+add_library(XdmfCore ${XdmfCoreSources})
+target_link_libraries(XdmfCore ${HDF5_LIBRARIES} ${LIBXML2_LIBRARIES})
 add_library(Xdmf ${XdmfSources})
-target_link_libraries(Xdmf ${HDF5_LIBRARIES} ${LIBXML2_LIBRARIES})
+target_link_libraries(Xdmf XdmfCore)
 
 option(XDMF_BUILD_DOCUMENTATION OFF)
 if(XDMF_BUILD_DOCUMENTATION)

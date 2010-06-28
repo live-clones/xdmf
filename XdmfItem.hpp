@@ -1,11 +1,3 @@
-/**
- * An XdmfItem replaces the XdmfElement class in the previous version of Xdmf.  An XdmfItem represents an item that can be
- * visited by an XdmfVisitor and have it's contents added to an Xdmf file.  These include XdmfGrids, XdmfSets,
- * XdmfTopologies, etc.
- *
- * This is an abstract base class.
- */
-
 #ifndef XDMFITEM_HPP_
 #define XDMFITEM_HPP_
 
@@ -32,7 +24,7 @@ public:
 	virtual ~XdmfItem();
 
 	LOKI_DEFINE_VISITABLE_BASE()
-	friend class XdmfReader;
+	friend class XdmfCoreReader;
 
 	/**
 	 * Get the tag for this XdmfItem.  This is equivalent to tags in XML parlance.

@@ -27,6 +27,11 @@ protected:
 
 	XdmfObject();
 
+private:
+
+	XdmfObject(const XdmfObject & object);  // Not implemented.
+	void operator=(const XdmfObject & object);  // Not implemented.
+
 };
 
 #endif /* XDMFOBJECT_HPP_ */
