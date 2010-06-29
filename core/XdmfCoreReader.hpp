@@ -20,10 +20,21 @@ public:
 
 	virtual ~XdmfCoreReader();
 
+	/**
+	 * Read an Xdmf file from disk into memory.
+	 *
+	 * @param fileName the path on disk to the Xdmf file to read in.
+	 * @return an XdmfItem at the root of the Xdmf tree.
+	 */
 	virtual boost::shared_ptr<XdmfItem> read(const std::string & fileName) const;
 
 protected:
 
+	/**
+	 * Constructor
+	 *
+	 * @param itemFactory an XdmfCoreItemFactory to construct XdmfItems for a specific Xdmf language.
+	 */
 	XdmfCoreReader(const boost::shared_ptr<XdmfCoreItemFactory> itemFactory);
 
 private:

@@ -1,4 +1,4 @@
-from Xdmf import *
+from XdmfCore import *
 
 if __name__ == "__main__":
 

@@ -92,5 +92,3 @@ boost::shared_ptr<XdmfItem> XdmfCoreReader::read(const std::string & filePath) c
 
 	return toReturn[0];
 }
-
-

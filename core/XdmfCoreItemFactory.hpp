@@ -9,7 +9,7 @@ class XdmfItem;
 #include "XdmfObject.hpp"
 
 /**
- * @brief Factory for constructing XdmfItems from their ItemTag and ItemProperties
+ * @brief Factory that constructs XdmfItems using tags and properties.
  *
  * XdmfCoreItemFactory is an abstract base class.
  */
