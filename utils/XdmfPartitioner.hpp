@@ -19,6 +19,7 @@ class XdmfPartitioner : public XdmfObject {
 public:
 
 	XdmfNewMacro(XdmfPartitioner);
+	virtual ~XdmfPartitioner();
 
 	/**
 	 * Partitions an XdmfGrid using the metis library.  Currently supported topology types are:
@@ -41,17 +42,21 @@ public:
 	 *
 	 * @param gridToPartition an XdmfGrid to partition.
 	 * @param numberOfPartitions the number of pieces to partition the grid into.
-	 * @param heavyDataWriter an XdmfHDF5Writer to write the partitioned mesh to.
+	 * @param heavyDataWriter an XdmfHDF5Writer to write the partitioned mesh to.  If no heavyDataWriter is specified, all partitioned data will remain in memory.
 	 *
 	 * @return a spatial collection containing partitioned grids.
 	 */
-	boost::shared_ptr<XdmfGridCollection> partition(boost::shared_ptr<XdmfGrid> gridToPartition, const unsigned int numberOfPartitions,
+	boost::shared_ptr<XdmfGridCollection> partition(const boost::shared_ptr<XdmfGrid> gridToPartition, const unsigned int numberOfPartitions,
 			boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter);
 
 protected:
 
 	XdmfPartitioner();
-	virtual ~XdmfPartitioner();
+
+private:
+
+	XdmfPartitioner(const XdmfPartitioner & partitioner);  // Not implemented.
+	void operator=(const XdmfPartitioner & partitioner);  // Not implemented.
 };
 
 #endif /* XDMFPARTITIONER_HPP_ */
