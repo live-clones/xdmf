@@ -23,7 +23,7 @@ public:
 	virtual ~XdmfSet();
 
 	LOKI_DEFINE_VISITABLE(XdmfSet, XdmfDataItem)
-	static std::string ItemTag;
+	const static std::string ItemTag;
 
 	/**
 	 * Get the XdmfSetType associated with this set.

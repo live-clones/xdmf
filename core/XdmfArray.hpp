@@ -54,7 +54,7 @@ public:
 
 	LOKI_DEFINE_VISITABLE(XdmfArray, XdmfItem)
 	friend class XdmfHDF5Writer;
-	static std::string ItemTag;
+	static const std::string ItemTag;
 
 	/**
 	 * Copy values from an XdmfArray into this array.

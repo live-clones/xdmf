@@ -20,7 +20,7 @@ XdmfSet::~XdmfSet()
 	std::cout << "Deleted Set " << this << std::endl;
 }
 
-std::string XdmfSet::ItemTag = "Set";
+const std::string XdmfSet::ItemTag = "Set";
 
 std::string XdmfSet::getName() const
 {

@@ -22,7 +22,7 @@ public:
 	virtual ~XdmfGeometry();
 
 	LOKI_DEFINE_VISITABLE(XdmfGeometry, XdmfDataItem)
-	static std::string ItemTag;
+	static const std::string ItemTag;
 
 	/**
 	 * Get the XdmfGeometryType associated with this geometry.

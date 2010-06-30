@@ -23,7 +23,7 @@ public:
 	virtual ~XdmfGridCollection();
 
 	LOKI_DEFINE_VISITABLE(XdmfGridCollection, XdmfGrid)
-	static std::string ItemTag;
+	static const std::string ItemTag;
 
 	/**
 	 * Get a grid from this collection.

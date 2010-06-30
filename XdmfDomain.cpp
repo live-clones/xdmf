@@ -18,7 +18,7 @@ XdmfDomain::~XdmfDomain()
   std::cout << "Deleted Domain " << this << std::endl;
 }
 
-std::string XdmfDomain::ItemTag = "Domain";
+const std::string XdmfDomain::ItemTag = "Domain";
 
 void XdmfDomain::insert(const boost::shared_ptr<XdmfGrid> grid)
 {

@@ -21,7 +21,7 @@ public:
 	virtual ~XdmfDomain();
 
 	LOKI_DEFINE_VISITABLE(XdmfDomain, XdmfItem)
-	static std::string ItemTag;
+	static const std::string ItemTag;
 
 	/**
 	 * Get a XdmfGrid attached to the domain.

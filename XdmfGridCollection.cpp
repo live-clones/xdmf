@@ -20,7 +20,7 @@ XdmfGridCollection::~XdmfGridCollection()
   std::cout << "Deleted Collection " << this << std::endl;
 }
 
-std::string XdmfGridCollection::ItemTag = "Grid";
+const std::string XdmfGridCollection::ItemTag = "Grid";
 
 boost::shared_ptr<XdmfGrid> XdmfGridCollection::getGrid(const unsigned int index)
 {

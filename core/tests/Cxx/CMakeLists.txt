@@ -1,7 +1,6 @@
 set(XdmfCoreCxxTests
 	TestXdmfArray
 	TestXdmfArrayWriteRead
-	TestXdmfDataItem
 	TestXdmfHDF5Writer
 )
 

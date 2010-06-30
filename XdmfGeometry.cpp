@@ -21,7 +21,7 @@ XdmfGeometry::~XdmfGeometry()
 	std::cout << "Deleted Geometry " << this << std::endl;
 }
 
-std::string XdmfGeometry::ItemTag = "Geometry";
+const std::string XdmfGeometry::ItemTag = "Geometry";
 
 boost::shared_ptr<const XdmfGeometryType> XdmfGeometry::getGeometryType() const
 {

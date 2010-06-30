@@ -22,7 +22,7 @@ XdmfAttribute::~XdmfAttribute()
 	std::cout << "Deleted Attribute " << this << std::endl;
 }
 
-std::string XdmfAttribute::ItemTag = "Attribute";
+const std::string XdmfAttribute::ItemTag = "Attribute";
 
 boost::shared_ptr<const XdmfAttributeCenter> XdmfAttribute::getAttributeCenter() const
 {

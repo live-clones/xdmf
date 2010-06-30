@@ -24,7 +24,7 @@ XdmfGrid::~XdmfGrid()
   std::cout << "Deleted Grid " << this << std::endl;
 }
 
-std::string XdmfGrid::ItemTag = "Grid";
+const std::string XdmfGrid::ItemTag = "Grid";
 
 boost::shared_ptr<XdmfAttribute> XdmfGrid::getAttribute(const unsigned int index)
 {

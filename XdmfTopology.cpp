@@ -22,7 +22,7 @@ XdmfTopology::~XdmfTopology()
 	std::cout << "Deleted Topology " << this << std::endl;
 }
 
-std::string XdmfTopology::ItemTag = "Topology";
+const std::string XdmfTopology::ItemTag = "Topology";
 
 std::string XdmfTopology::getItemTag() const
 {

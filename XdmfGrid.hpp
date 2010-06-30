@@ -26,7 +26,7 @@ public:
 	virtual ~XdmfGrid();
 
 	LOKI_DEFINE_VISITABLE(XdmfGrid, XdmfItem)
-	static std::string ItemTag;
+	static const std::string ItemTag;
 
 	/**
 	 * Get an XdmfAttribute attached to this grid.

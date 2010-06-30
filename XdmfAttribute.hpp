@@ -22,7 +22,7 @@ public:
 	virtual ~XdmfAttribute();
 
 	LOKI_DEFINE_VISITABLE(XdmfAttribute, XdmfDataItem)
-	static std::string ItemTag;
+	static const std::string ItemTag;
 
 	/**
 	 * Get the XdmfAttributeCenter associated with this attribute.

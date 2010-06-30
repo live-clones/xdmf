@@ -319,7 +319,7 @@ XdmfArray::~XdmfArray()
 	std::cout << "Deleted Array " << this << std::endl;
 }
 
-std::string XdmfArray::ItemTag = "DataItem";
+const std::string XdmfArray::ItemTag = "DataItem";
 
 void XdmfArray::clear()
 {
