@@ -15,3 +15,8 @@ XdmfReader::~XdmfReader()
 	std::cout << "Deleted XdmfReader " << this << std::endl;
 }
 
+boost::shared_ptr<XdmfItem> XdmfReader::read(const std::string & fileName) const
+{
+	return XdmfCoreReader::read(fileName);
+}
+

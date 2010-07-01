@@ -63,24 +63,22 @@ public:
 	  rightPoint[2] = (1.0/3.0)*(2*point2[2] + point1[2]);
 	}
 
-	inline void insertPointWithoutCheck(std::vector<double> & newPoint, std::map<std::vector<double>, unsigned int, PointComparison> & coordToIdMap, const boost::shared_ptr<XdmfArray> newConnectivity, const boost::shared_ptr<XdmfArray> newPoints) const
+	inline void insertPointWithoutCheck(std::vector<double> & newPoint, const boost::shared_ptr<XdmfArray> & newConnectivity, const boost::shared_ptr<XdmfArray> & newPoints) const
 	{
-	  unsigned int newId = newPoints->getSize() / 3;
-	  newConnectivity->pushBack(newId);
+	  newConnectivity->pushBack(newPoints->getSize() / 3);
 	  newPoints->pushBack(newPoint[0]);
 	  newPoints->pushBack(newPoint[1]);
 	  newPoints->pushBack(newPoint[2]);
 	}
 
-	inline void insertPointWithCheck(std::vector<double> & newPoint, std::map<std::vector<double>, unsigned int, PointComparison> & coordToIdMap, const boost::shared_ptr<XdmfArray> newConnectivity, const boost::shared_ptr<XdmfArray> newPoints) const
+	inline void insertPointWithCheck(std::vector<double> & newPoint, std::map<std::vector<double>, unsigned int, PointComparison> & coordToIdMap, const boost::shared_ptr<XdmfArray> & newConnectivity, const boost::shared_ptr<XdmfArray> & newPoints) const
 	{
 	  std::map<std::vector<double>, unsigned int>::const_iterator iter = coordToIdMap.find(newPoint);
 	  if(iter == coordToIdMap.end())
 	  {
 	    // Not inserted before
-	    unsigned int newId = newPoints->getSize() / 3;
-	    coordToIdMap[newPoint] = newId;
-	    insertPointWithoutCheck(newPoint, coordToIdMap, newConnectivity, newPoints);
+	    coordToIdMap[newPoint] = newPoints->getSize() / 3;;
+	    insertPointWithoutCheck(newPoint, newConnectivity, newPoints);
 	  }
 	  else
 	  {
@@ -98,12 +96,23 @@ public:
 		boost::shared_ptr<XdmfArray> newPoints = toReturn->getGeometry()->getArray();
 		newPoints->initialize(gridToConvert->getGeometry()->getArray()->getType());
 		newPoints->resize(gridToConvert->getGeometry()->getArray()->getSize(), 0);
+
+		if(!gridToConvert->getGeometry()->getArray()->isInitialized())
+		{
+			gridToConvert->getGeometry()->getArray()->read();
+		}
+
 		// Copy all geometry values from old grid into new grid because we are keeping all old points.
 		newPoints->copyValues(0, gridToConvert->getGeometry()->getArray(), 0, gridToConvert->getGeometry()->getArray()->getSize());
 
 		boost::shared_ptr<XdmfArray> newConnectivity = toReturn->getTopology()->getArray();
 		newConnectivity->initialize(gridToConvert->getTopology()->getArray()->getType());
 		newConnectivity->reserve(64 * gridToConvert->getTopology()->getNumberElements());
+
+		if(!gridToConvert->getTopology()->getArray()->isInitialized())
+		{
+			gridToConvert->getTopology()->getArray()->read();
+		}
 
 		std::vector<double> leftPoint(3);
 		std::vector<double> rightPoint(3);
@@ -116,7 +125,7 @@ public:
 			localNodes.reserve(44);
 			for(int j=0; j<8; ++j)
 			{
-				gridToConvert->getGeometry()->getArray()->getValuesCopy((8 * i + j) * 3, &localNodes[j][0], 3);
+				gridToConvert->getGeometry()->getArray()->getValuesCopy(gridToConvert->getTopology()->getArray()->getValueCopy<unsigned int>(8*i + j) * 3, &localNodes[j][0], 3);
 			}
 
 			// Add old connectivity information to newConnectivity.
@@ -293,25 +302,24 @@ public:
 
 		    // Case 28
 		    this->computeInteriorPoints(leftPoint, rightPoint, localNodes[33], localNodes[34]);
-		    this->insertPointWithoutCheck(leftPoint, coordToIdMap, newConnectivity, newPoints);
-		    this->insertPointWithoutCheck(rightPoint, coordToIdMap, newConnectivity, newPoints);
+		    this->insertPointWithoutCheck(leftPoint, newConnectivity, newPoints);
+		    this->insertPointWithoutCheck(rightPoint, newConnectivity, newPoints);
 
 		    // Case 29
 		    this->computeInteriorPoints(leftPoint, rightPoint, localNodes[35], localNodes[32]);
-		    this->insertPointWithoutCheck(leftPoint, coordToIdMap, newConnectivity, newPoints);
-		    this->insertPointWithoutCheck(rightPoint, coordToIdMap, newConnectivity, newPoints);
+		    this->insertPointWithoutCheck(leftPoint, newConnectivity, newPoints);
+		    this->insertPointWithoutCheck(rightPoint, newConnectivity, newPoints);
 
 		    // Case 30
 		    this->computeInteriorPoints(leftPoint, rightPoint, localNodes[41], localNodes[42]);
-		    this->insertPointWithoutCheck(leftPoint, coordToIdMap, newConnectivity, newPoints);
-		    this->insertPointWithoutCheck(rightPoint, coordToIdMap, newConnectivity, newPoints);
+		    this->insertPointWithoutCheck(leftPoint, newConnectivity, newPoints);
+		    this->insertPointWithoutCheck(rightPoint, newConnectivity, newPoints);
 
 		    // Case 31
 		    this->computeInteriorPoints(leftPoint, rightPoint, localNodes[43], localNodes[40]);
-		    this->insertPointWithoutCheck(leftPoint, coordToIdMap, newConnectivity, newPoints);
-		    this->insertPointWithoutCheck(rightPoint, coordToIdMap, newConnectivity, newPoints);
+		    this->insertPointWithoutCheck(leftPoint, newConnectivity, newPoints);
+		    this->insertPointWithoutCheck(rightPoint, newConnectivity, newPoints);
 		}
-
 		return toReturn;
 	}
 };

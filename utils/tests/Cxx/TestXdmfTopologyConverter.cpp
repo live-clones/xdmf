@@ -32,9 +32,6 @@ int main(int argc, char* argv[])
 	 */
 	boost::shared_ptr<XdmfGrid> hex64Grid = converter->convert(hexGrid, XdmfTopologyType::Hexahedron_64());
 
-	boost::shared_ptr<XdmfWriter> writer = XdmfWriter::New("hex64.xmf");
-	hex64Grid->accept(writer);
-
 	assert(hex64Grid->getGeometry()->getGeometryType() == XdmfGeometryType::XYZ());
 	assert(hex64Grid->getGeometry()->getNumberPoints() == 64);
 	double expectedPoints[192] = {0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0.333333333333333, 0, 0, 0.666666666666667, 0, 0, 1, 0.333333333333333,
@@ -59,6 +56,7 @@ int main(int argc, char* argv[])
 		assert(fabs(expectedPoints[i] - hex64Grid->getGeometry()->getArray()->getValueCopy<double>(i)) < epsilon);
 	}
 	assert(hex64Grid->getTopology()->getTopologyType() == XdmfTopologyType::Hexahedron_64());
+	assert(hex64Grid->getTopology()->getNumberElements() == 1);
 	for(unsigned int i=0; i<64; ++i)
 	{
 		assert(i == hex64Grid->getTopology()->getArray()->getValueCopy<unsigned int>(i));
