@@ -23,8 +23,6 @@
 /*                                                                 */
 /*******************************************************************/
 
-#include "XdmfPartitioner.hpp"
-
 #ifndef BUILD_EXE
 
 extern "C"
@@ -43,6 +41,7 @@ extern "C"
 #include "XdmfGridCollection.hpp"
 #include "XdmfGridCollectionType.hpp"
 #include "XdmfHDF5Writer.hpp"
+#include "XdmfPartitioner.hpp"
 #include "XdmfSet.hpp"
 #include "XdmfSetType.hpp"
 #include "XdmfTopology.hpp"
@@ -57,7 +56,7 @@ XdmfPartitioner::~XdmfPartitioner()
 }
 
 boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::shared_ptr<XdmfGrid> gridToPartition, const unsigned int numberOfPartitions,
-		boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter)
+		boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter) const
 {
 	int metisElementType;
 	int numNodesPerElement;
@@ -303,7 +302,8 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 					createdAttribute->setAttributeType(currAttribute->getAttributeType());
 					unsigned int index = 0;
 					unsigned int numValsPerComponent = currAttribute->getArray()->getSize() / gridToPartition->getTopology()->getNumberElements();
-					createdAttribute->getArray()->reserve(currElemIds.size() * numValsPerComponent);
+					createdAttribute->getArray()->initialize(currAttribute->getArray()->getType());
+					createdAttribute->getArray()->resize<unsigned int>(currElemIds.size() * numValsPerComponent);
 					for(std::vector<unsigned int>::const_iterator iter = currElemIds.begin(); iter != currElemIds.end(); ++iter)
 					{
 						createdAttribute->getArray()->copyValues(index, currAttribute->getArray(), *iter * numValsPerComponent, numValsPerComponent);
@@ -316,7 +316,8 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 					createdAttribute->setName(currAttribute->getName());
 					createdAttribute->setAttributeCenter(currAttribute->getAttributeCenter());
 					createdAttribute->setAttributeType(currAttribute->getAttributeType());
-					createdAttribute->getArray()->reserve(currNodeMap.size());
+					createdAttribute->getArray()->initialize(currAttribute->getArray()->getType());
+					createdAttribute->getArray()->resize<unsigned int>(currNodeMap.size());
 					for(std::map<unsigned int, unsigned int>::const_iterator iter = currNodeMap.begin(); iter != currNodeMap.end(); ++iter)
 					{
 						createdAttribute->getArray()->copyValues(iter->second, currAttribute->getArray(), iter->first, 1);
@@ -403,6 +404,7 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 #include "XdmfDomain.hpp"
 #include "XdmfGridCollection.hpp"
 #include "XdmfHDF5Writer.hpp"
+#include "XdmfPartitioner.hpp"
 #include "XdmfReader.hpp"
 #include "XdmfWriter.hpp"
 
@@ -417,7 +419,6 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
  */
 int main(int argc, char* argv[])
 {
-
 	std::string usage = "Partitions an Xdmf grid using the metis library: \n \n Usage: \n \n   XdmfPartitioner <path-of-file-to-partition> <num-partitions> (Optional: <path-to-output-file>)";
 	std::string meshName = "";
 

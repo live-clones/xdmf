@@ -33,7 +33,7 @@ public:
 	 *
 	 * @return the converted XdmfGrid.
 	 */
-	boost::shared_ptr<XdmfGrid> convert(const boost::shared_ptr<const XdmfGrid> gridToConvert, const boost::shared_ptr<const XdmfTopologyType> topologyType) const;
+	boost::shared_ptr<XdmfGrid> convert(const boost::shared_ptr<XdmfGrid> gridToConvert, const boost::shared_ptr<const XdmfTopologyType> topologyType) const;
 
 protected:
 
@@ -43,6 +43,12 @@ private:
 
 	XdmfTopologyConverter(const XdmfTopologyConverter & converter);  // Not implemented.
 	void operator=(const XdmfTopologyConverter & converter);  // Not implemented.
+
+	// Specific Topology Converters
+	class HexahedronToHexahedron64;
+
+	// Point comparator
+	class PointComparison;
 };
 
 #endif /* XDMFPARTITIONER_HPP_ */

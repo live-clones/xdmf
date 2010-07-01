@@ -1,3 +1,5 @@
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
 option(XDMF_BUILD_PARTITIONER OFF)
 
 set(XdmfUtilsExecutables)
@@ -24,3 +26,7 @@ foreach(executable ${XdmfUtilsExecutables})
 	set_target_properties(${executable} PROPERTIES COMPILE_FLAGS -DBUILD_EXE)
 	target_link_libraries(${executable} XdmfUtils)
 endforeach(executable ${XdmfUtilsExecutables})
+
+if(XDMF_BUILD_TESTING)
+	add_subdirectory(tests)
+endif(XDMF_BUILD_TESTING)

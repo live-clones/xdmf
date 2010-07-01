@@ -496,7 +496,7 @@ void XdmfArray::initialize(const boost::shared_ptr<const XdmfArrayType> arrayTyp
 	{
 		this->initialize<unsigned short>();
 	}
-	else if(arrayType == XdmfArrayType::Int32())
+	else if(arrayType == XdmfArrayType::UInt32())
 	{
 		this->initialize<unsigned int>();
 	}

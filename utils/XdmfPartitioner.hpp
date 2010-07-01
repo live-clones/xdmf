@@ -38,7 +38,7 @@ public:
 	 *
 	 * The partitioner splits the XdmfGrid and all attached XdmfAttributes and XdmfSets into their proper partition.
 	 * An XdmfAttribute named "GlobalNodeId" is added to each partitioned grid to map partitioned node ids to their
-	 * original unpartitioned id.  This could allow grids to be recombined.
+	 * original unpartitioned id.  All arrays attached to the passed gridToPartition are read from disk if not initialized.
 	 *
 	 * @param gridToPartition an XdmfGrid to partition.
 	 * @param numberOfPartitions the number of pieces to partition the grid into.
@@ -47,7 +47,7 @@ public:
 	 * @return a spatial collection containing partitioned grids.
 	 */
 	boost::shared_ptr<XdmfGridCollection> partition(const boost::shared_ptr<XdmfGrid> gridToPartition, const unsigned int numberOfPartitions,
-			boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter);
+			boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter) const;
 
 protected:
 
