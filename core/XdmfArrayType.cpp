@@ -82,6 +82,10 @@ XdmfArrayType::~XdmfArrayType()
 boost::shared_ptr<const XdmfArrayType> XdmfArrayType::New(const std::map<std::string, std::string> & itemProperties)
 {
 	std::map<std::string, std::string>::const_iterator type = itemProperties.find("DataType");
+	if(type == itemProperties.end())
+	{
+		type = itemProperties.find("NumberType");
+	}
 	std::map<std::string, std::string>::const_iterator precision = itemProperties.find("Precision");
 	if(type != itemProperties.end() && precision != itemProperties.end())
 	{
