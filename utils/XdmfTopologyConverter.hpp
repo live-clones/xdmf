@@ -46,6 +46,7 @@ private:
 
 	// Specific Topology Converters
 	class HexahedronToHexahedron64;
+	class Hexahedron64ToHexahedron;
 
 	// Point comparator
 	class PointComparison;

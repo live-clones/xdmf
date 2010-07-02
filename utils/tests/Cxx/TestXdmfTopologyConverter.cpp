@@ -62,5 +62,18 @@ int main(int argc, char* argv[])
 		assert(i == hex64Grid->getTopology()->getArray()->getValueCopy<unsigned int>(i));
 	}
 
+	/*
+	 * Hexahedron_64 to Hexahedron
+	 */
+	boost::shared_ptr<XdmfGrid> newHexGrid = converter->convert(hex64Grid, XdmfTopologyType::Hexahedron());
+	assert(newHexGrid->getGeometry()->getGeometryType() == XdmfGeometryType::XYZ());
+	assert(newHexGrid->getGeometry()->getNumberPoints() == 64);
+	for(unsigned int i=0; i<192; ++i)
+	{
+		assert(fabs(expectedPoints[i] - newHexGrid->getGeometry()->getArray()->getValueCopy<double>(i)) < epsilon);
+	}
+	assert(newHexGrid->getTopology()->getTopologyType() == XdmfTopologyType::Hexahedron());
+	assert(newHexGrid->getTopology()->getNumberElements() == 27);
+
 	return 0;
 }
