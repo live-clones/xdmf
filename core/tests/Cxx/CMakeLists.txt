@@ -2,6 +2,7 @@ set(XdmfCoreCxxTests
 	TestXdmfArray
 	TestXdmfArrayWriteRead
 	TestXdmfHDF5Writer
+	TestXdmfInformation
 )
 
 foreach(test ${XdmfCoreCxxTests})

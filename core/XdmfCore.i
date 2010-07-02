@@ -12,6 +12,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 	#include <XdmfDataItem.hpp>
 	#include <XdmfHDF5Controller.hpp>
 	#include <XdmfHDF5Writer.hpp>
+	#include <XdmfInformation.hpp>
 	#include <XdmfItem.hpp>
 	#include <XdmfItemProperty.hpp>
 	#include <XdmfObject.hpp>
@@ -33,6 +34,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %shared_ptr(XdmfDataItem)
 %shared_ptr(XdmfHDF5Controller)
 %shared_ptr(XdmfHDF5Writer)
+%shared_ptr(XdmfInformation)
 %shared_ptr(XdmfItem)
 %shared_ptr(XdmfItemProperty)
 %shared_ptr(XdmfObject)
@@ -53,6 +55,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
 %include XdmfCoreItemFactory.hpp
 %include XdmfCoreReader.hpp
+%include XdmfInformation.hpp
 %include XdmfHDF5Controller.hpp
 %include XdmfHDF5Writer.hpp
 %include XdmfWriter.hpp

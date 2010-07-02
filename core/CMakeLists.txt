@@ -28,6 +28,7 @@ set(XdmfCoreSources
 	XdmfDataItem
 	XdmfHDF5Controller
 	XdmfHDF5Writer
+	XdmfInformation
 	XdmfItem
 	XdmfItemProperty
 	XdmfObject

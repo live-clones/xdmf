@@ -13,6 +13,7 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 	#include <XdmfDataItem.hpp>
 	#include <XdmfHDF5Controller.hpp>
 	#include <XdmfHDF5Writer.hpp>
+	#include <XdmfInformation.hpp>
 	#include <XdmfItem.hpp>
 	#include <XdmfItemProperty.hpp>
 	#include <XdmfObject.hpp>
@@ -64,6 +65,10 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 	else if(boost::shared_ptr<XdmfGridCollection> gridCollection = boost::shared_dynamic_cast<XdmfGridCollection>($1))
 	{
 		$result = SWIG_NewPointerObj(SWIG_as_voidptr(new boost::shared_ptr<XdmfGridCollection>(gridCollection)), SWIGTYPE_p_boost__shared_ptrT_XdmfGridCollection_t, SWIG_POINTER_OWN);
+	}
+	else if(boost::shared_ptr<XdmfInformation> information = boost::shared_dynamic_cast<XdmfInformation>($1))
+	{
+		$result = SWIG_NewPointerObj(SWIG_as_voidptr(new boost::shared_ptr<XdmfInformation>(information)), SWIGTYPE_p_boost__shared_ptrT_XdmfInformation_t, SWIG_POINTER_OWN);
 	}
 	else if(boost::shared_ptr<XdmfSet> set = boost::shared_dynamic_cast<XdmfSet>($1))
 	{
