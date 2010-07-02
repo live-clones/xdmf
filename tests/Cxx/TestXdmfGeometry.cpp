@@ -9,12 +9,12 @@ int main(int argc, char* argv[])
 	assert(XdmfGeometryType::XYZ() != XdmfGeometryType::XYZ() == false);
 	assert(XdmfGeometryType::XYZ() != XdmfGeometryType::XY());
 
-	boost::shared_ptr<XdmfGeometry> geom = XdmfGeometry::New();
-	assert(geom->getGeometryType() == XdmfGeometryType::NoGeometryType());
-	assert(geom->getGeometryType()->getDimensions() == 0);
-	geom->setGeometryType(XdmfGeometryType::XYZ());
-	assert(geom->getGeometryType() == XdmfGeometryType::XYZ());
-	assert(geom->getGeometryType()->getDimensions() == 3);
+	boost::shared_ptr<XdmfGeometry> geometry = XdmfGeometry::New();
+	assert(geometry->getType() == XdmfGeometryType::NoGeometryType());
+	assert(geometry->getType()->getDimensions() == 0);
+	geometry->setType(XdmfGeometryType::XYZ());
+	assert(geometry->getType() == XdmfGeometryType::XYZ());
+	assert(geometry->getType()->getDimensions() == 3);
 
 	return 0;
 }

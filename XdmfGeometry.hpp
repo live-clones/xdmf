@@ -24,13 +24,6 @@ public:
 	LOKI_DEFINE_VISITABLE(XdmfGeometry, XdmfDataItem)
 	static const std::string ItemTag;
 
-	/**
-	 * Get the XdmfGeometryType associated with this geometry.
-	 *
-	 * @return XdmfGeometryType of this geometry.
-	 */
-	boost::shared_ptr<const XdmfGeometryType> getGeometryType() const;
-
 	std::map<std::string, std::string> getItemProperties() const;
 
 	std::string getItemTag() const;
@@ -41,11 +34,18 @@ public:
 	unsigned int getNumberPoints() const;
 
 	/**
+	 * Get the XdmfGeometryType associated with this geometry.
+	 *
+	 * @return XdmfGeometryType of this geometry.
+	 */
+	boost::shared_ptr<const XdmfGeometryType> getType() const;
+
+	/**
 	 * Set the XdmfGeometryType associated with this geometry.
 	 *
 	 * @param geometryType the XdmfGeometryType to set.
 	 */
-	void setGeometryType(const boost::shared_ptr<const XdmfGeometryType> geometryType);
+	void setType(const boost::shared_ptr<const XdmfGeometryType> geometryType);
 
 protected:
 

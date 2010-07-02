@@ -29,14 +29,8 @@ public:
 	 *
 	 * @return XdmfAttributeCenter of the attribute.
 	 */
-	boost::shared_ptr<const XdmfAttributeCenter> getAttributeCenter() const;
+	boost::shared_ptr<const XdmfAttributeCenter> getCenter() const;
 
-	/**
-	 * Get the XdmfAttributeType associated with this attribute.
-	 *
-	 * @return XdmfAttributeType of the attribute.
-	 */
-	boost::shared_ptr<const XdmfAttributeType> getAttributeType() const;
 
 	std::map<std::string, std::string> getItemProperties() const;
 
@@ -50,18 +44,18 @@ public:
 	std::string getName() const;
 
 	/**
+	 * Get the XdmfAttributeType associated with this attribute.
+	 *
+	 * @return XdmfAttributeType of the attribute.
+	 */
+	boost::shared_ptr<const XdmfAttributeType> getType() const;
+
+	/**
 	 * Set the XdmfAttributeCenter associated with this attribute.
 	 *
 	 * @param attributeCenter the XdmfAttributeCenter to set.
 	 */
-	void setAttributeCenter(const boost::shared_ptr<const XdmfAttributeCenter> attributeCenter);
-
-	/**
-	 * Set the XdmfAttributeType associated with this attribute.
-	 *
-	 * @param attributeType XdmfAttributeType to set.
-	 */
-	void setAttributeType(const boost::shared_ptr<const XdmfAttributeType> attributeType);
+	void setCenter(const boost::shared_ptr<const XdmfAttributeCenter> attributeCenter);
 
 	/**
 	 * Set the name of the attribute.
@@ -69,6 +63,13 @@ public:
 	 * @param name a string containing the name to set.
 	 */
 	void setName(const std::string & name);
+
+	/**
+	 * Set the XdmfAttributeType associated with this attribute.
+	 *
+	 * @param attributeType XdmfAttributeType to set.
+	 */
+	void setType(const boost::shared_ptr<const XdmfAttributeType> attributeType);
 
 protected:
 
@@ -81,8 +82,8 @@ private:
 	void operator=(const XdmfAttribute & attribute);  // Not implemented.
 
 	std::string mName;
-	boost::shared_ptr<const XdmfAttributeType> mAttributeType;
 	boost::shared_ptr<const XdmfAttributeCenter> mAttributeCenter;
+	boost::shared_ptr<const XdmfAttributeType> mAttributeType;
 };
 
 #endif /* XDMFATTRIBUTE_HPP_ */

@@ -40,14 +40,14 @@ public:
 	 *
 	 * @return XdmfTopologyType of the topology.
 	 */
-	boost::shared_ptr<const XdmfTopologyType> getTopologyType() const;
+	boost::shared_ptr<const XdmfTopologyType> getType() const;
 
 	/**
 	 * Set the XdmfTopologyType associated with this topology.
 	 *
 	 * @param topologyType the XdmfTopologyType to set.
 	 */
-	void setTopologyType(const boost::shared_ptr<const XdmfTopologyType> topologyType);
+	void setType(const boost::shared_ptr<const XdmfTopologyType> topologyType);
 
 protected:
 

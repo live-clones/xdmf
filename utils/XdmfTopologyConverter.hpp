@@ -17,6 +17,7 @@ class XdmfTopologyType;
  *
  * Currently supported conversions:
  * 	Hexahedron to Hexahedron_64
+ * 	Hexahedron_64 to Hexahedron
  */
 class XdmfTopologyConverter : public XdmfObject {
 

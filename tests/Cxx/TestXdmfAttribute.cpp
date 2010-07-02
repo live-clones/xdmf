@@ -10,9 +10,9 @@ int main(int argc, char* argv[])
 	assert(XdmfAttributeType::Scalar() != XdmfAttributeType::Vector());
 
 	boost::shared_ptr<XdmfAttribute> attribute = XdmfAttribute::New();
-	assert(attribute->getAttributeType() == XdmfAttributeType::NoAttributeType());
-	attribute->setAttributeType(XdmfAttributeType::Scalar());
-	assert(attribute->getAttributeType() == XdmfAttributeType::Scalar());
+	assert(attribute->getType() == XdmfAttributeType::NoAttributeType());
+	attribute->setType(XdmfAttributeType::Scalar());
+	assert(attribute->getType() == XdmfAttributeType::Scalar());
 
 	return 0;
 }

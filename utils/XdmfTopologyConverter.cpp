@@ -92,8 +92,8 @@ public:
 	{
 		boost::shared_ptr<XdmfGrid> toReturn = XdmfGrid::New();
 		toReturn->setName(gridToConvert->getName());
-		toReturn->getGeometry()->setGeometryType(gridToConvert->getGeometry()->getGeometryType());
-		toReturn->getTopology()->setTopologyType(XdmfTopologyType::Hexahedron_64());
+		toReturn->getGeometry()->setType(gridToConvert->getGeometry()->getType());
+		toReturn->getTopology()->setType(XdmfTopologyType::Hexahedron_64());
 
 		boost::shared_ptr<XdmfArray> newPoints = toReturn->getGeometry()->getArray();
 		newPoints->initialize(gridToConvert->getGeometry()->getArray()->getType());
@@ -339,7 +339,7 @@ public:
 		toReturn->setName(gridToConvert->getName());
 
 		toReturn->setGeometry(gridToConvert->getGeometry());
-		toReturn->getTopology()->setTopologyType(XdmfTopologyType::Hexahedron());
+		toReturn->getTopology()->setType(XdmfTopologyType::Hexahedron());
 
 		boost::shared_ptr<XdmfArray> oldConnectivity = gridToConvert->getTopology()->getArray();
 		boost::shared_ptr<XdmfArray> newConnectivity = toReturn->getTopology()->getArray();
@@ -576,11 +576,11 @@ public:
 		for(unsigned int i=0; i<gridToConvert->getNumberOfAttributes(); ++i)
 		{
 			boost::shared_ptr<XdmfAttribute> currAttribute = gridToConvert->getAttribute(i);
-			if(currAttribute->getAttributeCenter() == XdmfAttributeCenter::Node())
+			if(currAttribute->getCenter() == XdmfAttributeCenter::Node())
 			{
 				toReturn->insert(currAttribute);
 			}
-			else if(currAttribute->getAttributeCenter() == XdmfAttributeCenter::Cell())
+			else if(currAttribute->getCenter() == XdmfAttributeCenter::Cell())
 			{
 				if(!currAttribute->getArray()->isInitialized())
 				{
@@ -589,8 +589,8 @@ public:
 
 				boost::shared_ptr<XdmfAttribute> newAttribute = XdmfAttribute::New();
 				newAttribute->setName(currAttribute->getName());
-				newAttribute->setAttributeType(currAttribute->getAttributeType());
-				newAttribute->setAttributeCenter(currAttribute->getAttributeCenter());
+				newAttribute->setType(currAttribute->getType());
+				newAttribute->setCenter(currAttribute->getCenter());
 
 				boost::shared_ptr<XdmfArray> vals = newAttribute->getArray();
 				vals->initialize(currAttribute->getArray()->getType());
@@ -608,14 +608,14 @@ public:
 
 boost::shared_ptr<XdmfGrid> XdmfTopologyConverter::convert(const boost::shared_ptr<XdmfGrid> gridToConvert, const boost::shared_ptr<const XdmfTopologyType> topologyType) const
 {
-	boost::shared_ptr<const XdmfTopologyType> topologyTypeToConvert = gridToConvert->getTopology()->getTopologyType();
+	boost::shared_ptr<const XdmfTopologyType> topologyTypeToConvert = gridToConvert->getTopology()->getType();
 	if(topologyTypeToConvert == topologyType)
 	{
 		// No conversion necessary
 		return gridToConvert;
 	}
 
-	if(gridToConvert->getGeometry()->getGeometryType() != XdmfGeometryType::XYZ())
+	if(gridToConvert->getGeometry()->getType() != XdmfGeometryType::XYZ())
 	{
 		assert(false);
 	}

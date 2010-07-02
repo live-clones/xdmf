@@ -36,11 +36,6 @@ boost::shared_ptr<const XdmfGrid> XdmfGridCollection::getGrid(const unsigned int
 	return mGrids[index];
 }
 
-boost::shared_ptr<const XdmfGridCollectionType> XdmfGridCollection::getGridCollectionType() const
-{
-	return mCollectionType;
-}
-
 std::map<std::string, std::string> XdmfGridCollection::getItemProperties() const
 {
 	std::map<std::string, std::string> collectionProperties;
@@ -53,6 +48,11 @@ std::map<std::string, std::string> XdmfGridCollection::getItemProperties() const
 unsigned int XdmfGridCollection::getNumberOfGrids() const
 {
 	return mGrids.size();
+}
+
+boost::shared_ptr<const XdmfGridCollectionType> XdmfGridCollection::getType() const
+{
+	return mCollectionType;
 }
 
 void XdmfGridCollection::insert(const boost::shared_ptr<XdmfGrid> grid)
@@ -86,7 +86,7 @@ void XdmfGridCollection::removeGrid(const unsigned int index)
 	mGrids.erase(mGrids.begin() + index);
 }
 
-void XdmfGridCollection::setGridCollectionType(const boost::shared_ptr<const XdmfGridCollectionType> collectionType)
+void XdmfGridCollection::setType(const boost::shared_ptr<const XdmfGridCollectionType> collectionType)
 {
 	mCollectionType = collectionType;
 }

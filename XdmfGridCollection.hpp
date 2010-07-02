@@ -41,13 +41,6 @@ public:
 	 */
 	boost::shared_ptr<const XdmfGrid> getGrid(const unsigned int index) const;
 
-	/**
-	 * Get the XdmfGridCollectionType associated with this grid collection.
-	 *
-	 * @return XdmfGridCollectionType of this collection.
-	 */
-	boost::shared_ptr<const XdmfGridCollectionType> getGridCollectionType() const;
-
 	std::map<std::string, std::string> getItemProperties() const;
 
 	/**
@@ -56,6 +49,13 @@ public:
 	 * @return unsigned int containing the number of XdmfGrids in this collection.
 	 */
 	unsigned int getNumberOfGrids() const;
+
+	/**
+	 * Get the XdmfGridCollectionType associated with this grid collection.
+	 *
+	 * @return XdmfGridCollectionType of this collection.
+	 */
+	boost::shared_ptr<const XdmfGridCollectionType> getType() const;
 
 	/**
 	 * Insert a grid into this collection.
@@ -76,7 +76,7 @@ public:
 	 *
 	 * @param collectionType the XdmfGridCollectionType to set.
 	 */
-	void setGridCollectionType(const boost::shared_ptr<const XdmfGridCollectionType> collectionType);
+	void setType(const boost::shared_ptr<const XdmfGridCollectionType> collectionType);
 
 	virtual void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor) const;
 

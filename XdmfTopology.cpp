@@ -48,7 +48,7 @@ unsigned int XdmfTopology::getNumberElements() const
 	return this->getArray()->getSize() / mTopologyType->getNodesPerElement();
 }
 
-boost::shared_ptr<const XdmfTopologyType> XdmfTopology::getTopologyType() const
+boost::shared_ptr<const XdmfTopologyType> XdmfTopology::getType() const
 {
 	return mTopologyType;
 }
@@ -59,7 +59,7 @@ void XdmfTopology::populateItem(const std::map<std::string, std::string> & itemP
 	XdmfDataItem::populateItem(itemProperties, childItems);
 }
 
-void XdmfTopology::setTopologyType(const boost::shared_ptr<const XdmfTopologyType> topologyType)
+void XdmfTopology::setType(const boost::shared_ptr<const XdmfTopologyType> topologyType)
 {
 	mTopologyType = topologyType;
 }
