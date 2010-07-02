@@ -63,6 +63,20 @@ int main(int argc, char* argv[])
 	}
 
 	/*
+	 * Hexahedron to Hexahedron_125
+	 */
+	boost::shared_ptr<XdmfGrid> hex125Grid = converter->convert(hexGrid, XdmfTopologyType::Hexahedron_125());
+
+	assert(hex125Grid->getGeometry()->getType() == XdmfGeometryType::XYZ());
+	assert(hex125Grid->getGeometry()->getNumberPoints() == 125);
+	assert(hex125Grid->getTopology()->getType() == XdmfTopologyType::Hexahedron_125());
+	assert(hex125Grid->getTopology()->getNumberElements() == 1);
+	for(unsigned int i=0; i<125; ++i)
+	{
+		assert(i == hex125Grid->getTopology()->getArray()->getValueCopy<unsigned int>(i));
+	}
+
+	/*
 	 * Hexahedron_64 to Hexahedron
 	 */
 	boost::shared_ptr<XdmfGrid> newHexGrid = converter->convert(hex64Grid, XdmfTopologyType::Hexahedron());
@@ -74,6 +88,5 @@ int main(int argc, char* argv[])
 	}
 	assert(newHexGrid->getTopology()->getType() == XdmfTopologyType::Hexahedron());
 	assert(newHexGrid->getTopology()->getNumberElements() == 27);
-
 	return 0;
 }

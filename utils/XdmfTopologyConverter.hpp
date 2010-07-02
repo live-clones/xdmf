@@ -42,15 +42,13 @@ protected:
 
 private:
 
+	/**
+	 * PIMPL
+	 */
+	class XdmfTopologyConverterImpl;
+
 	XdmfTopologyConverter(const XdmfTopologyConverter & converter);  // Not implemented.
 	void operator=(const XdmfTopologyConverter & converter);  // Not implemented.
-
-	// Specific Topology Converters
-	class HexahedronToHexahedron64;
-	class Hexahedron64ToHexahedron;
-
-	// Point comparator
-	class PointComparison;
 };
 
 #endif /* XDMFPARTITIONER_HPP_ */

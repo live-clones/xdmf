@@ -27,6 +27,10 @@
  * 	Pyramid_13
  * 	Wedge_15
  * 	Hexahedron_20
+ * 	Hexahedron_24
+ * 	Hexahedron_27
+ * 	Hexahedron_64
+ * 	Hexahedron_125
  * 	Mixed
  * 	TwoDSMesh
  * 	TwoDRectMesh
@@ -44,7 +48,7 @@ public:
 	friend class XdmfTopology;
 
 	enum CellType {
-		NoCellType, Linear, Quadratic, Cubic, Arbitrary, Structured
+		NoCellType, Linear, Quadratic, Cubic, Quartic, Arbitrary, Structured
 	};
 
 	// Supported Xdmf Topology Types
@@ -68,6 +72,7 @@ public:
 	static boost::shared_ptr<const XdmfTopologyType> Hexahedron_24();
 	static boost::shared_ptr<const XdmfTopologyType> Hexahedron_27();
 	static boost::shared_ptr<const XdmfTopologyType> Hexahedron_64();
+	static boost::shared_ptr<const XdmfTopologyType> Hexahedron_125();
 	static boost::shared_ptr<const XdmfTopologyType> Mixed();
 	static boost::shared_ptr<const XdmfTopologyType> TwoDSMesh();
 	static boost::shared_ptr<const XdmfTopologyType> TwoDRectMesh();
