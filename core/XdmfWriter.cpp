@@ -110,7 +110,7 @@ void XdmfWriter::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisito
 	}
 
 	this->visit(dynamic_cast<XdmfItem &>(array), visitor);
-	xmlAddChild(mImpl->mXMLCurrentNode->children, xmlNewText((xmlChar*)xmlTextValues.str().c_str()));
+	xmlAddChild(mImpl->mXMLCurrentNode->last, xmlNewText((xmlChar*)xmlTextValues.str().c_str()));
 }
 
 void XdmfWriter::visit(XdmfItem & item, const boost::shared_ptr<XdmfBaseVisitor> visitor)
