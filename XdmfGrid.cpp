@@ -189,7 +189,7 @@ void XdmfGrid::setGeometry(const boost::shared_ptr<XdmfGeometry> geometry)
 
 void XdmfGrid::setName(const std::string & name)
 {
-	mName= name;
+	mName = name;
 }
 
 void XdmfGrid::setTopology(const boost::shared_ptr<XdmfTopology> topology)

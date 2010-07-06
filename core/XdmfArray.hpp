@@ -116,6 +116,13 @@ public:
 	boost::shared_ptr<const XdmfHDF5Controller> getHDF5Controller() const;
 
 	/**
+	 * Get the name of the array.
+	 *
+	 * @return a string containing the name of the array.
+	 */
+	std::string getName() const;
+
+	/**
 	 * Get the number of values stored in this array.
 	 *
 	 * @return the number of values stored in this array.
@@ -236,6 +243,13 @@ public:
 	 * @param hdf5Controller the hdf5 controller to attach to this XdmfArray.
 	 */
 	void setHDF5Controller(const boost::shared_ptr<XdmfHDF5Controller> hdf5Controller);
+
+	/**
+	 * Set the name of the array.
+	 *
+	 * @param name a string containing the name to set.
+	 */
+	void setName(const std::string & name);
 
 	/**
 	 * Sets the values of this array to the values stored in the arrayPointer array.  No copy is made.  Modifications to the array are
@@ -385,6 +399,7 @@ private:
 	bool mHaveArray;
 	bool mHaveArrayPointer;
 	boost::shared_ptr<XdmfHDF5Controller> mHDF5Controller;
+	std::string mName;
 	unsigned int mTmpReserveSize;
 };
 

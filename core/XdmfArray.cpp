@@ -309,6 +309,7 @@ XdmfArray::XdmfArray() :
 	mHaveArrayPointer(false),
 	mArrayPointerNumValues(0),
 	mHDF5Controller(boost::shared_ptr<XdmfHDF5Controller>()),
+	mName(""),
 	mTmpReserveSize(0)
 {
 	std::cout << "Created Array " << this << std::endl;
@@ -384,10 +385,14 @@ std::map<std::string, std::string> XdmfArray::getItemProperties() const
 	{
 		arrayProperties["Format"] = "XML";
 	}
-	boost::shared_ptr<const XdmfArrayType> type = this->getType();
 	std::stringstream size;
 	size <<  this->getSize();
 	arrayProperties["Dimensions"] = size.str();
+	if(mName.compare("") != 0)
+	{
+		arrayProperties["Name"] = mName;
+	}
+	boost::shared_ptr<const XdmfArrayType> type = this->getType();
 	type->getProperties(arrayProperties);
 	return arrayProperties;
 }
@@ -395,6 +400,11 @@ std::map<std::string, std::string> XdmfArray::getItemProperties() const
 std::string XdmfArray::getItemTag() const
 {
 	return ItemTag;
+}
+
+std::string XdmfArray::getName() const
+{
+	return mName;
 }
 
 unsigned int XdmfArray::getSize() const
@@ -575,6 +585,15 @@ void XdmfArray::populateItem(const std::map<std::string, std::string> & itemProp
 	{
 		assert(false);
 	}
+	std::map<std::string, std::string>::const_iterator name = itemProperties.find("Name");
+	if(name != itemProperties.end())
+	{
+		mName = name->second;
+	}
+	else
+	{
+		mName = "";
+	}
 }
 
 void XdmfArray::read()
@@ -624,6 +643,11 @@ void XdmfArray::reserve(const unsigned int size)
 void XdmfArray::setHDF5Controller(const boost::shared_ptr<XdmfHDF5Controller> hdf5Controller)
 {
 	mHDF5Controller = hdf5Controller;
+}
+
+void XdmfArray::setName(const std::string & name)
+{
+	mName = name;
 }
 
 void XdmfArray::swap(const boost::shared_ptr<XdmfArray> array)

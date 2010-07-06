@@ -247,5 +247,9 @@ int main(int argc, char* argv[])
 	array8->reserve(50);
 	assert(array8->getCapacity() >= 50);
 
+	assert(array8->getName().compare("") == 0);
+	array8->setName("BLAH");
+	assert(array8->getName().compare("BLAH") == 0);
+
 	return 0;
 }

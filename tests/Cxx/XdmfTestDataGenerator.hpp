@@ -34,6 +34,7 @@ public:
 				0.1, 0.1, -1.1, 1.1, 0.1, -1.1, 3.1, 0.1, -2.1, 0.1, 1.1, -1.1, 1.1, 1.1, -1.1, 3.1, 2.1, -2.1};
 		grid->getGeometry()->setType(XdmfGeometryType::XYZ());
 		grid->getGeometry()->getArray()->copyValues(0, &points[0], 36);
+		grid->getGeometry()->getArray()->setName("Geom 1");
 
 		// Set Topology
 		int connectivity[] = {0, 1, 7, 6, 3, 4, 10, 9, 1, 2, 8, 7, 4, 5, 11, 10};
