@@ -49,7 +49,7 @@ public:
 	 *
 	 * @return a std::string containing the path to the hdf5 file.
 	 */
-	std::string getHDF5FilePath() const;
+	std::string getFilePath() const;
 
 	/**
 	 * Get the size of the hdf5 data set owned by this controller.
@@ -82,7 +82,7 @@ private:
 	void operator=(const XdmfHDF5Controller & hdf5Controller);  // Not implemented.
 
 	std::string mDataSetName;
-	std::string mHDF5FilePath;
+	std::string mFilePath;
 	unsigned int mSize;
 	boost::shared_ptr<const XdmfArrayType> mType;
 };

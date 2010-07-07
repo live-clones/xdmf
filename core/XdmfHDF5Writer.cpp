@@ -15,7 +15,7 @@ class XdmfHDF5Writer::XdmfHDF5WriterImpl {
 public:
 
 	XdmfHDF5WriterImpl(const std::string & hdf5FilePath) :
-		mHDF5FilePath(hdf5FilePath),
+		mFilePath(hdf5FilePath),
 		mLastWrittenDataSet(""),
 		mDataSetId(0),
 		mMode(Default)
@@ -25,7 +25,7 @@ public:
 	{
 	};
 	int mDataSetId;
-	std::string mHDF5FilePath;
+	std::string mFilePath;
 	std::string mLastWrittenDataSet;
 	Mode mMode;
 };
@@ -107,9 +107,19 @@ XdmfHDF5Writer::~XdmfHDF5Writer()
 	std::cout << "Deleted XdmfHDF5Writer " << this << std::endl;
 }
 
+std::string XdmfHDF5Writer::getFilePath() const
+{
+	return mImpl->mFilePath;
+}
+
 std::string XdmfHDF5Writer::getLastWrittenDataSet() const
 {
 	return mImpl->mLastWrittenDataSet;
+}
+
+XdmfHDF5Writer::Mode XdmfHDF5Writer::getMode() const
+{
+	return mImpl->mMode;
 }
 
 void XdmfHDF5Writer::setMode(const Mode mode)
@@ -137,14 +147,14 @@ void XdmfHDF5Writer::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVi
 
 	if(datatype != -1)
 	{
-		std::string hdf5FilePath = mImpl->mHDF5FilePath;
+		std::string hdf5FilePath = mImpl->mFilePath;
 		std::stringstream dataSetName;
 
 		if((mImpl->mMode == Overwrite || mImpl->mMode == Append) && array.mHDF5Controller)
 		{
 			// Write to the previous dataset
 			dataSetName << array.mHDF5Controller->getDataSetName();
-			hdf5FilePath = array.mHDF5Controller->getHDF5FilePath();
+			hdf5FilePath = array.mHDF5Controller->getFilePath();
 		}
 		else
 		{

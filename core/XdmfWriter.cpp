@@ -5,6 +5,7 @@
 #include <sstream>
 #include "XdmfArray.hpp"
 #include "XdmfItem.hpp"
+#include "XdmfHDF5Controller.hpp"
 #include "XdmfHDF5Writer.hpp"
 #include "XdmfWriter.hpp"
 
@@ -18,18 +19,22 @@ public:
 	XdmfWriterImpl(const std::string & xmlFilePath, const boost::shared_ptr<XdmfHDF5Writer> hdf5Writer) :
 		mHDF5Writer(hdf5Writer),
 		mLightDataLimit(100),
-		mXMLFilePath(xmlFilePath),
-		mTraverseLevel(0)
+		mMode(Default),
+		mTraverseLevel(0),
+		mXMLCurrentNode(NULL),
+		mXMLDocument(NULL),
+		mXMLFilePath(xmlFilePath)
 	{
 	};
 	~XdmfWriterImpl()
 	{
 	};
 	boost::shared_ptr<XdmfHDF5Writer> mHDF5Writer;
-	unsigned int mTraverseLevel;
 	unsigned int mLightDataLimit;
-	xmlDocPtr mXMLDocument;
+	Mode mMode;
+	unsigned int mTraverseLevel;
 	xmlNodePtr mXMLCurrentNode;
+	xmlDocPtr mXMLDocument;
 	std::string mXMLFilePath;
 };
 
@@ -79,9 +84,19 @@ boost::shared_ptr<const XdmfHDF5Writer> XdmfWriter::getHDF5Writer() const
 	return mImpl->mHDF5Writer;
 }
 
+std::string XdmfWriter::getFilePath() const
+{
+	return mImpl->mXMLFilePath;
+}
+
 unsigned int XdmfWriter::getLightDataLimit() const
 {
 	return mImpl->mLightDataLimit;
+}
+
+XdmfWriter::Mode XdmfWriter::getMode() const
+{
+	return mImpl->mMode;
 }
 
 void XdmfWriter::openFile()
@@ -96,9 +111,20 @@ void XdmfWriter::setLightDataLimit(const unsigned int numValues)
 	mImpl->mLightDataLimit = numValues;
 }
 
+void XdmfWriter::setMode(const Mode mode)
+{
+	mImpl->mMode = mode;
+}
+
 void XdmfWriter::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
 	std::stringstream xmlTextValues;
+
+	if(array.getHDF5Controller() && array.getHDF5Controller()->getFilePath().compare(mImpl->mHDF5Writer->getFilePath()) != 0 && mImpl->mMode == Default)
+	{
+		array.read();
+	}
+
 	if(array.getHDF5Controller() || array.getSize() > mImpl->mLightDataLimit)
 	{
 		mImpl->mHDF5Writer->visit(array, mImpl->mHDF5Writer);

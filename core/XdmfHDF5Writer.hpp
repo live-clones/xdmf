@@ -45,7 +45,12 @@ public:
 		return p;
 	}
 
-	void setMode(const Mode mode);
+	/**
+	 * Get the path to the hdf5 file on disk this writer is writing to.
+	 *
+	 * @return a std::string containing the path to the hdf5 file on disk this writer is writing to.
+	 */
+	std::string getFilePath() const;
 
 	/**
 	 * Get the path to the last written data set written by this writer.
@@ -53,6 +58,20 @@ public:
 	 * @return the path to the last written data set.
 	 */
 	std::string getLastWrittenDataSet() const;
+
+	/**
+	 * Get the Mode of operation for this writer.
+	 *
+	 * @return the Mode of operation for this writer.
+	 */
+	Mode getMode() const;
+
+	/**
+	 * Set the mode of operation for this writer.
+	 *
+	 * @param mode the Mode of operation for this writer.
+	 */
+	void setMode(const Mode mode);
 
 	/**
 	 * Write an XdmfArray to HDF5.

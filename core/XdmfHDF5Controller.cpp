@@ -14,8 +14,8 @@ XdmfHDF5Controller::XdmfHDF5Controller(const std::string & dataSetPath, const un
 	size_t colonLocation = dataSetPath.find(":");
 	if(colonLocation != std::string::npos)
 	{
-		mHDF5FilePath = dataSetPath.substr(0, colonLocation);
-		if(colonLocation + 1  != mHDF5FilePath.size())
+		mFilePath = dataSetPath.substr(0, colonLocation);
+		if(colonLocation + 1  != mFilePath.size())
 		{
 			mDataSetName = dataSetPath.substr(colonLocation + 1, dataSetPath.size());
 		}
@@ -42,13 +42,13 @@ std::string XdmfHDF5Controller::getDataSetName() const
 std::string XdmfHDF5Controller::getDataSetPath() const
 {
 	std::stringstream toReturn;
-	toReturn << mHDF5FilePath << ":" << mDataSetName;
+	toReturn << mFilePath << ":" << mDataSetName;
 	return toReturn.str();
 }
 
-std::string XdmfHDF5Controller::getHDF5FilePath() const
+std::string XdmfHDF5Controller::getFilePath() const
 {
-	return mHDF5FilePath;
+	return mFilePath;
 }
 
 unsigned int XdmfHDF5Controller::getSize() const
@@ -63,7 +63,7 @@ boost::shared_ptr<const XdmfArrayType> XdmfHDF5Controller::getType() const
 
 void XdmfHDF5Controller::read(XdmfArray * const array)
 {
-	hid_t hdf5Handle = H5Fopen(mHDF5FilePath.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT);
+	hid_t hdf5Handle = H5Fopen(mFilePath.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT);
 	hid_t dataset = H5Dopen(hdf5Handle, mDataSetName.c_str(), H5P_DEFAULT);
 	hid_t dataspace = H5Dget_space(dataset);
 	hssize_t numVals = H5Sget_simple_extent_npoints(dataspace);

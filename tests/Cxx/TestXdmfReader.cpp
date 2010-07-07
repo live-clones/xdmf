@@ -21,6 +21,7 @@ int main(int argc, char* argv[])
 	boost::shared_ptr<XdmfDomain> readDomain = boost::shared_dynamic_cast<XdmfDomain>(reader->read("TestXdmfReader1.xmf"));
 
 	boost::shared_ptr<XdmfWriter> writer2 = XdmfWriter::New("TestXdmfReader2.xmf");
+	writer2->setMode(XdmfWriter::DistributedHeavyData);
 	readDomain->accept(writer2);
 
 	// Compare two files for equality
