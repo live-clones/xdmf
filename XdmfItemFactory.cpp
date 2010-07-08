@@ -7,6 +7,7 @@
 #include "XdmfInformation.hpp"
 #include "XdmfItemFactory.hpp"
 #include "XdmfSet.hpp"
+#include "XdmfTime.hpp"
 #include "XdmfTopology.hpp"
 
 XdmfItemFactory::XdmfItemFactory()
@@ -55,6 +56,10 @@ boost::shared_ptr<XdmfItem> XdmfItemFactory::createItem(const std::string & item
 	else if(itemTag.compare(XdmfSet::ItemTag) == 0)
 	{
 		newItem = XdmfSet::New();
+	}
+	else if(itemTag.compare(XdmfTime::ItemTag) == 0)
+	{
+		newItem = XdmfTime::New();
 	}
 	else if(itemTag.compare(XdmfTopology::ItemTag) == 0)
 	{

@@ -23,6 +23,7 @@ set(XdmfSources
 	XdmfReader
 	XdmfSet
 	XdmfSetType
+	XdmfTime
 	XdmfTopology
 	XdmfTopologyType
 )

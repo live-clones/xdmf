@@ -9,10 +9,12 @@
 #include "XdmfGrid.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfSet.hpp"
+#include "XdmfTime.hpp"
 #include "XdmfTopology.hpp"
 
 XdmfGrid::XdmfGrid() :
 	mGeometry(XdmfGeometry::New()),
+	mTime(boost::shared_ptr<XdmfTime>()),
 	mTopology(XdmfTopology::New()),
 	mName("Grid")
 {
@@ -40,16 +42,16 @@ boost::shared_ptr<const XdmfAttribute> XdmfGrid::getAttribute(const unsigned int
 	return mAttributes[index];
 }
 
-boost::shared_ptr<XdmfAttribute> XdmfGrid::getAttribute(const std::string & attributeName)
+boost::shared_ptr<XdmfAttribute> XdmfGrid::getAttribute(const std::string & name)
 {
-	return boost::const_pointer_cast<XdmfAttribute>(static_cast<const XdmfGrid &>(*this).getAttribute(attributeName));
+	return boost::const_pointer_cast<XdmfAttribute>(static_cast<const XdmfGrid &>(*this).getAttribute(name));
 }
 
-boost::shared_ptr<const XdmfAttribute> XdmfGrid::getAttribute(const std::string & attributeName) const
+boost::shared_ptr<const XdmfAttribute> XdmfGrid::getAttribute(const std::string & name) const
 {
 	for(std::vector<boost::shared_ptr<XdmfAttribute> >::const_iterator iter = mAttributes.begin(); iter != mAttributes.end(); ++iter)
 	{
-		if((*iter)->getName().compare(attributeName) == 0)
+		if((*iter)->getName().compare(name) == 0)
 		{
 			return *iter;
 		}
@@ -108,6 +110,33 @@ boost::shared_ptr<const XdmfSet> XdmfGrid::getSet(const unsigned int index) cons
 	return mSets[index];
 }
 
+boost::shared_ptr<XdmfSet> XdmfGrid::getSet(const std::string & name)
+{
+	return boost::const_pointer_cast<XdmfSet>(static_cast<const XdmfGrid &>(*this).getSet(name));
+}
+
+boost::shared_ptr<const XdmfSet> XdmfGrid::getSet(const std::string & name) const
+{
+	for(std::vector<boost::shared_ptr<XdmfSet> >::const_iterator iter = mSets.begin(); iter != mSets.end(); ++iter)
+	{
+		if((*iter)->getName().compare(name) == 0)
+		{
+			return *iter;
+		}
+	}
+	return boost::shared_ptr<XdmfSet>();
+}
+
+boost::shared_ptr<XdmfTime> XdmfGrid::getTime()
+{
+	return boost::const_pointer_cast<XdmfTime>(static_cast<const XdmfGrid &>(*this).getTime());
+}
+
+boost::shared_ptr<const XdmfTime> XdmfGrid::getTime() const
+{
+	return mTime;
+}
+
 boost::shared_ptr<XdmfTopology> XdmfGrid::getTopology()
 {
 	return boost::const_pointer_cast<XdmfTopology>(static_cast<const XdmfGrid &>(*this).getTopology());
@@ -153,6 +182,10 @@ void XdmfGrid::populateItem(const std::map<std::string, std::string> & itemPrope
 		{
 			this->insert(set);
 		}
+		else if(boost::shared_ptr<XdmfTime> time = boost::shared_dynamic_cast<XdmfTime>(*iter))
+		{
+			mTime = time;
+		}
 		else if(boost::shared_ptr<XdmfTopology> topology = boost::shared_dynamic_cast<XdmfTopology>(*iter))
 		{
 			mTopology = topology;
@@ -173,6 +206,19 @@ void XdmfGrid::removeAttribute(const unsigned int index)
 	mAttributes.erase(mAttributes.begin() + index);
 }
 
+void XdmfGrid::removeAttribute(const std::string & name)
+{
+	for(std::vector<boost::shared_ptr<XdmfAttribute> >::iterator iter = mAttributes.begin(); iter != mAttributes.end(); ++iter)
+	{
+		if((*iter)->getName().compare(name) == 0)
+		{
+			mAttributes.erase(iter);
+			return;
+		}
+	}
+	return;
+}
+
 void XdmfGrid::removeSet(const unsigned int index)
 {
 	if(index >= mSets.size())
@@ -180,6 +226,19 @@ void XdmfGrid::removeSet(const unsigned int index)
 		assert(false);
 	}
 	mSets.erase(mSets.begin() + index);
+}
+
+void XdmfGrid::removeSet(const std::string & name)
+{
+	for(std::vector<boost::shared_ptr<XdmfSet> >::iterator iter = mSets.begin(); iter != mSets.end(); ++iter)
+	{
+		if((*iter)->getName().compare(name) == 0)
+		{
+			mSets.erase(iter);
+			return;
+		}
+	}
+	return;
 }
 
 void XdmfGrid::setGeometry(const boost::shared_ptr<XdmfGeometry> geometry)
@@ -192,6 +251,11 @@ void XdmfGrid::setName(const std::string & name)
 	mName = name;
 }
 
+void XdmfGrid::setTime(const boost::shared_ptr<XdmfTime> time)
+{
+	mTime = time;
+}
+
 void XdmfGrid::setTopology(const boost::shared_ptr<XdmfTopology> topology)
 {
 	mTopology = topology;
@@ -199,6 +263,10 @@ void XdmfGrid::setTopology(const boost::shared_ptr<XdmfTopology> topology)
 
 void XdmfGrid::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor) const
 {
+	if(mTime != NULL)
+	{
+		mTime->accept(visitor);
+	}
 	mGeometry->accept(visitor);
 	mTopology->accept(visitor);
 	for(std::vector<boost::shared_ptr<XdmfAttribute> >::const_iterator iter = mAttributes.begin(); iter != mAttributes.end(); ++iter)

@@ -34,6 +34,7 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 	#include <XdmfReader.hpp>
 	#include <XdmfSet.hpp>
 	#include <XdmfSetType.hpp>
+	#include <XdmfTime.hpp>
 	#include <XdmfTopology.hpp>
 	#include <XdmfTopologyType.hpp>
 %}
@@ -74,6 +75,10 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 	{
 		$result = SWIG_NewPointerObj(SWIG_as_voidptr(new boost::shared_ptr<XdmfSet>(set)), SWIGTYPE_p_boost__shared_ptrT_XdmfSet_t, SWIG_POINTER_OWN);
 	}
+	else if(boost::shared_ptr<XdmfTime> time = boost::shared_dynamic_cast<XdmfTime>($1))
+	{
+		$result = SWIG_NewPointerObj(SWIG_as_voidptr(new boost::shared_ptr<XdmfTime>(time)), SWIGTYPE_p_boost__shared_ptrT_XdmfTime_t, SWIG_POINTER_OWN);
+	}
 	else if(boost::shared_ptr<XdmfTopology> topology = boost::shared_dynamic_cast<XdmfTopology>($1))
 	{
 		$result = SWIG_NewPointerObj(SWIG_as_voidptr(new boost::shared_ptr<XdmfTopology>(topology)), SWIGTYPE_p_boost__shared_ptrT_XdmfTopology_t, SWIG_POINTER_OWN);
@@ -98,6 +103,7 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 %shared_ptr(XdmfReader)
 %shared_ptr(XdmfSet)
 %shared_ptr(XdmfSetType)
+%shared_ptr(XdmfTime)
 %shared_ptr(XdmfTopology)
 %shared_ptr(XdmfTopologyType)
 
@@ -114,5 +120,6 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 %include XdmfReader.hpp
 %include XdmfSet.hpp
 %include XdmfSetType.hpp
+%include XdmfTime.hpp
 %include XdmfTopology.hpp
 %include XdmfTopologyType.hpp

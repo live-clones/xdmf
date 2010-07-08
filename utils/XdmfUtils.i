@@ -34,6 +34,7 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
 	#include <XdmfReader.hpp>
 	#include <XdmfSet.hpp>
 	#include <XdmfSetType.hpp>
+	#include <XdmfTime.hpp>
 	#include <XdmfTopology.hpp>
 	#include <XdmfTopologyType.hpp>
 

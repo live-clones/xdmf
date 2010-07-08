@@ -8,6 +8,7 @@
 #include "XdmfGrid.hpp"
 #include "XdmfSet.hpp"
 #include "XdmfSetType.hpp"
+#include "XdmfTime.hpp"
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
 
@@ -22,6 +23,7 @@ public:
 	 * 	Nodal Attributes = 1
 	 * Number of Sets = 1
 	 *  Nodal Set = 1
+	 * Time = 100
 	 * Total Number of Values = 69
 	 */
 	static boost::shared_ptr<XdmfGrid> createHexahedron()
@@ -63,6 +65,10 @@ public:
 		nodeSet->setName("Node Set");
 		nodeSet->setSetType(XdmfSetType::Node());
 		nodeSet->getArray()->copyValues(0, &nodeIds[0], 3);
+
+		// Add time
+		boost::shared_ptr<XdmfTime> time = XdmfTime::New(100);
+		grid->setTime(time);
 
 		grid->insert(nodalAttribute);
 		grid->insert(cellAttribute);

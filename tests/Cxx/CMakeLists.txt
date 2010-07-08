@@ -5,6 +5,7 @@ set(XdmfCxxTests
 	TestXdmfGridCollection
 	TestXdmfReader
 	TestXdmfSet
+	TestXdmfTime
 	TestXdmfTopology
 	TestXdmfVisitorValueCounter
 	TestXdmfWriter

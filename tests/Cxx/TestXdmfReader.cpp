@@ -39,6 +39,5 @@ int main(int argc, char* argv[])
 
 	assert(firstContents.compare(secondContents) == 0);
 
-
 	return 0;
 }

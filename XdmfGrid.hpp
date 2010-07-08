@@ -5,6 +5,7 @@
 class XdmfAttribute;
 class XdmfGeometry;
 class XdmfSet;
+class XdmfTime;
 class XdmfTopology;
 
 // Includes
@@ -47,18 +48,18 @@ public:
 	/**
 	 * Get an XdmfAttribute attached to this grid by name.
 	 *
-	 * @param attributeName the name of the XdmfAttribute to retrieve.
+	 * @param name the name of the XdmfAttribute to retrieve.
 	 * @return requested XdmfAttribute, if not found a NULL pointer is returned.
 	 */
-	boost::shared_ptr<XdmfAttribute> getAttribute(const std::string & attributeName);
+	boost::shared_ptr<XdmfAttribute> getAttribute(const std::string & name);
 
 	/**
 	 * Get an XdmfAttribute attached to this grid by name (const version).
 	 *
-	 * @param attributeName the name of the XdmfAttribute to retrieve.
+	 * @param name the name of the XdmfAttribute to retrieve.
 	 * @return requested XdmfAttribute, if not found a NULL pointer is returned.
 	 */
-	boost::shared_ptr<const XdmfAttribute> getAttribute(const std::string & attributeName) const;
+	boost::shared_ptr<const XdmfAttribute> getAttribute(const std::string & name) const;
 
 	/**
 	 * Get the XdmfGeometry associated with this grid.
@@ -116,6 +117,36 @@ public:
 	boost::shared_ptr<const XdmfSet> getSet(const unsigned int index) const;
 
 	/**
+	 * Get an XdmfSet attached to this grid by name.
+	 *
+	 * @param name the name of the XdmfSet to retrieve.
+	 * @return requested XdmfSet, if not found a NULL pointer is returned.
+	 */
+	boost::shared_ptr<XdmfSet> getSet(const std::string & name);
+
+	/**
+	 * Get an XdmfSet attached to this grid by name (const version).
+	 *
+	 * @param name the name of the XdmfSet to retrieve.
+	 * @return requested XdmfSet, if not found a NULL pointer is returned.
+	 */
+	boost::shared_ptr<const XdmfSet> getSet(const std::string & name) const;
+
+	/**
+	 * Get the XdmfTime attached to this grid.
+	 *
+	 * @return pointer to the XdmfTime attached to this grid.  If no XdmfTime is attached, return NULL.
+	 */
+	boost::shared_ptr<XdmfTime> getTime();
+
+	/**
+	 * Get the XdmfTime attached to this grid (const version).
+	 *
+	 * @return pointer to the XdmfTime attached to this grid.  If no XdmfTime is attached, return NULL.
+	 */
+	boost::shared_ptr<const XdmfTime> getTime() const;
+
+	/**
 	 * Get the XdmfTopology associated with this grid.
 	 *
 	 * @return a smart pointer to the XdmfTopology.
@@ -151,6 +182,13 @@ public:
 	void removeAttribute(const unsigned int index);
 
 	/**
+	 * Remove an XdmfAttribute from the grid by name.  If no XdmfAttribute having the name is found, no attributes are removed.
+	 *
+	 * @param name of the XdmfAttribute to remove.
+	 */
+	void removeAttribute(const std::string & name);
+
+	/**
 	 * Remove an XdmfSet from the grid.
 	 *
 	 * @param index of the XdmfSet to remove.
@@ -158,11 +196,25 @@ public:
 	void removeSet(const unsigned int index);
 
 	/**
+	 * Remove an XdmfSet from the grid by name.  If no XdmfSet having the name is found, no sets are removed.
+	 *
+	 * @param name of the XdmfSet to remove.
+	 */
+	void removeSet(const std::string & name);
+
+	/**
 	 * Set the XdmfGeometry associated with this grid.
 	 *
 	 * @param geometry an XdmfGeometry to attach to this grid.
 	 */
 	void setGeometry(const boost::shared_ptr<XdmfGeometry> geometry);
+
+	/**
+	 * Set the XdmfTime associated with this grid.
+	 *
+	 * @param time an XdmfTime to attach to this grid.
+	 */
+	void setTime(const boost::shared_ptr<XdmfTime> time);
 
 	/**
 	 * Set the XdmfTopology associated with this grid.
@@ -195,6 +247,7 @@ private:
 	std::vector<boost::shared_ptr<XdmfAttribute> > mAttributes;
 	boost::shared_ptr<XdmfGeometry> mGeometry;
 	std::vector<boost::shared_ptr<XdmfSet> > mSets;
+	boost::shared_ptr<XdmfTime> mTime;
 	boost::shared_ptr<XdmfTopology> mTopology;
 };
 
