@@ -23,7 +23,7 @@ public:
 	{
 	};
 
-	std::vector<boost::shared_ptr<XdmfItem> > read(xmlNodePtr currNode)
+	std::vector<boost::shared_ptr<XdmfItem> > read(xmlNodePtr currNode, bool ignoreSiblings = false)
 	{
 		std::vector<boost::shared_ptr<XdmfItem> > myItems;
 
@@ -31,10 +31,10 @@ public:
 		{
 			if(currNode->type == XML_ELEMENT_NODE)
 			{
+				xmlChar * xpointer = NULL;
 				if(xmlStrcmp(currNode->name, (xmlChar*)"include") == 0)
 				{
 					xmlAttrPtr currAttribute = currNode->properties;
-					xmlChar * xpointer;
 					while(currAttribute != NULL)
 					{
 						if(xmlStrcmp(currAttribute->name, (xmlChar*)"xpointer") == 0)
@@ -44,23 +44,12 @@ public:
 						}
 					}
 					xmlXPathObjectPtr xPathObject = xmlXPtrEval(xpointer, mXPathContext);
-					std::cout << "HERE" << std::endl;
-					std::map<xmlNodePtr, boost::shared_ptr<XdmfItem> >::const_iterator iter = mXPathMap.find(xPathObject->nodesetval->nodeTab[0]);
-					if(iter != mXPathMap.end())
+					for(unsigned int i=0; i<xPathObject->nodesetval->nodeNr; ++i)
 					{
-						myItems.push_back(iter->second);
+						std::vector<boost::shared_ptr<XdmfItem> > newItems = this->read(xPathObject->nodesetval->nodeTab[i], true);
+						myItems.insert(myItems.end(), newItems.begin(), newItems.end());
 					}
-
-					//this->read();
-					//for(unsigned int i=0; i<xPathObject->nodesetval->nodeNr; ++i)
-					//{
-						//std::cout << xPathObject->nodesetval->nodeTab[i]->type << std::endl;
-						//std::cout << xPathObject->nodesetval->nodeTab[i]->name << std::endl;
-						//this->read(xPathObject->nodesetval->nodeTab[i]);
-						//currNode = NULL;
-						//currNode = xPathObject->nodesetval->nodeTab[0];
-					//}
-					//xmlXPathFreeObject(xPathObject);
+					xmlXPathFreeObject(xPathObject);
 				}
 				else
 				{
@@ -86,7 +75,7 @@ public:
 							itemProperties[(const char *)currAttribute->name] = (const char *)currAttribute->children->content;
 							currAttribute = currAttribute->next;
 						}
-						std::vector<boost::shared_ptr<XdmfItem> > childItems = this->read(currNode->children);
+						std::vector<boost::shared_ptr<XdmfItem> > childItems = this->read(currNode->children, ignoreSiblings);
 						boost::shared_ptr<XdmfItem> newItem = mItemFactory->createItem((const char *)currNode->name, itemProperties);
 						newItem->populateItem(itemProperties, childItems);
 						myItems.push_back(newItem);
@@ -94,7 +83,14 @@ public:
 					}
 				}
 			}
-			currNode = currNode->next;
+			if(ignoreSiblings)
+			{
+				currNode = NULL;
+			}
+			else
+			{
+				currNode = currNode->next;
+			}
 		}
 		return myItems;
 	}
