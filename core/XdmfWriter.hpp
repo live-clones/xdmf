@@ -141,9 +141,6 @@ private:
 	XdmfWriter(const XdmfWriter & writer);  // Not implemented.
 	void operator=(const XdmfWriter & writer);  // Not implemented.
 
-	void closeFile();
-	void openFile();
-
 	XdmfWriterImpl * mImpl;
 };
 

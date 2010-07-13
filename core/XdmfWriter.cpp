@@ -2,6 +2,7 @@
 // Xdmf Smart Pointer Test
 
 #include <libxml/tree.h>
+#include <map>
 #include <sstream>
 #include "XdmfArray.hpp"
 #include "XdmfItem.hpp"
@@ -20,22 +21,44 @@ public:
 		mHDF5Writer(hdf5Writer),
 		mLightDataLimit(100),
 		mMode(Default),
-		mTraverseLevel(0),
 		mXMLCurrentNode(NULL),
 		mXMLDocument(NULL),
-		mXMLFilePath(xmlFilePath)
+		mXMLFilePath(xmlFilePath),
+		mXPathCount(0),
+		mXPathString("")
 	{
 	};
+
 	~XdmfWriterImpl()
 	{
 	};
+
+	void closeFile()
+	{
+		mXPath.clear();
+		xmlSaveFormatFile(mXMLFilePath.c_str(), mXMLDocument, 1);
+		xmlFreeDoc(mXMLDocument);
+		xmlCleanupParser();
+	};
+
+	void openFile()
+	{
+		mXMLDocument = xmlNewDoc((xmlChar*)"1.0");
+		mXMLCurrentNode = xmlNewNode(NULL, (xmlChar*)"Xdmf");
+		xmlNewProp(mXMLCurrentNode, (xmlChar*)"xmlns:xi", (xmlChar*)"http://www.w3.org/2001/XInclude");
+		xmlNewProp(mXMLCurrentNode, (xmlChar*)"Version", (xmlChar*)"2.0");
+		xmlDocSetRootElement(mXMLDocument, mXMLCurrentNode);
+	}
+
 	boost::shared_ptr<XdmfHDF5Writer> mHDF5Writer;
 	unsigned int mLightDataLimit;
 	Mode mMode;
-	unsigned int mTraverseLevel;
 	xmlNodePtr mXMLCurrentNode;
 	xmlDocPtr mXMLDocument;
 	std::string mXMLFilePath;
+	std::map<const XdmfItem * const, std::string> mXPath;
+	unsigned int mXPathCount;
+	std::string mXPathString;
 };
 
 XdmfWriter::XdmfWriter(const std::string & xmlFilePath)
@@ -67,13 +90,6 @@ XdmfWriter::~XdmfWriter()
 	std::cout << "Deleted XdmfWriter " << this << std::endl;
 }
 
-void XdmfWriter::closeFile()
-{
-	xmlSaveFormatFile(mImpl->mXMLFilePath.c_str(), mImpl->mXMLDocument, 1);
-	xmlFreeDoc(mImpl->mXMLDocument);
-	xmlCleanupParser();
-}
-
 boost::shared_ptr<XdmfHDF5Writer> XdmfWriter::getHDF5Writer()
 {
 	return boost::const_pointer_cast<XdmfHDF5Writer>(static_cast<const XdmfWriter &>(*this).getHDF5Writer());
@@ -97,13 +113,6 @@ unsigned int XdmfWriter::getLightDataLimit() const
 XdmfWriter::Mode XdmfWriter::getMode() const
 {
 	return mImpl->mMode;
-}
-
-void XdmfWriter::openFile()
-{
-	mImpl->mXMLDocument = xmlNewDoc((xmlChar*)"1.0");
-	mImpl->mXMLCurrentNode = xmlNewNode(NULL, (xmlChar*)"Xdmf");
-	xmlDocSetRootElement(mImpl->mXMLDocument, mImpl->mXMLCurrentNode);
 }
 
 void XdmfWriter::setLightDataLimit(const unsigned int numValues)
@@ -141,23 +150,50 @@ void XdmfWriter::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisito
 
 void XdmfWriter::visit(XdmfItem & item, const boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
-	if(mImpl->mTraverseLevel == 0)
+	if(mImpl->mXPathString.compare("") == 0)
 	{
-		this->openFile();
+		mImpl->openFile();
 	}
-	mImpl->mTraverseLevel++;
+
+	mImpl->mXPathCount++;
+
 	xmlNodePtr parentNode = mImpl->mXMLCurrentNode;
-	mImpl->mXMLCurrentNode = xmlNewChild(mImpl->mXMLCurrentNode, NULL, (xmlChar*)item.getItemTag().c_str(), NULL);
-	const std::map<std::string, std::string> itemProperties = item.getItemProperties();
-	for(std::map<std::string, std::string>::const_iterator iter = itemProperties.begin(); iter != itemProperties.end(); ++iter)
+	std::string parentXPathString = mImpl->mXPathString;
+
+	std::stringstream newXPathString;
+	newXPathString << mImpl->mXPathString << "/" << mImpl->mXPathCount;
+	mImpl->mXPathString = newXPathString.str();
+
+	std::map<const XdmfItem * const, std::string>::const_iterator iter = mImpl->mXPath.find(&item);
+	if(iter != mImpl->mXPath.end())
 	{
-		xmlNewProp(mImpl->mXMLCurrentNode, (xmlChar*)iter->first.c_str(), (xmlChar*)iter->second.c_str());
+		// Inserted before --- just xpath location of previously written node
+		mImpl->mXMLCurrentNode = xmlNewChild(mImpl->mXMLCurrentNode, NULL, (xmlChar*)"xi:include", NULL);
+		xmlNewProp(mImpl->mXMLCurrentNode, (xmlChar*)"xpointer", (xmlChar*)iter->second.c_str());
 	}
-	item.traverse(visitor);
-	mImpl->mXMLCurrentNode = parentNode;
-	mImpl->mTraverseLevel--;
-	if(mImpl->mTraverseLevel == 0)
+	else
 	{
-		this->closeFile();
+		// Not inserted before --- need to write all data and traverse.
+		mImpl->mXMLCurrentNode = xmlNewChild(mImpl->mXMLCurrentNode, NULL, (xmlChar*)item.getItemTag().c_str(), NULL);
+		std::stringstream xPathProp;
+		xPathProp << "element(/1" << mImpl->mXPathString << ")";
+		mImpl->mXPath[&item] = xPathProp.str();
+		const std::map<std::string, std::string> itemProperties = item.getItemProperties();
+		for(std::map<std::string, std::string>::const_iterator iter = itemProperties.begin(); iter != itemProperties.end(); ++iter)
+		{
+			xmlNewProp(mImpl->mXMLCurrentNode, (xmlChar*)iter->first.c_str(), (xmlChar*)iter->second.c_str());
+		}
+		unsigned int parentCount = mImpl->mXPathCount;
+		mImpl->mXPathCount = 0;
+		item.traverse(visitor);
+		mImpl->mXPathCount = parentCount;
+	}
+
+	mImpl->mXMLCurrentNode = parentNode;
+	mImpl->mXPathString = parentXPathString;
+
+	if(mImpl->mXPathString.compare("") == 0)
+	{
+		mImpl->closeFile();
 	}
 }

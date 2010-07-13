@@ -1,6 +1,6 @@
 #include <fstream>
 #include <sstream>
-#include "XdmfItem.hpp"
+#include "XdmfDomain.hpp"
 #include "XdmfReader.hpp"
 #include "XdmfWriter.hpp"
 

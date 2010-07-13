@@ -1,3 +1,4 @@
+#include "XdmfDomain.hpp"
 #include "XdmfHDF5Writer.hpp"
 #include "XdmfWriter.hpp"
 

@@ -1,3 +1,4 @@
+#include "XdmfDomain.hpp"
 #include "XdmfWriter.hpp"
 
 #include "XdmfTestDataGenerator.hpp"

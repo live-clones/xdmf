@@ -10,6 +10,7 @@ set(XdmfCxxTests
 	TestXdmfVisitorValueCounter
 	TestXdmfWriter
 	TestXdmfWriterHDF5ThenXML
+	TestXdmfXPath
 )
 
 foreach(test ${XdmfCxxTests})

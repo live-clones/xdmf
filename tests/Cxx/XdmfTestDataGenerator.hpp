@@ -2,7 +2,6 @@
 #include "XdmfAttributeCenter.hpp"
 #include "XdmfAttributeType.hpp"
 #include "XdmfArray.hpp"
-#include "XdmfDomain.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGeometryType.hpp"
 #include "XdmfGrid.hpp"
