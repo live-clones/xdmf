@@ -2,7 +2,6 @@
 // Xdmf Smart Pointer Test
 
 #include <libxml/tree.h>
-#include <map>
 #include <sstream>
 #include "XdmfArray.hpp"
 #include "XdmfItem.hpp"

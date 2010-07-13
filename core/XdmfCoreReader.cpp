@@ -1,6 +1,7 @@
 // Kenneth Leiter
 // Xdmf Smart Pointer Test
 
+#include <libxml/xpointer.h>
 #include <libxml/xmlreader.h>
 #include "XdmfCoreItemFactory.hpp"
 #include "XdmfCoreReader.hpp"
@@ -22,7 +23,7 @@ public:
 	{
 	};
 
-	std::vector<boost::shared_ptr<XdmfItem> > read(xmlNodePtr currNode) const
+	std::vector<boost::shared_ptr<XdmfItem> > read(xmlNodePtr currNode)
 	{
 		std::vector<boost::shared_ptr<XdmfItem> > myItems;
 
@@ -30,31 +31,76 @@ public:
 		{
 			if(currNode->type == XML_ELEMENT_NODE)
 			{
-				std::map<std::string, std::string> itemProperties;
-				std::cout << currNode->name << std::endl;
-				if(currNode->children != NULL)
+				if(xmlStrcmp(currNode->name, (xmlChar*)"include") == 0)
 				{
-					itemProperties["Content"] = (const char *)currNode->children->content;
+					xmlAttrPtr currAttribute = currNode->properties;
+					xmlChar * xpointer;
+					while(currAttribute != NULL)
+					{
+						if(xmlStrcmp(currAttribute->name, (xmlChar*)"xpointer") == 0)
+						{
+							xpointer = currAttribute->children->content;
+							break;
+						}
+					}
+					xmlXPathObjectPtr xPathObject = xmlXPtrEval(xpointer, mXPathContext);
+					std::cout << "HERE" << std::endl;
+					std::map<xmlNodePtr, boost::shared_ptr<XdmfItem> >::const_iterator iter = mXPathMap.find(xPathObject->nodesetval->nodeTab[0]);
+					if(iter != mXPathMap.end())
+					{
+						myItems.push_back(iter->second);
+					}
+
+					//this->read();
+					//for(unsigned int i=0; i<xPathObject->nodesetval->nodeNr; ++i)
+					//{
+						//std::cout << xPathObject->nodesetval->nodeTab[i]->type << std::endl;
+						//std::cout << xPathObject->nodesetval->nodeTab[i]->name << std::endl;
+						//this->read(xPathObject->nodesetval->nodeTab[i]);
+						//currNode = NULL;
+						//currNode = xPathObject->nodesetval->nodeTab[0];
+					//}
+					//xmlXPathFreeObject(xPathObject);
 				}
 				else
 				{
-					itemProperties["Content"] = "";
+					std::map<xmlNodePtr, boost::shared_ptr<XdmfItem> >::const_iterator iter = mXPathMap.find(currNode);
+					if(iter != mXPathMap.end())
+					{
+						myItems.push_back(iter->second);
+					}
+					else
+					{
+						std::map<std::string, std::string> itemProperties;
+						if(currNode->children != NULL)
+						{
+							itemProperties["Content"] = (const char *)currNode->children->content;
+						}
+						else
+						{
+							itemProperties["Content"] = "";
+						}
+						xmlAttrPtr currAttribute = currNode->properties;
+						while(currAttribute != NULL)
+						{
+							itemProperties[(const char *)currAttribute->name] = (const char *)currAttribute->children->content;
+							currAttribute = currAttribute->next;
+						}
+						std::vector<boost::shared_ptr<XdmfItem> > childItems = this->read(currNode->children);
+						boost::shared_ptr<XdmfItem> newItem = mItemFactory->createItem((const char *)currNode->name, itemProperties);
+						newItem->populateItem(itemProperties, childItems);
+						myItems.push_back(newItem);
+						mXPathMap[currNode] = newItem;
+					}
 				}
-				xmlAttrPtr currAttribute = currNode->properties;
-				while(currAttribute != NULL)
-				{
-					itemProperties[(const char *)currAttribute->name] = (const char *)currAttribute->children->content;
-					currAttribute = currAttribute->next;
-				}
-				std::vector<boost::shared_ptr<XdmfItem> > childItems = this->read(currNode->children);
-				boost::shared_ptr<XdmfItem> newItem = mItemFactory->createItem((const char *)currNode->name, itemProperties);
-				newItem->populateItem(itemProperties, childItems);
-				myItems.push_back(newItem);
 			}
 			currNode = currNode->next;
 		}
 		return myItems;
 	}
+
+	xmlXPathContextPtr mXPathContext;
+	std::map<xmlNodePtr, boost::shared_ptr<XdmfItem> > mXPathMap;
 
 private:
 
@@ -79,6 +125,7 @@ boost::shared_ptr<XdmfItem> XdmfCoreReader::read(const std::string & filePath) c
 	xmlNodePtr currNode;
 
 	document = xmlReadFile(filePath.c_str(), NULL, 0);
+	mImpl->mXPathContext = xmlXPtrNewContext(document, NULL, NULL);
 	if(document == NULL)
 	{
 		assert(false);
@@ -87,6 +134,8 @@ boost::shared_ptr<XdmfItem> XdmfCoreReader::read(const std::string & filePath) c
 
 	std::vector<boost::shared_ptr<XdmfItem> > toReturn = mImpl->read(currNode->children);
 
+	mImpl->mXPathMap.clear();
+	xmlXPathFreeContext(mImpl->mXPathContext);
 	xmlFreeDoc(document);
 	xmlCleanupParser();
 
