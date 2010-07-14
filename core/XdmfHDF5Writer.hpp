@@ -98,7 +98,7 @@ private:
 	XdmfHDF5Writer(const XdmfHDF5Writer & hdf5Writer);  // Not implemented.
 	void operator=(const XdmfHDF5Writer & hdf5Writer);  // Not implemented.
 
-	XdmfHDF5WriterImpl * mImpl;
+	XdmfHDF5WriterImpl * const mImpl;
 };
 
 #endif /* XDMFHDF5WRITER_HPP_ */

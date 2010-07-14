@@ -35,7 +35,7 @@ protected:
 	 *
 	 * @param itemFactory an XdmfCoreItemFactory to construct XdmfItems for a specific Xdmf language.
 	 */
-	XdmfCoreReader(const boost::shared_ptr<XdmfCoreItemFactory> itemFactory);
+	XdmfCoreReader(const boost::shared_ptr<const XdmfCoreItemFactory> itemFactory);
 
 private:
 
@@ -47,7 +47,7 @@ private:
 	XdmfCoreReader(const XdmfCoreReader & reader);  // Not implemented.
 	void operator=(const XdmfCoreReader & reader);  // Not implemented.
 
-	XdmfCoreReaderImpl * const mImpl;
+	const XdmfCoreReaderImpl * const mImpl;
 };
 
 #endif /* XDMFCOREREADER_HPP_ */
