@@ -160,7 +160,7 @@ inline void XdmfHex125Generator::SpectralOperations::ComputeThreeQuarterPoint(st
   threeQuarterPoint[2] = (1.0/2.0)*((1 + C) * point2[2] + (1 - C) * point1[2]);
 }
 
-inline void InsertPointWithoutCheck(std::vector<XdmfFloat64> & newPoint, std::map<std::vector<XdmfFloat64>, XdmfInt32, PointComparison> & coordToIdMap, std::vector<XdmfInt32> & newConnectivity, std::vector<XdmfFloat64> & newPoints)
+inline void InsertPointWithoutCheck(const std::vector<XdmfFloat64> & newPoint, std::vector<XdmfInt32> & newConnectivity, std::vector<XdmfFloat64> & newPoints)
 {
   XdmfInt32 newId = newPoints.size() / 3;
   newConnectivity.push_back(newId);
@@ -169,7 +169,7 @@ inline void InsertPointWithoutCheck(std::vector<XdmfFloat64> & newPoint, std::ma
   newPoints.push_back(newPoint[2]);
 }
 
-inline void InsertPointWithCheck(std::vector<XdmfFloat64> & newPoint, std::map<std::vector<XdmfFloat64>, XdmfInt32, PointComparison> & coordToIdMap, std::vector<XdmfInt32> & newConnectivity, std::vector<XdmfFloat64> & newPoints)
+inline void InsertPointWithCheck(const std::vector<XdmfFloat64> & newPoint, std::map<std::vector<XdmfFloat64>, XdmfInt32, PointComparison> & coordToIdMap, std::vector<XdmfInt32> & newConnectivity, std::vector<XdmfFloat64> & newPoints)
 {
   std::map<std::vector<XdmfFloat64>, XdmfInt32>::const_iterator iter = coordToIdMap.find(newPoint);
   if(iter == coordToIdMap.end())
@@ -177,7 +177,7 @@ inline void InsertPointWithCheck(std::vector<XdmfFloat64> & newPoint, std::map<s
     // Not inserted before
     XdmfInt32 newId = newPoints.size() / 3;
     coordToIdMap[newPoint] = newId;
-    InsertPointWithoutCheck(newPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(newPoint, newConnectivity, newPoints);
   }
   else
   {
@@ -222,6 +222,8 @@ XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentEl
   std::vector<XdmfFloat64> quarterPoint(3);
   std::vector<XdmfFloat64> midPoint(3);
   std::vector<XdmfFloat64> threeQuarterPoint(3);
+
+  newConnectivity.reserve(125 * grid->GetTopology()->GetNumberOfElements());
 
   std::map<std::vector<XdmfFloat64>, XdmfInt32, PointComparison> coordToIdMap;
 
@@ -526,63 +528,63 @@ XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentEl
 
     // Case 40
     operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[55], localNodes[47]);
-    InsertPointWithoutCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
-    InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
-    InsertPointWithoutCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(quarterPoint, newConnectivity, newPoints);
+    InsertPointWithoutCheck(midPoint, newConnectivity, newPoints);
+    InsertPointWithoutCheck(threeQuarterPoint, newConnectivity, newPoints);
 
     // Case 41
     operation->ComputeMidPoint(midPoint, localNodes[46], localNodes[50]);
-    InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(midPoint, newConnectivity, newPoints);
 
     // Case 42
     operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[49], localNodes[53]);
-    InsertPointWithoutCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
-    InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
-    InsertPointWithoutCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(quarterPoint, newConnectivity, newPoints);
+    InsertPointWithoutCheck(midPoint, newConnectivity, newPoints);
+    InsertPointWithoutCheck(threeQuarterPoint, newConnectivity, newPoints);
 
     // Case 43
     operation->ComputeMidPoint(midPoint, localNodes[52], localNodes[44]);
-    InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(midPoint, newConnectivity, newPoints);
 
     // Case 44
     operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[67], localNodes[59]);
-    InsertPointWithoutCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
-    InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
-    InsertPointWithoutCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(quarterPoint, newConnectivity, newPoints);
+    InsertPointWithoutCheck(midPoint, newConnectivity, newPoints);
+    InsertPointWithoutCheck(threeQuarterPoint, newConnectivity, newPoints);
 
     // Case 45
     operation->ComputeMidPoint(midPoint, localNodes[62], localNodes[58]);
-    InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(midPoint, newConnectivity, newPoints);
 
     // Case 46
     operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[61], localNodes[65]);
-    InsertPointWithoutCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
-    InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
-    InsertPointWithoutCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(quarterPoint, newConnectivity, newPoints);
+    InsertPointWithoutCheck(midPoint, newConnectivity, newPoints);
+    InsertPointWithoutCheck(threeQuarterPoint, newConnectivity, newPoints);
 
     // Case 47
     operation->ComputeMidPoint(midPoint, localNodes[56], localNodes[64]);
-    InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(midPoint, newConnectivity, newPoints);
 
     // Case 48
     operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[79], localNodes[71]);
-    InsertPointWithoutCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
-    InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
-    InsertPointWithoutCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(quarterPoint, newConnectivity, newPoints);
+    InsertPointWithoutCheck(midPoint, newConnectivity, newPoints);
+    InsertPointWithoutCheck(threeQuarterPoint, newConnectivity, newPoints);
 
     // Case 49
     operation->ComputeMidPoint(midPoint, localNodes[70], localNodes[74]);
-    InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(midPoint, newConnectivity, newPoints);
 
     // Case 50
     operation->ComputeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[73], localNodes[77]);
-    InsertPointWithoutCheck(quarterPoint, coordToIdMap, newConnectivity, newPoints);
-    InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
-    InsertPointWithoutCheck(threeQuarterPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(quarterPoint, newConnectivity, newPoints);
+    InsertPointWithoutCheck(midPoint, newConnectivity, newPoints);
+    InsertPointWithoutCheck(threeQuarterPoint, newConnectivity, newPoints);
 
     // Case 51
     operation->ComputeMidPoint(midPoint, localNodes[76], localNodes[68]);
-    InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(midPoint, newConnectivity, newPoints);
 
     // Case 52
     operation->ComputeMidPoint(midPoint, localNodes[12], localNodes[18]);
@@ -594,15 +596,15 @@ XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentEl
 
     // Case 54
     operation->ComputeMidPoint(midPoint, localNodes[48], localNodes[54]);
-    InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(midPoint, newConnectivity, newPoints);
 
     // Case 55
     operation->ComputeMidPoint(midPoint, localNodes[60], localNodes[66]);
-    InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(midPoint, newConnectivity, newPoints);
 
     // Case 56
     operation->ComputeMidPoint(midPoint, localNodes[72], localNodes[78]);
-    InsertPointWithoutCheck(midPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(midPoint, newConnectivity, newPoints);
   }
 
   delete operation;

@@ -192,6 +192,7 @@ class XdmfPartitioner(_object):
         except: self.this = this
     __swig_destroy__ = _XdmfUtils.delete_XdmfPartitioner
     __del__ = lambda self : None;
+    def DoNotSplit(self, *args): return _XdmfUtils.XdmfPartitioner_DoNotSplit(self, *args)
     def Partition(self, *args): return _XdmfUtils.XdmfPartitioner_Partition(self, *args)
 XdmfPartitioner_swigregister = _XdmfUtils.XdmfPartitioner_swigregister
 XdmfPartitioner_swigregister(XdmfPartitioner)

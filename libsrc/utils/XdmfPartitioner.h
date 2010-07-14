@@ -23,6 +23,8 @@
 /*                                                                 */
 /*******************************************************************/
 
+class XdmfGrid;
+
 #include "Xdmf.h"
 
 /*!
@@ -43,6 +45,8 @@ class XdmfPartitioner
      */
     ~XdmfPartitioner();
 
+    void DoNotSplit(XdmfSet * set);
+
     /*!
      * 
      * Partitions an XdmfGrid into a number of partitions using the metis library.  Currently supported topology types are:
@@ -59,4 +63,9 @@ class XdmfPartitioner
      * @return XdmfGrid* a spatial collection containing partitioned grids.
      */
     XdmfGrid * Partition(XdmfGrid * grid, int numPartitions, XdmfElement * parentElement);
+
+  private:
+
+    class XdmfPartitionerImpl;
+    XdmfPartitionerImpl * mImpl;
 };

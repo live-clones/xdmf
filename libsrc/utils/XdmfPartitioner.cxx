@@ -35,14 +35,33 @@ extern "C"
 }
 
 #include <map>
+#include <set>
 #include <vector>
 
-XdmfPartitioner::XdmfPartitioner()
+class XdmfPartitioner::XdmfPartitionerImpl {
+
+public:
+
+  XdmfPartitionerImpl(){};
+  ~XdmfPartitionerImpl(){};
+  std::set<XdmfSet *> doNotSplitSets;
+};
+
+std::set<XdmfSet *> doNotSplitSets;
+
+XdmfPartitioner::XdmfPartitioner() :
+  mImpl(new XdmfPartitionerImpl())
 {
 }
 
 XdmfPartitioner::~XdmfPartitioner()
 {
+  delete mImpl;
+}
+
+void XdmfPartitioner::DoNotSplit(XdmfSet * set)
+{
+  mImpl->doNotSplitSets.insert(set);
 }
 
 XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfElement * parentElement)
@@ -351,77 +370,93 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
       releaseData = 1;
     }
     int partitionId = 0;
-    for(int i=0; i<numPartitions; ++i)
+    if(mImpl->doNotSplitSets.find(currSet) == mImpl->doNotSplitSets.end())
     {
-      std::map<XdmfInt32, XdmfInt32> & currNodeMap = globalToLocalNodeIdMap[i];
-      std::vector<XdmfInt32> & currElemIds = globalElementIds[i];
-      if(currElemIds.size() > 0)
+      for(int i=0; i<numPartitions; ++i)
       {
-        XdmfGrid * partition = partitions[partitionId];
-        partitionId++;
-        switch(currSet->GetSetType())
+        std::map<XdmfInt32, XdmfInt32> & currNodeMap = globalToLocalNodeIdMap[i];
+        std::vector<XdmfInt32> & currElemIds = globalElementIds[i];
+        if(currElemIds.size() > 0)
         {
-          case(XDMF_SET_TYPE_CELL):
-          case(XDMF_SET_TYPE_FACE):
-          case(XDMF_SET_TYPE_EDGE):
+          XdmfGrid * partition = partitions[partitionId];
+          partitionId++;
+          switch(currSet->GetSetType())
           {
-            std::vector<XdmfInt32> myIds;
-            for(int k=0; k<currSet->GetIds()->GetNumberOfElements(); ++k)
+            case(XDMF_SET_TYPE_CELL):
+            case(XDMF_SET_TYPE_FACE):
+            case(XDMF_SET_TYPE_EDGE):
             {
-              std::vector<XdmfInt32>::const_iterator val = std::find(currElemIds.begin(), currElemIds.end(), currSet->GetIds()->GetValueAsInt32(k));
-              if(val != currElemIds.end())
+              std::vector<XdmfInt32> myIds;
+              for(int k=0; k<currSet->GetIds()->GetNumberOfElements(); ++k)
               {
-                myIds.push_back(val - currElemIds.begin());
+                std::vector<XdmfInt32>::const_iterator val = std::find(currElemIds.begin(), currElemIds.end(), currSet->GetIds()->GetValueAsInt32(k));
+                if(val != currElemIds.end())
+                {
+                  myIds.push_back(val - currElemIds.begin());
+                }
               }
-            }
-            if(myIds.size() != 0)
-            {
-              XdmfSet * set = new XdmfSet();
-              set->SetName(currSet->GetName());
-              set->SetSetType(currSet->GetSetType());
-              set->SetSize(myIds.size());
-              set->SetDeleteOnGridDelete(true);
-              XdmfArray * ids = set->GetIds();
-              ids->SetNumberType(XDMF_INT32_TYPE);
-              ids->SetNumberOfElements(myIds.size());
-              ids->SetValues(0, &myIds[0], myIds.size());
-              partition->Insert(set);
-            }
-            break;
-          }
-          case(XDMF_SET_TYPE_NODE):
-          {
-            std::vector<XdmfInt32> myIds;
-            for(int k=0; k<currSet->GetIds()->GetNumberOfElements(); k++)
-            {
-              std::map<XdmfInt32, XdmfInt32>::const_iterator val = currNodeMap.find(currSet->GetIds()->GetValueAsInt32(k));
-              if(val != currNodeMap.end())
+              if(myIds.size() != 0)
               {
-                myIds.push_back(val->second);
+                XdmfSet * set = new XdmfSet();
+                set->SetName(currSet->GetName());
+                set->SetSetType(currSet->GetSetType());
+                set->SetSize(myIds.size());
+                set->SetDeleteOnGridDelete(true);
+                XdmfArray * ids = set->GetIds();
+                ids->SetNumberType(XDMF_INT32_TYPE);
+                ids->SetNumberOfElements(myIds.size());
+                ids->SetValues(0, &myIds[0], myIds.size());
+                partition->Insert(set);
               }
+              break;
             }
-            if(myIds.size() != 0)
+            case(XDMF_SET_TYPE_NODE):
             {
-              XdmfSet * set = new XdmfSet();
-              set->SetName(currSet->GetName());
-              set->SetSetType(currSet->GetSetType());
-              set->SetSize(myIds.size());
-              set->SetDeleteOnGridDelete(true);
-              XdmfArray * ids = set->GetIds();
-              ids->SetNumberType(XDMF_INT32_TYPE);
-              ids->SetNumberOfElements(myIds.size());
-              ids->SetValues(0, &myIds[0], myIds.size());
-              partition->Insert(set);
+              std::vector<XdmfInt32> myIds;
+              for(int k=0; k<currSet->GetIds()->GetNumberOfElements(); k++)
+              {
+                std::map<XdmfInt32, XdmfInt32>::const_iterator val = currNodeMap.find(currSet->GetIds()->GetValueAsInt32(k));
+                if(val != currNodeMap.end())
+                {
+                  myIds.push_back(val->second);
+                }
+              }
+              if(myIds.size() != 0)
+              {
+                XdmfSet * set = new XdmfSet();
+                set->SetName(currSet->GetName());
+                set->SetSetType(currSet->GetSetType());
+                set->SetSize(myIds.size());
+                set->SetDeleteOnGridDelete(true);
+                XdmfArray * ids = set->GetIds();
+                ids->SetNumberType(XDMF_INT32_TYPE);
+                ids->SetNumberOfElements(myIds.size());
+                ids->SetValues(0, &myIds[0], myIds.size());
+                partition->Insert(set);
+              }
+              break;
             }
-            break;
-          }
-          default:
-          {
-            std::cout << "Unknown set type encountered: " << currSet->GetSetTypeAsString() << std::endl;  
-            break;
+            default:
+            {
+              std::cout << "Unknown set type encountered: " << currSet->GetSetTypeAsString() << std::endl;  
+              break;
+            }
           }
         }
       }
+    }
+    else
+    {
+      XdmfSet * set = new XdmfSet();
+      set->SetName(currSet->GetName());
+      set->SetSetType(currSet->GetSetType());
+      set->SetSize(currSet->GetSize());
+      set->SetDeleteOnGridDelete(true);
+      XdmfArray * ids = set->GetIds();
+      ids->SetNumberType(XDMF_INT32_TYPE);
+      ids->SetNumberOfElements(currSet->GetIds()->GetNumberOfElements());
+      ids->SetValues(0, currSet->GetIds(), currSet->GetIds()->GetNumberOfElements());
+      collection->Insert(set);
     }
     if(releaseData)
     {
@@ -549,18 +584,18 @@ int main(int argc, char* argv[])
     child->GetTopology()->GetConnectivity()->SetHeavyDataSetName(heavyConnName.str().c_str());
 
     // Set heavy data set names for mesh attributes and sets
-    for(int i=0; i<child->GetNumberOfAttributes(); i++)
+    for(int j=0; j<child->GetNumberOfAttributes(); j++)
     {
       std::stringstream heavyAttrName;
-      heavyAttrName << meshName << ".h5:/" << child->GetName() << "/Attribute/" << child->GetAttribute(i)->GetAttributeCenterAsString() << "/" << child->GetAttribute(i)->GetName();
-      child->GetAttribute(i)->GetValues()->SetHeavyDataSetName(heavyAttrName.str().c_str());
+      heavyAttrName << meshName << ".h5:/" << child->GetName() << "/Attribute/" << child->GetAttribute(j)->GetAttributeCenterAsString() << "/" << child->GetAttribute(j)->GetName();
+      child->GetAttribute(j)->GetValues()->SetHeavyDataSetName(heavyAttrName.str().c_str());
     }
 
-    for(int i=0; i<child->GetNumberOfSets(); i++)
+    for(int j=0; j<child->GetNumberOfSets(); j++)
     {
       std::stringstream heavySetName;
-      heavySetName << meshName << ".h5:/" << child->GetName() << "/Set/" << child->GetSets(i)->GetSetTypeAsString() << "/" << child->GetSets(i)->GetName();
-      child->GetSets(i)->GetIds()->SetHeavyDataSetName(heavySetName.str().c_str());
+      heavySetName << meshName << ".h5:/" << child->GetName() << "/Set/" << child->GetSets(j)->GetSetTypeAsString() << "/" << child->GetSets(j)->GetName();
+      child->GetSets(j)->GetIds()->SetHeavyDataSetName(heavySetName.str().c_str());
     }
   }
 

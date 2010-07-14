@@ -55,29 +55,29 @@ struct PointComparison {
 class XdmfHex64Generator::Operations
 {
 public:
-  virtual void ComputeInteriorPoints(std::vector<XdmfFloat64> & leftPoint, std::vector<XdmfFloat64> & rightPoint, std::vector<XdmfFloat64> & point1, std::vector<XdmfFloat64> & point2) = 0;
-  virtual void ComputeLeftPoint(std::vector<XdmfFloat64> & leftPoint, std::vector<XdmfFloat64> & point1, std::vector<XdmfFloat64> & point2) = 0;
-  virtual void ComputeRightPoint(std::vector<XdmfFloat64> & rightPoint, std::vector<XdmfFloat64> & point1, std::vector<XdmfFloat64> & point2) = 0;
+  virtual void ComputeInteriorPoints(std::vector<XdmfFloat64> & leftPoint, std::vector<XdmfFloat64> & rightPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2) = 0;
+  virtual void ComputeLeftPoint(std::vector<XdmfFloat64> & leftPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2) = 0;
+  virtual void ComputeRightPoint(std::vector<XdmfFloat64> & rightPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2) = 0;
 };
 
 class XdmfHex64Generator::NormalOperations : public XdmfHex64Generator::Operations
 {
 public:
-  void ComputeInteriorPoints(std::vector<XdmfFloat64> & leftPoint, std::vector<XdmfFloat64> & rightPoint, std::vector<XdmfFloat64> & point1, std::vector<XdmfFloat64> & point2);
-  void ComputeLeftPoint(std::vector<XdmfFloat64> & leftPoint, std::vector<XdmfFloat64> & point1, std::vector<XdmfFloat64> & point2);
-  void ComputeRightPoint(std::vector<XdmfFloat64> & rightPoint, std::vector<XdmfFloat64> & point1, std::vector<XdmfFloat64> & point2) ;
+  void ComputeInteriorPoints(std::vector<XdmfFloat64> & leftPoint, std::vector<XdmfFloat64> & rightPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2);
+  void ComputeLeftPoint(std::vector<XdmfFloat64> & leftPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2);
+  void ComputeRightPoint(std::vector<XdmfFloat64> & rightPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2) ;
 };
 
 class XdmfHex64Generator::SpectralOperations : public XdmfHex64Generator::Operations
 {
 public:
   static const double C = 0.44721359549995793; // 1 / sqrt(5)
-  virtual void ComputeInteriorPoints(std::vector<XdmfFloat64> & leftPoint, std::vector<XdmfFloat64> & rightPoint, std::vector<XdmfFloat64> & point1, std::vector<XdmfFloat64> & point2);
-  virtual void ComputeLeftPoint(std::vector<XdmfFloat64> & leftPoint, std::vector<XdmfFloat64> & point1, std::vector<XdmfFloat64> & point2);
-  virtual void ComputeRightPoint(std::vector<XdmfFloat64> & rightPoint, std::vector<XdmfFloat64> & point1, std::vector<XdmfFloat64> & point2);
+  virtual void ComputeInteriorPoints(std::vector<XdmfFloat64> & leftPoint, std::vector<XdmfFloat64> & rightPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2);
+  virtual void ComputeLeftPoint(std::vector<XdmfFloat64> & leftPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2);
+  virtual void ComputeRightPoint(std::vector<XdmfFloat64> & rightPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2);
 };
 
-inline void XdmfHex64Generator::NormalOperations::ComputeInteriorPoints(std::vector<XdmfFloat64> & leftPoint, std::vector<XdmfFloat64> & rightPoint, std::vector<XdmfFloat64> & point1, std::vector<XdmfFloat64> & point2)
+inline void XdmfHex64Generator::NormalOperations::ComputeInteriorPoints(std::vector<XdmfFloat64> & leftPoint, std::vector<XdmfFloat64> & rightPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2)
 {
   leftPoint[0] = (1.0/3.0)*(point2[0] + 2*point1[0]);
   leftPoint[1] = (1.0/3.0)*(point2[1] + 2*point1[1]);
@@ -88,21 +88,21 @@ inline void XdmfHex64Generator::NormalOperations::ComputeInteriorPoints(std::vec
   rightPoint[2] = (1.0/3.0)*(2*point2[2] + point1[2]);
 }
 
-inline void XdmfHex64Generator::NormalOperations::ComputeLeftPoint(std::vector<XdmfFloat64> & leftPoint, std::vector<XdmfFloat64> & point1, std::vector<XdmfFloat64> & point2)
+inline void XdmfHex64Generator::NormalOperations::ComputeLeftPoint(std::vector<XdmfFloat64> & leftPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2)
 {
   leftPoint[0] = (1.0/3.0)*(point2[0] + 2*point1[0]);
   leftPoint[1] = (1.0/3.0)*(point2[1] + 2*point1[1]);
   leftPoint[2] = (1.0/3.0)*(point2[2] + 2*point1[2]);
 }
 
-inline void XdmfHex64Generator::NormalOperations::ComputeRightPoint(std::vector<XdmfFloat64> & rightPoint, std::vector<XdmfFloat64> & point1, std::vector<XdmfFloat64> & point2)
+inline void XdmfHex64Generator::NormalOperations::ComputeRightPoint(std::vector<XdmfFloat64> & rightPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2)
 {
   rightPoint[0] = (1.0/3.0)*(2*point2[0] + point1[0]);
   rightPoint[1] = (1.0/3.0)*(2*point2[1] + point1[1]);
   rightPoint[2] = (1.0/3.0)*(2*point2[2] + point1[2]);
 }
 
-inline void XdmfHex64Generator::SpectralOperations::ComputeInteriorPoints(std::vector<XdmfFloat64> & leftPoint, std::vector<XdmfFloat64> & rightPoint, std::vector<XdmfFloat64> & point1, std::vector<XdmfFloat64> & point2)
+inline void XdmfHex64Generator::SpectralOperations::ComputeInteriorPoints(std::vector<XdmfFloat64> & leftPoint, std::vector<XdmfFloat64> & rightPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2)
 {
   leftPoint[0] = (1.0/2.0)*((1 - C)*point2[0] + (1 + C)*point1[0]);
   leftPoint[1] = (1.0/2.0)*((1 - C)*point2[1] + (1 + C)*point1[1]);
@@ -113,14 +113,14 @@ inline void XdmfHex64Generator::SpectralOperations::ComputeInteriorPoints(std::v
   rightPoint[2] = (1.0/2.0)*((1+C)*point2[2] + (1-C)*point1[2]);
 }
 
-inline void XdmfHex64Generator::SpectralOperations::ComputeLeftPoint(std::vector<XdmfFloat64> & leftPoint, std::vector<XdmfFloat64> & point1, std::vector<XdmfFloat64> & point2)
+inline void XdmfHex64Generator::SpectralOperations::ComputeLeftPoint(std::vector<XdmfFloat64> & leftPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2)
 {
   leftPoint[0] = (1.0/2.0)*((1 - C)*point2[0] + (1 + C)*point1[0]);
   leftPoint[1] = (1.0/2.0)*((1 - C)*point2[1] + (1 + C)*point1[1]);
   leftPoint[2] = (1.0/2.0)*((1 - C)*point2[2] + (1 + C)*point1[2]);
 }
 
-inline void XdmfHex64Generator::SpectralOperations::ComputeRightPoint(std::vector<XdmfFloat64> & rightPoint, std::vector<XdmfFloat64> & point1, std::vector<XdmfFloat64> & point2)
+inline void XdmfHex64Generator::SpectralOperations::ComputeRightPoint(std::vector<XdmfFloat64> & rightPoint, const std::vector<XdmfFloat64> & point1, const std::vector<XdmfFloat64> & point2)
 {
   rightPoint[0] = (1.0/2.0)*((1+C)*point2[0] + (1-C)*point1[0]);
   rightPoint[1] = (1.0/2.0)*((1+C)*point2[1] + (1-C)*point1[1]);
@@ -135,24 +135,22 @@ XdmfHex64Generator::~XdmfHex64Generator()
 {
 }
 
-inline void InsertPointWithoutCheck(std::vector<XdmfFloat64> & newPoint, std::map<std::vector<XdmfFloat64>, XdmfInt32, PointComparison> & coordToIdMap, std::vector<XdmfInt32> & newConnectivity, std::vector<XdmfFloat64> & newPoints)
+inline void InsertPointWithoutCheck(const std::vector<XdmfFloat64> & newPoint, std::vector<XdmfInt32> & newConnectivity, std::vector<XdmfFloat64> & newPoints)
 {
-  XdmfInt32 newId = newPoints.size() / 3;
-  newConnectivity.push_back(newId);
+  newConnectivity.push_back(newPoints.size() / 3);
   newPoints.push_back(newPoint[0]);
   newPoints.push_back(newPoint[1]);
   newPoints.push_back(newPoint[2]);
 }
 
-inline void InsertPointWithCheck(std::vector<XdmfFloat64> & newPoint, std::map<std::vector<XdmfFloat64>, XdmfInt32, PointComparison> & coordToIdMap, std::vector<XdmfInt32> & newConnectivity, std::vector<XdmfFloat64> & newPoints)
+inline void InsertPointWithCheck(const std::vector<XdmfFloat64> & newPoint, std::map<std::vector<XdmfFloat64>, XdmfInt32, PointComparison> & coordToIdMap, std::vector<XdmfInt32> & newConnectivity, std::vector<XdmfFloat64> & newPoints)
 {
   std::map<std::vector<XdmfFloat64>, XdmfInt32>::const_iterator iter = coordToIdMap.find(newPoint);
   if(iter == coordToIdMap.end())
   {
     // Not inserted before
-    XdmfInt32 newId = newPoints.size() / 3;
-    coordToIdMap[newPoint] = newId;
-    InsertPointWithoutCheck(newPoint, coordToIdMap, newConnectivity, newPoints);
+    coordToIdMap[newPoint] = newPoints.size() / 3;
+    InsertPointWithoutCheck(newPoint, newConnectivity, newPoints);
   }
   else
   {
@@ -198,6 +196,8 @@ XdmfGrid * XdmfHex64Generator::Generate(XdmfGrid * grid, XdmfElement * parentEle
   std::vector<XdmfFloat64> leftPoint(3);
   std::vector<XdmfFloat64> rightPoint(3);
 
+  newConnectivity.reserve(64 * grid->GetTopology()->GetNumberOfElements());
+
   std::map<std::vector<XdmfFloat64>, XdmfInt32, PointComparison> coordToIdMap;
 
   // Iterate over all elements, for each element compute new coordinate points and insert those values into newGeometry and newConnectivity.
@@ -206,11 +206,10 @@ XdmfGrid * XdmfHex64Generator::Generate(XdmfGrid * grid, XdmfElement * parentEle
     std::cout << "Converting Element " << i << std::endl;
 
     // Fill localNodes with original coordinate information.
-    std::vector<std::vector<XdmfFloat64> > localNodes(8);
+    std::vector<std::vector<XdmfFloat64> > localNodes(8, std::vector<XdmfFloat64>(3));
     localNodes.reserve(44);
     for(int j=0; j<8; ++j)
     {
-      localNodes[j] = std::vector<XdmfFloat64>(3);
       grid->GetGeometry()->GetPoints()->GetValues(grid->GetTopology()->GetConnectivity()->GetValueAsInt64(8*i + j) * 3, &localNodes[j][0], 3);
     }
 
@@ -389,23 +388,23 @@ XdmfGrid * XdmfHex64Generator::Generate(XdmfGrid * grid, XdmfElement * parentEle
 
     // Case 28
     operation->ComputeInteriorPoints(leftPoint, rightPoint, localNodes[33], localNodes[34]);
-    InsertPointWithoutCheck(leftPoint, coordToIdMap, newConnectivity, newPoints);
-    InsertPointWithoutCheck(rightPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(leftPoint, newConnectivity, newPoints);
+    InsertPointWithoutCheck(rightPoint, newConnectivity, newPoints);
 
     // Case 29
     operation->ComputeInteriorPoints(leftPoint, rightPoint, localNodes[35], localNodes[32]);
-    InsertPointWithoutCheck(leftPoint, coordToIdMap, newConnectivity, newPoints);
-    InsertPointWithoutCheck(rightPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(leftPoint, newConnectivity, newPoints);
+    InsertPointWithoutCheck(rightPoint, newConnectivity, newPoints);
 
     // Case 30
     operation->ComputeInteriorPoints(leftPoint, rightPoint, localNodes[41], localNodes[42]);
-    InsertPointWithoutCheck(leftPoint, coordToIdMap, newConnectivity, newPoints);
-    InsertPointWithoutCheck(rightPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(leftPoint, newConnectivity, newPoints);
+    InsertPointWithoutCheck(rightPoint, newConnectivity, newPoints);
 
     // Case 31
     operation->ComputeInteriorPoints(leftPoint, rightPoint, localNodes[43], localNodes[40]);
-    InsertPointWithoutCheck(leftPoint, coordToIdMap, newConnectivity, newPoints);
-    InsertPointWithoutCheck(rightPoint, coordToIdMap, newConnectivity, newPoints);
+    InsertPointWithoutCheck(leftPoint, newConnectivity, newPoints);
+    InsertPointWithoutCheck(rightPoint, newConnectivity, newPoints);
   }
 
   delete operation;
