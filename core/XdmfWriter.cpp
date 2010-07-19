@@ -138,8 +138,7 @@ void XdmfWriter::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisito
 		if(array.getHDF5Controller() || array.getSize() > mImpl->mLightDataLimit)
 		{
 			mImpl->mHDF5Writer->visit(array, mImpl->mHDF5Writer);
-			std::string contentVal = mImpl->mHDF5Writer->getLastWrittenDataSet();
-			std::cout << contentVal << std::endl;
+			std::string contentVal = array.getHDF5Controller()->getDataSetPath();
 			if(size_t colonLocation = contentVal.find(":") != std::string::npos)
 			{
 				if(size_t fileDir = contentVal.substr(0, colonLocation).find_last_of("/\\") != std::string::npos)

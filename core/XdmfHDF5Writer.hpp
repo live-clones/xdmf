@@ -53,13 +53,6 @@ public:
 	std::string getFilePath() const;
 
 	/**
-	 * Get the path to the last written data set written by this writer.
-	 *
-	 * @return the path to the last written data set.
-	 */
-	std::string getLastWrittenDataSet() const;
-
-	/**
 	 * Get the Mode of operation for this writer.
 	 *
 	 * @return the Mode of operation for this writer.

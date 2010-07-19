@@ -16,7 +16,6 @@ public:
 
 	XdmfHDF5WriterImpl(const std::string & hdf5FilePath) :
 		mFilePath(hdf5FilePath),
-		mLastWrittenDataSet(""),
 		mDataSetId(0),
 		mMode(Default)
 	{
@@ -26,7 +25,6 @@ public:
 	};
 	int mDataSetId;
 	std::string mFilePath;
-	std::string mLastWrittenDataSet;
 	Mode mMode;
 };
 
@@ -112,11 +110,6 @@ std::string XdmfHDF5Writer::getFilePath() const
 	return mImpl->mFilePath;
 }
 
-std::string XdmfHDF5Writer::getLastWrittenDataSet() const
-{
-	return mImpl->mLastWrittenDataSet;
-}
-
 XdmfHDF5Writer::Mode XdmfHDF5Writer::getMode() const
 {
 	return mImpl->mMode;
@@ -130,7 +123,6 @@ void XdmfHDF5Writer::setMode(const Mode mode)
 void XdmfHDF5Writer::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
 	hid_t datatype = -1;
-	mImpl->mLastWrittenDataSet = "";
 
 	if(array.mHaveArray)
 	{
@@ -139,10 +131,6 @@ void XdmfHDF5Writer::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVi
 	else if(array.mHaveArrayPointer)
 	{
 		datatype = boost::apply_visitor(GetHDF5Type(), array.mArrayPointer);
-	}
-	else if(array.mHDF5Controller)
-	{
-		mImpl->mLastWrittenDataSet = array.mHDF5Controller->getDataSetPath();
 	}
 
 	if(datatype != -1)
@@ -237,8 +225,6 @@ void XdmfHDF5Writer::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVi
 
 		std::stringstream writtenDataSet;
 		writtenDataSet << hdf5FilePath << ":" << dataSetName.str();
-
-		mImpl->mLastWrittenDataSet = writtenDataSet.str();
 
 		// Attach a new controller to the array if needed.
 		if(mImpl->mMode == Default || !array.mHDF5Controller)
