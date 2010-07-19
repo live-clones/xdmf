@@ -87,10 +87,14 @@ boost::shared_ptr<const XdmfArrayType> XdmfArrayType::New(const std::map<std::st
 		type = itemProperties.find("NumberType");
 	}
 	std::map<std::string, std::string>::const_iterator precision = itemProperties.find("Precision");
-	if(type != itemProperties.end() && precision != itemProperties.end())
+	if(type != itemProperties.end())
 	{
 		const std::string typeVal = type->second;
-		const unsigned int precisionVal = atoi(precision->second.c_str());
+		unsigned int precisionVal = 0;
+		if(precision != itemProperties.end())
+		{
+			precisionVal = atoi(precision->second.c_str());
+		}
 		if(typeVal.compare("None") == 0)
 		{
 			return Uninitialized();
@@ -103,21 +107,21 @@ boost::shared_ptr<const XdmfArrayType> XdmfArrayType::New(const std::map<std::st
 		{
 			return Int16();
 		}
-		else if(typeVal.compare("Int") == 0 && precisionVal == 4)
-		{
-			return Int32();
-		}
 		else if(typeVal.compare("Int") == 0 && precisionVal == 8)
 		{
 			return Int64();
 		}
-		else if(typeVal.compare("Float") == 0 && precisionVal == 4)
+		else if(typeVal.compare("Int") == 0)
 		{
-			return Float32();
+			return Int32();
 		}
 		else if(typeVal.compare("Float") == 0 && precisionVal == 8)
 		{
 			return Float64();
+		}
+		else if(typeVal.compare("Float") == 0)
+		{
+			return Float32();
 		}
 		else if(typeVal.compare("UChar") == 0)
 		{

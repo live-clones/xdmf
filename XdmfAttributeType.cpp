@@ -63,7 +63,11 @@ XdmfAttributeType::~XdmfAttributeType()
 
 boost::shared_ptr<const XdmfAttributeType> XdmfAttributeType::New(const std::map<std::string, std::string> & itemProperties)
 {
-	std::map<std::string, std::string>::const_iterator type = itemProperties.find("AttributeType");
+	std::map<std::string, std::string>::const_iterator type = itemProperties.find("Type");
+	if(type == itemProperties.end())
+	{
+		type = itemProperties.find("AttributeType");
+	}
 	if(type != itemProperties.end())
 	{
 		const std::string typeVal = type->second;
@@ -115,5 +119,5 @@ bool XdmfAttributeType::operator!=(const XdmfAttributeType & attributeType) cons
 
 void XdmfAttributeType::getProperties(std::map<std::string, std::string> & collectedProperties) const
 {
-	collectedProperties["AttributeType"] = mName;
+	collectedProperties["Type"] = mName;
 }

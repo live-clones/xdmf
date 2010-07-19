@@ -59,7 +59,6 @@ private:
 	XdmfTopology(const XdmfTopology & topology);  // Not implemented.
 	void operator=(const XdmfTopology & topology);  // Not implemented.
 
-	int mNumberElements;
 	boost::shared_ptr<const XdmfTopologyType> mTopologyType;
 };
 

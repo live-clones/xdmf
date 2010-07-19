@@ -3,6 +3,7 @@
 
 // Forward Declarations
 class XdmfGrid;
+class XdmfGridCollection;
 
 // Includes
 #include "XdmfItem.hpp"
@@ -26,8 +27,8 @@ public:
 	/**
 	 * Get a XdmfGrid attached to the domain.
 	 *
-	 * @param index an unsigned int of the grid to retrieve.
-	 * @return smart pointer to the grid at the specified index attached to this domain.
+	 * @param index of the grid to retrieve.
+	 * @return grid at the specified index attached to this domain.
 	 */
 	boost::shared_ptr<XdmfGrid> getGrid(const unsigned int index);
 
@@ -35,9 +36,25 @@ public:
 	 * Get a XdmfGrid attached to this domain (const version).
 	 *
 	 * @param index of the grid to retrieve.
-	 * @return pointer to the grid attached to this domain.
+	 * @return grid at the specified index attached to this domain.
 	 */
 	boost::shared_ptr<const XdmfGrid> getGrid(const unsigned int index) const;
+
+	/**
+	 * Get a XdmfGridCollection attached to the domain.
+	 *
+	 * @param index of the grid collection to retrieve.
+	 * @return grid collection at the specified index attached to this domain.
+	 */
+	boost::shared_ptr<XdmfGridCollection> getGridCollection(const unsigned int index);
+
+	/**
+	 * Get a XdmfGridCollection attached to the domain (const version).
+	 *
+	 * @param index of the grid collection to retrieve.
+	 * @return grid collection at the specified index attached to this domain.
+	 */
+	boost::shared_ptr<const XdmfGridCollection> getGridCollection(const unsigned int index) const;
 
 	std::map<std::string, std::string> getItemProperties() const;
 
@@ -48,7 +65,14 @@ public:
 	 *
 	 * @return unsigned int containing the number of XdmfGrids attached to this domain.
 	 */
-	unsigned int getNumberOfGrids() const;
+	unsigned int getNumberGrids() const;
+
+	/**
+	 * Get the number of XdmfGridCollections attached to this domain.
+	 *
+	 * @return unsigned int containing the number of XdmfGridCollections attached to this domain.
+	 */
+	unsigned int getNumberGridCollections() const;
 
 	/**
 	 * Insert a XdmfGrid into the domain.
@@ -58,11 +82,25 @@ public:
 	void insert(const boost::shared_ptr<XdmfGrid> grid);
 
 	/**
+	 * Insert a XdmfGridCollection into the domain.
+	 *
+	 * @param gridCollection a shared pointer to an XdmfGridCollection to insert into the domain.
+	 */
+	void insert(const boost::shared_ptr<XdmfGridCollection> gridCollection);
+
+	/**
 	 * Remove an XdmfGrid from the domain.
 	 *
 	 * @param index of the XdmfGrid to remove.
 	 */
 	void removeGrid(const unsigned int index);
+
+	/**
+	 * Remove an XdmfGridCollection from the domain.
+	 *
+	 * @param index of the XdmfGridCollection to remove.
+	 */
+	void removeGridCollection(const unsigned int index);
 
 	virtual void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor) const;
 
@@ -77,6 +115,7 @@ private:
 	void operator=(const XdmfDomain & domain);  // Not implemented.
 
 	std::vector<boost::shared_ptr<XdmfGrid> > mGrids;
+	std::vector<boost::shared_ptr<XdmfGridCollection> > mGridCollections;
 };
 
 #endif /* XDMFDOMAIN_HPP_ */

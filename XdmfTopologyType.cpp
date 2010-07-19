@@ -198,7 +198,12 @@ XdmfTopologyType::~XdmfTopologyType()
 
 boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::New(const std::map<std::string, std::string> & itemProperties)
 {
-	std::map<std::string, std::string>::const_iterator type = itemProperties.find("TopologyType");
+	std::map<std::string, std::string>::const_iterator type = itemProperties.find("Type");
+	if(type == itemProperties.end())
+	{
+		type = itemProperties.find("TopologyType");
+	}
+
 	std::map<std::string, std::string>::const_iterator nodesPerElement = itemProperties.find("NodesPerElement");
 	if(type != itemProperties.end())
 	{
@@ -345,7 +350,7 @@ unsigned int XdmfTopologyType::getNodesPerElement() const
 
 void XdmfTopologyType::getProperties(std::map<std::string, std::string> & collectedProperties) const
 {
-	collectedProperties["TopologyType"] = mName;
+	collectedProperties["Type"] = mName;
 	if(mName.compare("Polygon") == 0)
 	{
 		std::stringstream nodesPerElement;

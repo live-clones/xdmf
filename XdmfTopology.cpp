@@ -11,8 +11,7 @@
 #include "XdmfTopologyType.hpp"
 
 XdmfTopology::XdmfTopology() :
-	mTopologyType(XdmfTopologyType::NoTopologyType()),
-	mNumberElements(0)
+	mTopologyType(XdmfTopologyType::NoTopologyType())
 {
 	std::cout << "Created Topology " << this << std::endl;
 }
@@ -33,9 +32,12 @@ std::map<std::string, std::string> XdmfTopology::getItemProperties() const
 {
 	std::map<std::string, std::string> topologyProperties;
 	mTopologyType->getProperties(topologyProperties);
-	std::stringstream numElements;
-	numElements << this->getNumberElements();
-	topologyProperties["Dimensions"] = numElements.str();
+	if(mTopologyType != XdmfTopologyType::Polyvertex())
+	{
+		std::stringstream numElements;
+		numElements << this->getNumberElements();
+		topologyProperties["Dimensions"] = numElements.str();
+	}
 	return topologyProperties;
 }
 

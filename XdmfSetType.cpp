@@ -49,7 +49,11 @@ XdmfSetType::~XdmfSetType()
 
 boost::shared_ptr<const XdmfSetType> XdmfSetType::New(const std::map<std::string, std::string> & itemProperties)
 {
-	std::map<std::string, std::string>::const_iterator type = itemProperties.find("SetType");
+	std::map<std::string, std::string>::const_iterator type = itemProperties.find("Type");
+	if(type == itemProperties.end())
+	{
+		type = itemProperties.find("SetType");
+	}
 	if(type != itemProperties.end())
 	{
 		const std::string typeVal = type->second;
@@ -93,5 +97,5 @@ bool XdmfSetType::operator!=(const XdmfSetType & setType) const
 
 void XdmfSetType::getProperties(std::map<std::string, std::string> & collectedProperties) const
 {
-	collectedProperties["SetType"] = this->mName;
+	collectedProperties["Type"] = this->mName;
 }

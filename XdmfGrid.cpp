@@ -166,7 +166,7 @@ void XdmfGrid::populateItem(const std::map<std::string, std::string> & itemPrope
 	}
 	else
 	{
-		assert(false);
+		mName = "";
 	}
 	for(std::vector<boost::shared_ptr<XdmfItem> >::const_iterator iter = childItems.begin(); iter != childItems.end(); ++iter)
 	{

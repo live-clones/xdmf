@@ -220,6 +220,16 @@ public:
 		return toReturn.str();
 	}
 
+	std::string getValuesString(const unsigned char * const array, const int numValues) const
+	{
+		std::stringstream toReturn;
+		for(int i=0; i<numValues; ++i)
+		{
+			toReturn << (int)array[i] << " ";
+		}
+		return toReturn.str();
+	}
+
 	template<typename T>
 	std::string getValuesString(const T * const array, const int numValues) const
 	{
@@ -562,6 +572,26 @@ void XdmfArray::populateItem(const std::map<std::string, std::string> & itemProp
 	{
 		if(format->second.compare("HDF") == 0)
 		{
+			std::map<std::string, std::string>::const_iterator xmlDir = itemProperties.find("XMLDir");
+			if(xmlDir == itemProperties.end())
+			{
+				assert(false);
+			}
+			size_t colonLocation = contentVal.find(":");
+			if(colonLocation != std::string::npos)
+			{
+				size_t fileDir = contentVal.substr(0, colonLocation).find_last_of("/\\");
+				if(fileDir == std::string::npos)
+				{
+					std::stringstream newContentVal;
+					newContentVal << xmlDir->second << "/" << contentVal;
+					contentVal = newContentVal.str();
+				}
+			}
+			else
+			{
+				assert(false);
+			}
 			mHDF5Controller = XdmfHDF5Controller::New(contentVal, sizeVal, arrayType);
 		}
 		else if(format->second.compare("XML") == 0)

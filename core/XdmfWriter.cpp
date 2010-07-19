@@ -126,25 +126,56 @@ void XdmfWriter::setMode(const Mode mode)
 
 void XdmfWriter::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
-	std::stringstream xmlTextValues;
-
-	if(array.getHDF5Controller() && array.getHDF5Controller()->getFilePath().compare(mImpl->mHDF5Writer->getFilePath()) != 0 && mImpl->mMode == Default)
+	if(array.getSize() > 0)
 	{
-		array.read();
-	}
+		std::stringstream xmlTextValues;
 
-	if(array.getHDF5Controller() || array.getSize() > mImpl->mLightDataLimit)
-	{
-		mImpl->mHDF5Writer->visit(array, mImpl->mHDF5Writer);
-		xmlTextValues << mImpl->mHDF5Writer->getLastWrittenDataSet();
-	}
-	else
-	{
-		xmlTextValues << array.getValuesString();
-	}
+		if(array.getHDF5Controller() && array.getHDF5Controller()->getFilePath().compare(mImpl->mHDF5Writer->getFilePath()) != 0 && mImpl->mMode == Default)
+		{
+			array.read();
+		}
 
-	this->visit(dynamic_cast<XdmfItem &>(array), visitor);
-	xmlAddChild(mImpl->mXMLCurrentNode->last, xmlNewText((xmlChar*)xmlTextValues.str().c_str()));
+		if(array.getHDF5Controller() || array.getSize() > mImpl->mLightDataLimit)
+		{
+			mImpl->mHDF5Writer->visit(array, mImpl->mHDF5Writer);
+			std::string contentVal = mImpl->mHDF5Writer->getLastWrittenDataSet();
+			std::cout << contentVal << std::endl;
+			if(size_t colonLocation = contentVal.find(":") != std::string::npos)
+			{
+				if(size_t fileDir = contentVal.substr(0, colonLocation).find_last_of("/\\") != std::string::npos)
+				{
+					// Absolute Path
+					std::string cwd = XdmfObject::getCWD();
+					if(size_t relPathBegin = contentVal.find(cwd) != std::string::npos)
+					{
+						// Substitute Relative Path
+						xmlTextValues << contentVal.substr(cwd.size() + 1, contentVal.size() - cwd.size());
+					}
+					else
+					{
+						// Write Absolute Path
+						xmlTextValues << contentVal;
+					}
+				}
+				else
+				{
+					// Relative Path
+					xmlTextValues << contentVal;
+				}
+			}
+			else
+			{
+				assert(false);
+			}
+		}
+		else
+		{
+			xmlTextValues << array.getValuesString();
+		}
+
+		this->visit(dynamic_cast<XdmfItem &>(array), visitor);
+		xmlAddChild(mImpl->mXMLCurrentNode->last, xmlNewText((xmlChar*)xmlTextValues.str().c_str()));
+	}
 }
 
 void XdmfWriter::visit(XdmfItem & item, const boost::shared_ptr<XdmfBaseVisitor> visitor)

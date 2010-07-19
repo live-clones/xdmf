@@ -23,6 +23,13 @@ public:
 
 	virtual ~XdmfObject();
 
+	/**
+	 * Gets the current working directory Xdmf is running in.  This is useful for reading and writing files containing relative paths to hdf5 datasets.
+	 *
+	 * @return the current working directory.
+	 */
+	static std::string getCWD();
+
 protected:
 
 	XdmfObject();

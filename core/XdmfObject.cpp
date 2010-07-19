@@ -9,10 +9,15 @@
 
 XdmfObject::XdmfObject()
 {
-
 }
 
 XdmfObject::~XdmfObject()
 {
+}
 
+std::string XdmfObject::getCWD()
+{
+	char buffer[256];
+	getcwd(buffer, 256);
+	return buffer;
 }

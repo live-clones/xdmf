@@ -74,7 +74,12 @@ XdmfGeometryType::~XdmfGeometryType()
 
 boost::shared_ptr<const XdmfGeometryType> XdmfGeometryType::New(const std::map<std::string, std::string> & itemProperties)
 {
-	std::map<std::string, std::string>::const_iterator type = itemProperties.find("GeometryType");
+	std::map<std::string, std::string>::const_iterator type = itemProperties.find("Type");
+	if(type == itemProperties.end())
+	{
+		type = itemProperties.find("GeometryType");
+	}
+
 	if(type != itemProperties.end())
 	{
 		const std::string typeVal = type->second;
@@ -139,5 +144,5 @@ unsigned int XdmfGeometryType::getDimensions() const
 
 void XdmfGeometryType::getProperties(std::map<std::string, std::string> & collectedProperties) const
 {
-	collectedProperties["GeometryType"] = mName;
+	collectedProperties["Type"] = mName;
 }
