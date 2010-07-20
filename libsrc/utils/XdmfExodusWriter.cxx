@@ -126,6 +126,10 @@ std::string XdmfExodusWriter::DetermineExodusCellType(XdmfInt32 xdmfElementType)
     {
       return "QUAD";
     }
+    case(XDMF_QUAD_9):
+    {
+      return "QUAD";
+    }
     case(XDMF_TET_10):
     {
       return "TETRA";

@@ -178,8 +178,12 @@ if ( XDMF_WORD_CMP( topologyType, "NOTOPOLOGY") ){
   newTopologyType = XDMF_TRI_6;
 } else if( XDMF_WORD_CMP( topologyType, "QUAD_8") ){
   newTopologyType = XDMF_QUAD_8;
+} else if( XDMF_WORD_CMP( topologyType, "QUAD_9") ){
+  newTopologyType = XDMF_QUAD_9;
 } else if( XDMF_WORD_CMP( topologyType, "QUADRILATERAL_8") ){
   newTopologyType = XDMF_QUAD_8;
+} else if( XDMF_WORD_CMP( topologyType, "QUADRILATERAL_9") ){
+  newTopologyType = XDMF_QUAD_9;
 } else if( XDMF_WORD_CMP( topologyType, "TET_10") ){
   newTopologyType = XDMF_TET_10;
 } else if( XDMF_WORD_CMP( topologyType, "TETRAHEDRON_10") ){
@@ -251,6 +255,8 @@ XdmfTopology::GetTopologyTypeAsString( void ) {
       return("Triangle_6");
     case  XDMF_QUAD_8 :
       return("Quadrilateral_8");
+    case  XDMF_QUAD_9 :
+      return("Quadrilateral_9");
     case  XDMF_TET_10 :
       return("Tetrahedron_10");
     case  XDMF_PYRAMID_13 :
@@ -328,6 +334,9 @@ XdmfInt32  nodesPerElement = 0;
       break;
     case  XDMF_QUAD_8 :
       nodesPerElement = 8;
+      break;
+    case  XDMF_QUAD_9 :
+      nodesPerElement = 9;
       break;
     case  XDMF_TET_10 :
       nodesPerElement = 10;
@@ -507,6 +516,9 @@ if(this->TopologyType == XDMF_MIXED){
               break;
             case  XDMF_QUAD_8 :
               npe = 8;
+              break;
+            case  XDMF_QUAD_9 :
+              npe = 9;
               break;
             case  XDMF_TET_10 :
               npe = 10;
@@ -733,6 +745,8 @@ XdmfTopology::GetEdgesPerElement() {
       return 3;
     case  XDMF_QUAD_8 :
       return 4;
+    case  XDMF_QUAD_9 :
+      return 4;
     case  XDMF_TET_10 :
       return 6;
     case  XDMF_PYRAMID_13 :
@@ -785,6 +799,8 @@ XdmfTopology::GetFacesPerElement() {
     case  XDMF_TRI_6 :
       return 1;
     case  XDMF_QUAD_8 :
+      return 1;
+    case  XDMF_QUAD_9 :
       return 1;
     case  XDMF_TET_10 :
       return 4;

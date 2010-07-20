@@ -65,7 +65,7 @@ XdmfInt32 XdmfExodusReader::DetermineXdmfCellType(char * exoElemType, int numPoi
   {
     // VTK_QUADRATIC_QUAD with 9 points
     // Currently unsupported in Xdmf
-    return XDMF_QUAD_8;
+    return XDMF_QUAD_9;
   }
   else if (elemType.substr(0,3) == "TET" && numPointsPerCell == 10)
   {
@@ -103,7 +103,7 @@ XdmfInt32 XdmfExodusReader::DetermineXdmfCellType(char * exoElemType, int numPoi
   {
     // VTK_BIQUADRATIC_QUAD;
     // Currently unsupported in Xdmf
-    return XDMF_NOTOPOLOGY;
+    return XDMF_QUAD_9;
   }
   else if (elemType.substr(0,3) == "TRU" && numPointsPerCell == 3)
   {

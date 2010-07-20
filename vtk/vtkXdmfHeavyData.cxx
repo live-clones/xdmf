@@ -337,6 +337,8 @@ int vtkXdmfHeavyData::GetNumberOfPointsPerCell(int vtk_cell_type)
     return 6;
   case VTK_QUADRATIC_QUAD:
     return 8;
+  case VTK_BIQUADRATIC_QUAD:
+    return 9;
   case VTK_QUADRATIC_TETRA:
     return 10;
   case VTK_QUADRATIC_PYRAMID:
@@ -383,6 +385,8 @@ int vtkXdmfHeavyData::GetVTKCellType(XdmfInt32 topologyType)
     return VTK_QUADRATIC_TRIANGLE ;
   case  XDMF_QUAD_8 :
     return VTK_QUADRATIC_QUAD ;
+  case  XDMF_QUAD_9 :
+    return VTK_BIQUADRATIC_QUAD ;
   case  XDMF_TET_10 :
     return VTK_QUADRATIC_TETRA ;
   case  XDMF_PYRAMID_13 :

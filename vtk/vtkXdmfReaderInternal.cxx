@@ -480,6 +480,7 @@ int vtkXdmfDomain::GetDataDimensionality(XdmfGrid* xmfGrid)
   case XDMF_EDGE_3      :
   case XDMF_TRI_6       :
   case XDMF_QUAD_8      :
+  case XDMF_QUAD_9      :
   case XDMF_TET_10      :
   case XDMF_PYRAMID_13  :
   case XDMF_WEDGE_15    :

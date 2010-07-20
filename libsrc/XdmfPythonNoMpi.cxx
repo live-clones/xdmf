@@ -33679,6 +33679,7 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "XDMF_EDGE_3",SWIG_From_int(static_cast< int >(0x0022)));
   SWIG_Python_SetConstant(d, "XDMF_TRI_6",SWIG_From_int(static_cast< int >(0x0024)));
   SWIG_Python_SetConstant(d, "XDMF_QUAD_8",SWIG_From_int(static_cast< int >(0x0025)));
+  SWIG_Python_SetConstant(d, "XDMF_QUAD_9",SWIG_From_int(static_cast< int >(0x0023)));
   SWIG_Python_SetConstant(d, "XDMF_TET_10",SWIG_From_int(static_cast< int >(0x0026)));
   SWIG_Python_SetConstant(d, "XDMF_PYRAMID_13",SWIG_From_int(static_cast< int >(0x0027)));
   SWIG_Python_SetConstant(d, "XDMF_WEDGE_15",SWIG_From_int(static_cast< int >(0x0028)));
