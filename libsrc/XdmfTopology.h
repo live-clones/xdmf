@@ -47,6 +47,7 @@
 #define XDMF_EDGE_3         0x0022
 #define XDMF_TRI_6          0x0024
 #define XDMF_QUAD_8         0x0025
+#define XDMF_QUAD_9         0x0023
 #define XDMF_TET_10         0x0026
 #define XDMF_PYRAMID_13     0x0027
 #define XDMF_WEDGE_15       0x0028
