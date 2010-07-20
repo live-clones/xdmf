@@ -35,7 +35,21 @@ void XdmfDataItem::populateItem(const std::map<std::string, std::string> & itemP
 	{
 		if(boost::shared_ptr<XdmfArray> array = boost::shared_dynamic_cast<XdmfArray>(*iter))
 		{
-			this->setArray(array);
+			if(mArray->getSize() == 0)
+			{
+				this->setArray(array);
+			}
+			else
+			{
+				// Support old Xdmf format that could contain multiple data items.  Just append the values to the first array.
+				if(!mArray->isInitialized())
+				{
+					mArray->read();
+				}
+				const unsigned int oldSize = mArray->getSize();
+				mArray->resize(oldSize + array->getSize(), 0);
+				mArray->copyValues(oldSize, array, 0, array->getSize(), 1, 1);
+			}
 		}
 	}
 }
