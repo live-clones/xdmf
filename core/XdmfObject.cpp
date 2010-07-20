@@ -15,13 +15,6 @@ XdmfObject::~XdmfObject()
 {
 }
 
-std::string XdmfObject::getCWD()
-{
-	char buffer[256];
-	getcwd(buffer, 256);
-	return buffer;
-}
-
 std::string XdmfObject::getRealPath(const std::string & path)
 {
 	char realPath[PATH_MAX];

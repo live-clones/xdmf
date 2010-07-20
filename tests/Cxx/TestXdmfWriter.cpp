@@ -9,7 +9,6 @@ int main(int argc, char* argv[])
 
 	std::string realPath = XdmfObject::getRealPath("output.xmf");
 
-	std::cout << realPath << " " << writer->getFilePath() << std::endl;
 	assert(writer->getFilePath().compare(realPath) == 0);
 	writer->setLightDataLimit(10);
 	assert(writer->getLightDataLimit() == 10);

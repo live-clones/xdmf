@@ -117,15 +117,11 @@ XdmfCoreReader::~XdmfCoreReader()
 
 boost::shared_ptr<XdmfItem> XdmfCoreReader::read(const std::string & filePath) const
 {
-	std::string xmlDir = "";
-	size_t index = filePath.find_last_of("/\\");
+	std::string xmlDir = XdmfObject::getRealPath(filePath);
+	size_t index = xmlDir.find_last_of("/\\");
 	if(index != std::string::npos)
 	{
-	    xmlDir = filePath.substr(0, index);
-	}
-	else
-	{
-		xmlDir = XdmfObject::getCWD();
+	    xmlDir = xmlDir.substr(0, index + 1);
 	}
 
 	const xmlDocPtr document = xmlReadFile(filePath.c_str(), NULL, 0);

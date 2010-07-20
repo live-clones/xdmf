@@ -138,34 +138,19 @@ void XdmfWriter::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisito
 		if(array.getHDF5Controller() || array.getSize() > mImpl->mLightDataLimit)
 		{
 			mImpl->mHDF5Writer->visit(array, mImpl->mHDF5Writer);
-			std::string contentVal = array.getHDF5Controller()->getDataSetPath();
-			if(size_t colonLocation = contentVal.find(":") != std::string::npos)
+
+			std::string hdf5Path = array.getHDF5Controller()->getFilePath();
+			size_t index = hdf5Path.find_last_of("/\\");
+			if(index != std::string::npos)
 			{
-				if(size_t fileDir = contentVal.substr(0, colonLocation).find_last_of("/\\") != std::string::npos)
+				std::string hdf5Dir = hdf5Path.substr(0, index + 1);
+				if(mImpl->mXMLFilePath.find(hdf5Dir) == 0)
 				{
-					// Absolute Path
-					std::string cwd = XdmfObject::getCWD();
-					if(size_t relPathBegin = contentVal.find(cwd) != std::string::npos)
-					{
-						// Substitute Relative Path
-						xmlTextValues << contentVal.substr(cwd.size() + 1, contentVal.size() - cwd.size());
-					}
-					else
-					{
-						// Write Absolute Path
-						xmlTextValues << contentVal;
-					}
-				}
-				else
-				{
-					// Relative Path
-					xmlTextValues << contentVal;
+					hdf5Path = hdf5Path.substr(hdf5Dir.size(), hdf5Path.size() - hdf5Dir.size());
 				}
 			}
-			else
-			{
-				assert(false);
-			}
+
+			xmlTextValues << hdf5Path << ":" << array.getHDF5Controller()->getDataSetPath();
 		}
 		else
 		{

@@ -23,10 +23,10 @@ public:
 	/**
 	 * Read an Xdmf file from disk into memory.
 	 *
-	 * @param fileName the path on disk to the Xdmf file to read in.
+	 * @param filePath the path on disk to the Xdmf file to read in.
 	 * @return an XdmfItem at the root of the Xdmf tree.
 	 */
-	virtual boost::shared_ptr<XdmfItem> read(const std::string & fileName) const;
+	virtual boost::shared_ptr<XdmfItem> read(const std::string & filePath) const;
 
 protected:
 

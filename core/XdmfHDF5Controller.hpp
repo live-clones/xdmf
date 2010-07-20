@@ -24,23 +24,16 @@ public:
 	/**
 	 * Create a new controller for an hdf5 data set on disk.
 	 */
-	static boost::shared_ptr<XdmfHDF5Controller> New(const std::string & dataSetPath, const unsigned int size, const boost::shared_ptr<const XdmfArrayType> type)
+	static boost::shared_ptr<XdmfHDF5Controller> New(const std::string & hdf5FilePath, const std::string & dataSetPath, const unsigned int size, const boost::shared_ptr<const XdmfArrayType> type)
 	{
-		boost::shared_ptr<XdmfHDF5Controller> p(new XdmfHDF5Controller(dataSetPath, size, type));
+		boost::shared_ptr<XdmfHDF5Controller> p(new XdmfHDF5Controller(hdf5FilePath, dataSetPath, size, type));
 		return p;
 	}
 
 	/**
-	 * Get the name of the data set owned by this controller. For "/home/output.h5:/foo/data" this is "/foo/data"
+	 * Get the path of the data set within the hdf5 file owned by this controller. For "/home/output.h5:/foo/data" this is "/foo/data"
 	 *
-	 * @return a std::string containing the name of the data set.
-	 */
-	std::string getDataSetName() const;
-
-	/**
-	 * Get the absolute path to the hdf5 data set on disk owned by this controller. For "/home/output.h5:/foo/data" this is "/home/output.h5:/foo/data"
-	 *
-	 * @return a std::string to the hdf5 data set location on disk.
+	 * @return a std::string containing the path of the data set.
 	 */
 	std::string getDataSetPath() const;
 
@@ -74,14 +67,14 @@ public:
 
 protected:
 
-	XdmfHDF5Controller(const std::string & dataSetPath, const unsigned int size, const boost::shared_ptr<const XdmfArrayType> type);
+	XdmfHDF5Controller(const std::string & hdf5FilePath, const std::string & dataSetPath, const unsigned int size, const boost::shared_ptr<const XdmfArrayType> type);
 
 private:
 
 	XdmfHDF5Controller(const XdmfHDF5Controller & hdf5Controller);  // Not implemented.
 	void operator=(const XdmfHDF5Controller & hdf5Controller);  // Not implemented.
 
-	std::string mDataSetName;
+	std::string mDataSetPath;
 	std::string mFilePath;
 	unsigned int mSize;
 	boost::shared_ptr<const XdmfArrayType> mType;

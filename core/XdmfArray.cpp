@@ -580,19 +580,21 @@ void XdmfArray::populateItem(const std::map<std::string, std::string> & itemProp
 			size_t colonLocation = contentVal.find(":");
 			if(colonLocation != std::string::npos)
 			{
-				size_t fileDir = contentVal.substr(0, colonLocation).find_last_of("/\\");
-				if(fileDir == std::string::npos)
+				std::string hdf5Path = contentVal.substr(0, colonLocation);
+				std::string dataSetPath = contentVal.substr(colonLocation + 1, contentVal.size() - colonLocation - 1);
+				if(hdf5Path.compare(XdmfObject::getRealPath(hdf5Path)) != 0)
 				{
-					std::stringstream newContentVal;
-					newContentVal << xmlDir->second << "/" << contentVal;
-					contentVal = newContentVal.str();
+					// Dealing with a relative path for hdf5 location
+					std::stringstream newHDF5Path;
+					newHDF5Path << xmlDir->second << hdf5Path;
+					hdf5Path = newHDF5Path.str();
 				}
+				mHDF5Controller = XdmfHDF5Controller::New(hdf5Path, dataSetPath, sizeVal, arrayType);
 			}
 			else
 			{
 				assert(false);
 			}
-			mHDF5Controller = XdmfHDF5Controller::New(contentVal, sizeVal, arrayType);
 		}
 		else if(format->second.compare("XML") == 0)
 		{

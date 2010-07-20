@@ -136,17 +136,17 @@ void XdmfHDF5Writer::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVi
 	if(datatype != -1)
 	{
 		std::string hdf5FilePath = mImpl->mFilePath;
-		std::stringstream dataSetName;
+		std::stringstream dataSetPath;
 
 		if((mImpl->mMode == Overwrite || mImpl->mMode == Append) && array.mHDF5Controller)
 		{
 			// Write to the previous dataset
-			dataSetName << array.mHDF5Controller->getDataSetName();
+			dataSetPath << array.mHDF5Controller->getDataSetPath();
 			hdf5FilePath = array.mHDF5Controller->getFilePath();
 		}
 		else
 		{
-			dataSetName << "Data" << mImpl->mDataSetId;
+			dataSetPath << "Data" << mImpl->mDataSetId;
 		}
 
 		// Open a hdf5 dataset and write to it on disk.
@@ -168,7 +168,7 @@ void XdmfHDF5Writer::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVi
 		{
 			hdf5Handle = H5Fcreate(hdf5FilePath.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
 		}
-		hid_t dataset = H5Dopen(hdf5Handle, dataSetName.str().c_str(), H5P_DEFAULT);
+		hid_t dataset = H5Dopen(hdf5Handle, dataSetPath.str().c_str(), H5P_DEFAULT);
 
 		hid_t dataspace = H5S_ALL;
 		hid_t memspace = H5S_ALL;
@@ -180,7 +180,7 @@ void XdmfHDF5Writer::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVi
 			hid_t property = H5Pcreate(H5P_DATASET_CREATE);
 			hsize_t chunkSize = 1024;
 			status = H5Pset_chunk(property, 1, &chunkSize);
-			dataset = H5Dcreate(hdf5Handle, dataSetName.str().c_str(), datatype, memspace, H5P_DEFAULT, property, H5P_DEFAULT);
+			dataset = H5Dcreate(hdf5Handle, dataSetPath.str().c_str(), datatype, memspace, H5P_DEFAULT, property, H5P_DEFAULT);
 			status = H5Pclose(property);
 		}
 		else
@@ -223,14 +223,10 @@ void XdmfHDF5Writer::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVi
 		// Restore previous error handler
 		H5Eset_auto2(0, old_func, old_client_data);
 
-		std::stringstream writtenDataSet;
-		writtenDataSet << hdf5FilePath << ":" << dataSetName.str();
-
 		// Attach a new controller to the array if needed.
 		if(mImpl->mMode == Default || !array.mHDF5Controller)
 		{
-			boost::shared_ptr<XdmfHDF5Controller> newDataSetController = XdmfHDF5Controller::New(writtenDataSet.str(),
-					array.getSize(), array.getType());
+			boost::shared_ptr<XdmfHDF5Controller> newDataSetController = XdmfHDF5Controller::New(hdf5FilePath, dataSetPath.str(), array.getSize(), array.getType());
 			array.setHDF5Controller(newDataSetController);
 			mImpl->mDataSetId++;
 		}
