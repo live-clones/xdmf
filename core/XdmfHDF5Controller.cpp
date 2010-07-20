@@ -23,6 +23,7 @@ XdmfHDF5Controller::XdmfHDF5Controller(const std::string & dataSetPath, const un
 		{
 			assert(false);
 		}
+		mFilePath = XdmfObject::getRealPath(mFilePath);
 	}
 	else
 	{

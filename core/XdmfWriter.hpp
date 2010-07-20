@@ -61,7 +61,7 @@ public:
 	}
 
 	/**
-	 * Get the path to the XML file on disk this writer is writing to.
+	 * Get the absolute path to the XML file on disk this writer is writing to.
 	 *
 	 * @return a std::string containing the path to the XML file on disk this writer is writing to.
 	 */

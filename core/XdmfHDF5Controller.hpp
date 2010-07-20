@@ -31,21 +31,21 @@ public:
 	}
 
 	/**
-	 * Get the name of the data set owned by this controller.
+	 * Get the name of the data set owned by this controller. For "/home/output.h5:/foo/data" this is "/foo/data"
 	 *
 	 * @return a std::string containing the name of the data set.
 	 */
 	std::string getDataSetName() const;
 
 	/**
-	 * Get the path to the hdf5 data set on disk owned by this controller.
+	 * Get the absolute path to the hdf5 data set on disk owned by this controller. For "/home/output.h5:/foo/data" this is "/home/output.h5:/foo/data"
 	 *
 	 * @return a std::string to the hdf5 data set location on disk.
 	 */
 	std::string getDataSetPath() const;
 
 	/**
-	 * Get the path to the hdf5 file on disk where the data set owned by this controller resides.
+	 * Get the absolute path to the hdf5 file on disk where the data set owned by this controller resides. For "/home/output.h5:/foo/data" this is "/home/output.h5"
 	 *
 	 * @return a std::string containing the path to the hdf5 file.
 	 */

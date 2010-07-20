@@ -21,3 +21,10 @@ std::string XdmfObject::getCWD()
 	getcwd(buffer, 256);
 	return buffer;
 }
+
+std::string XdmfObject::getRealPath(const std::string & path)
+{
+	char realPath[PATH_MAX];
+	realpath(path.c_str(), realPath);
+	return realPath;
+}

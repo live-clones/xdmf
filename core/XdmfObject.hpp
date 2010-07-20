@@ -30,6 +30,14 @@ public:
 	 */
 	static std::string getCWD();
 
+	/**
+	 * Converts a filesystem path to an absolute real path (absolute path with no symlinks)
+	 *
+	 * @param path a string containing the path to convert.
+	 * @return the equivalent real path.
+	 */
+	static std::string getRealPath(const std::string & path);
+
 protected:
 
 	XdmfObject();

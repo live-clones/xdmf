@@ -22,10 +22,10 @@ public:
 		mMode(Default),
 		mXMLCurrentNode(NULL),
 		mXMLDocument(NULL),
-		mXMLFilePath(xmlFilePath),
 		mXPathCount(0),
 		mXPathString("")
 	{
+		mXMLFilePath = XdmfObject::getRealPath(xmlFilePath);
 	};
 
 	~XdmfWriterImpl()
