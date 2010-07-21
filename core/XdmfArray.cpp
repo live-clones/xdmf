@@ -546,7 +546,7 @@ void XdmfArray::internalizeArrayPointer()
 void XdmfArray::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems)
 {
 	std::string contentVal;
-	unsigned int sizeVal;
+	unsigned int sizeVal = 1;
 
 	const boost::shared_ptr<const XdmfArrayType> arrayType = XdmfArrayType::New(itemProperties);
 	std::map<std::string, std::string>::const_iterator content = itemProperties.find("Content");
@@ -561,7 +561,11 @@ void XdmfArray::populateItem(const std::map<std::string, std::string> & itemProp
 	std::map<std::string, std::string>::const_iterator size = itemProperties.find("Dimensions");
 	if(size != itemProperties.end())
 	{
-		sizeVal = atoi(size->second.c_str());
+		boost::tokenizer<> tokens(size->second);
+		for(boost::tokenizer<>::const_iterator iter = tokens.begin(); iter != tokens.end(); ++iter)
+		{
+			sizeVal *= atoi((*iter).c_str());
+		}
 	}
 	else
 	{
