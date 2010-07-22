@@ -1,4 +1,3 @@
-#include "XdmfArray.hpp"
 #include "XdmfAttribute.hpp"
 #include "XdmfDomain.hpp"
 #include "XdmfGeometry.hpp"
@@ -20,12 +19,14 @@ XdmfItemFactory::~XdmfItemFactory()
 
 boost::shared_ptr<XdmfItem> XdmfItemFactory::createItem(const std::string & itemTag, const std::map<std::string, std::string> & itemProperties) const
 {
-	boost::shared_ptr<XdmfItem> newItem;
-	if(itemTag.compare(XdmfArray::ItemTag) == 0)
+	boost::shared_ptr<XdmfItem> newItem = XdmfCoreItemFactory::createItem(itemTag, itemProperties);
+
+	if(newItem != NULL)
 	{
-		newItem = XdmfArray::New();
+		return newItem;
 	}
-	else if(itemTag.compare(XdmfAttribute::ItemTag) == 0)
+
+	if(itemTag.compare(XdmfAttribute::ItemTag) == 0)
 	{
 		newItem = XdmfAttribute::New();
 	}
@@ -64,10 +65,6 @@ boost::shared_ptr<XdmfItem> XdmfItemFactory::createItem(const std::string & item
 	else if(itemTag.compare(XdmfTopology::ItemTag) == 0)
 	{
 		newItem = XdmfTopology::New();
-	}
-	else
-	{
-		assert(false);
 	}
 	return newItem;
 }

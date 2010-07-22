@@ -5,6 +5,7 @@
 class XdmfGridCollectionType;
 
 // Includes
+#include "XdmfDomain.hpp"
 #include "XdmfGrid.hpp"
 
 /**
@@ -15,7 +16,7 @@ class XdmfGridCollectionType;
  *
  * It is valid to nest collections.  A spatial collection within a temporal collection is commonly used.
  */
-class XdmfGridCollection : public XdmfGrid {
+class XdmfGridCollection : public XdmfGrid, public XdmfDomain {
 
 public:
 
@@ -25,30 +26,9 @@ public:
 	LOKI_DEFINE_VISITABLE(XdmfGridCollection, XdmfGrid)
 	static const std::string ItemTag;
 
-	/**
-	 * Get a grid from this collection.
-	 *
-	 * @param index of grid to retrieve.
-	 * @return the requested XdmfGrid.
-	 */
-	boost::shared_ptr<XdmfGrid> getGrid(const unsigned int index);
-
-	/**
-	 * Get a grid from this collection (const version).
-	 *
-	 * @param index of the grid to retrieve.
-	 * @return the requested XdmfGrid.
-	 */
-	boost::shared_ptr<const XdmfGrid> getGrid(const unsigned int index) const;
-
 	std::map<std::string, std::string> getItemProperties() const;
 
-	/**
-	 * Get the number of grids in this collection.
-	 *
-	 * @return unsigned int containing the number of XdmfGrids in this collection.
-	 */
-	unsigned int getNumberOfGrids() const;
+	std::string getItemTag() const;
 
 	/**
 	 * Get the XdmfGridCollectionType associated with this grid collection.
@@ -57,19 +37,8 @@ public:
 	 */
 	boost::shared_ptr<const XdmfGridCollectionType> getType() const;
 
-	/**
-	 * Insert a grid into this collection.
-	 *
-	 * @param grid an XdmfGrid to insert into this collection.
-	 */
-	void insert(const boost::shared_ptr<XdmfGrid> grid);
-
-	/**
-	 * Remove a grid from this collection.
-	 *
-	 * @param index of the XdmfGrid to remove.
-	 */
-	void removeGrid(const unsigned int index);
+	using XdmfDomain::insert;
+	using XdmfGrid::insert;
 
 	/**
 	 * Set the XdmfGridCollectionType associated with this grid collection.
@@ -78,7 +47,7 @@ public:
 	 */
 	void setType(const boost::shared_ptr<const XdmfGridCollectionType> collectionType);
 
-	virtual void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor) const;
+	void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor) const;
 
 protected:
 
@@ -91,7 +60,6 @@ private:
 	void operator=(const XdmfGridCollection & collection);  // Not implemented.
 
 	boost::shared_ptr<const XdmfGridCollectionType> mCollectionType;
-	std::vector<boost::shared_ptr<XdmfGrid> > mGrids;
 };
 
 #endif /* XDMFGRID_HPP_ */

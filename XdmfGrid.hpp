@@ -19,7 +19,7 @@ class XdmfTopology;
  * into the XdmfGrid to specify values attached at various parts of the mesh.  XdmfSets can be inserted in the XdmfGrid
  * to specify collections of mesh elements.
  */
-class XdmfGrid : public XdmfItem {
+class XdmfGrid : public virtual XdmfItem {
 
 public:
 
@@ -77,7 +77,7 @@ public:
 
 	std::map<std::string, std::string> getItemProperties() const;
 
-	std::string getItemTag() const;
+	virtual std::string getItemTag() const;
 
 	/**
 	 * Get the name of the grid.

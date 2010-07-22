@@ -94,6 +94,10 @@ private:
 			}
 			std::vector<boost::shared_ptr<XdmfItem> > childItems = this->read(currNode->children, xPathContext, xPathMap, xmlDir);
 			boost::shared_ptr<XdmfItem> newItem = mItemFactory->createItem((const char *)currNode->name, itemProperties);
+			if(newItem == NULL)
+			{
+				assert(false);
+			}
 			newItem->populateItem(itemProperties, childItems);
 			myItems.push_back(newItem);
 			xPathMap[currNode] = newItem;

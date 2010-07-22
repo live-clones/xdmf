@@ -466,7 +466,7 @@ int main(int argc, char* argv[])
 	boost::shared_ptr<XdmfReader> reader = XdmfReader::New();
 	boost::shared_ptr<XdmfDomain> domain = boost::shared_dynamic_cast<XdmfDomain>(reader->read(argv[1]));
 
-	if(domain->getNumberOfGrids() <= 0)
+	if(domain->getNumberGrids() <= 0)
 	{
 		std::cout << "No grids to partition" << std::endl;
 		return 1;

@@ -92,10 +92,6 @@ void XdmfDomain::populateItem(const std::map<std::string, std::string> & itemPro
 		{
 			this->insert(grid);
 		}
-		else
-		{
-			assert(false);
-		}
 	}
 }
 

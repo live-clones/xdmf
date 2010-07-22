@@ -28,22 +28,23 @@ class XdmfHDF5Writer : public XdmfVisitor,
 
 public:
 
-	virtual ~XdmfHDF5Writer();
-
-	enum Mode {
-		Default, Overwrite, Append
-	};
-
 	/**
 	 * Construct XdmfHDF5Writer
 	 *
 	 * @param hdf5FilePath the location of the hdf5 file to output to on disk.
+	 * @return new XdmfHDF5Writer
 	 */
 	static boost::shared_ptr<XdmfHDF5Writer> New(const std::string & hdf5FilePath)
 	{
 		boost::shared_ptr<XdmfHDF5Writer> p(new XdmfHDF5Writer(hdf5FilePath));
 		return p;
 	}
+
+	virtual ~XdmfHDF5Writer();
+
+	enum Mode {
+		Default, Overwrite, Append
+	};
 
 	/**
 	 * Get the path to the hdf5 file on disk this writer is writing to.

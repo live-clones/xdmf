@@ -190,10 +190,6 @@ void XdmfGrid::populateItem(const std::map<std::string, std::string> & itemPrope
 		{
 			mTopology = topology;
 		}
-		else
-		{
-			//assert(false);
-		}
 	}
 }
 

@@ -17,12 +17,6 @@ public:
 	XdmfNewMacro(XdmfItemFactory);
 	virtual ~XdmfItemFactory();
 
-	/**
-	 * Create a new XdmfItem.
-	 *
-	 * @param itemTag a string containing the tag of the XdmfItem to create.
-	 * @param itemProperties a map of key/value properties for the the XdmfItem.
-	 */
 	virtual boost::shared_ptr<XdmfItem> createItem(const std::string & itemTag, const std::map<std::string, std::string> & itemProperties) const;
 
 protected:

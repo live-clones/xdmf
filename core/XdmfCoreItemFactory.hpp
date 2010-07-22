@@ -24,8 +24,9 @@ public:
 	 *
 	 * @param itemTag a string containing the tag of the XdmfItem to create.
 	 * @param itemProperties a map of key/value properties for the the XdmfItem.
+	 * @return constructed XdmfItem.  If no XdmfItem can be constructed, return NULL.
 	 */
-	virtual boost::shared_ptr<XdmfItem> createItem(const std::string & itemTag, const std::map<std::string, std::string> & itemProperties) const = 0;
+	virtual boost::shared_ptr<XdmfItem> createItem(const std::string & itemTag, const std::map<std::string, std::string> & itemProperties) const;
 
 protected:
 
