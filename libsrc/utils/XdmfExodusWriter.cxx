@@ -511,25 +511,25 @@ void XdmfExodusWriter::write(const char * fileName, XdmfGrid * gridToWrite)
     {
       case(XDMF_SET_TYPE_CELL):
       {
-        ex_put_side_set_param(exodusHandle, setId, numValues, 0);
+        ex_put_side_set_param(exodusHandle, setId + i, numValues, 0);
         int * values = new int[numValues];
         // Add 1 to xdmf ids because exodus ids begin at 1
         *currSet->GetIds() + 1;
         currSet->GetIds()->GetValues(0, values, numValues);
         ex_put_side_set(exodusHandle, setId + i, values, NULL);
-        ex_put_name(exodusHandle, EX_SIDE_SET, setId, name.c_str());
+        ex_put_name(exodusHandle, EX_SIDE_SET, setId + i, name.c_str());
         delete [] values;
         break;
       }
       case(XDMF_SET_TYPE_NODE):
       {
-        ex_put_node_set_param(exodusHandle, setId, numValues, 0);
+        ex_put_node_set_param(exodusHandle, setId + i, numValues, 0);
         int * values = new int[numValues];
         // Add 1 to xdmf ids because exodus ids begin at 1
         *currSet->GetIds() + 1;
         currSet->GetIds()->GetValues(0, values, numValues);
         ex_put_node_set(exodusHandle, setId + i, values);
-        ex_put_name(exodusHandle, EX_NODE_SET, setId, name.c_str());
+        ex_put_name(exodusHandle, EX_NODE_SET, setId + i, name.c_str());
         delete [] values;
         break;
       }
