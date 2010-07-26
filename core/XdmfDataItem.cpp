@@ -11,12 +11,10 @@
 XdmfDataItem::XdmfDataItem() :
 	mArray(XdmfArray::New())
 {
-	std::cout << "Created DataItem " << this << std::endl;
 }
 
 XdmfDataItem::~XdmfDataItem()
 {
-	std::cout << "Deleted DataItem " << this << std::endl;
 }
 
 boost::shared_ptr<XdmfArray> XdmfDataItem::getArray()

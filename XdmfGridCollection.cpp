@@ -12,12 +12,10 @@ XdmfGridCollection::XdmfGridCollection() :
 	mCollectionType(XdmfGridCollectionType::NoCollectionType())
 {
 	mName = "Collection";
-	std::cout << "Created Collection " << this << std::endl;
 }
 
 XdmfGridCollection::~XdmfGridCollection()
 {
-  std::cout << "Deleted Collection " << this << std::endl;
 }
 
 const std::string XdmfGridCollection::ItemTag = "Grid";

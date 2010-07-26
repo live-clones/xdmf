@@ -11,12 +11,10 @@
 
 XdmfDomain::XdmfDomain()
 {
-	std::cout << "Created Domain " << this << std::endl;
 }
 
 XdmfDomain::~XdmfDomain()
 {
-  std::cout << "Deleted Domain " << this << std::endl;
 }
 
 const std::string XdmfDomain::ItemTag = "Domain";

@@ -14,12 +14,10 @@ XdmfAttribute::XdmfAttribute() :
 	mAttributeType(XdmfAttributeType::NoAttributeType()),
 	mAttributeCenter(XdmfAttributeCenter::Grid())
 {
-	std::cout << "Created Attribute " << this << std::endl;
 }
 
 XdmfAttribute::~XdmfAttribute()
 {
-	std::cout << "Deleted Attribute " << this << std::endl;
 }
 
 const std::string XdmfAttribute::ItemTag = "Attribute";

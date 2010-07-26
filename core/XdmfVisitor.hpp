@@ -6,7 +6,6 @@ class XdmfItem;
 
 // Includes
 #include <loki/Visitor.h>
-#include "XdmfObject.hpp"
 
 /**
  * @brief Perform an operation on an Xdmf graph structure.
@@ -14,8 +13,7 @@ class XdmfItem;
  * XdmfVisitor is an abstract base class for any operation that operates on an Xdmf graph structure.  These operations could
  * involve writing to disk or modifying the structure in some way.
  */
-class XdmfVisitor : public XdmfObject,
-	public XdmfBaseVisitor,
+class XdmfVisitor : public XdmfBaseVisitor,
 	public Loki::Visitor<XdmfItem> {
 
 public:

@@ -31,7 +31,7 @@ set(XdmfCoreSources
 	XdmfInformation
 	XdmfItem
 	XdmfItemProperty
-	XdmfObject
+	XdmfSystemUtils
 	XdmfVisitor
 	XdmfWriter
 )

@@ -20,7 +20,17 @@ class XdmfGridCollection : public XdmfGrid, public XdmfDomain {
 
 public:
 
-	XdmfNewMacro(XdmfGridCollection);
+	/**
+	 * Create a new XdmfGridCollection.
+	 *
+	 * @return constructed XdmfGridCollection.
+	 */
+	static boost::shared_ptr<XdmfGridCollection> New()
+	{
+		boost::shared_ptr<XdmfGridCollection> p(new XdmfGridCollection());
+		return p;
+	};
+
 	virtual ~XdmfGridCollection();
 
 	LOKI_DEFINE_VISITABLE(XdmfGridCollection, XdmfGrid)

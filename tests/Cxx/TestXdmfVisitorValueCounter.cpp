@@ -8,7 +8,17 @@ class XdmfVisitorValueCounter : public XdmfVisitor,
 
 public:
 
-	XdmfNewMacro(XdmfVisitorValueCounter);
+	/**
+	 * Create a new XdmfVisitorValueCounter.
+	 *
+	 * @return constructed XdmfVisitorValueCounter.
+	 */
+	static boost::shared_ptr<XdmfVisitorValueCounter> New()
+	{
+		boost::shared_ptr<XdmfVisitorValueCounter> p(new XdmfVisitorValueCounter());
+		return p;
+	};
+
 	~XdmfVisitorValueCounter()
 	{
 	};

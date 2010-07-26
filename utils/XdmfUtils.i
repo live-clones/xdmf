@@ -16,7 +16,6 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
 	#include <XdmfInformation.hpp>
 	#include <XdmfItem.hpp>
 	#include <XdmfItemProperty.hpp>
-	#include <XdmfObject.hpp>
 	#include <XdmfVisitor.hpp>
 	#include <XdmfWriter.hpp>
 

@@ -96,13 +96,11 @@ public:
 XdmfHDF5Writer::XdmfHDF5Writer(const std::string & hdf5FilePath) :
 	mImpl(new XdmfHDF5WriterImpl(hdf5FilePath))
 {
-	std::cout << "Created XdmfHDF5Writer " << this << std::endl;
 }
 
 XdmfHDF5Writer::~XdmfHDF5Writer()
 {
 	delete mImpl;
-	std::cout << "Deleted XdmfHDF5Writer " << this << std::endl;
 }
 
 std::string XdmfHDF5Writer::getFilePath() const

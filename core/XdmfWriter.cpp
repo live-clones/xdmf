@@ -7,6 +7,7 @@
 #include "XdmfItem.hpp"
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfHDF5Writer.hpp"
+#include "XdmfSystemUtils.hpp"
 #include "XdmfWriter.hpp"
 
 /**
@@ -25,7 +26,7 @@ public:
 		mXPathCount(0),
 		mXPathString("")
 	{
-		mXMLFilePath = XdmfObject::getRealPath(xmlFilePath);
+		mXMLFilePath = XdmfSystemUtils::getRealPath(xmlFilePath);
 	};
 
 	~XdmfWriterImpl()
@@ -74,19 +75,16 @@ XdmfWriter::XdmfWriter(const std::string & xmlFilePath)
 	}
 	boost::shared_ptr<XdmfHDF5Writer> hdf5Writer = XdmfHDF5Writer::New(heavyFileName.str());
 	mImpl = new XdmfWriterImpl(xmlFilePath, hdf5Writer);
-	std::cout << "Created XdmfWriter " << this << std::endl;
 }
 
 XdmfWriter::XdmfWriter(const std::string & xmlFilePath, boost::shared_ptr<XdmfHDF5Writer> hdf5Writer) :
 	mImpl(new XdmfWriterImpl(xmlFilePath, hdf5Writer))
 {
-	std::cout << "Created XdmfWriter " << this << std::endl;
 }
 
 XdmfWriter::~XdmfWriter()
 {
 	delete mImpl;
-	std::cout << "Deleted XdmfWriter " << this << std::endl;
 }
 
 boost::shared_ptr<XdmfHDF5Writer> XdmfWriter::getHDF5Writer()

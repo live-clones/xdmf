@@ -18,7 +18,17 @@ class XdmfDomain : public virtual XdmfItem {
 
 public:
 
-	XdmfNewMacro(XdmfDomain);
+	/**
+	 * Create a new XdmfDomain.
+	 *
+	 * @return constructed XdmfDomain.
+	 */
+	static boost::shared_ptr<XdmfDomain> New()
+	{
+		boost::shared_ptr<XdmfDomain> p(new XdmfDomain());
+		return p;
+	};
+
 	virtual ~XdmfDomain();
 
 	LOKI_DEFINE_VISITABLE(XdmfDomain, XdmfItem)

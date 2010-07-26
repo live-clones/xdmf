@@ -5,15 +5,15 @@
 class XdmfItem;
 
 // Includes
+#include <boost/shared_ptr.hpp>
 #include <map>
-#include "XdmfObject.hpp"
 
 /**
  * @brief Factory that constructs XdmfItems using tags and properties.
  *
  * XdmfCoreItemFactory is an abstract base class.
  */
-class XdmfCoreItemFactory : public XdmfObject {
+class XdmfCoreItemFactory {
 
 public:
 

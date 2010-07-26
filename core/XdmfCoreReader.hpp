@@ -6,7 +6,8 @@ class XdmfCoreItemFactory;
 class XdmfItem;
 
 // Includes
-#include "XdmfObject.hpp"
+#include <boost/shared_ptr.hpp>
+#include <string>
 
 /**
  * @brief Reads an Xdmf structured file stored on disk into memory.
@@ -14,7 +15,7 @@ class XdmfItem;
  * Reads an Xdmf structured file stored on disk into an Xdmf structure in memory.  All light data is parsed in order to create appropriate
  * Xdmf objects.  Heavy data controllers are created and attached to XdmfArrays but no heavy data is read into memory.
  */
-class XdmfCoreReader : public XdmfObject {
+class XdmfCoreReader {
 
 public:
 

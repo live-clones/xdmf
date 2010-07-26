@@ -23,7 +23,17 @@ class XdmfGrid : public virtual XdmfItem {
 
 public:
 
-	XdmfNewMacro(XdmfGrid);
+	/**
+	 * Create a new XdmfGrid.
+	 *
+	 * @return constructed XdmfGrid.
+	 */
+	static boost::shared_ptr<XdmfGrid> New()
+	{
+		boost::shared_ptr<XdmfGrid> p(new XdmfGrid());
+		return p;
+	};
+
 	virtual ~XdmfGrid();
 
 	LOKI_DEFINE_VISITABLE(XdmfGrid, XdmfItem)

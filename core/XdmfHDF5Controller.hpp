@@ -5,9 +5,6 @@
 class XdmfArray;
 class XdmfArrayType;
 
-// Includes
-#include "XdmfObject.hpp"
-
 /**
  * @brief Couples an XdmfArray with HDF5 data stored on disk.
  *
@@ -15,7 +12,7 @@ class XdmfArrayType;
  * written to disk an XdmfHDF5Controller is attached to XdmfArrays.  This allows data to be released
  * from memory but still be accessible or have its location written to light data.
  */
-class XdmfHDF5Controller : public XdmfObject {
+class XdmfHDF5Controller {
 
 public:
 

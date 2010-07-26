@@ -18,7 +18,17 @@ class XdmfAttribute : public XdmfDataItem {
 
 public:
 
-	XdmfNewMacro(XdmfAttribute);
+	/**
+	 * Create a new XdmfAttribute.
+	 *
+	 * @return constructed XdmfAttribute.
+	 */
+	static boost::shared_ptr<XdmfAttribute> New()
+	{
+		boost::shared_ptr<XdmfAttribute> p(new XdmfAttribute());
+		return p;
+	};
+
 	virtual ~XdmfAttribute();
 
 	LOKI_DEFINE_VISITABLE(XdmfAttribute, XdmfDataItem)

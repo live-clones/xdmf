@@ -13,12 +13,10 @@ XdmfGeometry::XdmfGeometry() :
 	mGeometryType(XdmfGeometryType::NoGeometryType()),
 	mNumberPoints(0)
 {
-	std::cout << "Created Geometry " << this << std::endl;
 }
 
 XdmfGeometry::~XdmfGeometry()
 {
-	std::cout << "Deleted Geometry " << this << std::endl;
 }
 
 const std::string XdmfGeometry::ItemTag = "Geometry";

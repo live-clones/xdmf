@@ -14,7 +14,17 @@ class XdmfReader : public XdmfCoreReader {
 
 public:
 
-	XdmfNewMacro(XdmfReader);
+	/**
+	 * Create a new XdmfReader.
+	 *
+	 * @return constructed XdmfReader.
+	 */
+	static boost::shared_ptr<XdmfReader> New()
+	{
+		boost::shared_ptr<XdmfReader> p(new XdmfReader());
+		return p;
+	};
+
 	virtual ~XdmfReader();
 
 protected:

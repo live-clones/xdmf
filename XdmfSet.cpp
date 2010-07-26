@@ -12,12 +12,10 @@ XdmfSet::XdmfSet() :
 	mSetType(XdmfSetType::NoSetType()),
 	mName("")
 {
-	std::cout << "Created Set " << this << std::endl;
 }
 
 XdmfSet::~XdmfSet()
 {
-	std::cout << "Deleted Set " << this << std::endl;
 }
 
 const std::string XdmfSet::ItemTag = "Set";

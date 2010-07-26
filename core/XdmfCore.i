@@ -15,7 +15,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 	#include <XdmfInformation.hpp>
 	#include <XdmfItem.hpp>
 	#include <XdmfItemProperty.hpp>
-	#include <XdmfObject.hpp>
+	#include <XdmfSystemUtils.hpp>
 	#include <XdmfVisitor.hpp>
 	#include <XdmfWriter.hpp>
 %}
@@ -37,7 +37,6 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %shared_ptr(XdmfInformation)
 %shared_ptr(XdmfItem)
 %shared_ptr(XdmfItemProperty)
-%shared_ptr(XdmfObject)
 %shared_ptr(XdmfVisitor)
 %shared_ptr(XdmfWriter)
 
@@ -45,8 +44,6 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %template() Loki::BaseVisitable<void>;
 %template() Loki::Visitor<XdmfArray>;
 %template() Loki::Visitor<XdmfItem>;
-
-%include XdmfObject.hpp
 
 %include XdmfItem.hpp
 %include XdmfDataItem.hpp

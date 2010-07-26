@@ -6,13 +6,14 @@
 #include "XdmfArray.hpp"
 #include "XdmfArrayType.hpp"
 #include "XdmfHDF5Controller.hpp"
+#include "XdmfSystemUtils.hpp"
 
 XdmfHDF5Controller::XdmfHDF5Controller(const std::string & hdf5FilePath, const std::string & dataSetPath, const unsigned int size, const boost::shared_ptr<const XdmfArrayType> type) :
 	mDataSetPath(dataSetPath),
 	mSize(size),
 	mType(type)
 {
-	mFilePath = XdmfObject::getRealPath(hdf5FilePath);
+	mFilePath = XdmfSystemUtils::getRealPath(hdf5FilePath);
 }
 
 XdmfHDF5Controller::~XdmfHDF5Controller()

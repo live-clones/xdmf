@@ -6,19 +6,26 @@ class XdmfGrid;
 class XdmfGridCollection;
 class XdmfHDF5Writer;
 
-// Includes
-#include "XdmfObject.hpp"
-
 /*!
  * @brief XdmfPartitioner partitions an XdmfGrid using the metis library.
  *
  * XdmfPartitioner uses the metis library to partition XdmfGrids.
  */
-class XdmfPartitioner : public XdmfObject {
+class XdmfPartitioner {
 
 public:
 
-	XdmfNewMacro(XdmfPartitioner);
+	/**
+	 * Create a new XdmfPartitioner.
+	 *
+	 * @return constructed XdmfPartitioner.
+	 */
+	static boost::shared_ptr<XdmfPartitioner> New()
+	{
+		boost::shared_ptr<XdmfPartitioner> p(new XdmfPartitioner());
+		return p;
+	};
+
 	virtual ~XdmfPartitioner();
 
 	/**

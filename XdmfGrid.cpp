@@ -18,12 +18,10 @@ XdmfGrid::XdmfGrid() :
 	mTopology(XdmfTopology::New()),
 	mName("Grid")
 {
-	std::cout << "Created Grid " << this << std::endl;
 }
 
 XdmfGrid::~XdmfGrid()
 {
-  std::cout << "Deleted Grid " << this << std::endl;
 }
 
 const std::string XdmfGrid::ItemTag = "Grid";

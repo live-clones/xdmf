@@ -2,8 +2,9 @@
 #define XDMFITEMPROPERTY_HPP_
 
 // Includes
+#include <boost/shared_ptr.hpp>
 #include <map>
-#include "XdmfObject.hpp"
+#include <string>
 
 /**
  * @brief Represents a property attached to an XdmfItem.
@@ -14,7 +15,7 @@
  * This is an abstract base class to facilitate reading and writing of properties in a generic way.
  */
 
-class XdmfItemProperty : public XdmfObject {
+class XdmfItemProperty {
 
 public:
 

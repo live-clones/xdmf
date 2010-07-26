@@ -11,12 +11,10 @@ XdmfInformation::XdmfInformation() :
 	mKey(""),
 	mValue("")
 {
-	std::cout << "Created Information " << this << std::endl;
 }
 
 XdmfInformation::~XdmfInformation()
 {
-	std::cout << "Deleted Information " << this << std::endl;
 }
 
 const std::string XdmfInformation::ItemTag = "Information";

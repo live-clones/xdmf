@@ -13,12 +13,10 @@
 XdmfTopology::XdmfTopology() :
 	mTopologyType(XdmfTopologyType::NoTopologyType())
 {
-	std::cout << "Created Topology " << this << std::endl;
 }
 
 XdmfTopology::~XdmfTopology()
 {
-	std::cout << "Deleted Topology " << this << std::endl;
 }
 
 const std::string XdmfTopology::ItemTag = "Topology";

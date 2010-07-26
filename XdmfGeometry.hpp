@@ -18,7 +18,17 @@ class XdmfGeometry : public XdmfDataItem {
 
 public:
 
-	XdmfNewMacro(XdmfGeometry);
+	/**
+	 * Create a new XdmfGeometry.
+	 *
+	 * @return constructed XdmfGeometry.
+	 */
+	static boost::shared_ptr<XdmfGeometry> New()
+	{
+		boost::shared_ptr<XdmfGeometry> p(new XdmfGeometry());
+		return p;
+	};
+
 	virtual ~XdmfGeometry();
 
 	LOKI_DEFINE_VISITABLE(XdmfGeometry, XdmfDataItem)

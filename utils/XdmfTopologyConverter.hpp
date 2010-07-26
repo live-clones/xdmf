@@ -5,9 +5,6 @@
 class XdmfGrid;
 class XdmfTopologyType;
 
-// Includes
-#include "XdmfObject.hpp"
-
 /*!
  * @brief XdmfTopologyConverter converts an XdmfGrid to different topology types.  XdmfAttributes and XdmfSets attached to the XdmfGrid
  * are adjusted to remain valid for the new topology type.
@@ -19,11 +16,21 @@ class XdmfTopologyType;
  * 	Hexahedron to Hexahedron_64
  * 	Hexahedron_64 to Hexahedron
  */
-class XdmfTopologyConverter : public XdmfObject {
+class XdmfTopologyConverter {
 
 public:
 
-	XdmfNewMacro(XdmfTopologyConverter);
+	/**
+	 * Create a new XdmfTopologyConverter.
+	 *
+	 * @return constructed XdmfTopologyConverter.
+	 */
+	static boost::shared_ptr<XdmfTopologyConverter> New()
+	{
+		boost::shared_ptr<XdmfTopologyConverter> p(new XdmfTopologyConverter());
+		return p;
+	};
+
 	virtual ~XdmfTopologyConverter();
 
 	/**

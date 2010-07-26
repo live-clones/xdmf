@@ -1,4 +1,5 @@
 #include "XdmfDomain.hpp"
+#include "XdmfSystemUtils.hpp"
 #include "XdmfWriter.hpp"
 
 #include "XdmfTestDataGenerator.hpp"
@@ -7,7 +8,7 @@ int main(int argc, char* argv[])
 {
 	boost::shared_ptr<XdmfWriter> writer = XdmfWriter::New("output.xmf");
 
-	std::string realPath = XdmfObject::getRealPath("output.xmf");
+	std::string realPath = XdmfSystemUtils::getRealPath("output.xmf");
 
 	assert(writer->getFilePath().compare(realPath) == 0);
 	writer->setLightDataLimit(10);

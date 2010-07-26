@@ -9,7 +9,6 @@ int main(int argc, char* argv[])
 
 	grid->setName(gridName);
 	assert(grid->getName().compare(gridName) == 0);
-	std::cout << grid->getName() << std::endl;
 
 	boost::shared_ptr<XdmfAttribute> attr = XdmfAttribute::New();
 	attr->setName("foo");
@@ -41,7 +40,6 @@ int main(int argc, char* argv[])
 	grid->removeSet("foo");
 	assert(grid->getNumberOfAttributes() == 0);
 	assert(grid->getNumberOfSets() == 0);
-
 
 	return 0;
 }

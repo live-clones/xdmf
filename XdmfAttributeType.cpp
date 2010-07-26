@@ -53,12 +53,10 @@ boost::shared_ptr<const XdmfAttributeType> XdmfAttributeType::GlobalId()
 XdmfAttributeType::XdmfAttributeType(const std::string & name) :
 	mName(name)
 {
-	std::cout << "CRRRRREATED" << std::endl;
 }
 
 XdmfAttributeType::~XdmfAttributeType()
 {
-	std::cout << "DEEEELETED" << std::endl;
 }
 
 boost::shared_ptr<const XdmfAttributeType> XdmfAttributeType::New(const std::map<std::string, std::string> & itemProperties)

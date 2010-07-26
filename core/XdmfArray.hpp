@@ -49,7 +49,17 @@ class XdmfArray : public XdmfItem {
 
 public:
 
-	XdmfNewMacro(XdmfArray);
+	/**
+	 * Create a new XdmfArray.
+	 *
+	 * @return constructed XdmfArray.
+	 */
+	static boost::shared_ptr<XdmfArray> New()
+	{
+		boost::shared_ptr<XdmfArray> p(new XdmfArray());
+		return p;
+	};
+
 	virtual ~XdmfArray();
 
 	LOKI_DEFINE_VISITABLE(XdmfArray, XdmfItem)

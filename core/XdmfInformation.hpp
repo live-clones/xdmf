@@ -13,7 +13,17 @@ class XdmfInformation : public XdmfItem {
 
 public:
 
-	XdmfNewMacro(XdmfInformation);
+	/**
+	 * Create a new XdmfInformation.
+	 *
+	 * @return constructed XdmfInformation.
+	 */
+	static boost::shared_ptr<XdmfInformation> New()
+	{
+		boost::shared_ptr<XdmfInformation> p(new XdmfInformation());
+		return p;
+	};
+
 	virtual ~XdmfInformation();
 
 	LOKI_DEFINE_VISITABLE(XdmfInformation, XdmfItem)

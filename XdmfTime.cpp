@@ -11,12 +11,10 @@
 XdmfTime::XdmfTime(const double & value) :
 	mValue(value)
 {
-	std::cout << "Created Time " << this << std::endl;
 }
 
 XdmfTime::~XdmfTime()
 {
-	std::cout << "Deleted Time " << this << std::endl;
 }
 
 const std::string XdmfTime::ItemTag = "Time";

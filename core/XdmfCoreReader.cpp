@@ -3,9 +3,11 @@
 
 #include <libxml/xpointer.h>
 #include <libxml/xmlreader.h>
+#include <map>
 #include "XdmfCoreItemFactory.hpp"
 #include "XdmfCoreReader.hpp"
 #include "XdmfItem.hpp"
+#include "XdmfSystemUtils.hpp"
 
 /**
  * PIMPL
@@ -110,18 +112,16 @@ private:
 XdmfCoreReader::XdmfCoreReader(const boost::shared_ptr<const XdmfCoreItemFactory> itemFactory) :
 	mImpl(new XdmfCoreReaderImpl(itemFactory))
 {
-	std::cout << "Created XdmfReader " << this << std::endl;
 }
 
 XdmfCoreReader::~XdmfCoreReader()
 {
 	delete mImpl;
-	std::cout << "Deleted XdmfReader " << this << std::endl;
 }
 
 boost::shared_ptr<XdmfItem> XdmfCoreReader::read(const std::string & filePath) const
 {
-	std::string xmlDir = XdmfObject::getRealPath(filePath);
+	std::string xmlDir = XdmfSystemUtils::getRealPath(filePath);
 	size_t index = xmlDir.find_last_of("/\\");
 	if(index != std::string::npos)
 	{

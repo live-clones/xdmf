@@ -18,7 +18,17 @@ class XdmfTopology : public XdmfDataItem {
 
 public:
 
-	XdmfNewMacro(XdmfTopology);
+	/**
+	 * Create a new XdmfTopology.
+	 *
+	 * @return constructed XdmfTopology.
+	 */
+	static boost::shared_ptr<XdmfTopology> New()
+	{
+		boost::shared_ptr<XdmfTopology> p(new XdmfTopology());
+		return p;
+	};
+
 	virtual ~XdmfTopology();
 
 	LOKI_DEFINE_VISITABLE(XdmfTopology, XdmfDataItem)

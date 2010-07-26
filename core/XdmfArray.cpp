@@ -10,6 +10,7 @@
 #include "XdmfArray.hpp"
 #include "XdmfArrayType.hpp"
 #include "XdmfHDF5Controller.hpp"
+#include "XdmfSystemUtils.hpp"
 #include "XdmfVisitor.hpp"
 
 class XdmfArray::Clear : public boost::static_visitor<void> {
@@ -322,12 +323,10 @@ XdmfArray::XdmfArray() :
 	mName(""),
 	mTmpReserveSize(0)
 {
-	std::cout << "Created Array " << this << std::endl;
 }
 
 XdmfArray::~XdmfArray()
 {
-	std::cout << "Deleted Array " << this << std::endl;
 }
 
 const std::string XdmfArray::ItemTag = "DataItem";
@@ -586,7 +585,7 @@ void XdmfArray::populateItem(const std::map<std::string, std::string> & itemProp
 			{
 				std::string hdf5Path = contentVal.substr(0, colonLocation);
 				std::string dataSetPath = contentVal.substr(colonLocation + 1, contentVal.size() - colonLocation - 1);
-				if(hdf5Path.compare(XdmfObject::getRealPath(hdf5Path)) != 0)
+				if(hdf5Path.compare(XdmfSystemUtils::getRealPath(hdf5Path)) != 0)
 				{
 					// Dealing with a relative path for hdf5 location
 					std::stringstream newHDF5Path;

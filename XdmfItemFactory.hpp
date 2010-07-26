@@ -14,7 +14,17 @@ class XdmfItemFactory : public XdmfCoreItemFactory {
 
 public:
 
-	XdmfNewMacro(XdmfItemFactory);
+	/**
+	 * Create a new XdmfItemFactory.
+	 *
+	 * @return constructed XdmfItemFactory.
+	 */
+	static boost::shared_ptr<XdmfItemFactory> New()
+	{
+		boost::shared_ptr<XdmfItemFactory> p(new XdmfItemFactory());
+		return p;
+	};
+
 	virtual ~XdmfItemFactory();
 
 	virtual boost::shared_ptr<XdmfItem> createItem(const std::string & itemTag, const std::map<std::string, std::string> & itemProperties) const;

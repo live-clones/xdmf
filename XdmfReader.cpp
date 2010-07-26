@@ -7,10 +7,8 @@
 XdmfReader::XdmfReader() :
 	XdmfCoreReader(XdmfItemFactory::New())
 {
-	std::cout << "Created XdmfReader " << this << std::endl;
 }
 
 XdmfReader::~XdmfReader()
 {
-	std::cout << "Deleted XdmfReader " << this << std::endl;
 }

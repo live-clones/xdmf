@@ -19,7 +19,17 @@ class XdmfSet : public XdmfDataItem {
 
 public:
 
-	XdmfNewMacro(XdmfSet);
+	/**
+	 * Create a new XdmfSet.
+	 *
+	 * @return constructed XdmfSet.
+	 */
+	static boost::shared_ptr<XdmfSet> New()
+	{
+		boost::shared_ptr<XdmfSet> p(new XdmfSet());
+		return p;
+	};
+
 	virtual ~XdmfSet();
 
 	LOKI_DEFINE_VISITABLE(XdmfSet, XdmfDataItem)

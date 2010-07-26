@@ -30,6 +30,7 @@ extern "C"
 	#include <metis.h>
 }
 
+#include <iostream>
 #include <sstream>
 #include "XdmfArray.hpp"
 #include "XdmfAttribute.hpp"
@@ -400,6 +401,7 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 
 #else
 
+#include <iostream>
 #include <sstream>
 #include "XdmfDomain.hpp"
 #include "XdmfGridCollection.hpp"
