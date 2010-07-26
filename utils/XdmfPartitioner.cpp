@@ -269,7 +269,7 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 	gridToPartition->getTopology()->getArray()->release();
 
 	// Split attributes into proper partitions
-	for(unsigned int i=0; i<gridToPartition->getNumberOfAttributes(); ++i)
+	for(unsigned int i=0; i<gridToPartition->getNumberAttributes(); ++i)
 	{
 		boost::shared_ptr<XdmfAttribute> currAttribute = gridToPartition->getAttribute(i);
 		if(!currAttribute->getArray()->isInitialized())
@@ -339,7 +339,7 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 	}
 
 	// Split sets into proper partitions
-	for(unsigned int i=0; i<gridToPartition->getNumberOfSets(); ++i)
+	for(unsigned int i=0; i<gridToPartition->getNumberSets(); ++i)
 	{
 		boost::shared_ptr<XdmfSet> currSet = gridToPartition->getSet(i);
 		if(!currSet->getArray()->isInitialized())

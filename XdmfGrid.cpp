@@ -39,11 +39,11 @@ boost::shared_ptr<XdmfAttribute> XdmfGrid::getAttribute(const unsigned int index
 
 boost::shared_ptr<const XdmfAttribute> XdmfGrid::getAttribute(const unsigned int index) const
 {
-	if(index >= mAttributes.size())
+	if(index < mAttributes.size())
 	{
-		assert(false);
+		return mAttributes[index];
 	}
-	return mAttributes[index];
+	return boost::shared_ptr<XdmfAttribute>();
 }
 
 boost::shared_ptr<XdmfAttribute> XdmfGrid::getAttribute(const std::string & name)
@@ -90,12 +90,12 @@ std::string XdmfGrid::getName() const
 	return mName;
 }
 
-unsigned int XdmfGrid::getNumberOfAttributes() const
+unsigned int XdmfGrid::getNumberAttributes() const
 {
 	return mAttributes.size();
 }
 
-unsigned int XdmfGrid::getNumberOfSets() const
+unsigned int XdmfGrid::getNumberSets() const
 {
 	return mSets.size();
 }
@@ -107,11 +107,11 @@ boost::shared_ptr<XdmfSet> XdmfGrid::getSet(const unsigned int index)
 
 boost::shared_ptr<const XdmfSet> XdmfGrid::getSet(const unsigned int index) const
 {
-	if(index >= mSets.size())
+	if(index < mSets.size())
 	{
-		assert(false);
+		return mSets[index];
 	}
-	return mSets[index];
+	return boost::shared_ptr<XdmfSet>();
 }
 
 boost::shared_ptr<XdmfSet> XdmfGrid::getSet(const std::string & name)
@@ -199,11 +199,10 @@ void XdmfGrid::populateItem(const std::map<std::string, std::string> & itemPrope
 
 void XdmfGrid::removeAttribute(const unsigned int index)
 {
-	if(index >= mAttributes.size())
+	if(index < mAttributes.size())
 	{
-		assert(false);
+		mAttributes.erase(mAttributes.begin() + index);
 	}
-	mAttributes.erase(mAttributes.begin() + index);
 }
 
 void XdmfGrid::removeAttribute(const std::string & name)
@@ -221,11 +220,10 @@ void XdmfGrid::removeAttribute(const std::string & name)
 
 void XdmfGrid::removeSet(const unsigned int index)
 {
-	if(index >= mSets.size())
+	if(index < mSets.size())
 	{
-		assert(false);
+		mSets.erase(mSets.begin() + index);
 	}
-	mSets.erase(mSets.begin() + index);
 }
 
 void XdmfGrid::removeSet(const std::string & name)

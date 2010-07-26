@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
 	grid->getTopology()->accept(hdf5Writer);
 	grid->getTopology()->getArray()->release();
 
-	for(int i=0; i<grid->getNumberOfAttributes(); ++i)
+	for(int i=0; i<grid->getNumberAttributes(); ++i)
 	{
 		grid->getAttribute(i)->accept(hdf5Writer);
 		grid->getAttribute(i)->getArray()->release();

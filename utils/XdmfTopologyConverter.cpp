@@ -1040,7 +1040,7 @@ public:
 			newConnectivity->copyValues(startIndex + 215, oldConnectivity, 20 + valuesStartIndex, 1);
 		}
 
-		for(unsigned int i=0; i<gridToConvert->getNumberOfAttributes(); ++i)
+		for(unsigned int i=0; i<gridToConvert->getNumberAttributes(); ++i)
 		{
 			boost::shared_ptr<XdmfAttribute> currAttribute = gridToConvert->getAttribute(i);
 			if(currAttribute->getCenter() == XdmfAttributeCenter::Node())

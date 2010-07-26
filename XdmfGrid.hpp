@@ -36,48 +36,48 @@ public:
 	static const std::string ItemTag;
 
 	/**
-	 * Get an XdmfAttribute attached to this grid.
+	 * Get an attribute attached to this grid by index.
 	 *
-	 * @param index of the XdmfAttribute to retrieve.
-	 * @return smart pointer to the XdmfAttribute attached to this grid.
+	 * @param index of the attribute to retrieve.
+	 * @return requested attribute.  If not found a NULL pointer is returned.
 	 */
 	boost::shared_ptr<XdmfAttribute> getAttribute(const unsigned int index);
 
 	/**
-	 * Get an XdmfAttribute attached to this grid (const version).
+	 * Get an attribute attached to this grid by index (const version).
 	 *
-	 * @param index of the XdmfAttribute to retrieve.
-	 * @return pointer to the XdmfAttribute attached to this grid.
+	 * @param index of the attribute to retrieve.
+	 * @return requested attribute.  If not found a NULL pointer is returned.
 	 */
 	boost::shared_ptr<const XdmfAttribute> getAttribute(const unsigned int index) const;
 
 	/**
-	 * Get an XdmfAttribute attached to this grid by name.
+	 * Get an attribute attached to this grid by name.
 	 *
-	 * @param name the name of the XdmfAttribute to retrieve.
-	 * @return requested XdmfAttribute, if not found a NULL pointer is returned.
+	 * @param name of the attribute to retrieve.
+	 * @return requested attribute.  If not found a NULL pointer is returned.
 	 */
 	boost::shared_ptr<XdmfAttribute> getAttribute(const std::string & name);
 
 	/**
-	 * Get an XdmfAttribute attached to this grid by name (const version).
+	 * Get an attribute attached to this grid by name (const version).
 	 *
-	 * @param name the name of the XdmfAttribute to retrieve.
-	 * @return requested XdmfAttribute, if not found a NULL pointer is returned.
+	 * @param name the name of the attribute to retrieve.
+	 * @return requested attribute.  If not found a NULL pointer is returned.
 	 */
 	boost::shared_ptr<const XdmfAttribute> getAttribute(const std::string & name) const;
 
 	/**
-	 * Get the XdmfGeometry associated with this grid.
+	 * Get the geometry associated with this grid.
 	 *
-	 * @return a smart pointer to the XdmfGeometry.
+	 * @return the geometry associated with this grid.
 	 */
 	boost::shared_ptr<XdmfGeometry> getGeometry();
 
 	/**
-	 * Get the XdmfGeometry associated with this grid (const version).
+	 * Get the geometry associated with this grid (const version).
 	 *
-	 * @return a smart pointer to the XdmfGeometry.
+	 * @return the geometry associated with this grid.
 	 */
 	boost::shared_ptr<const XdmfGeometry> getGeometry() const;
 
@@ -88,151 +88,151 @@ public:
 	/**
 	 * Get the name of the grid.
 	 *
-	 * @return a string containing the name of the grid.
+	 * @return the name of the grid.
 	 */
 	std::string getName() const;
 
 	/**
-	 * Get the number of XdmfAttributes attached to this grid.
+	 * Get the number of attributes attached to this grid.
 	 *
-	 * @return an unsigned int containing the number of XdmfAttributes attached to this grid.
+	 * @return the number of attributes attached to this grid.
 	 */
-	unsigned int getNumberOfAttributes() const;
+	unsigned int getNumberAttributes() const;
 
 	/**
-	 * Get the number of XdmfSets attached to this grid.
+	 * Get the number of sets attached to this grid.
 	 *
-	 * @return an unsigned int containing the number of XdmfSets attached to this grid.
+	 * @return the number of sets attached to this grid.
 	 */
-	unsigned int getNumberOfSets() const;
+	unsigned int getNumberSets() const;
 
 	/**
-	 * Get an XdmfSet attached to this grid.
+	 * Get a set attached to this grid by index.
 	 *
-	 * @param index of the XdmfSet to retrieve.
-	 * @return pointer to the XdmfSet attached to this grid.
+	 * @param index of the set to retrieve.
+	 * @return requested set.  If not found a NULL pointer is returned.
 	 */
 	boost::shared_ptr<XdmfSet> getSet(const unsigned int index);
 
 	/**
-	 * Get an XdmfSet attached to this grid (const version).
+	 * Get a set attached to this grid by index (const version).
 	 *
-	 * @param index of the XdmfSet to retrieve.
-	 * @return pointer to the XdmfSet attached to this grid.
+	 * @param index of the set to retrieve.
+	 * @return requested set.  If not found a NULL pointer is returned.
 	 */
 	boost::shared_ptr<const XdmfSet> getSet(const unsigned int index) const;
 
 	/**
-	 * Get an XdmfSet attached to this grid by name.
+	 * Get a set attached to this grid by name.
 	 *
-	 * @param name the name of the XdmfSet to retrieve.
-	 * @return requested XdmfSet, if not found a NULL pointer is returned.
+	 * @param name of the set to retrieve.
+	 * @return requested set.  If not found a NULL pointer is returned.
 	 */
 	boost::shared_ptr<XdmfSet> getSet(const std::string & name);
 
 	/**
-	 * Get an XdmfSet attached to this grid by name (const version).
+	 * Get a set attached to this grid by name (const version).
 	 *
-	 * @param name the name of the XdmfSet to retrieve.
-	 * @return requested XdmfSet, if not found a NULL pointer is returned.
+	 * @param name of the set to retrieve.
+	 * @return requested set.  If not found a NULL pointer is returned.
 	 */
 	boost::shared_ptr<const XdmfSet> getSet(const std::string & name) const;
 
 	/**
-	 * Get the XdmfTime attached to this grid.
+	 * Get the time associated with this grid.
 	 *
-	 * @return pointer to the XdmfTime attached to this grid.  If no XdmfTime is attached, return NULL.
+	 * @return pointer to the XdmfTime attached to this grid.  If no XdmfTime is attached, return a NULL pointer.
 	 */
 	boost::shared_ptr<XdmfTime> getTime();
 
 	/**
-	 * Get the XdmfTime attached to this grid (const version).
+	 * Get the time associated with this grid (const version).
 	 *
-	 * @return pointer to the XdmfTime attached to this grid.  If no XdmfTime is attached, return NULL.
+	 * @return pointer to the XdmfTime attached to this grid.  If no XdmfTime is attached, return a NULL pointer.
 	 */
 	boost::shared_ptr<const XdmfTime> getTime() const;
 
 	/**
-	 * Get the XdmfTopology associated with this grid.
+	 * Get the topology associated with this grid.
 	 *
-	 * @return a smart pointer to the XdmfTopology.
+	 * @return the topology associated with this grid.
 	 */
 	boost::shared_ptr<XdmfTopology> getTopology();
 
 	/**
-	 * Get the XdmfTopology associated with this grid (const version).
+	 * Get the topology associated with this grid (const version).
 	 *
-	 * @return a smart pointer to the XdmfTopology.
+	 * @return the topology associated with this grid.
 	 */
 	boost::shared_ptr<const XdmfTopology> getTopology() const;
 
 	/**
-	 * Insert an XdmfAttribute into the grid.
+	 * Insert an attribute into the grid.
 	 *
 	 * @param attribute an XdmfAttribute to attach to this grid.
 	 */
 	void insert(const boost::shared_ptr<XdmfAttribute> attribute);
 
 	/**
-	 * Insert an XdmfSet into the grid.
+	 * Insert a set into the grid.
 	 *
 	 * @param set an XdmfSet to attach to this grid.
 	 */
 	void insert(const boost::shared_ptr<XdmfSet> set);
 
 	/**
-	 * Remove an XdmfAttribute from the grid.
+	 * Remove an attribute from the grid by index.  If no attribute is at that index, no attributes are removed.
 	 *
-	 * @param index of the XdmfAttribute to remove.
+	 * @param index of the attribute to remove.
 	 */
 	void removeAttribute(const unsigned int index);
 
 	/**
-	 * Remove an XdmfAttribute from the grid by name.  If no XdmfAttribute having the name is found, no attributes are removed.
+	 * Remove an attribute from the grid by name.  If no attribute having the name is found, no attributes are removed.
 	 *
-	 * @param name of the XdmfAttribute to remove.
+	 * @param name of the attribute to remove.
 	 */
 	void removeAttribute(const std::string & name);
 
 	/**
-	 * Remove an XdmfSet from the grid.
+	 * Remove an set from the grid by index.  If no set is at that index, no sets are removed.
 	 *
-	 * @param index of the XdmfSet to remove.
+	 * @param index of the set to remove.
 	 */
 	void removeSet(const unsigned int index);
 
 	/**
-	 * Remove an XdmfSet from the grid by name.  If no XdmfSet having the name is found, no sets are removed.
+	 * Remove an set from the grid by name.  If no set having the name is found, no sets are removed.
 	 *
-	 * @param name of the XdmfSet to remove.
+	 * @param name of the set to remove.
 	 */
 	void removeSet(const std::string & name);
 
 	/**
-	 * Set the XdmfGeometry associated with this grid.
+	 * Set the geometry associated with this grid.
 	 *
-	 * @param geometry an XdmfGeometry to attach to this grid.
+	 * @param geometry an XdmfGeometry to associate with this grid.
 	 */
 	void setGeometry(const boost::shared_ptr<XdmfGeometry> geometry);
 
 	/**
-	 * Set the XdmfTime associated with this grid.
+	 * Set the time associated with this grid.
 	 *
-	 * @param time an XdmfTime to attach to this grid.
+	 * @param time an XdmfTime to associate with this grid.
 	 */
 	void setTime(const boost::shared_ptr<XdmfTime> time);
 
 	/**
-	 * Set the XdmfTopology associated with this grid.
+	 * Set the topology associated with this grid.
 	 *
-	 * @param topology an XdmfTopology to attach to this grid.
+	 * @param topology an XdmfTopology to associate with this grid.
 	 */
 	void setTopology(const boost::shared_ptr<XdmfTopology> topology);
 
 	/**
 	 * Set the name of the grid.
 	 *
-	 * @param name a string containing the name to set.
+	 * @param name of the grid to set.
 	 */
 	void setName(const std::string & name);
 
