@@ -315,6 +315,12 @@ private:
 	const unsigned int mSize;
 };
 
+boost::shared_ptr<XdmfArray> XdmfArray::New()
+{
+	boost::shared_ptr<XdmfArray> p(new XdmfArray());
+	return p;
+}
+
 XdmfArray::XdmfArray() :
 	mHaveArray(false),
 	mHaveArrayPointer(false),

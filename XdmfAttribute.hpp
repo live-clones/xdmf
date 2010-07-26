@@ -23,11 +23,7 @@ public:
 	 *
 	 * @return constructed XdmfAttribute.
 	 */
-	static boost::shared_ptr<XdmfAttribute> New()
-	{
-		boost::shared_ptr<XdmfAttribute> p(new XdmfAttribute());
-		return p;
-	};
+	static boost::shared_ptr<XdmfAttribute> New();
 
 	virtual ~XdmfAttribute();
 

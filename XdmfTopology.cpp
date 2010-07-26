@@ -10,6 +10,12 @@
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
 
+boost::shared_ptr<XdmfTopology> XdmfTopology::New()
+{
+	boost::shared_ptr<XdmfTopology> p(new XdmfTopology());
+	return p;
+}
+
 XdmfTopology::XdmfTopology() :
 	mTopologyType(XdmfTopologyType::NoTopologyType())
 {

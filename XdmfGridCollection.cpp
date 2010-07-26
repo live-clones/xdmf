@@ -8,6 +8,12 @@
 #include "XdmfGridCollection.hpp"
 #include "XdmfGridCollectionType.hpp"
 
+boost::shared_ptr<XdmfGridCollection> XdmfGridCollection::New()
+{
+	boost::shared_ptr<XdmfGridCollection> p(new XdmfGridCollection());
+	return p;
+};
+
 XdmfGridCollection::XdmfGridCollection() :
 	mCollectionType(XdmfGridCollectionType::NoCollectionType())
 {

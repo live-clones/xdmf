@@ -9,6 +9,12 @@
 #include "XdmfTime.hpp"
 #include "XdmfTopology.hpp"
 
+boost::shared_ptr<XdmfItemFactory> XdmfItemFactory::New()
+{
+	boost::shared_ptr<XdmfItemFactory> p(new XdmfItemFactory());
+	return p;
+}
+
 XdmfItemFactory::XdmfItemFactory()
 {
 }

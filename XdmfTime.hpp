@@ -19,11 +19,7 @@ public:
 	 * @param timeValue the value of the XdmfTime to create.
 	 * @return the new XdmfTime.
 	 */
-	static boost::shared_ptr<XdmfTime> New(const double & value = 0)
-	{
-		boost::shared_ptr<XdmfTime> p(new XdmfTime(value));
-		return p;
-	}
+	static boost::shared_ptr<XdmfTime> New(const double & value = 0);
 
 	virtual ~XdmfTime();
 

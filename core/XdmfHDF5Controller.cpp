@@ -8,6 +8,12 @@
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfSystemUtils.hpp"
 
+boost::shared_ptr<XdmfHDF5Controller> XdmfHDF5Controller::New(const std::string & hdf5FilePath, const std::string & dataSetPath, const unsigned int size, const boost::shared_ptr<const XdmfArrayType> type)
+{
+	boost::shared_ptr<XdmfHDF5Controller> p(new XdmfHDF5Controller(hdf5FilePath, dataSetPath, size, type));
+	return p;
+}
+
 XdmfHDF5Controller::XdmfHDF5Controller(const std::string & hdf5FilePath, const std::string & dataSetPath, const unsigned int size, const boost::shared_ptr<const XdmfArrayType> type) :
 	mDataSetPath(dataSetPath),
 	mSize(size),

@@ -8,6 +8,12 @@
 #include <sstream>
 #include "XdmfTime.hpp"
 
+boost::shared_ptr<XdmfTime> XdmfTime::New(const double & value)
+{
+	boost::shared_ptr<XdmfTime> p(new XdmfTime(value));
+	return p;
+}
+
 XdmfTime::XdmfTime(const double & value) :
 	mValue(value)
 {

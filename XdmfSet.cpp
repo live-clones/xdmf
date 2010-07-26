@@ -8,6 +8,12 @@
 #include "XdmfSet.hpp"
 #include "XdmfSetType.hpp"
 
+boost::shared_ptr<XdmfSet> XdmfSet::New()
+{
+	boost::shared_ptr<XdmfSet> p(new XdmfSet());
+	return p;
+}
+
 XdmfSet::XdmfSet() :
 	mSetType(XdmfSetType::NoSetType()),
 	mName("")

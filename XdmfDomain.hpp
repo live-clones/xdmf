@@ -23,12 +23,7 @@ public:
 	 *
 	 * @return constructed XdmfDomain.
 	 */
-	static boost::shared_ptr<XdmfDomain> New()
-	{
-		boost::shared_ptr<XdmfDomain> p(new XdmfDomain());
-		return p;
-	};
-
+	static boost::shared_ptr<XdmfDomain> New();
 	virtual ~XdmfDomain();
 
 	LOKI_DEFINE_VISITABLE(XdmfDomain, XdmfItem)

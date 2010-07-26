@@ -9,6 +9,12 @@
 #include "XdmfGeometry.hpp"
 #include "XdmfGeometryType.hpp"
 
+boost::shared_ptr<XdmfGeometry> XdmfGeometry::New()
+{
+	boost::shared_ptr<XdmfGeometry> p(new XdmfGeometry());
+	return p;
+}
+
 XdmfGeometry::XdmfGeometry() :
 	mGeometryType(XdmfGeometryType::NoGeometryType()),
 	mNumberPoints(0)

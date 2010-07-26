@@ -19,11 +19,7 @@ public:
 	 *
 	 * @return constructed XdmfItemFactory.
 	 */
-	static boost::shared_ptr<XdmfItemFactory> New()
-	{
-		boost::shared_ptr<XdmfItemFactory> p(new XdmfItemFactory());
-		return p;
-	};
+	static boost::shared_ptr<XdmfItemFactory> New();
 
 	virtual ~XdmfItemFactory();
 

@@ -24,11 +24,7 @@ public:
 	 *
 	 * @return constructed XdmfSet.
 	 */
-	static boost::shared_ptr<XdmfSet> New()
-	{
-		boost::shared_ptr<XdmfSet> p(new XdmfSet());
-		return p;
-	};
+	static boost::shared_ptr<XdmfSet> New();
 
 	virtual ~XdmfSet();
 

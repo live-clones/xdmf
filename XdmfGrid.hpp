@@ -28,11 +28,7 @@ public:
 	 *
 	 * @return constructed XdmfGrid.
 	 */
-	static boost::shared_ptr<XdmfGrid> New()
-	{
-		boost::shared_ptr<XdmfGrid> p(new XdmfGrid());
-		return p;
-	};
+	static boost::shared_ptr<XdmfGrid> New();
 
 	virtual ~XdmfGrid();
 

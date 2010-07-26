@@ -23,11 +23,7 @@ public:
 	 *
 	 * @return constructed XdmfTopology.
 	 */
-	static boost::shared_ptr<XdmfTopology> New()
-	{
-		boost::shared_ptr<XdmfTopology> p(new XdmfTopology());
-		return p;
-	};
+	static boost::shared_ptr<XdmfTopology> New();
 
 	virtual ~XdmfTopology();
 

@@ -61,6 +61,12 @@ public:
 	std::string mXPathString;
 };
 
+boost::shared_ptr<XdmfWriter> XdmfWriter::New(const std::string & xmlFilePath)
+{
+	boost::shared_ptr<XdmfWriter> p(new XdmfWriter(xmlFilePath));
+	return p;
+}
+
 XdmfWriter::XdmfWriter(const std::string & xmlFilePath)
 {
 	std::stringstream heavyFileName;

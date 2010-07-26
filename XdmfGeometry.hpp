@@ -23,11 +23,7 @@ public:
 	 *
 	 * @return constructed XdmfGeometry.
 	 */
-	static boost::shared_ptr<XdmfGeometry> New()
-	{
-		boost::shared_ptr<XdmfGeometry> p(new XdmfGeometry());
-		return p;
-	};
+	static boost::shared_ptr<XdmfGeometry> New();
 
 	virtual ~XdmfGeometry();
 

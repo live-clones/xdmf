@@ -18,11 +18,7 @@ public:
 	 *
 	 * @return constructed XdmfInformation.
 	 */
-	static boost::shared_ptr<XdmfInformation> New()
-	{
-		boost::shared_ptr<XdmfInformation> p(new XdmfInformation());
-		return p;
-	};
+	static boost::shared_ptr<XdmfInformation> New();
 
 	virtual ~XdmfInformation();
 

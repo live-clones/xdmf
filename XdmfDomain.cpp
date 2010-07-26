@@ -9,6 +9,12 @@
 #include "XdmfGrid.hpp"
 #include "XdmfGridCollection.hpp"
 
+boost::shared_ptr<XdmfDomain> XdmfDomain::New()
+{
+	boost::shared_ptr<XdmfDomain> p(new XdmfDomain());
+	return p;
+}
+
 XdmfDomain::XdmfDomain()
 {
 }

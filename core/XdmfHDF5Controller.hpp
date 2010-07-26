@@ -5,6 +5,9 @@
 class XdmfArray;
 class XdmfArrayType;
 
+// Includes
+#include <boost/shared_ptr.hpp>
+
 /**
  * @brief Couples an XdmfArray with HDF5 data stored on disk.
  *
@@ -21,11 +24,7 @@ public:
 	/**
 	 * Create a new controller for an hdf5 data set on disk.
 	 */
-	static boost::shared_ptr<XdmfHDF5Controller> New(const std::string & hdf5FilePath, const std::string & dataSetPath, const unsigned int size, const boost::shared_ptr<const XdmfArrayType> type)
-	{
-		boost::shared_ptr<XdmfHDF5Controller> p(new XdmfHDF5Controller(hdf5FilePath, dataSetPath, size, type));
-		return p;
-	}
+	static boost::shared_ptr<XdmfHDF5Controller> New(const std::string & hdf5FilePath, const std::string & dataSetPath, const unsigned int size, const boost::shared_ptr<const XdmfArrayType> type);
 
 	/**
 	 * Get the path of the data set within the hdf5 file owned by this controller. For "/home/output.h5:/foo/data" this is "/foo/data"

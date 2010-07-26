@@ -27,8 +27,6 @@ class XdmfWriter : public XdmfVisitor,
 
 public:
 
-	virtual ~XdmfWriter();
-
 	enum Mode {
 		Default, DistributedHeavyData
 	};
@@ -40,11 +38,9 @@ public:
 	 * @param xmlFilePath the path to the xml file to write to.
 	 * @return the new XdmfWriter.
 	 */
-	static boost::shared_ptr<XdmfWriter> New(const std::string & xmlFilePath)
-	{
-		boost::shared_ptr<XdmfWriter> p(new XdmfWriter(xmlFilePath));
-		return p;
-	}
+	static boost::shared_ptr<XdmfWriter> New(const std::string & xmlFilePath);
+
+	virtual ~XdmfWriter();
 
 	/**
 	 * Create a new XdmfWriter to write Xdmf data to disk.  This will utilize the supplied hdf5Writer to write any

@@ -7,6 +7,12 @@
 
 #include "XdmfInformation.hpp"
 
+boost::shared_ptr<XdmfInformation> XdmfInformation::New()
+{
+	boost::shared_ptr<XdmfInformation> p(new XdmfInformation());
+	return p;
+};
+
 XdmfInformation::XdmfInformation() :
 	mKey(""),
 	mValue("")

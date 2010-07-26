@@ -12,6 +12,12 @@
 #include "XdmfTime.hpp"
 #include "XdmfTopology.hpp"
 
+boost::shared_ptr<XdmfGrid> XdmfGrid::New()
+{
+	boost::shared_ptr<XdmfGrid> p(new XdmfGrid());
+	return p;
+}
+
 XdmfGrid::XdmfGrid() :
 	mGeometry(XdmfGeometry::New()),
 	mTime(boost::shared_ptr<XdmfTime>()),

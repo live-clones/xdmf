@@ -19,11 +19,7 @@ public:
 	 *
 	 * @return constructed XdmfReader.
 	 */
-	static boost::shared_ptr<XdmfReader> New()
-	{
-		boost::shared_ptr<XdmfReader> p(new XdmfReader());
-		return p;
-	};
+	static boost::shared_ptr<XdmfReader> New();
 
 	virtual ~XdmfReader();
 

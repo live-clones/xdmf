@@ -93,6 +93,12 @@ public:
 	}
 };
 
+boost::shared_ptr<XdmfHDF5Writer> XdmfHDF5Writer::New(const std::string & hdf5FilePath)
+{
+	boost::shared_ptr<XdmfHDF5Writer> p(new XdmfHDF5Writer(hdf5FilePath));
+	return p;
+}
+
 XdmfHDF5Writer::XdmfHDF5Writer(const std::string & hdf5FilePath) :
 	mImpl(new XdmfHDF5WriterImpl(hdf5FilePath))
 {

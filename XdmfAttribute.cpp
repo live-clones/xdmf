@@ -9,6 +9,12 @@
 #include "XdmfAttributeCenter.hpp"
 #include "XdmfAttributeType.hpp"
 
+boost::shared_ptr<XdmfAttribute> XdmfAttribute::New()
+{
+	boost::shared_ptr<XdmfAttribute> p(new XdmfAttribute());
+	return p;
+}
+
 XdmfAttribute::XdmfAttribute() :
 	mName(""),
 	mAttributeType(XdmfAttributeType::NoAttributeType()),

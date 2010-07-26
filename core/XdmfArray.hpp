@@ -54,11 +54,7 @@ public:
 	 *
 	 * @return constructed XdmfArray.
 	 */
-	static boost::shared_ptr<XdmfArray> New()
-	{
-		boost::shared_ptr<XdmfArray> p(new XdmfArray());
-		return p;
-	};
+	static boost::shared_ptr<XdmfArray> New();
 
 	virtual ~XdmfArray();
 
