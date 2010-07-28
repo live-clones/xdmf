@@ -18,3 +18,9 @@ XdmfReader::XdmfReader() :
 XdmfReader::~XdmfReader()
 {
 }
+
+// Implemented to make SWIG wrapping work correctly (typemaps to return specific subclass instances of XdmfItems)
+boost::shared_ptr<XdmfItem> XdmfReader::read(const std::string & filePath) const
+{
+	return XdmfCoreReader::read(filePath);
+}

@@ -23,6 +23,8 @@ public:
 
 	virtual ~XdmfReader();
 
+	boost::shared_ptr<XdmfItem> read(const std::string & filePath) const;
+
 protected:
 
 	XdmfReader();

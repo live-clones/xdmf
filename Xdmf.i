@@ -51,8 +51,7 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 	}
 	else if(boost::shared_ptr<XdmfDomain> domain = boost::shared_dynamic_cast<XdmfDomain>($1))
 	{
-		boost::shared_ptr<XdmfDomain> * newDomain = new boost::shared_ptr<XdmfDomain>(domain);
-		$result = SWIG_NewPointerObj(SWIG_as_voidptr(newDomain), SWIGTYPE_p_boost__shared_ptrT_XdmfDomain_t, SWIG_POINTER_OWN);
+		$result = SWIG_NewPointerObj(SWIG_as_voidptr(new boost::shared_ptr<XdmfDomain>(domain)), SWIGTYPE_p_boost__shared_ptrT_XdmfDomain_t, SWIG_POINTER_OWN);
 	}
 	else if(boost::shared_ptr<XdmfGeometry> geometry = boost::shared_dynamic_cast<XdmfGeometry>($1))
 	{
