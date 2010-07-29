@@ -26,6 +26,7 @@ set(XdmfSources
 	XdmfTime
 	XdmfTopology
 	XdmfTopologyType
+	XdmfWriter
 )
 
 add_library(Xdmf ${XdmfSources})

@@ -87,7 +87,7 @@ public:
 	void copyValues(const unsigned int startIndex, const T * const valuesPointer, const unsigned int numValues = 1, const unsigned int arrayStride = 1, const unsigned int valuesStride = 1);
 
 	/**
-	 * Remove all values from this array
+	 * Remove all values from this array.
 	 */
 	void clear();
 
@@ -208,7 +208,7 @@ public:
 	/**
 	 * Returns whether the array is initialized (contains values in memory).
 	 */
-	bool isInitialized();
+	bool isInitialized() const;
 
 	/**
 	 * Copy a value to the back of this array

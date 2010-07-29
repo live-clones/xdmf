@@ -4,20 +4,20 @@
 #include <libxml/tree.h>
 #include <sstream>
 #include "XdmfArray.hpp"
+#include "XdmfCoreWriter.hpp"
 #include "XdmfItem.hpp"
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfHDF5Writer.hpp"
 #include "XdmfSystemUtils.hpp"
-#include "XdmfWriter.hpp"
 
 /**
  * PIMPL
  */
-class XdmfWriter::XdmfWriterImpl {
+class XdmfCoreWriter::XdmfCoreWriterImpl {
 
 public:
 
-	XdmfWriterImpl(const std::string & xmlFilePath, const boost::shared_ptr<XdmfHDF5Writer> hdf5Writer) :
+	XdmfCoreWriterImpl(const std::string & xmlFilePath, const boost::shared_ptr<XdmfHDF5Writer> hdf5Writer) :
 		mHDF5Writer(hdf5Writer),
 		mLightDataLimit(100),
 		mMode(Default),
@@ -29,7 +29,7 @@ public:
 		mXMLFilePath = XdmfSystemUtils::getRealPath(xmlFilePath);
 	};
 
-	~XdmfWriterImpl()
+	~XdmfCoreWriterImpl()
 	{
 	};
 
@@ -61,13 +61,7 @@ public:
 	std::string mXPathString;
 };
 
-boost::shared_ptr<XdmfWriter> XdmfWriter::New(const std::string & xmlFilePath)
-{
-	boost::shared_ptr<XdmfWriter> p(new XdmfWriter(xmlFilePath));
-	return p;
-}
-
-XdmfWriter::XdmfWriter(const std::string & xmlFilePath)
+XdmfCoreWriter::XdmfCoreWriter(const std::string & xmlFilePath)
 {
 	std::stringstream heavyFileName;
 	size_t extension = xmlFilePath.rfind(".");
@@ -80,55 +74,64 @@ XdmfWriter::XdmfWriter(const std::string & xmlFilePath)
 		heavyFileName << xmlFilePath << ".h5";
 	}
 	boost::shared_ptr<XdmfHDF5Writer> hdf5Writer = XdmfHDF5Writer::New(heavyFileName.str());
-	mImpl = new XdmfWriterImpl(xmlFilePath, hdf5Writer);
+	mImpl = new XdmfCoreWriterImpl(xmlFilePath, hdf5Writer);
 }
 
-XdmfWriter::XdmfWriter(const std::string & xmlFilePath, boost::shared_ptr<XdmfHDF5Writer> hdf5Writer) :
-	mImpl(new XdmfWriterImpl(xmlFilePath, hdf5Writer))
+XdmfCoreWriter::XdmfCoreWriter(const std::string & xmlFilePath, boost::shared_ptr<XdmfHDF5Writer> hdf5Writer) :
+	mImpl(new XdmfCoreWriterImpl(xmlFilePath, hdf5Writer))
 {
 }
 
-XdmfWriter::~XdmfWriter()
+XdmfCoreWriter::~XdmfCoreWriter()
 {
 	delete mImpl;
 }
 
-boost::shared_ptr<XdmfHDF5Writer> XdmfWriter::getHDF5Writer()
+boost::shared_ptr<XdmfHDF5Writer> XdmfCoreWriter::getHDF5Writer()
 {
-	return boost::const_pointer_cast<XdmfHDF5Writer>(static_cast<const XdmfWriter &>(*this).getHDF5Writer());
+	return boost::const_pointer_cast<XdmfHDF5Writer>(static_cast<const XdmfCoreWriter &>(*this).getHDF5Writer());
 }
 
-boost::shared_ptr<const XdmfHDF5Writer> XdmfWriter::getHDF5Writer() const
+boost::shared_ptr<const XdmfHDF5Writer> XdmfCoreWriter::getHDF5Writer() const
 {
 	return mImpl->mHDF5Writer;
 }
 
-std::string XdmfWriter::getFilePath() const
+std::string XdmfCoreWriter::getFilePath() const
 {
 	return mImpl->mXMLFilePath;
 }
 
-unsigned int XdmfWriter::getLightDataLimit() const
+unsigned int XdmfCoreWriter::getLightDataLimit() const
 {
 	return mImpl->mLightDataLimit;
 }
 
-XdmfWriter::Mode XdmfWriter::getMode() const
+XdmfCoreWriter::Mode XdmfCoreWriter::getMode() const
 {
 	return mImpl->mMode;
 }
 
-void XdmfWriter::setLightDataLimit(const unsigned int numValues)
+void XdmfCoreWriter::moveToLastWrittenNode()
+{
+	mImpl->mXMLCurrentNode = mImpl->mXMLCurrentNode->last;
+}
+void XdmfCoreWriter::moveToParentNode()
+{
+	mImpl->mXMLCurrentNode = mImpl->mXMLCurrentNode->parent;
+}
+
+void XdmfCoreWriter::setLightDataLimit(const unsigned int numValues)
 {
 	mImpl->mLightDataLimit = numValues;
 }
 
-void XdmfWriter::setMode(const Mode mode)
+void XdmfCoreWriter::setMode(const Mode mode)
 {
 	mImpl->mMode = mode;
 }
 
-void XdmfWriter::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisitor> visitor)
+void XdmfCoreWriter::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
 	if(array.getSize() > 0)
 	{
@@ -166,7 +169,7 @@ void XdmfWriter::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisito
 	}
 }
 
-void XdmfWriter::visit(XdmfItem & item, const boost::shared_ptr<XdmfBaseVisitor> visitor)
+void XdmfCoreWriter::visit(XdmfItem & item, const boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
 	if(mImpl->mXPathString.compare("") == 0)
 	{
@@ -175,7 +178,6 @@ void XdmfWriter::visit(XdmfItem & item, const boost::shared_ptr<XdmfBaseVisitor>
 
 	mImpl->mXPathCount++;
 
-	xmlNodePtr parentNode = mImpl->mXMLCurrentNode;
 	std::string parentXPathString = mImpl->mXPathString;
 
 	std::stringstream newXPathString;
@@ -207,7 +209,7 @@ void XdmfWriter::visit(XdmfItem & item, const boost::shared_ptr<XdmfBaseVisitor>
 		mImpl->mXPathCount = parentCount;
 	}
 
-	mImpl->mXMLCurrentNode = parentNode;
+	mImpl->mXMLCurrentNode = mImpl->mXMLCurrentNode->parent;
 	mImpl->mXPathString = parentXPathString;
 
 	if(mImpl->mXPathString.compare("") == 0)

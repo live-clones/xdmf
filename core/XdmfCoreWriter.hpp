@@ -1,5 +1,5 @@
-#ifndef XDMFWRITER_HPP_
-#define XDMFWRITER_HPP_
+#ifndef XDMFCOREWRITER_HPP_
+#define XDMFCOREWRITER_HPP_
 
 // Forward Declarations
 class XdmfArray;
@@ -22,7 +22,7 @@ class XdmfHDF5Writer;
  * will automatically reference any hdf5 dataset even if it resides in a different file than the one currently being written to.
  * written.
  */
-class XdmfWriter : public XdmfVisitor,
+class XdmfCoreWriter : public XdmfVisitor,
 	public Loki::Visitor<XdmfArray> {
 
 public:
@@ -31,30 +31,7 @@ public:
 		Default, DistributedHeavyData
 	};
 
-	/**
-	 * Create a new XdmfWriter to write Xdmf data to disk.  This will create its own hdf5 writer based on the xmlFileName.
-	 * For example, if supplied "output.xmf" the created hdf5 writer would write to file "output.h5".
-	 *
-	 * @param xmlFilePath the path to the xml file to write to.
-	 * @return the new XdmfWriter.
-	 */
-	static boost::shared_ptr<XdmfWriter> New(const std::string & xmlFilePath);
-
-	virtual ~XdmfWriter();
-
-	/**
-	 * Create a new XdmfWriter to write Xdmf data to disk.  This will utilize the supplied hdf5Writer to write any
-	 * heavy data to disk.
-	 *
-	 * @param xmlFilePath the path to the xml file to write to.
-	 * @param hdf5Writer the heavy data writer to use when writing.
-	 * @return the new XdmfWriter.
-	 */
-	static boost::shared_ptr<XdmfWriter> New(const std::string & xmlFilePath, const boost::shared_ptr<XdmfHDF5Writer> hdf5Writer)
-	{
-		boost::shared_ptr<XdmfWriter> p(new XdmfWriter(xmlFilePath, hdf5Writer));
-		return p;
-	}
+	virtual ~XdmfCoreWriter();
 
 	/**
 	 * Get the absolute path to the XML file on disk this writer is writing to.
@@ -111,7 +88,7 @@ public:
 	 * @param array an XdmfArray to write to disk.
 	 * @param visitor a smart pointer to this visitor --- aids in grid traversal.
 	 */
-	void visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisitor> visitor);
+	virtual void visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisitor> visitor);
 
 	/**
 	 * Write an XdmfItem to disk
@@ -119,25 +96,28 @@ public:
 	 * @param item an XdmfItem to write to disk.
 	 * @param visitor a smart pointer to this visitor --- aids in grid traversal.
 	 */
-	void visit(XdmfItem & item, const boost::shared_ptr<XdmfBaseVisitor> visitor);
+	virtual void visit(XdmfItem & item, const boost::shared_ptr<XdmfBaseVisitor> visitor);
 
 
 protected:
 
-	XdmfWriter(const std::string & xmlFilePath);
-	XdmfWriter(const std::string & xmlFilePath, boost::shared_ptr<XdmfHDF5Writer> hdf5Writer);
+	XdmfCoreWriter(const std::string & xmlFilePath);
+	XdmfCoreWriter(const std::string & xmlFilePath, boost::shared_ptr<XdmfHDF5Writer> hdf5Writer);
+
+	void moveToLastWrittenNode();
+	void moveToParentNode();
 
 private:
 
 	/**
 	 * PIMPL
 	 */
-	class XdmfWriterImpl;
+	class XdmfCoreWriterImpl;
 
-	XdmfWriter(const XdmfWriter & writer);  // Not implemented.
-	void operator=(const XdmfWriter & writer);  // Not implemented.
+	XdmfCoreWriter(const XdmfCoreWriter & coreWriter);  // Not implemented.
+	void operator=(const XdmfCoreWriter & coreWriter);  // Not implemented.
 
-	XdmfWriterImpl * mImpl;
+	XdmfCoreWriterImpl * mImpl;
 };
 
-#endif /* XDMFWRITER_HPP_ */
+#endif /* XDMFCOREWRITER_HPP_ */

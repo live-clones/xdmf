@@ -7,6 +7,24 @@
 
 #include "XdmfTestDataGenerator.hpp"
 
+void compare(const std::string & firstFileName, const std::string & secondFileName)
+{
+	// Compare two files for equality
+	std::ifstream firstFile(firstFileName.c_str());
+	std::ifstream secondFile(secondFileName.c_str());
+
+	std::stringstream firstBuffer;
+	std::stringstream secondBuffer;
+
+	firstBuffer << firstFile.rdbuf();
+	secondBuffer << secondFile.rdbuf();
+
+	std::string firstContents(firstBuffer.str());
+	std::string secondContents(secondBuffer.str());
+
+	assert(firstContents.compare(secondContents) == 0);
+}
+
 int main(int argc, char* argv[])
 {
 	// Test != and == operators
@@ -44,20 +62,20 @@ int main(int argc, char* argv[])
 	boost::shared_ptr<XdmfWriter> writer2 = XdmfWriter::New("TestXdmfGridCollection2.xmf");
 	gridCollection2->accept(writer2);
 
-	// Compare two files for equality
-	std::ifstream firstFile("TestXdmfGridCollection1.xmf");
-	std::ifstream secondFile("TestXdmfGridCollection2.xmf");
+	compare("TestXdmfGridCollection1.xmf", "TestXdmfGridCollection2.xmf");
 
-	std::stringstream firstBuffer;
-	std::stringstream secondBuffer;
+	boost::shared_ptr<XdmfWriter> writer3 = XdmfWriter::New("TestXdmfGridCollectionHDF1.xmf");
+	writer3->setLightDataLimit(0);
+	gridCollection->accept(writer3);
 
-	firstBuffer << firstFile.rdbuf();
-	secondBuffer << secondFile.rdbuf();
+	boost::shared_ptr<XdmfGridCollection> gridCollection3 = boost::shared_dynamic_cast<XdmfGridCollection>(reader->read("TestXdmfGridCollectionHDF1.xmf"));
 
-	std::string firstContents(firstBuffer.str());
-	std::string secondContents(secondBuffer.str());
+	boost::shared_ptr<XdmfWriter> writer4 = XdmfWriter::New("TestXdmfGridCollectionHDF2.xmf");
+	writer4->setLightDataLimit(0);
+	writer4->setMode(XdmfWriter::DistributedHeavyData);
+	gridCollection3->accept(writer4);
 
-	assert(firstContents.compare(secondContents) == 0);
+	compare("TestXdmfGridCollectionHDF1.xmf", "TestXdmfGridCollectionHDF2.xmf");
 
 	return 0;
 }

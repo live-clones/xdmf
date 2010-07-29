@@ -25,6 +25,7 @@ set(XdmfCoreSources
 	XdmfArrayType
 	XdmfCoreItemFactory
 	XdmfCoreReader
+	XdmfCoreWriter
 	XdmfDataItem
 	XdmfHDF5Controller
 	XdmfHDF5Writer
@@ -33,7 +34,6 @@ set(XdmfCoreSources
 	XdmfItemProperty
 	XdmfSystemUtils
 	XdmfVisitor
-	XdmfWriter
 )
 
 add_library(XdmfCore ${XdmfCoreSources})

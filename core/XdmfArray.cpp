@@ -381,7 +381,7 @@ unsigned int XdmfArray::getCapacity() const
 
 boost::shared_ptr<XdmfHDF5Controller> XdmfArray::getHDF5Controller()
 {
-	return mHDF5Controller;
+	return boost::const_pointer_cast<XdmfHDF5Controller>(static_cast<const XdmfArray &>(*this).getHDF5Controller());
 }
 
 boost::shared_ptr<const XdmfHDF5Controller> XdmfArray::getHDF5Controller() const
@@ -535,7 +535,7 @@ void XdmfArray::initialize(const boost::shared_ptr<const XdmfArrayType> arrayTyp
 	}
 }
 
-bool XdmfArray::isInitialized()
+bool XdmfArray::isInitialized() const
 {
 	return mHaveArray || mHaveArrayPointer;
 }
