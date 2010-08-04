@@ -96,6 +96,14 @@ public:
 	void erase(const unsigned int index);
 
 	/**
+	 * Get the data type of this array.
+	 *
+	 * @return a string containing the Xdmf data type for the array, this is one of
+	 *      Char, Short, Int, Float, UChar, UShort, UInt.
+	 */
+	boost::shared_ptr<const XdmfArrayType> getArrayType() const;
+
+	/**
 	 * Get the capacity of this array (the number of values this array can store without reallocation).
 	 *
 	 * @return the capacity of this array.
@@ -126,14 +134,6 @@ public:
 	 * @return a string containing the name of the array.
 	 */
 	std::string getName() const;
-
-	/**
-	 * Get the data type of this array.
-	 *
-	 * @return a string containing the Xdmf data type for the array, this is one of
-	 *      Char, Short, Int, Float, UChar, UShort, UInt.
-	 */
-	boost::shared_ptr<const XdmfArrayType> getType() const;
 
 	/**
 	 * Get a copy of a single value stored in this array.
@@ -335,9 +335,9 @@ private:
 	class CopyValues;
 
 	class Erase;
+	class GetArrayType;
 	class GetCapacity;
 	class GetHDF5Type;
-	class GetType;
 
 	template <typename T>
 	class GetValuesCopy;

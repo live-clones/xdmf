@@ -19,6 +19,7 @@ public:
 
 	XdmfWriterImpl(const std::string & xmlFilePath, const boost::shared_ptr<XdmfHDF5Writer> hdf5Writer) :
 		mHDF5Writer(hdf5Writer),
+		mLastXPathed(false),
 		mLightDataLimit(100),
 		mMode(Default),
 		mWriteXPaths(true),
@@ -52,6 +53,7 @@ public:
 	}
 
 	boost::shared_ptr<XdmfHDF5Writer> mHDF5Writer;
+	bool mLastXPathed;
 	unsigned int mLightDataLimit;
 	Mode mMode;
 	bool mWriteXPaths;
@@ -155,7 +157,7 @@ void XdmfWriter::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisito
 		this->visit(dynamic_cast<XdmfItem &>(array), visitor);
 	}
 
-	if(array.size() > 0)
+	if(array.size() > 0 && !mImpl->mLastXPathed)
 	{
 		std::stringstream xmlTextValues;
 
@@ -230,6 +232,7 @@ void XdmfWriter::visit(XdmfItem & item, const boost::shared_ptr<XdmfBaseVisitor>
 			// Inserted before --- just xpath location of previously written node
 			mImpl->mXMLCurrentNode = xmlNewChild(mImpl->mXMLCurrentNode, NULL, (xmlChar*)"xi:include", NULL);
 			xmlNewProp(mImpl->mXMLCurrentNode, (xmlChar*)"xpointer", (xmlChar*)iter->second.c_str());
+			mImpl->mLastXPathed = true;
 		}
 		else
 		{
@@ -247,6 +250,7 @@ void XdmfWriter::visit(XdmfItem & item, const boost::shared_ptr<XdmfBaseVisitor>
 			mImpl->mXPathCount = 0;
 			item.traverse(visitor);
 			mImpl->mXPathCount = parentCount;
+			mImpl->mLastXPathed = false;
 		}
 
 		mImpl->mXPathString = parentXPathString;

@@ -85,6 +85,71 @@ private:
 	const unsigned int mIndex;
 };
 
+class XdmfArray::GetArrayType : public boost::static_visitor<boost::shared_ptr<const XdmfArrayType> > {
+public:
+
+	GetArrayType()
+	{
+	}
+
+	boost::shared_ptr<const XdmfArrayType> getArrayType(const char * const) const
+	{
+		return XdmfArrayType::Int8();
+	}
+
+	boost::shared_ptr<const XdmfArrayType> getArrayType(const short * const) const
+	{
+		return XdmfArrayType::Int16();
+	}
+
+	boost::shared_ptr<const XdmfArrayType> getArrayType(const int * const) const
+	{
+		return XdmfArrayType::Int32();
+	}
+
+	boost::shared_ptr<const XdmfArrayType> getArrayType(const long * const) const
+	{
+		return XdmfArrayType::Int64();
+	}
+
+	boost::shared_ptr<const XdmfArrayType> getArrayType(const float * const) const
+	{
+		return XdmfArrayType::Float32();
+	}
+
+	boost::shared_ptr<const XdmfArrayType> getArrayType(const double * const) const
+	{
+		return XdmfArrayType::Float64();
+	}
+
+	boost::shared_ptr<const XdmfArrayType> getArrayType(const unsigned char * const) const
+	{
+		return XdmfArrayType::UInt8();
+	}
+
+	boost::shared_ptr<const XdmfArrayType> getArrayType(const unsigned short * const) const
+	{
+		return XdmfArrayType::UInt16();
+	}
+
+	boost::shared_ptr<const XdmfArrayType> getArrayType(const unsigned int * const) const
+	{
+		return XdmfArrayType::UInt32();
+	}
+
+	template<typename T>
+	boost::shared_ptr<const XdmfArrayType> operator()(const boost::shared_ptr<std::vector<T> > & array) const
+	{
+		return this->getArrayType(&(array.get()->operator[](0)));
+	}
+
+	template<typename T>
+	boost::shared_ptr<const XdmfArrayType> operator()(const boost::shared_array<const T> & array) const
+	{
+		return this->getArrayType(array.get());
+	}
+};
+
 class XdmfArray::GetCapacity : public boost::static_visitor<unsigned int> {
 public:
 
@@ -96,71 +161,6 @@ public:
 	unsigned int operator()(const boost::shared_ptr<std::vector<T> > & array) const
 	{
 		return array->capacity();
-	}
-};
-
-class XdmfArray::GetType : public boost::static_visitor<boost::shared_ptr<const XdmfArrayType> > {
-public:
-
-	GetType()
-	{
-	}
-
-	boost::shared_ptr<const XdmfArrayType> getType(const char * const) const
-	{
-		return XdmfArrayType::Int8();
-	}
-
-	boost::shared_ptr<const XdmfArrayType> getType(const short * const) const
-	{
-		return XdmfArrayType::Int16();
-	}
-
-	boost::shared_ptr<const XdmfArrayType> getType(const int * const) const
-	{
-		return XdmfArrayType::Int32();
-	}
-
-	boost::shared_ptr<const XdmfArrayType> getType(const long * const) const
-	{
-		return XdmfArrayType::Int64();
-	}
-
-	boost::shared_ptr<const XdmfArrayType> getType(const float * const) const
-	{
-		return XdmfArrayType::Float32();
-	}
-
-	boost::shared_ptr<const XdmfArrayType> getType(const double * const) const
-	{
-		return XdmfArrayType::Float64();
-	}
-
-	boost::shared_ptr<const XdmfArrayType> getType(const unsigned char * const) const
-	{
-		return XdmfArrayType::UInt8();
-	}
-
-	boost::shared_ptr<const XdmfArrayType> getType(const unsigned short * const) const
-	{
-		return XdmfArrayType::UInt16();
-	}
-
-	boost::shared_ptr<const XdmfArrayType> getType(const unsigned int * const) const
-	{
-		return XdmfArrayType::UInt32();
-	}
-
-	template<typename T>
-	boost::shared_ptr<const XdmfArrayType> operator()(const boost::shared_ptr<std::vector<T> > & array) const
-	{
-		return this->getType(&(array.get()->operator[](0)));
-	}
-
-	template<typename T>
-	boost::shared_ptr<const XdmfArrayType> operator()(const boost::shared_array<const T> & array) const
-	{
-		return this->getType(array.get());
 	}
 };
 
@@ -370,6 +370,24 @@ void XdmfArray::erase(const unsigned int index)
 	}
 }
 
+
+boost::shared_ptr<const XdmfArrayType> XdmfArray::getArrayType() const
+{
+	if(mHaveArray)
+	{
+		return boost::apply_visitor(GetArrayType(), mArray);
+	}
+	else if(mHaveArrayPointer)
+	{
+		return boost::apply_visitor(GetArrayType(), mArrayPointer);
+	}
+	else if(mHDF5Controller)
+	{
+		return mHDF5Controller->getType();
+	}
+	return XdmfArrayType::Uninitialized();
+}
+
 unsigned int XdmfArray::getCapacity() const
 {
 	if(mHaveArray)
@@ -407,7 +425,7 @@ std::map<std::string, std::string> XdmfArray::getItemProperties() const
 	{
 		arrayProperties["Name"] = mName;
 	}
-	boost::shared_ptr<const XdmfArrayType> type = this->getType();
+	boost::shared_ptr<const XdmfArrayType> type = this->getArrayType();
 	type->getProperties(arrayProperties);
 	return arrayProperties;
 }
@@ -420,23 +438,6 @@ std::string XdmfArray::getItemTag() const
 std::string XdmfArray::getName() const
 {
 	return mName;
-}
-
-boost::shared_ptr<const XdmfArrayType> XdmfArray::getType() const
-{
-	if(mHaveArray)
-	{
-		return boost::apply_visitor(GetType(), mArray);
-	}
-	else if(mHaveArrayPointer)
-	{
-		return boost::apply_visitor(GetType(), mArrayPointer);
-	}
-	else if(mHDF5Controller)
-	{
-		return mHDF5Controller->getType();
-	}
-	return XdmfArrayType::Uninitialized();
 }
 
 void * XdmfArray::getValuesPointer()

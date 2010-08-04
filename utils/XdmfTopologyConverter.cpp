@@ -107,25 +107,25 @@ public:
 		toReturn->getGeometry()->setType(gridToConvert->getGeometry()->getType());
 		toReturn->getTopology()->setType(XdmfTopologyType::Hexahedron_64());
 
-		boost::shared_ptr<XdmfArray> newPoints = toReturn->getGeometry()->getArray();
-		newPoints->initialize(gridToConvert->getGeometry()->getArray()->getType());
-		newPoints->resize(gridToConvert->getGeometry()->getArray()->size(), 0);
+		boost::shared_ptr<XdmfArray> newPoints = toReturn->getGeometry();
+		newPoints->initialize(gridToConvert->getGeometry()->getArrayType());
+		newPoints->resize(gridToConvert->getGeometry()->size(), 0);
 
-		if(!gridToConvert->getGeometry()->getArray()->isInitialized())
+		if(!gridToConvert->getGeometry()->isInitialized())
 		{
-			gridToConvert->getGeometry()->getArray()->read();
+			gridToConvert->getGeometry()->read();
 		}
 
 		// Copy all geometry values from old grid into new grid because we are keeping all old points.
-		newPoints->copyValues(0, gridToConvert->getGeometry()->getArray(), 0, gridToConvert->getGeometry()->getArray()->size());
+		newPoints->copyValues(0, gridToConvert->getGeometry(), 0, gridToConvert->getGeometry()->size());
 
-		boost::shared_ptr<XdmfArray> newConnectivity = toReturn->getTopology()->getArray();
-		newConnectivity->initialize(gridToConvert->getTopology()->getArray()->getType());
+		boost::shared_ptr<XdmfArray> newConnectivity = toReturn->getTopology();
+		newConnectivity->initialize(gridToConvert->getTopology()->getArrayType());
 		newConnectivity->reserve(64 * gridToConvert->getTopology()->getNumberElements());
 
-		if(!gridToConvert->getTopology()->getArray()->isInitialized())
+		if(!gridToConvert->getTopology()->isInitialized())
 		{
-			gridToConvert->getTopology()->getArray()->read();
+			gridToConvert->getTopology()->read();
 		}
 
 		std::vector<double> leftPoint(3);
@@ -139,12 +139,12 @@ public:
 			// Fill localNodes with original coordinate information.
 			for(int j=0; j<8; ++j)
 			{
-				gridToConvert->getGeometry()->getArray()->getValuesCopy(gridToConvert->getTopology()->getArray()->getValueCopy<unsigned int>(8*i + j) * 3, &localNodes[j][0], 3);
+				gridToConvert->getGeometry()->getValuesCopy(gridToConvert->getTopology()->getValueCopy<unsigned int>(8*i + j) * 3, &localNodes[j][0], 3);
 			}
 
 			// Add old connectivity information to newConnectivity.
 			newConnectivity->resize(newConnectivity->size() + 8, 0);
-			newConnectivity->copyValues(64*i, gridToConvert->getTopology()->getArray(), 8*i, 8);
+			newConnectivity->copyValues(64*i, gridToConvert->getTopology(), 8*i, 8);
 
 			// Case 0
 			this->computeInteriorPoints(leftPoint, rightPoint, localNodes[0], localNodes[1]);
@@ -388,25 +388,25 @@ public:
 		toReturn->getGeometry()->setType(gridToConvert->getGeometry()->getType());
 		toReturn->getTopology()->setType(XdmfTopologyType::Hexahedron_125());
 
-		boost::shared_ptr<XdmfArray> newPoints = toReturn->getGeometry()->getArray();
-		newPoints->initialize(gridToConvert->getGeometry()->getArray()->getType());
-		newPoints->resize(gridToConvert->getGeometry()->getArray()->size(), 0);
+		boost::shared_ptr<XdmfArray> newPoints = toReturn->getGeometry();
+		newPoints->initialize(gridToConvert->getGeometry()->getArrayType());
+		newPoints->resize(gridToConvert->getGeometry()->size(), 0);
 
-		if(!gridToConvert->getGeometry()->getArray()->isInitialized())
+		if(!gridToConvert->getGeometry()->isInitialized())
 		{
-			gridToConvert->getGeometry()->getArray()->read();
+			gridToConvert->getGeometry()->read();
 		}
 
 		// Copy all geometry values from old grid into new grid because we are keeping all old points.
-		newPoints->copyValues(0, gridToConvert->getGeometry()->getArray(), 0, gridToConvert->getGeometry()->getArray()->size());
+		newPoints->copyValues(0, gridToConvert->getGeometry(), 0, gridToConvert->getGeometry()->size());
 
-		boost::shared_ptr<XdmfArray> newConnectivity = toReturn->getTopology()->getArray();
-		newConnectivity->initialize(gridToConvert->getTopology()->getArray()->getType());
+		boost::shared_ptr<XdmfArray> newConnectivity = toReturn->getTopology();
+		newConnectivity->initialize(gridToConvert->getTopology()->getArrayType());
 		newConnectivity->reserve(125 * gridToConvert->getTopology()->getNumberElements());
 
-		if(!gridToConvert->getTopology()->getArray()->isInitialized())
+		if(!gridToConvert->getTopology()->isInitialized())
 		{
-			gridToConvert->getTopology()->getArray()->read();
+			gridToConvert->getTopology()->read();
 		}
 
 		std::vector<double> quarterPoint(3);
@@ -422,12 +422,12 @@ public:
 
 			for(int j=0; j<8; ++j)
 			{
-				gridToConvert->getGeometry()->getArray()->getValuesCopy(gridToConvert->getTopology()->getArray()->getValueCopy<unsigned int>(8*i + j) * 3, &localNodes[j][0], 3);
+				gridToConvert->getGeometry()->getValuesCopy(gridToConvert->getTopology()->getValueCopy<unsigned int>(8*i + j) * 3, &localNodes[j][0], 3);
 			}
 
 			// Add old connectivity information to newConnectivity.
 			newConnectivity->resize(newConnectivity->size() + 8, 0);
-			newConnectivity->copyValues(125*i, gridToConvert->getTopology()->getArray(), 8*i, 8);
+			newConnectivity->copyValues(125*i, gridToConvert->getTopology(), 8*i, 8);
 
 			// Case 0
 			this->computeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[0], localNodes[1]);
@@ -808,9 +808,9 @@ public:
 		toReturn->setGeometry(gridToConvert->getGeometry());
 		toReturn->getTopology()->setType(XdmfTopologyType::Hexahedron());
 
-		boost::shared_ptr<XdmfArray> oldConnectivity = gridToConvert->getTopology()->getArray();
-		boost::shared_ptr<XdmfArray> newConnectivity = toReturn->getTopology()->getArray();
-		newConnectivity->initialize(oldConnectivity->getType());
+		boost::shared_ptr<XdmfArray> oldConnectivity = gridToConvert->getTopology();
+		boost::shared_ptr<XdmfArray> newConnectivity = toReturn->getTopology();
+		newConnectivity->initialize(oldConnectivity->getArrayType());
 		newConnectivity->resize(216 * gridToConvert->getTopology()->getNumberElements(), 0);
 
 		if(!oldConnectivity->isInitialized())
@@ -1049,9 +1049,9 @@ public:
 			}
 			else if(currAttribute->getCenter() == XdmfAttributeCenter::Cell())
 			{
-				if(!currAttribute->getArray()->isInitialized())
+				if(!currAttribute->isInitialized())
 				{
-					currAttribute->getArray()->read();
+					currAttribute->read();
 				}
 
 				boost::shared_ptr<XdmfAttribute> newAttribute = XdmfAttribute::New();
@@ -1059,12 +1059,12 @@ public:
 				newAttribute->setType(currAttribute->getType());
 				newAttribute->setCenter(currAttribute->getCenter());
 
-				boost::shared_ptr<XdmfArray> vals = newAttribute->getArray();
-				vals->initialize(currAttribute->getArray()->getType());
-				vals->resize(currAttribute->getArray()->size() * 27, 0);
-				for(unsigned int j=0; j<currAttribute->getArray()->size(); ++j)
+				boost::shared_ptr<XdmfArray> vals = newAttribute;
+				vals->initialize(currAttribute->getArrayType());
+				vals->resize(currAttribute->size() * 27, 0);
+				for(unsigned int j=0; j<currAttribute->size(); ++j)
 				{
-					vals->copyValues(j * 27, currAttribute->getArray(), j, 27, 1, 0);
+					vals->copyValues(j * 27, currAttribute, j, 27, 1, 0);
 				}
 				toReturn->insert(newAttribute);
 			}

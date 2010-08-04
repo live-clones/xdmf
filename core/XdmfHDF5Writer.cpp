@@ -66,39 +66,39 @@ void XdmfHDF5Writer::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVi
 
 	if(array.isInitialized())
 	{
-		if(array.getType() == XdmfArrayType::Int8())
+		if(array.getArrayType() == XdmfArrayType::Int8())
 		{
 			datatype = H5T_NATIVE_CHAR;
 		}
-		else if(array.getType() == XdmfArrayType::Int16())
+		else if(array.getArrayType() == XdmfArrayType::Int16())
 		{
 			datatype = H5T_NATIVE_SHORT;
 		}
-		else if(array.getType() == XdmfArrayType::Int32())
+		else if(array.getArrayType() == XdmfArrayType::Int32())
 		{
 			datatype = H5T_NATIVE_INT;
 		}
-		else if(array.getType() == XdmfArrayType::Int64())
+		else if(array.getArrayType() == XdmfArrayType::Int64())
 		{
 			datatype = H5T_NATIVE_LONG;
 		}
-		else if(array.getType() == XdmfArrayType::Float32())
+		else if(array.getArrayType() == XdmfArrayType::Float32())
 		{
 			datatype = H5T_NATIVE_FLOAT;
 		}
-		else if(array.getType() == XdmfArrayType::Float64())
+		else if(array.getArrayType() == XdmfArrayType::Float64())
 		{
 			datatype = H5T_NATIVE_DOUBLE;
 		}
-		else if(array.getType() == XdmfArrayType::UInt8())
+		else if(array.getArrayType() == XdmfArrayType::UInt8())
 		{
 			datatype = H5T_NATIVE_UCHAR;
 		}
-		else if(array.getType() == XdmfArrayType::UInt16())
+		else if(array.getArrayType() == XdmfArrayType::UInt16())
 		{
 			datatype = H5T_NATIVE_USHORT;
 		}
-		else if(array.getType() == XdmfArrayType::UInt32())
+		else if(array.getArrayType() == XdmfArrayType::UInt32())
 		{
 			datatype = H5T_NATIVE_UINT;
 		}
@@ -201,7 +201,7 @@ void XdmfHDF5Writer::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVi
 		// Attach a new controller to the array if needed.
 		if(mImpl->mMode == Default || !array.getHDF5Controller())
 		{
-			boost::shared_ptr<XdmfHDF5Controller> newDataSetController = XdmfHDF5Controller::New(hdf5FilePath, dataSetPath.str(), array.size(), array.getType());
+			boost::shared_ptr<XdmfHDF5Controller> newDataSetController = XdmfHDF5Controller::New(hdf5FilePath, dataSetPath.str(), array.size(), array.getArrayType());
 			array.setHDF5Controller(newDataSetController);
 			mImpl->mDataSetId++;
 		}

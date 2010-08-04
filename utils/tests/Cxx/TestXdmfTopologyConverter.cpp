@@ -20,12 +20,12 @@ int main(int argc, char* argv[])
 	boost::shared_ptr<XdmfGrid> hexGrid = XdmfGrid::New();
 	double hexPoints[24] = {0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1};
 	hexGrid->getGeometry()->setType(XdmfGeometryType::XYZ());
-	hexGrid->getGeometry()->getArray()->resize<double>(24, 0);
-	hexGrid->getGeometry()->getArray()->copyValues(0, hexPoints, 24);
+	hexGrid->getGeometry()->resize<double>(24, 0);
+	hexGrid->getGeometry()->copyValues(0, hexPoints, 24);
 	unsigned int hexConn[8] = {0, 1, 2, 3, 4, 5, 6, 7};
 	hexGrid->getTopology()->setType(XdmfTopologyType::Hexahedron());
-	hexGrid->getTopology()->getArray()->resize<unsigned int>(8, 0);
-	hexGrid->getTopology()->getArray()->copyValues(0, hexConn, 8);
+	hexGrid->getTopology()->resize<unsigned int>(8, 0);
+	hexGrid->getTopology()->copyValues(0, hexConn, 8);
 
 	/*
 	 * Hexahedron to Hexahedron_64
@@ -53,13 +53,13 @@ int main(int argc, char* argv[])
 
 	for(unsigned int i=0; i<192; ++i)
 	{
-		assert(fabs(expectedPoints[i] - hex64Grid->getGeometry()->getArray()->getValueCopy<double>(i)) < epsilon);
+		assert(fabs(expectedPoints[i] - hex64Grid->getGeometry()->getValueCopy<double>(i)) < epsilon);
 	}
 	assert(hex64Grid->getTopology()->getType() == XdmfTopologyType::Hexahedron_64());
 	assert(hex64Grid->getTopology()->getNumberElements() == 1);
 	for(unsigned int i=0; i<64; ++i)
 	{
-		assert(i == hex64Grid->getTopology()->getArray()->getValueCopy<unsigned int>(i));
+		assert(i == hex64Grid->getTopology()->getValueCopy<unsigned int>(i));
 	}
 
 	/*
@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
 	assert(hex125Grid->getTopology()->getNumberElements() == 1);
 	for(unsigned int i=0; i<125; ++i)
 	{
-		assert(i == hex125Grid->getTopology()->getArray()->getValueCopy<unsigned int>(i));
+		assert(i == hex125Grid->getTopology()->getValueCopy<unsigned int>(i));
 	}
 
 	/*
@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
 	assert(newHexGrid->getGeometry()->getNumberPoints() == 64);
 	for(unsigned int i=0; i<192; ++i)
 	{
-		assert(fabs(expectedPoints[i] - newHexGrid->getGeometry()->getArray()->getValueCopy<double>(i)) < epsilon);
+		assert(fabs(expectedPoints[i] - newHexGrid->getGeometry()->getValueCopy<double>(i)) < epsilon);
 	}
 	assert(newHexGrid->getTopology()->getType() == XdmfTopologyType::Hexahedron());
 	assert(newHexGrid->getTopology()->getNumberElements() == 27);
