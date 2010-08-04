@@ -70,8 +70,14 @@ void XdmfAttribute::populateItem(const std::map<std::string, std::string> & item
 	}
 	mAttributeCenter = XdmfAttributeCenter::New(itemProperties);
 	mAttributeType = XdmfAttributeType::New(itemProperties);
-
-	XdmfDataItem::populateItem(itemProperties, childItems);
+	for(std::vector<boost::shared_ptr<XdmfItem> >::const_iterator iter = childItems.begin(); iter != childItems.end(); ++iter)
+	{
+		if(boost::shared_ptr<XdmfArray> array = boost::shared_dynamic_cast<XdmfArray>(*iter))
+		{
+			this->swap(array);
+		}
+		// TODO: If multiple dataitems.
+	}
 }
 
 void XdmfAttribute::setCenter(const boost::shared_ptr<const XdmfAttributeCenter> attributeCenter)

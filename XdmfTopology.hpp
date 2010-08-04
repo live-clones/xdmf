@@ -5,7 +5,7 @@
 class XdmfTopologyType;
 
 // Includes
-#include "XdmfDataItem.hpp"
+#include "XdmfArray.hpp"
 
 /**
  * @brief Handles the connectivity information in an XdmfGrid.
@@ -14,7 +14,7 @@ class XdmfTopologyType;
  * between all points contained in an XdmfGrid.  XdmfTopology contains an XdmfTopologyType property
  * which should be set that specifies the element type stored.
  */
-class XdmfTopology : public XdmfDataItem {
+class XdmfTopology : public XdmfArray {
 
 public:
 
@@ -27,7 +27,7 @@ public:
 
 	virtual ~XdmfTopology();
 
-	LOKI_DEFINE_VISITABLE(XdmfTopology, XdmfDataItem)
+	LOKI_DEFINE_VISITABLE(XdmfTopology, XdmfArray)
 	static const std::string ItemTag;
 
 	std::map<std::string, std::string> getItemProperties() const;

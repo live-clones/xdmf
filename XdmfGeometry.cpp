@@ -5,7 +5,6 @@
  *      Author: kleiter
  */
 
-#include "XdmfArray.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGeometryType.hpp"
 
@@ -45,7 +44,7 @@ unsigned int XdmfGeometry::getNumberPoints() const
 	{
 		return 0;
 	}
-	return this->getArray()->size() / mGeometryType->getDimensions();
+	return this->size() / mGeometryType->getDimensions();
 }
 
 boost::shared_ptr<const XdmfGeometryType> XdmfGeometry::getType() const
@@ -56,7 +55,14 @@ boost::shared_ptr<const XdmfGeometryType> XdmfGeometry::getType() const
 void XdmfGeometry::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems)
 {
 	mGeometryType = XdmfGeometryType::New(itemProperties);
-	XdmfDataItem::populateItem(itemProperties, childItems);
+	for(std::vector<boost::shared_ptr<XdmfItem> >::const_iterator iter = childItems.begin(); iter != childItems.end(); ++iter)
+	{
+		if(boost::shared_ptr<XdmfArray> array = boost::shared_dynamic_cast<XdmfArray>(*iter))
+		{
+			this->swap(array);
+		}
+		// TODO: If multiple dataitems.
+	}
 }
 
 void XdmfGeometry::setType(const boost::shared_ptr<const XdmfGeometryType> geometryType)

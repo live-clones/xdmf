@@ -5,7 +5,7 @@
 class XdmfGeometryType;
 
 // Includes
-#include "XdmfDataItem.hpp"
+#include "XdmfArray.hpp"
 
 /**
  * @brief Handles the coordinate positions of points in an XdmfGrid.
@@ -14,7 +14,7 @@ class XdmfGeometryType;
  * of all points contained in an XdmfGrid.  XdmfGeometry contains an XdmfGeometryType property
  * which should be set that specifies the types of coordinate values stored.
  */
-class XdmfGeometry : public XdmfDataItem {
+class XdmfGeometry : public XdmfArray {
 
 public:
 
@@ -27,7 +27,7 @@ public:
 
 	virtual ~XdmfGeometry();
 
-	LOKI_DEFINE_VISITABLE(XdmfGeometry, XdmfDataItem)
+	LOKI_DEFINE_VISITABLE(XdmfGeometry, XdmfArray)
 	static const std::string ItemTag;
 
 	std::map<std::string, std::string> getItemProperties() const;

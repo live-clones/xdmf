@@ -6,7 +6,7 @@ class XdmfAttributeCenter;
 class XdmfAttributeType;
 
 // Includes
-#include "XdmfDataItem.hpp"
+#include "XdmfArray.hpp"
 
 /**
  * @brief Handles computed values attached to an XdmfGrid.
@@ -14,7 +14,7 @@ class XdmfAttributeType;
  * XdmfAttribute contains two properties that should be set, XdmfAttributeCenter and XdmfAttributeType.
  * XdmfAttribute is a subclass of XdmfDataItem, meaning it contains an XdmfArray to store values.
  */
-class XdmfAttribute : public XdmfDataItem {
+class XdmfAttribute : public XdmfArray {
 
 public:
 
@@ -27,7 +27,7 @@ public:
 
 	virtual ~XdmfAttribute();
 
-	LOKI_DEFINE_VISITABLE(XdmfAttribute, XdmfDataItem)
+	LOKI_DEFINE_VISITABLE(XdmfAttribute, XdmfArray)
 	static const std::string ItemTag;
 
 	/**

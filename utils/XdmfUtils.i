@@ -10,7 +10,6 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
 	#include <XdmfArrayType.hpp>
 	#include <XdmfCoreItemFactory.hpp>
 	#include <XdmfCoreReader.hpp>
-	#include <XdmfDataItem.hpp>
 	#include <XdmfHDF5Controller.hpp>
 	#include <XdmfHDF5Writer.hpp>
 	#include <XdmfInformation.hpp>

@@ -6,7 +6,6 @@
  */
 
 #include <sstream>
-#include "XdmfArray.hpp"
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
 
@@ -51,7 +50,7 @@ unsigned int XdmfTopology::getNumberElements() const
 	{
 		return 0;
 	}
-	return this->getArray()->size() / mTopologyType->getNodesPerElement();
+	return this->size() / mTopologyType->getNodesPerElement();
 }
 
 boost::shared_ptr<const XdmfTopologyType> XdmfTopology::getType() const
@@ -62,7 +61,14 @@ boost::shared_ptr<const XdmfTopologyType> XdmfTopology::getType() const
 void XdmfTopology::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems)
 {
 	mTopologyType = XdmfTopologyType::New(itemProperties);
-	XdmfDataItem::populateItem(itemProperties, childItems);
+	for(std::vector<boost::shared_ptr<XdmfItem> >::const_iterator iter = childItems.begin(); iter != childItems.end(); ++iter)
+	{
+		if(boost::shared_ptr<XdmfArray> array = boost::shared_dynamic_cast<XdmfArray>(*iter))
+		{
+			this->swap(array);
+		}
+		// TODO: If multiple dataitems.
+	}
 }
 
 void XdmfTopology::setType(const boost::shared_ptr<const XdmfTopologyType> topologyType)

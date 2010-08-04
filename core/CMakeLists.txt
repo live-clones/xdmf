@@ -25,7 +25,6 @@ set(XdmfCoreSources
 	XdmfArrayType
 	XdmfCoreItemFactory
 	XdmfCoreReader
-	XdmfDataItem
 	XdmfHDF5Controller
 	XdmfHDF5Writer
 	XdmfInformation

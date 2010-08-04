@@ -16,7 +16,8 @@ class XdmfGridCollectionType;
  *
  * It is valid to nest collections.  A spatial collection within a temporal collection is commonly used.
  */
-class XdmfGridCollection : public XdmfGrid, public XdmfDomain {
+class XdmfGridCollection : public XdmfGrid,
+	public XdmfDomain {
 
 public:
 

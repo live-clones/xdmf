@@ -11,15 +11,15 @@ int main(int argc, char* argv[])
 	// First write and release heavy data
 	boost::shared_ptr<XdmfHDF5Writer> hdf5Writer = XdmfHDF5Writer::New("output.h5");
 	grid->getGeometry()->accept(hdf5Writer);
-	grid->getGeometry()->getArray()->release();
+	grid->getGeometry()->release();
 
 	grid->getTopology()->accept(hdf5Writer);
-	grid->getTopology()->getArray()->release();
+	grid->getTopology()->release();
 
 	for(int i=0; i<grid->getNumberAttributes(); ++i)
 	{
 		grid->getAttribute(i)->accept(hdf5Writer);
-		grid->getAttribute(i)->getArray()->release();
+		grid->getAttribute(i)->release();
 	}
 
 	// Now insert into domain and write light data

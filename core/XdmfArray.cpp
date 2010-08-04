@@ -698,16 +698,19 @@ void XdmfArray::swap(const boost::shared_ptr<XdmfArray> array)
 	int tmpArrayPointerNumValues = array->mArrayPointerNumValues;
 	bool tmpHaveArray = array->mHaveArray;
 	bool tmpHaveArrayPointer = array->mHaveArrayPointer;
+	boost::shared_ptr<XdmfHDF5Controller> tmpHDF5Controller = array->mHDF5Controller;
 
 	array->mArray = mArray;
 	array->mArrayPointer = mArrayPointer;
 	array->mArrayPointerNumValues = mArrayPointerNumValues;
 	array->mHaveArray = mHaveArray;
 	array->mHaveArrayPointer = mHaveArrayPointer;
+	array->mHDF5Controller = mHDF5Controller;
 
 	mArray = tmpArray;
 	mArrayPointer = tmpArrayPointer;
 	mArrayPointerNumValues = tmpArrayPointerNumValues;
 	mHaveArray = tmpHaveArray;
 	mHaveArrayPointer = tmpHaveArrayPointer;
+	mHDF5Controller = tmpHDF5Controller;
 }

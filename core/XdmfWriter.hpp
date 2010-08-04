@@ -81,6 +81,13 @@ public:
 	unsigned int getLightDataLimit() const;
 
 	/**
+	 * Get whether this writer is set to write xpaths.
+	 *
+	 * @return bool whether this writer is set to write xpaths.
+	 */
+	bool getWriteXPaths() const;
+
+	/**
 	 * Get the Mode of operation for this writer.
 	 *
 	 * @return the Mode of operation for this writer.
@@ -100,6 +107,13 @@ public:
 	 * @param mode the Mode of operation for this writer.
 	 */
 	void setMode(const Mode mode);
+
+	/**
+	 * Set whether to write xpaths for this writer.
+	 *
+	 * @param writeXPaths, whether to write xpaths for this writer.
+	 */
+	void setWriteXPaths(const bool writeXPaths = true);
 
 	/**
 	 * Write an XdmfArray to disk
@@ -122,9 +136,6 @@ protected:
 
 	XdmfWriter(const std::string & xmlFilePath);
 	XdmfWriter(const std::string & xmlFilePath, boost::shared_ptr<XdmfHDF5Writer> hdf5Writer);
-
-	void moveToLastWrittenNode();
-	void moveToParentNode();
 
 private:
 
