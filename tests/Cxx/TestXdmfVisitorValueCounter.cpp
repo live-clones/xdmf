@@ -31,7 +31,7 @@ public:
 
 	void visit(XdmfArray & array, boost::shared_ptr<Loki::BaseVisitor> visitor)
 	{
-		mCount += array.getSize();
+		mCount += array.size();
 	}
 
 	void visit(XdmfSet & set, boost::shared_ptr<Loki::BaseVisitor> visitor)

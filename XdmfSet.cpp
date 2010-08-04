@@ -57,14 +57,9 @@ std::string XdmfSet::getName() const
 	return mName;
 }
 
-boost::shared_ptr<const XdmfSetType> XdmfSet::getSetType() const
+boost::shared_ptr<const XdmfSetType> XdmfSet::getType() const
 {
 	return mSetType;
-}
-
-bool XdmfSet::isInitialized() const
-{
-	return this->size() > 0;
 }
 
 void XdmfSet::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems)
@@ -84,7 +79,7 @@ void XdmfSet::populateItem(const std::map<std::string, std::string> & itemProper
 		{
 			if(array->isInitialized())
 			{
-				for(unsigned int i=0; i<array->getSize(); ++i)
+				for(unsigned int i=0; i<array->size(); ++i)
 				{
 					this->insert(array->getValueCopy<unsigned int>(i));
 				}
@@ -104,7 +99,7 @@ void XdmfSet::read()
 	{
 		boost::shared_ptr<XdmfArray> setValues = XdmfArray::New();
 		mHDF5Controller->read(setValues.get());
-		for(unsigned int i=0; i<setValues->getSize(); ++i)
+		for(unsigned int i=0; i<setValues->size(); ++i)
 		{
 			this->insert(setValues->getValueCopy<unsigned int>(i));
 		}
@@ -126,7 +121,7 @@ void XdmfSet::setName(const std::string & name)
 	mName= name;
 }
 
-void XdmfSet::setSetType(const boost::shared_ptr<const XdmfSetType> setType)
+void XdmfSet::setType(const boost::shared_ptr<const XdmfSetType> setType)
 {
 	mSetType = setType;
 }
@@ -137,5 +132,21 @@ std::size_t XdmfSet::size() const
 	{
 		return std::set<unsigned int>::size();
 	}
-	return mHDF5Controller->getSize();
+	else if(mHDF5Controller)
+	{
+		return mHDF5Controller->getSize();
+	}
+	return 0;
+}
+
+void XdmfSet::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor) const
+{
+	boost::shared_ptr<XdmfArray> setValues = XdmfArray::New();
+	setValues->reserve(std::set<unsigned int>::size());
+	for(XdmfSet::const_iterator iter = this->begin(); iter != this->end(); ++iter)
+	{
+		setValues->pushBack(*iter);
+	}
+	setValues->setHDF5Controller(mHDF5Controller);
+	setValues->accept(visitor);
 }

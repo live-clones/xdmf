@@ -33,7 +33,7 @@ void XdmfDataItem::populateItem(const std::map<std::string, std::string> & itemP
 	{
 		if(boost::shared_ptr<XdmfArray> array = boost::shared_dynamic_cast<XdmfArray>(*iter))
 		{
-			if(mArray->getSize() == 0)
+			if(mArray->size() == 0)
 			{
 				this->setArray(array);
 			}
@@ -44,9 +44,9 @@ void XdmfDataItem::populateItem(const std::map<std::string, std::string> & itemP
 				{
 					mArray->read();
 				}
-				const unsigned int oldSize = mArray->getSize();
-				mArray->resize(oldSize + array->getSize(), 0);
-				mArray->copyValues(oldSize, array, 0, array->getSize(), 1, 1);
+				const unsigned int oldSize = mArray->size();
+				mArray->resize(oldSize + array->size(), 0);
+				mArray->copyValues(oldSize, array, 0, array->size(), 1, 1);
 			}
 		}
 	}

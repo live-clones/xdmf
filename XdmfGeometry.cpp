@@ -45,7 +45,7 @@ unsigned int XdmfGeometry::getNumberPoints() const
 	{
 		return 0;
 	}
-	return this->getArray()->getSize() / mGeometryType->getDimensions();
+	return this->getArray()->size() / mGeometryType->getDimensions();
 }
 
 boost::shared_ptr<const XdmfGeometryType> XdmfGeometry::getType() const

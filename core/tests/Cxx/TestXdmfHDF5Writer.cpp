@@ -57,9 +57,9 @@ int main(int argc, char* argv[])
 	array->accept(writer);
 	array->accept(writer);
 	array->accept(writer);
-	assert(array->getSize() == 2);
+	assert(array->size() == 2);
 	array->read();
-	assert(array->getSize() == 10);
+	assert(array->size() == 10);
 	for(int i=0; i<5; ++i)
 	{
 		assert(array->getValueCopy<int>(i*2) == 2);

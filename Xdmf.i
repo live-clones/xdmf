@@ -16,6 +16,7 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 	#include <XdmfInformation.hpp>
 	#include <XdmfItem.hpp>
 	#include <XdmfItemProperty.hpp>
+	#include <XdmfSystemUtils.hpp>
 	#include <XdmfVisitor.hpp>
 	#include <XdmfWriter.hpp>
 
@@ -86,6 +87,12 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 		$result = SWIG_NewPointerObj(SWIG_as_voidptr(new boost::shared_ptr<XdmfItem>($1)), SWIGTYPE_p_boost__shared_ptrT_XdmfItem_t, SWIG_POINTER_OWN);
 	}
 }
+
+%include std_set.i
+%template(std_set_uint) std::set<unsigned int>;
+
+// Abstract Base Classes
+%template() Loki::Visitor<XdmfSet>;
 
 // Shared Pointer Templates
 %shared_ptr(XdmfAttribute)

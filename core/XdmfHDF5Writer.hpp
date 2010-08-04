@@ -16,7 +16,7 @@ class XdmfArray;
  * disk.  It will also attach an XdmfHDF5Controller to all XdmfArrays that it writes to disk.
  *
  * There are three modes of operation for this writer:
- * 	Default - All initialized XdmfArrays are written to new hdf5 datasets irregardless of whether they
+ * 	Default - All initialized XdmfArrays are written to new hdf5 datasets regardless of whether they
  * 		are attached to another hdf5 dataset on disk via an XdmfHDF5Controller.
  * 	Overwrite - If an initialized XdmfArray is attached to an hdf5 dataset via an XdmfHDF5Contoller the writer
  * 		will write values to that location, overwriting all previous written values.
@@ -81,9 +81,6 @@ private:
 	 * PIMPL
 	 */
 	class XdmfHDF5WriterImpl;
-
-	// Variant Visitor Operation
-	class GetHDF5Type;
 
 	XdmfHDF5Writer(const XdmfHDF5Writer & hdf5Writer);  // Not implemented.
 	void operator=(const XdmfHDF5Writer & hdf5Writer);  // Not implemented.

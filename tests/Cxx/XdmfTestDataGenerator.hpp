@@ -62,7 +62,7 @@ public:
 		boost::shared_ptr<XdmfSet> nodeSet = XdmfSet::New();
 		int nodeIds[] = {0, 1, 2};
 		nodeSet->setName("Node Set");
-		nodeSet->setSetType(XdmfSetType::Node());
+		nodeSet->setType(XdmfSetType::Node());
 		nodeSet->insert(nodeIds, nodeIds + 3);
 
 		// Add time

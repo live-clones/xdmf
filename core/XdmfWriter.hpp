@@ -1,5 +1,5 @@
-#ifndef XDMFCOREWRITER_HPP_
-#define XDMFCOREWRITER_HPP_
+#ifndef XDMFWRITER_HPP_
+#define XDMFWRITER_HPP_
 
 // Forward Declarations
 class XdmfArray;
@@ -22,7 +22,7 @@ class XdmfHDF5Writer;
  * will automatically reference any hdf5 dataset even if it resides in a different file than the one currently being written to.
  * written.
  */
-class XdmfCoreWriter : public XdmfVisitor,
+class XdmfWriter : public XdmfVisitor,
 	public Loki::Visitor<XdmfArray> {
 
 public:
@@ -31,7 +31,26 @@ public:
 		Default, DistributedHeavyData
 	};
 
-	virtual ~XdmfCoreWriter();
+	/**
+	 * Create a new XdmfWriter to write Xdmf data to disk.  This will create its own hdf5 writer based on the xmlFileName.
+	 * For example, if supplied "output.xmf" the created hdf5 writer would write to file "output.h5".
+	 *
+	 * @param xmlFilePath the path to the xml file to write to.
+	 * @return the new XdmfWriter.
+	 */
+	static boost::shared_ptr<XdmfWriter> New(const std::string & xmlFilePath);
+
+	/**
+	 * Create a new XdmfWriter to write Xdmf data to disk.  This will utilize the supplied hdf5Writer to write any
+	 * heavy data to disk.
+	 *
+	 * @param xmlFilePath the path to the xml file to write to.
+	 * @param hdf5Writer the heavy data writer to use when writing.
+	 * @return the new XdmfWriter.
+	 */
+	static boost::shared_ptr<XdmfWriter> New(const std::string & xmlFilePath, const boost::shared_ptr<XdmfHDF5Writer> hdf5Writer);
+
+	virtual ~XdmfWriter();
 
 	/**
 	 * Get the absolute path to the XML file on disk this writer is writing to.
@@ -101,8 +120,8 @@ public:
 
 protected:
 
-	XdmfCoreWriter(const std::string & xmlFilePath);
-	XdmfCoreWriter(const std::string & xmlFilePath, boost::shared_ptr<XdmfHDF5Writer> hdf5Writer);
+	XdmfWriter(const std::string & xmlFilePath);
+	XdmfWriter(const std::string & xmlFilePath, boost::shared_ptr<XdmfHDF5Writer> hdf5Writer);
 
 	void moveToLastWrittenNode();
 	void moveToParentNode();
@@ -112,12 +131,12 @@ private:
 	/**
 	 * PIMPL
 	 */
-	class XdmfCoreWriterImpl;
+	class XdmfWriterImpl;
 
-	XdmfCoreWriter(const XdmfCoreWriter & coreWriter);  // Not implemented.
-	void operator=(const XdmfCoreWriter & coreWriter);  // Not implemented.
+	XdmfWriter(const XdmfWriter & coreWriter);  // Not implemented.
+	void operator=(const XdmfWriter & coreWriter);  // Not implemented.
 
-	XdmfCoreWriterImpl * mImpl;
+	XdmfWriterImpl * mImpl;
 };
 
-#endif /* XDMFCOREWRITER_HPP_ */
+#endif /* XDMFWRITER_HPP_ */

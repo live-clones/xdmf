@@ -4,6 +4,7 @@
 #include <hdf5.h>
 #include <sstream>
 #include "XdmfArray.hpp"
+#include "XdmfArrayType.hpp"
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfHDF5Writer.hpp"
 
@@ -26,71 +27,6 @@ public:
 	int mDataSetId;
 	std::string mFilePath;
 	Mode mMode;
-};
-
-class XdmfHDF5Writer::GetHDF5Type : public boost::static_visitor <hid_t> {
-public:
-
-	GetHDF5Type()
-	{
-	}
-
-	hid_t getHDF5Type(const char * const) const
-	{
-		return H5T_NATIVE_CHAR;
-	}
-
-	hid_t getHDF5Type(const short * const) const
-	{
-		return H5T_NATIVE_SHORT;
-	}
-
-	hid_t getHDF5Type(const int * const) const
-	{
-		return H5T_NATIVE_INT;
-	}
-
-	hid_t getHDF5Type(const long * const) const
-	{
-		return H5T_NATIVE_LONG;
-	}
-
-	hid_t getHDF5Type(const float * const) const
-	{
-		return H5T_NATIVE_FLOAT;
-	}
-
-	hid_t getHDF5Type(const double * const) const
-	{
-		return H5T_NATIVE_DOUBLE;
-	}
-
-	hid_t getHDF5Type(const unsigned char * const) const
-	{
-		return H5T_NATIVE_UCHAR;
-	}
-
-	hid_t getHDF5Type(const unsigned short * const) const
-	{
-		return H5T_NATIVE_USHORT;
-	}
-
-	hid_t getHDF5Type(const unsigned int * const) const
-	{
-		return H5T_NATIVE_UINT;
-	}
-
-	template<typename T>
-	hid_t operator()(const boost::shared_ptr<std::vector<T> > & array) const
-	{
-		return this->getHDF5Type(&(array.get()->operator[](0)));
-	}
-
-	template<typename T>
-	hid_t operator()(const boost::shared_array<const T> & array) const
-	{
-		return this->getHDF5Type(array.get());
-	}
 };
 
 boost::shared_ptr<XdmfHDF5Writer> XdmfHDF5Writer::New(const std::string & hdf5FilePath)
@@ -128,13 +64,48 @@ void XdmfHDF5Writer::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVi
 {
 	hid_t datatype = -1;
 
-	if(array.mHaveArray)
+	if(array.isInitialized())
 	{
-		datatype = boost::apply_visitor(GetHDF5Type(), array.mArray);
-	}
-	else if(array.mHaveArrayPointer)
-	{
-		datatype = boost::apply_visitor(GetHDF5Type(), array.mArrayPointer);
+		if(array.getType() == XdmfArrayType::Int8())
+		{
+			datatype = H5T_NATIVE_CHAR;
+		}
+		else if(array.getType() == XdmfArrayType::Int16())
+		{
+			datatype = H5T_NATIVE_SHORT;
+		}
+		else if(array.getType() == XdmfArrayType::Int32())
+		{
+			datatype = H5T_NATIVE_INT;
+		}
+		else if(array.getType() == XdmfArrayType::Int64())
+		{
+			datatype = H5T_NATIVE_LONG;
+		}
+		else if(array.getType() == XdmfArrayType::Float32())
+		{
+			datatype = H5T_NATIVE_FLOAT;
+		}
+		else if(array.getType() == XdmfArrayType::Float64())
+		{
+			datatype = H5T_NATIVE_DOUBLE;
+		}
+		else if(array.getType() == XdmfArrayType::UInt8())
+		{
+			datatype = H5T_NATIVE_UCHAR;
+		}
+		else if(array.getType() == XdmfArrayType::UInt16())
+		{
+			datatype = H5T_NATIVE_USHORT;
+		}
+		else if(array.getType() == XdmfArrayType::UInt32())
+		{
+			datatype = H5T_NATIVE_UINT;
+		}
+		else
+		{
+			assert(false);
+		}
 	}
 
 	if(datatype != -1)
@@ -142,11 +113,11 @@ void XdmfHDF5Writer::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVi
 		std::string hdf5FilePath = mImpl->mFilePath;
 		std::stringstream dataSetPath;
 
-		if((mImpl->mMode == Overwrite || mImpl->mMode == Append) && array.mHDF5Controller)
+		if((mImpl->mMode == Overwrite || mImpl->mMode == Append) && array.getHDF5Controller())
 		{
 			// Write to the previous dataset
-			dataSetPath << array.mHDF5Controller->getDataSetPath();
-			hdf5FilePath = array.mHDF5Controller->getFilePath();
+			dataSetPath << array.getHDF5Controller()->getDataSetPath();
+			hdf5FilePath = array.getHDF5Controller()->getFilePath();
 		}
 		else
 		{
@@ -155,7 +126,7 @@ void XdmfHDF5Writer::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVi
 
 		// Open a hdf5 dataset and write to it on disk.
 		herr_t status;
-		hsize_t size = array.getSize();
+		hsize_t size = array.size();
 		hid_t hdf5Handle;
 
 		// Save old error handler and turn off error handling for now
@@ -228,9 +199,9 @@ void XdmfHDF5Writer::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVi
 		H5Eset_auto2(0, old_func, old_client_data);
 
 		// Attach a new controller to the array if needed.
-		if(mImpl->mMode == Default || !array.mHDF5Controller)
+		if(mImpl->mMode == Default || !array.getHDF5Controller())
 		{
-			boost::shared_ptr<XdmfHDF5Controller> newDataSetController = XdmfHDF5Controller::New(hdf5FilePath, dataSetPath.str(), array.getSize(), array.getType());
+			boost::shared_ptr<XdmfHDF5Controller> newDataSetController = XdmfHDF5Controller::New(hdf5FilePath, dataSetPath.str(), array.size(), array.getType());
 			array.setHDF5Controller(newDataSetController);
 			mImpl->mDataSetId++;
 		}

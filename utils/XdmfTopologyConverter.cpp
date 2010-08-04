@@ -42,7 +42,7 @@ public:
 
 	inline void insertPointWithoutCheck(const std::vector<double> & newPoint, const boost::shared_ptr<XdmfArray> & newConnectivity, const boost::shared_ptr<XdmfArray> & newPoints) const
 	{
-		newConnectivity->pushBack(newPoints->getSize() / 3);
+		newConnectivity->pushBack<unsigned int>(newPoints->size() / 3);
 		newPoints->pushBack(newPoint[0]);
 		newPoints->pushBack(newPoint[1]);
 		newPoints->pushBack(newPoint[2]);
@@ -54,7 +54,7 @@ public:
 		if(iter == coordToIdMap.end())
 		{
 			// Not inserted before
-			coordToIdMap[newPoint] = newPoints->getSize() / 3;;
+			coordToIdMap[newPoint] = newPoints->size() / 3;;
 			insertPointWithoutCheck(newPoint, newConnectivity, newPoints);
 		}
 		else
@@ -109,7 +109,7 @@ public:
 
 		boost::shared_ptr<XdmfArray> newPoints = toReturn->getGeometry()->getArray();
 		newPoints->initialize(gridToConvert->getGeometry()->getArray()->getType());
-		newPoints->resize(gridToConvert->getGeometry()->getArray()->getSize(), 0);
+		newPoints->resize(gridToConvert->getGeometry()->getArray()->size(), 0);
 
 		if(!gridToConvert->getGeometry()->getArray()->isInitialized())
 		{
@@ -117,7 +117,7 @@ public:
 		}
 
 		// Copy all geometry values from old grid into new grid because we are keeping all old points.
-		newPoints->copyValues(0, gridToConvert->getGeometry()->getArray(), 0, gridToConvert->getGeometry()->getArray()->getSize());
+		newPoints->copyValues(0, gridToConvert->getGeometry()->getArray(), 0, gridToConvert->getGeometry()->getArray()->size());
 
 		boost::shared_ptr<XdmfArray> newConnectivity = toReturn->getTopology()->getArray();
 		newConnectivity->initialize(gridToConvert->getTopology()->getArray()->getType());
@@ -143,7 +143,7 @@ public:
 			}
 
 			// Add old connectivity information to newConnectivity.
-			newConnectivity->resize(newConnectivity->getSize() + 8, 0);
+			newConnectivity->resize(newConnectivity->size() + 8, 0);
 			newConnectivity->copyValues(64*i, gridToConvert->getTopology()->getArray(), 8*i, 8);
 
 			// Case 0
@@ -390,7 +390,7 @@ public:
 
 		boost::shared_ptr<XdmfArray> newPoints = toReturn->getGeometry()->getArray();
 		newPoints->initialize(gridToConvert->getGeometry()->getArray()->getType());
-		newPoints->resize(gridToConvert->getGeometry()->getArray()->getSize(), 0);
+		newPoints->resize(gridToConvert->getGeometry()->getArray()->size(), 0);
 
 		if(!gridToConvert->getGeometry()->getArray()->isInitialized())
 		{
@@ -398,7 +398,7 @@ public:
 		}
 
 		// Copy all geometry values from old grid into new grid because we are keeping all old points.
-		newPoints->copyValues(0, gridToConvert->getGeometry()->getArray(), 0, gridToConvert->getGeometry()->getArray()->getSize());
+		newPoints->copyValues(0, gridToConvert->getGeometry()->getArray(), 0, gridToConvert->getGeometry()->getArray()->size());
 
 		boost::shared_ptr<XdmfArray> newConnectivity = toReturn->getTopology()->getArray();
 		newConnectivity->initialize(gridToConvert->getTopology()->getArray()->getType());
@@ -426,7 +426,7 @@ public:
 			}
 
 			// Add old connectivity information to newConnectivity.
-			newConnectivity->resize(newConnectivity->getSize() + 8, 0);
+			newConnectivity->resize(newConnectivity->size() + 8, 0);
 			newConnectivity->copyValues(125*i, gridToConvert->getTopology()->getArray(), 8*i, 8);
 
 			// Case 0
@@ -1061,8 +1061,8 @@ public:
 
 				boost::shared_ptr<XdmfArray> vals = newAttribute->getArray();
 				vals->initialize(currAttribute->getArray()->getType());
-				vals->resize(currAttribute->getArray()->getSize() * 27, 0);
-				for(unsigned int j=0; j<currAttribute->getArray()->getSize(); ++j)
+				vals->resize(currAttribute->getArray()->size() * 27, 0);
+				for(unsigned int j=0; j<currAttribute->getArray()->size(); ++j)
 				{
 					vals->copyValues(j * 27, currAttribute->getArray(), j, 27, 1, 0);
 				}

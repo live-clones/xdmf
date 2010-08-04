@@ -164,20 +164,6 @@ public:
 	}
 };
 
-class XdmfArray::GetSize : public boost::static_visitor<unsigned int> {
-public:
-
-	GetSize()
-	{
-	}
-
-	template<typename T>
-	unsigned int operator()(const boost::shared_ptr<std::vector<T> > & array) const
-	{
-		return array->size();
-	}
-};
-
 class XdmfArray::GetValuesPointer : public boost::static_visitor<const void * const> {
 public:
 
@@ -315,6 +301,20 @@ private:
 	const unsigned int mSize;
 };
 
+class XdmfArray::Size : public boost::static_visitor<unsigned int> {
+public:
+
+	Size()
+	{
+	}
+
+	template<typename T>
+	unsigned int operator()(const boost::shared_ptr<std::vector<T> > & array) const
+	{
+		return array->size();
+	}
+};
+
 boost::shared_ptr<XdmfArray> XdmfArray::New()
 {
 	boost::shared_ptr<XdmfArray> p(new XdmfArray());
@@ -401,7 +401,7 @@ std::map<std::string, std::string> XdmfArray::getItemProperties() const
 		arrayProperties["Format"] = "XML";
 	}
 	std::stringstream size;
-	size <<  this->getSize();
+	size <<  this->size();
 	arrayProperties["Dimensions"] = size.str();
 	if(mName.compare("") != 0)
 	{
@@ -420,23 +420,6 @@ std::string XdmfArray::getItemTag() const
 std::string XdmfArray::getName() const
 {
 	return mName;
-}
-
-unsigned int XdmfArray::getSize() const
-{
-	if(mHaveArray)
-	{
-		return boost::apply_visitor(GetSize(), mArray);
-	}
-	else if(mHaveArrayPointer)
-	{
-		return mArrayPointerNumValues;
-	}
-	else if(mHDF5Controller)
-	{
-		return mHDF5Controller->getSize();
-	}
-	return 0;
 }
 
 boost::shared_ptr<const XdmfArrayType> XdmfArray::getType() const
@@ -689,6 +672,23 @@ void XdmfArray::setHDF5Controller(const boost::shared_ptr<XdmfHDF5Controller> hd
 void XdmfArray::setName(const std::string & name)
 {
 	mName = name;
+}
+
+std::size_t XdmfArray::size() const
+{
+	if(mHaveArray)
+	{
+		return boost::apply_visitor(Size(), mArray);
+	}
+	else if(mHaveArrayPointer)
+	{
+		return mArrayPointerNumValues;
+	}
+	else if(mHDF5Controller)
+	{
+		return mHDF5Controller->getSize();
+	}
+	return 0;
 }
 
 void XdmfArray::swap(const boost::shared_ptr<XdmfArray> array)

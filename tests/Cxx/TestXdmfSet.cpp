@@ -10,9 +10,9 @@ int main(int argc, char* argv[])
 	assert(XdmfSetType::Node() != XdmfSetType::Cell());
 
 	boost::shared_ptr<XdmfSet> set = XdmfSet::New();
-	assert(set->getSetType() == XdmfSetType::NoSetType());
-	set->setSetType(XdmfSetType::Node());
-	assert(set->getSetType() == XdmfSetType::Node());
+	assert(set->getType() == XdmfSetType::NoSetType());
+	set->setType(XdmfSetType::Node());
+	assert(set->getType() == XdmfSetType::Node());
 	set->setName("TEST");
 	assert(set->getName().compare("TEST") == 0);
 

@@ -7,17 +7,17 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %{
 	#include <XdmfArray.hpp>
 	#include <XdmfArrayType.hpp>
+	#include <XdmfCoreHDF5Writer.hpp>
 	#include <XdmfCoreItemFactory.hpp>
 	#include <XdmfCoreReader.hpp>
+	#include <XdmfCoreWriter.hpp>
 	#include <XdmfDataItem.hpp>
 	#include <XdmfHDF5Controller.hpp>
-	#include <XdmfHDF5Writer.hpp>
 	#include <XdmfInformation.hpp>
 	#include <XdmfItem.hpp>
 	#include <XdmfItemProperty.hpp>
 	#include <XdmfSystemUtils.hpp>
 	#include <XdmfVisitor.hpp>
-	#include <XdmfWriter.hpp>
 %}
 
 %include boost_shared_ptr.i
@@ -25,12 +25,18 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %include std_vector.i
 %include loki/Visitor.h
 
+// Abstract Base Classes
+%template() Loki::BaseVisitable<void>;
+%template() Loki::Visitor<XdmfArray>;
+%template() Loki::Visitor<XdmfItem>;
+
 // Shared Pointer Templates
 %shared_ptr(XdmfArray)
 %shared_ptr(XdmfArrayType)
 %shared_ptr(XdmfBaseVisitor)
 %shared_ptr(XdmfCoreItemFactory)
 %shared_ptr(XdmfCoreReader)
+%shared_ptr(XdmfCoreWriter)
 %shared_ptr(XdmfDataItem)
 %shared_ptr(XdmfHDF5Controller)
 %shared_ptr(XdmfHDF5Writer)
@@ -38,12 +44,6 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %shared_ptr(XdmfItem)
 %shared_ptr(XdmfItemProperty)
 %shared_ptr(XdmfVisitor)
-%shared_ptr(XdmfWriter)
-
-// Abstract Base Classes
-%template() Loki::BaseVisitable<void>;
-%template() Loki::Visitor<XdmfArray>;
-%template() Loki::Visitor<XdmfItem>;
 
 %include XdmfItem.hpp
 %include XdmfDataItem.hpp
@@ -52,10 +52,10 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
 %include XdmfCoreItemFactory.hpp
 %include XdmfCoreReader.hpp
+%include XdmfCoreWriter.hpp
 %include XdmfInformation.hpp
 %include XdmfHDF5Controller.hpp
 %include XdmfHDF5Writer.hpp
-%include XdmfWriter.hpp
 
 %include XdmfArray.hpp
 %include XdmfArrayType.hpp

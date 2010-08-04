@@ -22,8 +22,6 @@ class XdmfSet : public XdmfItem,
 
 public:
 
-	// TODO: isInitialized is broken the way it is coded.  Always if size == 0 it is uninitialized...
-
 	/**
 	 * Create a new XdmfSet.
 	 *
@@ -66,12 +64,7 @@ public:
 	 *
 	 * @return XdmfSetType of this set.
 	 */
-	boost::shared_ptr<const XdmfSetType> getSetType() const;
-
-	/**
-	 * Returns whether the set is initialized (contains values in memory).
-	 */
-	bool isInitialized() const;
+	boost::shared_ptr<const XdmfSetType> getType() const;
 
 	/**
 	 * Read data from disk into memory.
@@ -102,13 +95,17 @@ public:
 	 *
 	 * @param setType the XdmfSetType to set.
 	 */
-	void setSetType(const boost::shared_ptr<const XdmfSetType> setType);
+	void setType(const boost::shared_ptr<const XdmfSetType> setType);
 
 	std::size_t size() const;
 
-protected:
+	void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor) const;
 
 	XdmfSet();
+
+protected:
+
+
 	virtual void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems);
 
 private:

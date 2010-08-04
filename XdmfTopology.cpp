@@ -51,7 +51,7 @@ unsigned int XdmfTopology::getNumberElements() const
 	{
 		return 0;
 	}
-	return this->getArray()->getSize() / mTopologyType->getNodesPerElement();
+	return this->getArray()->size() / mTopologyType->getNodesPerElement();
 }
 
 boost::shared_ptr<const XdmfTopologyType> XdmfTopology::getType() const

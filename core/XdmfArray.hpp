@@ -59,7 +59,6 @@ public:
 	virtual ~XdmfArray();
 
 	LOKI_DEFINE_VISITABLE(XdmfArray, XdmfItem)
-	friend class XdmfHDF5Writer;
 	static const std::string ItemTag;
 
 	/**
@@ -127,13 +126,6 @@ public:
 	 * @return a string containing the name of the array.
 	 */
 	std::string getName() const;
-
-	/**
-	 * Get the number of values stored in this array.
-	 *
-	 * @return the number of values stored in this array.
-	 */
-	unsigned int getSize() const;
 
 	/**
 	 * Get the data type of this array.
@@ -294,6 +286,13 @@ public:
 	void setValues(const boost::shared_ptr<std::vector<T> > array);
 
 	/**
+	 * Get the number of values stored in this array.
+	 *
+	 * @return the number of values stored in this array.
+	 */
+	std::size_t size() const;
+
+	/**
 	 * Exchange the contents of the vector with the contents of this XdmfArray.  No copy is made.  The internal arrays are swapped.
 	 *
 	 * @param array a vector to exchange values with.
@@ -338,7 +337,6 @@ private:
 	class Erase;
 	class GetCapacity;
 	class GetHDF5Type;
-	class GetSize;
 	class GetType;
 
 	template <typename T>
@@ -348,6 +346,7 @@ private:
 	class GetValuesString;
 	class InternalizeArrayPointer;
 	class NewArray;
+	struct NullDeleter;
 
 	template <typename T>
 	class PushBack;
@@ -357,7 +356,7 @@ private:
 	template <typename T>
 	class Resize;
 
-	struct NullDeleter;
+	class Size;
 
 	/**
 	 * After setValues(const T * const array) is called, XdmfArray stores a pointer that is not allowed to be modified through
