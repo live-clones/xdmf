@@ -30,6 +30,7 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 	#include <XdmfGridCollection.hpp>
 	#include <XdmfGridCollectionType.hpp>
 	#include <XdmfItemFactory.hpp>
+	#include <XdmfMap.hpp>
 	#include <XdmfReader.hpp>
 	#include <XdmfSet.hpp>
 	#include <XdmfSetType.hpp>
@@ -69,6 +70,10 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 	{
 		$result = SWIG_NewPointerObj(SWIG_as_voidptr(new boost::shared_ptr<XdmfInformation>(information)), SWIGTYPE_p_boost__shared_ptrT_XdmfInformation_t, SWIG_POINTER_OWN);
 	}
+	else if(boost::shared_ptr<XdmfMap> map = boost::shared_dynamic_cast<XdmfMap>($1))
+	{
+		$result = SWIG_NewPointerObj(SWIG_as_voidptr(new boost::shared_ptr<XdmfMap>(map)), SWIGTYPE_p_boost__shared_ptrT_XdmfMap_t, SWIG_POINTER_OWN);
+	}
 	else if(boost::shared_ptr<XdmfSet> set = boost::shared_dynamic_cast<XdmfSet>($1))
 	{
 		$result = SWIG_NewPointerObj(SWIG_as_voidptr(new boost::shared_ptr<XdmfSet>(set)), SWIGTYPE_p_boost__shared_ptrT_XdmfSet_t, SWIG_POINTER_OWN);
@@ -104,6 +109,7 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 %shared_ptr(XdmfGridCollection)
 %shared_ptr(XdmfGridCollectionType)
 %shared_ptr(XdmfItemFactory)
+%shared_ptr(XdmfMap)
 %shared_ptr(XdmfReader)
 %shared_ptr(XdmfSet)
 %shared_ptr(XdmfSetType)
@@ -121,6 +127,7 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 %include XdmfGridCollection.hpp
 %include XdmfGridCollectionType.hpp
 %include XdmfItemFactory.hpp
+%include XdmfMap.hpp
 %include XdmfReader.hpp
 %include XdmfSet.hpp
 %include XdmfSetType.hpp

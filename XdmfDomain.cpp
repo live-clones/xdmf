@@ -117,7 +117,7 @@ void XdmfDomain::removeGridCollection(const unsigned int index)
 	mGridCollections.erase(mGridCollections.begin() + index);
 }
 
-void XdmfDomain::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor) const
+void XdmfDomain::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
 	for(std::vector<boost::shared_ptr<XdmfGrid> >::const_iterator iter = mGrids.begin(); iter != mGrids.end(); ++iter)
 	{

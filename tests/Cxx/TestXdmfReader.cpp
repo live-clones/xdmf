@@ -1,9 +1,8 @@
-#include <fstream>
-#include <sstream>
 #include "XdmfDomain.hpp"
 #include "XdmfReader.hpp"
 #include "XdmfWriter.hpp"
 
+#include "XdmfTestCompareFiles.hpp"
 #include "XdmfTestDataGenerator.hpp"
 
 int main(int argc, char* argv[])
@@ -24,20 +23,7 @@ int main(int argc, char* argv[])
 	writer2->setMode(XdmfWriter::DistributedHeavyData);
 	readDomain->accept(writer2);
 
-	// Compare two files for equality
-	std::ifstream firstFile("TestXdmfReader1.xmf");
-	std::ifstream secondFile("TestXdmfReader2.xmf");
-
-	std::stringstream firstBuffer;
-	std::stringstream secondBuffer;
-
-	firstBuffer << firstFile.rdbuf();
-	secondBuffer << secondFile.rdbuf();
-
-	std::string firstContents(firstBuffer.str());
-	std::string secondContents(secondBuffer.str());
-
-	assert(firstContents.compare(secondContents) == 0);
+	assert(XdmfTestCompareFiles::compareFiles("TestXdmfReader1.xmf", "TestXdmfReader2.xmf"));
 
 	return 0;
 }

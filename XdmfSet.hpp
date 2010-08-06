@@ -99,7 +99,7 @@ public:
 
 	std::size_t size() const;
 
-	void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor) const;
+	void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor);
 
 	XdmfSet();
 

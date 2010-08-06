@@ -1,29 +1,10 @@
-#include <fstream>
-#include <sstream>
 #include "XdmfGridCollection.hpp"
 #include "XdmfGridCollectionType.hpp"
 #include "XdmfReader.hpp"
 #include "XdmfWriter.hpp"
 
+#include "XdmfTestCompareFiles.hpp"
 #include "XdmfTestDataGenerator.hpp"
-
-void compare(const std::string & firstFileName, const std::string & secondFileName)
-{
-	// Compare two files for equality
-	std::ifstream firstFile(firstFileName.c_str());
-	std::ifstream secondFile(secondFileName.c_str());
-
-	std::stringstream firstBuffer;
-	std::stringstream secondBuffer;
-
-	firstBuffer << firstFile.rdbuf();
-	secondBuffer << secondFile.rdbuf();
-
-	std::string firstContents(firstBuffer.str());
-	std::string secondContents(secondBuffer.str());
-
-	assert(firstContents.compare(secondContents) == 0);
-}
 
 int main(int argc, char* argv[])
 {
@@ -62,7 +43,7 @@ int main(int argc, char* argv[])
 	boost::shared_ptr<XdmfWriter> writer2 = XdmfWriter::New("TestXdmfGridCollection2.xmf");
 	gridCollection2->accept(writer2);
 
-	compare("TestXdmfGridCollection1.xmf", "TestXdmfGridCollection2.xmf");
+	assert(XdmfTestCompareFiles::compareFiles("TestXdmfGridCollection1.xmf", "TestXdmfGridCollection2.xmf"));
 
 	boost::shared_ptr<XdmfWriter> writer3 = XdmfWriter::New("TestXdmfGridCollectionHDF1.xmf");
 	writer3->setLightDataLimit(0);
@@ -75,7 +56,8 @@ int main(int argc, char* argv[])
 	writer4->setMode(XdmfWriter::DistributedHeavyData);
 	gridCollection3->accept(writer4);
 
-	compare("TestXdmfGridCollectionHDF1.xmf", "TestXdmfGridCollectionHDF2.xmf");
+
+	assert(XdmfTestCompareFiles::compareFiles("TestXdmfGridCollectionHDF1.xmf", "TestXdmfGridCollectionHDF2.xmf"));
 
 	return 0;
 }

@@ -161,13 +161,15 @@ void XdmfWriter::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisito
 	{
 		std::stringstream xmlTextValues;
 
-		if(array.getHDF5Controller() && array.getHDF5Controller()->getFilePath().compare(mImpl->mHDF5Writer->getFilePath()) != 0 && mImpl->mMode == Default)
+		// Take care of writing to single HDF5 file (Default behavior)
+		if(!array.isInitialized() && array.getHDF5Controller() && array.getHDF5Controller()->getFilePath().compare(mImpl->mHDF5Writer->getFilePath()) != 0 && mImpl->mMode == Default)
 		{
 			array.read();
 		}
 
 		if(array.getHDF5Controller() || array.size() > mImpl->mLightDataLimit)
 		{
+			// Write values to HDF5
 			mImpl->mHDF5Writer->visit(array, mImpl->mHDF5Writer);
 
 			std::string hdf5Path = array.getHDF5Controller()->getFilePath();
@@ -185,9 +187,11 @@ void XdmfWriter::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisito
 		}
 		else
 		{
+			// Write values to XML
 			xmlTextValues << array.getValuesString();
 		}
 
+		// Write XML (metadata) description
 		if(isSubclassed)
 		{
 			boost::shared_ptr<XdmfArray> arrayToWrite = XdmfArray::New();

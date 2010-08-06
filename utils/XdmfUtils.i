@@ -30,6 +30,7 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
 	#include <XdmfGridCollection.hpp>
 	#include <XdmfGridCollectionType.hpp>
 	#include <XdmfItemFactory.hpp>
+	#include <XdmfMap.hpp>
 	#include <XdmfReader.hpp>
 	#include <XdmfSet.hpp>
 	#include <XdmfSetType.hpp>

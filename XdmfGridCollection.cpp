@@ -57,7 +57,7 @@ void XdmfGridCollection::setType(const boost::shared_ptr<const XdmfGridCollectio
 	mCollectionType = collectionType;
 }
 
-void XdmfGridCollection::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor) const
+void XdmfGridCollection::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
 	XdmfGrid::traverse(visitor);
 	XdmfDomain::traverse(visitor);

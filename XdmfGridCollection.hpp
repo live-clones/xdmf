@@ -54,7 +54,7 @@ public:
 	 */
 	void setType(const boost::shared_ptr<const XdmfGridCollectionType> collectionType);
 
-	void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor) const;
+	void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor);
 
 protected:
 

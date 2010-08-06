@@ -5,6 +5,7 @@
 #include "XdmfGridCollection.hpp"
 #include "XdmfInformation.hpp"
 #include "XdmfItemFactory.hpp"
+#include "XdmfMap.hpp"
 #include "XdmfSet.hpp"
 #include "XdmfTime.hpp"
 #include "XdmfTopology.hpp"
@@ -59,6 +60,10 @@ boost::shared_ptr<XdmfItem> XdmfItemFactory::createItem(const std::string & item
 	else if(itemTag.compare(XdmfInformation::ItemTag) == 0)
 	{
 		newItem = XdmfInformation::New();
+	}
+	else if(itemTag.compare(XdmfMap::ItemTag) == 0)
+	{
+		newItem = XdmfMap::New();
 	}
 	else if(itemTag.compare(XdmfSet::ItemTag) == 0)
 	{

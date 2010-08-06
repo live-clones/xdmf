@@ -4,6 +4,7 @@
 // Forward Declarations
 class XdmfAttribute;
 class XdmfGeometry;
+class XdmfMap;
 class XdmfSet;
 class XdmfTime;
 class XdmfTopology;
@@ -84,6 +85,20 @@ public:
 	std::map<std::string, std::string> getItemProperties() const;
 
 	virtual std::string getItemTag() const;
+
+	/**
+	 * Get the boundary communicator map associated with this grid.
+	 *
+	 * @return the boundary communicator map associated with this grid.
+	 */
+	boost::shared_ptr<XdmfMap > getMap();
+
+	/**
+	 * Get the boundary communicator map associated with this grid (const version).
+	 *
+	 * @return the boundary communicator map associated with this grid.
+	 */
+	boost::shared_ptr<const XdmfMap> getMap() const;
 
 	/**
 	 * Get the name of the grid.
@@ -216,6 +231,20 @@ public:
 	void setGeometry(const boost::shared_ptr<XdmfGeometry> geometry);
 
 	/**
+	 * Set the boundary communicator map associated with this grid.
+	 *
+	 * @param map a XdmfMap to associate with this grid.
+	 */
+	void setMap(boost::shared_ptr<XdmfMap> map);
+
+	/**
+	 * Set the name of the grid.
+	 *
+	 * @param name of the grid to set.
+	 */
+	void setName(const std::string & name);
+
+	/**
 	 * Set the time associated with this grid.
 	 *
 	 * @param time an XdmfTime to associate with this grid.
@@ -229,14 +258,7 @@ public:
 	 */
 	void setTopology(const boost::shared_ptr<XdmfTopology> topology);
 
-	/**
-	 * Set the name of the grid.
-	 *
-	 * @param name of the grid to set.
-	 */
-	void setName(const std::string & name);
-
-	virtual void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor) const;
+	virtual void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor);
 
 protected:
 
@@ -252,6 +274,7 @@ private:
 
 	std::vector<boost::shared_ptr<XdmfAttribute> > mAttributes;
 	boost::shared_ptr<XdmfGeometry> mGeometry;
+	boost::shared_ptr<XdmfMap> mMap;
 	std::vector<boost::shared_ptr<XdmfSet> > mSets;
 	boost::shared_ptr<XdmfTime> mTime;
 	boost::shared_ptr<XdmfTopology> mTopology;

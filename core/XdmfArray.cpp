@@ -687,7 +687,7 @@ std::size_t XdmfArray::size() const
 	}
 	else if(mHDF5Controller)
 	{
-		return mHDF5Controller->getSize();
+		return mHDF5Controller->size();
 	}
 	return 0;
 }

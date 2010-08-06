@@ -3,6 +3,7 @@ set(XdmfCxxTests
 	TestXdmfGeometry
 	TestXdmfGrid
 	TestXdmfGridCollection
+	TestXdmfMap
 	TestXdmfReader
 	TestXdmfSet
 	TestXdmfTime

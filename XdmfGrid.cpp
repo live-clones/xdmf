@@ -8,6 +8,7 @@
 #include "XdmfAttribute.hpp"
 #include "XdmfGrid.hpp"
 #include "XdmfGeometry.hpp"
+#include "XdmfMap.hpp"
 #include "XdmfSet.hpp"
 #include "XdmfTime.hpp"
 #include "XdmfTopology.hpp"
@@ -20,9 +21,10 @@ boost::shared_ptr<XdmfGrid> XdmfGrid::New()
 
 XdmfGrid::XdmfGrid() :
 	mGeometry(XdmfGeometry::New()),
+	mMap(boost::shared_ptr<XdmfMap>()),
+	mName("Grid"),
 	mTime(boost::shared_ptr<XdmfTime>()),
-	mTopology(XdmfTopology::New()),
-	mName("Grid")
+	mTopology(XdmfTopology::New())
 {
 }
 
@@ -83,6 +85,16 @@ std::map<std::string, std::string> XdmfGrid::getItemProperties() const
 std::string XdmfGrid::getItemTag() const
 {
 	return ItemTag;
+}
+
+boost::shared_ptr<XdmfMap> XdmfGrid::getMap()
+{
+	return boost::const_pointer_cast<XdmfMap>(static_cast<const XdmfGrid &>(*this).getMap());
+}
+
+boost::shared_ptr<const XdmfMap> XdmfGrid::getMap() const
+{
+	return mMap;
 }
 
 std::string XdmfGrid::getName() const
@@ -182,6 +194,10 @@ void XdmfGrid::populateItem(const std::map<std::string, std::string> & itemPrope
 		{
 			mGeometry = geometry;
 		}
+		else if(boost::shared_ptr<XdmfMap> map = boost::shared_dynamic_cast<XdmfMap>(*iter))
+		{
+			mMap = map;
+		}
 		else if(boost::shared_ptr<XdmfSet> set = boost::shared_dynamic_cast<XdmfSet>(*iter))
 		{
 			this->insert(set);
@@ -244,6 +260,11 @@ void XdmfGrid::setGeometry(const boost::shared_ptr<XdmfGeometry> geometry)
 	mGeometry = geometry;
 }
 
+void XdmfGrid::setMap(boost::shared_ptr<XdmfMap> map)
+{
+	mMap = map;
+}
+
 void XdmfGrid::setName(const std::string & name)
 {
 	mName = name;
@@ -259,14 +280,24 @@ void XdmfGrid::setTopology(const boost::shared_ptr<XdmfTopology> topology)
 	mTopology = topology;
 }
 
-void XdmfGrid::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor) const
+void XdmfGrid::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
 	if(mTime != NULL)
 	{
 		mTime->accept(visitor);
 	}
-	mGeometry->accept(visitor);
-	mTopology->accept(visitor);
+	if(mGeometry != NULL)
+	{
+		mGeometry->accept(visitor);
+	}
+	if(mTopology != NULL)
+	{
+		mTopology->accept(visitor);
+	}
+	if(mMap != NULL)
+	{
+		mMap->accept(visitor);
+	}
 	for(std::vector<boost::shared_ptr<XdmfAttribute> >::const_iterator iter = mAttributes.begin(); iter != mAttributes.end(); ++iter)
 	{
 		(*iter)->accept(visitor);

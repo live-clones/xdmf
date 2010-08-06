@@ -107,7 +107,7 @@ public:
 	 */
 	void removeGridCollection(const unsigned int index);
 
-	virtual void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor) const;
+	virtual void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor);
 
 protected:
 

@@ -20,6 +20,7 @@ set(XdmfSources
 	XdmfGridCollection
 	XdmfGridCollectionType
 	XdmfItemFactory
+	XdmfMap
 	XdmfReader
 	XdmfSet
 	XdmfSetType

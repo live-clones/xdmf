@@ -134,12 +134,12 @@ std::size_t XdmfSet::size() const
 	}
 	else if(mHDF5Controller)
 	{
-		return mHDF5Controller->getSize();
+		return mHDF5Controller->size();
 	}
 	return 0;
 }
 
-void XdmfSet::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor) const
+void XdmfSet::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
 	boost::shared_ptr<XdmfArray> setValues = XdmfArray::New();
 	setValues->reserve(std::set<unsigned int>::size());
@@ -149,4 +149,5 @@ void XdmfSet::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor) const
 	}
 	setValues->setHDF5Controller(mHDF5Controller);
 	setValues->accept(visitor);
+	mHDF5Controller = setValues->getHDF5Controller();
 }

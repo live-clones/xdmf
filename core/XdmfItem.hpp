@@ -43,7 +43,7 @@ public:
 	 *
 	 * @param a visitor to pass to this XdmfItem's children.
 	 */
-	virtual void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor) const;
+	virtual void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor);
 
 protected:
 
