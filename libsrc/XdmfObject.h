@@ -100,6 +100,7 @@
 # endif
 #endif /* SWIG */
 
+#include <string.h> /* strcmp for XdmfSetStringMacro */
 
 #ifdef __cplusplus
 /* Use ANSI C++ --------------------------------------------- */
