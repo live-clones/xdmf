@@ -42,6 +42,7 @@ extern "C"
 #include "XdmfGridCollection.hpp"
 #include "XdmfGridCollectionType.hpp"
 #include "XdmfHDF5Writer.hpp"
+#include "XdmfMap.hpp"
 #include "XdmfPartitioner.hpp"
 #include "XdmfSet.hpp"
 #include "XdmfSetType.hpp"
@@ -60,30 +61,30 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 		boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter) const
 {
 	int metisElementType;
-	int numNodesPerElement;
+	int nodesPerElement;
 
 	boost::shared_ptr<const XdmfTopologyType> topologyType = gridToPartition->getTopology()->getType();
 	if(topologyType == XdmfTopologyType::Triangle() || topologyType == XdmfTopologyType::Triangle_6())
 	{
 		metisElementType = 1;
-		numNodesPerElement = 3;
+		nodesPerElement = 3;
 	}
 	else if(topologyType == XdmfTopologyType::Quadrilateral() || topologyType == XdmfTopologyType::Quadrilateral_8())
 	{
 		metisElementType = 4;
-		numNodesPerElement = 4;
+		nodesPerElement = 4;
 	}
 	else if(topologyType == XdmfTopologyType::Tetrahedron() || topologyType == XdmfTopologyType::Tetrahedron_10())
 	{
 		metisElementType = 2;
-		numNodesPerElement = 4;
+		nodesPerElement = 4;
 	}
 	else if(topologyType == XdmfTopologyType::Hexahedron() || topologyType == XdmfTopologyType::Hexahedron_20() ||
 			topologyType == XdmfTopologyType::Hexahedron_24() || topologyType == XdmfTopologyType::Hexahedron_27() ||
 			topologyType == XdmfTopologyType::Hexahedron_64())
 	{
 		metisElementType = 3;
-		numNodesPerElement = 8;
+		nodesPerElement = 8;
 	}
 	else
 	{
@@ -96,20 +97,20 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 	}
 
 	int numElements = gridToPartition->getTopology()->getNumberElements();
-	idxtype * metisConnectivity = new idxtype[numNodesPerElement * numElements];
+	idxtype * metisConnectivity = new idxtype[nodesPerElement * numElements];
 	for(unsigned int i=0; i<numElements; ++i)
 	{
-		gridToPartition->getTopology()->getValuesCopy(i*topologyType->getNodesPerElement(), &metisConnectivity[i*numNodesPerElement], numNodesPerElement);
+		gridToPartition->getTopology()->getValuesCopy(i*topologyType->getNodesPerElement(), &metisConnectivity[i*nodesPerElement], nodesPerElement);
 	}
 
 	int numNodes = gridToPartition->getGeometry()->getNumberPoints();
 
 	// Need to remap connectivity for nonlinear elements so that metis handles it properly.
 	std::map<idxtype, idxtype> xdmfIdToMetisId;
-	if(numNodesPerElement != topologyType->getNodesPerElement())
+	if(nodesPerElement != topologyType->getNodesPerElement())
 	{
 		unsigned int index = 0;
-		for (unsigned int i=0; i<numElements * numNodesPerElement; ++i)
+		for (unsigned int i=0; i<numElements * nodesPerElement; ++i)
 		{
 			std::map<idxtype, idxtype>::const_iterator val = xdmfIdToMetisId.find(metisConnectivity[i]);
 			if (val != xdmfIdToMetisId.end())
@@ -173,8 +174,7 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 	}
 	delete [] elementsPartition;
 
-	boost::shared_ptr<XdmfAttribute> globalNodeIds = gridToPartition->getAttribute("GlobalNodeId");
-	bool generateGlobalNodeIds = !globalNodeIds;
+	bool generateGlobalNodeIds = !gridToPartition->getAttribute("GlobalNodeId");
 
 	boost::shared_ptr<XdmfGridCollection> partitionedGrids = XdmfGridCollection::New();
 	partitionedGrids->setType(XdmfGridCollectionType::Spatial());
@@ -243,7 +243,7 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 
 			if (generateGlobalNodeIds)
 			{
-				globalNodeIds = XdmfAttribute::New();
+				boost::shared_ptr<XdmfAttribute> globalNodeIds = XdmfAttribute::New();
 				globalNodeIds->setName("GlobalNodeId");
 				globalNodeIds->setType(XdmfAttributeType::GlobalId());
 				globalNodeIds->setCenter(XdmfAttributeCenter::Node());
@@ -395,6 +395,29 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 		}
 		currSet->release();
 	}
+
+	// Add XdmfMap to map boundary nodes between partitions
+	std::vector<boost::shared_ptr<XdmfAttribute> > globalNodeIds;
+	for(unsigned int i=0; i<partitionedGrids->getNumberGrids(); ++i)
+	{
+		boost::shared_ptr<XdmfAttribute> globalNodeId = partitionedGrids->getGrid(i)->getAttribute("GlobalNodeId");
+		globalNodeId->read();
+		globalNodeIds.push_back(globalNodeId);
+	}
+
+	std::vector<boost::shared_ptr<XdmfMap> > maps = XdmfMap::New(globalNodeIds);
+	for(unsigned int i=0; i<partitionedGrids->getNumberGrids(); ++i)
+	{
+		boost::shared_ptr<XdmfMap> map = maps[i];
+		partitionedGrids->getGrid(i)->setMap(map);
+		if(heavyDataWriter)
+		{
+			globalNodeIds[i]->release();
+			map->accept(heavyDataWriter);
+			map->release();
+		}
+	}
+
 	return partitionedGrids;
 }
 

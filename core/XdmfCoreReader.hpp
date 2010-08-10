@@ -8,6 +8,7 @@ class XdmfItem;
 // Includes
 #include <boost/shared_ptr.hpp>
 #include <string>
+#include <vector>
 
 /**
  * @brief Reads an Xdmf structured file stored on disk into memory.
@@ -28,6 +29,15 @@ public:
 	 * @return an XdmfItem at the root of the Xdmf tree.
 	 */
 	virtual boost::shared_ptr<XdmfItem> read(const std::string & filePath) const;
+
+	/**
+	 * Read part of an Xdmf file from disk into memory.
+	 *
+	 * @param filePath the path of the Xdmf file to read in from disk.
+	 * @param xPath an XPath corresponding to the portion of the file to read.
+	 * @return a vector of XdmfItems that are included in the XPath.
+	 */
+	virtual std::vector<boost::shared_ptr<XdmfItem> > read(const std::string & filePath, const std::string & xPath) const;
 
 protected:
 

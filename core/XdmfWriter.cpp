@@ -25,10 +25,10 @@ public:
 		mWriteXPaths(true),
 		mXMLCurrentNode(NULL),
 		mXMLDocument(NULL),
+		mXMLFilePath(XdmfSystemUtils::getRealPath(xmlFilePath)),
 		mXPathCount(0),
 		mXPathString("")
 	{
-		mXMLFilePath = XdmfSystemUtils::getRealPath(xmlFilePath);
 	};
 
 	~XdmfWriterImpl()
@@ -191,18 +191,18 @@ void XdmfWriter::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisito
 			xmlTextValues << array.getValuesString();
 		}
 
+		bool oldWriteXPaths = mImpl->mWriteXPaths;
+		mImpl->mWriteXPaths = false;
+
 		// Write XML (metadata) description
 		if(isSubclassed)
 		{
 			boost::shared_ptr<XdmfArray> arrayToWrite = XdmfArray::New();
 			array.swap(arrayToWrite);
 			mImpl->mXMLCurrentNode = mImpl->mXMLCurrentNode->last;
-			bool oldWriteXPaths = mImpl->mWriteXPaths;
-			mImpl->mWriteXPaths = false;
 			this->visit(dynamic_cast<XdmfItem &>(*arrayToWrite.get()), visitor);
 			xmlAddChild(mImpl->mXMLCurrentNode->last, xmlNewText((xmlChar*)xmlTextValues.str().c_str()));
 			mImpl->mXMLCurrentNode = mImpl->mXMLCurrentNode->parent;
-			mImpl->mWriteXPaths = oldWriteXPaths;
 			array.swap(arrayToWrite);
 		}
 		else
@@ -210,6 +210,8 @@ void XdmfWriter::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisito
 			this->visit(dynamic_cast<XdmfItem &>(array), visitor);
 			xmlAddChild(mImpl->mXMLCurrentNode->last, xmlNewText((xmlChar*)xmlTextValues.str().c_str()));
 		}
+
+		mImpl->mWriteXPaths = oldWriteXPaths;
 	}
 }
 

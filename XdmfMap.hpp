@@ -39,6 +39,11 @@ public:
 	void insert(const unsigned int localNodeId, const unsigned int remoteTaskId, const unsigned int remoteLocalNodeId);
 
 	/**
+	 * Returns whether the map is initialized (contains values in memory).
+	 */
+	bool isInitialized() const;
+
+	/**
 	 * Read data from disk into memory.
 	 */
 	void read();

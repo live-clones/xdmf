@@ -7,6 +7,7 @@
 #include "XdmfArrayType.hpp"
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfHDF5Writer.hpp"
+#include "XdmfSystemUtils.hpp"
 
 /**
  * PIMPL
@@ -16,14 +17,16 @@ class XdmfHDF5Writer::XdmfHDF5WriterImpl {
 public:
 
 	XdmfHDF5WriterImpl(const std::string & hdf5FilePath) :
-		mFilePath(hdf5FilePath),
+		mFilePath(XdmfSystemUtils::getRealPath(hdf5FilePath)),
 		mDataSetId(0),
 		mMode(Default)
 	{
 	};
+
 	~XdmfHDF5WriterImpl()
 	{
 	};
+
 	int mDataSetId;
 	std::string mFilePath;
 	Mode mMode;

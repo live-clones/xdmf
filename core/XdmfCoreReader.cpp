@@ -67,8 +67,6 @@ public:
 		return myItems;
 	}
 
-private:
-
 	/**
 	 * Reads a single xmlNode into an XdmfItem object in memory.  The constructed XdmfItem is added to myItems and an entry is added mapping the xmlNodePtr to the new XdmfItem in the xPathMap.
 	 */
@@ -143,4 +141,35 @@ boost::shared_ptr<XdmfItem> XdmfCoreReader::read(const std::string & filePath) c
 	xmlCleanupParser();
 
 	return toReturn[0];
+}
+
+std::vector<boost::shared_ptr<XdmfItem> > XdmfCoreReader::read(const std::string & filePath, const std::string & xPath) const
+{
+	std::string xmlDir = XdmfSystemUtils::getRealPath(filePath);
+	size_t index = xmlDir.find_last_of("/\\");
+	if(index != std::string::npos)
+	{
+	    xmlDir = xmlDir.substr(0, index + 1);
+	}
+
+	const xmlDocPtr document = xmlReadFile(filePath.c_str(), NULL, 0);
+	const xmlXPathContextPtr xPathContext = xmlXPtrNewContext(document, NULL, NULL);
+	if(document == NULL)
+	{
+		assert(false);
+	}
+
+	std::vector<boost::shared_ptr<XdmfItem> > toReturn;
+	std::map<xmlNodePtr, boost::shared_ptr<XdmfItem> > xPathMap;
+	xmlXPathObjectPtr xPathObject = xmlXPathEvalExpression((xmlChar*)xPath.c_str(), xPathContext);
+	for(unsigned int i=0; i<xPathObject->nodesetval->nodeNr; ++i)
+	{
+		mImpl->readSingleNode(xPathObject->nodesetval->nodeTab[i], xPathContext, xPathMap, toReturn, xmlDir);
+	}
+	xmlXPathFreeObject(xPathObject);
+	xmlXPathFreeContext(xPathContext);
+	xmlFreeDoc(document);
+	xmlCleanupParser();
+
+	return toReturn;
 }

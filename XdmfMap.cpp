@@ -141,6 +141,11 @@ void XdmfMap::insert(const unsigned int localNodeId, const unsigned int remoteTa
 	}
 }
 
+bool XdmfMap::isInitialized() const
+{
+	return mImpl->mMap.size() > 0;
+}
+
 void XdmfMap::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems)
 {
 	std::vector<boost::shared_ptr<XdmfArray> > arrayVector;
@@ -213,7 +218,7 @@ void XdmfMap::read()
 
 void XdmfMap::release()
 {
-
+	mImpl->mMap.clear();
 }
 
 void XdmfMap::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor)

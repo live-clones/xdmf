@@ -24,3 +24,8 @@ boost::shared_ptr<XdmfItem> XdmfReader::read(const std::string & filePath) const
 {
 	return XdmfCoreReader::read(filePath);
 }
+
+std::vector<boost::shared_ptr<XdmfItem> > XdmfReader::read(const std::string & filePath, const std::string & xPath) const
+{
+	return XdmfCoreReader::read(filePath, xPath);
+}
