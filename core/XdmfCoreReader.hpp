@@ -58,7 +58,7 @@ private:
 	XdmfCoreReader(const XdmfCoreReader & reader);  // Not implemented.
 	void operator=(const XdmfCoreReader & reader);  // Not implemented.
 
-	const XdmfCoreReaderImpl * const mImpl;
+	XdmfCoreReaderImpl * const mImpl;
 };
 
 #endif /* XDMFCOREREADER_HPP_ */

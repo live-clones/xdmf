@@ -53,6 +53,8 @@ public:
 	 */
 	void release();
 
+	void setHDF5Controllers(boost::shared_ptr<XdmfHDF5Controller> localNodeIdsHDF5Controller, boost::shared_ptr<XdmfHDF5Controller> remoteTaskIdsHDF5Controller, boost::shared_ptr<XdmfHDF5Controller> remoteLocalNodeIdsHDF5Controller);
+
 	void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor);
 
 protected:

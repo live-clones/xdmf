@@ -342,7 +342,7 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 	for(unsigned int i=0; i<gridToPartition->getNumberSets(); ++i)
 	{
 		boost::shared_ptr<XdmfSet> currSet = gridToPartition->getSet(i);
-		if(currSet->size() == 0)
+		if(!currSet->isInitialized())
 		{
 			currSet->read();
 		}
@@ -383,6 +383,7 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 				}
 				if(partitionedSet->size() > 0)
 				{
+					partitioned->insert(partitionedSet);
 					partitionedSet->setName(currSet->getName());
 					partitionedSet->setType(currSet->getType());
 					if(heavyDataWriter)

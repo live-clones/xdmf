@@ -67,6 +67,11 @@ public:
 	boost::shared_ptr<const XdmfSetType> getType() const;
 
 	/**
+	 * Returns whether the set is initialized (contains values in memory).
+	 */
+	bool isInitialized() const;
+
+	/**
 	 * Read data from disk into memory.
 	 */
 	void read();

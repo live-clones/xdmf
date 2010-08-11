@@ -25,10 +25,36 @@ public:
 	{
 	};
 
+	void closeFile()
+	{
+		xmlXPathFreeContext(mXPathContext);
+		xmlFreeDoc(mDocument);
+		xmlCleanupParser();
+	}
+
+	void openFile(const std::string & filePath)
+	{
+		mXMLDir = XdmfSystemUtils::getRealPath(filePath);
+		size_t index = mXMLDir.find_last_of("/\\");
+		if(index != std::string::npos)
+		{
+		    mXMLDir = mXMLDir.substr(0, index + 1);
+		}
+
+		mDocument = xmlReadFile(filePath.c_str(), NULL, 0);
+
+		if(mDocument == NULL)
+		{
+			assert(false);
+		}
+
+		mXPathContext = xmlXPtrNewContext(mDocument, NULL, NULL);
+	}
+
 	/**
 	 * Constructs XdmfItems for all nodes in currNode's tree.  XdmfItems are constructed by recursively calling this function for all children of currNode.
 	 */
-	std::vector<boost::shared_ptr<XdmfItem> > read(xmlNodePtr currNode, const xmlXPathContextPtr xPathContext, std::map<xmlNodePtr, boost::shared_ptr<XdmfItem> > & xPathMap, const std::string & xmlDir) const
+	std::vector<boost::shared_ptr<XdmfItem> > read(xmlNodePtr currNode, std::map<xmlNodePtr, boost::shared_ptr<XdmfItem> > & xPathMap) const
 	{
 		std::vector<boost::shared_ptr<XdmfItem> > myItems;
 
@@ -49,17 +75,17 @@ public:
 							break;
 						}
 					}
-					xmlXPathObjectPtr xPathObject = xmlXPtrEval(xpointer, xPathContext);
+					xmlXPathObjectPtr xPathObject = xmlXPtrEval(xpointer, mXPathContext);
 					for(unsigned int i=0; i<xPathObject->nodesetval->nodeNr; ++i)
 					{
-						this->readSingleNode(xPathObject->nodesetval->nodeTab[i], xPathContext, xPathMap, myItems, xmlDir);
+						this->readSingleNode(xPathObject->nodesetval->nodeTab[i], xPathMap, myItems);
 					}
 					xmlXPathFreeObject(xPathObject);
 				}
 				else
 				{
 					// Normal reading
-					this->readSingleNode(currNode, xPathContext, xPathMap, myItems, xmlDir);
+					this->readSingleNode(currNode, xPathMap, myItems);
 				}
 			}
 			currNode = currNode->next;
@@ -70,7 +96,7 @@ public:
 	/**
 	 * Reads a single xmlNode into an XdmfItem object in memory.  The constructed XdmfItem is added to myItems and an entry is added mapping the xmlNodePtr to the new XdmfItem in the xPathMap.
 	 */
-	void readSingleNode(const xmlNodePtr currNode, const xmlXPathContextPtr xPathContext, std::map<xmlNodePtr, boost::shared_ptr<XdmfItem> > & xPathMap, std::vector<boost::shared_ptr<XdmfItem> > & myItems, const std::string & xmlDir) const
+	void readSingleNode(const xmlNodePtr currNode, std::map<xmlNodePtr, boost::shared_ptr<XdmfItem> > & xPathMap, std::vector<boost::shared_ptr<XdmfItem> > & myItems) const
 	{
 		std::map<xmlNodePtr, boost::shared_ptr<XdmfItem> >::const_iterator iter = xPathMap.find(currNode);
 		if(iter != xPathMap.end())
@@ -83,7 +109,7 @@ public:
 			if(currNode->children != NULL)
 			{
 				itemProperties["Content"] = (const char *)currNode->children->content;
-				itemProperties["XMLDir"] = xmlDir;
+				itemProperties["XMLDir"] = mXMLDir;
 			}
 
 			xmlAttrPtr currAttribute = currNode->properties;
@@ -92,7 +118,7 @@ public:
 				itemProperties[(const char *)currAttribute->name] = (const char *)currAttribute->children->content;
 				currAttribute = currAttribute->next;
 			}
-			std::vector<boost::shared_ptr<XdmfItem> > childItems = this->read(currNode->children, xPathContext, xPathMap, xmlDir);
+			std::vector<boost::shared_ptr<XdmfItem> > childItems = this->read(currNode->children, xPathMap);
 			boost::shared_ptr<XdmfItem> newItem = mItemFactory->createItem((const char *)currNode->name, itemProperties);
 			if(newItem == NULL)
 			{
@@ -104,7 +130,10 @@ public:
 		}
 	}
 
+	xmlDocPtr mDocument;
 	const boost::shared_ptr<const XdmfCoreItemFactory> mItemFactory;
+	std::string mXMLDir;
+	xmlXPathContextPtr mXPathContext;
 };
 
 XdmfCoreReader::XdmfCoreReader(const boost::shared_ptr<const XdmfCoreItemFactory> itemFactory) :
@@ -119,57 +148,25 @@ XdmfCoreReader::~XdmfCoreReader()
 
 boost::shared_ptr<XdmfItem> XdmfCoreReader::read(const std::string & filePath) const
 {
-	std::string xmlDir = XdmfSystemUtils::getRealPath(filePath);
-	size_t index = xmlDir.find_last_of("/\\");
-	if(index != std::string::npos)
-	{
-	    xmlDir = xmlDir.substr(0, index + 1);
-	}
-
-	const xmlDocPtr document = xmlReadFile(filePath.c_str(), NULL, 0);
-	const xmlXPathContextPtr xPathContext = xmlXPtrNewContext(document, NULL, NULL);
-	if(document == NULL)
-	{
-		assert(false);
-	}
-	const xmlNodePtr currNode = xmlDocGetRootElement(document);
-
+	mImpl->openFile(filePath);
+	const xmlNodePtr currNode = xmlDocGetRootElement(mImpl->mDocument);
 	std::map<xmlNodePtr, boost::shared_ptr<XdmfItem> > xPathMap;
-	const std::vector<boost::shared_ptr<XdmfItem> > toReturn = mImpl->read(currNode->children, xPathContext, xPathMap, xmlDir);
-	xmlXPathFreeContext(xPathContext);
-	xmlFreeDoc(document);
-	xmlCleanupParser();
-
+	const std::vector<boost::shared_ptr<XdmfItem> > toReturn = mImpl->read(currNode->children, xPathMap);
+	mImpl->closeFile();
 	return toReturn[0];
 }
 
 std::vector<boost::shared_ptr<XdmfItem> > XdmfCoreReader::read(const std::string & filePath, const std::string & xPath) const
 {
-	std::string xmlDir = XdmfSystemUtils::getRealPath(filePath);
-	size_t index = xmlDir.find_last_of("/\\");
-	if(index != std::string::npos)
-	{
-	    xmlDir = xmlDir.substr(0, index + 1);
-	}
-
-	const xmlDocPtr document = xmlReadFile(filePath.c_str(), NULL, 0);
-	const xmlXPathContextPtr xPathContext = xmlXPtrNewContext(document, NULL, NULL);
-	if(document == NULL)
-	{
-		assert(false);
-	}
-
+	mImpl->openFile(filePath);
 	std::vector<boost::shared_ptr<XdmfItem> > toReturn;
 	std::map<xmlNodePtr, boost::shared_ptr<XdmfItem> > xPathMap;
-	xmlXPathObjectPtr xPathObject = xmlXPathEvalExpression((xmlChar*)xPath.c_str(), xPathContext);
+	xmlXPathObjectPtr xPathObject = xmlXPathEvalExpression((xmlChar*)xPath.c_str(), mImpl->mXPathContext);
 	for(unsigned int i=0; i<xPathObject->nodesetval->nodeNr; ++i)
 	{
-		mImpl->readSingleNode(xPathObject->nodesetval->nodeTab[i], xPathContext, xPathMap, toReturn, xmlDir);
+		mImpl->readSingleNode(xPathObject->nodesetval->nodeTab[i], xPathMap, toReturn);
 	}
 	xmlXPathFreeObject(xPathObject);
-	xmlXPathFreeContext(xPathContext);
-	xmlFreeDoc(document);
-	xmlCleanupParser();
-
+	mImpl->closeFile();
 	return toReturn;
 }

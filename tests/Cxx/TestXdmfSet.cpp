@@ -16,5 +16,11 @@ int main(int argc, char* argv[])
 	set->setName("TEST");
 	assert(set->getName().compare("TEST") == 0);
 
+	assert(set->isInitialized() == false);
+	assert(set->find(0) == set->end());
+	set->insert(0);
+	assert(set->isInitialized() == true);
+	assert(set->find(0) != set->end());
+
 	return 0;
 }

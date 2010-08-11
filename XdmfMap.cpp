@@ -221,6 +221,15 @@ void XdmfMap::release()
 	mImpl->mMap.clear();
 }
 
+void XdmfMap::setHDF5Controllers(boost::shared_ptr<XdmfHDF5Controller> localNodeIdsHDF5Controller, boost::shared_ptr<XdmfHDF5Controller> remoteTaskIdsHDF5Controller, boost::shared_ptr<XdmfHDF5Controller> remoteLocalNodeIdsHDF5Controller)
+{
+	assert(localNodeIdsHDF5Controller->size() == remoteTaskIdsHDF5Controller->size() && localNodeIdsHDF5Controller->size() == remoteLocalNodeIdsHDF5Controller->size());
+	mImpl->mLocalNodeIdsHDF5Controller = localNodeIdsHDF5Controller;
+	mImpl->mRemoteTaskIdsHDF5Controller = remoteTaskIdsHDF5Controller;
+	mImpl->mRemoteLocalNodeIdsHDF5Controller = remoteLocalNodeIdsHDF5Controller;
+}
+
+
 void XdmfMap::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
 	boost::shared_ptr<XdmfArray> localNodeIds = XdmfArray::New();
