@@ -471,43 +471,43 @@ std::string XdmfArray::getValuesString() const
 	return "";
 }
 
-void XdmfArray::initialize(const boost::shared_ptr<const XdmfArrayType> arrayType)
+void XdmfArray::initialize(const boost::shared_ptr<const XdmfArrayType> arrayType, const unsigned int size)
 {
 	if(arrayType == XdmfArrayType::Int8())
 	{
-		this->initialize<char>();
+		this->initialize<char>(size);
 	}
 	else if(arrayType == XdmfArrayType::Int16())
 	{
-		this->initialize<short>();
+		this->initialize<short>(size);
 	}
 	else if(arrayType == XdmfArrayType::Int32())
 	{
-		this->initialize<int>();
+		this->initialize<int>(size);
 	}
 	else if(arrayType == XdmfArrayType::Int64())
 	{
-		this->initialize<long>();
+		this->initialize<long>(size);
 	}
 	else if(arrayType == XdmfArrayType::Float32())
 	{
-		this->initialize<float>();
+		this->initialize<float>(size);
 	}
 	else if(arrayType == XdmfArrayType::Float64())
 	{
-		this->initialize<double>();
+		this->initialize<double>(size);
 	}
 	else if(arrayType == XdmfArrayType::UInt8())
 	{
-		this->initialize<unsigned char>();
+		this->initialize<unsigned char>(size);
 	}
 	else if(arrayType == XdmfArrayType::UInt16())
 	{
-		this->initialize<unsigned short>();
+		this->initialize<unsigned short>(size);
 	}
 	else if(arrayType == XdmfArrayType::UInt32())
 	{
-		this->initialize<unsigned int>();
+		this->initialize<unsigned int>(size);
 	}
 	else if(arrayType == XdmfArrayType::Uninitialized())
 	{

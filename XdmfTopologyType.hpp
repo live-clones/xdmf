@@ -23,6 +23,7 @@
  * 	Edge_3
  * 	Triangle_6
  * 	Quadrilateral_8
+ * 	Quadrilateral_9
  * 	Tetrahedron_10
  * 	Pyramid_13
  * 	Wedge_15
@@ -37,7 +38,7 @@
  * 	TwoDCoRectMesh
  * 	ThreeDSMesh
  * 	ThreeDRectMesh
- *	ThreeDCoRectMesh
+ * 	ThreeDCoRectMesh
  */
 class XdmfTopologyType : public XdmfItemProperty {
 
@@ -65,9 +66,11 @@ public:
 	static boost::shared_ptr<const XdmfTopologyType> Edge_3();
 	static boost::shared_ptr<const XdmfTopologyType> Triangle_6();
 	static boost::shared_ptr<const XdmfTopologyType> Quadrilateral_8();
+	static boost::shared_ptr<const XdmfTopologyType> Quadrilateral_9();
 	static boost::shared_ptr<const XdmfTopologyType> Tetrahedron_10();
 	static boost::shared_ptr<const XdmfTopologyType> Pyramid_13();
 	static boost::shared_ptr<const XdmfTopologyType> Wedge_15();
+	static boost::shared_ptr<const XdmfTopologyType> Wedge_18();
 	static boost::shared_ptr<const XdmfTopologyType> Hexahedron_20();
 	static boost::shared_ptr<const XdmfTopologyType> Hexahedron_24();
 	static boost::shared_ptr<const XdmfTopologyType> Hexahedron_27();

@@ -198,14 +198,14 @@ void XdmfArray::getValuesCopy(const unsigned int startIndex, T * const valuesPoi
 }
 
 template <typename T>
-boost::shared_ptr<std::vector<T> > XdmfArray::initialize()
+boost::shared_ptr<std::vector<T> > XdmfArray::initialize(const unsigned int size)
 {
 	if(mHaveArrayPointer)
 	{
 		releaseArrayPointer();
 	}
 	// Set type of variant to type of pointer
-	boost::shared_ptr<std::vector<T> > newArray(new std::vector<T>());
+	boost::shared_ptr<std::vector<T> > newArray(new std::vector<T>(size));
 	if(mTmpReserveSize > 0)
 	{
 		newArray->reserve(mTmpReserveSize);

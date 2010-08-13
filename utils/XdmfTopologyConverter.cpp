@@ -108,8 +108,7 @@ public:
 		toReturn->getTopology()->setType(XdmfTopologyType::Hexahedron_64());
 
 		boost::shared_ptr<XdmfArray> newPoints = toReturn->getGeometry();
-		newPoints->initialize(gridToConvert->getGeometry()->getArrayType());
-		newPoints->resize(gridToConvert->getGeometry()->size(), 0);
+		newPoints->initialize(gridToConvert->getGeometry()->getArrayType(), gridToConvert->getGeometry()->size());
 
 		if(!gridToConvert->getGeometry()->isInitialized())
 		{
@@ -389,8 +388,7 @@ public:
 		toReturn->getTopology()->setType(XdmfTopologyType::Hexahedron_125());
 
 		boost::shared_ptr<XdmfArray> newPoints = toReturn->getGeometry();
-		newPoints->initialize(gridToConvert->getGeometry()->getArrayType());
-		newPoints->resize(gridToConvert->getGeometry()->size(), 0);
+		newPoints->initialize(gridToConvert->getGeometry()->getArrayType(), gridToConvert->getGeometry()->size());
 
 		if(!gridToConvert->getGeometry()->isInitialized())
 		{
@@ -810,8 +808,7 @@ public:
 
 		boost::shared_ptr<XdmfArray> oldConnectivity = gridToConvert->getTopology();
 		boost::shared_ptr<XdmfArray> newConnectivity = toReturn->getTopology();
-		newConnectivity->initialize(oldConnectivity->getArrayType());
-		newConnectivity->resize(216 * gridToConvert->getTopology()->getNumberElements(), 0);
+		newConnectivity->initialize(oldConnectivity->getArrayType(), 216 * gridToConvert->getTopology()->getNumberElements());
 
 		if(!oldConnectivity->isInitialized())
 		{
@@ -1060,8 +1057,7 @@ public:
 				newAttribute->setCenter(currAttribute->getCenter());
 
 				boost::shared_ptr<XdmfArray> vals = newAttribute;
-				vals->initialize(currAttribute->getArrayType());
-				vals->resize(currAttribute->size() * 27, 0);
+				vals->initialize(currAttribute->getArrayType(), currAttribute->size() * 27);
 				for(unsigned int j=0; j<currAttribute->size(); ++j)
 				{
 					vals->copyValues(j * 27, currAttribute, j, 27, 1, 0);
@@ -1072,6 +1068,12 @@ public:
 		return toReturn;
 	}
 };
+
+boost::shared_ptr<XdmfTopologyConverter> XdmfTopologyConverter::New()
+{
+	boost::shared_ptr<XdmfTopologyConverter> p(new XdmfTopologyConverter());
+	return p;
+}
 
 XdmfTopologyConverter::XdmfTopologyConverter()
 {

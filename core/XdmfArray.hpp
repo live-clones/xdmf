@@ -187,15 +187,19 @@ public:
 	/**
 	 * Initializes the array to contain an empty container of a particular type.
 	 *
+	 * @param size the number of values in the initialized array.
 	 * @return a smart pointer to the internal vector of values initialized in this array.
 	 */
 	template <typename T>
-	boost::shared_ptr<std::vector<T> > initialize();
+	boost::shared_ptr<std::vector<T> > initialize(const unsigned int size = 0);
 
 	/**
 	 * Initializes the array to contain an empty container of a particular XdmfArrayType.
+	 *
+	 * @param arrayType the type of array to initialize.
+	 * @param size the number of values in the initialized array.
 	 */
-	void initialize(const boost::shared_ptr<const XdmfArrayType> arrayType);
+	void initialize(const boost::shared_ptr<const XdmfArrayType> arrayType, const unsigned int size = 0);
 
 	/**
 	 * Returns whether the array is initialized (contains values in memory).

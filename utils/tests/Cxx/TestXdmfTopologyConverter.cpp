@@ -1,13 +1,12 @@
 #include <math.h>
 #include "XdmfArray.hpp"
+#include "XdmfArrayType.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGeometryType.hpp"
 #include "XdmfGrid.hpp"
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyConverter.hpp"
 #include "XdmfTopologyType.hpp"
-
-#include "XdmfArrayType.hpp"
 #include "XdmfWriter.hpp"
 
 int main(int argc, char* argv[])

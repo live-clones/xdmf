@@ -6,6 +6,9 @@ class XdmfGrid;
 class XdmfGridCollection;
 class XdmfHDF5Writer;
 
+// Includes
+#include <boost/shared_ptr.hpp>
+
 /*!
  * @brief XdmfPartitioner partitions an XdmfGrid using the metis library.
  *
@@ -20,11 +23,7 @@ public:
 	 *
 	 * @return constructed XdmfPartitioner.
 	 */
-	static boost::shared_ptr<XdmfPartitioner> New()
-	{
-		boost::shared_ptr<XdmfPartitioner> p(new XdmfPartitioner());
-		return p;
-	};
+	static boost::shared_ptr<XdmfPartitioner> New();
 
 	virtual ~XdmfPartitioner();
 

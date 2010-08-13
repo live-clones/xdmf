@@ -1,5 +1,6 @@
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
+option(XDMF_BUILD_EXODUS_IO OFF)
 option(XDMF_BUILD_PARTITIONER OFF)
 
 set(XdmfUtilsExecutables)
@@ -7,6 +8,15 @@ set(XdmfUtilsSources
 	XdmfTopologyConverter
 )
 set(XdmfUtilsLinkLibraries Xdmf)
+
+if(XDMF_BUILD_EXODUS_IO)
+	find_package(Exodus REQUIRED)
+	if(EXODUS_FOUND)
+		include_directories(${EXODUS_INCLUDE_DIR} ${NetCDF_INCLUDE_DIR})
+	endif(EXODUS_FOUND)
+	set(XdmfUtilsSources ${XdmfUtilsSources} XdmfExodusReader)
+	set(XdmfUtilsLinkLibraries ${XdmfUtilsLinkLibraries} ${EXODUS_LIBRARIES} ${NetCDF_LIBRARIES})
+endif(XDMF_BUILD_EXODUS_IO)
 
 if(XDMF_BUILD_PARTITIONER)
 	find_package(Metis REQUIRED)

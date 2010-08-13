@@ -95,6 +95,12 @@ boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Quadrilateral_8()
 	return p;
 }
 
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Quadrilateral_9()
+{
+	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(9, "Quadrilateral_9", Quadratic));
+	return p;
+}
+
 boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Tetrahedron_10()
 {
 	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(10, "Tetrahedron_10", Quadratic));
@@ -110,6 +116,12 @@ boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Pyramid_13()
 boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Wedge_15()
 {
 	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(15, "Wedge_15", Quadratic));
+	return p;
+}
+
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Wedge_18()
+{
+	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(18, "Wedge_18", Quadratic));
 	return p;
 }
 

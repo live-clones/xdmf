@@ -5,6 +5,9 @@
 class XdmfGrid;
 class XdmfTopologyType;
 
+// Includes
+#include <boost/shared_ptr.hpp>
+
 /*!
  * @brief XdmfTopologyConverter converts an XdmfGrid to different topology types.  XdmfAttributes and XdmfSets attached to the XdmfGrid
  * are adjusted to remain valid for the new topology type.
@@ -25,11 +28,7 @@ public:
 	 *
 	 * @return constructed XdmfTopologyConverter.
 	 */
-	static boost::shared_ptr<XdmfTopologyConverter> New()
-	{
-		boost::shared_ptr<XdmfTopologyConverter> p(new XdmfTopologyConverter());
-		return p;
-	};
+	static boost::shared_ptr<XdmfTopologyConverter> New();
 
 	virtual ~XdmfTopologyConverter();
 
