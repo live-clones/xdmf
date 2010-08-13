@@ -3,6 +3,7 @@
 
 // Forward Declarations
 class XdmfGrid;
+class XdmfHDF5Writer;
 class XdmfTopologyType;
 
 // Includes
@@ -37,10 +38,12 @@ public:
 	 *
 	 * @param gridToConvert the XdmfGrid to convert to a different topology
 	 * @param topologyType the XdmfTopologyType to convert to.
+	 * @param heavyDataWriter an XdmfHDF5Writer to write the converted mesh to.  If no heavyDataWriter is specified, all mesh data will remain in memory.
 	 *
 	 * @return the converted XdmfGrid.
 	 */
-	boost::shared_ptr<XdmfGrid> convert(const boost::shared_ptr<XdmfGrid> gridToConvert, const boost::shared_ptr<const XdmfTopologyType> topologyType) const;
+	boost::shared_ptr<XdmfGrid> convert(const boost::shared_ptr<XdmfGrid> gridToConvert, const boost::shared_ptr<const XdmfTopologyType> topologyType,
+			const boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter = boost::shared_ptr<XdmfHDF5Writer>()) const;
 
 protected:
 

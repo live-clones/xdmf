@@ -1,4 +1,5 @@
 set(XdmfUtilsCxxTests
+	TestXdmfExodusReader
 	TestXdmfTopologyConverter
 )
 

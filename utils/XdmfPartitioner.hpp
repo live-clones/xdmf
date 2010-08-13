@@ -53,7 +53,7 @@ public:
 	 * @return a spatial collection containing partitioned grids.
 	 */
 	boost::shared_ptr<XdmfGridCollection> partition(const boost::shared_ptr<XdmfGrid> gridToPartition, const unsigned int numberOfPartitions,
-			boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter) const;
+			const boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter = boost::shared_ptr<XdmfHDF5Writer>()) const;
 
 protected:
 

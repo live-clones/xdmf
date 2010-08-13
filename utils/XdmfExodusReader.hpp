@@ -3,6 +3,7 @@
 
 // Forward Declarations
 class XdmfGrid;
+class XdmfHDF5Writer;
 class XdmfTopologyType;
 
 // Includes
@@ -29,10 +30,11 @@ public:
      * Read the contents of an ExodusII file from disk into an Xdmf structure in memory..
      *
      * @param fileName containing the path of the exodus file to read.
+	 * @param heavyDataWriter an XdmfHDF5Writer to write the mesh to.  If no heavyDataWriter is specified, all mesh data will remain in memory.
      *
      * @return XdmfGrid containing the mesh stored in the ExodusII file.
      */
-	boost::shared_ptr<XdmfGrid> read(const std::string & fileName) const;
+	boost::shared_ptr<XdmfGrid> read(const std::string & fileName, const boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter = boost::shared_ptr<XdmfHDF5Writer>()) const;
 
 protected:
 

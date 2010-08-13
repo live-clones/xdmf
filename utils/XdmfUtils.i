@@ -39,6 +39,7 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
 	#include <XdmfTopologyType.hpp>
 
 	// XdmfUtils Includes
+	#include <XdmfExodusReader.hpp>
 	//#include <XdmfPartitioner.hpp>
 	#include <XdmfTopologyConverter.hpp>
 %}
@@ -50,8 +51,10 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
 //}
 
 // Shared Pointer Templates
+%shared_ptr(XdmfExodusReader)
 //%shared_ptr(XdmfPartitioner)
 %shared_ptr(XdmfTopologyConverter)
 
+%include XdmfExodusReader.hpp
 //%include XdmfPartitioner.hpp
 %include XdmfTopologyConverter.hpp

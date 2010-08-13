@@ -32,7 +32,6 @@ extern "C"
 
 #include <iostream>
 #include <sstream>
-#include "XdmfArray.hpp"
 #include "XdmfAttribute.hpp"
 #include "XdmfAttributeCenter.hpp"
 #include "XdmfAttributeType.hpp"
@@ -64,7 +63,7 @@ XdmfPartitioner::~XdmfPartitioner()
 }
 
 boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::shared_ptr<XdmfGrid> gridToPartition, const unsigned int numberOfPartitions,
-		boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter) const
+		const boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter) const
 {
 	int metisElementType;
 	int nodesPerElement;
@@ -97,9 +96,11 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 		assert(false);
 	}
 
+	bool releaseTopology = false;
 	if(!gridToPartition->getTopology()->isInitialized())
 	{
 		gridToPartition->getTopology()->read();
+		releaseTopology = true;
 	}
 
 	int numElements = gridToPartition->getTopology()->getNumberElements();
@@ -185,9 +186,11 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 	boost::shared_ptr<XdmfGridCollection> partitionedGrids = XdmfGridCollection::New();
 	partitionedGrids->setType(XdmfGridCollectionType::Spatial());
 
+	bool releaseGeometry = false;
 	if(!gridToPartition->getGeometry()->isInitialized())
 	{
 		gridToPartition->getGeometry()->read();
+		releaseGeometry = true;
 	}
 
 	// Split geometry and topology into proper partitions
@@ -207,26 +210,23 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 
 			// Fill in geometry for this partition
 			partitioned->getGeometry()->setType(gridToPartition->getGeometry()->getType());
-			boost::shared_ptr<XdmfArray> geometryVals = partitioned->getGeometry();
 			unsigned int numDimensions = partitioned->getGeometry()->getType()->getDimensions();
-			geometryVals->initialize(gridToPartition->getGeometry()->getArrayType(), currNodeMap.size() * numDimensions);
+			partitioned->getGeometry()->initialize(gridToPartition->getGeometry()->getArrayType(), currNodeMap.size() * numDimensions);
 
 			for(std::map<unsigned int, unsigned int>::const_iterator iter = currNodeMap.begin(); iter != currNodeMap.end(); ++iter)
 			{
-				geometryVals->copyValues(iter->second * numDimensions, gridToPartition->getGeometry(), iter->first * numDimensions, numDimensions);
+				partitioned->getGeometry()->copyValues(iter->second * numDimensions, gridToPartition->getGeometry(), iter->first * numDimensions, numDimensions);
 			}
 
 			if(heavyDataWriter)
 			{
-				geometryVals->accept(heavyDataWriter);
-				geometryVals->release();
+				partitioned->getGeometry()->accept(heavyDataWriter);
+				partitioned->getGeometry()->release();
 			}
 
 			// Fill in topology for this partition
 			partitioned->getTopology()->setType(gridToPartition->getTopology()->getType());
-			boost::shared_ptr<XdmfArray> topologyVals = partitioned->getTopology();
-			topologyVals->initialize(gridToPartition->getTopology()->getArrayType(), currElemIds.size() * topologyType->getNodesPerElement());
-
+			partitioned->getTopology()->initialize(gridToPartition->getTopology()->getArrayType(), currElemIds.size() * topologyType->getNodesPerElement());
 			unsigned int index = 0;
 			for(std::vector<unsigned int>::const_iterator iter = currElemIds.begin(); iter != currElemIds.end(); ++iter)
 			{
@@ -234,15 +234,15 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 				for(unsigned int j=0; j<topologyType->getNodesPerElement(); ++j)
 				{
 					unsigned int globalNodeId = currNodeMap[gridToPartition->getTopology()->getValueCopy<unsigned int>(*iter * topologyType->getNodesPerElement() + j)];
-					topologyVals->copyValues(index, &globalNodeId, 1);
+					partitioned->getTopology()->copyValues(index, &globalNodeId, 1);
 					index++;
 				}
 			}
 
 			if(heavyDataWriter)
 			{
-				topologyVals->accept(heavyDataWriter);
-				topologyVals->release();
+				partitioned->getTopology()->accept(heavyDataWriter);
+				partitioned->getTopology()->release();
 			}
 
 			if (generateGlobalNodeIds)
@@ -251,34 +251,40 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 				globalNodeIds->setName("GlobalNodeId");
 				globalNodeIds->setType(XdmfAttributeType::GlobalId());
 				globalNodeIds->setCenter(XdmfAttributeCenter::Node());
-
-				boost::shared_ptr<XdmfArray> globalNodeIdsVals = globalNodeIds;
-				globalNodeIdsVals->resize<unsigned int>(currNodeMap.size());
-				for (std::map<unsigned int, unsigned int>::const_iterator iter = currNodeMap.begin(); iter != currNodeMap.end(); ++iter)
+				globalNodeIds->initialize<unsigned int>(currNodeMap.size());
+				for(std::map<unsigned int, unsigned int>::const_iterator iter = currNodeMap.begin(); iter != currNodeMap.end(); ++iter)
 				{
-					globalNodeIdsVals->copyValues(iter->second, &iter->first, 1);
+					globalNodeIds->copyValues(iter->second, &iter->first, 1);
 				}
 				partitioned->insert(globalNodeIds);
 
 				if(heavyDataWriter)
 				{
-					globalNodeIdsVals->accept(heavyDataWriter);
-					globalNodeIdsVals->release();
+					globalNodeIds->accept(heavyDataWriter);
+					globalNodeIds->release();
 				}
 			}
 		}
 	}
 
-	gridToPartition->getGeometry()->release();
-	gridToPartition->getTopology()->release();
+	if(releaseGeometry)
+	{
+		gridToPartition->getGeometry()->release();
+	}
+	if(releaseTopology)
+	{
+		gridToPartition->getTopology()->release();
+	}
 
 	// Split attributes into proper partitions
 	for(unsigned int i=0; i<gridToPartition->getNumberAttributes(); ++i)
 	{
 		boost::shared_ptr<XdmfAttribute> currAttribute = gridToPartition->getAttribute(i);
+		bool releaseAttribute = false;
 		if(!currAttribute->isInitialized())
 		{
 			currAttribute->read();
+			releaseAttribute = true;
 		}
 		unsigned int partitionId = 0;
 		for(unsigned int j=0; j<numberOfPartitions; ++j)
@@ -289,7 +295,7 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 			{
 				boost::shared_ptr<XdmfGrid> partitioned = partitionedGrids->getGrid(partitionId);
 				partitionId++;
-				boost::shared_ptr<XdmfAttribute> createdAttribute;
+				boost::shared_ptr<XdmfAttribute> createdAttribute = boost::shared_ptr<XdmfAttribute>();
 				if(currAttribute->getCenter() == XdmfAttributeCenter::Grid())
 				{
 					if(partitionId == 0)
@@ -331,22 +337,31 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 					partitioned->insert(createdAttribute);
 					if(heavyDataWriter)
 					{
+						if(!createdAttribute->isInitialized())
+						{
+							createdAttribute->read();
+						}
 						createdAttribute->accept(heavyDataWriter);
 						createdAttribute->release();
 					}
 				}
 			}
 		}
-		currAttribute->release();
+		if(releaseAttribute)
+		{
+			currAttribute->release();
+		}
 	}
 
 	// Split sets into proper partitions
 	for(unsigned int i=0; i<gridToPartition->getNumberSets(); ++i)
 	{
 		boost::shared_ptr<XdmfSet> currSet = gridToPartition->getSet(i);
+		bool releaseSet = false;
 		if(!currSet->isInitialized())
 		{
 			currSet->read();
+			releaseSet = true;
 		}
 		unsigned int partitionId = 0;
 		for(unsigned int j=0; j<numberOfPartitions; ++j)
@@ -396,7 +411,10 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 				}
 			}
 		}
-		currSet->release();
+		if(releaseSet)
+		{
+			currSet->release();
+		}
 	}
 
 	// Add XdmfMap to map boundary nodes between partitions
@@ -404,7 +422,10 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 	for(unsigned int i=0; i<partitionedGrids->getNumberGrids(); ++i)
 	{
 		boost::shared_ptr<XdmfAttribute> globalNodeId = partitionedGrids->getGrid(i)->getAttribute("GlobalNodeId");
-		globalNodeId->read();
+		if(!globalNodeId->isInitialized())
+		{
+			globalNodeId->read();
+		}
 		globalNodeIds.push_back(globalNodeId);
 	}
 

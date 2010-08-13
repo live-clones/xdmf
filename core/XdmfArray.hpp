@@ -188,6 +188,7 @@ public:
 	 * Initializes the array to contain an empty container of a particular type.
 	 *
 	 * @param size the number of values in the initialized array.
+	 *
 	 * @return a smart pointer to the internal vector of values initialized in this array.
 	 */
 	template <typename T>

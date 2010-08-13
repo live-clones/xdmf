@@ -32,6 +32,7 @@
 #include "XdmfGeometry.hpp"
 #include "XdmfGeometryType.hpp"
 #include "XdmfGrid.hpp"
+#include "XdmfHDF5Writer.hpp"
 #include "XdmfSet.hpp"
 #include "XdmfSetType.hpp"
 #include "XdmfTopology.hpp"
@@ -51,16 +52,21 @@ XdmfExodusReader::~XdmfExodusReader()
 {
 }
 
-boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName) const
+boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName, const boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter) const
 {
-
-	boost::shared_ptr<XdmfGrid> grid = XdmfGrid::New();
+	boost::shared_ptr<XdmfGrid> toReturn = XdmfGrid::New();
 
 	// Read Exodus II file to XdmfGrid via Exodus II API
 	float version;
 	int CPU_word_size = sizeof(double);
 	int IO_word_size = 0; // Get from file
 	int exodusHandle = ex_open(fileName.c_str(), EX_READ, &CPU_word_size, &IO_word_size, &version);
+
+	if(exodusHandle < 0)
+	{
+		// Invalid fileName
+		assert(false);
+	}
 
 	char * title = new char[MAX_LINE_LENGTH+1];
 	int num_dim, num_nodes, num_elem, num_elem_blk, num_node_sets, num_side_sets;
@@ -87,11 +93,11 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName)
 	// In the future we may want to do XDMF_GEOMETRY_X_Y_Z?
 	if(num_dim == 3)
 	{
-		grid->getGeometry()->setType(XdmfGeometryType::XYZ());
+		toReturn->getGeometry()->setType(XdmfGeometryType::XYZ());
 	}
 	else if(num_dim = 2)
 	{
-		grid->getGeometry()->setType(XdmfGeometryType::XY());
+		toReturn->getGeometry()->setType(XdmfGeometryType::XY());
 	}
 	else
 	{
@@ -99,20 +105,26 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName)
 		assert(false);
 	}
 
-	grid->getGeometry()->initialize(XdmfArrayType::Float64());
-	grid->getGeometry()->reserve(num_nodes * num_dim);
+	toReturn->getGeometry()->initialize(XdmfArrayType::Float64());
+	toReturn->getGeometry()->reserve(num_nodes * num_dim);
 	for(unsigned int i=0; i<num_nodes; ++i)
 	{
-		grid->getGeometry()->pushBack(x[i]);
-		grid->getGeometry()->pushBack(y[i]);
+		toReturn->getGeometry()->pushBack(x[i]);
+		toReturn->getGeometry()->pushBack(y[i]);
 		if(num_dim == 3)
 		{
-			grid->getGeometry()->pushBack(z[i]);
+			toReturn->getGeometry()->pushBack(z[i]);
 		}
 	}
 	delete [] x;
 	delete [] y;
 	delete [] z;
+
+	if(heavyDataWriter)
+	{
+		toReturn->getGeometry()->accept(heavyDataWriter);
+		toReturn->getGeometry()->release();
+	}
 
 	int * blockIds = new int[num_elem_blk];
 	ex_get_elem_blk_ids(exodusHandle, blockIds);
@@ -149,21 +161,21 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName)
 
 	if(topologyTypes.size() > 0)
 	{
-		grid->getTopology()->setType(topologyTypes[0]);
+		toReturn->getTopology()->setType(topologyTypes[0]);
 		if(topologyTypes.size() > 1)
 		{
 			for(std::vector<boost::shared_ptr<const XdmfTopologyType> >::const_iterator iter = topologyTypes.begin() + 1; iter != topologyTypes.end(); ++iter)
 			{
 				// Cannot be mixed topology!
-				assert(grid->getTopology()->getType() == *iter);
+				assert(toReturn->getTopology()->getType() == *iter);
 			}
 		}
 	}
 
 	topologyTypes.clear();
 
-	grid->getTopology()->initialize(XdmfArrayType::Int32(), totalConns);
-	int * connectivityPointer = (int *)grid->getTopology()->getValuesPointer();
+	toReturn->getTopology()->initialize(XdmfArrayType::Int32(), totalConns);
+	int * connectivityPointer = (int *)toReturn->getTopology()->getValuesPointer();
 	// Read connectivity from element blocks
 	int elemIndex = 0;
 	for(unsigned int i=0; i<num_elem_blk; ++i)
@@ -173,7 +185,7 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName)
 	}
 
 	// This is taken from VTK's vtkExodusIIReader and adapted to fit Xdmf element types, which have the same ordering as VTK.
-	if(grid->getTopology()->getType() == XdmfTopologyType::Hexahedron_20() || grid->getTopology()->getType() == XdmfTopologyType::Hexahedron_27())
+	if(toReturn->getTopology()->getType() == XdmfTopologyType::Hexahedron_20() || toReturn->getTopology()->getType() == XdmfTopologyType::Hexahedron_27())
 	{
 		int * ptr = connectivityPointer;
 		int itmp[4];
@@ -194,7 +206,7 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName)
 				*ptr = itmp[j];
 			}
 
-			if(grid->getTopology()->getType() == XdmfTopologyType::Hexahedron_27())
+			if(toReturn->getTopology()->getType() == XdmfTopologyType::Hexahedron_27())
 			{
 				for(unsigned int j=0; j<4; ++j, ++ptr)
 				{
@@ -207,7 +219,7 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName)
 			}
 		}
 	}
-	else if(grid->getTopology()->getType() == XdmfTopologyType::Wedge_15() || grid->getTopology()->getType() == XdmfTopologyType::Wedge_18())
+	else if(toReturn->getTopology()->getType() == XdmfTopologyType::Wedge_15() || toReturn->getTopology()->getType() == XdmfTopologyType::Wedge_18())
 	{
 		int * ptr = connectivityPointer;
 		int itmp[3];
@@ -228,7 +240,7 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName)
 				*ptr = itmp[j];
 			}
 
-			if(grid->getTopology()->getType() == XdmfTopologyType::Wedge_18())
+			if(toReturn->getTopology()->getType() == XdmfTopologyType::Wedge_18())
 			{
 				itmp[0] = *(ptr);
 				itmp[1] = *(ptr+1);
@@ -246,6 +258,12 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName)
 		connectivityPointer[i]--;
 	}
 
+	if(heavyDataWriter)
+	{
+		toReturn->getTopology()->accept(heavyDataWriter);
+		toReturn->getTopology()->release();
+	}
+
 	boost::shared_ptr<XdmfAttribute> globalIds = XdmfAttribute::New();
 	globalIds->setName("GlobalNodeId");
 	globalIds->setCenter(XdmfAttributeCenter::Node());
@@ -261,7 +279,13 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName)
 		globalIdsPointer[i]--;
 	}
 
-	grid->insert(globalIds);
+	toReturn->insert(globalIds);
+
+	if(heavyDataWriter)
+	{
+		globalIds->accept(heavyDataWriter);
+		globalIds->release();
+	}
 
 	// Read node sets
 	int * nodeSetIds = new int[num_node_sets];
@@ -300,28 +324,13 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName)
 				set->insert(node_set_node_list[j] - 1);
 			}
 
-			grid->insert(set);
+			toReturn->insert(set);
 
-			/*
-			if(num_df_in_set > 0)
+			if(heavyDataWriter)
 			{
-				double * node_set_distribution_factors = new double[num_df_in_set];
-				ex_get_node_set_dist_fact(exodusHandle, nodeSetIds[j], node_set_distribution_factors);
-
-				XdmfAttribute * attr = new XdmfAttribute();
-				attr->SetName("SetAttribute");
-				attr->SetAttributeType(XDMF_ATTRIBUTE_TYPE_SCALAR);
-				attr->SetAttributeCenter(XDMF_ATTRIBUTE_CENTER_NODE);
-				attr->SetDeleteOnGridDelete(true);
-
-				XdmfArray * attrVals = attr->GetValues();
-				attrVals->SetNumberType(XDMF_FLOAT32_TYPE);
-				attrVals->SetNumberOfElements(num_df_in_set);
-				attrVals->SetValues(0, node_set_distribution_factors, num_df_in_set, 1, 1);
-				set->Insert(attr);
-				delete [] node_set_distribution_factors;
-			 }
-			 */
+				set->accept(heavyDataWriter);
+				set->release();
+			}
 
 			delete [] node_set_node_list;
 		}
@@ -393,7 +402,12 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName)
 		attribute->setType(XdmfAttributeType::Scalar());
 		attribute->initialize(XdmfArrayType::Float64());
 		attribute->pushBack(global_var_vals[i]);
-		grid->insert(attribute);
+		toReturn->insert(attribute);
+		if(heavyDataWriter)
+		{
+			attribute->accept(heavyDataWriter);
+			attribute->release();
+		}
 		delete [] global_var_names[i];
 	}
 	delete [] global_var_vals;
@@ -412,7 +426,12 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName)
 			attribute->setType(XdmfAttributeType::Scalar());
 			attribute->initialize(XdmfArrayType::Float64(), num_nodes);
 			ex_get_nodal_var(exodusHandle, 1, i+1, num_nodes, (double*)attribute->getValuesPointer());
-			grid->insert(attribute);
+			toReturn->insert(attribute);
+			if(heavyDataWriter)
+			{
+				attribute->accept(heavyDataWriter);
+				attribute->release();
+			}
 			delete [] nodal_var_names[i];
 		}
 	}
@@ -431,7 +450,12 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName)
 			ex_get_elem_var(exodusHandle, 1, i+1, blockIds[j], numElemsInBlock[i], &((double*)attribute->getValuesPointer())[elemIndex]);
 			elemIndex = elemIndex + numElemsInBlock[i];
 		}
-		grid->insert(attribute);
+		toReturn->insert(attribute);
+		if(heavyDataWriter)
+		{
+			attribute->accept(heavyDataWriter);
+			attribute->release();
+		}
 		delete [] elem_var_names[i];
 	}
 
@@ -440,7 +464,7 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName)
 	delete [] numElemsInBlock;
 	delete [] numNodesPerElemInBlock;
 	delete [] numElemAttrInBlock;
-	return grid;
+	return toReturn;
 }
 
 boost::shared_ptr<const XdmfTopologyType> XdmfExodusReader::exodusToXdmfTopologyType(std::string exodusTopologyType, const int pointsPerCell) const
@@ -597,6 +621,3 @@ boost::shared_ptr<const XdmfTopologyType> XdmfExodusReader::exodusToXdmfTopology
 	}
 	return XdmfTopologyType::NoTopologyType();
 }
-
-
-
