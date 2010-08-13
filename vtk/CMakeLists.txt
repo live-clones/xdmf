@@ -32,7 +32,6 @@ SET( Xdmf_SRCS
 #vtkXdmfOpenGLCamera.cxx
   vtkXdmfReader.cxx
   vtkXdmfReaderInternal.cxx
-  vtkXdmfWriter2.cxx
   vtkXdmfWriter.cxx
 #${Xdmf_BINARY_DIR}/vtk/vtkXdmfRenderWindowInteractor.cxx
 #vtkXdmfDataSetWriter.cxx

@@ -2,234 +2,170 @@
 
   Program:   Visualization Toolkit
   Module:    vtkXdmfWriter.h
-  Language:  C++
-  Date:      $Date$
-  Version:   $Revision$
 
-  Copyright (c) 1993-2002 Ken Martin, Will Schroeder, Bill Lorensen 
+  Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
   See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
+
 // .NAME vtkXdmfWriter - write eXtensible Data Model and Format files
 // .SECTION Description
-// vtkXdmfWriter is a process object that writes XDMF data.  The input to this
-// writer is a single vtkDataSet object.
-// .SECTION Caveats
-// used the XDMF API
-// .SECTION See Also
-// vtkDataReader
+// vtkXdmfWriter converts vtkDataObjects to XDMF format. This is intended to
+// replace vtkXdmfWriter, which is not up to date with the capabilities of the
+// newer XDMF2 library. This writer understands VTK's composite data types and
+// produces full trees in the output XDMF files.
+
 #ifndef _vtkXdmfWriter_h
 #define _vtkXdmfWriter_h
 
-#include "vtkProcessObject.h"
+#include "vtkDataObjectAlgorithm.h"
+#include <vector>
 
-// from "XdmfGrid.h"
-#define XDMF_GRID_COLLECTION_TEMPORAL   0x0001
-#define XDMF_GRID_COLLECTION_SPATIAL    0x0002
-#define XDMF_GRID_COLLECTION_UNSET      0x0FFFF
+class vtkExecutive;
 
+class vtkCompositeDataSet;
 class vtkDataSet;
-class vtkPoints;
-class vtkCellArray;
+class vtkDataObject;
+class vtkFieldData;
 class vtkDataArray;
-class vtkDataSetCollection;
+class vtkInformation;
+class vtkInformationVector;
+class vtkXdmfWriterDomainMemoryHandler;
+
 //BTX
 class XdmfDOM;
+class XdmfGrid;
+class XdmfArray;
+struct  _xmlNode;
+typedef _xmlNode *XdmfXmlNode;
+struct vtkXW2NodeHelp {
+  XdmfDOM     *DOM;
+  XdmfXmlNode  node;
+  bool         staticFlag;
+  vtkXW2NodeHelp(XdmfDOM *d, XdmfXmlNode n, bool f) : DOM(d), node(n), staticFlag(f) {};
+};
 //ETX
 
-class VTK_EXPORT vtkXdmfWriter : public vtkProcessObject
+class VTK_EXPORT vtkXdmfWriter : public vtkDataObjectAlgorithm
 {
 public:
   static vtkXdmfWriter *New();
-  vtkTypeMacro(vtkXdmfWriter,vtkProcessObject);
+  vtkTypeMacro(vtkXdmfWriter,vtkDataObjectAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
-  // Set or get the AllLight flag. If set, all data will be written as light
-  // data (inlined).
-  vtkSetClampMacro(AllLight, int, 0, 1);
-  vtkBooleanMacro(AllLight, int);
-  vtkGetMacro(AllLight, int);
-
-  // Description:
-  // Make all data heavy, including rectilinear grid arrays.
-  vtkSetClampMacro(AllHeavy, int, 0, 1);
-  vtkBooleanMacro(AllHeavy, int);
-  vtkGetMacro(AllHeavy, int);
+  // Set the input data set.
+  virtual void SetInput(vtkDataObject* dobj);
 
   // Description:
   // Set or get the file name of the xdmf file.
-  virtual void SetFileName(const char* fname);
-  virtual const char* GetFileName();
+  vtkSetStringMacro(FileName);
+  vtkGetStringMacro(FileName);
 
   // Description:
-  // Set or get the grid name of the dataset.
-  vtkSetStringMacro(GridName);
-  vtkGetStringMacro(GridName);
+  // Set or get the file name of the hdf5 file.
+  // Note that if the File name is not specified, then the group name is ignore
+  vtkSetStringMacro(HeavyDataFileName);
+  vtkGetStringMacro(HeavyDataFileName);
 
   // Description:
-  // Set or ger the domain name.
-  vtkSetStringMacro(DomainName);
-  vtkGetStringMacro(DomainName);
+  // Set or get the group name into which data will be written
+  // it may contain nested groups as in "/Proc0/Block0"
+  vtkSetStringMacro(HeavyDataGroupName);
+  vtkGetStringMacro(HeavyDataGroupName);
 
   // Description:
-  // Collection name defines collection grids belong to
-  vtkSetStringMacro(CollectionName);
-  vtkGetStringMacro(CollectionName);
+  // Write data to output. Method executes subclasses WriteData() method, as 
+  // well as StartMethod() and EndMethod() methods.
+  // Returns 1 on success and 0 on failure.
+  virtual int Write();
 
   // Description:
-  // If GridOnly is set, only the grid will be written and all the header
-  // information will be ignored
-  vtkSetClampMacro(GridOnly, int, 0, 1);
-  vtkBooleanMacro(GridOnly, int);
-  vtkGetMacro(GridOnly, int);
+  // Topology Geometry and Attribute arrays smaller than this are written in line into the XML.
+  // Default is 100.
+  vtkSetMacro(LightDataLimit, int);
+  vtkGetMacro(LightDataLimit, int);
 
-  // Description:
-  // Set or get the name of the heavy data file name.
-  virtual void SetHeavyDataSetName( const char *name);
-  virtual const char* GetHeavyDataSetName();
+  //Description:
+  //Controls whether writer automatically writes all input time steps, or 
+  //just the timestep that is currently on the input. 
+  //Default is OFF.
+  vtkSetMacro(WriteAllTimeSteps, int);
+  vtkGetMacro(WriteAllTimeSteps, int);
+  vtkBooleanMacro(WriteAllTimeSteps, int);
 
-  // Description:
-  // Set the input data set.
-  virtual void SetInput(vtkDataSet* ds);
+    // Description:
+  // Called in parallel runs to identify the portion this process is responsible for
+  // TODO: respect this
+  vtkSetMacro(Piece, int);
+  vtkSetMacro(NumberOfPieces, int);
 
-  // Description:
-  // If InputsArePieces is set, the onpuits are considered to be parts/pieces
-  // of a larger grid and are joined together inside the hdf5 file
-  vtkSetClampMacro(InputsArePieces, int, 0, 1);
-  vtkBooleanMacro(InputsArePieces, int);
-  vtkGetMacro(InputsArePieces, int);
+  //TODO: control choice of heavy data format (xml, hdf5, sql, raw)
 
-  // Description:
-  // When InputsArePieces is set, this is the true size of the data
-  vtkSetVector3Macro(FullGridSize, int);
-  vtkGetVectorMacro(FullGridSize, int, 3);
-
-  // Description:
-  // If appending many time steps together into a single file
-  // you should set CollectionType to "Temporal", 
-  // when appending grids into a multi-block type structure
-  // use collection type is "Spatial". By default, Collection type is Unset
-  vtkSetMacro(CollectionType, int);
-  vtkGetMacro(CollectionType, int);
-  void SetCollectionTypeToTemporal() { 
-    this->SetCollectionType(XDMF_GRID_COLLECTION_TEMPORAL); }
-  void SetCollectionTypeToSpatial()  { 
-    this->SetCollectionType(XDMF_GRID_COLLECTION_SPATIAL); }
-  void CloseCollection();
-    
-  // Description:
-  // Set the time value of this data
-  vtkSetMacro(TimeValue, double);
-  vtkGetMacro(TimeValue, double);
-
-  // Description:
-  // If AppendGridsToDomain is set, the existing xdmf xml file is opeded
-  // and new grid are added to the existing domain inside it.
-  // No checking is performed on the structuire of the file.
-  vtkSetClampMacro(AppendGridsToDomain, int, 0, 1);
-  vtkBooleanMacro(AppendGridsToDomain, int);
-  vtkGetMacro(AppendGridsToDomain, int);
-
-  // Description:
-  // Write the XDMF file.
-  void Write();
-
-  // Description:
-  // Add a dataset to the list of data to append.
-  void AddInput(vtkDataObject *in);
-
-  // Description:
-  // Get any input of this filter.
-  vtkDataObject *GetInput(int idx);
-  vtkDataObject *GetInput() 
-    {return this->GetInput( 0 );}
-  
-  // Description:
-  // Remove a dataset from the list of data to append.
-  void RemoveInput(vtkDataObject *in);
-
-  // Description:
-  // Returns a copy of the input array.  Modifications to this list
-  // will not be reflected in the actual inputs.
-  vtkDataSetCollection *GetInputList();
-
-  // Description:
-  // Indent xml 
-  void Indent(ostream& ost);
-  void IncrementIndent() { this->CurrIndent ++; }
-  void DecrementIndent() { this->CurrIndent --; }
-
-  // Description:
-  // Generate hdf5 name for array
-  const char* GenerateHDF5ArrayName(const char* gridName, const char* arrayName);
+  //TODO: These controls are available in vtkXdmfWriter, but are not used here.
+  //GridsOnly
+  //Append to Domain
 
 protected:
   vtkXdmfWriter();
   ~vtkXdmfWriter();
 
-  void WriteAttributes( ostream& ost, vtkDataSet* ds, const char* gridName );
-  void StartTopology( ostream& ost, int cellType, vtkIdType numVert, vtkIdType numCells );
-  void StartTopology( ostream& ost, const char* toptype, int rank, int *dims );
-  void EndTopology( ostream& ost );
-  void StartGeometry( ostream& ost, const char* type );
-  void EndGeometry( ostream& ost );
-  virtual int WriteHead( ostream& ost );
-  virtual int WriteTail( ostream& ost );
-  virtual int WriteGrid( ostream& ost, const char* name, vtkDataSet* ds, 
-    void* mapofcells = 0, const void *celltype = 0 );
-  virtual int WriteCellArray( ostream& ost, vtkDataSet* Cells, const char* gridName, 
-    void* mapofcells, const void *celltype );
-  virtual int WritePoints( ostream& ost, vtkPoints *Points, vtkDataSet* dataSet, const char* gridName );
-  virtual int WriteDataArray( ostream& ost, vtkDataArray* array, vtkDataSet* ds,
-    int dims[3], const char* Name, const char* Center, int type, const char* gridName,
-    int active, int cellData = 0 );
-  virtual int WriteVTKArray( ostream& ost, vtkDataArray* array, vtkDataSet* dataSet,
-    int dims[3], int *extents, const char* name, const char* dataName, const char* gridName, int alllight,
-    int cellData = 0);
+  //Choose composite executive by default for time.
+  virtual vtkExecutive* CreateDefaultExecutive();
+
+  //Can take any one data object
+  virtual int FillInputPortInformation(int port, vtkInformation *info);
+
+  //Overridden to ...
+  virtual int RequestInformation(vtkInformation*, 
+                                 vtkInformationVector**, 
+                                 vtkInformationVector*);
+  //Overridden to ...
+  virtual int RequestUpdateExtent(vtkInformation*, 
+                                  vtkInformationVector**, 
+                                  vtkInformationVector*);
+  //Overridden to ...
+  virtual int RequestData(vtkInformation*, 
+                          vtkInformationVector**, 
+                          vtkInformationVector*);
   
-  virtual bool ReadDocument(const char* filename);
-  virtual int  ParseExistingFile(const char* filename);
-  
-  vtkSetStringMacro(HeavyDataSetNameString);
-  char    *HeavyDataSetNameString;
+  //These do the work: recursively parse down input's structure all the way to arrays, 
+  //use XDMF lib to dump everything to file.
 
-  vtkSetStringMacro(FileNameString);
-  char    *FileNameString;
-  char    *GridName;
-  char    *DomainName;
-  char    *CollectionName;
-  
-  int    AllLight;
-  int    AllHeavy;
+  virtual void CreateTopology(vtkDataSet *ds, XdmfGrid *grid, vtkIdType PDims[3], vtkIdType CDims[3], vtkIdType &PRank, vtkIdType &CRank, void *staticdata);
+  virtual void CreateGeometry(vtkDataSet *ds, XdmfGrid *grid, void *staticdata);
 
-  int CurrIndent;
+  virtual void WriteDataSet(vtkDataObject *dobj, XdmfGrid *grid);
+  virtual void WriteCompositeDataSet(vtkCompositeDataSet *dobj, XdmfGrid *grid);
+  virtual void WriteAtomicDataSet(vtkDataObject *dobj, XdmfGrid *grid);
+  virtual void WriteArrays(vtkFieldData* dsa, XdmfGrid *grid, int association,
+                           vtkIdType rank, vtkIdType *dims, const char *name);
+  virtual void ConvertVToXArray(vtkDataArray *vda, XdmfArray *xda, 
+                                vtkIdType rank, vtkIdType *dims,
+                                int AllocStrategy, const char *heavyprefix);
 
-  int GridOnly;
+  char *FileName;
+  char *HeavyDataFileName;
+  char *HeavyDataGroupName;
 
-  int AppendGridsToDomain;
-  int InputsArePieces;
-  int FullGridSize[3];
-  double TimeValue;
+  int LightDataLimit;
 
-  vtkSetStringMacro(HDF5ArrayName);
-  char* HDF5ArrayName;
+  int WriteAllTimeSteps;
+  int NumberOfTimeSteps;
+  int CurrentTimeIndex;
 
-  // list of data sets to append together.
-  // Here as a convenience.  It is a copy of the input array.
-  vtkDataSetCollection *InputList;
+  int Piece;
+  int NumberOfPieces;
 
-  char *DocString;
-  int   CollectionType;
-  XdmfDOM  *DOM;
+  XdmfDOM *DOM;
+  XdmfGrid *TopTemporalGrid;
 
-public:
-  int CurrentInputNumber;
+  vtkXdmfWriterDomainMemoryHandler *DomainMemoryHandler;
 
 private:
   vtkXdmfWriter(const vtkXdmfWriter&); // Not implemented

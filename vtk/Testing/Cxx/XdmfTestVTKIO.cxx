@@ -13,7 +13,7 @@
 
 =========================================================================*/
 //Description:
-//This tests vtkXdmfWriter2 and vtkXdmfReader
+//This tests vtkXdmfWriter and vtkXdmfReader
 //It manufactures/reads a bunch of test data objects, writes them to disk 
 //via the xdmfwriter, reads the files back in with the xdmfreader, and 
 //compares the output of the reader against the input to the reader. If 
@@ -21,7 +21,7 @@
 //files around for inspection. Otherwise it deletes the temporary files it
 //creates and returns success.
 
-#include "vtkXdmfWriter2.h"
+#include "vtkXdmfWriter.h"
 
 #include "vtkCellData.h"
 #include "vtkDataObject.h"
@@ -143,7 +143,7 @@ bool TestXDMFConversion(vtkDataObject*input, char *prefix)
   sprintf(hdf5file, "%s.h5", prefix);
   sprintf(vtkfile, "%s.vtk", prefix);
 
-  vtkXdmfWriter2 *xwriter = vtkXdmfWriter2::New();
+  vtkXdmfWriter *xwriter = vtkXdmfWriter::New();
   xwriter->SetLightDataLimit(10000);
   xwriter->WriteAllTimeStepsOn();
   xwriter->SetFileName(xdmffile);
@@ -226,7 +226,7 @@ int main (int ac, char **av)
   tsrc->GrowingOn();
   tsrc->SetXAmplitude(2.0);
 
-  vtkXdmfWriter2 *xwriter = vtkXdmfWriter2::New();
+  vtkXdmfWriter *xwriter = vtkXdmfWriter::New();
   xwriter->SetLightDataLimit(10000);
   xwriter->WriteAllTimeStepsOn();
   xwriter->SetFileName("xdmfIOtest_temporal_1.xmf");
