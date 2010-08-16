@@ -41,6 +41,7 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 
 %import XdmfCore.i
 
+#ifdef SWIGPYTHON
 %pythoncode {
 	from XdmfCore import *
 }
@@ -91,6 +92,139 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 		$result = SWIG_NewPointerObj(SWIG_as_voidptr(new boost::shared_ptr<XdmfItem>($1)), SWIGTYPE_p_boost__shared_ptrT_XdmfItem_t, SWIG_POINTER_OWN);
 	}
 }
+#endif
+
+#if 0
+%include std_set.i
+%template(std_set_uint) std::set<unsigned int>;
+
+// Abstract Base Classes
+%template() Loki::Visitor<XdmfSet>;
+#endif
+
+#ifdef SWIGJAVA
+
+// Typemaps that work for Java
+
+%typemap(out)  boost::shared_ptr<XdmfItem> {
+        if(boost::shared_ptr<XdmfAttribute> value = boost::shared_dynamic_cast<XdmfAttribute>($1))
+        {
+                *(boost::shared_ptr< XdmfAttribute > **)&($result) = value ? new boost::shared_ptr< XdmfAttribute >(value) : 0;
+        }
+        else if(boost::shared_ptr<XdmfDomain> value = boost::shared_dynamic_cast<XdmfDomain>($1))
+        {
+                *(boost::shared_ptr< XdmfDomain > **)&($result) = value ? new boost::shared_ptr< XdmfDomain >(value) : 0;
+        }
+        else if(boost::shared_ptr<XdmfGeometry> value = boost::shared_dynamic_cast<XdmfGeometry>($1))
+        {
+                *(boost::shared_ptr< XdmfGeometry > **)&($result) = value ? new boost::shared_ptr< XdmfGeometry >(value) : 0;
+        }
+        else if(boost::shared_ptr<XdmfGrid> value = boost::shared_dynamic_cast<XdmfGrid>($1))
+        {
+                *(boost::shared_ptr< XdmfGrid > **)&($result) = value ? new boost::shared_ptr< XdmfGrid >(value) : 0;
+        }
+        else if(boost::shared_ptr<XdmfGridCollection> value = boost::shared_dynamic_cast<XdmfGridCollection>($1))
+        {
+                *(boost::shared_ptr< XdmfGridCollection > **)&($result) = value ? new boost::shared_ptr< XdmfGridCollection >(value) : 0;
+        }
+        else if(boost::shared_ptr<XdmfInformation> value = boost::shared_dynamic_cast<XdmfInformation>($1))
+        {
+                *(boost::shared_ptr< XdmfInformation > **)&($result) = value ? new boost::shared_ptr< XdmfInformation >(value) : 0;
+        }
+        else if(boost::shared_ptr<XdmfSet> value = boost::shared_dynamic_cast<XdmfSet>($1))
+        {
+                *(boost::shared_ptr< XdmfSet > **)&($result) = value ? new boost::shared_ptr< XdmfSet >(value) : 0;
+        }
+        else if(boost::shared_ptr<XdmfTime> value = boost::shared_dynamic_cast<XdmfTime>($1))
+        {
+               *(boost::shared_ptr< XdmfTime > **)&($result) = value ? new boost::shared_ptr< XdmfTime >(value) : 0;
+        }
+        else if(boost::shared_ptr<XdmfTopology> value = boost::shared_dynamic_cast<XdmfTopology>($1))
+        {
+                *(boost::shared_ptr< XdmfTopology > **)&($result) = value ? new boost::shared_ptr< XdmfTopology >(value) : 0;
+        }
+        else
+        {
+                *(boost::shared_ptr< XdmfItem > **)&($result) = &($1);
+        }
+}
+
+// Swig+Java will automatically create 'getter' functions for static
+// variables in a class (in this case the ItemTag member variable).
+// This happens to conflict with the getters that Xdmf implements to
+// override the otherwise virtual functions of the parent class.  Here,
+// we ask swig to ignore the static variable (thereby removing direct
+// access to the variable, but leaving access to our getter function
+
+
+%ignore XdmfAttribute::ItemTag;
+%ignore XdmfDomain::ItemTag;
+%ignore XdmfGeometry::ItemTag;
+%ignore XdmfGrid::ItemTag;
+%ignore XdmfGridCollection::ItemTag;
+%ignore XdmfSet::ItemTag;
+%ignore XdmfTime::ItemTag;
+%ignore XdmfTopology::ItemTag;
+%ignore XdmfMap::ItemTag;
+
+// Swig+Java does not like 2 functions with the same prototype that
+// simply return const/non-const versions of the same type.  We
+// ask Swig to ignore one of the two getter functions.  We may
+// have to change this to rename the function to a new name such
+// that we preserve the ability to get a constant variable
+
+%ignore XdmfDomain::getGrid(const unsigned int index) const;
+%ignore XdmfDomain::getGridCollection(unsigned int const) const;
+%ignore XdmfGrid::getAttribute(const unsigned int index) const;
+%ignore XdmfGrid::getAttribute(const std::string & name) const;
+%ignore XdmfGrid::getSet(const unsigned int index) const;
+%ignore XdmfGrid::getSet(const std::string & name) const;
+%ignore XdmfGrid::getGeometry() const;
+%ignore XdmfGrid::getTime() const;
+%ignore XdmfGrid::getTopology() const;
+%ignore XdmfGridCollection::getGrid(const unsigned int index) const;
+
+#endif
+
+#ifdef SWIGJAVA
+%ignore XdmfAttribute::ItemTag;
+%ignore XdmfDomain::ItemTag;
+%ignore XdmfGeometry::ItemTag;
+%ignore XdmfGrid::ItemTag;
+%ignore XdmfGridCollection::ItemTag;
+%ignore XdmfSet::ItemTag;
+%ignore XdmfTime::ItemTag;
+%ignore XdmfTopology::ItemTag;
+%ignore XdmfDomain::getGrid(const unsigned int index) const;
+%ignore XdmfGrid::getAttribute(const unsigned int index) const;
+%ignore XdmfGrid::getAttribute(const std::string & name) const;
+%ignore XdmfGrid::getSet(const unsigned int index) const;
+%ignore XdmfGrid::getSet(const std::string & name) const;
+%ignore XdmfGrid::getGeometry() const;
+%ignore XdmfGrid::getTime() const;
+%ignore XdmfGrid::getTopology() const;
+%ignore XdmfGrid::getMap() const;
+%ignore XdmfGridCollection::getGrid(const unsigned int index) const;
+%ignore XdmfSet::getHDF5Controller() const;
+
+%pragma(java) jniclasscode=%{
+  static {
+    try {
+        System.loadLibrary("XdmfCoreJava");
+    } catch (UnsatisfiedLinkError e) {
+      System.err.println("Native code library failed to load for XdmfCoreJava\n" + e);
+      System.exit(1);
+    }
+    try {
+        System.loadLibrary("XdmfJava");
+    } catch (UnsatisfiedLinkError e) {
+      System.err.println("Native code library failed to load for XdmfJava\n" + e);
+      System.exit(1);
+    }
+  }
+%}
+
+#endif
 
 // Shared Pointer Templates
 %shared_ptr(XdmfAttribute)

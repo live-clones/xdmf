@@ -307,6 +307,8 @@ public:
 	template<typename T>
 	bool swap(std::vector<T> & array);
 
+	std::string getDimensionString() const;
+
 	/**
 	 * Exchange the contents of the vector with the contents of this XdmfArray.  No copy is made.  The internal arrays are swapped.
 	 *
@@ -412,6 +414,7 @@ private:
 	boost::shared_ptr<XdmfHDF5Controller> mHDF5Controller;
 	std::string mName;
 	unsigned int mTmpReserveSize;
+	std::string mDimensionString;
 };
 
 #include "XdmfArray.tpp"

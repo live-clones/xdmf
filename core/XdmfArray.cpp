@@ -413,6 +413,11 @@ std::map<std::string, std::string> XdmfArray::getItemProperties() const
 	return arrayProperties;
 }
 
+std::string XdmfArray::getDimensionString() const
+{
+	return(mDimensionString);
+}
+
 std::string XdmfArray::getItemTag() const
 {
 	return ItemTag;
@@ -573,6 +578,7 @@ void XdmfArray::populateItem(const std::map<std::string, std::string> & itemProp
 		{
 			sizeVal *= atoi((*iter).c_str());
 		}
+		mDimensionString = size->second;
 	}
 	else
 	{

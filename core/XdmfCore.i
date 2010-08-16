@@ -43,6 +43,26 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %template() Loki::Visitor<XdmfArray>;
 %template() Loki::Visitor<XdmfItem>;
 
+#ifdef SWIGJAVA
+%ignore XdmfArray::ItemTag;
+%ignore XdmfInformation::ItemTag;
+%ignore XdmfDataItem::getArray() const;
+%ignore XdmfArray::getHDF5Controller() const;
+%ignore XdmfArray::getValuesPointer() const;
+%ignore XdmfWriter::getHDF5Writer() const;
+
+%pragma(java) jniclasscode=%{
+  static {
+    try {
+        System.loadLibrary("XdmfCoreJava");
+    } catch (UnsatisfiedLinkError e) {
+      System.err.println("Native code library failed to load for XdmfCoreJava\n" + e);
+      System.exit(1);
+    }
+  }
+%}
+#endif
+
 %include XdmfItem.hpp
 %include XdmfItemProperty.hpp
 %include XdmfVisitor.hpp
@@ -87,6 +107,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %template(resizeAsUInt16) XdmfArray::resize<unsigned short>;
 %template(resizeAsUInt32) XdmfArray::resize<unsigned int>;
 
+#ifndef SWIGJAVA
 // Provide accessors from python lists to XdmfArrays
 %extend XdmfArray {
 	void copyValueAsInt8(int index, char value) {
@@ -165,3 +186,4 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 				self.copyValueAsUInt32(i+startIndex, values[i])
 	};
 };
+#endif /* SWIGJAVA */

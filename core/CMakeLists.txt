@@ -49,6 +49,28 @@ if(XDMF_BUILD_TESTING)
 	add_subdirectory(tests)
 endif(XDMF_BUILD_TESTING)
 
+option(XDMF_WRAP_JAVA "Wrap Xdmf with Java" ON)
+if(XDMF_WRAP_JAVA)
+	find_package(SWIG REQUIRED)
+	include(${SWIG_USE_FILE})
+	find_package(Java REQUIRED)
+	find_package(JNI REQUIRED)
+	set(CMAKE_SWIG_FLAGS -v -make_default -package mil.army.arl.xdmf)
+	set(XDMF_CORE_JAVA_PACKAGE_DIR mil/army/arl/xdmf)
+	set(XDMF_CORE_JAVA_DIR ${CMAKE_CURRENT_BINARY_DIR}/${XDMF_CORE_JAVA_PACKAGE_DIR})
+	file(MAKE_DIRECTORY ${XDMF_CORE_JAVA_DIR})
+	set(CMAKE_SWIG_OUTDIR ${XDMF_CORE_JAVA_DIR})
+	include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2})
+	set_source_files_properties(XdmfCore.i PROPERTIES CPLUSPLUS ON)
+	swig_add_module(XdmfCoreJava java XdmfCore.i)
+	swig_link_libraries(XdmfCoreJava XdmfCore)
+	set(XDMF_CORE_JAVA_JAR ${CMAKE_BINARY_DIR}/XdmfCore.jar CACHE INTERNAL "")
+	add_custom_command(TARGET XdmfCoreJava
+		POST_BUILD
+		COMMAND ${JAVA_COMPILE} ARGS "${CMAKE_CURRENT_BINARY_DIR}/mil/army/arl/xdmf/*.java"
+		COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_BINARY_DIR} ${JAVA_ARCHIVE} -cvf ${XDMF_CORE_JAVA_JAR} "mil/army/arl/xdmf/*.class")
+endif(XDMF_WRAP_JAVA)
+
 option(XDMF_WRAP_PYTHON OFF)
 if(XDMF_WRAP_PYTHON)
 	find_package(SWIG REQUIRED)
