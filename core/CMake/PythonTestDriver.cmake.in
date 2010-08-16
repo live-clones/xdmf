@@ -1,0 +1,27 @@
+SET(python_runtime @PYTHON_EXECUTABLE@)
+SET(python_binary_dir @CMAKE_CURRENT_BINARY_DIR@)
+
+IF(WIN32)
+	STRING(REGEX REPLACE ":" ";" PYTHONPATH ${PYTHONPATH})
+ENDIF(WIN32)
+
+SET(ENV{PYTHONPATH} "${PYTHONPATH}$ENV{PYTHONPATH}")
+
+MESSAGE("CALLING: ${python_runtime} ${EXECUTABLE} ${ARGUMENTS}")
+
+EXECUTE_PROCESS(
+    	COMMAND ${python_runtime} ${EXECUTABLE}.pyc ${ARGUMENTS}
+		WORKING_DIRECTORY ${python_binary_dir}
+    		RESULT_VARIABLE python_result
+    		OUTPUT_VARIABLE python_output
+ 		ERROR_VARIABLE python_error
+)
+
+MESSAGE("Result: ${python_result}")
+MESSAGE("Output: ${python_output}")
+MESSAGE("Error: ${python_error}")
+
+IF(python_result)
+	MESSAGE(SEND_ERROR "${python_result}")
+ENDIF(python_result)
+

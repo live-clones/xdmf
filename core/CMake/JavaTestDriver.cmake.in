@@ -1,0 +1,26 @@
+SET(java_runtime @JAVA_RUNTIME@)
+SET(java_binary_dir @CMAKE_CURRENT_BINARY_DIR@)
+
+IF(WIN32)
+	STRING(REGEX REPLACE ":" ";" CLASSPATH ${CLASSPATH})
+ENDIF(WIN32)
+
+SET(ENV{LD_LIBRARY_PATH} "${LDPATH}$ENV{LD_LIBRARY_PATH}")
+SET(ENV{CLASSPATH} "${CLASSPATH}$ENV{CLASSPATH}")
+
+MESSAGE("CALLING: ${java_runtime} ${EXECUTABLE} ${ARGUMENTS}")
+EXECUTE_PROCESS(
+       COMMAND ${java_runtime} ${EXECUTABLE} ${ARGUMENTS} 
+               	WORKING_DIRECTORY ${java_binary_dir}
+		RESULT_VARIABLE java_result
+               	OUTPUT_VARIABLE java_output
+               	ERROR_VARIABLE  java_error
+)
+
+MESSAGE("Result: ${java_result}")
+MESSAGE("Output: ${java_output}")
+MESSAGE("Error:	${java_error}")
+
+IF(java_result)
+      MESSAGE(SEND_ERROR "${java_result}")
+ENDIF(java_result)

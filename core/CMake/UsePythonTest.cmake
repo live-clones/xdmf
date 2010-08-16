@@ -1,52 +1,57 @@
-# Add a python test from a python file
-# One cannot simply do:
-# SET(ENV{PYTHONPATH} ${LIBRARY_OUTPUT_PATH})
-# SET(my_test "from test_mymodule import *\;test_mymodule()")
-# ADD_TEST(PYTHON-TEST-MYMODULE  python -c ${my_test})
-# Since cmake is only transmitting the ADD_TEST line to ctest thus you are loosing
-# the env var. The only way to store the env var is to physically write in the cmake script
-# whatever PYTHONPATH you want and then add the test as 'cmake -P python_test.cmake'
-# 
-# Usage:
-# SET_SOURCE_FILES_PROPERTIES(test.py PROPERTIES PYTHONPATH
-#   "${LIBRARY_OUTPUT_PATH}:${VTK_DIR}")
-# ADD_PYTHON_TEST(PYTHON-TEST test.py)
+# We cannot call ${PYTHON_EXECUTABLE} or ${PYTHON_LIBRARIES} because
+# they do not get propagated down to this subdirectory
+SET(PYTHON_EXECUTABLE python)
 
-# Need python interpreter:
-FIND_PACKAGE(PythonInterp REQUIRED)
+# Variables that are set externally
+SET(python_configure_files ${CMAKE_SOURCE_DIR}/core/CMake)
+SET(python_binary_dir ${CMAKE_CURRENT_BINARY_DIR})
+SET(python_source_dir ${CMAKE_CURRENT_SOURCE_DIR})
+GET_PROPERTY(python_dependencies GLOBAL PROPERTY PYTHON_TEST_DEPENDENCIES)
+GET_PROPERTY(python_pythonpath GLOBAL PROPERTY PYTHON_TEST_PYTHONPATH)
 
-MACRO(ADD_PYTHON_TEST TESTNAME FILENAME)
-  GET_SOURCE_FILE_PROPERTY(loc ${FILENAME} LOCATION)
-  GET_SOURCE_FILE_PROPERTY(pyenv ${FILENAME} PYTHONPATH)
-  STRING(REGEX REPLACE ";" " " wo_semicolumn "${ARGN}")
-  FILE(WRITE ${CMAKE_CURRENT_BINARY_DIR}/${TESTNAME}.cmake
-"
-  SET(ENV{PYTHONPATH} ${pyenv})
-  EXECUTE_PROCESS(
-  	COMMAND ${PYTHON_EXECUTABLE} ${loc} ${wo_semicolumn}
-  	#WORKING_DIRECTORY @LIBRARY_OUTPUT_PATH@
-  	RESULT_VARIABLE import_res
-  	OUTPUT_VARIABLE import_output
-  	ERROR_VARIABLE  import_output
-  )
-  
-  # Pass the output back to ctest
-  #MESSAGE("\${import_output}")
-  IF(import_res)
-    MESSAGE(SEND_ERROR "\${import_res}")
-  ENDIF(import_res)
-"
-)
-  ADD_TEST(${TESTNAME} cmake -P ${CMAKE_CURRENT_BINARY_DIR}/${TESTNAME}.cmake)
+# Add Python Test Macro
+# Author: Brian Panneton
+# Description:	This macro compiles and adds the python test in one shot. There is
+#		no need to build a test separately, because there isn't a case 
+#		that you don't want to run it.
+# Parameters: 
+#		executable 	= executable name 
+#		${ARGN}		= any arguments for the executable
+#
+
+MACRO(ADD_PYTHON_TEST executable)
+	
+	IF(EXISTS ${ARGN})
+		SET(arguments "${ARGN}")
+	ELSE(EXISTS ${ARGN})
+		SET(arguments "")
+	ENDIF(EXISTS ${ARGN})
+
+	ADD_CUSTOM_COMMAND(
+		OUTPUT ${python_binary_dir}/${executable}.pyc
+		WORKING_DIRECTORY ${python_binary_dir} 
+		COMMAND ${CMAKE_COMMAND}
+		ARGS 	-E copy
+			${python_source_dir}/${executable}.py
+			${python_binary_dir}/${executable}.py
+		COMMAND ${PYTHON_EXECUTABLE} 
+		ARGS	-mpy_compile
+			${python_binary_dir}/${executable}.py
+		DEPENDS ${python_source_dir}/${executable}.py
+			${python_dependencies}
+	)
+	
+	SET_PROPERTY(GLOBAL APPEND PROPERTY PYTHON_TEST_TARGETS "${python_binary_dir}/${executable}.pyc")
+	
+	ADD_TEST(Python_${executable} ${CMAKE_COMMAND}
+        	-D EXECUTABLE=${executable}
+        	-D ARGUMENTS=${arguments}
+		-D PYTHONPATH=${python_pythonpath}
+        	-P ${python_binary_dir}/PythonTestDriver.cmake
+	) 
+
 ENDMACRO(ADD_PYTHON_TEST)
 
-# Byte compile recursively a directory (DIRNAME)
-MACRO(ADD_PYTHON_COMPILEALL_TEST DIRNAME)
-  # First get the path:
-  GET_FILENAME_COMPONENT(temp_path "${PYTHON_LIBRARIES}" PATH)
-  # Find the python script:
-  GET_FILENAME_COMPONENT(PYTHON_COMPILE_ALL_PY "${temp_path}/../compileall.py" ABSOLUTE)
-  # add test, use DIRNAME to create uniq name for the test:
-  ADD_TEST(COMPILE_ALL-${DIRNAME} ${PYTHON_EXECUTABLE} "${PYTHON_COMPILE_ALL_PY}" -q ${DIRNAME})
-ENDMACRO(ADD_PYTHON_COMPILEALL_TEST)
+# Configure the python 'driver' file
+CONFIGURE_FILE(${python_configure_files}/PythonTestDriver.cmake.in ${python_binary_dir}/PythonTestDriver.cmake @ONLY)
 
