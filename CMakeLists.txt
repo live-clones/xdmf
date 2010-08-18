@@ -8,6 +8,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMake ${CMAKE_CURRENT_SOURCE_D
 
 add_subdirectory(core)
 include_directories(${XdmfCore_INCLUDE_DIRS})
+include_directories(tests/Cxx)
 
 set(XdmfSources
 	XdmfAttribute

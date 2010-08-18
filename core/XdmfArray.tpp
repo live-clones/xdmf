@@ -164,7 +164,7 @@ boost::shared_ptr<std::vector<T> > XdmfArray::getValues()
 		boost::shared_ptr<std::vector<T> > currArray = boost::get<boost::shared_ptr<std::vector<T> > >(mArray);
 		return currArray;
 	}
-	catch(const boost::bad_get& exception)
+	catch(const boost::bad_get & exception)
 	{
 		return boost::shared_ptr<std::vector<T> >();
 	}

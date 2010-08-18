@@ -1,7 +1,10 @@
 set(XdmfUtilsCxxTests
-	TestXdmfExodusReader
 	TestXdmfTopologyConverter
 )
+
+if(XDMF_BUILD_EXODUS_IO)
+	set(XdmfUtilsCxxTests ${XdmfUtilsCxxTests} 	TestXdmfExodusIO)
+endif(XDMF_BUILD_EXODUS_IO)
 
 foreach(test ${XdmfUtilsCxxTests})
 	add_executable(${test} ${test})

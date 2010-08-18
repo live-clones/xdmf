@@ -189,7 +189,7 @@ void XdmfMap::populateItem(const std::map<std::string, std::string> & itemProper
 
 void XdmfMap::read()
 {
-	if(mImpl->mLocalNodeIdsHDF5Controller != NULL && mImpl->mRemoteTaskIdsHDF5Controller != NULL && mImpl->mRemoteLocalNodeIdsHDF5Controller != NULL)
+	if(mImpl->mLocalNodeIdsHDF5Controller && mImpl->mRemoteTaskIdsHDF5Controller && mImpl->mRemoteLocalNodeIdsHDF5Controller)
 	{
 		assert(mImpl->mLocalNodeIdsHDF5Controller->size() == mImpl->mRemoteTaskIdsHDF5Controller->size() && mImpl->mLocalNodeIdsHDF5Controller->size() == mImpl->mRemoteLocalNodeIdsHDF5Controller->size());
 		boost::shared_ptr<XdmfArray> globalNodeIds = XdmfArray::New();

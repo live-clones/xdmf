@@ -15,9 +15,12 @@ boost::shared_ptr<XdmfGridCollection> XdmfGridCollection::New()
 };
 
 XdmfGridCollection::XdmfGridCollection() :
+	XdmfGrid(),
 	mCollectionType(XdmfGridCollectionType::NoCollectionType())
 {
+	mGeometry = boost::shared_ptr<XdmfGeometry>();
 	mName = "Collection";
+	mTopology = boost::shared_ptr<XdmfTopology>();
 }
 
 XdmfGridCollection::~XdmfGridCollection()

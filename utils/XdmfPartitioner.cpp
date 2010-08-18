@@ -1,28 +1,3 @@
-/*******************************************************************/
-/*                               XDMF                              */
-/*                   eXtensible Data Model and Format              */
-/*                                                                 */
-/*  Id : Id  */
-/*  Date : $Date$ */
-/*  Version : $Revision$ */
-/*                                                                 */
-/*  Author:                                                        */
-/*     Kenneth Leiter                                              */
-/*     kenneth.leiter@arl.army.mil                                 */
-/*     US Army Research Laboratory                                 */
-/*     Aberdeen Proving Ground, MD                                 */
-/*                                                                 */
-/*     Copyright @ 2010 US Army Research Laboratory                */
-/*     All Rights Reserved                                         */
-/*     See Copyright.txt or http://www.arl.hpc.mil/ice for details */
-/*                                                                 */
-/*     This software is distributed WITHOUT ANY WARRANTY; without  */
-/*     even the implied warranty of MERCHANTABILITY or FITNESS     */
-/*     FOR A PARTICULAR PURPOSE.  See the above copyright notice   */
-/*     for more information.                                       */
-/*                                                                 */
-/*******************************************************************/
-
 #ifndef BUILD_EXE
 
 extern "C"
@@ -65,6 +40,9 @@ XdmfPartitioner::~XdmfPartitioner()
 boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::shared_ptr<XdmfGrid> gridToPartition, const unsigned int numberOfPartitions,
 		const boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter) const
 {
+	// Make sure geometry and topology are non null
+	assert(gridToPartition->getGeometry() && gridToPartition->getTopology());
+
 	int metisElementType;
 	int nodesPerElement;
 
@@ -107,7 +85,7 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 	idxtype * metisConnectivity = new idxtype[nodesPerElement * numElements];
 	for(unsigned int i=0; i<numElements; ++i)
 	{
-		gridToPartition->getTopology()->getValuesCopy(i*topologyType->getNodesPerElement(), &metisConnectivity[i*nodesPerElement], nodesPerElement);
+		gridToPartition->getTopology()->getValuesCopy(i*topologyType->getNodesPerElement(), metisConnectivity + i * nodesPerElement, nodesPerElement);
 	}
 
 	int numNodes = gridToPartition->getGeometry()->getNumberPoints();
@@ -332,7 +310,7 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 						createdAttribute->copyValues(iter->second, currAttribute, iter->first, 1);
 					}
 				}
-				if(createdAttribute != NULL)
+				if(createdAttribute)
 				{
 					partitioned->insert(createdAttribute);
 					if(heavyDataWriter)

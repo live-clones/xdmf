@@ -282,19 +282,19 @@ void XdmfGrid::setTopology(const boost::shared_ptr<XdmfTopology> topology)
 
 void XdmfGrid::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
-	if(mTime != NULL)
+	if(mTime)
 	{
 		mTime->accept(visitor);
 	}
-	if(mGeometry != NULL)
+	if(mGeometry)
 	{
 		mGeometry->accept(visitor);
 	}
-	if(mTopology != NULL)
+	if(mTopology)
 	{
 		mTopology->accept(visitor);
 	}
-	if(mMap != NULL)
+	if(mMap)
 	{
 		mMap->accept(visitor);
 	}

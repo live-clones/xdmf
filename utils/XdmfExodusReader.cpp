@@ -1,28 +1,3 @@
-/*******************************************************************/
-/*                               XDMF                              */
-/*                   eXtensible Data Model and Format              */
-/*                                                                 */
-/*  Id : Id  */
-/*  Date : $Date$ */
-/*  Version : $Revision$ */
-/*                                                                 */
-/*  Author:                                                        */
-/*     Kenneth Leiter                                              */
-/*     kenneth.leiter@arl.army.mil                                 */
-/*     US Army Research Laboratory                                 */
-/*     Aberdeen Proving Ground, MD                                 */
-/*                                                                 */
-/*     Copyright @ 2009 US Army Research Laboratory                */
-/*     All Rights Reserved                                         */
-/*     See Copyright.txt or http://www.arl.hpc.mil/ice for details */
-/*                                                                 */
-/*     This software is distributed WITHOUT ANY WARRANTY; without  */
-/*     even the implied warranty of MERCHANTABILITY or FITNESS     */
-/*     FOR A PARTICULAR PURPOSE.  See the above copyright notice   */
-/*     for more information.                                       */
-/*                                                                 */
-/*******************************************************************/
-
 #include <exodusII.h>
 #include "XdmfArrayType.hpp"
 #include "XdmfAttribute.hpp"
@@ -71,6 +46,7 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName,
 	char * title = new char[MAX_LINE_LENGTH+1];
 	int num_dim, num_nodes, num_elem, num_elem_blk, num_node_sets, num_side_sets;
 	ex_get_init (exodusHandle, title, &num_dim, &num_nodes, &num_elem, &num_elem_blk, &num_node_sets, &num_side_sets);
+	toReturn->setName(title);
 	delete [] title;
 
 	/*
@@ -180,7 +156,7 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName,
 	int elemIndex = 0;
 	for(unsigned int i=0; i<num_elem_blk; ++i)
 	{
-		ex_get_elem_conn(exodusHandle, blockIds[i], &connectivityPointer[elemIndex]);
+		ex_get_elem_conn(exodusHandle, blockIds[i], connectivityPointer + elemIndex);
 		elemIndex += numElemsInBlock[i] * numNodesPerElemInBlock[i];
 	}
 
@@ -447,8 +423,8 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName,
 		elemIndex = 0;
 		for (unsigned int j=0; j<num_elem_blk; ++j)
 		{
-			ex_get_elem_var(exodusHandle, 1, i+1, blockIds[j], numElemsInBlock[i], &((double*)attribute->getValuesPointer())[elemIndex]);
-			elemIndex = elemIndex + numElemsInBlock[i];
+			ex_get_elem_var(exodusHandle, 1, i+1, blockIds[j], numElemsInBlock[j], (double*)attribute->getValuesPointer() + elemIndex);
+			elemIndex += numElemsInBlock[j];
 		}
 		toReturn->insert(attribute);
 		if(heavyDataWriter)

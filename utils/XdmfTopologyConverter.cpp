@@ -1129,7 +1129,7 @@ public:
 					currAttribute->release();
 				}
 			}
-			if(createdAttribute != NULL)
+			if(createdAttribute)
 			{
 				toReturn->insert(createdAttribute);
 				if(heavyDataWriter)
@@ -1164,6 +1164,9 @@ XdmfTopologyConverter::~XdmfTopologyConverter()
 boost::shared_ptr<XdmfGrid> XdmfTopologyConverter::convert(const boost::shared_ptr<XdmfGrid> gridToConvert, const boost::shared_ptr<const XdmfTopologyType> topologyType,
 	const boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter) const
 {
+	// Make sure geometry and topology are non null
+	assert(gridToConvert->getGeometry() && gridToConvert->getTopology());
+
 	boost::shared_ptr<const XdmfTopologyType> topologyTypeToConvert = gridToConvert->getTopology()->getType();
 	if(topologyTypeToConvert == topologyType)
 	{

@@ -265,7 +265,9 @@ protected:
 	XdmfGrid();
 	virtual void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems);
 
+	boost::shared_ptr<XdmfGeometry> mGeometry;
 	std::string mName;
+	boost::shared_ptr<XdmfTopology> mTopology;
 
 private:
 
@@ -273,11 +275,9 @@ private:
 	void operator=(const XdmfGrid & grid);  // Not implemented.
 
 	std::vector<boost::shared_ptr<XdmfAttribute> > mAttributes;
-	boost::shared_ptr<XdmfGeometry> mGeometry;
 	boost::shared_ptr<XdmfMap> mMap;
 	std::vector<boost::shared_ptr<XdmfSet> > mSets;
 	boost::shared_ptr<XdmfTime> mTime;
-	boost::shared_ptr<XdmfTopology> mTopology;
 };
 
 #endif /* XDMFGRID_HPP_ */

@@ -28,7 +28,7 @@ boost::shared_ptr<XdmfItem> XdmfItemFactory::createItem(const std::string & item
 {
 	boost::shared_ptr<XdmfItem> newItem = XdmfCoreItemFactory::createItem(itemTag, itemProperties);
 
-	if(newItem != NULL)
+	if(newItem)
 	{
 		return newItem;
 	}
