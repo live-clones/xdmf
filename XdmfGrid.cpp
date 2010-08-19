@@ -173,7 +173,7 @@ void XdmfGrid::insert(const boost::shared_ptr<XdmfSet> set)
 	mSets.push_back(set);
 }
 
-void XdmfGrid::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems)
+void XdmfGrid::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader)
 {
 	std::map<std::string, std::string>::const_iterator name = itemProperties.find("Name");
 	if(name != itemProperties.end())

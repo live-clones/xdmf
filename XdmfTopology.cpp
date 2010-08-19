@@ -58,7 +58,7 @@ boost::shared_ptr<const XdmfTopologyType> XdmfTopology::getType() const
 	return mTopologyType;
 }
 
-void XdmfTopology::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems)
+void XdmfTopology::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader)
 {
 	mTopologyType = XdmfTopologyType::New(itemProperties);
 	for(std::vector<boost::shared_ptr<XdmfItem> >::const_iterator iter = childItems.begin(); iter != childItems.end(); ++iter)

@@ -57,7 +57,7 @@ boost::shared_ptr<const XdmfAttributeType> XdmfAttribute::getType() const
 	return mAttributeType;
 }
 
-void XdmfAttribute::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems)
+void XdmfAttribute::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader)
 {
 	std::map<std::string, std::string>::const_iterator name = itemProperties.find("Name");
 	if(name != itemProperties.end())

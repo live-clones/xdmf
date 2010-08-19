@@ -146,7 +146,7 @@ bool XdmfMap::isInitialized() const
 	return mImpl->mMap.size() > 0;
 }
 
-void XdmfMap::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems)
+void XdmfMap::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader)
 {
 	std::vector<boost::shared_ptr<XdmfArray> > arrayVector;
 	arrayVector.reserve(3);

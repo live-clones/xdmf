@@ -106,12 +106,10 @@ public:
 
 	void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor);
 
-	XdmfSet();
-
 protected:
 
-
-	virtual void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems);
+	XdmfSet();
+	virtual void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader);
 
 private:
 

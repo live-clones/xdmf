@@ -2,6 +2,7 @@
 #define XDMFITEM_HPP_
 
 // Forward Declarations
+class XdmfCoreReader;
 class XdmfVisitor;
 
 // Includes
@@ -56,7 +57,7 @@ protected:
 	 * @param itemProperties a map of key/value properties associated with this XdmfItem.
 	 * @param childItems a vector of child items to be added to this XdmfItem.
 	 */
-	virtual void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem > > & childItems) = 0;
+	virtual void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem > > & childItems, const XdmfCoreReader * const reader) = 0;
 
 private:
 

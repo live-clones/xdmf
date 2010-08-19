@@ -4,6 +4,7 @@
 #include <libxml/xpointer.h>
 #include <libxml/xmlreader.h>
 #include <map>
+#include <sstream>
 #include "XdmfCoreItemFactory.hpp"
 #include "XdmfCoreReader.hpp"
 #include "XdmfItem.hpp"
@@ -16,7 +17,8 @@ class XdmfCoreReader::XdmfCoreReaderImpl {
 
 public:
 
-	XdmfCoreReaderImpl(const boost::shared_ptr<const XdmfCoreItemFactory> itemFactory) :
+	XdmfCoreReaderImpl(const boost::shared_ptr<const XdmfCoreItemFactory> itemFactory, const XdmfCoreReader * const coreReader) :
+		mCoreReader(coreReader),
 		mItemFactory(itemFactory)
 	{
 	};
@@ -27,6 +29,7 @@ public:
 
 	void closeFile()
 	{
+		mXPathMap.clear();
 		xmlXPathFreeContext(mXPathContext);
 		xmlFreeDoc(mDocument);
 		xmlCleanupParser();
@@ -49,12 +52,13 @@ public:
 		}
 
 		mXPathContext = xmlXPtrNewContext(mDocument, NULL, NULL);
+		mXPathMap.clear();
 	}
 
 	/**
 	 * Constructs XdmfItems for all nodes in currNode's tree.  XdmfItems are constructed by recursively calling this function for all children of currNode.
 	 */
-	std::vector<boost::shared_ptr<XdmfItem> > read(xmlNodePtr currNode, std::map<xmlNodePtr, boost::shared_ptr<XdmfItem> > & xPathMap) const
+	std::vector<boost::shared_ptr<XdmfItem> > read(xmlNodePtr currNode)
 	{
 		std::vector<boost::shared_ptr<XdmfItem> > myItems;
 
@@ -75,17 +79,23 @@ public:
 							break;
 						}
 					}
-					xmlXPathObjectPtr xPathObject = xmlXPtrEval(xpointer, mXPathContext);
-					for(unsigned int i=0; i<xPathObject->nodesetval->nodeNr; ++i)
+					if(xpointer)
 					{
-						this->readSingleNode(xPathObject->nodesetval->nodeTab[i], xPathMap, myItems);
+						xmlXPathObjectPtr xPathObject = xmlXPtrEval(xpointer, mXPathContext);
+						if(xPathObject && xPathObject->nodesetval)
+						{
+							for(unsigned int i=0; i<xPathObject->nodesetval->nodeNr; ++i)
+							{
+								this->readSingleNode(xPathObject->nodesetval->nodeTab[i], myItems);
+							}
+						}
+						xmlXPathFreeObject(xPathObject);
 					}
-					xmlXPathFreeObject(xPathObject);
 				}
 				else
 				{
 					// Normal reading
-					this->readSingleNode(currNode, xPathMap, myItems);
+					this->readSingleNode(currNode, myItems);
 				}
 			}
 			currNode = currNode->next;
@@ -94,12 +104,12 @@ public:
 	}
 
 	/**
-	 * Reads a single xmlNode into an XdmfItem object in memory.  The constructed XdmfItem is added to myItems and an entry is added mapping the xmlNodePtr to the new XdmfItem in the xPathMap.
+	 * Reads a single xmlNode into an XdmfItem object in memory.  The constructed XdmfItem is added to myItems and an entry is added mapping the xmlNodePtr to the new XdmfItem in the mXPathMap.
 	 */
-	void readSingleNode(const xmlNodePtr currNode, std::map<xmlNodePtr, boost::shared_ptr<XdmfItem> > & xPathMap, std::vector<boost::shared_ptr<XdmfItem> > & myItems) const
+	void readSingleNode(const xmlNodePtr currNode, std::vector<boost::shared_ptr<XdmfItem> > & myItems)
 	{
-		std::map<xmlNodePtr, boost::shared_ptr<XdmfItem> >::const_iterator iter = xPathMap.find(currNode);
-		if(iter != xPathMap.end())
+		std::map<xmlNodePtr, boost::shared_ptr<XdmfItem> >::const_iterator iter = mXPathMap.find(currNode);
+		if(iter != mXPathMap.end())
 		{
 			myItems.push_back(iter->second);
 		}
@@ -118,26 +128,41 @@ public:
 				itemProperties[(const char *)currAttribute->name] = (const char *)currAttribute->children->content;
 				currAttribute = currAttribute->next;
 			}
-			std::vector<boost::shared_ptr<XdmfItem> > childItems = this->read(currNode->children, xPathMap);
+			std::vector<boost::shared_ptr<XdmfItem> > childItems = this->read(currNode->children);
 			boost::shared_ptr<XdmfItem> newItem = mItemFactory->createItem((const char *)currNode->name, itemProperties);
 			if(newItem == NULL)
 			{
 				assert(false);
 			}
-			newItem->populateItem(itemProperties, childItems);
+			newItem->populateItem(itemProperties, childItems, mCoreReader);
 			myItems.push_back(newItem);
-			xPathMap[currNode] = newItem;
+			mXPathMap[currNode] = newItem;
 		}
 	}
 
+	void readPathObjects(const std::string & xPath, std::vector<boost::shared_ptr<XdmfItem> > & myItems)
+	{
+		xmlXPathObjectPtr xPathObject = xmlXPathEvalExpression((xmlChar*)xPath.c_str(), mXPathContext);
+		if(xPathObject && xPathObject->nodesetval)
+		{
+			for(unsigned int i=0; i<xPathObject->nodesetval->nodeNr; ++i)
+			{
+				this->readSingleNode(xPathObject->nodesetval->nodeTab[i], myItems);
+			}
+		}
+		xmlXPathFreeObject(xPathObject);
+	}
+
 	xmlDocPtr mDocument;
+	const XdmfCoreReader * const mCoreReader;
 	const boost::shared_ptr<const XdmfCoreItemFactory> mItemFactory;
 	std::string mXMLDir;
 	xmlXPathContextPtr mXPathContext;
+	std::map<xmlNodePtr, boost::shared_ptr<XdmfItem> > mXPathMap;
 };
 
 XdmfCoreReader::XdmfCoreReader(const boost::shared_ptr<const XdmfCoreItemFactory> itemFactory) :
-	mImpl(new XdmfCoreReaderImpl(itemFactory))
+	mImpl(new XdmfCoreReaderImpl(itemFactory, this))
 {
 }
 
@@ -150,8 +175,7 @@ boost::shared_ptr<XdmfItem> XdmfCoreReader::read(const std::string & filePath) c
 {
 	mImpl->openFile(filePath);
 	const xmlNodePtr currNode = xmlDocGetRootElement(mImpl->mDocument);
-	std::map<xmlNodePtr, boost::shared_ptr<XdmfItem> > xPathMap;
-	const std::vector<boost::shared_ptr<XdmfItem> > toReturn = mImpl->read(currNode->children, xPathMap);
+	const std::vector<boost::shared_ptr<XdmfItem> > toReturn = mImpl->read(currNode->children);
 	mImpl->closeFile();
 	return toReturn[0];
 }
@@ -159,14 +183,15 @@ boost::shared_ptr<XdmfItem> XdmfCoreReader::read(const std::string & filePath) c
 std::vector<boost::shared_ptr<XdmfItem> > XdmfCoreReader::read(const std::string & filePath, const std::string & xPath) const
 {
 	mImpl->openFile(filePath);
-	std::vector<boost::shared_ptr<XdmfItem> > toReturn;
-	std::map<xmlNodePtr, boost::shared_ptr<XdmfItem> > xPathMap;
-	xmlXPathObjectPtr xPathObject = xmlXPathEvalExpression((xmlChar*)xPath.c_str(), mImpl->mXPathContext);
-	for(unsigned int i=0; i<xPathObject->nodesetval->nodeNr; ++i)
-	{
-		mImpl->readSingleNode(xPathObject->nodesetval->nodeTab[i], xPathMap, toReturn);
-	}
-	xmlXPathFreeObject(xPathObject);
+	std::vector<boost::shared_ptr<XdmfItem> > toReturn = this->readPathObjects(xPath);
 	mImpl->closeFile();
 	return toReturn;
 }
+
+std::vector<boost::shared_ptr<XdmfItem> > XdmfCoreReader::readPathObjects(const std::string & xPath) const
+{
+	std::vector<boost::shared_ptr<XdmfItem> > toReturn;
+	mImpl->readPathObjects(xPath, toReturn);
+	return toReturn;
+}
+

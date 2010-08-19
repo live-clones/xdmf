@@ -44,7 +44,7 @@ double XdmfTime::getValue() const
 	return mValue;
 }
 
-void XdmfTime::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems)
+void XdmfTime::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader)
 {
 	std::map<std::string, std::string>::const_iterator value = itemProperties.find("Value");
 	if(value != itemProperties.end())

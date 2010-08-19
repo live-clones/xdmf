@@ -48,11 +48,11 @@ boost::shared_ptr<const XdmfGridCollectionType> XdmfGridCollection::getType() co
 	return mCollectionType;
 }
 
-void XdmfGridCollection::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems)
+void XdmfGridCollection::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader)
 {
 	mCollectionType = XdmfGridCollectionType::New(itemProperties);
-	XdmfDomain::populateItem(itemProperties, childItems);
-	XdmfGrid::populateItem(itemProperties, childItems);
+	XdmfDomain::populateItem(itemProperties, childItems, reader);
+	XdmfGrid::populateItem(itemProperties, childItems, reader);
 }
 
 void XdmfGridCollection::setType(const boost::shared_ptr<const XdmfGridCollectionType> collectionType)

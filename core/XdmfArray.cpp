@@ -532,7 +532,7 @@ void XdmfArray::internalizeArrayPointer()
 	}
 }
 
-void XdmfArray::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems)
+void XdmfArray::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader)
 {
 	std::string contentVal;
 	unsigned int sizeVal = 1;

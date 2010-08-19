@@ -39,6 +39,8 @@ public:
 	 */
 	virtual std::vector<boost::shared_ptr<XdmfItem> > read(const std::string & filePath, const std::string & xPath) const;
 
+	std::vector<boost::shared_ptr<XdmfItem> > readPathObjects(const std::string & xPath) const;
+
 protected:
 
 	/**
