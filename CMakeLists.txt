@@ -28,16 +28,24 @@ if(XDMF_WRAP_PYTHON)
 	# A macro to swig and create the python files
 	# Since we essentually do the same thing inside and outside core, it
 	# would be easier as a macro
+	# Parameters:
+	#	python_name = the name of the intended target to be wrapped
+	#	${ARGN} = any dependencies needed by the target
+	# Output:
+	#	Target Name = the output target name will have ${python_name} as its name
 	MACRO(XDMF_SWIG_PYTHON python_name)
 		set(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR})
 		set_source_files_properties(${python_name}.i PROPERTIES CPLUSPLUS ON)
 		swig_add_module(${python_name} python ${python_name}.i)
 		swig_link_libraries(${python_name} ${python_name} ${PYTHON_LIBRARIES})
+		if("${ARGN}" STRGREATER "")
+			add_dependencies(${python_name} "${ARGN}")
+		endif("${ARGN}" STRGREATER "")
 		install(FILES ${CMAKE_BINARY_DIR}/Xdmf.py DESTINATION lib/python)
 		install(TARGETS ${SWIG_MODULE_Xdmf_REAL_NAME} DESTINATION lib/python)
 	ENDMACRO(XDMF_SWIG_PYTHON)
 	
-	XDMF_SWIG_PYTHON(Xdmf)
+	XDMF_SWIG_PYTHON(Xdmf XdmfCore)
 endif(XDMF_WRAP_PYTHON)
 
 # If we are wrapping java, let's include it in the top level
@@ -49,6 +57,12 @@ if(XDMF_WRAP_JAVA)
 	# A macro to swig and create the jar files
 	# Since we essentually do the same thing inside and outside core, it
 	# would be easier as a macro
+	# Parameters:
+	#	java_name = the name of the intended target to be wrapped
+	#	${ARGN} = any dependencies needed by the target
+	# Output:
+	#	Target Name	= the output target name will have ${java_name}Java as its name
+	#	Target Jar	= the output target jar will have ${java_name}Java.jar as its name
 	MACRO(XDMF_SWIG_JAVA java_name)
 		set(XDMF_JAVA_PACKAGE_DIR mil/army/arl/xdmf)
 		set(XDMF_JAVA_DIR ${CMAKE_CURRENT_BINARY_DIR}/${XDMF_JAVA_PACKAGE_DIR})
