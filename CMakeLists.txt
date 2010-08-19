@@ -49,7 +49,7 @@ if(XDMF_WRAP_JAVA)
 	# A macro to swig and create the jar files
 	# Since we essentually do the same thing inside and outside core, it
 	# would be easier as a macro
-	MACRO(XDMF_SWIG_JAVA java_name java_classpath)
+	MACRO(XDMF_SWIG_JAVA java_name)
 		set(XDMF_JAVA_PACKAGE_DIR mil/army/arl/xdmf)
 		set(XDMF_JAVA_DIR ${CMAKE_CURRENT_BINARY_DIR}/${XDMF_JAVA_PACKAGE_DIR})
 		file(MAKE_DIRECTORY ${XDMF_JAVA_DIR})
@@ -67,7 +67,7 @@ if(XDMF_WRAP_JAVA)
 		add_custom_command(TARGET ${java_name}Java
 			POST_BUILD 	
 			COMMAND ${JAVA_COMPILE}
-			ARGS 	 -cp "'${java_classpath}'"
+			ARGS 	 -cp "'${CMAKE_BINARY_DIR}/*'"
 					 "${XDMF_JAVA_DIR}/*.java"
 			COMMAND ${JAVA_ARCHIVE}
 			ARGS	-cvf ${CMAKE_BINARY_DIR}/${java_name}.jar
@@ -75,7 +75,7 @@ if(XDMF_WRAP_JAVA)
 		)
 	ENDMACRO(XDMF_SWIG_JAVA)
 	
-	XDMF_SWIG_JAVA(Xdmf "core" XdmfCoreJava)
+	XDMF_SWIG_JAVA(Xdmf XdmfCoreJava)
 	set(XDMF_JAVA_JAR ${CMAKE_BINARY_DIR}/Xdmf.jar CACHE INTERNAL "")
 endif(XDMF_WRAP_JAVA)
 
