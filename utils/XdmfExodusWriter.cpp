@@ -409,11 +409,11 @@ void XdmfExodusWriter::write(const std::string & filePath, const boost::shared_p
 			{
 				ex_put_side_set_param(exodusHandle, setId + i, numValues, 0);
 				int * values = new int[numValues];
-				unsigned int k=0;
-				for(XdmfSet::const_iterator iter = currSet->begin(); iter != currSet->end(); ++iter, ++k)
+				currSet->getValuesCopy(0, values, numValues);
+				for(unsigned int k=0; k<numValues; ++k)
 				{
 					// Add 1 to xdmf ids because exodus ids begin at 1
-					values[k] = *iter + 1;
+					values[k]++;
 				}
 				ex_put_side_set(exodusHandle, setId + i, values, NULL);
 				ex_put_name(exodusHandle, EX_SIDE_SET, setId + i, name.c_str());
@@ -423,11 +423,11 @@ void XdmfExodusWriter::write(const std::string & filePath, const boost::shared_p
 			{
 				ex_put_node_set_param(exodusHandle, setId + i, numValues, 0);
 				int * values = new int[numValues];
-				unsigned int k=0;
-				for(XdmfSet::const_iterator iter = currSet->begin(); iter != currSet->end(); ++iter, ++k)
+				currSet->getValuesCopy(0, values, numValues);
+				for(unsigned int k=0; k<numValues; ++k)
 				{
 					// Add 1 to xdmf ids because exodus ids begin at 1
-					values[k] = *iter + 1;
+					values[k]++;
 				}
 				ex_put_node_set(exodusHandle, setId + i, values);
 				ex_put_name(exodusHandle, EX_NODE_SET, setId + i, name.c_str());

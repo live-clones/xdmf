@@ -4,8 +4,7 @@
 
 // Make a new XdmfVisitor that simply counts number of values
 class XdmfVisitorValueCounter : public XdmfVisitor,
-	public Loki::Visitor<XdmfArray>,
-	public Loki::Visitor<XdmfSet> {
+	public Loki::Visitor<XdmfArray> {
 
 public:
 
@@ -32,11 +31,6 @@ public:
 	void visit(XdmfArray & array, boost::shared_ptr<Loki::BaseVisitor> visitor)
 	{
 		mCount += array.size();
-	}
-
-	void visit(XdmfSet & set, boost::shared_ptr<Loki::BaseVisitor> visitor)
-	{
-		mCount += set.size();
 	}
 
 protected:

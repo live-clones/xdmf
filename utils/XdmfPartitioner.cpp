@@ -355,24 +355,24 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 
 				if(currSet->getType() == XdmfSetType::Cell() || currSet->getType() == XdmfSetType::Face() || currSet->getType() == XdmfSetType::Edge())
 				{
-					for(XdmfSet::const_iterator iter = currSet->begin(); iter != currSet->end(); ++iter)
+					for(unsigned int k=0; k<currSet->size(); ++k)
 					{
-						std::vector<unsigned int>::const_iterator val = std::find(currElemIds.begin(), currElemIds.end(), *iter);
+						std::vector<unsigned int>::const_iterator val = std::find(currElemIds.begin(), currElemIds.end(), currSet->getValueCopy<unsigned int>(k));
 						if(val != currElemIds.end())
 						{
 							unsigned int valToPush = val - currElemIds.begin();
-							partitionedSet->insert(valToPush);
+							partitionedSet->pushBack(valToPush);
 						}
 					}
 				}
 				else if(currSet->getType() == XdmfSetType::Node())
 				{
-					for(XdmfSet::const_iterator iter = currSet->begin(); iter != currSet->end(); ++iter)
+					for(unsigned int k=0; k<currSet->size(); ++k)
 					{
-						std::map<unsigned int, unsigned int>::const_iterator val = currNodeMap.find(*iter);
+						std::map<unsigned int, unsigned int>::const_iterator val = currNodeMap.find(currSet->getValueCopy<unsigned int>(k));
 						if(val != currNodeMap.end())
 						{
-							partitionedSet->insert(val->second);
+							partitionedSet->pushBack(val->second);
 						}
 					}
 				}

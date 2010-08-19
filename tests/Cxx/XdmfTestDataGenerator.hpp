@@ -63,7 +63,7 @@ public:
 		int nodeIds[] = {0, 1, 2};
 		nodeSet->setName("Node Set");
 		nodeSet->setType(XdmfSetType::Node());
-		nodeSet->insert(nodeIds, nodeIds + 3);
+		nodeSet->copyValues(0, &nodeIds[0], 3);
 
 		// Add Time
 		boost::shared_ptr<XdmfTime> time = XdmfTime::New(100);

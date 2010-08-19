@@ -1,3 +1,4 @@
+#include "XdmfAttribute.hpp"
 #include "XdmfSet.hpp"
 #include "XdmfSetType.hpp"
 
@@ -16,11 +17,21 @@ int main(int argc, char* argv[])
 	set->setName("TEST");
 	assert(set->getName().compare("TEST") == 0);
 
-	assert(set->isInitialized() == false);
-	assert(set->find(0) == set->end());
-	set->insert(0);
-	assert(set->isInitialized() == true);
-	assert(set->find(0) != set->end());
-
+	assert(set->getNumberAttributes() == 0);
+	assert(set->getAttribute("") == NULL);
+	assert(set->getAttribute(0) == NULL);
+	boost::shared_ptr<XdmfAttribute> attribute = XdmfAttribute::New();
+	attribute->setName("foo");
+	set->insert(attribute);
+	assert(set->getNumberAttributes() == 1);
+	assert(set->getAttribute(0) == attribute);
+	assert(set->getAttribute("foo") == attribute);
+	set->removeAttribute(0);
+	assert(set->getNumberAttributes() == 0);
+	set->insert(attribute);
+	set->removeAttribute("no");
+	assert(set->getNumberAttributes() == 1);
+	set->removeAttribute("foo");
+	assert(set->getNumberAttributes() == 0);
 	return 0;
 }

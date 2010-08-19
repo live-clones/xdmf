@@ -288,16 +288,17 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName,
 
 		if (num_nodes_in_set > 0)
 		{
-			int * node_set_node_list = new int[num_nodes_in_set];
-			ex_get_node_set(exodusHandle, nodeSetIds[i], node_set_node_list);
-
 			boost::shared_ptr<XdmfSet> set = XdmfSet::New();
 			set->setName(node_set_names[i]);
 			set->setType(XdmfSetType::Node());
+			set->initialize(XdmfArrayType::Int32(), num_nodes_in_set);
+			int * setPointer = (int*)set->getValuesPointer();
+			ex_get_node_set(exodusHandle, nodeSetIds[i], setPointer);
 
+			// Subtract all node ids by 1 since exodus indices start at 1
 			for(unsigned int j=0; j<num_nodes_in_set; ++j)
 			{
-				set->insert(node_set_node_list[j] - 1);
+				setPointer[i]--;
 			}
 
 			toReturn->insert(set);
@@ -307,8 +308,6 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName,
 				set->accept(heavyDataWriter);
 				set->release();
 			}
-
-			delete [] node_set_node_list;
 		}
 		delete [] node_set_names[i];
 	}

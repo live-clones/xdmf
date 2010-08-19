@@ -5,7 +5,7 @@
  *      Author: kleiter
  */
 
-#include "XdmfArray.hpp"
+#include "XdmfAttribute.hpp"
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfSet.hpp"
 #include "XdmfSetType.hpp"
@@ -17,7 +17,6 @@ boost::shared_ptr<XdmfSet> XdmfSet::New()
 }
 
 XdmfSet::XdmfSet() :
-	mHDF5Controller(boost::shared_ptr<XdmfHDF5Controller>()),
 	mName(""),
 	mSetType(XdmfSetType::NoSetType())
 {
@@ -29,14 +28,35 @@ XdmfSet::~XdmfSet()
 
 const std::string XdmfSet::ItemTag = "Set";
 
-boost::shared_ptr<XdmfHDF5Controller> XdmfSet::getHDF5Controller()
+boost::shared_ptr<XdmfAttribute> XdmfSet::getAttribute(const unsigned int index)
 {
-	return boost::const_pointer_cast<XdmfHDF5Controller>(static_cast<const XdmfSet &>(*this).getHDF5Controller());
+	return boost::const_pointer_cast<XdmfAttribute>(static_cast<const XdmfSet &>(*this).getAttribute(index));
 }
 
-boost::shared_ptr<const XdmfHDF5Controller> XdmfSet::getHDF5Controller() const
+boost::shared_ptr<const XdmfAttribute> XdmfSet::getAttribute(const unsigned int index) const
 {
-	return mHDF5Controller;
+	if(index < mAttributes.size())
+	{
+		return mAttributes[index];
+	}
+	return boost::shared_ptr<XdmfAttribute>();
+}
+
+boost::shared_ptr<XdmfAttribute> XdmfSet::getAttribute(const std::string & name)
+{
+	return boost::const_pointer_cast<XdmfAttribute>(static_cast<const XdmfSet &>(*this).getAttribute(name));
+}
+
+boost::shared_ptr<const XdmfAttribute> XdmfSet::getAttribute(const std::string & name) const
+{
+	for(std::vector<boost::shared_ptr<XdmfAttribute> >::const_iterator iter = mAttributes.begin(); iter != mAttributes.end(); ++iter)
+	{
+		if((*iter)->getName().compare(name) == 0)
+		{
+			return *iter;
+		}
+	}
+	return boost::shared_ptr<XdmfAttribute>();
 }
 
 std::map<std::string, std::string> XdmfSet::getItemProperties() const
@@ -57,14 +77,19 @@ std::string XdmfSet::getName() const
 	return mName;
 }
 
+unsigned int XdmfSet::getNumberAttributes() const
+{
+	return mAttributes.size();
+}
+
 boost::shared_ptr<const XdmfSetType> XdmfSet::getType() const
 {
 	return mSetType;
 }
 
-bool XdmfSet::isInitialized() const
+void XdmfSet::insert(const boost::shared_ptr<XdmfAttribute> attribute)
 {
-	return std::set<unsigned int>::size() > 0;
+	mAttributes.push_back(attribute);
 }
 
 void XdmfSet::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader)
@@ -78,47 +103,40 @@ void XdmfSet::populateItem(const std::map<std::string, std::string> & itemProper
 	{
 		assert(false);
 	}
+	mSetType = XdmfSetType::New(itemProperties);
 	for(std::vector<boost::shared_ptr<XdmfItem> >::const_iterator iter = childItems.begin(); iter != childItems.end(); ++iter)
 	{
 		if(boost::shared_ptr<XdmfArray> array = boost::shared_dynamic_cast<XdmfArray>(*iter))
 		{
-			if(array->isInitialized())
-			{
-				for(unsigned int i=0; i<array->size(); ++i)
-				{
-					this->insert(array->getValueCopy<unsigned int>(i));
-				}
-			}
-			else
-			{
-				mHDF5Controller = array->getHDF5Controller();
-			}
+			this->swap(array);
+			// TODO: If multiple dataitems.
 		}
-	}
-	mSetType = XdmfSetType::New(itemProperties);
-}
-
-void XdmfSet::read()
-{
-	if(mHDF5Controller)
-	{
-		boost::shared_ptr<XdmfArray> setValues = XdmfArray::New();
-		mHDF5Controller->read(setValues.get());
-		for(unsigned int i=0; i<setValues->size(); ++i)
+		else if(boost::shared_ptr<XdmfAttribute> attribute = boost::shared_dynamic_cast<XdmfAttribute>(*iter))
 		{
-			this->insert(setValues->getValueCopy<unsigned int>(i));
+			this->insert(attribute);
 		}
 	}
 }
 
-void XdmfSet::release()
+void XdmfSet::removeAttribute(const unsigned int index)
 {
-	std::set<unsigned int>::clear();
+	if(index < mAttributes.size())
+	{
+		mAttributes.erase(mAttributes.begin() + index);
+	}
 }
 
-void XdmfSet::setHDF5Controller(const boost::shared_ptr<XdmfHDF5Controller> hdf5Controller)
+void XdmfSet::removeAttribute(const std::string & name)
 {
-	mHDF5Controller = hdf5Controller;
+	for(std::vector<boost::shared_ptr<XdmfAttribute> >::iterator iter = mAttributes.begin(); iter != mAttributes.end(); ++iter)
+	{
+		if((*iter)->getName().compare(name) == 0)
+		{
+			mAttributes.erase(iter);
+			return;
+		}
+	}
+	return;
 }
 
 void XdmfSet::setName(const std::string & name)
@@ -131,28 +149,11 @@ void XdmfSet::setType(const boost::shared_ptr<const XdmfSetType> setType)
 	mSetType = setType;
 }
 
-std::size_t XdmfSet::size() const
-{
-	if(std::set<unsigned int>::size() != 0)
-	{
-		return std::set<unsigned int>::size();
-	}
-	else if(mHDF5Controller)
-	{
-		return mHDF5Controller->size();
-	}
-	return 0;
-}
-
 void XdmfSet::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
-	boost::shared_ptr<XdmfArray> setValues = XdmfArray::New();
-	setValues->reserve(std::set<unsigned int>::size());
-	for(XdmfSet::const_iterator iter = this->begin(); iter != this->end(); ++iter)
+	XdmfArray::traverse(visitor);
+	for(std::vector<boost::shared_ptr<XdmfAttribute> >::const_iterator iter = mAttributes.begin(); iter != mAttributes.end(); ++iter)
 	{
-		setValues->pushBack(*iter);
+		(*iter)->accept(visitor);
 	}
-	setValues->setHDF5Controller(mHDF5Controller);
-	setValues->accept(visitor);
-	mHDF5Controller = setValues->getHDF5Controller();
 }

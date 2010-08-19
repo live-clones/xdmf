@@ -92,12 +92,6 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 	}
 }
 
-%include std_set.i
-%template(std_set_uint) std::set<unsigned int>;
-
-// Abstract Base Classes
-%template() Loki::Visitor<XdmfSet>;
-
 // Shared Pointer Templates
 %shared_ptr(XdmfAttribute)
 %shared_ptr(XdmfAttributeCenter)
