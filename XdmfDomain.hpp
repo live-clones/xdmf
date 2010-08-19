@@ -14,7 +14,7 @@ class XdmfGridCollection;
  * XdmfDomain is the top XdmfItem in an Xdmf structure.  It can store a number of grids and
  * provides methods to insert, retrieve, and remove these grids.
  */
-class XdmfDomain : public virtual XdmfItem {
+class XdmfDomain : public XdmfItem {
 
 public:
 

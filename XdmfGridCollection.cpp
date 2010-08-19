@@ -15,12 +15,9 @@ boost::shared_ptr<XdmfGridCollection> XdmfGridCollection::New()
 };
 
 XdmfGridCollection::XdmfGridCollection() :
-	XdmfGrid(),
-	mCollectionType(XdmfGridCollectionType::NoCollectionType())
+	mCollectionType(XdmfGridCollectionType::NoCollectionType()),
+	mName("Collection")
 {
-	mGeometry = boost::shared_ptr<XdmfGeometry>();
-	mName = "Collection";
-	mTopology = boost::shared_ptr<XdmfTopology>();
 }
 
 XdmfGridCollection::~XdmfGridCollection()
@@ -43,6 +40,11 @@ std::string XdmfGridCollection::getItemTag() const
 	return ItemTag;
 }
 
+std::string XdmfGridCollection::getName() const
+{
+	return mName;
+}
+
 boost::shared_ptr<const XdmfGridCollectionType> XdmfGridCollection::getType() const
 {
 	return mCollectionType;
@@ -51,17 +53,24 @@ boost::shared_ptr<const XdmfGridCollectionType> XdmfGridCollection::getType() co
 void XdmfGridCollection::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader)
 {
 	mCollectionType = XdmfGridCollectionType::New(itemProperties);
+	std::map<std::string, std::string>::const_iterator name = itemProperties.find("Name");
+	if(name != itemProperties.end())
+	{
+		mName = name->second;
+	}
+	else
+	{
+		mName = "";
+	}
 	XdmfDomain::populateItem(itemProperties, childItems, reader);
-	XdmfGrid::populateItem(itemProperties, childItems, reader);
+}
+
+void XdmfGridCollection::setName(const std::string & name)
+{
+	mName = name;
 }
 
 void XdmfGridCollection::setType(const boost::shared_ptr<const XdmfGridCollectionType> collectionType)
 {
 	mCollectionType = collectionType;
-}
-
-void XdmfGridCollection::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor)
-{
-	XdmfGrid::traverse(visitor);
-	XdmfDomain::traverse(visitor);
 }

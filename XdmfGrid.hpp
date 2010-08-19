@@ -20,7 +20,7 @@ class XdmfTopology;
  * into the XdmfGrid to specify values attached at various parts of the mesh.  XdmfSets can be inserted in the XdmfGrid
  * to specify collections of mesh elements.
  */
-class XdmfGrid : public virtual XdmfItem {
+class XdmfGrid : public XdmfItem {
 
 public:
 
@@ -265,19 +265,18 @@ protected:
 	XdmfGrid();
 	virtual void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader);
 
-	boost::shared_ptr<XdmfGeometry> mGeometry;
-	std::string mName;
-	boost::shared_ptr<XdmfTopology> mTopology;
-
 private:
 
 	XdmfGrid(const XdmfGrid & grid);  // Not implemented.
 	void operator=(const XdmfGrid & grid);  // Not implemented.
 
 	std::vector<boost::shared_ptr<XdmfAttribute> > mAttributes;
+	boost::shared_ptr<XdmfGeometry> mGeometry;
 	boost::shared_ptr<XdmfMap> mMap;
+	std::string mName;
 	std::vector<boost::shared_ptr<XdmfSet> > mSets;
 	boost::shared_ptr<XdmfTime> mTime;
+	boost::shared_ptr<XdmfTopology> mTopology;
 };
 
 #endif /* XDMFGRID_HPP_ */
