@@ -300,11 +300,16 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
         {
           case(XDMF_ATTRIBUTE_CENTER_GRID):
           {
-            // Will continue to be true for entire collection - so insert at top level
-            if(partitionId == 0)
-            {
-              collection->Insert(currAttribute);
-            }
+            XdmfAttribute * attribute = new XdmfAttribute();
+            attribute->SetName(currAttribute->GetName());
+            attribute->SetAttributeType(currAttribute->GetAttributeType());
+            attribute->SetAttributeCenter(currAttribute->GetAttributeCenter());
+            attribute->SetDeleteOnGridDelete(true);
+            XdmfArray * attributeVals = attribute->GetValues();
+            attributeVals->SetNumberType(currAttribute->GetValues()->GetNumberType());
+            attributeVals->SetNumberOfElements(currAttribute->GetValues()->GetNumberOfElements());
+            attributeVals->SetValues(0, currAttribute->GetValues(), currAttribute->GetValues()->GetNumberOfElements(), 0);
+            partition->Insert(attribute);
             break;
           }
           case(XDMF_ATTRIBUTE_CENTER_CELL):
