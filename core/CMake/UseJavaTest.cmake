@@ -39,7 +39,13 @@ MACRO(ADD_JAVA_TEST executable)
 	
 	SET_PROPERTY(GLOBAL APPEND PROPERTY JAVA_TEST_TARGETS "${java_binary_dir}/${executable}.class")
 
-	ADD_TEST(Java_${executable} ${CMAKE_COMMAND}
+        STRING(REGEX MATCH "core" is_core "${java_binary_dir}")
+        IF(EXISTS ${is_core})
+                SET(is_core "Core")
+        ENDIF(EXISTS ${is_core})
+	
+
+	ADD_TEST(Java${is_core}_${executable} ${CMAKE_COMMAND}
         	-D EXECUTABLE=${executable}
         	-D ARGUMENTS=${arguments}
         	-D CLASSPATH=${java_classpath}

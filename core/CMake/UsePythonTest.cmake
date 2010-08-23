@@ -42,8 +42,13 @@ MACRO(ADD_PYTHON_TEST executable)
 	)
 	
 	SET_PROPERTY(GLOBAL APPEND PROPERTY PYTHON_TEST_TARGETS "${python_binary_dir}/${executable}.pyc")
+
+	STRING(REGEX MATCH "core" is_core "${python_binary_dir}")
+	IF(EXISTS ${is_core})
+		SET(is_core "Core")
+	ENDIF(EXISTS ${is_core})
 	
-	ADD_TEST(Python_${executable} ${CMAKE_COMMAND}
+	ADD_TEST(Python${is_core}_${executable} ${CMAKE_COMMAND}
         	-D EXECUTABLE=${executable}
         	-D ARGUMENTS=${arguments}
 		-D PYTHONPATH=${python_pythonpath}

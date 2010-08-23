@@ -26,6 +26,12 @@
        	ENDIF(EXISTS ${cxx_source_dir}/${executable}.cxx)
 	
 	TARGET_LINK_LIBRARIES(${executable} ${cxx_dependencies})
-       	ADD_TEST(Cxx_${executable} ${executable} ${arguments})
+ 
+        STRING(REGEX MATCH "core" is_core "${cxx_binary_dir}")
+        IF(EXISTS ${is_core})
+                SET(is_core "Core")
+        ENDIF(EXISTS ${is_core})
+
+      	ADD_TEST(Cxx${is_core}_${executable} ${executable} ${arguments})
  ENDMACRO(ADD_CXX_TEST executable)
 
