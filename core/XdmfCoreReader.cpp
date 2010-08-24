@@ -171,13 +171,21 @@ XdmfCoreReader::~XdmfCoreReader()
 	delete mImpl;
 }
 
-boost::shared_ptr<XdmfItem> XdmfCoreReader::read(const std::string & filePath) const
+std::vector<boost::shared_ptr<XdmfItem> > XdmfCoreReader::readItems(const std::string & filePath) const
 {
 	mImpl->openFile(filePath);
 	const xmlNodePtr currNode = xmlDocGetRootElement(mImpl->mDocument);
 	const std::vector<boost::shared_ptr<XdmfItem> > toReturn = mImpl->read(currNode->children);
 	mImpl->closeFile();
-	return toReturn[0];
+	return toReturn;
+}
+
+boost::shared_ptr<XdmfItem> XdmfCoreReader::read(const std::string & filePath) const
+{
+	const std::vector<boost::shared_ptr<XdmfItem> > toReturn = readItems(filePath);
+	if (toReturn.size() == 0)
+		return(boost::shared_ptr<XdmfItem>());
+	return(toReturn[0]);
 }
 
 std::vector<boost::shared_ptr<XdmfItem> > XdmfCoreReader::read(const std::string & filePath, const std::string & xPath) const

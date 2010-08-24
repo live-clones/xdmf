@@ -109,6 +109,20 @@ public:
 	void setMode(const Mode mode);
 
 	/**
+	 * Set XML document title
+	 *
+	 * @param title, title to use for this XML document
+	 */
+	void setDocumentTitle(const std::string title);
+
+	/**
+	 * Set version String
+	 *
+	 * @param version, string to use as version attribute in document title
+	 */
+	void setVersionString(const std::string version);
+
+	/**
 	 * Set whether to write xpaths for this writer.
 	 *
 	 * @param writeXPaths whether to write xpaths for this writer.

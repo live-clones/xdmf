@@ -22,6 +22,13 @@ void XdmfItem::populateItem(const std::map<std::string, std::string> &, std::vec
 	}
 }
 
+bool XdmfItem::IsEqual(boost::shared_ptr<XdmfItem> item)
+{
+	if (item == NULL) return false;
+	if (this == item.get()) return(true);
+	return(false);
+}
+
 void XdmfItem::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
 	for(std::vector<boost::shared_ptr<XdmfInformation> >::const_iterator iter = mInformations.begin(); iter != mInformations.end(); ++iter)

@@ -64,6 +64,22 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %}
 #endif /* SWIGJAVA */
 
+#ifdef SWIGPYTHON
+%extend XdmfItem {
+  bool __eq__(boost::shared_ptr<XdmfItem> item) {
+    return(self->IsEqual(item));
+  }
+};
+#endif
+
+#ifdef SWIGJAVA
+%extend XdmfItem {
+  bool equals(boost::shared_ptr<XdmfItem> item) {
+    return(self->IsEqual(item));
+  }
+};
+#endif
+
 %include XdmfItem.hpp
 %include XdmfItemProperty.hpp
 %include XdmfVisitor.hpp

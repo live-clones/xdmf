@@ -147,6 +147,13 @@ public:
 	 */
 	virtual void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor);
 
+	/**
+	 * Test for equality of underlying item.
+	 *
+	 * @param an XdmfItem to test for equality
+	 */
+	bool IsEqual(boost::shared_ptr<XdmfItem> item);
+
 protected:
 
 	XdmfItem();

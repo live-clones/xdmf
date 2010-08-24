@@ -31,6 +31,14 @@ public:
 	virtual boost::shared_ptr<XdmfItem> read(const std::string & filePath) const;
 
 	/**
+	 * Read an Xdmf file from disk into memory.
+	 *
+	 * @param filePath the path of the Xdmf file to read in from disk.
+	 * @return a vector of XdmfItems at the root of the Xdmf tree.
+	 */
+	virtual std::vector<boost::shared_ptr<XdmfItem> > readItems(const std::string & filePath) const;
+
+	/**
 	 * Read part of an Xdmf file from disk into memory.
 	 *
 	 * @param filePath the path of the Xdmf file to read in from disk.
