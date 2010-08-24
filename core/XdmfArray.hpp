@@ -308,6 +308,13 @@ public:
 	void setValuesInternal(const boost::shared_ptr<std::vector<T> > array);
 
 	/**
+	 * Get the original dimensions string from the stored array
+	 *
+	 * @return the dimension string from the stored array
+	 */
+	std::string getDimensionString() const;
+
+	/**
 	 * Exchange the contents of the vector with the contents of this XdmfArray.  No copy is made.  The internal arrays are swapped.
 	 *
 	 * @param array a vector to exchange values with.
