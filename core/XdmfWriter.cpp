@@ -157,7 +157,7 @@ void XdmfWriter::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisito
 		this->visit(dynamic_cast<XdmfItem &>(array), visitor);
 	}
 
-	if(array.size() > 0 && !mImpl->mLastXPathed)
+	if(array.size() > 0 && !(mImpl->mLastXPathed && isSubclassed))
 	{
 		std::stringstream xmlTextValues;
 

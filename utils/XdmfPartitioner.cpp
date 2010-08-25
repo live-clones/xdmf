@@ -276,10 +276,8 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 				boost::shared_ptr<XdmfAttribute> createdAttribute = boost::shared_ptr<XdmfAttribute>();
 				if(currAttribute->getCenter() == XdmfAttributeCenter::Grid())
 				{
-					if(partitionId == 0)
-					{
-						createdAttribute = currAttribute;
-					}
+					// Insert into each partition
+					createdAttribute = currAttribute;
 				}
 				else if(currAttribute->getCenter() == XdmfAttributeCenter::Cell() ||
 						currAttribute->getCenter() == XdmfAttributeCenter::Face() ||

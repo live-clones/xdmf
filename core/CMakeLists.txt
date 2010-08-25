@@ -57,4 +57,8 @@ if(XDMF_WRAP_PYTHON)
 	swig_link_libraries(XdmfCore XdmfCore ${PYTHON_LIBRARIES})
 endif(XDMF_WRAP_PYTHON)
 
+file(GLOB XdmfCoreHeaders *.hpp)
+install(FILES ${XdmfCoreHeaders} DESTINATION include)
+install(TARGETS XdmfCore LIBRARY DESTINATION lib)
+
 set(XdmfCore_INCLUDE_DIRS ${Boost_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} ${HDF5_INCLUDE_DIR} ${LIBXML2_INCLUDE_DIR} ${PYTHON_INCLUDE_DIRS} CACHE INTERNAL "")

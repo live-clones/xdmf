@@ -57,4 +57,7 @@ if(XDMF_BUILD_UTILS)
 	add_subdirectory(utils)
 endif(XDMF_BUILD_UTILS)
 
+file(GLOB XdmfHeaders *.hpp)
+install(FILES ${XdmfHeaders} DESTINATION include)
+install(TARGETS Xdmf LIBRARY DESTINATION lib)
 

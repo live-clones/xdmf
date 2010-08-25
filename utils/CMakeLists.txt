@@ -3,7 +3,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 option(XDMF_BUILD_EXODUS_IO OFF)
 option(XDMF_BUILD_PARTITIONER OFF)
 
-set(XdmfUtilsExecutables)
 set(XdmfUtilsSources
 	XdmfTopologyConverter
 )
@@ -46,3 +45,9 @@ if(XDMF_WRAP_PYTHON)
 	swig_add_module(XdmfUtils python XdmfUtils.i)
 	swig_link_libraries(XdmfUtils XdmfUtils ${PYTHON_LIBRARIES})
 endif(XDMF_WRAP_PYTHON)
+
+foreach(source ${XdmfUtilsSources})
+	set(XdmfUtilsHeaders ${XdmfUtilsHeaders} ${source}.hpp)
+endforeach(source ${XdmfUtilsSources})
+install(FILES ${XdmfUtilsHeaders} DESTINATION include)
+install(TARGETS ${XdmfUtilsExecutables} RUNTIME DESTINATION bin)
