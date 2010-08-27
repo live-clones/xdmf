@@ -10,6 +10,19 @@ SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMake ${CMAKE_CURRENT_SOURCE_DIR}/core/CMake)
 
+# Should we build with testing
+option(XDMF_BUILD_TESTING OFF)
+if(XDMF_BUILD_TESTING)
+	enable_testing()
+	include(CTest)
+endif(XDMF_BUILD_TESTING)
+
+# Should we build with documentation
+option(XDMF_BUILD_DOCUMENTATION OFF)
+if(XDMF_BUILD_DOCUMENTATION)
+	add_subdirectory(doc)
+endif(XDMF_BUILD_DOCUMENTATION)
+
 # Wrapper Setup
 option(XDMF_WRAP_PYTHON OFF)
 option(XDMF_WRAP_JAVA OFF)
@@ -44,8 +57,6 @@ if(XDMF_WRAP_PYTHON)
 		install(FILES ${CMAKE_BINARY_DIR}/Xdmf.py DESTINATION lib/python)
 		install(TARGETS ${SWIG_MODULE_Xdmf_REAL_NAME} DESTINATION lib/python)
 	ENDMACRO(XDMF_SWIG_PYTHON)
-	
-	XDMF_SWIG_PYTHON(Xdmf XdmfCore)
 endif(XDMF_WRAP_PYTHON)
 
 # If we are wrapping java, let's include it in the top level
@@ -88,54 +99,57 @@ if(XDMF_WRAP_JAVA)
 					"${XDMF_JAVA_PACKAGE_DIR}/*.class"
 		)
 	ENDMACRO(XDMF_SWIG_JAVA)
-	
-	XDMF_SWIG_JAVA(Xdmf XdmfCoreJava)
-	set(XDMF_JAVA_JAR ${CMAKE_BINARY_DIR}/Xdmf.jar CACHE INTERNAL "")
 endif(XDMF_WRAP_JAVA)
 
 add_subdirectory(core)
 include_directories(${XdmfCore_INCLUDE_DIRS})
-include_directories(tests/Cxx)
 
-set(XdmfSources
-	XdmfAttribute
-	XdmfAttributeCenter
-	XdmfAttributeType
-	XdmfDomain
-	XdmfGeometry
-	XdmfGeometryType
-	XdmfGrid
-	XdmfGridCollection
-	XdmfGridCollectionType
-	XdmfItemFactory
-	XdmfMap
-	XdmfReader
-	XdmfSet
-	XdmfSetType
-	XdmfTime
-	XdmfTopology
-	XdmfTopologyType
-)
+option(XDMF_BUILD_CORE_ONLY OFF)
+if(NOT XDMF_BUILD_CORE_ONLY)
 
-add_library(Xdmf ${XdmfSources})
-target_link_libraries(Xdmf XdmfCore)
-
-option(XDMF_BUILD_DOCUMENTATION OFF)
-if(XDMF_BUILD_DOCUMENTATION)
-	add_subdirectory(doc)
-endif(XDMF_BUILD_DOCUMENTATION)
-
-option(XDMF_BUILD_UTILS OFF)
-if(XDMF_BUILD_UTILS)
-	add_subdirectory(utils)
-endif(XDMF_BUILD_UTILS)
-
-file(GLOB XdmfHeaders *.hpp)
-install(FILES ${XdmfHeaders} DESTINATION include)
-install(TARGETS Xdmf LIBRARY DESTINATION lib)
-
-if(XDMF_BUILD_TESTING)
-	enable_testing()
-	add_subdirectory(tests)
-endif(XDMF_BUILD_TESTING)
-
+	set(XdmfSources
+		XdmfAttribute
+		XdmfAttributeCenter
+		XdmfAttributeType
+		XdmfDomain
+		XdmfGeometry
+		XdmfGeometryType
+		XdmfGrid
+		XdmfGridCollection
+		XdmfGridCollectionType
+		XdmfItemFactory
+		XdmfMap
+		XdmfReader
+		XdmfSet
+		XdmfSetType
+		XdmfTime
+		XdmfTopology
+		XdmfTopologyType
+	)
+	
+	add_library(Xdmf ${XdmfSources})
+	target_link_libraries(Xdmf XdmfCore)
+	
+	if(XDMF_WRAP_PYTHON)
+		XDMF_SWIG_PYTHON(Xdmf XdmfCore)
+	endif(XDMF_WRAP_PYTHON)
+	
+	if(XDMF_WRAP_JAVA)
+		XDMF_SWIG_JAVA(Xdmf XdmfCoreJava)
+		set(XDMF_JAVA_JAR ${CMAKE_BINARY_DIR}/Xdmf.jar CACHE INTERNAL "")
+	endif(XDMF_WRAP_JAVA)
+	
+	if(XDMF_BUILD_TESTING)
+		add_subdirectory(tests)
+	endif(XDMF_BUILD_TESTING)
+	
+	option(XDMF_BUILD_UTILS OFF)
+	if(XDMF_BUILD_UTILS)
+		add_subdirectory(utils)
+	endif(XDMF_BUILD_UTILS)
+		
+	file(GLOB XdmfHeaders *.hpp)
+	install(FILES ${XdmfHeaders} DESTINATION include)
+	install(TARGETS Xdmf LIBRARY DESTINATION lib)
+	
+endif(NOT XDMF_BUILD_CORE_ONLY)

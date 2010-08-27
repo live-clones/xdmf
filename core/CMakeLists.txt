@@ -42,10 +42,7 @@ set(XdmfCoreSources
 add_library(XdmfCore ${XdmfCoreSources})
 target_link_libraries(XdmfCore ${HDF5_LIBRARIES} ${LIBXML2_LIBRARIES})
 
-option(XDMF_BUILD_TESTING OFF)
 if(XDMF_BUILD_TESTING)
-	enable_testing()
-	include(CTest)
 	add_subdirectory(tests)
 endif(XDMF_BUILD_TESTING)
 
