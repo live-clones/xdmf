@@ -183,28 +183,7 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 %ignore XdmfGrid::getTime() const;
 %ignore XdmfGrid::getTopology() const;
 %ignore XdmfGridCollection::getGrid(const unsigned int index) const;
-
-#endif
-
-#ifdef SWIGJAVA
-%ignore XdmfAttribute::ItemTag;
-%ignore XdmfDomain::ItemTag;
-%ignore XdmfGeometry::ItemTag;
-%ignore XdmfGrid::ItemTag;
-%ignore XdmfGridCollection::ItemTag;
-%ignore XdmfSet::ItemTag;
-%ignore XdmfTime::ItemTag;
-%ignore XdmfTopology::ItemTag;
-%ignore XdmfDomain::getGrid(const unsigned int index) const;
-%ignore XdmfGrid::getAttribute(const unsigned int index) const;
-%ignore XdmfGrid::getAttribute(const std::string & name) const;
-%ignore XdmfGrid::getSet(const unsigned int index) const;
-%ignore XdmfGrid::getSet(const std::string & name) const;
-%ignore XdmfGrid::getGeometry() const;
-%ignore XdmfGrid::getTime() const;
-%ignore XdmfGrid::getTopology() const;
 %ignore XdmfGrid::getMap() const;
-%ignore XdmfGridCollection::getGrid(const unsigned int index) const;
 %ignore XdmfSet::getHDF5Controller() const;
 
 %pragma(java) jniclasscode=%{
