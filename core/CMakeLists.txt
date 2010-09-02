@@ -42,10 +42,6 @@ set(XdmfCoreSources
 add_library(XdmfCore ${XdmfCoreSources})
 target_link_libraries(XdmfCore ${HDF5_LIBRARIES} ${LIBXML2_LIBRARIES})
 
-if(XDMF_BUILD_TESTING)
-	add_subdirectory(tests)
-endif(XDMF_BUILD_TESTING)
-
 if(XDMF_WRAP_JAVA)
 	XDMF_SWIG_JAVA(XdmfCore)
 	set(XDMF_CORE_JAVA_JAR ${CMAKE_BINARY_DIR}/XdmfCore.jar CACHE INTERNAL "")
@@ -60,3 +56,7 @@ install(FILES ${XdmfCoreHeaders} DESTINATION include)
 install(TARGETS XdmfCore LIBRARY DESTINATION lib)
 
 set(XdmfCore_INCLUDE_DIRS ${Boost_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} ${HDF5_INCLUDE_DIR} ${LIBXML2_INCLUDE_DIR} ${PYTHON_INCLUDE_DIRS} CACHE INTERNAL "")
+
+if(XDMF_BUILD_TESTING)
+	add_subdirectory(tests)
+endif(XDMF_BUILD_TESTING)
