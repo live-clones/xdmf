@@ -23,6 +23,19 @@ include(UsePythonTest)
 ADD_PYTHON_TEST(TestXdmfHDF5Writer)
 ADD_PYTHON_TEST(TestXdmfWriter)
 
+# Add any python cleanup here:
+# Note: We don't want to use a foreach loop to test the files incase we
+#       have multiple files (ie: CLEAN_PYTHON_TEST(testname outputfile1 ...))
+#       Read UseCxxTest.cmake for more information
+# ---------------------------------------
+CLEAN_PYTHON_TEST(TestXdmfHDF5Writer
+	hdf5WriterPythonTest.h5
+)
+CLEAN_PYTHON_TEST(TestXdmfWriter
+	output.h5
+	output.xmf
+)
+
 # Add a custom target for all python tests
 # Note: ${TARGETS} is set in ADD_PYTHON_TEST
 IF(EXISTS Python_Core_Test_target)

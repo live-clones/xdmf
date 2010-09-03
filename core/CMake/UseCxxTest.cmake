@@ -35,3 +35,14 @@
       	ADD_TEST(Cxx${is_core}_${executable} ${executable} ${arguments})
  ENDMACRO(ADD_CXX_TEST executable)
 
+ # CXX Clean Macro
+ # Author: Brian Panneton
+ # Description: This macro sets up the cxx test for a make clean.
+ # Parameters:         
+ #		executable      = executable name
+ #             	${ARGN}         = files that the executable created
+ MACRO(CLEAN_CXX_TEST executable)
+	set_property(DIRECTORY APPEND PROPERTY 
+		ADDITIONAL_MAKE_CLEAN_FILES ${ARGN} 
+	)
+ ENDMACRO(CLEAN_CXX_TEST executable)

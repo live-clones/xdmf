@@ -29,6 +29,15 @@ include (UseJavaTest)
 # ------------------------
 ADD_JAVA_TEST(TestXdmfJava)
 
+# Add any java cleanup here:
+# Note: We don't want to use a foreach loop to test the files incase we
+#       have multiple files (ie: CLEAN_JAVA_TEST(testname outputfile1 ...))
+#       Read UseCxxTest.cmake for more information
+# ---------------------------------------
+CLEAN_JAVA_TEST(TestXdmfJava
+	outputJavaTest.xmf
+)
+
 # Add a custom target for all java tests 
 # Note: ${TARGETS} is set in ADD_JAVA_TEST
 IF(EXISTS Java_Core_Test_target)

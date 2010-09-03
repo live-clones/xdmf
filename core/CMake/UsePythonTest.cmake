@@ -57,6 +57,19 @@ MACRO(ADD_PYTHON_TEST executable)
 
 ENDMACRO(ADD_PYTHON_TEST)
 
+# Python Clean Macro
+# Author: Brian Panneton
+# Description: This macro sets up the python test for a make clean.
+# Parameters:         
+#              executable      = executable name
+#              ${ARGN}         = files that the executable created
+MACRO(CLEAN_PYTHON_TEST executable)
+	set_property(DIRECTORY APPEND PROPERTY
+		ADDITIONAL_MAKE_CLEAN_FILES ${ARGN}
+		${executable}.py
+	)
+ENDMACRO(CLEAN_PYTHON_TEST executable)
+
 # Configure the python 'driver' file
 CONFIGURE_FILE(${python_configure_files}/PythonTestDriver.cmake.in ${python_binary_dir}/PythonTestDriver.cmake @ONLY)
 

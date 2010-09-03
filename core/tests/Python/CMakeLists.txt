@@ -20,6 +20,13 @@ include(UsePythonTest)
 # ---------------------
 ADD_PYTHON_TEST(TestXdmfArray)
 
+# Add any python cleanup here:
+# Note: We don't want to use a foreach loop to test the files incase we
+#       have multiple files (ie: CLEAN_PYTHON_TEST(testname outputfile1 ...))
+#       Read UseCxxTest.cmake for more information
+# ---------------------------------------
+CLEAN_PYTHON_TEST(TestXdmfArray)
+
 # Add a custom target for all python tests
 # Note: ${TARGETS} is set in ADD_PYTHON_TEST
 GET_PROPERTY(targets GLOBAL PROPERTY PYTHON_TEST_TARGETS)

@@ -26,6 +26,13 @@ include (UseJavaTest)
 # ------------------------
 # none
 
+# Add any java cleanup here:
+# Note: We don't want to use a foreach loop to test the files incase we
+#       have multiple files (ie: CLEAN_JAVA_TEST(testname outputfile1 ...))
+#       Read UseCxxTest.cmake for more information
+# ---------------------------------------
+# none
+
 # Add a custom target for all java tests 
 # Note: ${TARGETS} is set in ADD_JAVA_TEST
 GET_PROPERTY(targets GLOBAL PROPERTY JAVA_TEST_TARGETS)

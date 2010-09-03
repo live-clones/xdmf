@@ -55,5 +55,18 @@ MACRO(ADD_JAVA_TEST executable)
 
 ENDMACRO(ADD_JAVA_TEST)
 
+# Java Clean Macro
+# Author: Brian Panneton
+# Description: This macro sets up the java test for a make clean.
+# Parameters:         
+#              executable      = executable name
+#              ${ARGN}         = files that the executable created
+MACRO(CLEAN_JAVA_TEST executable)
+       set_property(DIRECTORY APPEND PROPERTY 
+                ADDITIONAL_MAKE_CLEAN_FILES ${ARGN}
+       )
+ENDMACRO(CLEAN_JAVA_TEST executable)
+
+
 # Configure the java 'driver' file
 CONFIGURE_FILE(${java_configure_files}/JavaTestDriver.cmake.in ${java_binary_dir}/JavaTestDriver.cmake @ONLY)
