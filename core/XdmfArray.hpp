@@ -11,24 +11,25 @@ class XdmfHDF5Controller;
 #include <boost/variant.hpp>
 
 /**
- * @brief Provides a single interface for storing a wide variety of data types.
+ * @brief Provides a single interface for storing a variety of data types.
  *
- * XdmfArray stores data values that are read in or will be written to heavy data on disk. The
+ * XdmfArray stores data values that are read in from or will be written to heavy data on disk. The
  * data type stored is determined by the type initially inserted into the XdmfArray.  XdmfArray
  * allows for insertion and retrieval of data in two fundamental ways:
  *
  * By Copy:
  *
- *  copyValues
- * 	getValuesCopy
+ *	getValue
+ * 	getValues
+ *	insert
  *
  * 	XdmfArray stores its own copy of the data.  Modifications to the data stored in the XdmfArray will
  * 	not change values stored in the original array.
  *
  * By Shared Reference:
  *
- * 	setValues
- * 	getValues
+ *	getValuesInternal
+ * 	setValuesInternal
  *
  * 	XdmfArray shares a reference to the data.  No copy is made. XdmfArray holds a shared pointer to the original
  * 	data.  Modifications to the data stored in the XdmfArray also causes modification to values stored in the original
@@ -60,30 +61,6 @@ public:
 
 	LOKI_DEFINE_VISITABLE(XdmfArray, XdmfItem)
 	static const std::string ItemTag;
-
-	/**
-	 * Copy values from an XdmfArray into this array.
-	 *
-	 * @param startIndex the index in this array to begin insertion.
-	 * @param values a shared pointer to an XdmfArray to copy into this array.
-	 * @param valuesStartIndex the index in the XdmfArray to begin copying.
-	 * @param numValues the number of values to copy into this array.
-	 * @param arrayStride number of values to stride in this array between each copy.
-	 * @param valuesStride number of values to stride in the XdmfArray between each copy.
-	 */
-	void copyValues(const unsigned int startIndex, const boost::shared_ptr<const XdmfArray> values, const unsigned int valuesStartIndex= 0, const unsigned int numValues = 1, const unsigned int arrayStride = 1, const unsigned int valuesStride = 1);
-
-	/**
-	 * Copy values into this array.
-	 *
-	 * @param startIndex the index in this XdmfArray to begin insertion.
-	 * @param valuesPointer a pointer to the values to copy into this XdmfArray.
-	 * @param numValues the number of values to copy into this array.
-	 * @param arrayStride number of values to stride in this XdmfArray between each copy.
-	 * @param valuesStride number of values to stride in the pointer between each copy.
-	 */
-	template<typename T>
-	void copyValues(const unsigned int startIndex, const T * const valuesPointer, const unsigned int numValues = 1, const unsigned int arrayStride = 1, const unsigned int valuesStride = 1);
 
 	/**
 	 * Remove all values from this array.
@@ -136,20 +113,19 @@ public:
 	std::string getName() const;
 
 	/**
+	 * Get the number of values stored in this array.
+	 *
+	 * @return the number of values stored in this array.
+	 */
+	unsigned int getSize() const;
+
+	/**
 	 * Get a copy of a single value stored in this array.
 	 *
 	 * @return the requested value.
 	 */
 	template <typename T>
-	T getValueCopy(const unsigned int index) const;
-
-	/**
-	 * Get a smart pointer to the values stored in this array.
-	 *
-	 * @return a smart pointer to the internal vector of values stored in this array.
-	 */
-	template <typename T>
-	boost::shared_ptr<std::vector<T> > getValues();
+	T getValue(const unsigned int index) const;
 
 	/**
 	 * Get a copy of the values stored in this array
@@ -161,21 +137,29 @@ public:
 	 * @param valuesStride number of values to stride in the pointer between each copy.
 	 */
 	template <typename T>
-	void getValuesCopy(const unsigned int startIndex, T * const valuesPointer, const unsigned int numValues = 1, const unsigned int arrayStride = 1, const unsigned int valuesStride = 1) const;
+	void getValues(const unsigned int startIndex, T * const valuesPointer, const unsigned int numValues = 1, const unsigned int arrayStride = 1, const unsigned int valuesStride = 1) const;
 
 	/**
-	 * Get a pointer to the values stored in this array.
+	 * Get a smart pointer to the internal values stored in this array.
+	 *
+	 * @return a smart pointer to the internal vector of values stored in this array.
+	 */
+	template <typename T>
+	boost::shared_ptr<std::vector<T> > getValuesInternal();
+
+	/**
+	 * Get a pointer to the internal values stored in this array.
 	 *
 	 * @return a void pointer to the first value stored in this array.
 	 */
-	void * getValuesPointer();
+	void * getValuesInternal();
 
 	/**
-	 * Get a pointer to the values stored in this array (const version).
+	 * Get a pointer to the internal values stored in this array (const version).
 	 *
 	 * @return a void pointer to the first value stored in this array.
 	 */
-	const void * getValuesPointer() const;
+	const void * getValuesInternal() const;
 
 	/**
 	 * Get the values stored in this array as a string.
@@ -201,6 +185,30 @@ public:
 	 * @param size the number of values in the initialized array.
 	 */
 	void initialize(const boost::shared_ptr<const XdmfArrayType> arrayType, const unsigned int size = 0);
+
+	/**
+	 * Copy values from an XdmfArray into this array.
+	 *
+	 * @param startIndex the index in this array to begin insertion.
+	 * @param values a shared pointer to an XdmfArray to copy into this array.
+	 * @param valuesStartIndex the index in the XdmfArray to begin copying.
+	 * @param numValues the number of values to copy into this array.
+	 * @param arrayStride number of values to stride in this array between each copy.
+	 * @param valuesStride number of values to stride in the XdmfArray between each copy.
+	 */
+	void insert(const unsigned int startIndex, const boost::shared_ptr<const XdmfArray> values, const unsigned int valuesStartIndex= 0, const unsigned int numValues = 1, const unsigned int arrayStride = 1, const unsigned int valuesStride = 1);
+
+	/**
+	 * Copy values into this array.
+	 *
+	 * @param startIndex the index in this XdmfArray to begin insertion.
+	 * @param valuesPointer a pointer to the values to copy into this XdmfArray.
+	 * @param numValues the number of values to copy into this array.
+	 * @param arrayStride number of values to stride in this XdmfArray between each copy.
+	 * @param valuesStride number of values to stride in the pointer between each copy.
+	 */
+	template<typename T>
+	void insert(const unsigned int startIndex, const T * const valuesPointer, const unsigned int numValues = 1, const unsigned int arrayStride = 1, const unsigned int valuesStride = 1);
 
 	/**
 	 * Returns whether the array is initialized (contains values in memory).
@@ -269,7 +277,7 @@ public:
 	 * @param transferOwnership whether to transfer responsibility for deletion of the array to XdmfArray.
 	 */
 	template<typename T>
-	void setValues(const T * const arrayPointer, const unsigned int numValues, const bool transferOwnership = 0);
+	void setValuesInternal(const T * const arrayPointer, const unsigned int numValues, const bool transferOwnership = 0);
 
 	/**
 	 * Sets the values of this array to the values stored in the vector.  No copy is made.  The caller of this method retains
@@ -279,7 +287,7 @@ public:
 	 * @param transferOwnership whether to transfer responsibility for deletion of the array to XdmfArray.
 	 */
 	template<typename T>
-	void setValues(std::vector<T> & array, const bool transferOwnership = 0);
+	void setValuesInternal(std::vector<T> & array, const bool transferOwnership = 0);
 
 	/**
 	 * Sets the values of this array to the values stored in the vector.  No copy is made.  This array shares ownership with
@@ -288,14 +296,7 @@ public:
 	 * @param array a smart pointer to a vector to store in this array.
 	 */
 	template<typename T>
-	void setValues(const boost::shared_ptr<std::vector<T> > array);
-
-	/**
-	 * Get the number of values stored in this array.
-	 *
-	 * @return the number of values stored in this array.
-	 */
-	std::size_t size() const;
+	void setValuesInternal(const boost::shared_ptr<std::vector<T> > array);
 
 	/**
 	 * Exchange the contents of the vector with the contents of this XdmfArray.  No copy is made.  The internal arrays are swapped.
@@ -334,21 +335,21 @@ private:
 
 	// Variant Visitor Operations
 	class Clear;
-	class CopyArrayValues;
-
-	template <typename T>
-	class CopyValues;
-
 	class Erase;
 	class GetArrayType;
 	class GetCapacity;
 	class GetHDF5Type;
 
 	template <typename T>
-	class GetValuesCopy;
+	class GetValues;
 
 	class GetValuesPointer;
 	class GetValuesString;
+
+	template <typename T>
+	class Insert;
+
+	class InsertArray;
 	class InternalizeArrayPointer;
 	class NewArray;
 	struct NullDeleter;

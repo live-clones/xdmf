@@ -9,7 +9,7 @@ if __name__ == "__main__":
 	assert(set.getType() == XdmfSetType.NoSetType())
 	set.setType(XdmfSetType.Node())
 	assert(set.getType() == XdmfSetType.Node())
-	assert(set.size() == 0)
+	assert(set.getSize() == 0)
 	set.copyValueAsInt32(0, 1)
-	assert(set.size() == 1)
+	assert(set.getSize() == 1)
 

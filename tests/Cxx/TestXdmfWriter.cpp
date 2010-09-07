@@ -4,7 +4,7 @@
 
 #include "XdmfTestDataGenerator.hpp"
 
-int main(int argc, char* argv[])
+int main(int, char *)
 {
 	boost::shared_ptr<XdmfWriter> writer = XdmfWriter::New("output.xmf");
 

@@ -15,8 +15,9 @@ boost::shared_ptr<XdmfGridCollection> XdmfGridCollection::New()
 };
 
 XdmfGridCollection::XdmfGridCollection() :
+	XdmfDomain(),
 	XdmfGrid(),
-	mCollectionType(XdmfGridCollectionType::NoCollectionType())
+	mType(XdmfGridCollectionType::NoCollectionType())
 {
 	mName = "Collection";
 }
@@ -32,7 +33,7 @@ std::map<std::string, std::string> XdmfGridCollection::getItemProperties() const
 	std::map<std::string, std::string> collectionProperties;
 	collectionProperties["Name"] = mName;
 	collectionProperties["GridType"] = "Collection";
-	mCollectionType->getProperties(collectionProperties);
+	mType->getProperties(collectionProperties);
 	return collectionProperties;
 }
 
@@ -43,23 +44,34 @@ std::string XdmfGridCollection::getItemTag() const
 
 boost::shared_ptr<const XdmfGridCollectionType> XdmfGridCollection::getType() const
 {
-	return mCollectionType;
+	return mType;
+}
+
+void XdmfGridCollection::insert(const boost::shared_ptr<XdmfInformation> information)
+{
+	XdmfItem::insert(information);
 }
 
 void XdmfGridCollection::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader)
 {
-	mCollectionType = XdmfGridCollectionType::New(itemProperties);
+	mType = XdmfGridCollectionType::New(itemProperties);
 	XdmfDomain::populateItem(itemProperties, childItems, reader);
+	mInformations.clear();
 	XdmfGrid::populateItem(itemProperties, childItems, reader);
 }
 
-void XdmfGridCollection::setType(const boost::shared_ptr<const XdmfGridCollectionType> collectionType)
+void XdmfGridCollection::setType(const boost::shared_ptr<const XdmfGridCollectionType> type)
 {
-	mCollectionType = collectionType;
+	mType = type;
 }
 
 void XdmfGridCollection::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
 	XdmfGrid::traverse(visitor);
+
+	// Only write XdmfInformations once (deal with diamond inheritance)
+	std::vector<boost::shared_ptr<XdmfInformation> > informations;
+	informations.swap(mInformations);
 	XdmfDomain::traverse(visitor);
+	informations.swap(mInformations);
 }

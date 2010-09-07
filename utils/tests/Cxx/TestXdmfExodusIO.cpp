@@ -6,7 +6,7 @@
 
 #include "XdmfTestDataGenerator.hpp"
 
-int main(int argc, char* argv[])
+int main(int, char *)
 {
 	boost::shared_ptr<XdmfExodusWriter> exodusWriter = XdmfExodusWriter::New();
 	boost::shared_ptr<XdmfGrid> hexahedron = XdmfTestDataGenerator::createHexahedron();
@@ -17,15 +17,15 @@ int main(int argc, char* argv[])
 	assert(grid->getName() == hexahedron->getName());
 	assert(grid->getGeometry()->getType() == hexahedron->getGeometry()->getType());
 	assert(grid->getGeometry()->getNumberPoints() == hexahedron->getGeometry()->getNumberPoints());
-	for(unsigned int i=0; i<grid->getGeometry()->size(); ++i)
+	for(unsigned int i=0; i<grid->getGeometry()->getSize(); ++i)
 	{
-		assert(grid->getGeometry()->getValueCopy<double>(i) == hexahedron->getGeometry()->getValueCopy<double>(i));
+		assert(grid->getGeometry()->getValue<double>(i) == hexahedron->getGeometry()->getValue<double>(i));
 	}
 	assert(grid->getTopology()->getType() == hexahedron->getTopology()->getType());
 	assert(grid->getTopology()->getNumberElements() == hexahedron->getTopology()->getNumberElements());
-	for(unsigned int i=0; i<grid->getTopology()->size(); ++i)
+	for(unsigned int i=0; i<grid->getTopology()->getSize(); ++i)
 	{
-		assert(grid->getTopology()->getValueCopy<double>(i) == hexahedron->getTopology()->getValueCopy<double>(i));
+		assert(grid->getTopology()->getValue<double>(i) == hexahedron->getTopology()->getValue<double>(i));
 	}
 	assert(hexahedron->getNumberAttributes() + 1 == grid->getNumberAttributes());
 	for(unsigned int i=0; i<hexahedron->getNumberAttributes(); ++i)
@@ -34,10 +34,10 @@ int main(int argc, char* argv[])
 		boost::shared_ptr<XdmfAttribute> attribute2 = grid->getAttribute(attribute1->getName());
 		assert(attribute1->getCenter() == attribute2->getCenter());
 		assert(attribute1->getType() == attribute2->getType());
-		assert(attribute1->size() == attribute2->size());
-		for(unsigned int j=0; j<attribute1->size(); ++j)
+		assert(attribute1->getSize() == attribute2->getSize());
+		for(unsigned int j=0; j<attribute1->getSize(); ++j)
 		{
-			assert(attribute1->getValueCopy<double>(i) == attribute2->getValueCopy<double>(i));
+			assert(attribute1->getValue<double>(i) == attribute2->getValue<double>(i));
 		}
 	}
 }

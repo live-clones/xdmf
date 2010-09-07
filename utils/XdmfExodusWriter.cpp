@@ -54,7 +54,7 @@ public:
 			{
 				attributeName = attributeName.substr(0, MAX_STR_LENGTH - numComponentDigits);
 			}
-			for(unsigned int i=0; i<numComponents; ++i)
+			for(int i=0; i<numComponents; ++i)
 			{
 				std::stringstream toAdd;
 				toAdd << attributeName << "-" << i+1;
@@ -148,21 +148,21 @@ void XdmfExodusWriter::write(const std::string & filePath, const boost::shared_p
 	// Write nodal coordinate values to exodus
 	if(currGrid->getGeometry()->getType() == XdmfGeometryType::XYZ() || currGrid->getGeometry()->getType() == XdmfGeometryType::XY())
 	{
-		currGrid->getGeometry()->getValuesCopy(0, x, num_nodes, 3);
-		currGrid->getGeometry()->getValuesCopy(1, y, num_nodes, 3);
+		currGrid->getGeometry()->getValues(0, x, num_nodes, 3);
+		currGrid->getGeometry()->getValues(1, y, num_nodes, 3);
 		if(currGrid->getGeometry()->getType() == XdmfGeometryType::XYZ())
 		{
-			currGrid->getGeometry()->getValuesCopy(2, z, num_nodes, 3);
+			currGrid->getGeometry()->getValues(2, z, num_nodes, 3);
 		}
 		ex_put_coord(exodusHandle, x ,y ,z);
 	}
 	else if(currGrid->getGeometry()->getType() == XdmfGeometryType::X_Y_Z() || currGrid->getGeometry()->getType() == XdmfGeometryType::X_Y())
 	{
-		currGrid->getGeometry()->getValuesCopy(0, x, num_nodes);
-		currGrid->getGeometry()->getValuesCopy(num_nodes, y, num_nodes);
+		currGrid->getGeometry()->getValues(0, x, num_nodes);
+		currGrid->getGeometry()->getValues(num_nodes, y, num_nodes);
 		if(currGrid->getGeometry()->getType() == XdmfGeometryType::X_Y_Z())
 		{
-			currGrid->getGeometry()->getValuesCopy(num_nodes * 2, z, num_nodes);
+			currGrid->getGeometry()->getValues(num_nodes * 2, z, num_nodes);
 		}
 	}
 	delete [] x;
@@ -180,7 +180,7 @@ void XdmfExodusWriter::write(const std::string & filePath, const boost::shared_p
 
 	// Write Element Connectivity
 	int * elem_connectivity = new int[num_elem * currGrid->getTopology()->getType()->getNodesPerElement()];
-	currGrid->getTopology()->getValuesCopy(0, elem_connectivity, num_elem * currGrid->getTopology()->getType()->getNodesPerElement());
+	currGrid->getTopology()->getValues(0, elem_connectivity, num_elem * currGrid->getTopology()->getType()->getNodesPerElement());
 	for(unsigned int i=0; i<num_elem * currGrid->getTopology()->getType()->getNodesPerElement(); ++i)
 	{
 		// Add 1 to connectivity array since exodus indices start at 1
@@ -193,7 +193,7 @@ void XdmfExodusWriter::write(const std::string & filePath, const boost::shared_p
 		int itmp[4];
 
 		// Exodus Node ordering does not match Xdmf, we must convert.
-		for(unsigned int i=0; i<num_elem; ++i)
+		for(int i=0; i<num_elem; ++i)
 		{
 			ptr += 12;
 
@@ -230,7 +230,7 @@ void XdmfExodusWriter::write(const std::string & filePath, const boost::shared_p
 		int itmp[3];
 
 		// Exodus Node ordering does not match Xdmf, we must convert.
-		for(unsigned int i=0; i<num_elem; ++i)
+		for(int i=0; i<num_elem; ++i)
 		{
 			ptr += 9;
 
@@ -277,21 +277,21 @@ void XdmfExodusWriter::write(const std::string & filePath, const boost::shared_p
 		boost::shared_ptr<XdmfAttribute> currAttribute = currGrid->getAttribute(i);
 		if(currAttribute->getCenter() == XdmfAttributeCenter::Grid())
 		{
-			int numComponents = currAttribute->size();
+			int numComponents = currAttribute->getSize();
 			globalComponents.push_back(numComponents);
 			numGlobalAttributes += numComponents;
 			mImpl->constructAttributeNames(currAttribute->getName(), globalAttributeNames, numComponents);
 		}
 		else if(currAttribute->getCenter() == XdmfAttributeCenter::Node())
 		{
-			int numComponents = currAttribute->size() / num_nodes;
+			int numComponents = currAttribute->getSize() / num_nodes;
 			nodalComponents.push_back(numComponents);
 			numNodalAttributes += numComponents;
 			mImpl->constructAttributeNames(currAttribute->getName(), nodalAttributeNames, numComponents);
 		}
 		else if(currAttribute->getCenter() == XdmfAttributeCenter::Cell())
 		{
-			int numComponents = currAttribute->size() / num_elem;
+			int numComponents = currAttribute->getSize() / num_elem;
 			elementComponents.push_back(numComponents);
 			numElementAttributes += numComponents;
 			mImpl->constructAttributeNames(currAttribute->getName(), elementAttributeNames, numComponents);
@@ -335,7 +335,7 @@ void XdmfExodusWriter::write(const std::string & filePath, const boost::shared_p
 		numGrids = gridCollection->getNumberGrids();
 	}
 
-	for(unsigned int i=0; i<numGrids; ++i)
+	for(int i=0; i<numGrids; ++i)
 	{
 		double * globalAttributeVals = new double[numGlobalAttributes];
 
@@ -356,19 +356,19 @@ void XdmfExodusWriter::write(const std::string & filePath, const boost::shared_p
 			boost::shared_ptr<XdmfAttribute> currAttribute = currGrid->getAttribute(j);
 			if(currAttribute->getCenter() == XdmfAttributeCenter::Grid())
 			{
-				for(unsigned int k=0; k<globalComponents[globalComponentIndex]; ++k)
+				for(int k=0; k<globalComponents[globalComponentIndex]; ++k)
 				{
-					currAttribute->getValuesCopy(k, globalAttributeVals + globalIndex, 1);
+					currAttribute->getValues(k, globalAttributeVals + globalIndex, 1);
 					globalIndex++;
 				}
 				globalComponentIndex++;
 			}
 			else if(currAttribute->getCenter() == XdmfAttributeCenter::Node())
         	{
-				for(unsigned int k=0; k<nodalComponents[nodalComponentIndex]; ++k)
+				for(int k=0; k<nodalComponents[nodalComponentIndex]; ++k)
 				{
 					double * nodalValues = new double[num_nodes];
-					currAttribute->getValuesCopy(k, nodalValues, num_nodes, nodalComponents[nodalComponentIndex]);
+					currAttribute->getValues(k, nodalValues, num_nodes, nodalComponents[nodalComponentIndex]);
 					ex_put_nodal_var(exodusHandle, i+1, nodalIndex+1, num_nodes, nodalValues);
 					ex_update(exodusHandle);
 					delete [] nodalValues;
@@ -378,10 +378,10 @@ void XdmfExodusWriter::write(const std::string & filePath, const boost::shared_p
         	}
 			else if(currAttribute->getCenter() == XdmfAttributeCenter::Cell())
         	{
-				for(unsigned int k=0; k<elementComponents[elementComponentIndex]; ++k)
+				for(int k=0; k<elementComponents[elementComponentIndex]; ++k)
 				{
 					double * elementValues = new double[num_elem];
-					currAttribute->getValuesCopy(k, elementValues, num_elem, elementComponents[elementComponentIndex]);
+					currAttribute->getValues(k, elementValues, num_elem, elementComponents[elementComponentIndex]);
 					ex_put_elem_var(exodusHandle, i+1, elementIndex+1, 10, num_elem, elementValues);
 					ex_update(exodusHandle);
 					delete [] elementValues;
@@ -399,7 +399,7 @@ void XdmfExodusWriter::write(const std::string & filePath, const boost::shared_p
 		for(unsigned int j=0; j<currGrid->getNumberSets(); ++j)
 		{
 			boost::shared_ptr<XdmfSet> currSet = currGrid->getSet(j);
-			int numValues = currSet->size();
+			int numValues = currSet->getSize();
 			std::string name = currSet->getName();
 			if(name.size() > MAX_STR_LENGTH)
 			{
@@ -409,8 +409,8 @@ void XdmfExodusWriter::write(const std::string & filePath, const boost::shared_p
 			{
 				ex_put_side_set_param(exodusHandle, setId + i, numValues, 0);
 				int * values = new int[numValues];
-				currSet->getValuesCopy(0, values, numValues);
-				for(unsigned int k=0; k<numValues; ++k)
+				currSet->getValues(0, values, numValues);
+				for(int k=0; k<numValues; ++k)
 				{
 					// Add 1 to xdmf ids because exodus ids begin at 1
 					values[k]++;
@@ -423,8 +423,8 @@ void XdmfExodusWriter::write(const std::string & filePath, const boost::shared_p
 			{
 				ex_put_node_set_param(exodusHandle, setId + i, numValues, 0);
 				int * values = new int[numValues];
-				currSet->getValuesCopy(0, values, numValues);
-				for(unsigned int k=0; k<numValues; ++k)
+				currSet->getValues(0, values, numValues);
+				for(int k=0; k<numValues; ++k)
 				{
 					// Add 1 to xdmf ids because exodus ids begin at 1
 					values[k]++;

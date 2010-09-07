@@ -198,9 +198,9 @@ boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::ThreeDCoRectMesh()
 }
 
 XdmfTopologyType::XdmfTopologyType(const int& nodesPerElement, const std::string& name, const CellType& cellType) :
-	mNodesPerElement(nodesPerElement),
+	mCellType(cellType),
 	mName(name),
-	mCellType(cellType)
+	mNodesPerElement(nodesPerElement)
 {
 }
 

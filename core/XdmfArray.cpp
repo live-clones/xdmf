@@ -27,45 +27,6 @@ public:
 	}
 };
 
-class XdmfArray::CopyArrayValues : public boost::static_visitor<void> {
-public:
-
-	CopyArrayValues(const unsigned int startIndex, const unsigned int valuesStartIndex, const unsigned int numValues, const unsigned int arrayStride, const unsigned int valuesStride) :
-		mStartIndex(startIndex),
-		mValuesStartIndex(valuesStartIndex),
-		mNumValues(numValues),
-		mArrayStride(arrayStride),
-		mValuesStride(valuesStride)
-	{
-	}
-
-	template<typename T, typename U>
-	void operator()(const boost::shared_ptr<std::vector<T> > & array, const boost::shared_ptr<std::vector<U> > & arrayToCopy) const
-	{
-		unsigned int size = mStartIndex + mNumValues;
-		if(mArrayStride > 1)
-		{
-			size = mStartIndex + mNumValues * mArrayStride - 1;
-		}
-		if(array->size() < size)
-		{
-			array->resize(size);
-		}
-		for(int i=0; i<mNumValues; ++i)
-		{
-			array->operator[](mStartIndex + i*mArrayStride) = (T)arrayToCopy->operator[](mValuesStartIndex + i*mValuesStride);
-		}
-	}
-
-private:
-
-	const unsigned int mStartIndex;
-	const unsigned int mValuesStartIndex;
-	const unsigned int mNumValues;
-	const unsigned int mArrayStride;
-	const unsigned int mValuesStride;
-};
-
 class XdmfArray::Erase : public boost::static_visitor<void> {
 public:
 
@@ -245,6 +206,45 @@ private:
 	const unsigned int mArrayPointerNumValues;
 };
 
+class XdmfArray::InsertArray : public boost::static_visitor<void> {
+public:
+
+	InsertArray(const unsigned int startIndex, const unsigned int valuesStartIndex, const unsigned int numValues, const unsigned int arrayStride, const unsigned int valuesStride) :
+		mStartIndex(startIndex),
+		mValuesStartIndex(valuesStartIndex),
+		mNumValues(numValues),
+		mArrayStride(arrayStride),
+		mValuesStride(valuesStride)
+	{
+	}
+
+	template<typename T, typename U>
+	void operator()(const boost::shared_ptr<std::vector<T> > & array, const boost::shared_ptr<std::vector<U> > & arrayToCopy) const
+	{
+		unsigned int size = mStartIndex + mNumValues;
+		if(mArrayStride > 1)
+		{
+			size = mStartIndex + mNumValues * mArrayStride - 1;
+		}
+		if(array->size() < size)
+		{
+			array->resize(size);
+		}
+		for(unsigned int i=0; i<mNumValues; ++i)
+		{
+			array->operator[](mStartIndex + i*mArrayStride) = (T)arrayToCopy->operator[](mValuesStartIndex + i*mValuesStride);
+		}
+	}
+
+private:
+
+	const unsigned int mStartIndex;
+	const unsigned int mValuesStartIndex;
+	const unsigned int mNumValues;
+	const unsigned int mArrayStride;
+	const unsigned int mValuesStride;
+};
+
 class XdmfArray::InternalizeArrayPointer : public boost::static_visitor<void> {
 public:
 
@@ -257,7 +257,7 @@ public:
 	void operator()(const boost::shared_array<const T> & array) const
 	{
 		mArray->mHaveArrayPointer = false;
-		mArray->copyValues(0, array.get(), mArray->mArrayPointerNumValues);
+		mArray->insert(0, array.get(), mArray->mArrayPointerNumValues);
 		mArray->mArrayPointer = boost::shared_array<const T>();
 		mArray->mArrayPointerNumValues = 0;
 	}
@@ -322,9 +322,9 @@ boost::shared_ptr<XdmfArray> XdmfArray::New()
 }
 
 XdmfArray::XdmfArray() :
+	mArrayPointerNumValues(0),
 	mHaveArray(false),
 	mHaveArrayPointer(false),
-	mArrayPointerNumValues(0),
 	mHDF5Controller(boost::shared_ptr<XdmfHDF5Controller>()),
 	mName(""),
 	mTmpReserveSize(0)
@@ -343,23 +343,6 @@ void XdmfArray::clear()
 	{
 		return boost::apply_visitor(Clear(), mArray);
 	}
-}
-
-void XdmfArray::copyValues(const unsigned int startIndex, const boost::shared_ptr<const XdmfArray> values, const unsigned int valuesStartIndex, const unsigned int numValues, const unsigned int arrayStride, const unsigned int valuesStride)
-{
-	if(mHaveArrayPointer)
-	{
-		internalizeArrayPointer();
-	}
-	if(!mHaveArray)
-	{
-		// Copy the values variant in order to get the type (only taking smart pointer so no worries about large copies)
-		mArray = values->mArray;
-		// Reinitialize variant array to contain new array with same type.
-		boost::apply_visitor(NewArray(), mArray);
-		mHaveArray = true;
-	}
-	boost::apply_visitor(CopyArrayValues(startIndex, valuesStartIndex, numValues, arrayStride, valuesStride), mArray, values->mArray);
 }
 
 void XdmfArray::erase(const unsigned int index)
@@ -419,7 +402,7 @@ std::map<std::string, std::string> XdmfArray::getItemProperties() const
 		arrayProperties["Format"] = "XML";
 	}
 	std::stringstream size;
-	size <<  this->size();
+	size <<  this->getSize();
 	arrayProperties["Dimensions"] = size.str();
 	if(mName.compare("") != 0)
 	{
@@ -440,12 +423,29 @@ std::string XdmfArray::getName() const
 	return mName;
 }
 
-void * XdmfArray::getValuesPointer()
+unsigned int XdmfArray::getSize() const
 {
-	return const_cast<void *>(static_cast<const XdmfArray &>(*this).getValuesPointer());
+	if(mHaveArray)
+	{
+		return boost::apply_visitor(Size(), mArray);
+	}
+	else if(mHaveArrayPointer)
+	{
+		return mArrayPointerNumValues;
+	}
+	else if(mHDF5Controller)
+	{
+		return mHDF5Controller->getSize();
+	}
+	return 0;
 }
 
-const void * XdmfArray::getValuesPointer() const
+void * XdmfArray::getValuesInternal()
+{
+	return const_cast<void *>(static_cast<const XdmfArray &>(*this).getValuesInternal());
+}
+
+const void * XdmfArray::getValuesInternal() const
 {
 	if(mHaveArray)
 	{
@@ -519,6 +519,23 @@ void XdmfArray::initialize(const boost::shared_ptr<const XdmfArrayType> arrayTyp
 	}
 }
 
+void XdmfArray::insert(const unsigned int startIndex, const boost::shared_ptr<const XdmfArray> values, const unsigned int valuesStartIndex, const unsigned int numValues, const unsigned int arrayStride, const unsigned int valuesStride)
+{
+	if(mHaveArrayPointer)
+	{
+		internalizeArrayPointer();
+	}
+	if(!mHaveArray)
+	{
+		// Copy the values variant in order to get the type (only taking smart pointer so no worries about large copies)
+		mArray = values->mArray;
+		// Reinitialize variant array to contain new array with same type.
+		boost::apply_visitor(NewArray(), mArray);
+		mHaveArray = true;
+	}
+	boost::apply_visitor(InsertArray(startIndex, valuesStartIndex, numValues, arrayStride, valuesStride), mArray, values->mArray);
+}
+
 bool XdmfArray::isInitialized() const
 {
 	return mHaveArray || mHaveArrayPointer;
@@ -534,6 +551,7 @@ void XdmfArray::internalizeArrayPointer()
 
 void XdmfArray::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader)
 {
+	XdmfItem::populateItem(itemProperties, childItems, reader);
 	std::string contentVal;
 	unsigned int sizeVal = 1;
 
@@ -673,23 +691,6 @@ void XdmfArray::setHDF5Controller(const boost::shared_ptr<XdmfHDF5Controller> hd
 void XdmfArray::setName(const std::string & name)
 {
 	mName = name;
-}
-
-std::size_t XdmfArray::size() const
-{
-	if(mHaveArray)
-	{
-		return boost::apply_visitor(Size(), mArray);
-	}
-	else if(mHaveArrayPointer)
-	{
-		return mArrayPointerNumValues;
-	}
-	else if(mHDF5Controller)
-	{
-		return mHDF5Controller->size();
-	}
-	return 0;
 }
 
 void XdmfArray::swap(const boost::shared_ptr<XdmfArray> array)

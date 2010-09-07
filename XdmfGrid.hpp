@@ -181,6 +181,8 @@ public:
 	 */
 	boost::shared_ptr<const XdmfTopology> getTopology() const;
 
+	using XdmfItem::insert;
+
 	/**
 	 * Insert an attribute into the grid.
 	 *

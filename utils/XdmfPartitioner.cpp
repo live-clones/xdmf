@@ -44,7 +44,7 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 	assert(gridToPartition->getGeometry() && gridToPartition->getTopology());
 
 	int metisElementType;
-	int nodesPerElement;
+	unsigned int nodesPerElement;
 
 	boost::shared_ptr<const XdmfTopologyType> topologyType = gridToPartition->getTopology()->getType();
 	if(topologyType == XdmfTopologyType::Triangle() || topologyType == XdmfTopologyType::Triangle_6())
@@ -83,9 +83,9 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 
 	int numElements = gridToPartition->getTopology()->getNumberElements();
 	idxtype * metisConnectivity = new idxtype[nodesPerElement * numElements];
-	for(unsigned int i=0; i<numElements; ++i)
+	for(int i=0; i<numElements; ++i)
 	{
-		gridToPartition->getTopology()->getValuesCopy(i*topologyType->getNodesPerElement(), metisConnectivity + i * nodesPerElement, nodesPerElement);
+		gridToPartition->getTopology()->getValues(i*topologyType->getNodesPerElement(), metisConnectivity + i * nodesPerElement, nodesPerElement);
 	}
 
 	int numNodes = gridToPartition->getGeometry()->getNumberPoints();
@@ -141,12 +141,12 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 
 	// Fill in globalNodeId for each partition
 	unsigned int totalIndex = 0;
-	for (unsigned int i=0; i<numElements; ++i)
+	for (int i=0; i<numElements; ++i)
 	{
 		unsigned int partitionId = elementsPartition[i];
 		for (unsigned int j=0; j<topologyType->getNodesPerElement(); ++j)
 		{
-			unsigned int globalNodeId = gridToPartition->getTopology()->getValueCopy<unsigned int>(totalIndex);
+			unsigned int globalNodeId = gridToPartition->getTopology()->getValue<unsigned int>(totalIndex);
 			if (globalToLocalNodeIdMap[partitionId].count(globalNodeId) == 0)
 			{
 				// Have not seen this node, need to add to map
@@ -193,7 +193,7 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 
 			for(std::map<unsigned int, unsigned int>::const_iterator iter = currNodeMap.begin(); iter != currNodeMap.end(); ++iter)
 			{
-				partitioned->getGeometry()->copyValues(iter->second * numDimensions, gridToPartition->getGeometry(), iter->first * numDimensions, numDimensions);
+				partitioned->getGeometry()->insert(iter->second * numDimensions, gridToPartition->getGeometry(), iter->first * numDimensions, numDimensions);
 			}
 
 			if(heavyDataWriter)
@@ -211,8 +211,8 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 				// Translate these global node ids to local node ids
 				for(unsigned int j=0; j<topologyType->getNodesPerElement(); ++j)
 				{
-					unsigned int globalNodeId = currNodeMap[gridToPartition->getTopology()->getValueCopy<unsigned int>(*iter * topologyType->getNodesPerElement() + j)];
-					partitioned->getTopology()->copyValues(index, &globalNodeId, 1);
+					unsigned int globalNodeId = currNodeMap[gridToPartition->getTopology()->getValue<unsigned int>(*iter * topologyType->getNodesPerElement() + j)];
+					partitioned->getTopology()->insert(index, &globalNodeId, 1);
 					index++;
 				}
 			}
@@ -232,7 +232,7 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 				globalNodeIds->initialize<unsigned int>(currNodeMap.size());
 				for(std::map<unsigned int, unsigned int>::const_iterator iter = currNodeMap.begin(); iter != currNodeMap.end(); ++iter)
 				{
-					globalNodeIds->copyValues(iter->second, &iter->first, 1);
+					globalNodeIds->insert(iter->second, &iter->first, 1);
 				}
 				partitioned->insert(globalNodeIds);
 
@@ -288,11 +288,11 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 					createdAttribute->setCenter(currAttribute->getCenter());
 					createdAttribute->setType(currAttribute->getType());
 					unsigned int index = 0;
-					unsigned int numValsPerComponent = currAttribute->size() / gridToPartition->getTopology()->getNumberElements();
+					unsigned int numValsPerComponent = currAttribute->getSize() / gridToPartition->getTopology()->getNumberElements();
 					createdAttribute->initialize(currAttribute->getArrayType(), currElemIds.size() * numValsPerComponent);
 					for(std::vector<unsigned int>::const_iterator iter = currElemIds.begin(); iter != currElemIds.end(); ++iter)
 					{
-						createdAttribute->copyValues(index, currAttribute, *iter * numValsPerComponent, numValsPerComponent);
+						createdAttribute->insert(index, currAttribute, *iter * numValsPerComponent, numValsPerComponent);
 						index += numValsPerComponent;
 					}
 				}
@@ -305,7 +305,7 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 					createdAttribute->initialize(currAttribute->getArrayType(), currNodeMap.size());
 					for(std::map<unsigned int, unsigned int>::const_iterator iter = currNodeMap.begin(); iter != currNodeMap.end(); ++iter)
 					{
-						createdAttribute->copyValues(iter->second, currAttribute, iter->first, 1);
+						createdAttribute->insert(iter->second, currAttribute, iter->first, 1);
 					}
 				}
 				if(createdAttribute)
@@ -353,9 +353,9 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 
 				if(currSet->getType() == XdmfSetType::Cell() || currSet->getType() == XdmfSetType::Face() || currSet->getType() == XdmfSetType::Edge())
 				{
-					for(unsigned int k=0; k<currSet->size(); ++k)
+					for(unsigned int k=0; k<currSet->getSize(); ++k)
 					{
-						std::vector<unsigned int>::const_iterator val = std::find(currElemIds.begin(), currElemIds.end(), currSet->getValueCopy<unsigned int>(k));
+						std::vector<unsigned int>::const_iterator val = std::find(currElemIds.begin(), currElemIds.end(), currSet->getValue<unsigned int>(k));
 						if(val != currElemIds.end())
 						{
 							unsigned int valToPush = val - currElemIds.begin();
@@ -365,16 +365,16 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 				}
 				else if(currSet->getType() == XdmfSetType::Node())
 				{
-					for(unsigned int k=0; k<currSet->size(); ++k)
+					for(unsigned int k=0; k<currSet->getSize(); ++k)
 					{
-						std::map<unsigned int, unsigned int>::const_iterator val = currNodeMap.find(currSet->getValueCopy<unsigned int>(k));
+						std::map<unsigned int, unsigned int>::const_iterator val = currNodeMap.find(currSet->getValue<unsigned int>(k));
 						if(val != currNodeMap.end())
 						{
 							partitionedSet->pushBack(val->second);
 						}
 					}
 				}
-				if(partitionedSet->size() > 0)
+				if(partitionedSet->getSize() > 0)
 				{
 					partitioned->insert(partitionedSet);
 					partitionedSet->setName(currSet->getName());

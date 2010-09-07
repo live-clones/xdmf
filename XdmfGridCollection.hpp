@@ -16,8 +16,8 @@ class XdmfGridCollectionType;
  *
  * It is valid to nest collections.  A spatial collection within a temporal collection is commonly used.
  */
-class XdmfGridCollection : public XdmfGrid,
-	public XdmfDomain {
+class XdmfGridCollection : public XdmfDomain,
+	public XdmfGrid {
 
 public:
 
@@ -48,11 +48,18 @@ public:
 	using XdmfGrid::insert;
 
 	/**
+	 * Insert an information into the grid collection (needed to use virtual inheritance correctly).
+	 *
+	 * @param information an XdmfInformation to attach to this item.
+	 */
+	void insert(const boost::shared_ptr<XdmfInformation> information);
+
+	/**
 	 * Set the XdmfGridCollectionType associated with this grid collection.
 	 *
 	 * @param collectionType the XdmfGridCollectionType to set.
 	 */
-	void setType(const boost::shared_ptr<const XdmfGridCollectionType> collectionType);
+	void setType(const boost::shared_ptr<const XdmfGridCollectionType> type);
 
 	void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor);
 
@@ -66,7 +73,7 @@ private:
 	XdmfGridCollection(const XdmfGridCollection & collection);  // Not implemented.
 	void operator=(const XdmfGridCollection & collection);  // Not implemented.
 
-	boost::shared_ptr<const XdmfGridCollectionType> mCollectionType;
+	boost::shared_ptr<const XdmfGridCollectionType> mType;
 };
 
 #endif /* XDMFGRID_HPP_ */

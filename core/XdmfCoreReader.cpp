@@ -84,7 +84,7 @@ public:
 						xmlXPathObjectPtr xPathObject = xmlXPtrEval(xpointer, mXPathContext);
 						if(xPathObject && xPathObject->nodesetval)
 						{
-							for(unsigned int i=0; i<xPathObject->nodesetval->nodeNr; ++i)
+							for(int i=0; i<xPathObject->nodesetval->nodeNr; ++i)
 							{
 								this->readSingleNode(xPathObject->nodesetval->nodeTab[i], myItems);
 							}
@@ -145,7 +145,7 @@ public:
 		xmlXPathObjectPtr xPathObject = xmlXPathEvalExpression((xmlChar*)xPath.c_str(), mXPathContext);
 		if(xPathObject && xPathObject->nodesetval)
 		{
-			for(unsigned int i=0; i<xPathObject->nodesetval->nodeNr; ++i)
+			for(int i=0; i<xPathObject->nodesetval->nodeNr; ++i)
 			{
 				this->readSingleNode(xPathObject->nodesetval->nodeTab[i], myItems);
 			}

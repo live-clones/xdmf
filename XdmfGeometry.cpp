@@ -15,8 +15,8 @@ boost::shared_ptr<XdmfGeometry> XdmfGeometry::New()
 }
 
 XdmfGeometry::XdmfGeometry() :
-	mGeometryType(XdmfGeometryType::NoGeometryType()),
-	mNumberPoints(0)
+	mNumberPoints(0),
+	mType(XdmfGeometryType::NoGeometryType())
 {
 }
 
@@ -29,7 +29,7 @@ const std::string XdmfGeometry::ItemTag = "Geometry";
 std::map<std::string, std::string> XdmfGeometry::getItemProperties() const
 {
 	std::map<std::string, std::string> geometryProperties;
-	mGeometryType->getProperties(geometryProperties);
+	mType->getProperties(geometryProperties);
 	return geometryProperties;
 }
 
@@ -40,21 +40,22 @@ std::string XdmfGeometry::getItemTag() const
 
 unsigned int XdmfGeometry::getNumberPoints() const
 {
-	if(mGeometryType->getDimensions() == 0)
+	if(mType->getDimensions() == 0)
 	{
 		return 0;
 	}
-	return this->size() / mGeometryType->getDimensions();
+	return this->getSize() / mType->getDimensions();
 }
 
 boost::shared_ptr<const XdmfGeometryType> XdmfGeometry::getType() const
 {
-	return mGeometryType;
+	return mType;
 }
 
 void XdmfGeometry::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader)
 {
-	mGeometryType = XdmfGeometryType::New(itemProperties);
+	XdmfItem::populateItem(itemProperties, childItems, reader);
+	mType = XdmfGeometryType::New(itemProperties);
 	for(std::vector<boost::shared_ptr<XdmfItem> >::const_iterator iter = childItems.begin(); iter != childItems.end(); ++iter)
 	{
 		if(boost::shared_ptr<XdmfArray> array = boost::shared_dynamic_cast<XdmfArray>(*iter))
@@ -65,7 +66,7 @@ void XdmfGeometry::populateItem(const std::map<std::string, std::string> & itemP
 	}
 }
 
-void XdmfGeometry::setType(const boost::shared_ptr<const XdmfGeometryType> geometryType)
+void XdmfGeometry::setType(const boost::shared_ptr<const XdmfGeometryType> type)
 {
-	mGeometryType = geometryType;
+	mType = type;
 }

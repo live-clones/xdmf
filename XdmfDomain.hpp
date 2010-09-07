@@ -79,17 +79,19 @@ public:
 	 */
 	unsigned int getNumberGridCollections() const;
 
+	using XdmfItem::insert;
+
 	/**
 	 * Insert a XdmfGrid into the domain.
 	 *
-	 * @param grid a shared pointer to an XdmfGrid to insert into the domain.
+	 * @param grid a XdmfGrid to insert into the domain.
 	 */
 	void insert(const boost::shared_ptr<XdmfGrid> grid);
 
 	/**
 	 * Insert a XdmfGridCollection into the domain.
 	 *
-	 * @param gridCollection a shared pointer to an XdmfGridCollection to insert into the domain.
+	 * @param gridCollection a XdmfGridCollection to insert into the domain.
 	 */
 	void insert(const boost::shared_ptr<XdmfGridCollection> gridCollection);
 

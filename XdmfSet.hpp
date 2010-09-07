@@ -90,6 +90,9 @@ public:
 	 */
 	boost::shared_ptr<const XdmfSetType> getType() const;
 
+	using XdmfArray::insert;
+	using XdmfItem::insert;
+
 	/**
 	 * Insert an attribute into the set.
 	 *
@@ -123,7 +126,7 @@ public:
 	 *
 	 * @param setType the XdmfSetType to set.
 	 */
-	void setType(const boost::shared_ptr<const XdmfSetType> setType);
+	void setType(const boost::shared_ptr<const XdmfSetType> type);
 
 	void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor);
 
@@ -139,7 +142,7 @@ private:
 
 	std::vector<boost::shared_ptr<XdmfAttribute> > mAttributes;
 	std::string mName;
-	boost::shared_ptr<const XdmfSetType> mSetType;
+	boost::shared_ptr<const XdmfSetType> mType;
 };
 
 #endif /* XDMFSET_HPP_ */

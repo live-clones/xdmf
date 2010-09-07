@@ -157,7 +157,7 @@ void XdmfWriter::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisito
 		this->visit(dynamic_cast<XdmfItem &>(array), visitor);
 	}
 
-	if(array.size() > 0 && !(mImpl->mLastXPathed && isSubclassed))
+	if(array.getSize() > 0 && !(mImpl->mLastXPathed && isSubclassed))
 	{
 		std::stringstream xmlTextValues;
 
@@ -167,7 +167,7 @@ void XdmfWriter::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisito
 			array.read();
 		}
 
-		if(array.getHDF5Controller() || array.size() > mImpl->mLightDataLimit)
+		if(array.getHDF5Controller() || array.getSize() > mImpl->mLightDataLimit)
 		{
 			// Write values to HDF5
 			mImpl->mHDF5Writer->visit(array, mImpl->mHDF5Writer);

@@ -1,12 +1,13 @@
 #include "XdmfGridCollection.hpp"
 #include "XdmfGridCollectionType.hpp"
+#include "XdmfInformation.hpp"
 #include "XdmfReader.hpp"
 #include "XdmfWriter.hpp"
 
 #include "XdmfTestCompareFiles.hpp"
 #include "XdmfTestDataGenerator.hpp"
 
-int main(int argc, char* argv[])
+int main(int, char *)
 {
 	// Test != and == operators
 	assert(XdmfGridCollectionType::Spatial() == XdmfGridCollectionType::Spatial());
@@ -30,6 +31,9 @@ int main(int argc, char* argv[])
 	assert(gridCollection->getNumberGrids() == 0);
 	gridCollection->insert(childGrid1);
 	gridCollection->insert(childGrid2);
+
+	boost::shared_ptr<XdmfInformation> information = XdmfInformation::New("Key", "Value");
+	gridCollection->insert(information);
 
 	gridCollection->setType(XdmfGridCollectionType::Temporal());
 	assert(gridCollection->getType() == XdmfGridCollectionType::Temporal());

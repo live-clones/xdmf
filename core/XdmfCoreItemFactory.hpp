@@ -17,7 +17,7 @@ class XdmfCoreItemFactory {
 
 public:
 
-	virtual ~XdmfCoreItemFactory();
+	virtual ~XdmfCoreItemFactory() = 0;
 
 	/**
 	 * Create a new XdmfItem.

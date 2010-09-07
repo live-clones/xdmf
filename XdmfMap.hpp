@@ -36,6 +36,8 @@ public:
 
 	std::string getItemTag() const;
 
+	using XdmfItem::insert;
+
 	void insert(const unsigned int localNodeId, const unsigned int remoteTaskId, const unsigned int remoteLocalNodeId);
 
 	/**

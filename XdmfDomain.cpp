@@ -86,6 +86,7 @@ void XdmfDomain::insert(const boost::shared_ptr<XdmfGridCollection> gridCollecti
 
 void XdmfDomain::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader)
 {
+	XdmfItem::populateItem(itemProperties, childItems, reader);
 	for(std::vector<boost::shared_ptr<XdmfItem> >::const_iterator iter = childItems.begin(); iter != childItems.end(); ++iter)
 	{
 		if(boost::shared_ptr<XdmfGridCollection> gridCollection = boost::shared_dynamic_cast<XdmfGridCollection>(*iter))
@@ -119,6 +120,7 @@ void XdmfDomain::removeGridCollection(const unsigned int index)
 
 void XdmfDomain::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
+	XdmfItem::traverse(visitor);
 	for(std::vector<boost::shared_ptr<XdmfGrid> >::const_iterator iter = mGrids.begin(); iter != mGrids.end(); ++iter)
 	{
 		(*iter)->accept(visitor);

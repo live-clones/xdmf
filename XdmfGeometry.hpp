@@ -51,7 +51,7 @@ public:
 	 *
 	 * @param geometryType the XdmfGeometryType to set.
 	 */
-	void setType(const boost::shared_ptr<const XdmfGeometryType> geometryType);
+	void setType(const boost::shared_ptr<const XdmfGeometryType> type);
 
 protected:
 
@@ -63,8 +63,8 @@ private:
 	XdmfGeometry(const XdmfGeometry & geometry);  // Not implemented.
 	void operator=(const XdmfGeometry & geometry);  // Not implemented.
 
-	boost::shared_ptr<const XdmfGeometryType> mGeometryType;
 	int mNumberPoints;
+	boost::shared_ptr<const XdmfGeometryType> mType;
 };
 
 #endif /* XDMFGEOMETRY_HPP_ */

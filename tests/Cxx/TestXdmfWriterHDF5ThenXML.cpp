@@ -4,7 +4,7 @@
 
 #include "XdmfTestDataGenerator.hpp"
 
-int main(int argc, char* argv[])
+int main(int, char *)
 {
 	boost::shared_ptr<XdmfGrid> grid = XdmfTestDataGenerator::createHexahedron();
 
@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
 	grid->getTopology()->accept(hdf5Writer);
 	grid->getTopology()->release();
 
-	for(int i=0; i<grid->getNumberAttributes(); ++i)
+	for(unsigned int i=0; i<grid->getNumberAttributes(); ++i)
 	{
 		grid->getAttribute(i)->accept(hdf5Writer);
 		grid->getAttribute(i)->release();

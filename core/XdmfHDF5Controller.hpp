@@ -41,6 +41,13 @@ public:
 	std::string getFilePath() const;
 
 	/**
+	 * Get the size of the hdf5 data set owned by this controller.
+	 *
+	 * @return a int containing the size of the hdf5 data set.
+	 */
+	unsigned int getSize() const;
+
+	/**
 	 * Get the array type of the hdf5 data set owned by this controller.
 	 *
 	 * @return an XdmfArrayType containing the array type of the hdf5 data set.
@@ -53,13 +60,6 @@ public:
 	 * @param array and XdmfArray to read data into.
 	 */
 	void read(XdmfArray * const array);
-
-	/**
-	 * Get the size of the hdf5 data set owned by this controller.
-	 *
-	 * @return a int containing the size of the hdf5 data set.
-	 */
-	unsigned int size() const;
 
 protected:
 

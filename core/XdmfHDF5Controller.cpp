@@ -36,6 +36,11 @@ std::string XdmfHDF5Controller::getFilePath() const
 	return mFilePath;
 }
 
+unsigned int XdmfHDF5Controller::getSize() const
+{
+	return mSize;
+}
+
 boost::shared_ptr<const XdmfArrayType> XdmfHDF5Controller::getType() const
 {
 	return mType;
@@ -50,16 +55,11 @@ void XdmfHDF5Controller::read(XdmfArray * const array)
 	hid_t datatype = H5Dget_type(dataset);
 
 	array->initialize(mType, numVals);
-	H5Dread(dataset, datatype, H5S_ALL, H5S_ALL, H5P_DEFAULT, array->getValuesPointer());
+	H5Dread(dataset, datatype, H5S_ALL, H5S_ALL, H5P_DEFAULT, array->getValuesInternal());
 
 	herr_t status;
 	status = H5Tclose(datatype);
 	status = H5Sclose(dataspace);
 	status = H5Dclose(dataset);
 	status = H5Fclose(hdf5Handle);
-}
-
-unsigned int XdmfHDF5Controller::size() const
-{
-	return mSize;
 }

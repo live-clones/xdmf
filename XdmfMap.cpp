@@ -41,9 +41,9 @@ std::vector<boost::shared_ptr<XdmfMap> > XdmfMap::New(const std::vector<boost::s
 	for(unsigned int i=0; i<globalNodeIds.size(); ++i)
 	{
 		const boost::shared_ptr<XdmfAttribute> currGlobalNodeIds = globalNodeIds[i];
-		for(unsigned int j=0; j<currGlobalNodeIds->size(); ++j)
+		for(unsigned int j=0; j<currGlobalNodeIds->getSize(); ++j)
 		{
-			unsigned int currGlobalNodeId = currGlobalNodeIds->getValueCopy<unsigned int>(j);
+			unsigned int currGlobalNodeId = currGlobalNodeIds->getValue<unsigned int>(j);
 			if(currGlobalNodeId > maxGlobalNodeId)
 			{
 				maxGlobalNodeId = currGlobalNodeId;
@@ -58,9 +58,9 @@ std::vector<boost::shared_ptr<XdmfMap> > XdmfMap::New(const std::vector<boost::s
 	for(unsigned int i=0; i<globalNodeIds.size(); ++i)
 	{
 		const boost::shared_ptr<XdmfAttribute> currGlobalNodeIds = globalNodeIds[i];
-		for(unsigned int j=0; j<currGlobalNodeIds->size(); ++j)
+		for(unsigned int j=0; j<currGlobalNodeIds->getSize(); ++j)
 		{
-			unsigned int currGlobalNodeId = currGlobalNodeIds->getValueCopy<unsigned int>(j);
+			unsigned int currGlobalNodeId = currGlobalNodeIds->getValue<unsigned int>(j);
 			globalNodeIdMap[currGlobalNodeId][i] = j;
 		}
 	}
@@ -73,9 +73,9 @@ std::vector<boost::shared_ptr<XdmfMap> > XdmfMap::New(const std::vector<boost::s
 		boost::shared_ptr<XdmfMap> map = XdmfMap::New();
 		toReturn.push_back(map);
 		const boost::shared_ptr<XdmfAttribute> currGlobalNodeIds = globalNodeIds[i];
-		for(unsigned int j=0; j<currGlobalNodeIds->size(); ++j)
+		for(unsigned int j=0; j<currGlobalNodeIds->getSize(); ++j)
 		{
-			unsigned int currGlobalNodeId = currGlobalNodeIds->getValueCopy<unsigned int>(j);
+			unsigned int currGlobalNodeId = currGlobalNodeIds->getValue<unsigned int>(j);
 			if(globalNodeIdMap[currGlobalNodeId].size() > 1)
 			{
 				for(std::map<unsigned int, unsigned int>::const_iterator iter = globalNodeIdMap[currGlobalNodeId].begin(); iter != globalNodeIdMap[currGlobalNodeId].end(); ++iter)
@@ -148,6 +148,7 @@ bool XdmfMap::isInitialized() const
 
 void XdmfMap::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader)
 {
+	XdmfItem::populateItem(itemProperties, childItems, reader);
 	std::vector<boost::shared_ptr<XdmfArray> > arrayVector;
 	arrayVector.reserve(3);
 	for(std::vector<boost::shared_ptr<XdmfItem> >::const_iterator iter = childItems.begin(); iter != childItems.end(); ++iter)
@@ -158,7 +159,7 @@ void XdmfMap::populateItem(const std::map<std::string, std::string> & itemProper
 		}
 	}
 	assert(arrayVector.size() == 3);
-	assert(arrayVector[0]->size() == arrayVector[1]->size() &&  arrayVector[0]->size() == arrayVector[2]->size());
+	assert(arrayVector[0]->getSize() == arrayVector[1]->getSize() &&  arrayVector[0]->getSize() == arrayVector[2]->getSize());
 	bool needToRead = false;
 	for(std::vector<boost::shared_ptr<XdmfArray> >::const_iterator iter = arrayVector.begin(); iter != arrayVector.end(); ++iter)
 	{
@@ -174,9 +175,9 @@ void XdmfMap::populateItem(const std::map<std::string, std::string> & itemProper
 		{
 			(*iter)->read();
 		}
-		for(unsigned int i=0; i<arrayVector[0]->size(); ++i)
+		for(unsigned int i=0; i<arrayVector[0]->getSize(); ++i)
 		{
-			this->insert(arrayVector[0]->getValueCopy<unsigned int>(i), arrayVector[1]->getValueCopy<unsigned int>(i), arrayVector[2]->getValueCopy<unsigned int>(i));
+			this->insert(arrayVector[0]->getValue<unsigned int>(i), arrayVector[1]->getValue<unsigned int>(i), arrayVector[2]->getValue<unsigned int>(i));
 		}
 	}
 	else
@@ -191,7 +192,7 @@ void XdmfMap::read()
 {
 	if(mImpl->mLocalNodeIdsHDF5Controller && mImpl->mRemoteTaskIdsHDF5Controller && mImpl->mRemoteLocalNodeIdsHDF5Controller)
 	{
-		assert(mImpl->mLocalNodeIdsHDF5Controller->size() == mImpl->mRemoteTaskIdsHDF5Controller->size() && mImpl->mLocalNodeIdsHDF5Controller->size() == mImpl->mRemoteLocalNodeIdsHDF5Controller->size());
+		assert(mImpl->mLocalNodeIdsHDF5Controller->getSize() == mImpl->mRemoteTaskIdsHDF5Controller->getSize() && mImpl->mLocalNodeIdsHDF5Controller->getSize() == mImpl->mRemoteLocalNodeIdsHDF5Controller->getSize());
 		boost::shared_ptr<XdmfArray> globalNodeIds = XdmfArray::New();
 		boost::shared_ptr<XdmfArray> taskIds = XdmfArray::New();
 		boost::shared_ptr<XdmfArray> localNodeIds = XdmfArray::New();
@@ -199,18 +200,18 @@ void XdmfMap::read()
 		mImpl->mRemoteTaskIdsHDF5Controller->read(taskIds.get());
 		mImpl->mRemoteLocalNodeIdsHDF5Controller->read(localNodeIds.get());
 
-		for(unsigned int i=0; i<globalNodeIds->size(); ++i)
+		for(unsigned int i=0; i<globalNodeIds->getSize(); ++i)
 		{
-			std::map<unsigned int, std::map<unsigned int, unsigned int> >::iterator iter = mImpl->mMap.find(globalNodeIds->getValueCopy<unsigned int>(i));
+			std::map<unsigned int, std::map<unsigned int, unsigned int> >::iterator iter = mImpl->mMap.find(globalNodeIds->getValue<unsigned int>(i));
 			if(iter != mImpl->mMap.end())
 			{
-				iter->second[taskIds->getValueCopy<unsigned int>(i)] = localNodeIds->getValueCopy<unsigned int>(i);
+				iter->second[taskIds->getValue<unsigned int>(i)] = localNodeIds->getValue<unsigned int>(i);
 			}
 			else
 			{
 				std::map<unsigned int, unsigned int> newMap;
-				newMap[taskIds->getValueCopy<unsigned int>(i)] = localNodeIds->getValueCopy<unsigned int>(i);
-				mImpl->mMap[globalNodeIds->getValueCopy<unsigned int>(i)] = newMap;
+				newMap[taskIds->getValue<unsigned int>(i)] = localNodeIds->getValue<unsigned int>(i);
+				mImpl->mMap[globalNodeIds->getValue<unsigned int>(i)] = newMap;
 			}
 		}
 	}
@@ -223,7 +224,7 @@ void XdmfMap::release()
 
 void XdmfMap::setHDF5Controllers(boost::shared_ptr<XdmfHDF5Controller> localNodeIdsHDF5Controller, boost::shared_ptr<XdmfHDF5Controller> remoteTaskIdsHDF5Controller, boost::shared_ptr<XdmfHDF5Controller> remoteLocalNodeIdsHDF5Controller)
 {
-	assert(localNodeIdsHDF5Controller->size() == remoteTaskIdsHDF5Controller->size() && localNodeIdsHDF5Controller->size() == remoteLocalNodeIdsHDF5Controller->size());
+	assert(localNodeIdsHDF5Controller->getSize() == remoteTaskIdsHDF5Controller->getSize() && localNodeIdsHDF5Controller->getSize() == remoteLocalNodeIdsHDF5Controller->getSize());
 	mImpl->mLocalNodeIdsHDF5Controller = localNodeIdsHDF5Controller;
 	mImpl->mRemoteTaskIdsHDF5Controller = remoteTaskIdsHDF5Controller;
 	mImpl->mRemoteLocalNodeIdsHDF5Controller = remoteLocalNodeIdsHDF5Controller;
@@ -232,6 +233,7 @@ void XdmfMap::setHDF5Controllers(boost::shared_ptr<XdmfHDF5Controller> localNode
 
 void XdmfMap::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
+	XdmfItem::traverse(visitor);
 	boost::shared_ptr<XdmfArray> localNodeIds = XdmfArray::New();
 	boost::shared_ptr<XdmfArray> remoteTaskIds = XdmfArray::New();
 	boost::shared_ptr<XdmfArray> remoteLocalNodeIds = XdmfArray::New();

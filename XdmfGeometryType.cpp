@@ -63,8 +63,8 @@ boost::shared_ptr<const XdmfGeometryType> XdmfGeometryType::Origin_DXDY()
 }
 
 XdmfGeometryType::XdmfGeometryType(const std::string& name, const int& dimensions) :
-	mName(name),
-	mDimensions(dimensions)
+	mDimensions(dimensions),
+	mName(name)
 {
 }
 

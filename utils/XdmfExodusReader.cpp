@@ -71,7 +71,7 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName,
 	{
 		toReturn->getGeometry()->setType(XdmfGeometryType::XYZ());
 	}
-	else if(num_dim = 2)
+	else if(num_dim == 2)
 	{
 		toReturn->getGeometry()->setType(XdmfGeometryType::XY());
 	}
@@ -83,7 +83,7 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName,
 
 	toReturn->getGeometry()->initialize(XdmfArrayType::Float64());
 	toReturn->getGeometry()->reserve(num_nodes * num_dim);
-	for(unsigned int i=0; i<num_nodes; ++i)
+	for(int i=0; i<num_nodes; ++i)
 	{
 		toReturn->getGeometry()->pushBack(x[i]);
 		toReturn->getGeometry()->pushBack(y[i]);
@@ -112,7 +112,7 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName,
 	topologyTypes.reserve(num_elem_blk);
 	int totalNumElem = 0;
 	int totalConns = 0;
-	for(unsigned int i=0; i<num_elem_blk; ++i)
+	for(int i=0; i<num_elem_blk; ++i)
 	{
 		char * elem_type = new char[MAX_STR_LENGTH+1];
 		int num_nodes_per_elem, num_elem_this_blk, num_attr;
@@ -151,10 +151,10 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName,
 	topologyTypes.clear();
 
 	toReturn->getTopology()->initialize(XdmfArrayType::Int32(), totalConns);
-	int * connectivityPointer = (int *)toReturn->getTopology()->getValuesPointer();
+	int * connectivityPointer = (int *)toReturn->getTopology()->getValuesInternal();
 	// Read connectivity from element blocks
 	int elemIndex = 0;
-	for(unsigned int i=0; i<num_elem_blk; ++i)
+	for(int i=0; i<num_elem_blk; ++i)
 	{
 		ex_get_elem_conn(exodusHandle, blockIds[i], connectivityPointer + elemIndex);
 		elemIndex += numElemsInBlock[i] * numNodesPerElemInBlock[i];
@@ -167,7 +167,7 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName,
 		int itmp[4];
 
 		// Exodus Node ordering does not match Xdmf, we must convert.
-		for(unsigned int i=0; i<totalNumElem; ++i)
+		for(int i=0; i<totalNumElem; ++i)
 		{
 			ptr += 12;
 
@@ -201,7 +201,7 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName,
 		int itmp[3];
 
 		// Exodus Node ordering does not match Xdmf, we must convert.
-		for (unsigned int i=0; i<totalNumElem; i++)
+		for (int i=0; i<totalNumElem; i++)
 		{
 			ptr += 9;
 
@@ -229,7 +229,7 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName,
 	}
 
 	// Subtract all node ids by 1 since exodus indices start at 1
-	for(unsigned int i=0; i<totalConns; ++i)
+	for(int i=0; i<totalConns; ++i)
 	{
 		connectivityPointer[i]--;
 	}
@@ -245,12 +245,12 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName,
 	globalIds->setCenter(XdmfAttributeCenter::Node());
 	globalIds->setType(XdmfAttributeType::GlobalId());
 	globalIds->initialize(XdmfArrayType::Int32(), num_nodes);
-	int * globalIdsPointer = (int*)globalIds->getValuesPointer();
+	int * globalIdsPointer = (int*)globalIds->getValuesInternal();
 
 	ex_get_node_num_map(exodusHandle, globalIdsPointer);
 
 	// Subtract all node ids by 1 since exodus indices start at 1
-	for(unsigned int i=0; i<num_nodes; ++i)
+	for(int i=0; i<num_nodes; ++i)
 	{
 		globalIdsPointer[i]--;
 	}
@@ -268,13 +268,13 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName,
 	ex_get_node_set_ids(exodusHandle, nodeSetIds);
 
 	char * node_set_names[num_node_sets];
-	for (unsigned int i=0; i<num_node_sets; ++i)
+	for (int i=0; i<num_node_sets; ++i)
 	{
 		node_set_names[i] = new char[MAX_STR_LENGTH+1];
 	}
 	ex_get_names(exodusHandle, EX_NODE_SET, node_set_names);
 
-	for (unsigned int i=0; i<num_node_sets; ++i)
+	for (int i=0; i<num_node_sets; ++i)
 	{
 		int num_nodes_in_set, num_df_in_set;
 		ex_get_node_set_param(exodusHandle, nodeSetIds[i], &num_nodes_in_set, &num_df_in_set);
@@ -292,11 +292,11 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName,
 			set->setName(node_set_names[i]);
 			set->setType(XdmfSetType::Node());
 			set->initialize(XdmfArrayType::Int32(), num_nodes_in_set);
-			int * setPointer = (int*)set->getValuesPointer();
+			int * setPointer = (int*)set->getValuesInternal();
 			ex_get_node_set(exodusHandle, nodeSetIds[i], setPointer);
 
 			// Subtract all node ids by 1 since exodus indices start at 1
-			for(unsigned int j=0; j<num_nodes_in_set; ++j)
+			for(int j=0; j<num_nodes_in_set; ++j)
 			{
 				setPointer[i]--;
 			}
@@ -368,7 +368,7 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName,
 	// Global variable data
 	double * global_var_vals = new double[num_global_vars];
 	ex_get_glob_vars(exodusHandle, 1, num_global_vars, &global_var_vals);
-	for (unsigned int i=0; i<num_global_vars; ++i)
+	for (int i=0; i<num_global_vars; ++i)
 	{
 		// Write global attribute to xdmf
 		boost::shared_ptr<XdmfAttribute> attribute = XdmfAttribute::New();
@@ -388,7 +388,7 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName,
 	delete [] global_var_vals;
 
 	// Nodal variable data
-	for (unsigned int i=0; i<num_nodal_vars; ++i)
+	for (int i=0; i<num_nodal_vars; ++i)
 	{
 		// The strcmp with "GlobalNodeId" is meant to prevent errors from occuring when a nodal variable is named GlobalNodeId.
 		// A GlobalNodeId attribute was added before when adding the nodal map which means that this attribute should be ignored...
@@ -400,7 +400,7 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName,
 			attribute->setCenter(XdmfAttributeCenter::Node());
 			attribute->setType(XdmfAttributeType::Scalar());
 			attribute->initialize(XdmfArrayType::Float64(), num_nodes);
-			ex_get_nodal_var(exodusHandle, 1, i+1, num_nodes, (double*)attribute->getValuesPointer());
+			ex_get_nodal_var(exodusHandle, 1, i+1, num_nodes, (double*)attribute->getValuesInternal());
 			toReturn->insert(attribute);
 			if(heavyDataWriter)
 			{
@@ -412,7 +412,7 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName,
 	}
 
 	// Element variable data
-	for (unsigned int i=0; i<num_elem_vars; ++i)
+	for (int i=0; i<num_elem_vars; ++i)
 	{
 		boost::shared_ptr<XdmfAttribute> attribute = XdmfAttribute::New();
 		attribute->setName(elem_var_names[i]);
@@ -420,9 +420,9 @@ boost::shared_ptr<XdmfGrid> XdmfExodusReader::read(const std::string & fileName,
 		attribute->setType(XdmfAttributeType::Scalar());
 		attribute->initialize(XdmfArrayType::Float64(), totalNumElem);
 		elemIndex = 0;
-		for (unsigned int j=0; j<num_elem_blk; ++j)
+		for (int j=0; j<num_elem_blk; ++j)
 		{
-			ex_get_elem_var(exodusHandle, 1, i+1, blockIds[j], numElemsInBlock[j], (double*)attribute->getValuesPointer() + elemIndex);
+			ex_get_elem_var(exodusHandle, 1, i+1, blockIds[j], numElemsInBlock[j], (double*)attribute->getValuesInternal() + elemIndex);
 			elemIndex += numElemsInBlock[j];
 		}
 		toReturn->insert(attribute);

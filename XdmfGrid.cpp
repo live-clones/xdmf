@@ -20,9 +20,9 @@ boost::shared_ptr<XdmfGrid> XdmfGrid::New()
 }
 
 XdmfGrid::XdmfGrid() :
+	mName("Grid"),
 	mGeometry(XdmfGeometry::New()),
 	mMap(boost::shared_ptr<XdmfMap>()),
-	mName("Grid"),
 	mTime(boost::shared_ptr<XdmfTime>()),
 	mTopology(XdmfTopology::New())
 {
@@ -175,6 +175,7 @@ void XdmfGrid::insert(const boost::shared_ptr<XdmfSet> set)
 
 void XdmfGrid::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader)
 {
+	XdmfItem::populateItem(itemProperties, childItems, reader);
 	std::map<std::string, std::string>::const_iterator name = itemProperties.find("Name");
 	if(name != itemProperties.end())
 	{
@@ -282,6 +283,7 @@ void XdmfGrid::setTopology(const boost::shared_ptr<XdmfTopology> topology)
 
 void XdmfGrid::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
+	XdmfItem::traverse(visitor);
 	if(mTime)
 	{
 		mTime->accept(visitor);

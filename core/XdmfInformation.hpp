@@ -20,6 +20,16 @@ public:
 	 */
 	static boost::shared_ptr<XdmfInformation> New();
 
+	/**
+	 * Create a new XdmfInformation.
+	 *
+	 * @param key a string containing the key of the XdmfInformation to create.
+	 * @param value a string containing the value of the XdmfInformation to create.
+	 *
+	 * @return constructed XdmfInformation
+	 */
+	static boost::shared_ptr<XdmfInformation> New(const std::string & key, const std::string & value);
+
 	virtual ~XdmfInformation();
 
 	LOKI_DEFINE_VISITABLE(XdmfInformation, XdmfItem)
@@ -32,14 +42,14 @@ public:
 	/**
 	 * Get the key for this information item.
 	 *
-	 * @return std::string containing the key.
+	 * @return string containing the key.
 	 */
 	std::string getKey() const;
 
 	/**
 	 * Get the value for this information item.
 	 *
-	 * @return std::string containing the value.
+	 * @return string containing the value.
 	 */
 	std::string getValue() const;
 
@@ -59,7 +69,7 @@ public:
 
 protected:
 
-	XdmfInformation();
+	XdmfInformation(const std::string & key = "", const std::string & value = "");
 	virtual void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader);
 
 private:

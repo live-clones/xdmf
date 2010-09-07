@@ -16,7 +16,7 @@ boost::shared_ptr<XdmfTopology> XdmfTopology::New()
 }
 
 XdmfTopology::XdmfTopology() :
-	mTopologyType(XdmfTopologyType::NoTopologyType())
+	mType(XdmfTopologyType::NoTopologyType())
 {
 }
 
@@ -34,8 +34,8 @@ std::string XdmfTopology::getItemTag() const
 std::map<std::string, std::string> XdmfTopology::getItemProperties() const
 {
 	std::map<std::string, std::string> topologyProperties;
-	mTopologyType->getProperties(topologyProperties);
-	if(mTopologyType != XdmfTopologyType::Polyvertex())
+	mType->getProperties(topologyProperties);
+	if(mType != XdmfTopologyType::Polyvertex())
 	{
 		std::stringstream numElements;
 		numElements << this->getNumberElements();
@@ -46,21 +46,22 @@ std::map<std::string, std::string> XdmfTopology::getItemProperties() const
 
 unsigned int XdmfTopology::getNumberElements() const
 {
-	if(mTopologyType->getNodesPerElement() == 0)
+	if(mType->getNodesPerElement() == 0)
 	{
 		return 0;
 	}
-	return this->size() / mTopologyType->getNodesPerElement();
+	return this->getSize() / mType->getNodesPerElement();
 }
 
 boost::shared_ptr<const XdmfTopologyType> XdmfTopology::getType() const
 {
-	return mTopologyType;
+	return mType;
 }
 
 void XdmfTopology::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader)
 {
-	mTopologyType = XdmfTopologyType::New(itemProperties);
+	XdmfItem::populateItem(itemProperties, childItems, reader);
+	mType = XdmfTopologyType::New(itemProperties);
 	for(std::vector<boost::shared_ptr<XdmfItem> >::const_iterator iter = childItems.begin(); iter != childItems.end(); ++iter)
 	{
 		if(boost::shared_ptr<XdmfArray> array = boost::shared_dynamic_cast<XdmfArray>(*iter))
@@ -71,7 +72,7 @@ void XdmfTopology::populateItem(const std::map<std::string, std::string> & itemP
 	}
 }
 
-void XdmfTopology::setType(const boost::shared_ptr<const XdmfTopologyType> topologyType)
+void XdmfTopology::setType(const boost::shared_ptr<const XdmfTopologyType> type)
 {
-	mTopologyType = topologyType;
+	mType = type;
 }

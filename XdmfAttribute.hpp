@@ -59,9 +59,9 @@ public:
 	/**
 	 * Set the XdmfAttributeCenter associated with this attribute.
 	 *
-	 * @param attributeCenter the XdmfAttributeCenter to set.
+	 * @param center the XdmfAttributeCenter to set.
 	 */
-	void setCenter(const boost::shared_ptr<const XdmfAttributeCenter> attributeCenter);
+	void setCenter(const boost::shared_ptr<const XdmfAttributeCenter> center);
 
 	/**
 	 * Set the name of the attribute.
@@ -73,9 +73,9 @@ public:
 	/**
 	 * Set the XdmfAttributeType associated with this attribute.
 	 *
-	 * @param attributeType XdmfAttributeType to set.
+	 * @param type XdmfAttributeType to set.
 	 */
-	void setType(const boost::shared_ptr<const XdmfAttributeType> attributeType);
+	void setType(const boost::shared_ptr<const XdmfAttributeType> type);
 
 protected:
 
@@ -87,9 +87,9 @@ private:
 	XdmfAttribute(const XdmfAttribute & attribute);  // Not implemented.
 	void operator=(const XdmfAttribute & attribute);  // Not implemented.
 
+	boost::shared_ptr<const XdmfAttributeCenter> mCenter;
 	std::string mName;
-	boost::shared_ptr<const XdmfAttributeCenter> mAttributeCenter;
-	boost::shared_ptr<const XdmfAttributeType> mAttributeType;
+	boost::shared_ptr<const XdmfAttributeType> mType;
 };
 
 #endif /* XDMFATTRIBUTE_HPP_ */

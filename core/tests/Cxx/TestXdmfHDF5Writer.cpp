@@ -2,7 +2,7 @@
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfHDF5Writer.hpp"
 
-int main(int argc, char* argv[])
+int main(int, char *)
 {
 	boost::shared_ptr<XdmfArray> array = XdmfArray::New();
 	array->pushBack(0);
@@ -57,13 +57,13 @@ int main(int argc, char* argv[])
 	array->accept(writer);
 	array->accept(writer);
 	array->accept(writer);
-	assert(array->size() == 2);
+	assert(array->getSize() == 2);
 	array->read();
-	assert(array->size() == 10);
+	assert(array->getSize() == 10);
 	for(int i=0; i<5; ++i)
 	{
-		assert(array->getValueCopy<int>(i*2) == 2);
-		assert(array->getValueCopy<int>(i*2 + 1) == 3);
+		assert(array->getValue<int>(i*2) == 2);
+		assert(array->getValue<int>(i*2 + 1) == 3);
 	}
 
 	return 0;

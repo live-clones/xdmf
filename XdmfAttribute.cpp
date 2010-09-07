@@ -16,9 +16,9 @@ boost::shared_ptr<XdmfAttribute> XdmfAttribute::New()
 }
 
 XdmfAttribute::XdmfAttribute() :
+	mCenter(XdmfAttributeCenter::Grid()),
 	mName(""),
-	mAttributeType(XdmfAttributeType::NoAttributeType()),
-	mAttributeCenter(XdmfAttributeCenter::Grid())
+	mType(XdmfAttributeType::NoAttributeType())
 {
 }
 
@@ -30,15 +30,15 @@ const std::string XdmfAttribute::ItemTag = "Attribute";
 
 boost::shared_ptr<const XdmfAttributeCenter> XdmfAttribute::getCenter() const
 {
-	return mAttributeCenter;
+	return mCenter;
 }
 
 std::map<std::string, std::string> XdmfAttribute::getItemProperties() const
 {
 	std::map<std::string, std::string> attributeProperties;
 	attributeProperties["Name"] = mName;
-	mAttributeType->getProperties(attributeProperties);
-	mAttributeCenter->getProperties(attributeProperties);
+	mType->getProperties(attributeProperties);
+	mCenter->getProperties(attributeProperties);
 	return attributeProperties;
 }
 
@@ -54,11 +54,12 @@ std::string XdmfAttribute::getName() const
 
 boost::shared_ptr<const XdmfAttributeType> XdmfAttribute::getType() const
 {
-	return mAttributeType;
+	return mType;
 }
 
 void XdmfAttribute::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader)
 {
+	XdmfItem::populateItem(itemProperties, childItems, reader);
 	std::map<std::string, std::string>::const_iterator name = itemProperties.find("Name");
 	if(name != itemProperties.end())
 	{
@@ -68,8 +69,8 @@ void XdmfAttribute::populateItem(const std::map<std::string, std::string> & item
 	{
 		assert(false);
 	}
-	mAttributeCenter = XdmfAttributeCenter::New(itemProperties);
-	mAttributeType = XdmfAttributeType::New(itemProperties);
+	mCenter = XdmfAttributeCenter::New(itemProperties);
+	mType = XdmfAttributeType::New(itemProperties);
 	for(std::vector<boost::shared_ptr<XdmfItem> >::const_iterator iter = childItems.begin(); iter != childItems.end(); ++iter)
 	{
 		if(boost::shared_ptr<XdmfArray> array = boost::shared_dynamic_cast<XdmfArray>(*iter))
@@ -80,9 +81,9 @@ void XdmfAttribute::populateItem(const std::map<std::string, std::string> & item
 	}
 }
 
-void XdmfAttribute::setCenter(const boost::shared_ptr<const XdmfAttributeCenter> attributeCenter)
+void XdmfAttribute::setCenter(const boost::shared_ptr<const XdmfAttributeCenter> center)
 {
-	mAttributeCenter = attributeCenter;
+	mCenter = center;
 }
 
 void XdmfAttribute::setName(const std::string & name)
@@ -90,7 +91,7 @@ void XdmfAttribute::setName(const std::string & name)
 	mName= name;
 }
 
-void XdmfAttribute::setType(const boost::shared_ptr<const XdmfAttributeType> attributeType)
+void XdmfAttribute::setType(const boost::shared_ptr<const XdmfAttributeType> type)
 {
-	mAttributeType = attributeType;
+	mType = type;
 }

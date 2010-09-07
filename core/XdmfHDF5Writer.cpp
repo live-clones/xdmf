@@ -17,8 +17,8 @@ class XdmfHDF5Writer::XdmfHDF5WriterImpl {
 public:
 
 	XdmfHDF5WriterImpl(const std::string & hdf5FilePath) :
-		mFilePath(XdmfSystemUtils::getRealPath(hdf5FilePath)),
 		mDataSetId(0),
+		mFilePath(XdmfSystemUtils::getRealPath(hdf5FilePath)),
 		mMode(Default)
 	{
 	};
@@ -63,7 +63,7 @@ void XdmfHDF5Writer::setMode(const Mode mode)
 	mImpl->mMode = mode;
 }
 
-void XdmfHDF5Writer::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisitor> visitor)
+void XdmfHDF5Writer::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisitor>)
 {
 	hid_t datatype = -1;
 
@@ -129,7 +129,7 @@ void XdmfHDF5Writer::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVi
 
 		// Open a hdf5 dataset and write to it on disk.
 		herr_t status;
-		hsize_t size = array.size();
+		hsize_t size = array.getSize();
 		hid_t hdf5Handle;
 
 		// Save old error handler and turn off error handling for now
@@ -186,7 +186,7 @@ void XdmfHDF5Writer::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVi
 				status = H5Dset_extent(dataset, &size);
 			}
 		}
-		status = H5Dwrite(dataset, datatype, memspace, dataspace, H5P_DEFAULT, array.getValuesPointer());
+		status = H5Dwrite(dataset, datatype, memspace, dataspace, H5P_DEFAULT, array.getValuesInternal());
 		if(dataspace != H5S_ALL)
 		{
 			status = H5Sclose(dataspace);
@@ -204,7 +204,7 @@ void XdmfHDF5Writer::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVi
 		// Attach a new controller to the array if needed.
 		if(mImpl->mMode == Default || !array.getHDF5Controller())
 		{
-			boost::shared_ptr<XdmfHDF5Controller> newDataSetController = XdmfHDF5Controller::New(hdf5FilePath, dataSetPath.str(), array.size(), array.getArrayType());
+			boost::shared_ptr<XdmfHDF5Controller> newDataSetController = XdmfHDF5Controller::New(hdf5FilePath, dataSetPath.str(), array.getSize(), array.getArrayType());
 			array.setHDF5Controller(newDataSetController);
 			mImpl->mDataSetId++;
 		}

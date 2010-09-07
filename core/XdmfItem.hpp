@@ -3,6 +3,7 @@
 
 // Forward Declarations
 class XdmfCoreReader;
+class XdmfInformation;
 class XdmfVisitor;
 
 // Includes
@@ -22,10 +23,42 @@ class XdmfItem : public Loki::BaseVisitable<void> {
 
 public:
 
-	virtual ~XdmfItem();
+	virtual ~XdmfItem() = 0;
 
 	LOKI_DEFINE_VISITABLE_BASE()
 	friend class XdmfCoreReader;
+
+	/**
+	 * Get an information attached to this item by index.
+	 *
+	 * @param index of the information to retrieve.
+	 * @return requested information.  If not found a NULL pointer is returned.
+	 */
+	boost::shared_ptr<XdmfInformation> getInformation(const unsigned int index);
+
+	/**
+	 * Get an information attached to this item by index (const version).
+	 *
+	 * @param index of the information to retrieve.
+	 * @return requested information.  If not found a NULL pointer is returned.
+	 */
+	boost::shared_ptr<const XdmfInformation> getInformation(const unsigned int index) const;
+
+	/**
+	 * Get an information attached to this item by key.
+	 *
+	 * @param key of the information to retrieve.
+	 * @return requested information.  If not found a NULL pointer is returned.
+	 */
+	boost::shared_ptr<XdmfInformation> getInformation(const std::string & key);
+
+	/**
+	 * Get an information attached to this grid by name (const version).
+	 *
+	 * @param key of the information to retrieve.
+	 * @return requested information.  If not found a NULL pointer is returned.
+	 */
+	boost::shared_ptr<const XdmfInformation> getInformation(const std::string & key) const;
 
 	/**
 	 * Get the tag for this XdmfItem.  This is equivalent to tags in XML parlance.
@@ -38,6 +71,34 @@ public:
 	 * @return a map of key/value properties associated with this XdmfItem.
 	 */
 	virtual std::map<std::string, std::string> getItemProperties() const = 0;
+
+	/**
+	 * Get the number of informations attached to this item.
+	 *
+	 * @return the number of informations attached to this item.
+	 */
+	unsigned int getNumberInformations() const;
+
+	/**
+	 * Insert an information into the item.
+	 *
+	 * @param information an XdmfInformation to attach to this item.
+	 */
+	virtual void insert(const boost::shared_ptr<XdmfInformation> information);
+
+	/**
+	 * Remove an information from the item by index.  If no information is at that index, no information are removed.
+	 *
+	 * @param index of the information to remove.
+	 */
+	void removeInformation(const unsigned int index);
+
+	/**
+	 * Remove an information from the item by key.  If no information having the key is found, no informations are removed.
+	 *
+	 * @param key of the attribute to remove.
+	 */
+	void removeInformation(const std::string & key);
 
 	/**
 	 * Traverse this XdmfItem by passing the visitor to its children XdmfItems.
@@ -57,7 +118,9 @@ protected:
 	 * @param itemProperties a map of key/value properties associated with this XdmfItem.
 	 * @param childItems a vector of child items to be added to this XdmfItem.
 	 */
-	virtual void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem > > & childItems, const XdmfCoreReader * const reader) = 0;
+	virtual void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem > > & childItems, const XdmfCoreReader * const reader);
+
+	std::vector<boost::shared_ptr<XdmfInformation> > mInformations;
 
 private:
 

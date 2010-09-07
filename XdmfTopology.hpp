@@ -53,7 +53,7 @@ public:
 	 *
 	 * @param topologyType the XdmfTopologyType to set.
 	 */
-	void setType(const boost::shared_ptr<const XdmfTopologyType> topologyType);
+	void setType(const boost::shared_ptr<const XdmfTopologyType> type);
 
 protected:
 
@@ -65,7 +65,7 @@ private:
 	XdmfTopology(const XdmfTopology & topology);  // Not implemented.
 	void operator=(const XdmfTopology & topology);  // Not implemented.
 
-	boost::shared_ptr<const XdmfTopologyType> mTopologyType;
+	boost::shared_ptr<const XdmfTopologyType> mType;
 };
 
 #endif /* XDMFTOPOLOGY_HPP_ */

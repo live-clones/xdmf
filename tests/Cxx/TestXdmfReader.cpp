@@ -5,7 +5,7 @@
 #include "XdmfTestCompareFiles.hpp"
 #include "XdmfTestDataGenerator.hpp"
 
-int main(int argc, char* argv[])
+int main(int, char *)
 {
 	boost::shared_ptr<XdmfWriter> writer = XdmfWriter::New("TestXdmfReader1.xmf");
 	writer->setLightDataLimit(10);

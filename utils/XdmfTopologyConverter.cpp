@@ -42,7 +42,7 @@ public:
 
 	inline void insertPointWithoutCheck(const std::vector<double> & newPoint, const boost::shared_ptr<XdmfArray> & newConnectivity, const boost::shared_ptr<XdmfArray> & newPoints) const
 	{
-		newConnectivity->pushBack<unsigned int>(newPoints->size() / 3);
+		newConnectivity->pushBack<unsigned int>(newPoints->getSize() / 3);
 		newPoints->pushBack(newPoint[0]);
 		newPoints->pushBack(newPoint[1]);
 		newPoints->pushBack(newPoint[2]);
@@ -54,7 +54,7 @@ public:
 		if(iter == coordToIdMap.end())
 		{
 			// Not inserted before
-			coordToIdMap[newPoint] = newPoints->size() / 3;;
+			coordToIdMap[newPoint] = newPoints->getSize() / 3;;
 			insertPointWithoutCheck(newPoint, newConnectivity, newPoints);
 		}
 		else
@@ -107,7 +107,7 @@ public:
 
 		boost::shared_ptr<XdmfGeometry> toReturnGeometry = toReturn->getGeometry();
 		toReturnGeometry->setType(gridToConvert->getGeometry()->getType());
-		toReturnGeometry->initialize(gridToConvert->getGeometry()->getArrayType(), gridToConvert->getGeometry()->size());
+		toReturnGeometry->initialize(gridToConvert->getGeometry()->getArrayType(), gridToConvert->getGeometry()->getSize());
 
 		bool releaseGeometry = false;
 		if(!gridToConvert->getGeometry()->isInitialized())
@@ -117,7 +117,7 @@ public:
 		}
 
 		// Copy all geometry values from old grid into new grid because we are keeping all old points.
-		toReturnGeometry->copyValues(0, gridToConvert->getGeometry(), 0, gridToConvert->getGeometry()->size());
+		toReturnGeometry->insert(0, gridToConvert->getGeometry(), 0, gridToConvert->getGeometry()->getSize());
 
 		if(releaseGeometry)
 		{
@@ -146,12 +146,12 @@ public:
 			// Fill localNodes with original coordinate information.
 			for(int j=0; j<8; ++j)
 			{
-				toReturnGeometry->getValuesCopy(gridToConvert->getTopology()->getValueCopy<unsigned int>(8*i + j) * 3, &localNodes[j][0], 3);
+				toReturnGeometry->getValues(gridToConvert->getTopology()->getValue<unsigned int>(8*i + j) * 3, &localNodes[j][0], 3);
 			}
 
 			// Add old connectivity information to newConnectivity.
-			toReturnTopology->resize(toReturnTopology->size() + 8, 0);
-			toReturnTopology->copyValues(64*i, gridToConvert->getTopology(), 8*i, 8);
+			toReturnTopology->resize(toReturnTopology->getSize() + 8, 0);
+			toReturnTopology->insert(64*i, gridToConvert->getTopology(), 8*i, 8);
 
 			// Case 0
 			this->computeInteriorPoints(leftPoint, rightPoint, localNodes[0], localNodes[1]);
@@ -406,7 +406,7 @@ public:
 
 		boost::shared_ptr<XdmfGeometry> toReturnGeometry = toReturn->getGeometry();
 		toReturnGeometry->setType(gridToConvert->getGeometry()->getType());
-		toReturnGeometry->initialize(gridToConvert->getGeometry()->getArrayType(), gridToConvert->getGeometry()->size());
+		toReturnGeometry->initialize(gridToConvert->getGeometry()->getArrayType(), gridToConvert->getGeometry()->getSize());
 
 		bool releaseGeometry = false;
 		if(!gridToConvert->getGeometry()->isInitialized())
@@ -416,7 +416,7 @@ public:
 		}
 
 		// Copy all geometry values from old grid into new grid because we are keeping all old points.
-		toReturnGeometry->copyValues(0, gridToConvert->getGeometry(), 0, gridToConvert->getGeometry()->size());
+		toReturnGeometry->insert(0, gridToConvert->getGeometry(), 0, gridToConvert->getGeometry()->getSize());
 
 		if(releaseGeometry)
 		{
@@ -447,12 +447,12 @@ public:
 
 			for(int j=0; j<8; ++j)
 			{
-				toReturnGeometry->getValuesCopy(gridToConvert->getTopology()->getValueCopy<unsigned int>(8*i + j) * 3, &localNodes[j][0], 3);
+				toReturnGeometry->getValues(gridToConvert->getTopology()->getValue<unsigned int>(8*i + j) * 3, &localNodes[j][0], 3);
 			}
 
 			// Add old connectivity information to toReturnTopology.
-			toReturnTopology->resize(toReturnTopology->size() + 8, 0);
-			toReturnTopology->copyValues(125*i, gridToConvert->getTopology(), 8*i, 8);
+			toReturnTopology->resize(toReturnTopology->getSize() + 8, 0);
+			toReturnTopology->insert(125*i, gridToConvert->getTopology(), 8*i, 8);
 
 			// Case 0
 			this->computeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[0], localNodes[1]);
@@ -868,222 +868,222 @@ public:
 		{
 			const unsigned int startIndex = 216 * i;
 			const unsigned int valuesStartIndex = 64 * i;
-			toReturnTopology->copyValues(startIndex + 0, gridToConvertTopology, 0 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 1, gridToConvertTopology, 8 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 2, gridToConvertTopology, 48 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 3, gridToConvertTopology, 15 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 4, gridToConvertTopology, 24 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 5, gridToConvertTopology, 36 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 6, gridToConvertTopology, 56 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 7, gridToConvertTopology, 33 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 8, gridToConvertTopology, 8 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 9, gridToConvertTopology, 9 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 10, gridToConvertTopology, 49 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 11, gridToConvertTopology, 48 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 12, gridToConvertTopology, 36 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 13, gridToConvertTopology, 37 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 14, gridToConvertTopology, 57 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 15, gridToConvertTopology, 56 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 16, gridToConvertTopology, 9 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 17, gridToConvertTopology, 1 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 18, gridToConvertTopology, 10 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 19, gridToConvertTopology, 49 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 20, gridToConvertTopology, 37 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 21, gridToConvertTopology, 25 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 22, gridToConvertTopology, 34 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 23, gridToConvertTopology, 57 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 24, gridToConvertTopology, 15 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 25, gridToConvertTopology, 48 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 26, gridToConvertTopology, 51 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 27, gridToConvertTopology, 14 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 28, gridToConvertTopology, 33 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 29, gridToConvertTopology, 56 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 30, gridToConvertTopology, 59 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 31, gridToConvertTopology, 32 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 32, gridToConvertTopology, 48 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 33, gridToConvertTopology, 49 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 34, gridToConvertTopology, 50 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 35, gridToConvertTopology, 51 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 36, gridToConvertTopology, 56 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 37, gridToConvertTopology, 57 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 38, gridToConvertTopology, 58 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 39, gridToConvertTopology, 59 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 40, gridToConvertTopology, 49 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 41, gridToConvertTopology, 10 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 42, gridToConvertTopology, 11 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 43, gridToConvertTopology, 50 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 44, gridToConvertTopology, 57 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 45, gridToConvertTopology, 34 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 46, gridToConvertTopology, 35 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 47, gridToConvertTopology, 58 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 48, gridToConvertTopology, 14 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 49, gridToConvertTopology, 51 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 50, gridToConvertTopology, 13 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 51, gridToConvertTopology, 3 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 52, gridToConvertTopology, 32 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 53, gridToConvertTopology, 59 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 54, gridToConvertTopology, 39 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 55, gridToConvertTopology, 27 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 56, gridToConvertTopology, 51 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 57, gridToConvertTopology, 50 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 58, gridToConvertTopology, 12 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 59, gridToConvertTopology, 13 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 60, gridToConvertTopology, 59 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 61, gridToConvertTopology, 58 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 62, gridToConvertTopology, 38 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 63, gridToConvertTopology, 39 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 64, gridToConvertTopology, 50 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 65, gridToConvertTopology, 11 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 66, gridToConvertTopology, 2 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 67, gridToConvertTopology, 12 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 68, gridToConvertTopology, 58 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 69, gridToConvertTopology, 35 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 70, gridToConvertTopology, 26 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 71, gridToConvertTopology, 38 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 72, gridToConvertTopology, 24 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 73, gridToConvertTopology, 36 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 74, gridToConvertTopology, 56 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 75, gridToConvertTopology, 33 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 76, gridToConvertTopology, 28 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 77, gridToConvertTopology, 44 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 78, gridToConvertTopology, 60 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 79, gridToConvertTopology, 41 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 80, gridToConvertTopology, 36 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 81, gridToConvertTopology, 37 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 82, gridToConvertTopology, 57 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 83, gridToConvertTopology, 56 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 84, gridToConvertTopology, 44 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 85, gridToConvertTopology, 45 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 86, gridToConvertTopology, 61 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 87, gridToConvertTopology, 60 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 88, gridToConvertTopology, 37 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 89, gridToConvertTopology, 25 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 90, gridToConvertTopology, 34 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 91, gridToConvertTopology, 57 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 92, gridToConvertTopology, 45 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 93, gridToConvertTopology, 29 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 94, gridToConvertTopology, 42 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 95, gridToConvertTopology, 61 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 96, gridToConvertTopology, 33 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 97, gridToConvertTopology, 56 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 98, gridToConvertTopology, 59 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 99, gridToConvertTopology, 32 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 100, gridToConvertTopology, 41 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 101, gridToConvertTopology, 60 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 102, gridToConvertTopology, 63 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 103, gridToConvertTopology, 40 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 104, gridToConvertTopology, 56 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 105, gridToConvertTopology, 57 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 106, gridToConvertTopology, 58 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 107, gridToConvertTopology, 59 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 108, gridToConvertTopology, 60 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 109, gridToConvertTopology, 61 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 110, gridToConvertTopology, 62 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 111, gridToConvertTopology, 63 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 112, gridToConvertTopology, 57 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 113, gridToConvertTopology, 34 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 114, gridToConvertTopology, 35 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 115, gridToConvertTopology, 58 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 116, gridToConvertTopology, 61 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 117, gridToConvertTopology, 42 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 118, gridToConvertTopology, 43 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 119, gridToConvertTopology, 62 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 120, gridToConvertTopology, 32 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 121, gridToConvertTopology, 59 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 122, gridToConvertTopology, 39 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 123, gridToConvertTopology, 27 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 124, gridToConvertTopology, 40 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 125, gridToConvertTopology, 63 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 126, gridToConvertTopology, 47 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 127, gridToConvertTopology, 31 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 128, gridToConvertTopology, 59 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 129, gridToConvertTopology, 58 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 130, gridToConvertTopology, 38 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 131, gridToConvertTopology, 39 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 132, gridToConvertTopology, 63 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 133, gridToConvertTopology, 62 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 134, gridToConvertTopology, 46 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 135, gridToConvertTopology, 47 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 136, gridToConvertTopology, 58 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 137, gridToConvertTopology, 35 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 138, gridToConvertTopology, 26 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 139, gridToConvertTopology, 38 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 140, gridToConvertTopology, 62 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 141, gridToConvertTopology, 43 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 142, gridToConvertTopology, 30 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 143, gridToConvertTopology, 46 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 144, gridToConvertTopology, 28 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 145, gridToConvertTopology, 44 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 146, gridToConvertTopology, 60 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 147, gridToConvertTopology, 41 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 148, gridToConvertTopology, 4 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 149, gridToConvertTopology, 16 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 150, gridToConvertTopology, 52 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 151, gridToConvertTopology, 23 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 152, gridToConvertTopology, 44 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 153, gridToConvertTopology, 45 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 154, gridToConvertTopology, 61 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 155, gridToConvertTopology, 60 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 156, gridToConvertTopology, 16 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 157, gridToConvertTopology, 17 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 158, gridToConvertTopology, 53 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 159, gridToConvertTopology, 52 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 160, gridToConvertTopology, 45 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 161, gridToConvertTopology, 29 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 162, gridToConvertTopology, 42 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 163, gridToConvertTopology, 61 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 164, gridToConvertTopology, 17 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 165, gridToConvertTopology, 5 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 166, gridToConvertTopology, 18 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 167, gridToConvertTopology, 53 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 168, gridToConvertTopology, 41 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 169, gridToConvertTopology, 60 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 170, gridToConvertTopology, 63 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 171, gridToConvertTopology, 40 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 172, gridToConvertTopology, 23 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 173, gridToConvertTopology, 52 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 174, gridToConvertTopology, 55 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 175, gridToConvertTopology, 22 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 176, gridToConvertTopology, 60 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 177, gridToConvertTopology, 61 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 178, gridToConvertTopology, 62 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 179, gridToConvertTopology, 63 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 180, gridToConvertTopology, 52 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 181, gridToConvertTopology, 53 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 182, gridToConvertTopology, 54 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 183, gridToConvertTopology, 55 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 184, gridToConvertTopology, 61 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 185, gridToConvertTopology, 42 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 186, gridToConvertTopology, 43 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 187, gridToConvertTopology, 62 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 188, gridToConvertTopology, 53 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 189, gridToConvertTopology, 18 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 190, gridToConvertTopology, 19 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 191, gridToConvertTopology, 54 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 192, gridToConvertTopology, 40 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 193, gridToConvertTopology, 63 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 194, gridToConvertTopology, 47 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 195, gridToConvertTopology, 31 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 196, gridToConvertTopology, 22 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 197, gridToConvertTopology, 55 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 198, gridToConvertTopology, 21 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 199, gridToConvertTopology, 7 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 200, gridToConvertTopology, 63 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 201, gridToConvertTopology, 62 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 202, gridToConvertTopology, 46 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 203, gridToConvertTopology, 47 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 204, gridToConvertTopology, 55 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 205, gridToConvertTopology, 54 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 206, gridToConvertTopology, 20 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 207, gridToConvertTopology, 21 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 208, gridToConvertTopology, 62 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 209, gridToConvertTopology, 43 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 210, gridToConvertTopology, 30 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 211, gridToConvertTopology, 46 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 212, gridToConvertTopology, 54 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 213, gridToConvertTopology, 19 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 214, gridToConvertTopology, 6 + valuesStartIndex, 1);
-			toReturnTopology->copyValues(startIndex + 215, gridToConvertTopology, 20 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 0, gridToConvertTopology, 0 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 1, gridToConvertTopology, 8 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 2, gridToConvertTopology, 48 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 3, gridToConvertTopology, 15 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 4, gridToConvertTopology, 24 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 5, gridToConvertTopology, 36 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 6, gridToConvertTopology, 56 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 7, gridToConvertTopology, 33 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 8, gridToConvertTopology, 8 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 9, gridToConvertTopology, 9 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 10, gridToConvertTopology, 49 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 11, gridToConvertTopology, 48 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 12, gridToConvertTopology, 36 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 13, gridToConvertTopology, 37 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 14, gridToConvertTopology, 57 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 15, gridToConvertTopology, 56 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 16, gridToConvertTopology, 9 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 17, gridToConvertTopology, 1 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 18, gridToConvertTopology, 10 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 19, gridToConvertTopology, 49 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 20, gridToConvertTopology, 37 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 21, gridToConvertTopology, 25 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 22, gridToConvertTopology, 34 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 23, gridToConvertTopology, 57 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 24, gridToConvertTopology, 15 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 25, gridToConvertTopology, 48 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 26, gridToConvertTopology, 51 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 27, gridToConvertTopology, 14 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 28, gridToConvertTopology, 33 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 29, gridToConvertTopology, 56 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 30, gridToConvertTopology, 59 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 31, gridToConvertTopology, 32 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 32, gridToConvertTopology, 48 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 33, gridToConvertTopology, 49 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 34, gridToConvertTopology, 50 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 35, gridToConvertTopology, 51 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 36, gridToConvertTopology, 56 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 37, gridToConvertTopology, 57 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 38, gridToConvertTopology, 58 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 39, gridToConvertTopology, 59 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 40, gridToConvertTopology, 49 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 41, gridToConvertTopology, 10 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 42, gridToConvertTopology, 11 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 43, gridToConvertTopology, 50 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 44, gridToConvertTopology, 57 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 45, gridToConvertTopology, 34 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 46, gridToConvertTopology, 35 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 47, gridToConvertTopology, 58 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 48, gridToConvertTopology, 14 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 49, gridToConvertTopology, 51 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 50, gridToConvertTopology, 13 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 51, gridToConvertTopology, 3 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 52, gridToConvertTopology, 32 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 53, gridToConvertTopology, 59 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 54, gridToConvertTopology, 39 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 55, gridToConvertTopology, 27 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 56, gridToConvertTopology, 51 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 57, gridToConvertTopology, 50 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 58, gridToConvertTopology, 12 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 59, gridToConvertTopology, 13 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 60, gridToConvertTopology, 59 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 61, gridToConvertTopology, 58 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 62, gridToConvertTopology, 38 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 63, gridToConvertTopology, 39 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 64, gridToConvertTopology, 50 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 65, gridToConvertTopology, 11 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 66, gridToConvertTopology, 2 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 67, gridToConvertTopology, 12 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 68, gridToConvertTopology, 58 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 69, gridToConvertTopology, 35 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 70, gridToConvertTopology, 26 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 71, gridToConvertTopology, 38 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 72, gridToConvertTopology, 24 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 73, gridToConvertTopology, 36 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 74, gridToConvertTopology, 56 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 75, gridToConvertTopology, 33 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 76, gridToConvertTopology, 28 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 77, gridToConvertTopology, 44 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 78, gridToConvertTopology, 60 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 79, gridToConvertTopology, 41 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 80, gridToConvertTopology, 36 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 81, gridToConvertTopology, 37 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 82, gridToConvertTopology, 57 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 83, gridToConvertTopology, 56 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 84, gridToConvertTopology, 44 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 85, gridToConvertTopology, 45 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 86, gridToConvertTopology, 61 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 87, gridToConvertTopology, 60 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 88, gridToConvertTopology, 37 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 89, gridToConvertTopology, 25 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 90, gridToConvertTopology, 34 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 91, gridToConvertTopology, 57 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 92, gridToConvertTopology, 45 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 93, gridToConvertTopology, 29 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 94, gridToConvertTopology, 42 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 95, gridToConvertTopology, 61 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 96, gridToConvertTopology, 33 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 97, gridToConvertTopology, 56 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 98, gridToConvertTopology, 59 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 99, gridToConvertTopology, 32 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 100, gridToConvertTopology, 41 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 101, gridToConvertTopology, 60 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 102, gridToConvertTopology, 63 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 103, gridToConvertTopology, 40 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 104, gridToConvertTopology, 56 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 105, gridToConvertTopology, 57 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 106, gridToConvertTopology, 58 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 107, gridToConvertTopology, 59 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 108, gridToConvertTopology, 60 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 109, gridToConvertTopology, 61 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 110, gridToConvertTopology, 62 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 111, gridToConvertTopology, 63 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 112, gridToConvertTopology, 57 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 113, gridToConvertTopology, 34 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 114, gridToConvertTopology, 35 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 115, gridToConvertTopology, 58 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 116, gridToConvertTopology, 61 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 117, gridToConvertTopology, 42 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 118, gridToConvertTopology, 43 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 119, gridToConvertTopology, 62 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 120, gridToConvertTopology, 32 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 121, gridToConvertTopology, 59 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 122, gridToConvertTopology, 39 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 123, gridToConvertTopology, 27 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 124, gridToConvertTopology, 40 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 125, gridToConvertTopology, 63 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 126, gridToConvertTopology, 47 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 127, gridToConvertTopology, 31 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 128, gridToConvertTopology, 59 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 129, gridToConvertTopology, 58 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 130, gridToConvertTopology, 38 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 131, gridToConvertTopology, 39 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 132, gridToConvertTopology, 63 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 133, gridToConvertTopology, 62 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 134, gridToConvertTopology, 46 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 135, gridToConvertTopology, 47 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 136, gridToConvertTopology, 58 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 137, gridToConvertTopology, 35 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 138, gridToConvertTopology, 26 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 139, gridToConvertTopology, 38 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 140, gridToConvertTopology, 62 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 141, gridToConvertTopology, 43 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 142, gridToConvertTopology, 30 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 143, gridToConvertTopology, 46 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 144, gridToConvertTopology, 28 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 145, gridToConvertTopology, 44 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 146, gridToConvertTopology, 60 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 147, gridToConvertTopology, 41 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 148, gridToConvertTopology, 4 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 149, gridToConvertTopology, 16 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 150, gridToConvertTopology, 52 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 151, gridToConvertTopology, 23 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 152, gridToConvertTopology, 44 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 153, gridToConvertTopology, 45 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 154, gridToConvertTopology, 61 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 155, gridToConvertTopology, 60 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 156, gridToConvertTopology, 16 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 157, gridToConvertTopology, 17 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 158, gridToConvertTopology, 53 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 159, gridToConvertTopology, 52 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 160, gridToConvertTopology, 45 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 161, gridToConvertTopology, 29 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 162, gridToConvertTopology, 42 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 163, gridToConvertTopology, 61 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 164, gridToConvertTopology, 17 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 165, gridToConvertTopology, 5 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 166, gridToConvertTopology, 18 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 167, gridToConvertTopology, 53 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 168, gridToConvertTopology, 41 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 169, gridToConvertTopology, 60 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 170, gridToConvertTopology, 63 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 171, gridToConvertTopology, 40 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 172, gridToConvertTopology, 23 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 173, gridToConvertTopology, 52 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 174, gridToConvertTopology, 55 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 175, gridToConvertTopology, 22 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 176, gridToConvertTopology, 60 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 177, gridToConvertTopology, 61 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 178, gridToConvertTopology, 62 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 179, gridToConvertTopology, 63 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 180, gridToConvertTopology, 52 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 181, gridToConvertTopology, 53 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 182, gridToConvertTopology, 54 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 183, gridToConvertTopology, 55 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 184, gridToConvertTopology, 61 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 185, gridToConvertTopology, 42 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 186, gridToConvertTopology, 43 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 187, gridToConvertTopology, 62 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 188, gridToConvertTopology, 53 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 189, gridToConvertTopology, 18 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 190, gridToConvertTopology, 19 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 191, gridToConvertTopology, 54 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 192, gridToConvertTopology, 40 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 193, gridToConvertTopology, 63 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 194, gridToConvertTopology, 47 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 195, gridToConvertTopology, 31 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 196, gridToConvertTopology, 22 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 197, gridToConvertTopology, 55 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 198, gridToConvertTopology, 21 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 199, gridToConvertTopology, 7 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 200, gridToConvertTopology, 63 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 201, gridToConvertTopology, 62 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 202, gridToConvertTopology, 46 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 203, gridToConvertTopology, 47 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 204, gridToConvertTopology, 55 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 205, gridToConvertTopology, 54 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 206, gridToConvertTopology, 20 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 207, gridToConvertTopology, 21 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 208, gridToConvertTopology, 62 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 209, gridToConvertTopology, 43 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 210, gridToConvertTopology, 30 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 211, gridToConvertTopology, 46 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 212, gridToConvertTopology, 54 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 213, gridToConvertTopology, 19 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 214, gridToConvertTopology, 6 + valuesStartIndex, 1);
+			toReturnTopology->insert(startIndex + 215, gridToConvertTopology, 20 + valuesStartIndex, 1);
 		}
 
 		if(releaseTopology)
@@ -1118,10 +1118,10 @@ public:
 				createdAttribute->setName(currAttribute->getName());
 				createdAttribute->setType(currAttribute->getType());
 				createdAttribute->setCenter(currAttribute->getCenter());
-				createdAttribute->initialize(currAttribute->getArrayType(), currAttribute->size() * 27);
-				for(unsigned int j=0; j<currAttribute->size(); ++j)
+				createdAttribute->initialize(currAttribute->getArrayType(), currAttribute->getSize() * 27);
+				for(unsigned int j=0; j<currAttribute->getSize(); ++j)
 				{
-					createdAttribute->copyValues(j * 27, currAttribute, j, 27, 1, 0);
+					createdAttribute->insert(j * 27, currAttribute, j, 27, 1, 0);
 				}
 
 				if(releaseAttribute)

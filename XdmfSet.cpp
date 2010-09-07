@@ -18,7 +18,7 @@ boost::shared_ptr<XdmfSet> XdmfSet::New()
 
 XdmfSet::XdmfSet() :
 	mName(""),
-	mSetType(XdmfSetType::NoSetType())
+	mType(XdmfSetType::NoSetType())
 {
 }
 
@@ -63,7 +63,7 @@ std::map<std::string, std::string> XdmfSet::getItemProperties() const
 {
 	std::map<std::string, std::string> setProperties;
 	setProperties["Name"] = mName;
-	mSetType->getProperties(setProperties);
+	mType->getProperties(setProperties);
 	return setProperties;
 }
 
@@ -84,7 +84,7 @@ unsigned int XdmfSet::getNumberAttributes() const
 
 boost::shared_ptr<const XdmfSetType> XdmfSet::getType() const
 {
-	return mSetType;
+	return mType;
 }
 
 void XdmfSet::insert(const boost::shared_ptr<XdmfAttribute> attribute)
@@ -94,6 +94,7 @@ void XdmfSet::insert(const boost::shared_ptr<XdmfAttribute> attribute)
 
 void XdmfSet::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader)
 {
+	XdmfItem::populateItem(itemProperties, childItems, reader);
 	std::map<std::string, std::string>::const_iterator name = itemProperties.find("Name");
 	if(name != itemProperties.end())
 	{
@@ -103,7 +104,7 @@ void XdmfSet::populateItem(const std::map<std::string, std::string> & itemProper
 	{
 		assert(false);
 	}
-	mSetType = XdmfSetType::New(itemProperties);
+	mType = XdmfSetType::New(itemProperties);
 	for(std::vector<boost::shared_ptr<XdmfItem> >::const_iterator iter = childItems.begin(); iter != childItems.end(); ++iter)
 	{
 		if(boost::shared_ptr<XdmfArray> array = boost::shared_dynamic_cast<XdmfArray>(*iter))
@@ -141,17 +142,17 @@ void XdmfSet::removeAttribute(const std::string & name)
 
 void XdmfSet::setName(const std::string & name)
 {
-	mName= name;
+	mName = name;
 }
 
-void XdmfSet::setType(const boost::shared_ptr<const XdmfSetType> setType)
+void XdmfSet::setType(const boost::shared_ptr<const XdmfSetType> type)
 {
-	mSetType = setType;
+	mType = type;
 }
 
 void XdmfSet::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
-	XdmfArray::traverse(visitor);
+	XdmfItem::traverse(visitor);
 	for(std::vector<boost::shared_ptr<XdmfAttribute> >::const_iterator iter = mAttributes.begin(); iter != mAttributes.end(); ++iter)
 	{
 		(*iter)->accept(visitor);

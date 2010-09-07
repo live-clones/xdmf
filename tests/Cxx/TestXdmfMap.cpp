@@ -42,37 +42,37 @@ void performTests(std::vector<boost::shared_ptr<XdmfMap> > & boundaryMaps)
  *
  */
 
-int main(int argc, char* argv[])
+int main(int, char *)
 {
 	// Grid 0
 	boost::shared_ptr<XdmfGrid> grid0 = XdmfGrid::New();
 	grid0->getGeometry()->setType(XdmfGeometryType::XYZ());
 	double points0[] = {-1, 0, 0, 0, 0, 0};
-	grid0->getGeometry()->copyValues(0, &points0[0], 6);
+	grid0->getGeometry()->insert(0, &points0[0], 6);
 	grid0->getTopology()->setType(XdmfTopologyType::Polyline());
 	unsigned int connectivity0[] = {0, 1};
-	grid0->getTopology()->copyValues(0, &connectivity0[0], 2);
+	grid0->getTopology()->insert(0, &connectivity0[0], 2);
 	boost::shared_ptr<XdmfAttribute> globalNodeIds0 = XdmfAttribute::New();
 	globalNodeIds0->setName("GlobalNodeId");
 	globalNodeIds0->setCenter(XdmfAttributeCenter::Node());
 	globalNodeIds0->setType(XdmfAttributeType::GlobalId());
 	unsigned int globalVals0[] = {0, 1};
-	globalNodeIds0->copyValues(0, &globalVals0[0], 2);
+	globalNodeIds0->insert(0, &globalVals0[0], 2);
 
 	// Grid 1
 	boost::shared_ptr<XdmfGrid> grid1 = XdmfGrid::New();
 	grid1->getGeometry()->setType(XdmfGeometryType::XYZ());
 	double points1[] = {0, 0, 0, 1, 0, 0};
-	grid1->getGeometry()->copyValues(0, &points1[0], 6);
+	grid1->getGeometry()->insert(0, &points1[0], 6);
 	grid1->getTopology()->setType(XdmfTopologyType::Polyline());
 	unsigned int connectivity1[] = {0, 1};
-	grid1->getTopology()->copyValues(0, &connectivity1[0], 2);
+	grid1->getTopology()->insert(0, &connectivity1[0], 2);
 	boost::shared_ptr<XdmfAttribute> globalNodeIds1 = XdmfAttribute::New();
 	globalNodeIds1->setName("GlobalNodeId");
 	globalNodeIds1->setCenter(XdmfAttributeCenter::Node());
 	globalNodeIds1->setType(XdmfAttributeType::GlobalId());
 	unsigned int globalVals1[] = {1, 2};
-	globalNodeIds1->copyValues(0, &globalVals1[0], 2);
+	globalNodeIds1->insert(0, &globalVals1[0], 2);
 
 	std::vector<boost::shared_ptr<XdmfAttribute> > globalNodeIds;
 	globalNodeIds.push_back(globalNodeIds0);

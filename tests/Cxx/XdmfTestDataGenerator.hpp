@@ -34,13 +34,13 @@ public:
 		double points[] = {0.1, 0.1, 1.1, 1.1, 0.1, 1.1, 3.1, 0.1, 2.1, 0.1, 1.1, 1.1, 1.1, 1.1, 1.1, 3.1, 2.1, 2.1,
 				0.1, 0.1, -1.1, 1.1, 0.1, -1.1, 3.1, 0.1, -2.1, 0.1, 1.1, -1.1, 1.1, 1.1, -1.1, 3.1, 2.1, -2.1};
 		grid->getGeometry()->setType(XdmfGeometryType::XYZ());
-		grid->getGeometry()->copyValues(0, &points[0], 36);
+		grid->getGeometry()->insert(0, &points[0], 36);
 		//grid->getGeometry()->setName("Geom 1");
 
 		// Set Topology
 		int connectivity[] = {0, 1, 7, 6, 3, 4, 10, 9, 1, 2, 8, 7, 4, 5, 11, 10};
 		grid->getTopology()->setType(XdmfTopologyType::Hexahedron());
-		grid->getTopology()->copyValues(0, &connectivity[0], 16);
+		grid->getTopology()->insert(0, &connectivity[0], 16);
 
 		// Add Node Attribute
 		boost::shared_ptr<XdmfAttribute> nodalAttribute = XdmfAttribute::New();
@@ -48,7 +48,7 @@ public:
 		nodalAttribute->setName("Nodal Attribute");
 		nodalAttribute->setType(XdmfAttributeType::Scalar());
 		nodalAttribute->setCenter(XdmfAttributeCenter::Node());
-		nodalAttribute->copyValues(0, &nodeValues[0], 12);
+		nodalAttribute->insert(0, &nodeValues[0], 12);
 
 		// Add Cell Attribute
 		boost::shared_ptr<XdmfAttribute> cellAttribute = XdmfAttribute::New();
@@ -56,14 +56,14 @@ public:
 		cellAttribute->setName("Cell Attribute");
 		cellAttribute->setType(XdmfAttributeType::Scalar());
 		cellAttribute->setCenter(XdmfAttributeCenter::Cell());
-		cellAttribute->copyValues(0, &cellValues[0], 2);
+		cellAttribute->insert(0, &cellValues[0], 2);
 
 		// Add Node Set
 		boost::shared_ptr<XdmfSet> nodeSet = XdmfSet::New();
 		int nodeIds[] = {0, 1, 2};
 		nodeSet->setName("Node Set");
 		nodeSet->setType(XdmfSetType::Node());
-		nodeSet->copyValues(0, &nodeIds[0], 3);
+		nodeSet->insert(0, &nodeIds[0], 3);
 
 		// Add Time
 		boost::shared_ptr<XdmfTime> time = XdmfTime::New(100);

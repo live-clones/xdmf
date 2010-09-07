@@ -1,7 +1,7 @@
 #include "XdmfGeometry.hpp"
 #include "XdmfGeometryType.hpp"
 
-int main(int argc, char* argv[])
+int main(int, char *)
 {
 	// Test != and == operators
 	assert(XdmfGeometryType::XYZ() == XdmfGeometryType::XYZ());

@@ -7,8 +7,8 @@
 /**
  * @brief Property describing what types of values an XdmfArray contains.
  *
- * XdmfArrayType is a property used by XdmfArray to specify the types of values stored in an
- * XdmfArray.  A specific XdmfArrayType can be created by calling one of the static methods
+ * XdmfArrayType is specifies the types of values stored in an XdmfArray.
+ * A specific XdmfArrayType can be created by calling one of the static methods
  * in the class, i.e. XdmfArrayType::Int32().
  *
  * Xdmf supports the following attribute types:
@@ -80,8 +80,8 @@ private:
 
 	static boost::shared_ptr<const XdmfArrayType> New(const std::map<std::string, std::string> & itemProperties);
 
-	unsigned int mPrecision;
 	std::string mName;
+	unsigned int mPrecision;
 };
 
 #endif /* XDMFARRAYTYPE_HPP_ */
