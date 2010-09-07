@@ -13,14 +13,14 @@ class XdmfTopology;
 #include "XdmfItem.hpp"
 
 /**
- * @brief A mesh that consists of elements, points, and values attached to the mesh.
+ * @brief A mesh containing elements, points, and fields attached to the mesh.
  *
  * XdmfGrid represents a mesh.  It is required to contain two other Xdmf data structures, an XdmfGeometry
  * that stores point locations and an XdmfTopology that store connectivity information.  XdmfAttributes can be inserted
- * into the XdmfGrid to specify values attached at various parts of the mesh.  XdmfSets can be inserted in the XdmfGrid
+ * into the XdmfGrid to specify fields centered on various parts of the mesh.  XdmfSets can be inserted into XdmfGrids
  * to specify collections of mesh elements.
  */
-class XdmfGrid : public XdmfItem {
+class XdmfGrid : public virtual XdmfItem {
 
 public:
 
@@ -265,6 +265,8 @@ protected:
 	XdmfGrid();
 	virtual void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader);
 
+	std::string mName;
+
 private:
 
 	XdmfGrid(const XdmfGrid & grid);  // Not implemented.
@@ -273,7 +275,6 @@ private:
 	std::vector<boost::shared_ptr<XdmfAttribute> > mAttributes;
 	boost::shared_ptr<XdmfGeometry> mGeometry;
 	boost::shared_ptr<XdmfMap> mMap;
-	std::string mName;
 	std::vector<boost::shared_ptr<XdmfSet> > mSets;
 	boost::shared_ptr<XdmfTime> mTime;
 	boost::shared_ptr<XdmfTopology> mTopology;

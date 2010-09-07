@@ -6,6 +6,7 @@ class XdmfGridCollectionType;
 
 // Includes
 #include "XdmfDomain.hpp"
+#include "XdmfGrid.hpp"
 
 /**
  * @brief A spatial or temporal collection of XdmfGrids.
@@ -15,7 +16,8 @@ class XdmfGridCollectionType;
  *
  * It is valid to nest collections.  A spatial collection within a temporal collection is commonly used.
  */
-class XdmfGridCollection : public XdmfDomain {
+class XdmfGridCollection : public XdmfGrid,
+	public XdmfDomain {
 
 public:
 
@@ -28,19 +30,12 @@ public:
 
 	virtual ~XdmfGridCollection();
 
-	LOKI_DEFINE_VISITABLE(XdmfGridCollection, XdmfDomain)
+	LOKI_DEFINE_VISITABLE(XdmfGridCollection, XdmfGrid)
 	static const std::string ItemTag;
 
 	std::map<std::string, std::string> getItemProperties() const;
 
 	std::string getItemTag() const;
-
-	/**
-	 * Get the name of the grid collection.
-	 *
-	 * @return the name of the grid collection.
-	 */
-	std::string getName() const;
 
 	/**
 	 * Get the XdmfGridCollectionType associated with this grid collection.
@@ -49,12 +44,8 @@ public:
 	 */
 	boost::shared_ptr<const XdmfGridCollectionType> getType() const;
 
-	/**
-	 * Set the name of the grid collection.
-	 *
-	 * @param name of the grid collection to set.
-	 */
-	void setName(const std::string & name);
+	using XdmfDomain::insert;
+	using XdmfGrid::insert;
 
 	/**
 	 * Set the XdmfGridCollectionType associated with this grid collection.
@@ -62,6 +53,8 @@ public:
 	 * @param collectionType the XdmfGridCollectionType to set.
 	 */
 	void setType(const boost::shared_ptr<const XdmfGridCollectionType> collectionType);
+
+	void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor);
 
 protected:
 
@@ -74,7 +67,6 @@ private:
 	void operator=(const XdmfGridCollection & collection);  // Not implemented.
 
 	boost::shared_ptr<const XdmfGridCollectionType> mCollectionType;
-	std::string mName;
 };
 
 #endif /* XDMFGRID_HPP_ */
