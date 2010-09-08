@@ -160,3 +160,8 @@ void XdmfArrayType::getProperties(std::map<std::string, std::string> & collected
 	precision << mPrecision;
 	collectedProperties["Precision"] = precision.str();
 }
+
+int XdmfArrayType::getElementSize() const
+{
+	return (mPrecision);
+}

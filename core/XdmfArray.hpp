@@ -308,6 +308,13 @@ public:
 	void setValuesInternal(const boost::shared_ptr<std::vector<T> > array);
 
 	/**
+	 * Get the size of an element in this array
+	 *
+	 * @return the size of an array element (0 if ArrayType is undefined)
+	 */
+	int getElementSize() const;
+
+	/**
 	 * Get the original dimensions string from the stored array
 	 *
 	 * @return the dimension string from the stored array

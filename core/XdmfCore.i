@@ -127,6 +127,40 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 #ifndef SWIGJAVA
 // Provide accessors from python lists to XdmfArrays
 %extend XdmfArray {
+        PyObject * getBuffer ()
+        {
+                void *vp = $self->getValuesPointer();
+                Py_ssize_t sz = $self->size() * $self->getElementSize();
+                PyObject * c = PyBuffer_FromMemory(vp, sz);
+                return(c);
+        }
+        %pythoncode {
+                def getNumpyArray(self):
+                        from numpy import frombuffer as ___frombuffer
+                        buf = self.getBuffer()
+                        aType = self.getArrayType()
+                        if aType == XdmfArrayType.Int8() :
+                            na = ___frombuffer(buf, 'int8')
+                        elif aType == XdmfArrayType.Int16() :
+                            na = ___frombuffer(buf, 'int16')
+                        elif aType == XdmfArrayType.Int32() :
+                            na = ___frombuffer(buf, 'int32')
+                        elif aType == XdmfArrayType.Int64() :
+                            na = ___frombuffer(buf, 'int64')
+                        elif aType == XdmfArrayType.Float32() :
+                            na = ___frombuffer(buf, 'float32')
+                        elif aType == XdmfArrayType.Float64() :
+                            na = ___frombuffer(buf, 'float64')
+                        elif aType == XdmfArrayType.UInt8() :
+                            na = ___frombuffer(buf, 'uint8')
+                        elif aType == XdmfArrayType.UInt16() :
+                            na = ___frombuffer(buf, 'uint16')
+                        elif aType == XdmfArrayType.UInt32() :
+                            na = ___frombuffer(buf, 'uint32')
+                        return na;
+        };
+
+
 	void copyValueAsInt8(int index, char value) {
 		$self->insert(index, &value);
 	}

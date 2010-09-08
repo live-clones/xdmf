@@ -61,6 +61,8 @@ public:
 	 */
 	bool operator!=(const XdmfArrayType & arrayType) const;
 
+	int getElementSize() const;
+
 protected:
 
 	/**

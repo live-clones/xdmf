@@ -413,6 +413,13 @@ std::map<std::string, std::string> XdmfArray::getItemProperties() const
 	return arrayProperties;
 }
 
+int XdmfArray::getElementSize() const
+{
+    boost::shared_ptr<const XdmfArrayType> aType = getArrayType();
+    if (aType == NULL) return(0);
+    return(aType->getElementSize());
+}
+
 std::string XdmfArray::getDimensionString() const
 {
 	return(mDimensionString);
