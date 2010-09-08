@@ -48,6 +48,7 @@ if(XDMF_WRAP_PYTHON)
 	#	Target Name = the output target name will have ${python_name} as its name
 	MACRO(XDMF_SWIG_PYTHON python_name)
 		set(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR})
+		set(CMAKE_SWIG_FLAGS "")
 		set_source_files_properties(${python_name}.i PROPERTIES CPLUSPLUS ON)
 		swig_add_module(${python_name} python ${python_name}.i)
 		swig_link_libraries(${python_name} ${python_name} ${PYTHON_LIBRARIES})
@@ -80,7 +81,7 @@ if(XDMF_WRAP_JAVA)
 	#	Target Jar	= the output target jar will have ${java_name}Java.jar as its name
 	MACRO(XDMF_SWIG_JAVA java_name)
 		set(XDMF_JAVA_PACKAGE_DIR mil/army/arl/xdmf)
-       	set(XDMF_JAVA_DIR ${CMAKE_CURRENT_BINARY_DIR}/${XDMF_JAVA_PACKAGE_DIR})
+		set(XDMF_JAVA_DIR ${CMAKE_CURRENT_BINARY_DIR}/${XDMF_JAVA_PACKAGE_DIR})
 		set(CMAKE_SWIG_OUTDIR ${XDMF_JAVA_DIR})
 		set(CMAKE_SWIG_FLAGS -v -make_default -package mil.army.arl.xdmf)
 		set_source_files_properties(${java_name}.i PROPERTIES CPLUSPLUS ON)
@@ -145,16 +146,17 @@ if(NOT XDMF_BUILD_CORE_ONLY)
 	add_library(Xdmf ${XdmfSources})
 	target_link_libraries(Xdmf XdmfCore)
 	
-	if(XDMF_WRAP_PYTHON)
-		XDMF_SWIG_PYTHON(Xdmf XdmfCore)
-	endif(XDMF_WRAP_PYTHON)
-	
 	if(XDMF_WRAP_JAVA)
 		XDMF_SWIG_JAVA(Xdmf XdmfCoreJava)
 		set(XDMF_JAVA_JAR ${CMAKE_BINARY_DIR}/Xdmf.jar CACHE INTERNAL "")
 	endif(XDMF_WRAP_JAVA)
 	
+	if(XDMF_WRAP_PYTHON)
+		XDMF_SWIG_PYTHON(Xdmf XdmfCore)
+	endif(XDMF_WRAP_PYTHON)
+	
 	if(XDMF_BUILD_TESTING)
+		include_directories(tests/Cxx)
 		add_subdirectory(tests)
 	endif(XDMF_BUILD_TESTING)
 	

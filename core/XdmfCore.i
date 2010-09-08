@@ -44,11 +44,12 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %template() Loki::Visitor<XdmfItem>;
 
 #ifdef SWIGJAVA
+%ignore XdmfArray::getHDF5Controller() const;
+%ignore XdmfArray::getValuesInternal() const;
 %ignore XdmfArray::ItemTag;
 %ignore XdmfInformation::ItemTag;
-%ignore XdmfDataItem::getArray() const;
-%ignore XdmfArray::getHDF5Controller() const;
-%ignore XdmfArray::getValuesPointer() const;
+%ignore XdmfItem::getInformation(const unsigned int index) const;
+%ignore XdmfItem::getInformation(const std::string & name) const;
 %ignore XdmfWriter::getHDF5Writer() const;
 
 %pragma(java) jniclasscode=%{
@@ -61,7 +62,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
     }
   }
 %}
-#endif
+#endif /* SWIGJAVA */
 
 %include XdmfItem.hpp
 %include XdmfItemProperty.hpp

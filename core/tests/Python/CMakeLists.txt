@@ -1,7 +1,7 @@
 # Add any dependencies that the python tests may need
 # Note: The tests already depend on their own file
 SET_PROPERTY(GLOBAL APPEND PROPERTY PYTHON_TEST_DEPENDENCIES
-	
+
 )
 
 # Add any pythonpath directories that the python tests may need
@@ -22,8 +22,8 @@ ADD_PYTHON_TEST(TestXdmfArray)
 
 # Add any python cleanup here:
 # Note: We don't want to use a foreach loop to test the files incase we
-#       have multiple files (ie: CLEAN_PYTHON_TEST(testname outputfile1 ...))
-#       Read UseCxxTest.cmake for more information
+#	have multiple files (ie: CLEAN_PYTHON_TEST(testname outputfile1 ...))
+#	Read UseCxxTest.cmake for more information
 # ---------------------------------------
 CLEAN_PYTHON_TEST(TestXdmfArray)
 
@@ -32,5 +32,5 @@ CLEAN_PYTHON_TEST(TestXdmfArray)
 GET_PROPERTY(targets GLOBAL PROPERTY PYTHON_TEST_TARGETS)
 ADD_CUSTOM_TARGET(Python_Core_Test_target ALL DEPENDS ${targets})
 
-# We need to reset the targests since we created a core target
+# We need to reset the targets since we created a core target
 SET_PROPERTY(GLOBAL PROPERTY PYTHON_TEST_TARGETS "")

@@ -9,7 +9,7 @@ include (UseCxxTest)
 
 # Add any cxx tests here:
 # Note: We don't want to use a foreach loop to test the files incase we
-# 	have extra arguments (ie: ADD_CXX_TEST(testname inputfile))
+#	have extra arguments (ie: ADD_CXX_TEST(testname inputfile))
 #	Read UseCxxTest.cmake for more information
 # ---------------------------------------
 ADD_CXX_TEST(TestXdmfArray)
@@ -20,8 +20,8 @@ ADD_CXX_TEST(TestXdmfInformation)
 
 # Add any cxx cleanup here:
 # Note: We don't want to use a foreach loop to test the files incase we
-#       have multiple files (ie: CLEAN_CXX_TEST(testname outputfile1 ...))
-#       Read UseCxxTest.cmake for more information
+#	have multiple files (ie: CLEAN_CXX_TEST(testname outputfile1 ...))
+#	Read UseCxxTest.cmake for more information
 # ---------------------------------------
 CLEAN_CXX_TEST(TestXdmfArray)
 CLEAN_CXX_TEST(TestXdmfArrayWriteRead 

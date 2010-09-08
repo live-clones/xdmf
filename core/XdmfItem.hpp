@@ -53,7 +53,7 @@ public:
 	boost::shared_ptr<XdmfInformation> getInformation(const std::string & key);
 
 	/**
-	 * Get an information attached to this grid by name (const version).
+	 * Get an information attached to this grid by key (const version).
 	 *
 	 * @param key of the information to retrieve.
 	 * @return requested information.  If not found a NULL pointer is returned.

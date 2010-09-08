@@ -156,7 +156,6 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 // we ask swig to ignore the static variable (thereby removing direct
 // access to the variable, but leaving access to our getter function
 
-
 %ignore XdmfAttribute::ItemTag;
 %ignore XdmfDomain::ItemTag;
 %ignore XdmfGeometry::ItemTag;
@@ -183,6 +182,7 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 %ignore XdmfGrid::getTime() const;
 %ignore XdmfGrid::getTopology() const;
 %ignore XdmfGridCollection::getGrid(const unsigned int index) const;
+%ignore XdmfGridCollection::insert(const boost::shared_ptr<XdmfInformation> information);
 %ignore XdmfGrid::getMap() const;
 %ignore XdmfSet::getHDF5Controller() const;
 
@@ -203,7 +203,7 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
   }
 %}
 
-#endif
+#endif */ SWIGJAVA */
 
 // Shared Pointer Templates
 %shared_ptr(XdmfAttribute)

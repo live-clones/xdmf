@@ -25,8 +25,8 @@ ADD_PYTHON_TEST(TestXdmfWriter)
 
 # Add any python cleanup here:
 # Note: We don't want to use a foreach loop to test the files incase we
-#       have multiple files (ie: CLEAN_PYTHON_TEST(testname outputfile1 ...))
-#       Read UseCxxTest.cmake for more information
+#	have multiple files (ie: CLEAN_PYTHON_TEST(testname outputfile1 ...))
+#	Read UseCxxTest.cmake for more information
 # ---------------------------------------
 CLEAN_PYTHON_TEST(TestXdmfHDF5Writer
 	hdf5WriterPythonTest.h5
