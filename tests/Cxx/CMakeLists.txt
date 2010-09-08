@@ -1,4 +1,4 @@
-# Add any dependencies that the cxx core tests may need
+# Add any dependencies that the cxx tests may need
 # Note: The tests already depend on their own file
 SET_PROPERTY(GLOBAL APPEND PROPERTY CXX_TEST_DEPENDENCIES
 	"Xdmf"
@@ -57,4 +57,3 @@ CLEAN_CXX_TEST(TestXdmfXPath
 	XdmfXPath1.xmf
 	XdmfXPath2.xmf
 )
-
