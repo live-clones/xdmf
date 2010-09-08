@@ -7,32 +7,35 @@
  * @brief Property describing the types of elements stored in an XdmfTopology.
  *
  * XdmfTopologyType is a property used by XdmfTopology to specify the element types stored in the XdmfTopology.
- * A specific XdmfTopologyType can be created by calling on of the static methods in the class, i.e.
+ * A specific XdmfTopologyType can be created by calling on one of the static methods in the class, i.e.
  * XdmfTopologyType::Tetrahedron().
  *
  * Xdmf supports the following topology types:
  * 	NoTopologyType
- * 	Polyvertex
- * 	Polyline
- * 	Polygon
- * 	Triangle
- * 	Quadrilateral
- * 	Tetrahedron
- * 	Wedge
- * 	Hexahedron
- * 	Edge_3
- * 	Triangle_6
- * 	Quadrilateral_8
- * 	Quadrilateral_9
- * 	Tetrahedron_10
- * 	Pyramid_13
- * 	Wedge_15
- * 	Hexahedron_20
- * 	Hexahedron_24
- * 	Hexahedron_27
- * 	Hexahedron_64
- * 	Hexahedron_125
- * 	Mixed
+ * 	Polyvertex - Unconnected Points
+ * 	Polyline - Line Segments
+ * 	Polygon - N Edge Polygon
+ * 	Triangle - 3 Edge Polygon
+ * 	Quadrilateral - 4 Edge Polygon
+ * 	Tetrahedron - 4 Triangular Faces
+ * 	Wedge - 4 Triangular Faces, Quadrilateral Base
+ * 	Hexahedron - 6 Quadrilateral Faces
+ * 	Edge_3 - 3 Node Quadratic Line
+ * 	Triangle_6 - 6 Node Quadratic Triangle
+ * 	Quadrilateral_8 - 8 Node Quadratic Quadrilateral
+ * 	Quadrilateral_9 - 9 Node Bi-Quadratic Quadrilateral
+ * 	Tetrahedron_10 - 10 Node Quadratic Tetrahedron
+ * 	Pyramid_13 - 13 Node Quadratic Pyramid
+ * 	Wedge_15 - 15 Node Quadratic Wedge
+ * 	Wedge_18 - 18 Node Bi-Quadratic Wedge
+ * 	Hexahedron_20 - 20 Node Quadratic Hexahedron
+ * 	Hexahedron_24 - 24 Node Bi-Quadratic Hexahedron
+ * 	Hexahedron_27 - 27 Node Tri-Quadratic Hexahedron
+ * 	Hexahedron_64 - 64 Node Tri-Cubic Hexahedron
+ * 	Hexahedron_64_GLL - 64 Node Spectral Tri-Cubic Hexahedron with Gauss-Lobatto-Legendre points.
+ * 	Hexahedron_125 - 125 Node Tri-Quartic Hexahedron
+ * 	Hexahedron_125_GLL - 125 Node Spectral Tri-Quartic Hexahedron with Gauss-Lobatto-Legendre points.
+ * 	Mixed - Mixture of Unstructured Topologies
  * 	TwoDSMesh
  * 	TwoDRectMesh
  * 	TwoDCoRectMesh
@@ -75,7 +78,9 @@ public:
 	static boost::shared_ptr<const XdmfTopologyType> Hexahedron_24();
 	static boost::shared_ptr<const XdmfTopologyType> Hexahedron_27();
 	static boost::shared_ptr<const XdmfTopologyType> Hexahedron_64();
+	static boost::shared_ptr<const XdmfTopologyType> Hexahedron_64_GLL();
 	static boost::shared_ptr<const XdmfTopologyType> Hexahedron_125();
+	static boost::shared_ptr<const XdmfTopologyType> Hexahedron_125_GLL();
 	static boost::shared_ptr<const XdmfTopologyType> Mixed();
 	static boost::shared_ptr<const XdmfTopologyType> TwoDSMesh();
 	static boost::shared_ptr<const XdmfTopologyType> TwoDRectMesh();

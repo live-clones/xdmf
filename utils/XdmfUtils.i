@@ -39,21 +39,17 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
 	#include <XdmfTopologyType.hpp>
 
 	// XdmfUtils Includes
-	#ifdef XDMF_BUILD_EXODUS_IO
-		#include <XdmfExodusReader.hpp>
-		#include <XdmfExodusWriter.hpp>
-	#endif
-	#ifdef XDMF_BUILD_PARTITIONER
-		#include <XdmfPartitioner.hpp>
-	#endif
+	#include <XdmfExodusReader.hpp>
+	#include <XdmfExodusWriter.hpp>
+	#include <XdmfPartitioner.hpp>
 	#include <XdmfTopologyConverter.hpp>
 %}
 
 %import Xdmf.i
 
-//%pythoncode {
-//	from Xdmf import *
-//}
+%pythoncode {
+	from Xdmf import *
+}
 
 // Shared Pointer Templates
 #ifdef XDMF_BUILD_EXODUS_IO

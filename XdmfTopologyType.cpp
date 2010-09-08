@@ -149,9 +149,21 @@ boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Hexahedron_64()
 	return p;
 }
 
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Hexahedron_64_GLL()
+{
+	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(64, "Hexahedron_64_GLL", Cubic));
+	return p;
+}
+
 boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Hexahedron_125()
 {
 	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(125, "Hexahedron_125", Quartic));
+	return p;
+}
+
+boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Hexahedron_125_GLL()
+{
+	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(125, "Hexahedron_125_GLL", Quartic));
 	return p;
 }
 

@@ -1,4 +1,4 @@
-#include <math.h>
+#include <cmath>
 #include "XdmfAttribute.hpp"
 #include "XdmfAttributeCenter.hpp"
 #include "XdmfAttributeType.hpp"
@@ -25,6 +25,33 @@ public:
 	{
 	}
 
+	// Classes that perform topology conversions.  Converter is the root base class.  Tessellator is a subclass of
+	// Converter that deals with cases where the mesh only needs to be tessellated to carry out the conversion
+	// (e.g. Hexahedron_64ToHexahedron.
+
+	class Converter;
+	class Tessellator;
+	class HexahedronToHexahedron_64;
+	class HexahedronToHexahedron_64_GLL;
+	class HexahedronToHexahedron_125;
+	class HexahedronToHexahedron_125_GLL;
+	class Hexahedron_64ToHexahedron;
+	class Hexahedron_125ToHexahedron;
+};
+
+class XdmfTopologyConverter::XdmfTopologyConverterImpl::Converter
+{
+	
+public:
+	
+	Converter()
+	{	
+	}
+	
+	virtual ~Converter()
+	{
+	}
+	
 	struct PointComparison {
 		bool operator()(const std::vector<double> & point1, const std::vector<double> & point2) const
 		{
@@ -39,8 +66,10 @@ public:
 			return false;
 		}
 	};
+	
+	virtual boost::shared_ptr<XdmfGrid> convert(const boost::shared_ptr<XdmfGrid> gridToConvert, const boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter) const = 0;
 
-	inline void insertPointWithoutCheck(const std::vector<double> & newPoint, const boost::shared_ptr<XdmfArray> & newConnectivity, const boost::shared_ptr<XdmfArray> & newPoints) const
+	void insertPointWithoutCheck(const std::vector<double> & newPoint, const boost::shared_ptr<XdmfArray> & newConnectivity, const boost::shared_ptr<XdmfArray> & newPoints) const
 	{
 		newConnectivity->pushBack<unsigned int>(newPoints->getSize() / 3);
 		newPoints->pushBack(newPoint[0]);
@@ -48,7 +77,7 @@ public:
 		newPoints->pushBack(newPoint[2]);
 	}
 
-	inline void insertPointWithCheck(const std::vector<double> & newPoint, std::map<std::vector<double>, unsigned int, PointComparison> & coordToIdMap, const boost::shared_ptr<XdmfArray> & newConnectivity, const boost::shared_ptr<XdmfArray> & newPoints) const
+	void insertPointWithCheck(const std::vector<double> & newPoint, std::map<std::vector<double>, unsigned int, PointComparison> & coordToIdMap, const boost::shared_ptr<XdmfArray> & newConnectivity, const boost::shared_ptr<XdmfArray> & newPoints) const
 	{
 		std::map<std::vector<double>, unsigned int>::const_iterator iter = coordToIdMap.find(newPoint);
 		if(iter == coordToIdMap.end())
@@ -61,39 +90,142 @@ public:
 		{
 			newConnectivity->pushBack(iter->second);
 		}
-	}
-
-	class HexahedronToHexahedron_64;
-	class HexahedronToHexahedron_125;
-	class Hexahedron_64ToHexahedron;
+	}	
+	
 };
 
-class XdmfTopologyConverter::XdmfTopologyConverterImpl::HexahedronToHexahedron_64 : public XdmfTopologyConverter::XdmfTopologyConverterImpl {
+class XdmfTopologyConverter::XdmfTopologyConverterImpl::Tessellator : public XdmfTopologyConverter::XdmfTopologyConverterImpl::Converter {
+	
+public:
+	
+	virtual ~Tessellator()
+	{
+	}
+	
+	boost::shared_ptr<XdmfGrid> convert(const boost::shared_ptr<XdmfGrid> gridToConvert, const boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter) const
+	{
+		boost::shared_ptr<XdmfGrid> toReturn = XdmfGrid::New();
+		toReturn->setName(gridToConvert->getName());
+		toReturn->setGeometry(gridToConvert->getGeometry());
+
+		if(heavyDataWriter)
+		{
+			if(!toReturn->getGeometry()->isInitialized())
+			{
+				toReturn->getGeometry()->read();
+			}
+			toReturn->getGeometry()->accept(heavyDataWriter);
+			toReturn->getGeometry()->release();
+		}
+		
+		bool releaseTopology;
+		if(!gridToConvert->getTopology()->isInitialized())
+		{
+			gridToConvert->getTopology()->read();
+			releaseTopology = true;
+		}
+		
+		this->tesselateTopology(gridToConvert->getTopology(), toReturn->getTopology());
+		
+		if(releaseTopology)
+		{
+			gridToConvert->getTopology()->release();
+		}
+
+		if(heavyDataWriter)
+		{
+			toReturn->getTopology()->accept(heavyDataWriter);
+			toReturn->getTopology()->release();
+		}
+
+		for(unsigned int i=0; i<gridToConvert->getNumberAttributes(); ++i)
+		{
+			boost::shared_ptr<XdmfAttribute> currAttribute = gridToConvert->getAttribute(i);
+			boost::shared_ptr<XdmfAttribute> createdAttribute = boost::shared_ptr<XdmfAttribute>();
+			if(currAttribute->getCenter() == XdmfAttributeCenter::Node())
+			{
+				createdAttribute = currAttribute;
+			}
+			else if(currAttribute->getCenter() == XdmfAttributeCenter::Cell())
+			{
+				bool releaseAttribute = false;
+				if(!currAttribute->isInitialized())
+				{
+					currAttribute->read();
+					releaseAttribute = true;
+				}
+
+				createdAttribute = XdmfAttribute::New();
+				createdAttribute->setName(currAttribute->getName());
+				createdAttribute->setType(currAttribute->getType());
+				createdAttribute->setCenter(currAttribute->getCenter());
+				createdAttribute->initialize(currAttribute->getArrayType(), currAttribute->getSize() * mNumTesselations);
+				for(unsigned int j=0; j<currAttribute->getSize(); ++j)
+				{
+					createdAttribute->insert(j * mNumTesselations, currAttribute, j, mNumTesselations, 1, 0);
+				}
+
+				if(releaseAttribute)
+				{
+					currAttribute->release();
+				}
+			}
+			if(createdAttribute)
+			{
+				toReturn->insert(createdAttribute);
+				if(heavyDataWriter)
+				{
+					if(!createdAttribute->isInitialized())
+					{
+						createdAttribute->read();
+					}
+					createdAttribute->accept(heavyDataWriter);
+					createdAttribute->release();
+				}
+			}
+		}
+		return toReturn;
+	}
+	
+	virtual void tesselateTopology(boost::shared_ptr<XdmfTopology> topologyToConvert, boost::shared_ptr<XdmfTopology> topologyToReturn) const = 0;
+	
+protected:
+	
+	Tessellator(const unsigned int numTesselations) :
+		mNumTesselations(numTesselations)
+	{
+	}
+	
+	const unsigned int mNumTesselations;
+	
+};
+
+class XdmfTopologyConverter::XdmfTopologyConverterImpl::HexahedronToHexahedron_64 : public XdmfTopologyConverter::XdmfTopologyConverterImpl::Converter {
+
 public:
 
 	HexahedronToHexahedron_64()
 	{
 	}
 
-	inline void computeInteriorPoints(std::vector<double> & leftPoint, std::vector<double> & rightPoint, const std::vector<double> & point1, const std::vector<double> & point2) const
+	virtual ~HexahedronToHexahedron_64()
+	{
+	}
+
+	virtual void computeInteriorPoints(std::vector<double> & leftPoint, std::vector<double> & rightPoint, const std::vector<double> & point1, const std::vector<double> & point2) const
+	{
+		this->computeLeftPoint(leftPoint, point1, point2);
+		this->computeRightPoint(rightPoint, point1, point2);
+	}
+
+	virtual void computeLeftPoint(std::vector<double> & leftPoint, const std::vector<double> & point1, const std::vector<double> & point2) const
 	{
 		leftPoint[0] = (1.0/3.0)*(point2[0] + 2*point1[0]);
 		leftPoint[1] = (1.0/3.0)*(point2[1] + 2*point1[1]);
 		leftPoint[2] = (1.0/3.0)*(point2[2] + 2*point1[2]);
-
-		rightPoint[0] = (1.0/3.0)*(2*point2[0] + point1[0]);
-		rightPoint[1] = (1.0/3.0)*(2*point2[1] + point1[1]);
-		rightPoint[2] = (1.0/3.0)*(2*point2[2] + point1[2]);
 	}
 
-	inline void computeLeftPoint(std::vector<double> & leftPoint, const std::vector<double> & point1, const std::vector<double> & point2) const
-	{
-		leftPoint[0] = (1.0/3.0)*(point2[0] + 2*point1[0]);
-		leftPoint[1] = (1.0/3.0)*(point2[1] + 2*point1[1]);
-		leftPoint[2] = (1.0/3.0)*(point2[2] + 2*point1[2]);
-	}
-
-	inline void computeRightPoint(std::vector<double> & rightPoint, const std::vector<double> & point1, const std::vector<double> & point2) const
+	virtual void computeRightPoint(std::vector<double> & rightPoint, const std::vector<double> & point1, const std::vector<double> & point2) const
 	{
 		rightPoint[0] = (1.0/3.0)*(2*point2[0] + point1[0]);
 		rightPoint[1] = (1.0/3.0)*(2*point2[1] + point1[1]);
@@ -356,43 +488,70 @@ public:
 	}
 };
 
-class XdmfTopologyConverter::XdmfTopologyConverterImpl::HexahedronToHexahedron_125 : public XdmfTopologyConverter::XdmfTopologyConverterImpl {
+class XdmfTopologyConverter::XdmfTopologyConverterImpl::HexahedronToHexahedron_64_GLL : public XdmfTopologyConverter::XdmfTopologyConverterImpl::HexahedronToHexahedron_64 {
+
+public:
+
+	HexahedronToHexahedron_64_GLL()
+	{
+	}
+
+	void computeLeftPoint(std::vector<double> & leftPoint, const std::vector<double> & point1, const std::vector<double> & point2) const
+	{
+		leftPoint[0] = (1.0/2.0)*((1-C)*point2[0] + (1+C)*point1[0]);
+		leftPoint[1] = (1.0/2.0)*((1-C)*point2[1] + (1+C)*point1[1]);
+		leftPoint[2] = (1.0/2.0)*((1-C)*point2[2] + (1+C)*point1[2]);
+	}
+
+	void computeRightPoint(std::vector<double> & rightPoint, const std::vector<double> & point1, const std::vector<double> & point2) const
+	{
+		rightPoint[0] = (1.0/2.0)*((1+C)*point2[0] + (1-C)*point1[0]);
+		rightPoint[1] = (1.0/2.0)*((1+C)*point2[1] + (1-C)*point1[1]);
+		rightPoint[2] = (1.0/2.0)*((1+C)*point2[2] + (1-C)*point1[2]);
+	}
+	
+private:
+	
+	static const double C;
+	
+};
+
+const double XdmfTopologyConverter::XdmfTopologyConverterImpl::HexahedronToHexahedron_64_GLL::C = 1 / std::sqrt(5.0);
+
+class XdmfTopologyConverter::XdmfTopologyConverterImpl::HexahedronToHexahedron_125 : public XdmfTopologyConverter::XdmfTopologyConverterImpl::Converter {
+
 public:
 
 	HexahedronToHexahedron_125()
 	{
 	}
 
-	inline void computeInteriorPoints(std::vector<double> & quarterPoint, std::vector<double> & midPoint, std::vector<double> & threeQuarterPoint, const std::vector<double> & point1, const std::vector<double> & point2) const
+	virtual ~HexahedronToHexahedron_125()
 	{
-		quarterPoint[0] = (1.0/4.0)*(point2[0] + 3*point1[0]);
-		quarterPoint[1] = (1.0/4.0)*(point2[1] + 3*point1[1]);
-		quarterPoint[2] = (1.0/4.0)*(point2[2] + 3*point1[2]);
-
-		midPoint[0] = (1.0/2.0)*(point2[0] + point1[0]);
-		midPoint[1] = (1.0/2.0)*(point2[1] + point1[1]);
-		midPoint[2] = (1.0/2.0)*(point2[2] + point1[2]);
-
-		threeQuarterPoint[0] = (1.0/4.0)*(3.0*point2[0] + point1[0]);
-		threeQuarterPoint[1] = (1.0/4.0)*(3.0*point2[1] + point1[1]);
-		threeQuarterPoint[2] = (1.0/4.0)*(3.0*point2[2] + point1[2]);
+	}
+	
+	void computeInteriorPoints(std::vector<double> & quarterPoint, std::vector<double> & midPoint, std::vector<double> & threeQuarterPoint, const std::vector<double> & point1, const std::vector<double> & point2) const
+	{
+		this->computeQuarterPoint(quarterPoint, point1, point2);
+		this->computeMidPoint(midPoint, point1, point2);
+		this->computeThreeQuarterPoint(threeQuarterPoint, point1, point2);
 	}
 
-	inline void computeQuarterPoint (std::vector<double> & quarterPoint, const std::vector<double> & point1, const std::vector<double> & point2) const
+	virtual void computeQuarterPoint(std::vector<double> & quarterPoint, const std::vector<double> & point1, const std::vector<double> & point2) const
 	{
 		quarterPoint[0] = (1.0/4.0)*(point2[0] + 3*point1[0]);
 		quarterPoint[1] = (1.0/4.0)*(point2[1] + 3*point1[1]);
 		quarterPoint[2] = (1.0/4.0)*(point2[2] + 3*point1[2]);
 	}
 
-	inline void computeMidPoint(std::vector<double> & midPoint, const std::vector<double> & point1, const std::vector<double> & point2) const
+	void computeMidPoint(std::vector<double> & midPoint, const std::vector<double> & point1, const std::vector<double> & point2) const
 	{
 		midPoint[0] = (1.0/2.0)*(point2[0] + point1[0]);
 		midPoint[1] = (1.0/2.0)*(point2[1] + point1[1]);
 		midPoint[2] = (1.0/2.0)*(point2[2] + point1[2]);
 	}
 
-	inline void computeThreeQuarterPoint(std::vector<double> & threeQuarterPoint, const std::vector<double> & point1, const std::vector<double> & point2) const
+	virtual void computeThreeQuarterPoint(std::vector<double> & threeQuarterPoint, const std::vector<double> & point1, const std::vector<double> & point2) const
 	{
 		threeQuarterPoint[0] = (1.0/4.0)*(3.0*point2[0] + point1[0]);
 		threeQuarterPoint[1] = (1.0/4.0)*(3.0*point2[1] + point1[1]);
@@ -694,125 +853,125 @@ public:
 			this->insertPointWithCheck(midPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
 			this->insertPointWithCheck(threeQuarterPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
 
-		    // Case 32
-		    this->computeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[19], localNodes[11]);
-		    this->insertPointWithCheck(quarterPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
-		    this->insertPointWithCheck(midPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
-		    this->insertPointWithCheck(threeQuarterPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
+			// Case 32
+			this->computeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[19], localNodes[11]);
+			this->insertPointWithCheck(quarterPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
+			this->insertPointWithCheck(midPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
+			this->insertPointWithCheck(threeQuarterPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
 
-		    // Case 33
-		    this->computeMidPoint(midPoint, localNodes[10], localNodes[14]);
-		    this->insertPointWithCheck(midPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
+			// Case 33
+			this->computeMidPoint(midPoint, localNodes[10], localNodes[14]);
+			this->insertPointWithCheck(midPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
 
-		    // Case 34
-		    this->computeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[13], localNodes[17]);
-		    this->insertPointWithCheck(quarterPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
-		    this->insertPointWithCheck(midPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
-		    this->insertPointWithCheck(threeQuarterPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
+			// Case 34
+			this->computeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[13], localNodes[17]);
+			this->insertPointWithCheck(quarterPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
+			this->insertPointWithCheck(midPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
+			this->insertPointWithCheck(threeQuarterPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
 
-		    // Case 35
-		    this->computeMidPoint(midPoint, localNodes[16], localNodes[8]);
-		    this->insertPointWithCheck(midPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
+			// Case 35
+			this->computeMidPoint(midPoint, localNodes[16], localNodes[8]);
+			this->insertPointWithCheck(midPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
 
-		    // Case 36
-		    this->computeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[31], localNodes[23]);
-		    this->insertPointWithCheck(quarterPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
-		    this->insertPointWithCheck(midPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
-		    this->insertPointWithCheck(threeQuarterPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
+			// Case 36
+			this->computeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[31], localNodes[23]);
+			this->insertPointWithCheck(quarterPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
+			this->insertPointWithCheck(midPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
+			this->insertPointWithCheck(threeQuarterPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
 
-		    // Case 37
-		    this->computeMidPoint(midPoint, localNodes[22], localNodes[26]);
-		    this->insertPointWithCheck(midPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
+			// Case 37
+			this->computeMidPoint(midPoint, localNodes[22], localNodes[26]);
+			this->insertPointWithCheck(midPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
 
-		    // Case 38
-		    this->computeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[25], localNodes[29]);
-		    this->insertPointWithCheck(quarterPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
-		    this->insertPointWithCheck(midPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
-		    this->insertPointWithCheck(threeQuarterPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
+			// Case 38
+			this->computeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[25], localNodes[29]);
+			this->insertPointWithCheck(quarterPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
+			this->insertPointWithCheck(midPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
+			this->insertPointWithCheck(threeQuarterPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
 
-		    // Case 39
-		    this->computeMidPoint(midPoint, localNodes[28], localNodes[20]);
-		    this->insertPointWithCheck(midPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
+			// Case 39
+			this->computeMidPoint(midPoint, localNodes[28], localNodes[20]);
+			this->insertPointWithCheck(midPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
 
-		    // Case 40
-		    this->computeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[55], localNodes[47]);
-		    this->insertPointWithoutCheck(quarterPoint, toReturnTopology, toReturnGeometry);
-		    this->insertPointWithoutCheck(midPoint, toReturnTopology, toReturnGeometry);
-		    this->insertPointWithoutCheck(threeQuarterPoint, toReturnTopology, toReturnGeometry);
+			// Case 40
+			this->computeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[55], localNodes[47]);
+			this->insertPointWithoutCheck(quarterPoint, toReturnTopology, toReturnGeometry);
+			this->insertPointWithoutCheck(midPoint, toReturnTopology, toReturnGeometry);
+			this->insertPointWithoutCheck(threeQuarterPoint, toReturnTopology, toReturnGeometry);
 
-		    // Case 41
-		    this->computeMidPoint(midPoint, localNodes[46], localNodes[50]);
-		    this->insertPointWithoutCheck(midPoint, toReturnTopology, toReturnGeometry);
+			// Case 41
+			this->computeMidPoint(midPoint, localNodes[46], localNodes[50]);
+			this->insertPointWithoutCheck(midPoint, toReturnTopology, toReturnGeometry);
 
-		    // Case 42
-		    this->computeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[49], localNodes[53]);
-		    this->insertPointWithoutCheck(quarterPoint, toReturnTopology, toReturnGeometry);
-		    this->insertPointWithoutCheck(midPoint, toReturnTopology, toReturnGeometry);
-		    this->insertPointWithoutCheck(threeQuarterPoint, toReturnTopology, toReturnGeometry);
+			// Case 42
+			this->computeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[49], localNodes[53]);
+			this->insertPointWithoutCheck(quarterPoint, toReturnTopology, toReturnGeometry);
+			this->insertPointWithoutCheck(midPoint, toReturnTopology, toReturnGeometry);
+			this->insertPointWithoutCheck(threeQuarterPoint, toReturnTopology, toReturnGeometry);
 
-		    // Case 43
-		    this->computeMidPoint(midPoint, localNodes[52], localNodes[44]);
-		    this->insertPointWithoutCheck(midPoint, toReturnTopology, toReturnGeometry);
+			// Case 43
+			this->computeMidPoint(midPoint, localNodes[52], localNodes[44]);
+			this->insertPointWithoutCheck(midPoint, toReturnTopology, toReturnGeometry);
 
-		    // Case 44
-		    this->computeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[67], localNodes[59]);
-		    this->insertPointWithoutCheck(quarterPoint, toReturnTopology, toReturnGeometry);
-		    this->insertPointWithoutCheck(midPoint, toReturnTopology, toReturnGeometry);
-		    this->insertPointWithoutCheck(threeQuarterPoint, toReturnTopology, toReturnGeometry);
+			// Case 44
+			this->computeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[67], localNodes[59]);
+			this->insertPointWithoutCheck(quarterPoint, toReturnTopology, toReturnGeometry);
+			this->insertPointWithoutCheck(midPoint, toReturnTopology, toReturnGeometry);
+			this->insertPointWithoutCheck(threeQuarterPoint, toReturnTopology, toReturnGeometry);
 
-		    // Case 45
-		    this->computeMidPoint(midPoint, localNodes[62], localNodes[58]);
-		    this->insertPointWithoutCheck(midPoint, toReturnTopology, toReturnGeometry);
+			// Case 45
+			this->computeMidPoint(midPoint, localNodes[62], localNodes[58]);
+			this->insertPointWithoutCheck(midPoint, toReturnTopology, toReturnGeometry);
 
-		    // Case 46
-		    this->computeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[61], localNodes[65]);
-		    this->insertPointWithoutCheck(quarterPoint, toReturnTopology, toReturnGeometry);
-		    this->insertPointWithoutCheck(midPoint, toReturnTopology, toReturnGeometry);
-		    this->insertPointWithoutCheck(threeQuarterPoint, toReturnTopology, toReturnGeometry);
+			// Case 46
+			this->computeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[61], localNodes[65]);
+			this->insertPointWithoutCheck(quarterPoint, toReturnTopology, toReturnGeometry);
+			this->insertPointWithoutCheck(midPoint, toReturnTopology, toReturnGeometry);
+			this->insertPointWithoutCheck(threeQuarterPoint, toReturnTopology, toReturnGeometry);
 
-		    // Case 47
-		    this->computeMidPoint(midPoint, localNodes[56], localNodes[64]);
-		    this->insertPointWithoutCheck(midPoint, toReturnTopology, toReturnGeometry);
+			// Case 47
+			this->computeMidPoint(midPoint, localNodes[56], localNodes[64]);
+			this->insertPointWithoutCheck(midPoint, toReturnTopology, toReturnGeometry);
 
-		    // Case 48
-		    this->computeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[79], localNodes[71]);
-		    this->insertPointWithoutCheck(quarterPoint, toReturnTopology, toReturnGeometry);
-		    this->insertPointWithoutCheck(midPoint, toReturnTopology, toReturnGeometry);
-		    this->insertPointWithoutCheck(threeQuarterPoint, toReturnTopology, toReturnGeometry);
+			// Case 48
+			this->computeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[79], localNodes[71]);
+			this->insertPointWithoutCheck(quarterPoint, toReturnTopology, toReturnGeometry);
+			this->insertPointWithoutCheck(midPoint, toReturnTopology, toReturnGeometry);
+			this->insertPointWithoutCheck(threeQuarterPoint, toReturnTopology, toReturnGeometry);
 
-		    // Case 49
-		    this->computeMidPoint(midPoint, localNodes[70], localNodes[74]);
-		    this->insertPointWithoutCheck(midPoint, toReturnTopology, toReturnGeometry);
+			// Case 49
+			this->computeMidPoint(midPoint, localNodes[70], localNodes[74]);
+			this->insertPointWithoutCheck(midPoint, toReturnTopology, toReturnGeometry);
 
-		    // Case 50
-		    this->computeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[73], localNodes[77]);
-		    this->insertPointWithoutCheck(quarterPoint, toReturnTopology, toReturnGeometry);
-		    this->insertPointWithoutCheck(midPoint, toReturnTopology, toReturnGeometry);
-		    this->insertPointWithoutCheck(threeQuarterPoint, toReturnTopology, toReturnGeometry);
+			// Case 50
+			this->computeInteriorPoints(quarterPoint, midPoint, threeQuarterPoint, localNodes[73], localNodes[77]);
+			this->insertPointWithoutCheck(quarterPoint, toReturnTopology, toReturnGeometry);
+			this->insertPointWithoutCheck(midPoint, toReturnTopology, toReturnGeometry);
+			this->insertPointWithoutCheck(threeQuarterPoint, toReturnTopology, toReturnGeometry);
 
-		    // Case 51
-		    this->computeMidPoint(midPoint, localNodes[76], localNodes[68]);
-		    this->insertPointWithoutCheck(midPoint, toReturnTopology, toReturnGeometry);
+			// Case 51
+			this->computeMidPoint(midPoint, localNodes[76], localNodes[68]);
+			this->insertPointWithoutCheck(midPoint, toReturnTopology, toReturnGeometry);
 
-		    // Case 52
-		    this->computeMidPoint(midPoint, localNodes[12], localNodes[18]);
-		    this->insertPointWithCheck(midPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
+			// Case 52
+			this->computeMidPoint(midPoint, localNodes[12], localNodes[18]);
+			this->insertPointWithCheck(midPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
 
-		    // Case 53
-		    this->computeMidPoint(midPoint, localNodes[24], localNodes[30]);
-		    this->insertPointWithCheck(midPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
+			// Case 53
+			this->computeMidPoint(midPoint, localNodes[24], localNodes[30]);
+			this->insertPointWithCheck(midPoint, coordToIdMap, toReturnTopology, toReturnGeometry);
 
-		    // Case 54
-		    this->computeMidPoint(midPoint, localNodes[48], localNodes[54]);
-		    this->insertPointWithoutCheck(midPoint, toReturnTopology, toReturnGeometry);
+			// Case 54
+			this->computeMidPoint(midPoint, localNodes[48], localNodes[54]);
+			this->insertPointWithoutCheck(midPoint, toReturnTopology, toReturnGeometry);
 
-		    // Case 55
-		    this->computeMidPoint(midPoint, localNodes[60], localNodes[66]);
-		    this->insertPointWithoutCheck(midPoint, toReturnTopology, toReturnGeometry);
+			// Case 55
+			this->computeMidPoint(midPoint, localNodes[60], localNodes[66]);
+			this->insertPointWithoutCheck(midPoint, toReturnTopology, toReturnGeometry);
 
-		    // Case 56
-		    this->computeMidPoint(midPoint, localNodes[72], localNodes[78]);
-		    this->insertPointWithoutCheck(midPoint, toReturnTopology, toReturnGeometry);
+			// Case 56
+			this->computeMidPoint(midPoint, localNodes[72], localNodes[78]);
+			this->insertPointWithoutCheck(midPoint, toReturnTopology, toReturnGeometry);
 		}
 		if(releaseTopology)
 		{
@@ -829,321 +988,805 @@ public:
 	}
 };
 
-class XdmfTopologyConverter::XdmfTopologyConverterImpl::Hexahedron_64ToHexahedron : public XdmfTopologyConverter::XdmfTopologyConverterImpl {
-public:
+class XdmfTopologyConverter::XdmfTopologyConverterImpl::HexahedronToHexahedron_125_GLL : public XdmfTopologyConverter::XdmfTopologyConverterImpl::HexahedronToHexahedron_125 {
 
-	Hexahedron_64ToHexahedron()
+public:
+	
+	HexahedronToHexahedron_125_GLL()
 	{
 	}
 
-	boost::shared_ptr<XdmfGrid> convert(const boost::shared_ptr<XdmfGrid> gridToConvert, const boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter) const
+	void computeQuarterPoint(std::vector<double> & quarterPoint, const std::vector<double> & point1, const std::vector<double> & point2) const
 	{
-		boost::shared_ptr<XdmfGrid> toReturn = XdmfGrid::New();
-		toReturn->setName(gridToConvert->getName());
-		toReturn->setGeometry(gridToConvert->getGeometry());
+		quarterPoint[0] = (1.0/2.0)*((1-C) * point2[0] + (1+C) * point1[0]);
+		quarterPoint[1] = (1.0/2.0)*((1-C) * point2[1] + (1+C) * point1[1]);
+		quarterPoint[2] = (1.0/2.0)*((1-C) * point2[2] + (1+C) * point1[2]);
+	}
 
-		if(heavyDataWriter)
+	void computeThreeQuarterPoint(std::vector<double> & threeQuarterPoint, const std::vector<double> & point1, const std::vector<double> & point2) const
+	{
+		threeQuarterPoint[0] = (1.0/2.0)*((1+C) * point2[0] + (1-C) * point1[0]);
+		threeQuarterPoint[1] = (1.0/2.0)*((1+C) * point2[1] + (1-C) * point1[1]);
+		threeQuarterPoint[2] = (1.0/2.0)*((1+C) * point2[2] + (1-C) * point1[2]);
+	}
+	
+private:
+	
+	static const double C;
+	
+};
+
+const double XdmfTopologyConverter::XdmfTopologyConverterImpl::HexahedronToHexahedron_125_GLL::C = std::sqrt(3.0/7.0);
+
+class XdmfTopologyConverter::XdmfTopologyConverterImpl::Hexahedron_64ToHexahedron : public XdmfTopologyConverter::XdmfTopologyConverterImpl::Tessellator {
+
+public:
+
+	Hexahedron_64ToHexahedron() :
+		Tessellator(27)
+	{
+	}
+	
+	void tesselateTopology(boost::shared_ptr<XdmfTopology> topologyToConvert, boost::shared_ptr<XdmfTopology> topologyToReturn) const
+	{
+		topologyToReturn->setType(XdmfTopologyType::Hexahedron());
+		topologyToReturn->initialize(topologyToConvert->getArrayType(), 216 * topologyToConvert->getNumberElements());
+
+		unsigned int newIndex = 0;
+		for(unsigned int i=0; i<topologyToConvert->getNumberElements(); ++i)
 		{
-			if(!toReturn->getGeometry()->isInitialized())
-			{
-				toReturn->getGeometry()->read();
-			}
-			toReturn->getGeometry()->accept(heavyDataWriter);
-			toReturn->getGeometry()->release();
-		}
-
-		boost::shared_ptr<XdmfArray> gridToConvertTopology = gridToConvert->getTopology();
-		boost::shared_ptr<XdmfTopology> toReturnTopology = toReturn->getTopology();
-		toReturnTopology->setType(XdmfTopologyType::Hexahedron());
-		toReturnTopology->initialize(gridToConvertTopology->getArrayType(), 216 * gridToConvert->getTopology()->getNumberElements());
-
-		bool releaseTopology;
-		if(!gridToConvertTopology->isInitialized())
-		{
-			gridToConvertTopology->read();
-			releaseTopology = true;
-		}
-
-		for(unsigned int i=0; i<gridToConvert->getTopology()->getNumberElements(); ++i)
-		{
-			const unsigned int startIndex = 216 * i;
 			const unsigned int valuesStartIndex = 64 * i;
-			toReturnTopology->insert(startIndex + 0, gridToConvertTopology, 0 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 1, gridToConvertTopology, 8 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 2, gridToConvertTopology, 48 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 3, gridToConvertTopology, 15 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 4, gridToConvertTopology, 24 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 5, gridToConvertTopology, 36 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 6, gridToConvertTopology, 56 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 7, gridToConvertTopology, 33 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 8, gridToConvertTopology, 8 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 9, gridToConvertTopology, 9 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 10, gridToConvertTopology, 49 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 11, gridToConvertTopology, 48 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 12, gridToConvertTopology, 36 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 13, gridToConvertTopology, 37 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 14, gridToConvertTopology, 57 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 15, gridToConvertTopology, 56 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 16, gridToConvertTopology, 9 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 17, gridToConvertTopology, 1 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 18, gridToConvertTopology, 10 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 19, gridToConvertTopology, 49 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 20, gridToConvertTopology, 37 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 21, gridToConvertTopology, 25 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 22, gridToConvertTopology, 34 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 23, gridToConvertTopology, 57 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 24, gridToConvertTopology, 15 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 25, gridToConvertTopology, 48 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 26, gridToConvertTopology, 51 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 27, gridToConvertTopology, 14 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 28, gridToConvertTopology, 33 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 29, gridToConvertTopology, 56 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 30, gridToConvertTopology, 59 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 31, gridToConvertTopology, 32 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 32, gridToConvertTopology, 48 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 33, gridToConvertTopology, 49 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 34, gridToConvertTopology, 50 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 35, gridToConvertTopology, 51 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 36, gridToConvertTopology, 56 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 37, gridToConvertTopology, 57 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 38, gridToConvertTopology, 58 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 39, gridToConvertTopology, 59 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 40, gridToConvertTopology, 49 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 41, gridToConvertTopology, 10 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 42, gridToConvertTopology, 11 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 43, gridToConvertTopology, 50 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 44, gridToConvertTopology, 57 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 45, gridToConvertTopology, 34 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 46, gridToConvertTopology, 35 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 47, gridToConvertTopology, 58 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 48, gridToConvertTopology, 14 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 49, gridToConvertTopology, 51 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 50, gridToConvertTopology, 13 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 51, gridToConvertTopology, 3 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 52, gridToConvertTopology, 32 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 53, gridToConvertTopology, 59 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 54, gridToConvertTopology, 39 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 55, gridToConvertTopology, 27 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 56, gridToConvertTopology, 51 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 57, gridToConvertTopology, 50 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 58, gridToConvertTopology, 12 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 59, gridToConvertTopology, 13 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 60, gridToConvertTopology, 59 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 61, gridToConvertTopology, 58 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 62, gridToConvertTopology, 38 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 63, gridToConvertTopology, 39 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 64, gridToConvertTopology, 50 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 65, gridToConvertTopology, 11 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 66, gridToConvertTopology, 2 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 67, gridToConvertTopology, 12 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 68, gridToConvertTopology, 58 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 69, gridToConvertTopology, 35 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 70, gridToConvertTopology, 26 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 71, gridToConvertTopology, 38 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 72, gridToConvertTopology, 24 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 73, gridToConvertTopology, 36 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 74, gridToConvertTopology, 56 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 75, gridToConvertTopology, 33 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 76, gridToConvertTopology, 28 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 77, gridToConvertTopology, 44 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 78, gridToConvertTopology, 60 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 79, gridToConvertTopology, 41 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 80, gridToConvertTopology, 36 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 81, gridToConvertTopology, 37 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 82, gridToConvertTopology, 57 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 83, gridToConvertTopology, 56 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 84, gridToConvertTopology, 44 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 85, gridToConvertTopology, 45 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 86, gridToConvertTopology, 61 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 87, gridToConvertTopology, 60 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 88, gridToConvertTopology, 37 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 89, gridToConvertTopology, 25 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 90, gridToConvertTopology, 34 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 91, gridToConvertTopology, 57 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 92, gridToConvertTopology, 45 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 93, gridToConvertTopology, 29 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 94, gridToConvertTopology, 42 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 95, gridToConvertTopology, 61 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 96, gridToConvertTopology, 33 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 97, gridToConvertTopology, 56 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 98, gridToConvertTopology, 59 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 99, gridToConvertTopology, 32 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 100, gridToConvertTopology, 41 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 101, gridToConvertTopology, 60 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 102, gridToConvertTopology, 63 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 103, gridToConvertTopology, 40 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 104, gridToConvertTopology, 56 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 105, gridToConvertTopology, 57 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 106, gridToConvertTopology, 58 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 107, gridToConvertTopology, 59 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 108, gridToConvertTopology, 60 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 109, gridToConvertTopology, 61 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 110, gridToConvertTopology, 62 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 111, gridToConvertTopology, 63 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 112, gridToConvertTopology, 57 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 113, gridToConvertTopology, 34 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 114, gridToConvertTopology, 35 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 115, gridToConvertTopology, 58 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 116, gridToConvertTopology, 61 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 117, gridToConvertTopology, 42 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 118, gridToConvertTopology, 43 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 119, gridToConvertTopology, 62 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 120, gridToConvertTopology, 32 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 121, gridToConvertTopology, 59 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 122, gridToConvertTopology, 39 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 123, gridToConvertTopology, 27 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 124, gridToConvertTopology, 40 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 125, gridToConvertTopology, 63 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 126, gridToConvertTopology, 47 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 127, gridToConvertTopology, 31 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 128, gridToConvertTopology, 59 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 129, gridToConvertTopology, 58 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 130, gridToConvertTopology, 38 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 131, gridToConvertTopology, 39 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 132, gridToConvertTopology, 63 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 133, gridToConvertTopology, 62 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 134, gridToConvertTopology, 46 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 135, gridToConvertTopology, 47 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 136, gridToConvertTopology, 58 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 137, gridToConvertTopology, 35 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 138, gridToConvertTopology, 26 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 139, gridToConvertTopology, 38 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 140, gridToConvertTopology, 62 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 141, gridToConvertTopology, 43 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 142, gridToConvertTopology, 30 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 143, gridToConvertTopology, 46 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 144, gridToConvertTopology, 28 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 145, gridToConvertTopology, 44 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 146, gridToConvertTopology, 60 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 147, gridToConvertTopology, 41 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 148, gridToConvertTopology, 4 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 149, gridToConvertTopology, 16 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 150, gridToConvertTopology, 52 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 151, gridToConvertTopology, 23 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 152, gridToConvertTopology, 44 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 153, gridToConvertTopology, 45 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 154, gridToConvertTopology, 61 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 155, gridToConvertTopology, 60 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 156, gridToConvertTopology, 16 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 157, gridToConvertTopology, 17 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 158, gridToConvertTopology, 53 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 159, gridToConvertTopology, 52 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 160, gridToConvertTopology, 45 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 161, gridToConvertTopology, 29 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 162, gridToConvertTopology, 42 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 163, gridToConvertTopology, 61 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 164, gridToConvertTopology, 17 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 165, gridToConvertTopology, 5 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 166, gridToConvertTopology, 18 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 167, gridToConvertTopology, 53 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 168, gridToConvertTopology, 41 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 169, gridToConvertTopology, 60 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 170, gridToConvertTopology, 63 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 171, gridToConvertTopology, 40 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 172, gridToConvertTopology, 23 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 173, gridToConvertTopology, 52 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 174, gridToConvertTopology, 55 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 175, gridToConvertTopology, 22 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 176, gridToConvertTopology, 60 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 177, gridToConvertTopology, 61 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 178, gridToConvertTopology, 62 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 179, gridToConvertTopology, 63 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 180, gridToConvertTopology, 52 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 181, gridToConvertTopology, 53 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 182, gridToConvertTopology, 54 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 183, gridToConvertTopology, 55 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 184, gridToConvertTopology, 61 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 185, gridToConvertTopology, 42 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 186, gridToConvertTopology, 43 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 187, gridToConvertTopology, 62 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 188, gridToConvertTopology, 53 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 189, gridToConvertTopology, 18 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 190, gridToConvertTopology, 19 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 191, gridToConvertTopology, 54 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 192, gridToConvertTopology, 40 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 193, gridToConvertTopology, 63 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 194, gridToConvertTopology, 47 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 195, gridToConvertTopology, 31 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 196, gridToConvertTopology, 22 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 197, gridToConvertTopology, 55 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 198, gridToConvertTopology, 21 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 199, gridToConvertTopology, 7 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 200, gridToConvertTopology, 63 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 201, gridToConvertTopology, 62 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 202, gridToConvertTopology, 46 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 203, gridToConvertTopology, 47 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 204, gridToConvertTopology, 55 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 205, gridToConvertTopology, 54 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 206, gridToConvertTopology, 20 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 207, gridToConvertTopology, 21 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 208, gridToConvertTopology, 62 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 209, gridToConvertTopology, 43 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 210, gridToConvertTopology, 30 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 211, gridToConvertTopology, 46 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 212, gridToConvertTopology, 54 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 213, gridToConvertTopology, 19 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 214, gridToConvertTopology, 6 + valuesStartIndex, 1);
-			toReturnTopology->insert(startIndex + 215, gridToConvertTopology, 20 + valuesStartIndex, 1);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 0 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 8 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 48 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 15 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 24 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 36 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 56 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 33 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 8 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 9 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 49 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 48 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 36 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 37 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 57 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 56 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 9 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 1 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 10 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 49 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 37 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 25 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 34 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 57 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 15 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 48 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 51 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 14 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 33 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 56 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 59 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 32 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 48 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 49 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 50 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 51 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 56 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 57 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 58 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 59 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 49 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 10 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 11 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 50 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 57 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 34 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 35 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 58 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 14 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 51 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 13 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 3 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 32 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 59 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 39 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 27 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 51 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 50 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 12 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 13 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 59 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 58 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 38 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 39 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 50 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 11 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 2 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 12 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 58 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 35 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 26 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 38 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 24 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 36 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 56 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 33 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 28 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 44 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 60 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 41 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 36 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 37 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 57 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 56 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 44 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 45 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 61 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 60 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 37 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 25 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 34 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 57 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 45 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 29 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 42 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 61 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 33 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 56 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 59 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 32 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 41 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 60 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 63 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 40 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 56 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 57 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 58 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 59 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 60 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 61 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 62 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 63 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 57 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 34 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 35 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 58 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 61 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 42 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 43 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 62 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 32 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 59 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 39 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 27 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 40 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 63 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 47 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 31 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 59 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 58 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 38 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 39 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 63 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 62 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 46 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 47 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 58 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 35 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 26 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 38 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 62 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 43 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 30 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 46 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 28 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 44 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 60 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 41 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 4 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 16 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 52 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 23 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 44 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 45 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 61 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 60 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 16 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 17 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 53 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 52 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 45 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 29 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 42 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 61 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 17 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 5 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 18 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 53 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 41 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 60 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 63 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 40 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 23 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 52 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 55 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 22 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 60 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 61 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 62 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 63 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 52 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 53 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 54 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 55 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 61 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 42 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 43 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 62 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 53 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 18 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 19 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 54 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 40 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 63 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 47 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 31 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 22 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 55 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 21 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 7 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 63 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 62 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 46 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 47 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 55 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 54 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 20 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 21 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 62 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 43 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 30 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 46 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 54 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 19 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 6 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 20 + valuesStartIndex);
 		}
+	}
+};
 
-		if(releaseTopology)
+class XdmfTopologyConverter::XdmfTopologyConverterImpl::Hexahedron_125ToHexahedron : public XdmfTopologyConverter::XdmfTopologyConverterImpl::Tessellator {
+
+public:
+
+	Hexahedron_125ToHexahedron() :
+		Tessellator(64)
+	{
+	}
+		
+	void tesselateTopology(boost::shared_ptr<XdmfTopology> topologyToConvert, boost::shared_ptr<XdmfTopology> topologyToReturn) const
+	{
+		topologyToReturn->setType(XdmfTopologyType::Hexahedron());
+		topologyToReturn->initialize(topologyToConvert->getArrayType(), 512 * topologyToConvert->getNumberElements());
+		
+		unsigned int newIndex = 0;
+		for(unsigned int i=0; i<topologyToConvert->getNumberElements(); ++i)
 		{
-			gridToConvertTopology->release();
+			const unsigned int valuesStartIndex = 125 * i;
+			topologyToReturn->insert(newIndex++, topologyToConvert, 0 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 8 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 80 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 19 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 32 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 44 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 96 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 55 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 8 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 9 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 81 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 80 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 44 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 45 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 97 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 96 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 9 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 10 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 82 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 81 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 45 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 46 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 98 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 97 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 10 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 1 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 11 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 82 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 46 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 33 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 47 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 98 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 19 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 80 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 87 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 18 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 55 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 96 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 103 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 54 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 80 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 81 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 120 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 87 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 96 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 97 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 122 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 103 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 81 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 82 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 83 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 120 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 97 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 98 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 99 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 122 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 82 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 11 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 12 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 83 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 98 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 47 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 48 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 99 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 18 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 87 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 86 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 17 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 54 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 103 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 102 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 53 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 87 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 120 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 85 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 86 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 103 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 122 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 101 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 102 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 120 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 83 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 84 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 85 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 122 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 99 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 100 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 101 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 83 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 12 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 13 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 84 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 99 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 48 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 49 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 100 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 17 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 86 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 16 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 3 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 53 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 102 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 52 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 35 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 86 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 85 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 15 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 16 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 102 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 101 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 51 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 52 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 85 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 84 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 14 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 15 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 101 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 100 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 50 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 51 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 84 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 13 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 2 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 14 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 100 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 49 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 34 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 50 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 32 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 44 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 96 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 55 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 40 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 68 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 112 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 79 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 44 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 45 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 97 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 96 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 68 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 69 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 113 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 112 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 45 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 46 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 98 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 97 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 69 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 70 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 114 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 113 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 46 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 33 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 47 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 98 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 70 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 41 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 71 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 114 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 55 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 96 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 103 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 54 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 79 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 112 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 119 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 78 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 96 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 97 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 122 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 103 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 112 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 113 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 124 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 119 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 97 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 98 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 99 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 122 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 113 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 114 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 115 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 124 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 98 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 47 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 48 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 99 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 114 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 71 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 72 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 115 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 54 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 103 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 102 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 53 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 78 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 119 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 118 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 77 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 103 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 122 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 101 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 102 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 119 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 124 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 117 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 118 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 122 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 99 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 100 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 101 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 124 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 115 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 116 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 117 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 99 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 48 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 49 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 100 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 115 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 72 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 73 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 116 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 53 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 102 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 52 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 35 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 77 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 118 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 76 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 43 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 102 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 101 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 51 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 52 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 118 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 117 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 75 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 76 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 101 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 100 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 50 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 51 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 117 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 116 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 74 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 75 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 100 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 49 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 34 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 50 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 116 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 73 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 42 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 74 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 40 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 68 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 112 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 79 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 36 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 56 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 104 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 67 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 68 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 69 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 113 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 112 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 56 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 57 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 105 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 104 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 69 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 70 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 114 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 113 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 57 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 58 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 106 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 105 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 70 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 41 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 71 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 114 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 58 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 37 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 59 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 106 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 79 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 112 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 119 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 78 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 67 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 104 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 111 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 66 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 112 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 113 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 124 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 119 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 104 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 105 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 123 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 111 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 113 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 114 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 115 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 124 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 105 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 106 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 107 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 123 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 114 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 71 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 72 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 115 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 106 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 59 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 60 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 107 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 78 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 119 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 118 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 77 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 66 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 111 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 110 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 65 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 119 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 124 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 117 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 118 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 111 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 123 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 109 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 110 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 124 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 115 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 116 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 117 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 123 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 107 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 108 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 109 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 115 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 72 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 73 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 116 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 107 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 60 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 61 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 108 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 77 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 118 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 76 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 43 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 65 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 110 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 64 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 39 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 118 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 117 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 75 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 76 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 110 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 109 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 63 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 64 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 117 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 116 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 74 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 75 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 109 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 108 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 62 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 63 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 116 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 73 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 42 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 74 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 108 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 61 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 38 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 62 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 36 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 56 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 104 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 67 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 4 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 20 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 88 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 31 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 56 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 57 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 105 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 104 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 20 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 21 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 89 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 88 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 57 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 58 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 106 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 105 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 21 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 22 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 90 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 89 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 58 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 37 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 59 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 106 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 22 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 5 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 23 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 90 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 67 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 104 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 111 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 66 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 31 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 88 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 95 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 30 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 104 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 105 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 123 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 111 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 88 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 89 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 121 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 95 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 105 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 106 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 107 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 123 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 89 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 90 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 91 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 121 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 106 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 59 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 60 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 107 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 90 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 23 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 24 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 91 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 66 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 111 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 110 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 65 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 30 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 95 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 94 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 29 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 111 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 123 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 109 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 110 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 95 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 121 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 93 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 94 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 123 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 107 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 108 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 109 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 121 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 91 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 92 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 93 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 107 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 60 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 61 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 108 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 91 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 24 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 25 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 92 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 65 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 110 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 64 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 39 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 29 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 94 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 28 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 7 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 110 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 109 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 63 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 64 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 94 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 93 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 27 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 28 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 109 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 108 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 62 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 63 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 93 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 92 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 26 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 27 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 108 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 61 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 38 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 62 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 92 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 25 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 6 + valuesStartIndex);
+			topologyToReturn->insert(newIndex++, topologyToConvert, 26 + valuesStartIndex);
 		}
-
-		if(heavyDataWriter)
-		{
-			toReturnTopology->accept(heavyDataWriter);
-			toReturnTopology->release();
-		}
-
-		for(unsigned int i=0; i<gridToConvert->getNumberAttributes(); ++i)
-		{
-			boost::shared_ptr<XdmfAttribute> currAttribute = gridToConvert->getAttribute(i);
-			boost::shared_ptr<XdmfAttribute> createdAttribute = boost::shared_ptr<XdmfAttribute>();
-			if(currAttribute->getCenter() == XdmfAttributeCenter::Node())
-			{
-				createdAttribute = currAttribute;
-			}
-			else if(currAttribute->getCenter() == XdmfAttributeCenter::Cell())
-			{
-				bool releaseAttribute = false;
-				if(!currAttribute->isInitialized())
-				{
-					currAttribute->read();
-					releaseAttribute = true;
-				}
-
-				createdAttribute = XdmfAttribute::New();
-				createdAttribute->setName(currAttribute->getName());
-				createdAttribute->setType(currAttribute->getType());
-				createdAttribute->setCenter(currAttribute->getCenter());
-				createdAttribute->initialize(currAttribute->getArrayType(), currAttribute->getSize() * 27);
-				for(unsigned int j=0; j<currAttribute->getSize(); ++j)
-				{
-					createdAttribute->insert(j * 27, currAttribute, j, 27, 1, 0);
-				}
-
-				if(releaseAttribute)
-				{
-					currAttribute->release();
-				}
-			}
-			if(createdAttribute)
-			{
-				toReturn->insert(createdAttribute);
-				if(heavyDataWriter)
-				{
-					if(!createdAttribute->isInitialized())
-					{
-						createdAttribute->read();
-					}
-					createdAttribute->accept(heavyDataWriter);
-					createdAttribute->release();
-				}
-			}
-		}
-		return toReturn;
 	}
 };
 
@@ -1179,26 +1822,48 @@ boost::shared_ptr<XdmfGrid> XdmfTopologyConverter::convert(const boost::shared_p
 		assert(false);
 	}
 
+	XdmfTopologyConverterImpl::Converter * converter = NULL;
 	if(topologyTypeToConvert == XdmfTopologyType::Hexahedron())
 	{
 		if(topologyType == XdmfTopologyType::Hexahedron_64())
 		{
-			XdmfTopologyConverterImpl::HexahedronToHexahedron_64 converter;
-			return converter.convert(gridToConvert, heavyDataWriter);
+			converter = new XdmfTopologyConverterImpl::HexahedronToHexahedron_64();
+		}
+		else if(topologyType == XdmfTopologyType::Hexahedron_64_GLL())
+		{
+			converter = new XdmfTopologyConverterImpl::HexahedronToHexahedron_64_GLL();
 		}
 		else if(topologyType == XdmfTopologyType::Hexahedron_125())
 		{
-			XdmfTopologyConverterImpl::HexahedronToHexahedron_125 converter;
-			return converter.convert(gridToConvert, heavyDataWriter);
+			converter = new XdmfTopologyConverterImpl::HexahedronToHexahedron_125();
+		}
+		else if(topologyType == XdmfTopologyType::Hexahedron_125_GLL())
+		{
+			converter = new XdmfTopologyConverterImpl::HexahedronToHexahedron_125_GLL();
 		}
 	}
 	else if(topologyTypeToConvert == XdmfTopologyType::Hexahedron_64())
 	{
 		if(topologyType == XdmfTopologyType::Hexahedron())
 		{
-			XdmfTopologyConverterImpl::Hexahedron_64ToHexahedron converter;
-			return converter.convert(gridToConvert, heavyDataWriter);
+			converter = new XdmfTopologyConverterImpl::Hexahedron_64ToHexahedron();
 		}
 	}
-	assert(false);
+	else if(topologyTypeToConvert == XdmfTopologyType::Hexahedron_125())
+	{
+		if(topologyType == XdmfTopologyType::Hexahedron())
+		{
+			converter = new XdmfTopologyConverterImpl::Hexahedron_125ToHexahedron();
+		}
+	}
+	if(converter)
+	{
+		boost::shared_ptr<XdmfGrid> toReturn = converter->convert(gridToConvert, heavyDataWriter);
+		delete converter;
+		return toReturn;
+	}
+	else
+	{
+		assert(false);
+	}
 }
