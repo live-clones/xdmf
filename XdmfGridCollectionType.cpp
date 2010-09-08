@@ -71,6 +71,15 @@ bool XdmfGridCollectionType::operator!=(const XdmfGridCollectionType & collectio
 	return !this->operator==(collectionType);
 }
 
+bool XdmfGridCollectionType::IsEqual(boost::shared_ptr<XdmfGridCollectionType> collectionType)
+{
+        if(collectionType == NULL) return false;
+        if(this == collectionType.get()
+           &&   mName == collectionType->mName
+        ) return true;
+        return false;
+}
+
 void XdmfGridCollectionType::getProperties(std::map<std::string, std::string> & collectedProperties) const
 {
 	collectedProperties["CollectionType"] = mName;

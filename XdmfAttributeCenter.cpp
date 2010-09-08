@@ -91,6 +91,16 @@ bool XdmfAttributeCenter::operator!=(const XdmfAttributeCenter & attributeCenter
   return !this->operator==(attributeCenter);
 }
 
+bool XdmfAttributeCenter::IsEqual(boost::shared_ptr<XdmfAttributeCenter> attributeCenter)
+{
+        if(attributeCenter == NULL) return false;
+        if(this == attributeCenter.get()      
+           &&   mName == attributeCenter->mName    
+        ) return true; 
+        return false;
+}
+
+
 void XdmfAttributeCenter::getProperties(std::map<std::string, std::string> & collectedProperties) const
 {
 	collectedProperties["Center"] = mName;

@@ -22,6 +22,7 @@ include(UsePythonTest)
 # -----------------------
 ADD_PYTHON_TEST(TestXdmfHDF5Writer)
 ADD_PYTHON_TEST(TestXdmfWriter)
+ADD_PYTHON_TEST(TestXdmfEquals)
 
 # Add any python cleanup here:
 # Note: We don't want to use a foreach loop to test the files incase we
@@ -35,6 +36,7 @@ CLEAN_PYTHON_TEST(TestXdmfWriter
 	output.h5
 	output.xmf
 )
+CLEAN_PYTHON_TEST(TestXdmfEquals)
 
 # Add a custom target for all python tests
 # Note: ${TARGETS} is set in ADD_PYTHON_TEST

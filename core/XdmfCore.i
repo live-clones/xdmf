@@ -24,6 +24,25 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %include std_vector.i
 %include loki/Visitor.h
 
+#ifdef SWIGJAVA
+    %extend XdmfArrayType {
+            bool equals(boost::shared_ptr<XdmfArrayType> arrayType) {
+                    return(self->IsEqual(arrayType));
+            }
+    };
+    %ignore XdmfArrayType::operator==(const XdmfArrayType & arrayType) const;
+    %ignore XdmfArrayType::operator!=(const XdmfArrayType & arrayType) const;
+#endif
+
+
+#ifdef SWIGPYTHON
+%extend XdmfArrayType {
+  bool __eq__(boost::shared_ptr<XdmfArrayType> arrayType) {
+    return(self->IsEqual(arrayType));
+  }
+};
+#endif
+
 // Shared Pointer Templates
 %shared_ptr(XdmfArray)
 %shared_ptr(XdmfArrayType)
@@ -257,3 +276,4 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 	};
 };
 #endif /* SWIGJAVA */
+

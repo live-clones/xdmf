@@ -47,6 +47,14 @@ public:
 	 */
 	bool operator!=(const XdmfGridCollectionType & collectionType) const;
 
+	/**
+         * Compare two XdmfGridCollectionType for equality (for wrapping)
+         *
+         * @param collectionType a boost shared pointer to an XdmfGridCollectionType to compare equality to.
+         * @return true if the XdmfGridCollectionType are equal.
+         */
+        bool IsEqual(boost::shared_ptr<XdmfGridCollectionType> collectionType);
+
 protected:
 
 	/**

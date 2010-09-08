@@ -41,11 +41,66 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 
 %import XdmfCore.i
 
+#ifdef SWIGJAVA
+    %extend XdmfAttributeCenter {
+        bool equals(boost::shared_ptr<XdmfAttributeCenter> attributeCenter) {
+            return(self->IsEqual(attributeCenter));
+        }
+    };
+    %extend XdmfAttributeType {
+        bool equals(boost::shared_ptr<XdmfAttributeType> attributeType) {
+            return(self->IsEqual(attributeType));
+        }
+    };
+    %extend XdmfGeometryType {
+        bool equals(boost::shared_ptr<XdmfGeometryType> geometryType) {
+            return(self->IsEqual(geometryType));
+        }
+    };
+    %extend XdmfGridCollectionType {
+        bool equals(boost::shared_ptr<XdmfGridCollectionType> collectionType) {
+            return(self->IsEqual(collectionType));
+        }
+    };
+    %extend XdmfSetType {
+        bool equals(boost::shared_ptr<XdmfSetType> setType) {
+            return(self->IsEqual(setType));
+        }
+    };
+    %extend XdmfTopologyType {
+        bool equals(boost::shared_ptr<XdmfTopologyType> topologyType) {
+            return(self->IsEqual(topologyType));
+        }
+    };
+    %ignore XdmfTopologyType::operator==(const XdmfTopologyType & topologyType) const;
+    %ignore XdmfTopologyType::operator!=(const XdmfTopologyType & topologyType) const;
+    %ignore XdmfSetType::operator==(const XdmfSetType & setType) const;
+    %ignore XdmfSetType::operator!=(const XdmfSetType & setType) const;
+    %ignore XdmfGridCollectionType::operator==(const XdmfGridCollectionType & collectionType) const;
+    %ignore XdmfGridCollectionType::operator!=(const XdmfGridCollectionType & collectionType) const;
+    %ignore XdmfAttributeCenter::operator==(const XdmfAttributeCenter & attributeCenter) const;
+    %ignore XdmfAttributeCenter::operator!=(const XdmfAttributeCenter & attributeCenter) const;
+    %ignore XdmfGeometryType::operator==(const XdmfGeometryType & geometryType) const;
+    %ignore XdmfGeometryType::operator!=(const XdmfGeometryType & geometryType) const;
+    %ignore XdmfAttributeType::operator==(const XdmfAttributeType & attributeType) const;
+    %ignore XdmfAttributeType::operator!=(const XdmfAttributeType & attributeType) const;
+
+#endif
+
+
+#ifdef SWIGPYTHON
+%extend XdmfAttributeCenter {
+  bool __eq__(boost::shared_ptr<XdmfAttributeCenter> attributeCenter) {
+    return(self->IsEqual(attributeCenter));
+  }
+};
+#endif
+
+
 #ifdef SWIGPYTHON
 %pythoncode {
 	from XdmfCore import *
 }
-
 %typemap(out) boost::shared_ptr<XdmfItem> {
 	if(boost::shared_ptr<XdmfAttribute> attribute = boost::shared_dynamic_cast<XdmfAttribute>($1))
 	{

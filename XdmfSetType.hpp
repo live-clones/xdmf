@@ -50,6 +50,14 @@ public:
 	 */
 	bool operator!=(const XdmfSetType & setType) const;
 
+        /**
+         * Compare two XdmfSetType for equality (for wrapping)
+         *
+         * @param setType a boost shared pointer to an XdmfSetType to compare equality to.
+         * @return true if the XdmfSetType are equal.
+         */
+        bool IsEqual(boost::shared_ptr<XdmfSetType> setType);
+
 protected:
 
 	/**

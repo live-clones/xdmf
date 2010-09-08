@@ -19,6 +19,7 @@ include(UsePythonTest)
 #	Read UsePythonTest.cmake for more information
 # ---------------------
 ADD_PYTHON_TEST(TestXdmfArray)
+ADD_PYTHON_TEST(TestXdmfArrayTypeEquals)
 
 # Add any python cleanup here:
 # Note: We don't want to use a foreach loop to test the files incase we
@@ -26,6 +27,7 @@ ADD_PYTHON_TEST(TestXdmfArray)
 #	Read UseCxxTest.cmake for more information
 # ---------------------------------------
 CLEAN_PYTHON_TEST(TestXdmfArray)
+CLEAN_PYTHON_TEST(TestXdmfArrayTypeEquals)
 
 # Add a custom target for all python tests
 # Note: ${TARGETS} is set in ADD_PYTHON_TEST

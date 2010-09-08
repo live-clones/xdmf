@@ -51,6 +51,14 @@ public:
 	 */
 	bool operator!=(const XdmfAttributeCenter & attributeCenter) const;
 
+	/**
+         * Compare two XdmfAttributeCenter for equality (for wrapping)
+         *
+         * @param attributeCenter a boost shared pointer to an XdmfAttributeCenter to compare equality to.
+         * @return true if the XdmfAttributeCenter are equal.
+         */
+        bool IsEqual(boost::shared_ptr<XdmfAttributeCenter> attributeCenter);
+
 protected:
 
 	/**

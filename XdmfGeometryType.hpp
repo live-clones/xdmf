@@ -71,6 +71,14 @@ public:
 	 */
 	bool operator!=(const XdmfGeometryType & geometryType) const;
 
+        /**
+         * Compare two XdmfGeometryType for equality (for wrapping)
+         *
+         * @param geometryType a boost shared pointer to an XdmfGeometryType to compare equality to.
+         * @return true if the XdmfGeometryType are equal.
+         */
+        bool IsEqual(boost::shared_ptr<XdmfGeometryType> geometryType);
+
 protected:
 
 	/**

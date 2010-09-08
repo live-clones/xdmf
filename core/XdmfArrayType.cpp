@@ -4,7 +4,7 @@
  *  Created on: Jan 29, 2010
  *      Author: kleiter
  */
-
+#include <iostream> //REMOVE
 #include <sstream>
 #include "XdmfArrayType.hpp"
 
@@ -151,6 +151,16 @@ bool XdmfArrayType::operator==(const XdmfArrayType & arrayType) const
 bool XdmfArrayType::operator!=(const XdmfArrayType & arrayType) const
 {
 	return !this->operator==(arrayType);
+}
+
+bool XdmfArrayType::IsEqual(boost::shared_ptr<XdmfArrayType> arrayType)
+{
+	if(arrayType == NULL) return false;
+	if(this == arrayType.get()
+	   && 	mName == arrayType->mName 
+	   &&	mPrecision == arrayType->mPrecision
+	) return true;
+	return false;	
 }
 
 void XdmfArrayType::getProperties(std::map<std::string, std::string> & collectedProperties) const

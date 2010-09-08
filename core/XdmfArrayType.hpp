@@ -60,6 +60,14 @@ public:
 	 * @return true if the XdmfArrayTypes are not equal.
 	 */
 	bool operator!=(const XdmfArrayType & arrayType) const;
+	
+	/**
+	 * Compare two XdmfArrayTypes for equality (for java wrapping)
+	 *
+	 * @param arrayType a boost shared pointer to an XdmfArrayType to compare equality to.
+	 * @return true if the XdmfArrayTypes are equal.
+	 */
+	bool IsEqual(boost::shared_ptr<XdmfArrayType> arrayType);
 
 	int getElementSize() const;
 

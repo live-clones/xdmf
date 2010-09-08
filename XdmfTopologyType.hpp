@@ -126,6 +126,15 @@ public:
 	 */
 	bool operator!=(const XdmfTopologyType & topologyType) const;
 
+        /**
+         * Compare two XdmfTopologyType for equality (for wrapping)
+         *
+         * @param topologyType a boost shared pointer to an XdmfTopologyType to compare equality to.
+         * @return true if the XdmfTopologyType are equal.
+         */
+        bool IsEqual(boost::shared_ptr<XdmfTopologyType> topologyType);
+
+
 protected:
 
 	/**

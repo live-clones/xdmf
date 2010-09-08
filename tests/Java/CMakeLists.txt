@@ -9,15 +9,16 @@ SET_PROPERTY(GLOBAL APPEND PROPERTY JAVA_TEST_DEPENDENCIES
 # Note: JAVA_TEST_CLASSPATH is also set in core
 GET_PROPERTY(java_classpath GLOBAL PROPERTY JAVA_TEST_CLASSPATH)
 SET_PROPERTY(GLOBAL PROPERTY JAVA_TEST_CLASSPATH 
-	"${java_classpath}:${XDMF_JAVA_JAR}"
+        "${java_classpath}${XDMF_JAVA_JAR}:"
 )
 
 # Add any ldpath directories that the java tests may need
 # Note: JAVA_TEST_LDPATH is also set in core
 GET_PROPERTY(java_ldpath GLOBAL PROPERTY JAVA_TEST_LDPATH)
 SET_PROPERTY(GLOBAL PROPERTY JAVA_TEST_LDPATH 
-	"${java_ldpath}:"
-)
+	"${java_ldpath}"
+)  
+>>>>>>> FIX: Corrected SWIG overriding equals for Java and Python
 
 # Include our test macros
 include (UseJavaTest)
@@ -28,6 +29,7 @@ include (UseJavaTest)
 #	Read UseJavaTest.cmake for more information
 # ------------------------
 ADD_JAVA_TEST(TestXdmfJava)
+ADD_JAVA_TEST(TestXdmfEquals)
 
 # Add any java cleanup here:
 # Note: We don't want to use a foreach loop to test the files incase we
@@ -37,6 +39,7 @@ ADD_JAVA_TEST(TestXdmfJava)
 CLEAN_JAVA_TEST(TestXdmfJava
 	outputJavaTest.xmf
 )
+CLEAN_JAVA_TEST(TestXdmfEquals)
 
 # Add a custom target for all java tests 
 # Note: ${TARGETS} is set in ADD_JAVA_TEST

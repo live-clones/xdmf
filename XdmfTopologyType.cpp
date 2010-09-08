@@ -362,6 +362,18 @@ bool XdmfTopologyType::operator!=(const XdmfTopologyType& topologyType) const
 	return !this->operator==(topologyType);
 }
 
+bool XdmfTopologyType::IsEqual(boost::shared_ptr<XdmfTopologyType> topologyType)
+{
+        if(topologyType == NULL) return false;
+        if(this == topologyType.get()
+	   &&   mNodesPerElement == topologyType->mNodesPerElement
+	   &&	mCellType == topologyType->mCellType
+           &&   mName == topologyType->mName
+        ) return true;
+        return false;
+}
+
+
 XdmfTopologyType::CellType XdmfTopologyType::getCellType() const
 {
 	return mCellType;

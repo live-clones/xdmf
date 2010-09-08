@@ -55,6 +55,15 @@ public:
 	 */
 	bool operator!=(const XdmfAttributeType & attributeType) const;
 
+        /**
+         * Compare two XdmfAttributeType for equality (for wrapping)
+         *
+         * @param attributeType a boost shared pointer to an XdmfAttributeType to compare equality to.
+         * @return true if the XdmfAttributeType are equal.
+         */
+        bool IsEqual(boost::shared_ptr<XdmfAttributeType> attributeType);
+
+
 protected:
 
 	/**

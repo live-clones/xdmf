@@ -115,6 +115,16 @@ bool XdmfAttributeType::operator!=(const XdmfAttributeType & attributeType) cons
 	return !this->operator==(attributeType);
 }
 
+bool XdmfAttributeType::IsEqual(boost::shared_ptr<XdmfAttributeType> attributeType)
+{
+        if(attributeType == NULL) return false;
+        if(this == attributeType.get()
+           &&   mName == attributeType->mName
+        ) return true;
+        return false;
+}
+
+
 void XdmfAttributeType::getProperties(std::map<std::string, std::string> & collectedProperties) const
 {
 	collectedProperties["Type"] = mName;
