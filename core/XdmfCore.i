@@ -140,24 +140,24 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
                         buf = self.getBuffer()
                         aType = self.getArrayType()
                         if aType == XdmfArrayType.Int8() :
-                            na = ___frombuffer(buf, 'int8')
-                        elif aType == XdmfArrayType.Int16() :
-                            na = ___frombuffer(buf, 'int16')
-                        elif aType == XdmfArrayType.Int32() :
-                            na = ___frombuffer(buf, 'int32')
-                        elif aType == XdmfArrayType.Int64() :
-                            na = ___frombuffer(buf, 'int64')
-                        elif aType == XdmfArrayType.Float32() :
-                            na = ___frombuffer(buf, 'float32')
-                        elif aType == XdmfArrayType.Float64() :
-                            na = ___frombuffer(buf, 'float64')
-                        elif aType == XdmfArrayType.UInt8() :
-                            na = ___frombuffer(buf, 'uint8')
-                        elif aType == XdmfArrayType.UInt16() :
-                            na = ___frombuffer(buf, 'uint16')
-                        elif aType == XdmfArrayType.UInt32() :
-                            na = ___frombuffer(buf, 'uint32')
-                        return na;
+                            return(___frombuffer(buf, 'int8'))
+                        if aType == XdmfArrayType.Int16() :
+                            return(___frombuffer(buf, 'int16'))
+                        if aType == XdmfArrayType.Int32() :
+                            return(___frombuffer(buf, 'int32'))
+                        if aType == XdmfArrayType.Int64() :
+                            return(___frombuffer(buf, 'int64'))
+                        if aType == XdmfArrayType.Float32() :
+                            return(___frombuffer(buf, 'float32'))
+                        if aType == XdmfArrayType.Float64() :
+                            return(___frombuffer(buf, 'float64'))
+                        if aType == XdmfArrayType.UInt8() :
+                            return(___frombuffer(buf, 'uint8'))
+                        if aType == XdmfArrayType.UInt16() :
+                            return(___frombuffer(buf, 'uint16'))
+                        if aType == XdmfArrayType.UInt32() :
+                            return(___frombuffer(buf, 'uint32'))
+                        return None;
         };
 
 
