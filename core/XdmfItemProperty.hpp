@@ -24,7 +24,7 @@ public:
 	/**
 	 * Retrieve the key/value pairs that this XdmfItemProperty contains by inserting into the passed vector.
 	 *
-	 * @param a std::vector<std::pair<std::string, std::string> > to insert name / value pairs into.
+	 * @param collectedProperties a std::vector<std::pair<std::string, std::string> > to insert name / value pairs into.
 	 */
 	virtual void getProperties(std::map<std::string, std::string> & collectedProperties) const = 0;
 

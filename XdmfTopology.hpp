@@ -51,7 +51,7 @@ public:
 	/**
 	 * Set the XdmfTopologyType associated with this topology.
 	 *
-	 * @param topologyType the XdmfTopologyType to set.
+	 * @param type the XdmfTopologyType to set.
 	 */
 	void setType(const boost::shared_ptr<const XdmfTopologyType> type);
 

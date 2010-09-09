@@ -16,7 +16,7 @@ public:
 	/**
 	 * Create a new XdmfTime.
 	 *
-	 * @param timeValue the value of the XdmfTime to create.
+	 * @param value the timeValue of the XdmfTime to create.
 	 * @return the new XdmfTime.
 	 */
 	static boost::shared_ptr<XdmfTime> New(const double & value = 0);
@@ -40,7 +40,7 @@ public:
 	/**
 	 * Set the time value associated with this XdmfTime.
 	 *
-	 * @return a double containing the time value.
+	 * @param time a double containing the time value.
 	 */
 	void setValue(const double & time);
 

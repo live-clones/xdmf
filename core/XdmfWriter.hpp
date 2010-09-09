@@ -111,7 +111,7 @@ public:
 	/**
 	 * Set whether to write xpaths for this writer.
 	 *
-	 * @param writeXPaths, whether to write xpaths for this writer.
+	 * @param writeXPaths whether to write xpaths for this writer.
 	 */
 	void setWriteXPaths(const bool writeXPaths = true);
 

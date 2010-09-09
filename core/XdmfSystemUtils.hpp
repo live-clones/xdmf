@@ -5,9 +5,9 @@
 #include <string>
 
 /**
- * @brief Root Xdmf Class.
+ * @brief System specific functions.
  *
- * XdmfObject is the root Xdmf class which all Xdmf classes are derived from.
+ * Collects all system specific functions needed by Xdmf.
  */
 class XdmfSystemUtils {
 

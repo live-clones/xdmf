@@ -49,7 +49,7 @@ public:
 	/**
 	 * Set the XdmfGeometryType associated with this geometry.
 	 *
-	 * @param geometryType the XdmfGeometryType to set.
+	 * @param type the XdmfGeometryType to set.
 	 */
 	void setType(const boost::shared_ptr<const XdmfGeometryType> type);
 

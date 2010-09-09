@@ -28,7 +28,7 @@ public:
     /*!
      * Write an XdmfGrid to an ExodusII file.
      *
-     * @param path of the ExodusII file to writer.
+     * @param filePath of the ExodusII file to write.
      * @param gridToWrite an XdmfGrid to write to ExodusII file format.
      */
     void write(const std::string & filePath, const boost::shared_ptr<XdmfGrid> gridToWrite) const;

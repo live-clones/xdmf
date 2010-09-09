@@ -9,6 +9,9 @@
 #include "XdmfGrid.hpp"
 #include "XdmfGridCollection.hpp"
 
+XDMF_CHILDREN_IMPLEMENTATION(XdmfDomain, XdmfGrid, Grid, Name)
+XDMF_CHILDREN_IMPLEMENTATION(XdmfDomain, XdmfGridCollection, GridCollection, Name)
+
 boost::shared_ptr<XdmfDomain> XdmfDomain::New()
 {
 	boost::shared_ptr<XdmfDomain> p(new XdmfDomain());
@@ -25,34 +28,6 @@ XdmfDomain::~XdmfDomain()
 
 const std::string XdmfDomain::ItemTag = "Domain";
 
-boost::shared_ptr<XdmfGrid> XdmfDomain::getGrid(const unsigned int index)
-{
-	return boost::const_pointer_cast<XdmfGrid>(static_cast<const XdmfDomain &>(*this).getGrid(index));
-}
-
-boost::shared_ptr<const XdmfGrid> XdmfDomain::getGrid(const unsigned int index) const
-{
-	if(index >= mGrids.size())
-	{
-		assert(false);
-	}
-	return mGrids[index];
-}
-
-boost::shared_ptr<XdmfGridCollection> XdmfDomain::getGridCollection(const unsigned int index)
-{
-	return boost::const_pointer_cast<XdmfGridCollection>(static_cast<const XdmfDomain &>(*this).getGridCollection(index));
-}
-
-boost::shared_ptr<const XdmfGridCollection> XdmfDomain::getGridCollection(const unsigned int index) const
-{
-	if(index >= mGridCollections.size())
-	{
-		assert(false);
-	}
-	return mGridCollections[index];
-}
-
 std::map<std::string, std::string> XdmfDomain::getItemProperties() const
 {
 	std::map<std::string, std::string> domainProperties;
@@ -62,26 +37,6 @@ std::map<std::string, std::string> XdmfDomain::getItemProperties() const
 std::string XdmfDomain::getItemTag() const
 {
 	return ItemTag;
-}
-
-unsigned int XdmfDomain::getNumberGrids() const
-{
-	return mGrids.size();
-}
-
-unsigned int XdmfDomain::getNumberGridCollections() const
-{
-	return mGridCollections.size();
-}
-
-void XdmfDomain::insert(const boost::shared_ptr<XdmfGrid> grid)
-{
-	mGrids.push_back(grid);
-}
-
-void XdmfDomain::insert(const boost::shared_ptr<XdmfGridCollection> gridCollection)
-{
-	mGridCollections.push_back(gridCollection);
 }
 
 void XdmfDomain::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader)
@@ -98,24 +53,6 @@ void XdmfDomain::populateItem(const std::map<std::string, std::string> & itemPro
 			this->insert(grid);
 		}
 	}
-}
-
-void XdmfDomain::removeGrid(const unsigned int index)
-{
-	if(index >= mGrids.size())
-	{
-		assert(false);
-	}
-	mGrids.erase(mGrids.begin() + index);
-}
-
-void XdmfDomain::removeGridCollection(const unsigned int index)
-{
-	if(index >= mGridCollections.size())
-	{
-		assert(false);
-	}
-	mGridCollections.erase(mGridCollections.begin() + index);
 }
 
 void XdmfDomain::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor)

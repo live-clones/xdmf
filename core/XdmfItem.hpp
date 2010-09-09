@@ -13,6 +13,105 @@ class XdmfVisitor;
 #include <string>
 #include <vector>
 
+// MMacro that allows children XdmfItems to be attached to a parent XdmfItem. -- For Header File
+#define XDMF_CHILDREN(ChildClass, ChildName, SearchName) \
+public: \
+	/** Get a ChildClass attached to this item by index.
+	@param index of the ChildClass to retrieve.
+	@return requested ChildClass.  If no ChildClass##s exist at the index, a NULL pointer is returned.
+	*/ \
+	virtual boost::shared_ptr<ChildClass> get##ChildName(const unsigned int index); \
+	/** Get a ChildClass attached to this item by index (const version).
+	@param index of the ChildClass to retrieve.
+	@return requested ChildClass.  If no ChildClass##s exist at the index, a NULL pointer is returned.
+	*/ \
+	virtual boost::shared_ptr<const ChildClass> get##ChildName(const unsigned int index) const; \
+	/** Get a ChildClass attached to this item by SearchName.
+	@param SearchName of the ChildClass to retrieve.
+	@return requested ChildClass.  If no ChildClass##s are found with the correct SearchName, a NULL pointer is returned.
+	*/ \
+	virtual boost::shared_ptr<ChildClass> get##ChildName(const std::string & SearchName); \
+	/** Get a ChildClass attached to this item by SearchName (const version).
+	@param SearchName of the ChildClass to retrieve.
+	@return requested ChildClass.  If no ChildClass##s are found with the correct SearchName, a NULL pointer is returned.
+	*/ \
+	virtual boost::shared_ptr<const ChildClass> get##ChildName(const std::string & SearchName) const; \
+	/** Get the number of ChildClass##s attached to this item.
+	@return number of ChildClass##s attached to this item.
+	*/ \
+	virtual unsigned int getNumber##ChildName##s() const; \
+	/** Insert a ChildClass into to this item.
+	@param ChildName to attach to this item.
+	*/ \
+	virtual void insert(const boost::shared_ptr<ChildClass> ChildName); \
+	/** Remove a ChildClass from this item by index. If no ChildClass##s exist at the index, nothing is removed.
+	@param index of the ChildClass to remove.
+	*/ \
+	virtual void remove##ChildName(const unsigned int index); \
+	/** Remove a ChildClass from this item by SearchName. If no ChildClass##s have the correct SearchName, nothing is removed.
+	@param SearchName of the ChildClass to remove.
+	*/ \
+	virtual void remove##ChildName(const std::string & SearchName); \
+protected : \
+	std::vector<boost::shared_ptr<ChildClass> > m##ChildName##s; \
+public : \
+
+// Macro that allows children XdmfItems to be attached to a parent XdmfItem. -- For Implementation File
+#define XDMF_CHILDREN_IMPLEMENTATION(ParentClass, ChildClass, ChildName, SearchName) \
+	boost::shared_ptr<ChildClass> ParentClass::get##ChildName(const unsigned int index) \
+	{ \
+		return boost::const_pointer_cast<ChildClass>(static_cast<const ParentClass &>(*this).get##ChildName(index)); \
+	} \
+	boost::shared_ptr<const ChildClass> ParentClass::get##ChildName(const unsigned int index) const \
+	{ \
+		if(index < m##ChildName##s.size()) \
+		{ \
+			return m##ChildName##s[index]; \
+		} \
+		return boost::shared_ptr<ChildClass>(); \
+	} \
+	boost::shared_ptr<ChildClass> ParentClass::get##ChildName(const std::string & SearchName) \
+	{ \
+		return boost::const_pointer_cast<ChildClass>(static_cast<const ParentClass &>(*this).get##ChildName(SearchName)); \
+	} \
+	boost::shared_ptr<const ChildClass> ParentClass::get##ChildName(const std::string & SearchName) const \
+	{ \
+		for(std::vector<boost::shared_ptr<ChildClass> >::const_iterator iter = m##ChildName##s.begin(); iter != m##ChildName##s.end(); ++iter) \
+		{ \
+			if((*iter)->get##SearchName().compare(SearchName) == 0) \
+			{ \
+				return *iter; \
+			} \
+		} \
+		return boost::shared_ptr<ChildClass>(); \
+	} \
+	unsigned int ParentClass::getNumber##ChildName##s() const \
+	{ \
+		return m##ChildName##s.size(); \
+	} \
+	void ParentClass::insert(const boost::shared_ptr<ChildClass> ChildName) \
+	{ \
+		m##ChildName##s.push_back(ChildName); \
+	} \
+	void ParentClass::remove##ChildName(const unsigned int index) \
+	{ \
+		if(index < m##ChildName##s.size()) \
+		{ \
+			m##ChildName##s.erase(m##ChildName##s.begin() + index); \
+		} \
+	} \
+	void ParentClass::remove##ChildName(const std::string & SearchName) \
+	{ \
+		for(std::vector<boost::shared_ptr<ChildClass> >::iterator iter = m##ChildName##s.begin(); iter != m##ChildName##s.end(); ++iter) \
+		{ \
+			if((*iter)->get##SearchName().compare(SearchName) == 0) \
+			{ \
+				m##ChildName##s.erase(iter); \
+				return; \
+			} \
+		} \
+	}
+
 /**
  * @brief Base class of any object that is able to be added to an Xdmf structure.
  *
@@ -26,39 +125,8 @@ public:
 	virtual ~XdmfItem() = 0;
 
 	LOKI_DEFINE_VISITABLE_BASE()
+	XDMF_CHILDREN(XdmfInformation, Information, Key)
 	friend class XdmfCoreReader;
-
-	/**
-	 * Get an information attached to this item by index.
-	 *
-	 * @param index of the information to retrieve.
-	 * @return requested information.  If not found a NULL pointer is returned.
-	 */
-	boost::shared_ptr<XdmfInformation> getInformation(const unsigned int index);
-
-	/**
-	 * Get an information attached to this item by index (const version).
-	 *
-	 * @param index of the information to retrieve.
-	 * @return requested information.  If not found a NULL pointer is returned.
-	 */
-	boost::shared_ptr<const XdmfInformation> getInformation(const unsigned int index) const;
-
-	/**
-	 * Get an information attached to this item by key.
-	 *
-	 * @param key of the information to retrieve.
-	 * @return requested information.  If not found a NULL pointer is returned.
-	 */
-	boost::shared_ptr<XdmfInformation> getInformation(const std::string & key);
-
-	/**
-	 * Get an information attached to this grid by key (const version).
-	 *
-	 * @param key of the information to retrieve.
-	 * @return requested information.  If not found a NULL pointer is returned.
-	 */
-	boost::shared_ptr<const XdmfInformation> getInformation(const std::string & key) const;
 
 	/**
 	 * Get the tag for this XdmfItem.  This is equivalent to tags in XML parlance.
@@ -73,37 +141,9 @@ public:
 	virtual std::map<std::string, std::string> getItemProperties() const = 0;
 
 	/**
-	 * Get the number of informations attached to this item.
-	 *
-	 * @return the number of informations attached to this item.
-	 */
-	unsigned int getNumberInformations() const;
-
-	/**
-	 * Insert an information into the item.
-	 *
-	 * @param information an XdmfInformation to attach to this item.
-	 */
-	virtual void insert(const boost::shared_ptr<XdmfInformation> information);
-
-	/**
-	 * Remove an information from the item by index.  If no information is at that index, no information are removed.
-	 *
-	 * @param index of the information to remove.
-	 */
-	void removeInformation(const unsigned int index);
-
-	/**
-	 * Remove an information from the item by key.  If no information having the key is found, no informations are removed.
-	 *
-	 * @param key of the attribute to remove.
-	 */
-	void removeInformation(const std::string & key);
-
-	/**
 	 * Traverse this XdmfItem by passing the visitor to its children XdmfItems.
 	 *
-	 * @param a visitor to pass to this XdmfItem's children.
+	 * @param visitor operation to pass to this XdmfItem's children.
 	 */
 	virtual void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor);
 
@@ -115,12 +155,11 @@ protected:
 	 * Populates an item using a map of key/value property pairs and a vector of its child items.  This is used to
 	 * support generic reading of XdmfItems from disk.
 	 *
-	 * @param itemProperties a map of key/value properties associated with this XdmfItem.
-	 * @param childItems a vector of child items to be added to this XdmfItem.
+	 * @param itemProperties a map of key/value properties associated with this item.
+	 * @param childItems a vector of child items to be added to this item.
+	 * @param reader the current XdmfCoreReader being used to populate Xdmf structures.
 	 */
 	virtual void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem > > & childItems, const XdmfCoreReader * const reader);
-
-	std::vector<boost::shared_ptr<XdmfInformation> > mInformations;
 
 private:
 

@@ -124,7 +124,7 @@ public:
 	/**
 	 * Set the XdmfSetType associated with this set.
 	 *
-	 * @param setType the XdmfSetType to set.
+	 * @param type the XdmfSetType to set.
 	 */
 	void setType(const boost::shared_ptr<const XdmfSetType> type);
 

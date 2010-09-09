@@ -57,7 +57,7 @@ public:
 	/**
 	 * Set the XdmfGridCollectionType associated with this grid collection.
 	 *
-	 * @param collectionType the XdmfGridCollectionType to set.
+	 * @param type the XdmfGridCollectionType to set.
 	 */
 	void setType(const boost::shared_ptr<const XdmfGridCollectionType> type);
 

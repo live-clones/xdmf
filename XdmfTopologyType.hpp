@@ -99,7 +99,7 @@ public:
 	/**
 	 * Get the number of nodes per element associated with this topology type.
 	 *
-	 * @return an unsinged int containing number of nodes per element.
+	 * @return an unsigned int containing number of nodes per element.
 	 */
 	unsigned int getNodesPerElement() const;
 
