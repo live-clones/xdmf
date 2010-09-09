@@ -96,6 +96,31 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
     return(self->IsEqual(attributeCenter));
   }
 };
+%extend XdmfAttributeType {
+  bool __eq__(boost::shared_ptr<XdmfAttributeType> attributeType) {
+    return(self->IsEqual(attributeType));
+  }
+};
+%extend XdmfGeometryType {
+  bool __eq__(boost::shared_ptr<XdmfGeometryType> geometryType) {
+    return(self->IsEqual(geometryType));
+  }
+};
+%extend XdmfGridCollectionType {
+  bool __eq__(boost::shared_ptr<XdmfGridCollectionType> collectionType) {
+    return(self->IsEqual(collectionType));
+  }
+};
+%extend XdmfSetType {
+  bool __eq__(boost::shared_ptr<XdmfSetType> setType) {
+    return(self->IsEqual(setType));
+  }
+};
+%extend XdmfTopologyType {
+  bool __eq__(boost::shared_ptr<XdmfTopologyType> topologyType) {
+    return(self->IsEqual(topologyType));
+  }
+};
 #endif
 
 
