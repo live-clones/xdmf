@@ -18,7 +18,6 @@ GET_PROPERTY(java_ldpath GLOBAL PROPERTY JAVA_TEST_LDPATH)
 SET_PROPERTY(GLOBAL PROPERTY JAVA_TEST_LDPATH 
 	"${java_ldpath}"
 )  
->>>>>>> FIX: Corrected SWIG overriding equals for Java and Python
 
 # Include our test macros
 include (UseJavaTest)
