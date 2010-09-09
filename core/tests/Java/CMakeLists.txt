@@ -24,7 +24,7 @@ include (UseJavaTest)
 #	have extra arguments (ie: ADD_JAVA_TEST(testname inputfile))
 #	Read UseJavaTest.cmake for more information
 # ------------------------
-ADD_JAVA_TEST(TestXdmfArrayTypeEquals)
+ADD_JAVA_TEST(TestXdmfEquals)
 
 
 # Add any java cleanup here:
@@ -32,7 +32,7 @@ ADD_JAVA_TEST(TestXdmfArrayTypeEquals)
 #	have multiple files (ie: CLEAN_JAVA_TEST(testname outputfile1 ...))
 #	Read UseCxxTest.cmake for more information
 # ---------------------------------------
-CLEAN_JAVA_TEST(TestXdmfArrayTypeEquals)
+CLEAN_JAVA_TEST(TestXdmfEquals)
 
 # Add a custom target for all java tests 
 # Note: ${TARGETS} is set in ADD_JAVA_TEST

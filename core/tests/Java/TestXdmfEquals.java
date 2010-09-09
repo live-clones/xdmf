@@ -1,6 +1,6 @@
 import mil.army.arl.xdmf.*;
 
-public class TestXdmfArrayTypeEquals {
+public class TestXdmfEquals {
     static {
         System.loadLibrary("XdmfCoreJava");
     }
