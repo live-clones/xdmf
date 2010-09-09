@@ -85,6 +85,8 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
     %ignore XdmfAttributeType::operator==(const XdmfAttributeType & attributeType) const;
     %ignore XdmfAttributeType::operator!=(const XdmfAttributeType & attributeType) const;
 
+    %rename(getAttributeUIntConst) XdmfSet::getAttribute(unsigned int const) const;
+    %rename(getAttributeStrConst) XdmfSet::getAttribute(std::string const &) const;
 #endif
 
 
