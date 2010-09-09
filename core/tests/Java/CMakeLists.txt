@@ -36,5 +36,4 @@ include (UseJavaTest)
 # Add a custom target for all java tests 
 # Note: ${TARGETS} is set in ADD_JAVA_TEST
 GET_PROPERTY(targets GLOBAL PROPERTY JAVA_TEST_TARGETS)
-ADD_CUSTOM_TARGET(Java_Core_Test_target ALL DEPENDS ${targets})
-
+ADD_CUSTOM_TARGET(Java_Core_Test_target ALL DEPENDS XdmfCoreJava ${targets})

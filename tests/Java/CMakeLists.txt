@@ -45,4 +45,4 @@ IF(EXISTS Java_Core_Test_target)
 ENDIF(EXISTS Java_Core_Test_target)
 
 GET_PROPERTY(targets GLOBAL PROPERTY JAVA_TEST_TARGETS)
-ADD_CUSTOM_TARGET(Java_ALLTEST ALL DEPENDS ${Java_Core_Test_target} ${targets}) 
+ADD_CUSTOM_TARGET(Java_ALLTEST ALL DEPENDS ${Java_Core_Test_target} XdmfJava ${targets}) 
