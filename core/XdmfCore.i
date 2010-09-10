@@ -136,28 +136,47 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
         }
         %pythoncode {
                 def getNumpyArray(self):
-                        from numpy import frombuffer as ___frombuffer
-                        buf = self.getBuffer()
-                        aType = self.getArrayType()
-                        if aType == XdmfArrayType.Int8() :
-                            return(___frombuffer(buf, 'int8'))
-                        if aType == XdmfArrayType.Int16() :
-                            return(___frombuffer(buf, 'int16'))
-                        if aType == XdmfArrayType.Int32() :
-                            return(___frombuffer(buf, 'int32'))
-                        if aType == XdmfArrayType.Int64() :
-                            return(___frombuffer(buf, 'int64'))
-                        if aType == XdmfArrayType.Float32() :
-                            return(___frombuffer(buf, 'float32'))
-                        if aType == XdmfArrayType.Float64() :
-                            return(___frombuffer(buf, 'float64'))
-                        if aType == XdmfArrayType.UInt8() :
-                            return(___frombuffer(buf, 'uint8'))
-                        if aType == XdmfArrayType.UInt16() :
-                            return(___frombuffer(buf, 'uint16'))
-                        if aType == XdmfArrayType.UInt32() :
-                            return(___frombuffer(buf, 'uint32'))
-                        return None;
+                        h5ctl = self.getHDF5Controller()
+                        if h5ctl == None :
+                            try :
+                                from numpy import frombuffer as ___frombuffer
+                            except :
+                                return None
+                            buf = self.getBuffer()
+                            aType = self.getArrayType()
+                            if aType == XdmfArrayType.Int8() :
+                                return(___frombuffer(buf, 'int8'))
+                            if aType == XdmfArrayType.Int16() :
+                                return(___frombuffer(buf, 'int16'))
+                            if aType == XdmfArrayType.Int32() :
+                                return(___frombuffer(buf, 'int32'))
+                            if aType == XdmfArrayType.Int64() :
+                                return(___frombuffer(buf, 'int64'))
+                            if aType == XdmfArrayType.Float32() :
+                                return(___frombuffer(buf, 'float32'))
+                            if aType == XdmfArrayType.Float64() :
+                                return(___frombuffer(buf, 'float64'))
+                            if aType == XdmfArrayType.UInt8() :
+                                return(___frombuffer(buf, 'uint8'))
+                            if aType == XdmfArrayType.UInt16() :
+                                return(___frombuffer(buf, 'uint16'))
+                            if aType == XdmfArrayType.UInt32() :
+                                return(___frombuffer(buf, 'uint32'))
+                            return None
+                        else :
+                            h5FileName = h5ctl.getFilePath()
+                            h5DataSetName = h5ctl.getDataSetPath()
+                            if (h5FileName == None) | (h5DataSetName == None) :
+                                return None
+                            try :
+                                from h5py import File as ___File
+                                from numpy import array as ___array
+                                f = ___File(h5FileName, 'r')
+                                if h5DataSetName in f.keys() :
+                                    return(___array(f[h5DataSetName]))
+                            except :
+                                pass
+                            return None
         };
 
 
