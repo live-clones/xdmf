@@ -30,6 +30,8 @@ public:
 	LOKI_DEFINE_VISITABLE(XdmfTopology, XdmfArray)
 	static const std::string ItemTag;
 
+	std::string getDimensions() const;
+
 	std::map<std::string, std::string> getItemProperties() const;
 
 	std::string getItemTag() const;
@@ -65,6 +67,7 @@ private:
 	XdmfTopology(const XdmfTopology & topology);  // Not implemented.
 	void operator=(const XdmfTopology & topology);  // Not implemented.
 
+	std::string mDimensions;
 	boost::shared_ptr<const XdmfTopologyType> mType;
 };
 

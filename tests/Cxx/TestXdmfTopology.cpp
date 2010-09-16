@@ -17,10 +17,12 @@ int main(int, char *)
 	boost::shared_ptr<XdmfTopology> top = XdmfTopology::New();
 	assert(top->getType() == XdmfTopologyType::NoTopologyType());
 	assert(top->getType()->getNodesPerElement() == 0);
+	assert(top->getType()->getName().compare("NoTopology") == 0);
 
 	top->setType(XdmfTopologyType::Hexahedron());
 	assert(top->getType() == XdmfTopologyType::Hexahedron());
 	assert(top->getType()->getNodesPerElement() == 8);
+	assert(top->getType()->getName().compare("Hexahedron") == 0);
 
 	boost::shared_ptr<const XdmfTopologyType> polygon = XdmfTopologyType::Polygon(6);
 	boost::shared_ptr<const XdmfTopologyType> polygon6 = XdmfTopologyType::Polygon(6);

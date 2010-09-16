@@ -129,7 +129,7 @@ public:
 				currAttribute = currAttribute->next;
 			}
 			std::vector<boost::shared_ptr<XdmfItem> > childItems = this->read(currNode->children);
-			boost::shared_ptr<XdmfItem> newItem = mItemFactory->createItem((const char *)currNode->name, itemProperties);
+			boost::shared_ptr<XdmfItem> newItem = mItemFactory->createItem((const char *)currNode->name, itemProperties, childItems);
 			if(newItem == NULL)
 			{
 				assert(false);

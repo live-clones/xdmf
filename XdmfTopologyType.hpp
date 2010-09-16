@@ -88,11 +88,18 @@ public:
 	//static boost::shared_ptr<const XdmfTopologyType> ThreeDCoRectMesh();
 
 	/**
-	 * Get the cell type associated with this topology type
+	 * Get the cell type associated with this topology type.
 	 *
 	 * @return a CellType containing the cell type.
 	 */
 	CellType getCellType() const;
+
+	/**
+	 * Get the name of this topology type.
+	 *
+	 * @return the name of this topology type.
+	 */
+	std::string getName() const;
 
 	/**
 	 * Get the number of nodes per element associated with this topology type.
@@ -126,7 +133,7 @@ protected:
 	 * by Xdmf should be accessed through more specific static methods that construct XdmfTopologyType -
 	 * i.e. XdmfTopologyType::Tetrahedron()
 	 */
-	XdmfTopologyType(const int & nodesPerElement, const std::string & name, const CellType & cellType);
+	XdmfTopologyType(const unsigned int nodesPerElement, const std::string & name, const CellType cellType);
 
 private:
 
@@ -137,7 +144,7 @@ private:
 
 	CellType mCellType;
 	std::string mName;
-	int mNodesPerElement;
+	unsigned int mNodesPerElement;
 };
 
 #endif /* XDMFTOPOLOGYTYPE_HPP_ */

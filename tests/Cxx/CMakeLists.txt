@@ -43,6 +43,7 @@ CLEAN_CXX_TEST(TestXdmfGridCollection
 )
 CLEAN_CXX_TEST(TestXdmfGridRegular
 	TestXdmfGridRegular1.xmf
+	TestXdmfGridRegular2.xmf
 )
 CLEAN_CXX_TEST(TestXdmfReader
 	TestXdmfReader1.h5

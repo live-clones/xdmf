@@ -31,7 +31,7 @@ public:
 	 * @return constructed structured grid.
 	 */
 	static boost::shared_ptr<XdmfGridRegular> New(const double brickSizeX, const double brickSizeY, const unsigned int numPointsX,
-		const unsigned int numPointsY, const double originX = 0, const double originY = 0);
+		const unsigned int numPointsY, const double originX, const double originY);
 
 	/**
 	 * Create a new structured grid (Three dimensional).
@@ -50,7 +50,7 @@ public:
 	 */
 	static boost::shared_ptr<XdmfGridRegular> New(const double brickSizeX, const double brickSizeY, const double brickSizeZ,
 		const unsigned int numPointsX, const unsigned int numPointsY, const unsigned int numPointsZ,
-		const double originX = 0, const double originY = 0, const double originZ = 0);
+		const double originX, const double originY, const double originZ);
 
 	virtual ~XdmfGridRegular();
 
@@ -129,7 +129,7 @@ protected:
 	XdmfGridRegular(const double brickSizeX, const double brickSizeY, const double brickSizeZ,
 		const unsigned int numPointsX, const unsigned int numPointsY, const unsigned int numPointsZ,
 		const double originX, const double originY, const double originZ);
-	//virtual void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader);
+	void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader);
 
 private:
 

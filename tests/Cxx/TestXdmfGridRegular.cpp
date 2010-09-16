@@ -2,11 +2,10 @@
 #include "XdmfGeometry.hpp"
 #include "XdmfGeometryType.hpp"
 #include "XdmfGridRegular.hpp"
+#include "XdmfReader.hpp"
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
 #include "XdmfWriter.hpp"
-
-#include <iostream>
 
 int main(int, char *)
 {
@@ -86,8 +85,13 @@ int main(int, char *)
 	// Input / Output
 
 	boost::shared_ptr<XdmfWriter> writer = XdmfWriter::New("TestXdmfGridRegular1.xmf");
-
 	grid->accept(writer);
+
+	boost::shared_ptr<XdmfReader> reader = XdmfReader::New();
+	boost::shared_ptr<XdmfGrid> grid2 = boost::shared_dynamic_cast<XdmfGrid>(reader->read("TestXdmfGridRegular1.xmf"));
+
+	boost::shared_ptr<XdmfWriter> writer2 = XdmfWriter::New("TestXdmfGridRegular2.xmf");
+	grid2->accept(writer2);
 
 	return 0;
 }

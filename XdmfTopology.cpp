@@ -16,6 +16,7 @@ boost::shared_ptr<XdmfTopology> XdmfTopology::New()
 }
 
 XdmfTopology::XdmfTopology() :
+	mDimensions(""),
 	mType(XdmfTopologyType::NoTopologyType())
 {
 }
@@ -25,6 +26,17 @@ XdmfTopology::~XdmfTopology()
 }
 
 const std::string XdmfTopology::ItemTag = "Topology";
+
+std::string XdmfTopology::getDimensions() const
+{
+	if(mDimensions.compare("") == 0)
+	{
+		std::stringstream toReturn;
+		toReturn << this->getNumberElements();
+		return toReturn.str();
+	}
+	return mDimensions;
+}
 
 std::string XdmfTopology::getItemTag() const
 {
@@ -62,6 +74,11 @@ void XdmfTopology::populateItem(const std::map<std::string, std::string> & itemP
 {
 	XdmfItem::populateItem(itemProperties, childItems, reader);
 	mType = XdmfTopologyType::New(itemProperties);
+	std::map<std::string, std::string>::const_iterator dimensions = itemProperties.find("Dimensions");
+	if(dimensions != itemProperties.end())
+	{
+		mDimensions = dimensions->second;
+	}
 	for(std::vector<boost::shared_ptr<XdmfItem> >::const_iterator iter = childItems.begin(); iter != childItems.end(); ++iter)
 	{
 		if(boost::shared_ptr<XdmfArray> array = boost::shared_dynamic_cast<XdmfArray>(*iter))
@@ -75,5 +92,4 @@ void XdmfTopology::populateItem(const std::map<std::string, std::string> & itemP
 void XdmfTopology::setType(const boost::shared_ptr<const XdmfTopologyType> type)
 {
 	mType = type;
-
 }

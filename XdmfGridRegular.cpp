@@ -5,6 +5,7 @@
  *      Author: kleiter
  */
 
+#include <boost/tokenizer.hpp>
 #include <cmath>
 #include "XdmfArray.hpp"
 #include "XdmfGeometry.hpp"
@@ -160,7 +161,7 @@ public:
 
 		unsigned int getNodesPerElement() const
 		{
-			// 2 ^ Dimensions
+			// 2^Dimensions
 			// e.g. 1D = 2 nodes per element and 2D = 4 nodes per element.
 			return (unsigned int)std::pow(2, (double)mRegularGrid->getDimensions()->getSize());
 		}
@@ -293,6 +294,22 @@ boost::shared_ptr<XdmfArray> XdmfGridRegular::getOrigin()
 boost::shared_ptr<const XdmfArray> XdmfGridRegular::getOrigin() const
 {
 	return mImpl->mOrigin;
+}
+
+void XdmfGridRegular::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader)
+{
+	XdmfGrid::populateItem(itemProperties, childItems, reader);
+	mImpl->mOrigin->swap(this->getGeometry());
+	mImpl->mBrickSize->swap(this->getGeometry());
+	mImpl->mDimensions->clear();
+	std::string dimensions = this->getTopology()->getDimensions();
+	boost::tokenizer<> tokens(dimensions);
+	for(boost::tokenizer<>::const_iterator iter = tokens.begin(); iter != tokens.end(); ++iter)
+	{
+		mImpl->mDimensions->pushBack<unsigned int>(atoi((*iter).c_str()));
+	}
+	this->setGeometry(XdmfGridRegularImpl::XdmfGeometryRegular::New(this));
+	this->setTopology(XdmfGridRegularImpl::XdmfTopologyRegular::New(this));
 }
 
 void XdmfGridRegular::setBrickSize(const boost::shared_ptr<XdmfArray> brickSize)

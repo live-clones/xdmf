@@ -37,9 +37,7 @@ public:
 	static boost::shared_ptr<const XdmfGeometryType> X_Y_Z();
 	static boost::shared_ptr<const XdmfGeometryType> X_Y();
 	static boost::shared_ptr<const XdmfGeometryType> VXVYVZ();
-	static boost::shared_ptr<const XdmfGeometryType> Origin_DXDYDZ();
 	static boost::shared_ptr<const XdmfGeometryType> VXVY();
-	static boost::shared_ptr<const XdmfGeometryType> Origin_DXDY();
 
 	/**
 	 * Get the dimensions of this geometry type - i.e. XYZ = 3.
@@ -47,6 +45,13 @@ public:
 	 * @return an int containing number of dimensions.
 	 */
 	virtual unsigned int getDimensions() const;
+
+	/**
+	 * Get the name of this geometry type.
+	 *
+	 * @return the name of this geometry type.
+	 */
+	std::string getName() const;
 
 	virtual void getProperties(std::map<std::string, std::string> & collectedProperties) const;
 

@@ -210,7 +210,7 @@ boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::ThreeDCoRectMesh()
 	return p;
 }*/
 
-XdmfTopologyType::XdmfTopologyType(const int& nodesPerElement, const std::string& name, const CellType& cellType) :
+XdmfTopologyType::XdmfTopologyType(const unsigned int nodesPerElement, const std::string & name, const CellType cellType) :
 	mCellType(cellType),
 	mName(name),
 	mNodesPerElement(nodesPerElement)
@@ -322,19 +322,20 @@ boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::New(const std::map<s
 		{
 			return Mixed();
 		}
-		/*
-		else if(typeVal.compare("2DSMESH") == 0)
+		/*else if(typeVal.compare("2DSMESH") == 0)
 		{
 			return TwoDSMesh();
 		}
 		else if(typeVal.compare("2DRECTMESH") == 0)
 		{
 			return TwoDRectMesh();
-		}
-		else if(typeVal.compare("2DCORECTMESH") == 0)
+		}*/
+		else if(typeVal.compare("2DCORECTMESH") == 0 || typeVal.compare("3DCORECTMESH") == 0)
 		{
-			return TwoDCoRectMesh();
-		}
+			// Special case --- Regular Grid
+			boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(0, "REGULAR", Structured));
+			return p;
+		}/*
 		else if(typeVal.compare("3DSMESH") == 0)
 		{
 			return ThreeDSMesh();
@@ -342,12 +343,7 @@ boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::New(const std::map<s
 		else if(typeVal.compare("3DRECTMESH") == 0)
 		{
 			return ThreeDRectMesh();
-		}
-		else if(typeVal.compare("3DCORECTMESH") == 0)
-		{
-			return ThreeDCoRectMesh();
-		}
-		*/
+		}*/
 		else
 		{
 			assert(false);
@@ -369,6 +365,11 @@ bool XdmfTopologyType::operator!=(const XdmfTopologyType& topologyType) const
 XdmfTopologyType::CellType XdmfTopologyType::getCellType() const
 {
 	return mCellType;
+}
+
+std::string XdmfTopologyType::getName() const
+{
+	return mName;
 }
 
 unsigned int XdmfTopologyType::getNodesPerElement() const

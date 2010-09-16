@@ -44,21 +44,9 @@ boost::shared_ptr<const XdmfGeometryType> XdmfGeometryType::VXVYVZ()
 	return p;
 }
 
-boost::shared_ptr<const XdmfGeometryType> XdmfGeometryType::Origin_DXDYDZ()
-{
-	static boost::shared_ptr<const XdmfGeometryType> p(new XdmfGeometryType("ORIGIN_DXDYDZ", 3));
-	return p;
-}
-
 boost::shared_ptr<const XdmfGeometryType> XdmfGeometryType::VXVY()
 {
 	static boost::shared_ptr<const XdmfGeometryType> p(new XdmfGeometryType("VXVY", 2));
-	return p;
-}
-
-boost::shared_ptr<const XdmfGeometryType> XdmfGeometryType::Origin_DXDY()
-{
-	static boost::shared_ptr<const XdmfGeometryType> p(new XdmfGeometryType("ORIGIN_DXDY", 2));
 	return p;
 }
 
@@ -107,17 +95,15 @@ boost::shared_ptr<const XdmfGeometryType> XdmfGeometryType::New(const std::map<s
 		{
 			return VXVYVZ();
 		}
-		else if(typeVal.compare("ORIGIN_DXDYDZ") == 0)
-		{
-			return Origin_DXDYDZ();
-		}
 		else if(typeVal.compare("VXVY") == 0)
 		{
 			return VXVY();
 		}
-		else if(typeVal.compare("ORIGIN_DXDY") == 0)
+		else if(typeVal.compare("ORIGIN_DXDY") == 0 || typeVal.compare("ORIGIN_DXDYDZ") == 0)
 		{
-			return Origin_DXDY();
+			// Special case --- Regular Grid
+			boost::shared_ptr<const XdmfGeometryType> p(new XdmfGeometryType("REGULAR", 0));
+			return p;
 		}
 		else
 		{
@@ -140,6 +126,11 @@ bool XdmfGeometryType::operator!=(const XdmfGeometryType& geometryType) const
 unsigned int XdmfGeometryType::getDimensions() const
 {
 	return mDimensions;
+}
+
+std::string XdmfGeometryType::getName() const
+{
+	return mName;
 }
 
 void XdmfGeometryType::getProperties(std::map<std::string, std::string> & collectedProperties) const
