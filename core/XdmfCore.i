@@ -129,8 +129,8 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %extend XdmfArray {
         PyObject * getBuffer ()
         {
-                void *vp = $self->getValuesPointer();
-                Py_ssize_t sz = $self->size() * $self->getElementSize();
+                void *vp = $self->getValuesInternal();
+                Py_ssize_t sz = $self->getSize() * $self->getElementSize();
                 PyObject * c = PyBuffer_FromMemory(vp, sz);
                 return(c);
         }
