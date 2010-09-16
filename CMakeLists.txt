@@ -8,7 +8,9 @@ SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 SET(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
 SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMake ${CMAKE_CURRENT_SOURCE_DIR}/core/CMake)
+set(CMAKE_MODULE_PATH 
+	${CMAKE_SOURCE_DIR}/CMake
+	${CMAKE_SOURCE_DIR}/CMake/TestingSuite)
 
 # Should we build with testing
 option(XDMF_BUILD_TESTING OFF)
@@ -35,6 +37,7 @@ endif(XDMF_WRAP_PYTHON OR XDMF_WRAP_JAVA)
 
 # If we are wrapping python, let's include it in the top level
 if(XDMF_WRAP_PYTHON)
+	find_package(PythonInterp REQUIRED)
 	find_package(PythonLibs REQUIRED)
 	include_directories(${PYTHON_INCLUDE_DIRS})
 
