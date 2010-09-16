@@ -16,10 +16,9 @@ boost::shared_ptr<XdmfGridCollection> XdmfGridCollection::New()
 
 XdmfGridCollection::XdmfGridCollection() :
 	XdmfDomain(),
-	XdmfGrid(),
+	XdmfGrid("Collection"),
 	mType(XdmfGridCollectionType::NoCollectionType())
 {
-	mName = "Collection";
 }
 
 XdmfGridCollection::~XdmfGridCollection()
@@ -30,8 +29,7 @@ const std::string XdmfGridCollection::ItemTag = "Grid";
 
 std::map<std::string, std::string> XdmfGridCollection::getItemProperties() const
 {
-	std::map<std::string, std::string> collectionProperties;
-	collectionProperties["Name"] = mName;
+	std::map<std::string, std::string> collectionProperties = XdmfGrid::getItemProperties();
 	collectionProperties["GridType"] = "Collection";
 	mType->getProperties(collectionProperties);
 	return collectionProperties;

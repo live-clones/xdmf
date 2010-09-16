@@ -18,7 +18,7 @@ class XdmfVisitor : public XdmfBaseVisitor,
 
 public:
 
-	virtual ~XdmfVisitor();
+	virtual ~XdmfVisitor() = 0;
 	virtual void visit(XdmfItem & item, const boost::shared_ptr<XdmfBaseVisitor> visitor);
 
 protected:

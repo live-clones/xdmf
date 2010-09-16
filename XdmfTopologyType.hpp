@@ -82,12 +82,10 @@ public:
 	static boost::shared_ptr<const XdmfTopologyType> Hexahedron_125();
 	static boost::shared_ptr<const XdmfTopologyType> Hexahedron_125_GLL();
 	static boost::shared_ptr<const XdmfTopologyType> Mixed();
-	static boost::shared_ptr<const XdmfTopologyType> TwoDSMesh();
-	static boost::shared_ptr<const XdmfTopologyType> TwoDRectMesh();
-	static boost::shared_ptr<const XdmfTopologyType> TwoDCoRectMesh();
-	static boost::shared_ptr<const XdmfTopologyType> ThreeDSMesh();
-	static boost::shared_ptr<const XdmfTopologyType> ThreeDRectMesh();
-	static boost::shared_ptr<const XdmfTopologyType> ThreeDCoRectMesh();
+	//static boost::shared_ptr<const XdmfTopologyType> TwoDRectMesh();
+	//static boost::shared_ptr<const XdmfTopologyType> TwoDCoRectMesh();
+	//static boost::shared_ptr<const XdmfTopologyType> ThreeDRectMesh();
+	//static boost::shared_ptr<const XdmfTopologyType> ThreeDCoRectMesh();
 
 	/**
 	 * Get the cell type associated with this topology type
@@ -101,9 +99,9 @@ public:
 	 *
 	 * @return an unsigned int containing number of nodes per element.
 	 */
-	unsigned int getNodesPerElement() const;
+	virtual unsigned int getNodesPerElement() const;
 
-	void getProperties(std::map<std::string, std::string> & collectedProperties) const;
+	virtual void getProperties(std::map<std::string, std::string> & collectedProperties) const;
 
 	/*
 	 * Compare two XdmfTopologyTypes for equality.

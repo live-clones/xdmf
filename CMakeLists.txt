@@ -122,7 +122,6 @@ include_directories(${XdmfCore_INCLUDE_DIRS})
 
 option(XDMF_BUILD_CORE_ONLY OFF)
 if(NOT XDMF_BUILD_CORE_ONLY)
-
 	set(XdmfSources
 		XdmfAttribute
 		XdmfAttributeCenter
@@ -133,6 +132,7 @@ if(NOT XDMF_BUILD_CORE_ONLY)
 		XdmfGrid
 		XdmfGridCollection
 		XdmfGridCollectionType
+		XdmfGridRegular
 		XdmfItemFactory
 		XdmfMap
 		XdmfReader
@@ -168,5 +168,4 @@ if(NOT XDMF_BUILD_CORE_ONLY)
 	file(GLOB XdmfHeaders *.hpp)
 	install(FILES ${XdmfHeaders} DESTINATION include)
 	install(TARGETS Xdmf LIBRARY DESTINATION lib)
-	
 endif(NOT XDMF_BUILD_CORE_ONLY)

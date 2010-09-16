@@ -6,8 +6,8 @@
  */
 
 #include "XdmfAttribute.hpp"
-#include "XdmfGrid.hpp"
 #include "XdmfGeometry.hpp"
+#include "XdmfGrid.hpp"
 #include "XdmfMap.hpp"
 #include "XdmfSet.hpp"
 #include "XdmfTime.hpp"
@@ -22,10 +22,10 @@ boost::shared_ptr<XdmfGrid> XdmfGrid::New()
 	return p;
 }
 
-XdmfGrid::XdmfGrid() :
-	mName("Grid"),
+XdmfGrid::XdmfGrid(const std::string & name) :
 	mGeometry(XdmfGeometry::New()),
 	mMap(boost::shared_ptr<XdmfMap>()),
+	mName(name),
 	mTime(boost::shared_ptr<XdmfTime>()),
 	mTopology(XdmfTopology::New())
 {

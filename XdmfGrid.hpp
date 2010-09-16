@@ -146,10 +146,8 @@ public:
 
 protected:
 
-	XdmfGrid();
+	XdmfGrid(const std::string & name = "Grid");
 	virtual void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader);
-
-	std::string mName;
 
 private:
 
@@ -158,8 +156,10 @@ private:
 
 	boost::shared_ptr<XdmfGeometry> mGeometry;
 	boost::shared_ptr<XdmfMap> mMap;
+	std::string mName;
 	boost::shared_ptr<XdmfTime> mTime;
 	boost::shared_ptr<XdmfTopology> mTopology;
+
 };
 
 #endif /* XDMFGRID_HPP_ */

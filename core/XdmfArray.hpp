@@ -187,7 +187,16 @@ public:
 	void initialize(const boost::shared_ptr<const XdmfArrayType> arrayType, const unsigned int size = 0);
 
 	/**
-	 * Copy values from an XdmfArray into this array.
+	 * Insert value into this array
+	 *
+	 * @param index the index in this array to insert.
+	 * @param value the value to insert
+	 */
+	template<typename T>
+	void insert(const unsigned int index, const T & value);
+
+	/**
+	 * Insert values from an XdmfArray into this array.
 	 *
 	 * @param startIndex the index in this array to begin insertion.
 	 * @param values a shared pointer to an XdmfArray to copy into this array.
@@ -199,7 +208,7 @@ public:
 	void insert(const unsigned int startIndex, const boost::shared_ptr<const XdmfArray> values, const unsigned int valuesStartIndex= 0, const unsigned int numValues = 1, const unsigned int arrayStride = 1, const unsigned int valuesStride = 1);
 
 	/**
-	 * Copy values into this array.
+	 * Insert values into this array.
 	 *
 	 * @param startIndex the index in this XdmfArray to begin insertion.
 	 * @param valuesPointer a pointer to the values to copy into this XdmfArray.

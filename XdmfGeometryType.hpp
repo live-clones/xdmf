@@ -46,9 +46,9 @@ public:
 	 *
 	 * @return an int containing number of dimensions.
 	 */
-	unsigned int getDimensions() const;
+	virtual unsigned int getDimensions() const;
 
-	void getProperties(std::map<std::string, std::string> & collectedProperties) const;
+	virtual void getProperties(std::map<std::string, std::string> & collectedProperties) const;
 
 	/*
 	 * Compare two XdmfGeometryTypes for equality.

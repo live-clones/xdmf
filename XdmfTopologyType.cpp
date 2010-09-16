@@ -173,6 +173,7 @@ boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Mixed()
 	return p;
 }
 
+/*
 boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::TwoDSMesh()
 {
 	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(1, "2DSMesh", Structured));
@@ -207,7 +208,7 @@ boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::ThreeDCoRectMesh()
 {
 	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(1, "3DCoRectMesh", Structured));
 	return p;
-}
+}*/
 
 XdmfTopologyType::XdmfTopologyType(const int& nodesPerElement, const std::string& name, const CellType& cellType) :
 	mCellType(cellType),
@@ -321,6 +322,7 @@ boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::New(const std::map<s
 		{
 			return Mixed();
 		}
+		/*
 		else if(typeVal.compare("2DSMESH") == 0)
 		{
 			return TwoDSMesh();
@@ -345,6 +347,7 @@ boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::New(const std::map<s
 		{
 			return ThreeDCoRectMesh();
 		}
+		*/
 		else
 		{
 			assert(false);

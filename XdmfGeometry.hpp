@@ -37,7 +37,7 @@ public:
 	/**
 	 * Get the number of points stored in this geometry.
 	 */
-	unsigned int getNumberPoints() const;
+	virtual unsigned int getNumberPoints() const;
 
 	/**
 	 * Get the XdmfGeometryType associated with this geometry.

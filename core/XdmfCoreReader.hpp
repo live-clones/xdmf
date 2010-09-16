@@ -20,7 +20,7 @@ class XdmfCoreReader {
 
 public:
 
-	virtual ~XdmfCoreReader();
+	virtual ~XdmfCoreReader() = 0;
 
 	/**
 	 * Read an Xdmf file from disk into memory.

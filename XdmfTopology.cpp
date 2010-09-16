@@ -35,7 +35,7 @@ std::map<std::string, std::string> XdmfTopology::getItemProperties() const
 {
 	std::map<std::string, std::string> topologyProperties;
 	mType->getProperties(topologyProperties);
-	if(mType != XdmfTopologyType::Polyvertex())
+	if(mType->getCellType() != XdmfTopologyType::Structured && mType != XdmfTopologyType::Polyvertex())
 	{
 		std::stringstream numElements;
 		numElements << this->getNumberElements();
@@ -75,4 +75,5 @@ void XdmfTopology::populateItem(const std::map<std::string, std::string> & itemP
 void XdmfTopology::setType(const boost::shared_ptr<const XdmfTopologyType> type)
 {
 	mType = type;
+
 }

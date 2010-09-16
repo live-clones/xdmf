@@ -39,7 +39,7 @@ public:
 	 *
 	 * @return int of number elements in the Topology.
 	 */
-	unsigned int getNumberElements() const;
+	virtual unsigned int getNumberElements() const;
 
 	/**
 	 * Get the XdmfTopologyType associated with this topology.

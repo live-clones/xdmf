@@ -16,6 +16,7 @@ ADD_CXX_TEST(TestXdmfAttribute)
 ADD_CXX_TEST(TestXdmfGeometry)
 ADD_CXX_TEST(TestXdmfGrid)
 ADD_CXX_TEST(TestXdmfGridCollection)
+ADD_CXX_TEST(TestXdmfGridRegular)
 ADD_CXX_TEST(TestXdmfReader)
 ADD_CXX_TEST(TestXdmfSet)
 ADD_CXX_TEST(TestXdmfTime)
@@ -39,6 +40,9 @@ CLEAN_CXX_TEST(TestXdmfGridCollection
 	TestXdmfGridCollectionHDF1.h5
 	TestXdmfGridCollectionHDF1.xmf
 	TestXdmfGridCollectionHDF2.xmf
+)
+CLEAN_CXX_TEST(TestXdmfGridRegular
+	TestXdmfGridRegular1.xmf
 )
 CLEAN_CXX_TEST(TestXdmfReader
 	TestXdmfReader1.h5

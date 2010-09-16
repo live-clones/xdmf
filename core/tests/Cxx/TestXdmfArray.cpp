@@ -89,6 +89,14 @@ int main(int, char *)
 	assert(array5->getSize() == 3);
 	assert(array->getSize() == 4);
 
+	/**
+	 * Single Insertion
+	 */
+	boost::shared_ptr<XdmfArray> array10 = XdmfArray::New();
+	array10->insert<unsigned int>(0, 1);
+	assert(array10->getSize() == 1);
+	assert(array10->getValue<unsigned int>(0) == 1);
+
 	//
 	// PUSHBACK
 	//

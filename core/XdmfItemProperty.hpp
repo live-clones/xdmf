@@ -19,7 +19,7 @@ class XdmfItemProperty {
 
 public:
 
-	virtual ~XdmfItemProperty();
+	virtual ~XdmfItemProperty() = 0;
 
 	/**
 	 * Retrieve the key/value pairs that this XdmfItemProperty contains by inserting into the passed vector.

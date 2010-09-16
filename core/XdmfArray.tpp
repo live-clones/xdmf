@@ -188,6 +188,20 @@ boost::shared_ptr<std::vector<T> > XdmfArray::initialize(const unsigned int size
 	return newArray;
 }
 
+template<typename T>
+void XdmfArray::insert(const unsigned int index, const T & value)
+{
+	if(mHaveArrayPointer)
+	{
+		internalizeArrayPointer();
+	}
+	if(!mHaveArray)
+	{
+		initialize<T>();
+	}
+	boost::apply_visitor(Insert<T>(index, &value, 1, 0, 0), mArray);
+}
+
 template <typename T>
 void XdmfArray::insert(const unsigned int startIndex, const T * const valuesPointer, const unsigned int numValues, const unsigned int arrayStride, const unsigned int valuesStride)
 {
