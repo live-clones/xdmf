@@ -463,6 +463,32 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
       ids->SetNumberOfElements(currSet->GetIds()->GetNumberOfElements());
       ids->SetValues(0, currSet->GetIds(), currSet->GetIds()->GetNumberOfElements());
       collection->Insert(set);
+
+      for(int i=0; i<currSet->GetNumberOfAttributes(); ++i)
+      {
+        XdmfAttribute * currAttribute = currSet->GetAttribute(i);
+        // If data wasn't read in before, make sure it's released after processing
+        bool releaseAttribute = 0;
+        if(currAttribute->GetValues()->GetNumberOfElements() == 0)
+        {
+          currAttribute->Update();
+          releaseAttribute = 1;
+        }
+        XdmfAttribute * attribute = new XdmfAttribute();
+        attribute->SetName(currAttribute->GetName());
+        attribute->SetAttributeType(currAttribute->GetAttributeType());
+        attribute->SetAttributeCenter(currAttribute->GetAttributeCenter());
+        attribute->SetDeleteOnGridDelete(true);
+        XdmfArray * attributeVals = attribute->GetValues();
+        attributeVals->SetNumberType(currAttribute->GetValues()->GetNumberType());
+        attributeVals->SetNumberOfElements(currAttribute->GetValues()->GetNumberOfElements());
+        attributeVals->SetValues(0, currAttribute->GetValues(), currAttribute->GetValues()->GetNumberOfElements(), 0);
+        set->Insert(attribute);
+        if(releaseData)
+        {
+          currAttribute->Release();
+        }
+      }
     }
     if(releaseData)
     {
@@ -471,7 +497,6 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
   }
 
   // Add information to top of collection
-  std::cout << grid->GetNumberOfInformations() << std::endl;
   for(int j=0; j<grid->GetNumberOfInformations(); ++j)
   {
     collection->Insert(grid->GetInformation(j));
