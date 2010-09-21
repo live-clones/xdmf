@@ -419,12 +419,14 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
             case(XDMF_SET_TYPE_NODE):
             {
               std::vector<XdmfInt32> myIds;
+              std::vector<XdmfInt32> myIdsIndex;
               for(int k=0; k<currSet->GetIds()->GetNumberOfElements(); k++)
               {
                 std::map<XdmfInt32, XdmfInt32>::const_iterator val = currNodeMap.find(currSet->GetIds()->GetValueAsInt32(k));
                 if(val != currNodeMap.end())
                 {
                   myIds.push_back(val->second);
+                  myIdsIndex.push_back(k);
                 }
               }
               if(myIds.size() != 0)
@@ -439,6 +441,38 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
                 ids->SetNumberOfElements(myIds.size());
                 ids->SetValues(0, &myIds[0], myIds.size());
                 partition->Insert(set);
+
+                // Split Attributes
+                for(int k=0; k<currSet->GetNumberOfAttributes(); ++k)
+                {
+                  XdmfAttribute * currAttribute = currSet->GetAttribute(k);
+                  if(currAttribute->GetAttributeCenter() == XDMF_ATTRIBUTE_CENTER_NODE)
+                  {
+                    bool releaseAttribute = 0;
+                    if(currAttribute->GetValues()->GetNumberOfElements() == 0)
+                    {
+                      currAttribute->Update();
+                      releaseAttribute = 1;
+                    }
+                    XdmfAttribute * attribute = new XdmfAttribute();
+                    attribute->SetName(currAttribute->GetName());
+                    attribute->SetAttributeType(currAttribute->GetAttributeType());
+                    attribute->SetAttributeCenter(currAttribute->GetAttributeCenter());
+                    attribute->SetDeleteOnGridDelete(true);
+                    XdmfArray * attributeVals = attribute->GetValues();
+                    attributeVals->SetNumberType(currAttribute->GetValues()->GetNumberType());
+                    attributeVals->SetNumberOfElements(myIds.size());
+                    for(int l=0; l<myIds.size(); ++l)
+                    {
+                      attributeVals->SetValues(l, currAttribute->GetValues(), 1, myIdsIndex[l]);
+                    }
+                    set->Insert(attribute);
+                    if(releaseAttribute)
+                    {
+                      currAttribute->Release();
+                    }
+                  }
+                }
               }
               break;
             }
@@ -484,7 +518,7 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
         attributeVals->SetNumberOfElements(currAttribute->GetValues()->GetNumberOfElements());
         attributeVals->SetValues(0, currAttribute->GetValues(), currAttribute->GetValues()->GetNumberOfElements(), 0);
         set->Insert(attribute);
-        if(releaseData)
+        if(releaseAttribute)
         {
           currAttribute->Release();
         }
