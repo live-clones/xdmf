@@ -25,6 +25,7 @@
 
 #include "XdmfExodusWriter.h"
 
+#include <cassert>
 #include <exodusII.h>
 #include <sstream>
 #include <string>
@@ -169,6 +170,7 @@ void XdmfExodusWriter::write(const char * fileName, XdmfGrid * gridToWrite)
 
   XdmfGrid * currGrid = gridToWrite;
   bool temporalCollection = false;
+  bool spatialCollection = false;
   if(currGrid->GetGridType() == XDMF_GRID_COLLECTION && currGrid->GetCollectionType() == XDMF_GRID_COLLECTION_TEMPORAL)
   {
     // Writing a temporal collection, use first timestep for geometry and topology values.
@@ -177,9 +179,24 @@ void XdmfExodusWriter::write(const char * fileName, XdmfGrid * gridToWrite)
     temporalCollection = true;
   }
 
-  int num_dim;
+  if(currGrid->GetGridType() == XDMF_GRID_COLLECTION && currGrid->GetCollectionType() == XDMF_GRID_COLLECTION_SPATIAL)
+  {
+    // Writing a spatial collection
+    spatialCollection = true;
+  }
 
-  switch(currGrid->GetGeometry()->GetGeometryType())
+  XdmfInt32 geomType;
+  if(spatialCollection)
+  {
+    geomType = currGrid->GetChild(0)->GetGeometry()->GetGeometryType();
+  }
+  else
+  {
+    geomType = currGrid->GetGeometry()->GetGeometryType();
+  }
+
+  int num_dim;
+  switch(geomType)
   {
     case(XDMF_GEOMETRY_XYZ):
       num_dim = 3;
@@ -198,11 +215,54 @@ void XdmfExodusWriter::write(const char * fileName, XdmfGrid * gridToWrite)
       return;
   }
 
-  int num_nodes = currGrid->GetGeometry()->GetNumberOfPoints();
-  int num_elem = currGrid->GetTopology()->GetNumberOfElements();
-  int num_elem_blk = 1;
+  int num_nodes;
+  int num_elem;
+  int num_elem_blk;;
   int num_node_sets = 0;
   int num_side_sets = 0;
+
+  if(spatialCollection)
+  {
+    num_elem_blk = currGrid->GetNumberOfChildren();
+    // Need to figure out number of pts and elements.
+    num_nodes = 0;
+    num_elem = 0;
+    for(unsigned int i=0; i<currGrid->GetNumberOfChildren(); ++i)
+    {
+      XdmfGrid * grid = currGrid->GetChild(i);
+      grid->Update();
+      for(unsigned int j=0; j<grid->GetNumberOfAttributes(); ++j)
+      {
+        XdmfAttribute * attribute = grid->GetAttribute(j);
+        if(strcmp(attribute->GetName(), "GlobalNodeId") == 0)
+        {
+          attribute->Update();
+          for(unsigned int j=0; j<attribute->GetValues()->GetNumberOfElements(); ++j)
+          {
+            XdmfInt64 currVal = attribute->GetValues()->GetValueAsInt64(j);
+            if(currVal > num_nodes)
+            {
+              num_nodes = currVal;
+            }
+          }
+          attribute->Release();
+        }
+      }
+      num_elem += grid->GetTopology()->GetNumberOfElements();
+    }
+    if(num_nodes == 0)
+    {
+      std::cout << "No GlobalNodeId attribute found for this spatial collection.  Exodus needs coordinate values stored globally, which means that we need to have a way to put them back together from Xdmf." << std::endl;
+      return;
+    }
+    num_nodes++;
+  }
+  else
+  {
+    num_nodes = currGrid->GetGeometry()->GetNumberOfPoints();
+    num_elem = currGrid->GetTopology()->GetNumberOfElements();
+    num_elem_blk = 1;
+  }
 
   for (int i=0; i<currGrid->GetNumberOfSets(); ++i)
   {
@@ -223,27 +283,65 @@ void XdmfExodusWriter::write(const char * fileName, XdmfGrid * gridToWrite)
 
   ex_put_init(exodusHandle, title.c_str(), num_dim, num_nodes, num_elem, num_elem_blk, num_node_sets, num_side_sets);
 
-  // Write nodal coordinate values to exodus
   double * x = new double[num_nodes];
   double * y = new double[num_nodes];
   double * z = new double[num_nodes];
-  if(currGrid->GetGeometry()->GetGeometryType() == XDMF_GEOMETRY_XYZ || currGrid->GetGeometry()->GetGeometryType() == XDMF_GEOMETRY_XY)
+  if(spatialCollection)
   {
-    currGrid->GetGeometry()->GetPoints()->GetValues(0, x, num_nodes, 3);
-    currGrid->GetGeometry()->GetPoints()->GetValues(1, y, num_nodes, 3);
-    if(currGrid->GetGeometry()->GetGeometryType() == XDMF_GEOMETRY_XYZ)
+    for(unsigned int i=0; i<currGrid->GetNumberOfChildren(); ++i)
     {
-      currGrid->GetGeometry()->GetPoints()->GetValues(2, z, num_nodes, 3);
+      XdmfGrid * grid = currGrid->GetChild(i);
+      XdmfAttribute * globalNodeIds;
+      for(unsigned int j=0; j<grid->GetNumberOfAttributes(); ++j)
+      {
+        globalNodeIds = grid->GetAttribute(j);
+        if(strcmp(globalNodeIds->GetName(), "GlobalNodeId") == 0)
+        {
+          globalNodeIds->Update();
+          break;
+        }
+      }
+      for(unsigned int j=0; j<grid->GetGeometry()->GetNumberOfPoints(); ++j)
+      {
+        unsigned int currId = globalNodeIds->GetValues()->GetValueAsInt64(j);
+        if(grid->GetGeometry()->GetGeometryType() == XDMF_GEOMETRY_XYZ || grid->GetGeometry()->GetGeometryType() == XDMF_GEOMETRY_XY)
+        {
+          int startIndex = j * 3;
+          grid->GetGeometry()->GetPoints()->GetValues(startIndex, &x[currId], 1);
+          grid->GetGeometry()->GetPoints()->GetValues(startIndex + 1, &y[currId], 1);
+          if(grid->GetGeometry()->GetGeometryType() == XDMF_GEOMETRY_XYZ)
+          {
+            grid->GetGeometry()->GetPoints()->GetValues(startIndex + 2, &z[currId], 1);
+          }
+        }
+        else if(grid->GetGeometry()->GetGeometryType() == XDMF_GEOMETRY_X_Y_Z || currGrid->GetGeometry()->GetGeometryType() == XDMF_GEOMETRY_X_Y)
+        {
+          // Not implemented currently.
+          assert(false);
+        }
+      }
+      grid->GetGeometry()->Release();
+      globalNodeIds->Release();
     }
   }
-  else if(currGrid->GetGeometry()->GetGeometryType() == XDMF_GEOMETRY_X_Y_Z || currGrid->GetGeometry()->GetGeometryType() == XDMF_GEOMETRY_X_Y)
+  else
   {
-    currGrid->GetGeometry()->GetPoints()->GetValues(0, x, num_nodes);
-    currGrid->GetGeometry()->GetPoints()->GetValues(num_nodes, y, num_nodes);
-    if(currGrid->GetGeometry()->GetGeometryType() == XDMF_GEOMETRY_X_Y_Z)
+    // Write nodal coordinate values to exodus
+    if(currGrid->GetGeometry()->GetGeometryType() == XDMF_GEOMETRY_XYZ || currGrid->GetGeometry()->GetGeometryType() == XDMF_GEOMETRY_XY)
     {
-      currGrid->GetGeometry()->GetPoints()->GetValues(num_nodes*2, z, num_nodes);
+      currGrid->GetGeometry()->GetPoints()->GetValues(0, x, num_nodes, 3);
+      currGrid->GetGeometry()->GetPoints()->GetValues(1, y, num_nodes, 3);
+      if(currGrid->GetGeometry()->GetGeometryType() == XDMF_GEOMETRY_XYZ)
+      {
+        currGrid->GetGeometry()->GetPoints()->GetValues(2, z, num_nodes, 3);
+      }
     }
+    else if(currGrid->GetGeometry()->GetGeometryType() == XDMF_GEOMETRY_X_Y_Z || currGrid->GetGeometry()->GetGeometryType() == XDMF_GEOMETRY_X_Y)
+    {
+      // Not implemented currently.
+      assert(false);
+    }
+    currGrid->GetGeometry()->Release();
   }
 
   ex_put_coord(exodusHandle, x ,y ,z);
@@ -251,96 +349,135 @@ void XdmfExodusWriter::write(const char * fileName, XdmfGrid * gridToWrite)
   delete [] y;
   delete [] z;
 
-  // Write Element block parameters
-  XdmfInt32 topType = currGrid->GetTopology()->GetTopologyType();
-  std::string cellType = this->DetermineExodusCellType(topType);
-  if (cellType.compare("") == 0)
+  for(unsigned int iNumBlocks=0; iNumBlocks<num_elem_blk; ++iNumBlocks)
   {
-    std::cout << "Cannot write grid with topology " << currGrid->GetTopology()->GetTopologyTypeAsString() << std::endl;
-    return;
-  }
-  ex_put_elem_block(exodusHandle, 10, cellType.c_str(), num_elem, currGrid->GetTopology()->GetNodesPerElement(), num_side_sets);
-
-  // Write Element Connectivity
-  int * elem_connectivity = new int[num_elem * currGrid->GetTopology()->GetNodesPerElement()];
-  // Add 1 to connectivity array since exodus indices start at 1
-  *currGrid->GetTopology()->GetConnectivity() + 1;
-  currGrid->GetTopology()->GetConnectivity()->GetValues(0, elem_connectivity, num_elem * currGrid->GetTopology()->GetNodesPerElement());
-
-  if(topType == XDMF_HEX_20 || topType == XDMF_HEX_27)
-  {
-    int * ptr = elem_connectivity;
-    int k;
-    int itmp[4];
-
-    // Exodus Node ordering does not match Xdmf, we must convert.
-    for (int i=0; i<num_elem; i++)
+    XdmfTopology * topology;
+    if(spatialCollection)
     {
-      ptr += 12;
+      topology = currGrid->GetChild(iNumBlocks)->GetTopology();
+    }
+    else
+    {
+      topology = currGrid->GetTopology();
+    }
 
-      for ( k = 0; k < 4; ++k, ++ptr)
+    // Write Element block parameters
+    XdmfInt32 topType = topology->GetTopologyType();
+    std::string cellType = this->DetermineExodusCellType(topType);
+    if (cellType.compare("") == 0)
+    {
+      std::cout << "Cannot write grid with topology " << topology->GetTopologyTypeAsString() << std::endl;
+      return;
+    }
+
+    ex_put_elem_block(exodusHandle, 10 + iNumBlocks, cellType.c_str(), topology->GetNumberOfElements(), topology->GetNodesPerElement(), num_side_sets);
+
+    // Write Element Connectivity
+    int * elem_connectivity = new int[topology->GetNumberOfElements() * topology->GetNodesPerElement()];
+
+    if(spatialCollection)
+    {
+      XdmfAttribute * globalNodeIds = NULL;
+      for(unsigned int i=0; i<currGrid->GetChild(iNumBlocks)->GetNumberOfAttributes(); ++i)
       {
-        itmp[k] = *ptr;
-        *ptr = ptr[4];
+        globalNodeIds = currGrid->GetChild(iNumBlocks)->GetAttribute(i);
+        if(strcmp(globalNodeIds->GetName(), "GlobalNodeId") == 0)
+        {
+          globalNodeIds->Update();
+          break;
+        }
       }
-
-      for ( k = 0; k < 4; ++k, ++ptr )
+      int numVals = topology->GetNumberOfElements() * topology->GetNodesPerElement();
+      for(unsigned int i=0; i<numVals; ++i)
       {
-        *ptr = itmp[k];
+        elem_connectivity[i] = globalNodeIds->GetValues()->GetValueAsInt32(topology->GetConnectivity()->GetValueAsInt32(i)) + 1;
       }
+      globalNodeIds->Release();
+    }
+    else
+    {
+      // Add 1 to connectivity array since exodus indices start at 1
+      *topology->GetConnectivity() + 1;
+      topology->GetConnectivity()->GetValues(0, elem_connectivity, topology->GetNumberOfElements() * topology->GetNodesPerElement());
+    }
 
-      if(topType == XDMF_HEX_27)
+    topology->Release();
+
+    if(topType == XDMF_HEX_20 || topType == XDMF_HEX_27)
+    {
+      int * ptr = elem_connectivity;
+      int k;
+      int itmp[4];
+
+      // Exodus Node ordering does not match Xdmf, we must convert.
+      for (int i=0; i<topology->GetNumberOfElements(); i++)
       {
-        itmp[0] = *ptr;
-        *(ptr++) = ptr[6];
-        itmp[1] = *ptr;
-        *(ptr++) = ptr[3];
-        itmp[2] = *ptr;
-        *(ptr++) = ptr[3];
-        itmp[3] = *ptr;
+        ptr += 12;
+
+        for ( k = 0; k < 4; ++k, ++ptr)
+        {
+          itmp[k] = *ptr;
+          *ptr = ptr[4];
+        }
+
         for ( k = 0; k < 4; ++k, ++ptr )
         {
           *ptr = itmp[k];
         }
+
+        if(topType == XDMF_HEX_27)
+        {
+          itmp[0] = *ptr;
+          *(ptr++) = ptr[6];
+          itmp[1] = *ptr;
+          *(ptr++) = ptr[3];
+          itmp[2] = *ptr;
+          *(ptr++) = ptr[3];
+          itmp[3] = *ptr;
+          for ( k = 0; k < 4; ++k, ++ptr )
+          {
+            *ptr = itmp[k];
+          }
+        }
       }
     }
-  }
-  else if (topType == XDMF_WEDGE_15 || topType == XDMF_WEDGE_18)
-  {
-    int * ptr = elem_connectivity;
-    int k;
-    int itmp[3];
-
-    // Exodus Node ordering does not match Xdmf, we must convert.
-    for (int i=0; i<num_elem; i++)
+    else if (topType == XDMF_WEDGE_15 || topType == XDMF_WEDGE_18)
     {
-      ptr += 9;
+      int * ptr = elem_connectivity;
+      int k;
+      int itmp[3];
 
-      for (k = 0; k < 3; ++k, ++ptr)
+      // Exodus Node ordering does not match Xdmf, we must convert.
+      for (int i=0; i<topology->GetNumberOfElements(); i++)
       {
-        itmp[k] = *ptr;
-        *ptr = ptr[3];
-      }
+        ptr += 9;
 
-      for (k = 0; k < 3; ++k, ++ptr)
-      {
-        *ptr = itmp[k];
-      }
+        for (k = 0; k < 3; ++k, ++ptr)
+        {
+          itmp[k] = *ptr;
+          *ptr = ptr[3];
+        }
 
-      if(topType == XDMF_WEDGE_18)
-      {
-        itmp[0] = *(ptr);
-        itmp[1] = *(ptr+1);
-        itmp[2] = *(ptr+2);
-        *(ptr++) = itmp[2];
-        *(ptr++) = itmp[0];
-        *(ptr++) = itmp[1];
+        for (k = 0; k < 3; ++k, ++ptr)
+        {
+          *ptr = itmp[k];
+        }
+
+        if(topType == XDMF_WEDGE_18)
+        {
+          itmp[0] = *(ptr);
+          itmp[1] = *(ptr+1);
+          itmp[2] = *(ptr+2);
+          *(ptr++) = itmp[2];
+          *(ptr++) = itmp[0];
+          *(ptr++) = itmp[1];
+        }
       }
     }
-  }
 
-  ex_put_elem_conn(exodusHandle, 10, elem_connectivity);
-  delete [] elem_connectivity;
+    ex_put_elem_conn(exodusHandle, 10 + iNumBlocks, elem_connectivity);
+    delete [] elem_connectivity;
+  }
 
   // Write Attributes
   int numGlobalAttributes = 0;
@@ -354,9 +491,33 @@ void XdmfExodusWriter::write(const char * fileName, XdmfGrid * gridToWrite)
   std::vector<std::string> nodalAttributeNames;
   std::vector<std::string> elementAttributeNames;
 
-  for(int i=0; i<currGrid->GetNumberOfAttributes(); ++i)
+  int numberAttributes;
+  if(spatialCollection)
   {
-    XdmfAttribute * currAttribute = currGrid->GetAttribute(i);
+    numberAttributes = currGrid->GetChild(0)->GetNumberOfAttributes();
+  }
+  else
+  {
+    numberAttributes = currGrid->GetNumberOfAttributes();
+  }
+
+  for(int i=0; i<numberAttributes; ++i)
+  {
+    XdmfAttribute * currAttribute;
+    int numElemInBlock;
+    int numNodesInBlock;
+    if(spatialCollection)
+    {
+      currAttribute = currGrid->GetChild(0)->GetAttribute(i);
+      numElemInBlock = currGrid->GetChild(0)->GetTopology()->GetNumberOfElements();
+      numNodesInBlock = currGrid->GetChild(0)->GetGeometry()->GetNumberOfPoints();
+    }
+    else
+    {
+      currAttribute = currGrid->GetAttribute(i);
+      numElemInBlock = currGrid->GetTopology()->GetNumberOfElements();
+      numNodesInBlock = currGrid->GetGeometry()->GetNumberOfPoints();
+    }
     currAttribute->Update();
     int numComponents = 0;
     switch(currAttribute->GetAttributeCenter())
@@ -371,7 +532,7 @@ void XdmfExodusWriter::write(const char * fileName, XdmfGrid * gridToWrite)
       }
       case(XDMF_ATTRIBUTE_CENTER_NODE):
       {
-        numComponents = currAttribute->GetValues()->GetNumberOfElements() / num_nodes;
+        numComponents = currAttribute->GetValues()->GetNumberOfElements() / numNodesInBlock;
         nodalComponents.push_back(numComponents);
         numNodalAttributes += numComponents;
         nameHandler->ConstructAttributeName(currAttribute->GetName(), nodalAttributeNames, numComponents);
@@ -379,7 +540,7 @@ void XdmfExodusWriter::write(const char * fileName, XdmfGrid * gridToWrite)
       }
       case(XDMF_ATTRIBUTE_CENTER_CELL):
       {
-        numComponents = currAttribute->GetValues()->GetNumberOfElements() / num_elem;
+        numComponents = currAttribute->GetValues()->GetNumberOfElements() / numElemInBlock;
         elementComponents.push_back(numComponents);
         numElementAttributes += numComponents;
         nameHandler->ConstructAttributeName(currAttribute->GetName(), elementAttributeNames, numComponents);
@@ -420,13 +581,13 @@ void XdmfExodusWriter::write(const char * fileName, XdmfGrid * gridToWrite)
   delete [] nodalNames;
   delete [] elementNames;
 
-  int numGrids = 1;
+  int numTemporalGrids = 1;
   if(temporalCollection)
   {
-    numGrids = gridToWrite->GetNumberOfChildren();
+    numTemporalGrids = gridToWrite->GetNumberOfChildren();
   }
  
-  for(int i=0; i<numGrids; ++i)
+  for(int i=0; i<numTemporalGrids; ++i)
   {
     double * globalAttributeVals = new double[numGlobalAttributes];
 
@@ -442,53 +603,126 @@ void XdmfExodusWriter::write(const char * fileName, XdmfGrid * gridToWrite)
       currGrid = gridToWrite->GetChild(i);
       currGrid->Update();
     }
-    
-    for(int j=0; j<currGrid->GetNumberOfAttributes(); ++j)
+
+    for(int j=0; j<numberAttributes; ++j)
     {
-      XdmfAttribute * currAttribute = currGrid->GetAttribute(j);
-      currAttribute->Update();
-      switch(currAttribute->GetAttributeCenter())
+      XdmfInt32 attributeCenter;
+      std::vector<std::vector<double> > nodalArrays;
+
+      for(unsigned int iNumBlocks=0; iNumBlocks<num_elem_blk; ++iNumBlocks)
       {
-        case(XDMF_ATTRIBUTE_CENTER_GRID):
+        XdmfAttribute * currAttribute;
+        XdmfAttribute * globalNodeIds = NULL;
+        if(spatialCollection)
         {
-          for(int k=0; k<globalComponents[globalComponentIndex]; ++k)
+          currAttribute = currGrid->GetChild(iNumBlocks)->GetAttribute(j);
+          for(unsigned int k=0; k<currGrid->GetChild(iNumBlocks)->GetNumberOfAttributes(); ++k)
           {
-            currAttribute->GetValues()->GetValues(k, &globalAttributeVals[globalIndex], 1);
-            globalIndex++;
+            globalNodeIds = currGrid->GetChild(iNumBlocks)->GetAttribute(k);
+            if(strcmp(globalNodeIds->GetName(), "GlobalNodeId") == 0)
+            {
+              globalNodeIds->Update();
+              break;
+            }
           }
-          globalComponentIndex++;
+        }
+        else
+        {
+          currAttribute = currGrid->GetAttribute(j);
+        }
+        currAttribute->Update();
+        attributeCenter = currAttribute->GetAttributeCenter();
+        switch(currAttribute->GetAttributeCenter())
+        {
+          case(XDMF_ATTRIBUTE_CENTER_GRID):
+          {
+            for(int k=0; k<globalComponents[globalComponentIndex]; ++k)
+            {
+              currAttribute->GetValues()->GetValues(k, &globalAttributeVals[globalIndex], 1);
+              globalIndex++;
+            }
+            globalComponentIndex++;
+            break;
+          }
+          case(XDMF_ATTRIBUTE_CENTER_NODE):
+          {
+            int numComponents = nodalComponents[nodalComponentIndex];
+            for(int k=0; k<numComponents; ++k)
+            {
+              if(nodalArrays.size() == 0)
+              {
+                nodalArrays.resize(numComponents);
+              }
+              if(iNumBlocks == 0)
+              {
+                nodalArrays[k].resize(num_nodes);
+              }
+              if(spatialCollection)
+              {
+                int numVals = currAttribute->GetValues()->GetNumberOfElements() / numComponents;
+                int index = k;
+                for(int l=0; l<numVals; ++l, index+=numComponents)
+                {
+                  nodalArrays[k][globalNodeIds->GetValues()->GetValueAsInt32(l)] = currAttribute->GetValues()->GetValueAsFloat64(index);
+                }
+              }
+              else
+              {
+                currAttribute->GetValues()->GetValues(k, &nodalArrays[k][0], currAttribute->GetValues()->GetNumberOfElements() / numComponents, numComponents);
+              }
+            }
+            break;
+          }
+          case(XDMF_ATTRIBUTE_CENTER_CELL):
+          {
+            int numElemInBlock;
+            if(spatialCollection)
+            {
+              numElemInBlock = currGrid->GetChild(iNumBlocks)->GetTopology()->GetNumberOfElements();
+            }
+            else
+            {
+              numElemInBlock = currGrid->GetTopology()->GetNumberOfElements();
+            }
+            for(int k=0; k<elementComponents[elementComponentIndex]; ++k)
+            {
+              double * elementValues = new double[numElemInBlock];
+              currAttribute->GetValues()->GetValues(k, elementValues, numElemInBlock, elementComponents[elementComponentIndex]);
+              ex_put_elem_var(exodusHandle, i+1, elementIndex+k+1, 10 + iNumBlocks, numElemInBlock, elementValues);
+              ex_update(exodusHandle);
+              delete [] elementValues;
+            }
+            break;
+          }
+        }
+        if(globalNodeIds)
+        {
+          globalNodeIds->Release();
+        }
+        currAttribute->Release();
+      }
+      switch(attributeCenter)
+      {
+        case(XDMF_ATTRIBUTE_CENTER_CELL):
+        {
+          elementIndex+=elementComponents[elementComponentIndex];
+          elementComponentIndex++;
           break;
         }
         case(XDMF_ATTRIBUTE_CENTER_NODE):
         {
           for(int k=0; k<nodalComponents[nodalComponentIndex]; ++k)
           {
-            double * nodalValues = new double[num_nodes];
-            currAttribute->GetValues()->GetValues(k, nodalValues, num_nodes, nodalComponents[nodalComponentIndex]);
-            ex_put_nodal_var(exodusHandle, i+1, nodalIndex+1, num_nodes, nodalValues);
+            ex_put_nodal_var(exodusHandle, i+1, nodalIndex+1, nodalArrays[k].size(), &nodalArrays[k][0]);
             ex_update(exodusHandle);
-            delete [] nodalValues;
+            nodalArrays[k].clear();
             nodalIndex++;
           }
           nodalComponentIndex++;
           break;
         }
-        case(XDMF_ATTRIBUTE_CENTER_CELL):
-        {
-          for(int k=0; k<elementComponents[elementComponentIndex]; ++k)
-          {
-            double * elementValues = new double[num_elem];
-            currAttribute->GetValues()->GetValues(k, elementValues, num_elem, elementComponents[elementComponentIndex]);
-            ex_put_elem_var(exodusHandle, i+1, elementIndex+1, 10, num_elem, elementValues);
-            ex_update(exodusHandle);
-            delete [] elementValues;
-            elementIndex++;
-          }
-          elementComponentIndex++;
-          break;
-        }
       }
-      currAttribute->Release();
+      nodalArrays.clear();
     }
     ex_put_glob_vars(exodusHandle, i+1, numGlobalAttributes, globalAttributeVals);
     ex_update(exodusHandle);
