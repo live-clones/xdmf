@@ -27,6 +27,7 @@
 
 #include <cassert>
 #include <exodusII.h>
+#include <set>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -264,19 +265,50 @@ void XdmfExodusWriter::write(const char * fileName, XdmfGrid * gridToWrite)
     num_elem_blk = 1;
   }
 
-  for (int i=0; i<currGrid->GetNumberOfSets(); ++i)
+  if(spatialCollection)
   {
-    switch(currGrid->GetSets(i)->GetSetType())
+    std::set<std::string> sideSetNames;
+    std::set<std::string> nodeSetNames;
+    for(unsigned int iNumBlocks=0; iNumBlocks<num_elem_blk; ++iNumBlocks)
     {
-      case(XDMF_SET_TYPE_CELL):
+      XdmfGrid * grid = currGrid->GetChild(iNumBlocks);
+      for(int i=0; i<grid->GetNumberOfSets(); ++i)
       {
-        num_side_sets++;
-        break;
+        XdmfSet * set = grid->GetSets(i);
+        switch(set->GetSetType())
+        {
+          case(XDMF_SET_TYPE_CELL):
+          {
+            sideSetNames.insert(set->GetName());
+            break;
+          }
+          case(XDMF_SET_TYPE_NODE):
+          {
+            nodeSetNames.insert(set->GetName());
+            break;
+          }
+        }
       }
-      case(XDMF_SET_TYPE_NODE):
+    }
+    num_side_sets = sideSetNames.size();
+    num_node_sets = nodeSetNames.size();
+  }
+  else
+  {
+    for (int i=0; i<currGrid->GetNumberOfSets(); ++i)
+    {
+      switch(currGrid->GetSets(i)->GetSetType())
       {
-        num_node_sets++;
-        break;
+        case(XDMF_SET_TYPE_CELL):
+        {
+          num_side_sets++;
+          break;
+        }
+        case(XDMF_SET_TYPE_NODE):
+        {
+          num_node_sets++;
+          break;
+        }
       }
     }
   }
@@ -731,45 +763,124 @@ void XdmfExodusWriter::write(const char * fileName, XdmfGrid * gridToWrite)
 
   // Write Sets
   int setId = 20;
-  for (int i=0; i<currGrid->GetNumberOfSets(); ++i)
+
+  // Set name to set of ids.
+  if(spatialCollection)
   {
-    XdmfSet * currSet = currGrid->GetSets(i);
-    currSet->Update();
-    int numValues = currSet->GetIds()->GetNumberOfElements();
-    std::string name = currSet->GetName();
-    if(name.length() > MAX_STR_LENGTH)
+    std::map<std::string, std::set<int> > allSets;
+    std::map<std::string, XdmfInt32> allSetsType;
+    for(unsigned int iNumBlocks=0; iNumBlocks<num_elem_blk; ++iNumBlocks)
     {
-      name = name.substr(0, MAX_STR_LENGTH);
-    }
-    switch(currSet->GetSetType())
-    {
-      case(XDMF_SET_TYPE_CELL):
+      XdmfGrid * grid = currGrid->GetChild(iNumBlocks);
+      for(unsigned int i=0; i<grid->GetNumberOfSets(); ++i)
       {
-        ex_put_side_set_param(exodusHandle, setId + i, numValues, 0);
-        int * values = new int[numValues];
-        // Add 1 to xdmf ids because exodus ids begin at 1
-        *currSet->GetIds() + 1;
-        currSet->GetIds()->GetValues(0, values, numValues);
-        ex_put_side_set(exodusHandle, setId + i, values, NULL);
-        ex_put_name(exodusHandle, EX_SIDE_SET, setId + i, name.c_str());
-        delete [] values;
-        break;
+        XdmfSet * currSet = grid->GetSets(i);
+        XdmfAttribute * globalNodeIds = NULL;
+        for(unsigned int k=0; k<grid->GetNumberOfAttributes(); ++k)
+        {
+          globalNodeIds = grid->GetAttribute(k);
+          if(strcmp(globalNodeIds->GetName(), "GlobalNodeId") == 0)
+          {
+            globalNodeIds->Update();
+            break;
+          }
+        }
+        currSet->Update();
+        if(allSets.find(currSet->GetName()) == allSets.end())
+        {
+          allSets[currSet->GetName()] = std::set<int>();
+          allSetsType[currSet->GetName()] = currSet->GetSetType();
+        }
+        std::set<int> & setToAddTo = allSets[currSet->GetName()];
+        for(int j=0; j<currSet->GetIds()->GetNumberOfElements(); ++j)
+        {
+          setToAddTo.insert(globalNodeIds->GetValues()->GetValueAsInt32(currSet->GetIds()->GetValueAsInt32(j)) + 1);
+        }
+        currSet->Release();
+        globalNodeIds->Release();
       }
-      case(XDMF_SET_TYPE_NODE):
+    }
+
+    for(std::map<std::string, std::set<int> >::const_iterator iter = allSets.begin(); iter != allSets.end(); ++iter)
+    {
+      const std::string & currSetName = iter->first;
+      const std::set<int> & currSet = iter->second;
+      XdmfInt32 currSetType = allSetsType[currSetName];
+      std::vector<int> setValues;
+      setValues.resize(currSet.size());
+      int index = 0;
+      for(std::set<int>::const_iterator setIter = currSet.begin(); setIter != currSet.end(); ++setIter)
       {
-        ex_put_node_set_param(exodusHandle, setId + i, numValues, 0);
-        int * values = new int[numValues];
-        // Add 1 to xdmf ids because exodus ids begin at 1
-        *currSet->GetIds() + 1;
-        currSet->GetIds()->GetValues(0, values, numValues);
-        ex_put_node_set(exodusHandle, setId + i, values);
-        ex_put_name(exodusHandle, EX_NODE_SET, setId + i, name.c_str());
-        delete [] values;
-        break;
+        setValues[index] = *setIter;
+        ++index;
+      }
+      std::string name = currSetName;
+      if(name.length() > MAX_STR_LENGTH)
+      {
+        name = name.substr(0, MAX_STR_LENGTH);
+      }
+      switch(currSetType)
+      {
+        case(XDMF_SET_TYPE_CELL):
+        {
+          ex_put_side_set_param(exodusHandle, setId + 1, setValues.size(), 0);
+          ex_put_side_set(exodusHandle, setId + 1, &setValues[0], NULL);
+          ex_put_name(exodusHandle, EX_SIDE_SET, setId + 1, name.c_str());
+          break;
+        }
+        case(XDMF_SET_TYPE_NODE):
+        {
+          ex_put_node_set_param(exodusHandle, setId + 1, setValues.size(), 0);
+          ex_put_node_set(exodusHandle, setId + 1, &setValues[0]);
+          ex_put_name(exodusHandle, EX_NODE_SET, setId + 1, name.c_str());
+          break;
+        }
+      }
+      ++setId;
+    }
+  }
+  else
+  {
+    int setId = 20;
+    for (int i=0; i<currGrid->GetNumberOfSets(); ++i)
+    {
+      XdmfSet * currSet = currGrid->GetSets(i);
+      currSet->Update();
+      int numValues = currSet->GetIds()->GetNumberOfElements();
+      std::string name = currSet->GetName();
+      if(name.length() > MAX_STR_LENGTH)
+      {
+        name = name.substr(0, MAX_STR_LENGTH);
+      }
+      switch(currSet->GetSetType())
+      {
+        case(XDMF_SET_TYPE_CELL):
+        {
+          ex_put_side_set_param(exodusHandle, setId + i, numValues, 0);
+          int * values = new int[numValues];
+          // Add 1 to xdmf ids because exodus ids begin at 1
+          *currSet->GetIds() + 1;
+          currSet->GetIds()->GetValues(0, values, numValues);
+          ex_put_side_set(exodusHandle, setId + i, values, NULL);
+          ex_put_name(exodusHandle, EX_SIDE_SET, setId + i, name.c_str());
+          delete [] values;
+          break;
+        }
+        case(XDMF_SET_TYPE_NODE):
+        {
+          ex_put_node_set_param(exodusHandle, setId + i, numValues, 0);
+          int * values = new int[numValues];
+          // Add 1 to xdmf ids because exodus ids begin at 1
+          *currSet->GetIds() + 1;
+          currSet->GetIds()->GetValues(0, values, numValues);
+          ex_put_node_set(exodusHandle, setId + i, values);
+          ex_put_name(exodusHandle, EX_NODE_SET, setId + i, name.c_str());
+          delete [] values;
+          break;
+        }
       }
     }
   }
-
   // Close Exodus File
   ex_close(exodusHandle);
 }
