@@ -1,6 +1,13 @@
 project(XdmfCore)
 cmake_minimum_required(VERSION 2.6)
 
+include(SetUpVersion)
+if(VERSION_CONTROL_AUTOUPDATE)
+        VersionMajorSet("2")
+        VersionCalculate()
+        VersionWrite("Xdmf")
+endif(VERSION_CONTROL_AUTOUPDATE)
+
 set(BUILD_SHARED_LIBS true)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 SET(CMAKE_SKIP_BUILD_RPATH  FALSE)

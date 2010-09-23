@@ -18,6 +18,7 @@ if(XDMF_BUILD_DSM)
 	ADD_TEST_CXX(TestXdmfHDF5WriterDSM)
 endif(XDMF_BUILD_DSM)
 ADD_TEST_CXX(TestXdmfInformation)
+ADD_TEST_CXX(TestXdmfVersion)
 
 # Add any cxx cleanup here:
 # Note: We don't want to use a foreach loop to test the files incase we
@@ -34,3 +35,4 @@ if(XDMF_BUILD_DSM)
 	CLEAN_TEST_CXX(TestXdmfHDF5WriterDSM)
 endif(XDMF_BUILD_DSM)
 CLEAN_TEST_CXX(TestXdmfInformation)
+CLEAN_TEST_CXX(TestXdmfVersion)
