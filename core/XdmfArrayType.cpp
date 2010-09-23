@@ -155,11 +155,14 @@ bool XdmfArrayType::operator!=(const XdmfArrayType & arrayType) const
 
 bool XdmfArrayType::IsEqual(boost::shared_ptr<XdmfArrayType> arrayType)
 {
-	if(arrayType == NULL) return false;
-	if(this == arrayType.get()
-	   && 	mName == arrayType->mName 
-	   &&	mPrecision == arrayType->mPrecision
-	) return true;
+	if(arrayType == NULL)
+	{
+		return false;
+	}
+	if(this == arrayType.get() && mName == arrayType->mName && mPrecision == arrayType->mPrecision)
+	{
+		return true;
+	}
 	return false;	
 }
 

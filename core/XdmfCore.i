@@ -200,39 +200,39 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
 
 	void copyValueAsInt8(int index, char value) {
-		$self->insert(index, &value);
+		$self->insert(index, value);
 	}
 
 	void copyValueAsInt16(int index, short value) {
-		$self->insert(index, &value);
+		$self->insert(index, value);
 	}
 
 	void copyValueAsInt32(int index, int value) {
-		$self->insert(index, &value);
+		$self->insert(index, value);
 	}
 
 	void copyValueAsInt64(int index, long value) {
-		$self->insert(index, &value);
+		$self->insert(index, value);
 	}
 
 	void copyValueAsFloat32(int index, float value) {
-		$self->insert(index, &value);
+		$self->insert(index, value);
 	}
 
 	void copyValueAsFloat64(int index, double value) {
-		$self->insert(index, &value);
+		$self->insert(index, value);
 	}
 
 	void copyValueAsUInt8(int index, unsigned char value) {
-		$self->insert(index, &value);
+		$self->insert(index, value);
 	}
 
 	void copyValueAsUInt16(int index, unsigned short value) {
-		$self->insert(index, &value);
+		$self->insert(index, value);
 	}
 
 	void copyValueAsUInt32(int index, unsigned int value) {
-		$self->insert(index, &value);
+		$self->insert(index, value);
 	}
 };
 

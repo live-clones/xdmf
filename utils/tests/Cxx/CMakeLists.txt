@@ -5,27 +5,27 @@ SET_PROPERTY(GLOBAL APPEND PROPERTY CXX_TEST_DEPENDENCIES
 )
 
 # Include our test macros
-include (UseCxxTest)
+include (AddTestsCxx)
 
 # Add any cxx tests here:
 # Note: We don't want to use a foreach loop to test the files incase we
-#	have extra arguments (id: ADD_CXX_TEST(testname inputfile))
+#	have extra arguments (id: ADD_TEST_CXX(testname inputfile))
 #	Read UseCxxTest.cmake for more information
 # ---------------------------------------
-ADD_CXX_TEST(TestXdmfTopologyConverter)
+ADD_TEST_CXX(TestXdmfTopologyConverter)
 
 if(XDMF_BUILD_EXODUS_IO)
-	ADD_CXX_TEST(TestXdmfExodusIO)
+	ADD_TEST_CXX(TestXdmfExodusIO)
 endif(XDMF_BUILD_EXODUS_IO)
 
 # Add any cxx cleanup here:
 # Note: We don't want to use a foreach loop to test the files incase we
-#	have multiple files (ie: CLEAN_CXX_TEST(testname outputfile1 ...))
+#	have multiple files (ie: CLEAN_TEST_CXX(testname outputfile1 ...))
 #	Read UseCxxTest.cmake for more information
 # ---------------------------------------
-CLEAN_CXX_TEST(TestXdmfTopologyConverter)
+CLEAN_TEST_CXX(TestXdmfTopologyConverter)
 if(XDMF_BUILD_EXODUS_IO)
-	CLEAN_CXX_TEST(TestXdmfExodusIO
+	CLEAN_TEST_CXX(TestXdmfExodusIO
 		TestXdmfExodusIO.exo
 	)
 endif(XDMF_BUILD_EXODUS_IO)

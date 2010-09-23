@@ -87,9 +87,19 @@ public:
 	 */
 	unsigned int getCapacity() const;
 
-	std::map<std::string, std::string> getItemProperties() const;
+	/**
+	 * Get the original dimensions string from the stored array
+	 *
+	 * @return the dimension string from the stored array
+	 */
+	std::string getDimensionString() const;
 
-	std::string getItemTag() const;
+	/**
+	 * Get the size of an element in this array
+	 *
+	 * @return the size of an array element (0 if ArrayType is undefined)
+	 */
+	int getElementSize() const;
 
 	/**
 	 * Get the hdf5 controller attached to this XdmfArray.
@@ -104,6 +114,10 @@ public:
 	 * @return the hdf5 controller attached to this XdmfArray.
 	 */
 	boost::shared_ptr<const XdmfHDF5Controller> getHDF5Controller() const;
+
+	std::map<std::string, std::string> getItemProperties() const;
+
+	std::string getItemTag() const;
 
 	/**
 	 * Get the name of the array.
@@ -306,20 +320,6 @@ public:
 	 */
 	template<typename T>
 	void setValuesInternal(const boost::shared_ptr<std::vector<T> > array);
-
-	/**
-	 * Get the size of an element in this array
-	 *
-	 * @return the size of an array element (0 if ArrayType is undefined)
-	 */
-	int getElementSize() const;
-
-	/**
-	 * Get the original dimensions string from the stored array
-	 *
-	 * @return the dimension string from the stored array
-	 */
-	std::string getDimensionString() const;
 
 	/**
 	 * Exchange the contents of the vector with the contents of this XdmfArray.  No copy is made.  The internal arrays are swapped.

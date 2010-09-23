@@ -20,7 +20,6 @@ class XdmfHDF5Writer;
  * If a dataset is encountered that resides in a different heavy data file on disk, the dataset is read from disk and written
  * to the new hdf5 file.  If this is undesired, the XdmfWriter can be set to DistributedHeavyData mode in which the writer
  * will automatically reference any hdf5 dataset even if it resides in a different file than the one currently being written to.
- * written.
  */
 class XdmfWriter : public XdmfVisitor,
 	public Loki::Visitor<XdmfArray> {

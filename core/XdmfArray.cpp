@@ -380,6 +380,18 @@ unsigned int XdmfArray::getCapacity() const
 	return 0;
 }
 
+std::string XdmfArray::getDimensionString() const
+{
+	return mDimensionString;
+}
+
+int XdmfArray::getElementSize() const
+{
+    boost::shared_ptr<const XdmfArrayType> aType = getArrayType();
+    if (aType == NULL) return(0);
+    return(aType->getElementSize());
+}
+
 boost::shared_ptr<XdmfHDF5Controller> XdmfArray::getHDF5Controller()
 {
 	return boost::const_pointer_cast<XdmfHDF5Controller>(static_cast<const XdmfArray &>(*this).getHDF5Controller());
@@ -411,18 +423,6 @@ std::map<std::string, std::string> XdmfArray::getItemProperties() const
 	boost::shared_ptr<const XdmfArrayType> type = this->getArrayType();
 	type->getProperties(arrayProperties);
 	return arrayProperties;
-}
-
-int XdmfArray::getElementSize() const
-{
-    boost::shared_ptr<const XdmfArrayType> aType = getArrayType();
-    if (aType == NULL) return(0);
-    return(aType->getElementSize());
-}
-
-std::string XdmfArray::getDimensionString() const
-{
-	return(mDimensionString);
 }
 
 std::string XdmfArray::getItemTag() const
