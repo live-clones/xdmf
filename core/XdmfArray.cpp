@@ -386,13 +386,6 @@ std::string XdmfArray::getDimensionString() const
 	return mDimensionString;
 }
 
-int XdmfArray::getElementSize() const
-{
-    boost::shared_ptr<const XdmfArrayType> aType = getArrayType();
-    if (aType == NULL) return(0);
-    return(aType->getElementSize());
-}
-
 boost::shared_ptr<XdmfHeavyDataController> XdmfArray::getHeavyDataController()
 {
 	return boost::const_pointer_cast<XdmfHeavyDataController>(static_cast<const XdmfArray &>(*this).getHeavyDataController());

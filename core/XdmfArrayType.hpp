@@ -43,9 +43,9 @@ public:
 	static boost::shared_ptr<const XdmfArrayType> UInt16();
 	static boost::shared_ptr<const XdmfArrayType> UInt32();
 
-	void getProperties(std::map<std::string, std::string> & collectedProperties) const;
+	unsigned int getElementSize() const;
 
-	int getElementSize() const;
+	void getProperties(std::map<std::string, std::string> & collectedProperties) const;
 
 protected:
 

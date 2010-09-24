@@ -143,15 +143,15 @@ boost::shared_ptr<const XdmfArrayType> XdmfArrayType::New(const std::map<std::st
 	assert(false);
 }
 
+unsigned int XdmfArrayType::getElementSize() const
+{
+	return mPrecision;
+}
+
 void XdmfArrayType::getProperties(std::map<std::string, std::string> & collectedProperties) const
 {
 	collectedProperties["DataType"] = mName;
 	std::stringstream precision;
 	precision << mPrecision;
 	collectedProperties["Precision"] = precision.str();
-}
-
-int XdmfArrayType::getElementSize() const
-{
-	return (mPrecision);
 }

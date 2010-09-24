@@ -80,18 +80,18 @@ public:
 	unsigned int getLightDataLimit() const;
 
 	/**
-	 * Get whether this writer is set to write xpaths.
-	 *
-	 * @return bool whether this writer is set to write xpaths.
-	 */
-	bool getWriteXPaths() const;
-
-	/**
 	 * Get the Mode of operation for this writer.
 	 *
 	 * @return the Mode of operation for this writer.
 	 */
 	Mode getMode() const;
+
+	/**
+	 * Get whether this writer is set to write xpaths.
+	 *
+	 * @return bool whether this writer is set to write xpaths.
+	 */
+	bool getWriteXPaths() const;
 
 	/**
 	 * Set the number of values that this writer writes to light data (XML) before switching to a heavy data format.
@@ -106,20 +106,6 @@ public:
 	 * @param mode the Mode of operation for this writer.
 	 */
 	void setMode(const Mode mode);
-
-	/**
-	 * Set XML document title
-	 *
-	 * @param title, title to use for this XML document
-	 */
-	void setDocumentTitle(const std::string title);
-
-	/**
-	 * Set version String
-	 *
-	 * @param version, string to use as version attribute in document title
-	 */
-	void setVersionString(const std::string version);
 
 	/**
 	 * Set whether to write xpaths for this writer.
@@ -148,6 +134,9 @@ public:
 protected:
 
 	XdmfWriter(const std::string & xmlFilePath, boost::shared_ptr<XdmfHeavyDataWriter> heavyDataWriter);
+
+	void setDocumentTitle(std::string title);
+	void setVersionString(std::string version);
 
 private:
 

@@ -150,16 +150,6 @@ void XdmfWriter::setWriteXPaths(const bool writeXPaths)
 	mImpl->mWriteXPaths = writeXPaths;
 }
 
-void XdmfWriter::setDocumentTitle(const std::string title)
-{
-	mImpl->mDocumentTitle = title;
-}
-
-void XdmfWriter::setVersionString(const std::string version)
-{
-	mImpl->mVersionString = version;
-}
-
 void XdmfWriter::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
 	bool isSubclassed = array.getItemTag().compare(XdmfArray::ItemTag) != 0;
@@ -300,4 +290,15 @@ void XdmfWriter::visit(XdmfItem & item, const boost::shared_ptr<XdmfBaseVisitor>
 	{
 		mImpl->closeFile();
 	}
+}
+
+void
+XdmfWriter::setDocumentTitle(std::string title)
+{
+    mImpl->mDocumentTitle = title;
+}
+void
+XdmfWriter::setVersionString(std::string version)
+{
+    mImpl->mVersionString = version;
 }

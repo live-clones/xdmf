@@ -147,7 +147,6 @@ public:
 	 */
 	virtual void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor);
 
-
 protected:
 
 	XdmfItem();

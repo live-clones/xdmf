@@ -95,13 +95,6 @@ public:
 	std::string getDimensionString() const;
 
 	/**
-	 * Get the size of an element in this array
-	 *
-	 * @return the size of an array element (0 if ArrayType is undefined)
-	 */
-	int getElementSize() const;
-
-	/**
 	 * Get the heavy data controller attached to this XdmfArray.
 	 *
 	 * @return the heavy data controller attached to this XdmfArray.

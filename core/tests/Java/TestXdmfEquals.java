@@ -34,5 +34,6 @@ public class TestXdmfEquals {
 		if(type1a == type2) /*False*/ {
 			throw new SecurityException("Failed False Check (==)");
 		}
+		
     }
 }
