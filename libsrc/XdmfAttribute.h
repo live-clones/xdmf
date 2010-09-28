@@ -47,7 +47,7 @@ class XdmfTopology;
 class XdmfDataDesc;
 class XdmfDataItem;
 class XdmfArray;
-
+class XdmfInformation;
 //! Class for Scalar, Vector, and Tensor Computed Data
 /*!
 	XdmfAttribute is a Class that handles the Computed Values
@@ -142,6 +142,8 @@ public:
   XdmfInt32 Build();
 //! Release Big Data
  XdmfInt32 Release();
+//! Retreives a Information Element
+  XdmfInformation * GetInformation(const XdmfInt32 Index);
 protected:
   XdmfDataItem *GetDataItem();
 

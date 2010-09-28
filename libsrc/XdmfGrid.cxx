@@ -93,6 +93,11 @@ XdmfGrid::~XdmfGrid() {
     }
   }
   free(this->Sets);
+  for ( Index = 0; Index < this->NumberOfInformations; Index ++ ){
+    if (this->Informations[Index]->GetDeleteOnGridDelete()){
+        delete this->Informations[Index];
+    }
+  }
   free(this->Informations);
 }
 
@@ -620,6 +625,34 @@ if( this->NumberOfSets > 0 ){
     iSet->SetDOM( this->DOM );    
     iSet->SetElement( lSetElement );
     iSet->UpdateInformation();
+    }
+}
+// Get Information
+XdmfInt32 OldNumberOfInformation = this->NumberOfInformations;
+this->NumberOfInformations = this->DOM->FindNumberOfElements("Information", this->Element );
+if( this->NumberOfInformations > 0 ){
+  XdmfInt32  Index;
+  XdmfInformation  *iInformation;
+  XdmfXmlNode    lInformationElement;
+
+  for ( Index = 0; Index < OldNumberOfInformation; Index ++ )
+    {
+    delete this->Informations[Index];
+    }
+  this->Informations = ( XdmfInformation **)realloc( this->Informations,
+      this->NumberOfInformations * sizeof( XdmfInformation * ));
+  for( Index = 0 ; Index < this->NumberOfInformations ; Index++ ){
+    iInformation = new XdmfInformation;
+    iInformation->SetDeleteOnGridDelete(true);
+    this->Informations[Index] = iInformation;
+    if (Index==0) {
+      lInformationElement = this->DOM->FindElement( "Information", Index, this->Element, 0);
+    } else {
+      lInformationElement = this->DOM->FindNextElement( "Information", lInformationElement, 0);
+    }
+    iInformation->SetDOM( this->DOM );
+    iInformation->SetElement( lInformationElement );
+    iInformation->UpdateInformation();
     }
 }
 

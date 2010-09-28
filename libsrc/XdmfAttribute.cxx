@@ -28,6 +28,7 @@
 #include "XdmfDataDesc.h"
 #include "XdmfArray.h"
 #include "XdmfDOM.h"
+#include "XdmfInformation.h"
 
 XdmfAttribute::XdmfAttribute() {
   this->SetElementName("Attribute");
@@ -80,6 +81,24 @@ XdmfDataItem * XdmfAttribute::GetDataItem(){
         di->SetElement(Node);
     }
     return(di);
+}
+
+XdmfInformation * XdmfAttribute::GetInformation(const XdmfInt32 Index){
+    if(Index < this->DOM->FindNumberOfElements("Information", this->Element )){
+      XdmfInformation *di = NULL;
+      XdmfXmlNode Node =  this->DOM->FindElement( "Information", Index, this->Element, 0);
+      if(Node) {
+        di = new XdmfInformation;
+        di->SetDeleteOnGridDelete(true);
+        di->SetDOM( this->DOM );
+        di->SetElement( Node );
+        di->UpdateInformation();
+        return(di);
+      }
+    }else{
+        XdmfErrorMessage("Grid has " << this->DOM->FindNumberOfElements("Information", this->Element ) << " Information. Index " << Index << " is out of range");
+    }
+    return(NULL);
 }
 
 XdmfInt32
