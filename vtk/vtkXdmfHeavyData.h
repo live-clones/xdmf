@@ -31,7 +31,7 @@ class vtkRectilinearGrid;
 class vtkStructuredGrid;
 class vtkUnstructuredGrid;
 class vtkXdmfDomain;
-class vtkXdmfReader;
+class vtkAlgorithm;
 
 // vtkXdmfHeavyData helps in reading heavy data from Xdmf and putting that into
 // vtkDataObject subclasses.
@@ -39,7 +39,7 @@ class vtkXdmfHeavyData
 {
   vtkXdmfDomain* Domain;
   XdmfDataItem DataItem;
-  vtkXdmfReader* Reader;
+  vtkAlgorithm* Reader;
 public:
   // These must be set before using this class.
   int Piece;
@@ -51,7 +51,7 @@ public:
   XdmfFloat64 Time;
 
 public:
-  vtkXdmfHeavyData(vtkXdmfDomain* domain, vtkXdmfReader* reader);
+  vtkXdmfHeavyData(vtkXdmfDomain* domain, vtkAlgorithm* reader);
   ~vtkXdmfHeavyData();
 
   // Description:

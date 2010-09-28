@@ -61,7 +61,7 @@ static void vtkGetDims(int exts[6], int dims[3])
 
 //----------------------------------------------------------------------------
 vtkXdmfHeavyData::vtkXdmfHeavyData(vtkXdmfDomain* domain,
-  vtkXdmfReader* reader)
+  vtkAlgorithm* reader)
 {
   this->Reader = reader;
   this->Piece = 0;
