@@ -5,7 +5,6 @@
  *      Author: kleiter
  */
 
-#include <map>
 #include <sstream>
 #include "XdmfTopologyType.hpp"
 
@@ -329,13 +328,13 @@ boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::New(const std::map<s
 		else if(typeVal.compare("2DRECTMESH") == 0)
 		{
 			return TwoDRectMesh();
-		}*/
+		}
 		else if(typeVal.compare("2DCORECTMESH") == 0 || typeVal.compare("3DCORECTMESH") == 0)
 		{
 			// Special case --- Regular Grid
 			boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(0, "REGULAR", Structured));
 			return p;
-		}/*
+		}
 		else if(typeVal.compare("3DSMESH") == 0)
 		{
 			return ThreeDSMesh();
@@ -373,7 +372,6 @@ bool XdmfTopologyType::IsEqual(boost::shared_ptr<XdmfTopologyType> topologyType)
         return false;
 }
 
-
 XdmfTopologyType::CellType XdmfTopologyType::getCellType() const
 {
 	return mCellType;
@@ -391,7 +389,7 @@ unsigned int XdmfTopologyType::getNodesPerElement() const
 
 void XdmfTopologyType::getProperties(std::map<std::string, std::string> & collectedProperties) const
 {
-	collectedProperties["Type"] = mName;
+	collectedProperties["Type"] = this->getName();
 	if(mName.compare("Polygon") == 0)
 	{
 		std::stringstream nodesPerElement;

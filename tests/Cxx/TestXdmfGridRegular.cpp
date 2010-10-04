@@ -7,6 +7,8 @@
 #include "XdmfTopologyType.hpp"
 #include "XdmfWriter.hpp"
 
+#include "XdmfTestCompareFiles.hpp"
+
 int main(int, char *)
 {
 	boost::shared_ptr<XdmfGridRegular> grid = XdmfGridRegular::New(1, 1, 1, 1, 1, 1, 0, 0, 0);
@@ -88,10 +90,12 @@ int main(int, char *)
 	grid->accept(writer);
 
 	boost::shared_ptr<XdmfReader> reader = XdmfReader::New();
-	boost::shared_ptr<XdmfGrid> grid2 = boost::shared_dynamic_cast<XdmfGrid>(reader->read("TestXdmfGridRegular1.xmf"));
+	boost::shared_ptr<XdmfGridRegular> grid2 = boost::shared_dynamic_cast<XdmfGridRegular>(reader->read("TestXdmfGridRegular1.xmf"));
 
 	boost::shared_ptr<XdmfWriter> writer2 = XdmfWriter::New("TestXdmfGridRegular2.xmf");
 	grid2->accept(writer2);
+
+	assert(XdmfTestCompareFiles::compareFiles("TestXdmfGridRegular1.xmf", "TestXdmfGridRegular2.xmf"));
 
 	return 0;
 }

@@ -4,7 +4,7 @@
  *  Created on: Jan 29, 2010
  *      Author: kleiter
  */
-#include <iostream> //REMOVE
+
 #include <sstream>
 #include "XdmfArrayType.hpp"
 

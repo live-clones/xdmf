@@ -135,6 +135,7 @@ if(NOT XDMF_BUILD_CORE_ONLY)
 		XdmfGrid
 		XdmfGridCollection
 		XdmfGridCollectionType
+		XdmfGridRectilinear
 		XdmfGridRegular
 		XdmfItemFactory
 		XdmfMap

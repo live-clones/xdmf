@@ -52,6 +52,18 @@ public:
 		const unsigned int numPointsX, const unsigned int numPointsY, const unsigned int numPointsZ,
 		const double originX, const double originY, const double originZ);
 
+	/**
+	 * Create a new structured grid (N dimensional).
+	 *
+	 * @param brickSize the size of the brick in each direction.
+	 * @param numPoints the number of points in each direction.
+	 * @param origin the coordinates of the origin.
+	 *
+	 * @return constructed structured grid.
+	 */
+	static boost::shared_ptr<XdmfGridRegular> New(const boost::shared_ptr<XdmfArray> brickSize, const boost::shared_ptr<XdmfArray> numPoints,
+		const boost::shared_ptr<XdmfArray> origin);
+
 	virtual ~XdmfGridRegular();
 
 	LOKI_DEFINE_VISITABLE(XdmfGridRegular, XdmfGrid)
@@ -79,7 +91,7 @@ public:
 	boost::shared_ptr<XdmfArray> getDimensions();
 
 	/**
-	 * Get the dimensions of the grid, the number of points in each direction.
+	 * Get the dimensions of the grid, the number of points in each direction (const version).
 	 *
 	 * @return XdmfArray containing the dimensions of this grid.
 	 */
@@ -95,7 +107,7 @@ public:
 	/**
 	 * Get the location of the origin of the grid.
 	 *
-	 * @return XdmfArray containing the location of the origin of the grid.
+	 * @return XdmfArray containing the location of the origin of the grid (const version).
 	 */
 	boost::shared_ptr<const XdmfArray> getOrigin() const;
 
@@ -124,11 +136,9 @@ public:
 
 protected:
 
-	XdmfGridRegular(const double brickSizeX, const double brickSizeY, const unsigned int numPointsX,
-		const unsigned int numPointsY, const double originX, const double originY);
-	XdmfGridRegular(const double brickSizeX, const double brickSizeY, const double brickSizeZ,
-		const unsigned int numPointsX, const unsigned int numPointsY, const unsigned int numPointsZ,
-		const double originX, const double originY, const double originZ);
+	XdmfGridRegular(const boost::shared_ptr<XdmfArray> brickSize, const boost::shared_ptr<XdmfArray> numPoints,
+		const boost::shared_ptr<XdmfArray> origin);
+
 	void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader);
 
 private:

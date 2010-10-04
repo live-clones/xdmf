@@ -99,12 +99,6 @@ boost::shared_ptr<const XdmfGeometryType> XdmfGeometryType::New(const std::map<s
 		{
 			return VXVY();
 		}
-		else if(typeVal.compare("ORIGIN_DXDY") == 0 || typeVal.compare("ORIGIN_DXDYDZ") == 0)
-		{
-			// Special case --- Regular Grid
-			boost::shared_ptr<const XdmfGeometryType> p(new XdmfGeometryType("REGULAR", 0));
-			return p;
-		}
 		else
 		{
 			assert(false);

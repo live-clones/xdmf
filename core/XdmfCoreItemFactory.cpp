@@ -15,5 +15,5 @@ boost::shared_ptr<XdmfItem> XdmfCoreItemFactory::createItem(const std::string & 
 	{
 		return XdmfArray::New();
 	}
-	return boost::shared_ptr<XdmfItem>();;
+	return boost::shared_ptr<XdmfItem>();
 }

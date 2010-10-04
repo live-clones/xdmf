@@ -99,7 +99,7 @@ public:
 	 *
 	 * @return the name of this topology type.
 	 */
-	std::string getName() const;
+	virtual std::string getName() const;
 
 	/**
 	 * Get the number of nodes per element associated with this topology type.
@@ -108,7 +108,7 @@ public:
 	 */
 	virtual unsigned int getNodesPerElement() const;
 
-	virtual void getProperties(std::map<std::string, std::string> & collectedProperties) const;
+	void getProperties(std::map<std::string, std::string> & collectedProperties) const;
 
 	/*
 	 * Compare two XdmfTopologyTypes for equality.
@@ -126,14 +126,13 @@ public:
 	 */
 	bool operator!=(const XdmfTopologyType & topologyType) const;
 
-        /**
-         * Compare two XdmfTopologyType for equality (for wrapping)
-         *
-         * @param topologyType a boost shared pointer to an XdmfTopologyType to compare equality to.
-         * @return true if the XdmfTopologyType are equal.
-         */
-        bool IsEqual(boost::shared_ptr<XdmfTopologyType> topologyType);
-
+	/**
+	 * Compare two XdmfTopologyType for equality (for wrapping)
+	 *
+	 * @param topologyType a boost shared pointer to an XdmfTopologyType to compare equality to.
+	 * @return true if the XdmfTopologyType are equal.
+	 */
+	bool IsEqual(boost::shared_ptr<XdmfTopologyType> topologyType);
 
 protected:
 

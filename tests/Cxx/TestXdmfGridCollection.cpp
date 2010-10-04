@@ -60,7 +60,6 @@ int main(int, char *)
 	writer4->setMode(XdmfWriter::DistributedHeavyData);
 	gridCollection3->accept(writer4);
 
-
 	assert(XdmfTestCompareFiles::compareFiles("TestXdmfGridCollectionHDF1.xmf", "TestXdmfGridCollectionHDF2.xmf"));
 
 	return 0;
