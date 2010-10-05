@@ -39,31 +39,6 @@ public:
 
 	void getProperties(std::map<std::string, std::string> & collectedProperties) const;
 
-	/*
-	 * Compare two XdmfAttributeTypes for equality.
-	 *
-	 * @param attributeType an XdmfAttributeType to compare equality to.
-	 * @return true if the XdmfAttributeTypes are equal.
-	 */
-	bool operator==(const XdmfAttributeType & attributeType) const;
-
-	/**
-	 * Compare two XdmfAttributeTypes for inequality.
-	 *
-	 * @param attributeType an XdmfAttributeType to compare inequality to.
-	 * @return true if the XdmfAttributeTypes are not equal.
-	 */
-	bool operator!=(const XdmfAttributeType & attributeType) const;
-
-        /**
-         * Compare two XdmfAttributeType for equality (for wrapping)
-         *
-         * @param attributeType a boost shared pointer to an XdmfAttributeType to compare equality to.
-         * @return true if the XdmfAttributeType are equal.
-         */
-        bool IsEqual(boost::shared_ptr<XdmfAttributeType> attributeType);
-
-
 protected:
 
 	/**

@@ -107,27 +107,6 @@ boost::shared_ptr<const XdmfGeometryType> XdmfGeometryType::New(const std::map<s
 	assert(false);
 }
 
-bool XdmfGeometryType::operator==(const XdmfGeometryType& geometryType) const
-{
-	return mDimensions == geometryType.mDimensions && mName.compare(geometryType.mName) == 0;
-}
-
-bool XdmfGeometryType::operator!=(const XdmfGeometryType& geometryType) const
-{
-	return !this->operator==(geometryType);
-}
-
-bool XdmfGeometryType::IsEqual(boost::shared_ptr<XdmfGeometryType> geometryType)
-{
-        if(geometryType == NULL) return false;
-        if(this == geometryType.get()
-           &&   mDimensions == geometryType->mDimensions
-	   &&	mName == geometryType->mName
-        ) return true;
-        return false;
-}
-
-
 unsigned int XdmfGeometryType::getDimensions() const
 {
 	return mDimensions;

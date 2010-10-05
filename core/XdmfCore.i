@@ -24,25 +24,6 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %include std_vector.i
 %include loki/Visitor.h
 
-#ifdef SWIGJAVA
-    %extend XdmfArrayType {
-            bool equals(boost::shared_ptr<XdmfArrayType> arrayType) {
-                    return(self->IsEqual(arrayType));
-            }
-    };
-    %ignore XdmfArrayType::operator==(const XdmfArrayType & arrayType) const;
-    %ignore XdmfArrayType::operator!=(const XdmfArrayType & arrayType) const;
-#endif
-
-
-#ifdef SWIGPYTHON
-%extend XdmfArrayType {
-  bool __eq__(boost::shared_ptr<XdmfArrayType> arrayType) {
-    return(self->IsEqual(arrayType));
-  }
-};
-#endif
-
 // Shared Pointer Templates
 %shared_ptr(XdmfArray)
 %shared_ptr(XdmfArrayType)
@@ -61,43 +42,6 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %template() Loki::BaseVisitable<void>;
 %template() Loki::Visitor<XdmfArray>;
 %template() Loki::Visitor<XdmfItem>;
-
-#ifdef SWIGJAVA
-%ignore XdmfArray::getHDF5Controller() const;
-%ignore XdmfArray::getValuesInternal() const;
-%ignore XdmfArray::ItemTag;
-%ignore XdmfInformation::ItemTag;
-%ignore XdmfItem::getInformation(const unsigned int index) const;
-%ignore XdmfItem::getInformation(const std::string & name) const;
-%ignore XdmfWriter::getHDF5Writer() const;
-
-%pragma(java) jniclasscode=%{
-  static {
-    try {
-        System.loadLibrary("XdmfCoreJava");
-    } catch (UnsatisfiedLinkError e) {
-      System.err.println("Native code library failed to load for XdmfCoreJava\n" + e);
-      System.exit(1);
-    }
-  }
-%}
-#endif /* SWIGJAVA */
-
-#ifdef SWIGPYTHON
-%extend XdmfItem {
-  bool __eq__(boost::shared_ptr<XdmfItem> item) {
-    return(self->IsEqual(item));
-  }
-};
-#endif
-
-#ifdef SWIGJAVA
-%extend XdmfItem {
-  bool equals(boost::shared_ptr<XdmfItem> item) {
-    return(self->IsEqual(item));
-  }
-};
-#endif
 
 %include XdmfItem.hpp
 %include XdmfItemProperty.hpp
@@ -143,61 +87,65 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %template(resizeAsUInt16) XdmfArray::resize<unsigned short>;
 %template(resizeAsUInt32) XdmfArray::resize<unsigned int>;
 
-#ifndef SWIGJAVA
-// Provide accessors from python lists to XdmfArrays
-%extend XdmfArray {
-        PyObject * getBuffer ()
-        {
-                void *vp = $self->getValuesInternal();
-                Py_ssize_t sz = $self->getSize() * $self->getElementSize();
-                PyObject * c = PyBuffer_FromMemory(vp, sz);
-                return(c);
-        }
-        %pythoncode {
-                def getNumpyArray(self):
-                        h5ctl = self.getHDF5Controller()
-                        if h5ctl == None :
-                            try :
-                                from numpy import frombuffer as ___frombuffer
-                            except :
-                                return None
-                            buf = self.getBuffer()
-                            aType = self.getArrayType()
-                            if aType == XdmfArrayType.Int8() :
-                                return(___frombuffer(buf, 'int8'))
-                            if aType == XdmfArrayType.Int16() :
-                                return(___frombuffer(buf, 'int16'))
-                            if aType == XdmfArrayType.Int32() :
-                                return(___frombuffer(buf, 'int32'))
-                            if aType == XdmfArrayType.Int64() :
-                                return(___frombuffer(buf, 'int64'))
-                            if aType == XdmfArrayType.Float32() :
-                                return(___frombuffer(buf, 'float32'))
-                            if aType == XdmfArrayType.Float64() :
-                                return(___frombuffer(buf, 'float64'))
-                            if aType == XdmfArrayType.UInt8() :
-                                return(___frombuffer(buf, 'uint8'))
-                            if aType == XdmfArrayType.UInt16() :
-                                return(___frombuffer(buf, 'uint16'))
-                            if aType == XdmfArrayType.UInt32() :
-                                return(___frombuffer(buf, 'uint32'))
-                            return None
-                        else :
-                            h5FileName = h5ctl.getFilePath()
-                            h5DataSetName = h5ctl.getDataSetPath()
-                            if (h5FileName == None) | (h5DataSetName == None) :
-                                return None
-                            try :
-                                from h5py import File as ___File
-                                from numpy import array as ___array
-                                f = ___File(h5FileName, 'r')
-                                if h5DataSetName in f.keys() :
-                                    return(___array(f[h5DataSetName]))
-                            except :
-                                pass
-                            return None
-        };
+#ifdef SWIGPYTHON
 
+// Provide accessors from python lists to XdmfArrays
+
+%extend XdmfArray
+{
+	PyObject * getBuffer ()
+	{
+		void *vp = $self->getValuesInternal();
+		Py_ssize_t sz = $self->getSize() * $self->getElementSize();
+		PyObject * c = PyBuffer_FromMemory(vp, sz);
+		return(c);
+	}
+	
+	%pythoncode
+	{
+		def getNumpyArray(self):
+			h5ctl = self.getHDF5Controller()
+			if h5ctl == None :
+				try :
+					from numpy import frombuffer as ___frombuffer
+				except :
+					return None
+				buf = self.getBuffer()
+				aType = self.getArrayType()
+				if aType == XdmfArrayType.Int8() :
+					return(___frombuffer(buf, 'int8'))
+				if aType == XdmfArrayType.Int16() :
+					return(___frombuffer(buf, 'int16'))
+				if aType == XdmfArrayType.Int32() :
+					return(___frombuffer(buf, 'int32'))
+				if aType == XdmfArrayType.Int64() :
+					return(___frombuffer(buf, 'int64'))
+				if aType == XdmfArrayType.Float32() :
+					return(___frombuffer(buf, 'float32'))
+				if aType == XdmfArrayType.Float64() :
+					return(___frombuffer(buf, 'float64'))
+				if aType == XdmfArrayType.UInt8() :
+					return(___frombuffer(buf, 'uint8'))
+				if aType == XdmfArrayType.UInt16() :
+					return(___frombuffer(buf, 'uint16'))
+				if aType == XdmfArrayType.UInt32() :
+					return(___frombuffer(buf, 'uint32'))
+				return None
+			else :
+				h5FileName = h5ctl.getFilePath()
+				h5DataSetName = h5ctl.getDataSetPath()
+				if (h5FileName == None) | (h5DataSetName == None) :
+					return None
+				try :
+					from h5py import File as ___File
+					from numpy import array as ___array
+					f = ___File(h5FileName, 'r')
+					if h5DataSetName in f.keys() :
+						return(___array(f[h5DataSetName]))
+				except :
+					pass
+			return None
+	};
 
 	void copyValueAsInt8(int index, char value) {
 		$self->insert(index, value);
@@ -234,10 +182,9 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 	void copyValueAsUInt32(int index, unsigned int value) {
 		$self->insert(index, value);
 	}
-};
 
-%extend XdmfArray {
-	%pythoncode {
+	%pythoncode 
+	{
 		def insertAsInt8(self, startIndex, values):
 			for i in range(0, len(values)):
 				self.copyValueAsInt8(i+startIndex, values[i])
@@ -275,5 +222,50 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 				self.copyValueAsUInt32(i+startIndex, values[i])
 	};
 };
-#endif /* SWIGJAVA */
 
+%extend XdmfItem {
+
+	bool __eq__(boost::shared_ptr<XdmfItem> item)
+	{
+		return self == item.get();
+	}
+
+};
+
+%extend XdmfItemProperty {
+
+	bool __eq__(boost::shared_ptr<XdmfItemProperty> itemProperty)
+	{
+		return self == itemProperty.get();
+	}
+
+};
+
+#endif /* SWIGPYTHON */
+
+#ifdef SWIGJAVA
+
+%ignore XdmfArray::getHDF5Controller() const;
+%ignore XdmfArray::getValuesInternal() const;
+%ignore XdmfArray::ItemTag;
+%ignore XdmfInformation::ItemTag;
+%ignore XdmfItem::getInformation(const unsigned int index) const;
+%ignore XdmfItem::getInformation(const std::string & name) const;
+%ignore XdmfWriter::getHDF5Writer() const;
+
+%pragma(java) jniclasscode=%{
+	static
+	{
+		try 
+		{
+			System.loadLibrary("XdmfCoreJava");
+		}
+		catch (UnsatisfiedLinkError e)
+		{
+			System.err.println("Native code library failed to load for XdmfCoreJava\n" + e);
+			System.exit(1);
+		}
+	}
+%}
+
+#endif /* SWIGJAVA */

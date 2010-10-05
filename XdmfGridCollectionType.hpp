@@ -31,30 +31,6 @@ public:
 
 	void getProperties(std::map<std::string, std::string> & collectedProperties) const;
 
-	/*
-	 * Compare two XdmfGridCollectionTypes for equality.
-	 *
-	 * @param collectionType an XdmfGridCollectionType to compare equality to.
-	 * @return true if the XdmfGridCollectionTypes are equal.
-	 */
-	bool operator==(const XdmfGridCollectionType & collectionype) const;
-
-	/**
-	 * Compare two XdmfGridCollectionTypes for inequality.
-	 *
-	 * @param collectionType an XdmfGridCollectionType to compare inequality to.
-	 * @return true if the XdmfGridCollectionTypes are not equal.
-	 */
-	bool operator!=(const XdmfGridCollectionType & collectionType) const;
-
-	/**
-         * Compare two XdmfGridCollectionType for equality (for wrapping)
-         *
-         * @param collectionType a boost shared pointer to an XdmfGridCollectionType to compare equality to.
-         * @return true if the XdmfGridCollectionType are equal.
-         */
-        bool IsEqual(boost::shared_ptr<XdmfGridCollectionType> collectionType);
-
 protected:
 
 	/**

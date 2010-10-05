@@ -55,30 +55,6 @@ public:
 
 	virtual void getProperties(std::map<std::string, std::string> & collectedProperties) const;
 
-	/*
-	 * Compare two XdmfGeometryTypes for equality.
-	 *
-	 * @param geometryType a XdmfGeometryType to compare equality to.
-	 * @return true if the XdmfGeometryTypes are equal.
-	 */
-	bool operator==(const XdmfGeometryType & geometryType) const;
-
-	/**
-	 * Compare two XdmfGeometryTypes for inequality.
-	 *
-	 * @param geometryType a XdmfGeometryType to compare inequality to.
-	 * @return true if the XdmfGeometryTypes are not equal.
-	 */
-	bool operator!=(const XdmfGeometryType & geometryType) const;
-
-	/**
-	 * Compare two XdmfGeometryType for equality (for wrapping)
-	 *
-	 * @param geometryType a boost shared pointer to an XdmfGeometryType to compare equality to.
-	 * @return true if the XdmfGeometryType are equal.
-	 */
-	bool IsEqual(boost::shared_ptr<XdmfGeometryType> geometryType);
-
 protected:
 
 	/**

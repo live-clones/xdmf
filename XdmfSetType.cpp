@@ -85,26 +85,6 @@ boost::shared_ptr<const XdmfSetType> XdmfSetType::New(const std::map<std::string
 	assert(false);
 }
 
-bool XdmfSetType::operator==(const XdmfSetType & setType) const
-{
-	return mName.compare(setType.mName) == 0;
-}
-
-bool XdmfSetType::operator!=(const XdmfSetType & setType) const
-{
-	return !this->operator==(setType);
-}
-
-bool XdmfSetType::IsEqual(boost::shared_ptr<XdmfSetType> setType)
-{
-        if(setType == NULL) return false;
-        if(this == setType.get()
-           &&   mName == setType->mName
-        ) return true;
-        return false;
-}
-
-
 void XdmfSetType::getProperties(std::map<std::string, std::string> & collectedProperties) const
 {
 	collectedProperties["Type"] = this->mName;

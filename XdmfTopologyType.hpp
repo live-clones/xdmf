@@ -82,10 +82,6 @@ public:
 	static boost::shared_ptr<const XdmfTopologyType> Hexahedron_125();
 	static boost::shared_ptr<const XdmfTopologyType> Hexahedron_125_GLL();
 	static boost::shared_ptr<const XdmfTopologyType> Mixed();
-	//static boost::shared_ptr<const XdmfTopologyType> TwoDRectMesh();
-	//static boost::shared_ptr<const XdmfTopologyType> TwoDCoRectMesh();
-	//static boost::shared_ptr<const XdmfTopologyType> ThreeDRectMesh();
-	//static boost::shared_ptr<const XdmfTopologyType> ThreeDCoRectMesh();
 
 	/**
 	 * Get the cell type associated with this topology type.
@@ -109,30 +105,6 @@ public:
 	virtual unsigned int getNodesPerElement() const;
 
 	void getProperties(std::map<std::string, std::string> & collectedProperties) const;
-
-	/*
-	 * Compare two XdmfTopologyTypes for equality.
-	 *
-	 * @param topologyType an XdmfTopologyType to compare equality to.
-	 * @return true if the XdmfTopologyTypes are equal.
-	 */
-	bool operator==(const XdmfTopologyType & topologyType) const;
-
-	/**
-	 * Compare two XdmfTopologyTypes for inequality
-	 *
-	 * @param topologyType XdmfTopologyType to compare inequality to.
-	 * @return true if the XdmfTopologyTypes are not equal.
-	 */
-	bool operator!=(const XdmfTopologyType & topologyType) const;
-
-	/**
-	 * Compare two XdmfTopologyType for equality (for wrapping)
-	 *
-	 * @param topologyType a boost shared pointer to an XdmfTopologyType to compare equality to.
-	 * @return true if the XdmfTopologyType are equal.
-	 */
-	bool IsEqual(boost::shared_ptr<XdmfTopologyType> topologyType);
 
 protected:
 

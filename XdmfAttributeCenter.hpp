@@ -35,29 +35,6 @@ public:
 
 	void getProperties(std::map<std::string, std::string> & collectedProperties) const;
 
-	/**
-	 * Compare two XdmfAttributeCenters for equality.
-	 *
-	 * @param attributeCenter an XdmfAttributeCenter to compare equality to.
-	 * @return true if the XdmfAttributeCenters are equal.
-	 */
-	bool operator==(const XdmfAttributeCenter & attributeCenter) const;
-
-	/**
-	 * Compare two XdmfAttributeCenters for inequality.
-	 *
-	 * @param attributeCenter an XdmfAttributeCenter to compare inequality to.
-	 * @return true if the XdmfAttributeCenters are not equal.
-	 */
-	bool operator!=(const XdmfAttributeCenter & attributeCenter) const;
-
-	/**
-         * Compare two XdmfAttributeCenter for equality (for wrapping)
-         *
-         * @param attributeCenter a boost shared pointer to an XdmfAttributeCenter to compare equality to.
-         * @return true if the XdmfAttributeCenter are equal.
-         */
-        bool IsEqual(boost::shared_ptr<XdmfAttributeCenter> attributeCenter);
 
 protected:
 

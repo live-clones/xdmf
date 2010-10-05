@@ -143,29 +143,6 @@ boost::shared_ptr<const XdmfArrayType> XdmfArrayType::New(const std::map<std::st
 	assert(false);
 }
 
-bool XdmfArrayType::operator==(const XdmfArrayType & arrayType) const
-{
-	return mName.compare(arrayType.mName) == 0 && mPrecision == arrayType.mPrecision;
-}
-
-bool XdmfArrayType::operator!=(const XdmfArrayType & arrayType) const
-{
-	return !this->operator==(arrayType);
-}
-
-bool XdmfArrayType::IsEqual(boost::shared_ptr<XdmfArrayType> arrayType)
-{
-	if(arrayType == NULL)
-	{
-		return false;
-	}
-	if(this == arrayType.get() && mName == arrayType->mName && mPrecision == arrayType->mPrecision)
-	{
-		return true;
-	}
-	return false;	
-}
-
 void XdmfArrayType::getProperties(std::map<std::string, std::string> & collectedProperties) const
 {
 	collectedProperties["DataType"] = mName;

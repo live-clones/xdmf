@@ -84,8 +84,8 @@ protected:
 
 private:
 
-	XdmfAttribute(const XdmfAttribute & attribute);  // Not implemented.
-	void operator=(const XdmfAttribute & attribute);  // Not implemented.
+	XdmfAttribute(const XdmfAttribute &);  // Not implemented.
+	void operator=(const XdmfAttribute &);  // Not implemented.
 
 	boost::shared_ptr<const XdmfAttributeCenter> mCenter;
 	std::string mName;

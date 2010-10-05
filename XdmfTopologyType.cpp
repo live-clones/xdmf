@@ -172,43 +172,6 @@ boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::Mixed()
 	return p;
 }
 
-/*
-boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::TwoDSMesh()
-{
-	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(1, "2DSMesh", Structured));
-	return p;
-}
-
-boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::TwoDRectMesh()
-{
-	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(1, "2DRectMesh", Structured));
-	return p;
-}
-
-boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::TwoDCoRectMesh()
-{
-	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(1, "2DCoRectMesh", Structured));
-	return p;
-}
-
-boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::ThreeDSMesh()
-{
-	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(1, "3DSMesh", Structured));
-	return p;
-}
-
-boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::ThreeDRectMesh()
-{
-	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(1, "3DRectMesh", Structured));
-	return p;
-}
-
-boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::ThreeDCoRectMesh()
-{
-	static boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(1, "3DCoRectMesh", Structured));
-	return p;
-}*/
-
 XdmfTopologyType::XdmfTopologyType(const unsigned int nodesPerElement, const std::string & name, const CellType cellType) :
 	mCellType(cellType),
 	mName(name),
@@ -321,55 +284,12 @@ boost::shared_ptr<const XdmfTopologyType> XdmfTopologyType::New(const std::map<s
 		{
 			return Mixed();
 		}
-		/*else if(typeVal.compare("2DSMESH") == 0)
-		{
-			return TwoDSMesh();
-		}
-		else if(typeVal.compare("2DRECTMESH") == 0)
-		{
-			return TwoDRectMesh();
-		}
-		else if(typeVal.compare("2DCORECTMESH") == 0 || typeVal.compare("3DCORECTMESH") == 0)
-		{
-			// Special case --- Regular Grid
-			boost::shared_ptr<const XdmfTopologyType> p(new XdmfTopologyType(0, "REGULAR", Structured));
-			return p;
-		}
-		else if(typeVal.compare("3DSMESH") == 0)
-		{
-			return ThreeDSMesh();
-		}
-		else if(typeVal.compare("3DRECTMESH") == 0)
-		{
-			return ThreeDRectMesh();
-		}*/
 		else
 		{
 			assert(false);
 		}
 	}
 	assert(false);
-}
-
-bool XdmfTopologyType::operator==(const XdmfTopologyType& topologyType) const
-{
-	return mNodesPerElement == topologyType.mNodesPerElement && mName.compare(topologyType.mName) == 0 && mCellType == topologyType.mCellType;
-}
-
-bool XdmfTopologyType::operator!=(const XdmfTopologyType& topologyType) const
-{
-	return !this->operator==(topologyType);
-}
-
-bool XdmfTopologyType::IsEqual(boost::shared_ptr<XdmfTopologyType> topologyType)
-{
-        if(topologyType == NULL) return false;
-        if(this == topologyType.get()
-	   &&   mNodesPerElement == topologyType->mNodesPerElement
-	   &&	mCellType == topologyType->mCellType
-           &&   mName == topologyType->mName
-        ) return true;
-        return false;
 }
 
 XdmfTopologyType::CellType XdmfTopologyType::getCellType() const
