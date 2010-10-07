@@ -19,73 +19,64 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 	#include <XdmfWriter.hpp>
 %}
 
-%include boost_shared_ptr.i
-%include std_string.i
-%include std_vector.i
-%include loki/Visitor.h
+#ifdef SWIGJAVA
 
-// Shared Pointer Templates
-%shared_ptr(XdmfArray)
-%shared_ptr(XdmfArrayType)
-%shared_ptr(XdmfBaseVisitor)
-%shared_ptr(XdmfCoreItemFactory)
-%shared_ptr(XdmfCoreReader)
-%shared_ptr(XdmfHDF5Controller)
-%shared_ptr(XdmfHDF5Writer)
-%shared_ptr(XdmfInformation)
-%shared_ptr(XdmfItem)
-%shared_ptr(XdmfItemProperty)
-%shared_ptr(XdmfVisitor)
-%shared_ptr(XdmfWriter)
+// Ignore const overloaded methods
+%ignore XdmfArray::getHDF5Controller() const;
+%ignore XdmfArray::getValuesInternal() const;
+%ignore XdmfItem::getInformation(const unsigned int) const;
+%ignore XdmfItem::getInformation(const std::string &) const;
+%ignore XdmfWriter::getHDF5Writer() const;
 
-// Abstract Base Classes
-%template() Loki::BaseVisitable<void>;
-%template() Loki::Visitor<XdmfArray>;
-%template() Loki::Visitor<XdmfItem>;
+// Ignore ItemTags
+%ignore XdmfArray::ItemTag;
+%ignore XdmfInformation::ItemTag;
 
-%include XdmfItem.hpp
-%include XdmfItemProperty.hpp
-%include XdmfVisitor.hpp
+// Define equality operator
+%extend XdmfItem {
 
-%include XdmfCoreItemFactory.hpp
-%include XdmfCoreReader.hpp
-%include XdmfInformation.hpp
-%include XdmfHDF5Controller.hpp
-%include XdmfHDF5Writer.hpp
-%include XdmfWriter.hpp
+	bool equals(boost::shared_ptr<XdmfItem> item)
+	{
+		return self == item.get();
+	}
 
-%include XdmfArray.hpp
-%include XdmfArrayType.hpp
+	bool IsEqual(boost::shared_ptr<XdmfItem> item)
+	{
+		return self == item.get();
+	}
 
-%template(getValueAsInt8) XdmfArray::getValue<char>;
-%template(getValueAsInt16) XdmfArray::getValue<short>;
-%template(getValueAsInt32) XdmfArray::getValue<int>;
-%template(getValueAsInt64) XdmfArray::getValue<long>;
-%template(getValueAsFloat32) XdmfArray::getValue<float>;
-%template(getValueAsFloat64) XdmfArray::getValue<double>;
-%template(getValueAsUInt8) XdmfArray::getValue<unsigned char>;
-%template(getValueAsUInt16) XdmfArray::getValue<unsigned short>;
-%template(getValueAsUInt32) XdmfArray::getValue<unsigned int>;
+};
 
-%template(pushBackAsInt8) XdmfArray::pushBack<char>;
-%template(pushBackAsInt16) XdmfArray::pushBack<short>;
-%template(pushBackAsInt32) XdmfArray::pushBack<int>;
-%template(pushBackAsInt64) XdmfArray::pushBack<long>;
-%template(pushBackAsFloat32) XdmfArray::pushBack<float>;
-%template(pushBackAsFloat64) XdmfArray::pushBack<double>;
-%template(pushBackAsUInt8) XdmfArray::pushBack<unsigned char>;
-%template(pushBackAsUInt16) XdmfArray::pushBack<unsigned short>;
-%template(pushBackAsUInt32) XdmfArray::pushBack<unsigned int>;
+%extend XdmfItemProperty {
 
-%template(resizeAsInt8) XdmfArray::resize<char>;
-%template(resizeAsInt16) XdmfArray::resize<short>;
-%template(resizeAsInt32) XdmfArray::resize<int>;
-%template(resizeAsInt64) XdmfArray::resize<long>;
-%template(resizeAsFloat32) XdmfArray::resize<float>;
-%template(resizeAsFloat64) XdmfArray::resize<double>;
-%template(resizeAsUInt8) XdmfArray::resize<unsigned char>;
-%template(resizeAsUInt16) XdmfArray::resize<unsigned short>;
-%template(resizeAsUInt32) XdmfArray::resize<unsigned int>;
+	bool equals(boost::shared_ptr<XdmfItemProperty> itemProperty)
+	{
+		return self == itemProperty.get();
+	}
+
+	bool IsEqual(boost::shared_ptr<XdmfItemProperty> itemProperty)
+	{
+		return self == itemProperty.get();
+	}
+
+};
+
+%pragma(java) jniclasscode=%{
+	static
+	{
+		try 
+		{
+			System.loadLibrary("XdmfCoreJava");
+		}
+		catch (UnsatisfiedLinkError e)
+		{
+			System.err.println("Native code library failed to load for XdmfCoreJava\n" + e);
+			System.exit(1);
+		}
+	}
+%}
+
+#endif /* SWIGJAVA */
 
 #ifdef SWIGPYTHON
 
@@ -223,6 +214,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 	};
 };
 
+// Define equality operator
 %extend XdmfItem {
 
 	bool __eq__(boost::shared_ptr<XdmfItem> item)
@@ -243,29 +235,70 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
 #endif /* SWIGPYTHON */
 
-#ifdef SWIGJAVA
+%include boost_shared_ptr.i
+%include std_string.i
+%include std_vector.i
+%include loki/Visitor.h
 
-%ignore XdmfArray::getHDF5Controller() const;
-%ignore XdmfArray::getValuesInternal() const;
-%ignore XdmfArray::ItemTag;
-%ignore XdmfInformation::ItemTag;
-%ignore XdmfItem::getInformation(const unsigned int index) const;
-%ignore XdmfItem::getInformation(const std::string & name) const;
-%ignore XdmfWriter::getHDF5Writer() const;
+// Shared Pointer Templates
+%shared_ptr(XdmfArray)
+%shared_ptr(XdmfArrayType)
+%shared_ptr(XdmfBaseVisitor)
+%shared_ptr(XdmfCoreItemFactory)
+%shared_ptr(XdmfCoreReader)
+%shared_ptr(XdmfHDF5Controller)
+%shared_ptr(XdmfHDF5Writer)
+%shared_ptr(XdmfInformation)
+%shared_ptr(XdmfItem)
+%shared_ptr(XdmfItemProperty)
+%shared_ptr(XdmfVisitor)
+%shared_ptr(XdmfWriter)
 
-%pragma(java) jniclasscode=%{
-	static
-	{
-		try 
-		{
-			System.loadLibrary("XdmfCoreJava");
-		}
-		catch (UnsatisfiedLinkError e)
-		{
-			System.err.println("Native code library failed to load for XdmfCoreJava\n" + e);
-			System.exit(1);
-		}
-	}
-%}
+// Abstract Base Classes
+%template() Loki::BaseVisitable<void>;
+%template() Loki::Visitor<XdmfArray>;
+%template() Loki::Visitor<XdmfItem>;
 
-#endif /* SWIGJAVA */
+%include XdmfItem.hpp
+%include XdmfItemProperty.hpp
+%include XdmfVisitor.hpp
+
+%include XdmfCoreItemFactory.hpp
+%include XdmfCoreReader.hpp
+%include XdmfInformation.hpp
+%include XdmfHDF5Controller.hpp
+%include XdmfHDF5Writer.hpp
+%include XdmfWriter.hpp
+
+%include XdmfArray.hpp
+%include XdmfArrayType.hpp
+
+%template(getValueAsInt8) XdmfArray::getValue<char>;
+%template(getValueAsInt16) XdmfArray::getValue<short>;
+%template(getValueAsInt32) XdmfArray::getValue<int>;
+%template(getValueAsInt64) XdmfArray::getValue<long>;
+%template(getValueAsFloat32) XdmfArray::getValue<float>;
+%template(getValueAsFloat64) XdmfArray::getValue<double>;
+%template(getValueAsUInt8) XdmfArray::getValue<unsigned char>;
+%template(getValueAsUInt16) XdmfArray::getValue<unsigned short>;
+%template(getValueAsUInt32) XdmfArray::getValue<unsigned int>;
+
+%template(pushBackAsInt8) XdmfArray::pushBack<char>;
+%template(pushBackAsInt16) XdmfArray::pushBack<short>;
+%template(pushBackAsInt32) XdmfArray::pushBack<int>;
+%template(pushBackAsInt64) XdmfArray::pushBack<long>;
+%template(pushBackAsFloat32) XdmfArray::pushBack<float>;
+%template(pushBackAsFloat64) XdmfArray::pushBack<double>;
+%template(pushBackAsUInt8) XdmfArray::pushBack<unsigned char>;
+%template(pushBackAsUInt16) XdmfArray::pushBack<unsigned short>;
+%template(pushBackAsUInt32) XdmfArray::pushBack<unsigned int>;
+
+%template(resizeAsInt8) XdmfArray::resize<char>;
+%template(resizeAsInt16) XdmfArray::resize<short>;
+%template(resizeAsInt32) XdmfArray::resize<int>;
+%template(resizeAsInt64) XdmfArray::resize<long>;
+%template(resizeAsFloat32) XdmfArray::resize<float>;
+%template(resizeAsFloat64) XdmfArray::resize<double>;
+%template(resizeAsUInt8) XdmfArray::resize<unsigned char>;
+%template(resizeAsUInt16) XdmfArray::resize<unsigned short>;
+%template(resizeAsUInt32) XdmfArray::resize<unsigned int>;

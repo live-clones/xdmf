@@ -98,13 +98,29 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 	}
 }
 
-// Swig+Java will automatically create 'getter' functions for static
-// variables in a class (in this case the ItemTag member variable).
-// This happens to conflict with the getters that Xdmf implements to
-// override the otherwise virtual functions of the parent class.  Here,
-// we ask swig to ignore the static variable (thereby removing direct
-// access to the variable, but leaving access to our getter function
+// Ignore const overloaded methods
+%ignore XdmfDomain::getGrid(const unsigned int) const;
+%ignore XdmfDomain::getGrid(const std::string &) const;
+%ignore XdmfDomain::getGridCollection(const unsigned int) const;
+%ignore XdmfDomain::getGridCollection(const std::string &) const;
+%ignore XdmfGrid::getAttribute(const unsigned int) const;
+%ignore XdmfGrid::getAttribute(const std::string &) const;
+%ignore XdmfGrid::getGeometry() const;
+%ignore XdmfGrid::getMap() const;
+%ignore XdmfGrid::getSet(const unsigned int) const;
+%ignore XdmfGrid::getSet(const std::string &) const;
+%ignore XdmfGrid::getTime() const;
+%ignore XdmfGrid::getTopology() const;
+%ignore XdmfGridRectilinear::getCoordinates(const unsigned int) const;
+%ignore XdmfGridRectilinear::getCoordinates() const;
+%ignore XdmfGridRectilinear::getDimensions() const;
+%ignore XdmfGridRegular::getBrickSize() const;
+%ignore XdmfGridRegular::getDimensions() const;
+%ignore XdmfGridRegular::getOrigin() const;
+%ignore XdmfSet::getAttribute(const unsigned int) const;
+%ignore XdmfSet::getAttribute(const std::string &) const;
 
+// Ignore ItemTags
 %ignore XdmfAttribute::ItemTag;
 %ignore XdmfDomain::ItemTag;
 %ignore XdmfGeometry::ItemTag;
@@ -116,29 +132,6 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 %ignore XdmfSet::ItemTag;
 %ignore XdmfTime::ItemTag;
 %ignore XdmfTopology::ItemTag;
-
-// Swig+Java does not like 2 functions with the same prototype that
-// simply return const/non-const versions of the same type.  We
-// ask Swig to ignore one of the two getter functions.  We may
-// have to change this to rename the function to a new name such
-// that we preserve the ability to get a constant variable
-
-%rename(getAttributeUIntConst) XdmfSet::getAttribute(unsigned int const) const;
-%rename(getAttributeStrConst) XdmfSet::getAttribute(std::string const &) const;
-
-%ignore XdmfDomain::getGrid(const unsigned int index) const;
-%ignore XdmfDomain::getGridCollection(unsigned int const) const;
-%ignore XdmfGrid::getAttribute(const unsigned int index) const;
-%ignore XdmfGrid::getAttribute(const std::string & name) const;
-%ignore XdmfGrid::getSet(const unsigned int index) const;
-%ignore XdmfGrid::getSet(const std::string & name) const;
-%ignore XdmfGrid::getGeometry() const;
-%ignore XdmfGrid::getTime() const;
-%ignore XdmfGrid::getTopology() const;
-%ignore XdmfGridCollection::getGrid(const unsigned int index) const;
-%ignore XdmfGridCollection::insert(const boost::shared_ptr<XdmfInformation> information);
-%ignore XdmfGrid::getMap() const;
-%ignore XdmfSet::getHDF5Controller() const;
 
 %pragma(java) jniclasscode=%{
 	static

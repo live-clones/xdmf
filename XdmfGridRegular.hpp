@@ -5,7 +5,7 @@
 #include "XdmfGrid.hpp"
 
 /**
- * @brief A mesh consisting of congruent points arranged regularly in space.
+ * @brief A regular grid consisting of congruent points arranged regularly in space.
  *
  * XdmfGridRegular represents a regular mesh of congruent points arranged in space.
  * In order to define a regular grid, three sets of terms need to be supplied:
@@ -21,36 +21,36 @@ public:
 	/**
 	 * Create a new structured grid (Two dimensional).
 	 *
-	 * @param brickSizeX the size of the brick in the x direction.
-	 * @param brickSizeY the size of the brick in the y direction.
-	 * @param numPointsX the number of points in the x direction.
-	 * @param numPointsY the number of points in the y direction.
-	 * @param originX the x coordinate of the origin.
-	 * @param originY the y coordinate of the origin.
+	 * @param xBrickSize the size of the brick in the x direction.
+	 * @param yBrickSize the size of the brick in the y direction.
+	 * @param xNumPoints the number of points in the x direction.
+	 * @param yNumPoints the number of points in the y direction.
+	 * @param xOrigin the x coordinate of the origin.
+	 * @param yOrigin the y coordinate of the origin.
 	 *
 	 * @return constructed structured grid.
 	 */
-	static boost::shared_ptr<XdmfGridRegular> New(const double brickSizeX, const double brickSizeY, const unsigned int numPointsX,
-		const unsigned int numPointsY, const double originX, const double originY);
+	static boost::shared_ptr<XdmfGridRegular> New(const double xBrickSize, const double yBrickSize, const unsigned int xNumPoints,
+		const unsigned int yNumPoints, const double xOrigin, const double yOrigin);
 
 	/**
 	 * Create a new structured grid (Three dimensional).
 	 *
-	 * @param brickSizeX the size of the brick in the x direction.
-	 * @param brickSizeY the size of the brick in the y direction.
-	 * @param brickSizeZ the size of the brick in the z direction.
-	 * @param numPointsX the number of points in the x direction.
-	 * @param numPointsY the number of points in the y direction.
-	 * @param numPointsZ the number of points in the z direction.
-	 * @param originX the x coordinate of the origin.
-	 * @param originY the y coordinate of the origin.
-	 * @param originZ the z coordinate of the origin.
+	 * @param xBrickSize the size of the brick in the x direction.
+	 * @param yBrickSize the size of the brick in the y direction.
+	 * @param zBrickSize the size of the brick in the z direction.
+	 * @param xNumPoints the number of points in the x direction.
+	 * @param yNumPoints the number of points in the y direction.
+	 * @param zNumPoints the number of points in the z direction.
+	 * @param xOrigin the x coordinate of the origin.
+	 * @param yOrigin the y coordinate of the origin.
+	 * @param zOrigin the z coordinate of the origin.
 	 *
 	 * @return constructed structured grid.
 	 */
-	static boost::shared_ptr<XdmfGridRegular> New(const double brickSizeX, const double brickSizeY, const double brickSizeZ,
-		const unsigned int numPointsX, const unsigned int numPointsY, const unsigned int numPointsZ,
-		const double originX, const double originY, const double originZ);
+	static boost::shared_ptr<XdmfGridRegular> New(const double xBrickSize, const double yBrickSize, const double zBrickSize,
+		const unsigned int xNumPoints, const unsigned int yNumPoints, const unsigned int zNumPoints,
+		const double xOrigin, const double yOrigin, const double zOrigin);
 
 	/**
 	 * Create a new structured grid (N dimensional).

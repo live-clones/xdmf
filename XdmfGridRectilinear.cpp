@@ -63,7 +63,7 @@ public:
 			this->setType(XdmfGeometryTypeRectilinear::New(mRectilinearGrid));
 		}
 
-		XdmfGridRectilinear * const mRectilinearGrid;
+		const XdmfGridRectilinear * const mRectilinearGrid;
 	};
 
 	class XdmfGeometryTypeRectilinear : public XdmfGeometryType
@@ -87,11 +87,11 @@ public:
 			const unsigned int dimensions = this->getDimensions();
 			if(dimensions == 3)
 			{
-				collectedProperties["Type"] = "ORIGIN_DXDYDZ";
+				collectedProperties["Type"] = "VXVYVZ";
 			}
 			else if(dimensions == 2)
 			{
-				collectedProperties["Type"] = "ORIGIN_DXDY";
+				collectedProperties["Type"] = "VXVY";
 			}
 			else
 			{
@@ -103,7 +103,7 @@ public:
 
 		XdmfGeometryTypeRectilinear(const XdmfGridRectilinear * const rectilinearGrid) :
 			XdmfGeometryType("", 0),
-			mRectilinearGrid(mRectilinearGrid)
+			mRectilinearGrid(rectilinearGrid)
 		{
 		}
 
@@ -296,8 +296,11 @@ void XdmfGridRectilinear::populateItem(const std::map<std::string, std::string> 
 	{
 		if(boost::shared_ptr<XdmfGridRectilinear> rectilinearGrid = boost::shared_dynamic_cast<XdmfGridRectilinear>(*iter))
 		{
-			this->setCoordinates(rectilinearGrid->getCoordinates());
-			break;
+			if(rectilinearGrid->getGeometry()->getType()->getDimensions() > 0)
+			{
+				this->setCoordinates(rectilinearGrid->getCoordinates());
+				break;
+			}
 		}
 	}
 }

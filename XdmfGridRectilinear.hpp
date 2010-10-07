@@ -5,7 +5,7 @@
 #include "XdmfGrid.hpp"
 
 /**
- * @brief A mesh consisting of cells and points arranged on a regular lattice in space.
+ * @brief A rectilinear grid consisting of cells and points arranged on a regular lattice in space.
  *
  * XdmfGridRectilinear represents a mesh of cells and point arranged on a regular lattice in space.
  * Points are arranged along coordinate axes, but the spacing between points may vary.

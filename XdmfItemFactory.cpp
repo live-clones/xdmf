@@ -5,6 +5,8 @@
 #include "XdmfGeometryType.hpp"
 #include "XdmfGrid.hpp"
 #include "XdmfGridCollection.hpp"
+#include "XdmfGridCurvilinear.hpp"
+#include "XdmfGridRectilinear.hpp"
 #include "XdmfGridRegular.hpp"
 #include "XdmfInformation.hpp"
 #include "XdmfItemFactory.hpp"
@@ -80,6 +82,18 @@ boost::shared_ptr<XdmfItem> XdmfItemFactory::createItem(const std::string & item
 				}
 				return boost::shared_ptr<XdmfItem>();
 			}
+			else if(typeVal.compare("VXVY") == 0 || typeVal.compare("VXVYVZ") == 0)
+			{
+				std::vector<boost::shared_ptr<XdmfArray> > coordinateValues;
+				for(std::vector<boost::shared_ptr<XdmfItem> >::const_iterator iter = childItems.begin(); iter != childItems.end(); ++iter)
+				{
+					if(boost::shared_ptr<XdmfArray> array = boost::shared_dynamic_cast<XdmfArray>(*iter))
+					{
+						coordinateValues.push_back(array);
+					}
+				}
+				return XdmfGridRectilinear::New(coordinateValues);
+			}
 		}
 		return XdmfGeometry::New();
 	}
@@ -96,9 +110,18 @@ boost::shared_ptr<XdmfItem> XdmfItemFactory::createItem(const std::string & item
 			// Find out what kind of grid we have
 			for(std::vector<boost::shared_ptr<XdmfItem> >::const_iterator iter = childItems.begin(); iter != childItems.end(); ++iter)
 			{
-				if(boost::shared_ptr<XdmfGridRegular> regularGrid = boost::shared_dynamic_cast<XdmfGridRegular>(*iter))
+				if(boost::shared_ptr<XdmfGridCurvilinear> curvilinear = boost::shared_dynamic_cast<XdmfGridCurvilinear>(*iter))
+				{
+					return XdmfGridCurvilinear::New(0, 0);
+				}
+				else if(boost::shared_ptr<XdmfGridRegular> regularGrid = boost::shared_dynamic_cast<XdmfGridRegular>(*iter))
 				{
 					return XdmfGridRegular::New(0, 0, 0, 0, 0, 0);
+				}
+				else if(boost::shared_ptr<XdmfGridRectilinear> rectilinearGrid = boost::shared_dynamic_cast<XdmfGridRectilinear>(*iter))
+				{
+					std::vector<boost::shared_ptr<XdmfArray> > coordinateValues;
+					return XdmfGridRectilinear::New(coordinateValues);
 				}
 			}
 			return XdmfGrid::New();
@@ -132,7 +155,8 @@ boost::shared_ptr<XdmfItem> XdmfItemFactory::createItem(const std::string & item
 		{
 			std::string typeVal = type->second;
 			std::transform(typeVal.begin(), typeVal.end(), typeVal.begin(), (int(*)(int))std::toupper);
-			if(typeVal.compare("2DCORECTMESH") == 0 || typeVal.compare("3DCORECTMESH") == 0)
+			if(typeVal.compare("2DCORECTMESH") == 0 || typeVal.compare("3DCORECTMESH") == 0
+				|| typeVal.compare("2DSMESH") == 0 || typeVal.compare("3DSMESH") == 0)
 			{
 				boost::shared_ptr<XdmfArray> dimensionsArray = XdmfArray::New();
 				std::string dimensionsString = "";
@@ -146,8 +170,21 @@ boost::shared_ptr<XdmfItem> XdmfItemFactory::createItem(const std::string & item
 				{
 					dimensionsArray->pushBack<unsigned int>(atoi((*iter).c_str()));
 				}
-				return XdmfGridRegular::New(boost::shared_ptr<XdmfArray>(), dimensionsArray, boost::shared_ptr<XdmfArray>());
+				if(typeVal.compare("2DCORECTMESH") == 0 || typeVal.compare("3DCORECTMESH") == 0)
+				{
+					return XdmfGridRegular::New(boost::shared_ptr<XdmfArray>(), dimensionsArray, boost::shared_ptr<XdmfArray>());
+				}
+				else
+				{
+					return XdmfGridCurvilinear::New(dimensionsArray);
+				}
 			}
+			else if(typeVal.compare("2DRECTMESH") == 0 || typeVal.compare("3DRECTMESH") == 0)
+			{
+				std::vector<boost::shared_ptr<XdmfArray> > coordinateValues;
+				return XdmfGridRectilinear::New(coordinateValues);
+			}
+
 		}
 		return XdmfTopology::New();
 	}

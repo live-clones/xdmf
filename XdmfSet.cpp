@@ -10,6 +10,8 @@
 #include "XdmfSet.hpp"
 #include "XdmfSetType.hpp"
 
+XDMF_CHILDREN_IMPLEMENTATION(XdmfSet, XdmfAttribute, Attribute, Name)
+
 boost::shared_ptr<XdmfSet> XdmfSet::New()
 {
 	boost::shared_ptr<XdmfSet> p(new XdmfSet());
@@ -27,37 +29,6 @@ XdmfSet::~XdmfSet()
 }
 
 const std::string XdmfSet::ItemTag = "Set";
-
-boost::shared_ptr<XdmfAttribute> XdmfSet::getAttribute(const unsigned int index)
-{
-	return boost::const_pointer_cast<XdmfAttribute>(static_cast<const XdmfSet &>(*this).getAttribute(index));
-}
-
-boost::shared_ptr<const XdmfAttribute> XdmfSet::getAttribute(const unsigned int index) const
-{
-	if(index < mAttributes.size())
-	{
-		return mAttributes[index];
-	}
-	return boost::shared_ptr<XdmfAttribute>();
-}
-
-boost::shared_ptr<XdmfAttribute> XdmfSet::getAttribute(const std::string & name)
-{
-	return boost::const_pointer_cast<XdmfAttribute>(static_cast<const XdmfSet &>(*this).getAttribute(name));
-}
-
-boost::shared_ptr<const XdmfAttribute> XdmfSet::getAttribute(const std::string & name) const
-{
-	for(std::vector<boost::shared_ptr<XdmfAttribute> >::const_iterator iter = mAttributes.begin(); iter != mAttributes.end(); ++iter)
-	{
-		if((*iter)->getName().compare(name) == 0)
-		{
-			return *iter;
-		}
-	}
-	return boost::shared_ptr<XdmfAttribute>();
-}
 
 std::map<std::string, std::string> XdmfSet::getItemProperties() const
 {
@@ -77,19 +48,9 @@ std::string XdmfSet::getName() const
 	return mName;
 }
 
-unsigned int XdmfSet::getNumberAttributes() const
-{
-	return mAttributes.size();
-}
-
 boost::shared_ptr<const XdmfSetType> XdmfSet::getType() const
 {
 	return mType;
-}
-
-void XdmfSet::insert(const boost::shared_ptr<XdmfAttribute> attribute)
-{
-	mAttributes.push_back(attribute);
 }
 
 void XdmfSet::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader)
@@ -117,27 +78,6 @@ void XdmfSet::populateItem(const std::map<std::string, std::string> & itemProper
 			this->insert(attribute);
 		}
 	}
-}
-
-void XdmfSet::removeAttribute(const unsigned int index)
-{
-	if(index < mAttributes.size())
-	{
-		mAttributes.erase(mAttributes.begin() + index);
-	}
-}
-
-void XdmfSet::removeAttribute(const std::string & name)
-{
-	for(std::vector<boost::shared_ptr<XdmfAttribute> >::iterator iter = mAttributes.begin(); iter != mAttributes.end(); ++iter)
-	{
-		if((*iter)->getName().compare(name) == 0)
-		{
-			mAttributes.erase(iter);
-			return;
-		}
-	}
-	return;
 }
 
 void XdmfSet::setName(const std::string & name)
