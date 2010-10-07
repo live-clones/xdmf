@@ -29,6 +29,7 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 	#include <XdmfGrid.hpp>
 	#include <XdmfGridCollection.hpp>
 	#include <XdmfGridCollectionType.hpp>
+	#include <XdmfGridCurvilinear.hpp>
 	#include <XdmfGridRectilinear.hpp>
 	#include <XdmfGridRegular.hpp>
 	#include <XdmfItemFactory.hpp>
@@ -67,6 +68,10 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 	else if(boost::shared_ptr<XdmfGridCollection> value = boost::shared_dynamic_cast<XdmfGridCollection>($1))
 	{
 		*(boost::shared_ptr< XdmfGridCollection > **)&($result) = value ? new boost::shared_ptr< XdmfGridCollection >(value) : 0;
+	}
+	else if(boost::shared_ptr<XdmfGridCurvilinear> value = boost::shared_dynamic_cast<XdmfGridCurvilinear>($1))
+	{
+		*(boost::shared_ptr< XdmfGridCurvilinear > **)&($result) = value ? new boost::shared_ptr< XdmfGridCurvilinear >(value) : 0;
 	}
 	else if(boost::shared_ptr<XdmfGridRectilinear> value = boost::shared_dynamic_cast<XdmfGridRectilinear>($1))
 	{
@@ -111,6 +116,7 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 %ignore XdmfGrid::getSet(const std::string &) const;
 %ignore XdmfGrid::getTime() const;
 %ignore XdmfGrid::getTopology() const;
+%ignore XdmfGridCurvilinear::getDimensions() const;
 %ignore XdmfGridRectilinear::getCoordinates(const unsigned int) const;
 %ignore XdmfGridRectilinear::getCoordinates() const;
 %ignore XdmfGridRectilinear::getDimensions() const;
@@ -126,6 +132,7 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 %ignore XdmfGeometry::ItemTag;
 %ignore XdmfGrid::ItemTag;
 %ignore XdmfGridCollection::ItemTag;
+%ignore XdmfGridCurvilinear::ItemTag;
 %ignore XdmfGridRegular::ItemTag;
 %ignore XdmfGridRectilinear::ItemTag;
 %ignore XdmfMap::ItemTag;
@@ -186,6 +193,10 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 	{
 		$result = SWIG_NewPointerObj(SWIG_as_voidptr(new boost::shared_ptr<XdmfGridCollection>(gridCollection)), SWIGTYPE_p_boost__shared_ptrT_XdmfGridCollection_t, SWIG_POINTER_OWN);
 	}
+	else if(boost::shared_ptr<XdmfGridCurvilinear> gridCurvilinear = boost::shared_dynamic_cast<XdmfGridCurvilinear>($1))
+	{
+		$result = SWIG_NewPointerObj(SWIG_as_voidptr(new boost::shared_ptr<XdmfGridCurvilinear>(gridCurvilinear)), SWIGTYPE_p_boost__shared_ptrT_XdmfGridCurvilinear_t, SWIG_POINTER_OWN);
+	}
 	else if(boost::shared_ptr<XdmfGridRectilinear> gridRectilinear = boost::shared_dynamic_cast<XdmfGridRectilinear>($1))
 	{
 		$result = SWIG_NewPointerObj(SWIG_as_voidptr(new boost::shared_ptr<XdmfGridRectilinear>(gridRectilinear)), SWIGTYPE_p_boost__shared_ptrT_XdmfGridRectilinear_t, SWIG_POINTER_OWN);
@@ -232,6 +243,7 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 %shared_ptr(XdmfGrid)
 %shared_ptr(XdmfGridCollection)
 %shared_ptr(XdmfGridCollectionType)
+%shared_ptr(XdmfGridCurvilinear)
 %shared_ptr(XdmfGridRectilinear)
 %shared_ptr(XdmfGridRegular)
 %shared_ptr(XdmfItemFactory)
@@ -252,6 +264,7 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 %include XdmfGrid.hpp
 %include XdmfGridCollection.hpp
 %include XdmfGridCollectionType.hpp
+%include XdmfGridCurvilinear.hpp
 %include XdmfGridRectilinear.hpp
 %include XdmfGridRegular.hpp
 %include XdmfItemFactory.hpp

@@ -29,6 +29,7 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
 	#include <XdmfGrid.hpp>
 	#include <XdmfGridCollection.hpp>
 	#include <XdmfGridCollectionType.hpp>
+	#include <XdmfGridCurvilinear.hpp>
 	#include <XdmfGridRectilinear.hpp>
 	#include <XdmfGridRegular.hpp>
 	#include <XdmfItemFactory.hpp>
