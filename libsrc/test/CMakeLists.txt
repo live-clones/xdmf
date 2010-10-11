@@ -25,7 +25,7 @@ endmacro()
 macro( XdmfMPITest testname num_procs )
     find_package( MPI )
     if( MPI_FOUND AND GENERATOR_EXPRESSIONS_SUPPORTED)
-        include_directories( MPI_INCLUDE_PATH )
+        include_directories( ${MPI_INCLUDE_PATH} )
         add_executable( ${testname} ${ARGN} )
         target_link_libraries( ${testname} Xdmf ${MPI_LIBRARIES} )
         add_test(NAME ${testname} 
