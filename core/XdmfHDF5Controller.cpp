@@ -15,10 +15,7 @@ boost::shared_ptr<XdmfHDF5Controller> XdmfHDF5Controller::New(const std::string 
 }
 
 XdmfHDF5Controller::XdmfHDF5Controller(const std::string & hdf5FilePath, const std::string & dataSetPath, const unsigned int size, const boost::shared_ptr<const XdmfArrayType> type) :
-	mDataSetPath(dataSetPath),
-	mFilePath(XdmfSystemUtils::getRealPath(hdf5FilePath)),
-	mSize(size),
-	mType(type)
+	XdmfHeavyDataController(hdf5FilePath, dataSetPath, size, type)
 {
 }
 
@@ -26,24 +23,9 @@ XdmfHDF5Controller::~XdmfHDF5Controller()
 {
 }
 
-std::string XdmfHDF5Controller::getDataSetPath() const
+std::string XdmfHDF5Controller::getName() const
 {
-	return mDataSetPath;
-}
-
-std::string XdmfHDF5Controller::getFilePath() const
-{
-	return mFilePath;
-}
-
-unsigned int XdmfHDF5Controller::getSize() const
-{
-	return mSize;
-}
-
-boost::shared_ptr<const XdmfArrayType> XdmfHDF5Controller::getType() const
-{
-	return mType;
+	return "HDF";
 }
 
 void XdmfHDF5Controller::read(XdmfArray * const array)

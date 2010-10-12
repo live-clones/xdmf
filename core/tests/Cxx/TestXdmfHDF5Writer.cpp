@@ -12,13 +12,13 @@ int main(int, char *)
 	//
 	// Default operation - Always write to separate datasets.
 	//
-	assert(array->getHDF5Controller() == NULL);
+	assert(array->getHeavyDataController() == NULL);
 	boost::shared_ptr<XdmfHDF5Writer> writer = XdmfHDF5Writer::New("hdf5WriterTest.h5");
 	array->accept(writer);
-	boost::shared_ptr<XdmfHDF5Controller> firstController = array->getHDF5Controller();
+	boost::shared_ptr<XdmfHeavyDataController> firstController = array->getHeavyDataController();
 	std::string firstPath = firstController->getDataSetPath();
 	array->accept(writer);
-	boost::shared_ptr<XdmfHDF5Controller> secondController = array->getHDF5Controller();
+	boost::shared_ptr<XdmfHeavyDataController> secondController = array->getHeavyDataController();
 	std::string secondPath = secondController->getDataSetPath();
 	assert(firstController != secondController);
 	assert(firstPath.compare(secondPath) != 0);
@@ -28,14 +28,14 @@ int main(int, char *)
 	//
 	writer->setMode(XdmfHDF5Writer::Overwrite);
 	array->accept(writer);
-	boost::shared_ptr<XdmfHDF5Controller> thirdController = array->getHDF5Controller();
+	boost::shared_ptr<XdmfHeavyDataController> thirdController = array->getHeavyDataController();
 	std::string thirdPath = thirdController->getDataSetPath();
 	assert(secondController == thirdController);
 	assert(secondPath.compare(thirdPath) == 0);
 
 	array->pushBack(3);
 	array->accept(writer);
-	boost::shared_ptr<XdmfHDF5Controller> fourthController = array->getHDF5Controller();
+	boost::shared_ptr<XdmfHeavyDataController> fourthController = array->getHeavyDataController();
 	std::string fourthPath = fourthController->getDataSetPath();
 	assert(thirdController == fourthController);
 	assert(thirdPath.compare(fourthPath) == 0);
@@ -43,7 +43,7 @@ int main(int, char *)
 	array->erase(0);
 	array->erase(0);
 	array->accept(writer);
-	boost::shared_ptr<XdmfHDF5Controller> fifthController = array->getHDF5Controller();
+	boost::shared_ptr<XdmfHeavyDataController> fifthController = array->getHeavyDataController();
 	std::string fifthPath = fifthController->getDataSetPath();
 	assert(fourthController == fifthController);
 	assert(fourthPath.compare(fifthPath) == 0);

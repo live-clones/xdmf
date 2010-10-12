@@ -10,6 +10,7 @@
 #include "XdmfArray.hpp"
 #include "XdmfArrayType.hpp"
 #include "XdmfHDF5Controller.hpp"
+#include "XdmfHeavyDataController.hpp"
 #include "XdmfSystemUtils.hpp"
 #include "XdmfVisitor.hpp"
 
@@ -325,7 +326,7 @@ XdmfArray::XdmfArray() :
 	mArrayPointerNumValues(0),
 	mHaveArray(false),
 	mHaveArrayPointer(false),
-	mHDF5Controller(boost::shared_ptr<XdmfHDF5Controller>()),
+	mHeavyDataController(boost::shared_ptr<XdmfHeavyDataController>()),
 	mName(""),
 	mTmpReserveSize(0)
 {
@@ -364,9 +365,9 @@ boost::shared_ptr<const XdmfArrayType> XdmfArray::getArrayType() const
 	{
 		return boost::apply_visitor(GetArrayType(), mArrayPointer);
 	}
-	else if(mHDF5Controller)
+	else if(mHeavyDataController)
 	{
-		return mHDF5Controller->getType();
+		return mHeavyDataController->getType();
 	}
 	return XdmfArrayType::Uninitialized();
 }
@@ -392,22 +393,22 @@ int XdmfArray::getElementSize() const
     return(aType->getElementSize());
 }
 
-boost::shared_ptr<XdmfHDF5Controller> XdmfArray::getHDF5Controller()
+boost::shared_ptr<XdmfHeavyDataController> XdmfArray::getHeavyDataController()
 {
-	return boost::const_pointer_cast<XdmfHDF5Controller>(static_cast<const XdmfArray &>(*this).getHDF5Controller());
+	return boost::const_pointer_cast<XdmfHeavyDataController>(static_cast<const XdmfArray &>(*this).getHeavyDataController());
 }
 
-boost::shared_ptr<const XdmfHDF5Controller> XdmfArray::getHDF5Controller() const
+boost::shared_ptr<const XdmfHeavyDataController> XdmfArray::getHeavyDataController() const
 {
-	return mHDF5Controller;
+	return mHeavyDataController;
 }
 
 std::map<std::string, std::string> XdmfArray::getItemProperties() const
 {
 	std::map<std::string, std::string> arrayProperties;
-	if(mHDF5Controller)
+	if(mHeavyDataController)
 	{
-		arrayProperties["Format"] = "HDF";
+		arrayProperties["Format"] = mHeavyDataController->getName();
 	}
 	else
 	{
@@ -445,9 +446,9 @@ unsigned int XdmfArray::getSize() const
 	{
 		return mArrayPointerNumValues;
 	}
-	else if(mHDF5Controller)
+	else if(mHeavyDataController)
 	{
-		return mHDF5Controller->getSize();
+		return mHeavyDataController->getSize();
 	}
 	return 0;
 }
@@ -613,7 +614,7 @@ void XdmfArray::populateItem(const std::map<std::string, std::string> & itemProp
 					newHDF5Path << xmlDir->second << hdf5Path;
 					hdf5Path = newHDF5Path.str();
 				}
-				mHDF5Controller = XdmfHDF5Controller::New(hdf5Path, dataSetPath, sizeVal, arrayType);
+				mHeavyDataController = XdmfHDF5Controller::New(hdf5Path, dataSetPath, sizeVal, arrayType);
 			}
 			else
 			{
@@ -654,9 +655,9 @@ void XdmfArray::populateItem(const std::map<std::string, std::string> & itemProp
 
 void XdmfArray::read()
 {
-	if(mHDF5Controller)
+	if(mHeavyDataController)
 	{
-		mHDF5Controller->read(this);
+		mHeavyDataController->read(this);
 	}
 }
 
@@ -696,9 +697,9 @@ void XdmfArray::reserve(const unsigned int size)
 	}
 }
 
-void XdmfArray::setHDF5Controller(const boost::shared_ptr<XdmfHDF5Controller> hdf5Controller)
+void XdmfArray::setHeavyDataController(const boost::shared_ptr<XdmfHeavyDataController> heavyDataController)
 {
-	mHDF5Controller = hdf5Controller;
+	mHeavyDataController = heavyDataController;
 }
 
 void XdmfArray::setName(const std::string & name)
@@ -713,19 +714,19 @@ void XdmfArray::swap(const boost::shared_ptr<XdmfArray> array)
 	int tmpArrayPointerNumValues = array->mArrayPointerNumValues;
 	bool tmpHaveArray = array->mHaveArray;
 	bool tmpHaveArrayPointer = array->mHaveArrayPointer;
-	boost::shared_ptr<XdmfHDF5Controller> tmpHDF5Controller = array->mHDF5Controller;
+	boost::shared_ptr<XdmfHeavyDataController> tmpHeavyDataController = array->mHeavyDataController;
 
 	array->mArray = mArray;
 	array->mArrayPointer = mArrayPointer;
 	array->mArrayPointerNumValues = mArrayPointerNumValues;
 	array->mHaveArray = mHaveArray;
 	array->mHaveArrayPointer = mHaveArrayPointer;
-	array->mHDF5Controller = mHDF5Controller;
+	array->mHeavyDataController = mHeavyDataController;
 
 	mArray = tmpArray;
 	mArrayPointer = tmpArrayPointer;
 	mArrayPointerNumValues = tmpArrayPointerNumValues;
 	mHaveArray = tmpHaveArray;
 	mHaveArrayPointer = tmpHaveArrayPointer;
-	mHDF5Controller = tmpHDF5Controller;
+	mHeavyDataController = tmpHeavyDataController;
 }

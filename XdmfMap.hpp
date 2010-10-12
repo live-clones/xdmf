@@ -70,11 +70,11 @@ public:
 	void read();
 
 	/**
-	 * Release all data held in memory.  The HDF5Controllers remain attached.
+	 * Release all data held in memory.  The heavy data remain attached.
 	 */
 	void release();
 
-	void setHDF5Controllers(boost::shared_ptr<XdmfHDF5Controller> localNodeIdsHDF5Controller, boost::shared_ptr<XdmfHDF5Controller> remoteTaskIdsHDF5Controller, boost::shared_ptr<XdmfHDF5Controller> remoteLocalNodeIdsHDF5Controller);
+	void setHeavyDataControllers(boost::shared_ptr<XdmfHeavyDataController> localNodeIdsHeavyDataController, boost::shared_ptr<XdmfHeavyDataController> remoteTaskIdsHeavyDataController, boost::shared_ptr<XdmfHeavyDataController> remoteLocalNodeIdsHeavyDataController);
 
 	void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor);
 

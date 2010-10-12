@@ -30,6 +30,8 @@ set(XdmfCoreSources
 	XdmfCoreReader
 	XdmfHDF5Controller
 	XdmfHDF5Writer
+	XdmfHeavyDataController
+	XdmfHeavyDataWriter
 	XdmfInformation
 	XdmfItem
 	XdmfItemProperty

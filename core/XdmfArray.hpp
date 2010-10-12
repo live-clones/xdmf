@@ -3,7 +3,7 @@
 
 // Forward Declarations
 class XdmfArrayType;
-class XdmfHDF5Controller;
+class XdmfHeavyDataController;
 
 // Includes
 #include "XdmfItem.hpp"
@@ -102,18 +102,18 @@ public:
 	int getElementSize() const;
 
 	/**
-	 * Get the hdf5 controller attached to this XdmfArray.
+	 * Get the heavy data controller attached to this XdmfArray.
 	 *
-	 * @return the hdf5 controller attached to this XdmfArray.
+	 * @return the heavy data controller attached to this XdmfArray.
 	 */
-	boost::shared_ptr<XdmfHDF5Controller> getHDF5Controller();
+	boost::shared_ptr<XdmfHeavyDataController> getHeavyDataController();
 
 	/**
-	 * Get the hdf5 controller attached to this XdmfArray (const version).
+	 * Get the heavy data controller attached to this XdmfArray (const version).
 	 *
-	 * @return the hdf5 controller attached to this XdmfArray.
+	 * @return the heavy data controller attached to this XdmfArray.
 	 */
-	boost::shared_ptr<const XdmfHDF5Controller> getHDF5Controller() const;
+	boost::shared_ptr<const XdmfHeavyDataController> getHeavyDataController() const;
 
 	std::map<std::string, std::string> getItemProperties() const;
 
@@ -276,7 +276,7 @@ public:
 	 *
 	 * @param hdf5Controller the hdf5 controller to attach to this XdmfArray.
 	 */
-	void setHDF5Controller(const boost::shared_ptr<XdmfHDF5Controller> hdf5Controller);
+	void setHeavyDataController(const boost::shared_ptr<XdmfHeavyDataController> hdf5Controller);
 
 	/**
 	 * Set the name of the array.
@@ -361,7 +361,6 @@ private:
 	class Erase;
 	class GetArrayType;
 	class GetCapacity;
-	class GetHDF5Type;
 
 	template <typename T>
 	class GetValues;
@@ -432,7 +431,7 @@ private:
 	unsigned int mArrayPointerNumValues;
 	bool mHaveArray;
 	bool mHaveArrayPointer;
-	boost::shared_ptr<XdmfHDF5Controller> mHDF5Controller;
+	boost::shared_ptr<XdmfHeavyDataController> mHeavyDataController;
 	std::string mName;
 	unsigned int mTmpReserveSize;
 	std::string mDimensionString;

@@ -1,7 +1,7 @@
 #include "XdmfAttribute.hpp"
 #include "XdmfGridCollection.hpp"
 #include "XdmfGridCollectionType.hpp"
-#include "XdmfHDF5Controller.hpp"
+#include "XdmfHeavyDataController.hpp"
 #include "XdmfMap.hpp"
 
 /**
@@ -12,9 +12,9 @@ class XdmfMap::XdmfMapImpl {
 public:
 
 	XdmfMapImpl() :
-		mLocalNodeIdsHDF5Controller(boost::shared_ptr<XdmfHDF5Controller>()),
-		mRemoteLocalNodeIdsHDF5Controller(boost::shared_ptr<XdmfHDF5Controller>()),
-		mRemoteTaskIdsHDF5Controller(boost::shared_ptr<XdmfHDF5Controller>())
+		mLocalNodeIdsHeavyDataController(boost::shared_ptr<XdmfHeavyDataController>()),
+		mRemoteLocalNodeIdsHeavyDataController(boost::shared_ptr<XdmfHeavyDataController>()),
+		mRemoteTaskIdsHeavyDataController(boost::shared_ptr<XdmfHeavyDataController>())
 	{
 	};
 
@@ -22,10 +22,10 @@ public:
 	{
 	};
 
-	boost::shared_ptr<XdmfHDF5Controller> mLocalNodeIdsHDF5Controller;
+	boost::shared_ptr<XdmfHeavyDataController> mLocalNodeIdsHeavyDataController;
 	std::map<unsigned int, std::map<unsigned int, unsigned int> > mMap;	// localNodeId | remoteTaskId | remoteLocalNodeId
-	boost::shared_ptr<XdmfHDF5Controller> mRemoteLocalNodeIdsHDF5Controller;
-	boost::shared_ptr<XdmfHDF5Controller> mRemoteTaskIdsHDF5Controller;
+	boost::shared_ptr<XdmfHeavyDataController> mRemoteLocalNodeIdsHeavyDataController;
+	boost::shared_ptr<XdmfHeavyDataController> mRemoteTaskIdsHeavyDataController;
 
 };
 
@@ -182,23 +182,23 @@ void XdmfMap::populateItem(const std::map<std::string, std::string> & itemProper
 	}
 	else
 	{
-		mImpl->mLocalNodeIdsHDF5Controller = arrayVector[0]->getHDF5Controller();
-		mImpl->mRemoteTaskIdsHDF5Controller = arrayVector[1]->getHDF5Controller();
-		mImpl->mRemoteLocalNodeIdsHDF5Controller = arrayVector[2]->getHDF5Controller();
+		mImpl->mLocalNodeIdsHeavyDataController = arrayVector[0]->getHeavyDataController();
+		mImpl->mRemoteTaskIdsHeavyDataController = arrayVector[1]->getHeavyDataController();
+		mImpl->mRemoteLocalNodeIdsHeavyDataController = arrayVector[2]->getHeavyDataController();
 	}
 }
 
 void XdmfMap::read()
 {
-	if(mImpl->mLocalNodeIdsHDF5Controller && mImpl->mRemoteTaskIdsHDF5Controller && mImpl->mRemoteLocalNodeIdsHDF5Controller)
+	if(mImpl->mLocalNodeIdsHeavyDataController && mImpl->mRemoteTaskIdsHeavyDataController && mImpl->mRemoteLocalNodeIdsHeavyDataController)
 	{
-		assert(mImpl->mLocalNodeIdsHDF5Controller->getSize() == mImpl->mRemoteTaskIdsHDF5Controller->getSize() && mImpl->mLocalNodeIdsHDF5Controller->getSize() == mImpl->mRemoteLocalNodeIdsHDF5Controller->getSize());
+		assert(mImpl->mLocalNodeIdsHeavyDataController->getSize() == mImpl->mRemoteTaskIdsHeavyDataController->getSize() && mImpl->mLocalNodeIdsHeavyDataController->getSize() == mImpl->mRemoteLocalNodeIdsHeavyDataController->getSize());
 		boost::shared_ptr<XdmfArray> globalNodeIds = XdmfArray::New();
 		boost::shared_ptr<XdmfArray> taskIds = XdmfArray::New();
 		boost::shared_ptr<XdmfArray> localNodeIds = XdmfArray::New();
-		mImpl->mLocalNodeIdsHDF5Controller->read(globalNodeIds.get());
-		mImpl->mRemoteTaskIdsHDF5Controller->read(taskIds.get());
-		mImpl->mRemoteLocalNodeIdsHDF5Controller->read(localNodeIds.get());
+		mImpl->mLocalNodeIdsHeavyDataController->read(globalNodeIds.get());
+		mImpl->mRemoteTaskIdsHeavyDataController->read(taskIds.get());
+		mImpl->mRemoteLocalNodeIdsHeavyDataController->read(localNodeIds.get());
 
 		for(unsigned int i=0; i<globalNodeIds->getSize(); ++i)
 		{
@@ -222,12 +222,12 @@ void XdmfMap::release()
 	mImpl->mMap.clear();
 }
 
-void XdmfMap::setHDF5Controllers(boost::shared_ptr<XdmfHDF5Controller> localNodeIdsHDF5Controller, boost::shared_ptr<XdmfHDF5Controller> remoteTaskIdsHDF5Controller, boost::shared_ptr<XdmfHDF5Controller> remoteLocalNodeIdsHDF5Controller)
+void XdmfMap::setHeavyDataControllers(boost::shared_ptr<XdmfHeavyDataController> localNodeIdsHeavyDataController, boost::shared_ptr<XdmfHeavyDataController> remoteTaskIdsHeavyDataController, boost::shared_ptr<XdmfHeavyDataController> remoteLocalNodeIdsHeavyDataController)
 {
-	assert(localNodeIdsHDF5Controller->getSize() == remoteTaskIdsHDF5Controller->getSize() && localNodeIdsHDF5Controller->getSize() == remoteLocalNodeIdsHDF5Controller->getSize());
-	mImpl->mLocalNodeIdsHDF5Controller = localNodeIdsHDF5Controller;
-	mImpl->mRemoteTaskIdsHDF5Controller = remoteTaskIdsHDF5Controller;
-	mImpl->mRemoteLocalNodeIdsHDF5Controller = remoteLocalNodeIdsHDF5Controller;
+	assert(localNodeIdsHeavyDataController->getSize() == remoteTaskIdsHeavyDataController->getSize() && localNodeIdsHeavyDataController->getSize() == remoteLocalNodeIdsHeavyDataController->getSize());
+	mImpl->mLocalNodeIdsHeavyDataController = localNodeIdsHeavyDataController;
+	mImpl->mRemoteTaskIdsHeavyDataController = remoteTaskIdsHeavyDataController;
+	mImpl->mRemoteLocalNodeIdsHeavyDataController = remoteLocalNodeIdsHeavyDataController;
 }
 
 
@@ -246,13 +246,13 @@ void XdmfMap::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor)
 			remoteLocalNodeIds->pushBack(iter2->second);
 		}
 	}
-	localNodeIds->setHDF5Controller(mImpl->mLocalNodeIdsHDF5Controller);
-	remoteTaskIds->setHDF5Controller(mImpl->mRemoteTaskIdsHDF5Controller);
-	remoteLocalNodeIds->setHDF5Controller(mImpl->mRemoteLocalNodeIdsHDF5Controller);
+	localNodeIds->setHeavyDataController(mImpl->mLocalNodeIdsHeavyDataController);
+	remoteTaskIds->setHeavyDataController(mImpl->mRemoteTaskIdsHeavyDataController);
+	remoteLocalNodeIds->setHeavyDataController(mImpl->mRemoteLocalNodeIdsHeavyDataController);
 	localNodeIds->accept(visitor);
 	remoteTaskIds->accept(visitor);
 	remoteLocalNodeIds->accept(visitor);
-	mImpl->mLocalNodeIdsHDF5Controller = localNodeIds->getHDF5Controller();
-	mImpl->mRemoteTaskIdsHDF5Controller = remoteTaskIds->getHDF5Controller();
-	mImpl->mRemoteLocalNodeIdsHDF5Controller = remoteLocalNodeIds->getHDF5Controller();
+	mImpl->mLocalNodeIdsHeavyDataController = localNodeIds->getHeavyDataController();
+	mImpl->mRemoteTaskIdsHeavyDataController = remoteTaskIds->getHeavyDataController();
+	mImpl->mRemoteLocalNodeIdsHeavyDataController = remoteLocalNodeIds->getHeavyDataController();
 }

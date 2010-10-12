@@ -3,7 +3,7 @@
 
 // Forward Declarations
 class XdmfArray;
-class XdmfHDF5Writer;
+class XdmfHeavyDataWriter;
 
 // Includes
 #include "XdmfVisitor.hpp"
@@ -13,13 +13,13 @@ class XdmfHDF5Writer;
  *
  * XdmfWriter visits each node of an Xdmf graph structure and writes data to disk.  Writing begins by calling the
  * accept() operation on any XdmfItem and supplying this writer as the parameter.  The XdmfItem as well as all children
- * attached to the XdmfItem are written to disk.  Heavy data is written to HDF5 format using the XdmfHDF5Writer and light
+ * attached to the XdmfItem are written to disk.  Heavy data is written to a heavy data format using an XdmfHeavyDataWriter and light
  * data is written to XML.
  *
- * By default, the XdmfWriter writes all heavy data to a single heavy data file specified by the XdmfHDF5Writer.
+ * By default, the XdmfWriter writes all heavy data to a single heavy data file specified by the XdmfHeavyDataWriter.
  * If a dataset is encountered that resides in a different heavy data file on disk, the dataset is read from disk and written
- * to the new hdf5 file.  If this is undesired, the XdmfWriter can be set to DistributedHeavyData mode in which the writer
- * will automatically reference any hdf5 dataset even if it resides in a different file than the one currently being written to.
+ * to the new heavy data file.  If this is undesired, the XdmfWriter can be set to DistributedHeavyData mode in which the writer
+ * will automatically reference any heavy dataset even if it resides in a different file than the one currently being written to.
  */
 class XdmfWriter : public XdmfVisitor,
 	public Loki::Visitor<XdmfArray> {
@@ -40,14 +40,14 @@ public:
 	static boost::shared_ptr<XdmfWriter> New(const std::string & xmlFilePath);
 
 	/**
-	 * Create a new XdmfWriter to write Xdmf data to disk.  This will utilize the supplied hdf5Writer to write any
+	 * Create a new XdmfWriter to write Xdmf data to disk.  This will utilize the supplied heavy data writer to write any
 	 * heavy data to disk.
 	 *
 	 * @param xmlFilePath the path to the xml file to write to.
-	 * @param hdf5Writer the heavy data writer to use when writing.
+	 * @param heavyDataWriter the heavy data writer to use when writing.
 	 * @return the new XdmfWriter.
 	 */
-	static boost::shared_ptr<XdmfWriter> New(const std::string & xmlFilePath, const boost::shared_ptr<XdmfHDF5Writer> hdf5Writer);
+	static boost::shared_ptr<XdmfWriter> New(const std::string & xmlFilePath, const boost::shared_ptr<XdmfHeavyDataWriter> heavyDataWriter);
 
 	virtual ~XdmfWriter();
 
@@ -59,18 +59,18 @@ public:
 	std::string getFilePath() const;
 
 	/**
-	 * Get the hdf5 writer that this XdmfWriter uses to write heavy data to disk.
+	 * Get the heavy data writer that this XdmfWriter uses to write heavy data to disk.
 	 *
-	 * @return the requested hdf5 writer.
+	 * @return the requested heavy data writer.
 	 */
-	boost::shared_ptr<XdmfHDF5Writer> getHDF5Writer();
+	boost::shared_ptr<XdmfHeavyDataWriter> getHeavyDataWriter();
 
 	/**
-	 * Get the hdf5 writer that this XdmfWriter uses to write heavy data to disk (const version).
+	 * Get the heavy data writer that this XdmfWriter uses to write heavy data to disk (const version).
 	 *
-	 * @return the requested hdf5 writer.
+	 * @return the requested heavy data writer.
 	 */
-	boost::shared_ptr<const XdmfHDF5Writer> getHDF5Writer() const;
+	boost::shared_ptr<const XdmfHeavyDataWriter> getHeavyDataWriter() const;
 
 	/**
 	 * Get the number of values that this writer writes to light data (XML) before switching to a heavy data format.
@@ -147,8 +147,7 @@ public:
 
 protected:
 
-	XdmfWriter(const std::string & xmlFilePath);
-	XdmfWriter(const std::string & xmlFilePath, boost::shared_ptr<XdmfHDF5Writer> hdf5Writer);
+	XdmfWriter(const std::string & xmlFilePath, boost::shared_ptr<XdmfHeavyDataWriter> heavyDataWriter);
 
 private:
 

@@ -7,60 +7,20 @@
 #include "XdmfArrayType.hpp"
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfHDF5Writer.hpp"
-#include "XdmfSystemUtils.hpp"
 
-/**
- * PIMPL
- */
-class XdmfHDF5Writer::XdmfHDF5WriterImpl {
-
-public:
-
-	XdmfHDF5WriterImpl(const std::string & hdf5FilePath) :
-		mDataSetId(0),
-		mFilePath(XdmfSystemUtils::getRealPath(hdf5FilePath)),
-		mMode(Default)
-	{
-	};
-
-	~XdmfHDF5WriterImpl()
-	{
-	};
-
-	int mDataSetId;
-	std::string mFilePath;
-	Mode mMode;
-};
-
-boost::shared_ptr<XdmfHDF5Writer> XdmfHDF5Writer::New(const std::string & hdf5FilePath)
+boost::shared_ptr<XdmfHDF5Writer> XdmfHDF5Writer::New(const std::string & filePath)
 {
-	boost::shared_ptr<XdmfHDF5Writer> p(new XdmfHDF5Writer(hdf5FilePath));
+	boost::shared_ptr<XdmfHDF5Writer> p(new XdmfHDF5Writer(filePath));
 	return p;
 }
 
-XdmfHDF5Writer::XdmfHDF5Writer(const std::string & hdf5FilePath) :
-	mImpl(new XdmfHDF5WriterImpl(hdf5FilePath))
+XdmfHDF5Writer::XdmfHDF5Writer(const std::string & filePath) :
+	XdmfHeavyDataWriter(filePath)
 {
 }
 
 XdmfHDF5Writer::~XdmfHDF5Writer()
 {
-	delete mImpl;
-}
-
-std::string XdmfHDF5Writer::getFilePath() const
-{
-	return mImpl->mFilePath;
-}
-
-XdmfHDF5Writer::Mode XdmfHDF5Writer::getMode() const
-{
-	return mImpl->mMode;
-}
-
-void XdmfHDF5Writer::setMode(const Mode mode)
-{
-	mImpl->mMode = mode;
 }
 
 void XdmfHDF5Writer::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisitor>)
@@ -113,18 +73,18 @@ void XdmfHDF5Writer::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVi
 
 	if(datatype != -1)
 	{
-		std::string hdf5FilePath = mImpl->mFilePath;
+		std::string hdf5FilePath = mFilePath;
 		std::stringstream dataSetPath;
 
-		if((mImpl->mMode == Overwrite || mImpl->mMode == Append) && array.getHDF5Controller())
+		if((mMode == Overwrite || mMode == Append) && array.getHeavyDataController())
 		{
 			// Write to the previous dataset
-			dataSetPath << array.getHDF5Controller()->getDataSetPath();
-			hdf5FilePath = array.getHDF5Controller()->getFilePath();
+			dataSetPath << array.getHeavyDataController()->getDataSetPath();
+			hdf5FilePath = array.getHeavyDataController()->getFilePath();
 		}
 		else
 		{
-			dataSetPath << "Data" << mImpl->mDataSetId;
+			dataSetPath << "Data" << mDataSetId;
 		}
 
 		// Open a hdf5 dataset and write to it on disk.
@@ -164,7 +124,7 @@ void XdmfHDF5Writer::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVi
 		else
 		{
 			// Need to resize dataset to fit new data
-			if(mImpl->mMode == Append)
+			if(mMode == Append)
 			{
 				// Get size of old dataset
 				dataspace = H5Dget_space(dataset);
@@ -202,11 +162,11 @@ void XdmfHDF5Writer::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVi
 		H5Eset_auto2(0, old_func, old_client_data);
 
 		// Attach a new controller to the array if needed.
-		if(mImpl->mMode == Default || !array.getHDF5Controller())
+		if(mMode == Default || !array.getHeavyDataController())
 		{
 			boost::shared_ptr<XdmfHDF5Controller> newDataSetController = XdmfHDF5Controller::New(hdf5FilePath, dataSetPath.str(), array.getSize(), array.getArrayType());
-			array.setHDF5Controller(newDataSetController);
-			mImpl->mDataSetId++;
+			array.setHeavyDataController(newDataSetController);
+			mDataSetId++;
 		}
 	}
 }

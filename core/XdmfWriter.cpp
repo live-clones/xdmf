@@ -4,9 +4,10 @@
 #include <libxml/tree.h>
 #include <sstream>
 #include "XdmfArray.hpp"
-#include "XdmfItem.hpp"
+#include "XdmfHeavyDataWriter.hpp"
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfHDF5Writer.hpp"
+#include "XdmfItem.hpp"
 #include "XdmfSystemUtils.hpp"
 #include "XdmfWriter.hpp"
 
@@ -17,8 +18,8 @@ class XdmfWriter::XdmfWriterImpl {
 
 public:
 
-	XdmfWriterImpl(const std::string & xmlFilePath, const boost::shared_ptr<XdmfHDF5Writer> hdf5Writer) :
-		mHDF5Writer(hdf5Writer),
+	XdmfWriterImpl(const std::string & xmlFilePath, const boost::shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) :
+		mHeavyDataWriter(heavyDataWriter),
 		mLastXPathed(false),
 		mLightDataLimit(100),
 		mMode(Default),
@@ -55,7 +56,7 @@ public:
 		xmlDocSetRootElement(mXMLDocument, mXMLCurrentNode);
 	}
 
-	boost::shared_ptr<XdmfHDF5Writer> mHDF5Writer;
+	boost::shared_ptr<XdmfHeavyDataWriter> mHeavyDataWriter;
 	bool mLastXPathed;
 	unsigned int mLightDataLimit;
 	Mode mMode;
@@ -73,18 +74,6 @@ public:
 
 boost::shared_ptr<XdmfWriter> XdmfWriter::New(const std::string & xmlFilePath)
 {
-	boost::shared_ptr<XdmfWriter> p(new XdmfWriter(xmlFilePath));
-	return p;
-}
-
-boost::shared_ptr<XdmfWriter> XdmfWriter::New(const std::string & xmlFilePath, const boost::shared_ptr<XdmfHDF5Writer> hdf5Writer)
-{
-	boost::shared_ptr<XdmfWriter> p(new XdmfWriter(xmlFilePath, hdf5Writer));
-	return p;
-}
-
-XdmfWriter::XdmfWriter(const std::string & xmlFilePath)
-{
 	std::stringstream heavyFileName;
 	size_t extension = xmlFilePath.rfind(".");
 	if(extension != std::string::npos)
@@ -96,11 +85,18 @@ XdmfWriter::XdmfWriter(const std::string & xmlFilePath)
 		heavyFileName << xmlFilePath << ".h5";
 	}
 	boost::shared_ptr<XdmfHDF5Writer> hdf5Writer = XdmfHDF5Writer::New(heavyFileName.str());
-	mImpl = new XdmfWriterImpl(xmlFilePath, hdf5Writer);
+	boost::shared_ptr<XdmfWriter> p(new XdmfWriter(xmlFilePath, hdf5Writer));
+	return p;
 }
 
-XdmfWriter::XdmfWriter(const std::string & xmlFilePath, boost::shared_ptr<XdmfHDF5Writer> hdf5Writer) :
-	mImpl(new XdmfWriterImpl(xmlFilePath, hdf5Writer))
+boost::shared_ptr<XdmfWriter> XdmfWriter::New(const std::string & xmlFilePath, const boost::shared_ptr<XdmfHeavyDataWriter> heavyDataWriter)
+{
+	boost::shared_ptr<XdmfWriter> p(new XdmfWriter(xmlFilePath, heavyDataWriter));
+	return p;
+}
+
+XdmfWriter::XdmfWriter(const std::string & xmlFilePath, boost::shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) :
+	mImpl(new XdmfWriterImpl(xmlFilePath, heavyDataWriter))
 {
 }
 
@@ -109,14 +105,14 @@ XdmfWriter::~XdmfWriter()
 	delete mImpl;
 }
 
-boost::shared_ptr<XdmfHDF5Writer> XdmfWriter::getHDF5Writer()
+boost::shared_ptr<XdmfHeavyDataWriter> XdmfWriter::getHeavyDataWriter()
 {
-	return boost::const_pointer_cast<XdmfHDF5Writer>(static_cast<const XdmfWriter &>(*this).getHDF5Writer());
+	return boost::const_pointer_cast<XdmfHeavyDataWriter>(static_cast<const XdmfWriter &>(*this).getHeavyDataWriter());
 }
 
-boost::shared_ptr<const XdmfHDF5Writer> XdmfWriter::getHDF5Writer() const
+boost::shared_ptr<const XdmfHeavyDataWriter> XdmfWriter::getHeavyDataWriter() const
 {
-	return mImpl->mHDF5Writer;
+	return mImpl->mHeavyDataWriter;
 }
 
 std::string XdmfWriter::getFilePath() const
@@ -177,29 +173,29 @@ void XdmfWriter::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisito
 	{
 		std::stringstream xmlTextValues;
 
-		// Take care of writing to single HDF5 file (Default behavior)
-		if(!array.isInitialized() && array.getHDF5Controller() && array.getHDF5Controller()->getFilePath().compare(mImpl->mHDF5Writer->getFilePath()) != 0 && mImpl->mMode == Default)
+		// Take care of writing to single heavy data file (Default behavior)
+		if(!array.isInitialized() && array.getHeavyDataController() && array.getHeavyDataController()->getFilePath().compare(mImpl->mHeavyDataWriter->getFilePath()) != 0 && mImpl->mMode == Default)
 		{
 			array.read();
 		}
 
-		if(array.getHDF5Controller() || array.getSize() > mImpl->mLightDataLimit)
+		if(array.getHeavyDataController() || array.getSize() > mImpl->mLightDataLimit)
 		{
-			// Write values to HDF5
-			mImpl->mHDF5Writer->visit(array, mImpl->mHDF5Writer);
+			// Write values to heavy data
+			mImpl->mHeavyDataWriter->visit(array, mImpl->mHeavyDataWriter);
 
-			std::string hdf5Path = array.getHDF5Controller()->getFilePath();
-			size_t index = hdf5Path.find_last_of("/\\");
+			std::string heavyDataPath = array.getHeavyDataController()->getFilePath();
+			size_t index = heavyDataPath.find_last_of("/\\");
 			if(index != std::string::npos)
 			{
-				std::string hdf5Dir = hdf5Path.substr(0, index + 1);
-				if(mImpl->mXMLFilePath.find(hdf5Dir) == 0)
+				std::string heavyDataDir = heavyDataPath.substr(0, index + 1);
+				if(mImpl->mXMLFilePath.find(heavyDataDir) == 0)
 				{
-					hdf5Path = hdf5Path.substr(hdf5Dir.size(), hdf5Path.size() - hdf5Dir.size());
+					heavyDataPath = heavyDataPath.substr(heavyDataDir.size(), heavyDataPath.size() - heavyDataDir.size());
 				}
 			}
 
-			xmlTextValues << hdf5Path << ":" << array.getHDF5Controller()->getDataSetPath();
+			xmlTextValues << heavyDataPath << ":" << array.getHeavyDataController()->getDataSetPath();
 		}
 		else
 		{
