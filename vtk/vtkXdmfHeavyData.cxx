@@ -92,17 +92,17 @@ vtkDataObject* vtkXdmfHeavyData::ReadData()
   bool distribute_leaf_nodes = this->NumberOfPieces > 1;
   XdmfInt32 numChildren = this->Domain->GetNumberOfGrids();
   int number_of_leaf_nodes = 0;
-  
+
   vtkMultiBlockDataSet* mb = vtkMultiBlockDataSet::New();
   mb->SetNumberOfBlocks(numChildren);
 
   for (XdmfInt32 cc=0; cc < numChildren; cc++)
     {
-    XdmfGrid* xmfChild = this->Domain->GetGrid(cc); 
+    XdmfGrid* xmfChild = this->Domain->GetGrid(cc);
     mb->GetMetaData(cc)->Set(vtkCompositeDataSet::NAME(),
       xmfChild->GetName());
     bool child_is_leaf = (xmfChild->IsUniform() != 0);
-    if (!child_is_leaf || !distribute_leaf_nodes || 
+    if (!child_is_leaf || !distribute_leaf_nodes ||
       (number_of_leaf_nodes % this->NumberOfPieces) == this->Piece)
       {
       // it's possible that the data has way too many blocks, in which case the
@@ -135,7 +135,7 @@ vtkDataObject* vtkXdmfHeavyData::ReadData(XdmfGrid* xmfGrid)
     // sanity check-ensure that the xmfGrid is valid.
     return 0;
     }
-  
+
   XdmfInt32 gridType = (xmfGrid->GetGridType() & XDMF_GRID_MASK);
   if (gridType == XDMF_GRID_COLLECTION &&
     xmfGrid->GetCollectionType() == XDMF_GRID_COLLECTION_TEMPORAL)
@@ -177,7 +177,7 @@ vtkDataObject* vtkXdmfHeavyData::ReadComposite(XdmfGrid* xmfComposite)
     multiBlock->GetMetaData(cc)->Set(vtkCompositeDataSet::NAME(),
       xmfChild->GetName());
     bool child_is_leaf = (xmfChild->IsUniform() != 0);
-    if (!child_is_leaf || !distribute_leaf_nodes || 
+    if (!child_is_leaf || !distribute_leaf_nodes ||
       (number_of_leaf_nodes % this->NumberOfPieces) == this->Piece)
       {
       vtkDataObject* childDO = this->ReadData(xmfChild);
@@ -252,7 +252,7 @@ vtkDataObject* vtkXdmfHeavyData::ReadTemporalCollection(
       }
     return mb;
     }
-  
+
   return 0;
 }
 
@@ -273,7 +273,11 @@ vtkDataObject* vtkXdmfHeavyData::ReadUniformData(XdmfGrid* xmfGrid)
 
   // Read heavy data for grid geometry/topology. This does not read any
   // data-arrays. They are read explicitly.
-  xmfGrid->Update();
+  XdmfInt32 status = xmfGrid->Update();
+  if (status == XDMF_FAIL)
+    {
+    return 0;
+    }
 
   vtkDataObject* dataObject = 0;
 
@@ -402,9 +406,9 @@ int vtkXdmfHeavyData::GetVTKCellType(XdmfInt32 topologyType)
   case  XDMF_HEX_27 :
     return VTK_TRIQUADRATIC_HEXAHEDRON ;
   case XDMF_MIXED :
-    return VTK_NUMBER_OF_CELL_TYPES; 
+    return VTK_NUMBER_OF_CELL_TYPES;
     }
-  // XdmfErrorMessage("Unknown Topology Type = " 
+  // XdmfErrorMessage("Unknown Topology Type = "
   //  << xmfGrid->GetTopology()->GetTopologyType());
   return VTK_EMPTY_CELL;
 }
@@ -1014,7 +1018,7 @@ vtkDataArray* vtkXdmfHeavyData::ReadAttribute(XdmfAttribute* xmfAttribute,
   int attrCenter = xmfAttribute->GetAttributeCenter();
   int numComponents = 1;
 
-  switch (attrType) 
+  switch (attrType)
     {
   case XDMF_ATTRIBUTE_TYPE_TENSOR :
     numComponents = 9;
@@ -1026,7 +1030,7 @@ vtkDataArray* vtkXdmfHeavyData::ReadAttribute(XdmfAttribute* xmfAttribute,
     numComponents = 3;
     break;
   default :
-    numComponents = 1; 
+    numComponents = 1;
     break;
     }
 
@@ -1091,7 +1095,7 @@ vtkDataArray* vtkXdmfHeavyData::ReadAttribute(XdmfAttribute* xmfAttribute,
   vtkDataArray* dataArray = xmfConvertor->FromXdmfArray(
     xmfDataItem.GetArray()->GetTagName(), 1, data_rank, numComponents, 0);
   xmfConvertor->Delete();
-  
+
   if (attrType == XDMF_ATTRIBUTE_TYPE_TENSOR6)
     {
     // convert Tensor6 to Tensor.
@@ -1242,7 +1246,7 @@ vtkMultiBlockDataSet* vtkXdmfHeavyData::ReadSets(
       }
 
     // Okay now we have an enabled set. Create a new dataset for it
-    vtkDataSet* set = 0; 
+    vtkDataSet* set = 0;
 
     XdmfInt32 setType = xmfSet->GetSetType();
     switch (setType)
@@ -1280,7 +1284,7 @@ vtkDataSet* vtkXdmfHeavyData::ExtractPoints(XdmfSet* xmfSet,
 {
   // TODO: How to handle structured datasets with update_extents/strides etc.
   // Do they too always produce vtkUniformGrid or do we want to produce
-  // structured dataset 
+  // structured dataset
 
   // Read heavy data. We cannot do anything smart if update_extents or stride
   // is specified here. We have to read the entire set and then prune it.
@@ -1355,9 +1359,9 @@ vtkDataSet* vtkXdmfHeavyData::ExtractCells(XdmfSet* xmfSet,
 {
   // TODO: How to handle structured datasets with update_extents/strides etc.
   // Do they too always produce vtkUniformGrid or do we want to produce
-  // structured dataset 
+  // structured dataset
 
-  // Read heavy data. 
+  // Read heavy data.
   xmfSet->Update();
 
   XdmfArray* xmfIds = xmfSet->GetIds();
@@ -1466,7 +1470,7 @@ vtkDataSet* vtkXdmfHeavyData::ExtractFaces(XdmfSet* xmfSet, vtkDataSet* dataSet)
         "Invalid faceId " << faceId << " on cell " << cellId);
       continue;
       }
-    
+
     // Now insert this face a new cell in the output dataset.
     vtkIdType numPoints = face->GetNumberOfPoints();
     vtkPoints* facePoints = face->GetPoints();
@@ -1477,7 +1481,7 @@ vtkDataSet* vtkXdmfHeavyData::ExtractFaces(XdmfSet* xmfSet, vtkDataSet* dataSet)
         facePoints->GetPoint(kk), outputPts[kk]);
       }
     polys->InsertNextCell(numPoints, outputPts);
-    delete [] outputPts; 
+    delete [] outputPts;
     }
 
   ids->Delete();
@@ -1503,7 +1507,7 @@ vtkDataSet* vtkXdmfHeavyData::ExtractFaces(XdmfSet* xmfSet, vtkDataSet* dataSet)
       array->Delete();
       }
     }
- 
+
   return output;
 }
 
@@ -1566,7 +1570,7 @@ vtkDataSet* vtkXdmfHeavyData::ExtractEdges(XdmfSet* xmfSet, vtkDataSet* dataSet)
         << faceId << " on cell " << cellId);
       continue;
       }
-    
+
     // Now insert this edge as a new cell in the output dataset.
     vtkIdType numPoints = edge->GetNumberOfPoints();
     vtkPoints* edgePoints = edge->GetPoints();
@@ -1577,7 +1581,7 @@ vtkDataSet* vtkXdmfHeavyData::ExtractEdges(XdmfSet* xmfSet, vtkDataSet* dataSet)
         edgePoints->GetPoint(kk), outputPts[kk]);
       }
     lines->InsertNextCell(numPoints, outputPts);
-    delete [] outputPts; 
+    delete [] outputPts;
     }
 
   ids->Delete();
@@ -1603,6 +1607,6 @@ vtkDataSet* vtkXdmfHeavyData::ExtractEdges(XdmfSet* xmfSet, vtkDataSet* dataSet)
       array->Delete();
       }
     }
- 
+
   return output;
 }
