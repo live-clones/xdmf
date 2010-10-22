@@ -160,6 +160,7 @@ private:
 	void operator=(const XdmfWriter & coreWriter);  // Not implemented.
 
 	XdmfWriterImpl * mImpl;
+
 };
 
 #endif /* XDMFWRITER_HPP_ */

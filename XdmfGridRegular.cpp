@@ -186,7 +186,7 @@ public:
 	private:
 
 		XdmfTopologyTypeRegular(const XdmfGridRegular * const regularGrid) :
-			XdmfTopologyType(0, "foo", XdmfTopologyType::Structured),
+			XdmfTopologyType(0, "foo", XdmfTopologyType::Structured, 0x1102),
 			mRegularGrid(regularGrid)
 		{
 		}

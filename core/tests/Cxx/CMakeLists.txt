@@ -14,6 +14,10 @@ ADD_TEST_CXX(TestXdmfArray)
 ADD_TEST_CXX(TestXdmfArrayWriteRead)
 ADD_TEST_CXX(TestXdmfHDF5Controller)
 ADD_TEST_CXX(TestXdmfHDF5Writer)
+if(XDMF_BUILD_DSM)
+	ADD_TEST_CXX(TestXdmfHDF5WriterDSM)
+	ADD_TEST_CXX(TestXdmfHDF5WriterDSMServer)
+endif(XDMF_BUILD_DSM)
 ADD_TEST_CXX(TestXdmfInformation)
 
 # Add any cxx cleanup here:
@@ -27,4 +31,7 @@ CLEAN_TEST_CXX(TestXdmfArrayWriteRead
 CLEAN_TEST_CXX(TestXdmfHDF5Controller)
 CLEAN_TEST_CXX(TestXdmfHDF5Writer
 	hdf5WriterTest.h5)
+if(XDMF_BUILD_DSM)
+	CLEAN_TEST_CXX(TestXdmfHDF5WriterDSM)
+endif(XDMF_BUILD_DSM)
 CLEAN_TEST_CXX(TestXdmfInformation)

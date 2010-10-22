@@ -4,7 +4,15 @@
 #include "XdmfHeavyDataWriter.hpp"
 #include "XdmfSystemUtils.hpp"
 
+XdmfHeavyDataWriter::XdmfHeavyDataWriter() :
+	mDataSetId(0),
+	mFilePath(""),
+	mMode(Default)
+{
+}
+
 XdmfHeavyDataWriter::XdmfHeavyDataWriter(const std::string & filePath) :
+	mDataSetId(0),
 	mFilePath(XdmfSystemUtils::getRealPath(filePath)),
 	mMode(Default)
 {

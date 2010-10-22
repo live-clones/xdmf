@@ -91,6 +91,13 @@ public:
 	CellType getCellType() const;
 
 	/**
+	 * Get the id of this cell type, necessary in order to create grids containing mixed cells.
+	 *
+	 * @return the ID of the topology type.
+	 */
+	virtual unsigned int getID() const;
+
+	/**
 	 * Get the name of this topology type.
 	 *
 	 * @return the name of this topology type.
@@ -113,7 +120,7 @@ protected:
 	 * by Xdmf should be accessed through more specific static methods that construct XdmfTopologyType -
 	 * i.e. XdmfTopologyType::Tetrahedron()
 	 */
-	XdmfTopologyType(const unsigned int nodesPerElement, const std::string & name, const CellType cellType);
+	XdmfTopologyType(const unsigned int nodesPerElement, const std::string & name, const CellType cellType, const unsigned int id);
 
 private:
 
@@ -122,9 +129,11 @@ private:
 
 	static boost::shared_ptr<const XdmfTopologyType> New(const std::map<std::string, std::string> & itemProperties);
 
-	CellType mCellType;
-	std::string mName;
-	unsigned int mNodesPerElement;
+	const CellType mCellType;
+	const unsigned int mID;
+	const std::string mName;
+	const unsigned int mNodesPerElement;
+
 };
 
 #endif /* XDMFTOPOLOGYTYPE_HPP_ */

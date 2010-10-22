@@ -4,9 +4,9 @@
 #include "XdmfHeavyDataController.hpp"
 #include "XdmfSystemUtils.hpp"
 
-XdmfHeavyDataController::XdmfHeavyDataController(const std::string & heavyDataFilePath, const std::string & dataSetPath, const unsigned int size, const boost::shared_ptr<const XdmfArrayType> type) :
+XdmfHeavyDataController::XdmfHeavyDataController(const std::string & filePath, const std::string & dataSetPath, const unsigned int size, const boost::shared_ptr<const XdmfArrayType> type) :
 	mDataSetPath(dataSetPath),
-	mFilePath(XdmfSystemUtils::getRealPath(heavyDataFilePath)),
+	mFilePath(XdmfSystemUtils::getRealPath(filePath)),
 	mSize(size),
 	mType(type)
 {
