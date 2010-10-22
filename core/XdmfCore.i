@@ -9,6 +9,8 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 	#include <XdmfArrayType.hpp>
 	#include <XdmfCoreItemFactory.hpp>
 	#include <XdmfCoreReader.hpp>
+	#include <XdmfHeavyDataController.hpp>
+	#include <XdmfHeavyDataWriter.hpp>
 	#include <XdmfHDF5Controller.hpp>
 	#include <XdmfHDF5Writer.hpp>
 	#include <XdmfInformation.hpp>
@@ -20,99 +22,57 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %}
 
 #ifdef SWIGJAVA
-<<<<<<< HEAD
-=======
-    %extend XdmfArrayType {
-            bool equals(boost::shared_ptr<XdmfArrayType> arrayType) {
-                return(self == arrayType.get());
-            }
-    };
-    %ignore XdmfArrayType::operator==(const XdmfArrayType & arrayType) const;
-    %ignore XdmfArrayType::operator!=(const XdmfArrayType & arrayType) const;
-#endif
-
-
-#ifdef SWIGPYTHON
-%extend XdmfArrayType {
-  bool __eq__(boost::shared_ptr<XdmfArrayType> arrayType) {
-        return(self == arrayType.get());
-  }
-};
-#endif
-
-// Shared Pointer Templates
-%shared_ptr(XdmfArray)
-%shared_ptr(XdmfArrayType)
-%shared_ptr(XdmfBaseVisitor)
-%shared_ptr(XdmfCoreItemFactory)
-%shared_ptr(XdmfCoreReader)
-%shared_ptr(XdmfHDF5Controller)
-%shared_ptr(XdmfHDF5Writer)
-%shared_ptr(XdmfInformation)
-%shared_ptr(XdmfItem)
-%shared_ptr(XdmfItemProperty)
-%shared_ptr(XdmfVisitor)
-%shared_ptr(XdmfWriter)
-
-// Abstract Base Classes
-%template() Loki::BaseVisitable<void>;
-%template() Loki::Visitor<XdmfArray>;
-%template() Loki::Visitor<XdmfItem>;
->>>>>>> Cleanup: 1. XdmfArray -- took out getElementSize() 2. XdmfArrayType -- took out IsEqual() 3. Xdmf.i -- implement IsEqual() function here for Python and Java in XdmfArrayType and XdmfItem (see #2 and #5) 4. Xdmf.i -- getNumpyArray uses getElementSize on XdmfArrayType instead of on XdmfArray (see #1) 5. XdmfItem -- took out IsEqual() 6. XdmfWriter -- made setDocumentTitle() and setCersionString() protected functions 7. Java test TestXdmfEquals -- took out test of XdmfItem->IsEqual()
 
 // Ignore const overloaded methods
-%ignore XdmfArray::getHDF5Controller() const;
+%ignore XdmfArray::getHeavyDataController() const;
 %ignore XdmfArray::getValuesInternal() const;
 %ignore XdmfItem::getInformation(const unsigned int) const;
 %ignore XdmfItem::getInformation(const std::string &) const;
-%ignore XdmfWriter::getHDF5Writer() const;
+%ignore XdmfWriter::getHeavyDataWriter() const;
 
 // Ignore ItemTags
 %ignore XdmfArray::ItemTag;
 %ignore XdmfInformation::ItemTag;
 
-// Define equality operator
+// Define equality operators
 %extend XdmfItem {
-<<<<<<< HEAD
 
-	bool equals(boost::shared_ptr<XdmfItem> item)
+	bool equals(boost::shared_ptr<XdmfItem> item) 
 	{
+		if (item == NULL)
+		{
+			return false;
+		}
 		return self == item.get();
 	}
-
-	bool IsEqual(boost::shared_ptr<XdmfItem> item)
+	
+	bool IsEqual(boost::shared_ptr<XdmfItem> item) 
 	{
+		if (item == NULL)
+		{
+			return false;
+		}
 		return self == item.get();
 	}
-
-=======
-  bool __eq__(boost::shared_ptr<XdmfItem> item) {
-    if (item == NULL) return (false);
-    if (self == item.get()) return(true);
-    return(false);
-  }
-};
-#endif
-
-#ifdef SWIGJAVA
-%extend XdmfItem {
-  bool equals(boost::shared_ptr<XdmfItem> item) {
-    if (item == NULL) return (false);
-    if (self == item.get()) return(true);
-    return(false);
-  }
->>>>>>> Cleanup: 1. XdmfArray -- took out getElementSize() 2. XdmfArrayType -- took out IsEqual() 3. Xdmf.i -- implement IsEqual() function here for Python and Java in XdmfArrayType and XdmfItem (see #2 and #5) 4. Xdmf.i -- getNumpyArray uses getElementSize on XdmfArrayType instead of on XdmfArray (see #1) 5. XdmfItem -- took out IsEqual() 6. XdmfWriter -- made setDocumentTitle() and setCersionString() protected functions 7. Java test TestXdmfEquals -- took out test of XdmfItem->IsEqual()
 };
 
 %extend XdmfItemProperty {
 
 	bool equals(boost::shared_ptr<XdmfItemProperty> itemProperty)
 	{
+		if (itemProperty == NULL)
+		{
+			return false;
+		}
 		return self == itemProperty.get();
 	}
-
-	bool IsEqual(boost::shared_ptr<XdmfItemProperty> itemProperty)
+	
+	bool IsEqual(boost::shared_ptr<XdmfItemProperty> itemProperty) 
 	{
+		if (itemProperty == NULL)
+		{
+			return false;
+		}
 		return self == itemProperty.get();
 	}
 
@@ -139,58 +99,59 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
 // Provide accessors from python lists to XdmfArrays
 %extend XdmfArray {
-    PyObject * getBuffer ()
-    {
-            void *vp = $self->getValuesInternal();
-            Py_ssize_t sz = $self->getSize() * $self->getArrayType()->getElementSize();
-            PyObject * c = PyBuffer_FromMemory(vp, sz);
-            return(c);
-    }
-    
-    %pythoncode {
-            def getNumpyArray(self):
-                    h5ctl = self.getHDF5Controller()
-                    if h5ctl == None :
-                        try :
-                            from numpy import frombuffer as ___frombuffer
-                        except :
-                            return None
-                        buf = self.getBuffer()
-                        aType = self.getArrayType()
-                        if aType == XdmfArrayType.Int8() :
-                            return(___frombuffer(buf, 'int8'))
-                        if aType == XdmfArrayType.Int16() :
-                            return(___frombuffer(buf, 'int16'))
-                        if aType == XdmfArrayType.Int32() :
-                            return(___frombuffer(buf, 'int32'))
-                        if aType == XdmfArrayType.Int64() :
-                            return(___frombuffer(buf, 'int64'))
-                        if aType == XdmfArrayType.Float32() :
-                            return(___frombuffer(buf, 'float32'))
-                        if aType == XdmfArrayType.Float64() :
-                            return(___frombuffer(buf, 'float64'))
-                        if aType == XdmfArrayType.UInt8() :
-                            return(___frombuffer(buf, 'uint8'))
-                        if aType == XdmfArrayType.UInt16() :
-                            return(___frombuffer(buf, 'uint16'))
-                        if aType == XdmfArrayType.UInt32() :
-                            return(___frombuffer(buf, 'uint32'))
-                        return None
-                    else :
-                        h5FileName = h5ctl.getFilePath()
-                        h5DataSetName = h5ctl.getDataSetPath()
-                        if (h5FileName == None) | (h5DataSetName == None) :
-                            return None
-                        try :
-                            from h5py import File as ___File
-                            from numpy import array as ___array
-                            f = ___File(h5FileName, 'r')
-                            if h5DataSetName in f.keys() :
-                                return(___array(f[h5DataSetName]))
-                        except :
-                            pass
-                        return None
-    };
+	
+	PyObject * getBuffer ()
+	{
+		void *vp = $self->getValuesInternal();
+		Py_ssize_t sz = $self->getSize() * $self->getArrayType()->getElementSize();
+		PyObject * c = PyBuffer_FromMemory(vp, sz);
+		return(c);
+	}
+
+	%pythoncode {
+		def getNumpyArray(self):
+			h5ctl = self.getHDF5Controller()
+			if h5ctl == None :
+				try :
+					from numpy import frombuffer as ___frombuffer
+				except :
+					return None
+				buf = self.getBuffer()
+				aType = self.getArrayType()
+				if aType == XdmfArrayType.Int8() :
+					return(___frombuffer(buf, 'int8'))
+				if aType == XdmfArrayType.Int16() :
+					return(___frombuffer(buf, 'int16'))
+				if aType == XdmfArrayType.Int32() :
+					return(___frombuffer(buf, 'int32'))
+				if aType == XdmfArrayType.Int64() :
+					return(___frombuffer(buf, 'int64'))
+				if aType == XdmfArrayType.Float32() :
+					return(___frombuffer(buf, 'float32'))
+				if aType == XdmfArrayType.Float64() :
+					return(___frombuffer(buf, 'float64'))
+				if aType == XdmfArrayType.UInt8() :
+					return(___frombuffer(buf, 'uint8'))
+				if aType == XdmfArrayType.UInt16() :
+					return(___frombuffer(buf, 'uint16'))
+				if aType == XdmfArrayType.UInt32() :
+					return(___frombuffer(buf, 'uint32'))
+				return None
+			else :
+				h5FileName = h5ctl.getFilePath()
+				h5DataSetName = h5ctl.getDataSetPath()
+				if (h5FileName == None) | (h5DataSetName == None) :
+					return None
+				try :
+					from h5py import File as ___File
+					from numpy import array as ___array
+					f = ___File(h5FileName, 'r')
+					if h5DataSetName in f.keys() :
+						return(___array(f[h5DataSetName]))
+				except :
+					pass
+			return None
+	};
 
 
 	void copyValueAsInt8(int index, char value) {
@@ -303,6 +264,8 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %shared_ptr(XdmfCoreReader)
 %shared_ptr(XdmfHDF5Controller)
 %shared_ptr(XdmfHDF5Writer)
+%shared_ptr(XdmfHeavyDataController)
+%shared_ptr(XdmfHeavyDataWriter)
 %shared_ptr(XdmfInformation)
 %shared_ptr(XdmfItem)
 %shared_ptr(XdmfItemProperty)
@@ -317,6 +280,9 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %include XdmfItem.hpp
 %include XdmfItemProperty.hpp
 %include XdmfVisitor.hpp
+
+%include XdmfHeavyDataController.hpp
+%include XdmfHeavyDataWriter.hpp
 
 %include XdmfCoreItemFactory.hpp
 %include XdmfCoreReader.hpp

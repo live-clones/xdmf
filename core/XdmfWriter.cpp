@@ -135,6 +135,16 @@ bool XdmfWriter::getWriteXPaths() const
 	return mImpl->mWriteXPaths;
 }
 
+void XdmfWriter::setDocumentTitle(std::string title)
+{
+	mImpl->mDocumentTitle = title;
+}
+void
+XdmfWriter::setVersionString(std::string version)
+{
+	mImpl->mVersionString = version;
+}
+
 void XdmfWriter::setLightDataLimit(const unsigned int numValues)
 {
 	mImpl->mLightDataLimit = numValues;
@@ -219,7 +229,8 @@ void XdmfWriter::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisito
 
 void XdmfWriter::visit(XdmfItem & item, const boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
-	if (mImpl->mDepth == 0) {
+	if (mImpl->mDepth == 0)
+	{
 		 mImpl->openFile();
 	}
 	mImpl->mDepth++;
@@ -290,15 +301,4 @@ void XdmfWriter::visit(XdmfItem & item, const boost::shared_ptr<XdmfBaseVisitor>
 	{
 		mImpl->closeFile();
 	}
-}
-
-void
-XdmfWriter::setDocumentTitle(std::string title)
-{
-    mImpl->mDocumentTitle = title;
-}
-void
-XdmfWriter::setVersionString(std::string version)
-{
-    mImpl->mVersionString = version;
 }

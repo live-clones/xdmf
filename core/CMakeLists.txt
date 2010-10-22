@@ -8,6 +8,8 @@ SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 SET(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
 SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
+option(XDMF_BUILD_DSM OFF)
+
 find_package(Boost REQUIRED)
 if(Boost_FOUND)
 	include_directories(${Boost_INCLUDE_DIRS})
@@ -17,6 +19,21 @@ find_package(HDF5 REQUIRED)
 if(HDF5_FOUND)
 	include_directories(${HDF5_INCLUDE_DIR})	
 endif(HDF5_FOUND)
+
+if(XDMF_BUILD_DSM)
+	find_path(HDF5DSM_DIR include/H5FDdsm.h)
+	if(HDF5DSM_DIR AND EXISTS ${HDF5DSM_DIR}/include/H5FDdsm.h)
+	  include_directories(${HDF5DSM_DIR}/include)
+	  find_library(HDF5DSM_LIBRARIES H5FDdsm ${HDF5DSM_DIR}/lib)
+	else(HDF5DSM_DIR AND EXISTS ${HDF5DSM_DIR}/include/H5FDdsm.h)
+	  message(SEND_ERROR "Cannot find HDF5DSM!  Please set HDF5DSM_DIR and configure again.")
+	endif(HDF5DSM_DIR AND EXISTS ${HDF5DSM_DIR}/include/H5FDdsm.h)
+	
+	find_package(MPI REQUIRED)
+	if(MPI_FOUND)
+		include_directories(${MPI_INCLUDE_PATH})
+	endif(MPI_FOUND)
+endif(XDMF_BUILD_DSM)
 
 find_package(LibXml2 REQUIRED)
 if(LIBXML2_FOUND)
@@ -40,8 +57,12 @@ set(XdmfCoreSources
 	XdmfWriter
 )
 
+if(XDMF_BUILD_DSM)
+	set(XdmfCoreSources ${XdmfCoreSources} XdmfHDF5WriterDSM)
+endif(XDMF_BUILD_DSM)
+
 add_library(XdmfCore ${XdmfCoreSources})
-target_link_libraries(XdmfCore ${HDF5_LIBRARIES} ${LIBXML2_LIBRARIES})
+target_link_libraries(XdmfCore ${HDF5_LIBRARIES} ${HDF5DSM_LIBRARIES} ${LIBXML2_LIBRARIES})
 
 if(XDMF_WRAP_JAVA)
 	XDMF_SWIG_JAVA(XdmfCore)
