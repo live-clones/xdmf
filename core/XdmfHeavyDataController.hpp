@@ -69,7 +69,7 @@ public:
 
 protected:
 
-	XdmfHeavyDataController(const std::string & hdf5FilePath, const std::string & dataSetPath, const unsigned int size, const boost::shared_ptr<const XdmfArrayType> type);
+	XdmfHeavyDataController(const std::string & filePath, const std::string & dataSetPath, const unsigned int size, const boost::shared_ptr<const XdmfArrayType> type);
 
 	std::string mDataSetPath;
 	std::string mFilePath;

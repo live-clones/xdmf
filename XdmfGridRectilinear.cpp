@@ -187,7 +187,7 @@ public:
 	private:
 
 		XdmfTopologyTypeRectilinear(const XdmfGridRectilinear * const rectilinearGrid) :
-			XdmfTopologyType(0, "foo", XdmfTopologyType::Structured),
+			XdmfTopologyType(0, "foo", XdmfTopologyType::Structured, 0x1101),
 			mRectilinearGrid(rectilinearGrid)
 		{
 		}

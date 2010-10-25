@@ -67,8 +67,10 @@ public:
 
 protected:
 
+	XdmfHeavyDataWriter();
 	XdmfHeavyDataWriter(const std::string & filePath);
 
+	int mDataSetId;
 	std::string mFilePath;
 	Mode mMode;
 

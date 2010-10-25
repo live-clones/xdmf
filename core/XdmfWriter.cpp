@@ -19,6 +19,8 @@ class XdmfWriter::XdmfWriterImpl {
 public:
 
 	XdmfWriterImpl(const std::string & xmlFilePath, const boost::shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) :
+		mDepth(0),
+		mDocumentTitle("Xdmf"),
 		mHeavyDataWriter(heavyDataWriter),
 		mLastXPathed(false),
 		mLightDataLimit(100),
@@ -29,9 +31,7 @@ public:
 		mXMLFilePath(XdmfSystemUtils::getRealPath(xmlFilePath)),
 		mXPathCount(0),
 		mXPathString(""),
-		mDocumentTitle("Xdmf"),
-		mVersionString("2.0"),
-		mDepth(0)
+		mVersionString("2.0")
 	{
 	};
 
@@ -56,6 +56,8 @@ public:
 		xmlDocSetRootElement(mXMLDocument, mXMLCurrentNode);
 	}
 
+	int mDepth;
+	std::string mDocumentTitle;
 	boost::shared_ptr<XdmfHeavyDataWriter> mHeavyDataWriter;
 	bool mLastXPathed;
 	unsigned int mLightDataLimit;
@@ -67,9 +69,8 @@ public:
 	std::map<const XdmfItem * const, std::string> mXPath;
 	unsigned int mXPathCount;
 	std::string mXPathString;
-	std::string mDocumentTitle;
 	std::string mVersionString;
-	int mDepth;
+
 };
 
 boost::shared_ptr<XdmfWriter> XdmfWriter::New(const std::string & xmlFilePath)
