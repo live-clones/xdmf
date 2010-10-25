@@ -21,7 +21,7 @@ class XdmfHeavyDataController {
 
 public:
 
-	virtual ~XdmfHeavyDataController();
+	virtual ~XdmfHeavyDataController() = 0;
 
 	/**
 	 * Get the path of the data set within the heavy data file owned by this controller.

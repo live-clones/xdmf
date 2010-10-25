@@ -58,7 +58,10 @@ set(XdmfCoreSources
 )
 
 if(XDMF_BUILD_DSM)
-	set(XdmfCoreSources ${XdmfCoreSources} XdmfHDF5WriterDSM)
+	set(XdmfCoreSources 
+		${XdmfCoreSources}
+		XdmfHDF5ControllerDSM 
+		XdmfHDF5WriterDSM)
 endif(XDMF_BUILD_DSM)
 
 add_library(XdmfCore ${XdmfCoreSources})

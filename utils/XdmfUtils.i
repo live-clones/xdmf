@@ -12,6 +12,10 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
 	#include <XdmfCoreReader.hpp>
 	#include <XdmfHDF5Controller.hpp>
 	#include <XdmfHDF5Writer.hpp>
+#ifdef XDMF_BUILD_DSM
+	#include <XdmfHDF5ControllerDSM.hpp>
+	#include <XdmfHDF5WriterDSM.hpp>
+#endif
 	#include <XdmfHeavyDataController.hpp>
 	#include <XdmfHeavyDataWriter.hpp>
 	#include <XdmfInformation.hpp>
@@ -52,9 +56,13 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
 
 %import Xdmf.i
 
+#ifdef SWIGPYTHON
+
 %pythoncode {
 	from Xdmf import *
 }
+
+#endif /* SWIGPYTHON */
 
 // Shared Pointer Templates
 #ifdef XDMF_BUILD_EXODUS_IO

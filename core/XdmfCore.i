@@ -13,6 +13,10 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 	#include <XdmfHeavyDataWriter.hpp>
 	#include <XdmfHDF5Controller.hpp>
 	#include <XdmfHDF5Writer.hpp>
+#ifdef XDMF_BUILD_DSM
+	#include <XdmfHDF5ControllerDSM.hpp>
+	#include <XdmfHDF5WriterDSM.hpp>
+#endif
 	#include <XdmfInformation.hpp>
 	#include <XdmfItem.hpp>
 	#include <XdmfItemProperty.hpp>
@@ -264,6 +268,10 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %shared_ptr(XdmfCoreReader)
 %shared_ptr(XdmfHDF5Controller)
 %shared_ptr(XdmfHDF5Writer)
+#ifdef XDMF_BUILD_DSM
+	%shared_ptr(XdmfHDF5ControllerDSM)
+	%shared_ptr(XdmfHDF5WriterDSM)
+#endif
 %shared_ptr(XdmfHeavyDataController)
 %shared_ptr(XdmfHeavyDataWriter)
 %shared_ptr(XdmfInformation)
@@ -290,6 +298,11 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %include XdmfHDF5Controller.hpp
 %include XdmfHDF5Writer.hpp
 %include XdmfWriter.hpp
+
+#ifdef XDMF_BUILD_DSM
+	%include XdmfHDF5ControllerDSM.hpp
+	%include XdmfHDF5WriterDSM.hpp
+#endif
 
 %include XdmfArray.hpp
 %include XdmfArrayType.hpp

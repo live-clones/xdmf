@@ -23,7 +23,17 @@ XdmfHDF5Writer::~XdmfHDF5Writer()
 {
 }
 
-void XdmfHDF5Writer::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisitor>)
+boost::shared_ptr<XdmfHDF5Controller> XdmfHDF5Writer::createHDF5Controller(const std::string & hdf5FilePath, const std::string & dataSetPath, const unsigned int size, const boost::shared_ptr<const XdmfArrayType> type)
+{
+	return XdmfHDF5Controller::New(hdf5FilePath, dataSetPath, size, type);
+}
+
+void XdmfHDF5Writer::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisitor> visitor)
+{
+	this->write(array, H5P_DEFAULT);
+}
+
+void XdmfHDF5Writer::write(XdmfArray & array, const int fapl)
 {
 	hid_t datatype = -1;
 
@@ -100,11 +110,11 @@ void XdmfHDF5Writer::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVi
 
 		if(H5Fis_hdf5(hdf5FilePath.c_str()) > 0)
 		{
-			hdf5Handle = H5Fopen(hdf5FilePath.c_str(), H5F_ACC_RDWR, H5P_DEFAULT);
+			hdf5Handle = H5Fopen(hdf5FilePath.c_str(), H5F_ACC_RDWR, fapl);
 		}
 		else
 		{
-			hdf5Handle = H5Fcreate(hdf5FilePath.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+			hdf5Handle = H5Fcreate(hdf5FilePath.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, fapl);
 		}
 		hid_t dataset = H5Dopen(hdf5Handle, dataSetPath.str().c_str(), H5P_DEFAULT);
 
@@ -164,7 +174,7 @@ void XdmfHDF5Writer::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVi
 		// Attach a new controller to the array if needed.
 		if(mMode == Default || !array.getHeavyDataController())
 		{
-			boost::shared_ptr<XdmfHDF5Controller> newDataSetController = XdmfHDF5Controller::New(hdf5FilePath, dataSetPath.str(), array.getSize(), array.getArrayType());
+			boost::shared_ptr<XdmfHDF5Controller> newDataSetController = this->createHDF5Controller(hdf5FilePath, dataSetPath.str(), array.getSize(), array.getArrayType());
 			array.setHeavyDataController(newDataSetController);
 			mDataSetId++;
 		}

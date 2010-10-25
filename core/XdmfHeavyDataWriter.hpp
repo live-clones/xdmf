@@ -34,7 +34,7 @@ public:
 		Default, Overwrite, Append
 	};
 
-	virtual ~XdmfHeavyDataWriter();
+	virtual ~XdmfHeavyDataWriter() = 0;
 
 	/**
 	 * Get the path to the heavy data file on disk this writer is writing to.

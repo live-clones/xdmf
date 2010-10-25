@@ -16,7 +16,6 @@ ADD_TEST_CXX(TestXdmfHDF5Controller)
 ADD_TEST_CXX(TestXdmfHDF5Writer)
 if(XDMF_BUILD_DSM)
 	ADD_TEST_CXX(TestXdmfHDF5WriterDSM)
-	ADD_TEST_CXX(TestXdmfHDF5WriterDSMServer)
 endif(XDMF_BUILD_DSM)
 ADD_TEST_CXX(TestXdmfInformation)
 

@@ -1,6 +1,10 @@
 #ifndef XDMFHDF5WRITER_HPP_
 #define XDMFHDF5WRITER_HPP_
 
+// Forward Declarations
+class XdmfArrayType;
+class XdmfHDF5Controller;
+
 // Includes
 #include "XdmfHeavyDataWriter.hpp"
 
@@ -28,11 +32,31 @@ public:
 
 	virtual ~XdmfHDF5Writer();
 
-	void visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisitor> visitor);
+	virtual void visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisitor> visitor);
 
 protected:
 
 	XdmfHDF5Writer(const std::string & filePath);
+
+	/**
+	 * Create a new HDF5 Controller that is able to read in a dataset after being written by this writer.
+	 *
+	 * @param hdf5FilePath the location of the hdf5 file the data set resides in.
+	 * @param dataSetPath the location of the dataset within the hdf5 file.
+	 * @param size the size of the dataset to read.
+	 * @param type the data type of the dataset to read.
+	 *
+	 * @return new HDF5 Controller.
+	 */
+	virtual boost::shared_ptr<XdmfHDF5Controller> createHDF5Controller(const std::string & hdf5FilePath, const std::string & dataSetPath, const unsigned int size, const boost::shared_ptr<const XdmfArrayType> type);
+
+	/**
+	 * Write the XdmfArray to a hdf5 file.
+	 *
+	 * @param array an XdmfArray to write to hdf5.
+	 * @param fapl the file access property list for the hdf5 file on disk.
+	 */
+	void write(XdmfArray & array, const int fapl);
 
 private:
 

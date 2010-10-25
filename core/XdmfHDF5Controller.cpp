@@ -30,7 +30,12 @@ std::string XdmfHDF5Controller::getName() const
 
 void XdmfHDF5Controller::read(XdmfArray * const array)
 {
-	hid_t hdf5Handle = H5Fopen(mFilePath.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT);
+	this->read(array, H5P_DEFAULT);
+}
+
+void XdmfHDF5Controller::read(XdmfArray * const array, const int fapl)
+{
+	hid_t hdf5Handle = H5Fopen(mFilePath.c_str(), H5F_ACC_RDONLY, fapl);
 	hid_t dataset = H5Dopen(hdf5Handle, mDataSetPath.c_str(), H5P_DEFAULT);
 	hid_t dataspace = H5Dget_space(dataset);
 	hssize_t numVals = H5Sget_simple_extent_npoints(dataspace);

@@ -19,16 +19,24 @@ public:
 
 	/**
 	 * Create a new controller for an hdf5 data set on disk.
+	 *
+	 * @param hdf5FilePath the location of the hdf5 file the data set resides in.
+	 * @param dataSetPath the location of the dataset within the hdf5 file.
+	 * @param size the size of the dataset to read.
+	 * @param type the data type of the dataset to read.
+	 *
+	 * @return new HDF5 Controller.
 	 */
 	static boost::shared_ptr<XdmfHDF5Controller> New(const std::string & hdf5FilePath, const std::string & dataSetPath, const unsigned int size, const boost::shared_ptr<const XdmfArrayType> type);
 
-	std::string getName() const;
+	virtual std::string getName() const;
 
-	void read(XdmfArray * const array);
+	virtual void read(XdmfArray * const array);
 
 protected:
 
 	XdmfHDF5Controller(const std::string & hdf5FilePath, const std::string & dataSetPath, const unsigned int size, const boost::shared_ptr<const XdmfArrayType> type);
+	void read(XdmfArray * const array, const int fapl);
 
 private:
 
