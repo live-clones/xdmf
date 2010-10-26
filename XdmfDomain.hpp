@@ -2,8 +2,11 @@
 #define XDMFDOMAIN_HPP_
 
 // Forward Declarations
-class XdmfGrid;
 class XdmfGridCollection;
+class XdmfGridCurvilinear;
+class XdmfGridRectilinear;
+class XdmfGridRegular;
+class XdmfGridUnstructured;
 
 // Includes
 #include "XdmfItem.hpp"
@@ -27,8 +30,11 @@ public:
 	virtual ~XdmfDomain();
 
 	LOKI_DEFINE_VISITABLE(XdmfDomain, XdmfItem)
-	XDMF_CHILDREN(XdmfGrid, Grid, Name)
 	XDMF_CHILDREN(XdmfGridCollection, GridCollection, Name)
+	XDMF_CHILDREN(XdmfGridCurvilinear, GridCurvilinear, Name)
+	XDMF_CHILDREN(XdmfGridRectilinear, GridRectilinear, Name)
+	XDMF_CHILDREN(XdmfGridRegular, GridRegular, Name)
+	XDMF_CHILDREN(XdmfGridUnstructured, GridUnstructured, Name)
 	static const std::string ItemTag;
 
 	std::map<std::string, std::string> getItemProperties() const;

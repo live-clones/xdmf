@@ -2,7 +2,7 @@
 #define XDMFPARTITIONER_HPP_
 
 // Forward Declarations
-class XdmfGrid;
+class XdmfGridUnstructured;
 class XdmfGridCollection;
 class XdmfHDF5Writer;
 
@@ -42,17 +42,17 @@ public:
 	 * XdmfTopologyType::Hexahedron_27
 	 * XdmfTopologyType::Hexahedron_64
 	 *
-	 * The partitioner splits the XdmfGrid and all attached XdmfAttributes and XdmfSets into their proper partition.
+	 * The partitioner splits the XdmfGridUnstructured and all attached XdmfAttributes and XdmfSets into their proper partition.
 	 * An XdmfAttribute named "GlobalNodeId" is added to each partitioned grid to map partitioned node ids to their
 	 * original unpartitioned id.  All arrays attached to the passed gridToPartition are read from disk if not initialized.
 	 *
-	 * @param gridToPartition an XdmfGrid to partition.
+	 * @param gridToPartition an XdmfGridUnstructured to partition.
 	 * @param numberOfPartitions the number of pieces to partition the grid into.
 	 * @param heavyDataWriter an XdmfHDF5Writer to write the partitioned mesh to.  If no heavyDataWriter is specified, all partitioned data will remain in memory.
 	 *
 	 * @return a spatial collection containing partitioned grids.
 	 */
-	boost::shared_ptr<XdmfGridCollection> partition(const boost::shared_ptr<XdmfGrid> gridToPartition, const unsigned int numberOfPartitions,
+	boost::shared_ptr<XdmfGridCollection> partition(const boost::shared_ptr<XdmfGridUnstructured> gridToPartition, const unsigned int numberOfPartitions,
 			const boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter = boost::shared_ptr<XdmfHDF5Writer>()) const;
 
 protected:

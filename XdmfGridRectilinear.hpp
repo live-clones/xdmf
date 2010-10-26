@@ -1,6 +1,9 @@
 #ifndef XDMFGRIDRECTILINEAR_HPP_
 #define XDMFGRIDRECTILINEAR_HPP_
 
+// Forward Declarations
+class XdmfArray;
+
 // Includes
 #include "XdmfGrid.hpp"
 

@@ -261,8 +261,8 @@ XdmfGridRegular::XdmfGridRegular(const boost::shared_ptr<XdmfArray> brickSize, c
 	const boost::shared_ptr<XdmfArray> origin) :
 	mImpl(new XdmfGridRegularImpl(brickSize, numPoints, origin))
 {
-	this->setGeometry(XdmfGridRegularImpl::XdmfGeometryRegular::New(this));
-	this->setTopology(XdmfGridRegularImpl::XdmfTopologyRegular::New(this));
+	mGeometry = XdmfGridRegularImpl::XdmfGeometryRegular::New(this);
+	mTopology = XdmfGridRegularImpl::XdmfTopologyRegular::New(this);
 }
 
 XdmfGridRegular::~XdmfGridRegular()

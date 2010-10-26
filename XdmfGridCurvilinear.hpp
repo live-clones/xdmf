@@ -1,6 +1,9 @@
 #ifndef XDMFGRIDCURVILINEAR_HPP_
 #define XDMFGRIDCURVILINEAR_HPP_
 
+// Forward Declarations
+class XdmfArray;
+
 // Includes
 #include "XdmfGrid.hpp"
 
@@ -69,11 +72,25 @@ public:
 	boost::shared_ptr<const XdmfArray> getDimensions() const;
 
 	/**
+	 * Get the geometry associated with this grid.
+	 *
+	 * @return the geometry associated with this grid.
+	 */
+	boost::shared_ptr<XdmfGeometry> getGeometry();
+
+	/**
 	 * Set the dimensions of the grid, the number of points in each direction.
 	 *
 	 * @param dimensions the dimension of the grid.
 	 */
 	void setDimensions(const boost::shared_ptr<XdmfArray> dimensions);
+
+	/**
+	 * Set the geometry associated with this grid.
+	 *
+	 * @param geometry an XdmfGeometry to associate with this grid.
+	 */
+	void setGeometry(const boost::shared_ptr<XdmfGeometry> geometry);
 
 protected:
 

@@ -3,7 +3,7 @@
 #include "XdmfArrayType.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGeometryType.hpp"
-#include "XdmfGrid.hpp"
+#include "XdmfGridUnstructured.hpp"
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyConverter.hpp"
 #include "XdmfTopologyType.hpp"
@@ -16,7 +16,7 @@ int main(int, char *)
 	boost::shared_ptr<XdmfTopologyConverter> converter = XdmfTopologyConverter::New();
 
 	// Create Hexahedron Grid
-	boost::shared_ptr<XdmfGrid> hexGrid = XdmfGrid::New();
+	boost::shared_ptr<XdmfGridUnstructured> hexGrid = XdmfGridUnstructured::New();
 	double hexPoints[24] = {0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1};
 	hexGrid->getGeometry()->setType(XdmfGeometryType::XYZ());
 	hexGrid->getGeometry()->resize<double>(24, 0);
@@ -29,7 +29,7 @@ int main(int, char *)
 	/*
 	 * Hexahedron to Hexahedron_64
 	 */
-	boost::shared_ptr<XdmfGrid> hex64Grid = converter->convert(hexGrid, XdmfTopologyType::Hexahedron_64());
+	boost::shared_ptr<XdmfGridUnstructured> hex64Grid = converter->convert(hexGrid, XdmfTopologyType::Hexahedron_64());
 
 	assert(hex64Grid->getGeometry()->getType() == XdmfGeometryType::XYZ());
 	assert(hex64Grid->getGeometry()->getNumberPoints() == 64);
@@ -64,7 +64,7 @@ int main(int, char *)
 	/*
 	 * Hexahedron to Hexahedron_125
 	 */
-	boost::shared_ptr<XdmfGrid> hex125Grid = converter->convert(hexGrid, XdmfTopologyType::Hexahedron_125());
+	boost::shared_ptr<XdmfGridUnstructured> hex125Grid = converter->convert(hexGrid, XdmfTopologyType::Hexahedron_125());
 
 	assert(hex125Grid->getGeometry()->getType() == XdmfGeometryType::XYZ());
 	assert(hex125Grid->getGeometry()->getNumberPoints() == 125);
@@ -78,7 +78,7 @@ int main(int, char *)
 	/*
 	 * Hexahedron_64 to Hexahedron
 	 */
-	boost::shared_ptr<XdmfGrid> newHexGrid = converter->convert(hex64Grid, XdmfTopologyType::Hexahedron());
+	boost::shared_ptr<XdmfGridUnstructured> newHexGrid = converter->convert(hex64Grid, XdmfTopologyType::Hexahedron());
 	assert(newHexGrid->getGeometry()->getType() == XdmfGeometryType::XYZ());
 	assert(newHexGrid->getGeometry()->getNumberPoints() == 64);
 	for(unsigned int i=0; i<192; ++i)

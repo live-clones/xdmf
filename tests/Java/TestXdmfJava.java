@@ -11,7 +11,7 @@ public class TestXdmfJava {
         XdmfWriter writer = XdmfWriter.New("outputJavaTest.xmf");
         writer.setLightDataLimit((long)10);
         
-        XdmfGrid grid = XdmfGrid.New();
+        XdmfGridUnstructured grid = XdmfGridUnstructured.New();
         grid.setName("test");
         grid.getGeometry().setType(XdmfGeometryType.XYZ());
 

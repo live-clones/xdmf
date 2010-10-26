@@ -138,6 +138,7 @@ if(NOT XDMF_BUILD_CORE_ONLY)
 		XdmfGridCurvilinear
 		XdmfGridRectilinear
 		XdmfGridRegular
+		XdmfGridUnstructured
 		XdmfItemFactory
 		XdmfMap
 		XdmfReader

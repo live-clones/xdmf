@@ -4,7 +4,7 @@
 #include "XdmfArray.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGeometryType.hpp"
-#include "XdmfGrid.hpp"
+#include "XdmfGridUnstructured.hpp"
 #include "XdmfSet.hpp"
 #include "XdmfSetType.hpp"
 #include "XdmfTime.hpp"
@@ -25,9 +25,9 @@ public:
 	 * Time = 100
 	 * Total Number of Values = 69
 	 */
-	static boost::shared_ptr<XdmfGrid> createHexahedron()
+	static boost::shared_ptr<XdmfGridUnstructured> createHexahedron()
 	{
-		boost::shared_ptr<XdmfGrid> grid = XdmfGrid::New();
+		boost::shared_ptr<XdmfGridUnstructured> grid = XdmfGridUnstructured::New();
 		grid->setName("Hexahedron");
 
 		// Set Geometry

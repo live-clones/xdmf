@@ -143,7 +143,7 @@ boost::shared_ptr<XdmfGridCurvilinear> XdmfGridCurvilinear::New(const boost::sha
 XdmfGridCurvilinear::XdmfGridCurvilinear(const boost::shared_ptr<XdmfArray> numPoints) :
 	mImpl(new XdmfGridCurvilinearImpl(numPoints))
 {
-	this->setTopology(XdmfGridCurvilinearImpl::XdmfTopologyCurvilinear::New(this));
+	mTopology = XdmfGridCurvilinearImpl::XdmfTopologyCurvilinear::New(this);
 }
 
 XdmfGridCurvilinear::~XdmfGridCurvilinear()
@@ -163,6 +163,11 @@ boost::shared_ptr<const XdmfArray> XdmfGridCurvilinear::getDimensions() const
 	return mImpl->mDimensions;
 }
 
+boost::shared_ptr<XdmfGeometry> XdmfGridCurvilinear::getGeometry()
+{
+	return boost::const_pointer_cast<XdmfGeometry>(static_cast<const XdmfGrid &>(*this).getGeometry());
+}
+
 void XdmfGridCurvilinear::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader)
 {
 	XdmfGrid::populateItem(itemProperties, childItems, reader);
@@ -179,5 +184,10 @@ void XdmfGridCurvilinear::populateItem(const std::map<std::string, std::string> 
 void XdmfGridCurvilinear::setDimensions(const boost::shared_ptr<XdmfArray> dimensions)
 {
 	mImpl->mDimensions = dimensions;
+}
+
+void XdmfGridCurvilinear::setGeometry(const boost::shared_ptr<XdmfGeometry> geometry)
+{
+	mGeometry = geometry;
 }
 

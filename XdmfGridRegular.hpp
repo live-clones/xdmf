@@ -1,6 +1,9 @@
 #ifndef XDMFGRIDREGULAR_HPP_
 #define XDMFGRIDREGULAR_HPP_
 
+// Forward Declarations
+class XdmfArray;
+
 // Includes
 #include "XdmfGrid.hpp"
 

@@ -14,7 +14,7 @@ int main(int, char *)
 	writer->setLightDataLimit(10);
 	assert(writer->getLightDataLimit() == 10);
 
-	boost::shared_ptr<XdmfGrid> grid = XdmfTestDataGenerator::createHexahedron();
+	boost::shared_ptr<XdmfGridUnstructured> grid = XdmfTestDataGenerator::createHexahedron();
 
 	boost::shared_ptr<XdmfDomain> domain = XdmfDomain::New();
 	domain->insert(grid);

@@ -4,7 +4,7 @@
 #include "XdmfAttributeType.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGeometryType.hpp"
-#include "XdmfGrid.hpp"
+#include "XdmfGridUnstructured.hpp"
 #include "XdmfHDF5Writer.hpp"
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyConverter.hpp"
@@ -67,7 +67,7 @@ public:
 		}
 	};
 	
-	virtual boost::shared_ptr<XdmfGrid> convert(const boost::shared_ptr<XdmfGrid> gridToConvert, const boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter) const = 0;
+	virtual boost::shared_ptr<XdmfGridUnstructured> convert(const boost::shared_ptr<XdmfGridUnstructured> gridToConvert, const boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter) const = 0;
 
 	void insertPointWithoutCheck(const std::vector<double> & newPoint, const boost::shared_ptr<XdmfArray> & newConnectivity, const boost::shared_ptr<XdmfArray> & newPoints) const
 	{
@@ -102,9 +102,9 @@ public:
 	{
 	}
 	
-	boost::shared_ptr<XdmfGrid> convert(const boost::shared_ptr<XdmfGrid> gridToConvert, const boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter) const
+	boost::shared_ptr<XdmfGridUnstructured> convert(const boost::shared_ptr<XdmfGridUnstructured> gridToConvert, const boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter) const
 	{
-		boost::shared_ptr<XdmfGrid> toReturn = XdmfGrid::New();
+		boost::shared_ptr<XdmfGridUnstructured> toReturn = XdmfGridUnstructured::New();
 		toReturn->setName(gridToConvert->getName());
 		toReturn->setGeometry(gridToConvert->getGeometry());
 
@@ -232,9 +232,9 @@ public:
 		rightPoint[2] = (1.0/3.0)*(2*point2[2] + point1[2]);
 	}
 
-	boost::shared_ptr<XdmfGrid> convert(const boost::shared_ptr<XdmfGrid> gridToConvert, const boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter) const
+	boost::shared_ptr<XdmfGridUnstructured> convert(const boost::shared_ptr<XdmfGridUnstructured> gridToConvert, const boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter) const
 	{
-		boost::shared_ptr<XdmfGrid> toReturn = XdmfGrid::New();
+		boost::shared_ptr<XdmfGridUnstructured> toReturn = XdmfGridUnstructured::New();
 		toReturn->setName(gridToConvert->getName());
 
 		boost::shared_ptr<XdmfGeometry> toReturnGeometry = toReturn->getGeometry();
@@ -558,9 +558,9 @@ public:
 		threeQuarterPoint[2] = (1.0/4.0)*(3.0*point2[2] + point1[2]);
 	}
 
-	boost::shared_ptr<XdmfGrid> convert(const boost::shared_ptr<XdmfGrid> gridToConvert, const boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter) const
+	boost::shared_ptr<XdmfGridUnstructured> convert(const boost::shared_ptr<XdmfGridUnstructured> gridToConvert, const boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter) const
 	{
-		boost::shared_ptr<XdmfGrid> toReturn = XdmfGrid::New();
+		boost::shared_ptr<XdmfGridUnstructured> toReturn = XdmfGridUnstructured::New();
 		toReturn->setName(gridToConvert->getName());
 
 		boost::shared_ptr<XdmfGeometry> toReturnGeometry = toReturn->getGeometry();
@@ -1804,7 +1804,7 @@ XdmfTopologyConverter::~XdmfTopologyConverter()
 {
 }
 
-boost::shared_ptr<XdmfGrid> XdmfTopologyConverter::convert(const boost::shared_ptr<XdmfGrid> gridToConvert, const boost::shared_ptr<const XdmfTopologyType> topologyType,
+boost::shared_ptr<XdmfGridUnstructured> XdmfTopologyConverter::convert(const boost::shared_ptr<XdmfGridUnstructured> gridToConvert, const boost::shared_ptr<const XdmfTopologyType> topologyType,
 	const boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter) const
 {
 	// Make sure geometry and topology are non null
@@ -1858,7 +1858,7 @@ boost::shared_ptr<XdmfGrid> XdmfTopologyConverter::convert(const boost::shared_p
 	}
 	if(converter)
 	{
-		boost::shared_ptr<XdmfGrid> toReturn = converter->convert(gridToConvert, heavyDataWriter);
+		boost::shared_ptr<XdmfGridUnstructured> toReturn = converter->convert(gridToConvert, heavyDataWriter);
 		delete converter;
 		return toReturn;
 	}

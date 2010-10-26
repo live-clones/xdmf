@@ -2,7 +2,7 @@
 #define XDMFTOPOLOGYCONVERTER_HPP_
 
 // Forward Declarations
-class XdmfGrid;
+class XdmfGridUnstructured;
 class XdmfHDF5Writer;
 class XdmfTopologyType;
 
@@ -10,7 +10,7 @@ class XdmfTopologyType;
 #include <boost/shared_ptr.hpp>
 
 /*!
- * @brief XdmfTopologyConverter converts an XdmfGrid to different topology types.  XdmfAttributes and XdmfSets attached to the XdmfGrid
+ * @brief XdmfTopologyConverter converts an XdmfGridUnstructured to different topology types.  XdmfAttributes and XdmfSets attached to the XdmfGrid
  * are adjusted to remain valid for the new topology type.
  *
  * When converting from a lower order topology to a higher order topology type (e.g. Hexahedron to Hexahedron_64) additional points are added to the mesh, no additional elements are added.
@@ -38,15 +38,15 @@ public:
 	virtual ~XdmfTopologyConverter();
 
 	/**
-	 * Converts an XdmfGrid to a different topology type
+	 * Converts an XdmfGridUnstructured to a different topology type
 	 *
-	 * @param gridToConvert the XdmfGrid to convert to a different topology
+	 * @param gridToConvert the XdmfGridUnstructured to convert to a different topology
 	 * @param topologyType the XdmfTopologyType to convert to.
 	 * @param heavyDataWriter an XdmfHDF5Writer to write the converted mesh to.  If no heavyDataWriter is specified, all mesh data will remain in memory.
 	 *
-	 * @return the converted XdmfGrid.
+	 * @return the converted XdmfGridUnstructured.
 	 */
-	boost::shared_ptr<XdmfGrid> convert(const boost::shared_ptr<XdmfGrid> gridToConvert, const boost::shared_ptr<const XdmfTopologyType> topologyType,
+	boost::shared_ptr<XdmfGridUnstructured> convert(const boost::shared_ptr<XdmfGridUnstructured> gridToConvert, const boost::shared_ptr<const XdmfTopologyType> topologyType,
 			const boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter = boost::shared_ptr<XdmfHDF5Writer>()) const;
 
 protected:

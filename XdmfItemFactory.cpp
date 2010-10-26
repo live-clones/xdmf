@@ -3,11 +3,11 @@
 #include "XdmfDomain.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGeometryType.hpp"
-#include "XdmfGrid.hpp"
 #include "XdmfGridCollection.hpp"
 #include "XdmfGridCurvilinear.hpp"
 #include "XdmfGridRectilinear.hpp"
 #include "XdmfGridRegular.hpp"
+#include "XdmfGridUnstructured.hpp"
 #include "XdmfInformation.hpp"
 #include "XdmfItemFactory.hpp"
 #include "XdmfMap.hpp"
@@ -124,7 +124,7 @@ boost::shared_ptr<XdmfItem> XdmfItemFactory::createItem(const std::string & item
 					return XdmfGridRectilinear::New(coordinateValues);
 				}
 			}
-			return XdmfGrid::New();
+			return XdmfGridUnstructured::New();
 		}
 	}
 	else if(itemTag.compare(XdmfInformation::ItemTag) == 0)

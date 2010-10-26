@@ -20,15 +20,15 @@ int main(int, char *)
 	gridCollection->setName("Collection2");
 	assert(gridCollection->getName().compare("Collection2") == 0);
 
-	boost::shared_ptr<XdmfGrid> childGrid1 = XdmfTestDataGenerator::createHexahedron();
-	boost::shared_ptr<XdmfGrid> childGrid2 = XdmfTestDataGenerator::createHexahedron();
+	boost::shared_ptr<XdmfGridUnstructured> childGrid1 = XdmfTestDataGenerator::createHexahedron();
+	boost::shared_ptr<XdmfGridUnstructured> childGrid2 = XdmfTestDataGenerator::createHexahedron();
 
-	assert(gridCollection->getNumberGrids() == 0);
+	assert(gridCollection->getNumberGridUnstructureds() == 0);
 	gridCollection->insert(childGrid1);
-	assert(gridCollection->getNumberGrids() == 1);
-	assert(gridCollection->getGrid(0) == childGrid1);
-	gridCollection->removeGrid(0);
-	assert(gridCollection->getNumberGrids() == 0);
+	assert(gridCollection->getNumberGridUnstructureds() == 1);
+	assert(gridCollection->getGridUnstructured(0) == childGrid1);
+	gridCollection->removeGridUnstructured(0);
+	assert(gridCollection->getNumberGridUnstructureds() == 0);
 	gridCollection->insert(childGrid1);
 	gridCollection->insert(childGrid2);
 

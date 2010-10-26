@@ -2,7 +2,7 @@
 #define XDMFEXODUSWRITER_HPP_
 
 // Forward Declarations
-class XdmfGrid;
+class XdmfGridUnstructured;
 class XdmfTopologyType;
 
 // Includes
@@ -26,12 +26,12 @@ public:
 	virtual ~XdmfExodusWriter();
 
     /*!
-     * Write an XdmfGrid to an ExodusII file.
+     * Write an XdmfGridUnstructured to an ExodusII file.
      *
      * @param filePath of the ExodusII file to write.
      * @param gridToWrite an XdmfGrid to write to ExodusII file format.
      */
-    void write(const std::string & filePath, const boost::shared_ptr<XdmfGrid> gridToWrite) const;
+    void write(const std::string & filePath, const boost::shared_ptr<XdmfGridUnstructured> gridToWrite) const;
 
 protected:
 

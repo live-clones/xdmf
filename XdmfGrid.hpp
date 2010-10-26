@@ -24,14 +24,7 @@ class XdmfGrid : public virtual XdmfItem {
 
 public:
 
-	/**
-	 * Create a new XdmfGrid.
-	 *
-	 * @return constructed XdmfGrid.
-	 */
-	static boost::shared_ptr<XdmfGrid> New();
-
-	virtual ~XdmfGrid();
+	virtual ~XdmfGrid() = 0;
 
 	LOKI_DEFINE_VISITABLE(XdmfGrid, XdmfItem)
 	XDMF_CHILDREN(XdmfAttribute, Attribute, Name)
@@ -40,13 +33,6 @@ public:
 
 	/**
 	 * Get the geometry associated with this grid.
-	 *
-	 * @return the geometry associated with this grid.
-	 */
-	boost::shared_ptr<XdmfGeometry> getGeometry();
-
-	/**
-	 * Get the geometry associated with this grid (const version).
 	 *
 	 * @return the geometry associated with this grid.
 	 */
@@ -96,23 +82,9 @@ public:
 	 *
 	 * @return the topology associated with this grid.
 	 */
-	boost::shared_ptr<XdmfTopology> getTopology();
-
-	/**
-	 * Get the topology associated with this grid (const version).
-	 *
-	 * @return the topology associated with this grid.
-	 */
 	boost::shared_ptr<const XdmfTopology> getTopology() const;
 
 	using XdmfItem::insert;
-
-	/**
-	 * Set the geometry associated with this grid.
-	 *
-	 * @param geometry an XdmfGeometry to associate with this grid.
-	 */
-	void setGeometry(const boost::shared_ptr<XdmfGeometry> geometry);
 
 	/**
 	 * Set the boundary communicator map associated with this grid.
@@ -135,13 +107,6 @@ public:
 	 */
 	void setTime(const boost::shared_ptr<XdmfTime> time);
 
-	/**
-	 * Set the topology associated with this grid.
-	 *
-	 * @param topology an XdmfTopology to associate with this grid.
-	 */
-	void setTopology(const boost::shared_ptr<XdmfTopology> topology);
-
 	virtual void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor);
 
 protected:
@@ -149,16 +114,17 @@ protected:
 	XdmfGrid(const std::string & name = "Grid");
 	virtual void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader);
 
+	boost::shared_ptr<XdmfGeometry> mGeometry;
+	boost::shared_ptr<XdmfTopology> mTopology;
+
 private:
 
 	XdmfGrid(const XdmfGrid & grid);  // Not implemented.
 	void operator=(const XdmfGrid & grid);  // Not implemented.
 
-	boost::shared_ptr<XdmfGeometry> mGeometry;
 	boost::shared_ptr<XdmfMap> mMap;
 	std::string mName;
 	boost::shared_ptr<XdmfTime> mTime;
-	boost::shared_ptr<XdmfTopology> mTopology;
 
 };
 
