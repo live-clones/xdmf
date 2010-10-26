@@ -26,30 +26,6 @@ boost::shared_ptr<const XdmfGeometryType> XdmfGeometryType::XY()
 	return p;
 }
 
-boost::shared_ptr<const XdmfGeometryType> XdmfGeometryType::X_Y_Z()
-{
-	static boost::shared_ptr<const XdmfGeometryType> p(new XdmfGeometryType("X_Y_Z", 3));
-	return p;
-}
-
-boost::shared_ptr<const XdmfGeometryType> XdmfGeometryType::X_Y()
-{
-	static boost::shared_ptr<const XdmfGeometryType> p(new XdmfGeometryType("X_Y", 2));
-	return p;
-}
-
-boost::shared_ptr<const XdmfGeometryType> XdmfGeometryType::VXVYVZ()
-{
-	static boost::shared_ptr<const XdmfGeometryType> p(new XdmfGeometryType("VXVYVZ", 3));
-	return p;
-}
-
-boost::shared_ptr<const XdmfGeometryType> XdmfGeometryType::VXVY()
-{
-	static boost::shared_ptr<const XdmfGeometryType> p(new XdmfGeometryType("VXVY", 2));
-	return p;
-}
-
 XdmfGeometryType::XdmfGeometryType(const std::string& name, const int& dimensions) :
 	mDimensions(dimensions),
 	mName(name)
@@ -82,22 +58,6 @@ boost::shared_ptr<const XdmfGeometryType> XdmfGeometryType::New(const std::map<s
 		else if(typeVal.compare("XY") == 0)
 		{
 			return XY();
-		}
-		else if(typeVal.compare("X_Y_Z") == 0)
-		{
-			return X_Y_Z();
-		}
-		else if(typeVal.compare("X_Y") == 0)
-		{
-			return X_Y();
-		}
-		else if(typeVal.compare("VXVYVZ") == 0)
-		{
-			return VXVYVZ();
-		}
-		else if(typeVal.compare("VXVY") == 0)
-		{
-			return VXVY();
 		}
 		else
 		{

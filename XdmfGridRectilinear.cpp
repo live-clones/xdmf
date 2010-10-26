@@ -235,10 +235,9 @@ boost::shared_ptr<XdmfGridRectilinear> XdmfGridRectilinear::New(const std::vecto
 }
 
 XdmfGridRectilinear::XdmfGridRectilinear(const std::vector<boost::shared_ptr<XdmfArray> > & axesCoordinates) :
+	XdmfGrid(XdmfGridRectilinearImpl::XdmfGeometryRectilinear::New(this), XdmfGridRectilinearImpl::XdmfTopologyRectilinear::New(this)),
 	mImpl(new XdmfGridRectilinearImpl(axesCoordinates))
 {
-	mGeometry = XdmfGridRectilinearImpl::XdmfGeometryRectilinear::New(this);
-	mTopology = XdmfGridRectilinearImpl::XdmfTopologyRectilinear::New(this);
 }
 
 XdmfGridRectilinear::~XdmfGridRectilinear()

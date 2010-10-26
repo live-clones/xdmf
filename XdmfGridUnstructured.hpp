@@ -5,12 +5,11 @@
 #include "XdmfGrid.hpp"
 
 /**
- * @brief A mesh containing elements, points, and fields attached to the mesh.
+ * @brief An unstructured grid consisting of elements, points, and fields attached to the mesh.
  *
- * XdmfGrid represents a mesh.  It is required to contain two other Xdmf data structures, an XdmfGeometry
- * that stores point locations and an XdmfTopology that store connectivity information.  XdmfAttributes can be inserted
- * into the XdmfGrid to specify fields centered on various parts of the mesh.  XdmfSets can be inserted into XdmfGrids
- * to specify collections of mesh elements.
+ * After creating an unstructured grid, the XdmfGeometry and XdmfTopology must be set.  The XdmfTopology
+ * describes the element types contained in the grid and their connectivity.  The XdmfGeometry describes the
+ * location of nodes.
  */
 class XdmfGridUnstructured : public XdmfGrid {
 

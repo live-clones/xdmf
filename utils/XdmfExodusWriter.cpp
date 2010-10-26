@@ -146,25 +146,13 @@ void XdmfExodusWriter::write(const std::string & filePath, const boost::shared_p
 	double * y = new double[num_nodes];
 	double * z = new double[num_nodes];
 	// Write nodal coordinate values to exodus
-	if(currGrid->getGeometry()->getType() == XdmfGeometryType::XYZ() || currGrid->getGeometry()->getType() == XdmfGeometryType::XY())
+	currGrid->getGeometry()->getValues(0, x, num_nodes, 3);
+	currGrid->getGeometry()->getValues(1, y, num_nodes, 3);
+	if(currGrid->getGeometry()->getType() == XdmfGeometryType::XYZ())
 	{
-		currGrid->getGeometry()->getValues(0, x, num_nodes, 3);
-		currGrid->getGeometry()->getValues(1, y, num_nodes, 3);
-		if(currGrid->getGeometry()->getType() == XdmfGeometryType::XYZ())
-		{
-			currGrid->getGeometry()->getValues(2, z, num_nodes, 3);
-		}
-		ex_put_coord(exodusHandle, x ,y ,z);
+		currGrid->getGeometry()->getValues(2, z, num_nodes, 3);
 	}
-	else if(currGrid->getGeometry()->getType() == XdmfGeometryType::X_Y_Z() || currGrid->getGeometry()->getType() == XdmfGeometryType::X_Y())
-	{
-		currGrid->getGeometry()->getValues(0, x, num_nodes);
-		currGrid->getGeometry()->getValues(num_nodes, y, num_nodes);
-		if(currGrid->getGeometry()->getType() == XdmfGeometryType::X_Y_Z())
-		{
-			currGrid->getGeometry()->getValues(num_nodes * 2, z, num_nodes);
-		}
-	}
+	ex_put_coord(exodusHandle, x ,y ,z);
 	delete [] x;
 	delete [] y;
 	delete [] z;

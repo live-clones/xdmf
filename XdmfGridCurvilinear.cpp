@@ -7,6 +7,7 @@
 
 #include <cmath>
 #include "XdmfArray.hpp"
+#include "XdmfGeometry.hpp"
 #include "XdmfGridCurvilinear.hpp"
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
@@ -141,9 +142,9 @@ boost::shared_ptr<XdmfGridCurvilinear> XdmfGridCurvilinear::New(const boost::sha
 }
 
 XdmfGridCurvilinear::XdmfGridCurvilinear(const boost::shared_ptr<XdmfArray> numPoints) :
+	XdmfGrid(XdmfGeometry::New(), XdmfGridCurvilinearImpl::XdmfTopologyCurvilinear::New(this)),
 	mImpl(new XdmfGridCurvilinearImpl(numPoints))
 {
-	mTopology = XdmfGridCurvilinearImpl::XdmfTopologyCurvilinear::New(this);
 }
 
 XdmfGridCurvilinear::~XdmfGridCurvilinear()

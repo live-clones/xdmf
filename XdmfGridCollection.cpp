@@ -5,6 +5,8 @@
  *      Author: kleiter
  */
 
+#include "XdmfGeometry.hpp"
+#include "XdmfTopology.hpp"
 #include "XdmfGridCollection.hpp"
 #include "XdmfGridCollectionType.hpp"
 
@@ -16,7 +18,7 @@ boost::shared_ptr<XdmfGridCollection> XdmfGridCollection::New()
 
 XdmfGridCollection::XdmfGridCollection() :
 	XdmfDomain(),
-	XdmfGrid("Collection"),
+	XdmfGrid(XdmfGeometry::New(), XdmfTopology::New(), "Collection"),
 	mType(XdmfGridCollectionType::NoCollectionType())
 {
 }

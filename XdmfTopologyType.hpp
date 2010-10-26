@@ -36,12 +36,6 @@
  * 	Hexahedron_125 - 125 Node Tri-Quartic Hexahedron
  * 	Hexahedron_125_GLL - 125 Node Spectral Tri-Quartic Hexahedron with Gauss-Lobatto-Legendre points.
  * 	Mixed - Mixture of Unstructured Topologies
- * 	TwoDSMesh
- * 	TwoDRectMesh
- * 	TwoDCoRectMesh
- * 	ThreeDSMesh
- * 	ThreeDRectMesh
- * 	ThreeDCoRectMesh
  */
 class XdmfTopologyType : public XdmfItemProperty {
 

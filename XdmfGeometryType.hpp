@@ -15,12 +15,6 @@
  * 	NoGeometryType
  * 	XYZ
  * 	XY
- * 	X_Y_Z
- * 	X_Y
- * 	VXVYVZ
- * 	Origin_DXDYDZ
- * 	VXVY
- * 	Origin_DXDY
  */
 class XdmfGeometryType : public XdmfItemProperty {
 
@@ -34,10 +28,6 @@ public:
 	static boost::shared_ptr<const XdmfGeometryType> NoGeometryType();
 	static boost::shared_ptr<const XdmfGeometryType> XYZ();
 	static boost::shared_ptr<const XdmfGeometryType> XY();
-	static boost::shared_ptr<const XdmfGeometryType> X_Y_Z();
-	static boost::shared_ptr<const XdmfGeometryType> X_Y();
-	static boost::shared_ptr<const XdmfGeometryType> VXVYVZ();
-	static boost::shared_ptr<const XdmfGeometryType> VXVY();
 
 	/**
 	 * Get the dimensions of this geometry type - i.e. XYZ = 3.

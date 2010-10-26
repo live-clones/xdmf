@@ -5,7 +5,9 @@
  *      Author: kleiter
  */
 
+#include "XdmfGeometry.hpp"
 #include "XdmfGridUnstructured.hpp"
+#include "XdmfTopology.hpp"
 
 boost::shared_ptr<XdmfGridUnstructured> XdmfGridUnstructured::New()
 {
@@ -14,7 +16,7 @@ boost::shared_ptr<XdmfGridUnstructured> XdmfGridUnstructured::New()
 }
 
 XdmfGridUnstructured::XdmfGridUnstructured() :
-	XdmfGrid()
+	XdmfGrid(XdmfGeometry::New(), XdmfTopology::New())
 {
 }
 

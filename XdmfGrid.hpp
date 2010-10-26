@@ -19,6 +19,8 @@ class XdmfTopology;
  * that stores point locations and an XdmfTopology that store connectivity information.  XdmfAttributes can be inserted
  * into the XdmfGrid to specify fields centered on various parts of the mesh.  XdmfSets can be inserted into XdmfGrids
  * to specify collections of mesh elements.
+ *
+ * XdmfGrid is an abstract base class.  There are several implementations for representing both structured and unstructured grids.
  */
 class XdmfGrid : public virtual XdmfItem {
 
@@ -111,7 +113,8 @@ public:
 
 protected:
 
-	XdmfGrid(const std::string & name = "Grid");
+	XdmfGrid(const boost::shared_ptr<XdmfGeometry> geometry, const boost::shared_ptr<XdmfTopology> topology, const std::string & name = "Grid");
+
 	virtual void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader);
 
 	boost::shared_ptr<XdmfGeometry> mGeometry;

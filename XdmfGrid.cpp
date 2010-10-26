@@ -16,9 +16,9 @@
 XDMF_CHILDREN_IMPLEMENTATION(XdmfGrid, XdmfAttribute, Attribute, Name)
 XDMF_CHILDREN_IMPLEMENTATION(XdmfGrid, XdmfSet, Set, Name)
 
-XdmfGrid::XdmfGrid(const std::string & name) :
-	mGeometry(XdmfGeometry::New()),
-	mTopology(XdmfTopology::New()),
+XdmfGrid::XdmfGrid(const boost::shared_ptr<XdmfGeometry> geometry, const boost::shared_ptr<XdmfTopology> topology, const std::string & name) :
+	mGeometry(geometry),
+	mTopology(topology),
 	mMap(boost::shared_ptr<XdmfMap>()),
 	mName(name),
 	mTime(boost::shared_ptr<XdmfTime>())
