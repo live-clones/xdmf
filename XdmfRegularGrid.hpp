@@ -1,5 +1,5 @@
-#ifndef XDMFGRIDREGULAR_HPP_
-#define XDMFGRIDREGULAR_HPP_
+#ifndef XDMFREGULARGRID_HPP_
+#define XDMFREGULARGRID_HPP_
 
 // Forward Declarations
 class XdmfArray;
@@ -10,14 +10,14 @@ class XdmfArray;
 /**
  * @brief A regular grid consisting of congruent points arranged regularly in space.
  *
- * XdmfGridRegular represents a regular mesh of congruent points arranged in space.
+ * XdmfRegularGrid represents a regular mesh of congruent points arranged in space.
  * In order to define a regular grid, three sets of terms need to be supplied:
  *
  * Brick Size (Dx, Dy, (Dz)) - Size of an individual brick.
  * Dimensions (X, Y, (Z)) - Number of points in X, Y, and Z directions
  * Origin Location (X, Y, (Z)) - Location of the origin of the mesh in space.
  */
-class XdmfGridRegular : public XdmfGrid {
+class XdmfRegularGrid : public XdmfGrid {
 
 public:
 
@@ -33,7 +33,7 @@ public:
 	 *
 	 * @return constructed structured grid.
 	 */
-	static boost::shared_ptr<XdmfGridRegular> New(const double xBrickSize, const double yBrickSize, const unsigned int xNumPoints,
+	static boost::shared_ptr<XdmfRegularGrid> New(const double xBrickSize, const double yBrickSize, const unsigned int xNumPoints,
 		const unsigned int yNumPoints, const double xOrigin, const double yOrigin);
 
 	/**
@@ -51,7 +51,7 @@ public:
 	 *
 	 * @return constructed structured grid.
 	 */
-	static boost::shared_ptr<XdmfGridRegular> New(const double xBrickSize, const double yBrickSize, const double zBrickSize,
+	static boost::shared_ptr<XdmfRegularGrid> New(const double xBrickSize, const double yBrickSize, const double zBrickSize,
 		const unsigned int xNumPoints, const unsigned int yNumPoints, const unsigned int zNumPoints,
 		const double xOrigin, const double yOrigin, const double zOrigin);
 
@@ -64,12 +64,12 @@ public:
 	 *
 	 * @return constructed structured grid.
 	 */
-	static boost::shared_ptr<XdmfGridRegular> New(const boost::shared_ptr<XdmfArray> brickSize, const boost::shared_ptr<XdmfArray> numPoints,
+	static boost::shared_ptr<XdmfRegularGrid> New(const boost::shared_ptr<XdmfArray> brickSize, const boost::shared_ptr<XdmfArray> numPoints,
 		const boost::shared_ptr<XdmfArray> origin);
 
-	virtual ~XdmfGridRegular();
+	virtual ~XdmfRegularGrid();
 
-	LOKI_DEFINE_VISITABLE(XdmfGridRegular, XdmfGrid)
+	LOKI_DEFINE_VISITABLE(XdmfRegularGrid, XdmfGrid)
 	static const std::string ItemTag;
 
 	/**
@@ -139,7 +139,7 @@ public:
 
 protected:
 
-	XdmfGridRegular(const boost::shared_ptr<XdmfArray> brickSize, const boost::shared_ptr<XdmfArray> numPoints,
+	XdmfRegularGrid(const boost::shared_ptr<XdmfArray> brickSize, const boost::shared_ptr<XdmfArray> numPoints,
 		const boost::shared_ptr<XdmfArray> origin);
 
 	void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader);
@@ -149,13 +149,13 @@ private:
 	/**
 	 * PIMPL
 	 */
-	class XdmfGridRegularImpl;
+	class XdmfRegularGridImpl;
 
-	XdmfGridRegular(const XdmfGridRegular & grid);  // Not implemented.
-	void operator=(const XdmfGridRegular & grid);  // Not implemented.
+	XdmfRegularGrid(const XdmfRegularGrid & grid);  // Not implemented.
+	void operator=(const XdmfRegularGrid & grid);  // Not implemented.
 
-	XdmfGridRegularImpl * mImpl;
+	XdmfRegularGridImpl * mImpl;
 
 };
 
-#endif /* XDMFGRIDREGULAR_HPP_ */
+#endif /* XDMFREGULARGRID_HPP_ */

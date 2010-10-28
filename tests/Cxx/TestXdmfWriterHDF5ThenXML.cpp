@@ -6,7 +6,7 @@
 
 int main(int, char *)
 {
-	boost::shared_ptr<XdmfGridUnstructured> grid = XdmfTestDataGenerator::createHexahedron();
+	boost::shared_ptr<XdmfUnstructuredGrid> grid = XdmfTestDataGenerator::createHexahedron();
 
 	// First write and release heavy data
 	boost::shared_ptr<XdmfHDF5Writer> hdf5Writer = XdmfHDF5Writer::New("output.h5");

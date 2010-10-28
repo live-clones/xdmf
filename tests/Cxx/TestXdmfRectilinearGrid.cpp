@@ -1,7 +1,7 @@
 #include "XdmfArray.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGeometryType.hpp"
-#include "XdmfGridRectilinear.hpp"
+#include "XdmfRectilinearGrid.hpp"
 #include "XdmfReader.hpp"
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
@@ -30,7 +30,7 @@ int main(int, char *)
 	vz->insert(1, 1);
 	vz->insert(2, 3);
 
-	boost::shared_ptr<XdmfGridRectilinear> grid = XdmfGridRectilinear::New(vx, vy, vz);
+	boost::shared_ptr<XdmfRectilinearGrid> grid = XdmfRectilinearGrid::New(vx, vy, vz);
 	assert(grid->getDimensions()->getValuesString().compare("4 3 3 ") == 0);
 	assert(vx == grid->getCoordinates(0));
 	assert(vy == grid->getCoordinates(1));
@@ -50,16 +50,16 @@ int main(int, char *)
 
 	// Input / Output
 
-	boost::shared_ptr<XdmfWriter> writer = XdmfWriter::New("TestXdmfGridRectilinear1.xmf");
+	boost::shared_ptr<XdmfWriter> writer = XdmfWriter::New("TestXdmfRectilinearGrid1.xmf");
 	grid->accept(writer);
 
 	boost::shared_ptr<XdmfReader> reader = XdmfReader::New();
-	boost::shared_ptr<XdmfGridRectilinear> grid2 = boost::shared_dynamic_cast<XdmfGridRectilinear>(reader->read("TestXdmfGridRectilinear1.xmf"));
+	boost::shared_ptr<XdmfRectilinearGrid> grid2 = boost::shared_dynamic_cast<XdmfRectilinearGrid>(reader->read("TestXdmfRectilinearGrid1.xmf"));
 
-	boost::shared_ptr<XdmfWriter> writer2 = XdmfWriter::New("TestXdmfGridRectilinear2.xmf");
+	boost::shared_ptr<XdmfWriter> writer2 = XdmfWriter::New("TestXdmfRectilinearGrid2.xmf");
 	grid2->accept(writer2);
 
-	assert(XdmfTestCompareFiles::compareFiles("TestXdmfGridRectilinear1.xmf", "TestXdmfGridRectilinear2.xmf"));
+	assert(XdmfTestCompareFiles::compareFiles("TestXdmfRectilinearGrid1.xmf", "TestXdmfRectilinearGrid2.xmf"));
 
 	return 0;
 }

@@ -2,9 +2,9 @@
 #define XDMFPARTITIONER_HPP_
 
 // Forward Declarations
-class XdmfGridUnstructured;
 class XdmfGridCollection;
 class XdmfHDF5Writer;
+class XdmfUnstructuredGrid;
 
 // Includes
 #include <boost/shared_ptr.hpp>
@@ -52,7 +52,7 @@ public:
 	 *
 	 * @return a spatial collection containing partitioned grids.
 	 */
-	boost::shared_ptr<XdmfGridCollection> partition(const boost::shared_ptr<XdmfGridUnstructured> gridToPartition, const unsigned int numberOfPartitions,
+	boost::shared_ptr<XdmfGridCollection> partition(const boost::shared_ptr<XdmfUnstructuredGrid> gridToPartition, const unsigned int numberOfPartitions,
 			const boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter = boost::shared_ptr<XdmfHDF5Writer>()) const;
 
 protected:

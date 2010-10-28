@@ -10,8 +10,8 @@ int main(int, char *)
 	boost::shared_ptr<XdmfWriter> writer = XdmfWriter::New("TestXdmfReader1.xmf");
 	writer->setLightDataLimit(10);
 
-	boost::shared_ptr<XdmfGridUnstructured> grid1 = XdmfTestDataGenerator::createHexahedron();
-	boost::shared_ptr<XdmfGridUnstructured> grid2 = XdmfTestDataGenerator::createHexahedron();
+	boost::shared_ptr<XdmfUnstructuredGrid> grid1 = XdmfTestDataGenerator::createHexahedron();
+	boost::shared_ptr<XdmfUnstructuredGrid> grid2 = XdmfTestDataGenerator::createHexahedron();
 
 	boost::shared_ptr<XdmfDomain> domain = XdmfDomain::New();
 	domain->insert(grid1);
@@ -29,7 +29,7 @@ int main(int, char *)
 
 	std::vector<boost::shared_ptr<XdmfItem> > readItems = reader->read("TestXdmfReader1.xmf", "/Xdmf/Domain/Grid[1]");
 	assert(readItems.size() == 1);
-	boost::shared_ptr<XdmfGridUnstructured> readGrid = boost::shared_dynamic_cast<XdmfGridUnstructured>(readItems[0]);
+	boost::shared_ptr<XdmfUnstructuredGrid> readGrid = boost::shared_dynamic_cast<XdmfUnstructuredGrid>(readItems[0]);
 	assert(readGrid->getName().compare("Hexahedron") == 0);
 
 	std::vector<boost::shared_ptr<XdmfItem> > readItems2 = reader->read("TestXdmfReader1.xmf", "//Attribute");

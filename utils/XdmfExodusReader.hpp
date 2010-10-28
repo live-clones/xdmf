@@ -2,9 +2,9 @@
 #define XDMFEXODUSREADER_HPP_
 
 // Forward Declarations
-class XdmfGridUnstructured;
 class XdmfHDF5Writer;
 class XdmfTopologyType;
+class XdmfUnstructuredGrid;
 
 // Includes
 #include <boost/shared_ptr.hpp>
@@ -32,9 +32,9 @@ public:
      * @param fileName containing the path of the exodus file to read.
      * @param heavyDataWriter an XdmfHDF5Writer to write the mesh to.  If no heavyDataWriter is specified, all mesh data will remain in memory.
      *
-     * @return XdmfGridUnstructured containing the mesh stored in the ExodusII file.
+     * @return an unstructured grid containing the mesh stored in the ExodusII file.
      */
-	boost::shared_ptr<XdmfGridUnstructured> read(const std::string & fileName, const boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter = boost::shared_ptr<XdmfHDF5Writer>()) const;
+	boost::shared_ptr<XdmfUnstructuredGrid> read(const std::string & fileName, const boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter = boost::shared_ptr<XdmfHDF5Writer>()) const;
 
 protected:
 

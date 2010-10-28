@@ -9,14 +9,14 @@
 #include "XdmfArray.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGeometryType.hpp"
-#include "XdmfGridRegular.hpp"
+#include "XdmfRegularGrid.hpp"
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
 
 /**
  * PIMPL
  */
-class XdmfGridRegular::XdmfGridRegularImpl {
+class XdmfRegularGrid::XdmfRegularGridImpl {
 
 public:
 
@@ -25,7 +25,7 @@ public:
 
 	public:
 
-		static boost::shared_ptr<XdmfGeometryRegular> New(XdmfGridRegular * const regularGrid)
+		static boost::shared_ptr<XdmfGeometryRegular> New(XdmfRegularGrid * const regularGrid)
 		{
 			boost::shared_ptr<XdmfGeometryRegular> p(new XdmfGeometryRegular(regularGrid));
 			return p;
@@ -56,13 +56,13 @@ public:
 
 	private:
 
-		XdmfGeometryRegular(XdmfGridRegular * const regularGrid) :
+		XdmfGeometryRegular(XdmfRegularGrid * const regularGrid) :
 			mRegularGrid(regularGrid)
 		{
 			this->setType(XdmfGeometryTypeRegular::New(mRegularGrid));
 		}
 
-		XdmfGridRegular * const mRegularGrid;
+		XdmfRegularGrid * const mRegularGrid;
 	};
 
 	class XdmfGeometryTypeRegular : public XdmfGeometryType
@@ -70,7 +70,7 @@ public:
 
 	public:
 
-		static boost::shared_ptr<const XdmfGeometryTypeRegular> New(const XdmfGridRegular * const regularGrid)
+		static boost::shared_ptr<const XdmfGeometryTypeRegular> New(const XdmfRegularGrid * const regularGrid)
 		{
 			boost::shared_ptr<const XdmfGeometryTypeRegular> p(new XdmfGeometryTypeRegular(regularGrid));
 			return p;
@@ -100,13 +100,13 @@ public:
 
 	private:
 
-		XdmfGeometryTypeRegular(const XdmfGridRegular * const regularGrid) :
+		XdmfGeometryTypeRegular(const XdmfRegularGrid * const regularGrid) :
 			XdmfGeometryType("", 0),
 			mRegularGrid(regularGrid)
 		{
 		}
 
-		const XdmfGridRegular * const mRegularGrid;
+		const XdmfRegularGrid * const mRegularGrid;
 
 	};
 
@@ -115,7 +115,7 @@ public:
 
 	public:
 
-		static boost::shared_ptr<XdmfTopologyRegular> New(const XdmfGridRegular * const regularGrid)
+		static boost::shared_ptr<XdmfTopologyRegular> New(const XdmfRegularGrid * const regularGrid)
 		{
 			boost::shared_ptr<XdmfTopologyRegular> p(new XdmfTopologyRegular(regularGrid));
 			return p;
@@ -138,13 +138,13 @@ public:
 
 	private:
 
-		XdmfTopologyRegular(const XdmfGridRegular * const regularGrid) :
+		XdmfTopologyRegular(const XdmfRegularGrid * const regularGrid) :
 			mRegularGrid(regularGrid)
 		{
 			this->setType(XdmfTopologyTypeRegular::New(regularGrid));
 		}
 
-		const XdmfGridRegular * const mRegularGrid;
+		const XdmfRegularGrid * const mRegularGrid;
 	};
 
 	class XdmfTopologyTypeRegular : public XdmfTopologyType
@@ -152,7 +152,7 @@ public:
 
 	public:
 
-		static boost::shared_ptr<const XdmfTopologyTypeRegular> New(const XdmfGridRegular * const regularGrid)
+		static boost::shared_ptr<const XdmfTopologyTypeRegular> New(const XdmfRegularGrid * const regularGrid)
 		{
 			boost::shared_ptr<const XdmfTopologyTypeRegular> p(new XdmfTopologyTypeRegular(regularGrid));
 			return p;
@@ -185,17 +185,17 @@ public:
 
 	private:
 
-		XdmfTopologyTypeRegular(const XdmfGridRegular * const regularGrid) :
+		XdmfTopologyTypeRegular(const XdmfRegularGrid * const regularGrid) :
 			XdmfTopologyType(0, "foo", XdmfTopologyType::Structured, 0x1102),
 			mRegularGrid(regularGrid)
 		{
 		}
 
-		const XdmfGridRegular * const mRegularGrid;
+		const XdmfRegularGrid * const mRegularGrid;
 
 	};
 
-	XdmfGridRegularImpl(const boost::shared_ptr<XdmfArray> brickSize, const boost::shared_ptr<XdmfArray> numPoints, const boost::shared_ptr<XdmfArray> origin) :
+	XdmfRegularGridImpl(const boost::shared_ptr<XdmfArray> brickSize, const boost::shared_ptr<XdmfArray> numPoints, const boost::shared_ptr<XdmfArray> origin) :
 		mBrickSize(brickSize),
 		mDimensions(numPoints),
 		mOrigin(origin)
@@ -208,7 +208,7 @@ public:
 
 };
 
-boost::shared_ptr<XdmfGridRegular> XdmfGridRegular::New(const double xBrickSize, const double yBrickSize, const unsigned int xNumPoints,
+boost::shared_ptr<XdmfRegularGrid> XdmfRegularGrid::New(const double xBrickSize, const double yBrickSize, const unsigned int xNumPoints,
 	const unsigned int yNumPoints, const double xOrigin, const double yOrigin)
 {
 	boost::shared_ptr<XdmfArray> brickSize = XdmfArray::New();
@@ -223,11 +223,11 @@ boost::shared_ptr<XdmfGridRegular> XdmfGridRegular::New(const double xBrickSize,
 	origin->resize<double>(2);
 	origin->insert(0, xOrigin);
 	origin->insert(1, yOrigin);
-	boost::shared_ptr<XdmfGridRegular> p(new XdmfGridRegular(brickSize, numPoints, origin));
+	boost::shared_ptr<XdmfRegularGrid> p(new XdmfRegularGrid(brickSize, numPoints, origin));
 	return p;
 }
 
-boost::shared_ptr<XdmfGridRegular> XdmfGridRegular::New(const double xBrickSize, const double yBrickSize, const double zBrickSize,
+boost::shared_ptr<XdmfRegularGrid> XdmfRegularGrid::New(const double xBrickSize, const double yBrickSize, const double zBrickSize,
 	const unsigned int xNumPoints, const unsigned int yNumPoints, const unsigned int zNumPoints,
 	const double xOrigin, const double yOrigin, const double zOrigin)
 {
@@ -246,68 +246,68 @@ boost::shared_ptr<XdmfGridRegular> XdmfGridRegular::New(const double xBrickSize,
 	origin->insert(0, xOrigin);
 	origin->insert(1, yOrigin);
 	origin->insert(2, zOrigin);
-	boost::shared_ptr<XdmfGridRegular> p(new XdmfGridRegular(brickSize, numPoints, origin));
+	boost::shared_ptr<XdmfRegularGrid> p(new XdmfRegularGrid(brickSize, numPoints, origin));
 	return p;
 }
 
-boost::shared_ptr<XdmfGridRegular> XdmfGridRegular::New(const boost::shared_ptr<XdmfArray> brickSize, const boost::shared_ptr<XdmfArray> numPoints,
+boost::shared_ptr<XdmfRegularGrid> XdmfRegularGrid::New(const boost::shared_ptr<XdmfArray> brickSize, const boost::shared_ptr<XdmfArray> numPoints,
 		const boost::shared_ptr<XdmfArray> origin)
 {
-	boost::shared_ptr<XdmfGridRegular> p(new XdmfGridRegular(brickSize, numPoints, origin));
+	boost::shared_ptr<XdmfRegularGrid> p(new XdmfRegularGrid(brickSize, numPoints, origin));
 	return p;
 }
 
-XdmfGridRegular::XdmfGridRegular(const boost::shared_ptr<XdmfArray> brickSize, const boost::shared_ptr<XdmfArray> numPoints,
+XdmfRegularGrid::XdmfRegularGrid(const boost::shared_ptr<XdmfArray> brickSize, const boost::shared_ptr<XdmfArray> numPoints,
 	const boost::shared_ptr<XdmfArray> origin) :
-	XdmfGrid(XdmfGridRegularImpl::XdmfGeometryRegular::New(this), XdmfGridRegularImpl::XdmfTopologyRegular::New(this)),
-	mImpl(new XdmfGridRegularImpl(brickSize, numPoints, origin))
+	XdmfGrid(XdmfRegularGridImpl::XdmfGeometryRegular::New(this), XdmfRegularGridImpl::XdmfTopologyRegular::New(this)),
+	mImpl(new XdmfRegularGridImpl(brickSize, numPoints, origin))
 {
 }
 
-XdmfGridRegular::~XdmfGridRegular()
+XdmfRegularGrid::~XdmfRegularGrid()
 {
 	delete mImpl;
 }
 
-const std::string XdmfGridRegular::ItemTag = "Grid";
+const std::string XdmfRegularGrid::ItemTag = "Grid";
 
-boost::shared_ptr<XdmfArray> XdmfGridRegular::getBrickSize()
+boost::shared_ptr<XdmfArray> XdmfRegularGrid::getBrickSize()
 {
-	return boost::const_pointer_cast<XdmfArray>(static_cast<const XdmfGridRegular &>(*this).getBrickSize());
+	return boost::const_pointer_cast<XdmfArray>(static_cast<const XdmfRegularGrid &>(*this).getBrickSize());
 }
 
-boost::shared_ptr<const XdmfArray> XdmfGridRegular::getBrickSize() const
+boost::shared_ptr<const XdmfArray> XdmfRegularGrid::getBrickSize() const
 {
 	return mImpl->mBrickSize;
 }
 
-boost::shared_ptr<XdmfArray> XdmfGridRegular::getDimensions()
+boost::shared_ptr<XdmfArray> XdmfRegularGrid::getDimensions()
 {
-	return boost::const_pointer_cast<XdmfArray>(static_cast<const XdmfGridRegular &>(*this).getDimensions());
+	return boost::const_pointer_cast<XdmfArray>(static_cast<const XdmfRegularGrid &>(*this).getDimensions());
 }
 
-boost::shared_ptr<const XdmfArray> XdmfGridRegular::getDimensions() const
+boost::shared_ptr<const XdmfArray> XdmfRegularGrid::getDimensions() const
 {
 	return mImpl->mDimensions;
 }
 
-boost::shared_ptr<XdmfArray> XdmfGridRegular::getOrigin()
+boost::shared_ptr<XdmfArray> XdmfRegularGrid::getOrigin()
 {
-	return boost::const_pointer_cast<XdmfArray>(static_cast<const XdmfGridRegular &>(*this).getOrigin());
+	return boost::const_pointer_cast<XdmfArray>(static_cast<const XdmfRegularGrid &>(*this).getOrigin());
 }
 
-boost::shared_ptr<const XdmfArray> XdmfGridRegular::getOrigin() const
+boost::shared_ptr<const XdmfArray> XdmfRegularGrid::getOrigin() const
 {
 	return mImpl->mOrigin;
 }
 
-void XdmfGridRegular::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader)
+void XdmfRegularGrid::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader)
 {
 	XdmfGrid::populateItem(itemProperties, childItems, reader);
 
 	for(std::vector<boost::shared_ptr<XdmfItem> >::const_iterator iter = childItems.begin(); iter != childItems.end(); ++iter)
 	{
-		if(boost::shared_ptr<XdmfGridRegular> regularGrid = boost::shared_dynamic_cast<XdmfGridRegular>(*iter))
+		if(boost::shared_ptr<XdmfRegularGrid> regularGrid = boost::shared_dynamic_cast<XdmfRegularGrid>(*iter))
 		{
 			if(regularGrid->getBrickSize())
 			{
@@ -327,17 +327,17 @@ void XdmfGridRegular::populateItem(const std::map<std::string, std::string> & it
 	}
 }
 
-void XdmfGridRegular::setBrickSize(const boost::shared_ptr<XdmfArray> brickSize)
+void XdmfRegularGrid::setBrickSize(const boost::shared_ptr<XdmfArray> brickSize)
 {
 	mImpl->mBrickSize = brickSize;
 }
 
-void XdmfGridRegular::setDimensions(const boost::shared_ptr<XdmfArray> dimensions)
+void XdmfRegularGrid::setDimensions(const boost::shared_ptr<XdmfArray> dimensions)
 {
 	mImpl->mDimensions = dimensions;
 }
 
-void XdmfGridRegular::setOrigin(const boost::shared_ptr<XdmfArray> origin)
+void XdmfRegularGrid::setOrigin(const boost::shared_ptr<XdmfArray> origin)
 {
 	mImpl->mOrigin = origin;
 }

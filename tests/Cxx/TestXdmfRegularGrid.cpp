@@ -1,8 +1,8 @@
 #include "XdmfArray.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGeometryType.hpp"
-#include "XdmfGridRegular.hpp"
 #include "XdmfReader.hpp"
+#include "XdmfRegularGrid.hpp"
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
 #include "XdmfWriter.hpp"
@@ -11,7 +11,7 @@
 
 int main(int, char *)
 {
-	boost::shared_ptr<XdmfGridRegular> grid = XdmfGridRegular::New(1, 1, 1, 1, 1, 1, 0, 0, 0);
+	boost::shared_ptr<XdmfRegularGrid> grid = XdmfRegularGrid::New(1, 1, 1, 1, 1, 1, 0, 0, 0);
 	boost::shared_ptr<XdmfArray> brickSize = grid->getBrickSize();
 	assert(brickSize->getSize() == 3);
 	for(unsigned int i=0; i<brickSize->getSize(); ++i)
@@ -86,16 +86,16 @@ int main(int, char *)
 
 	// Input / Output
 
-	boost::shared_ptr<XdmfWriter> writer = XdmfWriter::New("TestXdmfGridRegular1.xmf");
+	boost::shared_ptr<XdmfWriter> writer = XdmfWriter::New("TestXdmfRegularGrid1.xmf");
 	grid->accept(writer);
 
 	boost::shared_ptr<XdmfReader> reader = XdmfReader::New();
-	boost::shared_ptr<XdmfGridRegular> grid2 = boost::shared_dynamic_cast<XdmfGridRegular>(reader->read("TestXdmfGridRegular1.xmf"));
+	boost::shared_ptr<XdmfRegularGrid> grid2 = boost::shared_dynamic_cast<XdmfRegularGrid>(reader->read("TestXdmfRegularGrid1.xmf"));
 
-	boost::shared_ptr<XdmfWriter> writer2 = XdmfWriter::New("TestXdmfGridRegular2.xmf");
+	boost::shared_ptr<XdmfWriter> writer2 = XdmfWriter::New("TestXdmfRegularGrid2.xmf");
 	grid2->accept(writer2);
 
-	assert(XdmfTestCompareFiles::compareFiles("TestXdmfGridRegular1.xmf", "TestXdmfGridRegular2.xmf"));
+	assert(XdmfTestCompareFiles::compareFiles("TestXdmfRegularGrid1.xmf", "TestXdmfRegularGrid2.xmf"));
 
 	return 0;
 }

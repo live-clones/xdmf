@@ -1,19 +1,19 @@
 #include <boost/tokenizer.hpp>
 #include "XdmfAttribute.hpp"
+#include "XdmfCurvilinearGrid.hpp"
 #include "XdmfDomain.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGeometryType.hpp"
 #include "XdmfGridCollection.hpp"
-#include "XdmfGridCurvilinear.hpp"
-#include "XdmfGridRectilinear.hpp"
-#include "XdmfGridRegular.hpp"
-#include "XdmfGridUnstructured.hpp"
 #include "XdmfInformation.hpp"
 #include "XdmfItemFactory.hpp"
 #include "XdmfMap.hpp"
+#include "XdmfRectilinearGrid.hpp"
+#include "XdmfRegularGrid.hpp"
 #include "XdmfSet.hpp"
 #include "XdmfTime.hpp"
 #include "XdmfTopology.hpp"
+#include "XdmfUnstructuredGrid.hpp"
 
 boost::shared_ptr<XdmfItemFactory> XdmfItemFactory::New()
 {
@@ -78,7 +78,7 @@ boost::shared_ptr<XdmfItem> XdmfItemFactory::createItem(const std::string & item
 				}
 				if(origin && brickSize)
 				{
-					return XdmfGridRegular::New(brickSize, boost::shared_ptr<XdmfArray>(), origin);
+					return XdmfRegularGrid::New(brickSize, boost::shared_ptr<XdmfArray>(), origin);
 				}
 				return boost::shared_ptr<XdmfItem>();
 			}
@@ -92,7 +92,7 @@ boost::shared_ptr<XdmfItem> XdmfItemFactory::createItem(const std::string & item
 						coordinateValues.push_back(array);
 					}
 				}
-				return XdmfGridRectilinear::New(coordinateValues);
+				return XdmfRectilinearGrid::New(coordinateValues);
 			}
 		}
 		return XdmfGeometry::New();
@@ -110,21 +110,21 @@ boost::shared_ptr<XdmfItem> XdmfItemFactory::createItem(const std::string & item
 			// Find out what kind of grid we have
 			for(std::vector<boost::shared_ptr<XdmfItem> >::const_iterator iter = childItems.begin(); iter != childItems.end(); ++iter)
 			{
-				if(boost::shared_ptr<XdmfGridCurvilinear> curvilinear = boost::shared_dynamic_cast<XdmfGridCurvilinear>(*iter))
+				if(boost::shared_ptr<XdmfCurvilinearGrid> curvilinear = boost::shared_dynamic_cast<XdmfCurvilinearGrid>(*iter))
 				{
-					return XdmfGridCurvilinear::New(0, 0);
+					return XdmfCurvilinearGrid::New(0, 0);
 				}
-				else if(boost::shared_ptr<XdmfGridRegular> regularGrid = boost::shared_dynamic_cast<XdmfGridRegular>(*iter))
+				else if(boost::shared_ptr<XdmfRegularGrid> regularGrid = boost::shared_dynamic_cast<XdmfRegularGrid>(*iter))
 				{
-					return XdmfGridRegular::New(0, 0, 0, 0, 0, 0);
+					return XdmfRegularGrid::New(0, 0, 0, 0, 0, 0);
 				}
-				else if(boost::shared_ptr<XdmfGridRectilinear> rectilinearGrid = boost::shared_dynamic_cast<XdmfGridRectilinear>(*iter))
+				else if(boost::shared_ptr<XdmfRectilinearGrid> rectilinearGrid = boost::shared_dynamic_cast<XdmfRectilinearGrid>(*iter))
 				{
 					std::vector<boost::shared_ptr<XdmfArray> > coordinateValues;
-					return XdmfGridRectilinear::New(coordinateValues);
+					return XdmfRectilinearGrid::New(coordinateValues);
 				}
 			}
-			return XdmfGridUnstructured::New();
+			return XdmfUnstructuredGrid::New();
 		}
 	}
 	else if(itemTag.compare(XdmfInformation::ItemTag) == 0)
@@ -172,17 +172,17 @@ boost::shared_ptr<XdmfItem> XdmfItemFactory::createItem(const std::string & item
 				}
 				if(typeVal.compare("2DCORECTMESH") == 0 || typeVal.compare("3DCORECTMESH") == 0)
 				{
-					return XdmfGridRegular::New(boost::shared_ptr<XdmfArray>(), dimensionsArray, boost::shared_ptr<XdmfArray>());
+					return XdmfRegularGrid::New(boost::shared_ptr<XdmfArray>(), dimensionsArray, boost::shared_ptr<XdmfArray>());
 				}
 				else
 				{
-					return XdmfGridCurvilinear::New(dimensionsArray);
+					return XdmfCurvilinearGrid::New(dimensionsArray);
 				}
 			}
 			else if(typeVal.compare("2DRECTMESH") == 0 || typeVal.compare("3DRECTMESH") == 0)
 			{
 				std::vector<boost::shared_ptr<XdmfArray> > coordinateValues;
-				return XdmfGridRectilinear::New(coordinateValues);
+				return XdmfRectilinearGrid::New(coordinateValues);
 			}
 
 		}

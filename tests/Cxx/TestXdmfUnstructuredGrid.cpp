@@ -1,12 +1,12 @@
 #include "XdmfAttribute.hpp"
-#include "XdmfGridUnstructured.hpp"
+#include "XdmfUnstructuredGrid.hpp"
 #include "XdmfInformation.hpp"
 #include "XdmfSet.hpp"
 #include "XdmfTime.hpp"
 
 int main(int, char *)
 {
-	boost::shared_ptr<XdmfGridUnstructured> grid = XdmfGridUnstructured::New();
+	boost::shared_ptr<XdmfUnstructuredGrid> grid = XdmfUnstructuredGrid::New();
 	std::string gridName = "Grid1";
 
 	grid->setName(gridName);

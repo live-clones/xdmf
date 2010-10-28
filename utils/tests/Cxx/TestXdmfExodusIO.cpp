@@ -9,11 +9,11 @@
 int main(int, char *)
 {
 	boost::shared_ptr<XdmfExodusWriter> exodusWriter = XdmfExodusWriter::New();
-	boost::shared_ptr<XdmfGridUnstructured> hexahedron = XdmfTestDataGenerator::createHexahedron();
+	boost::shared_ptr<XdmfUnstructuredGrid> hexahedron = XdmfTestDataGenerator::createHexahedron();
 	exodusWriter->write("TestXdmfExodusIO.exo", hexahedron);
 
 	boost::shared_ptr<XdmfExodusReader> reader = XdmfExodusReader::New();
-	boost::shared_ptr<XdmfGridUnstructured> grid = reader->read("TestXdmfExodusIO.exo");
+	boost::shared_ptr<XdmfUnstructuredGrid> grid = reader->read("TestXdmfExodusIO.exo");
 	assert(grid->getName() == hexahedron->getName());
 	assert(grid->getGeometry()->getType() == hexahedron->getGeometry()->getType());
 	assert(grid->getGeometry()->getNumberPoints() == hexahedron->getGeometry()->getNumberPoints());

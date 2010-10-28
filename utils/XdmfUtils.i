@@ -29,24 +29,24 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
 	#include <XdmfAttribute.hpp>
 	#include <XdmfAttributeCenter.hpp>
 	#include <XdmfAttributeType.hpp>
+	#include <XdmfCurvilinearGrid.hpp>
 	#include <XdmfDomain.hpp>
 	#include <XdmfGeometry.hpp>
 	#include <XdmfGeometryType.hpp>
 	#include <XdmfGrid.hpp>
 	#include <XdmfGridCollection.hpp>
 	#include <XdmfGridCollectionType.hpp>
-	#include <XdmfGridCurvilinear.hpp>
-	#include <XdmfGridRectilinear.hpp>
-	#include <XdmfGridRegular.hpp>
-	#include <XdmfGridUnstructured.hpp>
 	#include <XdmfItemFactory.hpp>
 	#include <XdmfMap.hpp>
 	#include <XdmfReader.hpp>
+	#include <XdmfRectilinearGrid.hpp>
+	#include <XdmfRegularGrid.hpp>
 	#include <XdmfSet.hpp>
 	#include <XdmfSetType.hpp>
 	#include <XdmfTime.hpp>
 	#include <XdmfTopology.hpp>
 	#include <XdmfTopologyType.hpp>
+	#include <XdmfUnstructuredGrid.hpp>
 
 	// XdmfUtils Includes
 	#include <XdmfExodusReader.hpp>

@@ -12,7 +12,6 @@ extern "C"
 #include "XdmfAttributeType.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGeometryType.hpp"
-#include "XdmfGridUnstructured.hpp"
 #include "XdmfGridCollection.hpp"
 #include "XdmfGridCollectionType.hpp"
 #include "XdmfHDF5Writer.hpp"
@@ -22,6 +21,7 @@ extern "C"
 #include "XdmfSetType.hpp"
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
+#include "XdmfUnstructuredGrid.hpp"
 
 boost::shared_ptr<XdmfPartitioner> XdmfPartitioner::New()
 {
@@ -37,7 +37,7 @@ XdmfPartitioner::~XdmfPartitioner()
 {
 }
 
-boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::shared_ptr<XdmfGridUnstructured> gridToPartition, const unsigned int numberOfPartitions,
+boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::shared_ptr<XdmfUnstructuredGrid> gridToPartition, const unsigned int numberOfPartitions,
 		const boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter) const
 {
 	// Make sure geometry and topology are non null
@@ -182,7 +182,7 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 			std::stringstream name;
 			name << gridToPartition->getName() << "_" << i;
 
-			boost::shared_ptr<XdmfGridUnstructured> partitioned = XdmfGridUnstructured::New();
+			boost::shared_ptr<XdmfUnstructuredGrid> partitioned = XdmfUnstructuredGrid::New();
 			partitioned->setName(name.str());
 			partitionedGrids->insert(partitioned);
 
@@ -271,7 +271,7 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 			std::vector<unsigned int> & currElemIds = globalElementIds[j];
 			if(currElemIds.size() > 0)
 			{
-				boost::shared_ptr<XdmfGridUnstructured> partitioned = partitionedGrids->getGridUnstructured(partitionId);
+				boost::shared_ptr<XdmfUnstructuredGrid> partitioned = partitionedGrids->getUnstructuredGrid(partitionId);
 				partitionId++;
 				boost::shared_ptr<XdmfAttribute> createdAttribute = boost::shared_ptr<XdmfAttribute>();
 				if(currAttribute->getCenter() == XdmfAttributeCenter::Grid())
@@ -346,7 +346,7 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 			std::vector<unsigned int> & currElemIds = globalElementIds[j];
 			if(currElemIds.size() > 0)
 			{
-				boost::shared_ptr<XdmfGridUnstructured> partitioned = partitionedGrids->getGridUnstructured(partitionId);
+				boost::shared_ptr<XdmfUnstructuredGrid> partitioned = partitionedGrids->getUnstructuredGrid(partitionId);
 				partitionId++;
 
 				boost::shared_ptr<XdmfSet> partitionedSet = XdmfSet::New();
@@ -395,9 +395,9 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 
 	// Add XdmfMap to map boundary nodes between partitions
 	std::vector<boost::shared_ptr<XdmfAttribute> > globalNodeIds;
-	for(unsigned int i=0; i<partitionedGrids->getNumberGridUnstructureds(); ++i)
+	for(unsigned int i=0; i<partitionedGrids->getNumberUnstructuredGrids(); ++i)
 	{
-		boost::shared_ptr<XdmfAttribute> globalNodeId = partitionedGrids->getGridUnstructured(i)->getAttribute("GlobalNodeId");
+		boost::shared_ptr<XdmfAttribute> globalNodeId = partitionedGrids->getUnstructuredGrid(i)->getAttribute("GlobalNodeId");
 		if(!globalNodeId->isInitialized())
 		{
 			globalNodeId->read();
@@ -406,10 +406,10 @@ boost::shared_ptr<XdmfGridCollection> XdmfPartitioner::partition(const boost::sh
 	}
 
 	std::vector<boost::shared_ptr<XdmfMap> > maps = XdmfMap::New(globalNodeIds);
-	for(unsigned int i=0; i<partitionedGrids->getNumberGridUnstructureds(); ++i)
+	for(unsigned int i=0; i<partitionedGrids->getNumberUnstructuredGrids(); ++i)
 	{
 		boost::shared_ptr<XdmfMap> map = maps[i];
-		partitionedGrids->getGridUnstructured(i)->setMap(map);
+		partitionedGrids->getUnstructuredGrid(i)->setMap(map);
 		if(heavyDataWriter)
 		{
 			globalNodeIds[i]->release();
@@ -490,7 +490,7 @@ int main(int argc, char* argv[])
 	boost::shared_ptr<XdmfReader> reader = XdmfReader::New();
 	boost::shared_ptr<XdmfDomain> domain = boost::shared_dynamic_cast<XdmfDomain>(reader->read(argv[1]));
 
-	if(domain->getNumberGridUnstructureds() <= 0)
+	if(domain->getNumberUnstructuredGrids() <= 0)
 	{
 		std::cout << "No grids to partition" << std::endl;
 		return 1;
@@ -501,7 +501,7 @@ int main(int argc, char* argv[])
 	boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter = XdmfHDF5Writer::New(heavyFileName.str());
 
 	boost::shared_ptr<XdmfPartitioner> partitioner = XdmfPartitioner::New();
-	boost::shared_ptr<XdmfGridCollection> toWrite = partitioner->partition(domain->getGridUnstructured(0), numPartitions, heavyDataWriter);
+	boost::shared_ptr<XdmfGridCollection> toWrite = partitioner->partition(domain->getUnstructuredGrid(0), numPartitions, heavyDataWriter);
 
 	boost::shared_ptr<XdmfDomain> newDomain = XdmfDomain::New();
 	newDomain->insert(toWrite);

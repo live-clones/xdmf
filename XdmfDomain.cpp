@@ -6,17 +6,17 @@
  */
 
 #include "XdmfDomain.hpp"
+#include "XdmfCurvilinearGrid.hpp"
 #include "XdmfGridCollection.hpp"
-#include "XdmfGridCurvilinear.hpp"
-#include "XdmfGridRectilinear.hpp"
-#include "XdmfGridRegular.hpp"
-#include "XdmfGridUnstructured.hpp"
+#include "XdmfRectilinearGrid.hpp"
+#include "XdmfRegularGrid.hpp"
+#include "XdmfUnstructuredGrid.hpp"
 
 XDMF_CHILDREN_IMPLEMENTATION(XdmfDomain, XdmfGridCollection, GridCollection, Name)
-XDMF_CHILDREN_IMPLEMENTATION(XdmfDomain, XdmfGridCurvilinear, GridCurvilinear, Name)
-XDMF_CHILDREN_IMPLEMENTATION(XdmfDomain, XdmfGridRectilinear, GridRectilinear, Name)
-XDMF_CHILDREN_IMPLEMENTATION(XdmfDomain, XdmfGridRegular, GridRegular, Name)
-XDMF_CHILDREN_IMPLEMENTATION(XdmfDomain, XdmfGridUnstructured, GridUnstructured, Name)
+XDMF_CHILDREN_IMPLEMENTATION(XdmfDomain, XdmfCurvilinearGrid, CurvilinearGrid, Name)
+XDMF_CHILDREN_IMPLEMENTATION(XdmfDomain, XdmfRectilinearGrid, RectilinearGrid, Name)
+XDMF_CHILDREN_IMPLEMENTATION(XdmfDomain, XdmfRegularGrid, RegularGrid, Name)
+XDMF_CHILDREN_IMPLEMENTATION(XdmfDomain, XdmfUnstructuredGrid, UnstructuredGrid, Name)
 
 boost::shared_ptr<XdmfDomain> XdmfDomain::New()
 {
@@ -54,19 +54,19 @@ void XdmfDomain::populateItem(const std::map<std::string, std::string> & itemPro
 		{
 			this->insert(gridCollection);
 		}
-		else if(boost::shared_ptr<XdmfGridCurvilinear> grid = boost::shared_dynamic_cast<XdmfGridCurvilinear>(*iter))
+		else if(boost::shared_ptr<XdmfCurvilinearGrid> grid = boost::shared_dynamic_cast<XdmfCurvilinearGrid>(*iter))
 		{
 			this->insert(grid);
 		}
-		else if(boost::shared_ptr<XdmfGridRectilinear> grid = boost::shared_dynamic_cast<XdmfGridRectilinear>(*iter))
+		else if(boost::shared_ptr<XdmfRectilinearGrid> grid = boost::shared_dynamic_cast<XdmfRectilinearGrid>(*iter))
 		{
 			this->insert(grid);
 		}
-		else if(boost::shared_ptr<XdmfGridRegular> grid = boost::shared_dynamic_cast<XdmfGridRegular>(*iter))
+		else if(boost::shared_ptr<XdmfRegularGrid> grid = boost::shared_dynamic_cast<XdmfRegularGrid>(*iter))
 		{
 			this->insert(grid);
 		}
-		else if(boost::shared_ptr<XdmfGridUnstructured> grid = boost::shared_dynamic_cast<XdmfGridUnstructured>(*iter))
+		else if(boost::shared_ptr<XdmfUnstructuredGrid> grid = boost::shared_dynamic_cast<XdmfUnstructuredGrid>(*iter))
 		{
 			this->insert(grid);
 		}
@@ -80,19 +80,19 @@ void XdmfDomain::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor)
 	{
 		(*iter)->accept(visitor);
 	}
-	for(std::vector<boost::shared_ptr<XdmfGridCurvilinear> >::const_iterator iter = mGridCurvilinears.begin(); iter != mGridCurvilinears.end(); ++iter)
+	for(std::vector<boost::shared_ptr<XdmfCurvilinearGrid> >::const_iterator iter = mCurvilinearGrids.begin(); iter != mCurvilinearGrids.end(); ++iter)
 	{
 		(*iter)->accept(visitor);
 	}
-	for(std::vector<boost::shared_ptr<XdmfGridRectilinear> >::const_iterator iter = mGridRectilinears.begin(); iter != mGridRectilinears.end(); ++iter)
+	for(std::vector<boost::shared_ptr<XdmfRectilinearGrid> >::const_iterator iter = mRectilinearGrids.begin(); iter != mRectilinearGrids.end(); ++iter)
 	{
 		(*iter)->accept(visitor);
 	}
-	for(std::vector<boost::shared_ptr<XdmfGridRegular> >::const_iterator iter = mGridRegulars.begin(); iter != mGridRegulars.end(); ++iter)
+	for(std::vector<boost::shared_ptr<XdmfRegularGrid> >::const_iterator iter = mRegularGrids.begin(); iter != mRegularGrids.end(); ++iter)
 	{
 		(*iter)->accept(visitor);
 	}
-	for(std::vector<boost::shared_ptr<XdmfGridUnstructured> >::const_iterator iter = mGridUnstructureds.begin(); iter != mGridUnstructureds.end(); ++iter)
+	for(std::vector<boost::shared_ptr<XdmfUnstructuredGrid> >::const_iterator iter = mUnstructuredGrids.begin(); iter != mUnstructuredGrids.end(); ++iter)
 	{
 		(*iter)->accept(visitor);
 	}

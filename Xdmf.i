@@ -29,24 +29,24 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 	#include <XdmfAttribute.hpp>
 	#include <XdmfAttributeCenter.hpp>
 	#include <XdmfAttributeType.hpp>
+	#include <XdmfCurvilinearGrid.hpp>
 	#include <XdmfDomain.hpp>
 	#include <XdmfGeometry.hpp>
 	#include <XdmfGeometryType.hpp>
 	#include <XdmfGrid.hpp>
 	#include <XdmfGridCollection.hpp>
 	#include <XdmfGridCollectionType.hpp>
-	#include <XdmfGridCurvilinear.hpp>
-	#include <XdmfGridRectilinear.hpp>
-	#include <XdmfGridRegular.hpp>
-	#include <XdmfGridUnstructured.hpp>
 	#include <XdmfItemFactory.hpp>
 	#include <XdmfMap.hpp>
 	#include <XdmfReader.hpp>
+	#include <XdmfRectilinearGrid.hpp>
+	#include <XdmfRegularGrid.hpp>
 	#include <XdmfSet.hpp>
 	#include <XdmfSetType.hpp>
 	#include <XdmfTime.hpp>
 	#include <XdmfTopology.hpp>
 	#include <XdmfTopologyType.hpp>
+	#include <XdmfUnstructuredGrid.hpp>
 %}
 
 %import XdmfCore.i
@@ -60,6 +60,10 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 	{
 		*(boost::shared_ptr< XdmfAttribute > **)&($result) = value ? new boost::shared_ptr< XdmfAttribute >(value) : 0;
 	}
+	else if(boost::shared_ptr<XdmfCurvilinearGrid> value = boost::shared_dynamic_cast<XdmfCurvilinearGrid>($1))
+	{
+		*(boost::shared_ptr< XdmfCurvilinearGrid > **)&($result) = value ? new boost::shared_ptr< XdmfCurvilinearGrid >(value) : 0;
+	}
 	else if(boost::shared_ptr<XdmfDomain> value = boost::shared_dynamic_cast<XdmfDomain>($1))
 	{
 		*(boost::shared_ptr< XdmfDomain > **)&($result) = value ? new boost::shared_ptr< XdmfDomain >(value) : 0;
@@ -72,25 +76,17 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 	{
 		*(boost::shared_ptr< XdmfGridCollection > **)&($result) = value ? new boost::shared_ptr< XdmfGridCollection >(value) : 0;
 	}
-	else if(boost::shared_ptr<XdmfGridCurvilinear> value = boost::shared_dynamic_cast<XdmfGridCurvilinear>($1))
-	{
-		*(boost::shared_ptr< XdmfGridCurvilinear > **)&($result) = value ? new boost::shared_ptr< XdmfGridCurvilinear >(value) : 0;
-	}
-	else if(boost::shared_ptr<XdmfGridRectilinear> value = boost::shared_dynamic_cast<XdmfGridRectilinear>($1))
-	{
-		*(boost::shared_ptr< XdmfGridRectilinear > **)&($result) = value ? new boost::shared_ptr< XdmfGridRectilinear >(value) : 0;
-	}
-	else if(boost::shared_ptr<XdmfGridRegular> value = boost::shared_dynamic_cast<XdmfGridRegular>($1))
-	{
-		*(boost::shared_ptr< XdmfGridRegular > **)&($result) = value ? new boost::shared_ptr< XdmfGridRegular >(value) : 0;
-	}
-	else if(boost::shared_ptr<XdmfGridUnstructured> value = boost::shared_dynamic_cast<XdmfGridUnstructured>($1))
-	{
-		*(boost::shared_ptr< XdmfGridUnstructured > **)&($result) = value ? new boost::shared_ptr< XdmfGridUnstructured >(value) : 0;
-	}
 	else if(boost::shared_ptr<XdmfInformation> value = boost::shared_dynamic_cast<XdmfInformation>($1))
 	{
 		*(boost::shared_ptr< XdmfInformation > **)&($result) = value ? new boost::shared_ptr< XdmfInformation >(value) : 0;
+	}
+	else if(boost::shared_ptr<XdmfRectilinearGrid> value = boost::shared_dynamic_cast<XdmfRectilinearGrid>($1))
+	{
+		*(boost::shared_ptr< XdmfRectilinearGrid > **)&($result) = value ? new boost::shared_ptr< XdmfRectilinearGrid >(value) : 0;
+	}
+	else if(boost::shared_ptr<XdmfRegularGrid> value = boost::shared_dynamic_cast<XdmfRegularGrid>($1))
+	{
+		*(boost::shared_ptr< XdmfRegularGrid > **)&($result) = value ? new boost::shared_ptr< XdmfRegularGrid >(value) : 0;
 	}
 	else if(boost::shared_ptr<XdmfSet> value = boost::shared_dynamic_cast<XdmfSet>($1))
 	{
@@ -104,6 +100,10 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 	{
 		*(boost::shared_ptr< XdmfTopology > **)&($result) = value ? new boost::shared_ptr< XdmfTopology >(value) : 0;
 	}
+	else if(boost::shared_ptr<XdmfUnstructuredGrid> value = boost::shared_dynamic_cast<XdmfUnstructuredGrid>($1))
+	{
+		*(boost::shared_ptr< XdmfUnstructuredGrid > **)&($result) = value ? new boost::shared_ptr< XdmfUnstructuredGrid >(value) : 0;
+	}
 	else
 	{
 		*(boost::shared_ptr< XdmfItem > **)&($result) = &($1);
@@ -111,45 +111,46 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 }
 
 // Ignore const overloaded methods
+%ignore XdmfCurvilinearGrid::getDimensions() const;
+%ignore XdmfDomain::getCurvilinearGrid(const unsigned int) const;
+%ignore XdmfDomain::getCurvilinearGrid(const std::string &) const;
 %ignore XdmfDomain::getGridCollection(const unsigned int) const;
 %ignore XdmfDomain::getGridCollection(const std::string &) const;
-%ignore XdmfDomain::getGridCurvilinear(const unsigned int) const;
-%ignore XdmfDomain::getGridCurvilinear(const std::string &) const;
-%ignore XdmfDomain::getGridRectilinear(const unsigned int) const;
-%ignore XdmfDomain::getGridRectilinear(const std::string &) const;
-%ignore XdmfDomain::getGridRegular(const unsigned int) const;
-%ignore XdmfDomain::getGridRegular(const std::string &) const;
-%ignore XdmfDomain::getGridUnstructured(const unsigned int) const;
-%ignore XdmfDomain::getGridUnstructured(const std::string &) const;
+%ignore XdmfDomain::getRectilinearGrid(const unsigned int) const;
+%ignore XdmfDomain::getRectilinearGrid(const std::string &) const;
+%ignore XdmfDomain::getRegularGrid(const unsigned int) const;
+%ignore XdmfDomain::getRegularGrid(const std::string &) const;
+%ignore XdmfDomain::getUnstructuredGrid(const unsigned int) const;
+%ignore XdmfDomain::getUnstructuredGrid(const std::string &) const;
 %ignore XdmfGrid::getAttribute(const unsigned int) const;
 %ignore XdmfGrid::getAttribute(const std::string &) const;
 %ignore XdmfGrid::getMap() const;
 %ignore XdmfGrid::getSet(const unsigned int) const;
 %ignore XdmfGrid::getSet(const std::string &) const;
 %ignore XdmfGrid::getTime() const;
-%ignore XdmfGridCurvilinear::getDimensions() const;
-%ignore XdmfGridRectilinear::getCoordinates(const unsigned int) const;
-%ignore XdmfGridRectilinear::getCoordinates() const;
-%ignore XdmfGridRectilinear::getDimensions() const;
-%ignore XdmfGridRegular::getBrickSize() const;
-%ignore XdmfGridRegular::getDimensions() const;
-%ignore XdmfGridRegular::getOrigin() const;
+%ignore XdmfRectilinearGrid::getCoordinates(const unsigned int) const;
+%ignore XdmfRectilinearGrid::getCoordinates() const;
+%ignore XdmfRectilinearGrid::getDimensions() const;
+%ignore XdmfRegularGrid::getBrickSize() const;
+%ignore XdmfRegularGrid::getDimensions() const;
+%ignore XdmfRegularGrid::getOrigin() const;
 %ignore XdmfSet::getAttribute(const unsigned int) const;
 %ignore XdmfSet::getAttribute(const std::string &) const;
 
 // Ignore ItemTags
 %ignore XdmfAttribute::ItemTag;
+%ignore XdmfCurvilinearGrid::ItemTag;
 %ignore XdmfDomain::ItemTag;
 %ignore XdmfGeometry::ItemTag;
 %ignore XdmfGrid::ItemTag;
 %ignore XdmfGridCollection::ItemTag;
-%ignore XdmfGridCurvilinear::ItemTag;
-%ignore XdmfGridRegular::ItemTag;
-%ignore XdmfGridRectilinear::ItemTag;
 %ignore XdmfMap::ItemTag;
+%ignore XdmfRectilinearGrid::ItemTag;
+%ignore XdmfRegularGrid::ItemTag;
 %ignore XdmfSet::ItemTag;
 %ignore XdmfTime::ItemTag;
 %ignore XdmfTopology::ItemTag;
+%ignore XdmfUnstructuredGrid::ItemTag;
 
 %pragma(java) jniclasscode=%{
 	static
@@ -188,6 +189,10 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 	{
 		$result = SWIG_NewPointerObj(SWIG_as_voidptr(new boost::shared_ptr<XdmfAttribute>(attribute)), SWIGTYPE_p_boost__shared_ptrT_XdmfAttribute_t, SWIG_POINTER_OWN);
 	}
+	else if(boost::shared_ptr<XdmfCurvilinearGrid> gridCurvilinear = boost::shared_dynamic_cast<XdmfCurvilinearGrid>($1))
+	{
+		$result = SWIG_NewPointerObj(SWIG_as_voidptr(new boost::shared_ptr<XdmfCurvilinearGrid>(gridCurvilinear)), SWIGTYPE_p_boost__shared_ptrT_XdmfCurvilinearGrid_t, SWIG_POINTER_OWN);
+	}
 	else if(boost::shared_ptr<XdmfDomain> domain = boost::shared_dynamic_cast<XdmfDomain>($1))
 	{
 		$result = SWIG_NewPointerObj(SWIG_as_voidptr(new boost::shared_ptr<XdmfDomain>(domain)), SWIGTYPE_p_boost__shared_ptrT_XdmfDomain_t, SWIG_POINTER_OWN);
@@ -200,22 +205,6 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 	{
 		$result = SWIG_NewPointerObj(SWIG_as_voidptr(new boost::shared_ptr<XdmfGridCollection>(gridCollection)), SWIGTYPE_p_boost__shared_ptrT_XdmfGridCollection_t, SWIG_POINTER_OWN);
 	}
-	else if(boost::shared_ptr<XdmfGridCurvilinear> gridCurvilinear = boost::shared_dynamic_cast<XdmfGridCurvilinear>($1))
-	{
-		$result = SWIG_NewPointerObj(SWIG_as_voidptr(new boost::shared_ptr<XdmfGridCurvilinear>(gridCurvilinear)), SWIGTYPE_p_boost__shared_ptrT_XdmfGridCurvilinear_t, SWIG_POINTER_OWN);
-	}
-	else if(boost::shared_ptr<XdmfGridRectilinear> gridRectilinear = boost::shared_dynamic_cast<XdmfGridRectilinear>($1))
-	{
-		$result = SWIG_NewPointerObj(SWIG_as_voidptr(new boost::shared_ptr<XdmfGridRectilinear>(gridRectilinear)), SWIGTYPE_p_boost__shared_ptrT_XdmfGridRectilinear_t, SWIG_POINTER_OWN);
-	}
-	else if(boost::shared_ptr<XdmfGridRegular> gridRegular = boost::shared_dynamic_cast<XdmfGridRegular>($1))
-	{
-		$result = SWIG_NewPointerObj(SWIG_as_voidptr(new boost::shared_ptr<XdmfGridRegular>(gridRegular)), SWIGTYPE_p_boost__shared_ptrT_XdmfGridRegular_t, SWIG_POINTER_OWN);
-	}
-	else if(boost::shared_ptr<XdmfGridUnstructured> gridUnstructured = boost::shared_dynamic_cast<XdmfGridUnstructured>($1))
-	{
-		$result = SWIG_NewPointerObj(SWIG_as_voidptr(new boost::shared_ptr<XdmfGridUnstructured>(gridUnstructured)), SWIGTYPE_p_boost__shared_ptrT_XdmfGridUnstructured_t, SWIG_POINTER_OWN);
-	}
 	else if(boost::shared_ptr<XdmfInformation> information = boost::shared_dynamic_cast<XdmfInformation>($1))
 	{
 		$result = SWIG_NewPointerObj(SWIG_as_voidptr(new boost::shared_ptr<XdmfInformation>(information)), SWIGTYPE_p_boost__shared_ptrT_XdmfInformation_t, SWIG_POINTER_OWN);
@@ -223,6 +212,14 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 	else if(boost::shared_ptr<XdmfMap> map = boost::shared_dynamic_cast<XdmfMap>($1))
 	{
 		$result = SWIG_NewPointerObj(SWIG_as_voidptr(new boost::shared_ptr<XdmfMap>(map)), SWIGTYPE_p_boost__shared_ptrT_XdmfMap_t, SWIG_POINTER_OWN);
+	}
+	else if(boost::shared_ptr<XdmfRectilinearGrid> gridRectilinear = boost::shared_dynamic_cast<XdmfRectilinearGrid>($1))
+	{
+		$result = SWIG_NewPointerObj(SWIG_as_voidptr(new boost::shared_ptr<XdmfRectilinearGrid>(gridRectilinear)), SWIGTYPE_p_boost__shared_ptrT_XdmfRectilinearGrid_t, SWIG_POINTER_OWN);
+	}
+	else if(boost::shared_ptr<XdmfRegularGrid> gridRegular = boost::shared_dynamic_cast<XdmfRegularGrid>($1))
+	{
+		$result = SWIG_NewPointerObj(SWIG_as_voidptr(new boost::shared_ptr<XdmfRegularGrid>(gridRegular)), SWIGTYPE_p_boost__shared_ptrT_XdmfRegularGrid_t, SWIG_POINTER_OWN);
 	}
 	else if(boost::shared_ptr<XdmfSet> set = boost::shared_dynamic_cast<XdmfSet>($1))
 	{
@@ -236,6 +233,10 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 	{
 		$result = SWIG_NewPointerObj(SWIG_as_voidptr(new boost::shared_ptr<XdmfTopology>(topology)), SWIGTYPE_p_boost__shared_ptrT_XdmfTopology_t, SWIG_POINTER_OWN);
 	}
+	else if(boost::shared_ptr<XdmfUnstructuredGrid> gridUnstructured = boost::shared_dynamic_cast<XdmfUnstructuredGrid>($1))
+	{
+		$result = SWIG_NewPointerObj(SWIG_as_voidptr(new boost::shared_ptr<XdmfUnstructuredGrid>(gridUnstructured)), SWIGTYPE_p_boost__shared_ptrT_XdmfUnstructuredGrid_t, SWIG_POINTER_OWN);
+	}
 	else
 	{
 		$result = SWIG_NewPointerObj(SWIG_as_voidptr(new boost::shared_ptr<XdmfItem>($1)), SWIGTYPE_p_boost__shared_ptrT_XdmfItem_t, SWIG_POINTER_OWN);
@@ -248,43 +249,44 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 %shared_ptr(XdmfAttribute)
 %shared_ptr(XdmfAttributeCenter)
 %shared_ptr(XdmfAttributeType)
+%shared_ptr(XdmfCurvilinearGrid)
 %shared_ptr(XdmfDomain)
 %shared_ptr(XdmfGeometry)
 %shared_ptr(XdmfGeometryType)
 %shared_ptr(XdmfGrid)
 %shared_ptr(XdmfGridCollection)
 %shared_ptr(XdmfGridCollectionType)
-%shared_ptr(XdmfGridCurvilinear)
-%shared_ptr(XdmfGridRectilinear)
-%shared_ptr(XdmfGridRegular)
-%shared_ptr(XdmfGridUnstructured)
 %shared_ptr(XdmfItemFactory)
 %shared_ptr(XdmfMap)
 %shared_ptr(XdmfReader)
+%shared_ptr(XdmfRectilinearGrid)
+%shared_ptr(XdmfRegularGrid)
 %shared_ptr(XdmfSet)
 %shared_ptr(XdmfSetType)
 %shared_ptr(XdmfTime)
 %shared_ptr(XdmfTopology)
 %shared_ptr(XdmfTopologyType)
+%shared_ptr(XdmfUnstructuredGrid)
+
+%include XdmfGrid.hpp
 
 %include XdmfAttribute.hpp
 %include XdmfAttributeCenter.hpp
 %include XdmfAttributeType.hpp
+%include XdmfCurvilinearGrid.hpp
 %include XdmfDomain.hpp
 %include XdmfGeometry.hpp
 %include XdmfGeometryType.hpp
-%include XdmfGrid.hpp
 %include XdmfGridCollection.hpp
 %include XdmfGridCollectionType.hpp
-%include XdmfGridCurvilinear.hpp
-%include XdmfGridRectilinear.hpp
-%include XdmfGridRegular.hpp
-%include XdmfGridUnstructured.hpp
 %include XdmfItemFactory.hpp
 %include XdmfMap.hpp
 %include XdmfReader.hpp
+%include XdmfRectilinearGrid.hpp
+%include XdmfRegularGrid.hpp
 %include XdmfSet.hpp
 %include XdmfSetType.hpp
 %include XdmfTime.hpp
 %include XdmfTopology.hpp
 %include XdmfTopologyType.hpp
+%include XdmfUnstructuredGrid.hpp

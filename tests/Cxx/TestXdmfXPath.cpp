@@ -8,9 +8,9 @@
 int main(int, char *)
 {
 	boost::shared_ptr<XdmfWriter> writer = XdmfWriter::New("XdmfXPath1.xmf");
-	boost::shared_ptr<XdmfGridUnstructured> grid = XdmfTestDataGenerator::createHexahedron();
+	boost::shared_ptr<XdmfUnstructuredGrid> grid = XdmfTestDataGenerator::createHexahedron();
 
-	boost::shared_ptr<XdmfGridUnstructured> newGrid = XdmfGridUnstructured::New();
+	boost::shared_ptr<XdmfUnstructuredGrid> newGrid = XdmfUnstructuredGrid::New();
 	newGrid->setName("NoAttributes");
 	newGrid->setGeometry(grid->getGeometry());
 	newGrid->setTopology(grid->getTopology());

@@ -8,11 +8,11 @@
 #include "XdmfGeometryType.hpp"
 #include "XdmfGridCollection.hpp"
 #include "XdmfGridCollectionType.hpp"
-#include "XdmfGridUnstructured.hpp"
 #include "XdmfSet.hpp"
 #include "XdmfSetType.hpp"
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
+#include "XdmfUnstructuredGrid.hpp"
 
 /**
  * PIMPL
@@ -80,7 +80,7 @@ XdmfExodusWriter::~XdmfExodusWriter()
 	delete mImpl;
 }
 
-void XdmfExodusWriter::write(const std::string & filePath, const boost::shared_ptr<XdmfGridUnstructured> gridToWrite) const
+void XdmfExodusWriter::write(const std::string & filePath, const boost::shared_ptr<XdmfUnstructuredGrid> gridToWrite) const
 {
 
 	// Open Exodus File
@@ -96,14 +96,14 @@ void XdmfExodusWriter::write(const std::string & filePath, const boost::shared_p
 	}
 
 	boost::shared_ptr<XdmfGridCollection> gridCollection = boost::shared_ptr<XdmfGridCollection>();
-	boost::shared_ptr<XdmfGridUnstructured> currGrid = gridToWrite;
+	boost::shared_ptr<XdmfUnstructuredGrid> currGrid = gridToWrite;
 
 	// Check if they are temporal collections and use the first grid to determine geometry and topology.
 	if(boost::shared_ptr<XdmfGridCollection> tmpGrid = boost::shared_dynamic_cast<XdmfGridCollection>(gridToWrite))
 	{
-		if(tmpGrid->getType() == XdmfGridCollectionType::Temporal() && tmpGrid->getNumberGridUnstructureds() > 0)
+		if(tmpGrid->getType() == XdmfGridCollectionType::Temporal() && tmpGrid->getNumberUnstructuredGrids() > 0)
 		{
-			currGrid = tmpGrid->getGridUnstructured(0);
+			currGrid = tmpGrid->getUnstructuredGrid(0);
 			gridCollection = tmpGrid;
 		}
 		else
@@ -320,7 +320,7 @@ void XdmfExodusWriter::write(const std::string & filePath, const boost::shared_p
 	int numGrids = 1;
 	if(gridCollection)
 	{
-		numGrids = gridCollection->getNumberGridUnstructureds();
+		numGrids = gridCollection->getNumberUnstructuredGrids();
 	}
 
 	for(int i=0; i<numGrids; ++i)
@@ -336,7 +336,7 @@ void XdmfExodusWriter::write(const std::string & filePath, const boost::shared_p
 
 		if(gridCollection)
 		{
-			currGrid = gridCollection->getGridUnstructured(i);
+			currGrid = gridCollection->getUnstructuredGrid(i);
 		}
 
 		for(unsigned int j=0; j<currGrid->getNumberAttributes(); ++j)

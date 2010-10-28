@@ -1,7 +1,7 @@
 #include "XdmfArray.hpp"
+#include "XdmfCurvilinearGrid.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGeometryType.hpp"
-#include "XdmfGridCurvilinear.hpp"
 #include "XdmfReader.hpp"
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
@@ -11,7 +11,7 @@
 
 int main(int, char *)
 {
-	boost::shared_ptr<XdmfGridCurvilinear> grid = XdmfGridCurvilinear::New(2, 2, 3);
+	boost::shared_ptr<XdmfCurvilinearGrid> grid = XdmfCurvilinearGrid::New(2, 2, 3);
 	boost::shared_ptr<XdmfArray> dimensions = grid->getDimensions();
 	assert(dimensions->getSize() == 3);
 	assert(dimensions->getValue<unsigned int>(0) == 2);
@@ -37,16 +37,16 @@ int main(int, char *)
 
 	// Input / Output
 
-	boost::shared_ptr<XdmfWriter> writer = XdmfWriter::New("TestXdmfGridCurvilinear1.xmf");
+	boost::shared_ptr<XdmfWriter> writer = XdmfWriter::New("TestXdmfCurvilinearGrid1.xmf");
 	grid->accept(writer);
 
 	boost::shared_ptr<XdmfReader> reader = XdmfReader::New();
-	boost::shared_ptr<XdmfGridCurvilinear> grid2 = boost::shared_dynamic_cast<XdmfGridCurvilinear>(reader->read("TestXdmfGridCurvilinear1.xmf"));
+	boost::shared_ptr<XdmfCurvilinearGrid> grid2 = boost::shared_dynamic_cast<XdmfCurvilinearGrid>(reader->read("TestXdmfCurvilinearGrid1.xmf"));
 
-	boost::shared_ptr<XdmfWriter> writer2 = XdmfWriter::New("TestXdmfGridCurvilinear2.xmf");
+	boost::shared_ptr<XdmfWriter> writer2 = XdmfWriter::New("TestXdmfCurvilinearGrid2.xmf");
 	grid2->accept(writer2);
 
-	assert(XdmfTestCompareFiles::compareFiles("TestXdmfGridCurvilinear1.xmf", "TestXdmfGridCurvilinear2.xmf"));
+	assert(XdmfTestCompareFiles::compareFiles("TestXdmfCurvilinearGrid1.xmf", "TestXdmfCurvilinearGrid2.xmf"));
 
 	return 0;
 }

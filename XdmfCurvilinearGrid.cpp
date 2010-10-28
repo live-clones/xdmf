@@ -7,15 +7,15 @@
 
 #include <cmath>
 #include "XdmfArray.hpp"
+#include "XdmfCurvilinearGrid.hpp"
 #include "XdmfGeometry.hpp"
-#include "XdmfGridCurvilinear.hpp"
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
 
 /**
  * PIMPL
  */
-class XdmfGridCurvilinear::XdmfGridCurvilinearImpl {
+class XdmfCurvilinearGrid::XdmfCurvilinearGridImpl {
 
 public:
 
@@ -24,7 +24,7 @@ public:
 
 	public:
 
-		static boost::shared_ptr<XdmfTopologyCurvilinear> New(const XdmfGridCurvilinear * const curvilinearGrid)
+		static boost::shared_ptr<XdmfTopologyCurvilinear> New(const XdmfCurvilinearGrid * const curvilinearGrid)
 		{
 			boost::shared_ptr<XdmfTopologyCurvilinear> p(new XdmfTopologyCurvilinear(curvilinearGrid));
 			return p;
@@ -47,13 +47,13 @@ public:
 
 	private:
 
-		XdmfTopologyCurvilinear(const XdmfGridCurvilinear * const curvilinearGrid) :
+		XdmfTopologyCurvilinear(const XdmfCurvilinearGrid * const curvilinearGrid) :
 			mCurvilinearGrid(curvilinearGrid)
 		{
 			this->setType(XdmfTopologyTypeCurvilinear::New(curvilinearGrid));
 		}
 
-		const XdmfGridCurvilinear * const mCurvilinearGrid;
+		const XdmfCurvilinearGrid * const mCurvilinearGrid;
 	};
 
 	class XdmfTopologyTypeCurvilinear : public XdmfTopologyType
@@ -61,7 +61,7 @@ public:
 
 	public:
 
-		static boost::shared_ptr<const XdmfTopologyTypeCurvilinear> New(const XdmfGridCurvilinear * const curvilinearGrid)
+		static boost::shared_ptr<const XdmfTopologyTypeCurvilinear> New(const XdmfCurvilinearGrid * const curvilinearGrid)
 		{
 			boost::shared_ptr<const XdmfTopologyTypeCurvilinear> p(new XdmfTopologyTypeCurvilinear(curvilinearGrid));
 			return p;
@@ -94,17 +94,17 @@ public:
 
 	private:
 
-		XdmfTopologyTypeCurvilinear(const XdmfGridCurvilinear * const curvilinearGrid) :
+		XdmfTopologyTypeCurvilinear(const XdmfCurvilinearGrid * const curvilinearGrid) :
 			XdmfTopologyType(0, "foo", XdmfTopologyType::Structured, 0x1110),
 			mCurvilinearGrid(curvilinearGrid)
 		{
 		}
 
-		const XdmfGridCurvilinear * const mCurvilinearGrid;
+		const XdmfCurvilinearGrid * const mCurvilinearGrid;
 
 	};
 
-	XdmfGridCurvilinearImpl(const boost::shared_ptr<XdmfArray> numPoints) :
+	XdmfCurvilinearGridImpl(const boost::shared_ptr<XdmfArray> numPoints) :
 		mDimensions(numPoints)
 	{
 	}
@@ -113,17 +113,17 @@ public:
 
 };
 
-boost::shared_ptr<XdmfGridCurvilinear> XdmfGridCurvilinear::New(const unsigned int xNumPoints, const unsigned int yNumPoints)
+boost::shared_ptr<XdmfCurvilinearGrid> XdmfCurvilinearGrid::New(const unsigned int xNumPoints, const unsigned int yNumPoints)
 {
 	boost::shared_ptr<XdmfArray> numPoints = XdmfArray::New();
 	numPoints->resize<unsigned int>(2);
 	numPoints->insert(0, xNumPoints);
 	numPoints->insert(1, yNumPoints);
-	boost::shared_ptr<XdmfGridCurvilinear> p(new XdmfGridCurvilinear(numPoints));
+	boost::shared_ptr<XdmfCurvilinearGrid> p(new XdmfCurvilinearGrid(numPoints));
 	return p;
 }
 
-boost::shared_ptr<XdmfGridCurvilinear> XdmfGridCurvilinear::New(const unsigned int xNumPoints, const unsigned int yNumPoints,
+boost::shared_ptr<XdmfCurvilinearGrid> XdmfCurvilinearGrid::New(const unsigned int xNumPoints, const unsigned int yNumPoints,
 	const unsigned int zNumPoints)
 {
 	boost::shared_ptr<XdmfArray> numPoints = XdmfArray::New();
@@ -131,63 +131,63 @@ boost::shared_ptr<XdmfGridCurvilinear> XdmfGridCurvilinear::New(const unsigned i
 	numPoints->insert(0, xNumPoints);
 	numPoints->insert(1, yNumPoints);
 	numPoints->insert(2, zNumPoints);
-	boost::shared_ptr<XdmfGridCurvilinear> p(new XdmfGridCurvilinear(numPoints));
+	boost::shared_ptr<XdmfCurvilinearGrid> p(new XdmfCurvilinearGrid(numPoints));
 	return p;
 }
 
-boost::shared_ptr<XdmfGridCurvilinear> XdmfGridCurvilinear::New(const boost::shared_ptr<XdmfArray> numPoints)
+boost::shared_ptr<XdmfCurvilinearGrid> XdmfCurvilinearGrid::New(const boost::shared_ptr<XdmfArray> numPoints)
 {
-	boost::shared_ptr<XdmfGridCurvilinear> p(new XdmfGridCurvilinear(numPoints));
+	boost::shared_ptr<XdmfCurvilinearGrid> p(new XdmfCurvilinearGrid(numPoints));
 	return p;
 }
 
-XdmfGridCurvilinear::XdmfGridCurvilinear(const boost::shared_ptr<XdmfArray> numPoints) :
-	XdmfGrid(XdmfGeometry::New(), XdmfGridCurvilinearImpl::XdmfTopologyCurvilinear::New(this)),
-	mImpl(new XdmfGridCurvilinearImpl(numPoints))
+XdmfCurvilinearGrid::XdmfCurvilinearGrid(const boost::shared_ptr<XdmfArray> numPoints) :
+	XdmfGrid(XdmfGeometry::New(), XdmfCurvilinearGridImpl::XdmfTopologyCurvilinear::New(this)),
+	mImpl(new XdmfCurvilinearGridImpl(numPoints))
 {
 }
 
-XdmfGridCurvilinear::~XdmfGridCurvilinear()
+XdmfCurvilinearGrid::~XdmfCurvilinearGrid()
 {
 	delete mImpl;
 }
 
-const std::string XdmfGridCurvilinear::ItemTag = "Grid";
+const std::string XdmfCurvilinearGrid::ItemTag = "Grid";
 
-boost::shared_ptr<XdmfArray> XdmfGridCurvilinear::getDimensions()
+boost::shared_ptr<XdmfArray> XdmfCurvilinearGrid::getDimensions()
 {
-	return boost::const_pointer_cast<XdmfArray>(static_cast<const XdmfGridCurvilinear &>(*this).getDimensions());
+	return boost::const_pointer_cast<XdmfArray>(static_cast<const XdmfCurvilinearGrid &>(*this).getDimensions());
 }
 
-boost::shared_ptr<const XdmfArray> XdmfGridCurvilinear::getDimensions() const
+boost::shared_ptr<const XdmfArray> XdmfCurvilinearGrid::getDimensions() const
 {
 	return mImpl->mDimensions;
 }
 
-boost::shared_ptr<XdmfGeometry> XdmfGridCurvilinear::getGeometry()
+boost::shared_ptr<XdmfGeometry> XdmfCurvilinearGrid::getGeometry()
 {
 	return boost::const_pointer_cast<XdmfGeometry>(static_cast<const XdmfGrid &>(*this).getGeometry());
 }
 
-void XdmfGridCurvilinear::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader)
+void XdmfCurvilinearGrid::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader)
 {
 	XdmfGrid::populateItem(itemProperties, childItems, reader);
 
 	for(std::vector<boost::shared_ptr<XdmfItem> >::const_iterator iter = childItems.begin(); iter != childItems.end(); ++iter)
 	{
-		if(boost::shared_ptr<XdmfGridCurvilinear> curvilinearGrid = boost::shared_dynamic_cast<XdmfGridCurvilinear>(*iter))
+		if(boost::shared_ptr<XdmfCurvilinearGrid> curvilinearGrid = boost::shared_dynamic_cast<XdmfCurvilinearGrid>(*iter))
 		{
 			mImpl->mDimensions = curvilinearGrid->getDimensions();
 		}
 	}
 }
 
-void XdmfGridCurvilinear::setDimensions(const boost::shared_ptr<XdmfArray> dimensions)
+void XdmfCurvilinearGrid::setDimensions(const boost::shared_ptr<XdmfArray> dimensions)
 {
 	mImpl->mDimensions = dimensions;
 }
 
-void XdmfGridCurvilinear::setGeometry(const boost::shared_ptr<XdmfGeometry> geometry)
+void XdmfCurvilinearGrid::setGeometry(const boost::shared_ptr<XdmfGeometry> geometry)
 {
 	mGeometry = geometry;
 }

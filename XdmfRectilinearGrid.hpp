@@ -1,5 +1,5 @@
-#ifndef XDMFGRIDRECTILINEAR_HPP_
-#define XDMFGRIDRECTILINEAR_HPP_
+#ifndef XDMFRECTILINEARGRID_HPP_
+#define XDMFRECTILINEARGRID_HPP_
 
 // Forward Declarations
 class XdmfArray;
@@ -10,14 +10,14 @@ class XdmfArray;
 /**
  * @brief A rectilinear grid consisting of cells and points arranged on a regular lattice in space.
  *
- * XdmfGridRectilinear represents a mesh of cells and point arranged on a regular lattice in space.
+ * XdmfRectilinearGrid represents a mesh of cells and point arranged on a regular lattice in space.
  * Points are arranged along coordinate axes, but the spacing between points may vary.
  *
  * In order to define a rectilinear grid, the coordinates along each axis direction
  * must be specified.
  *
  */
-class XdmfGridRectilinear : public XdmfGrid {
+class XdmfRectilinearGrid : public XdmfGrid {
 
 public:
 
@@ -29,7 +29,7 @@ public:
 	 *
 	 * @return constructed rectilinear grid.
 	 */
-	static boost::shared_ptr<XdmfGridRectilinear> New(const boost::shared_ptr<XdmfArray> xCoordinates, const boost::shared_ptr<XdmfArray> yCoordinates);
+	static boost::shared_ptr<XdmfRectilinearGrid> New(const boost::shared_ptr<XdmfArray> xCoordinates, const boost::shared_ptr<XdmfArray> yCoordinates);
 
 	/**
 	 * Create a new rectilinear grid (Three dimensional).
@@ -40,7 +40,7 @@ public:
 	 *
 	 * @return constructed rectilinear grid.
 	 */
-	static boost::shared_ptr<XdmfGridRectilinear> New(const boost::shared_ptr<XdmfArray> xCoordinates, const boost::shared_ptr<XdmfArray> yCoordinates,
+	static boost::shared_ptr<XdmfRectilinearGrid> New(const boost::shared_ptr<XdmfArray> xCoordinates, const boost::shared_ptr<XdmfArray> yCoordinates,
 			const boost::shared_ptr<XdmfArray> zCoordinates);
 
 	/**
@@ -50,11 +50,11 @@ public:
 	 *
 	 * @return constructed rectilinear grid.
 	 */
-	static boost::shared_ptr<XdmfGridRectilinear> New(const std::vector<boost::shared_ptr<XdmfArray> > & axesCoordinates);
+	static boost::shared_ptr<XdmfRectilinearGrid> New(const std::vector<boost::shared_ptr<XdmfArray> > & axesCoordinates);
 
-	virtual ~XdmfGridRectilinear();
+	virtual ~XdmfRectilinearGrid();
 
-	LOKI_DEFINE_VISITABLE(XdmfGridRectilinear, XdmfGrid)
+	LOKI_DEFINE_VISITABLE(XdmfRectilinearGrid, XdmfGrid)
 	static const std::string ItemTag;
 
 	/**
@@ -120,7 +120,7 @@ public:
 
 protected:
 
-	XdmfGridRectilinear(const std::vector<boost::shared_ptr<XdmfArray> > & axesCoordinates);
+	XdmfRectilinearGrid(const std::vector<boost::shared_ptr<XdmfArray> > & axesCoordinates);
 
 	void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader);
 
@@ -129,13 +129,13 @@ private:
 	/**
 	 * PIMPL
 	 */
-	class XdmfGridRectilinearImpl;
+	class XdmfRectilinearGridImpl;
 
-	XdmfGridRectilinear(const XdmfGridRectilinear & grid);  // Not implemented.
-	void operator=(const XdmfGridRectilinear & grid);  // Not implemented.
+	XdmfRectilinearGrid(const XdmfRectilinearGrid & grid);  // Not implemented.
+	void operator=(const XdmfRectilinearGrid & grid);  // Not implemented.
 
-	XdmfGridRectilinearImpl * mImpl;
+	XdmfRectilinearGridImpl * mImpl;
 
 };
 
-#endif /* XDMFGRIDRECTILINEAR_HPP_ */
+#endif /* XDMFRECTILINEARGRID_HPP_ */

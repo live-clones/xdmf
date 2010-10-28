@@ -11,16 +11,16 @@ ADD_TEST_CXX_DEPENDENCIES("Xdmf")
 #	Read UseCxxTest.cmake for more information
 # ---------------------------------------
 ADD_TEST_CXX(TestXdmfAttribute)
+ADD_TEST_CXX(TestXdmfCurvilinearGrid)
 ADD_TEST_CXX(TestXdmfGeometry)
 ADD_TEST_CXX(TestXdmfGridCollection)
-ADD_TEST_CXX(TestXdmfGridCurvilinear)
-ADD_TEST_CXX(TestXdmfGridRegular)
-ADD_TEST_CXX(TestXdmfGridRectilinear)
-ADD_TEST_CXX(TestXdmfGridUnstructured)
 ADD_TEST_CXX(TestXdmfReader)
+ADD_TEST_CXX(TestXdmfRegularGrid)
+ADD_TEST_CXX(TestXdmfRectilinearGrid)
 ADD_TEST_CXX(TestXdmfSet)
 ADD_TEST_CXX(TestXdmfTime)
 ADD_TEST_CXX(TestXdmfTopology)
+ADD_TEST_CXX(TestXdmfUnstructuredGrid)
 ADD_TEST_CXX(TestXdmfVisitorValueCounter)
 ADD_TEST_CXX(TestXdmfWriter)
 ADD_TEST_CXX(TestXdmfWriterHDF5ThenXML)
@@ -32,11 +32,11 @@ ADD_TEST_CXX(TestXdmfXPath)
 #	Read UseCxxTest.cmake for more information
 # ---------------------------------------
 CLEAN_TEST_CXX(TestXdmfAttribute)
-CLEAN_TEST_CXX(TestXdmfGeometry)
-CLEAN_TEST_CXX(TestXdmfGridCurvilinear
-	TestXdmfGridCurvilinear1.xmf
-	TestXdmfGridCurvilinear2.xmf
+CLEAN_TEST_CXX(TestXdmfCurvilinearGrid
+	TestXdmfCurvilinearGrid1.xmf
+	TestXdmfCurvilinearGrid2.xmf
 )
+CLEAN_TEST_CXX(TestXdmfGeometry)
 CLEAN_TEST_CXX(TestXdmfGridCollection
 	TestXdmfGridCollection1.xmf
 	TestXdmfGridCollection2.xmf
@@ -44,23 +44,23 @@ CLEAN_TEST_CXX(TestXdmfGridCollection
 	TestXdmfGridCollectionHDF1.xmf
 	TestXdmfGridCollectionHDF2.xmf
 )
-CLEAN_TEST_CXX(TestXdmfGridRegular
-	TestXdmfGridRegular1.xmf
-	TestXdmfGridRegular2.xmf
-)
-CLEAN_TEST_CXX(TestXdmfGridRectilinear
-	TestXdmfGridRectilinear1.xmf
-	TestXdmfGridRectilinear2.xmf
-)
-CLEAN_TEST_CXX(TestXdmfGridUnstructured)
 CLEAN_TEST_CXX(TestXdmfReader
 	TestXdmfReader1.h5
 	TestXdmfReader1.xmf
 	TestXdmfReader2.xmf
 )
+CLEAN_TEST_CXX(TestXdmfRectilinearGrid
+	TestXdmfRectilinearGrid1.xmf
+	TestXdmfRectilinearGrid2.xmf
+)
+CLEAN_TEST_CXX(TestXdmfRegularGrid
+	TestXdmfRegularGrid1.xmf
+	TestXdmfRegularGrid2.xmf
+)
 CLEAN_TEST_CXX(TestXdmfSet)
 CLEAN_TEST_CXX(TestXdmfTime)
 CLEAN_TEST_CXX(TestXdmfTopology)
+CLEAN_TEST_CXX(TestXdmfUnstructuredGrid)
 CLEAN_TEST_CXX(TestXdmfVisitorValueCounter)
 CLEAN_TEST_CXX(TestXdmfWriter
 	output.h5

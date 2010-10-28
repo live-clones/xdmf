@@ -1,5 +1,5 @@
-#ifndef XDMFGRIDUNSTRUCTURED_HPP_
-#define XDMFGRIDUNSTRUCTURED_HPP_
+#ifndef XDMFUNSTRUCTUREDGRID_HPP_
+#define XDMFUNSTRUCTUREDGRID_HPP_
 
 // Includes
 #include "XdmfGrid.hpp"
@@ -11,7 +11,7 @@
  * describes the element types contained in the grid and their connectivity.  The XdmfGeometry describes the
  * location of nodes.
  */
-class XdmfGridUnstructured : public XdmfGrid {
+class XdmfUnstructuredGrid : public XdmfGrid {
 
 public:
 
@@ -20,9 +20,9 @@ public:
 	 *
 	 * @return constructed XdmfGridUnstructured.
 	 */
-	static boost::shared_ptr<XdmfGridUnstructured> New();
+	static boost::shared_ptr<XdmfUnstructuredGrid> New();
 
-	virtual ~XdmfGridUnstructured();
+	virtual ~XdmfUnstructuredGrid();
 
 	static const std::string ItemTag;
 
@@ -58,13 +58,13 @@ public:
 
 protected:
 
-	XdmfGridUnstructured();
+	XdmfUnstructuredGrid();
 
 private:
 
-	XdmfGridUnstructured(const XdmfGridUnstructured & grid);  // Not implemented.
-	void operator=(const XdmfGridUnstructured & grid);  // Not implemented.
+	XdmfUnstructuredGrid(const XdmfUnstructuredGrid & grid);  // Not implemented.
+	void operator=(const XdmfUnstructuredGrid & grid);  // Not implemented.
 
 };
 
-#endif /* XDMFGRID_HPP_ */
+#endif /* XDMFUNSTRUCTUREDGRID_HPP_ */

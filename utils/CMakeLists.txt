@@ -38,9 +38,9 @@ foreach(executable ${XdmfUtilsExecutables})
 	target_link_libraries(${executable} XdmfUtils)
 endforeach(executable ${XdmfUtilsExecutables})
 
-if(XDMF_BUILD_TESTING)
+if(BUILD_TESTING)
 	add_subdirectory(tests)
-endif(XDMF_BUILD_TESTING)
+endif(BUILD_TESTING)
 
 if(XDMF_WRAP_JAVA)
 	XDMF_SWIG_JAVA(XdmfUtils XdmfJava)

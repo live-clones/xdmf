@@ -4,12 +4,12 @@
 #include "XdmfArray.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGeometryType.hpp"
-#include "XdmfGridUnstructured.hpp"
 #include "XdmfSet.hpp"
 #include "XdmfSetType.hpp"
 #include "XdmfTime.hpp"
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
+#include "XdmfUnstructuredGrid.hpp"
 
 class XdmfTestDataGenerator {
 public:
@@ -25,9 +25,9 @@ public:
 	 * Time = 100
 	 * Total Number of Values = 69
 	 */
-	static boost::shared_ptr<XdmfGridUnstructured> createHexahedron()
+	static boost::shared_ptr<XdmfUnstructuredGrid> createHexahedron()
 	{
-		boost::shared_ptr<XdmfGridUnstructured> grid = XdmfGridUnstructured::New();
+		boost::shared_ptr<XdmfUnstructuredGrid> grid = XdmfUnstructuredGrid::New();
 		grid->setName("Hexahedron");
 
 		// Set Geometry

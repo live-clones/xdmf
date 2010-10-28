@@ -6,12 +6,12 @@
 #include "XdmfExodusReader.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGeometryType.hpp"
-#include "XdmfGridUnstructured.hpp"
 #include "XdmfHDF5Writer.hpp"
 #include "XdmfSet.hpp"
 #include "XdmfSetType.hpp"
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
+#include "XdmfUnstructuredGrid.hpp"
 
 boost::shared_ptr<XdmfExodusReader> XdmfExodusReader::New()
 {
@@ -27,9 +27,9 @@ XdmfExodusReader::~XdmfExodusReader()
 {
 }
 
-boost::shared_ptr<XdmfGridUnstructured> XdmfExodusReader::read(const std::string & fileName, const boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter) const
+boost::shared_ptr<XdmfUnstructuredGrid> XdmfExodusReader::read(const std::string & fileName, const boost::shared_ptr<XdmfHDF5Writer> heavyDataWriter) const
 {
-	boost::shared_ptr<XdmfGridUnstructured> toReturn = XdmfGridUnstructured::New();
+	boost::shared_ptr<XdmfUnstructuredGrid> toReturn = XdmfUnstructuredGrid::New();
 
 	// Read Exodus II file to XdmfGridUnstructured via Exodus II API
 	float version;

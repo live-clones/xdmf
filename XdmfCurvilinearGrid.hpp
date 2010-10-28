@@ -1,5 +1,5 @@
-#ifndef XDMFGRIDCURVILINEAR_HPP_
-#define XDMFGRIDCURVILINEAR_HPP_
+#ifndef XDMFCURVILINEARGRID_HPP_
+#define XDMFCURVILINEARGRID_HPP_
 
 // Forward Declarations
 class XdmfArray;
@@ -10,14 +10,14 @@ class XdmfArray;
 /**
  * @brief A curvilinear (or structured) grid consisting of cells and points arranged on a regular lattice in space.
  *
- * XdmfGridCurvilinear represents a mesh of cells and points arranged with regular topology in space.  A curvilinear grid
+ * XdmfCurvilinearGrid represents a mesh of cells and points arranged with regular topology in space.  A curvilinear grid
  * contains regular topology but irregular geometry.
  *
  * In order to define a curvilinear grid, the dimensions of the grid must be supplied and the coordinates of each point
  * must be specified.
  *
  */
-class XdmfGridCurvilinear : public XdmfGrid {
+class XdmfCurvilinearGrid : public XdmfGrid {
 
 public:
 
@@ -29,7 +29,7 @@ public:
 	 *
 	 * @return constructed curvilinear grid.
 	 */
-	static boost::shared_ptr<XdmfGridCurvilinear> New(const unsigned int xNumPoints, const unsigned int yNumPoints);
+	static boost::shared_ptr<XdmfCurvilinearGrid> New(const unsigned int xNumPoints, const unsigned int yNumPoints);
 
 	/**
 	 * Create a new curvilinear grid (Three dimensional).
@@ -40,7 +40,7 @@ public:
 	 *
 	 * @return constructed curvilinear grid.
 	 */
-	static boost::shared_ptr<XdmfGridCurvilinear> New(const unsigned int xNumPoints, const unsigned int yNumPoints,
+	static boost::shared_ptr<XdmfCurvilinearGrid> New(const unsigned int xNumPoints, const unsigned int yNumPoints,
 		const unsigned int zNumPounts);
 
 	/**
@@ -50,11 +50,11 @@ public:
 	 *
 	 * @return constructed curvilinear grid.
 	 */
-	static boost::shared_ptr<XdmfGridCurvilinear> New(const boost::shared_ptr<XdmfArray> numPoints);
+	static boost::shared_ptr<XdmfCurvilinearGrid> New(const boost::shared_ptr<XdmfArray> numPoints);
 
-	virtual ~XdmfGridCurvilinear();
+	virtual ~XdmfCurvilinearGrid();
 
-	LOKI_DEFINE_VISITABLE(XdmfGridCurvilinear, XdmfGrid)
+	LOKI_DEFINE_VISITABLE(XdmfCurvilinearGrid, XdmfGrid)
 	static const std::string ItemTag;
 
 	/**
@@ -94,7 +94,7 @@ public:
 
 protected:
 
-	XdmfGridCurvilinear(const boost::shared_ptr<XdmfArray> numPoints);
+	XdmfCurvilinearGrid(const boost::shared_ptr<XdmfArray> numPoints);
 
 	void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader);
 
@@ -103,13 +103,13 @@ private:
 	/**
 	 * PIMPL
 	 */
-	class XdmfGridCurvilinearImpl;
+	class XdmfCurvilinearGridImpl;
 
-	XdmfGridCurvilinear(const XdmfGridCurvilinear & grid);  // Not implemented.
-	void operator=(const XdmfGridCurvilinear & grid);  // Not implemented.
+	XdmfCurvilinearGrid(const XdmfCurvilinearGrid & grid);  // Not implemented.
+	void operator=(const XdmfCurvilinearGrid & grid);  // Not implemented.
 
-	XdmfGridCurvilinearImpl * mImpl;
+	XdmfCurvilinearGridImpl * mImpl;
 
 };
 
-#endif /* XDMFGRIDRECTILINEAR_HPP_ */
+#endif /* XDMFCURVILINEARGRID_HPP_ */
