@@ -1,6 +1,9 @@
 project(Xdmf)
 cmake_minimum_required(VERSION 2.6)
 
+enable_testing()
+include(CTest)
+
 set(BUILD_SHARED_LIBS true)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
@@ -11,13 +14,6 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_MODULE_PATH 
 	${CMAKE_SOURCE_DIR}/CMake
 	${CMAKE_SOURCE_DIR}/CMake/TestingSuite)
-
-# Should we build with testing
-option(XDMF_BUILD_TESTING OFF)
-if(XDMF_BUILD_TESTING)
-	enable_testing()
-	include(CTest)
-endif(XDMF_BUILD_TESTING)
 
 # Should we build with documentation
 option(XDMF_BUILD_DOCUMENTATION OFF)
@@ -33,6 +29,9 @@ option(XDMF_WRAP_JAVA OFF)
 if(XDMF_WRAP_PYTHON OR XDMF_WRAP_JAVA)
 	find_package(SWIG REQUIRED)
 	include(${SWIG_USE_FILE})
+	if(${SWIG_VERSION} LESS 2.0.0)
+		message(SEND_ERROR "Swig must be version 2.0.0 or greater")
+	endif(${SWIG_VERSION} LESS 2.0.0)
 endif(XDMF_WRAP_PYTHON OR XDMF_WRAP_JAVA)
 
 # If we are wrapping python, let's include it in the top level
@@ -129,24 +128,24 @@ if(NOT XDMF_BUILD_CORE_ONLY)
 		XdmfAttribute
 		XdmfAttributeCenter
 		XdmfAttributeType
+		XdmfCurvilinearGrid
 		XdmfDomain
 		XdmfGeometry
 		XdmfGeometryType
 		XdmfGrid
 		XdmfGridCollection
 		XdmfGridCollectionType
-		XdmfGridCurvilinear
-		XdmfGridRectilinear
-		XdmfGridRegular
-		XdmfGridUnstructured
 		XdmfItemFactory
 		XdmfMap
 		XdmfReader
+		XdmfRectilinearGrid
+		XdmfRegularGrid
 		XdmfSet
 		XdmfSetType
 		XdmfTime
 		XdmfTopology
 		XdmfTopologyType
+		XdmfUnstructuredGrid
 	)
 	
 	add_library(Xdmf ${XdmfSources})
@@ -161,10 +160,10 @@ if(NOT XDMF_BUILD_CORE_ONLY)
 		XDMF_SWIG_PYTHON(Xdmf XdmfCore)
 	endif(XDMF_WRAP_PYTHON)
 	
-	if(XDMF_BUILD_TESTING)
+	if(BUILD_TESTING)
 		include_directories(tests/Cxx)
 		add_subdirectory(tests)
-	endif(XDMF_BUILD_TESTING)
+	endif(BUILD_TESTING)
 	
 	option(XDMF_BUILD_UTILS OFF)
 	if(XDMF_BUILD_UTILS)
