@@ -157,81 +157,81 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 			return None
 	};
 
-
-	void copyValueAsInt8(int index, char value) {
-		$self->insert(index, value);
-	}
-
-	void copyValueAsInt16(int index, short value) {
-		$self->insert(index, value);
-	}
-
-	void copyValueAsInt32(int index, int value) {
-		$self->insert(index, value);
-	}
-
-	void copyValueAsInt64(int index, long value) {
-		$self->insert(index, value);
-	}
-
-	void copyValueAsFloat32(int index, float value) {
-		$self->insert(index, value);
-	}
-
-	void copyValueAsFloat64(int index, double value) {
-		$self->insert(index, value);
-	}
-
-	void copyValueAsUInt8(int index, unsigned char value) {
-		$self->insert(index, value);
-	}
-
-	void copyValueAsUInt16(int index, unsigned short value) {
-		$self->insert(index, value);
-	}
-
-	void copyValueAsUInt32(int index, unsigned int value) {
-		$self->insert(index, value);
-	}
-
 	%pythoncode 
 	{
 		def insertAsInt8(self, startIndex, values):
 			for i in range(0, len(values)):
-				self.copyValueAsInt8(i+startIndex, values[i])
+				self.insertValueAsInt8(i+startIndex, values[i])
 
 		def insertAsInt16(self, startIndex, values):
 			for i in range(0, len(values)):
-				self.copyValueAsInt16(i+startIndex, values[i])
+				self.insertValueAsInt16(i+startIndex, values[i])
 
 		def insertAsInt32(self, startIndex, values):
 			for i in range(0, len(values)):
-				self.copyValueAsInt32(i+startIndex, values[i])
+				self.insertValueAsInt32(i+startIndex, values[i])
 
 		def insertAsInt64(self, startIndex, values):
 			for i in range(0, len(values)):
-				self.copyValueAsInt64(i+startIndex, values[i])
+				self.insertValueAsInt64(i+startIndex, values[i])
 
 		def insertAsFloat32(self, startIndex, values):
 			for i in range(0, len(values)):
-				self.copyValueAsFloat32(i+startIndex, values[i])
+				self.insertValueAsFloat32(i+startIndex, values[i])
 
 		def insertAsFloat64(self, startIndex, values):
 			for i in range(0, len(values)):
-				self.copyValueAsFloat64(i+startIndex, values[i])
+				self.insertValueAsFloat64(i+startIndex, values[i])
 
 		def insertAsUInt8(self, startIndex, values):
 			for i in range(0, len(values)):
-				self.copyValueAsUInt8(i+startIndex, values[i])
+				self.insertValueAsUInt8(i+startIndex, values[i])
 
 		def insertAsUInt16(self, startIndex, values):
 			for i in range(0, len(values)):
-				self.copyValueAsUInt16(i+startIndex, values[i])
+				self.insertValueAsUInt16(i+startIndex, values[i])
 
 		def insertAsUInt32(self, startIndex, values):
 			for i in range(0, len(values)):
-				self.copyValueAsUInt32(i+startIndex, values[i])
+				self.insertValueAsUInt32(i+startIndex, values[i])
 	};
+	
+	void insertValueAsInt8(int index, char value) {
+		$self->insert(index, value);
+	}
+
+	void insertValueAsInt16(int index, short value) {
+		$self->insert(index, value);
+	}
+
+	void insertValueAsInt32(int index, int value) {
+		$self->insert(index, value);
+	}
+
+	void insertValueAsInt64(int index, long value) {
+		$self->insert(index, value);
+	}
+
+	void insertValueAsFloat32(int index, float value) {
+		$self->insert(index, value);
+	}
+
+	void insertValueAsFloat64(int index, double value) {
+		$self->insert(index, value);
+	}
+
+	void insertValueAsUInt8(int index, unsigned char value) {
+		$self->insert(index, value);
+	}
+
+	void insertValueAsUInt16(int index, unsigned short value) {
+		$self->insert(index, value);
+	}
+
+	void insertValueAsUInt32(int index, unsigned int value) {
+		$self->insert(index, value);
+	}
+	
 };
 
 // Define equality operator
@@ -316,6 +316,16 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %template(getValueAsUInt8) XdmfArray::getValue<unsigned char>;
 %template(getValueAsUInt16) XdmfArray::getValue<unsigned short>;
 %template(getValueAsUInt32) XdmfArray::getValue<unsigned int>;
+
+%template(initializeAsInt8) XdmfArray::initialize<char>;
+%template(initializeAsInt16) XdmfArray::initialize<short>;
+%template(initializeAsInt32) XdmfArray::initialize<int>;
+%template(initializeAsInt64) XdmfArray::initialize<long>;
+%template(initializeAsFloat32) XdmfArray::initialize<float>;
+%template(initializeAsFloat64) XdmfArray::initialize<double>;
+%template(initializeAsUInt8) XdmfArray::initialize<unsigned char>;
+%template(initializeAsUInt16) XdmfArray::initialize<unsigned short>;
+%template(initializeAsUInt32) XdmfArray::initialize<unsigned int>;
 
 %template(pushBackAsInt8) XdmfArray::pushBack<char>;
 %template(pushBackAsInt16) XdmfArray::pushBack<short>;
