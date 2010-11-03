@@ -163,6 +163,12 @@ void XdmfWriter::setWriteXPaths(const bool writeXPaths)
 
 void XdmfWriter::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
+	if (mImpl->mDepth == 0)
+	{
+		 mImpl->openFile();
+	}
+	mImpl->mDepth++;
+
 	bool isSubclassed = array.getItemTag().compare(XdmfArray::ItemTag) != 0;
 
 	if(isSubclassed)
@@ -225,6 +231,12 @@ void XdmfWriter::visit(XdmfArray & array, const boost::shared_ptr<XdmfBaseVisito
 		}
 
 		mImpl->mWriteXPaths = oldWriteXPaths;
+	}
+
+	mImpl->mDepth--;
+	if(mImpl->mDepth <= 0)
+	{
+		mImpl->closeFile();
 	}
 }
 
