@@ -263,7 +263,7 @@ struct DefaultCatchAll
         static ReturnType acceptImpl(T& visited, const boost::shared_ptr<BaseVisitor> guest)
         {
             // Apply the Acyclic Visitor
-            if (Visitor<T,R>* p = dynamic_cast<Visitor<T,R>*>(guest.get()))
+            if (Visitor<T,R>* p = (Visitor<T,R>*)(guest.get()))
             {
                 return p->visit(visited, guest);
             }
