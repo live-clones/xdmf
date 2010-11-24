@@ -1,9 +1,6 @@
 project(Xdmf)
 cmake_minimum_required(VERSION 2.6)
 
-enable_testing()
-include(CTest)
-
 set(BUILD_SHARED_LIBS true)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
@@ -22,6 +19,12 @@ option(XDMF_BUILD_DOCUMENTATION OFF)
 if(XDMF_BUILD_DOCUMENTATION)
 	add_subdirectory(doc)
 endif(XDMF_BUILD_DOCUMENTATION)
+
+option(XDMF_BUILD_TESTING ON)
+if(XDMF_BUILD_TESTING)
+    enable_testing()
+    include(CTest)
+endif(XDMF_BUILD_TESTING)
 
 # Wrapper Setup
 option(XDMF_WRAP_PYTHON OFF)
@@ -159,7 +162,6 @@ if(NOT XDMF_BUILD_CORE_ONLY)
 	endif(XDMF_WRAP_PYTHON)
 	
 	if(BUILD_TESTING)
-		include_directories(tests/Cxx)
 		add_subdirectory(tests)
 	endif(BUILD_TESTING)
 	
