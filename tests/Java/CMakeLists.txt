@@ -3,11 +3,11 @@ INCLUDE(AddTestsJava)
 # Add any dependencies that the java tests may need
 # Note: The tests already depend on their own file
 #	JAVA_TEST_DEPENDENCIES is also set in core
-ADD_TEST_JAVA_DEPENDENCIES("${XDMF_JAVA_JAR}")
+ADD_TEST_JAVA_DEPENDENCIES(Compiled_Xdmf_Jar)
 
 # Add any classpath directories that the java tests may need
 # Note: JAVA_TEST_CLASSPATH is also set in core
-ADD_TEST_JAVA_CLASSPATH("${XDMF_JAVA_JAR}")
+ADD_TEST_JAVA_CLASSPATH("${Xdmf_JAVA_JAR}")
 
 # Add any ldpath directories that the java tests may need
 # Note: JAVA_TEST_LDPATH is also set in core

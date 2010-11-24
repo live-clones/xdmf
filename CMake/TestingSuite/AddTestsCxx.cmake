@@ -31,17 +31,17 @@
 	
 	IF(EXISTS ${cxx_source_dir}/${executable}.cpp)
 		ADD_EXECUTABLE(${executable}${dup} ${cxx_source_dir}/${executable}.cpp)
-      	ENDIF(EXISTS ${cxx_source_dir}/${executable}.cpp)
+   	ENDIF(EXISTS ${cxx_source_dir}/${executable}.cpp)
 
 	IF(EXISTS ${cxx_source_dir}/${executable}.cxx)
 		ADD_EXECUTABLE(${executable}${dup} ${cxx_source_dir}/${executable}.cxx)
-       	ENDIF(EXISTS ${cxx_source_dir}/${executable}.cxx)
+   	ENDIF(EXISTS ${cxx_source_dir}/${executable}.cxx)
 	
 	GET_PROPERTY(cxx_dependencies GLOBAL PROPERTY CXX_TEST_DEPENDENCIES)
 	TARGET_LINK_LIBRARIES(${executable}${dup} ${cxx_dependencies})
  
 	SET_CORE("${cxx_binary_dir}")
-      	ADD_TEST(Cxx${is_core}_${executable}${dup} ${executable}${dup} ${arguments})
+   	ADD_TEST(Cxx${is_core}_${executable}${dup} ${executable}${dup} ${arguments})
  ENDMACRO(ADD_TEST_CXX executable)
 
  # CXX Clean Macro

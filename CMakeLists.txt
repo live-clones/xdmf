@@ -82,35 +82,32 @@ if(XDMF_WRAP_JAVA)
 	#	Target Name	= the output target name will have ${java_name}Java as its name
 	#	Target Jar	= the output target jar will have ${java_name}Java.jar as its name
 	MACRO(XDMF_SWIG_JAVA java_name)
-		set(XDMF_JAVA_PACKAGE_DIR mil/army/arl/xdmf)
+		set(${java_name}_JAVA_JAR ${CMAKE_BINARY_DIR}/${java_name}.jar)
+        set(XDMF_JAVA_PACKAGE_DIR mil/army/arl/xdmf)
 		set(XDMF_JAVA_DIR ${CMAKE_CURRENT_BINARY_DIR}/${XDMF_JAVA_PACKAGE_DIR})
 		set(CMAKE_SWIG_OUTDIR ${XDMF_JAVA_DIR})
 		set(CMAKE_SWIG_FLAGS -v -make_default -package mil.army.arl.xdmf)
 		set_source_files_properties(${java_name}.i PROPERTIES CPLUSPLUS ON)
 		swig_add_module(${java_name}Java java ${java_name}.i)
 		swig_link_libraries(${java_name}Java ${java_name})	
-		add_dependencies(${java_name}Java ${java_name}JavaDir)
-		if("${ARGN}" STRGREATER "")
-			add_dependencies(${java_name}Java "${ARGN}")
-		endif("${ARGN}" STRGREATER "")
-		add_custom_command(TARGET ${java_name}Java
-			POST_BUILD 	
-			COMMAND ${JAVA_COMPILE}
-			ARGS 	 -cp "'${CMAKE_BINARY_DIR}/*'"
-					 "${XDMF_JAVA_DIR}/*.java"
-			COMMAND ${JAVA_ARCHIVE}
-			ARGS	-cvf ${CMAKE_BINARY_DIR}/${java_name}.jar
-					"${XDMF_JAVA_PACKAGE_DIR}/*.class"
-		)
-		add_custom_target(
-			${java_name}JavaDir ALL
-			DEPENDS ${XDMF_JAVA_DIR}
-		)	
-		add_custom_command(
-			OUTPUT ${XDMF_JAVA_DIR}
-			COMMAND ${CMAKE_COMMAND} -E make_directory
-				${XDMF_JAVA_DIR}
-		)
+        add_custom_target(${java_name}_Java_Dir ALL DEPENDS 
+                            ${XDMF_JAVA_DIR})
+        add_custom_command(OUTPUT ${XDMF_JAVA_DIR}
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${XDMF_JAVA_DIR}
+        )
+        add_custom_target(Compiled_${java_name}_Jar ALL DEPENDS 
+                            ${${java_name}_JAVA_JAR})
+        add_custom_command(OUTPUT ${${java_name}_JAVA_JAR}
+            COMMAND ${JAVA_COMPILE}
+            ARGS    -cp "'${CMAKE_BINARY_DIR}/*'"
+                    "${XDMF_JAVA_DIR}/*.java"
+            COMMAND ${JAVA_ARCHIVE}
+            ARGS    -cvf ${${java_name}_JAVA_JAR}
+                    "${XDMF_JAVA_PACKAGE_DIR}/*.class"
+        )
+        add_dependencies(${java_name}Java ${java_name}_Java_Dir)
+        add_dependencies(Compiled_${java_name}_Jar ${java_name}Java "${ARGN}")
+
 		set_property(DIRECTORY APPEND PROPERTY
 			ADDITIONAL_MAKE_CLEAN_FILES
 			${CMAKE_BINARY_DIR}/${java_name}.jar
@@ -152,8 +149,7 @@ if(NOT XDMF_BUILD_CORE_ONLY)
 	target_link_libraries(Xdmf XdmfCore)
 	
 	if(XDMF_WRAP_JAVA)
-		XDMF_SWIG_JAVA(Xdmf XdmfCoreJava)
-		set(XDMF_JAVA_JAR ${CMAKE_BINARY_DIR}/Xdmf.jar CACHE INTERNAL "")
+		XDMF_SWIG_JAVA(Xdmf Compiled_XdmfCore_Jar)
 	endif(XDMF_WRAP_JAVA)
 	
 	if(XDMF_WRAP_PYTHON)

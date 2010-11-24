@@ -18,6 +18,20 @@ MACRO(ADD_TEST_PYTHON_DEPENDENCIES dependencies)
 	ENDIF(NOT ("${dependencies}" STREQUAL ""))
 ENDMACRO(ADD_TEST_PYTHON_DEPENDENCIES dependencies)
 
+# Python Add Dependencies Macro
+# Author: Brian Panneton
+# Description: This macro adds the python test dependencies.
+#        Note: The tests already depend on their own file
+# Parameters:         
+#              dependencies         = any dependencies needed for python tests
+MACRO(ADD_TEST_PYTHON_FILE_DEPENDENCIES dependencies)
+	IF(NOT ("${dependencies}" STREQUAL ""))
+	        SET_PROPERTY(GLOBAL APPEND PROPERTY PYTHON_TEST_FILE_DEPENDENCIES 
+        	        "${dependencies}"
+	        )
+	ENDIF(NOT ("${dependencies}" STREQUAL ""))
+ENDMACRO(ADD_TEST_PYTHON_FILE_DEPENDENCIES dependencies)
+
 # Python Add PythonPath Macro
 # Author: Brian Panneton
 # Description: This macro adds the python test pythonpaths.
@@ -46,8 +60,8 @@ MACRO(ADD_TEST_PYTHON executable)
 	
 	PARSE_TEST_ARGS("${ARGN}")
 
-	GET_PROPERTY(python_dependencies GLOBAL 
-			PROPERTY PYTHON_TEST_DEPENDENCIES)
+	GET_PROPERTY(python_file_dependencies GLOBAL 
+			PROPERTY PYTHON_TEST_FILE_DEPENDENCIES)
 	GET_PROPERTY(python_pythonpath GLOBAL PROPERTY PYTHON_TEST_PYTHONPATH)
 	
 	ADD_CUSTOM_COMMAND(
@@ -61,7 +75,7 @@ MACRO(ADD_TEST_PYTHON executable)
 		ARGS	-mpy_compile
 			${python_binary_dir}/${executable}.py
 		DEPENDS ${python_source_dir}/${executable}.py
-			${python_dependencies}
+			${python_file_dependencies}
 	)
 	
 	SET_PROPERTY(GLOBAL APPEND PROPERTY PYTHON_TEST_TARGETS "${python_binary_dir}/${executable}.pyc")
@@ -99,12 +113,18 @@ MACRO(CREATE_TARGET_TEST_PYTHON)
 	IF(EXISTS PythonCore_ALLTEST)
         	SET(PythonCore_ALLTEST PythonCore_ALLTEST)
 	ENDIF(EXISTS PythonCore_ALLTEST)
-	
+
+    GET_PROPERTY(python_dependencies GLOBAL PROPERTY PYTHON_TEST_DEPENDENCIES)	
+
 	SET_CORE("${python_binary_dir}")
 	GET_PROPERTY(targets GLOBAL PROPERTY PYTHON_TEST_TARGETS)
 	ADD_CUSTOM_TARGET(Python${is_core}_ALLTEST ALL DEPENDS 
 		${PythonCore_ALLTEST} ${targets})
-	
+
+    IF(NOT ("${python_dependencies}" STREQUAL ""))
+        ADD_DEPENDENCIES(Python${is_core}_ALLTEST ${python_dependencies})
+	ENDIF(NOT ("${python_dependencies}" STREQUAL ""))
+
 	IF(NOT ("${is_core}" STREQUAL ""))
 		SET_PROPERTY(GLOBAL PROPERTY PYTHON_TEST_TARGETS "")
 	ENDIF(NOT ("${is_core}" STREQUAL ""))
