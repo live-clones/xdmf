@@ -27,15 +27,35 @@
 XdmfInformation::XdmfInformation() {
     this->SetElementName("Information");
     this->Value = NULL;
+    this->NumberOfInformations = 0;
+    this->Informations = (XdmfInformation **)calloc(1, sizeof( XdmfInformation * ));
 }
 
 XdmfInformation::~XdmfInformation() {
+  for (int Index = 0; Index < this->NumberOfInformations; Index ++ ){
+    if (this->Informations[Index]->GetDeleteOnGridDelete()){
+        delete this->Informations[Index];
+    }
+  }
+  free(this->Informations);
+  delete[] this->Value;
 }
 
 XdmfInt32
 XdmfInformation::Insert( XdmfElement *Child){
     if(Child && XDMF_WORD_CMP(Child->GetElementName(), "Information")){
-        return(XdmfElement::Insert(Child));
+      XdmfInt32 status = XdmfElement::Insert(Child);
+      if((status == XDMF_SUCCESS) && XDMF_WORD_CMP(Child->GetElementName(), "Information")){
+            XdmfInformation *ChildInfo = (XdmfInformation *)Child;
+            this->NumberOfInformations++;
+            this->Informations = ( XdmfInformation **)realloc( this->Informations,
+                this->NumberOfInformations * sizeof( XdmfInformation * ));
+            if(!this->Informations) {
+                XdmfErrorMessage("Realloc of Information List Failed");
+                return(XDMF_FAIL);
+            }
+            this->Informations[this->NumberOfInformations - 1] = ChildInfo;
+      }
     }else{
         XdmfErrorMessage("Information can only Insert Information elements");
     }

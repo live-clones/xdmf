@@ -72,6 +72,8 @@ public:
 
 protected:
     XdmfString  Value;
+    XdmfInt32 NumberOfInformations;
+    XdmfInformation **Informations;
 };
 
 #endif // __XdmfInformation_h

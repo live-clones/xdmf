@@ -103,6 +103,7 @@ XdmfValuesXML::Write(XdmfArray *anArray, XdmfConstString /*HeavyDataSetName*/){
         len = MIN(len, nelements);
         DataValues = anArray->GetValues(index, len);
         StringOutput << DataValues << endl;
+        //delete [] DataValues;
         index += len;
         nelements -= len;
         dims[r] -= len;

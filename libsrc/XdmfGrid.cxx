@@ -92,7 +92,12 @@ XdmfGrid::~XdmfGrid() {
         delete this->Sets[Index];
     }
   }
-  free(this->Sets);
+  free(this->Sets);  
+  for ( Index = 0; Index < this->NumberOfInformations; Index ++ ){
+    if (this->Informations[Index]->GetDeleteOnGridDelete()){
+        delete this->Informations[Index];
+    }
+  }
   free(this->Informations);
 }
 
