@@ -66,8 +66,10 @@ if(XDMF_WRAP_PYTHON)
 		if("${ARGN}" STRGREATER "")
 			add_dependencies(${python_name} "${ARGN}")
 		endif("${ARGN}" STRGREATER "")
-		install(FILES ${CMAKE_BINARY_DIR}/Xdmf.py DESTINATION lib/python)
-		install(TARGETS ${SWIG_MODULE_Xdmf_REAL_NAME} DESTINATION lib/python)
+		install(FILES ${CMAKE_BINARY_DIR}/${python_name}.py 
+                DESTINATION lib/python)
+		install(TARGETS ${SWIG_MODULE_${python_name}_REAL_NAME} 
+                DESTINATION lib/python)
 	ENDMACRO(XDMF_SWIG_PYTHON)
 endif(XDMF_WRAP_PYTHON)
 
@@ -118,6 +120,7 @@ if(XDMF_WRAP_JAVA)
 			${CMAKE_BINARY_DIR}/${java_name}.jar
 			${XDMF_JAVA_DIR}
 		)
+        install(FILES ${CMAKE_BINARY_DIR}/${java_name}.jar DESTINATION lib/java)
 	ENDMACRO(XDMF_SWIG_JAVA)
 endif(XDMF_WRAP_JAVA)
 
