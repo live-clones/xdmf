@@ -82,7 +82,7 @@ if(XDMF_WRAP_PYTHON)
 	XDMF_SWIG_PYTHON(XdmfCore)
 endif(XDMF_WRAP_PYTHON)
 
-file(GLOB XdmfCoreHeaders *.hpp)
+file(GLOB_RECURSE XdmfCoreHeaders "*.hpp" "*.tpp" "*.i")
 file(GLOB LokiHeaders loki/*.h)
 install(FILES ${XdmfCoreHeaders} DESTINATION include)
 install(FILES ${LokiHeaders} DESTINATION include/loki)

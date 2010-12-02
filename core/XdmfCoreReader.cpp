@@ -103,6 +103,8 @@ public:
 		return myItems;
 	}
 
+int globalCount;
+
 	/**
 	 * Reads a single xmlNode into an XdmfItem object in memory.  The constructed XdmfItem is added to myItems and an entry is added mapping the xmlNodePtr to the new XdmfItem in the mXPathMap.
 	 */
@@ -117,23 +119,26 @@ public:
 		{
 			std::map<std::string, std::string> itemProperties;
 			if(currNode->children != NULL)
-			{
-				itemProperties["Content"] = (const char *)currNode->children->content;
+			{   
+                if(currNode->children->content != NULL)
+                    itemProperties["Content"] = (const char *)currNode->children->content;  
+                else itemProperties["Content"] = "";
 				itemProperties["XMLDir"] = mXMLDir;
 			}
-
 			xmlAttrPtr currAttribute = currNode->properties;
 			while(currAttribute != NULL)
 			{
 				itemProperties[(const char *)currAttribute->name] = (const char *)currAttribute->children->content;
 				currAttribute = currAttribute->next;
 			}
+
 			std::vector<boost::shared_ptr<XdmfItem> > childItems = this->read(currNode->children);
 			boost::shared_ptr<XdmfItem> newItem = mItemFactory->createItem((const char *)currNode->name, itemProperties, childItems);
 			if(newItem == NULL)
 			{
 				assert(false);
 			}
+
 			newItem->populateItem(itemProperties, childItems, mCoreReader);
 			myItems.push_back(newItem);
 			mXPathMap[currNode] = newItem;

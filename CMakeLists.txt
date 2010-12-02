@@ -120,7 +120,10 @@ if(XDMF_WRAP_JAVA)
 			${CMAKE_BINARY_DIR}/${java_name}.jar
 			${XDMF_JAVA_DIR}
 		)
-        install(FILES ${CMAKE_BINARY_DIR}/${java_name}.jar DESTINATION lib/java)
+        install(FILES ${CMAKE_BINARY_DIR}/${java_name}.jar 
+                DESTINATION lib/java)
+       	install(TARGETS ${SWIG_MODULE_${java_name}Java_REAL_NAME}
+                DESTINATION lib/java)
 	ENDMACRO(XDMF_SWIG_JAVA)
 endif(XDMF_WRAP_JAVA)
 
@@ -173,7 +176,7 @@ if(NOT XDMF_BUILD_CORE_ONLY)
 		add_subdirectory(utils)
 	endif(XDMF_BUILD_UTILS)
 		
-	file(GLOB XdmfHeaders *.hpp)
+	file(GLOB XdmfHeaders "*.hpp" "*.tpp" "*.i")
 	install(FILES ${XdmfHeaders} DESTINATION include)
 	install(TARGETS Xdmf LIBRARY DESTINATION lib)
 endif(NOT XDMF_BUILD_CORE_ONLY)
