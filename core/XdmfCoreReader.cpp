@@ -120,9 +120,9 @@ int globalCount;
 			std::map<std::string, std::string> itemProperties;
 			if(currNode->children != NULL)
 			{   
-                if(currNode->children->content != NULL)
-                    itemProperties["Content"] = (const char *)currNode->children->content;  
-                else itemProperties["Content"] = "";
+                xmlChar *content = xmlNodeGetContent(currNode);
+                itemProperties["Content"] = (char*)content;
+                xmlFree(content);
 				itemProperties["XMLDir"] = mXMLDir;
 			}
 			xmlAttrPtr currAttribute = currNode->properties;
