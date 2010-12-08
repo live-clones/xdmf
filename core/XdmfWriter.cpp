@@ -10,6 +10,7 @@
 #include "XdmfItem.hpp"
 #include "XdmfSystemUtils.hpp"
 #include "XdmfWriter.hpp"
+#include "XdmfVersion.hpp"
 
 /**
  * PIMPL
@@ -31,7 +32,7 @@ public:
 		mXMLFilePath(XdmfSystemUtils::getRealPath(xmlFilePath)),
 		mXPathCount(0),
 		mXPathString(""),
-		mVersionString("2.0")
+		mVersionString(XdmfVersion.getShort())
 	{
 	};
 

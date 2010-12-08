@@ -15,6 +15,13 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/CMake/VersionSuite)
 SET(vMajor "0")
 SET(vMinor "0")
 
+# This Macro allows you to set up the Version in a one liner
+MACRO(VersionCreate versionName versionMajor)
+    VersionMajorSet(${versionMajor})
+    VersionCalculate()
+    VersionWrite(${versionName})
+ENDMACRO(VersionCreate versionName versionMajor)
+
 # This Macro allows you to set the rewrite number
 MACRO(VersionMajorSet versionMajor)
 	SET(vMajor ${versionMajor})
@@ -32,11 +39,13 @@ MACRO(VersionCalculate)
 ENDMACRO(VersionCalculate)
 
 # This Macro writes your hpp file
-MACRO(VersionWrite versionProjectName)
-	FILE(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/${versionProjectName}Version.hpp 
-"/*Current Version of ${versionProjectName}*/
-\#define VersionMajor ${vMajor}
-\#define VersionMinor ${vMinor}
-\#include \"Version.hpp\"\n"
+MACRO(VersionWrite vProjectName)
+	FILE(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/${vProjectName}Version.hpp 
+"\#ifndef ${vProjectName}_VERSION_HPP
+\#define ${vProjectName}_VERSION_HPP
+/* Current Version of ${vProjectName} */
+\#include \"ProjectVersion.hpp\"
+ProjectVersion ${vProjectName}Version = ProjectVersion(\"${vProjectName}\", ${vMajor}, ${vMinor});
+\#endif\n"
 	)
 ENDMACRO(VersionWrite)

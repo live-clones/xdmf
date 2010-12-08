@@ -3,9 +3,7 @@ cmake_minimum_required(VERSION 2.6)
 
 include(SetUpVersion)
 if(VERSION_CONTROL_AUTOUPDATE)
-        VersionMajorSet("2")
-        VersionCalculate()
-        VersionWrite("Xdmf")
+        VersionCreate("Xdmf" "2")
 endif(VERSION_CONTROL_AUTOUPDATE)
 
 set(BUILD_SHARED_LIBS true)
