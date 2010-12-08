@@ -58,6 +58,7 @@ set(XdmfCoreSources
 	XdmfItem
 	XdmfItemProperty
 	XdmfSystemUtils
+    XdmfVersion
 	XdmfVisitor
 	XdmfWriter
 )

@@ -1,6 +1,6 @@
-#ifndef Xdmf_VERSION_HPP
-#define Xdmf_VERSION_HPP
-/* Current Version of Xdmf */
+/* Current Version of Xdmf 
+ * Major is: 2
+ * Minor is: 0
+ */
 #include "ProjectVersion.hpp"
-ProjectVersion XdmfVersion = ProjectVersion("Xdmf", 2, 0);
-#endif
+extern ProjectVersion XdmfVersion;

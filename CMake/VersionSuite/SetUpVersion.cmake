@@ -38,14 +38,22 @@ MACRO(VersionCalculate)
 	SET(vMinor ${count})
 ENDMACRO(VersionCalculate)
 
-# This Macro writes your hpp file
+# This Macro writes your hpp/cpp files
 MACRO(VersionWrite vProjectName)
-	FILE(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/${vProjectName}Version.hpp 
-"\#ifndef ${vProjectName}_VERSION_HPP
-\#define ${vProjectName}_VERSION_HPP
-/* Current Version of ${vProjectName} */
+    FILE(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/${vProjectName}Version.hpp 
+"/* Current Version of ${vProjectName} 
+ * Major is: ${vMajor}
+ * Minor is: ${vMinor}
+ */
 \#include \"ProjectVersion.hpp\"
-ProjectVersion ${vProjectName}Version = ProjectVersion(\"${vProjectName}\", ${vMajor}, ${vMinor});
-\#endif\n"
+extern ProjectVersion ${vProjectName}Version;\n"
+    )
+
+	FILE(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/${vProjectName}Version.cpp 
+"/* Current Version of ${vProjectName}
+ * Make sure to include this file in your built sources 
+ */
+\#include \"${vProjectName}Version.hpp\"
+ProjectVersion ${vProjectName}Version = ProjectVersion(\"${vProjectName}\", ${vMajor}, ${vMinor});\n"
 	)
 ENDMACRO(VersionWrite)
