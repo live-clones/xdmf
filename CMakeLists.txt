@@ -20,7 +20,6 @@ if(XDMF_BUILD_DOCUMENTATION)
 	add_subdirectory(doc)
 endif(XDMF_BUILD_DOCUMENTATION)
 
-
 option(XDMF_BUILD_TESTING ON)
 if(XDMF_BUILD_TESTING)
     enable_testing()
