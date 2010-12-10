@@ -12,7 +12,7 @@ set(CMAKE_MODULE_PATH
 	${CMAKE_SOURCE_DIR}/CMake
 	${CMAKE_SOURCE_DIR}/CMake/TestingSuite
 	${CMAKE_SOURCE_DIR}/CMake/VersionSuite
-)
+) 
 
 # Should we build with documentation
 option(XDMF_BUILD_DOCUMENTATION OFF)
