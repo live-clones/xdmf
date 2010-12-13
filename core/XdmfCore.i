@@ -23,6 +23,9 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 	#include <XdmfSystemUtils.hpp>
 	#include <XdmfVisitor.hpp>
 	#include <XdmfWriter.hpp>
+
+    #include <ProjectVersion.hpp>
+    #include <XdmfVersion.hpp>
 %}
 
 #ifdef SWIGJAVA
@@ -288,7 +291,6 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %include XdmfItem.hpp
 %include XdmfItemProperty.hpp
 %include XdmfVisitor.hpp
-
 %include XdmfHeavyDataController.hpp
 %include XdmfHeavyDataWriter.hpp
 
@@ -298,6 +300,15 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %include XdmfHDF5Controller.hpp
 %include XdmfHDF5Writer.hpp
 %include XdmfWriter.hpp
+
+%include CMake/VersionSuite/ProjectVersion.hpp
+%include XdmfVersion.hpp
+#ifdef SWIGPYTHON
+%pythoncode
+{
+    XdmfVersion = _XdmfCore.cvar.XdmfVersion
+};
+#endif
 
 #ifdef XDMF_BUILD_DSM
 	%include XdmfHDF5ControllerDSM.hpp
