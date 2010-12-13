@@ -14,6 +14,7 @@ ADD_TEST_PYTHON_PYTHONPATH("${CMAKE_BINARY_DIR}")
 # ---------------------
 ADD_TEST_PYTHON(TestXdmfArray)
 ADD_TEST_PYTHON(TestXdmfEquals)
+ADD_TEST_PYTHON(TestXdmfVersion)
 
 # Add any python cleanup here:
 # Note: We don't want to use a foreach loop to test the files incase we
@@ -22,6 +23,7 @@ ADD_TEST_PYTHON(TestXdmfEquals)
 # ---------------------------------------
 CLEAN_TEST_PYTHON(TestXdmfArray)
 CLEAN_TEST_PYTHON(TestXdmfEquals)
+CLEAN_TEST_PYTHON(TestXdmfVersion)
 
 # Add a custom target for all python tests
 # Note: ${TARGETS} is set in ADD_TEST_PYTHON
