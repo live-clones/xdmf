@@ -177,7 +177,7 @@ if(NOT XDMF_BUILD_CORE_ONLY)
 		add_subdirectory(utils)
 	endif(XDMF_BUILD_UTILS)
 		
-	file(GLOB XdmfHeaders "*.hpp" "*.tpp" "*.i")
+	file(GLOB XdmfHeaders "*.hpp" "*.tpp" "*.i" "CMake/VersionSuite/*.hpp")
 	install(FILES ${XdmfHeaders} DESTINATION include)
 	install(TARGETS Xdmf LIBRARY DESTINATION lib)
 endif(NOT XDMF_BUILD_CORE_ONLY)
