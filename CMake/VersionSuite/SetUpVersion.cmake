@@ -29,13 +29,18 @@ ENDMACRO(VersionMajorSet)
 
 # This Macro calculates the number of tags from your git repo
 MACRO(VersionCalculate)
-	EXEC_PROGRAM(git ${CMAKE_SOURCE_DIR} ARGS tag OUTPUT_VARIABLE return)
-	STRING(REGEX REPLACE "\n" ";" return "${return}")
-	SET(count 0)
-	FOREACH(r ${return})
-		MATH(EXPR count "${count} + 1")
-	ENDFOREACH(r ${return})
-	SET(vMinor ${count})
+    FIND_PACKAGE(Git)
+    IF(GIT_FOUND)
+        EXEC_PROGRAM(${GIT_EXECUTABLE} ${CMAKE_SOURCE_DIR} ARGS tag OUTPUT_VARIABLE return)
+        STRING(REGEX REPLACE "\n" ";" return "${return}")
+        SET(count 0)
+        FOREACH(r ${return})
+            MATH(EXPR count "${count} + 1")
+        ENDFOREACH(r ${return})
+        SET(vMinor ${count})       
+    ELSE(GIT_FOUND)
+        SET(vMinor "X")
+    ENDIF(GIT_FOUND)
 ENDMACRO(VersionCalculate)
 
 # This Macro writes your hpp/cpp files
@@ -54,6 +59,6 @@ extern ProjectVersion ${vProjectName}Version;\n"
  * Make sure to include this file in your built sources 
  */
 \#include \"${vProjectName}Version.hpp\"
-ProjectVersion ${vProjectName}Version = ProjectVersion(\"${vProjectName}\", ${vMajor}, ${vMinor});\n"
+ProjectVersion ${vProjectName}Version = ProjectVersion(\"${vProjectName}\", \"${vMajor}\", \"${vMinor}\");\n"
 	)
 ENDMACRO(VersionWrite)

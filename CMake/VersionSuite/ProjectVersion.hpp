@@ -25,6 +25,12 @@ class ProjectVersion {
 		setMinor(iMinor);
 	}
 
+    ProjectVersion(std::string iProjectName, 
+                            std::string iMajor, std::string iMinor) { 
+		setProjectName(iProjectName);
+		setMajorStr(iMajor);
+		setMinorStr(iMinor);
+    }	
 	/**
 	 * Get the version string
 	 *
@@ -59,7 +65,10 @@ class ProjectVersion {
      * @return the Version Major in string format
      */
 	std::string getMajorStr() 
-	{ return IntToStr(Major); }
+	{ 
+      if(Major != -1) return IntToStr(Major);
+      return("X");
+    }
 		
 	/**
      * Get the Version Minor
@@ -67,7 +76,10 @@ class ProjectVersion {
      * @return the Version Minor in string format
      */
     std::string getMinorStr() 
-	{ return IntToStr(Minor); }
+	{ 
+      if(Minor != -1) return IntToStr(Minor); 
+      return("X");
+    }
 		
 	/**
      * Get the Version Major
@@ -92,11 +104,23 @@ private:
 		s << number;
 		return s.str();
 	}
+    int StrToInt(std::string string) {
+        int i = 0;
+        std::stringstream s(string);
+        if(!(s >> i)) return -1;
+        return i;
+    }
     void setProjectName(std::string iProjectName)
         { ProjectName = iProjectName; }
 
     void setMajor(int iMajor) { Major = iMajor; }
+    void setMajorStr(std::string iMajor) {
+        Major = StrToInt(iMajor);
+    }
     void setMinor(int iMinor) { Minor = iMinor; }
+    void setMinorStr(std::string iMinor) {
+        Minor = StrToInt(iMinor);
+    }
 };
 
 #endif //PROJECT_VERSION_HPP
