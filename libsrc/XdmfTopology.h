@@ -328,6 +328,10 @@ public:
   XdmfXNode *SetElementFromTopology( XdmfXNode *Element = NULL );
 */
 
+ //! Create a new topology containing the external surface of the 
+ //  current topology.
+ XdmfTopology * GetExternalSurface();
+
 protected:
   XdmfDataItem *GetDataItem();
 
