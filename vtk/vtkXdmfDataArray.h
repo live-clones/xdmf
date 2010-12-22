@@ -25,9 +25,9 @@
 #ifndef _vtkXdmfDataArray_h
 #define _vtkXdmfDataArray_h
 
-#include <XdmfArray.h>
 #include <vtkDataArray.h>
 #include <vtkFloatArray.h>
+#include <XdmfArray.h>
 
 class VTK_EXPORT vtkXdmfDataArray : public vtkObject
 {
