@@ -533,7 +533,11 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid * grid, int numPartitions, XdmfEl
   // Add information to top of collection
   for(int j=0; j<grid->GetNumberOfInformations(); ++j)
   {
-    collection->Insert(grid->GetInformation(j));
+    XdmfInformation * gridInformation = grid->GetInformation(j);
+    XdmfInformation * information = new XdmfInformation;
+    information->SetName(gridInformation->GetName());
+    information->SetValue(gridInformation->GetValue()); 
+    collection->Insert(information);
   }
 
   return collection;
