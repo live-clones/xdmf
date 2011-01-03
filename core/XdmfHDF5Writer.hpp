@@ -6,6 +6,7 @@ class XdmfArrayType;
 class XdmfHDF5Controller;
 
 // Includes
+#include "XdmfCore.hpp"
 #include "XdmfHeavyDataWriter.hpp"
 
 /**
@@ -18,7 +19,7 @@ class XdmfHDF5Controller;
  *
  * This writer supports all heavy data writing modes listed in XdmfHeavyDataWriter.
  */
-class XdmfHDF5Writer : public XdmfHeavyDataWriter {
+class XDMFCORE_EXPORT XdmfHDF5Writer : public XdmfHeavyDataWriter {
 
 public:
 

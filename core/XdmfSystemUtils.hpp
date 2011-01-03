@@ -3,13 +3,14 @@
 
 // Includes
 #include <string>
+#include "XdmfCore.hpp"
 
 /**
  * @brief System specific functions.
  *
  * Collects all system specific functions needed by Xdmf.
  */
-class XdmfSystemUtils {
+class XDMFCORE_EXPORT XdmfSystemUtils {
 
 public:
 

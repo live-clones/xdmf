@@ -1,3 +1,4 @@
+#include <cctype>
 #include <boost/tokenizer.hpp>
 #include "XdmfAttribute.hpp"
 #include "XdmfCurvilinearGrid.hpp"
@@ -154,7 +155,7 @@ boost::shared_ptr<XdmfItem> XdmfItemFactory::createItem(const std::string & item
 		if(type != itemProperties.end())
 		{
 			std::string typeVal = type->second;
-			std::transform(typeVal.begin(), typeVal.end(), typeVal.begin(), (int(*)(int))std::toupper);
+			std::transform(typeVal.begin(), typeVal.end(), typeVal.begin(), (int(*)(int))toupper);
 			if(typeVal.compare("2DCORECTMESH") == 0 || typeVal.compare("3DCORECTMESH") == 0
 				|| typeVal.compare("2DSMESH") == 0 || typeVal.compare("3DSMESH") == 0)
 			{

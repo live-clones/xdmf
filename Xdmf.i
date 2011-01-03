@@ -5,7 +5,9 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 
 %module Xdmf
 %{
-	// XdmfCore Includes
+    #include <Xdmf.hpp>
+	
+    // XdmfCore Includes
 	#include <XdmfArray.hpp>
 	#include <XdmfArrayType.hpp>
 	#include <XdmfCoreItemFactory.hpp>
@@ -268,6 +270,7 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 %shared_ptr(XdmfTopologyType)
 %shared_ptr(XdmfUnstructuredGrid)
 
+%include Xdmf.hpp
 %include XdmfGrid.hpp
 
 %include XdmfAttribute.hpp

@@ -2,6 +2,7 @@
 #define XDMFSETTYPE_HPP_
 
 // Includes
+#include "Xdmf.hpp"
 #include "XdmfItemProperty.hpp"
 
 /**
@@ -17,7 +18,7 @@
  * 	Face
  * 	Edge
  */
-class XdmfSetType : public XdmfItemProperty {
+class XDMF_EXPORT XdmfSetType : public XdmfItemProperty {
 
 public:
 

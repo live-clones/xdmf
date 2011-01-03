@@ -5,6 +5,7 @@
 class XdmfArray;
 
 // Includes
+#include "Xdmf.hpp"
 #include "XdmfGrid.hpp"
 
 /**
@@ -17,7 +18,7 @@ class XdmfArray;
  * must be specified.
  *
  */
-class XdmfRectilinearGrid : public XdmfGrid {
+class XDMF_EXPORT XdmfRectilinearGrid : public XdmfGrid {
 
 public:
 
@@ -137,5 +138,10 @@ private:
 	XdmfRectilinearGridImpl * mImpl;
 
 };
+
+#ifdef _WIN32
+    XDMF_TEMPLATE template class XDMF_EXPORT boost::shared_ptr<XdmfArray>;
+    XDMF_TEMPLATE template class XDMF_EXPORT boost::shared_ptr<const XdmfArray>;
+#endif
 
 #endif /* XDMFRECTILINEARGRID_HPP_ */

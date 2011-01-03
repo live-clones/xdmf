@@ -5,6 +5,7 @@
 class XdmfGeometryType;
 
 // Includes
+#include "Xdmf.hpp"
 #include "XdmfArray.hpp"
 
 /**
@@ -14,7 +15,7 @@ class XdmfGeometryType;
  * of all points contained in an XdmfGrid.  XdmfGeometry contains an XdmfGeometryType property
  * which should be set that specifies the types of coordinate values stored.
  */
-class XdmfGeometry : public XdmfArray {
+class XDMF_EXPORT XdmfGeometry : public XdmfArray {
 
 public:
 
@@ -66,5 +67,9 @@ private:
 	int mNumberPoints;
 	boost::shared_ptr<const XdmfGeometryType> mType;
 };
+
+#ifdef _WIN32
+    XDMF_TEMPLATE template class XDMF_EXPORT boost::shared_ptr<const XdmfGeometryType>;
+#endif
 
 #endif /* XDMFGEOMETRY_HPP_ */

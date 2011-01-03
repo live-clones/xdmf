@@ -2,6 +2,7 @@
 #define XDMFREADER_HPP_
 
 // Includes
+#include "Xdmf.hpp"
 #include "XdmfCoreReader.hpp"
 
 /**
@@ -10,7 +11,7 @@
  * Reads an Xdmf file stored on disk into an Xdmf structure in memory.  All light data is parsed in order to create appropriate
  * Xdmf objects.  Heavy data controllers are created and attached to XdmfArrays but no heavy data is read into memory.
  */
-class XdmfReader : public XdmfCoreReader {
+class XDMF_EXPORT XdmfReader : public XdmfCoreReader {
 
 public:
 
@@ -36,5 +37,10 @@ private:
 	XdmfReader(const XdmfReader & reader);  // Not implemented.
 	void operator=(const XdmfReader & reader);  // Not implemented.
 };
+
+#ifdef _WIN32
+    XDMF_TEMPLATE template class XDMF_EXPORT boost::shared_ptr<XdmfItem>;
+#endif
+
 
 #endif /* XDMFREADER_HPP_ */

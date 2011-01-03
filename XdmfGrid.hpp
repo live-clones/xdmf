@@ -10,6 +10,7 @@ class XdmfTime;
 class XdmfTopology;
 
 // Includes
+#include "Xdmf.hpp"
 #include "XdmfItem.hpp"
 
 /**
@@ -22,7 +23,7 @@ class XdmfTopology;
  *
  * XdmfGrid is an abstract base class.  There are several implementations for representing both structured and unstructured grids.
  */
-class XdmfGrid : public virtual XdmfItem {
+class XDMF_EXPORT XdmfGrid : public virtual XdmfItem {
 
 public:
 
@@ -130,5 +131,20 @@ private:
 	boost::shared_ptr<XdmfTime> mTime;
 
 };
+
+#ifdef _WIN32
+    XDMF_TEMPLATE template class XDMF_EXPORT std::allocator<boost::shared_ptr<XdmfAttribute> >;
+    XDMF_TEMPLATE template class XDMF_EXPORT std::vector<boost::shared_ptr<XdmfAttribute>, std::allocator<boost::shared_ptr<XdmfAttribute> > >;
+    XDMF_TEMPLATE template class XDMF_EXPORT std::allocator<boost::shared_ptr<XdmfSet> >;
+    XDMF_TEMPLATE template class XDMF_EXPORT std::vector<boost::shared_ptr<XdmfSet>, std::allocator<boost::shared_ptr<XdmfSet> > >;
+    XDMF_TEMPLATE template class XDMF_EXPORT boost::shared_ptr<XdmfGeometry>;
+    XDMF_TEMPLATE template class XDMF_EXPORT boost::shared_ptr<const XdmfGeometry>;
+    XDMF_TEMPLATE template class XDMF_EXPORT boost::shared_ptr<XdmfTopology>;
+    XDMF_TEMPLATE template class XDMF_EXPORT boost::shared_ptr<const XdmfTopology>;
+    XDMF_TEMPLATE template class XDMF_EXPORT boost::shared_ptr<XdmfMap>;
+    XDMF_TEMPLATE template class XDMF_EXPORT boost::shared_ptr<const XdmfMap>;
+    XDMF_TEMPLATE template class XDMF_EXPORT boost::shared_ptr<XdmfTime>;
+    XDMF_TEMPLATE template class XDMF_EXPORT boost::shared_ptr<const XdmfTime>;
+#endif
 
 #endif /* XDMFGRID_HPP_ */

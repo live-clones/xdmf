@@ -7,6 +7,7 @@ class XdmfHDF5Controller;
 class XdmfSetType;
 
 // Includes
+#include "Xdmf.hpp"
 #include "XdmfArray.hpp"
 
 /**
@@ -17,7 +18,7 @@ class XdmfSetType;
  * set are determined by their id.  An XdmfSet can have XdmfAttributes attached that contain extra values
  * attached to the elements in the set.
  */
-class XdmfSet : public XdmfArray {
+class XDMF_EXPORT XdmfSet : public XdmfArray {
 
 public:
 
@@ -84,5 +85,11 @@ private:
 	std::string mName;
 	boost::shared_ptr<const XdmfSetType> mType;
 };
+
+#ifdef _WIN32
+    XDMF_TEMPLATE template class XDMF_EXPORT std::allocator<boost::shared_ptr<XdmfAttribute> >;
+    XDMF_TEMPLATE template class XDMF_EXPORT std::vector<boost::shared_ptr<XdmfAttribute>, std::allocator<boost::shared_ptr<XdmfAttribute> > >;
+    XDMF_TEMPLATE template class XDMF_EXPORT boost::shared_ptr<const XdmfSetType>;
+#endif
 
 #endif /* XDMFSET_HPP_ */

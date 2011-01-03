@@ -40,7 +40,7 @@ MACRO(ADD_TEST_JAVA_CLASSPATH cp)
         GET_PROPERTY(classpath GLOBAL PROPERTY JAVA_TEST_CLASSPATH)
         IF(NOT ("${cp}" STREQUAL ""))
                 SET_PROPERTY(GLOBAL PROPERTY JAVA_TEST_CLASSPATH 
-                        "${classpath}:${cp}" 
+                        "${classpath}${sep}${cp}" 
                 )
         ENDIF(NOT ("${cp}" STREQUAL "")) 
 ENDMACRO(ADD_TEST_JAVA_CLASSPATH cp)
@@ -54,10 +54,24 @@ MACRO(ADD_TEST_JAVA_LDPATH ld)
 	GET_PROPERTY(ldpath GLOBAL PROPERTY JAVA_TEST_LDPATH)
 	IF("${ld}" STRGREATER "")
 		SET_PROPERTY(GLOBAL PROPERTY JAVA_TEST_LDPATH 
-        		"${ldpath}:${ld}" 
+        		"${ldpath}${sep}${ld}" 
 		)
 	ENDIF("${ld}" STRGREATER "")  
 ENDMACRO(ADD_TEST_JAVA_LDPATH ld)
+
+# Java Add Path Macro
+# Author: Brian Panneton
+# Description: This macro adds the java test paths.
+# Parameters:         
+#               p = any paths needed for java tests
+MACRO(ADD_TEST_JAVA_PATH p)
+    GET_PROPERTY(path GLOBAL PROPERTY JAVA_TEST_PATH)
+    IF("${p}" STRGREATER "")
+        SET_PROPERTY(GLOBAL PROPERTY JAVA_TEST_PATH 
+                "${path}${sep}${p}" 
+        )
+    ENDIF("${p}" STRGREATER "")
+ENDMACRO(ADD_TEST_JAVA_PATH p)
 
 # Add Java Test Macro
 # Author: Brian Panneton
@@ -76,6 +90,7 @@ MACRO(ADD_TEST_JAVA executable)
                     JAVA_TEST_FILE_DEPENDENCIES)
 	GET_PROPERTY(java_classpath GLOBAL PROPERTY JAVA_TEST_CLASSPATH)
 	GET_PROPERTY(java_ldpath GLOBAL PROPERTY JAVA_TEST_LDPATH)
+    GET_PROPERTY(java_path GLOBAL PROPERTY JAVA_TEST_PATH)
 	
 	ADD_CUSTOM_COMMAND(
 		OUTPUT ${java_binary_dir}/${executable}.class
@@ -83,22 +98,30 @@ MACRO(ADD_TEST_JAVA executable)
 		DEPENDS	${java_source_dir}/${executable}.java
 			${java_file_dependencies}
 		COMMAND ${JAVA_COMPILE}
-		ARGS	-cp	'${java_classpath}'
-			-d	'${java_binary_dir}'
+		ARGS	-cp	"\"${java_classpath}\""
+			-d	"\"${java_binary_dir}\""
 			${java_source_dir}/${executable}.java
 	)
 	
 	SET_PROPERTY(GLOBAL APPEND PROPERTY JAVA_TEST_TARGETS "${java_binary_dir}/${executable}.class")
 	
-	SET_CORE("${java_binary_dir}")
-	ADD_TEST(Java${is_core}_${executable}${dup} ${CMAKE_COMMAND}
-        	-D EXECUTABLE=${executable}
-        	-D ARGUMENTS=${arguments}
-        	-D CLASSPATH=${java_classpath}
-        	-D LDPATH=${java_ldpath} 
-        	-P ${java_binary_dir}/TestDriverJava.cmake
-	) 
+    # Dlls need to be in the path dir for java
+    IF(WIN32)
+        IF("${java_path}" STREQUAL "")
+            SET(java_path ${java_ldpath})
+        ENDIF("${java_path}" STREQUAL "")
+    ENDIF(WIN32)    
 
+	SET_CORE("${java_binary_dir}")
+    ADD_TEST(Java${is_core}_${executable}${dup} ${CMAKE_COMMAND}
+            -D "EXECUTABLE=${executable}"
+            -D "ARGUMENTS=${arguments}"
+            -D "CLASSPATH=${java_classpath}"
+            -D "LDPATH=${java_ldpath}"
+            -D "PATH=${java_path}"
+            -D "SEPARATOR=${sep}"
+            -P "${java_binary_dir}/TestDriverJava.cmake"
+    )
 ENDMACRO(ADD_TEST_JAVA executable)
 
 # Java Clean Macro

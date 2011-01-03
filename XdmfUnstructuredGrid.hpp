@@ -2,6 +2,7 @@
 #define XDMFUNSTRUCTUREDGRID_HPP_
 
 // Includes
+#include "Xdmf.hpp"
 #include "XdmfGrid.hpp"
 
 /**
@@ -11,7 +12,7 @@
  * describes the element types contained in the grid and their connectivity.  The XdmfGeometry describes the
  * location of nodes.
  */
-class XdmfUnstructuredGrid : public XdmfGrid {
+class XDMF_EXPORT XdmfUnstructuredGrid : public XdmfGrid {
 
 public:
 
@@ -66,5 +67,10 @@ private:
 	void operator=(const XdmfUnstructuredGrid & grid);  // Not implemented.
 
 };
+
+#ifdef _WIN32
+    XDMF_TEMPLATE template class XDMF_EXPORT boost::shared_ptr<XdmfTopology>;
+    XDMF_TEMPLATE template class XDMF_EXPORT boost::shared_ptr<XdmfGeometry>;
+#endif
 
 #endif /* XDMFUNSTRUCTUREDGRID_HPP_ */

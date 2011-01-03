@@ -2,6 +2,7 @@
 #define XDMFATTRIBUTETYPE_HPP_
 
 // Includes
+#include "Xdmf.hpp"
 #include "XdmfItemProperty.hpp"
 
 /**
@@ -20,7 +21,7 @@
  * 	Tensor6
  * 	GlobalId
  */
-class XdmfAttributeType : public XdmfItemProperty {
+class XDMF_EXPORT XdmfAttributeType : public XdmfItemProperty {
 
 public:
 

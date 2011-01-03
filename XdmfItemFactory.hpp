@@ -5,12 +5,13 @@
 class XdmfItem;
 
 // Includes
+#include "Xdmf.hpp"
 #include "XdmfCoreItemFactory.hpp"
 
 /**
  * @brief Factory for constructing XdmfItems from their ItemTag and ItemProperties
  */
-class XdmfItemFactory : public XdmfCoreItemFactory {
+class XDMF_EXPORT XdmfItemFactory : public XdmfCoreItemFactory {
 
 public:
 

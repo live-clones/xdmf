@@ -6,7 +6,7 @@ ADD_TEST_JAVA_DEPENDENCIES(Compiled_XdmfCore_Jar)
 
 # Add any classpath directories that the java tests may need
 # Note: JAVA_TEST_CLASSPATH is also set in core
-ADD_TEST_JAVA_CLASSPATH(".:${XdmfCore_JAVA_JAR}")
+ADD_TEST_JAVA_CLASSPATH("${XdmfCore_JAVA_JAR}")
 
 # Add any ldpath directories that the java tests may need
 # Note: JAVA_TEST_LDPATH is also set in core
@@ -28,6 +28,4 @@ CLEAN_TEST_JAVA(TestXdmfEquals)
 
 # Add a custom target for all java tests 
 # Note: ${TARGETS} is set in ADD_TEST_JAVA
-#GET_PROPERTY(targets GLOBAL PROPERTY JAVA_TEST_TARGETS)
-#ADD_CUSTOM_TARGET(Java_Core_Test_target ALL DEPENDS XdmfCoreJava ${targets})
 CREATE_TARGET_TEST_JAVA()

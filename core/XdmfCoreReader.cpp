@@ -103,8 +103,6 @@ public:
 		return myItems;
 	}
 
-int globalCount;
-
 	/**
 	 * Reads a single xmlNode into an XdmfItem object in memory.  The constructed XdmfItem is added to myItems and an entry is added mapping the xmlNodePtr to the new XdmfItem in the mXPathMap.
 	 */

@@ -83,6 +83,7 @@ boost::shared_ptr<const XdmfSetType> XdmfSetType::New(const std::map<std::string
 		}
 	}
 	assert(false);
+    return boost::shared_ptr<const XdmfSetType>();
 }
 
 void XdmfSetType::getProperties(std::map<std::string, std::string> & collectedProperties) const

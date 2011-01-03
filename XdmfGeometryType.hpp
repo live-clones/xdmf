@@ -2,6 +2,7 @@
 #define XDMFGEOMETRYTYPE_HPP_
 
 // Includes
+#include "Xdmf.hpp"
 #include "XdmfItemProperty.hpp"
 
 /**
@@ -16,7 +17,7 @@
  * 	XYZ
  * 	XY
  */
-class XdmfGeometryType : public XdmfItemProperty {
+class XDMF_EXPORT XdmfGeometryType : public XdmfItemProperty {
 
 public:
 

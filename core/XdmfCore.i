@@ -5,6 +5,8 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
 %module XdmfCore
 %{
+    #include <XdmfCore.hpp>
+
 	#include <XdmfArray.hpp>
 	#include <XdmfArrayType.hpp>
 	#include <XdmfCoreItemFactory.hpp>
@@ -288,6 +290,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %template() Loki::Visitor<XdmfArray>;
 %template() Loki::Visitor<XdmfItem>;
 
+%include XdmfCore.hpp
 %include XdmfItem.hpp
 %include XdmfItemProperty.hpp
 %include XdmfVisitor.hpp

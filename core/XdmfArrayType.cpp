@@ -141,6 +141,7 @@ boost::shared_ptr<const XdmfArrayType> XdmfArrayType::New(const std::map<std::st
 		}
 	}
 	assert(false);
+    return boost::shared_ptr<const XdmfArrayType>();
 }
 
 unsigned int XdmfArrayType::getElementSize() const

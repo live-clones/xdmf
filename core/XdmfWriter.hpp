@@ -6,6 +6,7 @@ class XdmfArray;
 class XdmfHeavyDataWriter;
 
 // Includes
+#include "XdmfCore.hpp"
 #include "XdmfVisitor.hpp"
 
 /**
@@ -21,7 +22,7 @@ class XdmfHeavyDataWriter;
  * to the new heavy data file.  If this is undesired, the XdmfWriter can be set to DistributedHeavyData mode in which the writer
  * will automatically reference any heavy dataset even if it resides in a different file than the one currently being written to.
  */
-class XdmfWriter : public XdmfVisitor,
+class XDMFCORE_EXPORT XdmfWriter : public XdmfVisitor,
 	public Loki::Visitor<XdmfArray> {
 
 public:
@@ -151,5 +152,10 @@ private:
 	XdmfWriterImpl * mImpl;
 
 };
+
+#ifdef _WIN32
+    XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT boost::shared_ptr<XdmfHeavyDataWriter>;
+    XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT boost::shared_ptr<const XdmfHeavyDataWriter>;
+#endif
 
 #endif /* XDMFWRITER_HPP_ */

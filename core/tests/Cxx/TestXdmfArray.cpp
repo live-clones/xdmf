@@ -120,7 +120,13 @@ int main(int, char *)
 	assert(array5Pointer[0] == 1);
 	assert(array5Pointer[1] == 2);
 	// Assert we can copy values out correctly
-	array->getValues(1, &outValues[0], 4);
+
+    /* How does the next line work in linux?? 
+        4 exceeds the size of the array by 1
+        line: array->getValues(1, &outValues[0], 4);
+        I think it should be 3.
+    */
+    array->getValues(1, &outValues[0], 3);
 	assert(outValues[0] == values[1]);
 
 	/**

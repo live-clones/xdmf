@@ -79,6 +79,7 @@ boost::shared_ptr<const XdmfAttributeCenter> XdmfAttributeCenter::New(const std:
 		}
 	}
 	assert(false);
+    return boost::shared_ptr<const XdmfAttributeCenter>();
 }
 
 void XdmfAttributeCenter::getProperties(std::map<std::string, std::string> & collectedProperties) const

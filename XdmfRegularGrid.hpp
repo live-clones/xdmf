@@ -5,6 +5,7 @@
 class XdmfArray;
 
 // Includes
+#include "Xdmf.hpp"
 #include "XdmfGrid.hpp"
 
 /**
@@ -17,7 +18,7 @@ class XdmfArray;
  * Dimensions (X, Y, (Z)) - Number of points in X, Y, and Z directions
  * Origin Location (X, Y, (Z)) - Location of the origin of the mesh in space.
  */
-class XdmfRegularGrid : public XdmfGrid {
+class XDMF_EXPORT XdmfRegularGrid : public XdmfGrid {
 
 public:
 
@@ -157,5 +158,10 @@ private:
 	XdmfRegularGridImpl * mImpl;
 
 };
+
+#ifdef _WIN32
+    XDMF_TEMPLATE template class XDMF_EXPORT boost::shared_ptr<XdmfArray>;
+    XDMF_TEMPLATE template class XDMF_EXPORT boost::shared_ptr<const XdmfArray>;
+#endif
 
 #endif /* XDMFREGULARGRID_HPP_ */

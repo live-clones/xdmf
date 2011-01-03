@@ -5,6 +5,7 @@
 #include <boost/shared_ptr.hpp>
 #include <map>
 #include <string>
+#include "XdmfCore.hpp"
 
 /**
  * @brief Represents a property attached to an XdmfItem.
@@ -15,7 +16,7 @@
  * This is an abstract base class to facilitate reading and writing of properties in a generic way.
  */
 
-class XdmfItemProperty {
+class XDMFCORE_EXPORT XdmfItemProperty {
 
 public:
 

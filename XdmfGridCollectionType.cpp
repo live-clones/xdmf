@@ -59,6 +59,7 @@ boost::shared_ptr<const XdmfGridCollectionType> XdmfGridCollectionType::New(cons
 		}
 	}
 	assert(false);
+    return boost::shared_ptr<const XdmfGridCollectionType>();
 }
 
 void XdmfGridCollectionType::getProperties(std::map<std::string, std::string> & collectedProperties) const

@@ -2,6 +2,7 @@
 #define XDMFTIME_HPP_
 
 // Includes
+#include "Xdmf.hpp"
 #include "XdmfItem.hpp"
 
 /**
@@ -9,7 +10,7 @@
  *
  * An XdmfTime sets a time value for an XdmfGrid item.
  */
-class XdmfTime : public XdmfItem {
+class XDMF_EXPORT XdmfTime : public XdmfItem {
 
 public:
 

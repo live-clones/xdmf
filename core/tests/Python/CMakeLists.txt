@@ -26,9 +26,4 @@ CLEAN_TEST_PYTHON(TestXdmfEquals)
 CLEAN_TEST_PYTHON(TestXdmfVersion)
 
 # Add a custom target for all python tests
-# Note: ${TARGETS} is set in ADD_TEST_PYTHON
-#GET_PROPERTY(targets GLOBAL PROPERTY PYTHON_TEST_TARGETS)
-#ADD_CUSTOM_TARGET(Python_Core_Test_target ALL DEPENDS ${targets})
 CREATE_TARGET_TEST_PYTHON()
-# We need to reset the targets since we created a core target
-#SET_PROPERTY(GLOBAL PROPERTY PYTHON_TEST_TARGETS "")

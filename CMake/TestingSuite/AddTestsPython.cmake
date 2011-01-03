@@ -41,7 +41,7 @@ MACRO(ADD_TEST_PYTHON_PYTHONPATH pyp)
         GET_PROPERTY(pythonpath GLOBAL PROPERTY PYTHON_TEST_PYTHONPATH)
         IF(NOT ("${pyp}" STREQUAL ""))
                 SET_PROPERTY(GLOBAL PROPERTY PYTHON_TEST_PYTHONPATH 
-                        "${pythonpath}:${pyp}" 
+                        "${pythonpath}${sep}${pyp}" 
                 )
         ENDIF(NOT ("${pyp}" STREQUAL ""))
 ENDMACRO(ADD_TEST_PYTHON_PYTHONPATH cp)
@@ -81,14 +81,13 @@ MACRO(ADD_TEST_PYTHON executable)
 	SET_PROPERTY(GLOBAL APPEND PROPERTY PYTHON_TEST_TARGETS "${python_binary_dir}/${executable}.pyc")
 
 	SET_CORE("${python_binary_dir}")
-	ADD_TEST(Python${is_core}_${executable}${dup} ${CMAKE_COMMAND}
-        	-D EXECUTABLE=${executable}
-        	-D ARGUMENTS=${arguments}
-		-D PYTHONPATH=${python_pythonpath}
-        	-P ${python_binary_dir}/TestDriverPython.cmake
-	) 
-
-
+    ADD_TEST(Python${is_core}_${executable}${dup} ${CMAKE_COMMAND}
+            -D "EXECUTABLE=${executable}"
+            -D "ARGUMENTS=${arguments}"
+            -D "PYTHONPATH=${python_pythonpath}"
+            -D "SEPARATOR=${sep}"
+            -P "${python_binary_dir}/TestDriverPython.cmake"
+    )
 ENDMACRO(ADD_TEST_PYTHON executable)
 
 # Python Clean Macro

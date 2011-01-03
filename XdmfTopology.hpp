@@ -5,6 +5,7 @@
 class XdmfTopologyType;
 
 // Includes
+#include "Xdmf.hpp"
 #include "XdmfArray.hpp"
 
 /**
@@ -14,7 +15,7 @@ class XdmfTopologyType;
  * between all points contained in an XdmfGrid.  XdmfTopology contains an XdmfTopologyType property
  * which should be set that specifies the element type stored.
  */
-class XdmfTopology : public XdmfArray {
+class XDMF_EXPORT XdmfTopology : public XdmfArray {
 
 public:
 
@@ -67,5 +68,9 @@ private:
 
 	boost::shared_ptr<const XdmfTopologyType> mType;
 };
+
+#ifdef _WIN32
+    XDMF_TEMPLATE template class XDMF_EXPORT boost::shared_ptr<const XdmfTopologyType>;
+#endif
 
 #endif /* XDMFTOPOLOGY_HPP_ */

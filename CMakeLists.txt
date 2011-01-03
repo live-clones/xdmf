@@ -67,6 +67,17 @@ if(XDMF_WRAP_PYTHON)
 		if("${ARGN}" STRGREATER "")
 			add_dependencies(${python_name} "${ARGN}")
 		endif("${ARGN}" STRGREATER "")
+
+        if(WIN32)
+            set_target_properties(${SWIG_MODULE_${python_name}_REAL_NAME}
+PROPERTIES 
+                    PREFIX ../
+                    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+                    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+                    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+            )
+        endif(WIN32)
+
 		install(FILES ${CMAKE_BINARY_DIR}/${python_name}.py 
                 DESTINATION lib/python)
 		install(TARGETS ${SWIG_MODULE_${python_name}_REAL_NAME} 
@@ -98,6 +109,22 @@ if(XDMF_WRAP_JAVA)
 		set_source_files_properties(${java_name}.i PROPERTIES CPLUSPLUS ON)
 		swig_add_module(${java_name}Java java ${java_name}.i)
 		swig_link_libraries(${java_name}Java ${java_name})	
+
+        if(WIN32)
+            set_target_properties(${SWIG_MODULE_${java_name}Java_REAL_NAME} 
+                PROPERTIES 
+                    PREFIX ../
+                    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+                    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+                    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+            )
+            set(java_compile_args "-cp \"\\\"${CMAKE_BINARY_DIR}/*.jar\\\"\" *.java")
+            set(java_dest "bin")
+        else(WIN32)
+            set(java_compile_args -cp '${CMAKE_BINARY_DIR}/*' ${XDMF_JAVA_DIR}/*.java)
+            set(java_dest "lib/java")
+        endif(WIN32)
+
         add_custom_target(${java_name}_Java_Dir ALL DEPENDS 
                             ${XDMF_JAVA_DIR})
         add_custom_command(OUTPUT ${XDMF_JAVA_DIR}
@@ -107,14 +134,17 @@ if(XDMF_WRAP_JAVA)
                             ${${java_name}_JAVA_JAR})
         add_custom_command(OUTPUT ${${java_name}_JAVA_JAR}
             COMMAND ${JAVA_COMPILE}
-            ARGS    -cp "'${CMAKE_BINARY_DIR}/*'"
-                    "${XDMF_JAVA_DIR}/*.java"
+            ARGS    ${java_compile_args}
             COMMAND ${JAVA_ARCHIVE}
             ARGS    -cvf ${${java_name}_JAVA_JAR}
                     "${XDMF_JAVA_PACKAGE_DIR}/*.class"
         )
         add_dependencies(${java_name}Java ${java_name}_Java_Dir)
-        add_dependencies(Compiled_${java_name}_Jar ${java_name}Java "${ARGN}")
+        add_dependencies(Compiled_${java_name}_Jar ${java_name}Java)
+
+        if(NOT ${ARGN} EQUAL "")
+            add_dependencies(Compiled_${java_name}_Jar "${ARGN}")
+        endif(NOT ${ARGN} EQUAL "")
 
 		set_property(DIRECTORY APPEND PROPERTY
 			ADDITIONAL_MAKE_CLEAN_FILES
@@ -124,7 +154,7 @@ if(XDMF_WRAP_JAVA)
         install(FILES ${CMAKE_BINARY_DIR}/${java_name}.jar 
                 DESTINATION lib/java)
        	install(TARGETS ${SWIG_MODULE_${java_name}Java_REAL_NAME}
-                DESTINATION lib/java)
+                DESTINATION ${java_dest})
 	ENDMACRO(XDMF_SWIG_JAVA)
 endif(XDMF_WRAP_JAVA)
 
@@ -159,6 +189,15 @@ if(NOT XDMF_BUILD_CORE_ONLY)
 	
 	add_library(Xdmf ${XdmfSources})
 	target_link_libraries(Xdmf XdmfCore)
+
+    if(WIN32)
+        set_target_properties(Xdmf PROPERTIES 
+                DEFINE_SYMBOL Xdmf_EXPORTS
+                PREFIX ../
+                RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+                LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+                ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+    endif(WIN32)
 	
 	if(XDMF_WRAP_JAVA)
 		XDMF_SWIG_JAVA(Xdmf Compiled_XdmfCore_Jar)
@@ -179,5 +218,9 @@ if(NOT XDMF_BUILD_CORE_ONLY)
 		
 	file(GLOB XdmfHeaders "*.hpp" "*.tpp" "*.i" "CMake/VersionSuite/*.hpp")
 	install(FILES ${XdmfHeaders} DESTINATION include)
-	install(TARGETS Xdmf LIBRARY DESTINATION lib)
+    install(TARGETS Xdmf 
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib
+    )
 endif(NOT XDMF_BUILD_CORE_ONLY)

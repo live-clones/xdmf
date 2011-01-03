@@ -41,7 +41,7 @@ void XdmfHDF5Controller::read(XdmfArray * const array, const int fapl)
 	hssize_t numVals = H5Sget_simple_extent_npoints(dataspace);
 	hid_t datatype = H5Dget_type(dataset);
 
-	array->initialize(mType, numVals);
+	array->initialize(mType, (const unsigned int)numVals);
 	H5Dread(dataset, datatype, H5S_ALL, H5S_ALL, H5P_DEFAULT, array->getValuesInternal());
 
 	herr_t status;

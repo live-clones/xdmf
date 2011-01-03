@@ -2,6 +2,7 @@
 #define XDMFTOPOLOGYTYPE_HPP_
 
 // Includes
+#include "Xdmf.hpp"
 #include "XdmfItemProperty.hpp"
 /**
  * @brief Property describing the types of elements stored in an XdmfTopology.
@@ -37,7 +38,7 @@
  * 	Hexahedron_125_GLL - 125 Node Spectral Tri-Quartic Hexahedron with Gauss-Lobatto-Legendre points.
  * 	Mixed - Mixture of Unstructured Topologies
  */
-class XdmfTopologyType : public XdmfItemProperty {
+class XDMF_EXPORT XdmfTopologyType : public XdmfItemProperty {
 
 public:
 

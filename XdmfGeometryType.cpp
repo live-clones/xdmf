@@ -65,6 +65,7 @@ boost::shared_ptr<const XdmfGeometryType> XdmfGeometryType::New(const std::map<s
 		}
 	}
 	assert(false);
+    return boost::shared_ptr<const XdmfGeometryType>();
 }
 
 unsigned int XdmfGeometryType::getDimensions() const

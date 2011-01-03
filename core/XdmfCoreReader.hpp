@@ -6,6 +6,7 @@ class XdmfCoreItemFactory;
 class XdmfItem;
 
 // Includes
+#include "XdmfCore.hpp"
 #include <boost/shared_ptr.hpp>
 #include <string>
 #include <vector>
@@ -18,7 +19,7 @@ class XdmfItem;
  *
  * XdmfCoreReader is an abstract base class.
  */
-class XdmfCoreReader {
+class XDMFCORE_EXPORT XdmfCoreReader {
 
 public:
 
@@ -72,5 +73,10 @@ private:
 
 	XdmfCoreReaderImpl * const mImpl;
 };
+
+#ifdef _WIN32
+    XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT std::allocator<boost::shared_ptr<XdmfItem> >;
+    XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT std::vector<boost::shared_ptr<XdmfItem>, std::allocator<boost::shared_ptr<XdmfItem> > >;
+#endif
 
 #endif /* XDMFCOREREADER_HPP_ */

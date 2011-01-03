@@ -12,8 +12,9 @@ class XdmfVisitor;
 #include <map>
 #include <string>
 #include <vector>
+#include "XdmfCore.hpp"
 
-// MMacro that allows children XdmfItems to be attached to a parent XdmfItem. -- For Header File
+// Macro that allows children XdmfItems to be attached to a parent XdmfItem. -- For Header File
 #define XDMF_CHILDREN(ChildClass, ChildName, SearchName) \
 public: \
 	/** Get a ChildClass attached to this item by index.
@@ -118,7 +119,7 @@ public : \
  * XdmfItem is an abstract base class.  It represents any item that can be visited and traversed by an XdmfVisitor
  * and have its contents added to an Xdmf file.
  */
-class XdmfItem : public Loki::BaseVisitable<void> {
+class XDMFCORE_EXPORT XdmfItem : public Loki::BaseVisitable<void> {
 
 public:
 
@@ -167,5 +168,12 @@ private:
 	void operator=(const XdmfItem & item);  // Not implemented.
 
 };
+
+#ifdef _WIN32
+    XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT std::allocator<boost::shared_ptr<XdmfInformation> >;
+    XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT std::vector<boost::shared_ptr<XdmfInformation>, std::allocator<boost::shared_ptr<XdmfInformation> > >;
+    XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT boost::shared_ptr<Loki::BaseVisitor>;
+    XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT Loki::BaseVisitable<void, false>;
+#endif
 
 #endif /* XDMFITEM_HPP_ */

@@ -19,6 +19,34 @@
 	ENDIF(NOT ("${dependencies}" STREQUAL ""))
  ENDMACRO(ADD_TEST_CXX_DEPENDENCIES dependencies)
 
+# Cxx Add LDPath  Macro
+# Author: Brian Panneton
+# Description: This macro adds the cxx test ldpaths.
+# Parameters:         
+#               ld  = any ldpaths needed for cxx tests
+MACRO(ADD_TEST_CXX_LDPATH ld)
+    GET_PROPERTY(ldpath GLOBAL PROPERTY CXX_TEST_LDPATH)
+    IF("${ld}" STRGREATER "")
+        SET_PROPERTY(GLOBAL PROPERTY CXX_TEST_LDPATH 
+                "${ldpath}${sep}${ld}" 
+        )
+    ENDIF("${ld}" STRGREATER "")
+ENDMACRO(ADD_TEST_CXX_LDPATH ld)
+
+# Cxx Add Path  Macro
+# Author: Brian Panneton
+# Description: This macro adds the cxx test paths.
+# Parameters:         
+#               p  = any paths needed for cxx tests
+MACRO(ADD_TEST_CXX_PATH p)
+    GET_PROPERTY(path GLOBAL PROPERTY CXX_TEST_PATH)
+    IF("${p}" STRGREATER "")
+        SET_PROPERTY(GLOBAL PROPERTY CXX_TEST_PATH 
+                "${path}${sep}${p}" 
+        )
+    ENDIF("${p}" STRGREATER "")
+ENDMACRO(ADD_TEST_CXX_PATH p)
+
  # CXX Test Macro
  # Author: Brian Panneton
  # Description: This macro builds and add the cxx test in one shot.
@@ -38,10 +66,32 @@
    	ENDIF(EXISTS ${cxx_source_dir}/${executable}.cxx)
 	
 	GET_PROPERTY(cxx_dependencies GLOBAL PROPERTY CXX_TEST_DEPENDENCIES)
+    GET_PROPERTY(cxx_ldpath GLOBAL PROPERTY CXX_TEST_LDPATH)
+    GET_PROPERTY(cxx_path GLOBAL PROPERTY CXX_TEST_PATH)
 	TARGET_LINK_LIBRARIES(${executable}${dup} ${cxx_dependencies})
  
+    # Take care of windowisims
+    IF(WIN32)
+        SET_TARGET_PROPERTIES(${executable}${dup} PROPERTIES 
+                PREFIX ../
+                RUNTIME_OUTPUT_DIRECTORY ${cxx_binary_dir}
+                LIBRARY_OUTPUT_DIRECTORY ${cxx_binary_dir}
+                ARCHIVE_OUTPUT_DIRECTORY ${cxx_binary_dir})
+
+        IF("${cxx_path}" STREQUAL "")
+            SET(cxx_path ${cxx_ldpath})
+        ENDIF("${cxx_path}" STREQUAL "")
+    ENDIF(WIN32)
+
 	SET_CORE("${cxx_binary_dir}")
-   	ADD_TEST(Cxx${is_core}_${executable}${dup} ${executable}${dup} ${arguments})
+    ADD_TEST(Cxx${is_core}_${executable}${dup} ${CMAKE_COMMAND}
+            -D "EXECUTABLE=${executable}${dup}"
+            -D "ARGUMENTS=${arguments}"
+            -D "LDPATH=${cxx_ldpath}"
+            -D "PATH=${cxx_path}"
+            -D "SEPARATOR=${sep}"
+            -P "${cxx_binary_dir}/TestDriverCxx.cmake"
+    ) 
  ENDMACRO(ADD_TEST_CXX executable)
 
  # CXX Clean Macro
@@ -55,3 +105,7 @@
 		ADDITIONAL_MAKE_CLEAN_FILES ${ARGN} 
 	)
  ENDMACRO(CLEAN_TEST_CXX executable)
+
+ # Configure the cxx 'driver' file
+CONFIGURE_FILE(${TESTING_SUITE_DIR}/TestingSuite/TestDriverCxx.cmake.in ${cxx_binary_dir}/TestDriverCxx.cmake @ONLY)
+

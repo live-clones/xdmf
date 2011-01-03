@@ -8,6 +8,7 @@ class XdmfArrayType;
 // Includes
 #include <boost/shared_ptr.hpp>
 #include <string>
+#include "XdmfCore.hpp"
 
 /**
  * @brief Couples an XdmfArray with heavy data stored on disk.
@@ -17,7 +18,7 @@ class XdmfArrayType;
  * written to disk an XdmfHeavyController is attached to XdmfArrays.  This allows data to be released
  * from memory but still be accessible or have its location written to light data.
  */
-class XdmfHeavyDataController {
+class XDMFCORE_EXPORT XdmfHeavyDataController {
 
 public:
 
@@ -82,5 +83,9 @@ private:
 	void operator=(const XdmfHeavyDataController & heavyDataController);  // Not implemented.
 
 };
+
+#ifdef _WIN32
+    XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT boost::shared_ptr<const XdmfArrayType>;
+#endif
 
 #endif /* XDMFHEAVYDATACONTROLLER_HPP_ */

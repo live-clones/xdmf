@@ -5,6 +5,7 @@
 class XdmfItem;
 
 // Includes
+#include "XdmfCore.hpp"
 #include <boost/shared_ptr.hpp>
 #include <map>
 #include <vector>
@@ -14,7 +15,7 @@ class XdmfItem;
  *
  * XdmfCoreItemFactory is an abstract base class.
  */
-class XdmfCoreItemFactory {
+class XDMFCORE_EXPORT XdmfCoreItemFactory {
 
 public:
 

@@ -2,6 +2,7 @@
 #define XDMFARRAYTYPE_HPP_
 
 // Includes
+#include "XdmfCore.hpp"
 #include "XdmfItemProperty.hpp"
 
 /**
@@ -23,7 +24,7 @@
  * 	UInt16
  * 	UInt32
  */
-class XdmfArrayType : public XdmfItemProperty {
+class XDMFCORE_EXPORT XdmfArrayType : public XdmfItemProperty {
 
 public:
 

@@ -73,6 +73,16 @@ endif(XDMF_BUILD_DSM)
 add_library(XdmfCore ${XdmfCoreSources})
 target_link_libraries(XdmfCore ${HDF5_LIBRARIES} ${HDF5DSM_LIBRARIES} ${LIBXML2_LIBRARIES})
 
+if(WIN32)
+    add_definitions(-D_HDF5USEDLL_ -D_HDF5USEHLDLL_)
+    set_target_properties(XdmfCore PROPERTIES 
+            DEFINE_SYMBOL XdmfCore_EXPORTS
+            PREFIX ../
+            RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+            LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+            ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+endif(WIN32)
+
 if(XDMF_WRAP_JAVA)
 	XDMF_SWIG_JAVA(XdmfCore)
 endif(XDMF_WRAP_JAVA)
@@ -81,11 +91,15 @@ if(XDMF_WRAP_PYTHON)
 	XDMF_SWIG_PYTHON(XdmfCore)
 endif(XDMF_WRAP_PYTHON)
 
-file(GLOB_RECURSE XdmfCoreHeaders "*.hpp" "*.tpp" "*.i")
+file(GLOB_RECURSE XdmfCoreHeaders "*.hpp" "*.tpp" "*.i" "../CMake/VersionSuite/*.hpp")
 file(GLOB LokiHeaders loki/*.h)
 install(FILES ${XdmfCoreHeaders} DESTINATION include)
 install(FILES ${LokiHeaders} DESTINATION include/loki)
-install(TARGETS XdmfCore LIBRARY DESTINATION lib)
+install(TARGETS XdmfCore 
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+)
 
 set(XdmfCore_INCLUDE_DIRS ${Boost_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} ${HDF5_INCLUDE_DIR} ${LIBXML2_INCLUDE_DIR} ${PYTHON_INCLUDE_DIRS} CACHE INTERNAL "")
 

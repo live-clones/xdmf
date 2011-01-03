@@ -2,6 +2,7 @@
 #define XDMFATTRIBUTECENTER_HPP_
 
 // Includes
+#include "Xdmf.hpp"
 #include "XdmfItemProperty.hpp"
 
 /**
@@ -18,7 +19,7 @@
  * 	Edge
  * 	Node
  */
-class XdmfAttributeCenter : public XdmfItemProperty {
+class XDMF_EXPORT XdmfAttributeCenter : public XdmfItemProperty {
 
 public:
 

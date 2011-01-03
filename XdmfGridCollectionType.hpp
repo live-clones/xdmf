@@ -2,6 +2,7 @@
 #define XDMFGRIDCOLLECTIONTYPE_HPP_
 
 // Includes
+#include "Xdmf.hpp"
 #include "XdmfItemProperty.hpp"
 
 /**
@@ -16,7 +17,7 @@
  * 	Spatial
  * 	Temporal
  */
-class XdmfGridCollectionType : public XdmfItemProperty {
+class XDMF_EXPORT XdmfGridCollectionType : public XdmfItemProperty {
 
 public:
 

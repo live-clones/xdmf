@@ -9,6 +9,7 @@ class XdmfRegularGrid;
 class XdmfUnstructuredGrid;
 
 // Includes
+#include "Xdmf.hpp"
 #include "XdmfItem.hpp"
 
 /**
@@ -17,7 +18,7 @@ class XdmfUnstructuredGrid;
  * XdmfDomain is the top XdmfItem in an Xdmf structure.  It can store a number of grids and
  * provides methods to insert, retrieve, and remove these grids.
  */
-class XdmfDomain : public virtual XdmfItem {
+class XDMF_EXPORT XdmfDomain : public virtual XdmfItem {
 
 public:
 
@@ -56,5 +57,18 @@ private:
 	void operator=(const XdmfDomain & domain);  // Not implemented.
 
 };
+
+#ifdef _WIN32
+    XDMF_TEMPLATE template class XDMF_EXPORT std::allocator<boost::shared_ptr<XdmfGridCollection> >;
+    XDMF_TEMPLATE template class XDMF_EXPORT std::vector<boost::shared_ptr<XdmfGridCollection>, std::allocator<boost::shared_ptr<XdmfGridCollection> > >;
+    XDMF_TEMPLATE template class XDMF_EXPORT std::allocator<boost::shared_ptr<XdmfCurvilinearGrid> >;
+    XDMF_TEMPLATE template class XDMF_EXPORT std::vector<boost::shared_ptr<XdmfCurvilinearGrid>, std::allocator<boost::shared_ptr<XdmfCurvilinearGrid> > >;
+    XDMF_TEMPLATE template class XDMF_EXPORT std::allocator<boost::shared_ptr<XdmfRectilinearGrid> >;
+    XDMF_TEMPLATE template class XDMF_EXPORT std::vector<boost::shared_ptr<XdmfRectilinearGrid>, std::allocator<boost::shared_ptr<XdmfRectilinearGrid> > >;
+    XDMF_TEMPLATE template class XDMF_EXPORT std::allocator<boost::shared_ptr<XdmfRegularGrid> >;
+    XDMF_TEMPLATE template class XDMF_EXPORT std::vector<boost::shared_ptr<XdmfRegularGrid>, std::allocator<boost::shared_ptr<XdmfRegularGrid> > >;
+    XDMF_TEMPLATE template class XDMF_EXPORT std::allocator<boost::shared_ptr<XdmfUnstructuredGrid> >;
+    XDMF_TEMPLATE template class XDMF_EXPORT std::vector<boost::shared_ptr<XdmfUnstructuredGrid>, std::allocator<boost::shared_ptr<XdmfUnstructuredGrid> > >;
+#endif
 
 #endif /* XDMFDOMAIN_HPP_ */

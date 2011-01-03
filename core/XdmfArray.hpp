@@ -6,6 +6,7 @@ class XdmfArrayType;
 class XdmfHeavyDataController;
 
 // Includes
+#include "XdmfCore.hpp"
 #include "XdmfItem.hpp"
 #include <boost/shared_array.hpp>
 #include <boost/variant.hpp>
@@ -46,7 +47,7 @@ class XdmfHeavyDataController;
  * 	UInt16
  * 	UInt32
  */
-class XdmfArray : public XdmfItem {
+class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
 
 public:
 
@@ -431,5 +432,13 @@ private:
 };
 
 #include "XdmfArray.tpp"
+
+#ifdef _WIN32
+    XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT boost::shared_ptr<const XdmfArrayType>;
+    XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT boost::shared_ptr<XdmfHeavyDataController>;
+    XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT boost::shared_ptr<const XdmfHeavyDataController>;
+    XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT boost::shared_ptr<Loki::BaseVisitor>;
+    XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT Loki::Visitor<boost::shared_ptr<XdmfArray>, boost::shared_ptr<XdmfItem> >;
+#endif
 
 #endif /* XDMFARRAY_HPP_ */

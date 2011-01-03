@@ -6,6 +6,7 @@ class XdmfArray;
 class XdmfGridCollection;
 
 // Includes
+#include "XdmfMap.hpp"
 #include "XdmfItem.hpp"
 
 /**
@@ -21,7 +22,7 @@ class XdmfGridCollection;
  *		to construct the proper XdmfMaps.
  *
  */
-class XdmfMap : public XdmfItem {
+class XDMF_EXPORT XdmfMap : public XdmfItem {
 
 public:
 

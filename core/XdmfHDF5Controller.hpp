@@ -2,6 +2,7 @@
 #define XDMFHDF5CONTROLLER_HPP_
 
 // Includes
+#include "XdmfCore.hpp"
 #include "XdmfHeavyDataController.hpp"
 
 /**
@@ -11,7 +12,7 @@
  * written to disk an XdmfHDF5Controller is attached to XdmfArrays.  This allows data to be released
  * from memory but still be accessible or have its location written to light data.
  */
-class XdmfHDF5Controller : public XdmfHeavyDataController {
+class XDMFCORE_EXPORT XdmfHDF5Controller : public XdmfHeavyDataController {
 
 public:
 

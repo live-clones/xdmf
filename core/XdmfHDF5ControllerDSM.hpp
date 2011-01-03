@@ -5,6 +5,7 @@
 class H5FDdsmBuffer;
 
 // Includes
+#include "XdmfCore.hpp"
 #include "XdmfHDF5Controller.hpp"
 
 /**
@@ -14,7 +15,7 @@ class H5FDdsmBuffer;
  * written to a DSM buffer an XdmfHDF5ControllerDSM is attached to XdmfArrays.  This allows data to be released
  * from memory but still be accessible or have its location written to light data.
  */
-class XdmfHDF5ControllerDSM : public XdmfHDF5Controller {
+class XDMFCORE_EXPORT XdmfHDF5ControllerDSM : public XdmfHDF5Controller {
 
 public:
 

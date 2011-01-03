@@ -6,6 +6,7 @@ class XdmfArray;
 
 // Includes
 #include <string>
+#include "XdmfCore.hpp"
 #include "XdmfVisitor.hpp"
 
 /**
@@ -25,7 +26,7 @@ class XdmfArray;
  *  Append - If an initialized XdmfArray is attached to an heavy dataset via an XdmfHeavyDataController the writer
  *  	will append the values to the end of the dataset on disk.
  */
-class XdmfHeavyDataWriter : public XdmfVisitor,
+class XDMFCORE_EXPORT XdmfHeavyDataWriter : public XdmfVisitor,
 	public Loki::Visitor<XdmfArray> {
 
 public:

@@ -5,6 +5,7 @@
 class XdmfGridCollectionType;
 
 // Includes
+#include "Xdmf.hpp"
 #include "XdmfDomain.hpp"
 #include "XdmfGrid.hpp"
 
@@ -16,7 +17,7 @@ class XdmfGridCollectionType;
  *
  * It is valid to nest collections.  A spatial collection within a temporal collection is commonly used.
  */
-class XdmfGridCollection : public XdmfDomain,
+class XDMF_EXPORT XdmfGridCollection : public XdmfDomain,
 	public XdmfGrid {
 
 public:
@@ -75,5 +76,9 @@ private:
 
 	boost::shared_ptr<const XdmfGridCollectionType> mType;
 };
+
+#ifdef _WIN32
+    XDMF_TEMPLATE template class XDMF_EXPORT boost::shared_ptr<const XdmfGridCollectionType>;
+#endif
 
 #endif /* XDMFGRID_HPP_ */

@@ -6,6 +6,7 @@ class XdmfAttributeCenter;
 class XdmfAttributeType;
 
 // Includes
+#include "Xdmf.hpp"
 #include "XdmfArray.hpp"
 
 /**
@@ -14,7 +15,7 @@ class XdmfAttributeType;
  * XdmfAttribute contains two properties that should be set, XdmfAttributeCenter and XdmfAttributeType.
  * XdmfAttribute is a subclass of XdmfDataItem, meaning it contains an XdmfArray to store values.
  */
-class XdmfAttribute : public XdmfArray {
+class XDMF_EXPORT XdmfAttribute : public XdmfArray {
 
 public:
 
@@ -91,5 +92,10 @@ private:
 	std::string mName;
 	boost::shared_ptr<const XdmfAttributeType> mType;
 };
+
+#ifdef _WIN32
+    XDMF_TEMPLATE template class XDMF_EXPORT boost::shared_ptr<const XdmfAttributeType>;
+    XDMF_TEMPLATE template class XDMF_EXPORT boost::shared_ptr<const XdmfAttributeCenter>;
+#endif
 
 #endif /* XDMFATTRIBUTE_HPP_ */

@@ -2,6 +2,7 @@
 #define XDMFINFORMATION_HPP_
 
 // Includes
+#include "XdmfCore.hpp"
 #include "XdmfItem.hpp"
 
 /**
@@ -9,7 +10,7 @@
  *
  * This can useful for storing input parameters to a code or for general information like runtime.
  */
-class XdmfInformation : public XdmfItem {
+class XDMFCORE_EXPORT XdmfInformation : public XdmfItem {
 
 public:
 
@@ -37,7 +38,7 @@ public:
 
 	std::map<std::string, std::string> getItemProperties() const;
 
-	std::string getItemTag() const;
+	virtual std::string getItemTag() const;
 
 	/**
 	 * Get the key for this information item.
@@ -80,5 +81,10 @@ private:
 	std::string mKey;
 	std::string mValue;
 };
+
+#ifdef _WIN32
+    XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT boost::shared_ptr<Loki::BaseVisitor>;
+    XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT Loki::Visitor<boost::shared_ptr<XdmfInformation>, boost::shared_ptr<XdmfItem> >;
+#endif
 
 #endif /* XDMFINFORMATION_HPP_ */

@@ -5,6 +5,9 @@ include(AddTestsCxx)
 # Note: The tests already depend on their own file
 ADD_TEST_CXX_DEPENDENCIES("XdmfCore")
 
+# Add any ldpath directories that the cxx tests may need
+ADD_TEST_CXX_LDPATH("${CMAKE_BINARY_DIR}")
+
 # Add any cxx tests here:
 # Note: We don't want to use a foreach loop to test the files incase we
 #	have extra arguments (ie: ADD_TEST_CXX(testname inputfile))
