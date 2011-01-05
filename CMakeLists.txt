@@ -118,10 +118,10 @@ if(XDMF_WRAP_JAVA)
                     LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
                     ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
             )
-            set(java_compile_args "-cp \"\\\"${CMAKE_BINARY_DIR}/*.jar\\\"\" *.java")
+            set(java_compile_args -cp "${CMAKE_BINARY_DIR}/*.jar" *.java)
             set(java_dest "bin")
         else(WIN32)
-            set(java_compile_args -cp '${CMAKE_BINARY_DIR}/*' ${XDMF_JAVA_DIR}/*.java)
+            set(java_compile_args -cp "${CMAKE_BINARY_DIR}/*.jar" ${XDMF_JAVA_DIR}/*.java)
             set(java_dest "lib/java")
         endif(WIN32)
 
@@ -133,8 +133,8 @@ if(XDMF_WRAP_JAVA)
         add_custom_target(Compiled_${java_name}_Jar ALL DEPENDS 
                             ${${java_name}_JAVA_JAR})
         add_custom_command(OUTPUT ${${java_name}_JAVA_JAR}
-            COMMAND ${JAVA_COMPILE}
-            ARGS    ${java_compile_args}
+            COMMAND ${CMAKE_COMMAND} -E chdir ${XDMF_JAVA_PACKAGE_DIR} 
+                ${JAVA_COMPILE} ARGS ${java_compile_args}
             COMMAND ${JAVA_ARCHIVE}
             ARGS    -cvf ${${java_name}_JAVA_JAR}
                     "${XDMF_JAVA_PACKAGE_DIR}/*.class"

@@ -16,11 +16,11 @@ SET(vMajor "0")
 SET(vMinor "0")
 
 # This Macro allows you to set up the Version in a one liner
-MACRO(VersionCreate versionName versionMajor)
+MACRO(VersionCreate versionName versionMajor export_name)
     VersionMajorSet(${versionMajor})
     VersionCalculate()
-    VersionWrite(${versionName})
-ENDMACRO(VersionCreate versionName versionMajor)
+    VersionWrite(${versionName} ${export_name} "${ARGN}")
+ENDMACRO(VersionCreate versionName versionMajor export_name)
 
 # This Macro allows you to set the rewrite number
 MACRO(VersionMajorSet versionMajor)
@@ -44,14 +44,19 @@ MACRO(VersionCalculate)
 ENDMACRO(VersionCalculate)
 
 # This Macro writes your hpp/cpp files
-MACRO(VersionWrite vProjectName)
+MACRO(VersionWrite vProjectName export_name)
+    SET(include_list "${ARGN}")
+    FOREACH(il ${include_list})
+        SET(includes "${includes}\n\#include \"${il}\"")
+    ENDFOREACH(il ${include_list})
     FILE(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/${vProjectName}Version.hpp 
 "/* Current Version of ${vProjectName} 
  * Major is: ${vMajor}
  * Minor is: ${vMinor}
  */
+${includes}
 \#include \"ProjectVersion.hpp\"
-extern ProjectVersion ${vProjectName}Version;\n"
+extern ${export_name} ProjectVersion ${vProjectName}Version;\n"
     )
 
 	FILE(WRITE ${CMAKE_CURRENT_SOURCE_DIR}/${vProjectName}Version.cpp 
@@ -61,4 +66,4 @@ extern ProjectVersion ${vProjectName}Version;\n"
 \#include \"${vProjectName}Version.hpp\"
 ProjectVersion ${vProjectName}Version = ProjectVersion(\"${vProjectName}\", \"${vMajor}\", \"${vMinor}\");\n"
 	)
-ENDMACRO(VersionWrite)
+ENDMACRO(VersionWrite vProjectName export_name)

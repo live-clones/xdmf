@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.6)
 
 include(SetUpVersion)
 if(VERSION_CONTROL_AUTOUPDATE)
-        VersionCreate("Xdmf" "2")
+        VersionCreate("Xdmf" "2" "XDMFCORE_EXPORT" "XdmfCore.hpp")
 endif(VERSION_CONTROL_AUTOUPDATE)
 
 set(BUILD_SHARED_LIBS true)
