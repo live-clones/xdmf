@@ -22,6 +22,7 @@
 /*     for more information.                                       */
 /*                                                                 */
 /*******************************************************************/
+#include <cstring>
 #include "XdmfDsm.h"
 #include "XdmfDsmComm.h"
 #include "XdmfDsmMsg.h"
