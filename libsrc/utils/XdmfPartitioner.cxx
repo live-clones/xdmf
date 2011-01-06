@@ -597,7 +597,9 @@ int main(int argc, char* argv[])
 
   if(argc < 4)
   {
-    meshName = meshName + "-partitioned";
+    std::stringstream partitionedMeshName;
+    partitionedMeshName << meshName << "_p" << numPartitions;
+    meshName = partitionedMeshName.str();
   }
   
   XdmfDOM dom;
