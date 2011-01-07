@@ -249,8 +249,9 @@ XdmfFortran::SetGridGeometry(char * geometryType, char * numberType, int * numbe
     myPoints->SetNumberOfElements(*numberOfPoints * 3);
     break;
   case XDMF_GEOMETRY_ORIGIN_DXDYDZ:
-    myPoints->SetNumberOfElements(6);
-    break;
+    myGeometry->SetOrigin(reinterpret_cast<XdmfFloat64*>(points));
+    myGeometry->SetDxDyDz(reinterpret_cast<XdmfFloat64*>(points+3));
+    return;
   default:
     myPoints->SetNumberOfElements(*numberOfPoints * 3);
     break;
