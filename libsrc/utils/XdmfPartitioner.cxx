@@ -34,6 +34,7 @@ extern "C"
 #include <metis.h>
 }
 
+#include <algorithm>
 #include <map>
 #include <set>
 #include <vector>

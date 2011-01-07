@@ -22,6 +22,7 @@
 /*     for more information.                                       */
 /*                                                                 */
 /*******************************************************************/
+#include <cstdlib>
 #include "XdmfInformation.h"
 
 XdmfInformation::XdmfInformation() {

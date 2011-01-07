@@ -24,6 +24,7 @@
 /*******************************************************************/
 
 #include "XdmfExodusReader.h"
+#include <algorithm>
 #include <exodusII.h>
 
 //
