@@ -1,4 +1,1 @@
-from Xdmf import *
-from XdmfUtils import *
-from libvtkXdmfPython import *
-
+@XDMF_PYTHON_INIT_COMMANDS@
