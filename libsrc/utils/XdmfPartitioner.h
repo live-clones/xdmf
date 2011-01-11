@@ -28,13 +28,20 @@ class XdmfGrid;
 #include "Xdmf.h"
 
 /*!
- * @brief XdmfPartitioner partitions an XdmfGrid into a number of XdmfGrids using the metis library.  A pointer to an 
- * XdmfGrid spatial collection is returned containing the partitioned grids.
+ * @brief XdmfPartitioner partitions an XdmfGrid into a number of XdmfGrids 
+ * using the metis library.  A pointer to an XdmfGrid spatial collection 
+ * is returned containing the partitioned grids.
  */
 
 class XdmfPartitioner
 {
   public:
+
+    enum MetisScheme {
+      NodalGraph = 1,
+      DualGraph
+    };
+
     /*!
      * Constructor.
      */
@@ -49,20 +56,32 @@ class XdmfPartitioner
 
     /*!
      * 
-     * Partitions an XdmfGrid into a number of partitions using the metis library.  Currently supported topology types are:
+     * Partitions an XdmfGrid into a number of partitions using the 
+     * metis library.  Currently supported topology types are:
      *
-     * XDMF_TRI, XDMF_TRI_6, XDMF_QUAD, XDMF_QUAD_8, XDMF_TET, XDMF_TET_10, XDMF_HEX, XDMF_HEX_20, XDMF_HEX_24, XDMF_HEX_27
+     * XDMF_TRI, XDMF_TRI_6, 
+     * XDMF_QUAD, XDMF_QUAD_8, XDMF_QUAD_9,
+     * XDMF_TET, XDMF_TET_10, 
+     * XDMF_HEX, XDMF_HEX_20, XDMF_HEX_24, XDMF_HEX_27, XDMF_HEX_64, 
+     * XDMF_HEX_125
      *
-     * The routine splits the XdmfGrid and also splits all attributes and sets into their proper partitions.  An attribute named
-     * "GlobalNodeId" is added that serves to map child node ids to their global id for the entire spatial collection.
+     * The routine splits the XdmfGrid and also splits all attributes and 
+     * sets into their proper partitions.  An attribute with name 
+     * "GlobalNodeId" is added to each partitioned grid to map node ids to 
+     * their original global id in the unpartitioned grid.
      *
-     * @param grid a XdmfGrid* to partition
-     * @param numPartitions the number of partitions to split the grid into
-     * @param parentElement the parent XdmfElement* to insert the created spatial collection of partitioned grids.
+     * @param grid a XdmfGrid to partition.
+     * @param numPartitions the number of partitions to split the grid.
+     * @param parentElement the parent XdmfElement to insert the created 
+     * spatial collection into.
+     * @param metisScheme the metis partitioning scheme, default = NodalGraph.
      *
-     * @return XdmfGrid* a spatial collection containing partitioned grids.
+     * @return XdmfGrid a spatial collection containing partitioned grids.
      */
-    XdmfGrid * Partition(XdmfGrid * grid, int numPartitions, XdmfElement * parentElement);
+    XdmfGrid * Partition(XdmfGrid *    grid, 
+			 int           numPartitions, 
+			 XdmfElement * parentElement,
+			 MetisScheme   metisScheme = NodalGraph);
 
   private:
 
