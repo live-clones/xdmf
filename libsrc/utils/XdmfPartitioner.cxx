@@ -214,6 +214,7 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid    * grid,
   parentElement->Insert(collection);
 
   std::vector<XdmfGrid*> partitions;
+  int numEmptyPartitions = 0;
 
   for(int i=0; i<numPartitions; ++i)
   {
@@ -289,6 +290,10 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid    * grid,
         }
         partition->Insert(globalIds);
       }
+    }
+    else
+    {
+      ++numEmptyPartitions;
     }
   } 
 
@@ -556,6 +561,14 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid    * grid,
     information->SetName(gridInformation->GetName());
     information->SetValue(gridInformation->GetValue()); 
     collection->Insert(information);
+  }
+
+  if(numEmptyPartitions > 0)
+  {
+    std::stringstream warning;
+    warning << "Metis could only partition the file into " 
+	    << numPartitions - numEmptyPartitions << " partitions.";
+    std::cout << warning.str() << std::endl;
   }
 
   return collection;
