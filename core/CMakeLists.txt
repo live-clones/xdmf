@@ -15,14 +15,22 @@ SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 option(XDMF_BUILD_DSM OFF)
 
+mark_as_advanced(CLEAR Boost_INCLUDE_DIR)
 find_package(Boost REQUIRED)
 if(Boost_FOUND)
 	include_directories(${Boost_INCLUDE_DIRS})
+	mark_as_advanced(FORCE Boost_INCLUDE_DIR)
 endif(Boost_FOUND)
 
+mark_as_advanced(CLEAR HDF5_C_INCLUDE_DIR)
+mark_as_advanced(CLEAR HDF5_hdf5_LIBRARY_DEBUG)
+mark_as_advanced(CLEAR HDF5_hdf5_LIBRARY_RELEASE)
 find_package(HDF5 REQUIRED)
 if(HDF5_FOUND)
-	include_directories(${HDF5_INCLUDE_DIR})	
+	include_directories(${HDF5_INCLUDE_DIRS})
+	mark_as_advanced(FORCE HDF5_C_INCLUDE_DIR)
+	mark_as_advanced(FORCE HDF5_hdf5_LIBRARY_DEBUG)
+	mark_as_advanced(FORCE HDF5_hdf5_LIBRARY_RELEASE)
 endif(HDF5_FOUND)
 
 if(XDMF_BUILD_DSM)
@@ -71,7 +79,7 @@ if(XDMF_BUILD_DSM)
 endif(XDMF_BUILD_DSM)
 
 add_library(XdmfCore ${XdmfCoreSources})
-target_link_libraries(XdmfCore ${HDF5_LIBRARIES} ${HDF5DSM_LIBRARIES} ${LIBXML2_LIBRARIES})
+target_link_libraries(XdmfCore ${HDF5_hdf5_LIBRARY} ${HDF5DSM_LIBRARIES} ${LIBXML2_LIBRARIES})
 
 if(WIN32)
     add_definitions(-D_HDF5USEDLL_ -D_HDF5USEHLDLL_)
