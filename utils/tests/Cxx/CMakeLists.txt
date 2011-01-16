@@ -4,8 +4,11 @@ SET_PROPERTY(GLOBAL APPEND PROPERTY CXX_TEST_DEPENDENCIES
 	"XdmfUtils"
 )
 
+# Include XdmfTestDataGenerator from non-util tests
+include_directories(${CMAKE_SOURCE_DIR}/tests/Cxx/)
+
 # Include our test macros
-include (AddTestsCxx)
+include(AddTestsCxx)
 
 # Add any cxx tests here:
 # Note: We don't want to use a foreach loop to test the files incase we
