@@ -37,4 +37,8 @@ private:
 
 };
 
+#ifdef _WIN32
+    XDMF_TEMPLATE template class XDMF_EXPORT boost::shared_ptr<XdmfItemFactory>;
+#endif
+
 #endif /* XDMFITEMFACTORY_HPP_ */
