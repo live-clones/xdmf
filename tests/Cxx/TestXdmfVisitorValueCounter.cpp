@@ -4,55 +4,61 @@
 
 // Make a new XdmfVisitor that simply counts number of values
 class XdmfVisitorValueCounter : public XdmfVisitor,
-	public Loki::Visitor<XdmfArray> {
+                                public Loki::Visitor<XdmfArray> {
 
 public:
 
-	/**
-	 * Create a new XdmfVisitorValueCounter.
-	 *
-	 * @return constructed XdmfVisitorValueCounter.
-	 */
-	static boost::shared_ptr<XdmfVisitorValueCounter> New()
-	{
-		boost::shared_ptr<XdmfVisitorValueCounter> p(new XdmfVisitorValueCounter());
-		return p;
-	};
+  /**
+   * Create a new XdmfVisitorValueCounter.
+   *
+   * @return constructed XdmfVisitorValueCounter.
+   */
+  static boost::shared_ptr<XdmfVisitorValueCounter>
+  New()
+  {
+    boost::shared_ptr<XdmfVisitorValueCounter>
+      p(new XdmfVisitorValueCounter());
+    return p;
+  };
 
-	~XdmfVisitorValueCounter()
-	{
-	};
+  ~XdmfVisitorValueCounter()
+  {
+  };
 
-	int getCount()
-	{
-		return mCount;
-	}
+  int
+  getCount()
+  {
+    return mCount;
+  }
 
-	void visit(XdmfArray & array, boost::shared_ptr<Loki::BaseVisitor>)
-	{
-		mCount += array.getSize();
-	}
+  void
+  visit(XdmfArray & array, boost::shared_ptr<Loki::BaseVisitor>)
+  {
+    mCount += array.getSize();
+  }
 
 protected:
 
-	XdmfVisitorValueCounter() :
-		mCount(0)
-	{
-	}
+  XdmfVisitorValueCounter() :
+    mCount(0)
+  {
+  }
 
 private:
 
-	int mCount;
+  int mCount;
 };
 
 int main(int, char *)
 {
-	boost::shared_ptr<XdmfVisitorValueCounter> visitor = XdmfVisitorValueCounter::New();
-	boost::shared_ptr<XdmfGrid> grid = XdmfTestDataGenerator::createHexahedron();
+  boost::shared_ptr<XdmfVisitorValueCounter> visitor =
+    XdmfVisitorValueCounter::New();
+  boost::shared_ptr<XdmfGrid> grid =
+    XdmfTestDataGenerator::createHexahedron();
 
-	grid->accept(visitor);
+  grid->accept(visitor);
 
-	assert(visitor->getCount() == 69);
+  assert(visitor->getCount() == 69);
 
-	return 0;
+  return 0;
 }

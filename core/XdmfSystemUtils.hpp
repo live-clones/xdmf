@@ -12,25 +12,27 @@
  */
 class XDMFCORE_EXPORT XdmfSystemUtils {
 
-public:
+ public:
 
-	/**
-	 * Converts a filesystem path to an absolute real path (absolute path with no symlinks)
-	 *
-	 * @param path a string containing the path to convert.
-	 * @return the equivalent real path.
-	 */
-	static std::string getRealPath(const std::string & path);
+  /**
+   * Converts a filesystem path to an absolute real path (absolute path with
+   * no symlinks)
+   *
+   * @param path a string containing the path to convert.
+   *
+   * @return the equivalent real path.
+   */
+  static std::string getRealPath(const std::string & path);
 
-protected:
+ protected:
 
-	XdmfSystemUtils();
-	~XdmfSystemUtils();
+  XdmfSystemUtils();
+  ~XdmfSystemUtils();
 
-private:
+ private:
 
-	XdmfSystemUtils(const XdmfSystemUtils & systemUtils);  // Not implemented.
-	void operator=(const XdmfSystemUtils & systemUtils);  // Not implemented.
+  XdmfSystemUtils(const XdmfSystemUtils &);  // Not implemented.
+  void operator=(const XdmfSystemUtils &);  // Not implemented.
 
 };
 

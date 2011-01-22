@@ -9,8 +9,8 @@ ADD_TEST_PYTHON_PYTHONPATH("${CMAKE_BINARY_DIR}")
 
 # Add any python tests here:
 # Note: we don't want to use a foreach loop to test the files incase we
-#	have extra arguments (ie: ADD_TEST_PYTHON(testname inputfile))
-#	Read UsePythonTest.cmake for more information
+#       have extra arguments (ie: ADD_TEST_PYTHON(testname inputfile))
+#       Read UsePythonTest.cmake for more information
 # ---------------------
 ADD_TEST_PYTHON(TestXdmfArray)
 ADD_TEST_PYTHON(TestXdmfEquals)
@@ -18,8 +18,8 @@ ADD_TEST_PYTHON(TestXdmfVersion)
 
 # Add any python cleanup here:
 # Note: We don't want to use a foreach loop to test the files incase we
-#	have multiple files (ie: CLEAN_TEST_PYTHON(testname outputfile1 ...))
-#	Read UseCxxTest.cmake for more information
+#       have multiple files (ie: CLEAN_TEST_PYTHON(testname outputfile1 ...))
+#       Read UseCxxTest.cmake for more information
 # ---------------------------------------
 CLEAN_TEST_PYTHON(TestXdmfArray)
 CLEAN_TEST_PYTHON(TestXdmfEquals)

@@ -6,54 +6,58 @@
 #include "XdmfItemProperty.hpp"
 
 /**
- * @brief Property describing the type of an XdmfSet.
+ * @brief Property describing the type of ids an XdmfSet contains.
  *
- * An XdmfSet consist of a collection of nodes, cells, faces, or edges that are part of an XdmfGrid.  This
- * property indicates which element type the set contains.
+ * An XdmfSet holds ids for a collection of nodes, cells, faces, or edges
+ * that are part of an XdmfGrid. This property indicates which type the set
+ * contains.
  *
  * Xdmf supports the following set types:
- * 	NoSetType
- * 	Node
- * 	Cell
- * 	Face
- * 	Edge
+ *   NoSetType
+ *   Node
+ *   Cell
+ *   Face
+ *   Edge
  */
 class XDMF_EXPORT XdmfSetType : public XdmfItemProperty {
 
-public:
+ public:
 
-	virtual ~XdmfSetType();
+  virtual ~XdmfSetType();
 
-	friend class XdmfSet;
+  friend class XdmfSet;
 
-	// Supported Xdmf Set Types
-	static boost::shared_ptr<const XdmfSetType> NoSetType();
-	static boost::shared_ptr<const XdmfSetType> Node();
-	static boost::shared_ptr<const XdmfSetType> Cell();
-	static boost::shared_ptr<const XdmfSetType> Face();
-	static boost::shared_ptr<const XdmfSetType> Edge();
+  // Supported Xdmf Set Types
+  static boost::shared_ptr<const XdmfSetType> NoSetType();
+  static boost::shared_ptr<const XdmfSetType> Node();
+  static boost::shared_ptr<const XdmfSetType> Cell();
+  static boost::shared_ptr<const XdmfSetType> Face();
+  static boost::shared_ptr<const XdmfSetType> Edge();
 
-	void getProperties(std::map<std::string, std::string> & collectedProperties) const;
+  void
+  getProperties(std::map<std::string, std::string> & collectedProperties) const;
 
-protected:
+ protected:
 
-	/**
-	 * Protected constructor for XdmfSetType.  The constructor is protected because all set types supported
-	 * by Xdmf should be accessed through more specific static methods that construct XdmfSetTypes -
-	 * i.e. XdmfSetType::Node().
-	 *
-	 * @param name a std::string containing the name of the XdmfSetType.
-	 */
-	XdmfSetType(const std::string & name);
+  /**
+   * Protected constructor for XdmfSetType. The constructor is protected
+   * because all set types supported by Xdmf should be accessed through more
+   * specific static methods that construct XdmfSetTypes -
+   * i.e. XdmfSetType::Node().
+   *
+   * @param name a std::string containing the name of the XdmfSetType.
+   */
+  XdmfSetType(const std::string & name);
 
-private:
+ private:
 
-	XdmfSetType(const XdmfSetType & setType); // Not implemented.
-	void operator=(const XdmfSetType & setType); // Not implemented.
+  XdmfSetType(const XdmfSetType &); // Not implemented.
+  void operator=(const XdmfSetType &); // Not implemented.
 
-	static boost::shared_ptr<const XdmfSetType> New(const std::map<std::string, std::string> & itemProperties);
+  static boost::shared_ptr<const XdmfSetType>
+  New(const std::map<std::string, std::string> & itemProperties);
 
-	std::string mName;
+  std::string mName;
 };
 
-#endif /* XDMFGEOMETRYTYPE_HPP_ */
+#endif /* XDMFSETTYPE_HPP_ */

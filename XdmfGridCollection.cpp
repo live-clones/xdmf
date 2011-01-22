@@ -10,16 +10,17 @@
 #include "XdmfGridCollection.hpp"
 #include "XdmfGridCollectionType.hpp"
 
-boost::shared_ptr<XdmfGridCollection> XdmfGridCollection::New()
+boost::shared_ptr<XdmfGridCollection>
+XdmfGridCollection::New()
 {
-	boost::shared_ptr<XdmfGridCollection> p(new XdmfGridCollection());
-	return p;
+  boost::shared_ptr<XdmfGridCollection> p(new XdmfGridCollection());
+  return p;
 };
 
 XdmfGridCollection::XdmfGridCollection() :
-	XdmfDomain(),
-	XdmfGrid(XdmfGeometry::New(), XdmfTopology::New(), "Collection"),
-	mType(XdmfGridCollectionType::NoCollectionType())
+  XdmfDomain(),
+  XdmfGrid(XdmfGeometry::New(), XdmfTopology::New(), "Collection"),
+  mType(XdmfGridCollectionType::NoCollectionType())
 {
 }
 
@@ -29,49 +30,59 @@ XdmfGridCollection::~XdmfGridCollection()
 
 const std::string XdmfGridCollection::ItemTag = "Grid";
 
-std::map<std::string, std::string> XdmfGridCollection::getItemProperties() const
+std::map<std::string, std::string>
+XdmfGridCollection::getItemProperties() const
 {
-	std::map<std::string, std::string> collectionProperties = XdmfGrid::getItemProperties();
-	collectionProperties["GridType"] = "Collection";
-	mType->getProperties(collectionProperties);
-	return collectionProperties;
+  std::map<std::string, std::string> collectionProperties =
+    XdmfGrid::getItemProperties();
+  collectionProperties["GridType"] = "Collection";
+  mType->getProperties(collectionProperties);
+  return collectionProperties;
 }
 
-std::string XdmfGridCollection::getItemTag() const
+std::string
+XdmfGridCollection::getItemTag() const
 {
-	return ItemTag;
+  return ItemTag;
 }
 
-boost::shared_ptr<const XdmfGridCollectionType> XdmfGridCollection::getType() const
+boost::shared_ptr<const XdmfGridCollectionType>
+XdmfGridCollection::getType() const
 {
-	return mType;
+  return mType;
 }
 
-void XdmfGridCollection::insert(const boost::shared_ptr<XdmfInformation> information)
+void
+XdmfGridCollection::insert(const boost::shared_ptr<XdmfInformation> information)
 {
-	XdmfItem::insert(information);
+  XdmfItem::insert(information);
 }
 
-void XdmfGridCollection::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader)
+void
+XdmfGridCollection::populateItem(const std::map<std::string, std::string> & itemProperties,
+                                 std::vector<boost::shared_ptr<XdmfItem> > & childItems,
+                                 const XdmfCoreReader * const reader)
 {
-	mType = XdmfGridCollectionType::New(itemProperties);
-	XdmfDomain::populateItem(itemProperties, childItems, reader);
-	mInformations.clear();
-	XdmfGrid::populateItem(itemProperties, childItems, reader);
+  mType = XdmfGridCollectionType::New(itemProperties);
+  XdmfDomain::populateItem(itemProperties, childItems, reader);
+  mInformations.clear();
+  XdmfGrid::populateItem(itemProperties, childItems, reader);
 }
 
-void XdmfGridCollection::setType(const boost::shared_ptr<const XdmfGridCollectionType> type)
+void
+XdmfGridCollection::setType(const boost::shared_ptr<const XdmfGridCollectionType> type)
 {
-	mType = type;
+  mType = type;
 }
 
-void XdmfGridCollection::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor)
+void
+XdmfGridCollection::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
-	XdmfGrid::traverse(visitor);
+  XdmfGrid::traverse(visitor);
 
-	// Only write XdmfInformations once (deal with diamond inheritance)
-	std::vector<boost::shared_ptr<XdmfInformation> > informations;
-	informations.swap(mInformations);
-	XdmfDomain::traverse(visitor);
-	informations.swap(mInformations);
+  // Only write XdmfInformations once (deal with diamond inheritance)
+  std::vector<boost::shared_ptr<XdmfInformation> > informations;
+  informations.swap(mInformations);
+  XdmfDomain::traverse(visitor);
+  informations.swap(mInformations);
 }

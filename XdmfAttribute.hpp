@@ -10,92 +10,100 @@ class XdmfAttributeType;
 #include "XdmfArray.hpp"
 
 /**
- * @brief Handles computed values attached to an XdmfGrid.
+ * @brief Holds values located at specific parts of an XdmfGrid.
  *
- * XdmfAttribute contains two properties that should be set, XdmfAttributeCenter and XdmfAttributeType.
- * XdmfAttribute is a subclass of XdmfDataItem, meaning it contains an XdmfArray to store values.
+ * XdmfAttribute holds values centered at specific locations of an XdmfGrid.
+ * An attribute contains two properties that should be set,
+ * XdmfAttributeCenter, which describes where the values are centered, and
+ * XdmfAttributeType, which describes what types of values the attribute
+ * contains.
  */
 class XDMF_EXPORT XdmfAttribute : public XdmfArray {
 
-public:
+ public:
 
-	/**
-	 * Create a new XdmfAttribute.
-	 *
-	 * @return constructed XdmfAttribute.
-	 */
-	static boost::shared_ptr<XdmfAttribute> New();
+  /**
+   * Create a new XdmfAttribute.
+   *
+   * @return constructed XdmfAttribute.
+   */
+  static boost::shared_ptr<XdmfAttribute> New();
 
-	virtual ~XdmfAttribute();
+  virtual ~XdmfAttribute();
 
-	LOKI_DEFINE_VISITABLE(XdmfAttribute, XdmfArray)
-	static const std::string ItemTag;
+  LOKI_DEFINE_VISITABLE(XdmfAttribute, XdmfArray);
+  static const std::string ItemTag;
 
-	/**
-	 * Get the XdmfAttributeCenter associated with this attribute.
-	 *
-	 * @return XdmfAttributeCenter of the attribute.
-	 */
-	boost::shared_ptr<const XdmfAttributeCenter> getCenter() const;
+  /**
+   * Get the XdmfAttributeCenter associated with this attribute.
+   *
+   * @return XdmfAttributeCenter of the attribute.
+   */
+  boost::shared_ptr<const XdmfAttributeCenter> getCenter() const;
 
+  std::map<std::string, std::string> getItemProperties() const;
 
-	std::map<std::string, std::string> getItemProperties() const;
+  std::string getItemTag() const;
 
-	std::string getItemTag() const;
+  /**
+   * Get the name of the attribute.
+   *
+   * @return a string containing the name of the attribute.
+   */
+  std::string getName() const;
 
-	/**
-	 * Get the name of the attribute.
-	 *
-	 * @return a string containing the name of the attribute.
-	 */
-	std::string getName() const;
+  /**
+   * Get the XdmfAttributeType associated with this attribute.
+   *
+   * @return XdmfAttributeType of the attribute.
+   */
+  boost::shared_ptr<const XdmfAttributeType> getType() const;
 
-	/**
-	 * Get the XdmfAttributeType associated with this attribute.
-	 *
-	 * @return XdmfAttributeType of the attribute.
-	 */
-	boost::shared_ptr<const XdmfAttributeType> getType() const;
+  /**
+   * Set the XdmfAttributeCenter associated with this attribute.
+   *
+   * @param center the XdmfAttributeCenter to set.
+   */
+  void setCenter(const boost::shared_ptr<const XdmfAttributeCenter> center);
 
-	/**
-	 * Set the XdmfAttributeCenter associated with this attribute.
-	 *
-	 * @param center the XdmfAttributeCenter to set.
-	 */
-	void setCenter(const boost::shared_ptr<const XdmfAttributeCenter> center);
+  /**
+   * Set the name of the attribute.
+   *
+   * @param name a string containing the name to set.
+   */
+  void setName(const std::string & name);
 
-	/**
-	 * Set the name of the attribute.
-	 *
-	 * @param name a string containing the name to set.
-	 */
-	void setName(const std::string & name);
+  /**
+   * Set the XdmfAttributeType associated with this attribute.
+   *
+   * @param type XdmfAttributeType to set.
+   */
+  void setType(const boost::shared_ptr<const XdmfAttributeType> type);
 
-	/**
-	 * Set the XdmfAttributeType associated with this attribute.
-	 *
-	 * @param type XdmfAttributeType to set.
-	 */
-	void setType(const boost::shared_ptr<const XdmfAttributeType> type);
+ protected:
 
-protected:
+  XdmfAttribute();
 
-	XdmfAttribute();
-	virtual void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader);
+  virtual void
+  populateItem(const std::map<std::string, std::string> & itemProperties,
+               std::vector<boost::shared_ptr<XdmfItem> > & childItems,
+               const XdmfCoreReader * const reader);
 
-private:
+ private:
 
-	XdmfAttribute(const XdmfAttribute &);  // Not implemented.
-	void operator=(const XdmfAttribute &);  // Not implemented.
+  XdmfAttribute(const XdmfAttribute &);  // Not implemented.
+  void operator=(const XdmfAttribute &);  // Not implemented.
 
-	boost::shared_ptr<const XdmfAttributeCenter> mCenter;
-	std::string mName;
-	boost::shared_ptr<const XdmfAttributeType> mType;
+  boost::shared_ptr<const XdmfAttributeCenter> mCenter;
+  std::string mName;
+  boost::shared_ptr<const XdmfAttributeType> mType;
 };
 
 #ifdef _WIN32
-    XDMF_TEMPLATE template class XDMF_EXPORT boost::shared_ptr<const XdmfAttributeType>;
-    XDMF_TEMPLATE template class XDMF_EXPORT boost::shared_ptr<const XdmfAttributeCenter>;
+XDMF_TEMPLATE template class XDMF_EXPORT
+boost::shared_ptr<const XdmfAttributeType>;
+XDMF_TEMPLATE template class XDMF_EXPORT
+boost::shared_ptr<const XdmfAttributeCenter>;
 #endif
 
 #endif /* XDMFATTRIBUTE_HPP_ */

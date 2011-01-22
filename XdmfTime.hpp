@@ -6,56 +6,60 @@
 #include "XdmfItem.hpp"
 
 /**
- * @brief Time specification for an XdmfGrid Item.
+ * @brief Time specification for an XdmfGrid.
  *
- * An XdmfTime sets a time value for an XdmfGrid item.
+ * An XdmfTime sets a time value for an XdmfGrid.
  */
 class XDMF_EXPORT XdmfTime : public XdmfItem {
 
-public:
+ public:
 
-	/**
-	 * Create a new XdmfTime.
-	 *
-	 * @param value the timeValue of the XdmfTime to create.
-	 * @return the new XdmfTime.
-	 */
-	static boost::shared_ptr<XdmfTime> New(const double & value = 0);
+  /**
+   * Create a new XdmfTime.
+   *
+   * @param value the timeValue of the XdmfTime to create.
+   * @return the new XdmfTime.
+   */
+  static boost::shared_ptr<XdmfTime> New(const double & value = 0);
 
-	virtual ~XdmfTime();
+  virtual ~XdmfTime();
 
-	LOKI_DEFINE_VISITABLE(XdmfTime, XdmfItem)
-	static const std::string ItemTag;
+  LOKI_DEFINE_VISITABLE(XdmfTime, XdmfItem);
+  static const std::string ItemTag;
 
-	std::map<std::string, std::string> getItemProperties() const;
+  std::map<std::string, std::string> getItemProperties() const;
 
-	std::string getItemTag() const;
+  std::string getItemTag() const;
 
-	/**
-	 * Get the time value associated with this XdmfTime.
-	 *
-	 * @return a double containing the time value.
-	 */
-	double getValue() const;
+  /**
+   * Get the time value associated with this XdmfTime.
+   *
+   * @return a double containing the time value.
+   */
+  double getValue() const;
 
-	/**
-	 * Set the time value associated with this XdmfTime.
-	 *
-	 * @param time a double containing the time value.
-	 */
-	void setValue(const double & time);
+  /**
+   * Set the time value associated with this XdmfTime.
+   *
+   * @param time a double containing the time value.
+   */
+  void setValue(const double & time);
 
-protected:
+ protected:
 
-	XdmfTime(const double & value);
-	virtual void populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader);
+  XdmfTime(const double & value);
 
-private:
+  virtual void
+  populateItem(const std::map<std::string, std::string> & itemProperties,
+               std::vector<boost::shared_ptr<XdmfItem> > & childItems,
+               const XdmfCoreReader * const reader);
 
-	XdmfTime(const XdmfTime & time);  // Not implemented.
-	void operator=(const XdmfTime & time);  // Not implemented.
+ private:
 
-	double mValue;
+  XdmfTime(const XdmfTime &);  // Not implemented.
+  void operator=(const XdmfTime &);  // Not implemented.
+
+  double mValue;
 };
 
 #endif /* XDMFTIME_HPP_ */

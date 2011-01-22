@@ -7,21 +7,25 @@
 
 #include "XdmfInformation.hpp"
 
-boost::shared_ptr<XdmfInformation> XdmfInformation::New()
+boost::shared_ptr<XdmfInformation>
+XdmfInformation::New()
 {
-	boost::shared_ptr<XdmfInformation> p(new XdmfInformation());
-	return p;
+  boost::shared_ptr<XdmfInformation> p(new XdmfInformation());
+  return p;
 };
 
-boost::shared_ptr<XdmfInformation> XdmfInformation::New(const std::string & key, const std::string & value)
+boost::shared_ptr<XdmfInformation>
+XdmfInformation::New(const std::string & key,
+                     const std::string & value)
 {
-	boost::shared_ptr<XdmfInformation> p(new XdmfInformation(key, value));
-	return p;
+  boost::shared_ptr<XdmfInformation> p(new XdmfInformation(key, value));
+  return p;
 };
 
-XdmfInformation::XdmfInformation(const std::string & key, const std::string & value) :
-	mKey(key),
-	mValue(value)
+XdmfInformation::XdmfInformation(const std::string & key,
+                                 const std::string & value) :
+  mKey(key),
+  mValue(value)
 {
 }
 
@@ -31,58 +35,67 @@ XdmfInformation::~XdmfInformation()
 
 const std::string XdmfInformation::ItemTag = "Information";
 
-std::map<std::string, std::string> XdmfInformation::getItemProperties() const
+std::map<std::string, std::string>
+XdmfInformation::getItemProperties() const
 {
-	std::map<std::string, std::string> informationProperties;
-	informationProperties["Name"] = mKey;
-	informationProperties["Value"] = mValue;
-	return informationProperties;
+  std::map<std::string, std::string> informationProperties;
+  informationProperties["Name"] = mKey;
+  informationProperties["Value"] = mValue;
+  return informationProperties;
 }
 
-std::string XdmfInformation::getItemTag() const
+std::string
+XdmfInformation::getItemTag() const
 {
-	return ItemTag;
+  return ItemTag;
 }
 
-std::string XdmfInformation::getKey() const
+std::string
+XdmfInformation::getKey() const
 {
-	return mKey;
+  return mKey;
 }
 
-std::string XdmfInformation::getValue() const
+std::string
+XdmfInformation::getValue() const
 {
-	return mValue;
+  return mValue;
 }
 
-void XdmfInformation::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader)
+void
+XdmfInformation::populateItem(const std::map<std::string, std::string> & itemProperties,
+                              std::vector<boost::shared_ptr<XdmfItem> > & childItems,
+                              const XdmfCoreReader * const reader)
 {
-	XdmfItem::populateItem(itemProperties, childItems, reader);
-	std::map<std::string, std::string>::const_iterator key = itemProperties.find("Name");
-	if(key != itemProperties.end())
-	{
-		mKey = key->second;
-	}
-	else
-	{
-		assert(false);
-	}
-	std::map<std::string, std::string>::const_iterator value = itemProperties.find("Value");
-	if(value != itemProperties.end())
-	{
-		mValue = value->second;
-	}
-	else
-	{
-		assert(false);
-	}
+  XdmfItem::populateItem(itemProperties, childItems, reader);
+
+  std::map<std::string, std::string>::const_iterator key =
+    itemProperties.find("Name");
+  if(key != itemProperties.end()) {
+    mKey = key->second;
+  }
+  else {
+    assert(false);
+  }
+
+  std::map<std::string, std::string>::const_iterator value =
+    itemProperties.find("Value");
+  if(value != itemProperties.end()) {
+    mValue = value->second;
+  }
+  else {
+    assert(false);
+  }
 }
 
-void XdmfInformation::setKey(const std::string & key)
+void
+XdmfInformation::setKey(const std::string & key)
 {
-	mKey= key;
+  mKey= key;
 }
 
-void XdmfInformation::setValue(const std::string & value)
+void
+XdmfInformation::setValue(const std::string & value)
 {
-	mValue= value;
+  mValue= value;
 }

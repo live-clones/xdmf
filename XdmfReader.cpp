@@ -4,14 +4,15 @@
 #include "XdmfItemFactory.hpp"
 #include "XdmfReader.hpp"
 
-boost::shared_ptr<XdmfReader> XdmfReader::New()
+boost::shared_ptr<XdmfReader>
+XdmfReader::New()
 {
-	boost::shared_ptr<XdmfReader> p(new XdmfReader());
-	return p;
+  boost::shared_ptr<XdmfReader> p(new XdmfReader());
+  return p;
 }
 
 XdmfReader::XdmfReader() :
-	XdmfCoreReader(XdmfItemFactory::New())
+  XdmfCoreReader(XdmfItemFactory::New())
 {
 }
 
@@ -19,13 +20,17 @@ XdmfReader::~XdmfReader()
 {
 }
 
-// Implemented to make SWIG wrapping work correctly (typemaps to return specific subclass instances of XdmfItems)
-boost::shared_ptr<XdmfItem> XdmfReader::read(const std::string & filePath) const
+// Implemented to make SWIG wrapping work correctly
+// (typemaps to return specific subclass instances of XdmfItems)
+boost::shared_ptr<XdmfItem>
+XdmfReader::read(const std::string & filePath) const
 {
-	return XdmfCoreReader::read(filePath);
+  return XdmfCoreReader::read(filePath);
 }
 
-std::vector<boost::shared_ptr<XdmfItem> > XdmfReader::read(const std::string & filePath, const std::string & xPath) const
+std::vector<boost::shared_ptr<XdmfItem> >
+XdmfReader::read(const std::string & filePath,
+                 const std::string & xPath) const
 {
-	return XdmfCoreReader::read(filePath, xPath);
+  return XdmfCoreReader::read(filePath, xPath);
 }

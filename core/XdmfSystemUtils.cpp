@@ -8,9 +8,10 @@ XdmfSystemUtils::~XdmfSystemUtils()
 {
 }
 
-std::string XdmfSystemUtils::getRealPath(const std::string & path)
+std::string
+XdmfSystemUtils::getRealPath(const std::string & path)
 {
-	char realPath[PATH_MAX];
-	realpath(path.c_str(), realPath);
-	return realPath;
+  char realPath[PATH_MAX];
+  realpath(path.c_str(), realPath);
+  return realPath;
 }

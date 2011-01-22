@@ -2,7 +2,6 @@
 #define XDMFEXODUSWRITER_HPP_
 
 // Forward Declarations
-class XdmfTopologyType;
 class XdmfUnstructuredGrid;
 
 // Includes
@@ -10,54 +9,41 @@ class XdmfUnstructuredGrid;
 #include <string>
 
 /*!
- * @brief XdmfExodusWriter writes an Xdmf structure in memory to an ExodusII file on disk.
+ * @brief XdmfExodusWriter writes an Xdmf structure in memory to an ExodusII
+ * file on disk.
  */
 class XdmfExodusWriter {
 
 public:
 
-	/**
-	 * Create a new XdmfExodusReader.
-	 *
-	 * @return constructed XdmfExodusReader.
-	 */
-	static boost::shared_ptr<XdmfExodusWriter> New();
+  /**
+   * Create a new XdmfExodusReader.
+   *
+   * @return constructed XdmfExodusReader.
+   */
+  static boost::shared_ptr<XdmfExodusWriter> New();
 
-	virtual ~XdmfExodusWriter();
+  virtual ~XdmfExodusWriter();
 
-    /*!
-     * Write an XdmfGridUnstructured to an ExodusII file.
-     *
-     * @param filePath of the ExodusII file to write.
-     * @param gridToWrite an XdmfGrid to write to ExodusII file format.
-     */
-    void write(const std::string & filePath, const boost::shared_ptr<XdmfUnstructuredGrid> gridToWrite) const;
+  /*!
+   * Write an XdmfUnstructuredGrid to an ExodusII file.
+   *
+   * @param filePath of the ExodusII file to write.
+   * @param gridToWrite an XdmfUnstructuredGrid to write to ExodusII file
+   * format.
+   */
+  void write(const std::string & filePath,
+             const boost::shared_ptr<XdmfUnstructuredGrid> gridToWrite) const;
 
 protected:
 
-	XdmfExodusWriter();
+  XdmfExodusWriter();
 
 private:
 
-	/**
-	 * PIMPL
-	 */
-	class XdmfExodusWriterImpl;
+  XdmfExodusWriter(const XdmfExodusWriter &);  // Not implemented.
+  void operator=(const XdmfExodusWriter &);  // Not implemented.
 
-	XdmfExodusWriter(const XdmfExodusWriter & exodusWriter);  // Not implemented.
-	void operator=(const XdmfExodusWriter & exodusWriter);  // Not implemented.
-
-	/**
-	 * Convert an Xdmf topology type to an exodus topology type.
-	 *
-	 * @param exodusTopologyType a string containing the name of the exodus topology type to convert.
-	 * @param pointsPerCell the number of points per cell for the exodus topology type to convert.
-	 *
-	 * @return the equivalent XdmfTopologyType.
-	 */
-	std::string xdmfToExodusTopologyType(boost::shared_ptr<const XdmfTopologyType> topologyType) const;
-
-	XdmfExodusWriterImpl * mImpl;
 };
 
 #endif /* XDMFEXODUSWRITER_HPP_ */

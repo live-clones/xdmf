@@ -9,14 +9,15 @@
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
 
-boost::shared_ptr<XdmfTopology> XdmfTopology::New()
+boost::shared_ptr<XdmfTopology>
+XdmfTopology::New()
 {
-	boost::shared_ptr<XdmfTopology> p(new XdmfTopology());
-	return p;
+  boost::shared_ptr<XdmfTopology> p(new XdmfTopology());
+  return p;
 }
 
 XdmfTopology::XdmfTopology() :
-	mType(XdmfTopologyType::NoTopologyType())
+  mType(XdmfTopologyType::NoTopologyType())
 {
 }
 
@@ -26,52 +27,60 @@ XdmfTopology::~XdmfTopology()
 
 const std::string XdmfTopology::ItemTag = "Topology";
 
-std::string XdmfTopology::getItemTag() const
+std::string
+XdmfTopology::getItemTag() const
 {
-	return ItemTag;
+  return ItemTag;
 }
 
-std::map<std::string, std::string> XdmfTopology::getItemProperties() const
+std::map<std::string, std::string>
+XdmfTopology::getItemProperties() const
 {
-	std::map<std::string, std::string> topologyProperties;
-	mType->getProperties(topologyProperties);
-	if(mType->getCellType() != XdmfTopologyType::Structured && mType != XdmfTopologyType::Polyvertex())
-	{
-		std::stringstream numElements;
-		numElements << this->getNumberElements();
-		topologyProperties["Dimensions"] = numElements.str();
-	}
-	return topologyProperties;
+  std::map<std::string, std::string> topologyProperties;
+  mType->getProperties(topologyProperties);
+  if(mType->getCellType() != XdmfTopologyType::Structured &&
+     mType != XdmfTopologyType::Polyvertex()) {
+    std::stringstream numElements;
+    numElements << this->getNumberElements();
+    topologyProperties["Dimensions"] = numElements.str();
+  }
+  return topologyProperties;
 }
 
-unsigned int XdmfTopology::getNumberElements() const
+unsigned int
+XdmfTopology::getNumberElements() const
 {
-	if(mType->getNodesPerElement() == 0)
-	{
-		return 0;
-	}
-	return this->getSize() / mType->getNodesPerElement();
+  if(mType->getNodesPerElement() == 0) {
+    return 0;
+  }
+  return this->getSize() / mType->getNodesPerElement();
 }
 
-boost::shared_ptr<const XdmfTopologyType> XdmfTopology::getType() const
+boost::shared_ptr<const XdmfTopologyType>
+XdmfTopology::getType() const
 {
-	return mType;
+  return mType;
 }
 
-void XdmfTopology::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader)
+void
+XdmfTopology::populateItem(const std::map<std::string, std::string> & itemProperties,
+                           std::vector<boost::shared_ptr<XdmfItem> > & childItems,
+                           const XdmfCoreReader * const reader)
 {
-	XdmfItem::populateItem(itemProperties, childItems, reader);
-	mType = XdmfTopologyType::New(itemProperties);
-	for(std::vector<boost::shared_ptr<XdmfItem> >::const_iterator iter = childItems.begin(); iter != childItems.end(); ++iter)
-	{
-		if(boost::shared_ptr<XdmfArray> array = boost::shared_dynamic_cast<XdmfArray>(*iter))
-		{
-			this->swap(array);
-		}
-	}
+  XdmfItem::populateItem(itemProperties, childItems, reader);
+  mType = XdmfTopologyType::New(itemProperties);
+  for(std::vector<boost::shared_ptr<XdmfItem> >::const_iterator iter = childItems.begin();
+      iter != childItems.end();
+      ++iter) {
+    if(boost::shared_ptr<XdmfArray> array =
+       boost::shared_dynamic_cast<XdmfArray>(*iter)) {
+      this->swap(array);
+    }
+  }
 }
 
-void XdmfTopology::setType(const boost::shared_ptr<const XdmfTopologyType> type)
+void
+XdmfTopology::setType(const boost::shared_ptr<const XdmfTopologyType> type)
 {
-	mType = type;
+  mType = type;
 }
