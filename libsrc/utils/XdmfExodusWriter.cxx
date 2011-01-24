@@ -380,10 +380,10 @@ void XdmfExodusWriter::write(const char * fileName, XdmfGrid * gridToWrite)
       }
     }
     else if(geometryType == XDMF_GEOMETRY_X_Y_Z || 
-	    geometryType == XDMF_GEOMETRY_X_Y)
+            geometryType == XDMF_GEOMETRY_X_Y)
     {
       XdmfErrorMessage("Non-interlaced geometry types are currently not "
-		       "supported in the exodus writer");
+                       "supported in the exodus writer");
       return;
     }
     currGrid->GetGeometry()->Release();
@@ -613,6 +613,13 @@ void XdmfExodusWriter::write(const char * fileName, XdmfGrid * gridToWrite)
   delete [] nodalNames;
   delete [] elementNames;
 
+	int numTruthTableValues = num_elem_blk * numElementAttributes;
+  int * truthTable = new int[numTruthTableValues];
+  for(int i=0; i<numTruthTableValues; ++i) {
+    truthTable[i] = 1;
+  }
+  ex_put_elem_var_tab(exodusHandle, num_elem_blk, numElementAttributes, truthTable);
+
   int numTemporalGrids = 1;
   if(temporalCollection)
   {
@@ -657,7 +664,7 @@ void XdmfExodusWriter::write(const char * fileName, XdmfGrid * gridToWrite)
         }
         currAttribute->Update();
         attributeCenter = currAttribute->GetAttributeCenter();
-        switch(currAttribute->GetAttributeCenter())
+        switch(attributeCenter)
         {
           case(XDMF_ATTRIBUTE_CENTER_GRID):
           {
