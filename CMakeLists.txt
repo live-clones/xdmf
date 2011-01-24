@@ -22,11 +22,12 @@ if(XDMF_BUILD_DOCUMENTATION)
   add_subdirectory(doc)
 endif(XDMF_BUILD_DOCUMENTATION)
 
-option(XDMF_BUILD_TESTING ON)
-if(XDMF_BUILD_TESTING)
+# Enable CMake testing
+option(BUILD_TESTING "Build Tests" OFF)
+if(BUILD_TESTING)
   enable_testing()
   include(CTest)
-endif(XDMF_BUILD_TESTING)
+endif(BUILD_TESTING)
 
 # Wrapper Setup
 option(XDMF_WRAP_PYTHON OFF)
@@ -223,4 +224,3 @@ if(NOT XDMF_BUILD_CORE_ONLY)
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib)
 endif(NOT XDMF_BUILD_CORE_ONLY)
-
