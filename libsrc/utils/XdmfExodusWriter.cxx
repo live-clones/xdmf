@@ -27,6 +27,7 @@
 
 #include <cassert>
 #include <exodusII.h>
+#include <map>
 #include <set>
 #include <sstream>
 #include <string>
