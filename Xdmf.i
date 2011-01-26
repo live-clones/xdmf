@@ -5,9 +5,9 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 
 %module Xdmf
 %{
-    #include <Xdmf.hpp>
+  #include <Xdmf.hpp>
 	
-    // XdmfCore Includes
+  // XdmfCore Includes
 	#include <XdmfArray.hpp>
 	#include <XdmfArrayType.hpp>
 	#include <XdmfCoreItemFactory.hpp>
@@ -293,3 +293,5 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 %include XdmfTopology.hpp
 %include XdmfTopologyType.hpp
 %include XdmfUnstructuredGrid.hpp
+
+%template(ItemVector) std::vector<boost::shared_ptr<XdmfItem> >;
