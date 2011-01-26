@@ -46,6 +46,33 @@ MACRO(ADD_TEST_PYTHON_PYTHONPATH pyp)
         ENDIF(NOT ("${pyp}" STREQUAL ""))
 ENDMACRO(ADD_TEST_PYTHON_PYTHONPATH cp)
 
+# Python Add LDPath  Macro
+# Author: Brian Panneton
+# Description: This macro adds the python test ldpaths.
+# Parameters:         
+#               ld  = any ldpaths needed for python tests
+MACRO(ADD_TEST_PYTHON_LDPATH ld)
+    GET_PROPERTY(ldpath GLOBAL PROPERTY PYTHON_TEST_LDPATH)
+    IF("${ld}" STRGREATER "")
+        SET_PROPERTY(GLOBAL PROPERTY PYTHON_TEST_LDPATH 
+                "${ldpath}${sep}${ld}" 
+        )
+    ENDIF("${ld}" STRGREATER "")
+ENDMACRO(ADD_TEST_PYTHON_LDPATH ld)
+
+# Python Add Path Macro
+# Author: Brian Panneton
+# Description: This macro adds the python test paths.
+# Parameters:         
+#               p = any paths needed for python tests
+MACRO(ADD_TEST_PYTHON_PATH p)
+    GET_PROPERTY(path GLOBAL PROPERTY PYTHON_TEST_PATH)
+    IF("${p}" STRGREATER "")
+        SET_PROPERTY(GLOBAL PROPERTY PYTHON_TEST_PATH 
+                "${path}${sep}${p}" 
+        )
+    ENDIF("${p}" STRGREATER "")
+ENDMACRO(ADD_TEST_PYTHON_PATH p)
 
 # Add Python Test Macro
 # Author: Brian Panneton
@@ -63,6 +90,8 @@ MACRO(ADD_TEST_PYTHON executable)
 	GET_PROPERTY(python_file_dependencies GLOBAL 
 			PROPERTY PYTHON_TEST_FILE_DEPENDENCIES)
 	GET_PROPERTY(python_pythonpath GLOBAL PROPERTY PYTHON_TEST_PYTHONPATH)
+    GET_PROPERTY(python_ldpath GLOBAL PROPERTY PYTHON_TEST_LDPATH)
+    GET_PROPERTY(python_path GLOBAL PROPERTY PYTHON_TEST_PATH)
 	
 	ADD_CUSTOM_COMMAND(
 		OUTPUT ${python_binary_dir}/${executable}.pyc
@@ -80,14 +109,24 @@ MACRO(ADD_TEST_PYTHON executable)
 	
 	SET_PROPERTY(GLOBAL APPEND PROPERTY PYTHON_TEST_TARGETS "${python_binary_dir}/${executable}.pyc")
 
+    # Dlls need to be in the path dir for java
+    IF(WIN32)
+        IF("${python_path}" STREQUAL "")
+            SET(python_path ${java_ldpath})
+        ENDIF("${python_path}" STREQUAL "")
+    ENDIF(WIN32)
+
 	SET_CORE("${python_binary_dir}")
     ADD_TEST(Python${is_core}_${executable}${dup} ${CMAKE_COMMAND}
             -D "EXECUTABLE=${executable}"
             -D "ARGUMENTS=${arguments}"
             -D "PYTHONPATH=${python_pythonpath}"
+            -D "LDPATH=${python_ldpath}"
+            -D "PATH=${python_path}"
             -D "SEPARATOR=${sep}"
             -P "${python_binary_dir}/TestDriverPython.cmake"
     )
+
 ENDMACRO(ADD_TEST_PYTHON executable)
 
 # Python Clean Macro
