@@ -170,6 +170,8 @@ private:
 };
 
 #ifdef _WIN32
+    XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT std::allocator<boost::shared_ptr<XdmfItem> >;
+    XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT std::vector<boost::shared_ptr<XdmfItem>, std::allocator<boost::shared_ptr<XdmfItem> > >;
     XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT std::allocator<boost::shared_ptr<XdmfInformation> >;
     XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT std::vector<boost::shared_ptr<XdmfInformation>, std::allocator<boost::shared_ptr<XdmfInformation> > >;
     XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT boost::shared_ptr<Loki::BaseVisitor>;
