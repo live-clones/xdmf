@@ -361,6 +361,18 @@ XdmfGrid* vtkXdmfDomain::GetGrid(XdmfGrid* xmfGrid, double time)
         return child;
         }
       }
+
+    // It's possible that user has not specified a <Time /> element at all. In
+    // that case, try to locate the first grid with no time value set.
+    for (XdmfInt32 cc=0; cc < xmfGrid->GetNumberOfChildren(); cc++)
+      {
+      XdmfGrid* child = xmfGrid->GetChild(cc);
+      if (child && child->GetTime()->GetTimeType() == XDMF_TIME_UNSET)
+        {
+        return child;
+        }
+      }
+
     // not sure what to do if no sub-grid matches the requested time.
     return NULL;
     }

@@ -217,6 +217,18 @@ vtkDataObject* vtkXdmfHeavyData::ReadTemporalCollection(
       valid_children.push_back(child);
       }
     }
+  // if no child matched this timestep, handle the case where the user didn't
+  // specify any <Time /> element for the temporal collection.
+  for (XdmfInt32 cc=0;
+    valid_children.size() == 0 &&
+    cc < xmfTemporalCollection->GetNumberOfChildren(); cc++)
+    {
+    XdmfGrid* child = xmfTemporalCollection->GetChild(cc);
+    if (child && child->GetTime()->GetTimeType() == XDMF_TIME_UNSET)
+      {
+      valid_children.push_back(child);
+      }
+    }
 
   if (valid_children.size() == 0)
     {
