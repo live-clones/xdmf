@@ -7,6 +7,16 @@ ADD_TEST_PYTHON_DEPENDENCIES("")
 # Add any pythonpath directories that the python tests may need
 ADD_TEST_PYTHON_PYTHONPATH("${CMAKE_BINARY_DIR}")
 
+# Add any ldpath directories that the python tests may need
+ADD_TEST_PYTHON_LDPATH("${CMAKE_BINARY_DIR}")
+ADD_TEST_PYTHON_LDPATH("${HDF5_LIBRARIES}")
+ADD_TEST_PYTHON_LDPATH("${LIBXML2_LIBRARIES}")
+
+# Add any path directories that the python tests may need
+ADD_TEST_PYTHON_PATH("${CMAKE_BINARY_DIR}")
+ADD_TEST_PYTHON_PATH("${HDF5_BINARY_DIRS}")
+ADD_TEST_PYTHON_PATH("${LIBXML2_BINARY_DIRS}")
+
 # Add any python tests here:
 # Note: we don't want to use a foreach loop to test the files incase we
 #	have extra arguments (ie: ADD_TEST_PYTHON(testname inputfile))

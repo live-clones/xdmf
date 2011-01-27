@@ -29,6 +29,8 @@ if(HDF5_FOUND)
 			include_directories(${MPI_INCLUDE_PATH})
 		endif(MPI_FOUND)
 	endif(HDF5_IS_PARALLEL)
+    get_filename_component(HDF5_ROOT "$HDF5_INCLUDE_DIR}/../" REALPATH)
+    set(HDF5_BINARY_DIRS ${HDF5_ROOT}/bin ${HDF5_ROOT}/dll)
 endif(HDF5_FOUND)
 
 if(XDMF_BUILD_DSM)
@@ -49,6 +51,8 @@ endif(XDMF_BUILD_DSM)
 find_package(LibXml2 REQUIRED)
 if(LIBXML2_FOUND)
 	include_directories(${LIBXML2_INCLUDE_DIR})
+    get_filename_component(LIBXML2_ROOT "${LIBXML2_INCLUDE_DIR}/../" REALPATH)
+    set(LIBXML2_BINARY_DIRS ${LIBXML2_ROOT}/bin)
 endif(LIBXML2_FOUND)
 
 set(XdmfCoreSources
