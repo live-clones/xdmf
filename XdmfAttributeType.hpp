@@ -6,12 +6,13 @@
 #include "XdmfItemProperty.hpp"
 
 /**
- * @brief Property describing the type of values an XdmfAttribute contains.
+ * @brief Property describing the type of values an XdmfAttribute
+ * contains.
  *
- * XdmfAttributeType is a property used by XdmfAttribute to specify what type
- * of values the XdmfAttribute contains. A specific XdmfAttributeType can be
- * created by calling one of the static methods in the class,
- * i.e. XdmfAttributeType::Scalar().
+ * XdmfAttributeType is a property used by XdmfAttribute to specify
+ * what type of values the XdmfAttribute contains. A specific
+ * XdmfAttributeType can be created by calling one of the static
+ * methods in the class, i.e. XdmfAttributeType::Scalar().
  *
  * Xdmf supports the following attribute types:
  *   NoAttributeType

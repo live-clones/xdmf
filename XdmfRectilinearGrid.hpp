@@ -9,15 +9,15 @@ class XdmfArray;
 #include "XdmfGrid.hpp"
 
 /**
- * @brief A rectilinear grid consists of cells and points arranged on a
- * regular lattice in space.
+ * @brief A rectilinear grid consists of cells and points arranged on
+ * a regular lattice in space.
  *
- * XdmfRectilinearGrid represents a mesh of cells and points arranged on a
- * regular lattice in space. Points are arranged along coordinate axes, but
- * the spacing between points may vary.
+ * XdmfRectilinearGrid represents a mesh of cells and points arranged
+ * on a regular lattice in space. Points are arranged along coordinate
+ * axes, but the spacing between points may vary.
  *
- * In order to define a rectilinear grid, the coordinates along each axis
- * direction must be specified.
+ * In order to define a rectilinear grid, the coordinates along each
+ * axis direction must be specified.
  *
  */
 class XDMF_EXPORT XdmfRectilinearGrid : public XdmfGrid {
@@ -68,18 +68,19 @@ class XDMF_EXPORT XdmfRectilinearGrid : public XdmfGrid {
   /**
    * Get the coordinates of the grid along a single axis.
    *
-   * @param axisIndex the index of the axis to retrieve, (i.e. 0 for x-axis).
-   * If no array exists at the index, return NULL.
+   * @param axisIndex the index of the axis to retrieve, (i.e. 0 for
+   * x-axis). If no array exists at the index, return NULL.
    *
    * @return array of coordinates along
    */
   boost::shared_ptr<XdmfArray> getCoordinates(const unsigned int axisIndex);
 
   /**
-   * Get the coordinates of the grid along a single axis (const version).
+   * Get the coordinates of the grid along a single axis (const
+   * version).
    *
-   * @param axisIndex the index of the axis to retrieve (i.e. 0 for x-axis).
-   * If no array exists at the index, return NULL.
+   * @param axisIndex the index of the axis to retrieve (i.e. 0 for
+   * x-axis). If no array exists at the index, return NULL.
    *
    * @return array of coordinates along
    */
@@ -89,27 +90,30 @@ class XDMF_EXPORT XdmfRectilinearGrid : public XdmfGrid {
   /**
    * Get the coordinates of the grid along all axes.
    *
-   * @return vector containing an array of coordinates along each direction.
+   * @return vector containing an array of coordinates along each
+   * direction.
    */
   std::vector<boost::shared_ptr<XdmfArray> > getCoordinates();
 
   /**
    * Get the coordinates of the grid along all axes (const version).
    *
-   * @return vector containing an array of coordinates along each direction.
+   * @return vector containing an array of coordinates along each
+   * direction.
    */
   const std::vector<boost::shared_ptr<XdmfArray> > getCoordinates() const;
 
   /**
-   * Get the dimensions of the grid, the number of points in each direction.
+   * Get the dimensions of the grid, the number of points in each
+   * direction.
    *
    * @return XdmfArray containing dimensions of this grid.
    */
   boost::shared_ptr<XdmfArray> getDimensions();
 
   /**
-   * Get the dimensions of the grid, the number of points in each direction
-   * (const version).
+   * Get the dimensions of the grid, the number of points in each
+   * direction (const version).
    *
    * @return XdmfArray containing the dimensions of this grid.
    */
@@ -119,7 +123,8 @@ class XDMF_EXPORT XdmfRectilinearGrid : public XdmfGrid {
    * Set the coordinates of the grid along a single axis.
    *
    * @param axisIndex the index of the axis to set (i.e. 0 for x-axis).
-   * @param axisCoordinates the coordinates of points along a single axis to set.
+   * @param axisCoordinates the coordinates of points along a single axis to
+   * set.
    */
   void setCoordinates(const unsigned int axisIndex,
                       const boost::shared_ptr<XdmfArray> axisCoordinates);

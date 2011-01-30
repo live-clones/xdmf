@@ -11,9 +11,9 @@ class XdmfItem;
 /**
  * @brief Perform an operation on an Xdmf graph structure.
  *
- * XdmfVisitor is an abstract base class for any operation that operates on an
- * Xdmf graph structure. These operations could involve writing to disk or
- * modifying the structure in some way.
+ * XdmfVisitor is an abstract base class for any operation that
+ * operates on an Xdmf graph structure. These operations could involve
+ * writing to disk or modifying the structure in some way.
  */
 class XDMFCORE_EXPORT XdmfVisitor : public XdmfBaseVisitor,
                                     public Loki::Visitor<XdmfItem> {

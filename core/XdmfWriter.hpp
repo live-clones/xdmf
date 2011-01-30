@@ -10,23 +10,24 @@ class XdmfHeavyDataWriter;
 #include "XdmfVisitor.hpp"
 
 /**
- * @brief Traverse the Xdmf graph and write light and heavy data stored to
- * disk.
+ * @brief Traverse the Xdmf graph and write light and heavy data
+ * stored to disk.
  *
- * XdmfWriter visits each node of an Xdmf graph structure and writes data to
- * disk. Writing begins by calling the accept() operation on any XdmfItem and
- * supplying this writer as the parameter. The XdmfItem as well as all
- * children attached to the XdmfItem are written to disk. Heavy data is
- * written to a heavy data format using an XdmfHeavyDataWriter and light data
- * is written to XML.
+ * XdmfWriter visits each node of an Xdmf graph structure and writes
+ * data to disk. Writing begins by calling the accept() operation on
+ * any XdmfItem and supplying this writer as the parameter. The
+ * XdmfItem as well as all children attached to the XdmfItem are
+ * written to disk. Heavy data is written to a heavy data format using
+ * an XdmfHeavyDataWriter and light data is written to XML.
  *
- * By default, the XdmfWriter writes all heavy data to a single heavy data
- * file specified by the XdmfHeavyDataWriter. If a dataset is encountered that
- * resides in a different heavy data file on disk, the dataset is read from
- * disk and written to the new heavy data file. If this is undesired, the
- * XdmfWriter can be set to DistributedHeavyData mode in which the writer will
- * automatically reference any heavy dataset even if it resides in a different
- * file than the one currently being written to.
+ * By default, the XdmfWriter writes all heavy data to a single heavy
+ * data file specified by the XdmfHeavyDataWriter. If a dataset is
+ * encountered that resides in a different heavy data file on disk,
+ * the dataset is read from disk and written to the new heavy data
+ * file. If this is undesired, the XdmfWriter can be set to
+ * DistributedHeavyData mode in which the writer will automatically
+ * reference any heavy dataset even if it resides in a different file
+ * than the one currently being written to.
  */
 class XDMFCORE_EXPORT XdmfWriter : public XdmfVisitor,
                                    public Loki::Visitor<XdmfArray> {
@@ -39,9 +40,10 @@ class XDMFCORE_EXPORT XdmfWriter : public XdmfVisitor,
   };
 
   /**
-   * Create a new XdmfWriter to write Xdmf data to disk. This will create its
-   * own hdf5 writer based on the xmlFileName. For example, if supplied
-   * "output.xmf" the created hdf5 writer would write to file "output.h5".
+   * Create a new XdmfWriter to write Xdmf data to disk. This will
+   * create its own hdf5 writer based on the xmlFileName. For example,
+   * if supplied "output.xmf" the created hdf5 writer would write to
+   * file "output.h5".
    *
    * @param xmlFilePath the path to the xml file to write to.
    *
@@ -50,8 +52,9 @@ class XDMFCORE_EXPORT XdmfWriter : public XdmfVisitor,
   static boost::shared_ptr<XdmfWriter> New(const std::string & xmlFilePath);
 
   /**
-   * Create a new XdmfWriter to write Xdmf data to disk. This will utilize the
-   * passed heavy data writer to write any heavy data to disk.
+   * Create a new XdmfWriter to write Xdmf data to disk. This will
+   * utilize the passed heavy data writer to write any heavy data to
+   * disk.
    *
    * @param xmlFilePath the path to the xml file to write to.
    * @param heavyDataWriter the heavy data writer to use when writing.
@@ -63,7 +66,8 @@ class XDMFCORE_EXPORT XdmfWriter : public XdmfVisitor,
   virtual ~XdmfWriter();
 
   /**
-   * Get the absolute path to the XML file on disk this writer is writing to.
+   * Get the absolute path to the XML file on disk this writer is
+   * writing to.
    *
    * @return a std::string containing the path to the XML file on disk this
    * writer is writing to.
@@ -71,24 +75,24 @@ class XDMFCORE_EXPORT XdmfWriter : public XdmfVisitor,
   std::string getFilePath() const;
 
   /**
-   * Get the heavy data writer that this XdmfWriter uses to write heavy data
-   * to disk.
+   * Get the heavy data writer that this XdmfWriter uses to write
+   * heavy data to disk.
    *
    * @return the requested heavy data writer.
    */
   boost::shared_ptr<XdmfHeavyDataWriter> getHeavyDataWriter();
 
   /**
-   * Get the heavy data writer that this XdmfWriter uses to write heavy data
-   * to disk (const version).
+   * Get the heavy data writer that this XdmfWriter uses to write
+   * heavy data to disk (const version).
    *
    * @return the requested heavy data writer.
    */
   boost::shared_ptr<const XdmfHeavyDataWriter> getHeavyDataWriter() const;
 
   /**
-   * Get the number of values that this writer writes to light data (XML)
-   * before switching to a heavy data format.
+   * Get the number of values that this writer writes to light data
+   * (XML) before switching to a heavy data format.
    *
    * @return an unsigned int containing the number of values.
    */
@@ -109,8 +113,8 @@ class XDMFCORE_EXPORT XdmfWriter : public XdmfVisitor,
   bool getWriteXPaths() const;
 
   /**
-   * Set the number of values that this writer writes to light data (XML)
-   * before switching to a heavy data format.
+   * Set the number of values that this writer writes to light data
+   * (XML) before switching to a heavy data format.
    *
    * @param numValues an unsigned int containing the number of values.
    */

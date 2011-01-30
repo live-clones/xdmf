@@ -3,9 +3,9 @@
 # Descrition: 	This small suite allows you to add support
 #		for versioning in your projects
 
-# This allows you to turn on and off the auto 
+# This allows you to turn on and off the auto
 # update of the (project name)Version.hpp file
-SET(VERSION_CONTROL_AUTOUPDATE ON CACHE BOOL "Automaticaly Update The Version")
+SET(VERSION_CONTROL_AUTOUPDATE OFF CACHE BOOL "Automaticaly Update The Version")
 MARK_AS_ADVANCED(VERSION_CONTROL_AUTOUPDATE)
 
 # We need to make sure we have the header file
@@ -37,7 +37,7 @@ MACRO(VersionCalculate)
         FOREACH(r ${return})
             MATH(EXPR count "${count} + 1")
         ENDFOREACH(r ${return})
-        SET(vMinor ${count})       
+        SET(vMinor ${count})
     ELSE(GIT_FOUND)
         SET(vMinor "X")
     ENDIF(GIT_FOUND)
@@ -49,8 +49,8 @@ MACRO(VersionWrite vProjectName export_name)
     FOREACH(il ${include_list})
         SET(includes "${includes}\n\#include \"${il}\"")
     ENDFOREACH(il ${include_list})
-    FILE(WRITE ${CMAKE_BINARY_DIR}/${vProjectName}Version.hpp 
-"/* Current Version of ${vProjectName} 
+    FILE(WRITE ${CMAKE_BINARY_DIR}/${vProjectName}Version.hpp
+"/* Current Version of ${vProjectName}
  * Major is: ${vMajor}
  * Minor is: ${vMinor}
  */
@@ -59,9 +59,9 @@ ${includes}
 extern ${export_name} ProjectVersion ${vProjectName}Version;\n"
     )
 
-	FILE(WRITE ${CMAKE_BINARY_DIR}/${vProjectName}Version.cpp 
+	FILE(WRITE ${CMAKE_BINARY_DIR}/${vProjectName}Version.cpp
 "/* Current Version of ${vProjectName}
- * Make sure to include this file in your built sources 
+ * Make sure to include this file in your built sources
  */
 \#include \"${vProjectName}Version.hpp\"
 ProjectVersion ${vProjectName}Version = ProjectVersion(\"${vProjectName}\", \"${vMajor}\", \"${vMinor}\");\n"

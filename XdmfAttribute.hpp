@@ -12,11 +12,11 @@ class XdmfAttributeType;
 /**
  * @brief Holds values located at specific parts of an XdmfGrid.
  *
- * XdmfAttribute holds values centered at specific locations of an XdmfGrid.
- * An attribute contains two properties that should be set,
- * XdmfAttributeCenter, which describes where the values are centered, and
- * XdmfAttributeType, which describes what types of values the attribute
- * contains.
+ * XdmfAttribute holds values centered at specific locations of an
+ * XdmfGrid. An attribute contains two properties that should be set,
+ * XdmfAttributeCenter, which describes where the values are centered,
+ * and XdmfAttributeType, which describes what types of values the
+ * attribute contains.
  */
 class XDMF_EXPORT XdmfAttribute : public XdmfArray {
 

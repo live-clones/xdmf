@@ -6,11 +6,12 @@
 #include "XdmfItem.hpp"
 
 /**
- * @brief Holds a key/value pair that can be attached to an Xdmf structure.
+ * @brief Holds a key/value pair that can be attached to an Xdmf
+ * structure.
  *
- * XdmfInformation stores two strings as a key value pair. These can be used
- * to store input parameters to a code or for simple result data like wall
- * time.
+ * XdmfInformation stores two strings as a key value pair. These can
+ * be used to store input parameters to a code or for simple result
+ * data like wall time.
  */
 class XDMFCORE_EXPORT XdmfInformation : public XdmfItem {
 

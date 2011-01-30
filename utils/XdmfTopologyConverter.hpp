@@ -10,16 +10,17 @@ class XdmfUnstructuredGrid;
 #include <boost/shared_ptr.hpp>
 
 /**
- * XdmfTopologyConverter converts an unstructured grid to different topology
- * types. Attributes and sets attached to the grid are adjusted to remain
+ * @brief Converts an unstructured grid to different topology types.
+ *
+ * Attributes and sets attached to the grid are adjusted to remain
  * valid for the new topology type.
  *
- * When converting from a lower order topology to a higher order topology
- * type (e.g. Hexahedron to Hexahedron_64) additional points are added to the
- * mesh, no additional elements are added. When converting from a higher order
- * topology to a lower order topology type (e.h. Hexahedron_64 to Hexahedron)
- * elements are tesselated to form the new topology, no additional points are
- * added.
+ * When converting from a lower order topology to a higher order
+ * topology type (e.g. Hexahedron to Hexahedron_64) additional points
+ * are added to the mesh, no additional elements are added. When
+ * converting from a higher order topology to a lower order topology
+ * type (e.h. Hexahedron_64 to Hexahedron) elements are tesselated to
+ * form the new topology, no additional points are added.
  *
  * Currently supported conversions:
  *   Hexahedron to Hexahedron_64

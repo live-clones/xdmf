@@ -6,11 +6,13 @@
 #include "XdmfItemProperty.hpp"
 
 /**
- * @brief Property describing the types of elements stored in an XdmfTopology.
+ * @brief Property describing the types of elements stored in an
+ * XdmfTopology.
  *
- * XdmfTopologyType is a property used by XdmfTopology to specify the element
- * types stored. A specific XdmfTopologyType can be created by calling one of
- * the static methods in the class, i.e. XdmfTopologyType::Tetrahedron().
+ * XdmfTopologyType is a property used by XdmfTopology to specify the
+ * element types stored. A specific XdmfTopologyType can be created by
+ * calling one of the static methods in the class,
+ * i.e. XdmfTopologyType::Tetrahedron().
  *
  * Xdmf supports the following topology types:
  *   NoTopologyType
@@ -109,7 +111,8 @@ class XDMF_EXPORT XdmfTopologyType : public XdmfItemProperty {
   virtual std::string getName() const;
 
   /**
-   * Get the number of nodes per element associated with this topology type.
+   * Get the number of nodes per element associated with this topology
+   * type.
    *
    * @return an unsigned int containing number of nodes per element.
    */
@@ -121,10 +124,10 @@ class XDMF_EXPORT XdmfTopologyType : public XdmfItemProperty {
  protected:
 
   /**
-   * Protected constructor for XdmfTopologyType. The constructor is protected
-   * because all topology types supported by Xdmf should be accessed through
-   * more specific static methods that construct XdmfTopologyType -
-   * i.e. XdmfTopologyType::Tetrahedron()
+   * Protected constructor for XdmfTopologyType. The constructor is
+   * protected because all topology types supported by Xdmf should be
+   * accessed through more specific static methods that construct
+   * XdmfTopologyType - i.e. XdmfTopologyType::Tetrahedron()
    */
   XdmfTopologyType(const unsigned int nodesPerElement,
                    const std::string & name,

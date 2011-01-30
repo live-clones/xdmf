@@ -12,27 +12,28 @@ class XdmfHeavyDataController;
 #include <boost/variant.hpp>
 
 /**
- * @brief Provides storage for data values that are read in or will be written
- * to heavy data on disk.
+ * @brief Provides storage for data values that are read in or will be
+ * written to heavy data on disk.
  *
- * XdmfArray provides a single interface for storing a variety of data types.
- * The data type stored is determined by the type initially inserted into the
- * array.  An array can be initialized with a specific data type before
- * insertion of values by calling initialize().
+ * XdmfArray provides a single interface for storing a variety of data
+ * types.  The data type stored is determined by the type initially
+ * inserted into the array.  An array can be initialized with a
+ * specific data type before insertion of values by calling
+ * initialize().
  *
  * An XdmfArray is associated with heavy data files on disk through an
  * XdmfHeavyDataController. When an Xdmf file is read from disk,
- * XdmfHeavyDataControllers are attached to all created XdmfArrays that
- * contain values stored in heavy data. These values are not read into memory
- * when the Xdmf file is parsed. The array is uninitialized and the return
- * value of isInitialized() is false.  In order to read the heavy data values
- * into memory, read() must be called. This will cause the array to ask for
- * values to be read from disk using the XdmfHeavyDataController. After the
- * values have been read from heavy data on disk, isInitialized() will return
- * true.
+ * XdmfHeavyDataControllers are attached to all created XdmfArrays
+ * that contain values stored in heavy data. These values are not read
+ * into memory when the Xdmf file is parsed. The array is
+ * uninitialized and the return value of isInitialized() is false.  In
+ * order to read the heavy data values into memory, read() must be
+ * called. This will cause the array to ask for values to be read from
+ * disk using the XdmfHeavyDataController. After the values have been
+ * read from heavy data on disk, isInitialized() will return true.
  *
- * XdmfArray allows for insertion and retrieval of data in two fundamental
- * ways:
+ * XdmfArray allows for insertion and retrieval of data in two
+ * fundamental ways:
  *
  * By Copy:
  *
@@ -41,18 +42,19 @@ class XdmfHeavyDataController;
  *   insert
  *   pushBack
  *
- * XdmfArray stores its own copy of the data.  Modifications to the data
- * stored in the XdmfArray will not change values stored in the original array.
+ * XdmfArray stores its own copy of the data.  Modifications to the
+ * data stored in the XdmfArray will not change values stored in the
+ * original array.
  *
  * By Shared Reference:
  *
  *   getValuesInternal
  *   setValuesInternal
  *
- * XdmfArray shares a reference to the data.  No copy is made. XdmfArray holds
- * a shared pointer to the original data.  Modifications to the data stored in
- * the XdmfArray also causes modification to values stored in the original
- * array.
+ * XdmfArray shares a reference to the data.  No copy is
+ * made. XdmfArray holds a shared pointer to the original data.
+ * Modifications to the data stored in the XdmfArray also causes
+ * modification to values stored in the original array.
  *
  * Xdmf supports the following datatypes:
  *   Int8
@@ -99,8 +101,8 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
   boost::shared_ptr<const XdmfArrayType> getArrayType() const;
 
   /**
-   * Get the capacity of this array, the number of values the array can store
-   * without reallocation.
+   * Get the capacity of this array, the number of values the array
+   * can store without reallocation.
    *
    * @return the capacity of this array.
    */
@@ -121,7 +123,8 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
   boost::shared_ptr<XdmfHeavyDataController> getHeavyDataController();
 
   /**
-   * Get the heavy data controller attached to this array (const version).
+   * Get the heavy data controller attached to this array (const
+   * version).
    *
    * @return the heavy data controller attached to this array.
    */
@@ -175,8 +178,8 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
   /**
    * Get a smart pointer to the internal values stored in this array.
    *
-   * @return a smart pointer to the internal vector of values stored in this
-   * array.
+   * @return a smart pointer to the internal vector of values stored
+   * in this array.
    */
   template <typename T>
   boost::shared_ptr<std::vector<T> > getValuesInternal();
@@ -189,7 +192,8 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
   void * getValuesInternal();
 
   /**
-   * Get a pointer to the internal values stored in this array (const version).
+   * Get a pointer to the internal values stored in this array (const
+   * version).
    *
    * @return a void pointer to the first value stored in this array.
    */
@@ -207,8 +211,8 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
    *
    * @param size the number of values in the initialized array.
    *
-   * @return a smart pointer to the internal vector of values initialized in
-   * this array.
+   * @return a smart pointer to the internal vector of values
+   * initialized in this array.
    */
   template <typename T>
   boost::shared_ptr<std::vector<T> > initialize(const unsigned int size = 0);
@@ -270,7 +274,8 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
               const unsigned int valuesStride = 1);
 
   /**
-   * Returns whether the array is initialized (contains values in memory).
+   * Returns whether the array is initialized (contains values in
+   * memory).
    */
   bool isInitialized() const;
 
@@ -298,10 +303,10 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
   void reserve(const unsigned int size);
 
   /**
-   * Resizes the array to contain a number of values. If numValues is larger
-   * than the current size, values are appended to the end of the arrat equal
-   * to value. If numValues is less than the current size, values at indices
-   * larger than numValues are removed.
+   * Resizes the array to contain a number of values. If numValues is
+   * larger than the current size, values are appended to the end of
+   * the array equal to value. If numValues is less than the current
+   * size, values at indices larger than numValues are removed.
    *
    * @param numValues the number of values to resize this array to.
    * @param value the number to initialize newly created values to, if needed.
@@ -313,8 +318,8 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
   /**
    * Attach an heavy data controller to this array.
    *
-   * @param heavyDataController the heavy data controller to attach to this
-   * array.
+   * @param heavyDataController the heavy data controller to attach to
+   * this array.
    */
   void
   setHeavyDataController(const boost::shared_ptr<XdmfHeavyDataController> heavyDataController);
@@ -327,18 +332,19 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
   void setName(const std::string & name);
 
   /**
-   * Sets the values of this array to the values stored in the arrayPointer
-   * array. No copy is made. Modifications to the array are not permitted
-   * through the XdmfArray API. Any calls through the XdmfArray API to modify
-   * the array (i.e. any non-const function) will result in the array being
-   * copied into internal storage. The internal copy is then modified.
-   * This prevents situations where a realloc of the pointer could cause other
-   * references to become invalid. The caller of this method can continue to
-   * modify the values stored in arrayPointer on its own. This function is
-   * meant for applications that have their own array data structures that
-   * merely use Xdmf to output the data, an operation that should not require
-   * a copy. Other applications that use Xdmf for in memory data storage
-   * should avoid this function.
+   * Sets the values of this array to the values stored in the
+   * arrayPointer array. No copy is made. Modifications to the array
+   * are not permitted through the XdmfArray API. Any calls through
+   * the XdmfArray API to modify the array (i.e. any non-const
+   * function) will result in the array being copied into internal
+   * storage. The internal copy is then modified.  This prevents
+   * situations where a realloc of the pointer could cause other
+   * references to become invalid. The caller of this method can
+   * continue to modify the values stored in arrayPointer on its
+   * own. This function is meant for applications that have their own
+   * array data structures that merely use Xdmf to output the data, an
+   * operation that should not require a copy. Other applications that
+   * use Xdmf for in memory data storage should avoid this function.
    *
    * @param arrayPointer a pointer to an array to store in this XdmfArray.
    * @param numValues the number of values in the array.
@@ -351,10 +357,10 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
                          const bool transferOwnership = 0);
 
   /**
-   * Sets the values of this array to the values stored in the vector. No copy
-   * is made. The caller of this method retains ownership of the data and
-   * must ensure that the array is still valid for the entire time Xdmf needs
-   * it.
+   * Sets the values of this array to the values stored in the
+   * vector. No copy is made. The caller of this method retains
+   * ownership of the data and must ensure that the array is still
+   * valid for the entire time Xdmf needs it.
    *
    * @param array a vector to store in this XdmfArray.
    * @param transferOwnership whether to transfer responsibility for deletion
@@ -365,9 +371,9 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
                          const bool transferOwnership = 0);
 
   /**
-   * Sets the values of this array to the values stored in the vector. No copy
-   * is made. This array shares ownership with other references to the smart
-   * pointer.
+   * Sets the values of this array to the values stored in the
+   * vector. No copy is made. This array shares ownership with other
+   * references to the smart pointer.
    *
    * @param array a smart pointer to a vector to store in this array.
    */
@@ -375,8 +381,8 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
   void setValuesInternal(const boost::shared_ptr<std::vector<T> > array);
 
   /**
-   * Exchange the contents of the vector with the contents of this array.
-   * No copy is made. The internal arrays are swapped.
+   * Exchange the contents of the vector with the contents of this
+   * array. No copy is made. The internal arrays are swapped.
    *
    * @param array a vector to exchange values with.
    * @return bool whether the swap was successful.
@@ -385,8 +391,8 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
   bool swap(std::vector<T> & array);
 
   /**
-   * Exchange the contents of the vector with the contents of this array.
-   * No copy is made.  The internal arrays are swapped.
+   * Exchange the contents of the vector with the contents of this
+   * array. No copy is made. The internal arrays are swapped.
    *
    * @param array a smart pointer to a vector to exchange values with.
    * @return bool whether the swap was successful.
@@ -395,8 +401,8 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
   bool swap(const boost::shared_ptr<std::vector<T> > array);
 
   /**
-   * Exchange the contents of an XdmfArray with the contents of this array.
-   * No copy is made.  The internal arrays are swapped.
+   * Exchange the contents of an XdmfArray with the contents of this
+   * array. No copy is made. The internal arrays are swapped.
    *
    * @param array a smart pointer to a vector to exchange values with.
    */
@@ -435,12 +441,12 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
   class Size;
 
   /**
-   * After setValues() is called, XdmfArray stores a pointer that is not
-   * allowed to be modified through the XdmfArray API. If the user desires to
-   * modify the contents of the pointer, they must do so without calling any
-   * non-const functions of XdmfArray.  If they do call non-const functions of
-   * XdmfArray, we attempt to accommodate by copying the array pointer into
-   * internal data structures.
+   * After setValues() is called, XdmfArray stores a pointer that is
+   * not allowed to be modified through the XdmfArray API. If the user
+   * desires to modify the contents of the pointer, they must do so
+   * without calling any non-const functions of XdmfArray. If they do
+   * call non-const functions of XdmfArray, we attempt to accommodate
+   * by copying the array pointer into internal data structures.
    */
   void internalizeArrayPointer();
 

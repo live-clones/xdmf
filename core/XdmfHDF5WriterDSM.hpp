@@ -8,14 +8,15 @@ class H5FDdsmBuffer;
 #include "XdmfHDF5Writer.hpp"
 
 /**
- * @brief Traverse the Xdmf graph and write heavy data stored in XdmfArrays to
- * a DSM buffer.
+ * @brief Traverse the Xdmf graph and write heavy data stored in
+ * XdmfArrays to a DSM buffer.
  *
- * XdmfHDF5WriterDSM traverses an Xdmf graph structure and writes data stored
- * in XdmfArrays to a DSM buffer. Writing begins by calling the accept()
- * operation on any XdmfItem and supplying this writer as the parameter. The
- * writer will write all XdmfArrays under the XdmfItem to a DSM Buffer. It
- * will also attach an XdmfHDF5ControllerDSM to all XdmfArrays.
+ * XdmfHDF5WriterDSM traverses an Xdmf graph structure and writes data
+ * stored in XdmfArrays to a DSM buffer. Writing begins by calling the
+ * accept() operation on any XdmfItem and supplying this writer as the
+ * parameter. The writer will write all XdmfArrays under the XdmfItem
+ * to a DSM Buffer. It will also attach an XdmfHDF5ControllerDSM to
+ * all XdmfArrays.
  *
  * This writer supports all heavy data writing modes listed in
  * XdmfHeavyDataWriter.

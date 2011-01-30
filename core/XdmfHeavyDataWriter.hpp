@@ -10,16 +10,19 @@ class XdmfArray;
 #include "XdmfVisitor.hpp"
 
 /**
- * @brief Traverses the Xdmf graph and writes heavy data stored in XdmfArrays
- * to heavy data files on disk. This is an abstract base class to support the
- * writing of different heavy data formats.
+ * @brief Traverses the Xdmf graph and writes heavy data stored in
+ * XdmfArrays to heavy data files on disk.
  *
- * XdmfHeavyDataWriter traverses an Xdmf graph structure and writes data
- * stored in XdmfArrays to heavy data files on disk. Writing begins by calling
- * the accept() operation on any XdmfItem and supplying this writer as the
- * parameter. The writer will write all XdmfArrays under the XdmfItem to a
- * heavy data file on disk. It will also attach an XdmfHeavyDataController to
- * all XdmfArrays that it writes to disk.
+ * This is an abstract base class to support the writing of different
+ * heavy data formats.
+ *
+ * XdmfHeavyDataWriter traverses an Xdmf graph structure and writes
+ * data stored in XdmfArrays to heavy data files on disk. Writing
+ * begins by calling the accept() operation on any XdmfItem and
+ * supplying this writer as the parameter. The writer will write all
+ * XdmfArrays under the XdmfItem to a heavy data file on disk. It will
+ * also attach an XdmfHeavyDataController to all XdmfArrays that it
+ * writes to disk.
  *
  * There are three modes of operation for this writer:
  *   Default - All initialized XdmfArrays are written to new heavy datasets
@@ -28,9 +31,9 @@ class XdmfArray;
  *   Overwrite - If an initialized XdmfArray is attached to an heavy dataset
  *               via an XdmfHeavyDataController the writer will write values
  *               to that location, overwriting all previous written values.
- *  Append - If an initialized XdmfArray is attached to an heavy dataset via
- *           an XdmfHeavyDataController the writer will append the values to
- *           the end of the dataset on disk.
+ *   Append - If an initialized XdmfArray is attached to an heavy dataset via
+ *            an XdmfHeavyDataController the writer will append the values to
+ *            the end of the dataset on disk.
  */
 class XDMFCORE_EXPORT XdmfHeavyDataWriter : public XdmfVisitor,
                                             public Loki::Visitor<XdmfArray> {

@@ -6,13 +6,13 @@
 #include "XdmfItemProperty.hpp"
 
 /**
- * @brief Property describing the types of coordinate values stored in an
- * XdmfGeometry.
+ * @brief Property describing the types of coordinate values stored in
+ * an XdmfGeometry.
  *
- * XdmfGeometryType is a property used by XdmfGeometry to specify the type of
- * coordinate values stored in the XdmfGeometry. A specific XdmfGeometryType
- * can be created by calling one of the static methods in the class, i.e.
- * XdmfAttributeType::XYZ().
+ * XdmfGeometryType is a property used by XdmfGeometry to specify the
+ * type of coordinate values stored in the XdmfGeometry. A specific
+ * XdmfGeometryType can be created by calling one of the static
+ * methods in the class, i.e.  XdmfAttributeType::XYZ().
  *
  * Xdmf supports the following geometry types:
  *   NoGeometryType
@@ -52,10 +52,10 @@ class XDMF_EXPORT XdmfGeometryType : public XdmfItemProperty {
  protected:
 
   /**
-   * Protected constructor for XdmfGeometryType.  The constructor is protected
-   * because all geometry types supported by Xdmf should be accessed through
-   * more specific static methods that construct XdmfGeometryTypes - i.e.
-   * XdmfGeometryType::XYZ().
+   * Protected constructor for XdmfGeometryType.  The constructor is
+   * protected because all geometry types supported by Xdmf should be
+   * accessed through more specific static methods that construct
+   * XdmfGeometryTypes - i.e.  XdmfGeometryType::XYZ().
    *
    * @param name a std::string containing the name of the geometry type..
    * @param dimensions an int containing the dimensions of the geometry type.

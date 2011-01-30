@@ -8,10 +8,10 @@
 /**
  * @brief Property describing where XdmfAttribute values are centered.
  *
- * XdmfAttributeCenter is a property used by XdmfAttribute to specify where
- * its values are centered on an XdmfGrid. A specific XdmfAttributeCenter can
- * be created by calling on of the static methods in the class, i.e.
- * XdmfAttributeCenter::Cell().
+ * XdmfAttributeCenter is a property used by XdmfAttribute to specify
+ * where its values are centered on an XdmfGrid. A specific
+ * XdmfAttributeCenter can be created by calling on of the static
+ * methods in the class, i.e.  XdmfAttributeCenter::Cell().
  *
  * Xdmf supports the following attribute centers:
  *   Grid
@@ -42,10 +42,11 @@ class XDMF_EXPORT XdmfAttributeCenter : public XdmfItemProperty {
  protected:
 
   /**
-   * Protected constructor for XdmfAttributeCenter.  The constructor is
-   * protected because all attribute centers supported by Xdmf should be
-   * accessed through more specific static methods that construct
-   * XdmfAttributeCenters - i.e. XdmfAttributeCenter::Node().
+   * Protected constructor for XdmfAttributeCenter.  The constructor
+   * is protected because all attribute centers supported by Xdmf
+   * should be accessed through more specific static methods that
+   * construct XdmfAttributeCenters -
+   * i.e. XdmfAttributeCenter::Node().
    *
    * @param name the name of the XdmfAttributeCenter to construct.
    */

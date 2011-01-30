@@ -9,9 +9,9 @@ class XdmfUnstructuredGrid;
 #include <boost/shared_ptr.hpp>
 #include <string>
 
-/*!
- * @brief XdmfExodusReader reads an ExodusII file from disk into an Xdmf
- * structure in memory.
+/**
+ * @brief Reads an ExodusII file from disk into an Xdmf structure in
+ * memory.
  */
 class XdmfExodusReader {
 
@@ -26,9 +26,9 @@ public:
 
   virtual ~XdmfExodusReader();
 
-  /*!
-   * Read the contents of an ExodusII file from disk into an Xdmf structure in
-   * memory.
+  /**
+   * Read the contents of an ExodusII file from disk into an Xdmf
+   * structure in memory.
    *
    * @param fileName containing the path of the exodus file to read.
    * @param heavyDataWriter an XdmfHeavyDataWriter to write the mesh to. If no

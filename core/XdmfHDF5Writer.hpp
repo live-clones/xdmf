@@ -10,14 +10,15 @@ class XdmfHDF5Controller;
 #include "XdmfHeavyDataWriter.hpp"
 
 /**
- * @brief Traverse the Xdmf graph and write heavy data stored in XdmfArrays to
- * HDF5 on disk.
+ * @brief Traverse the Xdmf graph and write heavy data stored in
+ * XdmfArrays to HDF5 on disk.
  *
- * XdmfHDF5Writer traverses an Xdmf graph structure and writes data stored in
- * XdmfArrays to HDF5. Writing begins by calling the accept() operation on any
- * XdmfItem and supplying this writer as the parameter. The writer will write
- * all XdmfArrays under the XdmfItem to an hdf5 file on disk. It will also
- * attach an XdmfHDF5Controller to all XdmfArrays that it writes to disk.
+ * XdmfHDF5Writer traverses an Xdmf graph structure and writes data
+ * stored in XdmfArrays to HDF5. Writing begins by calling the
+ * accept() operation on any XdmfItem and supplying this writer as the
+ * parameter. The writer will write all XdmfArrays under the XdmfItem
+ * to an hdf5 file on disk. It will also attach an XdmfHDF5Controller
+ * to all XdmfArrays that it writes to disk.
  *
  * This writer supports all heavy data writing modes listed in
  * XdmfHeavyDataWriter.
@@ -45,8 +46,8 @@ class XDMFCORE_EXPORT XdmfHDF5Writer : public XdmfHeavyDataWriter {
   XdmfHDF5Writer(const std::string & filePath);
 
   /**
-   * Create a new HDF5 Controller that is able to read in after being written
-   * by this writer.
+   * Create a new HDF5 Controller that is able to read in after being
+   * written by this writer.
    *
    * @param hdf5FilePath the location of the hdf5 file the data set resides in.
    * @param dataSetPath the location of the dataset within the hdf5 file.

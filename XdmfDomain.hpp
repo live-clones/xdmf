@@ -15,9 +15,9 @@ class XdmfUnstructuredGrid;
 /**
  * @brief The root XdmfItem that holds XdmfGrids.
  *
- * XdmfDomain is the top XdmfItem in an Xdmf structure.
- * It can store a number of grids and provides methods to insert, retrieve,
- * and remove these grids.
+ * XdmfDomain is the top XdmfItem in an Xdmf structure.  It can store
+ * a number of grids and provides methods to insert, retrieve, and
+ * remove these grids.
  */
 class XDMF_EXPORT XdmfDomain : public virtual XdmfItem {
 

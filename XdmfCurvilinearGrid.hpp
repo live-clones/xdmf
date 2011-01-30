@@ -9,14 +9,14 @@ class XdmfArray;
 #include "XdmfGrid.hpp"
 
 /**
- * @brief A curvilinear (or structured) grid consisting of cells and points
- * arranged on a regular lattice in space.
+ * @brief A curvilinear (or structured) grid consisting of cells and
+ * points arranged on a regular lattice in space.
  *
- * XdmfCurvilinearGrid represents a mesh of cells and points arranged with
- * regular topology and irregular geometry.
+ * XdmfCurvilinearGrid represents a mesh of cells and points arranged
+ * with regular topology and irregular geometry.
  *
- * In order to define a curvilinear grid, the dimensions of the grid must be
- * supplied along with the coordinates of each point.
+ * In order to define a curvilinear grid, the dimensions of the grid
+ * must be supplied along with the coordinates of each point.
  *
  */
 class XDMF_EXPORT XdmfCurvilinearGrid : public XdmfGrid {
@@ -40,7 +40,7 @@ class XDMF_EXPORT XdmfCurvilinearGrid : public XdmfGrid {
    *
    * @param xNumPoints the number of points in the x direction.
    * @param yNumPoints the number of points in the y direction.
-   * @param yNumPoints the number of points in the z direction.
+   * @param zNumPoints the number of points in the z direction.
    *
    * @return constructed curvilinear grid.
    */
@@ -65,15 +65,16 @@ class XDMF_EXPORT XdmfCurvilinearGrid : public XdmfGrid {
   static const std::string ItemTag;
 
   /**
-   * Get the dimensions of the grid, the number of points in each direction.
+   * Get the dimensions of the grid, the number of points in each
+   * direction.
    *
    * @return XdmfArray containing dimensions of this grid.
    */
   boost::shared_ptr<XdmfArray> getDimensions();
 
   /**
-   * Get the dimensions of the grid, the number of points in each direction
-   * (const version).
+   * Get the dimensions of the grid, the number of points in each
+   * direction (const version).
    *
    * @return XdmfArray containing the dimensions of this grid.
    */
@@ -87,7 +88,8 @@ class XDMF_EXPORT XdmfCurvilinearGrid : public XdmfGrid {
   boost::shared_ptr<XdmfGeometry> getGeometry();
 
   /**
-   * Set the dimensions of the grid, the number of points in each direction.
+   * Set the dimensions of the grid, the number of points in each
+   * direction.
    *
    * @param dimensions the dimension of the grid.
    */

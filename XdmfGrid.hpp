@@ -14,17 +14,19 @@ class XdmfTopology;
 #include "XdmfItem.hpp"
 
 /**
- * @brief A mesh containing elements, points, and fields attached to the mesh.
+ * @brief A mesh containing elements, points, and fields attached to
+ * the mesh.
  *
- * XdmfGrid represents a mesh. It is required to contain two other Xdmf data
- * structures, an XdmfGeometry that stores point locations and an XdmfTopology
- * that store connectivity information. XdmfAttributes can be inserted into
- * the XdmfGrid to specify fields centered on various parts of the mesh.
- * XdmfSets can be inserted into XdmfGrids to specify collections of mesh
- * elements.
+ * XdmfGrid represents a mesh. It is required to contain two other
+ * Xdmf data structures, an XdmfGeometry that stores point locations
+ * and an XdmfTopology that store connectivity
+ * information. XdmfAttributes can be inserted into the XdmfGrid to
+ * specify fields centered on various parts of the mesh.  XdmfSets can
+ * be inserted into XdmfGrids to specify collections of mesh elements.
  *
- * XdmfGrid is an abstract base class.  There are several implementations for
- * representing both structured and unstructured grids.
+ * XdmfGrid is an abstract base class. There are several
+ * implementations for representing both structured and unstructured
+ * grids.
  */
 class XDMF_EXPORT XdmfGrid : public virtual XdmfItem {
 
@@ -73,16 +75,16 @@ class XDMF_EXPORT XdmfGrid : public virtual XdmfItem {
   /**
    * Get the time associated with this grid.
    *
-   * @return pointer to the XdmfTime attached to this grid. If no XdmfTime is
-   * attached, return a NULL pointer.
+   * @return pointer to the XdmfTime attached to this grid. If no
+   * XdmfTime is attached, return a NULL pointer.
    */
   boost::shared_ptr<XdmfTime> getTime();
 
   /**
    * Get the time associated with this grid (const version).
    *
-   * @return pointer to the XdmfTime attached to this grid. If no XdmfTime is
-   * attached, return a NULL pointer.
+   * @return pointer to the XdmfTime attached to this grid. If no
+   * XdmfTime is attached, return a NULL pointer.
    */
   boost::shared_ptr<const XdmfTime> getTime() const;
 

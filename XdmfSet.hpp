@@ -11,14 +11,15 @@ class XdmfSetType;
 #include "XdmfArray.hpp"
 
 /**
- * @brief Holds a collection of individual nodes, cells, faces, or edges that
- * are part of an XdmfGrid.
+ * @brief Holds a collection of individual nodes, cells, faces, or
+ * edges that are part of an XdmfGrid.
  *
- * An XdmfSet holds a collection of nodes, cells, faces, or edges that are
- * part of an XdmfGrid. For instance, a simulation may want to hold a set of
- * nodes on a boundary. The individual elements making up the set are
- * determined by their id. An XdmfSet can have XdmfAttributes attached that
- * contain extra values attached to the elements in the set.
+ * An XdmfSet holds a collection of nodes, cells, faces, or edges that
+ * are part of an XdmfGrid. For instance, a simulation may want to
+ * hold a set of nodes on a boundary. The individual elements making
+ * up the set are determined by their id. An XdmfSet can have
+ * XdmfAttributes attached that contain extra values attached to the
+ * elements in the set.
  */
 class XDMF_EXPORT XdmfSet : public XdmfArray {
 

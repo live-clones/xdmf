@@ -83,9 +83,9 @@ public :
 // Macro that allows children XdmfItems to be attached to a parent XdmfItem.
 // -- For Implementation File
 #define XDMF_CHILDREN_IMPLEMENTATION(ParentClass,                             \
-                                    ChildClass,                               \
-                                    ChildName,                                \
-                                    SearchName)                               \
+                                     ChildClass,                              \
+                                     ChildName,                               \
+                                     SearchName)                              \
                                                                               \
   boost::shared_ptr<ChildClass>                                               \
   ParentClass::get##ChildName(const unsigned int index)                       \
@@ -162,9 +162,9 @@ public :
  * @brief Base class of any object that is able to be added to an Xdmf
  * structure.
  *
- * XdmfItem is an abstract base class.  An XdmfItem is a structure that can be
- * visited and traversed by an XdmfVisitor and have its contents written to
- * an Xdmf file.
+ * XdmfItem is an abstract base class. An XdmfItem is a structure that
+ * can be visited and traversed by an XdmfVisitor and have its
+ * contents written to an Xdmf file.
  */
 class XDMFCORE_EXPORT XdmfItem : public Loki::BaseVisitable<void> {
 
@@ -177,15 +177,16 @@ class XDMFCORE_EXPORT XdmfItem : public Loki::BaseVisitable<void> {
   friend class XdmfCoreReader;
 
   /**
-   * Get the tag for this item.  This is equivalent to tags in XML parlance.
+   * Get the tag for this item.  This is equivalent to tags in XML
+   * parlance.
    *
    * @return the tag for this XdmfItem.
    */
   virtual std::string getItemTag() const = 0;
 
   /**
-   * Get the key/value property pairs for this item.  These are equivalent
-   * to attributes in XML parlance.
+   * Get the key/value property pairs for this item. These are
+   * equivalent to attributes in XML parlance.
    *
    * @return a map of key/value properties associated with this XdmfItem.
    */
@@ -203,9 +204,9 @@ class XDMFCORE_EXPORT XdmfItem : public Loki::BaseVisitable<void> {
   XdmfItem();
 
   /**
-   * Populates an item using a map of key/value property pairs and a vector of
-   * its child items.  This is used to support generic reading of XdmfItems
-   * from disk.
+   * Populates an item using a map of key/value property pairs and a
+   * vector of its child items. This is used to support generic
+   * reading of XdmfItems from disk.
    *
    * @param itemProperties a map of key/value properties associated with
    * this item.

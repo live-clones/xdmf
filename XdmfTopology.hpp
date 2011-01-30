@@ -11,10 +11,10 @@ class XdmfTopologyType;
 /**
  * @brief Holds the connectivity information in an XdmfGrid.
  *
- * XdmfTopology is a required part of an XdmfGrid. It stores the connectivity
- * information for all points contained in an XdmfGrid. XdmfTopology contains
- * an XdmfTopologyType property which should be set that specifies the
- * element type stored.
+ * XdmfTopology is a required part of an XdmfGrid. It stores the
+ * connectivity information for all points contained in an
+ * XdmfGrid. XdmfTopology contains an XdmfTopologyType property which
+ * should be set that specifies the element type stored.
  */
 class XDMF_EXPORT XdmfTopology : public XdmfArray {
 

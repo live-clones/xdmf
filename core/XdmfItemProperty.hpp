@@ -10,9 +10,9 @@
 /**
  * @brief A property attached to an XdmfItem.
  *
- * XdmfItems can have zero or more properties attached to them that describe a
- * specific characteristic of that item. For instance, XdmfAttributes have
- * both center and type properties.
+ * XdmfItems can have zero or more properties attached to them that
+ * describe a specific characteristic of that item. For instance,
+ * XdmfAttributes have both center and type properties.
  *
  * This is an abstract base class to facilitate reading and writing of
  * properties in a generic way.

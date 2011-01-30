@@ -6,12 +6,13 @@
 #include "XdmfGrid.hpp"
 
 /**
- * @brief An unstructured grid consists of elements, points, and fields
- * attached to the mesh.
+ * @brief An unstructured grid that consists of elements, points, and
+ * fields attached to the mesh.
  *
- * After creating an unstructured grid, the XdmfGeometry and XdmfTopology must
- *  be set. The XdmfTopology describes the element types contained in the grid
- * and their connectivity. The XdmfGeometry describes the positions of nodes.
+ * After creating an unstructured grid, the XdmfGeometry and
+ * XdmfTopology must be set. The XdmfTopology describes the element
+ * types contained in the grid and their connectivity. The
+ * XdmfGeometry describes the positions of nodes.
  */
 class XDMF_EXPORT XdmfUnstructuredGrid : public XdmfGrid {
 

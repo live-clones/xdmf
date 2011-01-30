@@ -15,8 +15,8 @@ class XDMFCORE_EXPORT XdmfSystemUtils {
  public:
 
   /**
-   * Converts a filesystem path to an absolute real path (absolute path with
-   * no symlinks)
+   * Converts a filesystem path to an absolute real path (absolute
+   * path with no symlinks)
    *
    * @param path a string containing the path to convert.
    *

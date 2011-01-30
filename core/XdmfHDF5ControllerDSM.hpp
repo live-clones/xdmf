@@ -11,11 +11,11 @@ class H5FDdsmBuffer;
 /**
  * @brief Couples an XdmfArray with HDF5 data stored in a DSM buffer.
  *
- * Serves as an interface between data stored in XdmfArrays and data stored in
- * DSM buffers.  When an Xdmf file is read from or written to a DSM buffer an
- * XdmfHDF5ControllerDSM is attached to XdmfArrays.  This allows data to be
- * released from memory but still be accessible or have its location written to
- * light data.
+ * Serves as an interface between data stored in XdmfArrays and data
+ * stored in DSM buffers.  When an Xdmf file is read from or written
+ * to a DSM buffer an XdmfHDF5ControllerDSM is attached to XdmfArrays.
+ * This allows data to be released from memory but still be accessible
+ * or have its location written to light data.
  */
 class XDMFCORE_EXPORT XdmfHDF5ControllerDSM : public XdmfHDF5Controller {
 

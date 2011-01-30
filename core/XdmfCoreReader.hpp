@@ -14,10 +14,10 @@ class XdmfItem;
 /**
  * @brief Reads an Xdmf file stored on disk into memory.
  *
- * Reads an Xdmf file stored on disk into an Xdmf structure in memory.  All
- * light data is parsed in order to create appropriate Xdmf objects.  Heavy
- * data controllers are created and attached to XdmfArrays but no heavy data
- * is read into memory.
+ * Reads an Xdmf file stored on disk into an Xdmf structure in memory.
+ * All light data is parsed in order to create appropriate Xdmf
+ * objects.  Heavy data controllers are created and attached to
+ * XdmfArrays but no heavy data is read into memory.
  *
  * XdmfCoreReader is an abstract base class.
  */
@@ -66,8 +66,8 @@ class XDMFCORE_EXPORT XdmfCoreReader {
   /**
    * Constructor
    *
-   * @param itemFactory an XdmfCoreItemFactory to construct XdmfItems for a
-   * specific language.
+   * @param itemFactory an XdmfCoreItemFactory to construct XdmfItems
+   * for a specific language.
    */
   XdmfCoreReader(const boost::shared_ptr<const XdmfCoreItemFactory> itemFactory);
 

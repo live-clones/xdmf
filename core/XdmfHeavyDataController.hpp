@@ -12,14 +12,15 @@ class XdmfArrayType;
 
 /**
  * @brief Couples an XdmfArray with heavy data stored on disk.
- * This is an abstract base class to support the reading of different heavy
- * data formats.
  *
- * Serves as an interface between data stored in XdmfArrays and data stored on
- * disk. When an Xdmf file is read from or written to disk an
- * XdmfHeavyController is attached to XdmfArrays. This allows data to be
- * released from memory but still be accessible or have its location written
- * to light data.
+ * This is an abstract base class to support the reading of different
+ * heavy data formats.
+ *
+ * Serves as an interface between data stored in XdmfArrays and data
+ * stored on disk. When an Xdmf file is read from or written to disk
+ * an XdmfHeavyController is attached to XdmfArrays. This allows data
+ * to be released from memory but still be accessible or have its
+ * location written to light data.
  */
 class XDMFCORE_EXPORT XdmfHeavyDataController {
 
@@ -28,8 +29,8 @@ class XDMFCORE_EXPORT XdmfHeavyDataController {
   virtual ~XdmfHeavyDataController() = 0;
 
   /**
-   * Get the path of the data set within the heavy data file owned by this
-   * controller.
+   * Get the path of the data set within the heavy data file owned by
+   * this controller.
    * For "/home/output.h5:/foo/data" this is "/foo/data"
    *
    * @return a std::string containing the path of the data set.
@@ -37,8 +38,8 @@ class XDMFCORE_EXPORT XdmfHeavyDataController {
   std::string getDataSetPath() const;
 
   /**
-   * Get the absolute path to the heavy data file on disk where the data set
-   * owned by this controller resides.
+   * Get the absolute path to the heavy data file on disk where the
+   * data set owned by this controller resides.
    * For "/home/output.h5:/foo/data" this is "/home/output.h5"
    *
    * @return a std::string containing the path to the heavy data file.
@@ -46,7 +47,8 @@ class XDMFCORE_EXPORT XdmfHeavyDataController {
   std::string getFilePath() const;
 
   /**
-   * Get the name of this heavy data format. E.g. "HDF" for hdf5 format.
+   * Get the name of this heavy data format. E.g. "HDF" for hdf5
+   * format.
    *
    * @return std::string containing the name of this heavy data format
    */
@@ -60,14 +62,16 @@ class XDMFCORE_EXPORT XdmfHeavyDataController {
   unsigned int getSize() const;
 
   /**
-   * Get the array type of the heavy data set owned by this controller.
+   * Get the array type of the heavy data set owned by this
+   * controller.
    *
    * @return an XdmfArrayType containing the array type of the heavy data set.
    */
   boost::shared_ptr<const XdmfArrayType> getType() const;
 
   /**
-   * Read data owned by this controller on disk into the passed XdmfArray.
+   * Read data owned by this controller on disk into the passed
+   * XdmfArray.
    *
    * @param array and XdmfArray to read data into.
    */

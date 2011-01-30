@@ -20,8 +20,8 @@
 namespace {
 
   /**
-   * Constructs attribute names for ExodusII files since exodus cannot store
-   * vectors. Also handles the exodus MAX_STR_LENGTH limitation.
+   * Constructs attribute names for ExodusII files since exodus cannot
+   * store vectors. Also handles the exodus MAX_STR_LENGTH limitation.
    *
    * @param attributeName the attribute name in Xdmf.
    * @param names a vector of names to add the constructed attribute names to.

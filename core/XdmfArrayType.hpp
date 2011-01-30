@@ -6,11 +6,12 @@
 #include "XdmfItemProperty.hpp"
 
 /**
- * @brief Property describing what types of values an XdmfArray contains.
+ * @brief Property describing what types of values an XdmfArray
+ * contains.
  *
  * XdmfArrayType specifies the types of values stored in an XdmfArray.
- * A specific XdmfArrayType can be created by calling one of the static methods
- * in the class, i.e. XdmfArrayType::Int32().
+ * A specific XdmfArrayType can be created by calling one of the
+ * static methods in the class, i.e. XdmfArrayType::Int32().
  *
  * Xdmf supports the following attribute types:
  *   Uninitialized
@@ -45,7 +46,8 @@ class XDMFCORE_EXPORT XdmfArrayType : public XdmfItemProperty {
   static boost::shared_ptr<const XdmfArrayType> UInt32();
 
   /**
-   * Get the data size, in bytes, of the value associated with this array type.
+   * Get the data size, in bytes, of the value associated with this
+   * array type.
    *
    * @return the data size, in bytes.
    */
@@ -57,9 +59,9 @@ class XDMFCORE_EXPORT XdmfArrayType : public XdmfItemProperty {
  protected:
 
   /**
-   * Protected constructor for XdmfArrayType.
-   * The constructor is protected because all array types supported by Xdmf
-   * should be accessed through more specific static methods that construct
+   * Protected constructor for XdmfArrayType. The constructor is
+   * protected because all array types supported by Xdmf should be
+   * accessed through more specific static methods that construct
    * XdmfArrayTypes - i.e. XdmfArrayType::Float64().
    *
    * @param name the name of the XdmfArrayType to construct.

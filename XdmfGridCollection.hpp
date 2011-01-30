@@ -12,13 +12,13 @@ class XdmfGridCollectionType;
 /**
  * @brief A spatial or temporal collection of XdmfGrids.
  *
- * A temporal collection is timestep data.  Each child grid represents the
- * state at a single timestep.
- * A spatial collection consists of XdmfGrids that are arranged together in
- * space. E.g. a partitioned mesh.
+ * A temporal collection is timestep data.  Each child grid represents
+ * the state at a single timestep.  A spatial collection consists of
+ * XdmfGrids that are arranged together in space. E.g. a partitioned
+ * mesh.
  *
- * It is valid to nest collections. A spatial collection inside a temporal
- * collection is commonly used.
+ * It is valid to nest collections. A spatial collection inside a
+ * temporal collection is commonly used.
  */
 class XDMF_EXPORT XdmfGridCollection : public XdmfDomain,
                                        public XdmfGrid {
@@ -52,14 +52,15 @@ class XDMF_EXPORT XdmfGridCollection : public XdmfDomain,
   using XdmfGrid::insert;
 
   /**
-   * Insert an information into the grid collection..
+   * Insert an information into the grid collection.
    *
    * @param information an XdmfInformation to attach to this item.
    */
   void insert(const boost::shared_ptr<XdmfInformation> information);
 
   /**
-   * Set the XdmfGridCollectionType associated with this grid collection.
+   * Set the XdmfGridCollectionType associated with this grid
+   * collection.
    *
    * @param type the XdmfGridCollectionType to set.
    */

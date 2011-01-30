@@ -8,11 +8,11 @@
 /**
  * @brief Couples an XdmfArray with HDF5 data stored on disk.
  *
- * Serves as an interface between data stored in XdmfArrays and data stored in
- * hdf5 files on disk. When an Xdmf file is read from or written to disk an
- * XdmfHDF5Controller is attached to XdmfArrays. This allows data to be
- * released from memory but still be accessible or have its location written
- * to light data.
+ * Serves as an interface between data stored in XdmfArrays and data
+ * stored in hdf5 files on disk. When an Xdmf file is read from or
+ * written to disk an XdmfHDF5Controller is attached to
+ * XdmfArrays. This allows data to be released from memory but still
+ * be accessible or have its location written to light data.
  */
 class XDMFCORE_EXPORT XdmfHDF5Controller : public XdmfHeavyDataController {
 

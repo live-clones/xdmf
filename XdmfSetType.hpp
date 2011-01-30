@@ -8,9 +8,9 @@
 /**
  * @brief Property describing the type of ids an XdmfSet contains.
  *
- * An XdmfSet holds ids for a collection of nodes, cells, faces, or edges
- * that are part of an XdmfGrid. This property indicates which type the set
- * contains.
+ * An XdmfSet holds ids for a collection of nodes, cells, faces, or
+ * edges that are part of an XdmfGrid. This property indicates which
+ * type the set contains.
  *
  * Xdmf supports the following set types:
  *   NoSetType
@@ -40,10 +40,10 @@ class XDMF_EXPORT XdmfSetType : public XdmfItemProperty {
  protected:
 
   /**
-   * Protected constructor for XdmfSetType. The constructor is protected
-   * because all set types supported by Xdmf should be accessed through more
-   * specific static methods that construct XdmfSetTypes -
-   * i.e. XdmfSetType::Node().
+   * Protected constructor for XdmfSetType. The constructor is
+   * protected because all set types supported by Xdmf should be
+   * accessed through more specific static methods that construct
+   * XdmfSetTypes - i.e. XdmfSetType::Node().
    *
    * @param name a std::string containing the name of the XdmfSetType.
    */

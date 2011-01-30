@@ -11,10 +11,10 @@ class XdmfGeometryType;
 /**
  * @brief Handles the coordinate positions of points in an XdmfGrid.
  *
- * XdmfGeometry is a required part of an XdmfGrid. It stores the coordinate
- * locations of all points contained in an XdmfGrid. XdmfGeometry contains an
- * XdmfGeometryType property which should be set that specifies the types of
- * coordinate values stored.
+ * XdmfGeometry is a required part of an XdmfGrid. It stores the
+ * coordinate locations of all points contained in an
+ * XdmfGrid. XdmfGeometry contains an XdmfGeometryType property which
+ * should be set that specifies the types of coordinate values stored.
  */
 class XDMF_EXPORT XdmfGeometry : public XdmfArray {
 

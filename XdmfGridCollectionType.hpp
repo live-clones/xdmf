@@ -8,10 +8,11 @@
 /**
  * @brief Property describing the type of an XdmfGridCollection.
  *
- * XdmfGridCollectionType is a property used by XdmfGridCollection to specify
- * what type of collection the XdmfGridCollection contains. A specific
- * XdmfGridCollectionType can be created by calling one of the static methods
- * in the class, i.e. XdmfGridCollectionType::Temporal().
+ * XdmfGridCollectionType is a property used by XdmfGridCollection to
+ * specify what type of collection the XdmfGridCollection contains. A
+ * specific XdmfGridCollectionType can be created by calling one of
+ * the static methods in the class,
+ * i.e. XdmfGridCollectionType::Temporal().
  *
  * Xdmf supports the following collection types:
  *   NoCollectionType
@@ -37,10 +38,11 @@ class XDMF_EXPORT XdmfGridCollectionType : public XdmfItemProperty {
  protected:
 
   /**
-   * Protected constructor for XdmfGridCollectionType. The constructor is
-   * protected because all collection types supported by Xdmf should be
-   * accessed through more specific static methods that construct
-   * XdmfGridCollectionType - i.e. XdmfGridCollectionType::Temporal().
+   * Protected constructor for XdmfGridCollectionType. The constructor
+   * is protected because all collection types supported by Xdmf
+   * should be accessed through more specific static methods that
+   * construct XdmfGridCollectionType -
+   * i.e. XdmfGridCollectionType::Temporal().
    *
    * @param name the name of the XdmfGridCollectionType to construct.
    */

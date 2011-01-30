@@ -9,12 +9,12 @@ class XdmfArray;
 #include "XdmfGrid.hpp"
 
 /**
- * @brief A regular grid consists of congruent points arranged regularly in
- * space.
+ * @brief A regular grid consists of congruent points arranged
+ * regularly in space.
  *
- * XdmfRegularGrid represents a regular mesh of congruent points arranged in
- * space. In order to define a regular grid, three sets of terms need to be
- * supplied:
+ * XdmfRegularGrid represents a regular mesh of congruent points
+ * arranged in space. In order to define a regular grid, three sets of
+ * terms need to be supplied:
  *
  * Brick Size (Dx, Dy, (Dz)) - Size of an individual brick.
  * Dimensions (X, Y, (Z)) - Number of points in X, Y, and Z directions
@@ -102,15 +102,16 @@ class XDMF_EXPORT XdmfRegularGrid : public XdmfGrid {
   boost::shared_ptr<const XdmfArray> getBrickSize() const;
 
   /**
-   * Get the dimensions of the grid, the number of points in each direction.
+   * Get the dimensions of the grid, the number of points in each
+   * direction.
    *
    * @return XdmfArray containing dimensions of this grid.
    */
   boost::shared_ptr<XdmfArray> getDimensions();
 
   /**
-   * Get the dimensions of the grid, the number of points in each direction
-   * (const version).
+   * Get the dimensions of the grid, the number of points in each
+   * direction (const version).
    *
    * @return XdmfArray containing the dimensions of this grid.
    */
@@ -119,28 +120,31 @@ class XDMF_EXPORT XdmfRegularGrid : public XdmfGrid {
   /**
    * Get the location of the origin of the grid.
    *
-   * @return XdmfArray containing the location of the origin of the grid.
+   * @return XdmfArray containing the location of the origin of the
+   * grid.
    */
   boost::shared_ptr<XdmfArray> getOrigin();
 
   /**
    * Get the location of the origin of the grid.
    *
-   * @return XdmfArray containing the location of the origin of the grid
-   * (const version).
+   * @return XdmfArray containing the location of the origin of the
+   * grid (const version).
    */
   boost::shared_ptr<const XdmfArray> getOrigin() const;
 
   /**
    * Set the size of the points composing the grid.
    *
-   * @param brickSize the sizes of the points composing the mesh. This should
-   * have the same number of terms as the dimensionality of the mesh.
+   * @param brickSize the sizes of the points composing the mesh. This
+   * should have the same number of terms as the dimensionality of the
+   * mesh.
    */
   void setBrickSize(const boost::shared_ptr<XdmfArray> brickSize);
 
   /**
-   * Set the dimensions of the grid, the number of points in each direction.
+   * Set the dimensions of the grid, the number of points in each
+   * direction.
    *
    * @param dimensions the dimension of the grid.
    */
@@ -149,8 +153,8 @@ class XDMF_EXPORT XdmfRegularGrid : public XdmfGrid {
   /**
    * Set the origin of the grid.
    *
-   * @param origin location of the origin of the grid.  This should have
-   * the same number of terms as the dimensionality of the mesh.
+   * @param origin location of the origin of the grid.  This should
+   * have the same number of terms as the dimensionality of the mesh.
    */
   void setOrigin(const boost::shared_ptr<XdmfArray> origin);
 

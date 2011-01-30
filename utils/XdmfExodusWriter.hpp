@@ -8,9 +8,9 @@ class XdmfUnstructuredGrid;
 #include <boost/shared_ptr.hpp>
 #include <string>
 
-/*!
- * @brief XdmfExodusWriter writes an Xdmf structure in memory to an ExodusII
- * file on disk.
+/**
+ * @brief Writes an Xdmf structure in memory to an ExodusII file on
+ * disk.
  */
 class XdmfExodusWriter {
 
@@ -25,7 +25,7 @@ public:
 
   virtual ~XdmfExodusWriter();
 
-  /*!
+  /**
    * Write an XdmfUnstructuredGrid to an ExodusII file.
    *
    * @param filePath of the ExodusII file to write.

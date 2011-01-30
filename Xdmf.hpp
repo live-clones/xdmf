@@ -1,5 +1,49 @@
 #ifndef _XDMF_HPP
 #define _XDMF_HPP
+
+/*! \mainpage XDMF API
+*
+* \section intro Introduction
+*
+* The eXtensible Data Model and Format (XDMF) is a distributed data
+* hub for accessing scientific data in High Performance Computing
+* (HPC) applications. XDMF defines a data model and format as well as
+* facilities for accessing the data in a distributed environment.
+*
+* XDMF differs from other data model and format efforts in that the
+* "light data" is logically (and possibly physically) separated from
+* the "heavy data". Light data is considered to be both "data about
+* the data" such as dimensions and name, as well as small quantities
+* of computed data. Heavy data is considered to be large amounts of
+* data. For example, in a three dimensional structural mechanics
+* calculation, the size and dimensions of the computational grid are
+* light data while the actual X, Y, and Z values for the grid are
+* heavy data. Calculated values like "Pressure at a node" are heavy,
+* while "Total Residual Mass" for the entire calculation is light.
+* Light data is stored on disk in a machine parsable language like
+* XML. Heavy data is stored in a format suitable for large amounts of
+* data like HDF5.
+*
+* While use of the XDMF API is not necessary to produce or consume
+* valid datasets, it is extremely useful for handling the wide variety
+* of files that are possible and its use is highly recommended. The
+* XDMF API is written in C++ and is wrapped for access from other
+* languages including Python and Java.
+*
+* XDMF utilizes reference counting shared pointers to handle ownership
+* of XDMF objects. This allows multiple objects to reference a single
+* XDMF object. An object is deleted and memory is reclaimed when no
+* other XDMF objects hold a reference to the object. This allows
+* flexibility in constructing XDMF structures, as simple structures
+* can be shared instead of copied.
+*
+* All XDMF objects are constructed by calling New(), which returns a
+* shared pointer to a newly constructed object. All default
+* constructors in the XDMF API are protected, ensuring that only
+* shared pointers can be created. These pointers are freed
+* automatically by the shared pointer reference counting mechanism.
+*/
+
 /* Keep all our Win32 Conversions here */
 #ifdef _WIN32
 /* Used to export/import from the dlls */

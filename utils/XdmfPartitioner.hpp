@@ -9,8 +9,9 @@ class XdmfUnstructuredGrid;
 // Includes
 #include <boost/shared_ptr.hpp>
 
-/*!
- * @brief XdmfPartitioner partitions an XdmfGrid using the metis library.
+/**
+ * @brief XdmfPartitioner partitions an XdmfGrid using the metis
+ * library.
  *
  * XdmfPartitioner uses the metis library to partition XdmfGrids.
  */
@@ -44,11 +45,11 @@ public:
    * XdmfTopologyType::Hexahedron_64
    *
    * The partitioner splits the XdmfGridUnstructured and all attached
-   * XdmfAttributes and XdmfSets into their proper partition. An XdmfAttribute
-   * named "GlobalNodeId" is added to each partitioned grid to map
-   * partitioned node ids to their original unpartitioned id. All arrays
-   * attached to the passed gridToPartition are read from disk if not
-   * initialized.
+   * XdmfAttributes and XdmfSets into their proper partition. An
+   * XdmfAttribute named "GlobalNodeId" is added to each partitioned
+   * grid to map partitioned node ids to their original unpartitioned
+   * id. All arrays attached to the passed gridToPartition are read
+   * from disk if not initialized.
    *
    * @param gridToPartition an XdmfGridUnstructured to partition.
    * @param numberOfPartitions the number of pieces to partition the grid into.
