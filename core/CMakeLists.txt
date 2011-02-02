@@ -18,6 +18,9 @@ option(XDMF_BUILD_DSM OFF)
 find_package(Boost REQUIRED)
 if(Boost_FOUND)
 	include_directories(${Boost_INCLUDE_DIRS})
+    set(XDMF_BOOST_INCLUDE_DIRS ${Boost_INCLUDE_DIRS})
+    get_filename_component(Boost_ROOT "${Boost_INCLUDE_DIRS}" REALPATH)
+    set(XDMF_BOOST_ROOT_DIR ${Boost_ROOT})
 endif(Boost_FOUND)
 
 find_package(HDF5 REQUIRED)
@@ -29,8 +32,12 @@ if(HDF5_FOUND)
 			include_directories(${MPI_INCLUDE_PATH})
 		endif(MPI_FOUND)
 	endif(HDF5_IS_PARALLEL)
-    get_filename_component(HDF5_ROOT "$HDF5_INCLUDE_DIR}/../" REALPATH)
+    get_filename_component(HDF5_ROOT "${HDF5_INCLUDE_DIR}/../" REALPATH)
     set(HDF5_BINARY_DIRS ${HDF5_ROOT}/bin ${HDF5_ROOT}/dll)
+    set(XDMF_HDF5_ROOT_DIR ${HDF5_ROOT})
+    set(XDMF_HDF5_INCLUDE_DIR ${HDF5_INCLUDE_DIR})
+    set(XDMF_HDF5_LIBRARIES ${HDF5_LIBRARIES})
+    set(XDMF_HDF5_BINARY_DIRS ${HDF5_BINARY_DIRS})
 endif(HDF5_FOUND)
 
 if(XDMF_BUILD_DSM)
@@ -51,8 +58,12 @@ endif(XDMF_BUILD_DSM)
 find_package(LibXml2 REQUIRED)
 if(LIBXML2_FOUND)
 	include_directories(${LIBXML2_INCLUDE_DIR})
-    get_filename_component(LIBXML2_ROOT "${LIBXML2_INCLUDE_DIR}/../" REALPATH)
+    get_filename_component(LIBXML2_ROOT "${LIBXML2_INCLUDE_DIR}/../../" REALPATH)
     set(LIBXML2_BINARY_DIRS ${LIBXML2_ROOT}/bin)
+    set(XDMF_LIBXML2_ROOT_DIR ${LIBXML2_ROOT})
+    set(XDMF_LIBXML2_INCLUDE_DIR ${LIBXML2_INCLUDE_DIR})
+    set(XDMF_LIBXML2_LIBRARIES ${LIBXML2_LIBRARIES})
+    set(XDMF_LIBXML2_BINARY_DIRS ${LIBXML2_BINARY_DIRS})
 endif(LIBXML2_FOUND)
 
 set(XdmfCoreSources
@@ -101,6 +112,12 @@ if(XDMF_WRAP_PYTHON)
 	XDMF_SWIG_PYTHON(XdmfCore)
 endif(XDMF_WRAP_PYTHON)
 
+if(WIN32)
+    set(XDMFCORE_LIBRARY_CONFIG ${CMAKE_INSTALL_PREFIX}/bin/XdmfCore.dll)
+else(WIN32)
+    set(XDMFCORE_LIBRARY_CONFIG ${CMAKE_INSTALL_PREFIX}/lib/libXdmfCore.so)
+endif(WIN32)
+
 file(GLOB_RECURSE XdmfCoreHeaders "*.hpp" "*.tpp" "*.i" "../CMake/VersionSuite/*.hpp")
 file(GLOB LokiHeaders loki/*.h)
 install(FILES ${XdmfCoreHeaders} DESTINATION include)
@@ -116,3 +133,12 @@ set(XdmfCore_INCLUDE_DIRS ${Boost_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} ${HD
 if(BUILD_TESTING)
 	add_subdirectory(tests)
 endif(BUILD_TESTING)
+
+# Since these are not set as of yet, we don't want to remove them from the
+# config file
+set(XDMF_LIBRARY_CONFIG "@XDMF_LIBRARY_CONFIG@")
+set(XDMF_JAVA_JAR_CONFIG "@XDMF_JAVA_JAR_CONFIG@")
+set(XDMF_PYTHON_CONFIG "@XDMF_PYTHON_CONFIG@")
+configure_file(${CMAKE_SOURCE_DIR}/XdmfConfig.cmake.in
+                ${CMAKE_BINARY_DIR}/XdmfConfig.cmake.in @ONLY)
+

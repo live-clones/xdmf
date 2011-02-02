@@ -7,8 +7,8 @@ SET(ENV{LD_LIBRARY_PATH} "${LDPATH}${SEPARATOR}$ENV{LD_LIBRARY_PATH}")
 
 MESSAGE("| Calling:\t${python_runtime} ${EXECUTABLE} ${ARGUMENTS}")
 EXECUTE_PROCESS(
-    	COMMAND ${python_runtime} ${EXECUTABLE}.pyc ${ARGUMENTS}
-		WORKING_DIRECTORY ${python_binary_dir}
+    	COMMAND "${python_runtime}" "${EXECUTABLE}.pyc" ${ARGUMENTS}
+		WORKING_DIRECTORY "${python_binary_dir}"
     		RESULT_VARIABLE python_result
     		OUTPUT_VARIABLE python_output
  		ERROR_VARIABLE python_error

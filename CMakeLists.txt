@@ -14,7 +14,6 @@ set(CMAKE_MODULE_PATH
 	${CMAKE_SOURCE_DIR}/CMake/VersionSuite
 ) 
 
-
 # Should we build with documentation
 option(XDMF_BUILD_DOCUMENTATION OFF)
 if(XDMF_BUILD_DOCUMENTATION)
@@ -38,6 +37,7 @@ if(XDMF_WRAP_PYTHON OR XDMF_WRAP_JAVA)
 	if(${SWIG_VERSION} LESS 2.0.0)
 		message(SEND_ERROR "Swig must be version 2.0.0 or greater")
 	endif(${SWIG_VERSION} LESS 2.0.0)
+    set(XDMF_SWIG_EXECUTABLE ${SWIG_EXECUTABLE})
 endif(XDMF_WRAP_PYTHON OR XDMF_WRAP_JAVA)
 
 # If we are wrapping python, let's include it in the top level
@@ -45,7 +45,10 @@ if(XDMF_WRAP_PYTHON)
 	find_package(PythonInterp REQUIRED)
 	find_package(PythonLibs REQUIRED)
 	include_directories(${PYTHON_INCLUDE_DIRS})
-
+    set(XDMF_PYTHON_EXECUTABLE ${PYTHON_EXECUTABLE})
+    set(XDMF_PYTHON_LIBRARY ${PYTHON_LIBRARY})
+    set(XDMF_PYTHON_INCLUDE_DIRS ${PYTHON_INCLUDE_DIRS})
+ 
 	# A macro to swig and create the python files
 	# Since we essentually do the same thing inside and outside core, it
 	# would be easier as a macro
@@ -78,7 +81,10 @@ PROPERTIES
                     ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
             )
         endif(WIN32)
-
+    
+        string(TOUPPER ${python_name} python_name_upper)
+        set(${python_name_upper}_PYTHON_CONFIG
+                ${CMAKE_INSTALL_PREFIX}/lib/python/${python_name}.py)
 		install(FILES ${CMAKE_BINARY_DIR}/${python_name}.py 
                 DESTINATION lib/python)
 		install(TARGETS ${SWIG_MODULE_${python_name}_REAL_NAME} 
@@ -91,6 +97,11 @@ if(XDMF_WRAP_JAVA)
 	find_package(Java REQUIRED)
 	find_package(JNI REQUIRED)
 	include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2})
+
+    set(XDMF_JAVA_INCLUDE_PATH ${JAVA_INCLUDE_PATH})
+    set(XDMF_JAVA_INCLUDE_PATH2 ${JAVA_INCLUDE_PATH2})
+    set(XDMF_JAVA_COMPILE ${JAVA_COMPILE})
+    set(XDMF_JAVA_ARCHIVE ${JAVA_ARCHIVE})
 
 	# A macro to swig and create the jar files
 	# Since we essentually do the same thing inside and outside core, it
@@ -153,6 +164,10 @@ if(XDMF_WRAP_JAVA)
 			${CMAKE_BINARY_DIR}/${java_name}.jar
 			${XDMF_JAVA_DIR}
 		)
+
+        string(TOUPPER ${java_name} java_name_upper)
+        set(${java_name_upper}_JAVA_JAR_CONFIG
+                     ${CMAKE_INSTALL_PREFIX}/lib/java/${java_name}.jar)
         install(FILES ${CMAKE_BINARY_DIR}/${java_name}.jar 
                 DESTINATION lib/java)
        	install(TARGETS ${SWIG_MODULE_${java_name}Java_REAL_NAME}
@@ -218,7 +233,13 @@ if(NOT XDMF_BUILD_CORE_ONLY)
 		add_subdirectory(utils)
 	endif(XDMF_BUILD_UTILS)
 		
-	file(GLOB XdmfHeaders "*.hpp" "*.tpp" "*.i" "CMake/VersionSuite/*.hpp")
+    if(WIN32)
+        set(XDMF_LIBRARY_CONFIG ${CMAKE_INSTALL_PREFIX}/bin/Xdmf.dll)
+    else(WIN32)
+        set(XDMF_LIBRARY_CONFIG ${CMAKE_INSTALL_PREFIX}/lib/libXdmf.so)
+    endif(WIN32)
+	
+    file(GLOB XdmfHeaders "*.hpp" "*.tpp" "*.i" "CMake/VersionSuite/*.hpp")
 	install(FILES ${XdmfHeaders} DESTINATION include)
     install(TARGETS Xdmf 
         RUNTIME DESTINATION bin
@@ -226,3 +247,7 @@ if(NOT XDMF_BUILD_CORE_ONLY)
         ARCHIVE DESTINATION lib
     )
 endif(NOT XDMF_BUILD_CORE_ONLY)
+
+configure_file(${CMAKE_BINARY_DIR}/XdmfConfig.cmake.in
+                ${CMAKE_BINARY_DIR}/XdmfConfig.cmake @ONLY)
+install(FILES ${CMAKE_BINARY_DIR}/XdmfConfig.cmake DESTINATION .)
