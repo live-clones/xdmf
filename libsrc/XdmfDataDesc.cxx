@@ -26,6 +26,7 @@
 
 #include <cstring>
 #include <stdlib.h>
+#include <string.h>
 
 XdmfDataDesc::XdmfDataDesc() {
 #ifndef XDMF_MEMORY_DEBUG
