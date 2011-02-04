@@ -1,3 +1,5 @@
+#include <limits.h>
+#include <stdlib.h>
 #include "XdmfSystemUtils.hpp"
 
 XdmfSystemUtils::XdmfSystemUtils()
