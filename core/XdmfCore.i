@@ -31,7 +31,6 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %}
 
 #ifdef SWIGJAVA
-
 // Ignore const overloaded methods
 %ignore XdmfArray::getHeavyDataController() const;
 %ignore XdmfArray::getValuesInternal() const;
@@ -360,3 +359,5 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %template(resizeAsUInt8) XdmfArray::resize<unsigned char>;
 %template(resizeAsUInt16) XdmfArray::resize<unsigned short>;
 %template(resizeAsUInt32) XdmfArray::resize<unsigned int>;
+
+%template(ItemVector) std::vector<boost::shared_ptr<XdmfItem> >;
