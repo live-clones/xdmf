@@ -243,7 +243,7 @@ if(NOT XDMF_BUILD_CORE_ONLY)
     endif(WIN32)
 	
     file(GLOB XdmfHeaders "*.hpp" "*.tpp" "*.i" "CMake/VersionSuite/*.hpp")
-	install(FILES ${XdmfHeaders} DESTINATION include)
+    install(FILES ${XdmfHeaders} DESTINATION include)
     install(TARGETS Xdmf 
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
@@ -252,5 +252,4 @@ if(NOT XDMF_BUILD_CORE_ONLY)
 endif(NOT XDMF_BUILD_CORE_ONLY)
 
 xdmf_create_config_file(${PROJECT_NAME})
-file(COPY "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake" DESTINATION ${CMAKE_INSTALL_PREFIX}
-     FILE_PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ )
+install(FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake" DESTINATION ${CMAKE_INSTALL_PREFIX})
