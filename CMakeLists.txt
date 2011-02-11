@@ -14,6 +14,8 @@ set(CMAKE_MODULE_PATH
 	${CMAKE_SOURCE_DIR}/CMake/VersionSuite
 ) 
 
+include("${CMAKE_CURRENT_SOURCE_DIR}/XdmfFunctions.cmake")
+
 # Should we build with documentation
 option(XDMF_BUILD_DOCUMENTATION OFF)
 if(XDMF_BUILD_DOCUMENTATION)
@@ -249,6 +251,6 @@ if(NOT XDMF_BUILD_CORE_ONLY)
     )
 endif(NOT XDMF_BUILD_CORE_ONLY)
 
-configure_file(${CMAKE_BINARY_DIR}/XdmfConfig.cmake.in
-                ${CMAKE_BINARY_DIR}/XdmfConfig.cmake @ONLY)
-install(FILES ${CMAKE_BINARY_DIR}/XdmfConfig.cmake DESTINATION .)
+xdmf_create_config_file(${PROJECT_NAME})
+file(COPY "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake" DESTINATION ${CMAKE_INSTALL_PREFIX}
+     FILE_PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ )
