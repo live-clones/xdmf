@@ -1,3 +1,4 @@
+#include <H5FDdsm.h>
 #include <H5FDdsmManager.h>
 #include "XdmfArray.hpp"
 #include "XdmfArrayType.hpp"
