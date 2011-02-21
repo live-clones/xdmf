@@ -403,10 +403,18 @@ if ( XDMF_WORD_CMP( topologyType, "NOTOPOLOGY") ){
   newTopologyType = XDMF_TRI_6;
 } else if( XDMF_WORD_CMP( topologyType, "TRIANGLE_6") ){
   newTopologyType = XDMF_TRI_6;
+} else if( XDMF_WORD_CMP( topologyType, "TRI_7") ){
+  newTopologyType = XDMF_TRI_7;
+} else if( XDMF_WORD_CMP( topologyType, "TRIANGLE_7") ){
+  newTopologyType = XDMF_TRI_7;
+} else if( XDMF_WORD_CMP( topologyType, "QUAD_6") ){
+  newTopologyType = XDMF_QUAD_6;
 } else if( XDMF_WORD_CMP( topologyType, "QUAD_8") ){
   newTopologyType = XDMF_QUAD_8;
 } else if( XDMF_WORD_CMP( topologyType, "QUAD_9") ){
   newTopologyType = XDMF_QUAD_9;
+} else if( XDMF_WORD_CMP( topologyType, "QUADRILATERAL_6") ){
+  newTopologyType = XDMF_QUAD_6;
 } else if( XDMF_WORD_CMP( topologyType, "QUADRILATERAL_8") ){
   newTopologyType = XDMF_QUAD_8;
 } else if( XDMF_WORD_CMP( topologyType, "QUADRILATERAL_9") ){
@@ -417,6 +425,8 @@ if ( XDMF_WORD_CMP( topologyType, "NOTOPOLOGY") ){
   newTopologyType = XDMF_TET_10;
 } else if( XDMF_WORD_CMP( topologyType, "PYRAMID_13") ){
   newTopologyType = XDMF_PYRAMID_13;
+} else if( XDMF_WORD_CMP( topologyType, "WEDGE_12") ){
+  newTopologyType = XDMF_WEDGE_12;
 } else if( XDMF_WORD_CMP( topologyType, "WEDGE_15") ){
   newTopologyType = XDMF_WEDGE_15;
 } else if( XDMF_WORD_CMP( topologyType, "WEDGE_18") ){
@@ -484,6 +494,10 @@ XdmfTopology::GetTopologyTypeAsString( void ) {
       return("Edge_3");
     case  XDMF_TRI_6 :
       return("Triangle_6");
+    case  XDMF_TRI_7:
+      return("Triangle_7");
+    case XDMF_QUAD_6:
+      return("Quadrilateral_6");
     case  XDMF_QUAD_8 :
       return("Quadrilateral_8");
     case  XDMF_QUAD_9 :
@@ -492,6 +506,8 @@ XdmfTopology::GetTopologyTypeAsString( void ) {
       return("Tetrahedron_10");
     case  XDMF_PYRAMID_13 :
       return("Pyramid_13");
+    case  XDMF_WEDGE_12:
+      return("Wedge_12");
     case  XDMF_WEDGE_15 :
       return("Wedge_15");
     case  XDMF_WEDGE_18 :
@@ -567,6 +583,12 @@ XdmfInt32  nodesPerElement = 0;
     case  XDMF_TRI_6 :
       nodesPerElement = 6;
       break;
+    case  XDMF_TRI_7 :
+      nodesPerElement = 7;
+      break;
+    case  XDMF_QUAD_6:
+      nodesPerElement = 6;
+      break;
     case  XDMF_QUAD_8 :
       nodesPerElement = 8;
       break;
@@ -578,6 +600,9 @@ XdmfInt32  nodesPerElement = 0;
       break;
     case  XDMF_PYRAMID_13 :
       nodesPerElement = 13;
+      break;
+    case  XDMF_WEDGE_12 :
+      nodesPerElement = 12;
       break;
     case  XDMF_WEDGE_15 :
       nodesPerElement = 15;
@@ -755,6 +780,12 @@ if(this->TopologyType == XDMF_MIXED){
             case  XDMF_TRI_6 :
               npe = 6;
               break;
+            case  XDMF_TRI_7 :
+              npe = 7;
+              break;
+            case  XDMF_QUAD_6 :
+              npe = 6;
+              break;
             case  XDMF_QUAD_8 :
               npe = 8;
               break;
@@ -766,6 +797,9 @@ if(this->TopologyType == XDMF_MIXED){
               break;
             case  XDMF_PYRAMID_13 :
               npe = 13;
+              break;
+            case  XDMF_WEDGE_12 :
+              npe = 12;
               break;
             case  XDMF_WEDGE_15 :
               npe = 15;
@@ -989,21 +1023,25 @@ XdmfTopology::GetEdgesPerElement() {
     case  XDMF_EDGE_3 :
       return 1;
     case  XDMF_TRI_6 :
+    case  XDMF_TRI_7 :
       return 3;
+    case  XDMF_QUAD_6 :
     case  XDMF_QUAD_8 :
-      return 4;
     case  XDMF_QUAD_9 :
       return 4;
     case  XDMF_TET_10 :
       return 6;
     case  XDMF_PYRAMID_13 :
       return 8;
+    case  XDMF_WEDGE_12 :
     case  XDMF_WEDGE_15 :
     case  XDMF_WEDGE_18 :
       return 9;
     case  XDMF_HEX_20 :
     case  XDMF_HEX_24 :
     case  XDMF_HEX_27 :
+    case  XDMF_HEX_64 :
+    case  XDMF_HEX_125 :
       return 12;
     case  XDMF_MIXED :
     case  XDMF_2DSMESH :
@@ -1044,21 +1082,25 @@ XdmfTopology::GetFacesPerElement() {
     case  XDMF_EDGE_3 :
       return 0;
     case  XDMF_TRI_6 :
+    case  XDMF_TRI_7 :
       return 1;
+    case  XDMF_QUAD_6 :
     case  XDMF_QUAD_8 :
-      return 1;
     case  XDMF_QUAD_9 :
       return 1;
     case  XDMF_TET_10 :
       return 4;
     case  XDMF_PYRAMID_13 :
       return 5;
+    case  XDMF_WEDGE_12 :
     case  XDMF_WEDGE_15 :
     case  XDMF_WEDGE_18 :
       return 5;
     case  XDMF_HEX_20 :
     case  XDMF_HEX_24 :
     case  XDMF_HEX_27 :
+    case  XDMF_HEX_64 :
+    case  XDMF_HEX_125 :
       return 6;
     case  XDMF_MIXED :
     case  XDMF_2DSMESH :

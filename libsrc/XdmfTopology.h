@@ -46,10 +46,13 @@
 #define XDMF_HEX            0x9
 #define XDMF_EDGE_3         0x0022
 #define XDMF_TRI_6          0x0024
+#define XDMF_TRI_7          0x0037
+#define XDMF_QUAD_6         0x0035
 #define XDMF_QUAD_8         0x0025
 #define XDMF_QUAD_9         0x0023
 #define XDMF_TET_10         0x0026
 #define XDMF_PYRAMID_13     0x0027
+#define XDMF_WEDGE_12       0x0036
 #define XDMF_WEDGE_15       0x0028
 #define XDMF_WEDGE_18       0x0029
 #define XDMF_HEX_20         0x0030
@@ -84,9 +87,13 @@ Currently supported BASE topologies are :
       HEXAHEDRON .......... 6 QUADRILATERAL Faces
       EDGE_3 .............. 3 Node High Order Line
       TRIANGLE_6 .......... 6 Node High Order Triangle
+      TRIANGLE_& .......... 7 Node High Order Triangle (Bi-Quadratic Triangle)
+      QUADRILATERAL_6 ..... 6 Node High Order Quadrilateral (Quadratic Linear Hexahedron)
       QUADRILATERAL_8 ..... 8 Node High Order Quadrilateral
+      QUADRILATERAL_9 ..... 9 Node High Order Quadrilateral
       TETRAHEDRON_10 ...... 10 Node High Order Tetrahedron
       PYRAMID_13 .......... 13 Node High Order Pyramid
+      WEDGE_12 ............ 12 Node High Order Wedge (Quadratic Linear Wedge)
       WEDGE_15 ............ 15 Node High Order Wedge (Quadratic Wedge)
       WEDGE_18 ............ 18 Node High Order Wedge (Bi-Quadratic Wedge)
       HEXAHEDRON_20 ....... 20 Node High Order Hexahedron (Quadratic Hexahedron)

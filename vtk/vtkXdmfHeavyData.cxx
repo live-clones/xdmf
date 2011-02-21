@@ -353,6 +353,12 @@ int vtkXdmfHeavyData::GetNumberOfPointsPerCell(int vtk_cell_type)
     return 24;
   case VTK_TRIQUADRATIC_HEXAHEDRON:
     return 27;
+  case VTK_QUADRATIC_LINEAR_QUAD:
+    return 6;
+  case VTK_QUADRATIC_LINEAR_WEDGE:
+    return 12;
+  case VTK_BIQUADRATIC_TRIANGLE:
+    return 7;
     }
   return -1;
 }
@@ -383,6 +389,10 @@ int vtkXdmfHeavyData::GetVTKCellType(XdmfInt32 topologyType)
     return VTK_QUADRATIC_EDGE ;
   case  XDMF_TRI_6 :
     return VTK_QUADRATIC_TRIANGLE ;
+  case  XDMF_TRI_7 :
+    return VTK_BIQUADRATIC_TRIANGLE ;
+  case  XDMF_QUAD_6 :
+    return VTK_QUADRATIC_LINEAR_QUAD ;
   case  XDMF_QUAD_8 :
     return VTK_QUADRATIC_QUAD ;
   case  XDMF_QUAD_9 :
@@ -391,6 +401,8 @@ int vtkXdmfHeavyData::GetVTKCellType(XdmfInt32 topologyType)
     return VTK_QUADRATIC_TETRA ;
   case  XDMF_PYRAMID_13 :
     return VTK_QUADRATIC_PYRAMID ;
+  case  XDMF_WEDGE_12 :
+    return VTK_QUADRATIC_LINEAR_WEDGE;
   case  XDMF_WEDGE_15 :
     return VTK_QUADRATIC_WEDGE ;
   case  XDMF_WEDGE_18 :
