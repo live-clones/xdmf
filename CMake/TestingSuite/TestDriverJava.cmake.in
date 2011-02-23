@@ -1,4 +1,4 @@
-SET(java_runtime @JAVA_RUNTIME@)
+SET(java_runtime "@JAVA_RUNTIME@")
 SET(java_binary_dir @CMAKE_CURRENT_BINARY_DIR@)
 
 SET(ENV{PATH} "${PATH}${SEPARATOR}$ENV{PATH}")
@@ -7,9 +7,9 @@ SET(ENV{CLASSPATH} "${CLASSPATH}${SEPARATOR}$ENV{CLASSPATH}")
 
 MESSAGE("| Calling:\t${java_runtime} ${EXECUTABLE} ${ARGUMENTS}")
 EXECUTE_PROCESS(
-       COMMAND ${java_runtime} ${EXECUTABLE} ${ARGUMENTS} 
-               	WORKING_DIRECTORY ${java_binary_dir}
-		RESULT_VARIABLE java_result
+       COMMAND "${java_runtime}" "${EXECUTABLE}" ${ARGUMENTS} 
+               	WORKING_DIRECTORY "${java_binary_dir}"
+        		RESULT_VARIABLE java_result
                	OUTPUT_VARIABLE java_output
                	ERROR_VARIABLE  java_error
 )
@@ -28,3 +28,6 @@ MESSAGE("----------------------------------------------------------")
 IF(java_error)
 	MESSAGE(SEND_ERROR "Test Failed.")
 ENDIF(java_error)
+IF(NOT "${java_result}" STREQUAL "0")
+    MESSAGE(SEND_ERROR "Result not zero.")
+ENDIF(NOT "${java_result}" STREQUAL "0")

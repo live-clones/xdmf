@@ -7,13 +7,11 @@ ADD_TEST_CXX_DEPENDENCIES("XdmfCore")
 
 # Add any ldpath directories that the cxx tests may need
 ADD_TEST_CXX_LDPATH("${CMAKE_BINARY_DIR}")
-ADD_TEST_CXX_LDPATH("${HDF5_LIBRARIES}")
-ADD_TEST_CXX_LDPATH("${LIBXML2_LIBRARIES}")
+ADD_TEST_CXX_LDPATH("${XDMF_LIBRARIES}")
 
 # Add any path directoreis that the Cxx tests may need
 ADD_TEST_CXX_PATH("${CMAKE_BINARY_DIR}")
-ADD_TEST_CXX_PATH("${HDF5_BINARY_DIRS}")
-ADD_TEST_CXX_PATH("${LIBXML2_BINARY_DIRS}")
+ADD_TEST_CXX_PATH("${XDMF_BINARIES}")
 
 # Add any cxx tests here:
 # Note: We don't want to use a foreach loop to test the files incase we
