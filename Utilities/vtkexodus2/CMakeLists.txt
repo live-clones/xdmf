@@ -24,6 +24,19 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(cbind_SRCS
+  exgcssc.c 
+  exgecpp.c 
+  exgnconn.c 
+  exgncor.c 
+  exgnnv.c 
+  exgnoatt.c 
+  exgnvar.c 
+  expecpp.c 
+  expncor.c 
+  expnnv.c 
+  expnoatt.c 
+  expnvar.c 
+  exppsetd.c
   exclos.c
   excn2s.c
   ex_conv.c
