@@ -293,5 +293,3 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 %include XdmfTopology.hpp
 %include XdmfTopologyType.hpp
 %include XdmfUnstructuredGrid.hpp
-
-%template(ItemVector) std::vector<boost::shared_ptr<XdmfItem> >;
