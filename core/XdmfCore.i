@@ -84,8 +84,8 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
             System.loadLibrary("XdmfCoreJava");
         }
         catch (UnsatisfiedLinkError e) {
-            System.err.println("Native code library failed to load for
-                                XdmfCoreJava\n" + e);
+            System.err.println("Native code library failed to load for" +
+                               "XdmfCoreJava\n" + e);
             System.exit(1);
         }
     }
