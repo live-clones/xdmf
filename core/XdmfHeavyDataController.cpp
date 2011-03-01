@@ -64,7 +64,7 @@ XdmfHeavyDataController::getSize() const
   return std::accumulate(mDimensions.begin(),
                          mDimensions.end(),
                          1,
-                         std::multiplies<int>());
+                         std::multiplies<unsigned int>());
 }
 
 boost::shared_ptr<const XdmfArrayType>

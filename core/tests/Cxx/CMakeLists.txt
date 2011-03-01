@@ -19,6 +19,7 @@ ADD_TEST_CXX_PATH("${XDMF_BINARIES}")
 #       Read UseCxxTest.cmake for more information
 # ---------------------------------------
 ADD_TEST_CXX(TestXdmfArray)
+ADD_TEST_CXX(TestXdmfArrayMultidimensional)
 ADD_TEST_CXX(TestXdmfArrayWriteRead)
 ADD_TEST_CXX(TestXdmfHDF5Controller)
 ADD_TEST_CXX(TestXdmfHDF5Writer)
@@ -34,6 +35,7 @@ ADD_TEST_CXX(TestXdmfVersion)
 #       Read UseCxxTest.cmake for more information
 # ---------------------------------------
 CLEAN_TEST_CXX(TestXdmfArray)
+CLEAN_TEST_CXX(TestXdmfArrayMultidimensional)
 CLEAN_TEST_CXX(TestXdmfArrayWriteRead
   test.h5)
 CLEAN_TEST_CXX(TestXdmfHDF5Controller)

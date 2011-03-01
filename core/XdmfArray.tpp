@@ -21,6 +21,8 @@
 /*                                                                           */
 /*****************************************************************************/
 
+#include <functional>
+#include <numeric>
 #include "XdmfArray.hpp"
 
 template <typename T>
@@ -76,12 +78,14 @@ public:
          const T * const valuesPointer,
          const unsigned int numValues,
          const unsigned int arrayStride,
-         const unsigned int valuesStride) :
+         const unsigned int valuesStride,
+         std::vector<unsigned int> & dimensions) :
     mStartIndex(startIndex),
     mValuesPointer(valuesPointer),
     mNumValues(numValues),
     mArrayStride(arrayStride),
-    mValuesStride(valuesStride)
+    mValuesStride(valuesStride),
+    mDimensions(dimensions)
   {
   }
 
@@ -95,6 +99,7 @@ public:
     }
     if(array->size() < size) {
       array->resize(size);
+      mDimensions.clear();
     }
     for(unsigned int i=0; i<mNumValues; ++i) {
       array->operator[](mStartIndex + i*mArrayStride) =
@@ -109,6 +114,7 @@ private:
   const unsigned int mNumValues;
   const unsigned int mArrayStride;
   const unsigned int mValuesStride;
+  std::vector<unsigned int> & mDimensions;
 };
 
 template <typename T>
@@ -234,6 +240,18 @@ XdmfArray::initialize(const unsigned int size)
   return newArray;
 }
 
+template <typename T>
+boost::shared_ptr<std::vector<T> >
+XdmfArray::initialize(const std::vector<unsigned int> & dimensions)
+{
+  mDimensions = dimensions;
+  const unsigned int size = std::accumulate(dimensions.begin(),
+                                            dimensions.end(),
+                                            1,
+                                            std::multiplies<unsigned int>());
+  return this->initialize<T>(size);
+}
+
 template<typename T>
 void
 XdmfArray::insert(const unsigned int index,
@@ -245,7 +263,7 @@ XdmfArray::insert(const unsigned int index,
   if(!mHaveArray) {
     initialize<T>();
   }
-  boost::apply_visitor(Insert<T>(index, &value, 1, 0, 0), mArray);
+  boost::apply_visitor(Insert<T>(index, &value, 1, 0, 0, mDimensions), mArray);
 }
 
 template <typename T>
@@ -266,7 +284,8 @@ XdmfArray::insert(const unsigned int startIndex,
                                  valuesPointer,
                                  numValues,
                                  arrayStride,
-                                 valuesStride),
+                                 valuesStride,
+                                 mDimensions),
                        mArray);
 }
 
@@ -280,6 +299,7 @@ XdmfArray::pushBack(const T & value)
   if(!mHaveArray) {
     initialize<T>();
   }
+  mDimensions.clear();
   return boost::apply_visitor(PushBack<T>(value), mArray);
 }
 
@@ -294,7 +314,21 @@ XdmfArray::resize(const unsigned int numValues,
   if(!mHaveArray) {
     initialize<T>();
   }
+  mDimensions.clear();
   return boost::apply_visitor(Resize<T>(numValues, value), mArray);
+}
+
+template<typename T>
+void 
+XdmfArray::resize(const std::vector<unsigned int> & dimensions,
+                  const T & value)
+{
+  const unsigned int size = std::accumulate(dimensions.begin(),
+                                            dimensions.end(),
+                                            1,
+                                            std::multiplies<unsigned int>());
+  this->resize(size, value);
+  mDimensions = dimensions;
 }
 
 template <typename T>

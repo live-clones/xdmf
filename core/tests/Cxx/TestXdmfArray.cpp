@@ -245,7 +245,7 @@ int main(int, char *)
   //
 
   /**
-   * RegetSize
+   * Resize
    */
   boost::shared_ptr<XdmfArray> array8 = XdmfArray::New();
   array8->insert(0, &values[0], 4, 1, 1);

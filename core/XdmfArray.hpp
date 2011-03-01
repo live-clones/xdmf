@@ -132,11 +132,18 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
   unsigned int getCapacity() const;
 
   /**
-   * Get the dimensions of the array as a string.
+   * Get the dimensions of the array.
    *
    * @return the dimensions of the array.
    */
-  std::string getDimensionString() const;
+  std::vector<unsigned int> getDimensions() const;
+
+  /**
+   * Get the dimensions of the array as a string.
+   *
+   * @return the dimensions of the array as a string.
+   */
+  std::string getDimensionsString() const;
 
   /**
    * Get the heavy data controller attached to this array.
@@ -243,11 +250,32 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
   /**
    * Initialize the array to contain a particular type.
    *
+   * @param dimensions the dimensions of the initialized array.
+   *
+   * @return a smart pointer to the internal vector of values
+   * initialized in this array.
+   */
+  template <typename T>
+  boost::shared_ptr<std::vector<T> >
+  initialize(const std::vector<unsigned int> & dimensions);
+
+  /**
+   * Initialize the array to contain a particular type.
+   *
    * @param arrayType the type of array to initialize.
    * @param size the number of values in the initialized array.
    */
   void initialize(const boost::shared_ptr<const XdmfArrayType> arrayType,
                   const unsigned int size = 0);
+
+  /**
+   * Initialize the array to contain a particular type.
+   *
+   * @param arrayType the type of array to initialize.
+   * @param dimensions the number dimensions of the initialized array.
+   */
+  void initialize(const boost::shared_ptr<const XdmfArrayType> arrayType,
+                  const std::vector<unsigned int> & dimensions);
 
   /**
    * Insert value into this array
@@ -336,6 +364,20 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
    */
   template<typename T>
   void resize(const unsigned int numValues,
+              const T & value = 0);
+
+  /**
+   * Resizes the array to specified dimensions. If the number of
+   * values specified by the dimensions is larger than the current
+   * size, values are appended to the end of the array equal to
+   * value. If numValues is less than the current size, values at
+   * indices larger than numValues are removed.
+   *
+   * @param dimensions the dimensions to resize the arrat to.
+   * @param value the number to intialize newly created values to, if needed.
+   */
+  template<typename T>
+  void resize(const std::vector<unsigned int> & dimensions,
               const T & value = 0);
 
   /**
@@ -508,12 +550,12 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
   ArrayVariant mArray;
   ArrayPointerVariant mArrayPointer;
   unsigned int mArrayPointerNumValues;
+  std::vector<unsigned int> mDimensions;
   bool mHaveArray;
   bool mHaveArrayPointer;
   boost::shared_ptr<XdmfHeavyDataController> mHeavyDataController;
   std::string mName;
   unsigned int mTmpReserveSize;
-  std::string mDimensionString;
 };
 
 #include "XdmfArray.tpp"
