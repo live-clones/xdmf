@@ -10,7 +10,7 @@ set(CMAKE_MODULE_PATH
   ${CMAKE_SOURCE_DIR}/CMake/TestingSuite
   ${CMAKE_SOURCE_DIR}/CMake/VersionSuite)
 
-include("${CMAKE_CURRENT_SOURCE_DIR}/XdmfFunctions.cmake")
+include(XdmfFunctions)
 
 # RPath
 set(CMAKE_SKIP_BUILD_RPATH  FALSE)

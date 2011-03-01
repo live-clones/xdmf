@@ -1,7 +1,7 @@
 # Version Suite
 # Author: Brian Panneton
-# Descrition: 	This small suite allows you to add support
-#		for versioning in your projects
+# Descrition:   This small suite allows you to add support
+#               for versioning in your projects
 
 # This allows you to turn on and off the auto
 # update of the (project name)Version.hpp file
@@ -24,7 +24,7 @@ ENDMACRO(VersionCreate versionName versionMajor export_name)
 
 # This Macro allows you to set the rewrite number
 MACRO(VersionMajorSet versionMajor)
-	SET(vMajor ${versionMajor})
+        SET(vMajor ${versionMajor})
 ENDMACRO(VersionMajorSet)
 
 # This Macro calculates the number of tags from your git repo
@@ -59,11 +59,11 @@ ${includes}
 extern ${export_name} ProjectVersion ${vProjectName}Version;\n"
     )
 
-	FILE(WRITE ${CMAKE_BINARY_DIR}/${vProjectName}Version.cpp
+        FILE(WRITE ${CMAKE_BINARY_DIR}/${vProjectName}Version.cpp
 "/* Current Version of ${vProjectName}
  * Make sure to include this file in your built sources
  */
 \#include \"${vProjectName}Version.hpp\"
 ProjectVersion ${vProjectName}Version = ProjectVersion(\"${vProjectName}\", \"${vMajor}\", \"${vMinor}\");\n"
-	)
+        )
 ENDMACRO(VersionWrite vProjectName export_name)
