@@ -47,10 +47,17 @@ XdmfHDF5Writer::~XdmfHDF5Writer()
 boost::shared_ptr<XdmfHDF5Controller>
 XdmfHDF5Writer::createHDF5Controller(const std::string & hdf5FilePath,
                                      const std::string & dataSetPath,
-                                     const unsigned int size,
-                                     const boost::shared_ptr<const XdmfArrayType> type)
+                                     const boost::shared_ptr<const XdmfArrayType> type,
+                                     const std::vector<unsigned int> & start,
+                                     const std::vector<unsigned int> & stride,
+                                     const std::vector<unsigned int> & count)
 {
-  return XdmfHDF5Controller::New(hdf5FilePath, dataSetPath, size, type);
+  return XdmfHDF5Controller::New(hdf5FilePath,
+                                 dataSetPath,
+                                 type,
+                                 start,
+                                 stride,
+                                 count);
 }
 
 void
@@ -200,15 +207,23 @@ XdmfHDF5Writer::write(XdmfArray & array,
     // Restore previous error handler
     H5Eset_auto2(0, old_func, old_client_data);
 
-    // Attach a new controller to the array if needed.
-    if(mMode == Default || !array.getHeavyDataController()) {
-      boost::shared_ptr<XdmfHDF5Controller> newDataSetController =
-        this->createHDF5Controller(hdf5FilePath,
-                                   dataSetPath.str(),
-                                   array.getSize(),
-                                   array.getArrayType());
-      array.setHeavyDataController(newDataSetController);
-      mDataSetId++;
+    // Attach a new controller to the array
+    unsigned int newSize = array.getSize();
+    if(mMode == Append && array.getHeavyDataController()) {
+      newSize = newSize + array.getHeavyDataController()->getSize();
     }
+
+    if(mMode == Default || !array.getHeavyDataController()) {
+      ++mDataSetId;
+    }
+
+    const boost::shared_ptr<XdmfHDF5Controller> newDataController =
+      this->createHDF5Controller(hdf5FilePath,
+                                 dataSetPath.str(),
+                                 array.getArrayType(),
+                                 std::vector<unsigned int>(1, 0),
+                                 std::vector<unsigned int>(1, 1),
+                                 std::vector<unsigned int>(1, newSize));
+    array.setHeavyDataController(newDataController);
   }
 }

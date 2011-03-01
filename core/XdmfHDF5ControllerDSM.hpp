@@ -52,8 +52,10 @@ class XDMFCORE_EXPORT XdmfHDF5ControllerDSM : public XdmfHDF5Controller {
   static boost::shared_ptr<XdmfHDF5ControllerDSM>
   New(const std::string & hdf5FilePath,
       const std::string & dataSetPath,
-      const unsigned int size,
       const boost::shared_ptr<const XdmfArrayType> type,
+      const std::vector<unsigned int> & start,
+      const std::vector<unsigned int> & stride,
+      const std::vector<unsigned int> & count,
       H5FDdsmBuffer * const dsmBuffer);
 
   std::string getName() const;
@@ -64,8 +66,10 @@ class XDMFCORE_EXPORT XdmfHDF5ControllerDSM : public XdmfHDF5Controller {
 
   XdmfHDF5ControllerDSM(const std::string & hdf5FilePath,
                         const std::string & dataSetPath,
-                        const unsigned int size,
                         const boost::shared_ptr<const XdmfArrayType> type,
+                        const std::vector<unsigned int> & start,
+                        const std::vector<unsigned int> & stride,
+                        const std::vector<unsigned int> & count,
                         H5FDdsmBuffer * const dsmBuffer);
 
  private:

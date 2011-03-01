@@ -74,16 +74,23 @@ class XDMFCORE_EXPORT XdmfHDF5Writer : public XdmfHeavyDataWriter {
    *
    * @param hdf5FilePath the location of the hdf5 file the data set resides in.
    * @param dataSetPath the location of the dataset within the hdf5 file.
-   * @param size the size of the dataset to read.
    * @param type the data type of the dataset to read.
+   * @param start the offset of the starting element in each dimension in
+   * the hdf5 data set.
+   * @param stride the number of elements to move in each dimension from the
+   * hdf5 data set.
+   * @param count the number of elements to select in each dimension from the
+   * hdf5 data set. (size in each dimension)
    *
    * @return new HDF5 Controller.
    */
   virtual boost::shared_ptr<XdmfHDF5Controller>
   createHDF5Controller(const std::string & hdf5FilePath,
                        const std::string & dataSetPath,
-                       const unsigned int size,
-                       const boost::shared_ptr<const XdmfArrayType> type);
+                       const boost::shared_ptr<const XdmfArrayType> type,
+                       const std::vector<unsigned int> & start,
+                       const std::vector<unsigned int> & stride,
+                       const std::vector<unsigned int> & count);
 
   /**
    * Write the XdmfArray to a hdf5 file.

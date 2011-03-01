@@ -49,13 +49,17 @@ XdmfHDF5WriterDSM::~XdmfHDF5WriterDSM()
 boost::shared_ptr<XdmfHDF5Controller>
 XdmfHDF5WriterDSM::createHDF5Controller(const std::string & hdf5FilePath,
                                         const std::string & dataSetPath,
-                                        const unsigned int size,
-                                        const boost::shared_ptr<const XdmfArrayType> type)
+                                        const boost::shared_ptr<const XdmfArrayType> type,
+                                        const std::vector<unsigned int> & start,
+                                        const std::vector<unsigned int> & stride,
+                                        const std::vector<unsigned int> & count)
 {
   return XdmfHDF5ControllerDSM::New(hdf5FilePath,
                                     dataSetPath,
-                                    size,
                                     type,
+                                    start,
+                                    stride,
+                                    count,
                                     mDSMBuffer);
 }
 

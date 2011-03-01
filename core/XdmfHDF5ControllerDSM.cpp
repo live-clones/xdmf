@@ -28,25 +28,31 @@
 boost::shared_ptr<XdmfHDF5ControllerDSM>
 XdmfHDF5ControllerDSM::New(const std::string & hdf5FilePath,
                            const std::string & dataSetPath,
-                           const unsigned int size,
                            const boost::shared_ptr<const XdmfArrayType> type,
+                           const std::vector<unsigned int> & start,
+                           const std::vector<unsigned int> & stride,
+                           const std::vector<unsigned int> & count,
                            H5FDdsmBuffer * const dsmBuffer)
 {
   boost::shared_ptr<XdmfHDF5ControllerDSM>
     p(new XdmfHDF5ControllerDSM(hdf5FilePath,
                                 dataSetPath,
-                                size,
                                 type,
+                                start,
+                                stride,
+                                count,
                                 dsmBuffer));
   return p;
 }
 
 XdmfHDF5ControllerDSM::XdmfHDF5ControllerDSM(const std::string & hdf5FilePath,
                                              const std::string & dataSetPath,
-                                             const unsigned int size,
                                              const boost::shared_ptr<const XdmfArrayType> type,
+                                             const std::vector<unsigned int> & start,
+                                             const std::vector<unsigned int> & stride,
+                                             const std::vector<unsigned int> & count,
                                              H5FDdsmBuffer * const dsmBuffer) :
-  XdmfHDF5Controller(hdf5FilePath, dataSetPath, size, type),
+  XdmfHDF5Controller(hdf5FilePath, dataSetPath, type, start, stride, count),
   mDSMBuffer(dsmBuffer)
 {
 }

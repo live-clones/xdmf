@@ -72,8 +72,10 @@ protected:
   virtual boost::shared_ptr<XdmfHDF5Controller>
   createHDF5Controller(const std::string & hdf5FilePath,
                        const std::string & dataSetPath,
-                       const unsigned int size,
-                       const boost::shared_ptr<const XdmfArrayType> type);
+                       const boost::shared_ptr<const XdmfArrayType> type,
+                       const std::vector<unsigned int> & start,
+                       const std::vector<unsigned int> & stride,
+                       const std::vector<unsigned int> & count);
 
 private:
 

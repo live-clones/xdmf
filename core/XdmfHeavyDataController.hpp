@@ -31,6 +31,7 @@ class XdmfArrayType;
 // Includes
 #include <boost/shared_ptr.hpp>
 #include <string>
+#include <vector>
 #include "XdmfCore.hpp"
 
 /**
@@ -59,6 +60,14 @@ class XDMFCORE_EXPORT XdmfHeavyDataController {
    * @return a std::string containing the path of the data set.
    */
   std::string getDataSetPath() const;
+
+  /**
+   * Get the dimensions of the heavy data set owned by this controller.
+   *
+   * @return a vector containing the size in each dimension of the heavy data
+   * set owned by this controller.
+   */
+  std::vector<unsigned int> getDimensions() const;
 
   /**
    * Get the absolute path to the heavy data file on disk where the
@@ -104,13 +113,13 @@ class XDMFCORE_EXPORT XdmfHeavyDataController {
 
   XdmfHeavyDataController(const std::string & filePath,
                           const std::string & dataSetPath,
-                          const unsigned int size,
-                          const boost::shared_ptr<const XdmfArrayType> type);
+                          const boost::shared_ptr<const XdmfArrayType> type,
+                          const std::vector<unsigned int> & dimensions);
 
-  std::string mDataSetPath;
-  std::string mFilePath;
-  unsigned int mSize;
-  boost::shared_ptr<const XdmfArrayType> mType;
+  const std::string mDataSetPath;
+  const std::vector<unsigned int> mDimensions;
+  const std::string mFilePath;
+  const boost::shared_ptr<const XdmfArrayType> mType;
 
  private:
 

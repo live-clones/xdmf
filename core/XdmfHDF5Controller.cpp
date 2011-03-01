@@ -31,21 +31,32 @@
 boost::shared_ptr<XdmfHDF5Controller>
 XdmfHDF5Controller::New(const std::string & hdf5FilePath,
                         const std::string & dataSetPath,
-                        const unsigned int size,
-                        const boost::shared_ptr<const XdmfArrayType> type)
+                        const boost::shared_ptr<const XdmfArrayType> type,
+                        const std::vector<unsigned int> & start,
+                        const std::vector<unsigned int> & stride,
+                        const std::vector<unsigned int> & count)
 {
   boost::shared_ptr<XdmfHDF5Controller> p(new XdmfHDF5Controller(hdf5FilePath,
                                                                  dataSetPath,
-                                                                 size,
-                                                                 type));
+                                                                 type,
+                                                                 start,
+                                                                 stride,
+                                                                 count));
   return p;
 }
 
 XdmfHDF5Controller::XdmfHDF5Controller(const std::string & hdf5FilePath,
                                        const std::string & dataSetPath,
-                                       const unsigned int size,
-                                       const boost::shared_ptr<const XdmfArrayType> type) :
-  XdmfHeavyDataController(hdf5FilePath, dataSetPath, size, type)
+                                       const boost::shared_ptr<const XdmfArrayType> type,
+                                       const std::vector<unsigned int> & start,
+                                       const std::vector<unsigned int> & stride,
+                                       const std::vector<unsigned int> & count) :
+  XdmfHeavyDataController(hdf5FilePath,
+                          dataSetPath,
+                          type,
+                          count),
+  mStart(start),
+  mStride(stride)
 {
 }
 
@@ -68,23 +79,43 @@ XdmfHDF5Controller::read(XdmfArray * const array)
 void
 XdmfHDF5Controller::read(XdmfArray * const array, const int fapl)
 {
+  herr_t status;
+
   hid_t hdf5Handle = H5Fopen(mFilePath.c_str(), H5F_ACC_RDONLY, fapl);
   hid_t dataset = H5Dopen(hdf5Handle, mDataSetPath.c_str(), H5P_DEFAULT);
   hid_t dataspace = H5Dget_space(dataset);
-  hssize_t numVals = H5Sget_simple_extent_npoints(dataspace);
+
+  std::vector<hsize_t> start(mStart.begin(), mStart.end());
+  std::vector<hsize_t> stride(mStride.begin(), mStride.end());
+  std::vector<hsize_t> count(mDimensions.begin(), mDimensions.end());
+
+  status = H5Sselect_hyperslab(dataspace,
+                               H5S_SELECT_SET,
+                               &start[0],
+                               &stride[0],
+                               &count[0],
+                               NULL);
+  hssize_t numVals = H5Sget_select_npoints(dataspace);
+  hsize_t dims[1];
+  dims[0] = numVals;
+//  hid_t memspace = H5Screate_simple(1, dims, NULL);
+//  hsize_t memStart[] = {0};
+//  hsize_t memStride[] = {1};
+//  hsize_t memCount[] = {10};
+//status = H5Sselect_hyperslab(memspace, H5S_SELECT_SET, memStart, memStride, memCount, NULL);
   hid_t datatype = H5Dget_type(dataset);
 
   array->initialize(mType, (const unsigned int)numVals);
-  H5Dread(dataset,
-          datatype,
-          H5S_ALL,
-          H5S_ALL,
-          H5P_DEFAULT,
-          array->getValuesInternal());
+  status = H5Dread(dataset,
+                   datatype,
+                   H5S_ALL,
+                   dataspace,
+                   H5P_DEFAULT,
+                   array->getValuesInternal());
 
-  herr_t status;
   status = H5Tclose(datatype);
   status = H5Sclose(dataspace);
+//  status = H5Sclose(memspace);
   status = H5Dclose(dataset);
   status = H5Fclose(hdf5Handle);
 }

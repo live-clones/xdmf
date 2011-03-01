@@ -21,16 +21,18 @@
 /*                                                                           */
 /*****************************************************************************/
 
+#include <functional>
+#include <numeric>
 #include "XdmfHeavyDataController.hpp"
 #include "XdmfSystemUtils.hpp"
 
 XdmfHeavyDataController::XdmfHeavyDataController(const std::string & filePath,
                                                  const std::string & dataSetPath,
-                                                 const unsigned int size,
-                                                 const boost::shared_ptr<const XdmfArrayType> type) :
+                                                 const boost::shared_ptr<const XdmfArrayType> type,
+                                                 const std::vector<unsigned int> & dimensions) :
   mDataSetPath(dataSetPath),
+  mDimensions(dimensions),
   mFilePath(XdmfSystemUtils::getRealPath(filePath)),
-  mSize(size),
   mType(type)
 {
 }
@@ -45,6 +47,11 @@ XdmfHeavyDataController::getDataSetPath() const
   return mDataSetPath;
 }
 
+std::vector<unsigned int> XdmfHeavyDataController::getDimensions() const
+{
+  return mDimensions;
+}
+
 std::string
 XdmfHeavyDataController::getFilePath() const
 {
@@ -54,7 +61,10 @@ XdmfHeavyDataController::getFilePath() const
 unsigned int
 XdmfHeavyDataController::getSize() const
 {
-  return mSize;
+  return std::accumulate(mDimensions.begin(),
+                         mDimensions.end(),
+                         1,
+                         std::multiplies<int>());
 }
 
 boost::shared_ptr<const XdmfArrayType>

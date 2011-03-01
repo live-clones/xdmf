@@ -663,10 +663,13 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
           newHDF5Path << xmlDir->second << hdf5Path;
           hdf5Path = newHDF5Path.str();
         }
-        mHeavyDataController = XdmfHDF5Controller::New(hdf5Path,
-                                                       dataSetPath,
-                                                       sizeVal,
-                                                       arrayType);
+        mHeavyDataController = 
+          XdmfHDF5Controller::New(hdf5Path,
+                                  dataSetPath,
+                                  arrayType,
+                                  std::vector<unsigned int>(1, 0),
+                                  std::vector<unsigned int>(1, 1),
+                                  std::vector<unsigned int>(1, sizeVal));
       }
       else {
         assert(false);

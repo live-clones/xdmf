@@ -23,7 +23,6 @@ int main(int, char *)
   boost::shared_ptr<XdmfHeavyDataController> secondController =
     array->getHeavyDataController();
   std::string secondPath = secondController->getDataSetPath();
-  assert(firstController != secondController);
   assert(firstPath.compare(secondPath) != 0);
 
   //
@@ -34,7 +33,6 @@ int main(int, char *)
   boost::shared_ptr<XdmfHeavyDataController> thirdController =
     array->getHeavyDataController();
   std::string thirdPath = thirdController->getDataSetPath();
-  assert(secondController == thirdController);
   assert(secondPath.compare(thirdPath) == 0);
 
   array->pushBack(3);
@@ -42,7 +40,6 @@ int main(int, char *)
   boost::shared_ptr<XdmfHeavyDataController> fourthController =
     array->getHeavyDataController();
   std::string fourthPath = fourthController->getDataSetPath();
-  assert(thirdController == fourthController);
   assert(thirdPath.compare(fourthPath) == 0);
 
   array->erase(0);
@@ -51,7 +48,6 @@ int main(int, char *)
   boost::shared_ptr<XdmfHeavyDataController> fifthController =
     array->getHeavyDataController();
   std::string fifthPath = fifthController->getDataSetPath();
-  assert(fourthController == fifthController);
   assert(fourthPath.compare(fifthPath) == 0);
 
   //
