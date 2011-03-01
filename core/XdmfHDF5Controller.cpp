@@ -98,8 +98,7 @@ XdmfHDF5Controller::read(XdmfArray * const array, const int fapl)
                                &count[0],
                                NULL);
   hssize_t numVals = H5Sget_select_npoints(dataspace);
-  hsize_t dims[1];
-  dims[0] = numVals;
+
 //  hid_t memspace = H5Screate_simple(1, dims, NULL);
 //  hsize_t memStart[] = {0};
 //  hsize_t memStride[] = {1};
@@ -107,7 +106,10 @@ XdmfHDF5Controller::read(XdmfArray * const array, const int fapl)
 //status = H5Sselect_hyperslab(memspace, H5S_SELECT_SET, memStart, memStride, memCount, NULL);
   hid_t datatype = H5Dget_type(dataset);
 
-  array->initialize(mType, (const unsigned int)numVals);
+  array->initialize(mType, mDimensions);
+
+  assert(numVals == array->getSize());
+
   status = H5Dread(dataset,
                    datatype,
                    H5S_ALL,
