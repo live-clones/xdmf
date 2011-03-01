@@ -58,6 +58,8 @@ XdmfHDF5Controller::XdmfHDF5Controller(const std::string & hdf5FilePath,
   mStart(start),
   mStride(stride)
 {
+  assert(mStart.size() == mStride.size() && 
+         mStride.size() == mDimensions.size());
 }
 
 XdmfHDF5Controller::~XdmfHDF5Controller()
