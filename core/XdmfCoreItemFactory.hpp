@@ -40,29 +40,33 @@ class XdmfItem;
  */
 class XDMFCORE_EXPORT XdmfCoreItemFactory {
 
-public:
+ public:
 
-	virtual ~XdmfCoreItemFactory() = 0;
+  virtual ~XdmfCoreItemFactory() = 0;
 
-	/**
-	 * Create a new XdmfItem.
-	 *
-	 * @param itemTag a string containing the tag of the XdmfItem to create.
-	 * @param itemProperties a map of key/value properties for the the XdmfItem.
-	 * @param childItems the children of the XdmfItem to create.
-	 *
-	 * @return constructed XdmfItem.  If no XdmfItem can be constructed, return NULL.
-	 */
-	virtual boost::shared_ptr<XdmfItem> createItem(const std::string & itemTag, const std::map<std::string, std::string> & itemProperties, const std::vector<boost::shared_ptr<XdmfItem> > & childItems) const;
+  /**
+   * Create a new XdmfItem.
+   *
+   * @param itemTag a string containing the tag of the XdmfItem to create.
+   * @param itemProperties a map of key/value properties for the the XdmfItem.
+   * @param childItems the children of the XdmfItem to create.
+   *
+   * @return constructed XdmfItem. If no XdmfItem can be constructed,
+   * return NULL.
+   */
+  virtual boost::shared_ptr<XdmfItem>
+  createItem(const std::string & itemTag,
+             const std::map<std::string, std::string> & itemProperties,
+             const std::vector<boost::shared_ptr<XdmfItem> > & childItems) const;
 
-protected:
+ protected:
 
-	XdmfCoreItemFactory();
+  XdmfCoreItemFactory();
 
-private:
+ private:
 
-	XdmfCoreItemFactory(const XdmfCoreItemFactory & itemFactory);  // Not implemented.
-	void operator=(const XdmfCoreItemFactory & itemFactory);  // Not implemented.
+  XdmfCoreItemFactory(const XdmfCoreItemFactory &);  // Not implemented.
+  void operator=(const XdmfCoreItemFactory &);  // Not implemented.
 
 };
 

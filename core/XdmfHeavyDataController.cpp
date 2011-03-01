@@ -24,11 +24,14 @@
 #include "XdmfHeavyDataController.hpp"
 #include "XdmfSystemUtils.hpp"
 
-XdmfHeavyDataController::XdmfHeavyDataController(const std::string & filePath, const std::string & dataSetPath, const unsigned int size, const boost::shared_ptr<const XdmfArrayType> type) :
-	mDataSetPath(dataSetPath),
-	mFilePath(XdmfSystemUtils::getRealPath(filePath)),
-	mSize(size),
-	mType(type)
+XdmfHeavyDataController::XdmfHeavyDataController(const std::string & filePath,
+                                                 const std::string & dataSetPath,
+                                                 const unsigned int size,
+                                                 const boost::shared_ptr<const XdmfArrayType> type) :
+  mDataSetPath(dataSetPath),
+  mFilePath(XdmfSystemUtils::getRealPath(filePath)),
+  mSize(size),
+  mType(type)
 {
 }
 
@@ -36,22 +39,26 @@ XdmfHeavyDataController::~XdmfHeavyDataController()
 {
 }
 
-std::string XdmfHeavyDataController::getDataSetPath() const
+std::string
+XdmfHeavyDataController::getDataSetPath() const
 {
-	return mDataSetPath;
+  return mDataSetPath;
 }
 
-std::string XdmfHeavyDataController::getFilePath() const
+std::string
+XdmfHeavyDataController::getFilePath() const
 {
-	return mFilePath;
+  return mFilePath;
 }
 
-unsigned int XdmfHeavyDataController::getSize() const
+unsigned int
+XdmfHeavyDataController::getSize() const
 {
-	return mSize;
+  return mSize;
 }
 
-boost::shared_ptr<const XdmfArrayType> XdmfHeavyDataController::getType() const
+boost::shared_ptr<const XdmfArrayType>
+XdmfHeavyDataController::getType() const
 {
-	return mType;
+  return mType;
 }

@@ -24,12 +24,10 @@ ADD_TEST_PYTHON(TestXdmfEquals)
 #	Read UseCxxTest.cmake for more information
 # ---------------------------------------
 CLEAN_TEST_PYTHON(TestXdmfHDF5Writer
-	hdf5WriterPythonTest.h5
-)
+  hdf5WriterPythonTest.h5)
 CLEAN_TEST_PYTHON(TestXdmfWriter
-	output.h5
-	output.xmf
-)
+  output.h5
+  output.xmf)
 CLEAN_TEST_PYTHON(TestXdmfEquals)
 
 # Add a custom target for all python tests

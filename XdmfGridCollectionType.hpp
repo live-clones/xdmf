@@ -31,49 +31,55 @@
 /**
  * @brief Property describing the type of an XdmfGridCollection.
  *
- * XdmfGridCollectionType is a property used by XdmfGridCollection to specify what type of collection the
- * XdmfGridCollection contains.  A specific XdmfGridCollectionType can be created by calling one of the static methods
- * in the class, i.e. XdmfGridCollectionType::Temporal().
+ * XdmfGridCollectionType is a property used by XdmfGridCollection to
+ * specify what type of collection the XdmfGridCollection contains. A
+ * specific XdmfGridCollectionType can be created by calling one of
+ * the static methods in the class,
+ * i.e. XdmfGridCollectionType::Temporal().
  *
  * Xdmf supports the following collection types:
- * 	NoCollectionType
- * 	Spatial
- * 	Temporal
+ *   NoCollectionType
+ *   Spatial
+ *   Temporal
  */
 class XDMF_EXPORT XdmfGridCollectionType : public XdmfItemProperty {
 
-public:
+ public:
 
-	virtual ~XdmfGridCollectionType();
+  virtual ~XdmfGridCollectionType();
 
-	friend class XdmfGridCollection;
+  friend class XdmfGridCollection;
 
-	// Supported XdmfGridCollectionTypes
-	static boost::shared_ptr<const XdmfGridCollectionType> NoCollectionType();
-	static boost::shared_ptr<const XdmfGridCollectionType> Spatial();
-	static boost::shared_ptr<const XdmfGridCollectionType> Temporal();
+  // Supported XdmfGridCollectionTypes
+  static boost::shared_ptr<const XdmfGridCollectionType> NoCollectionType();
+  static boost::shared_ptr<const XdmfGridCollectionType> Spatial();
+  static boost::shared_ptr<const XdmfGridCollectionType> Temporal();
 
-	void getProperties(std::map<std::string, std::string> & collectedProperties) const;
+  void
+  getProperties(std::map<std::string, std::string> & collectedProperties) const;
 
-protected:
+ protected:
 
-	/**
-	 * Protected constructor for XdmfGridCollectionType.  The constructor is protected because all collection types supported
-	 * by Xdmf should be accessed through more specific static methods that construct XdmfGridCollectionType - i.e.
-	 * XdmfGridCollectionType::Temporal().
-	 *
-	 * @param name the name of the XdmfGridCollectionType to construct.
-	 */
-	XdmfGridCollectionType(const std::string & name);
+  /**
+   * Protected constructor for XdmfGridCollectionType. The constructor
+   * is protected because all collection types supported by Xdmf
+   * should be accessed through more specific static methods that
+   * construct XdmfGridCollectionType -
+   * i.e. XdmfGridCollectionType::Temporal().
+   *
+   * @param name the name of the XdmfGridCollectionType to construct.
+   */
+  XdmfGridCollectionType(const std::string & name);
 
-private:
+ private:
 
-	XdmfGridCollectionType(const XdmfGridCollectionType & collectionType); // Not implemented.
-	void operator=(const XdmfGridCollectionType & collectionType); // Not implemented.
+  XdmfGridCollectionType(const XdmfGridCollectionType &); // Not implemented.
+  void operator=(const XdmfGridCollectionType &); // Not implemented.
 
-	static boost::shared_ptr<const XdmfGridCollectionType> New(const std::map<std::string, std::string> & itemProperties);
+  static boost::shared_ptr<const XdmfGridCollectionType>
+  New(const std::map<std::string, std::string> & itemProperties);
 
-	std::string mName;
+  std::string mName;
 };
 
 #endif /* XDMFGRIDCOLLECTIONTYPE_HPP_ */

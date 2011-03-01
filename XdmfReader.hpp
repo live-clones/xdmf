@@ -31,39 +31,43 @@
 /**
  * @brief Reads an Xdmf file stored on disk into memory.
  *
- * Reads an Xdmf file stored on disk into an Xdmf structure in memory.  All light data is parsed in order to create appropriate
- * Xdmf objects.  Heavy data controllers are created and attached to XdmfArrays but no heavy data is read into memory.
+ * Reads an Xdmf file stored on disk into an Xdmf structure in
+ * memory. All light data is parsed in order to create appropriate
+ * Xdmf objects. Heavy data controllers are created and attached to
+ * XdmfArrays but no heavy data is read into memory.
  */
 class XDMF_EXPORT XdmfReader : public XdmfCoreReader {
 
-public:
+ public:
 
-	/**
-	 * Create a new XdmfReader.
-	 *
-	 * @return constructed XdmfReader.
-	 */
-	static boost::shared_ptr<XdmfReader> New();
+  /**
+   * Create a new XdmfReader.
+   *
+   * @return constructed XdmfReader.
+   */
+  static boost::shared_ptr<XdmfReader> New();
 
-	virtual ~XdmfReader();
+  virtual ~XdmfReader();
 
-	boost::shared_ptr<XdmfItem> read(const std::string & filePath) const;
+  boost::shared_ptr<XdmfItem> read(const std::string & filePath) const;
 
-	std::vector<boost::shared_ptr<XdmfItem> > read(const std::string & filePath, const std::string & xPath) const;
+  std::vector<boost::shared_ptr<XdmfItem> >
+  read(const std::string & filePath,
+       const std::string & xPath) const;
 
-protected:
+ protected:
 
-	XdmfReader();
+  XdmfReader();
 
-private:
+ private:
 
-	XdmfReader(const XdmfReader & reader);  // Not implemented.
-	void operator=(const XdmfReader & reader);  // Not implemented.
+  XdmfReader(const XdmfReader &);  // Not implemented.
+  void operator=(const XdmfReader &);  // Not implemented.
 };
 
 #ifdef _WIN32
-    XDMF_TEMPLATE template class XDMF_EXPORT boost::shared_ptr<XdmfItem>;
+XDMF_TEMPLATE template class XDMF_EXPORT
+boost::shared_ptr<XdmfItem>;
 #endif
-
 
 #endif /* XDMFREADER_HPP_ */

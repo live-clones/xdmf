@@ -29,67 +29,72 @@
 #include "XdmfItemProperty.hpp"
 
 /**
- * @brief Property describing the types of coordinate values stored in an XdmfGeometry.
+ * @brief Property describing the types of coordinate values stored in
+ * an XdmfGeometry.
  *
- * XdmfGeometryType is a property used by XdmfGeometry to specify the type of coordinate values
- * stored in the XdmfGeometry.  A specific XdmfGeometryType can be created by calling on of the static methods
- * in the class, i.e. XdmfAttributeType::XYZ().
+ * XdmfGeometryType is a property used by XdmfGeometry to specify the
+ * type of coordinate values stored in the XdmfGeometry. A specific
+ * XdmfGeometryType can be created by calling one of the static
+ * methods in the class, i.e.  XdmfAttributeType::XYZ().
  *
  * Xdmf supports the following geometry types:
- * 	NoGeometryType
- * 	XYZ
- * 	XY
+ *   NoGeometryType
+ *   XYZ
+ *   XY
  */
 class XDMF_EXPORT XdmfGeometryType : public XdmfItemProperty {
 
-public:
+ public:
 
-	virtual ~XdmfGeometryType();
+  virtual ~XdmfGeometryType();
 
-	friend class XdmfGeometry;
+  friend class XdmfGeometry;
 
-	// Supported Xdmf Geometry Types
-	static boost::shared_ptr<const XdmfGeometryType> NoGeometryType();
-	static boost::shared_ptr<const XdmfGeometryType> XYZ();
-	static boost::shared_ptr<const XdmfGeometryType> XY();
+  // Supported Xdmf Geometry Types
+  static boost::shared_ptr<const XdmfGeometryType> NoGeometryType();
+  static boost::shared_ptr<const XdmfGeometryType> XYZ();
+  static boost::shared_ptr<const XdmfGeometryType> XY();
 
-	/**
-	 * Get the dimensions of this geometry type - i.e. XYZ = 3.
-	 *
-	 * @return an int containing number of dimensions.
-	 */
-	virtual unsigned int getDimensions() const;
+  /**
+   * Get the dimensions of this geometry type - i.e. XYZ = 3.
+   *
+   * @return an int containing number of dimensions.
+   */
+  virtual unsigned int getDimensions() const;
 
-	/**
-	 * Get the name of this geometry type.
-	 *
-	 * @return the name of this geometry type.
-	 */
-	std::string getName() const;
+  /**
+   * Get the name of this geometry type.
+   *
+   * @return the name of this geometry type.
+   */
+  std::string getName() const;
 
-	virtual void getProperties(std::map<std::string, std::string> & collectedProperties) const;
+  virtual void
+  getProperties(std::map<std::string, std::string> & collectedProperties) const;
 
-protected:
+ protected:
 
-	/**
-	 * Protected constructor for XdmfGeometryType.  The constructor is protected because all geometry types supported
-	 * by Xdmf should be accessed through more specific static methods that construct XdmfGeometryTypes -
-	 * i.e. XdmfGeometryType::XYZ().
-	 *
-	 * @param name a std::string containing the name of the XdmfGeometryType.
-	 * @param dimensions an int containing the dimensions of the XdmfGeometryType.
-	 */
-	XdmfGeometryType(const std::string & name, const int & dimensions);
+  /**
+   * Protected constructor for XdmfGeometryType.  The constructor is
+   * protected because all geometry types supported by Xdmf should be
+   * accessed through more specific static methods that construct
+   * XdmfGeometryTypes - i.e.  XdmfGeometryType::XYZ().
+   *
+   * @param name a std::string containing the name of the geometry type..
+   * @param dimensions an int containing the dimensions of the geometry type.
+   */
+  XdmfGeometryType(const std::string & name, const int & dimensions);
 
-private:
+ private:
 
-	XdmfGeometryType(const XdmfGeometryType & geometryType); // Not implemented.
-	void operator=(const XdmfGeometryType & geometryType); // Not implemented.
+  XdmfGeometryType(const XdmfGeometryType &); // Not implemented.
+  void operator=(const XdmfGeometryType &); // Not implemented.
 
-	static boost::shared_ptr<const XdmfGeometryType> New(const std::map<std::string, std::string> & itemProperties);
+  static boost::shared_ptr<const XdmfGeometryType>
+  New(const std::map<std::string, std::string> & itemProperties);
 
-	unsigned int mDimensions;
-	std::string mName;
+  unsigned int mDimensions;
+  std::string mName;
 };
 
 #endif /* XDMFGEOMETRYTYPE_HPP_ */

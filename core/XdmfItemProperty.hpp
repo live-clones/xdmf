@@ -31,35 +31,39 @@
 #include "XdmfCore.hpp"
 
 /**
- * @brief Represents a property attached to an XdmfItem.
+ * @brief A property attached to an XdmfItem.
  *
- * XdmfItems can have zero or more properties attached to them that describe a specific characteristic of that item.
- * For instance, XdmfAttributes have both Type and Center Properties.
+ * XdmfItems can have zero or more properties attached to them that
+ * describe a specific characteristic of that item. For instance,
+ * XdmfAttributes have both center and type properties.
  *
- * This is an abstract base class to facilitate reading and writing of properties in a generic way.
+ * This is an abstract base class to facilitate reading and writing of
+ * properties in a generic way.
  */
 
 class XDMFCORE_EXPORT XdmfItemProperty {
 
-public:
+ public:
 
-	virtual ~XdmfItemProperty() = 0;
+  virtual ~XdmfItemProperty() = 0;
 
-	/**
-	 * Retrieve the key/value pairs that this XdmfItemProperty contains by inserting into the passed vector.
-	 *
-	 * @param collectedProperties a std::vector<std::pair<std::string, std::string> > to insert name / value pairs into.
-	 */
-	virtual void getProperties(std::map<std::string, std::string> & collectedProperties) const = 0;
+  /**
+   * Retrieve the key/value pairs that this XdmfItemProperty contains by
+   * inserting into the passed map.
+   *
+   * @param collectedProperties a map to insert name / value pairs into.
+   */
+  virtual void
+  getProperties(std::map<std::string, std::string> & collectedProperties) const = 0;
 
-protected:
+ protected:
 
-	XdmfItemProperty();
+  XdmfItemProperty();
 
-private:
+ private:
 
-	XdmfItemProperty(const XdmfItemProperty&);  // Not implemented.
-	void operator=(const XdmfItemProperty&);  // Not implemented.
+  XdmfItemProperty(const XdmfItemProperty &);  // Not implemented.
+  void operator=(const XdmfItemProperty &);  // Not implemented.
 
 };
 

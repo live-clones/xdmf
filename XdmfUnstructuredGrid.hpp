@@ -29,71 +29,75 @@
 #include "XdmfGrid.hpp"
 
 /**
- * @brief An unstructured grid consisting of elements, points, and fields attached to the mesh.
+ * @brief An unstructured grid that consists of elements, points, and
+ * fields attached to the mesh.
  *
- * After creating an unstructured grid, the XdmfGeometry and XdmfTopology must be set.  The XdmfTopology
- * describes the element types contained in the grid and their connectivity.  The XdmfGeometry describes the
- * location of nodes.
+ * After creating an unstructured grid, the XdmfGeometry and
+ * XdmfTopology must be set. The XdmfTopology describes the element
+ * types contained in the grid and their connectivity. The
+ * XdmfGeometry describes the positions of nodes.
  */
 class XDMF_EXPORT XdmfUnstructuredGrid : public XdmfGrid {
 
-public:
+ public:
 
-	/**
-	 * Create a new XdmfGridUnstructured.
-	 *
-	 * @return constructed XdmfGridUnstructured.
-	 */
-	static boost::shared_ptr<XdmfUnstructuredGrid> New();
+  /**
+   * Create a new XdmfGridUnstructured.
+   *
+   * @return constructed XdmfGridUnstructured.
+   */
+  static boost::shared_ptr<XdmfUnstructuredGrid> New();
 
-	virtual ~XdmfUnstructuredGrid();
+  virtual ~XdmfUnstructuredGrid();
 
-	static const std::string ItemTag;
+  static const std::string ItemTag;
 
-	/**
-	 * Get the geometry associated with this grid.
-	 *
-	 * @return the geometry associated with this grid.
-	 */
-	boost::shared_ptr<XdmfGeometry> getGeometry();
+  /**
+   * Get the geometry associated with this grid.
+   *
+   * @return the geometry associated with this grid.
+   */
+  boost::shared_ptr<XdmfGeometry> getGeometry();
 
-	virtual std::string getItemTag() const;
+  virtual std::string getItemTag() const;
 
-	/**
-	 * Get the topology associated with this grid.
-	 *
-	 * @return the topology associated with this grid.
-	 */
-	boost::shared_ptr<XdmfTopology> getTopology();
+  /**
+   * Get the topology associated with this grid.
+   *
+   * @return the topology associated with this grid.
+   */
+  boost::shared_ptr<XdmfTopology> getTopology();
 
-	/**
-	 * Set the geometry associated with this grid.
-	 *
-	 * @param geometry an XdmfGeometry to associate with this grid.
-	 */
-	void setGeometry(const boost::shared_ptr<XdmfGeometry> geometry);
+  /**
+   * Set the geometry associated with this grid.
+   *
+   * @param geometry an XdmfGeometry to associate with this grid.
+   */
+  void setGeometry(const boost::shared_ptr<XdmfGeometry> geometry);
 
-	/**
-	 * Set the topology associated with this grid.
-	 *
-	 * @param topology an XdmfTopology to associate with this grid.
-	 */
-	void setTopology(const boost::shared_ptr<XdmfTopology> topology);
+  /**
+   * Set the topology associated with this grid.
+   *
+   * @param topology an XdmfTopology to associate with this grid.
+   */
+  void setTopology(const boost::shared_ptr<XdmfTopology> topology);
 
-protected:
+ protected:
 
-	XdmfUnstructuredGrid();
+  XdmfUnstructuredGrid();
 
-private:
+ private:
 
-	XdmfUnstructuredGrid(const XdmfUnstructuredGrid & grid);  // Not implemented.
-	void operator=(const XdmfUnstructuredGrid & grid);  // Not implemented.
+  XdmfUnstructuredGrid(const XdmfUnstructuredGrid &);  // Not implemented.
+  void operator=(const XdmfUnstructuredGrid &);  // Not implemented.
 
 };
 
 #ifdef _WIN32
-    XDMF_TEMPLATE template class XDMF_EXPORT boost::shared_ptr<XdmfTopology>;
-    XDMF_TEMPLATE template class XDMF_EXPORT boost::shared_ptr<XdmfGeometry>;
+XDMF_TEMPLATE template class XDMF_EXPORT
+boost::shared_ptr<XdmfTopology>;
+XDMF_TEMPLATE template class XDMF_EXPORT
+boost::shared_ptr<XdmfGeometry>;
 #endif
 
 #endif /* XDMFUNSTRUCTUREDGRID_HPP_ */

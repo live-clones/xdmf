@@ -25,16 +25,17 @@
 #include "XdmfAttributeCenter.hpp"
 #include "XdmfAttributeType.hpp"
 
-boost::shared_ptr<XdmfAttribute> XdmfAttribute::New()
+boost::shared_ptr<XdmfAttribute>
+XdmfAttribute::New()
 {
-	boost::shared_ptr<XdmfAttribute> p(new XdmfAttribute());
-	return p;
+  boost::shared_ptr<XdmfAttribute> p(new XdmfAttribute());
+  return p;
 }
 
 XdmfAttribute::XdmfAttribute() :
-	mCenter(XdmfAttributeCenter::Grid()),
-	mName(""),
-	mType(XdmfAttributeType::NoAttributeType())
+  mCenter(XdmfAttributeCenter::Grid()),
+  mName(""),
+  mType(XdmfAttributeType::NoAttributeType())
 {
 }
 
@@ -44,70 +45,84 @@ XdmfAttribute::~XdmfAttribute()
 
 const std::string XdmfAttribute::ItemTag = "Attribute";
 
-boost::shared_ptr<const XdmfAttributeCenter> XdmfAttribute::getCenter() const
+boost::shared_ptr<const XdmfAttributeCenter>
+XdmfAttribute::getCenter() const
 {
-	return mCenter;
+  return mCenter;
 }
 
-std::map<std::string, std::string> XdmfAttribute::getItemProperties() const
+std::map<std::string, std::string>
+XdmfAttribute::getItemProperties() const
 {
-	std::map<std::string, std::string> attributeProperties;
-	attributeProperties["Name"] = mName;
-	mType->getProperties(attributeProperties);
-	mCenter->getProperties(attributeProperties);
-	return attributeProperties;
+  std::map<std::string, std::string> attributeProperties;
+  attributeProperties["Name"] = mName;
+  mType->getProperties(attributeProperties);
+  mCenter->getProperties(attributeProperties);
+  return attributeProperties;
 }
 
-std::string XdmfAttribute::getItemTag() const
+std::string
+XdmfAttribute::getItemTag() const
 {
-	return ItemTag;
+  return ItemTag;
 }
 
-std::string XdmfAttribute::getName() const
+std::string
+XdmfAttribute::getName() const
 {
-	return mName;
+  return mName;
 }
 
-boost::shared_ptr<const XdmfAttributeType> XdmfAttribute::getType() const
+boost::shared_ptr<const XdmfAttributeType>
+XdmfAttribute::getType() const
 {
-	return mType;
+  return mType;
 }
 
-void XdmfAttribute::populateItem(const std::map<std::string, std::string> & itemProperties, std::vector<boost::shared_ptr<XdmfItem> > & childItems, const XdmfCoreReader * const reader)
+void
+XdmfAttribute::populateItem(const std::map<std::string, std::string> & itemProperties,
+                            std::vector<boost::shared_ptr<XdmfItem> > & childItems,
+                            const XdmfCoreReader * const reader)
 {
-	XdmfItem::populateItem(itemProperties, childItems, reader);
-	std::map<std::string, std::string>::const_iterator name = itemProperties.find("Name");
-	if(name != itemProperties.end())
-	{
-		mName = name->second;
-	}
-	else
-	{
-		assert(false);
-	}
-	mCenter = XdmfAttributeCenter::New(itemProperties);
-	mType = XdmfAttributeType::New(itemProperties);
-	for(std::vector<boost::shared_ptr<XdmfItem> >::const_iterator iter = childItems.begin(); iter != childItems.end(); ++iter)
-	{
-		if(boost::shared_ptr<XdmfArray> array = boost::shared_dynamic_cast<XdmfArray>(*iter))
-		{
-			this->swap(array);
-		}
-		// TODO: If multiple dataitems.
-	}
+  XdmfItem::populateItem(itemProperties, childItems, reader);
+
+  std::map<std::string, std::string>::const_iterator name =
+    itemProperties.find("Name");
+  if(name != itemProperties.end()) {
+    mName = name->second;
+  }
+  else {
+    assert(false);
+  }
+
+  mCenter = XdmfAttributeCenter::New(itemProperties);
+  mType = XdmfAttributeType::New(itemProperties);
+  for(std::vector<boost::shared_ptr<XdmfItem> >::const_iterator iter =
+        childItems.begin();
+      iter != childItems.end();
+      ++iter) {
+    if(boost::shared_ptr<XdmfArray> array =
+       boost::shared_dynamic_cast<XdmfArray>(*iter)) {
+      this->swap(array);
+    }
+    // TODO: If multiple dataitems.
+  }
 }
 
-void XdmfAttribute::setCenter(const boost::shared_ptr<const XdmfAttributeCenter> center)
+void
+XdmfAttribute::setCenter(const boost::shared_ptr<const XdmfAttributeCenter> center)
 {
-	mCenter = center;
+  mCenter = center;
 }
 
-void XdmfAttribute::setName(const std::string & name)
+void
+XdmfAttribute::setName(const std::string & name)
 {
-	mName= name;
+  mName= name;
 }
 
-void XdmfAttribute::setType(const boost::shared_ptr<const XdmfAttributeType> type)
+void
+XdmfAttribute::setType(const boost::shared_ptr<const XdmfAttributeType> type)
 {
-	mType = type;
+  mType = type;
 }

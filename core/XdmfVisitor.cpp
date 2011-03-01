@@ -32,7 +32,9 @@ XdmfVisitor::~XdmfVisitor()
 {
 }
 
-void XdmfVisitor::visit(XdmfItem & item, const boost::shared_ptr<XdmfBaseVisitor> visitor)
+void
+XdmfVisitor::visit(XdmfItem & item,
+                   const boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
-	item.traverse(visitor);
+  item.traverse(visitor);
 }

@@ -24,38 +24,43 @@
 #include "XdmfSetType.hpp"
 
 // Supported XdmfSetTypes
-boost::shared_ptr<const XdmfSetType> XdmfSetType::NoSetType()
+boost::shared_ptr<const XdmfSetType>
+XdmfSetType::NoSetType()
 {
-	static boost::shared_ptr<const XdmfSetType> p(new XdmfSetType("None"));
-	return p;
+  static boost::shared_ptr<const XdmfSetType> p(new XdmfSetType("None"));
+  return p;
 }
 
-boost::shared_ptr<const XdmfSetType> XdmfSetType::Node()
+boost::shared_ptr<const XdmfSetType>
+XdmfSetType::Node()
 {
-	static boost::shared_ptr<const XdmfSetType> p(new XdmfSetType("Node"));
-	return p;
+  static boost::shared_ptr<const XdmfSetType> p(new XdmfSetType("Node"));
+  return p;
 }
 
-boost::shared_ptr<const XdmfSetType> XdmfSetType::Cell()
+boost::shared_ptr<const XdmfSetType>
+XdmfSetType::Cell()
 {
-	static boost::shared_ptr<const XdmfSetType> p(new XdmfSetType("Cell"));
-	return p;
+  static boost::shared_ptr<const XdmfSetType> p(new XdmfSetType("Cell"));
+  return p;
 }
 
-boost::shared_ptr<const XdmfSetType> XdmfSetType::Face()
+boost::shared_ptr<const XdmfSetType>
+XdmfSetType::Face()
 {
-	static boost::shared_ptr<const XdmfSetType> p(new XdmfSetType("Face"));
-	return p;
+  static boost::shared_ptr<const XdmfSetType> p(new XdmfSetType("Face"));
+  return p;
 }
 
-boost::shared_ptr<const XdmfSetType> XdmfSetType::Edge()
+boost::shared_ptr<const XdmfSetType>
+XdmfSetType::Edge()
 {
-	static boost::shared_ptr<const XdmfSetType> p(new XdmfSetType("Edge"));
-	return p;
+  static boost::shared_ptr<const XdmfSetType> p(new XdmfSetType("Edge"));
+  return p;
 }
 
 XdmfSetType::XdmfSetType(const std::string & name) :
-	mName(name)
+  mName(name)
 {
 }
 
@@ -63,46 +68,41 @@ XdmfSetType::~XdmfSetType()
 {
 }
 
-boost::shared_ptr<const XdmfSetType> XdmfSetType::New(const std::map<std::string, std::string> & itemProperties)
+boost::shared_ptr<const XdmfSetType>
+XdmfSetType::New(const std::map<std::string, std::string> & itemProperties)
 {
-	std::map<std::string, std::string>::const_iterator type = itemProperties.find("Type");
-	if(type == itemProperties.end())
-	{
-		type = itemProperties.find("SetType");
-	}
-	if(type != itemProperties.end())
-	{
-		const std::string typeVal = type->second;
-		if(typeVal.compare("None") == 0)
-		{
-			return NoSetType();
-		}
-		else if(typeVal.compare("Node") == 0)
-		{
-			return Node();
-		}
-		else if(typeVal.compare("Cell") == 0)
-		{
-			return Cell();
-		}
-		else if(typeVal.compare("Face") == 0)
-		{
-			return Face();
-		}
-		else if(typeVal.compare("Edge") == 0)
-		{
-			return Edge();
-		}
-		else
-		{
-			assert(false);
-		}
-	}
-	assert(false);
-    return boost::shared_ptr<const XdmfSetType>();
+  std::map<std::string, std::string>::const_iterator type =
+    itemProperties.find("Type");
+  if(type == itemProperties.end()) {
+    type = itemProperties.find("SetType");
+  }
+  if(type != itemProperties.end()) {
+    const std::string typeVal = type->second;
+    if(typeVal.compare("None") == 0) {
+      return NoSetType();
+    }
+    else if(typeVal.compare("Node") == 0) {
+      return Node();
+    }
+    else if(typeVal.compare("Cell") == 0) {
+      return Cell();
+    }
+    else if(typeVal.compare("Face") == 0) {
+      return Face();
+    }
+    else if(typeVal.compare("Edge") == 0) {
+      return Edge();
+    }
+    else {
+      assert(false);
+    }
+  }
+  assert(false);
+  return boost::shared_ptr<const XdmfSetType>();
 }
 
-void XdmfSetType::getProperties(std::map<std::string, std::string> & collectedProperties) const
+void
+XdmfSetType::getProperties(std::map<std::string, std::string> & collectedProperties) const
 {
-	collectedProperties["Type"] = this->mName;
+  collectedProperties["Type"] = this->mName;
 }

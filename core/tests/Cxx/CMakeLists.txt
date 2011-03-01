@@ -15,32 +15,32 @@ ADD_TEST_CXX_PATH("${XDMF_BINARIES}")
 
 # Add any cxx tests here:
 # Note: We don't want to use a foreach loop to test the files incase we
-#	have extra arguments (ie: ADD_TEST_CXX(testname inputfile))
-#	Read UseCxxTest.cmake for more information
+#       have extra arguments (ie: ADD_TEST_CXX(testname inputfile))
+#       Read UseCxxTest.cmake for more information
 # ---------------------------------------
 ADD_TEST_CXX(TestXdmfArray)
 ADD_TEST_CXX(TestXdmfArrayWriteRead)
 ADD_TEST_CXX(TestXdmfHDF5Controller)
 ADD_TEST_CXX(TestXdmfHDF5Writer)
 if(XDMF_BUILD_DSM)
-	ADD_TEST_CXX(TestXdmfHDF5WriterDSM)
+  ADD_TEST_CXX(TestXdmfHDF5WriterDSM)
 endif(XDMF_BUILD_DSM)
 ADD_TEST_CXX(TestXdmfInformation)
 ADD_TEST_CXX(TestXdmfVersion)
 
 # Add any cxx cleanup here:
 # Note: We don't want to use a foreach loop to test the files incase we
-#	have multiple files (ie: CLEAN_TEST_CXX(testname outputfile1 ...))
-#	Read UseCxxTest.cmake for more information
+#       have multiple files (ie: CLEAN_TEST_CXX(testname outputfile1 ...))
+#       Read UseCxxTest.cmake for more information
 # ---------------------------------------
 CLEAN_TEST_CXX(TestXdmfArray)
-CLEAN_TEST_CXX(TestXdmfArrayWriteRead 
-	test.h5)
+CLEAN_TEST_CXX(TestXdmfArrayWriteRead
+  test.h5)
 CLEAN_TEST_CXX(TestXdmfHDF5Controller)
 CLEAN_TEST_CXX(TestXdmfHDF5Writer
-	hdf5WriterTest.h5)
+  hdf5WriterTest.h5)
 if(XDMF_BUILD_DSM)
-	CLEAN_TEST_CXX(TestXdmfHDF5WriterDSM)
+  CLEAN_TEST_CXX(TestXdmfHDF5WriterDSM)
 endif(XDMF_BUILD_DSM)
 CLEAN_TEST_CXX(TestXdmfInformation)
 CLEAN_TEST_CXX(TestXdmfVersion)
