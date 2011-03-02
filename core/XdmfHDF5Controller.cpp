@@ -58,7 +58,7 @@ XdmfHDF5Controller::XdmfHDF5Controller(const std::string & hdf5FilePath,
   mStart(start),
   mStride(stride)
 {
-  assert(mStart.size() == mStride.size() && 
+  assert(mStart.size() == mStride.size() &&
          mStride.size() == mDimensions.size());
 }
 
@@ -99,11 +99,16 @@ XdmfHDF5Controller::read(XdmfArray * const array, const int fapl)
                                NULL);
   hssize_t numVals = H5Sget_select_npoints(dataspace);
 
-//  hid_t memspace = H5Screate_simple(1, dims, NULL);
-//  hsize_t memStart[] = {0};
-//  hsize_t memStride[] = {1};
-//  hsize_t memCount[] = {10};
-//status = H5Sselect_hyperslab(memspace, H5S_SELECT_SET, memStart, memStride, memCount, NULL);
+  hid_t memspace = H5Screate_simple(mDimensions.size(),
+                                    &count[0],
+                                    NULL);
+  /*  status = H5Sselect_hyperslab(memspace,
+                               H5S_SELECT_SET,
+                               &memStart[0],
+                               &memStride[0],
+                               &memCount[0],
+                               NULL);*/
+
   hid_t datatype = H5Dget_type(dataset);
 
   array->initialize(mType, mDimensions);
@@ -112,14 +117,14 @@ XdmfHDF5Controller::read(XdmfArray * const array, const int fapl)
 
   status = H5Dread(dataset,
                    datatype,
-                   H5S_ALL,
+                   memspace,
                    dataspace,
                    H5P_DEFAULT,
                    array->getValuesInternal());
 
   status = H5Tclose(datatype);
   status = H5Sclose(dataspace);
-//  status = H5Sclose(memspace);
+  status = H5Sclose(memspace);
   status = H5Dclose(dataset);
   status = H5Fclose(hdf5Handle);
 }

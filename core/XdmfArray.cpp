@@ -464,7 +464,7 @@ std::string
 XdmfArray::getDimensionsString() const
 {
   const std::vector<unsigned int> & dimensions = this->getDimensions();
-  return GetValuesString().getValuesString(&dimensions[0], 
+  return GetValuesString().getValuesString(&dimensions[0],
                                            dimensions.size());
 }
 
@@ -491,9 +491,7 @@ XdmfArray::getItemProperties() const
   else {
     arrayProperties["Format"] = "XML";
   }
-  std::stringstream size;
-  size <<  this->getSize();
-  arrayProperties["Dimensions"] = size.str();
+  arrayProperties["Dimensions"] = this->getDimensionsString();
   if(mName.compare("") != 0) {
     arrayProperties["Name"] = mName;
   }
@@ -605,8 +603,8 @@ XdmfArray::initialize(const boost::shared_ptr<const XdmfArrayType> arrayType,
                       const std::vector<unsigned int> & dimensions)
 {
   mDimensions = dimensions;
-  const unsigned int size = std::accumulate(mDimensions.begin(),
-                                            mDimensions.end(),
+  const unsigned int size = std::accumulate(dimensions.begin(),
+                                            dimensions.end(),
                                             1,
                                             std::multiplies<unsigned int>());
   return this->initialize(arrayType, size);
@@ -711,12 +709,14 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
           newHDF5Path << xmlDir->second << hdf5Path;
           hdf5Path = newHDF5Path.str();
         }
-        mHeavyDataController = 
+        mHeavyDataController =
           XdmfHDF5Controller::New(hdf5Path,
                                   dataSetPath,
                                   arrayType,
-                                  std::vector<unsigned int>(1, 0),
-                                  std::vector<unsigned int>(1, 1),
+                                  std::vector<unsigned int>(mDimensions.size(),
+                                                            0),
+                                  std::vector<unsigned int>(mDimensions.size(),
+                                                            1),
                                   mDimensions);
       }
       else {

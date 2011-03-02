@@ -149,15 +149,16 @@ XdmfHDF5Writer::write(XdmfArray & array,
     hid_t dataspace = H5S_ALL;
     hid_t memspace = H5S_ALL;
 
+    std::vector<hsize_t> current_dims(dimensions.begin(), dimensions.end());
+  
     if(dataset < 0) {
-      std::vector<hsize_t> current_dims(dimensions.begin(), dimensions.end());
       std::vector<hsize_t> maximum_dims(dimensions.size(), H5S_UNLIMITED);
-      memspace = H5Screate_simple(dimensions.size(), 
-                                  &current_dims[0], 
+      memspace = H5Screate_simple(dimensions.size(),
+                                  &current_dims[0],
                                   &maximum_dims[0]);
       hid_t property = H5Pcreate(H5P_DATASET_CREATE);
-      hsize_t chunkSize = 1024;
-      status = H5Pset_chunk(property, 1, &chunkSize);
+      std::vector<hsize_t> chunk_size(dimensions.size(), 1024);
+      status = H5Pset_chunk(property, dimensions.size(), &chunk_size[0]);
       dataset = H5Dcreate(hdf5Handle,
                           dataSetPath.str().c_str(),
                           datatype,
@@ -191,7 +192,17 @@ XdmfHDF5Writer::write(XdmfArray & array,
                                      NULL) ;
       }
       else {
-        status = H5Dset_extent(dataset, &size);
+        // Overwriting - dataset rank must remain the same (hdf5 constraint)
+        hid_t dataspace = H5Dget_space(dataset);
+
+        const int ndims = H5Sget_simple_extent_ndims(dataspace);
+        assert(ndims == current_dims.size());
+
+        status = H5Dset_extent(dataset, &current_dims[0]);
+
+        if(status < 0) {
+          assert(false);
+        }
       }
     }
     status = H5Dwrite(dataset,
@@ -200,6 +211,11 @@ XdmfHDF5Writer::write(XdmfArray & array,
                       dataspace,
                       H5P_DEFAULT,
                       array.getValuesInternal());
+
+    if(status < 0) {
+      assert(false);
+    }
+
     if(dataspace != H5S_ALL) {
       status = H5Sclose(dataspace);
     }
@@ -213,7 +229,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
     H5Eset_auto2(0, old_func, old_client_data);
 
     // Attach a new controller to the array
-    boost::shared_ptr<XdmfHDF5Controller> newDataController = 
+    boost::shared_ptr<XdmfHDF5Controller> newDataController =
       boost::shared_ptr<XdmfHDF5Controller>();
 
     unsigned int newSize = array.getSize();
@@ -227,7 +243,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
                                    std::vector<unsigned int>(1, 1),
                                    std::vector<unsigned int>(1, newSize));
     }
-    
+
     if(mMode == Default || !array.getHeavyDataController()) {
       ++mDataSetId;
     }
@@ -237,8 +253,10 @@ XdmfHDF5Writer::write(XdmfArray & array,
         this->createHDF5Controller(hdf5FilePath,
                                    dataSetPath.str(),
                                    array.getArrayType(),
-                                   std::vector<unsigned int>(1, 0),
-                                   std::vector<unsigned int>(1, 1),
+                                   std::vector<unsigned int>(dimensions.size(),
+                                                             0),
+                                   std::vector<unsigned int>(dimensions.size(),
+                                                             1),
                                    dimensions);
     }
     array.setHeavyDataController(newDataController);

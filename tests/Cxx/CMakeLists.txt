@@ -14,6 +14,7 @@ ADD_TEST_CXX(TestXdmfAttribute)
 ADD_TEST_CXX(TestXdmfCurvilinearGrid)
 ADD_TEST_CXX(TestXdmfGeometry)
 ADD_TEST_CXX(TestXdmfGridCollection)
+ADD_TEST_CXX(TestXdmfHDF5Hyperslab)
 ADD_TEST_CXX(TestXdmfReader)
 ADD_TEST_CXX(TestXdmfRegularGrid)
 ADD_TEST_CXX(TestXdmfRectilinearGrid)
@@ -42,6 +43,10 @@ CLEAN_TEST_CXX(TestXdmfGridCollection
   TestXdmfGridCollectionHDF1.h5
   TestXdmfGridCollectionHDF1.xmf
   TestXdmfGridCollectionHDF2.xmf)
+CLEAN_TEST_CXX(TestXdmfHDF5Hyperslab
+  TestXdmfHDF5Hyperslab.xmf
+  TestXdmfHDF5Hyperslab.h5
+  TestXdmfHDF5Hyperslab2.xmf)
 CLEAN_TEST_CXX(TestXdmfReader
   TestXdmfReader1.h5
   TestXdmfReader1.xmf
