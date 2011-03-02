@@ -444,10 +444,8 @@ XdmfArray::getDimensions() const
   if(mHaveArray) {
     if(mDimensions.size() == 0) {
       const unsigned int size = boost::apply_visitor(Size(), mArray);
-      if(size > 0) {
-        std::vector<unsigned int> toReturn(1, size);
-        return toReturn;
-      }
+      std::vector<unsigned int> toReturn(1, size);
+      return toReturn;
     }
     return mDimensions;
   }
@@ -457,7 +455,7 @@ XdmfArray::getDimensions() const
   else if(mHeavyDataController) {
     return mHeavyDataController->getDimensions();
   }
-  return mDimensions;
+  return std::vector<unsigned int>(1, 0);
 }
 
 std::string

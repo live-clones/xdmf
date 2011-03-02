@@ -18,6 +18,10 @@ int main(int, char *)
   assert(array->getArrayType() == XdmfArrayType::Uninitialized());
   assert(array->getValuesString() == "");
   assert(array->getValuesInternal() == NULL);
+  std::vector<unsigned int> dimensions = array->getDimensions();
+  assert(dimensions.size() == 1);
+  assert(dimensions[0] == 0);
+  assert(array->getDimensionsString().compare("0 ") == 0);
   array->insert(0, &values[0], 4, 1, 1);
   assert(array->getSize() == 4);
   assert(array->getArrayType() == XdmfArrayType::Int32());
