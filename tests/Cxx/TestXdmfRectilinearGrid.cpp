@@ -34,7 +34,7 @@ int main(int, char *)
                                                                          vy,
                                                                          vz);
 
-  assert(grid->getDimensions()->getValuesString().compare("4 3 3 ") == 0);
+  assert(grid->getDimensions()->getValuesString().compare("4 3 3") == 0);
   assert(vx == grid->getCoordinates(0));
   assert(vy == grid->getCoordinates(1));
   assert(vz == grid->getCoordinates(2));

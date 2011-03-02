@@ -193,26 +193,37 @@ public:
   {
   }
 
+  template<typename T, typename U>
+  std::string
+  getValuesString(const T * const array,
+                  const int numValues) const
+  {
+    const unsigned int lastIndex = numValues-1;
+
+    if(lastIndex < 0) {
+      return "";
+    }
+
+    std::stringstream toReturn;
+    for(unsigned int i=0; i<lastIndex; ++i) {
+      toReturn << (U)array[i] << " ";
+    }
+    toReturn << (U)array[lastIndex];
+    return toReturn.str();
+  }
+
   std::string
   getValuesString(const char * const array,
                   const int numValues) const
   {
-    std::stringstream toReturn;
-    for(int i=0; i<numValues; ++i) {
-      toReturn << (int)array[i] << " ";
-    }
-    return toReturn.str();
+    return getValuesString<char, int>(array, numValues);
   }
 
   std::string
   getValuesString(const unsigned char * const array,
                   const int numValues) const
   {
-    std::stringstream toReturn;
-    for(int i=0; i<numValues; ++i) {
-      toReturn << (int)array[i] << " ";
-    }
-    return toReturn.str();
+    return getValuesString<unsigned char, int>(array, numValues);
   }
 
   template<typename T>
@@ -220,11 +231,7 @@ public:
   getValuesString(const T * const array,
                   const int numValues) const
   {
-    std::stringstream toReturn;
-    for(int i=0; i<numValues; ++i) {
-      toReturn << array[i] << " ";
-    }
-    return toReturn.str();
+    return getValuesString<T, T>(array, numValues);
   }
 
   template<typename T>
