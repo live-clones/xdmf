@@ -134,12 +134,13 @@ if(XDMF_WRAP_JAVA)
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
         LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
         ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-      set(java_compile_args -cp ".\;${CMAKE_BINARY_DIR}/*" *.java)
+      set(java_files *.java)
       set(java_dest "bin")
+      set(separator "\;")
     else(WIN32)
-      set(java_compile_args -cp "${CMAKE_BINARY_DIR}/*.jar"
-        ${XDMF_JAVA_DIR}/*.java)
+      set(java_files ${XDMF_JAVA_DIR}/*.java)
       set(java_dest "lib/java")
+      set(separator ":")
     endif(WIN32)
 
     add_custom_target(${java_name}_Java_Dir ALL DEPENDS ${XDMF_JAVA_DIR})
@@ -149,7 +150,7 @@ if(XDMF_WRAP_JAVA)
       ${${java_name}_JAVA_JAR})
     add_custom_command(OUTPUT ${${java_name}_JAVA_JAR}
       COMMAND ${CMAKE_COMMAND} -E chdir ${XDMF_JAVA_PACKAGE_DIR}
-              ${JAVA_COMPILE} ${java_compile_args}
+              ${JAVA_COMPILE} -cp \".${java_cp_jars}\" ${java_files}
       COMMAND ${JAVA_ARCHIVE} -cvf ${${java_name}_JAVA_JAR}
              "${XDMF_JAVA_PACKAGE_DIR}/*.class")
     add_dependencies(${java_name}Java ${java_name}_Java_Dir)
@@ -164,6 +165,7 @@ if(XDMF_WRAP_JAVA)
       ${CMAKE_BINARY_DIR}/${java_name}.jar
       ${XDMF_JAVA_DIR})
 
+    set(java_cp_jars "${java_cp_jars}${separator}${${java_name}_JAVA_JAR}")
     string(TOUPPER ${java_name} java_name_upper)
     set(${java_name_upper}_JAVA_JAR
       ${CMAKE_INSTALL_PREFIX}/lib/java/${java_name}.jar)
@@ -171,6 +173,7 @@ if(XDMF_WRAP_JAVA)
     if(NOT "${${java_name}Parent}" STREQUAL "")
       set(${java_name_upper}_JAVA_JAR ${${java_name_upper}_JAVA_JAR}
         PARENT_SCOPE)
+      set(java_cp_jars "${java_cp_jars}" PARENT_SCOPE)
     endif(NOT "${${java_name}Parent}" STREQUAL "")
 
     install(FILES ${CMAKE_BINARY_DIR}/${java_name}.jar
