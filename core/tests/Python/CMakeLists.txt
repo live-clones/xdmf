@@ -23,6 +23,7 @@ ADD_TEST_PYTHON_PATH("${LIBXML2_BINARY_DIRS}")
 #       Read UsePythonTest.cmake for more information
 # ---------------------
 ADD_TEST_PYTHON(TestXdmfArray)
+ADD_TEST_PYTHON(TestXdmfArrayMultidimensional)
 ADD_TEST_PYTHON(TestXdmfEquals)
 ADD_TEST_PYTHON(TestXdmfVersion)
 
@@ -32,6 +33,7 @@ ADD_TEST_PYTHON(TestXdmfVersion)
 #       Read UseCxxTest.cmake for more information
 # ---------------------------------------
 CLEAN_TEST_PYTHON(TestXdmfArray)
+CLEAN_TEST_PYTHON(TestXdmfArrayMultidimensional)
 CLEAN_TEST_PYTHON(TestXdmfEquals)
 CLEAN_TEST_PYTHON(TestXdmfVersion)
 

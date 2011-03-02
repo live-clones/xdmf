@@ -349,4 +349,5 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %template(resizeAsUInt16) XdmfArray::resize<unsigned short>;
 %template(resizeAsUInt32) XdmfArray::resize<unsigned int>;
 
+%template(UIntVector) std::vector<unsigned int>;
 %template(ItemVector) std::vector<boost::shared_ptr<XdmfItem> >;
