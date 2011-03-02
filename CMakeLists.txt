@@ -243,7 +243,13 @@ if(NOT XDMF_BUILD_CORE_ONLY)
     set(XDMF_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/libXdmf.so)
   endif(WIN32)
 
-  file(GLOB XdmfHeaders "*.hpp" "*.tpp" "*.i" "CMake/VersionSuite/*.hpp")
+  file(GLOB XdmfHeaders 
+    "*.hpp" 
+    "*.tpp" 
+    "*.i" 
+    "CMake/VersionSuite/*.hpp"
+    "${CMAKE_BINARY_DIR}/*.hpp"
+  )
   install(FILES ${XdmfHeaders} DESTINATION include)
   install(TARGETS Xdmf
     RUNTIME DESTINATION bin
