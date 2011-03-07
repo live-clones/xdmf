@@ -10,6 +10,7 @@ if version_info >= (2,6,0):
     def swig_import_helper():
         from os.path import dirname
         import imp
+        fp = None
         try:
             fp, pathname, description = imp.find_module('_Xdmf', [dirname(__file__)])
             _mod = imp.load_module('_Xdmf', fp, pathname, description)
