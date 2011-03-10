@@ -78,6 +78,7 @@ set(XdmfCoreSources
   XdmfArrayType
   XdmfCoreItemFactory
   XdmfCoreReader
+  XdmfError
   XdmfHDF5Controller
   XdmfHDF5Writer
   XdmfHeavyDataController
