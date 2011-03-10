@@ -644,7 +644,9 @@ XdmfGrid * XdmfHex125Generator::Generate(XdmfGrid * grid, XdmfElement * parentEl
   return newGrid;
 }
 
-XdmfGrid * XdmfHex125Generator::Split(XdmfGrid * grid, XdmfElement * parentElement)
+XdmfGrid * XdmfHex125Generator::Split(XdmfGrid * grid, 
+                                      XdmfElement * parentElement,
+                                      bool splitAttributes)
 {
   if(grid->GetTopology()->GetTopologyType() != XDMF_HEX_125)
   {
@@ -662,7 +664,10 @@ XdmfGrid * XdmfHex125Generator::Split(XdmfGrid * grid, XdmfElement * parentEleme
   newGrid->SetDeleteOnGridDelete(true);
   newGrid->SetName(grid->GetName());
 
-  parentElement->Insert(newGrid);
+  if(parentElement) 
+  {
+    parentElement->Insert(newGrid);
+  }
 
   XdmfGeometry * newGeometry = newGrid->GetGeometry();
   newGeometry->SetGeometryType(grid->GetGeometry()->GetGeometryType());
@@ -1202,34 +1207,35 @@ XdmfGrid * XdmfHex125Generator::Split(XdmfGrid * grid, XdmfElement * parentEleme
 
   }
 
-  for(int i=0; i<grid->GetNumberOfAttributes(); ++i)
+  if(splitAttributes) 
   {
-    XdmfAttribute * currAttribute = grid->GetAttribute(i);
-    currAttribute->Update();
-    if(currAttribute->GetAttributeCenter() == XDMF_ATTRIBUTE_CENTER_NODE)
+    for(int i=0; i<grid->GetNumberOfAttributes(); ++i)
     {
-      newGrid->Insert(currAttribute);
-      currAttribute->SetDeleteOnGridDelete(false);
-    }
-    else if(currAttribute->GetAttributeType() == XDMF_ATTRIBUTE_CENTER_CELL)
-    {
-      XdmfAttribute * newAttribute = new XdmfAttribute();
-      newAttribute->SetName(currAttribute->GetName());
-      newAttribute->SetAttributeType(currAttribute->GetAttributeType());
-      newAttribute->SetAttributeCenter(currAttribute->GetAttributeCenter());
-      newAttribute->SetDeleteOnGridDelete(true);
-
-      XdmfArray * vals = newAttribute->GetValues();
-      vals->SetNumberType(currAttribute->GetValues()->GetNumberType());
-      vals->SetNumberOfElements(currAttribute->GetValues()->GetNumberOfElements() * 64);
-      for(int j=0; j<currAttribute->GetValues()->GetNumberOfElements(); ++j)
+      XdmfAttribute * currAttribute = grid->GetAttribute(i);
+      currAttribute->Update();
+      if(currAttribute->GetAttributeCenter() == XDMF_ATTRIBUTE_CENTER_NODE)
       {
-
-        vals->SetValues(j*64, currAttribute->GetValues(), 64, j, 1, 0);
+        newGrid->Insert(currAttribute);
+        currAttribute->SetDeleteOnGridDelete(false);
       }
-      newGrid->Insert(newAttribute);
+      else if(currAttribute->GetAttributeType() == XDMF_ATTRIBUTE_CENTER_CELL)
+      {
+        XdmfAttribute * newAttribute = new XdmfAttribute();
+        newAttribute->SetName(currAttribute->GetName());
+        newAttribute->SetAttributeType(currAttribute->GetAttributeType());
+        newAttribute->SetAttributeCenter(currAttribute->GetAttributeCenter());
+        newAttribute->SetDeleteOnGridDelete(true);
+
+        XdmfArray * vals = newAttribute->GetValues();
+        vals->SetNumberType(currAttribute->GetValues()->GetNumberType());
+        vals->SetNumberOfElements(currAttribute->GetValues()->GetNumberOfElements() * 64);
+        for(int j=0; j<currAttribute->GetValues()->GetNumberOfElements(); ++j)
+        {
+          vals->SetValues(j*64, currAttribute->GetValues(), 64, j, 1, 0);
+        }
+        newGrid->Insert(newAttribute);
+      }
     }
   }
-
   return newGrid;
 }

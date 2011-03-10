@@ -65,10 +65,13 @@ public:
      *
      * @param grid an XdmfGrid containing XDMF_HEX_64 topology to split.
      * @param parentElement the XdmfElement to insert the grid into.
+     * @param splitAttributes a bool whether to split attributes in the mesh.
      *
      * @return a pointer to the split XdmfGrid.
      */
-    XdmfGrid * Split(XdmfGrid * grid, XdmfElement * parentElement);
+    XdmfGrid * Split(XdmfGrid * grid, 
+                     XdmfElement * parentElement,
+                     bool splitAttributes = true);
 
 private:
 
