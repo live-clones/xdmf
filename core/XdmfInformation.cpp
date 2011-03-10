@@ -22,6 +22,7 @@
 /*****************************************************************************/
 
 #include "XdmfInformation.hpp"
+#include "XdmfError.hpp"
 
 boost::shared_ptr<XdmfInformation>
 XdmfInformation::New()
@@ -91,7 +92,7 @@ XdmfInformation::populateItem(const std::map<std::string, std::string> & itemPro
     mKey = key->second;
   }
   else {
-    assert(false);
+    XdmfError::message(XdmfError::FATAL, "'Name' not found in itemProperties in XdmfInformation::populateItem");
   }
 
   std::map<std::string, std::string>::const_iterator value =
@@ -100,7 +101,7 @@ XdmfInformation::populateItem(const std::map<std::string, std::string> & itemPro
     mValue = value->second;
   }
   else {
-    assert(false);
+    XdmfError::message(XdmfError::FATAL, "'Value' not found in itemProperties in XdmfInformation::populateItem");
   }
 }
 

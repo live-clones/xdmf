@@ -27,6 +27,7 @@
 #include "XdmfArrayType.hpp"
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfHDF5Writer.hpp"
+#include "XdmfError.hpp"
 
 boost::shared_ptr<XdmfHDF5Writer>
 XdmfHDF5Writer::New(const std::string & filePath)
@@ -102,7 +103,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
       datatype = H5T_NATIVE_UINT;
     }
     else {
-      assert(false);
+        XdmfError::message(XdmfError::FATAL, "Array of unsupported type in XdmfHDF5Writer::write");
     }
   }
 
@@ -196,12 +197,15 @@ XdmfHDF5Writer::write(XdmfArray & array,
         hid_t dataspace = H5Dget_space(dataset);
 
         const int ndims = H5Sget_simple_extent_ndims(dataspace);
-        assert(ndims == current_dims.size());
+        if(ndims != current_dims.size())
+            XdmfError::message(XdmfError::FATAL, "Data set rank different -- ndims != current_dims.size() -- in XdmfHDF5Writer::write");
 
         status = H5Dset_extent(dataset, &current_dims[0]);
 
         if(status < 0) {
-          assert(false);
+          std::ostringstream oss;
+          oss << "H5Dset_extent returned failure in XdmfHDF5Writer::write -- status: " << status;
+          XdmfError::message(XdmfError::FATAL, oss.str());
         }
       }
     }
@@ -213,7 +217,9 @@ XdmfHDF5Writer::write(XdmfArray & array,
                       array.getValuesInternal());
 
     if(status < 0) {
-      assert(false);
+      std::ostringstream oss;
+      oss << "H5Dwrite returned failure in XdmfHDF5Writer::write -- status: " << status;
+      XdmfError::message(XdmfError::FATAL, oss.str());
     }
 
     if(dataspace != H5S_ALL) {

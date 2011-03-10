@@ -4,9 +4,9 @@
 #include <iostream>
 #include <sstream>
 
-#include <Xdmf.hpp>
+#include "XdmfCore.hpp"
 
-class XDMF_EXPORT XdmfError
+class XDMFCORE_EXPORT XdmfError
 {
 public:
     XdmfError();

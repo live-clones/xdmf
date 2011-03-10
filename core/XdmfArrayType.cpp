@@ -23,6 +23,7 @@
 
 #include <sstream>
 #include "XdmfArrayType.hpp"
+#include "XdmfError.hpp"
 
 // Supported XdmfArrayTypes
 boost::shared_ptr<const XdmfArrayType>
@@ -163,10 +164,10 @@ XdmfArrayType::New(const std::map<std::string, std::string> & itemProperties)
       return UInt32();
     }
     else {
-      assert(false);
+      XdmfError::message(XdmfError::FATAL, "Type not one of accepted values: "+typeVal+" in XdmfArrayType::New");
     }
   }
-  assert(false);
+  XdmfError::message(XdmfError::FATAL, "Type unset because neither 'DataType' nor 'NumberType' found in itemProperties in XdmfArrayType::New");
   return boost::shared_ptr<const XdmfArrayType>();
 }
 

@@ -29,6 +29,7 @@
 #include "XdmfHeavyDataController.hpp"
 #include "XdmfSystemUtils.hpp"
 #include "XdmfVisitor.hpp"
+#include "XdmfError.hpp"
 
 class XdmfArray::Clear : public boost::static_visitor<void> {
 public:
@@ -599,7 +600,7 @@ XdmfArray::initialize(const boost::shared_ptr<const XdmfArrayType> arrayType,
     this->release();
   }
   else {
-    assert(false);
+    XdmfError::message(XdmfError::FATAL, "Array of unsupported type in XdmfArray::initialize");
   }
 }
 
@@ -676,7 +677,7 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
     contentVal = content->second;
   }
   else {
-    assert(false);
+    XdmfError::message(XdmfError::FATAL, "'Content' not found in itemProperties in XdmfArray::populateItem");
   }
 
   std::map<std::string, std::string>::const_iterator dimensions =
@@ -690,7 +691,7 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
     }
   }
   else {
-    assert(false);
+    XdmfError::message(XdmfError::FATAL, "'Dimensions' not found in itemProperties in XdmfArray::populateItem");
   }
 
   std::map<std::string, std::string>::const_iterator format =
@@ -700,7 +701,7 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
       std::map<std::string, std::string>::const_iterator xmlDir =
         itemProperties.find("XMLDir");
       if(xmlDir == itemProperties.end()) {
-        assert(false);
+        XdmfError::message(XdmfError::FATAL, "'XMLDir' not found in itemProperties in XdmfArray::populateItem");
       }
       size_t colonLocation = contentVal.find(":");
       if(colonLocation != std::string::npos) {
@@ -725,7 +726,7 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
                                   mDimensions);
       }
       else {
-        assert(false);
+        XdmfError::message(XdmfError::FATAL, "':' not found in content in XdmfArray::populateItem -- double check an HDF5 data set is specified for the file");
       }
     }
     else if(format->second.compare("XML") == 0) {
@@ -742,11 +743,11 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
       }
     }
     else {
-      assert(false);
+      XdmfError::message(XdmfError::FATAL, "Neither 'HDF' nor 'XML' specified as 'Format' in XdmfArray::populateItem");
     }
   }
   else {
-    assert(false);
+    XdmfError::message(XdmfError::FATAL, "'Format' not found in itemProperties in XdmfArray::populateItem");
   }
 
   std::map<std::string, std::string>::const_iterator name =

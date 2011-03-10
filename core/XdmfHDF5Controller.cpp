@@ -27,6 +27,7 @@
 #include "XdmfArrayType.hpp"
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfSystemUtils.hpp"
+#include "XdmfError.hpp"
 
 boost::shared_ptr<XdmfHDF5Controller>
 XdmfHDF5Controller::New(const std::string & hdf5FilePath,
@@ -58,8 +59,8 @@ XdmfHDF5Controller::XdmfHDF5Controller(const std::string & hdf5FilePath,
   mStart(start),
   mStride(stride)
 {
-  assert(mStart.size() == mStride.size() &&
-         mStride.size() == mDimensions.size());
+  if(!(mStart.size() == mStride.size() && mStride.size() == mDimensions.size()))
+    XdmfError::message(XdmfError::FATAL, "mStart, mStride, mDimensions must all be of equal length in XdmfHDF5Controller constructor");
 }
 
 XdmfHDF5Controller::~XdmfHDF5Controller()
@@ -113,7 +114,8 @@ XdmfHDF5Controller::read(XdmfArray * const array, const int fapl)
 
   array->initialize(mType, mDimensions);
 
-  assert(numVals == array->getSize());
+  if(numVals != array->getSize())
+    XdmfError::message(XdmfError::FATAL, "numVals in H5 does not match size of XdmfArray in XdmfHDF5Controller::read");
 
   status = H5Dread(dataset,
                    datatype,

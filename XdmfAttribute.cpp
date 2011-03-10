@@ -24,6 +24,7 @@
 #include "XdmfAttribute.hpp"
 #include "XdmfAttributeCenter.hpp"
 #include "XdmfAttributeType.hpp"
+#include "XdmfError.hpp"
 
 boost::shared_ptr<XdmfAttribute>
 XdmfAttribute::New()
@@ -92,7 +93,7 @@ XdmfAttribute::populateItem(const std::map<std::string, std::string> & itemPrope
     mName = name->second;
   }
   else {
-    assert(false);
+    XdmfError::message(XdmfError::FATAL,"'Name' not found in itemProperties in XdmfAttribute::populateItem");
   }
 
   mCenter = XdmfAttributeCenter::New(itemProperties);

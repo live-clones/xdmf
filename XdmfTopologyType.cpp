@@ -24,6 +24,7 @@
 #include <cctype>
 #include <sstream>
 #include "XdmfTopologyType.hpp"
+#include "XdmfError.hpp"
 
 // Supported XdmfTopologyTypes
 boost::shared_ptr<const XdmfTopologyType>
@@ -287,7 +288,7 @@ XdmfTopologyType::New(const std::map<std::string, std::string> & itemProperties)
       if(nodesPerElement != itemProperties.end()) {
         return Polygon(atoi(nodesPerElement->second.c_str()));
       }
-      assert(false);
+      XdmfError::message(XdmfError::FATAL, "'NodesPerElement' not in itemProperties and type 'POLYGON' selected in XdmfTopologyType::New");
     }
     else if(typeVal.compare("TRIANGLE") == 0) {
       return Triangle();
@@ -341,10 +342,10 @@ XdmfTopologyType::New(const std::map<std::string, std::string> & itemProperties)
       return Mixed();
     }
     else {
-      assert(false);
+      XdmfError::message(XdmfError::FATAL, "Invalid Type selected in XdmfTopologyType::New");
     }
   }
-  assert(false);
+  XdmfError::message(XdmfError::FATAL, "Neither 'Type' nor 'TopologyType' found in itemProperties in XdmfTopologyType::New");
   return boost::shared_ptr<const XdmfTopologyType>();
 }
 

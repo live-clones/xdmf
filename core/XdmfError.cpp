@@ -26,6 +26,8 @@ XdmfError::message(Level level, std::string msg)
 {
     if(level<=XdmfError::getLevel())
         XdmfError::WriteToStream(msg);
+    if(level == XdmfError::FATAL)
+        exit(1);
 }
 
 void

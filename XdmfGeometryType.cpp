@@ -22,6 +22,7 @@
 /*****************************************************************************/
 
 #include "XdmfGeometryType.hpp"
+#include "XdmfError.hpp"
 
 // Supported XdmfGeometryTypes
 boost::shared_ptr<const XdmfGeometryType>
@@ -80,10 +81,10 @@ XdmfGeometryType::New(const std::map<std::string, std::string> & itemProperties)
       return XY();
     }
     else {
-      assert(false);
+      XdmfError::message(XdmfError::FATAL, "Type not 'None', 'XYZ', or 'XY' in XdmfGeometryType::New");
     }
   }
-  assert(false);
+  XdmfError::message(XdmfError::FATAL, "Neither 'Type' nor 'GeometryType' in itemProperties in XdmfGeometryType::New");
   return boost::shared_ptr<const XdmfGeometryType>();
 }
 

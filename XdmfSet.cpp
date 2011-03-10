@@ -25,6 +25,7 @@
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfSet.hpp"
 #include "XdmfSetType.hpp"
+#include "XdmfError.hpp"
 
 XDMF_CHILDREN_IMPLEMENTATION(XdmfSet, XdmfAttribute, Attribute, Name)
 
@@ -86,7 +87,7 @@ XdmfSet::populateItem(const std::map<std::string, std::string> & itemProperties,
     mName = name->second;
   }
   else  {
-    assert(false);
+    XdmfError::message(XdmfError::FATAL, "'Name' not found in itemProperties in XdmfSet::populateItem");
   }
   mType = XdmfSetType::New(itemProperties);
   for(std::vector<boost::shared_ptr<XdmfItem> >::const_iterator iter =

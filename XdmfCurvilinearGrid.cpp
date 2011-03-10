@@ -27,6 +27,7 @@
 #include "XdmfGeometry.hpp"
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
+#include "XdmfError.hpp"
 
 /**
  * PIMPL
@@ -108,7 +109,7 @@ public:
         collectedProperties["Type"] = "2DSMesh";
       }
       else {
-        assert(false);
+        XdmfError::message(XdmfError::FATAL, "Grid dimensions not 2 or 3 in XdmfTopologyTypeCurvilinear::getProperties");
       }
       collectedProperties["Dimensions"] = dimensions->getValuesString();
     }

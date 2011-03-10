@@ -32,6 +32,7 @@
 #include "XdmfTopologyConverter.hpp"
 #include "XdmfTopologyType.hpp"
 #include "XdmfUnstructuredGrid.hpp"
+#include "XdmfError.hpp"
 
 //
 // local methods
@@ -2584,7 +2585,8 @@ XdmfTopologyConverter::convert(const boost::shared_ptr<XdmfUnstructuredGrid> gri
                                const boost::shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) const
 {
   // Make sure geometry and topology are non null
-  assert(gridToConvert->getGeometry() && gridToConvert->getTopology());
+  if(!(gridToConvert->getGeometry() && gridToConvert->getTopology()))
+    XdmfError::message(XdmfError::FATAL, "Current grid's geometry or topology is null in XdmfTopologyConverter::convert");
 
   boost::shared_ptr<const XdmfTopologyType> topologyTypeToConvert =
     gridToConvert->getTopology()->getType();
@@ -2594,7 +2596,7 @@ XdmfTopologyConverter::convert(const boost::shared_ptr<XdmfUnstructuredGrid> gri
   }
 
   if(gridToConvert->getGeometry()->getType() != XdmfGeometryType::XYZ()) {
-    assert(false);
+    XdmfError::message(XdmfError::FATAL, "Grid to convert's type is not 'XYZ' in XdmfTopologyConverter::convert");
   }
 
   Converter * converter = NULL;
@@ -2629,6 +2631,6 @@ XdmfTopologyConverter::convert(const boost::shared_ptr<XdmfUnstructuredGrid> gri
     return toReturn;
   }
   else {
-    assert(false);
+    XdmfError::message(XdmfError::FATAL, "Converter NULL because topology type to convert not of valid type in XdmfTopologyConverter::convert");
   }
 }

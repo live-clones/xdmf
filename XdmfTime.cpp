@@ -23,6 +23,7 @@
 
 #include <sstream>
 #include "XdmfTime.hpp"
+#include "XdmfError.hpp"
 
 boost::shared_ptr<XdmfTime>
 XdmfTime::New(const double & value)
@@ -76,7 +77,7 @@ XdmfTime::populateItem(const std::map<std::string, std::string> & itemProperties
     mValue = atof(value->second.c_str());
   }
   else {
-    assert(false);
+    XdmfError::message(XdmfError::FATAL, "'Value' not in itemProperties in XdmfTime::populateItem");
   }
 }
 

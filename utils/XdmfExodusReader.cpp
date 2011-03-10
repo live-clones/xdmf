@@ -35,6 +35,7 @@
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
 #include "XdmfUnstructuredGrid.hpp"
+#include "XdmfError.hpp"
 
 //
 // local methods
@@ -233,7 +234,7 @@ XdmfExodusReader::read(const std::string & fileName,
 
   if(exodusHandle < 0) {
     // Invalid fileName
-    assert(false);
+    XdmfError::message(XdmfError::FATAL, "Invalid fileName: "+fileName+" in XdmfExodusReader::read");
   }
 
   char * title = new char[MAX_LINE_LENGTH+1];
@@ -275,7 +276,9 @@ XdmfExodusReader::read(const std::string & fileName,
   }
   else {
     // Xdmf does not support geometries with less than 2 dimensions
-    assert(false);
+    std::ostringstream oss;
+    oss << "Xdmf does not support geometries with less than 2 dimensions -- num_dim: " << num_dim << "-- in XdmfExodusReader::read";
+    XdmfError::message(XdmfError::FATAL, oss.str());
   }
 
   toReturn->getGeometry()->initialize(XdmfArrayType::Float64());
@@ -343,7 +346,8 @@ XdmfExodusReader::read(const std::string & fileName,
           iter != topologyTypes.end();
           ++iter) {
         // Cannot be mixed topology!
-        assert(toReturn->getTopology()->getType() == *iter);
+        if(toReturn->getTopology()->getType() != *iter)
+            XdmfError::message(XdmfError::FATAL, "Requested mix of topology types -- "+toReturn->getTopology()->getType()->getName()+" and "+(*iter)->getName()+" in XdmfExodusReader::read");
       }
     }
   }

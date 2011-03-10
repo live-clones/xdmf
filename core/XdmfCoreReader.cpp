@@ -29,6 +29,7 @@
 #include "XdmfCoreReader.hpp"
 #include "XdmfItem.hpp"
 #include "XdmfSystemUtils.hpp"
+#include "XdmfError.hpp"
 
 /**
  * PIMPL
@@ -69,7 +70,7 @@ public:
     mDocument = xmlReadFile(filePath.c_str(), NULL, 0);
 
     if(mDocument == NULL) {
-      assert(false);
+      XdmfError::message(XdmfError::FATAL, "xmlReadFile could not read "+filePath+" in XdmfCoreReader::XdmfCoreReaderImpl::openFile");
     }
 
     mXPathContext = xmlXPtrNewContext(mDocument, NULL, NULL);
@@ -156,7 +157,7 @@ public:
                                  itemProperties,
                                  childItems);
       if(newItem == NULL) {
-        assert(false);
+        XdmfError::message(XdmfError::FATAL, "mItemFactory failed to createItem in XdmfCoreReader::XdmfCoreReaderImpl::readSingleNode");
       }
 
       newItem->populateItem(itemProperties, childItems, mCoreReader);

@@ -22,6 +22,7 @@
 /*****************************************************************************/
 
 #include "XdmfAttributeCenter.hpp"
+#include "XdmfError.hpp"
 
 // Supported XdmfAttributeCenters
 boost::shared_ptr<const XdmfAttributeCenter>
@@ -96,10 +97,10 @@ XdmfAttributeCenter::New(const std::map<std::string, std::string> & itemProperti
       return Node();
     }
     else {
-      assert(false);
+      XdmfError::message(XdmfError::FATAL, "Center not of 'Grid','Cell','Face','Edge','Node' in XdmfAttributeCenter::New");
     }
   }
-  assert(false);
+  XdmfError::message(XdmfError::FATAL, "'Center' not found in itemProperties in XdmfAttributeCenter::New");
   return boost::shared_ptr<const XdmfAttributeCenter>();
 }
 

@@ -26,6 +26,7 @@
 #include "XdmfGridCollectionType.hpp"
 #include "XdmfHeavyDataController.hpp"
 #include "XdmfMap.hpp"
+#include "XdmfError.hpp"
 
 boost::shared_ptr<XdmfMap>
 XdmfMap::New()
@@ -167,9 +168,11 @@ XdmfMap::populateItem(const std::map<std::string, std::string> & itemProperties,
         arrayVector.push_back(array);
       }
   }
-  assert(arrayVector.size() == 3);
-  assert(arrayVector[0]->getSize() == arrayVector[1]->getSize() &&
-         arrayVector[0]->getSize() == arrayVector[2]->getSize());
+  if(arrayVector.size() != 3)
+    XdmfError::message(XdmfError::FATAL, "Length of array vector not equal to 3 in XdmfMap::populateItem");
+  if(!(arrayVector[0]->getSize() == arrayVector[1]->getSize() &&
+         arrayVector[0]->getSize() == arrayVector[2]->getSize()))
+    XdmfError::message(XdmfError::FATAL, "Length of individual array vectors not equal in XdmfMap::populateItem");
   bool needToRead = false;
   for(std::vector<boost::shared_ptr<XdmfArray> >::const_iterator iter =
         arrayVector.begin();
@@ -206,10 +209,11 @@ XdmfMap::read()
   if(mLocalNodeIdsController &&
      mRemoteTaskIdsController &&
      mRemoteLocalNodeIdsController) {
-    assert(mLocalNodeIdsController->getSize() ==
+    if(!(mLocalNodeIdsController->getSize() ==
            mRemoteTaskIdsController->getSize() &&
            mLocalNodeIdsController->getSize() ==
-           mRemoteLocalNodeIdsController->getSize());
+           mRemoteLocalNodeIdsController->getSize()))
+      XdmfError::message(XdmfError::FATAL, "Number of local nodes not equal to number of remote tasks or nodes in XdmfMap::read");
     boost::shared_ptr<XdmfArray> globalNodeIds = XdmfArray::New();
     boost::shared_ptr<XdmfArray> taskIds = XdmfArray::New();
     boost::shared_ptr<XdmfArray> localNodeIds = XdmfArray::New();
@@ -245,10 +249,11 @@ XdmfMap::setHeavyDataControllers(boost::shared_ptr<XdmfHeavyDataController> loca
                                  boost::shared_ptr<XdmfHeavyDataController> remoteTaskIdsController,
                                  boost::shared_ptr<XdmfHeavyDataController> remoteLocalNodeIdsController)
 {
-  assert(localNodeIdsController->getSize() ==
+  if(!(localNodeIdsController->getSize() ==
          remoteTaskIdsController->getSize() &&
          localNodeIdsController->getSize() ==
-         remoteLocalNodeIdsController->getSize());
+         remoteLocalNodeIdsController->getSize()))
+    XdmfError::message(XdmfError::FATAL, "Number of local nodes not equal to number of remote tasks or nodes in XdmfMap::read");
   mLocalNodeIdsController = localNodeIdsController;
   mRemoteTaskIdsController = remoteTaskIdsController;
   mRemoteLocalNodeIdsController = remoteLocalNodeIdsController;

@@ -22,6 +22,7 @@
 /*****************************************************************************/
 
 #include "XdmfGridCollectionType.hpp"
+#include "XdmfError.hpp"
 
 // Supported XdmfGridCollectionTypes
 boost::shared_ptr<const XdmfGridCollectionType>
@@ -74,10 +75,10 @@ XdmfGridCollectionType::New(const std::map<std::string, std::string> & itemPrope
       return Temporal();
     }
     else {
-      assert(false);
+      XdmfError::message(XdmfError::FATAL, "'CollectionType' not of 'None', 'Spatial', or 'Temporal' in XdmfGridCollectionType::New");
     }
   }
-  assert(false);
+  XdmfError::message(XdmfError::FATAL, "'CollectionType' not in itemProperties in XdmfGridCollectionType::New");
   return boost::shared_ptr<const XdmfGridCollectionType>();
 }
 

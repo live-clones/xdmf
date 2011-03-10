@@ -22,6 +22,7 @@
 /*****************************************************************************/
 
 #include "XdmfSetType.hpp"
+#include "XdmfError.hpp"
 
 // Supported XdmfSetTypes
 boost::shared_ptr<const XdmfSetType>
@@ -94,10 +95,10 @@ XdmfSetType::New(const std::map<std::string, std::string> & itemProperties)
       return Edge();
     }
     else {
-      assert(false);
+      XdmfError::message(XdmfError::FATAL, "Type not of 'None', 'Node', 'Cell', 'Face', or 'Edge' in XdmfSetType::New");
     }
   }
-  assert(false);
+  XdmfError::message(XdmfError::FATAL, "Neither 'Type' nor 'SetType' found in itemProperties in XdmfSetType::New");
   return boost::shared_ptr<const XdmfSetType>();
 }
 

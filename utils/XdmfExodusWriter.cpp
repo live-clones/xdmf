@@ -36,6 +36,7 @@
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
 #include "XdmfUnstructuredGrid.hpp"
+#include "XdmfError.hpp"
 
 //
 // local methods
@@ -176,7 +177,7 @@ XdmfExodusWriter::write(const std::string & filePath,
     }
     else {
       // Only Temporal Collections are currently supported.
-      assert(false);
+      XdmfError::message(XdmfError::FATAL, "Only Temporal Collections are currently supported or no unstructured grids provided in XdmfExodusWriter::write");
     }
   }
   else {
@@ -184,7 +185,8 @@ XdmfExodusWriter::write(const std::string & filePath,
   }
 
   // Make sure geometry and topology are non null
-  assert(currGrid->getGeometry() && currGrid->getTopology());
+  if(!(currGrid->getGeometry() && currGrid->getTopology()))
+    XdmfError::message(XdmfError::FATAL, "Current grid's geometry or topology is null in XdmfExodusWriter::write");
 
   int num_dim = currGrid->getGeometry()->getType()->getDimensions();
   int num_nodes = currGrid->getGeometry()->getNumberPoints();
@@ -230,7 +232,7 @@ XdmfExodusWriter::write(const std::string & filePath,
     xdmfToExodusTopologyType(currGrid->getTopology()->getType());
   if (exodusTopologyType.compare("") == 0) {
     // Topology Type not supported by ExodusII
-    assert(false);
+    XdmfError::message(XdmfError::FATAL, "Topology type not supported by ExodusII in XdmfExodusWriter::write");
   }
   ex_put_elem_block(exodusHandle,
                     10,

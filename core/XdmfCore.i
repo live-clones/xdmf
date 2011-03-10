@@ -11,6 +11,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
     #include <XdmfCore.hpp>
     #include <XdmfCoreItemFactory.hpp>
     #include <XdmfCoreReader.hpp>
+    #include <XdmfError.hpp>
     #include <XdmfHeavyDataController.hpp>
     #include <XdmfHeavyDataWriter.hpp>
     #include <XdmfHDF5Controller.hpp>
@@ -277,6 +278,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %template() Loki::Visitor<XdmfItem>;
 
 %include XdmfCore.hpp
+%include XdmfError.hpp
 %include XdmfItem.hpp
 %include XdmfItemProperty.hpp
 %include XdmfVisitor.hpp

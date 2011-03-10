@@ -28,6 +28,7 @@
 #include "XdmfRectilinearGrid.hpp"
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
+#include "XdmfError.hpp"
 
 /**
  * PIMPL
@@ -118,7 +119,7 @@ public:
         collectedProperties["Type"] = "VXVY";
       }
       else {
-        assert(false);
+        XdmfError::message(XdmfError::FATAL, "Number of dimensions not 2 or 3 in XdmfGeometryTypeRectilinear::getProperties");
       }
     }
 
@@ -207,7 +208,7 @@ public:
         collectedProperties["Type"] = "2DRectMesh";
       }
       else {
-        assert(false);
+        XdmfError::message(XdmfError::FATAL, "Number of dimensions not 2 or 3 in XdmfTopologyTypeRectilinear::getProperties");
       }
       collectedProperties["Dimensions"] = dimensions->getValuesString();
     }

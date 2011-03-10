@@ -28,6 +28,7 @@
 #include "XdmfRegularGrid.hpp"
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
+#include "XdmfError.hpp"
 
 /**
  * PIMPL
@@ -114,7 +115,7 @@ public:
         collectedProperties["Type"] = "ORIGIN_DXDY";
       }
       else {
-        assert(false);
+        XdmfError::message(XdmfError::FATAL, "Dimensions not 2 or 3 in XdmfGeometryTypeRegular::getProperties");
       }
     }
 
@@ -203,7 +204,7 @@ public:
         collectedProperties["Type"] = "2DCoRectMesh";
       }
       else {
-        assert(false);
+        XdmfError::message(XdmfError::FATAL, "Dimensions not 2 or 3 in XdmfTopologyTypeRegular::getProperties");
       }
       collectedProperties["Dimensions"] = dimensions->getValuesString();
     }

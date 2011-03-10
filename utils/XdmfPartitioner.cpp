@@ -45,6 +45,7 @@ extern "C"
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
 #include "XdmfUnstructuredGrid.hpp"
+#include "XdmfError.hpp"
 
 boost::shared_ptr<XdmfPartitioner>
 XdmfPartitioner::New()
@@ -67,7 +68,8 @@ XdmfPartitioner::partition(const boost::shared_ptr<XdmfUnstructuredGrid> gridToP
                            const boost::shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) const
 {
   // Make sure geometry and topology are non null
-  assert(gridToPartition->getGeometry() && gridToPartition->getTopology());
+  if(!(gridToPartition->getGeometry() && gridToPartition->getTopology()))
+    XdmfError::message(XdmfError::FATAL, "Current grid's geometry or topology is null in XdmfPartitioner::partition");
 
   const boost::shared_ptr<XdmfGeometry> geometry =
     gridToPartition->getGeometry();
@@ -105,7 +107,7 @@ XdmfPartitioner::partition(const boost::shared_ptr<XdmfUnstructuredGrid> gridToP
     nodesPerElement = 8;
   }
   else {
-    assert(false);
+    XdmfError::message(XdmfError::FATAL, "Topology type is not 'Triangle', 'Quadrilateral', 'Tetrahedron', 'Hexahedron' in XdmfPartition::partition");
   }
 
   bool releaseTopology = false;

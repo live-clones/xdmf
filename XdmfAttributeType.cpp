@@ -22,6 +22,7 @@
 /*****************************************************************************/
 
 #include "XdmfAttributeType.hpp"
+#include "XdmfError.hpp"
 
 // Supported XdmfAttributeTypes
 boost::shared_ptr<const XdmfAttributeType>
@@ -121,10 +122,10 @@ XdmfAttributeType::New(const std::map<std::string, std::string> & itemProperties
       return GlobalId();
     }
     else {
-      assert(false);
+      XdmfError::message(XdmfError::FATAL, "Type not of 'None','Scalar','Vector','Tensor','Matrix','Tensor6', or 'GlobalId' in XdmfAttributeType::New");
     }
   }
-  assert(false);
+  XdmfError::message(XdmfError::FATAL, "Neither 'Type' nor 'AttributeType' found in itemProperties in XdmfAttributeType::New");
   return boost::shared_ptr<const XdmfAttributeType>();
 }
 
