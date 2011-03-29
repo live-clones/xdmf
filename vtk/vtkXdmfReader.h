@@ -37,6 +37,7 @@
 
 class vtkXdmfArraySelection;
 class vtkXdmfDocument;
+class vtkGraph;
 
 class VTK_EXPORT vtkXdmfReader : public vtkDataReader
 {
@@ -131,6 +132,11 @@ public:
   // Description:
   // Every time the SIL is updated a this will return a different value.
   vtkGetMacro(SILUpdateStamp, int);
+
+  // Description:
+  // SIL describes organization of/relationships between classifications
+  // eg. blocks/materials/hierarchies.
+  virtual vtkGraph* GetSIL();
 
 //BTX
 protected:
