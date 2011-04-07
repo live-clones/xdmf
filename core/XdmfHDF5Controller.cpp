@@ -103,19 +103,55 @@ XdmfHDF5Controller::read(XdmfArray * const array, const int fapl)
   hid_t memspace = H5Screate_simple(mDimensions.size(),
                                     &count[0],
                                     NULL);
-  /*  status = H5Sselect_hyperslab(memspace,
+
+  /* status = H5Sselect_hyperslab(memspace,
                                H5S_SELECT_SET,
                                &memStart[0],
                                &memStride[0],
                                &memCount[0],
                                NULL);*/
 
-  hid_t datatype = H5Dget_type(dataset);
+  hid_t datatype;
+  if(mType == XdmfArrayType::Int8()) {
+    datatype = H5T_NATIVE_CHAR;
+  }
+  else if(mType == XdmfArrayType::Int16()) {
+    datatype = H5T_NATIVE_SHORT;
+  }
+  else if(mType == XdmfArrayType::Int32()) {
+    datatype = H5T_NATIVE_INT;
+  }
+  else if(mType == XdmfArrayType::Int64()) {
+    datatype = H5T_NATIVE_LONG;
+  }
+  else if(mType == XdmfArrayType::Float32()) {
+    datatype = H5T_NATIVE_FLOAT;
+  }
+  else if(mType == XdmfArrayType::Float64()) {
+    datatype = H5T_NATIVE_DOUBLE;
+  }
+  else if(mType == XdmfArrayType::UInt8()) {
+    datatype = H5T_NATIVE_UCHAR;
+  }
+  else if(mType == XdmfArrayType::UInt16()) {
+    datatype = H5T_NATIVE_USHORT;
+  }
+  else if(mType == XdmfArrayType::UInt32()) {
+    datatype = H5T_NATIVE_UINT;
+  }
+  else {
+    XdmfError::message(XdmfError::FATAL, 
+                       "Unknown XdmfArrayType encountered in hdf5 "
+                       "controller.");
+  }
 
   array->initialize(mType, mDimensions);
 
-  if(numVals != array->getSize())
-    XdmfError::message(XdmfError::FATAL, "numVals in H5 does not match size of XdmfArray in XdmfHDF5Controller::read");
+  if(numVals != array->getSize()) {
+    XdmfError::message(XdmfError::FATAL, 
+                       "Number of values in hdf5 dataset does not match "
+                       "allocated size in XdmfArray.");
+  }
 
   status = H5Dread(dataset,
                    datatype,
@@ -124,7 +160,6 @@ XdmfHDF5Controller::read(XdmfArray * const array, const int fapl)
                    H5P_DEFAULT,
                    array->getValuesInternal());
 
-  status = H5Tclose(datatype);
   status = H5Sclose(dataspace);
   status = H5Sclose(memspace);
   status = H5Dclose(dataset);
