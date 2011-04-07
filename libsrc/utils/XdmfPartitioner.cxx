@@ -365,10 +365,11 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid    * grid,
             attribute->SetDeleteOnGridDelete(true);
             XdmfArray * attributeVals = attribute->GetValues();
             attributeVals->SetNumberType(currAttribute->GetValues()->GetNumberType());
-            attributeVals->SetNumberOfElements(currNodeMap.size());
+            int numValsPerComponent = currAttribute->GetValues()->GetNumberOfElements() / grid->GetGeometry()->GetNumberOfPoints();
+            attributeVals->SetNumberOfElements(currNodeMap.size() * numValsPerComponent);
             for(std::map<XdmfInt32, XdmfInt32>::const_iterator iter = currNodeMap.begin(); iter != currNodeMap.end(); ++iter)
             {
-              attributeVals->SetValues(iter->second, currAttribute->GetValues(), 1, iter->first);
+              attributeVals->SetValues(iter->second * numValsPerComponent, currAttribute->GetValues(), numValsPerComponent, iter->first * numValsPerComponent);
             }
             partition->Insert(attribute);
             break;
