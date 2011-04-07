@@ -137,11 +137,16 @@ public:
     }
     else {
       std::map<std::string, std::string> itemProperties;
-      if(currNode->children != NULL) {
-        xmlChar *content = xmlNodeGetContent(currNode);
-        itemProperties["Content"] = (char*)content;
-        xmlFree(content);
-        itemProperties["XMLDir"] = mXMLDir;
+
+      xmlNodePtr childNode = currNode->children;
+      while(childNode != NULL) {
+        if(childNode->type == XML_TEXT_NODE) {
+          xmlChar * content = childNode->content;
+          itemProperties["Content"] = (char*)content;
+          itemProperties["XMLDir"] = mXMLDir;
+          break;
+        }
+        childNode = childNode->next;
       }
       xmlAttrPtr currAttribute = currNode->properties;
       while(currAttribute != NULL) {

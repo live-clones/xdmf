@@ -101,7 +101,13 @@ XdmfInformation::populateItem(const std::map<std::string, std::string> & itemPro
     mValue = value->second;
   }
   else {
-    XdmfError::message(XdmfError::FATAL, "'Value' not found in itemProperties in XdmfInformation::populateItem");
+    value = itemProperties.find("Content");
+    if(value != itemProperties.end()) {
+      mValue = value->second;
+    }
+    else {
+      XdmfError::message(XdmfError::FATAL, "'Value' not found in itemProperties in XdmfInformation::populateItem");
+    }
   }
 }
 
