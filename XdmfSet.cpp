@@ -94,14 +94,14 @@ XdmfSet::populateItem(const std::map<std::string, std::string> & itemProperties,
         childItems.begin();
       iter != childItems.end();
       ++iter) {
-    if(boost::shared_ptr<XdmfArray> array =
-       boost::shared_dynamic_cast<XdmfArray>(*iter)) {
+    if(boost::shared_ptr<XdmfAttribute> attribute =
+       boost::shared_dynamic_cast<XdmfAttribute>(*iter)) {
+      this->insert(attribute);
+    }
+    else if(boost::shared_ptr<XdmfArray> array =
+            boost::shared_dynamic_cast<XdmfArray>(*iter)) {
       this->swap(array);
       // TODO: If multiple dataitems.
-    }
-    else if(boost::shared_ptr<XdmfAttribute> attribute =
-            boost::shared_dynamic_cast<XdmfAttribute>(*iter)) {
-      this->insert(attribute);
     }
   }
 }
