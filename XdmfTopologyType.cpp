@@ -70,7 +70,7 @@ XdmfTopologyType::Polygon(const unsigned int nodesPerElement)
 boost::shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Triangle()
 {
-  boost::shared_ptr<const XdmfTopologyType>
+  static boost::shared_ptr<const XdmfTopologyType>
     p(new XdmfTopologyType(3, "Triangle", Linear, 0x4));
   return p;
 }
