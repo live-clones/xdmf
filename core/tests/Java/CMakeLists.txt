@@ -21,6 +21,7 @@ ADD_TEST_JAVA_PATH("${XDMF_BINARIES}")
 #	Read UseJavaTest.cmake for more information
 # ------------------------
 ADD_TEST_JAVA(TestXdmfEquals)
+ADD_TEST_JAVA(TestXdmfArray)
 
 # Add any java cleanup here:
 # Note: We don't want to use a foreach loop to test the files incase we
@@ -28,6 +29,7 @@ ADD_TEST_JAVA(TestXdmfEquals)
 #	Read UseCxxTest.cmake for more information
 # ---------------------------------------
 CLEAN_TEST_JAVA(TestXdmfEquals)
+CLEAN_TEST_JAVA(TestXdmfArray)
 
 # Add a custom target for all java tests 
 # Note: ${TARGETS} is set in ADD_TEST_JAVA

@@ -79,6 +79,56 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
 };
 
+%typemap(javacode) XdmfArray %{
+    public void insertValuesAsInt8(int index, char[] values) {
+        for(int i = 0; i < values.length; i++)
+            this.insertValueAsInt8(index+i, values[i]);
+    }
+
+    public void insertValuesAsInt16(int index, short[] values) {
+        for(int i = 0; i < values.length; i++)
+            this.insertValueAsInt16(index+i, values[i]);
+    }
+
+    public void insertValuesAsInt32(int index, int[] values) {
+        for(int i = 0; i < values.length; i++)
+            this.insertValueAsInt32(index+i, values[i]);
+    }
+
+    public void insertValuesAsFloat32(int index, float[] values) {
+        for(int i = 0; i < values.length; i++)
+            this.insertValueAsFloat32(index+i, values[i]);
+    }
+
+    public void insertValuesAsFloat64(int index, double[] values) {
+        for(int i = 0; i < values.length; i++)
+            this.insertValueAsFloat64(index+i, values[i]);
+    }
+%}
+
+%extend XdmfArray {
+    
+    void insertValueAsInt8(int index, char value) {
+        $self->insert(index, value);
+    }
+
+    void insertValueAsInt16(int index, short value) {
+        $self->insert(index, value);
+    }
+
+    void insertValueAsInt32(int index, int value) {
+        $self->insert(index, value);
+    }
+
+    void insertValueAsFloat32(int index, float value) {
+        $self->insert(index, value);
+    }
+
+    void insertValueAsFloat64(int index, double value) {
+        $self->insert(index, value);
+    }
+};
+
 %pragma(java) jniclasscode=%{
     static {
         try {
@@ -353,3 +403,4 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
 %template(UIntVector) std::vector<unsigned int>;
 %template(ItemVector) std::vector<boost::shared_ptr<XdmfItem> >;
+
