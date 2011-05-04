@@ -140,11 +140,25 @@ public:
 
       xmlNodePtr childNode = currNode->children;
       while(childNode != NULL) {
-        if(childNode->type == XML_TEXT_NODE) {
-          xmlChar * content = childNode->content;
-          itemProperties["Content"] = (char*)content;
-          itemProperties["XMLDir"] = mXMLDir;
-          break;
+        if(childNode->type == XML_TEXT_NODE && childNode->content) {
+          const char * content = (char*)childNode->content;
+
+          // determine if content is whitespace
+          const size_t contentSize = strlen(content);
+          bool whitespace = true;
+
+          for(int i=0; i<contentSize; ++i) {
+            if(!isspace(content[i])) {
+              whitespace = false;
+              break;
+            }
+          }
+
+          if(!whitespace) {
+            itemProperties["Content"] = content;
+            itemProperties["XMLDir"] = mXMLDir;
+            break;
+          }
         }
         childNode = childNode->next;
       }
