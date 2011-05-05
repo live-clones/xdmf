@@ -38,6 +38,19 @@ class XdmfTopologyType;
  * connectivity information for all points contained in an
  * XdmfGrid. XdmfTopology contains an XdmfTopologyType property which
  * should be set that specifies the element type stored.
+ *
+ * In the case of mixed topology types, the connectivity stores
+ * topology type ids prior to each element's connectivity
+ * information. For element types of varying sizes (Polyvertex,
+ * Polyline, and Polygon), the topology type id is followed by a
+ * number specifying the number of nodes in the element.  For example,
+ * a tetrahedron element (id 6) followed by a polygon element (id 3)
+ * with 5 points would look similar the following:
+ *
+ * 6 20 25 100 200 3 5 300 301 302 303 304
+ *
+ * The tetrahedron is composed of nodes 20, 25, 100, and 200. The
+ * polygon is composed of nodes 300 to 304.
  */
 class XDMF_EXPORT XdmfTopology : public XdmfArray {
 

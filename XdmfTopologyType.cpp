@@ -23,8 +23,8 @@
 
 #include <cctype>
 #include <sstream>
-#include "XdmfTopologyType.hpp"
 #include "XdmfError.hpp"
+#include "XdmfTopologyType.hpp"
 
 // Supported XdmfTopologyTypes
 boost::shared_ptr<const XdmfTopologyType>
@@ -241,6 +241,90 @@ XdmfTopologyType::Mixed()
   static boost::shared_ptr<const XdmfTopologyType>
     p(new XdmfTopologyType(0, "Mixed", Arbitrary, 0x70));
   return p;
+}
+
+boost::shared_ptr<const XdmfTopologyType> 
+XdmfTopologyType::New(const unsigned int id)
+{
+  if(id == XdmfTopologyType::NoTopologyType()->getID()) {
+    return XdmfTopologyType::NoTopologyType();
+  }
+  else if(id == XdmfTopologyType::Polyvertex()->getID()) {
+    return XdmfTopologyType::Polyvertex();
+  }
+  else if(id == XdmfTopologyType::Polyline()->getID()) {
+    return XdmfTopologyType::Polyline();
+  }
+  else if(id == XdmfTopologyType::Polygon(0)->getID()) {
+    return XdmfTopologyType::Polygon(0);
+  }
+  else if(id == XdmfTopologyType::Triangle()->getID()) {
+    return XdmfTopologyType::Triangle();
+  }
+  else if(id == XdmfTopologyType::Quadrilateral()->getID()) {
+    return XdmfTopologyType::Quadrilateral();
+  }
+  else if(id == XdmfTopologyType::Tetrahedron()->getID()) {
+    return XdmfTopologyType::Tetrahedron();
+  }
+  else if(id == XdmfTopologyType::Pyramid()->getID()) {
+    return XdmfTopologyType::Pyramid();
+  }
+  else if(id == XdmfTopologyType::Wedge()->getID()) {
+    return XdmfTopologyType::Wedge();
+  }
+  else if(id == XdmfTopologyType::Hexahedron()->getID()) {
+    return XdmfTopologyType::Hexahedron();
+  }
+  else if(id == XdmfTopologyType::Edge_3()->getID()) {
+    return XdmfTopologyType::Edge_3();
+  }
+  else if(id == XdmfTopologyType::Triangle_6()->getID()) {
+    return XdmfTopologyType::Triangle_6();
+  }
+  else if(id == XdmfTopologyType::Quadrilateral_8()->getID()) {
+    return XdmfTopologyType::Quadrilateral_8();
+  }
+  else if(id == XdmfTopologyType::Quadrilateral_9()->getID()) {
+    return XdmfTopologyType::Quadrilateral_9();
+  }
+  else if(id == XdmfTopologyType::Tetrahedron_10()->getID()) {
+    return XdmfTopologyType::Tetrahedron_10();
+  }
+  else if(id == XdmfTopologyType::Pyramid_13()->getID()) {
+    return XdmfTopologyType::Pyramid_13();
+  }
+  else if(id == XdmfTopologyType::Wedge_15()->getID()) {
+    return XdmfTopologyType::Wedge_15();
+  }
+  else if(id == XdmfTopologyType::Wedge_18()->getID()) {
+    return XdmfTopologyType::Wedge_18();
+  }
+  else if(id == XdmfTopologyType::Hexahedron_20()->getID()) {
+    return XdmfTopologyType::Hexahedron_20();
+  }
+  else if(id == XdmfTopologyType::Hexahedron_24()->getID()) {
+    return XdmfTopologyType::Hexahedron_24();
+  }
+  else if(id == XdmfTopologyType::Hexahedron_27()->getID()) {
+    return XdmfTopologyType::Hexahedron_27();
+  }
+  else if(id == XdmfTopologyType::Hexahedron_64()->getID()) {
+    return XdmfTopologyType::Hexahedron_64();
+  }
+  else if(id == XdmfTopologyType::Hexahedron_64_GLL()->getID()) {
+    return XdmfTopologyType::Hexahedron_64_GLL();
+  }
+  else if(id == XdmfTopologyType::Hexahedron_125()->getID()) {
+    return XdmfTopologyType::Hexahedron_125();
+  }
+  else if(id == XdmfTopologyType::Hexahedron_125_GLL()->getID()) {
+    return XdmfTopologyType::Hexahedron_125_GLL();
+  }
+  else if(id == XdmfTopologyType::Mixed()->getID()) {
+    return XdmfTopologyType::Mixed();
+  }
+  return boost::shared_ptr<const XdmfTopologyType>();
 }
 
 XdmfTopologyType::XdmfTopologyType(const unsigned int nodesPerElement,

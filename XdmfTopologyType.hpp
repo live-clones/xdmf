@@ -82,7 +82,9 @@ class XDMF_EXPORT XdmfTopologyType : public XdmfItemProperty {
     Structured
   };
 
-  // Supported Xdmf Topology Types
+  /**
+   * Supported Xdmf Topology Types
+   */
   static boost::shared_ptr<const XdmfTopologyType> NoTopologyType();
   static boost::shared_ptr<const XdmfTopologyType> Polyvertex();
   static boost::shared_ptr<const XdmfTopologyType> Polyline();
@@ -110,6 +112,16 @@ class XDMF_EXPORT XdmfTopologyType : public XdmfItemProperty {
   static boost::shared_ptr<const XdmfTopologyType> Hexahedron_125();
   static boost::shared_ptr<const XdmfTopologyType> Hexahedron_125_GLL();
   static boost::shared_ptr<const XdmfTopologyType> Mixed();
+
+  /**
+   * Get a topology type from id.
+   *
+   * @param id of the topology type.
+   *
+   * @return topology type corresponding to id - if no topology type is found
+   * an NULL pointer is returned.
+   */
+  static boost::shared_ptr<const XdmfTopologyType> New(const unsigned int id);
 
   /**
    * Get the cell type associated with this topology type.

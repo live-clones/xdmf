@@ -22,6 +22,7 @@
 /*****************************************************************************/
 
 #include <sstream>
+#include "XdmfError.hpp"
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
 
@@ -66,7 +67,43 @@ XdmfTopology::getItemProperties() const
 unsigned int
 XdmfTopology::getNumberElements() const
 {
+  // deal with special cases first (mixed / no topology)
   if(mType->getNodesPerElement() == 0) {
+    if(mType == XdmfTopologyType::Mixed()) {
+      unsigned int index = 0;
+      unsigned int numberElements = 0;
+      // iterate over all values in connectivity, pulling topology type ids
+      // and counting number of elements
+      while(index < this->getSize()) {
+        const unsigned int id = this->getValue<unsigned int>(index);
+        const boost::shared_ptr<const XdmfTopologyType> topologyType = 
+          XdmfTopologyType::New(id);
+        if(topologyType == NULL) {
+          XdmfError::message(XdmfError::FATAL, 
+                             "Invalid topology type id found in connectivity "
+                             "when parsing mixed topology.");
+        }
+        if(topologyType == XdmfTopologyType::Polyvertex()) {
+          const unsigned int numberPolyvertexElements = 
+            this->getValue<unsigned int>(index + 1);
+          numberElements += numberPolyvertexElements;
+          index += numberPolyvertexElements + 2;
+        }
+        else if(topologyType == XdmfTopologyType::Polyline() ||
+                topologyType == XdmfTopologyType::Polygon(0)) {
+          const unsigned int numberNodes = 
+            this->getValue<unsigned int>(index + 1);
+          numberElements += 1;
+          index += numberNodes + 2;
+        }
+        else {
+          // add 1 to element count and move to next element id
+          numberElements += 1;
+          index += topologyType->getNodesPerElement() + 1;
+        }
+      }
+      return numberElements;
+    }
     return 0;
   }
   return this->getSize() / mType->getNodesPerElement();
