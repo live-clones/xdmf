@@ -8,7 +8,7 @@ set(XdmfUtilsSources
 set(XdmfUtilsLinkLibraries Xdmf)
 
 if(XDMF_BUILD_EXODUS_IO)
-  set(XdmfSwigFlags ${XdmfSwigFlags} "-DXDMF_BUILD_EXODUS_IO ")
+  set(XDMF_SWIG_FLAGS ${XDMF_SWIG_FLAGS} -DXDMF_BUILD_EXODUS_IO)
   find_package(Exodus REQUIRED)
   if(EXODUS_FOUND)
     include_directories(${EXODUS_INCLUDE_DIR} ${NetCDF_INCLUDE_DIR})
@@ -21,7 +21,7 @@ if(XDMF_BUILD_EXODUS_IO)
 endif(XDMF_BUILD_EXODUS_IO)
 
 if(XDMF_BUILD_PARTITIONER)
-  set(XdmfSwigFlags ${XdmfSwigFlags} "-DXDMF_BUILD_PARTITIONER ")
+  set(XDMF_SWIG_FLAGS ${XDMF_SWIG_FLAGS} -DXDMF_BUILD_PARTITIONER)
   find_package(Metis REQUIRED)
   if(METIS_FOUND)
     include_directories(${METIS_INCLUDE_DIR})
@@ -48,6 +48,10 @@ if(XDMF_WRAP_JAVA)
   XDMF_SWIG_JAVA(XdmfUtils XdmfJava)
   set(XDMF_UTILS_JAVA_JAR ${CMAKE_BINARY_DIR}/XdmfUtils.jar CACHE INTERNAL "")
 endif(XDMF_WRAP_JAVA)
+
+if(XDMF_WRAP_PYTHON)
+  XDMF_SWIG_PYTHON(XdmfUtils Xdmf)
+endif(XDMF_WRAP_PYTHON)
 
 foreach(source ${XdmfUtilsSources})
   set(XdmfUtilsHeaders ${XdmfUtilsHeaders} ${source}.hpp)
