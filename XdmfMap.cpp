@@ -22,11 +22,11 @@
 /*****************************************************************************/
 
 #include "XdmfAttribute.hpp"
+#include "XdmfError.hpp"
 #include "XdmfGridCollection.hpp"
 #include "XdmfGridCollectionType.hpp"
 #include "XdmfHeavyDataController.hpp"
 #include "XdmfMap.hpp"
-#include "XdmfError.hpp"
 
 boost::shared_ptr<XdmfMap>
 XdmfMap::New()
@@ -38,60 +38,46 @@ XdmfMap::New()
 std::vector<boost::shared_ptr<XdmfMap> >
 XdmfMap::New(const std::vector<boost::shared_ptr<XdmfAttribute> > & globalNodeIds)
 {
-  unsigned int maxGlobalNodeId = 0;
-  for(unsigned int i=0; i<globalNodeIds.size(); ++i) {
-    const boost::shared_ptr<XdmfAttribute> currGlobalNodeIds =
-      globalNodeIds[i];
-    for(unsigned int j=0; j<currGlobalNodeIds->getSize(); ++j) {
-      unsigned int currGlobalNodeId =
-        currGlobalNodeIds->getValue<unsigned int>(j);
-      if(currGlobalNodeId > maxGlobalNodeId) {
-        maxGlobalNodeId = currGlobalNodeId;
-      }
-    }
-  }
-
   // globalNodeId | taskId | localNodeId at taskId
-  std::vector<std::map<unsigned int, unsigned int> >
-    globalNodeIdMap(maxGlobalNodeId + 1,
-                    std::map<unsigned int, unsigned int>());
+  std::map<node_id, std::map<task_id, node_id> > globalNodeIdMap;
 
-  // Fill globalNodeIdMap
+  // fill globalNodeIdMap using globalNodeIds
   for(unsigned int i=0; i<globalNodeIds.size(); ++i) {
-    const boost::shared_ptr<XdmfAttribute> currGlobalNodeIds =
+    const boost::shared_ptr<XdmfAttribute> currGlobalNodeIds = 
       globalNodeIds[i];
     for(unsigned int j=0; j<currGlobalNodeIds->getSize(); ++j) {
-      unsigned int currGlobalNodeId =
-        currGlobalNodeIds->getValue<unsigned int>(j);
+      const node_id currGlobalNodeId = currGlobalNodeIds->getValue<node_id>(j);
       globalNodeIdMap[currGlobalNodeId][i] = j;
     }
   }
 
-  std::vector<boost::shared_ptr<XdmfMap> > toReturn;
-  toReturn.reserve(globalNodeIds.size());
-  // Fill maps for each partition
+  std::vector<boost::shared_ptr<XdmfMap> > returnValue;
+  returnValue.resize(globalNodeIds.size());
+
+  // fill maps for each partition
   for(unsigned int i=0; i<globalNodeIds.size(); ++i)  {
     boost::shared_ptr<XdmfMap> map = XdmfMap::New();
-    toReturn.push_back(map);
-    const boost::shared_ptr<XdmfAttribute> currGlobalNodeIds =
+    returnValue[i] = map;
+    const boost::shared_ptr<XdmfAttribute> currGlobalNodeIds = 
       globalNodeIds[i];
+    
     for(unsigned int j=0; j<currGlobalNodeIds->getSize(); ++j) {
-      unsigned int currGlobalNodeId =
-        currGlobalNodeIds->getValue<unsigned int>(j);
-      if(globalNodeIdMap[currGlobalNodeId].size() > 1) {
-        for(std::map<unsigned int, unsigned int>::const_iterator iter =
-              globalNodeIdMap[currGlobalNodeId].begin();
-            iter != globalNodeIdMap[currGlobalNodeId].end();
+      const node_id currGlobalNodeId = currGlobalNodeIds->getValue<node_id>(j);
+      const std::map<task_id, node_id> & currMap = 
+        globalNodeIdMap[currGlobalNodeId];
+      if(currMap.size() > 1) {
+        for(std::map<task_id, node_id>::const_iterator iter = currMap.begin(); 
+            iter != currMap.end();
             ++iter) {
           if(iter->first != i) {
-            map->insert(j, iter->first, iter->second);
+            map->insert(iter->first, j, iter->second);
           }
         }
       }
     }
   }
-
-  return toReturn;
+  
+  return returnValue;
 }
 
 XdmfMap::XdmfMap()
@@ -117,33 +103,30 @@ XdmfMap::getItemTag() const
   return ItemTag;
 }
 
-std::map<unsigned int, unsigned int>
-XdmfMap::getRemoteNodeIds(const unsigned int localNodeId)
+std::map<XdmfMap::task_id, XdmfMap::node_id_map> 
+XdmfMap::getMap() const
 {
-  std::map<unsigned int, std::map<unsigned int, unsigned int> >::const_iterator
-    iter = mMap.find(localNodeId);
+  return mMap;
+}
+
+XdmfMap::node_id_map
+XdmfMap::getRemoteNodeIds(const task_id remoteTaskId)
+{
+  std::map<task_id, node_id_map>::const_iterator iter = 
+    mMap.find(remoteTaskId);
   if(iter != mMap.end()) {
     return iter->second;
   }
   // No entry, return empty map.
-  return std::map<unsigned int, unsigned int>();
+  return node_id_map();
 }
 
 void
-XdmfMap::insert(const unsigned int localNodeId,
-                const unsigned int remoteTaskId,
-                const unsigned int remoteLocalNodeId)
+XdmfMap::insert(const task_id remoteTaskId,
+                const node_id localNodeId,
+                const node_id remoteLocalNodeId)
 {
-  std::map<unsigned int, std::map<unsigned int, unsigned int> >::iterator
-    iter = mMap.find(localNodeId);
-  if(iter != mMap.end()) {
-    iter->second[remoteTaskId] = remoteLocalNodeId;
-  }
-  else {
-    std::map<unsigned int, unsigned int> newMap;
-    newMap[remoteTaskId] = remoteLocalNodeId;
-    mMap[localNodeId] = newMap;
-  }
+  mMap[remoteTaskId][localNodeId].insert(remoteLocalNodeId);
 }
 
 bool XdmfMap::isInitialized() const
@@ -157,6 +140,7 @@ XdmfMap::populateItem(const std::map<std::string, std::string> & itemProperties,
                       const XdmfCoreReader * const reader)
 {
   XdmfItem::populateItem(itemProperties, childItems, reader);
+
   std::vector<boost::shared_ptr<XdmfArray> > arrayVector;
   arrayVector.reserve(3);
   for(std::vector<boost::shared_ptr<XdmfItem> >::const_iterator iter =
@@ -168,13 +152,21 @@ XdmfMap::populateItem(const std::map<std::string, std::string> & itemProperties,
         arrayVector.push_back(array);
       }
   }
+
   if(arrayVector.size() != 3)
-    XdmfError::message(XdmfError::FATAL, "Length of array vector not equal to 3 in XdmfMap::populateItem");
+    XdmfError::message(XdmfError::FATAL, 
+                       "Expected 3 arrays attached to XdmfMap::populateItem");
   if(!(arrayVector[0]->getSize() == arrayVector[1]->getSize() &&
-         arrayVector[0]->getSize() == arrayVector[2]->getSize()))
-    XdmfError::message(XdmfError::FATAL, "Length of individual array vectors not equal in XdmfMap::populateItem");
+       arrayVector[0]->getSize() == arrayVector[2]->getSize())) {
+    XdmfError::message(XdmfError::FATAL, 
+                       "Arrays must be of equal size in "
+                       "XdmfMap:: populateItem");
+  }
+  
+  // check if any arrays have values in memory - if so, they need to be 
+  // read into map
   bool needToRead = false;
-  for(std::vector<boost::shared_ptr<XdmfArray> >::const_iterator iter =
+  for(std::vector<boost::shared_ptr<XdmfArray> >::const_iterator iter = 
         arrayVector.begin();
       iter != arrayVector.end();
       ++iter) {
@@ -183,22 +175,25 @@ XdmfMap::populateItem(const std::map<std::string, std::string> & itemProperties,
       break;
     }
   }
+  
   if(needToRead) {
     for(std::vector<boost::shared_ptr<XdmfArray> >::const_iterator iter =
           arrayVector.begin();
         iter != arrayVector.end();
         ++iter) {
-      (*iter)->read();
+      if(!(*iter)->isInitialized()) {
+        (*iter)->read();
+      }
     }
     for(unsigned int i=0; i<arrayVector[0]->getSize(); ++i) {
-      this->insert(arrayVector[0]->getValue<unsigned int>(i),
-                   arrayVector[1]->getValue<unsigned int>(i),
-                   arrayVector[2]->getValue<unsigned int>(i));
+      this->insert(arrayVector[0]->getValue<task_id>(i),
+                   arrayVector[1]->getValue<node_id>(i),
+                   arrayVector[2]->getValue<node_id>(i));
     }
   }
   else {
-    mLocalNodeIdsController = arrayVector[0]->getHeavyDataController();
-    mRemoteTaskIdsController = arrayVector[1]->getHeavyDataController();
+    mRemoteTaskIdsController = arrayVector[0]->getHeavyDataController();
+    mLocalNodeIdsController = arrayVector[1]->getHeavyDataController();
     mRemoteLocalNodeIdsController = arrayVector[2]->getHeavyDataController();
   }
 }
@@ -209,31 +204,29 @@ XdmfMap::read()
   if(mLocalNodeIdsController &&
      mRemoteTaskIdsController &&
      mRemoteLocalNodeIdsController) {
-    if(!(mLocalNodeIdsController->getSize() ==
-           mRemoteTaskIdsController->getSize() &&
-           mLocalNodeIdsController->getSize() ==
-           mRemoteLocalNodeIdsController->getSize()))
-      XdmfError::message(XdmfError::FATAL, "Number of local nodes not equal to number of remote tasks or nodes in XdmfMap::read");
-    boost::shared_ptr<XdmfArray> globalNodeIds = XdmfArray::New();
-    boost::shared_ptr<XdmfArray> taskIds = XdmfArray::New();
-    boost::shared_ptr<XdmfArray> localNodeIds = XdmfArray::New();
-    mLocalNodeIdsController->read(globalNodeIds.get());
-    mRemoteTaskIdsController->read(taskIds.get());
-    mRemoteLocalNodeIdsController->read(localNodeIds.get());
+    
+    if(!(mLocalNodeIdsController->getSize() == 
+         mRemoteTaskIdsController->getSize() &&
+         mLocalNodeIdsController->getSize() ==
+         mRemoteLocalNodeIdsController->getSize())) {
+      XdmfError::message(XdmfError::FATAL, 
+                         "Arrays must be of equal size in XdmfMap::read");
+    }
 
-    for(unsigned int i=0; i<globalNodeIds->getSize(); ++i) {
-      std::map<unsigned int, std::map<unsigned int, unsigned int> >::iterator
-        iter = mMap.find(globalNodeIds->getValue<unsigned int>(i));
-      if(iter != mMap.end()) {
-        iter->second[taskIds->getValue<unsigned int>(i)] =
-          localNodeIds->getValue<unsigned int>(i);
-      }
-      else {
-        std::map<unsigned int, unsigned int> newMap;
-        newMap[taskIds->getValue<unsigned int>(i)] =
-          localNodeIds->getValue<unsigned int>(i);
-        mMap[globalNodeIds->getValue<unsigned int>(i)] = newMap;
-      }
+    boost::shared_ptr<XdmfArray> remoteTaskIds = XdmfArray::New();
+    boost::shared_ptr<XdmfArray> localNodeIds = XdmfArray::New();
+    boost::shared_ptr<XdmfArray> remoteLocalNodeIds = XdmfArray::New();
+
+    mRemoteTaskIdsController->read(remoteTaskIds.get());
+    mLocalNodeIdsController->read(localNodeIds.get());
+    mRemoteLocalNodeIdsController->read(remoteLocalNodeIds.get());
+
+    for(unsigned int i=0; i<remoteTaskIds->getSize(); ++i) {
+      const unsigned int remoteTaskId = remoteTaskIds->getValue<task_id>(i);
+      const unsigned int localNodeId = localNodeIds->getValue<node_id>(i);
+      const unsigned int remoteLocalNodeId = 
+        remoteLocalNodeIds->getValue<node_id>(i);
+      mMap[remoteTaskId][localNodeId].insert(remoteLocalNodeId);
     }
   }
 }
@@ -245,17 +238,19 @@ XdmfMap::release()
 }
 
 void
-XdmfMap::setHeavyDataControllers(boost::shared_ptr<XdmfHeavyDataController> localNodeIdsController,
-                                 boost::shared_ptr<XdmfHeavyDataController> remoteTaskIdsController,
+XdmfMap::setHeavyDataControllers(boost::shared_ptr<XdmfHeavyDataController> remoteTaskIdsController,
+                                 boost::shared_ptr<XdmfHeavyDataController> localNodeIdsController,
                                  boost::shared_ptr<XdmfHeavyDataController> remoteLocalNodeIdsController)
 {
   if(!(localNodeIdsController->getSize() ==
-         remoteTaskIdsController->getSize() &&
-         localNodeIdsController->getSize() ==
-         remoteLocalNodeIdsController->getSize()))
-    XdmfError::message(XdmfError::FATAL, "Number of local nodes not equal to number of remote tasks or nodes in XdmfMap::read");
-  mLocalNodeIdsController = localNodeIdsController;
+       remoteTaskIdsController->getSize() &&
+       localNodeIdsController->getSize() ==
+       remoteLocalNodeIdsController->getSize()))
+    XdmfError::message(XdmfError::FATAL, 
+                       "Arrays must be of equal size in "
+                       "XdmfMap::setHeavyDataControllers");
   mRemoteTaskIdsController = remoteTaskIdsController;
+  mLocalNodeIdsController = localNodeIdsController;
   mRemoteLocalNodeIdsController = remoteLocalNodeIdsController;
 }
 
@@ -264,28 +259,38 @@ void
 XdmfMap::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor)
 {
   XdmfItem::traverse(visitor);
-  boost::shared_ptr<XdmfArray> localNodeIds = XdmfArray::New();
+
   boost::shared_ptr<XdmfArray> remoteTaskIds = XdmfArray::New();
+  boost::shared_ptr<XdmfArray> localNodeIds = XdmfArray::New();
   boost::shared_ptr<XdmfArray> remoteLocalNodeIds = XdmfArray::New();
-  for(std::map<unsigned int, std::map<unsigned int, unsigned int> >::const_iterator
+
+  for(std::map<task_id, node_id_map>::const_iterator
         iter = mMap.begin();
       iter != mMap.end();
       ++iter) {
-    for(std::map<unsigned int, unsigned int>::const_iterator iter2 =
-          iter->second.begin();
+    for(node_id_map::const_iterator 
+          iter2 = iter->second.begin();
         iter2 != iter->second.end();
         ++iter2) {
-      localNodeIds->pushBack(iter->first);
-      remoteTaskIds->pushBack(iter2->first);
-      remoteLocalNodeIds->pushBack(iter2->second);
+      for(node_id_map::mapped_type::const_iterator iter3 = 
+            iter2->second.begin();
+          iter3 != iter2->second.end();
+          ++iter3) {
+        remoteTaskIds->pushBack(iter->first);
+        localNodeIds->pushBack(iter2->first);
+        remoteLocalNodeIds->pushBack(*iter3);
+      }
     }
   }
-  localNodeIds->setHeavyDataController(mLocalNodeIdsController);
+
   remoteTaskIds->setHeavyDataController(mRemoteTaskIdsController);
+  localNodeIds->setHeavyDataController(mLocalNodeIdsController);
   remoteLocalNodeIds->setHeavyDataController(mRemoteLocalNodeIdsController);
+
+  remoteTaskIds->accept(visitor);  
   localNodeIds->accept(visitor);
-  remoteTaskIds->accept(visitor);
   remoteLocalNodeIds->accept(visitor);
+
   mLocalNodeIdsController = localNodeIds->getHeavyDataController();
   mRemoteTaskIdsController = remoteTaskIds->getHeavyDataController();
   mRemoteLocalNodeIdsController = remoteLocalNodeIds->getHeavyDataController();

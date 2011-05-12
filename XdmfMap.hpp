@@ -26,12 +26,14 @@
 
 // Forward Declarations
 class XdmfArray;
-class XdmfGridCollection;
+class XdmfAttribute;
 class XdmfHeavyDataController;
 
 // Includes
-#include "XdmfMap.hpp"
+#include "Xdmf.hpp"
 #include "XdmfItem.hpp"
+
+#include <set>
 
 /**
  * @brief Boundary communicator map for partitioned spatial
@@ -56,6 +58,10 @@ class XDMF_EXPORT XdmfMap : public XdmfItem {
 
  public:
 
+  typedef int node_id;
+  typedef int task_id;
+  typedef std::map<node_id, std::set<node_id> > node_id_map;
+
   /**
    * Create a new XdmfMap.
    *
@@ -70,6 +76,7 @@ class XDMF_EXPORT XdmfMap : public XdmfItem {
    *
    * @param globalNodeIds a vector of attributes containing globalNodeId
    * values for each partition to be mapped.
+   *
    * @return constructed XdmfMaps for each partition. The size of the vector
    * will be the same as the globalNodeIds vector.
    */
@@ -84,23 +91,44 @@ class XDMF_EXPORT XdmfMap : public XdmfItem {
   std::map<std::string, std::string> getItemProperties() const;
 
   /**
-   * Given a local node id return a map containing equivalent remote
-   * node ids
+   * Get stored boundary communicator map.
+   *
+   * @return stored boundary communicator map.
    */
-  std::map<unsigned int, unsigned int>
-  getRemoteNodeIds(const unsigned int localNodeId);
+  std::map<task_id, node_id_map> getMap() const;
+
+  /**
+   * Given a remote task id return a map of local node ids to remote
+   * node ids
+   *
+   * @param remoteTaskId a task id to retrieve mapping for.
+   *
+   * @return a map of local node ids to a vector of remote node ids on
+   * remoteTaskId.
+   */
+  node_id_map getRemoteNodeIds(const task_id remoteTaskId);
 
   std::string getItemTag() const;
 
   using XdmfItem::insert;
 
-  void insert(const unsigned int localNodeId,
-              const unsigned int remoteTaskId,
-              const unsigned int remoteLocalNodeId);
+  /**
+   * Insert a new entry in map.
+   *
+   * @param remoteTaskId task id where the remoteLoalNodeId is located.
+   * @param localNodeId the node id of the node being mapped.
+   * @param remoteLocalNodeId a node id on the remoteTaskId that the
+   * localNodeId is mapped to.
+   */
+  void insert(const task_id  remoteTaskId, 
+              const node_id  localNodeId,
+              const node_id  remoteLocalNodeId);
 
   /**
    * Returns whether the map is initialized (contains values in
    * memory).
+   *
+   * @return bool true if map contains values in memory.
    */
   bool isInitialized() const;
 
@@ -117,16 +145,16 @@ class XDMF_EXPORT XdmfMap : public XdmfItem {
   /**
    * Set the heavy data controllers for this map.
    *
-   * @param localNodeIdsController an XdmfHeavyDataController to the local
-   * node ids dataset.
    * @param remoteTaskIdsController an XdmfHeavyDataController to the remote
    * task ids dataset.
+   * @param localNodeIdsController an XdmfHeavyDataController to the local
+   * node ids dataset.
    * @param remoteLocalNodeIdsController an XdmfHeavyDataController to the
    * remote local node ids dataset.
    */
   void
-  setHeavyDataControllers(boost::shared_ptr<XdmfHeavyDataController> localNodeIdsController,
-                          boost::shared_ptr<XdmfHeavyDataController> remoteTaskIdsController,
+  setHeavyDataControllers(boost::shared_ptr<XdmfHeavyDataController> remoteTaskIdsController,
+                          boost::shared_ptr<XdmfHeavyDataController> localNodeIdsController,
                           boost::shared_ptr<XdmfHeavyDataController> remoteLocalNodeIdsController);
 
   void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor);
@@ -146,8 +174,8 @@ class XDMF_EXPORT XdmfMap : public XdmfItem {
   void operator=(const XdmfMap & map);  // Not implemented.
 
   boost::shared_ptr<XdmfHeavyDataController> mLocalNodeIdsController;
-  // localNodeId | remoteTaskId | remoteLocalNodeId
-  std::map<unsigned int, std::map<unsigned int, unsigned int> > mMap;
+  // remoteTaskId | localNodeId | remoteLocalNodeId
+  std::map<task_id, node_id_map > mMap;
   boost::shared_ptr<XdmfHeavyDataController> mRemoteLocalNodeIdsController;
   boost::shared_ptr<XdmfHeavyDataController> mRemoteTaskIdsController;
 

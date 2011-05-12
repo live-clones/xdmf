@@ -3,7 +3,6 @@
 #include "XdmfAttributeType.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGeometryType.hpp"
-#include "XdmfGrid.hpp"
 #include "XdmfGridCollection.hpp"
 #include "XdmfGridCollectionType.hpp"
 #include "XdmfHDF5Writer.hpp"
@@ -12,21 +11,28 @@
 #include "XdmfTestCompareFiles.hpp"
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
+#include "XdmfUnstructuredGrid.hpp"
 #include "XdmfWriter.hpp"
+
+#include <iostream>
 
 void performTests(std::vector<boost::shared_ptr<XdmfMap> > & boundaryMaps)
 {
   boundaryMaps[0]->read();
   boundaryMaps[1]->read();
-  std::map<unsigned int, unsigned int> mapping;
-  mapping = boundaryMaps[0]->getRemoteNodeIds(0);
-  assert(mapping.size() == 0);
+  
+  // localNodeId || remoteLocalNodeId
+  XdmfMap::node_id_map mapping;
+  
   mapping = boundaryMaps[0]->getRemoteNodeIds(1);
   assert(mapping.size() == 1);
-  assert(mapping[1] == 0);
+  assert(mapping[1].size() == 1);
+  assert(*(mapping[1].begin()) == 0);
+
   mapping = boundaryMaps[1]->getRemoteNodeIds(0);
   assert(mapping.size() == 1);
-  assert(mapping[0] == 1);
+  assert(mapping[0].size() == 1);
+  assert(*(mapping[0].begin()) == 1);
 }
 
 /*
@@ -45,7 +51,7 @@ void performTests(std::vector<boost::shared_ptr<XdmfMap> > & boundaryMaps)
 int main(int, char **)
 {
   // Grid 0
-  boost::shared_ptr<XdmfGrid> grid0 = XdmfGrid::New();
+  boost::shared_ptr<XdmfUnstructuredGrid> grid0 = XdmfUnstructuredGrid::New();
   grid0->getGeometry()->setType(XdmfGeometryType::XYZ());
   double points0[] = {-1, 0, 0, 0, 0, 0};
   grid0->getGeometry()->insert(0, &points0[0], 6);
@@ -60,7 +66,7 @@ int main(int, char **)
   globalNodeIds0->insert(0, &globalVals0[0], 2);
 
   // Grid 1
-  boost::shared_ptr<XdmfGrid> grid1 = XdmfGrid::New();
+  boost::shared_ptr<XdmfUnstructuredGrid> grid1 = XdmfUnstructuredGrid::New();
   grid1->getGeometry()->setType(XdmfGeometryType::XYZ());
   double points1[] = {0, 0, 0, 1, 0, 0};
   grid1->getGeometry()->insert(0, &points1[0], 6);
@@ -78,7 +84,7 @@ int main(int, char **)
   globalNodeIds.push_back(globalNodeIds0);
   globalNodeIds.push_back(globalNodeIds1);
 
-  std::vector<boost::shared_ptr<XdmfMap> > boundaryMaps =
+  std::vector<boost::shared_ptr<XdmfMap> > boundaryMaps = 
     XdmfMap::New(globalNodeIds);
 
   performTests(boundaryMaps);
@@ -101,8 +107,8 @@ int main(int, char **)
     boost::shared_dynamic_cast<XdmfDomain>(reader->read("TestXdmfMap1.xmf"));
 
   boundaryMaps.clear();
-  boundaryMaps.push_back(domain2->getGridCollection(0)->getGrid(0)->getMap());
-  boundaryMaps.push_back(domain2->getGridCollection(0)->getGrid(1)->getMap());
+  boundaryMaps.push_back(domain2->getGridCollection(0)->getUnstructuredGrid(0)->getMap());
+  boundaryMaps.push_back(domain2->getGridCollection(0)->getUnstructuredGrid(1)->getMap());
   performTests(boundaryMaps);
 
   boost::shared_ptr<XdmfWriter> writer2 = XdmfWriter::New("TestXdmfMap2.xmf");
@@ -121,13 +127,13 @@ int main(int, char **)
     (reader->read("TestXdmfMapHDF1.xmf"));
 
   boundaryMaps.clear();
-  boundaryMaps.push_back(domainHDF->getGridCollection(0)->getGrid(0)->getMap());
-  boundaryMaps.push_back(domainHDF->getGridCollection(0)->getGrid(1)->getMap());
+  boundaryMaps.push_back(domainHDF->getGridCollection(0)->getUnstructuredGrid(0)->getMap());
+  boundaryMaps.push_back(domainHDF->getGridCollection(0)->getUnstructuredGrid(1)->getMap());
   performTests(boundaryMaps);
 
   boost::shared_ptr<XdmfWriter> writerHDF2 =
     XdmfWriter::New("TestXdmfMapHDF2.xmf");
-  writerHDF2->getHDF5Writer()->setMode(XdmfHDF5Writer::Overwrite);
+  writerHDF2->getHeavyDataWriter()->setMode(XdmfHeavyDataWriter::Overwrite);
   writerHDF2->setLightDataLimit(0);
   domainHDF->accept(writerHDF2);
 
