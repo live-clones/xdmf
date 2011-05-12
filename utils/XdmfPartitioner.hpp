@@ -27,10 +27,12 @@
 // Forward Declarations
 class XdmfGridCollection;
 class XdmfHeavyDataWriter;
+class XdmfSet;
 class XdmfUnstructuredGrid;
 
 // Includes
 #include <boost/shared_ptr.hpp>
+#include <set>
 
 /**
  * @brief XdmfPartitioner partitions an XdmfGrid using the metis
@@ -50,6 +52,14 @@ public:
   static boost::shared_ptr<XdmfPartitioner> New();
 
   virtual ~XdmfPartitioner();
+
+  /**
+   * Ingore set when partitioning. Set is not partitioned or added to
+   * resulting grid.
+   *
+   * @param set the set to ignore when partitioning.
+   */
+  void ignore(const boost::shared_ptr<const XdmfSet> set);
 
   /**
    * Partitions an XdmfGrid using the metis library.
@@ -95,6 +105,9 @@ private:
 
   XdmfPartitioner(const XdmfPartitioner & partitioner);  // Not implemented.
   void operator=(const XdmfPartitioner & partitioner);  // Not implemented.
+
+  std::set<boost::shared_ptr<const XdmfSet> > mIgnoredSets;
+
 };
 
 #endif /* XDMFPARTITIONER_HPP_ */

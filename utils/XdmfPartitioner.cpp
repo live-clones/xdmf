@@ -47,6 +47,8 @@ extern "C"
 #include "XdmfUnstructuredGrid.hpp"
 #include "XdmfError.hpp"
 
+#include "XdmfArrayType.hpp"
+
 boost::shared_ptr<XdmfPartitioner>
 XdmfPartitioner::New()
 {
@@ -60,6 +62,12 @@ XdmfPartitioner::XdmfPartitioner()
 
 XdmfPartitioner::~XdmfPartitioner()
 {
+}
+
+void 
+XdmfPartitioner::ignore(const boost::shared_ptr<const XdmfSet> set)
+{
+  mIgnoredSets.insert(set);
 }
 
 boost::shared_ptr<XdmfGridCollection>
@@ -157,6 +165,7 @@ XdmfPartitioner::partition(const boost::shared_ptr<XdmfUnstructuredGrid> gridToP
   idxtype * elementsPartition = new idxtype[numElements];
   idxtype * nodesPartition = new idxtype[numNodes];
 
+  /*
   METIS_PartMeshDual(&numElements,
                      &numNodes,
                      metisConnectivity,
@@ -166,17 +175,18 @@ XdmfPartitioner::partition(const boost::shared_ptr<XdmfUnstructuredGrid> gridToP
                      &numCutEdges,
                      elementsPartition,
                      nodesPartition);
-  /*
+  */
+  
   METIS_PartMeshNodal(&numElements,
                       &numNodes,
                       metisConnectivity,
                       &metisElementType,
                       &startIndex,
-                      &numPartitions,
+                      (int*)&numberOfPartitions,
                       &numCutEdges,
                       elementsPartition,
                       nodesPartition);
-  */
+  
   delete [] metisConnectivity;
   delete [] nodesPartition;
 
@@ -390,59 +400,95 @@ XdmfPartitioner::partition(const boost::shared_ptr<XdmfUnstructuredGrid> gridToP
   // Split sets into proper partitions
   for(unsigned int i=0; i<gridToPartition->getNumberSets(); ++i) {
     boost::shared_ptr<XdmfSet> currSet = gridToPartition->getSet(i);
-    bool releaseSet = false;
-    if(!currSet->isInitialized()) {
-      currSet->read();
-      releaseSet = true;
-    }
-    unsigned int partitionId = 0;
-    for(unsigned int j=0; j<numberOfPartitions; ++j) {
-      std::map<unsigned int, unsigned int> & currNodeMap =
-        globalToLocalNodeIdMap[j];
-      std::vector<unsigned int> & currElemIds = globalElementIds[j];
-      if(currElemIds.size() > 0) {
-        boost::shared_ptr<XdmfUnstructuredGrid> partitioned =
-          partitionedGrids->getUnstructuredGrid(partitionId);
-        partitionId++;
-
-        boost::shared_ptr<XdmfSet> partitionedSet = XdmfSet::New();
-
-        if(currSet->getType() == XdmfSetType::Cell() ||
-           currSet->getType() == XdmfSetType::Face() ||
-           currSet->getType() == XdmfSetType::Edge()) {
-          for(unsigned int k=0; k<currSet->getSize(); ++k) {
-            std::vector<unsigned int>::const_iterator val =
-              std::find(currElemIds.begin(),
-                        currElemIds.end(),
-                        currSet->getValue<unsigned int>(k));
-            if(val != currElemIds.end()) {
-              unsigned int valToPush = val - currElemIds.begin();
-              partitionedSet->pushBack(valToPush);
+    if(mIgnoredSets.find(currSet) == mIgnoredSets.end()) {
+      bool releaseSet = false;
+      if(!currSet->isInitialized()) {
+        currSet->read();
+        releaseSet = true;
+      }
+      unsigned int partitionId = 0;
+      for(unsigned int j=0; j<numberOfPartitions; ++j) {
+        std::map<unsigned int, unsigned int> & currNodeMap =
+          globalToLocalNodeIdMap[j];
+        std::vector<unsigned int> & currElemIds = globalElementIds[j];
+        if(currElemIds.size() > 0) {
+          boost::shared_ptr<XdmfUnstructuredGrid> partitioned =
+            partitionedGrids->getUnstructuredGrid(partitionId);
+          partitionId++;
+          
+          boost::shared_ptr<XdmfSet> partitionedSet = XdmfSet::New();
+          std::vector<unsigned int> partitionedSetIndex;
+          
+          if(currSet->getType() == XdmfSetType::Cell() ||
+             currSet->getType() == XdmfSetType::Face() ||
+             currSet->getType() == XdmfSetType::Edge()) {
+            for(unsigned int k=0; k<currSet->getSize(); ++k) {
+              std::vector<unsigned int>::const_iterator val =
+                std::find(currElemIds.begin(),
+                          currElemIds.end(),
+                          currSet->getValue<unsigned int>(k));
+              if(val != currElemIds.end()) {
+                unsigned int valToPush = val - currElemIds.begin();
+                partitionedSet->pushBack(valToPush);
+                partitionedSetIndex.push_back(k);
+              }
             }
           }
-        }
-        else if(currSet->getType() == XdmfSetType::Node()) {
-          for(unsigned int k=0; k<currSet->getSize(); ++k) {
-            std::map<unsigned int, unsigned int>::const_iterator val =
-              currNodeMap.find(currSet->getValue<unsigned int>(k));
-            if(val != currNodeMap.end()) {
-              partitionedSet->pushBack(val->second);
+          else if(currSet->getType() == XdmfSetType::Node()) {
+            for(unsigned int k=0; k<currSet->getSize(); ++k) {
+              std::map<unsigned int, unsigned int>::const_iterator val =
+                currNodeMap.find(currSet->getValue<unsigned int>(k));
+              if(val != currNodeMap.end()) {
+                partitionedSet->pushBack(val->second);
+                partitionedSetIndex.push_back(k);
+              }
             }
           }
-        }
-        if(partitionedSet->getSize() > 0) {
-          partitioned->insert(partitionedSet);
-          partitionedSet->setName(currSet->getName());
-          partitionedSet->setType(currSet->getType());
-          if(heavyDataWriter) {
-            partitionedSet->accept(heavyDataWriter);
-            partitionedSet->release();
+          
+          if(partitionedSet->getSize() > 0) {
+
+            for(unsigned int k=0; k<currSet->getNumberAttributes(); ++k) {
+              const boost::shared_ptr<XdmfAttribute> currAttribute = 
+                currSet->getAttribute(k);
+              if(currAttribute->getCenter() == XdmfAttributeCenter::Node()) {
+                bool releaseAttribute = false;
+                if(!currAttribute->isInitialized()) {
+                  currAttribute->read();
+                  releaseAttribute = true;
+                }
+                const boost::shared_ptr<XdmfAttribute> partitionedAttribute = 
+                  XdmfAttribute::New();
+                partitionedAttribute->setCenter(currAttribute->getCenter());
+                partitionedAttribute->setName(currAttribute->getName());
+                partitionedAttribute->setType(currAttribute->getType());
+                partitionedAttribute->initialize(currAttribute->getArrayType(),
+                                                 partitionedSetIndex.size());
+                for(unsigned int l=0; l<partitionedSetIndex.size(); ++l) {
+                  partitionedAttribute->insert(l, 
+                                               currAttribute,
+                                               partitionedSetIndex[l]);
+                }
+                partitionedSet->insert(partitionedAttribute);
+                if(heavyDataWriter) {
+                  partitionedAttribute->accept(heavyDataWriter);
+                  partitionedAttribute->release();
+                }
+              }
+            }
+
+            partitioned->insert(partitionedSet);
+            partitionedSet->setName(currSet->getName());
+            partitionedSet->setType(currSet->getType());
+            if(heavyDataWriter) {
+              partitionedSet->accept(heavyDataWriter);
+              partitionedSet->release();
+            }
           }
         }
       }
-    }
-    if(releaseSet) {
-      currSet->release();
+      if(releaseSet) {
+        currSet->release();
+      }
     }
   }
 
