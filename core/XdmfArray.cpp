@@ -452,13 +452,12 @@ XdmfArray::getDimensions() const
   if(mHaveArray) {
     if(mDimensions.size() == 0) {
       const unsigned int size = boost::apply_visitor(Size(), mArray);
-      std::vector<unsigned int> toReturn(1, size);
-      return toReturn;
+      return std::vector<unsigned int>(1, size);
     }
     return mDimensions;
   }
   else if(mHaveArrayPointer) {
-    // FIXME:
+    return std::vector<unsigned int>(1, mArrayPointerNumValues);
   }
   else if(mHeavyDataController) {
     return mHeavyDataController->getDimensions();
