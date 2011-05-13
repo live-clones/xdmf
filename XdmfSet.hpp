@@ -46,14 +46,14 @@ class XdmfSetType;
  */
 class XDMF_EXPORT XdmfSet : public XdmfArray {
 
- public:
+public:
 
   /**
    * Create a new XdmfSet.
    *
    * @return constructed XdmfSet.
    */
-  static boost::shared_ptr<XdmfSet> New();
+  static shared_ptr<XdmfSet> New();
 
   virtual ~XdmfSet();
 
@@ -77,7 +77,7 @@ class XDMF_EXPORT XdmfSet : public XdmfArray {
    *
    * @return XdmfSetType of this set.
    */
-  boost::shared_ptr<const XdmfSetType> getType() const;
+  shared_ptr<const XdmfSetType> getType() const;
 
   using XdmfArray::insert;
   using XdmfItem::insert;
@@ -94,36 +94,36 @@ class XDMF_EXPORT XdmfSet : public XdmfArray {
    *
    * @param type the XdmfSetType to set.
    */
-  void setType(const boost::shared_ptr<const XdmfSetType> type);
+  void setType(const shared_ptr<const XdmfSetType> type);
 
-  void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor);
+  void traverse(const shared_ptr<XdmfBaseVisitor> visitor);
 
- protected:
+protected:
 
   XdmfSet();
 
   virtual void
   populateItem(const std::map<std::string, std::string> & itemProperties,
-               std::vector<boost::shared_ptr<XdmfItem> > & childItems,
+               std::vector<shared_ptr<XdmfItem> > & childItems,
                const XdmfCoreReader * const reader);
 
- private:
+private:
 
   XdmfSet(const XdmfSet &);  // Not implemented.
   void operator=(const XdmfSet &);  // Not implemented.
 
   std::string mName;
-  boost::shared_ptr<const XdmfSetType> mType;
+  shared_ptr<const XdmfSetType> mType;
 };
 
 #ifdef _WIN32
 XDMF_TEMPLATE template class XDMF_EXPORT
-std::allocator<boost::shared_ptr<XdmfAttribute> >;
+std::allocator<shared_ptr<XdmfAttribute> >;
 XDMF_TEMPLATE template class XDMF_EXPORT
-std::vector<boost::shared_ptr<XdmfAttribute>,
-            std::allocator<boost::shared_ptr<XdmfAttribute> > >;
+std::vector<shared_ptr<XdmfAttribute>,
+            std::allocator<shared_ptr<XdmfAttribute> > >;
 XDMF_TEMPLATE template class XDMF_EXPORT
-boost::shared_ptr<const XdmfSetType>;
+shared_ptr<const XdmfSetType>;
 #endif
 
 #endif /* XDMFSET_HPP_ */

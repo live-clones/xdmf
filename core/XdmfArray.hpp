@@ -92,14 +92,14 @@ class XdmfHeavyDataController;
  */
 class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
 
- public:
+public:
 
   /**
    * Create a new XdmfArray.
    *
    * @return constructed XdmfArray.
    */
-  static boost::shared_ptr<XdmfArray> New();
+  static shared_ptr<XdmfArray> New();
 
   virtual ~XdmfArray();
 
@@ -121,7 +121,7 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
    *
    * @return a XdmfArrayType containing the data type for the array.
    */
-  boost::shared_ptr<const XdmfArrayType> getArrayType() const;
+  shared_ptr<const XdmfArrayType> getArrayType() const;
 
   /**
    * Get the capacity of this array, the number of values the array
@@ -150,7 +150,7 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
    *
    * @return the heavy data controller attached to this array.
    */
-  boost::shared_ptr<XdmfHeavyDataController> getHeavyDataController();
+  shared_ptr<XdmfHeavyDataController> getHeavyDataController();
 
   /**
    * Get the heavy data controller attached to this array (const
@@ -158,7 +158,7 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
    *
    * @return the heavy data controller attached to this array.
    */
-  boost::shared_ptr<const XdmfHeavyDataController>
+  shared_ptr<const XdmfHeavyDataController>
   getHeavyDataController() const;
 
   std::map<std::string, std::string> getItemProperties() const;
@@ -212,7 +212,7 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
    * in this array.
    */
   template <typename T>
-  boost::shared_ptr<std::vector<T> > getValuesInternal();
+  shared_ptr<std::vector<T> > getValuesInternal();
 
   /**
    * Get a pointer to the internal values stored in this array.
@@ -245,7 +245,7 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
    * initialized in this array.
    */
   template <typename T>
-  boost::shared_ptr<std::vector<T> > initialize(const unsigned int size = 0);
+  shared_ptr<std::vector<T> > initialize(const unsigned int size = 0);
 
   /**
    * Initialize the array to contain a particular type.
@@ -256,7 +256,7 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
    * initialized in this array.
    */
   template <typename T>
-  boost::shared_ptr<std::vector<T> >
+  shared_ptr<std::vector<T> >
   initialize(const std::vector<unsigned int> & dimensions);
 
   /**
@@ -265,7 +265,7 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
    * @param arrayType the type of array to initialize.
    * @param size the number of values in the initialized array.
    */
-  void initialize(const boost::shared_ptr<const XdmfArrayType> arrayType,
+  void initialize(const shared_ptr<const XdmfArrayType> arrayType,
                   const unsigned int size = 0);
 
   /**
@@ -274,7 +274,7 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
    * @param arrayType the type of array to initialize.
    * @param dimensions the number dimensions of the initialized array.
    */
-  void initialize(const boost::shared_ptr<const XdmfArrayType> arrayType,
+  void initialize(const shared_ptr<const XdmfArrayType> arrayType,
                   const std::vector<unsigned int> & dimensions);
 
   /**
@@ -300,7 +300,7 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
    * each copy.
    */
   void insert(const unsigned int startIndex,
-              const boost::shared_ptr<const XdmfArray> values,
+              const shared_ptr<const XdmfArray> values,
               const unsigned int valuesStartIndex= 0,
               const unsigned int numValues = 1,
               const unsigned int arrayStride = 1,
@@ -387,7 +387,7 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
    * this array.
    */
   void
-  setHeavyDataController(const boost::shared_ptr<XdmfHeavyDataController> heavyDataController);
+  setHeavyDataController(const shared_ptr<XdmfHeavyDataController> heavyDataController);
 
   /**
    * Set the name of the array.
@@ -443,7 +443,7 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
    * @param array a smart pointer to a vector to store in this array.
    */
   template<typename T>
-  void setValuesInternal(const boost::shared_ptr<std::vector<T> > array);
+  void setValuesInternal(const shared_ptr<std::vector<T> > array);
 
   /**
    * Exchange the contents of the vector with the contents of this
@@ -463,7 +463,7 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
    * @return bool whether the swap was successful.
    */
   template<typename T>
-  bool swap(const boost::shared_ptr<std::vector<T> > array);
+  bool swap(const shared_ptr<std::vector<T> > array);
 
   /**
    * Exchange the contents of an XdmfArray with the contents of this
@@ -471,18 +471,18 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
    *
    * @param array a smart pointer to a vector to exchange values with.
    */
-  void swap(const boost::shared_ptr<XdmfArray> array);
+  void swap(const shared_ptr<XdmfArray> array);
 
- protected:
+protected:
 
   XdmfArray();
 
   virtual void
   populateItem(const std::map<std::string, std::string> & itemProperties,
-               std::vector<boost::shared_ptr<XdmfItem> > & childItems,
+               std::vector<shared_ptr<XdmfItem> > & childItems,
                const XdmfCoreReader * const reader);
 
- private:
+private:
 
   XdmfArray(const XdmfArray &);  // Not implemented.
   void operator=(const XdmfArray &);  // Not implemented.
@@ -526,15 +526,15 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
   void releaseArrayPointer();
 
   typedef boost::variant<
-    boost::shared_ptr<std::vector<char> >,
-    boost::shared_ptr<std::vector<short> >,
-    boost::shared_ptr<std::vector<int> >,
-    boost::shared_ptr<std::vector<long> >,
-    boost::shared_ptr<std::vector<float> >,
-    boost::shared_ptr<std::vector<double> >,
-    boost::shared_ptr<std::vector<unsigned char> >,
-    boost::shared_ptr<std::vector<unsigned short> >,
-    boost::shared_ptr<std::vector<unsigned int> > > ArrayVariant;
+    shared_ptr<std::vector<char> >,
+    shared_ptr<std::vector<short> >,
+    shared_ptr<std::vector<int> >,
+    shared_ptr<std::vector<long> >,
+    shared_ptr<std::vector<float> >,
+    shared_ptr<std::vector<double> >,
+    shared_ptr<std::vector<unsigned char> >,
+    shared_ptr<std::vector<unsigned short> >,
+    shared_ptr<std::vector<unsigned int> > > ArrayVariant;
 
   typedef boost::variant<
     boost::shared_array<const char>,
@@ -553,7 +553,7 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
   std::vector<unsigned int> mDimensions;
   bool mHaveArray;
   bool mHaveArrayPointer;
-  boost::shared_ptr<XdmfHeavyDataController> mHeavyDataController;
+  shared_ptr<XdmfHeavyDataController> mHeavyDataController;
   std::string mName;
   unsigned int mTmpReserveSize;
 };
@@ -562,15 +562,15 @@ class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
 
 #ifdef _WIN32
 XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT
-boost::shared_ptr<const XdmfArrayType>;
+shared_ptr<const XdmfArrayType>;
 XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT
-boost::shared_ptr<XdmfHeavyDataController>;
+shared_ptr<XdmfHeavyDataController>;
 XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT
-boost::shared_ptr<const XdmfHeavyDataController>;
+shared_ptr<const XdmfHeavyDataController>;
 XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT
-boost::shared_ptr<Loki::BaseVisitor>;
+shared_ptr<Loki::BaseVisitor>;
 XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT
-Loki::Visitor<boost::shared_ptr<XdmfArray>, boost::shared_ptr<XdmfItem> >;
+Loki::Visitor<shared_ptr<XdmfArray>, shared_ptr<XdmfItem> >;
 #endif
 
 #endif /* XDMFARRAY_HPP_ */

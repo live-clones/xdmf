@@ -53,7 +53,7 @@ public:
 
   template<typename U>
   void
-  operator()(const boost::shared_ptr<std::vector<U> > & array) const
+  operator()(const shared_ptr<std::vector<U> > & array) const
   {
     for(unsigned int i=0; i<mNumValues; ++i) {
       mValuesPointer[i*mValuesStride] =
@@ -91,7 +91,7 @@ public:
 
   template<typename U>
   void
-  operator()(boost::shared_ptr<std::vector<U> > & array) const
+  operator()(shared_ptr<std::vector<U> > & array) const
   {
     unsigned int size = mStartIndex + mNumValues;
     if(mArrayStride > 1) {
@@ -128,7 +128,7 @@ public:
 
   template<typename U>
   void
-  operator()(boost::shared_ptr<std::vector<U> > & array) const
+  operator()(shared_ptr<std::vector<U> > & array) const
   {
     array->push_back((U)mVal);
   }
@@ -151,7 +151,7 @@ public:
 
   template<typename U>
   void
-  operator()(boost::shared_ptr<std::vector<U> > & array) const
+  operator()(shared_ptr<std::vector<U> > & array) const
   {
     array->resize(mNumValues, (U)mVal);
   }
@@ -196,41 +196,41 @@ XdmfArray::getValues(const unsigned int startIndex,
                          mArray);
   }
   else if(mHaveArrayPointer) {
-      boost::apply_visitor(GetValues<T>(startIndex,
-                                        valuesPointer,
-                                        numValues,
-                                        arrayStride,
-                                        valuesStride),
-                           mArrayPointer);
+    boost::apply_visitor(GetValues<T>(startIndex,
+                                      valuesPointer,
+                                      numValues,
+                                      arrayStride,
+                                      valuesStride),
+                         mArrayPointer);
   }
 }
 
 template <typename T>
-boost::shared_ptr<std::vector<T> >
+shared_ptr<std::vector<T> >
 XdmfArray::getValuesInternal()
 {
   if(mHaveArrayPointer) {
     internalizeArrayPointer();
   }
   try {
-    boost::shared_ptr<std::vector<T> > currArray =
-      boost::get<boost::shared_ptr<std::vector<T> > >(mArray);
+    shared_ptr<std::vector<T> > currArray =
+      boost::get<shared_ptr<std::vector<T> > >(mArray);
     return currArray;
   }
   catch(const boost::bad_get & exception) {
-    return boost::shared_ptr<std::vector<T> >();
+    return shared_ptr<std::vector<T> >();
   }
 }
 
 template <typename T>
-boost::shared_ptr<std::vector<T> >
+shared_ptr<std::vector<T> >
 XdmfArray::initialize(const unsigned int size)
 {
   if(mHaveArrayPointer) {
     releaseArrayPointer();
   }
   // Set type of variant to type of pointer
-  boost::shared_ptr<std::vector<T> > newArray(new std::vector<T>(size));
+  shared_ptr<std::vector<T> > newArray(new std::vector<T>(size));
   if(mTmpReserveSize > 0) {
     newArray->reserve(mTmpReserveSize);
     mTmpReserveSize = 0;
@@ -241,7 +241,7 @@ XdmfArray::initialize(const unsigned int size)
 }
 
 template <typename T>
-boost::shared_ptr<std::vector<T> >
+shared_ptr<std::vector<T> >
 XdmfArray::initialize(const std::vector<unsigned int> & dimensions)
 {
   mDimensions = dimensions;
@@ -319,7 +319,7 @@ XdmfArray::resize(const unsigned int numValues,
 }
 
 template<typename T>
-void 
+void
 XdmfArray::resize(const std::vector<unsigned int> & dimensions,
                   const T & value)
 {
@@ -363,11 +363,11 @@ XdmfArray::setValuesInternal(std::vector<T> & array,
     releaseArrayPointer();
   }
   if(transferOwnership) {
-    boost::shared_ptr<std::vector<T> > newArray(&array);
+    shared_ptr<std::vector<T> > newArray(&array);
     mArray = newArray;
   }
   else {
-    boost::shared_ptr<std::vector<T> > newArray(&array, NullDeleter());
+    shared_ptr<std::vector<T> > newArray(&array, NullDeleter());
     mArray = newArray;
   }
   mHaveArray = true;
@@ -375,7 +375,7 @@ XdmfArray::setValuesInternal(std::vector<T> & array,
 
 template <typename T>
 void
-XdmfArray::setValuesInternal(const boost::shared_ptr<std::vector<T> > array)
+XdmfArray::setValuesInternal(const shared_ptr<std::vector<T> > array)
 {
   if(mHaveArrayPointer) {
     releaseArrayPointer();
@@ -395,8 +395,8 @@ XdmfArray::swap(std::vector<T> & array)
     initialize<T>();
   }
   try {
-    boost::shared_ptr<std::vector<T> > currArray =
-      boost::get<boost::shared_ptr<std::vector<T> > >(mArray);
+    shared_ptr<std::vector<T> > currArray =
+      boost::get<shared_ptr<std::vector<T> > >(mArray);
     currArray->swap(array);
     return true;
   }
@@ -407,7 +407,7 @@ XdmfArray::swap(std::vector<T> & array)
 
 template <typename T>
 bool
-XdmfArray::swap(const boost::shared_ptr<std::vector<T> > array)
+XdmfArray::swap(const shared_ptr<std::vector<T> > array)
 {
   return this->swap(*array.get());
 }

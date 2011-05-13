@@ -24,18 +24,18 @@
 #include "XdmfInformation.hpp"
 #include "XdmfError.hpp"
 
-boost::shared_ptr<XdmfInformation>
+shared_ptr<XdmfInformation>
 XdmfInformation::New()
 {
-  boost::shared_ptr<XdmfInformation> p(new XdmfInformation());
+  shared_ptr<XdmfInformation> p(new XdmfInformation());
   return p;
 };
 
-boost::shared_ptr<XdmfInformation>
+shared_ptr<XdmfInformation>
 XdmfInformation::New(const std::string & key,
                      const std::string & value)
 {
-  boost::shared_ptr<XdmfInformation> p(new XdmfInformation(key, value));
+  shared_ptr<XdmfInformation> p(new XdmfInformation(key, value));
   return p;
 };
 
@@ -81,7 +81,7 @@ XdmfInformation::getValue() const
 
 void
 XdmfInformation::populateItem(const std::map<std::string, std::string> & itemProperties,
-                              std::vector<boost::shared_ptr<XdmfItem> > & childItems,
+                              std::vector<shared_ptr<XdmfItem> > & childItems,
                               const XdmfCoreReader * const reader)
 {
   XdmfItem::populateItem(itemProperties, childItems, reader);
@@ -92,7 +92,9 @@ XdmfInformation::populateItem(const std::map<std::string, std::string> & itemPro
     mKey = key->second;
   }
   else {
-    XdmfError::message(XdmfError::FATAL, "'Name' not found in itemProperties in XdmfInformation::populateItem");
+    XdmfError::message(XdmfError::FATAL,
+                       "'Name' not found in itemProperties in "
+                       "XdmfInformation::populateItem");
   }
 
   std::map<std::string, std::string>::const_iterator value =
@@ -106,7 +108,9 @@ XdmfInformation::populateItem(const std::map<std::string, std::string> & itemPro
       mValue = value->second;
     }
     else {
-      XdmfError::message(XdmfError::FATAL, "'Value' not found in itemProperties in XdmfInformation::populateItem");
+      XdmfError::message(XdmfError::FATAL,
+                         "'Value' not found in itemProperties in "
+                         "XdmfInformation::populateItem");
     }
   }
 }

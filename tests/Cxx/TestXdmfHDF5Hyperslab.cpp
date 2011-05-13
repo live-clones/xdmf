@@ -10,7 +10,7 @@ int main(int, char **)
   //
   // Create 2x2 array.
   //
-  boost::shared_ptr<XdmfArray> array = XdmfArray::New();
+  shared_ptr<XdmfArray> array = XdmfArray::New();
   std::vector<unsigned int> dimensions(2, 2);
   array->initialize<int>(dimensions);
   int values[] = {0, 1, 2, 3};
@@ -23,7 +23,7 @@ int main(int, char **)
   //
   // Write array to disk.
   //
-  boost::shared_ptr<XdmfWriter> writer = 
+  shared_ptr<XdmfWriter> writer =
     XdmfWriter::New("TestXdmfHDF5Hyperslab.xmf");
   writer->setLightDataLimit(0);
   array->accept(writer);
@@ -31,17 +31,15 @@ int main(int, char **)
   //
   // Read array from disk.
   //
-  boost::shared_ptr<XdmfReader> reader = 
-    XdmfReader::New();
-  boost::shared_ptr<XdmfItem> item = reader->read("TestXdmfHDF5Hyperslab.xmf");
-  boost::shared_ptr<XdmfArray> readArray = 
-    boost::shared_dynamic_cast<XdmfArray>(item);
+  shared_ptr<XdmfReader> reader = XdmfReader::New();
+  shared_ptr<XdmfItem> item = reader->read("TestXdmfHDF5Hyperslab.xmf");
+  shared_ptr<XdmfArray> readArray = shared_dynamic_cast<XdmfArray>(item);
   assert(readArray);
   assert(readArray->getSize() == 4);
   std::vector<unsigned int> readDimensions = readArray->getDimensions();
   assert(readDimensions.size() == 2);
   assert(readDimensions[0] == 2 && readDimensions[1] == 2);
- 
+
   //
   // Read heavy values from disk.
   //
@@ -68,8 +66,8 @@ int main(int, char **)
   dimensions = readArray->getDimensions();
   assert(dimensions.size() == 2);
   assert(dimensions[0] == 3 && dimensions[1] == 3);
- 
-  boost::shared_ptr<XdmfWriter> writer2 = 
+
+  shared_ptr<XdmfWriter> writer2 =
     XdmfWriter::New("TestXdmfHDF5Hyperslab2.xmf");
   writer2->setLightDataLimit(0);
   writer2->getHeavyDataWriter()->setMode(XdmfHeavyDataWriter::Overwrite);
@@ -78,11 +76,9 @@ int main(int, char **)
   //
   // Read array from disk.
   //
-  
-  boost::shared_ptr<XdmfItem> item2 = 
-    reader->read("TestXdmfHDF5Hyperslab2.xmf");
-  boost::shared_ptr<XdmfArray> readArray2 = 
-    boost::shared_dynamic_cast<XdmfArray>(item2);
+
+  shared_ptr<XdmfItem> item2 = reader->read("TestXdmfHDF5Hyperslab2.xmf");
+  shared_ptr<XdmfArray> readArray2 = shared_dynamic_cast<XdmfArray>(item2);
   assert(readArray2);
   assert(readArray2->getSize() == 9);
   readDimensions = readArray2->getDimensions();
@@ -119,11 +115,11 @@ int main(int, char **)
   const std::vector<unsigned int> stride(2,1);
   const std::vector<unsigned int> count(2, 2);
 
-  boost::shared_ptr<XdmfHeavyDataController> controller =
+  shared_ptr<XdmfHeavyDataController> controller =
     readArray2->getHeavyDataController();
   assert(controller);
 
-  boost::shared_ptr<XdmfHDF5Controller> hyperslabController = 
+  shared_ptr<XdmfHDF5Controller> hyperslabController =
     XdmfHDF5Controller::New(controller->getFilePath(),
                             controller->getDataSetPath(),
                             controller->getType(),
@@ -131,10 +127,10 @@ int main(int, char **)
                             stride,
                             count);
 
-  boost::shared_ptr<XdmfArray> hyperslabArray = XdmfArray::New();
+  shared_ptr<XdmfArray> hyperslabArray = XdmfArray::New();
   hyperslabArray->setHeavyDataController(hyperslabController);
   assert(hyperslabArray->getSize() == 4);
-  std::vector<unsigned int> hyperslabDimensions = 
+  std::vector<unsigned int> hyperslabDimensions =
     hyperslabArray->getDimensions();
   assert(hyperslabDimensions.size() == 2);
   assert(hyperslabDimensions[0] == 2 && hyperslabDimensions[1] == 2);
@@ -147,7 +143,7 @@ int main(int, char **)
   assert(hyperslabArray->getValue<int>(1) == 5);
   assert(hyperslabArray->getValue<int>(2) == 7);
   assert(hyperslabArray->getValue<int>(3) == 8);
- 
+
   return 0;
 
 }

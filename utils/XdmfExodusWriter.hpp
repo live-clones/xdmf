@@ -44,7 +44,7 @@ public:
    *
    * @return constructed XdmfExodusReader.
    */
-  static boost::shared_ptr<XdmfExodusWriter> New();
+  static shared_ptr<XdmfExodusWriter> New();
 
   virtual ~XdmfExodusWriter();
 
@@ -56,7 +56,7 @@ public:
    * format.
    */
   void write(const std::string & filePath,
-             const boost::shared_ptr<XdmfUnstructuredGrid> gridToWrite) const;
+             const shared_ptr<XdmfUnstructuredGrid> gridToWrite) const;
 
 protected:
 

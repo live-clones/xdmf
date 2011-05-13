@@ -45,24 +45,24 @@
  */
 class XDMF_EXPORT XdmfAttributeCenter : public XdmfItemProperty {
 
- public:
+public:
 
   virtual ~XdmfAttributeCenter();
 
   friend class XdmfAttribute;
 
   // Supported Xdmf Attribute Centers
-  static boost::shared_ptr<const XdmfAttributeCenter> Grid();
-  static boost::shared_ptr<const XdmfAttributeCenter> Cell();
-  static boost::shared_ptr<const XdmfAttributeCenter> Face();
-  static boost::shared_ptr<const XdmfAttributeCenter> Edge();
-  static boost::shared_ptr<const XdmfAttributeCenter> Node();
+  static shared_ptr<const XdmfAttributeCenter> Grid();
+  static shared_ptr<const XdmfAttributeCenter> Cell();
+  static shared_ptr<const XdmfAttributeCenter> Face();
+  static shared_ptr<const XdmfAttributeCenter> Edge();
+  static shared_ptr<const XdmfAttributeCenter> Node();
 
   void
   getProperties(std::map<std::string, std::string> & collectedProperties) const;
 
 
- protected:
+protected:
 
   /**
    * Protected constructor for XdmfAttributeCenter.  The constructor
@@ -75,12 +75,12 @@ class XDMF_EXPORT XdmfAttributeCenter : public XdmfItemProperty {
    */
   XdmfAttributeCenter(const std::string & name);
 
- private:
+private:
 
   XdmfAttributeCenter(const XdmfAttributeCenter &); // Not implemented.
   void operator=(const XdmfAttributeCenter &); // Not implemented.
 
-  static boost::shared_ptr<const XdmfAttributeCenter>
+  static shared_ptr<const XdmfAttributeCenter>
   New(const std::map<std::string, std::string> & itemProperties);
 
   std::string mName;

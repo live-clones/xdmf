@@ -25,29 +25,28 @@
 #include <hdf5.h>
 #include "XdmfHDF5ControllerDSM.hpp"
 
-boost::shared_ptr<XdmfHDF5ControllerDSM>
+shared_ptr<XdmfHDF5ControllerDSM>
 XdmfHDF5ControllerDSM::New(const std::string & hdf5FilePath,
                            const std::string & dataSetPath,
-                           const boost::shared_ptr<const XdmfArrayType> type,
+                           const shared_ptr<const XdmfArrayType> type,
                            const std::vector<unsigned int> & start,
                            const std::vector<unsigned int> & stride,
                            const std::vector<unsigned int> & count,
                            H5FDdsmBuffer * const dsmBuffer)
 {
-  boost::shared_ptr<XdmfHDF5ControllerDSM>
-    p(new XdmfHDF5ControllerDSM(hdf5FilePath,
-                                dataSetPath,
-                                type,
-                                start,
-                                stride,
-                                count,
-                                dsmBuffer));
+  shared_ptr<XdmfHDF5ControllerDSM> p(new XdmfHDF5ControllerDSM(hdf5FilePath,
+                                                                dataSetPath,
+                                                                type,
+                                                                start,
+                                                                stride,
+                                                                count,
+                                                                dsmBuffer));
   return p;
 }
 
 XdmfHDF5ControllerDSM::XdmfHDF5ControllerDSM(const std::string & hdf5FilePath,
                                              const std::string & dataSetPath,
-                                             const boost::shared_ptr<const XdmfArrayType> type,
+                                             const shared_ptr<const XdmfArrayType> type,
                                              const std::vector<unsigned int> & start,
                                              const std::vector<unsigned int> & stride,
                                              const std::vector<unsigned int> & count,

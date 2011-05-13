@@ -25,10 +25,10 @@
 #include "XdmfTime.hpp"
 #include "XdmfError.hpp"
 
-boost::shared_ptr<XdmfTime>
+shared_ptr<XdmfTime>
 XdmfTime::New(const double & value)
 {
-  boost::shared_ptr<XdmfTime> p(new XdmfTime(value));
+  shared_ptr<XdmfTime> p(new XdmfTime(value));
   return p;
 }
 
@@ -67,7 +67,7 @@ XdmfTime::getValue() const
 
 void
 XdmfTime::populateItem(const std::map<std::string, std::string> & itemProperties,
-                       std::vector<boost::shared_ptr<XdmfItem> > & childItems,
+                       std::vector<shared_ptr<XdmfItem> > & childItems,
                        const XdmfCoreReader * const reader)
 {
   XdmfItem::populateItem(itemProperties, childItems, reader);

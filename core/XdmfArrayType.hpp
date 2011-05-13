@@ -50,23 +50,23 @@
  */
 class XDMFCORE_EXPORT XdmfArrayType : public XdmfItemProperty {
 
- public:
+public:
 
   virtual ~XdmfArrayType();
 
   friend class XdmfArray;
 
   // Supported XdmfArrayTypes
-  static boost::shared_ptr<const XdmfArrayType> Uninitialized();
-  static boost::shared_ptr<const XdmfArrayType> Int8();
-  static boost::shared_ptr<const XdmfArrayType> Int16();
-  static boost::shared_ptr<const XdmfArrayType> Int32();
-  static boost::shared_ptr<const XdmfArrayType> Int64();
-  static boost::shared_ptr<const XdmfArrayType> Float32();
-  static boost::shared_ptr<const XdmfArrayType> Float64();
-  static boost::shared_ptr<const XdmfArrayType> UInt8();
-  static boost::shared_ptr<const XdmfArrayType> UInt16();
-  static boost::shared_ptr<const XdmfArrayType> UInt32();
+  static shared_ptr<const XdmfArrayType> Uninitialized();
+  static shared_ptr<const XdmfArrayType> Int8();
+  static shared_ptr<const XdmfArrayType> Int16();
+  static shared_ptr<const XdmfArrayType> Int32();
+  static shared_ptr<const XdmfArrayType> Int64();
+  static shared_ptr<const XdmfArrayType> Float32();
+  static shared_ptr<const XdmfArrayType> Float64();
+  static shared_ptr<const XdmfArrayType> UInt8();
+  static shared_ptr<const XdmfArrayType> UInt16();
+  static shared_ptr<const XdmfArrayType> UInt32();
 
   /**
    * Get the data size, in bytes, of the value associated with this
@@ -79,7 +79,7 @@ class XDMFCORE_EXPORT XdmfArrayType : public XdmfItemProperty {
   void
   getProperties(std::map<std::string, std::string> & collectedProperties) const;
 
- protected:
+protected:
 
   /**
    * Protected constructor for XdmfArrayType. The constructor is
@@ -94,12 +94,12 @@ class XDMFCORE_EXPORT XdmfArrayType : public XdmfItemProperty {
   XdmfArrayType(const std::string & name,
                 const unsigned int precision);
 
- private:
+private:
 
   XdmfArrayType(const XdmfArrayType &); // Not implemented.
   void operator=(const XdmfArrayType &); // Not implemented.
 
-  static boost::shared_ptr<const XdmfArrayType>
+  static shared_ptr<const XdmfArrayType>
   New(const std::map<std::string, std::string> & itemProperties);
 
   std::string mName;

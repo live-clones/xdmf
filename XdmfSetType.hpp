@@ -21,23 +21,23 @@
  */
 class XDMF_EXPORT XdmfSetType : public XdmfItemProperty {
 
- public:
+public:
 
   virtual ~XdmfSetType();
 
   friend class XdmfSet;
 
   // Supported Xdmf Set Types
-  static boost::shared_ptr<const XdmfSetType> NoSetType();
-  static boost::shared_ptr<const XdmfSetType> Node();
-  static boost::shared_ptr<const XdmfSetType> Cell();
-  static boost::shared_ptr<const XdmfSetType> Face();
-  static boost::shared_ptr<const XdmfSetType> Edge();
+  static shared_ptr<const XdmfSetType> NoSetType();
+  static shared_ptr<const XdmfSetType> Node();
+  static shared_ptr<const XdmfSetType> Cell();
+  static shared_ptr<const XdmfSetType> Face();
+  static shared_ptr<const XdmfSetType> Edge();
 
   void
   getProperties(std::map<std::string, std::string> & collectedProperties) const;
 
- protected:
+protected:
 
   /**
    * Protected constructor for XdmfSetType. The constructor is
@@ -49,12 +49,12 @@ class XDMF_EXPORT XdmfSetType : public XdmfItemProperty {
    */
   XdmfSetType(const std::string & name);
 
- private:
+private:
 
   XdmfSetType(const XdmfSetType &); // Not implemented.
   void operator=(const XdmfSetType &); // Not implemented.
 
-  static boost::shared_ptr<const XdmfSetType>
+  static shared_ptr<const XdmfSetType>
   New(const std::map<std::string, std::string> & itemProperties);
 
   std::string mName;

@@ -44,16 +44,16 @@
  */
 class XDMF_EXPORT XdmfGeometryType : public XdmfItemProperty {
 
- public:
+public:
 
   virtual ~XdmfGeometryType();
 
   friend class XdmfGeometry;
 
   // Supported Xdmf Geometry Types
-  static boost::shared_ptr<const XdmfGeometryType> NoGeometryType();
-  static boost::shared_ptr<const XdmfGeometryType> XYZ();
-  static boost::shared_ptr<const XdmfGeometryType> XY();
+  static shared_ptr<const XdmfGeometryType> NoGeometryType();
+  static shared_ptr<const XdmfGeometryType> XYZ();
+  static shared_ptr<const XdmfGeometryType> XY();
 
   /**
    * Get the dimensions of this geometry type - i.e. XYZ = 3.
@@ -72,7 +72,7 @@ class XDMF_EXPORT XdmfGeometryType : public XdmfItemProperty {
   virtual void
   getProperties(std::map<std::string, std::string> & collectedProperties) const;
 
- protected:
+protected:
 
   /**
    * Protected constructor for XdmfGeometryType.  The constructor is
@@ -85,12 +85,12 @@ class XDMF_EXPORT XdmfGeometryType : public XdmfItemProperty {
    */
   XdmfGeometryType(const std::string & name, const int & dimensions);
 
- private:
+private:
 
   XdmfGeometryType(const XdmfGeometryType &); // Not implemented.
   void operator=(const XdmfGeometryType &); // Not implemented.
 
-  static boost::shared_ptr<const XdmfGeometryType>
+  static shared_ptr<const XdmfGeometryType>
   New(const std::map<std::string, std::string> & itemProperties);
 
   unsigned int mDimensions;

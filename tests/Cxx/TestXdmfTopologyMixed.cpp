@@ -14,20 +14,20 @@ int main(int, char **)
 
   //
   // Create a unstructured grid consisting of a quadrilateral element
-  // and a polyline element connected to each other by a single node at 
+  // and a polyline element connected to each other by a single node at
   // the corner of each.
-  // 
-  boost::shared_ptr<XdmfUnstructuredGrid> grid = XdmfUnstructuredGrid::New();
+  //
+  shared_ptr<XdmfUnstructuredGrid> grid = XdmfUnstructuredGrid::New();
   grid->setName("Mixed");
 
   // Set Geometry
-  double points[] = {0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 2.0, 2.0, 3.0, 
+  double points[] = {0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 2.0, 2.0, 3.0,
                      1.0, 4.0, 2.0, 5.0, 1.0, 6.0, 2.0};
   grid->getGeometry()->setType(XdmfGeometryType::XY());
   grid->getGeometry()->insert(0, &points[0], 18);
-  
+
   // Set Topology
-  boost::shared_ptr<XdmfTopology> topology = grid->getTopology();
+  shared_ptr<XdmfTopology> topology = grid->getTopology();
   topology->setType(XdmfTopologyType::Mixed());
   topology->pushBack(XdmfTopologyType::Quadrilateral()->getID());
   topology->pushBack(0);
@@ -45,19 +45,19 @@ int main(int, char **)
 
   assert(topology->getNumberElements() == 2);
 
-  boost::shared_ptr<XdmfDomain> domain = XdmfDomain::New();
+  shared_ptr<XdmfDomain> domain = XdmfDomain::New();
   domain->insert(grid);
 
-  boost::shared_ptr<XdmfWriter> writer =
+  shared_ptr<XdmfWriter> writer =
     XdmfWriter::New("TestXdmfTopologyMixed1.xmf");
   domain->accept(writer);
 
-  boost::shared_ptr<XdmfReader> reader = XdmfReader::New();
-  boost::shared_ptr<XdmfDomain> readDomain =
-    boost::shared_dynamic_cast<XdmfDomain>
+  shared_ptr<XdmfReader> reader = XdmfReader::New();
+  shared_ptr<XdmfDomain> readDomain =
+    shared_dynamic_cast<XdmfDomain>
     (reader->read("TestXdmfTopologyMixed1.xmf"));
 
-  boost::shared_ptr<XdmfWriter> writer2 =
+  shared_ptr<XdmfWriter> writer2 =
     XdmfWriter::New("TestXdmfTopologyMixed2.xmf");
   readDomain->accept(writer2);
 

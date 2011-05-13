@@ -44,21 +44,21 @@
  */
 class XDMF_EXPORT XdmfGridCollectionType : public XdmfItemProperty {
 
- public:
+public:
 
   virtual ~XdmfGridCollectionType();
 
   friend class XdmfGridCollection;
 
   // Supported XdmfGridCollectionTypes
-  static boost::shared_ptr<const XdmfGridCollectionType> NoCollectionType();
-  static boost::shared_ptr<const XdmfGridCollectionType> Spatial();
-  static boost::shared_ptr<const XdmfGridCollectionType> Temporal();
+  static shared_ptr<const XdmfGridCollectionType> NoCollectionType();
+  static shared_ptr<const XdmfGridCollectionType> Spatial();
+  static shared_ptr<const XdmfGridCollectionType> Temporal();
 
   void
   getProperties(std::map<std::string, std::string> & collectedProperties) const;
 
- protected:
+protected:
 
   /**
    * Protected constructor for XdmfGridCollectionType. The constructor
@@ -71,12 +71,12 @@ class XDMF_EXPORT XdmfGridCollectionType : public XdmfItemProperty {
    */
   XdmfGridCollectionType(const std::string & name);
 
- private:
+private:
 
   XdmfGridCollectionType(const XdmfGridCollectionType &); // Not implemented.
   void operator=(const XdmfGridCollectionType &); // Not implemented.
 
-  static boost::shared_ptr<const XdmfGridCollectionType>
+  static shared_ptr<const XdmfGridCollectionType>
   New(const std::map<std::string, std::string> & itemProperties);
 
   std::string mName;

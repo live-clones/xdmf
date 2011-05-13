@@ -49,7 +49,7 @@ public:
    *
    * @return constructed XdmfPartitioner.
    */
-  static boost::shared_ptr<XdmfPartitioner> New();
+  static shared_ptr<XdmfPartitioner> New();
 
   virtual ~XdmfPartitioner();
 
@@ -59,7 +59,7 @@ public:
    *
    * @param set the set to ignore when partitioning.
    */
-  void ignore(const boost::shared_ptr<const XdmfSet> set);
+  void ignore(const shared_ptr<const XdmfSet> set);
 
   /**
    * Partitions an XdmfGrid using the metis library.
@@ -92,10 +92,10 @@ public:
    *
    * @return a spatial collection containing partitioned grids.
    */
-  boost::shared_ptr<XdmfGridCollection>
-  partition(const boost::shared_ptr<XdmfUnstructuredGrid> gridToPartition,
+  shared_ptr<XdmfGridCollection>
+  partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartition,
             const unsigned int numberOfPartitions,
-            const boost::shared_ptr<XdmfHeavyDataWriter> heavyDataWriter = boost::shared_ptr<XdmfHeavyDataWriter>()) const;
+            const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter = shared_ptr<XdmfHeavyDataWriter>()) const;
 
 protected:
 
@@ -106,7 +106,7 @@ private:
   XdmfPartitioner(const XdmfPartitioner & partitioner);  // Not implemented.
   void operator=(const XdmfPartitioner & partitioner);  // Not implemented.
 
-  std::set<boost::shared_ptr<const XdmfSet> > mIgnoredSets;
+  std::set<shared_ptr<const XdmfSet> > mIgnoredSets;
 
 };
 

@@ -51,19 +51,19 @@ int main(int argc, char *argv[])
   }
 
   // Create Array
-  boost::shared_ptr<XdmfArray> array = XdmfArray::New();
+  shared_ptr<XdmfArray> array = XdmfArray::New();
   array->initialize<int>(0);
   array->pushBack(0);
   array->pushBack(1);
   array->pushBack(2);
 
   // Create DSM Writer and write to DSM space.
-  boost::shared_ptr<XdmfHDF5WriterDSM> writer =
+  shared_ptr<XdmfHDF5WriterDSM> writer =
     XdmfHDF5WriterDSM::New("dsm", dsmBuffer);
   array->accept(writer);
 
   // Read data
-  boost::shared_ptr<XdmfArray> readArray = XdmfArray::New();
+  shared_ptr<XdmfArray> readArray = XdmfArray::New();
   readArray->setHeavyDataController(array->getHeavyDataController());
   readArray->read();
   assert(readArray->getSize() == 3);

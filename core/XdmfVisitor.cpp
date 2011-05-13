@@ -1,5 +1,5 @@
 /*****************************************************************************/
-/*                                    XDMF                                   */
+/*                                    Xdmf                                   */
 /*                       eXtensible Data Model and Format                    */
 /*                                                                           */
 /*  Id : XdmfVisitor.cpp                                                     */
@@ -34,7 +34,7 @@ XdmfVisitor::~XdmfVisitor()
 
 void
 XdmfVisitor::visit(XdmfItem & item,
-                   const boost::shared_ptr<XdmfBaseVisitor> visitor)
+                   const shared_ptr<XdmfBaseVisitor> visitor)
 {
   item.traverse(visitor);
 }

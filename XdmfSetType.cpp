@@ -25,38 +25,38 @@
 #include "XdmfError.hpp"
 
 // Supported XdmfSetTypes
-boost::shared_ptr<const XdmfSetType>
+shared_ptr<const XdmfSetType>
 XdmfSetType::NoSetType()
 {
-  static boost::shared_ptr<const XdmfSetType> p(new XdmfSetType("None"));
+  static shared_ptr<const XdmfSetType> p(new XdmfSetType("None"));
   return p;
 }
 
-boost::shared_ptr<const XdmfSetType>
+shared_ptr<const XdmfSetType>
 XdmfSetType::Node()
 {
-  static boost::shared_ptr<const XdmfSetType> p(new XdmfSetType("Node"));
+  static shared_ptr<const XdmfSetType> p(new XdmfSetType("Node"));
   return p;
 }
 
-boost::shared_ptr<const XdmfSetType>
+shared_ptr<const XdmfSetType>
 XdmfSetType::Cell()
 {
-  static boost::shared_ptr<const XdmfSetType> p(new XdmfSetType("Cell"));
+  static shared_ptr<const XdmfSetType> p(new XdmfSetType("Cell"));
   return p;
 }
 
-boost::shared_ptr<const XdmfSetType>
+shared_ptr<const XdmfSetType>
 XdmfSetType::Face()
 {
-  static boost::shared_ptr<const XdmfSetType> p(new XdmfSetType("Face"));
+  static shared_ptr<const XdmfSetType> p(new XdmfSetType("Face"));
   return p;
 }
 
-boost::shared_ptr<const XdmfSetType>
+shared_ptr<const XdmfSetType>
 XdmfSetType::Edge()
 {
-  static boost::shared_ptr<const XdmfSetType> p(new XdmfSetType("Edge"));
+  static shared_ptr<const XdmfSetType> p(new XdmfSetType("Edge"));
   return p;
 }
 
@@ -69,7 +69,7 @@ XdmfSetType::~XdmfSetType()
 {
 }
 
-boost::shared_ptr<const XdmfSetType>
+shared_ptr<const XdmfSetType>
 XdmfSetType::New(const std::map<std::string, std::string> & itemProperties)
 {
   std::map<std::string, std::string>::const_iterator type =
@@ -95,11 +95,15 @@ XdmfSetType::New(const std::map<std::string, std::string> & itemProperties)
       return Edge();
     }
     else {
-      XdmfError::message(XdmfError::FATAL, "Type not of 'None', 'Node', 'Cell', 'Face', or 'Edge' in XdmfSetType::New");
+      XdmfError::message(XdmfError::FATAL, 
+                         "Type not of 'None', 'Node', 'Cell', 'Face', or "
+                         "'Edge' in XdmfSetType::New");
     }
   }
-  XdmfError::message(XdmfError::FATAL, "Neither 'Type' nor 'SetType' found in itemProperties in XdmfSetType::New");
-  return boost::shared_ptr<const XdmfSetType>();
+  XdmfError::message(XdmfError::FATAL, 
+                     "Neither 'Type' nor 'SetType' found in itemProperties "
+                     "in XdmfSetType::New");
+  return shared_ptr<const XdmfSetType>();
 }
 
 void

@@ -25,10 +25,10 @@
 #include "XdmfTopology.hpp"
 #include "XdmfUnstructuredGrid.hpp"
 
-boost::shared_ptr<XdmfUnstructuredGrid>
+shared_ptr<XdmfUnstructuredGrid>
 XdmfUnstructuredGrid::New()
 {
-  boost::shared_ptr<XdmfUnstructuredGrid> p(new XdmfUnstructuredGrid());
+  shared_ptr<XdmfUnstructuredGrid> p(new XdmfUnstructuredGrid());
   return p;
 }
 
@@ -43,7 +43,7 @@ XdmfUnstructuredGrid::~XdmfUnstructuredGrid()
 
 const std::string XdmfUnstructuredGrid::ItemTag = "Grid";
 
-boost::shared_ptr<XdmfGeometry>
+shared_ptr<XdmfGeometry>
 XdmfUnstructuredGrid::getGeometry()
 {
   return boost::const_pointer_cast<XdmfGeometry>
@@ -56,7 +56,7 @@ XdmfUnstructuredGrid::getItemTag() const
   return ItemTag;
 }
 
-boost::shared_ptr<XdmfTopology>
+shared_ptr<XdmfTopology>
 XdmfUnstructuredGrid::getTopology()
 {
   return boost::const_pointer_cast<XdmfTopology>
@@ -64,13 +64,13 @@ XdmfUnstructuredGrid::getTopology()
 }
 
 void
-XdmfUnstructuredGrid::setGeometry(const boost::shared_ptr<XdmfGeometry> geometry)
+XdmfUnstructuredGrid::setGeometry(const shared_ptr<XdmfGeometry> geometry)
 {
   mGeometry = geometry;
 }
 
 void
-XdmfUnstructuredGrid::setTopology(const boost::shared_ptr<XdmfTopology> topology)
+XdmfUnstructuredGrid::setTopology(const shared_ptr<XdmfTopology> topology)
 {
   mTopology = topology;
 }

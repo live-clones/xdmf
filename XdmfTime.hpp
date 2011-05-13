@@ -35,7 +35,7 @@
  */
 class XDMF_EXPORT XdmfTime : public XdmfItem {
 
- public:
+public:
 
   /**
    * Create a new XdmfTime.
@@ -43,7 +43,7 @@ class XDMF_EXPORT XdmfTime : public XdmfItem {
    * @param value the timeValue of the XdmfTime to create.
    * @return the new XdmfTime.
    */
-  static boost::shared_ptr<XdmfTime> New(const double & value = 0);
+  static shared_ptr<XdmfTime> New(const double & value = 0);
 
   virtual ~XdmfTime();
 
@@ -68,16 +68,16 @@ class XDMF_EXPORT XdmfTime : public XdmfItem {
    */
   void setValue(const double & time);
 
- protected:
+protected:
 
   XdmfTime(const double & value);
 
   virtual void
   populateItem(const std::map<std::string, std::string> & itemProperties,
-               std::vector<boost::shared_ptr<XdmfItem> > & childItems,
+               std::vector<shared_ptr<XdmfItem> > & childItems,
                const XdmfCoreReader * const reader);
 
- private:
+private:
 
   XdmfTime(const XdmfTime &);  // Not implemented.
   void operator=(const XdmfTime &);  // Not implemented.

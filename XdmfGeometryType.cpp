@@ -25,27 +25,24 @@
 #include "XdmfError.hpp"
 
 // Supported XdmfGeometryTypes
-boost::shared_ptr<const XdmfGeometryType>
+shared_ptr<const XdmfGeometryType>
 XdmfGeometryType::NoGeometryType()
 {
-  static boost::shared_ptr<const XdmfGeometryType>
-    p(new XdmfGeometryType("None", 0));
+  static shared_ptr<const XdmfGeometryType> p(new XdmfGeometryType("None", 0));
   return p;
 }
 
-boost::shared_ptr<const XdmfGeometryType>
+shared_ptr<const XdmfGeometryType>
 XdmfGeometryType::XYZ()
 {
-  static boost::shared_ptr<const XdmfGeometryType>
-    p(new XdmfGeometryType("XYZ", 3));
+  static shared_ptr<const XdmfGeometryType> p(new XdmfGeometryType("XYZ", 3));
   return p;
 }
 
-boost::shared_ptr<const XdmfGeometryType>
+shared_ptr<const XdmfGeometryType>
 XdmfGeometryType::XY()
 {
-  static boost::shared_ptr<const XdmfGeometryType>
-    p(new XdmfGeometryType("XY", 2));
+  static shared_ptr<const XdmfGeometryType> p(new XdmfGeometryType("XY", 2));
   return p;
 }
 
@@ -60,7 +57,7 @@ XdmfGeometryType::~XdmfGeometryType()
 {
 }
 
-boost::shared_ptr<const XdmfGeometryType>
+shared_ptr<const XdmfGeometryType>
 XdmfGeometryType::New(const std::map<std::string, std::string> & itemProperties)
 {
   std::map<std::string, std::string>::const_iterator type =
@@ -81,11 +78,14 @@ XdmfGeometryType::New(const std::map<std::string, std::string> & itemProperties)
       return XY();
     }
     else {
-      XdmfError::message(XdmfError::FATAL, "Type not 'None', 'XYZ', or 'XY' in XdmfGeometryType::New");
+      XdmfError::message(XdmfError::FATAL, "Type not 'None', 'XYZ', or 'XY' "
+                         "in XdmfGeometryType::New");
     }
   }
-  XdmfError::message(XdmfError::FATAL, "Neither 'Type' nor 'GeometryType' in itemProperties in XdmfGeometryType::New");
-  return boost::shared_ptr<const XdmfGeometryType>();
+  XdmfError::message(XdmfError::FATAL, 
+                     "Neither 'Type' nor 'GeometryType' in itemProperties in "
+                     "XdmfGeometryType::New");
+  return shared_ptr<const XdmfGeometryType>();
 }
 
 unsigned int

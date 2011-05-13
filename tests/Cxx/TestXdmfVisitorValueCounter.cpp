@@ -13,11 +13,10 @@ public:
    *
    * @return constructed XdmfVisitorValueCounter.
    */
-  static boost::shared_ptr<XdmfVisitorValueCounter>
+  static shared_ptr<XdmfVisitorValueCounter>
   New()
   {
-    boost::shared_ptr<XdmfVisitorValueCounter>
-      p(new XdmfVisitorValueCounter());
+    shared_ptr<XdmfVisitorValueCounter> p(new XdmfVisitorValueCounter());
     return p;
   };
 
@@ -32,7 +31,7 @@ public:
   }
 
   void
-  visit(XdmfArray & array, boost::shared_ptr<Loki::BaseVisitor>)
+  visit(XdmfArray & array, shared_ptr<Loki::BaseVisitor>)
   {
     mCount += array.getSize();
   }
@@ -51,10 +50,8 @@ private:
 
 int main(int, char **)
 {
-  boost::shared_ptr<XdmfVisitorValueCounter> visitor =
-    XdmfVisitorValueCounter::New();
-  boost::shared_ptr<XdmfGrid> grid =
-    XdmfTestDataGenerator::createHexahedron();
+  shared_ptr<XdmfVisitorValueCounter> visitor = XdmfVisitorValueCounter::New();
+  shared_ptr<XdmfGrid> grid = XdmfTestDataGenerator::createHexahedron();
 
   grid->accept(visitor);
 

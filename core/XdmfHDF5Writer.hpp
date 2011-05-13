@@ -48,7 +48,7 @@ class XdmfHDF5Controller;
  */
 class XDMFCORE_EXPORT XdmfHDF5Writer : public XdmfHeavyDataWriter {
 
- public:
+public:
 
   /**
    * Construct XdmfHDF5Writer
@@ -57,14 +57,14 @@ class XDMFCORE_EXPORT XdmfHDF5Writer : public XdmfHeavyDataWriter {
    *
    * @return new XdmfHDF5Writer.
    */
-  static boost::shared_ptr<XdmfHDF5Writer> New(const std::string & filePath);
+  static shared_ptr<XdmfHDF5Writer> New(const std::string & filePath);
 
   virtual ~XdmfHDF5Writer();
 
   virtual void visit(XdmfArray & array,
-                     const boost::shared_ptr<XdmfBaseVisitor> visitor);
+                     const shared_ptr<XdmfBaseVisitor> visitor);
 
- protected:
+protected:
 
   XdmfHDF5Writer(const std::string & filePath);
 
@@ -84,10 +84,10 @@ class XDMFCORE_EXPORT XdmfHDF5Writer : public XdmfHeavyDataWriter {
    *
    * @return new HDF5 Controller.
    */
-  virtual boost::shared_ptr<XdmfHDF5Controller>
+  virtual shared_ptr<XdmfHDF5Controller>
   createHDF5Controller(const std::string & hdf5FilePath,
                        const std::string & dataSetPath,
-                       const boost::shared_ptr<const XdmfArrayType> type,
+                       const shared_ptr<const XdmfArrayType> type,
                        const std::vector<unsigned int> & start,
                        const std::vector<unsigned int> & stride,
                        const std::vector<unsigned int> & count);
@@ -100,7 +100,7 @@ class XDMFCORE_EXPORT XdmfHDF5Writer : public XdmfHeavyDataWriter {
    */
   void write(XdmfArray & array, const int fapl);
 
- private:
+private:
 
   XdmfHDF5Writer(const XdmfHDF5Writer &);  // Not implemented.
   void operator=(const XdmfHDF5Writer &);  // Not implemented.

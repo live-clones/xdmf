@@ -5,7 +5,6 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
 %module XdmfCore
 %{
-
     #include <XdmfArray.hpp>
     #include <XdmfArrayType.hpp>
     #include <XdmfCore.hpp>
@@ -298,6 +297,13 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 #endif /* SWIGPYTHON */
 
 %include boost_shared_ptr.i
+
+%inline
+%{
+    #include <boost/shared_ptr.hpp>
+    using namespace boost;
+%}
+
 %include std_string.i
 %include std_vector.i
 %include loki/Visitor.h

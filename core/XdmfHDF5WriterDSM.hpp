@@ -55,24 +55,24 @@ public:
    * @param dsmBuffer the dsm buffer to write to.
    * @return new XdmfHDF5WriterDSM.
    */
-  static boost::shared_ptr<XdmfHDF5WriterDSM>
+  static shared_ptr<XdmfHDF5WriterDSM>
   New(const std::string & filePath,
       H5FDdsmBuffer * const dsmBuffer);
 
   virtual ~XdmfHDF5WriterDSM();
 
   void visit(XdmfArray & array,
-             const boost::shared_ptr<XdmfBaseVisitor> visitor);
+             const shared_ptr<XdmfBaseVisitor> visitor);
 
 protected:
 
   XdmfHDF5WriterDSM(const std::string & filePath,
                     H5FDdsmBuffer * const dsmBuffer);
 
-  virtual boost::shared_ptr<XdmfHDF5Controller>
+  virtual shared_ptr<XdmfHDF5Controller>
   createHDF5Controller(const std::string & hdf5FilePath,
                        const std::string & dataSetPath,
-                       const boost::shared_ptr<const XdmfArrayType> type,
+                       const shared_ptr<const XdmfArrayType> type,
                        const std::vector<unsigned int> & start,
                        const std::vector<unsigned int> & stride,
                        const std::vector<unsigned int> & count);

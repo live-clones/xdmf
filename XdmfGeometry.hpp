@@ -41,14 +41,14 @@ class XdmfGeometryType;
  */
 class XDMF_EXPORT XdmfGeometry : public XdmfArray {
 
- public:
+public:
 
   /**
    * Create a new XdmfGeometry.
    *
    * @return constructed XdmfGeometry.
    */
-  static boost::shared_ptr<XdmfGeometry> New();
+  static shared_ptr<XdmfGeometry> New();
 
   virtual ~XdmfGeometry();
 
@@ -69,36 +69,36 @@ class XDMF_EXPORT XdmfGeometry : public XdmfArray {
    *
    * @return XdmfGeometryType of this geometry.
    */
-  boost::shared_ptr<const XdmfGeometryType> getType() const;
+  shared_ptr<const XdmfGeometryType> getType() const;
 
   /**
    * Set the XdmfGeometryType associated with this geometry.
    *
    * @param type the XdmfGeometryType to set.
    */
-  void setType(const boost::shared_ptr<const XdmfGeometryType> type);
+  void setType(const shared_ptr<const XdmfGeometryType> type);
 
- protected:
+protected:
 
   XdmfGeometry();
 
   virtual void
   populateItem(const std::map<std::string, std::string> & itemProperties,
-               std::vector<boost::shared_ptr<XdmfItem> > & childItems,
+               std::vector<shared_ptr<XdmfItem> > & childItems,
                const XdmfCoreReader * const reader);
 
- private:
+private:
 
   XdmfGeometry(const XdmfGeometry &);  // Not implemented.
   void operator=(const XdmfGeometry &);  // Not implemented.
 
   int mNumberPoints;
-  boost::shared_ptr<const XdmfGeometryType> mType;
+  shared_ptr<const XdmfGeometryType> mType;
 };
 
 #ifdef _WIN32
 XDMF_TEMPLATE template class XDMF_EXPORT
-boost::shared_ptr<const XdmfGeometryType>;
+shared_ptr<const XdmfGeometryType>;
 #endif
 
 #endif /* XDMFGEOMETRY_HPP_ */

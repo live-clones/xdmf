@@ -29,10 +29,10 @@ class XdmfCoreItemFactory;
 class XdmfItem;
 
 // Includes
-#include "XdmfCore.hpp"
-#include <boost/shared_ptr.hpp>
 #include <string>
 #include <vector>
+#include "XdmfCore.hpp"
+#include "XdmfSharedPtr.hpp"
 
 /**
  * @brief Reads an Xdmf file stored on disk into memory.
@@ -46,7 +46,7 @@ class XdmfItem;
  */
 class XDMFCORE_EXPORT XdmfCoreReader {
 
- public:
+public:
 
   virtual ~XdmfCoreReader() = 0;
 
@@ -57,7 +57,7 @@ class XDMFCORE_EXPORT XdmfCoreReader {
    *
    * @return an XdmfItem at the root of the Xdmf tree.
    */
-  virtual boost::shared_ptr<XdmfItem> read(const std::string & filePath) const;
+  virtual shared_ptr<XdmfItem> read(const std::string & filePath) const;
 
   /**
    * Read part of an Xdmf file from disk into memory.
@@ -67,7 +67,7 @@ class XDMFCORE_EXPORT XdmfCoreReader {
    *
    * @return a vector of XdmfItems that are included in the XPath.
    */
-  virtual std::vector<boost::shared_ptr<XdmfItem> >
+  virtual std::vector<shared_ptr<XdmfItem> >
   read(const std::string & filePath,
        const std::string & xPath) const;
 
@@ -78,13 +78,13 @@ class XDMFCORE_EXPORT XdmfCoreReader {
    *
    * @return a vector of XdmfItems at the root of the Xdmf tree.
    */
-  virtual std::vector<boost::shared_ptr<XdmfItem> >
+  virtual std::vector<shared_ptr<XdmfItem> >
   readItems(const std::string & filePath) const;
 
-  std::vector<boost::shared_ptr<XdmfItem> >
+  std::vector<shared_ptr<XdmfItem> >
   readPathObjects(const std::string & xPath) const;
 
- protected:
+protected:
 
   /**
    * Constructor
@@ -92,9 +92,9 @@ class XDMFCORE_EXPORT XdmfCoreReader {
    * @param itemFactory an XdmfCoreItemFactory to construct XdmfItems
    * for a specific language.
    */
-  XdmfCoreReader(const boost::shared_ptr<const XdmfCoreItemFactory> itemFactory);
+  XdmfCoreReader(const shared_ptr<const XdmfCoreItemFactory> itemFactory);
 
- private:
+private:
 
   /**
    * PIMPL
@@ -109,10 +109,10 @@ class XDMFCORE_EXPORT XdmfCoreReader {
 
 #ifdef _WIN32
 XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT
-std::allocator<boost::shared_ptr<XdmfItem> >;
+std::allocator<shared_ptr<XdmfItem> >;
 XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT
-std::vector<boost::shared_ptr<XdmfItem>,
-            std::allocator<boost::shared_ptr<XdmfItem> > >;
+std::vector<shared_ptr<XdmfItem>,
+            std::allocator<shared_ptr<XdmfItem> > >;
 #endif
 
 #endif /* XDMFCOREREADER_HPP_ */

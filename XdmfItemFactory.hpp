@@ -37,27 +37,27 @@ class XdmfItem;
  */
 class XDMF_EXPORT XdmfItemFactory : public XdmfCoreItemFactory {
 
- public:
+public:
 
   /**
    * Create a new XdmfItemFactory.
    *
    * @return constructed XdmfItemFactory.
    */
-  static boost::shared_ptr<XdmfItemFactory> New();
+  static shared_ptr<XdmfItemFactory> New();
 
   virtual ~XdmfItemFactory();
 
-  virtual boost::shared_ptr<XdmfItem>
+  virtual shared_ptr<XdmfItem>
   createItem(const std::string & itemTag,
              const std::map<std::string, std::string> & itemProperties,
-             const std::vector<boost::shared_ptr<XdmfItem> > & childItems) const;
+             const std::vector<shared_ptr<XdmfItem> > & childItems) const;
 
- protected:
+protected:
 
   XdmfItemFactory();
 
- private:
+private:
 
   XdmfItemFactory(const XdmfItemFactory &);  // Not implemented.
   void operator=(const XdmfItemFactory &);  // Not implemented.
@@ -65,7 +65,7 @@ class XDMF_EXPORT XdmfItemFactory : public XdmfCoreItemFactory {
 };
 
 #ifdef _WIN32
-    XDMF_TEMPLATE template class XDMF_EXPORT boost::shared_ptr<XdmfItemFactory>;
+XDMF_TEMPLATE template class XDMF_EXPORT shared_ptr<XdmfItemFactory>;
 #endif
 
 #endif /* XDMFITEMFACTORY_HPP_ */

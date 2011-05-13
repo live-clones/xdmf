@@ -9,7 +9,7 @@ int main(int, char **)
   //
   // Create 1D arrays
   //
-  boost::shared_ptr<XdmfArray> array = XdmfArray::New();
+  shared_ptr<XdmfArray> array = XdmfArray::New();
   array->initialize(XdmfArrayType::UInt32(), 2);
   assert(array->getArrayType() == XdmfArrayType::UInt32());
   assert(array->getSize() == 2);
@@ -29,7 +29,7 @@ int main(int, char **)
   //
   // Create 2D arrays
   //
-  boost::shared_ptr<XdmfArray> array2 = XdmfArray::New();
+  shared_ptr<XdmfArray> array2 = XdmfArray::New();
   std::vector<unsigned int> newDimensions(2, 2);
   array2->initialize<unsigned short>(newDimensions);
   assert(array2->getArrayType() == XdmfArrayType::UInt16());

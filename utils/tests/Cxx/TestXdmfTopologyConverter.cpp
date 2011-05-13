@@ -13,11 +13,11 @@ int main(int, char *)
 {
   const double epsilon = 1e-6;
 
-  boost::shared_ptr<XdmfTopologyConverter> converter =
+  shared_ptr<XdmfTopologyConverter> converter =
     XdmfTopologyConverter::New();
 
   // Create Hexahedron Grid
-  boost::shared_ptr<XdmfUnstructuredGrid> hexGrid =
+  shared_ptr<XdmfUnstructuredGrid> hexGrid =
     XdmfUnstructuredGrid::New();
   double hexPoints[24] = {0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0,
                           1, 1, 1, 1, 0, 1, 1};
@@ -32,7 +32,7 @@ int main(int, char *)
   /*
    * Hexahedron to Hexahedron_64
    */
-  boost::shared_ptr<XdmfUnstructuredGrid> hex64Grid =
+  shared_ptr<XdmfUnstructuredGrid> hex64Grid =
     converter->convert(hexGrid, XdmfTopologyType::Hexahedron_64());
 
   assert(hex64Grid->getGeometry()->getType() == XdmfGeometryType::XYZ());
@@ -87,7 +87,7 @@ int main(int, char *)
   /*
    * Hexahedron to Hexahedron_125
    */
-  boost::shared_ptr<XdmfUnstructuredGrid> hex125Grid =
+  shared_ptr<XdmfUnstructuredGrid> hex125Grid =
     converter->convert(hexGrid, XdmfTopologyType::Hexahedron_125());
 
   assert(hex125Grid->getGeometry()->getType() == XdmfGeometryType::XYZ());
@@ -102,7 +102,7 @@ int main(int, char *)
   /*
    * Hexahedron_64 to Hexahedron
    */
-  boost::shared_ptr<XdmfUnstructuredGrid> newHexGrid =
+  shared_ptr<XdmfUnstructuredGrid> newHexGrid =
     converter->convert(hex64Grid, XdmfTopologyType::Hexahedron());
   assert(newHexGrid->getGeometry()->getType() == XdmfGeometryType::XYZ());
   assert(newHexGrid->getGeometry()->getNumberPoints() == 64);

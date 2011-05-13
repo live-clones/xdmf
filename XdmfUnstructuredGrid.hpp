@@ -39,14 +39,14 @@
  */
 class XDMF_EXPORT XdmfUnstructuredGrid : public XdmfGrid {
 
- public:
+public:
 
   /**
    * Create a new XdmfGridUnstructured.
    *
    * @return constructed XdmfGridUnstructured.
    */
-  static boost::shared_ptr<XdmfUnstructuredGrid> New();
+  static shared_ptr<XdmfUnstructuredGrid> New();
 
   virtual ~XdmfUnstructuredGrid();
 
@@ -57,7 +57,7 @@ class XDMF_EXPORT XdmfUnstructuredGrid : public XdmfGrid {
    *
    * @return the geometry associated with this grid.
    */
-  boost::shared_ptr<XdmfGeometry> getGeometry();
+  shared_ptr<XdmfGeometry> getGeometry();
 
   virtual std::string getItemTag() const;
 
@@ -66,27 +66,27 @@ class XDMF_EXPORT XdmfUnstructuredGrid : public XdmfGrid {
    *
    * @return the topology associated with this grid.
    */
-  boost::shared_ptr<XdmfTopology> getTopology();
+  shared_ptr<XdmfTopology> getTopology();
 
   /**
    * Set the geometry associated with this grid.
    *
    * @param geometry an XdmfGeometry to associate with this grid.
    */
-  void setGeometry(const boost::shared_ptr<XdmfGeometry> geometry);
+  void setGeometry(const shared_ptr<XdmfGeometry> geometry);
 
   /**
    * Set the topology associated with this grid.
    *
    * @param topology an XdmfTopology to associate with this grid.
    */
-  void setTopology(const boost::shared_ptr<XdmfTopology> topology);
+  void setTopology(const shared_ptr<XdmfTopology> topology);
 
- protected:
+protected:
 
   XdmfUnstructuredGrid();
 
- private:
+private:
 
   XdmfUnstructuredGrid(const XdmfUnstructuredGrid &);  // Not implemented.
   void operator=(const XdmfUnstructuredGrid &);  // Not implemented.
@@ -95,9 +95,9 @@ class XDMF_EXPORT XdmfUnstructuredGrid : public XdmfGrid {
 
 #ifdef _WIN32
 XDMF_TEMPLATE template class XDMF_EXPORT
-boost::shared_ptr<XdmfTopology>;
+shared_ptr<XdmfTopology>;
 XDMF_TEMPLATE template class XDMF_EXPORT
-boost::shared_ptr<XdmfGeometry>;
+shared_ptr<XdmfGeometry>;
 #endif
 
 #endif /* XDMFUNSTRUCTUREDGRID_HPP_ */

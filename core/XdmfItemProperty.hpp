@@ -25,10 +25,10 @@
 #define XDMFITEMPROPERTY_HPP_
 
 // Includes
-#include <boost/shared_ptr.hpp>
 #include <map>
 #include <string>
 #include "XdmfCore.hpp"
+#include "XdmfSharedPtr.hpp"
 
 /**
  * @brief A property attached to an XdmfItem.
@@ -43,7 +43,7 @@
 
 class XDMFCORE_EXPORT XdmfItemProperty {
 
- public:
+public:
 
   virtual ~XdmfItemProperty() = 0;
 
@@ -56,11 +56,11 @@ class XDMFCORE_EXPORT XdmfItemProperty {
   virtual void
   getProperties(std::map<std::string, std::string> & collectedProperties) const = 0;
 
- protected:
+protected:
 
   XdmfItemProperty();
 
- private:
+private:
 
   XdmfItemProperty(const XdmfItemProperty &);  // Not implemented.
   void operator=(const XdmfItemProperty &);  // Not implemented.

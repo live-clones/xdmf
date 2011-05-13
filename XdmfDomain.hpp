@@ -44,14 +44,14 @@ class XdmfUnstructuredGrid;
  */
 class XDMF_EXPORT XdmfDomain : public virtual XdmfItem {
 
- public:
+public:
 
   /**
    * Create a new XdmfDomain.
    *
    * @return constructed XdmfDomain.
    */
-  static boost::shared_ptr<XdmfDomain> New();
+  static shared_ptr<XdmfDomain> New();
 
   virtual ~XdmfDomain();
 
@@ -69,17 +69,17 @@ class XDMF_EXPORT XdmfDomain : public virtual XdmfItem {
 
   using XdmfItem::insert;
 
-  virtual void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor);
+  virtual void traverse(const shared_ptr<XdmfBaseVisitor> visitor);
 
- protected:
+protected:
 
   XdmfDomain();
   virtual void
   populateItem(const std::map<std::string, std::string> & itemProperties,
-               std::vector<boost::shared_ptr<XdmfItem> > & childItems,
+               std::vector<shared_ptr<XdmfItem> > & childItems,
                const XdmfCoreReader * const reader);
 
- private:
+private:
 
   XdmfDomain(const XdmfDomain &);  // Not implemented.
   void operator=(const XdmfDomain &);  // Not implemented.
@@ -88,30 +88,30 @@ class XDMF_EXPORT XdmfDomain : public virtual XdmfItem {
 
 #ifdef _WIN32
 XDMF_TEMPLATE template class XDMF_EXPORT
-std::allocator<boost::shared_ptr<XdmfGridCollection> >;
+std::allocator<shared_ptr<XdmfGridCollection> >;
 XDMF_TEMPLATE template class XDMF_EXPORT
-std::vector<boost::shared_ptr<XdmfGridCollection>,
-            std::allocator<boost::shared_ptr<XdmfGridCollection> > >;
+std::vector<shared_ptr<XdmfGridCollection>,
+            std::allocator<shared_ptr<XdmfGridCollection> > >;
 XDMF_TEMPLATE template class XDMF_EXPORT
-std::allocator<boost::shared_ptr<XdmfCurvilinearGrid> >;
+std::allocator<shared_ptr<XdmfCurvilinearGrid> >;
 XDMF_TEMPLATE template class XDMF_EXPORT
-std::vector<boost::shared_ptr<XdmfCurvilinearGrid>,
-            std::allocator<boost::shared_ptr<XdmfCurvilinearGrid> > >;
+std::vector<shared_ptr<XdmfCurvilinearGrid>,
+            std::allocator<shared_ptr<XdmfCurvilinearGrid> > >;
 XDMF_TEMPLATE template class XDMF_EXPORT
-std::allocator<boost::shared_ptr<XdmfRectilinearGrid> >;
+std::allocator<shared_ptr<XdmfRectilinearGrid> >;
 XDMF_TEMPLATE template class XDMF_EXPORT
-std::vector<boost::shared_ptr<XdmfRectilinearGrid>,
-            std::allocator<boost::shared_ptr<XdmfRectilinearGrid> > >;
+std::vector<shared_ptr<XdmfRectilinearGrid>,
+            std::allocator<shared_ptr<XdmfRectilinearGrid> > >;
 XDMF_TEMPLATE template class XDMF_EXPORT
-std::allocator<boost::shared_ptr<XdmfRegularGrid> >;
+std::allocator<shared_ptr<XdmfRegularGrid> >;
 XDMF_TEMPLATE template class XDMF_EXPORT
-std::vector<boost::shared_ptr<XdmfRegularGrid>,
-            std::allocator<boost::shared_ptr<XdmfRegularGrid> > >;
+std::vector<shared_ptr<XdmfRegularGrid>,
+            std::allocator<shared_ptr<XdmfRegularGrid> > >;
 XDMF_TEMPLATE template class XDMF_EXPORT
-std::allocator<boost::shared_ptr<XdmfUnstructuredGrid> >;
+std::allocator<shared_ptr<XdmfUnstructuredGrid> >;
 XDMF_TEMPLATE template class XDMF_EXPORT
-std::vector<boost::shared_ptr<XdmfUnstructuredGrid>,
-            std::allocator<boost::shared_ptr<XdmfUnstructuredGrid> > >;
+std::vector<shared_ptr<XdmfUnstructuredGrid>,
+            std::allocator<shared_ptr<XdmfUnstructuredGrid> > >;
 #endif
 
 #endif /* XDMFDOMAIN_HPP_ */

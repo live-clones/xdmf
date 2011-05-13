@@ -46,14 +46,14 @@ class XdmfGridCollectionType;
 class XDMF_EXPORT XdmfGridCollection : public XdmfDomain,
                                        public XdmfGrid {
 
- public:
+public:
 
   /**
    * Create a new XdmfGridCollection.
    *
    * @return constructed XdmfGridCollection.
    */
-  static boost::shared_ptr<XdmfGridCollection> New();
+  static shared_ptr<XdmfGridCollection> New();
 
   virtual ~XdmfGridCollection();
 
@@ -69,7 +69,7 @@ class XDMF_EXPORT XdmfGridCollection : public XdmfDomain,
    *
    * @return XdmfGridCollectionType of this collection.
    */
-  boost::shared_ptr<const XdmfGridCollectionType> getType() const;
+  shared_ptr<const XdmfGridCollectionType> getType() const;
 
   using XdmfDomain::insert;
   using XdmfGrid::insert;
@@ -79,7 +79,7 @@ class XDMF_EXPORT XdmfGridCollection : public XdmfDomain,
    *
    * @param information an XdmfInformation to attach to this item.
    */
-  void insert(const boost::shared_ptr<XdmfInformation> information);
+  void insert(const shared_ptr<XdmfInformation> information);
 
   /**
    * Set the XdmfGridCollectionType associated with this grid
@@ -87,30 +87,30 @@ class XDMF_EXPORT XdmfGridCollection : public XdmfDomain,
    *
    * @param type the XdmfGridCollectionType to set.
    */
-  void setType(const boost::shared_ptr<const XdmfGridCollectionType> type);
+  void setType(const shared_ptr<const XdmfGridCollectionType> type);
 
-  void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor);
+  void traverse(const shared_ptr<XdmfBaseVisitor> visitor);
 
- protected:
+protected:
 
   XdmfGridCollection();
 
   virtual void
   populateItem(const std::map<std::string, std::string> & itemProperties,
-               std::vector<boost::shared_ptr<XdmfItem> > & childItems,
+               std::vector<shared_ptr<XdmfItem> > & childItems,
                const XdmfCoreReader * const reader);
 
- private:
+private:
 
   XdmfGridCollection(const XdmfGridCollection &);  // Not implemented.
   void operator=(const XdmfGridCollection &);  // Not implemented.
 
-  boost::shared_ptr<const XdmfGridCollectionType> mType;
+  shared_ptr<const XdmfGridCollectionType> mType;
 };
 
 #ifdef _WIN32
 XDMF_TEMPLATE template class XDMF_EXPORT
-boost::shared_ptr<const XdmfGridCollectionType>;
+shared_ptr<const XdmfGridCollectionType>;
 #endif
 
 #endif /* XDMFGRID_HPP_ */

@@ -9,7 +9,7 @@ int main(int, char **)
   assert(XdmfAttributeType::Scalar() != XdmfAttributeType::Scalar() == false);
   assert(XdmfAttributeType::Scalar() != XdmfAttributeType::Vector());
 
-  boost::shared_ptr<XdmfAttribute> attribute = XdmfAttribute::New();
+  shared_ptr<XdmfAttribute> attribute = XdmfAttribute::New();
   assert(attribute->getType() == XdmfAttributeType::NoAttributeType());
   attribute->setType(XdmfAttributeType::Scalar());
   assert(attribute->getType() == XdmfAttributeType::Scalar());

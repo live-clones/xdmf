@@ -29,10 +29,10 @@
 
 XDMF_CHILDREN_IMPLEMENTATION(XdmfSet, XdmfAttribute, Attribute, Name)
 
-boost::shared_ptr<XdmfSet>
+  shared_ptr<XdmfSet>
 XdmfSet::New()
 {
-  boost::shared_ptr<XdmfSet> p(new XdmfSet());
+  shared_ptr<XdmfSet> p(new XdmfSet());
   return p;
 }
 
@@ -69,7 +69,7 @@ XdmfSet::getName() const
   return mName;
 }
 
-boost::shared_ptr<const XdmfSetType>
+shared_ptr<const XdmfSetType>
 XdmfSet::getType() const
 {
   return mType;
@@ -77,7 +77,7 @@ XdmfSet::getType() const
 
 void
 XdmfSet::populateItem(const std::map<std::string, std::string> & itemProperties,
-                      std::vector<boost::shared_ptr<XdmfItem> > & childItems,
+                      std::vector<shared_ptr<XdmfItem> > & childItems,
                       const XdmfCoreReader * const reader)
 {
   XdmfItem::populateItem(itemProperties, childItems, reader);
@@ -87,19 +87,21 @@ XdmfSet::populateItem(const std::map<std::string, std::string> & itemProperties,
     mName = name->second;
   }
   else  {
-    XdmfError::message(XdmfError::FATAL, "'Name' not found in itemProperties in XdmfSet::populateItem");
+    XdmfError::message(XdmfError::FATAL, 
+                       "'Name' not found in itemProperties in "
+                       "XdmfSet::populateItem");
   }
   mType = XdmfSetType::New(itemProperties);
-  for(std::vector<boost::shared_ptr<XdmfItem> >::const_iterator iter =
+  for(std::vector<shared_ptr<XdmfItem> >::const_iterator iter =
         childItems.begin();
       iter != childItems.end();
       ++iter) {
-    if(boost::shared_ptr<XdmfAttribute> attribute =
-       boost::shared_dynamic_cast<XdmfAttribute>(*iter)) {
+    if(shared_ptr<XdmfAttribute> attribute =
+       shared_dynamic_cast<XdmfAttribute>(*iter)) {
       this->insert(attribute);
     }
-    else if(boost::shared_ptr<XdmfArray> array =
-            boost::shared_dynamic_cast<XdmfArray>(*iter)) {
+    else if(shared_ptr<XdmfArray> array = 
+            shared_dynamic_cast<XdmfArray>(*iter)) {
       this->swap(array);
       // TODO: If multiple dataitems.
     }
@@ -113,19 +115,19 @@ XdmfSet::setName(const std::string & name)
 }
 
 void
-XdmfSet::setType(const boost::shared_ptr<const XdmfSetType> type)
+XdmfSet::setType(const shared_ptr<const XdmfSetType> type)
 {
   mType = type;
 }
 
 void
-XdmfSet::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor)
+XdmfSet::traverse(const shared_ptr<XdmfBaseVisitor> visitor)
 {
   XdmfItem::traverse(visitor);
-  for(std::vector<boost::shared_ptr<XdmfAttribute> >::const_iterator iter =
+  for(std::vector<shared_ptr<XdmfAttribute> >::const_iterator iter =
         mAttributes.begin();
       iter != mAttributes.end();
       ++iter) {
-      (*iter)->accept(visitor);
-    }
+    (*iter)->accept(visitor);
+  }
 }

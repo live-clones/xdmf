@@ -42,10 +42,10 @@ public:
 
   public:
 
-    static boost::shared_ptr<XdmfGeometryRectilinear>
+    static shared_ptr<XdmfGeometryRectilinear>
     New(XdmfRectilinearGrid * const rectilinearGrid)
     {
-      boost::shared_ptr<XdmfGeometryRectilinear>
+      shared_ptr<XdmfGeometryRectilinear>
         p(new XdmfGeometryRectilinear(rectilinearGrid));
       return p;
     }
@@ -53,7 +53,7 @@ public:
     unsigned int
     getNumberPoints() const
     {
-      const boost::shared_ptr<const XdmfArray> dimensions =
+      const shared_ptr<const XdmfArray> dimensions =
         mRectilinearGrid->getDimensions();
       if(dimensions->getSize() == 0) {
         return 0;
@@ -66,11 +66,11 @@ public:
     }
 
     void
-    traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor)
+    traverse(const shared_ptr<XdmfBaseVisitor> visitor)
     {
-      const std::vector<boost::shared_ptr<XdmfArray> > & coordinates =
+      const std::vector<shared_ptr<XdmfArray> > & coordinates =
         mRectilinearGrid->getCoordinates();
-      for(std::vector<boost::shared_ptr<XdmfArray> >::const_iterator iter =
+      for(std::vector<shared_ptr<XdmfArray> >::const_iterator iter =
             coordinates.begin();
           iter != coordinates.end();
           ++iter) {
@@ -94,10 +94,10 @@ public:
 
   public:
 
-    static boost::shared_ptr<const XdmfGeometryTypeRectilinear>
+    static shared_ptr<const XdmfGeometryTypeRectilinear>
     New(const XdmfRectilinearGrid * const rectilinearGrid)
     {
-      boost::shared_ptr<const XdmfGeometryTypeRectilinear>
+      shared_ptr<const XdmfGeometryTypeRectilinear>
         p(new XdmfGeometryTypeRectilinear(rectilinearGrid));
       return p;
     }
@@ -140,10 +140,10 @@ public:
 
   public:
 
-    static boost::shared_ptr<XdmfTopologyRectilinear>
+    static shared_ptr<XdmfTopologyRectilinear>
     New(const XdmfRectilinearGrid * const rectilinearGrid)
     {
-      boost::shared_ptr<XdmfTopologyRectilinear>
+      shared_ptr<XdmfTopologyRectilinear>
         p(new XdmfTopologyRectilinear(rectilinearGrid));
       return p;
     }
@@ -151,7 +151,7 @@ public:
     unsigned int
     getNumberElements() const
     {
-      const boost::shared_ptr<const XdmfArray> dimensions =
+      const shared_ptr<const XdmfArray> dimensions = 
         mRectilinearGrid->getDimensions();
       if(dimensions->getSize() == 0) {
         return 0;
@@ -179,10 +179,10 @@ public:
 
   public:
 
-    static boost::shared_ptr<const XdmfTopologyTypeRectilinear>
+    static shared_ptr<const XdmfTopologyTypeRectilinear>
     New(const XdmfRectilinearGrid * const rectilinearGrid)
     {
-      boost::shared_ptr<const XdmfTopologyTypeRectilinear>
+      shared_ptr<const XdmfTopologyTypeRectilinear>
         p(new XdmfTopologyTypeRectilinear(rectilinearGrid));
       return p;
     }
@@ -199,7 +199,7 @@ public:
     void
     getProperties(std::map<std::string, std::string> & collectedProperties) const
     {
-      boost::shared_ptr<const XdmfArray> dimensions =
+      shared_ptr<const XdmfArray> dimensions = 
         mRectilinearGrid->getDimensions();
       if(dimensions->getSize() == 3) {
         collectedProperties["Type"] = "3DRectMesh";
@@ -208,7 +208,9 @@ public:
         collectedProperties["Type"] = "2DRectMesh";
       }
       else {
-        XdmfError::message(XdmfError::FATAL, "Number of dimensions not 2 or 3 in XdmfTopologyTypeRectilinear::getProperties");
+        XdmfError::message(XdmfError::FATAL, 
+                           "Number of dimensions not 2 or 3 in "
+                           "XdmfTopologyTypeRectilinear::getProperties");
       }
       collectedProperties["Dimensions"] = dimensions->getValuesString();
     }
@@ -225,52 +227,49 @@ public:
 
   };
 
-  XdmfRectilinearGridImpl(const std::vector<boost::shared_ptr<XdmfArray> > & coordinates) :
+  XdmfRectilinearGridImpl(const std::vector<shared_ptr<XdmfArray> > & coordinates) :
     mCoordinates(coordinates.begin(), coordinates.end())
   {
   }
 
-  std::vector<boost::shared_ptr<XdmfArray> > mCoordinates;
+  std::vector<shared_ptr<XdmfArray> > mCoordinates;
 
 };
 
-boost::shared_ptr<XdmfRectilinearGrid>
-XdmfRectilinearGrid::New(const boost::shared_ptr<XdmfArray> xCoordinates,
-                         const boost::shared_ptr<XdmfArray> yCoordinates)
+shared_ptr<XdmfRectilinearGrid>
+XdmfRectilinearGrid::New(const shared_ptr<XdmfArray> xCoordinates,
+                         const shared_ptr<XdmfArray> yCoordinates)
 {
-  std::vector<boost::shared_ptr<XdmfArray> > axesCoordinates;
+  std::vector<shared_ptr<XdmfArray> > axesCoordinates;
   axesCoordinates.resize(2);
   axesCoordinates[0] = xCoordinates;
   axesCoordinates[1] = yCoordinates;
-  boost::shared_ptr<XdmfRectilinearGrid>
-    p(new XdmfRectilinearGrid(axesCoordinates));
+  shared_ptr<XdmfRectilinearGrid> p(new XdmfRectilinearGrid(axesCoordinates));
   return p;
 }
 
-boost::shared_ptr<XdmfRectilinearGrid>
-XdmfRectilinearGrid::New(const boost::shared_ptr<XdmfArray> xCoordinates,
-                         const boost::shared_ptr<XdmfArray> yCoordinates,
-                         const boost::shared_ptr<XdmfArray> zCoordinates)
+shared_ptr<XdmfRectilinearGrid>
+XdmfRectilinearGrid::New(const shared_ptr<XdmfArray> xCoordinates,
+                         const shared_ptr<XdmfArray> yCoordinates,
+                         const shared_ptr<XdmfArray> zCoordinates)
 {
-  std::vector<boost::shared_ptr<XdmfArray> > axesCoordinates;
+  std::vector<shared_ptr<XdmfArray> > axesCoordinates;
   axesCoordinates.resize(3);
   axesCoordinates[0] = xCoordinates;
   axesCoordinates[1] = yCoordinates;
   axesCoordinates[2] = zCoordinates;
-  boost::shared_ptr<XdmfRectilinearGrid>
-    p(new XdmfRectilinearGrid(axesCoordinates));
+  shared_ptr<XdmfRectilinearGrid> p(new XdmfRectilinearGrid(axesCoordinates));
   return p;
 }
 
-boost::shared_ptr<XdmfRectilinearGrid>
-XdmfRectilinearGrid::New(const std::vector<boost::shared_ptr<XdmfArray> > & axesCoordinates)
+shared_ptr<XdmfRectilinearGrid>
+XdmfRectilinearGrid::New(const std::vector<shared_ptr<XdmfArray> > & axesCoordinates)
 {
-  boost::shared_ptr<XdmfRectilinearGrid>
-    p(new XdmfRectilinearGrid(axesCoordinates));
+  shared_ptr<XdmfRectilinearGrid> p(new XdmfRectilinearGrid(axesCoordinates));
   return p;
 }
 
-XdmfRectilinearGrid::XdmfRectilinearGrid(const std::vector<boost::shared_ptr<XdmfArray> > & axesCoordinates) :
+XdmfRectilinearGrid::XdmfRectilinearGrid(const std::vector<shared_ptr<XdmfArray> > & axesCoordinates) :
   XdmfGrid(XdmfRectilinearGridImpl::XdmfGeometryRectilinear::New(this),
            XdmfRectilinearGridImpl::XdmfTopologyRectilinear::New(this)),
   mImpl(new XdmfRectilinearGridImpl(axesCoordinates))
@@ -284,7 +283,7 @@ XdmfRectilinearGrid::~XdmfRectilinearGrid()
 
 const std::string XdmfRectilinearGrid::ItemTag = "Grid";
 
-boost::shared_ptr<XdmfArray>
+shared_ptr<XdmfArray>
 XdmfRectilinearGrid::getCoordinates(const unsigned int axisIndex)
 {
   return boost::const_pointer_cast<XdmfArray>
@@ -292,40 +291,40 @@ XdmfRectilinearGrid::getCoordinates(const unsigned int axisIndex)
      (*this).getCoordinates(axisIndex));
 }
 
-boost::shared_ptr<const XdmfArray>
+shared_ptr<const XdmfArray>
 XdmfRectilinearGrid::getCoordinates(const unsigned int axisIndex) const
 {
   if(axisIndex < mImpl->mCoordinates.size()) {
     return mImpl->mCoordinates[axisIndex];
   }
-  return boost::shared_ptr<XdmfArray>();
+  return shared_ptr<XdmfArray>();
 }
 
-std::vector<boost::shared_ptr<XdmfArray> >
+std::vector<shared_ptr<XdmfArray> >
 XdmfRectilinearGrid::getCoordinates()
 {
   return static_cast<const XdmfRectilinearGrid &>(*this).getCoordinates();
 }
 
-const std::vector<boost::shared_ptr<XdmfArray> >
+const std::vector<shared_ptr<XdmfArray> >
 XdmfRectilinearGrid::getCoordinates() const
 {
   return mImpl->mCoordinates;
 }
 
-boost::shared_ptr<XdmfArray>
+shared_ptr<XdmfArray>
 XdmfRectilinearGrid::getDimensions()
 {
   return boost::const_pointer_cast<XdmfArray>
     (static_cast<const XdmfRectilinearGrid &>(*this).getDimensions());
 }
 
-boost::shared_ptr<const XdmfArray>
+shared_ptr<const XdmfArray>
 XdmfRectilinearGrid::getDimensions() const
 {
-  boost::shared_ptr<XdmfArray> dimensions = XdmfArray::New();
+  shared_ptr<XdmfArray> dimensions = XdmfArray::New();
   dimensions->reserve(mImpl->mCoordinates.size());
-  for(std::vector<boost::shared_ptr<XdmfArray> >::const_iterator iter =
+  for(std::vector<shared_ptr<XdmfArray> >::const_iterator iter =
         mImpl->mCoordinates.begin();
       iter != mImpl->mCoordinates.end();
       ++iter) {
@@ -336,17 +335,17 @@ XdmfRectilinearGrid::getDimensions() const
 
 void
 XdmfRectilinearGrid::populateItem(const std::map<std::string, std::string> & itemProperties,
-                                  std::vector<boost::shared_ptr<XdmfItem> > & childItems,
+                                  std::vector<shared_ptr<XdmfItem> > & childItems,
                                   const XdmfCoreReader * const reader)
 {
   XdmfGrid::populateItem(itemProperties, childItems, reader);
 
-  for(std::vector<boost::shared_ptr<XdmfItem> >::const_iterator iter =
+  for(std::vector<shared_ptr<XdmfItem> >::const_iterator iter =
         childItems.begin();
       iter != childItems.end();
       ++iter) {
-    if(boost::shared_ptr<XdmfRectilinearGrid> rectilinearGrid =
-       boost::shared_dynamic_cast<XdmfRectilinearGrid>(*iter)) {
+    if(shared_ptr<XdmfRectilinearGrid> rectilinearGrid =
+       shared_dynamic_cast<XdmfRectilinearGrid>(*iter)) {
       if(rectilinearGrid->getGeometry()->getType()->getDimensions() > 0) {
         this->setCoordinates(rectilinearGrid->getCoordinates());
         break;
@@ -357,7 +356,7 @@ XdmfRectilinearGrid::populateItem(const std::map<std::string, std::string> & ite
 
 void
 XdmfRectilinearGrid::setCoordinates(const unsigned int axisIndex,
-                                    const boost::shared_ptr<XdmfArray> axisCoordinates)
+                                    const shared_ptr<XdmfArray> axisCoordinates)
 {
   if(mImpl->mCoordinates.size() <= axisIndex) {
     mImpl->mCoordinates.reserve(axisIndex + 1);
@@ -371,7 +370,7 @@ XdmfRectilinearGrid::setCoordinates(const unsigned int axisIndex,
 }
 
 void
-XdmfRectilinearGrid::setCoordinates(const std::vector<boost::shared_ptr<XdmfArray> > axesCoordinates)
+XdmfRectilinearGrid::setCoordinates(const std::vector<shared_ptr<XdmfArray> > axesCoordinates)
 {
   mImpl->mCoordinates = axesCoordinates;
 }

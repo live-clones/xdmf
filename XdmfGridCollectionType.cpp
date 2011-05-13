@@ -25,26 +25,26 @@
 #include "XdmfError.hpp"
 
 // Supported XdmfGridCollectionTypes
-boost::shared_ptr<const XdmfGridCollectionType>
+shared_ptr<const XdmfGridCollectionType>
 XdmfGridCollectionType::NoCollectionType()
 {
-  static boost::shared_ptr<const XdmfGridCollectionType>
+  static shared_ptr<const XdmfGridCollectionType>
     p(new XdmfGridCollectionType("None"));
   return p;
 }
 
-boost::shared_ptr<const XdmfGridCollectionType>
+shared_ptr<const XdmfGridCollectionType>
 XdmfGridCollectionType::Spatial()
 {
-  static boost::shared_ptr<const XdmfGridCollectionType>
+  static shared_ptr<const XdmfGridCollectionType>
     p(new XdmfGridCollectionType("Spatial"));
   return p;
 }
 
-boost::shared_ptr<const XdmfGridCollectionType>
+shared_ptr<const XdmfGridCollectionType>
 XdmfGridCollectionType::Temporal()
 {
-  static boost::shared_ptr<const XdmfGridCollectionType>
+  static shared_ptr<const XdmfGridCollectionType>
     p(new XdmfGridCollectionType("Temporal"));
   return p;
 }
@@ -58,7 +58,7 @@ XdmfGridCollectionType::~XdmfGridCollectionType()
 {
 }
 
-boost::shared_ptr<const XdmfGridCollectionType>
+shared_ptr<const XdmfGridCollectionType>
 XdmfGridCollectionType::New(const std::map<std::string, std::string> & itemProperties)
 {
   std::map<std::string, std::string>::const_iterator type =
@@ -75,11 +75,15 @@ XdmfGridCollectionType::New(const std::map<std::string, std::string> & itemPrope
       return Temporal();
     }
     else {
-      XdmfError::message(XdmfError::FATAL, "'CollectionType' not of 'None', 'Spatial', or 'Temporal' in XdmfGridCollectionType::New");
+      XdmfError::message(XdmfError::FATAL, 
+                         "'CollectionType' not of 'None', 'Spatial', or "
+                         "'Temporal' in XdmfGridCollectionType::New");
     }
   }
-  XdmfError::message(XdmfError::FATAL, "'CollectionType' not in itemProperties in XdmfGridCollectionType::New");
-  return boost::shared_ptr<const XdmfGridCollectionType>();
+  XdmfError::message(XdmfError::FATAL, 
+                     "'CollectionType' not in itemProperties in "
+                     "XdmfGridCollectionType::New");
+  return shared_ptr<const XdmfGridCollectionType>();
 }
 
 void

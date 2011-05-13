@@ -55,7 +55,7 @@ class XdmfHeavyDataWriter;
 class XDMFCORE_EXPORT XdmfWriter : public XdmfVisitor,
                                    public Loki::Visitor<XdmfArray> {
 
- public:
+public:
 
   enum Mode {
     Default,
@@ -72,7 +72,7 @@ class XDMFCORE_EXPORT XdmfWriter : public XdmfVisitor,
    *
    * @return the new XdmfWriter.
    */
-  static boost::shared_ptr<XdmfWriter> New(const std::string & xmlFilePath);
+  static shared_ptr<XdmfWriter> New(const std::string & xmlFilePath);
 
   /**
    * Create a new XdmfWriter to write Xdmf data to disk. This will
@@ -84,7 +84,8 @@ class XDMFCORE_EXPORT XdmfWriter : public XdmfVisitor,
    *
    * @return the new XdmfWriter.
    */
-  static boost::shared_ptr<XdmfWriter> New(const std::string & xmlFilePath, const boost::shared_ptr<XdmfHeavyDataWriter> heavyDataWriter);
+  static shared_ptr<XdmfWriter> New(const std::string & xmlFilePath, 
+                                    const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter);
 
   virtual ~XdmfWriter();
 
@@ -103,7 +104,7 @@ class XDMFCORE_EXPORT XdmfWriter : public XdmfVisitor,
    *
    * @return the requested heavy data writer.
    */
-  boost::shared_ptr<XdmfHeavyDataWriter> getHeavyDataWriter();
+  shared_ptr<XdmfHeavyDataWriter> getHeavyDataWriter();
 
   /**
    * Get the heavy data writer that this XdmfWriter uses to write
@@ -111,7 +112,7 @@ class XDMFCORE_EXPORT XdmfWriter : public XdmfVisitor,
    *
    * @return the requested heavy data writer.
    */
-  boost::shared_ptr<const XdmfHeavyDataWriter> getHeavyDataWriter() const;
+  shared_ptr<const XdmfHeavyDataWriter> getHeavyDataWriter() const;
 
   /**
    * Get the number of values that this writer writes to light data
@@ -164,7 +165,7 @@ class XDMFCORE_EXPORT XdmfWriter : public XdmfVisitor,
    * @param visitor a smart pointer to this visitor --- aids in grid traversal.
    */
   virtual void visit(XdmfArray & array,
-                     const boost::shared_ptr<XdmfBaseVisitor> visitor);
+                     const shared_ptr<XdmfBaseVisitor> visitor);
 
   /**
    * Write an XdmfItem to disk
@@ -173,18 +174,18 @@ class XDMFCORE_EXPORT XdmfWriter : public XdmfVisitor,
    * @param visitor a smart pointer to this visitor --- aids in grid traversal.
    */
   virtual void visit(XdmfItem & item,
-                     const boost::shared_ptr<XdmfBaseVisitor> visitor);
+                     const shared_ptr<XdmfBaseVisitor> visitor);
 
 
- protected:
+protected:
 
   XdmfWriter(const std::string & xmlFilePath,
-             boost::shared_ptr<XdmfHeavyDataWriter> heavyDataWriter);
+             shared_ptr<XdmfHeavyDataWriter> heavyDataWriter);
 
   void setDocumentTitle(std::string title);
   void setVersionString(std::string version);
 
- private:
+private:
 
   /**
    * PIMPL
@@ -200,9 +201,9 @@ class XDMFCORE_EXPORT XdmfWriter : public XdmfVisitor,
 
 #ifdef _WIN32
 XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT
-boost::shared_ptr<XdmfHeavyDataWriter>;
+shared_ptr<XdmfHeavyDataWriter>;
 XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT
-boost::shared_ptr<const XdmfHeavyDataWriter>;
+shared_ptr<const XdmfHeavyDataWriter>;
 #endif
 
 #endif /* XDMFWRITER_HPP_ */

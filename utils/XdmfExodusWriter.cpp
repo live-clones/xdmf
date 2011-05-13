@@ -87,7 +87,7 @@ namespace {
    * @return string containing the name of the equivalent exodus topology type.
    */
   std::string
-  xdmfToExodusTopologyType(boost::shared_ptr<const XdmfTopologyType> topologyType)
+  xdmfToExodusTopologyType(shared_ptr<const XdmfTopologyType> topologyType)
   {
     if(topologyType == XdmfTopologyType::Polyvertex()) {
       return "SUP";
@@ -128,10 +128,10 @@ namespace {
 
 }
 
-boost::shared_ptr<XdmfExodusWriter>
+shared_ptr<XdmfExodusWriter>
 XdmfExodusWriter::New()
 {
-  boost::shared_ptr<XdmfExodusWriter> p(new XdmfExodusWriter());
+  shared_ptr<XdmfExodusWriter> p(new XdmfExodusWriter());
   return p;
 }
 
@@ -145,7 +145,7 @@ XdmfExodusWriter::~XdmfExodusWriter()
 
 void
 XdmfExodusWriter::write(const std::string & filePath,
-                        const boost::shared_ptr<XdmfUnstructuredGrid> gridToWrite) const
+                        const shared_ptr<XdmfUnstructuredGrid> gridToWrite) const
 {
 
   // Open Exodus File
@@ -162,14 +162,14 @@ XdmfExodusWriter::write(const std::string & filePath,
     title = title.substr(0, MAX_STR_LENGTH);
   }
 
-  boost::shared_ptr<XdmfGridCollection> gridCollection =
-    boost::shared_ptr<XdmfGridCollection>();
-  boost::shared_ptr<XdmfUnstructuredGrid> currGrid = gridToWrite;
+  shared_ptr<XdmfGridCollection> gridCollection =
+    shared_ptr<XdmfGridCollection>();
+  shared_ptr<XdmfUnstructuredGrid> currGrid = gridToWrite;
 
   // Check if they are temporal collections and use the first grid to
   // determine geometry and topology.
-  if(boost::shared_ptr<XdmfGridCollection> tmpGrid =
-     boost::shared_dynamic_cast<XdmfGridCollection>(gridToWrite)) {
+  if(shared_ptr<XdmfGridCollection> tmpGrid =
+     shared_dynamic_cast<XdmfGridCollection>(gridToWrite)) {
     if(tmpGrid->getType() == XdmfGridCollectionType::Temporal() &&
        tmpGrid->getNumberUnstructuredGrids() > 0) {
       currGrid = tmpGrid->getUnstructuredGrid(0);
@@ -330,7 +330,7 @@ XdmfExodusWriter::write(const std::string & filePath,
   std::vector<std::string> elementAttributeNames;
 
   for(unsigned int i=0; i<currGrid->getNumberAttributes(); ++i) {
-    boost::shared_ptr<XdmfAttribute> currAttribute = currGrid->getAttribute(i);
+    shared_ptr<XdmfAttribute> currAttribute = currGrid->getAttribute(i);
     if(currAttribute->getCenter() == XdmfAttributeCenter::Grid()) {
       int numComponents = currAttribute->getSize();
       globalComponents.push_back(numComponents);
@@ -405,7 +405,7 @@ XdmfExodusWriter::write(const std::string & filePath,
     }
 
     for(unsigned int j=0; j<currGrid->getNumberAttributes(); ++j) {
-      boost::shared_ptr<XdmfAttribute> currAttribute = currGrid->getAttribute(j);
+      shared_ptr<XdmfAttribute> currAttribute = currGrid->getAttribute(j);
       if(currAttribute->getCenter() == XdmfAttributeCenter::Grid()) {
         for(int k=0; k<globalComponents[globalComponentIndex]; ++k) {
           currAttribute->getValues(k, globalAttributeVals + globalIndex, 1);
@@ -460,7 +460,7 @@ XdmfExodusWriter::write(const std::string & filePath,
     // Write Sets
     int setId = 20;
     for(unsigned int j=0; j<currGrid->getNumberSets(); ++j) {
-      boost::shared_ptr<XdmfSet> currSet = currGrid->getSet(j);
+      shared_ptr<XdmfSet> currSet = currGrid->getSet(j);
       int numValues = currSet->getSize();
       std::string name = currSet->getName();
       if(name.size() > MAX_STR_LENGTH) {

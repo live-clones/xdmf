@@ -26,83 +26,73 @@
 #include "XdmfError.hpp"
 
 // Supported XdmfArrayTypes
-boost::shared_ptr<const XdmfArrayType>
+shared_ptr<const XdmfArrayType>
 XdmfArrayType::Uninitialized()
 {
-  static boost::shared_ptr<const XdmfArrayType>
-    p(new XdmfArrayType("None", 0));
+  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("None", 0));
   return p;
 }
 
-boost::shared_ptr<const XdmfArrayType>
+shared_ptr<const XdmfArrayType>
 XdmfArrayType::Int8()
 {
-  static boost::shared_ptr<const XdmfArrayType>
-    p(new XdmfArrayType("Char", 1));
+  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("Char", 1));
   return p;
 }
 
-boost::shared_ptr<const XdmfArrayType>
+shared_ptr<const XdmfArrayType>
 XdmfArrayType::Int16()
 {
-  static boost::shared_ptr<const XdmfArrayType>
-    p(new XdmfArrayType("Short", 2));
+  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("Short", 2));
   return p;
 }
 
-boost::shared_ptr<const XdmfArrayType>
+shared_ptr<const XdmfArrayType>
 XdmfArrayType::Int32()
 {
-  static boost::shared_ptr<const XdmfArrayType>
-    p(new XdmfArrayType("Int", 4));
+  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("Int", 4));
   return p;
 }
 
-boost::shared_ptr<const XdmfArrayType>
+shared_ptr<const XdmfArrayType>
 XdmfArrayType::Int64()
 {
-  static boost::shared_ptr<const XdmfArrayType>
-    p(new XdmfArrayType("Int", 8));
+  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("Int", 8));
   return p;
 }
 
-boost::shared_ptr<const XdmfArrayType>
+shared_ptr<const XdmfArrayType>
 XdmfArrayType::Float32()
 {
-  static boost::shared_ptr<const XdmfArrayType>
-    p(new XdmfArrayType("Float", 4));
+  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("Float", 4));
   return p;
 }
 
-boost::shared_ptr<const XdmfArrayType>
+shared_ptr<const XdmfArrayType>
 XdmfArrayType::Float64()
 {
-  static boost::shared_ptr<const XdmfArrayType>
-    p(new XdmfArrayType("Float", 8));
+  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("Float", 8));
   return p;
 }
 
-boost::shared_ptr<const XdmfArrayType>
+shared_ptr<const XdmfArrayType>
 XdmfArrayType::UInt8()
 {
-  static boost::shared_ptr<const XdmfArrayType>
-    p(new XdmfArrayType("UChar", 1));
+  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("UChar", 1));
   return p;
 }
 
-boost::shared_ptr<const XdmfArrayType>
+shared_ptr<const XdmfArrayType>
 XdmfArrayType::UInt16()
 {
-  static boost::shared_ptr<const XdmfArrayType>
-    p(new XdmfArrayType("UShort", 2));
+  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("UShort", 2));
   return p;
 }
 
-boost::shared_ptr<const XdmfArrayType>
+shared_ptr<const XdmfArrayType>
 XdmfArrayType::UInt32()
 {
-  static boost::shared_ptr<const XdmfArrayType>
-    p(new XdmfArrayType("UInt", 4));
+  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("UInt", 4));
   return p;
 }
 
@@ -117,7 +107,7 @@ XdmfArrayType::~XdmfArrayType()
 {
 }
 
-boost::shared_ptr<const XdmfArrayType>
+shared_ptr<const XdmfArrayType>
 XdmfArrayType::New(const std::map<std::string, std::string> & itemProperties)
 {
   std::map<std::string, std::string>::const_iterator type =
@@ -164,11 +154,16 @@ XdmfArrayType::New(const std::map<std::string, std::string> & itemProperties)
       return UInt32();
     }
     else {
-      XdmfError::message(XdmfError::FATAL, "Type not one of accepted values: "+typeVal+" in XdmfArrayType::New");
+      XdmfError::message(XdmfError::FATAL,
+                         "Type not one of accepted values: " + typeVal +
+                         " in XdmfArrayType::New");
     }
   }
-  XdmfError::message(XdmfError::FATAL, "Type unset because neither 'DataType' nor 'NumberType' found in itemProperties in XdmfArrayType::New");
-  return boost::shared_ptr<const XdmfArrayType>();
+  XdmfError::message(XdmfError::FATAL,
+                     "Type unset because neither 'DataType' nor "
+                     "'NumberType' found in itemProperties in "
+                     "XdmfArrayType::New");
+  return shared_ptr<const XdmfArrayType>();
 }
 
 unsigned int

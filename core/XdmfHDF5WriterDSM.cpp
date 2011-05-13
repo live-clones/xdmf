@@ -26,12 +26,12 @@
 #include "XdmfHDF5ControllerDSM.hpp"
 #include "XdmfHDF5WriterDSM.hpp"
 
-boost::shared_ptr<XdmfHDF5WriterDSM>
+shared_ptr<XdmfHDF5WriterDSM>
 XdmfHDF5WriterDSM::New(const std::string & filePath,
                        H5FDdsmBuffer * const dsmBuffer)
 {
-  boost::shared_ptr<XdmfHDF5WriterDSM> p(new XdmfHDF5WriterDSM(filePath,
-                                                               dsmBuffer));
+  shared_ptr<XdmfHDF5WriterDSM> p(new XdmfHDF5WriterDSM(filePath,
+                                                        dsmBuffer));
   return p;
 }
 
@@ -46,10 +46,10 @@ XdmfHDF5WriterDSM::~XdmfHDF5WriterDSM()
 {
 }
 
-boost::shared_ptr<XdmfHDF5Controller>
+shared_ptr<XdmfHDF5Controller>
 XdmfHDF5WriterDSM::createHDF5Controller(const std::string & hdf5FilePath,
                                         const std::string & dataSetPath,
-                                        const boost::shared_ptr<const XdmfArrayType> type,
+                                        const shared_ptr<const XdmfArrayType> type,
                                         const std::vector<unsigned int> & start,
                                         const std::vector<unsigned int> & stride,
                                         const std::vector<unsigned int> & count)
@@ -64,7 +64,7 @@ XdmfHDF5WriterDSM::createHDF5Controller(const std::string & hdf5FilePath,
 }
 
 void XdmfHDF5WriterDSM::visit(XdmfArray & array,
-                              const boost::shared_ptr<XdmfBaseVisitor>)
+                              const shared_ptr<XdmfBaseVisitor>)
 {
   // Set file access property list for DSM
   hid_t fapl = H5Pcreate(H5P_FILE_ACCESS);

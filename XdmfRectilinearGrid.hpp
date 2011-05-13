@@ -45,7 +45,7 @@ class XdmfArray;
  */
 class XDMF_EXPORT XdmfRectilinearGrid : public XdmfGrid {
 
- public:
+public:
 
   /**
    * Create a new rectilinear grid (Two dimensional).
@@ -55,9 +55,9 @@ class XDMF_EXPORT XdmfRectilinearGrid : public XdmfGrid {
    *
    * @return constructed rectilinear grid.
    */
-  static boost::shared_ptr<XdmfRectilinearGrid>
-  New(const boost::shared_ptr<XdmfArray> xCoordinates,
-      const boost::shared_ptr<XdmfArray> yCoordinates);
+  static shared_ptr<XdmfRectilinearGrid>
+  New(const shared_ptr<XdmfArray> xCoordinates,
+      const shared_ptr<XdmfArray> yCoordinates);
 
   /**
    * Create a new rectilinear grid (Three dimensional).
@@ -68,10 +68,10 @@ class XDMF_EXPORT XdmfRectilinearGrid : public XdmfGrid {
    *
    * @return constructed rectilinear grid.
    */
-  static boost::shared_ptr<XdmfRectilinearGrid>
-  New(const boost::shared_ptr<XdmfArray> xCoordinates,
-      const boost::shared_ptr<XdmfArray> yCoordinates,
-      const boost::shared_ptr<XdmfArray> zCoordinates);
+  static shared_ptr<XdmfRectilinearGrid>
+  New(const shared_ptr<XdmfArray> xCoordinates,
+      const shared_ptr<XdmfArray> yCoordinates,
+      const shared_ptr<XdmfArray> zCoordinates);
 
   /**
    * Create a new rectilinear grid (N dimensional).
@@ -80,8 +80,8 @@ class XDMF_EXPORT XdmfRectilinearGrid : public XdmfGrid {
    *
    * @return constructed rectilinear grid.
    */
-  static boost::shared_ptr<XdmfRectilinearGrid>
-  New(const std::vector<boost::shared_ptr<XdmfArray> > & axesCoordinates);
+  static shared_ptr<XdmfRectilinearGrid>
+  New(const std::vector<shared_ptr<XdmfArray> > & axesCoordinates);
 
   virtual ~XdmfRectilinearGrid();
 
@@ -96,7 +96,7 @@ class XDMF_EXPORT XdmfRectilinearGrid : public XdmfGrid {
    *
    * @return array of coordinates along
    */
-  boost::shared_ptr<XdmfArray> getCoordinates(const unsigned int axisIndex);
+  shared_ptr<XdmfArray> getCoordinates(const unsigned int axisIndex);
 
   /**
    * Get the coordinates of the grid along a single axis (const
@@ -107,7 +107,7 @@ class XDMF_EXPORT XdmfRectilinearGrid : public XdmfGrid {
    *
    * @return array of coordinates along
    */
-  boost::shared_ptr<const XdmfArray>
+  shared_ptr<const XdmfArray>
   getCoordinates(const unsigned int axisIndex) const;
 
   /**
@@ -116,7 +116,7 @@ class XDMF_EXPORT XdmfRectilinearGrid : public XdmfGrid {
    * @return vector containing an array of coordinates along each
    * direction.
    */
-  std::vector<boost::shared_ptr<XdmfArray> > getCoordinates();
+  std::vector<shared_ptr<XdmfArray> > getCoordinates();
 
   /**
    * Get the coordinates of the grid along all axes (const version).
@@ -124,7 +124,7 @@ class XDMF_EXPORT XdmfRectilinearGrid : public XdmfGrid {
    * @return vector containing an array of coordinates along each
    * direction.
    */
-  const std::vector<boost::shared_ptr<XdmfArray> > getCoordinates() const;
+  const std::vector<shared_ptr<XdmfArray> > getCoordinates() const;
 
   /**
    * Get the dimensions of the grid, the number of points in each
@@ -132,7 +132,7 @@ class XDMF_EXPORT XdmfRectilinearGrid : public XdmfGrid {
    *
    * @return XdmfArray containing dimensions of this grid.
    */
-  boost::shared_ptr<XdmfArray> getDimensions();
+  shared_ptr<XdmfArray> getDimensions();
 
   /**
    * Get the dimensions of the grid, the number of points in each
@@ -140,7 +140,7 @@ class XDMF_EXPORT XdmfRectilinearGrid : public XdmfGrid {
    *
    * @return XdmfArray containing the dimensions of this grid.
    */
-  boost::shared_ptr<const XdmfArray> getDimensions() const;
+  shared_ptr<const XdmfArray> getDimensions() const;
 
   /**
    * Set the coordinates of the grid along a single axis.
@@ -150,7 +150,7 @@ class XDMF_EXPORT XdmfRectilinearGrid : public XdmfGrid {
    * set.
    */
   void setCoordinates(const unsigned int axisIndex,
-                      const boost::shared_ptr<XdmfArray> axisCoordinates);
+                      const shared_ptr<XdmfArray> axisCoordinates);
 
   /**
    * Set the coordinates of the grid along all axes.
@@ -158,17 +158,17 @@ class XDMF_EXPORT XdmfRectilinearGrid : public XdmfGrid {
    * @param axesCoordinates the coordinates of points along each axis.
    */
   void
-  setCoordinates(const std::vector<boost::shared_ptr<XdmfArray> > axesCoordinates);
+  setCoordinates(const std::vector<shared_ptr<XdmfArray> > axesCoordinates);
 
- protected:
+protected:
 
-  XdmfRectilinearGrid(const std::vector<boost::shared_ptr<XdmfArray> > & axesCoordinates);
+  XdmfRectilinearGrid(const std::vector<shared_ptr<XdmfArray> > & axesCoordinates);
 
   void populateItem(const std::map<std::string, std::string> & itemProperties,
-                    std::vector<boost::shared_ptr<XdmfItem> > & childItems,
+                    std::vector<shared_ptr<XdmfItem> > & childItems,
                     const XdmfCoreReader * const reader);
 
- private:
+private:
 
   /**
    * PIMPL
@@ -184,9 +184,9 @@ class XDMF_EXPORT XdmfRectilinearGrid : public XdmfGrid {
 
 #ifdef _WIN32
 XDMF_TEMPLATE template class XDMF_EXPORT
-boost::shared_ptr<XdmfArray>;
+shared_ptr<XdmfArray>;
 XDMF_TEMPLATE template class XDMF_EXPORT
-boost::shared_ptr<const XdmfArray>;
+shared_ptr<const XdmfArray>;
 #endif
 
 #endif /* XDMFRECTILINEARGRID_HPP_ */

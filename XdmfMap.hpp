@@ -48,7 +48,7 @@ class XdmfHeavyDataController;
  * Calling New() with no parameters will construct an empty map. The
  * map can be filled manually with subsequent insert commands.
  *
- * Calling New(const std::vector<boost::shared_ptr<XdmfAttribute> > &
+ * Calling New(const std::vector<shared_ptr<XdmfAttribute> > &
  * globalNodeIds) will construct XdmfMaps for each grid in an entire
  * global system. Each entry in the vector contains the globalNodeIds
  * for that partition. The constructor accepts global node ids for
@@ -56,7 +56,7 @@ class XdmfHeavyDataController;
  */
 class XDMF_EXPORT XdmfMap : public XdmfItem {
 
- public:
+public:
 
   typedef int node_id;
   typedef int task_id;
@@ -67,7 +67,7 @@ class XDMF_EXPORT XdmfMap : public XdmfItem {
    *
    * @return constructed XdmfMap.
    */
-  static boost::shared_ptr<XdmfMap> New();
+  static shared_ptr<XdmfMap> New();
 
   /**
    * Create XdmfMaps for each grid in a domain decomposed mesh. Each
@@ -80,8 +80,8 @@ class XDMF_EXPORT XdmfMap : public XdmfItem {
    * @return constructed XdmfMaps for each partition. The size of the vector
    * will be the same as the globalNodeIds vector.
    */
-  static std::vector<boost::shared_ptr<XdmfMap> >
-  New(const std::vector<boost::shared_ptr<XdmfAttribute> > & globalNodeIds);
+  static std::vector<shared_ptr<XdmfMap> >
+  New(const std::vector<shared_ptr<XdmfAttribute> > & globalNodeIds);
 
   virtual ~XdmfMap();
 
@@ -120,7 +120,7 @@ class XDMF_EXPORT XdmfMap : public XdmfItem {
    * @param remoteLocalNodeId a node id on the remoteTaskId that the
    * localNodeId is mapped to.
    */
-  void insert(const task_id  remoteTaskId, 
+  void insert(const task_id  remoteTaskId,
               const node_id  localNodeId,
               const node_id  remoteLocalNodeId);
 
@@ -153,31 +153,31 @@ class XDMF_EXPORT XdmfMap : public XdmfItem {
    * remote local node ids dataset.
    */
   void
-  setHeavyDataControllers(boost::shared_ptr<XdmfHeavyDataController> remoteTaskIdsController,
-                          boost::shared_ptr<XdmfHeavyDataController> localNodeIdsController,
-                          boost::shared_ptr<XdmfHeavyDataController> remoteLocalNodeIdsController);
+  setHeavyDataControllers(shared_ptr<XdmfHeavyDataController> remoteTaskIdsController,
+                          shared_ptr<XdmfHeavyDataController> localNodeIdsController,
+                          shared_ptr<XdmfHeavyDataController> remoteLocalNodeIdsController);
 
-  void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor);
+  void traverse(const shared_ptr<XdmfBaseVisitor> visitor);
 
- protected:
+protected:
 
   XdmfMap();
 
   virtual void
   populateItem(const std::map<std::string, std::string> & itemProperties,
-               std::vector<boost::shared_ptr<XdmfItem> > & childItems,
+               std::vector<shared_ptr<XdmfItem> > & childItems,
                const XdmfCoreReader * const reader);
 
- private:
+private:
 
   XdmfMap(const XdmfMap & map);  // Not implemented.
   void operator=(const XdmfMap & map);  // Not implemented.
 
-  boost::shared_ptr<XdmfHeavyDataController> mLocalNodeIdsController;
+  shared_ptr<XdmfHeavyDataController> mLocalNodeIdsController;
   // remoteTaskId | localNodeId | remoteLocalNodeId
   std::map<task_id, node_id_map > mMap;
-  boost::shared_ptr<XdmfHeavyDataController> mRemoteLocalNodeIdsController;
-  boost::shared_ptr<XdmfHeavyDataController> mRemoteTaskIdsController;
+  shared_ptr<XdmfHeavyDataController> mRemoteLocalNodeIdsController;
+  shared_ptr<XdmfHeavyDataController> mRemoteTaskIdsController;
 
 };
 

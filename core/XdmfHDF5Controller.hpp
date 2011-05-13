@@ -39,7 +39,7 @@
  */
 class XDMFCORE_EXPORT XdmfHDF5Controller : public XdmfHeavyDataController {
 
- public:
+public:
 
   virtual ~XdmfHDF5Controller();
 
@@ -58,10 +58,10 @@ class XDMFCORE_EXPORT XdmfHDF5Controller : public XdmfHeavyDataController {
    *
    * @return new HDF5 Controller.
    */
-  static boost::shared_ptr<XdmfHDF5Controller>
+  static shared_ptr<XdmfHDF5Controller>
   New(const std::string & hdf5FilePath,
       const std::string & dataSetPath,
-      const boost::shared_ptr<const XdmfArrayType> type,
+      const shared_ptr<const XdmfArrayType> type,
       const std::vector<unsigned int> & start,
       const std::vector<unsigned int> & stride,
       const std::vector<unsigned int> & count);
@@ -70,18 +70,18 @@ class XDMFCORE_EXPORT XdmfHDF5Controller : public XdmfHeavyDataController {
 
   virtual void read(XdmfArray * const array);
 
- protected:
+protected:
 
   XdmfHDF5Controller(const std::string & hdf5FilePath,
                      const std::string & dataSetPath,
-                     const boost::shared_ptr<const XdmfArrayType> type,
+                     const shared_ptr<const XdmfArrayType> type,
                      const std::vector<unsigned int> & start,
                      const std::vector<unsigned int> & stride,
                      const std::vector<unsigned int> & count);
 
   void read(XdmfArray * const array, const int fapl);
 
- private:
+private:
 
   XdmfHDF5Controller(const XdmfHDF5Controller &);  // Not implemented.
   void operator=(const XdmfHDF5Controller &);  // Not implemented.

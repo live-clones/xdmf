@@ -29,10 +29,10 @@ class XdmfArray;
 class XdmfArrayType;
 
 // Includes
-#include <boost/shared_ptr.hpp>
 #include <string>
 #include <vector>
 #include "XdmfCore.hpp"
+#include "XdmfSharedPtr.hpp"
 
 /**
  * @brief Couples an XdmfArray with heavy data stored on disk.
@@ -48,7 +48,7 @@ class XdmfArrayType;
  */
 class XDMFCORE_EXPORT XdmfHeavyDataController {
 
- public:
+public:
 
   virtual ~XdmfHeavyDataController() = 0;
 
@@ -99,7 +99,7 @@ class XDMFCORE_EXPORT XdmfHeavyDataController {
    *
    * @return an XdmfArrayType containing the array type of the heavy data set.
    */
-  boost::shared_ptr<const XdmfArrayType> getType() const;
+  shared_ptr<const XdmfArrayType> getType() const;
 
   /**
    * Read data owned by this controller on disk into the passed
@@ -109,19 +109,19 @@ class XDMFCORE_EXPORT XdmfHeavyDataController {
    */
   virtual void read(XdmfArray * const array) = 0;
 
- protected:
+protected:
 
   XdmfHeavyDataController(const std::string & filePath,
                           const std::string & dataSetPath,
-                          const boost::shared_ptr<const XdmfArrayType> type,
+                          const shared_ptr<const XdmfArrayType> type,
                           const std::vector<unsigned int> & dimensions);
 
   const std::string mDataSetPath;
   const std::vector<unsigned int> mDimensions;
   const std::string mFilePath;
-  const boost::shared_ptr<const XdmfArrayType> mType;
+  const shared_ptr<const XdmfArrayType> mType;
 
- private:
+private:
 
   XdmfHeavyDataController(const XdmfHeavyDataController&);  // Not implemented.
   void operator=(const XdmfHeavyDataController &);  // Not implemented.
@@ -130,7 +130,7 @@ class XDMFCORE_EXPORT XdmfHeavyDataController {
 
 #ifdef _WIN32
 XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT
-boost::shared_ptr<const XdmfArrayType>;
+shared_ptr<const XdmfArrayType>;
 #endif
 
 #endif /* XDMFHEAVYDATACONTROLLER_HPP_ */

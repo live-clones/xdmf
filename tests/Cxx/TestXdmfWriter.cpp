@@ -6,7 +6,7 @@
 
 int main(int, char **)
 {
-  boost::shared_ptr<XdmfWriter> writer = XdmfWriter::New("output.xmf");
+  shared_ptr<XdmfWriter> writer = XdmfWriter::New("output.xmf");
 
   std::string realPath = XdmfSystemUtils::getRealPath("output.xmf");
 
@@ -14,10 +14,10 @@ int main(int, char **)
   writer->setLightDataLimit(10);
   assert(writer->getLightDataLimit() == 10);
 
-  boost::shared_ptr<XdmfUnstructuredGrid> grid =
+  shared_ptr<XdmfUnstructuredGrid> grid =
     XdmfTestDataGenerator::createHexahedron();
 
-  boost::shared_ptr<XdmfDomain> domain = XdmfDomain::New();
+  shared_ptr<XdmfDomain> domain = XdmfDomain::New();
   domain->insert(grid);
   domain->accept(writer);
 

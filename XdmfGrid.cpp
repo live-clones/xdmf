@@ -32,14 +32,14 @@
 XDMF_CHILDREN_IMPLEMENTATION(XdmfGrid, XdmfAttribute, Attribute, Name)
 XDMF_CHILDREN_IMPLEMENTATION(XdmfGrid, XdmfSet, Set, Name)
 
-XdmfGrid::XdmfGrid(const boost::shared_ptr<XdmfGeometry> geometry,
-                   const boost::shared_ptr<XdmfTopology> topology,
+XdmfGrid::XdmfGrid(const shared_ptr<XdmfGeometry> geometry,
+                   const shared_ptr<XdmfTopology> topology,
                    const std::string & name) :
   mGeometry(geometry),
   mTopology(topology),
-  mMap(boost::shared_ptr<XdmfMap>()),
+  mMap(shared_ptr<XdmfMap>()),
   mName(name),
-  mTime(boost::shared_ptr<XdmfTime>())
+  mTime(shared_ptr<XdmfTime>())
 {
 }
 
@@ -49,7 +49,7 @@ XdmfGrid::~XdmfGrid()
 
 const std::string XdmfGrid::ItemTag = "Grid";
 
-boost::shared_ptr<const XdmfGeometry>
+shared_ptr<const XdmfGeometry>
 XdmfGrid::getGeometry() const
 {
   return mGeometry;
@@ -69,14 +69,14 @@ XdmfGrid::getItemTag() const
   return ItemTag;
 }
 
-boost::shared_ptr<XdmfMap>
+shared_ptr<XdmfMap>
 XdmfGrid::getMap()
 {
   return boost::const_pointer_cast<XdmfMap>
     (static_cast<const XdmfGrid &>(*this).getMap());
 }
 
-boost::shared_ptr<const XdmfMap>
+shared_ptr<const XdmfMap>
 XdmfGrid::getMap() const
 {
   return mMap;
@@ -88,20 +88,20 @@ XdmfGrid::getName() const
   return mName;
 }
 
-boost::shared_ptr<XdmfTime>
+shared_ptr<XdmfTime>
 XdmfGrid::getTime()
 {
   return boost::const_pointer_cast<XdmfTime>
     (static_cast<const XdmfGrid &>(*this).getTime());
 }
 
-boost::shared_ptr<const XdmfTime>
+shared_ptr<const XdmfTime>
 XdmfGrid::getTime() const
 {
   return mTime;
 }
 
-boost::shared_ptr<const XdmfTopology>
+shared_ptr<const XdmfTopology>
 XdmfGrid::getTopology() const
 {
   return mTopology;
@@ -109,7 +109,7 @@ XdmfGrid::getTopology() const
 
 void
 XdmfGrid::populateItem(const std::map<std::string, std::string> & itemProperties,
-                       std::vector<boost::shared_ptr<XdmfItem> > & childItems,
+                       std::vector<shared_ptr<XdmfItem> > & childItems,
                        const XdmfCoreReader * const reader)
 {
   XdmfItem::populateItem(itemProperties, childItems, reader);
@@ -121,39 +121,39 @@ XdmfGrid::populateItem(const std::map<std::string, std::string> & itemProperties
   else {
     mName = "";
   }
-  for(std::vector<boost::shared_ptr<XdmfItem> >::const_iterator iter =
+  for(std::vector<shared_ptr<XdmfItem> >::const_iterator iter =
         childItems.begin();
       iter != childItems.end();
       ++iter) {
-    if(boost::shared_ptr<XdmfAttribute> attribute =
-       boost::shared_dynamic_cast<XdmfAttribute>(*iter)) {
+    if(shared_ptr<XdmfAttribute> attribute =
+       shared_dynamic_cast<XdmfAttribute>(*iter)) {
       this->insert(attribute);
     }
-    else if(boost::shared_ptr<XdmfGeometry> geometry =
-            boost::shared_dynamic_cast<XdmfGeometry>(*iter)) {
+    else if(shared_ptr<XdmfGeometry> geometry =
+            shared_dynamic_cast<XdmfGeometry>(*iter)) {
       mGeometry = geometry;
     }
-    else if(boost::shared_ptr<XdmfMap> map =
-            boost::shared_dynamic_cast<XdmfMap>(*iter)) {
+    else if(shared_ptr<XdmfMap> map =
+            shared_dynamic_cast<XdmfMap>(*iter)) {
       mMap = map;
     }
-    else if(boost::shared_ptr<XdmfSet> set =
-            boost::shared_dynamic_cast<XdmfSet>(*iter)) {
+    else if(shared_ptr<XdmfSet> set =
+            shared_dynamic_cast<XdmfSet>(*iter)) {
       this->insert(set);
     }
-    else if(boost::shared_ptr<XdmfTime> time =
-            boost::shared_dynamic_cast<XdmfTime>(*iter)) {
+    else if(shared_ptr<XdmfTime> time =
+            shared_dynamic_cast<XdmfTime>(*iter)) {
       mTime = time;
     }
-    else if(boost::shared_ptr<XdmfTopology> topology =
-            boost::shared_dynamic_cast<XdmfTopology>(*iter)) {
+    else if(shared_ptr<XdmfTopology> topology =
+            shared_dynamic_cast<XdmfTopology>(*iter)) {
       mTopology = topology;
     }
   }
 }
 
 void
-XdmfGrid::setMap(boost::shared_ptr<XdmfMap> map)
+XdmfGrid::setMap(shared_ptr<XdmfMap> map)
 {
   mMap = map;
 }
@@ -165,13 +165,13 @@ XdmfGrid::setName(const std::string & name)
 }
 
 void
-XdmfGrid::setTime(const boost::shared_ptr<XdmfTime> time)
+XdmfGrid::setTime(const shared_ptr<XdmfTime> time)
 {
   mTime = time;
 }
 
 void
-XdmfGrid::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor)
+XdmfGrid::traverse(const shared_ptr<XdmfBaseVisitor> visitor)
 {
   XdmfItem::traverse(visitor);
   if(mTime) {
@@ -186,14 +186,13 @@ XdmfGrid::traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor)
   if(mMap) {
     mMap->accept(visitor);
   }
-  for(std::vector<boost::shared_ptr<XdmfAttribute> >::const_iterator iter =
+  for(std::vector<shared_ptr<XdmfAttribute> >::const_iterator iter = 
         mAttributes.begin();
       iter != mAttributes.end();
       ++iter) {
     (*iter)->accept(visitor);
   }
-  for(std::vector<boost::shared_ptr<XdmfSet> >::const_iterator iter =
-        mSets.begin();
+  for(std::vector<shared_ptr<XdmfSet> >::const_iterator iter = mSets.begin();
       iter != mSets.end();
       ++iter) {
     (*iter)->accept(visitor);

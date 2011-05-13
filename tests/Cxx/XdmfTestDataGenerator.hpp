@@ -25,9 +25,9 @@ public:
    * Time = 100
    * Total Number of Values = 69
    */
-  static boost::shared_ptr<XdmfUnstructuredGrid> createHexahedron()
+  static shared_ptr<XdmfUnstructuredGrid> createHexahedron()
   {
-    boost::shared_ptr<XdmfUnstructuredGrid> grid = XdmfUnstructuredGrid::New();
+    shared_ptr<XdmfUnstructuredGrid> grid = XdmfUnstructuredGrid::New();
     grid->setName("Hexahedron");
 
     // Set Geometry
@@ -45,7 +45,7 @@ public:
     grid->getTopology()->insert(0, &connectivity[0], 16);
 
     // Add Node Attribute
-    boost::shared_ptr<XdmfAttribute> nodalAttribute = XdmfAttribute::New();
+    shared_ptr<XdmfAttribute> nodalAttribute = XdmfAttribute::New();
     int nodeValues[] = {100, 200, 300, 300, 400, 500, 300, 400, 500, 500, 600,
                         700};
     nodalAttribute->setName("Nodal Attribute");
@@ -54,7 +54,7 @@ public:
     nodalAttribute->insert(0, &nodeValues[0], 12);
 
     // Add Cell Attribute
-    boost::shared_ptr<XdmfAttribute> cellAttribute = XdmfAttribute::New();
+    shared_ptr<XdmfAttribute> cellAttribute = XdmfAttribute::New();
     int cellValues[] = {100, 200};
     cellAttribute->setName("Cell Attribute");
     cellAttribute->setType(XdmfAttributeType::Scalar());
@@ -62,14 +62,14 @@ public:
     cellAttribute->insert(0, &cellValues[0], 2);
 
     // Add Node Set
-    boost::shared_ptr<XdmfSet> nodeSet = XdmfSet::New();
+    shared_ptr<XdmfSet> nodeSet = XdmfSet::New();
     int nodeIds[] = {0, 1, 2};
     nodeSet->setName("Node Set");
     nodeSet->setType(XdmfSetType::Node());
     nodeSet->insert(0, &nodeIds[0], 3);
 
     // Add Time
-    boost::shared_ptr<XdmfTime> time = XdmfTime::New(100);
+    shared_ptr<XdmfTime> time = XdmfTime::New(100);
     grid->setTime(time);
 
     grid->insert(nodalAttribute);

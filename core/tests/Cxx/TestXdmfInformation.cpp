@@ -2,7 +2,7 @@
 
 int main(int, char **)
 {
-  boost::shared_ptr<XdmfInformation> information = XdmfInformation::New();
+  shared_ptr<XdmfInformation> information = XdmfInformation::New();
   assert(information->getKey().compare("") == 0);
   assert(information->getValue().compare("") == 0);
   information->setKey("Key");
@@ -10,8 +10,8 @@ int main(int, char **)
   assert(information->getKey().compare("Key") == 0);
   assert(information->getValue().compare("Value") == 0);
 
-  boost::shared_ptr<XdmfInformation> information1 =
-    XdmfInformation::New("Key1", "Value1");
+  shared_ptr<XdmfInformation> information1 = XdmfInformation::New("Key1", 
+                                                                  "Value1");
   assert(information1->getKey().compare("Key1") == 0);
   assert(information1->getValue().compare("Value1") == 0);
 

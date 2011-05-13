@@ -1,5 +1,5 @@
 /*****************************************************************************/
-/*                                    XDMF                                   */
+/*                                    Xdmf                                   */
 /*                       eXtensible Data Model and Format                    */
 /*                                                                           */
 /*  Id : XdmfHDF5Controller.cpp                                              */
@@ -29,26 +29,26 @@
 #include "XdmfSystemUtils.hpp"
 #include "XdmfError.hpp"
 
-boost::shared_ptr<XdmfHDF5Controller>
+shared_ptr<XdmfHDF5Controller>
 XdmfHDF5Controller::New(const std::string & hdf5FilePath,
                         const std::string & dataSetPath,
-                        const boost::shared_ptr<const XdmfArrayType> type,
+                        const shared_ptr<const XdmfArrayType> type,
                         const std::vector<unsigned int> & start,
                         const std::vector<unsigned int> & stride,
                         const std::vector<unsigned int> & count)
 {
-  boost::shared_ptr<XdmfHDF5Controller> p(new XdmfHDF5Controller(hdf5FilePath,
-                                                                 dataSetPath,
-                                                                 type,
-                                                                 start,
-                                                                 stride,
-                                                                 count));
+  shared_ptr<XdmfHDF5Controller> p(new XdmfHDF5Controller(hdf5FilePath,
+                                                          dataSetPath,
+                                                          type,
+                                                          start,
+                                                          stride,
+                                                          count));
   return p;
 }
 
 XdmfHDF5Controller::XdmfHDF5Controller(const std::string & hdf5FilePath,
                                        const std::string & dataSetPath,
-                                       const boost::shared_ptr<const XdmfArrayType> type,
+                                       const shared_ptr<const XdmfArrayType> type,
                                        const std::vector<unsigned int> & start,
                                        const std::vector<unsigned int> & stride,
                                        const std::vector<unsigned int> & count) :
@@ -60,7 +60,9 @@ XdmfHDF5Controller::XdmfHDF5Controller(const std::string & hdf5FilePath,
   mStride(stride)
 {
   if(!(mStart.size() == mStride.size() && mStride.size() == mDimensions.size()))
-    XdmfError::message(XdmfError::FATAL, "mStart, mStride, mDimensions must all be of equal length in XdmfHDF5Controller constructor");
+    XdmfError::message(XdmfError::FATAL,
+                       "mStart, mStride, mDimensions must all be of equal "
+                       "length in XdmfHDF5Controller constructor");
 }
 
 XdmfHDF5Controller::~XdmfHDF5Controller()
@@ -105,11 +107,11 @@ XdmfHDF5Controller::read(XdmfArray * const array, const int fapl)
                                     NULL);
 
   /* status = H5Sselect_hyperslab(memspace,
-                               H5S_SELECT_SET,
-                               &memStart[0],
-                               &memStride[0],
-                               &memCount[0],
-                               NULL);*/
+     H5S_SELECT_SET,
+     &memStart[0],
+     &memStride[0],
+     &memCount[0],
+     NULL);*/
 
   hid_t datatype;
   if(mType == XdmfArrayType::Int8()) {
@@ -140,7 +142,7 @@ XdmfHDF5Controller::read(XdmfArray * const array, const int fapl)
     datatype = H5T_NATIVE_UINT;
   }
   else {
-    XdmfError::message(XdmfError::FATAL, 
+    XdmfError::message(XdmfError::FATAL,
                        "Unknown XdmfArrayType encountered in hdf5 "
                        "controller.");
   }
@@ -148,7 +150,7 @@ XdmfHDF5Controller::read(XdmfArray * const array, const int fapl)
   array->initialize(mType, mDimensions);
 
   if(numVals != array->getSize()) {
-    XdmfError::message(XdmfError::FATAL, 
+    XdmfError::message(XdmfError::FATAL,
                        "Number of values in hdf5 dataset does not match "
                        "allocated size in XdmfArray.");
   }

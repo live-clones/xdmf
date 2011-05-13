@@ -10,7 +10,7 @@ int main(int, char **)
   assert(XdmfSetType::Node() != XdmfSetType::Node() == false);
   assert(XdmfSetType::Node() != XdmfSetType::Cell());
 
-  boost::shared_ptr<XdmfSet> set = XdmfSet::New();
+  shared_ptr<XdmfSet> set = XdmfSet::New();
   assert(set->getType() == XdmfSetType::NoSetType());
   set->setType(XdmfSetType::Node());
   assert(set->getType() == XdmfSetType::Node());
@@ -20,7 +20,7 @@ int main(int, char **)
   assert(set->getNumberAttributes() == 0);
   assert(set->getAttribute("") == NULL);
   assert(set->getAttribute(0) == NULL);
-  boost::shared_ptr<XdmfAttribute> attribute = XdmfAttribute::New();
+  shared_ptr<XdmfAttribute> attribute = XdmfAttribute::New();
   attribute->setName("foo");
   set->insert(attribute);
   assert(set->getNumberAttributes() == 1);

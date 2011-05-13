@@ -62,7 +62,7 @@ public:
    *
    * @return constructed XdmfTopologyConverter.
    */
-  static boost::shared_ptr<XdmfTopologyConverter> New();
+  static shared_ptr<XdmfTopologyConverter> New();
 
   virtual ~XdmfTopologyConverter();
 
@@ -78,10 +78,10 @@ public:
    *
    * @return the converted unstructured grid.
    */
-  boost::shared_ptr<XdmfUnstructuredGrid>
-  convert(const boost::shared_ptr<XdmfUnstructuredGrid> gridToConvert,
-          const boost::shared_ptr<const XdmfTopologyType> topologyType,
-          const boost::shared_ptr<XdmfHeavyDataWriter> heavyDataWriter = boost::shared_ptr<XdmfHeavyDataWriter>()) const;
+  shared_ptr<XdmfUnstructuredGrid>
+  convert(const shared_ptr<XdmfUnstructuredGrid> gridToConvert,
+          const shared_ptr<const XdmfTopologyType> topologyType,
+          const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter = shared_ptr<XdmfHeavyDataWriter>()) const;
 
 protected:
 

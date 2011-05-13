@@ -25,42 +25,42 @@
 #include "XdmfError.hpp"
 
 // Supported XdmfAttributeCenters
-boost::shared_ptr<const XdmfAttributeCenter>
+shared_ptr<const XdmfAttributeCenter>
 XdmfAttributeCenter::Grid()
 {
-  static boost::shared_ptr<const XdmfAttributeCenter>
+  static shared_ptr<const XdmfAttributeCenter>
     p(new XdmfAttributeCenter("Grid"));
   return p;
 }
 
-boost::shared_ptr<const XdmfAttributeCenter>
+shared_ptr<const XdmfAttributeCenter>
 XdmfAttributeCenter::Cell()
 {
-  static boost::shared_ptr<const XdmfAttributeCenter>
+  static shared_ptr<const XdmfAttributeCenter> 
     p(new XdmfAttributeCenter("Cell"));
   return p;
 }
 
-boost::shared_ptr<const XdmfAttributeCenter>
+shared_ptr<const XdmfAttributeCenter>
 XdmfAttributeCenter::Face()
 {
-  static boost::shared_ptr<const XdmfAttributeCenter>
+  static shared_ptr<const XdmfAttributeCenter>
     p(new XdmfAttributeCenter("Face"));
   return p;
 }
 
-boost::shared_ptr<const XdmfAttributeCenter>
+shared_ptr<const XdmfAttributeCenter>
 XdmfAttributeCenter::Edge()
 {
-  static boost::shared_ptr<const XdmfAttributeCenter>
+  static shared_ptr<const XdmfAttributeCenter>
     p(new XdmfAttributeCenter("Edge"));
   return p;
 }
 
-boost::shared_ptr<const XdmfAttributeCenter>
+shared_ptr<const XdmfAttributeCenter>
 XdmfAttributeCenter::Node()
 {
-  static boost::shared_ptr<const XdmfAttributeCenter>
+  static shared_ptr<const XdmfAttributeCenter>
     p(new XdmfAttributeCenter("Node"));
   return p;
 }
@@ -74,7 +74,7 @@ XdmfAttributeCenter::~XdmfAttributeCenter()
 {
 }
 
-boost::shared_ptr<const XdmfAttributeCenter>
+shared_ptr<const XdmfAttributeCenter>
 XdmfAttributeCenter::New(const std::map<std::string, std::string> & itemProperties)
 {
   std::map<std::string, std::string>::const_iterator center =
@@ -97,11 +97,15 @@ XdmfAttributeCenter::New(const std::map<std::string, std::string> & itemProperti
       return Node();
     }
     else {
-      XdmfError::message(XdmfError::FATAL, "Center not of 'Grid','Cell','Face','Edge','Node' in XdmfAttributeCenter::New");
+      XdmfError::message(XdmfError::FATAL, 
+                         "Center not of 'Grid','Cell','Face','Edge','Node' "
+                         "in XdmfAttributeCenter::New");
     }
   }
-  XdmfError::message(XdmfError::FATAL, "'Center' not found in itemProperties in XdmfAttributeCenter::New");
-  return boost::shared_ptr<const XdmfAttributeCenter>();
+  XdmfError::message(XdmfError::FATAL, 
+                     "'Center' not found in itemProperties in "
+                     "XdmfAttributeCenter::New");
+  return shared_ptr<const XdmfAttributeCenter>();
 }
 
 void

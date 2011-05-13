@@ -38,14 +38,14 @@
  */
 class XDMFCORE_EXPORT XdmfInformation : public XdmfItem {
 
- public:
+public:
 
   /**
    * Create a new XdmfInformation.
    *
    * @return constructed XdmfInformation.
    */
-  static boost::shared_ptr<XdmfInformation> New();
+  static shared_ptr<XdmfInformation> New();
 
   /**
    * Create a new XdmfInformation.
@@ -56,8 +56,8 @@ class XDMFCORE_EXPORT XdmfInformation : public XdmfItem {
    *
    * @return constructed XdmfInformation
    */
-  static boost::shared_ptr<XdmfInformation> New(const std::string & key,
-                                                const std::string & value);
+  static shared_ptr<XdmfInformation> New(const std::string & key,
+                                         const std::string & value);
 
   virtual ~XdmfInformation();
 
@@ -96,17 +96,17 @@ class XDMFCORE_EXPORT XdmfInformation : public XdmfItem {
    */
   void setValue(const std::string & value);
 
- protected:
+protected:
 
   XdmfInformation(const std::string & key = "",
                   const std::string & value = "");
 
   virtual void
   populateItem(const std::map<std::string, std::string> & itemProperties,
-               std::vector<boost::shared_ptr<XdmfItem> > & childItems,
+               std::vector<shared_ptr<XdmfItem> > & childItems,
                const XdmfCoreReader * const reader);
 
- private:
+private:
 
   XdmfInformation(const XdmfInformation &);  // Not implemented.
   void operator=(const XdmfInformation &);  // Not implemented.
@@ -117,10 +117,10 @@ class XDMFCORE_EXPORT XdmfInformation : public XdmfItem {
 
 #ifdef _WIN32
 XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT
-boost::shared_ptr<Loki::BaseVisitor>;
+shared_ptr<Loki::BaseVisitor>;
 XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT
-Loki::Visitor<boost::shared_ptr<XdmfInformation>,
-              boost::shared_ptr<XdmfItem> >;
+Loki::Visitor<shared_ptr<XdmfInformation>,
+              shared_ptr<XdmfItem> >;
 #endif
 
 #endif /* XDMFINFORMATION_HPP_ */

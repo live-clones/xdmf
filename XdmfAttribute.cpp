@@ -26,10 +26,10 @@
 #include "XdmfAttributeType.hpp"
 #include "XdmfError.hpp"
 
-boost::shared_ptr<XdmfAttribute>
+shared_ptr<XdmfAttribute>
 XdmfAttribute::New()
 {
-  boost::shared_ptr<XdmfAttribute> p(new XdmfAttribute());
+  shared_ptr<XdmfAttribute> p(new XdmfAttribute());
   return p;
 }
 
@@ -46,7 +46,7 @@ XdmfAttribute::~XdmfAttribute()
 
 const std::string XdmfAttribute::ItemTag = "Attribute";
 
-boost::shared_ptr<const XdmfAttributeCenter>
+shared_ptr<const XdmfAttributeCenter>
 XdmfAttribute::getCenter() const
 {
   return mCenter;
@@ -74,7 +74,7 @@ XdmfAttribute::getName() const
   return mName;
 }
 
-boost::shared_ptr<const XdmfAttributeType>
+shared_ptr<const XdmfAttributeType>
 XdmfAttribute::getType() const
 {
   return mType;
@@ -82,7 +82,7 @@ XdmfAttribute::getType() const
 
 void
 XdmfAttribute::populateItem(const std::map<std::string, std::string> & itemProperties,
-                            std::vector<boost::shared_ptr<XdmfItem> > & childItems,
+                            std::vector<shared_ptr<XdmfItem> > & childItems,
                             const XdmfCoreReader * const reader)
 {
   XdmfItem::populateItem(itemProperties, childItems, reader);
@@ -98,12 +98,11 @@ XdmfAttribute::populateItem(const std::map<std::string, std::string> & itemPrope
 
   mCenter = XdmfAttributeCenter::New(itemProperties);
   mType = XdmfAttributeType::New(itemProperties);
-  for(std::vector<boost::shared_ptr<XdmfItem> >::const_iterator iter =
+  for(std::vector<shared_ptr<XdmfItem> >::const_iterator iter = 
         childItems.begin();
       iter != childItems.end();
       ++iter) {
-    if(boost::shared_ptr<XdmfArray> array =
-       boost::shared_dynamic_cast<XdmfArray>(*iter)) {
+    if(shared_ptr<XdmfArray> array = shared_dynamic_cast<XdmfArray>(*iter)) {
       this->swap(array);
     }
     // TODO: If multiple dataitems.
@@ -111,7 +110,7 @@ XdmfAttribute::populateItem(const std::map<std::string, std::string> & itemPrope
 }
 
 void
-XdmfAttribute::setCenter(const boost::shared_ptr<const XdmfAttributeCenter> center)
+XdmfAttribute::setCenter(const shared_ptr<const XdmfAttributeCenter> center)
 {
   mCenter = center;
 }
@@ -123,7 +122,7 @@ XdmfAttribute::setName(const std::string & name)
 }
 
 void
-XdmfAttribute::setType(const boost::shared_ptr<const XdmfAttributeType> type)
+XdmfAttribute::setType(const shared_ptr<const XdmfAttributeType> type)
 {
   mType = type;
 }

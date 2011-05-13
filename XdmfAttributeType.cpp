@@ -25,58 +25,58 @@
 #include "XdmfError.hpp"
 
 // Supported XdmfAttributeTypes
-boost::shared_ptr<const XdmfAttributeType>
+shared_ptr<const XdmfAttributeType>
 XdmfAttributeType::NoAttributeType()
 {
-  static boost::shared_ptr<const XdmfAttributeType>
+  static shared_ptr<const XdmfAttributeType> 
     p(new XdmfAttributeType("None"));
   return p;
 }
 
-boost::shared_ptr<const XdmfAttributeType>
+shared_ptr<const XdmfAttributeType>
 XdmfAttributeType::Scalar()
 {
-  static boost::shared_ptr<const XdmfAttributeType>
+  static shared_ptr<const XdmfAttributeType> 
     p(new XdmfAttributeType("Scalar"));
   return p;
 }
 
-boost::shared_ptr<const XdmfAttributeType>
+shared_ptr<const XdmfAttributeType>
 XdmfAttributeType::Vector()
 {
-  static boost::shared_ptr<const XdmfAttributeType>
+  static shared_ptr<const XdmfAttributeType> 
     p(new XdmfAttributeType("Vector"));
   return p;
 }
 
-boost::shared_ptr<const XdmfAttributeType>
+shared_ptr<const XdmfAttributeType>
 XdmfAttributeType::Tensor()
 {
-  static boost::shared_ptr<const XdmfAttributeType>
+  static shared_ptr<const XdmfAttributeType>
     p(new XdmfAttributeType("Tensor"));
   return p;
 }
 
-boost::shared_ptr<const XdmfAttributeType>
+shared_ptr<const XdmfAttributeType>
 XdmfAttributeType::Matrix()
 {
-  static boost::shared_ptr<const XdmfAttributeType>
+  static shared_ptr<const XdmfAttributeType>
     p(new XdmfAttributeType("Matrix"));
   return p;
 }
 
-boost::shared_ptr<const XdmfAttributeType>
+shared_ptr<const XdmfAttributeType>
 XdmfAttributeType::Tensor6()
 {
-  static boost::shared_ptr<const XdmfAttributeType>
+  static shared_ptr<const XdmfAttributeType>
     p(new XdmfAttributeType("Tensor6"));
   return p;
 }
 
-boost::shared_ptr<const XdmfAttributeType>
+shared_ptr<const XdmfAttributeType>
 XdmfAttributeType::GlobalId()
 {
-  static boost::shared_ptr<const XdmfAttributeType>
+  static shared_ptr<const XdmfAttributeType>
     p(new XdmfAttributeType("GlobalId"));
   return p;
 }
@@ -90,7 +90,7 @@ XdmfAttributeType::~XdmfAttributeType()
 {
 }
 
-boost::shared_ptr<const XdmfAttributeType>
+shared_ptr<const XdmfAttributeType>
 XdmfAttributeType::New(const std::map<std::string, std::string> & itemProperties)
 {
   std::map<std::string, std::string>::const_iterator type =
@@ -122,11 +122,16 @@ XdmfAttributeType::New(const std::map<std::string, std::string> & itemProperties
       return GlobalId();
     }
     else {
-      XdmfError::message(XdmfError::FATAL, "Type not of 'None','Scalar','Vector','Tensor','Matrix','Tensor6', or 'GlobalId' in XdmfAttributeType::New");
+      XdmfError::message(XdmfError::FATAL, 
+                         "Type not of 'None','Scalar','Vector','Tensor', "
+                         "'Matrix','Tensor6', or 'GlobalId' in "
+                         "XdmfAttributeType::New");
     }
   }
-  XdmfError::message(XdmfError::FATAL, "Neither 'Type' nor 'AttributeType' found in itemProperties in XdmfAttributeType::New");
-  return boost::shared_ptr<const XdmfAttributeType>();
+  XdmfError::message(XdmfError::FATAL, 
+                     "Neither 'Type' nor 'AttributeType' found in "
+                     "itemProperties in XdmfAttributeType::New");
+  return shared_ptr<const XdmfAttributeType>();
 }
 
 void

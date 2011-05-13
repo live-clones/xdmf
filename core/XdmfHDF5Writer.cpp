@@ -29,10 +29,10 @@
 #include "XdmfHDF5Writer.hpp"
 #include "XdmfError.hpp"
 
-boost::shared_ptr<XdmfHDF5Writer>
+shared_ptr<XdmfHDF5Writer>
 XdmfHDF5Writer::New(const std::string & filePath)
 {
-  boost::shared_ptr<XdmfHDF5Writer> p(new XdmfHDF5Writer(filePath));
+  shared_ptr<XdmfHDF5Writer> p(new XdmfHDF5Writer(filePath));
   return p;
 }
 
@@ -45,10 +45,10 @@ XdmfHDF5Writer::~XdmfHDF5Writer()
 {
 }
 
-boost::shared_ptr<XdmfHDF5Controller>
+shared_ptr<XdmfHDF5Controller>
 XdmfHDF5Writer::createHDF5Controller(const std::string & hdf5FilePath,
                                      const std::string & dataSetPath,
-                                     const boost::shared_ptr<const XdmfArrayType> type,
+                                     const shared_ptr<const XdmfArrayType> type,
                                      const std::vector<unsigned int> & start,
                                      const std::vector<unsigned int> & stride,
                                      const std::vector<unsigned int> & count)
@@ -63,7 +63,7 @@ XdmfHDF5Writer::createHDF5Controller(const std::string & hdf5FilePath,
 
 void
 XdmfHDF5Writer::visit(XdmfArray & array,
-                      const boost::shared_ptr<XdmfBaseVisitor> visitor)
+                      const shared_ptr<XdmfBaseVisitor> visitor)
 {
   this->write(array, H5P_DEFAULT);
 }
@@ -103,7 +103,9 @@ XdmfHDF5Writer::write(XdmfArray & array,
       datatype = H5T_NATIVE_UINT;
     }
     else {
-        XdmfError::message(XdmfError::FATAL, "Array of unsupported type in XdmfHDF5Writer::write");
+      XdmfError::message(XdmfError::FATAL,
+                         "Array of unsupported type in "
+                         "XdmfHDF5Writer::write");
     }
   }
 
@@ -151,7 +153,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
     hid_t memspace = H5S_ALL;
 
     std::vector<hsize_t> current_dims(dimensions.begin(), dimensions.end());
-  
+
     if(dataset < 0) {
       std::vector<hsize_t> maximum_dims(dimensions.size(), H5S_UNLIMITED);
       memspace = H5Screate_simple(dimensions.size(),
@@ -198,14 +200,17 @@ XdmfHDF5Writer::write(XdmfArray & array,
 
         const int ndims = H5Sget_simple_extent_ndims(dataspace);
         if(ndims != current_dims.size())
-            XdmfError::message(XdmfError::FATAL, "Data set rank different -- ndims != current_dims.size() -- in XdmfHDF5Writer::write");
+          XdmfError::message(XdmfError::FATAL, \
+                             "Data set rank different -- ndims != "
+                             "current_dims.size() -- in "
+                             "XdmfHDF5Writer::write");
 
         status = H5Dset_extent(dataset, &current_dims[0]);
 
         if(status < 0) {
-          std::ostringstream oss;
-          oss << "H5Dset_extent returned failure in XdmfHDF5Writer::write -- status: " << status;
-          XdmfError::message(XdmfError::FATAL, oss.str());
+          XdmfError::message(XdmfError::FATAL,
+                            "H5Dset_extent returned failure in "
+                             "XdmfHDF5Writer::write -- status: " + status);
         }
       }
     }
@@ -217,9 +222,9 @@ XdmfHDF5Writer::write(XdmfArray & array,
                       array.getValuesInternal());
 
     if(status < 0) {
-      std::ostringstream oss;
-      oss << "H5Dwrite returned failure in XdmfHDF5Writer::write -- status: " << status;
-      XdmfError::message(XdmfError::FATAL, oss.str());
+      XdmfError::message(XdmfError::FATAL, 
+                         "H5Dwrite returned failure in XdmfHDF5Writer::write "
+                         "-- status: " + status);
     }
 
     if(dataspace != H5S_ALL) {
@@ -235,8 +240,8 @@ XdmfHDF5Writer::write(XdmfArray & array,
     H5Eset_auto2(0, old_func, old_client_data);
 
     // Attach a new controller to the array
-    boost::shared_ptr<XdmfHDF5Controller> newDataController =
-      boost::shared_ptr<XdmfHDF5Controller>();
+    shared_ptr<XdmfHDF5Controller> newDataController =
+      shared_ptr<XdmfHDF5Controller>();
 
     unsigned int newSize = array.getSize();
     if(mMode == Append && array.getHeavyDataController()) {

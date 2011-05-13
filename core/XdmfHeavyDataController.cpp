@@ -28,7 +28,7 @@
 
 XdmfHeavyDataController::XdmfHeavyDataController(const std::string & filePath,
                                                  const std::string & dataSetPath,
-                                                 const boost::shared_ptr<const XdmfArrayType> type,
+                                                 const shared_ptr<const XdmfArrayType> type,
                                                  const std::vector<unsigned int> & dimensions) :
   mDataSetPath(dataSetPath),
   mDimensions(dimensions),
@@ -67,7 +67,7 @@ XdmfHeavyDataController::getSize() const
                          std::multiplies<unsigned int>());
 }
 
-boost::shared_ptr<const XdmfArrayType>
+shared_ptr<const XdmfArrayType>
 XdmfHeavyDataController::getType() const
 {
   return mType;

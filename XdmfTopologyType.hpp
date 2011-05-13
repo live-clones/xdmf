@@ -66,7 +66,7 @@
  */
 class XDMF_EXPORT XdmfTopologyType : public XdmfItemProperty {
 
- public:
+public:
 
   virtual ~XdmfTopologyType();
 
@@ -85,33 +85,33 @@ class XDMF_EXPORT XdmfTopologyType : public XdmfItemProperty {
   /**
    * Supported Xdmf Topology Types
    */
-  static boost::shared_ptr<const XdmfTopologyType> NoTopologyType();
-  static boost::shared_ptr<const XdmfTopologyType> Polyvertex();
-  static boost::shared_ptr<const XdmfTopologyType> Polyline();
-  static boost::shared_ptr<const XdmfTopologyType>
-    Polygon(const unsigned int nodesPerElement);
-  static boost::shared_ptr<const XdmfTopologyType> Triangle();
-  static boost::shared_ptr<const XdmfTopologyType> Quadrilateral();
-  static boost::shared_ptr<const XdmfTopologyType> Tetrahedron();
-  static boost::shared_ptr<const XdmfTopologyType> Pyramid();
-  static boost::shared_ptr<const XdmfTopologyType> Wedge();
-  static boost::shared_ptr<const XdmfTopologyType> Hexahedron();
-  static boost::shared_ptr<const XdmfTopologyType> Edge_3();
-  static boost::shared_ptr<const XdmfTopologyType> Triangle_6();
-  static boost::shared_ptr<const XdmfTopologyType> Quadrilateral_8();
-  static boost::shared_ptr<const XdmfTopologyType> Quadrilateral_9();
-  static boost::shared_ptr<const XdmfTopologyType> Tetrahedron_10();
-  static boost::shared_ptr<const XdmfTopologyType> Pyramid_13();
-  static boost::shared_ptr<const XdmfTopologyType> Wedge_15();
-  static boost::shared_ptr<const XdmfTopologyType> Wedge_18();
-  static boost::shared_ptr<const XdmfTopologyType> Hexahedron_20();
-  static boost::shared_ptr<const XdmfTopologyType> Hexahedron_24();
-  static boost::shared_ptr<const XdmfTopologyType> Hexahedron_27();
-  static boost::shared_ptr<const XdmfTopologyType> Hexahedron_64();
-  static boost::shared_ptr<const XdmfTopologyType> Hexahedron_64_GLL();
-  static boost::shared_ptr<const XdmfTopologyType> Hexahedron_125();
-  static boost::shared_ptr<const XdmfTopologyType> Hexahedron_125_GLL();
-  static boost::shared_ptr<const XdmfTopologyType> Mixed();
+  static shared_ptr<const XdmfTopologyType> NoTopologyType();
+  static shared_ptr<const XdmfTopologyType> Polyvertex();
+  static shared_ptr<const XdmfTopologyType> Polyline();
+  static shared_ptr<const XdmfTopologyType>
+  Polygon(const unsigned int nodesPerElement);
+  static shared_ptr<const XdmfTopologyType> Triangle();
+  static shared_ptr<const XdmfTopologyType> Quadrilateral();
+  static shared_ptr<const XdmfTopologyType> Tetrahedron();
+  static shared_ptr<const XdmfTopologyType> Pyramid();
+  static shared_ptr<const XdmfTopologyType> Wedge();
+  static shared_ptr<const XdmfTopologyType> Hexahedron();
+  static shared_ptr<const XdmfTopologyType> Edge_3();
+  static shared_ptr<const XdmfTopologyType> Triangle_6();
+  static shared_ptr<const XdmfTopologyType> Quadrilateral_8();
+  static shared_ptr<const XdmfTopologyType> Quadrilateral_9();
+  static shared_ptr<const XdmfTopologyType> Tetrahedron_10();
+  static shared_ptr<const XdmfTopologyType> Pyramid_13();
+  static shared_ptr<const XdmfTopologyType> Wedge_15();
+  static shared_ptr<const XdmfTopologyType> Wedge_18();
+  static shared_ptr<const XdmfTopologyType> Hexahedron_20();
+  static shared_ptr<const XdmfTopologyType> Hexahedron_24();
+  static shared_ptr<const XdmfTopologyType> Hexahedron_27();
+  static shared_ptr<const XdmfTopologyType> Hexahedron_64();
+  static shared_ptr<const XdmfTopologyType> Hexahedron_64_GLL();
+  static shared_ptr<const XdmfTopologyType> Hexahedron_125();
+  static shared_ptr<const XdmfTopologyType> Hexahedron_125_GLL();
+  static shared_ptr<const XdmfTopologyType> Mixed();
 
   /**
    * Get a topology type from id.
@@ -121,7 +121,7 @@ class XDMF_EXPORT XdmfTopologyType : public XdmfItemProperty {
    * @return topology type corresponding to id - if no topology type is found
    * an NULL pointer is returned.
    */
-  static boost::shared_ptr<const XdmfTopologyType> New(const unsigned int id);
+  static shared_ptr<const XdmfTopologyType> New(const unsigned int id);
 
   /**
    * Get the cell type associated with this topology type.
@@ -156,7 +156,7 @@ class XDMF_EXPORT XdmfTopologyType : public XdmfItemProperty {
   void
   getProperties(std::map<std::string, std::string> & collectedProperties) const;
 
- protected:
+protected:
 
   /**
    * Protected constructor for XdmfTopologyType. The constructor is
@@ -169,12 +169,12 @@ class XDMF_EXPORT XdmfTopologyType : public XdmfItemProperty {
                    const CellType cellType,
                    const unsigned int id);
 
- private:
+private:
 
   XdmfTopologyType(const XdmfTopologyType &); // Not implemented.
   void operator=(const XdmfTopologyType &); // Not implemented.
 
-  static boost::shared_ptr<const XdmfTopologyType>
+  static shared_ptr<const XdmfTopologyType>
   New(const std::map<std::string, std::string> & itemProperties);
 
   const CellType mCellType;

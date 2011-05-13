@@ -65,9 +65,9 @@ namespace {
     {
     }
 
-    virtual boost::shared_ptr<XdmfUnstructuredGrid>
-    convert(const boost::shared_ptr<XdmfUnstructuredGrid> gridToConvert,
-            const boost::shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) const = 0;
+    virtual shared_ptr<XdmfUnstructuredGrid>
+    convert(const shared_ptr<XdmfUnstructuredGrid> gridToConvert,
+            const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) const = 0;
 
   protected:
 
@@ -88,8 +88,8 @@ namespace {
 
     void
     insertPointWithoutCheck(const std::vector<double> & newPoint,
-                            const boost::shared_ptr<XdmfTopology> & newConnectivity,
-                            const boost::shared_ptr<XdmfGeometry> & newPoints) const
+                            const shared_ptr<XdmfTopology> & newConnectivity,
+                            const shared_ptr<XdmfGeometry> & newPoints) const
     {
       newConnectivity->pushBack<unsigned int>(newPoints->getSize() / 3);
       newPoints->pushBack(newPoint[0]);
@@ -100,8 +100,8 @@ namespace {
     void
     insertPointWithCheck(const std::vector<double> & newPoint,
                          std::map<std::vector<double>, unsigned int, PointComparison> & coordToIdMap,
-                         const boost::shared_ptr<XdmfTopology> & newConnectivity,
-                         const boost::shared_ptr<XdmfGeometry> & newPoints) const
+                         const shared_ptr<XdmfTopology> & newConnectivity,
+                         const shared_ptr<XdmfGeometry> & newPoints) const
     {
       std::map<std::vector<double>, unsigned int>::const_iterator iter =
         coordToIdMap.find(newPoint);
@@ -125,11 +125,11 @@ namespace {
     {
     }
 
-    boost::shared_ptr<XdmfUnstructuredGrid>
-    convert(const boost::shared_ptr<XdmfUnstructuredGrid> gridToConvert,
-            const boost::shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) const
+    shared_ptr<XdmfUnstructuredGrid>
+    convert(const shared_ptr<XdmfUnstructuredGrid> gridToConvert,
+            const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) const
     {
-      boost::shared_ptr<XdmfUnstructuredGrid> toReturn =
+      shared_ptr<XdmfUnstructuredGrid> toReturn =
         XdmfUnstructuredGrid::New();
       toReturn->setName(gridToConvert->getName());
       toReturn->setGeometry(gridToConvert->getGeometry());
@@ -161,56 +161,56 @@ namespace {
       }
 
       for(unsigned int i=0; i<gridToConvert->getNumberAttributes(); ++i) {
-        boost::shared_ptr<XdmfAttribute> currAttribute =
+        shared_ptr<XdmfAttribute> currAttribute =
           gridToConvert->getAttribute(i);
-          boost::shared_ptr<XdmfAttribute> createdAttribute =
-            boost::shared_ptr<XdmfAttribute>();
-          if(currAttribute->getCenter() == XdmfAttributeCenter::Node()) {
-            createdAttribute = currAttribute;
+        shared_ptr<XdmfAttribute> createdAttribute =
+          shared_ptr<XdmfAttribute>();
+        if(currAttribute->getCenter() == XdmfAttributeCenter::Node()) {
+          createdAttribute = currAttribute;
+        }
+        else if(currAttribute->getCenter() == XdmfAttributeCenter::Cell()) {
+          bool releaseAttribute = false;
+          if(!currAttribute->isInitialized()) {
+            currAttribute->read();
+            releaseAttribute = true;
           }
-          else if(currAttribute->getCenter() == XdmfAttributeCenter::Cell()) {
-            bool releaseAttribute = false;
-            if(!currAttribute->isInitialized()) {
-              currAttribute->read();
-              releaseAttribute = true;
-            }
 
-            createdAttribute = XdmfAttribute::New();
-            createdAttribute->setName(currAttribute->getName());
-            createdAttribute->setType(currAttribute->getType());
-            createdAttribute->setCenter(currAttribute->getCenter());
-            createdAttribute->initialize(currAttribute->getArrayType(),
-                                         currAttribute->getSize() * mNumTesselations);
-            for(unsigned int j=0; j<currAttribute->getSize(); ++j) {
-              createdAttribute->insert(j * mNumTesselations,
-                                       currAttribute,
-                                       j,
-                                       mNumTesselations,
-                                       1,
-                                       0);
-            }
+          createdAttribute = XdmfAttribute::New();
+          createdAttribute->setName(currAttribute->getName());
+          createdAttribute->setType(currAttribute->getType());
+          createdAttribute->setCenter(currAttribute->getCenter());
+          createdAttribute->initialize(currAttribute->getArrayType(),
+                                       currAttribute->getSize() * mNumTesselations);
+          for(unsigned int j=0; j<currAttribute->getSize(); ++j) {
+            createdAttribute->insert(j * mNumTesselations,
+                                     currAttribute,
+                                     j,
+                                     mNumTesselations,
+                                     1,
+                                     0);
+          }
 
-            if(releaseAttribute) {
-              currAttribute->release();
-            }
+          if(releaseAttribute) {
+            currAttribute->release();
           }
-          if(createdAttribute) {
-            toReturn->insert(createdAttribute);
-            if(heavyDataWriter) {
-              if(!createdAttribute->isInitialized()) {
-                createdAttribute->read();
-              }
-              createdAttribute->accept(heavyDataWriter);
-              createdAttribute->release();
+        }
+        if(createdAttribute) {
+          toReturn->insert(createdAttribute);
+          if(heavyDataWriter) {
+            if(!createdAttribute->isInitialized()) {
+              createdAttribute->read();
             }
+            createdAttribute->accept(heavyDataWriter);
+            createdAttribute->release();
           }
+        }
       }
       return toReturn;
     }
 
     virtual void
-    tesselateTopology(boost::shared_ptr<XdmfTopology> topologyToConvert,
-                      boost::shared_ptr<XdmfTopology> topologyToReturn) const = 0;
+    tesselateTopology(shared_ptr<XdmfTopology> topologyToConvert,
+                      shared_ptr<XdmfTopology> topologyToReturn) const = 0;
 
   protected:
 
@@ -265,15 +265,15 @@ namespace {
       rightPoint[2] = (1.0/3.0)*(2*point2[2] + point1[2]);
     }
 
-    boost::shared_ptr<XdmfUnstructuredGrid>
-    convert(const boost::shared_ptr<XdmfUnstructuredGrid> gridToConvert,
-            const boost::shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) const
+    shared_ptr<XdmfUnstructuredGrid>
+    convert(const shared_ptr<XdmfUnstructuredGrid> gridToConvert,
+            const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) const
     {
-      boost::shared_ptr<XdmfUnstructuredGrid> toReturn =
+      shared_ptr<XdmfUnstructuredGrid> toReturn =
         XdmfUnstructuredGrid::New();
       toReturn->setName(gridToConvert->getName());
 
-      boost::shared_ptr<XdmfGeometry> toReturnGeometry =
+      shared_ptr<XdmfGeometry> toReturnGeometry =
         toReturn->getGeometry();
       toReturnGeometry->setType(gridToConvert->getGeometry()->getType());
       toReturnGeometry->initialize(gridToConvert->getGeometry()->getArrayType(),
@@ -296,7 +296,7 @@ namespace {
         gridToConvert->getGeometry()->release();
       }
 
-      boost::shared_ptr<XdmfTopology> toReturnTopology =
+      shared_ptr<XdmfTopology> toReturnTopology =
         toReturn->getTopology();
       toReturnTopology->setType(XdmfTopologyType::Hexahedron_64());
       toReturnTopology->initialize(gridToConvert->getTopology()->getArrayType());
@@ -848,15 +848,15 @@ namespace {
       threeQuarterPoint[2] = (1.0/4.0)*(3.0*point2[2] + point1[2]);
     }
 
-    boost::shared_ptr<XdmfUnstructuredGrid>
-    convert(const boost::shared_ptr<XdmfUnstructuredGrid> gridToConvert,
-            const boost::shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) const
+    shared_ptr<XdmfUnstructuredGrid>
+    convert(const shared_ptr<XdmfUnstructuredGrid> gridToConvert,
+            const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) const
     {
-      boost::shared_ptr<XdmfUnstructuredGrid> toReturn =
+      shared_ptr<XdmfUnstructuredGrid> toReturn =
         XdmfUnstructuredGrid::New();
       toReturn->setName(gridToConvert->getName());
 
-      boost::shared_ptr<XdmfGeometry> toReturnGeometry =
+      shared_ptr<XdmfGeometry> toReturnGeometry =
         toReturn->getGeometry();
       toReturnGeometry->setType(gridToConvert->getGeometry()->getType());
       toReturnGeometry->initialize(gridToConvert->getGeometry()->getArrayType(),
@@ -879,7 +879,7 @@ namespace {
         gridToConvert->getGeometry()->release();
       }
 
-      boost::shared_ptr<XdmfTopology> toReturnTopology = toReturn->getTopology();
+      shared_ptr<XdmfTopology> toReturnTopology = toReturn->getTopology();
       toReturn->getTopology()->setType(XdmfTopologyType::Hexahedron_125());
       toReturnTopology->initialize(gridToConvert->getTopology()->getArrayType());
       toReturnTopology->reserve(125 * gridToConvert->getTopology()->getNumberElements());
@@ -1797,8 +1797,8 @@ namespace {
     }
 
     void
-    tesselateTopology(boost::shared_ptr<XdmfTopology> topologyToConvert,
-                      boost::shared_ptr<XdmfTopology> topologyToReturn) const
+    tesselateTopology(shared_ptr<XdmfTopology> topologyToConvert,
+                      shared_ptr<XdmfTopology> topologyToReturn) const
     {
       topologyToReturn->setType(XdmfTopologyType::Hexahedron());
       topologyToReturn->initialize(topologyToConvert->getArrayType(),
@@ -2037,8 +2037,8 @@ namespace {
     }
 
     void
-    tesselateTopology(boost::shared_ptr<XdmfTopology> topologyToConvert,
-                      boost::shared_ptr<XdmfTopology> topologyToReturn) const
+    tesselateTopology(shared_ptr<XdmfTopology> topologyToConvert,
+                      shared_ptr<XdmfTopology> topologyToReturn) const
     {
       topologyToReturn->setType(XdmfTopologyType::Hexahedron());
       topologyToReturn->initialize(topologyToConvert->getArrayType(),
@@ -2564,10 +2564,10 @@ namespace {
   };
 }
 
-boost::shared_ptr<XdmfTopologyConverter>
+shared_ptr<XdmfTopologyConverter>
 XdmfTopologyConverter::New()
 {
-  boost::shared_ptr<XdmfTopologyConverter> p(new XdmfTopologyConverter());
+  shared_ptr<XdmfTopologyConverter> p(new XdmfTopologyConverter());
   return p;
 }
 
@@ -2579,16 +2579,16 @@ XdmfTopologyConverter::~XdmfTopologyConverter()
 {
 }
 
-boost::shared_ptr<XdmfUnstructuredGrid>
-XdmfTopologyConverter::convert(const boost::shared_ptr<XdmfUnstructuredGrid> gridToConvert,
-                               const boost::shared_ptr<const XdmfTopologyType> topologyType,
-                               const boost::shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) const
+shared_ptr<XdmfUnstructuredGrid>
+XdmfTopologyConverter::convert(const shared_ptr<XdmfUnstructuredGrid> gridToConvert,
+                               const shared_ptr<const XdmfTopologyType> topologyType,
+                               const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) const
 {
   // Make sure geometry and topology are non null
   if(!(gridToConvert->getGeometry() && gridToConvert->getTopology()))
     XdmfError::message(XdmfError::FATAL, "Current grid's geometry or topology is null in XdmfTopologyConverter::convert");
 
-  boost::shared_ptr<const XdmfTopologyType> topologyTypeToConvert =
+  shared_ptr<const XdmfTopologyType> topologyTypeToConvert =
     gridToConvert->getTopology()->getType();
   if(topologyTypeToConvert == topologyType) {
     // No conversion necessary
@@ -2625,7 +2625,7 @@ XdmfTopologyConverter::convert(const boost::shared_ptr<XdmfUnstructuredGrid> gri
     }
   }
   if(converter) {
-    boost::shared_ptr<XdmfUnstructuredGrid> toReturn =
+    shared_ptr<XdmfUnstructuredGrid> toReturn =
       converter->convert(gridToConvert, heavyDataWriter);
     delete converter;
     return toReturn;

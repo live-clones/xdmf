@@ -44,7 +44,7 @@ class XdmfArray;
  */
 class XDMF_EXPORT XdmfCurvilinearGrid : public XdmfGrid {
 
- public:
+public:
 
   /**
    * Create a new curvilinear grid (Two dimensional).
@@ -54,7 +54,7 @@ class XDMF_EXPORT XdmfCurvilinearGrid : public XdmfGrid {
    *
    * @return constructed curvilinear grid.
    */
-  static boost::shared_ptr<XdmfCurvilinearGrid>
+  static shared_ptr<XdmfCurvilinearGrid>
   New(const unsigned int xNumPoints,
       const unsigned int yNumPoints);
 
@@ -67,7 +67,7 @@ class XDMF_EXPORT XdmfCurvilinearGrid : public XdmfGrid {
    *
    * @return constructed curvilinear grid.
    */
-  static boost::shared_ptr<XdmfCurvilinearGrid>
+  static shared_ptr<XdmfCurvilinearGrid>
   New(const unsigned int xNumPoints,
       const unsigned int yNumPoints,
       const unsigned int zNumPoints);
@@ -79,8 +79,8 @@ class XDMF_EXPORT XdmfCurvilinearGrid : public XdmfGrid {
    *
    * @return constructed curvilinear grid.
    */
-  static boost::shared_ptr<XdmfCurvilinearGrid>
-  New(const boost::shared_ptr<XdmfArray> numPoints);
+  static shared_ptr<XdmfCurvilinearGrid>
+  New(const shared_ptr<XdmfArray> numPoints);
 
   virtual ~XdmfCurvilinearGrid();
 
@@ -93,7 +93,7 @@ class XDMF_EXPORT XdmfCurvilinearGrid : public XdmfGrid {
    *
    * @return XdmfArray containing dimensions of this grid.
    */
-  boost::shared_ptr<XdmfArray> getDimensions();
+  shared_ptr<XdmfArray> getDimensions();
 
   /**
    * Get the dimensions of the grid, the number of points in each
@@ -101,14 +101,14 @@ class XDMF_EXPORT XdmfCurvilinearGrid : public XdmfGrid {
    *
    * @return XdmfArray containing the dimensions of this grid.
    */
-  boost::shared_ptr<const XdmfArray> getDimensions() const;
+  shared_ptr<const XdmfArray> getDimensions() const;
 
   /**
    * Get the geometry associated with this grid.
    *
    * @return the geometry associated with this grid.
    */
-  boost::shared_ptr<XdmfGeometry> getGeometry();
+  shared_ptr<XdmfGeometry> getGeometry();
 
   /**
    * Set the dimensions of the grid, the number of points in each
@@ -116,25 +116,25 @@ class XDMF_EXPORT XdmfCurvilinearGrid : public XdmfGrid {
    *
    * @param dimensions the dimension of the grid.
    */
-  void setDimensions(const boost::shared_ptr<XdmfArray> dimensions);
+  void setDimensions(const shared_ptr<XdmfArray> dimensions);
 
   /**
    * Set the geometry associated with this grid.
    *
    * @param geometry an XdmfGeometry to associate with this grid.
    */
-  void setGeometry(const boost::shared_ptr<XdmfGeometry> geometry);
+  void setGeometry(const shared_ptr<XdmfGeometry> geometry);
 
- protected:
+protected:
 
-  XdmfCurvilinearGrid(const boost::shared_ptr<XdmfArray> numPoints);
+  XdmfCurvilinearGrid(const shared_ptr<XdmfArray> numPoints);
 
   void
   populateItem(const std::map<std::string, std::string> & itemProperties,
-               std::vector<boost::shared_ptr<XdmfItem> > & childItems,
+               std::vector<shared_ptr<XdmfItem> > & childItems,
                const XdmfCoreReader * const reader);
 
- private:
+private:
 
   /**
    * PIMPL
@@ -150,11 +150,11 @@ class XDMF_EXPORT XdmfCurvilinearGrid : public XdmfGrid {
 
 #ifdef _WIN32
 XDMF_TEMPLATE template class XDMF_EXPORT
-boost::shared_ptr<XdmfGeometry>;
+shared_ptr<XdmfGeometry>;
 XDMF_TEMPLATE template class XDMF_EXPORT
-boost::shared_ptr<XdmfArray>;
+shared_ptr<XdmfArray>;
 XDMF_TEMPLATE template class XDMF_EXPORT
-boost::shared_ptr<const XdmfArray>;
+shared_ptr<const XdmfArray>;
 #endif
 
 #endif /* XDMFCURVILINEARGRID_HPP_ */

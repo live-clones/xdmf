@@ -40,7 +40,7 @@ class XdmfWriter::XdmfWriterImpl {
 public:
 
   XdmfWriterImpl(const std::string & xmlFilePath,
-                 const boost::shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) :
+                 const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) :
     mDepth(0),
     mDocumentTitle("Xdmf"),
     mHeavyDataWriter(heavyDataWriter),
@@ -86,7 +86,7 @@ public:
 
   int mDepth;
   std::string mDocumentTitle;
-  boost::shared_ptr<XdmfHeavyDataWriter> mHeavyDataWriter;
+  shared_ptr<XdmfHeavyDataWriter> mHeavyDataWriter;
   bool mLastXPathed;
   unsigned int mLightDataLimit;
   Mode mMode;
@@ -101,7 +101,7 @@ public:
 
 };
 
-boost::shared_ptr<XdmfWriter>
+shared_ptr<XdmfWriter>
 XdmfWriter::New(const std::string & xmlFilePath)
 {
   std::stringstream heavyFileName;
@@ -112,23 +112,23 @@ XdmfWriter::New(const std::string & xmlFilePath)
   else {
     heavyFileName << xmlFilePath << ".h5";
   }
-  boost::shared_ptr<XdmfHDF5Writer> hdf5Writer =
+  shared_ptr<XdmfHDF5Writer> hdf5Writer =
     XdmfHDF5Writer::New(heavyFileName.str());
-  boost::shared_ptr<XdmfWriter> p(new XdmfWriter(xmlFilePath, hdf5Writer));
+  shared_ptr<XdmfWriter> p(new XdmfWriter(xmlFilePath, hdf5Writer));
   return p;
 }
 
-boost::shared_ptr<XdmfWriter>
+shared_ptr<XdmfWriter>
 XdmfWriter::New(const std::string & xmlFilePath,
-                const boost::shared_ptr<XdmfHeavyDataWriter> heavyDataWriter)
+                const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter)
 {
-  boost::shared_ptr<XdmfWriter> p(new XdmfWriter(xmlFilePath,
-                                                 heavyDataWriter));
+  shared_ptr<XdmfWriter> p(new XdmfWriter(xmlFilePath,
+                                          heavyDataWriter));
   return p;
 }
 
 XdmfWriter::XdmfWriter(const std::string & xmlFilePath,
-                       boost::shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) :
+                       shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) :
   mImpl(new XdmfWriterImpl(xmlFilePath, heavyDataWriter))
 {
 }
@@ -138,14 +138,14 @@ XdmfWriter::~XdmfWriter()
   delete mImpl;
 }
 
-boost::shared_ptr<XdmfHeavyDataWriter>
+shared_ptr<XdmfHeavyDataWriter>
 XdmfWriter::getHeavyDataWriter()
 {
   return boost::const_pointer_cast<XdmfHeavyDataWriter>
     (static_cast<const XdmfWriter &>(*this).getHeavyDataWriter());
 }
 
-boost::shared_ptr<const XdmfHeavyDataWriter>
+shared_ptr<const XdmfHeavyDataWriter>
 XdmfWriter::getHeavyDataWriter() const
 {
   return mImpl->mHeavyDataWriter;
@@ -207,7 +207,7 @@ XdmfWriter::setWriteXPaths(const bool writeXPaths)
 
 void
 XdmfWriter::visit(XdmfArray & array,
-                  const boost::shared_ptr<XdmfBaseVisitor> visitor)
+                  const shared_ptr<XdmfBaseVisitor> visitor)
 {
   if (mImpl->mDepth == 0) {
     mImpl->openFile();
@@ -260,7 +260,7 @@ XdmfWriter::visit(XdmfArray & array,
 
     // Write XML (metadata) description
     if(isSubclassed) {
-      boost::shared_ptr<XdmfArray> arrayToWrite = XdmfArray::New();
+      shared_ptr<XdmfArray> arrayToWrite = XdmfArray::New();
       array.swap(arrayToWrite);
       mImpl->mXMLCurrentNode = mImpl->mXMLCurrentNode->last;
       this->visit(dynamic_cast<XdmfItem &>(*arrayToWrite.get()), visitor);
@@ -286,7 +286,7 @@ XdmfWriter::visit(XdmfArray & array,
 
 void
 XdmfWriter::visit(XdmfItem & item,
-                  const boost::shared_ptr<XdmfBaseVisitor> visitor)
+                  const shared_ptr<XdmfBaseVisitor> visitor)
 {
   if (mImpl->mDepth == 0) {
     mImpl->openFile();

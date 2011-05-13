@@ -8,13 +8,13 @@
 
 int main(int, char *)
 {
-  boost::shared_ptr<XdmfExodusWriter> exodusWriter = XdmfExodusWriter::New();
-  boost::shared_ptr<XdmfUnstructuredGrid> hexahedron =
+  shared_ptr<XdmfExodusWriter> exodusWriter = XdmfExodusWriter::New();
+  shared_ptr<XdmfUnstructuredGrid> hexahedron =
     XdmfTestDataGenerator::createHexahedron();
   exodusWriter->write("TestXdmfExodusIO.exo", hexahedron);
 
-  boost::shared_ptr<XdmfExodusReader> reader = XdmfExodusReader::New();
-  boost::shared_ptr<XdmfUnstructuredGrid> grid =
+  shared_ptr<XdmfExodusReader> reader = XdmfExodusReader::New();
+  shared_ptr<XdmfUnstructuredGrid> grid =
     reader->read("TestXdmfExodusIO.exo");
   assert(grid->getName() == hexahedron->getName());
   assert(grid->getGeometry()->getType() ==
@@ -35,8 +35,8 @@ int main(int, char *)
   }
   assert(hexahedron->getNumberAttributes() + 1 == grid->getNumberAttributes());
   for(unsigned int i=0; i<hexahedron->getNumberAttributes(); ++i) {
-    boost::shared_ptr<XdmfAttribute> attribute1 = hexahedron->getAttribute(i);
-    boost::shared_ptr<XdmfAttribute> attribute2 =
+    shared_ptr<XdmfAttribute> attribute1 = hexahedron->getAttribute(i);
+    shared_ptr<XdmfAttribute> attribute2 =
       grid->getAttribute(attribute1->getName());
     assert(attribute1->getCenter() == attribute2->getCenter());
     assert(attribute1->getType() == attribute2->getType());

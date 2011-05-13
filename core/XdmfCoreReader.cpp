@@ -39,7 +39,7 @@ class XdmfCoreReader::XdmfCoreReaderImpl {
 
 public:
 
-  XdmfCoreReaderImpl(const boost::shared_ptr<const XdmfCoreItemFactory> itemFactory,
+  XdmfCoreReaderImpl(const shared_ptr<const XdmfCoreItemFactory> itemFactory,
                      const XdmfCoreReader * const coreReader) :
     mCoreReader(coreReader),
     mItemFactory(itemFactory)
@@ -71,7 +71,9 @@ public:
     mDocument = xmlReadFile(filePath.c_str(), NULL, 0);
 
     if(mDocument == NULL) {
-      XdmfError::message(XdmfError::FATAL, "xmlReadFile could not read "+filePath+" in XdmfCoreReader::XdmfCoreReaderImpl::openFile");
+      XdmfError::message(XdmfError::FATAL,
+                         "xmlReadFile could not read " + filePath +
+                         " in XdmfCoreReader::XdmfCoreReaderImpl::openFile");
     }
 
     mXPathContext = xmlXPtrNewContext(mDocument, NULL, NULL);
@@ -83,10 +85,10 @@ public:
    * XdmfItems are constructed by recursively calling this function for all
    * children of currNode.
    */
-  std::vector<boost::shared_ptr<XdmfItem> >
+  std::vector<shared_ptr<XdmfItem> >
   read(xmlNodePtr currNode)
   {
-    std::vector<boost::shared_ptr<XdmfItem> > myItems;
+    std::vector<shared_ptr<XdmfItem> > myItems;
 
     while(currNode != NULL) {
       if(currNode->type == XML_ELEMENT_NODE) {
@@ -129,9 +131,9 @@ public:
    */
   void
   readSingleNode(const xmlNodePtr currNode,
-                 std::vector<boost::shared_ptr<XdmfItem> > & myItems)
+                 std::vector<shared_ptr<XdmfItem> > & myItems)
   {
-    std::map<xmlNodePtr, boost::shared_ptr<XdmfItem> >::const_iterator iter =
+    std::map<xmlNodePtr, shared_ptr<XdmfItem> >::const_iterator iter =
       mXPathMap.find(currNode);
     if(iter != mXPathMap.end()) {
       myItems.push_back(iter->second);
@@ -170,14 +172,16 @@ public:
         currAttribute = currAttribute->next;
       }
 
-      std::vector<boost::shared_ptr<XdmfItem> > childItems =
+      std::vector<shared_ptr<XdmfItem> > childItems =
         this->read(currNode->children);
-      boost::shared_ptr<XdmfItem> newItem =
+      shared_ptr<XdmfItem> newItem =
         mItemFactory->createItem((const char *)currNode->name,
                                  itemProperties,
                                  childItems);
       if(newItem == NULL) {
-        XdmfError::message(XdmfError::FATAL, "mItemFactory failed to createItem in XdmfCoreReader::XdmfCoreReaderImpl::readSingleNode");
+        XdmfError::message(XdmfError::FATAL, 
+                           "mItemFactory failed to createItem in "
+                           "XdmfCoreReader::XdmfCoreReaderImpl::readSingleNode");
       }
 
       newItem->populateItem(itemProperties, childItems, mCoreReader);
@@ -188,7 +192,7 @@ public:
 
   void
   readPathObjects(const std::string & xPath,
-                  std::vector<boost::shared_ptr<XdmfItem> > & myItems)
+                  std::vector<shared_ptr<XdmfItem> > & myItems)
   {
     xmlXPathObjectPtr xPathObject =
       xmlXPathEvalExpression((xmlChar*)xPath.c_str(), mXPathContext);
@@ -202,13 +206,13 @@ public:
 
   xmlDocPtr mDocument;
   const XdmfCoreReader * const mCoreReader;
-  const boost::shared_ptr<const XdmfCoreItemFactory> mItemFactory;
+  const shared_ptr<const XdmfCoreItemFactory> mItemFactory;
   std::string mXMLDir;
   xmlXPathContextPtr mXPathContext;
-  std::map<xmlNodePtr, boost::shared_ptr<XdmfItem> > mXPathMap;
+  std::map<xmlNodePtr, shared_ptr<XdmfItem> > mXPathMap;
 };
 
-XdmfCoreReader::XdmfCoreReader(const boost::shared_ptr<const XdmfCoreItemFactory> itemFactory) :
+XdmfCoreReader::XdmfCoreReader(const shared_ptr<const XdmfCoreItemFactory> itemFactory) :
   mImpl(new XdmfCoreReaderImpl(itemFactory, this))
 {
 }
@@ -218,43 +222,41 @@ XdmfCoreReader::~XdmfCoreReader()
   delete mImpl;
 }
 
-std::vector<boost::shared_ptr<XdmfItem> >
+std::vector<shared_ptr<XdmfItem> >
 XdmfCoreReader::readItems(const std::string & filePath) const
 {
   mImpl->openFile(filePath);
   const xmlNodePtr currNode = xmlDocGetRootElement(mImpl->mDocument);
-  const std::vector<boost::shared_ptr<XdmfItem> > toReturn =
+  const std::vector<shared_ptr<XdmfItem> > toReturn =
     mImpl->read(currNode->children);
   mImpl->closeFile();
   return toReturn;
 }
 
-boost::shared_ptr<XdmfItem>
+shared_ptr<XdmfItem>
 XdmfCoreReader::read(const std::string & filePath) const
 {
-  const std::vector<boost::shared_ptr<XdmfItem> > toReturn =
-    readItems(filePath);
+  const std::vector<shared_ptr<XdmfItem> > toReturn = readItems(filePath);
   if (toReturn.size() == 0) {
-    return(boost::shared_ptr<XdmfItem>());
+    return(shared_ptr<XdmfItem>());
   }
   return(toReturn[0]);
 }
 
-std::vector<boost::shared_ptr<XdmfItem> >
+std::vector<shared_ptr<XdmfItem> >
 XdmfCoreReader::read(const std::string & filePath,
                      const std::string & xPath) const
 {
   mImpl->openFile(filePath);
-  std::vector<boost::shared_ptr<XdmfItem> > toReturn =
-    this->readPathObjects(xPath);
+  std::vector<shared_ptr<XdmfItem> > toReturn = this->readPathObjects(xPath);
   mImpl->closeFile();
   return toReturn;
 }
 
-std::vector<boost::shared_ptr<XdmfItem> >
+std::vector<shared_ptr<XdmfItem> >
 XdmfCoreReader::readPathObjects(const std::string & xPath) const
 {
-  std::vector<boost::shared_ptr<XdmfItem> > toReturn;
+  std::vector<shared_ptr<XdmfItem> > toReturn;
   mImpl->readPathObjects(xPath, toReturn);
   return toReturn;
 }

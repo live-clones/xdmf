@@ -54,14 +54,14 @@ class XdmfTopologyType;
  */
 class XDMF_EXPORT XdmfTopology : public XdmfArray {
 
- public:
+public:
 
   /**
    * Create a new XdmfTopology.
    *
    * @return constructed XdmfTopology.
    */
-  static boost::shared_ptr<XdmfTopology> New();
+  static shared_ptr<XdmfTopology> New();
 
   virtual ~XdmfTopology();
 
@@ -84,35 +84,35 @@ class XDMF_EXPORT XdmfTopology : public XdmfArray {
    *
    * @return XdmfTopologyType of the topology.
    */
-  boost::shared_ptr<const XdmfTopologyType> getType() const;
+  shared_ptr<const XdmfTopologyType> getType() const;
 
   /**
    * Set the XdmfTopologyType associated with this topology.
    *
    * @param type the XdmfTopologyType to set.
    */
-  void setType(const boost::shared_ptr<const XdmfTopologyType> type);
+  void setType(const shared_ptr<const XdmfTopologyType> type);
 
- protected:
+protected:
 
   XdmfTopology();
 
   virtual void
   populateItem(const std::map<std::string, std::string> & itemProperties,
-               std::vector<boost::shared_ptr<XdmfItem> > & childItems,
+               std::vector<shared_ptr<XdmfItem> > & childItems,
                const XdmfCoreReader * const reader);
 
- private:
+private:
 
   XdmfTopology(const XdmfTopology &);  // Not implemented.
   void operator=(const XdmfTopology &);  // Not implemented.
 
-  boost::shared_ptr<const XdmfTopologyType> mType;
+  shared_ptr<const XdmfTopologyType> mType;
 };
 
 #ifdef _WIN32
 XDMF_TEMPLATE template class XDMF_EXPORT
-boost::shared_ptr<const XdmfTopologyType>;
+shared_ptr<const XdmfTopologyType>;
 #endif
 
 #endif /* XDMFTOPOLOGY_HPP_ */

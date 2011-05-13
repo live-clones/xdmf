@@ -6,12 +6,11 @@
 
 int main(int, char **)
 {
-  boost::shared_ptr<XdmfUnstructuredGrid> grid =
+  shared_ptr<XdmfUnstructuredGrid> grid = 
     XdmfTestDataGenerator::createHexahedron();
 
   // First write and release heavy data
-  boost::shared_ptr<XdmfHDF5Writer> hdf5Writer =
-    XdmfHDF5Writer::New("output.h5");
+  shared_ptr<XdmfHDF5Writer> hdf5Writer = XdmfHDF5Writer::New("output.h5");
   grid->getGeometry()->accept(hdf5Writer);
   grid->getGeometry()->release();
 
@@ -24,11 +23,10 @@ int main(int, char **)
   }
 
   // Now insert into domain and write light data
-  boost::shared_ptr<XdmfDomain> domain = XdmfDomain::New();
+  shared_ptr<XdmfDomain> domain = XdmfDomain::New();
   domain->insert(grid);
 
-  boost::shared_ptr<XdmfWriter> writer =
-    XdmfWriter::New("output.xmf", hdf5Writer);
+  shared_ptr<XdmfWriter> writer = XdmfWriter::New("output.xmf", hdf5Writer);
   writer->setLightDataLimit(10);
   domain->accept(writer);
 

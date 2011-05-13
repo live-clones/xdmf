@@ -38,28 +38,28 @@
  */
 class XDMF_EXPORT XdmfReader : public XdmfCoreReader {
 
- public:
+public:
 
   /**
    * Create a new XdmfReader.
    *
    * @return constructed XdmfReader.
    */
-  static boost::shared_ptr<XdmfReader> New();
+  static shared_ptr<XdmfReader> New();
 
   virtual ~XdmfReader();
 
-  boost::shared_ptr<XdmfItem> read(const std::string & filePath) const;
+  shared_ptr<XdmfItem> read(const std::string & filePath) const;
 
-  std::vector<boost::shared_ptr<XdmfItem> >
+  std::vector<shared_ptr<XdmfItem> >
   read(const std::string & filePath,
        const std::string & xPath) const;
 
- protected:
+protected:
 
   XdmfReader();
 
- private:
+private:
 
   XdmfReader(const XdmfReader &);  // Not implemented.
   void operator=(const XdmfReader &);  // Not implemented.
@@ -67,7 +67,7 @@ class XDMF_EXPORT XdmfReader : public XdmfCoreReader {
 
 #ifdef _WIN32
 XDMF_TEMPLATE template class XDMF_EXPORT
-boost::shared_ptr<XdmfItem>;
+shared_ptr<XdmfItem>;
 #endif
 
 #endif /* XDMFREADER_HPP_ */

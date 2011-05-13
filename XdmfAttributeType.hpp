@@ -48,25 +48,25 @@
  */
 class XDMF_EXPORT XdmfAttributeType : public XdmfItemProperty {
 
- public:
+public:
 
   virtual ~XdmfAttributeType();
 
   friend class XdmfAttribute;
 
   // Supported Xdmf Attribute Types
-  static boost::shared_ptr<const XdmfAttributeType> NoAttributeType();
-  static boost::shared_ptr<const XdmfAttributeType> Scalar();
-  static boost::shared_ptr<const XdmfAttributeType> Vector();
-  static boost::shared_ptr<const XdmfAttributeType> Tensor();
-  static boost::shared_ptr<const XdmfAttributeType> Matrix();
-  static boost::shared_ptr<const XdmfAttributeType> Tensor6();
-  static boost::shared_ptr<const XdmfAttributeType> GlobalId();
+  static shared_ptr<const XdmfAttributeType> NoAttributeType();
+  static shared_ptr<const XdmfAttributeType> Scalar();
+  static shared_ptr<const XdmfAttributeType> Vector();
+  static shared_ptr<const XdmfAttributeType> Tensor();
+  static shared_ptr<const XdmfAttributeType> Matrix();
+  static shared_ptr<const XdmfAttributeType> Tensor6();
+  static shared_ptr<const XdmfAttributeType> GlobalId();
 
   void
   getProperties(std::map<std::string, std::string> & collectedProperties) const;
 
- protected:
+protected:
 
   /**
    * Protected constructor for XdmfAttributeType.  The constructor is
@@ -78,12 +78,12 @@ class XDMF_EXPORT XdmfAttributeType : public XdmfItemProperty {
    */
   XdmfAttributeType(const std::string & name);
 
- private:
+private:
 
   XdmfAttributeType(const XdmfAttributeType &); // Not implemented.
   void operator=(const XdmfAttributeType &); // Not implemented.
 
-  static boost::shared_ptr<const XdmfAttributeType>
+  static shared_ptr<const XdmfAttributeType>
   New(const std::map<std::string, std::string> & itemProperties);
 
   std::string mName;

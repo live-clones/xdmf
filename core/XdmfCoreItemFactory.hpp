@@ -28,10 +28,10 @@
 class XdmfItem;
 
 // Includes
-#include "XdmfCore.hpp"
-#include <boost/shared_ptr.hpp>
 #include <map>
 #include <vector>
+#include "XdmfCore.hpp"
+#include "XdmfSharedPtr.hpp"
 
 /**
  * @brief Factory that constructs XdmfItems using tags and properties.
@@ -40,7 +40,7 @@ class XdmfItem;
  */
 class XDMFCORE_EXPORT XdmfCoreItemFactory {
 
- public:
+public:
 
   virtual ~XdmfCoreItemFactory() = 0;
 
@@ -54,16 +54,16 @@ class XDMFCORE_EXPORT XdmfCoreItemFactory {
    * @return constructed XdmfItem. If no XdmfItem can be constructed,
    * return NULL.
    */
-  virtual boost::shared_ptr<XdmfItem>
+  virtual shared_ptr<XdmfItem>
   createItem(const std::string & itemTag,
              const std::map<std::string, std::string> & itemProperties,
-             const std::vector<boost::shared_ptr<XdmfItem> > & childItems) const;
+             const std::vector<shared_ptr<XdmfItem> > & childItems) const;
 
- protected:
+protected:
 
   XdmfCoreItemFactory();
 
- private:
+private:
 
   XdmfCoreItemFactory(const XdmfCoreItemFactory &);  // Not implemented.
   void operator=(const XdmfCoreItemFactory &);  // Not implemented.

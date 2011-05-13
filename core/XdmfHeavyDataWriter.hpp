@@ -61,7 +61,7 @@ class XdmfArray;
 class XDMFCORE_EXPORT XdmfHeavyDataWriter : public XdmfVisitor,
                                             public Loki::Visitor<XdmfArray> {
 
- public:
+public:
 
   enum Mode {
     Default,
@@ -100,9 +100,9 @@ class XDMFCORE_EXPORT XdmfHeavyDataWriter : public XdmfVisitor,
    * @param visitor a smart pointer to this visitor --- aids in grid traversal.
    */
   virtual void visit(XdmfArray & array,
-                     const boost::shared_ptr<XdmfBaseVisitor> visitor) = 0;
+                     const shared_ptr<XdmfBaseVisitor> visitor) = 0;
 
- protected:
+protected:
 
   XdmfHeavyDataWriter();
   XdmfHeavyDataWriter(const std::string & filePath);
@@ -111,7 +111,7 @@ class XDMFCORE_EXPORT XdmfHeavyDataWriter : public XdmfVisitor,
   std::string mFilePath;
   Mode mMode;
 
- private:
+private:
 
   XdmfHeavyDataWriter(const XdmfHeavyDataWriter &);  // Not implemented.
   void operator=(const XdmfHeavyDataWriter &);  // Not implemented.

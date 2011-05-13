@@ -6,14 +6,14 @@
 
 int main(int, char **)
 {
-  boost::shared_ptr<XdmfUnstructuredGrid> grid = XdmfUnstructuredGrid::New();
+  shared_ptr<XdmfUnstructuredGrid> grid = XdmfUnstructuredGrid::New();
   std::string gridName = "Grid1";
 
   grid->setName(gridName);
   assert(grid->getName().compare(gridName) == 0);
 
   // Insert Attributes
-  boost::shared_ptr<XdmfAttribute> attr = XdmfAttribute::New();
+  shared_ptr<XdmfAttribute> attr = XdmfAttribute::New();
   attr->setName("foo");
   assert(grid->getNumberAttributes() == 0);
   grid->insert(attr);
@@ -24,7 +24,7 @@ int main(int, char **)
   assert(grid->getAttribute("foo1") == NULL);
 
   // Insert Sets
-  boost::shared_ptr<XdmfSet> set = XdmfSet::New();
+  shared_ptr<XdmfSet> set = XdmfSet::New();
   set->setName("foo");
   assert(grid->getNumberSets() == 0);
   grid->insert(set);
@@ -36,7 +36,7 @@ int main(int, char **)
 
   // Insert Time
   assert(grid->getTime() == NULL);
-  boost::shared_ptr<XdmfTime> time = XdmfTime::New(0);
+  shared_ptr<XdmfTime> time = XdmfTime::New(0);
   grid->setTime(time);
   assert(grid->getTime() == time);
 
@@ -63,7 +63,7 @@ int main(int, char **)
   assert(grid->getNumberSets() == 0);
 
   // Insert Information
-  boost::shared_ptr<XdmfInformation> information =
+  shared_ptr<XdmfInformation> information =
     XdmfInformation::New("key", "value");
   grid->insert(information);
 

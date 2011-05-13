@@ -45,7 +45,7 @@ class XdmfArray;
  */
 class XDMF_EXPORT XdmfRegularGrid : public XdmfGrid {
 
- public:
+public:
 
   /**
    * Create a new structured grid (Two dimensional).
@@ -59,12 +59,12 @@ class XDMF_EXPORT XdmfRegularGrid : public XdmfGrid {
    *
    * @return constructed structured grid.
    */
-  static boost::shared_ptr<XdmfRegularGrid> New(const double xBrickSize,
-                                                const double yBrickSize,
-                                                const unsigned int xNumPoints,
-                                                const unsigned int yNumPoints,
-                                                const double xOrigin,
-                                                const double yOrigin);
+  static shared_ptr<XdmfRegularGrid> New(const double xBrickSize,
+                                         const double yBrickSize,
+                                         const unsigned int xNumPoints,
+                                         const unsigned int yNumPoints,
+                                         const double xOrigin,
+                                         const double yOrigin);
 
   /**
    * Create a new structured grid (Three dimensional).
@@ -81,15 +81,15 @@ class XDMF_EXPORT XdmfRegularGrid : public XdmfGrid {
    *
    * @return constructed structured grid.
    */
-  static boost::shared_ptr<XdmfRegularGrid> New(const double xBrickSize,
-                                                const double yBrickSize,
-                                                const double zBrickSize,
-                                                const unsigned int xNumPoints,
-                                                const unsigned int yNumPoints,
-                                                const unsigned int zNumPoints,
-                                                const double xOrigin,
-                                                const double yOrigin,
-                                                const double zOrigin);
+  static shared_ptr<XdmfRegularGrid> New(const double xBrickSize,
+                                         const double yBrickSize,
+                                         const double zBrickSize,
+                                         const unsigned int xNumPoints,
+                                         const unsigned int yNumPoints,
+                                         const unsigned int zNumPoints,
+                                         const double xOrigin,
+                                         const double yOrigin,
+                                         const double zOrigin);
 
   /**
    * Create a new structured grid (N dimensional).
@@ -100,10 +100,10 @@ class XDMF_EXPORT XdmfRegularGrid : public XdmfGrid {
    *
    * @return constructed structured grid.
    */
-  static boost::shared_ptr<XdmfRegularGrid>
-  New(const boost::shared_ptr<XdmfArray> brickSize,
-      const boost::shared_ptr<XdmfArray> numPoints,
-      const boost::shared_ptr<XdmfArray> origin);
+  static shared_ptr<XdmfRegularGrid>
+  New(const shared_ptr<XdmfArray> brickSize,
+      const shared_ptr<XdmfArray> numPoints,
+      const shared_ptr<XdmfArray> origin);
 
   virtual ~XdmfRegularGrid();
 
@@ -115,14 +115,14 @@ class XDMF_EXPORT XdmfRegularGrid : public XdmfGrid {
    *
    * @return XdmfArray containing brick sizes for this grid.
    */
-  boost::shared_ptr<XdmfArray> getBrickSize();
+  shared_ptr<XdmfArray> getBrickSize();
 
   /**
    * Get the size of the points composing the grid (const version).
    *
    * @return XdmfArray containing brick sizes for this grid.
    */
-  boost::shared_ptr<const XdmfArray> getBrickSize() const;
+  shared_ptr<const XdmfArray> getBrickSize() const;
 
   /**
    * Get the dimensions of the grid, the number of points in each
@@ -130,7 +130,7 @@ class XDMF_EXPORT XdmfRegularGrid : public XdmfGrid {
    *
    * @return XdmfArray containing dimensions of this grid.
    */
-  boost::shared_ptr<XdmfArray> getDimensions();
+  shared_ptr<XdmfArray> getDimensions();
 
   /**
    * Get the dimensions of the grid, the number of points in each
@@ -138,7 +138,7 @@ class XDMF_EXPORT XdmfRegularGrid : public XdmfGrid {
    *
    * @return XdmfArray containing the dimensions of this grid.
    */
-  boost::shared_ptr<const XdmfArray> getDimensions() const;
+  shared_ptr<const XdmfArray> getDimensions() const;
 
   /**
    * Get the location of the origin of the grid.
@@ -146,7 +146,7 @@ class XDMF_EXPORT XdmfRegularGrid : public XdmfGrid {
    * @return XdmfArray containing the location of the origin of the
    * grid.
    */
-  boost::shared_ptr<XdmfArray> getOrigin();
+  shared_ptr<XdmfArray> getOrigin();
 
   /**
    * Get the location of the origin of the grid.
@@ -154,7 +154,7 @@ class XDMF_EXPORT XdmfRegularGrid : public XdmfGrid {
    * @return XdmfArray containing the location of the origin of the
    * grid (const version).
    */
-  boost::shared_ptr<const XdmfArray> getOrigin() const;
+  shared_ptr<const XdmfArray> getOrigin() const;
 
   /**
    * Set the size of the points composing the grid.
@@ -163,7 +163,7 @@ class XDMF_EXPORT XdmfRegularGrid : public XdmfGrid {
    * should have the same number of terms as the dimensionality of the
    * mesh.
    */
-  void setBrickSize(const boost::shared_ptr<XdmfArray> brickSize);
+  void setBrickSize(const shared_ptr<XdmfArray> brickSize);
 
   /**
    * Set the dimensions of the grid, the number of points in each
@@ -171,7 +171,7 @@ class XDMF_EXPORT XdmfRegularGrid : public XdmfGrid {
    *
    * @param dimensions the dimension of the grid.
    */
-  void setDimensions(const boost::shared_ptr<XdmfArray> dimensions);
+  void setDimensions(const shared_ptr<XdmfArray> dimensions);
 
   /**
    * Set the origin of the grid.
@@ -179,19 +179,19 @@ class XDMF_EXPORT XdmfRegularGrid : public XdmfGrid {
    * @param origin location of the origin of the grid.  This should
    * have the same number of terms as the dimensionality of the mesh.
    */
-  void setOrigin(const boost::shared_ptr<XdmfArray> origin);
+  void setOrigin(const shared_ptr<XdmfArray> origin);
 
- protected:
+protected:
 
-  XdmfRegularGrid(const boost::shared_ptr<XdmfArray> brickSize,
-                  const boost::shared_ptr<XdmfArray> numPoints,
-                  const boost::shared_ptr<XdmfArray> origin);
+  XdmfRegularGrid(const shared_ptr<XdmfArray> brickSize,
+                  const shared_ptr<XdmfArray> numPoints,
+                  const shared_ptr<XdmfArray> origin);
 
   void populateItem(const std::map<std::string, std::string> & itemProperties,
-                    std::vector<boost::shared_ptr<XdmfItem> > & childItems,
+                    std::vector<shared_ptr<XdmfItem> > & childItems,
                     const XdmfCoreReader * const reader);
 
- private:
+private:
 
   /**
    * PIMPL
@@ -207,9 +207,9 @@ class XDMF_EXPORT XdmfRegularGrid : public XdmfGrid {
 
 #ifdef _WIN32
 XDMF_TEMPLATE template class XDMF_EXPORT
-boost::shared_ptr<XdmfArray>;
+shared_ptr<XdmfArray>;
 XDMF_TEMPLATE template class XDMF_EXPORT
-boost::shared_ptr<const XdmfArray>;
+shared_ptr<const XdmfArray>;
 #endif
 
 #endif /* XDMFREGULARGRID_HPP_ */

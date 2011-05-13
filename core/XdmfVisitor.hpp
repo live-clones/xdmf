@@ -41,18 +41,18 @@ class XdmfItem;
 class XDMFCORE_EXPORT XdmfVisitor : public XdmfBaseVisitor,
                                     public Loki::Visitor<XdmfItem> {
 
- public:
+public:
 
   virtual ~XdmfVisitor() = 0;
 
   virtual void visit(XdmfItem & item,
-                     const boost::shared_ptr<XdmfBaseVisitor> visitor);
+                     const shared_ptr<XdmfBaseVisitor> visitor);
 
- protected:
+protected:
 
   XdmfVisitor();
 
- private:
+private:
 
   XdmfVisitor(const XdmfVisitor & visitor);  // Not implemented.
   void operator=(const XdmfVisitor & visitor);  // Not implemented.

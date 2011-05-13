@@ -30,12 +30,12 @@ class XdmfInformation;
 class XdmfVisitor;
 
 // Includes
-#include <boost/shared_ptr.hpp>
 #include <loki/Visitor.h>
 #include <map>
 #include <string>
 #include <vector>
 #include "XdmfCore.hpp"
+#include "XdmfSharedPtr.hpp"
 
 // Macro that allows children XdmfItems to be attached to a parent XdmfItem.
 // -- For Header File
@@ -48,7 +48,7 @@ public:                                                                       \
       @return requested ChildClass. If no ChildClass##s exist at the index,
       a NULL pointer is returned.
   */                                                                          \
-  virtual boost::shared_ptr<ChildClass>                                       \
+  virtual shared_ptr<ChildClass>                                              \
   get##ChildName(const unsigned int index);                                   \
                                                                               \
   /** Get a ChildClass attached to this item by index (const version).
@@ -56,7 +56,7 @@ public:                                                                       \
       @return requested ChildClass. If no ChildClass##s exist at the index, a
       NULL pointer is returned.
   */                                                                          \
-  virtual boost::shared_ptr<const ChildClass>                                 \
+  virtual shared_ptr<const ChildClass>                                        \
   get##ChildName(const unsigned int index) const;                             \
                                                                               \
   /** Get a ChildClass attached to this item by SearchName.
@@ -64,7 +64,7 @@ public:                                                                       \
       @return requested ChildClass. If no ChildClass##s are found with the
       correct SearchName, a NULL pointer is returned.
   */                                                                          \
-  virtual boost::shared_ptr<ChildClass>                                       \
+  virtual shared_ptr<ChildClass>                                              \
   get##ChildName(const std::string & SearchName);                             \
                                                                               \
   /** Get a ChildClass attached to this item by SearchName (const version).
@@ -72,7 +72,7 @@ public:                                                                       \
       @return requested ChildClass  If no ChildClass##s are found with the
       correct SearchName, a NULL pointer is returned.
   */                                                                          \
-  virtual boost::shared_ptr<const ChildClass>                                 \
+  virtual shared_ptr<const ChildClass>                                        \
   get##ChildName(const std::string & SearchName) const;                       \
                                                                               \
   /** Get the number of ChildClass##s attached to this item.
@@ -83,7 +83,7 @@ public:                                                                       \
   /** Insert a ChildClass into to this item.
       @param ChildName to attach to this item.
   */                                                                          \
-  virtual void insert(const boost::shared_ptr<ChildClass> ChildName);         \
+  virtual void insert(const shared_ptr<ChildClass> ChildName);                \
                                                                               \
   /** Remove a ChildClass from this item by index. If no ChildClass##s exist
       at the index, nothing is removed.
@@ -99,7 +99,7 @@ public:                                                                       \
                                                                               \
 protected :                                                                   \
                                                                               \
-  std::vector<boost::shared_ptr<ChildClass> > m##ChildName##s;                \
+  std::vector<shared_ptr<ChildClass> > m##ChildName##s;                       \
                                                                               \
 public :
 
@@ -110,33 +110,33 @@ public :
                                      ChildName,                               \
                                      SearchName)                              \
                                                                               \
-  boost::shared_ptr<ChildClass>                                               \
+  shared_ptr<ChildClass>                                                      \
   ParentClass::get##ChildName(const unsigned int index)                       \
   {                                                                           \
     return boost::const_pointer_cast<ChildClass>                              \
       (static_cast<const ParentClass &>(*this).get##ChildName(index));        \
   }                                                                           \
                                                                               \
-  boost::shared_ptr<const ChildClass>                                         \
+  shared_ptr<const ChildClass>                                                \
   ParentClass::get##ChildName(const unsigned int index) const                 \
   {                                                                           \
     if(index < m##ChildName##s.size()) {                                      \
       return m##ChildName##s[index];                                          \
     }                                                                         \
-    return boost::shared_ptr<ChildClass>();                                   \
+    return shared_ptr<ChildClass>();                                          \
   }                                                                           \
                                                                               \
-  boost::shared_ptr<ChildClass>                                               \
+  shared_ptr<ChildClass>                                                      \
   ParentClass::get##ChildName(const std::string & SearchName)                 \
   {                                                                           \
     return boost::const_pointer_cast<ChildClass>                              \
       (static_cast<const ParentClass &>(*this).get##ChildName(SearchName));   \
   }                                                                           \
                                                                               \
-  boost::shared_ptr<const ChildClass>                                         \
+  shared_ptr<const ChildClass>                                                \
   ParentClass::get##ChildName(const std::string & SearchName) const           \
   {                                                                           \
-    for(std::vector<boost::shared_ptr<ChildClass> >::const_iterator iter =    \
+    for(std::vector<shared_ptr<ChildClass> >::const_iterator iter =           \
           m##ChildName##s.begin();                                            \
         iter != m##ChildName##s.end();                                        \
         ++iter) {                                                             \
@@ -144,7 +144,7 @@ public :
         return *iter;                                                         \
       }                                                                       \
     }                                                                         \
-    return boost::shared_ptr<ChildClass>();                                   \
+    return shared_ptr<ChildClass>();                                          \
   }                                                                           \
                                                                               \
   unsigned int                                                                \
@@ -154,7 +154,7 @@ public :
   }                                                                           \
                                                                               \
   void                                                                        \
-  ParentClass::insert(const boost::shared_ptr<ChildClass> ChildName)          \
+  ParentClass::insert(const shared_ptr<ChildClass> ChildName)                 \
   {                                                                           \
     m##ChildName##s.push_back(ChildName);                                     \
   }                                                                           \
@@ -170,7 +170,7 @@ public :
   void                                                                        \
   ParentClass::remove##ChildName(const std::string & SearchName)              \
   {                                                                           \
-    for(std::vector<boost::shared_ptr<ChildClass> >::iterator iter =          \
+    for(std::vector<shared_ptr<ChildClass> >::iterator iter =                 \
           m##ChildName##s.begin();                                            \
         iter != m##ChildName##s.end();                                        \
         ++iter) {                                                             \
@@ -191,7 +191,7 @@ public :
  */
 class XDMFCORE_EXPORT XdmfItem : public Loki::BaseVisitable<void> {
 
- public:
+public:
 
   virtual ~XdmfItem() = 0;
 
@@ -220,9 +220,9 @@ class XDMFCORE_EXPORT XdmfItem : public Loki::BaseVisitable<void> {
    *
    * @param visitor the visitor to pass to child items.
    */
-  virtual void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor);
+  virtual void traverse(const shared_ptr<XdmfBaseVisitor> visitor);
 
- protected:
+protected:
 
   XdmfItem();
 
@@ -239,10 +239,10 @@ class XDMFCORE_EXPORT XdmfItem : public Loki::BaseVisitable<void> {
    */
   virtual void
   populateItem(const std::map<std::string, std::string> & itemProperties,
-               std::vector<boost::shared_ptr<XdmfItem > > & childItems,
+               std::vector<shared_ptr<XdmfItem > > & childItems,
                const XdmfCoreReader * const reader);
 
- private:
+private:
 
   XdmfItem(const XdmfItem &);  // Not implemented.
   void operator=(const XdmfItem &);  // Not implemented.
@@ -252,17 +252,17 @@ class XDMFCORE_EXPORT XdmfItem : public Loki::BaseVisitable<void> {
 #ifdef _WIN32
 XDMFCORE_TEMPLATE
 template class XDMFCORE_EXPORT
-std::allocator<boost::shared_ptr<XdmfItem> >;
+std::allocator<shared_ptr<XdmfItem> >;
 XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT
-std::vector<boost::shared_ptr<XdmfItem>,
-            std::allocator<boost::shared_ptr<XdmfItem> > >;
+std::vector<shared_ptr<XdmfItem>, 
+            std::allocator<shared_ptr<XdmfItem> > >;
 XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT
-std::allocator<boost::shared_ptr<XdmfInformation> >;
+std::allocator<shared_ptr<XdmfInformation> >;
 XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT
-std::vector<boost::shared_ptr<XdmfInformation>,
-            std::allocator<boost::shared_ptr<XdmfInformation> > >;
+std::vector<shared_ptr<XdmfInformation>, 
+            std::allocator<shared_ptr<XdmfInformation> > >;
 XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT
-boost::shared_ptr<Loki::BaseVisitor>;
+shared_ptr<Loki::BaseVisitor>;
 XDMFCORE_TEMPLATE template class XDMFCORE_EXPORT
 Loki::BaseVisitable<void, false>;
 #endif

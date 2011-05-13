@@ -42,17 +42,17 @@ class H5FDdsmBuffer;
  */
 class XDMFCORE_EXPORT XdmfHDF5ControllerDSM : public XdmfHDF5Controller {
 
- public:
+public:
 
   virtual ~XdmfHDF5ControllerDSM();
 
   /**
    * Create a new controller for an DSM data set.
    */
-  static boost::shared_ptr<XdmfHDF5ControllerDSM>
+  static shared_ptr<XdmfHDF5ControllerDSM>
   New(const std::string & hdf5FilePath,
       const std::string & dataSetPath,
-      const boost::shared_ptr<const XdmfArrayType> type,
+      const shared_ptr<const XdmfArrayType> type,
       const std::vector<unsigned int> & start,
       const std::vector<unsigned int> & stride,
       const std::vector<unsigned int> & count,
@@ -62,17 +62,17 @@ class XDMFCORE_EXPORT XdmfHDF5ControllerDSM : public XdmfHDF5Controller {
 
   void read(XdmfArray * const array);
 
- protected:
+protected:
 
   XdmfHDF5ControllerDSM(const std::string & hdf5FilePath,
                         const std::string & dataSetPath,
-                        const boost::shared_ptr<const XdmfArrayType> type,
+                        const shared_ptr<const XdmfArrayType> type,
                         const std::vector<unsigned int> & start,
                         const std::vector<unsigned int> & stride,
                         const std::vector<unsigned int> & count,
                         H5FDdsmBuffer * const dsmBuffer);
 
- private:
+private:
 
   XdmfHDF5ControllerDSM(const XdmfHDF5Controller &);  // Not implemented.
   void operator=(const XdmfHDF5Controller &);  // Not implemented.

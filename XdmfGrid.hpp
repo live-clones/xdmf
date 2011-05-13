@@ -53,7 +53,7 @@ class XdmfTopology;
  */
 class XDMF_EXPORT XdmfGrid : public virtual XdmfItem {
 
- public:
+public:
 
   virtual ~XdmfGrid() = 0;
 
@@ -67,7 +67,7 @@ class XDMF_EXPORT XdmfGrid : public virtual XdmfItem {
    *
    * @return the geometry associated with this grid.
    */
-  boost::shared_ptr<const XdmfGeometry> getGeometry() const;
+  shared_ptr<const XdmfGeometry> getGeometry() const;
 
   std::map<std::string, std::string> getItemProperties() const;
 
@@ -78,7 +78,7 @@ class XDMF_EXPORT XdmfGrid : public virtual XdmfItem {
    *
    * @return the boundary communicator map associated with this grid.
    */
-  boost::shared_ptr<XdmfMap> getMap();
+  shared_ptr<XdmfMap> getMap();
 
   /**
    * Get the boundary communicator map associated with this grid
@@ -86,7 +86,7 @@ class XDMF_EXPORT XdmfGrid : public virtual XdmfItem {
    *
    * @return the boundary communicator map associated with this grid.
    */
-  boost::shared_ptr<const XdmfMap> getMap() const;
+  shared_ptr<const XdmfMap> getMap() const;
 
   /**
    * Get the name of the grid.
@@ -101,7 +101,7 @@ class XDMF_EXPORT XdmfGrid : public virtual XdmfItem {
    * @return pointer to the XdmfTime attached to this grid. If no
    * XdmfTime is attached, return a NULL pointer.
    */
-  boost::shared_ptr<XdmfTime> getTime();
+  shared_ptr<XdmfTime> getTime();
 
   /**
    * Get the time associated with this grid (const version).
@@ -109,14 +109,14 @@ class XDMF_EXPORT XdmfGrid : public virtual XdmfItem {
    * @return pointer to the XdmfTime attached to this grid. If no
    * XdmfTime is attached, return a NULL pointer.
    */
-  boost::shared_ptr<const XdmfTime> getTime() const;
+  shared_ptr<const XdmfTime> getTime() const;
 
   /**
    * Get the topology associated with this grid.
    *
    * @return the topology associated with this grid.
    */
-  boost::shared_ptr<const XdmfTopology> getTopology() const;
+  shared_ptr<const XdmfTopology> getTopology() const;
 
   using XdmfItem::insert;
 
@@ -125,7 +125,7 @@ class XDMF_EXPORT XdmfGrid : public virtual XdmfItem {
    *
    * @param map a XdmfMap to associate with this grid.
    */
-  void setMap(boost::shared_ptr<XdmfMap> map);
+  void setMap(shared_ptr<XdmfMap> map);
 
   /**
    * Set the name of the grid.
@@ -139,62 +139,62 @@ class XDMF_EXPORT XdmfGrid : public virtual XdmfItem {
    *
    * @param time an XdmfTime to associate with this grid.
    */
-  void setTime(const boost::shared_ptr<XdmfTime> time);
+  void setTime(const shared_ptr<XdmfTime> time);
 
-  virtual void traverse(const boost::shared_ptr<XdmfBaseVisitor> visitor);
+  virtual void traverse(const shared_ptr<XdmfBaseVisitor> visitor);
 
- protected:
+protected:
 
-  XdmfGrid(const boost::shared_ptr<XdmfGeometry> geometry,
-           const boost::shared_ptr<XdmfTopology> topology,
+  XdmfGrid(const shared_ptr<XdmfGeometry> geometry,
+           const shared_ptr<XdmfTopology> topology,
            const std::string & name = "Grid");
 
   virtual void
   populateItem(const std::map<std::string, std::string> & itemProperties,
-               std::vector<boost::shared_ptr<XdmfItem> > & childItems,
+               std::vector<shared_ptr<XdmfItem> > & childItems,
                const XdmfCoreReader * const reader);
 
-  boost::shared_ptr<XdmfGeometry> mGeometry;
-  boost::shared_ptr<XdmfTopology> mTopology;
+  shared_ptr<XdmfGeometry> mGeometry;
+  shared_ptr<XdmfTopology> mTopology;
 
- private:
+private:
 
   XdmfGrid(const XdmfGrid &);  // Not implemented.
   void operator=(const XdmfGrid &);  // Not implemented.
 
-  boost::shared_ptr<XdmfMap> mMap;
+  shared_ptr<XdmfMap> mMap;
   std::string mName;
-  boost::shared_ptr<XdmfTime> mTime;
+  shared_ptr<XdmfTime> mTime;
 
 };
 
 #ifdef _WIN32
 XDMF_TEMPLATE template class XDMF_EXPORT
-std::allocator<boost::shared_ptr<XdmfAttribute> >;
+std::allocator<shared_ptr<XdmfAttribute> >;
 XDMF_TEMPLATE template class XDMF_EXPORT
-std::vector<boost::shared_ptr<XdmfAttribute>,
-            std::allocator<boost::shared_ptr<XdmfAttribute> > >;
+std::vector<shared_ptr<XdmfAttribute>,
+            std::allocator<shared_ptr<XdmfAttribute> > >;
 XDMF_TEMPLATE template class XDMF_EXPORT
-std::allocator<boost::shared_ptr<XdmfSet> >;
+std::allocator<shared_ptr<XdmfSet> >;
 XDMF_TEMPLATE template class XDMF_EXPORT
-std::vector<boost::shared_ptr<XdmfSet>,
-            std::allocator<boost::shared_ptr<XdmfSet> > >;
+std::vector<shared_ptr<XdmfSet>,
+            std::allocator<shared_ptr<XdmfSet> > >;
 XDMF_TEMPLATE template class XDMF_EXPORT
-boost::shared_ptr<XdmfGeometry>;
+shared_ptr<XdmfGeometry>;
 XDMF_TEMPLATE template class XDMF_EXPORT
-boost::shared_ptr<const XdmfGeometry>;
+shared_ptr<const XdmfGeometry>;
 XDMF_TEMPLATE template class XDMF_EXPORT
-boost::shared_ptr<XdmfTopology>;
+shared_ptr<XdmfTopology>;
 XDMF_TEMPLATE template class XDMF_EXPORT
-boost::shared_ptr<const XdmfTopology>;
+shared_ptr<const XdmfTopology>;
 XDMF_TEMPLATE template class XDMF_EXPORT
-boost::shared_ptr<XdmfMap>;
+shared_ptr<XdmfMap>;
 XDMF_TEMPLATE template class XDMF_EXPORT
-boost::shared_ptr<const XdmfMap>;
+shared_ptr<const XdmfMap>;
 XDMF_TEMPLATE template class XDMF_EXPORT
-boost::shared_ptr<XdmfTime>;
+shared_ptr<XdmfTime>;
 XDMF_TEMPLATE template class XDMF_EXPORT
-boost::shared_ptr<const XdmfTime>;
+shared_ptr<const XdmfTime>;
 #endif
 
 #endif /* XDMFGRID_HPP_ */
