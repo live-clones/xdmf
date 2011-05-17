@@ -621,4 +621,4 @@ int main(int argc, char* argv[])
   std::cout << "Wrote: " << xmlFileName.str() << std::endl;
 }
 
-#endif //BUILD_EXE
+#endif // BUILD_EXE

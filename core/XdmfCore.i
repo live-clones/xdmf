@@ -22,6 +22,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
     #include <XdmfInformation.hpp>
     #include <XdmfItem.hpp>
     #include <XdmfItemProperty.hpp>
+    #include <XdmfSharedPtr.hpp>
     #include <XdmfSystemUtils.hpp>
     #include <XdmfVersion.hpp>
     #include <XdmfVisitor.hpp>

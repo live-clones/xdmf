@@ -30,7 +30,7 @@ class XdmfTopologyType;
 class XdmfUnstructuredGrid;
 
 // Includes
-#include <boost/shared_ptr.hpp>
+#include "XdmfSharedPtr.hpp"
 
 /**
  * @brief Converts an unstructured grid to different topology types.

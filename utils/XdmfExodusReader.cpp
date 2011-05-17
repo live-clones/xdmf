@@ -491,7 +491,7 @@ XdmfExodusReader::read(const std::string & fileName,
 
       // Subtract all node ids by 1 since exodus indices start at 1
       for(int j=0; j<num_nodes_in_set; ++j) {
-        setPointer[i]--;
+        setPointer[j]--;
       }
 
       toReturn->insert(set);

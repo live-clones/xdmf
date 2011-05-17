@@ -29,8 +29,8 @@ class XdmfHeavyDataWriter;
 class XdmfUnstructuredGrid;
 
 // Includes
-#include <boost/shared_ptr.hpp>
 #include <string>
+#include "XdmfSharedPtr.hpp"
 
 /**
  * @brief Reads an ExodusII file from disk into an Xdmf structure in

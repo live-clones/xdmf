@@ -31,8 +31,8 @@ class XdmfSet;
 class XdmfUnstructuredGrid;
 
 // Includes
-#include <boost/shared_ptr.hpp>
 #include <set>
+#include "XdmfSharedPtr.hpp"
 
 /**
  * @brief XdmfPartitioner partitions an XdmfGrid using the metis

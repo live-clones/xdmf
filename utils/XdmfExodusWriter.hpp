@@ -28,8 +28,8 @@
 class XdmfUnstructuredGrid;
 
 // Includes
-#include <boost/shared_ptr.hpp>
 #include <string>
+#include "XdmfSharedPtr.hpp"
 
 /**
  * @brief Writes an Xdmf structure in memory to an ExodusII file on
