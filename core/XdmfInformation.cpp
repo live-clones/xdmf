@@ -21,8 +21,11 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#include "XdmfInformation.hpp"
+#include "XdmfArray.hpp"
 #include "XdmfError.hpp"
+#include "XdmfInformation.hpp"
+
+XDMF_CHILDREN_IMPLEMENTATION(XdmfInformation, XdmfArray, Array, Name)
 
 shared_ptr<XdmfInformation>
 XdmfInformation::New()
@@ -113,6 +116,14 @@ XdmfInformation::populateItem(const std::map<std::string, std::string> & itemPro
                          "XdmfInformation::populateItem");
     }
   }
+  for(std::vector<shared_ptr<XdmfItem> >::const_iterator iter =
+        childItems.begin();
+      iter != childItems.end();
+      ++iter) {
+    if(shared_ptr<XdmfArray> array = shared_dynamic_cast<XdmfArray>(*iter)) {
+      this->insert(array);
+    }
+  }
 }
 
 void
@@ -125,4 +136,16 @@ void
 XdmfInformation::setValue(const std::string & value)
 {
   mValue= value;
+}
+
+void
+XdmfInformation::traverse(const shared_ptr<XdmfBaseVisitor> visitor)
+{
+  XdmfItem::traverse(visitor);
+  for(std::vector<shared_ptr<XdmfArray> >::const_iterator iter = 
+        mArrays.begin();
+      iter != mArrays.end();
+      ++iter) {
+    (*iter)->accept(visitor);
+  }
 }

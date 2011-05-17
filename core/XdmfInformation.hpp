@@ -24,6 +24,9 @@
 #ifndef XDMFINFORMATION_HPP_
 #define XDMFINFORMATION_HPP_
 
+// Forward declarations
+class XdmfArray;
+
 // Includes
 #include "XdmfCore.hpp"
 #include "XdmfItem.hpp"
@@ -62,6 +65,7 @@ public:
   virtual ~XdmfInformation();
 
   LOKI_DEFINE_VISITABLE(XdmfInformation, XdmfItem);
+  XDMF_CHILDREN(XdmfArray, Array, Name);
   static const std::string ItemTag;
 
   std::map<std::string, std::string> getItemProperties() const;
@@ -82,6 +86,8 @@ public:
    */
   std::string getValue() const;
 
+  using XdmfItem::insert;
+
   /**
    * Set the key for this information item.
    *
@@ -95,6 +101,8 @@ public:
    * @param value a string containing the value to set.
    */
   void setValue(const std::string & value);
+
+  virtual void traverse(const shared_ptr<XdmfBaseVisitor> visitor);
 
 protected:
 
