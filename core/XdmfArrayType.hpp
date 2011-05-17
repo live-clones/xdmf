@@ -76,6 +76,13 @@ public:
    */
   unsigned int getElementSize() const;
 
+  /**
+   * Get the name of the data type.
+   *
+   * @return the name of the data type.
+   */
+  std::string getName() const;
+  
   void
   getProperties(std::map<std::string, std::string> & collectedProperties) const;
 

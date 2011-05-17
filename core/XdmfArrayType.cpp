@@ -172,6 +172,12 @@ XdmfArrayType::getElementSize() const
   return mPrecision;
 }
 
+std::string
+XdmfArrayType::getName() const
+{
+  return mName;
+}
+
 void
 XdmfArrayType::getProperties(std::map<std::string, std::string> & collectedProperties) const
 {
