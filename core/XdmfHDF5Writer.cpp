@@ -30,8 +30,12 @@
 #include "XdmfError.hpp"
 
 shared_ptr<XdmfHDF5Writer>
-XdmfHDF5Writer::New(const std::string & filePath)
+XdmfHDF5Writer::New(const std::string & filePath,
+                    const bool clobberFile)
 {
+  if(clobberFile) {
+    std::remove(filePath.c_str());
+  }
   shared_ptr<XdmfHDF5Writer> p(new XdmfHDF5Writer(filePath));
   return p;
 }
@@ -72,6 +76,7 @@ void
 XdmfHDF5Writer::write(XdmfArray & array,
                       const int fapl)
 {
+
   hid_t datatype = -1;
 
   if(array.isInitialized()) {
@@ -111,6 +116,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
 
   if(datatype != -1) {
     std::string hdf5FilePath = mFilePath;
+
     std::stringstream dataSetPath;
 
     if((mMode == Overwrite || mMode == Append)
@@ -145,9 +151,20 @@ XdmfHDF5Writer::write(XdmfArray & array,
                              H5P_DEFAULT,
                              fapl);
     }
+    
     hid_t dataset = H5Dopen(hdf5Handle,
                             dataSetPath.str().c_str(),
                             H5P_DEFAULT);
+
+    // if default mode find a new data set to write to (keep
+    // incrementing dataSetId)
+    while(dataset >= 0 && mMode == Default) {
+      dataSetPath.str(std::string());
+      dataSetPath << "Data" << ++mDataSetId;
+      dataset = H5Dopen(hdf5Handle,
+                        dataSetPath.str().c_str(),
+                        H5P_DEFAULT);
+    }
 
     hid_t dataspace = H5S_ALL;
     hid_t memspace = H5S_ALL;
@@ -271,5 +288,9 @@ XdmfHDF5Writer::write(XdmfArray & array,
                                    dimensions);
     }
     array.setHeavyDataController(newDataController);
+
+    if(mReleaseData) {
+      array.release();
+    }
   }
 }

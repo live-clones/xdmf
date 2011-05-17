@@ -54,10 +54,12 @@ public:
    * Construct XdmfHDF5Writer
    *
    * @param filePath the location of the hdf5 file to output to on disk.
+   * @param clobberFile whether to overwrite the previous file if it exists.
    *
    * @return new XdmfHDF5Writer.
    */
-  static shared_ptr<XdmfHDF5Writer> New(const std::string & filePath);
+  static shared_ptr<XdmfHDF5Writer> New(const std::string & filePath,
+                                        const bool clobberFile = false);
 
   virtual ~XdmfHDF5Writer();
 
