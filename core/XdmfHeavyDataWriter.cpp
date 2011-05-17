@@ -34,7 +34,8 @@ XdmfHeavyDataWriter::XdmfHeavyDataWriter() :
 XdmfHeavyDataWriter::XdmfHeavyDataWriter(const std::string & filePath) :
   mDataSetId(0),
   mFilePath(XdmfSystemUtils::getRealPath(filePath)),
-  mMode(Default)
+  mMode(Default),
+  mReleaseData(false)
 {
 }
 
@@ -54,8 +55,20 @@ XdmfHeavyDataWriter::getMode() const
   return mMode;
 }
 
+bool 
+XdmfHeavyDataWriter::getReleaseData() const
+{
+  return mReleaseData;
+}
+
 void
 XdmfHeavyDataWriter::setMode(const Mode mode)
 {
   mMode = mode;
+}
+
+void
+XdmfHeavyDataWriter::setReleaseData(const bool releaseData)
+{
+  mReleaseData = releaseData;
 }

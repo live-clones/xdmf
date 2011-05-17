@@ -87,11 +87,25 @@ public:
   Mode getMode() const;
 
   /**
+   * Get whether to release data from memory after writing to disk.
+   *
+   * @return true if data is freed after writing
+   */
+  bool getReleaseData() const;
+
+  /**
    * Set the mode of operation for this writer.
    *
    * @param mode the Mode of operation for this writer.
    */
   void setMode(const Mode mode);
+
+  /**
+   * Set whether to release data from memory after writing to disk.
+   *
+   * @param releaseData true if data should be freed after writing
+   */
+  void setReleaseData(const bool releaseData = true);
 
   /**
    * Write an XdmfArray to heavy data file on disk.
@@ -110,6 +124,7 @@ protected:
   int mDataSetId;
   std::string mFilePath;
   Mode mMode;
+  bool mReleaseData;
 
 private:
 
