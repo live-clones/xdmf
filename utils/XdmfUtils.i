@@ -21,6 +21,7 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
     #include <XdmfInformation.hpp>
     #include <XdmfItem.hpp>
     #include <XdmfItemProperty.hpp>
+    #include <XdmfSharedPtr.hpp>
     #include <XdmfSystemUtils.hpp>
     #include <XdmfVisitor.hpp>
     #include <XdmfWriter.hpp>
@@ -49,6 +50,7 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
     #include <XdmfUnstructuredGrid.hpp>
 
     // XdmfUtils Includes
+    #include <XdmfDiff.hpp>
     #include <XdmfExodusReader.hpp>
     #include <XdmfExodusWriter.hpp>
     #include <XdmfPartitioner.hpp>
@@ -66,6 +68,7 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
 #endif /* SWIGPYTHON */
 
 // Shared Pointer Templates
+%shared_ptr(XdmfDiff)
 #ifdef XDMF_BUILD_EXODUS_IO
     %shared_ptr(XdmfExodusReader)
     %shared_ptr(XdmfExodusWriter)
@@ -75,6 +78,7 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
 #endif
 %shared_ptr(XdmfTopologyConverter)
 
+%include XdmfDiff.hpp
 #ifdef XDMF_BUILD_EXODUS_IO
     %include XdmfExodusReader.hpp
     %include XdmfExodusWriter.hpp

@@ -4,6 +4,7 @@ option(XDMF_BUILD_EXODUS_IO OFF)
 option(XDMF_BUILD_PARTITIONER OFF)
 
 set(XdmfUtilsSources
+  XdmfDiff
   XdmfTopologyConverter)
 set(XdmfUtilsLinkLibraries Xdmf)
 
