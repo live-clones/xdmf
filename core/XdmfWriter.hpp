@@ -87,6 +87,18 @@ public:
   static shared_ptr<XdmfWriter> New(const std::string & xmlFilePath, 
                                     const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter);
 
+  /**
+   * Create a new XdmfWriter to write Xdmf data to disk. This will
+   * write heavy data to disk using the passed heavy data writer and
+   * will add xml output to the stream.
+   *
+   * @param stream the output stream to write light data to.
+   *
+   * @return the new XdmfWriter;
+   */
+  static shared_ptr<XdmfWriter> New(std::ostream & stream,
+                                    const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter);
+
   virtual ~XdmfWriter();
 
   /**
@@ -180,7 +192,8 @@ public:
 protected:
 
   XdmfWriter(const std::string & xmlFilePath,
-             shared_ptr<XdmfHeavyDataWriter> heavyDataWriter);
+             shared_ptr<XdmfHeavyDataWriter> heavyDataWriter,
+             std::ostream * stream = NULL);
 
   void setDocumentTitle(std::string title);
   void setVersionString(std::string version);

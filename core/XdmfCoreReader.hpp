@@ -51,6 +51,17 @@ public:
   virtual ~XdmfCoreReader() = 0;
 
   /**
+   * Parse a string containing light data into an Xdmf structure in
+   * memory.
+   *
+   * @param lightData a string containing light data description of an
+   * Xdmf file.
+   *
+   * @return an XdmfItem at the root of the Xdmf tree.
+   */  
+  virtual shared_ptr<XdmfItem> parse(const std::string & lightData) const;
+
+  /**
    * Read an Xdmf file from disk into memory.
    *
    * @param filePath the path of the Xdmf file to read in from disk.
@@ -105,6 +116,7 @@ private:
   void operator=(const XdmfCoreReader &);  // Not implemented.
 
   XdmfCoreReaderImpl * const mImpl;
+
 };
 
 #ifdef _WIN32

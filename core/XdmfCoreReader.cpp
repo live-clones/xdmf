@@ -80,6 +80,21 @@ public:
     mXPathMap.clear();
   }
 
+  void
+  parse(const std::string & lightData) 
+  {
+    mDocument = xmlParseDoc((const xmlChar*)lightData.c_str());
+                               
+    if(mDocument == NULL) {
+      XdmfError::message(XdmfError::FATAL,
+                         "xmlReadFile could not parse passed light data string"
+                         " in XdmfCoreReader::XdmfCoreReaderImpl::parse");
+    }
+
+    mXPathContext = xmlXPtrNewContext(mDocument, NULL, NULL);
+    mXPathMap.clear();
+  }
+
   /**
    * Constructs XdmfItems for all nodes in currNode's tree.
    * XdmfItems are constructed by recursively calling this function for all
@@ -207,6 +222,7 @@ public:
   xmlDocPtr mDocument;
   const XdmfCoreReader * const mCoreReader;
   const shared_ptr<const XdmfCoreItemFactory> mItemFactory;
+  const std::string mRootItemTag;
   std::string mXMLDir;
   xmlXPathContextPtr mXPathContext;
   std::map<xmlNodePtr, shared_ptr<XdmfItem> > mXPathMap;
@@ -220,6 +236,17 @@ XdmfCoreReader::XdmfCoreReader(const shared_ptr<const XdmfCoreItemFactory> itemF
 XdmfCoreReader::~XdmfCoreReader()
 {
   delete mImpl;
+}
+
+shared_ptr<XdmfItem >
+XdmfCoreReader::parse(const std::string & lightData) const
+{
+  mImpl->parse(lightData);
+  const xmlNodePtr currNode = xmlDocGetRootElement(mImpl->mDocument);
+  const std::vector<shared_ptr<XdmfItem> > toReturn =
+    mImpl->read(currNode->children);
+  mImpl->closeFile();
+  return(toReturn[0]);
 }
 
 std::vector<shared_ptr<XdmfItem> >

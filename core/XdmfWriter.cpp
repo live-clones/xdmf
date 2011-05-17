@@ -21,6 +21,7 @@
 /*                                                                           */
 /*****************************************************************************/
 
+#include <fstream>
 #include <libxml/tree.h>
 #include <sstream>
 #include "XdmfArray.hpp"
@@ -40,12 +41,14 @@ class XdmfWriter::XdmfWriterImpl {
 public:
 
   XdmfWriterImpl(const std::string & xmlFilePath,
-                 const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) :
+                 const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter,
+                 std::ostream * stream) :
     mDepth(0),
     mDocumentTitle("Xdmf"),
     mHeavyDataWriter(heavyDataWriter),
     mLastXPathed(false),
     mLightDataLimit(100),
+    mStream(stream),
     mMode(Default),
     mWriteXPaths(true),
     mXMLCurrentNode(NULL),
@@ -65,7 +68,28 @@ public:
   closeFile()
   {
     mXPath.clear();
-    xmlSaveFormatFile(mXMLFilePath.c_str(), mXMLDocument, 1);
+
+    std::ofstream fileStream;
+    if(!mStream) {
+      fileStream.open(mXMLFilePath.c_str());
+      mStream = &fileStream;
+    }
+
+    xmlBufferPtr buffer = xmlBufferCreate();
+    xmlOutputBuffer * outputBuffer = xmlOutputBufferCreateBuffer(buffer,
+                                                                  NULL);
+    xmlSaveFormatFileTo(outputBuffer,
+                        mXMLDocument,
+                        "utf-8",
+                        1);
+    *mStream << buffer->content;
+    xmlBufferFree(buffer);
+    
+    if(fileStream.is_open()) {
+      fileStream.close();
+      mStream = NULL;
+    }
+    
     xmlFreeDoc(mXMLDocument);
     xmlCleanupParser();
   };
@@ -90,6 +114,7 @@ public:
   bool mLastXPathed;
   unsigned int mLightDataLimit;
   Mode mMode;
+  std::ostream * mStream;
   bool mWriteXPaths;
   xmlNodePtr mXMLCurrentNode;
   xmlDocPtr mXMLDocument;
@@ -112,7 +137,7 @@ XdmfWriter::New(const std::string & xmlFilePath)
   else {
     heavyFileName << xmlFilePath << ".h5";
   }
-  shared_ptr<XdmfHDF5Writer> hdf5Writer =
+  shared_ptr<XdmfHDF5Writer> hdf5Writer = 
     XdmfHDF5Writer::New(heavyFileName.str());
   shared_ptr<XdmfWriter> p(new XdmfWriter(xmlFilePath, hdf5Writer));
   return p;
@@ -127,9 +152,22 @@ XdmfWriter::New(const std::string & xmlFilePath,
   return p;
 }
 
+shared_ptr<XdmfWriter> 
+XdmfWriter::New(std::ostream & stream,
+                const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter)
+{
+  shared_ptr<XdmfWriter> p(new XdmfWriter("",
+                                          heavyDataWriter,
+                                          &stream));
+  return p;
+}
+
 XdmfWriter::XdmfWriter(const std::string & xmlFilePath,
-                       shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) :
-  mImpl(new XdmfWriterImpl(xmlFilePath, heavyDataWriter))
+                       shared_ptr<XdmfHeavyDataWriter> heavyDataWriter,
+                       std::ostream * stream) :
+  mImpl(new XdmfWriterImpl(xmlFilePath, 
+                           heavyDataWriter,
+                           stream))
 {
 }
 
@@ -182,12 +220,6 @@ XdmfWriter::setDocumentTitle(std::string title)
 }
 
 void
-XdmfWriter::setVersionString(std::string version)
-{
-  mImpl->mVersionString = version;
-}
-
-void
 XdmfWriter::setLightDataLimit(const unsigned int numValues)
 {
   mImpl->mLightDataLimit = numValues;
@@ -197,6 +229,12 @@ void
 XdmfWriter::setMode(const Mode mode)
 {
   mImpl->mMode = mode;
+}
+
+void
+XdmfWriter::setVersionString(std::string version)
+{
+  mImpl->mVersionString = version;
 }
 
 void
