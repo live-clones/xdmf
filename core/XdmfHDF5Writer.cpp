@@ -23,6 +23,7 @@
 
 #include <hdf5.h>
 #include <sstream>
+#include <cstdio>
 #include "XdmfArray.hpp"
 #include "XdmfArrayType.hpp"
 #include "XdmfHDF5Controller.hpp"
