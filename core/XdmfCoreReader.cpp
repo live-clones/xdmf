@@ -25,6 +25,7 @@
 #include <libxml/xmlreader.h>
 #include <map>
 #include <sstream>
+#include <cstring>
 #include "XdmfCoreItemFactory.hpp"
 #include "XdmfCoreReader.hpp"
 #include "XdmfItem.hpp"
@@ -144,7 +145,7 @@ public:
           const char * content = (char*)childNode->content;
 
           // determine if content is whitespace
-          const size_t contentSize = strlen(content);
+          const size_t contentSize = std::strlen(content);
           bool whitespace = true;
 
           for(int i=0; i<contentSize; ++i) {
