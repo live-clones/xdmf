@@ -251,6 +251,11 @@ XdmfMap::setHeavyDataControllers(shared_ptr<XdmfHeavyDataController> remoteTaskI
   mRemoteLocalNodeIdsController = remoteLocalNodeIdsController;
 }
 
+void 
+XdmfMap::setMap(std::map<task_id, node_id_map> map)
+{
+  mMap = map;
+}
 
 void
 XdmfMap::traverse(const shared_ptr<XdmfBaseVisitor> visitor)

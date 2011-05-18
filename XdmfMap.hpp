@@ -157,6 +157,13 @@ public:
                           shared_ptr<XdmfHeavyDataController> localNodeIdsController,
                           shared_ptr<XdmfHeavyDataController> remoteLocalNodeIdsController);
 
+  /**
+   * Set the boundary communicator map.
+   *
+   * @param map the boundary communicator map to store.
+   */
+  void setMap(std::map<task_id, node_id_map> map);
+
   void traverse(const shared_ptr<XdmfBaseVisitor> visitor);
 
 protected:
