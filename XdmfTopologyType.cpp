@@ -422,6 +422,9 @@ XdmfTopologyType::New(const std::map<std::string, std::string> & itemProperties)
     else if(typeVal.compare("HEXAHEDRON_64") == 0) {
       return Hexahedron_64();
     }
+    else if(typeVal.compare("HEXAHEDRON_125") == 0) {
+      return Hexahedron_125();
+    }
     else if(typeVal.compare("MIXED") == 0) {
       return Mixed();
     }
