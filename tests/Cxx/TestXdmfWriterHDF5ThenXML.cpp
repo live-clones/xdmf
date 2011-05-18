@@ -4,7 +4,7 @@
 
 #include "XdmfTestDataGenerator.hpp"
 
-int main(int, char *)
+int main(int, char **)
 {
   boost::shared_ptr<XdmfUnstructuredGrid> grid =
     XdmfTestDataGenerator::createHexahedron();

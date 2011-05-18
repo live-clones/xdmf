@@ -9,7 +9,7 @@
 
 #include "XdmfTestCompareFiles.hpp"
 
-int main(int, char *)
+int main(int, char **)
 {
   boost::shared_ptr<XdmfCurvilinearGrid> grid = XdmfCurvilinearGrid::New(2,
 									 2,

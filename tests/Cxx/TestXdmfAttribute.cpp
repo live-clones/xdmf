@@ -1,7 +1,7 @@
 #include "XdmfAttribute.hpp"
 #include "XdmfAttributeType.hpp"
 
-int main(int, char *)
+int main(int, char **)
 {
   // Test != and == operators
   assert(XdmfAttributeType::Scalar() == XdmfAttributeType::Scalar());

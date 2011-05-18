@@ -4,7 +4,7 @@
 #include "XdmfReader.hpp"
 #include "XdmfWriter.hpp"
 
-int main(int, char *)
+int main(int, char **)
 {
 
   //

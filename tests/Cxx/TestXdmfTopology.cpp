@@ -6,7 +6,7 @@ void setPolyTopology(boost::shared_ptr<XdmfTopology> polyTop)
   polyTop->setType(XdmfTopologyType::Polygon(6));
 }
 
-int main(int, char *)
+int main(int, char **)
 {
   // Test != and == operators
   assert(XdmfTopologyType::Hexahedron() == XdmfTopologyType::Hexahedron());

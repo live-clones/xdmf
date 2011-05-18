@@ -1,6 +1,6 @@
 #include "XdmfTime.hpp"
 
-int main(int, char *)
+int main(int, char **)
 {
   boost::shared_ptr<XdmfTime> time = XdmfTime::New();
   assert(time->getValue() == 0);

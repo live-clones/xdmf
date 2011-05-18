@@ -49,7 +49,7 @@ private:
   int mCount;
 };
 
-int main(int, char *)
+int main(int, char **)
 {
   boost::shared_ptr<XdmfVisitorValueCounter> visitor =
     XdmfVisitorValueCounter::New();

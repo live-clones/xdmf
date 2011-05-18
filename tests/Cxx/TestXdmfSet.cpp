@@ -2,7 +2,7 @@
 #include "XdmfSet.hpp"
 #include "XdmfSetType.hpp"
 
-int main(int, char *)
+int main(int, char **)
 {
   // Test != and == operators
   assert(XdmfSetType::Node() == XdmfSetType::Node());

@@ -42,7 +42,7 @@ void performTests(std::vector<boost::shared_ptr<XdmfMap> > & boundaryMaps)
  *
  */
 
-int main(int, char *)
+int main(int, char **)
 {
   // Grid 0
   boost::shared_ptr<XdmfGrid> grid0 = XdmfGrid::New();

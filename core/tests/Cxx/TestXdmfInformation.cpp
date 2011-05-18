@@ -1,6 +1,6 @@
 #include "XdmfInformation.hpp"
 
-int main(int, char *)
+int main(int, char **)
 {
   boost::shared_ptr<XdmfInformation> information = XdmfInformation::New();
   assert(information->getKey().compare("") == 0);

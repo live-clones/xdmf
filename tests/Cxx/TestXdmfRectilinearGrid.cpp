@@ -9,7 +9,7 @@
 
 #include "XdmfTestCompareFiles.hpp"
 
-int main(int, char *)
+int main(int, char **)
 {
   boost::shared_ptr<XdmfArray> vx = XdmfArray::New();
   vx->resize<unsigned int>(4);

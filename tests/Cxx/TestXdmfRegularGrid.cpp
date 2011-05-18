@@ -9,7 +9,7 @@
 
 #include "XdmfTestCompareFiles.hpp"
 
-int main(int, char *)
+int main(int, char **)
 {
   boost::shared_ptr<XdmfRegularGrid> grid = XdmfRegularGrid::New(1, 1, 1,
                                                                  1, 1, 1,

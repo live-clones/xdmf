@@ -7,7 +7,7 @@
 #include "XdmfTestCompareFiles.hpp"
 #include "XdmfTestDataGenerator.hpp"
 
-int main(int, char *)
+int main(int, char **)
 {
   // Test != and == operators
   assert(XdmfGridCollectionType::Spatial() ==

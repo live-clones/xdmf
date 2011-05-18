@@ -4,7 +4,7 @@
 #include "XdmfSet.hpp"
 #include "XdmfTime.hpp"
 
-int main(int, char *)
+int main(int, char **)
 {
   boost::shared_ptr<XdmfUnstructuredGrid> grid = XdmfUnstructuredGrid::New();
   std::string gridName = "Grid1";

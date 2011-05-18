@@ -1,7 +1,7 @@
 #include "XdmfArray.hpp"
 #include "XdmfArrayType.hpp"
 
-int main(int, char *)
+int main(int, char **)
 {
 
   int values[] = {1, 2, 3, 4};

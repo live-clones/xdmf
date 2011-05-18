@@ -2,7 +2,7 @@
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfHDF5Writer.hpp"
 
-int main(int, char *)
+int main(int, char **)
 {
   boost::shared_ptr<XdmfArray> array = XdmfArray::New();
   array->pushBack(0);

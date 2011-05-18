@@ -3,7 +3,7 @@
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfSystemUtils.hpp"
 
-int main(int, char *)
+int main(int, char **)
 {
   boost::shared_ptr<XdmfHDF5Controller> controller =
     XdmfHDF5Controller::New("output.h5",
