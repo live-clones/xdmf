@@ -202,15 +202,15 @@ template <typename T>
 T
 XdmfArray::getValue(const unsigned int index) const
 {
- if(mHaveArray) {
-   boost::apply_visitor(GetValue<T>(index),
-                        mArray);
- }
- else if(mHaveArrayPointer) {
-   boost::apply_visitor(GetValue<T>(index),
-                        mArrayPointer);
- }
- return 0;
+  if(mHaveArray) {
+    return boost::apply_visitor(GetValue<T>(index),
+                                mArray);
+  }
+  else if(mHaveArrayPointer) {
+    return boost::apply_visitor(GetValue<T>(index),
+                                mArrayPointer);
+  }
+  return 0;
 }
 
 template <typename T>
