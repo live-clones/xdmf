@@ -492,6 +492,7 @@ private:
   class Erase;
   class GetArrayType;
   class GetCapacity;
+  template <typename T> class GetValue;
   template <typename T> class GetValues;
   class GetValuesPointer;
   class GetValuesString;

@@ -26,6 +26,34 @@
 #include "XdmfArray.hpp"
 
 template <typename T>
+class XdmfArray::GetValue : public boost::static_visitor<T> {
+public:
+
+  GetValue(const unsigned int index) :
+    mIndex(index)
+  {
+  }
+
+  template<typename U>
+  T
+  operator()(const boost::shared_array<const U> & array) const
+  {
+    return (T)array[mIndex];
+  }
+
+  template<typename U>
+  T
+  operator()(const shared_ptr<std::vector<U> > & array) const
+  {
+    return (T)array->operator[](mIndex);
+  }
+
+private:
+
+  const unsigned int mIndex;
+};
+
+template <typename T>
 class XdmfArray::GetValues : public boost::static_visitor<void> {
 public:
 
@@ -174,9 +202,15 @@ template <typename T>
 T
 XdmfArray::getValue(const unsigned int index) const
 {
-  T toReturn;
-  this->getValues(index, &toReturn, 1);
-  return toReturn;
+ if(mHaveArray) {
+   boost::apply_visitor(GetValue<T>(index),
+                        mArray);
+ }
+ else if(mHaveArrayPointer) {
+   boost::apply_visitor(GetValue<T>(index),
+                        mArrayPointer);
+ }
+ return 0;
 }
 
 template <typename T>
