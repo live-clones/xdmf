@@ -98,6 +98,13 @@ public:
   std::map<task_id, node_id_map> getMap() const;
 
   /**
+   * Get name of boundary communicator map.
+   *
+   * @return name of boundary communicator map.
+   */
+  std::string getName() const;
+
+  /**
    * Given a remote task id return a map of local node ids to remote
    * node ids
    *
@@ -164,6 +171,13 @@ public:
    */
   void setMap(std::map<task_id, node_id_map> map);
 
+  /**
+   * Set the name of the boundary communicator map.
+   *
+   * @param name the name of the boundary communicator map to set.
+   */
+  void setName(const std::string & name);
+
   void traverse(const shared_ptr<XdmfBaseVisitor> visitor);
 
 protected:
@@ -183,6 +197,7 @@ private:
   shared_ptr<XdmfHeavyDataController> mLocalNodeIdsController;
   // remoteTaskId | localNodeId | remoteLocalNodeId
   std::map<task_id, node_id_map > mMap;
+  std::string mName;
   shared_ptr<XdmfHeavyDataController> mRemoteLocalNodeIdsController;
   shared_ptr<XdmfHeavyDataController> mRemoteTaskIdsController;
 

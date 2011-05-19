@@ -78,7 +78,8 @@ XdmfMap::New(const std::vector<shared_ptr<XdmfAttribute> > & globalNodeIds)
   return returnValue;
 }
 
-XdmfMap::XdmfMap()
+XdmfMap::XdmfMap() :
+  mName("")
 {
 }
 
@@ -92,6 +93,7 @@ std::map<std::string, std::string>
 XdmfMap::getItemProperties() const
 {
   std::map<std::string, std::string> mapProperties;
+  mapProperties["Name"] = mName;
   return mapProperties;
 }
 
@@ -105,6 +107,12 @@ std::map<XdmfMap::task_id, XdmfMap::node_id_map>
 XdmfMap::getMap() const
 {
   return mMap;
+}
+
+std::string
+XdmfMap::getName() const
+{
+  return mName;
 }
 
 XdmfMap::node_id_map
@@ -138,7 +146,14 @@ XdmfMap::populateItem(const std::map<std::string, std::string> & itemProperties,
                       const XdmfCoreReader * const reader)
 {
   XdmfItem::populateItem(itemProperties, childItems, reader);
-
+  std::map<std::string, std::string>::const_iterator name =
+    itemProperties.find("Name");
+  if(name != itemProperties.end()) {
+    mName = name->second;
+  }
+  else {
+    mName = "";
+  }
   std::vector<shared_ptr<XdmfArray> > arrayVector;
   arrayVector.reserve(3);
   for(std::vector<shared_ptr<XdmfItem> >::const_iterator iter =
@@ -255,6 +270,12 @@ void
 XdmfMap::setMap(std::map<task_id, node_id_map> map)
 {
   mMap = map;
+}
+
+void
+XdmfMap::setName(const std::string & name)
+{
+  mName = name;
 }
 
 void

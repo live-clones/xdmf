@@ -60,6 +60,7 @@ public:
   LOKI_DEFINE_VISITABLE(XdmfGrid, XdmfItem);
   XDMF_CHILDREN(XdmfAttribute, Attribute, Name);
   XDMF_CHILDREN(XdmfSet, Set, Name);
+  XDMF_CHILDREN(XdmfMap, Map, Name);
   static const std::string ItemTag;
 
   /**
@@ -72,21 +73,6 @@ public:
   std::map<std::string, std::string> getItemProperties() const;
 
   virtual std::string getItemTag() const;
-
-  /**
-   * Get the boundary communicator map associated with this grid.
-   *
-   * @return the boundary communicator map associated with this grid.
-   */
-  shared_ptr<XdmfMap> getMap();
-
-  /**
-   * Get the boundary communicator map associated with this grid
-   * (const version).
-   *
-   * @return the boundary communicator map associated with this grid.
-   */
-  shared_ptr<const XdmfMap> getMap() const;
 
   /**
    * Get the name of the grid.
@@ -119,13 +105,6 @@ public:
   shared_ptr<const XdmfTopology> getTopology() const;
 
   using XdmfItem::insert;
-
-  /**
-   * Set the boundary communicator map associated with this grid.
-   *
-   * @param map a XdmfMap to associate with this grid.
-   */
-  void setMap(shared_ptr<XdmfMap> map);
 
   /**
    * Set the name of the grid.
@@ -162,7 +141,6 @@ private:
   XdmfGrid(const XdmfGrid &);  // Not implemented.
   void operator=(const XdmfGrid &);  // Not implemented.
 
-  shared_ptr<XdmfMap> mMap;
   std::string mName;
   shared_ptr<XdmfTime> mTime;
 

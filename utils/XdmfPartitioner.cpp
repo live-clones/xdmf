@@ -516,7 +516,8 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
       i<partitionedGrids->getNumberUnstructuredGrids();
       ++i) {
     shared_ptr<XdmfMap> map = maps[i];
-    partitionedGrids->getUnstructuredGrid(i)->setMap(map);
+    map->setName("Subdomain Boundary");
+    partitionedGrids->getUnstructuredGrid(i)->insert(map);
     if(heavyDataWriter) {
       globalNodeIds[i]->release();
       map->accept(heavyDataWriter);

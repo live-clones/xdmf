@@ -88,8 +88,8 @@ int main(int, char **)
     XdmfMap::New(globalNodeIds);
 
   performTests(boundaryMaps);
-  grid0->setMap(boundaryMaps[0]);
-  grid1->setMap(boundaryMaps[1]);
+  grid0->insert(boundaryMaps[0]);
+  grid1->insert(boundaryMaps[1]);
 
   // Grid Collection
   shared_ptr<XdmfGridCollection> collection = XdmfGridCollection::New();
@@ -107,8 +107,8 @@ int main(int, char **)
     shared_dynamic_cast<XdmfDomain>(reader->read("TestXdmfMap1.xmf"));
 
   boundaryMaps.clear();
-  boundaryMaps.push_back(domain2->getGridCollection(0)->getUnstructuredGrid(0)->getMap());
-  boundaryMaps.push_back(domain2->getGridCollection(0)->getUnstructuredGrid(1)->getMap());
+  boundaryMaps.push_back(domain2->getGridCollection(0)->getUnstructuredGrid(0)->getMap(0));
+  boundaryMaps.push_back(domain2->getGridCollection(0)->getUnstructuredGrid(1)->getMap(0));
   performTests(boundaryMaps);
 
   shared_ptr<XdmfWriter> writer2 = XdmfWriter::New("TestXdmfMap2.xmf");
@@ -126,8 +126,8 @@ int main(int, char **)
     shared_dynamic_cast<XdmfDomain>(reader->read("TestXdmfMapHDF1.xmf"));
 
   boundaryMaps.clear();
-  boundaryMaps.push_back(domainHDF->getGridCollection(0)->getUnstructuredGrid(0)->getMap());
-  boundaryMaps.push_back(domainHDF->getGridCollection(0)->getUnstructuredGrid(1)->getMap());
+  boundaryMaps.push_back(domainHDF->getGridCollection(0)->getUnstructuredGrid(0)->getMap(0));
+  boundaryMaps.push_back(domainHDF->getGridCollection(0)->getUnstructuredGrid(1)->getMap(0));
   performTests(boundaryMaps);
 
   shared_ptr<XdmfWriter> writerHDF2 =
