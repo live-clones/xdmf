@@ -165,14 +165,18 @@ XdmfMap::populateItem(const std::map<std::string, std::string> & itemProperties,
     }
   }
 
-  if(arrayVector.size() != 3)
-    XdmfError::message(XdmfError::FATAL,
-                       "Expected 3 arrays attached to XdmfMap::populateItem");
-  if(!(arrayVector[0]->getSize() == arrayVector[1]->getSize() &&
-       arrayVector[0]->getSize() == arrayVector[2]->getSize())) {
-    XdmfError::message(XdmfError::FATAL,
-                       "Arrays must be of equal size in "
-                       "XdmfMap:: populateItem");
+  if(arrayVector.size() != 0) {
+    if(arrayVector.size() != 3) {
+      XdmfError::message(XdmfError::FATAL,
+                         "Expected 3 arrays attached to "
+                         "XdmfMap::populateItem");
+    }
+    if(!(arrayVector[0]->getSize() == arrayVector[1]->getSize() &&
+         arrayVector[0]->getSize() == arrayVector[2]->getSize())) {
+      XdmfError::message(XdmfError::FATAL,
+                         "Arrays must be of equal size in "
+                         "XdmfMap:: populateItem");
+    }
   }
 
   // check if any arrays have values in memory - if so, they need to be
