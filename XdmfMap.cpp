@@ -177,40 +177,40 @@ XdmfMap::populateItem(const std::map<std::string, std::string> & itemProperties,
                          "Arrays must be of equal size in "
                          "XdmfMap:: populateItem");
     }
-  }
 
-  // check if any arrays have values in memory - if so, they need to be
-  // read into map
-  bool needToRead = false;
-  for(std::vector<shared_ptr<XdmfArray> >::const_iterator iter =
-        arrayVector.begin();
-      iter != arrayVector.end();
-      ++iter) {
-    if((*iter)->isInitialized()) {
-      needToRead = true;
-      break;
-    }
-  }
-
-  if(needToRead) {
+    // check if any arrays have values in memory - if so, they need to be
+    // read into map
+    bool needToRead = false;
     for(std::vector<shared_ptr<XdmfArray> >::const_iterator iter =
           arrayVector.begin();
         iter != arrayVector.end();
         ++iter) {
-      if(!(*iter)->isInitialized()) {
-        (*iter)->read();
+      if((*iter)->isInitialized()) {
+        needToRead = true;
+        break;
       }
     }
-    for(unsigned int i=0; i<arrayVector[0]->getSize(); ++i) {
-      this->insert(arrayVector[0]->getValue<task_id>(i),
-                   arrayVector[1]->getValue<node_id>(i),
-                   arrayVector[2]->getValue<node_id>(i));
+
+    if(needToRead) {
+      for(std::vector<shared_ptr<XdmfArray> >::const_iterator iter =
+            arrayVector.begin();
+          iter != arrayVector.end();
+          ++iter) {
+        if(!(*iter)->isInitialized()) {
+          (*iter)->read();
+        }
+      }
+      for(unsigned int i=0; i<arrayVector[0]->getSize(); ++i) {
+        this->insert(arrayVector[0]->getValue<task_id>(i),
+                     arrayVector[1]->getValue<node_id>(i),
+                     arrayVector[2]->getValue<node_id>(i));
+      }
     }
-  }
-  else {
-    mRemoteTaskIdsController = arrayVector[0]->getHeavyDataController();
-    mLocalNodeIdsController = arrayVector[1]->getHeavyDataController();
-    mRemoteLocalNodeIdsController = arrayVector[2]->getHeavyDataController();
+    else {
+      mRemoteTaskIdsController = arrayVector[0]->getHeavyDataController();
+      mLocalNodeIdsController = arrayVector[1]->getHeavyDataController();
+      mRemoteLocalNodeIdsController = arrayVector[2]->getHeavyDataController();
+    }
   }
 }
 
