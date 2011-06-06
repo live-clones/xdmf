@@ -355,19 +355,19 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
           createdAttribute->setCenter(currAttribute->getCenter());
           createdAttribute->setType(currAttribute->getType());
           unsigned int index = 0;
-          unsigned int numValsPerComponent =
-            currAttribute->getSize() / topology->getNumberElements();
+          const unsigned int numberComponents = 
+	    currAttribute->getSize() / topology->getNumberElements();
           createdAttribute->initialize(currAttribute->getArrayType(),
-                                       currElemIds.size() * numValsPerComponent);
+                                       currElemIds.size() * numberComponents);
           for(std::vector<unsigned int>::const_iterator iter =
                 currElemIds.begin();
               iter != currElemIds.end();
               ++iter) {
             createdAttribute->insert(index,
                                      currAttribute,
-                                     *iter * numValsPerComponent,
-                                     numValsPerComponent);
-            index += numValsPerComponent;
+                                     *iter * numberComponents,
+                                     numberComponents);
+            index += numberComponents;
           }
         }
         else if(currAttribute->getCenter() == XdmfAttributeCenter::Node()) {
@@ -375,15 +375,18 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
           createdAttribute->setName(currAttribute->getName());
           createdAttribute->setCenter(currAttribute->getCenter());
           createdAttribute->setType(currAttribute->getType());
-          createdAttribute->initialize(currAttribute->getArrayType(), currNodeMap.size());
+          createdAttribute->initialize(currAttribute->getArrayType(), 
+				       currNodeMap.size());
+	  const unsigned int numberComponents = 
+	    currAttribute->getSize() / geometry->getNumberPoints();
           for(std::map<unsigned int, unsigned int>::const_iterator iter =
                 currNodeMap.begin();
               iter != currNodeMap.end();
               ++iter) {
-            createdAttribute->insert(iter->second,
+            createdAttribute->insert(iter->second * numberComponents,
                                      currAttribute,
-                                     iter->first,
-                                     1);
+                                     iter->first * numberComponents,
+                                     numberComponents);
           }
         }
         if(createdAttribute) {
