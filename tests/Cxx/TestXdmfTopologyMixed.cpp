@@ -34,7 +34,7 @@ int main(int, char **)
   topology->pushBack(1);
   topology->pushBack(2);
   topology->pushBack(3);
-  topology->pushBack(XdmfTopologyType::Polyline()->getID());
+  topology->pushBack(XdmfTopologyType::Polyline(0)->getID());
   topology->pushBack(6);
   topology->pushBack(2);
   topology->pushBack(4);

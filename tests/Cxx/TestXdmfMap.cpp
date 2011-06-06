@@ -55,7 +55,7 @@ int main(int, char **)
   grid0->getGeometry()->setType(XdmfGeometryType::XYZ());
   double points0[] = {-1, 0, 0, 0, 0, 0};
   grid0->getGeometry()->insert(0, &points0[0], 6);
-  grid0->getTopology()->setType(XdmfTopologyType::Polyline());
+  grid0->getTopology()->setType(XdmfTopologyType::Polyline(2));
   unsigned int connectivity0[] = {0, 1};
   grid0->getTopology()->insert(0, &connectivity0[0], 2);
   shared_ptr<XdmfAttribute> globalNodeIds0 = XdmfAttribute::New();
@@ -70,7 +70,7 @@ int main(int, char **)
   grid1->getGeometry()->setType(XdmfGeometryType::XYZ());
   double points1[] = {0, 0, 0, 1, 0, 0};
   grid1->getGeometry()->insert(0, &points1[0], 6);
-  grid1->getTopology()->setType(XdmfTopologyType::Polyline());
+  grid1->getTopology()->setType(XdmfTopologyType::Polyline(2));
   unsigned int connectivity1[] = {0, 1};
   grid1->getTopology()->insert(0, &connectivity1[0], 2);
   shared_ptr<XdmfAttribute> globalNodeIds1 = XdmfAttribute::New();

@@ -50,7 +50,7 @@ if __name__ == "__main__":
 
     xtt1 = XdmfTopologyType.Polyvertex()
     xtt2 = XdmfTopologyType.Polyvertex()
-    xtt3 = XdmfTopologyType.Polyline()
+    xtt3 = XdmfTopologyType.Polyline(0)
 
     print "XdmfTopologyType True Check"
     assert xtt1 == xtt2

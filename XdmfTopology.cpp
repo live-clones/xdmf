@@ -89,7 +89,7 @@ XdmfTopology::getNumberElements() const
           numberElements += numberPolyvertexElements;
           index += numberPolyvertexElements + 2;
         }
-        else if(topologyType == XdmfTopologyType::Polyline() ||
+        else if(topologyType == XdmfTopologyType::Polyline(0) ||
                 topologyType == XdmfTopologyType::Polygon(0)) {
           const unsigned int numberNodes =
             this->getValue<unsigned int>(index + 1);

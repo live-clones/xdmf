@@ -44,10 +44,18 @@ XdmfTopologyType::Polyvertex()
 }
 
 shared_ptr<const XdmfTopologyType>
-XdmfTopologyType::Polyline()
+XdmfTopologyType::Polyline(const unsigned int nodesPerElement)
 {
-  static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(1, "Polyline", Linear, 0x2));
+  static std::map<unsigned int, shared_ptr<const XdmfTopologyType> >
+    previousTypes;
+  std::map<unsigned int, shared_ptr<const XdmfTopologyType> >::const_iterator
+    type = previousTypes.find(nodesPerElement);
+  if(type != previousTypes.end()) {
+    return type->second;
+  }
+  shared_ptr<const XdmfTopologyType>
+    p(new XdmfTopologyType(nodesPerElement, "Polyline", Linear, 0x2));
+  previousTypes[nodesPerElement] = p;
   return p;
 }
 
@@ -252,8 +260,8 @@ XdmfTopologyType::New(const unsigned int id)
   else if(id == XdmfTopologyType::Polyvertex()->getID()) {
     return XdmfTopologyType::Polyvertex();
   }
-  else if(id == XdmfTopologyType::Polyline()->getID()) {
-    return XdmfTopologyType::Polyline();
+  else if(id == XdmfTopologyType::Polyline(0)->getID()) {
+    return XdmfTopologyType::Polyline(0);
   }
   else if(id == XdmfTopologyType::Polygon(0)->getID()) {
     return XdmfTopologyType::Polygon(0);
@@ -366,13 +374,20 @@ XdmfTopologyType::New(const std::map<std::string, std::string> & itemProperties)
       return Polyvertex();
     }
     else if(typeVal.compare("POLYLINE") == 0) {
-      return Polyline();
+      if(nodesPerElement != itemProperties.end()) {
+        return Polyline(atoi(nodesPerElement->second.c_str()));
+      }
+      XdmfError::message(XdmfError::FATAL, 
+                         "'NodesPerElement' not in itemProperties and type "
+                         "'POLYLINE' selected in XdmfTopologyType::New");
     }
     else if(typeVal.compare("POLYGON") == 0) {
       if(nodesPerElement != itemProperties.end()) {
         return Polygon(atoi(nodesPerElement->second.c_str()));
       }
-      XdmfError::message(XdmfError::FATAL, "'NodesPerElement' not in itemProperties and type 'POLYGON' selected in XdmfTopologyType::New");
+      XdmfError::message(XdmfError::FATAL, 
+                         "'NodesPerElement' not in itemProperties and type "
+                         "'POLYGON' selected in XdmfTopologyType::New");
     }
     else if(typeVal.compare("TRIANGLE") == 0) {
       return Triangle();
@@ -467,7 +482,7 @@ void
 XdmfTopologyType::getProperties(std::map<std::string, std::string> & collectedProperties) const
 {
   collectedProperties["Type"] = this->getName();
-  if(mName.compare("Polygon") == 0) {
+  if(mName.compare("Polygon") == 0 || mName.compare("Polyline") == 0) {
     std::stringstream nodesPerElement;
     nodesPerElement << mNodesPerElement;
     collectedProperties["NodesPerElement"] = nodesPerElement.str();

@@ -87,7 +87,8 @@ public:
    */
   static shared_ptr<const XdmfTopologyType> NoTopologyType();
   static shared_ptr<const XdmfTopologyType> Polyvertex();
-  static shared_ptr<const XdmfTopologyType> Polyline();
+  static shared_ptr<const XdmfTopologyType> 
+  Polyline(const unsigned int nodesPerElement);
   static shared_ptr<const XdmfTopologyType>
   Polygon(const unsigned int nodesPerElement);
   static shared_ptr<const XdmfTopologyType> Triangle();
