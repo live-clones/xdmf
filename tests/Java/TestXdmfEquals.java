@@ -128,7 +128,7 @@ public class TestXdmfEquals {
 	System.out.println("Checking XdmfTopologyType");
  	XdmfTopologyType xtt1 = XdmfTopologyType.Polyvertex();
         XdmfTopologyType xtt2 = XdmfTopologyType.Polyvertex();
-        XdmfTopologyType xtt3 = XdmfTopologyType.Polyline();
+        XdmfTopologyType xtt3 = XdmfTopologyType.Polyline(0);
 
         // Check IsEquals
         if(!(xtt1.IsEqual(xtt2))) /*True*/
