@@ -20,6 +20,7 @@ ADD_TEST_JAVA_LDPATH("")
 # ------------------------
 ADD_TEST_JAVA(TestXdmfJava)
 ADD_TEST_JAVA(TestXdmfEquals)
+ADD_TEST_JAVA(TestXdmfGC)
 
 # Add any java cleanup here:
 # Note: We don't want to use a foreach loop to test the files incase we
@@ -30,6 +31,7 @@ CLEAN_TEST_JAVA(TestXdmfJava
 	outputJavaTest.xmf
 )
 CLEAN_TEST_JAVA(TestXdmfEquals)
+CLEAN_TEST_JAVA(TestXdmfGC outputXdmfGC.xmf)
 
 # Add a custom target for all java tests 
 # Note: ${TARGETS} is set in ADD_TEST_JAVA
