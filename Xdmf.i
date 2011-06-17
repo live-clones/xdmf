@@ -101,6 +101,9 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
     }
 }
 
+// Ignore multiple inheritance warning
+#pragma SWIG nowarn=813
+
 // Ignore const overloaded methods
 %ignore XdmfCurvilinearGrid::getDimensions() const;
 %ignore XdmfDomain::getCurvilinearGrid(const unsigned int) const;
@@ -116,6 +119,9 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 %ignore XdmfGrid::getAttribute(const unsigned int) const;
 %ignore XdmfGrid::getAttribute(const std::string &) const;
 %ignore XdmfGrid::getMap() const;
+%ignore XdmfGrid::getMap(unsigned int const) const;
+%ignore XdmfGrid::getMap(unsigned int const &) const;
+%ignore XdmfGrid::getMap(std::string const &) const;
 %ignore XdmfGrid::getSet(const unsigned int) const;
 %ignore XdmfGrid::getSet(const std::string &) const;
 %ignore XdmfGrid::getTime() const;
@@ -164,7 +170,7 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
     }
 %}
 
-#endif */ SWIGJAVA */
+#endif /* SWIGJAVA */
 
 #ifdef SWIGPYTHON
 

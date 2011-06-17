@@ -32,12 +32,15 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %}
 
 #ifdef SWIGJAVA
+
 // Ignore const overloaded methods
 %ignore XdmfArray::getHeavyDataController() const;
 %ignore XdmfArray::getValuesInternal() const;
 %ignore XdmfItem::getInformation(const unsigned int) const;
 %ignore XdmfItem::getInformation(const std::string &) const;
 %ignore XdmfWriter::getHeavyDataWriter() const;
+%ignore XdmfInformation::getArray(unsigned int const) const;
+%ignore XdmfInformation::getArray(std::string const &) const;
 
 // Ignore ItemTags
 %ignore XdmfArray::ItemTag;
@@ -307,12 +310,12 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
 %include std_string.i
 %include std_vector.i
+%shared_ptr(Loki::BaseVisitor)
 %include loki/Visitor.h
 
 // Shared Pointer Templates
 %shared_ptr(XdmfArray)
 %shared_ptr(XdmfArrayType)
-%shared_ptr(XdmfBaseVisitor)
 %shared_ptr(XdmfCoreItemFactory)
 %shared_ptr(XdmfCoreReader)
 %shared_ptr(XdmfHDF5Controller)
