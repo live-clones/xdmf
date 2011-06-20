@@ -310,7 +310,12 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
 %include std_string.i
 %include std_vector.i
+
 %shared_ptr(Loki::BaseVisitor)
+%shared_ptr(Loki::BaseVisitable<void>)
+%shared_ptr(Loki::Visitor<XdmfItem>)
+%shared_ptr(Loki::Visitor<XdmfArray>)
+
 %include loki/Visitor.h
 
 // Shared Pointer Templates
