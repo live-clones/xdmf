@@ -243,10 +243,16 @@ if(NOT XDMF_BUILD_CORE_ONLY)
 
   if(WIN32)
     set(XDMF_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/Xdmf.lib)
-  else(WIN32)
-    set(XDMF_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/libXdmf.so)
   endif(WIN32)
+  
+  if(UNIX)
+    set(XDMF_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/libXdmf.so)
+  endif(UNIX)
 
+  if(APPLE)
+    set(XDMF_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/libXdmf.dylib)
+  endif(APPLE)
+  
   file(GLOB XdmfHeaders 
     "*.hpp" 
     "*.tpp" 

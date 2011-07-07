@@ -125,10 +125,17 @@ endif(XDMF_WRAP_PYTHON)
 
 if(WIN32)
     set(XDMFCORE_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/XdmfCore.lib PARENT_SCOPE)
-else(WIN32)
+endif(WIN32)
+
+if(UNIX)
     set(XDMFCORE_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/libXdmfCore.so
         PARENT_SCOPE)
-endif(WIN32)
+endif(UNIX)
+
+if(APPLE)
+    set(XDMFCORE_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/libXdmfCore.dylib
+        PARENT_SCOPE)
+endif(APPLE)
 
 file(GLOB_RECURSE
   XdmfCoreHeaders
