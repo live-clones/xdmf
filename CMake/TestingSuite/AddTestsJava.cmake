@@ -122,6 +122,10 @@ MACRO(ADD_TEST_JAVA executable)
             -D "SEPARATOR=${sep}"
             -P "${java_binary_dir}/TestDriverJava.cmake"
     )
+    IF(NOT "${tdep}" STREQUAL "")
+        SET_TESTS_PROPERTIES(Java${is_core}_${executable}${dup}
+            PROPERTIES DEPENDS ${tdep})
+    ENDIF(NOT "${tdep}" STREQUAL "")
 ENDMACRO(ADD_TEST_JAVA executable)
 
 # Java Clean Macro

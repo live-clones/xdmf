@@ -126,6 +126,10 @@ MACRO(ADD_TEST_PYTHON executable)
             -D "SEPARATOR=${sep}"
             -P "${python_binary_dir}/TestDriverPython.cmake"
     )
+    IF(NOT "${tdep}" STREQUAL "")
+        SET_TESTS_PROPERTIES(Python${is_core}_${executable}${dup}
+            PROPERTIES DEPENDS ${tdep})
+    ENDIF(NOT "${tdep}" STREQUAL "")
 
 ENDMACRO(ADD_TEST_PYTHON executable)
 
