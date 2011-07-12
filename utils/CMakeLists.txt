@@ -59,5 +59,11 @@ foreach(source ${XdmfUtilsSources})
 endforeach(source ${XdmfUtilsSources})
 
 install(FILES ${XdmfUtilsHeaders} DESTINATION include)
-install(TARGETS XdmfUtils LIBRARY DESTINATION lib)
-install(TARGETS ${XdmfUtilsExecutables} RUNTIME DESTINATION bin)
+install(TARGETS XdmfUtils 
+    RUNTIME DEESINATION bin
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib)
+install(TARGETS ${XdmfUtilsExecutables} 
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib)
