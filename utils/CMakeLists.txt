@@ -60,7 +60,7 @@ endforeach(source ${XdmfUtilsSources})
 
 install(FILES ${XdmfUtilsHeaders} DESTINATION include)
 install(TARGETS XdmfUtils 
-    RUNTIME DEESINATION bin
+    RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib)
 install(TARGETS ${XdmfUtilsExecutables} 
