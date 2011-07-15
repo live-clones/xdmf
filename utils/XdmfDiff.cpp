@@ -93,7 +93,9 @@ namespace {
       const T array1Value = array1->getValue<T>(i);
       const T array2Value = array2->getValue<T>(i);
       const T difference =
-        static_cast<T>(std::fabs(array1Value - array2Value));
+        static_cast<T>(array1Value > array2Value ?
+                         array1Value-array2Value : array2Value-array1Value);
+
       if(difference > absoluteTolerance) {
         std::cout << "At Index " << i << " | Expected: "
                   << array1Value << " | Got: " << array2Value << std::endl;
