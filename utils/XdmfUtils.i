@@ -50,6 +50,7 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
     #include <XdmfUnstructuredGrid.hpp>
 
     // XdmfUtils Includes
+    #include <XdmfUtils.hpp>
     #include <XdmfDiff.hpp>
     #include <XdmfExodusReader.hpp>
     #include <XdmfExodusWriter.hpp>
@@ -78,6 +79,7 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
 #endif
 %shared_ptr(XdmfTopologyConverter)
 
+%include XdmfUtils.hpp
 %include XdmfDiff.hpp
 #ifdef XDMF_BUILD_EXODUS_IO
     %include XdmfExodusReader.hpp

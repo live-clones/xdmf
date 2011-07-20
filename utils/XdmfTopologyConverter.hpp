@@ -30,6 +30,7 @@ class XdmfTopologyType;
 class XdmfUnstructuredGrid;
 
 // Includes
+#include "XdmfUtils.hpp"
 #include "XdmfSharedPtr.hpp"
 
 /**
@@ -53,7 +54,7 @@ class XdmfUnstructuredGrid;
  *   Hexahedron_64 to Hexahedron
  *   Hexahedron_125 to Hexahedron
  */
-class XdmfTopologyConverter {
+class XDMFUTILS_EXPORT XdmfTopologyConverter {
 
 public:
 

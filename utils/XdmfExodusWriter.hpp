@@ -29,13 +29,14 @@ class XdmfUnstructuredGrid;
 
 // Includes
 #include <string>
+#include "XdmfUtils.hpp"
 #include "XdmfSharedPtr.hpp"
 
 /**
  * @brief Writes an Xdmf structure in memory to an ExodusII file on
  * disk.
  */
-class XdmfExodusWriter {
+class XDMFUTILS_EXPORT XdmfExodusWriter {
 
 public:
 

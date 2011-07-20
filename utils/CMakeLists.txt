@@ -35,10 +35,31 @@ endif(XDMF_BUILD_PARTITIONER)
 add_library(XdmfUtils ${XdmfUtilsSources})
 target_link_libraries(XdmfUtils ${XdmfUtilsLinkLibraries})
 
+if(WIN32)
+  set_target_properties(${executable} PROPERTIES
+      DEFINE_SYMBOL XdmfUtils_EXPORTS
+	  PREFIX ../
+	  IMPORT_PREFIX ../
+	  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+	  LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+	  ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+endif(WIN32)
+
 foreach(executable ${XdmfUtilsExecutables})
   add_executable(${executable} ${executable})
   set_target_properties(${executable} PROPERTIES COMPILE_FLAGS -DBUILD_EXE)
   target_link_libraries(${executable} XdmfUtils)
+
+  if(WIN32)
+	  set_target_properties(${executable} PROPERTIES
+	      DEFINE_SYMBOL XdmfUtils_EXPORTS
+		  PREFIX ../
+		  IMPORT_PREFIX ../
+		  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+		  LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+		  ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+  endif(WIN32)
+
 endforeach(executable ${XdmfUtilsExecutables})
 
 if(BUILD_TESTING)

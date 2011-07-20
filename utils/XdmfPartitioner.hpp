@@ -32,6 +32,7 @@ class XdmfUnstructuredGrid;
 
 // Includes
 #include <set>
+#include "XdmfUtils.hpp"
 #include "XdmfSharedPtr.hpp"
 
 /**
@@ -40,7 +41,7 @@ class XdmfUnstructuredGrid;
  *
  * XdmfPartitioner uses the metis library to partition XdmfGrids.
  */
-class XdmfPartitioner {
+class XDMFUTILS_EXPORT XdmfPartitioner {
 
 public:
 

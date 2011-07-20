@@ -30,13 +30,14 @@ class XdmfUnstructuredGrid;
 
 // Includes
 #include <string>
+#include "XdmfUtils.hpp"
 #include "XdmfSharedPtr.hpp"
 
 /**
  * @brief Reads an ExodusII file from disk into an Xdmf structure in
  * memory.
  */
-class XdmfExodusReader {
+class XDMFUTILS_EXPORT XdmfExodusReader {
 
 public:
 

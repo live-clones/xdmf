@@ -103,7 +103,7 @@ namespace {
                          const shared_ptr<XdmfTopology> & newConnectivity,
                          const shared_ptr<XdmfGeometry> & newPoints) const
     {
-      std::map<std::vector<double>, unsigned int>::const_iterator iter =
+      std::map<std::vector<double>, unsigned int, PointComparison>::const_iterator iter =
         coordToIdMap.find(newPoint);
       if(iter == coordToIdMap.end()) {
         // Not inserted before

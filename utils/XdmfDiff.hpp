@@ -29,13 +29,14 @@ class XdmfItem;
 
 // Includes
 #include <string>
+#include "XdmfUtils.hpp"
 #include "XdmfSharedPtr.hpp"
 
 /**
  * @brief Compare differences between data stored in two Xdmf
  * structures.
  */
-class XdmfDiff {
+class XDMFUTILS_EXPORT XdmfDiff {
 
 public:
 
@@ -92,3 +93,4 @@ private:
 };
 
 #endif /* XDMFDIFF_HPP_ */
+
