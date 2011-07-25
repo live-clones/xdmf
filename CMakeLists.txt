@@ -1,6 +1,12 @@
 project(Xdmf)
 cmake_minimum_required(VERSION 2.6)
 
+if(MSVC10)
+	SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
+	SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
+	SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
+endif(MSVC10)
+
 set(BUILD_SHARED_LIBS true)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_BINARY_DIR})
@@ -75,12 +81,15 @@ if(XDMF_WRAP_PYTHON)
     endif("${ARGN}" STRGREATER "")
 
     if(WIN32)
-      set_target_properties(${SWIG_MODULE_${python_name}_REAL_NAME}
-        PROPERTIES
-        PREFIX ../
-        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+	  if(NOT MSVC10)
+        set_target_properties(${SWIG_MODULE_${python_name}_REAL_NAME}
+          PROPERTIES
+          PREFIX ../
+          IMPORT_PREFIX ../
+          RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+          LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+          ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+	  endif(NOT MSVC10)
     endif(WIN32)
 
     string(TOUPPER ${python_name} python_name_upper)
@@ -128,12 +137,15 @@ if(XDMF_WRAP_JAVA)
     swig_link_libraries(${java_name}Java ${java_name})
 
     if(WIN32)
-      set_target_properties(${SWIG_MODULE_${java_name}Java_REAL_NAME}
-        PROPERTIES
-        PREFIX ../
-        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+	  if(NOT MSVC10)
+        set_target_properties(${SWIG_MODULE_${java_name}Java_REAL_NAME}
+          PROPERTIES
+          PREFIX ../
+          IMPORT_PREFIX ../
+          RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+          LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+          ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+	  endif(NOT MSVC10)
       set(java_files *.java)
       set(java_dest "bin")
       set(separator "\;")
@@ -215,14 +227,17 @@ if(NOT XDMF_BUILD_CORE_ONLY)
   target_link_libraries(Xdmf XdmfCore)
 
   if(WIN32)
-    set_target_properties(Xdmf PROPERTIES
-      DEFINE_SYMBOL Xdmf_EXPORTS
-      PREFIX ../
-      IMPORT_PREFIX ../
-      RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-      LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-      ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-    endif(WIN32)
+	set_target_properties(Xdmf PROPERTIES
+      DEFINE_SYMBOL Xdmf_EXPORTS)
+    if(NOT MSVC10)
+	  set_target_properties(Xdmf PROPERTIES
+        PREFIX ../
+        IMPORT_PREFIX ../
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+	endif(NOT MSVC10)
+   endif(WIN32)
 
   if(XDMF_WRAP_JAVA)
     XDMF_SWIG_JAVA(Xdmf Compiled_XdmfCore_Jar)
