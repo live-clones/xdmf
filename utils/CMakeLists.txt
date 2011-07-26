@@ -52,12 +52,15 @@ foreach(executable ${XdmfUtilsExecutables})
 
   if(WIN32)
 	  set_target_properties(${executable} PROPERTIES
-	      DEFINE_SYMBOL XdmfUtils_EXPORTS
-		  PREFIX ../
-		  IMPORT_PREFIX ../
-		  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-		  LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-		  ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+	      DEFINE_SYMBOL XdmfUtils_EXPORTS)
+      if(NOT MSVC10)
+    	  set_target_properties(${executable} PROPERTIES
+	    	  PREFIX ../
+		      IMPORT_PREFIX ../
+		      RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+		      LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+		      ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+      endif(NOT MSVC10)
   endif(WIN32)
 
 endforeach(executable ${XdmfUtilsExecutables})
@@ -67,8 +70,7 @@ if(BUILD_TESTING)
 endif(BUILD_TESTING)
 
 if(XDMF_WRAP_JAVA)
-  XDMF_SWIG_JAVA(XdmfUtils XdmfJava)
-  set(XDMF_UTILS_JAVA_JAR ${CMAKE_BINARY_DIR}/XdmfUtils.jar CACHE INTERNAL "")
+  XDMF_SWIG_JAVA(XdmfUtils Compiled_Xdmf_Jar)
 endif(XDMF_WRAP_JAVA)
 
 if(XDMF_WRAP_PYTHON)
