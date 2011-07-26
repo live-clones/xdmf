@@ -459,7 +459,7 @@ double drand48();
 void srand48(long);
 int ispow2(int);
 void InitRandom(int);
-int intlog2(int);
+int intlog2metis(int);
 
 
 
