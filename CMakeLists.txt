@@ -197,6 +197,7 @@ endif(XDMF_WRAP_JAVA)
 
 add_subdirectory(core)
 include_directories(${XdmfCore_INCLUDE_DIRS})
+link_directories(${XDMF_LIBRARY_DIRS})
 
 option(XDMF_BUILD_CORE_ONLY OFF)
 if(NOT XDMF_BUILD_CORE_ONLY)
