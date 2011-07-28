@@ -39,7 +39,6 @@ if(HDF5_FOUND)
     PATH)
   set(XDMF_LIBRARY_DIRS ${XDMF_LIBRARY_DIRS}
 	${HDF5_LIBRARY_DIR})
-    message("${HDF5_LIBRARY_DIR}")
   set(HDF5_LIBRARIES hdf5)
   option(HDF5_IS_PARALLEL "Whether or not HDF5 has parallel IO support." OFF)
   if(HDF5_IS_PARALLEL)
