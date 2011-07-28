@@ -6,37 +6,30 @@
 
 int main(int argc, char *argv[])
 {
-  MPI_Init(&argc, &argv);
-
-  int rank, size;
-
+  int rank, size, provided, dsmSize = 16;
   MPI_Comm comm = MPI_COMM_WORLD;
+
+  MPI_Init_thread(&argc, &argv, MPI_THREAD_MULTIPLE, &provided);
   MPI_Comm_rank(comm, &rank);
   MPI_Comm_size(comm, &size);
 
-  // Create DSM Server
-  H5FDdsmManager * dsmServer = new H5FDdsmManager();
-  dsmServer->SetCommunicator(comm);
-  dsmServer->SetLocalBufferSizeMBytes(16);
-  dsmServer->SetDsmCommType(H5FD_DSM_COMM_SOCKET);
-  dsmServer->SetDsmIsServer(1);
-  dsmServer->SetServerHostName("default");
-  dsmServer->SetServerPort(22000);
-  dsmServer->CreateDSM();
-  dsmServer->PublishDSM();
+  if (rank == 0) {
+    if (provided != MPI_THREAD_MULTIPLE) {
+      std::cout << "# MPI_THREAD_MULTIPLE not set, you may need to recompile your "
+	<< "MPI distribution with threads enabled" << std::endl;
+    }
+    else {
+      std::cout << "# MPI_THREAD_MULTIPLE is OK" << std::endl;
+    }
+  }
 
-  // Create DSM Client
-  H5FDdsmManager * dsmClient = new H5FDdsmManager();
-  dsmClient->SetGlobalDebug(0);
-  dsmClient->SetCommunicator(comm);
-  dsmClient->SetDsmIsServer(0);
-  dsmClient->ReadDSMConfigFile();
-  dsmClient->CreateDSM();
+  // Create DSM
+  H5FDdsmManager * dsmManager = new H5FDdsmManager();
+  dsmManager->SetCommunicator(comm);
+  dsmManager->SetLocalBufferSizeMBytes(dsmSize / size);
+  dsmManager->CreateDSM();
 
-  // Connect to Server
-  dsmClient->ConnectDSM();
-
-  H5FDdsmBuffer * dsmBuffer = dsmClient->GetDSMHandle();
+  H5FDdsmBuffer * dsmBuffer = dsmManager->GetDSMHandle();
 
   H5FD_dsm_set_mode(H5FD_DSM_MANUAL_SERVER_UPDATE, dsmBuffer);
 
@@ -51,6 +44,7 @@ int main(int argc, char *argv[])
   }
 
   // Create Array
+  // Array should be distributed among processes
   shared_ptr<XdmfArray> array = XdmfArray::New();
   array->initialize<int>(0);
   array->pushBack(0);
@@ -73,14 +67,9 @@ int main(int argc, char *argv[])
     assert(array->getValue<int>(i) == readArray->getValue<int>(i));
   }
 
-  // Return to Server
-  H5FD_dsm_server_update(dsmBuffer);
-
-  // Closes ports or MPI communicators
-  dsmServer->UnpublishDSM();
-
-  delete dsmClient;
-  delete dsmServer;
+  // Wait for everyone to have finished reading
+  MPI_Barrier(comm);
+  delete dsmManager;
 
   MPI_Finalize();
 
