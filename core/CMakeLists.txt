@@ -39,7 +39,7 @@ if(HDF5_FOUND)
     PATH)
   set(XDMF_LIBRARY_DIRS ${XDMF_LIBRARY_DIRS}
 	${HDF5_LIBRARY_DIR})
-  set(HDF5_LIBRARIES hdf5)
+  set(HDF5_LIBRARIES ${HDF5_hdf5_LIBRARY_RELEASE})
   option(HDF5_IS_PARALLEL "Whether or not HDF5 has parallel IO support." OFF)
   if(HDF5_IS_PARALLEL)
     find_package(MPI REQUIRED)
@@ -55,7 +55,8 @@ if(HDF5_FOUND)
         include_directories(${H5FD_DSM_INCLUDE_DIR})
 	    set(XDMF_LIBRARY_DIRS ${XDMF_LIBRARY_DIRS} 
 	      ${H5FD_DSM_INCLUDE_DIR}/../lib)
-        set(H5FD_DSM_LIBRARIES H5FDdsm)
+        get_property(h5fddsm_lib_location TARGET H5FDdsm PROPERTY LOCATION)
+        set(H5FD_DSM_LIBRARIES h5fddsm_lib_location)
       else(H5FDdsm_FOUND)
         message(SEND_ERROR
           "Cannot find HDF5 DSM!  Please set H5FDdsm_DIR and configure again.")
