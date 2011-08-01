@@ -56,7 +56,7 @@ if(HDF5_FOUND)
 	    set(XDMF_LIBRARY_DIRS ${XDMF_LIBRARY_DIRS} 
 	      ${H5FD_DSM_INCLUDE_DIR}/../lib)
         get_property(h5fddsm_lib_location TARGET H5FDdsm PROPERTY LOCATION)
-        set(H5FD_DSM_LIBRARIES h5fddsm_lib_location)
+        set(H5FD_DSM_LIBRARIES ${h5fddsm_lib_location})
       else(H5FDdsm_FOUND)
         message(SEND_ERROR
           "Cannot find HDF5 DSM!  Please set H5FDdsm_DIR and configure again.")
