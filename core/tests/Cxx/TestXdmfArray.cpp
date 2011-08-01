@@ -26,8 +26,8 @@ int main(int, char **)
   assert(array->getSize() == 4);
   assert(array->getArrayType() == XdmfArrayType::Int32());
   assert(array->getValuesString().compare("1 2 3 4") == 0);
-  const int * const arrayPointer =
-    (const int * const)array->getValuesInternal();
+  const int * const arrayPointer = 
+    static_cast<int *>(array->getValuesInternal());
   assert(arrayPointer[0] == 1);
   assert(arrayPointer[1] == 2);
   assert(arrayPointer[2] == 3);
@@ -121,8 +121,8 @@ int main(int, char **)
   assert(array5->getSize() == 2);
   assert(array5->getArrayType() == XdmfArrayType::Int32());
   assert(array5->getValuesString().compare("1 2") == 0);
-  const int * const array5Pointer =
-    (const int * const)array5->getValuesInternal();
+  const int * const array5Pointer = 
+    static_cast<int *>(array5->getValuesInternal());
   assert(array5Pointer[0] == 1);
   assert(array5Pointer[1] == 2);
   // Assert we can copy values out correctly

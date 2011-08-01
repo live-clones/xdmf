@@ -159,7 +159,7 @@ public:
 };
 
 class XdmfArray::GetValuesPointer :
-  public boost::static_visitor<const void * const> {
+  public boost::static_visitor<const void *> {
 public:
 
   GetValuesPointer()
@@ -167,14 +167,14 @@ public:
   }
 
   template<typename T>
-  const void * const
+  const void *
   operator()(const shared_ptr<std::vector<T> > & array) const
   {
     return &array->operator[](0);
   }
 
   template<typename T>
-  const void * const
+  const void *
   operator()(const boost::shared_array<const T> & array) const
   {
     return array.get();
@@ -199,7 +199,7 @@ public:
   getValuesString(const T * const array,
                   const int numValues) const
   {
-    const unsigned int lastIndex = numValues-1;
+    const int lastIndex = numValues - 1;
 
     if(lastIndex < 0) {
       return "";
