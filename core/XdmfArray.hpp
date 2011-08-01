@@ -277,6 +277,8 @@ public:
   void initialize(const shared_ptr<const XdmfArrayType> arrayType,
                   const std::vector<unsigned int> & dimensions);
 
+  using XdmfItem::insert;
+
   /**
    * Insert value into this array
    *
@@ -340,7 +342,6 @@ public:
    * Read data from disk into memory.
    */
   void read();
-
   /**
    * Release all data currently held in memory.
    */
