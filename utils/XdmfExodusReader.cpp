@@ -22,6 +22,7 @@
 /*****************************************************************************/
 
 #include <exodusII.h>
+#include <cstring>
 #include "XdmfArrayType.hpp"
 #include "XdmfAttribute.hpp"
 #include "XdmfAttributeCenter.hpp"
