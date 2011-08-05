@@ -80,6 +80,10 @@ public:
   shared_ptr<const XdmfSetType> getType() const;
 
   using XdmfArray::insert;
+  
+#if defined(SWIG)
+  using XdmfItem::insert;
+#endif
 
   /**
    * Set the name of the set.
