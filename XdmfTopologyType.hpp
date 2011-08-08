@@ -59,9 +59,13 @@
  *   Hexahedron_24 - 24 Node Bi-Quadratic Hexahedron
  *   Hexahedron_27 - 27 Node Tri-Quadratic Hexahedron
  *   Hexahedron_64 - 64 Node Tri-Cubic Hexahedron
- *   Hexahedron_64_GLL - 64 Node Spectral Tri-Cubic Hexahedron with Gauss-Lobatto-Legendre points.
  *   Hexahedron_125 - 125 Node Tri-Quartic Hexahedron
- *   Hexahedron_125_GLL - 125 Node Spectral Tri-Quartic Hexahedron with Gauss-Lobatto-Legendre points.
+ *   Hexahedron_216 - 216 Node Tri-Quintic Hexahedron
+ *   Hexahedron_343 - 343 Node Tri-Hexic Hexahedron
+ *   Hexahedron_512 - 512 Node Tri-Septic Hexahedron
+ *   Hexahedron_729 - 729 Node Tri-Octic Hexahedron
+ *   Hexahedron_1000 - 1000 Node Tri-Nonic Hexahedron
+ *   Hexahedron_1331 - 1331 Node Tri-Decic Hexahedron
  *   Mixed - Mixture of Unstructured Topologies
  */
 class XDMF_EXPORT XdmfTopologyType : public XdmfItemProperty {
@@ -73,13 +77,19 @@ public:
   friend class XdmfTopology;
 
   enum CellType {
-    NoCellType,
-    Linear,
-    Quadratic,
-    Cubic,
-    Quartic,
-    Arbitrary,
-    Structured
+    NoCellType = 0,
+    Linear = 1,
+    Quadratic = 2,
+    Cubic = 3,
+    Quartic = 4,
+    Quintic = 5,
+    Sextic = 6,
+    Septic = 7,
+    Octic = 8,
+    Nonic = 9,
+    Decic = 10,
+    Arbitrary = 100,
+    Structured = 101
   };
 
   /**
@@ -109,9 +119,13 @@ public:
   static shared_ptr<const XdmfTopologyType> Hexahedron_24();
   static shared_ptr<const XdmfTopologyType> Hexahedron_27();
   static shared_ptr<const XdmfTopologyType> Hexahedron_64();
-  static shared_ptr<const XdmfTopologyType> Hexahedron_64_GLL();
   static shared_ptr<const XdmfTopologyType> Hexahedron_125();
-  static shared_ptr<const XdmfTopologyType> Hexahedron_125_GLL();
+  static shared_ptr<const XdmfTopologyType> Hexahedron_216();
+  static shared_ptr<const XdmfTopologyType> Hexahedron_343();
+  static shared_ptr<const XdmfTopologyType> Hexahedron_512();
+  static shared_ptr<const XdmfTopologyType> Hexahedron_729();
+  static shared_ptr<const XdmfTopologyType> Hexahedron_1000();
+  static shared_ptr<const XdmfTopologyType> Hexahedron_1331();
   static shared_ptr<const XdmfTopologyType> Mixed();
 
   /**

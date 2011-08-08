@@ -48,11 +48,26 @@ class XdmfUnstructuredGrid;
  *
  * Currently supported conversions:
  *   Hexahedron to Hexahedron_64
- *   Hexahedron to Hexahedron_64_GLL
  *   Hexahedron to Hexahedron_125
- *   Hexahedron to Hexahedron_125_GLL
+ *   Hexahedron to Hexahedron_216
+ *   Hexahedron to Hexahedron_343
+ *   Hexahedron to Hexahedron_512
+ *   Hexahedron to Hexahedron_729
+ *   Hexahedron to Hexahedron_1000
+ *   Hexahedron to Hexahedron_1331
  *   Hexahedron_64 to Hexahedron
  *   Hexahedron_125 to Hexahedron
+ *   Hexahedron_216 to Hexahedron
+ *   Hexahedron_343 to Hexahedron
+ *   Hexahedron_512 to Hexahedron
+ *   Hexahedron_729 to Hexahedron
+ *   Hexahedron_1000 to Hexahedron
+ *   Hexahedron_1331 to Hexahedron
+ *
+ * Additional options:
+ *   When generating high order hexahedrons an option of 0 adds nodes at
+ *   equal intervals inside the element. An option of 1 places nodes at
+ *   Guass Lobatto Legendre points.
  */
 class XDMFUTILS_EXPORT XdmfTopologyConverter {
 
@@ -73,6 +88,7 @@ public:
    * @param gridToConvert the unstructured grid to convert to a different
    * topology
    * @param topologyType the topology type to convert to.
+   * @param options additional options used when converting.
    * @param heavyDataWriter an heavy data writer to write the converted mesh
    * to. If no heavyDataWriter is specified, all mesh data will remain in
    * memory.
@@ -82,6 +98,7 @@ public:
   shared_ptr<XdmfUnstructuredGrid>
   convert(const shared_ptr<XdmfUnstructuredGrid> gridToConvert,
           const shared_ptr<const XdmfTopologyType> topologyType,
+          unsigned int options = 0,
           const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter = shared_ptr<XdmfHeavyDataWriter>()) const;
 
 protected:

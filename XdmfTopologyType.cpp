@@ -220,14 +220,6 @@ XdmfTopologyType::Hexahedron_64()
 }
 
 shared_ptr<const XdmfTopologyType>
-XdmfTopologyType::Hexahedron_64_GLL()
-{
-  static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(64, "Hexahedron_64_GLL", Cubic, 0x35));
-  return p;
-}
-
-shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Hexahedron_125()
 {
   static shared_ptr<const XdmfTopologyType>
@@ -236,12 +228,57 @@ XdmfTopologyType::Hexahedron_125()
 }
 
 shared_ptr<const XdmfTopologyType>
-XdmfTopologyType::Hexahedron_125_GLL()
+XdmfTopologyType::Hexahedron_216()
 {
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(125, "Hexahedron_125_GLL", Quartic, 0x36));
+    p(new XdmfTopologyType(216, "Hexahedron_216", Quintic, 0x35));
   return p;
 }
+
+
+shared_ptr<const XdmfTopologyType>
+XdmfTopologyType::Hexahedron_343()
+{
+  static shared_ptr<const XdmfTopologyType>
+    p(new XdmfTopologyType(343, "Hexahedron_343", Sextic, 0x36));
+  return p;
+}
+
+
+shared_ptr<const XdmfTopologyType>
+XdmfTopologyType::Hexahedron_512()
+{
+  static shared_ptr<const XdmfTopologyType>
+    p(new XdmfTopologyType(512, "Hexahedron_512", Septic, 0x37));
+  return p;
+}
+
+
+shared_ptr<const XdmfTopologyType>
+XdmfTopologyType::Hexahedron_729()
+{
+  static shared_ptr<const XdmfTopologyType>
+    p(new XdmfTopologyType(729, "Hexahedron_729", Octic, 0x38));
+  return p;
+}
+
+
+shared_ptr<const XdmfTopologyType>
+XdmfTopologyType::Hexahedron_1000()
+{
+  static shared_ptr<const XdmfTopologyType>
+    p(new XdmfTopologyType(1000, "Hexahedron_1000", Nonic, 0x39));
+  return p;
+}
+
+shared_ptr<const XdmfTopologyType>
+XdmfTopologyType::Hexahedron_1331()
+{
+  static shared_ptr<const XdmfTopologyType>
+    p(new XdmfTopologyType(1331, "Hexahedron_1331", Decic, 0x40));
+  return p;
+}
+
 
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Mixed()
@@ -320,14 +357,26 @@ XdmfTopologyType::New(const unsigned int id)
   else if(id == XdmfTopologyType::Hexahedron_64()->getID()) {
     return XdmfTopologyType::Hexahedron_64();
   }
-  else if(id == XdmfTopologyType::Hexahedron_64_GLL()->getID()) {
-    return XdmfTopologyType::Hexahedron_64_GLL();
-  }
   else if(id == XdmfTopologyType::Hexahedron_125()->getID()) {
     return XdmfTopologyType::Hexahedron_125();
   }
-  else if(id == XdmfTopologyType::Hexahedron_125_GLL()->getID()) {
-    return XdmfTopologyType::Hexahedron_125_GLL();
+  else if(id == XdmfTopologyType::Hexahedron_216()->getID()) {
+    return XdmfTopologyType::Hexahedron_216();
+  }
+  else if(id == XdmfTopologyType::Hexahedron_343()->getID()) {
+    return XdmfTopologyType::Hexahedron_343();
+  }
+  else if(id == XdmfTopologyType::Hexahedron_512()->getID()) {
+    return XdmfTopologyType::Hexahedron_512();
+  }
+  else if(id == XdmfTopologyType::Hexahedron_729()->getID()) {
+    return XdmfTopologyType::Hexahedron_729();
+  }
+  else if(id == XdmfTopologyType::Hexahedron_1000()->getID()) {
+    return XdmfTopologyType::Hexahedron_1000();
+  }
+  else if(id == XdmfTopologyType::Hexahedron_1331()->getID()) {
+    return XdmfTopologyType::Hexahedron_1331();
   }
   else if(id == XdmfTopologyType::Mixed()->getID()) {
     return XdmfTopologyType::Mixed();
@@ -439,6 +488,24 @@ XdmfTopologyType::New(const std::map<std::string, std::string> & itemProperties)
     }
     else if(typeVal.compare("HEXAHEDRON_125") == 0) {
       return Hexahedron_125();
+    }
+    else if(typeVal.compare("HEXAHEDRON_216") == 0) {
+      return Hexahedron_216();
+    }
+    else if(typeVal.compare("HEXAHEDRON_343") == 0) {
+      return Hexahedron_343();
+    }
+    else if(typeVal.compare("HEXAHEDRON_512") == 0) {
+      return Hexahedron_512();
+    }
+    else if(typeVal.compare("HEXAHEDRON_729") == 0) {
+      return Hexahedron_729();
+    }
+    else if(typeVal.compare("HEXAHEDRON_1000") == 0) {
+      return Hexahedron_1000();
+    }
+    else if(typeVal.compare("HEXAHEDRON_1331") == 0) {
+      return Hexahedron_1331();
     }
     else if(typeVal.compare("MIXED") == 0) {
       return Mixed();

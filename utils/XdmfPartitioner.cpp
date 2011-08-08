@@ -113,7 +113,13 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
           topologyType == XdmfTopologyType::Hexahedron_24() ||
           topologyType == XdmfTopologyType::Hexahedron_27() ||
           topologyType == XdmfTopologyType::Hexahedron_64() ||
-          topologyType == XdmfTopologyType::Hexahedron_125()) {
+          topologyType == XdmfTopologyType::Hexahedron_125() ||
+          topologyType == XdmfTopologyType::Hexahedron_216() ||
+          topologyType == XdmfTopologyType::Hexahedron_343() ||
+          topologyType == XdmfTopologyType::Hexahedron_512() ||
+          topologyType == XdmfTopologyType::Hexahedron_729() ||
+          topologyType == XdmfTopologyType::Hexahedron_1000() ||
+          topologyType == XdmfTopologyType::Hexahedron_1331()) {
     metisElementType = 3;
     nodesPerElement = 8;
   }

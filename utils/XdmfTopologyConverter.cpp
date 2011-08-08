@@ -28,6 +28,8 @@
 #include "XdmfGeometry.hpp"
 #include "XdmfGeometryType.hpp"
 #include "XdmfHeavyDataWriter.hpp"
+#include "XdmfSet.hpp"
+#include "XdmfSetType.hpp"
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyConverter.hpp"
 #include "XdmfTopologyType.hpp"
@@ -39,19 +41,10 @@
 //
 namespace {
 
-  // Classes that perform topology conversions. Converter is the root base
-  // class.  Tessellator is a subclass of Converter that deals with cases where
-  // the mesh only needs to be tessellated to carry out the conversion
-  // (e.g. Hexahedron_64 to Hexahedron.
-
-  class Converter;
-  class Tessellator;
-  class HexahedronToHexahedron_64;
-  class HexahedronToHexahedron_64_GLL;
-  class HexahedronToHexahedron_125;
-  class HexahedronToHexahedron_125_GLL;
-  class Hexahedron_64ToHexahedron;
-  class Hexahedron_125ToHexahedron;
+  // Classes that perform topology conversions. Converter is the root
+  // base class.  Tessellator is a subclass of Converter that deals
+  // with cases where the mesh only needs to be tessellated to carry
+  // out the conversion (e.g. Hexahedron_64 to Hexahedron).
 
   class Converter {
 
@@ -67,16 +60,19 @@ namespace {
 
     virtual shared_ptr<XdmfUnstructuredGrid>
     convert(const shared_ptr<XdmfUnstructuredGrid> gridToConvert,
+            const shared_ptr<const XdmfTopologyType> topologyType,
             const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) const = 0;
 
   protected:
 
     struct PointComparison {
+
+      static const double epsilon = 1e-6;
+
       bool
       operator()(const std::vector<double> & point1,
                  const std::vector<double> & point2) const
       {
-        double epsilon = 1e-6;
         for(unsigned int i=0; i<3; ++i) {
           if(fabs(point1[i] - point2[i]) > epsilon) {
             return point1[i] < point2[i];
@@ -86,18 +82,20 @@ namespace {
       }
     };
 
-    void
+    unsigned int
     insertPointWithoutCheck(const std::vector<double> & newPoint,
                             const shared_ptr<XdmfTopology> & newConnectivity,
                             const shared_ptr<XdmfGeometry> & newPoints) const
     {
-      newConnectivity->pushBack<unsigned int>(newPoints->getSize() / 3);
+      const unsigned int index = newPoints->getSize() / 3;
+      newConnectivity->pushBack(index);
       newPoints->pushBack(newPoint[0]);
       newPoints->pushBack(newPoint[1]);
       newPoints->pushBack(newPoint[2]);
+      return index;
     }
 
-    void
+    unsigned int
     insertPointWithCheck(const std::vector<double> & newPoint,
                          std::map<std::vector<double>, unsigned int, PointComparison> & coordToIdMap,
                          const shared_ptr<XdmfTopology> & newConnectivity,
@@ -108,10 +106,12 @@ namespace {
       if(iter == coordToIdMap.end()) {
         // Not inserted before
         coordToIdMap[newPoint] = newPoints->getSize() / 3;;
-        insertPointWithoutCheck(newPoint, newConnectivity, newPoints);
+        return insertPointWithoutCheck(newPoint, newConnectivity, newPoints);
       }
       else {
-        newConnectivity->pushBack(iter->second);
+        const unsigned int index = iter->second;
+        newConnectivity->pushBack(index);
+        return index;
       }
     }
 
@@ -127,6 +127,7 @@ namespace {
 
     shared_ptr<XdmfUnstructuredGrid>
     convert(const shared_ptr<XdmfUnstructuredGrid> gridToConvert,
+            const shared_ptr<const XdmfTopologyType> topologyType,
             const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) const
     {
       shared_ptr<XdmfUnstructuredGrid> toReturn =
@@ -223,1576 +224,494 @@ namespace {
 
   };
 
-  class HexahedronToHexahedron_64 : public Converter {
+  template <unsigned int ORDER, bool ISSPECTRAL>
+  class HexahedronToHighOrderHexahedron : public Converter {
 
   public:
 
-    HexahedronToHexahedron_64()
+    HexahedronToHighOrderHexahedron()
     {
     }
 
-    virtual ~HexahedronToHexahedron_64()
+    virtual ~HexahedronToHighOrderHexahedron()
     {
     }
 
-    virtual void
-    computeInteriorPoints(std::vector<double> & leftPoint,
-                          std::vector<double> & rightPoint,
-                          const std::vector<double> & point1,
-                          const std::vector<double> & point2) const
+    void
+    calculateIntermediatePoint(std::vector<double> & result,
+                               const std::vector<double> & point1,
+                               const std::vector<double> & point2,
+                               int index,
+                               bool spectral) const
     {
-      this->computeLeftPoint(leftPoint, point1, point2);
-      this->computeRightPoint(rightPoint, point1, point2);
+      const double scalar = points[index];
+      for (int i=0; i<3; i++)
+        result[i] = point1[i]+scalar*(point2[i]-point1[i]);
     }
 
-    virtual void
-    computeLeftPoint(std::vector<double> & leftPoint,
-                     const std::vector<double> & point1,
-                     const std::vector<double> & point2) const
-    {
-      leftPoint[0] = (1.0/3.0)*(point2[0] + 2*point1[0]);
-      leftPoint[1] = (1.0/3.0)*(point2[1] + 2*point1[1]);
-      leftPoint[2] = (1.0/3.0)*(point2[2] + 2*point1[2]);
-    }
-
-    virtual void
-    computeRightPoint(std::vector<double> & rightPoint,
-                      const std::vector<double> & point1,
-                      const std::vector<double> & point2) const
-    {
-      rightPoint[0] = (1.0/3.0)*(2*point2[0] + point1[0]);
-      rightPoint[1] = (1.0/3.0)*(2*point2[1] + point1[1]);
-      rightPoint[2] = (1.0/3.0)*(2*point2[2] + point1[2]);
-    }
 
     shared_ptr<XdmfUnstructuredGrid>
     convert(const shared_ptr<XdmfUnstructuredGrid> gridToConvert,
+            const shared_ptr<const XdmfTopologyType> topologyType,
             const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) const
     {
-      shared_ptr<XdmfUnstructuredGrid> toReturn =
-        XdmfUnstructuredGrid::New();
+
+      shared_ptr<XdmfUnstructuredGrid> toReturn = XdmfUnstructuredGrid::New();
       toReturn->setName(gridToConvert->getName());
 
-      shared_ptr<XdmfGeometry> toReturnGeometry =
-        toReturn->getGeometry();
-      toReturnGeometry->setType(gridToConvert->getGeometry()->getType());
-      toReturnGeometry->initialize(gridToConvert->getGeometry()->getArrayType(),
-                                   gridToConvert->getGeometry()->getSize());
+      shared_ptr<XdmfGeometry> geometry = gridToConvert->getGeometry();
+      shared_ptr<XdmfGeometry> toReturnGeometry = toReturn->getGeometry();
+
+      toReturnGeometry->setType(geometry->getType());
+      toReturnGeometry->initialize(geometry->getArrayType());
 
       bool releaseGeometry = false;
-      if(!gridToConvert->getGeometry()->isInitialized()) {
-        gridToConvert->getGeometry()->read();
+      if(!geometry->isInitialized()) {
+        geometry->read();
         releaseGeometry = true;
       }
 
-      // Copy all geometry values from old grid into new grid because we are
-      // keeping all old points.
-      toReturnGeometry->insert(0,
-                               gridToConvert->getGeometry(),
-                               0,
-                               gridToConvert->getGeometry()->getSize());
-
-      if(releaseGeometry) {
-        gridToConvert->getGeometry()->release();
-      }
-
-      shared_ptr<XdmfTopology> toReturnTopology =
-        toReturn->getTopology();
-      toReturnTopology->setType(XdmfTopologyType::Hexahedron_64());
-      toReturnTopology->initialize(gridToConvert->getTopology()->getArrayType());
-      toReturnTopology->reserve(64 * gridToConvert->getTopology()->getNumberElements());
-
-      bool releaseTopology = false;
-      if(!gridToConvert->getTopology()->isInitialized()) {
-        gridToConvert->getTopology()->read();
-      }
-
-      std::vector<double> leftPoint(3);
-      std::vector<double> rightPoint(3);
-      std::map<std::vector<double>, unsigned int, PointComparison> coordToIdMap;
-
-      std::vector<std::vector<double> > localNodes(44, std::vector<double>(3));
-
-      for(unsigned int i=0;
-          i<gridToConvert->getTopology()->getNumberElements();
-          ++i) {
-        // Fill localNodes with original coordinate information.
-        for(int j=0; j<8; ++j) {
-          toReturnGeometry->getValues(gridToConvert->getTopology()->getValue<unsigned int>(8*i + j) * 3,
-                                      &localNodes[j][0], 3);
-        }
-
-        // Add old connectivity information to newConnectivity.
-        toReturnTopology->resize(toReturnTopology->getSize() + 8, 0);
-        toReturnTopology->insert(64*i, gridToConvert->getTopology(), 8*i, 8);
-
-        // Case 0
-        this->computeInteriorPoints(leftPoint,
-                                    rightPoint,
-                                    localNodes[0],
-                                    localNodes[1]);
-        localNodes[8] = leftPoint;
-        localNodes[9] = rightPoint;
-        this->insertPointWithCheck(leftPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(rightPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 1
-        this->computeInteriorPoints(leftPoint,
-                                    rightPoint,
-                                    localNodes[1],
-                                    localNodes[2]);
-        localNodes[10] = leftPoint;
-        localNodes[11] = rightPoint;
-        this->insertPointWithCheck(leftPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(rightPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 2
-        this->computeInteriorPoints(leftPoint,
-                                    rightPoint,
-                                    localNodes[2],
-                                    localNodes[3]);
-        localNodes[12] = leftPoint;
-        localNodes[13] = rightPoint;
-        this->insertPointWithCheck(leftPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(rightPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 3
-        this->computeInteriorPoints(leftPoint,
-                                    rightPoint,
-                                    localNodes[3],
-                                    localNodes[0]);
-        localNodes[14] = leftPoint;
-        localNodes[15] = rightPoint;
-        this->insertPointWithCheck(leftPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(rightPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 4
-        this->computeInteriorPoints(leftPoint,
-                                    rightPoint,
-                                    localNodes[4],
-                                    localNodes[5]);
-        localNodes[16] = leftPoint;
-        localNodes[17] = rightPoint;
-        this->insertPointWithCheck(leftPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(rightPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 5
-        this->computeInteriorPoints(leftPoint,
-                                    rightPoint,
-                                    localNodes[5],
-                                    localNodes[6]);
-        localNodes[18] = leftPoint;
-        localNodes[19] = rightPoint;
-        this->insertPointWithCheck(leftPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(rightPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 6
-        this->computeInteriorPoints(leftPoint,
-                                    rightPoint,
-                                    localNodes[6],
-                                    localNodes[7]);
-        localNodes[20] = leftPoint;
-        localNodes[21] = rightPoint;
-        this->insertPointWithCheck(leftPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(rightPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 7
-        this->computeInteriorPoints(leftPoint,
-                                    rightPoint,
-                                    localNodes[7],
-                                    localNodes[4]);
-        localNodes[22] = leftPoint;
-        localNodes[23] = rightPoint;
-        this->insertPointWithCheck(leftPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(rightPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 8
-        computeLeftPoint(leftPoint, localNodes[0], localNodes[4]);
-        localNodes[24] = leftPoint;
-        insertPointWithCheck(leftPoint,
-                             coordToIdMap,
-                             toReturnTopology,
-                             toReturnGeometry);
-
-        // Case 9
-        this->computeLeftPoint(leftPoint, localNodes[1], localNodes[5]);
-        localNodes[25] = leftPoint;
-        this->insertPointWithCheck(leftPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 10
-        this->computeLeftPoint(leftPoint, localNodes[2], localNodes[6]);
-        localNodes[26] = leftPoint;
-        this->insertPointWithCheck(leftPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 11
-        this->computeLeftPoint(leftPoint, localNodes[3], localNodes[7]);
-        localNodes[27] = leftPoint;
-        this->insertPointWithCheck(leftPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 12
-        this->computeRightPoint(leftPoint, localNodes[0], localNodes[4]);
-        localNodes[28] = leftPoint;
-        this->insertPointWithCheck(leftPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 13
-        this->computeRightPoint(leftPoint, localNodes[1], localNodes[5]);
-        localNodes[29] = leftPoint;
-        this->insertPointWithCheck(leftPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 14
-        this->computeRightPoint(leftPoint, localNodes[2], localNodes[6]);
-        localNodes[30] = leftPoint;
-        this->insertPointWithCheck(leftPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 15
-        this->computeRightPoint(leftPoint, localNodes[3], localNodes[7]);
-        localNodes[31] = leftPoint;
-        this->insertPointWithCheck(leftPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 16
-        this->computeInteriorPoints(leftPoint,
-                                    rightPoint,
-                                    localNodes[27],
-                                    localNodes[24]);
-        localNodes[32] = leftPoint;
-        localNodes[33] = rightPoint;
-        this->insertPointWithCheck(leftPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(rightPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 17
-        this->computeInteriorPoints(leftPoint,
-                                    rightPoint,
-                                    localNodes[25],
-                                    localNodes[26]);
-        localNodes[34] = leftPoint;
-        localNodes[35] = rightPoint;
-        this->insertPointWithCheck(leftPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(rightPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 18
-        this->computeInteriorPoints(leftPoint,
-                                    rightPoint,
-                                    localNodes[24],
-                                    localNodes[25]);
-        localNodes[36] = leftPoint;
-        localNodes[37] = rightPoint;
-        this->insertPointWithCheck(leftPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(rightPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 19
-        this->computeInteriorPoints(leftPoint,
-                                    rightPoint,
-                                    localNodes[26],
-                                    localNodes[27]);
-        localNodes[38] = leftPoint;
-        localNodes[39] = rightPoint;
-        this->insertPointWithCheck(leftPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(rightPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 20
-        this->computeInteriorPoints(leftPoint,
-                                    rightPoint,
-                                    localNodes[31],
-                                    localNodes[28]);
-        localNodes[40] = leftPoint;
-        localNodes[41] = rightPoint;
-        this->insertPointWithCheck(leftPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(rightPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 21
-        this->computeInteriorPoints(leftPoint,
-                                    rightPoint,
-                                    localNodes[29],
-                                    localNodes[30]);
-        localNodes[42] = leftPoint;
-        localNodes[43] = rightPoint;
-        this->insertPointWithCheck(leftPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(rightPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 22
-        this->computeInteriorPoints(leftPoint,
-                                    rightPoint,
-                                    localNodes[28],
-                                    localNodes[29]);
-        this->insertPointWithCheck(leftPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(rightPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 23
-        this->computeInteriorPoints(leftPoint,
-                                    rightPoint,
-                                    localNodes[30],
-                                    localNodes[31]);
-        this->insertPointWithCheck(leftPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(rightPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 24
-        this->computeInteriorPoints(leftPoint,
-                                    rightPoint,
-                                    localNodes[15],
-                                    localNodes[10]);
-        this->insertPointWithCheck(leftPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(rightPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 25
-        this->computeInteriorPoints(leftPoint,
-                                    rightPoint,
-                                    localNodes[11],
-                                    localNodes[14]);
-        this->insertPointWithCheck(leftPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(rightPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 26
-        this->computeInteriorPoints(leftPoint,
-                                    rightPoint,
-                                    localNodes[23],
-                                    localNodes[18]);
-        this->insertPointWithCheck(leftPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(rightPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 27
-        this->computeInteriorPoints(leftPoint,
-                                    rightPoint,
-                                    localNodes[19],
-                                    localNodes[22]);
-        this->insertPointWithCheck(leftPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(rightPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 28
-        this->computeInteriorPoints(leftPoint,
-                                    rightPoint,
-                                    localNodes[33],
-                                    localNodes[34]);
-        this->insertPointWithoutCheck(leftPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-        this->insertPointWithoutCheck(rightPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-
-        // Case 29
-        this->computeInteriorPoints(leftPoint,
-                                    rightPoint,
-                                    localNodes[35],
-                                    localNodes[32]);
-        this->insertPointWithoutCheck(leftPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-        this->insertPointWithoutCheck(rightPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-
-        // Case 30
-        this->computeInteriorPoints(leftPoint,
-                                    rightPoint,
-                                    localNodes[41],
-                                    localNodes[42]);
-        this->insertPointWithoutCheck(leftPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-        this->insertPointWithoutCheck(rightPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-
-        // Case 31
-        this->computeInteriorPoints(leftPoint,
-                                    rightPoint,
-                                    localNodes[43],
-                                    localNodes[40]);
-        this->insertPointWithoutCheck(leftPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-        this->insertPointWithoutCheck(rightPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-      }
-      if(releaseTopology) {
-        gridToConvert->getTopology()->release();
-      }
-      if(heavyDataWriter) {
-        toReturnTopology->accept(heavyDataWriter);
-        toReturnTopology->release();
-        toReturnGeometry->accept(heavyDataWriter);
-        toReturnGeometry->release();
-      }
-      return toReturn;
-    }
-  };
-
-  class HexahedronToHexahedron_64_GLL : public HexahedronToHexahedron_64 {
-
-  public:
-
-    HexahedronToHexahedron_64_GLL()
-    {
-    }
-
-    void
-    computeLeftPoint(std::vector<double> & leftPoint,
-                     const std::vector<double> & point1,
-                     const std::vector<double> & point2) const
-    {
-      leftPoint[0] = (1.0/2.0)*((1-C)*point2[0] + (1+C)*point1[0]);
-      leftPoint[1] = (1.0/2.0)*((1-C)*point2[1] + (1+C)*point1[1]);
-      leftPoint[2] = (1.0/2.0)*((1-C)*point2[2] + (1+C)*point1[2]);
-    }
-
-    void computeRightPoint(std::vector<double> & rightPoint,
-                           const std::vector<double> & point1,
-                           const std::vector<double> & point2) const
-    {
-      rightPoint[0] = (1.0/2.0)*((1+C)*point2[0] + (1-C)*point1[0]);
-      rightPoint[1] = (1.0/2.0)*((1+C)*point2[1] + (1-C)*point1[1]);
-      rightPoint[2] = (1.0/2.0)*((1+C)*point2[2] + (1-C)*point1[2]);
-    }
-
-  private:
-
-    static const double C;
-
-  };
-
-  const double HexahedronToHexahedron_64_GLL::C = 1 / std::sqrt(5.0);
-
-  class HexahedronToHexahedron_125 : public Converter {
-
-  public:
-
-    HexahedronToHexahedron_125()
-    {
-    }
-
-    virtual ~HexahedronToHexahedron_125()
-    {
-    }
-
-    void
-    computeInteriorPoints(std::vector<double> & quarterPoint,
-                          std::vector<double> & midPoint,
-                          std::vector<double> & threeQuarterPoint,
-                          const std::vector<double> & point1,
-                          const std::vector<double> & point2) const
-    {
-      this->computeQuarterPoint(quarterPoint, point1, point2);
-      this->computeMidPoint(midPoint, point1, point2);
-      this->computeThreeQuarterPoint(threeQuarterPoint, point1, point2);
-    }
-
-    virtual
-    void computeQuarterPoint(std::vector<double> & quarterPoint,
-                             const std::vector<double> & point1,
-                             const std::vector<double> & point2) const
-    {
-      quarterPoint[0] = (1.0/4.0)*(point2[0] + 3*point1[0]);
-      quarterPoint[1] = (1.0/4.0)*(point2[1] + 3*point1[1]);
-      quarterPoint[2] = (1.0/4.0)*(point2[2] + 3*point1[2]);
-    }
-
-    void
-    computeMidPoint(std::vector<double> & midPoint,
-                    const std::vector<double> & point1,
-                    const std::vector<double> & point2) const
-    {
-      midPoint[0] = (1.0/2.0)*(point2[0] + point1[0]);
-      midPoint[1] = (1.0/2.0)*(point2[1] + point1[1]);
-      midPoint[2] = (1.0/2.0)*(point2[2] + point1[2]);
-    }
-
-    virtual void
-    computeThreeQuarterPoint(std::vector<double> & threeQuarterPoint,
-                             const std::vector<double> & point1,
-                             const std::vector<double> & point2) const
-    {
-      threeQuarterPoint[0] = (1.0/4.0)*(3.0*point2[0] + point1[0]);
-      threeQuarterPoint[1] = (1.0/4.0)*(3.0*point2[1] + point1[1]);
-      threeQuarterPoint[2] = (1.0/4.0)*(3.0*point2[2] + point1[2]);
-    }
-
-    shared_ptr<XdmfUnstructuredGrid>
-    convert(const shared_ptr<XdmfUnstructuredGrid> gridToConvert,
-            const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) const
-    {
-      shared_ptr<XdmfUnstructuredGrid> toReturn =
-        XdmfUnstructuredGrid::New();
-      toReturn->setName(gridToConvert->getName());
-
-      shared_ptr<XdmfGeometry> toReturnGeometry =
-        toReturn->getGeometry();
-      toReturnGeometry->setType(gridToConvert->getGeometry()->getType());
-      toReturnGeometry->initialize(gridToConvert->getGeometry()->getArrayType(),
-                                   gridToConvert->getGeometry()->getSize());
-
-      bool releaseGeometry = false;
-      if(!gridToConvert->getGeometry()->isInitialized()) {
-        gridToConvert->getGeometry()->read();
-        releaseGeometry = true;
-      }
-
-      // Copy all geometry values from old grid into new grid because we are
-      // keeping all old points.
-      toReturnGeometry->insert(0,
-                               gridToConvert->getGeometry(),
-                               0,
-                               gridToConvert->getGeometry()->getSize());
-
-      if(releaseGeometry) {
-        gridToConvert->getGeometry()->release();
-      }
-
+      shared_ptr<XdmfTopology> topology = gridToConvert->getTopology();
       shared_ptr<XdmfTopology> toReturnTopology = toReturn->getTopology();
-      toReturn->getTopology()->setType(XdmfTopologyType::Hexahedron_125());
-      toReturnTopology->initialize(gridToConvert->getTopology()->getArrayType());
-      toReturnTopology->reserve(125 * gridToConvert->getTopology()->getNumberElements());
+
+      toReturn->getTopology()->setType(topologyType);
+      toReturnTopology->initialize(topology->getArrayType());
+      toReturnTopology->reserve(mNodesPerElement *
+                                topology->getNumberElements());
 
       bool releaseTopology = false;
-      if(!gridToConvert->getTopology()->isInitialized()) {
-        gridToConvert->getTopology()->read();
+      if(!topology->isInitialized()) {
+        topology->read();
+        releaseTopology = true;
       }
 
-      std::vector<double> quarterPoint(3);
-      std::vector<double> midPoint(3);
-      std::vector<double> threeQuarterPoint(3);
       std::map<std::vector<double>, unsigned int, PointComparison> coordToIdMap;
+      std::map<unsigned int, unsigned int> oldIdToNewId;
 
-      std::vector<std::vector<double> > localNodes(80, std::vector<double>(3));
+      // allocate storage for values used in loop
+      unsigned int zeroIndex;
+      unsigned int oneIndex;
+      unsigned int twoIndex;
+      unsigned int threeIndex;
+      unsigned int fourIndex;
+      unsigned int fiveIndex;
+      unsigned int sixIndex;
+      unsigned int sevenIndex;
+      std::vector<double> elementCorner0(3);
+      std::vector<double> elementCorner1(3);
+      std::vector<double> elementCorner2(3);
+      std::vector<double> elementCorner3(3);
+      std::vector<double> elementCorner4(3);
+      std::vector<double> elementCorner5(3);
+      std::vector<double> elementCorner6(3);
+      std::vector<double> elementCorner7(3);
+      std::vector<double> planeCorner0(3);
+      std::vector<double> planeCorner1(3);
+      std::vector<double> planeCorner2(3);
+      std::vector<double> planeCorner3(3);
+      std::vector<double> lineEndPoint0(3);
+      std::vector<double> lineEndPoint1(3);
+      std::vector<double> point(3);
 
-      for(unsigned int i=0; i<gridToConvert->getTopology()->getNumberElements(); ++i) {
-        // Fill localNodes with original coordinate information.
+      unsigned int offset = 0;
+      for(unsigned int elem = 0; elem<topology->getNumberElements(); ++elem) {
 
-        for(int j=0; j<8; ++j) {
-          toReturnGeometry->getValues(gridToConvert->getTopology()->getValue<unsigned int>(8*i + j) * 3,
-                                      &localNodes[j][0], 3);
+        //
+        // get indices of coner vertices of the element
+        //
+        zeroIndex = topology->getValue<unsigned int>(offset++);
+        oneIndex = topology->getValue<unsigned int>(offset++);
+        twoIndex = topology->getValue<unsigned int>(offset++);
+        threeIndex = topology->getValue<unsigned int>(offset++);
+        fourIndex = topology->getValue<unsigned int>(offset++);
+        fiveIndex = topology->getValue<unsigned int>(offset++);
+        sixIndex = topology->getValue<unsigned int>(offset++);
+        sevenIndex = topology->getValue<unsigned int>(offset++);
+
+        // get locations of corner vertices of the element
+        geometry->getValues(zeroIndex * 3,
+                            &(elementCorner0[0]),
+                            3);
+        geometry->getValues(oneIndex * 3,
+                            &(elementCorner1[0]),
+                            3);
+        geometry->getValues(twoIndex * 3,
+                            &(elementCorner2[0]),
+                            3);
+        geometry->getValues(threeIndex * 3,
+                            &(elementCorner3[0]),
+                            3);
+        geometry->getValues(fourIndex * 3,
+                            &(elementCorner4[0]),
+                            3);
+        geometry->getValues(fiveIndex * 3,
+                            &(elementCorner5[0]),
+                            3);
+        geometry->getValues(sixIndex * 3,
+                            &(elementCorner6[0]),
+                            3);
+        geometry->getValues(sevenIndex * 3,
+                            &(elementCorner7[0]),
+                            3);
+
+        // loop over i, j, k directions of element isolation i, j, and
+        // k planes
+        for(unsigned int i=0; i<mNodesPerEdge; ++i){
+          // calculate corners of i plane
+          calculateIntermediatePoint(planeCorner0,
+                                     elementCorner0,
+                                     elementCorner1,
+                                     i,
+                                     true);
+          calculateIntermediatePoint(planeCorner1,
+                                     elementCorner4,
+                                     elementCorner5,
+                                     i,
+                                     true);
+          calculateIntermediatePoint(planeCorner2,
+                                     elementCorner3,
+                                     elementCorner2,
+                                     i,
+                                     true);
+          calculateIntermediatePoint(planeCorner3,
+                                     elementCorner7,
+                                     elementCorner6,
+                                     i,
+                                     true);
+
+          for(unsigned int j=0; j<mNodesPerEdge; ++j) {
+            // calculate endpoints of j slice of i plane
+            calculateIntermediatePoint(lineEndPoint0,
+                                       planeCorner0,
+                                       planeCorner2,
+                                       j,
+                                       true);
+            calculateIntermediatePoint(lineEndPoint1,
+                                       planeCorner1,
+                                       planeCorner3,
+                                       j,
+                                       true);
+
+            for(unsigned int k=0; k<mNodesPerEdge; ++k) {
+              // calculate point to add to mesh
+              calculateIntermediatePoint(point,
+                                         lineEndPoint0,
+                                         lineEndPoint1,
+                                         k,
+                                         true);
+              if((i == 0 || i == ORDER) ||
+                 (j == 0 || j == ORDER) ||
+                 (k == 0 || k == ORDER)) {
+                unsigned int newIndex = 
+                  this->insertPointWithCheck(point,
+                                             coordToIdMap,
+                                             toReturnTopology,
+                                             toReturnGeometry);
+                if((i == 0 || i == ORDER) &&
+                   (j == 0 || j == ORDER) &&
+                   (k == 0 || k == ORDER)) {
+                  if(i == 0) {
+                    if(j == 0) {
+                      if(k == 0) {
+                        oldIdToNewId[zeroIndex] = newIndex;
+                      }
+                      else {
+                        oldIdToNewId[fourIndex] = newIndex;
+                      }
+                    }
+                    else if(k == 0) {
+                      oldIdToNewId[threeIndex] = newIndex;
+                    }
+                    else {
+                      oldIdToNewId[sevenIndex] = newIndex;
+                    }
+                  }
+                  else {
+                    if(j == 0) {
+                      if(k == 0) {
+                        oldIdToNewId[oneIndex] = newIndex;
+                      }
+                      else {
+                        oldIdToNewId[fiveIndex] = newIndex;
+                      }
+                    }
+                    else if(k == 0) {
+                      oldIdToNewId[twoIndex] = newIndex;
+                    }
+                    else {
+                      oldIdToNewId[sixIndex] = newIndex;
+                    }
+                  }
+                }
+              }
+              else {
+                this->insertPointWithoutCheck(point,
+                                              toReturnTopology,
+                                              toReturnGeometry);
+              }
+            }
+          }
         }
-
-        // Add old connectivity information to toReturnTopology.
-        toReturnTopology->resize(toReturnTopology->getSize() + 8, 0);
-        toReturnTopology->insert(125*i, gridToConvert->getTopology(), 8*i, 8);
-
-        // Case 0
-        this->computeInteriorPoints(quarterPoint,
-                                    midPoint,
-                                    threeQuarterPoint,
-                                    localNodes[0],
-                                    localNodes[1]);
-        localNodes[8] = quarterPoint;
-        localNodes[9] = midPoint;
-        localNodes[10] = threeQuarterPoint;
-        this->insertPointWithCheck(quarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(threeQuarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 1
-        this->computeInteriorPoints(quarterPoint,
-                                    midPoint,
-                                    threeQuarterPoint,
-                                    localNodes[1],
-                                    localNodes[2]);
-        localNodes[11] = quarterPoint;
-        localNodes[12] = midPoint;
-        localNodes[13] = threeQuarterPoint;
-        this->insertPointWithCheck(quarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(threeQuarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 2
-        this->computeInteriorPoints(quarterPoint,
-                                    midPoint,
-                                    threeQuarterPoint,
-                                    localNodes[2],
-                                    localNodes[3]);
-        localNodes[14] = quarterPoint;
-        localNodes[15] = midPoint;
-        localNodes[16] = threeQuarterPoint;
-        this->insertPointWithCheck(quarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(threeQuarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 3
-        this->computeInteriorPoints(quarterPoint,
-                                    midPoint,
-                                    threeQuarterPoint,
-                                    localNodes[3],
-                                    localNodes[0]);
-        localNodes[17] = quarterPoint;
-        localNodes[18] = midPoint;
-        localNodes[19] = threeQuarterPoint;
-        this->insertPointWithCheck(quarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(threeQuarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 4
-        this->computeInteriorPoints(quarterPoint,
-                                    midPoint,
-                                    threeQuarterPoint,
-                                    localNodes[4],
-                                    localNodes[5]);
-        localNodes[20] = quarterPoint;
-        localNodes[21] = midPoint;
-        localNodes[22] = threeQuarterPoint;
-        this->insertPointWithCheck(quarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(threeQuarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 5
-        this->computeInteriorPoints(quarterPoint,
-                                    midPoint,
-                                    threeQuarterPoint,
-                                    localNodes[5],
-                                    localNodes[6]);
-        localNodes[23] = quarterPoint;
-        localNodes[24] = midPoint;
-        localNodes[25] = threeQuarterPoint;
-        this->insertPointWithCheck(quarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(threeQuarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 6
-        this->computeInteriorPoints(quarterPoint,
-                                    midPoint,
-                                    threeQuarterPoint,
-                                    localNodes[6],
-                                    localNodes[7]);
-        localNodes[26] = quarterPoint;
-        localNodes[27] = midPoint;
-        localNodes[28] = threeQuarterPoint;
-        this->insertPointWithCheck(quarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(threeQuarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 7
-        this->computeInteriorPoints(quarterPoint,
-                                    midPoint,
-                                    threeQuarterPoint,
-                                    localNodes[7],
-                                    localNodes[4]);
-        localNodes[29] = quarterPoint;
-        localNodes[30] = midPoint;
-        localNodes[31] = threeQuarterPoint;
-        this->insertPointWithCheck(quarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(threeQuarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 8
-        this->computeQuarterPoint(quarterPoint,
-                                  localNodes[0],
-                                  localNodes[4]);
-        localNodes[32] = quarterPoint;
-        this->insertPointWithCheck(quarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 9
-        this->computeQuarterPoint(quarterPoint,
-                                  localNodes[1],
-                                  localNodes[5]);
-        localNodes[33] = quarterPoint;
-        this->insertPointWithCheck(quarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 10
-        this->computeQuarterPoint(quarterPoint,
-                                  localNodes[2],
-                                  localNodes[6]);
-        localNodes[34] = quarterPoint;
-        this->insertPointWithCheck(quarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 11
-        this->computeQuarterPoint(quarterPoint,
-                                  localNodes[3],
-                                  localNodes[7]);
-        localNodes[35] = quarterPoint;
-        this->insertPointWithCheck(quarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 12
-        this->computeThreeQuarterPoint(threeQuarterPoint,
-                                       localNodes[0],
-                                       localNodes[4]);
-        localNodes[36] = threeQuarterPoint;
-        this->insertPointWithCheck(threeQuarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 13
-        this->computeThreeQuarterPoint(threeQuarterPoint,
-                                       localNodes[1],
-                                       localNodes[5]);
-        localNodes[37] = threeQuarterPoint;
-        this->insertPointWithCheck(threeQuarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 14
-        this->computeThreeQuarterPoint(threeQuarterPoint,
-                                       localNodes[2],
-                                       localNodes[6]);
-        localNodes[38] = threeQuarterPoint;
-        this->insertPointWithCheck(threeQuarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 15
-        this->computeThreeQuarterPoint(threeQuarterPoint,
-                                       localNodes[3],
-                                       localNodes[7]);
-        localNodes[39] = threeQuarterPoint;
-        this->insertPointWithCheck(threeQuarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 16
-        this->computeMidPoint(midPoint,
-                              localNodes[0],
-                              localNodes[4]);
-        localNodes[40] = midPoint;
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 17
-        this->computeMidPoint(midPoint,
-                              localNodes[1],
-                              localNodes[5]);
-        localNodes[41] = midPoint;
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 18
-        this->computeMidPoint(midPoint,
-                              localNodes[2],
-                              localNodes[6]);
-        localNodes[42] = midPoint;
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 19
-        this->computeMidPoint(midPoint,
-                              localNodes[3],
-                              localNodes[7]);
-        localNodes[43] = midPoint;
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 20
-        this->computeInteriorPoints(quarterPoint,
-                                    midPoint,
-                                    threeQuarterPoint,
-                                    localNodes[32],
-                                    localNodes[33]);
-        localNodes[44] = quarterPoint;
-        localNodes[45] = midPoint;
-        localNodes[46] = threeQuarterPoint;
-        this->insertPointWithCheck(quarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(threeQuarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 21
-        this->computeInteriorPoints(quarterPoint,
-                                    midPoint,
-                                    threeQuarterPoint,
-                                    localNodes[33],
-                                    localNodes[34]);
-        localNodes[47] = quarterPoint;
-        localNodes[48] = midPoint;
-        localNodes[49] = threeQuarterPoint;
-        this->insertPointWithCheck(quarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(threeQuarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 22
-        this->computeInteriorPoints(quarterPoint,
-                                    midPoint,
-                                    threeQuarterPoint,
-                                    localNodes[34],
-                                    localNodes[35]);
-        localNodes[50] = quarterPoint;
-        localNodes[51] = midPoint;
-        localNodes[52] = threeQuarterPoint;
-        this->insertPointWithCheck(quarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(threeQuarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 23
-        this->computeInteriorPoints(quarterPoint,
-                                    midPoint,
-                                    threeQuarterPoint,
-                                    localNodes[35],
-                                    localNodes[32]);
-        localNodes[53] = quarterPoint;
-        localNodes[54] = midPoint;
-        localNodes[55] = threeQuarterPoint;
-        this->insertPointWithCheck(quarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(threeQuarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 24
-        this->computeInteriorPoints(quarterPoint,
-                                    midPoint,
-                                    threeQuarterPoint,
-                                    localNodes[36],
-                                    localNodes[37]);
-        localNodes[56] = quarterPoint;
-        localNodes[57] = midPoint;
-        localNodes[58] = threeQuarterPoint;
-        this->insertPointWithCheck(quarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(threeQuarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 25
-        this->computeInteriorPoints(quarterPoint,
-                                    midPoint,
-                                    threeQuarterPoint,
-                                    localNodes[37],
-                                    localNodes[38]);
-        localNodes[59] = quarterPoint;
-        localNodes[60] = midPoint;
-        localNodes[61] = threeQuarterPoint;
-        this->insertPointWithCheck(quarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(threeQuarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 26
-        this->computeInteriorPoints(quarterPoint,
-                                    midPoint,
-                                    threeQuarterPoint,
-                                    localNodes[38],
-                                    localNodes[39]);
-        localNodes[62] = quarterPoint;
-        localNodes[63] = midPoint;
-        localNodes[64] = threeQuarterPoint;
-        this->insertPointWithCheck(quarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(threeQuarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 27
-        this->computeInteriorPoints(quarterPoint,
-                                    midPoint,
-                                    threeQuarterPoint,
-                                    localNodes[39],
-                                    localNodes[36]);
-        localNodes[65] = quarterPoint;
-        localNodes[66] = midPoint;
-        localNodes[67] = threeQuarterPoint;
-        this->insertPointWithCheck(quarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(threeQuarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 28
-        this->computeInteriorPoints(quarterPoint,
-                                    midPoint,
-                                    threeQuarterPoint,
-                                    localNodes[40],
-                                    localNodes[41]);
-        localNodes[68] = quarterPoint;
-        localNodes[69] = midPoint;
-        localNodes[70] = threeQuarterPoint;
-        this->insertPointWithCheck(quarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(threeQuarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 29
-        this->computeInteriorPoints(quarterPoint,
-                                    midPoint,
-                                    threeQuarterPoint,
-                                    localNodes[41],
-                                    localNodes[42]);
-        localNodes[71] = quarterPoint;
-        localNodes[72] = midPoint;
-        localNodes[73] = threeQuarterPoint;
-        this->insertPointWithCheck(quarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(threeQuarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 30
-        this->computeInteriorPoints(quarterPoint,
-                                    midPoint,
-                                    threeQuarterPoint,
-                                    localNodes[42],
-                                    localNodes[43]);
-        localNodes[74] = quarterPoint;
-        localNodes[75] = midPoint;
-        localNodes[76] = threeQuarterPoint;
-        this->insertPointWithCheck(quarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(threeQuarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 31
-        this->computeInteriorPoints(quarterPoint,
-                                    midPoint,
-                                    threeQuarterPoint,
-                                    localNodes[43],
-                                    localNodes[40]);
-        localNodes[77] = quarterPoint;
-        localNodes[78] = midPoint;
-        localNodes[79] = threeQuarterPoint;
-        this->insertPointWithCheck(quarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(threeQuarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 32
-        this->computeInteriorPoints(quarterPoint,
-                                    midPoint,
-                                    threeQuarterPoint,
-                                    localNodes[19],
-                                    localNodes[11]);
-        this->insertPointWithCheck(quarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(threeQuarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 33
-        this->computeMidPoint(midPoint,
-                              localNodes[10],
-                              localNodes[14]);
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 34
-        this->computeInteriorPoints(quarterPoint,
-                                    midPoint,
-                                    threeQuarterPoint,
-                                    localNodes[13],
-                                    localNodes[17]);
-        this->insertPointWithCheck(quarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(threeQuarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 35
-        this->computeMidPoint(midPoint, localNodes[16], localNodes[8]);
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 36
-        this->computeInteriorPoints(quarterPoint,
-                                    midPoint,
-                                    threeQuarterPoint,
-                                    localNodes[31],
-                                    localNodes[23]);
-        this->insertPointWithCheck(quarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(threeQuarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 37
-        this->computeMidPoint(midPoint, localNodes[22], localNodes[26]);
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 38
-        this->computeInteriorPoints(quarterPoint,
-                                    midPoint,
-                                    threeQuarterPoint,
-                                    localNodes[25],
-                                    localNodes[29]);
-        this->insertPointWithCheck(quarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-        this->insertPointWithCheck(threeQuarterPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 39
-        this->computeMidPoint(midPoint, localNodes[28], localNodes[20]);
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 40
-        this->computeInteriorPoints(quarterPoint,
-                                    midPoint,
-                                    threeQuarterPoint,
-                                    localNodes[55],
-                                    localNodes[47]);
-        this->insertPointWithoutCheck(quarterPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-        this->insertPointWithoutCheck(midPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-        this->insertPointWithoutCheck(threeQuarterPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-
-        // Case 41
-        this->computeMidPoint(midPoint, localNodes[46], localNodes[50]);
-        this->insertPointWithoutCheck(midPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-
-        // Case 42
-        this->computeInteriorPoints(quarterPoint,
-                                    midPoint,
-                                    threeQuarterPoint,
-                                    localNodes[49],
-                                    localNodes[53]);
-        this->insertPointWithoutCheck(quarterPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-        this->insertPointWithoutCheck(midPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-        this->insertPointWithoutCheck(threeQuarterPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-
-        // Case 43
-        this->computeMidPoint(midPoint, localNodes[52], localNodes[44]);
-        this->insertPointWithoutCheck(midPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-
-        // Case 44
-        this->computeInteriorPoints(quarterPoint,
-                                    midPoint,
-                                    threeQuarterPoint,
-                                    localNodes[67],
-                                    localNodes[59]);
-        this->insertPointWithoutCheck(quarterPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-        this->insertPointWithoutCheck(midPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-        this->insertPointWithoutCheck(threeQuarterPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-
-        // Case 45
-        this->computeMidPoint(midPoint, localNodes[62], localNodes[58]);
-        this->insertPointWithoutCheck(midPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-
-        // Case 46
-        this->computeInteriorPoints(quarterPoint,
-                                    midPoint,
-                                    threeQuarterPoint,
-                                    localNodes[61],
-                                    localNodes[65]);
-        this->insertPointWithoutCheck(quarterPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-        this->insertPointWithoutCheck(midPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-        this->insertPointWithoutCheck(threeQuarterPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-
-        // Case 47
-        this->computeMidPoint(midPoint, localNodes[56], localNodes[64]);
-        this->insertPointWithoutCheck(midPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-
-        // Case 48
-        this->computeInteriorPoints(quarterPoint,
-                                    midPoint,
-                                    threeQuarterPoint,
-                                    localNodes[79],
-                                    localNodes[71]);
-        this->insertPointWithoutCheck(quarterPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-        this->insertPointWithoutCheck(midPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-        this->insertPointWithoutCheck(threeQuarterPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-
-        // Case 49
-        this->computeMidPoint(midPoint, localNodes[70], localNodes[74]);
-        this->insertPointWithoutCheck(midPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-
-        // Case 50
-        this->computeInteriorPoints(quarterPoint,
-                                    midPoint,
-                                    threeQuarterPoint,
-                                    localNodes[73],
-                                    localNodes[77]);
-        this->insertPointWithoutCheck(quarterPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-        this->insertPointWithoutCheck(midPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-        this->insertPointWithoutCheck(threeQuarterPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-
-        // Case 51
-        this->computeMidPoint(midPoint, localNodes[76], localNodes[68]);
-        this->insertPointWithoutCheck(midPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-
-        // Case 52
-        this->computeMidPoint(midPoint, localNodes[12], localNodes[18]);
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 53
-        this->computeMidPoint(midPoint, localNodes[24], localNodes[30]);
-        this->insertPointWithCheck(midPoint,
-                                   coordToIdMap,
-                                   toReturnTopology,
-                                   toReturnGeometry);
-
-        // Case 54
-        this->computeMidPoint(midPoint, localNodes[48], localNodes[54]);
-        this->insertPointWithoutCheck(midPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-
-        // Case 55
-        this->computeMidPoint(midPoint, localNodes[60], localNodes[66]);
-        this->insertPointWithoutCheck(midPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
-
-        // Case 56
-        this->computeMidPoint(midPoint, localNodes[72], localNodes[78]);
-        this->insertPointWithoutCheck(midPoint,
-                                      toReturnTopology,
-                                      toReturnGeometry);
       }
+
       if(releaseTopology) {
-        gridToConvert->getTopology()->release();
+        topology->release();
       }
+      if(releaseGeometry) {
+        geometry->release();
+      }
+
       if(heavyDataWriter) {
         toReturnTopology->accept(heavyDataWriter);
         toReturnTopology->release();
         toReturnGeometry->accept(heavyDataWriter);
         toReturnGeometry->release();
       }
+
+      // handle sets
+      for(unsigned int i=0; i<gridToConvert->getNumberSets(); ++i) {
+        const shared_ptr<XdmfSet> set = gridToConvert->getSet(i);
+        const shared_ptr<const XdmfSetType> setType = set->getType();
+        if(setType == XdmfSetType::Cell()) {
+          toReturn->insert(set);
+        }
+        else if(setType == XdmfSetType::Node()) {
+          bool releaseSet = false;
+          if(!set->isInitialized()) {
+            set->read();
+            releaseSet = true;
+          }
+          shared_ptr<XdmfSet> toReturnSet = XdmfSet::New();
+          toReturnSet->setName(set->getName());
+          toReturnSet->setType(set->getType());
+          toReturnSet->initialize(set->getArrayType(),
+                                  set->getSize());
+                                  
+          for(int i=0; i<set->getSize(); ++i) {
+            const unsigned int nodeId = set->getValue<unsigned int>(i);
+            std::map<unsigned int, unsigned int>::const_iterator iter =
+              oldIdToNewId.find(nodeId);
+            if(iter == oldIdToNewId.end()) {
+              XdmfError::message(XdmfError::FATAL, 
+                                 "Error converting hex node id set to high "
+                                 "order node id set.");
+            }
+            toReturnSet->insert(i, iter->second);
+          }
+          if(releaseSet) {
+            set->release();
+          }
+
+          toReturn->insert(toReturnSet);
+
+          if(heavyDataWriter) {
+            toReturnSet->accept(heavyDataWriter);
+            toReturnSet->release();
+          }
+        }
+      }
       return toReturn;
-    }
-  };
-
-  class HexahedronToHexahedron_125_GLL : public HexahedronToHexahedron_125 {
-
-  public:
-
-    HexahedronToHexahedron_125_GLL()
-    {
-    }
-
-    void
-    computeQuarterPoint(std::vector<double> & quarterPoint,
-                        const std::vector<double> & point1,
-                        const std::vector<double> & point2) const
-    {
-      quarterPoint[0] = (1.0/2.0)*((1-C) * point2[0] + (1+C) * point1[0]);
-      quarterPoint[1] = (1.0/2.0)*((1-C) * point2[1] + (1+C) * point1[1]);
-      quarterPoint[2] = (1.0/2.0)*((1-C) * point2[2] + (1+C) * point1[2]);
-    }
-
-    void
-    computeThreeQuarterPoint(std::vector<double> & threeQuarterPoint,
-                             const std::vector<double> & point1,
-                             const std::vector<double> & point2) const
-    {
-      threeQuarterPoint[0] = (1.0/2.0)*((1+C) * point2[0] + (1-C) * point1[0]);
-      threeQuarterPoint[1] = (1.0/2.0)*((1+C) * point2[1] + (1-C) * point1[1]);
-      threeQuarterPoint[2] = (1.0/2.0)*((1+C) * point2[2] + (1-C) * point1[2]);
     }
 
   private:
-
-    static const double C;
+    static const unsigned int mNodesPerEdge = ORDER + 1;
+    static const unsigned int mNodesPerElement = mNodesPerEdge *
+      mNodesPerEdge * mNodesPerEdge;
+    static const double points[];
 
   };
 
-  const double HexahedronToHexahedron_125_GLL::C = std::sqrt(3.0/7.0);
+  template <>
+  const double HexahedronToHighOrderHexahedron<3, true>::points[] = {
+    0.0,
+    0.5-0.1*sqrt(5.0),
+    0.5+0.1*sqrt(5.0),
+    1.0
+  };
 
-  class Hexahedron_64ToHexahedron : public Tessellator {
+  template <>
+  const double HexahedronToHighOrderHexahedron<4, true>::points[] = {
+    0.0,
+    0.5-sqrt(21.0)/14.0,
+    0.5,
+    0.5+sqrt(21.0)/14.0,
+    1.0
+  };
+
+  template <>
+  const double HexahedronToHighOrderHexahedron<5, true>::points[] = {
+    0.0,
+    0.5-sqrt((7.0+2.0*sqrt(7.0))/84.0),
+    0.5-sqrt((7.0-2.0*sqrt(7.0))/84.0),
+    0.5+sqrt((7.0-2.0*sqrt(7.0))/84.0),
+    0.5+sqrt((7.0+2.0*sqrt(7.0))/84.0),
+    1.0
+  };
+
+  template <>
+  const double HexahedronToHighOrderHexahedron<6, true>::points[] = {
+    0.0,
+    0.5-sqrt((15.0+2.0*sqrt(15.0))/132.0),
+    0.5-sqrt((15.0-2.0*sqrt(15.0))/132.0),
+    0.5,
+    0.5+sqrt((15.0-2.0*sqrt(15.0))/132.0),
+    0.5+sqrt((15.0+2.0*sqrt(15.0))/132.0),
+    1.0
+  };
+
+  template <>
+  const double HexahedronToHighOrderHexahedron<7, true>::points[] = {
+    0.0,
+    0.064129925745196714,
+    0.20414990928342885,
+    0.39535039104876057,
+    0.60464960895123943,
+    0.79585009071657109,
+    0.93587007425480329,
+    1.0
+  };
+
+  template <>
+  const double HexahedronToHighOrderHexahedron<8, true>::points[] = {
+    0.0,
+    0.050121002294269912,
+    0.16140686024463108,
+    0.31844126808691087,
+    0.5,
+    0.68155873191308913,
+    0.83859313975536898,
+    0.94987899770573003,
+    1.0
+  };
+
+  template <>
+  const double HexahedronToHighOrderHexahedron<9, true>::points[] = {
+    0.0,
+    0.040233045916770627,
+    0.13061306744724743,
+    0.26103752509477773,
+    0.4173605211668065,
+    0.58263947883319345,
+    0.73896247490522227,
+    0.86938693255275257,
+    0.95976695408322943,
+    1.0
+  };
+
+  template <>
+  const double HexahedronToHighOrderHexahedron<10, true>::points[] = {
+    0.0,
+    0.032999284795970474,
+    0.10775826316842779,
+    0.21738233650189748,
+    0.35212093220653029,
+    0.5,
+    0.64787906779346971,
+    0.78261766349810258,
+    0.89224173683157226,
+    0.96700071520402953,
+    1.0
+  };
+
+  template <>
+  const double HexahedronToHighOrderHexahedron<3, false>::points[] = {
+    0.0,
+    1.0/3.0,
+    2.0/3.0,
+    1.0
+  };
+
+  template <>
+  const double HexahedronToHighOrderHexahedron<4, false>::points[] = {
+    0.0,
+    0.25,
+    0.5,
+    0.75,
+    1.0
+  };
+
+  template <>
+  const double HexahedronToHighOrderHexahedron<5, false>::points[] = {
+    0.0,
+    0.2,
+    0.4,
+    0.6,
+    0.8,
+    1.0
+  };
+
+  template <>
+  const double HexahedronToHighOrderHexahedron<6, false>::points[] = {
+    0.0,
+    1.0/6.0,
+    1.0/3.0,
+    0.5,
+    2.0/3.0,
+    5.0/6.0,
+    1.0
+  };
+
+  template <>
+  const double HexahedronToHighOrderHexahedron<7, false>::points[] = {
+    0.0,
+    1.0/7.0,
+    2.0/7.0,
+    3.0/7.0,
+    4.0/7.0,
+    5.0/7.0,
+    6.0/7.0,
+    1.0
+  };
+
+  template <>
+  const double HexahedronToHighOrderHexahedron<8, false>::points[] = {
+    0.0,
+    0.125,
+    0.25,
+    0.375,
+    0.5,
+    0.625,
+    0.75,
+    0.875,
+    1.0
+  };
+
+  template <>
+  const double HexahedronToHighOrderHexahedron<9, false>::points[] = {
+    0.0,
+    1.0/9.0,
+    2.0/9.0,
+    1.0/3.0,
+    4.0/9.0,
+    5.0/9.0,
+    2.0/3.0,
+    7.0/9.0,
+    8.0/9.0,
+    1.0
+  };
+
+  template <>
+  const double HexahedronToHighOrderHexahedron<10, false>::points[] = {
+    0.0,
+    0.1,
+    0.2,
+    0.3,
+    0.4,
+    0.5,
+    0.6,
+    0.7,
+    0.8,
+    0.9,
+    1.0
+  };
+
+  template <unsigned int ORDER>
+  class HighOrderHexahedronToHexahedron : public Tessellator {
 
   public:
 
-    Hexahedron_64ToHexahedron() :
-      Tessellator(27)
+    HighOrderHexahedronToHexahedron() :
+      Tessellator(ORDER * ORDER * ORDER)
     {
     }
 
@@ -1802,766 +721,50 @@ namespace {
     {
       topologyToReturn->setType(XdmfTopologyType::Hexahedron());
       topologyToReturn->initialize(topologyToConvert->getArrayType(),
-                                   216 * topologyToConvert->getNumberElements());
+                                   8 * ORDER * ORDER * ORDER * topologyToConvert->getNumberElements());
 
       unsigned int newIndex = 0;
+      int indexA = 0;
+      int indexB = mNodesPerEdge * mNodesPerEdge;
+      int indexC = mNodesPerEdge * mNodesPerEdge + mNodesPerEdge;
+      int indexD = mNodesPerEdge;
       for(unsigned int i=0; i<topologyToConvert->getNumberElements(); ++i) {
-        const unsigned int index = 64 * i;
-        topologyToReturn->insert(newIndex++, topologyToConvert, 0 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 8 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 48 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 15 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 24 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 36 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 56 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 33 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 8 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 9 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 49 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 48 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 36 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 37 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 57 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 56 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 9 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 1 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 10 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 49 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 37 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 25 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 34 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 57 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 15 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 48 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 51 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 14 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 33 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 56 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 59 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 32 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 48 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 49 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 50 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 51 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 56 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 57 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 58 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 59 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 49 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 10 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 11 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 50 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 57 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 34 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 35 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 58 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 14 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 51 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 13 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 3 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 32 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 59 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 39 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 27 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 51 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 50 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 12 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 13 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 59 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 58 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 38 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 39 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 50 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 11 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 2 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 12 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 58 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 35 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 26 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 38 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 24 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 36 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 56 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 33 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 28 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 44 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 60 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 41 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 36 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 37 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 57 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 56 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 44 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 45 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 61 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 60 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 37 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 25 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 34 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 57 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 45 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 29 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 42 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 61 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 33 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 56 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 59 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 32 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 41 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 60 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 63 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 40 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 56 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 57 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 58 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 59 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 60 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 61 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 62 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 63 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 57 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 34 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 35 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 58 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 61 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 42 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 43 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 62 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 32 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 59 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 39 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 27 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 40 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 63 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 47 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 31 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 59 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 58 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 38 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 39 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 63 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 62 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 46 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 47 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 58 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 35 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 26 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 38 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 62 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 43 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 30 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 46 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 28 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 44 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 60 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 41 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 4 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 16 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 52 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 23 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 44 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 45 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 61 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 60 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 16 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 17 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 53 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 52 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 45 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 29 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 42 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 61 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 17 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 5 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 18 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 53 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 41 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 60 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 63 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 40 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 23 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 52 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 55 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 22 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 60 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 61 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 62 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 63 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 52 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 53 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 54 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 55 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 61 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 42 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 43 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 62 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 53 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 18 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 19 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 54 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 40 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 63 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 47 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 31 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 22 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 55 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 21 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 7 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 63 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 62 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 46 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 47 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 55 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 54 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 20 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 21 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 62 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 43 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 30 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 46 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 54 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 19 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 6 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 20 + index);
+        for(unsigned int j=0; j<ORDER; ++j) {
+          for(unsigned int k=0; k<ORDER; ++k) {
+            for(unsigned int l=0; l<ORDER; ++l){
+              topologyToReturn->insert(newIndex++, topologyToConvert, indexA++);
+              topologyToReturn->insert(newIndex++, topologyToConvert, indexB++);
+              topologyToReturn->insert(newIndex++, topologyToConvert, indexC++);
+              topologyToReturn->insert(newIndex++, topologyToConvert, indexD++);
+              topologyToReturn->insert(newIndex++, topologyToConvert, indexA);
+              topologyToReturn->insert(newIndex++, topologyToConvert, indexB);
+              topologyToReturn->insert(newIndex++, topologyToConvert, indexC);
+              topologyToReturn->insert(newIndex++, topologyToConvert, indexD);
+            }
+            indexA++;
+            indexB++;
+            indexC++;
+            indexD++;
+          }
+          indexA += mNodesPerEdge;
+          indexB += mNodesPerEdge;
+          indexC += mNodesPerEdge;
+          indexD += mNodesPerEdge;
+        }
+        indexA += mNodesPerEdge * mNodesPerEdge;
+        indexB += mNodesPerEdge * mNodesPerEdge;
+        indexC += mNodesPerEdge * mNodesPerEdge;
+        indexD += mNodesPerEdge * mNodesPerEdge;
       }
     }
+
+  private:
+    static const unsigned int mNodesPerEdge = (ORDER + 1);
+    static const unsigned int mNodesPerElement = mNodesPerEdge *
+      mNodesPerEdge * mNodesPerEdge;
+
   };
 
-  class Hexahedron_125ToHexahedron : public Tessellator {
-
-  public:
-
-    Hexahedron_125ToHexahedron() :
-      Tessellator(64)
-    {
-    }
-
-    void
-    tesselateTopology(shared_ptr<XdmfTopology> topologyToConvert,
-                      shared_ptr<XdmfTopology> topologyToReturn) const
-    {
-      topologyToReturn->setType(XdmfTopologyType::Hexahedron());
-      topologyToReturn->initialize(topologyToConvert->getArrayType(),
-                                   512 * topologyToConvert->getNumberElements());
-
-      unsigned int newIndex = 0;
-      for(unsigned int i=0; i<topologyToConvert->getNumberElements(); ++i) {
-        const unsigned int index = 125 * i;
-        topologyToReturn->insert(newIndex++, topologyToConvert, 0 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 8 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 80 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 19 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 32 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 44 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 96 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 55 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 8 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 9 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 81 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 80 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 44 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 45 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 97 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 96 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 9 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 10 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 82 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 81 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 45 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 46 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 98 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 97 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 10 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 1 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 11 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 82 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 46 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 33 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 47 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 98 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 19 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 80 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 87 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 18 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 55 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 96 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 103 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 54 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 80 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 81 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 120 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 87 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 96 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 97 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 122 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 103 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 81 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 82 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 83 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 120 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 97 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 98 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 99 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 122 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 82 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 11 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 12 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 83 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 98 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 47 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 48 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 99 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 18 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 87 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 86 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 17 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 54 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 103 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 102 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 53 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 87 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 120 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 85 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 86 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 103 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 122 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 101 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 102 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 120 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 83 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 84 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 85 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 122 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 99 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 100 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 101 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 83 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 12 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 13 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 84 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 99 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 48 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 49 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 100 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 17 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 86 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 16 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 3 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 53 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 102 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 52 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 35 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 86 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 85 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 15 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 16 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 102 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 101 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 51 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 52 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 85 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 84 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 14 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 15 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 101 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 100 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 50 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 51 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 84 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 13 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 2 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 14 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 100 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 49 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 34 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 50 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 32 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 44 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 96 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 55 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 40 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 68 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 112 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 79 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 44 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 45 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 97 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 96 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 68 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 69 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 113 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 112 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 45 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 46 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 98 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 97 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 69 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 70 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 114 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 113 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 46 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 33 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 47 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 98 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 70 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 41 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 71 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 114 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 55 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 96 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 103 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 54 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 79 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 112 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 119 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 78 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 96 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 97 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 122 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 103 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 112 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 113 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 124 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 119 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 97 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 98 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 99 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 122 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 113 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 114 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 115 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 124 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 98 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 47 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 48 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 99 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 114 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 71 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 72 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 115 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 54 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 103 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 102 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 53 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 78 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 119 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 118 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 77 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 103 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 122 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 101 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 102 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 119 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 124 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 117 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 118 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 122 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 99 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 100 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 101 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 124 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 115 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 116 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 117 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 99 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 48 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 49 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 100 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 115 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 72 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 73 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 116 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 53 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 102 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 52 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 35 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 77 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 118 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 76 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 43 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 102 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 101 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 51 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 52 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 118 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 117 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 75 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 76 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 101 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 100 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 50 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 51 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 117 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 116 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 74 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 75 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 100 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 49 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 34 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 50 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 116 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 73 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 42 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 74 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 40 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 68 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 112 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 79 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 36 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 56 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 104 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 67 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 68 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 69 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 113 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 112 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 56 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 57 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 105 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 104 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 69 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 70 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 114 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 113 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 57 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 58 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 106 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 105 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 70 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 41 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 71 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 114 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 58 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 37 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 59 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 106 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 79 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 112 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 119 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 78 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 67 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 104 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 111 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 66 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 112 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 113 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 124 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 119 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 104 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 105 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 123 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 111 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 113 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 114 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 115 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 124 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 105 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 106 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 107 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 123 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 114 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 71 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 72 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 115 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 106 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 59 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 60 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 107 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 78 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 119 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 118 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 77 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 66 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 111 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 110 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 65 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 119 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 124 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 117 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 118 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 111 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 123 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 109 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 110 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 124 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 115 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 116 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 117 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 123 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 107 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 108 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 109 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 115 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 72 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 73 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 116 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 107 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 60 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 61 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 108 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 77 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 118 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 76 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 43 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 65 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 110 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 64 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 39 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 118 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 117 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 75 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 76 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 110 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 109 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 63 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 64 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 117 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 116 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 74 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 75 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 109 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 108 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 62 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 63 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 116 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 73 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 42 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 74 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 108 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 61 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 38 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 62 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 36 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 56 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 104 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 67 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 4 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 20 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 88 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 31 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 56 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 57 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 105 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 104 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 20 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 21 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 89 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 88 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 57 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 58 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 106 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 105 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 21 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 22 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 90 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 89 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 58 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 37 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 59 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 106 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 22 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 5 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 23 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 90 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 67 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 104 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 111 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 66 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 31 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 88 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 95 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 30 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 104 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 105 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 123 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 111 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 88 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 89 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 121 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 95 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 105 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 106 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 107 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 123 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 89 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 90 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 91 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 121 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 106 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 59 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 60 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 107 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 90 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 23 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 24 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 91 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 66 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 111 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 110 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 65 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 30 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 95 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 94 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 29 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 111 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 123 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 109 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 110 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 95 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 121 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 93 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 94 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 123 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 107 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 108 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 109 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 121 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 91 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 92 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 93 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 107 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 60 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 61 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 108 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 91 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 24 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 25 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 92 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 65 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 110 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 64 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 39 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 29 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 94 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 28 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 7 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 110 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 109 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 63 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 64 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 94 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 93 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 27 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 28 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 109 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 108 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 62 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 63 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 93 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 92 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 26 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 27 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 108 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 61 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 38 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 62 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 92 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 25 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 6 + index);
-        topologyToReturn->insert(newIndex++, topologyToConvert, 26 + index);
-      }
-    }
-  };
 }
 
 shared_ptr<XdmfTopologyConverter>
@@ -2582,11 +785,14 @@ XdmfTopologyConverter::~XdmfTopologyConverter()
 shared_ptr<XdmfUnstructuredGrid>
 XdmfTopologyConverter::convert(const shared_ptr<XdmfUnstructuredGrid> gridToConvert,
                                const shared_ptr<const XdmfTopologyType> topologyType,
+                               unsigned int options,
                                const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) const
 {
   // Make sure geometry and topology are non null
   if(!(gridToConvert->getGeometry() && gridToConvert->getTopology()))
-    XdmfError::message(XdmfError::FATAL, "Current grid's geometry or topology is null in XdmfTopologyConverter::convert");
+    XdmfError::message(XdmfError::FATAL,
+                       "Current grid's geometry or topology is null "
+                       "in XdmfTopologyConverter::convert");
 
   shared_ptr<const XdmfTopologyType> topologyTypeToConvert =
     gridToConvert->getTopology()->getType();
@@ -2596,41 +802,130 @@ XdmfTopologyConverter::convert(const shared_ptr<XdmfUnstructuredGrid> gridToConv
   }
 
   if(gridToConvert->getGeometry()->getType() != XdmfGeometryType::XYZ()) {
-    XdmfError::message(XdmfError::FATAL, "Grid to convert's type is not 'XYZ' in XdmfTopologyConverter::convert");
+    XdmfError::message(XdmfError::FATAL,
+                       "Grid to convert's type is not 'XYZ' in "
+                       "XdmfTopologyConverter::convert");
   }
 
   Converter * converter = NULL;
   if(topologyTypeToConvert == XdmfTopologyType::Hexahedron()) {
     if(topologyType == XdmfTopologyType::Hexahedron_64()) {
-      converter = new HexahedronToHexahedron_64();
-    }
-    else if(topologyType == XdmfTopologyType::Hexahedron_64_GLL()) {
-      converter = new HexahedronToHexahedron_64_GLL();
+      if(options == 1) {
+        converter = new HexahedronToHighOrderHexahedron<3, true>();
+      }
+      else {
+        converter = new HexahedronToHighOrderHexahedron<3, false>();
+      }
     }
     else if(topologyType == XdmfTopologyType::Hexahedron_125()) {
-      converter = new HexahedronToHexahedron_125();
+      if(options == 1) {
+        converter = new HexahedronToHighOrderHexahedron<4, true>();
+      }
+      else {
+        converter = new HexahedronToHighOrderHexahedron<4, false>();
+      }
     }
-    else if(topologyType == XdmfTopologyType::Hexahedron_125_GLL()) {
-      converter = new HexahedronToHexahedron_125_GLL();
+    else if(topologyType == XdmfTopologyType::Hexahedron_216()) {
+      if(options == 1) {
+        converter = new HexahedronToHighOrderHexahedron<5, true>();
+      }
+      else {
+        converter = new HexahedronToHighOrderHexahedron<5, false>();
+      }
+    }
+    else if(topologyType == XdmfTopologyType::Hexahedron_343()) {
+      if(options == 1) {
+        converter = new HexahedronToHighOrderHexahedron<6, true>();
+      }
+      else {
+        converter = new HexahedronToHighOrderHexahedron<6, false>();
+      }
+    }
+    else if(topologyType == XdmfTopologyType::Hexahedron_512()) {
+      if(options == 1) {
+        converter = new HexahedronToHighOrderHexahedron<7, true>();
+      }
+      else {
+        converter = new HexahedronToHighOrderHexahedron<7, false>();
+      }
+    }
+    else if(topologyType == XdmfTopologyType::Hexahedron_729()) {
+      if(options == 1) {
+        converter = new HexahedronToHighOrderHexahedron<8, true>();
+      }
+      else {
+        converter = new HexahedronToHighOrderHexahedron<8, false>();
+      }
+    }
+    else if(topologyType == XdmfTopologyType::Hexahedron_1000()) {
+      if(options == 1) {
+        converter = new HexahedronToHighOrderHexahedron<9, true>();
+      }
+      else {
+        converter = new HexahedronToHighOrderHexahedron<9, false>();
+      }
+    }
+    else if(topologyType == XdmfTopologyType::Hexahedron_1331()) {
+      if(options == 1) {
+        converter = new HexahedronToHighOrderHexahedron<10, true>();
+      }
+      else {
+        converter = new HexahedronToHighOrderHexahedron<10, false>();
+      }
     }
   }
   else if(topologyTypeToConvert == XdmfTopologyType::Hexahedron_64()) {
     if(topologyType == XdmfTopologyType::Hexahedron()) {
-      converter = new Hexahedron_64ToHexahedron();
+      converter = new HighOrderHexahedronToHexahedron<3>();
     }
   }
   else if(topologyTypeToConvert == XdmfTopologyType::Hexahedron_125()) {
     if(topologyType == XdmfTopologyType::Hexahedron()) {
-      converter = new Hexahedron_125ToHexahedron();
+      converter = new HighOrderHexahedronToHexahedron<4>();
     }
   }
+  else if(topologyTypeToConvert == XdmfTopologyType::Hexahedron_216()) {
+    if(topologyType == XdmfTopologyType::Hexahedron()) {
+      converter = new HighOrderHexahedronToHexahedron<5>();
+    }
+  }
+  else if(topologyTypeToConvert == XdmfTopologyType::Hexahedron_343()) {
+    if(topologyType == XdmfTopologyType::Hexahedron()) {
+      converter = new HighOrderHexahedronToHexahedron<6>();
+    }
+  }
+  else if(topologyTypeToConvert == XdmfTopologyType::Hexahedron_512()) {
+    if(topologyType == XdmfTopologyType::Hexahedron()) {
+      converter = new HighOrderHexahedronToHexahedron<7>();
+    }
+  }
+  else if(topologyTypeToConvert == XdmfTopologyType::Hexahedron_729()) {
+    if(topologyType == XdmfTopologyType::Hexahedron()) {
+      converter = new HighOrderHexahedronToHexahedron<8>();
+    }
+  }
+  else if(topologyTypeToConvert == XdmfTopologyType::Hexahedron_1000()) {
+    if(topologyType == XdmfTopologyType::Hexahedron()) {
+      converter = new HighOrderHexahedronToHexahedron<9>();
+    }
+  }
+  else if(topologyTypeToConvert == XdmfTopologyType::Hexahedron_1331()) {
+    if(topologyType == XdmfTopologyType::Hexahedron()) {
+      converter = new HighOrderHexahedronToHexahedron<10>();
+    }
+  }
+
   if(converter) {
     shared_ptr<XdmfUnstructuredGrid> toReturn =
-      converter->convert(gridToConvert, heavyDataWriter);
+      converter->convert(gridToConvert,
+                         topologyType,
+                         heavyDataWriter);
     delete converter;
     return toReturn;
   }
   else {
-    XdmfError::message(XdmfError::FATAL, "Converter NULL because topology type to convert not of valid type in XdmfTopologyConverter::convert");
+    XdmfError::message(XdmfError::FATAL,
+                       "Cannot convert topology type in "
+                       "XdmfTopologyConverter::convert");
   }
 }
