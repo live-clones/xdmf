@@ -174,6 +174,13 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 
 #ifdef SWIGPYTHON
 
+%include std_set.i
+%include std_map.i
+
+%template(XdmfMapNodeIdSet) std::set<int>;
+%template(XdmfMapNodeIdMap) std::map<int, std::set<int> >;
+%template(XdmfMapMap) std::map<int, std::map<int, std::set<int> > >;
+
 %pythoncode {
     from XdmfCore import *
 }
