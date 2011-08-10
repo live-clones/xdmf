@@ -22,6 +22,7 @@ mark_as_advanced(CLEAR Boost_INCLUDE_DIR)
 find_package(Boost REQUIRED)
 if(Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
+  set(XDMF_LIBRARY_DIRS ${XDMF_LIBRARY_DIRS} ${Boost_LIBRARIES})
   mark_as_advanced(FORCE Boost_INCLUDE_DIR)
 endif(Boost_FOUND)
 

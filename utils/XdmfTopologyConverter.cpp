@@ -67,7 +67,7 @@ namespace {
 
     struct PointComparison {
 
-      static const double epsilon = 1e-6;
+      static double epsilon() { return 1e-6; };
 
       bool
       operator()(const std::vector<double> & point1,
