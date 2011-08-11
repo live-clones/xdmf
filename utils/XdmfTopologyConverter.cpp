@@ -74,7 +74,7 @@ namespace {
                  const std::vector<double> & point2) const
       {
         for(unsigned int i=0; i<3; ++i) {
-          if(fabs(point1[i] - point2[i]) > epsilon) {
+          if(fabs(point1[i] - point2[i]) > epsilon()) {
             return point1[i] < point2[i];
           }
         }
