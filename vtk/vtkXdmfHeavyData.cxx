@@ -83,6 +83,12 @@ vtkDataObject* vtkXdmfHeavyData::ReadData()
 {
   if (this->Domain->GetNumberOfGrids() == 1)
     {
+    // There's just 1 grid. Now in serial, this is all good. In parallel, we
+    // need to be care:
+    // 1. If the data is structured, we respect the update-extent and read
+    //    accordingly.
+    // 2. If the data is unstructrued, we read only on the root node. The user
+    //    can apply D3 or something to repartition the data.
     return this->ReadData(this->Domain->GetGrid(0));
     }
 
@@ -430,6 +436,11 @@ vtkDataObject* vtkXdmfHeavyData::ReadUnstructuredGrid(XdmfGrid* xmfGrid)
 {
   vtkSmartPointer<vtkUnstructuredGrid> ugData =
     vtkSmartPointer<vtkUnstructuredGrid>::New();
+  if (this->Domain->GetNumberOfGrids() == 1 && this->Piece != 0)
+    {
+    ugData->Register(NULL);
+    return ugData;
+    }
 
   XdmfTopology* xmfTopology = xmfGrid->GetTopology();
   XdmfArray* xmfConnectivity = xmfTopology->GetConnectivity();
