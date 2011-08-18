@@ -436,7 +436,13 @@ vtkDataObject* vtkXdmfHeavyData::ReadUnstructuredGrid(XdmfGrid* xmfGrid)
 {
   vtkSmartPointer<vtkUnstructuredGrid> ugData =
     vtkSmartPointer<vtkUnstructuredGrid>::New();
-  if (this->Domain->GetNumberOfGrids() == 1 && this->Piece != 0)
+
+  // BUG #12527. For non-partitioned data, don't read unstructured grid on
+  // process id > 0.
+  if (this->Piece != 0 &&
+    this->Domain->GetNumberOfGrids() == 1 &&
+    this->Domain->GetVTKDataType() == VTK_UNSTRUCTURED_GRID &&
+    this->Domain->GetSetsSelection()->GetNumberOfArrays() == 0)
     {
     ugData->Register(NULL);
     return ugData;
