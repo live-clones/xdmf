@@ -1,11 +1,6 @@
 import mil.army.arl.xdmf.*;
 
 public class TestXdmfEquals {
-    static {
-        System.loadLibrary("XdmfCoreJava");
-	System.loadLibrary("XdmfJava");
-    }
-
     public static void main (String argv[]) {
         System.out.println("Hello World");
 

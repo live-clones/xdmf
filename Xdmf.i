@@ -152,14 +152,6 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 %pragma(java) jniclasscode=%{
     static {
         try {
-            System.loadLibrary("XdmfCoreJava");
-        }
-        catch (UnsatisfiedLinkError e) {
-            System.err.println("Native code library failed to load for" +
-                                "XdmfCoreJava\n" + e);
-            System.exit(1);
-        }
-        try {
             System.loadLibrary("XdmfJava");
         }
         catch (UnsatisfiedLinkError e) {

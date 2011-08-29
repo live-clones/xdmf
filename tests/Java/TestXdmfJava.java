@@ -1,11 +1,6 @@
 import mil.army.arl.xdmf.*;
 
 public class TestXdmfJava {
-    static {
-        System.loadLibrary("XdmfJava");
-        System.loadLibrary("XdmfCoreJava");
-    }
-
     public static void main (String argv[]) {
         System.out.println("Hello World");
         XdmfWriter writer = XdmfWriter.New("outputJavaTest.xmf");
