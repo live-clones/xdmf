@@ -206,7 +206,7 @@ public:
     }
 
     std::stringstream toReturn;
-    for(unsigned int i=0; i<lastIndex; ++i) {
+    for(int i=0; i<lastIndex; ++i) {
       toReturn << (U)array[i] << " ";
     }
     toReturn << (U)array[lastIndex];
