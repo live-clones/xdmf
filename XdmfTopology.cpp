@@ -55,8 +55,7 @@ XdmfTopology::getItemProperties() const
 {
   std::map<std::string, std::string> topologyProperties;
   mType->getProperties(topologyProperties);
-  if(mType->getCellType() != XdmfTopologyType::Structured &&
-     mType != XdmfTopologyType::Polyvertex()) {
+  if(mType->getCellType() != XdmfTopologyType::Structured) {
     std::stringstream numElements;
     numElements << this->getNumberElements();
     topologyProperties["Dimensions"] = numElements.str();
