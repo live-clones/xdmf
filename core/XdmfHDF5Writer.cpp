@@ -216,7 +216,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
         // Overwriting - dataset rank must remain the same (hdf5 constraint)
         hid_t dataspace = H5Dget_space(dataset);
 
-        const int ndims = H5Sget_simple_extent_ndims(dataspace);
+        const unsigned int ndims = H5Sget_simple_extent_ndims(dataspace);
         if(ndims != current_dims.size())
           XdmfError::message(XdmfError::FATAL, \
                              "Data set rank different -- ndims != "

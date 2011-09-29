@@ -666,7 +666,6 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
 {
   XdmfItem::populateItem(itemProperties, childItems, reader);
   std::string contentVal;
-  unsigned int sizeVal = 1;
 
   const shared_ptr<const XdmfArrayType> arrayType = 
     XdmfArrayType::New(itemProperties);

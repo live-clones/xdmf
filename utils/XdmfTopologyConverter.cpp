@@ -487,7 +487,7 @@ namespace {
           toReturnSet->initialize(set->getArrayType(),
                                   set->getSize());
                                   
-          for(int i=0; i<set->getSize(); ++i) {
+          for(unsigned int i=0; i<set->getSize(); ++i) {
             const unsigned int nodeId = set->getValue<unsigned int>(i);
             std::map<unsigned int, unsigned int>::const_iterator iter =
               oldIdToNewId.find(nodeId);
@@ -928,4 +928,5 @@ XdmfTopologyConverter::convert(const shared_ptr<XdmfUnstructuredGrid> gridToConv
                        "Cannot convert topology type in "
                        "XdmfTopologyConverter::convert");
   }
+
 }
