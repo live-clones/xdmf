@@ -73,6 +73,7 @@ XdmfPartitioner::ignore(const shared_ptr<const XdmfSet> set)
 shared_ptr<XdmfGridCollection>
 XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartition,
                            const unsigned int numberOfPartitions,
+                           const MetisScheme metisScheme,
                            const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) const
 {
   // Make sure geometry and topology are non null
@@ -90,22 +91,18 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
   const shared_ptr<const XdmfTopologyType> topologyType =
     topology->getType();
 
-  int metisElementType;
-  unsigned int nodesPerElement;
+  unsigned int nodesPerElement = 0;
 
   if(topologyType == XdmfTopologyType::Triangle() ||
      topologyType == XdmfTopologyType::Triangle_6()) {
-    metisElementType = 1;
     nodesPerElement = 3;
   }
   else if(topologyType == XdmfTopologyType::Quadrilateral() ||
           topologyType == XdmfTopologyType::Quadrilateral_8()) {
-    metisElementType = 4;
     nodesPerElement = 4;
   }
   else if(topologyType == XdmfTopologyType::Tetrahedron() ||
           topologyType == XdmfTopologyType::Tetrahedron_10()) {
-    metisElementType = 2;
     nodesPerElement = 4;
   }
   else if(topologyType == XdmfTopologyType::Hexahedron() ||
@@ -120,7 +117,6 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
           topologyType == XdmfTopologyType::Hexahedron_729() ||
           topologyType == XdmfTopologyType::Hexahedron_1000() ||
           topologyType == XdmfTopologyType::Hexahedron_1331()) {
-    metisElementType = 3;
     nodesPerElement = 8;
   }
   else {
@@ -137,10 +133,19 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
   }
 
   int numElements = topology->getNumberElements();
-  idxtype * metisConnectivity = new idxtype[nodesPerElement * numElements];
+  
+  // allocate metisConnectivity arrays
+  idx_t * metisConnectivityEptr = new idx_t[numElements + 1];
+  idx_t * metisConnectivityEind = new idx_t[nodesPerElement * numElements];
+  
+  metisConnectivityEptr[0] = 0;
+
+  unsigned int metisConnectivityEptrValue = 0;
   unsigned int connectivityOffset = 0;
-  idxtype * metisConnectivityPtr = metisConnectivity;
+  idx_t * metisConnectivityPtr = metisConnectivityEind;
   for(int i=0; i<numElements; ++i) {
+    metisConnectivityEptrValue += nodesPerElement;
+    metisConnectivityEptr[i + 1] = metisConnectivityEptrValue;
     topology->getValues(connectivityOffset,
                         metisConnectivityPtr,
                         nodesPerElement);
@@ -152,54 +157,74 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
 
   // Need to remap connectivity for nonlinear elements so that metis handles
   // it properly.
-  std::map<idxtype, idxtype> xdmfIdToMetisId;
+  std::map<idx_t, idx_t> xdmfIdToMetisId;
   if(nodesPerElement != topologyType->getNodesPerElement()) {
     unsigned int index = 0;
     for (unsigned int i=0; i<numElements * nodesPerElement; ++i) {
-      std::map<idxtype, idxtype>::const_iterator val =
-        xdmfIdToMetisId.find(metisConnectivity[i]);
+      std::map<idx_t, idx_t>::const_iterator val =
+        xdmfIdToMetisId.find(metisConnectivityEind[i]);
       if (val != xdmfIdToMetisId.end()) {
-        metisConnectivity[i] = val->second;
+        metisConnectivityEind[i] = val->second;
       }
       else {
         // Haven't seen this id before, map to index and set to new id
-        xdmfIdToMetisId[metisConnectivity[i]] = index;
-        metisConnectivity[i] = index;
+        xdmfIdToMetisId[metisConnectivityEind[i]] = index;
+        metisConnectivityEind[i] = index;
         index++;
       }
     }
     numNodes = index;
   }
 
-  int startIndex = 0;
-  int numCutEdges = 0;
+  idx_t * vwgt = NULL; // equal weight
+  idx_t * vsize = NULL; // equal size
+  idx_t ncommon = 1; // FIXME
+  idx_t nparts = numberOfPartitions;
+  real_t * tpwgts = NULL;
+  idx_t * options = NULL;
+  idx_t objval;
 
-  idxtype * elementsPartition = new idxtype[numElements];
-  idxtype * nodesPartition = new idxtype[numNodes];
-
-  /*
+  idx_t * elementsPartition = new idx_t[numElements];
+  idx_t * nodesPartition = new idx_t[numNodes];
+  
+  if(metisScheme == DUAL_GRAPH) {
     METIS_PartMeshDual(&numElements,
-    &numNodes,
-    metisConnectivity,
-    &metisElementType,
-    &startIndex,
-    (int*)&numberOfPartitions,
-    &numCutEdges,
-    elementsPartition,
-    nodesPartition);
-  */
+                       &numNodes,
+                       metisConnectivityEptr,
+                       metisConnectivityEind,
+                       vwgt,
+                       vsize,
+                       &ncommon,
+                       &nparts,
+                       tpwgts,
+                       options,
+                       &objval,
+                       elementsPartition,
+                       nodesPartition);
+  }
+  else if(metisScheme == NODAL_GRAPH) {
+    METIS_PartMeshNodal(&numElements,
+                        &numNodes,
+                        metisConnectivityEptr,
+                        metisConnectivityEind,
+                        vwgt,
+                        vsize,
+                        &nparts,
+                        tpwgts,
+                        options,
+                        &objval,
+                        elementsPartition,
+                        nodesPartition);
+  }
+  else {
+    XdmfError::message(XdmfError::FATAL, 
+                       "Invalid metis partitioning scheme selected in"
+                       "XdmfPartitioner::partition");
 
-  METIS_PartMeshNodal(&numElements,
-                      &numNodes,
-                      metisConnectivity,
-                      &metisElementType,
-                      &startIndex,
-                      (int*)&numberOfPartitions,
-                      &numCutEdges,
-                      elementsPartition,
-                      nodesPartition);
+  }
 
-  delete [] metisConnectivity;
+  delete [] metisConnectivityEptr;
+  delete [] metisConnectivityEind;
   delete [] nodesPartition;
 
   // For each partition, map global to local node id
@@ -548,6 +573,96 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
 #include "XdmfReader.hpp"
 #include "XdmfWriter.hpp"
 
+namespace {
+
+  //
+  // print usage
+  //
+  inline void
+  printUsage(const char * programName)
+  {
+
+    std::cerr << "usage: " << programName << " "
+              << "[-s metis_scheme] "
+              << "<input file> <number of partitions> [output file]"
+              << std::endl;
+    std::cerr << "metis_scheme: 1 - Dual Graph" << std::endl;
+    std::cerr << "metis_scheme: 2 - Node Graph" << std::endl;
+ 
+    //
+    //
+    //
+    return;
+
+  }
+
+  //
+  // process command line
+  //
+  void
+  processCommandLine(std::string                  & inputFileName,
+                     std::string                  & outputFileName,
+		     unsigned int                 & numPartitions,
+                     XdmfPartitioner::MetisScheme & metisScheme,
+		     int                            ac,
+                     char                         * av[])
+  {
+
+    int c;
+    bool errorFlag = false;
+    
+    while( (c=getopt(ac, av, "s:")) != -1 )
+    switch(c){
+
+    case 's': {
+      const int value = std::atoi(optarg);
+      if(value == 1) {
+        metisScheme = XdmfPartitioner::DUAL_GRAPH;
+      }
+      else if(value == 2) {
+        metisScheme = XdmfPartitioner::NODAL_GRAPH;
+      }
+      else {
+        errorFlag = true;
+      }
+      break;
+    }
+    case '?':
+      errorFlag = true;
+      break;
+    }
+
+    if (optind >= ac)
+      errorFlag = true;
+    else {
+      inputFileName = av[optind];
+      ++optind;
+    }
+
+    if (optind >= ac)
+      errorFlag = true;
+    else {
+      numPartitions = atoi(av[optind]);
+      ++optind;
+    }
+
+    if (optind < ac) {
+      outputFileName = av[optind];
+      ++optind;
+    }
+   
+    //
+    // check errorFlag
+    //
+    if (errorFlag == true) {
+      printUsage(av[0]);
+      std::exit(EXIT_FAILURE);
+    }
+
+  }
+
+}
+
 /**
  * XdmfPartitioner is a command line utility for partitioning Xdmf grids.
  * The XdmfPartitioner uses the metis library to partition Triangular,
@@ -560,20 +675,24 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
  */
 int main(int argc, char* argv[])
 {
-  std::string usage = "Partitions an Xdmf grid using the metis library: \n \n "
-    "Usage: \n \n   XdmfPartitioner <path-of-file-to-partition> "
-    "<num-partitions> (Optional: <path-to-output-file>)";
-  std::string meshName = "";
 
-  if (argc < 3) {
-    std::cout << usage << std::endl;
-    return 1;
-  }
+  std::string inputFileName;
+  std::string outputFileName = "";
+  unsigned int numPartitions;
+  XdmfPartitioner::MetisScheme metisScheme;
 
-  FILE * refFile = fopen(argv[1], "r");
+  processCommandLine(inputFileName,
+		     outputFileName,
+		     numPartitions,
+		     metisScheme,
+		     argc,
+		     argv);
+
+  std::cout << inputFileName << std::endl;
+
+  FILE * refFile = fopen(inputFileName.c_str(), "r");
   if (refFile) {
     // Success
-    meshName = argv[1];
     fclose(refFile);
   }
   else {
@@ -581,14 +700,16 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  unsigned int numPartitions = atoi(argv[2]);
-
-  if (argc >= 4) {
-    meshName = argv[3];
+  std::string meshName;
+  if(outputFileName.compare("") == 0) {
+    meshName = inputFileName;
+  }
+  else {
+    meshName = outputFileName;
   }
 
   if(meshName.find_last_of("/\\") != std::string::npos) {
-    meshName = meshName.substr(meshName.find_last_of("/\\")+1,
+    meshName = meshName.substr(meshName.find_last_of("/\\") + 1,
                                meshName.length());
   }
 
@@ -596,13 +717,15 @@ int main(int argc, char* argv[])
     meshName = meshName.substr(0, meshName.rfind("."));
   }
 
-  if(argc < 4) {
-    meshName = meshName + "-partitioned";
+  if(outputFileName.compare("") == 0) {
+    std::stringstream partitionedMeshName;
+    partitionedMeshName << meshName << "_p" << numPartitions;
+    meshName = partitionedMeshName.str();
   }
 
   shared_ptr<XdmfReader> reader = XdmfReader::New();
   shared_ptr<XdmfDomain> domain =
-    shared_dynamic_cast<XdmfDomain>(reader->read(argv[1]));
+    shared_dynamic_cast<XdmfDomain>(reader->read(inputFileName));
 
   if(domain->getNumberUnstructuredGrids() <= 0) {
     std::cout << "No grids to partition" << std::endl;
@@ -618,6 +741,7 @@ int main(int argc, char* argv[])
   shared_ptr<XdmfGridCollection> toWrite =
     partitioner->partition(domain->getUnstructuredGrid(0),
                            numPartitions,
+                           metisScheme,
                            heavyDataWriter);
 
   shared_ptr<XdmfDomain> newDomain = XdmfDomain::New();

@@ -45,6 +45,11 @@ class XDMFUTILS_EXPORT XdmfPartitioner {
 
 public:
 
+  enum MetisScheme {
+    DUAL_GRAPH = 0,
+    NODAL_GRAPH = 1
+  };
+
   /**
    * Create a new XdmfPartitioner.
    *
@@ -96,6 +101,7 @@ public:
   shared_ptr<XdmfGridCollection>
   partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartition,
             const unsigned int numberOfPartitions,
+            const MetisScheme metisScheme = DUAL_GRAPH,
             const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter = shared_ptr<XdmfHeavyDataWriter>()) const;
 
 protected:
