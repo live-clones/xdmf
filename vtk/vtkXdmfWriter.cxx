@@ -222,7 +222,7 @@ void vtkXdmfWriter::SetInput(vtkDataObject *input)
 {
   if (input)
     {
-    this->SetInputConnection(0, input->GetProducerPort());
+    this->SetInputDataInternal(0, input);
     }
   else
     {

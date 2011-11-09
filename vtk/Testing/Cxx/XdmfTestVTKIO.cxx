@@ -94,7 +94,7 @@ bool DoDataObjectsDiffer(vtkDataObject *dobj1, vtkDataObject *dobj2)
     cerr << "Number of field arrays test failed" << endl;
     return true;
   }
-  if (dobj1->GetEstimatedMemorySize()!=dobj2->GetEstimatedMemorySize())
+  if (dobj1->GetActualMemorySize()!=dobj2->GetActualMemorySize())
   {
     cerr << "Mem size test failed" << endl;
     return true;
@@ -156,7 +156,7 @@ bool TestXDMFConversion(vtkDataObject*input, char *prefix)
     {    
     vtkDataSetWriter *dsw = vtkDataSetWriter::New();
     dsw->SetFileName(vtkfile);
-    dsw->SetInput(ds);
+    dsw->SetInputData(ds);
     dsw->Write();
     dsw->Delete();
     }

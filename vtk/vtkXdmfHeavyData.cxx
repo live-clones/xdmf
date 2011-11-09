@@ -1416,8 +1416,8 @@ vtkDataSet* vtkXdmfHeavyData::ExtractCells(XdmfSet* xmfSet,
   selNode->Delete();
 
   vtkExtractSelectedIds* extractCells = vtkExtractSelectedIds::New();
-  extractCells->SetInputConnection(0, dataSet->GetProducerPort());
-  extractCells->SetInputConnection(1, sel->GetProducerPort());
+  extractCells->SetInputData(0, dataSet);
+  extractCells->SetInputData(1, sel);
   extractCells->Update();
 
   vtkDataSet* output = vtkDataSet::SafeDownCast(
