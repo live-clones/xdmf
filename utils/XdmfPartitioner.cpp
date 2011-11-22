@@ -91,40 +91,7 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
   const shared_ptr<const XdmfTopologyType> topologyType =
     topology->getType();
 
-  unsigned int nodesPerElement = 0;
-
-  if(topologyType == XdmfTopologyType::Triangle() ||
-     topologyType == XdmfTopologyType::Triangle_6()) {
-    nodesPerElement = 3;
-  }
-  else if(topologyType == XdmfTopologyType::Quadrilateral() ||
-          topologyType == XdmfTopologyType::Quadrilateral_8()) {
-    nodesPerElement = 4;
-  }
-  else if(topologyType == XdmfTopologyType::Tetrahedron() ||
-          topologyType == XdmfTopologyType::Tetrahedron_10()) {
-    nodesPerElement = 4;
-  }
-  else if(topologyType == XdmfTopologyType::Hexahedron() ||
-          topologyType == XdmfTopologyType::Hexahedron_20() ||
-          topologyType == XdmfTopologyType::Hexahedron_24() ||
-          topologyType == XdmfTopologyType::Hexahedron_27() ||
-          topologyType == XdmfTopologyType::Hexahedron_64() ||
-          topologyType == XdmfTopologyType::Hexahedron_125() ||
-          topologyType == XdmfTopologyType::Hexahedron_216() ||
-          topologyType == XdmfTopologyType::Hexahedron_343() ||
-          topologyType == XdmfTopologyType::Hexahedron_512() ||
-          topologyType == XdmfTopologyType::Hexahedron_729() ||
-          topologyType == XdmfTopologyType::Hexahedron_1000() ||
-          topologyType == XdmfTopologyType::Hexahedron_1331()) {
-    nodesPerElement = 8;
-  }
-  else {
-    XdmfError::message(XdmfError::FATAL, 
-                       "Topology type is not 'Triangle', 'Quadrilateral', "
-                       "'Tetrahedron', 'Hexahedron' in "
-                       "XdmfPartition::partition");
-  }
+  const unsigned int nodesPerElement = topologyType->getNodesPerElement();
 
   bool releaseTopology = false;
   if(!topology->isInitialized()) {
@@ -133,6 +100,7 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
   }
 
   int numElements = topology->getNumberElements();
+  int numNodes = geometry->getNumberPoints();
   
   // allocate metisConnectivity arrays
   idx_t * metisConnectivityEptr = new idx_t[numElements + 1];
@@ -151,29 +119,6 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
                         nodesPerElement);
     connectivityOffset += topologyType->getNodesPerElement();
     metisConnectivityPtr += nodesPerElement;
-  }
-
-  int numNodes = geometry->getNumberPoints();
-
-  // Need to remap connectivity for nonlinear elements so that metis handles
-  // it properly.
-  std::map<idx_t, idx_t> xdmfIdToMetisId;
-  if(nodesPerElement != topologyType->getNodesPerElement()) {
-    unsigned int index = 0;
-    for (unsigned int i=0; i<numElements * nodesPerElement; ++i) {
-      std::map<idx_t, idx_t>::const_iterator val =
-        xdmfIdToMetisId.find(metisConnectivityEind[i]);
-      if (val != xdmfIdToMetisId.end()) {
-        metisConnectivityEind[i] = val->second;
-      }
-      else {
-        // Haven't seen this id before, map to index and set to new id
-        xdmfIdToMetisId[metisConnectivityEind[i]] = index;
-        metisConnectivityEind[i] = index;
-        index++;
-      }
-    }
-    numNodes = index;
   }
 
   idx_t * vwgt = NULL; // equal weight
@@ -218,7 +163,7 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
   }
   else {
     XdmfError::message(XdmfError::FATAL, 
-                       "Invalid metis partitioning scheme selected in"
+                       "Invalid metis partitioning scheme selected in "
                        "XdmfPartitioner::partition");
 
   }
@@ -676,10 +621,10 @@ namespace {
 int main(int argc, char* argv[])
 {
 
-  std::string inputFileName;
+  std::string inputFileName = "";
   std::string outputFileName = "";
   unsigned int numPartitions;
-  XdmfPartitioner::MetisScheme metisScheme;
+  XdmfPartitioner::MetisScheme metisScheme = XdmfPartitioner::DUAL_GRAPH;
 
   processCommandLine(inputFileName,
 		     outputFileName,

@@ -60,7 +60,7 @@ public:
   virtual ~XdmfPartitioner();
 
   /**
-   * Ingore set when partitioning. Set is not partitioned or added to
+   * Ignore set when partitioning. Set is not partitioned or added to
    * resulting grid.
    *
    * @param set the set to ignore when partitioning.
@@ -68,27 +68,15 @@ public:
   void ignore(const shared_ptr<const XdmfSet> set);
 
   /**
-   * Partitions an XdmfGrid using the metis library.
-   * Currently supported topology types are:
-   *
-   * XdmfTopologyType::Triangle
-   * XdmfTopologyType::Triangle_6
-   * XdmfTopologyType::Quadrilateral
-   * XdmfTopologyType::Quadrilateral_8
-   * XdmfTopologyType::Tetrahedron
-   * XdmfTopologyType::Tetrahedron_10
-   * XdmfTopologyType::Hexahedron
-   * XdmfTopologyType::Hexahedron_20
-   * XdmfTopologyType::Hexahedron_24
-   * XdmfTopologyType::Hexahedron_27
-   * XdmfTopologyType::Hexahedron_64
+   * Partitions an XdmfUnstructuredGrid using the metis library.
    *
    * The partitioner splits the XdmfGridUnstructured and all attached
    * XdmfAttributes and XdmfSets into their proper partition. An
    * XdmfAttribute named "GlobalNodeId" is added to each partitioned
    * grid to map partitioned node ids to their original unpartitioned
-   * id. All arrays attached to the passed gridToPartition are read
-   * from disk if not initialized.
+   * id. An XdmfMap is added to each partitioned grid mapping shared
+   * nodes to other processors. All arrays attached to the passed
+   * gridToPartition are read from disk if not initialized.
    *
    * @param gridToPartition an XdmfGridUnstructured to partition.
    * @param numberOfPartitions the number of pieces to partition the grid into.
