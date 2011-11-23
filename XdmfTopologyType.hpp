@@ -146,6 +146,20 @@ public:
   CellType getCellType() const;
 
   /**
+   * Get the number of edges per element associated with this topology type.
+   *
+   * @return an unsigned int containing the number of edges per element.
+   */
+  virtual unsigned int getEdgesPerElement() const;
+
+  /**
+   * Get the number of faces per element associated with this topology type.
+   *
+   * @return an unsigned int containing the number of faces per element.
+   */
+  virtual unsigned int getFacesPerElement() const;
+
+  /**
    * Get the id of this cell type, necessary in order to create grids
    * containing mixed cells.
    *
@@ -180,6 +194,8 @@ protected:
    * XdmfTopologyType - i.e. XdmfTopologyType::Tetrahedron()
    */
   XdmfTopologyType(const unsigned int nodesPerElement,
+                   const unsigned int facesPerElement,
+                   const unsigned int edgesPerElement,
                    const std::string & name,
                    const CellType cellType,
                    const unsigned int id);
@@ -193,6 +209,8 @@ private:
   New(const std::map<std::string, std::string> & itemProperties);
 
   const CellType mCellType;
+  const unsigned int mEdgesPerElement;
+  const unsigned int mFacesPerElement;
   const unsigned int mID;
   const std::string mName;
   const unsigned int mNodesPerElement;

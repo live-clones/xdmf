@@ -89,6 +89,44 @@ public:
     }
 
     unsigned int
+    getEdgesPerElement() const
+    {
+      const unsigned int dimensions = 
+        mCurvilinearGrid->getDimensions()->getSize();
+      if(dimensions == 2) {
+        return 4;
+      }
+      else if(dimensions == 3) {
+        return 12;
+      }
+      else {
+        XdmfError::message(XdmfError::FATAL, 
+                           "Grid dimensions not 2 or 3 in "
+                           "XdmfTopologyTypeCurvilinear::getEdgesPerElement");
+      }
+      return 0;
+    }
+
+    unsigned int
+    getFacesPerElement() const
+    {
+      const unsigned int dimensions = 
+        mCurvilinearGrid->getDimensions()->getSize();
+      if(dimensions == 2) {
+        return 1;
+      }
+      else if(dimensions == 3) {
+        return 6;
+      }
+      else {
+        XdmfError::message(XdmfError::FATAL, 
+                           "Grid dimensions not 2 or 3 in "
+                           "XdmfTopologyTypeCurvilinear::getFacesPerElement");
+      }
+      return 0;
+    }
+
+    unsigned int
     getNodesPerElement() const
     {
       // 2^Dimensions
@@ -119,7 +157,7 @@ public:
   private:
 
     XdmfTopologyTypeCurvilinear(const XdmfCurvilinearGrid * const curvilinearGrid) :
-      XdmfTopologyType(0, "foo", XdmfTopologyType::Structured, 0x1110),
+      XdmfTopologyType(0, 0, 0, "foo", XdmfTopologyType::Structured, 0x1110),
       mCurvilinearGrid(curvilinearGrid)
     {
     }
