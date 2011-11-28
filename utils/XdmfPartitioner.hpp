@@ -92,6 +92,17 @@ public:
             const MetisScheme metisScheme = DUAL_GRAPH,
             const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter = shared_ptr<XdmfHeavyDataWriter>()) const;
 
+  /**
+   * Unpartitions an XdmfGridCollection of unstructured grids into a single
+   * XdmfUnstructuredGrid.
+   *
+   * @param gridToPartition an XdmfGridUnstructured to partition.
+   *
+   * @return a unstructured grid containing the unpartitioned grid.
+   */
+  shared_ptr<XdmfUnstructuredGrid>
+  unpartition(const shared_ptr<XdmfGridCollection> gridToUnPartition) const;
+
 protected:
 
   XdmfPartitioner();

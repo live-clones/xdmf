@@ -33,6 +33,7 @@ extern "C"
 #include "XdmfAttribute.hpp"
 #include "XdmfAttributeCenter.hpp"
 #include "XdmfAttributeType.hpp"
+#include "XdmfError.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGeometryType.hpp"
 #include "XdmfGridCollection.hpp"
@@ -45,9 +46,6 @@ extern "C"
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
 #include "XdmfUnstructuredGrid.hpp"
-#include "XdmfError.hpp"
-
-#include "XdmfArrayType.hpp"
 
 shared_ptr<XdmfPartitioner>
 XdmfPartitioner::New()
@@ -222,7 +220,7 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
       std::stringstream name;
       name << gridToPartition->getName() << "_" << i;
 
-      shared_ptr<XdmfUnstructuredGrid> partitioned =
+      const shared_ptr<XdmfUnstructuredGrid> partitioned =
         XdmfUnstructuredGrid::New();
       partitioned->setName(name.str());
       partitionedGrids->insert(partitioned);
@@ -301,7 +299,8 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
 
   // Split attributes into proper partitions
   for(unsigned int i=0; i<gridToPartition->getNumberAttributes(); ++i) {
-    shared_ptr<XdmfAttribute> currAttribute =
+
+    const shared_ptr<XdmfAttribute> currAttribute = 
       gridToPartition->getAttribute(i);
     bool releaseAttribute = false;
     if(!currAttribute->isInitialized()) {
@@ -314,18 +313,16 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
         globalToLocalNodeIdMap[j];
       std::vector<unsigned int> & currElemIds = globalElementIds[j];
       if(currElemIds.size() > 0) {
-        shared_ptr<XdmfUnstructuredGrid> partitioned =
+        const shared_ptr<XdmfUnstructuredGrid> partitioned =
           partitionedGrids->getUnstructuredGrid(partitionId);
         partitionId++;
-        shared_ptr<XdmfAttribute> createdAttribute =
+        shared_ptr<XdmfAttribute> createdAttribute = 
           shared_ptr<XdmfAttribute>();
         if(currAttribute->getCenter() == XdmfAttributeCenter::Grid()) {
           // Insert into each partition
           createdAttribute = currAttribute;
         }
-        else if(currAttribute->getCenter() == XdmfAttributeCenter::Cell() ||
-                currAttribute->getCenter() == XdmfAttributeCenter::Face() ||
-                currAttribute->getCenter() == XdmfAttributeCenter::Edge()) {
+        else if(currAttribute->getCenter() == XdmfAttributeCenter::Cell()) {
           createdAttribute = XdmfAttribute::New();
           createdAttribute->setName(currAttribute->getName());
           createdAttribute->setCenter(currAttribute->getCenter());
@@ -393,9 +390,9 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
       }
       unsigned int partitionId = 0;
       for(unsigned int j=0; j<numberOfPartitions; ++j) {
-        std::map<unsigned int, unsigned int> & currNodeMap =
+        const std::map<unsigned int, unsigned int> & currNodeMap =
           globalToLocalNodeIdMap[j];
-        std::vector<unsigned int> & currElemIds = globalElementIds[j];
+        const std::vector<unsigned int> & currElemIds = globalElementIds[j];
         if(currElemIds.size() > 0) {
           shared_ptr<XdmfUnstructuredGrid> partitioned =
             partitionedGrids->getUnstructuredGrid(partitionId);
@@ -404,9 +401,7 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
           shared_ptr<XdmfSet> partitionedSet = XdmfSet::New();
           std::vector<unsigned int> partitionedSetIndex;
 
-          if(currSet->getType() == XdmfSetType::Cell() ||
-             currSet->getType() == XdmfSetType::Face() ||
-             currSet->getType() == XdmfSetType::Edge()) {
+          if(currSet->getType() == XdmfSetType::Cell()) {
             for(unsigned int k=0; k<currSet->getSize(); ++k) {
               std::vector<unsigned int>::const_iterator val =
                 std::find(currElemIds.begin(),
@@ -430,28 +425,34 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
             }
           }
 
+          // Only insert set if contains values
           if(partitionedSet->getSize() > 0) {
 
             for(unsigned int k=0; k<currSet->getNumberAttributes(); ++k) {
               const shared_ptr<XdmfAttribute> currAttribute =
                 currSet->getAttribute(k);
-              if(currAttribute->getCenter() == XdmfAttributeCenter::Node()) {
-                bool releaseAttribute = false;
-                if(!currAttribute->isInitialized()) {
-                  currAttribute->read();
-                  releaseAttribute = true;
-                }
+              bool releaseAttribute = false;
+              if(!currAttribute->isInitialized()) {
+                currAttribute->read();
+                releaseAttribute = true;
+              }
+              if(currAttribute->getCenter() == XdmfAttributeCenter::Node() ||
+                 currAttribute->getCenter() == XdmfAttributeCenter::Cell()) {
+                const unsigned int numberComponents = 
+                  currAttribute->getSize() / currSet->getSize();
+                
                 const shared_ptr<XdmfAttribute> partitionedAttribute =
                   XdmfAttribute::New();
                 partitionedAttribute->setCenter(currAttribute->getCenter());
                 partitionedAttribute->setName(currAttribute->getName());
                 partitionedAttribute->setType(currAttribute->getType());
                 partitionedAttribute->initialize(currAttribute->getArrayType(),
-                                                 partitionedSetIndex.size());
+                                                 partitionedSetIndex.size() * numberComponents);
                 for(unsigned int l=0; l<partitionedSetIndex.size(); ++l) {
-                  partitionedAttribute->insert(l,
+                  partitionedAttribute->insert(l * numberComponents,
                                                currAttribute,
-                                               partitionedSetIndex[l]);
+                                               partitionedSetIndex[l] * numberComponents,
+                                               numberComponents);
                 }
                 partitionedSet->insert(partitionedAttribute);
                 if(heavyDataWriter) {
@@ -460,7 +461,6 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
                 }
               }
             }
-
             partitioned->insert(partitionedSet);
             partitionedSet->setName(currSet->getName());
             partitionedSet->setType(currSet->getType());
@@ -505,6 +505,238 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
   }
 
   return partitionedGrids;
+}
+
+shared_ptr<XdmfUnstructuredGrid>
+XdmfPartitioner::unpartition(const shared_ptr<XdmfGridCollection> gridToUnPartition) const
+{
+
+  const shared_ptr<XdmfUnstructuredGrid> returnValue = 
+    XdmfUnstructuredGrid::New();
+  const shared_ptr<XdmfTopology> returnValueTopology = 
+    returnValue->getTopology();
+  const shared_ptr<XdmfGeometry> returnValueGeometry =
+    returnValue->getGeometry();
+
+  const unsigned int numberUnstructuredGrids = 
+    gridToUnPartition->getNumberUnstructuredGrids();
+ 
+  unsigned int elementOffset = 0;
+
+  for(unsigned int i=0; i<numberUnstructuredGrids; ++i) {
+
+    const shared_ptr<XdmfUnstructuredGrid> grid = 
+      gridToUnPartition->getUnstructuredGrid(i);
+
+    const shared_ptr<XdmfAttribute> globalNodeIds = 
+      grid->getAttribute("GlobalNodeId");
+
+    if(!globalNodeIds) {
+      XdmfError::message(XdmfError::FATAL, 
+                         "Cannot find GlobalNodeId attribute in "
+                         "XdmfPartitioner::unpartition");
+    }
+
+    bool releaseGlobalNodeIds = false;
+    if(!globalNodeIds->isInitialized()) {
+      globalNodeIds->read();
+      releaseGlobalNodeIds = true;
+    }
+
+    // handle topology
+    const shared_ptr<XdmfTopology> topology = grid->getTopology();
+    
+    if(i==0) {
+      returnValueTopology->setType(topology->getType());
+      returnValueTopology->initialize(topology->getArrayType());
+    }
+
+    returnValueTopology->reserve(returnValueTopology->getSize() + 
+                                 topology->getSize());
+
+    bool releaseTopology = false;
+    if(!topology->isInitialized()) {
+      topology->read();
+      releaseTopology = true;
+    }
+
+    for(unsigned int j=0; j<topology->getSize(); ++j) {
+      const unsigned int localNodeId = topology->getValue<unsigned int>(j);
+      const unsigned int globalNodeId = 
+        globalNodeIds->getValue<unsigned int>(localNodeId);
+      returnValueTopology->pushBack(globalNodeId);
+    }
+
+    if(releaseTopology) {
+      topology->release();
+    }
+    
+    // handle geometry
+    const shared_ptr<XdmfGeometry> geometry = grid->getGeometry();
+    const shared_ptr<const XdmfGeometryType> geometryType = 
+      geometry->getType();
+    const unsigned int geometryDimension = geometryType->getDimensions();
+    
+    if(i==0) {
+      returnValueGeometry->setType(geometryType);
+      returnValueGeometry->initialize(geometry->getArrayType());
+    }
+
+    bool releaseGeometry = false;
+    if(!geometry->isInitialized()) {
+      geometry->read();
+      releaseGeometry = true;
+    }
+
+    for(unsigned int j=0; j<globalNodeIds->getSize(); ++j) {
+      const unsigned int globalNodeId = 
+        globalNodeIds->getValue<unsigned int>(j);
+      returnValueGeometry->insert(globalNodeId * geometryDimension,
+                                  geometry,
+                                  j * geometryDimension,
+                                  geometryDimension);
+    }
+
+    if(releaseGeometry) {
+      geometry->release();
+    }
+
+    // handle attributes
+    for(unsigned int j=0; j<grid->getNumberAttributes(); ++j) {
+
+      const shared_ptr<XdmfAttribute> attribute = grid->getAttribute(j);
+      const shared_ptr<const XdmfAttributeCenter> attributeCenter = 
+        attribute->getCenter();
+      
+      bool releaseAttribute = false;
+      if(!attribute->isInitialized()) {
+        attribute->read();
+        releaseAttribute = true;
+      }
+
+      shared_ptr<XdmfAttribute> returnValueAttribute;
+      
+      if(i==0) {
+        returnValueAttribute = XdmfAttribute::New();
+        returnValueAttribute->setName(attribute->getName());
+        returnValueAttribute->setCenter(attributeCenter);
+        returnValueAttribute->setType(attribute->getType());
+        returnValueAttribute->initialize(attribute->getArrayType());
+        returnValue->insert(returnValueAttribute);
+      }
+      else {
+        returnValueAttribute = returnValue->getAttribute(attribute->getName());
+      }
+
+
+      if(attributeCenter == XdmfAttributeCenter::Grid()) {
+        returnValueAttribute->insert(0,
+                                     attribute,
+                                     0,
+                                     attribute->getSize());              
+      }
+      else if(attributeCenter == XdmfAttributeCenter::Cell()) {
+        returnValueAttribute->insert(returnValueAttribute->getSize(),
+                                     attribute,
+                                     0,
+                                     attribute->getSize());
+      }
+      else if(attributeCenter == XdmfAttributeCenter::Node()) {
+        
+        const unsigned int numberComponents = 
+          attribute->getSize() / geometry->getNumberPoints();
+        
+        for(unsigned int k=0; k<globalNodeIds->getSize(); ++k) {
+          const unsigned int globalNodeId = 
+            globalNodeIds->getValue<unsigned int>(k);
+          returnValueAttribute->insert(globalNodeId * numberComponents,
+                                       attribute,
+                                       k * numberComponents,
+                                       numberComponents);
+        }
+        
+      }
+  
+      if(releaseAttribute) {
+        attribute->release();
+      }
+
+    }
+
+    // handle sets
+    for(unsigned int j=0; j<grid->getNumberSets(); ++j) {
+
+      const shared_ptr<XdmfSet> set = grid->getSet(j);
+      const shared_ptr<const XdmfSetType> setType = set->getType();
+      
+      bool releaseSet = false;
+      if(!set->isInitialized()) {
+        set->read();
+        releaseSet = true;
+      }
+
+      shared_ptr<XdmfSet> returnValueSet = returnValue->getSet(set->getName());
+      if(!returnValueSet) {
+        returnValueSet = XdmfSet::New();
+        returnValueSet->setName(set->getName());
+        returnValueSet->setType(setType);
+        returnValue->insert(returnValueSet);
+      }
+      
+      if(setType == XdmfSetType::Cell()) {
+        for(unsigned int k=0; k<set->getSize(); ++k) {
+          const unsigned int localCellId = set->getValue<unsigned int>(k);
+          returnValueSet->pushBack(localCellId + elementOffset);
+        }
+      }
+      else if(setType == XdmfSetType::Node()) {
+        for(unsigned int k=0; k<set->getSize(); ++k){
+          const unsigned int localNodeId = set->getValue<unsigned int>(k);
+          const unsigned int globalNodeId = 
+            globalNodeIds->getValue<unsigned int>(localNodeId);
+          returnValueSet->pushBack(globalNodeId);
+        }
+      }
+
+      for(unsigned int k=0; k<set->getNumberAttributes(); ++k) {
+        const shared_ptr<XdmfAttribute> attribute = set->getAttribute(k);
+        const shared_ptr<const XdmfAttributeCenter> attributeCenter = 
+          attribute->getCenter();
+        const shared_ptr<const XdmfAttributeType> attributeType =
+          attribute->getType();
+
+        shared_ptr<XdmfAttribute> returnValueAttribute =
+          returnValueSet->getAttribute(attribute->getName());
+        if(!returnValueAttribute) {
+          returnValueAttribute = XdmfAttribute::New();
+          returnValueAttribute->setName(attribute->getName());
+          returnValueAttribute->setCenter(attributeCenter);
+          returnValueAttribute->setType(attributeType);
+          returnValueSet->insert(returnValueAttribute);
+        }
+
+        if(attributeCenter == XdmfAttributeCenter::Cell() ||
+           attributeCenter == XdmfAttributeCenter::Node()) {
+          returnValueAttribute->insert(returnValueAttribute->getSize(),
+                                       attribute,
+                                       0,
+                                       attribute->getSize());
+        }
+        
+      }
+      
+    }
+    
+    elementOffset += topology->getNumberElements();
+
+    if(releaseGlobalNodeIds) {
+      globalNodeIds->release();
+    }
+    
+  }
+
+  return returnValue;
+
 }
 
 #else
