@@ -303,7 +303,7 @@ public:
    */
   void insert(const unsigned int startIndex,
               const shared_ptr<const XdmfArray> values,
-              const unsigned int valuesStartIndex= 0,
+              const unsigned int valuesStartIndex = 0,
               const unsigned int numValues = 1,
               const unsigned int arrayStride = 1,
               const unsigned int valuesStride = 1);
