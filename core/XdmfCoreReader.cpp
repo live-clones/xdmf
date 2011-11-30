@@ -21,6 +21,7 @@
 /*                                                                           */
 /*****************************************************************************/
 
+#include <libxml/uri.h>
 #include <libxml/xpointer.h>
 #include <libxml/xmlreader.h>
 #include <map>
@@ -31,6 +32,8 @@
 #include "XdmfItem.hpp"
 #include "XdmfSystemUtils.hpp"
 #include "XdmfError.hpp"
+
+#include <fstream>
 
 /**
  * PIMPL
@@ -107,27 +110,47 @@ public:
 
     while(currNode != NULL) {
       if(currNode->type == XML_ELEMENT_NODE) {
-        xmlChar * xpointer = NULL;
         if(xmlStrcmp(currNode->name, (xmlChar*)"include") == 0) {
           // Deal with proper reading of XIncludes
+
+          xmlChar * xpointer = NULL;
+          xmlChar * href = NULL;
+
           xmlAttrPtr currAttribute = currNode->properties;
           while(currAttribute != NULL) {
             if(xmlStrcmp(currAttribute->name, (xmlChar*)"xpointer") == 0) {
               xpointer = currAttribute->children->content;
-              break;
             }
+            if(xmlStrcmp(currAttribute->name, (xmlChar*)"href") == 0) {
+              href = currAttribute->children->content;
+            }
+            currAttribute = currAttribute->next;
           }
+
+          xmlDocPtr document = NULL;
+          xmlXPathContextPtr context = mXPathContext;
+          if(href) {
+            xmlChar * filePath = xmlBuildURI(href, mDocument->URL);
+            document = xmlReadFile((char*)filePath, NULL, 0);
+            context = xmlXPtrNewContext(document, NULL, NULL);           
+          }
+
           if(xpointer) {
-            xmlXPathObjectPtr xPathObject =
-              xmlXPtrEval(xpointer, mXPathContext);
-            if(xPathObject && xPathObject->nodesetval) {
-              for(int i=0; i<xPathObject->nodesetval->nodeNr; ++i) {
-                this->readSingleNode(xPathObject->nodesetval->nodeTab[i],
+            xmlXPathObjectPtr result = xmlXPtrEval(xpointer, context);
+            if(result && !xmlXPathNodeSetIsEmpty(result->nodesetval)) {
+              for(int i=0; i<result->nodesetval->nodeNr; ++i) {
+                this->readSingleNode(result->nodesetval->nodeTab[i],
                                      myItems);
               }
             }
-            xmlXPathFreeObject(xPathObject);
+            xmlXPathFreeObject(result);
           }
+
+          if(href) {
+            xmlXPathFreeContext(context);
+            xmlFreeDoc(document);
+          }
+
         }
         else {
           // Normal reading
@@ -136,6 +159,7 @@ public:
       }
       currNode = currNode->next;
     }
+
     return myItems;
   }
 

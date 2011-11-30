@@ -77,7 +77,7 @@ public:
 
     xmlBufferPtr buffer = xmlBufferCreate();
     xmlOutputBuffer * outputBuffer = xmlOutputBufferCreateBuffer(buffer,
-                                                                  NULL);
+                                                                 NULL);
     xmlSaveFormatFileTo(outputBuffer,
                         mXMLDocument,
                         "utf-8",
