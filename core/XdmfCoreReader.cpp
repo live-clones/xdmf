@@ -58,7 +58,12 @@ public:
   {
     mXPathMap.clear();
     xmlXPathFreeContext(mXPathContext);
-    xmlFreeDoc(mDocument);
+    for(std::map<std::string, xmlDocPtr>::const_iterator iter = 
+	  mDocuments.begin(); iter != mDocuments.end(); ++iter) {
+      xmlFreeDoc(iter->second);
+    }
+    mDocuments.clear();
+    
     xmlCleanupParser();
   }
 
@@ -78,6 +83,8 @@ public:
                          "xmlReadFile could not read " + filePath +
                          " in XdmfCoreReader::XdmfCoreReaderImpl::openFile");
     }
+
+    mDocuments.insert(std::make_pair((char*)mDocument->URL, mDocument));
 
     mXPathContext = xmlXPtrNewContext(mDocument, NULL, NULL);
     mXPathMap.clear();
@@ -127,11 +134,20 @@ public:
             currAttribute = currAttribute->next;
           }
 
-          xmlDocPtr document = NULL;
           xmlXPathContextPtr context = mXPathContext;
           if(href) {
+	    xmlDocPtr document;
             xmlChar * filePath = xmlBuildURI(href, mDocument->URL);
-            document = xmlReadFile((char*)filePath, NULL, 0);
+	    std::map<std::string, xmlDocPtr>::const_iterator iter = 
+	      mDocuments.find((char*)filePath);
+	    if(iter == mDocuments.end()) {
+	      document = xmlReadFile((char*)filePath, NULL, 0);
+	      mDocuments.insert(std::make_pair((char*)document->URL, document));
+	    }
+	    else {
+	      document = iter->second;
+	    }
+
             context = xmlXPtrNewContext(document, NULL, NULL);           
           }
 
@@ -148,7 +164,6 @@ public:
 
           if(href) {
             xmlXPathFreeContext(context);
-            xmlFreeDoc(document);
           }
 
         }
@@ -244,6 +259,7 @@ public:
   }
 
   xmlDocPtr mDocument;
+  std::map<std::string, xmlDocPtr> mDocuments;
   const XdmfCoreReader * const mCoreReader;
   const shared_ptr<const XdmfCoreItemFactory> mItemFactory;
   const std::string mRootItemTag;
