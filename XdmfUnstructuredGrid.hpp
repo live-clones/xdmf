@@ -24,6 +24,9 @@
 #ifndef XDMFUNSTRUCTUREDGRID_HPP_
 #define XDMFUNSTRUCTUREDGRID_HPP_
 
+// Forward Declarations
+class XdmfRegularGrid;
+
 // Includes
 #include "Xdmf.hpp"
 #include "XdmfGrid.hpp"
@@ -42,11 +45,19 @@ class XDMF_EXPORT XdmfUnstructuredGrid : public XdmfGrid {
 public:
 
   /**
-   * Create a new XdmfGridUnstructured.
+   * Create a new XdmfUnstructuredGrid.
    *
-   * @return constructed XdmfGridUnstructured.
+   * @return constructed XdmfUnstructuredGrid.
    */
   static shared_ptr<XdmfUnstructuredGrid> New();
+
+  /**
+   * Create a new XdmfUnstructuredGrid from a XdmfRegularGrid.
+   *
+   * @return constructed XdmfUnstructuredGrid.
+   */
+  static shared_ptr<XdmfUnstructuredGrid> 
+  New(const shared_ptr<XdmfRegularGrid> regularGrid);
 
   virtual ~XdmfUnstructuredGrid();
 
@@ -85,6 +96,7 @@ public:
 protected:
 
   XdmfUnstructuredGrid();
+  XdmfUnstructuredGrid(const shared_ptr<XdmfRegularGrid> regularGrid);
 
 private:
 

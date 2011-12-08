@@ -111,14 +111,14 @@ public:
   static const std::string ItemTag;
 
   /**
-   * Get the size of the points composing the grid.
+   * Get the size of the bricks composing the grid.
    *
    * @return XdmfArray containing brick sizes for this grid.
    */
   shared_ptr<XdmfArray> getBrickSize();
 
   /**
-   * Get the size of the points composing the grid (const version).
+   * Get the size of the bricks composing the grid (const version).
    *
    * @return XdmfArray containing brick sizes for this grid.
    */
