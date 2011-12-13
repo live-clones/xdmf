@@ -94,34 +94,34 @@ XdmfFortran::~XdmfFortran()
 void
 XdmfFortran::Destroy()
 {
-  currentTime = -1;
+   currentTime = -1;
 
-  delete myGeometry;
-  myGeometry = NULL;
-  delete myTopology;
-  myTopology = NULL;
+   delete myGeometry;
+   myGeometry = NULL;
+   delete myTopology;
+   myTopology = NULL;
 
-  while (!myAttributes.empty())
-  {
-    delete myAttributes.back();
-    myAttributes.pop_back();
-  }
+//   while (!myAttributes.empty())
+//   {
+//     delete myAttributes.back();
+//     myAttributes.pop_back();
+//   }
 
-  while (!myInformations.empty())
-  {
-    delete myInformations.back();
-    myInformations.pop_back();
-  }
+//   while (!myInformations.empty())
+//   {
+//     delete myInformations.back();
+//     myInformations.pop_back();
+//   }
 
-  while (!myCollections.empty())
-  {
-    delete myCollections.top();
-    myCollections.pop();
-  }
+//   while (!myCollections.empty())
+//   {
+//     delete myCollections.top();
+//     myCollections.pop();
+//   }
 
-  delete myDOM;
-  delete myRoot;
-  delete myDomain;
+   delete myRoot;
+   delete myDomain;
+   delete myDOM;
 }
 
 /**
@@ -147,6 +147,7 @@ XdmfFortran::AddCollection(char * collectionType)
   XdmfGrid * currentCollection = new XdmfGrid();
   currentCollection->SetGridType(XDMF_GRID_COLLECTION);
   currentCollection->SetCollectionTypeFromString(collectionType);
+  currentCollection->SetDeleteOnGridDelete(true);
   if (myCollections.empty())
   {
     myDomain->Insert(currentCollection);
@@ -168,9 +169,11 @@ XdmfFortran::AddCollection(char * collectionType)
 void
 XdmfFortran::CloseCollection()
 {
-  if (!myCollections.empty())
+  if(!myCollections.empty())
   {
-    delete myCollections.top();
+    if(myCollections.size() == 1) {
+      delete myCollections.top();
+    }
     myCollections.pop();
   }
 }
@@ -734,6 +737,7 @@ void
 XdmfFortran::WriteGrid(char * gridName)
 {
   XdmfGrid * grid = new XdmfGrid();
+  grid->SetDeleteOnGridDelete(true);
 
   if (myTopology == NULL)
   {
@@ -789,12 +793,12 @@ XdmfFortran::WriteGrid(char * gridName)
     myDomain->Insert(grid);
   }
 
-  XdmfTime * t = new XdmfTime();
   if (currentTime >= 0)
   {
+    XdmfTime * t = grid->GetTime();
     t->SetTimeType(XDMF_TIME_SINGLE);
     t->SetValue(currentTime);
-    grid->Insert(t);
+    grid->SetBuildTime(1);
     currentTime = -1;
   }
 
