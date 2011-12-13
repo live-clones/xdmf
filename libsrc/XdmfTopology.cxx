@@ -115,7 +115,7 @@ namespace {
       tmp = b;
       b = d;
       d = tmp;
-      e = tmp;
+      tmp = e;
       e = g;
       g = tmp;
       tmp = f;
