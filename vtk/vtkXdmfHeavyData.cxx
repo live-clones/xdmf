@@ -39,7 +39,7 @@
 #include "vtkXdmfReader.h"
 #include "vtkXdmfReaderInternal.h"
 
-#include <vtkstd/deque>
+#include <deque>
 #include <assert.h>
 
 static void vtkScaleExtents(int in_exts[6], int out_exts[6], int stride[3])
@@ -214,7 +214,7 @@ vtkDataObject* vtkXdmfHeavyData::ReadTemporalCollection(
   // sub-grids for a time-step since that changes the composite data hierarchy
   // over time which makes it hard to use filters such as vtkExtractBlock etc.
 
-  vtkstd::deque<XdmfGrid*> valid_children;
+  std::deque<XdmfGrid*> valid_children;
   for (XdmfInt32 cc=0; cc < xmfTemporalCollection->GetNumberOfChildren(); cc++)
     {
     XdmfGrid* child = xmfTemporalCollection->GetChild(cc);
@@ -241,8 +241,8 @@ vtkDataObject* vtkXdmfHeavyData::ReadTemporalCollection(
     return 0;
     }
 
-  vtkstd::deque<vtkSmartPointer<vtkDataObject> > child_data_objects;
-  vtkstd::deque<XdmfGrid*>::iterator iter;
+  std::deque<vtkSmartPointer<vtkDataObject> > child_data_objects;
+  std::deque<XdmfGrid*>::iterator iter;
   for (iter = valid_children.begin(); iter != valid_children.end(); ++iter)
     {
     vtkDataObject* childDO = this->ReadData(*iter);

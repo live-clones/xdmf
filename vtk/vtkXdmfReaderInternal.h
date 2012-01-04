@@ -41,10 +41,10 @@
 #include "XdmfTime.h"
 #include "XdmfSet.h"
 
-#include <vtkstd/string>
-#include <vtkstd/vector>
-#include <vtkstd/set>
-#include <vtkstd/map>
+#include <string>
+#include <vector>
+#include <set>
+#include <map>
 #include <vtksys/SystemTools.hxx>
 #include <assert.h>
 #include <functional>
@@ -66,7 +66,7 @@ public:
   //---------------------------------------------------------------------------
   // Description:
   // Returns the names for available domains.
-  const vtkstd::vector<vtkstd::string>& GetDomains()
+  const std::vector<std::string>& GetDomains()
     { return this->Domains; }
 
   //---------------------------------------------------------------------------
@@ -96,16 +96,16 @@ private:
   int ActiveDomainIndex;
   XdmfDOM XMLDOM;
   vtkXdmfDomain* ActiveDomain;
-  vtkstd::vector<vtkstd::string> Domains;
+  std::vector<std::string> Domains;
 
   char* LastReadContents;
   size_t LastReadContentsLength;
-  vtkstd::string LastReadFilename;
+  std::string LastReadFilename;
 };
 
 // I don't use vtkDataArraySelection since it's very slow when it comes to large
 // number of arrays. 
-class vtkXdmfArraySelection : public vtkstd::map<vtkstd::string, bool>
+class vtkXdmfArraySelection : public std::map<std::string, bool>
 {
 public:
   void Merge(const vtkXdmfArraySelection& other)
@@ -185,9 +185,9 @@ private:
   unsigned int GridsOverflowCounter;
   // these are node indices used when building the SIL.
   vtkIdType SILBlocksRoot;
-  vtkstd::map<vtkstd::string, vtkIdType> GridCenteredAttrbuteRoots;
-  vtkstd::map<vtkIdType,
-    vtkstd::map<XdmfInt64, vtkIdType> > GridCenteredAttrbuteValues;
+  std::map<std::string, vtkIdType> GridCenteredAttrbuteRoots;
+  std::map<vtkIdType,
+    std::map<XdmfInt64, vtkIdType> > GridCenteredAttrbuteValues;
 
   vtkSILBuilder* SILBuilder;
   vtkMutableDirectedGraph* SIL;
@@ -195,7 +195,7 @@ private:
   vtkXdmfArraySelection* CellArrays;
   vtkXdmfArraySelection* Grids;
   vtkXdmfArraySelection* Sets;
-  vtkstd::set<XdmfFloat64> TimeSteps; //< Only discrete timesteps are currently
+  std::set<XdmfFloat64> TimeSteps; //< Only discrete timesteps are currently
                                  //  supported.
 
 public:
@@ -236,7 +236,7 @@ public:
   //---------------------------------------------------------------------------
   // Description:
   // Returns the timesteps.
-  const vtkstd::set<XdmfFloat64>& GetTimeSteps()
+  const std::set<XdmfFloat64>& GetTimeSteps()
     { return this->TimeSteps; } 
   
   //---------------------------------------------------------------------------
@@ -249,7 +249,7 @@ public:
   // Returns the time value at the given index.
   XdmfFloat64 GetTimeForIndex(int index)
     {
-    vtkstd::set<XdmfFloat64>::iterator iter;
+    std::set<XdmfFloat64>::iterator iter;
     int cc=0;
     for (iter = this->TimeSteps.begin(); iter != this->TimeSteps.end();
       iter++, cc++)

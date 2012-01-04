@@ -316,7 +316,7 @@ int vtkXdmfReader::RequestInformation(vtkInformation *, vtkInformationVector **,
   outInfo->Set(vtkDataObject::SIL(), domain->GetSIL());
 
   // * Publish time information.
-  vtkstd::vector<double> time_steps(domain->GetTimeSteps().begin(),
+  std::vector<double> time_steps(domain->GetTimeSteps().begin(),
     domain->GetTimeSteps().end());
 
   if (time_steps.size() > 0)

@@ -65,7 +65,7 @@ bool vtkXdmfDocument::Parse(const char* xmffilename)
   delete [] this->LastReadContents;
   this->LastReadContents = 0;
   this->LastReadContentsLength = 0;
-  this->LastReadFilename = vtkstd::string();
+  this->LastReadFilename = std::string();
 
   this->XMLDOM.SetInputFileName(xmffilename);
   if (!this->XMLDOM.Parse())
@@ -74,7 +74,7 @@ bool vtkXdmfDocument::Parse(const char* xmffilename)
     }
 
   //Tell the parser what the working directory is.
-  vtkstd::string directory =
+  std::string directory =
     vtksys::SystemTools::GetFilenamePath(xmffilename) + "/";
   if (directory == "/")
     {
@@ -107,7 +107,7 @@ bool vtkXdmfDocument::ParseString(const char* xmfdata, size_t length)
 
   delete this->LastReadContents;
   this->LastReadContentsLength = 0;
-  this->LastReadFilename = vtkstd::string();
+  this->LastReadFilename = std::string();
 
   this->LastReadContents = new char[length+1];
   this->LastReadContentsLength = length;
@@ -323,7 +323,7 @@ int vtkXdmfDomain::GetVTKDataType(XdmfGrid* xmfGrid)
 //----------------------------------------------------------------------------
 int vtkXdmfDomain::GetIndexForTime(double time)
 {
-  vtkstd::set<XdmfFloat64>::iterator iter = this->TimeSteps.upper_bound(time);
+  std::set<XdmfFloat64>::iterator iter = this->TimeSteps.upper_bound(time);
   if (iter == this->TimeSteps.begin())
     {
     // The requested time step is before any available time.  We will use it by
@@ -335,7 +335,7 @@ int vtkXdmfDomain::GetIndexForTime(double time)
     iter--;
     }
 
-  vtkstd::set<XdmfFloat64>::iterator iter2 = this->TimeSteps.begin();
+  std::set<XdmfFloat64>::iterator iter2 = this->TimeSteps.begin();
   int counter = 0;
   while (iter2 != iter)
     {
@@ -554,8 +554,8 @@ void vtkXdmfDomain::CollectMetaData()
       {
       XdmfGrid * xmfGrid = &this->XMFGrids[cc];
 
-      vtkstd::string originalGridName = xmfGrid->GetName();
-      vtkstd::string gridName = xmfGrid->GetName();
+      std::string originalGridName = xmfGrid->GetName();
+      std::string gridName = xmfGrid->GetName();
       unsigned int count=1;
       while (this->Grids->HasArray(gridName.c_str()))
         {
@@ -651,8 +651,8 @@ void vtkXdmfDomain::CollectLeafMetaData(XdmfGrid* xmfGrid, vtkIdType silParent)
   if (silParent != -1 &&
     this->GridsOverflowCounter < MAX_COLLECTABLE_NUMBER_OF_GRIDS)
     {
-    vtkstd::string originalGridName = xmfGrid->GetName();
-    vtkstd::string gridName = xmfGrid->GetName();
+    std::string originalGridName = xmfGrid->GetName();
+    std::string gridName = xmfGrid->GetName();
     unsigned int count=1;
     while (this->Grids->HasArray(gridName.c_str()))
       {

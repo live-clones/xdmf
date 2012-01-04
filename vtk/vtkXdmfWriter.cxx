@@ -52,11 +52,11 @@
 #include "XdmfRoot.h"
 #include "XdmfTime.h"
 #include "XdmfTopology.h"
-#include <vtkstd/vector>
-#include <vtkstd/map>
-#include <vtkstd/algorithm>
+#include <vector>
+#include <map>
+#include <algorithm>
 #include <stdio.h>
-#include <libxml/tree.h> // always after vtkstd::blah stuff
+#include <libxml/tree.h> // always after std::blah stuff
 
 #if defined(_WIN32) && !defined(__CYGWIN__)
 # define SNPRINTF _snprintf
@@ -73,7 +73,7 @@ class vtkXdmfWriterDomainMemoryHandler
       }
     ~vtkXdmfWriterDomainMemoryHandler()
       {
-        for(vtkstd::vector<XdmfGrid*>::iterator iter = domainGrids.begin(); iter != domainGrids.end(); ++iter)
+        for(std::vector<XdmfGrid*>::iterator iter = domainGrids.begin(); iter != domainGrids.end(); ++iter)
         {
           delete *iter;
         }
@@ -90,7 +90,7 @@ class vtkXdmfWriterDomainMemoryHandler
       }
   private:
     XdmfDomain* domain;
-    vtkstd::vector<XdmfGrid*> domainGrids;
+    std::vector<XdmfGrid*> domainGrids;
 };
 
 //==============================================================================
@@ -120,7 +120,7 @@ struct vtkXdmfWriterInternal
       }
 
     };
-  typedef vtkstd::map<CellType, vtkSmartPointer<vtkIdList> > MapOfCellTypes;
+  typedef std::map<CellType, vtkSmartPointer<vtkIdList> > MapOfCellTypes;
   static void DetermineCellTypes(vtkPointSet *t, MapOfCellTypes& vec);
 };
 
@@ -483,10 +483,10 @@ void vtkXdmfWriter::CreateTopology(vtkDataSet *ds, XdmfGrid *grid, vtkIdType PDi
   grid->SetGridType(XDMF_GRID_UNIFORM);
 
   const char *heavyName = NULL;
-  vtkstd::string heavyDataSetName;
+  std::string heavyDataSetName;
   if (this->HeavyDataFileName)
     {
-    heavyDataSetName = vtkstd::string(this->HeavyDataFileName) + ":";
+    heavyDataSetName = std::string(this->HeavyDataFileName) + ":";
     if (this->HeavyDataGroupName)
       {
       heavyDataSetName = heavyDataSetName + HeavyDataGroupName + "/Topology";
@@ -843,10 +843,10 @@ void vtkXdmfWriter::CreateGeometry(vtkDataSet *ds, XdmfGrid *grid, void *staticd
   geo->SetLightDataLimit(this->LightDataLimit);
 
   const char *heavyName = NULL;
-  vtkstd::string heavyDataSetName;
+  std::string heavyDataSetName;
   if (this->HeavyDataFileName)
     {
-    heavyDataSetName = vtkstd::string(this->HeavyDataFileName) + ":";
+    heavyDataSetName = std::string(this->HeavyDataFileName) + ":";
     if (this->HeavyDataGroupName)
       {
       heavyDataSetName = heavyDataSetName + HeavyDataGroupName + "/Geometry";
@@ -969,13 +969,13 @@ void vtkXdmfWriter::WriteArrays(vtkFieldData* fd, XdmfGrid *grid, int associatio
     vtkDataSetAttributes *dsa = vtkDataSetAttributes::SafeDownCast(fd);
 
     const char *heavyName = NULL;
-    vtkstd::string heavyDataSetName;
+    std::string heavyDataSetName;
     if (this->HeavyDataFileName)
       {
-      heavyDataSetName = vtkstd::string(this->HeavyDataFileName) + ":";
+      heavyDataSetName = std::string(this->HeavyDataFileName) + ":";
       if (this->HeavyDataGroupName)
         {
-        heavyDataSetName = heavyDataSetName + vtkstd::string(HeavyDataGroupName) + "/" + name;
+        heavyDataSetName = heavyDataSetName + std::string(HeavyDataGroupName) + "/" + name;
         }
       heavyName = heavyDataSetName.c_str();
       }
@@ -983,12 +983,12 @@ void vtkXdmfWriter::WriteArrays(vtkFieldData* fd, XdmfGrid *grid, int associatio
     //
     // Sort alphabetically to avoid potential bad ordering problems
     //
-    vtkstd::vector<vtkstd::string> AttributeNames;
+    std::vector<std::string> AttributeNames;
     for (int i=0; i<fd->GetNumberOfArrays(); i++) {
       vtkDataArray *scalars = fd->GetArray(i);
       AttributeNames.push_back(scalars->GetName());
     }
-    vtkstd::sort(AttributeNames.begin(), AttributeNames.end());
+    std::sort(AttributeNames.begin(), AttributeNames.end());
 
     for (unsigned int i = 0; i < AttributeNames.size(); i++)
       {
@@ -1134,7 +1134,7 @@ void vtkXdmfWriter::ConvertVToXArray(vtkDataArray *vda,
     }
 
   if (heavyprefix) {
-    vtkstd::string dsname = vtkstd::string(heavyprefix) + "/" + vtkstd::string(vda->GetName());
+    std::string dsname = std::string(heavyprefix) + "/" + std::string(vda->GetName());
     xda->SetHeavyDataSetName(dsname.c_str());
   }
 
