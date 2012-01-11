@@ -26,7 +26,7 @@
 
 XDMF_CHILDREN_IMPLEMENTATION(XdmfItem, XdmfInformation, Information, Key)
 
-  XdmfItem::XdmfItem()
+XdmfItem::XdmfItem()
 {
 }
 
