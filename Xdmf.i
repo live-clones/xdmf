@@ -222,6 +222,42 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
     }
 }
 
+%extend XdmfAttributeCenter {
+    bool __eq__(const XdmfAttributeCenter * attributeCenter) {
+        return $self == attributeCenter;
+    }
+}
+
+%extend XdmfAttributeType {
+    bool __eq__(const XdmfAttributeType * attributeType) {
+   	return $self == attributeType;
+    }
+}
+
+%extend XdmfGeometryType {
+    bool __eq__(const XdmfGeometryType * geometryType) {
+   	return $self == geometryType;
+    }
+}
+
+%extend XdmfGridCollectionType {
+    bool __eq__(const XdmfGridCollectionType * gridCollectionType) {
+   	return $self == gridCollectionType;
+    }
+}
+
+%extend XdmfSetType {
+    bool __eq__(const XdmfSetType * setType) {
+   	return $self == setType;
+    }
+}
+
+%extend XdmfTopologyType {
+    bool __eq__(const XdmfTopologyType * topologyType) {
+   	return $self == topologyType;
+    }
+}
+
 #endif /* SWIGPYTHON */
 
 // Shared Pointer Templates
