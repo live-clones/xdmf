@@ -68,7 +68,7 @@ if(XDMF_WRAP_PYTHON)
     set(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR})
     # optimize swig generation --- these are all flags corresponding to -O
     # except -fvirtual which breaks visitor operation
-    set(CMAKE_SWIG_FLAGS ${XDMF_SWIG_FLAGS} -builtin -modern -fastdispatch -nosafecstrings -noproxydel -fastproxy -fastinit -fastunpack -fastquery -modernargs -nobuildnone)
+    set(CMAKE_SWIG_FLAGS ${XDMF_SWIG_FLAGS} -modern -fastdispatch -nosafecstrings -noproxydel -fastproxy -fastinit -fastunpack -fastquery -modernargs -nobuildnone)
     set_source_files_properties(${python_name}.i PROPERTIES CPLUSPLUS ON)
     set(swig_extra_generated_files "")
     swig_add_module(${python_name} python ${python_name}.i)
