@@ -283,8 +283,15 @@ XdmfCoreReader::parse(const std::string & lightData) const
 {
   mImpl->parse(lightData);
   const xmlNodePtr currNode = xmlDocGetRootElement(mImpl->mDocument);
-  const std::vector<shared_ptr<XdmfItem> > toReturn =
-    mImpl->read(currNode->children);
+  std::vector<shared_ptr<XdmfItem> > toReturn;
+  if(mImpl->mItemFactory->createItem((const char*)currNode->name,
+                                     std::map<std::string, std::string>(),
+                                     std::vector<shared_ptr<XdmfItem> >()) == NULL) {
+    toReturn = mImpl->read(currNode->children);
+  }
+  else {
+    toReturn = mImpl->read(currNode);
+  }
   mImpl->closeFile();
   return(toReturn[0]);
 }
