@@ -741,6 +741,7 @@ XdmfPartitioner::unpartition(const shared_ptr<XdmfGridCollection> gridToUnPartit
 
 #else
 
+#include <cstdio>
 #include <iostream>
 #include <sstream>
 #include "XdmfDomain.hpp"
