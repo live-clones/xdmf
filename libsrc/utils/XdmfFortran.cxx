@@ -148,6 +148,16 @@ XdmfFortran::AddCollection(char * collectionType)
   currentCollection->SetGridType(XDMF_GRID_COLLECTION);
   currentCollection->SetCollectionTypeFromString(collectionType);
   currentCollection->SetDeleteOnGridDelete(true);
+
+  if (currentTime >= 0)
+  {
+    XdmfTime * t = currentCollection->GetTime();
+    t->SetTimeType(XDMF_TIME_SINGLE);
+    t->SetValue(currentTime);
+    currentCollection->SetBuildTime(1);
+    currentTime = -1;
+  }
+
   if (myCollections.empty())
   {
     myDomain->Insert(currentCollection);
