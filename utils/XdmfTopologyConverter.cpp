@@ -41,6 +41,55 @@
 //
 namespace {
 
+  void handleSetConversion(const shared_ptr<XdmfUnstructuredGrid> gridToConvert,
+			   const shared_ptr<XdmfUnstructuredGrid> toReturn,
+			   const std::map<unsigned int, unsigned int> & oldIdToNewId,
+			   const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) 
+  {
+
+    for(unsigned int i=0; i<gridToConvert->getNumberSets(); ++i) {
+      const shared_ptr<XdmfSet> set = gridToConvert->getSet(i);
+      const shared_ptr<const XdmfSetType> setType = set->getType();
+      if(setType == XdmfSetType::Cell()) {
+	toReturn->insert(set);
+      }
+      else if(setType == XdmfSetType::Node()) {
+	bool releaseSet = false;
+	if(!set->isInitialized()) {
+	  set->read();
+	  releaseSet = true;
+	}
+	shared_ptr<XdmfSet> toReturnSet = XdmfSet::New();
+	toReturnSet->setName(set->getName());
+	toReturnSet->setType(set->getType());
+	toReturnSet->initialize(set->getArrayType(),
+				set->getSize());
+	  
+	for(unsigned int i=0; i<set->getSize(); ++i) {
+	  const unsigned int nodeId = set->getValue<unsigned int>(i);
+	  std::map<unsigned int, unsigned int>::const_iterator iter =
+	    oldIdToNewId.find(nodeId);
+	  if(iter == oldIdToNewId.end()) {
+	    XdmfError::message(XdmfError::FATAL, 
+			       "Error converting hex node id set to hex_27 "
+			       "node id set.");
+	  }
+	  toReturnSet->insert(i, iter->second);
+	}
+	if(releaseSet) {
+	  set->release();
+	}
+	  
+	toReturn->insert(toReturnSet);
+	  
+	if(heavyDataWriter) {
+	  toReturnSet->accept(heavyDataWriter);
+	  toReturnSet->release();
+	}
+      }
+    }
+  }
+
   // Classes that perform topology conversions. Converter is the root
   // base class.  Tessellator is a subclass of Converter that deals
   // with cases where the mesh only needs to be tessellated to carry
@@ -224,6 +273,327 @@ namespace {
 
   };
 
+  class HexahedronToHexahedron27 : public Converter {
+
+  public:
+
+    HexahedronToHexahedron27()
+    {
+    }
+
+    virtual ~HexahedronToHexahedron27()
+    {
+    }
+
+    void
+    calculateMidPoint(std::vector<double> & result,
+		      const std::vector<double> & point1,
+		      const std::vector<double> & point2) const
+    {
+      for (int i=0; i<3; i++)
+        result[i] = (point1[i]+point2[i]) / 2.0;
+    }
+
+    shared_ptr<XdmfUnstructuredGrid>
+    convert(const shared_ptr<XdmfUnstructuredGrid> gridToConvert,
+            const shared_ptr<const XdmfTopologyType> topologyType,
+            const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) const
+    {
+
+      shared_ptr<XdmfUnstructuredGrid> toReturn = XdmfUnstructuredGrid::New();
+      toReturn->setName(gridToConvert->getName());
+
+      shared_ptr<XdmfGeometry> geometry = gridToConvert->getGeometry();
+      shared_ptr<XdmfGeometry> toReturnGeometry = toReturn->getGeometry();
+
+      toReturnGeometry->setType(geometry->getType());
+      toReturnGeometry->initialize(geometry->getArrayType());
+
+      bool releaseGeometry = false;
+      if(!geometry->isInitialized()) {
+	geometry->read();
+	releaseGeometry = true;
+      }
+
+      shared_ptr<XdmfTopology> topology = gridToConvert->getTopology();
+      shared_ptr<XdmfTopology> toReturnTopology = toReturn->getTopology();
+
+      toReturn->getTopology()->setType(topologyType);
+      toReturnTopology->initialize(topology->getArrayType());
+      toReturnTopology->reserve(topologyType->getNodesPerElement() *
+				topology->getNumberElements());
+
+      bool releaseTopology = false;
+      if(!topology->isInitialized()) {
+	topology->read();
+	releaseTopology = true;
+      }
+
+      std::map<std::vector<double>, unsigned int, PointComparison> coordToIdMap;
+      std::map<unsigned int, unsigned int> oldIdToNewId;
+
+      // allocate storage for values used in loop
+      unsigned int zeroIndex;
+      unsigned int oneIndex;
+      unsigned int twoIndex;
+      unsigned int threeIndex;
+      unsigned int fourIndex;
+      unsigned int fiveIndex;
+      unsigned int sixIndex;
+      unsigned int sevenIndex;
+      std::vector<double> elementCorner0(3);
+      std::vector<double> elementCorner1(3);
+      std::vector<double> elementCorner2(3);
+      std::vector<double> elementCorner3(3);
+      std::vector<double> elementCorner4(3);
+      std::vector<double> elementCorner5(3);
+      std::vector<double> elementCorner6(3);
+      std::vector<double> elementCorner7(3);
+      std::vector<double> newPoint(3);
+
+      unsigned int offset = 0;
+      unsigned int newIndex = 0;
+      for(unsigned int elem = 0; elem<topology->getNumberElements(); ++elem) {
+
+	// get indices of coner vertices of the element
+	zeroIndex = topology->getValue<unsigned int>(offset++);
+	oneIndex = topology->getValue<unsigned int>(offset++);
+	twoIndex = topology->getValue<unsigned int>(offset++);
+	threeIndex = topology->getValue<unsigned int>(offset++);
+	fourIndex = topology->getValue<unsigned int>(offset++);
+	fiveIndex = topology->getValue<unsigned int>(offset++);
+	sixIndex = topology->getValue<unsigned int>(offset++);
+	sevenIndex = topology->getValue<unsigned int>(offset++);
+
+	// get locations of corner vertices of the element
+	geometry->getValues(zeroIndex * 3,
+			    &(elementCorner0[0]),
+			    3);
+	geometry->getValues(oneIndex * 3,
+			    &(elementCorner1[0]),
+			    3);
+	geometry->getValues(twoIndex * 3,
+			    &(elementCorner2[0]),
+			    3);
+	geometry->getValues(threeIndex * 3,
+			    &(elementCorner3[0]),
+			    3);
+	geometry->getValues(fourIndex * 3,
+			    &(elementCorner4[0]),
+			    3);
+	geometry->getValues(fiveIndex * 3,
+			    &(elementCorner5[0]),
+			    3);
+	geometry->getValues(sixIndex * 3,
+			    &(elementCorner6[0]),
+			    3);
+	geometry->getValues(sevenIndex * 3,
+			    &(elementCorner7[0]),
+			    3);
+
+	// insert corner points
+	newIndex = this->insertPointWithCheck(elementCorner0,
+					      coordToIdMap,
+					      toReturnTopology,
+					      toReturnGeometry);
+	oldIdToNewId[zeroIndex] = newIndex;
+	newIndex = this->insertPointWithCheck(elementCorner1,
+					      coordToIdMap,
+					      toReturnTopology,
+					      toReturnGeometry);
+	oldIdToNewId[oneIndex] = newIndex;
+	newIndex = this->insertPointWithCheck(elementCorner2,
+					      coordToIdMap,
+					      toReturnTopology,
+					      toReturnGeometry);
+	oldIdToNewId[twoIndex] = newIndex;
+	newIndex = this->insertPointWithCheck(elementCorner3,
+					      coordToIdMap,
+					      toReturnTopology,
+					      toReturnGeometry);
+	oldIdToNewId[threeIndex] = newIndex;
+	newIndex = this->insertPointWithCheck(elementCorner4,
+					      coordToIdMap,
+					      toReturnTopology,
+					      toReturnGeometry);
+	oldIdToNewId[fourIndex] = newIndex;
+	newIndex = this->insertPointWithCheck(elementCorner5,
+					      coordToIdMap,
+					      toReturnTopology,
+					      toReturnGeometry);
+	oldIdToNewId[fiveIndex] = newIndex;
+	newIndex = this->insertPointWithCheck(elementCorner6,
+					      coordToIdMap,
+					      toReturnTopology,
+					      toReturnGeometry);
+	oldIdToNewId[sixIndex] = newIndex;
+	newIndex = this->insertPointWithCheck(elementCorner7,
+					      coordToIdMap,
+					      toReturnTopology,
+					      toReturnGeometry);
+	oldIdToNewId[sevenIndex] = newIndex;
+
+	// insert additional points
+	calculateMidPoint(newPoint,
+			  elementCorner0,
+			  elementCorner1);
+	this->insertPointWithCheck(newPoint,
+				   coordToIdMap,
+				   toReturnTopology,
+				   toReturnGeometry);
+	calculateMidPoint(newPoint,
+			  elementCorner1,
+			  elementCorner2);
+	this->insertPointWithCheck(newPoint,
+				   coordToIdMap,
+				   toReturnTopology,
+				   toReturnGeometry);
+	calculateMidPoint(newPoint,
+			  elementCorner2,
+			  elementCorner3);
+	this->insertPointWithCheck(newPoint,
+				   coordToIdMap,
+				   toReturnTopology,
+				   toReturnGeometry);
+	calculateMidPoint(newPoint,
+			  elementCorner0,
+			  elementCorner3);
+	this->insertPointWithCheck(newPoint,
+				   coordToIdMap,
+				   toReturnTopology,
+				   toReturnGeometry);
+	calculateMidPoint(newPoint,
+			  elementCorner4,
+			  elementCorner5);
+	this->insertPointWithCheck(newPoint,
+				   coordToIdMap,
+				   toReturnTopology,
+				   toReturnGeometry);
+	calculateMidPoint(newPoint,
+			  elementCorner5,
+			  elementCorner6);
+	this->insertPointWithCheck(newPoint,
+				   coordToIdMap,
+				   toReturnTopology,
+				   toReturnGeometry);
+	calculateMidPoint(newPoint,
+			  elementCorner6,
+			  elementCorner7);
+	this->insertPointWithCheck(newPoint,
+				   coordToIdMap,
+				   toReturnTopology,
+				   toReturnGeometry);
+	calculateMidPoint(newPoint,
+			  elementCorner4,
+			  elementCorner7);
+	this->insertPointWithCheck(newPoint,
+				   coordToIdMap,
+				   toReturnTopology,
+				   toReturnGeometry);
+	calculateMidPoint(newPoint,
+			  elementCorner0,
+			  elementCorner4);
+	this->insertPointWithCheck(newPoint,
+				   coordToIdMap,
+				   toReturnTopology,
+				   toReturnGeometry);
+	calculateMidPoint(newPoint,
+			  elementCorner1,
+			  elementCorner5);
+	this->insertPointWithCheck(newPoint,
+				   coordToIdMap,
+				   toReturnTopology,
+				   toReturnGeometry);
+	calculateMidPoint(newPoint,
+			  elementCorner2,
+			  elementCorner6);
+	this->insertPointWithCheck(newPoint,
+				   coordToIdMap,
+				   toReturnTopology,
+				   toReturnGeometry);
+	calculateMidPoint(newPoint,
+			  elementCorner3,
+			  elementCorner7);
+	this->insertPointWithCheck(newPoint,
+				   coordToIdMap,
+				   toReturnTopology,
+				   toReturnGeometry);
+	calculateMidPoint(newPoint,
+			  elementCorner0,
+			  elementCorner7);
+	this->insertPointWithCheck(newPoint,
+				   coordToIdMap,
+				   toReturnTopology,
+				   toReturnGeometry);
+	calculateMidPoint(newPoint,
+			  elementCorner1,
+			  elementCorner6);
+	this->insertPointWithCheck(newPoint,
+				   coordToIdMap,
+				   toReturnTopology,
+				   toReturnGeometry);
+	calculateMidPoint(newPoint,
+			  elementCorner1,
+			  elementCorner4);
+	this->insertPointWithCheck(newPoint,
+				   coordToIdMap,
+				   toReturnTopology,
+				   toReturnGeometry);
+	calculateMidPoint(newPoint,
+			  elementCorner2,
+			  elementCorner7);
+	this->insertPointWithCheck(newPoint,
+				   coordToIdMap,
+				   toReturnTopology,
+				   toReturnGeometry);
+	calculateMidPoint(newPoint,
+			  elementCorner0,
+			  elementCorner2);
+	this->insertPointWithCheck(newPoint,
+				   coordToIdMap,
+				   toReturnTopology,
+				   toReturnGeometry);
+	calculateMidPoint(newPoint,
+			  elementCorner4,
+			  elementCorner6);
+	this->insertPointWithCheck(newPoint,
+				   coordToIdMap,
+				   toReturnTopology,
+				   toReturnGeometry);
+	calculateMidPoint(newPoint,
+			  elementCorner0,
+			  elementCorner6);
+	this->insertPointWithoutCheck(newPoint,
+				      toReturnTopology,
+				      toReturnGeometry);
+       
+      }
+ 
+      if(releaseTopology) {
+	topology->release();
+      }
+      if(releaseGeometry) {
+	geometry->release();
+      }
+       
+      if(heavyDataWriter) {
+	toReturnTopology->accept(heavyDataWriter);
+	toReturnTopology->release();
+	toReturnGeometry->accept(heavyDataWriter);
+	toReturnGeometry->release();
+      }
+
+      handleSetConversion(gridToConvert,
+			  toReturn,
+			  oldIdToNewId,
+			  heavyDataWriter);
+       
+      return toReturn;
+      
+    }
+    
+  };
+
   template <unsigned int ORDER, bool ISSPECTRAL>
   class HexahedronToHighOrderHexahedron : public Converter {
 
@@ -248,7 +618,6 @@ namespace {
       for (int i=0; i<3; i++)
         result[i] = point1[i]+scalar*(point2[i]-point1[i]);
     }
-
 
     shared_ptr<XdmfUnstructuredGrid>
     convert(const shared_ptr<XdmfUnstructuredGrid> gridToConvert,
@@ -276,7 +645,7 @@ namespace {
 
       toReturn->getTopology()->setType(topologyType);
       toReturnTopology->initialize(topology->getArrayType());
-      toReturnTopology->reserve(mNodesPerElement *
+      toReturnTopology->reserve(topologyType->getNodesPerElement() *
                                 topology->getNumberElements());
 
       bool releaseTopology = false;
@@ -316,9 +685,7 @@ namespace {
       unsigned int offset = 0;
       for(unsigned int elem = 0; elem<topology->getNumberElements(); ++elem) {
 
-        //
         // get indices of coner vertices of the element
-        //
         zeroIndex = topology->getValue<unsigned int>(offset++);
         oneIndex = topology->getValue<unsigned int>(offset++);
         twoIndex = topology->getValue<unsigned int>(offset++);
@@ -402,7 +769,7 @@ namespace {
               if((i == 0 || i == ORDER) ||
                  (j == 0 || j == ORDER) ||
                  (k == 0 || k == ORDER)) {
-                unsigned int newIndex = 
+                const unsigned int newIndex = 
                   this->insertPointWithCheck(point,
                                              coordToIdMap,
                                              toReturnTopology,
@@ -468,55 +835,16 @@ namespace {
         toReturnGeometry->release();
       }
 
-      // handle sets
-      for(unsigned int i=0; i<gridToConvert->getNumberSets(); ++i) {
-        const shared_ptr<XdmfSet> set = gridToConvert->getSet(i);
-        const shared_ptr<const XdmfSetType> setType = set->getType();
-        if(setType == XdmfSetType::Cell()) {
-          toReturn->insert(set);
-        }
-        else if(setType == XdmfSetType::Node()) {
-          bool releaseSet = false;
-          if(!set->isInitialized()) {
-            set->read();
-            releaseSet = true;
-          }
-          shared_ptr<XdmfSet> toReturnSet = XdmfSet::New();
-          toReturnSet->setName(set->getName());
-          toReturnSet->setType(set->getType());
-          toReturnSet->initialize(set->getArrayType(),
-                                  set->getSize());
-                                  
-          for(unsigned int i=0; i<set->getSize(); ++i) {
-            const unsigned int nodeId = set->getValue<unsigned int>(i);
-            std::map<unsigned int, unsigned int>::const_iterator iter =
-              oldIdToNewId.find(nodeId);
-            if(iter == oldIdToNewId.end()) {
-              XdmfError::message(XdmfError::FATAL, 
-                                 "Error converting hex node id set to high "
-                                 "order node id set.");
-            }
-            toReturnSet->insert(i, iter->second);
-          }
-          if(releaseSet) {
-            set->release();
-          }
+      handleSetConversion(gridToConvert,
+			  toReturn,
+			  oldIdToNewId,
+			  heavyDataWriter);
 
-          toReturn->insert(toReturnSet);
-
-          if(heavyDataWriter) {
-            toReturnSet->accept(heavyDataWriter);
-            toReturnSet->release();
-          }
-        }
-      }
       return toReturn;
     }
 
   private:
     static const unsigned int mNodesPerEdge = ORDER + 1;
-    static const unsigned int mNodesPerElement = mNodesPerEdge *
-      mNodesPerEdge * mNodesPerEdge;
     static const double points[];
 
   };
@@ -760,8 +1088,6 @@ namespace {
 
   private:
     static const unsigned int mNodesPerEdge = (ORDER + 1);
-    static const unsigned int mNodesPerElement = mNodesPerEdge *
-      mNodesPerEdge * mNodesPerEdge;
 
   };
 
@@ -809,6 +1135,9 @@ XdmfTopologyConverter::convert(const shared_ptr<XdmfUnstructuredGrid> gridToConv
 
   Converter * converter = NULL;
   if(topologyTypeToConvert == XdmfTopologyType::Hexahedron()) {
+    if(topologyType == XdmfTopologyType::Hexahedron_27()) {
+      converter = new HexahedronToHexahedron27();
+    }
     if(topologyType == XdmfTopologyType::Hexahedron_64()) {
       if(options == 1) {
         converter = new HexahedronToHighOrderHexahedron<3, true>();

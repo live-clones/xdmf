@@ -47,6 +47,7 @@ class XdmfUnstructuredGrid;
  * form the new topology, no additional points are added.
  *
  * Currently supported conversions:
+ *   Hexahedron to Hexahedron_27
  *   Hexahedron to Hexahedron_64
  *   Hexahedron to Hexahedron_125
  *   Hexahedron to Hexahedron_216
