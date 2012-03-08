@@ -247,7 +247,8 @@ int vtkXdmfReader::RequestDataObject(vtkInformationVector *outputVector)
   if (!output || output->GetDataObjectType() != vtk_type)
     {
     output = vtkDataObjectTypes::NewDataObject(vtk_type);
-    output->SetPipelineInformation(outputVector->GetInformationObject(0));
+    outputVector->GetInformationObject(0)->Set(
+        vtkDataObject::DATA_OBJECT(), output );
     this->GetOutputPortInformation(0)->Set(
       vtkDataObject::DATA_EXTENT_TYPE(), output->GetExtentType());
     output->Delete();

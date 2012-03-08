@@ -218,17 +218,9 @@ void vtkXdmfWriter::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //------------------------------------------------------------------------------
-void vtkXdmfWriter::SetInput(vtkDataObject *input)
+void vtkXdmfWriter::SetInputData(vtkDataObject *input)
 {
-  if (input)
-    {
-    this->SetInputConnection(0, input->GetProducerPort());
-    }
-  else
-    {
-    // Setting a NULL input remove the connection.
-    this->SetInputConnection(0, NULL);
-    }
+  this->SetInputDataInternal(0,input);
 }
 
 //------------------------------------------------------------------------------

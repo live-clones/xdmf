@@ -60,7 +60,7 @@ public:
 
   // Description:
   // Set the input data set.
-  virtual void SetInput(vtkDataObject* dobj);
+  virtual void SetInputData(vtkDataObject* dobj);
 
   // Description:
   // Set or get the file name of the xdmf file.
