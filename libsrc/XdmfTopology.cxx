@@ -161,6 +161,81 @@ namespace {
     currHash.push_back(newFace);
   }
 
+  void 
+  InsertQuad9InHash(XdmfInt64 a, XdmfInt64 b, XdmfInt64 c, XdmfInt64 d,
+		    XdmfInt64 e, XdmfInt64 f, XdmfInt64 g, XdmfInt64 h,
+                    XdmfInt64 i,
+		    std::vector<std::vector<std::vector<XdmfInt64> > > & hash)
+  {
+    XdmfInt64 tmp;
+    
+    // Reorder to get smallest id in a.
+    if (b < a && b < c && b < d) {
+      tmp = a;
+      a = b;
+      b = c;
+      c = d;
+      d = tmp;
+      tmp = e;
+      e = f;
+      f = g;
+      g = h;
+      h = tmp;
+    }
+    else if (c < a && c < b && c < d) {
+      tmp = a;
+      a = c;
+      c = tmp;
+      tmp = b;
+      b = d;
+      d = tmp;
+      tmp = e;
+      e = g;
+      g = tmp;
+      tmp = f;
+      f = h;
+      h = tmp;
+    }
+    else if (d < a && d < b && d < c) {
+      tmp = a;
+      a = d;
+      d = c;
+      c = b;
+      b = tmp;
+      tmp = e;
+      e = h;
+      h = g;
+      g = f;
+      f = tmp;
+    }
+
+    // Look for existing cell in the hash;
+    std::vector<std::vector<XdmfInt64> > & currHash = hash[a];
+    for(std::vector<std::vector<XdmfInt64> >::iterator iter = 
+	  currHash.begin(); iter != currHash.end(); ++iter) {
+      std::vector<XdmfInt64> & currFace = *iter;
+      // 7 because b + c + d + e + f + g + h
+      if(currFace.size() == 7) {
+	if ((b == currFace[0] && d == currFace[2]) || 
+	    (b == currFace[2] && d == currFace[0])) {
+	  currHash.erase(iter);
+	  return;
+	}
+      }
+    }
+    
+    std::vector<XdmfInt64> newFace(8);
+    newFace[0] = b;
+    newFace[1] = c;
+    newFace[2] = d;
+    newFace[3] = e;
+    newFace[4] = f;
+    newFace[5] = g;
+    newFace[6] = h;
+    newFace[7] = i;
+    currHash.push_back(newFace);
+  }
+
   void
   InsertTriInHash(XdmfInt64 a, XdmfInt64 b, XdmfInt64 c, 
 		  std::vector<std::vector<std::vector<XdmfInt64> > > & hash)
@@ -1310,7 +1385,73 @@ XdmfTopology::GetExternalSurface() {
     toReturnCells->SetValues(0, &newCells[0], newCells.size());
     return toReturn;
   }
-
+else if(TopologyType == XDMF_HEX_27) {
+    const int stopValue = numberCells * 27;
+    for(XdmfInt64 arrayOffset=0; arrayOffset<stopValue; arrayOffset += 27) {
+      const XdmfInt64 a = Connectivity->GetValueAsInt64(arrayOffset);
+      const XdmfInt64 b = Connectivity->GetValueAsInt64(arrayOffset + 1);
+      const XdmfInt64 c = Connectivity->GetValueAsInt64(arrayOffset + 2);
+      const XdmfInt64 d = Connectivity->GetValueAsInt64(arrayOffset + 3);
+      const XdmfInt64 e = Connectivity->GetValueAsInt64(arrayOffset + 4);
+      const XdmfInt64 f = Connectivity->GetValueAsInt64(arrayOffset + 5);
+      const XdmfInt64 g = Connectivity->GetValueAsInt64(arrayOffset + 6);
+      const XdmfInt64 h = Connectivity->GetValueAsInt64(arrayOffset + 7);
+      const XdmfInt64 i = Connectivity->GetValueAsInt64(arrayOffset + 8);
+      const XdmfInt64 j = Connectivity->GetValueAsInt64(arrayOffset + 9);
+      const XdmfInt64 k = Connectivity->GetValueAsInt64(arrayOffset + 10);
+      const XdmfInt64 l = Connectivity->GetValueAsInt64(arrayOffset + 11);
+      const XdmfInt64 m = Connectivity->GetValueAsInt64(arrayOffset + 12);
+      const XdmfInt64 n = Connectivity->GetValueAsInt64(arrayOffset + 13);
+      const XdmfInt64 o = Connectivity->GetValueAsInt64(arrayOffset + 14);
+      const XdmfInt64 p = Connectivity->GetValueAsInt64(arrayOffset + 15);
+      const XdmfInt64 q = Connectivity->GetValueAsInt64(arrayOffset + 16);
+      const XdmfInt64 r = Connectivity->GetValueAsInt64(arrayOffset + 17);
+      const XdmfInt64 s = Connectivity->GetValueAsInt64(arrayOffset + 18);
+      const XdmfInt64 t = Connectivity->GetValueAsInt64(arrayOffset + 19);
+      const XdmfInt64 u = Connectivity->GetValueAsInt64(arrayOffset + 20);
+      const XdmfInt64 v = Connectivity->GetValueAsInt64(arrayOffset + 21);
+      const XdmfInt64 w = Connectivity->GetValueAsInt64(arrayOffset + 22);
+      const XdmfInt64 x = Connectivity->GetValueAsInt64(arrayOffset + 23);
+      const XdmfInt64 y = Connectivity->GetValueAsInt64(arrayOffset + 24);
+      const XdmfInt64 z = Connectivity->GetValueAsInt64(arrayOffset + 25);
+      InsertQuad9InHash(a, b, f, e, i, r, m, q, w, hash);
+      InsertQuad9InHash(a, d, c, b, l, k, j, i, y, hash);
+      InsertQuad9InHash(a, e, h, d, q, p, t, l, u, hash);
+      InsertQuad9InHash(b, c, g, f, j, s, n, r, v, hash);
+      InsertQuad9InHash(c, d, h, g, k, t, o, s, x, hash);
+      InsertQuad9InHash(e, f, g, h, m, n, o, p, z, hash);
+    }
+    
+    // create new topology
+    XdmfTopology * toReturn = new XdmfTopology();
+    toReturn->SetTopologyType(XDMF_QUAD_9);
+    std::vector<XdmfInt64> newCells;
+    int index = 0;
+    for(std::vector<std::vector<std::vector<XdmfInt64> > >::const_iterator
+	  hashIter = hash.begin(); hashIter != hash.end(); 
+	++hashIter, ++index) {
+      const std::vector<std::vector<XdmfInt64> > & currHash = *hashIter;
+      for(std::vector<std::vector<XdmfInt64> >::const_iterator currHashIter = 
+	    currHash.begin(); currHashIter != currHash.end(); ++currHashIter) {
+	const std::vector<XdmfInt64> & currFaceIds = *currHashIter;
+	newCells.push_back(index);
+	newCells.push_back(currFaceIds[0]);
+	newCells.push_back(currFaceIds[1]);
+	newCells.push_back(currFaceIds[2]);
+	newCells.push_back(currFaceIds[3]);
+	newCells.push_back(currFaceIds[4]);
+	newCells.push_back(currFaceIds[5]);
+	newCells.push_back(currFaceIds[6]);
+	newCells.push_back(currFaceIds[7]);
+      }
+    }
+    toReturn->SetNumberOfElements(newCells.size() / 9);
+    XdmfArray * toReturnCells = toReturn->GetConnectivity();
+    toReturnCells->SetNumberType(XDMF_INT64_TYPE);
+    toReturnCells->SetNumberOfElements(newCells.size());
+    toReturnCells->SetValues(0, &newCells[0], newCells.size());
+    return toReturn;
+  }
   XdmfErrorMessage("Unsupported TopologyType when computing external surface");
   return NULL;
 
