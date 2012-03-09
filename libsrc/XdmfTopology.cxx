@@ -215,7 +215,7 @@ namespace {
 	  currHash.begin(); iter != currHash.end(); ++iter) {
       std::vector<XdmfInt64> & currFace = *iter;
       // 7 because b + c + d + e + f + g + h
-      if(currFace.size() == 7) {
+      if(currFace.size() == 8) {
 	if ((b == currFace[0] && d == currFace[2]) || 
 	    (b == currFace[2] && d == currFace[0])) {
 	  currHash.erase(iter);
