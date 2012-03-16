@@ -94,11 +94,13 @@ bool DoDataObjectsDiffer(vtkDataObject *dobj1, vtkDataObject *dobj2)
     cerr << "Number of field arrays test failed" << endl;
     return true;
   }
-//  if (dobj1->GetEstimatedMemorySize()!=dobj2->GetEstimatedMemorySize())
-//  {
-//    cerr << "Mem size test failed" << endl;
-//    return true;
-//  }
+  if (!dobj1->IsA("vtkPolyData") &&
+      !dobj1->IsA("vtkMultiBlockDataSet") &&
+      dobj1->GetActualMemorySize()!=dobj2->GetActualMemorySize())
+  {
+    cerr << "Mem size test failed" << endl;
+    return true;
+  }
   vtkDataSet *ds1 = vtkDataSet::SafeDownCast(dobj1);
   vtkDataSet *ds2 = vtkDataSet::SafeDownCast(dobj2);
   if (ds1 && ds2)
