@@ -2,11 +2,16 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 option(XDMF_BUILD_EXODUS_IO OFF)
 option(XDMF_BUILD_PARTITIONER OFF)
+option(XDMF_BUILD_FORTRAN OFF)
 
 set(XdmfUtilsSources
   XdmfDiff
   XdmfTopologyConverter)
 set(XdmfUtilsLinkLibraries Xdmf)
+
+if(XDMF_BUILD_FORTRAN)
+  set(XdmfUtilsSources ${XdmfUtilsSources} XdmfFortran)
+endif(XDMF_BUILD_FORTRAN)
 
 if(XDMF_BUILD_EXODUS_IO)
   set(XDMF_SWIG_FLAGS ${XDMF_SWIG_FLAGS} -DXDMF_BUILD_EXODUS_IO)
@@ -80,6 +85,10 @@ endif(XDMF_WRAP_PYTHON)
 foreach(source ${XdmfUtilsSources})
   set(XdmfUtilsHeaders ${XdmfUtilsHeaders} ${source}.hpp)
 endforeach(source ${XdmfUtilsSources})
+
+if(XDMF_BUILD_FORTRAN)
+  set(XdmfUtilsHeaders ${XdmfUtilsHeaders} Xdmf.f)
+endif(XDMF_BUILD_FORTRAN)
 
 install(FILES ${XdmfUtilsHeaders} DESTINATION include)
 install(TARGETS XdmfUtils 
