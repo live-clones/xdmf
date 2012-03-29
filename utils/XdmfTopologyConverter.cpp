@@ -1258,4 +1258,7 @@ XdmfTopologyConverter::convert(const shared_ptr<XdmfUnstructuredGrid> gridToConv
                        "XdmfTopologyConverter::convert");
   }
 
+  // not reached
+  return shared_ptr<XdmfUnstructuredGrid>();
+
 }

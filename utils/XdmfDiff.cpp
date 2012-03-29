@@ -144,7 +144,6 @@ XdmfDiff::compare(const shared_ptr<XdmfItem> item1,
 
   assert(diffVisitor1->mItems.size() == diffVisitor2->mItems.size());
 
-  std::vector<XdmfArray *>::size_type arrayOffset = 0;
   for(std::vector<XdmfItem *>::size_type i=0;
       i<diffVisitor1->mItems.size();
       ++i) {
