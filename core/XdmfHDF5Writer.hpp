@@ -51,7 +51,7 @@ class XDMFCORE_EXPORT XdmfHDF5Writer : public XdmfHeavyDataWriter {
 public:
 
   /**
-   * Construct XdmfHDF5Writer
+   * Construct XdmfHDF5Writer.
    *
    * @param filePath the location of the hdf5 file to output to on disk.
    * @param clobberFile whether to overwrite the previous file if it exists.
@@ -62,6 +62,10 @@ public:
                                         const bool clobberFile = false);
 
   virtual ~XdmfHDF5Writer();
+
+  void closeFile();
+
+  void openFile();
 
   virtual void visit(XdmfArray & array,
                      const shared_ptr<XdmfBaseVisitor> visitor);
@@ -104,8 +108,16 @@ protected:
 
 private:
 
+  /**
+   * PIMPL
+   */
+  class XdmfHDF5WriterImpl;
+
   XdmfHDF5Writer(const XdmfHDF5Writer &);  // Not implemented.
   void operator=(const XdmfHDF5Writer &);  // Not implemented.
+
+  XdmfHDF5WriterImpl * mImpl;
+
 };
 
 #endif /* XDMFHDF5WRITER_HPP_ */

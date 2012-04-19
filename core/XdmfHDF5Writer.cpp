@@ -26,9 +26,73 @@
 #include <cstdio>
 #include "XdmfArray.hpp"
 #include "XdmfArrayType.hpp"
+#include "XdmfError.hpp"
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfHDF5Writer.hpp"
-#include "XdmfError.hpp"
+
+/**
+ * PIMPL
+ */
+class XdmfHDF5Writer::XdmfHDF5WriterImpl {
+
+public:
+
+  XdmfHDF5WriterImpl():
+    mHDF5Handle(-1)
+  {
+  };
+
+  ~XdmfHDF5WriterImpl()
+  {
+    closeFile();
+  };
+
+  void
+  closeFile()
+  {
+    if(mHDF5Handle >= 0) {
+      herr_t status = H5Fclose(mHDF5Handle);
+      mHDF5Handle = -1;
+    }
+  };  
+
+  void
+  openFile(const std::string & filePath)
+  {
+
+    if(mHDF5Handle >= 0) {
+      // Perhaps we should throw a warning.
+      closeFile();
+    }
+
+    // Save old error handler and turn off error handling for now
+    H5E_auto_t old_func;
+    void * old_client_data;
+    H5Eget_auto(0, &old_func, &old_client_data);
+    H5Eset_auto2(0, NULL, NULL);
+  
+    int fapl = H5P_DEFAULT;
+
+    if(H5Fis_hdf5(filePath.c_str()) > 0) {
+      mHDF5Handle = H5Fopen(filePath.c_str(), 
+                            H5F_ACC_RDWR, 
+                            fapl);
+    }
+    else {
+      mHDF5Handle = H5Fcreate(filePath.c_str(),
+                              H5F_ACC_TRUNC,
+                              H5P_DEFAULT,
+                              fapl);
+    }
+
+    // Restore previous error handler
+    H5Eset_auto2(0, old_func, old_client_data);
+
+  }
+
+  hid_t mHDF5Handle;
+
+};
 
 shared_ptr<XdmfHDF5Writer>
 XdmfHDF5Writer::New(const std::string & filePath,
@@ -42,12 +106,14 @@ XdmfHDF5Writer::New(const std::string & filePath,
 }
 
 XdmfHDF5Writer::XdmfHDF5Writer(const std::string & filePath) :
-  XdmfHeavyDataWriter(filePath)
+  XdmfHeavyDataWriter(filePath),
+  mImpl(new XdmfHDF5WriterImpl())
 {
 }
 
 XdmfHDF5Writer::~XdmfHDF5Writer()
 {
+  delete mImpl;
 }
 
 shared_ptr<XdmfHDF5Controller>
@@ -64,6 +130,18 @@ XdmfHDF5Writer::createHDF5Controller(const std::string & hdf5FilePath,
                                  start,
                                  stride,
                                  count);
+}
+
+void 
+XdmfHDF5Writer::closeFile()
+{
+  mImpl->closeFile();
+}
+
+void 
+XdmfHDF5Writer::openFile()
+{
+  mImpl->openFile(mFilePath);
 }
 
 void
@@ -135,25 +213,20 @@ XdmfHDF5Writer::write(XdmfArray & array,
     // Open a hdf5 dataset and write to it on disk.
     herr_t status;
     hsize_t size = array.getSize();
-    hid_t hdf5Handle;
 
     // Save old error handler and turn off error handling for now
     H5E_auto_t old_func;
     void * old_client_data;
     H5Eget_auto(0, &old_func, &old_client_data);
     H5Eset_auto2(0, NULL, NULL);
+   
+    bool closeFile = false;
+    if(mImpl->mHDF5Handle < 0) {
+      mImpl->openFile(hdf5FilePath);
+      closeFile = true;
+    }
 
-    if(H5Fis_hdf5(hdf5FilePath.c_str()) > 0) {
-      hdf5Handle = H5Fopen(hdf5FilePath.c_str(), H5F_ACC_RDWR, fapl);
-    }
-    else {
-      hdf5Handle = H5Fcreate(hdf5FilePath.c_str(),
-                             H5F_ACC_TRUNC,
-                             H5P_DEFAULT,
-                             fapl);
-    }
-    
-    hid_t dataset = H5Dopen(hdf5Handle,
+    hid_t dataset = H5Dopen(mImpl->mHDF5Handle,
                             dataSetPath.str().c_str(),
                             H5P_DEFAULT);
 
@@ -162,10 +235,13 @@ XdmfHDF5Writer::write(XdmfArray & array,
     while(dataset >= 0 && mMode == Default) {
       dataSetPath.str(std::string());
       dataSetPath << "Data" << ++mDataSetId;
-      dataset = H5Dopen(hdf5Handle,
+      dataset = H5Dopen(mImpl->mHDF5Handle,
                         dataSetPath.str().c_str(),
                         H5P_DEFAULT);
     }
+
+    // Restore previous error handler
+    H5Eset_auto2(0, old_func, old_client_data);
 
     hid_t dataspace = H5S_ALL;
     hid_t memspace = H5S_ALL;
@@ -180,7 +256,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
       hid_t property = H5Pcreate(H5P_DATASET_CREATE);
       std::vector<hsize_t> chunk_size(dimensions.size(), 1024);
       status = H5Pset_chunk(property, dimensions.size(), &chunk_size[0]);
-      dataset = H5Dcreate(hdf5Handle,
+      dataset = H5Dcreate(mImpl->mHDF5Handle,
                           dataSetPath.str().c_str(),
                           datatype,
                           memspace,
@@ -252,10 +328,9 @@ XdmfHDF5Writer::write(XdmfArray & array,
       status = H5Sclose(memspace);
     }
     status = H5Dclose(dataset);
-    status = H5Fclose(hdf5Handle);
-
-    // Restore previous error handler
-    H5Eset_auto2(0, old_func, old_client_data);
+    if(closeFile) {
+      mImpl->closeFile();
+    }
 
     // Attach a new controller to the array
     shared_ptr<XdmfHDF5Controller> newDataController =

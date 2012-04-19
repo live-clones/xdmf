@@ -92,6 +92,10 @@ public:
     
     xmlFreeDoc(mXMLDocument);
     xmlCleanupParser();
+    
+    if(mHeavyDataWriter->getMode() == XdmfHeavyDataWriter::Default) {
+      mHeavyDataWriter->closeFile();
+    }
   };
 
   void
@@ -106,6 +110,9 @@ public:
                (xmlChar*)"Version",
                (xmlChar*)mVersionString.c_str());
     xmlDocSetRootElement(mXMLDocument, mXMLCurrentNode);
+    if(mHeavyDataWriter->getMode() == XdmfHeavyDataWriter::Default) {
+      mHeavyDataWriter->openFile();
+    }
   }
 
   int mDepth;
@@ -326,6 +333,7 @@ void
 XdmfWriter::visit(XdmfItem & item,
                   const shared_ptr<XdmfBaseVisitor> visitor)
 {
+
   if (mImpl->mDepth == 0) {
     mImpl->openFile();
   }

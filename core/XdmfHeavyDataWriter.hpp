@@ -72,6 +72,12 @@ public:
   virtual ~XdmfHeavyDataWriter() = 0;
 
   /**
+   * Close file. This is only needed when the file is opened manually
+   * through openFile().
+   */
+  virtual void closeFile() = 0;
+
+  /**
    * Get the path to the heavy data file on disk this writer is writing to.
    *
    * @return a std::string containing the path to the heavy file on disk this
@@ -92,6 +98,22 @@ public:
    * @return true if data is freed after writing
    */
   bool getReleaseData() const;
+
+  /**
+   * Open file for writing. This is an optional command that can
+   * improve performance for some writers when writing many datasets
+   * to a single file. User must call closeFile() after completing
+   * output.
+   *
+   * By default, heavy data files are open and closed before and after
+   * writing each dataset to ensure that other writers have access to
+   * the file (we never know whether we will be writing to the file
+   * again). This is expensive in some cases, but is always
+   * safe. Opening the file once and writing many datasets may result
+   * in improved performance, but the user must tell the writer when
+   * to open and close the file.
+   */
+  virtual void openFile() = 0;
 
   /**
    * Set the mode of operation for this writer.

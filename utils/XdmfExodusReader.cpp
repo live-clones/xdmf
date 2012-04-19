@@ -221,6 +221,10 @@ shared_ptr<XdmfUnstructuredGrid>
 XdmfExodusReader::read(const std::string & fileName,
                        const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) const
 {
+  if(heavyDataWriter) {
+    heavyDataWriter->openFile();
+  }
+
   shared_ptr<XdmfUnstructuredGrid> toReturn = XdmfUnstructuredGrid::New();
 
   // Read Exodus II file to XdmfGridUnstructured via Exodus II API
@@ -628,9 +632,15 @@ XdmfExodusReader::read(const std::string & fileName,
   }
 
   ex_close(exodusHandle);
+
   delete [] blockIds;
   delete [] numElemsInBlock;
   delete [] numNodesPerElemInBlock;
   delete [] numElemAttrInBlock;
+
+  if(heavyDataWriter) {
+    heavyDataWriter->closeFile();
+  }
+
   return toReturn;
 }

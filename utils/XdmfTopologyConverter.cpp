@@ -1245,10 +1245,19 @@ XdmfTopologyConverter::convert(const shared_ptr<XdmfUnstructuredGrid> gridToConv
   }
 
   if(converter) {
+    if(heavyDataWriter) {
+      heavyDataWriter->openFile();
+    }
+
     shared_ptr<XdmfUnstructuredGrid> toReturn =
       converter->convert(gridToConvert,
                          topologyType,
                          heavyDataWriter);
+
+    if(heavyDataWriter) {
+      heavyDataWriter->closeFile();
+    }
+
     delete converter;
     return toReturn;
   }

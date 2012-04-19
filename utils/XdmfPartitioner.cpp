@@ -74,6 +74,11 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
                            const MetisScheme metisScheme,
                            const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) const
 {
+
+  if(heavyDataWriter) {
+    heavyDataWriter->openFile();
+  }
+
   // Make sure geometry and topology are non null
   if(!(gridToPartition->getGeometry() && gridToPartition->getTopology()))
     XdmfError::message(XdmfError::FATAL, 
