@@ -38,7 +38,8 @@ XdmfHDF5WriterDSM::New(const std::string & filePath,
 XdmfHDF5WriterDSM::XdmfHDF5WriterDSM(const std::string & filePath,
                                      H5FDdsmBuffer * const dsmBuffer) :
   XdmfHDF5Writer(filePath),
-  mDSMBuffer(dsmBuffer)
+  mDSMBuffer(dsmBuffer),
+  mFAPL(-1)
 {
 }
 
@@ -63,18 +64,54 @@ XdmfHDF5WriterDSM::createHDF5Controller(const std::string & hdf5FilePath,
                                     mDSMBuffer);
 }
 
+void 
+XdmfHDF5WriterDSM::closeFile()
+{
+  if(mFAPL >= 0) {
+    herr_t status = H5Pclose(mFAPL);
+    mFAPL = -1;
+  }
+
+  XdmfHDF5Writer::closeFile();
+}
+
+void 
+XdmfHDF5WriterDSM::openFile()
+{
+  if(mFAPL >= 0) {
+    this->closeFile();
+  }
+
+  // Set file access property list for DSM
+  mFAPL = H5Pcreate(H5P_FILE_ACCESS);
+
+  // Use DSM driver
+  H5Pset_fapl_dsm(mFAPL, MPI_COMM_WORLD, mDSMBuffer);
+
+  XdmfHDF5Writer::openFile(mFAPL);
+}
+
 void XdmfHDF5WriterDSM::visit(XdmfArray & array,
                               const shared_ptr<XdmfBaseVisitor>)
 {
-  // Set file access property list for DSM
-  hid_t fapl = H5Pcreate(H5P_FILE_ACCESS);
+  bool closeFAPL = false;
 
-  // Use DSM driver
-  H5Pset_fapl_dsm(fapl, MPI_COMM_WORLD, mDSMBuffer);
+  if(mFAPL < 0) {
+    // Set file access property list for DSM
+    mFAPL = H5Pcreate(H5P_FILE_ACCESS);
+
+    // Use DSM driver
+    H5Pset_fapl_dsm(mFAPL, MPI_COMM_WORLD, mDSMBuffer);
+
+    closeFAPL = true;
+  }
 
   // Write to DSM Buffer
-  this->write(array, fapl);
+  this->write(array, mFAPL);
 
-  // Close file access property list
-  herr_t status = H5Pclose(fapl);
+  if(closeFAPL) {
+    // Close file access property list
+    herr_t status = H5Pclose(mFAPL);
+    mFAPL = -1;
+  }
 }

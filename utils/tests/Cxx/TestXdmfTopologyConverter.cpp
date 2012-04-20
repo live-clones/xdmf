@@ -11,8 +11,6 @@
 
 int main(int, char *)
 {
-  const double epsilon = 1e-6;
-
   shared_ptr<XdmfTopologyConverter> converter =
     XdmfTopologyConverter::New();
 

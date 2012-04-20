@@ -56,8 +56,9 @@ public:
     }
   };  
 
-  void
-  openFile(const std::string & filePath)
+  int
+  openFile(const std::string & filePath,
+           const int fapl)
   {
 
     if(mHDF5Handle >= 0) {
@@ -71,12 +72,16 @@ public:
     H5Eget_auto(0, &old_func, &old_client_data);
     H5Eset_auto2(0, NULL, NULL);
   
-    int fapl = H5P_DEFAULT;
+    int toReturn = 0;
 
     if(H5Fis_hdf5(filePath.c_str()) > 0) {
       mHDF5Handle = H5Fopen(filePath.c_str(), 
                             H5F_ACC_RDWR, 
                             fapl);
+      hsize_t numObjects;
+      herr_t status = H5Gget_num_objs(mHDF5Handle,
+                                      &numObjects);
+      toReturn = numObjects;
     }
     else {
       mHDF5Handle = H5Fcreate(filePath.c_str(),
@@ -87,6 +92,8 @@ public:
 
     // Restore previous error handler
     H5Eset_auto2(0, old_func, old_client_data);
+
+    return toReturn;
 
   }
 
@@ -141,7 +148,14 @@ XdmfHDF5Writer::closeFile()
 void 
 XdmfHDF5Writer::openFile()
 {
-  mImpl->openFile(mFilePath);
+  this->openFile(H5P_DEFAULT);
+}
+
+void
+XdmfHDF5Writer::openFile(const int fapl)
+{
+  mDataSetId = mImpl->openFile(mFilePath,
+                               fapl);
 }
 
 void
@@ -222,7 +236,8 @@ XdmfHDF5Writer::write(XdmfArray & array,
    
     bool closeFile = false;
     if(mImpl->mHDF5Handle < 0) {
-      mImpl->openFile(hdf5FilePath);
+      mImpl->openFile(hdf5FilePath,
+                      fapl);
       closeFile = true;
     }
 
@@ -232,14 +247,21 @@ XdmfHDF5Writer::write(XdmfArray & array,
 
     // if default mode find a new data set to write to (keep
     // incrementing dataSetId)
-    while(dataset >= 0 && mMode == Default) {
-      dataSetPath.str(std::string());
-      dataSetPath << "Data" << ++mDataSetId;
-      dataset = H5Dopen(mImpl->mHDF5Handle,
-                        dataSetPath.str().c_str(),
-                        H5P_DEFAULT);
+    if(dataset >= 0 && mMode == Default) {
+      while(true) {
+        dataSetPath.str(std::string());
+        dataSetPath << "Data" << ++mDataSetId;
+        if(!H5Lexists(mImpl->mHDF5Handle,
+                      dataSetPath.str().c_str(),
+                      H5P_DEFAULT)) {
+          dataset = H5Dopen(mImpl->mHDF5Handle,
+                            dataSetPath.str().c_str(),
+                            H5P_DEFAULT); 
+          break;
+        }
+      }
     }
-
+    
     // Restore previous error handler
     H5Eset_auto2(0, old_func, old_client_data);
 

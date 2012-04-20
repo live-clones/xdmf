@@ -61,6 +61,10 @@ public:
 
   virtual ~XdmfHDF5WriterDSM();
 
+  void closeFile();
+
+  void openFile();
+
   void visit(XdmfArray & array,
              const shared_ptr<XdmfBaseVisitor> visitor);
 
@@ -83,6 +87,7 @@ private:
   void operator=(const XdmfHDF5WriterDSM &);  // Not implemented.
 
   H5FDdsmBuffer * mDSMBuffer;
+  int mFAPL;
 
 };
 

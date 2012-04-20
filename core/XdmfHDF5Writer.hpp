@@ -63,9 +63,9 @@ public:
 
   virtual ~XdmfHDF5Writer();
 
-  void closeFile();
+  virtual void closeFile();
 
-  void openFile();
+  virtual void openFile();
 
   virtual void visit(XdmfArray & array,
                      const shared_ptr<XdmfBaseVisitor> visitor);
@@ -97,6 +97,13 @@ protected:
                        const std::vector<unsigned int> & start,
                        const std::vector<unsigned int> & stride,
                        const std::vector<unsigned int> & count);
+
+  /**
+   * Open hdf5 file with a fapl.
+   *
+   * @param fapl the file access property list for the hdf5 file.
+   */
+  void openFile(const int fapl);
 
   /**
    * Write the XdmfArray to a hdf5 file.

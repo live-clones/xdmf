@@ -47,25 +47,10 @@ if(HDF5_FOUND)
       get_filename_component(MPI_LIBRARY_DIR ${MPI_LIBRARY} PATH)
       set(XDMF_LIBRARY_DIRS ${XDMF_LIBRARY_DIRS} ${MPI_LIBRARY_DIR})
     endif(MPI_FOUND)
-    option(XDMF_BUILD_DSM OFF)
-    if(XDMF_BUILD_DSM)
-      find_package(H5FDdsm REQUIRED NO_MODULE)
-      if(H5FDdsm_FOUND)
-        include_directories(${H5FD_DSM_INCLUDE_DIR})
-        get_filename_component(H5FD_DSM_LIBRARY_DIR 
-                               "${H5FD_DSM_INCLUDE_DIR}/../lib" REALPATH)
-	set(XDMF_LIBRARY_DIRS ${XDMF_LIBRARY_DIRS} ${H5FD_DSM_LIBRARY_DIR})
-        get_property(h5fddsm_lib_location TARGET H5FDdsm PROPERTY LOCATION)
-        set(H5FD_DSM_LIBRARIES ${h5fddsm_lib_location})
-      else(H5FDdsm_FOUND)
-        message(SEND_ERROR
-          "Cannot find HDF5 DSM!  Please set H5FDdsm_DIR and configure again.")
-      endif(H5FDdsm_FOUND)
-    endif(XDMF_BUILD_DSM)
   endif(HDF5_IS_PARALLEL)
   get_filename_component(HDF5_ROOT "${HDF5_INCLUDE_DIR}/../" REALPATH)
   set(HDF5_BINARY_DIRS ${HDF5_ROOT}/bin ${HDF5_ROOT}/dll)
-  set(XDMF_LIBRARIES ${XDMF_LIBRARIES} ${HDF5_LIBRARIES} ${H5FD_DSM_LIBRARIES})
+  set(XDMF_LIBRARIES ${XDMF_LIBRARIES} ${HDF5_LIBRARIES})
   set(XDMF_HDF5_BINARY_DIRS ${HDF5_BINARY_DIRS} PARENT_SCOPE)
   set(XDMF_BINARIES ${XDMF_BINARIES} ${HDF5_BINARY_DIRS})
 endif(HDF5_FOUND)
@@ -98,11 +83,26 @@ set(XdmfCoreSources
   XdmfVisitor
   XdmfWriter)
 
+option(XDMF_BUILD_DSM OFF)
 if(XDMF_BUILD_DSM)
   set(XdmfCoreSources
     ${XdmfCoreSources}
     XdmfHDF5ControllerDSM
     XdmfHDF5WriterDSM)
+
+  find_package(H5FDdsm REQUIRED NO_MODULE)
+  if(H5FDdsm_FOUND)
+    include_directories(${H5FD_DSM_INCLUDE_DIR})
+    get_filename_component(H5FD_DSM_LIBRARY_DIR 
+                           "${H5FD_DSM_INCLUDE_DIR}/../lib" REALPATH)
+    set(XDMF_LIBRARY_DIRS ${XDMF_LIBRARY_DIRS} ${H5FD_DSM_LIBRARY_DIR})
+    get_property(h5fddsm_lib_location TARGET H5FDdsm PROPERTY LOCATION)
+    set(H5FD_DSM_LIBRARIES ${h5fddsm_lib_location})
+    set(XDMF_LIBRARIES ${XDMF_LIBRARIES} ${H5FD_DSM_LIBRARIES})
+  else(H5FDdsm_FOUND)
+    message(SEND_ERROR
+      "Cannot find HDF5 DSM!  Please set H5FDdsm_DIR and configure again.")
+  endif(H5FDdsm_FOUND)
 endif(XDMF_BUILD_DSM)
 
 add_library(XdmfCore ${XdmfCoreSources})
