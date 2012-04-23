@@ -112,7 +112,7 @@ int main(int, char **)
   // 7 8
   //
   const std::vector<unsigned int> start(2, 1);
-  const std::vector<unsigned int> stride(2,1);
+  const std::vector<unsigned int> stride(2, 1);
   const std::vector<unsigned int> count(2, 2);
 
   shared_ptr<XdmfHeavyDataController> controller =

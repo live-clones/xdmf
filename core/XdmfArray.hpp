@@ -500,7 +500,6 @@ private:
   template <typename T> class Insert;
   class InsertArray;
   class InternalizeArrayPointer;
-  class NewArray;
   struct NullDeleter;
   template <typename T> class PushBack;
   class Reserve;
@@ -517,17 +516,8 @@ private:
    */
   void internalizeArrayPointer();
 
-  /**
-   * Release references to internal data.
-   */
-  void releaseArray();
-
-  /**
-   * Release references to held array pointer internal data;
-   */
-  void releaseArrayPointer();
-
   typedef boost::variant<
+    boost::blank,
     shared_ptr<std::vector<char> >,
     shared_ptr<std::vector<short> >,
     shared_ptr<std::vector<int> >,
@@ -536,9 +526,7 @@ private:
     shared_ptr<std::vector<double> >,
     shared_ptr<std::vector<unsigned char> >,
     shared_ptr<std::vector<unsigned short> >,
-    shared_ptr<std::vector<unsigned int> > > ArrayVariant;
-
-  typedef boost::variant<
+    shared_ptr<std::vector<unsigned int> >,
     boost::shared_array<const char>,
     boost::shared_array<const short>,
     boost::shared_array<const int>,
@@ -547,14 +535,11 @@ private:
     boost::shared_array<const double>,
     boost::shared_array<const unsigned char>,
     boost::shared_array<const unsigned short>,
-    boost::shared_array<const unsigned int> > ArrayPointerVariant;
-
+    boost::shared_array<const unsigned int>  > ArrayVariant;
+  
   ArrayVariant mArray;
-  ArrayPointerVariant mArrayPointer;
   unsigned int mArrayPointerNumValues;
   std::vector<unsigned int> mDimensions;
-  bool mHaveArray;
-  bool mHaveArrayPointer;
   shared_ptr<XdmfHeavyDataController> mHeavyDataController;
   std::string mName;
   unsigned int mTmpReserveSize;

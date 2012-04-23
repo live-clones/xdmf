@@ -34,24 +34,52 @@
 class XdmfArray::Clear : public boost::static_visitor<void> {
 public:
 
-  Clear()
+  Clear(XdmfArray * const array) :
+    mArray(array)
   {
+  }
+
+  void
+  operator()(const boost::blank & array) const
+  {
+    return;
   }
 
   template<typename T>
   void
   operator()(const shared_ptr<std::vector<T> > & array) const
   {
-    return array->clear();
+    array->clear();
   }
+
+  template<typename T>
+  void
+  operator()(const boost::shared_array<const T> & array) const
+  {
+    mArray->internalizeArrayPointer();
+    boost::apply_visitor(*this,
+                         mArray->mArray);
+  }
+
+private:
+  
+  XdmfArray * const mArray;
 };
 
 class XdmfArray::Erase : public boost::static_visitor<void> {
 public:
 
-  Erase(const unsigned int index) :
+  Erase(XdmfArray * const array,
+        const unsigned int index) :
+    mArray(array),
     mIndex(index)
   {
+  }
+
+  void
+  operator()(const boost::blank & array) const
+  {
+    return;
   }
 
   template<typename T>
@@ -61,8 +89,18 @@ public:
     array->erase(array->begin() + mIndex);
   }
 
+  template<typename T>
+  void
+  operator()(const boost::shared_array<const T> & array) const
+  {
+    mArray->internalizeArrayPointer();
+    boost::apply_visitor(*this,
+                         mArray->mArray);
+  }
+
 private:
 
+  XdmfArray * const mArray;
   const unsigned int mIndex;
 };
 
@@ -70,7 +108,8 @@ class XdmfArray::GetArrayType :
   public boost::static_visitor<shared_ptr<const XdmfArrayType> > {
 public:
 
-  GetArrayType()
+  GetArrayType(const shared_ptr<XdmfHeavyDataController> & heavyDataController) :
+    mHeavyDataController(heavyDataController)
   {
   }
 
@@ -128,6 +167,15 @@ public:
     return XdmfArrayType::UInt32();
   }
 
+  shared_ptr<const XdmfArrayType>
+  operator()(const boost::blank & array) const
+  {
+    if(mHeavyDataController) {
+      return mHeavyDataController->getType();
+    }
+    return XdmfArrayType::Uninitialized();
+  }
+
   template<typename T>
   shared_ptr<const XdmfArrayType>
   operator()(const shared_ptr<std::vector<T> > & array) const
@@ -141,6 +189,10 @@ public:
   {
     return this->getArrayType(array.get());
   }
+
+private:
+
+  const shared_ptr<XdmfHeavyDataController> mHeavyDataController;
 };
 
 class XdmfArray::GetCapacity : public boost::static_visitor<unsigned int> {
@@ -150,11 +202,24 @@ public:
   {
   }
 
+  unsigned int
+  operator()(const boost::blank & array) const
+  {
+    return 0;
+  }
+
   template<typename T>
   unsigned int
   operator()(const shared_ptr<std::vector<T> > & array) const
   {
     return array->capacity();
+  }
+
+  template<typename T>
+  unsigned int
+  operator()(const boost::shared_array<const T> & array) const
+  {
+    return 0;
   }
 };
 
@@ -164,6 +229,12 @@ public:
 
   GetValuesPointer()
   {
+  }
+
+  const void *
+  operator()(const boost::blank & array) const
+  {
+    return NULL;
   }
 
   template<typename T>
@@ -183,11 +254,6 @@ public:
 
 class XdmfArray::GetValuesString : public boost::static_visitor<std::string> {
 public:
-
-  GetValuesString() :
-    mArrayPointerNumValues(0)
-  {
-  }
 
   GetValuesString(const int arrayPointerNumValues) :
     mArrayPointerNumValues(arrayPointerNumValues)
@@ -235,6 +301,12 @@ public:
     return getValuesString<T, T>(array, numValues);
   }
 
+  std::string
+  operator()(const boost::blank & array) const
+  {
+    return "";
+  }
+
   template<typename T>
   std::string
   operator()(const shared_ptr<std::vector<T> > & array) const
@@ -257,25 +329,36 @@ private:
 class XdmfArray::InsertArray : public boost::static_visitor<void> {
 public:
 
-  InsertArray(const unsigned int startIndex,
+  InsertArray(XdmfArray * const array,
+              const unsigned int startIndex,
               const unsigned int valuesStartIndex,
               const unsigned int numValues,
               const unsigned int arrayStride,
               const unsigned int valuesStride,
-              std::vector<unsigned int> & dimensions) :
+              std::vector<unsigned int> & dimensions,
+              const shared_ptr<const XdmfArray> & arrayToCopy) :
+    mArray(array),
     mStartIndex(startIndex),
     mValuesStartIndex(valuesStartIndex),
     mNumValues(numValues),
     mArrayStride(arrayStride),
     mValuesStride(valuesStride),
-    mDimensions(dimensions)
+    mDimensions(dimensions),
+    mArrayToCopy(arrayToCopy)
   {
   }
 
-  template<typename T, typename U>
   void
-  operator()(const shared_ptr<std::vector<T> > & array,
-             const shared_ptr<std::vector<U> > & arrayToCopy) const
+  operator()(const boost::blank & array) const
+  {
+    mArray->initialize(mArrayToCopy->getArrayType());
+    boost::apply_visitor(*this,
+                         mArray->mArray);
+  }
+
+  template<typename T>
+  void
+  operator()(const shared_ptr<std::vector<T> > & array) const
   {
     unsigned int size = mStartIndex + mNumValues;
     if(mArrayStride > 1) {
@@ -285,20 +368,32 @@ public:
       array->resize(size);
       mDimensions.clear();
     }
-    for(unsigned int i=0; i<mNumValues; ++i) {
-      array->operator[](mStartIndex + i*mArrayStride) =
-        (T)arrayToCopy->operator[](mValuesStartIndex + i*mValuesStride);
-    }
+    mArrayToCopy->getValues(mValuesStartIndex,
+                            &(array->operator[](mStartIndex)),
+                            mNumValues,
+                            mValuesStride,
+                            mArrayStride);
+  }
+
+  template<typename T>
+  void
+  operator()(const boost::shared_array<const T> & array) const
+  {
+    mArray->internalizeArrayPointer();
+    boost::apply_visitor(*this,
+                         mArray->mArray);
   }
 
 private:
 
+  XdmfArray * const mArray;
   const unsigned int mStartIndex;
   const unsigned int mValuesStartIndex;
   const unsigned int mNumValues;
   const unsigned int mArrayStride;
   const unsigned int mValuesStride;
   std::vector<unsigned int> & mDimensions;
+  const shared_ptr<const XdmfArray> mArrayToCopy;
 };
 
 class XdmfArray::InternalizeArrayPointer : public boost::static_visitor<void> {
@@ -309,13 +404,27 @@ public:
   {
   }
 
+  void
+  operator()(const boost::blank & array) const
+  {
+    return;
+  }
+
+  template<typename T>
+  void
+  operator()(const shared_ptr<std::vector<T> > & array) const
+  {
+    return;
+  }
+
   template<typename T>
   void
   operator()(const boost::shared_array<const T> & array) const
   {
-    mArray->mHaveArrayPointer = false;
-    mArray->insert(0, array.get(), mArray->mArrayPointerNumValues);
-    mArray->mArrayPointer = boost::shared_array<const T>();
+    const T * const pointer = array.get();
+    shared_ptr<std::vector<T> > newArray(new std::vector<T>(pointer,
+                                                            pointer + mArray->mArrayPointerNumValues));
+    mArray->mArray = newArray;
     mArray->mArrayPointerNumValues = 0;
   }
 
@@ -324,28 +433,20 @@ private:
   XdmfArray * const mArray;
 };
 
-class XdmfArray::NewArray : public boost::static_visitor<void> {
-public:
-
-  NewArray()
-  {
-  }
-
-  template<typename T>
-  void
-  operator()(shared_ptr<std::vector<T> > & array) const
-  {
-    shared_ptr<std::vector<T> > newArray(new std::vector<T>());
-    array = newArray;
-  }
-};
-
 class XdmfArray::Reserve : public boost::static_visitor<void> {
 public:
 
-  Reserve(const unsigned int size):
+  Reserve(XdmfArray * const array,
+          const unsigned int size):
+    mArray(array),
     mSize(size)
   {
+  }
+
+  void
+  operator()(const boost::blank & array) const
+  {
+    mArray->mTmpReserveSize = mSize;
   }
 
   template<typename T>
@@ -355,16 +456,36 @@ public:
     array->reserve(mSize);
   }
 
+  template<typename T>
+  void
+  operator()(const boost::shared_array<const T> & array) const
+  {
+    mArray->internalizeArrayPointer();
+    boost::apply_visitor(*this,
+                         mArray->mArray);
+  }
+
 private:
 
+  XdmfArray * const mArray;
   const unsigned int mSize;
 };
 
 class XdmfArray::Size : public boost::static_visitor<unsigned int> {
 public:
 
-  Size()
+  Size(const XdmfArray * const array) :
+    mArray(array)
   {
+  }
+
+  unsigned int
+  operator()(const boost::blank & array) const
+  {
+    if(mArray->mHeavyDataController) {
+      return mArray->mHeavyDataController->getSize();
+    }
+    return 0;
   }
 
   template<typename T>
@@ -373,6 +494,17 @@ public:
   {
     return array->size();
   }
+
+  template<typename T>
+  unsigned int
+  operator()(const boost::shared_array<const T> & array) const
+  {
+    return mArray->mArrayPointerNumValues;
+  }
+
+private:
+
+  const XdmfArray * const mArray; 
 };
 
 shared_ptr<XdmfArray>
@@ -384,8 +516,6 @@ XdmfArray::New()
 
 XdmfArray::XdmfArray() :
   mArrayPointerNumValues(0),
-  mHaveArray(false),
-  mHaveArrayPointer(false),
   mHeavyDataController(shared_ptr<XdmfHeavyDataController>()),
   mName(""),
   mTmpReserveSize(0)
@@ -401,76 +531,53 @@ const std::string XdmfArray::ItemTag = "DataItem";
 void
 XdmfArray::clear()
 {
-  if(mHaveArrayPointer) {
-    internalizeArrayPointer();
-  }
-  if(mHaveArray) {
-    boost::apply_visitor(Clear(), mArray);
-    mDimensions.clear();
-  }
+  boost::apply_visitor(Clear(this), 
+                       mArray);
+  mDimensions.clear();
 }
 
 void
 XdmfArray::erase(const unsigned int index)
 {
-  if(mHaveArrayPointer) {
-    internalizeArrayPointer();
-  }
-  if(mHaveArray) {
-    boost::apply_visitor(Erase(index), mArray);
-    mDimensions.clear();
-  }
+  boost::apply_visitor(Erase(this,
+                             index),
+                       mArray);
+  mDimensions.clear();
 }
 
 shared_ptr<const XdmfArrayType>
 XdmfArray::getArrayType() const
 {
-  if(mHaveArray) {
-    return boost::apply_visitor(GetArrayType(), mArray);
-  }
-  else if(mHaveArrayPointer) {
-    return boost::apply_visitor(GetArrayType(), mArrayPointer);
-  }
-  else if(mHeavyDataController) {
-    return mHeavyDataController->getType();
-  }
-  return XdmfArrayType::Uninitialized();
+  return boost::apply_visitor(GetArrayType(mHeavyDataController), 
+                              mArray);
 }
 
 unsigned int
 XdmfArray::getCapacity() const
 {
-  if(mHaveArray) {
-    return boost::apply_visitor(GetCapacity(), mArray);
-  }
-  return 0;
+  return boost::apply_visitor(GetCapacity(), 
+                              mArray);
 }
 
 std::vector<unsigned int>
 XdmfArray::getDimensions() const
 {
-  if(mHaveArray) {
-    if(mDimensions.size() == 0) {
-      const unsigned int size = boost::apply_visitor(Size(), mArray);
-      return std::vector<unsigned int>(1, size);
+  if(mDimensions.size() == 0) {
+    if(!this->isInitialized() && mHeavyDataController) {
+      return mHeavyDataController->getDimensions();
     }
-    return mDimensions;
+    const unsigned int size = this->getSize();
+    return std::vector<unsigned int>(1, size);
   }
-  else if(mHaveArrayPointer) {
-    return std::vector<unsigned int>(1, mArrayPointerNumValues);
-  }
-  else if(mHeavyDataController) {
-    return mHeavyDataController->getDimensions();
-  }
-  return std::vector<unsigned int>(1, 0);
+  return mDimensions;
 }
 
 std::string
 XdmfArray::getDimensionsString() const
 {
   const std::vector<unsigned int> & dimensions = this->getDimensions();
-  return GetValuesString().getValuesString(&dimensions[0],
-                                           dimensions.size());
+  return GetValuesString(dimensions.size()).getValuesString(&dimensions[0],
+                                                            dimensions.size());
 }
 
 shared_ptr<XdmfHeavyDataController>
@@ -520,16 +627,8 @@ XdmfArray::getName() const
 unsigned int
 XdmfArray::getSize() const
 {
-  if(mHaveArray) {
-    return boost::apply_visitor(Size(), mArray);
-  }
-  else if(mHaveArrayPointer) {
-    return mArrayPointerNumValues;
-  }
-  else if(mHeavyDataController) {
-    return mHeavyDataController->getSize();
-  }
-  return 0;
+  return boost::apply_visitor(Size(this), 
+                              mArray);
 }
 
 void *
@@ -542,26 +641,15 @@ XdmfArray::getValuesInternal()
 const void *
 XdmfArray::getValuesInternal() const
 {
-  if(mHaveArray) {
-    return boost::apply_visitor(GetValuesPointer(), mArray);
-  }
-  else if(mHaveArrayPointer) {
-    return boost::apply_visitor(GetValuesPointer(), mArrayPointer);
-  }
-  return NULL;
+  return boost::apply_visitor(GetValuesPointer(), 
+                              mArray);
 }
 
 std::string
 XdmfArray::getValuesString() const
 {
-  if(mHaveArray) {
-    return boost::apply_visitor(GetValuesString(), mArray);
-  }
-  else if(mHaveArrayPointer) {
-    return boost::apply_visitor(GetValuesString(mArrayPointerNumValues),
-                                mArrayPointer);
-  }
-  return "";
+  return boost::apply_visitor(GetValuesString(mArrayPointerNumValues), 
+                              mArray);
 }
 
 void
@@ -624,39 +712,34 @@ XdmfArray::insert(const unsigned int startIndex,
                   const unsigned int arrayStride,
                   const unsigned int valuesStride)
 {
-  if(mHaveArrayPointer) {
-    internalizeArrayPointer();
-  }
-  if(!mHaveArray) {
-    // Copy the values variant in order to get the type
-    // Only taking smart pointer so no worries about large copies
-    mArray = values->mArray;
-    // Reinitialize variant array to contain new array with same type.
-    boost::apply_visitor(NewArray(), mArray);
-    mHaveArray = true;
-  }
-  boost::apply_visitor(InsertArray(startIndex,
+  boost::apply_visitor(InsertArray(this,
+                                   startIndex,
                                    valuesStartIndex,
                                    numValues,
                                    arrayStride,
                                    valuesStride,
-                                   mDimensions),
-                       mArray,
-                       values->mArray);
+                                   mDimensions,
+                                   values),
+                       mArray);
 }
 
 bool
 XdmfArray::isInitialized() const
 {
-  return mHaveArray || mHaveArrayPointer;
+  try {
+    boost::get<boost::blank>(mArray);
+    return false;
+  }
+  catch(const boost::bad_get & exception) {
+  }
+  return true;
 }
 
 void
 XdmfArray::internalizeArrayPointer()
 {
-  if(mHaveArrayPointer) {
-    boost::apply_visitor(InternalizeArrayPointer(this), mArrayPointer);
-  }
+  boost::apply_visitor(InternalizeArrayPointer(this), 
+                       mArray);
 }
 
 void
@@ -783,39 +866,17 @@ XdmfArray::read()
 void
 XdmfArray::release()
 {
-  releaseArray();
-  releaseArrayPointer();
-}
-
-void
-XdmfArray::releaseArray()
-{
-  shared_ptr<std::vector<char> > emptyArray;
-  mArray = emptyArray;
-  mHaveArray = false;
+  mArray = boost::blank();
+  mArrayPointerNumValues = 0;
   mDimensions.clear();
-}
-
-void
-XdmfArray::releaseArrayPointer()
-{
-  boost::shared_array<const char> emptyArrayPointer;
-  mArrayPointer = emptyArrayPointer;
-  mHaveArrayPointer = false;
 }
 
 void
 XdmfArray::reserve(const unsigned int size)
 {
-  if(mHaveArrayPointer) {
-    internalizeArrayPointer();
-  }
-  if(!mHaveArray) {
-    mTmpReserveSize = size;
-  }
-  else {
-    boost::apply_visitor(Reserve(size), mArray);
-  }
+  boost::apply_visitor(Reserve(this,
+                               size),
+                       mArray);
 }
 
 void
@@ -833,28 +894,8 @@ XdmfArray::setName(const std::string & name)
 void
 XdmfArray::swap(const shared_ptr<XdmfArray> array)
 {
-  ArrayVariant tmpArray = array->mArray;
-  ArrayPointerVariant tmpArrayPointer = array->mArrayPointer;
-  int tmpArrayPointerNumValues = array->mArrayPointerNumValues;
-  bool tmpHaveArray = array->mHaveArray;
-  bool tmpHaveArrayPointer = array->mHaveArrayPointer;
-  shared_ptr<XdmfHeavyDataController> tmpHeavyDataController =
-    array->mHeavyDataController;
-  std::vector<unsigned int> tmpDimensions = array->mDimensions;
-
-  array->mArray = mArray;
-  array->mArrayPointer = mArrayPointer;
-  array->mArrayPointerNumValues = mArrayPointerNumValues;
-  array->mHaveArray = mHaveArray;
-  array->mHaveArrayPointer = mHaveArrayPointer;
-  array->mHeavyDataController = mHeavyDataController;
-  array->mDimensions = mDimensions;
-
-  mArray = tmpArray;
-  mArrayPointer = tmpArrayPointer;
-  mArrayPointerNumValues = tmpArrayPointerNumValues;
-  mHaveArray = tmpHaveArray;
-  mHaveArrayPointer = tmpHaveArrayPointer;
-  mHeavyDataController = tmpHeavyDataController;
-  mDimensions = tmpDimensions;
+  std::swap(mArray, array->mArray);
+  std::swap(mArrayPointerNumValues, array->mArrayPointerNumValues);
+  std::swap(mDimensions, array->mDimensions);
+  std::swap(mHeavyDataController, array->mHeavyDataController);
 }

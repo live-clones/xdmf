@@ -1,7 +1,7 @@
 #ifndef XDMFERROR_HPP_
 #define XDMFERROR_HPP_
 
-#include <iostream>
+#include <iosfwd>
 #include <sstream>
 
 #include "XdmfCore.hpp"

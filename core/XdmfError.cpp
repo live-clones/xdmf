@@ -1,5 +1,6 @@
 #include <XdmfError.hpp>
 #include <cstdlib>
+#include <iostream>
 
 XdmfError::XdmfError()
 {}

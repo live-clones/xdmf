@@ -1,6 +1,8 @@
 #include "XdmfArray.hpp"
 #include "XdmfArrayType.hpp"
 
+#include <iostream>
+
 int main(int, char **)
 {
 
@@ -90,9 +92,20 @@ int main(int, char **)
   shared_ptr<XdmfArray> array5 = XdmfArray::New();
   array5->insert(0, array, 1, 3);
   assert(array5->getSize() == 3);
+  assert(array5->getArrayType() == array->getArrayType());
   storedValues = array5->getValuesInternal<int>();
   assert(array5->getSize() == 3);
   assert(array->getSize() == 4);
+  assert(array5->getValuesString().compare("2 3 4") == 0);
+  array5->insert(1, array, 1, 3);
+  assert(array5->getValuesString().compare("2 2 3 4") == 0);
+  array5->clear();
+  assert(array5->getSize() == 0);
+  array5->insert(0, array, 1, 3, 2, 1);
+  assert(array5->getValuesString().compare("2 0 3 0 4") == 0);
+  array5->clear();
+  array5->insert(0, array, 1, 2, 2, 2);
+  assert(array5->getValuesString().compare("2 0 4") == 0);
 
   /**
    * Single Insertion
@@ -135,8 +148,8 @@ int main(int, char **)
   array5->setValuesInternal(&values[1], 3, 0);
   assert(array5->getSize() == 3);
   assert(array5->getValuesString().compare("2 3 4") == 0);
-  int zero = 0;
-  array5->insert(3, &zero, 1, 1, 0);
+   int zero = 0;
+   array5->insert(3, &zero, 1, 1, 0);
   assert(array5->getSize() == 4);
   assert(array5->getValuesString().compare("2 3 4 0") == 0);
 
@@ -261,6 +274,12 @@ int main(int, char **)
   assert(array8->getValuesString().compare("1 2 3 1 1 1 1 1") == 0);
 
   /**
+   * Erase
+   */
+  array8->erase(0);
+  assert(array8->getValuesString().compare("2 3 1 1 1 1 1") == 0);
+
+  /**
    * Reserve / Capacity
    */
   array8->reserve(50);
@@ -269,6 +288,20 @@ int main(int, char **)
   assert(array8->getName().compare("") == 0);
   array8->setName("BLAH");
   assert(array8->getName().compare("BLAH") == 0);
+
+  /**
+   * Dimensions
+   */
+  dimensions.resize(2);
+  dimensions[0] = 3;
+  dimensions[1] = 3;
+  shared_ptr<XdmfArray> array9 = XdmfArray::New();
+  array9->initialize(XdmfArrayType::Float64(),
+                     dimensions);
+  assert(array9->getDimensionsString() == "3 3");
+  assert(array9->getSize() == 9);
+  array9->insert<double>(9, 1.0);
+  assert(array9->getDimensionsString() == "10");
 
   return 0;
 }
