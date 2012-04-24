@@ -103,63 +103,63 @@ namespace {
     switch(arrayType) {
     case XDMF_ARRAY_TYPE_INT8:
       array->getValues(startIndex, 
-                       static_cast<char * const>(values), 
+                       static_cast<char *>(values), 
                        numValues, 
                        arrayStride, 
                        valuesStride); 
       break;
     case XDMF_ARRAY_TYPE_INT16:
       array->getValues(startIndex, 
-                       static_cast<short * const>(values), 
+                       static_cast<short *>(values), 
                        numValues, 
                        arrayStride, 
                        valuesStride); 
       break;
     case XDMF_ARRAY_TYPE_INT32:
       array->getValues(startIndex, 
-                       static_cast<int * const>(values), 
+                       static_cast<int *>(values), 
                        numValues, 
                        arrayStride, 
                        valuesStride); 
       break;
     case XDMF_ARRAY_TYPE_INT64:
       array->getValues(startIndex, 
-                       static_cast<long * const>(values), 
+                       static_cast<long *>(values), 
                        numValues, 
                        arrayStride, 
                        valuesStride); 
       break;
     case XDMF_ARRAY_TYPE_UINT8:
       array->getValues(startIndex, 
-                       static_cast<unsigned char * const>(values), 
+                       static_cast<unsigned char *>(values), 
                        numValues, 
                        arrayStride, 
                        valuesStride); 
       break;
     case XDMF_ARRAY_TYPE_UINT16:
       array->getValues(startIndex, 
-                       static_cast<unsigned short * const>(values), 
+                       static_cast<unsigned short *>(values), 
                        numValues, 
                        arrayStride, 
                        valuesStride); 
       break;
     case XDMF_ARRAY_TYPE_UINT32:
       array->getValues(startIndex, 
-                       static_cast<unsigned int * const>(values), 
+                       static_cast<unsigned int *>(values), 
                        numValues, 
                        arrayStride, 
                        valuesStride); 
       break;
     case XDMF_ARRAY_TYPE_FLOAT32:
       array->getValues(startIndex, 
-                       static_cast<float * const>(values), 
+                       static_cast<float *>(values), 
                        numValues, 
                        arrayStride, 
                        valuesStride); 
       break;
     case XDMF_ARRAY_TYPE_FLOAT64:
       array->getValues(startIndex, 
-                       static_cast<double * const>(values), 
+                       static_cast<double *>(values), 
                        numValues, 
                        arrayStride, 
                        valuesStride); 
