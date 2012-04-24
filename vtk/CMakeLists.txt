@@ -11,6 +11,9 @@ IF(PV_INSTALL_INCLUDE_DIR)
     SET(XDMF_INSTALL_INCLUDE_DIR ${PV_INSTALL_INCLUDE_DIR})
 ENDIF(PV_INSTALL_INCLUDE_DIR)
 
+include(${ParaView_CMAKE_DIR}/VTKMono/vtkTargetExportMacros.cmake)
+include(${ParaView_CMAKE_DIR}/VTKMono/vtkExportKit.cmake)
+
 # This Needs to be done since Xdmf/CMakeLists.txt !=
 # PV/Utils/Xdmf2/CMakeLists.txt
 # Because INSTALL_* commands require a leading / and because INSTALL (cmake
@@ -86,7 +89,7 @@ SET_SOURCE_FILES_PROPERTIES(
   )
 
 SET(VTK_BINARY_DIR "${Xdmf_BINARY_DIR}/vtk")
-INCLUDE(${VTK_CMAKE_DIR}/vtkExportKit.cmake)
+INCLUDE(${ParaView_CMAKE_DIR}/VTKMono/vtkExportKit.cmake)
 VTK_EXPORT_KIT("Xdmf" "XDMF" "${Xdmf_SRCS}")
 
 SET(VTK_BINARY_DIR "${Xdmf_BINARY_DIR}/vtk")
@@ -99,12 +102,15 @@ IF (VTK_FOUND)
     SET(LIBTYPE STATIC)
   ENDIF(VTK_BUILD_SHARED_LIBS OR BUILD_SHARED_LIBS)
 
-  VTK_ADD_LIBRARY(vtkXdmf ${LIBTYPE} ${Xdmf_SRCS})
+  PVVTK_ADD_LIBRARY(vtkXdmf ${LIBTYPE} ${Xdmf_SRCS})
+  add_dependencies(vtkXdmf vtklibxml2)
+  set(_xdmf_link_lib vtkIOCore Xdmf vtkRenderingOpenGL)
+
   IF(VTK_USE_PARALLEL)
-     TARGET_LINK_LIBRARIES(vtkXdmf vtkIO Xdmf vtkRendering vtkParallel)
-  ELSE(VTK_USE_PARALLEL)
-    TARGET_LINK_LIBRARIES(vtkXdmf vtkIO Xdmf vtkRendering)
+    list(APPEND _xdmf_link_lib vtkParallelCore)
   ENDIF(VTK_USE_PARALLEL)
+
+  target_link_libraries(vtkXdmf ${_xdmf_link_lib})
 
   IF (VTK_USE_MPI)
     # Needed for mpich 2
@@ -122,7 +128,7 @@ ENDIF(XDMF_BUILD_MPI)
   IF(VTK_WRAP_TCL)
     INCLUDE(${VTK_CMAKE_DIR}/vtkWrapTcl.cmake OPTIONAL)
     VTK_WRAP_TCL2(vtk${PROJECT_NAME}TCL XdmfTCL_SRCS ${Xdmf_SRCS})
-    VTK_ADD_LIBRARY(vtk${PROJECT_NAME}TCL ${LIBTYPE} ${XdmfTCL_SRCS} ${Xdmf_SRCS})
+    PVVTK_ADD_LIBRARY(vtk${PROJECT_NAME}TCL ${LIBTYPE} ${XdmfTCL_SRCS} ${Xdmf_SRCS})
     IF(VTK_USE_PARALLEL)
       TARGET_LINK_LIBRARIES(vtk${PROJECT_NAME}TCL vtkIOTCL vtkRenderingTCL vtkParallelTCL Xdmf)
     ELSE(VTK_USE_PARALLEL)
@@ -135,7 +141,7 @@ ENDIF(XDMF_BUILD_MPI)
   IF(VTK_WRAP_PYTHON)
     INCLUDE(${VTK_CMAKE_DIR}/vtkWrapPython.cmake OPTIONAL)
     VTK_WRAP_PYTHON2(vtk${PROJECT_NAME}Python XdmfPython_SRCS ${Xdmf_SRCS})
-    VTK_ADD_LIBRARY(vtk${PROJECT_NAME}Python MODULE ${XdmfPython_SRCS} ${Xdmf_SRCS})
+    PVVTK_ADD_LIBRARY(vtk${PROJECT_NAME}Python MODULE ${XdmfPython_SRCS} ${Xdmf_SRCS})
     IF(VTK_USE_PARALLEL)
       TARGET_LINK_LIBRARIES(vtk${PROJECT_NAME}Python vtkIOPythonD vtkRenderingPythonD vtkParallelPythonD Xdmf)
     ELSE(VTK_USE_PARALLEL)
