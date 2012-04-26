@@ -142,11 +142,17 @@ ENDIF(XDMF_BUILD_MPI)
     INCLUDE(${VTK_CMAKE_DIR}/vtkWrapPython.cmake OPTIONAL)
     VTK_WRAP_PYTHON2(vtk${PROJECT_NAME}Python XdmfPython_SRCS ${Xdmf_SRCS})
     PVVTK_ADD_LIBRARY(vtk${PROJECT_NAME}Python MODULE ${XdmfPython_SRCS} ${Xdmf_SRCS})
-    IF(VTK_USE_PARALLEL)
-      TARGET_LINK_LIBRARIES(vtk${PROJECT_NAME}Python vtkIOPythonD vtkRenderingPythonD vtkParallelPythonD Xdmf)
-    ELSE(VTK_USE_PARALLEL)
-      TARGET_LINK_LIBRARIES(vtk${PROJECT_NAME}Python vtkIOPythonD vtkRenderingPythonD Xdmf)
-    ENDIF(VTK_USE_PARALLEL)
+    set(_xdmf_link_lib 
+      vtkIOCorePythonD 
+      vtkRenderingCorePythonD
+      Xdmf)
+    
+    if(VTK_USE_PARALLEL)
+      list(APPEND _xdmf_link_lib vtkParallelCorePythonD) 
+    endif()
+    
+    target_link_libraries(vtk${PROJECT_NAME}Python ${_xdmf_link_lib})
+    
     ADD_DEPENDENCIES(vtk${PROJECT_NAME}Python vtk${PROJECT_NAME})
   ENDIF(VTK_WRAP_PYTHON)
 ELSE(VTK_FOUND)
