@@ -159,11 +159,11 @@ typedef enum {
  * applications and utilities.  However, nothing is statically allocated to
  * these sizes internally.
  */
-#define NC_MAX_DIMS 1024   /* max dimensions per file */
+#define NC_MAX_DIMS 65536   /* max dimensions per file */
 #define NC_MAX_ATTRS  8192   /* max global or per variable attributes */
-#define NC_MAX_VARS 8192   /* max variables per file */
+#define NC_MAX_VARS 524288   /* max variables per file */
 #define NC_MAX_NAME 256  /* max length of a name */
-#define NC_MAX_VAR_DIMS NC_MAX_DIMS /* max per variable dimensions */
+#define NC_MAX_VAR_DIMS 8 /* max per variable dimensions */
 
 /*
  * The netcdf version 3 functions all return integer error status.
