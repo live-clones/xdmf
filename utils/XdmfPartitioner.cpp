@@ -81,7 +81,7 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
 
   // Make sure geometry and topology are non null
   if(!(gridToPartition->getGeometry() && gridToPartition->getTopology()))
-    XdmfError::message(XdmfError::FATAL, 
+    XdmfError::message(XdmfError::FATAL,
                        "Current grid's geometry or topology is null in "
                        "XdmfPartitioner::partition");
 
@@ -104,11 +104,11 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
 
   int numElements = topology->getNumberElements();
   int numNodes = geometry->getNumberPoints();
-  
+
   // allocate metisConnectivity arrays
   idx_t * metisConnectivityEptr = new idx_t[numElements + 1];
   idx_t * metisConnectivityEind = new idx_t[nodesPerElement * numElements];
-  
+
   metisConnectivityEptr[0] = 0;
 
   unsigned int metisConnectivityEptrValue = 0;
@@ -134,7 +134,7 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
 
   idx_t * elementsPartition = new idx_t[numElements];
   idx_t * nodesPartition = new idx_t[numNodes];
-  
+
   if(metisScheme == DUAL_GRAPH) {
     METIS_PartMeshDual(&numElements,
                        &numNodes,
@@ -165,7 +165,7 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
                         nodesPartition);
   }
   else {
-    XdmfError::message(XdmfError::FATAL, 
+    XdmfError::message(XdmfError::FATAL,
                        "Invalid metis partitioning scheme selected in "
                        "XdmfPartitioner::partition");
 
@@ -305,7 +305,7 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
   // Split attributes into proper partitions
   for(unsigned int i=0; i<gridToPartition->getNumberAttributes(); ++i) {
 
-    const shared_ptr<XdmfAttribute> currAttribute = 
+    const shared_ptr<XdmfAttribute> currAttribute =
       gridToPartition->getAttribute(i);
     bool releaseAttribute = false;
     if(!currAttribute->isInitialized()) {
@@ -321,7 +321,7 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
         const shared_ptr<XdmfUnstructuredGrid> partitioned =
           partitionedGrids->getUnstructuredGrid(partitionId);
         partitionId++;
-        shared_ptr<XdmfAttribute> createdAttribute = 
+        shared_ptr<XdmfAttribute> createdAttribute =
           shared_ptr<XdmfAttribute>();
         if(currAttribute->getCenter() == XdmfAttributeCenter::Grid()) {
           // Insert into each partition
@@ -333,7 +333,7 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
           createdAttribute->setCenter(currAttribute->getCenter());
           createdAttribute->setType(currAttribute->getType());
           unsigned int index = 0;
-          const unsigned int numberComponents = 
+          const unsigned int numberComponents =
 	    currAttribute->getSize() / topology->getNumberElements();
           createdAttribute->initialize(currAttribute->getArrayType(),
                                        currElemIds.size() * numberComponents);
@@ -353,9 +353,9 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
           createdAttribute->setName(currAttribute->getName());
           createdAttribute->setCenter(currAttribute->getCenter());
           createdAttribute->setType(currAttribute->getType());
-          createdAttribute->initialize(currAttribute->getArrayType(), 
+          createdAttribute->initialize(currAttribute->getArrayType(),
 				       currNodeMap.size());
-	  const unsigned int numberComponents = 
+	  const unsigned int numberComponents =
 	    currAttribute->getSize() / geometry->getNumberPoints();
           for(std::map<unsigned int, unsigned int>::const_iterator iter =
                 currNodeMap.begin();
@@ -443,9 +443,9 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
               }
               if(currAttribute->getCenter() == XdmfAttributeCenter::Node() ||
                  currAttribute->getCenter() == XdmfAttributeCenter::Cell()) {
-                const unsigned int numberComponents = 
+                const unsigned int numberComponents =
                   currAttribute->getSize() / currSet->getSize();
-                
+
                 const shared_ptr<XdmfAttribute> partitionedAttribute =
                   XdmfAttribute::New();
                 partitionedAttribute->setCenter(currAttribute->getCenter());
@@ -516,28 +516,28 @@ shared_ptr<XdmfUnstructuredGrid>
 XdmfPartitioner::unpartition(const shared_ptr<XdmfGridCollection> gridToUnPartition) const
 {
 
-  const shared_ptr<XdmfUnstructuredGrid> returnValue = 
+  const shared_ptr<XdmfUnstructuredGrid> returnValue =
     XdmfUnstructuredGrid::New();
-  const shared_ptr<XdmfTopology> returnValueTopology = 
+  const shared_ptr<XdmfTopology> returnValueTopology =
     returnValue->getTopology();
   const shared_ptr<XdmfGeometry> returnValueGeometry =
     returnValue->getGeometry();
 
-  const unsigned int numberUnstructuredGrids = 
+  const unsigned int numberUnstructuredGrids =
     gridToUnPartition->getNumberUnstructuredGrids();
- 
+
   unsigned int elementOffset = 0;
 
   for(unsigned int i=0; i<numberUnstructuredGrids; ++i) {
 
-    const shared_ptr<XdmfUnstructuredGrid> grid = 
+    const shared_ptr<XdmfUnstructuredGrid> grid =
       gridToUnPartition->getUnstructuredGrid(i);
 
-    const shared_ptr<XdmfAttribute> globalNodeIds = 
+    const shared_ptr<XdmfAttribute> globalNodeIds =
       grid->getAttribute("GlobalNodeId");
 
     if(!globalNodeIds) {
-      XdmfError::message(XdmfError::FATAL, 
+      XdmfError::message(XdmfError::FATAL,
                          "Cannot find GlobalNodeId attribute in "
                          "XdmfPartitioner::unpartition");
     }
@@ -550,13 +550,13 @@ XdmfPartitioner::unpartition(const shared_ptr<XdmfGridCollection> gridToUnPartit
 
     // handle topology
     const shared_ptr<XdmfTopology> topology = grid->getTopology();
-    
+
     if(i==0) {
       returnValueTopology->setType(topology->getType());
       returnValueTopology->initialize(topology->getArrayType());
     }
 
-    returnValueTopology->reserve(returnValueTopology->getSize() + 
+    returnValueTopology->reserve(returnValueTopology->getSize() +
                                  topology->getSize());
 
     bool releaseTopology = false;
@@ -567,7 +567,7 @@ XdmfPartitioner::unpartition(const shared_ptr<XdmfGridCollection> gridToUnPartit
 
     for(unsigned int j=0; j<topology->getSize(); ++j) {
       const unsigned int localNodeId = topology->getValue<unsigned int>(j);
-      const unsigned int globalNodeId = 
+      const unsigned int globalNodeId =
         globalNodeIds->getValue<unsigned int>(localNodeId);
       returnValueTopology->pushBack(globalNodeId);
     }
@@ -575,13 +575,13 @@ XdmfPartitioner::unpartition(const shared_ptr<XdmfGridCollection> gridToUnPartit
     if(releaseTopology) {
       topology->release();
     }
-    
+
     // handle geometry
     const shared_ptr<XdmfGeometry> geometry = grid->getGeometry();
-    const shared_ptr<const XdmfGeometryType> geometryType = 
+    const shared_ptr<const XdmfGeometryType> geometryType =
       geometry->getType();
     const unsigned int geometryDimension = geometryType->getDimensions();
-    
+
     if(i==0) {
       returnValueGeometry->setType(geometryType);
       returnValueGeometry->initialize(geometry->getArrayType());
@@ -594,7 +594,7 @@ XdmfPartitioner::unpartition(const shared_ptr<XdmfGridCollection> gridToUnPartit
     }
 
     for(unsigned int j=0; j<globalNodeIds->getSize(); ++j) {
-      const unsigned int globalNodeId = 
+      const unsigned int globalNodeId =
         globalNodeIds->getValue<unsigned int>(j);
       returnValueGeometry->insert(globalNodeId * geometryDimension,
                                   geometry,
@@ -610,9 +610,9 @@ XdmfPartitioner::unpartition(const shared_ptr<XdmfGridCollection> gridToUnPartit
     for(unsigned int j=0; j<grid->getNumberAttributes(); ++j) {
 
       const shared_ptr<XdmfAttribute> attribute = grid->getAttribute(j);
-      const shared_ptr<const XdmfAttributeCenter> attributeCenter = 
+      const shared_ptr<const XdmfAttributeCenter> attributeCenter =
         attribute->getCenter();
-      
+
       bool releaseAttribute = false;
       if(!attribute->isInitialized()) {
         attribute->read();
@@ -620,7 +620,7 @@ XdmfPartitioner::unpartition(const shared_ptr<XdmfGridCollection> gridToUnPartit
       }
 
       shared_ptr<XdmfAttribute> returnValueAttribute;
-      
+
       if(i==0) {
         returnValueAttribute = XdmfAttribute::New();
         returnValueAttribute->setName(attribute->getName());
@@ -638,7 +638,7 @@ XdmfPartitioner::unpartition(const shared_ptr<XdmfGridCollection> gridToUnPartit
         returnValueAttribute->insert(0,
                                      attribute,
                                      0,
-                                     attribute->getSize());              
+                                     attribute->getSize());
       }
       else if(attributeCenter == XdmfAttributeCenter::Cell()) {
         returnValueAttribute->insert(returnValueAttribute->getSize(),
@@ -647,21 +647,21 @@ XdmfPartitioner::unpartition(const shared_ptr<XdmfGridCollection> gridToUnPartit
                                      attribute->getSize());
       }
       else if(attributeCenter == XdmfAttributeCenter::Node()) {
-        
-        const unsigned int numberComponents = 
+
+        const unsigned int numberComponents =
           attribute->getSize() / geometry->getNumberPoints();
-        
+
         for(unsigned int k=0; k<globalNodeIds->getSize(); ++k) {
-          const unsigned int globalNodeId = 
+          const unsigned int globalNodeId =
             globalNodeIds->getValue<unsigned int>(k);
           returnValueAttribute->insert(globalNodeId * numberComponents,
                                        attribute,
                                        k * numberComponents,
                                        numberComponents);
         }
-        
+
       }
-  
+
       if(releaseAttribute) {
         attribute->release();
       }
@@ -673,7 +673,7 @@ XdmfPartitioner::unpartition(const shared_ptr<XdmfGridCollection> gridToUnPartit
 
       const shared_ptr<XdmfSet> set = grid->getSet(j);
       const shared_ptr<const XdmfSetType> setType = set->getType();
-      
+
       bool releaseSet = false;
       if(!set->isInitialized()) {
         set->read();
@@ -687,7 +687,7 @@ XdmfPartitioner::unpartition(const shared_ptr<XdmfGridCollection> gridToUnPartit
         returnValueSet->setType(setType);
         returnValue->insert(returnValueSet);
       }
-      
+
       if(setType == XdmfSetType::Cell()) {
         for(unsigned int k=0; k<set->getSize(); ++k) {
           const unsigned int localCellId = set->getValue<unsigned int>(k);
@@ -697,7 +697,7 @@ XdmfPartitioner::unpartition(const shared_ptr<XdmfGridCollection> gridToUnPartit
       else if(setType == XdmfSetType::Node()) {
         for(unsigned int k=0; k<set->getSize(); ++k){
           const unsigned int localNodeId = set->getValue<unsigned int>(k);
-          const unsigned int globalNodeId = 
+          const unsigned int globalNodeId =
             globalNodeIds->getValue<unsigned int>(localNodeId);
           returnValueSet->pushBack(globalNodeId);
         }
@@ -705,7 +705,7 @@ XdmfPartitioner::unpartition(const shared_ptr<XdmfGridCollection> gridToUnPartit
 
       for(unsigned int k=0; k<set->getNumberAttributes(); ++k) {
         const shared_ptr<XdmfAttribute> attribute = set->getAttribute(k);
-        const shared_ptr<const XdmfAttributeCenter> attributeCenter = 
+        const shared_ptr<const XdmfAttributeCenter> attributeCenter =
           attribute->getCenter();
         const shared_ptr<const XdmfAttributeType> attributeType =
           attribute->getType();
@@ -727,17 +727,17 @@ XdmfPartitioner::unpartition(const shared_ptr<XdmfGridCollection> gridToUnPartit
                                        0,
                                        attribute->getSize());
         }
-        
+
       }
-      
+
     }
-    
+
     elementOffset += topology->getNumberElements();
 
     if(releaseGlobalNodeIds) {
       globalNodeIds->release();
     }
-    
+
   }
 
   return returnValue;
@@ -766,12 +766,13 @@ namespace {
   {
 
     std::cerr << "usage: " << programName << " "
-              << "[-s metis_scheme] "
+              << "[-s metis_scheme] [-u]"
               << "<input file> <number of partitions> [output file]"
               << std::endl;
-    std::cerr << "metis_scheme: 1 - Dual Graph" << std::endl;
-    std::cerr << "metis_scheme: 2 - Node Graph" << std::endl;
- 
+    std::cerr << "\t-s metis_scheme: 1 - Dual Graph" << std::endl;
+    std::cerr << "\t-s metis_scheme: 2 - Node Graph" << std::endl;
+    std::cerr << "\t-u unpartition file" << std::endl;
+
     //
     //
     //
@@ -787,14 +788,15 @@ namespace {
                      std::string                  & outputFileName,
 		     unsigned int                 & numPartitions,
                      XdmfPartitioner::MetisScheme & metisScheme,
+                     bool                         & unpartition,
 		     int                            ac,
                      char                         * av[])
   {
 
     int c;
     bool errorFlag = false;
-    
-    while( (c=getopt(ac, av, "s:")) != -1 )
+
+    while( (c=getopt(ac, av, "s:u")) != -1 )
     switch(c){
 
     case 's': {
@@ -810,6 +812,9 @@ namespace {
       }
       break;
     }
+    case 'u':
+      unpartition = true;
+      break;
     case '?':
       errorFlag = true;
       break;
@@ -822,18 +827,20 @@ namespace {
       ++optind;
     }
 
-    if (optind >= ac)
-      errorFlag = true;
-    else {
-      numPartitions = atoi(av[optind]);
-      ++optind;
+    if(!unpartition) {
+      if (optind >= ac)
+        errorFlag = true;
+      else {
+        numPartitions = atoi(av[optind]);
+        ++optind;
+      }
     }
 
     if (optind < ac) {
       outputFileName = av[optind];
       ++optind;
     }
-   
+
     //
     // check errorFlag
     //
@@ -863,11 +870,13 @@ int main(int argc, char* argv[])
   std::string outputFileName = "";
   unsigned int numPartitions;
   XdmfPartitioner::MetisScheme metisScheme = XdmfPartitioner::DUAL_GRAPH;
+  bool unpartition = false;
 
   processCommandLine(inputFileName,
 		     outputFileName,
 		     numPartitions,
 		     metisScheme,
+                     unpartition,
 		     argc,
 		     argv);
 
@@ -901,18 +910,31 @@ int main(int argc, char* argv[])
   }
 
   if(outputFileName.compare("") == 0) {
-    std::stringstream partitionedMeshName;
-    partitionedMeshName << meshName << "_p" << numPartitions;
-    meshName = partitionedMeshName.str();
+    std::stringstream newMeshName;
+    if(unpartition) {
+      newMeshName << meshName << "_unpartitioned";
+    }
+    else {
+      newMeshName << meshName << "_p" << numPartitions;
+    }
+    meshName = newMeshName.str();
   }
 
   shared_ptr<XdmfReader> reader = XdmfReader::New();
   shared_ptr<XdmfDomain> domain =
     shared_dynamic_cast<XdmfDomain>(reader->read(inputFileName));
 
-  if(domain->getNumberUnstructuredGrids() <= 0) {
-    std::cout << "No grids to partition" << std::endl;
-    return 1;
+  if(unpartition) {
+    if(domain->getNumberGridCollections() == 0) {
+      std::cout << "No grid collections to unpartition" << std::endl;
+      return 1;
+    }
+  }
+  else {
+    if(domain->getNumberUnstructuredGrids() <= 0) {
+      std::cout << "No grids to partition" << std::endl;
+      return 1;
+    }
   }
 
   std::stringstream heavyFileName;
@@ -920,15 +942,25 @@ int main(int argc, char* argv[])
   shared_ptr<XdmfHDF5Writer> heavyDataWriter =
     XdmfHDF5Writer::New(heavyFileName.str());
 
-  shared_ptr<XdmfPartitioner> partitioner = XdmfPartitioner::New();
-  shared_ptr<XdmfGridCollection> toWrite =
-    partitioner->partition(domain->getUnstructuredGrid(0),
-                           numPartitions,
-                           metisScheme,
-                           heavyDataWriter);
-
   shared_ptr<XdmfDomain> newDomain = XdmfDomain::New();
-  newDomain->insert(toWrite);
+
+  shared_ptr<XdmfPartitioner> partitioner = XdmfPartitioner::New();
+
+  shared_ptr<XdmfGrid> toWrite;
+  if(unpartition) {
+    shared_ptr<XdmfUnstructuredGrid> toWrite =
+      partitioner->unpartition(domain->getGridCollection(0));
+    newDomain->insert(toWrite);
+  }
+  else {
+    shared_ptr<XdmfGridCollection> toWrite =
+      partitioner->partition(domain->getUnstructuredGrid(0),
+                             numPartitions,
+                             metisScheme,
+                             heavyDataWriter);
+
+    newDomain->insert(toWrite);
+  }
 
   std::stringstream xmlFileName;
   xmlFileName << meshName << ".xmf";
