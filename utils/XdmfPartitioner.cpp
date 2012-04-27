@@ -766,7 +766,7 @@ namespace {
   {
 
     std::cerr << "usage: " << programName << " "
-              << "[-s metis_scheme] [-u]"
+              << "[-s metis_scheme] [-r] [-u]"
               << "<input file> <number of partitions> [output file]"
               << std::endl;
     std::cerr << "\t-s metis_scheme: 1 - Dual Graph" << std::endl;
@@ -796,7 +796,7 @@ namespace {
     int c;
     bool errorFlag = false;
 
-    while( (c=getopt(ac, av, "s:u")) != -1 )
+    while( (c=getopt(ac, av, "s:ur")) != -1 )
     switch(c){
 
     case 's': {
@@ -931,7 +931,8 @@ int main(int argc, char* argv[])
     }
   }
   else {
-    if(domain->getNumberUnstructuredGrids() <= 0) {
+    if(domain->getNumberUnstructuredGrids() == 0 &&
+       domain->getNumberGridCollections() == 0) {
       std::cout << "No grids to partition" << std::endl;
       return 1;
     }
@@ -946,19 +947,24 @@ int main(int argc, char* argv[])
 
   shared_ptr<XdmfPartitioner> partitioner = XdmfPartitioner::New();
 
-  shared_ptr<XdmfGrid> toWrite;
   if(unpartition) {
     shared_ptr<XdmfUnstructuredGrid> toWrite =
       partitioner->unpartition(domain->getGridCollection(0));
     newDomain->insert(toWrite);
   }
   else {
+    shared_ptr<XdmfUnstructuredGrid> gridToPartition;
+    if(domain->getNumberUnstructuredGrids() == 0) {
+      gridToPartition = partitioner->unpartition(domain->getGridCollection(0));
+    }
+    else {
+      gridToPartition = domain->getUnstructuredGrid(0);
+    }
     shared_ptr<XdmfGridCollection> toWrite =
-      partitioner->partition(domain->getUnstructuredGrid(0),
+      partitioner->partition(gridToPartition,
                              numPartitions,
                              metisScheme,
                              heavyDataWriter);
-
     newDomain->insert(toWrite);
   }
 
