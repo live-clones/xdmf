@@ -104,7 +104,13 @@ IF (VTK_FOUND)
 
   PVVTK_ADD_LIBRARY(vtkXdmf ${LIBTYPE} ${Xdmf_SRCS})
   add_dependencies(vtkXdmf vtklibxml2)
-  set(_xdmf_link_lib vtkIOCore Xdmf vtkRenderingOpenGL)
+  set(_xdmf_link_lib 
+    vtkIOCore
+    Xdmf
+    vtkRenderingOpenGL
+    vtkInteractionStyle
+    vtkRenderingFreeTypeOpenGL
+    )
 
   IF(VTK_USE_PARALLEL)
     list(APPEND _xdmf_link_lib vtkParallelCore)
