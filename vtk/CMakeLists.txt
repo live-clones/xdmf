@@ -118,10 +118,10 @@ IF (VTK_FOUND)
 
   target_link_libraries(vtkXdmf ${_xdmf_link_lib})
 
-  IF (VTK_USE_MPI)
+  IF (PARAVIEW_USE_MPI)
     # Needed for mpich 2
     ADD_DEFINITIONS("-DMPICH_IGNORE_CXX_SEEK")
-  ENDIF (VTK_USE_MPI)
+  ENDIF (PARAVIEW_USE_MPI)
 
 IF(XDMF_BUILD_MPI)
     # Building MPI 
