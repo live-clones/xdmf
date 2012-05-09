@@ -150,7 +150,9 @@ ENDIF(XDMF_BUILD_MPI)
     PVVTK_ADD_LIBRARY(vtk${PROJECT_NAME}Python MODULE ${XdmfPython_SRCS} ${Xdmf_SRCS})
     set(_xdmf_link_lib 
       vtkIOCorePythonD 
-      vtkRenderingCorePythonD
+      vtkRenderingOpenGLPythonD
+      vtkInteractionStyle
+      vtkRenderingFreeTypeOpenGL
       Xdmf)
     
     if(VTK_USE_PARALLEL)
