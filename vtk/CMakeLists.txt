@@ -112,9 +112,9 @@ IF (VTK_FOUND)
     vtkRenderingFreeTypeOpenGL
     )
 
-  IF(VTK_USE_PARALLEL)
+  if(Module_vtkParallelCore)
     list(APPEND _xdmf_link_lib vtkParallelCore)
-  ENDIF(VTK_USE_PARALLEL)
+  endif()
 
   target_link_libraries(vtkXdmf ${_xdmf_link_lib})
 
@@ -135,11 +135,11 @@ ENDIF(XDMF_BUILD_MPI)
     INCLUDE(${VTK_CMAKE_DIR}/vtkWrapTcl.cmake OPTIONAL)
     VTK_WRAP_TCL2(vtk${PROJECT_NAME}TCL XdmfTCL_SRCS ${Xdmf_SRCS})
     PVVTK_ADD_LIBRARY(vtk${PROJECT_NAME}TCL ${LIBTYPE} ${XdmfTCL_SRCS} ${Xdmf_SRCS})
-    IF(VTK_USE_PARALLEL)
+    if(Module_vtkParallelCore)
       TARGET_LINK_LIBRARIES(vtk${PROJECT_NAME}TCL vtkIOTCL vtkRenderingTCL vtkParallelTCL Xdmf)
-    ELSE(VTK_USE_PARALLEL)
+    else()
       TARGET_LINK_LIBRARIES(vtk${PROJECT_NAME}TCL vtkIOTCL vtkRenderingTCL Xdmf)
-    ENDIF(VTK_USE_PARALLEL)
+    endif()
     ADD_DEPENDENCIES(vtk${PROJECT_NAME}TCL vtk${PROJECT_NAME})
   ENDIF(VTK_WRAP_TCL)
 
@@ -155,7 +155,7 @@ ENDIF(XDMF_BUILD_MPI)
       vtkRenderingFreeTypeOpenGL
       Xdmf)
     
-    if(VTK_USE_PARALLEL)
+    if(Module_vtkParallelCore)
       list(APPEND _xdmf_link_lib vtkParallelCorePythonD) 
     endif()
     
