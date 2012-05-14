@@ -32,7 +32,7 @@ XdmfHeavyDataController::XdmfHeavyDataController(const std::string & filePath,
                                                  const std::vector<unsigned int> & dimensions) :
   mDataSetPath(dataSetPath),
   mDimensions(dimensions),
-  mFilePath(XdmfSystemUtils::getRealPath(filePath)),
+  mFilePath(filePath),
   mType(type)
 {
 }

@@ -868,7 +868,7 @@ int main(int argc, char* argv[])
 
   std::string inputFileName = "";
   std::string outputFileName = "";
-  unsigned int numPartitions;
+  unsigned int numPartitions = 0;
   XdmfPartitioner::MetisScheme metisScheme = XdmfPartitioner::DUAL_GRAPH;
   bool unpartition = false;
 

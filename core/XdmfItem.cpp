@@ -36,7 +36,7 @@ XdmfItem::~XdmfItem()
 
 void
 XdmfItem::populateItem(const std::map<std::string, std::string> &,
-                       std::vector<shared_ptr<XdmfItem > > & childItems,
+                       const std::vector<shared_ptr<XdmfItem > > & childItems,
                        const XdmfCoreReader * const)
 {
   for(std::vector<shared_ptr<XdmfItem> >::const_iterator iter =

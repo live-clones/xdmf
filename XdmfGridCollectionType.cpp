@@ -21,8 +21,9 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#include "XdmfGridCollectionType.hpp"
+#include <utility>
 #include "XdmfError.hpp"
+#include "XdmfGridCollectionType.hpp"
 
 // Supported XdmfGridCollectionTypes
 shared_ptr<const XdmfGridCollectionType>
@@ -63,31 +64,32 @@ XdmfGridCollectionType::New(const std::map<std::string, std::string> & itemPrope
 {
   std::map<std::string, std::string>::const_iterator type =
     itemProperties.find("CollectionType");
-  if(type != itemProperties.end()) {
-    const std::string typeVal = type->second;
-    if(typeVal.compare("None") == 0) {
-      return NoCollectionType();
-    }
-    else if(typeVal.compare("Spatial") == 0) {
-      return Spatial();
-    }
-    else if(typeVal.compare("Temporal") == 0) {
-      return Temporal();
-    }
-    else {
-      XdmfError::message(XdmfError::FATAL, 
-                         "'CollectionType' not of 'None', 'Spatial', or "
-                         "'Temporal' in XdmfGridCollectionType::New");
-    }
+  if(type == itemProperties.end()) {
+    XdmfError::message(XdmfError::FATAL, 
+                       "'CollectionType' not in itemProperties in "
+                       "XdmfGridCollectionType::New");
   }
+
+  const std::string & typeVal = type->second;
+  if(typeVal.compare("None") == 0) {
+    return NoCollectionType();
+  }
+  else if(typeVal.compare("Spatial") == 0) {
+    return Spatial();
+  }
+  else if(typeVal.compare("Temporal") == 0) {
+    return Temporal();
+  }
+
   XdmfError::message(XdmfError::FATAL, 
-                     "'CollectionType' not in itemProperties in "
-                     "XdmfGridCollectionType::New");
+                     "'CollectionType' not of 'None', 'Spatial', or "
+                     "'Temporal' in XdmfGridCollectionType::New");
+
   return shared_ptr<const XdmfGridCollectionType>();
 }
 
 void
 XdmfGridCollectionType::getProperties(std::map<std::string, std::string> & collectedProperties) const
 {
-  collectedProperties["CollectionType"] = mName;
+  collectedProperties.insert(std::make_pair("CollectionType", mName));
 }

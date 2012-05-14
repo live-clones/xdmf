@@ -21,6 +21,7 @@
 /*                                                                           */
 /*****************************************************************************/
 
+#include <utility>
 #include "XdmfGeometry.hpp"
 #include "XdmfTopology.hpp"
 #include "XdmfGridCollection.hpp"
@@ -51,7 +52,7 @@ XdmfGridCollection::getItemProperties() const
 {
   std::map<std::string, std::string> collectionProperties =
     XdmfGrid::getItemProperties();
-  collectionProperties["GridType"] = "Collection";
+  collectionProperties.insert(std::make_pair("GridType", "Collection"));
   mType->getProperties(collectionProperties);
   return collectionProperties;
 }
@@ -76,7 +77,7 @@ XdmfGridCollection::insert(const shared_ptr<XdmfInformation> information)
 
 void
 XdmfGridCollection::populateItem(const std::map<std::string, std::string> & itemProperties,
-                                 std::vector<shared_ptr<XdmfItem> > & childItems,
+                                 const std::vector<shared_ptr<XdmfItem> > & childItems,
                                  const XdmfCoreReader * const reader)
 {
   mType = XdmfGridCollectionType::New(itemProperties);

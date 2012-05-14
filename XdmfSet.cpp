@@ -21,6 +21,7 @@
 /*                                                                           */
 /*****************************************************************************/
 
+#include <utility>
 #include "XdmfAttribute.hpp"
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfSet.hpp"
@@ -52,7 +53,7 @@ std::map<std::string, std::string>
 XdmfSet::getItemProperties() const
 {
   std::map<std::string, std::string> setProperties;
-  setProperties["Name"] = mName;
+  setProperties.insert(std::make_pair("Name", mName));
   mType->getProperties(setProperties);
   return setProperties;
 }
@@ -77,7 +78,7 @@ XdmfSet::getType() const
 
 void
 XdmfSet::populateItem(const std::map<std::string, std::string> & itemProperties,
-                      std::vector<shared_ptr<XdmfItem> > & childItems,
+                      const std::vector<shared_ptr<XdmfItem> > & childItems,
                       const XdmfCoreReader * const reader)
 {
   XdmfItem::populateItem(itemProperties, childItems, reader);

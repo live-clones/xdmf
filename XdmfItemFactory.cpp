@@ -80,13 +80,11 @@ XdmfItemFactory::createItem(const std::string & itemTag,
     }
 
     if(type != itemProperties.end()) {
-      const std::string typeVal = type->second;
+      const std::string & typeVal = type->second;
       if(typeVal.compare("ORIGIN_DXDY") == 0 ||
          typeVal.compare("ORIGIN_DXDYDZ") == 0) {
-        shared_ptr<XdmfArray> origin =
-          shared_ptr<XdmfArray>();
-        shared_ptr<XdmfArray> brickSize =
-          shared_ptr<XdmfArray>();
+        shared_ptr<XdmfArray> origin = shared_ptr<XdmfArray>();
+        shared_ptr<XdmfArray> brickSize = shared_ptr<XdmfArray>();
         for(std::vector<shared_ptr<XdmfItem> >::const_iterator iter =
               childItems.begin();
             iter != childItems.end();

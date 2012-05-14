@@ -24,6 +24,7 @@
 #include <fstream>
 #include <libxml/tree.h>
 #include <sstream>
+#include <utility>
 #include "XdmfArray.hpp"
 #include "XdmfHeavyDataWriter.hpp"
 #include "XdmfHDF5Controller.hpp"
@@ -259,7 +260,8 @@ XdmfWriter::visit(XdmfArray & array,
   }
   mImpl->mDepth++;
 
-  bool isSubclassed = array.getItemTag().compare(XdmfArray::ItemTag) != 0;
+  const bool isSubclassed = 
+    array.getItemTag().compare(XdmfArray::ItemTag) != 0;
 
   if(isSubclassed) {
     this->visit(dynamic_cast<XdmfItem &>(array), visitor);
@@ -284,7 +286,7 @@ XdmfWriter::visit(XdmfArray & array,
         array.getHeavyDataController()->getFilePath();
       size_t index = heavyDataPath.find_last_of("/\\");
       if(index != std::string::npos) {
-        std::string heavyDataDir = heavyDataPath.substr(0, index + 1);
+        const std::string heavyDataDir = heavyDataPath.substr(0, index + 1);
         if(mImpl->mXMLFilePath.find(heavyDataDir) == 0) {
           heavyDataPath =
             heavyDataPath.substr(heavyDataDir.size(),
@@ -347,7 +349,7 @@ XdmfWriter::visit(XdmfItem & item,
     if(mImpl->mWriteXPaths) {
       mImpl->mXPathCount++;
 
-      std::string parentXPathString = mImpl->mXPathString;
+      const std::string parentXPathString = mImpl->mXPathString;
 
       std::stringstream newXPathString;
       newXPathString << mImpl->mXPathString << "/" << mImpl->mXPathCount;
@@ -374,16 +376,18 @@ XdmfWriter::visit(XdmfItem & item,
                                              NULL);
         std::stringstream xPathProp;
         xPathProp << "element(/1" << mImpl->mXPathString << ")";
-        mImpl->mXPath[&item] = xPathProp.str();
+        mImpl->mXPath.insert(std::make_pair(&item, xPathProp.str()));
         const std::map<std::string, std::string> & itemProperties =
           item.getItemProperties();
         for(std::map<std::string, std::string>::const_iterator iter =
               itemProperties.begin();
             iter != itemProperties.end();
             ++iter) {
-          xmlNewProp(mImpl->mXMLCurrentNode, (xmlChar*)iter->first.c_str(), (xmlChar*)iter->second.c_str());
+          xmlNewProp(mImpl->mXMLCurrentNode, 
+                     (xmlChar*)iter->first.c_str(), 
+                     (xmlChar*)iter->second.c_str());
         }
-        unsigned int parentCount = mImpl->mXPathCount;
+        const unsigned int parentCount = mImpl->mXPathCount;
         mImpl->mXPathCount = 0;
         item.traverse(visitor);
         mImpl->mXPathCount = parentCount;

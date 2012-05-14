@@ -21,6 +21,7 @@
 /*                                                                           */
 /*****************************************************************************/
 
+#include <utility>
 #include "XdmfGeometryType.hpp"
 #include "XdmfError.hpp"
 
@@ -65,26 +66,26 @@ XdmfGeometryType::New(const std::map<std::string, std::string> & itemProperties)
   if(type == itemProperties.end()) {
     type = itemProperties.find("GeometryType");
   }
-
-  if(type != itemProperties.end()) {
-    const std::string typeVal = type->second;
-    if(typeVal.compare("None") == 0) {
-      return NoGeometryType();
-    }
-    else if(typeVal.compare("XYZ") == 0) {
-      return XYZ();
-    }
-    else if(typeVal.compare("XY") == 0) {
-      return XY();
-    }
-    else {
-      XdmfError::message(XdmfError::FATAL, "Type not 'None', 'XYZ', or 'XY' "
-                         "in XdmfGeometryType::New");
-    }
+  if(type == itemProperties.end()) {
+    XdmfError::message(XdmfError::FATAL, 
+                       "Neither 'Type' nor 'GeometryType' in itemProperties "
+                       "in XdmfGeometryType::New");
   }
-  XdmfError::message(XdmfError::FATAL, 
-                     "Neither 'Type' nor 'GeometryType' in itemProperties in "
-                     "XdmfGeometryType::New");
+  const std::string & typeVal = type->second;
+
+  if(typeVal.compare("None") == 0) {
+    return NoGeometryType();
+  }
+  else if(typeVal.compare("XYZ") == 0) {
+    return XYZ();
+  }
+  else if(typeVal.compare("XY") == 0) {
+    return XY();
+  }
+
+  XdmfError::message(XdmfError::FATAL, "Type not 'None', 'XYZ', or 'XY' "
+                     "in XdmfGeometryType::New");
+
   return shared_ptr<const XdmfGeometryType>();
 }
 
@@ -103,5 +104,5 @@ XdmfGeometryType::getName() const
 void
 XdmfGeometryType::getProperties(std::map<std::string, std::string> & collectedProperties) const
 {
-  collectedProperties["Type"] = mName;
+  collectedProperties.insert(std::make_pair("Type", mName));
 }

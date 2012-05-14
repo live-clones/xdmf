@@ -21,6 +21,7 @@
 /*                                                                           */
 /*****************************************************************************/
 
+#include <utility>
 #include "XdmfSetType.hpp"
 #include "XdmfError.hpp"
 
@@ -77,37 +78,38 @@ XdmfSetType::New(const std::map<std::string, std::string> & itemProperties)
   if(type == itemProperties.end()) {
     type = itemProperties.find("SetType");
   }
-  if(type != itemProperties.end()) {
-    const std::string typeVal = type->second;
-    if(typeVal.compare("None") == 0) {
-      return NoSetType();
-    }
-    else if(typeVal.compare("Node") == 0) {
-      return Node();
-    }
-    else if(typeVal.compare("Cell") == 0) {
-      return Cell();
-    }
-    else if(typeVal.compare("Face") == 0) {
-      return Face();
-    }
-    else if(typeVal.compare("Edge") == 0) {
-      return Edge();
-    }
-    else {
-      XdmfError::message(XdmfError::FATAL, 
-                         "Type not of 'None', 'Node', 'Cell', 'Face', or "
-                         "'Edge' in XdmfSetType::New");
-    }
+  if(type == itemProperties.end()) {
+    XdmfError::message(XdmfError::FATAL, 
+                       "Neither 'Type' nor 'SetType' found in itemProperties "
+                       "in XdmfSetType::New");
   }
+  const std::string & typeVal = type->second;
+
+  if(typeVal.compare("Node") == 0) {
+    return Node();
+  }
+  else if(typeVal.compare("Cell") == 0) {
+    return Cell();
+  }
+  else if(typeVal.compare("Face") == 0) {
+    return Face();
+  }
+  else if(typeVal.compare("Edge") == 0) {
+    return Edge();
+  }
+  else if(typeVal.compare("None") == 0) {
+    return NoSetType();
+  }
+
   XdmfError::message(XdmfError::FATAL, 
-                     "Neither 'Type' nor 'SetType' found in itemProperties "
-                     "in XdmfSetType::New");
+                     "Type not of 'None', 'Node', 'Cell', 'Face', or "
+                     "'Edge' in XdmfSetType::New");
+
   return shared_ptr<const XdmfSetType>();
 }
 
 void
 XdmfSetType::getProperties(std::map<std::string, std::string> & collectedProperties) const
 {
-  collectedProperties["Type"] = this->mName;
+  collectedProperties.insert(std::make_pair("Type", mName));
 }

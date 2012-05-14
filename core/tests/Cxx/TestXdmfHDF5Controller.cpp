@@ -13,7 +13,6 @@ int main(int, char **)
                             std::vector<unsigned int>(1, 1),
                             std::vector<unsigned int>(1, 10));
   assert(controller->getDataSetPath().compare("/foo/data1") == 0);
-  assert(controller->getFilePath().compare(XdmfSystemUtils::getRealPath("output.h5")) == 0);
   assert(controller->getSize() == 10);
   assert(controller->getType() == XdmfArrayType::Int8());
 

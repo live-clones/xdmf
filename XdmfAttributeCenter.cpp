@@ -21,6 +21,7 @@
 /*                                                                           */
 /*****************************************************************************/
 
+#include <utility>
 #include "XdmfAttributeCenter.hpp"
 #include "XdmfError.hpp"
 
@@ -79,37 +80,38 @@ XdmfAttributeCenter::New(const std::map<std::string, std::string> & itemProperti
 {
   std::map<std::string, std::string>::const_iterator center =
     itemProperties.find("Center");
-  if(center != itemProperties.end()) {
-    const std::string centerVal = center->second;
-    if(centerVal.compare("Grid") == 0) {
-      return Grid();
-    }
-    else if(centerVal.compare("Cell") == 0) {
-      return Cell();
-    }
-    else if(centerVal.compare("Face") == 0) {
-      return Face();
-    }
-    else if(centerVal.compare("Edge") == 0) {
-      return Edge();
-    }
-    else if(centerVal.compare("Node") == 0) {
-      return Node();
-    }
-    else {
-      XdmfError::message(XdmfError::FATAL, 
-                         "Center not of 'Grid','Cell','Face','Edge','Node' "
-                         "in XdmfAttributeCenter::New");
-    }
+  if(center == itemProperties.end()) {
+    XdmfError::message(XdmfError::FATAL, 
+                       "'Center' not found in itemProperties in "
+                       "XdmfAttributeCenter::New");
   }
+  const std::string & centerVal = center->second;
+  
+  if(centerVal.compare("Node") == 0) {
+    return Node();
+  }
+  else if(centerVal.compare("Cell") == 0) {
+    return Cell();
+  }
+  else if(centerVal.compare("Grid") == 0) {
+    return Grid();
+  }
+  else if(centerVal.compare("Face") == 0) {
+    return Face();
+  }
+  else if(centerVal.compare("Edge") == 0) {
+    return Edge();
+  }
+
   XdmfError::message(XdmfError::FATAL, 
-                     "'Center' not found in itemProperties in "
-                     "XdmfAttributeCenter::New");
+                     "Center not of 'Grid','Cell','Face','Edge','Node' "
+                     "in XdmfAttributeCenter::New");
+
   return shared_ptr<const XdmfAttributeCenter>();
 }
 
 void
 XdmfAttributeCenter::getProperties(std::map<std::string, std::string> & collectedProperties) const
 {
-  collectedProperties["Center"] = mName;
+  collectedProperties.insert(std::make_pair("Center", mName));
 }

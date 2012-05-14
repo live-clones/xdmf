@@ -21,6 +21,7 @@
 /*                                                                           */
 /*****************************************************************************/
 
+#include <utility>
 #include "XdmfArray.hpp"
 #include "XdmfError.hpp"
 #include "XdmfInformation.hpp"
@@ -59,8 +60,8 @@ std::map<std::string, std::string>
 XdmfInformation::getItemProperties() const
 {
   std::map<std::string, std::string> informationProperties;
-  informationProperties["Name"] = mKey;
-  informationProperties["Value"] = mValue;
+  informationProperties.insert(std::make_pair("Name", mKey));
+  informationProperties.insert(std::make_pair("Value", mValue));
   return informationProperties;
 }
 
@@ -84,7 +85,7 @@ XdmfInformation::getValue() const
 
 void
 XdmfInformation::populateItem(const std::map<std::string, std::string> & itemProperties,
-                              std::vector<shared_ptr<XdmfItem> > & childItems,
+                              const std::vector<shared_ptr<XdmfItem> > & childItems,
                               const XdmfCoreReader * const reader)
 {
   XdmfItem::populateItem(itemProperties, childItems, reader);

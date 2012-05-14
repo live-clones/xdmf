@@ -21,6 +21,7 @@
 /*                                                                           */
 /*****************************************************************************/
 
+#include <utility>
 #include "XdmfAttribute.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGrid.hpp"
@@ -59,7 +60,7 @@ std::map<std::string, std::string>
 XdmfGrid::getItemProperties() const
 {
   std::map<std::string, std::string> gridProperties;
-  gridProperties["Name"] = mName;
+  gridProperties.insert(std::make_pair("Name", mName));
   return gridProperties;
 }
 
@@ -96,7 +97,7 @@ XdmfGrid::getTopology() const
 
 void
 XdmfGrid::populateItem(const std::map<std::string, std::string> & itemProperties,
-                       std::vector<shared_ptr<XdmfItem> > & childItems,
+                       const std::vector<shared_ptr<XdmfItem> > & childItems,
                        const XdmfCoreReader * const reader)
 {
   XdmfItem::populateItem(itemProperties, childItems, reader);

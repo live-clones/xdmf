@@ -22,6 +22,7 @@
 /*****************************************************************************/
 
 #include <sstream>
+#include <utility>
 #include "XdmfError.hpp"
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
@@ -58,7 +59,7 @@ XdmfTopology::getItemProperties() const
   if(mType->getCellType() != XdmfTopologyType::Structured) {
     std::stringstream numElements;
     numElements << this->getNumberElements();
-    topologyProperties["Dimensions"] = numElements.str();
+    topologyProperties.insert(std::make_pair("Dimensions", numElements.str()));
   }
   return topologyProperties;
 }
@@ -116,7 +117,7 @@ XdmfTopology::getType() const
 
 void
 XdmfTopology::populateItem(const std::map<std::string, std::string> & itemProperties,
-                           std::vector<shared_ptr<XdmfItem> > & childItems,
+                           const std::vector<shared_ptr<XdmfItem> > & childItems,
                            const XdmfCoreReader * const reader)
 {
   XdmfItem::populateItem(itemProperties, childItems, reader);

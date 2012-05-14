@@ -22,6 +22,7 @@
 /*****************************************************************************/
 
 #include <sstream>
+#include <utility>
 #include "XdmfTime.hpp"
 #include "XdmfError.hpp"
 
@@ -49,7 +50,7 @@ XdmfTime::getItemProperties() const
   std::map<std::string, std::string> timeProperties;
   std::stringstream value;
   value << mValue;
-  timeProperties["Value"] = value.str();
+  timeProperties.insert(std::make_pair("Value", value.str()));
   return timeProperties;
 }
 
@@ -67,7 +68,7 @@ XdmfTime::getValue() const
 
 void
 XdmfTime::populateItem(const std::map<std::string, std::string> & itemProperties,
-                       std::vector<shared_ptr<XdmfItem> > & childItems,
+                       const std::vector<shared_ptr<XdmfItem> > & childItems,
                        const XdmfCoreReader * const reader)
 {
   XdmfItem::populateItem(itemProperties, childItems, reader);
@@ -77,7 +78,9 @@ XdmfTime::populateItem(const std::map<std::string, std::string> & itemProperties
     mValue = atof(value->second.c_str());
   }
   else {
-    XdmfError::message(XdmfError::FATAL, "'Value' not in itemProperties in XdmfTime::populateItem");
+    XdmfError::message(XdmfError::FATAL, 
+                       "'Value' not in itemProperties in "
+                       "XdmfTime::populateItem");
   }
 }
 

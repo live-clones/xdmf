@@ -27,13 +27,13 @@
 #include <map>
 #include <sstream>
 #include <cstring>
+#include <utility>
+#include "XdmfArray.hpp"
 #include "XdmfCoreItemFactory.hpp"
 #include "XdmfCoreReader.hpp"
+#include "XdmfError.hpp"
 #include "XdmfItem.hpp"
 #include "XdmfSystemUtils.hpp"
-#include "XdmfError.hpp"
-
-#include <fstream>
 
 /**
  * PIMPL
@@ -101,6 +101,7 @@ public:
                          " in XdmfCoreReader::XdmfCoreReaderImpl::parse");
     }
 
+    mDocuments.insert(std::make_pair((char*)mDocument->URL, mDocument));
     mXPathContext = xmlXPtrNewContext(mDocument, NULL, NULL);
     mXPathMap.clear();
   }
@@ -196,37 +197,40 @@ public:
       std::map<std::string, std::string> itemProperties;
 
       xmlNodePtr childNode = currNode->children;
-      while(childNode != NULL) {
-        if(childNode->type == XML_TEXT_NODE && childNode->content) {
-          const char * content = (char*)childNode->content;
-
-          // determine if content is whitespace
-          const size_t contentSize = std::strlen(content);
-          bool whitespace = true;
-
-          for(size_t i=0; i<contentSize; ++i) {
-            if(!isspace(content[i])) {
-              whitespace = false;
+      if (XdmfArray::ItemTag.compare((char *)currNode->name) == 0) {
+        while(childNode != NULL) {
+          if(childNode->type == XML_TEXT_NODE && childNode->content) {
+            const char * content = (char*)childNode->content;
+            
+            // determine if content is whitespace
+            bool whitespace = true;
+            
+            const char * contentPtr = content;
+            while(contentPtr != NULL) {
+              if(!isspace(*contentPtr++)) {
+                whitespace = false;
+                break;
+              }
+            }
+            
+            if(!whitespace) {
+              itemProperties.insert(std::make_pair("Content", content));
+              itemProperties.insert(std::make_pair("XMLDir", mXMLDir));
               break;
             }
           }
-
-          if(!whitespace) {
-            itemProperties["Content"] = content;
-            itemProperties["XMLDir"] = mXMLDir;
-            break;
-          }
+          childNode = childNode->next;
         }
-        childNode = childNode->next;
       }
+     
       xmlAttrPtr currAttribute = currNode->properties;
       while(currAttribute != NULL) {
-        itemProperties[(const char *)currAttribute->name] =
-          (const char *)currAttribute->children->content;
+        itemProperties.insert(std::make_pair((char *)currAttribute->name,
+                                             (char *)currAttribute->children->content));
         currAttribute = currAttribute->next;
       }
 
-      std::vector<shared_ptr<XdmfItem> > childItems =
+      const std::vector<shared_ptr<XdmfItem> > childItems =
         this->read(currNode->children);
       shared_ptr<XdmfItem> newItem =
         mItemFactory->createItem((const char *)currNode->name,
@@ -240,7 +244,7 @@ public:
 
       newItem->populateItem(itemProperties, childItems, mCoreReader);
       myItems.push_back(newItem);
-      mXPathMap[currNode] = newItem;
+      mXPathMap.insert(std::make_pair(currNode, newItem));
     }
   }
 
@@ -262,7 +266,6 @@ public:
   std::map<std::string, xmlDocPtr> mDocuments;
   const XdmfCoreReader * const mCoreReader;
   const shared_ptr<const XdmfCoreItemFactory> mItemFactory;
-  const std::string mRootItemTag;
   std::string mXMLDir;
   xmlXPathContextPtr mXPathContext;
   std::map<xmlNodePtr, shared_ptr<XdmfItem> > mXPathMap;

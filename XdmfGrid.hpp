@@ -130,7 +130,7 @@ protected:
 
   virtual void
   populateItem(const std::map<std::string, std::string> & itemProperties,
-               std::vector<shared_ptr<XdmfItem> > & childItems,
+               const std::vector<shared_ptr<XdmfItem> > & childItems,
                const XdmfCoreReader * const reader);
 
   shared_ptr<XdmfGeometry> mGeometry;

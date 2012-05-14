@@ -21,6 +21,7 @@
 /*                                                                           */
 /*****************************************************************************/
 
+#include <utility>
 #include "XdmfAttributeType.hpp"
 #include "XdmfError.hpp"
 
@@ -98,44 +99,45 @@ XdmfAttributeType::New(const std::map<std::string, std::string> & itemProperties
   if(type == itemProperties.end()) {
     type = itemProperties.find("AttributeType");
   }
-  if(type != itemProperties.end()) {
-    const std::string typeVal = type->second;
-    if(typeVal.compare("None") == 0) {
-      return NoAttributeType();
-    }
-    else if(typeVal.compare("Scalar") == 0) {
-      return Scalar();
-    }
-    else if(typeVal.compare("Vector") == 0) {
-      return Vector();
-    }
-    else if(typeVal.compare("Tensor") == 0) {
-      return Tensor();
-    }
-    else if(typeVal.compare("Matrix") == 0) {
-      return Matrix();
-    }
-    else if(typeVal.compare("Tensor6") == 0) {
-      return Tensor6();
-    }
-    else if(typeVal.compare("GlobalId") == 0) {
-      return GlobalId();
-    }
-    else {
-      XdmfError::message(XdmfError::FATAL, 
-                         "Type not of 'None','Scalar','Vector','Tensor', "
-                         "'Matrix','Tensor6', or 'GlobalId' in "
-                         "XdmfAttributeType::New");
-    }
+  if(type == itemProperties.end()) {
+    XdmfError::message(XdmfError::FATAL, 
+                       "Neither 'Type' nor 'AttributeType' found in "
+                       "itemProperties in XdmfAttributeType::New");
   }
+  const std::string & typeVal = type->second;
+
+  if(typeVal.compare("Scalar") == 0) {
+    return Scalar();
+  }
+  else if(typeVal.compare("Vector") == 0) {
+    return Vector();
+  }
+  else if(typeVal.compare("Tensor") == 0) {
+    return Tensor();
+  }
+  else if(typeVal.compare("Matrix") == 0) {
+    return Matrix();
+  }
+  else if(typeVal.compare("Tensor6") == 0) {
+    return Tensor6();
+  }
+  else if(typeVal.compare("GlobalId") == 0) {
+    return GlobalId();
+  }
+  else if(typeVal.compare("None") == 0) {
+    return NoAttributeType();
+  }
+
   XdmfError::message(XdmfError::FATAL, 
-                     "Neither 'Type' nor 'AttributeType' found in "
-                     "itemProperties in XdmfAttributeType::New");
+                     "Type not of 'None','Scalar','Vector','Tensor', "
+                     "'Matrix','Tensor6', or 'GlobalId' in "
+                     "XdmfAttributeType::New");
+
   return shared_ptr<const XdmfAttributeType>();
 }
 
 void
 XdmfAttributeType::getProperties(std::map<std::string, std::string> & collectedProperties) const
 {
-  collectedProperties["Type"] = mName;
+  collectedProperties.insert(std::make_pair("Type", mName));
 }

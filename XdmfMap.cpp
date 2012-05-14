@@ -21,6 +21,7 @@
 /*                                                                           */
 /*****************************************************************************/
 
+#include <utility>
 #include "XdmfAttribute.hpp"
 #include "XdmfError.hpp"
 #include "XdmfGridCollection.hpp"
@@ -93,7 +94,7 @@ std::map<std::string, std::string>
 XdmfMap::getItemProperties() const
 {
   std::map<std::string, std::string> mapProperties;
-  mapProperties["Name"] = mName;
+  mapProperties.insert(std::make_pair("Name", mName));
   return mapProperties;
 }
 
@@ -142,7 +143,7 @@ bool XdmfMap::isInitialized() const
 
 void
 XdmfMap::populateItem(const std::map<std::string, std::string> & itemProperties,
-                      std::vector<shared_ptr<XdmfItem> > & childItems,
+                      const std::vector<shared_ptr<XdmfItem> > & childItems,
                       const XdmfCoreReader * const reader)
 {
   XdmfItem::populateItem(itemProperties, childItems, reader);

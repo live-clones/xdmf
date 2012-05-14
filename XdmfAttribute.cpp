@@ -21,6 +21,7 @@
 /*                                                                           */
 /*****************************************************************************/
 
+#include <utility>
 #include "XdmfAttribute.hpp"
 #include "XdmfAttributeCenter.hpp"
 #include "XdmfAttributeType.hpp"
@@ -56,7 +57,7 @@ std::map<std::string, std::string>
 XdmfAttribute::getItemProperties() const
 {
   std::map<std::string, std::string> attributeProperties;
-  attributeProperties["Name"] = mName;
+  attributeProperties.insert(std::make_pair("Name", mName));
   mType->getProperties(attributeProperties);
   mCenter->getProperties(attributeProperties);
   return attributeProperties;
@@ -82,7 +83,7 @@ XdmfAttribute::getType() const
 
 void
 XdmfAttribute::populateItem(const std::map<std::string, std::string> & itemProperties,
-                            std::vector<shared_ptr<XdmfItem> > & childItems,
+                            const std::vector<shared_ptr<XdmfItem> > & childItems,
                             const XdmfCoreReader * const reader)
 {
   XdmfItem::populateItem(itemProperties, childItems, reader);
@@ -93,7 +94,9 @@ XdmfAttribute::populateItem(const std::map<std::string, std::string> & itemPrope
     mName = name->second;
   }
   else {
-    XdmfError::message(XdmfError::FATAL,"'Name' not found in itemProperties in XdmfAttribute::populateItem");
+    XdmfError::message(XdmfError::FATAL,
+                       "'Name' not found in itemProperties in "
+                       "XdmfAttribute::populateItem");
   }
 
   mCenter = XdmfAttributeCenter::New(itemProperties);
@@ -104,8 +107,8 @@ XdmfAttribute::populateItem(const std::map<std::string, std::string> & itemPrope
       ++iter) {
     if(shared_ptr<XdmfArray> array = shared_dynamic_cast<XdmfArray>(*iter)) {
       this->swap(array);
+      break;
     }
-    // TODO: If multiple dataitems.
   }
 }
 

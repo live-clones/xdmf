@@ -73,7 +73,7 @@ XdmfGeometry::getType() const
 
 void
 XdmfGeometry::populateItem(const std::map<std::string, std::string> & itemProperties,
-                           std::vector<shared_ptr<XdmfItem> > & childItems,
+                           const std::vector<shared_ptr<XdmfItem> > & childItems,
                            const XdmfCoreReader * const reader)
 {
   XdmfItem::populateItem(itemProperties, childItems, reader);
@@ -84,8 +84,8 @@ XdmfGeometry::populateItem(const std::map<std::string, std::string> & itemProper
       ++iter) {
     if(shared_ptr<XdmfArray> array = shared_dynamic_cast<XdmfArray>(*iter)) {
       this->swap(array);
+      break;
     }
-    // TODO: If multiple dataitems.
   }
 }
 

@@ -23,6 +23,7 @@
 
 #include <cctype>
 #include <sstream>
+#include <utility>
 #include "XdmfError.hpp"
 #include "XdmfTopologyType.hpp"
 
@@ -413,117 +414,118 @@ XdmfTopologyType::New(const std::map<std::string, std::string> & itemProperties)
   if(type == itemProperties.end()) {
     type = itemProperties.find("TopologyType");
   }
+  if(type == itemProperties.end()) {
+    XdmfError::message(XdmfError::FATAL, 
+                       "Neither 'Type' nor 'TopologyType' found in "
+                       "itemProperties in XdmfTopologyType::New");
+  }
+  std::string typeVal = type->second;
+  std::transform(typeVal.begin(),
+                 typeVal.end(),
+                 typeVal.begin(),
+                 (int(*)(int))toupper);
 
   std::map<std::string, std::string>::const_iterator nodesPerElement =
     itemProperties.find("NodesPerElement");
-  if(type != itemProperties.end()) {
-    std::string typeVal = type->second;
-    std::transform(typeVal.begin(),
-                   typeVal.end(),
-                   typeVal.begin(),
-                   (int(*)(int))toupper);
-    if(typeVal.compare("NOTOPOLOGY") == 0) {
-      return NoTopologyType();
-    }
-    else if(typeVal.compare("POLYVERTEX") == 0) {
-      return Polyvertex();
-    }
-    else if(typeVal.compare("POLYLINE") == 0) {
-      if(nodesPerElement != itemProperties.end()) {
-        return Polyline(atoi(nodesPerElement->second.c_str()));
-      }
-      XdmfError::message(XdmfError::FATAL, 
-                         "'NodesPerElement' not in itemProperties and type "
-                         "'POLYLINE' selected in XdmfTopologyType::New");
-    }
-    else if(typeVal.compare("POLYGON") == 0) {
-      if(nodesPerElement != itemProperties.end()) {
-        return Polygon(atoi(nodesPerElement->second.c_str()));
-      }
-      XdmfError::message(XdmfError::FATAL, 
-                         "'NodesPerElement' not in itemProperties and type "
-                         "'POLYGON' selected in XdmfTopologyType::New");
-    }
-    else if(typeVal.compare("TRIANGLE") == 0) {
-      return Triangle();
-    }
-    else if(typeVal.compare("QUADRILATERAL") == 0) {
-      return Quadrilateral();
-    }
-    else if(typeVal.compare("TETRAHEDRON") == 0) {
-      return Tetrahedron();
-    }
-    else if(typeVal.compare("PYRAMID") == 0) {
-      return Pyramid();
-    }
-    else if(typeVal.compare("WEDGE") == 0) {
-      return Wedge();
-    }
-    else if(typeVal.compare("HEXAHEDRON") == 0) {
-      return Hexahedron();
-    }
-    else if(typeVal.compare("EDGE_3") == 0) {
-      return Edge_3();
-    }
-    else if(typeVal.compare("TRIANGLE_6") == 0) {
-      return Triangle_6();
-    }
-    else if(typeVal.compare("QUADRILATERAL_8") == 0) {
-      return Quadrilateral_8();
-    }
-    else if(typeVal.compare("TETRAHEDRON_10") == 0) {
-      return Tetrahedron_10();
-    }
-    else if(typeVal.compare("PYRAMID_13") == 0) {
-      return Pyramid_13();
-    }
-    else if(typeVal.compare("WEDGE_15") == 0) {
-      return Wedge_15();
-    }
-    else if(typeVal.compare("HEXAHEDRON_20") == 0) {
-      return Hexahedron_20();
-    }
-    else if(typeVal.compare("HEXAHEDRON_24") == 0) {
-      return Hexahedron_24();
-    }
-    else if(typeVal.compare("HEXAHEDRON_27") == 0) {
-      return Hexahedron_27();
-    }
-    else if(typeVal.compare("HEXAHEDRON_64") == 0) {
-      return Hexahedron_64();
-    }
-    else if(typeVal.compare("HEXAHEDRON_125") == 0) {
-      return Hexahedron_125();
-    }
-    else if(typeVal.compare("HEXAHEDRON_216") == 0) {
-      return Hexahedron_216();
-    }
-    else if(typeVal.compare("HEXAHEDRON_343") == 0) {
-      return Hexahedron_343();
-    }
-    else if(typeVal.compare("HEXAHEDRON_512") == 0) {
-      return Hexahedron_512();
-    }
-    else if(typeVal.compare("HEXAHEDRON_729") == 0) {
-      return Hexahedron_729();
-    }
-    else if(typeVal.compare("HEXAHEDRON_1000") == 0) {
-      return Hexahedron_1000();
-    }
-    else if(typeVal.compare("HEXAHEDRON_1331") == 0) {
-      return Hexahedron_1331();
-    }
-    else if(typeVal.compare("MIXED") == 0) {
-      return Mixed();
-    }
-    else {
-      XdmfError::message(XdmfError::FATAL, 
-                         "Invalid Type selected in XdmfTopologyType::New");
-    }
+
+  if(typeVal.compare("NOTOPOLOGY") == 0) {
+    return NoTopologyType();
   }
+  else if(typeVal.compare("POLYVERTEX") == 0) {
+    return Polyvertex();
+  }
+  else if(typeVal.compare("POLYLINE") == 0) {
+    if(nodesPerElement != itemProperties.end()) {
+      return Polyline(atoi(nodesPerElement->second.c_str()));
+    }
+    XdmfError::message(XdmfError::FATAL, 
+                         "'NodesPerElement' not in itemProperties and type "
+                       "'POLYLINE' selected in XdmfTopologyType::New");
+  }
+  else if(typeVal.compare("POLYGON") == 0) {
+    if(nodesPerElement != itemProperties.end()) {
+      return Polygon(atoi(nodesPerElement->second.c_str()));
+    }
+    XdmfError::message(XdmfError::FATAL, 
+                       "'NodesPerElement' not in itemProperties and type "
+                       "'POLYGON' selected in XdmfTopologyType::New");
+  }
+  else if(typeVal.compare("TRIANGLE") == 0) {
+    return Triangle();
+  }
+  else if(typeVal.compare("QUADRILATERAL") == 0) {
+    return Quadrilateral();
+  }
+  else if(typeVal.compare("TETRAHEDRON") == 0) {
+    return Tetrahedron();
+  }
+  else if(typeVal.compare("PYRAMID") == 0) {
+    return Pyramid();
+  }
+  else if(typeVal.compare("WEDGE") == 0) {
+    return Wedge();
+  }
+  else if(typeVal.compare("HEXAHEDRON") == 0) {
+    return Hexahedron();
+  }
+  else if(typeVal.compare("EDGE_3") == 0) {
+    return Edge_3();
+  }
+  else if(typeVal.compare("TRIANGLE_6") == 0) {
+    return Triangle_6();
+  }
+  else if(typeVal.compare("QUADRILATERAL_8") == 0) {
+    return Quadrilateral_8();
+  }
+  else if(typeVal.compare("TETRAHEDRON_10") == 0) {
+    return Tetrahedron_10();
+  }
+  else if(typeVal.compare("PYRAMID_13") == 0) {
+    return Pyramid_13();
+  }
+  else if(typeVal.compare("WEDGE_15") == 0) {
+    return Wedge_15();
+  }
+  else if(typeVal.compare("HEXAHEDRON_20") == 0) {
+    return Hexahedron_20();
+  }
+  else if(typeVal.compare("HEXAHEDRON_24") == 0) {
+    return Hexahedron_24();
+  }
+  else if(typeVal.compare("HEXAHEDRON_27") == 0) {
+    return Hexahedron_27();
+  }
+  else if(typeVal.compare("HEXAHEDRON_64") == 0) {
+    return Hexahedron_64();
+  }
+  else if(typeVal.compare("HEXAHEDRON_125") == 0) {
+    return Hexahedron_125();
+  }
+  else if(typeVal.compare("HEXAHEDRON_216") == 0) {
+    return Hexahedron_216();
+  }
+  else if(typeVal.compare("HEXAHEDRON_343") == 0) {
+    return Hexahedron_343();
+  }
+  else if(typeVal.compare("HEXAHEDRON_512") == 0) {
+    return Hexahedron_512();
+  }
+  else if(typeVal.compare("HEXAHEDRON_729") == 0) {
+    return Hexahedron_729();
+  }
+  else if(typeVal.compare("HEXAHEDRON_1000") == 0) {
+    return Hexahedron_1000();
+  }
+  else if(typeVal.compare("HEXAHEDRON_1331") == 0) {
+    return Hexahedron_1331();
+  }
+  else if(typeVal.compare("MIXED") == 0) {
+    return Mixed();
+  }
+  
   XdmfError::message(XdmfError::FATAL, 
-                     "Neither 'Type' nor 'TopologyType' found in "
-                     "itemProperties in XdmfTopologyType::New");
+                     "Invalid Type selected in XdmfTopologyType::New");
+
   return shared_ptr<const XdmfTopologyType>();
 }
 
@@ -566,10 +568,11 @@ XdmfTopologyType::getNodesPerElement() const
 void
 XdmfTopologyType::getProperties(std::map<std::string, std::string> & collectedProperties) const
 {
-  collectedProperties["Type"] = this->getName();
+  collectedProperties.insert(std::make_pair("Type", this->getName()));
   if(mName.compare("Polygon") == 0 || mName.compare("Polyline") == 0) {
     std::stringstream nodesPerElement;
     nodesPerElement << mNodesPerElement;
-    collectedProperties["NodesPerElement"] = nodesPerElement.str();
+    collectedProperties.insert(std::make_pair("NodesPerElement",
+                                              nodesPerElement.str()));
   }
 }
