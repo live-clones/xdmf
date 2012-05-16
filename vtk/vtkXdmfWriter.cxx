@@ -310,8 +310,8 @@ int vtkXdmfWriter::RequestUpdateExtent(
     //but that is annoying.
     double timeReq = inTimes[this->CurrentTimeIndex];
     inputVector[0]->GetInformationObject(0)->Set(
-        vtkStreamingDemandDrivenPipeline::UPDATE_TIME_STEPS(),
-        &timeReq, 1);
+        vtkStreamingDemandDrivenPipeline::UPDATE_TIME_STEP(),
+        timeReq);
     }
 
   return 1;
@@ -371,16 +371,16 @@ int vtkXdmfWriter::RequestData(
   vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
   vtkDataObject* input = inInfo->Get(vtkDataObject::DATA_OBJECT());
   vtkInformation *inDataInfo = input->GetInformation();
-  if (inDataInfo->Has(vtkDataObject::DATA_TIME_STEPS()))
+  if (inDataInfo->Has(vtkDataObject::DATA_TIME_STEP()))
     {
     //I am assuming we are not given a temporal data object and getting just one time.
-    double *dataT = input->GetInformation()->Get(vtkDataObject::DATA_TIME_STEPS());
+    double dataT = input->GetInformation()->Get(vtkDataObject::DATA_TIME_STEP());
     //cerr << "Writing " << this->CurrentTimeIndex << " " << *dataT << endl;
 
     XdmfTime *xT = grid->GetTime();
     xT->SetDeleteOnGridDelete(true);
     xT->SetTimeType(XDMF_TIME_SINGLE);
-    xT->SetValue(*dataT);
+    xT->SetValue(dataT);
     grid->Insert(xT);
     }
 

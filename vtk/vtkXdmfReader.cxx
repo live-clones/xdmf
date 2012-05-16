@@ -322,7 +322,7 @@ int vtkXdmfReader::RequestInformation(vtkInformation *, vtkInformationVector **,
 
   if (time_steps.size() > 0)
     {
-    outInfo->Set(vtkStreamingDemandDrivenPipeline::TIME_STEPS(), 
+    outInfo->Set(vtkStreamingDemandDrivenPipeline::TIME_STEPS(),
       &time_steps[0], static_cast<int>(time_steps.size()));
     double timeRange[2];
     timeRange[0] = time_steps.front();
@@ -403,9 +403,9 @@ int vtkXdmfReader::RequestData(vtkInformation *, vtkInformationVector **,
   if (this->LastTimeIndex <
     this->XdmfDocument->GetActiveDomain()->GetTimeSteps().size())
     {
-    double time = 
+    double time =
       this->XdmfDocument->GetActiveDomain()->GetTimeForIndex(this->LastTimeIndex);
-    output->GetInformation()->Set(vtkDataObject::DATA_TIME_STEPS(), &time, 1);
+    output->GetInformation()->Set(vtkDataObject::DATA_TIME_STEP(), time);
     }
   return 1;
 }
@@ -413,11 +413,11 @@ int vtkXdmfReader::RequestData(vtkInformation *, vtkInformationVector **,
 //----------------------------------------------------------------------------
 int vtkXdmfReader::ChooseTimeStep(vtkInformation* outInfo)
 {
-  if (outInfo->Has(vtkStreamingDemandDrivenPipeline::UPDATE_TIME_STEPS()))
+  if (outInfo->Has(vtkStreamingDemandDrivenPipeline::UPDATE_TIME_STEP()))
     {
     // we do not support multiple timestep requests.
     double time =
-      outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_TIME_STEPS())[0];
+      outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_TIME_STEP());
 
     return this->XdmfDocument->GetActiveDomain()->GetIndexForTime(time);
     }
