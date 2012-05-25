@@ -241,7 +241,7 @@ XdmfFortran::~XdmfFortran()
 {
 }
 
-void
+int
 XdmfFortran::addAttribute(const char * const name,
                           const int attributeCenter,
                           const int attributeType,
@@ -302,6 +302,10 @@ XdmfFortran::addAttribute(const char * const name,
                values);
 
   mAttributes.push_back(currAttribute);
+
+  const int id = mPreviousAttributes.size();
+  mPreviousAttributes.push_back(currAttribute);
+  return id;
 }
 
 void 
@@ -335,7 +339,6 @@ void
 XdmfFortran::addGridCollection(const char * const name,
                                const int gridCollectionType)
 {
-
   const shared_ptr<XdmfGridCollection> gridCollection = 
     XdmfGridCollection::New();
   gridCollection->setName(name);
@@ -359,10 +362,9 @@ XdmfFortran::addGridCollection(const char * const name,
                  mGridCollections);
 
   mGridCollections.push(gridCollection);
-
 }
 
-void
+int
 XdmfFortran::addInformation(const char * const key,
                             const char * const value)
 {
@@ -371,6 +373,28 @@ XdmfFortran::addInformation(const char * const key,
   information->setValue(value);
 
   mInformations.push_back(information);
+
+  const int id = mPreviousInformations.size();
+  mPreviousInformations.push_back(information);
+  return id;
+}
+
+void 
+XdmfFortran::addPreviousAttribute(const int attributeId)
+{
+  if(attributeId >= mPreviousAttributes.size()) {
+    XdmfError::message(XdmfError::FATAL, "Invalid attribute id");
+  }
+  mAttributes.push_back(mPreviousAttributes[attributeId]);
+}
+
+void 
+XdmfFortran::addPreviousInformation(const int informationId)
+{
+  if(informationId >= mPreviousInformations.size()) {
+    XdmfError::message(XdmfError::FATAL, "Invalid information id");
+  }
+  mInformations.push_back(mPreviousInformations[informationId]);
 }
 
 void 
@@ -381,7 +405,7 @@ XdmfFortran::closeGridCollection()
   }
 }
 
-void 
+int
 XdmfFortran::setGeometry(const int geometryType, 
                          const unsigned int numValues,
                          const int arrayType, 
@@ -405,6 +429,28 @@ XdmfFortran::setGeometry(const int geometryType,
                numValues,
                arrayType,
                pointValues);
+
+  const int id = mPreviousGeometries.size();
+  mPreviousGeometries.push_back(mGeometry);
+  return id;
+}
+
+void 
+XdmfFortran::setPreviousGeometry(const int geometryId)
+{
+  if(geometryId >= mPreviousGeometries.size()) {
+    XdmfError::message(XdmfError::FATAL, "Invalid geometry id");
+  }
+  mGeometry = mPreviousGeometries[geometryId];
+}
+
+void 
+XdmfFortran::setPreviousTopology(const int topologyId)
+{
+  if(topologyId >= mPreviousTopologies.size()) {
+    XdmfError::message(XdmfError::FATAL, "Invalid topology id");
+  }
+  mTopology = mPreviousTopologies[topologyId];
 }
 
 void 
@@ -414,7 +460,7 @@ XdmfFortran::setTime(const double time)
   mTime->setValue(time);
 }
 
-void
+int
 XdmfFortran::setTopology(const int topologyType, 
                          const unsigned int numValues,
                          const int arrayType,
@@ -517,7 +563,11 @@ XdmfFortran::setTopology(const int topologyType,
   writeToArray(mTopology,
                numValues,
                arrayType,
-               connectivityValues);  
+               connectivityValues);
+
+  const int id = mPreviousTopologies.size();
+  mPreviousTopologies.push_back(mTopology);
+  return id;
 }
 
 void 
@@ -549,7 +599,7 @@ extern "C"
     delete xdmfFortran;
   }
 
-  void
+  int
   XdmfAddAttribute(long * pointer, 
                    char * const name,
                    int  * attributeCenter,
@@ -559,12 +609,12 @@ extern "C"
                    void * values)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
-    xdmfFortran->addAttribute(name,
-                              *attributeCenter,
-                              *attributeType,
-                              *numValues,
-                              *arrayType, 
-                              values);
+    return xdmfFortran->addAttribute(name,
+                                     *attributeCenter,
+                                     *attributeType,
+                                     *numValues,
+                                     *arrayType, 
+                                     values);
   }
 
   void
@@ -585,13 +635,29 @@ extern "C"
                                    *gridCollectionType);
   }
 
-  void
+  int
   XdmfAddInformation(long * pointer, 
                      char * key, 
                      char * value)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
-    xdmfFortran->addInformation(key, value);
+    return xdmfFortran->addInformation(key, value);
+  }
+
+  void
+  XdmfAddPreviousAttribute(long * pointer, 
+                           int  * attributeId)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->addPreviousAttribute(*attributeId);
+  }
+
+  void
+  XdmfAddPreviousInformation(long * pointer, 
+                             int  * informationId)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->addPreviousInformation(*informationId);
   }
 
   void
@@ -601,7 +667,7 @@ extern "C"
     xdmfFortran->closeGridCollection();
   }
 
-  void
+  int
   XdmfSetGeometry(long * pointer, 
                   int  * geometryType, 
                   int  * numValues,
@@ -610,10 +676,26 @@ extern "C"
   {
 
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
-    xdmfFortran->setGeometry(*geometryType, 
-                             *numValues,
-                             *arrayType, 
-                             pointValues);
+    return xdmfFortran->setGeometry(*geometryType, 
+                                    *numValues,
+                                    *arrayType, 
+                                    pointValues);
+  }
+
+  void
+  XdmfSetPreviousGeometry(long * pointer, 
+                          int  * geometryId)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setPreviousGeometry(*geometryId);
+  }
+
+  void
+  XdmfSetPreviousTopology(long * pointer, 
+                          int  * topologyId)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setPreviousTopology(*topologyId);
   }
 
   void
@@ -624,7 +706,7 @@ extern "C"
     xdmfFortran->setTime(*time);
   }
 
-  void
+  int
   XdmfSetTopology(long * pointer, 
                   int  * topologyType, 
                   int  * numValues,
@@ -632,10 +714,10 @@ extern "C"
                   void * connectivityValues)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
-    xdmfFortran->setTopology(*topologyType, 
-                             *numValues, 
-                             *arrayType,
-                             connectivityValues);
+    return xdmfFortran->setTopology(*topologyType, 
+                                    *numValues, 
+                                    *arrayType,
+                                    connectivityValues);
   }
 
   void

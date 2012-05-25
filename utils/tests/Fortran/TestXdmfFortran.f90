@@ -17,6 +17,7 @@ PROGRAM XdmfFortranExample
   REAL*4 myPoints(3,3,4)
   INTEGER myConnections(8,2)
   REAL*8 myCellAttribute(2), myNodeAttribute(3,4), myTime
+  INTEGER nodeAttributeId, cellAttributeId, xdmfaddattribute
 
   filename = 'my_output'//CHAR(0)
   
@@ -100,10 +101,10 @@ PROGRAM XdmfFortranExample
        XDMF_ARRAY_TYPE_INT32, myConnections)
   CALL XDMFSETGEOMETRY(obj, XDMF_GEOMETRY_TYPE_XYZ, 36, &
        XDMF_ARRAY_TYPE_FLOAT32, myPoints)
-  CALL XDMFADDATTRIBUTE(obj, 'NodeValues'//CHAR(0), &
+  nodeAttributeId = XDMFADDATTRIBUTE(obj, 'NodeValues'//CHAR(0), &
        XDMF_ATTRIBUTE_CENTER_NODE, XDMF_ATTRIBUTE_TYPE_SCALAR, 12, &
        XDMF_ARRAY_TYPE_FLOAT64, myNodeAttribute)
-  CALL XDMFADDATTRIBUTE(obj, 'CellValues'//CHAR(0), &
+  cellAttributeId = XDMFADDATTRIBUTE(obj, 'CellValues'//CHAR(0), &
        XDMF_ATTRIBUTE_CENTER_CELL, XDMF_ATTRIBUTE_TYPE_SCALAR, 2, &
        XDMF_ARRAY_TYPE_FLOAT64, myCellAttribute)
   CALL XDMFADDINFORMATION(obj, 'Key'//CHAR(0), 'Value'//CHAR(0))
@@ -112,6 +113,7 @@ PROGRAM XdmfFortranExample
   myTime = 2.0
 
   CALL XDMFSETTIME(obj, myTime)
+  CALL XDMFADDPREVIOUSATTRIBUTE(obj, cellAttributeId)
   CALL XDMFADDGRID(obj, 'Identical'//CHAR(0))
   CALL XDMFCLOSEGRIDCOLLECTION(obj)
   CALL XDMFWRITE(obj, filename)

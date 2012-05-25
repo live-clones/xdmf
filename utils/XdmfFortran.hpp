@@ -33,6 +33,7 @@ class XdmfGridCollection;
 class XdmfInformation;
 class XdmfTime;
 class XdmfTopology;
+class XdmfUnstructuredGrid;
 
 //Includes
 #include <stack>
@@ -127,8 +128,12 @@ class XdmfTopology;
 #define XdmfAddGrid xdmfaddgrid_
 #define XdmfAddGridCollection xdmfaddgridcollection_
 #define XdmfAddInformation xdmfaddinformation_
+#define XdmfAddPreviousAttribute xdmfaddpreviousattribute_
+#define XdmfAddPreviousInformation xdmfaddpreviousinformation_
 #define XdmfCloseGridCollection xdmfclosegridcollection_
 #define XdmfSetGeometry xdmfsetgeometry_
+#define XdmfSetPreviousGeometry xdmfsetpreviousgeometry_
+#define XdmfSetPreviousTopology xdmfsetprevioustopology_
 #define XdmfSetTime xdmfsettime_
 #define XdmfSetTopology xdmfsettopology_
 #define XdmfWrite xdmfwrite_
@@ -163,13 +168,15 @@ public:
    * @param numValues number of attribute values to copy.
    * @param arrayType type of attribute values.
    * @param values array of attribute values.
+   *
+   * @return int providing id to fortran if reusing.
    */
-  void addAttribute(const char * const name,
-                    const int attributeCenter,
-                    const int attributeType,
-                    const unsigned int numValues,
-                    const int arrayType,
-                    const void * const values);
+  int addAttribute(const char * const name,
+                   const int attributeCenter,
+                   const int attributeType,
+                   const unsigned int numValues,
+                   const int arrayType,
+                   const void * const values);
 
   /**
    * Add grid to domain or collection. Inserts geometry, topology,
@@ -198,9 +205,30 @@ public:
    * create.
    * @param value string containing the value of the information to
    * create.
+   *
+   * @return int providing id to fortran if reusing.
    */
-  void addInformation(const char * const key,
-                      const char * const value);
+  int addInformation(const char * const key,
+                     const char * const value);
+
+
+  /**
+   * Add an attribute that will be inserted into the next grid or grid
+   * collection. This will reuse a previously added attribute so that
+   * xpointers can be used when writing to file (reducing file size).
+   *
+   * @param attributeId, returned from a previous addAttribute().
+   */
+  void addPreviousAttribute(const int attributeId);
+
+  /**
+   * Add an information that will be inserted into the next grid or grid
+   * collection. This will reuse a previously added information so that
+   * xpointers can be used when writing to file (reducing file size).
+   *
+   * @param informationId, returned from a previous addInformation().
+   */
+  void addPreviousInformation(const int informationId);
 
   /**
    * Closes grid collection. No additional grids or collections can be
@@ -215,11 +243,31 @@ public:
    * @param numValues number of point values to copy.
    * @param arrayType type of point values.
    * @param pointValues array of point values.
+   *
+   * @return int providing id to fortran if reusing.
    */
-  void setGeometry(const int geometryType, 
-                   const unsigned int numValues,
-                   const int arrayType, 
-                   const void * const pointValues);
+  int setGeometry(const int geometryType, 
+                  const unsigned int numValues,
+                  const int arrayType, 
+                  const void * const pointValues);
+  
+  /**
+   * Set the geometry (point data) that will be added to the next grid.
+   * This will reuse a previously set geometry so that xpointers can be
+   * used when writing to file (reducing file size);
+   *
+   * @param geometryId, returned from previous setGeometry()
+   */
+  void setPreviousGeometry(const int geometryId);
+
+  /**
+   * Set the topology (connectivity data) that will be added to the
+   * next grid.  This will reuse a previously set topology so that
+   * xpointers can be used when writing to file (reducing file size);
+   *
+   * @param topologyId, returned from previous setTopology()
+   */
+  void setPreviousTopology(const int topologyId);
 
   /**
    * Set the time that will be added to the next grid or grid
@@ -237,11 +285,13 @@ public:
    * @param numValues number of connectivity values to copy.
    * @param arrayType type of connectivity values.
    * @param connectivityValues array of connectivity values.
+   *
+   * @return int providing id to fortran if reusing.
    */
-  void setTopology(const int topologyType, 
-                   const unsigned int numValues,
-                   const int arrayType,
-                   const void * const connectivityValues);
+  int setTopology(const int topologyType, 
+                  const unsigned int numValues,
+                  const int arrayType,
+                  const void * const connectivityValues);
 
   /**
    * Write constructed file to disk.
@@ -260,6 +310,13 @@ private:
   std::vector<shared_ptr<XdmfAttribute> >     mAttributes;
   std::stack<shared_ptr<XdmfGridCollection> > mGridCollections;
   std::vector<shared_ptr<XdmfInformation> >   mInformations;
+
+  std::vector<shared_ptr<XdmfAttribute> > mPreviousAttributes;
+  std::vector<shared_ptr<XdmfGeometry> > mPreviousGeometries;
+  std::vector<shared_ptr<XdmfInformation> > mPreviousInformations;
+  std::vector<shared_ptr<XdmfTopology> > mPreviousTopologies;
+
+
 
 };
 
