@@ -137,6 +137,8 @@ class XdmfUnstructuredGrid;
 #define XdmfSetTime xdmfsettime_
 #define XdmfSetTopology xdmfsettopology_
 #define XdmfWrite xdmfwrite_
+#define XdmfRead xdmfread_
+#define XdmfWriteHDF5 xdmfwritehdf5_
 #endif
 
 /**
@@ -299,6 +301,21 @@ public:
    * @param xmlFilePath the path to the xml file to write to.
    */
   void write(const char * const xmlFilePath);
+
+  /** 
+   * Write HDF5 heavy data to disk and release
+   *
+   * @param xmlFilePath the path to the xml file to write to.
+   */
+  void writeHDF5(const char * const xmlFilePath);
+
+  /** 
+   * Read xml file and make it the domain
+   *
+   * @param xmlFilePath the path to the xml file to read.
+   */
+  void read(const char * const xmlFilePath);
+
 
 private:
   

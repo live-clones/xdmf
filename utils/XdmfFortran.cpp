@@ -22,6 +22,7 @@
 /*     for more information.                                       */
 /*                                                                 */
 /*******************************************************************/
+#include <sys/stat.h>
 
 #include "XdmfFortran.hpp"
 
@@ -42,6 +43,7 @@
 #include "XdmfTopologyType.hpp"
 #include "XdmfUnstructuredGrid.hpp"
 #include "XdmfWriter.hpp"
+#include "XdmfHDF5Writer.hpp"
 
 namespace {
 
@@ -577,6 +579,21 @@ XdmfFortran::write(const char * const xmlFilePath)
   mDomain->accept(writer);
 }
 
+void 
+XdmfFortran::writeHDF5(const char * const xmlFilePath)
+{
+  shared_ptr<XdmfHDF5Writer> writer = XdmfHDF5Writer::New(xmlFilePath);
+  writer->setReleaseData( true );
+  mDomain->accept(writer);
+}
+
+void 
+XdmfFortran::read(const char * const xmlFilePath)
+{
+  shared_ptr<XdmfReader> reader = XdmfReader::New();
+  mDomain = shared_dynamic_cast<XdmfDomain>(reader->read( xmlFilePath )); 
+}
+
 //
 // C++ will mangle the name based on the argument list. This tells the
 // compiler not to mangle the name so we can call it from 'C' (but
@@ -726,6 +743,26 @@ extern "C"
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
     xdmfFortran->write(xmlFilePath);
+  }
+
+
+  void
+  XdmfWriteHDF5(long * pointer,
+                char * xmlFilePath)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->writeHDF5(xmlFilePath);
+  }
+
+  void
+  XdmfRead(long * pointer,
+           char * xmlFilePath)
+  {
+    struct stat buffer;
+    if ( stat(xmlFilePath, &buffer) == 0 ) { 
+       XdmfFortran * xdmfFortran = (XdmfFortran *) *pointer;
+       xdmfFortran->read( xmlFilePath );
+    }   
   }
   
 }
