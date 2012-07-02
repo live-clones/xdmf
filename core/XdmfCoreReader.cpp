@@ -101,7 +101,7 @@ public:
                          " in XdmfCoreReader::XdmfCoreReaderImpl::parse");
     }
 
-    mDocuments.insert(std::make_pair((char*)mDocument->URL, mDocument));
+    //    mDocuments.insert(std::make_pair((char*)mDocument->URL, mDocument));
     mXPathContext = xmlXPtrNewContext(mDocument, NULL, NULL);
     mXPathMap.clear();
   }
