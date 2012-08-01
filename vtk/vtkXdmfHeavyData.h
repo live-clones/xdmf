@@ -12,15 +12,15 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
+// VTK-HeaderTest-Exclude: vtkXdmfHeavyData.h
 
 #ifndef __vtkXdmfHeavyData_h
 #define __vtkXdmfHeavyData_h
 
-#include "vtkObject.h"
-
 #include "XdmfDataItem.h"
-#include "XdmfGrid.h"
+#include "XdmfGrid.h" //won't compile without it
 
+class vtkAlgorithm;
 class vtkDataArray;
 class vtkDataObject;
 class vtkDataSet;
@@ -31,7 +31,6 @@ class vtkRectilinearGrid;
 class vtkStructuredGrid;
 class vtkUnstructuredGrid;
 class vtkXdmfDomain;
-class vtkAlgorithm;
 
 // vtkXdmfHeavyData helps in reading heavy data from Xdmf and putting that into
 // vtkDataObject subclasses.
@@ -64,7 +63,7 @@ public:
   // Returns the VTKCellType for the given xdmf topology. Returns VTK_EMPTY_CELL
   // on error and VTK_NUMBER_OF_CELL_TYPES for XDMF_MIXED.
   static int GetVTKCellType(XdmfInt32 topologyType);
-  
+
   // Description:
   // Returns the number of points per cell. -1 for error. 0 when no fixed number
   // of points possible.
@@ -107,13 +106,13 @@ private:
   // Reads geometry for vtkUnstructuredGrid or vtkStructuredGrid i.e. of
   // vtkPointSet subclasses. The extents only make sense when reading
   // vtkStructuredGrid. If non-null, then the only the points for the sub-grid
-  // are read. 
+  // are read.
   vtkPoints* ReadPoints(XdmfGeometry* xmfGeometry,
     int *update_extents=NULL,
     int *whole_extents=NULL);
 
   // Description:
-  // Read attributes. 
+  // Read attributes.
   bool ReadAttributes(vtkDataSet* dataSet, XdmfGrid* xmfGrid,
     int* update_extents=0);
 
@@ -160,5 +159,3 @@ private:
 };
 
 #endif
-
-

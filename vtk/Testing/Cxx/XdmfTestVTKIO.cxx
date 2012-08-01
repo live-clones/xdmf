@@ -14,28 +14,24 @@
 =========================================================================*/
 //Description:
 //This tests vtkXdmfWriter and vtkXdmfReader
-//It manufactures/reads a bunch of test data objects, writes them to disk 
-//via the xdmfwriter, reads the files back in with the xdmfreader, and 
-//compares the output of the reader against the input to the reader. If 
+//It manufactures/reads a bunch of test data objects, writes them to disk
+//via the xdmfwriter, reads the files back in with the xdmfreader, and
+//compares the output of the reader against the input to the reader. If
 //differences are found it fails and stops immediately, leaving any failed
 //files around for inspection. Otherwise it deletes the temporary files it
 //creates and returns success.
 
-#include "vtkXdmfWriter.h"
-
-#include "vtkCellData.h"
 #include "vtkDataObject.h"
 #include "vtkDataObjectGenerator.h"
 #include "vtkDataSet.h"
-#include "vtkDataSetWriter.h"
-#include "vtkFieldData.h"
-#include "vtkPointData.h"
 #include "vtkDataSetReader.h"
-#include "vtksys/SystemTools.hxx"
-//#include "vtkTemporalFractal.h"
-//#include "vtkTestUtilities.h"
+#include "vtkDataSetWriter.h"
+#include "vtkPointData.h"
+#include "vtkCellData.h"
 #include "vtkTimeSourceExample.h"
 #include "vtkXdmfReader.h"
+#include "vtkXdmfWriter.h"
+#include "vtksys/SystemTools.hxx"
 
 #ifndef _MSC_VER
 # include <unistd.h>
@@ -118,7 +114,7 @@ bool DoDataObjectsDiffer(vtkDataObject *dobj1, vtkDataObject *dobj2)
     double *bds1 = ds1->GetBounds();
     double *bds2 = ds2->GetBounds();
     if ((bds1[0]!=bds2[0]) ||
-        (bds1[1]!=bds2[1]) ||    
+        (bds1[1]!=bds2[1]) ||
         (bds1[2]!=bds2[2]) ||
         (bds1[3]!=bds2[3]) ||
         (bds1[4]!=bds2[4]) ||
@@ -159,7 +155,7 @@ bool TestXDMFConversion(vtkDataObject*input, char *prefix)
   xwriter->Delete();
   vtkDataSet *ds = vtkDataSet::SafeDownCast(input);
   if (ds)
-    {    
+    {
     vtkDataSetWriter *dsw = vtkDataSetWriter::New();
     dsw->SetFileName(vtkfile);
     dsw->SetInputData(ds);
@@ -194,7 +190,7 @@ bool TestXDMFConversion(vtkDataObject*input, char *prefix)
 
 int main (int ac, char **av)
 {
-  
+
   for (int i = 1; i < ac; i++)
     {
     if (!strcmp(av[i], "--dont-clean"))
@@ -203,7 +199,7 @@ int main (int ac, char **av)
       }
     }
 
-  bool fail = false; 
+  bool fail = false;
 
   //TEST SET 1
   vtkDataObjectGenerator *dog = vtkDataObjectGenerator::New();
@@ -257,7 +253,7 @@ int main (int ac, char **av)
   }
 
   //TEST SET 3
-  char* fname = 
+  char* fname =
    vtkTestUtilities::ExpandDataFileName(
     ac, av, "Data/RectGrid2.vtk");
   if (DoFilesExist(fname, NULL, false))
@@ -275,7 +271,7 @@ int main (int ac, char **av)
     }
 
     dsr = vtkDataSetReader::New();
-    fname = 
+    fname =
      vtkTestUtilities::ExpandDataFileName(
       ac, av, "Data/uGridEx.vtk");
     dsr->SetFileName(fname);
@@ -299,5 +295,3 @@ int main (int ac, char **av)
   //ETC.
   return 0;
 }
-
-

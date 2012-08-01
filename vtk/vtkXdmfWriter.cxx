@@ -64,6 +64,15 @@
 # define SNPRINTF snprintf
 #endif
 
+struct  _xmlNode;
+typedef _xmlNode *XdmfXmlNode;
+struct vtkXW2NodeHelp {
+  XdmfDOM     *DOM;
+  XdmfXmlNode  node;
+  bool         staticFlag;
+  vtkXW2NodeHelp(XdmfDOM *d, XdmfXmlNode n, bool f) : DOM(d), node(n), staticFlag(f) {};
+};
+
 class vtkXdmfWriterDomainMemoryHandler
 {
   public:

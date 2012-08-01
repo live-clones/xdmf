@@ -24,13 +24,14 @@
 #ifndef __vtkSILBuilder_h
 #define __vtkSILBuilder_h
 
+#include "vtkIOXdmf2Module.h" // For export macro
 #include "vtkObject.h"
 
 class vtkUnsignedCharArray;
 class vtkStringArray;
 class vtkMutableDirectedGraph;
 
-class VTK_EXPORT vtkSILBuilder : public vtkObject
+class VTKIOXDMF2_EXPORT vtkSILBuilder : public vtkObject
 {
 public:
   static vtkSILBuilder* New();
@@ -74,5 +75,3 @@ private:
 };
 
 #endif
-
-

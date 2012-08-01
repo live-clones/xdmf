@@ -1,119 +1,103 @@
-PROJECT(Xdmf)
+cmake_minimum_required(VERSION 2.8)
 
-SET(CMAKE_C_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_C_FLAGS}")
+project(xdmf2)
 
-# Send VTK executables to the ParaView LIBRARY directory (not a mistake).
-# Send VTK include files to the ParaView include directory
-# Send VTK libraries to the ParaView library directory.
-SET(VTK_INSTALL_PACKAGE_DIR_CM24 ${PV_INSTALL_LIB_DIR})
+#options
+set(XDMF_USE_ANSI_STDLIB 1)
+set(CMAKE_C_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_C_FLAGS}")
 
-IF (PARAVIEW_USE_MPI)
-  SET(XDMF_BUILD_MPI 1)
-  INCLUDE_DIRECTORIES(${MPI_INCLUDE_PATH})
-  
-  IF (MPI_LIBRARY) 
-    SET(XDMF2_MPI_LIBRARIES ${MPI_LIBRARY})   
-  ENDIF (MPI_LIBRARY)   
-  IF (MPI_EXTRA_LIBRARY)   
-    SET(XDMF2_MPI_LIBRARIES ${XDMF2_MPI_LIBRARIES} "${MPI_EXTRA_LIBRARY}")   
-  ENDIF (MPI_EXTRA_LIBRARY) 
-ELSE (PARAVIEW_USE_MPI)
-  SET(XDMF_BUILD_MPI 0)
-ENDIF (PARAVIEW_USE_MPI)
+#hard dependencies
+#XML
+if (XDMF_BUILT_INVTK)
+  set(XDMF_LIBXML2_LIBRARIES ${vtklibxml2_LIBRARIES})
+  set(XDMF_LIBXML2_INCLUDE_DIRS ${vtklibxml2_INCLUDE_DIRS})
+else()
+  find_package(LibXml2 REQUIRED)
+  set(XDMF_LIBXML2_LIBRARIES ${LIBXML2_LIBRARIES})
+  set(XDMF_LIBXML2_INCLUDE_DIRS ${LIBXML2_INCLUDE_DIR})
+endif()
+#?
+if(NOT BUILD_SHARED_LIBS)
+  add_definitions(-DLIBXML_STATIC)
+endif()
 
-IF(NOT BUILD_SHARED_LIBS)
-  ADD_DEFINITIONS(-DLIBXML_STATIC)
-ENDIF(NOT BUILD_SHARED_LIBS)
+#HDF5
+if (XDMF_BUILT_INVTK)
+  set(XDMF_HDF5_LIBRARIES ${vtkhdf5_LIBRARIES})
+  set(XDMF_HDF5_INCLUDE_DIRS ${vtkhdf5_INCLUDE_DIRS})
+else()
+  find_package(HDF5 REQUIRED)
+  set(XDMF_HDF5_LIBRARIES ${HDF5_LIBRARIES})
+  set(XDMF_HDF5_INCLUDE_DIRS ${HDF5_INCLUDE_DIRS})
+endif()
+if(EXISTS "${HDF5_CONFIG}")
+  include("${HDF5_CONFIG}")
+  add_definitions(${HDF5_EXTRA_FLAGS})
+endif()
 
-SET(XDMF_BUILD_VTK 1)
+#optional dependencies
+#MPI
+option(XDMF_BUILD_MPI "XDMF should use MPI" OFF)
+mark_as_advanced(XDMF_BUILD_MPI)
+if (XDMF_BUILD_MPI)
+  find_package(MPI REQUIRED)
+  include_directories(${MPI_INCLUDE_PATH})
+  set(XDMF_MPI_LIBRARIES ${MPI_LIBRARIES})
+  add_definitions(-DMPICH_IGNORE_CXX_SEEK)
+else()
+  add_definitions(-DUSE_SERIAL_XMDF)
+endif()
 
-set(LIBXML2_LIBRARY ${vtklibxml2_LIBRARIES})
-set(VTKLIBXML2_INCLUDE_DIRS ${vtklibxml2_INCLUDE_DIRS})
+#NDGM
+option(XDMF_HAS_NDGM "XDMF has Network Distributed Global Memory (NDGM)" OFF)
+mark_as_advanced(XDMF_HAS_NDGM)
+if(XDMF_HAS_NDGM)
+  option(XDMF_HAS_NDGM_SOURCE "XDMF has Network Distributed Global Memory (NDGM) Source" OFF)
+  if(XDMF_HAS_NDGM_SOURCE)
+    find_path(NDGM_DIR BuildNDGM.cmake ${xdmf2_SOURCE_DIR}/../Ndgm "Root of Source for NDGM")
+    if(NDGM_DIR)
+      message(STATUS "......Process NDGM Source")
+      include(${NDGM_DIR}/BuildNDGM.cmake)
+      #subdirs(NDGM)
+      include_directories(${NDGM_DIR}/libsrc)
+      set(NDGM_LIBRARY ndgm)
+    endif()
+  else()
+    message(STATUS "......Looking for NDGM_INCLUDE_DIR")
+    find_path(NDGM_INCLUDE_DIR Ndgm ${xdmf2_SOURCE_DIR}/../Ndgm/libsrc "Include Directory for NDGM; Resolves #include <Ndgm/ndgm.h>")
+    message(STATUS "......Looking for NDGM_LIBRARY")
+    find_library(NDGM_LIBRARY ndgm ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+    include_directories(${NDGM_INCLUDE_DIR})
+    set(NDGM_LIBRARY ${NDGM_LIBRARY})
+  endif()
+  set(HAVE_NDGM 1)
+endif()
 
-SET(HDF5_LIBRARY ${PARAVIEW_HDF5_LIBRARIES})
-IF(VTK_USE_SYSTEM_EXPAT)
-  SET(XDMF_EXPAT_LIBRARIES ${EXPAT_LIBRARY})
-ELSE(VTK_USE_SYSTEM_EXPAT)
-  SET(XDMF_EXPAT_LIBRARIES vtkexpat)
-ENDIF(VTK_USE_SYSTEM_EXPAT)
-SET(XDMF_USE_ANSI_STDLIB ${PARAVIEW_USE_ANSI_STDLIB})
+##########################
+#packaging
+if(NOT XDMF_INSTALL_LIB_DIR)
+  set(XDMF_INSTALL_LIB_DIR /lib)
+endif()
+if(NOT XDMF_INSTALL_INCLUDE_DIR)
+  set(XDMF_INSTALL_INCLUDE_DIR /include/Xdmf)
+endif()
 
-IF(NOT XDMF_INSTALL_LIB_DIR)
-  SET(XDMF_INSTALL_LIB_DIR /lib)
-ENDIF(NOT XDMF_INSTALL_LIB_DIR)
-IF(NOT XDMF_INSTALL_INCLUDE_DIR)
-  SET(XDMF_INSTALL_INCLUDE_DIR /include/Xdmf)
-ENDIF(NOT XDMF_INSTALL_INCLUDE_DIR)
-IF(NOT XDMF_INSTALL_INCLUDE_VTK_DIR)
-  SET(XDMF_INSTALL_INCLUDE_VTK_DIR /include/XdmfVtk)
-ENDIF(NOT XDMF_INSTALL_INCLUDE_VTK_DIR)
+set(XDMF2_OUTPUT_PATH ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR})
+configure_file(${xdmf2_SOURCE_DIR}/XDMFConfig.cmake.in
+  ${xdmf2_BINARY_DIR}/XDMFConfig.cmake @ONLY IMMEDIATE)
 
-# Let parent project set XDMF_INSTALL_NO_DEVELOPMENT or
-# XDMF_INSTALL_NO_RUNTIME to remove components from the installation.
-SET(XDMF_INSTALL_NO_LIBRARIES)
-IF(BUILD_SHARED_LIBS)
-  IF(XDMF_INSTALL_NO_RUNTIME AND XDMF_INSTALL_NO_DEVELOPMENT)
-    SET(XDMF_INSTALL_NO_LIBRARIES 1)
-  ENDIF(XDMF_INSTALL_NO_RUNTIME AND XDMF_INSTALL_NO_DEVELOPMENT)
-ELSE(BUILD_SHARED_LIBS)
-  IF(XDMF_INSTALL_NO_DEVELOPMENT)
-    SET(XDMF_INSTALL_NO_LIBRARIES 1)
-  ENDIF(XDMF_INSTALL_NO_DEVELOPMENT)
-ENDIF(BUILD_SHARED_LIBS)
-
-include_directories(vtkhdf5_INCLUDE_DIRS)
-
-IF(EXISTS "${HDF5_CONFIG}")
-  INCLUDE("${HDF5_CONFIG}")
-  ADD_DEFINITIONS(${HDF5_EXTRA_FLAGS})
-ENDIF(EXISTS "${HDF5_CONFIG}")
-
-OPTION(XDMF_HAS_NDGM "XDMF has Network Distributed Global Memory (NDGM)" OFF)
-MARK_AS_ADVANCED(XDMF_HAS_NDGM)
-IF(XDMF_HAS_NDGM)
-  OPTION(XDMF_HAS_NDGM_SOURCE "XDMF has Network Distributed Global Memory (NDGM) Source" OFF)
-  IF(XDMF_HAS_NDGM_SOURCE)
-    FIND_PATH(NDGM_DIR BuildNDGM.cmake ${Xdmf_SOURCE_DIR}/../Ndgm "Root of Source for NDGM")
-    IF(NDGM_DIR)
-      MESSAGE(STATUS "......Process NDGM Source")
-      INCLUDE(${NDGM_DIR}/BuildNDGM.cmake)
-      #SUBDIRS(NDGM)
-      INCLUDE_DIRECTORIES(${NDGM_DIR}/libsrc)
-      SET(NDGM_LIBRARY ndgm) 
-    ENDIF(NDGM_DIR)
-  ELSE(XDMF_HAS_NDGM_SOURCE)
-    MESSAGE(STATUS "......Looking for NDGM_INCLUDE_DIR")
-    FIND_PATH(NDGM_INCLUDE_DIR Ndgm ${Xdmf_SOURCE_DIR}/../Ndgm/libsrc "Include Directory for NDGM; Resolves #include <Ndgm/ndgm.h>")
-    MESSAGE(STATUS "......Looking for NDGM_LIBRARY")
-    FIND_LIBRARY(NDGM_LIBRARY ndgm ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
-    INCLUDE_DIRECTORIES(${NDGM_INCLUDE_DIR})
-    SET(NDGM_LIBRARY ${NDGM_LIBRARY})
-  ENDIF(XDMF_HAS_NDGM_SOURCE)
-  SET(HAVE_NDGM 1)
-ENDIF(XDMF_HAS_NDGM)
-
-SET(XDMF2_OUTPUT_PATH ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR})
-SET(XDMF2_VTK_DIR ${ParaView_BINARY_DIR}/VTK)
-CONFIGURE_FILE(${Xdmf_SOURCE_DIR}/XDMFConfig.cmake.in
-  ${Xdmf_BINARY_DIR}/XDMFConfig.cmake @ONLY IMMEDIATE)
-
-MAKE_DIRECTORY(${Xdmf_BINARY_DIR}/Ice)
-
-INCLUDE_DIRECTORIES(
-  ${Xdmf_SOURCE_DIR}/Ice
-  ${Xdmf_BINARY_DIR}/Ice
-  ${Xdmf_SOURCE_DIR}/libsrc
-  ${Xdmf_BINARY_DIR}/libsrc
-  ${Xdmf_SOURCE_DIR}/libsrc/utils
-  ${Xdmf_SOURCE_DIR}/vtk
-  ${Xdmf_BINARY_DIR}/vtk
-  ${VTK_INCLUDE_DIR} 
-  ${VTKEXPAT_INCLUDE_DIR}
-  ${ParaView_SOURCE_DIR}/VTK/Utilities
-  ${ParaView_BINARY_DIR}/VTK/Utilities
-  ${VTKLIBXML2_INCLUDE_DIR}
-  ${HDF5_INCLUDE_DIR}
+#setup build
+include_directories(
+  ${xdmf2_SOURCE_DIR}/libsrc
+  ${xdmf2_BINARY_DIR}/libsrc
+  ${xdmf2_SOURCE_DIR}/libsrc/utils
+  ${XDMF_EXPAT_INCLUDE_DIRS}
+  ${XDMF_LIBXML2_INCLUDE_DIRS}
+  ${XDMF_HDF5_INCLUDE_DIRS}
   )
-SUBDIRS(Ice)
-SUBDIRS(libsrc)
-SUBDIRS(vtk)
+
+include(TestBigEndian)
+test_big_endian(CMAKE_WORDS_BIGENDIAN)
+
+add_subdirectory(libsrc)
+vtk_target(xdmf2 NO_INSTALL) #?? hdf5 does it, should we?

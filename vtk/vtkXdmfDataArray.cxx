@@ -34,8 +34,8 @@
 #include <vtkFloatArray.h>
 #include <vtkDoubleArray.h>
 #include <vtkUnsignedIntArray.h>
-#include "vtkShortArray.h"
-#include "vtkUnsignedShortArray.h"
+#include <vtkShortArray.h>
+#include <vtkUnsignedShortArray.h>
 
 #include <XdmfArray.h>
 
@@ -390,4 +390,55 @@ char *vtkXdmfDataArray::ToXdmfArray( vtkDataArray *DataArray, int CopyShape ){
     break;
   }
   return( array->GetTagName() );
+}
+
+//------------------------------------------------------------------------------
+vtkDataArray *vtkXdmfDataArray::FromArray( void )
+{
+  return( this->FromXdmfArray() );
+}
+
+//------------------------------------------------------------------------------
+char *vtkXdmfDataArray::ToArray( void )
+{
+  return( this->ToXdmfArray() );
+}
+
+//------------------------------------------------------------------------------
+void vtkXdmfDataArray::SetArray( char *TagName )
+{
+  this->Array = TagNameToArray( TagName );
+  if( this->Array )
+    {
+    this->FromXdmfArray();
+    }
+}
+
+//------------------------------------------------------------------------------
+char *vtkXdmfDataArray::GetArray( void )
+{
+  if ( this->Array != NULL )
+    {
+    return( this->Array->GetTagName() );
+    }
+  return( NULL );
+}
+
+//------------------------------------------------------------------------------
+void vtkXdmfDataArray::SetVtkArray( vtkDataArray *array)
+{
+  this->vtkArray = array;
+  this->ToXdmfArray( array );
+}
+
+//------------------------------------------------------------------------------
+vtkDataArray *vtkXdmfDataArray::GetVtkArray( void )
+{
+  return( this->vtkArray );
+}
+
+//----------------------------------------------------------------------------
+void vtkXdmfDataArray::PrintSelf(ostream& os, vtkIndent indent)
+{
+  this->Superclass::PrintSelf(os,indent);
 }

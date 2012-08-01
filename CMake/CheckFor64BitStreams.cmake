@@ -23,7 +23,7 @@ MACRO(CHECK_FOR_64BIT_STREAMS VARIABLE)
     MESSAGE(STATUS "Check if system supports 64 bit streams")
     TRY_COMPILE(${VARIABLE}
                ${CMAKE_BINARY_DIR}
-               ${Xdmf_SOURCE_DIR}/CMake/CheckFor64BitStreams.cxx
+               ${xdmf2_SOURCE_DIR}/CMake/CheckFor64BitStreams.cxx
                CMAKE_FLAGS 
                -DCOMPILE_DEFINITIONS:STRING=${MACRO_CHECK_FOR_64BIT_STREAMS_FLAGS}
                OUTPUT_VARIABLE OUTPUT)

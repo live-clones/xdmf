@@ -25,49 +25,35 @@
 #ifndef _vtkXdmfDataArray_h
 #define _vtkXdmfDataArray_h
 
-#include <vtkDataArray.h>
-#include <vtkFloatArray.h>
-#include <XdmfArray.h>
+#include "vtkIOXdmf2Module.h" // For export macro
+#include "vtkObject.h"
 
-class VTK_EXPORT vtkXdmfDataArray : public vtkObject
+class vtkDataArray;
+class XdmfArray;
+
+class VTKIOXDMF2_EXPORT vtkXdmfDataArray : public vtkObject
 {
 public:
   static vtkXdmfDataArray *New();
   vtkTypeMacro(vtkXdmfDataArray,vtkObject);
+  void PrintSelf(ostream& os, vtkIndent indent);
 
-  
-  vtkDataArray *FromArray( void ) {
-    return( this->FromXdmfArray() );
-    }
-  char *ToArray( void ) {
-    return( this->ToXdmfArray() );
-    }
-  vtkDataArray *FromXdmfArray( char *ArrayName = NULL, int CopyShape = 1, 
+  vtkDataArray *FromArray( void );
+
+  char *ToArray( void );
+
+  vtkDataArray *FromXdmfArray( char *ArrayName = NULL, int CopyShape = 1,
    int rank = 1, int Components = 1 , int MakeCopy = 1);
+
   char *ToXdmfArray( vtkDataArray *DataArray = NULL, int CopyShape = 1 );
 
-  void SetArray( char *TagName ) {
-    this->Array = TagNameToArray( TagName );
-    if( this->Array ) {
-      this->FromXdmfArray();
-      }
-    }
+  void SetArray( char *TagName );
 
-  char *GetArray( void ) {
-    if ( this->Array != NULL ) {
-      return( this->Array->GetTagName() );
-    }
-    return( NULL );
-    }
+  char *GetArray( void );
 
-  void SetVtkArray( vtkDataArray *array) {
-    this->vtkArray = array;
-    this->ToXdmfArray( array );
-    }
+  void SetVtkArray( vtkDataArray *array);
 
-  vtkDataArray *GetVtkArray( void ) {
-    return( this->vtkArray );
-    }
+  vtkDataArray *GetVtkArray( void );
 
 protected:
   vtkXdmfDataArray();
@@ -78,4 +64,5 @@ private:
   vtkXdmfDataArray(const vtkXdmfDataArray&); // Not implemented
   void operator=(const vtkXdmfDataArray&); // Not implemented
 };
+
 #endif /* _vtkXdmfDataArray_h */

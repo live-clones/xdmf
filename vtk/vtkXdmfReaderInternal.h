@@ -15,6 +15,8 @@
 // .NAME vtkXdmfReaderInternal -- private class(es) used by vtkXdmfReader
 // .SECTION Description
 
+// VTK-HeaderTest-Exclude: vtkXdmfReaderInternal.h
+
 #ifndef __vtkXdmfReaderInternal_h
 #define __vtkXdmfReaderInternal_h
 
@@ -104,7 +106,7 @@ private:
 };
 
 // I don't use vtkDataArraySelection since it's very slow when it comes to large
-// number of arrays. 
+// number of arrays.
 class vtkXdmfArraySelection : public std::map<std::string, bool>
 {
 public:
@@ -121,7 +123,7 @@ public:
     {
     (*this)[name] = status;
     }
-  
+
   bool ArrayIsEnabled(const char* name)
     {
     vtkXdmfArraySelection::iterator iter = this->find(name);
@@ -163,7 +165,7 @@ public:
         }
       cc++;
       }
-    return NULL; 
+    return NULL;
     }
 
   int GetNumberOfArrays()
@@ -173,7 +175,7 @@ public:
 };
 
 //***************************************************************************
-class vtkXdmfDomain 
+class vtkXdmfDomain
 {
 private:
   XdmfInt64 NumberOfGrids;
@@ -237,8 +239,8 @@ public:
   // Description:
   // Returns the timesteps.
   const std::set<XdmfFloat64>& GetTimeSteps()
-    { return this->TimeSteps; } 
-  
+    { return this->TimeSteps; }
+
   //---------------------------------------------------------------------------
   // Description:
   // Given a time value, returns the index.
@@ -262,7 +264,7 @@ public:
     // invalid index.
     return 0.0;
     }
-  
+
   //---------------------------------------------------------------------------
   // Description:
   // If xmfGrid is a temporal collection, returns the child-grid matching the
@@ -337,5 +339,3 @@ private:
 };
 
 #endif
-
-

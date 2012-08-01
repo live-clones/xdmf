@@ -1,16 +1,6 @@
-ADD_EXECUTABLE(XdmfTestVTKIO XdmfTestVTKIO.cxx)
+vtk_module_test_executable(XdmfTestVTKIO XdmfTestVTKIO.cxx)
 
-set(_libs 
-  vtkIOCore
-  vtkCommonCore
-  vtkXdmf
-  vtkInteractionStyle)
-
-if(PARAVIEW_USE_MPI)
-  list(APPEND _libs vtkFiltersParallel)
-endif()
-
-target_link_libraries(XdmfTestVTKIO ${_libs})
-
-ADD_TEST(XdmfTestVTKIO ${EXECUTABLE_OUTPUT_PATH}/XdmfTestVTKIO)
-
+add_test(NAME XdmfTestVTKIO
+  COMMAND XdmfTestVTKIO
+  -T {VTK_TEST_OUTPUT_DIR}
+)

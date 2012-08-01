@@ -33,13 +33,14 @@
 #ifndef __vtkXdmfReader_h
 #define __vtkXdmfReader_h
 
+#include "vtkIOXdmf2Module.h" // For export macro
 #include "vtkDataReader.h"
 
 class vtkXdmfArraySelection;
 class vtkXdmfDocument;
 class vtkGraph;
 
-class VTK_EXPORT vtkXdmfReader : public vtkDataReader
+class VTKIOXDMF2_EXPORT vtkXdmfReader : public vtkDataReader
 {
 public:
   static vtkXdmfReader* New();
@@ -118,7 +119,7 @@ public:
     { return this->GetSetName(index); }
   int GetSetArrayStatus(const char* name)
     { return this->GetSetStatus(name); }
- 
+
   // Description:
   // Get/Set the stride used to skip points when reading structured datasets.
   // This affects all grids being read.
@@ -158,7 +159,7 @@ protected:
   vtkXdmfArraySelection* GetGridSelection();
   vtkXdmfArraySelection* GetSetsSelection();
   void PassCachedSelections();
-  
+
   char* DomainName;
   // char* ActiveDomainName;
   int Stride[3];
@@ -198,4 +199,3 @@ private:
 };
 
 #endif
-
