@@ -72,6 +72,7 @@ shared_ptr<XdmfGridCollection>
 XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartition,
                            const unsigned int numberOfPartitions,
                            const MetisScheme metisScheme,
+                           const shared_ptr<XdmfArray> weights,
                            const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) const
 {
 
