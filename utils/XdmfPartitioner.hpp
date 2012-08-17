@@ -81,8 +81,6 @@ public:
    * @param gridToPartition an XdmfGridUnstructured to partition.
    * @param numberOfPartitions the number of pieces to partition the grid into.
    * @param metisScheme which metis partitioning scheme to use.
-   * @param weights array of size number of elements giving the weight of 
-   * each element (if NULL all elements have equal weight).
    * @param heavyDataWriter an XdmfHDF5Writer to write the partitioned mesh to.
    * If no heavyDataWriter is specified, all partitioned data will remain in
    * memory.
@@ -93,7 +91,6 @@ public:
   partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartition,
             const unsigned int numberOfPartitions,
             const MetisScheme metisScheme = DUAL_GRAPH,
-            const shared_ptr<XdmfArray> weights = shared_ptr<XdmfArray>(),
             const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter = shared_ptr<XdmfHeavyDataWriter>()) const;
 
   /**

@@ -298,9 +298,11 @@ public:
   /**
    * Write constructed file to disk.
    *
-   * @param xmlFilePath the path to the xml file to write to.
+   * @param xmlFilePath the path to the xml file to write to.  
+   * @param numValues the number of values to write to light data
+   * before switching to heavy data.
    */
-  void write(const char * const xmlFilePath);
+  void write(const char * const xmlFilePath, const unsigned int numValues);
 
   /** 
    * Write HDF5 heavy data to disk and release

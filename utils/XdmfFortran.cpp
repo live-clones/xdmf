@@ -573,9 +573,10 @@ XdmfFortran::setTopology(const int topologyType,
 }
 
 void 
-XdmfFortran::write(const char * const xmlFilePath)
+XdmfFortran::write(const char * const xmlFilePath, const unsigned int numValues )
 {
   shared_ptr<XdmfWriter> writer = XdmfWriter::New(xmlFilePath);
+  writer->setLightDataLimit(numValues);
   mDomain->accept(writer);
 }
 
@@ -739,16 +740,17 @@ extern "C"
 
   void
   XdmfWrite(long * pointer,
-            char * xmlFilePath)
+            char * xmlFilePath,
+            const unsigned int * numValues)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
-    xdmfFortran->write(xmlFilePath);
+    xdmfFortran->write(xmlFilePath, *numValues);
   }
 
 
   void
   XdmfWriteHDF5(long * pointer,
-                char * xmlFilePath)
+                char * xmlFilePath )
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
     xdmfFortran->writeHDF5(xmlFilePath);
