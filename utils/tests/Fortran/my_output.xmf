@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Xdmf xmlns:xi="http://www.w3.org/2001/XInclude" Version="2.0">
+  <Domain>
+    <Grid CollectionType="Temporal" GridType="Collection" Name="Temporal">
+      <Information Name="GridCollection1" Value="This is Grid collection 1"/>
+      <Geometry Type="None"/>
+      <Topology Dimensions="0" Type="NoTopology"/>
+      <Grid Name="TestGrid">
+        <Information Name="Grid1" Value="This is Grid 1"/>
+        <Time Value="1"/>
+        <Geometry Type="XYZ">
+          <DataItem DataType="Float" Dimensions="36" Format="XML" Precision="4">0 0 1 1 0 1 3 0 2 0 1 1 1 1 1 3 2 2 0 0 -1 1 0 -1 3 0 -2 0 1 -1 1 1 -1 3 2 -2</DataItem>
+        </Geometry>
+        <Topology Dimensions="2" Type="Hexahedron">
+          <DataItem DataType="Int" Dimensions="16" Format="XML" Precision="4">0 1 7 6 3 4 10 9 1 2 8 7 4 5 11 10</DataItem>
+        </Topology>
+        <Attribute Center="Node" Name="NodeValues" Type="Scalar">
+          <Information Name="Attrib1" Value="This is Attribute 1"/>
+          <DataItem DataType="Float" Dimensions="12" Format="XML" Precision="8">100 200 300 300 400 500 300 400 500 500 600 700</DataItem>
+        </Attribute>
+        <Attribute Center="Cell" Name="CellValues" Type="Scalar">
+          <Information Name="Attrib2" Value="This is Attribute 2"/>
+          <DataItem DataType="Float" Dimensions="2" Format="XML" Precision="8">100 200</DataItem>
+        </Attribute>
+        <Attribute Center="Node" Name="SmallNodeValues" Type="Scalar">
+          <DataItem DataType="Float" Dimensions="6" Format="XML" Precision="8">100 200 300 300 400 500</DataItem>
+        </Attribute>
+        <Map Name="TestMap">
+          <DataItem DataType="Int" Dimensions="5" Format="XML" Precision="4">1 1 1 1 1</DataItem>
+          <DataItem DataType="Int" Dimensions="5" Format="XML" Precision="4">2 2 3 3 3</DataItem>
+          <DataItem DataType="Int" Dimensions="5" Format="XML" Precision="4">3 4 3 5 8</DataItem>
+        </Map>
+        <Set Name="TestSet" Type="Node">
+          <DataItem DataType="Float" Dimensions="12" Format="XML" Precision="8">100 200 300 300 400 500 300 400 500 500 600 700</DataItem>
+        </Set>
+      </Grid>
+      <Grid Name="Identical">
+        <Time Value="2"/>
+        <xi:include xpointer="element(/1/1/1/4/3)"/>
+        <xi:include xpointer="element(/1/1/1/4/4)"/>
+        <xi:include xpointer="element(/1/1/1/4/6)"/>
+        <xi:include xpointer="element(/1/1/1/4/5)"/>
+        <xi:include xpointer="element(/1/1/1/4/8)"/>
+        <xi:include xpointer="element(/1/1/1/4/9)"/>
+      </Grid>
+    </Grid>
+  </Domain>
+</Xdmf>
