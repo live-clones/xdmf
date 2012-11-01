@@ -74,11 +74,39 @@ public:
   /**
    * Close file. This is only needed when the file is opened manually
    * through openFile().
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assume that exampleWriter is a shared poinnter to a XdmfHDF5Writer.
+   * exampleWriter->closeFile();
+   *
+   * Python
+   *
+   * '''
+   * Assume that exampleWriter is a shared poinnter to a XdmfHDF5Writer.
+   * '''
+   * exampleWriter.closeFile()
    */
   virtual void closeFile() = 0;
 
   /**
    * Get the path to the heavy data file on disk this writer is writing to.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assume that examplewriter is a shared poinnter to a XdmfHDF5Writer.
+   * std::string examplePath = exampleWriter->getFilePath();
+   *
+   * Python
+   *
+   * '''
+   * Assume that examplewriter is a shared poinnter to a XdmfHDF5Writer.
+   * '''
+   * examplePath = exampleWriter.getFilePath()
    *
    * @return a std::string containing the path to the heavy file on disk this
    * writer is writing to.
@@ -88,12 +116,48 @@ public:
   /**
    * Get the Mode of operation for this writer.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * XdmfHeavyDataWriter::Mode exampleMode = XdmfHeavyDataWriter::Default;
+   * //Assuming that exampleWriter is a shared pointer to a XdmfHDF5Writer
+   * if (exampleWriter->getMode() == exampleMode)
+   * {
+   *   //Do whatever is to be done if the mode is default
+   * }
+   *
+   * Python
+   *
+   * exampleMode = XdmfHeavyDataWriter.Default
+   * '''
+   * Assuming that exampleWriter is a shared pointer to a XdmfHDF5Writer
+   * '''
+   * if exampleWriter.getMode() == exampleMode:
+   *   '''
+   *   Do whatever is to be done if the mode is default
+   *   '''
+   *
    * @return the Mode of operation for this writer.
    */
   Mode getMode() const;
 
   /**
    * Get whether to release data from memory after writing to disk.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assume that exampleWriter is a shared poinnter to a XdmfHDF5Writer.
+   * bool testRelease = exampleWriter->getReleaseData();
+   *
+   * Python
+   *
+   * '''
+   * Assume that exampleWriter is a shared poinnter to a XdmfHDF5Writer.
+   * '''
+   * testRelease = exampleWriter.getReleaseData()
    *
    * @return true if data is freed after writing
    */
@@ -112,11 +176,39 @@ public:
    * safe. Opening the file once and writing many datasets may result
    * in improved performance, but the user must tell the writer when
    * to open and close the file.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assume that exampleWriter is a shared poinnter to a XdmfHDF5Writer.
+   * exampleWriter->openFile();
+   *
+   * Python
+   *
+   * '''
+   * Assume that exampleWriter is a shared poinnter to a XdmfHDF5Writer.
+   * '''
+   * exampleWriter.openFile()
    */
   virtual void openFile() = 0;
 
   /**
    * Set the mode of operation for this writer.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assuming that exampleWriter is a shared pointer to a XdmfHDF5Writer
+   * exampleWriter->setMode(XdmfHeavyDataWriter::Default);
+   *
+   * Python
+   *
+   * '''
+   * Assuming that exampleWriter is a shared pointer to a XdmfHDF5Writer
+   * '''
+   * exampleWriter.setMode(XdmfHeavyDataWriter.Default)
    *
    * @param mode the Mode of operation for this writer.
    */
@@ -125,12 +217,56 @@ public:
   /**
    * Set whether to release data from memory after writing to disk.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assume that exampleWriter is a shared poinnter to a XdmfHDF5Writer.
+   * exampleWriter->setReleaseData(true);
+   * //Sets the writer to release data after writing
+   *
+   * Python
+   *
+   * '''
+   * Assume that exampleWriter is a shared poinnter to a XdmfHDF5Writer.
+   * '''
+   * exampleWriter.setReleaseData(True)
+   * '''
+   * Sets the writer to release data after writing
+   * '''
+   *
    * @param releaseData true if data should be freed after writing
    */
   void setReleaseData(const bool releaseData = true);
 
   /**
    * Write an XdmfArray to heavy data file on disk.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assume that exampleWriter is a shared pointer to an XdmfHDF5Writer.
+   * shared_ptr<XdmfArray> exampleArray = XdmfArray::New();
+   * exampleArray->pushBack(1);
+   * exampleArray->pushBack(2);
+   * exampleArray->pushBack(3);
+   * exampleArray->pushBack(4);
+   * exampleArray->pushBack(5);
+   * exampleWriter->visit(exampleArray, exampleWriter);
+   *
+   * Python
+   *
+   * '''
+   * Assume that exampleWriter is a shared pointer to an XdmfHDF5Writer.
+   * '''
+   * exampleArray = XdmfArray.New()
+   * exampleArray.pushBackAsInt32(1)
+   * exampleArray.pushBackAsInt32(2)
+   * exampleArray.pushBackAsInt32(3)
+   * exampleArray.pushBackAsInt32(4)
+   * exampleArray.pushBackAsInt32(5)
+   * exampleWriter.visit(exampleArray, exampleWriter)
    *
    * @param array an XdmfArray to write to heavy data.
    * @param visitor a smart pointer to this visitor --- aids in grid traversal.

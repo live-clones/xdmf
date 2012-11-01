@@ -12,6 +12,14 @@
  * edges that are part of an XdmfGrid. This property indicates which
  * type the set contains.
  *
+ * Example of use:
+ *
+ * //Assuming that exampleSet is a shared pointer to an XdmfSet with its type set
+ * if (exampleSet->getType() == XdmfSetType::Node())
+ * {
+ *   //Do whatever is to be done if the set is a node
+ * }
+ *
  * Xdmf supports the following set types:
  *   NoSetType
  *   Node

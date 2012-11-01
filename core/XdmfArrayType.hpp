@@ -36,6 +36,13 @@
  * A specific XdmfArrayType can be created by calling one of the
  * static methods in the class, i.e. XdmfArrayType::Int32().
  *
+ * Example of use:
+ * //Assuming that exampleArray is a shared pointer to an XdmfArray object that has been filled with data
+ * if (XdmfArrayType::Int8() == exampleArray->getArrayType())
+ * {
+ *   //do whatever is to be done with in the case that the array type is Int8
+ * }
+ *
  * Xdmf supports the following attribute types:
  *   Uninitialized
  *   Int8
@@ -72,6 +79,20 @@ public:
    * Get the data size, in bytes, of the value associated with this
    * array type.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * unsigned int dataSize = XdmfArrayType::Int8()->getElementSize();
+   * //The number of bytes in an Int8 will be stored in the dataSize variable
+   *
+   * Python
+   *
+   * dataSize = XdmfArrayType.Int8().getElementSize()
+   * '''
+   * The number of bytes in an Int8 will be stored in the dataSize variable
+   * '''
+   *
    * @return the data size, in bytes.
    */
   unsigned int getElementSize() const;
@@ -79,10 +100,24 @@ public:
   /**
    * Get the name of the data type.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * std::string dataName = XdmfArrayType::Int8()->getName();
+   * //The name of the Int8 data type will be stored in the dataName variable
+   *
+   * Python
+   *
+   * dataName = XdmfArrayType.Int8().getName()
+   * '''
+   * The name of the Int8 data type will be stored in the dataName variable
+   * '''
+   *
    * @return the name of the data type.
    */
   std::string getName() const;
-  
+
   void
   getProperties(std::map<std::string, std::string> & collectedProperties) const;
 

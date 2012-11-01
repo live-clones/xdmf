@@ -51,6 +51,16 @@ public:
   /**
    * Create a new XdmfSet.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * shared_ptr<XdmfSet> exampleSet = XdmfSet::New();
+   *
+   * Python
+   *
+   * exampleSet = XdmfSet.New()
+   *
    * @return constructed XdmfSet.
    */
   static shared_ptr<XdmfSet> New();
@@ -58,7 +68,7 @@ public:
   virtual ~XdmfSet();
 
   LOKI_DEFINE_VISITABLE(XdmfSet, XdmfArray);
-  XDMF_CHILDREN(XdmfAttribute, Attribute, Name);
+  XDMF_CHILDREN(XdmfSet, XdmfAttribute, Attribute, Name);
   static const std::string ItemTag;
 
   std::map<std::string, std::string> getItemProperties() const;
@@ -68,12 +78,40 @@ public:
   /**
    * Get the name of the set.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assuming that exampleSet is a shared pointer to an XdmfSet object with its name set
+   * std::string exampleName = exampleSet->getName();
+   *
+   * Python
+   *
+   * '''
+   * Assuming that exampleSet is a shared pointer to an XdmfSet object with its name set
+   * '''
+   * exampleName = exampleSet.getName()
+   *
    * @return a string containing the name of the set.
    */
   std::string getName() const;
 
   /**
    * Get the XdmfSetType associated with this set.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assuming that exampleSet is a shared pointer to an XdmfSet object with its type set
+   * shared_ptr<const XdmfSetType> exampleType = exampleSet->getType();
+   *
+   * Python
+   *
+   * '''
+   * Assuming that exampleSet is a shared pointer to an XdmfSet object with its type set
+   * '''
+   * exampleType = exampleSet.getType()
    *
    * @return XdmfSetType of this set.
    */
@@ -88,12 +126,38 @@ public:
   /**
    * Set the name of the set.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * shared_ptr<XdmfSet> exampleSet = XdmfSet::New();
+   * std::string newName = "New Name";
+   * exampleSet->setName(newName);
+   *
+   * Python
+   *
+   * exampleSet = XdmfSet.New()
+   * newName = "New Name"
+   * exampleSet.setName(newName)
+   *
    * @param name a string containing the name to set.
    */
   void setName(const std::string & name);
 
   /**
    * Set the XdmfSetType associated with this set.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * shared_ptr<XdmfSet> exampleSet = XdmfSet::New();
+   * exampleSet->setType(XdmfSetType::Node());
+   *
+   * Python
+   *
+   * exampleSet = XdmfSet.New()
+   * exampleSet.setType(XdmfSetType.Node())
    *
    * @param type the XdmfSetType to set.
    */

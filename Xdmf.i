@@ -168,10 +168,14 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 
 %include std_set.i
 %include std_map.i
+%include std_vector.i
 
 %template(XdmfMapNodeIdSet) std::set<int>;
 %template(XdmfMapNodeIdMap) std::map<int, std::set<int> >;
 %template(XdmfMapMap) std::map<int, std::map<int, std::set<int> > >;
+%template(AttributeVector) std::vector<shared_ptr<XdmfAttribute> >;
+%template(MapVector) std::vector<shared_ptr<XdmfMap> >;
+%template(ArrayVector) std::vector<shared_ptr<XdmfArray> >;
 
 %pythoncode {
     from XdmfCore import *

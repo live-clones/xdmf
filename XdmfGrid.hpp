@@ -58,13 +58,29 @@ public:
   virtual ~XdmfGrid() = 0;
 
   LOKI_DEFINE_VISITABLE(XdmfGrid, XdmfItem);
-  XDMF_CHILDREN(XdmfAttribute, Attribute, Name);
-  XDMF_CHILDREN(XdmfSet, Set, Name);
-  XDMF_CHILDREN(XdmfMap, Map, Name);
+  XDMF_CHILDREN(XdmfGrid, XdmfAttribute, Attribute, Name);
+  XDMF_CHILDREN(XdmfGrid, XdmfSet, Set, Name);
+  XDMF_CHILDREN(XdmfGrid, XdmfMap, Map, Name);
   static const std::string ItemTag;
 
   /**
    * Get the geometry associated with this grid.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * //using an unstructured grid since XdmfGrid is an abstract class
+   * //Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
+   * shared_ptr<const XdmfGeometry> exampleGeometry = exampleGrid->getGeometry();
+   *
+   * Python
+   *
+   * '''
+   * using an unstructured grid since XdmfGrid is an abstract class
+   * Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
+   * '''
+   * exampleGeometry = exampleGrid.getGeometry()
    *
    * @return the geometry associated with this grid.
    */
@@ -77,6 +93,22 @@ public:
   /**
    * Get the name of the grid.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * //using an unstructured grid since XdmfGrid is an abstract class
+   * //Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
+   * std::string exampleName = exampleGrid->getName();
+   * 
+   * Python
+   *
+   * '''
+   * using an unstructured grid since XdmfGrid is an abstract class
+   * Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
+   * '''
+   * exampleName = exampleGrid.getName()
+   * 
    * @return the name of the grid.
    */
   std::string getName() const;
@@ -84,6 +116,22 @@ public:
   /**
    * Get the time associated with this grid.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * //using an unstructured grid since XdmfGrid is an abstract class
+   * //Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
+   * shared_ptr<XdmfTime> exampleTime = exampleGrid->getTime();
+   * 
+   * Python
+   *
+   * '''
+   * using an unstructured grid since XdmfGrid is an abstract class
+   * Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
+   * '''
+   * exampleTime = exampleGrid.getTime()
+   * 
    * @return pointer to the XdmfTime attached to this grid. If no
    * XdmfTime is attached, return a NULL pointer.
    */
@@ -92,6 +140,16 @@ public:
   /**
    * Get the time associated with this grid (const version).
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * //using an unstructured grid since XdmfGrid is an abstract class
+   * //Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
+   * shared_ptr<const XdmfTime> exampleTime = exampleGrid->getTime();
+   * 
+   * Python: Python doesn't have a constant version
+   * 
    * @return pointer to the XdmfTime attached to this grid. If no
    * XdmfTime is attached, return a NULL pointer.
    */
@@ -99,6 +157,22 @@ public:
 
   /**
    * Get the topology associated with this grid.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * //using an unstructured grid since XdmfGrid is an abstract class
+   * //Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
+   * shared_ptr<const XdmfTopology> exampleTopology = exampleGrid->getTopology();
+   *
+   * Python
+   *
+   * '''
+   * using an unstructured grid since XdmfGrid is an abstract class
+   * Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
+   * '''
+   * exampleTopology = exampleGrid.getTopology()
    *
    * @return the topology associated with this grid.
    */
@@ -109,12 +183,48 @@ public:
   /**
    * Set the name of the grid.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * //using an unstructured grid since XdmfGrid is an abstract class
+   * //Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
+   * std::string newName = "New Name";
+   * exampleGrid->setName(newName);
+   *
+   * Python
+   *
+   * '''
+   * using an unstructured grid since XdmfGrid is an abstract class
+   * Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
+   * '''
+   * newName = "New Name"
+   * exampleGrid.setName(newName)
+   *
    * @param name of the grid to set.
    */
   void setName(const std::string & name);
 
   /**
    * Set the time associated with this grid.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * //using an unstructured grid since XdmfGrid is an abstract class
+   * //Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
+   * shared_ptr<XdmfTime> newTime = XdmfTime::New(20.0);
+   * exampleGrid->setTime(newTime);
+   *
+   * Python
+   *
+   * '''
+   * using an unstructured grid since XdmfGrid is an abstract class
+   * Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
+   * '''
+   * newTime = XdmfTime.New(20.0)
+   * exampleGrid.setTime(newTime)
    *
    * @param time an XdmfTime to associate with this grid.
    */

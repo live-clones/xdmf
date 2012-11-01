@@ -37,6 +37,14 @@
  * the static methods in the class,
  * i.e. XdmfGridCollectionType::Temporal().
  *
+ * Example of use:
+ *
+ * //Assuming that exampleCollection is a shared pointer to an XmdfGridCollection with a type that has been set
+ * if (exampleCollection->getType() == XdmfGridCollectionType::Temporal())
+ * {
+ *   //do whatever is to be done if the grid collection is temporal
+ * }
+ *
  * Xdmf supports the following collection types:
  *   NoCollectionType
  *   Spatial

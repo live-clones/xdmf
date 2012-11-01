@@ -46,6 +46,16 @@ public:
   /**
    * Create a new XdmfGeometry.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * shared_ptr<XdmfGeometry> exampleGeometry = XdmfGeometry::New();
+   *
+   * Python
+   *
+   * exampleGeometry = XdmfGeometry.New()
+   *
    * @return constructed XdmfGeometry.
    */
   static shared_ptr<XdmfGeometry> New();
@@ -61,11 +71,39 @@ public:
 
   /**
    * Get the number of points stored in this geometry.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * //assuming that exampleGeometry is a shared pointer to a XdmfGeometry object that has been filled with data
+   * unsigned int numPoints = exampleGeometry->getNumberPoints();
+   *
+   * Python
+   *
+   * '''
+   * assuming that exampleGeometry is a shared pointer to a XdmfGeometry object that has been filled with data
+   * '''
+   * numPoints = exampleGeometry.getNumberPoints()
    */
   virtual unsigned int getNumberPoints() const;
 
   /**
    * Get the XdmfGeometryType associated with this geometry.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * //assuming that exampleGeometry is a shared pointer to a XdmfGeometry object
+   * shared_ptr<const XdmfGeometryType> exampleType = exampleGeometry->getType();
+   *
+   * Python
+   *
+   * '''
+   * assuming that exampleGeometry is a shared pointer to a XdmfGeometry object
+   * '''
+   * exampleType = exampleGeometry.getType()
    *
    * @return XdmfGeometryType of this geometry.
    */
@@ -73,6 +111,18 @@ public:
 
   /**
    * Set the XdmfGeometryType associated with this geometry.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * shared_ptr<XdmfGeometry> exampleGeometry = XdmfGeometry::New();
+   * exampleGeometry->setType(XdmfGeometryType::XYZ());
+   *
+   * Python
+   *
+   * exampleGeometry = XdmfGeometry.New()
+   * exampleGeometry.setType(XdmfGeometryType.XYZ())
    *
    * @param type the XdmfGeometryType to set.
    */

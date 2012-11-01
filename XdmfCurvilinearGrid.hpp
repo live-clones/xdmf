@@ -49,6 +49,20 @@ public:
   /**
    * Create a new curvilinear grid (Two dimensional).
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * unsigned int newPointsX = 5;
+   * unsigned int newPointsY = 5;
+   * shared_ptr<XdmfCurvilinearGrid> exampleGrid = XdmfCurvilinearGrid::New(newPointsX, newPointsY);
+   *
+   * Python
+   *
+   * newPointsX = 5
+   * newPointsY = 5
+   * exampleGrid = XdmfCurvilinearGrid.New(newPointsX, newPointsY)
+   *
    * @param xNumPoints the number of points in the x direction.
    * @param yNumPoints the number of points in the y direction.
    *
@@ -60,6 +74,22 @@ public:
 
   /**
    * Create a new curvilinear grid (Three dimensional).
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * unsigned int newPointsX = 5;
+   * unsigned int newPointsY = 5;
+   * unsigned int newPointsZ = 5;
+   * shared_ptr<XdmfCurvilinearGrid> exampleGrid = XdmfCurvilinearGrid::New(newPointsX, newPointsY, newPointsZ);
+   *
+   * Python
+   *
+   * newPointsX = 5
+   * newPointsY = 5
+   * newPointsZ = 5
+   * exampleGrid = XdmfCurvilinearGrid.New(newPointsX, newPointsY, newPointsZ)
    *
    * @param xNumPoints the number of points in the x direction.
    * @param yNumPoints the number of points in the y direction.
@@ -74,6 +104,24 @@ public:
 
   /**
    * Create a new curvilinear grid (N dimensional).
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * shared_ptr<XdmfArray> newPoints = XdmfArray::New();
+   * newPoints->pushBack(5);
+   * newPoints->pushBack(5);
+   * newPoints->pushBack(5);
+   * shared_ptr<XdmfCurvilinearGrid> exampleGrid = XdmfCurvilinearGrid::New(newPoints);
+   *
+   * Python
+   *
+   * newPoints = XdmfArray.New()
+   * newPoints.pushBackAsInt32(5)
+   * newPoints.pushBackAsInt32(5)
+   * newPoints.pushBackAsInt32(5)
+   * exampleGrid = XdmfCurvilinearGrid.New(newPoints)
    *
    * @param numPoints the number of points in each direction.
    *
@@ -91,6 +139,20 @@ public:
    * Get the dimensions of the grid, the number of points in each
    * direction.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assuming that exampleGrid is a shared pointer to an XdmfCurvilinearGrid object
+   * shared_ptr<XdmfArray> exampleDimensions = exampleGrid->getDimensions();
+   *
+   * Python
+   *
+   * '''
+   * Assuming that exampleGrid is a shared pointer to an XdmfCurvilinearGrid object
+   * '''
+   * exampleDimensions = exampleGrid.getDimensions()
+   *
    * @return XdmfArray containing dimensions of this grid.
    */
   shared_ptr<XdmfArray> getDimensions();
@@ -99,12 +161,35 @@ public:
    * Get the dimensions of the grid, the number of points in each
    * direction (const version).
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assuming that exampleGrid is a shared pointer to an XdmfCurvilinearGrid object
+   * shared_ptr<const XdmfArray> exampleDimensions = exampleGrid->getDimensions();
+   *
+   * Python: Python doesn't have a constant version
+   *
    * @return XdmfArray containing the dimensions of this grid.
    */
   shared_ptr<const XdmfArray> getDimensions() const;
 
   /**
    * Get the geometry associated with this grid.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assuming that exampleGrid is a sharedPointer to an XdmfCurvilinearGrid object
+   * shared_ptr<XdmfGeometry> exampleGeometry = exampleGrid->getGeometry();
+   *
+   * Python
+   *
+   * '''
+   * Assuming that exampleGrid is a sharedPointer to an XdmfCurvilinearGrid object
+   * '''
+   * exampleGeometry = exampleGrid.getGeometry()
    *
    * @return the geometry associated with this grid.
    */
@@ -114,12 +199,62 @@ public:
    * Set the dimensions of the grid, the number of points in each
    * direction.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * shared_ptr<XdmfArray> newPoints = XdmfArray::New();
+   * newPoints->pushBack(5);
+   * newPoints->pushBack(5);
+   * newPoints->pushBack(5);
+   * //Assuming that exampleGrid is a sharedPointer to an XdmfCurvilinearGrid object
+   * exampleGrid->setDimensions(newPoints);
+   *
+   * Python
+   *
+   * newPoints = XdmfArray.New()
+   * newPoints.pushBackAsInt32(5)
+   * newPoints.pushBackAsInt32(5)
+   * newPoints.pushBackAsInt32(5)
+   * '''
+   * Assuming that exampleGrid is a sharedPointer to an XdmfCurvilinearGrid object
+   * '''
+   * exampleGrid.setDimensions(newPoints)
+   *
    * @param dimensions the dimension of the grid.
    */
   void setDimensions(const shared_ptr<XdmfArray> dimensions);
 
   /**
    * Set the geometry associated with this grid.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * shared_ptr<XdmfArray> newPoints = XdmfArray::New();
+   * newPoints->pushBack(5);
+   * newPoints->pushBack(5);
+   * newPoints->pushBack(5);
+   * shared_ptr<XdmfGeometry> newGeometry = XdmfGeometry::New();
+   * newGeometry->setType(XdmfGeometryType::XYZ());
+   * newGeometry->insert(0, newPoints, 0, 3, 1, 1);//Start index is 0, 3 values are passed, stride for both arrays is 1
+   * //Assuming that exampleGrid is a sharedPointer to an XdmfCurvilinearGrid object
+   * exampleGrid->setGeometry(newGeometry);
+   *
+   * Python
+   *
+   * newPoints = XdmfArray.New()
+   * newPoints.pushBackAsInt32(5)
+   * newPoints.pushBackAsInt32(5)
+   * newPoints.pushBackAsInt32(5)
+   * newGeometry = XdmfGeometry.New()
+   * newGeometry.setType(XdmfGeometryType.XYZ())
+   * newGeometry.insert(0, newPoints, 0, 3, 1, 1)//Start index is 0, 3 values are passed, stride for both arrays is 1
+   * '''
+   * Assuming that exampleGrid is a sharedPointer to an XdmfCurvilinearGrid object
+   * '''
+   * exampleGrid.setGeometry(newGeometry)
    *
    * @param geometry an XdmfGeometry to associate with this grid.
    */

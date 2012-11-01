@@ -37,6 +37,14 @@
  * calling one of the static methods in the class,
  * i.e. XdmfTopologyType::Tetrahedron().
  *
+ * Example of use:
+ *
+ * //Assuming that exampleTopology is a shared pointer to an XdmfTopology with its type set
+ * if (exampleTopology->getType() == XdmfTopologyType::Triangle())
+ * {
+ *   //Do whatever is to be done if the type is Triangle
+ * }
+ *
  * Xdmf supports the following topology types:
  *   NoTopologyType
  *   Polyvertex - Unconnected Points
@@ -131,6 +139,12 @@ public:
   /**
    * Get a topology type from id.
    *
+   * Example of use:
+   *
+   * //Assume that exampleTopology is a shared pointer to an XdmfTopology object with its type set
+   * unsigned int exampleID = exampleTopology->getID();
+   * shared_ptr<XdmfTopology> createdTopology = XdmfTopology::New(exampleID);
+   *
    * @param id of the topology type.
    *
    * @return topology type corresponding to id - if no topology type is found
@@ -141,6 +155,15 @@ public:
   /**
    * Get the cell type associated with this topology type.
    *
+   * Example of use:
+   *
+   * XdmfTopologyType::CellType exampleType = XdmfTopologyType::Linear;
+   * //Assuming that exampleTopology is a shared pointer to a filled XdmfTopology object
+   * if (exampleType == exampleTopology->getCellType())
+   * {
+   *   //Do whatever is to be done if the cell type is linear
+   * }
+   *
    * @return a CellType containing the cell type.
    */
   CellType getCellType() const;
@@ -148,12 +171,22 @@ public:
   /**
    * Get the number of edges per element associated with this topology type.
    *
+   * Example of use:
+   *
+   * unsigned int numEdges = XdmfTopologyType::Triangle()->getEdgesPerElement();
+   * //numEdges now contains the number of edges per element of the Triangle type.
+   *
    * @return an unsigned int containing the number of edges per element.
    */
   virtual unsigned int getEdgesPerElement() const;
 
   /**
    * Get the number of faces per element associated with this topology type.
+   *
+   * Example of use:
+   *
+   * unsigned int numFaces = XdmfTopologyType::Triangle()->getFacesPerElement();
+   * //numFaces now contains the number of faces per element of the Triangle type.
    *
    * @return an unsigned int containing the number of faces per element.
    */
@@ -163,12 +196,21 @@ public:
    * Get the id of this cell type, necessary in order to create grids
    * containing mixed cells.
    *
+   * Example of use:
+   *
+   * unsigned int holdID = XdmfTopologyType::Triangle()->getID();
+   * //holdID now contains the ID of the Triangle type.
+   *
    * @return the ID of the topology type.
    */
   virtual unsigned int getID() const;
 
   /**
    * Get the name of this topology type.
+   *
+   * Example of use:
+   *
+   * std::string exampleName = XdmfTopologyType::Triangle()->getName();
    *
    * @return the name of this topology type.
    */
@@ -177,6 +219,11 @@ public:
   /**
    * Get the number of nodes per element associated with this topology
    * type.
+   *
+   * Example of use:
+   *
+   * unsigned int numNodes = XdmfTopologyType::Triangle()->getNodesPerElement();
+   * //numNodes now contains the number of nodes per element of the Triangle type.
    *
    * @return an unsigned int containing number of nodes per element.
    */

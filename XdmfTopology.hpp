@@ -59,6 +59,16 @@ public:
   /**
    * Create a new XdmfTopology.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * shared_ptr<XdmfTopology> exampleTopology = XdmfTopology::New();
+   *
+   * Python
+   *
+   * exampleTopology = XdmfTopology.New()
+   *
    * @return constructed XdmfTopology.
    */
   static shared_ptr<XdmfTopology> New();
@@ -75,6 +85,20 @@ public:
   /**
    * Get the number of elements this Topology contains.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assuming that exampleTopology is a shared pointer to an XdmfTopology object with values set
+   * unsigned int numElements = exampleTopology->getNumberElements();
+   *
+   * Python
+   *
+   * '''
+   * Assuming that exampleTopology is a shared pointer to an XdmfTopology object with values set
+   * '''
+   * numElements = exampleTopology.getNumberElements()
+   *
    * @return int of number elements in the Topology.
    */
   virtual unsigned int getNumberElements() const;
@@ -82,12 +106,38 @@ public:
   /**
    * Get the XdmfTopologyType associated with this topology.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assuming that exampleTopology is a shared pointer to an XdmfTopology object with its type set
+   * shared_ptr<const XdmfTopologyType> exampleType = exampleTopology->getType();
+   *
+   * Python
+   *
+   * '''
+   * Assuming that exampleTopology is a shared pointer to an XdmfTopology object with its type set
+   * '''
+   * exampleType = exampleTopology.getType()
+   *
    * @return XdmfTopologyType of the topology.
    */
   shared_ptr<const XdmfTopologyType> getType() const;
 
   /**
    * Set the XdmfTopologyType associated with this topology.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * shared_ptr<XdmfTopology> exampleTopology = XdmfTopology::New();
+   * exampleTopology->setType(XdmfTopologyType::Pyramid());
+   *
+   * Python
+   *
+   * exampleTopology = XdmfTopology.New()
+   * exampleTopology.setType(XdmfTopologyType.Pyramid())
    *
    * @param type the XdmfTopologyType to set.
    */

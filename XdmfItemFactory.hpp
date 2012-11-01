@@ -42,6 +42,16 @@ public:
   /**
    * Create a new XdmfItemFactory.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * shared_ptr<XdmfItemFactory> exampleFactory = XdmfItemFactory::New();
+   *
+   * Python
+   *
+   * exampleFactory = XdmfItemFactory.New()
+   *
    * @return constructed XdmfItemFactory.
    */
   static shared_ptr<XdmfItemFactory> New();

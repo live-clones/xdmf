@@ -48,6 +48,84 @@ public:
 
   /**
    * Create a new controller for an DSM data set.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * std::string newPath = "Your file path goes here";
+   * std::string newSetPath = "The data set path goes here";
+   * shared_ptr<const XdmfArrayType> newType = XdmfArrayType::Int32();
+   * std::vector<unsigned int> readStarts;
+   * //Three dimensions, all starting at 0
+   * readStarts.push_back(0);
+   * readStarts.push_back(0);
+   * readStarts.push_back(0);
+   * std::vector<unsigned int> readStrides;
+   * //Three dimensions, all of them skip no values
+   * readStrides.push_back(1);
+   * readStrides.push_back(1);
+   * readStrides.push_back(1);
+   * std::vector<unsigned int> readCounts;
+   * //Three dimensions, read 10 values from all of them
+   * readCounts.push_back(10);
+   * readCounts.push_back(10);
+   * readCounts.push_back(10);
+   * //assume newDsmBuffer is a pointer to the dsm buffer where the data is stored
+   * shared_ptr<XdmfHDF5ControllerDSM> exampleController = XdmfHDF5ControllerDSM::New(
+   *   newPath,
+   *   newSetPath,
+   *   newType,
+   *   readStarts,
+   *   readStrides,
+   *   readCounts,
+   *   newDsmBuffer);
+   *
+   * Python
+   *
+   * newPath = "Your file path goes here"
+   * newSetPath = "The data set path goes here"
+   * newType = XdmfArrayType.Int32()
+   * readStarts = UInt32Vector()
+   * '''
+   * Three dimensions, all starting at 0
+   * '''
+   * readStarts.push_back(0)
+   * readStarts.push_back(0)
+   * readStarts.push_back(0)
+   * readStrides = UInt32Vector()
+   * '''
+   * Three dimensions, all of them skip no values
+   * '''
+   * readStrides.push_back(1)
+   * readStrides.push_back(1)
+   * readStrides.push_back(1)
+   * readCounts = UInt32Vector()
+   * '''
+   * Three dimensions, read 10 values from all of them
+   * '''
+   * readCounts.push_back(10)
+   * readCounts.push_back(10)
+   * readCounts.push_back(10)
+   * '''
+   * assume newDsmBuffer is a pointer to the dsm buffer where the data is stored
+   * '''
+   * exampleController = XdmfHDF5ControllerDSM.New(
+   *   newPath,
+   *   newSetPath,
+   *   newType,
+   *   readStarts,
+   *   readStrides,
+   *   readCounts,
+   *   newDsmBuffer)
+   *
+   * @param	hdf5FilePath	The path to the hdf5 file that the controller will be accessing
+   * @param	dataSetPath	The location within the file of the data the controller with be accessing
+   * @param	type		The data type of the data Ex: XdmfArrayType::Int32()
+   * @param	start		A vector of the start indexes for all dimensions of the data
+   * @param	stride		A vector of the distance between reads for all dimensions of the data
+   * @param	count		A vector of the number of values read from all dimensions of the data
+   * @param	dsmBuffer	A pointer to the dsm buffer
    */
   static shared_ptr<XdmfHDF5ControllerDSM>
   New(const std::string & hdf5FilePath,

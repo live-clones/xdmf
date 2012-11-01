@@ -1,3 +1,14 @@
+integer xdmfaddattribute
+integer xdmfaddinformation
+integer xdmfsettopology
+integer xdmfsetgeometry
+integer xdmfsetdimensions
+integer xdmfsetorigin
+integer xdmfsetbrick
+integer xdmfstoremap
+integer xdmfaddcoordinate
+integer xdmfaddset
+
 ! Array Type
 integer XDMF_ARRAY_TYPE_INT8
 integer XDMF_ARRAY_TYPE_INT16
@@ -64,6 +75,18 @@ integer XDMF_TOPOLOGY_TYPE_HEXAHEDRON_1000
 integer XDMF_TOPOLOGY_TYPE_HEXAHEDRON_1331
 integer XDMF_TOPOLOGY_TYPE_MIXED
 
+! Set Type
+integer XDMF_SET_TYPE_NODE
+integer XDMF_SET_TYPE_CELL
+integer XDMF_SET_TYPE_FACE
+integer XDMF_SET_TYPE_EDGE
+
+! Grid Type
+integer XDMF_GRID_TYPE_CURVILINEAR
+integer XDMF_GRID_TYPE_RECTILINEAR
+integer XDMF_GRID_TYPE_REGULAR
+integer XDMF_GRID_TYPE_UNSTRUCTURED
+
 !------------------------------------------------------
 
 parameter (XDMF_ARRAY_TYPE_INT8    = 0)
@@ -126,3 +149,12 @@ parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_1000  = 526)
 parameter (XDMF_TOPOLOGY_TYPE_HEXAHEDRON_1331  = 527)
 parameter (XDMF_TOPOLOGY_TYPE_MIXED            = 528)
 
+parameter (XDMF_SET_TYPE_NODE = 601)
+parameter (XDMF_SET_TYPE_CELL = 602)
+parameter (XDMF_SET_TYPE_FACE = 603)
+parameter (XDMF_SET_TYPE_EDGE = 604)
+
+parameter (XDMF_GRID_TYPE_CURVILINEAR	= 701)
+parameter (XDMF_GRID_TYPE_RECTILINEAR	= 702)
+parameter (XDMF_GRID_TYPE_REGULAR	= 703)
+parameter (XDMF_GRID_TYPE_UNSTRUCTURED	= 704)

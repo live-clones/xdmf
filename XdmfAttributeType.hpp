@@ -37,6 +37,14 @@
  * XdmfAttributeType can be created by calling one of the static
  * methods in the class, i.e. XdmfAttributeType::Scalar().
  *
+ * Example of use:
+ *
+ * //Assuming that exampleAttribute is a shared pointer to an XdmfAttribute that has had its type set
+ * if (exampleAttribute->getType() == XdmfAttributeType:Scalar())
+ * {
+ *   //do whatever is to be done if the attribute is a scalar
+ * }
+ *
  * Xdmf supports the following attribute types:
  *   NoAttributeType
  *   Scalar

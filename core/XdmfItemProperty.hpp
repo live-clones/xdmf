@@ -51,6 +51,20 @@ public:
    * Retrieve the key/value pairs that this XdmfItemProperty contains by
    * inserting into the passed map.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Using XdmfArrayType::Int32() as an example
+   * std::map<std::string, std::string> propertyMap;
+   * XdmfArrayType::Int32()->getProperties(propertyMap);
+   *
+   * Python
+   *
+   * //Using XdmfArrayType.Int32() as an example
+   * propertyMap = StringMap()
+   * XdmfArrayType.Int32().getProperties(propertyMap)
+   *
    * @param collectedProperties a map to insert name / value pairs into.
    */
   virtual void

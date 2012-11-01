@@ -53,6 +53,20 @@ public:
   /**
    * Construct XdmfHDF5Writer.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * std::string newPath = "Your file path goes here";
+   * bool replaceOrig = true;
+   * shared_ptr<XdmfHDF5Writer> exampleWriter = XdmfHDF5Writer::New(newPath, replaceOrig);
+   *
+   * Python
+   *
+   * newPath = "Your file path goes here"
+   * replaceOrig = True
+   * exampleWriter = XdmfHDF5Writer.New(newPath, replaceOrig)
+   *
    * @param filePath the location of the hdf5 file to output to on disk.
    * @param clobberFile whether to overwrite the previous file if it exists.
    *

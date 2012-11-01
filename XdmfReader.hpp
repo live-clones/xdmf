@@ -43,6 +43,16 @@ public:
   /**
    * Create a new XdmfReader.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * shared_ptr<XdmfReader> exampleReader = XdmfReader::New();
+   *
+   * Python
+   *
+   * exampleReader = XdmfReader.New()
+   *
    * @return constructed XdmfReader.
    */
   static shared_ptr<XdmfReader> New();

@@ -51,6 +51,22 @@ public:
   /**
    * Construct XdmfHDF5WriterDSM
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * std::string newPath = "Your file path goes here";
+   * //Assume newDsmBuffer is a pointer to a dsm
+   * shared_ptr<XmdfHDF5WriterDSM> exampleWriter = XdmfHDF5WriterDSM::New(newPath, newDsmBuffer);
+   *
+   * Python
+   *
+   * newPath = "Your file path goes here"
+   * '''
+   * Assume newDsmBuffer is a pointer to a dsm
+   * '''
+   * exampleWriter = XdmfHDF5WriterDSM.New(newPath, newDsmBuffer)
+   *
    * @param filePath the location of the hdf5 file to output to on disk.
    * @param dsmBuffer the dsm buffer to write to.
    * @return new XdmfHDF5WriterDSM.

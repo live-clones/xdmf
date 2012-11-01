@@ -57,12 +57,44 @@ public:
    * this controller.
    * For "/home/output.h5:/foo/data" this is "/foo/data"
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assuming that exampleController is a shared pointer to an XdmfHDF5Controller object
+   * //Since XdmfHeavyDataController is an abstract class
+   * std::string examplePath = exampleController->getDataSetPath();
+   *
+   * Python
+   *
+   * '''
+   * Assuming that exampleController is a shared pointer to an XdmfHDF5Controller object
+   * Since XdmfHeavyDataController is an abstract class
+   * '''
+   * examplePath = exampleController.getDataSetPath()
+   *
    * @return a std::string containing the path of the data set.
    */
   std::string getDataSetPath() const;
 
   /**
    * Get the dimensions of the heavy data set owned by this controller.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assuming that exampleController is a shared pointer to an XdmfHDF5Controller object
+   * //Since XdmfHeavyDataController is an abstract class
+   * std::vector<unsigned int>  exampleDimensions = exampleController->getDimensions();
+   *
+   * Python
+   *
+   * '''
+   * Assuming that exampleController is a shared pointer to an XdmfHDF5Controller object
+   * Since XdmfHeavyDataController is an abstract class
+   * '''
+   * exampleDimensions = exampleController.getDimensions()
    *
    * @return a vector containing the size in each dimension of the heavy data
    * set owned by this controller.
@@ -74,6 +106,22 @@ public:
    * data set owned by this controller resides.
    * For "/home/output.h5:/foo/data" this is "/home/output.h5"
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assuming that exampleController is a shared pointer to an XdmfHDF5Controller object
+   * //Since XdmfHeavyDataController is an abstract class
+   * std::string examplePath = exampleController->getFilePath();
+   *
+   * Python
+   *
+   * '''
+   * Assuming that exampleController is a shared pointer to an XdmfHDF5Controller object
+   * Since XdmfHeavyDataController is an abstract class
+   * '''
+   * examplePath = exampleController.getFilePath()
+   *
    * @return a std::string containing the path to the heavy data file.
    */
   std::string getFilePath() const;
@@ -82,12 +130,44 @@ public:
    * Get the name of this heavy data format. E.g. "HDF" for hdf5
    * format.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assuming that exampleController is a shared pointer to an XdmfHDF5Controller object
+   * //Since XdmfHeavyDataController is an abstract class
+   * std::string exampleName = exampleController->getName();
+   *
+   * Python
+   *
+   * '''
+   * Assuming that exampleController is a shared pointer to an XdmfHDF5Controller object
+   * Since XdmfHeavyDataController is an abstract class
+   * '''
+   * exampleName = exampleController.getName()
+   *
    * @return std::string containing the name of this heavy data format
    */
   virtual std::string getName() const = 0;
 
   /**
    * Get the size of the heavy data set owned by this controller.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assuming that exampleController is a shared pointer to an XdmfHDF5Controller object
+   * //Since XdmfHeavyDataController is an abstract class
+   * unsigned int exampleSize = exampleController->getSize();
+   *
+   * Python
+   *
+   * '''
+   * Assuming that exampleController is a shared pointer to an XdmfHDF5Controller object
+   * Since XdmfHeavyDataController is an abstract class
+   * '''
+   * exampleSize = exampleController.getSize()
    *
    * @return a int containing the size of the heavy data set.
    */
@@ -97,6 +177,22 @@ public:
    * Get the array type of the heavy data set owned by this
    * controller.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assuming that exampleController is a shared pointer to an XdmfHDF5Controller object
+   * //Since XdmfHeavyDataController is an abstract class
+   * shared_ptr<const XdmfArrayType> exampleType = exampleController->getType();
+   *
+   * Python
+   *
+   * '''
+   * Assuming that exampleController is a shared pointer to an XdmfHDF5Controller object
+   * Since XdmfHeavyDataController is an abstract class
+   * '''
+   * exampleType = exampleController.getType()
+   *
    * @return an XdmfArrayType containing the array type of the heavy data set.
    */
   shared_ptr<const XdmfArrayType> getType() const;
@@ -104,6 +200,28 @@ public:
   /**
    * Read data owned by this controller on disk into the passed
    * XdmfArray.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assuming that exampleController is a shared pointer to an XdmfHDF5Controller object
+   * //Since XdmfHeavyDataController is an abstract class
+   * shared_ptr<XdmfArray> exampleArray = XdmfArray::New();
+   * exampleController->read(exampleArray);
+   * //exampleArray now holds the data that exampleController holds.
+   *
+   * Python
+   *
+   * '''
+   * Assuming that exampleController is a shared pointer to an XdmfHDF5Controller object
+   * Since XdmfHeavyDataController is an abstract class
+   * '''
+   * exampleArray = XdmfArray.New()
+   * exampleController.read(exampleArray)
+   * '''
+   * exampleArray now holds the data that exampleController holds.
+   * '''
    *
    * @param array and XdmfArray to read data into.
    */

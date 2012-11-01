@@ -49,6 +49,16 @@ public:
   /**
    * Create a new XdmfDomain.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * shared_ptr<XdmfDomain> exampleDomain = XdmfDomain::New();
+   *
+   * Python
+   *
+   * exampleDomain = XdmfDomain.New();
+   *
    * @return constructed XdmfDomain.
    */
   static shared_ptr<XdmfDomain> New();
@@ -56,11 +66,11 @@ public:
   virtual ~XdmfDomain();
 
   LOKI_DEFINE_VISITABLE(XdmfDomain, XdmfItem);
-  XDMF_CHILDREN(XdmfGridCollection, GridCollection, Name);
-  XDMF_CHILDREN(XdmfCurvilinearGrid, CurvilinearGrid, Name);
-  XDMF_CHILDREN(XdmfRectilinearGrid, RectilinearGrid, Name);
-  XDMF_CHILDREN(XdmfRegularGrid, RegularGrid, Name);
-  XDMF_CHILDREN(XdmfUnstructuredGrid, UnstructuredGrid, Name);
+  XDMF_CHILDREN(XdmfDomain, XdmfGridCollection, GridCollection, Name);
+  XDMF_CHILDREN(XdmfDomain, XdmfCurvilinearGrid, CurvilinearGrid, Name);
+  XDMF_CHILDREN(XdmfDomain, XdmfRectilinearGrid, RectilinearGrid, Name);
+  XDMF_CHILDREN(XdmfDomain, XdmfRegularGrid, RegularGrid, Name);
+  XDMF_CHILDREN(XdmfDomain, XdmfUnstructuredGrid, UnstructuredGrid, Name);
   static const std::string ItemTag;
 
   std::map<std::string, std::string> getItemProperties() const;

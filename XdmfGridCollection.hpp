@@ -51,6 +51,16 @@ public:
   /**
    * Create a new XdmfGridCollection.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * shared_ptr<XdmfGridCollection> exampleCollection = XdmfGridCollection::New();
+   *
+   * Python
+   *
+   * exampleCollection = XdmfGridCollection.New()
+   *
    * @return constructed XdmfGridCollection.
    */
   static shared_ptr<XdmfGridCollection> New();
@@ -67,6 +77,20 @@ public:
   /**
    * Get the XdmfGridCollectionType associated with this grid collection.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object with its type set
+   * shared_ptr<const XdmfGridCollectionType> exampleType = exampleCollection->getType();
+   *
+   * Python
+   *
+   * '''
+   * Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object with its type set
+   * '''
+   * exampleType = exampleCollection.getType()
+   *
    * @return XdmfGridCollectionType of this collection.
    */
   shared_ptr<const XdmfGridCollectionType> getType() const;
@@ -77,6 +101,30 @@ public:
   /**
    * Insert an information into the grid collection.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object with its type set
+   * shared_ptr<XdmfInformation> exampleInformation = XdmfInformation::New();
+   * std::string newKey = "New Key";
+   * std::string newValue = "New Value";
+   * exampleInformation->setKey(newKey);
+   * exampleInformation->setValue(newValue);
+   * exampleCollection->insert(exampleInformation);
+   *
+   * Python
+   *
+   * '''
+   * Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object with its type set
+   * '''
+   * exampleInformation = XdmfInformation.New()
+   * newKey = "New Key"
+   * newValue = "New Value"
+   * exampleInformation.setKey(newKey)
+   * exampleInformation.setValue(newValue)
+   * exampleCollection.insert(exampleInformation)
+   *
    * @param information an XdmfInformation to attach to this item.
    */
   void insert(const shared_ptr<XdmfInformation> information);
@@ -84,6 +132,20 @@ public:
   /**
    * Set the XdmfGridCollectionType associated with this grid
    * collection.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object
+   * exampleCollection->setType(XdmfGridCollectionType::Temporal());
+   *
+   * Python
+   *
+   * '''
+   * Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object
+   * '''
+   * exampleCollection.setType(XdmfGridCollectionType.Temporal())
    *
    * @param type the XdmfGridCollectionType to set.
    */

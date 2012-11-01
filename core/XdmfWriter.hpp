@@ -68,6 +68,18 @@ public:
    * if supplied "output.xmf" the created hdf5 writer would write to
    * file "output.h5".
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * std::string outFile = "output file name goes here";
+   * shared_ptr<XdmfWriter> exampleWriter = XdmfWriter::New(outFile);
+   *
+   * Python
+   *
+   * outFile = "output file name goes here"
+   * exampleWriter = XdmfWriter.New(outFile)
+   *
    * @param xmlFilePath the path to the xml file to write to.
    *
    * @return the new XdmfWriter.
@@ -78,6 +90,24 @@ public:
    * Create a new XdmfWriter to write Xdmf data to disk. This will
    * utilize the passed heavy data writer to write any heavy data to
    * disk.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * std::string outFile = "output file name goes here";
+   * std::string heavyFile = "heavy file name goes here";
+   * bool replaceFile = true;
+   * shared_ptr<XdmfHDF5Writer> exampleHeavyWriter = XdmfHDF5Writer::New(heavyFile, replaceFile);
+   * shared_ptr<XdmfWriter> exampleWriter = XdmfWriter::New(outFile, exampleHeavyWriter);
+   *
+   * Python
+   *
+   * outFile = "output file name goes here"
+   * heavyFile = "heavy file name goes here"
+   * replaceFile = True
+   * exampleHeavyWriter = XdmfHDF5Writer.New(heavyFile, replaceFile)
+   * exampleWriter = XdmfWriter.New(outFile, exampleHeavyWriter)
    *
    * @param xmlFilePath the path to the xml file to write to.
    * @param heavyDataWriter the heavy data writer to use when writing.
@@ -92,7 +122,22 @@ public:
    * write heavy data to disk using the passed heavy data writer and
    * will add xml output to the stream.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * filebuf exampleBuffer;
+   * exampleBuffer.open("file goes here", ios::out);
+   * ostream exampleStream(&exampleBuffer);
+   * std::string heavyFile = "heavy file name goes here";
+   * bool replaceFile = true;
+   * shared_ptr<XdmfHDF5Writer> exampleHeavyWriter = XdmfHDF5Writer::New(heavyFile, replaceFile);
+   * shared_ptr<XdmfWriter> exampleWriter = XdmfWriter::New(exampleStream, exampleHeavyWriter);
+   *
+   * Python: does not curretnly support this version of New
+   *
    * @param stream the output stream to write light data to.
+   * @param heavyDataWriter the heavy data writer to use when writing.
    *
    * @return the new XdmfWriter;
    */
@@ -105,6 +150,20 @@ public:
    * Get the absolute path to the XML file on disk this writer is
    * writing to.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assume that exampleWriter is a shared pointer to a XdmfWriter object
+   * std::string examplePath = exampleWriter->getFilePath();
+   *
+   * Python
+   *
+   * '''
+   * Assume that exampleWriter is a shared pointer to a XdmfWriter object
+   * '''
+   * examplePath = exampleWriter.getFilePath()
+   *
    * @return a std::string containing the path to the XML file on disk this
    * writer is writing to.
    */
@@ -114,6 +173,20 @@ public:
    * Get the heavy data writer that this XdmfWriter uses to write
    * heavy data to disk.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assume that exampleWriter is a shared pointer to a XdmfWriter object
+   * shared_ptr<XdmfHeavyDataWriter> exampleHeavyWriter = exampleWriter->getHeavyDataWriter();
+   *
+   * Python
+   *
+   * '''
+   * Assume that exampleWriter is a shared pointer to a XdmfWriter object
+   * '''
+   * exampleHeavyWriter = exampleWriter.getHeavyDataWriter()
+   *
    * @return the requested heavy data writer.
    */
   shared_ptr<XdmfHeavyDataWriter> getHeavyDataWriter();
@@ -121,6 +194,15 @@ public:
   /**
    * Get the heavy data writer that this XdmfWriter uses to write
    * heavy data to disk (const version).
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assume that exampleWriter is a shared pointer to a XdmfWriter object
+   * shared_ptr<const XdmfHeavyDataWriter> exampleHeavyWriter = exampleWriter->getHeavyDataWriter();
+   *
+   * Python: Does not support a contant version of this function
    *
    * @return the requested heavy data writer.
    */
@@ -130,6 +212,20 @@ public:
    * Get the number of values that this writer writes to light data
    * (XML) before switching to a heavy data format.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assume that exampleWriter is a shared pointer to a XdmfWriter object
+   * unsigned int exampleLimit = exampleWriter->getLightDataLimit();
+   *
+   * Python
+   *
+   * '''
+   * Assume that exampleWriter is a shared pointer to a XdmfWriter object
+   * '''
+   * exampleLimit = exampleWriter.getLightDataLimit()
+   *
    * @return an unsigned int containing the number of values.
    */
   unsigned int getLightDataLimit() const;
@@ -137,12 +233,48 @@ public:
   /**
    * Get the Mode of operation for this writer.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * XdmfWriter::Mode testMode = XdmfWriter::Default;
+   * //Assume that exampleWriter is a shared pointer to a XdmfWriter object
+   * if (exampleWriter->getMode() == testMode)
+   * {
+   *   //Do whatever is to be done if the mode is default
+   * }
+   *
+   * Python
+   *
+   * testMode = XdmfWriter.Default
+   * '''
+   * Assume that exampleWriter is a shared pointer to a XdmfWriter object
+   * '''
+   * if exampleWriter.getMode() == testMode:
+   *   '''
+   *   Do whatever is to be done if the mode is default
+   *   '''
+   *
    * @return the Mode of operation for this writer.
    */
   Mode getMode() const;
 
   /**
    * Get whether this writer is set to write xpaths.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assume that exampleWriter is a shared pointer to a XdmfWriter object
+   * bool exampleTestPaths = exampleWriter->getWriteXPaths();
+   *
+   * Python
+   *
+   * '''
+   * Assume that exampleWriter is a shared pointer to a XdmfWriter object
+   * '''
+   * exampleTestPaths = exampleWriter.getWriteXPaths()
    *
    * @return bool whether this writer is set to write xpaths.
    */
@@ -152,12 +284,46 @@ public:
    * Set the number of values that this writer writes to light data
    * (XML) before switching to a heavy data format.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * unsigned int newLimit = 20;
+   * //Assume that exampleWriter is a shared pointer to a XdmfWriter object
+   * exampleWriter->setLightDataLimit(newLimit);
+   * //The writer will now place any data with a number of values over 20 into heavy data
+   *
+   * Python
+   *
+   * newLimit = 20;
+   * '''
+   * Assume that exampleWriter is a shared pointer to a XdmfWriter object
+   * '''
+   * exampleWriter.setLightDataLimit(newLimit)
+   * '''
+   * The writer will now place any data with a number of values over 20 into heavy data
+   * '''
+   *
    * @param numValues an unsigned int containing the number of values.
    */
   void setLightDataLimit(const unsigned int numValues);
 
   /**
    * Set the mode of operation for this writer.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assume that exampleWriter is a shared pointer to a XdmfWriter object
+   * exampleWriter->setMode(XdmfWriter::Default);
+   *
+   * Python
+   *
+   * '''
+   * Assume that exampleWriter is a shared pointer to a XdmfWriter object
+   * '''
+   * exampleWriter.setMode(XdmfWriter.Default)
    *
    * @param mode the Mode of operation for this writer.
    */
@@ -166,12 +332,62 @@ public:
   /**
    * Set whether to write xpaths for this writer.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assume that exampleWriter is a shared pointer to a XdmfWriter object
+   * exampleWriter->setWriteXPaths(true);
+   *
+   * Python
+   *
+   * '''
+   * Assume that exampleWriter is a shared pointer to a XdmfWriter object
+   * '''
+   * exampleWriter.setWriteXPaths(True)
+   *
    * @param writeXPaths whether to write xpaths for this writer.
    */
   void setWriteXPaths(const bool writeXPaths = true);
 
   /**
    * Write an XdmfArray to disk
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Using XdmfAttribute here, but any XdmfArray would work
+   * shared_ptr<XdmfAttribute> exampleAttribute = XdmfAttribute::New();
+   * exampleAttribute->setCenter(XdmfAttributeCenter::Node());
+   * exampleAttribute->setType(XdmfAttributeType::Scalar());
+   * exampleAttribute->pushBack(1);
+   * exampleAttribute->pushBack(2);
+   * exampleAttribute->pushBack(3);
+   * exampleAttribute->pushBack(4);
+   * exampleAttribute->pushBack(5);
+   * exampleAttribute->pushBack(6);
+   * std::string outFile = "output file name goes here";
+   * shared_ptr<XdmfWriter> exampleWriter = XdmfWriter::New(outFile);
+   * exampleWriter->visit(exampleAttribute, exampleWriter);
+   *
+   * Python
+   *
+   * '''
+   * Using XdmfAttribute here, but any XdmfArray would work
+   * '''
+   * exampleAttribute = XdmfAttribute.New()
+   * exampleAttribute.setCenter(XdmfAttributeCenter.Node())
+   * exampleAttribute.setType(XdmfAttributeType.Scalar())
+   * exampleAttribute.pushBackAsInt32(1)
+   * exampleAttribute.pushBackAsInt32(2)
+   * exampleAttribute.pushBackAsInt32(3)
+   * exampleAttribute.pushBackAsInt32(4)
+   * exampleAttribute.pushBackAsInt32(5)
+   * exampleAttribute.pushBackAsInt32(6)
+   * outFile = "output file name goes here"
+   * exampleWriter = XdmfWriter.New(outFile)
+   * exampleWriter.visit(exampleAttribute, exampleWriter)
    *
    * @param array an XdmfArray to write to disk.
    * @param visitor a smart pointer to this visitor --- aids in grid traversal.
@@ -181,6 +397,26 @@ public:
 
   /**
    * Write an XdmfItem to disk
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Using XdmfDomain here, but any XdmfItem would work
+   * shared_ptr<XdmfDomain> exampleDomain = XdmfDomain::New();
+   * std::string outFile = "output file name goes here";
+   * shared_ptr<XdmfWriter> exampleWriter = XdmfWriter::New(outFile);
+   * exampleWriter->visit(exampleDomain, exampleWriter);
+   *
+   * Python
+   *
+   * '''
+   * Using XdmfDomain here, but any XdmfItem would work
+   * '''
+   * exampleDomain = XdmfDomain.New()
+   * outFile = "output file name goes here"
+   * exampleWriter = XdmfWriter.New(outFile)
+   * exampleWriter.visit(exampleDomain, exampleWriter)
    *
    * @param item an XdmfItem to write to disk.
    * @param visitor a smart pointer to this visitor --- aids in grid traversal.

@@ -35,8 +35,15 @@
  * where its values are centered on an XdmfGrid. A specific
  * XdmfAttributeCenter can be created by calling on of the static
  * methods in the class, i.e.  XdmfAttributeCenter::Cell().
- *
  * Xdmf supports the following attribute centers:
+ *
+ * Example of use:
+ * //Assuming that exampleAttribute is a shared pointer to an XdmfAttribute with a set center
+ * if (exampleAttribute->getCenter() == XdmfAttributeCenter::Grid())
+ * {
+ *   //do whatever is to be done if the center is grid
+ * }
+ *
  *   Grid
  *   Cell
  *   Face

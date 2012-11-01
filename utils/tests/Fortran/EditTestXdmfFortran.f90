@@ -15,7 +15,7 @@ PROGRAM XdmfFortranExample
   INCLUDE 'Xdmf.f'
 
   INTEGER*8 obj
-  character*256 infilename, itemName, itemKey, itemValue, itemTag
+  character*256 infilename, outfilename, itemName, itemKey, itemValue, itemTag
   REAL*4 myPointsOutput(36)
   INTEGER myConnectionsOutput(16)
   INTEGER myMappedNodes(3), myDimensions(3)
@@ -24,6 +24,8 @@ PROGRAM XdmfFortranExample
 
   
   infilename = 'my_output.xmf'//CHAR(0)
+
+  outfilename = 'edited_output.xmf'//CHAR(0)
   
   CALL XDMFINIT(obj)
   CALL XDMFREAD(obj, infilename)
@@ -313,6 +315,19 @@ PROGRAM XdmfFortranExample
   PRINT *, 'Value: ', itemValue
 
 
+
+  CALL XDMFCLEARINFORMATIONS(obj)
+  CALL XDMFCLEARATTRIBUTES(obj)  
+  CALL XDMFREPLACESET(obj, 0, 'EditedSet'//CHAR(0), XDMF_SET_TYPE_NODE, mySetOutput, 12, XDMF_ARRAY_TYPE_FLOAT64)
+  PRINT *, 'Set Edited'
+  CALL XDMFOPENGRIDCOLLECTIONGRID(obj, XDMF_GRID_TYPE_UNSTRUCTURED, 0, 0, 1, 0, 0)
+  CALL XDMFREPLACEATTRIBUTE(obj, 1, 'Edited Attribute'//CHAR(0), XDMF_ATTRIBUTE_CENTER_NODE, XDMF_ATTRIBUTE_TYPE_SCALAR, &
+     4, XDMF_ARRAY_TYPE_FLOAT64, myNodeAttributeOutput)
+  CALL XDMFOPENGRIDCOLLECTIONGRID(obj, XDMF_GRID_TYPE_UNSTRUCTURED, 0, 0, 0, 1, 0)
+  CALL XDMFREPLACEINFORMATION(obj, 0, 'Edited Key'//CHAR(0), 'Edited Value'//CHAR(0))
+  CALL XDMFREPLACEGRIDCOLLECTIONGRID(obj, XDMF_GRID_TYPE_UNSTRUCTURED, 0, 'Edited Grid'//CHAR(0))
+  PRINT *, 'Grid Replaced'
+  CALL XDMFWRITE(obj, outfilename)
   CALL XDMFCLOSE(obj)
 
 END PROGRAM XdmfFortranExample

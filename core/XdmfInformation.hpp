@@ -46,12 +46,44 @@ public:
   /**
    * Create a new XdmfInformation.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * shared_ptr<XdmfInformation> infoExample = XdmfInformation::New();
+   * //Then the key and value must be set seperately
+   * infoExample->setKey("Your Key String");
+   * infoExample->setValue("Your Value String");
+   *
+   * Python
+   *
+   * infoExample = XdmfInformation.New()
+   * '''
+   * Then the key and value must be set seperately
+   * '''
+   * infoExample.setKey("Your Key String")
+   * infoExample.setValue("Your Value String")
+   *
    * @return constructed XdmfInformation.
    */
   static shared_ptr<XdmfInformation> New();
 
   /**
    * Create a new XdmfInformation.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * shared_ptr<XdmfInformation> infoExample = XdmfInformation::New("Your Key String", "Your Value String");
+   * //This code creates an information with the key "Your Key String" and the value "Your Value String"
+   *
+   * Python
+   *
+   * infoExample = XdmfInformation.New("Your Key String", "Your Value String")
+   * '''
+   * This code creates an information with the key "Your Key String" and the value "Your Value String"
+   * '''
    *
    * @param key a string containing the key of the XdmfInformation to create.
    * @param value a string containing the value of the XdmfInformation to
@@ -65,7 +97,7 @@ public:
   virtual ~XdmfInformation();
 
   LOKI_DEFINE_VISITABLE(XdmfInformation, XdmfItem);
-  XDMF_CHILDREN(XdmfArray, Array, Name);
+  XDMF_CHILDREN(XdmfInformation, XdmfArray, Array, Name);
   static const std::string ItemTag;
 
   std::map<std::string, std::string> getItemProperties() const;
@@ -75,12 +107,52 @@ public:
   /**
    * Get the key for this information item.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * shared_ptr<XdmfInformation> infoExample = XdmfInformation::New("Your Key String", "Your Value String");
+   * //This code creates an information with the key "Your Key String" and the value "Your Value String"
+   * std::string storedKey = infoExample->getKey();
+   * //"Your Key String" is now stored in the variable storedKey 
+   *
+   * Python
+   *
+   * infoExample = XdmfInformation.New("Your Key String", "Your Value String")
+   * '''
+   * This code creates an information with the key "Your Key String" and the value "Your Value String"
+   * '''
+   * storedKey = infoExample.getKey()
+   * '''
+   * "Your Key String" is now stored in the variable storedKey 
+   * '''
+   *
    * @return string containing the key.
    */
   std::string getKey() const;
 
   /**
    * Get the value for this information item.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * shared_ptr<XdmfInformation> infoExample = XdmfInformation::New("Your Key String", "Your Value String");
+   * //This code creates an information with the key "Your Key String" and the value "Your Value String"
+   * std::string storedValue = infoExample->getValue();
+   * //"Your Value String" is now stored in the variable storedValue 
+   *
+   * Python
+   *
+   * infoExample = XdmfInformation.New("Your Key String", "Your Value String")
+   * '''
+   * This code creates an information with the key "Your Key String" and the value "Your Value String"
+   * '''
+   * storedValue = infoExample.getValue()
+   * '''
+   * "Your Value String" is now stored in the variable storedValue 
+   * '''
    *
    * @return string containing the value.
    */
@@ -91,12 +163,52 @@ public:
   /**
    * Set the key for this information item.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * shared_ptr<XdmfInformation> infoExample = XdmfInformation::New("Your Key String", "Your Value String");
+   * //This code creates an information with the key "Your Key String" and the value "Your Value String"
+   * infoExample->setKey("Your New Key");
+   * //"Your New Key" is now the key for infoExample 
+   *
+   * Python
+   *
+   * infoExample = XdmfInformation.New("Your Key String", "Your Value String")
+   * '''
+   * This code creates an information with the key "Your Key String" and the value "Your Value String"
+   * '''
+   * infoExample.setKey("Your New Key")
+   * '''
+   * "Your New Key" is now the key for infoExample 
+   * '''
+   *
    * @param key a string containing the key to set.
    */
   void setKey(const std::string & key);
 
   /**
    * Set the value for this information item.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * shared_ptr<XdmfInformation> infoExample = XdmfInformation::New("Your Key String", "Your Value String");
+   * //This code creates an information with the key "Your Key String" and the value "Your Value String"
+   * infoExample->setValue("Your New Value");
+   * //"Your New Value" is now the value for infoExample 
+   *
+   * Python
+   *
+   * infoExample = XdmfInformation.New("Your Key String", "Your Value String")
+   * '''
+   * This code creates an information with the key "Your Key String" and the value "Your Value String"
+   * '''
+   * infoExample.setValue("Your New Value")
+   * '''
+   * "Your New Value" is now the value for infoExample 
+   * '''
    *
    * @param value a string containing the value to set.
    */

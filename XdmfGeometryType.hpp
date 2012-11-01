@@ -37,6 +37,14 @@
  * XdmfGeometryType can be created by calling one of the static
  * methods in the class, i.e.  XdmfAttributeType::XYZ().
  *
+ * Example of use:
+ *
+ * //Assuming that exampleGeometry is a shared pointer to an XdmfGeometry with its type set
+ * if (exampleGeometry->getType() == XdmfGeometry::XYZ())
+ * {
+ *   //do whatever is to be done if the geometry is xyz
+ * }
+ *
  * Xdmf supports the following geometry types:
  *   NoGeometryType
  *   XYZ
@@ -58,12 +66,22 @@ public:
   /**
    * Get the dimensions of this geometry type - i.e. XYZ = 3.
    *
+   * Example of use:
+   *
+   * unsigned int exampleDimensions = XdmfGeometryType::XYZ()->getDimensions();
+   * //The variable exampleDimensions now holds the number of dimensions that XYZ has
+   *
    * @return an int containing number of dimensions.
    */
   virtual unsigned int getDimensions() const;
 
   /**
    * Get the name of this geometry type.
+   *
+   * Example of use:
+   *
+   * std::string exampleName = XdmfGeometryType::XYZ()->getName();
+   * //The variable exampleName now holds the name of XYZ
    *
    * @return the name of this geometry type.
    */

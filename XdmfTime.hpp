@@ -40,6 +40,28 @@ public:
   /**
    * Create a new XdmfTime.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * //specifying a time
+   * double newTime = 5.0;
+   * shared_ptr<XdmfTime> exampleTime = XdmfTime::New(newTime);
+   * //Or the default case can be used to have time set to 0
+   * shared_ptr<XdmfTime> exampleTime2 = XdmfTime::New();
+   *
+   * Python
+   *
+   * '''
+   * specifying a time
+   * '''
+   * newTime = 5.0
+   * exampleTime = XdmfTime.New(newTime)
+   * '''
+   * Or the default case can be used to have time set to 0
+   * '''
+   * exampleTime2 = XdmfTime.New()
+   *
    * @param value the timeValue of the XdmfTime to create.
    * @return the new XdmfTime.
    */
@@ -57,12 +79,44 @@ public:
   /**
    * Get the time value associated with this XdmfTime.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * //Assumming that exampleTime is a shared pointer to an XdmfTime object
+   * double readTime = exampleTime->getTime();
+   *
+   * Python
+   *
+   * '''
+   * Assumming that exampleTime is a shared pointer to an XdmfTime object
+   * '''
+   * readTime = exampleTime.getTime()
+   *
    * @return a double containing the time value.
    */
   double getValue() const;
 
   /**
    * Set the time value associated with this XdmfTime.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * shared_ptr<XdmfTime> exampleTime = XdmfTime::New();
+   * double newTime = 5.0;
+   * exampleTime->setValue(newTime);
+   * //This sets the exampleTime's value to the value of newTime, which is 5.0.
+   *
+   * Python
+   *
+   * exampleTime = XdmfTime.New()
+   * newTime = 5.0
+   * exampleTime.setValue(newTime)
+   * '''
+   * This sets the exampleTime's value to the value of newTime, which is 5.0.
+   * '''
    *
    * @param time a double containing the time value.
    */

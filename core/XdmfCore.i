@@ -265,6 +265,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
 %include std_string.i
 %include std_vector.i
+%include std_map.i
 
 %shared_ptr(Loki::BaseVisitor)
 %shared_ptr(Loki::BaseVisitable<void>)
@@ -381,6 +382,14 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %template(resizeAsUInt16) XdmfArray::resize<unsigned short>;
 %template(resizeAsUInt32) XdmfArray::resize<unsigned int>;
 
-%template(UIntVector) std::vector<unsigned int>;
+%template(UInt8Vector) std::vector<unsigned char>;
+%template(UInt16Vector) std::vector<unsigned short>;
+%template(UInt32Vector) std::vector<unsigned int>;
+%template(Int8Vector) std::vector<char>;
+%template(Int16Vector) std::vector<short>;
+%template(Int32Vector) std::vector<int>;
+%template(Int64Vector) std::vector<long>;
+%template(Float32Vector) std::vector<float>;
+%template(Float64Vector) std::vector<double>;
 %template(ItemVector) std::vector<boost::shared_ptr<XdmfItem> >;
-
+%template(StringMap) std::map<std::string, std::string>;
