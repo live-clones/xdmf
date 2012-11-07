@@ -79,15 +79,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assume that exampleWriter is a shared poinnter to a XdmfHDF5Writer.
    * exampleWriter->closeFile();
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assume that exampleWriter is a shared poinnter to a XdmfHDF5Writer.
    * '''
    * exampleWriter.closeFile()
+   * @endcode
    */
   virtual void closeFile() = 0;
 
@@ -98,15 +102,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assume that examplewriter is a shared poinnter to a XdmfHDF5Writer.
    * std::string examplePath = exampleWriter->getFilePath();
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assume that examplewriter is a shared poinnter to a XdmfHDF5Writer.
    * '''
    * examplePath = exampleWriter.getFilePath()
+   * @endcode
    *
    * @return a std::string containing the path to the heavy file on disk this
    * writer is writing to.
@@ -120,15 +128,18 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * XdmfHeavyDataWriter::Mode exampleMode = XdmfHeavyDataWriter::Default;
    * //Assuming that exampleWriter is a shared pointer to a XdmfHDF5Writer
    * if (exampleWriter->getMode() == exampleMode)
    * {
    *   //Do whatever is to be done if the mode is default
    * }
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * exampleMode = XdmfHeavyDataWriter.Default
    * '''
    * Assuming that exampleWriter is a shared pointer to a XdmfHDF5Writer
@@ -137,6 +148,7 @@ public:
    *   '''
    *   Do whatever is to be done if the mode is default
    *   '''
+   * @endcode
    *
    * @return the Mode of operation for this writer.
    */
@@ -149,15 +161,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assume that exampleWriter is a shared poinnter to a XdmfHDF5Writer.
    * bool testRelease = exampleWriter->getReleaseData();
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assume that exampleWriter is a shared poinnter to a XdmfHDF5Writer.
    * '''
    * testRelease = exampleWriter.getReleaseData()
+   * @endcode
    *
    * @return true if data is freed after writing
    */
@@ -181,15 +197,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assume that exampleWriter is a shared poinnter to a XdmfHDF5Writer.
    * exampleWriter->openFile();
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assume that exampleWriter is a shared poinnter to a XdmfHDF5Writer.
    * '''
    * exampleWriter.openFile()
+   * @endcode
    */
   virtual void openFile() = 0;
 
@@ -200,15 +220,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assuming that exampleWriter is a shared pointer to a XdmfHDF5Writer
    * exampleWriter->setMode(XdmfHeavyDataWriter::Default);
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assuming that exampleWriter is a shared pointer to a XdmfHDF5Writer
    * '''
    * exampleWriter.setMode(XdmfHeavyDataWriter.Default)
+   * @endcode
    *
    * @param mode the Mode of operation for this writer.
    */
@@ -221,12 +245,15 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assume that exampleWriter is a shared poinnter to a XdmfHDF5Writer.
    * exampleWriter->setReleaseData(true);
    * //Sets the writer to release data after writing
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assume that exampleWriter is a shared poinnter to a XdmfHDF5Writer.
    * '''
@@ -234,6 +261,7 @@ public:
    * '''
    * Sets the writer to release data after writing
    * '''
+   * @endcode
    *
    * @param releaseData true if data should be freed after writing
    */
@@ -246,6 +274,7 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assume that exampleWriter is a shared pointer to an XdmfHDF5Writer.
    * shared_ptr<XdmfArray> exampleArray = XdmfArray::New();
    * exampleArray->pushBack(1);
@@ -254,9 +283,11 @@ public:
    * exampleArray->pushBack(4);
    * exampleArray->pushBack(5);
    * exampleWriter->visit(exampleArray, exampleWriter);
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assume that exampleWriter is a shared pointer to an XdmfHDF5Writer.
    * '''
@@ -267,6 +298,7 @@ public:
    * exampleArray.pushBackAsInt32(4)
    * exampleArray.pushBackAsInt32(5)
    * exampleWriter.visit(exampleArray, exampleWriter)
+   * @endcode
    *
    * @param array an XdmfArray to write to heavy data.
    * @param visitor a smart pointer to this visitor --- aids in grid traversal.

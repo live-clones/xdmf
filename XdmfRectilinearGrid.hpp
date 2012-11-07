@@ -54,6 +54,7 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * shared_ptr<XdmfArray> pointsXArray = XdmfArray::New();
    * pointsXArray->pushBack(5);
    * pointsXArray->pushBack(6);
@@ -69,9 +70,11 @@ public:
    * pointsYArray->pushBack(7);
    * pointsYArray->pushBack(10);
    * shared_ptr<XdmfRectilinearGrid> exampleGrid = XdmfRectilinearGrid::New(pointsXArray, pointsYArray);
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * pointsXArray = XdmfArray.New()
    * pointsXArray.pushBackAsInt32(5)
    * pointsXArray.pushBackAsInt32(6)
@@ -87,6 +90,7 @@ public:
    * pointsYArray.pushBackAsInt32(7)
    * pointsYArray.pushBackAsInt32(10)
    * exampleGrid = XdmfRectilinearGrid.New(pointsXArray, pointsYArray)
+   * @endcode
    *
    * @param xCoordinates the coordinates of points along the x axis
    * @param yCoordinates the coordinates of points along the y axis.
@@ -104,6 +108,7 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * shared_ptr<XdmfArray> pointsXArray = XdmfArray::New();
    * pointsXArray->pushBack(5);
    * pointsXArray->pushBack(6);
@@ -126,9 +131,11 @@ public:
    * pointsZArray->pushBack(7);
    * pointsZArray->pushBack(2);
    * shared_ptr<XdmfRectilinearGrid> exampleGrid = XdmfRectilinearGrid::New(pointsXArray, pointsYArray, pointsZArray);
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * pointsXArray = XdmfArray.New()
    * pointsXArray.pushBackAsInt32(5)
    * pointsXArray.pushBackAsInt32(6)
@@ -151,6 +158,7 @@ public:
    * pointsZArray.pushBackAsInt32(7)
    * pointsZArray.pushBackAsInt32(2)
    * exampleGrid = XdmfRectilinearGrid.New(pointsXArray, pointsYArray, pointsZArray)
+   * @endcode
    *
    * @param xCoordinates the coordinates of points along the x axis
    * @param yCoordinates the coordinates of points along the y axis.
@@ -170,6 +178,7 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * shared_ptr<XdmfArray> pointsXArray = XdmfArray::New();
    * pointsXArray->pushBack(5);
    * pointsXArray->pushBack(6);
@@ -196,9 +205,11 @@ public:
    * pointsCollector.push_back(pointsYArray);
    * pointsCollector.push_back(pointsZArray);
    * shared_ptr<XdmfRectilinearGrid> exampleGrid = XdmfRectilinearGrid::New(pointsCollector);
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * pointsXArray = XdmfArray.New()
    * pointsXArray.pushBackAsInt32(5)
    * pointsXArray.pushBackAsInt32(6)
@@ -225,6 +236,7 @@ public:
    * pointsCollector.push_back(pointsYArray)
    * pointsCollector.push_back(pointsZArray)
    * exampleGrid = XdmfRectilinearGrid.New(pointsCollector)
+   * @endcode
    *
    * @param axesCoordinates the coordinates of points along each axis.
    *
@@ -245,17 +257,21 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assuming that exampleGrid is a shared pointer to an XdmfRectilinearGrid with two axes
    * shared_ptr<XdmfArray> readPointsX = exampleGrid->getCoordinates(0);
    * shared_ptr<XdmfArray> readPointsY = exampleGrid->getCoordinates(1);
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assuming that exampleGrid is a shared pointer to an XdmfRectilinearGrid with two axes
    * '''
    * readPointsX = exampleGrid.getCoordinates(0)
    * readPointsY = exampleGrid.getCoordinates(1)
+   * @endcode
    *
    * @param axisIndex the index of the axis to retrieve, (i.e. 0 for
    * x-axis). If no array exists at the index, return NULL.
@@ -272,9 +288,11 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assuming that exampleGrid is a shared pointer to an XdmfRectilinearGrid with two axes
    * shared_ptr<const XdmfArray> readPointsX = exampleGrid->getCoordinates(0);
    * shared_ptr<const XdmfArray> readPointsY = exampleGrid->getCoordinates(1);
+   * @endcode
    *
    * Python: does not support a constant version of this function
    *
@@ -293,15 +311,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assuming that exampleGrid is a shared pointer to an XdmfRectilinearGrid
    * std::vector<shared_ptr<XdmfArray> > exampleCoordinates = exampleGrid->getCoordinates();
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assuming that exampleGrid is a shared pointer to an XdmfRectilinearGrid
    * '''
    * exampleCoordinates = exampleGrid.getCoordinates()
+   * @endcode
    *
    * @return vector containing an array of coordinates along each
    * direction.
@@ -313,8 +335,10 @@ public:
    *
    * Example of use:
    *
+   * @code {.cpp}
    * //Assuming that exampleGrid is a shared pointer to an XdmfRectilinearGrid
    * const std::vector<shared_ptr<XdmfArray> > exampleCoordinates = exampleGrid->getCoordinates();
+   * @endcode
    *
    * Python: does not support a constant version of this function
    *
@@ -331,15 +355,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assuming that exampleGrid is a shared pointer to an XdmfRectilinearGrid
    * shared_ptr<XdmfArray> exampleDimensions = exampleGrid->getDimensions();
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assuming that exampleGrid is a shared pointer to an XdmfRectilinearGrid
    * '''
    * exampleDimensions = exampleGrid->getDimensions();
+   * @endcode
    *
    * @return XdmfArray containing dimensions of this grid.
    */
@@ -353,8 +381,10 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assuming that exampleGrid is a shared pointer to an XdmfRectilinearGrid
    * shared_ptr<const XdmfArray> = exampleGrid->getDimensions();
+   * @endcode
    *
    * Python: Doesn't support a constant version of this function
    *
@@ -369,6 +399,7 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * shared_ptr<XdmfArray> pointsXArray = XdmfArray::New();
    * pointsXArray->pushBack(5);
    * pointsXArray->pushBack(6);
@@ -378,9 +409,11 @@ public:
    * pointsXArray->pushBack(10);
    * //Assuming that exampleGrid is a shared pointer to an XdmfRectilinearGrid
    * exampleGrid->setCoordinates(0, pointsXArray);
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * pointsXArray = XdmfArray.New()
    * pointsXArray.pushBackAsInt32(5)
    * pointsXArray.pushBackAsInt32(6)
@@ -392,6 +425,7 @@ public:
    * Assuming that exampleGrid is a shared pointer to an XdmfRectilinearGrid
    * '''
    * exampleGrid.setCoordinates(0, pointsXArray)
+   * @endcode
    *
    * @param axisIndex the index of the axis to set (i.e. 0 for x-axis).
    * @param axisCoordinates the coordinates of points along a single axis to
@@ -407,6 +441,7 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * shared_ptr<XdmfArray> pointsXArray = XdmfArray::New();
    * pointsXArray->pushBack(5);
    * pointsXArray->pushBack(6);
@@ -434,9 +469,11 @@ public:
    * pointsCollector.push_back(pointsZArray);
    * //Assuming that exampleGrid is a shared pointer to an XdmfRectilinearGrid
    * exampleGrid->setCoordinates(pointsCollector);
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * pointsXArray = XdmfArray.New()
    * pointsXArray.pushBackAsInt32(5)
    * pointsXArray.pushBackAsInt32(6)
@@ -466,6 +503,7 @@ public:
    * Assuming that exampleGrid is a shared pointer to an XdmfRectilinearGrid
    * '''
    * exampleGrid.setCoordinates(pointsCollector);
+   * @endcode
    *
    * @param axesCoordinates the coordinates of points along each axis.
    */

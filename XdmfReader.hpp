@@ -47,11 +47,15 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * shared_ptr<XdmfReader> exampleReader = XdmfReader::New();
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * exampleReader = XdmfReader.New()
+   * @endcode
    *
    * @return constructed XdmfReader.
    */

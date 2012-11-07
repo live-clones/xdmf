@@ -55,11 +55,15 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * shared_ptr<XdmfGridCollection> exampleCollection = XdmfGridCollection::New();
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * exampleCollection = XdmfGridCollection.New()
+   * @endcode
    *
    * @return constructed XdmfGridCollection.
    */
@@ -81,15 +85,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object with its type set
    * shared_ptr<const XdmfGridCollectionType> exampleType = exampleCollection->getType();
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object with its type set
    * '''
    * exampleType = exampleCollection.getType()
+   * @endcode
    *
    * @return XdmfGridCollectionType of this collection.
    */
@@ -105,6 +113,7 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object with its type set
    * shared_ptr<XdmfInformation> exampleInformation = XdmfInformation::New();
    * std::string newKey = "New Key";
@@ -112,9 +121,11 @@ public:
    * exampleInformation->setKey(newKey);
    * exampleInformation->setValue(newValue);
    * exampleCollection->insert(exampleInformation);
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object with its type set
    * '''
@@ -124,6 +135,7 @@ public:
    * exampleInformation.setKey(newKey)
    * exampleInformation.setValue(newValue)
    * exampleCollection.insert(exampleInformation)
+   * @endcode
    *
    * @param information an XdmfInformation to attach to this item.
    */
@@ -137,15 +149,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object
    * exampleCollection->setType(XdmfGridCollectionType::Temporal());
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object
    * '''
    * exampleCollection.setType(XdmfGridCollectionType.Temporal())
+   * @endcode
    *
    * @param type the XdmfGridCollectionType to set.
    */

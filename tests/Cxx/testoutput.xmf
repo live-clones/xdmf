@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Xdmf xmlns:xi="http://www.w3.org/2001/XInclude" Version="2.0">
+  <Domain>
+    <Information Name="Domain" Value="This is the primary data structure in Xdmf">
+      <Information Name="Information" Value="Information can have information"/>
+    </Information>
+    <Grid CollectionType="Spatial" GridType="Collection" Name="GridCollection Example">
+      <Information Name="Grid Collection 1" Value="This is the main grid collection"/>
+      <Geometry Type="None"/>
+      <Topology Dimensions="0" Type="NoTopology"/>
+      <Map Name="">
+        <DataItem DataType="Int" Dimensions="13" Format="XML" Precision="4">1 1 1 1 1 1 2 2 3 3 3 3 3</DataItem>
+        <DataItem DataType="Int" Dimensions="13" Format="XML" Precision="4">0 1 2 3 4 5 3 5 0 1 2 4 5</DataItem>
+        <DataItem DataType="Int" Dimensions="13" Format="XML" Precision="4">0 1 2 3 4 5 1 5 2 3 5 0 1</DataItem>
+      </Map>
+      <Map Name="">
+        <DataItem DataType="Int" Dimensions="13" Format="XML" Precision="4">0 0 0 0 0 0 2 2 3 3 3 3 3</DataItem>
+        <DataItem DataType="Int" Dimensions="13" Format="XML" Precision="4">0 1 2 3 4 5 3 5 0 1 2 4 5</DataItem>
+        <DataItem DataType="Int" Dimensions="13" Format="XML" Precision="4">0 1 2 3 4 5 1 5 2 3 5 0 1</DataItem>
+      </Map>
+      <Map Name="">
+        <DataItem DataType="Int" Dimensions="7" Format="XML" Precision="4">0 0 1 1 3 3 3</DataItem>
+        <DataItem DataType="Int" Dimensions="7" Format="XML" Precision="4">1 5 1 5 0 2 5</DataItem>
+        <DataItem DataType="Int" Dimensions="7" Format="XML" Precision="4">3 5 3 5 4 6 1</DataItem>
+      </Map>
+      <Map Name="">
+        <DataItem DataType="Int" Dimensions="13" Format="XML" Precision="4">0 0 0 0 0 1 1 1 1 1 2 2 2</DataItem>
+        <DataItem DataType="Int" Dimensions="13" Format="XML" Precision="4">0 1 2 3 5 0 1 2 3 5 1 4 6</DataItem>
+        <DataItem DataType="Int" Dimensions="13" Format="XML" Precision="4">4 5 0 1 2 4 5 0 1 2 5 0 2</DataItem>
+      </Map>
+      <Grid CollectionType="None" GridType="Collection" Name="Secondary grid collection">
+        <Geometry Type="None"/>
+        <Topology Dimensions="0" Type="NoTopology"/>
+      </Grid>
+      <Grid Name="Curvilinear Grid Example">
+        <Information Name="Curvilinear Grid" Value="This is an example curvilinear grid"/>
+        <Time Value="5">
+          <Information Name="Time" Value="The Time of the Curvilinear Grid"/>
+        </Time>
+        <Geometry Type="XYZ">
+          <Information Name="Geometry" Value="The geometry of the curvilinear grid"/>
+          <DataItem DataType="Float" Dimensions="36" Format="XML" Precision="8">1.1 1.1 2.1 2.1 1.1 2.1 4.1 1.1 3.1 1.1 2.1 2.1 2.1 2.1 2.1 4.1 3.1 3.1 1.1 1.1 0.1 2.1 1.1 0.1 4.1 1.1 -1.1 1.1 2.1 0.1 1.1 2.1 -0.1 4.1 3.1 -1.1</DataItem>
+        </Geometry>
+        <Topology Dimensions="12 12 12" Type="3DSMesh"/>
+        <Attribute Center="Node" Name="Global Node Equivalencies" Type="GlobalId">
+          <Information Name="Global Node Equivalencies" Value="These are the global nodes that accociate with the local nodes"/>
+          <DataItem DataType="Int" Dimensions="6" Format="XML" Precision="4">1 4 5 7 3 6</DataItem>
+        </Attribute>
+        <xi:include xpointer="element(/1/1/2/5)"/>
+      </Grid>
+      <Grid Name="Rectilinear Grid Example">
+        <Time Value="5">
+          <Information Name="Time" Value="The time of the rectiliniear grid"/>
+        </Time>
+        <Geometry Type="VXVYVZ">
+          <DataItem DataType="Float" Dimensions="12" Format="XML" Precision="8">1.1 1.1 2.1 2.1 1.1 2.1 4.1 1.1 3.1 1.1 2.1 2.1</DataItem>
+          <DataItem DataType="Float" Dimensions="12" Format="XML" Precision="8">2.1 2.1 2.1 4.1 3.1 3.1 1.1 1.1 0.1 2.1 1.1 0.1</DataItem>
+          <DataItem DataType="Float" Dimensions="12" Format="XML" Precision="8">4.1 1.1 -1.1 1.1 2.1 0.1 1.1 2.1 -0.1 4.1 3.1 -1.1</DataItem>
+        </Geometry>
+        <Topology Dimensions="12 12 12" Type="3DRectMesh"/>
+        <Attribute Center="Node" Name="Global Node Equivalencies" Type="GlobalId">
+          <Information Name="Global Node Equivalencies" Value="These are the global nodes that associate with the local nodes"/>
+          <DataItem DataType="Int" Dimensions="6" Format="XML" Precision="4">2 7 9 0 8 6</DataItem>
+        </Attribute>
+        <xi:include xpointer="element(/1/1/2/6)"/>
+      </Grid>
+      <Grid Name="Regular Grid Example">
+        <Time Value="5">
+          <Information Name="Time" Value="This is the time for the regular grid"/>
+        </Time>
+        <Geometry Type="ORIGIN_DXDYDZ">
+          <DataItem DataType="Float" Dimensions="3" Format="XML" Precision="8">0 0 0</DataItem>
+          <DataItem DataType="Float" Dimensions="3" Format="XML" Precision="8">10 10 10</DataItem>
+        </Geometry>
+        <Topology Dimensions="5 5 5" Type="3DCoRectMesh"/>
+        <Attribute Center="Node" Name="Global Node Equivalencies" Type="GlobalId">
+          <Information Name="Global Node Equivalencies" Value="These are the global nodes that associate with the local nodes"/>
+          <DataItem DataType="Int" Dimensions="7" Format="XML" Precision="4">3 6 1 4 2 5 9</DataItem>
+        </Attribute>
+        <xi:include xpointer="element(/1/1/2/7)"/>
+      </Grid>
+      <Grid Name="Unstructured Grid Example">
+        <Time Value="5">
+          <Information Name="Time" Value="This is the time for the Unstructured Grid"/>
+        </Time>
+        <Geometry Type="XYZ">
+          <Information Name="Geometry" Value="This is the geometry associated with the unstructured grid"/>
+          <DataItem DataType="Float" Dimensions="36" Format="XML" Precision="8">0.1 0.1 1.1 1.1 0.1 1.1 3.1 0.1 2.1 0.1 1.1 1.1 1.1 1.1 1.1 3.1 2.1 2.1 0.1 0.1 -1.1 1.1 0.1 -1.1 3.1 0.1 -2.1 0.1 1.1 -1.1 1.1 1.1 -1.1 3.1 2.1 -2.1</DataItem>
+        </Geometry>
+        <Topology Dimensions="2" Type="Hexahedron">
+          <DataItem DataType="Int" Dimensions="16" Format="XML" Precision="4">0 1 7 6 3 4 10 9 1 2 8 7 4 5 11 10</DataItem>
+        </Topology>
+        <Attribute Center="Node" Name="Global Node Equivalencies" Type="GlobalId">
+          <DataItem DataType="Int" Dimensions="6" Format="XML" Precision="4">1 4 5 7 3 6</DataItem>
+        </Attribute>
+        <xi:include xpointer="element(/1/1/2/4)"/>
+        <Set Name="Unstructured Grid's Set" Type="Node">
+          <Information Name="Data Set" Value="This is a set of arbitrary data"/>
+          <Attribute Center="Node" Name="The Set's attribute" Type="Scalar">
+            <DataItem DataType="Float" Dimensions="9" Format="XML" Precision="8">1.9 2.8 3.7 4.6 5.5 6.4 7.3 8.2 9.1</DataItem>
+          </Attribute>
+          <DataItem DataType="Float" Dimensions="5" Format="XML" Precision="8">5.1 4.2 3.3 2.4 1.5</DataItem>
+        </Set>
+      </Grid>
+    </Grid>
+    <xi:include xpointer="element(/1/1/2/9)"/>
+    <xi:include xpointer="element(/1/1/2/10)"/>
+    <xi:include xpointer="element(/1/1/2/11)"/>
+    <xi:include xpointer="element(/1/1/2/12)"/>
+  </Domain>
+</Xdmf>

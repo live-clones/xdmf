@@ -49,6 +49,7 @@ public:
    *
    * Example of use:
    *
+   * @code {.cpp}
    * //using XdmfItemFactory because XdmfCoreItemFactory is abstract
    * shared_ptr<XdmfItemFactory> exampleFactory = XdmfItemFactory::New();
    * std::map<std::string, std::string> newProperties;
@@ -59,9 +60,11 @@ public:
    * //But the item has to be cast afterwards to the correct type.
    * //childItems and itemProperties are not added to the item when created this way
    * //the collections are used to determine type
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * using XdmfItemFactory because XdmfCoreItemFactory is abstract
    * '''
@@ -74,6 +77,7 @@ public:
    * childItems and itemProperties are not added to the item when created this way
    * the collections are used to determine type
    * '''
+   * @endcode
    *
    * @param itemTag a string containing the tag of the XdmfItem to create.
    * @param itemProperties a map of key/value properties for the the XdmfItem.

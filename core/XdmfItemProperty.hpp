@@ -55,15 +55,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Using XdmfArrayType::Int32() as an example
    * std::map<std::string, std::string> propertyMap;
    * XdmfArrayType::Int32()->getProperties(propertyMap);
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * //Using XdmfArrayType.Int32() as an example
    * propertyMap = StringMap()
    * XdmfArrayType.Int32().getProperties(propertyMap)
+   * @endcode
    *
    * @param collectedProperties a map to insert name / value pairs into.
    */

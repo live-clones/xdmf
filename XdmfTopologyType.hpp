@@ -141,9 +141,25 @@ public:
    *
    * Example of use:
    *
+   * C++
+   *
+   * @code {.cpp}
    * //Assume that exampleTopology is a shared pointer to an XdmfTopology object with its type set
-   * unsigned int exampleID = exampleTopology->getID();
-   * shared_ptr<XdmfTopology> createdTopology = XdmfTopology::New(exampleID);
+   * unsigned int exampleID = exampleTopology->getType()->getID();
+   * shared_ptr<XdmfTopology> createdTopology = XdmfTopology::New();
+   * createdTopology->setType(XdmfTopologyType::New(exampleID));
+   * @endcode
+   *
+   * Python
+   *
+   * @code {.py}
+   * '''
+   * Assume that exampleTopology is a shared pointer to an XdmfTopology object with its type set
+   * '''
+   * exampleID = exampleTopology.getType().getID()
+   * createdTopology = XdmfTopology.New()
+   * createdTopology.setType(XdmfTopologyType.New(exampleID))
+   * @endcode
    *
    * @param id of the topology type.
    *
@@ -157,12 +173,29 @@ public:
    *
    * Example of use:
    *
+   * C++
+   *
+   * @code {.cpp}
    * XdmfTopologyType::CellType exampleType = XdmfTopologyType::Linear;
    * //Assuming that exampleTopology is a shared pointer to a filled XdmfTopology object
    * if (exampleType == exampleTopology->getCellType())
    * {
    *   //Do whatever is to be done if the cell type is linear
    * }
+   * @endcode
+   *
+   * Python
+   *
+   * @code {.py}
+   * exampleType = XdmfTopologyType.Linear
+   * '''
+   * Assuming that exampleTopology is a shared pointer to a filled XdmfTopology object
+   * '''
+   * if exampleType == exampleTopology.getCellType:
+   *   '''
+   *   Do whatever is to be done if the cell type is linear
+   *   '''
+   * @endcode
    *
    * @return a CellType containing the cell type.
    */
@@ -173,8 +206,21 @@ public:
    *
    * Example of use:
    *
+   * C++
+   *
+   * @code {.cpp}
    * unsigned int numEdges = XdmfTopologyType::Triangle()->getEdgesPerElement();
    * //numEdges now contains the number of edges per element of the Triangle type.
+   * @endcode
+   *
+   * Python
+   *
+   * @code {.cpp}
+   * numEdges = XdmfTopologyType.Triangle().getEdgesPerElement()
+   * '''
+   * numEdges now contains the number of edges per element of the Triangle type
+   * '''
+   * @endcode
    *
    * @return an unsigned int containing the number of edges per element.
    */
@@ -185,8 +231,21 @@ public:
    *
    * Example of use:
    *
+   * C++
+   *
+   * @code {.cpp}
    * unsigned int numFaces = XdmfTopologyType::Triangle()->getFacesPerElement();
    * //numFaces now contains the number of faces per element of the Triangle type.
+   * @endcode
+   *
+   * Python
+   *
+   * @code {.py}
+   * numFaces = XdmfTopologyType.Triangle().getFacesPerElement()
+   * '''
+   * numFaces now contains the number of faces per element of the Triangle type.
+   * '''
+   * @endcode
    *
    * @return an unsigned int containing the number of faces per element.
    */
@@ -198,8 +257,21 @@ public:
    *
    * Example of use:
    *
+   * C++
+   *
+   * @code {.cpp}
    * unsigned int holdID = XdmfTopologyType::Triangle()->getID();
    * //holdID now contains the ID of the Triangle type.
+   * @endcode
+   *
+   * Python
+   *
+   * @code {.py}
+   * holdID = XdmfTopologyType::Triangle().getID()
+   * '''
+   * holdID now contains the ID of the Triangle type
+   * '''
+   * @endcode
    *
    * @return the ID of the topology type.
    */
@@ -210,7 +282,17 @@ public:
    *
    * Example of use:
    *
+   * C++
+   *
+   * @code {.cpp}
    * std::string exampleName = XdmfTopologyType::Triangle()->getName();
+   * @endcode
+   *
+   * Python 
+   *
+   * @code {.py}
+   * exampleName = XdmfTopologyType.Triangle()->getName()
+   * @endcode
    *
    * @return the name of this topology type.
    */
@@ -222,8 +304,21 @@ public:
    *
    * Example of use:
    *
+   * C++
+   *
+   * @code {.cpp}
    * unsigned int numNodes = XdmfTopologyType::Triangle()->getNodesPerElement();
    * //numNodes now contains the number of nodes per element of the Triangle type.
+   * @endcode
+   *
+   * Python
+   *
+   * @code {.py}
+   * numNodes = XdmfTopologyType.Triangle().getNodesPerElement()
+   * '''
+   * numNodes now contains the number of nodes per element fo the Triangle type.
+   * '''
+   * @endcode
    *
    * @return an unsigned int containing number of nodes per element.
    */

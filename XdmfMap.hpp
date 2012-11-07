@@ -69,11 +69,15 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * shared_ptr<XdmfMap> exampleMap = XdmfMap::New();
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * exampleMap = XdmfMap.New()
+   * @endcode
    *
    * @return constructed XdmfMap.
    */
@@ -88,6 +92,7 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * std::vector<shared_ptr<XdmfAttribute> > holdGlobalNodes;
    * shared_ptr<XdmfAttribute> nodeAttribute = XdmfAttribute::New();
    * //The globalNodeIDs are placed into the attribute
@@ -108,9 +113,11 @@ public:
    * //then map 1 would have an entry of (3, 5, 2)
    * //and map 3 would have an entry of (1, 2, 5)
    * //The entries are formatted (remoteTaskID, remoteLocalNodeID, localNodeID)
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * grid = XdmfUnstructuredGrid.New()
    *
    * '''
@@ -152,6 +159,7 @@ public:
    *
    * grid.insert(testMap[0])
    * grid.insert(testMap[1])
+   * @endcode
    *
    * @param globalNodeIds a vector of attributes containing globalNodeId
    * values for each partition to be mapped.
@@ -176,6 +184,7 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assuming that exampleMap is a shared pointer to an XdmfMap object filled with the following tuples
    * //(1, 1, 9)
    * //(1, 2, 8)
@@ -201,9 +210,11 @@ public:
    * std::set<int>::iterator setWalker = remoteNodeSet.begin();
    * int remoteNodeValue = (*setWalker);
    * //remoteNodeValue now equals 9
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assuming that exampleMap is a shared pointer to an XdmfMap object filled with the following tuples
    * (1, 1, 9)
@@ -245,6 +256,7 @@ public:
    * '''
    * prints out all the remote node values associated with taskID 1 and localNode 1
    * '''
+   * @endcode
    *
    * @return stored boundary communicator map.
    */
@@ -257,15 +269,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assumming that exampleMap is a shared pointer to a XdmfMap object
    * std::string exampleName = exampleMap->getName();
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assumming that exampleMap is a shared pointer to a XdmfMap object
    * '''
    * exampleName = exampleMap.getName()
+   * @endcode
    *
    * @return name of boundary communicator map.
    */
@@ -279,6 +295,7 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assuming that exampleMap is a shared pointer to an XdmfMap object filled with the following tuples
    * //(1, 1, 9)
    * //(1, 2, 8)
@@ -299,9 +316,11 @@ public:
    * std::set<int>::iterator setWalker = remoteNodeSet.begin();
    * int remoteNodeValue = (*setWalker);
    * //remoteNodeValue now equals 9
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assuming that exampleMap is a shared pointer to an XdmfMap object filled with the following tuples
    * (1, 1, 9)
@@ -332,6 +351,7 @@ public:
    * '''
    * prints out all the remote node values associated with taskID 1 and localNode 1
    * '''
+   * @endcode
    *
    * @param remoteTaskId a task id to retrieve mapping for.
    *
@@ -351,15 +371,18 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * shared_ptr<XdmfMap> exampleMap = XdmfMap::New();
    * unsigned int newRemoteTaskID = 4;
    * unsigned int newLocalNodeID = 7;
    * unsigned int newRemoteLocalNodeID = 3;
    * exampleMap->insert(newRemoteTaskID, newLocalNodeID, newRemoteLocalNodeID);
    * //This inserts an entry of (4, 7, 3) into the map
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * exampleMap = XdmfMap.New()
    * newRemoteTaskID = 4
    * newLocalNodeID = 7
@@ -368,6 +391,7 @@ public:
    * '''
    * This inserts an entry of (4, 7, 3) into the map
    * '''
+   * @endcode
    *
    * @param remoteTaskId task id where the remoteLoalNodeId is located.
    * @param localNodeId the node id of the node being mapped.
@@ -386,14 +410,17 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assumming that exampleMap is a shared pointer to a XdmfMap object
    * if (exampleMap->isInitialized())
    * {
    *   //Do what is to be done if the map contains values
    * }
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assumming that exampleMap is a shared pointer to a XdmfMap object
    * '''
@@ -401,6 +428,7 @@ public:
    *   '''
    *   Do what is to be done if the map contains values
    *   '''
+   * @endcode
    *
    * @return bool true if map contains values in memory.
    */
@@ -413,19 +441,23 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assumming that exampleMap is a shared pointer to a XdmfMap object
    * if (!exampleMap->isInitialized())
    * {
    *   exampleMap->read();
    * }
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assumming that exampleMap is a shared pointer to a XdmfMap object
    * '''
    * if not(exampleMap.isInitialized()):
    *   exampleMap.read()
+   * @endcode
    */
   void read();
 
@@ -436,15 +468,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assumming that exampleMap is a shared pointer to a XdmfMap object
    * exampleMap->release();
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assumming that exampleMap is a shared pointer to a XdmfMap object
    * '''
    * exampleMap.release()
+   * @endcode
    */
   void release();
 
@@ -455,6 +491,7 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * std::string hdf5FilePath = "The HDF5 file path goes here";
    * std::string hdf5SetPath = "The HDF5 set path goes here";
    * int startIndex = 0; //start at the beginning
@@ -475,9 +512,11 @@ public:
    *   startIndex, readStride, readNumber);
    * shared_ptr<XdmfMap> exampleMap = XdmfMap::New();
    * exampleMap->setHeavyDataControllers(newRemoteTaskController, newLocalNodeController, newRemoteLocalNodeController);
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * hdf5FilePath = "The HDF5 file path goes here"
    * hdf5SetPath = "The HDF5 set path goes here"
    * startIndex = 0
@@ -507,6 +546,7 @@ public:
    *   startIndex, readStride, readNumber)
    * exampleMap = XdmfMap.New()
    * exampleMap.setHeavyDataControllers(newRemoteTaskController, newLocalNodeController, newRemoteLocalNodeController)
+   * @endcode
    *
    * @param remoteTaskIdsController an XdmfHeavyDataController to the remote
    * task ids dataset.
@@ -527,6 +567,7 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * shared_ptr<XdmfMap> exampleMap = XdmfMap::New();
    * //First create several std::map<int, int>
    * std::map<int, int> nodeMap;
@@ -562,9 +603,11 @@ public:
    * //(2, 7, 3)
    * //(2, 9, 7)
    * //(2, 9, 9)
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * newTaskMap = XdmfMapMap()
    * newNodeIdMap = XdmfMapNodeIdMap()
    * newNodeIdMap[2] = (3, 6, 8)
@@ -611,6 +654,7 @@ public:
    * (2, 9, 7)
    * (2, 9, 9)
    * '''
+   * @endcode
    *
    * @param map the boundary communicator map to store.
    */
@@ -623,17 +667,21 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assumming that exampleMap is a shared pointer to a XdmfMap object
    * std::string newName = "New Name";
    * exampleMap->setName(newName);
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assumming that exampleMap is a shared pointer to a XdmfMap object
    * '''
    * newName = "New Name"
    * exampleMap.setName(newName)
+   * @endcode
    *
    * @param name the name of the boundary communicator map to set.
    */

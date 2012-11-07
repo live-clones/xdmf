@@ -72,13 +72,17 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * std::string outFile = "output file name goes here";
    * shared_ptr<XdmfWriter> exampleWriter = XdmfWriter::New(outFile);
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * outFile = "output file name goes here"
    * exampleWriter = XdmfWriter.New(outFile)
+   * @endcode
    *
    * @param xmlFilePath the path to the xml file to write to.
    *
@@ -95,19 +99,23 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * std::string outFile = "output file name goes here";
    * std::string heavyFile = "heavy file name goes here";
    * bool replaceFile = true;
    * shared_ptr<XdmfHDF5Writer> exampleHeavyWriter = XdmfHDF5Writer::New(heavyFile, replaceFile);
    * shared_ptr<XdmfWriter> exampleWriter = XdmfWriter::New(outFile, exampleHeavyWriter);
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * outFile = "output file name goes here"
    * heavyFile = "heavy file name goes here"
    * replaceFile = True
    * exampleHeavyWriter = XdmfHDF5Writer.New(heavyFile, replaceFile)
    * exampleWriter = XdmfWriter.New(outFile, exampleHeavyWriter)
+   * @endcode
    *
    * @param xmlFilePath the path to the xml file to write to.
    * @param heavyDataWriter the heavy data writer to use when writing.
@@ -126,6 +134,7 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * filebuf exampleBuffer;
    * exampleBuffer.open("file goes here", ios::out);
    * ostream exampleStream(&exampleBuffer);
@@ -133,6 +142,7 @@ public:
    * bool replaceFile = true;
    * shared_ptr<XdmfHDF5Writer> exampleHeavyWriter = XdmfHDF5Writer::New(heavyFile, replaceFile);
    * shared_ptr<XdmfWriter> exampleWriter = XdmfWriter::New(exampleStream, exampleHeavyWriter);
+   * @endcode
    *
    * Python: does not curretnly support this version of New
    *
@@ -154,15 +164,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assume that exampleWriter is a shared pointer to a XdmfWriter object
    * std::string examplePath = exampleWriter->getFilePath();
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assume that exampleWriter is a shared pointer to a XdmfWriter object
    * '''
    * examplePath = exampleWriter.getFilePath()
+   * @endcode
    *
    * @return a std::string containing the path to the XML file on disk this
    * writer is writing to.
@@ -177,15 +191,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assume that exampleWriter is a shared pointer to a XdmfWriter object
    * shared_ptr<XdmfHeavyDataWriter> exampleHeavyWriter = exampleWriter->getHeavyDataWriter();
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assume that exampleWriter is a shared pointer to a XdmfWriter object
    * '''
    * exampleHeavyWriter = exampleWriter.getHeavyDataWriter()
+   * @endcode
    *
    * @return the requested heavy data writer.
    */
@@ -199,8 +217,10 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assume that exampleWriter is a shared pointer to a XdmfWriter object
    * shared_ptr<const XdmfHeavyDataWriter> exampleHeavyWriter = exampleWriter->getHeavyDataWriter();
+   * @endcode
    *
    * Python: Does not support a contant version of this function
    *
@@ -216,15 +236,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assume that exampleWriter is a shared pointer to a XdmfWriter object
    * unsigned int exampleLimit = exampleWriter->getLightDataLimit();
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assume that exampleWriter is a shared pointer to a XdmfWriter object
    * '''
    * exampleLimit = exampleWriter.getLightDataLimit()
+   * @endcode
    *
    * @return an unsigned int containing the number of values.
    */
@@ -237,15 +261,18 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * XdmfWriter::Mode testMode = XdmfWriter::Default;
    * //Assume that exampleWriter is a shared pointer to a XdmfWriter object
    * if (exampleWriter->getMode() == testMode)
    * {
    *   //Do whatever is to be done if the mode is default
    * }
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * testMode = XdmfWriter.Default
    * '''
    * Assume that exampleWriter is a shared pointer to a XdmfWriter object
@@ -254,6 +281,7 @@ public:
    *   '''
    *   Do whatever is to be done if the mode is default
    *   '''
+   * @endcode
    *
    * @return the Mode of operation for this writer.
    */
@@ -266,15 +294,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assume that exampleWriter is a shared pointer to a XdmfWriter object
    * bool exampleTestPaths = exampleWriter->getWriteXPaths();
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assume that exampleWriter is a shared pointer to a XdmfWriter object
    * '''
    * exampleTestPaths = exampleWriter.getWriteXPaths()
+   * @endcode
    *
    * @return bool whether this writer is set to write xpaths.
    */
@@ -288,13 +320,16 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * unsigned int newLimit = 20;
    * //Assume that exampleWriter is a shared pointer to a XdmfWriter object
    * exampleWriter->setLightDataLimit(newLimit);
    * //The writer will now place any data with a number of values over 20 into heavy data
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * newLimit = 20;
    * '''
    * Assume that exampleWriter is a shared pointer to a XdmfWriter object
@@ -303,6 +338,7 @@ public:
    * '''
    * The writer will now place any data with a number of values over 20 into heavy data
    * '''
+   * @endcode
    *
    * @param numValues an unsigned int containing the number of values.
    */
@@ -315,15 +351,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assume that exampleWriter is a shared pointer to a XdmfWriter object
    * exampleWriter->setMode(XdmfWriter::Default);
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assume that exampleWriter is a shared pointer to a XdmfWriter object
    * '''
    * exampleWriter.setMode(XdmfWriter.Default)
+   * @endcode
    *
    * @param mode the Mode of operation for this writer.
    */
@@ -336,15 +376,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assume that exampleWriter is a shared pointer to a XdmfWriter object
    * exampleWriter->setWriteXPaths(true);
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assume that exampleWriter is a shared pointer to a XdmfWriter object
    * '''
    * exampleWriter.setWriteXPaths(True)
+   * @endcode
    *
    * @param writeXPaths whether to write xpaths for this writer.
    */
@@ -357,6 +401,7 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Using XdmfAttribute here, but any XdmfArray would work
    * shared_ptr<XdmfAttribute> exampleAttribute = XdmfAttribute::New();
    * exampleAttribute->setCenter(XdmfAttributeCenter::Node());
@@ -370,9 +415,11 @@ public:
    * std::string outFile = "output file name goes here";
    * shared_ptr<XdmfWriter> exampleWriter = XdmfWriter::New(outFile);
    * exampleWriter->visit(exampleAttribute, exampleWriter);
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Using XdmfAttribute here, but any XdmfArray would work
    * '''
@@ -388,6 +435,7 @@ public:
    * outFile = "output file name goes here"
    * exampleWriter = XdmfWriter.New(outFile)
    * exampleWriter.visit(exampleAttribute, exampleWriter)
+   * @endcode
    *
    * @param array an XdmfArray to write to disk.
    * @param visitor a smart pointer to this visitor --- aids in grid traversal.
@@ -402,14 +450,17 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Using XdmfDomain here, but any XdmfItem would work
    * shared_ptr<XdmfDomain> exampleDomain = XdmfDomain::New();
    * std::string outFile = "output file name goes here";
    * shared_ptr<XdmfWriter> exampleWriter = XdmfWriter::New(outFile);
    * exampleWriter->visit(exampleDomain, exampleWriter);
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Using XdmfDomain here, but any XdmfItem would work
    * '''
@@ -417,6 +468,7 @@ public:
    * outFile = "output file name goes here"
    * exampleWriter = XdmfWriter.New(outFile)
    * exampleWriter.visit(exampleDomain, exampleWriter)
+   * @endcode
    *
    * @param item an XdmfItem to write to disk.
    * @param visitor a smart pointer to this visitor --- aids in grid traversal.

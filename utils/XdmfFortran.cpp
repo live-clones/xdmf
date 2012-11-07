@@ -52,6 +52,7 @@
 #include "XdmfUnstructuredGrid.hpp"
 #include "XdmfWriter.hpp"
 #include "XdmfHDF5Writer.hpp"
+#include "string.h"
 
 namespace {
 

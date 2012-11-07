@@ -63,11 +63,15 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * shared_ptr<XdmfTopology> exampleTopology = XdmfTopology::New();
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * exampleTopology = XdmfTopology.New()
+   * @endcode
    *
    * @return constructed XdmfTopology.
    */
@@ -89,15 +93,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assuming that exampleTopology is a shared pointer to an XdmfTopology object with values set
    * unsigned int numElements = exampleTopology->getNumberElements();
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assuming that exampleTopology is a shared pointer to an XdmfTopology object with values set
    * '''
    * numElements = exampleTopology.getNumberElements()
+   * @endcode
    *
    * @return int of number elements in the Topology.
    */
@@ -110,15 +118,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assuming that exampleTopology is a shared pointer to an XdmfTopology object with its type set
    * shared_ptr<const XdmfTopologyType> exampleType = exampleTopology->getType();
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assuming that exampleTopology is a shared pointer to an XdmfTopology object with its type set
    * '''
    * exampleType = exampleTopology.getType()
+   * @endcode
    *
    * @return XdmfTopologyType of the topology.
    */
@@ -131,13 +143,17 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * shared_ptr<XdmfTopology> exampleTopology = XdmfTopology::New();
    * exampleTopology->setType(XdmfTopologyType::Pyramid());
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * exampleTopology = XdmfTopology.New()
    * exampleTopology.setType(XdmfTopologyType.Pyramid())
+   * @endcode
    *
    * @param type the XdmfTopologyType to set.
    */

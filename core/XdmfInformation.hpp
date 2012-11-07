@@ -50,19 +50,23 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * shared_ptr<XdmfInformation> infoExample = XdmfInformation::New();
    * //Then the key and value must be set seperately
    * infoExample->setKey("Your Key String");
    * infoExample->setValue("Your Value String");
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * infoExample = XdmfInformation.New()
    * '''
    * Then the key and value must be set seperately
    * '''
    * infoExample.setKey("Your Key String")
    * infoExample.setValue("Your Value String")
+   * @endcode
    *
    * @return constructed XdmfInformation.
    */
@@ -75,15 +79,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * shared_ptr<XdmfInformation> infoExample = XdmfInformation::New("Your Key String", "Your Value String");
    * //This code creates an information with the key "Your Key String" and the value "Your Value String"
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * infoExample = XdmfInformation.New("Your Key String", "Your Value String")
    * '''
    * This code creates an information with the key "Your Key String" and the value "Your Value String"
    * '''
+   * @endcode
    *
    * @param key a string containing the key of the XdmfInformation to create.
    * @param value a string containing the value of the XdmfInformation to
@@ -111,13 +119,16 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * shared_ptr<XdmfInformation> infoExample = XdmfInformation::New("Your Key String", "Your Value String");
    * //This code creates an information with the key "Your Key String" and the value "Your Value String"
    * std::string storedKey = infoExample->getKey();
    * //"Your Key String" is now stored in the variable storedKey 
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * infoExample = XdmfInformation.New("Your Key String", "Your Value String")
    * '''
    * This code creates an information with the key "Your Key String" and the value "Your Value String"
@@ -126,6 +137,7 @@ public:
    * '''
    * "Your Key String" is now stored in the variable storedKey 
    * '''
+   * @endcode
    *
    * @return string containing the key.
    */
@@ -138,13 +150,16 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * shared_ptr<XdmfInformation> infoExample = XdmfInformation::New("Your Key String", "Your Value String");
    * //This code creates an information with the key "Your Key String" and the value "Your Value String"
    * std::string storedValue = infoExample->getValue();
    * //"Your Value String" is now stored in the variable storedValue 
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * infoExample = XdmfInformation.New("Your Key String", "Your Value String")
    * '''
    * This code creates an information with the key "Your Key String" and the value "Your Value String"
@@ -153,6 +168,7 @@ public:
    * '''
    * "Your Value String" is now stored in the variable storedValue 
    * '''
+   * @endcode
    *
    * @return string containing the value.
    */
@@ -167,13 +183,16 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * shared_ptr<XdmfInformation> infoExample = XdmfInformation::New("Your Key String", "Your Value String");
    * //This code creates an information with the key "Your Key String" and the value "Your Value String"
    * infoExample->setKey("Your New Key");
    * //"Your New Key" is now the key for infoExample 
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * infoExample = XdmfInformation.New("Your Key String", "Your Value String")
    * '''
    * This code creates an information with the key "Your Key String" and the value "Your Value String"
@@ -182,6 +201,7 @@ public:
    * '''
    * "Your New Key" is now the key for infoExample 
    * '''
+   * @endocode
    *
    * @param key a string containing the key to set.
    */
@@ -194,13 +214,16 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * shared_ptr<XdmfInformation> infoExample = XdmfInformation::New("Your Key String", "Your Value String");
    * //This code creates an information with the key "Your Key String" and the value "Your Value String"
    * infoExample->setValue("Your New Value");
    * //"Your New Value" is now the value for infoExample 
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * infoExample = XdmfInformation.New("Your Key String", "Your Value String")
    * '''
    * This code creates an information with the key "Your Key String" and the value "Your Value String"
@@ -209,6 +232,7 @@ public:
    * '''
    * "Your New Value" is now the value for infoExample 
    * '''
+   * @endcode
    *
    * @param value a string containing the value to set.
    */

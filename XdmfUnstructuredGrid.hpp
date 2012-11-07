@@ -51,11 +51,15 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * shared_ptr<XdmfUnstructuredGrid> exampleGrid = XdmfUnstructuredGrid::New();
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * exampleGrid = XdmfUnstructuredGrid.New()
+   * @endcode
    *
    * @return constructed XdmfUnstructuredGrid.
    */
@@ -68,6 +72,7 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * double newBrickX = 0.0;
    * double newBrickY = 0.0;
    * unsigned int newPointsX = 5;
@@ -76,9 +81,11 @@ public:
    * double newOriginY = 20.0;
    * shared_ptr<XdmfRegularGrid> baseGrid = XdmfRegularGrid::New(newBrickX, newBrickY, newPointsX, newPointsY, newOriginX, newOriginY);
    * shared_ptr<XdmfUnstructuredGrid> exampleGrid = XdmfUnstructuredGrid::New(baseGrid);
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * newBrickX = 0.0
    * newBrickY = 0.0
    * newPointsX = 5
@@ -87,6 +94,7 @@ public:
    * newOriginY = 20.0
    * baseGrid = XdmfRegularGrid.New(newBrickX, newBrickY, newPointsX, newPointsY, newOriginX, newOriginY)
    * exampleGrid = XdmfUnstructuredGrid.New(baseGrid)
+   * @endcode
    *
    * @param regularGrid	The grid that the unstructured grid will be created from
    *
@@ -106,15 +114,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assuming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
    * shared_ptr<XdmfGeometry> exampleGeometry = exampleGrid->getGeometry();
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assuming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
    * '''
    * exampleGeometry = exampleGrid.getGeometry()
+   * @endcode
    *
    * @return the geometry associated with this grid.
    */
@@ -129,15 +141,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assuming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
    * shared_ptr<XdmfTopology> exampleTopology = exampleGrid->getTopology();
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assuming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
    * '''
    * exampleTopology = exampleGrid.getTopology()
+   * @endcode
    *
    * @return the topology associated with this grid.
    */
@@ -150,6 +166,7 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * shared_ptr<XdmfUnstructuredGrid> exampleGrid = XdmfUnstructuredGrid::New();
    * shared_ptr<XdmfGeometry> newGeometry = XdmfGeometry::New();
    * newGeometry->setType(XdmfGeometryType::XYZ());
@@ -163,9 +180,11 @@ public:
    * newGeometry->pushBack(8);
    * newGeometry->pushBack(9);
    * exampleGrid->setGeometry(newGeometry);
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * exampleGrid = XdmfUnstructuredGrid.New()
    * newGeometry = XdmfGeometry.New()
    * newGeometry.setType(XdmfGeometryType.XYZ())
@@ -179,6 +198,7 @@ public:
    * newGeometry.pushBackAsInt32(8)
    * newGeometry.pushBackAsInt32(9)
    * exampleGrid.setGeometry(newGeometry)
+   * @endcode
    *
    * @param geometry an XdmfGeometry to associate with this grid.
    */
@@ -191,6 +211,7 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * shared_ptr<XdmfUnstructuredGrid> exampleGrid = XdmfUnstructuredGrid::New();
    * shared_ptr<XdmfTopology> newTopology = XdmfTopology::New();
    * newTopology->setType(XdmfTopologyType::Triangle());
@@ -204,9 +225,11 @@ public:
    * newTopology->pushBack(8);
    * newTopology->pushBack(9);
    * exampleGrid->setTopology(newTopology);
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * exampleGrid = XdmfUnstructuredGrid.New()
    * newTopology = XdmfTopology.New()
    * newTopology.setType(XdmfTopologyType.Triangle())
@@ -220,6 +243,7 @@ public:
    * newTopology.pushBackAsInt32(8)
    * newTopology.pushBackAsInt32(9)
    * exampleGrid.setTopology(newTopology)
+   * @endcode
    *
    * @param topology an XdmfTopology to associate with this grid.
    */

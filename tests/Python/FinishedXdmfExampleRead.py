@@ -102,7 +102,7 @@ if __name__ == "__main__":
 			if readAttribute.getCenter() == XdmfAttributeCenter.Node():
 				print "This attribute is a node"
 			else:
-				print "This attrubte is not a node"
+				print "This attribute is not a node"
 			print readAttribute.getValuesString()
 			j = j + 1
 		i=i+1
@@ -118,7 +118,7 @@ if __name__ == "__main__":
 		if readAttribute.getCenter() == XdmfAttributeCenter.Node():
 			print "This attribute is a node"
 		else:
-			print "This attrubte is not a node"
+			print "This attribute is not a node"
 		print readAttribute.getValuesString()
 		i = i + 1
 
@@ -198,7 +198,7 @@ if __name__ == "__main__":
 			if readAttribute.getCenter() == XdmfAttributeCenter.Node():
 				print "This attribute is a node"
 			else:
-				print "This attrubte is not a node"
+				print "This attribute is not a node"
 			print readAttribute.getValuesString()
 			j = j + 1
 		i=i+1
@@ -214,7 +214,7 @@ if __name__ == "__main__":
 		if readAttribute.getCenter() == XdmfAttributeCenter.Node():
 			print "This attribute is a node"
 		else:
-			print "This attrubte is not a node"
+			print "This attribute is not a node"
 		outputInformation = readAttribute.getInformation(0)
 		print "Key: " + outputInformation.getKey() + "\nValue: " + outputInformation.getValue()
 		print readAttribute.getValuesString()
@@ -289,7 +289,7 @@ if __name__ == "__main__":
 			if readAttribute.getCenter() == XdmfAttributeCenter.Node():
 				print "This attribute is a node"
 			else:
-				print "This attrubte is not a node"
+				print "This attribute is not a node"
 			print readAttribute.getValuesString()
 			j = j + 1
 		i=i+1
@@ -305,7 +305,7 @@ if __name__ == "__main__":
 		if readAttribute.getCenter() == XdmfAttributeCenter.Node():
 			print "This attribute is a node"
 		else:
-			print "This attrubte is not a node"
+			print "This attribute is not a node"
 		outputInformation = readAttribute.getInformation(0)
 		print "Key: " + outputInformation.getKey() + "\nValue: " + outputInformation.getValue()
 		print readAttribute.getValuesString()
@@ -373,7 +373,7 @@ if __name__ == "__main__":
 			if readAttribute.getCenter() == XdmfAttributeCenter.Node():
 				print "This attribute is a node"
 			else:
-				print "This attrubte is not a node"
+				print "This attribute is not a node"
 			print readAttribute.getValuesString()
 			j = j + 1
 		i=i+1
@@ -389,7 +389,7 @@ if __name__ == "__main__":
 		if readAttribute.getCenter() == XdmfAttributeCenter.Node():
 			print "This attribute is a node"
 		else:
-			print "This attrubte is not a node"
+			print "This attribute is not a node"
 		print readAttribute.getValuesString()
 		i = i + 1
 

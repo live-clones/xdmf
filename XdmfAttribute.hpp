@@ -52,11 +52,15 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * shared_ptr<XdmfAttribute> exampleAttribute = XdmfAttribute::New();
+   * #endcode
    *
    * Python
    *
+   * @code {.py}
    * exampleAttribute = XdmfAttribute.New()
+   * @endcode
    *
    * @return constructed XdmfAttribute.
    */
@@ -74,15 +78,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assuming that exampleAttribute is a shared pointer to an XdmfAttribute object with its center set
    * shared_ptr<const XdmfAttributeCenter> exampleCenter = exampleAttribute->getCenter();
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assuming that exampleAttribute is a shared pointer to an XdmfAttribute object with its center set
    * '''
    * exampleCenter = exampleAttribute.getCenter()
+   * @endcode
    *
    * @return XdmfAttributeCenter of the attribute.
    */
@@ -99,15 +107,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assuming that exampleAttribute is a shared pointer to an XdmfAttribute object
    * std::string exampleName = exampleAttribute->getName();
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assuming that exampleAttribute is a shared pointer to an XdmfAttribute object
    * '''
    * exampleName = exampleAttribute.getName()
+   * @endcode
    *
    * @return a string containing the name of the attribute.
    */
@@ -120,15 +132,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assuming that exampleAttribute is a shared pointer to an XdmfAttribute object with its type set
    * shared_ptr<const XdmfAttributeType> exampleType = exampleAttribute->getType();
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assuming that exampleAttribute is a shared pointer to an XdmfAttribute object with its type set
    * '''
    * exampleType = exampleAttribute.getType()
+   * @endcode
    *
    * @return XdmfAttributeType of the attribute.
    */
@@ -141,13 +157,17 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * shared_ptr<XdmfAttribute> exampleAttribute = XdmfAttribute::New();
    * exampleAttribute->setCenter(XdmfAttributeCenter::Node());
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * exampleAttribute = XdmfAttribute.New()
    * exampleAttribute.setCenter(XdmfAttributeCenter.Node())
+   * @endcode
    *
    * @param center the XdmfAttributeCenter to set.
    */
@@ -160,15 +180,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * shared_ptr<XdmfAttribute> exampleAttribute = XdmfAttribute::New();
    * std::string newName = "New Name";
    * exampleAttribute->setName(newName);
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * exampleAttribute = XdmfAttribute.New()
    * newName = "New Name"
    * exampleAttribute.setName(newName)
+   * @endcode
    *
    * @param name a string containing the name to set.
    */
@@ -181,13 +205,17 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * shared_ptr<XdmfAttribute> exampleAttribute = XdmfAttribute::New();
    * exampleAttribute->setType(XdmfAttributeType::Node());
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * exampleAttribute = XdmfAttribute.New()
    * exampleAttribute.setType(XdmfAttributeType.Node())
+   * @endcode
    *
    * @param type XdmfAttributeType to set.
    */

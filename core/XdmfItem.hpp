@@ -46,15 +46,21 @@ public:                                                                       \
   /** Get a ChildClass attached to this item by index.
       Example of use:
       C++
+      @code {.cpp}
       unsigned int getIndex = 0;
-      //Assume that exampleItem is a shared pointer to an ParentClass object
-      shared_ptr<ChildClass> exampleChild = exampleItem->get##ChildName(getIndex);
+      //Assume that exampleItem is a shared pointer to the ParentClass object
+      //Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class
+      shared_ptr<XdmfInformation> exampleChild = exampleItem->getInformation(getIndex);
+      @endcode
       Python
+      @code {.py}
       getIndex = 0;
       '''
-      Assume that exampleItem is a shared pointer to an ParentClass object
+      Assume that exampleItem is a shared pointer to the ParentClass object
+      Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class
       '''
-      exampleChild = exampleItem.get##ChildName(getIndex)
+      exampleChild = exampleItem.getInformation(getIndex)
+      @endcode
       @param index of the ChildClass to retrieve.
       @return requested ChildClass. If no ChildClass##s exist at the index,
       a NULL pointer is returned.
@@ -65,9 +71,12 @@ public:                                                                       \
   /** Get a ChildClass attached to this item by index (const version).
       Example of use:
       C++
+      @code {.cpp}
       unsigned int getIndex = 0;
-      //Assume that exampleItem is a shared pointer to an ParentClass object
-      shared_ptr<const ChildClass> exampleChild = exampleItem->get##ChildName(getIndex);
+      //Assume that exampleItem is a shared pointer to the ParentClass object
+      //Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class
+      shared_ptr<const XdmfInformation> exampleChild = exampleItem->getInfomation(getIndex);
+      @endcode
       Python: does not support a constant version of this function
       @param index of the ChildClass to retrieve.
       @return requested ChildClass. If no ChildClass##s exist at the index, a
@@ -79,15 +88,21 @@ public:                                                                       \
   /** Get a ChildClass attached to this item by SearchName.
       Example of use:
       C++
-      std::string finding##SearchName = "Find this";
-      //Assume that exampleItem is a shared pointer to an ParentClass object
-      shared_ptr<ChildClass> exampleChild = exampleItem->get##ChildName(finding##SearchName);
+      @code {.cpp}
+      std::string findingInfo = "Find this";
+      //Assume that exampleItem is a shared pointer to the ParentClass object
+      //Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class
+      shared_ptr<XdmfInformation> exampleChild = exampleItem->getInformation(findingInfo);
+      @endcode
       Python
-      finding##SearchName = "Find this"
+      @code {.py}
+      findingInfo = "Find this"
       '''
-      Assume that exampleItem is a shared pointer to an ParentClass object
+      Assume that exampleItem is a shared pointer to the ParentClass object
+      Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class
       '''
-      exampleChild = exampleItem.get##ChildName(finding##SearchName)
+      exampleChild = exampleItem.getInformation(findingInfo)
+      @endcode
       @param SearchName of the ChildClass to retrieve.
       @return requested ChildClass. If no ChildClass##s are found with the
       correct SearchName, a NULL pointer is returned.
@@ -98,9 +113,12 @@ public:                                                                       \
   /** Get a ChildClass attached to this item by SearchName (const version).
       Example of use:
       C++
-      std::string finding##SearchName = "Find this";
-      //Assume that exampleItem is a shared pointer to an ParentClass object
-      shared_ptr<const ChildClass> exampleChild = exampleItem->get##ChildName(finding##SearchName);
+      @code {.cpp}
+      std::string findingInfo = "Find this";
+      //Assume that exampleItem is a shared pointer to the ParentClass object
+      //Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class
+      shared_ptr<const XdmfInfomation> exampleChild = exampleItem->getInformation(findingInfo);
+      @endcode
       Python: does not support a constant version of this function
       @param SearchName of the ChildClass to retrieve.
       @return requested ChildClass  If no ChildClass##s are found with the
@@ -112,13 +130,19 @@ public:                                                                       \
   /** Get the number of ChildClass##s attached to this item.
       Example of use:
       C++
-      //Assume that exampleItem is a shared pointer to an ParentClass object
-      unsigned int exampleSize = exampleItem->getNumber##ChildName##s();
+      @code {.cpp}
+      //Assume that exampleItem is a shared pointer to the ParentClass object
+      //Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class
+      unsigned int exampleSize = exampleItem->getNumberInformations();
+      @endcode
       Python
+      @code {.py}
       '''
-      Assume that exampleItem is a shared pointer to an ParentClass object
+      Assume that exampleItem is a shared pointer to the ParentClass object
+      Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class
       '''
-      exampleSize = exampleItem.getNumber##ChildName##s()
+      exampleSize = exampleItem.getNumberInformations()
+      @endcode
       @return number of ChildClass##s attached to this item.
   */                                                                          \
   virtual unsigned int getNumber##ChildName##s() const;                       \
@@ -126,32 +150,42 @@ public:                                                                       \
   /** Insert a ChildClass into to this item.
       Example of use:
       C++
-      //Assume that exampleChild is a shared pointer to an ChildClass object
-      //Assume that exampleItem is a shared pointer to an ParentClass object
+      @code {.cpp}
+      //Assume that exampleChild is a shared pointer to a Child object
+      //Assume that exampleItem is a shared pointer to a Parent object
       exampleItem->insert(exampleChild);
+      @endcode
       Python
+      @code {.py}
       '''
-      Assume that exampleChild is a shared pointer to an ChildClass object
-      Assume that exampleItem is a shared pointer to an ParentClass object
+      Assume that exampleChild is a shared pointer to a Child object
+      Assume that exampleItem is a shared pointer to a Parent object
       '''
       exampleItem.insert(exampleChild)
+      @endcode
       @param ChildName to attach to this item.
   */                                                                          \
   virtual void insert(const shared_ptr<ChildClass> ChildName);                \
                                                                               \
-  /** Remove a ChildClass from this item by index. If no ChildClass##s exist
+  /** Remove a ChildClass from this item by index. If no object exists
       at the index, nothing is removed.
       Example of use:
       C++
-      //Assume that exampleItem is a shared pointer to an ParentClass object
+      @code {.cpp}
+      //Assume that exampleItem is a shared pointer to the ParentClass object
+      //Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class
       unsigned int removeIndex = 0;
-      exampleItem->remove##ChildName(removeIndex);
+      exampleItem->removeInformation(removeIndex);
+      @endcode
       Python
+      @code {.py}
       '''
-      Assume that exampleItem is a shared pointer to an ParentClass object
+      Assume that exampleItem is a shared pointer to the ParentClass object
+      Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class
       '''
       removeIndex = 0
-      exampleItem.remove##ChildName(removeIndex)
+      exampleItem.removeInformation(removeIndex)
+      @endcode
       @param index of the ChildClass to remove.
   */                                                                          \
   virtual void remove##ChildName(const unsigned int index);                   \
@@ -160,15 +194,21 @@ public:                                                                       \
       have the correct SearchName, nothing is removed.
       Example of use:
       C++
+      @code {.cpp}
       //Assume that exampleItem is a shared pointer to an ParentClass object
-      unsigned int remove##SearchName = "Remove this";
-      exampleItem->remove##ChildName(remove##SearchName);
+      //Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class
+      unsigned int removeInfo = "Remove this";
+      exampleItem->removeInformation(removeInfo);
+      @endcode
       Python
+      @code {.py}
       '''
       Assume that exampleItem is a shared pointer to an ParentClass object
+      Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class
       '''
-      remove##SearchName = "Remove this"
-      exampleItem.remove##ChildName(remove##SearchName)
+      removeInfo = "Remove this"
+      exampleItem.removeInformation(removeInfo)
+      @endcode
       @param SearchName of the ChildClass to remove.
   */                                                                          \
   virtual void remove##ChildName(const std::string & SearchName);             \
@@ -283,17 +323,21 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Using a shared pointer to an XdmfDomain object as an example
    * shared_ptr<XdmfDomain> exampleItem = XdmfDomain::New();
    * std::string exampleTag = exampleItem->getItemTag();
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Using a shared pointer to an XdmfDomain object as an example
    * '''
    * exampleItem = XdmfDomain.New()
    * exampleTag = exampleItem.getItemTag()
+   * @endcode
    *
    * @return the tag for this XdmfItem.
    */
@@ -307,17 +351,21 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Using a shared pointer to an XdmfDomain object as an example
    * shared_ptr<XdmfDomain> exampleItem = XdmfDomain::New();
    * std::map<std::string, std::string> propertyMap = exampleItem->getItemProperties();
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Using a shared pointer to an XdmfDomain object as an example
    * '''
    * exampleItem = XdmfDomain.New()
    * propertyMap = exampleItem.getItemProperties()
+   * @endcode
    *
    * @return a map of key/value properties associated with this XdmfItem.
    */
@@ -330,14 +378,17 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Using a shared pointer to an XdmfDomain object as an example
    * shared_ptr<XdmfDomain> exampleItem = XdmfDomain::New();
    * std::string writePath = "file path here";
    * shared_ptr<XdmfWriter> exampleWriter = XdmfWriter::New(writepath);
    * exampleItem->traverse(exampleWriter);
+   * @endcode}
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Using a shared pointer to an XdmfDomain object as an example
    * '''
@@ -345,6 +396,7 @@ public:
    * writePath = "file path here"
    * exampleWriter = XdmfWriter.New(writepath)
    * exampleItem.traverse(exampleWriter)
+   * @endcode
    *
    * @param visitor the visitor to pass to child items.
    */

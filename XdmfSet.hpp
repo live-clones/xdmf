@@ -55,11 +55,15 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * shared_ptr<XdmfSet> exampleSet = XdmfSet::New();
+   * @endcode
    *
    * Python
    *
+   8 @code {.py}
    * exampleSet = XdmfSet.New()
+   * @endcode
    *
    * @return constructed XdmfSet.
    */
@@ -82,15 +86,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assuming that exampleSet is a shared pointer to an XdmfSet object with its name set
    * std::string exampleName = exampleSet->getName();
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assuming that exampleSet is a shared pointer to an XdmfSet object with its name set
    * '''
    * exampleName = exampleSet.getName()
+   * @endcode
    *
    * @return a string containing the name of the set.
    */
@@ -103,15 +111,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * //Assuming that exampleSet is a shared pointer to an XdmfSet object with its type set
    * shared_ptr<const XdmfSetType> exampleType = exampleSet->getType();
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * '''
    * Assuming that exampleSet is a shared pointer to an XdmfSet object with its type set
    * '''
    * exampleType = exampleSet.getType()
+   * @endcode
    *
    * @return XdmfSetType of this set.
    */
@@ -130,15 +142,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * shared_ptr<XdmfSet> exampleSet = XdmfSet::New();
    * std::string newName = "New Name";
    * exampleSet->setName(newName);
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * exampleSet = XdmfSet.New()
    * newName = "New Name"
    * exampleSet.setName(newName)
+   * @endcode
    *
    * @param name a string containing the name to set.
    */
@@ -151,13 +167,17 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * shared_ptr<XdmfSet> exampleSet = XdmfSet::New();
    * exampleSet->setType(XdmfSetType::Node());
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * exampleSet = XdmfSet.New()
    * exampleSet.setType(XdmfSetType.Node())
+   * @endcode
    *
    * @param type the XdmfSetType to set.
    */

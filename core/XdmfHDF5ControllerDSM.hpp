@@ -53,6 +53,7 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * std::string newPath = "Your file path goes here";
    * std::string newSetPath = "The data set path goes here";
    * shared_ptr<const XdmfArrayType> newType = XdmfArrayType::Int32();
@@ -80,9 +81,11 @@ public:
    *   readStrides,
    *   readCounts,
    *   newDsmBuffer);
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * newPath = "Your file path goes here"
    * newSetPath = "The data set path goes here"
    * newType = XdmfArrayType.Int32()
@@ -118,6 +121,7 @@ public:
    *   readStrides,
    *   readCounts,
    *   newDsmBuffer)
+   * @endcode
    *
    * @param	hdf5FilePath	The path to the hdf5 file that the controller will be accessing
    * @param	dataSetPath	The location within the file of the data the controller with be accessing

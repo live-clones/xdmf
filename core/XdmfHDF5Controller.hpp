@@ -50,6 +50,7 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * std::string newPath = "File path to hdf5 file goes here";
    * std::string newSetPath = "path to the set goes here";
    * shared_ptr<const XdmfArrayType> readType = XdmfArrayType::Int32();
@@ -75,9 +76,11 @@ public:
    *   readStarts,
    *   readStrides,
    *   readCounts);
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * newPath = "File path to hdf5 file goes here"
    * newSetPath = "path to the set goes here"
    * readType = XdmfArrayType.Int32()
@@ -109,6 +112,7 @@ public:
    *   readStarts,
    *   readStrides,
    *   readCounts);
+   * @endcode
    *
    * @param hdf5FilePath the location of the hdf5 file the data set resides in.
    * @param dataSetPath the location of the dataset within the hdf5 file.

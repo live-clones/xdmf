@@ -83,15 +83,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * unsigned int dataSize = XdmfArrayType::Int8()->getElementSize();
    * //The number of bytes in an Int8 will be stored in the dataSize variable
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * dataSize = XdmfArrayType.Int8().getElementSize()
    * '''
    * The number of bytes in an Int8 will be stored in the dataSize variable
    * '''
+   * @endcode
    *
    * @return the data size, in bytes.
    */
@@ -104,15 +108,19 @@ public:
    *
    * C++
    *
+   * @code {.cpp}
    * std::string dataName = XdmfArrayType::Int8()->getName();
    * //The name of the Int8 data type will be stored in the dataName variable
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * dataName = XdmfArrayType.Int8().getName()
    * '''
    * The name of the Int8 data type will be stored in the dataName variable
    * '''
+   * @endcode
    *
    * @return the name of the data type.
    */

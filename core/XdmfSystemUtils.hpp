@@ -45,13 +45,17 @@ class XDMFCORE_EXPORT XdmfSystemUtils {
    *
    * C++
    *
+   * @code {.cpp}
    * std::string priorPath = "Path you want to convert";
    * std::string convertedPath = XdmfSystemUtils::getRealPath(priorPath);
+   * @endcode
    *
    * Python
    *
+   * @code {.py}
    * priorPath = "Path you want to convert"
    * convertedPath = XdmfSystemUtils.getRealPath(priorPath)
+   * @endcode
    *
    * @param path a string containing the path to convert.
    *
