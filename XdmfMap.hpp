@@ -192,16 +192,16 @@ public:
    * //(2, 4, 6)
    * //(3, 5, 5)
    * //(3, 6, 4)
-   * std::map<int, std::map<int, int> > taskIDMap = exampleMap->getMap();
+   * std::map<int, std::map<int, std::set<int> > > taskIDMap = exampleMap->getMap();
    * //taskIDMap now contains the same tuples as exampleMap
-   * std::map<int, std::map<int, int> >::iterator taskWalker = taskIDMap.begin();
+   * std::map<int, std::map<int, std::set<int> > >::iterator taskWalker = taskIDMap.begin();
    * int taskIDValue = (*taskWalker).first;
    * //taskIDValue is now equal to 1, because that is the first taskID listed
-   * std::map<int, int> nodeIDMap = taskIDMap[1];
+   * std::map<int, std::set<int> > nodeIDMap = taskIDMap[1];
    * //nodeIDMap now contains the following tuples because it retrieved the tuples associated with taskID 1
    * //(1, 9)
    * //(2, 8)
-   * std::map<int, int>::iterator mapWalker = nodeIDMap.begin();
+   * std::map<int, std::set<int> >::iterator mapWalker = nodeIDMap.begin();
    * int localNodeValue = (*mapWalker).first;
    * //localNodeValue is now equal to 1, because it is the first entry in the first tuple in the set
    * std::set<int> remoteNodeSet = exampleMap[1];
@@ -303,11 +303,11 @@ public:
    * //(2, 4, 6)
    * //(3, 5, 5)
    * //(3, 6, 4)
-   * std::map<int, int> nodeIDMap = exampleMap->getRemoteNodeIds(1);
+   * std::map<int, std::set<int> > nodeIDMap = exampleMap->getRemoteNodeIds(1);
    * //nodeIDMap now contains the following tuples because it retrieved the tuples associated with taskID 1
    * //(1, 9)
    * //(2, 8)
-   * std::map<int, int>::iterator mapWalker = nodeIDMap.begin();
+   * std::map<int, std::set<int> >::iterator mapWalker = nodeIDMap.begin();
    * int localNodeValue = (*mapWalker).first;
    * //localNodeValue is now equal to 1, because it is the first entry in the first tuple in the set
    * std::set<int> remoteNodeSet = exampleMap[1];
@@ -569,25 +569,36 @@ public:
    *
    * @code {.cpp}
    * shared_ptr<XdmfMap> exampleMap = XdmfMap::New();
-   * //First create several std::map<int, int>
-   * std::map<int, int> nodeMap;
-   * nodeMap.insert(pair<int, int>(2,3));
-   * nodeMap.insert(pair<int, int>(2,6));
-   * nodeMap.insert(pair<int, int>(2,8));
-   * nodeMap.insert(pair<int, int>(3,3));
-   * nodeMap.insert(pair<int, int>(4,7));
-   * nodeMap.insert(pair<int, int>(4,9));
-   * std::map<int, int> nodeMap2;
-   * nodeMap.insert(pair<int, int>(5,3));
-   * nodeMap.insert(pair<int, int>(5,6));
-   * nodeMap.insert(pair<int, int>(5,8));
-   * nodeMap.insert(pair<int, int>(7,3));
-   * nodeMap.insert(pair<int, int>(9,7));
-   * nodeMap.insert(pair<int, int>(9,9));
-   * //Then create a std::map<int, std::map<int, int> >
-   * std::map<int, std::map<int, int> > taskMap;
-   * taskMap.insert(pair<int, std::map<int, int> >(1, nodeMap);
-   * taskMap.insert(pair<int, std::map<int, int> >(2, nodeMap2);
+   * //First create a std::map<int, std::set<int> >
+   * std::map<int, std::map<int, std::set<int> > > taskMap;
+   * std::map<int, std::set<int> > nodeMap;
+   * std::set<int> remoteIDset;
+   * remoteIDset.insert(3);
+   * remoteIDset.insert(6);
+   * remoteIDset.insert(8);
+   * nodeMap.insert(pair<int, std::set<int> >(2, remoteIDset));
+   * remoteIDset.clear();
+   * remoteIDset.insert(3);
+   * nodeMap.insert(pair<int, std::set<int> >(3, remoteIDset));
+   * remoteIDset.clear();
+   * remoteIDset.insert(7);
+   * remoteIDset.insert(9);
+   * nodeMap.insert(pair<int, std::set<int> >(4, remoteIDset));
+   * taskMap.insert(pair<int, std::map<int, std::set<int> > >(1, nodeMap);
+   * nodeMap.clear();
+   * remoteIDset.clear();
+   * remoteIDset.insert(3);
+   * remoteIDset.insert(6);
+   * remoteIDset.insert(8);
+   * nodeMap.insert(pair<int, std::set<int> >(5, remoteIDset));
+   * remoteIDset.clear();
+   * remoteIDset.insert(3);
+   * nodeMap.insert(pair<int, std::set<int> >(7, remoteIDset));
+   * remoteIDset.clear();
+   * remoteIDset.insert(7);
+   * remoteIDset.insert(9);
+   * nodeMap.insert(pair<int, std::set<int> >(9, remoteIDset));
+   * taskMap.insert(pair<int, std::map<int, std::set<int> > >(2, nodeMap);
    * //then the result is set to the XdmfMap
    * exampleMap->setMap(taskMap);
    * //This fills the XdmfMap with the following tuples

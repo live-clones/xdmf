@@ -47,19 +47,19 @@ public:                                                                       \
       Example of use:
       C++
       @code {.cpp}
-      unsigned int getIndex = 0;
-      //Assume that exampleItem is a shared pointer to the ParentClass object
-      //Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class
-      shared_ptr<XdmfInformation> exampleChild = exampleItem->getInformation(getIndex);
+      unsigned int getIndex = 0;<br>
+      //Assume that exampleItem is a shared pointer to the ParentClass object<br>
+      //Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class<br>
+      shared_ptr<XdmfInformation> exampleChild = exampleItem->getInformation(getIndex);<br>
       @endcode
       Python
       @code {.py}
-      getIndex = 0;
-      '''
-      Assume that exampleItem is a shared pointer to the ParentClass object
-      Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class
-      '''
-      exampleChild = exampleItem.getInformation(getIndex)
+      getIndex = 0;<br>
+      '''<br>
+      Assume that exampleItem is a shared pointer to the ParentClass object<br>
+      Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class<br>
+      '''<br>
+      exampleChild = exampleItem.getInformation(getIndex)<br>
       @endcode
       @param index of the ChildClass to retrieve.
       @return requested ChildClass. If no ChildClass##s exist at the index,
@@ -72,10 +72,10 @@ public:                                                                       \
       Example of use:
       C++
       @code {.cpp}
-      unsigned int getIndex = 0;
-      //Assume that exampleItem is a shared pointer to the ParentClass object
-      //Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class
-      shared_ptr<const XdmfInformation> exampleChild = exampleItem->getInfomation(getIndex);
+      unsigned int getIndex = 0;<br>
+      //Assume that exampleItem is a shared pointer to the ParentClass object<br>
+      //Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class<br>
+      shared_ptr<const XdmfInformation> exampleChild = exampleItem->getInfomation(getIndex);<br>
       @endcode
       Python: does not support a constant version of this function
       @param index of the ChildClass to retrieve.
@@ -89,19 +89,19 @@ public:                                                                       \
       Example of use:
       C++
       @code {.cpp}
-      std::string findingInfo = "Find this";
-      //Assume that exampleItem is a shared pointer to the ParentClass object
-      //Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class
-      shared_ptr<XdmfInformation> exampleChild = exampleItem->getInformation(findingInfo);
+      std::string findingInfo = "Find this";<br>
+      //Assume that exampleItem is a shared pointer to the ParentClass object<br>
+      //Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class<br>
+      shared_ptr<XdmfInformation> exampleChild = exampleItem->getInformation(findingInfo);<br>
       @endcode
       Python
       @code {.py}
-      findingInfo = "Find this"
-      '''
-      Assume that exampleItem is a shared pointer to the ParentClass object
-      Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class
-      '''
-      exampleChild = exampleItem.getInformation(findingInfo)
+      findingInfo = "Find this"<br>
+      '''<br>
+      Assume that exampleItem is a shared pointer to the ParentClass object<br>
+      Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class<br>
+      '''<br>
+      exampleChild = exampleItem.getInformation(findingInfo)<br>
       @endcode
       @param SearchName of the ChildClass to retrieve.
       @return requested ChildClass. If no ChildClass##s are found with the
@@ -114,10 +114,10 @@ public:                                                                       \
       Example of use:
       C++
       @code {.cpp}
-      std::string findingInfo = "Find this";
-      //Assume that exampleItem is a shared pointer to the ParentClass object
-      //Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class
-      shared_ptr<const XdmfInfomation> exampleChild = exampleItem->getInformation(findingInfo);
+      std::string findingInfo = "Find this";<br>
+      //Assume that exampleItem is a shared pointer to the ParentClass object<br>
+      //Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class<br>
+      shared_ptr<const XdmfInfomation> exampleChild = exampleItem->getInformation(findingInfo);<br>
       @endcode
       Python: does not support a constant version of this function
       @param SearchName of the ChildClass to retrieve.
@@ -131,17 +131,17 @@ public:                                                                       \
       Example of use:
       C++
       @code {.cpp}
-      //Assume that exampleItem is a shared pointer to the ParentClass object
-      //Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class
-      unsigned int exampleSize = exampleItem->getNumberInformations();
+      //Assume that exampleItem is a shared pointer to the ParentClass object<br>
+      //Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class<br>
+      unsigned int exampleSize = exampleItem->getNumberInformations();<br>
       @endcode
       Python
       @code {.py}
-      '''
-      Assume that exampleItem is a shared pointer to the ParentClass object
-      Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class
-      '''
-      exampleSize = exampleItem.getNumberInformations()
+      '''<br>
+      Assume that exampleItem is a shared pointer to the ParentClass object<br>
+      Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class<br>
+      '''<br>
+      exampleSize = exampleItem.getNumberInformations()<br>
       @endcode
       @return number of ChildClass##s attached to this item.
   */                                                                          \
@@ -151,17 +151,17 @@ public:                                                                       \
       Example of use:
       C++
       @code {.cpp}
-      //Assume that exampleChild is a shared pointer to a Child object
-      //Assume that exampleItem is a shared pointer to a Parent object
-      exampleItem->insert(exampleChild);
+      //Assume that exampleChild is a shared pointer to a Child object<br>
+      //Assume that exampleItem is a shared pointer to a Parent object<br>
+      exampleItem->insert(exampleChild);<br>
       @endcode
       Python
       @code {.py}
-      '''
-      Assume that exampleChild is a shared pointer to a Child object
-      Assume that exampleItem is a shared pointer to a Parent object
-      '''
-      exampleItem.insert(exampleChild)
+      '''<br>
+      Assume that exampleChild is a shared pointer to a Child object<br>
+      Assume that exampleItem is a shared pointer to a Parent object<br>
+      '''<br>
+      exampleItem.insert(exampleChild)<br>
       @endcode
       @param ChildName to attach to this item.
   */                                                                          \
@@ -172,19 +172,19 @@ public:                                                                       \
       Example of use:
       C++
       @code {.cpp}
-      //Assume that exampleItem is a shared pointer to the ParentClass object
-      //Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class
-      unsigned int removeIndex = 0;
-      exampleItem->removeInformation(removeIndex);
+      //Assume that exampleItem is a shared pointer to the ParentClass object<br>
+      //Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class<br>
+      unsigned int removeIndex = 0;<br>
+      exampleItem->removeInformation(removeIndex);<br>
       @endcode
       Python
       @code {.py}
-      '''
-      Assume that exampleItem is a shared pointer to the ParentClass object
-      Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class
-      '''
-      removeIndex = 0
-      exampleItem.removeInformation(removeIndex)
+      '''<br>
+      Assume that exampleItem is a shared pointer to the ParentClass object<br>
+      Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class<br>
+      '''<br>
+      removeIndex = 0<br>
+      exampleItem.removeInformation(removeIndex)<br>
       @endcode
       @param index of the ChildClass to remove.
   */                                                                          \
@@ -195,19 +195,19 @@ public:                                                                       \
       Example of use:
       C++
       @code {.cpp}
-      //Assume that exampleItem is a shared pointer to an ParentClass object
-      //Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class
-      unsigned int removeInfo = "Remove this";
-      exampleItem->removeInformation(removeInfo);
+      //Assume that exampleItem is a shared pointer to an ParentClass object<br>
+      //Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class<br>
+      unsigned int removeInfo = "Remove this";<br>
+      exampleItem->removeInformation(removeInfo);<br>
       @endcode
       Python
       @code {.py}
-      '''
-      Assume that exampleItem is a shared pointer to an ParentClass object
-      Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class
-      '''
-      removeInfo = "Remove this"
-      exampleItem.removeInformation(removeInfo)
+      '''<br>
+      Assume that exampleItem is a shared pointer to an ParentClass object<br>
+      Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class<br>
+      '''<br>
+      removeInfo = "Remove this"<br>
+      exampleItem.removeInformation(removeInfo)<br>
       @endcode
       @param SearchName of the ChildClass to remove.
   */                                                                          \

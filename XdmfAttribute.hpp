@@ -54,7 +54,7 @@ public:
    *
    * @code {.cpp}
    * shared_ptr<XdmfAttribute> exampleAttribute = XdmfAttribute::New();
-   * #endcode
+   * @endcode
    *
    * Python
    *

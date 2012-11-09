@@ -201,7 +201,7 @@ public:
    * '''
    * "Your New Key" is now the key for infoExample 
    * '''
-   * @endocode
+   * @endcode
    *
    * @param key a string containing the key to set.
    */

@@ -65,7 +65,56 @@
 * constructors in the XDMF API are protected, ensuring that only
 * shared pointers can be created. These pointers are freed
 * automatically by the shared pointer reference counting mechanism.
+*
+* C++ Examples:
+*
+* \subpage cppwrite "C++ Example of Xdmf Creation"
+*
+* \subpage cppread "C++ Example of Reading Xdmf"
+*
+* \subpage cppedit "C++ Example of Reading and Modifying Xdmf"
+*
+* Python Examples:
+*
+* \subpage pywrite "Python Example of Xdmf Creation"
+*
+* \subpage pyread "Python Example of Reading Xdmf"
+*
+* \subpage pyedit "Python Example of Reading and Modifying Xdmf"
+*
 */
+
+/*!
+* \page cppwrite Example of Xdmf Creation
+* \include ExampleXdmfWrite.cpp
+*/
+
+/*!
+* \page cppread Example of Reading Xdmf
+* \include ExampleXdmfRead.cpp
+*/
+
+/*!
+* \page cppedit Example of Reading and Modifying
+* \include ExampleXdmfEdit.cpp
+*/
+
+/*!
+* \page pywrite Example of Xdmf Creation
+* \include XdmfExampleWrite.py
+*/
+
+/*!
+* \page pyread Example of Reading Xdmf
+* \include XdmfExampleRead.py
+*/
+
+/*!
+* \page pyedit Example of Reading and Modifying
+* \include XdmfExampleEdit.py
+*/
+
+
 
 /* Keep all our Win32 Conversions here */
 #ifdef _WIN32

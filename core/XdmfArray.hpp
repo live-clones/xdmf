@@ -127,14 +127,14 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
+   * @code{.cpp}
    * //Assuming that exampleArray is a shared pointer to an XdmfArray object
    * exampleArray->clear();
    * @endcode
    *
    * Python
    *
-   * @code {.py}
+   * @code{.py}
    * '''
    * Assuming that exampleArray is a shared pointer to an XdmfArray object
    * '''

@@ -43,6 +43,9 @@ class XdmfHeavyDataWriter;
  * written to disk. Heavy data is written to a heavy data format using
  * an XdmfHeavyDataWriter and light data is written to XML.
  *
+ * An infinite loop is possible if an XdmfItem somehow ends up as its own child,
+ * either directly or by way of another Xdmf Item.
+ *
  * By default, the XdmfWriter writes all heavy data to a single heavy
  * data file specified by the XdmfHeavyDataWriter. If a dataset is
  * encountered that resides in a different heavy data file on disk,
