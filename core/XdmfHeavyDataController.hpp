@@ -61,21 +61,17 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //Assuming that exampleController is a shared pointer to an XdmfHDF5Controller object
-   * //Since XdmfHeavyDataController is an abstract class
-   * std::string examplePath = exampleController->getDataSetPath();
-   * @endcode
+   * @dontinclude ExampleXdmfHeavyDataController.cpp
+   * @skipline Assuming
+   * @until Since
+   * @skipline getDataSetPath
    *
    * Python
    *
-   * @code {.py}
-   * '''
-   * Assuming that exampleController is a shared pointer to an XdmfHDF5Controller object
-   * Since XdmfHeavyDataController is an abstract class
-   * '''
-   * examplePath = exampleController.getDataSetPath()
-   * @endcode
+   * @dontinclude XdmfExampleHeavyDataController.py
+   * @skipline Assuming
+   * @until Since
+   * @skipline getDataSetPath
    *
    * @return a std::string containing the path of the data set.
    */
@@ -88,21 +84,17 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //Assuming that exampleController is a shared pointer to an XdmfHDF5Controller object
-   * //Since XdmfHeavyDataController is an abstract class
-   * std::vector<unsigned int>  exampleDimensions = exampleController->getDimensions();
-   * @endcode
+   * @dontinclude ExampleXdmfHeavyDataController.cpp
+   * @skipline Assuming
+   * @until Since
+   * @skipline getDimensions
    *
    * Python
    *
-   * @code {.py}
-   * '''
-   * Assuming that exampleController is a shared pointer to an XdmfHDF5Controller object
-   * Since XdmfHeavyDataController is an abstract class
-   * '''
-   * exampleDimensions = exampleController.getDimensions()
-   * @endcode
+   * @dontinclude XdmfExampleHeavyDataController.py
+   * @skipline Assuming
+   * @until Since
+   * @skipline getDimensions
    *
    * @return a vector containing the size in each dimension of the heavy data
    * set owned by this controller.
@@ -118,21 +110,17 @@ public:
    *
    * C++
    *
-   * @code {.cpp]
-   * //Assuming that exampleController is a shared pointer to an XdmfHDF5Controller object
-   * //Since XdmfHeavyDataController is an abstract class
-   * std::string examplePath = exampleController->getFilePath();
-   * @endcode
+   * @dontinclude ExampleXdmfHeavyDataController.cpp
+   * @skipline Assuming
+   * @until Since
+   * @skipline getFilePath
    *
    * Python
    *
-   * @code {.py}
-   * '''
-   * Assuming that exampleController is a shared pointer to an XdmfHDF5Controller object
-   * Since XdmfHeavyDataController is an abstract class
-   * '''
-   * examplePath = exampleController.getFilePath()
-   * @endcode
+   * @dontinclude XdmfExampleHeavyDataController.py
+   * @skipline Assuming
+   * @until Since
+   * @skipline getFilePath
    *
    * @return a std::string containing the path to the heavy data file.
    */
@@ -146,21 +134,17 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //Assuming that exampleController is a shared pointer to an XdmfHDF5Controller object
-   * //Since XdmfHeavyDataController is an abstract class
-   * std::string exampleName = exampleController->getName();
-   * @endcode
+   * @dontinclude ExampleXdmfHeavyDataController.cpp
+   * @skipline Assuming
+   * @until Since
+   * @skipline getName
    *
    * Python
    *
-   * @code {.py}
-   * '''
-   * Assuming that exampleController is a shared pointer to an XdmfHDF5Controller object
-   * Since XdmfHeavyDataController is an abstract class
-   * '''
-   * exampleName = exampleController.getName()
-   * @endcode
+   * @dontinclude XdmfExampleHeavyDataController.py
+   * @skipline Assuming
+   * @until Since
+   * @skipline getName
    *
    * @return std::string containing the name of this heavy data format
    */
@@ -173,21 +157,17 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //Assuming that exampleController is a shared pointer to an XdmfHDF5Controller object
-   * //Since XdmfHeavyDataController is an abstract class
-   * unsigned int exampleSize = exampleController->getSize();
-   * @endcode
+   * @dontinclude ExampleXdmfHeavyDataController.cpp
+   * @skipline Assuming
+   * @until Since
+   * @skipline getSize
    *
    * Python
    *
-   * @code {.py}
-   * '''
-   * Assuming that exampleController is a shared pointer to an XdmfHDF5Controller object
-   * Since XdmfHeavyDataController is an abstract class
-   * '''
-   * exampleSize = exampleController.getSize()
-   * @endcode
+   * @dontinclude XdmfExampleHeavyDataController.py
+   * @skipline Assuming
+   * @until Since
+   * @skipline getSize
    *
    * @return a int containing the size of the heavy data set.
    */
@@ -201,21 +181,17 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //Assuming that exampleController is a shared pointer to an XdmfHDF5Controller object
-   * //Since XdmfHeavyDataController is an abstract class
-   * shared_ptr<const XdmfArrayType> exampleType = exampleController->getType();
-   * @endcode
+   * @dontinclude ExampleXdmfHeavyDataController.cpp
+   * @skipline Assuming
+   * @until Since
+   * @skipline getType
    *
    * Python
    *
-   * @code {.py}
-   * '''
-   * Assuming that exampleController is a shared pointer to an XdmfHDF5Controller object
-   * Since XdmfHeavyDataController is an abstract class
-   * '''
-   * exampleType = exampleController.getType()
-   * @endcode
+   * @dontinclude XdmfExampleHeavyDataController.py
+   * @skipline Assuming
+   * @until Since
+   * @skipline getType
    *
    * @return an XdmfArrayType containing the array type of the heavy data set.
    */
@@ -229,27 +205,19 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //Assuming that exampleController is a shared pointer to an XdmfHDF5Controller object
-   * //Since XdmfHeavyDataController is an abstract class
-   * shared_ptr<XdmfArray> exampleArray = XdmfArray::New();
-   * exampleController->read(exampleArray);
-   * //exampleArray now holds the data that exampleController holds.
-   * @endcode
+   * @dontinclude ExampleXdmfHeavyDataController.cpp
+   * @skipline Assuming
+   * @until Since
+   * @skipline exampleArray
+   * @until //
    *
    * Python
    *
-   * @code {.py}
-   * '''
-   * Assuming that exampleController is a shared pointer to an XdmfHDF5Controller object
-   * Since XdmfHeavyDataController is an abstract class
-   * '''
-   * exampleArray = XdmfArray.New()
-   * exampleController.read(exampleArray)
-   * '''
-   * exampleArray now holds the data that exampleController holds.
-   * '''
-   * @endcode
+   * @dontinclude XdmfExampleHeavyDataController.py
+   * @skipline Assuming
+   * @until Since
+   * @skipline exampleArray
+   * @until #
    *
    * @param array and XdmfArray to read data into.
    */

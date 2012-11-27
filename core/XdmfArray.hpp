@@ -101,15 +101,13 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * shared_ptr<XdmfArray> exampleArray = XdmfArray::New();
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline New
    *
    * Python
    *
-   * @code {.py}
-   * exampleArray = XdmfArray.New()
-   * @endcode
+   * @dontinclude XdmfExampleArray.py
+   * @skipline New
    *
    * @return constructed XdmfArray.
    */
@@ -127,19 +125,15 @@ public:
    *
    * C++
    *
-   * @code{.cpp}
-   * //Assuming that exampleArray is a shared pointer to an XdmfArray object
-   * exampleArray->clear();
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline Assuming
+   * @skipline clear
    *
    * Python
    *
-   * @code{.py}
-   * '''
-   * Assuming that exampleArray is a shared pointer to an XdmfArray object
-   * '''
-   * exampleArray.clear()
-   * @endcode
+   * @dontinclude XdmfExampleArray.py
+   * @skipline Assuming
+   * @skipline clear
    */
   void clear();
 
@@ -150,29 +144,18 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //Assuming that exampleArray is a shared pointer to a XdmfArray object with the following values
-   * // [0, 1, 2, 3, 4, 5, 6, 7]
-   * unsigned int erasedIndex = 4;
-   * exampleArray->erase(erasedIndex);
-   * //exampleArray now contains the following
-   * // [0, 1, 2, 3, 5, 6, 7]
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline Assuming
+   * @skip exampleInternalPointerConst
+   * @skipline //
+   * @until ]
    *
    * Python
    *
-   * @code {.py}
-   * '''
-   * Assuming that exampleArray is a shared pointer to a XdmfArray object with the following values
-   * [0, 1, 2, 3, 4, 5, 6, 7]
-   * '''
-   * erasedIndex = 4;
-   * exampleArray.erase(erasedIndex)
-   * '''
-   * exampleArray now contains the following
-   * [0, 1, 2, 3, 5, 6, 7]
-   * '''
-   * @endcode
+   * @dontinclude XdmfExampleArray.py
+   * @skip exampleArray.insertAsFloat64(newIndex, newValue)
+   * @skipline contains
+   * @until ]
    */
   void erase(const unsigned int index);
 
@@ -183,19 +166,15 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //Assuming that exampleArray is a shared pointer to a filled XdmfArray object
-   * shared_ptr<const XdmfArrayType> exampleType = exampleArray->getArrayType();
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline Assuming
+   * @skipline getArrayType
    *
    * Python
    *
-   * @code {.py}
-   * '''
-   * Assuming that exampleArray is a shared pointer to a filled XdmfArray object
-   * '''
-   * exampleType = exampleArray.getArrayType()
-   * @endcode
+   * @dontinclude XdmfExampleArray.py
+   * @skipline Assuming
+   * @skipline getArrayType
    *
    * @return a XdmfArrayType containing the data type for the array.
    */
@@ -209,19 +188,15 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //Assuming that exampleArray is a shared pointer to an XdmfArray object
-   * unsigned int exampleCapacity = exampleArray->getCapacity();
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline Assuming
+   * @skipline getCapacity
    *
    * Python
    *
-   * @code {.py}
-   * '''
-   * Assuming that exampleArray is a shared pointer to an XdmfArray object
-   * '''
-   * exampleCapacity = exampleArray.getCapacity()
-   * @endcode
+   * @dontinclude XdmfExampleArray.py
+   * @skipline Assuming
+   * @skipline getCapacity
    *
    * @return the capacity of this array.
    */
@@ -234,19 +209,15 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //Assuming that exampleArray is a shared pointer to an XdmfArray object
-   * std::vector<unsigned int> exampleDimensions = exampleArray->getDimensions();
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline Assuming
+   * @skipline exampleDimensions
    *
    * Python
    *
-   * @code {.py}
-   * '''
-   * Assuming that exampleArray is a shared pointer to an XdmfArray object
-   * '''
-   * exampleDimensions = exampleArray.getDimensions()
-   * @endcode
+   * @dontinclude XdmfExampleArray.py
+   * @skipline Assuming
+   * @skipline exampleDimensions
    *
    * @return the dimensions of the array.
    */
@@ -259,19 +230,15 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //Assuming that exampleArray is a shared pointer to an XdmfArray object
-   * std::string exampleDimensions = exampleArray->getDimensionsString();
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline Assuming
+   * @skipline exampleDimensionString
    *
    * Python
    *
-   * @code {.py}
-   * '''
-   * Assuming that exampleArray is a shared pointer to an XdmfArray object
-   * '''
-   * exampleDimensions = exampleArray.getDimensionsString()
-   * @endcode
+   * @dontinclude XdmfExampleArray.py
+   * @skipline Assuming
+   * @skipline exampleDimensionString
    *
    * @return the dimensions of the array as a string.
    */
@@ -284,19 +251,15 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //Assume that exampleArray is a shared pointer to an XdmfArray object that has a heavy data controller
-   * shared_ptr<XdmfHeavyDataController> exampleController = exampleArray->getHeavyDataController();
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline Assume
+   * @skipline exampleController
    *
    * Python
    *
-   * @code {.py}
-   * '''
-   * Assume that exampleArray is a shared pointer to an XdmfArray object that has a heavy data controller
-   * '''
-   * exampleController = exampleArray.getHeavyDataController()
-   * @endcode
+   * @dontinclude XdmfExampleArray.py
+   * @skipline Assume
+   * @skipline exampleController
    *
    * @return the heavy data controller attached to this array.
    */
@@ -310,10 +273,9 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //Assume that exampleArray is a shared pointer to an XdmfArray object that has a heavy data controller
-   * shared_ptr<const XdmfHeavyDataController> exampleController = exampleArray->getHeavyDataController();
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline Assume
+   * @skipline exampleControllerConst
    *
    * Python: Doesn't support a constant version of this function
    *
@@ -333,19 +295,15 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //Assuming that exampleArray is a shared pointer to an XdmfArray object
-   * std::string exampleName = exampleArray->getItemName();
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline Assuming
+   * @skipline exampleName
    *
    * Python
    *
-   * @code {.py}
-   * '''
-   * Assuming that exampleArray is a shared pointer to an XdmfArray object
-   * '''
-   * exampleName = exampleArray.getItemName()
-   * @endcode
+   * @dontinclude XdmfExampleArray.py
+   * @skipline Assuming
+   * @skipline exampleName
    *
    * @return a string containing the name of the array.
    */
@@ -358,19 +316,15 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //Assuming that exampleArray is a shared pointer to an XdmfArray object
-   * unsigned int exampleSize = exampleArray->getSize();
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline Assuming
+   * @skipline exampleSize
    *
    * Python
    *
-   * @code {.py}
-   * '''
-   * Assuming that exampleArray is a shared pointer to an XdmfArray object
-   * '''
-   * exampleSize = exampleArray.getSize()
-   * @endcode
+   * @dontinclude XdmfExampleArray.py
+   * @skipline Assuming
+   * @skipline exampleSize
    *
    * @return the number of values stored in this array.
    */
@@ -383,28 +337,19 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //Assuming that exampleArray is a shared pointer to a XdmfArray object with the following values
-   * // [0, 1, 2, 3, 4, 5, 6, 7] all of which are int
-   * int exampleValue = exampleArray->getValue(4);
-   * //exampleValue now has the value of what was stored at index 4, which in this case is 4
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline Assuming
+   * @skip XdmfHeavyDataController
+   * @skipline exampleArray
+   * @until index
    *
    * Python
    *
-   * @code {.py}
-   * '''
-   * Assuming that exampleArray is a shared pointer to a XdmfArray object with the following values
-   * [0, 1, 2, 3, 4, 5, 6, 7] all of which are int
-   * '''
-   * exampleValue = exampleArray->getValueAsInt32(4);
-   * '''
-   * exampleValue now has the value of what was stored at index 4, which in this case is 4
-   * The data type of the returned value can be changed by changing the function name
-   * getValueAsInt32 returns an int value while getValueAsFloat64 returns a double value
-   * Variations of this function exist for all supported data types
-   * '''
-   * @endcode
+   * @dontinclude XdmfExampleArray.py
+   * @skipline Assuming
+   * @skip [4,
+   * @skipline 7]
+   * @until Variations
    *
    * @return the requested value.
    */
@@ -418,16 +363,11 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * int storeArray [10] = {0,1,2,3,4,5,6,7,8,9};
-   * shared_ptr<XdmfArray> exampleArray = XdmfArray::New();
-   * exampleArray->insert(0, &storeArray, 10, 1, 1);
-   * int readArray [10] = {10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
-   * exampleArray->getValues(0, &readArray, 5, 1, 2);
-   * //readArray now contains {0, 11, 1, 13, 2, 15, 3, 17, 4, 19}
-   * exampleArray->getValues(0, &readArray, 5, 2, 1);
-   * //readArray now contains {0, 2, 4, 6, 8, 15, 3, 17, 4, 19}
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline New
+   * @skipline initArray
+   * @skipline exampleArray
+   * @until {0,2,4,6,8,5,3,7,4,9}
    *
    * Python: This function is not supported in Python
    *
@@ -453,10 +393,11 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //Assuming that exampleArray is a shared pointer to an XdmfArray object filled with ints
-   * shared_ptr<std::vector<int> > exampleValues = exampleArray->getValuesInternal();
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline Assuming
+   * @skip getValuesString
+   * @skipline //
+   * @until exampleInternalVector
    *
    * Python:
    * Python does not support this version of the getValuesInternal function, it defaults to the version that returns a void pointer
@@ -474,23 +415,16 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //Assuming that exampleArray is a shared pointer to an XdmfArray object
-   * void * exampleValues = exampleArray->getValuesInternal();
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline Assuming
+   * @skipline exampleInternalPointer
    *
    * Python
    *
-   * @code {.py}
-   * '''
-   * Assuming that exampleArray is a shared pointer to an XdmfArray object
-   * '''
-   * exampleValues = exampleArray->getValuesInternal();
-   * '''
-   * due to the way python handles void pointers, this function is only useful for getting a pointer to pass
-   * if the retrieval of the internal values of the array is required, another function should be used
-   * '''
-   * @endcode
+   * @dontinclude XdmfExampleArray.py
+   * @skipline Assuming
+   * @skipline getValuesInternal
+   * @until used
    *
    * @return a void pointer to the first value stored in this array.
    */
@@ -502,10 +436,9 @@ public:
    *
    * Example of use:
    *
-   * @code {.cpp}
-   * //Assuming that exampleArray is a shared pointer to an XdmfArray object
-   * const void * exampleValues = exampleArray->getValuesInternal();
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline Assuming
+   * @skipline exampleInternalPointerConst
    *
    * Python:
    * Python does not support this version of the getValuesInternal function, it defaults to the version that returns a void pointer
@@ -521,23 +454,16 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //Assuming that exampleArray is a shared pointer to an XdmfArray object
-   * std::string exampleValues = exampleArray->getValuesString();
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline Assuming
+   * @skipline getValuesString
    *
    * Python
    *
-   * @code {.py}
-   * '''
-   * Assuming that exampleArray is a shared pointer to an XdmfArray object
-   * '''
-   * exampleValues = exampleArray.getValuesString()
-   * exampleArray = [float(piece) for piece in testArray.getValuesString().split()]
-   * '''
-   * This is one method of getting the contained values of the array
-   * '''
-   * @endcode
+   * @dontinclude XdmfExampleArray.py
+   * @skipline Assuming
+   * @skipline exampleValueString
+   * @until contained
    *
    * @return a string containing the contents of the array.
    */
@@ -550,11 +476,10 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * int newSize = 10;
-   * //Assuming that exampleArray is a shared pointer to an XdmfArray containing ints
-   * shared_ptr<std::vector<int> > exampleVector = exampleArray->initialize(newSize);
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline Assuming
+   * @skipline newSize
+   * @skipline exampleVector
    *
    * Python: Does not support this version of initialize
    *
@@ -573,14 +498,10 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * vector<unsigned int> newSize;
-   * newSize.push_back(5);
-   * newSize.push_back(5);
-   * newSize.push_back(5);
-   * //Assuming that exampleArray is a shared pointer to an XdmfArray containing ints
-   * shared_ptr<std::vector<int> > exampleVector = exampleArray->initialize(newSize);
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline Assuming
+   * @skipline newSizeVector
+   * @until exampleVector
    *
    * Python: Does not support this version of initialize
    *
@@ -600,21 +521,17 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * int newSize = 10;
-   * //Assuming that exampleArray is a shared pointer to an XdmfArray
-   * exampleArray->initialize(XdmfArrayType::Int32(), newSize);
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline Assuming
+   * @skipline newSize
+   * @skipline XdmfArrayType
    *
    * Python
    *
-   * @code {.py}
-   * newSize = 10
-   * '''
-   * Assuming that exampleArray is a shared pointer to an XdmfArray
-   * '''
-   * exampleArray.initialize(XdmfArrayType.Int32(), newSize)
-   * @endcode
+   * @dontinclude XdmfExampleArray.py
+   * @skipline Assuming
+   * @skipline newSize
+   * @skipline XdmfArrayType
    *
    * @param arrayType the type of array to initialize.
    * @param size the number of values in the initialized array.
@@ -629,27 +546,18 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * vector<unsigned int> newSize;
-   * newSize.push_back(5);
-   * newSize.push_back(5);
-   * newSize.push_back(5);
-   * //Assuming that exampleArray is a shared pointer to an XdmfArray containing ints
-   * exampleArray->initialize(XdmfArrayType::Int32(), newSize);
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline Assuming
+   * @skipline newSizeVector
+   * @until 5
+   * @skipline XdmfArrayType
    *
    * Python
    *
-   * @code {.py}
-   * newSize = UInt32Vector()
-   * newSize.push_back(5)
-   * newSize.push_back(5)
-   * newSize.push_back(5)
-   * '''
-   * Assuming that exampleArray is a shared pointer to an XdmfArray containing ints
-   * '''
-   * exampleArray.initialize(XdmfArrayType.Int32(), newSize)
-   * @endcode
+   * @dontinclude XdmfExampleArray.py
+   * @skipline Assuming
+   * @skipline uInt32Vector
+   * @until initialize
    *
    * @param arrayType the type of array to initialize.
    * @param dimensions the number dimensions of the initialized array.
@@ -666,26 +574,18 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * shared_ptr<XdmfArray> exampleArray = XdmfArray::New();
-   * int newIndex = 0;
-   * double newValue = 3.5;
-   * exampleArray->insert(newIndex, newValue);//the value of 3.5 is inserted at index 0
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline New
+   * @skipline newIndex
+   * @until newValue
+   * @skipline insert
    *
    * Python
    *
-   * @code {.py}
-   * exampleArray = XdmfArray.New()
-   * newIndex = 0
-   * newValue = 3.5
-   * exampleArray.insertAsFloat64(newIndex, newValue)//the value of 3.5 is inserted at index 0
-   * '''
-   * this example uses insertAsFloat64 to insert a double value
-   * versions for all other data types exist
-   * for example insertAsInt32 inserts as an int
-   * '''
-   * @endcode
+   * @dontinclude XdmfExampleArray.py
+   * @skipline New
+   * @skipline newIndex
+   * @until insertAsInt32
    *
    * @param index the index in this array to insert.
    * @param value the value to insert
@@ -701,39 +601,19 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * shared_ptr<XdmfArray> exampleArray = XdmfArray::New();
-   * int initArray [10] = {0,1,2,3,4,5,6,7,8,9};
-   * shared_ptr<XdmfArray> storeArray = XdmfArray::New();
-   * exampleArray->insert(0, *initArray, 10, 1, 1);
-   * storeArray->insert(0, exampleArray, 0, 10, 1, 1);
-   * //storeArray now contains {0,1,2,3,4,5,6,7,8,9}
-   * storeArray->insert(0, exampleArray, 0, 5, 2, 1);
-   * //storeArray now contains {0,1,1,3,2,5,3,7,4,9}
-   * storeArray->insert(0, exampleArray, 0, 5, 1, 2);
-   * //storeArray now contains {0,2,4,6,8,5,3,7,4,9}
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline New
+   * @skipline initArray
+   * @until insert
+   * @skipline tempArray
+   * @until {0,2,4,6,8,5,3,7,4,9}
    *
    * Python
    *
-   * @code {.py}
-   * exampleArray = XdmfArray.New()
-   * initArray = [0,1,2,3,4,5,6,7,8,9]
-   * storeArray = XdmfArray.New(;
-   * exampleArray.insert(0, initArray)
-   * storeArray.insert(0, exampleArray, 0, 10, 1, 1)
-   * '''
-   * storeArray now contains {0,1,2,3,4,5,6,7,8,9}
-   * '''
-   * storeArray.insert(0, exampleArray, 0, 5, 2, 1)
-   * '''
-   * storeArray now contains {0,1,1,3,2,5,3,7,4,9}
-   * '''
-   * storeArray.insert(0, exampleArray, 0, 5, 1, 2)
-   * '''
-   * storeArray now contains {0,2,4,6,8,5,3,7,4,9}
-   * '''
-   * @endcode
+   * @dontinclude XdmfExampleArray.py
+   * @skipline New
+   * @skipline initArray
+   * @until {0,2,4,6,8,5,3,7,4,9}
    *
    * @param startIndex the index in this array to begin insertion.
    * @param values a shared pointer to an XdmfArray to copy into this array.
@@ -758,41 +638,19 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * shared_ptr<XdmfArray> exampleArray = XdmfArray::New();
-   * int initArray [10] = {0,1,2,3,4,5,6,7,8,9};
-   * shared_ptr<XdmfArray> storeArray = XdmfArray::New();
-   * exampleArray->insert(0, initArray, 10, 1, 1);
-   * //exampleArray now contains {0,1,2,3,4,5,6,7,8,9}
-   * exampleArray->insert(0, initArray, 0, 5, 2, 1);
-   * //exampleArray now contains {0,1,1,3,2,5,3,7,4,9}
-   * examleArray->insert(0, initArray, 0, 5, 1, 2);
-   * //exampleArray now contains {0,2,4,6,8,5,3,7,4,9}
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline New
+   * @skipline initArray
+   * @skipline insert
+   * @until {0,2,4,6,8,5,3,7,4,9}
    *
    * Python
    *
-   * @code {.py}
-   * exampleArray = XdmfArray.New()
-   * initArray = [0,1,2,3,4,5,6,7,8,9]
-   * exampleArray.insertAsInt32(0, initArray)
-   * '''
-   * exampleArray now contains {0,1,2,3,4,5,6,7,8,9}
-   * '''
-   * examleArray.insertAsInt32(0, initArray[0:5:2])
-   * '''
-   * exampleArray now contains {0,2,4,6,8,5,3,7,4,9}
-   * '''
-   * examleArray.insertAsInt32(0, initArray[::-1])
-   * '''
-   * exampleArray now contains {9,8,7,6,5,4,3,2,1,0}
-   * Python uses a different function for each data type
-   * This example uses insertAsInt32 to insert ints
-   * insertAsFloat64 can also be used to insert doubles
-   * This function takes a start index and a list
-   * Sublists are inserted using Python's sublist notation
-   * '''
-   * @endcode
+   * @dontinclude XdmfExampleArray.py
+   * @skipline New
+   * @skipline initArray
+   * @skipline insertAsInt32
+   * @until Sublists
    *
    * @param startIndex the index in this array to begin insertion.
    * @param valuesPointer a pointer to the values to copy into this array.
@@ -817,25 +675,17 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //Assume that exampleArray is a shared pointer to an XdmfArray object
-   * if (exampleArray->isInitialized())
-   * {
-   *   //do whatever is to be done if the array is initialized
-   * }
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline Assuming
+   * @skipline isInitialized
+   * @until }
    *
    * Python
    *
-   * @code {.py}
-   * '''
-   * Assume that exampleArray is a shared pointer to an XdmfArray object
-   * '''
-   * if exampleArray.isInitialized():
-   *   '''
-   *   do whatever is to be done if the array is initialized
-   *   '''
-   * @endcode
+   * @dontinclude XdmfExampleArray.py
+   * @skipline Assuming
+   * @skipline isInitialized
+   * @until read
    */
   bool isInitialized() const;
 
@@ -846,24 +696,17 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * shared_ptr<XdmfArray> exampleArray = XdmfArray::New();
-   * int newValue = 5;
-   * exampleArray->pushBack(newValue);
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline New
+   * @skipline newValue
+   * @skipline pushBack
    *
    * Python
    *
-   * @code {.py}
-   * exampleArray = XdmfArray.New()
-   * newValue = 5
-   * exampleArray.pushBackAsInt32(newValue)
-   * '''
-   * For Python pushBack has multiple functions to cover different data types
-   * This case used an int so the function was pushBackAsInt32
-   * Another example would be to use pushBackAsFloat64 for double values
-   * '''
-   * @endcode
+   * @dontinclude XdmfExampleArray.py
+   * @skipline New
+   * @skipline newValue
+   * @until pushBackAsFloat64
    */
   template <typename T>
   void pushBack(const T & value);
@@ -875,23 +718,17 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //Assume that exampleArray is a shared pointer to an XdmfArray object
-   * if (!exampleArray->isInitialized())
-   * {
-   *   exampleArray->read();
-   * }
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline Assuming
+   * @skipline !exampleArray
+   * @until }
    *
    * Python
    *
-   * @code {.py}
-   * '''
-   * Assume that exampleArray is a shared pointer to an XdmfArray object
-   * '''
-   * if not(exampleArray.isInitialized()):
-   *   exampleArray->read();
-   * @endcode
+   * @dontinclude XdmfExampleArray.py
+   * @skipline Assuming
+   * @skipline isInitialized
+   * @until read
    */
   void read();
 
@@ -902,19 +739,15 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //Assume that exampleArray is a shared pointer to an XdmfArray object
-   * exampleArray->release();
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline Assuming
+   * @skipline release
    *
    * Python
    *
-   * @code {.py}
-   * '''
-   * Assume that exampleArray is a shared pointer to an XdmfArray object
-   * '''
-   * exampleArray.release()
-   * @endcode
+   * @dontinclude XdmfExampleArray.py
+   * @skipline Assuming
+   * @skipline release
    */
   void release();
 
@@ -925,19 +758,17 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * shared_ptr<XdmfArray> exampleArray = XdmfArray::New();
-   * unsigned int newSize = 10;
-   * exampleArray->reserve(newSize);
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline New
+   * @skipline newSize
+   * @skipline reserve
    *
    * Python
    *
-   * @code {.py}
-   * exampleArray = XdmfArray.New()
-   * newSize = 10
-   * exampleArray.reserve(newSize)
-   * @endcode
+   * @dontinclude XdmfExampleArray.py
+   * @skipline New
+   * @skipline newSize
+   * @skipline reserve
    *
    * @param size the capacity to set this array to.
    */
@@ -953,44 +784,24 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * shared_ptr<XdmfArray> exampleArray = XdmfArray::New();
-   * int initArray [10] = {0,1,2,3,4,5,6,7,8,9};
-   * exampleArray->insert(0, *initArray, 10, 1, 1);
-   * //exampleArray now contains {0,1,2,3,4,5,6,7,8,9}
-   * unsigned int newSize = 20;
-   * int baseValue = 1
-   * exampleArray->resize(newSize, baseValue)
-   * //exampleArray now contains {0,1,2,3,4,5,6,7,8,9,1,1,1,1,1,1,1,1,1,1}
-   * newSize = 5;
-   * exampleArray->resize(newSize, baseValue)
-   * //exampleArray now contains {0,1,2,3,4}
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline New
+   * @skipline newSize
+   * @skipline initArray
+   * @skipline insert 
+   * @until #
+   * @skipline newSize
+   * @until 4}
    *
    * Python
    *
-   * @code {.py}
-   * exampleArray = XdmfArray.New()
-   * initArray = [0,1,2,3,4,5,6,7,8,9]
-   * exampleArray.insertAsInt32(0, initArray);
-   * '''
-   * exampleArray now contains {0,1,2,3,4,5,6,7,8,9}
-   * '''
-   * newSize = 20;
-   * baseValue = 1
-   * exampleArray.resizeAsInt32(newSize, baseValue)
-   * '''
-   * exampleArray now contains {0,1,2,3,4,5,6,7,8,9,1,1,1,1,1,1,1,1,1,1}
-   * '''
-   * newSize = 5;
-   * exampleArray.resizeAsInt32(newSize, baseValue)
-   * '''
-   * exampleArray now contains {0,1,2,3,4}
-   * This example uses resizeAsInt32 because the baseValue inserted is to be an integer
-   * All other supported data types have similarly named function calls
-   * For example to insert a double resizeAsFloat64 is called
-   * '''
-   * @endcode
+   * @dontinclude XdmfExampleArray.py
+   * @skipline New
+   * @skipline initArray
+   * @skipline insert
+   * @until #
+   * @skipline newSize
+   * @until resizeAsFloat64
    *
    * @param numValues the number of values to resize this array to.
    * @param value the number to initialize newly created values to, if needed.
@@ -1010,46 +821,26 @@ public:
    * 
    * C++
    *
-   * @code {.cpp}
-   * shared_ptr<XdmfArray> exampleArray = XdmfArray::New();
-   * int initArray [10] = {0,1,2,3,4,5,6,7,8,9};
-   * exampleArray->insert(0, *initArray, 10, 1, 1);
-   * //exampleArray now contains {0,1,2,3,4,5,6,7,8,9}
-   * std::vector<unsigned int> newSize;
-   * newSize.push_back(4);
-   * newSize.push_back(5);
-   * int baseValue = 1
-   * exampleArray->resize(newSize, baseValue)
-   * //exampleArray now contains {0,1,2,3,4,5,6,7,8,9,1,1,1,1,1,1,1,1,1,1}
-   * newSize[0] = 1;
-   * exampleArray->resize(newSize, baseValue)
-   * //exampleArray now contains {0,1,2,3,4}
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline New
+   * @skipline newSizeVector
+   * @until push_back(5)
+   * @skipline initArray
+   * @skipline insert
+   * @until //
+   * @skip resize
+   * @skipline newSizeVector
+   * @until 4}
    *
    * Python
    *
-   * @code {.py}
-   * exampleArray = XdmfArray.New()
-   * initArray = [0,1,2,3,4,5,6,7,8,9]
-   * exampleArray.insertAsInt32(0, initArray);
-   * '''
-   * exampleArray now contains {0,1,2,3,4,5,6,7,8,9}
-   * '''
-   * newSize = [4, 5];
-   * baseValue = 1
-   * exampleArray.resizeAsInt32(newSize, baseValue)
-   * '''
-   * exampleArray now contains {0,1,2,3,4,5,6,7,8,9,1,1,1,1,1,1,1,1,1,1}
-   * '''
-   * newSize[0] = 1;
-   * exampleArray.resizeAsInt32(newSize, baseValue)
-   * '''
-   * exampleArray now contains {0,1,2,3,4}
-   * This example uses resizeAsInt32 because the baseValue inserted is to be an integer
-   * All other supported data types have similarly named function calls
-   * For example to insert a double resizeAsFloat64 is called
-   * '''
-   * @endcode
+   * @dontinclude XdmfExampleArray.py
+   * @skipline New
+   * @skipline initArray
+   * @skipline insertAsInt32
+   * @until #
+   * @skipline newSizeArray
+   * @until resizeAsFloat64
    *
    * @param dimensions the dimensions to resize the array to.
    * @param value the number to intialize newly created values to, if needed.
@@ -1065,23 +856,17 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //Assume that exampleArray is a shared pointer to an XdmfArray object that has a heavy data controller
-   * shared_ptr<XdmfHeavyDataController> exampleController = exampleArray->getHeavyDataController();
-   * shared_ptr<XdmfArray> newArray = XdmfArray::New();
-   * newArray->setHeaveyDataController(exampleController);
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline Assuming
+   * @skipline exampleController
+   * @until setHeaveyDataController
    *
    * Python
    *
-   * @code {.py}
-   * '''
-   * Assume that exampleArray is a shared pointer to an XdmfArray object that has a heavy data controller
-   * '''
-   * exampleController = exampleArray.getHeavyDataController()
-   * newArray = XdmfArray.New()
-   * newArray.setHeaveyDataController(exampleController)
-   * @endcode
+   * @dontinclude XdmfExampleArray.py
+   * @skipline Assuming
+   * @skipline exampleController
+   * @until setHeaveyDataController
    *
    * @param heavyDataController the heavy data controller to attach to
    * this array.
@@ -1096,19 +881,17 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * shared_ptr<XdmfArray> exampleArray = XdmfArray::New();
-   * std::string newName = "New Name";
-   * exampleArray->setName(newName);
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline New
+   * @skipline newName
+   * @until setName
    *
    * Python
    *
-   * @code {.py}
-   * exampleArray = XdmfArray.New()
-   * newName = "New Name"
-   * exampleArray.setName(newName)
-   * @endcode
+   * @dontinclude XdmfExampleArray.py
+   * @skipline New
+   * @skipline newName
+   * @until setName
    *
    * @param name of the array to set.
    */
@@ -1133,11 +916,9 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * shared_ptr<XdmfArray> exampleArray = XdmfArray::New();
-   * int initArray [10] = {0,1,2,3,4,5,6,7,8,9};
-   * exampleArray->setValuesInternal(&initArray, 10, 1);
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline initArray
+   * @skipline setValuesInternal
    *
    * Python: does not support setValuesInternal
    *
@@ -1161,16 +942,10 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * shared_ptr<XdmfArray> exampleArray = XdmfArray::New();
-   * std::vector<int> initVector;
-   * initVector.push_back(1);
-   * initVector.push_back(2);
-   * initVector.push_back(3);
-   * initVector.push_back(4);
-   * initVector.push_back(5);
-   * exampleArray->setValuesInternal(initVector, 1);
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline New
+   * @skipline initVector
+   * @skipline setValuesInternal
    *
    * Python: does not support setValuesInternal
    *
@@ -1191,17 +966,12 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * shared_ptr<XdmfArray> exampleArray = XdmfArray::New();
-   * std::vector<int> initVector;
-   * initVector.push_back(1);
-   * initVector.push_back(2);
-   * initVector.push_back(3);
-   * initVector.push_back(4);
-   * initVector.push_back(5);
-   * shared_ptr<std::vector> storeVector(&initVector);
-   * exampleArray->setValuesInternal(storeVector);
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline New
+   * @skipline initVector
+   * @until push_back(5)
+   * @skipline storeVector
+   * @until setValuesInternal
    *
    * Python: does not support setValuesInternal
    *
@@ -1218,20 +988,14 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * shared_ptr<XdmfArray> exampleArray = XdmfArray::New();
-   * int initArray [10] = {0,1,2,3,4,5,6,7,8,9};
-   * exampleArray->insert(0, &initArray, 10, 1, 1);
-   * std::vector<int> initVector;
-   * initVector.push_back(1);
-   * initVector.push_back(2);
-   * initVector.push_back(3);
-   * initVector.push_back(4);
-   * initVector.push_back(5);
-   * //The vector contains {1,2,3,4,5} and the XdmfArray contains {0,1,2,3,4,5,6,7,8,9}
-   * bool swapSucceded = exampleArray->swap(initVector);
-   * //The vector contains {0,1,2,3,4,5,6,7,8,9} and the XdmfArray contains {1,2,3,4,5}
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline New
+   * @skipline initArray
+   * @skipline insert
+   * @skipline initVector
+   * @until push_back(5)
+   * @skipline //
+   * @until //
    *
    * Python: The Python version only supports swapping XdmfArrays
    *
@@ -1249,21 +1013,15 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * shared_ptr<XdmfArray> exampleArray = XdmfArray::New();
-   * int initArray [10] = {0,1,2,3,4,5,6,7,8,9};
-   * exampleArray->insert(0, &initArray, 10, 1, 1);
-   * std::vector<int> initVector;
-   * initVector.push_back(1);
-   * initVector.push_back(2);
-   * initVector.push_back(3);
-   * initVector.push_back(4);
-   * initVector.push_back(5);
-   * shared_ptr<std::vector> storeVector(&initVector);
-   * //storeVector contains {1,2,3,4,5} and the XdmfArray contains {0,1,2,3,4,5,6,7,8,9}
-   * bool swapSucceded = exampleArray->swap(storeVector);
-   * //storeVector contains {0,1,2,3,4,5,6,7,8,9} and the XdmfArray contains {1,2,3,4,5}
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline New
+   * @skipline initArray
+   * @skipline insert
+   * @skipline initVector
+   * @until push_back(5)
+   * @skipline //
+   * @skipline storeSwapSucceded
+   * @until //
    *
    * Python: The Python version only supports swapping XdmfArrays
    *
@@ -1281,35 +1039,23 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * shared_ptr<XdmfArray> exampleArray = XdmfArray::New();
-   * int initArray [10] = {0,1,2,3,4,5,6,7,8,9};
-   * exampleArray->insert(0, &initArray, 10, 1, 1);
-   * shared_ptr<XdmfArray> swapArray = XdmfArray::New();
-   * int initArray2 [5] = {1,2,3,4,5};
-   * swapArray->insert(0, &initArray2, 5, 1, 1);
-   * //exampleArray contains {0,1,2,3,4,5,6,7,8,9} and swapArray contains {1,2,3,4,5}
-   * exampleArray->swap(swapArray);
-   * //Now exampleArray contains {1,2,3,4,5} and swapArray contains {0,1,2,3,4,5,6,7,8,9}
-   * @endcode
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline New
+   * @skipline initArray
+   * @skipline insert
+   * @skipline swapArray
+   * @until exampleArray
+   * @skipline //
    *
    * Python
    *
-   * @code {.py}
-   * exampleArray = XdmfArray.New()
-   * initArray = [0,1,2,3,4,5,6,7,8,9]
-   * exampleArray.insert(0, initArray)
-   * swapArray = XdmfArray.New()
-   * initArray2 = [1,2,3,4,5]
-   * swapArray.insert(0, initArray2)
-   * '''
-   * exampleArray contains {0,1,2,3,4,5,6,7,8,9} and swapArray contains {1,2,3,4,5}
-   * '''
-   * exampleArray.swap(swapArray)
-   * '''
-   * Now exampleArray contains {1,2,3,4,5} and swapArray contains {0,1,2,3,4,5,6,7,8,9}
-   * '''
-   * @endcode
+   * @dontinclude XdmfExampleArray.py
+   * @skipline New
+   * @skipline initArray
+   * @skipline insert
+   * @skipline swapArray
+   * @until exampleArray
+   * @skipline #
    *
    * @param array a smart pointer to a vector to exchange values with.
    */

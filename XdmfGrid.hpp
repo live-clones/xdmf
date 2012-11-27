@@ -70,21 +70,17 @@ public:
    *
    * C++
    *
-   8 @code {.cpp}
-   * //using an unstructured grid since XdmfGrid is an abstract class
-   * //Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
-   * shared_ptr<const XdmfGeometry> exampleGeometry = exampleGrid->getGeometry();
-   * @endcode
+   * @dontinclude ExampleXdmfGrid.cpp
+   * using an unstructured grid since XdmfGrid is an abstract class
+   * Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
+   * @skipline getGeometry
    *
    * Python
    *
-   * @code {.py}
-   * '''
+   * @dontinclude XdmfExampleGrid.py
    * using an unstructured grid since XdmfGrid is an abstract class
    * Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
-   * '''
-   * exampleGeometry = exampleGrid.getGeometry()
-   * @endcode
+   * @skipline getGeometry
    *
    * @return the geometry associated with this grid.
    */
@@ -101,21 +97,17 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //using an unstructured grid since XdmfGrid is an abstract class
-   * //Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
-   * std::string exampleName = exampleGrid->getName();
-   * @endcode
+   * @dontinclude ExampleXdmfGrid.cpp
+   * Using an unstructured grid since XdmfGrid is an abstract class
+   * Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
+   * @skipline getName
    *
    * Python
    *
-   * @code {.py}
-   * '''
-   * using an unstructured grid since XdmfGrid is an abstract class
+   * @dontinclude XdmfExampleGrid.py
+   * Using an unstructured grid since XdmfGrid is an abstract class
    * Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
-   * '''
-   * exampleName = exampleGrid.getName()
-   * @endcode
+   * @skipline getName
    *
    * @return the name of the grid.
    */
@@ -128,21 +120,17 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //using an unstructured grid since XdmfGrid is an abstract class
-   * //Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
-   * shared_ptr<XdmfTime> exampleTime = exampleGrid->getTime();
-   * @endcode
+   * @dontinclude ExampleXdmfGrid.cpp
+   * Using an unstructured grid since XdmfGrid is an abstract class
+   * Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
+   * @skipline getTime
    *
    * Python
    *
-   * @code {.py}
-   * '''
-   * using an unstructured grid since XdmfGrid is an abstract class
+   * @dontinclude XdmfExampleGrid.py
+   * Using an unstructured grid since XdmfGrid is an abstract class
    * Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
-   * '''
-   * exampleTime = exampleGrid.getTime()
-   * @endcode
+   * @skipline getTime
    *
    * @return pointer to the XdmfTime attached to this grid. If no
    * XdmfTime is attached, return a NULL pointer.
@@ -156,11 +144,10 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //using an unstructured grid since XdmfGrid is an abstract class
-   * //Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
-   * shared_ptr<const XdmfTime> exampleTime = exampleGrid->getTime();
-   * @endcode
+   * @dontinclude ExampleXdmfGrid.cpp
+   * Using an unstructured grid since XdmfGrid is an abstract class
+   * Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
+   * @skipline exampleTimeConst
    *
    * Python: Python doesn't have a constant version
    * 
@@ -176,21 +163,17 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //using an unstructured grid since XdmfGrid is an abstract class
-   * //Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
-   * shared_ptr<const XdmfTopology> exampleTopology = exampleGrid->getTopology();
-   * @endcode
+   * @dontinclude ExampleXdmfGrid.cpp
+   * Using an unstructured grid since XdmfGrid is an abstract class
+   * Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
+   * @skipline getTopology
    *
    * Python
    *
-   * @code {.py}
-   * '''
-   * using an unstructured grid since XdmfGrid is an abstract class
+   * @dontinclude XdmfExampleGrid.py
+   * Using an unstructured grid since XdmfGrid is an abstract class
    * Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
-   * '''
-   * exampleTopology = exampleGrid.getTopology()
-   * @endcode
+   * @skipline getTopology
    *
    * @return the topology associated with this grid.
    */
@@ -205,23 +188,19 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //using an unstructured grid since XdmfGrid is an abstract class
-   * //Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
-   * std::string newName = "New Name";
-   * exampleGrid->setName(newName);
-   * @endcode
+   * @dontinclude ExampleXdmfGrid.cpp
+   * Using an unstructured grid since XdmfGrid is an abstract class
+   * Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
+   * @skipline newName
+   * @skipline setName
    *
    * Python
    *
-   * @code {.py}
-   * '''
-   * using an unstructured grid since XdmfGrid is an abstract class
+   * @dontinclude XdmfExampleGrid.py
+   * Using an unstructured grid since XdmfGrid is an abstract class
    * Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
-   * '''
-   * newName = "New Name"
-   * exampleGrid.setName(newName)
-   * @endcode
+   * @skipline newName
+   * @skipline setName
    *
    * @param name of the grid to set.
    */
@@ -234,23 +213,19 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //using an unstructured grid since XdmfGrid is an abstract class
-   * //Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
-   * shared_ptr<XdmfTime> newTime = XdmfTime::New(20.0);
-   * exampleGrid->setTime(newTime);
-   * @endcode
+   * @dontinclude ExampleXdmfGrid.cpp
+   * Using an unstructured grid since XdmfGrid is an abstract class
+   * Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
+   * @skipline newTime
+   * @skipline setTime
    *
    * Python
    *
-   * @code {.py}
-   * '''
-   * using an unstructured grid since XdmfGrid is an abstract class
+   * @dontinclude XdmfExampleGrid.py
+   * Using an unstructured grid since XdmfGrid is an abstract class
    * Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
-   * '''
-   * newTime = XdmfTime.New(20.0)
-   * exampleGrid.setTime(newTime)
-   * @endcode
+   * @skipline newTime
+   * @skipline setTime
    *
    * @param time an XdmfTime to associate with this grid.
    */

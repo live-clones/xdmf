@@ -143,23 +143,15 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //Assume that exampleTopology is a shared pointer to an XdmfTopology object with its type set
-   * unsigned int exampleID = exampleTopology->getType()->getID();
-   * shared_ptr<XdmfTopology> createdTopology = XdmfTopology::New();
-   * createdTopology->setType(XdmfTopologyType::New(exampleID));
-   * @endcode
+   * @dontinclude ExampleXdmfTopologyType.cpp
+   * @skipline exampleID
+   * @until setType
    *
    * Python
    *
-   * @code {.py}
-   * '''
-   * Assume that exampleTopology is a shared pointer to an XdmfTopology object with its type set
-   * '''
-   * exampleID = exampleTopology.getType().getID()
-   * createdTopology = XdmfTopology.New()
-   * createdTopology.setType(XdmfTopologyType.New(exampleID))
-   * @endcode
+   * @dontinclude XdmfExampleTopologyType.py
+   * @skipline exampleID
+   * @until setType
    *
    * @param id of the topology type.
    *
@@ -175,27 +167,16 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * XdmfTopologyType::CellType exampleType = XdmfTopologyType::Linear;
-   * //Assuming that exampleTopology is a shared pointer to a filled XdmfTopology object
-   * if (exampleType == exampleTopology->getCellType())
-   * {
-   *   //Do whatever is to be done if the cell type is linear
-   * }
-   * @endcode
+   * @dontinclude ExampleXdmfTopologyType.cpp
+   * @skipline exampleType
+   * @until }
    *
    * Python
    *
-   * @code {.py}
-   * exampleType = XdmfTopologyType.Linear
-   * '''
-   * Assuming that exampleTopology is a shared pointer to a filled XdmfTopology object
-   * '''
-   * if exampleType == exampleTopology.getCellType:
-   *   '''
-   *   Do whatever is to be done if the cell type is linear
-   *   '''
-   * @endcode
+   * @dontinclude XdmfExampleTopologyType.py
+   * @skipline exampleType
+   * @until Do
+   * @skipline '''
    *
    * @return a CellType containing the cell type.
    */
@@ -208,19 +189,15 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * unsigned int numEdges = XdmfTopologyType::Triangle()->getEdgesPerElement();
-   * //numEdges now contains the number of edges per element of the Triangle type.
-   * @endcode
+   * @dontinclude ExampleXdmfTopologyType.cpp
+   * @skipline getEdgesPerElement
+   * numEdges now contains the number of edges per element of the Triangle type.
    *
    * Python
    *
-   * @code {.cpp}
-   * numEdges = XdmfTopologyType.Triangle().getEdgesPerElement()
-   * '''
+   * @dontinclude XdmfExampleTopologyType.py
+   * @skipline getEdgesPerElement
    * numEdges now contains the number of edges per element of the Triangle type
-   * '''
-   * @endcode
    *
    * @return an unsigned int containing the number of edges per element.
    */
@@ -233,19 +210,15 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * unsigned int numFaces = XdmfTopologyType::Triangle()->getFacesPerElement();
-   * //numFaces now contains the number of faces per element of the Triangle type.
-   * @endcode
+   * @dontinclude ExampleXdmfTopologyType.cpp
+   * @skipline getFacesPerElement
+   * numFaces now contains the number of faces per element of the Triangle type.
    *
    * Python
    *
-   * @code {.py}
-   * numFaces = XdmfTopologyType.Triangle().getFacesPerElement()
-   * '''
+   * @dontinclude XdmfExampleTopologyType.py
+   * @skipline getFacePerElement
    * numFaces now contains the number of faces per element of the Triangle type.
-   * '''
-   * @endcode
    *
    * @return an unsigned int containing the number of faces per element.
    */
@@ -259,19 +232,15 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * unsigned int holdID = XdmfTopologyType::Triangle()->getID();
-   * //holdID now contains the ID of the Triangle type.
-   * @endcode
+   * @dontinclude ExampleXdmfTopologyType.cpp
+   * @skipline holdID
+   * holdID now contains the ID of the Triangle type.
    *
    * Python
    *
-   * @code {.py}
-   * holdID = XdmfTopologyType::Triangle().getID()
-   * '''
-   * holdID now contains the ID of the Triangle type
-   * '''
-   * @endcode
+   * @dontinclude XdmfExampleTopologyType.py
+   * @skipline holdID
+   * holdID now contains the ID of the Triangle type.
    *
    * @return the ID of the topology type.
    */
@@ -284,15 +253,13 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * std::string exampleName = XdmfTopologyType::Triangle()->getName();
-   * @endcode
+   * @dontinclude ExampleXdmfTopologyType.cpp
+   * @skipline getName
    *
    * Python 
    *
-   * @code {.py}
-   * exampleName = XdmfTopologyType.Triangle()->getName()
-   * @endcode
+   * @dontinclude XdmfExampleTopologyType.py
+   * @skipline getName
    *
    * @return the name of this topology type.
    */
@@ -306,19 +273,15 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * unsigned int numNodes = XdmfTopologyType::Triangle()->getNodesPerElement();
-   * //numNodes now contains the number of nodes per element of the Triangle type.
-   * @endcode
+   * @dontinclude ExampleXdmfTopologyType.cpp
+   * @skipline getNodesPerElement
+   * numNodes now contains the number of nodes per element of the Triangle type.
    *
    * Python
    *
-   * @code {.py}
-   * numNodes = XdmfTopologyType.Triangle().getNodesPerElement()
-   * '''
+   * @dontinclude XdmfExampleTopologyType.py
+   * @skipline getNodesPerElement
    * numNodes now contains the number of nodes per element fo the Triangle type.
-   * '''
-   * @endcode
    *
    * @return an unsigned int containing number of nodes per element.
    */

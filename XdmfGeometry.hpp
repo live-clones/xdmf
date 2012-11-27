@@ -50,15 +50,13 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * shared_ptr<XdmfGeometry> exampleGeometry = XdmfGeometry::New();
-   * @endcode
+   * @dontinclude ExampleXdmfGeometry.cpp
+   * @skipline New
    *
    * Python
    *
-   * @code {.py}
-   * exampleGeometry = XdmfGeometry.New()
-   * @endcode
+   * @dontinclude XdmfExampleGeometry.py
+   * @skipline New
    *
    * @return constructed XdmfGeometry.
    */
@@ -80,19 +78,15 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //assuming that exampleGeometry is a shared pointer to a XdmfGeometry object that has been filled with data
-   * unsigned int numPoints = exampleGeometry->getNumberPoints();
-   * @endcode
+   * @dontinclude ExampleXdmfGeometry.cpp
+   * assuming that exampleGeometry is a shared pointer to a XdmfGeometry object that has been filled with data
+   * @skipline getNumberPoints
    *
    * Python
    *
-   * @code {.py}
-   * '''
+   * @dontinclude XdmfExampleGeometry.py
    * assuming that exampleGeometry is a shared pointer to a XdmfGeometry object that has been filled with data
-   * '''
-   * numPoints = exampleGeometry.getNumberPoints()
-   * @endcode
+   * @skipline getNumberPoints
    */
   virtual unsigned int getNumberPoints() const;
 
@@ -103,19 +97,15 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //assuming that exampleGeometry is a shared pointer to a XdmfGeometry object
-   * shared_ptr<const XdmfGeometryType> exampleType = exampleGeometry->getType();
-   * @endcode
+   * @dontinclude ExampleXdmfGeometry.cpp
+   * assuming that exampleGeometry is a shared pointer to a XdmfGeometry object
+   * @skipline getType
    *
    * Python
    *
-   * @code {.py}
-   * '''
+   * @dontinclude XdmfExampleGeometry.py
    * assuming that exampleGeometry is a shared pointer to a XdmfGeometry object
-   * '''
-   * exampleType = exampleGeometry.getType()
-   * @endcode
+   * @skipline getType
    *
    * @return XdmfGeometryType of this geometry.
    */
@@ -128,17 +118,15 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * shared_ptr<XdmfGeometry> exampleGeometry = XdmfGeometry::New();
-   * exampleGeometry->setType(XdmfGeometryType::XYZ());
-   * @endcode
+   * @dontinclude ExampleXdmfGeometry.cpp
+   * @skipline New
+   * @skipline setType
    *
    * Python
    *
-   * @code {.py}
-   * exampleGeometry = XdmfGeometry.New()
-   * exampleGeometry.setType(XdmfGeometryType.XYZ())
-   * @endcode
+   * @dontinclude XdmfExampleGeometry.py
+   * @skipline New
+   * @skipline setType
    *
    * @param type the XdmfGeometryType to set.
    */

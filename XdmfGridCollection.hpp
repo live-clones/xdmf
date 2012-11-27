@@ -55,15 +55,13 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * shared_ptr<XdmfGridCollection> exampleCollection = XdmfGridCollection::New();
-   * @endcode
+   * @dontinclude ExampleXdmfGridCollection.cpp
+   * @skipline New
    *
    * Python
    *
-   * @code {.py}
-   * exampleCollection = XdmfGridCollection.New()
-   * @endcode
+   * @dontinclude XdmfExampleGridCollection.py
+   * @skipline New
    *
    * @return constructed XdmfGridCollection.
    */
@@ -85,19 +83,15 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object with its type set
-   * shared_ptr<const XdmfGridCollectionType> exampleType = exampleCollection->getType();
-   * @endcode
+   * @dontinclude ExampleXdmfGridCollection.cpp
+   * Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object with its type set
+   * @skipline getType
    *
    * Python
    *
-   * @code {.py}
-   * '''
+   * @dontinclude XdmfExampleGridCollection.py
    * Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object with its type set
-   * '''
-   * exampleType = exampleCollection.getType()
-   * @endcode
+   * @skipline getType
    *
    * @return XdmfGridCollectionType of this collection.
    */
@@ -113,29 +107,19 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object with its type set
-   * shared_ptr<XdmfInformation> exampleInformation = XdmfInformation::New();
-   * std::string newKey = "New Key";
-   * std::string newValue = "New Value";
-   * exampleInformation->setKey(newKey);
-   * exampleInformation->setValue(newValue);
-   * exampleCollection->insert(exampleInformation);
-   * @endcode
+   * @dontinclude ExampleXdmfGridCollection.cpp
+   * @skipline exampleInformation
+   * @until setValue
+   * Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object
+   * skipline insert
    *
    * Python
    *
-   * @code {.py}
-   * '''
-   * Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object with its type set
-   * '''
-   * exampleInformation = XdmfInformation.New()
-   * newKey = "New Key"
-   * newValue = "New Value"
-   * exampleInformation.setKey(newKey)
-   * exampleInformation.setValue(newValue)
-   * exampleCollection.insert(exampleInformation)
-   * @endcode
+   * @dontinclude XdmfExampleGridCollection.py
+   * @skipline exampleInformation
+   * @until setValue
+   * Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object
+   * @skipline insert
    *
    * @param information an XdmfInformation to attach to this item.
    */
@@ -149,19 +133,15 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object
-   * exampleCollection->setType(XdmfGridCollectionType::Temporal());
-   * @endcode
+   * @dontinclude ExampleXdmfGridCollection.cpp
+   * Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object
+   * @skipline setType
    *
    * Python
    *
-   * @code {.py}
-   * '''
+   * @dontinclude XdmfExampleGridCollection.py
    * Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object
-   * '''
-   * exampleCollection.setType(XdmfGridCollectionType.Temporal())
-   * @endcode
+   * @skipline setType
    *
    * @param type the XdmfGridCollectionType to set.
    */

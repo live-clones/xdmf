@@ -46,15 +46,13 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * shared_ptr<XdmfItemFactory> exampleFactory = XdmfItemFactory::New();
-   * @endcode
+   * @dontinclude ExampleXdmfItemFactory.cpp
+   * @skipline New
    *
    * Python
    *
-   * @code {.py}
-   * exampleFactory = XdmfItemFactory.New()
-   * @endcode
+   * @dontinclude XdmfExampleItemFactory.py
+   * @skipline New
    *
    * @return constructed XdmfItemFactory.
    */

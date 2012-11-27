@@ -57,19 +57,15 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * std::string newPath = "Your file path goes here";
-   * bool replaceOrig = true;
-   * shared_ptr<XdmfHDF5Writer> exampleWriter = XdmfHDF5Writer::New(newPath, replaceOrig);
-   * @endcode
+   * @dontinclude ExampleXdmfHDF5Writer.cpp
+   * @skipline newPath
+   * @until XdmfHDF5Writer
    *
    * Python
    *
-   * @code {.py}
-   * newPath = "Your file path goes here"
-   * replaceOrig = True
-   * exampleWriter = XdmfHDF5Writer.New(newPath, replaceOrig)
-   * @endcode
+   * @dontinclude XdmfExampleHDF5Writer.py
+   * @skipline newPath
+   * @until XdmfHDF5Writer
    *
    * @param filePath the location of the hdf5 file to output to on disk.
    * @param clobberFile whether to overwrite the previous file if it exists.

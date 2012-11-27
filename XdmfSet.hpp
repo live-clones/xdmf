@@ -55,15 +55,13 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * shared_ptr<XdmfSet> exampleSet = XdmfSet::New();
-   * @endcode
+   * @dontinclude ExampleXdmfSet.cpp
+   * @skipline New
    *
    * Python
    *
-   8 @code {.py}
-   * exampleSet = XdmfSet.New()
-   * @endcode
+   * @dontinclude XdmfExampleSet.py
+   * @skipline New
    *
    * @return constructed XdmfSet.
    */
@@ -86,19 +84,15 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //Assuming that exampleSet is a shared pointer to an XdmfSet object with its name set
-   * std::string exampleName = exampleSet->getName();
-   * @endcode
+   * @dontinclude ExampleXdmfSet.cpp
+   * Assuming that exampleSet is a shared pointer to an XdmfSet object with its name set
+   * @skipline getName
    *
    * Python
    *
-   * @code {.py}
-   * '''
+   * @dontinclude XdmfExampleSet.py
    * Assuming that exampleSet is a shared pointer to an XdmfSet object with its name set
-   * '''
-   * exampleName = exampleSet.getName()
-   * @endcode
+   * @skipline getName
    *
    * @return a string containing the name of the set.
    */
@@ -111,19 +105,15 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * //Assuming that exampleSet is a shared pointer to an XdmfSet object with its type set
-   * shared_ptr<const XdmfSetType> exampleType = exampleSet->getType();
-   * @endcode
+   * @dontinclude ExampleXdmfSet.cpp
+   * Assuming that exampleSet is a shared pointer to an XdmfSet object with its type set
+   * @skipline getType
    *
    * Python
    *
-   * @code {.py}
-   * '''
+   * @dontinclude XdmfExampleSet.py
    * Assuming that exampleSet is a shared pointer to an XdmfSet object with its type set
-   * '''
-   * exampleType = exampleSet.getType()
-   * @endcode
+   * @skipline getType
    *
    * @return XdmfSetType of this set.
    */
@@ -142,19 +132,17 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * shared_ptr<XdmfSet> exampleSet = XdmfSet::New();
-   * std::string newName = "New Name";
-   * exampleSet->setName(newName);
-   * @endcode
+   * @dontinclude ExampleXdmfSet.cpp
+   * @skipline New
+   * @skipline newName
+   * @until setName
    *
    * Python
    *
-   * @code {.py}
-   * exampleSet = XdmfSet.New()
-   * newName = "New Name"
-   * exampleSet.setName(newName)
-   * @endcode
+   * @dontinclude XdmfExampleSet.py
+   * @skipline New
+   * @skipline newName
+   * @until setName
    *
    * @param name a string containing the name to set.
    */
@@ -167,17 +155,15 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * shared_ptr<XdmfSet> exampleSet = XdmfSet::New();
-   * exampleSet->setType(XdmfSetType::Node());
-   * @endcode
+   * @dontinclude ExampleXdmfSet.cpp
+   * @skipline New
+   * @skipline setType
    *
    * Python
    *
-   * @code {.py}
-   * exampleSet = XdmfSet.New()
-   * exampleSet.setType(XdmfSetType.Node())
-   * @endcode
+   * @dontinclude XdmfExampleSet.py
+   * @skipline New
+   * @skipline setType
    *
    * @param type the XdmfSetType to set.
    */

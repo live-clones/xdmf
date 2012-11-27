@@ -53,15 +53,13 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * shared_ptr<XdmfDomain> exampleDomain = XdmfDomain::New();
-   * @endcode
+   * @dontinclude ExampleXdmfDomain.cpp
+   * @skipline New
    *
    * Python
    *
-   * @code {.py}
-   * exampleDomain = XdmfDomain.New();
-   * @endcode
+   * @dontinclude XdmfExampleDomain.py
+   * @skipline New
    *
    * @return constructed XdmfDomain.
    */

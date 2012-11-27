@@ -1,6 +1,11 @@
 project(Xdmf)
 cmake_minimum_required(VERSION 2.6)
 
+#Needed to build DSM because relative paths are used to add its libraries
+if (POLICY CMP0015)
+	cmake_policy(SET CMP0015 NEW)
+endif (POLICY CMP0015)
+
 if(MSVC10)
 	SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
 	SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
