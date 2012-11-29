@@ -25,9 +25,9 @@
 #include <sstream>
 #include "XdmfArray.hpp"
 #include "XdmfArrayType.hpp"
+#include "XdmfError.hpp"
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfSystemUtils.hpp"
-#include "XdmfError.hpp"
 
 shared_ptr<XdmfHDF5Controller>
 XdmfHDF5Controller::New(const std::string & hdf5FilePath,
@@ -35,14 +35,17 @@ XdmfHDF5Controller::New(const std::string & hdf5FilePath,
                         const shared_ptr<const XdmfArrayType> type,
                         const std::vector<unsigned int> & start,
                         const std::vector<unsigned int> & stride,
-                        const std::vector<unsigned int> & count)
+                        const std::vector<unsigned int> & dimensions,
+                        const std::vector<unsigned int> & dataspaceDimensions)
 {
-  shared_ptr<XdmfHDF5Controller> p(new XdmfHDF5Controller(hdf5FilePath,
-                                                          dataSetPath,
-                                                          type,
-                                                          start,
-                                                          stride,
-                                                          count));
+  shared_ptr<XdmfHDF5Controller> 
+    p(new XdmfHDF5Controller(hdf5FilePath,
+                             dataSetPath,
+                             type,
+                             start,
+                             stride,
+                             dimensions,
+                             dataspaceDimensions));
   return p;
 }
 
@@ -51,18 +54,16 @@ XdmfHDF5Controller::XdmfHDF5Controller(const std::string & hdf5FilePath,
                                        const shared_ptr<const XdmfArrayType> type,
                                        const std::vector<unsigned int> & start,
                                        const std::vector<unsigned int> & stride,
-                                       const std::vector<unsigned int> & count) :
+                                       const std::vector<unsigned int> & dimensions,
+                                       const std::vector<unsigned int> & dataspaceDimensions) :
   XdmfHeavyDataController(hdf5FilePath,
                           dataSetPath,
                           type,
-                          count),
-  mStart(start),
-  mStride(stride)
+                          start,
+                          stride,
+                          dimensions,
+                          dataspaceDimensions)
 {
-  if(!(mStart.size() == mStride.size() && mStride.size() == mDimensions.size()))
-    XdmfError::message(XdmfError::FATAL,
-                       "mStart, mStride, mDimensions must all be of equal "
-                       "length in XdmfHDF5Controller constructor");
 }
 
 XdmfHDF5Controller::~XdmfHDF5Controller()

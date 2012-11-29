@@ -114,6 +114,7 @@ int main(int, char **)
   const std::vector<unsigned int> start(2, 1);
   const std::vector<unsigned int> stride(2, 1);
   const std::vector<unsigned int> count(2, 2);
+  const std::vector<unsigned int> dataSpaceSize(2, 3);
 
   shared_ptr<XdmfHeavyDataController> controller =
     readArray2->getHeavyDataController();
@@ -125,7 +126,8 @@ int main(int, char **)
                             controller->getType(),
                             start,
                             stride,
-                            count);
+                            count,
+                            dataSpaceSize);
 
   shared_ptr<XdmfArray> hyperslabArray = XdmfArray::New();
   hyperslabArray->setHeavyDataController(hyperslabController);

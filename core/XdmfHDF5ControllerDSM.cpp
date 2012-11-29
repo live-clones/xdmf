@@ -31,16 +31,19 @@ XdmfHDF5ControllerDSM::New(const std::string & hdf5FilePath,
                            const shared_ptr<const XdmfArrayType> type,
                            const std::vector<unsigned int> & start,
                            const std::vector<unsigned int> & stride,
-                           const std::vector<unsigned int> & count,
+                           const std::vector<unsigned int> & dimensions,
+                           const std::vector<unsigned int> & datspaceDimensions,
                            H5FDdsmBuffer * const dsmBuffer)
 {
-  shared_ptr<XdmfHDF5ControllerDSM> p(new XdmfHDF5ControllerDSM(hdf5FilePath,
-                                                                dataSetPath,
-                                                                type,
-                                                                start,
-                                                                stride,
-                                                                count,
-                                                                dsmBuffer));
+  shared_ptr<XdmfHDF5ControllerDSM> 
+    p(new XdmfHDF5ControllerDSM(hdf5FilePath,
+                                dataSetPath,
+                                type,
+                                start,
+                                stride,
+                                dimensions,
+                                datspaceDimensions,
+                                dsmBuffer));
   return p;
 }
 
@@ -49,9 +52,16 @@ XdmfHDF5ControllerDSM::XdmfHDF5ControllerDSM(const std::string & hdf5FilePath,
                                              const shared_ptr<const XdmfArrayType> type,
                                              const std::vector<unsigned int> & start,
                                              const std::vector<unsigned int> & stride,
-                                             const std::vector<unsigned int> & count,
+                                             const std::vector<unsigned int> & dimensions,
+                                             const std::vector<unsigned int> & dataspaceDimensions,
                                              H5FDdsmBuffer * const dsmBuffer) :
-  XdmfHDF5Controller(hdf5FilePath, dataSetPath, type, start, stride, count),
+  XdmfHDF5Controller(hdf5FilePath, 
+                     dataSetPath, 
+                     type, 
+                     start,
+                     stride,
+                     dimensions, 
+                     dataspaceDimensions),
   mDSMBuffer(dsmBuffer)
 {
 }
@@ -71,7 +81,7 @@ void XdmfHDF5ControllerDSM::read(XdmfArray * const array)
   hid_t fapl = H5Pcreate(H5P_FILE_ACCESS);
 
   // Use DSM driver
-  H5Pset_fapl_dsm(fapl, MPI_COMM_WORLD, mDSMBuffer);
+  H5Pset_fapl_dsm(fapl, MPI_COMM_WORLD, mDSMBuffer, 0);
 
   // Read from DSM Buffer
   XdmfHDF5Controller::read(array, fapl);

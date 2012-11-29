@@ -85,8 +85,11 @@ protected:
    * the hdf5 data set.
    * @param stride the number of elements to move in each dimension from the
    * hdf5 data set.
-   * @param count the number of elements to select in each dimension from the
-   * hdf5 data set. (size in each dimension)
+   * @param dimensions the number of elements to select in each
+   * dimension from the hdf5 data set. (size in each dimension)
+   * @param dataspaceDimensions the number of elements in the entire
+   * hdf5 data set (may be larger that dimensions if using
+   * hyperslabs).
    *
    * @return new HDF5 Controller.
    */
@@ -96,7 +99,8 @@ protected:
                        const shared_ptr<const XdmfArrayType> type,
                        const std::vector<unsigned int> & start,
                        const std::vector<unsigned int> & stride,
-                       const std::vector<unsigned int> & count);
+                       const std::vector<unsigned int> & dimensions,
+                       const std::vector<unsigned int> & dataspaceDimensions);
 
   /**
    * Open hdf5 file with a fapl.

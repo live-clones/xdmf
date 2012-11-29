@@ -824,6 +824,7 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
                                                         0),
                               std::vector<unsigned int>(mDimensions.size(),
                                                         1),
+                              mDimensions,
                               mDimensions);
   }
   else if(formatVal.compare("XML") == 0) {

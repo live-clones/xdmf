@@ -79,7 +79,8 @@ protected:
                        const shared_ptr<const XdmfArrayType> type,
                        const std::vector<unsigned int> & start,
                        const std::vector<unsigned int> & stride,
-                       const std::vector<unsigned int> & count);
+                       const std::vector<unsigned int> & dimensions,
+                       const std::vector<unsigned int> & dataspaceDimensions);
 
 private:
 
