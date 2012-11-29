@@ -96,13 +96,13 @@ if(XDMF_BUILD_DSM)
 
   find_package(H5FDdsm REQUIRED NO_MODULE)
   if(H5FDdsm_FOUND)
-    include_directories(${H5FD_DSM_INCLUDE_DIR})
-    get_filename_component(H5FD_DSM_LIBRARY_DIR 
-                           "${H5FD_DSM_INCLUDE_DIR}/../lib" REALPATH)
-    set(XDMF_LIBRARY_DIRS ${XDMF_LIBRARY_DIRS} ${H5FD_DSM_LIBRARY_DIR})
+    include_directories(${H5FDdsm_INCLUDE_DIR})
+    get_filename_component(H5FDdsm_LIBRARY_DIR 
+                           "${H5FDdsm_INCLUDE_DIR}/../lib" REALPATH)
+    set(XDMF_LIBRARY_DIRS ${XDMF_LIBRARY_DIRS} ${H5FDdsm_LIBRARY_DIR})
     get_property(h5fddsm_lib_location TARGET H5FDdsm PROPERTY LOCATION)
-    set(H5FD_DSM_LIBRARIES ${h5fddsm_lib_location})
-    set(XDMF_LIBRARIES ${XDMF_LIBRARIES} ${H5FD_DSM_LIBRARIES})
+    set(H5FDdsm_LIBRARIES ${h5fddsm_lib_location})
+    set(XDMF_LIBRARIES ${XDMF_LIBRARIES} ${H5FDdsm_LIBRARIES})
   else(H5FDdsm_FOUND)
     message(SEND_ERROR
       "Cannot find HDF5 DSM!  Please set H5FDdsm_DIR and configure again.")

@@ -2,6 +2,7 @@
 #include <H5FDdsmManager.h>
 #include "XdmfArray.hpp"
 #include "XdmfArrayType.hpp"
+#include "XdmfHDF5ControllerDSM.hpp"
 #include "XdmfHDF5WriterDSM.hpp"
 
 int main(int argc, char *argv[])
@@ -22,16 +23,19 @@ int main(int argc, char *argv[])
       std::cout << "# MPI_THREAD_MULTIPLE is OK" << std::endl;
     }
   }
-
+  
   // Create DSM
   H5FDdsmManager * dsmManager = new H5FDdsmManager();
-  dsmManager->SetCommunicator(comm);
+  dsmManager->SetMpiComm(comm);
   dsmManager->SetLocalBufferSizeMBytes(dsmSize / size);
-  dsmManager->CreateDSM();
+  dsmManager->SetLocalBufferSizeMBytes(dsmSize / size);
+  dsmManager->SetIsStandAlone(H5FD_DSM_TRUE);
+  dsmManager->Create();
+  H5FD_dsm_set_manager(dsmManager);
 
-  H5FDdsmBuffer * dsmBuffer = dsmManager->GetDSMHandle();
+  H5FD_dsm_set_options(H5FD_DSM_LOCK_ASYNCHRONOUS);
 
-  H5FD_dsm_set_mode(H5FD_DSM_MANUAL_SERVER_UPDATE, dsmBuffer);
+  H5FDdsmBuffer * dsmBuffer = dsmManager->GetDsmBuffer();
 
   // Get info from remote server
   double remoteMB = dsmBuffer->GetTotalLength() / (1024.0 * 1024.0);
@@ -47,24 +51,54 @@ int main(int argc, char *argv[])
   // Array should be distributed among processes
   shared_ptr<XdmfArray> array = XdmfArray::New();
   array->initialize<int>(0);
-  array->pushBack(0);
-  array->pushBack(1);
-  array->pushBack(2);
+  array->pushBack(rank*3);
+  array->pushBack(rank*3 + 1);
+  array->pushBack(rank*3 + 2);
+  shared_ptr<XdmfHDF5ControllerDSM> controller = 
+    XdmfHDF5ControllerDSM::New("dsm.h5",
+                               "data",
+                               XdmfArrayType::Int32(),
+                               std::vector<unsigned int>(1, rank*3),
+                               std::vector<unsigned int>(1, 1),
+                               std::vector<unsigned int>(1, 3),
+                               std::vector<unsigned int>(1, size*3),
+                               NULL);
+  array->setHeavyDataController(controller);
 
   // Create DSM Writer and write to DSM space.
   shared_ptr<XdmfHDF5WriterDSM> writer =
-    XdmfHDF5WriterDSM::New("dsm", dsmBuffer);
+    XdmfHDF5WriterDSM::New("dsm.h5", NULL);
+  writer->setMode(XdmfHeavyDataWriter::Hyperslab);
   array->accept(writer);
 
-  // Read data
-  shared_ptr<XdmfArray> readArray = XdmfArray::New();
-  readArray->setHeavyDataController(array->getHeavyDataController());
-  readArray->read();
-  assert(readArray->getSize() == 3);
-  assert(readArray->getArrayType() == XdmfArrayType::Int32());
-
-  for(unsigned int i=0; i<readArray->getSize(); ++i) {
-    assert(array->getValue<int>(i) == readArray->getValue<int>(i));
+  //H5FD_dsm_dump();
+  
+  // Release data and read back in to check if we wrote correctly
+  array->release();
+  array->read();
+  assert(array->getSize() == 3);
+  assert(array->getValue<int>(0) == 3*rank);
+  assert(array->getValue<int>(1) == 3*rank + 1);
+  assert(array->getValue<int>(2) == 3*rank + 2);
+  
+  MPI_Barrier(comm);
+  
+  // Adjust controller to read entire dataset onto each processor
+  shared_ptr<XdmfHDF5ControllerDSM> fullController = 
+    XdmfHDF5ControllerDSM::New("dsm.h5",
+                               "data",
+                               XdmfArrayType::Int32(),
+                               std::vector<unsigned int>(1, 0),
+                               std::vector<unsigned int>(1, 1),
+                               std::vector<unsigned int>(1, size*3),
+                               std::vector<unsigned int>(1, size*3),
+                               NULL);
+  array->setHeavyDataController(fullController);
+  array->release();
+  array->read();
+  assert(array->getSize() == size*3);
+  for(int i=0; i<size*3; ++i) {
+    assert(array->getValue<int>(i) == i);
   }
 
   // Wait for everyone to have finished reading

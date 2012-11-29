@@ -137,7 +137,8 @@ public:
       const shared_ptr<const XdmfArrayType> type,
       const std::vector<unsigned int> & start,
       const std::vector<unsigned int> & stride,
-      const std::vector<unsigned int> & count,
+      const std::vector<unsigned int> & dimensions,
+      const std::vector<unsigned int> & dataspaceDimensions,
       H5FDdsmBuffer * const dsmBuffer);
 
   std::string getName() const;
@@ -151,7 +152,8 @@ protected:
                         const shared_ptr<const XdmfArrayType> type,
                         const std::vector<unsigned int> & start,
                         const std::vector<unsigned int> & stride,
-                        const std::vector<unsigned int> & count,
+                        const std::vector<unsigned int> & dimensions,
+                        const std::vector<unsigned int> & dataspaceDimensions,
                         H5FDdsmBuffer * const dsmBuffer);
 
 private:

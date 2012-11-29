@@ -54,9 +54,14 @@ class XdmfArray;
  *   Overwrite - If an initialized XdmfArray is attached to an heavy dataset
  *               via an XdmfHeavyDataController the writer will write values
  *               to that location, overwriting all previous written values.
+ *               The dataset on disk will be resized appropriately.
  *   Append - If an initialized XdmfArray is attached to an heavy dataset via
  *            an XdmfHeavyDataController the writer will append the values to
  *            the end of the dataset on disk.
+ *   Hyperslab - If an initialized XdmfArray is attached to a heavy dataset
+ *               via an XdmfHeavyDataController the writer will write to a
+ *               hyperslab in the dataset based on the start, stride, and
+ *               dimensions of the XdmfHeavyDataController.
  */
 class XDMFCORE_EXPORT XdmfHeavyDataWriter : public XdmfVisitor,
                                             public Loki::Visitor<XdmfArray> {
@@ -66,7 +71,8 @@ public:
   enum Mode {
     Default,
     Overwrite,
-    Append
+    Append,
+    Hyperslab
   };
 
   virtual ~XdmfHeavyDataWriter() = 0;

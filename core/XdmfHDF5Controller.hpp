@@ -67,8 +67,11 @@ public:
    * the hdf5 data set.
    * @param stride the number of elements to move in each dimension from the
    * hdf5 data set.
-   * @param count the number of elements to select in each dimension from the
-   * hdf5 data set. (size in each dimension)
+   * @param dimensions the number of elements to select in each
+   * dimension from the hdf5 data set. (size in each dimension)
+   * @param dataspaceDimensions the number of elements in the entire
+   * hdf5 data set (may be larger that dimensions if using
+   * hyperslabs).
    *
    * @return new HDF5 Controller.
    */
@@ -78,7 +81,8 @@ public:
       const shared_ptr<const XdmfArrayType> type,
       const std::vector<unsigned int> & start,
       const std::vector<unsigned int> & stride,
-      const std::vector<unsigned int> & count);
+      const std::vector<unsigned int> & dimensions,
+      const std::vector<unsigned int> & dataspaceDimensions);
 
   virtual std::string getName() const;
 
@@ -91,7 +95,8 @@ protected:
                      const shared_ptr<const XdmfArrayType> type,
                      const std::vector<unsigned int> & start,
                      const std::vector<unsigned int> & stride,
-                     const std::vector<unsigned int> & count);
+                     const std::vector<unsigned int> & dimensions,
+                     const std::vector<unsigned int> & dataspaceDimensions);
 
   void read(XdmfArray * const array, const int fapl);
 
@@ -99,9 +104,6 @@ private:
 
   XdmfHDF5Controller(const XdmfHDF5Controller &);  // Not implemented.
   void operator=(const XdmfHDF5Controller &);  // Not implemented.
-
-  const std::vector<unsigned int> mStart;
-  const std::vector<unsigned int> mStride;
 
 };
 

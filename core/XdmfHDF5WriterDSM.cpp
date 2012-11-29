@@ -53,14 +53,16 @@ XdmfHDF5WriterDSM::createHDF5Controller(const std::string & hdf5FilePath,
                                         const shared_ptr<const XdmfArrayType> type,
                                         const std::vector<unsigned int> & start,
                                         const std::vector<unsigned int> & stride,
-                                        const std::vector<unsigned int> & count)
+                                        const std::vector<unsigned int> & dimensions,
+                                        const std::vector<unsigned int> & dataspaceDimensions)
 {
   return XdmfHDF5ControllerDSM::New(hdf5FilePath,
                                     dataSetPath,
                                     type,
                                     start,
                                     stride,
-                                    count,
+                                    dimensions,
+                                    dataspaceDimensions,
                                     mDSMBuffer);
 }
 
@@ -71,7 +73,6 @@ XdmfHDF5WriterDSM::closeFile()
     herr_t status = H5Pclose(mFAPL);
     mFAPL = -1;
   }
-
   XdmfHDF5Writer::closeFile();
 }
 
@@ -86,7 +87,7 @@ XdmfHDF5WriterDSM::openFile()
   mFAPL = H5Pcreate(H5P_FILE_ACCESS);
 
   // Use DSM driver
-  H5Pset_fapl_dsm(mFAPL, MPI_COMM_WORLD, mDSMBuffer);
+  H5Pset_fapl_dsm(mFAPL, MPI_COMM_WORLD, mDSMBuffer, 0);
 
   XdmfHDF5Writer::openFile(mFAPL);
 }
@@ -95,13 +96,14 @@ void XdmfHDF5WriterDSM::visit(XdmfArray & array,
                               const shared_ptr<XdmfBaseVisitor>)
 {
   bool closeFAPL = false;
-
+  
   if(mFAPL < 0) {
+
     // Set file access property list for DSM
     mFAPL = H5Pcreate(H5P_FILE_ACCESS);
 
     // Use DSM driver
-    H5Pset_fapl_dsm(mFAPL, MPI_COMM_WORLD, mDSMBuffer);
+    H5Pset_fapl_dsm(mFAPL, MPI_COMM_WORLD, mDSMBuffer, 0);
 
     closeFAPL = true;
   }

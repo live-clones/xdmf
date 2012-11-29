@@ -78,6 +78,17 @@ public:
   std::string getDataSetPath() const;
 
   /**
+   * Get the dimensions of the dataspace owned by this
+   * controller. This is the dimension of the entire heavy dataset,
+   * which may be larger than the dimensions of the array (if reading
+   * a piece of a larger dataset).
+   *
+   * @return a vector containing the size in each dimension of the dataspace
+   * owned by this controller.
+   */
+  std::vector<unsigned int> getDataspaceDimensions() const;
+
+  /**
    * Get the dimensions of the heavy data set owned by this controller.
    *
    * Example of use:
@@ -174,6 +185,22 @@ public:
   unsigned int getSize() const;
 
   /**
+   * Get the start index of the heavy data set owned by this controller.
+   *
+   * @return a vector containing the start index in each dimension of
+   * the heavy data set owned by this controller.
+   */
+  std::vector<unsigned int> getStart() const;
+
+  /**
+   * Get the stride of the heavy data set owned by this controller.
+   *
+   * @return a vector containing the stride in each dimension of the
+   * heavy data set owned by this controller.
+   */
+  std::vector<unsigned int> getStride() const;
+
+  /**
    * Get the array type of the heavy data set owned by this
    * controller.
    *
@@ -228,11 +255,17 @@ protected:
   XdmfHeavyDataController(const std::string & filePath,
                           const std::string & dataSetPath,
                           const shared_ptr<const XdmfArrayType> type,
-                          const std::vector<unsigned int> & dimensions);
+                          const std::vector<unsigned int> & start,
+                          const std::vector<unsigned int> & stride,
+                          const std::vector<unsigned int> & dimensions,
+                          const std::vector<unsigned int> & dataspaceDimensions);
 
   const std::string mDataSetPath;
+  const std::vector<unsigned int> mDataspaceDimensions;
   const std::vector<unsigned int> mDimensions;
   const std::string mFilePath;
+  const std::vector<unsigned int> mStart;
+  const std::vector<unsigned int> mStride;
   const shared_ptr<const XdmfArrayType> mType;
 
 private:

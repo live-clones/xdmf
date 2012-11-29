@@ -21,6 +21,7 @@ ADD_TEST_CXX_PATH("${XDMF_BINARIES}")
 ADD_TEST_CXX(TestXdmfArray)
 ADD_TEST_CXX(TestXdmfArrayMultidimensional)
 ADD_TEST_CXX(TestXdmfArrayWriteRead)
+ADD_TEST_CXX(TestXdmfArrayWriteReadHyperSlabs)
 ADD_TEST_CXX(TestXdmfHDF5Controller)
 ADD_TEST_CXX(TestXdmfHDF5Writer)
 if(XDMF_BUILD_DSM)
@@ -38,6 +39,8 @@ CLEAN_TEST_CXX(TestXdmfArray)
 CLEAN_TEST_CXX(TestXdmfArrayMultidimensional)
 CLEAN_TEST_CXX(TestXdmfArrayWriteRead
   test.h5)
+CLEAN_TEST_CXX(TestXdmfArrayWriteRead
+  testHyperslab.h5)
 CLEAN_TEST_CXX(TestXdmfHDF5Controller)
 CLEAN_TEST_CXX(TestXdmfHDF5Writer
   hdf5WriterTest.h5)
