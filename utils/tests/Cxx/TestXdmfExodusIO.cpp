@@ -33,17 +33,19 @@ int main(int, char *)
     assert(grid->getTopology()->getValue<double>(i) ==
            hexahedron->getTopology()->getValue<double>(i));
   }
-  assert(hexahedron->getNumberAttributes() + 1 == grid->getNumberAttributes());
+  assert(hexahedron->getNumberAttributes() + 2 == grid->getNumberAttributes());
   for(unsigned int i=0; i<hexahedron->getNumberAttributes(); ++i) {
     shared_ptr<XdmfAttribute> attribute1 = hexahedron->getAttribute(i);
-    shared_ptr<XdmfAttribute> attribute2 =
-      grid->getAttribute(attribute1->getName());
-    assert(attribute1->getCenter() == attribute2->getCenter());
-    assert(attribute1->getType() == attribute2->getType());
-    assert(attribute1->getSize() == attribute2->getSize());
-    for(unsigned int j=0; j<attribute1->getSize(); ++j) {
-      assert(attribute1->getValue<double>(i) ==
-             attribute2->getValue<double>(i));
+    if(attribute1->getCenter() != XdmfAttributeCenter::Grid()) {
+      shared_ptr<XdmfAttribute> attribute2 =
+        grid->getAttribute(attribute1->getName());
+      assert(attribute1->getCenter() == attribute2->getCenter());
+      assert(attribute1->getType() == attribute2->getType());
+      assert(attribute1->getSize() == attribute2->getSize());
+      for(unsigned int j=0; j<attribute1->getSize(); ++j) {
+        assert(attribute1->getValue<double>(i) ==
+               attribute2->getValue<double>(i));
+      }
     }
   }
 }

@@ -168,6 +168,12 @@ public:
   }
 
   shared_ptr<const XdmfArrayType>
+  getArrayType(const std::string * const) const
+  {
+    return XdmfArrayType::String();
+  }
+
+  shared_ptr<const XdmfArrayType>
   operator()(const boost::blank & array) const
   {
     if(mHeavyDataController) {
@@ -685,6 +691,9 @@ XdmfArray::initialize(const shared_ptr<const XdmfArrayType> arrayType,
   else if(arrayType == XdmfArrayType::UInt32()) {
     this->initialize<unsigned int>(size);
   }
+  else if(arrayType == XdmfArrayType::String()) {
+    this->initialize<std::string>(size);
+  }
   else if(arrayType == XdmfArrayType::Uninitialized()) {
     this->release();
   }
@@ -833,11 +842,21 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
     unsigned int index = 0;
     boost::char_separator<char> sep(" \t\n");
     boost::tokenizer<boost::char_separator<char> > tokens(contentVal, sep);
-    for(boost::tokenizer<boost::char_separator<char> >::const_iterator
-          iter = tokens.begin();
-        iter != tokens.end();
-        ++iter, ++index) {
-      this->insert(index, atof((*iter).c_str()));
+    if(arrayType == XdmfArrayType::String()) {
+      for(boost::tokenizer<boost::char_separator<char> >::const_iterator
+            iter = tokens.begin();
+          iter != tokens.end();
+          ++iter, ++index) {
+        this->insert(index, *iter);
+      }
+    }
+    else {
+      for(boost::tokenizer<boost::char_separator<char> >::const_iterator
+            iter = tokens.begin();
+          iter != tokens.end();
+          ++iter, ++index) {
+        this->insert(index, atof((*iter).c_str()));
+      }
     }
   }
   else {

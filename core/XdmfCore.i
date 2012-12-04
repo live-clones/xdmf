@@ -245,6 +245,13 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
         }
     }
 
+    void insertAsString(int startIndex, PyObject * list) {
+        Py_ssize_t size = PyList_Size(list);
+        for(Py_ssize_t i = 0; i < size; ++i) {
+            $self->insert<std::string>(i+startIndex, PyString_AsString(PyList_GetItem(list, i)));
+        }
+    }
+
 };
 
 %extend XdmfArrayType {
@@ -340,6 +347,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %template(getValueAsUInt8) XdmfArray::getValue<unsigned char>;
 %template(getValueAsUInt16) XdmfArray::getValue<unsigned short>;
 %template(getValueAsUInt32) XdmfArray::getValue<unsigned int>;
+%template(getValueAsString) XdmfArray::getValue<std::string>;
 
 %template(initializeAsInt8) XdmfArray::initialize<char>;
 %template(initializeAsInt16) XdmfArray::initialize<short>;
@@ -350,6 +358,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %template(initializeAsUInt8) XdmfArray::initialize<unsigned char>;
 %template(initializeAsUInt16) XdmfArray::initialize<unsigned short>;
 %template(initializeAsUInt32) XdmfArray::initialize<unsigned int>;
+%template(initializeAsString) XdmfArray::initialize<std::string>;
 
 %template(insertValueAsInt8) XdmfArray::insert<char>;
 %template(insertValueAsInt16) XdmfArray::insert<short>;
@@ -360,6 +369,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %template(insertValueAsUInt8) XdmfArray::insert<unsigned char>;
 %template(insertValueAsUInt16) XdmfArray::insert<unsigned short>;
 %template(insertValueAsUInt32) XdmfArray::insert<unsigned int>;
+%template(insertValueAsString) XdmfArray::insert<std::string>;
 
 %template(pushBackAsInt8) XdmfArray::pushBack<char>;
 %template(pushBackAsInt16) XdmfArray::pushBack<short>;
@@ -370,6 +380,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %template(pushBackAsUInt8) XdmfArray::pushBack<unsigned char>;
 %template(pushBackAsUInt16) XdmfArray::pushBack<unsigned short>;
 %template(pushBackAsUInt32) XdmfArray::pushBack<unsigned int>;
+%template(pushBackAsString) XdmfArray::pushBack<std::string>;
 
 %template(resizeAsInt8) XdmfArray::resize<char>;
 %template(resizeAsInt16) XdmfArray::resize<short>;
@@ -380,6 +391,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %template(resizeAsUInt8) XdmfArray::resize<unsigned char>;
 %template(resizeAsUInt16) XdmfArray::resize<unsigned short>;
 %template(resizeAsUInt32) XdmfArray::resize<unsigned int>;
+%template(resizeAsString) XdmfArray::resize<std::string>;
 
 %template(UIntVector) std::vector<unsigned int>;
 %template(ItemVector) std::vector<boost::shared_ptr<XdmfItem> >;

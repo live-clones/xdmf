@@ -20,10 +20,11 @@ public:
    * Number of Attributes = 2
    *   Cell Attributes = 1
    *   Nodal Attributes = 1
+   *   Grid Attributes = 1
    * Number of Sets = 1
    *   Nodal Set = 1
    * Time = 100
-   * Total Number of Values = 69
+   * Total Number of Values = 71
    */
   static shared_ptr<XdmfUnstructuredGrid> createHexahedron()
   {
@@ -61,6 +62,16 @@ public:
     cellAttribute->setCenter(XdmfAttributeCenter::Cell());
     cellAttribute->insert(0, &cellValues[0], 2);
 
+    // Add Grid Attribute
+    shared_ptr<XdmfAttribute> gridAttribute = XdmfAttribute::New();
+    std::string gridValues[] = {"foo", "bar"};
+    //int gridValues[] = {1, 2};
+    gridAttribute->setName("Grid Attribute");
+    gridAttribute->setType(XdmfAttributeType::Vector());
+    gridAttribute->setCenter(XdmfAttributeCenter::Grid());
+    gridAttribute->insert(0, &gridValues[0], 2);
+
+
     // Add Node Set
     shared_ptr<XdmfSet> nodeSet = XdmfSet::New();
     int nodeIds[] = {0, 1, 2};
@@ -74,6 +85,7 @@ public:
 
     grid->insert(nodalAttribute);
     grid->insert(cellAttribute);
+    grid->insert(gridAttribute);
     grid->insert(nodeSet);
     return grid;
   }

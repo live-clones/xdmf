@@ -47,6 +47,7 @@
  *   UInt8
  *   UInt16
  *   UInt32
+ *   String
  */
 class XDMFCORE_EXPORT XdmfArrayType : public XdmfItemProperty {
 
@@ -67,6 +68,7 @@ public:
   static shared_ptr<const XdmfArrayType> UInt8();
   static shared_ptr<const XdmfArrayType> UInt16();
   static shared_ptr<const XdmfArrayType> UInt32();
+  static shared_ptr<const XdmfArrayType> String();
 
   /**
    * Get the data size, in bytes, of the value associated with this

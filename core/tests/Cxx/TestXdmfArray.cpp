@@ -303,5 +303,25 @@ int main(int, char **)
   array9->insert<double>(9, 1.0);
   assert(array9->getDimensionsString() == "10");
 
+  //
+  // STRINGS
+  //
+  shared_ptr<XdmfArray> stringArray = XdmfArray::New();
+  stringArray->resize<std::string>(3, "");
+  std::string firstValue = stringArray->getValue<std::string>(0);
+  assert(firstValue.compare("") == 0);
+  stringArray->insert<std::string>(0, "foo");
+  stringArray->insert<std::string>(1, "bar");
+  stringArray->insert<std::string>(2, "cat");
+  firstValue = stringArray->getValue<std::string>(0);
+  assert(firstValue.compare("foo") == 0);
+  std::string allValues = stringArray->getValuesString();
+  assert(allValues.compare("foo bar cat") == 0);
+  stringArray->insert<int>(3, 1);
+  allValues = stringArray->getValuesString();
+  assert(allValues.compare("foo bar cat 1") == 0);
+  int num = stringArray->getValue<int>(3);
+  assert(num == 1);
+
   return 0;
 }

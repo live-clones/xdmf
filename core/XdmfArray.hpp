@@ -89,6 +89,7 @@ class XdmfHeavyDataController;
  *   UInt8
  *   UInt16
  *   UInt32
+ *   String
  */
 class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
 
@@ -527,6 +528,7 @@ private:
     shared_ptr<std::vector<unsigned char> >,
     shared_ptr<std::vector<unsigned short> >,
     shared_ptr<std::vector<unsigned int> >,
+    shared_ptr<std::vector<std::string> >,
     boost::shared_array<const char>,
     boost::shared_array<const short>,
     boost::shared_array<const int>,

@@ -171,6 +171,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
                       const int fapl)
 {
   hid_t datatype = -1;
+  bool closeDatatype = false;
 
   if(array.isInitialized()) {
     if(array.getArrayType() == XdmfArrayType::Int8()) {
@@ -199,6 +200,11 @@ XdmfHDF5Writer::write(XdmfArray & array,
     }
     else if(array.getArrayType() == XdmfArrayType::UInt32()) {
       datatype = H5T_NATIVE_UINT;
+    }
+    else if(array.getArrayType() == XdmfArrayType::String()) {
+      datatype = H5Tcopy(H5T_C_S1);
+      H5Tset_size(datatype, H5T_VARIABLE);
+      closeDatatype = true;
     }
     else {
       XdmfError::message(XdmfError::FATAL,
@@ -395,6 +401,9 @@ XdmfHDF5Writer::write(XdmfArray & array,
       status = H5Sclose(memspace);
     }
     status = H5Dclose(dataset);
+    if(closeDatatype) {
+      status = H5Tclose(datatype);
+    }
     if(closeFile) {
       mImpl->closeFile();
     }

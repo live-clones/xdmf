@@ -49,3 +49,18 @@ if __name__ == "__main__":
     array9.insertAsUInt32(0, values1)
     print array9.getValuesString()
     assert array9.getArrayType() == XdmfArrayType.UInt32()
+
+    stringArray = XdmfArray.New()
+    stringArray.insertValueAsString(0, "foo")
+    strings = ["bar", "car", "cellar"]
+    assert stringArray.getArrayType() == XdmfArrayType.String()
+    stringArray.insertAsString(0, strings)
+    assert stringArray.getSize() == 3
+    assert stringArray.getValueAsString(0) == "bar"
+    stringArray.pushBackAsString("dog")
+    assert stringArray.getSize() == 4
+    assert stringArray.getValueAsString(3) == "dog"
+    stringArray.resizeAsString(5, "")
+    assert stringArray.getSize() == 5
+    assert stringArray.getValueAsString(4) == ""
+    print stringArray.getValuesString()
