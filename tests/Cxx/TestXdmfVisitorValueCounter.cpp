@@ -56,7 +56,7 @@ int main(int, char **)
 
   grid->accept(visitor);
 
-  assert(visitor->getCount() == 69);
+  assert(visitor->getCount() == 71);
 
   return 0;
 }

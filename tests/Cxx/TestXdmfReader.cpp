@@ -40,11 +40,10 @@ int main(int, char **)
 
   std::vector<shared_ptr<XdmfItem> > readItems2 =
     reader->read("TestXdmfReader1.xmf", "//Attribute");
-  assert(readItems2.size() == 4);
+  assert(readItems2.size() == 6);
   shared_ptr<XdmfAttribute> readAttribute =
     shared_dynamic_cast<XdmfAttribute>(readItems2[0]);
-  assert(readAttribute->getName().compare("Nodal Attribute") == 0 ||
-         readAttribute->getName().compare("Cell Attribute"));
+  assert(readAttribute->getName().compare("Nodal Attribute") == 0);
 
   return 0;
 }

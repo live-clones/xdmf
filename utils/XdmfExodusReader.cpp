@@ -561,7 +561,7 @@ XdmfExodusReader::read(const std::string & fileName,
 
   // Global variable data
   double * global_var_vals = new double[num_global_vars];
-  ex_get_glob_vars(exodusHandle, 1, num_global_vars, &global_var_vals);
+  ex_get_glob_vars(exodusHandle, 1, num_global_vars, global_var_vals);
   for (int i=0; i<num_global_vars; ++i) {
     // Write global attribute to xdmf
     shared_ptr<XdmfAttribute> attribute = XdmfAttribute::New();

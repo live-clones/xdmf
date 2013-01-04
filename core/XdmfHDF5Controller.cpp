@@ -115,6 +115,7 @@ XdmfHDF5Controller::read(XdmfArray * const array, const int fapl)
      NULL);*/
 
   hid_t datatype;
+  bool closeDatatype = false;
   if(mType == XdmfArrayType::Int8()) {
     datatype = H5T_NATIVE_CHAR;
   }
@@ -142,6 +143,11 @@ XdmfHDF5Controller::read(XdmfArray * const array, const int fapl)
   else if(mType == XdmfArrayType::UInt32()) {
     datatype = H5T_NATIVE_UINT;
   }
+  else if(mType == XdmfArrayType::String()) {
+    datatype = H5Tcopy(H5T_C_S1);
+    H5Tset_size(datatype, H5T_VARIABLE);
+    closeDatatype = true;
+  }
   else {
     XdmfError::message(XdmfError::FATAL,
                        "Unknown XdmfArrayType encountered in hdf5 "
@@ -156,15 +162,37 @@ XdmfHDF5Controller::read(XdmfArray * const array, const int fapl)
                        "allocated size in XdmfArray.");
   }
 
-  status = H5Dread(dataset,
-                   datatype,
-                   memspace,
-                   dataspace,
-                   H5P_DEFAULT,
-                   array->getValuesInternal());
+  if(closeDatatype) {
+    char ** data = new char*[numVals];
+    status = H5Dread(dataset, 
+                     datatype, 
+                     memspace,
+                     dataspace,
+                     H5P_DEFAULT, 
+                     data);
+    for(hssize_t i=0; i<numVals; ++i) {
+      array->insert<std::string>(i, data[i]);
+    }
+    status = H5Dvlen_reclaim(datatype, 
+                             dataspace, 
+                             H5P_DEFAULT, 
+                             data);
+    delete [] data;
+  }
+  else {
+    status = H5Dread(dataset,
+                     datatype,
+                     memspace,
+                     dataspace,
+                     H5P_DEFAULT,
+                     array->getValuesInternal());
+  }
 
   status = H5Sclose(dataspace);
   status = H5Sclose(memspace);
   status = H5Dclose(dataset);
+  if(closeDatatype) {
+    status = H5Tclose(datatype);
+  }
   status = H5Fclose(hdf5Handle);
 }

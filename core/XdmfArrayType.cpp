@@ -97,6 +97,13 @@ XdmfArrayType::UInt32()
   return p;
 }
 
+shared_ptr<const XdmfArrayType>
+XdmfArrayType::String()
+{
+  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("String", 0));
+  return p;
+}
+
 XdmfArrayType::XdmfArrayType(const std::string & name,
                              const unsigned int precision) :
   mName(name),
@@ -140,6 +147,9 @@ XdmfArrayType::New(const std::map<std::string, std::string> & itemProperties)
       return Int64();
     }
     return Int32();
+  }
+  else if(typeVal.compare("String") == 0) {
+    return String();
   }
   else if(typeVal.compare("Char") == 0) {
     return Int8();
