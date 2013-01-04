@@ -168,13 +168,13 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRegularGrid.cpp
-   * Assuming exampleGrid is a shared pointer to an XdmfRegularGrid object
+   * @skipline Assuming
    * @skipline exampleBrick
    *
    * Python
    *
    * @dontinclude XdmfExampleRegularGrid.py
-   * Assuming exampleGrid is a shared pointer to an XdmfRegularGrid object
+   * @skipline Assuming
    * @skipline getBrickSize
    *
    * @return XdmfArray containing brick sizes for this grid.
@@ -189,7 +189,7 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRegularGrid.cpp
-   * Assuming exampleGrid is a shared pointer to an XdmfRegularGrid object
+   * @skipline Assuming
    * @skipline exampleBrickConst
    *
    * Python: Does not support a constant version of this function
@@ -207,13 +207,13 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRegularGrid.cpp
-   * Assuming exampleGrid is a shared pointer to an XdmfRegularGrid object
+   * @skipline Assuming
    * @skipline exampleDimensions
    *
    * Python
    *
    * @dontinclude XdmfExampleRegularGrid.py
-   * Assuming exampleGrid is a shared pointer to an XdmfRegularGrid object
+   * @skipline Assuming
    * @skipline getDimensions
    *
    * @return XdmfArray containing dimensions of this grid.
@@ -229,7 +229,7 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRegularGrid.cpp
-   * Assuming exampleGrid is a shared pointer to an XdmfRegularGrid object
+   * @skipline Assuming
    * @skipline exampleDimensions
    *
    * Python: Does not support a constant version of this function
@@ -246,13 +246,13 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRegularGrid.cpp
-   * Assuming exampleGrid is a shared pointer to an XdmfRegularGrid object
+   * @skipline Assuming
    * @skipline exampleOrigin
    *
    * Python
    *
    * @dontinclude XdmfExampleRegularGrid.py
-   * Assuming exampleGrid is a shared pointer to an XdmfRegularGrid object
+   * @skipline Assuming
    * @skipline getOrigin
    *
    * @return XdmfArray containing the location of the origin of the
@@ -268,7 +268,7 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRegularGrid.cpp
-   * Assuming exampleGrid is a shared pointer to an XdmfRegularGrid object
+   * @skipline Assuming
    * @skipline exampleOriginConst
    *
    * Python: Does not support a constant version of this function
@@ -286,7 +286,7 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRegularGrid.cpp
-   * Assuming exampleGrid is a shared pointer to an XdmfRegularGrid object
+   * @skipline Assuming
    * @skipline newBrickSize
    * @until newBrickSize->pushBack(22.0)
    * @skipline setBrickSize
@@ -294,7 +294,7 @@ public:
    * Python
    *
    * @dontinclude XdmfExampleRegularGrid.py
-   * Assuming exampleGrid is a shared pointer to an XdmfRegularGrid object
+   * @skipline Assuming
    * @skipline newBrickSize
    * @until newBrickSize.pushBackAsFloat64(22.0)
    * @skipline setBrickSize
@@ -314,7 +314,7 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRegularGrid.cpp
-   * Assuming exampleGrid is a shared pointer to an XdmfRegularGrid object
+   * @skipline Assuming
    * @skipline newNumPoints
    * @until newNumPoints->pushBack(7)
    * @skipline setDimensions
@@ -322,7 +322,7 @@ public:
    * Python
    *
    * @dontinclude XdmfExampleRegularGrid.py
-   * Assuming exampleGrid is a shared pointer to an XdmfRegularGrid object
+   * @skipline Assuming
    * @skipline newNumPoints
    * @until newNumPoints.pushBackAsUInt32(7)
    * @skipline setDimensions
@@ -339,7 +339,7 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRegularGrid.cpp
-   * Assuming exampleGrid is a shared pointer to an XdmfRegularGrid object
+   * @skipline Assuming
    * @skipline newGridOrigin
    * @until newGridOrigin->pushBack(2.0)
    * @skipline setOrigin
@@ -347,7 +347,7 @@ public:
    * Python
    *
    * @dontinclude XdmfExampleRegularGrid.py
-   * Assuming exampleGrid is a shared pointer to an XdmfRegularGrid object
+   * @skipline Assuming
    * @skipline newGridOrigin
    * @until newGridOrigin.pushBackAsFloat64(2.0)
    * @skipline setOrigin

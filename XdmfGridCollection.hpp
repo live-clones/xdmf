@@ -84,13 +84,13 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfGridCollection.cpp
-   * Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object with its type set
+   * @skipline Assuming
    * @skipline getType
    *
    * Python
    *
    * @dontinclude XdmfExampleGridCollection.py
-   * Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object with its type set
+   * @skipline Assuming
    * @skipline getType
    *
    * @return XdmfGridCollectionType of this collection.
@@ -108,17 +108,17 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfGridCollection.cpp
+   * @skipline Assuming
    * @skipline exampleInformation
    * @until setValue
-   * Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object
-   * skipline insert
+   * @skipline insert
    *
    * Python
    *
    * @dontinclude XdmfExampleGridCollection.py
+   * @skipline Assuming
    * @skipline exampleInformation
    * @until setValue
-   * Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object
    * @skipline insert
    *
    * @param information an XdmfInformation to attach to this item.
@@ -134,13 +134,13 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfGridCollection.cpp
-   * Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object
+   * @skipline Assuming
    * @skipline setType
    *
    * Python
    *
    * @dontinclude XdmfExampleGridCollection.py
-   * Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object
+   * @skipline Assuming
    * @skipline setType
    *
    * @param type the XdmfGridCollectionType to set.

@@ -92,13 +92,13 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfTopology.cpp
-   * Assuming that exampleTopology is a shared pointer to an XdmfTopology object with values set
+   * @skipline Assuming
    * @skipline getNumberElements
    *
    * Python
    *
    * @dontinclude XdmfExampleTopology.py
-   * Assuming that exampleTopology is a shared pointer to an XdmfTopology object with values set
+   * @skipline Assuming
    * @skipline getNumberElements
    *
    * @return int of number elements in the Topology.
@@ -113,13 +113,13 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfTopology.cpp
-   * Assuming that exampleTopology is a shared pointer to an XdmfTopology object with its type set
+   * @skipline Assuming
    * @skipline getType
    *
    * Python
    *
    * @dontinclude XdmfExampleTopology.py
-   * Assuming that exampleTopology is a shared pointer to an XdmfTopology object with its type set
+   * @skipline Assuming
    * @skipline getType
    *
    * @return XdmfTopologyType of the topology.

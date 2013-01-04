@@ -142,13 +142,13 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfCurvilinearGrid.cpp
-   * Assuming that exampleGrid is a shared pointer to an XdmfCurvilinearGrid object
+   * @skipline Assuming
    * @skipline getDimensions
    *
    * Python
    *
    * @dontinclude XdmfExampleCurvilinearGrid.py
-   * Assuming that exampleGrid is a shared pointer to an XdmfCurvilinearGrid object
+   * @skipline Assuming
    * @skipline getDimensions
    *
    * @return XdmfArray containing dimensions of this grid.
@@ -164,7 +164,7 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfCurvilinearGrid.cpp
-   * Assuming that exampleGrid is a shared pointer to an XdmfCurvilinearGrid object
+   * @skipline Assuming
    * @skipline const
    *
    * Python: Python doesn't have a constant version
@@ -181,13 +181,13 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfCurvilinearGrid.cpp
-   * Assuming that exampleGrid is a sharedPointer to an XdmfCurvilinearGrid object
+   * @skipline Assuming
    * @skipline getGeometry
    *
    * Python
    *
    * @dontinclude XdmfExampleCurvilinearGrid.py
-   * Assuming that exampleGrid is a sharedPointer to an XdmfCurvilinearGrid object
+   * @skipline Assuming
    * @skipline getGeometry
    *
    * @return the geometry associated with this grid.
@@ -203,13 +203,14 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfCurvilinearGrid.cpp
+   * @skipline Assuming
    * @skipline XdmfArray::New
    * @until setDimensions
-   * Assumng that exampleGrid is a shared pointer to an XdmfCurvilinearGrid object
    *
    * Python
    *
    * @dontinclude XdmfExampleCurvilinearGrid.py
+   * @skipline Assuming
    * @skip setDimensions
    * @skipline newPoints
    * @until setDimensions

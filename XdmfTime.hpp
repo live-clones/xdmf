@@ -45,19 +45,13 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfTime.cpp
-   * The Default case sets the time to 0.0
    * @skipline New
-   * You can also specify a time when creating the XdmfTime object
-   * @skipline newTime
    * @until exampleTime2
    *
    * Python
    *
    * @dontinclude XdmfExampleTime.py
-   * The Default case sets the time to 0.0
    * @skipline New
-   * You can also specify a time when creating the XdmfTime object
-   * @skipline newTime
    * @until exampleTime2
    *
    * @param value the timeValue of the XdmfTime to create.
@@ -82,13 +76,13 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfTime.cpp
-   * Assumming that exampleTime is a shared pointer to an XdmfTime object
+   * @skipline Assumming
    * @skipline getTime
    *
    * Python
    *
    * @dontinclude XdmfExampleTime.py
-   * Assumming that exampleTime is a shared pointer to an XdmfTime object
+   * @skipline Assumming
    * @skipline getTime
    *
    * @return a double containing the time value.
@@ -106,7 +100,6 @@ public:
    * @skipline New
    * @skipline newTime
    * @skipline setValue
-   * This sets the exampleTime's value to the value of newTime, which is 5.0.
    *
    * Python
    *
@@ -114,7 +107,6 @@ public:
    * @skipline New
    * @skipline newTime
    * @skipline setValue
-   * This sets the exampleTime's value to the value of newTime, which is 5.0.
    *
    * @param time a double containing the time value.
    */

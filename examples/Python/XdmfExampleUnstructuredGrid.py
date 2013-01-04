@@ -1,6 +1,8 @@
 from Xdmf import *
 
 if __name__ == "__main__":
+	#Assuming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
+
 	exampleGrid = XdmfUnstructuredGrid.New()
 
 	newBrickX = 0.0

@@ -5,6 +5,8 @@
 
 int main(int, char **)
 {
+	//Assuming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
+
 	shared_ptr<XdmfUnstructuredGrid> exampleGrid = XdmfUnstructuredGrid::New();
 
 	double newBrickX = 0.0;

@@ -3,6 +3,9 @@
 int main(int, char **)
 {
 	shared_ptr<XdmfUnstructuredGrid> exampleGrid = XdmfUnstructuredGrid::New();
+
+	//Using an unstructured grid since XdmfGrid is an abstract class
+	//Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
 	
 	std::string newName = "New Name";
 	exampleGrid->setName(newName);

@@ -7,6 +7,8 @@ int main(int, char **)
 {
 	int size = 2;
 
+	//Assuming that exampleGrid is a shared pointer to an XdmfCurvilinearGrid object
+
 	if (size == 2)
         {
 

@@ -19,6 +19,11 @@ if __name__ == "__main__":
 	readCounts.push_back(10)
 	readCounts.push_back(10)
 	readCounts.push_back(10)
+	readDataSize = UInt32Vector()
+	#three dimensins, each with 20 maximum values
+	readDataSize.push_back(20)
+	readDataSize.push_back(20)
+	readDataSize.push_back(20)
 	exampleController = XdmfHDF5Controller.New(
 		newPath,
 		newSetPath,

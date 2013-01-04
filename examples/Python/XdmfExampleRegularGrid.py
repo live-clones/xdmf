@@ -1,6 +1,8 @@
 from Xdmf import *
 
 if __name__ == "__main__":
+	#Assuming exampleGrid is a shared pointer to an XdmfRegularGrid object
+
 	newBrickX = 20.0
 	newPointsX = 5
 	newOriginX = 0.0

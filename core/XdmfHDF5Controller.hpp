@@ -52,13 +52,13 @@ public:
    *
    * @dontinclude ExampleXdmfHDF5Controller.cpp
    * @skipline newPath
-   * @until readCounts)
+   * @until readDataSize)
    *
    * Python
    *
    * @dontinclude XdmfExampleHDF5Controller.py
    * @skipline newPath
-   * @until readCounts)
+   * @until readDataSize)
    *
    * @param hdf5FilePath the location of the hdf5 file the data set resides in.
    * @param dataSetPath the location of the dataset within the hdf5 file.
@@ -70,7 +70,7 @@ public:
    * @param dimensions the number of elements to select in each
    * dimension from the hdf5 data set. (size in each dimension)
    * @param dataspaceDimensions the number of elements in the entire
-   * hdf5 data set (may be larger that dimensions if using
+   * hdf5 data set (may be larger than dimensions if using
    * hyperslabs).
    *
    * @return new HDF5 Controller.

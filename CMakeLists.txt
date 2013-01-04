@@ -46,6 +46,9 @@ endif(BUILD_TESTING)
 option(XDMF_WRAP_PYTHON OFF)
 option(XDMF_WRAP_JAVA OFF)
 
+# Test for DSM
+option(XDMF_BUILD_DSM OFF)
+
 # If we are wrapping either, we need swig
 if(XDMF_WRAP_PYTHON OR XDMF_WRAP_JAVA)
   find_package(SWIG REQUIRED)
@@ -59,7 +62,11 @@ endif(XDMF_WRAP_PYTHON OR XDMF_WRAP_JAVA)
 if(XDMF_WRAP_PYTHON)
   find_package(PythonInterp REQUIRED)
   find_package(PythonLibs REQUIRED)
-  include_directories(${PYTHON_INCLUDE_DIRS})
+  if (XDMF_BUILD_DSM)
+    include_directories(${PYTHON_INCLUDE_DIRS} ${MPI_CXX_INCLUDE_PATH})
+  else (XDMF_BUILD_DSM)
+    include_directories(${PYTHON_INCLUDE_DIRS})
+  endif (XDMF_BUILD_DSM)
 
   # A macro to swig and create the python files
   # Since we essentually do the same thing inside and outside core, it
@@ -74,6 +81,10 @@ if(XDMF_WRAP_PYTHON)
     # optimize swig generation --- these are all flags corresponding to -O
     # except -fvirtual which breaks visitor operation
     set(CMAKE_SWIG_FLAGS ${XDMF_SWIG_FLAGS} -modern -fastdispatch -nosafecstrings -noproxydel -fastproxy -fastinit -fastunpack -fastquery -modernargs -nobuildnone)
+    #Enables DSM
+    if (XDMF_BUILD_DSM)
+      set(CMAKE_SWIG_FLAGS ${CMAKE_SWIG_FLAGS} -DXDMF_BUILD_DSM)
+    endif (XDMF_BUILD_DSM)
     set_source_files_properties(${python_name}.i PROPERTIES CPLUSPLUS ON)
     set(swig_extra_generated_files "")
     swig_add_module(${python_name} python ${python_name}.i)

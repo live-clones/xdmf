@@ -99,13 +99,13 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfUnstructuredGrid.cpp
-   * Assuming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
+   * @skipline Assuming
    * @skipline getGeometry
    *
    * Python
    *
    * @dontinclude XdmfExampleUnstructuredGrid.py
-   * Assuming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
+   * @skipline Assuming
    * @skipline getGeometry
    *
    * @return the geometry associated with this grid.
@@ -122,13 +122,13 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfUnstructuredGrid.cpp
-   * Assuming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
+   * @skipline Assuming
    * @skipline getTopology
    *
    * Python
    *
    * @dontinclude XdmfExampleUnstructuredGrid.py
-   * Assuming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
+   * @skipline Assuming
    * @skipline getTopology
    *
    * @return the topology associated with this grid.

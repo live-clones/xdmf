@@ -79,13 +79,13 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfGeometry.cpp
-   * assuming that exampleGeometry is a shared pointer to a XdmfGeometry object that has been filled with data
+   * @skipline Assuming
    * @skipline getNumberPoints
    *
    * Python
    *
    * @dontinclude XdmfExampleGeometry.py
-   * assuming that exampleGeometry is a shared pointer to a XdmfGeometry object that has been filled with data
+   * @skipline Assuming
    * @skipline getNumberPoints
    */
   virtual unsigned int getNumberPoints() const;
@@ -98,13 +98,13 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfGeometry.cpp
-   * assuming that exampleGeometry is a shared pointer to a XdmfGeometry object
+   * @skipline Assuming
    * @skipline getType
    *
    * Python
    *
    * @dontinclude XdmfExampleGeometry.py
-   * assuming that exampleGeometry is a shared pointer to a XdmfGeometry object
+   * @skipline Assuming
    * @skipline getType
    *
    * @return XdmfGeometryType of this geometry.

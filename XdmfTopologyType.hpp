@@ -191,13 +191,11 @@ public:
    *
    * @dontinclude ExampleXdmfTopologyType.cpp
    * @skipline getEdgesPerElement
-   * numEdges now contains the number of edges per element of the Triangle type.
    *
    * Python
    *
    * @dontinclude XdmfExampleTopologyType.py
    * @skipline getEdgesPerElement
-   * numEdges now contains the number of edges per element of the Triangle type
    *
    * @return an unsigned int containing the number of edges per element.
    */
@@ -212,13 +210,11 @@ public:
    *
    * @dontinclude ExampleXdmfTopologyType.cpp
    * @skipline getFacesPerElement
-   * numFaces now contains the number of faces per element of the Triangle type.
    *
    * Python
    *
    * @dontinclude XdmfExampleTopologyType.py
    * @skipline getFacePerElement
-   * numFaces now contains the number of faces per element of the Triangle type.
    *
    * @return an unsigned int containing the number of faces per element.
    */
@@ -234,13 +230,11 @@ public:
    *
    * @dontinclude ExampleXdmfTopologyType.cpp
    * @skipline holdID
-   * holdID now contains the ID of the Triangle type.
    *
    * Python
    *
    * @dontinclude XdmfExampleTopologyType.py
    * @skipline holdID
-   * holdID now contains the ID of the Triangle type.
    *
    * @return the ID of the topology type.
    */
@@ -275,13 +269,11 @@ public:
    *
    * @dontinclude ExampleXdmfTopologyType.cpp
    * @skipline getNodesPerElement
-   * numNodes now contains the number of nodes per element of the Triangle type.
    *
    * Python
    *
    * @dontinclude XdmfExampleTopologyType.py
    * @skipline getNodesPerElement
-   * numNodes now contains the number of nodes per element fo the Triangle type.
    *
    * @return an unsigned int containing number of nodes per element.
    */

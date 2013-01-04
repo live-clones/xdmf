@@ -3,6 +3,9 @@ from Xdmf import *
 if __name__ == "__main__":
 	exampleGrid = XdmfUnstructuredGrid.New()
 
+	#Using an unstructured grid since XdmfGrid is an abstract class
+	#Assumming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
+
 	newName = "New Name"
 	exampleGrid.setName(newName)
 

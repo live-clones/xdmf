@@ -85,13 +85,13 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfSet.cpp
-   * Assuming that exampleSet is a shared pointer to an XdmfSet object with its name set
+   * @skipline Assuming
    * @skipline getName
    *
    * Python
    *
    * @dontinclude XdmfExampleSet.py
-   * Assuming that exampleSet is a shared pointer to an XdmfSet object with its name set
+   * @skipline Assuming
    * @skipline getName
    *
    * @return a string containing the name of the set.
@@ -106,13 +106,13 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfSet.cpp
-   * Assuming that exampleSet is a shared pointer to an XdmfSet object with its type set
+   * @skipline Assuming
    * @skipline getType
    *
    * Python
    *
    * @dontinclude XdmfExampleSet.py
-   * Assuming that exampleSet is a shared pointer to an XdmfSet object with its type set
+   * @skipline Assuming
    * @skipline getType
    *
    * @return XdmfSetType of this set.

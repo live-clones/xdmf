@@ -3,6 +3,41 @@ XdmfCorePython.cpp:
 swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 */
 
+
+#ifdef XDMF_BUILD_DSM
+
+%module XdmfCore
+%{
+
+    #include <mpi.h>
+
+    #include <XdmfArray.hpp>
+    #include <XdmfArrayType.hpp>
+    #include <XdmfCore.hpp>
+    #include <XdmfCoreItemFactory.hpp>
+    #include <XdmfCoreReader.hpp>
+    #include <XdmfError.hpp>
+    #include <XdmfHeavyDataController.hpp>
+    #include <XdmfHeavyDataWriter.hpp>
+    #include <XdmfHDF5Controller.hpp>
+    #include <XdmfHDF5Writer.hpp>
+    #include <XdmfHDF5ControllerDSM.hpp>
+    #include <XdmfHDF5WriterDSM.hpp>
+    #include <XdmfInformation.hpp>
+    #include <XdmfItem.hpp>
+    #include <XdmfItemProperty.hpp>
+    #include <XdmfSharedPtr.hpp>
+    #include <XdmfSystemUtils.hpp>
+    #include <XdmfVersion.hpp>
+    #include <XdmfVisitor.hpp>
+    #include <XdmfWriter.hpp>
+
+    #include <ProjectVersion.hpp>
+%}
+
+
+#else
+
 %module XdmfCore
 %{
     #include <XdmfArray.hpp>
@@ -15,10 +50,6 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
     #include <XdmfHeavyDataWriter.hpp>
     #include <XdmfHDF5Controller.hpp>
     #include <XdmfHDF5Writer.hpp>
-#ifdef XDMF_BUILD_DSM
-    #include <XdmfHDF5ControllerDSM.hpp>
-    #include <XdmfHDF5WriterDSM.hpp>
-#endif
     #include <XdmfInformation.hpp>
     #include <XdmfItem.hpp>
     #include <XdmfItemProperty.hpp>
@@ -30,6 +61,8 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
     #include <ProjectVersion.hpp>
 %}
+
+#endif
 
 #ifdef SWIGJAVA
 
@@ -126,6 +159,10 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
 #ifdef SWIGPYTHON
 
+%include mpi4py/mpi4py.i
+
+%mpi4py_typemap(Comm, MPI_Comm);
+
 // Provide accessors from python lists to XdmfArrays
 %extend XdmfArray {
 
@@ -139,7 +176,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
     %pythoncode {
         def getNumpyArray(self):
-            h5ctl = self.getHDF5Controller()
+            h5ctl = self.getHeavyDataController()
             if h5ctl == None :
                 try :
                     from numpy import frombuffer as ___frombuffer
@@ -292,6 +329,8 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %shared_ptr(XdmfItemProperty)
 %shared_ptr(XdmfVisitor)
 %shared_ptr(XdmfWriter)
+
+%shared_ptr(std::vector<int>)
 
 // Abstract Base Classes
 %template(BaseVisitable) Loki::BaseVisitable<void>;

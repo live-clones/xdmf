@@ -6,6 +6,8 @@ int main(int, char **)
 {
 	shared_ptr<XdmfAttribute> exampleAttribute = XdmfAttribute::New();
 
+	//Assuming that exampleAttribute is a shared pointer to an XdmfAttribute object
+
 	exampleAttribute->setCenter(XdmfAttributeCenter::Node());
 
 	std::string newName = "New Name";

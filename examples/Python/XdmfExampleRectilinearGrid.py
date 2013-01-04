@@ -1,6 +1,8 @@
 from Xdmf import *
 
 if __name__ == "__main__":
+	#Assuming that exampleGrid is a shared pointer to an XdmfRectilinearGrid
+
 	pointsXArray = XdmfArray.New()
 	pointsXArray.pushBackAsInt32(5)
 	pointsXArray.pushBackAsInt32(6)

@@ -149,14 +149,14 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRectilinearGrid.cpp
-   * Assuming that exampleGrid is a shared pointer to an XdmfRectilinearGrid with two axes
+   * @skipline Assuming
    * @skipline readPointsX
    * @until readPointsY
    *
    * Python
    *
    * @dontinclude XdmfExampleRectilinearGrid.py
-   * Assuming that exampleGrid is a shared pointer to an XdmfRectilinearGrid with two axes
+   * @skipline Assuming
    * @skipline readPointsX
    * @until readPointsY
    *
@@ -176,7 +176,7 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRectilinearGrid.cpp
-   * Assuming that exampleGrid is a shared pointer to an XdmfRectilinearGrid with two axes
+   * @skipline Assuming
    * @skipline readPointsXConst
    * @until readPointsYConst
    *
@@ -198,13 +198,13 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRectilinearGrid.cpp
-   * Assuming that exampleGrid is a shared pointer to an XdmfRectilinearGrid
+   * @skipline Assuming
    * @skipline exampleCoordinates
    *
    * Python
    *
    * @dontinclude XdmfExampleRectilinearGrid.py
-   * Assuming that exampleGrid is a shared pointer to an XdmfRectilinearGrid
+   * @skipline Assuming
    * @skipline exampleCoordinates
    *
    * @return vector containing an array of coordinates along each
@@ -220,7 +220,7 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRectilinearGrid.cpp
-   * Assuming that exampleGrid is a shared pointer to an XdmfRectilinearGrid
+   * @skipline Assuming
    * @skipline exampleCoordinatesConst
    *
    * Python: does not support a constant version of this function
@@ -239,13 +239,13 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRectilinearGrid.cpp
-   * Assuming that exampleGrid is a shared pointer to an XdmfRectilinearGrid
+   * @skipline Assuming
    * @skipline exampleDimensions
    *
    * Python
    *
    * @dontinclude XdmfExampleRectilinearGrid.py
-   * Assuming that exampleGrid is a shared pointer to an XdmfRectilinearGrid
+   * @skipline Assuming
    * @skipline exampleDimensions
    *
    * @return XdmfArray containing dimensions of this grid.
@@ -261,7 +261,7 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRectilinearGrid.cpp
-   * Assuming that exampleGrid is a shared pointer to an XdmfRectilinearGrid
+   * @skipline Assuming
    * @skipline exampleDimensionsConst
    *
    * Python: Doesn't support a constant version of this function
@@ -278,17 +278,17 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRectilinearGrid.cpp
+   * @skipline Assuming
    * @skipline pointsXArray
    * @until pointsXArray->pushBack(10)
-   * Assuming that exampleGrid is a shared pointer to an XdmfRectilinearGrid
    * @skipline setCoordinates
    *
    * Python
    *
    * @dontinclude XdmfExampleRectilinearGrid.py
+   * @skipline Assuming
    * @skipline pointsXArray
    * @until pointsXArray.pushBackAsInt32(10)
-   * Assuming that exampleGrid is a shared pointer to an XdmfRectilinearGrid
    * @skipline setCoordinates
    *
    * @param axisIndex the index of the axis to set (i.e. 0 for x-axis).
@@ -306,23 +306,23 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRectilinearGrid.cpp
+   * @skipline Assuming
    * @skipline pointsXArray
    * @until pointsZArray->pushBack(2);
    * @skipline pointsCollector
    * @until pointsZArray
-   * Assuming that exampleGrid is a shared pointer to an XdmfRectilinearGrid
    * @skipline setCoordinates
    *
    * Python
    *
    * @dontinclude XdmfExampleRectilinearGrid.py
+   * @skipline Assuming
    * @skipline pointsXArray
    * @until pointsYArray.pushBackAsInt32(10)
    * @skipline pointsZArray
    * @until pointsZArray.pushBackAsInt32(2)
    * @skipline ArrayVector
    * @until pointsZArray
-   * Assuming that exampleGrid is a shared pointer to an XdmfRectilinearGrid
    * @skipline setCoordinates
    *
    * @param axesCoordinates the coordinates of points along each axis.

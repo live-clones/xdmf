@@ -92,40 +92,15 @@ public:
    *
    * @dontinclude ExampleXdmfMap.cpp
    * @skipline holdGlobalNodes
-   * @until New
-   * The globalNodeIDs are placed into the attribute
-   * The index they are at in the attribute corresponds to their localNodeID
-   * @skipline nodeAttribute
-   * @until push_back
-   * The Attribute is then added to the vector
-   * The index that the Attribute has in the vector corresponds to a task id
-   * Using this method add all the required nodes
-   * @skipline nodeAttribute
-   * until vector
-   * returns a vector of maps that holds the equivalencies for the nodes provided
-   * for example if Attribute 1 had globalNodeID 3 at localNodeID 2
-   * and Attribute 3 had globalNodeID 3 at localNodeID 5
-   * then map 1 would have an entry of (3, 5, 2)
-   * and map 3 would have an entry of (1, 2, 5)
-   * The entries are formatted (remoteTaskID, remoteLocalNodeID, localNodeID)
+   * @until localNodeID)
    *
    * Python
    *
    * @dontinclude XdmfExampleMap.py
-   * create attributes for each task id
-   * the index of the node id in the attribute is the local node id
-   * @skipline map1Attribute
-   * @until map2Attribute.insertAsInt32
-   * insert the attributes into a vector
-   * the id of the attribute in the vector is equal to the task id
-   * @skipline testVector
-   * @until New
-   * returns a vector of maps that holds the equivalencies for the nodes provided
-   * for example if Attribute 1 had globalNodeID 3 at localNodeID 2
-   * and Attribute 3 had globalNodeID 3 at localNodeID 5
-   * then map 1 would have an entry of (3, 5, 2)
-   * and map 3 would have an entry of (1, 2, 5)
-   * The entries are formatted (remoteTaskID, remoteLocalNodeID, localNodeID)
+   * @skipline #create
+   * @until push_back(map2Attribute)
+   * @skipline New
+   * @until localNodeID)
    *
    * @param globalNodeIds a vector of attributes containing globalNodeId
    * values for each partition to be mapped.
@@ -151,57 +126,16 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfMap.cpp
-   * Assuming that exampleMap is a shared pointer to an XdmfMap object filled with the following tuples
-   * (1, 1, 9)
-   * (1, 2, 8)
-   * (2, 3, 7)
-   * (2, 4, 6)
-   * (3, 5, 5)
-   * (3, 6, 4)
-   * @skipline getMap
-   * taskIDMap now contains the same tuples as exampleMap
-   * @skipline begin
-   * @until first
-   * taskIDValue is now equal to 1, because that is the first taskID listed
-   * @skipline nodeIDMap
-   * nodeIDMap now contains the following tuples because it retrieved the tuples associated with taskID 1
-   * (1, 9)
-   * (2, 8)
-   * @skipline begin
-   * @until first
-   * localNodeValue is now equal to 1, because it is the first entry in the first tuple in the set
-   * @skipline remoteNodeSet
-   * remoteNodeSet now contains all remoteLocalNodeIDs for taskID 1 and LocalNode 1
-   * in this case remoteNodeSet contains (9)
-   * @skipline begin
-   * @until remoteNodeValue
-   * remoteNodeValue now equals 9
+   * @skip getMap
+   * @skipline Assuming
+   * @until //remoteNodeValue
    *
    * Python
    *
    * @dontinclude XdmfExampleMap.py
-   * Assuming that exampleMap is a shared pointer to an XdmfMap object filled with the following tuples
-   * (1, 1, 9)
-   * (1, 2, 8)
-   * (2, 3, 7)
-   * (2, 4, 6)
-   * (3, 5, 5)
-   * (3, 6, 4)
-   * @skipline getMap
-   * @until break
-   * This prints out all the task IDs
-   * unless the break is called on the last iteration the program will fail because of an issue with SWIG
-   * @skipline nodeIDMap
-   * nodeIDMap now contains the following tuples because it retrieved the tuples associated with taskID 1
-   * (1, 9)
-   * (2, 8)
-   * @skipline 0
-   * @until break
-   * This prints out all the local node IDs
-   * unless the break is called on the last iteration the program will fail because of an issue with SWIG
-   * @skipline val
-   * @until print
-   * prints out all the remote node values associated with taskID 1 and localNode 1
+   * @skip getMap
+   * @skipline Assuming
+   * @until #prints
    *
    * @return stored boundary communicator map.
    */
@@ -215,13 +149,13 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfMap.cpp
-   * Assumming that exampleMap is a shared pointer to a XdmfMap object
+   * @skipline Assumming
    * @skipline getName
    *
    * Python
    *
    * @dontinclude XdmfExampleMap.py
-   * Assumming that exampleMap is a shared pointer to a XdmfMap object
+   * @skipline Assumming
    * @skipline getName
    *
    * @return name of boundary communicator map.
@@ -237,48 +171,20 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfMap.cpp
-   * Assuming that exampleMap is a shared pointer to an XdmfMap object filled with the following tuples
-   * (1, 1, 9)
-   * (1, 2, 8)
-   * (2, 3, 7)
-   * (2, 4, 6)
-   * (3, 5, 5)
-   * (3, 6, 4)
+   * @skip getMap
+   * @skipline Assuming
+   * @until 4)
    * @skipline getRemoteNodeIds
-   * nodeIDMap now contains the following tuples because it retrieved the tuples associated with taskID 1
-   * (1, 9)
-   * (2, 8)
-   * @skipline begin
-   * @until first
-   * localNodeValue is now equal to 1, because it is the first entry in the first tuple in the set
-   * @skipline remoteNodeSet
-   * remoteNodeSet now contains all remoteLocalNodeIDs for taskID 1 and LocalNode 1
-   * in this case remoteNodeSet contains (9)
-   * @skipline begin
-   * @until remoteNodeValue
-   * remoteNodeValue now equals 9
+   * @until //remoteNodeValue
    *
    * Python
    *
    * @dontinclude XdmfExampleMap.py
-   * Assuming that exampleMap is a shared pointer to an XdmfMap object filled with the following tuples
-   * (1, 1, 9)
-   * (1, 2, 8)
-   * (2, 3, 7)
-   * (2, 4, 6)
-   * (3, 5, 5)
-   * (3, 6, 4)
+   * @skip getMap
+   * @skipline Assuming
+   * @until 4)
    * @skipline getRemoteNodeIds
-   * nodeIDMap now contains the following tuples because it retrieved the tuples associated with taskID 1
-   * (1, 9)
-   * (2, 8)
-   * @skipline 0
-   * @until break
-   * This prints out all the local node IDs
-   * unless the break is called on the last iteration the program will fail because of an issue with SWIG
-   * @skipline val
-   * @until print
-   * prints out all the remote node values associated with taskID 1 and localNode 1
+   * @until #prints
    *
    * @param remoteTaskId a task id to retrieve mapping for.
    *
@@ -301,16 +207,14 @@ public:
    * @dontinclude ExampleXdmfMap.cpp
    * @skipline New
    * @skipline newRemoteTaskID
-   * @until insert
-   * This inserts an entry of (4, 7, 3) into the map
+   * @until //This
    *
    * Python
    *
    * @dontinclude XdmfExampleMap.py
    * @skipline New
    * @skipline newRemoteTaskID
-   * @until insert
-   * This inserts an entry of (4, 7, 3) into the map
+   * @until #This
    *
    * @param remoteTaskId task id where the remoteLoalNodeId is located.
    * @param localNodeId the node id of the node being mapped.
@@ -330,14 +234,14 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfMap.cpp
-   * Assumming that exampleMap is a shared pointer to a XdmfMap object
+   * @skipline Assumming
    * @skipline isInitialized
    * @until }
    *
    * Python
    *
    * @dontinclude XdmfExampleMap.py
-   * Assumming that exampleMap is a shared pointer to a XdmfMap object
+   * @skipline Assumming
    * @skipline isInitialized
    * @until read
    *
@@ -353,14 +257,14 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfMap.cpp
-   * Assumming that exampleMap is a shared pointer to a XdmfMap object
+   * @skipline Assumming
    * @skipline isInitialized
    * @until }
    *
    * Python
    *
    * @dontinclude XdmfExampleMap.py
-   * Assumming that exampleMap is a shared pointer to a XdmfMap object
+   * @skipline Assumming
    * @skipline isInitialized
    * @until read
    */
@@ -374,13 +278,13 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfMap.cpp
-   * Assumming that exampleMap is a shared pointer to a XdmfMap object
+   * @skipline Assumming
    * @skipline release
    *
    * Python
    *
    * @dontinclude XdmfExampleMap.py
-   * Assumming that exampleMap is a shared pointer to a XdmfMap object
+   * @skipline Assumming
    * @skipline release
    */
   void release();
@@ -425,63 +329,13 @@ public:
    * @skipline New
    * First create a std::map<int, std::set<int> >
    * @skipline taskMap
-   * @until taskMap.insert
-   * Then insert it into a std::map<int, std::map<int, std::set<int> > >
-   * Repeat as many times as necessary.
-   * @skipline nodeMap
-   * @until taskMap.insert
-   * then the result is set to the XdmfMap
-   * @skipline setMap
-   * This fills the XdmfMap with the following tuples
-   * (1, 2, 3)
-   * (1, 2, 6)
-   * (1, 2, 8)
-   * (1, 3, 3)
-   * (1, 4, 7)
-   * (1, 4, 9)
-   * (2, 5, 3)
-   * (2, 5, 6)
-   * (2, 5, 8)
-   * (2, 7, 3)
-   * (2, 9, 7)
-   * (2, 9, 9)
+   * @until //Are
    *
    * Python
    *
    * @dontinclude XdmfExampleMap.py
    * @skipline newTaskMap
-   * @until newNodeIdMap[4]
-   * newNodeIdMap now contains the following
-   * (2, 3)
-   * (2, 6)
-   * (2, 8)
-   * (3, 3)
-   * (4, 7)
-   * (4, 9)
-   * @skipline secondNodeIdMap
-   * @until secondNodeIdMap[9]
-   * secondNodeIdMap now contains the following
-   * (5, 3)
-   * (5, 6)
-   * (5, 8)
-   * (7, 3)
-   * (9, 7)
-   * (9, 9)
-   * @skipline newTaskMap
-   * @until setMap
-   * This fills the XdmfMap with the following tuples
-   * (1, 2, 3)
-   * (1, 2, 6)
-   * (1, 2, 8)
-   * (1, 3, 3)
-   * (1, 4, 7)
-   * (1, 4, 9)
-   * (2, 5, 3)
-   * (2, 5, 6)
-   * (2, 5, 8)
-   * (2, 7, 3)
-   * (2, 9, 7)
-   * (2, 9, 9)
+   * @until #Is
    *
    * @param map the boundary communicator map to store.
    */
@@ -495,14 +349,14 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfMap.cpp
-   * Assumming that exampleMap is a shared pointer to a XdmfMap object
+   * @skipline Assumming
    * @skipline newName
    * @until setName
    *
    * Python
    *
    * @dontinclude XdmfExampleMap.py
-   * Assumming that exampleMap is a shared pointer to a XdmfMap object
+   * @skipline Assumming
    * @skipline newName
    * @until setName
    *

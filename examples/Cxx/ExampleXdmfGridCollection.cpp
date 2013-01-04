@@ -4,6 +4,8 @@
 
 int main(int, char **)
 {
+	//Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object
+
 	shared_ptr<XdmfGridCollection> exampleCollection = XdmfGridCollection::New();
 
 	exampleCollection->setType(XdmfGridCollectionType::Temporal());

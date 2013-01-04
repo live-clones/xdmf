@@ -72,13 +72,11 @@ public:
    *
    * @dontinclude ExampleXdmfGeometryType.cpp
    * @skipline getDimensions
-   * The variable exampleDimensions now holds the number of dimensions that XYZ has
    *
    * Python
    *
    * @dontinclude XdmfExampleGeometryType.py
    * @skipline getDimensions
-   * The variable exampleDimensions now holds the number of dimensions that XYZ has
    *
    * @return an int containing number of dimensions.
    */
@@ -93,13 +91,11 @@ public:
    *
    * @dontinclude ExampleXdmfGeometryType.cpp
    * @skipline getName
-   * The variable exampleName now holds the name of XYZ
    *
    * Python
    *
    * @dontinclude XdmfExampleGeometryType.py
    * @skipline getName
-   * The variable exampleName now holds the name of XYZ
    *
    * @return the name of this geometry type.
    */

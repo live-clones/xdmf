@@ -5,6 +5,8 @@ int main(int, char **)
 {
 	int size = 2;
 
+	//Assuming that exampleGrid is a shared pointer to an XdmfRectilinearGrid
+
         shared_ptr<XdmfArray> pointsXArray = XdmfArray::New();
         pointsXArray->pushBack(5);
         pointsXArray->pushBack(6);

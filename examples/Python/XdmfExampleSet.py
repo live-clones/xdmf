@@ -1,6 +1,8 @@
 from Xdmf import *
 
 if __name__ == "__main__":
+	#Assuming that exampleSet is a shared pointer to an XdmfSet object
+
 	exampleSet = XdmfSet.New()
 
 	std::string newName = "New Name";

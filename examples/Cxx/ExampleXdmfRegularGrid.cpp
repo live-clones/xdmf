@@ -5,6 +5,8 @@ int main(int, char **)
 {
 	int size = 2;
 
+	//Assuming exampleGrid is a shared pointer to an XdmfRegularGrid object
+
 	double newBrickX = 20.0;
         unsigned int newPointsX = 5;
         double newOriginX = 0;

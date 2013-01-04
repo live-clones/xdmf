@@ -20,13 +20,19 @@ int main(int, char **)
 	readCounts.push_back(10);
 	readCounts.push_back(10);
 	readCounts.push_back(10);
+	std::vector<unsigned int> readDataSize;
+	//Three dimensions, each with a maximum of 20 values
+	readDataSize.push_back(20);
+	readDataSize.push_back(20);
+	readDataSize.push_back(20);
 	shared_ptr<XdmfHDF5Controller> exampleController = XdmfHDF5Controller::New(
 		newPath,
 		newSetPath,
 		readType,
 		readStarts,
 		readStrides,
-		readCounts);
+		readCounts,
+		readDataSize);
 
 	return 0;
 }

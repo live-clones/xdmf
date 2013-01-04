@@ -4,6 +4,7 @@ option(XDMF_BUILD_EXODUS_IO OFF)
 option(XDMF_BUILD_PARTITIONER OFF)
 option(XDMF_BUILD_FORTRAN OFF)
 
+
 set(XdmfUtilsSources
   XdmfDiff
   XdmfTopologyConverter)
@@ -77,6 +78,7 @@ endif(BUILD_TESTING)
 if(XDMF_WRAP_JAVA)
   XDMF_SWIG_JAVA(XdmfUtils Compiled_Xdmf_Jar)
 endif(XDMF_WRAP_JAVA)
+
 
 if(XDMF_WRAP_PYTHON)
   XDMF_SWIG_PYTHON(XdmfUtils Xdmf)

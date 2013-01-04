@@ -77,13 +77,13 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfAttribute.cpp
-   * Assuming that exampleAttribute is a shared pointer to an XdmfAttribute object with its center set
+   * @skipline Assuming
    * @skipline getCenter
    *
    * Python
    *
    * @dontinclude XdmfExampleAttribute.py
-   * Assuming that exampleAttribute is a shared pointer to an XdmfAttribute object with its center set
+   * @skipline Assuming
    * @skipline getCenter
    *
    * @return XdmfAttributeCenter of the attribute.
@@ -102,13 +102,13 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfAttribute.cpp
-   * Assuming that exampleAttribute is a shared pointer to an XdmfAttribute object
+   * @skipline Assuming
    * @skipline getName
    *
    * Python
    *
    * @dontinclude XdmfExampleAttribute.py
-   * Assuming that exampleAttribute is a shared pointer to an XdmfAttribute object
+   * @skipline Assuming
    * @skipline getName
    *
    * @return a string containing the name of the attribute.
@@ -123,13 +123,13 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfAttribute.cpp
-   * Assuming that exampleAttribute is a shared pointer to an XdmfAttribute object with its type set
+   * @skipline Assuming
    * @skipline getType
    *
    * Python
    *
    * @dontinclude XdmfExampleAttribute.py
-   * Assuming that exampleAttribute is a shared pointer to an XdmfAttribute object with its type set
+   * @skipline Assuming
    * @skipline getType
    *
    * @return XdmfAttributeType of the attribute.

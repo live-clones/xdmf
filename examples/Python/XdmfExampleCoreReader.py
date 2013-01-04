@@ -5,12 +5,12 @@ if __name__ == "__main__":
 	exampleReader = XdmfReader.New()
 
 
-	readLight = "your light data here"
-	exampleItem = reader->parse(readLight)
+	readLight = "<dataitem>1 1 1 1 1 1 3 5 7 4 2</dataitem>"
+	exampleItem = exampleReader.parse(readLight)
 
 	readPath = "your file path here";
-	exampleItem = reader->read(readPath)
-	exampleCollection = reader.readItems(readPath)
+	exampleItem = exampleReader.read(readPath)
+	exampleCollection = exampleReader.readItems(readPath)
 
 	readXPath = "your X path here"
-	exampleItems = reader.read(readPath, readXPath)
+	exampleItems = exampleReader.read(readPath, readXPath)

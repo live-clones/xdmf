@@ -1,6 +1,8 @@
 from Xdmf import *
 
 if __name__ == "__main__":
+	#Assuming that exampleGrid is a shared pointer to an XdmfCurvilinearGrid object
+
 	newPointsX = 5
 	newPointsY = 5
 	newPointsZ = 5

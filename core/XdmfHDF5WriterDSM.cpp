@@ -23,6 +23,8 @@
 
 #include <H5FDdsm.h>
 #include <hdf5.h>
+#include <H5FDdsmManager.h>
+#include <H5FDdsmBuffer.h>
 #include "XdmfHDF5ControllerDSM.hpp"
 #include "XdmfHDF5WriterDSM.hpp"
 
@@ -35,12 +37,44 @@ XdmfHDF5WriterDSM::New(const std::string & filePath,
   return p;
 }
 
+shared_ptr<XdmfHDF5WriterDSM>
+XdmfHDF5WriterDSM::New(const std::string & filePath,
+                       MPI_Comm comm,
+                       unsigned int bufferSize)
+{
+  shared_ptr<XdmfHDF5WriterDSM> p(new XdmfHDF5WriterDSM(filePath,
+                                                        comm,
+                                                        bufferSize));
+  return p;
+}
+
 XdmfHDF5WriterDSM::XdmfHDF5WriterDSM(const std::string & filePath,
                                      H5FDdsmBuffer * const dsmBuffer) :
   XdmfHDF5Writer(filePath),
   mDSMBuffer(dsmBuffer),
   mFAPL(-1)
 {
+}
+
+XdmfHDF5WriterDSM::XdmfHDF5WriterDSM(const std::string & filePath,
+                                     MPI_Comm comm,
+                                     unsigned int bufferSize) :
+  XdmfHDF5Writer(filePath),
+  mFAPL(-1)
+{
+        H5FDdsmManager * newManager = new H5FDdsmManager();
+        newManager->SetMpiComm(comm);
+        newManager->SetLocalBufferSizeMBytes(bufferSize);
+        newManager->SetIsStandAlone(H5FD_DSM_TRUE);
+        newManager->Create();
+
+        H5FD_dsm_set_manager(newManager);
+
+        H5FD_dsm_set_options(H5FD_DSM_LOCK_ASYNCHRONOUS);
+
+        H5FDdsmBuffer * newBuffer = newManager->GetDsmBuffer();
+	mDSMManager = newManager;
+	mDSMBuffer = newBuffer;
 }
 
 XdmfHDF5WriterDSM::~XdmfHDF5WriterDSM()
@@ -64,6 +98,36 @@ XdmfHDF5WriterDSM::createHDF5Controller(const std::string & hdf5FilePath,
                                     dimensions,
                                     dataspaceDimensions,
                                     mDSMBuffer);
+}
+
+H5FDdsmManager * XdmfHDF5WriterDSM::getManager()
+{
+  return mDSMManager;
+}
+
+H5FDdsmBuffer * XdmfHDF5WriterDSM::getBuffer()
+{
+  return mDSMBuffer;
+}
+
+void XdmfHDF5WriterDSM::setManager(H5FDdsmManager * newManager)
+{
+  H5FDdsmBuffer * newBuffer = newManager->GetDsmBuffer();
+  mDSMManager = newManager;
+  mDSMBuffer = newBuffer;
+}
+
+void XdmfHDF5WriterDSM::setBuffer(H5FDdsmBuffer * newBuffer)
+{
+  mDSMBuffer = newBuffer;
+}
+
+void XdmfHDF5WriterDSM::deleteManager()
+{
+	if (mDSMManager != NULL)
+	{
+		delete mDSMManager;
+	}
 }
 
 void 

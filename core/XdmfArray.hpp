@@ -252,13 +252,13 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline Assume
+   * @skipline Assuming
    * @skipline exampleController
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
-   * @skipline Assume
+   * @skipline Assuming
    * @skipline exampleController
    *
    * @return the heavy data controller attached to this array.
@@ -274,7 +274,7 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline Assume
+   * @skipline Assuming
    * @skipline exampleControllerConst
    *
    * Python: Doesn't support a constant version of this function
@@ -340,14 +340,14 @@ public:
    * @dontinclude ExampleXdmfArray.cpp
    * @skipline Assuming
    * @skip XdmfHeavyDataController
-   * @skipline exampleArray
+   * @skipline if
    * @until index
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
    * @skipline Assuming
-   * @skip [4,
+   * @skip [0,
    * @skipline 7]
    * @until Variations
    *
@@ -369,7 +369,13 @@ public:
    * @skipline exampleArray
    * @until {0,2,4,6,8,5,3,7,4,9}
    *
-   * Python: This function is not supported in Python
+   * Python: This function is not supported in Python, it is replaced by the getNumpyArray function
+   *
+   * @dontinclude XdmfExampleArray.py
+   * @skipline New
+   * @skipline initArray
+   * @skipline exampleArray
+   * @skipline getNumpyArray	
    *
    * @param startIndex the index in this array to begin copying from.
    * @param valuesPointer a pointer to an array to copy into.
@@ -556,7 +562,7 @@ public:
    *
    * @dontinclude XdmfExampleArray.py
    * @skipline Assuming
-   * @skipline uInt32Vector
+   * @skipline UInt32Vector
    * @until initialize
    *
    * @param arrayType the type of array to initialize.
