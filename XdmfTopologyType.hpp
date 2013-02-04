@@ -66,6 +66,14 @@
  *   Hexahedron_729 - 729 Node Tri-Octic Hexahedron
  *   Hexahedron_1000 - 1000 Node Tri-Nonic Hexahedron
  *   Hexahedron_1331 - 1331 Node Tri-Decic Hexahedron
+ *   Hexahedron_Spectral_64 - 64 Node Spectral Tri-Cubic Hexahedron
+ *   Hexahedron_Spectral_125 - 125 Node Spectral Tri-Quartic Hexahedron
+ *   Hexahedron_Spectral_216 - 216 Node Spectral Tri-Quintic Hexahedron
+ *   Hexahedron_Spectral_343 - 343 Node Spectral Tri-Hexic Hexahedron
+ *   Hexahedron_Spectral_512 - 512 Node Spectral Tri-Septic Hexahedron
+ *   Hexahedron_Spectral_729 - 729 Node Spectral Tri-Octic Hexahedron
+ *   Hexahedron_Spectral_1000 - 1000 Node Spectral Tri-Nonic Hexahedron
+ *   Hexahedron_Spectral_1331 - 1331 Node Spectral Tri-Decic Hexahedron
  *   Mixed - Mixture of Unstructured Topologies
  */
 class XDMF_EXPORT XdmfTopologyType : public XdmfItemProperty {
@@ -126,6 +134,14 @@ public:
   static shared_ptr<const XdmfTopologyType> Hexahedron_729();
   static shared_ptr<const XdmfTopologyType> Hexahedron_1000();
   static shared_ptr<const XdmfTopologyType> Hexahedron_1331();
+  static shared_ptr<const XdmfTopologyType> Hexahedron_Spectral_64();
+  static shared_ptr<const XdmfTopologyType> Hexahedron_Spectral_125();
+  static shared_ptr<const XdmfTopologyType> Hexahedron_Spectral_216();
+  static shared_ptr<const XdmfTopologyType> Hexahedron_Spectral_343();
+  static shared_ptr<const XdmfTopologyType> Hexahedron_Spectral_512();
+  static shared_ptr<const XdmfTopologyType> Hexahedron_Spectral_729();
+  static shared_ptr<const XdmfTopologyType> Hexahedron_Spectral_1000();
+  static shared_ptr<const XdmfTopologyType> Hexahedron_Spectral_1331();
   static shared_ptr<const XdmfTopologyType> Mixed();
 
   /**
