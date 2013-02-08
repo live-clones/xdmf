@@ -2,6 +2,7 @@
 #include "XdmfArrayType.hpp"
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfHDF5Writer.hpp"
+#include <iostream>
 
 int main(int, char **)
 {
