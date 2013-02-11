@@ -38,9 +38,11 @@ ADD_TEST_CXX(TestXdmfVersion)
 CLEAN_TEST_CXX(TestXdmfArray)
 CLEAN_TEST_CXX(TestXdmfArrayMultidimensional)
 CLEAN_TEST_CXX(TestXdmfArrayWriteRead
-  test.h5)
-CLEAN_TEST_CXX(TestXdmfArrayWriteRead
-  testHyperslab.h5)
+  test.h5,
+  testHyperslab.h5,
+  testDimensions.h5,
+  testLargeArray.h5,
+  testString.h5)
 CLEAN_TEST_CXX(TestXdmfHDF5Controller)
 CLEAN_TEST_CXX(TestXdmfHDF5Writer
   hdf5WriterTest.h5)

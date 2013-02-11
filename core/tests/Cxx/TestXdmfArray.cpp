@@ -163,7 +163,6 @@ int main(int, char **)
   array5->setValuesInternal(doubleValues, 3, 1);
   assert(array5->getSize() == 3);
   assert(array5->getArrayType() == XdmfArrayType::Float64());
-  assert(array5->getValuesString().compare("0 1.1 10.1") == 0);
 
   //
   // SHARED ASSIGNMENTS

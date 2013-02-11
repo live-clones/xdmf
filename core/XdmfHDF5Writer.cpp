@@ -22,13 +22,21 @@
 /*****************************************************************************/
 
 #include <hdf5.h>
-#include <sstream>
+#include <cmath>
 #include <cstdio>
+#include <numeric>
+#include <sstream>
 #include "XdmfArray.hpp"
 #include "XdmfArrayType.hpp"
 #include "XdmfError.hpp"
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfHDF5Writer.hpp"
+
+namespace {
+
+  const static unsigned int DEFAULT_CHUNK_SIZE = 10000;
+
+}
 
 /**
  * PIMPL
@@ -38,6 +46,7 @@ class XdmfHDF5Writer::XdmfHDF5WriterImpl {
 public:
 
   XdmfHDF5WriterImpl():
+    mChunkSize(DEFAULT_CHUNK_SIZE),
     mHDF5Handle(-1)
   {
   };
@@ -54,8 +63,8 @@ public:
       herr_t status = H5Fclose(mHDF5Handle);
       mHDF5Handle = -1;
     }
-  };  
-
+  };
+  
   int
   openFile(const std::string & filePath,
            const int fapl)
@@ -93,9 +102,9 @@ public:
     H5Eset_auto2(0, old_func, old_client_data);
 
     return toReturn;
-
   }
 
+  unsigned int mChunkSize;
   hid_t mHDF5Handle;
 
 };
@@ -146,6 +155,12 @@ XdmfHDF5Writer::closeFile()
   mImpl->closeFile();
 }
 
+unsigned int
+XdmfHDF5Writer::getChunkSize() const
+{
+  return mImpl->mChunkSize;
+}
+
 void 
 XdmfHDF5Writer::openFile()
 {
@@ -157,6 +172,12 @@ XdmfHDF5Writer::openFile(const int fapl)
 {
   mDataSetId = mImpl->openFile(mFilePath,
                                fapl);
+}
+
+void
+XdmfHDF5Writer::setChunkSize(const unsigned int chunkSize)
+{
+  mImpl->mChunkSize = chunkSize;
 }
 
 void
@@ -243,7 +264,6 @@ XdmfHDF5Writer::write(XdmfArray & array,
 
     // Open a hdf5 dataset and write to it on disk.
     herr_t status;
-    hsize_t size = array.getSize();
 
     // Save old error handler and turn off error handling for now
     H5E_auto_t old_func;
@@ -293,8 +313,27 @@ XdmfHDF5Writer::write(XdmfArray & array,
       dataspace = H5Screate_simple(dimensions.size(),
                                    &current_dims[0],
                                    &maximum_dims[0]);
+
+      // calculate a proper chunk size - for multidimensional datasets the
+      // chunk dimensions have similar shape to original dataset
       hid_t property = H5Pcreate(H5P_DATASET_CREATE);
-      std::vector<hsize_t> chunk_size(dimensions.size(), 1024);
+      const hsize_t totalDimensionsSize = 
+        std::accumulate(current_dims.begin(),
+                        current_dims.end(),
+                        1,
+                        std::multiplies<hsize_t>());
+      const double factor = 
+        std::pow(((double)mImpl->mChunkSize / totalDimensionsSize), 
+                 1.0 / current_dims.size());
+      std::vector<hsize_t> chunk_size(current_dims.begin(),
+                                      current_dims.end());
+      for(std::vector<hsize_t>::iterator iter = chunk_size.begin();
+          iter != chunk_size.end(); ++iter) {
+        *iter = (hsize_t)(*iter * factor);
+        if(*iter == 0) {
+          *iter = 1;
+        }
+      }
       status = H5Pset_chunk(property, dimensions.size(), &chunk_size[0]);
       dataset = H5Dcreate(mImpl->mHDF5Handle,
                           dataSetPath.str().c_str(),
@@ -303,6 +342,11 @@ XdmfHDF5Writer::write(XdmfArray & array,
                           H5P_DEFAULT,
                           property,
                           H5P_DEFAULT);
+      if(dataset < 0) {
+        XdmfError::message(XdmfError::FATAL,
+                           "H5Dcreate returned failure in "
+                           "XdmfHDF5Writer::write -- status: " + dataset);
+      }
       status = H5Pclose(property);
     }
 
@@ -315,6 +359,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
       status = H5Sclose(dataspace);
       
       // Resize to fit size of old and new data.
+      hsize_t size = array.getSize();
       hsize_t newSize = size + datasize;
       status = H5Dset_extent(dataset, &newSize);
       

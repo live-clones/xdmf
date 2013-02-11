@@ -65,7 +65,23 @@ public:
 
   virtual void closeFile();
 
+  /**
+   * Get the chunk size used to output datasets to hdf5.
+   *
+   * @return chunk size used to output datasets to hdf5.
+   */
+  unsigned int getChunkSize() const;
+
   virtual void openFile();
+
+  /**
+   * Set the chunk size used to output datasets to hdf5. For
+   * multidimensional datasets the chunk size is the total number of
+   * elements in the chunk.
+   * 
+   * @param chunkSize the number of elements per chunk.
+   */
+  void setChunkSize(const unsigned int chunkSize);
 
   virtual void visit(XdmfArray & array,
                      const shared_ptr<XdmfBaseVisitor> visitor);
