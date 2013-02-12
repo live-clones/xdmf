@@ -343,9 +343,11 @@ XdmfHDF5Writer::write(XdmfArray & array,
                           property,
                           H5P_DEFAULT);
       if(dataset < 0) {
+        std::stringstream error;
+        error << "H5Dcreate returned failure in XdmfHDF5Writer::write -- " 
+              << "dataset: " << dataset;
         XdmfError::message(XdmfError::FATAL,
-                           "H5Dcreate returned failure in "
-                           "XdmfHDF5Writer::write -- status: " + dataset);
+                           error.str());
       }
       status = H5Pclose(property);
     }
@@ -420,9 +422,11 @@ XdmfHDF5Writer::write(XdmfArray & array,
                                    NULL) ;
       
       if(status < 0) {
+        std::stringstream error;
+        error << "H5Dset_extent returned failure in XdmfHDF5Writer::write "
+              << "-- status: " << status;
         XdmfError::message(XdmfError::FATAL,
-                           "H5Dset_extent returned failure in "
-                           "XdmfHDF5Writer::write -- status: " + status);
+                           error.str());
       }
     }
 
@@ -434,9 +438,11 @@ XdmfHDF5Writer::write(XdmfArray & array,
                       array.getValuesInternal());
 
     if(status < 0) {
+      std::stringstream error;
+      error << "H5Dwrite returned failure in XdmfHDF5Writer::write "
+            << "-- status: " << status;
       XdmfError::message(XdmfError::FATAL, 
-                         "H5Dwrite returned failure in XdmfHDF5Writer::write "
-                         "-- status: " + status);
+                         error.str());
     }
 
     if(dataspace != H5S_ALL) {

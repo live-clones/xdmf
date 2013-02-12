@@ -800,7 +800,7 @@ XdmfArray::swap(std::vector<T> & array)
     currArray->swap(array);
     return true;
   }
-  catch(const boost::bad_get& exception) {
+  catch(const boost::bad_get & exception) {
     return false;
   }
 }

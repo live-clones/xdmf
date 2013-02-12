@@ -441,6 +441,34 @@ private:
   XdmfArray * const mArray;
 };
 
+class XdmfArray::IsInitialized : public boost::static_visitor<bool> {
+public:
+
+  IsInitialized()
+  {
+  }
+
+  bool
+  operator()(const boost::blank & array) const
+  {
+    return false;
+  }
+
+  template<typename T>
+  bool
+  operator()(const shared_ptr<std::vector<T> > & array) const
+  {
+    return true;
+  }
+
+  template<typename T>
+  bool
+  operator()(const boost::shared_array<const T> & array) const
+  {
+    return true;
+  }
+};
+
 class XdmfArray::Reserve : public boost::static_visitor<void> {
 public:
 
@@ -739,13 +767,8 @@ XdmfArray::insert(const unsigned int startIndex,
 bool
 XdmfArray::isInitialized() const
 {
-  try {
-    boost::get<boost::blank>(mArray);
-    return false;
-  }
-  catch(const boost::bad_get & exception) {
-  }
-  return true;
+  return boost::apply_visitor(IsInitialized(),
+                              mArray);
 }
 
 void
