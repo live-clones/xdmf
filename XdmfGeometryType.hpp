@@ -39,11 +39,17 @@
  *
  * Example of use:
  *
- * //Assuming that exampleGeometry is a shared pointer to an XdmfGeometry with its type set
- * if (exampleGeometry->getType() == XdmfGeometry::XYZ())
- * {
- *   //do whatever is to be done if the geometry is xyz
- * }
+ * C++
+ *
+ * @dontinclude ExampleXdmfGeometryType.cpp
+ * @skipline getType
+ * @until }
+ *
+ * Python
+ *
+ * @dontinclude XdmfExampleGeometryType.py
+ * @skipline getType
+ * @until do
  *
  * Xdmf supports the following geometry types:
  *   NoGeometryType

@@ -12,6 +12,11 @@ int main(int, char **)
 
 	shared_ptr<const XdmfGridCollectionType> exampleType = exampleCollection->getType();
 
+	if (exampleType == XdmfGridCollectionType::Temporal())
+	{
+		//do whatever is to be done if the grid collection is temporal
+	}
+
 	shared_ptr<XdmfInformation> exampleInformation = XdmfInformation::New();
 	std::string newKey = "New Key";
 	std::string newValue = "New Value";

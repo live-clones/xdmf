@@ -60,9 +60,13 @@ int main(int, char **)
 	//loop controlling integers
 	int i = 0;
 	int j = 0;
+	int k = 0;
+	int m = 0;
 	int task;
 	int node;
 	int remote;
+	std::string blankstring = "";
+	char* outstring = strdup(blankstring.c_str());
 	shared_ptr<XdmfMap> readMap;
 	std::map<int, std::map<int, std::set<int> > > taskIDMap;
 	std::map<int, std::map<int, std::set<int> > >::iterator taskWalker;
@@ -74,6 +78,10 @@ int main(int, char **)
 	for (i=0; i<gridHolder->getNumberMaps(); i++)
 	{
 		readMap = gridHolder->getMap(i);
+		if (!readMap->isInitialized())
+		{
+			readMap->read();
+		}
 		printf("Map # %d\n", i);
 		taskIDMap = readMap->getMap();
 		for (taskWalker = taskIDMap.begin(); taskWalker!= taskIDMap.end(); taskWalker++)
@@ -109,6 +117,10 @@ int main(int, char **)
         for (i=0; i<ungrid->getNumberMaps(); i++)
         {
                 readMap = ungrid->getMap(i);
+		if (!readMap->isInitialized())
+		{
+			readMap->read();
+		}
                 printf("Map # %d\n", i);
                 taskIDMap = readMap->getMap();
                 for (taskWalker = taskIDMap.begin(); taskWalker!= taskIDMap.end(); taskWalker++)
@@ -133,6 +145,10 @@ int main(int, char **)
 	for (i=0; i < ungrid->getNumberSets(); i++)
 	{
 		readSet = ungrid->getSet(i);
+		if (!readSet->isInitialized())
+		{
+			readSet->read();
+		}
 		printf("Set # %d\n", i);
 		printf("%s\n", readSet->getName().c_str());
 		if (readSet->getType() == XdmfSetType::Node())
@@ -149,6 +165,10 @@ int main(int, char **)
 		for (j=0; j < readSet->getNumberAttributes(); j++)
 		{
 			readAttribute = readSet->getAttribute(j);
+			if (!readAttribute->isInitialized())
+			{
+				readAttribute->read();
+			}
 			printf("Set Attribute # %d\n", j);
 			printf("%s\n", readAttribute->getName().c_str());
 			if (readAttribute->getType() == XdmfAttributeType::Scalar())
@@ -173,6 +193,10 @@ int main(int, char **)
 	for (i = 0; i < ungrid->getNumberAttributes(); i++)
 	{
 		readAttribute = ungrid->getAttribute(i);
+		if (!readAttribute->isInitialized())
+		{
+			readAttribute->read();
+		}
 		printf("Attribute # %d\n", i);
 		printf("%s\n", readAttribute->getName().c_str());
 		if (readAttribute->getType() == XdmfAttributeType::Scalar())
@@ -196,6 +220,10 @@ int main(int, char **)
 
 	printf("Unstructured Topology\n");
 	shared_ptr<XdmfTopology> untopology = ungrid->getTopology();
+	if (!untopology->isInitialized())
+	{
+		untopology->read();
+	}
 	printf("The topology's tag: %s\n", untopology->getItemTag().c_str());
 	if (untopology->getType() == XdmfTopologyType::Hexahedron())
 	{
@@ -210,6 +238,10 @@ int main(int, char **)
 
 	printf("Unstructured Geometry\n");
 	shared_ptr<XdmfGeometry> ungeometry = ungrid->getGeometry();
+	if (!ungeometry->isInitialized())
+	{
+		ungeometry->read();
+	}
 	printf("The geometry's tag: %s\n", ungeometry->getItemTag().c_str());
 	if (ungeometry->getType() == XdmfGeometryType::XYZ())
 	{
@@ -243,6 +275,10 @@ int main(int, char **)
         for (i=0; i<curvgrid->getNumberMaps(); i++)
         {
                 readMap = curvgrid->getMap(i);
+		if (!readMap->isInitialized())
+		{
+			readMap->read();
+		}
                 printf("Map # %d\n", i);
                 taskIDMap = readMap->getMap();
                 for (taskWalker = taskIDMap.begin(); taskWalker!= taskIDMap.end(); taskWalker++)
@@ -264,6 +300,10 @@ int main(int, char **)
         for (i=0; i < curvgrid->getNumberSets(); i++)
         {
                 readSet = curvgrid->getSet(i);
+		if (!readSet->isInitialized());
+		{
+			readSet->read();
+		}
                 printf("Set # %d\n", i);
                 printf("%s\n", readSet->getName().c_str());
                 if (readSet->getType() == XdmfSetType::Node())
@@ -280,6 +320,10 @@ int main(int, char **)
                 for (j=0; j < readSet->getNumberAttributes(); j++)
                 {
                         readAttribute = readSet->getAttribute(j);
+			if (!readAttribute->isInitialized())
+			{
+				readAttribute->read();
+			}
                         printf("Set Attribute # %d\n", j);
                         printf("%s\n", readAttribute->getName().c_str());
                         if (readAttribute->getType() == XdmfAttributeType::Scalar())
@@ -304,6 +348,10 @@ int main(int, char **)
         for (i = 0; i < curvgrid->getNumberAttributes(); i++)
         {
                 readAttribute = curvgrid->getAttribute(i);
+		if (!readAttribute->isInitialized())
+		{
+			readAttribute->read();
+		}
                 printf("Attribute # %d\n", i);
                 printf("%s\n", readAttribute->getName().c_str());
                 if (readAttribute->getType() == XdmfAttributeType::Scalar())
@@ -327,11 +375,19 @@ int main(int, char **)
 
         printf("Curvilinear Dimensions\n");
         shared_ptr<XdmfArray> curvdimensions = curvgrid->getDimensions();
+	if (!curvdimensions->isInitialized())
+	{
+		curvdimensions->read();
+	}
         printf("The dimensions' tag: %s\n", curvdimensions->getItemTag().c_str());
         printf("Contains the values: %s\n", curvdimensions->getValuesString().c_str());
 
         printf("Curvilinear Geometry\n");
         shared_ptr<XdmfGeometry> curvgeometry = curvgrid->getGeometry();
+	if (!curvgeometry->isInitialized())
+	{
+		curvgeometry->read();
+	}
         printf("The geometry's tag: %s\n", curvgeometry->getItemTag().c_str());
         if (curvgeometry->getType() == XdmfGeometryType::XYZ())
 	{
@@ -362,6 +418,10 @@ int main(int, char **)
         for (i=0; i<rectgrid->getNumberMaps(); i++)
         {
                 readMap = rectgrid->getMap(i);
+		if (!readMap->isInitialized())
+		{
+			readMap->read();
+		}
                 printf("Map # %d\n", i);
                 taskIDMap = readMap->getMap();
                 for (taskWalker = taskIDMap.begin(); taskWalker!= taskIDMap.end(); taskWalker++)
@@ -383,6 +443,10 @@ int main(int, char **)
 	for (i=0; i < rectgrid->getNumberSets(); i++)
         {
                 readSet = rectgrid->getSet(i);
+		if (!readSet->isInitialized())
+		{
+			readSet->read();
+		}
                 printf("Set # %d\n", i);
                 printf("%s\n", readSet->getName().c_str());
                 if (readSet->getType() == XdmfSetType::Node())
@@ -399,6 +463,10 @@ int main(int, char **)
                 for (j=0; j < readSet->getNumberAttributes(); j++)
                 {
                         readAttribute = readSet->getAttribute(j);
+			if (!readAttribute->isInitialized())
+			{
+				readAttribute->read();
+			}
                         printf("Set Attribute # %d\n", j);
                         printf("%s\n", readAttribute->getName().c_str());
                         if (readAttribute->getType() == XdmfAttributeType::Scalar())
@@ -423,6 +491,10 @@ int main(int, char **)
         for (i = 0; i < rectgrid->getNumberAttributes(); i++)
         {
                 readAttribute = rectgrid->getAttribute(i);
+		if (!readAttribute->isInitialized())
+		{
+			readAttribute->read();
+		}
                 printf("Attribute # %d\n", i);
                 printf("%s\n", readAttribute->getName().c_str());
                 if (readAttribute->getType() == XdmfAttributeType::Scalar())
@@ -445,6 +517,10 @@ int main(int, char **)
         }
         printf("Rectilinear Dimensions\n");
         shared_ptr<XdmfArray> rectdimensions = rectgrid->getDimensions();
+	if (!rectdimensions->isInitialized())
+	{
+		rectdimensions->read();
+	}
         printf("The dimensions' tag: %s\n", rectdimensions->getItemTag().c_str());
         printf("Contains the values: %s\n", rectdimensions->getValuesString().c_str());
 
@@ -453,8 +529,14 @@ int main(int, char **)
         printf("Contains the values: \n");
 	for (i=0;i<rectcoordinates.size();i++)
 	{
+		if (!rectcoordinates[i]->isInitialized())
+		{
+			rectcoordinates[i]->read();
+		}
 		printf("%s\n", rectcoordinates[i]->getValuesString().c_str());
 	}
+
+
 
         printf("Regular Grid\n");
         shared_ptr<XdmfRegularGrid> reggrid = gridHolder->getRegularGrid(0);
@@ -469,6 +551,10 @@ int main(int, char **)
         for (i=0; i<reggrid->getNumberMaps(); i++)
         {
                 readMap = reggrid->getMap(i);
+		if (!readMap->isInitialized())
+		{
+			readMap->read();
+		}
                 printf("Map # %d\n", i);
                 taskIDMap = readMap->getMap();
                 for (taskWalker = taskIDMap.begin(); taskWalker!= taskIDMap.end(); taskWalker++)
@@ -490,6 +576,10 @@ int main(int, char **)
         for (i=0; i < reggrid->getNumberSets(); i++)
         {
                 readSet = reggrid->getSet(i);
+		if (!readSet->isInitialized())
+		{
+			readSet->read();
+		}
                 printf("Set # %d\n", i);
                 printf("%s\n", readSet->getName().c_str());
                 if (readSet->getType() == XdmfSetType::Node())
@@ -506,6 +596,10 @@ int main(int, char **)
                 for (j=0; j < readSet->getNumberAttributes(); j++)
                 {
                         readAttribute = readSet->getAttribute(j);
+			if (!readAttribute->isInitialized())
+			{
+				readAttribute->read();
+			}
                         printf("Set Attribute # %d\n", j);
                         printf("%s\n", readAttribute->getName().c_str());
                         if (readAttribute->getType() == XdmfAttributeType::Scalar())
@@ -530,6 +624,10 @@ int main(int, char **)
         for (i = 0; i < reggrid->getNumberAttributes(); i++)
         {
                 readAttribute = reggrid->getAttribute(i);
+		if (!readAttribute->isInitialized())
+		{
+			readAttribute->read();
+		}
                 printf("Attribute # %d\n", i);
                 printf("%s\n", readAttribute->getName().c_str());
                 if (readAttribute->getType() == XdmfAttributeType::Scalar())
@@ -553,32 +651,49 @@ int main(int, char **)
 
         printf("Regular Brick Size\n");
         shared_ptr<XdmfArray> regbricksize = reggrid->getBrickSize();
+	if (!regbricksize->isInitialized())
+	{
+		regbricksize->read();
+	}
         printf("The brick's tag: %s\n", regbricksize->getItemTag().c_str());
         printf("Contains the values: %s\n", regbricksize->getValuesString().c_str());
 
         printf("Regular Number of Points\n");
         shared_ptr<XdmfArray> regnumpoints = reggrid->getDimensions();
+	if (!regnumpoints->isInitialized())
+	{
+		regnumpoints->read();
+	}
         printf("The dimensions' tag: %s\n", regnumpoints->getItemTag().c_str());
         printf("Contains the values: %s\n", regnumpoints->getValuesString().c_str());
 
         printf("Regular Origin\n");
         shared_ptr<XdmfArray> regorigin = reggrid->getOrigin();
+	if (!regorigin->isInitialized())
+	{
+		regorigin->read();
+	}
         printf("The origin's tag: %s\n", regorigin->getItemTag().c_str());
         printf("Contains the values: %s\n", regorigin->getValuesString().c_str());
 
 
 
 
+
+
         primaryDomain->getInformation(0)->setKey("Edited");
         primaryDomain->getInformation(0)->setValue("This file is the edited version");
+	printf("edited domain information\n");
 
         shared_ptr<XdmfAttribute> unglobalIDs = ungrid->getAttribute(0);
         int newIDs1 [] = {5,2,8,7,9,1};
         unglobalIDs->insert(0, newIDs1, 6, 1, 1);
+	printf("edited unstructured attribute: %s\n", unglobalIDs->getValuesString());
 
         shared_ptr<XdmfSet> unset = ungrid->getSet(0);
 	double newunsetdata [] = {1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 0.23};
 	unset->insert(0, newunsetdata, 10, 1, 1);
+	printf("edited unstructured set: %s\n", unset->getValuesString());
 
         untopology = ungrid->getTopology();
 	int untoposize = untopology->getSize();
@@ -589,6 +704,7 @@ int main(int, char **)
 		untopologydata[i] = untopologydata[i] + 1;
 	}
         untopology->insert(0, untopologydata, untopology->getSize(), 1, 1);
+	printf("edited unstructured topology: %s\n", untopology->getValuesString());
 
         ungeometry = ungrid->getGeometry();
 	int ungeosize = ungeometry->getSize();
@@ -699,43 +815,12 @@ int main(int, char **)
         regorigin->insert(0, regorigindata, regorigin->getSize(), 1, 1);
         reggrid->setOrigin(regorigin);
 
-	shared_ptr<XdmfMap> newMap = XdmfMap::New();
-	remoteIDset.clear();
-        nodeIDMap.clear();
-	taskIDMap.clear();
-	remoteIDset.insert(3);
-        remoteIDset.insert(6);
-        remoteIDset.insert(8);
-	nodeIDMap.insert(std::pair<int, std::set<int> >(2, remoteIDset));
-	remoteIDset.clear();
-        remoteIDset.insert(3);
-        nodeIDMap.insert(std::pair<int, std::set<int> >(3, remoteIDset));
-	remoteIDset.clear();
-        remoteIDset.insert(7);
-        remoteIDset.insert(9);
-        nodeIDMap.insert(std::pair<int, std::set<int> >(4, remoteIDset));
-	taskIDMap.insert(std::pair<int, std::map<int, std::set<int> > >(1, nodeIDMap));
-	nodeIDMap.clear();
-	remoteIDset.clear();
-        remoteIDset.insert(3);
-        remoteIDset.insert(6);
-        remoteIDset.insert(8);
-        nodeIDMap.insert(std::pair<int, std::set<int> >(5, remoteIDset));
-	remoteIDset.clear();
-	remoteIDset.insert(3);
-        nodeIDMap.insert(std::pair<int, std::set<int> >(7, remoteIDset));
-	remoteIDset.clear();
-        remoteIDset.insert(7);
-        remoteIDset.insert(9);
-        nodeIDMap.insert(std::pair<int, std::set<int> >(9, remoteIDset));
-	taskIDMap.insert(std::pair<int, std::map<int, std::set<int> > >(2, nodeIDMap));
-	newMap->setMap(taskIDMap);
-	reggrid->insert(newMap);
-
-
-        shared_ptr<XdmfWriter> exampleWriter = XdmfWriter::New("editedtestoutput.xmf");
+	shared_ptr<XdmfHDF5Writer> exampleHeavyWriter = XdmfHDF5Writer::New("editedtestoutput.h5");
+        shared_ptr<XdmfWriter> exampleWriter = XdmfWriter::New("editedtestoutput.xmf", exampleHeavyWriter);
+	//exampleHeavyWriter->setFileSizeLimit(1);
+	primaryDomain->accept(exampleHeavyWriter);
+	exampleHeavyWriter->setMode(XdmfHeavyDataWriter::Overwrite);
         primaryDomain->accept(exampleWriter);
-
 
 	return 0;
 }

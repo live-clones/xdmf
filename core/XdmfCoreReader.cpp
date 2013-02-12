@@ -188,6 +188,8 @@ public:
   readSingleNode(const xmlNodePtr currNode,
                  std::vector<shared_ptr<XdmfItem> > & myItems)
   {
+
+
     std::map<xmlNodePtr, shared_ptr<XdmfItem> >::const_iterator iter =
       mXPathMap.find(currNode);
     if(iter != mXPathMap.end()) {
@@ -198,15 +200,21 @@ public:
 
       xmlNodePtr childNode = currNode->children;
       if (XdmfArray::ItemTag.compare((char *)currNode->name) == 0) {
+	unsigned int childContentIndex = 0;
         while(childNode != NULL) {
           if(childNode->type == XML_TEXT_NODE && childNode->content) {
             const char * content = (char*)childNode->content;
+
+
+
             
             // determine if content is whitespace
             bool whitespace = true;
             
             const char * contentPtr = content;
+            //step through to end of pointer
             while(contentPtr != NULL) {
+              //if not a whitespace character, break
               if(!isspace(*contentPtr++)) {
                 whitespace = false;
                 break;
@@ -214,15 +222,38 @@ public:
             }
             
             if(!whitespace) {
-              itemProperties.insert(std::make_pair("Content", content));
-              itemProperties.insert(std::make_pair("XMLDir", mXMLDir));
-              break;
+              if (childContentIndex == 0) {
+                itemProperties.insert(std::make_pair("XMLDir", mXMLDir));
+              }
+
+              //split the content based on "|" characters
+              size_t barSplit = 0;
+              std::string splitString(content);
+              std::string subcontent;
+              while (barSplit != std::string::npos) {
+		barSplit = 0;
+                barSplit = splitString.find_first_of("|", barSplit);
+                if (barSplit == std::string::npos) {
+                  subcontent = splitString;
+                }
+                else {
+                  subcontent = splitString.substr(0, barSplit);
+                  splitString = splitString.substr(barSplit+1);
+                  barSplit++;
+                }
+                std::stringstream contentString;
+                contentString << "Content" << childContentIndex;
+                itemProperties.insert(std::make_pair(contentString.str(), subcontent));
+		childContentIndex++;
+              }
             }
           }
           childNode = childNode->next;
+          //childContentIndex++;
         }
       }
-     
+    
+ 
       xmlAttrPtr currAttribute = currNode->properties;
       while(currAttribute != NULL) {
         itemProperties.insert(std::make_pair((char *)currAttribute->name,

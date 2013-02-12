@@ -24,6 +24,8 @@ if __name__ == "__main__":
 
 	exampleTestPaths = exampleWriter.getWriteXPaths()
 
+	exampleXPathParse = exampleWriter.getXPathParse()
+
 	newLimit = 20;
 	#Assume that exampleWriter is a shared pointer to a XdmfWriter object
 	exampleWriter.setLightDataLimit(newLimit)
@@ -32,6 +34,8 @@ if __name__ == "__main__":
 	exampleWriter.setMode(XdmfWriter.Default)
 
 	exampleWriter.setWriteXPaths(True)
+
+	exampleWriter.setXPathParse(True)
 
 	#Using XdmfAttribute here, but any XdmfArray would work
 	exampleAttribute = XdmfAttribute.New()

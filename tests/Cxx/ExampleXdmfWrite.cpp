@@ -219,8 +219,24 @@ int main(int, char **)
         shared_ptr<XdmfHDF5Writer> exampleHeavyWriter = XdmfHDF5Writer::New("testoutput.h5");
         shared_ptr<XdmfWriter> exampleWriter = XdmfWriter::New("testoutput.xmf", exampleHeavyWriter);
 
+	exampleHeavyWriter->setFileSizeLimit(1);
 
+	primaryDomain->accept(exampleHeavyWriter);
+	exampleHeavyWriter->setMode(XdmfHeavyDataWriter::Overwrite);//do this so that the data isn't in the hdf5 file twice.
         primaryDomain->accept(exampleWriter);
 
+        exampleHeavyWriter->setMode(XdmfHeavyDataWriter::Append);
+	for (int i = 0; i <= 408; i++)
+	{//overflow occurs at around 509
+		primaryDomain->accept(exampleHeavyWriter);
+	}
+	exampleHeavyWriter->setMode(XdmfHeavyDataWriter::Default);
+	primaryDomain->accept(exampleHeavyWriter);
+	exampleHeavyWriter->setMode(XdmfHeavyDataWriter::Append);
+	for (int i = 0; i<5; i++)
+	{
+		primaryDomain->accept(exampleHeavyWriter);
+	}
+	primaryDomain->accept(exampleWriter);
   return 0;
 }

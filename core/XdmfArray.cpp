@@ -31,6 +31,11 @@
 #include "XdmfVisitor.hpp"
 #include "XdmfError.hpp"
 
+XDMF_CHILDREN_IMPLEMENTATION(XdmfArray,
+                             XdmfHeavyDataController,
+                             HeavyDataController,
+                             Name)
+
 class XdmfArray::Clear : public boost::static_visitor<void> {
 public:
 
@@ -61,8 +66,7 @@ public:
                          mArray->mArray);
   }
 
-private:
-  
+private: 
   XdmfArray * const mArray;
 };
 
@@ -488,8 +492,8 @@ public:
   unsigned int
   operator()(const boost::blank & array) const
   {
-    if(mArray->mHeavyDataController) {
-      return mArray->mHeavyDataController->getSize();
+    if(mArray->mHeavyDataControllers.size()>0) {
+      return mArray->mHeavyDataControllers[0]->getSize();//modify this to compile all controllers
     }
     return 0;
   }
@@ -522,7 +526,6 @@ XdmfArray::New()
 
 XdmfArray::XdmfArray() :
   mArrayPointerNumValues(0),
-  mHeavyDataController(shared_ptr<XdmfHeavyDataController>()),
   mName(""),
   mTmpReserveSize(0)
 {
@@ -554,8 +557,16 @@ XdmfArray::erase(const unsigned int index)
 shared_ptr<const XdmfArrayType>
 XdmfArray::getArrayType() const
 {
-  return boost::apply_visitor(GetArrayType(mHeavyDataController), 
-                              mArray);
+  if (mHeavyDataControllers.size()>0)
+  {
+    return boost::apply_visitor(GetArrayType(mHeavyDataControllers[0]), 
+                                mArray);
+  }
+  else
+  {
+    return boost::apply_visitor(GetArrayType(shared_ptr<XdmfHDF5Controller>()),
+                                mArray);
+  }
 }
 
 unsigned int
@@ -569,8 +580,17 @@ std::vector<unsigned int>
 XdmfArray::getDimensions() const
 {
   if(mDimensions.size() == 0) {
-    if(!this->isInitialized() && mHeavyDataController) {
-      return mHeavyDataController->getDimensions();
+    if(!this->isInitialized() && mHeavyDataControllers.size() > 0) {
+      std::vector<unsigned int> returnDimensions;
+      std::vector<unsigned int> tempDimensions;
+      for (int i = 0; i < mHeavyDataControllers.size(); i++) {
+        tempDimensions = mHeavyDataControllers[i]->getDimensions();
+        for (int j =0; i < tempDimensions.size(); i++)
+        {
+          returnDimensions.push_back(tempDimensions[i]);
+        }
+      }
+      return returnDimensions;
     }
     const unsigned int size = this->getSize();
     return std::vector<unsigned int>(1, size);
@@ -586,26 +606,13 @@ XdmfArray::getDimensionsString() const
                                                             dimensions.size());
 }
 
-shared_ptr<XdmfHeavyDataController>
-XdmfArray::getHeavyDataController()
-{
-  return boost::const_pointer_cast<XdmfHeavyDataController>
-    (static_cast<const XdmfArray &>(*this).getHeavyDataController());
-}
-
-shared_ptr<const XdmfHeavyDataController>
-XdmfArray::getHeavyDataController() const
-{
-  return mHeavyDataController;
-}
-
 std::map<std::string, std::string>
 XdmfArray::getItemProperties() const
 {
   std::map<std::string, std::string> arrayProperties;
-  if(mHeavyDataController) {
+  if(mHeavyDataControllers.size()>0) {
     arrayProperties.insert(std::make_pair("Format",
-                                          mHeavyDataController->getName()));
+                                          mHeavyDataControllers[0]->getName()));
   }
   else {
     arrayProperties.insert(std::make_pair("Format", "XML"));
@@ -658,6 +665,33 @@ XdmfArray::getValuesString() const
 {
   return boost::apply_visitor(GetValuesString(mArrayPointerNumValues), 
                               mArray);
+}
+
+shared_ptr<XdmfHeavyDataController>
+XdmfArray::getHeavyDataController()
+{
+  return boost::const_pointer_cast<XdmfHeavyDataController>
+    (static_cast<const XdmfArray &>(*this).getHeavyDataController(0));
+}
+
+shared_ptr<const XdmfHeavyDataController>
+XdmfArray::getHeavyDataController() const
+{
+  if (mHeavyDataControllers.size()>0) {
+    return mHeavyDataControllers[0];
+  }
+  else {
+    return shared_ptr<XdmfHeavyDataController>();
+  }
+}
+
+void
+XdmfArray::setHeavyDataController(shared_ptr<XdmfHeavyDataController> newController)
+{
+  //since this is replacing the previous version which was designed to completely replace the controller of the array
+  //it will clear the current controllers before adding the new one in
+  mHeavyDataControllers.clear();
+  mHeavyDataControllers.push_back(newController);
 }
 
 void
@@ -758,19 +792,41 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
                         const std::vector<shared_ptr<XdmfItem> > & childItems,
                         const XdmfCoreReader * const reader)
 {
+  //This inserts any XdmfInformation in childItems into the object.
   XdmfItem::populateItem(itemProperties, childItems, reader);
 
   const shared_ptr<const XdmfArrayType> arrayType = 
     XdmfArrayType::New(itemProperties);
 
   std::map<std::string, std::string>::const_iterator content =
-    itemProperties.find("Content");
+    itemProperties.find("Content0");
   if(content == itemProperties.end()) {
     XdmfError::message(XdmfError::FATAL, 
                        "'Content' not found in itemProperties in "
                        "XdmfArray::populateItem");
   }
-  const std::string & contentVal = content->second;
+
+  //this was originally a constant, but the compiler doesn't like creating vectors of constant strings.
+  std::vector<std::string> contentVals;
+  contentVals.push_back(content->second);
+
+  int contentIndex=1;
+
+  bool endOfContent = false;
+
+  while(!endOfContent)
+  {
+    std::stringstream contentSearch;
+    contentSearch << "Content" << contentIndex;
+    content = itemProperties.find(contentSearch.str());
+    if(content != itemProperties.end()) {
+      contentVals.push_back(content->second);
+    }
+    else {
+      endOfContent = true;
+    }
+    contentIndex++;
+  }
 
   std::map<std::string, std::string>::const_iterator dimensions =
     itemProperties.find("Dimensions");
@@ -796,52 +852,62 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
   }
   const std::string & formatVal = format->second;
 
-  if(formatVal.compare("HDF") == 0) {
-    size_t colonLocation = contentVal.find(":");
-    if(colonLocation == std::string::npos) {
-      XdmfError::message(XdmfError::FATAL, 
-                         "':' not found in content in "
-                         "XdmfArray::populateItem -- double check an HDF5 "
-                         "data set is specified for the file");
-    }
-    
-    std::string hdf5Path = contentVal.substr(0, colonLocation);
-    const std::string dataSetPath =
-      contentVal.substr(colonLocation + 1,
-                        contentVal.size() - colonLocation - 1);
 
-    // FIXME: for other OS (e.g. windows)
-    if(hdf5Path.size() > 0 && hdf5Path[0] != '/') {
-      // Dealing with a relative path for hdf5 location
-      std::map<std::string, std::string>::const_iterator xmlDir =
-        itemProperties.find("XMLDir");
-      if(xmlDir == itemProperties.end()) {
+  if(formatVal.compare("HDF") == 0) {
+    contentIndex = 0;
+    int contentStep = 2;
+    while (contentIndex < contentVals.size()) {
+      size_t colonLocation = contentVals[contentIndex].find(":");
+      if(colonLocation == std::string::npos) {
         XdmfError::message(XdmfError::FATAL, 
-                           "'XMLDir' not found in itemProperties in "
-                           "XdmfArray::populateItem");
+                           "':' not found in content in "
+                           "XdmfArray::populateItem -- double check an HDF5 "
+                           "data set is specified for the file");
       }
 
-      std::stringstream newHDF5Path;
-      newHDF5Path << xmlDir->second << hdf5Path;
-      hdf5Path = newHDF5Path.str();
+      std::string hdf5Path = contentVals[contentIndex].substr(0, colonLocation);
+      std::string dataSetPath = contentVals[contentIndex].substr(colonLocation+1);
+
+      //parse dimensions from the content
+      std::vector<unsigned int> contentDims;
+      try {
+        //this is the string that contains the dimensions
+        boost::tokenizer<> dimtokens(contentVals[contentIndex+1]);
+        for(boost::tokenizer<>::const_iterator iter = dimtokens.begin();
+            iter != dimtokens.end();
+            ++iter) {
+          contentDims.push_back(atoi((*iter).c_str()));
+        }
+	contentStep = 2;//if this works then the dimension content should be skipped over
+      }
+      catch (...) {//if it fails then it means that the next content is not a dimension string
+        //in this case it is assumed that the controller will have dimensions equal to the array
+        for (int j = 0; j < mDimensions.size(); j++) {
+          contentDims.push_back(mDimensions[j]);
+        }
+        contentStep = 1;
+      }
+
+      mHeavyDataControllers.push_back( 
+        XdmfHDF5Controller::New(hdf5Path,
+                                dataSetPath,
+                                arrayType,
+                                std::vector<unsigned int>(contentDims.size(),
+                                                          0),
+                                std::vector<unsigned int>(contentDims.size(),
+                                                          1),
+                                contentDims,
+                                contentDims)
+      );
+      contentIndex+=contentStep;
     }
-    mHeavyDataController =
-      XdmfHDF5Controller::New(hdf5Path,
-                              dataSetPath,
-                              arrayType,
-                              std::vector<unsigned int>(mDimensions.size(),
-                                                        0),
-                              std::vector<unsigned int>(mDimensions.size(),
-                                                        1),
-                              mDimensions,
-                              mDimensions);
   }
   else if(formatVal.compare("XML") == 0) {
     this->initialize(arrayType,
                      mDimensions);
     unsigned int index = 0;
     boost::char_separator<char> sep(" \t\n");
-    boost::tokenizer<boost::char_separator<char> > tokens(contentVal, sep);
+    boost::tokenizer<boost::char_separator<char> > tokens(contentVals[0], sep);
     if(arrayType == XdmfArrayType::String()) {
       for(boost::tokenizer<boost::char_separator<char> >::const_iterator
             iter = tokens.begin();
@@ -878,8 +944,14 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
 void
 XdmfArray::read()
 {
-  if(mHeavyDataController) {
-    mHeavyDataController->read(this);
+  if(mHeavyDataControllers.size() > 0) {
+    mHeavyDataControllers[0]->read(this);
+    for (int i = 1; i < mHeavyDataControllers.size(); i++)
+    {
+      shared_ptr<XdmfArray> tempArray = XdmfArray::New();
+      mHeavyDataControllers[i]->read(tempArray.get());
+      this->insert(this->getSize(), tempArray, 0, tempArray->getSize());
+    }
   }
 }
 
@@ -900,12 +972,6 @@ XdmfArray::reserve(const unsigned int size)
 }
 
 void
-XdmfArray::setHeavyDataController(const shared_ptr<XdmfHeavyDataController> heavyDataController)
-{
-  mHeavyDataController = heavyDataController;
-}
-
-void
 XdmfArray::setName(const std::string & name)
 {
   mName = name;
@@ -917,5 +983,5 @@ XdmfArray::swap(const shared_ptr<XdmfArray> array)
   std::swap(mArray, array->mArray);
   std::swap(mArrayPointerNumValues, array->mArrayPointerNumValues);
   std::swap(mDimensions, array->mDimensions);
-  std::swap(mHeavyDataController, array->mHeavyDataController);
+  std::swap(mHeavyDataControllers, array->mHeavyDataControllers);
 }

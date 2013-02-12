@@ -16,5 +16,10 @@ int main(int, char **)
 
 	shared_ptr<const XdmfSetType> exampleType = exampleSet->getType();
 
+	if (exampleType == XdmfSetType::Node())
+	{
+		//Do whatever is to be done if the set is a node
+	}
+
 	return 0;
 }

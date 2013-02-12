@@ -39,11 +39,17 @@
  *
  * Example of use:
  *
- * //Assuming that exampleTopology is a shared pointer to an XdmfTopology with its type set
- * if (exampleTopology->getType() == XdmfTopologyType::Triangle())
- * {
- *   //Do whatever is to be done if the type is Triangle
- * }
+ * C++
+ *
+ * @dontinclude ExampleXdmfTopologyType.cpp
+ * @skipline getType
+ * @until }
+ *
+ * Python
+ *
+ * @dontinclude XdmfExampleTopologyType.py
+ * @skipline getType
+ * @until do
  *
  * Xdmf supports the following topology types:
  *   NoTopologyType

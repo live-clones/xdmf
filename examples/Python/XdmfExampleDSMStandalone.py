@@ -94,36 +94,36 @@ if __name__ == "__main__":
 
 	exampleWriter.setMode(XdmfHeavyDataWriter.Hyperslab);
 
-	exampleArray.setHeavyDataController(writeController);
+	exampleArray.insert(writeController);
 
 	for i in range (0, size):
 		comm.Barrier()
 		if i == id:
 			print "Core # " + str(id)
 			print "Controller Stats"
-			print "datasetpath = " + exampleArray.getHeavyDataController().getDataSetPath()
-			print "filepath = " + exampleArray.getHeavyDataController().getFilePath()
+			print "datasetpath = " + exampleArray.getHeavyDataController(0).getDataSetPath()
+			print "filepath = " + exampleArray.getHeavyDataController(0).getFilePath()
 			print "Dataspace Dimensions"
-			outputVector = exampleArray.getHeavyDataController().getDataspaceDimensions()
+			outputVector = exampleArray.getHeavyDataController(0).getDataspaceDimensions()
 			j=0
 			for item in outputVector:
 				print "[" + str(j) + "] = " + str(item)
 				j = j + 1
 			print "Controller Dimensions"
-			outputVector = exampleArray.getHeavyDataController().getDimensions()
+			outputVector = exampleArray.getHeavyDataController(0).getDimensions()
 			j=0
 			for item in outputVector:
 				print "[" + str(j) + "] = " + str(item)
 				j = j + 1
-			print "Controller Size = " + str(exampleArray.getHeavyDataController().getSize())
+			print "Controller Size = " + str(exampleArray.getHeavyDataController(0).getSize())
 			print "Controller Starts"
-			outputVector = exampleArray.getHeavyDataController().getStart()
+			outputVector = exampleArray.getHeavyDataController(0).getStart()
 			j=0
 			for item in outputVector:
 				print "[" + str(j) + "] = " + str(item)
 				j = j + 1
 			print "Controller strides"
-			outputVector = exampleArray.getHeavyDataController().getStride()
+			outputVector = exampleArray.getHeavyDataController(0).getStride()
 			j=0
 			for item in outputVector:
 				print "[" + str(j) + "] = " + str(item)
@@ -177,7 +177,7 @@ if __name__ == "__main__":
 		readDataSize,
 		exampleWriter.getBuffer())
 
-	readArray.setHeavyDataController(readController)
+	readArray.insert(readController)
 
         print "testing read"
         readArray.read()
@@ -188,29 +188,29 @@ if __name__ == "__main__":
 		if i == id:
 			print "Core # " + str(id)
 			print "Controller Stats"
-			print "datasetpath = " + readArray.getHeavyDataController().getDataSetPath()
-			print "filepath = " + readArray.getHeavyDataController().getFilePath()
+			print "datasetpath = " + readArray.getHeavyDataController(0).getDataSetPath()
+			print "filepath = " + readArray.getHeavyDataController(0).getFilePath()
 			print "Dataspace Dimensions"
-			outputVector = readArray.getHeavyDataController().getDataspaceDimensions()
+			outputVector = readArray.getHeavyDataController(0).getDataspaceDimensions()
 			j=0
 			for item in outputVector:
 				print "[" + str(j) + "] = " + str(item)
 				j = j + 1
 			print "Controller Dimensions"
-			outputVector = readArray.getHeavyDataController().getDimensions()
+			outputVector = readArray.getHeavyDataController(0).getDimensions()
 			j=0
 			for item in outputVector:
 				print "[" + str(j) + "] = " + str(item)
 				j = j + 1
-			print "Controller Size = " + str(readArray.getHeavyDataController().getSize())
+			print "Controller Size = " + str(readArray.getHeavyDataController(0).getSize())
 			print "Controller Starts"
-			outputVector = readArray.getHeavyDataController().getStart()
+			outputVector = readArray.getHeavyDataController(0).getStart()
 			j=0
 			for item in outputVector:
 				print "[" + str(j) + "] = " + str(item)
 				j = j + 1
 			print "Controller strides"
-			outputVector = readArray.getHeavyDataController().getStride()
+			outputVector = readArray.getHeavyDataController(0).getStride()
 			j=0
 			for item in outputVector:
 				print "[" + str(j) + "] = " + str(item)

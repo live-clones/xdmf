@@ -306,17 +306,17 @@ public:
    * @skipline hdf5FilePath
    * @until setHeavyDataController
    *
-   * @param remoteTaskIdsController an XdmfHeavyDataController to the remote
+   * @param remoteTaskIdsControllers a vector of XdmfHeavyDataControllers to the remote
    * task ids dataset.
-   * @param localNodeIdsController an XdmfHeavyDataController to the local
+   * @param localNodeIdsControllers a vector of XdmfHeavyDataControllers to the local
    * node ids dataset.
-   * @param remoteLocalNodeIdsController an XdmfHeavyDataController to the
+   * @param remoteLocalNodeIdsControllers a vector of XdmfHeavyDataControllers to the
    * remote local node ids dataset.
    */
   void
-  setHeavyDataControllers(shared_ptr<XdmfHeavyDataController> remoteTaskIdsController,
-                          shared_ptr<XdmfHeavyDataController> localNodeIdsController,
-                          shared_ptr<XdmfHeavyDataController> remoteLocalNodeIdsController);
+  setHeavyDataControllers(std::vector<shared_ptr<XdmfHeavyDataController> > remoteTaskIdsControllers,
+                          std::vector<shared_ptr<XdmfHeavyDataController> > localNodeIdsControllers,
+                          std::vector<shared_ptr<XdmfHeavyDataController> > remoteLocalNodeIdsControllers);
 
   /**
    * Set the boundary communicator map.
@@ -380,12 +380,12 @@ private:
   XdmfMap(const XdmfMap & map);  // Not implemented.
   void operator=(const XdmfMap & map);  // Not implemented.
 
-  shared_ptr<XdmfHeavyDataController> mLocalNodeIdsController;
+  std::vector<shared_ptr<XdmfHeavyDataController> > mLocalNodeIdsControllers;
   // remoteTaskId | localNodeId | remoteLocalNodeId
   std::map<task_id, node_id_map > mMap;
   std::string mName;
-  shared_ptr<XdmfHeavyDataController> mRemoteLocalNodeIdsController;
-  shared_ptr<XdmfHeavyDataController> mRemoteTaskIdsController;
+  std::vector<shared_ptr<XdmfHeavyDataController> > mRemoteLocalNodeIdsControllers;
+  std::vector<shared_ptr<XdmfHeavyDataController> > mRemoteTaskIdsControllers;
 
 };
 

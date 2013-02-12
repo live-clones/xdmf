@@ -24,6 +24,8 @@
 #include <hdf5.h>
 #include <sstream>
 #include <cstdio>
+#include <set>
+#include "XdmfItem.hpp"
 #include "XdmfArray.hpp"
 #include "XdmfArrayType.hpp"
 #include "XdmfError.hpp"
@@ -38,7 +40,10 @@ class XdmfHDF5Writer::XdmfHDF5WriterImpl {
 public:
 
   XdmfHDF5WriterImpl():
-    mHDF5Handle(-1)
+    mHDF5Handle(-1),
+    mHDF5FileSizeLimit(-1),
+    mDepth(0),
+    mFileIndex(0)
   {
   };
 
@@ -97,6 +102,10 @@ public:
   }
 
   hid_t mHDF5Handle;
+  int mHDF5FileSizeLimit;
+  int mFileIndex;
+  int mDepth;
+  std::set<const XdmfItem *> mWrittenItems;
 
 };
 
@@ -140,6 +149,19 @@ XdmfHDF5Writer::createHDF5Controller(const std::string & hdf5FilePath,
                                  dataspaceDimensions);
 }
 
+
+void
+XdmfHDF5Writer::setFileSizeLimit(int newSize)
+{
+  mImpl->mHDF5FileSizeLimit = newSize;
+}
+
+int
+XdmfHDF5Writer::getFileSizeLimit()
+{
+  return mImpl->mHDF5FileSizeLimit;
+}
+
 void 
 XdmfHDF5Writer::closeFile()
 {
@@ -163,8 +185,42 @@ void
 XdmfHDF5Writer::visit(XdmfArray & array,
                       const shared_ptr<XdmfBaseVisitor> visitor)
 {
-  this->write(array, H5P_DEFAULT);
+  mImpl->mDepth++;
+  std::set<const XdmfItem *>::iterator checkWritten = mImpl->mWrittenItems.find(&array);
+  if (checkWritten == mImpl->mWrittenItems.end() || array.getItemTag() == "DataItem") {
+    //if it has children send the writer to them too.
+    array.traverse(visitor);
+    //only do this if the object has not already been written
+    this->write(array, H5P_DEFAULT);
+    mImpl->mWrittenItems.insert(&array);
+
+  }
+  //if the object has already been written, just end, it already has the data
+  mImpl->mDepth--;
+  if(mImpl->mDepth <= 0) {
+    mImpl->mWrittenItems.clear();
+  }
 }
+
+void
+XdmfHDF5Writer::visit(XdmfItem & item,
+                      const shared_ptr<XdmfBaseVisitor> visitor)
+{
+  mImpl->mDepth++;
+  //This is similar to the algorithm for writing XPaths
+  //shouldn't be a problem if XPaths are turned off because all this does is avoid writing an object twice
+  //if it was written once then all instances of the object should have the ocntroller
+  std::set<const XdmfItem *>::iterator checkWritten = mImpl->mWrittenItems.find(&item);
+  if (checkWritten == mImpl->mWrittenItems.end()) {
+    mImpl->mWrittenItems.insert(&item);
+    item.traverse(visitor);
+  }
+  mImpl->mDepth--;
+  if(mImpl->mDepth <= 0) {
+    mImpl->mWrittenItems.clear();
+  }
+}
+
 
 void
 XdmfHDF5Writer::write(XdmfArray & array,
@@ -213,233 +269,709 @@ XdmfHDF5Writer::write(XdmfArray & array,
     }
   }
 
+  herr_t status;
+
   if(datatype != -1) {
     std::string hdf5FilePath = mFilePath;
 
-    std::stringstream dataSetPath;
-
-    shared_ptr<XdmfHeavyDataController> heavyDataController = 
-      array.getHeavyDataController();
-    const std::vector<unsigned int> & dimensions = array.getDimensions();
-    std::vector<unsigned int> dataspaceDimensions = dimensions;
-    std::vector<unsigned int> start(dimensions.size(), 0);
-    std::vector<unsigned int> stride(dimensions.size(), 1);
-
-    if((mMode == Overwrite || mMode == Append || mMode == Hyperslab)
-       && heavyDataController) {
-      
-      // Write to the previous dataset
-      dataSetPath << heavyDataController->getDataSetPath();
-      hdf5FilePath = heavyDataController->getFilePath();
-      if(mMode == Hyperslab) {
-        dataspaceDimensions = heavyDataController->getDataspaceDimensions();
-        start = heavyDataController->getStart();
-        stride = heavyDataController->getStride();
-      }
+    size_t extIndex;
+    std::string checkFileName;
+    std::string checkFileExt;
+    extIndex = hdf5FilePath.find_last_of(".");
+    if (extIndex == std::string::npos) {
+      checkFileName = hdf5FilePath;
+      checkFileExt = "";
     }
     else {
-      dataSetPath << "Data" << mDataSetId;
+      checkFileName = hdf5FilePath.substr(0, extIndex);
+      checkFileExt = hdf5FilePath.substr(extIndex+1);
     }
 
-    // Open a hdf5 dataset and write to it on disk.
-    herr_t status;
-    hsize_t size = array.getSize();
+    std::stringstream dataSetPath;
 
-    // Save old error handler and turn off error handling for now
-    H5E_auto_t old_func;
-    void * old_client_data;
-    H5Eget_auto(0, &old_func, &old_client_data);
-    H5Eset_auto2(0, NULL, NULL);
-   
-    bool closeFile = false;
-    if(mImpl->mHDF5Handle < 0) {
-      mImpl->openFile(hdf5FilePath,
-                      fapl);
-      closeFile = true;
+    std::vector<shared_ptr<XdmfHeavyDataController> > previousControllers;
+
+    for(int i = 0; i < array.getNumberHeavyDataControllers(); i++) {
+      previousControllers.push_back(array.getHeavyDataController(i));
     }
 
-    hid_t dataset = H5Dopen(mImpl->mHDF5Handle,
-                            dataSetPath.str().c_str(),
-                            H5P_DEFAULT);
-
-    // if default mode find a new data set to write to (keep
-    // incrementing dataSetId)
-    if(dataset >= 0 && mMode == Default) {
-      while(true) {
-        dataSetPath.str(std::string());
-        dataSetPath << "Data" << ++mDataSetId;
-        if(!H5Lexists(mImpl->mHDF5Handle,
-                      dataSetPath.str().c_str(),
-                      H5P_DEFAULT)) {
-          dataset = H5Dopen(mImpl->mHDF5Handle,
-                            dataSetPath.str().c_str(),
-                            H5P_DEFAULT); 
-          break;
-        }
-      }
+    //remove controllers from the array, they will be replaced by the controllers created by this function.
+    while(array.getNumberHeavyDataControllers() != 0) {
+      array.removeHeavyDataController(0);
     }
 
-    // Restore previous error handler
-    H5Eset_auto2(0, old_func, old_client_data);
 
-    hid_t dataspace = H5S_ALL;
-    hid_t memspace = H5S_ALL;
 
-    std::vector<hsize_t> current_dims(dataspaceDimensions.begin(), 
-                                      dataspaceDimensions.end());
-
-    if(dataset < 0) {
-      std::vector<hsize_t> maximum_dims(dimensions.size(), H5S_UNLIMITED);
-      dataspace = H5Screate_simple(dimensions.size(),
-                                   &current_dims[0],
-                                   &maximum_dims[0]);
-      hid_t property = H5Pcreate(H5P_DATASET_CREATE);
-      std::vector<hsize_t> chunk_size(dimensions.size(), 1024);
-      status = H5Pset_chunk(property, dimensions.size(), &chunk_size[0]);
-      dataset = H5Dcreate(mImpl->mHDF5Handle,
-                          dataSetPath.str().c_str(),
-                          datatype,
-                          dataspace,
-                          H5P_DEFAULT,
-                          property,
-                          H5P_DEFAULT);
-      status = H5Pclose(property);
-    }
-
-    if(mMode == Append) {
-      // Need to resize dataset to fit new data
-      
-      // Get size of old dataset
-      dataspace = H5Dget_space(dataset);
-      hssize_t datasize = H5Sget_simple_extent_npoints(dataspace);
-      status = H5Sclose(dataspace);
-      
-      // Resize to fit size of old and new data.
-      hsize_t newSize = size + datasize;
-      status = H5Dset_extent(dataset, &newSize);
-      
-      // Select hyperslab to write to.
-      memspace = H5Screate_simple(1, &size, NULL);
-      dataspace = H5Dget_space(dataset); 
-      hsize_t start = datasize;
-      status = H5Sselect_hyperslab(dataspace,
-                                   H5S_SELECT_SET,
-                                   &start,
-                                   NULL,
-                                   &size,
-                                   NULL);
-    }
-    else if(mMode == Overwrite) {
-      // Overwriting - dataset rank must remain the same (hdf5 constraint)
-      dataspace = H5Dget_space(dataset);
-      
-      const unsigned int ndims = H5Sget_simple_extent_ndims(dataspace);
-      if(ndims != current_dims.size())
-        XdmfError::message(XdmfError::FATAL,                            \
-                           "Data set rank different -- ndims != "
-                           "current_dims.size() -- in "
-                           "XdmfHDF5Writer::write");
-
-      status = H5Dset_extent(dataset, &current_dims[0]);
-      dataspace = H5Dget_space(dataset);
-    }
-    else if(mMode == Hyperslab) {
-      // Hyperslab - dataset rank must remain the same (hdf5 constraint)
-      dataspace = H5Dget_space(dataset);
-      
-      const unsigned int ndims = H5Sget_simple_extent_ndims(dataspace);
-      if(ndims != current_dims.size())
-        XdmfError::message(XdmfError::FATAL,                            \
-                           "Data set rank different -- ndims != "
-                           "current_dims.size() -- in "
-                           "XdmfHDF5Writer::write");
-      
-      status = H5Dset_extent(dataset, &current_dims[0]);
-      dataspace = H5Dget_space(dataset);
-
-      std::vector<hsize_t> count(dimensions.begin(),
-                                 dimensions.end());
-      std::vector<hsize_t> currStride(stride.begin(),
-                                      stride.end());
-      std::vector<hsize_t> currStart(start.begin(),
-                                     start.end());
-
-      memspace = H5Screate_simple(count.size(),
-                                  &(count[0]),
-                                  NULL);
-      status = H5Sselect_hyperslab(dataspace,
-                                   H5S_SELECT_SET,
-                                   &currStart[0],
-                                   &currStride[0],
-                                   &count[0],
-                                   NULL) ;
-      
-      if(status < 0) {
-        XdmfError::message(XdmfError::FATAL,
-                           "H5Dset_extent returned failure in "
-                           "XdmfHDF5Writer::write -- status: " + status);
-      }
-    }
-
-    status = H5Dwrite(dataset,
-                      datatype,
-                      memspace,
-                      dataspace,
-                      H5P_DEFAULT,
-                      array.getValuesInternal());
-
-    if(status < 0) {
-      XdmfError::message(XdmfError::FATAL, 
-                         "H5Dwrite returned failure in XdmfHDF5Writer::write "
-                         "-- status: " + status);
-    }
-
-    if(dataspace != H5S_ALL) {
-      status = H5Sclose(dataspace);
-    }
-    if(memspace != H5S_ALL) {
-      status = H5Sclose(memspace);
-    }
-    status = H5Dclose(dataset);
-    if(closeDatatype) {
-      status = H5Tclose(datatype);
-    }
-    if(closeFile) {
-      mImpl->closeFile();
-    }
-
-    // Attach a new controller to the array
-    shared_ptr<XdmfHDF5Controller> newDataController =
-      shared_ptr<XdmfHDF5Controller>();
-
-    unsigned int newSize = array.getSize();
-    if(mMode == Append && heavyDataController) {
-      newSize = array.getSize() + heavyDataController->getSize();
-      newDataController =
+    if (previousControllers.size() == 0) {
+      //create a temporary controller if the array doesn't have one
+      shared_ptr<XdmfHDF5Controller> tempDataController =
         this->createHDF5Controller(hdf5FilePath,
-                                   dataSetPath.str(),
+                                   "Data",
                                    array.getArrayType(),
                                    std::vector<unsigned int>(1, 0),
                                    std::vector<unsigned int>(1, 1),
-                                   std::vector<unsigned int>(1, newSize),
-                                   std::vector<unsigned int>(1, newSize));
+                                   std::vector<unsigned int>(1, array.getSize()),
+                                   std::vector<unsigned int>(1, array.getSize()));
+      previousControllers.push_back(tempDataController);
     }
 
-    if(mMode == Default || !heavyDataController) {
-      ++mDataSetId;
+    int controllerIndexOffset = 0;
+
+    for(int i = 0; i < previousControllers.size(); i++)// it is assumed that the array will have at least one controller
+    {
+      if (mMode == Append) {//append only cares about the last controller, so add the rest back in
+	for (; i < previousControllers.size() - 1; i++) {
+          array.insert(previousControllers[i]);
+	}
+      }
+
+      shared_ptr<XdmfHeavyDataController> heavyDataController =
+        previousControllers[i];
+      //stats for the data currently stored in the array
+      const std::vector<unsigned int> & dimensions = array.getDimensions();
+      std::vector<unsigned int> dataspaceDimensions = dimensions;
+      std::vector<unsigned int> start(dimensions.size(), 0);
+      std::vector<unsigned int> stride(dimensions.size(), 1);
+
+      if((mMode == Overwrite || mMode == Append || mMode == Hyperslab)
+        && heavyDataController) {
+
+        // Write to the previous dataset
+        dataSetPath.str(std::string());
+        dataSetPath << heavyDataController->getDataSetPath();
+        hdf5FilePath = heavyDataController->getFilePath();
+        if(mMode == Hyperslab) {//start, stride, and dataspace dimensions only matter for hyperslab mode
+          dataspaceDimensions = heavyDataController->getDataspaceDimensions();
+          start = heavyDataController->getStart();
+          stride = heavyDataController->getStride();
+        }
+      }
+      else {
+        dataSetPath.str(std::string());
+        dataSetPath << "Data" << mDataSetId;
+      }
+
+      // Open a hdf5 dataset and write to it on disk.
+      hsize_t size = array.getSize();
+
+      // Save old error handler and turn off error handling for now
+      H5E_auto_t old_func;
+      void * old_client_data;
+      H5Eget_auto(0, &old_func, &old_client_data);
+      H5Eset_auto2(0, NULL, NULL);
+
+      //check here for if the file would become larger than the limit after the addition.
+      //then check subsequent files for the same limitation
+      //currently assuming that at least one dimension will be written per file.
+      //probably for append and default	
+      //no need to check for overwrite the data is already alloted
+      //  might need to check after all as overwrite might expand data size.
+      //might need to check for hyperslab, if the data wasn't alloted yet.
+
+      bool splittingPossible = false;
+      //check if splitting is necessary
+      if (mMode == Overwrite) {//might need a split if data written is larger than data alotted
+        splittingPossible = true;
+      }
+      if (mMode == Default) {//new data set is created with each call
+        splittingPossible = true;
+      }
+      if (mMode == Append) {//data is added onto end of sets
+        splittingPossible = true;
+      }
+      if (mMode == Hyperslab) {//splitting is only required if the slab is not set up yet
+        //check if slab already exists
+        int numData = mImpl->openFile(hdf5FilePath,
+                                      fapl);
+        if (numData > 0) {//if it already exists the file does not need to be split.
+          splittingPossible = false;
+        }
+        else {
+          splittingPossible = true;
+        }
+      }
+
+      std::vector<std::string> filesWritten;
+      std::vector<shared_ptr<XdmfArray> > arraysWritten;
+      std::vector<std::vector<unsigned int> > startsWritten;
+      std::vector<std::vector<unsigned int> > stridesWritten;
+      std::vector<std::vector<unsigned int> > dimensionsWritten;
+      std::vector<std::vector<unsigned int> > dataSizesWritten;
+
+      //this is the file splitting algorithm
+      if (mImpl->mHDF5FileSizeLimit > 0 && splittingPossible) {//only if the file limit is positive, disabled if 0 or negative
+        //repeat until a suitable file is found
+        bool suitableFound = false;
+        unsigned int currentDimension = 0;
+        unsigned int previousDimension = currentDimension;
+        unsigned int previousDataSize = 0;
+        //Even though theoretically this could be an infinite loop
+        //if all possible files with the specified name are produced
+        //the chances of that happening are small.
+        //It can handle up to 65535 different files.
+        //This value may vary depending on the compiler and platform.
+        //The variable UINT_MAX holds the value in question.
+        //If all files are take up it will loop until a file opens up since adding past the max causes overflow.
+        while (currentDimension < dimensions.size()) {
+
+          std::stringstream testFile;
+          if (mImpl->mFileIndex == 0) {//if sequentially named files need to be created or referenced
+            testFile << checkFileName << "." << checkFileExt;
+          }
+          else {
+            testFile << checkFileName << mImpl->mFileIndex << "." << checkFileExt;
+          }
+          int sizeOffset = 0;
+          FILE *checkFile = NULL;
+          // get the file stream
+          checkFile = fopen(testFile.str().c_str(), "r");
+          int fileSize = 0;//if the file doesn't exist the size is 0 because there's no data
+          if (checkFile != NULL) {
+            // set the file pointer to end of file
+            fseek(checkFile, 0, SEEK_END);
+            // get the file size, in bytes
+            fileSize = ftell(checkFile);
+
+            //if overwrite subtract previous data size.
+            if (mMode == Overwrite) {
+              //find previous data size
+              mImpl->openFile(testFile.str(),
+                              fapl);
+              hid_t checkset = H5Dopen(mImpl->mHDF5Handle,
+                                       dataSetPath.str().c_str(),
+                                       H5P_DEFAULT);
+              hid_t checkspace = H5S_ALL;
+              checkspace = H5Dget_space(checkset);
+              hssize_t checksize = H5Sget_simple_extent_npoints(checkspace);
+              status = H5Dclose(checkset);
+              if(checkspace != H5S_ALL) {
+                status = H5Sclose(checkspace);
+              }
+              fileSize = fileSize - checksize;//remove previous set's size, since it's overwritten
+              if (fileSize < 0) {
+                fileSize = 0;
+              }
+            }
+
+            fclose(checkFile);
+          }
+          else if (previousDataSize == 0) {
+            sizeOffset += 800;//base size of an hdf5 file is 800
+          }
+          // close stream and release buffer
+          //check size to see if it's within range
+          if (closeDatatype == true) {//closetype is only true if strings are being used, it's set at the beginning when types are checked.
+            //compile the length of all stored strings
+            //this would be time consuming but it's required to accurately guess the size of the data stored
+            //Advise against using split HDF5 files and strings in conjunction.
+            //Probably would lengthen execution times significantly
+            int arrayStartIndex = 0;//starting index
+            for (int j = 0; j < previousDimension; j++) {
+              arrayStartIndex += dimensions[j];
+            }
+            //if needed split the written array into smaller arrays based on dimension blocks
+            while (currentDimension < dataspaceDimensions.size()) {
+              int sizeSubTotal = 0;
+              for (int j = arrayStartIndex; j < arrayStartIndex+dimensions[currentDimension]; j++) {
+                sizeSubTotal += array.getValue<std::string>(j).length() * 8;
+              }
+              if (sizeSubTotal+previousDataSize+fileSize > mImpl->mHDF5FileSizeLimit*(1024*1024)) {
+                if (sizeSubTotal + 800 > mImpl->mHDF5FileSizeLimit*(1024*1024)) {
+                  XdmfError::message(XdmfError::FATAL,
+                                     "Error: Specified file size is too small for dimensions of XdmfArray being written.\n");
+                }
+                mImpl->mFileIndex++;
+                break;
+              }
+              else {
+                sizeOffset += sizeSubTotal;
+              }
+              currentDimension++;
+            }
+          }
+          else {
+            int dataItemSize = 0;
+            //data item size depends on the variable type
+            dataItemSize = array.getArrayType()->getElementSize();
+
+            //if needed split the written array into smaller arrays based on dimension blocks
+            int sizeSubTotal = 0;
+            while (currentDimension < dataspaceDimensions.size()) {
+              sizeSubTotal = dataspaceDimensions[currentDimension] * dataItemSize;
+              if (sizeSubTotal+previousDataSize+fileSize > mImpl->mHDF5FileSizeLimit*(1024*1024)) {
+                if (sizeSubTotal + 800 > mImpl->mHDF5FileSizeLimit*(1024*1024)) {
+                  XdmfError::message(XdmfError::FATAL,
+                                     "Error: Specified file size is too small for dimensions of XdmfArray being written.\n");
+                }
+                mImpl->mFileIndex++;
+                break;
+              }
+              else {
+                sizeOffset += sizeSubTotal;
+              }
+              currentDimension++;
+              //maybe move to next controller?
+            }
+          }
+          if (sizeOffset > 0) {//If data is written place the partition in the appropriate vectors
+            previousDataSize += sizeOffset;
+            //place up to dimension j-1 into the array and add it to the arrays to be written
+            int containedInPriorDimensions = controllerIndexOffset;//starting index
+            int containedInDimensions = 0;//count moved
+            std::vector<unsigned int> partialStarts;
+            std::vector<unsigned int> partialStrides;
+            std::vector<unsigned int> partialDimensions;
+            std::vector<unsigned int> partialDataSizes;
+            int j = 0;
+            for (j = 0; j < previousDimension; j++) {
+              containedInPriorDimensions += dimensions[j];
+            }
+            for (j = previousDimension; j < currentDimension; j++) {
+              containedInDimensions += dimensions[j];
+              //if the array fits inside the dimensions without garbage data
+              if (containedInDimensions+containedInPriorDimensions<array.getSize()) {
+                partialStarts.push_back(start[j]);
+                partialStrides.push_back(stride[j]);
+                partialDimensions.push_back(dimensions[j]);
+                partialDataSizes.push_back(dataspaceDimensions[j]);
+              }
+              else {//otherwise resize the current dimension to fit what is left in the array
+                if (array.getSize() - containedInPriorDimensions > 0) {
+                  partialDimensions.push_back(array.getSize() - (containedInDimensions - dimensions[j]));
+                  partialStarts.push_back(start[j]);
+                  partialStrides.push_back(stride[j]);				
+                  partialDataSizes.push_back(dataspaceDimensions[j]);
+                }
+                else { //if the array fit perfectly in the prior dimensions then just end
+                  break;
+                }
+              }
+            }
+            if (j == dimensions.size()) {
+              controllerIndexOffset = containedInPriorDimensions + containedInDimensions;
+            }
+            shared_ptr<XdmfArray> partialArray = XdmfArray::New();
+            if (datatype == H5T_NATIVE_CHAR){
+              partialArray->initialize(XdmfArrayType::Int8(), 0);
+              for (j = containedInPriorDimensions; j < containedInPriorDimensions + containedInDimensions; j++){
+                partialArray->pushBack(array.getValue<char>(j));
+              }
+            }
+            else if (datatype == H5T_NATIVE_SHORT){
+              partialArray->initialize(XdmfArrayType::Int16(), 0);
+              for (j = containedInPriorDimensions; j < containedInPriorDimensions + containedInDimensions; j++){
+                partialArray->pushBack(array.getValue<short>(j));
+              }
+            }
+            else if (datatype == H5T_NATIVE_INT){
+              partialArray->initialize(XdmfArrayType::Int32(), 0);
+              for (j = containedInPriorDimensions; j < containedInPriorDimensions + containedInDimensions; j++){
+                partialArray->pushBack(array.getValue<int>(j));
+              }
+            }
+            else if (datatype == H5T_NATIVE_LONG){
+              partialArray->initialize(XdmfArrayType::Int64(), 0);
+              for (j = containedInPriorDimensions; j < containedInPriorDimensions + containedInDimensions; j++){
+                partialArray->pushBack(array.getValue<long>(j));
+              }
+            }
+            else if (datatype == H5T_NATIVE_FLOAT){
+              partialArray->initialize(XdmfArrayType::Float32(), 0);
+              for (j = containedInPriorDimensions; j < containedInPriorDimensions + containedInDimensions; j++){
+                partialArray->pushBack(array.getValue<float>(j));
+              }
+            }
+            else if (datatype == H5T_NATIVE_DOUBLE){
+              partialArray->initialize(XdmfArrayType::Float64(), 0);
+              for (j = containedInPriorDimensions; j < containedInPriorDimensions + containedInDimensions; j++){
+                partialArray->pushBack(array.getValue<double>(j));
+              }
+            }
+            else if (datatype == H5T_NATIVE_UCHAR){
+              partialArray->initialize(XdmfArrayType::UInt8(), 0);
+              for (j = containedInPriorDimensions; j < containedInPriorDimensions + containedInDimensions; j++){
+                partialArray->pushBack(array.getValue<unsigned char>(j));
+              }
+            }
+            else if (datatype == H5T_NATIVE_USHORT){
+              partialArray->initialize(XdmfArrayType::UInt16(), 0);
+              for (j = containedInPriorDimensions; j < containedInPriorDimensions + containedInDimensions; j++){
+                partialArray->pushBack(array.getValue<unsigned short>(j));
+              }
+            }
+            else if (datatype == H5T_NATIVE_UINT) {
+              partialArray->initialize(XdmfArrayType::UInt32(), 0);
+              for (j = containedInPriorDimensions; j < containedInPriorDimensions + containedInDimensions; j++){
+                partialArray->pushBack(array.getValue<unsigned int>(j));
+              }
+            }
+            else if (closeDatatype) {//closeDatatype is only true if strings are being used
+              partialArray->initialize(XdmfArrayType::String(), 0);
+              for (j = containedInPriorDimensions; j < containedInPriorDimensions + containedInDimensions; j++){
+                partialArray->pushBack(array.getValue<std::string>(j));
+              }
+            }
+            if (partialArray->getSize()==0) {
+              break;
+            }
+		//check if the array size is less than the size alloted by the dimensions
+		//then reduce the dimensions until it fits into the dimensions?
+
+
+            arraysWritten.push_back(partialArray);
+            filesWritten.push_back(testFile.str());
+            startsWritten.push_back(partialStarts);
+            stridesWritten.push_back(partialStrides);
+            dimensionsWritten.push_back(partialDimensions);
+            dataSizesWritten.push_back(partialDataSizes);
+            previousDimension = currentDimension;
+          }
+          else {//otherwise reset the dimension location
+            currentDimension = previousDimension;
+          }
+        }
+        if (mMode == Append) {
+          //if the written filename is different write add the previous controller
+          if (filesWritten[filesWritten.size()-1] != heavyDataController->getFilePath()) {
+            //should also be different from previous controller
+            if (filesWritten.size() > 1) {
+              if (filesWritten[filesWritten.size()-1] != filesWritten[filesWritten.size()-2]) {
+                array.insert(heavyDataController);
+              }
+            }
+            else {
+              array.insert(heavyDataController);
+            }
+          }
+        }
+      }
+      else {
+        //otherwise work with the full array
+        shared_ptr<XdmfArray> partialArray = XdmfArray::New();
+	//need to copy by duplicating the contents of the array
+	int j = 0;
+        if (datatype == H5T_NATIVE_CHAR){
+          partialArray->initialize(XdmfArrayType::Int8(), 0);
+          for (j = controllerIndexOffset; j < controllerIndexOffset + heavyDataController->getSize() && j < array.getSize() ; j++){
+            partialArray->pushBack(array.getValue<char>(j));
+          }
+        }
+        else if (datatype == H5T_NATIVE_SHORT){
+          partialArray->initialize(XdmfArrayType::Int16(), 0);
+          for (j = controllerIndexOffset; j < controllerIndexOffset + heavyDataController->getSize() && j < array.getSize(); j++){
+            partialArray->pushBack(array.getValue<short>(j));
+          }
+        }
+        else if (datatype == H5T_NATIVE_INT){
+          partialArray->initialize(XdmfArrayType::Int32(), 0);
+          for (j = controllerIndexOffset; j < controllerIndexOffset + heavyDataController->getSize() && j < array.getSize(); j++){
+            partialArray->pushBack(array.getValue<int>(j));
+          }
+        }
+        else if (datatype == H5T_NATIVE_LONG){
+          partialArray->initialize(XdmfArrayType::Int64(), 0);
+          for (j = controllerIndexOffset; j < controllerIndexOffset + heavyDataController->getSize() && j < array.getSize(); j++){
+            partialArray->pushBack(array.getValue<long>(j));
+          }
+        }
+        else if (datatype == H5T_NATIVE_FLOAT){
+          partialArray->initialize(XdmfArrayType::Float32(), 0);
+          for (j = controllerIndexOffset; j < controllerIndexOffset + heavyDataController->getSize() && j < array.getSize(); j++){
+            partialArray->pushBack(array.getValue<float>(j));
+          }
+        }
+        else if (datatype == H5T_NATIVE_DOUBLE){
+          partialArray->initialize(XdmfArrayType::Float64(), 0);
+          for (j = controllerIndexOffset; j < controllerIndexOffset + heavyDataController->getSize() && j < array.getSize(); j++){
+            partialArray->pushBack(array.getValue<double>(j));
+          }
+        }
+        else if (datatype == H5T_NATIVE_UCHAR){
+          partialArray->initialize(XdmfArrayType::UInt8(), 0);
+          for (j = controllerIndexOffset; j < controllerIndexOffset + heavyDataController->getSize() && j < array.getSize(); j++){
+            partialArray->pushBack(array.getValue<unsigned char>(j));
+          }
+        }
+        else if (datatype == H5T_NATIVE_USHORT){
+          partialArray->initialize(XdmfArrayType::UInt16(), 0);
+          for (j = controllerIndexOffset; j < controllerIndexOffset + heavyDataController->getSize() && j < array.getSize(); j++){
+            partialArray->pushBack(array.getValue<unsigned short>(j));
+          }
+        }
+        else if (datatype == H5T_NATIVE_UINT) {
+          partialArray->initialize(XdmfArrayType::UInt32(), 0);
+          for (j = controllerIndexOffset; j < controllerIndexOffset + heavyDataController->getSize() && j < array.getSize(); j++){
+            partialArray->pushBack(array.getValue<unsigned int>(j));
+          }
+        }
+        else if (closeDatatype) {//closeDatatype is only true if strings are being used
+          partialArray->initialize(XdmfArrayType::String(), 0);
+          for (j = controllerIndexOffset; j < controllerIndexOffset + heavyDataController->getSize() && j < array.getSize(); j++){
+            partialArray->pushBack(array.getValue<std::string>(j));
+          }
+        }
+
+	controllerIndexOffset = j;//set the offset to the point after the end of the current subset
+        if (partialArray->getSize()==0) {
+          break;
+        }
+        arraysWritten.push_back(partialArray);
+        filesWritten.push_back(hdf5FilePath);
+        //also need to push the starts and strides loaded from the HeavyDataController
+        startsWritten.push_back(start);
+        stridesWritten.push_back(stride);
+        dimensionsWritten.push_back(dimensions);
+        dataSizesWritten.push_back(dataspaceDimensions);
+      }
+
+      //loop based on the amount of blocks split from the array.
+      for (int writeIndex = 0; writeIndex < arraysWritten.size(); writeIndex++) {
+
+        bool closeFile = true;
+        //probably going to need to open a new file each iteration
+        mImpl->openFile(filesWritten[writeIndex],
+                        fapl);
+
+        hid_t dataset = H5Dopen(mImpl->mHDF5Handle,
+                                dataSetPath.str().c_str(),
+                                H5P_DEFAULT);
+
+        hid_t checkspace = H5S_ALL;
+        checkspace = H5Dget_space(dataset);
+        hssize_t checksize = H5Sget_simple_extent_npoints(checkspace);
+        if(checkspace != H5S_ALL) {
+          status = H5Sclose(checkspace);
+        }
+
+        // if default mode find a new data set to write to (keep
+        // incrementing dataSetId)
+        if(checksize >=0 && mMode == Default) {
+          while(true) {
+            dataSetPath.str(std::string());
+            dataSetPath << "Data" << ++mDataSetId;
+            if(!H5Lexists(mImpl->mHDF5Handle,
+                          dataSetPath.str().c_str(),
+                          H5P_DEFAULT)) {
+              dataset = H5Dopen(mImpl->mHDF5Handle,
+                                dataSetPath.str().c_str(),
+                                H5P_DEFAULT);
+              checkspace = H5Dget_space(dataset);
+              checksize = H5Sget_simple_extent_npoints(checkspace);
+              if(checkspace != H5S_ALL) {
+                status = H5Sclose(checkspace);
+              }
+              break;
+            }
+          }
+        }
+
+        // Restore previous error handler
+        H5Eset_auto2(0, old_func, old_client_data);
+
+        hid_t dataspace = H5S_ALL;
+        hid_t memspace = H5S_ALL;
+
+        std::vector<hsize_t> current_dims(dataSizesWritten[writeIndex].begin(),
+                                          dataSizesWritten[writeIndex].end());
+
+        if(checksize < 0) {//if the dataset doesn't contain anything
+
+          std::vector<hsize_t> maximum_dims(dimensionsWritten[writeIndex].size(), H5S_UNLIMITED);
+          //create a new dataspace
+          dataspace = H5Screate_simple(dimensionsWritten[writeIndex].size(),
+                                       &current_dims[0],
+                                       &maximum_dims[0]);
+          hid_t property = H5Pcreate(H5P_DATASET_CREATE);
+          std::vector<hsize_t> chunk_size(dimensionsWritten[writeIndex].size(), 1024);
+          status = H5Pset_chunk(property, dimensionsWritten[writeIndex].size(), &chunk_size[0]);
+          //use that dataspace to create a new dataset
+          dataset = H5Dcreate(mImpl->mHDF5Handle,
+                              dataSetPath.str().c_str(),
+                              datatype,
+                              dataspace,
+                              H5P_DEFAULT,
+                              property,
+                              H5P_DEFAULT);
+          status = H5Pclose(property);
+        }
+
+        if(mMode == Append) {
+          // Need to resize dataset to fit new data
+
+          // Get size of old dataset
+          dataspace = H5Dget_space(dataset);
+          hssize_t datasize = H5Sget_simple_extent_npoints(dataspace);
+          status = H5Sclose(dataspace);
+
+
+		//rethink this algorithm for finding the size
+          if (filesWritten[writeIndex] != previousControllers[i]->getFilePath()) {
+            datasize = 0;
+          }
+          if (dataSetPath.str() != previousControllers[i]->getDataSetPath()) {
+            datasize = 0;
+          }
+
+          // Resize to fit size of old and new data.
+          hsize_t newSize = arraysWritten[writeIndex]->getSize() + datasize;
+          status = H5Dset_extent(dataset, &newSize);
+
+          // Select hyperslab to write to.
+          memspace = H5Screate_simple(1, &size, NULL);
+          dataspace = H5Dget_space(dataset);
+          hsize_t dataStart = datasize;
+          status = H5Sselect_hyperslab(dataspace,
+                                       H5S_SELECT_SET,
+                                       &dataStart,
+                                       NULL,
+                                       &size,
+                                       NULL);
+        }
+        else if(mMode == Overwrite) {
+          // Overwriting - dataset rank must remain the same (hdf5 constraint)
+          dataspace = H5Dget_space(dataset);
+
+          const unsigned int ndims = H5Sget_simple_extent_ndims(dataspace);
+          if(ndims != current_dims.size())
+            XdmfError::message(XdmfError::FATAL,                            \
+                               "Data set rank different -- ndims != "
+                               "current_dims.size() -- in "
+                               "XdmfHDF5Writer::write");
+
+          status = H5Dset_extent(dataset, &current_dims[0]);
+          dataspace = H5Dget_space(dataset);
+        }
+        else if(mMode == Hyperslab) {
+          // Hyperslab - dataset rank must remain the same (hdf5 constraint)
+          dataspace = H5Dget_space(dataset);
+
+          const unsigned int ndims = H5Sget_simple_extent_ndims(dataspace);
+          if(ndims != current_dims.size())
+            XdmfError::message(XdmfError::FATAL,                            \
+                               "Data set rank different -- ndims != "
+                               "current_dims.size() -- in "
+                               "XdmfHDF5Writer::write");
+
+          status = H5Dset_extent(dataset, &current_dims[0]);
+          dataspace = H5Dget_space(dataset);
+
+          std::vector<hsize_t> count(dimensionsWritten[writeIndex].begin(),
+                                     dimensionsWritten[writeIndex].end());
+          std::vector<hsize_t> currStride(stridesWritten[writeIndex].begin(),
+                                          stridesWritten[writeIndex].end());
+          std::vector<hsize_t> currStart(startsWritten[writeIndex].begin(),
+                                         startsWritten[writeIndex].end());
+
+          memspace = H5Screate_simple(count.size(),
+                                      &(count[0]),
+                                      NULL);
+          status = H5Sselect_hyperslab(dataspace,
+                                       H5S_SELECT_SET,
+                                       &currStart[0],
+                                       &currStride[0],
+                                       &count[0],
+                                       NULL) ;
+
+          if(status < 0) {
+            XdmfError::message(XdmfError::FATAL,
+                               "H5Dset_extent returned failure in "
+                               "XdmfHDF5Writer::write -- status: " + status);
+          }
+        }
+
+
+        status = H5Dwrite(dataset,
+                          datatype,
+                          memspace,
+                          dataspace,
+                          H5P_DEFAULT,
+                          arraysWritten[writeIndex]->getValuesInternal());
+
+        if(status < 0) {
+          XdmfError::message(XdmfError::FATAL,
+                             "H5Dwrite returned failure in XdmfHDF5Writer::write "
+                             "-- status: " + status);
+        }
+        if(dataspace != H5S_ALL) {
+          status = H5Sclose(dataspace);
+        }
+        if(memspace != H5S_ALL) {
+          status = H5Sclose(memspace);
+        }
+        status = H5Dclose(dataset);
+
+        if(closeFile) {
+          mImpl->closeFile();
+        }
+
+        if(mMode == Default) {
+          ++mDataSetId;
+        }
+
+
+		//this is segfaulting specifically the getArrayType
+
+
+        // Attach a new controller to the array
+        shared_ptr<XdmfHDF5Controller> newDataController =
+          shared_ptr<XdmfHDF5Controller>();
+
+        unsigned int newSize;
+        if(mMode == Append) {
+          //find data size
+          mImpl->openFile(filesWritten[writeIndex],
+                          fapl);
+          hid_t checkset = H5Dopen(mImpl->mHDF5Handle,
+                                   dataSetPath.str().c_str(),
+                                   H5P_DEFAULT);
+          hid_t checkspace = H5S_ALL;
+          checkspace = H5Dget_space(checkset);
+          newSize = H5Sget_simple_extent_npoints(checkspace);
+          status = H5Dclose(checkset);
+	  if(checkspace != H5S_ALL) {
+	    status = H5Sclose(checkspace);
+          }
+ 
+          std::vector<unsigned int> insertStarts;
+          insertStarts.push_back(0);
+          std::vector<unsigned int> insertStrides;
+          insertStrides.push_back(1);
+          std::vector<unsigned int> insertDimensions;
+          insertDimensions.push_back(newSize);
+          std::vector<unsigned int> insertDataSpaceDimensions;
+          insertDataSpaceDimensions.push_back(newSize);
+
+          newDataController =
+            this->createHDF5Controller(filesWritten[writeIndex],
+                                       dataSetPath.str(),
+                                       arraysWritten[writeIndex]->getArrayType(),
+                                       insertStarts,
+                                       insertStrides,
+                                       insertDimensions,
+                                       insertDataSpaceDimensions);
+        }
+
+        if(!newDataController) {
+          newDataController =
+            this->createHDF5Controller(filesWritten[writeIndex],
+                                       dataSetPath.str(),
+                                       arraysWritten[writeIndex]->getArrayType(),
+                                       startsWritten[writeIndex],
+                                       stridesWritten[writeIndex],
+                                       dimensionsWritten[writeIndex],
+                                       dataSizesWritten[writeIndex]);
+
+        }
+
+        array.insert(newDataController);
+
+      }
+
     }
 
-    if(!newDataController) {
-      newDataController =
-        this->createHDF5Controller(hdf5FilePath,
-                                   dataSetPath.str(),
-                                   array.getArrayType(),
-                                   start,
-                                   stride,
-                                   dimensions,
-                                   dataspaceDimensions);
+    if(closeDatatype) {
+      status = H5Tclose(datatype);
     }
-    array.setHeavyDataController(newDataController);
 
     if(mReleaseData) {
       array.release();

@@ -13,3 +13,6 @@ if __name__ == "__main__":
 	exampleName = exampleSet.getName()
 
 	exampleType = exampleSet.getType()
+
+	if exampleType == XdmfSetType.Node():
+		#do whatever is to be done if the set is a node

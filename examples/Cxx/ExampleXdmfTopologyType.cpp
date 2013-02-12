@@ -24,5 +24,10 @@ int main(int, char **)
 
 	unsigned int numNodes = XdmfTopologyType::Triangle()->getNodesPerElement();
 
+	if (createdTopology->getType() == XdmfTopologyType::Triangle())
+	{
+		//Do whatever is to be done if the type is Triangle
+	}
+
 	return 0;
 }

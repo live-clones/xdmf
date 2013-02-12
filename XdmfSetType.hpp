@@ -14,11 +14,17 @@
  *
  * Example of use:
  *
- * //Assuming that exampleSet is a shared pointer to an XdmfSet with its type set
- * if (exampleSet->getType() == XdmfSetType::Node())
- * {
- *   //Do whatever is to be done if the set is a node
- * }
+ * C++
+ *
+ * @dontinclude ExampleXdmfSet.cpp
+ * @skipline exampleType
+ * @until }
+ *
+ * Python
+ *
+ * @dontinclude XdmfExampleSet.py
+ * @skipline exampleType
+ * @until do
  *
  * Xdmf supports the following set types:
  *   NoSetType

@@ -25,6 +25,7 @@
 #define XDMFHDF5WRITER_HPP_
 
 // Forward Declarations
+class XdmfArray;
 class XdmfArrayType;
 class XdmfHDF5Controller;
 
@@ -77,11 +78,59 @@ public:
 
   virtual ~XdmfHDF5Writer();
 
+
+  /**
+   * Sets the file size limit of the HDF5 files produced by the writer in MB. Overflow is pushed to a new HDF5 file.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfHDF5Writer.cpp
+   * @skipline newPath
+   * @until setFileSizeLimit
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleHDF5Writer.py
+   * @skipline newPath
+   * @until setFileSizeLimit
+   *
+   * @param	newSize	The size limit in MB
+   */
+  void setFileSizeLimit(int newSize);
+
+  /**
+   * Gets the file size limit of the HDF5 files produced by the writer in MB. Overflow is pushed to a new HDF5 file.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfHDF5Writer.cpp
+   * @skipline newPath
+   * @until New
+   * @skipline exampleLimit
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleHDF5Writer.py
+   * @skipline newPath
+   * @until New
+   * @skipline exampleLimit
+   *
+   * @return	The size limit in MB
+   */
+  int getFileSizeLimit();
+
   virtual void closeFile();
 
   virtual void openFile();
 
   virtual void visit(XdmfArray & array,
+                     const shared_ptr<XdmfBaseVisitor> visitor);
+
+  virtual void visit(XdmfItem & item,
                      const shared_ptr<XdmfBaseVisitor> visitor);
 
 protected:

@@ -9,6 +9,9 @@ if __name__ == "__main__":
 
 	exampleType = exampleCollection.getType()
 
+	if exampleType == XdmfGridCollectionType.Temporal():
+		#do whatever is to be done if the grid collection is temporal
+
 	exampleInformation = XdmfInformation.New()
 	newKey = "New Key"
 	newValue = "New Value"

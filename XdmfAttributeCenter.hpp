@@ -38,11 +38,18 @@
  * Xdmf supports the following attribute centers:
  *
  * Example of use:
- * //Assuming that exampleAttribute is a shared pointer to an XdmfAttribute with a set center
- * if (exampleAttribute->getCenter() == XdmfAttributeCenter::Grid())
- * {
- *   //do whatever is to be done if the center is grid
- * }
+ *
+ * C++
+ *
+ * @dontinclude ExampleXdmfAttribute.cpp
+ * @skipline exampleCenter
+ * @until }
+ *
+ * Python
+ *
+ * @dontinclude XdmfExampleAttribute.py
+ * @skipline exampleCenter
+ * @until do
  *
  *   Grid
  *   Cell

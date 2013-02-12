@@ -43,35 +43,33 @@ class XdmfVisitor;
                                                                               \
 public:                                                                       \
                                                                               \
-  /** Get a ChildClass attached to this item by index.
-      Example of use:
-      C++
-      @dontinclude ExampleXdmfItem.cpp
-      @skipline //Assume
-      @until Using
-      @skipline getIndex
-      @until getInformation
-      Python
-      @dontinclude XdmfExampleItem.py
-      @skipline #Assume
-      @until Using
-      @skipline getIndex
-      @until getInformation
-      @param index of the ChildClass to retrieve.
+  /** Get a ChildClass attached to this item by index.<br>
+      Example of use:<br>
+      C++<br>
+      //Assume that exampleItem is a shared pointer to the ParentClass object<br>
+      //Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class<br>
+      unsigned int getIndex = 0;<br>
+      shared_ptr<XdmfInformation> exampleChild = exampleItem->getInformation(getIndex);<br>
+      Python<br>
+      '''<br>
+      Assume that exampleItem is a shared pointer to the ParentClass object<br>
+      Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class<br>
+      '''<br>
+      getIndex = 0<br>
+      exampleChild = exampleItem.getInformation(getIndex)<br>
       @return requested ChildClass. If no ChildClass##s exist at the index,
       a NULL pointer is returned.
   */                                                                          \
   virtual shared_ptr<ChildClass>                                              \
   get##ChildName(const unsigned int index);                                   \
                                                                               \
-  /** Get a ChildClass attached to this item by index (const version).
-      Example of use:
-      C++
-      @dontinclude ExampleXdmfItem.cpp
-      @skipline //Assume
-      @until Using
-      @skipline getIndex
-      @skipline exampleChildConst
+  /** Get a ChildClass attached to this item by index (const version).<br>
+      Example of use:<br>
+      C++<br>
+      //Assume that exampleItem is a shared pointer to the ParentClass object<br>
+      //Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class<br>
+      unsigned int getIndex = 0;<br>
+      shared_ptr<const XdmfInformation> exampleChildConst = exampleItem->getInformation(getIndex);<br>
       Python: does not support a constant version of this function
       @param index of the ChildClass to retrieve.
       @return requested ChildClass. If no ChildClass##s exist at the index, a
@@ -80,20 +78,20 @@ public:                                                                       \
   virtual shared_ptr<const ChildClass>                                        \
   get##ChildName(const unsigned int index) const;                             \
                                                                               \
-  /** Get a ChildClass attached to this item by SearchName.
-      Example of use:
-      C++
-      @dontinclude ExampleXdmfItem.cpp
-      @skipline //Assume
-      @until Using
-      @skipline findngInfo
-      @until getInformation
-      Python
-      @dontinclude XdmfExampleItem.py
-      @skipline #Assume
-      @until Using
-      @skipline findingInfo
-      @until getInformation
+  /** Get a ChildClass attached to this item by SearchName.<br>
+      Example of use:<br>
+      C++<br>
+      //Assume that exampleItem is a shared pointer to the ParentClass object<br>
+      //Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class<br>
+      std::string findingInfo = "Find this";<br>
+      shared_ptr<XdmfInformation> exampleStringChild = exampleItem->getInformation(findingInfo);<br>
+      Python<br>
+      '''<br>
+      Assume that exampleItem is a shared pointer to the ParentClass object<br>
+      Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class<br>
+      '''<br>
+      findingInfo = "Find this"<br>
+      exampleStringChild = exampleItem.getInformation(findingInfo)<br>
       @param SearchName of the ChildClass to retrieve.
       @return requested ChildClass. If no ChildClass##s are found with the
       correct SearchName, a NULL pointer is returned.
@@ -101,14 +99,13 @@ public:                                                                       \
   virtual shared_ptr<ChildClass>                                              \
   get##ChildName(const std::string & SearchName);                             \
                                                                               \
-  /** Get a ChildClass attached to this item by SearchName (const version).
-      Example of use:
-      C++
-      @dontinclude ExampleXdmfItem.cpp
-      @skipline //Assume
-      @until Using
-      @skipline finidngInfo
-      @skipline exampleStringChildConst
+  /** Get a ChildClass attached to this item by SearchName (const version).<br>
+      Example of use:<br>
+      C++<br>
+      //Assume that exampleItem is a shared pointer to the ParentClass object<br>
+      //Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class<br>
+      std::string findingInfo = "Find this";<br>
+      shared_ptr<const XdmfInformation> exampleStringChildConst = exampleItem->getInformation(findingInfo);<br>
       Python: does not support a constant version of this function
       @param SearchName of the ChildClass to retrieve.
       @return requested ChildClass  If no ChildClass##s are found with the
@@ -117,70 +114,70 @@ public:                                                                       \
   virtual shared_ptr<const ChildClass>                                        \
   get##ChildName(const std::string & SearchName) const;                       \
                                                                               \
-  /** Get the number of ChildClass##s attached to this item.
-      Example of use:
-      C++
-      @dontinclude ExampleXdmfItem.cpp
-      @skipline //Assume
-      @until Using
-      @skipline exampleSize
-      Python
-      @dontinclude XdmfExampleItem.py
-      @skipline #Assume
-      @until Using
-      @skipline exampleSize
+  /** Get the number of ChildClass##s attached to this item.<br>
+      Example of use:<br>
+      C++<br>
+      //Assume that exampleItem is a shared pointer to the ParentClass object<br>
+      //Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class<br>
+      unsigned int exampleSize = exampleItem->getNumberInformations();<br>
+      Python<br>
+      '''<br>
+      Assume that exampleItem is a shared pointer to the ParentClass object<br>
+      Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class<br>
+      '''<br>
+      exampleSize = exampleItem.getNumberInformations()<br>
       @return number of ChildClass##s attached to this item.
   */                                                                          \
   virtual unsigned int getNumber##ChildName##s() const;                       \
                                                                               \
-  /** Insert a ChildClass into to this item.
-      Example of use:
-      C++
-      @dontinclude ExampleXdmfItem.cpp
-      @skipline exampleItem
-      @until insert
-      Python
-      @dontinclude XdmfExampleItem.py
-      @skipline exampleItem
-      @until insert
+  /** Insert a ChildClass into to this item.<br>
+      Example of use:<br>
+      C++<br>
+      shared_ptr<XdmfInformation> exampleItem = XdmfInformation::New("Parent", "This is a parent information");<br>
+      shared_ptr<XdmfInformation> addChild = XdmfInformation::New("Child", "This is a child information");<br>
+      exampleItem->insert(addChild);<br>
+      Python<br>
+      exampleItem = XdmfInformation.New("Parent", "This is a parent information")<br>
+      addChild = XdmfInformation.New("Child", "This is a child information")<br>
+      exampleItem.insert(addChild)<br>
       @param ChildName to attach to this item.
   */                                                                          \
   virtual void insert(const shared_ptr<ChildClass> ChildName);                \
                                                                               \
   /** Remove a ChildClass from this item by index. If no object exists
-      at the index, nothing is removed.
-      Example of use:
-      C++
-      @dontinclude ExampleXdmfItem.cpp
-      @skipline //Assume
-      @until Using
-      @skipline removeIndex
-      @until removeInformation
-      Python
-      @dontinclude XdmfExampleItem.cpp
-      @skipline #Assume
-      @until Using
-      @skipline removeIndex
-      @until removeInformation
+      at the index, nothing is removed.<br>
+      Example of use:<br>
+      C++<br>
+      //Assume that exampleItem is a shared pointer to the ParentClass object<br>
+      //Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class<br>
+      unsigned int removeIndex = 0;<br>
+      exampleItem->removeInformation(removeIndex);<br>
+      Python<br>
+      '''<br>
+      Assume that exampleItem is a shared pointer to the ParentClass object<br>
+      Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class<br>
+      '''<br>
+      removeIndex = 0
+      exampleItem.removeInformation(removeIndex)
       @param index of the ChildClass to remove.
   */                                                                          \
   virtual void remove##ChildName(const unsigned int index);                   \
                                                                               \
   /** Remove a ChildClass from this item by SearchName. If no ChildClass##s
-      have the correct SearchName, nothing is removed.
-      Example of use:
-      C++
-      @dontinclude ExampleXdmfItem.cpp
-      @skipline //Assume
-      @until Using
-      @skipline removeInfo
-      @until removeInformation
-      Python
-      @dontinclude XdmfExampleItem.py
-      @skipline #Assume
-      @until Using
-      @skipline removeInfo
-      @until removeInformation
+      have the correct SearchName, nothing is removed.<br>
+      Example of use:<br>
+      C++<br>
+      //Assume that exampleItem is a shared pointer to the ParentClass object<br>
+      //Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class<br>
+      std::string removeInfo = "Remove this";<br>
+      exampleItem->removeInformation(removeInfo);<br>
+      Python<br>
+      '''<br>
+      Assume that exampleItem is a shared pointer to the ParentClass object<br>
+      Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class<br>
+      '''<br>
+      removeInfo = "Remove this"<br>
+      exampleItem.removeInformation(removeInfo)<br>
       @param SearchName of the ChildClass to remove.
   */                                                                          \
   virtual void remove##ChildName(const std::string & SearchName);             \

@@ -37,11 +37,18 @@
  * static methods in the class, i.e. XdmfArrayType::Int32().
  *
  * Example of use:
- * //Assuming that exampleArray is a shared pointer to an XdmfArray object that has been filled with data
- * if (XdmfArrayType::Int8() == exampleArray->getArrayType())
- * {
- *   //do whatever is to be done with in the case that the array type is Int8
- * }
+ *
+ * C++
+ *
+ * @dontinclude ExampleXdmfArrayType.cpp
+ * @skipline XdmfArrayType
+ * @until }
+ *
+ * Python
+ *
+ * @dontinclude XdmfExampleArrayType.py
+ * @skipline exampleType
+ * @until do
  *
  * Xdmf supports the following attribute types:
  *   Uninitialized
@@ -85,19 +92,13 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * unsigned int dataSize = XdmfArrayType::Int8()->getElementSize();
-   * //The number of bytes in an Int8 will be stored in the dataSize variable
-   * @endcode
+   * @dontinclude ExampleXdmfArrayType.cpp
+   * @skipline getElementSize
    *
    * Python
    *
-   * @code {.py}
-   * dataSize = XdmfArrayType.Int8().getElementSize()
-   * '''
-   * The number of bytes in an Int8 will be stored in the dataSize variable
-   * '''
-   * @endcode
+   * @dontinclude XdmfExampleArrayType.py
+   * @skipline getElementSize
    *
    * @return the data size, in bytes.
    */
@@ -110,19 +111,13 @@ public:
    *
    * C++
    *
-   * @code {.cpp}
-   * std::string dataName = XdmfArrayType::Int8()->getName();
-   * //The name of the Int8 data type will be stored in the dataName variable
-   * @endcode
+   * @dontinclude ExampleXdmfArrayType.cpp
+   * @skipline getName
    *
    * Python
    *
-   * @code {.py}
-   * dataName = XdmfArrayType.Int8().getName()
-   * '''
-   * The name of the Int8 data type will be stored in the dataName variable
-   * '''
-   * @endcode
+   * @dontinclude XdmfExampleArrayType.py
+   * @skipline getName
    *
    * @return the name of the data type.
    */

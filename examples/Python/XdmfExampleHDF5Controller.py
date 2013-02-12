@@ -30,4 +30,5 @@ if __name__ == "__main__":
 		readType,
 		readStarts,
 		readStrides,
-		readCounts)
+		readCounts,
+		readDataSize)

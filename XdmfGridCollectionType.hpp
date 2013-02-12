@@ -39,11 +39,17 @@
  *
  * Example of use:
  *
- * //Assuming that exampleCollection is a shared pointer to an XmdfGridCollection with a type that has been set
- * if (exampleCollection->getType() == XdmfGridCollectionType::Temporal())
- * {
- *   //do whatever is to be done if the grid collection is temporal
- * }
+ * C++
+ *
+ * @dontinclude ExampleXdmfGridCollection.cpp
+ * @skipline exampleType
+ * @until }
+ *
+ * Python
+ *
+ * @dontinclude XdmfExampleGridCollection.py
+ * @skipline exampleType
+ * @until do
  *
  * Xdmf supports the following collection types:
  *   NoCollectionType

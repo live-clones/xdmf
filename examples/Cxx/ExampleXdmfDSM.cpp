@@ -73,7 +73,8 @@ int main(int argc, char *argv[])
 	std::string newSetPath = "data";//virtual set path
 
 	/*
-	//writes must happen from all cores write empty arrays from cores other than main
+	//writes must happen from all cores
+	//write empty arrays from cores other than main
 	shared_ptr<XdmfArray> array = XdmfArray::New();
 	array->initialize<int>(0);//this is required to write
 	if (id == 0)
@@ -98,7 +99,7 @@ int main(int argc, char *argv[])
 			writeCountVector,
 			writeDataSizeVector,
 			dsmBuffer);
-		array->setHeavyDataController(readController);
+		array->insert(readController);
 
 		for (unsigned int i = 0; i<size -1; i++)
 		{
@@ -155,7 +156,7 @@ int main(int argc, char *argv[])
 			writeCountVector,
 			writeDataSizeVector,
 			dsmBuffer);
-		array->setHeavyDataController(readController);
+		array->insert(readController);
 
 		for (unsigned int i =1; i<size; i++)
 		{
@@ -200,7 +201,7 @@ int main(int argc, char *argv[])
 		std::cout << "DSM writer used" << id << std::endl;
 	}*/
 
-	/*
+	
 	//multicore write with arrays of varying sizes
 	// Create Array
 	// Array should be distributed among processes
@@ -237,7 +238,7 @@ int main(int argc, char *argv[])
 		writeCountVector,
 		writeDataSizeVector,
 		dsmBuffer);
-	array->setHeavyDataController(readController);
+	array->insert(readController);
 	for (unsigned int i = 0; i < size; i++)
 	{
 		MPI_Barrier(comm);
@@ -280,10 +281,10 @@ int main(int argc, char *argv[])
 	MPI_Barrier(comm);
 	array->accept(writer);
 	std::cout << "DSM writer used" << id << std::endl;
-	*/
-
-
 	
+
+
+	/*
 	//for writing from multiple cores
 	// Create Array
 	// Array should be distributed among processes
@@ -310,7 +311,7 @@ int main(int argc, char *argv[])
 		writeCountVector,
 		writeDataSizeVector,
 		dsmBuffer);
-	array->setHeavyDataController(readController);
+	array->insert(readController);
 	for (unsigned int i = 0; i < size; i++)
 	{
 		MPI_Barrier(comm);
@@ -352,8 +353,7 @@ int main(int argc, char *argv[])
         std::cout << "DSM writer set up" << std::endl;
 	MPI_Barrier(comm);
 	array->accept(writer);
-	std::cout << "DSM writer used" << id << std::endl;
-	
+	std::cout << "DSM writer used" << id << std::endl;*/
 
 	//ensure all writes are called
 	MPI_Barrier(comm);
@@ -379,9 +379,9 @@ int main(int argc, char *argv[])
 		std::cout << "number of values = " << countVector[0] << std::endl;
 		std::cout << "Size of block = " << datasizeVector[0] << std::endl;
 		readController = XdmfHDF5ControllerDSM::New(
-			array->getHeavyDataController()->getFilePath(),
-			array->getHeavyDataController()->getDataSetPath(),
-			array->getHeavyDataController()->getType(),
+			array->getHeavyDataController(0)->getFilePath(),
+			array->getHeavyDataController(0)->getDataSetPath(),
+			array->getHeavyDataController(0)->getType(),
 			startVector,
 			strideVector,
 			countVector,
@@ -390,7 +390,7 @@ int main(int argc, char *argv[])
 		std::cout << "done making reader" << std::endl;
 		shared_ptr<XdmfArray> readArray = XdmfArray::New();
 		readArray->initialize<int>(0);
-		readArray->setHeavyDataController(readController);
+		readArray->insert(readController);
 
 		std::cout << "reader set" << std::endl;
 		readArray->read();//if it hangs here, read requires all cores to read at the same time
@@ -399,29 +399,29 @@ int main(int argc, char *argv[])
 
 		std::cout << "Core # " << id << std::endl;
 		std::cout << "Controller stats" << std::endl;
-		std::cout << "datasetpath = " << readArray->getHeavyDataController()->getDataSetPath() << std::endl;
-		std::cout << "filepath = " << readArray->getHeavyDataController()->getFilePath() << std::endl;
-		outputVector = readArray->getHeavyDataController()->getDataspaceDimensions();
+		std::cout << "datasetpath = " << readArray->getHeavyDataController(0)->getDataSetPath() << std::endl;
+		std::cout << "filepath = " << readArray->getHeavyDataController(0)->getFilePath() << std::endl;
+		outputVector = readArray->getHeavyDataController(0)->getDataspaceDimensions();
 		std::cout << "Data space dimensions" << std::endl;
 		for (int j=0; j<outputVector.size(); j++)
 		{
 			std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
 		}
 		std::cout << "Controller Dimensions" << std::endl;
-		outputVector = readArray->getHeavyDataController()->getDimensions();
+		outputVector = readArray->getHeavyDataController(0)->getDimensions();
 		for (int j=0; j<outputVector.size(); j++)
 		{
 			std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
 		}
-		std::cout << "Controller size" << readArray->getHeavyDataController()->getSize() << std::endl;
+		std::cout << "Controller size" << readArray->getHeavyDataController(0)->getSize() << std::endl;
 		std::cout << "Controller starts" << std::endl;
-		outputVector = readArray->getHeavyDataController()->getStart();
+		outputVector = readArray->getHeavyDataController(0)->getStart();
 		for (int j=0; j<outputVector.size(); j++)
 		{
 			std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
 		}
 		std::cout << "Controller strides" << std::endl;
-		outputVector = readArray->getHeavyDataController()->getStride();
+		outputVector = readArray->getHeavyDataController(0)->getStride();
 		for (int j=0; j<outputVector.size(); j++)
 		{
 			std::cout << "[" << j << "] =" << outputVector[j] << "\n" << std::endl;
@@ -445,9 +445,9 @@ int main(int argc, char *argv[])
 		datasizeVector.push_back(4*size);
 		std::cout << "Size of block = " << datasizeVector[0] << std::endl;
 		readController = XdmfHDF5ControllerDSM::New(
-		array->getHeavyDataController()->getFilePath(),
-		array->getHeavyDataController()->getDataSetPath(),
-		array->getHeavyDataController()->getType(),
+		array->getHeavyDataController(0)->getFilePath(),
+		array->getHeavyDataController(0)->getDataSetPath(),
+		array->getHeavyDataController(0)->getType(),
 		startVector,
 		strideVector,
 		countVector,
@@ -456,7 +456,7 @@ int main(int argc, char *argv[])
 		std::cout << "done making reader" << std::endl;
 		shared_ptr<XdmfArray> readArray = XdmfArray::New();
 		readArray->initialize<int>(0);
-		readArray->setHeavyDataController(readController);
+		readArray->insert(readController);
 
 		std::cout << "reader set" << std::endl;
 		readArray->read();//if it hangs here, read requires all cores to read at the same time
@@ -465,29 +465,29 @@ int main(int argc, char *argv[])
 
 		std::cout << "Core # " << id << std::endl;
 		std::cout << "Controller stats" << std::endl;
-		std::cout << "datasetpath = " << readArray->getHeavyDataController()->getDataSetPath() << std::endl;
-		std::cout << "filepath = " << readArray->getHeavyDataController()->getFilePath() << std::endl;
-		outputVector = readArray->getHeavyDataController()->getDataspaceDimensions();
+		std::cout << "datasetpath = " << readArray->getHeavyDataController(0)->getDataSetPath() << std::endl;
+		std::cout << "filepath = " << readArray->getHeavyDataController(0)->getFilePath() << std::endl;
+		outputVector = readArray->getHeavyDataController(0)->getDataspaceDimensions();
 		std::cout << "Data space dimensions" << std::endl;
 		for (int j=0; j<outputVector.size(); j++)
 		{
 			std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
 		}
 		std::cout << "Controller Dimensions" << std::endl;
-		outputVector = readArray->getHeavyDataController()->getDimensions();
+		outputVector = readArray->getHeavyDataController(0)->getDimensions();
 		for (int j=0; j<outputVector.size(); j++)
 		{
 			std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
 		}
-		std::cout << "Controller size" << readArray->getHeavyDataController()->getSize() << std::endl;
+		std::cout << "Controller size" << readArray->getHeavyDataController(0)->getSize() << std::endl;
 		std::cout << "Controller starts" << std::endl;
-		outputVector = readArray->getHeavyDataController()->getStart();
+		outputVector = readArray->getHeavyDataController(0)->getStart();
 		for (int j=0; j<outputVector.size(); j++)
 		{
 			std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
 		}
 		std::cout << "Controller strides" << std::endl;
-		outputVector = readArray->getHeavyDataController()->getStride();
+		outputVector = readArray->getHeavyDataController(0)->getStride();
 		for (int j=0; j<outputVector.size(); j++)
 		{
 			std::cout << "[" << j << "] =" << outputVector[j] << "\n" << std::endl;
@@ -500,7 +500,7 @@ int main(int argc, char *argv[])
 	}*/
 
 
-	/*
+	
 	//mutlicore read with varying sizes
 	std::cout << "getting output" << std::endl;
 	// Read data (Working on getting this to produce meaningful results.)
@@ -513,9 +513,9 @@ int main(int argc, char *argv[])
 	datasizeVector.push_back(datacount);
 	std::cout << "Size of block = " << datasizeVector[0] << std::endl;
 	readController = XdmfHDF5ControllerDSM::New(
-		array->getHeavyDataController()->getFilePath(),
-		array->getHeavyDataController()->getDataSetPath(),
-		array->getHeavyDataController()->getType(),
+		array->getHeavyDataController(0)->getFilePath(),
+		array->getHeavyDataController(0)->getDataSetPath(),
+		array->getHeavyDataController(0)->getType(),
 		startVector,
 		strideVector,
 		countVector,
@@ -524,7 +524,7 @@ int main(int argc, char *argv[])
 	std::cout << "done making reader" << std::endl;
 	shared_ptr<XdmfArray> readArray = XdmfArray::New();
 	readArray->reserve(array->getSize()*size);
-	readArray->setHeavyDataController(readController);
+	readArray->insert(readController);
 
 	std::cout << "reader set" << std::endl;
 	readArray->read();
@@ -538,21 +538,21 @@ int main(int argc, char *argv[])
 		{
 			std::cout << "Core # " << id << std::endl;
 			std::cout << "Controller stats" << std::endl;
-			std::cout << "datasetpath = " << array->getHeavyDataController()->getDataSetPath() << std::endl;
-			std::cout << "datasetpath = " << array->getHeavyDataController()->getFilePath() << std::endl;
-			outputVector = array->getHeavyDataController()->getDataspaceDimensions();
+			std::cout << "datasetpath = " << array->getHeavyDataController(0)->getDataSetPath() << std::endl;
+			std::cout << "datasetpath = " << array->getHeavyDataController(0)->getFilePath() << std::endl;
+			outputVector = array->getHeavyDataController(0)->getDataspaceDimensions();
 			std::cout << "Data space dimensions" << std::endl;
 			for (int j=0; j<outputVector.size(); j++)
 			{
 				std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
 			}
 			std::cout << "Controller Dimensions" << std::endl;
-			outputVector = array->getHeavyDataController()->getDimensions();
+			outputVector = array->getHeavyDataController(0)->getDimensions();
 			for (int j=0; j<outputVector.size(); j++)
 			{
 				std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
 			}
-			std::cout << "Controller size" << array->getHeavyDataController()->getSize() << std::endl;
+			std::cout << "Controller size" << array->getHeavyDataController(0)->getSize() << std::endl;
 			std::cout << "Controller starts" << std::endl;
 			outputVector = readController->getStart();
 			for (int j=0; j<outputVector.size(); j++)
@@ -560,7 +560,7 @@ int main(int argc, char *argv[])
 				std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
 			}
 			std::cout << "Controller strides" << std::endl;
-			outputVector = array->getHeavyDataController()->getStride();
+			outputVector = array->getHeavyDataController(0)->getStride();
 			for (int j=0; j<outputVector.size(); j++)
 			{
 				std::cout << "[" << j << "] =" << outputVector[j] << "\n" << std::endl;
@@ -571,10 +571,10 @@ int main(int argc, char *argv[])
 				std::cout << "core #" << id <<" readArray[" << i << "] = " << readArray->getValue<int>(i) << std::endl;
 			}
 		}
-	}*/
+	}
 
 
-	
+	/*
 	//For the multicore read
 	std::cout << "getting output" << std::endl;
 	// Read data (Working on getting this to produce meaningful results.)
@@ -587,9 +587,9 @@ int main(int argc, char *argv[])
 	datasizeVector.push_back(4*size);
 	std::cout << "Size of block = " << datasizeVector[0] << std::endl;
 	readController = XdmfHDF5ControllerDSM::New(
-		array->getHeavyDataController()->getFilePath(),
-		array->getHeavyDataController()->getDataSetPath(),
-		array->getHeavyDataController()->getType(),
+		array->getHeavyDataController(0)->getFilePath(),
+		array->getHeavyDataController(0)->getDataSetPath(),
+		array->getHeavyDataController(0)->getType(),
 		startVector,
 		strideVector,
 		countVector,
@@ -598,7 +598,7 @@ int main(int argc, char *argv[])
 	std::cout << "done making reader" << std::endl;
 	shared_ptr<XdmfArray> readArray = XdmfArray::New();
 	readArray->reserve(array->getSize()*size);
-	readArray->setHeavyDataController(readController);
+	readArray->insert(readController);
 
 	std::cout << "reader set" << std::endl;
 	readArray->read();
@@ -612,21 +612,21 @@ int main(int argc, char *argv[])
 		{
 			std::cout << "Core # " << id << std::endl;
 			std::cout << "Controller stats" << std::endl;
-			std::cout << "datasetpath = " << array->getHeavyDataController()->getDataSetPath() << std::endl;
-			std::cout << "filepath = " << array->getHeavyDataController()->getFilePath() << std::endl;
-			outputVector = array->getHeavyDataController()->getDataspaceDimensions();
+			std::cout << "datasetpath = " << array->getHeavyDataController(0)->getDataSetPath() << std::endl;
+			std::cout << "filepath = " << array->getHeavyDataController(0)->getFilePath() << std::endl;
+			outputVector = array->getHeavyDataController(0)->getDataspaceDimensions();
 			std::cout << "Data space dimensions" << std::endl;
 			for (int j=0; j<outputVector.size(); j++)
 			{
 				std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
 			}
 			std::cout << "Controller Dimensions" << std::endl;
-			outputVector = array->getHeavyDataController()->getDimensions();
+			outputVector = array->getHeavyDataController(0)->getDimensions();
 			for (int j=0; j<outputVector.size(); j++)
 			{
 				std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
 			}
-			std::cout << "Controller size" << array->getHeavyDataController()->getSize() << std::endl;
+			std::cout << "Controller size" << array->getHeavyDataController(0)->getSize() << std::endl;
 			std::cout << "Controller starts" << std::endl;
 			outputVector = readController->getStart();
 			for (int j=0; j<outputVector.size(); j++)
@@ -634,7 +634,7 @@ int main(int argc, char *argv[])
 				std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
 			}
 			std::cout << "Controller strides" << std::endl;
-			outputVector = array->getHeavyDataController()->getStride();
+			outputVector = array->getHeavyDataController(0)->getStride();
 			for (int j=0; j<outputVector.size(); j++)
 			{
 				std::cout << "[" << j << "] =" << outputVector[j] << "\n" << std::endl;
@@ -645,7 +645,7 @@ int main(int argc, char *argv[])
 				std::cout << "core #" << id <<" readArray[" << i << "] = " << readArray->getValue<int>(i) << std::endl;
 			}
 		}
-	}
+	}*/
 
 
 	MPI_Barrier(comm);

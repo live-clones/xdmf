@@ -117,6 +117,7 @@ public:
   virtual ~XdmfArray();
 
   LOKI_DEFINE_VISITABLE(XdmfArray, XdmfItem);
+  XDMF_CHILDREN(XdmfArray, XdmfHeavyDataController, HeavyDataController, Name);
   static const std::string ItemTag;
 
   /**
@@ -244,46 +245,6 @@ public:
    * @return the dimensions of the array as a string.
    */
   std::string getDimensionsString() const;
-
-  /**
-   * Get the heavy data controller attached to this array.
-   *
-   * Example of use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfArray.cpp
-   * @skipline Assuming
-   * @skipline exampleController
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleArray.py
-   * @skipline Assuming
-   * @skipline exampleController
-   *
-   * @return the heavy data controller attached to this array.
-   */
-  shared_ptr<XdmfHeavyDataController> getHeavyDataController();
-
-  /**
-   * Get the heavy data controller attached to this array (const
-   * version).
-   *
-   * Example of use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfArray.cpp
-   * @skipline Assuming
-   * @skipline exampleControllerConst
-   *
-   * Python: Doesn't support a constant version of this function
-   *
-   * @return the heavy data controller attached to this array.
-   */
-  shared_ptr<const XdmfHeavyDataController>
-  getHeavyDataController() const;
 
   std::map<std::string, std::string> getItemProperties() const;
 
@@ -718,6 +679,84 @@ public:
   template <typename T>
   void pushBack(const T & value);
 
+
+
+
+
+
+
+
+
+  /**
+   * Get the first heavy data controller attached to this array.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline Assuming
+   * @skipline exampleController
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleArray.py
+   * @skipline Assuming
+   * @skipline exampleController
+   *
+   * @return the heavy data controller attached to this array.
+   */
+  shared_ptr<XdmfHeavyDataController>
+  getHeavyDataController();
+
+  /**
+   * Get the first heavy data controller attached to this array. (const version)
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline Assuming
+   * @skipline exampleControllerConst
+   *
+   * Python: Doesn't support a constant version of this function
+   *
+   * @return the heavy data controller attached to this array.
+   */
+  shared_ptr<const XdmfHeavyDataController>
+  getHeavyDataController() const;
+
+  /**
+   * Replace all controllers attached to this array with the controller provided.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline Assuming
+   * @skipline exampleController
+   * @until setHeaveyDataController
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleArray.py
+   * @skipline Assuming
+   * @skipline exampleController
+   * @until setHeaveyDataController
+   *
+   * @param newController the heavy data controller to attach to this array.
+   */
+  void
+  setHeavyDataController(shared_ptr<XdmfHeavyDataController> newController);
+
+
+
+
+
+
+
   /**
    * Read data from disk into memory.
    *
@@ -796,7 +835,7 @@ public:
    * @skipline newSize
    * @skipline initArray
    * @skipline insert 
-   * @until #
+   * @until //
    * @skipline newSize
    * @until 4}
    *
@@ -855,31 +894,6 @@ public:
   template<typename T>
   void resize(const std::vector<unsigned int> & dimensions,
               const T & value = 0);
-
-  /**
-   * Attach an heavy data controller to this array.
-   *
-   * Example of use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfArray.cpp
-   * @skipline Assuming
-   * @skipline exampleController
-   * @until setHeaveyDataController
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleArray.py
-   * @skipline Assuming
-   * @skipline exampleController
-   * @until setHeaveyDataController
-   *
-   * @param heavyDataController the heavy data controller to attach to
-   * this array.
-   */
-  void
-  setHeavyDataController(const shared_ptr<XdmfHeavyDataController> heavyDataController);
 
   /**
    * Set the name of the array.
@@ -1135,7 +1149,6 @@ private:
   ArrayVariant mArray;
   unsigned int mArrayPointerNumValues;
   std::vector<unsigned int> mDimensions;
-  shared_ptr<XdmfHeavyDataController> mHeavyDataController;
   std::string mName;
   unsigned int mTmpReserveSize;
 };

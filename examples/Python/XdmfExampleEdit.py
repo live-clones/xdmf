@@ -30,6 +30,8 @@ if __name__ == "__main__":
 	outstring = ""
 	while i < gridHolder.getNumberMaps():
 		readMap = gridHolder.getMap(i)
+		if not readMap.isInitialized():
+			readMap.read()
 		outstring = outstring + "Map # " + str(i) + "\n"
 		taskIDMap = readMap.getMap()
 		j = 0
@@ -60,6 +62,8 @@ if __name__ == "__main__":
 	outstring = ""
 	while i < ungrid.getNumberMaps():
 		readMap = ungrid.getMap(i)
+		if not readMap.isInitialized():
+			readMap.read()
 		print "Map # " + str(i)
 		taskIDMap = readMap.getMap()
 		j = 0
@@ -81,6 +85,8 @@ if __name__ == "__main__":
 	print outstring
 	while i < ungrid.getNumberSets():
 		readSet = ungrid.getSet(i)
+		if not readSet.isInitialized():
+			readSet.read()
 		print "Set # " + str(i)
 		print readSet.getName()
 		if readSet.getType() == XdmfSetType.Node():
@@ -109,6 +115,8 @@ if __name__ == "__main__":
 	i=0
 	while i < ungrid.getNumberAttributes():
 		readAttribute = ungrid.getAttribute(i)
+		if not readAttribute.isInitialized():
+			readAttribute.read()
 		print "Attribute # " + str(i)
 		print readAttribute.getName()
 		if readAttribute.getType() == XdmfAttributeType.Scalar():
@@ -124,6 +132,8 @@ if __name__ == "__main__":
 
 	print "Unstructured Topology"
 	untopology = ungrid.getTopology()
+	if not untopology.isInitialized():
+		untopology.read()
 	print "The topology's tag: " + untopology.getItemTag()
 	if untopology.getType() == XdmfTopologyType.Hexahedron():
 		print "This topology is a hexahedron"
@@ -134,6 +144,8 @@ if __name__ == "__main__":
 
 	print "Unstructured Geometry"
 	ungeometry = ungrid.getGeometry()
+	if not ungeometry.isInitialized():
+		ungeometry.read()
 	print "The geometry's tag: " +ungeometry.getItemTag()
 	if ungeometry.getType() == XdmfGeometryType.XYZ():
 		print "This geometry is XYZ"
@@ -160,6 +172,8 @@ if __name__ == "__main__":
 	outstring = ""
 	while i < curvgrid.getNumberMaps():
 		readMap = curvgrid.getMap(i)
+		if not readMap.isInitialized():
+			readMap.read()
 		print "Map # " + str(i)
 		taskIDMap = readMap.getMap()
 		j = 0
@@ -181,6 +195,8 @@ if __name__ == "__main__":
 	print outstring
 	while i < curvgrid.getNumberSets():
 		readSet = curvgrid.getSet(i)
+		if not readSet.isInitialized():
+			readSet.read()
 		print "Set # " + str(i)
 		print readSet.getName()
 		if readSet.getType() == XdmfSetType.Node():
@@ -207,6 +223,8 @@ if __name__ == "__main__":
 	i=0
 	while i < curvgrid.getNumberAttributes():
 		readAttribute = curvgrid.getAttribute(i)
+		if not readAttribute.isInitialized():
+			readAttribute.read()
 		print "Attribute # " + str(i)
 		print readAttribute.getName()
 		if readAttribute.getType() == XdmfAttributeType.Scalar():
@@ -224,11 +242,15 @@ if __name__ == "__main__":
 
 	print "Curvilinear Dimensions"
 	curvdimensions = curvgrid.getDimensions()
+	if not curvdimensions.isInitialized():
+		curvdimensions.read()
 	print "The dimensions' tag: " + curvdimensions.getItemTag()
 	print "Contains the values: " + curvdimensions.getValuesString()
 
 	print "Curvilinear Geometry"
 	curvgeometry = curvgrid.getGeometry()
+	if not curvgeometry.isInitialized():
+		curvgeometry.read()
 	print "The geometry's tag: " + curvgeometry.getItemTag()
 	if curvgeometry.getType() == XdmfGeometryType.XYZ():
 		print "This geometry is XYZ"
@@ -251,6 +273,8 @@ if __name__ == "__main__":
 	outstring = ""
 	while i < rectgrid.getNumberMaps():
 		readMap = rectgrid.getMap(i)
+		if not readMap.isInitialized():
+			readMap.read()
 		print "Map # " + str(i)
 		taskIDMap = readMap.getMap()
 		j = 0
@@ -272,6 +296,8 @@ if __name__ == "__main__":
 	print outstring
 	while i < rectgrid.getNumberSets():
 		readSet = rectgrid.getSet(i)
+		if not readSet.isInitialized():
+			readSet.read()
 		print "Set # " + str(i)
 		print readSet.getName()
 		if readSet.getType() == XdmfSetType.Node():
@@ -298,6 +324,8 @@ if __name__ == "__main__":
 	i=0
 	while i < rectgrid.getNumberAttributes():
 		readAttribute = rectgrid.getAttribute(i)
+		if not readAttribute.isInitialized():
+			readAttribute.read()
 		print "Attribute # " + str(i)
 		print readAttribute.getName()
 		if readAttribute.getType() == XdmfAttributeType.Scalar():
@@ -315,6 +343,8 @@ if __name__ == "__main__":
 
 	print "Rectilinear Dimensions"
 	rectdimensions = rectgrid.getDimensions()
+	if not rectdimensions.isInitialized():
+		rectdimensions.read()
 	print "The dimensions' tag: " + rectdimensions.getItemTag()
 	print "Contains the values: " + rectdimensions.getValuesString()
 
@@ -322,6 +352,8 @@ if __name__ == "__main__":
 	rectcoordinates = rectgrid.getCoordinates()
 	print "Contains the values: "
 	for coordinateaxes in rectcoordinates:
+		if not coordinateaxes.isInitialized():
+			coordinateaxes.read()
 		print coordinateaxes.getValuesString()
 
 	print "Regular Grid"
@@ -335,6 +367,8 @@ if __name__ == "__main__":
 	outstring = ""
 	while i < reggrid.getNumberMaps():
 		readMap = reggrid.getMap(i)
+		if not readMap.isInitialized():
+			readMap.read()
 		print "Map # " + str(i)
 		taskIDMap = readMap.getMap()
 		j = 0
@@ -356,6 +390,8 @@ if __name__ == "__main__":
 	print outstring
 	while i < reggrid.getNumberSets():
 		readSet = reggrid.getSet(i)
+		if not readSet.isInitialized():
+			readSet.read()
 		print "Set # " + str(i)
 		print readSet.getName()
 		if readSet.getType() == XdmfSetType.Node():
@@ -382,6 +418,8 @@ if __name__ == "__main__":
 	i=0
 	while i < reggrid.getNumberAttributes():
 		readAttribute = reggrid.getAttribute(i)
+		if not readAttribute.isInitialized():
+			readAttribute.read()
 		print "Attribute # " + str(i)
 		print readAttribute.getName()
 		if readAttribute.getType() == XdmfAttributeType.Scalar():
@@ -397,16 +435,22 @@ if __name__ == "__main__":
 
 	print "Regular Brick Size"
 	regbricksize = reggrid.getBrickSize()
+	if not regbricksize.isInitialized():
+		regbricksize.read()
 	print "The brick's tag: " + regbricksize.getItemTag()
 	print "Contains the values: " + regbricksize.getValuesString()
 
 	print "Regular Number of Points"
 	regnumpoints = reggrid.getDimensions()
+	if not regnumpoints.isInitialized():
+		regnumpoints.read()
 	print "The dimensions' tag: " + regnumpoints.getItemTag()
 	print "Contains the values: " + regnumpoints.getValuesString()
 
 	print "Regular Origin"
 	regorigin = reggrid.getOrigin()
+	if not regorigin.isInitialized():
+		regorigin.read()
 	print "The origin's tag: " + regorigin.getItemTag()
 	print "Contains the values: " + regorigin.getValuesString()
 

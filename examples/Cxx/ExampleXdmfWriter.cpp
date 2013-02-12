@@ -30,12 +30,15 @@ int main(int, char **)
 
 	unsigned int exampleLimit = exampleWriter->getLightDataLimit();
 
+	XdmfWriter::Mode testMode = XdmfWriter::Default;
 	if (exampleWriter->getMode() == testMode)
 	{
 		//Do whatever is to be done if the mode is default
 	}
 
 	bool exampleTestPaths = exampleWriter->getWriteXPaths();
+
+	bool exampleXPathParse = exampleWriter->getXPathParse();
 
 	unsigned int newLimit = 20;
 	exampleWriter->setLightDataLimit(newLimit);
@@ -44,6 +47,8 @@ int main(int, char **)
 	exampleWriter->setMode(XdmfWriter::Default);
 
 	exampleWriter->setWriteXPaths(true);
+
+	exampleWriter->setXPathParse(true);
 
 	//Using XdmfAttribute here, but any XdmfArray would work
 	shared_ptr<XdmfAttribute> exampleAttribute = XdmfAttribute::New();

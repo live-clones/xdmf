@@ -191,5 +191,6 @@ if __name__ == "__main__":
 	exampleHeavyWriter = XdmfHDF5Writer.New("testoutput.h5")
 	exampleWriter = XdmfWriter.New("testoutput.xmf", exampleHeavyWriter)
 
-	
+	primaryDomain.accept(exampleHeavyWriter)
+	exampleHeavyWriter.setMode(XdmfHeavyDataWriter.Overwrite)
 	primaryDomain.accept(exampleWriter)

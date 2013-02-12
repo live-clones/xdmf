@@ -20,3 +20,8 @@ if __name__ == "__main__":
 	exampleName = XdmfTopologyType.Triangle().getName()
 
 	numNodes = XdmfTopologyType.Triangle().getNodesPerElement()
+
+	testType = createdTopology.getType()
+
+	if testType == XdmfTopologyType.Triangle:
+		#do whatever is to be done if the type is a triangle

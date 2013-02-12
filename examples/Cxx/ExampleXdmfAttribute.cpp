@@ -17,9 +17,19 @@ int main(int, char **)
 
 	shared_ptr<const XdmfAttributeCenter> exampleCenter = exampleAttribute->getCenter();
 
+	if (exampleCenter == XdmfAttributeCenter::Grid())
+	{
+		//do whatever is to be done if the center is grid
+	}
+
 	std::string exampleName = exampleAttribute->getName();
 
 	shared_ptr<const XdmfAttributeType> exampleType = exampleAttribute->getType();
+
+	if (exampleType == XdmfAttributeType:Scalar())
+	{
+		//do whatever is to be done if the attribute is a scalar
+	}
 
 	return 0;
 }
