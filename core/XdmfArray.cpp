@@ -22,6 +22,7 @@
 /*****************************************************************************/
 
 #include <boost/tokenizer.hpp>
+#include <limits>
 #include <sstream>
 #include <utility>
 #include "XdmfArray.hpp"
@@ -282,6 +283,7 @@ public:
     }
 
     std::stringstream toReturn;
+    toReturn.precision(std::numeric_limits<U>::digits10 + 2);
     for(int i=0; i<lastIndex; ++i) {
       toReturn << (U)array[i] << " ";
     }

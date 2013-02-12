@@ -1111,7 +1111,6 @@ XdmfTopologyConverter::~XdmfTopologyConverter()
 shared_ptr<XdmfUnstructuredGrid>
 XdmfTopologyConverter::convert(const shared_ptr<XdmfUnstructuredGrid> gridToConvert,
                                const shared_ptr<const XdmfTopologyType> topologyType,
-                               unsigned int options,
                                const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) const
 {
   // Make sure geometry and topology are non null
@@ -1138,107 +1137,107 @@ XdmfTopologyConverter::convert(const shared_ptr<XdmfUnstructuredGrid> gridToConv
     if(topologyType == XdmfTopologyType::Hexahedron_27()) {
       converter = new HexahedronToHexahedron27();
     }
-    if(topologyType == XdmfTopologyType::Hexahedron_64()) {
-      if(options == 1) {
-        converter = new HexahedronToHighOrderHexahedron<3, true>();
-      }
-      else {
-        converter = new HexahedronToHighOrderHexahedron<3, false>();
-      }
+    else if(topologyType == XdmfTopologyType::Hexahedron_64()) {
+      converter = new HexahedronToHighOrderHexahedron<3, false>();
+    }
+    else if(topologyType == XdmfTopologyType::Hexahedron_Spectral_64()) {
+      converter = new HexahedronToHighOrderHexahedron<3, true>();
     }
     else if(topologyType == XdmfTopologyType::Hexahedron_125()) {
-      if(options == 1) {
-        converter = new HexahedronToHighOrderHexahedron<4, true>();
-      }
-      else {
-        converter = new HexahedronToHighOrderHexahedron<4, false>();
-      }
+      converter = new HexahedronToHighOrderHexahedron<4, false>();
+    }
+    else if(topologyType == XdmfTopologyType::Hexahedron_Spectral_125()) {
+      converter = new HexahedronToHighOrderHexahedron<4, true>();
     }
     else if(topologyType == XdmfTopologyType::Hexahedron_216()) {
-      if(options == 1) {
-        converter = new HexahedronToHighOrderHexahedron<5, true>();
-      }
-      else {
-        converter = new HexahedronToHighOrderHexahedron<5, false>();
-      }
+      converter = new HexahedronToHighOrderHexahedron<5, false>();
+    }
+    else if(topologyType == XdmfTopologyType::Hexahedron_Spectral_216()) {
+      converter = new HexahedronToHighOrderHexahedron<5, true>();
     }
     else if(topologyType == XdmfTopologyType::Hexahedron_343()) {
-      if(options == 1) {
-        converter = new HexahedronToHighOrderHexahedron<6, true>();
-      }
-      else {
-        converter = new HexahedronToHighOrderHexahedron<6, false>();
-      }
+      converter = new HexahedronToHighOrderHexahedron<6, false>();
+    }
+    else if(topologyType == XdmfTopologyType::Hexahedron_Spectral_343()) {
+      converter = new HexahedronToHighOrderHexahedron<6, true>();
     }
     else if(topologyType == XdmfTopologyType::Hexahedron_512()) {
-      if(options == 1) {
-        converter = new HexahedronToHighOrderHexahedron<7, true>();
-      }
-      else {
-        converter = new HexahedronToHighOrderHexahedron<7, false>();
-      }
+      converter = new HexahedronToHighOrderHexahedron<7, false>();
+    }
+    else if(topologyType == XdmfTopologyType::Hexahedron_Spectral_512()) {
+      converter = new HexahedronToHighOrderHexahedron<7, true>();
     }
     else if(topologyType == XdmfTopologyType::Hexahedron_729()) {
-      if(options == 1) {
-        converter = new HexahedronToHighOrderHexahedron<8, true>();
-      }
-      else {
-        converter = new HexahedronToHighOrderHexahedron<8, false>();
-      }
+      converter = new HexahedronToHighOrderHexahedron<8, false>();
+    }
+    else if(topologyType == XdmfTopologyType::Hexahedron_Spectral_729()) {
+      converter = new HexahedronToHighOrderHexahedron<8, true>();
     }
     else if(topologyType == XdmfTopologyType::Hexahedron_1000()) {
-      if(options == 1) {
-        converter = new HexahedronToHighOrderHexahedron<9, true>();
-      }
-      else {
-        converter = new HexahedronToHighOrderHexahedron<9, false>();
-      }
+      converter = new HexahedronToHighOrderHexahedron<9, false>();
+    }
+    else if(topologyType == XdmfTopologyType::Hexahedron_Spectral_1000()) {
+      converter = new HexahedronToHighOrderHexahedron<9, true>();
     }
     else if(topologyType == XdmfTopologyType::Hexahedron_1331()) {
-      if(options == 1) {
-        converter = new HexahedronToHighOrderHexahedron<10, true>();
-      }
-      else {
-        converter = new HexahedronToHighOrderHexahedron<10, false>();
-      }
+      converter = new HexahedronToHighOrderHexahedron<10, false>();
+    }
+    else if(topologyType == XdmfTopologyType::Hexahedron_Spectral_1331()) {
+      converter = new HexahedronToHighOrderHexahedron<10, true>();
     }
   }
-  else if(topologyTypeToConvert == XdmfTopologyType::Hexahedron_64()) {
+  else if(topologyTypeToConvert == XdmfTopologyType::Hexahedron_64() ||
+          topologyTypeToConvert == 
+          XdmfTopologyType::Hexahedron_Spectral_64()) {
     if(topologyType == XdmfTopologyType::Hexahedron()) {
       converter = new HighOrderHexahedronToHexahedron<3>();
     }
   }
-  else if(topologyTypeToConvert == XdmfTopologyType::Hexahedron_125()) {
+  else if(topologyTypeToConvert == XdmfTopologyType::Hexahedron_125() ||
+          topologyTypeToConvert == 
+          XdmfTopologyType::Hexahedron_Spectral_125()) {
     if(topologyType == XdmfTopologyType::Hexahedron()) {
       converter = new HighOrderHexahedronToHexahedron<4>();
     }
   }
-  else if(topologyTypeToConvert == XdmfTopologyType::Hexahedron_216()) {
+  else if(topologyTypeToConvert == XdmfTopologyType::Hexahedron_216() ||
+          topologyTypeToConvert == 
+          XdmfTopologyType::Hexahedron_Spectral_216()) {
     if(topologyType == XdmfTopologyType::Hexahedron()) {
       converter = new HighOrderHexahedronToHexahedron<5>();
     }
   }
-  else if(topologyTypeToConvert == XdmfTopologyType::Hexahedron_343()) {
+  else if(topologyTypeToConvert == XdmfTopologyType::Hexahedron_343() ||
+          topologyTypeToConvert == 
+          XdmfTopologyType::Hexahedron_Spectral_343()) {
     if(topologyType == XdmfTopologyType::Hexahedron()) {
       converter = new HighOrderHexahedronToHexahedron<6>();
     }
   }
-  else if(topologyTypeToConvert == XdmfTopologyType::Hexahedron_512()) {
+  else if(topologyTypeToConvert == XdmfTopologyType::Hexahedron_512() ||
+          topologyTypeToConvert == 
+          XdmfTopologyType::Hexahedron_Spectral_512()) {
     if(topologyType == XdmfTopologyType::Hexahedron()) {
       converter = new HighOrderHexahedronToHexahedron<7>();
     }
   }
-  else if(topologyTypeToConvert == XdmfTopologyType::Hexahedron_729()) {
+  else if(topologyTypeToConvert == XdmfTopologyType::Hexahedron_729() ||
+          topologyTypeToConvert == 
+          XdmfTopologyType::Hexahedron_Spectral_729()) {
     if(topologyType == XdmfTopologyType::Hexahedron()) {
       converter = new HighOrderHexahedronToHexahedron<8>();
     }
   }
-  else if(topologyTypeToConvert == XdmfTopologyType::Hexahedron_1000()) {
+  else if(topologyTypeToConvert == XdmfTopologyType::Hexahedron_1000() ||
+          topologyTypeToConvert == 
+          XdmfTopologyType::Hexahedron_Spectral_1000()) {
     if(topologyType == XdmfTopologyType::Hexahedron()) {
       converter = new HighOrderHexahedronToHexahedron<9>();
     }
   }
-  else if(topologyTypeToConvert == XdmfTopologyType::Hexahedron_1331()) {
+  else if(topologyTypeToConvert == XdmfTopologyType::Hexahedron_1331() ||
+          topologyTypeToConvert == 
+          XdmfTopologyType::Hexahedron_Spectral_1331()) {
     if(topologyType == XdmfTopologyType::Hexahedron()) {
       converter = new HighOrderHexahedronToHexahedron<10>();
     }

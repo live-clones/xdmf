@@ -282,6 +282,80 @@ XdmfTopologyType::Hexahedron_1331()
   return p;
 }
 
+shared_ptr<const XdmfTopologyType>
+XdmfTopologyType::Hexahedron_Spectral_64()
+{
+  static shared_ptr<const XdmfTopologyType>
+    p(new XdmfTopologyType(64, 6, 12, "Hexahedron_Spectral_64", Cubic, 0x41));
+  return p;
+}
+
+shared_ptr<const XdmfTopologyType>
+XdmfTopologyType::Hexahedron_Spectral_125()
+{
+  static shared_ptr<const XdmfTopologyType>
+    p(new XdmfTopologyType(125, 6, 12, 
+                           "Hexahedron_Spectral_125", Quartic, 0x42));
+  return p;
+}
+
+shared_ptr<const XdmfTopologyType>
+XdmfTopologyType::Hexahedron_Spectral_216()
+{
+  static shared_ptr<const XdmfTopologyType>
+    p(new XdmfTopologyType(216, 6, 12, 
+                           "Hexahedron_Spectral_216", Quintic, 0x43));
+  return p;
+}
+
+
+shared_ptr<const XdmfTopologyType>
+XdmfTopologyType::Hexahedron_Spectral_343()
+{
+  static shared_ptr<const XdmfTopologyType>
+    p(new XdmfTopologyType(343, 6, 12, 
+                           "Hexahedron_Spectral_343", Sextic, 0x44));
+  return p;
+}
+
+
+shared_ptr<const XdmfTopologyType>
+XdmfTopologyType::Hexahedron_Spectral_512()
+{
+  static shared_ptr<const XdmfTopologyType>
+    p(new XdmfTopologyType(512, 6, 12, 
+                           "Hexahedron_Spectral_512", Septic, 0x45));
+  return p;
+}
+
+
+shared_ptr<const XdmfTopologyType>
+XdmfTopologyType::Hexahedron_Spectral_729()
+{
+  static shared_ptr<const XdmfTopologyType>
+    p(new XdmfTopologyType(729, 6, 12, 
+                           "Hexahedron_Spectral_729", Octic, 0x46));
+  return p;
+}
+
+
+shared_ptr<const XdmfTopologyType>
+XdmfTopologyType::Hexahedron_Spectral_1000()
+{
+  static shared_ptr<const XdmfTopologyType>
+    p(new XdmfTopologyType(1000, 6, 12, 
+                           "Hexahedron_Spectral_1000", Nonic, 0x47));
+  return p;
+}
+
+shared_ptr<const XdmfTopologyType>
+XdmfTopologyType::Hexahedron_Spectral_1331()
+{
+  static shared_ptr<const XdmfTopologyType>
+    p(new XdmfTopologyType(1331, 6, 12, 
+                           "Hexahedron_Spectral_1331", Decic, 0x48));
+  return p;
+}
 
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Mixed()
@@ -380,6 +454,30 @@ XdmfTopologyType::New(const unsigned int id)
   }
   else if(id == XdmfTopologyType::Hexahedron_1331()->getID()) {
     return XdmfTopologyType::Hexahedron_1331();
+  }
+  else if(id == XdmfTopologyType::Hexahedron_Spectral_64()->getID()) {
+    return XdmfTopologyType::Hexahedron_Spectral_64();
+  }
+  else if(id == XdmfTopologyType::Hexahedron_Spectral_125()->getID()) {
+    return XdmfTopologyType::Hexahedron_Spectral_125();
+  }
+  else if(id == XdmfTopologyType::Hexahedron_Spectral_216()->getID()) {
+    return XdmfTopologyType::Hexahedron_Spectral_216();
+  }
+  else if(id == XdmfTopologyType::Hexahedron_Spectral_343()->getID()) {
+    return XdmfTopologyType::Hexahedron_Spectral_343();
+  }
+  else if(id == XdmfTopologyType::Hexahedron_Spectral_512()->getID()) {
+    return XdmfTopologyType::Hexahedron_Spectral_512();
+  }
+  else if(id == XdmfTopologyType::Hexahedron_Spectral_729()->getID()) {
+    return XdmfTopologyType::Hexahedron_Spectral_729();
+  }
+  else if(id == XdmfTopologyType::Hexahedron_Spectral_1000()->getID()) {
+    return XdmfTopologyType::Hexahedron_Spectral_1000();
+  }
+  else if(id == XdmfTopologyType::Hexahedron_Spectral_1331()->getID()) {
+    return XdmfTopologyType::Hexahedron_Spectral_1331();
   }
   else if(id == XdmfTopologyType::Mixed()->getID()) {
     return XdmfTopologyType::Mixed();
@@ -518,6 +616,30 @@ XdmfTopologyType::New(const std::map<std::string, std::string> & itemProperties)
   }
   else if(typeVal.compare("HEXAHEDRON_1331") == 0) {
     return Hexahedron_1331();
+  }
+  else if(typeVal.compare("HEXAHEDRON_SPECTRAL_64") == 0) {
+    return Hexahedron_Spectral_64();
+  }
+  else if(typeVal.compare("HEXAHEDRON_SPECTRAL_125") == 0) {
+    return Hexahedron_Spectral_125();
+  }
+  else if(typeVal.compare("HEXAHEDRON_SPECTRAL_216") == 0) {
+    return Hexahedron_Spectral_216();
+  }
+  else if(typeVal.compare("HEXAHEDRON_SPECTRAL_343") == 0) {
+    return Hexahedron_Spectral_343();
+  }
+  else if(typeVal.compare("HEXAHEDRON_SPECTRAL_512") == 0) {
+    return Hexahedron_Spectral_512();
+  }
+  else if(typeVal.compare("HEXAHEDRON_SPECTRAL_729") == 0) {
+    return Hexahedron_Spectral_729();
+  }
+  else if(typeVal.compare("HEXAHEDRON_SPECTRAL_1000") == 0) {
+    return Hexahedron_Spectral_1000();
+  }
+  else if(typeVal.compare("HEXAHEDRON_SPECTRAL_1331") == 0) {
+    return Hexahedron_Spectral_1331();
   }
   else if(typeVal.compare("MIXED") == 0) {
     return Mixed();
