@@ -94,8 +94,6 @@ XdmfGrid * XdmfPartitioner::Partition(XdmfGrid    * grid,
     case(XDMF_HEX_20):
     case(XDMF_HEX_24):
     case(XDMF_HEX_27):
-    case(XDMF_HEX_64):
-    case(XDMF_HEX_125):
       metisElementType = 3;
       numNodesPerElement = 8;
       break;

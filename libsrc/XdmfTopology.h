@@ -58,8 +58,6 @@
 #define XDMF_HEX_20         0x0030
 #define XDMF_HEX_24         0x0031
 #define XDMF_HEX_27         0x0032
-#define XDMF_HEX_64         0x0033
-#define XDMF_HEX_125        0x0034
 #define XDMF_MIXED          0x0070
 #define XDMF_2DSMESH        0x0100
 #define XDMF_2DRECTMESH     0x0101

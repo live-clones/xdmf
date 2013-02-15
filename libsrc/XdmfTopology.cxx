@@ -514,10 +514,6 @@ if ( XDMF_WORD_CMP( topologyType, "NOTOPOLOGY") ){
   newTopologyType = XDMF_HEX_24;
 } else if( XDMF_WORD_CMP( topologyType, "HEXAHEDRON_27") ){
   newTopologyType = XDMF_HEX_27;
-} else if( XDMF_WORD_CMP( topologyType, "HEXAHEDRON_64") ){
-  newTopologyType = XDMF_HEX_64;
-} else if( XDMF_WORD_CMP( topologyType, "HEXAHEDRON_125") ){
-  newTopologyType = XDMF_HEX_125;
 } else if( XDMF_WORD_CMP( topologyType, "MIXED") ){
   newTopologyType = XDMF_MIXED;
 } else if( XDMF_WORD_CMP( topologyType, "2DSMESH") ){
@@ -593,10 +589,6 @@ XdmfTopology::GetTopologyTypeAsString( void ) {
       return("Hexahedron_24");
     case  XDMF_HEX_27 :
       return("Hexahedron_27");
-    case  XDMF_HEX_64 :
-      return("Hexahedron_64");
-    case  XDMF_HEX_125 :
-      return("Hexahedron_125");
     case XDMF_MIXED :
       return("Mixed");
     case  XDMF_2DSMESH :
@@ -693,12 +685,6 @@ XdmfInt32  nodesPerElement = 0;
       break;
     case  XDMF_HEX_27 :
       nodesPerElement = 27;
-      break;
-    case  XDMF_HEX_64 :
-      nodesPerElement = 64;
-      break;
-    case  XDMF_HEX_125 :
-      nodesPerElement = 125;
       break;
     case  XDMF_MIXED :
       nodesPerElement = 0;
@@ -890,12 +876,6 @@ if(this->TopologyType == XDMF_MIXED){
               break;
             case  XDMF_HEX_27 :
               npe = 27;
-              break;
-            case XDMF_HEX_64 :
-              npe = 64;
-              break;
-            case XDMF_HEX_125 :
-              npe = 125;
               break;
             default :
                 XdmfErrorMessage("Unknown Cell Type = " << celltype);
@@ -1115,8 +1095,6 @@ XdmfTopology::GetEdgesPerElement() {
     case  XDMF_HEX_20 :
     case  XDMF_HEX_24 :
     case  XDMF_HEX_27 :
-    case  XDMF_HEX_64 :
-    case  XDMF_HEX_125 :
       return 12;
     case  XDMF_MIXED :
     case  XDMF_2DSMESH :
@@ -1174,8 +1152,6 @@ XdmfTopology::GetFacesPerElement() {
     case  XDMF_HEX_20 :
     case  XDMF_HEX_24 :
     case  XDMF_HEX_27 :
-    case  XDMF_HEX_64 :
-    case  XDMF_HEX_125 :
       return 6;
     case  XDMF_MIXED :
     case  XDMF_2DSMESH :
