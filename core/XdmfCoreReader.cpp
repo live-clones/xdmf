@@ -135,7 +135,7 @@ public:
             currAttribute = currAttribute->next;
           }
 
-          xmlXPathContextPtr context = mXPathContext;
+          xmlXPathContextPtr oldContext = mXPathContext;
           if(href) {
 	    xmlDocPtr document;
             xmlChar * filePath = xmlBuildURI(href, mDocument->URL);
@@ -149,11 +149,11 @@ public:
 	      document = iter->second;
 	    }
 
-            context = xmlXPtrNewContext(document, NULL, NULL);           
+            mXPathContext = xmlXPtrNewContext(document, NULL, NULL);           
           }
 
           if(xpointer) {
-            xmlXPathObjectPtr result = xmlXPtrEval(xpointer, context);
+            xmlXPathObjectPtr result = xmlXPtrEval(xpointer, mXPathContext);
             if(result && !xmlXPathNodeSetIsEmpty(result->nodesetval)) {
               for(int i=0; i<result->nodesetval->nodeNr; ++i) {
                 this->readSingleNode(result->nodesetval->nodeTab[i],
@@ -164,8 +164,10 @@ public:
           }
 
           if(href) {
-            xmlXPathFreeContext(context);
+            xmlXPathFreeContext(mXPathContext);
           }
+
+          mXPathContext = oldContext;
 
         }
         else {
