@@ -817,7 +817,7 @@ int main(int, char **)
 
 	shared_ptr<XdmfHDF5Writer> exampleHeavyWriter = XdmfHDF5Writer::New("editedtestoutput.h5");
         shared_ptr<XdmfWriter> exampleWriter = XdmfWriter::New("editedtestoutput.xmf", exampleHeavyWriter);
-	//exampleHeavyWriter->setFileSizeLimit(1);
+	exampleHeavyWriter->setFileSizeLimit(1);
 	primaryDomain->accept(exampleHeavyWriter);
 	exampleHeavyWriter->setMode(XdmfHeavyDataWriter::Overwrite);
         primaryDomain->accept(exampleWriter);

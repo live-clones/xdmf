@@ -546,6 +546,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
                   partialStarts.push_back(start[j]);
                   partialStrides.push_back(stride[j]);				
                   partialDataSizes.push_back(dataspaceDimensions[j]);
+                  containedInDimensions = (containedInDimensions - dimensions[j]) + (array.getSize() - (containedInDimensions - dimensions[j]));
                 }
                 else { //if the array fit perfectly in the prior dimensions then just end
                   break;
@@ -559,9 +560,11 @@ XdmfHDF5Writer::write(XdmfArray & array,
             j = containedInPriorDimensions;
             if (datatype == H5T_NATIVE_CHAR){
               partialArray->initialize(XdmfArrayType::Int8(), 0);
+
               char movedData [containedInDimensions];
               array.getValues(containedInPriorDimensions, movedData, containedInDimensions);
               partialArray->insert(0, movedData, containedInDimensions);
+
 /*
               for (j = containedInPriorDimensions; j < containedInPriorDimensions + containedInDimensions; j++){
                 partialArray->pushBack(array.getValue<char>(j));
@@ -570,9 +573,11 @@ XdmfHDF5Writer::write(XdmfArray & array,
             }
             else if (datatype == H5T_NATIVE_SHORT){
               partialArray->initialize(XdmfArrayType::Int16(), 0);
+
               short movedData [containedInDimensions];
               array.getValues(containedInPriorDimensions, movedData, containedInDimensions);
               partialArray->insert(0, movedData, containedInDimensions);
+
 /*
               for (j = containedInPriorDimensions; j < containedInPriorDimensions + containedInDimensions; j++){
                 partialArray->pushBack(array.getValue<short>(j));
@@ -581,9 +586,11 @@ XdmfHDF5Writer::write(XdmfArray & array,
             }
             else if (datatype == H5T_NATIVE_INT){
               partialArray->initialize(XdmfArrayType::Int32(), 0);
+
               int movedData [containedInDimensions];
               array.getValues(containedInPriorDimensions, movedData, containedInDimensions);
               partialArray->insert(0, movedData, containedInDimensions);
+
 /*
               for (j = containedInPriorDimensions; j < containedInPriorDimensions + containedInDimensions; j++){
                 partialArray->pushBack(array.getValue<int>(j));
@@ -592,9 +599,11 @@ XdmfHDF5Writer::write(XdmfArray & array,
             }
             else if (datatype == H5T_NATIVE_LONG){
               partialArray->initialize(XdmfArrayType::Int64(), 0);
+
               long movedData [containedInDimensions];
               array.getValues(containedInPriorDimensions, movedData, containedInDimensions);
               partialArray->insert(0, movedData, containedInDimensions);
+
 /*
               for (j = containedInPriorDimensions; j < containedInPriorDimensions + containedInDimensions; j++){
                 partialArray->pushBack(array.getValue<long>(j));
@@ -603,9 +612,11 @@ XdmfHDF5Writer::write(XdmfArray & array,
             }
             else if (datatype == H5T_NATIVE_FLOAT){
               partialArray->initialize(XdmfArrayType::Float32(), 0);
+
               float movedData [containedInDimensions];
               array.getValues(containedInPriorDimensions, movedData, containedInDimensions);
               partialArray->insert(0, movedData, containedInDimensions);
+
 /*
               for (j = containedInPriorDimensions; j < containedInPriorDimensions + containedInDimensions; j++){
                 partialArray->pushBack(array.getValue<float>(j));
@@ -614,9 +625,11 @@ XdmfHDF5Writer::write(XdmfArray & array,
             }
             else if (datatype == H5T_NATIVE_DOUBLE){
               partialArray->initialize(XdmfArrayType::Float64(), 0);
+
               double movedData [containedInDimensions];
               array.getValues(containedInPriorDimensions, movedData, containedInDimensions);
               partialArray->insert(0, movedData, containedInDimensions);
+
 /*
               for (j = containedInPriorDimensions; j < containedInPriorDimensions + containedInDimensions; j++){
                 partialArray->pushBack(array.getValue<double>(j));
@@ -625,9 +638,11 @@ XdmfHDF5Writer::write(XdmfArray & array,
             }
             else if (datatype == H5T_NATIVE_UCHAR){
               partialArray->initialize(XdmfArrayType::UInt8(), 0);
+
               unsigned char movedData [containedInDimensions];
               array.getValues(containedInPriorDimensions, movedData, containedInDimensions);
               partialArray->insert(0, movedData, containedInDimensions);
+
 /*
               for (j = containedInPriorDimensions; j < containedInPriorDimensions + containedInDimensions; j++){
                 partialArray->pushBack(array.getValue<unsigned char>(j));
@@ -636,9 +651,11 @@ XdmfHDF5Writer::write(XdmfArray & array,
             }
             else if (datatype == H5T_NATIVE_USHORT){
               partialArray->initialize(XdmfArrayType::UInt16(), 0);
+
               unsigned short movedData [containedInDimensions];
               array.getValues(containedInPriorDimensions, movedData, containedInDimensions);
               partialArray->insert(0, movedData, containedInDimensions);
+
 /*
               for (j = containedInPriorDimensions; j < containedInPriorDimensions + containedInDimensions; j++){
                 partialArray->pushBack(array.getValue<unsigned short>(j));
@@ -647,9 +664,11 @@ XdmfHDF5Writer::write(XdmfArray & array,
             }
             else if (datatype == H5T_NATIVE_UINT) {
               partialArray->initialize(XdmfArrayType::UInt32(), 0);
+
               unsigned int movedData [containedInDimensions];
               array.getValues(containedInPriorDimensions, movedData, containedInDimensions);
               partialArray->insert(0, movedData, containedInDimensions);
+
 /*
               for (j = containedInPriorDimensions; j < containedInPriorDimensions + containedInDimensions; j++){
                 partialArray->pushBack(array.getValue<unsigned int>(j));
@@ -663,11 +682,9 @@ XdmfHDF5Writer::write(XdmfArray & array,
               }
             }
 
-            if (partialArray->getSize()==0) {
+            if (partialDimensions.size() == 0) {
               break;
             }
-		//check if the array size is less than the size alloted by the dimensions
-		//then reduce the dimensions until it fits into the dimensions?
 
 
             arraysWritten.push_back(partialArray);
@@ -706,6 +723,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
         int movedSize = 0;
         if (datatype == H5T_NATIVE_CHAR){
           partialArray->initialize(XdmfArrayType::Int8(), 0);
+
           if ((array.getSize() - controllerIndexOffset) <= heavyDataController->getSize()) {
             movedSize = array.getSize() - controllerIndexOffset;
           }
@@ -716,6 +734,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
           array.getValues(controllerIndexOffset, movedData, movedSize);
           partialArray->insert(0, movedData, movedSize);
           j+=movedSize;
+
 /*
           for (j = controllerIndexOffset; j < controllerIndexOffset + heavyDataController->getSize() && j < array.getSize() ; j++){
             partialArray->pushBack(array.getValue<char>(j));
@@ -724,6 +743,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
         }
         else if (datatype == H5T_NATIVE_SHORT){
           partialArray->initialize(XdmfArrayType::Int16(), 0);
+
           if ((array.getSize() - controllerIndexOffset) <= heavyDataController->getSize()) {
             movedSize = array.getSize() - controllerIndexOffset;
           }
@@ -734,6 +754,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
           array.getValues(controllerIndexOffset, movedData, movedSize);
           partialArray->insert(0, movedData, movedSize);
           j+=movedSize;
+
 /*
           for (j = controllerIndexOffset; j < controllerIndexOffset + heavyDataController->getSize() && j < array.getSize(); j++){
             partialArray->pushBack(array.getValue<short>(j));
@@ -742,6 +763,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
         }
         else if (datatype == H5T_NATIVE_INT){
           partialArray->initialize(XdmfArrayType::Int32(), 0);
+
           if ((array.getSize() - controllerIndexOffset) <= heavyDataController->getSize()) {
             movedSize = array.getSize() - controllerIndexOffset;
           }
@@ -752,6 +774,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
           array.getValues(controllerIndexOffset, movedData, movedSize);
           partialArray->insert(0, movedData, movedSize);
           j+=movedSize;
+
 /*
           for (j = controllerIndexOffset; j < controllerIndexOffset + heavyDataController->getSize() && j < array.getSize(); j++){
             partialArray->pushBack(array.getValue<int>(j));
@@ -760,6 +783,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
         }
         else if (datatype == H5T_NATIVE_LONG){
           partialArray->initialize(XdmfArrayType::Int64(), 0);
+
           if ((array.getSize() - controllerIndexOffset) <= heavyDataController->getSize()) {
             movedSize = array.getSize() - controllerIndexOffset;
           }
@@ -770,6 +794,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
           array.getValues(controllerIndexOffset, movedData, movedSize);
           partialArray->insert(0, movedData, movedSize);
           j+=movedSize;
+
 /*
           for (j = controllerIndexOffset; j < controllerIndexOffset + heavyDataController->getSize() && j < array.getSize(); j++){
             partialArray->pushBack(array.getValue<long>(j));
@@ -778,6 +803,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
         }
         else if (datatype == H5T_NATIVE_FLOAT){
           partialArray->initialize(XdmfArrayType::Float32(), 0);
+
           if ((array.getSize() - controllerIndexOffset) <= heavyDataController->getSize()) {
             movedSize = array.getSize() - controllerIndexOffset;
           }
@@ -788,6 +814,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
           array.getValues(controllerIndexOffset, movedData, movedSize);
           partialArray->insert(0, movedData, movedSize);
           j+=movedSize;
+
 /*
           for (j = controllerIndexOffset; j < controllerIndexOffset + heavyDataController->getSize() && j < array.getSize(); j++){
             partialArray->pushBack(array.getValue<float>(j));
@@ -796,6 +823,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
         }
         else if (datatype == H5T_NATIVE_DOUBLE){
           partialArray->initialize(XdmfArrayType::Float64(), 0);
+
           if ((array.getSize() - controllerIndexOffset) <= heavyDataController->getSize()) {
             movedSize = array.getSize() - controllerIndexOffset;
           }
@@ -806,6 +834,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
           array.getValues(controllerIndexOffset, movedData, movedSize);
           partialArray->insert(0, movedData, movedSize);
           j+=movedSize;
+
 /*
           for (j = controllerIndexOffset; j < controllerIndexOffset + heavyDataController->getSize() && j < array.getSize(); j++){
             partialArray->pushBack(array.getValue<double>(j));
@@ -814,6 +843,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
         }
         else if (datatype == H5T_NATIVE_UCHAR){
           partialArray->initialize(XdmfArrayType::UInt8(), 0);
+
           if ((array.getSize() - controllerIndexOffset) <= heavyDataController->getSize()) {
             movedSize = array.getSize() - controllerIndexOffset;
           }
@@ -824,6 +854,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
           array.getValues(controllerIndexOffset, movedData, movedSize);
           partialArray->insert(0, movedData, movedSize);
           j+=movedSize;
+
 /*
           for (j = controllerIndexOffset; j < controllerIndexOffset + heavyDataController->getSize() && j < array.getSize(); j++){
             partialArray->pushBack(array.getValue<unsigned char>(j));
@@ -832,6 +863,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
         }
         else if (datatype == H5T_NATIVE_USHORT){
           partialArray->initialize(XdmfArrayType::UInt16(), 0);
+
           if ((array.getSize() - controllerIndexOffset) <= heavyDataController->getSize()) {
             movedSize = array.getSize() - controllerIndexOffset;
           }
@@ -842,6 +874,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
           array.getValues(controllerIndexOffset, movedData, movedSize);
           partialArray->insert(0, movedData, movedSize);
           j+=movedSize;
+
 /*
           for (j = controllerIndexOffset; j < controllerIndexOffset + heavyDataController->getSize() && j < array.getSize(); j++){
             partialArray->pushBack(array.getValue<unsigned short>(j));
@@ -850,6 +883,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
         }
         else if (datatype == H5T_NATIVE_UINT) {
           partialArray->initialize(XdmfArrayType::UInt32(), 0);
+
           if ((array.getSize() - controllerIndexOffset) <= heavyDataController->getSize()) {
             movedSize = array.getSize() - controllerIndexOffset;
           }
@@ -860,6 +894,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
           array.getValues(controllerIndexOffset, movedData, movedSize);
           partialArray->insert(0, movedData, movedSize);
           j+=movedSize;
+
 /*
           for (j = controllerIndexOffset; j < controllerIndexOffset + heavyDataController->getSize() && j < array.getSize(); j++){
             partialArray->pushBack(array.getValue<unsigned int>(j));
@@ -958,12 +993,13 @@ XdmfHDF5Writer::write(XdmfArray & array,
 
           std::vector<hsize_t> maximum_dims(curDimensions.size(), H5S_UNLIMITED);
           //create a new dataspace
-          dataspace = H5Screate_simple(curDimensions.size(),
+          dataspace = H5Screate_simple(current_dims.size(),
                                        &current_dims[0],
                                        &maximum_dims[0]);
           hid_t property = H5Pcreate(H5P_DATASET_CREATE);
-          std::vector<hsize_t> chunk_size(curDimensions.size(), 1024);
-          status = H5Pset_chunk(property, curDimensions.size(), &chunk_size[0]);
+          std::vector<hsize_t> chunk_size(current_dims.size(), 1024);
+
+          status = H5Pset_chunk(property, current_dims.size(), &chunk_size[0]);
           //use that dataspace to create a new dataset
           dataset = H5Dcreate(mImpl->mHDF5Handle,
                               dataSetPath.str().c_str(),
@@ -1097,15 +1133,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
 
         // Attach a new controller to the array
         shared_ptr<XdmfHDF5Controller> newDataController =
-            this->createHDF5Controller(curFileName,
-                                       dataSetPath.str(),
-                                       curArray->getArrayType(),
-                                       curStart,
-                                       curStride,
-                                       curDimensions,
-                                       curDataSize);
-
-//          shared_ptr<XdmfHDF5Controller>();
+          shared_ptr<XdmfHDF5Controller>();
 
         unsigned int newSize;
         if(mMode == Append) {
@@ -1141,7 +1169,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
                                        insertDimensions,
                                        insertDataSpaceDimensions);
         }
-/*
+
         if(!newDataController) {
           newDataController =
             this->createHDF5Controller(curFileName,
@@ -1152,7 +1180,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
                                        curDimensions,
                                        curDataSize);
         }
-*/
+
         array.insert(newDataController);
 
         fileNameWalker++;
