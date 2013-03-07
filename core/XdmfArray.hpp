@@ -541,7 +541,7 @@ private:
     boost::shared_array<const unsigned char>,
     boost::shared_array<const unsigned short>,
     boost::shared_array<const unsigned int> > ArrayVariant;
-  
+
   ArrayVariant mArray;
   unsigned int mArrayPointerNumValues;
   std::vector<unsigned int> mDimensions;
