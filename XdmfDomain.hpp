@@ -26,6 +26,7 @@
 
 // Forward Declarations
 class XdmfCurvilinearGrid;
+class XdmfGraph;
 class XdmfGridCollection;
 class XdmfRectilinearGrid;
 class XdmfRegularGrid;
@@ -56,8 +57,9 @@ public:
   virtual ~XdmfDomain();
 
   LOKI_DEFINE_VISITABLE(XdmfDomain, XdmfItem);
-  XDMF_CHILDREN(XdmfGridCollection, GridCollection, Name);
   XDMF_CHILDREN(XdmfCurvilinearGrid, CurvilinearGrid, Name);
+  XDMF_CHILDREN(XdmfGraph, Graph, Name);
+  XDMF_CHILDREN(XdmfGridCollection, GridCollection, Name);
   XDMF_CHILDREN(XdmfRectilinearGrid, RectilinearGrid, Name);
   XDMF_CHILDREN(XdmfRegularGrid, RegularGrid, Name);
   XDMF_CHILDREN(XdmfUnstructuredGrid, UnstructuredGrid, Name);

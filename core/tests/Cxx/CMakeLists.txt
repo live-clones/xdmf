@@ -28,6 +28,7 @@ if(XDMF_BUILD_DSM)
   ADD_TEST_CXX(TestXdmfHDF5WriterDSM)
 endif(XDMF_BUILD_DSM)
 ADD_TEST_CXX(TestXdmfInformation)
+ADD_TEST_CXX(TestXdmfSparseMatrix)
 ADD_TEST_CXX(TestXdmfVersion)
 
 # Add any cxx cleanup here:
@@ -50,4 +51,6 @@ if(XDMF_BUILD_DSM)
   CLEAN_TEST_CXX(TestXdmfHDF5WriterDSM)
 endif(XDMF_BUILD_DSM)
 CLEAN_TEST_CXX(TestXdmfInformation)
+CLEAN_TEST_CXX(TestXdmfSparseMatrix
+  TestXdmfSparseMatrix.xmf)
 CLEAN_TEST_CXX(TestXdmfVersion)

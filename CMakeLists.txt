@@ -211,6 +211,7 @@ if(NOT XDMF_BUILD_CORE_ONLY)
     XdmfDomain
     XdmfGeometry
     XdmfGeometryType
+    XdmfGraph
     XdmfGrid
     XdmfGridCollection
     XdmfGridCollectionType

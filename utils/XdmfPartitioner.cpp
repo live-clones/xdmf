@@ -36,6 +36,7 @@ extern "C"
 #include "XdmfError.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGeometryType.hpp"
+#include "XdmfGraph.hpp"
 #include "XdmfGridCollection.hpp"
 #include "XdmfGridCollectionType.hpp"
 #include "XdmfHeavyDataWriter.hpp"
@@ -46,6 +47,60 @@ extern "C"
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
 #include "XdmfUnstructuredGrid.hpp"
+
+//
+// local methods
+//
+namespace {
+
+  shared_ptr<XdmfGraph>
+  addSymmetricEntries(const shared_ptr<XdmfGraph> graph)
+  {
+    const shared_ptr<XdmfArray> rowPointer = graph->getRowPointer();
+    const shared_ptr<XdmfArray> columnIndex = graph->getColumnIndex();
+    const unsigned int numberRows = graph->getNumberRows();
+
+    std::set<std::pair<unsigned int, unsigned int> > entrySet;
+    for(unsigned int i=0; i<numberRows; ++i) {
+      for(unsigned int j=rowPointer->getValue<unsigned int>(i);
+          j<rowPointer->getValue<unsigned int>(i+1);
+          ++j) {
+        const unsigned int k = columnIndex->getValue<unsigned int>(j);
+        entrySet.insert(std::make_pair(i, k));
+        entrySet.insert(std::make_pair(k, i));
+      }
+    }
+
+    shared_ptr<XdmfGraph> toReturn = XdmfGraph::New(numberRows);
+    shared_ptr<XdmfArray> toReturnRowPointer = toReturn->getRowPointer();
+    shared_ptr<XdmfArray> toReturnColumnIndex = toReturn->getColumnIndex();
+    shared_ptr<XdmfArray> toReturnValues = toReturn->getValues();
+
+    unsigned int currentRow = 1;
+    for(std::set<std::pair<unsigned int, unsigned int> >::const_iterator
+          iter = entrySet.begin();
+        iter != entrySet.end();
+        ++iter) {
+      const std::pair<unsigned int, unsigned int> & entry = *iter;
+      const unsigned int row = entry.first;
+      const unsigned int column = entry.second;
+      for(unsigned int j = currentRow; j<row; ++j) {
+        toReturnRowPointer->insert<unsigned int>(j,
+                                                 toReturnColumnIndex->getSize());
+      }
+
+      currentRow = row + 1;
+      toReturnColumnIndex->pushBack<unsigned int>(column);
+      toReturnValues->pushBack<double>(1.0);
+      toReturnRowPointer->insert(row+1,
+                                 toReturnColumnIndex->getSize());
+    }
+
+    return toReturn;
+
+  }
+
+}
 
 shared_ptr<XdmfPartitioner>
 XdmfPartitioner::New()
@@ -67,6 +122,139 @@ XdmfPartitioner::ignore(const shared_ptr<const XdmfSet> set)
 {
   mIgnoredSets.insert(set);
 }
+
+void
+XdmfPartitioner::partition(const shared_ptr<XdmfGraph> graphToPartition,
+                           const unsigned int numberOfPartitions) const
+{
+
+  // Make sure row pointer and column index are non null
+  if(!(graphToPartition->getRowPointer() &&
+       graphToPartition->getColumnIndex()))
+    XdmfError::message(XdmfError::FATAL,
+                       "Current graph's row pointer or column index is null "
+                       "in XdmfPartitioner::partition");
+
+  shared_ptr<XdmfArray> rowPointer = graphToPartition->getRowPointer();
+  shared_ptr<XdmfArray> columnIndex = graphToPartition->getColumnIndex();
+
+  idx_t numberVertices = graphToPartition->getNumberNodes();
+  idx_t numberConstraints = 1;
+
+  bool releaseRowPointer = false;
+  if(!rowPointer->isInitialized()) {
+    rowPointer->read();
+    releaseRowPointer = true;
+  }
+  bool releaseColumnIndex = false;
+  if(!columnIndex->isInitialized()) {
+    columnIndex->read();
+    releaseColumnIndex = true;
+  }
+
+  shared_ptr<XdmfGraph> graph = graphToPartition;
+
+  // Check whether graph is directed, if so we need to make it undirected
+  // in order to partition with metis. From metis FAQ:
+  //
+  // The partitioning routines in METIS can only partition undirected graphs
+  // (i.e., graphs in which for each edge (v,u) there is also an edge (u,v)).
+  // For partitioning purposes, the directionality of an edge does not play
+  // any role because if edge (u,v) is cut so will the edge (v,u). For this
+  // reason, a directed graph can be easily partitioned by METIS by first
+  // converting it into the corresponding undirected graph. That is, create
+  // a graph for each directed edge (u,v) also contains the (v,u) edge as
+  // well.
+  const unsigned int numberRows = graphToPartition->getNumberRows();
+  for(unsigned int i=0; i<numberRows; ++i) {
+    for(unsigned int j=rowPointer->getValue<unsigned int>(i);
+        j<rowPointer->getValue<unsigned int>(i+1);
+        ++j) {
+      const unsigned int k = columnIndex->getValue<unsigned int>(j);
+      bool symmetric = false;
+      for(unsigned int l=rowPointer->getValue<unsigned int>(k);
+          l<rowPointer->getValue<unsigned int>(k+1);
+          ++l) {
+        const unsigned int m = columnIndex->getValue<unsigned int>(l);
+        if(i == m) {
+          symmetric = true;
+          break;
+        }
+      }
+      if(!symmetric) {
+        graph = addSymmetricEntries(graphToPartition);
+        if(releaseRowPointer) {
+          rowPointer->release();
+        }
+        if(releaseColumnIndex) {
+          columnIndex->release();
+        }
+        rowPointer = graph->getRowPointer();
+        columnIndex = graph->getColumnIndex();
+        break;
+      }
+    }
+  }
+
+  // copy into metis data structures
+  idx_t * xadj = new idx_t[rowPointer->getSize()];
+  rowPointer->getValues(0,
+                        xadj,
+                        rowPointer->getSize());
+  if(releaseRowPointer) {
+    rowPointer->release();
+  }
+  idx_t * adjncy = new idx_t[columnIndex->getSize()];
+  columnIndex->getValues(0,
+                         adjncy,
+                         columnIndex->getSize());
+  if(releaseColumnIndex) {
+    columnIndex->release();
+  }
+
+  idx_t * vwgt = NULL; // equal vertex weights
+  idx_t * vsize = NULL; // equal vertex sizes
+  idx_t * adjwgt = NULL; // equal edge weights
+  idx_t numParts = numberOfPartitions;
+  real_t * tpwgts = NULL; // equal constraints and partition weights
+  real_t * ubvec = NULL; // default load imbalance tolerance
+  idx_t * options = NULL; // default options
+  idx_t objval;
+  idx_t * part = new idx_t[numberVertices];
+
+  METIS_PartGraphRecursive(&numberVertices,
+                           &numberConstraints,
+                           xadj,
+                           adjncy,
+                           vwgt,
+                           vsize,
+                           adjwgt,
+                           &numParts,
+                           tpwgts,
+                           ubvec,
+                           options,
+                           &objval,
+                           part);
+
+  delete [] xadj;
+  delete [] adjncy;
+
+  graphToPartition->removeAttribute("Partition");
+
+  shared_ptr<XdmfAttribute> attribute = XdmfAttribute::New();
+  attribute->setName("Partition");
+  attribute->setCenter(XdmfAttributeCenter::Node());
+  attribute->setType(XdmfAttributeType::Scalar());
+  attribute->insert(0,
+                    part,
+                    numberVertices);
+  graphToPartition->insert(attribute);
+
+  delete [] part;
+
+  return;
+}
+
 
 shared_ptr<XdmfGridCollection>
 XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartition,
@@ -102,8 +290,8 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
     releaseTopology = true;
   }
 
-  int numElements = topology->getNumberElements();
-  int numNodes = geometry->getNumberPoints();
+  idx_t numElements = topology->getNumberElements();
+  idx_t numNodes = geometry->getNumberPoints();
 
   // allocate metisConnectivity arrays
   idx_t * metisConnectivityEptr = new idx_t[numElements + 1];
@@ -334,7 +522,7 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
           createdAttribute->setType(currAttribute->getType());
           unsigned int index = 0;
           const unsigned int numberComponents =
-	    currAttribute->getSize() / topology->getNumberElements();
+            currAttribute->getSize() / topology->getNumberElements();
           createdAttribute->initialize(currAttribute->getArrayType(),
                                        currElemIds.size() * numberComponents);
           for(std::vector<unsigned int>::const_iterator iter =
@@ -354,9 +542,9 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
           createdAttribute->setCenter(currAttribute->getCenter());
           createdAttribute->setType(currAttribute->getType());
           createdAttribute->initialize(currAttribute->getArrayType(),
-				       currNodeMap.size());
-	  const unsigned int numberComponents =
-	    currAttribute->getSize() / geometry->getNumberPoints();
+                                       currNodeMap.size());
+          const unsigned int numberComponents =
+            currAttribute->getSize() / geometry->getNumberPoints();
           for(std::map<unsigned int, unsigned int>::const_iterator iter =
                 currNodeMap.begin();
               iter != currNodeMap.end();
@@ -750,6 +938,7 @@ XdmfPartitioner::unpartition(const shared_ptr<XdmfGridCollection> gridToUnPartit
 #include <iostream>
 #include <sstream>
 #include "XdmfDomain.hpp"
+#include "XdmfGraph.hpp"
 #include "XdmfGridCollection.hpp"
 #include "XdmfHDF5Writer.hpp"
 #include "XdmfPartitioner.hpp"
@@ -786,10 +975,10 @@ namespace {
   void
   processCommandLine(std::string                  & inputFileName,
                      std::string                  & outputFileName,
-		     unsigned int                 & numPartitions,
+                     unsigned int                 & numPartitions,
                      XdmfPartitioner::MetisScheme & metisScheme,
                      bool                         & unpartition,
-		     int                            ac,
+                     int                            ac,
                      char                         * av[])
   {
 
@@ -873,12 +1062,12 @@ int main(int argc, char* argv[])
   bool unpartition = false;
 
   processCommandLine(inputFileName,
-		     outputFileName,
-		     numPartitions,
-		     metisScheme,
+                     outputFileName,
+                     numPartitions,
+                     metisScheme,
                      unpartition,
-		     argc,
-		     argv);
+                     argc,
+                     argv);
 
   std::cout << inputFileName << std::endl;
 
@@ -932,8 +1121,9 @@ int main(int argc, char* argv[])
   }
   else {
     if(domain->getNumberUnstructuredGrids() == 0 &&
-       domain->getNumberGridCollections() == 0) {
-      std::cout << "No grids to partition" << std::endl;
+       domain->getNumberGridCollections() == 0 &&
+       domain->getNumberGraphs() == 0) {
+      std::cout << "No grids or graphs to partition" << std::endl;
       return 1;
     }
   }
@@ -953,19 +1143,29 @@ int main(int argc, char* argv[])
     newDomain->insert(toWrite);
   }
   else {
-    shared_ptr<XdmfUnstructuredGrid> gridToPartition;
-    if(domain->getNumberUnstructuredGrids() == 0) {
-      gridToPartition = partitioner->unpartition(domain->getGridCollection(0));
+    if(domain->getNumberGraphs() == 0) {
+      shared_ptr<XdmfUnstructuredGrid> gridToPartition;
+      if(domain->getNumberUnstructuredGrids() == 0) {
+        // repartition
+        gridToPartition =
+          partitioner->unpartition(domain->getGridCollection(0));
+      }
+      else {
+        gridToPartition = domain->getUnstructuredGrid(0);
+      }
+      shared_ptr<XdmfGridCollection> toWrite =
+        partitioner->partition(gridToPartition,
+                               numPartitions,
+                               metisScheme,
+                               heavyDataWriter);
+      newDomain->insert(toWrite);
     }
     else {
-      gridToPartition = domain->getUnstructuredGrid(0);
+      shared_ptr<XdmfGraph> graphToPartition = domain->getGraph(0);
+      partitioner->partition(graphToPartition,
+                             numPartitions);
+      newDomain->insert(graphToPartition);
     }
-    shared_ptr<XdmfGridCollection> toWrite =
-      partitioner->partition(gridToPartition,
-                             numPartitions,
-                             metisScheme,
-                             heavyDataWriter);
-    newDomain->insert(toWrite);
   }
 
   std::stringstream xmlFileName;

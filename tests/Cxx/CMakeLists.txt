@@ -13,6 +13,7 @@ ADD_TEST_CXX_DEPENDENCIES("Xdmf")
 ADD_TEST_CXX(TestXdmfAttribute)
 ADD_TEST_CXX(TestXdmfCurvilinearGrid)
 ADD_TEST_CXX(TestXdmfGeometry)
+ADD_TEST_CXX(TestXdmfGraph)
 ADD_TEST_CXX(TestXdmfGridCollection)
 ADD_TEST_CXX(TestXdmfHDF5Hyperslab)
 ADD_TEST_CXX(TestXdmfMap)
@@ -39,6 +40,8 @@ CLEAN_TEST_CXX(TestXdmfCurvilinearGrid
   TestXdmfCurvilinearGrid1.xmf
   TestXdmfCurvilinearGrid2.xmf)
 CLEAN_TEST_CXX(TestXdmfGeometry)
+CLEAN_TEST_CXX(TestXdmfGraph
+  TestXdmfGraph.xmf)
 CLEAN_TEST_CXX(TestXdmfGridCollection
   TestXdmfGridCollection1.xmf
   TestXdmfGridCollection2.xmf

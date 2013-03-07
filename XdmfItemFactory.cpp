@@ -28,6 +28,7 @@
 #include "XdmfDomain.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGeometryType.hpp"
+#include "XdmfGraph.hpp"
 #include "XdmfGridCollection.hpp"
 #include "XdmfInformation.hpp"
 #include "XdmfItemFactory.hpp"
@@ -35,6 +36,7 @@
 #include "XdmfRectilinearGrid.hpp"
 #include "XdmfRegularGrid.hpp"
 #include "XdmfSet.hpp"
+#include "XdmfSparseMatrix.hpp"
 #include "XdmfTime.hpp"
 #include "XdmfTopology.hpp"
 #include "XdmfUnstructuredGrid.hpp"
@@ -124,6 +126,9 @@ XdmfItemFactory::createItem(const std::string & itemTag,
     }
     return XdmfGeometry::New();
   }
+  else if(itemTag.compare(XdmfGraph::ItemTag) == 0) {
+    return XdmfGraph::New(0);
+  }
   else if(itemTag.compare(XdmfGrid::ItemTag) == 0) {
     // For backwards compatibility with the old format, this tag can
     // correspond to multiple XdmfItems.
@@ -164,6 +169,9 @@ XdmfItemFactory::createItem(const std::string & itemTag,
   }
   else if(itemTag.compare(XdmfSet::ItemTag) == 0) {
     return XdmfSet::New();
+  }
+  else if(itemTag.compare(XdmfSparseMatrix::ItemTag) == 0) {
+    return XdmfSparseMatrix::New(0, 0);
   }
   else if(itemTag.compare(XdmfTime::ItemTag) == 0) {
     return XdmfTime::New();

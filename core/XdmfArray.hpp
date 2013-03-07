@@ -183,6 +183,8 @@ public:
   /**
    * Get a copy of a single value stored in this array.
    *
+   * @param index the index in the array to copy.
+   *
    * @return the requested value.
    */
   template <typename T>
@@ -323,7 +325,7 @@ public:
   template<typename T>
   void insert(const unsigned int startIndex,
               const T * const valuesPointer,
-              const unsigned int numValues = 1,
+              const unsigned int numValues,
               const unsigned int arrayStride = 1,
               const unsigned int valuesStride = 1);
 
@@ -538,7 +540,7 @@ private:
     boost::shared_array<const double>,
     boost::shared_array<const unsigned char>,
     boost::shared_array<const unsigned short>,
-    boost::shared_array<const unsigned int>  > ArrayVariant;
+    boost::shared_array<const unsigned int> > ArrayVariant;
   
   ArrayVariant mArray;
   unsigned int mArrayPointerNumValues;

@@ -79,6 +79,7 @@ set(XdmfCoreSources
   XdmfInformation
   XdmfItem
   XdmfItemProperty
+  XdmfSparseMatrix
   XdmfSystemUtils
   ${CMAKE_BINARY_DIR}/XdmfVersion
   XdmfVisitor
