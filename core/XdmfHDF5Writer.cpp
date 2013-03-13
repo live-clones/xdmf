@@ -702,10 +702,10 @@ XdmfHDF5Writer::write(XdmfArray & array,
         }
         if (mMode == Append) {
           //if the written filename is different write add the previous controller
-          if (*((filesWritten.end())--) != heavyDataController->getFilePath()) {
+          if (*(filesWritten.rbegin()) != heavyDataController->getFilePath()) {
             //should also be different from previous controller
             if (filesWritten.size() > 1) {
-              if (*((filesWritten.end())--) != *(((filesWritten.end())--)--)) {
+              if (*(filesWritten.rbegin()) != *((filesWritten.rbegin())++)) {
                 array.insert(heavyDataController);
               }
             }
