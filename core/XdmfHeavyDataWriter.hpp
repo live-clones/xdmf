@@ -141,6 +141,7 @@ public:
    * @param array an XdmfArray to write to heavy data.
    * @param visitor a smart pointer to this visitor --- aids in grid traversal.
    */
+  using XdmfVisitor::visit;
   virtual void visit(XdmfArray & array,
                      const shared_ptr<XdmfBaseVisitor> visitor) = 0;
 

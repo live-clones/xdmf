@@ -64,9 +64,9 @@ int main(int, char **)
   assert(dimensionsArray->getSize() == 24);
   std::vector<unsigned int> readDimensions = dimensionsArray->getDimensions();
   assert(readDimensions.size() == 3);
-  assert(readDimensions[0] = 2);
-  assert(readDimensions[1] = 3);
-  assert(readDimensions[2] = 4);
+  assert(readDimensions[0] == 2);
+  assert(readDimensions[1] == 3);
+  assert(readDimensions[2] == 4);
 
   shared_ptr<XdmfHDF5Writer> largeArrayWriter = 
     XdmfHDF5Writer::New("testLargeArray.h5");

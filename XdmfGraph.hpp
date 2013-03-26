@@ -60,6 +60,8 @@ public:
 
   unsigned int getNumberNodes() const;
 
+  using XdmfSparseMatrix::insert;
+
   void traverse(const shared_ptr<XdmfBaseVisitor> visitor);
 
 protected:

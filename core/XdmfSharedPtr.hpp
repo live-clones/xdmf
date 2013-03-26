@@ -35,11 +35,12 @@ using boost::shared_dynamic_cast;
 
 #else
 
-using boost::dynamic_pointer_cast;
 template <typename T, typename U>
 shared_ptr<T> shared_dynamic_cast(shared_ptr<U> const & r) 
 {
-  return dynamic_pointer_cast<T>(r);
+  typedef typename shared_ptr<T>::element_type E;
+  E * p = dynamic_cast< E* >( r.get() );
+  return p? shared_ptr<T>( r, p ): shared_ptr<T>();
 }
 
 #endif /* HAVE_BOOST_SHARED_DYNAMIC_CAST */
