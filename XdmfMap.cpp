@@ -68,7 +68,7 @@ XdmfMap::New(const std::vector<shared_ptr<XdmfAttribute> > & globalNodeIds)
         for(std::map<task_id, node_id>::const_iterator iter = currMap.begin();
             iter != currMap.end();
             ++iter) {
-          if(iter->first != i) {
+          if(iter->first != (int)i) {
             map->insert(iter->first, j, iter->second);
           }
         }

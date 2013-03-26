@@ -384,7 +384,7 @@ XdmfFortran::addInformation(const char * const key,
 void 
 XdmfFortran::addPreviousAttribute(const int attributeId)
 {
-  if(attributeId >= mPreviousAttributes.size()) {
+  if(attributeId >= (int)mPreviousAttributes.size()) {
     XdmfError::message(XdmfError::FATAL, "Invalid attribute id");
   }
   mAttributes.push_back(mPreviousAttributes[attributeId]);
@@ -393,7 +393,7 @@ XdmfFortran::addPreviousAttribute(const int attributeId)
 void 
 XdmfFortran::addPreviousInformation(const int informationId)
 {
-  if(informationId >= mPreviousInformations.size()) {
+  if(informationId >= (int)mPreviousInformations.size()) {
     XdmfError::message(XdmfError::FATAL, "Invalid information id");
   }
   mInformations.push_back(mPreviousInformations[informationId]);
@@ -440,7 +440,7 @@ XdmfFortran::setGeometry(const int geometryType,
 void 
 XdmfFortran::setPreviousGeometry(const int geometryId)
 {
-  if(geometryId >= mPreviousGeometries.size()) {
+  if(geometryId >= (int)mPreviousGeometries.size()) {
     XdmfError::message(XdmfError::FATAL, "Invalid geometry id");
   }
   mGeometry = mPreviousGeometries[geometryId];
@@ -449,7 +449,7 @@ XdmfFortran::setPreviousGeometry(const int geometryId)
 void 
 XdmfFortran::setPreviousTopology(const int topologyId)
 {
-  if(topologyId >= mPreviousTopologies.size()) {
+  if(topologyId >= (int)mPreviousTopologies.size()) {
     XdmfError::message(XdmfError::FATAL, "Invalid topology id");
   }
   mTopology = mPreviousTopologies[topologyId];

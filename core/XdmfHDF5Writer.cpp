@@ -60,7 +60,7 @@ public:
   closeFile()
   {
     if(mHDF5Handle >= 0) {
-      herr_t status = H5Fclose(mHDF5Handle);
+      /*herr_t status =*/H5Fclose(mHDF5Handle);
       mHDF5Handle = -1;
     }
   };
@@ -87,8 +87,8 @@ public:
                             H5F_ACC_RDWR, 
                             fapl);
       hsize_t numObjects;
-      herr_t status = H5Gget_num_objs(mHDF5Handle,
-                                      &numObjects);
+      /*herr_t status = */H5Gget_num_objs(mHDF5Handle,
+                                          &numObjects);
       toReturn = numObjects;
     }
     else {
