@@ -1,7 +1,9 @@
 project(XdmfCore)
 cmake_minimum_required(VERSION 2.6)
 
+include(CheckCXXSourceCompiles)
 include(SetUpVersion)
+
 if(VERSION_CONTROL_AUTOUPDATE OR 
     NOT EXISTS ${CMAKE_BINARY_DIR}/XdmfVersion.hpp)
   VersionCreate("Xdmf" "2" "XDMFCORE_EXPORT" "XdmfCore.hpp")
@@ -65,6 +67,25 @@ if(LIBXML2_FOUND)
   set(XDMF_LIBRARIES ${XDMF_LIBRARIES} ${LIBXML2_LIBRARIES})
   set(XDMF_BINARIES ${XDMF_BINARIES} ${LIBXML2_BINARY_DIRS})
 endif(LIBXML2_FOUND)
+
+# Perform compile-time checks and generate XdmfConfig.hpp
+unset(HAVE_BOOST_SHARED_DYNAMIC_CAST CACHE)
+set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${Boost_INCLUDE_DIRS})
+check_cxx_source_compiles("
+#include <boost/shared_ptr.hpp>
+
+struct Base { virtual ~Base(){} };
+struct Derived : public Base {};
+
+int main(int ac, char * av)
+{
+  boost::shared_ptr<Base> ptr(new Base());
+  boost::shared_dynamic_cast<Derived>(ptr);
+}
+"
+HAVE_BOOST_SHARED_DYNAMIC_CAST)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/XdmfConfig.hpp.in 
+               ${CMAKE_BINARY_DIR}/XdmfConfig.hpp)
 
 set(XdmfCoreSources
   XdmfArray
