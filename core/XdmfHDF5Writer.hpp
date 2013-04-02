@@ -127,6 +127,7 @@ public:
 
   virtual void openFile();
 
+  using XdmfHeavyDataWriter::visit;
   virtual void visit(XdmfArray & array,
                      const shared_ptr<XdmfBaseVisitor> visitor);
 

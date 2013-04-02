@@ -27,6 +27,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
     #include <XdmfItem.hpp>
     #include <XdmfItemProperty.hpp>
     #include <XdmfSharedPtr.hpp>
+    #include <XdmfSparseMatrix.hpp>
     #include <XdmfSystemUtils.hpp>
     #include <XdmfVersion.hpp>
     #include <XdmfVisitor.hpp>
@@ -78,6 +79,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 // Ignore ItemTags
 %ignore XdmfArray::ItemTag;
 %ignore XdmfInformation::ItemTag;
+%ignore XdmfSparseMatrix::ItemTag;
 
 // Define equality operators
 %extend XdmfItem {
@@ -334,6 +336,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %shared_ptr(XdmfInformation)
 %shared_ptr(XdmfItem)
 %shared_ptr(XdmfItemProperty)
+%shared_ptr(XdmfSparseMatrix)
 %shared_ptr(XdmfVisitor)
 %shared_ptr(XdmfWriter)
 
@@ -357,6 +360,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %include XdmfInformation.hpp
 %include XdmfHDF5Controller.hpp
 %include XdmfHDF5Writer.hpp
+%include XdmfSparseMatrix.hpp
 %include XdmfWriter.hpp
 
 %include CMake/VersionSuite/ProjectVersion.hpp

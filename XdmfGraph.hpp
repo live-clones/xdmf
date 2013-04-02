@@ -2,7 +2,7 @@
 /*                                    XDMF                                   */
 /*                       eXtensible Data Model and Format                    */
 /*                                                                           */
-/*  Id : XdmfSharedPtr.hpp                                                   */
+/*  Id : XdmfGraph.hpp                                                       */
 /*                                                                           */
 /*  Author:                                                                  */
 /*     Kenneth Leiter                                                        */
@@ -21,28 +21,65 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#ifndef XDMFSHAREDPTR_HPP_
-#define XDMFSHAREDPTR_HPP_
+#ifndef XDMFGRAPH_HPP_
+#define XDMFGRAPH_HPP_
 
-#include "XdmfConfig.hpp"
-#include <boost/shared_ptr.hpp>
+// Forward Declarations
+class XdmfAttribute;
 
-using boost::shared_ptr;
+// Includes
+#include "Xdmf.hpp"
+#include "XdmfSparseMatrix.hpp"
 
-#ifdef HAVE_BOOST_SHARED_DYNAMIC_CAST
+/**
+ * @brief Graph stored in sparse matrix form.
+ *
+ * Stores graph information in sparse matrix form. Attributes defining
+ * node and edge information can be inserted.
+ */
+class XDMF_EXPORT XdmfGraph : public XdmfSparseMatrix {
 
-using boost::shared_dynamic_cast;
+public:
 
-#else
+  /**
+   * Create a new XdmfGraph.
+   *
+   * @param numberNodes number of nodes in graph.
+   *
+   * @return constructed XdmfGraph.
+   */
+  static shared_ptr<XdmfGraph> New(const unsigned int numberNodes);
 
-template <typename T, typename U>
-shared_ptr<T> shared_dynamic_cast(shared_ptr<U> const & r) 
-{
-  typedef typename shared_ptr<T>::element_type E;
-  E * p = dynamic_cast< E* >( r.get() );
-  return p? shared_ptr<T>( r, p ): shared_ptr<T>();
-}
+  virtual ~XdmfGraph();
 
-#endif /* HAVE_BOOST_SHARED_DYNAMIC_CAST */
+  LOKI_DEFINE_VISITABLE(XdmfGraph, XdmfSparseMatrix);
+  XDMF_CHILDREN(XdmfAttribute, Attribute, Name);
+  static const std::string ItemTag;
 
-#endif /* XDMFSHAREDPTR_HPP_ */
+  std::string getItemTag() const;
+
+  unsigned int getNumberNodes() const;
+
+  using XdmfSparseMatrix::insert;
+
+  void traverse(const shared_ptr<XdmfBaseVisitor> visitor);
+
+protected:
+
+  XdmfGraph(const unsigned int numberNodes);
+
+  virtual void
+  populateItem(const std::map<std::string, std::string> & itemProperties,
+               const std::vector<shared_ptr<XdmfItem> > & childItems,
+               const XdmfCoreReader * const reader);
+
+private:
+
+  XdmfGraph(const XdmfGraph &);  // Not implemented.
+  void operator=(const XdmfGraph &);  // Not implemented.
+};
+
+#ifdef _WIN32
+#endif
+
+#endif /* XDMFGRAPH_HPP_ */

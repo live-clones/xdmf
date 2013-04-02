@@ -273,11 +273,14 @@ XdmfExodusWriter::write(const std::string & filePath,
       if(currGrid->getTopology()->getType() ==
          XdmfTopologyType::Hexahedron_27()) {
         itmp[0] = *ptr;
-        *(ptr++) = ptr[6];
+        *ptr = ptr[6];
+        ptr++;
         itmp[1] = *ptr;
-        *(ptr++) = ptr[3];
+        *ptr = ptr[3];
+        ptr++;
         itmp[2] = *ptr;
-        *(ptr++) = ptr[3];
+        *ptr = ptr[3];
+        ptr++;
         itmp[3] = *ptr;
         for (unsigned int j=0; j<4; ++j, ++ptr) {
           *ptr = itmp[j];

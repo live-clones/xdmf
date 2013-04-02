@@ -25,6 +25,7 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
     #include <XdmfItem.hpp>
     #include <XdmfItemProperty.hpp>
     #include <XdmfSharedPtr.hpp>
+    #include <XdmfSparseMatrix.hpp>
     #include <XdmfSystemUtils.hpp>
     #include <XdmfVisitor.hpp>
     #include <XdmfWriter.hpp>
@@ -37,6 +38,7 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
     #include <XdmfDomain.hpp>
     #include <XdmfGeometry.hpp>
     #include <XdmfGeometryType.hpp>
+    #include <XdmfGraph.hpp>
     #include <XdmfGrid.hpp>
     #include <XdmfGridCollection.hpp>
     #include <XdmfGridCollectionType.hpp>

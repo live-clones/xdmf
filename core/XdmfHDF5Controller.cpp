@@ -114,7 +114,7 @@ XdmfHDF5Controller::read(XdmfArray * const array, const int fapl)
      &memCount[0],
      NULL);*/
 
-  hid_t datatype;
+  hid_t datatype = H5T_NO_CLASS;
   bool closeDatatype = false;
   if(mType == XdmfArrayType::Int8()) {
     datatype = H5T_NATIVE_CHAR;

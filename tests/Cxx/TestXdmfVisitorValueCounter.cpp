@@ -30,6 +30,8 @@ public:
     return mCount;
   }
 
+  using XdmfVisitor::visit;
+
   void
   visit(XdmfArray & array, 
         const shared_ptr<XdmfBaseVisitor>)

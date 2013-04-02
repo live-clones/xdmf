@@ -25,6 +25,7 @@
 #define XDMFPARTITIONER_HPP_
 
 // Forward Declarations
+class XdmfGraph;
 class XdmfGridCollection;
 class XdmfHeavyDataWriter;
 class XdmfSet;
@@ -66,6 +67,19 @@ public:
    * @param set the set to ignore when partitioning.
    */
   void ignore(const shared_ptr<const XdmfSet> set);
+
+  /**
+   * Partitions an XdmfGraph using the metis library. An attribute
+   * named "Partition" is added to the XdmfGraph that contains
+   * partition numbers for each graph vertex.
+   *
+   * @param graphToPartition an XdmfGraph to partition.
+   * @param numberOfPartitions the number of pieces to partition the
+   * graph into.
+   */
+  void
+  partition(const shared_ptr<XdmfGraph> graphToPartition,
+            const unsigned int numberOfPartitions) const;
 
   /**
    * Partitions an XdmfUnstructuredGrid using the metis library.

@@ -29,6 +29,7 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
     #include <XdmfItem.hpp>
     #include <XdmfItemProperty.hpp>
     #include <XdmfSharedPtr.hpp>
+    #include <XdmfSparseMatrix.hpp>
     #include <XdmfSystemUtils.hpp>
     #include <XdmfVisitor.hpp>
     #include <XdmfWriter.hpp>
@@ -41,6 +42,7 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
     #include <XdmfDomain.hpp>
     #include <XdmfGeometry.hpp>
     #include <XdmfGeometryType.hpp>
+    #include <XdmfGraph.hpp>
     #include <XdmfGrid.hpp>
     #include <XdmfGridCollection.hpp>
     #include <XdmfGridCollectionType.hpp>
@@ -192,6 +194,7 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 %ignore XdmfCurvilinearGrid::ItemTag;
 %ignore XdmfDomain::ItemTag;
 %ignore XdmfGeometry::ItemTag;
+%ignore XdmfGraph::ItemTag;
 %ignore XdmfGrid::ItemTag;
 %ignore XdmfGridCollection::ItemTag;
 %ignore XdmfMap::ItemTag;
@@ -249,6 +252,9 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
     }
     else if(shared_ptr<XdmfGeometry> geometry = shared_dynamic_cast<XdmfGeometry>($1)) {
         $result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfGeometry>(geometry)), SWIGTYPE_p_boost__shared_ptrT_XdmfGeometry_t, SWIG_POINTER_OWN);
+    }
+    else if(shared_ptr<XdmfGraph> graph = shared_dynamic_cast<XdmfGraph>($1)) {
+        $result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfGraph>(graph)), SWIGTYPE_p_boost__shared_ptrT_XdmfGraph_t, SWIG_POINTER_OWN);
     }
     else if(shared_ptr<XdmfGridCollection> gridCollection = shared_dynamic_cast<XdmfGridCollection>($1)) {
         $result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfGridCollection>(gridCollection)), SWIGTYPE_p_boost__shared_ptrT_XdmfGridCollection_t, SWIG_POINTER_OWN);
@@ -328,6 +334,7 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 %shared_ptr(XdmfDomain)
 %shared_ptr(XdmfGeometry)
 %shared_ptr(XdmfGeometryType)
+%shared_ptr(XdmfGraph)
 %shared_ptr(XdmfGrid)
 %shared_ptr(XdmfGridCollection)
 %shared_ptr(XdmfGridCollectionType)
@@ -353,6 +360,7 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 %include XdmfDomain.hpp
 %include XdmfGeometry.hpp
 %include XdmfGeometryType.hpp
+%include XdmfGraph.hpp
 %include XdmfGridCollection.hpp
 %include XdmfGridCollectionType.hpp
 %include XdmfItemFactory.hpp

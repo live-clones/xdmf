@@ -2,7 +2,7 @@
 /*                                    XDMF                                   */
 /*                       eXtensible Data Model and Format                    */
 /*                                                                           */
-/*  Id : XdmfSharedPtr.hpp                                                   */
+/*  Id : XdmfGraph.cpp                                                       */
 /*                                                                           */
 /*  Author:                                                                  */
 /*     Kenneth Leiter                                                        */
@@ -21,28 +21,69 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#ifndef XDMFSHAREDPTR_HPP_
-#define XDMFSHAREDPTR_HPP_
+#include "XdmfAttribute.hpp"
+#include "XdmfGraph.hpp"
 
-#include "XdmfConfig.hpp"
-#include <boost/shared_ptr.hpp>
+XDMF_CHILDREN_IMPLEMENTATION(XdmfGraph, XdmfAttribute, Attribute, Name)
 
-using boost::shared_ptr;
-
-#ifdef HAVE_BOOST_SHARED_DYNAMIC_CAST
-
-using boost::shared_dynamic_cast;
-
-#else
-
-template <typename T, typename U>
-shared_ptr<T> shared_dynamic_cast(shared_ptr<U> const & r) 
+shared_ptr<XdmfGraph>
+XdmfGraph::New(const unsigned int numberNodes)
 {
-  typedef typename shared_ptr<T>::element_type E;
-  E * p = dynamic_cast< E* >( r.get() );
-  return p? shared_ptr<T>( r, p ): shared_ptr<T>();
+  shared_ptr<XdmfGraph> p(new XdmfGraph(numberNodes));
+  return p;
 }
 
-#endif /* HAVE_BOOST_SHARED_DYNAMIC_CAST */
+XdmfGraph::XdmfGraph(const unsigned int numberNodes) :
+  XdmfSparseMatrix(numberNodes,
+                   numberNodes)
+{
+}
 
-#endif /* XDMFSHAREDPTR_HPP_ */
+XdmfGraph::~XdmfGraph()
+{
+}
+
+const std::string XdmfGraph::ItemTag = "Graph";
+
+std::string
+XdmfGraph::getItemTag() const
+{
+  return ItemTag;
+}
+
+unsigned int
+XdmfGraph::getNumberNodes() const
+{
+  return this->getNumberRows();
+}
+
+void
+XdmfGraph::populateItem(const std::map<std::string, std::string> & itemProperties,
+                        const std::vector<shared_ptr<XdmfItem> > & childItems,
+                        const XdmfCoreReader * const reader)
+{
+  XdmfSparseMatrix::populateItem(itemProperties,
+                                 childItems,
+                                 reader);
+  for(std::vector<shared_ptr<XdmfItem> >::const_iterator iter =
+        childItems.begin();
+      iter != childItems.end();
+      ++iter) {
+    if(shared_ptr<XdmfAttribute> attribute =
+       shared_dynamic_cast<XdmfAttribute>(*iter)) {
+      this->insert(attribute);
+    }
+  }
+}
+
+void
+XdmfGraph::traverse(const shared_ptr<XdmfBaseVisitor> visitor)
+{
+  XdmfSparseMatrix::traverse(visitor);
+  for(std::vector<shared_ptr<XdmfAttribute> >::const_iterator iter =
+        mAttributes.begin();
+      iter != mAttributes.end();
+      ++iter) {
+    (*iter)->accept(visitor);
+  }
+}

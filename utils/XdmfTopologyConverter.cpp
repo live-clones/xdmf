@@ -22,6 +22,9 @@
 /*****************************************************************************/
 
 #include <cmath>
+#include <map>
+#include <iostream>
+#include <vector>
 #include "XdmfAttribute.hpp"
 #include "XdmfAttributeCenter.hpp"
 #include "XdmfAttributeType.hpp"
@@ -40,10 +43,14 @@
 // local methods
 //
 namespace {
+  
+  typedef std::pair<std::vector<unsigned int>, 
+                    std::vector<unsigned int> > OldFaceToNewFaceMap ;
+  typedef std::vector<std::vector<OldFaceToNewFaceMap> > FaceHash;
 
   void handleSetConversion(const shared_ptr<XdmfUnstructuredGrid> gridToConvert,
 			   const shared_ptr<XdmfUnstructuredGrid> toReturn,
-			   const std::map<unsigned int, unsigned int> & oldIdToNewId,
+			   const std::vector<int> & oldIdToNewId,
 			   const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) 
   {
 
@@ -67,14 +74,8 @@ namespace {
 	  
 	for(unsigned int i=0; i<set->getSize(); ++i) {
 	  const unsigned int nodeId = set->getValue<unsigned int>(i);
-	  std::map<unsigned int, unsigned int>::const_iterator iter =
-	    oldIdToNewId.find(nodeId);
-	  if(iter == oldIdToNewId.end()) {
-	    XdmfError::message(XdmfError::FATAL, 
-			       "Error converting hex node id set to hex_27 "
-			       "node id set.");
-	  }
-	  toReturnSet->insert(i, iter->second);
+          const int newNodeId = oldIdToNewId[nodeId];
+	  toReturnSet->insert(i, newNodeId);
 	}
 	if(releaseSet) {
 	  set->release();
@@ -87,6 +88,57 @@ namespace {
 	  toReturnSet->release();
 	}
       }
+    }
+  }
+
+  template <unsigned int ORDER>
+  void remapTopology(shared_ptr<XdmfTopology> topology)
+  {
+    return;
+  }
+
+  template <>
+  void remapTopology<2>(shared_ptr<XdmfTopology> topology)
+  {
+    const unsigned int numberElements = topology->getNumberElements();
+    unsigned int oldElementIds[27];
+    unsigned int newElementIds[27];
+    unsigned int offset = 0;
+    for(unsigned int i=0; i<numberElements; ++i) {
+      topology->getValues(offset,
+                          oldElementIds,
+                          27);
+      newElementIds[0] = oldElementIds[0];
+      newElementIds[1] = oldElementIds[18];
+      newElementIds[2] = oldElementIds[24];
+      newElementIds[3] = oldElementIds[6];
+      newElementIds[4] = oldElementIds[2];
+      newElementIds[5] = oldElementIds[20];
+      newElementIds[6] = oldElementIds[26];
+      newElementIds[7] = oldElementIds[8];
+      newElementIds[8] = oldElementIds[9];
+      newElementIds[9] = oldElementIds[21];
+      newElementIds[10] = oldElementIds[15];
+      newElementIds[11] = oldElementIds[3];
+      newElementIds[12] = oldElementIds[11];
+      newElementIds[13] = oldElementIds[23];
+      newElementIds[14] = oldElementIds[17];
+      newElementIds[15] = oldElementIds[5];
+      newElementIds[16] = oldElementIds[1];
+      newElementIds[17] = oldElementIds[19];
+      newElementIds[18] = oldElementIds[25];
+      newElementIds[19] = oldElementIds[7];
+      newElementIds[20] = oldElementIds[4];
+      newElementIds[21] = oldElementIds[22];
+      newElementIds[22] = oldElementIds[10];
+      newElementIds[23] = oldElementIds[16];
+      newElementIds[24] = oldElementIds[12];
+      newElementIds[25] = oldElementIds[14];
+      newElementIds[26] = oldElementIds[13];
+      topology->insert(offset,
+                       newElementIds,
+                       27);
+      offset += 27;
     }
   }
 
@@ -111,58 +163,6 @@ namespace {
     convert(const shared_ptr<XdmfUnstructuredGrid> gridToConvert,
             const shared_ptr<const XdmfTopologyType> topologyType,
             const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) const = 0;
-
-  protected:
-
-    struct PointComparison {
-
-      static double epsilon() { return 1e-6; };
-
-      bool
-      operator()(const std::vector<double> & point1,
-                 const std::vector<double> & point2) const
-      {
-        for(unsigned int i=0; i<3; ++i) {
-          if(fabs(point1[i] - point2[i]) > epsilon()) {
-            return point1[i] < point2[i];
-          }
-        }
-        return false;
-      }
-    };
-
-    unsigned int
-    insertPointWithoutCheck(const std::vector<double> & newPoint,
-                            const shared_ptr<XdmfTopology> & newConnectivity,
-                            const shared_ptr<XdmfGeometry> & newPoints) const
-    {
-      const unsigned int index = newPoints->getSize() / 3;
-      newConnectivity->pushBack(index);
-      newPoints->pushBack(newPoint[0]);
-      newPoints->pushBack(newPoint[1]);
-      newPoints->pushBack(newPoint[2]);
-      return index;
-    }
-
-    unsigned int
-    insertPointWithCheck(const std::vector<double> & newPoint,
-                         std::map<std::vector<double>, unsigned int, PointComparison> & coordToIdMap,
-                         const shared_ptr<XdmfTopology> & newConnectivity,
-                         const shared_ptr<XdmfGeometry> & newPoints) const
-    {
-      std::map<std::vector<double>, unsigned int, PointComparison>::const_iterator iter =
-        coordToIdMap.find(newPoint);
-      if(iter == coordToIdMap.end()) {
-        // Not inserted before
-        coordToIdMap[newPoint] = newPoints->getSize() / 3;;
-        return insertPointWithoutCheck(newPoint, newConnectivity, newPoints);
-      }
-      else {
-        const unsigned int index = iter->second;
-        newConnectivity->pushBack(index);
-        return index;
-      }
-    }
 
   };
 
@@ -273,327 +273,6 @@ namespace {
 
   };
 
-  class HexahedronToHexahedron27 : public Converter {
-
-  public:
-
-    HexahedronToHexahedron27()
-    {
-    }
-
-    virtual ~HexahedronToHexahedron27()
-    {
-    }
-
-    void
-    calculateMidPoint(std::vector<double> & result,
-		      const std::vector<double> & point1,
-		      const std::vector<double> & point2) const
-    {
-      for (int i=0; i<3; i++)
-        result[i] = (point1[i]+point2[i]) / 2.0;
-    }
-
-    shared_ptr<XdmfUnstructuredGrid>
-    convert(const shared_ptr<XdmfUnstructuredGrid> gridToConvert,
-            const shared_ptr<const XdmfTopologyType> topologyType,
-            const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) const
-    {
-
-      shared_ptr<XdmfUnstructuredGrid> toReturn = XdmfUnstructuredGrid::New();
-      toReturn->setName(gridToConvert->getName());
-
-      shared_ptr<XdmfGeometry> geometry = gridToConvert->getGeometry();
-      shared_ptr<XdmfGeometry> toReturnGeometry = toReturn->getGeometry();
-
-      toReturnGeometry->setType(geometry->getType());
-      toReturnGeometry->initialize(geometry->getArrayType());
-
-      bool releaseGeometry = false;
-      if(!geometry->isInitialized()) {
-	geometry->read();
-	releaseGeometry = true;
-      }
-
-      shared_ptr<XdmfTopology> topology = gridToConvert->getTopology();
-      shared_ptr<XdmfTopology> toReturnTopology = toReturn->getTopology();
-
-      toReturn->getTopology()->setType(topologyType);
-      toReturnTopology->initialize(topology->getArrayType());
-      toReturnTopology->reserve(topologyType->getNodesPerElement() *
-				topology->getNumberElements());
-
-      bool releaseTopology = false;
-      if(!topology->isInitialized()) {
-	topology->read();
-	releaseTopology = true;
-      }
-
-      std::map<std::vector<double>, unsigned int, PointComparison> coordToIdMap;
-      std::map<unsigned int, unsigned int> oldIdToNewId;
-
-      // allocate storage for values used in loop
-      unsigned int zeroIndex;
-      unsigned int oneIndex;
-      unsigned int twoIndex;
-      unsigned int threeIndex;
-      unsigned int fourIndex;
-      unsigned int fiveIndex;
-      unsigned int sixIndex;
-      unsigned int sevenIndex;
-      std::vector<double> elementCorner0(3);
-      std::vector<double> elementCorner1(3);
-      std::vector<double> elementCorner2(3);
-      std::vector<double> elementCorner3(3);
-      std::vector<double> elementCorner4(3);
-      std::vector<double> elementCorner5(3);
-      std::vector<double> elementCorner6(3);
-      std::vector<double> elementCorner7(3);
-      std::vector<double> newPoint(3);
-
-      unsigned int offset = 0;
-      unsigned int newIndex = 0;
-      for(unsigned int elem = 0; elem<topology->getNumberElements(); ++elem) {
-
-	// get indices of coner vertices of the element
-	zeroIndex = topology->getValue<unsigned int>(offset++);
-	oneIndex = topology->getValue<unsigned int>(offset++);
-	twoIndex = topology->getValue<unsigned int>(offset++);
-	threeIndex = topology->getValue<unsigned int>(offset++);
-	fourIndex = topology->getValue<unsigned int>(offset++);
-	fiveIndex = topology->getValue<unsigned int>(offset++);
-	sixIndex = topology->getValue<unsigned int>(offset++);
-	sevenIndex = topology->getValue<unsigned int>(offset++);
-
-	// get locations of corner vertices of the element
-	geometry->getValues(zeroIndex * 3,
-			    &(elementCorner0[0]),
-			    3);
-	geometry->getValues(oneIndex * 3,
-			    &(elementCorner1[0]),
-			    3);
-	geometry->getValues(twoIndex * 3,
-			    &(elementCorner2[0]),
-			    3);
-	geometry->getValues(threeIndex * 3,
-			    &(elementCorner3[0]),
-			    3);
-	geometry->getValues(fourIndex * 3,
-			    &(elementCorner4[0]),
-			    3);
-	geometry->getValues(fiveIndex * 3,
-			    &(elementCorner5[0]),
-			    3);
-	geometry->getValues(sixIndex * 3,
-			    &(elementCorner6[0]),
-			    3);
-	geometry->getValues(sevenIndex * 3,
-			    &(elementCorner7[0]),
-			    3);
-
-	// insert corner points
-	newIndex = this->insertPointWithCheck(elementCorner0,
-					      coordToIdMap,
-					      toReturnTopology,
-					      toReturnGeometry);
-	oldIdToNewId[zeroIndex] = newIndex;
-	newIndex = this->insertPointWithCheck(elementCorner1,
-					      coordToIdMap,
-					      toReturnTopology,
-					      toReturnGeometry);
-	oldIdToNewId[oneIndex] = newIndex;
-	newIndex = this->insertPointWithCheck(elementCorner2,
-					      coordToIdMap,
-					      toReturnTopology,
-					      toReturnGeometry);
-	oldIdToNewId[twoIndex] = newIndex;
-	newIndex = this->insertPointWithCheck(elementCorner3,
-					      coordToIdMap,
-					      toReturnTopology,
-					      toReturnGeometry);
-	oldIdToNewId[threeIndex] = newIndex;
-	newIndex = this->insertPointWithCheck(elementCorner4,
-					      coordToIdMap,
-					      toReturnTopology,
-					      toReturnGeometry);
-	oldIdToNewId[fourIndex] = newIndex;
-	newIndex = this->insertPointWithCheck(elementCorner5,
-					      coordToIdMap,
-					      toReturnTopology,
-					      toReturnGeometry);
-	oldIdToNewId[fiveIndex] = newIndex;
-	newIndex = this->insertPointWithCheck(elementCorner6,
-					      coordToIdMap,
-					      toReturnTopology,
-					      toReturnGeometry);
-	oldIdToNewId[sixIndex] = newIndex;
-	newIndex = this->insertPointWithCheck(elementCorner7,
-					      coordToIdMap,
-					      toReturnTopology,
-					      toReturnGeometry);
-	oldIdToNewId[sevenIndex] = newIndex;
-
-	// insert additional points
-	calculateMidPoint(newPoint,
-			  elementCorner0,
-			  elementCorner1);
-	this->insertPointWithCheck(newPoint,
-				   coordToIdMap,
-				   toReturnTopology,
-				   toReturnGeometry);
-	calculateMidPoint(newPoint,
-			  elementCorner1,
-			  elementCorner2);
-	this->insertPointWithCheck(newPoint,
-				   coordToIdMap,
-				   toReturnTopology,
-				   toReturnGeometry);
-	calculateMidPoint(newPoint,
-			  elementCorner2,
-			  elementCorner3);
-	this->insertPointWithCheck(newPoint,
-				   coordToIdMap,
-				   toReturnTopology,
-				   toReturnGeometry);
-	calculateMidPoint(newPoint,
-			  elementCorner0,
-			  elementCorner3);
-	this->insertPointWithCheck(newPoint,
-				   coordToIdMap,
-				   toReturnTopology,
-				   toReturnGeometry);
-	calculateMidPoint(newPoint,
-			  elementCorner4,
-			  elementCorner5);
-	this->insertPointWithCheck(newPoint,
-				   coordToIdMap,
-				   toReturnTopology,
-				   toReturnGeometry);
-	calculateMidPoint(newPoint,
-			  elementCorner5,
-			  elementCorner6);
-	this->insertPointWithCheck(newPoint,
-				   coordToIdMap,
-				   toReturnTopology,
-				   toReturnGeometry);
-	calculateMidPoint(newPoint,
-			  elementCorner6,
-			  elementCorner7);
-	this->insertPointWithCheck(newPoint,
-				   coordToIdMap,
-				   toReturnTopology,
-				   toReturnGeometry);
-	calculateMidPoint(newPoint,
-			  elementCorner4,
-			  elementCorner7);
-	this->insertPointWithCheck(newPoint,
-				   coordToIdMap,
-				   toReturnTopology,
-				   toReturnGeometry);
-	calculateMidPoint(newPoint,
-			  elementCorner0,
-			  elementCorner4);
-	this->insertPointWithCheck(newPoint,
-				   coordToIdMap,
-				   toReturnTopology,
-				   toReturnGeometry);
-	calculateMidPoint(newPoint,
-			  elementCorner1,
-			  elementCorner5);
-	this->insertPointWithCheck(newPoint,
-				   coordToIdMap,
-				   toReturnTopology,
-				   toReturnGeometry);
-	calculateMidPoint(newPoint,
-			  elementCorner2,
-			  elementCorner6);
-	this->insertPointWithCheck(newPoint,
-				   coordToIdMap,
-				   toReturnTopology,
-				   toReturnGeometry);
-	calculateMidPoint(newPoint,
-			  elementCorner3,
-			  elementCorner7);
-	this->insertPointWithCheck(newPoint,
-				   coordToIdMap,
-				   toReturnTopology,
-				   toReturnGeometry);
-	calculateMidPoint(newPoint,
-			  elementCorner0,
-			  elementCorner7);
-	this->insertPointWithCheck(newPoint,
-				   coordToIdMap,
-				   toReturnTopology,
-				   toReturnGeometry);
-	calculateMidPoint(newPoint,
-			  elementCorner1,
-			  elementCorner6);
-	this->insertPointWithCheck(newPoint,
-				   coordToIdMap,
-				   toReturnTopology,
-				   toReturnGeometry);
-	calculateMidPoint(newPoint,
-			  elementCorner1,
-			  elementCorner4);
-	this->insertPointWithCheck(newPoint,
-				   coordToIdMap,
-				   toReturnTopology,
-				   toReturnGeometry);
-	calculateMidPoint(newPoint,
-			  elementCorner2,
-			  elementCorner7);
-	this->insertPointWithCheck(newPoint,
-				   coordToIdMap,
-				   toReturnTopology,
-				   toReturnGeometry);
-	calculateMidPoint(newPoint,
-			  elementCorner0,
-			  elementCorner2);
-	this->insertPointWithCheck(newPoint,
-				   coordToIdMap,
-				   toReturnTopology,
-				   toReturnGeometry);
-	calculateMidPoint(newPoint,
-			  elementCorner4,
-			  elementCorner6);
-	this->insertPointWithCheck(newPoint,
-				   coordToIdMap,
-				   toReturnTopology,
-				   toReturnGeometry);
-	calculateMidPoint(newPoint,
-			  elementCorner0,
-			  elementCorner6);
-	this->insertPointWithoutCheck(newPoint,
-				      toReturnTopology,
-				      toReturnGeometry);
-       
-      }
- 
-      if(releaseTopology) {
-	topology->release();
-      }
-      if(releaseGeometry) {
-	geometry->release();
-      }
-       
-      if(heavyDataWriter) {
-	toReturnTopology->accept(heavyDataWriter);
-	toReturnTopology->release();
-	toReturnGeometry->accept(heavyDataWriter);
-	toReturnGeometry->release();
-      }
-
-      handleSetConversion(gridToConvert,
-			  toReturn,
-			  oldIdToNewId,
-			  heavyDataWriter);
-       
-      return toReturn;
-      
-    }
-    
-  };
-
   template <unsigned int ORDER, bool ISSPECTRAL>
   class HexahedronToHighOrderHexahedron : public Converter {
 
@@ -607,16 +286,164 @@ namespace {
     {
     }
 
+    int
+    reorder(unsigned int & a,
+            unsigned int & b,
+            unsigned int & c,
+            unsigned int & d) const
+    {
+      
+      int tmp;
+      
+      // Reorder to get smallest id in a.
+      if (b < a && b < c && b < d) {
+        tmp = a;
+        a = b;
+        b = c;
+        c = d;
+        d = tmp;
+        return 1;
+      }
+      else if (c < a && c < b && c < d) {
+        tmp = a;
+        a = c;
+        c = tmp;
+        tmp = b;
+        b = d;
+        d = tmp;
+        return 2;
+      }
+      else if (d < a && d < b && d < c) {
+        tmp = a;
+        a = d;
+        d = c;
+        c = b;
+        b = tmp;
+        return 3;
+      }
+      
+      return 0;
+
+    }               
+
     void
-    calculateIntermediatePoint(std::vector<double> & result,
-                               const std::vector<double> & point1,
-                               const std::vector<double> & point2,
-                               int index,
-                               bool spectral) const
+    rotateQuad(unsigned int reorderVal,
+               const std::vector<unsigned int> & face,
+               std::vector<unsigned int> & newFace) const
+    {
+      
+      switch (reorderVal) {
+      case 0: {
+        std::copy(face.begin(),
+                  face.end(),
+                  newFace.begin());
+        return;
+      }
+      case 1: {
+        unsigned int index = 0;
+        for(unsigned int i=mNodesPerEdge; i>0; --i) {
+          for(unsigned int j=i-1; j<mNodesPerFace; j+=mNodesPerEdge) {
+            newFace[index++] = face[j];
+          }
+        }
+        return;
+      }
+      case 2: {
+        for(unsigned int i=0; i<mNodesPerFace; ++i) {
+          newFace[i] = face[mNodesPerFace - 1 - i];
+        }
+        return;
+      }
+      case 3: {
+        unsigned int index = 0;
+        for(unsigned int i=mNodesPerFace-mNodesPerEdge; i<mNodesPerFace; ++i) {
+          for(int j=i; j>=0; j-=mNodesPerEdge) {
+            newFace[index++] = face[j];
+          }
+        }
+        return;
+      }
+      }
+    }
+
+    void
+    addFaceToHash(unsigned int a,
+                  unsigned int b,
+                  unsigned int c,
+                  unsigned int d,
+                  FaceHash & hash,
+                  std::vector<unsigned int> & face) const
+    {
+      const unsigned int reorderVal = reorder(a, b, c, d);
+      
+      std::vector<unsigned int> newFace(face.size());
+      rotateQuad(reorderVal,
+                 face,
+                 newFace);
+      
+      // Look for existing cell in the hash;
+      FaceHash::value_type & currHash = hash[a];
+      std::vector<unsigned int> currFace(3);
+      currFace[0] = b;
+      currFace[1] = c;
+      currFace[2] = d;
+      currHash.push_back(std::make_pair(currFace, newFace));
+      
+    }
+
+    std::vector<unsigned int>
+    getFace(unsigned int a,
+            unsigned int b,
+            unsigned int c,
+            unsigned int d,
+            FaceHash & hash) const
+    {
+      
+      unsigned int reorderVal = reorder(a, b, c, d);   
+
+      // need to rotate opposite of what we put in
+      if(reorderVal == 1) {
+        reorderVal = 3;
+      }
+      else if(reorderVal == 3) {
+        reorderVal = 1;
+      }
+            
+      // Look for existing cell in the hash;
+      FaceHash::value_type & currHash = hash[a];
+      for(FaceHash::value_type::iterator iter = currHash.begin(); 
+          iter != currHash.end(); ++iter) {
+        std::vector<unsigned int> & currFace = iter->first;
+        // 3 because b + c + d
+        if(currFace.size() == 3) {
+          if(b == currFace[0] && d == currFace[2]) {
+            
+            const std::vector<unsigned int> & face = iter->second;
+            std::vector<unsigned int> returnValue(face.size());
+            rotateQuad(reorderVal,
+                       face,
+                       returnValue);
+            currHash.erase(iter);
+            return returnValue;
+            
+          }
+        }
+      }
+
+      return std::vector<unsigned int>();
+      
+    }
+
+    void
+    calculateIntermediatePoint(double result[3],
+                               const double point1[3],
+                               const double point2[3],
+                               int index) const
     {
       const double scalar = points[index];
-      for (int i=0; i<3; i++)
+      for (int i=0; i<3; ++i) {
         result[i] = point1[i]+scalar*(point2[i]-point1[i]);
+      }
     }
 
     shared_ptr<XdmfUnstructuredGrid>
@@ -654,9 +481,6 @@ namespace {
         releaseTopology = true;
       }
 
-      std::map<std::vector<double>, unsigned int, PointComparison> coordToIdMap;
-      std::map<unsigned int, unsigned int> oldIdToNewId;
-
       // allocate storage for values used in loop
       unsigned int zeroIndex;
       unsigned int oneIndex;
@@ -666,21 +490,30 @@ namespace {
       unsigned int fiveIndex;
       unsigned int sixIndex;
       unsigned int sevenIndex;
-      std::vector<double> elementCorner0(3);
-      std::vector<double> elementCorner1(3);
-      std::vector<double> elementCorner2(3);
-      std::vector<double> elementCorner3(3);
-      std::vector<double> elementCorner4(3);
-      std::vector<double> elementCorner5(3);
-      std::vector<double> elementCorner6(3);
-      std::vector<double> elementCorner7(3);
-      std::vector<double> planeCorner0(3);
-      std::vector<double> planeCorner1(3);
-      std::vector<double> planeCorner2(3);
-      std::vector<double> planeCorner3(3);
-      std::vector<double> lineEndPoint0(3);
-      std::vector<double> lineEndPoint1(3);
-      std::vector<double> point(3);
+      double elementCorner0[3];
+      double elementCorner1[3];
+      double elementCorner2[3];
+      double elementCorner3[3];
+      double elementCorner4[3];
+      double elementCorner5[3];
+      double elementCorner6[3];
+      double elementCorner7[3];
+      double planeCorner0[3];
+      double planeCorner1[3];
+      double planeCorner2[3];
+      double planeCorner3[3];
+      double lineEndPoint0[3];
+      double lineEndPoint1[3];
+      double (*newPoints)[3] = new double[mNumberPoints][3];
+
+      unsigned int largestId = 0;
+      for(unsigned int i=0; i<topology->getSize(); ++i) {
+        const unsigned int val = topology->getValue<unsigned int>(i);
+        largestId = std::max(val, largestId);
+      }
+
+      FaceHash hash(largestId + 1);
+      std::vector<int> oldIdToNewId(largestId + 1, -1);
 
       unsigned int offset = 0;
       for(unsigned int elem = 0; elem<topology->getNumberElements(); ++elem) {
@@ -693,8 +526,22 @@ namespace {
         fourIndex = topology->getValue<unsigned int>(offset++);
         fiveIndex = topology->getValue<unsigned int>(offset++);
         sixIndex = topology->getValue<unsigned int>(offset++);
-        sevenIndex = topology->getValue<unsigned int>(offset++);
+        sevenIndex = topology->getValue<unsigned int>(offset++);       
 
+        // get previously added faces
+        std::vector<unsigned int> bottomFace = 
+          getFace(zeroIndex, threeIndex, twoIndex, oneIndex, hash);
+        std::vector<unsigned int> frontFace = 
+          getFace(zeroIndex, oneIndex, fiveIndex, fourIndex, hash);
+        std::vector<unsigned int> leftFace = 
+          getFace(zeroIndex, fourIndex, sevenIndex, threeIndex, hash);
+        std::vector<unsigned int> rightFace = 
+          getFace(oneIndex, twoIndex, sixIndex, fiveIndex, hash);
+        std::vector<unsigned int> backFace = 
+          getFace(threeIndex, sevenIndex, sixIndex, twoIndex, hash);
+        std::vector<unsigned int> topFace = 
+          getFace(fourIndex, fiveIndex, sixIndex, sevenIndex, hash);
+                                                   
         // get locations of corner vertices of the element
         geometry->getValues(zeroIndex * 3,
                             &(elementCorner0[0]),
@@ -720,106 +567,201 @@ namespace {
         geometry->getValues(sevenIndex * 3,
                             &(elementCorner7[0]),
                             3);
+        
+        std::vector<int> newIds(mNumberPoints, -1);
+
+        // set new ids if they have been found previously
+        newIds[mZeroIndex] = oldIdToNewId[zeroIndex];
+        newIds[mOneIndex] = oldIdToNewId[oneIndex];
+        newIds[mTwoIndex] = oldIdToNewId[twoIndex];
+        newIds[mThreeIndex] = oldIdToNewId[threeIndex];
+        newIds[mFourIndex] = oldIdToNewId[fourIndex];
+        newIds[mFiveIndex] = oldIdToNewId[fiveIndex];
+        newIds[mSixIndex] = oldIdToNewId[sixIndex];
+        newIds[mSevenIndex] = oldIdToNewId[sevenIndex];
 
         // loop over i, j, k directions of element isolation i, j, and
         // k planes
+        int pointIndex = 0;
         for(unsigned int i=0; i<mNodesPerEdge; ++i){
           // calculate corners of i plane
           calculateIntermediatePoint(planeCorner0,
                                      elementCorner0,
                                      elementCorner1,
-                                     i,
-                                     true);
+                                     i);
           calculateIntermediatePoint(planeCorner1,
                                      elementCorner4,
                                      elementCorner5,
-                                     i,
-                                     true);
+                                     i);
           calculateIntermediatePoint(planeCorner2,
                                      elementCorner3,
                                      elementCorner2,
-                                     i,
-                                     true);
+                                     i);
           calculateIntermediatePoint(planeCorner3,
                                      elementCorner7,
                                      elementCorner6,
-                                     i,
-                                     true);
-
+                                     i);
           for(unsigned int j=0; j<mNodesPerEdge; ++j) {
             // calculate endpoints of j slice of i plane
             calculateIntermediatePoint(lineEndPoint0,
                                        planeCorner0,
                                        planeCorner2,
-                                       j,
-                                       true);
+                                       j);
             calculateIntermediatePoint(lineEndPoint1,
                                        planeCorner1,
                                        planeCorner3,
-                                       j,
-                                       true);
-
+                                       j);
             for(unsigned int k=0; k<mNodesPerEdge; ++k) {
-              // calculate point to add to mesh
-              calculateIntermediatePoint(point,
+               // calculate point to add to mesh
+              calculateIntermediatePoint(newPoints[pointIndex++],
                                          lineEndPoint0,
                                          lineEndPoint1,
-                                         k,
-                                         true);
-              if((i == 0 || i == ORDER) ||
-                 (j == 0 || j == ORDER) ||
-                 (k == 0 || k == ORDER)) {
-                const unsigned int newIndex = 
-                  this->insertPointWithCheck(point,
-                                             coordToIdMap,
-                                             toReturnTopology,
-                                             toReturnGeometry);
-                if((i == 0 || i == ORDER) &&
-                   (j == 0 || j == ORDER) &&
-                   (k == 0 || k == ORDER)) {
-                  if(i == 0) {
-                    if(j == 0) {
-                      if(k == 0) {
-                        oldIdToNewId[zeroIndex] = newIndex;
-                      }
-                      else {
-                        oldIdToNewId[fourIndex] = newIndex;
-                      }
-                    }
-                    else if(k == 0) {
-                      oldIdToNewId[threeIndex] = newIndex;
-                    }
-                    else {
-                      oldIdToNewId[sevenIndex] = newIndex;
-                    }
-                  }
-                  else {
-                    if(j == 0) {
-                      if(k == 0) {
-                        oldIdToNewId[oneIndex] = newIndex;
-                      }
-                      else {
-                        oldIdToNewId[fiveIndex] = newIndex;
-                      }
-                    }
-                    else if(k == 0) {
-                      oldIdToNewId[twoIndex] = newIndex;
-                    }
-                    else {
-                      oldIdToNewId[sixIndex] = newIndex;
-                    }
-                  }
-                }
-              }
-              else {
-                this->insertPointWithoutCheck(point,
-                                              toReturnTopology,
-                                              toReturnGeometry);
-              }
+                                         k);
             }
           }
         }
+        
+        if(bottomFace.size() > 0) {
+          unsigned int index = 0;
+          for(unsigned int i=0; i<mNumberPoints; i+=mNodesPerEdge) {
+            newIds[i] = bottomFace[index++];
+          }
+        }
+        if(frontFace.size() > 0) {
+          unsigned int index = 0;
+          for(unsigned int i=0; i<mNodesPerEdge; ++i) {
+            for(unsigned int j=i; j<mNumberPoints; j+=mNodesPerFace) {
+              newIds[j] = frontFace[index++];
+            }
+          }
+        }
+        std::copy(leftFace.begin(),
+                  leftFace.end(),
+                  &(newIds[0]));
+        if(rightFace.size() > 0) {
+          unsigned int index = 0;
+          for(unsigned int i=mNumberPoints - mNodesPerFace; 
+              i<mNumberPoints - mNodesPerFace + mNodesPerEdge; ++i) {
+            for(unsigned int j=i; j<mNumberPoints; j+=mNodesPerEdge) {
+              newIds[j] = rightFace[index++];
+            }
+          }
+        }
+        if(backFace.size() > 0) {          
+          unsigned int index = 0;
+          for(unsigned int i=mNodesPerFace - mNodesPerEdge; 
+              i<mNumberPoints; i+=mNodesPerFace) {
+            for(unsigned int j=i; j<i+mNodesPerEdge; ++j) {
+              newIds[j] = backFace[index++];
+            }
+          }
+        }
+        if(topFace.size() > 0) {
+          unsigned int index = 0;
+          for(unsigned int i=mNodesPerEdge-1; 
+              i<mNodesPerFace; i+=mNodesPerEdge) {
+            for(unsigned int j=i; j<mNumberPoints; j+=mNodesPerFace) {
+              newIds[j] = topFace[index++];
+            }
+          }
+        }
+        
+        // finally, add the points and ids to the new topology and geometry
+        for(unsigned int i=0; i<mNumberPoints; ++i) {
+          const int id = newIds[i];
+          if(id == -1) {
+            // need to add the new point
+            const unsigned int newId = toReturnGeometry->getNumberPoints();
+            newIds[i] = newId;
+            toReturnGeometry->insert(newId * 3,
+                                     &(newPoints[i][0]),
+                                     3);
+            toReturnTopology->pushBack(newId);
+          }
+          else {
+            // point added previously, so just add the found id
+            toReturnTopology->pushBack(id);
+          }
+        }
+   
+        // add all faces to hash (mirror to match face on another element)
+        if(bottomFace.size() == 0) {
+          bottomFace.resize(mNodesPerFace);
+          unsigned int index = 0;
+          for(unsigned int i=0; i<mNodesPerFace; i+=mNodesPerEdge) {
+            for(unsigned int j=i; j<mNumberPoints; j+=mNodesPerFace) {
+              bottomFace[index++] = newIds[j];
+            }
+          }
+          addFaceToHash(zeroIndex, oneIndex, twoIndex, threeIndex, hash, 
+                        bottomFace);
+        }
+        if(frontFace.size() == 0) {
+          frontFace.resize(mNodesPerFace);
+          unsigned int index = 0;
+          for(unsigned int i=0; i<mNumberPoints; i+=mNodesPerFace) {
+            for(unsigned int j=i; j<i+mNodesPerEdge; ++j) {
+              frontFace[index++] = newIds[j];
+            }
+          }
+          addFaceToHash(zeroIndex, fourIndex, fiveIndex, oneIndex, hash, 
+                        frontFace);
+        }
+        if(leftFace.size() == 0) {
+          leftFace.resize(mNodesPerFace);
+          unsigned int index = 0;
+          for(unsigned int i=0; i<mNodesPerEdge; ++i) {
+            for(unsigned int j=i; j<mNodesPerFace; j+=mNodesPerEdge) {
+              leftFace[index++] = newIds[j];
+            }
+          }
+          addFaceToHash(zeroIndex, threeIndex, sevenIndex, fourIndex, hash, 
+                        leftFace);
+        } 
+        if(rightFace.size() == 0) {
+          rightFace.resize(mNodesPerFace);
+          std::copy(&(newIds[mOneIndex]),
+                    &(newIds[mNumberPoints]),
+                    &(rightFace[0]));
+          addFaceToHash(oneIndex, fiveIndex, sixIndex, twoIndex, hash, 
+                        rightFace);
+        }
+        if(backFace.size() == 0) {
+          backFace.resize(mNodesPerFace);
+          unsigned int index = 0;
+          for(unsigned int i=mNodesPerFace - mNodesPerEdge; 
+              i<mNodesPerFace; ++i) {
+            for(unsigned int j=i; j<mNumberPoints; j+=mNodesPerFace) {
+              backFace[index++] = newIds[j];
+            }
+          }
+          addFaceToHash(threeIndex, twoIndex, sixIndex, sevenIndex, hash, 
+                        backFace);
+        }
+        if(topFace.size() == 0) {
+          topFace.resize(mNodesPerFace);
+          unsigned int index = 0;
+          for(unsigned int i=mNodesPerEdge-1; 
+              i<mNumberPoints; i+=mNodesPerEdge) {
+            topFace[index++] = newIds[i];
+          }
+          addFaceToHash(fourIndex, sevenIndex, sixIndex, fiveIndex, hash, 
+                        topFace);
+        }
+
+        // add ids to map
+        oldIdToNewId[zeroIndex] = newIds[mZeroIndex];
+        oldIdToNewId[oneIndex] = newIds[mOneIndex];
+        oldIdToNewId[twoIndex] = newIds[mTwoIndex];
+        oldIdToNewId[threeIndex] = newIds[mThreeIndex];
+        oldIdToNewId[fourIndex] = newIds[mFourIndex];
+        oldIdToNewId[fiveIndex] = newIds[mFiveIndex];
+        oldIdToNewId[sixIndex] = newIds[mSixIndex];
+        oldIdToNewId[sevenIndex] = newIds[mSevenIndex];
+   
       }
+
+      delete [] newPoints;
 
       if(releaseTopology) {
         topology->release();
@@ -827,6 +769,8 @@ namespace {
       if(releaseGeometry) {
         geometry->release();
       }
+
+      remapTopology<ORDER>(toReturnTopology);
 
       if(heavyDataWriter) {
         toReturnTopology->accept(heavyDataWriter);
@@ -839,12 +783,31 @@ namespace {
 			  toReturn,
 			  oldIdToNewId,
 			  heavyDataWriter);
-
       return toReturn;
     }
 
   private:
     static const unsigned int mNodesPerEdge = ORDER + 1;
+    static const unsigned int mNodesPerFace = (ORDER + 1) * (ORDER + 1);
+    static const unsigned int mNumberPoints = 
+      (ORDER + 1) * (ORDER + 1) * (ORDER + 1);
+    static const unsigned int mZeroIndex = 
+      0;
+    static const unsigned int mOneIndex = 
+      (ORDER + 1) * (ORDER + 1) * (ORDER + 1) - (ORDER + 1) * (ORDER + 1);
+    static const unsigned int mTwoIndex = 
+      (ORDER + 1) * (ORDER + 1) * (ORDER + 1) - (ORDER + 1);
+    static const unsigned int mThreeIndex = 
+      (ORDER + 1) * (ORDER + 1) - (ORDER + 1);
+    static const unsigned int mFourIndex =
+      ORDER;
+    static const unsigned int mFiveIndex = 
+      (ORDER + 1) * (ORDER + 1) * (ORDER + 1) - (ORDER + 1) * (ORDER + 1) + 
+      ORDER;
+    static const unsigned int mSixIndex = 
+      (ORDER + 1) * (ORDER + 1) * (ORDER + 1) - 1;
+    static const unsigned int mSevenIndex =
+      (ORDER + 1) * (ORDER + 1) - 1;
     static const double points[];
 
   };
@@ -938,6 +901,13 @@ namespace {
     0.78261766349810258,
     0.89224173683157226,
     0.96700071520402953,
+    1.0
+  };
+
+  template <>
+  const double HexahedronToHighOrderHexahedron<2, false>::points[] = {
+    0.0,
+    0.5,
     1.0
   };
 
@@ -1135,7 +1105,7 @@ XdmfTopologyConverter::convert(const shared_ptr<XdmfUnstructuredGrid> gridToConv
   Converter * converter = NULL;
   if(topologyTypeToConvert == XdmfTopologyType::Hexahedron()) {
     if(topologyType == XdmfTopologyType::Hexahedron_27()) {
-      converter = new HexahedronToHexahedron27();
+      converter = new HexahedronToHighOrderHexahedron<2, false>();
     }
     else if(topologyType == XdmfTopologyType::Hexahedron_64()) {
       converter = new HexahedronToHighOrderHexahedron<3, false>();

@@ -46,7 +46,7 @@ public:
   }
 
   void
-  operator()(const boost::blank & array) const
+  operator()(const boost::blank &) const
   {
     return;
   }
@@ -67,7 +67,7 @@ public:
                          mArray->mArray);
   }
 
-private: 
+private:
   XdmfArray * const mArray;
 };
 
@@ -82,7 +82,7 @@ public:
   }
 
   void
-  operator()(const boost::blank & array) const
+  operator()(const boost::blank &) const
   {
     return;
   }
@@ -96,7 +96,7 @@ public:
 
   template<typename T>
   void
-  operator()(const boost::shared_array<const T> & array) const
+  operator()(const boost::shared_array<const T> &) const
   {
     mArray->internalizeArrayPointer();
     boost::apply_visitor(*this,
@@ -179,10 +179,10 @@ public:
   }
 
   shared_ptr<const XdmfArrayType>
-  operator()(const boost::blank & array) const
+  operator()(const boost::blank &) const
   {
-    if(mHeavyDataController) {
-      return mHeavyDataController->getType();
+    if(mHeavyDataController.size > 0) {
+      return mHeavyDataControllers[0]->getType();
     }
     return XdmfArrayType::Uninitialized();
   }
@@ -214,7 +214,7 @@ public:
   }
 
   unsigned int
-  operator()(const boost::blank & array) const
+  operator()(const boost::blank &) const
   {
     return 0;
   }
@@ -228,7 +228,7 @@ public:
 
   template<typename T>
   unsigned int
-  operator()(const boost::shared_array<const T> & array) const
+  operator()(const boost::shared_array<const T> &) const
   {
     return 0;
   }
@@ -243,7 +243,7 @@ public:
   }
 
   const void *
-  operator()(const boost::blank & array) const
+  operator()(const boost::blank &) const
   {
     return NULL;
   }
@@ -314,7 +314,7 @@ public:
   }
 
   std::string
-  operator()(const boost::blank & array) const
+  operator()(const boost::blank &) const
   {
     return "";
   }
@@ -361,7 +361,7 @@ public:
   }
 
   void
-  operator()(const boost::blank & array) const
+  operator()(const boost::blank &) const
   {
     mArray->initialize(mArrayToCopy->getArrayType());
     boost::apply_visitor(*this,
@@ -417,14 +417,14 @@ public:
   }
 
   void
-  operator()(const boost::blank & array) const
+  operator()(const boost::blank &) const
   {
     return;
   }
 
   template<typename T>
   void
-  operator()(const shared_ptr<std::vector<T> > & array) const
+  operator()(const shared_ptr<std::vector<T> > &) const
   {
     return;
   }
@@ -445,6 +445,33 @@ private:
   XdmfArray * const mArray;
 };
 
+class XdmfArray::IsInitialized : public boost::static_visitor<bool> {
+public:
+
+  IsInitialized()
+  {
+  }
+
+  bool
+  operator()(const boost::blank &) const
+  {
+    return false;
+  }
+
+  template<typename T>
+  bool
+  operator()(const shared_ptr<std::vector<T> > &) const
+  {
+    return true;
+  }
+
+  template<typename T>
+  bool
+  operator()(const T &) const
+  {
+    return true;
+  }
+};
 class XdmfArray::Reserve : public boost::static_visitor<void> {
 public:
 
@@ -456,7 +483,7 @@ public:
   }
 
   void
-  operator()(const boost::blank & array) const
+  operator()(const boost::blank &) const
   {
     mArray->mTmpReserveSize = mSize;
   }
@@ -470,7 +497,7 @@ public:
 
   template<typename T>
   void
-  operator()(const boost::shared_array<const T> & array) const
+  operator()(const boost::shared_array<const T> &) const
   {
     mArray->internalizeArrayPointer();
     boost::apply_visitor(*this,
@@ -492,9 +519,9 @@ public:
   }
 
   unsigned int
-  operator()(const boost::blank & array) const
+  operator()(const boost::blank &) const
   {
-    if(mArray->mHeavyDataControllers.size()>0) {
+    if(mArray->mHeavyDataControllers.size() > 0) {
       return mArray->mHeavyDataControllers[0]->getSize();//modify this to compile all controllers
     }
     return 0;
@@ -509,14 +536,14 @@ public:
 
   template<typename T>
   unsigned int
-  operator()(const boost::shared_array<const T> & array) const
+  operator()(const boost::shared_array<const T> &) const
   {
     return mArray->mArrayPointerNumValues;
   }
 
 private:
 
-  const XdmfArray * const mArray; 
+  const XdmfArray * const mArray;
 };
 
 shared_ptr<XdmfArray>
@@ -542,7 +569,7 @@ const std::string XdmfArray::ItemTag = "DataItem";
 void
 XdmfArray::clear()
 {
-  boost::apply_visitor(Clear(this), 
+  boost::apply_visitor(Clear(this),
                        mArray);
   mDimensions.clear();
 }
@@ -574,7 +601,7 @@ XdmfArray::getArrayType() const
 unsigned int
 XdmfArray::getCapacity() const
 {
-  return boost::apply_visitor(GetCapacity(), 
+  return boost::apply_visitor(GetCapacity(),
                               mArray);
 }
 
@@ -619,7 +646,7 @@ XdmfArray::getItemProperties() const
   else {
     arrayProperties.insert(std::make_pair("Format", "XML"));
   }
-  arrayProperties.insert(std::make_pair("Dimensions", 
+  arrayProperties.insert(std::make_pair("Dimensions",
                                         this->getDimensionsString()));
   if(mName.compare("") != 0) {
     arrayProperties.insert(std::make_pair("Name", mName));
@@ -644,7 +671,7 @@ XdmfArray::getName() const
 unsigned int
 XdmfArray::getSize() const
 {
-  return boost::apply_visitor(Size(this), 
+  return boost::apply_visitor(Size(this),
                               mArray);
 }
 
@@ -658,14 +685,14 @@ XdmfArray::getValuesInternal()
 const void *
 XdmfArray::getValuesInternal() const
 {
-  return boost::apply_visitor(GetValuesPointer(), 
+  return boost::apply_visitor(GetValuesPointer(),
                               mArray);
 }
 
 std::string
 XdmfArray::getValuesString() const
 {
-  return boost::apply_visitor(GetValuesString(mArrayPointerNumValues), 
+  return boost::apply_visitor(GetValuesString(mArrayPointerNumValues),
                               mArray);
 }
 
@@ -734,7 +761,7 @@ XdmfArray::initialize(const shared_ptr<const XdmfArrayType> arrayType,
     this->release();
   }
   else {
-    XdmfError::message(XdmfError::FATAL, 
+    XdmfError::message(XdmfError::FATAL,
                        "Array of unsupported type in XdmfArray::initialize");
   }
 }
@@ -773,19 +800,14 @@ XdmfArray::insert(const unsigned int startIndex,
 bool
 XdmfArray::isInitialized() const
 {
-  try {
-    boost::get<boost::blank>(mArray);
-    return false;
-  }
-  catch(const boost::bad_get & exception) {
-  }
-  return true;
+  return boost::apply_visitor(IsInitialized(),
+                              mArray);
 }
 
 void
 XdmfArray::internalizeArrayPointer()
 {
-  boost::apply_visitor(InternalizeArrayPointer(this), 
+  boost::apply_visitor(InternalizeArrayPointer(this),
                        mArray);
 }
 
@@ -797,13 +819,13 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
   //This inserts any XdmfInformation in childItems into the object.
   XdmfItem::populateItem(itemProperties, childItems, reader);
 
-  const shared_ptr<const XdmfArrayType> arrayType = 
+  const shared_ptr<const XdmfArrayType> arrayType =
     XdmfArrayType::New(itemProperties);
 
   std::map<std::string, std::string>::const_iterator content =
     itemProperties.find("Content0");
   if(content == itemProperties.end()) {
-    XdmfError::message(XdmfError::FATAL, 
+    XdmfError::message(XdmfError::FATAL,
                        "'Content' not found in itemProperties in "
                        "XdmfArray::populateItem");
   }
@@ -833,11 +855,11 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
   std::map<std::string, std::string>::const_iterator dimensions =
     itemProperties.find("Dimensions");
   if(dimensions == itemProperties.end()) {
-    XdmfError::message(XdmfError::FATAL, 
+    XdmfError::message(XdmfError::FATAL,
                        "'Dimensions' not found in itemProperties in "
                        "XdmfArray::populateItem");
   }
-   
+
   boost::tokenizer<> tokens(dimensions->second);
   for(boost::tokenizer<>::const_iterator iter = tokens.begin();
       iter != tokens.end();
@@ -848,12 +870,11 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
   std::map<std::string, std::string>::const_iterator format =
     itemProperties.find("Format");
   if(format == itemProperties.end()) {
-    XdmfError::message(XdmfError::FATAL, 
+    XdmfError::message(XdmfError::FATAL,
                        "'Format' not found in itemProperties in "
                        "XdmfArray::populateItem");
   }
   const std::string & formatVal = format->second;
-
 
   if(formatVal.compare("HDF") == 0) {
     contentIndex = 0;
@@ -869,6 +890,16 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
 
       std::string hdf5Path = contentVals[contentIndex].substr(0, colonLocation);
       std::string dataSetPath = contentVals[contentIndex].substr(colonLocation+1);
+
+      // FIXME: for other OS (e.g. windows)
+      if(hdf5Path.size() > 0 && hdf5Path[0] != '/') {
+        // Dealing with a relative path for hdf5 location
+        std::map<std::string, std::string>::const_iterator xmlDir =
+          itemProperties.find("XMLDir");
+        if(xmlDir == itemProperties.end()) {
+          XdmfError::message(XdmfError::FATAL,
+                             "'XMLDir' not found in itemProperties in "
+                             "XdmfArray::populateItem");
 
       //parse dimensions from the content
       std::vector<unsigned int> contentDims;
@@ -928,7 +959,7 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
     }
   }
   else {
-    XdmfError::message(XdmfError::FATAL, 
+    XdmfError::message(XdmfError::FATAL,
                        "Neither 'HDF' nor 'XML' specified as 'Format' "
                        "in XdmfArray::populateItem");
   }
