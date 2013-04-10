@@ -30,6 +30,7 @@ class XdmfAttribute;
 class XdmfDomain;
 class XdmfGeometry;
 class XdmfGridCollection;
+class XdmfHDF5Writer;
 class XdmfInformation;
 class XdmfTime;
 class XdmfTopology;
@@ -37,6 +38,7 @@ class XdmfUnstructuredGrid;
 
 //Includes
 #include <stack>
+#include <map>
 #include <vector>
 #include "XdmfUtils.hpp"
 #include "XdmfSharedPtr.hpp"
@@ -136,6 +138,8 @@ class XdmfUnstructuredGrid;
 #define XdmfSetPreviousTopology xdmfsetprevioustopology_
 #define XdmfSetTime xdmfsettime_
 #define XdmfSetTopology xdmfsettopology_
+#define XdmfSetTopologyPolyline xdmfsettopologypolyline_
+#define XdmfSetTopologyPolyvertex xdmfsettopologypolyvertex_
 #define XdmfWrite xdmfwrite_
 #define XdmfRead xdmfread_
 #define XdmfWriteHDF5 xdmfwritehdf5_
@@ -287,13 +291,16 @@ public:
    * @param numValues number of connectivity values to copy.
    * @param arrayType type of connectivity values.
    * @param connectivityValues array of connectivity values.
+   * @param polyNodesPerElement for polyline and polyvertex types the
+   * number of nodes per element.
    *
    * @return int providing id to fortran if reusing.
    */
   int setTopology(const int topologyType, 
                   const unsigned int numValues,
                   const int arrayType,
-                  const void * const connectivityValues);
+                  const void * const connectivityValues,
+                  const int polyNodesPerElement = 0);
 
   /**
    * Write constructed file to disk.
@@ -335,7 +342,7 @@ private:
   std::vector<shared_ptr<XdmfInformation> > mPreviousInformations;
   std::vector<shared_ptr<XdmfTopology> > mPreviousTopologies;
 
-
+  std::map<std::string, shared_ptr<XdmfHDF5Writer> > mPreviousWriters;
 
 };
 

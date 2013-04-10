@@ -18,8 +18,10 @@ PROGRAM XdmfFortranExample
   INTEGER myConnections(8,2)
   REAL*8 myCellAttribute(2), myNodeAttribute(3,4), myTime
   INTEGER nodeAttributeId, cellAttributeId, xdmfaddattribute
+  REAL*4 polylinePoints(3,4)
+  INTEGER polylineTopology(6)
 
-  filename = 'my_output'//CHAR(0)
+  filename = 'my_output.xmf'//CHAR(0)
   
   myPoints(1,1,1) = 0
   myPoints(2,1,1) = 0
@@ -57,7 +59,7 @@ PROGRAM XdmfFortranExample
   myPoints(1,3,4) = 3
   myPoints(2,3,4) = 2
   myPoints(3,3,4) = -2
-  
+
   myConnections(1,1) = 0
   myConnections(2,1) = 1
   myConnections(3,1) = 7
@@ -90,6 +92,26 @@ PROGRAM XdmfFortranExample
   
   myCellAttribute(1) = 100
   myCellAttribute(2) = 200
+
+  polylinePoints(1,1) = 0
+  polylinePoints(2,1) = 0
+  polylinePoints(3,1) = 0
+  polylinePoints(1,2) = 1
+  polylinePoints(2,2) = 1
+  polylinePoints(3,2) = 0
+  polylinePoints(1,3) = 2
+  polylinePoints(2,3) = 1
+  polylinePoints(3,3) = 0
+  polylinePoints(1,4) = 3
+  polylinePoints(2,4) = 0
+  polylinePoints(3,4) = 0 
+
+  polylineTopology(1) = 0
+  polylineTopology(2) = 1
+  polylineTopology(3) = 1
+  polylineTopology(4) = 2
+  polylineTopology(5) = 2
+  polylineTopology(6) = 3
   
   myTime = 1.0
 
@@ -115,8 +137,15 @@ PROGRAM XdmfFortranExample
   CALL XDMFSETTIME(obj, myTime)
   CALL XDMFADDPREVIOUSATTRIBUTE(obj, cellAttributeId)
   CALL XDMFADDGRID(obj, 'Identical'//CHAR(0))
+
+  CALL XDMFSETTOPOLOGYPOLYLINE(obj, 2, 6, XDMF_ARRAY_TYPE_INT32, &
+       polylineTopology)
+  CALL XDMFSETGEOMETRY(obj, XDMF_GEOMETRY_TYPE_XYZ, 12, &
+       XDMF_ARRAY_TYPE_FLOAT32, polylinePoints)
+  CALL XDMFADDGRID(obj, 'TestPolyline'//CHAR(0))
+
   CALL XDMFCLOSEGRIDCOLLECTION(obj)
-  CALL XDMFWRITE(obj, filename)
+  CALL XDMFWRITE(obj, filename, 10)
   CALL XDMFCLOSE(obj)
 
 END PROGRAM XdmfFortranExample

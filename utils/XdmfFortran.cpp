@@ -466,7 +466,8 @@ int
 XdmfFortran::setTopology(const int topologyType, 
                          const unsigned int numValues,
                          const int arrayType,
-                         const void * const connectivityValues)
+                         const void * const connectivityValues,
+                         const int polyNodesPerElement)
 {
   mTopology = XdmfTopology::New();
 
@@ -475,10 +476,10 @@ XdmfFortran::setTopology(const int topologyType,
     mTopology->setType(XdmfTopologyType::Polyvertex());
     break;
   case XDMF_TOPOLOGY_TYPE_POLYLINE:
-    mTopology->setType(XdmfTopologyType::Polyline(0));
+    mTopology->setType(XdmfTopologyType::Polyline(polyNodesPerElement));
     break;
   case XDMF_TOPOLOGY_TYPE_POLYGON:
-    mTopology->setType(XdmfTopologyType::Polygon(0));
+    mTopology->setType(XdmfTopologyType::Polygon(polyNodesPerElement));
     break;
   case XDMF_TOPOLOGY_TYPE_TRIANGLE:
     mTopology->setType(XdmfTopologyType::Triangle());
@@ -509,7 +510,8 @@ XdmfFortran::setTopology(const int topologyType,
     break;
   case XDMF_TOPOLOGY_TYPE_QUADRILATERAL_9:
     mTopology->setType(XdmfTopologyType::Quadrilateral_9());
-    break;  case XDMF_TOPOLOGY_TYPE_TETRAHEDRON_10:
+    break;  
+  case XDMF_TOPOLOGY_TYPE_TETRAHEDRON_10:
     mTopology->setType(XdmfTopologyType::Tetrahedron_10());
     break;
   case XDMF_TOPOLOGY_TYPE_PYRAMID_13:
@@ -573,7 +575,8 @@ XdmfFortran::setTopology(const int topologyType,
 }
 
 void 
-XdmfFortran::write(const char * const xmlFilePath, const unsigned int numValues )
+XdmfFortran::write(const char * const xmlFilePath, 
+                   const unsigned int numValues)
 {
   shared_ptr<XdmfWriter> writer = XdmfWriter::New(xmlFilePath);
   writer->setLightDataLimit(numValues);
@@ -583,9 +586,20 @@ XdmfFortran::write(const char * const xmlFilePath, const unsigned int numValues 
 void 
 XdmfFortran::writeHDF5(const char * const xmlFilePath)
 {
-  shared_ptr<XdmfHDF5Writer> writer = XdmfHDF5Writer::New(xmlFilePath);
-  writer->setReleaseData( true );
+  shared_ptr<XdmfHDF5Writer> writer;
+  std::map<std::string, shared_ptr<XdmfHDF5Writer> >::iterator iter =
+    mPreviousWriters.find(xmlFilePath);
+  if(iter != mPreviousWriters.end()) {
+    writer = iter->second;
+  }
+  else {
+    writer = XdmfHDF5Writer::New(xmlFilePath);
+    writer->setReleaseData(true);
+    mPreviousWriters[xmlFilePath] = writer;
+  }
+  writer->openFile();
   mDomain->accept(writer);
+  writer->closeFile();
 }
 
 void 
@@ -738,6 +752,36 @@ extern "C"
                                     connectivityValues);
   }
 
+  int
+  XdmfSetTopologyPolyline(long * pointer,
+                          int  * nodesPerElement,
+                          int  * numValues,
+                          int  * arrayType,
+                          void * connectivityValues)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    return xdmfFortran->setTopology(XDMF_TOPOLOGY_TYPE_POLYLINE, 
+                                    *numValues, 
+                                    *arrayType,
+                                    connectivityValues,
+                                    *nodesPerElement);
+  }
+
+  int
+  XdmfSetTopologyPolyvertex(long * pointer,
+                            int  * nodesPerElement,
+                            int  * numValues,
+                            int  * arrayType,
+                            void * connectivityValues)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    return xdmfFortran->setTopology(XDMF_TOPOLOGY_TYPE_POLYVERTEX, 
+                                    *numValues, 
+                                    *arrayType,
+                                    connectivityValues,
+                                    *nodesPerElement);
+  }
+
   void
   XdmfWrite(long * pointer,
             char * xmlFilePath,
@@ -750,7 +794,7 @@ extern "C"
 
   void
   XdmfWriteHDF5(long * pointer,
-                char * xmlFilePath )
+                char * xmlFilePath)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
     xdmfFortran->writeHDF5(xmlFilePath);
