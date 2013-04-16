@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
   array->accept(writer);
 
   //H5FD_dsm_dump();
-  
+
   // Release data and read back in to check if we wrote correctly
   array->release();
   array->read();

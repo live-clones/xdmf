@@ -1,4 +1,10 @@
 #include "XdmfArray.hpp"
+#include "XdmfArrayType.hpp"
+#include <vector>
+#include <map>
+
+shared_ptr<XdmfArray> maximum(std::vector<shared_ptr<XdmfArray> > values);
+shared_ptr<XdmfArray> prepend(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2);
 
 int main(int, char **)
 {
@@ -10,13 +16,13 @@ int main(int, char **)
 
 	int newSize = 10;
 	exampleArray->reserve(newSize);
-	shared_ptr<std::vector<int> > exampleVector = exampleArray->initialize(newSize);
+	shared_ptr<std::vector<int> > exampleVector = exampleArray->initialize<int>(newSize);
 	exampleArray->initialize(XdmfArrayType::Int32(), newSize);
 
 	std::vector<unsigned int> newSizeVector;
 	newSizeVector.push_back(4);
 	newSizeVector.push_back(5);
-	shared_ptr<std::vector<int> > exampleVector = exampleArray->initialize(newSizeVector);
+	shared_ptr<std::vector<int> > exampleVectorFromVector = exampleArray->initialize<int>(newSizeVector);
 	exampleArray->initialize(XdmfArrayType::Int32(), newSize);
 
 	if (exampleArray->isInitialized())
@@ -33,9 +39,9 @@ int main(int, char **)
 	shared_ptr<XdmfArray> tempArray = XdmfArray::New();
 	exampleArray->insert(0, initArray, 10, 1, 1);
 	//exampleArray now contains {0,1,2,3,4,5,6,7,8,9}
-	exampleArray->insert(0, initArray, 0, 5, 2, 1);
+	exampleArray->insert(0, initArray, 5, 2, 1);
 	//exampleArray now contains {0,1,1,3,2,5,3,7,4,9}
-	examleArray->insert(0, initArray, 0, 5, 1, 2);
+	exampleArray->insert(0, initArray, 5, 1, 2);
 	//exampleArray now contains {0,2,4,6,8,5,3,7,4,9}
 	tempArray->insert(0, exampleArray, 0, 10, 1, 1);
 	//tempArray now contains {0,1,2,3,4,5,6,7,8,9}
@@ -49,7 +55,7 @@ int main(int, char **)
 	exampleArray->pushBack(newValue);
 	exampleArray->insert(newIndex, newValue);//the value of 3.5 is inserted at index 0
 
-	exampleArray->setValuesInternal(&initArray, 10, 1);
+	exampleArray->setValuesInternal(initArray, 10, 1);
 
 	std::vector<int> initVector;
 	initVector.push_back(1);
@@ -59,7 +65,7 @@ int main(int, char **)
 	initVector.push_back(5);
 	exampleArray->setValuesInternal(initVector, 1);
 
-	shared_ptr<std::vector> storeVector(&initVector);
+	shared_ptr<std::vector<int> > storeVector(&initVector);
 	exampleArray->setValuesInternal(storeVector);
 
 	//The vector contains {1,2,3,4,5} and the XdmfArray contains {0,1,2,3,4,5,6,7,8,9}
@@ -84,18 +90,18 @@ int main(int, char **)
 	exampleArray->getValues(0, readArray, 5, 2, 1);
 	//readArray now contains {0, 2, 4, 6, 8, 15, 3, 17, 4, 19}
 
-	newSize = 20
-	int baseValue = 1
-	exampleArray->resize(newSize, baseValue)
+	newSize = 20;
+	int baseValue = 1;
+	exampleArray->resize(newSize, baseValue);
 	//exampleArray now contains {0,1,2,3,4,5,6,7,8,9,1,1,1,1,1,1,1,1,1,1}
 	newSize = 5;
-	exampleArray->resize(newSize, baseValue)
+	exampleArray->resize(newSize, baseValue);
 	//exampleArray now contains {0,1,2,3,4}
 
-	exampleArray->resize(newSizeVector, baseValue)
+	exampleArray->resize(newSizeVector, baseValue);
 	//exampleArray now contains {0,1,2,3,4,5,6,7,8,9,1,1,1,1,1,1,1,1,1,1}
 	newSizeVector[0] = 1;
-	exampleArray->resize(newSizeVector, baseValue)
+	exampleArray->resize(newSizeVector, baseValue);
 	//exampleArray now contains {0,1,2,3,4}
 
 
@@ -113,18 +119,18 @@ int main(int, char **)
 	unsigned int exampleSize = exampleArray->getSize();
 
 	shared_ptr<XdmfHeavyDataController> exampleController = exampleArray->getHeavyDataController();
-	newArray = XdmfArray.New()
-	newArray.setHeaveyDataController(exampleController)
+	shared_ptr<XdmfArray> newArray = XdmfArray::New();
+	newArray->setHeavyDataController(exampleController);
 	shared_ptr<const XdmfHeavyDataController> exampleControllerConst = exampleArray->getHeavyDataController();
 
 	//if exampleArray contains [0, 1, 2, 3, 4, 5, 6, 7]
-	int exampleValue = exampleArray->getValue(4);
+	int exampleValue = exampleArray->getValue<int>(4);
 	//exampleValue now has the value of what was stored at index 4, which in this case is 4
 
 	std::string exampleValueString = exampleArray->getValuesString();
 
 	//assuming that exampleArray is filled with ints
-	shared_ptr<std::vector<int> > exampleInternalVector = exampleArray->getValuesInternal();
+	shared_ptr<std::vector<int> > exampleInternalVector = exampleArray->getValuesInternal<int>();
 	void * exampleInternalPointer = exampleArray->getValuesInternal();
 	const void * exampleInternalPointerConst = exampleArray->getValuesInternal();
 
@@ -136,5 +142,83 @@ int main(int, char **)
 
 	exampleArray->release();
 
+	std::string exampleOperations = XdmfArray::getSupportedOperations();
+	std::vector<std::string> exampleFunctions = XdmfArray::getSupportedFunctions();
+	std::string exampleVariableChars = XdmfArray::getValidVariableChars();
+	std::string exampleDigitChars = XdmfArray::getValidDigitChars();
+
+	int examplePriority = XdmfArray::getOperationPriority('|');
+
+	shared_ptr<XdmfArray> valueArray1 = XdmfArray::New();
+	valueArray1->pushBack(1);
+	valueArray1->pushBack(2);
+	valueArray1->pushBack(3);
+	valueArray1->pushBack(4);
+	shared_ptr<XdmfArray> valueArray2 = XdmfArray::New();
+	valueArray2->pushBack(9);
+	valueArray2->pushBack(8);
+	valueArray2->pushBack(7);
+	valueArray2->pushBack(6);
+
+	std::vector<shared_ptr<XdmfArray> > valueVector;
+	valueVector.push_back(valueArray1);
+	valueVector.push_back(valueArray2);
+
+	shared_ptr<XdmfArray> answerArray;
+
+	answerArray = XdmfArray::sum(valueVector);
+	answerArray = XdmfArray::ave(valueVector);
+	answerArray = XdmfArray::chunk(valueArray1, valueArray2);
+	answerArray = XdmfArray::interlace(valueArray1, valueArray2);
+
+	int exampleNumOperations = XdmfArray::addOperation('@', (shared_ptr<XdmfArray>(*)(shared_ptr<XdmfArray>, shared_ptr<XdmfArray>))prepend, 2);
+	answerArray = XdmfArray::evaluateOperation(valueArray1, valueArray2, '@');
+
+	int exampleNumFunctions = XdmfArray::addFunction("MAX", (shared_ptr<XdmfArray>(*)(std::vector<shared_ptr<XdmfArray> >))maximum);
+	answerArray = XdmfArray::evaluateFunction(valueVector, "MAX");
+
+	std::map<std::string, shared_ptr<XdmfArray> > valueMap;
+	valueMap["A"] = valueArray1;
+	valueMap["B"] = valueArray2;
+
+	std::string parsedExpression = "MAX(A,B)@(A#B)";
+	answerArray = XdmfArray::evaluateExpression(parsedExpression, valueMap);
+
 	return 0;
+}
+
+shared_ptr<XdmfArray> maximum(std::vector<shared_ptr<XdmfArray> > values)
+{
+	if (values[0]->getArrayType() == XdmfArrayType::String())
+	{
+		shared_ptr<XdmfArray> returnArray = XdmfArray::New();
+		returnArray->pushBack(values[0]->getValue<std::string>(0));
+		return returnArray;
+	}
+	else
+	{
+		double maxVal = values[0]->getValue<double>(0);
+		for (int i = 0; i < values.size(); i++)
+		{
+			for (int j = 0; j < values[i]->getSize(); j++)
+			{
+				if (maxVal < values[i]->getValue<double>(j))
+				{
+					maxVal = values[i]->getValue<double>(j);
+				}
+			}
+		}
+		shared_ptr<XdmfArray> returnArray = XdmfArray::New();
+		returnArray->pushBack(maxVal);
+		return returnArray;
+	}
+}
+
+shared_ptr<XdmfArray> prepend(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2)
+{
+	//joins into new array and returns it
+	shared_ptr<XdmfArray> returnArray = XdmfArray::New();
+	returnArray->insert(0, val2, 0, val2->getSize(),  1, 1);
+	returnArray->insert(val2->getSize(), val1, 0, val1->getSize(), 1, 1);
+	return returnArray;
 }

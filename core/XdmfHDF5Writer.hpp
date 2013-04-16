@@ -123,9 +123,71 @@ public:
    */
   int getFileSizeLimit();
 
+  /**
+   * Sets the file index. Used when file splitting and incremented when the current file is full. Set to 0 before using hyperslab or overwrite.
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfHDF5Writer.cpp
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleHDF5Writer.py
+   *
+   * @param	newIndex	The index that the writer will append to the file name when incorperating file splitting
+   */
+  void setFileIndex(int newIndex);
+
+  /**
+   * Gets the file index. Used when file splitting and incremented whent he current file is full.
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfHDF5Writer.cpp
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleHDF5Writer.py
+   *
+   * @return	The current file index.
+   */
+  int getFileIndex();
+
   virtual void closeFile();
 
+  /**
+   * Get the chunk size used to output datasets to hdf5.
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfHDF5Writer.cpp
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleHDF5Writer.py
+   *
+   * @return chunk size used to output datasets to hdf5.
+   */
+  unsigned int getChunkSize() const;
+
   virtual void openFile();
+
+  /**
+   * Set the chunk size used to output datasets to hdf5. For
+   * multidimensional datasets the chunk size is the total number of
+   * elements in the chunk.
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfHDF5Writer.cpp
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleHDF5Writer.py
+   *
+   * @param chunkSize the number of elements per chunk.
+   */
+  void setChunkSize(const unsigned int chunkSize);
 
   using XdmfHeavyDataWriter::visit;
   virtual void visit(XdmfArray & array,

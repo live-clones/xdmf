@@ -7,10 +7,13 @@
 !!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+
 PROGRAM XdmfFortranExample
-  
-  IMPLICIT NONE
+ 
+  Implicit none
   INCLUDE 'Xdmf.f'
+
+  
 
   INTEGER*8 obj
   character*256 filename
@@ -119,7 +122,7 @@ PROGRAM XdmfFortranExample
   CALL XDMFSETTIME(obj, myTime)
 !! Unstructured Only
   tempID = XDMFSETTOPOLOGY(obj, XDMF_TOPOLOGY_TYPE_HEXAHEDRON, 16, &
-       XDMF_ARRAY_TYPE_INT32, myConnections)
+       XDMF_ARRAY_TYPE_INT32, myConnections, 0)
 !! /Unstructured Only
 !! Curvilinear and Rectilinear Only
   tempID = XDMFSETDIMENSIONS(obj, 3, XDMF_ARRAY_TYPE_INT32, myDimensions)
@@ -164,5 +167,6 @@ PROGRAM XdmfFortranExample
 !!  CALL XDMFWRITEHDF5(obj, 'my_output.h5'//CHAR(0))
   CALL XDMFWRITE(obj, filename)
   CALL XDMFCLOSE(obj)
+
 
 END PROGRAM XdmfFortranExample

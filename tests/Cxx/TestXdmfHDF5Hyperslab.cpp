@@ -71,6 +71,7 @@ int main(int, char **)
     XdmfWriter::New("TestXdmfHDF5Hyperslab2.xmf");
   writer2->setLightDataLimit(0);
   writer2->getHeavyDataWriter()->setMode(XdmfHeavyDataWriter::Overwrite);
+
   readArray->accept(writer2);
 
   //

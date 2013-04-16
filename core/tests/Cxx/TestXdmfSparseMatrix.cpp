@@ -3,14 +3,15 @@
 
 int main(int, char **)
 {
-
   shared_ptr<XdmfSparseMatrix> matrix = XdmfSparseMatrix::New(3, 3);
+
   matrix->setName("foo");
   shared_ptr<XdmfArray> rowPointer = matrix->getRowPointer();
   shared_ptr<XdmfArray> columnIndex = matrix->getColumnIndex();
   shared_ptr<XdmfArray> values = matrix->getValues();
-  rowPointer->insert<unsigned int>(0, 0);
-  rowPointer->insert<unsigned int>(1, 0);
+
+  rowPointer->insert<unsigned int>(0, 1);
+  rowPointer->insert<unsigned int>(1, 1);
   rowPointer->insert<unsigned int>(2, 2);
   rowPointer->insert<unsigned int>(3, 3);
   columnIndex->pushBack<unsigned int>(1);

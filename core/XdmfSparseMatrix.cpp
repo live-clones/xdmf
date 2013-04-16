@@ -187,6 +187,8 @@ XdmfSparseMatrix::populateItem(const std::map<std::string, std::string> & itemPr
   }
 
   if(arrayVector.size() < 3) {
+    //The three required arrays are for the row pointer, column index, and the contained values.
+    //Without these arrays the object can't be properly built.
     XdmfError::message(XdmfError::FATAL,
                        "Expected 3 arrays attached to "
                        "XdmfSparseMatrix::populateItem");

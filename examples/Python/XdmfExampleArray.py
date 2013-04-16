@@ -1,6 +1,30 @@
 from Xdmf import *
 from numpy import *
 
+def maximum(values):
+	values = ArrayVector(values)#need to cast to the right data type
+	if values[0].getArrayType() == XdmfArrayType.String():
+		returnArray = XdmfArray.New()
+		returnArray.pushBackAsString(values[0].getValueAsString(0))
+		return returnArray;
+	else:
+		maxVal = values[0].getValueAsFloat64(0)
+		for i in range (0, values.size()):
+			for j in range (0, values[i].getSize()):
+				if maxVal < values[i].getValueAsFloat64(j):
+					maxVal = values[i].getValueAsFloat64(j)
+		returnArray = XdmfArray.New()
+		returnArray.pushBackAsFloat64(maxVal)
+		return returnArray
+
+def prepend(val1, val2):
+	val1 = XdmfArray.XdmfArrayPtr(val1)#need to cast to the right data type
+	val2 = XdmfArray.XdmfArrayPtr(val2)#had to write a custom casting method to integrate it properly
+	returnArray = XdmfArray.New()
+	returnArray.insert(0, val2, 0, val2.getSize())
+	returnArray.insert(val2.getSize(), val1, 0, val1.getSize())
+	return returnArray
+
 if __name__ == "__main__":
 	exampleArray = XdmfArray.New()
 
@@ -130,3 +154,46 @@ if __name__ == "__main__":
 	newArray.setHeavyDataController(exampleController)
 
 	exampleArray.release()
+
+
+
+
+        exampleOperations = XdmfArray.getSupportedOperations()
+        exampleFunctions = XdmfArray.getSupportedFunctions()
+        exampleVariableChars = XdmfArray.getValidVariableChars()
+        exampleDigitChars = XdmfArray.getValidDigitChars()
+
+        examplePriority = XdmfArray.getOperationPriority('|')
+
+        valueArray1 = XdmfArray.New()
+        valueArray1.pushBackAsInt32(1)
+        valueArray1.pushBackAsInt32(2)
+        valueArray1.pushBackAsInt32(3)
+        valueArray1.pushBackAsInt32(4)
+        valueArray2 = XdmfArray.New()
+        valueArray2.pushBackAsInt32(9)
+        valueArray2.pushBackAsInt32(8)
+        valueArray2.pushBackAsInt32(7)
+        valueArray2.pushBackAsInt32(6)
+
+        valueVector = ArrayVector()
+        valueVector.push_back(valueArray1)
+        valueVector.push_back(valueArray2)
+
+        answerArray = XdmfArray.sum(valueVector)
+        answerArray = XdmfArray.ave(valueVector)
+        answerArray = XdmfArray.chunk(valueArray1, valueArray2)
+        answerArray = XdmfArray.interlace(valueArray1, valueArray2)
+
+        exampleNumOperations = XdmfArray.addOperation('@', prepend, 2)
+        answerArray = XdmfArray.evaluateOperation(valueArray1, valueArray2, '@')
+
+        exampleNumFunctions = XdmfArray.addFunction("MAX", maximum)
+        answerArray = XdmfArray.evaluateFunction(valueVector, "MAX")
+
+        valueMap = ArrayMap()
+        valueMap["A"] = valueArray1
+        valueMap["B"] = valueArray2
+
+        parsedExpression = "MAX(A,B)@(A#B)"
+        answerArray = XdmfArray.evaluateExpression(parsedExpression, valueMap)

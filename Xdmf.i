@@ -78,6 +78,7 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
     #include <XdmfItem.hpp>
     #include <XdmfItemProperty.hpp>
     #include <XdmfSharedPtr.hpp>
+    #include <XdmfSparseMatrix.hpp>
     #include <XdmfSystemUtils.hpp>
     #include <XdmfVisitor.hpp>
     #include <XdmfWriter.hpp>

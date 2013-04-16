@@ -328,7 +328,6 @@ XdmfWriter::visit(XdmfArray & array,
         }
         xmlTextValues.push_back(valuesStream.str());
       }
-      array.read();//ensures that the data matches the data in the controllers
     }
     else {
       // Write values to XML

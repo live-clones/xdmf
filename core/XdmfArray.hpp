@@ -161,6 +161,308 @@ public:
    */
   void erase(const unsigned int index);
 
+
+
+
+
+
+
+  /**
+   * Evaluates an expression based on the list of variables provided.
+   * A list of valid operations is retrievable from the getSupportedOperations static method.
+   * None of the XdmfArrays provided are modified during the evaluation process.
+   *
+   * Example of Use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline maximum
+   * @skipline main
+   * @skipline addOperation
+   * @skipline addFunction
+   * @skipline valueMap
+   * @until }
+   * @skipline maximum
+   * @until else
+   * @skipline {
+   * @until returnArray;
+   * @skipline }
+   * @until }
+   * @skipline prepend
+   * @until }
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleArray.py
+   * @skipline maximum
+   * @until else
+   * @skipline maxVal
+   * @until pushBackAsFloat
+   * @skipline return
+   * @skipline prepend
+   * @until val2.getSize
+   * @skipline return
+   * @skipline __main__
+   * @skipline addOperation
+   * @skipline addFunction
+   * @skipline valueMap
+   * @until evaluateExpression
+   *
+   * @param	expression	a string containing the expresion to be evaluated
+   * @param	variables	a map of strings to their XdmfArray equivalent
+   * @return			a shared pointer to the XdmfArray resulting from the expression
+   */
+  static shared_ptr<XdmfArray> evaluateExpression(std::string expression, std::map<std::string, shared_ptr<XdmfArray> > variables);
+
+  /**
+   * Evaluates the operation specified using the two shared pointers to XdmfArrays provided.
+   * A list of valid operations is retrievable from the getSupportedOperations static method.
+   * None of the XdmfArrays provided are modified during the evaluation process.
+   *
+   * Example of Use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline prepend
+   * @skipline main
+   * @skipline answerArray
+   * @skipline addOperation
+   * @until evaluateOperation
+   * @skipline return
+   * @until }
+   * @skipline prepend
+   * @until }
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleArray.py
+   * @skipline prepend
+   * @until val2.getSize
+   * @skipline return
+   * @skipline __main__
+   * @skipline addOperation
+   * @until evaluateOperation
+   *
+   * @param	val1		the first array being evaluated
+   * @param	val2		the second array being evaluated
+   * @param	operation	a character specifying the operation performed
+   * @return			a shared pointer to the Xdmf Array that results from the calculation
+   */
+  static shared_ptr<XdmfArray> evaluateOperation(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2, char operation);
+
+  /**
+   * Adds an operation to the list of viable operators.
+   *
+   * Example of Use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline prepend
+   * @skipline main
+   * @skipline addOperation
+   * @skipline return
+   * @until }
+   * @skipline prepend
+   * @until }
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleArray.py
+   * @skipline prepend
+   * @until val2.getSize
+   * @skipline return
+   * @skipline __main__
+   * @skipline addOperation
+   *
+   * @param	newoperator	the character to be associated with the provided binary operation
+   * @param	functionref	a pointer to the function to be associated with the provided operator
+   * @param	priority	used to determine order of operations the higher the value the earlier it is evaluated
+   */
+  static int addOperation(char newoperator, shared_ptr<XdmfArray>(*functionref)(shared_ptr<XdmfArray>, shared_ptr<XdmfArray>), int priority);
+
+  /**
+   * Joins the two provided arrays together end to end.
+   *
+   * Example of Use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline valueArray1
+   * @until (6)
+   * @skipline chunk
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleArray.py
+   * @skipline valueArray1
+   * @until (6)
+   * @skipline chunk
+   *
+   * @param     val1            the first array being evaluated
+   * @param     val2            the second array being evaluated
+   * @return			the arrays joined end to end
+   */
+  static shared_ptr<XdmfArray> chunk(shared_ptr<XdmfArray>, shared_ptr<XdmfArray>);
+
+  /**
+   * Joins the two provided arrays while interspercing their values evenly.
+   * Example of Use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline valueArray1
+   * @until (6)
+   * @skipline interlace
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleArray.py
+   * @skipline valueArray1
+   * @until (6)
+   * @skipline interlace
+   *
+   * @param     val1            the first array being evaluated
+   * @param     val2            the second array being evaluated
+   * @return                    the interlaced arrays
+   */
+  static shared_ptr<XdmfArray> interlace(shared_ptr<XdmfArray>, shared_ptr<XdmfArray>);
+
+  /**
+   * Evaluates the function specified using the vector of XdmfArrays provided.
+   * None of the XdmfArrays provided are modified during the evaluation process.
+   * 
+   * C++
+   *
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline maximum
+   * @skipline main
+   * @skipline addFunction
+   * @until evaluateFunction
+   * @skipline return
+   * @until }
+   * @skipline maximum
+   * @until else
+   * @skipline {
+   * @until returnArray;
+   * @skipline }
+   * @until }
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleArray.py
+   * @skipline maximum
+   * @until else
+   * @skipline maxVal
+   * @until pushBackAsFloat
+   * @skipline return
+   * @skipline __main__
+   * @skipline addFunction
+   * @until evaluateFunction
+   *
+   * @param	valueVector	a vector containing the arrays to be used
+   * @param	functionName	the string associated with the function being called
+   * @return			the result of the function being called, a scalar will be returned as an XdmfArray with one value
+   */
+  static shared_ptr<XdmfArray> evaluateFunction(std::vector<shared_ptr<XdmfArray> > valueVector, std::string functionName);
+
+  /*
+   * adds a specified function to the list of functions used while evaluating strings
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline maximum
+   * @skipline main
+   * @skipline addFunction
+   * @skipline return
+   * @until }
+   * @skipline maximum
+   * @until else
+   * @skipline {
+   * @until returnArray;
+   * @skipline }
+   * @until }
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleArray.py
+   * @skipline maximum
+   * @until else
+   * @skipline maxVal
+   * @until pushBackAsFloat
+   * @skipline return
+   * @skipline __main__
+   * @skipline addFunction
+   *
+   * @param	name		A string to be associated with the provided function during string evaluation
+   * @param	functionref	A pointer to the function to be associated with the given string
+   * @return			The total number of functions currently associated
+   */
+  static int addFunction(std::string name, shared_ptr<XdmfArray>(*functionref)(std::vector<shared_ptr<XdmfArray> >));
+
+  /**
+   * Adds together all the values contained in the provided arrays.
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline valueArray1
+   * @until valueVector
+   * @skipline valueArray1
+   * @until valueArray2
+   * @skipline sum
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleArray.py
+   * @skipline valueArray1
+   * @until valueVector
+   * @skipline valueArray1
+   * @until valueArray2
+   * @skipline sum
+   *
+   * @param	values	a vector containing the arrays to be used
+   * @return		an XdmfArray containing one value which is the total of all the values contained within the provided arrays
+   */
+  static shared_ptr<XdmfArray> sum(std::vector<shared_ptr<XdmfArray> > values);
+
+  /**
+   * Averages the values contained in all the provided arrays.
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline valueArray1
+   * @until valueVector
+   * @skipline valueArray1
+   * @until valueArray2
+   * @skipline ave
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleArray.py
+   * @skipline valueArray1
+   * @until valueVector
+   * @skipline valueArray1
+   * @until valueArray2
+   * @skipline ave
+   *
+   * @param	values	a vector containing the arrays to be used
+   * @return		an XdmfArray containing  one value which is the average of all values contained within the provided arrays
+   */
+  static shared_ptr<XdmfArray> ave(std::vector<shared_ptr<XdmfArray> > values);
+
+
+
+
+
+
+
   /**
    * Get the data type of this array.
    *
@@ -271,6 +573,37 @@ public:
    */
   std::string getName() const;
 
+
+
+
+
+  /**
+   * Gets the priority of operation whose associated character is provided. Returns -1 if the operation is not supported.
+   * The higher the value the earlier that operation is evaluated during evaluateExpression.
+   *
+   * Example of Use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline getOperationPriority
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleArray.py
+   * @skipline getOperationPriority
+   *
+   * @param	operation	the character associated with the operation to be checked
+   * @return			the priority of the operation
+   */
+  static int getOperationPriority(char operation);
+
+
+
+
+
+
+
   /**
    * Get the number of values stored in this array.
    *
@@ -291,6 +624,94 @@ public:
    * @return the number of values stored in this array.
    */
   unsigned int getSize() const;
+
+
+
+
+
+  /**
+   * Gets a string that contains all the characters of the supported operations.
+   * Parenthesis are included for grouping purposes in expressions.
+   *
+   * Example of Use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline getSupportedOperations
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleArray.py
+   * @skipline getSupportedOperations
+   *
+   * @return	a string containing the characters for all supported operations
+   */
+  static const std::string getSupportedOperations();
+
+  /**
+   * Gets a string that contains all the characters of the supported operations.
+   * Parenthesis are included for grouping purposes in expressions.
+   *
+   * Example of Use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline getSupportedFunctions
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleArray.py
+   * @skipline getSupportedFunctions
+   *
+   * @return    a vector containing the strings associated with all valid functions
+   */
+  static const std::vector<std::string> getSupportedFunctions();
+
+  /**
+   * Gets a string that contains all strings that are viable for use when mapping
+   * to shared pointers of XdmfArrays for the evaluateExpression function.
+   *
+   * Example of Use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline getValidVariableChars
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleArray.py
+   * @skipline getValidVariableChars
+   *
+   * @return	a string containing all valid variable characters
+   */
+  static const std::string getValidVariableChars();
+
+  /**
+   * Gets a string that contains all strings that are viable for use when mapping
+   * to scalars (which are stored in XdmfArrays of size 1) for the evaluateExpression function.
+   *
+   * Example of Use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline getValidDigitChars
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleArray.py
+   * @skipline getValidDigitChars
+   *
+   * @return    a string containing all valid variable characters
+   */
+  static const std::string getValidDigitChars();
+
+
+
+
 
   /**
    * Get a copy of a single value stored in this array.
@@ -313,7 +734,6 @@ public:
    * @skipline 7]
    * @until Variations
    *
-   * @param index the index in the array to copy.
    * @return the requested value.
    */
   template <typename T>
@@ -680,14 +1100,6 @@ public:
   template <typename T>
   void pushBack(const T & value);
 
-
-
-
-
-
-
-
-
   /**
    * Get the first heavy data controller attached to this array.
    *
@@ -751,12 +1163,6 @@ public:
    */
   void
   setHeavyDataController(shared_ptr<XdmfHeavyDataController> newController);
-
-
-
-
-
-
 
   /**
    * Read data from disk into memory.
@@ -1109,7 +1515,6 @@ private:
   template <typename T> class Insert;
   class InsertArray;
   class InternalizeArrayPointer;
-  class IsInitialized;
   struct NullDeleter;
   template <typename T> class PushBack;
   class Reserve;
@@ -1146,13 +1551,21 @@ private:
     boost::shared_array<const double>,
     boost::shared_array<const unsigned char>,
     boost::shared_array<const unsigned short>,
-    boost::shared_array<const unsigned int> > ArrayVariant;
-
+    boost::shared_array<const unsigned int>  > ArrayVariant;
+  
   ArrayVariant mArray;
   unsigned int mArrayPointerNumValues;
   std::vector<unsigned int> mDimensions;
   std::string mName;
   unsigned int mTmpReserveSize;
+
+  static std::string mSupportedOperations;
+  static const std::string mValidVariableChars;
+  static const std::string mValidDigitChars;
+  static int mOperationPriority[];
+
+  static std::map<std::string, shared_ptr<XdmfArray>(*)(std::vector<shared_ptr<XdmfArray> >)> arrayFunctions;
+  static std::map<char, shared_ptr<XdmfArray>(*)(shared_ptr<XdmfArray>, shared_ptr<XdmfArray>)> operations;
 };
 
 #include "XdmfArray.tpp"

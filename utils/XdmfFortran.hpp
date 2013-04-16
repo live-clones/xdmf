@@ -490,7 +490,8 @@ public:
   int setTopology(const int topologyType, 
                   const unsigned int numValues,
                   const int arrayType,
-                  const void * const connectivityValues);
+                  const void * const connectivityValues,
+                  const int numNodes);
 
 
 
@@ -2176,8 +2177,9 @@ public:
    * Write constructed file to disk.
    *
    * @param xmlFilePath the path to the xml file to write to.
+   * @param release	whether the HDF5 writer will release data after finishing
    */
-  void write(const char * const xmlFilePath);
+  void write(const char * const xmlFilePath, const int dataLimit, const bool release);
 
   /** 
    * Write HDF5 heavy data to disk and release

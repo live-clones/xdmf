@@ -54,6 +54,9 @@
 #include "XdmfHDF5Writer.hpp"
 #include "string.h"
 
+#include <stdio.h>
+#include <stdarg.h>
+
 namespace {
 
   template <typename T>
@@ -590,7 +593,8 @@ int
 XdmfFortran::setTopology(const int topologyType, 
                          const unsigned int numValues,
                          const int arrayType,
-                         const void * const connectivityValues)
+                         const void * const connectivityValues,
+                         const int numNodes)
 {
   mTopology = XdmfTopology::New();
 
@@ -599,10 +603,10 @@ XdmfFortran::setTopology(const int topologyType,
     mTopology->setType(XdmfTopologyType::Polyvertex());
     break;
   case XDMF_TOPOLOGY_TYPE_POLYLINE:
-    mTopology->setType(XdmfTopologyType::Polyline(0));
+    mTopology->setType(XdmfTopologyType::Polyline(numNodes));
     break;
   case XDMF_TOPOLOGY_TYPE_POLYGON:
-    mTopology->setType(XdmfTopologyType::Polygon(0));
+    mTopology->setType(XdmfTopologyType::Polygon(numNodes));
     break;
   case XDMF_TOPOLOGY_TYPE_TRIANGLE:
     mTopology->setType(XdmfTopologyType::Triangle());
@@ -5881,9 +5885,11 @@ XdmfFortran::clearPrevious()
 
 
 void 
-XdmfFortran::write(const char * const xmlFilePath)
+XdmfFortran::write(const char * const xmlFilePath, const int datalimit, const bool release)
 {
   shared_ptr<XdmfWriter> writer = XdmfWriter::New(xmlFilePath);
+  writer->setLightDataLimit(datalimit);
+  writer->getHeavyDataWriter()->setReleaseData(release);
   mDomain->accept(writer);
 }
 
@@ -6036,13 +6042,15 @@ extern "C"
                   int  * topologyType, 
                   int  * numValues,
                   int  * arrayType,
-                  void * connectivityValues)
+                  void * connectivityValues,
+                  int * numVals)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
     return xdmfFortran->setTopology(*topologyType, 
                                     *numValues, 
                                     *arrayType,
-                                    connectivityValues);
+                                    connectivityValues,
+                                    *numVals);
   }
 
 
@@ -7195,12 +7203,13 @@ extern "C"
 
   void
   XdmfWrite(long * pointer,
-            char * xmlFilePath)
+            char * xmlFilePath,
+            int * datalimit,
+            bool * release)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
-    xdmfFortran->write(xmlFilePath);
+    xdmfFortran->write(xmlFilePath, *datalimit, *release);
   }
-
 
   void
   XdmfWriteHDF5(long * pointer,
