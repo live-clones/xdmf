@@ -265,7 +265,6 @@ void
 XdmfHDF5Writer::write(XdmfArray & array,
                       const int fapl)
 {
-	printf("write started\n");
   hid_t datatype = -1;
   bool closeDatatype = false;
 
@@ -881,7 +880,6 @@ else
 		//if the array hasn't been split
 		if (amountAlreadyWritten == 0)
 		{
-			printf("fits and not split\n");
 			//just pass all data to the partial vectors
 			for (int j = 0; j < dimensions.size(); j++)//done using a loop so that data is copied, not referenced
 			{
@@ -893,7 +891,6 @@ else
 		}
 		else//if the array has been split
 		{
-			printf("fits and split\n");
 			int dimensionIndex = previousDimensions.size() - 1;
 
 			//loop previous dimensions in
@@ -912,7 +909,6 @@ else
                                 while (newStart < 0)
                                 {
 	                                newStart += stride[j];
-					printf("newStart = %d\n", newStart);
                                 }
                                 partialStarts.push_back(newStart);
 
@@ -986,7 +982,6 @@ else
 		//if the array hasn't been split
 		if (amountAlreadyWritten == 0)
 		{
-			printf("doesn't fit and not split\n");
 			//see if it will fit in the next file
 			//if it will just go to the next file
 			//otherwise split it.
@@ -1042,7 +1037,6 @@ else
 		}
 		else//if the array has been split
 		{//This case should not come up often as it requires truly gigantic data sets
-			printf("doesn't fit and is split\n");
 			//see if it will fit in the next file
 			//if it will just go to the next file
 			//otherwise split it.
@@ -1084,7 +1078,6 @@ else
 						while (newStart < 0)
 						{
 							newStart += stride[j];
-							printf("newStart = %d\n", newStart);
 						}
 						partialStarts.push_back(newStart);
 						//stride should not change in this algorithm
@@ -1582,26 +1575,6 @@ if (mMode == Append) {
         std::vector<unsigned int> curDataSize = *dataSizeWalker;
 
 
-		printf("starts:\n");
-		for (int j = 0; j< curStart.size(); j++)
-                {
-                        printf("Stride[%d] = %d\n", j, curStart[j]);
-                }
-		printf("strides:\n");
-		for (int j = 0; j< curStride.size(); j++)
-                {
-                        printf("Stride[%d] = %d\n", j, curStride[j]);
-                }
-		printf("dimensions:\n");
-		for (int j = 0; j< curDimensions.size(); j++)
-		{
-			printf("dimension[%d] = %d\n", j, curDimensions[j]);
-		}
-		printf("dataspace:\n");
-                for (int j = 0; j< curDataSize.size(); j++)
-                {
-                        printf("dataspace[%d] = %d\n", j, curDataSize[j]);
-                }
 
 	bool closeFile = false;
         //This is meant to open files if it isn't already opened by the write prior
@@ -1885,5 +1858,4 @@ if (mMode == Append) {
       array.release();
     }
   }
-	printf("write done\n");
 }
