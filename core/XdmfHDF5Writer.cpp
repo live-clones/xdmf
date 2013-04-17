@@ -370,6 +370,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
       std::list<std::vector<unsigned int> > stridesWritten;
       std::list<std::vector<unsigned int> > dimensionsWritten;
       std::list<std::vector<unsigned int> > dataSizesWritten;
+      std::list<unsigned int> arrayOffsetsWritten;
 
       // Open a hdf5 dataset and write to it on disk.
       hsize_t size = array.getSize();
@@ -392,7 +393,16 @@ XdmfHDF5Writer::write(XdmfArray & array,
       shared_ptr<XdmfHeavyDataController> heavyDataController =
         previousControllers[i];
       //stats for the data currently stored in the array
-      const std::vector<unsigned int> & dimensions = heavyDataController->getDimensions();
+      
+      std::vector<unsigned int> dimensions;
+      if (mMode != Hyperslab)
+      {
+        dimensions = array.getDimensions();
+      }
+      else
+      {
+	dimensions = heavyDataController->getDimensions();
+      }
       std::vector<unsigned int> dataspaceDimensions = dimensions;
       std::vector<unsigned int> start(dimensions.size(), 0);
       std::vector<unsigned int> stride(dimensions.size(), 1);
@@ -438,6 +448,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
         //check if slab already exists
         int numData = mImpl->openFile(hdf5FilePath,
                                       fapl);
+	printf("number of data items in the hyperslab = %d\n", numData);
         if (numData > 0) {//if it already exists the file does not need to be split.
           splittingPossible = false;
         }
@@ -880,6 +891,7 @@ else
 		//if the array hasn't been split
 		if (amountAlreadyWritten == 0)
 		{
+			printf("fits and isn't split\n");
 			//just pass all data to the partial vectors
 			for (int j = 0; j < dimensions.size(); j++)//done using a loop so that data is copied, not referenced
 			{
@@ -891,6 +903,7 @@ else
 		}
 		else//if the array has been split
 		{
+			printf("fits and is split\n");
 			int dimensionIndex = previousDimensions.size() - 1;
 
 			//loop previous dimensions in
@@ -978,15 +991,24 @@ else
 	else//otherwise, take remaining size and start removing dimensions until the dimension block is less, then take a fraction of the dimension
 	{
 		//calculate the number of values of the data type you're using will fit
+		printf("file size limit = %d\npreviousDataSize = %d\nfileSize = %d\nbyte size = %d\n", mImpl->mHDF5FileSizeLimit*(1024*1024), previousDataSize, fileSize,
+			(mImpl->mHDF5FileSizeLimit*(1024*1024) - (previousDataSize + fileSize)));
 		unsigned int usableSpace = (mImpl->mHDF5FileSizeLimit*(1024*1024) - (previousDataSize + fileSize)) / dataItemSize;
+		if (mImpl->mHDF5FileSizeLimit*(1024*1024) < (previousDataSize + fileSize))
+		{
+			usableSpace = 0;
+		}
 		//if the array hasn't been split
 		if (amountAlreadyWritten == 0)
 		{
+			printf("doesn't fit and isn't split\n");
 			//see if it will fit in the next file
 			//if it will just go to the next file
 			//otherwise split it.
+			printf("usableSpace before check = %d\n", usableSpace);
 			if ((remainingValues * dataItemSize) + 800 > mImpl->mHDF5FileSizeLimit*(1024*1024) && usableSpace > 0)
 			{
+				
 				//figure out the size of the largest block that will fit.
 				unsigned int blockSizeSubtotal = 1;
 				int dimensionIndex = 0;
@@ -1002,6 +1024,7 @@ else
 
 				//determine how many of those blocks will fit
 				unsigned int numBlocks = usableSpace / blockSizeSubtotal;//this should be less than the current value for the dimension
+				printf("numBlocks = %d\nusableSpace = %d\nblockSizeSubtotal = %d\n", numBlocks, usableSpace, blockSizeSubtotal);
 				//add dimensions as required.
 
 				int j = 0;
@@ -1024,6 +1047,10 @@ else
 				{//for hyperslab in general
 					//determine how many values from the array will fit into the blocks being used with the dimensions specified
 					unsigned int displacement = (numBlocks - start[j]) / stride[j];
+					if (numBlocks - (displacement * stride[j]) - start[j] > 0)
+					{
+						displacement++;
+					}					
 					if (dimensions[j] <= displacement)//if there are less values than there are space for, just write all of them.
 					{
 						partialDimensions.push_back(dimensions[j]);
@@ -1037,6 +1064,7 @@ else
 		}
 		else//if the array has been split
 		{//This case should not come up often as it requires truly gigantic data sets
+			printf("doesn't fit and is split\n");
 			//see if it will fit in the next file
 			//if it will just go to the next file
 			//otherwise split it.
@@ -1086,7 +1114,10 @@ else
 						//determine how many values from the array will fit into the blocks being used
 						//with the dimensions specified
 						unsigned int displacement = (numBlocks - newStart) / stride[j];
-						
+						if (numBlocks - (displacement * stride[j]) - newStart > 0)
+	                                        {
+	                                                displacement++;
+	                                        }
 						if ((dimensions[j] - previousDimensions[j]) <= displacement)
 						{//if there are less values than there are space for, just write all of them.
 							partialDimensions.push_back(dimensions[j] - previousDimensions[j]);
@@ -1124,44 +1155,65 @@ else
 	}
 }
 
-
 if (partialDimensions.size() > 0)
 {//building the array to be written
             int containedInDimensions = 1;//count moved
+            unsigned int startTotal = 0;
             for (int j = 0 ; j < partialDimensions.size(); j++)
             {
+	      if (mMode == Hyperslab)
+              {
+                startTotal += partialStarts[j] * containedInDimensions;
+              }
               containedInDimensions *= partialDimensions[j];
+		printf("contained in dimensions = %d\n", containedInDimensions);
             }
             int containedInPriorDimensions = controllerIndexOffset;//starting index
+		printf("controller index offset for pulling array data %d\n", controllerIndexOffset);
             int startOffset = 1;
-            for (int j = 0; j < previousDimensions.size(); j++)
+            for (int j = 0; j < previousDataSizes.size(); j++)
             {
-              startOffset *= previousDimensions[j];
+              startOffset *= previousDataSizes[j];
             }
-	    if (previousDimensions.size() == 0)
+	    if (previousDataSizes.size() == 0)
             {
               startOffset = 0;
             }
             containedInPriorDimensions += startOffset;
-
+		printf("total index offset for pulling array data %d\n", containedInPriorDimensions);
             int dimensionTotal = 1;
             for (int j = 0; j < dimensions.size(); j++)
             {
+		printf("dimension[%d] = %d\n", j, dimensions[j]);
               dimensionTotal *= dimensions[j];
             }
             
 
-            if (containedInDimensions + containedInPriorDimensions == dimensionTotal)
+
+		//start = partialStarts multiplied together + amount already written
+		//stride = strides multiplied together
+            unsigned int totalStride = 1;
+            if (mMode == Hyperslab)
+            {
+              for (int j = 0; j < partialStrides.size(); j++)
+              {
+                totalStride*=partialStrides[j];
+              }
+            }
+
+
+            if (containedInDimensions*totalStride + containedInPriorDimensions == dimensionTotal)
             {
               controllerIndexOffset += dimensionTotal;
             }
+
 
             shared_ptr<XdmfArray> partialArray = XdmfArray::New();
             if (datatype == H5T_NATIVE_CHAR){
               partialArray->initialize(XdmfArrayType::Int8(), 0);
 
               char movedData [containedInDimensions];
-              array.getValues(containedInPriorDimensions, movedData, containedInDimensions);
+              array.getValues(containedInPriorDimensions + startTotal, movedData, containedInDimensions, totalStride);
               partialArray->insert(0, movedData, containedInDimensions);
 
             }
@@ -1169,7 +1221,7 @@ if (partialDimensions.size() > 0)
               partialArray->initialize(XdmfArrayType::Int16(), 0);
 
               short movedData [containedInDimensions];
-              array.getValues(containedInPriorDimensions, movedData, containedInDimensions);
+              array.getValues(containedInPriorDimensions + startTotal, movedData, containedInDimensions, totalStride);
               partialArray->insert(0, movedData, containedInDimensions);
 
             }
@@ -1177,7 +1229,7 @@ if (partialDimensions.size() > 0)
               partialArray->initialize(XdmfArrayType::Int32(), 0);
 
               int movedData [containedInDimensions];
-              array.getValues(containedInPriorDimensions, movedData, containedInDimensions);
+              array.getValues(containedInPriorDimensions + startTotal, movedData, containedInDimensions, totalStride);
               partialArray->insert(0, movedData, containedInDimensions);
 
             }
@@ -1185,7 +1237,7 @@ if (partialDimensions.size() > 0)
               partialArray->initialize(XdmfArrayType::Int64(), 0);
 
               long movedData [containedInDimensions];
-              array.getValues(containedInPriorDimensions, movedData, containedInDimensions);
+              array.getValues(containedInPriorDimensions + startTotal, movedData, containedInDimensions, totalStride);
               partialArray->insert(0, movedData, containedInDimensions);
 
             }
@@ -1193,7 +1245,7 @@ if (partialDimensions.size() > 0)
               partialArray->initialize(XdmfArrayType::Float32(), 0);
 
               float movedData [containedInDimensions];
-              array.getValues(containedInPriorDimensions, movedData, containedInDimensions);
+              array.getValues(containedInPriorDimensions + startTotal, movedData, containedInDimensions, totalStride);
               partialArray->insert(0, movedData, containedInDimensions);
 
 
@@ -1202,7 +1254,7 @@ if (partialDimensions.size() > 0)
               partialArray->initialize(XdmfArrayType::Float64(), 0);
 
               double movedData [containedInDimensions];
-              array.getValues(containedInPriorDimensions, movedData, containedInDimensions);
+              array.getValues(containedInPriorDimensions + startTotal, movedData, containedInDimensions, totalStride);
               partialArray->insert(0, movedData, containedInDimensions);
 
             }
@@ -1210,7 +1262,7 @@ if (partialDimensions.size() > 0)
               partialArray->initialize(XdmfArrayType::UInt8(), 0);
 
               unsigned char movedData [containedInDimensions];
-              array.getValues(containedInPriorDimensions, movedData, containedInDimensions);
+              array.getValues(containedInPriorDimensions + startTotal, movedData, containedInDimensions, totalStride);
               partialArray->insert(0, movedData, containedInDimensions);
 
             }
@@ -1218,7 +1270,7 @@ if (partialDimensions.size() > 0)
               partialArray->initialize(XdmfArrayType::UInt16(), 0);
 
               unsigned short movedData [containedInDimensions];
-              array.getValues(containedInPriorDimensions, movedData, containedInDimensions);
+              array.getValues(containedInPriorDimensions + startTotal, movedData, containedInDimensions, totalStride);
               partialArray->insert(0, movedData, containedInDimensions);
 
             }
@@ -1226,12 +1278,12 @@ if (partialDimensions.size() > 0)
               partialArray->initialize(XdmfArrayType::UInt32(), 0);
 
               unsigned int movedData [containedInDimensions];
-              array.getValues(containedInPriorDimensions, movedData, containedInDimensions);
+              array.getValues(containedInPriorDimensions + startTotal, movedData, containedInDimensions, totalStride);
               partialArray->insert(0, movedData, containedInDimensions);
             }
             else if (closeDatatype) {//closeDatatype is only true if strings are being used
               partialArray->initialize(XdmfArrayType::String(), 0);
-              for (int j = containedInPriorDimensions; j < containedInPriorDimensions + containedInDimensions; j++){
+              for (int j = containedInPriorDimensions + startTotal; j < containedInPriorDimensions + containedInDimensions*totalStride; j+=totalStride){
                 partialArray->pushBack(array.getValue<std::string>(j));
               }
             }
@@ -1243,7 +1295,7 @@ if (partialDimensions.size() > 0)
             stridesWritten.push_back(partialStrides);
             dimensionsWritten.push_back(partialDimensions);
             dataSizesWritten.push_back(partialDataSizes);
-
+            arrayOffsetsWritten.push_back(containedInPriorDimensions);
 
             //for hyperslab the space is controlled by the dataspace dimensions
             //so use that since the dimensions should be equal to the dataspace dimensions in all other variations
@@ -1357,12 +1409,6 @@ if (mMode == Append) {
           array.getValues(controllerIndexOffset, movedData, movedSize);
           partialArray->insert(0, movedData, movedSize);
           j+=movedSize;
-
-/*
-          for (j = controllerIndexOffset; j < controllerIndexOffset + heavyDataController->getSize() && j < array.getSize() ; j++){
-            partialArray->pushBack(array.getValue<char>(j));
-          }
-*/
         }
         else if (datatype == H5T_NATIVE_SHORT){
           partialArray->initialize(XdmfArrayType::Int16(), 0);
@@ -1377,12 +1423,6 @@ if (mMode == Append) {
           array.getValues(controllerIndexOffset, movedData, movedSize);
           partialArray->insert(0, movedData, movedSize);
           j+=movedSize;
-
-/*
-          for (j = controllerIndexOffset; j < controllerIndexOffset + heavyDataController->getSize() && j < array.getSize(); j++){
-            partialArray->pushBack(array.getValue<short>(j));
-          }
-*/
         }
         else if (datatype == H5T_NATIVE_INT){
           partialArray->initialize(XdmfArrayType::Int32(), 0);
@@ -1397,12 +1437,6 @@ if (mMode == Append) {
           array.getValues(controllerIndexOffset, movedData, movedSize);
           partialArray->insert(0, movedData, movedSize);
           j+=movedSize;
-
-/*
-          for (j = controllerIndexOffset; j < controllerIndexOffset + heavyDataController->getSize() && j < array.getSize(); j++){
-            partialArray->pushBack(array.getValue<int>(j));
-          }
-*/
         }
         else if (datatype == H5T_NATIVE_LONG){
           partialArray->initialize(XdmfArrayType::Int64(), 0);
@@ -1417,12 +1451,6 @@ if (mMode == Append) {
           array.getValues(controllerIndexOffset, movedData, movedSize);
           partialArray->insert(0, movedData, movedSize);
           j+=movedSize;
-
-/*
-          for (j = controllerIndexOffset; j < controllerIndexOffset + heavyDataController->getSize() && j < array.getSize(); j++){
-            partialArray->pushBack(array.getValue<long>(j));
-          }
-*/
         }
         else if (datatype == H5T_NATIVE_FLOAT){
           partialArray->initialize(XdmfArrayType::Float32(), 0);
@@ -1437,12 +1465,6 @@ if (mMode == Append) {
           array.getValues(controllerIndexOffset, movedData, movedSize);
           partialArray->insert(0, movedData, movedSize);
           j+=movedSize;
-
-/*
-          for (j = controllerIndexOffset; j < controllerIndexOffset + heavyDataController->getSize() && j < array.getSize(); j++){
-            partialArray->pushBack(array.getValue<float>(j));
-          }
-*/
         }
         else if (datatype == H5T_NATIVE_DOUBLE){
           partialArray->initialize(XdmfArrayType::Float64(), 0);
@@ -1457,12 +1479,6 @@ if (mMode == Append) {
           array.getValues(controllerIndexOffset, movedData, movedSize);
           partialArray->insert(0, movedData, movedSize);
           j+=movedSize;
-
-/*
-          for (j = controllerIndexOffset; j < controllerIndexOffset + heavyDataController->getSize() && j < array.getSize(); j++){
-            partialArray->pushBack(array.getValue<double>(j));
-          }
-*/
         }
         else if (datatype == H5T_NATIVE_UCHAR){
           partialArray->initialize(XdmfArrayType::UInt8(), 0);
@@ -1477,12 +1493,6 @@ if (mMode == Append) {
           array.getValues(controllerIndexOffset, movedData, movedSize);
           partialArray->insert(0, movedData, movedSize);
           j+=movedSize;
-
-/*
-          for (j = controllerIndexOffset; j < controllerIndexOffset + heavyDataController->getSize() && j < array.getSize(); j++){
-            partialArray->pushBack(array.getValue<unsigned char>(j));
-          }
-*/
         }
         else if (datatype == H5T_NATIVE_USHORT){
           partialArray->initialize(XdmfArrayType::UInt16(), 0);
@@ -1497,12 +1507,6 @@ if (mMode == Append) {
           array.getValues(controllerIndexOffset, movedData, movedSize);
           partialArray->insert(0, movedData, movedSize);
           j+=movedSize;
-
-/*
-          for (j = controllerIndexOffset; j < controllerIndexOffset + heavyDataController->getSize() && j < array.getSize(); j++){
-            partialArray->pushBack(array.getValue<unsigned short>(j));
-          }
-*/
         }
         else if (datatype == H5T_NATIVE_UINT) {
           partialArray->initialize(XdmfArrayType::UInt32(), 0);
@@ -1517,12 +1521,6 @@ if (mMode == Append) {
           array.getValues(controllerIndexOffset, movedData, movedSize);
           partialArray->insert(0, movedData, movedSize);
           j+=movedSize;
-
-/*
-          for (j = controllerIndexOffset; j < controllerIndexOffset + heavyDataController->getSize() && j < array.getSize(); j++){
-            partialArray->pushBack(array.getValue<unsigned int>(j));
-          }
-*/
         }
         else if (closeDatatype) {//closeDatatype is only true if strings are being used
           partialArray->initialize(XdmfArrayType::String(), 0);
@@ -1532,11 +1530,11 @@ if (mMode == Append) {
           }
 
         }
-
-	controllerIndexOffset = j;//set the offset to the point after the end of the current subset
         if (partialArray->getSize()==0) {
           break;
         }
+	arrayOffsetsWritten.push_back(controllerIndexOffset);
+	controllerIndexOffset = j;//set the offset to the point after the end of the current subset
 
         arraysWritten.push_back(partialArray);
         filesWritten.push_back(hdf5FilePath);
@@ -1562,6 +1560,7 @@ if (mMode == Append) {
       std::list<std::vector<unsigned int> >::iterator strideWalker = stridesWritten.begin();
       std::list<std::vector<unsigned int> >::iterator dimensionWalker = dimensionsWritten.begin();
       std::list<std::vector<unsigned int> >::iterator dataSizeWalker = dataSizesWritten.begin();
+      std::list<unsigned int>::iterator arrayOffsetWalker = arrayOffsetsWritten.begin();
 
 
       //loop based on the amount of blocks split from the array.
@@ -1573,7 +1572,19 @@ if (mMode == Append) {
         std::vector<unsigned int> curStride = *strideWalker;
         std::vector<unsigned int> curDimensions = *dimensionWalker;
         std::vector<unsigned int> curDataSize = *dataSizeWalker;
+        unsigned int curArrayOffset = *arrayOffsetWalker;
 
+		printf("filename = %s\n", curFileName);
+                for (int j = 0; j < curStart.size(); j++)
+                {
+                        printf("start[%d] = %d\n", j, curStart[j]);
+                }
+                for (int j = 0; j < curStride.size(); j++)
+                {
+                        printf("stride[%d] = %d\n", j, curStride[j]);
+                }
+		printf("array start offset = %d\n", curArrayOffset);
+		printf("array contains:\n%s\n", curArray->getValuesString());
 
 
 	bool closeFile = false;
@@ -1836,6 +1847,8 @@ if (mMode == Append) {
                                        curDataSize);
         }
 
+        newDataController->setArrayOffset(curArrayOffset);
+
         array.insert(newDataController);
 
         fileNameWalker++;
@@ -1844,6 +1857,7 @@ if (mMode == Append) {
         strideWalker++;
         dimensionWalker++;
         dataSizeWalker++;
+        arrayOffsetWalker++;
 
 
       }

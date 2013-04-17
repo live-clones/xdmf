@@ -40,7 +40,8 @@ XdmfHeavyDataController::XdmfHeavyDataController(const std::string & filePath,
   mFilePath(filePath),
   mStart(start),
   mStride(stride),
-  mType(type)
+  mType(type),
+  mArrayStartOffset(0)
 {
   if(!(mStart.size() == mStride.size() && 
        mStride.size() == mDimensions.size()))
@@ -83,6 +84,18 @@ XdmfHeavyDataController::getSize() const
                          mDimensions.end(),
                          1,
                          std::multiplies<unsigned int>());
+}
+
+void
+XdmfHeavyDataController::setArrayOffset(unsigned int newOffset)
+{
+  mArrayStartOffset = newOffset;
+}
+
+unsigned int
+XdmfHeavyDataController::getArrayOffset() const
+{
+  return mArrayStartOffset;
 }
 
 std::vector<unsigned int> 

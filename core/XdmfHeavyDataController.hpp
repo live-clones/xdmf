@@ -185,6 +185,38 @@ public:
   unsigned int getSize() const;
 
   /**
+   * For use in conjunction with heavy data controllers set to arrays, the offset within the array from which the controller will be inserted
+   * Is also set when created by a writer.
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfHeavyDataController.cpp
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleHeavyDataController.py
+   *
+   * @param	newOffset	the new index at which the controller will be written
+   */
+  void setArrayOffset(unsigned int newOffset);
+
+  /**
+   * Gets the index at which the controller will offset when an array reads it from its associated controllers.
+   * Set when created by a Writer or set manually.
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfHeavyDataController.cpp
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleHeavyDataController.py
+   *
+   * @return	the offset that the array will read from
+   */
+  unsigned int getArrayOffset() const;
+
+  /**
    * Get the start index of the heavy data set owned by this controller.
    *
    * @return a vector containing the start index in each dimension of
@@ -266,6 +298,7 @@ protected:
   const std::string mFilePath;
   const std::vector<unsigned int> mStart;
   const std::vector<unsigned int> mStride;
+  unsigned int mArrayStartOffset;
   const shared_ptr<const XdmfArrayType> mType;
 
 private:

@@ -14,7 +14,7 @@ int main(int, char **)
 	{
 		writtenArray->pushBack(i);
 	}
-	std::vector<unsigned int> starts;
+/*	std::vector<unsigned int> starts;
 	std::vector<unsigned int> strides;
 	std::vector<unsigned int> dimensions;
 	std::vector<unsigned int> dataspaces;
@@ -38,15 +38,14 @@ int main(int, char **)
 	writtenArray->insert(arrayController);
         starts[0] = 5;
 	arrayController = XdmfHDF5Controller::New("arraydata.h5", "Data", XdmfArrayType::Int32(), starts, strides, dimensions, dataspaces);
-        writtenArray->insert(arrayController);
+        writtenArray->insert(arrayController);*/
 	shared_ptr<XdmfHDF5Writer> arrayHeavyWriter = XdmfHDF5Writer::New("arraydata.h5");
 	arrayHeavyWriter->setFileSizeLimit(1);
-	arrayHeavyWriter->setMode(XdmfHDF5Writer::Hyperslab);
+//	arrayHeavyWriter->setMode(XdmfHDF5Writer::Hyperslab);
 	shared_ptr<XdmfWriter> arrayWriter = XdmfWriter::New("arraydata.xmf", arrayHeavyWriter);
 	arrayWriter->setLightDataLimit(5);
 	writtenArray->accept(arrayWriter);
 
-	printf("%s\n\n", writtenArray->getValuesString());
 	writtenArray->release();
 	printf("after release\narray contains: %s\n", writtenArray->getValuesString());
 	writtenArray->read();
