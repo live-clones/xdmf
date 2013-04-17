@@ -448,7 +448,6 @@ XdmfHDF5Writer::write(XdmfArray & array,
         //check if slab already exists
         int numData = mImpl->openFile(hdf5FilePath,
                                       fapl);
-	printf("number of data items in the hyperslab = %d\n", numData);
         if (numData > 0) {//if it already exists the file does not need to be split.
           splittingPossible = false;
         }
@@ -891,7 +890,6 @@ else
 		//if the array hasn't been split
 		if (amountAlreadyWritten == 0)
 		{
-			printf("fits and isn't split\n");
 			//just pass all data to the partial vectors
 			for (int j = 0; j < dimensions.size(); j++)//done using a loop so that data is copied, not referenced
 			{
@@ -903,7 +901,6 @@ else
 		}
 		else//if the array has been split
 		{
-			printf("fits and is split\n");
 			int dimensionIndex = previousDimensions.size() - 1;
 
 			//loop previous dimensions in
@@ -991,7 +988,6 @@ else
 	else//otherwise, take remaining size and start removing dimensions until the dimension block is less, then take a fraction of the dimension
 	{
 		//calculate the number of values of the data type you're using will fit
-		printf("file size limit = %d\npreviousDataSize = %d\nfileSize = %d\nbyte size = %d\n", mImpl->mHDF5FileSizeLimit*(1024*1024), previousDataSize, fileSize,
 			(mImpl->mHDF5FileSizeLimit*(1024*1024) - (previousDataSize + fileSize)));
 		unsigned int usableSpace = (mImpl->mHDF5FileSizeLimit*(1024*1024) - (previousDataSize + fileSize)) / dataItemSize;
 		if (mImpl->mHDF5FileSizeLimit*(1024*1024) < (previousDataSize + fileSize))
@@ -1001,11 +997,9 @@ else
 		//if the array hasn't been split
 		if (amountAlreadyWritten == 0)
 		{
-			printf("doesn't fit and isn't split\n");
 			//see if it will fit in the next file
 			//if it will just go to the next file
 			//otherwise split it.
-			printf("usableSpace before check = %d\n", usableSpace);
 			if ((remainingValues * dataItemSize) + 800 > mImpl->mHDF5FileSizeLimit*(1024*1024) && usableSpace > 0)
 			{
 				
@@ -1024,7 +1018,6 @@ else
 
 				//determine how many of those blocks will fit
 				unsigned int numBlocks = usableSpace / blockSizeSubtotal;//this should be less than the current value for the dimension
-				printf("numBlocks = %d\nusableSpace = %d\nblockSizeSubtotal = %d\n", numBlocks, usableSpace, blockSizeSubtotal);
 				//add dimensions as required.
 
 				int j = 0;
@@ -1064,7 +1057,6 @@ else
 		}
 		else//if the array has been split
 		{//This case should not come up often as it requires truly gigantic data sets
-			printf("doesn't fit and is split\n");
 			//see if it will fit in the next file
 			//if it will just go to the next file
 			//otherwise split it.
@@ -1166,10 +1158,8 @@ if (partialDimensions.size() > 0)
                 startTotal += partialStarts[j] * containedInDimensions;
               }
               containedInDimensions *= partialDimensions[j];
-		printf("contained in dimensions = %d\n", containedInDimensions);
             }
             int containedInPriorDimensions = controllerIndexOffset;//starting index
-		printf("controller index offset for pulling array data %d\n", controllerIndexOffset);
             int startOffset = 1;
             for (int j = 0; j < previousDataSizes.size(); j++)
             {
@@ -1180,11 +1170,9 @@ if (partialDimensions.size() > 0)
               startOffset = 0;
             }
             containedInPriorDimensions += startOffset;
-		printf("total index offset for pulling array data %d\n", containedInPriorDimensions);
             int dimensionTotal = 1;
             for (int j = 0; j < dimensions.size(); j++)
             {
-		printf("dimension[%d] = %d\n", j, dimensions[j]);
               dimensionTotal *= dimensions[j];
             }
             
@@ -1573,18 +1561,6 @@ if (mMode == Append) {
         std::vector<unsigned int> curDimensions = *dimensionWalker;
         std::vector<unsigned int> curDataSize = *dataSizeWalker;
         unsigned int curArrayOffset = *arrayOffsetWalker;
-
-		printf("filename = %s\n", curFileName);
-                for (int j = 0; j < curStart.size(); j++)
-                {
-                        printf("start[%d] = %d\n", j, curStart[j]);
-                }
-                for (int j = 0; j < curStride.size(); j++)
-                {
-                        printf("stride[%d] = %d\n", j, curStride[j]);
-                }
-		printf("array start offset = %d\n", curArrayOffset);
-		printf("array contains:\n%s\n", curArray->getValuesString());
 
 
 	bool closeFile = false;
