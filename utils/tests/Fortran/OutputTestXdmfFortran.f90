@@ -122,7 +122,7 @@ PROGRAM XdmfFortranExample
   CALL XDMFSETTIME(obj, myTime)
 !! Unstructured Only
   tempID = XDMFSETTOPOLOGY(obj, XDMF_TOPOLOGY_TYPE_HEXAHEDRON, 16, &
-       XDMF_ARRAY_TYPE_INT32, myConnections, 0)
+       XDMF_ARRAY_TYPE_INT32, myConnections)
 !! /Unstructured Only
 !! Curvilinear and Rectilinear Only
   tempID = XDMFSETDIMENSIONS(obj, 3, XDMF_ARRAY_TYPE_INT32, myDimensions)
