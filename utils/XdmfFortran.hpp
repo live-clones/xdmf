@@ -164,6 +164,8 @@ class XdmfUnstructuredGrid;
 #define XdmfWriteHDF5 xdmfwritehdf5_
 
 
+#define XdmfSetTopologyPolyline xdmfsettopologypolyline_
+
 
 #define XdmfRetrieveNumDomainGridCollections xdmfretrievenumdomaingridcollections_
 #define XdmfRetrieveNumGridCollectionGridCollections xdmfretrievenumgridcollectiongridcollections_
@@ -2194,6 +2196,23 @@ public:
    * @param xmlFilePath the path to the xml file to read.
    */
   void read(const char * const xmlFilePath);
+
+
+  /** 
+   * Set the topology (connectivity data) for a polyline that will be
+   * added to the next grid.
+   *
+   * @param nodesPerElement number of nodes in the polyline.
+   * @param numValues number of connectivity values to copy.
+   * @param arrayType type of connectivity values.
+   * @param connectivityValues array of connectivity values.
+   *
+   * @return int providing id to fortran if reusing.
+   */
+  int setTopologyPolyline(const unsigned int nodesPerElement, 
+                          const unsigned int numValues,
+                          const int arrayType,
+                          const void * const connectivityValues);
 
 
 private:

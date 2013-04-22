@@ -5890,6 +5890,7 @@ XdmfFortran::write(const char * const xmlFilePath, const int datalimit, const bo
   shared_ptr<XdmfWriter> writer = XdmfWriter::New(xmlFilePath);
   writer->setLightDataLimit(datalimit);
   writer->getHeavyDataWriter()->setReleaseData(release);
+  shared_dynamic_cast<XdmfHDF5Writer>(writer->getHeavyDataWriter())->setFileSizeLimit(1);
   mDomain->accept(writer);
 }
 
@@ -5906,6 +5907,26 @@ XdmfFortran::read(const char * const xmlFilePath)
 {
   shared_ptr<XdmfReader> reader = XdmfReader::New();
   mDomain = shared_dynamic_cast<XdmfDomain>(reader->read( xmlFilePath )); 
+}
+
+
+//temporary fix, hopefully
+int
+XdmfFortran::setTopologyPolyline(const unsigned int nodesPerElement,
+                        const unsigned int numValues,
+                        const int arrayType,
+                        const void * const connectivityValues)
+{
+  mTopology = XdmfTopology::New();
+  mTopology->setType(XdmfTopologyType::Polyline(nodesPerElement));
+  // insert connectivity values into array
+  writeToArray(mTopology,
+               numValues,
+               arrayType,
+               connectivityValues);
+  const int id = mPreviousTopologies.size();
+  mPreviousTopologies.push_back(mTopology);
+  return id;
 }
 
 //
@@ -6042,15 +6063,14 @@ extern "C"
                   int  * topologyType, 
                   int  * numValues,
                   int  * arrayType,
-                  void * connectivityValues,
-                  int * numVals)
+                  void * connectivityValues)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
     return xdmfFortran->setTopology(*topologyType, 
                                     *numValues, 
                                     *arrayType,
                                     connectivityValues,
-                                    *numVals);
+                                    0);
   }
 
 
@@ -7229,5 +7249,19 @@ extern "C"
        xdmfFortran->read( xmlFilePath );
     }   
   }
+
+  int
+  XdmfSetTopologyPolyline(long * pointer,
+                          int * nodesPerElement,
+                          int * numValues,
+                          int * arrayType,
+                          void * connectivityValues)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    return xdmfFortran->setTopologyPolyline(*nodesPerElement,
+                                    *numValues,
+                                    *arrayType,
+                                    connectivityValues);
+  }  
   
 }

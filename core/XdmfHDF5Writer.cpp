@@ -433,35 +433,8 @@ XdmfHDF5Writer::write(XdmfArray & array,
       //  might need to check after all as overwrite might expand data size.
       //might need to check for hyperslab, if the data wasn't alloted yet.
 
-      bool splittingPossible = false;
-      //check if splitting is necessary
-      if (mMode == Overwrite) {//might need a split if data written is larger than data alotted
-        splittingPossible = true;
-      }
-      if (mMode == Default) {//new data set is created with each call
-        splittingPossible = true;
-      }
-      if (mMode == Append) {//data is added onto end of sets
-        splittingPossible = true;
-      }
-      if (mMode == Hyperslab) {//splitting is only required if the slab is not set up yet
-        //check if slab already exists
-        int numData = mImpl->openFile(hdf5FilePath,
-                                      fapl);
-        if (numData > 0) {//if it already exists the file does not need to be split.
-          splittingPossible = false;
-        }
-        else {
-          splittingPossible = true;
-        }
-      }
-
       //this is the file splitting algorithm
-      if (mImpl->mHDF5FileSizeLimit > 0 && splittingPossible) {//only if the file limit is positive, disabled if 0 or negative
-        //repeat until a suitable file is found
-        bool suitableFound = false;
-        unsigned int currentDimension = 0;
-        unsigned int previousDimension = currentDimension;
+      if (mImpl->mHDF5FileSizeLimit > 0) {//only if the file limit is positive, disabled if 0 or negative
         unsigned int previousDataSize = 0;
 
 	std::vector<unsigned int> previousDimensions;
@@ -481,6 +454,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
 	{
 		containedInController *= dataspaceDimensions[j];
 	}
+	hssize_t hyperslabSize = 0;
         while (amountAlreadyWritten < containedInController) {
 
 
@@ -489,7 +463,6 @@ XdmfHDF5Writer::write(XdmfArray & array,
 		std::vector<unsigned int> partialDimensions;
 		std::vector<unsigned int> partialDataSizes;
 
-
           std::stringstream testFile;
           if (mImpl->mFileIndex == 0) {//if sequentially named files need to be created or referenced
             testFile << checkFileName << "." << checkFileExt;
@@ -497,7 +470,6 @@ XdmfHDF5Writer::write(XdmfArray & array,
           else {
             testFile << checkFileName << mImpl->mFileIndex << "." << checkFileExt;
           }
-          int sizeOffset = 0;
           FILE *checkFile = NULL;
           int fileSize = 0;//if the file doesn't exist the size is 0 because there's no data
           // get the file stream
@@ -509,7 +481,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
             fileSize = ftell(checkFile);
 
             //if overwrite subtract previous data size.
-            if (mMode == Overwrite) {
+            if (mMode == Overwrite || mMode == Hyperslab) {
               //find previous data size
               mImpl->openFile(testFile.str(),
                               fapl);
@@ -523,15 +495,27 @@ XdmfHDF5Writer::write(XdmfArray & array,
               if(checkspace != H5S_ALL) {
                 status = H5Sclose(checkspace);
               }
-              fileSize = fileSize - checksize;//remove previous set's size, since it's overwritten
-              if (fileSize < 0) {
-                fileSize = 0;
+              if (mMode == Overwrite) {
+                fileSize = fileSize - checksize;//remove previous set's size, since it's overwritten
+                if (fileSize < 0) {
+                  fileSize = 0;
+                }
+                if (fileSize == 0) {
+                  fileSize += 800;
+                }
               }
+              else if (mMode == Hyperslab) {
+		hyperslabSize = checksize;
+		printf("size of existing hyperslab = %d\n", hyperslabSize);
+              }
+            }
+            if (fileSize == 0) {
+              fileSize += 800;
             }
             fclose(checkFile);
           }
           else if (previousDataSize == 0) {
-            sizeOffset += 800;//base size of an hdf5 file is 800
+            fileSize += 800;//base size of an hdf5 file is 800
           }
           // close stream and release buffer
           //check size to see if it's within range
@@ -847,7 +831,6 @@ if (closeDatatype == true) //closetype is only true if strings are being used, i
 		}
 		//move to next file
 		mImpl->mFileIndex++;
-		previousDataSize = 0;
 	}
 }
 else
@@ -882,7 +865,8 @@ else
 		break;
 	}
 
-	unsigned int dataItemSize = array.getArrayType()->getElementSize();	
+	unsigned int dataItemSize = array.getArrayType()->getElementSize();
+
 
 	//if remaining size is less than available space, just write all of what's left
 	if ((remainingValues * dataItemSize) + previousDataSize + fileSize < mImpl->mHDF5FileSizeLimit*(1024*1024))
@@ -988,12 +972,17 @@ else
 	else//otherwise, take remaining size and start removing dimensions until the dimension block is less, then take a fraction of the dimension
 	{
 		//calculate the number of values of the data type you're using will fit
-			(mImpl->mHDF5FileSizeLimit*(1024*1024) - (previousDataSize + fileSize)));
-		unsigned int usableSpace = (mImpl->mHDF5FileSizeLimit*(1024*1024) - (previousDataSize + fileSize)) / dataItemSize;
-		if (mImpl->mHDF5FileSizeLimit*(1024*1024) < (previousDataSize + fileSize))
+		unsigned int usableSpace = (mImpl->mHDF5FileSizeLimit*(1024*1024) -  fileSize) / dataItemSize;
+		printf("fileSize = %d\n", fileSize);
+		printf("previousDataSize = %d\n", previousDataSize);
+		if (mImpl->mHDF5FileSizeLimit*(1024*1024) < fileSize)
 		{
 			usableSpace = 0;
 		}
+		printf("usableSpace = %d\n", usableSpace);
+		usableSpace += hyperslabSize-previousDataSize;
+		printf("usableSpace after adjustment = %d\n", usableSpace);
+		
 		//if the array hasn't been split
 		if (amountAlreadyWritten == 0)
 		{
@@ -1028,8 +1017,14 @@ else
 					partialDimensions.push_back(dimensions[j]);
 					partialDataSizes.push_back(dataspaceDimensions[j]);
 				}
-
-				partialStarts.push_back(start[j]);
+				if (start[j] > numBlocks)
+				{
+					partialStarts.push_back(numBlocks-1);
+				}
+				else
+				{
+					partialStarts.push_back(start[j]);
+				}
 				partialStrides.push_back(stride[j]);
 				partialDataSizes.push_back(numBlocks);
 				if (dimensions[j] == dataspaceDimensions[j])//this is for non-hyperslab and specific cases of hyperslab
@@ -1039,11 +1034,16 @@ else
 				else
 				{//for hyperslab in general
 					//determine how many values from the array will fit into the blocks being used with the dimensions specified
-					unsigned int displacement = (numBlocks - start[j]) / stride[j];
-					if (numBlocks - (displacement * stride[j]) - start[j] > 0)
+					unsigned int displacement = numBlocks / stride[j];
+					if (((int)displacement * (int)stride[j]) + (start[j] % stride[j]) < numBlocks)
 					{
 						displacement++;
-					}					
+					}
+					displacement -= start[j]/stride[j];
+					if (start[j] > numBlocks)
+					{
+						displacement = 0;
+					}
 					if (dimensions[j] <= displacement)//if there are less values than there are space for, just write all of them.
 					{
 						partialDimensions.push_back(dimensions[j]);
@@ -1105,11 +1105,16 @@ else
 						partialDataSizes.push_back(numBlocks);
 						//determine how many values from the array will fit into the blocks being used
 						//with the dimensions specified
-						unsigned int displacement = (numBlocks - newStart) / stride[j];
-						if (numBlocks - (displacement * stride[j]) - newStart > 0)
+						unsigned int displacement = numBlocks / stride[j];
+						if (((int)displacement * (int)stride[j]) + (newStart % stride[j]) < numBlocks)
 	                                        {
 	                                                displacement++;
 	                                        }
+						displacement -= newStart/stride[j];
+						if (newStart > numBlocks)
+						{
+							displacement = 0;
+						}
 						if ((dimensions[j] - previousDimensions[j]) <= displacement)
 						{//if there are less values than there are space for, just write all of them.
 							partialDimensions.push_back(dimensions[j] - previousDimensions[j]);
@@ -1143,9 +1148,11 @@ else
 			}
 		}
 		//move to next file
+		printf("moving to the next file\n");
 		mImpl->mFileIndex++;
 	}
 }
+
 
 if (partialDimensions.size() > 0)
 {//building the array to be written
@@ -1170,13 +1177,12 @@ if (partialDimensions.size() > 0)
               startOffset = 0;
             }
             containedInPriorDimensions += startOffset;
-            int dimensionTotal = 1;
-            for (int j = 0; j < dimensions.size(); j++)
-            {
-              dimensionTotal *= dimensions[j];
-            }
-            
 
+            int dimensionTotal = 1;
+	    for (int j = 0; j < dimensions.size(); j++)
+	    {
+	      dimensionTotal *= dimensions[j];
+	    }
 
 		//start = partialStarts multiplied together + amount already written
 		//stride = strides multiplied together
@@ -1190,11 +1196,8 @@ if (partialDimensions.size() > 0)
             }
 
 
-            if (containedInDimensions*totalStride + containedInPriorDimensions == dimensionTotal)
+            if (containedInDimensions > 0)
             {
-              controllerIndexOffset += dimensionTotal;
-            }
-
 
             shared_ptr<XdmfArray> partialArray = XdmfArray::New();
             if (datatype == H5T_NATIVE_CHAR){
@@ -1284,6 +1287,14 @@ if (partialDimensions.size() > 0)
             dimensionsWritten.push_back(partialDimensions);
             dataSizesWritten.push_back(partialDataSizes);
             arrayOffsetsWritten.push_back(containedInPriorDimensions);
+            }
+
+
+            if (containedInDimensions*totalStride + containedInPriorDimensions == dimensionTotal)
+            {
+              controllerIndexOffset += dimensionTotal;
+            }
+
 
             //for hyperslab the space is controlled by the dataspace dimensions
             //so use that since the dimensions should be equal to the dataspace dimensions in all other variations
@@ -1537,6 +1548,7 @@ if (mMode == Append) {
       {
       	i++;
 	mImpl->mFileIndex = origFileIndex;
+	controllerIndexOffset = 0;
       }
 
 }

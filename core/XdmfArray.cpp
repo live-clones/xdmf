@@ -392,7 +392,7 @@ public:
   {
     unsigned int size = mStartIndex + mNumValues;
     if(mArrayStride > 1) {
-      size = mStartIndex + mNumValues * mArrayStride - 1;
+      size = mStartIndex + mNumValues * mArrayStride - (mStartIndex%mArrayStride);
     }
     if(array->size() < size) {
       array->resize(size);
@@ -1757,12 +1757,21 @@ void
 XdmfArray::read()
 {
   if(mHeavyDataControllers.size() > 0) {
-    mHeavyDataControllers[0]->read(this);
-    for (int i = 1; i < mHeavyDataControllers.size(); i++)
+    this->release();
+    for (int i = 0; i < mHeavyDataControllers.size(); i++)
     {
       shared_ptr<XdmfArray> tempArray = XdmfArray::New();
       mHeavyDataControllers[i]->read(tempArray.get());
-      this->insert(this->getSize(), tempArray, 0, tempArray->getSize());
+      unsigned int startsTotal = 0;
+      unsigned int strideTotal = 1;
+      unsigned int dimTotal = 1;
+      for (int j = 0; j < mHeavyDataControllers[i]->getDimensions().size(); j++) {
+        strideTotal *= mHeavyDataControllers[i]->getStride()[j];
+	startsTotal += dimTotal * mHeavyDataControllers[i]->getStart()[j];
+        dimTotal *= mHeavyDataControllers[i]->getDimensions()[j];
+      }
+	
+      this->insert(mHeavyDataControllers[i]->getArrayOffset() + startsTotal, tempArray, 0, dimTotal, strideTotal, 1);
     }
   }
 }

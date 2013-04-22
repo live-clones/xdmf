@@ -47,9 +47,16 @@ int main(int, char **)
 	writtenArray->accept(arrayWriter);
 
 	writtenArray->release();
-	printf("after release\narray contains: %s\n", writtenArray->getValuesString());
 	writtenArray->read();
-	printf("%s\n\n", writtenArray->getValuesString());
+	//printf("%s\n", writtenArray->getValuesString());
+	printf("array size = %d\n", writtenArray->getSize());
+	for (int i = 0; i < writtenArray->getSize(); i++)
+        {
+                if (i != writtenArray->getValue<int>(i))
+		{
+			printf("%d doesn't match %d\n", i, writtenArray->getValue<int>(i));
+		}
+        }
 
 	return 0;
 }

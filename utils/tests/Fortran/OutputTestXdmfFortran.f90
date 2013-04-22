@@ -165,7 +165,7 @@ PROGRAM XdmfFortranExample
   CALL XDMFADDGRID(obj, 'Identical'//CHAR(0), XDMF_GRID_TYPE_UNSTRUCTURED)
   CALL XDMFCLOSEGRIDCOLLECTION(obj)
 !!  CALL XDMFWRITEHDF5(obj, 'my_output.h5'//CHAR(0))
-  CALL XDMFWRITE(obj, filename)
+  CALL XDMFWRITE(obj, filename, 10, .TRUE.)
   CALL XDMFCLOSE(obj)
 
 
