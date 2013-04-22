@@ -368,10 +368,8 @@ public:
   void
   operator()(const shared_ptr<std::vector<T> > & array) const
   {
-    unsigned int size = mStartIndex + mNumValues;
-    if(mArrayStride > 1) {
-      size = mStartIndex + mNumValues * mArrayStride - 1;
-    }
+    const unsigned int size = 
+      mStartIndex + (mNumValues - 1) * mArrayStride + 1;
     if(array->size() < size) {
       array->resize(size);
       mDimensions.clear();
