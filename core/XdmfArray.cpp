@@ -392,7 +392,7 @@ public:
   {
     unsigned int size = mStartIndex + mNumValues;
     if(mArrayStride > 1) {
-      size = mStartIndex + mNumValues * mArrayStride - (mStartIndex%mArrayStride);
+      size = mStartIndex + (mNumValues - 1) * mArrayStride + 1;
     }
     if(array->size() < size) {
       array->resize(size);
@@ -1579,7 +1579,34 @@ XdmfArray::insert(const unsigned int startIndex,
                                    values),
                        mArray);
 }
-
+/*
+//TODO
+void
+XdmfArray::insert(const std::vector<unsigned int> startIndex,
+                  const shared_ptr<const XdmfArray> values,
+                  const std::vector<unsigned int> valuesStartIndex,
+                  const std::vector<unsigned int> numValues,
+                  const std::vector<unsigned int> arrayStride,
+                  const std::vector<unsigned int> valuesStride)
+{
+	if (startIndex.size() == arrayStride.size() == 1)//if array being inserted into has been reduced to one dimension
+	{
+		//check if the array being inserted has been reduced to one dimension
+		if (valueStartIndex.size() == valuesStride.size() == numValues.size() == 1)//if it has been
+		{
+			//do a 1d insert
+		}
+		else
+		{
+			//reduce dimensions by splitting and calling recursively
+		}
+	}
+	else//otherwise reduce dimensions by splitting and calling recursively
+	{
+		
+	}
+}
+*/
 bool
 XdmfArray::isInitialized() const
 {

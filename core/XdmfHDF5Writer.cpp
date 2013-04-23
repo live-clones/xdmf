@@ -52,6 +52,7 @@ public:
     mChunkSize(DEFAULT_CHUNK_SIZE),
     mOpenFile(""),
     mHDF5FileSizeLimit(-1),
+    mAllowSplitDataSets(false),
     mDepth(0),
     mFileIndex(0)
   {
@@ -118,6 +119,7 @@ public:
   unsigned int mChunkSize;
   std::string mOpenFile;
   int mHDF5FileSizeLimit;
+  bool mAllowSplitDataSets;
   int mFileIndex;
   int mDepth;
   std::set<const XdmfItem *> mWrittenItems;
@@ -175,6 +177,18 @@ int
 XdmfHDF5Writer::getFileSizeLimit()
 {
   return mImpl->mHDF5FileSizeLimit;
+}
+
+void
+XdmfHDF5Writer::setAllowSetSplitting(bool newAllow)
+{
+  mImpl->mAllowSplitDataSets = newAllow;
+}
+
+int
+XdmfHDF5Writer::getAllowSetSplitting()
+{
+  return mImpl->mAllowSplitDataSets;
 }
 
 void
@@ -506,7 +520,6 @@ XdmfHDF5Writer::write(XdmfArray & array,
               }
               else if (mMode == Hyperslab) {
 		hyperslabSize = checksize;
-		printf("size of existing hyperslab = %d\n", hyperslabSize);
               }
             }
             if (fileSize == 0) {
@@ -973,15 +986,11 @@ else
 	{
 		//calculate the number of values of the data type you're using will fit
 		unsigned int usableSpace = (mImpl->mHDF5FileSizeLimit*(1024*1024) -  fileSize) / dataItemSize;
-		printf("fileSize = %d\n", fileSize);
-		printf("previousDataSize = %d\n", previousDataSize);
 		if (mImpl->mHDF5FileSizeLimit*(1024*1024) < fileSize)
 		{
 			usableSpace = 0;
 		}
-		printf("usableSpace = %d\n", usableSpace);
 		usableSpace += hyperslabSize-previousDataSize;
-		printf("usableSpace after adjustment = %d\n", usableSpace);
 		
 		//if the array hasn't been split
 		if (amountAlreadyWritten == 0)
@@ -991,66 +1000,79 @@ else
 			//otherwise split it.
 			if ((remainingValues * dataItemSize) + 800 > mImpl->mHDF5FileSizeLimit*(1024*1024) && usableSpace > 0)
 			{
-				
-				//figure out the size of the largest block that will fit.
-				unsigned int blockSizeSubtotal = 1;
-				int dimensionIndex = 0;
-				//find the dimension that was split
-				while (dimensionIndex < dataspaceDimensions.size() && blockSizeSubtotal <= usableSpace)
+				if (mImpl->mAllowSplitDataSets)
 				{
-					blockSizeSubtotal *= dataspaceDimensions[dimensionIndex];
-					dimensionIndex++;
-				}//It should end on the "blockSizeSubtotal <= arrayStartIndex" statement, the other half is for backup
-				//move back one dimension so we're working on the dimension that was split, not the one after it
-				dimensionIndex--;
-				blockSizeSubtotal /= dataspaceDimensions[dimensionIndex];
-
-				//determine how many of those blocks will fit
-				unsigned int numBlocks = usableSpace / blockSizeSubtotal;//this should be less than the current value for the dimension
-				//add dimensions as required.
-
-				int j = 0;
-				for (j = 0; j < dimensionIndex; j++)
-				{
-					partialStarts.push_back(start[j]);
-					partialStrides.push_back(stride[j]);
-					partialDimensions.push_back(dimensions[j]);
-					partialDataSizes.push_back(dataspaceDimensions[j]);
-				}
-				if (start[j] > numBlocks)
-				{
-					partialStarts.push_back(numBlocks-1);
-				}
-				else
-				{
-					partialStarts.push_back(start[j]);
-				}
-				partialStrides.push_back(stride[j]);
-				partialDataSizes.push_back(numBlocks);
-				if (dimensions[j] == dataspaceDimensions[j])//this is for non-hyperslab and specific cases of hyperslab
-				{
-					partialDimensions.push_back(numBlocks);
-				}
-				else
-				{//for hyperslab in general
-					//determine how many values from the array will fit into the blocks being used with the dimensions specified
-					unsigned int displacement = numBlocks / stride[j];
-					if (((int)displacement * (int)stride[j]) + (start[j] % stride[j]) < numBlocks)
+					//figure out the size of the largest block that will fit.
+					unsigned int blockSizeSubtotal = 1;
+					int dimensionIndex = 0;
+					//find the dimension that was split
+					while (dimensionIndex < dataspaceDimensions.size() && blockSizeSubtotal <= usableSpace)
 					{
-						displacement++;
+						blockSizeSubtotal *= dataspaceDimensions[dimensionIndex];
+						dimensionIndex++;
+					}//It should end on the "blockSizeSubtotal <= arrayStartIndex" statement, the other half is for backup
+					//move back one dimension so we're working on the dimension that was split, not the one after it
+					dimensionIndex--;
+					blockSizeSubtotal /= dataspaceDimensions[dimensionIndex];
+
+					//determine how many of those blocks will fit
+					unsigned int numBlocks = usableSpace / blockSizeSubtotal;//this should be less than the current value for the dimension
+					//add dimensions as required.
+
+					int j = 0;
+					for (j = 0; j < dimensionIndex; j++)
+					{
+						partialStarts.push_back(start[j]);
+						partialStrides.push_back(stride[j]);
+						partialDimensions.push_back(dimensions[j]);
+						partialDataSizes.push_back(dataspaceDimensions[j]);
 					}
-					displacement -= start[j]/stride[j];
 					if (start[j] > numBlocks)
 					{
-						displacement = 0;
+						partialStarts.push_back(numBlocks-1);
 					}
-					if (dimensions[j] <= displacement)//if there are less values than there are space for, just write all of them.
+					else
 					{
+						partialStarts.push_back(start[j]);
+					}
+					partialStrides.push_back(stride[j]);
+					partialDataSizes.push_back(numBlocks);
+					if (dimensions[j] == dataspaceDimensions[j])//this is for non-hyperslab and specific cases of hyperslab
+					{
+						partialDimensions.push_back(numBlocks);
+					}
+					else
+					{//for hyperslab in general
+						//determine how many values from the array will fit into the blocks being used with the dimensions specified
+						unsigned int displacement = numBlocks / stride[j];
+						if (((int)displacement * (int)stride[j]) + (start[j] % stride[j]) < numBlocks)
+						{
+							displacement++;
+						}
+						displacement -= start[j]/stride[j];
+						if (start[j] > numBlocks)
+						{
+							displacement = 0;
+						}
+						if (dimensions[j] <= displacement)//if there are less values than there are space for, just write all of them.
+						{
+							partialDimensions.push_back(dimensions[j]);
+						}
+						else//otherwise write what space allows for
+						{
+							partialDimensions.push_back(displacement);
+						}
+					}
+				}
+				else
+				{
+					//just pass all data to the partial vectors
+                		        for (int j = 0; j < dimensions.size(); j++)//done using a loop so that data is copied, not referenced
+					{
+						partialStarts.push_back(start[j]);
+						partialStrides.push_back(stride[j]);
 						partialDimensions.push_back(dimensions[j]);
-					}
-					else//otherwise write what space allows for
-					{
-						partialDimensions.push_back(displacement);
+						partialDataSizes.push_back(dataspaceDimensions[j]);
 					}
 				}
 			}
@@ -1148,7 +1170,6 @@ else
 			}
 		}
 		//move to next file
-		printf("moving to the next file\n");
 		mImpl->mFileIndex++;
 	}
 }

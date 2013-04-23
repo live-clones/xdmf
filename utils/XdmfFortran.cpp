@@ -270,7 +270,9 @@ XdmfFortran::XdmfFortran() :
   mTopology(shared_ptr<XdmfTopology>()),
   mBrick(shared_ptr<XdmfArray>()),
   mOrigin(shared_ptr<XdmfArray>()),
-  mDimensions(shared_ptr<XdmfArray>())
+  mDimensions(shared_ptr<XdmfArray>()),
+  mMaxFileSize(0),
+  mAllowSetSplitting(false)
 {
 }
 
@@ -355,8 +357,9 @@ XdmfFortran::addAttribute(const char * const name,
 }
 
 void 
-XdmfFortran::addGrid(const char * const name, int gridType)
+XdmfFortran::addGrid(const char * const name)
 {
+  /*
   if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
   {
     if(mDimensions == NULL) {
@@ -432,34 +435,31 @@ XdmfFortran::addGrid(const char * const name, int gridType)
                    mTime,
                    mDomain,
                    mGridCollections);
+  }*/
+  const shared_ptr<XdmfUnstructuredGrid> grid = XdmfUnstructuredGrid::New();
+  grid->setName(name);
+
+  if(mGeometry == NULL) {
+    XdmfError::message(XdmfError::FATAL, 
+                     "Must set geometry before adding grid.");
   }
-  else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
-  {
-    const shared_ptr<XdmfUnstructuredGrid> grid = XdmfUnstructuredGrid::New();
-    grid->setName(name);
 
-    if(mGeometry == NULL) {
-      XdmfError::message(XdmfError::FATAL, 
-                       "Must set geometry before adding grid.");
-    }
-
-    if(mTopology == NULL) {
-      XdmfError::message(XdmfError::FATAL, 
-                       "Must set topology before adding grid.");
-    }
+  if(mTopology == NULL) {
+    XdmfError::message(XdmfError::FATAL, 
+                     "Must set topology before adding grid.");
+  }
   
-    grid->setGeometry(mGeometry);
-    grid->setTopology(mTopology);
+  grid->setGeometry(mGeometry);
+  grid->setTopology(mTopology);
 
-    insertElements(grid,
-                   mAttributes,
-                   mInformations,
-                   mSets,
-                   mMaps,
-                   mTime,
-                   mDomain,
-                   mGridCollections);
-  }
+  insertElements(grid,
+                 mAttributes,
+                 mInformations,
+                 mSets,
+                 mMaps,
+                 mTime,
+                 mDomain,
+                 mGridCollections);
 }
 
 void 
@@ -5884,13 +5884,26 @@ XdmfFortran::clearPrevious()
 
 
 
+void
+XdmfFortran::setAllowSetSplitting(bool newAllow)
+{
+  mAllowSetSplitting = newAllow;
+}
+
+void
+XdmfFortran::setMaxFileSize(int newSize)
+{
+  mMaxFileSize = newSize;
+}
+
 void 
 XdmfFortran::write(const char * const xmlFilePath, const int datalimit, const bool release)
 {
   shared_ptr<XdmfWriter> writer = XdmfWriter::New(xmlFilePath);
-  writer->setLightDataLimit(datalimit);
+  writer->setLightDataLimit(mMaxFileSize);
   writer->getHeavyDataWriter()->setReleaseData(release);
-  shared_dynamic_cast<XdmfHDF5Writer>(writer->getHeavyDataWriter())->setFileSizeLimit(1);
+  shared_dynamic_cast<XdmfHDF5Writer>(writer->getHeavyDataWriter())->setFileSizeLimit(mMaxFileSize);
+  shared_dynamic_cast<XdmfHDF5Writer>(writer->getHeavyDataWriter())->setAllowSetSplitting(mAllowSetSplitting);
   mDomain->accept(writer);
 }
 
@@ -5898,6 +5911,8 @@ void
 XdmfFortran::writeHDF5(const char * const xmlFilePath)
 {
   shared_ptr<XdmfHDF5Writer> writer = XdmfHDF5Writer::New(xmlFilePath);
+  writer->setFileSizeLimit(mMaxFileSize);
+  writer->setAllowSetSplitting(mAllowSetSplitting);
   writer->setReleaseData( true );
   mDomain->accept(writer);
 }
@@ -5970,11 +5985,10 @@ extern "C"
 
   void
   XdmfAddGrid(long * pointer, 
-              char * gridName,
-              int * gridType)
+              char * gridName)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
-    xdmfFortran->addGrid(gridName, *gridType);
+    xdmfFortran->addGrid(gridName);
   }
 
   void
@@ -7220,6 +7234,20 @@ extern "C"
 
 
 
+
+  void
+  XdmfSetAllowSetSplitting(long * pointer, bool * newAllow)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setAllowSetSplitting(*newAllow);
+  }
+
+  void
+  XdmfSetMaxFileSize(long * pointer, int * newSize)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->setMaxFileSize(*newSize);
+  }
 
   void
   XdmfWrite(long * pointer,

@@ -55,6 +55,10 @@ class XdmfHeavyDataController;
  * disk using the XdmfHeavyDataController. After the values have been
  * read from heavy data on disk, isInitialized() will return true.
  *
+ * This version of Xdmf allows for multiple controllers to be added to
+ * a single array. Be aware that doing this makes the files written
+ * incompatible with previous editions.
+ *
  * XdmfArray allows for insertion and retrieval of data in two
  * fundamental ways:
  *
@@ -1019,6 +1023,35 @@ public:
               const unsigned int numValues = 1,
               const unsigned int arrayStride = 1,
               const unsigned int valuesStride = 1);
+
+  /**
+   * Insert values from an XdmfArray into this array. This is the multidimensional version.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfArray.cpp
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleArray.py
+   *
+   * @param startIndex the index in this array to begin insertion.
+   * @param values a shared pointer to an XdmfArray to copy into this array.
+   * @param valuesStartIndex the index in the XdmfArray to begin copying.
+   * @param numValues the number of values to copy into this array.
+   * @param arrayStride number of values to stride in this array between each
+   * copy.
+   * @param valuesStride number of values to stride in the XdmfArray between
+   * each copy.
+   */
+/*  void insert(const std::vector<unsigned int> startIndex,
+              const shared_ptr<const XdmfArray> values,
+              const std::vector<unsigned int> valuesStartIndex,
+              const std::vector<unsigned int> numValues,
+              const std::vector<unsigned int> arrayStride,
+              const std::vector<unsigned int> valuesStride);*/
 
   /**
    * Insert values into this array.

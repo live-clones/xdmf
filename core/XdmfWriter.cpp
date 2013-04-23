@@ -320,11 +320,17 @@ XdmfWriter::visit(XdmfArray & array,
           }
         }
         valuesStream.str(std::string());//clear the stream
-        valuesStream << heavyDataPath << ":"
-                     << array.getHeavyDataController(i)->getDataSetPath()
-                     << "|" << dimensionStream.str();
-        if (i + 1 < array.getNumberHeavyDataControllers()){
-          valuesStream << "|";
+	if (array.getNumberHeavyDataControllers() > 1) {
+          valuesStream << heavyDataPath << ":"
+                       << array.getHeavyDataController(i)->getDataSetPath()
+                       << "|" << dimensionStream.str();
+          if (i + 1 < array.getNumberHeavyDataControllers()){
+            valuesStream << "|";
+          }
+        }
+	else {
+         valuesStream << heavyDataPath << ":"
+                       << array.getHeavyDataController(i)->getDataSetPath(); 
         }
         xmlTextValues.push_back(valuesStream.str());
       }

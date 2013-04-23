@@ -124,6 +124,46 @@ public:
   int getFileSizeLimit();
 
   /**
+   * Sets whether to allow the HDF5 writer to split data sets when writing to hdf5.
+   * Splitting should only occur for massive data sets.
+   * Setting to false assures compatibility with previous editions.
+   * Default setting is false
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfHDF5Writer.cpp
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleHDF5Writer.py
+   *
+   * @param	newAllow	whether to allow data sets to be split across hdf5 files
+   */
+  void setAllowSetSplitting(bool newAllow);
+
+  /**
+   * Gets whether the HDF5 Writer is allowed to split data sets when writing to hdf5.
+   * Splitting should only occur for massive data sets.
+   * Setting to false assures compatibility with previous editions.
+   * Default setting is false.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfHDF5Writer.cpp
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleHDF5Writer.py
+   *
+   * @return	whether to allow data sets to be split across hdf5 files
+   */
+  int getAllowSetSplitting();
+
+  /**
    * Sets the file index. Used when file splitting and incremented when the current file is full. Set to 0 before using hyperslab or overwrite.
    *
    * C++

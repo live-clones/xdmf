@@ -159,6 +159,8 @@ class XdmfUnstructuredGrid;
 #define XdmfSetPreviousTopology xdmfsetprevioustopology_
 #define XdmfSetTime xdmfsettime_
 #define XdmfSetTopology xdmfsettopology_
+#define XdmfSetAllowSetSplitting xdmfsetallowsetsplitting_
+#define XdmfSetMaxFileSize xdmfsetmaxfilesize_
 #define XdmfWrite xdmfwrite_
 #define XdmfRead xdmfread_
 #define XdmfWriteHDF5 xdmfwritehdf5_
@@ -382,9 +384,8 @@ public:
    * are placed in mAttributes, mInformations, and mSets
    *
    * @param name of the grid.
-   * @param gridType the type of the grid represented as an integer Ex: XDMF_GRID_TYPE_UNSTRUCTURED
    */
-  void addGrid(const char * const name, int gridType);
+  void addGrid(const char * const name);
 
   /**
    * Add grid collection to domain or collection. Inserts attributes
@@ -2172,8 +2173,24 @@ public:
 
 
 
+  /**
+   * Sets whether to allow the hdf5 writer to split large data sets across multiple files.
+   * Setting to true removes compatibiliity with previous versions.
+   * When off it will write sets that will not fit into a file to the current file
+   * before moving to the next should file splitting be enabled.
+   * Default is off (false).
+   *
+   * @param	newAllow	whether to allow splitting or not
+   */
+  void setAllowSetSplitting(bool newAllow);
 
-
+  /**
+   * Sets the file size at which the hdf5 writer will move to a new file.
+   * Default is no splitting (value=0)
+   * 
+   * @param	newSize		new maximum file size before moving
+   */
+  void setMaxFileSize(int newSize);
 
   /**
    * Write constructed file to disk.
@@ -2242,6 +2259,9 @@ private:
   std::vector<shared_ptr<XdmfArray> >       mPreviousBricks;
   std::vector<shared_ptr<XdmfArray> >       mPreviousCoordinates;
   std::vector<shared_ptr<XdmfMap> >         mPreviousMaps;
+
+  unsigned int mMaxFileSize;
+  bool mAllowSetSplitting;
 
 
 };

@@ -9,7 +9,7 @@ integer xdmfstoremap
 integer xdmfaddcoordinate
 integer xdmfaddset
 
-integer xdmfsettopologypolyline
+
 
 
 
