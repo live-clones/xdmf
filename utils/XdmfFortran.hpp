@@ -30,7 +30,7 @@ class XdmfAttribute;
 class XdmfDomain;
 class XdmfGeometry;
 class XdmfGridCollection;
-class XdmfHDF5Writer;
+class XdmfHeavyDataWriter;
 class XdmfInformation;
 class XdmfTime;
 class XdmfTopology;
@@ -342,7 +342,7 @@ private:
   std::vector<shared_ptr<XdmfInformation> > mPreviousInformations;
   std::vector<shared_ptr<XdmfTopology> > mPreviousTopologies;
 
-  std::map<std::string, shared_ptr<XdmfHDF5Writer> > mPreviousWriters;
+  std::map<std::string, shared_ptr<XdmfHeavyDataWriter> > mPreviousWriters;
 
 };
 

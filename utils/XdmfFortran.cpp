@@ -38,6 +38,7 @@
 #include "XdmfGridCollectionType.hpp"
 #include "XdmfInformation.hpp"
 #include "XdmfReader.hpp"
+#include "XdmfSystemUtils.hpp"
 #include "XdmfTime.hpp"
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
@@ -579,27 +580,45 @@ XdmfFortran::write(const char * const xmlFilePath,
                    const unsigned int numValues)
 {
   shared_ptr<XdmfWriter> writer = XdmfWriter::New(xmlFilePath);
+
+  // check if we have a previous heavy data writer around
+  shared_ptr<XdmfHeavyDataWriter> heavyDataWriter = 
+    writer->getHeavyDataWriter();
+  const std::string heavyDataWriterPath = heavyDataWriter->getFilePath();
+  std::map<std::string, shared_ptr<XdmfHeavyDataWriter> >::iterator iter =
+    mPreviousWriters.find(heavyDataWriterPath);
+  if(iter != mPreviousWriters.end()) {
+    writer->setHeavyDataWriter(iter->second);
+  }
+  else {
+    heavyDataWriter->setReleaseData(true);
+    mPreviousWriters[heavyDataWriterPath] = heavyDataWriter;
+  }
+
   writer->setLightDataLimit(numValues);
   mDomain->accept(writer);
 }
 
 void 
-XdmfFortran::writeHDF5(const char * const xmlFilePath)
+XdmfFortran::writeHDF5(const char * const hdf5FilePath)
 {
-  shared_ptr<XdmfHDF5Writer> writer;
-  std::map<std::string, shared_ptr<XdmfHDF5Writer> >::iterator iter =
-    mPreviousWriters.find(xmlFilePath);
+  // convert path to fully resolved path
+  const std::string fullPath = XdmfSystemUtils::getRealPath(hdf5FilePath);
+
+  // check if we have a previous heavy data writer around
+  shared_ptr<XdmfHeavyDataWriter> writer;
+  std::map<std::string, shared_ptr<XdmfHeavyDataWriter> >::iterator iter =
+    mPreviousWriters.find(fullPath);
   if(iter != mPreviousWriters.end()) {
     writer = iter->second;
   }
   else {
-    writer = XdmfHDF5Writer::New(xmlFilePath);
+    writer = XdmfHDF5Writer::New(fullPath);
     writer->setReleaseData(true);
-    mPreviousWriters[xmlFilePath] = writer;
+    mPreviousWriters[fullPath] = writer;
   }
-  writer->openFile();
+
   mDomain->accept(writer);
-  writer->closeFile();
 }
 
 void 
@@ -794,10 +813,10 @@ extern "C"
 
   void
   XdmfWriteHDF5(long * pointer,
-                char * xmlFilePath)
+                char * hdf5FilePath)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
-    xdmfFortran->writeHDF5(xmlFilePath);
+    xdmfFortran->writeHDF5(hdf5FilePath);
   }
 
   void
