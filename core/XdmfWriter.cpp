@@ -227,6 +227,12 @@ XdmfWriter::setDocumentTitle(std::string title)
   mImpl->mDocumentTitle = title;
 }
 
+void 
+XdmfWriter::setHeavyDataWriter(shared_ptr<XdmfHeavyDataWriter> heavyDataWriter)
+{
+  mImpl->mHeavyDataWriter = heavyDataWriter;
+}
+
 void
 XdmfWriter::setLightDataLimit(const unsigned int numValues)
 {
