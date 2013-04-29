@@ -40,6 +40,7 @@
 #include "XdmfGridCollectionType.hpp"
 #include "XdmfInformation.hpp"
 #include "XdmfReader.hpp"
+#include "XdmfSystemUtils.hpp"
 #include "XdmfTime.hpp"
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
@@ -723,12 +724,6 @@ XdmfFortran::setTopology(const int topologyType,
   return id;
 }
 
-
-
-
-
-
-
 int
 XdmfFortran::retrieveNumDomainGridCollections()
 {
@@ -1377,7 +1372,6 @@ XdmfFortran::replaceDomainGrid(int gridType, int index, char * name)
 
 			shared_ptr<XdmfCurvilinearGrid> grid = mDomain->getCurvilinearGrid(index);
 			grid->setName(name);
-
 			grid->setGeometry(mGeometry);
 			grid->setDimensions(mDimensions);
 
@@ -1385,7 +1379,6 @@ XdmfFortran::replaceDomainGrid(int gridType, int index, char * name)
 			{
 				grid->removeAttribute(0);
 			}
-
 			for(std::vector<shared_ptr<XdmfAttribute> >::const_iterator iter =
 				mAttributes.begin(); 
 				iter != mAttributes.end();

@@ -44,6 +44,7 @@ class XdmfHeavyDataWriter;
 
 //Includes
 #include <stack>
+#include <map>
 #include <vector>
 #include "XdmfUtils.hpp"
 #include "XdmfSharedPtr.hpp"
@@ -532,6 +533,8 @@ public:
    * @param numValues number of connectivity values to copy.
    * @param arrayType type of connectivity values.
    * @param connectivityValues array of connectivity values.
+   * @param polyNodesPerElement for polyline and polyvertex types the
+   * number of nodes per element.
    *
    * @return int providing id to fortran if reusing.
    */
@@ -539,11 +542,15 @@ public:
                   const unsigned int numValues,
                   const int arrayType,
                   const void * const connectivityValues,
+<<<<<<< HEAD
                   const int numNodes);
 
 
 
 
+=======
+                  const int polyNodesPerElement = 0);
+>>>>>>> 6748b23947ebc47742c96d7e3a56242511c67d73
 
   /**
    * Returns the number of grid collections currently

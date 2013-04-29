@@ -134,11 +134,28 @@ XdmfPartitioner::partition(const shared_ptr<XdmfGraph> graphToPartition,
     XdmfError::message(XdmfError::FATAL,
                        "Current graph's row pointer or column index is null "
                        "in XdmfPartitioner::partition");
+ 
+  graphToPartition->removeAttribute("Partition");
+
+  shared_ptr<XdmfAttribute> attribute = XdmfAttribute::New();
+  attribute->setName("Partition");
+  attribute->setCenter(XdmfAttributeCenter::Node());
+  attribute->setType(XdmfAttributeType::Scalar());
+  graphToPartition->insert(attribute);
+
+  idx_t numberVertices = graphToPartition->getNumberNodes();
+  
+  // Handle case where we partition onto 1 processor. Metis for some reason
+  // handles this incorrectly (indices are 1 instead of zero even though 
+  // correct numbering option is supplied to metis)
+  if(numberOfPartitions == 1) {
+    attribute->resize<idx_t>(numberVertices, 0);
+    return;
+  }
 
   shared_ptr<XdmfArray> rowPointer = graphToPartition->getRowPointer();
   shared_ptr<XdmfArray> columnIndex = graphToPartition->getColumnIndex();
 
-  idx_t numberVertices = graphToPartition->getNumberNodes();
   idx_t numberConstraints = 1;
 
   bool releaseRowPointer = false;
@@ -239,16 +256,9 @@ XdmfPartitioner::partition(const shared_ptr<XdmfGraph> graphToPartition,
   delete [] xadj;
   delete [] adjncy;
 
-  graphToPartition->removeAttribute("Partition");
-
-  shared_ptr<XdmfAttribute> attribute = XdmfAttribute::New();
-  attribute->setName("Partition");
-  attribute->setCenter(XdmfAttributeCenter::Node());
-  attribute->setType(XdmfAttributeType::Scalar());
   attribute->insert(0,
                     part,
                     numberVertices);
-  graphToPartition->insert(attribute);
 
   delete [] part;
 

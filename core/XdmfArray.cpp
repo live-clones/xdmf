@@ -85,7 +85,8 @@ public:
                          mArray->mArray);
   }
 
-private: 
+private:
+ 
   XdmfArray * const mArray;
 };
 
@@ -390,10 +391,10 @@ public:
   void
   operator()(const shared_ptr<std::vector<T> > & array) const
   {
-    unsigned int size = mStartIndex + mNumValues;
-    if(mArrayStride > 1) {
-      size = mStartIndex + (mNumValues - 1) * mArrayStride + 1;
-    }
+    unsigned int size =
+      mStartIndex + (mNumValues) * mArrayStride + 1;
+
+
     if(array->size() < size) {
       array->resize(size);
       mDimensions.clear();
@@ -463,6 +464,34 @@ private:
   XdmfArray * const mArray;
 };
 
+class XdmfArray::IsInitialized : public boost::static_visitor<bool> {
+public:
+
+  IsInitialized()
+  {
+  }
+
+  bool
+  operator()(const boost::blank &) const
+  {
+    return false;
+  }
+
+  template<typename T>
+  bool
+  operator()(const shared_ptr<std::vector<T> > &) const
+  {
+    return true;
+  }
+
+  template<typename T>
+  bool
+  operator()(const T &) const
+  {
+    return true;
+  }
+};
+
 class XdmfArray::Reserve : public boost::static_visitor<void> {
 public:
 
@@ -517,7 +546,7 @@ public:
       for (int i = 0; i < mArray->mHeavyDataControllers.size(); i++) {
         total += mArray->mHeavyDataControllers[i]->getSize();
       }
-      return total;//modify this to compile all controllers
+      return total;
     }
     return 0;
   }
@@ -1452,7 +1481,7 @@ XdmfArray::insert(const unsigned int startIndex,
 }
 
 
-//TODO
+
 void
 XdmfArray::insert(const std::vector<unsigned int> startIndex,
                   const shared_ptr<const XdmfArray> values,
@@ -1591,13 +1620,8 @@ XdmfArray::insert(const std::vector<unsigned int> startIndex,
 bool
 XdmfArray::isInitialized() const
 {
-  try {
-    boost::get<boost::blank>(mArray);
-    return false;
-  }
-  catch(const boost::bad_get & exception) {
-  }
-  return true;
+  return boost::apply_visitor(IsInitialized(),
+                                mArray);
 }
 
 void

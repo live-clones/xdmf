@@ -1,45 +1,62 @@
 #include "XdmfArray.hpp"
-#include "XdmfArrayType.hpp"
-
-#include <iostream>
 
 int main(int, char **)
 {
-  shared_ptr<XdmfArray> resultArray = XdmfArray::New();
+
+  // Insert from another array
+  shared_ptr<XdmfArray> array1 = XdmfArray::New();
   shared_ptr<XdmfArray> insertArray1 = XdmfArray::New();
   shared_ptr<XdmfArray> insertArray2 = XdmfArray::New();
   shared_ptr<XdmfArray> insertArray3 = XdmfArray::New();
   shared_ptr<XdmfArray> insertArray4 = XdmfArray::New();
 
-  for (int i = 0; i< 10; i++)
-  {
-   insertArray1->pushBack(1);
-  }
+  insertArray1->resize<int>(10, 1);
+  insertArray2->resize<int>(10, 2);
+  insertArray3->resize<int>(10, 3);
+  insertArray4->resize<int>(10, 4);
 
-  for (int i = 0; i< 10; i++)
-  {
-   insertArray2->pushBack(2);
-  }
+  array1->insert(0, insertArray1, 0, 10, 4, 1);
+  array1->insert(1, insertArray2, 0, 10, 4, 1);
+  array1->insert(2, insertArray3, 0, 10, 4, 1);
+  array1->insert(3, insertArray4, 0, 10, 4, 1);
 
-  for (int i = 0; i< 10; i++)
-  {
-   insertArray3->pushBack(3);
-  }
+  assert(array1->getValuesString().compare("1 2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1 "
+                                           "2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1 2 "
+                                           "3 4 1 2 3 4") == 0);
 
-  for (int i = 0; i< 10; i++)
-  {
-   insertArray4->pushBack(4);
-  }
+  // Insert from vector
+  std::vector<int> insertArray5(10, 1);
+  std::vector<int> insertArray6(10, 2);
+  std::vector<int> insertArray7(10, 3);
+  std::vector<int> insertArray8(10, 4);
 
-  resultArray->insert(0, insertArray1, 0, 10, 4, 1);
-  resultArray->insert(1, insertArray2, 0, 10, 4, 1);
-  resultArray->insert(2, insertArray3, 0, 10, 4, 1);
-  resultArray->insert(3, insertArray4, 0, 10, 4, 1);
+  shared_ptr<XdmfArray> array2 = XdmfArray::New();
 
-  printf("result array contains:\n%s\n", resultArray->getValuesString());
-  printf("result should be:\n%s\n", "1 2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1 2 3 4");
+  array2->insert(0, &(insertArray5[0]), 10, 4, 1);
+  array2->insert(1, &(insertArray6[0]), 10, 4, 1);
+  array2->insert(2, &(insertArray7[0]), 10, 4, 1);
+  array2->insert(3, &(insertArray8[0]), 10, 4, 1);
 
-  assert(resultArray->getValuesString().compare("1 2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1 2 3 4") == 0);
+  assert(array2->getValuesString().compare("1 2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1 "
+                                           "2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1 2 "
+                                           "3 4 1 2 3 4") == 0);
+
+  // Insert from vector string
+  std::vector<std::string> insertArray9(10, "1");
+  std::vector<std::string> insertArray10(10, "2");
+  std::vector<std::string> insertArray11(10, "3");
+  std::vector<std::string> insertArray12(10, "4");
+
+  shared_ptr<XdmfArray> array3 = XdmfArray::New();
+
+  array3->insert(0, &(insertArray9[0]), 10, 4, 1);
+  array3->insert(1, &(insertArray10[0]), 10, 4, 1);
+  array3->insert(2, &(insertArray11[0]), 10, 4, 1);
+  array3->insert(3, &(insertArray12[0]), 10, 4, 1);
+
+  assert(array3->getValuesString().compare("1 2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1 "
+                                           "2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1 2 "
+                                           "3 4 1 2 3 4") == 0);
 
   return 0;
 }
