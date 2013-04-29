@@ -315,8 +315,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
     static std::vector<std::string> getSupportedFunctions()
     {
       std::vector<std::string> returnVector = XdmfArray::getSupportedFunctions();
-      for (std::map<std::string, PyObject *>::iterator functionWalker = pythonFunctions.begin(); functionWalker != pythonFunctions.end(); functionWalker++)
-      {
+      for (std::map<std::string, PyObject *>::iterator functionWalker = pythonFunctions.begin(); functionWalker != pythonFunctions.end(); functionWalker++) {
         returnVector.push_back(functionWalker->first);
       }
       return returnVector;
@@ -324,8 +323,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
     static shared_ptr<XdmfArray> evaluateFunction(std::vector<shared_ptr<XdmfArray> > functValues, std::string functName)
     {
-      if (pythonFunctions.find(functName)!= pythonFunctions.end())
-      {
+      if (pythonFunctions.find(functName)!= pythonFunctions.end()) {
         swig_type_info * paramType = SWIG_TypeQuery("_p_std__vectorT_boost__shared_ptrT_XdmfArray_t_std__allocatorT_boost__shared_ptrT_XdmfArray_t_t_t");
         PyObject * pyVector = SWIG_NewPointerObj(static_cast<void*>(& functValues), paramType, SWIG_POINTER_NEW);
         PyObject * args = PyTuple_New(1);
@@ -338,8 +336,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
         shared_ptr<XdmfArray> returnArray = returnArrayPointer[0];
         return returnArray;
       }
-      else
-      {
+      else {
          /*this does not actually cause an infinte recursive loop, it sends the values to the version of the function defined in XdmfArray.cpp*/
          return XdmfArray::evaluateFunction(functValues, functName);
       }
@@ -355,20 +352,17 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
     static int getOperationPriority(char operation)
     {
       size_t operationLocation = pythonSupportedOperations.find(operation);
-      if (operationLocation != std::string::npos)
-      {
+      if (operationLocation != std::string::npos) {
         return pythonOperationPriority[operationLocation];
       }
-      else
-      {
+      else {
         return XdmfArray::getOperationPriority(operation);
       }
     }
 
     static shared_ptr<XdmfArray> evaluateOperation(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2, char functName)
     {
-      if (pythonOperations.find(functName)!= pythonOperations.end())
-      {
+      if (pythonOperations.find(functName)!= pythonOperations.end()) {
         swig_type_info * paramType = SWIG_TypeQuery("_p_boost__shared_ptrT_XdmfArray_t");
         PyObject * pyVal1 = SWIG_NewPointerObj(static_cast<void*>(& val1), paramType, SWIG_POINTER_NEW);
         PyObject * pyVal2 = SWIG_NewPointerObj(static_cast<void*>(& val2), paramType, SWIG_POINTER_NEW);
@@ -383,8 +377,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
         shared_ptr<XdmfArray> returnArray = returnArrayPointer[0];
         return returnArray;
       }
-      else
-      {
+      else {
          /*this does not actually cause an infinte recursive loop, it sends the values to the version of the function defined in XdmfArray.cpp*/
          return XdmfArray::evaluateOperation(val1, val2, functName);
       }
@@ -397,14 +390,11 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
       /*string is parsed left to right
         elements of the same priority are evaluated right to left*/
-      for (int i = 0; i < expression.size(); i++)
-      {
-        if (XdmfArray::getValidDigitChars().find(expression[i]) != std::string::npos)/*found to be a digit*/
-        {
+      for (int i = 0; i < expression.size(); i++) {
+        if (XdmfArray::getValidDigitChars().find(expression[i]) != std::string::npos) {/*found to be a digit*/
           /*progress until a non-digit is found*/
           int valueStart = i;
-          while (XdmfArray::getValidDigitChars().find(expression[i + 1]) != std::string::npos)
-          {
+          while (XdmfArray::getValidDigitChars().find(expression[i + 1]) != std::string::npos) {
             i++;
           }
           /*push back to the value stack*/
@@ -412,37 +402,29 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
           valueArray->insert(0, atof(expression.substr(valueStart, i + 1 - valueStart).c_str()));/*use this to convert to double*/
           valueStack.push(valueArray);
         }
-        else if (XdmfArray::getValidVariableChars().find(expression[i]) != std::string::npos)/*found to be a variable*/
-        {
+        else if (XdmfArray::getValidVariableChars().find(expression[i]) != std::string::npos) {/*found to be a variable*/
           int valueStart = i;
           /*progress until a nonvariable value is found*/
-          while (XdmfArray::getValidVariableChars().find(expression[i + 1]) != std::string::npos)
-          {
+          while (XdmfArray::getValidVariableChars().find(expression[i + 1]) != std::string::npos) {
             i++;
           }
           /*convert to equivalent*/
-          if (variables.find(expression.substr(valueStart, i + 1 - valueStart)) == variables.end())
-          {
+          if (variables.find(expression.substr(valueStart, i + 1 - valueStart)) == variables.end()) {
             std::vector<std::string> functionList = XdmfArray::getSupportedFunctions();
             bool functionExists = false;
-            for (int j = 0; j < functionList.size() && !functionExists; j++)
-            {
-              if (functionList[j] == expression.substr(valueStart, i + 1 - valueStart))
-              {
+            for (int j = 0; j < functionList.size() && !functionExists; j++) {
+              if (functionList[j] == expression.substr(valueStart, i + 1 - valueStart)) {
                 functionExists = true;
               }
             }
-            if (functionExists)
-            {
+            if (functionExists) {
               XdmfError::message(XdmfError::FATAL,
                                  "Error: Invalid Variable in evaluateExpression " + expression.substr(valueStart, i + 1 - valueStart));
             }
-            else
-            {
+            else {
               std::string currentFunction = expression.substr(valueStart, i + 1 - valueStart);
               /*check if next character is an open parenthesis*/
-              if (expression[i+1] != '(')
-              {
+              if (expression[i+1] != '(') {
                 XdmfError::message(XdmfError::FATAL,
                                    "Error: No values supplied to function " + expression.substr(valueStart, i + 1 - valueStart));
               }
@@ -450,14 +432,11 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
               i = i + 2;
               valueStart = i;
               int numOpenParenthesis = 0;
-              while ((expression[i] != ')' || numOpenParenthesis) && i < expression.size())
-              {
-                if (expression[i] == '(')
-                {
+              while ((expression[i] != ')' || numOpenParenthesis) && i < expression.size()) {
+                if (expression[i] == '(') {
                   numOpenParenthesis++;
                 }
-                else if (expression[i] == ')')
-                {
+                else if (expression[i] == ')') {
                   numOpenParenthesis--;
                 }
                 i++;
@@ -466,17 +445,14 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
               std::vector<shared_ptr<XdmfArray> > parameterVector;
               /*split that string at commas*/
               size_t parameterSplit = 0;
-              while (parameterSplit != std::string::npos)
-              {
+              while (parameterSplit != std::string::npos) {
                 parameterSplit = 0;
                 parameterSplit = functionParameters.find_first_of(",", parameterSplit);
                 /*feed the substrings to the parse function*/
-                if (parameterSplit == std::string::npos)
-                {
+                if (parameterSplit == std::string::npos) {
                   parameterVector.push_back(evaluateExpression(functionParameters, variables));
                 }
-                else
-                {
+                else {
                   parameterVector.push_back(evaluateExpression(functionParameters.substr(0, parameterSplit), variables));
                   functionParameters = functionParameters.substr(parameterSplit+1);
                 }
@@ -484,29 +460,22 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
               valueStack.push(evaluateFunction(parameterVector, currentFunction));
             }
           }
-          else
-          {
+          else {
             /*push equivalent to value stack*/
             valueStack.push(variables.find(expression.substr(valueStart, i + 1 - valueStart))->second);
           }
         }
-        else if (XdmfArray::getSupportedOperations().find(expression[i]) != std::string::npos)//found to be an operation
-        {
+        else if (XdmfArray::getSupportedOperations().find(expression[i]) != std::string::npos) {/*found to be an operation*/
           /*pop operations off the stack until one of a lower or equal importance is found*/
-          if (operationStack.size() > 0)
-          {
-            if (expression[i] == ')')
-            {
+          if (operationStack.size() > 0) {
+            if (expression[i] == ')') {
               /*to close a parenthesis pop off all operations until another parentheis is found*/
-              while (operationStack.size() > 0 && operationStack.top() != '(')
-              {
-                if (valueStack.size() < 2)/*must be at least two values for this loop to work properly*/
-                {
+              while (operationStack.size() > 0 && operationStack.top() != '(') {
+                if (valueStack.size() < 2) {/*must be at least two values for this loop to work properly*/
                   XdmfError::message(XdmfError::FATAL,
                                      "Error: Not Enough Values in evaluateExpression");
                 }
-                else
-                {
+                else {
                   shared_ptr<XdmfArray> val2 = valueStack.top();
                   valueStack.pop();
                   shared_ptr<XdmfArray> val1 = valueStack.top();
@@ -517,34 +486,28 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
               }
               operationStack.pop();
             }
-            else if (expression[i] == '(')
-            {
+            else if (expression[i] == '(') {
               /*just add it if it's a start parenthesis
                 nothing happens here in that case
                 addition happens after the if statement block*/
             }
-            else
-            {
+            else {
               int operationLocation = XdmfArray::getOperationPriority(expression[i]);
               int topOperationLocation = XdmfArray::getOperationPriority(operationStack.top());
               /*see order of operations to determine importance*/
-              while (operationStack.size() > 0 && operationLocation < topOperationLocation)
-              {
-                if (valueStack.size() < 2)/*must be at least two values for this loop to work properly*/
-                {
+              while (operationStack.size() > 0 && operationLocation < topOperationLocation) {
+                if (valueStack.size() < 2) {/*must be at least two values for this loop to work properly*/
                   XdmfError::message(XdmfError::FATAL,
                                      "Error: Not Enough Values in evaluateExpression");
                 }
-                else
-                {
+                else {
                   shared_ptr<XdmfArray> val2 = valueStack.top();
                   valueStack.pop();
                   shared_ptr<XdmfArray> val1 = valueStack.top();
                   valueStack.pop();
                   valueStack.push(evaluateOperation(val1, val2, operationStack.top()));
                   operationStack.pop();
-                  if (operationStack.size() == 0)
-                  {
+                  if (operationStack.size() == 0) {
                     break;
                   }
                   topOperationLocation = XdmfArray::getOperationPriority(operationStack.top());
@@ -552,8 +515,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
               }
             }
           }
-          if (expression[i] != ')')
-          {
+          if (expression[i] != ')') {
             /*add the operation to the operation stack*/
             operationStack.push(expression[i]);
           }
@@ -563,33 +525,26 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
 
       /*empty what's left in the stacks before finishing*/
-      while (valueStack.size() > 1 && operationStack.size() > 0)
-      {
-        if (valueStack.size() < 2)/*must be at least two values for this loop to work properly*/
-        {
+      while (valueStack.size() > 1 && operationStack.size() > 0) {
+        if (valueStack.size() < 2) {/*must be at least two values for this loop to work properly*/
           XdmfError::message(XdmfError::FATAL,
                              "Error: Not Enough Values in evaluateExpression");
         }
-        else
-        {
-          if(operationStack.top() == '(')
-          {
+        else {
+          if(operationStack.top() == '(') {
             XdmfError::message(XdmfError::WARNING,
                                "Warning: Unpaired Parenthesis");
           }
-          else
-          {
+          else {
             shared_ptr<XdmfArray> val2 = valueStack.top();
             valueStack.pop();
             shared_ptr<XdmfArray> val1 = valueStack.top();
             valueStack.pop();
-            if (operationStack.size() == 0)
-            {
+            if (operationStack.size() == 0) {
               XdmfError::message(XdmfError::FATAL,
                                  "Error: Not Enough Operators in evaluateExpression");
             }
-            else
-            {
+            else {
               valueStack.push(evaluateOperation(val1, val2, operationStack.top()));
               operationStack.pop();
             }
@@ -598,14 +553,12 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
       }
 
       /*throw error if there's extra operations*/
-      if (operationStack.size() > 0)
-      {
+      if (operationStack.size() > 0) {
         XdmfError::message(XdmfError::WARNING,
                            "Warning: Left Over Operators in evaluateExpression");
       }
 
-      if (valueStack.size() > 1)
-      {
+      if (valueStack.size() > 1) {
         XdmfError::message(XdmfError::WARNING,
                            "Warning: Left Over Values in evaluateExpression");
       }
@@ -620,13 +573,11 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
     static int addFunction(std::string newName, PyObject * functionref)
     {
       /*check if the object is callable*/
-      if (PyCallable_Check(functionref) == 1)
-      {
+      if (PyCallable_Check(functionref) == 1) {
         pythonFunctions[newName] = functionref;
         return pythonFunctions.size();
       }
-      else
-      {
+      else {
         XdmfError::message(XdmfError::FATAL,
           "Error: Function is not callable");
         return -1;
@@ -637,8 +588,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
     static std::vector<std::string> getSupportedFunctions()
     {
       std::vector<std::string> returnVector = XdmfArray::getSupportedFunctions();
-      for (std::map<std::string, PyObject *>::iterator functionWalker = pythonFunctions.begin(); functionWalker != pythonFunctions.end(); functionWalker++)
-      {
+      for (std::map<std::string, PyObject *>::iterator functionWalker = pythonFunctions.begin(); functionWalker != pythonFunctions.end(); functionWalker++) {
         returnVector.push_back(functionWalker->first);
       }
       return returnVector;
@@ -646,8 +596,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
     static shared_ptr<XdmfArray> evaluateFunction(std::vector<shared_ptr<XdmfArray> > functValues, std::string functName)
     {
-      if (pythonFunctions.find(functName)!= pythonFunctions.end())
-      {
+      if (pythonFunctions.find(functName)!= pythonFunctions.end()) {
         swig_type_info * paramType = SWIG_TypeQuery("_p_std__vectorT_boost__shared_ptrT_XdmfArray_t_std__allocatorT_boost__shared_ptrT_XdmfArray_t_t_t");
         PyObject * pyVector = SWIG_NewPointerObj(static_cast<void*>(& functValues), paramType, SWIG_POINTER_NEW);
         PyObject * args = PyTuple_New(1);
@@ -660,8 +609,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
         shared_ptr<XdmfArray> returnArray = returnArrayPointer[0];
         return returnArray;
       }
-      else
-      {
+      else {
          /*this does not actually cause an infinte recursive loop, it sends the values to the version of the function defined in XdmfArray.cpp*/
          return XdmfArray::evaluateFunction(functValues, functName);
       }
@@ -669,26 +617,21 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
     static int addOperation(char newName, PyObject * calcref, int priority)
     {
-      if (newName == '(' || newName == ')')
-      {
+      if (newName == '(' || newName == ')') {
         XdmfError::message(XdmfError::FATAL,
                            "Error: Parenthesis can not be redefined");
       }
       /*check if the object is callable*/
-      if (PyCallable_Check(calcref) == 1)
-      {
-        if (pythonOperations.find(newName) != pythonOperations.end() || XdmfArray::getSupportedOperations().find(newName) != std::string::npos)
-        {
+      if (PyCallable_Check(calcref) == 1) {
+        if (pythonOperations.find(newName) != pythonOperations.end() || XdmfArray::getSupportedOperations().find(newName) != std::string::npos) {
           XdmfError::message(XdmfError::WARNING,
-            "Warning: Operation Redefined");/*It's a good idea to warn users when they're doing this*/
+                             "Warning: Operation Redefined");/*It's a good idea to warn users when they're doing this*/
           size_t operationLocation = pythonSupportedOperations.find(newName);
           /*if not an already defined python function*/
-          if (pythonOperations.find(newName) == pythonOperations.end())
-          {
+          if (pythonOperations.find(newName) == pythonOperations.end()) {
             pythonSupportedOperations.push_back(newName);
             int priorityArraySize = sizeof(pythonOperationPriority)/sizeof(int);
-            if (pythonSupportedOperations.size()-1 > priorityArraySize)
-            {
+            if (pythonSupportedOperations.size()-1 > priorityArraySize) {
               int newArray [priorityArraySize*2];
               std::copy(pythonOperationPriority, pythonOperationPriority+(priorityArraySize-1), newArray);
               delete pythonOperationPriority;
@@ -698,16 +641,13 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
           pythonOperationPriority[operationLocation] = priority;
           /*if defined on the c++ side same as adding a new one*/
         }
-        else
-        {
+        else {
           pythonSupportedOperations += newName;
-          if (XdmfArray::getValidVariableChars().find(newName) != std::string::npos || XdmfArray::getValidDigitChars().find(newName) != std::string::npos)
-          {
+          if (XdmfArray::getValidVariableChars().find(newName) != std::string::npos || XdmfArray::getValidDigitChars().find(newName) != std::string::npos) {
             XdmfError::message(XdmfError::FATAL,
               "Error: Operation Overlaps with Variables");
           }
-          else
-          {
+          else {
             pythonSupportedOperations.push_back(newName);
             int priorityArraySize = sizeof(pythonOperationPriority)/sizeof(int);
             if (pythonSupportedOperations.size()-1 > priorityArraySize)
@@ -722,8 +662,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
         pythonOperations[newName] = calcref;
         return pythonOperations.size();
       }
-      else
-      {
+      else {
         XdmfError::message(XdmfError::FATAL,
           "Error: Operation is not callable");
         return -1;
@@ -733,8 +672,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
     static std::string getSupportedOperations()
     {
       std::string returnVector = XdmfArray::getSupportedOperations();
-      for (std::map<char, PyObject *>::iterator functionWalker = pythonOperations.begin(); functionWalker != pythonOperations.end(); functionWalker++)
-      {
+      for (std::map<char, PyObject *>::iterator functionWalker = pythonOperations.begin(); functionWalker != pythonOperations.end(); functionWalker++) {
         returnVector += functionWalker->first;
       }
       return returnVector;
@@ -742,8 +680,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
     static shared_ptr<XdmfArray> evaluateOperation(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2, char functName)
     {
-      if (pythonOperations.find(functName)!= pythonOperations.end())
-      {
+      if (pythonOperations.find(functName)!= pythonOperations.end()) {
         swig_type_info * paramType = SWIG_TypeQuery("_p_boost__shared_ptrT_XdmfArray_t");
         PyObject * pyVal1 = SWIG_NewPointerObj(static_cast<void*>(& val1), paramType, SWIG_POINTER_NEW);
         PyObject * pyVal2 = SWIG_NewPointerObj(static_cast<void*>(& val2), paramType, SWIG_POINTER_NEW);
@@ -758,8 +695,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
         shared_ptr<XdmfArray> returnArray = returnArrayPointer[0];
         return returnArray;
       }
-      else
-      {
+      else {
          /*this does not actually cause an infinte recursive loop, it sends the values to the version of the function defined in XdmfArray.cpp*/
          return XdmfArray::evaluateOperation(val1, val2, functName);
       }
@@ -772,14 +708,11 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
       /*string is parsed left to right
         elements of the same priority are evaluated right to left*/
-      for (int i = 0; i < expression.size(); i++)
-      {
-        if (XdmfArray::getValidDigitChars().find(expression[i]) != std::string::npos) /*found to be a digit*/
-        {
+      for (int i = 0; i < expression.size(); i++) {
+        if (XdmfArray::getValidDigitChars().find(expression[i]) != std::string::npos) { /*found to be a digit*/
           /*progress until a non-digit is found*/
           int valueStart = i;
-          while (XdmfArray::getValidDigitChars().find(expression[i + 1]) != std::string::npos)
-          {
+          while (XdmfArray::getValidDigitChars().find(expression[i + 1]) != std::string::npos) {
             i++;
           }
           /*push back to the value stack*/
@@ -787,37 +720,29 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
           valueArray->insert(0, atof(expression.substr(valueStart, i + 1 - valueStart).c_str()));/*use this to convert to double*/
           valueStack.push(valueArray);
         }
-        else if (XdmfArray::getValidVariableChars().find(expression[i]) != std::string::npos)/*found to be a variable*/
-        {
+        else if (XdmfArray::getValidVariableChars().find(expression[i]) != std::string::npos) {/*found to be a variable*/
           int valueStart = i;
           /*progress until a nonvariable value is found*/
-          while (XdmfArray::getValidVariableChars().find(expression[i + 1]) != std::string::npos)
-          {
+          while (XdmfArray::getValidVariableChars().find(expression[i + 1]) != std::string::npos) {
             i++;
           }
           /*convert to equivalent*/
-          if (variables.find(expression.substr(valueStart, i + 1 - valueStart)) == variables.end())
-          {
+          if (variables.find(expression.substr(valueStart, i + 1 - valueStart)) == variables.end()) {
             std::vector<std::string> functionList = XdmfArray::getSupportedFunctions();
             bool functionExists = false;
-            for (int j = 0; j < functionList.size() && !functionExists; j++)
-            {
-              if (functionList[j] == expression.substr(valueStart, i + 1 - valueStart))
-              {
+            for (int j = 0; j < functionList.size() && !functionExists; j++) {
+              if (functionList[j] == expression.substr(valueStart, i + 1 - valueStart)) {
                 functionExists = true;
               }
             }
-            if (functionExists)
-            {
+            if (functionExists) {
               XdmfError::message(XdmfError::FATAL,
                                  "Error: Invalid Variable in evaluateExpression " + expression.substr(valueStart, i + 1 - valueStart));
             }
-            else
-            {
+            else {
               std::string currentFunction = expression.substr(valueStart, i + 1 - valueStart);
               /*check if next character is an open parenthesis*/
-              if (expression[i+1] != '(')
-              {
+              if (expression[i+1] != '(') {
                 XdmfError::message(XdmfError::FATAL,
                                    "Error: No values supplied to function " + expression.substr(valueStart, i + 1 - valueStart));
               }
@@ -825,14 +750,11 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
               i = i + 2;
               valueStart = i;
               int numOpenParenthesis = 0;
-              while ((expression[i] != ')' || numOpenParenthesis) && i < expression.size())
-              {
-                if (expression[i] == '(')
-                {
+              while ((expression[i] != ')' || numOpenParenthesis) && i < expression.size()) {
+                if (expression[i] == '(') {
                   numOpenParenthesis++;
                 }
-                else if (expression[i] == ')')
-                {
+                else if (expression[i] == ')') {
                   numOpenParenthesis--;
                 }
                 i++;
@@ -841,17 +763,14 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
               std::vector<shared_ptr<XdmfArray> > parameterVector;
               /*split that string at commas*/
               size_t parameterSplit = 0;
-              while (parameterSplit != std::string::npos)
-              {
+              while (parameterSplit != std::string::npos) {
                 parameterSplit = 0;
                 parameterSplit = functionParameters.find_first_of(",", parameterSplit);
                 /*feed the substrings to the parse function*/
-                if (parameterSplit == std::string::npos)
-                {
+                if (parameterSplit == std::string::npos) {
                   parameterVector.push_back(evaluateExpression(functionParameters, variables));
                 }
-                else
-                {
+                else {
                   parameterVector.push_back(evaluateExpression(functionParameters.substr(0, parameterSplit), variables));
                   functionParameters = functionParameters.substr(parameterSplit+1);
                 }
@@ -859,29 +778,22 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
               valueStack.push(evaluateFunction(parameterVector, currentFunction));
             }
           }
-          else
-          {
+          else {
             /*push equivalent to value stack*/
             valueStack.push(variables.find(expression.substr(valueStart, i + 1 - valueStart))->second);
           }
         }
-        else if (XdmfArray::getSupportedOperations().find(expression[i]) != std::string::npos)//found to be an operation
-        {
+        else if (XdmfArray::getSupportedOperations().find(expression[i]) != std::string::npos) {/*found to be an operation*/
           /*pop operations off the stack until one of a lower or equal importance is found*/
-          if (operationStack.size() > 0)
-          {
-            if (expression[i] == ')')
-            {
+          if (operationStack.size() > 0) {
+            if (expression[i] == ')') {
               /*to close a parenthesis pop off all operations until another parentheis is found*/
-              while (operationStack.size() > 0 && operationStack.top() != '(')
-              {
-                if (valueStack.size() < 2)/*must be at least two values for this loop to work properly*/
-                {
+              while (operationStack.size() > 0 && operationStack.top() != '(') {
+                if (valueStack.size() < 2) {/*must be at least two values for this loop to work properly*/
                   XdmfError::message(XdmfError::FATAL,
                                      "Error: Not Enough Values in evaluateExpression");
                 }
-                else
-                {
+                else {
                   shared_ptr<XdmfArray> val2 = valueStack.top();
                   valueStack.pop();
                   shared_ptr<XdmfArray> val1 = valueStack.top();
@@ -892,34 +804,28 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
               }
               operationStack.pop();
             }
-            else if (expression[i] == '(')
-            {
+            else if (expression[i] == '(') {
               /*just add it if it's a start parenthesis
                 nothing happens here in that case
                 addition happens after the if statement*/
             }
-            else
-            {
+            else {
               int operationLocation = XdmfArray::getOperationPriority(expression[i]);
               int topOperationLocation = XdmfArray::getOperationPriority(operationStack.top());
               /*see order of operations to determine importance*/
-              while (operationStack.size() > 0 && operationLocation < topOperationLocation)
-              {
-                if (valueStack.size() < 2)/*must be at least two values for this loop to work properly*/
-                {
+              while (operationStack.size() > 0 && operationLocation < topOperationLocation) {
+                if (valueStack.size() < 2) {/*must be at least two values for this loop to work properly*/
                   XdmfError::message(XdmfError::FATAL,
                                      "Error: Not Enough Values in evaluateExpression");
                 }
-                else
-                {
+                else {
                   shared_ptr<XdmfArray> val2 = valueStack.top();
                   valueStack.pop();
                   shared_ptr<XdmfArray> val1 = valueStack.top();
                   valueStack.pop();
                   valueStack.push(evaluateOperation(val1, val2, operationStack.top()));
                   operationStack.pop();
-                  if (operationStack.size() == 0)
-                  {
+                  if (operationStack.size() == 0) {
                     break;
                   }
                   topOperationLocation = XdmfArray::getOperationPriority(operationStack.top());
@@ -927,8 +833,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
               }
             }
           }
-          if (expression[i] != ')')
-          {
+          if (expression[i] != ')') {
             /*add the operation to the operation stack*/
             operationStack.push(expression[i]);
           }
@@ -938,33 +843,26 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
 
       /*empty what's left in the stacks before finishing*/
-      while (valueStack.size() > 1 && operationStack.size() > 0)
-      {
-        if (valueStack.size() < 2)/*must be at least two values for this loop to work properly*/
-        {
+      while (valueStack.size() > 1 && operationStack.size() > 0) {
+        if (valueStack.size() < 2) {/*must be at least two values for this loop to work properly*/
           XdmfError::message(XdmfError::FATAL,
                              "Error: Not Enough Values in evaluateExpression");
         }
-        else
-        {
-          if(operationStack.top() == '(')
-          {
+        else {
+          if(operationStack.top() == '(') {
             XdmfError::message(XdmfError::WARNING,
                                "Warning: Unpaired Parenthesis");
           }
-          else
-          {
+          else {
             shared_ptr<XdmfArray> val2 = valueStack.top();
             valueStack.pop();
             shared_ptr<XdmfArray> val1 = valueStack.top();
             valueStack.pop();
-            if (operationStack.size() == 0)
-            {
+            if (operationStack.size() == 0) {
               XdmfError::message(XdmfError::FATAL,
                                  "Error: Not Enough Operators in evaluateExpression");
             }
-            else
-            {
+            else {
               valueStack.push(evaluateOperation(val1, val2, operationStack.top()));
               operationStack.pop();
             }
@@ -973,14 +871,12 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
       }
 
       /*throw error if there's extra operations*/
-      if (operationStack.size() > 0)
-      {
+      if (operationStack.size() > 0) {
         XdmfError::message(XdmfError::WARNING,
                            "Warning: Left Over Operators in evaluateExpression");
       }
 
-      if (valueStack.size() > 1)
-      {
+      if (valueStack.size() > 1) {
         XdmfError::message(XdmfError::WARNING,
                            "Warning: Left Over Values in evaluateExpression");
       }

@@ -49,5 +49,15 @@ int main(int, char **)
 	exampleController->read(exampleArray);
 	//exampleArray now holds the data that exampleController holds.
 
+        std::vector<unsigned int> exampleStart = exampleController->getStart();
+
+        std::vector<unsigned int> exampleStride = exampleController->getStride();
+
+	unsigned int newArrayOffset = 5;//default is 0
+
+	exampleController->setArrayOffset(newArrayOffset);
+
+	unsigned int exampleOffset = exampleController->getArrayOffset();
+
 	return 0;
 }

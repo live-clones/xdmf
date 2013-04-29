@@ -44,6 +44,18 @@ public:
   /**
    * Create a new XdmfGraph.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfGraph.cpp
+   * @skipline New
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleGraph.py
+   * @skipline New
+   *
    * @param numberNodes number of nodes in graph.
    *
    * @return constructed XdmfGraph.

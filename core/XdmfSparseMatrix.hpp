@@ -41,6 +41,18 @@ public:
   /**
    * Create a new XdmfSparseMatrix.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfSparseMatrix.cpp
+   * @skipline New
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleSparseMatrix.py
+   * @skipline New
+   *
    * @param numberRows number of rows in matrix.
    * @param numberColumns number of columns in matrix.
    *
@@ -57,6 +69,22 @@ public:
   /**
    * Get the column index array.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfSparseMatrix.cpp
+   * @skipline New
+   * @skipline newColumnIndex
+   * @until getColumnIndex
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleSparseMatrix.py
+   * @skipline New
+   * @skipline newColumnIndex
+   * @until getColumnIndex
+   *
    * @return array containing column indices for nonzero entries of
    * matrix. This is the same size as values.
    */
@@ -69,12 +97,44 @@ public:
   /**
    * Get the name of the sparse matrix.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfSparseMatrix.cpp
+   * @skipline New
+   * @until getName
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleSparseMatrix.py
+   * @skipline New
+   * @until getName
+   *
    * @return a string containing the name of the sparse matrix.
    */
   std::string getName() const;
 
   /**
    * Get the number of columns in the sparse matrix.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfSparseMatrix.cpp
+   * @skipline New
+   * @skipline newColumnIndex
+   * @until setColumn
+   * @skipline getNumberColumns
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleSparseMatrix.py
+   * @skipline New
+   * @skipline newColumnIndex
+   * @until setColumn
+   * @skipline getNumberColumns
    *
    * @return the number of columns in the sparse matrix.
    */
@@ -83,12 +143,46 @@ public:
   /**
    * Get the number of rows in the sparse matrix.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfSparseMatrix.cpp
+   * @skipline New
+   * @skipline newRowPointer
+   * @until setRow
+   * @skipline getNumberRows
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleSparseMatrix.py
+   * @skipline New
+   * @skipline newRowPointer
+   * @until setRow
+   * @skipline getNumberRows
+   *
    * @return the number of rows in the sparse matrix.
    */
   unsigned int getNumberRows() const;
 
   /**
    * Get the row pointer array.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfSparseMatrix.cpp
+   * @skipline New
+   * @skipline newRowPointer
+   * @until getRow
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleSparseMatrix.py
+   * @skipline New
+   * @skipline newRowPointer
+   * @until getRow
    *
    * @return array containing indices into column array for each
    * row. This is the size of the number of rows in the matrix +
@@ -99,6 +193,30 @@ public:
   /**
    * Get the values array.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfSparseMatrix.cpp
+   * @skipline New
+   * @skipline newRowPointer
+   * @until getRow
+   * @skipline newColumnIndex
+   * @until setColumn
+   * @skipline newValues
+   * @until getValues
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleSparseMatrix.py
+   * @skipline New
+   * @skipline newRowPointer
+   * @until getRow
+   * @skipline newColumnIndex
+   * @until setColumn
+   * @skipline newValues
+   * @until getValues
+   *
    * @return array containing values of nonzero entries of matrix.
    */
   shared_ptr<XdmfArray> getValues();
@@ -106,12 +224,54 @@ public:
   /**
    * Get values as a string in two dimensional format.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfSparseMatrix.cpp
+   * @skipline New
+   * @skipline newRowPointer
+   * @until getRow
+   * @skipline newColumnIndex
+   * @until setColumn
+   * @skipline newValues
+   * @until setValues
+   * @skipline getValuesString
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleSparseMatrix.py
+   * @skipline New
+   * @skipline newRowPointer
+   * @until getRow
+   * @skipline newColumnIndex
+   * @until setColumn
+   * @skipline newValues
+   * @until setValues
+   * @skipline getValuesString
+   *
    * @return string representation of matrix.
    */
   std::string getValuesString() const;
 
   /**
    * Set the column index array.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfSparseMatrix.cpp
+   * @skipline New
+   * @skipline newColumnIndex
+   * @until getColumnIndex
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleSparseMatrix.py
+   * @skipline New
+   * @skipline newColumnIndex
+   * @until getColumnIndex
    *
    * @param columnIndex array containing column indices for nonzero
    * entries of matrix. This is the same size as values.
@@ -121,12 +281,42 @@ public:
   /**
    * Set the name of the sparse matrix.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfSparseMatrix.cpp
+   * @skipline New
+   * @until setName
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleSparseMatrix.py
+   * @skipline New
+   * @until setName
+   *
    * @param name a string containing the name to set.
    */
   void setName(const std::string & name);
 
   /**
    * Set the row pointer array.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfSparseMatrix.cpp
+   * @skipline New
+   * @skipline newRowPointer
+   * @until setRow
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleSparseMatrix.py
+   * @skipline New
+   * @skipline newRowPointer
+   * @until setRow
    *
    * @param rowPointer array containing indices into column array for
    * each row. This is the size of the number of rows in the matrix +
@@ -136,6 +326,30 @@ public:
 
   /**
    * Set the values array.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfSparseMatrix.cpp
+   * @skipline New
+   * @skipline newRowPointer
+   * @until getRow
+   * @skipline newColumnIndex
+   * @until setColumn
+   * @skipline newValues
+   * @until setValues
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleSparseMatrix.py
+   * @skipline New
+   * @skipline newRowPointer
+   * @until getRow
+   * @skipline newColumnIndex
+   * @until setColumn
+   * @skipline newValues
+   * @until setValues
    *
    * @param values array containing values of nonzero entries of
    * matrix.

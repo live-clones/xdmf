@@ -40,6 +40,7 @@ class XdmfCurvilinearGrid;
 class XdmfRectilinearGrid;
 class XdmfRegularGrid;
 class XdmfUnstructuredGrid;
+class XdmfHeavyDataWriter;
 
 //Includes
 #include <stack>
@@ -149,6 +150,11 @@ class XdmfUnstructuredGrid;
 #define XdmfClose xdmfclose_
 #define XdmfAddAttribute xdmfaddattribute_
 #define XdmfAddGrid xdmfaddgrid_
+
+#define XdmfAddGridCurvilinear xdmfaddgridcurvilinear_
+#define XdmfAddGridRectilinear xdmfaddgridrectilinear_
+#define XdmfAddGridRegular xdmfaddgridregular_
+
 #define XdmfAddGridCollection xdmfaddgridcollection_
 #define XdmfAddInformation xdmfaddinformation_
 #define XdmfAddPreviousAttribute xdmfaddpreviousattribute_
@@ -164,7 +170,7 @@ class XdmfUnstructuredGrid;
 #define XdmfWrite xdmfwrite_
 #define XdmfRead xdmfread_
 #define XdmfWriteHDF5 xdmfwritehdf5_
-
+#define XdmfInitHDF5 xdmfinithdf5_
 
 #define XdmfSetTopologyPolyline xdmfsettopologypolyline_
 
@@ -377,15 +383,52 @@ public:
                    const void * const values);
 
   /**
-   * Add grid to domain or collection. Inserts geometry, topology,
+   * Add unstructured grid to domain or collection. Inserts geometry, topology,
    * attributes, and informations into grid. If no geometry or
    * topology is set, an error is generated.
    * The top of parentAttributes, parentInformations, and parentSets
    * are placed in mAttributes, mInformations, and mSets
    *
-   * @param name of the grid.
+   * @param 	name		name of the grid.
+   * @param 	writeToHDF5	whether to write the grid to hdf5 after adding it
    */
-  void addGrid(const char * const name);
+  void addGrid(const char * const name, const bool writeToHDF5);
+
+  /**
+   * Add curvilinear grid to domain or collection. Inserts geometry, dimensions,
+   * attributes, and informations into grid. If no geometry or
+   * dimensions are set, an error is generated.
+   * The top of parentAttributes, parentInformations, and parentSets
+   * are placed in mAttributes, mInformations, and mSets
+   *
+   * @param 	name 	name of the grid.
+   * @param     writeToHDF5     whether to write the grid to hdf5 after adding it
+   */
+  void addGridCurvilinear(const char * const name, const bool writeToHDF5);
+
+  /**
+   * Add rectilinear grid to domain or collection. Inserts coordinate,
+   * attributes, and informations into grid. If no geometry or
+   * topology is set, an error is generated.
+   * The top of parentAttributes, parentInformations, and parentSets
+   * are placed in mAttributes, mInformations, and mSets
+   *
+   * @param 	name 	name of the grid.
+   * @param     writeToHDF5     whether to write the grid to hdf5 after adding it
+   */
+  void addGridRectilinear(const char * const name, const bool writeToHDF5);
+
+  /**
+   * Add rectilinear grid to domain or collection. Inserts origin, brick, dimensions,
+   * attributes, and informations into grid. If no geometry or
+   * topology is set, an error is generated.
+   * The top of parentAttributes, parentInformations, and parentSets
+   * are placed in mAttributes, mInformations, and mSets
+   *
+   * @param 	name 	name of the grid.
+   * @param     writeToHDF5     whether to write the grid to hdf5 after adding it
+   */
+  void addGridRegular(const char * const name, const bool writeToHDF5);
 
   /**
    * Add grid collection to domain or collection. Inserts attributes
@@ -435,8 +478,10 @@ public:
   /**
    * Closes grid collection. No additional grids or collections can be
    * added to the current collection.
+   *
+   * @param     writeToHDF5     whether to write the grid to hdf5 after adding it
    */
-  void closeGridCollection();
+  void closeGridCollection(const bool writeToHDF5);
 
   /**
    * Set the geometry (point data) that will be added to the next grid.
@@ -2204,8 +2249,17 @@ public:
    * Write HDF5 heavy data to disk and release
    *
    * @param xmlFilePath the path to the xml file to write to.
+   * @param release     whether or not to release data after a write
    */
-  void writeHDF5(const char * const xmlFilePath);
+  void writeHDF5(const char * const xmlFilePath, const bool release);
+
+  /**
+   * Generate the persistant hdf5 writer so it doesn't need to be generated later
+   *
+   * @param xmlFilePath the path to the xml file to write to.
+   * @param release	whether or not to release data after a write
+   */
+  void initHDF5(const char * const xmlFilePath, const bool release);
 
   /** 
    * Read xml file and make it the domain. Replaces current domain.
@@ -2241,6 +2295,7 @@ private:
   shared_ptr<XdmfArray>	   mDimensions;
   shared_ptr<XdmfArray>    mOrigin;
   shared_ptr<XdmfArray>    mBrick;
+  shared_ptr<XdmfHeavyDataWriter> mHeavyDataWriter;
 
   std::vector<shared_ptr<XdmfAttribute> >     mAttributes;
   std::vector<shared_ptr<XdmfArray> >         mCoordinates;

@@ -12,5 +12,23 @@ int main(int, char **)
 
 	int exampleLimit = exampleWriter->getFileSizeLimit();
 
+	bool newAllow = true;//false is default
+
+	exampleWriter->setAllowSetSplitting(newAllow);
+
+	bool exampleAllowSplitting = exampleWriter->getAllowSetSplitting();
+
+	int newFileIndex = 0;//0 resets to no appended index
+
+	exampleWriter->setFileIndex(newFileIndex);
+
+	int exampleIndex = exampleWriter->getFileIndex();
+
+	int newChunk = 10;//creates blocks in sets of 10 slots
+
+	exampleWriter->setChunkSize(newChunk);
+
+	int exampleChunk = exampleWriter->getChunkSize();
+
 	return 0;
 }

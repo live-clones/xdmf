@@ -327,7 +327,7 @@ PROGRAM XdmfFortranExample
   CALL XDMFREPLACEINFORMATION(obj, 0, 'Edited Key'//CHAR(0), 'Edited Value'//CHAR(0))
   CALL XDMFREPLACEGRIDCOLLECTIONGRID(obj, XDMF_GRID_TYPE_UNSTRUCTURED, 0, 'Edited Grid'//CHAR(0))
   PRINT *, 'Grid Replaced'
-  CALL XDMFWRITE(obj, outfilename)
+  CALL XDMFWRITE(obj, outfilename, 10, .TRUE.)
   CALL XDMFCLOSE(obj)
 
 END PROGRAM XdmfFortranExample

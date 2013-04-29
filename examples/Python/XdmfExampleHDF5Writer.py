@@ -9,3 +9,21 @@ if __name__ == "__main__":
 	exampleWriter.setFileSizeLimit(newFileSizeLimit)
 
 	exampleLimit = exampleWriter.getFileSizeLimit()
+
+        newAllow = True#false is default
+
+        exampleWriter.setAllowSetSplitting(newAllow)
+
+        exampleAllowSplitting = exampleWriter.getAllowSetSplitting()
+
+        newFileIndex = 0#0 resets to no appended index
+
+        exampleWriter.setFileIndex(newFileIndex)
+
+        exampleIndex = exampleWriter.getFileIndex()
+
+        newChunk = 10#creates blocks in sets of 10 slots
+
+        exampleWriter.setChunkSize(newChunk)
+
+        exampleChunk = exampleWriter.getChunkSize()

@@ -134,10 +134,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfHDF5Writer.cpp
+   * @skipline newPath
+   * @until New
+   * @skipline newAllow
+   * @until setAllow
    *
    * Python
    *
    * @dontinclude XdmfExampleHDF5Writer.py
+   * @skipline newPath
+   * @until New
+   * @skipline newAllow
+   * @until setAllow
    *
    * @param	newAllow	whether to allow data sets to be split across hdf5 files
    */
@@ -154,10 +162,16 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfHDF5Writer.cpp
+   * @skipline newPath
+   * @until New
+   * @skipline exampleAllow
    *
    * Python
    *
    * @dontinclude XdmfExampleHDF5Writer.py
+   * @skipline newPath
+   * @until New
+   * @skipline exampleAllow
    *
    * @return	whether to allow data sets to be split across hdf5 files
    */
@@ -169,10 +183,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfHDF5Writer.cpp
+   * @skipline newPath
+   * @until New
+   * @skipline newFileIndex
+   * @until setFileIndex
    *
    * Python
    *
    * @dontinclude XdmfExampleHDF5Writer.py
+   * @skipline newPath
+   * @until New
+   * @skipline newFileIndex
+   * @until setFileIndex
    *
    * @param	newIndex	The index that the writer will append to the file name when incorperating file splitting
    */
@@ -184,10 +206,16 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfHDF5Writer.cpp
+   * @skipline newPath
+   * @until New
+   * @skipline getFileIndex
    *
    * Python
    *
    * @dontinclude XdmfExampleHDF5Writer.py
+   * @skipline newPath
+   * @until New
+   * @skipline getFileIndex
    *
    * @return	The current file index.
    */
@@ -201,10 +229,16 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfHDF5Writer.cpp
+   * @skipline newPath
+   * @until New
+   * @skipline getChunkSize
    *
    * Python
    *
    * @dontinclude XdmfExampleHDF5Writer.py
+   * @skipline newPath
+   * @until New
+   * @skipline getChunkSize
    *
    * @return chunk size used to output datasets to hdf5.
    */
@@ -220,10 +254,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfHDF5Writer.cpp
+   * @skipline newPath
+   * @until New
+   * @skipline newChunk
+   * @until setChunkSize
    *
    * Python
    *
    * @dontinclude XdmfExampleHDF5Writer.py
+   * @skipline newPath
+   * @until New
+   * @skipline newChunk
+   * @until setChunkSize
    *
    * @param chunkSize the number of elements per chunk.
    */

@@ -191,10 +191,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfHeavyDataController.cpp
+   * @skipline Assuming
+   * @until Since
+   * @skipline newArrayOffset
+   * @until setArrayOffset
    *
    * Python
    *
    * @dontinclude XdmfExampleHeavyDataController.py
+   * @skipline Assuming
+   * @until Since
+   * @skipline newArrayOffset
+   * @until setArrayOffset
    *
    * @param	newOffset	the new index at which the controller will be written
    */
@@ -207,10 +215,16 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfHeavyDataController.cpp
+   * @skipline Assuming
+   * @until Since
+   * @skipline getArrayOffset
    *
    * Python
    *
    * @dontinclude XdmfExampleHeavyDataController.py
+   * @skipline Assuming
+   * @until Since
+   * @skipline getArrayOffset
    *
    * @return	the offset that the array will read from
    */
@@ -219,6 +233,20 @@ public:
   /**
    * Get the start index of the heavy data set owned by this controller.
    *
+   * C++
+   *
+   * @dontinclude ExampleXdmfHeavyDataController.cpp
+   * @skipline Assuming
+   * @until Since
+   * @skipline getStart
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleHeavyDataController.py
+   * @skipline Assuming
+   * @until Since
+   * @skipline getStart
+   *
    * @return a vector containing the start index in each dimension of
    * the heavy data set owned by this controller.
    */
@@ -226,6 +254,20 @@ public:
 
   /**
    * Get the stride of the heavy data set owned by this controller.
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfHeavyDataController.cpp
+   * @skipline Assuming
+   * @until Since
+   * @skipline getStride
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleHeavyDataController.py
+   * @skipline Assuming
+   * @until Since
+   * @skipline getStride
    *
    * @return a vector containing the stride in each dimension of the
    * heavy data set owned by this controller.

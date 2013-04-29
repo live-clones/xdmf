@@ -271,6 +271,7 @@ XdmfFortran::XdmfFortran() :
   mBrick(shared_ptr<XdmfArray>()),
   mOrigin(shared_ptr<XdmfArray>()),
   mDimensions(shared_ptr<XdmfArray>()),
+  mHeavyDataWriter(shared_ptr<XdmfHeavyDataWriter>()),
   mMaxFileSize(0),
   mAllowSetSplitting(false)
 {
@@ -357,85 +358,8 @@ XdmfFortran::addAttribute(const char * const name,
 }
 
 void 
-XdmfFortran::addGrid(const char * const name)
+XdmfFortran::addGrid(const char * const name, const bool writeToHDF5)//unstructured version
 {
-  /*
-  if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
-  {
-    if(mDimensions == NULL) {
-      XdmfError::message(XdmfError::FATAL, 
-                       "Must set dimensions before adding grid.");
-    }
-  
-    const shared_ptr<XdmfCurvilinearGrid> grid = XdmfCurvilinearGrid::New(mDimensions);
-    grid->setName(name);
-
-    if(mGeometry == NULL) {
-      XdmfError::message(XdmfError::FATAL, 
-                       "Must set geometry before adding grid.");
-    }
-
-    grid->setGeometry(mGeometry);
-
-    insertElements(grid,
-                   mAttributes,
-                   mInformations,
-                   mSets,
-                   mMaps,
-                   mTime,
-                   mDomain,
-                   mGridCollections);
-  }
-  else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
-  {
-    if(mCoordinates.empty()) {
-      XdmfError::message(XdmfError::FATAL, 
-                       "Must set Coordinates before adding grid.");
-    }
-  
-    const shared_ptr<XdmfRectilinearGrid> grid = XdmfRectilinearGrid::New(mCoordinates);
-    mCoordinates.clear();
-    grid->setName(name);
-
-    insertElements(grid,
-                   mAttributes,
-                   mInformations,
-                   mSets,
-                   mMaps,
-                   mTime,
-                   mDomain,
-                   mGridCollections);
-  }
-  else if (gridType == XDMF_GRID_TYPE_REGULAR)
-  {
-
-    if(mBrick == NULL) {
-      XdmfError::message(XdmfError::FATAL, 
-                       "Must set brick size before adding grid.");
-    }
-
-    if(mDimensions == NULL) {
-      XdmfError::message(XdmfError::FATAL, 
-                       "Must set dimensions before adding grid.");
-    }
-
-    if(mOrigin == NULL) {
-      XdmfError::message(XdmfError::FATAL, 
-                       "Must set origin before adding grid.");
-    }
-  
-    const shared_ptr<XdmfRegularGrid> grid = XdmfRegularGrid::New(mBrick, mDimensions, mOrigin);
-    grid->setName(name);
-
-    insertElements(grid,
-                   mAttributes,
-                   mInformations,
-                   mSets,
-                   mMaps,
-                   mTime,
-                   mDomain,
-                   mGridCollections);
-  }*/
   const shared_ptr<XdmfUnstructuredGrid> grid = XdmfUnstructuredGrid::New();
   grid->setName(name);
 
@@ -460,7 +384,102 @@ XdmfFortran::addGrid(const char * const name)
                  mTime,
                  mDomain,
                  mGridCollections);
+  if (writeToHDF5 && mHeavyDataWriter != NULL) {
+    grid->accept(mHeavyDataWriter);
+  }
 }
+
+void
+XdmfFortran::addGridCurvilinear(const char * const name, const bool writeToHDF5)
+{
+  if(mDimensions == NULL) {
+    XdmfError::message(XdmfError::FATAL,
+                       "Must set dimensions before adding grid.");
+  }
+
+  const shared_ptr<XdmfCurvilinearGrid> grid = XdmfCurvilinearGrid::New(mDimensions);
+  grid->setName(name);
+
+  if(mGeometry == NULL) {
+    XdmfError::message(XdmfError::FATAL,
+                       "Must set geometry before adding grid.");
+  }
+
+  grid->setGeometry(mGeometry);
+
+  insertElements(grid,
+                 mAttributes,
+                 mInformations,
+                 mSets,
+                 mMaps,
+                 mTime,
+                 mDomain,
+                 mGridCollections);
+  if (writeToHDF5 && mHeavyDataWriter != NULL) {
+    grid->accept(mHeavyDataWriter);
+  }
+}
+
+void
+XdmfFortran::addGridRectilinear(const char * const name, const bool writeToHDF5)
+{
+  if(mCoordinates.empty()) {
+    XdmfError::message(XdmfError::FATAL,
+                       "Must set Coordinates before adding grid.");
+  }
+
+  const shared_ptr<XdmfRectilinearGrid> grid = XdmfRectilinearGrid::New(mCoordinates);
+  mCoordinates.clear();
+  grid->setName(name);
+
+  insertElements(grid,
+                 mAttributes,
+                 mInformations,
+                 mSets,
+                 mMaps,
+                 mTime,
+                 mDomain,
+                 mGridCollections);
+  if (writeToHDF5 && mHeavyDataWriter != NULL) {
+    grid->accept(mHeavyDataWriter);
+  }
+}
+
+void
+XdmfFortran::addGridRegular(const char * const name, const bool writeToHDF5)
+{
+  if(mBrick == NULL) {
+    XdmfError::message(XdmfError::FATAL,
+                       "Must set brick size before adding grid.");
+  }
+
+  if(mDimensions == NULL) {
+    XdmfError::message(XdmfError::FATAL,
+                       "Must set dimensions before adding grid.");
+  }
+
+  if(mOrigin == NULL) {
+    XdmfError::message(XdmfError::FATAL,
+                       "Must set origin before adding grid.");
+  }
+
+  const shared_ptr<XdmfRegularGrid> grid = XdmfRegularGrid::New(mBrick, mDimensions, mOrigin);
+  grid->setName(name);
+
+  insertElements(grid,
+                 mAttributes,
+                 mInformations,
+                 mSets,
+                 mMaps,
+                 mTime,
+                 mDomain,
+                 mGridCollections);
+  if (writeToHDF5 && mHeavyDataWriter != NULL) {
+    grid->accept(mHeavyDataWriter);
+  }
+}
+
+
 
 void 
 XdmfFortran::addGridCollection(const char * const name,
@@ -527,9 +546,12 @@ XdmfFortran::addPreviousInformation(const int informationId)
 }
 
 void 
-XdmfFortran::closeGridCollection()
+XdmfFortran::closeGridCollection(const bool writeToHDF5)
 {
   if(!mGridCollections.empty()) {
+    if (writeToHDF5 && mHeavyDataWriter != NULL) {
+      mGridCollections.top()->accept(mHeavyDataWriter);
+    }
     mGridCollections.pop();
   }
 }
@@ -5899,8 +5921,15 @@ XdmfFortran::setMaxFileSize(int newSize)
 void 
 XdmfFortran::write(const char * const xmlFilePath, const int datalimit, const bool release)
 {
-  shared_ptr<XdmfWriter> writer = XdmfWriter::New(xmlFilePath);
-  writer->setLightDataLimit(mMaxFileSize);
+  shared_ptr<XdmfWriter> writer;
+  if (mHeavyDataWriter == NULL) {
+    writer = XdmfWriter::New(xmlFilePath);
+    mHeavyDataWriter = writer->getHeavyDataWriter();
+  }
+  else {
+    writer = XdmfWriter::New(xmlFilePath, mHeavyDataWriter);
+  }
+  writer->setLightDataLimit(datalimit);
   writer->getHeavyDataWriter()->setReleaseData(release);
   shared_dynamic_cast<XdmfHDF5Writer>(writer->getHeavyDataWriter())->setFileSizeLimit(mMaxFileSize);
   shared_dynamic_cast<XdmfHDF5Writer>(writer->getHeavyDataWriter())->setAllowSetSplitting(mAllowSetSplitting);
@@ -5908,13 +5937,29 @@ XdmfFortran::write(const char * const xmlFilePath, const int datalimit, const bo
 }
 
 void 
-XdmfFortran::writeHDF5(const char * const xmlFilePath)
+XdmfFortran::writeHDF5(const char * const xmlFilePath, const bool release)
+{
+  if (mHeavyDataWriter == NULL || mHeavyDataWriter->getFilePath() != xmlFilePath) {
+    shared_ptr<XdmfHDF5Writer> writer = XdmfHDF5Writer::New(xmlFilePath);
+    writer->setFileSizeLimit(mMaxFileSize);
+    writer->setAllowSetSplitting(mAllowSetSplitting);
+    writer->setReleaseData( release );
+    mHeavyDataWriter = writer;
+  }
+  if (mHeavyDataWriter->getReleaseData() != release) {
+    mHeavyDataWriter->setReleaseData(release);
+  }
+  mDomain->accept(mHeavyDataWriter);
+}
+
+void
+XdmfFortran::initHDF5(const char * const xmlFilePath, const bool release)
 {
   shared_ptr<XdmfHDF5Writer> writer = XdmfHDF5Writer::New(xmlFilePath);
   writer->setFileSizeLimit(mMaxFileSize);
   writer->setAllowSetSplitting(mAllowSetSplitting);
-  writer->setReleaseData( true );
-  mDomain->accept(writer);
+  writer->setReleaseData( release );
+  mHeavyDataWriter = writer;
 }
 
 void 
@@ -5985,10 +6030,38 @@ extern "C"
 
   void
   XdmfAddGrid(long * pointer, 
-              char * gridName)
+              char * gridName,
+              bool * writeToHDF5)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
-    xdmfFortran->addGrid(gridName);
+    xdmfFortran->addGrid(gridName, *writeToHDF5);
+  }
+
+  void
+  XdmfAddGridCurvilinear(long * pointer,
+                         char * gridName,
+                         bool * writeToHDF5)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->addGridCurvilinear(gridName, *writeToHDF5);
+  }
+
+  void
+  XdmfAddGridRectilinear(long * pointer,
+                         char * gridName,
+                         bool * writeToHDF5)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->addGridRectilinear(gridName, *writeToHDF5);
+  }
+
+  void
+  XdmfAddGridRegular(long * pointer,
+                     char * gridName,
+                     bool * writeToHDF5)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->addGridRegular(gridName, *writeToHDF5);
   }
 
   void
@@ -6027,10 +6100,10 @@ extern "C"
   }
 
   void
-  XdmfCloseGridCollection(long * pointer)
+  XdmfCloseGridCollection(long * pointer, bool * writeToHDF5)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
-    xdmfFortran->closeGridCollection();
+    xdmfFortran->closeGridCollection(*writeToHDF5);
   }
 
   int
@@ -7261,10 +7334,20 @@ extern "C"
 
   void
   XdmfWriteHDF5(long * pointer,
-                char * xmlFilePath)
+                char * xmlFilePath,
+                bool * release)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
-    xdmfFortran->writeHDF5(xmlFilePath);
+    xdmfFortran->writeHDF5(xmlFilePath, release);
+  }
+
+  void
+  XdmfInitHDF5(long * pointer,
+                char * xmlFilePath,
+                bool * release)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->initHDF5(xmlFilePath, release);
   }
 
   void

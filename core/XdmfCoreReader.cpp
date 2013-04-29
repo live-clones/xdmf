@@ -489,7 +489,6 @@ public:
       }
       currNode = currNode->next;
     }
-
     return myItems;
   }
 
@@ -502,7 +501,6 @@ public:
   readSingleNode(const xmlNodePtr currNode,
                  std::vector<shared_ptr<XdmfItem> > & myItems)
   {
-
     //check to see if the node is already in the Xpath
     std::map<xmlNodePtr, shared_ptr<XdmfItem> >::const_iterator iter =
       mXPathMap.find(currNode);
@@ -585,7 +583,6 @@ public:
                            "mItemFactory failed to createItem in "
                            "XdmfCoreReader::XdmfCoreReaderImpl::readSingleNode");
       }
-
       newItem->populateItem(itemProperties, childItems, mCoreReader);
       myItems.push_back(newItem);
       mXPathMap.insert(std::make_pair(currNode, newItem));

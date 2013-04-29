@@ -45,3 +45,13 @@ if __name__ == "__main__":
 	exampleArray = XdmfArray.New()
 	exampleController.read(exampleArray)
 	#exampleArray now holds the data that exampleController holds.
+
+        exampleStart = exampleController.getStart()
+
+        exampleStride = exampleController.getStride()
+
+        newArrayOffset = 5#default is 0
+
+        exampleController.setArrayOffset(newArrayOffset)
+
+        exampleOffset = exampleController.getArrayOffset()

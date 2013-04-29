@@ -1,5 +1,6 @@
 #include "XdmfArray.hpp"
 #include "XdmfHDF5Writer.hpp"
+#include "XdmfHDF5Controller.hpp"
 
 int main(int, char **)
 {

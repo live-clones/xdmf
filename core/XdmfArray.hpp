@@ -310,7 +310,7 @@ public:
    * @param     val2            the second array being evaluated
    * @return			the arrays joined end to end
    */
-  static shared_ptr<XdmfArray> chunk(shared_ptr<XdmfArray>, shared_ptr<XdmfArray>);
+  static shared_ptr<XdmfArray> chunk(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2);
 
   /**
    * Joins the two provided arrays while interspercing their values evenly.
@@ -334,7 +334,7 @@ public:
    * @param     val2            the second array being evaluated
    * @return                    the interlaced arrays
    */
-  static shared_ptr<XdmfArray> interlace(shared_ptr<XdmfArray>, shared_ptr<XdmfArray>);
+  static shared_ptr<XdmfArray> interlace(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2);
 
   /**
    * Evaluates the function specified using the vector of XdmfArrays provided.
@@ -1032,26 +1032,30 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
+   * @skipline writtenArray
+   * @until writeStrides)
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
+   * @skipline writtenArray
+   * @until writeStrides)
    *
-   * @param startIndex the index in this array to begin insertion.
+   * @param startIndex the index in this array to begin insertion for each dimension
    * @param values a shared pointer to an XdmfArray to copy into this array.
-   * @param valuesStartIndex the index in the XdmfArray to begin copying.
-   * @param numValues the number of values to copy into this array.
-   * @param arrayStride number of values to stride in this array between each
-   * copy.
-   * @param valuesStride number of values to stride in the XdmfArray between
-   * each copy.
+   * @param valuesStartIndex the index in the XdmfArray to begin copying for each dimension of the source array
+   * @param numValues the number of values to copy into this array for each dimension on the source array
+   * @param numInserted the number of strides to make across the array being written to for each dimension
+   * @param arrayStride number of values to stride in this array between each copy for each dimension
+   * @param valuesStride number of values to stride in the XdmfArray between each copy for each dimension of the source array
    */
-/*  void insert(const std::vector<unsigned int> startIndex,
+  void insert(const std::vector<unsigned int> startIndex,
               const shared_ptr<const XdmfArray> values,
               const std::vector<unsigned int> valuesStartIndex,
               const std::vector<unsigned int> numValues,
+              const std::vector<unsigned int> numInserted,
               const std::vector<unsigned int> arrayStride,
-              const std::vector<unsigned int> valuesStride);*/
+              const std::vector<unsigned int> valuesStride);
 
   /**
    * Insert values into this array.
