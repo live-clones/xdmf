@@ -464,6 +464,7 @@ private:
   XdmfArray * const mArray;
 };
 
+
 class XdmfArray::IsInitialized : public boost::static_visitor<bool> {
 public:
 

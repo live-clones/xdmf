@@ -1552,6 +1552,7 @@ private:
   template <typename T> class Insert;
   class InsertArray;
   class InternalizeArrayPointer;
+  class IsInitialized;
   struct NullDeleter;
   template <typename T> class PushBack;
   class Reserve;
