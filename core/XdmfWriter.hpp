@@ -212,6 +212,14 @@ public:
   shared_ptr<const XdmfHeavyDataWriter> getHeavyDataWriter() const;
 
   /**
+   * Set the heavy data writer that this XdmfWriter uses to write
+   * heavy data to disk.
+   *
+   * @param heavyDataWriter the heavy data writer to set.
+   */
+  void setHeavyDataWriter(shared_ptr<XdmfHeavyDataWriter> heavyDataWriter);
+
+  /**
    * Get the number of values that this writer writes to light data
    * (XML) before switching to a heavy data format.
    *
