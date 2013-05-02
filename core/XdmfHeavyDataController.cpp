@@ -45,9 +45,14 @@ XdmfHeavyDataController::XdmfHeavyDataController(const std::string & filePath,
 {
   if(!(mStart.size() == mStride.size() && 
        mStride.size() == mDimensions.size()))
-    XdmfError::message(XdmfError::FATAL,
-                       "mStart, mStride, mDimensions must all be of equal "
-                       "length in XdmfHeavyDataController constructor");
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "mStart, mStride, mDimensions must all be of equal "
+                         "length in XdmfHeavyDataController constructor");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
 }
 
 XdmfHeavyDataController::~XdmfHeavyDataController()

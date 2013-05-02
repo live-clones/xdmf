@@ -100,9 +100,14 @@ XdmfAttributeType::New(const std::map<std::string, std::string> & itemProperties
     type = itemProperties.find("AttributeType");
   }
   if(type == itemProperties.end()) {
-    XdmfError::message(XdmfError::FATAL, 
-                       "Neither 'Type' nor 'AttributeType' found in "
-                       "itemProperties in XdmfAttributeType::New");
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+                         "Neither 'Type' nor 'AttributeType' found in "
+                         "itemProperties in XdmfAttributeType::New");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
   const std::string & typeVal = type->second;
 
@@ -128,10 +133,15 @@ XdmfAttributeType::New(const std::map<std::string, std::string> & itemProperties
     return NoAttributeType();
   }
 
-  XdmfError::message(XdmfError::FATAL, 
-                     "Type not of 'None','Scalar','Vector','Tensor', "
-                     "'Matrix','Tensor6', or 'GlobalId' in "
-                     "XdmfAttributeType::New");
+  try {
+    XdmfError::message(XdmfError::FATAL, 
+                       "Type not of 'None','Scalar','Vector','Tensor', "
+                       "'Matrix','Tensor6', or 'GlobalId' in "
+                       "XdmfAttributeType::New");
+  }
+  catch (XdmfError e) {
+    throw e;
+  }
 
   return shared_ptr<const XdmfAttributeType>();
 }

@@ -114,7 +114,12 @@ public:
         collectedProperties["Type"] = "ORIGIN_DXDY";
       }
       else {
-        XdmfError::message(XdmfError::FATAL, "Dimensions not 2 or 3 in XdmfGeometryTypeRegular::getProperties");
+        try {
+          XdmfError::message(XdmfError::FATAL, "Dimensions not 2 or 3 in XdmfGeometryTypeRegular::getProperties");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
       }
     }
 
@@ -192,9 +197,14 @@ public:
         return 12;
       }
       else {
-        XdmfError::message(XdmfError::FATAL, 
-                           "Grid dimensions not 2 or 3 in "
-                           "XdmfTopologyTypeRegular::getEdgesPerElement");
+        try {
+          XdmfError::message(XdmfError::FATAL, 
+                             "Grid dimensions not 2 or 3 in "
+                             "XdmfTopologyTypeRegular::getEdgesPerElement");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
       }
       return 0;
     }
@@ -210,9 +220,14 @@ public:
         return 6;
       }
       else {
-        XdmfError::message(XdmfError::FATAL, 
-                           "Grid dimensions not 2 or 3 in "
-                           "XdmfTopologyTypeRegular::getFacesPerElement");
+        try {
+          XdmfError::message(XdmfError::FATAL, 
+                             "Grid dimensions not 2 or 3 in "
+                             "XdmfTopologyTypeRegular::getFacesPerElement");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
       }
       return 0;
     }
@@ -237,9 +252,14 @@ public:
         collectedProperties["Type"] = "2DCoRectMesh";
       }
       else {
-        XdmfError::message(XdmfError::FATAL, 
-                           "Dimensions not 2 or 3 in "
-                           "XdmfTopologyTypeRegular::getProperties");
+        try {
+          XdmfError::message(XdmfError::FATAL, 
+                             "Dimensions not 2 or 3 in "
+                             "XdmfTopologyTypeRegular::getProperties");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
       }
       collectedProperties["Dimensions"] = dimensions->getValuesString();
     }

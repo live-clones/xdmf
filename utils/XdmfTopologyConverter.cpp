@@ -1084,10 +1084,16 @@ XdmfTopologyConverter::convert(const shared_ptr<XdmfUnstructuredGrid> gridToConv
                                const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter) const
 {
   // Make sure geometry and topology are non null
-  if(!(gridToConvert->getGeometry() && gridToConvert->getTopology()))
-    XdmfError::message(XdmfError::FATAL,
-                       "Current grid's geometry or topology is null "
-                       "in XdmfTopologyConverter::convert");
+  if(!(gridToConvert->getGeometry() && gridToConvert->getTopology())) {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Current grid's geometry or topology is null "
+                         "in XdmfTopologyConverter::convert");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 
   shared_ptr<const XdmfTopologyType> topologyTypeToConvert =
     gridToConvert->getTopology()->getType();
@@ -1097,9 +1103,14 @@ XdmfTopologyConverter::convert(const shared_ptr<XdmfUnstructuredGrid> gridToConv
   }
 
   if(gridToConvert->getGeometry()->getType() != XdmfGeometryType::XYZ()) {
-    XdmfError::message(XdmfError::FATAL,
-                       "Grid to convert's type is not 'XYZ' in "
-                       "XdmfTopologyConverter::convert");
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Grid to convert's type is not 'XYZ' in "
+                         "XdmfTopologyConverter::convert");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
 
   Converter * converter = NULL;
@@ -1231,9 +1242,14 @@ XdmfTopologyConverter::convert(const shared_ptr<XdmfUnstructuredGrid> gridToConv
     return toReturn;
   }
   else {
-    XdmfError::message(XdmfError::FATAL,
-                       "Cannot convert topology type in "
-                       "XdmfTopologyConverter::convert");
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Cannot convert topology type in "
+                         "XdmfTopologyConverter::convert");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
 
   // not reached

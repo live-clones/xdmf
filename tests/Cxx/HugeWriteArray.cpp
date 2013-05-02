@@ -66,14 +66,15 @@ int main(int, char **)
 	writtenArray->release();
 	writtenArray->read();
 	printf("after read\n");
-	//printf("%s\n", writtenArray->getValuesString());
 	printf("array size = %d\n", writtenArray->getSize());
+	assert(writtenArray->getSize() == 9000000);
 	for (int i = 0; i < writtenArray->getSize(); i++)
         {
                 if (i != writtenArray->getValue<int>(i))
 		{
 			printf("%d doesn't match %d\n", i, writtenArray->getValue<int>(i));
 		}
+		assert(i == writtenArray->getValue<int>(i));
         }
 
 	return 0;

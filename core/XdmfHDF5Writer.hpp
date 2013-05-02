@@ -81,6 +81,7 @@ public:
 
   /**
    * Sets the file size limit of the HDF5 files produced by the writer in MB. Overflow is pushed to a new HDF5 file.
+   * Using with arrays of string type may reduce performance.
    *
    * Example of use:
    *

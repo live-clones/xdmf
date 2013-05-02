@@ -239,7 +239,12 @@ XdmfExodusReader::read(const std::string & fileName,
 
   if(exodusHandle < 0) {
     // Invalid fileName
-    XdmfError::message(XdmfError::FATAL, "Invalid fileName: "+fileName+" in XdmfExodusReader::read");
+    try {
+      XdmfError::message(XdmfError::FATAL, "Invalid fileName: "+fileName+" in XdmfExodusReader::read");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
 
   char * title = new char[MAX_LINE_LENGTH+1];
@@ -351,8 +356,14 @@ XdmfExodusReader::read(const std::string & fileName,
           iter != topologyTypes.end();
           ++iter) {
         // Cannot be mixed topology!
-        if(toReturn->getTopology()->getType() != *iter)
-          XdmfError::message(XdmfError::FATAL, "Requested mix of topology types -- "+toReturn->getTopology()->getType()->getName()+" and "+(*iter)->getName()+" in XdmfExodusReader::read");
+        if(toReturn->getTopology()->getType() != *iter) {
+          try {
+            XdmfError::message(XdmfError::FATAL, "Requested mix of topology types -- "+toReturn->getTopology()->getType()->getName()+" and "+(*iter)->getName()+" in XdmfExodusReader::read");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+        }
       }
     }
   }

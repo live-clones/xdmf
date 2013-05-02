@@ -263,8 +263,7 @@ public:
   void
   operator()(shared_ptr<std::vector<std::string> > & array) const
   {
-    const unsigned int size = 
-      mStartIndex + (mNumValues - 1) * mArrayStride + 1;
+    unsigned int size = mStartIndex + (mNumValues - 1) * mArrayStride + 1;
     if(array->size() < size) {
       array->resize(size);
       mDimensions.clear();
@@ -280,8 +279,7 @@ public:
   void
   operator()(shared_ptr<std::vector<U> > & array) const
   {
-    const unsigned int size = 
-      mStartIndex + (mNumValues - 1) * mArrayStride + 1;
+    unsigned int size = mStartIndex + (mNumValues - 1) * mArrayStride + 1;
     if(array->size() < size) {
       array->resize(size);
       mDimensions.clear();
@@ -344,8 +342,7 @@ public:
   void
   operator()(shared_ptr<std::vector<std::string> > & array) const
   {
-    const unsigned int size = 
-      mStartIndex + (mNumValues - 1) * mArrayStride + 1;
+    unsigned int size = mStartIndex + (mNumValues - 1) * mArrayStride + 1;
     if(array->size() < size) {
       array->resize(size);
       mDimensions.clear();
@@ -360,8 +357,7 @@ public:
   void
   operator()(shared_ptr<std::vector<U> > & array) const
   {
-    const unsigned int size = 
-      mStartIndex + (mNumValues - 1) * mArrayStride + 1;
+    unsigned int size = mStartIndex + (mNumValues - 1) * mArrayStride + 1;
     if(array->size() < size) {
       array->resize(size);
       mDimensions.clear();

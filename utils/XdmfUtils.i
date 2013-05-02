@@ -15,6 +15,7 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
     #include <XdmfArrayType.hpp>
     #include <XdmfCoreItemFactory.hpp>
     #include <XdmfCoreReader.hpp>
+    #include <XdmfError.hpp>
     #include <XdmfHDF5Controller.hpp>
     #include <XdmfHDF5Writer.hpp>
     #include <XdmfHDF5ControllerDSM.hpp>
@@ -72,6 +73,7 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
     #include <XdmfArrayType.hpp>
     #include <XdmfCoreItemFactory.hpp>
     #include <XdmfCoreReader.hpp>
+    #include <XdmfError.hpp>
     #include <XdmfHDF5Controller.hpp>
     #include <XdmfHDF5Writer.hpp>
     #include <XdmfHeavyDataController.hpp>
@@ -122,9 +124,13 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
 
 #ifdef SWIGPYTHON
 
+#ifdef XDMF_BUILD_DSM
+
 %include mpi4py/mpi4py.i
 
 %mpi4py_typemap(Comm, MPI_Comm);
+
+#endif
 
 %pythoncode {
     from Xdmf import *

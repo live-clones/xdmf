@@ -91,7 +91,6 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
     #include <XdmfDomain.hpp>
     #include <XdmfGeometry.hpp>
     #include <XdmfGeometryType.hpp>
-    #include <XdmfGraph.hpp>
     #include <XdmfGrid.hpp>
     #include <XdmfGridCollection.hpp>
     #include <XdmfGridCollectionType.hpp>
@@ -227,9 +226,14 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 %include std_set.i
 %include std_map.i
 %include std_vector.i
+
+#ifdef XDMF_BUILD_DSM
+
 %include mpi4py/mpi4py.i
 
 %mpi4py_typemap(Comm, MPI_Comm);
+
+#endif
 
 %template(XdmfMapNodeIdSet) std::set<int>;
 %template(XdmfMapNodeIdMap) std::map<int, std::set<int> >;

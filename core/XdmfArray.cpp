@@ -85,8 +85,7 @@ public:
                          mArray->mArray);
   }
 
-private:
- 
+private: 
   XdmfArray * const mArray;
 };
 
@@ -391,10 +390,7 @@ public:
   void
   operator()(const shared_ptr<std::vector<T> > & array) const
   {
-    unsigned int size =
-      mStartIndex + (mNumValues) * mArrayStride + 1;
-
-
+    unsigned int size = mStartIndex + (mNumValues - 1) * mArrayStride + 1;
     if(array->size() < size) {
       array->resize(size);
       mDimensions.clear();
@@ -463,7 +459,6 @@ private:
 
   XdmfArray * const mArray;
 };
-
 
 class XdmfArray::IsInitialized : public boost::static_visitor<bool> {
 public:
@@ -639,15 +634,25 @@ XdmfArray::evaluateExpression(std::string expression, std::map<std::string, shar
       //convert to equivalent
       if (variables.find(expression.substr(valueStart, i + 1 - valueStart)) == variables.end()) {
         if (arrayFunctions.find(expression.substr(valueStart, i + 1 - valueStart)) == arrayFunctions.end()) {
-          XdmfError::message(XdmfError::FATAL,
-                             "Error: Invalid Variable in evaluateExpression " + expression.substr(valueStart, i + 1 - valueStart));
+          try {
+            XdmfError::message(XdmfError::FATAL,
+                               "Error: Invalid Variable in evaluateExpression " + expression.substr(valueStart, i + 1 - valueStart));
+          }
+          catch (XdmfError e) {
+            throw e;
+          }
         }
         else {
           std::string currentFunction = expression.substr(valueStart, i + 1 - valueStart);
           //check if next character is an open parenthesis
           if (expression[i+1] != '(') {
-            XdmfError::message(XdmfError::FATAL,
-                               "Error: No values supplied to function " + expression.substr(valueStart, i + 1 - valueStart));
+            try {
+              XdmfError::message(XdmfError::FATAL,
+                                 "Error: No values supplied to function " + expression.substr(valueStart, i + 1 - valueStart));
+            }
+            catch (XdmfError e) {
+              throw e;
+            }
           }
           //if it is grab the string between paranthesis
           i = i + 2;
@@ -693,8 +698,13 @@ XdmfArray::evaluateExpression(std::string expression, std::map<std::string, shar
           //to close a parenthesis pop off all operations until another parentheis is found
           while (operationStack.size() > 0 && operationStack.top() != '(') {
             if (valueStack.size() < 2) {//must be at least two values for this loop to work properly
-              XdmfError::message(XdmfError::FATAL,
-                                 "Error: Not Enough Values in evaluateExpression");
+              try {
+                XdmfError::message(XdmfError::FATAL,
+                                   "Error: Not Enough Values in evaluateExpression");
+              }
+              catch (XdmfError e) {
+                throw e;
+              }
             }
             else {
               shared_ptr<XdmfArray> val2 = valueStack.top();
@@ -718,8 +728,13 @@ XdmfArray::evaluateExpression(std::string expression, std::map<std::string, shar
           //see order of operations to determine importance
           while (operationStack.size() > 0 && operationLocation < topOperationLocation) {
             if (valueStack.size() < 2) {//must be at least two values for this loop to work properly
-              XdmfError::message(XdmfError::FATAL,
-                                 "Error: Not Enough Values in evaluateExpression");
+              try {
+                XdmfError::message(XdmfError::FATAL,
+                                   "Error: Not Enough Values in evaluateExpression");
+              }
+              catch (XdmfError e) {
+                throw e;
+              }
             }
             else {
               shared_ptr<XdmfArray> val2 = valueStack.top();
@@ -747,13 +762,23 @@ XdmfArray::evaluateExpression(std::string expression, std::map<std::string, shar
   //empty what's left in the stacks before finishing
   while (valueStack.size() > 1 && operationStack.size() > 0) {
     if (valueStack.size() < 2) {//must be at least two values for this loop to work properly
-      XdmfError::message(XdmfError::FATAL,
-                         "Error: Not Enough Values in evaluateExpression");
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "Error: Not Enough Values in evaluateExpression");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
     }
     else {
       if(operationStack.top() == '(') {
-        XdmfError::message(XdmfError::WARNING,
-                           "Warning: Unpaired Parenthesis");
+        try {
+          XdmfError::message(XdmfError::WARNING,
+                             "Warning: Unpaired Parenthesis");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
       }
       else {
         shared_ptr<XdmfArray> val2 = valueStack.top();
@@ -761,8 +786,13 @@ XdmfArray::evaluateExpression(std::string expression, std::map<std::string, shar
         shared_ptr<XdmfArray> val1 = valueStack.top();
         valueStack.pop();
         if (operationStack.size() == 0) {
-          XdmfError::message(XdmfError::FATAL,
-                             "Error: Not Enough Operators in evaluateExpression");
+          try {
+            XdmfError::message(XdmfError::FATAL,
+                               "Error: Not Enough Operators in evaluateExpression");
+          }
+          catch (XdmfError e) {
+            throw e;
+          }
         }
         else {
           valueStack.push(evaluateOperation(val1, val2, operationStack.top()));
@@ -774,13 +804,23 @@ XdmfArray::evaluateExpression(std::string expression, std::map<std::string, shar
 
   //throw error if there's extra operations
   if (operationStack.size() > 0) {
-    XdmfError::message(XdmfError::WARNING,
-                       "Warning: Left Over Operators in evaluateExpression");
+    try {
+      XdmfError::message(XdmfError::WARNING,
+                         "Warning: Left Over Operators in evaluateExpression");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
 
   if (valueStack.size() > 1) {
-    XdmfError::message(XdmfError::WARNING,
-                       "Warning: Left Over Values in evaluateExpression");
+    try {
+      XdmfError::message(XdmfError::WARNING,
+                         "Warning: Left Over Values in evaluateExpression");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
 
   return valueStack.top();
@@ -801,15 +841,25 @@ int
 XdmfArray::addOperation(char newoperator, shared_ptr<XdmfArray>(*operationref)(shared_ptr<XdmfArray>, shared_ptr<XdmfArray>), int priority)
 {
   if (newoperator == '(' || newoperator == ')') {
-    XdmfError::message(XdmfError::FATAL,
-                       "Error: Parenthesis can not be redefined");
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Parenthesis can not be redefined");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
   //give warning if the operation already exists
   size_t origsize = operations.size();
   operations[newoperator] = operationref;//place reference in the associated location
   if (origsize == operations.size()) {//it's nice to let people know they're doing this so they don't get surprised about changes in behavior
-    XdmfError::message(XdmfError::WARNING,
-                       "Warning: Function Overwritten");
+    try {
+      XdmfError::message(XdmfError::WARNING,
+                         "Warning: Function Overwritten");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
     //overwrite the existing info for that operation
     //add the priority to the specified location in the priority array
     size_t priorityLocation = mSupportedOperations.find(newoperator);
@@ -819,8 +869,13 @@ XdmfArray::addOperation(char newoperator, shared_ptr<XdmfArray>(*operationref)(s
     //create new operation
     //as long as the operation isn't a valid function character
     if (mValidVariableChars.find(newoperator) != std::string::npos || mValidDigitChars.find(newoperator) != std::string::npos) {
-      XdmfError::message(XdmfError::FATAL,
-                         "Error: Operation Overlaps with Variables");
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "Error: Operation Overlaps with Variables");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
     }
     else { //build the operation
       //add operation to the supported character string
@@ -1174,16 +1229,26 @@ XdmfArray::addFunction(std::string name, shared_ptr<XdmfArray>(*functionref)(std
   for (int i = 0; i < name.size(); i++) {
     if (mValidVariableChars.find(name[i]) == std::string::npos) {//if the character is not found in the list of valid characters
       //then throw an error
-      XdmfError::message(XdmfError::FATAL,
-                         "Error: Function Name Contains Invalid Characters");
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "Error: Function Name Contains Invalid Character(s)");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
     }
   }
   size_t origsize = arrayFunctions.size();
   arrayFunctions[name] = functionref;
   if (origsize == arrayFunctions.size()) {//if no new functions were added
     //toss a warning, it's nice to let people know that they're doing this
-    XdmfError::message(XdmfError::WARNING,
-                       "Warning: Function Overwritten");
+    try {
+      XdmfError::message(XdmfError::WARNING,
+                         "Warning: Function Overwritten");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
   return arrayFunctions.size();
 }
@@ -1445,8 +1510,13 @@ XdmfArray::initialize(const shared_ptr<const XdmfArrayType> arrayType,
     this->release();
   }
   else {
-    XdmfError::message(XdmfError::FATAL, 
-                       "Array of unsupported type in XdmfArray::initialize");
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+                         "Array of unsupported type in XdmfArray::initialize");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
 }
 
@@ -1482,7 +1552,6 @@ XdmfArray::insert(const unsigned int startIndex,
 }
 
 
-
 void
 XdmfArray::insert(const std::vector<unsigned int> startIndex,
                   const shared_ptr<const XdmfArray> values,
@@ -1492,129 +1561,112 @@ XdmfArray::insert(const std::vector<unsigned int> startIndex,
                   const std::vector<unsigned int> arrayStride,
                   const std::vector<unsigned int> valuesStride)
 {
-	if ((values->getDimensions().size() == valuesStartIndex.size() && valuesStartIndex.size() == numValues.size() && numValues.size() == valuesStride.size())
-		&& (numInserted.size() == startIndex.size() && startIndex.size() == mDimensions.size() && mDimensions.size() == arrayStride.size()))
-	{//ensuring dimensions match up when pulling data
-		//pull data from values
-		std::vector<unsigned int > dimTotalVector;
-		unsigned int dimTotal = 1;
-		for (int i = 0; i < values->getDimensions().size(); i++)
-		{
-			dimTotalVector.push_back(dimTotal);
-			dimTotal *= values->getDimensions()[i];
-		}
-		std::vector<int> indexVector;
-		for (int i = 0; i < values->getDimensions().size(); i++)
-		{
-			indexVector.push_back(0);
-		}
-		shared_ptr<XdmfArray> holderArray = XdmfArray::New();
-		unsigned int holderoffset = 0;
-		while (indexVector[indexVector.size()-1] < 1)
-		{//end when the last index is incremented
-			//initialize the section of the array you're pulling from
-			unsigned int startTotal = 0;
-			dimTotal = 1;
-			for (int i = 0; i < values->getDimensions().size(); i++)
-			{
-				if (i == 0)
-				{//stride doesn't factor in to the first dimension since it's being used with the insert call
-					startTotal += valuesStartIndex[i] * dimTotal;
-				}
-				else
-				{
-					startTotal += valuesStartIndex[i] * dimTotal + valuesStride[i] * dimTotal * indexVector[i-1];
-				}
-				dimTotal *= values->getDimensions()[i];
-			}
-			//insert the subsection
-			holderArray->insert(holderoffset, values, startTotal, numValues[0], 1, valuesStride[0]);
-			holderoffset+=numValues[0];
-			//increment up the vector
-			bool increment = true;
-			for (int i = 0; i < indexVector.size() && increment; i++)
-			{
-				indexVector[i]++;
-				if (i+1 < numValues.size())//to keep the loop from breaking at the end
-				{
-					if (indexVector[i] >= numValues[i+1])
-					{
-						indexVector[i] = indexVector[i] % numValues[i+1];
-					}
-					else
-					{
-						increment = false;
-					}
-				}
-			}
-		}
-		//values being inserted retrieved
-		//use an variation of the last loop to insert into this array
+  if ((values->getDimensions().size() == valuesStartIndex.size() && valuesStartIndex.size() == numValues.size() && numValues.size() == valuesStride.size())
+      && (numInserted.size() == startIndex.size() && startIndex.size() == mDimensions.size() && mDimensions.size() == arrayStride.size())) {//ensuring dimensions match up when pulling data
+    //pull data from values
+    std::vector<unsigned int > dimTotalVector;
+    unsigned int dimTotal = 1;
+    for (int i = 0; i < values->getDimensions().size(); i++) {
+      dimTotalVector.push_back(dimTotal);
+      dimTotal *= values->getDimensions()[i];
+    }
+    std::vector<int> indexVector;
+    for (int i = 0; i < values->getDimensions().size(); i++) {
+      indexVector.push_back(0);
+    }
+    shared_ptr<XdmfArray> holderArray = XdmfArray::New();
+    unsigned int holderoffset = 0;
+    while (indexVector[indexVector.size()-1] < 1) {//end when the last index is incremented
+      //initialize the section of the array you're pulling from
+      unsigned int startTotal = 0;
+      dimTotal = 1;
+      for (int i = 0; i < values->getDimensions().size(); i++) {
+        if (i == 0) {//stride doesn't factor in to the first dimension since it's being used with the insert call
+          startTotal += valuesStartIndex[i] * dimTotal;
+        }
+        else {
+          startTotal += valuesStartIndex[i] * dimTotal + valuesStride[i] * dimTotal * indexVector[i-1];
+        }
+        dimTotal *= values->getDimensions()[i];
+      }
+      //insert the subsection
+      holderArray->insert(holderoffset, values, startTotal, numValues[0], 1, valuesStride[0]);
+      holderoffset+=numValues[0];
+      //increment up the vector
+      bool increment = true;
+      for (int i = 0; i < indexVector.size() && increment; i++) {
+        indexVector[i]++;
+        if (i+1 < numValues.size()) {//to keep the loop from breaking at the end
+          if (indexVector[i] >= numValues[i+1]) {
+            indexVector[i] = indexVector[i] % numValues[i+1];
+          }
+          else {
+            increment = false;
+          }
+        }
+      }
+    }
+    //values being inserted retrieved
+    //use an variation of the last loop to insert into this array
 
+    indexVector.clear();
+    for (int i = 0; i < this->getDimensions().size(); i++) {
+      indexVector.push_back(0);
+    }
+    holderoffset = 0;
+    while (indexVector[indexVector.size()-1] < 1) {//end when the last index is incremented
+      //initialize the section of the array you're pulling from
+      unsigned int startTotal = 0;
+      dimTotal = 1;
+      for (int i = 0; i < this->getDimensions().size(); i++) {
+        if (i == 0) {//stride doesn't factor in to the first dimension since it's being used with the insert call
+          startTotal += startIndex[i] * dimTotal;
+        }
+        else {
+          startTotal += startIndex[i] * dimTotal + arrayStride[i] * dimTotal * indexVector[i-1];
+        }
+        dimTotal *= this->getDimensions()[i];
+      }
+      //insert the subsection
+      this->insert(startTotal, holderArray, holderoffset, numInserted[0], arrayStride[0], 1);
+      holderoffset+=numInserted[0];
+      //increment up the vector
+      bool increment = true;
+      for (int i = 0; i < indexVector.size() && increment; i++) {
+        indexVector[i]++;
+        if (i+1 < numInserted.size()) {//to keep the loop from breaking at the end
+          if (indexVector[i] >= numInserted[i+1]) {
+            indexVector[i] = indexVector[i] % numInserted[i+1];
+          }
+          else {
+            increment = false;
+          }
+        }
+      }
+    }
+  }
+  else {
+    //throw an error
+    if (!(values->getDimensions().size() == valuesStartIndex.size() && valuesStartIndex.size() == numValues.size() && numValues.size() == valuesStride.size())) {
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "Error: Number of starts, strides, and/or values retrieved does not match up with the dimensions of the array being retrieved from");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+    else if (!(numInserted.size() == startIndex.size() && startIndex.size() == mDimensions.size() && mDimensions.size() == arrayStride.size())) {
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "Error: Number of starts, strides, and/or values written does not match up with the dimensions of the array being inserted into");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
 
-		indexVector.clear();
-                for (int i = 0; i < this->getDimensions().size(); i++)
-                {
-                        indexVector.push_back(0);
-                }
-		holderoffset = 0;
-                while (indexVector[indexVector.size()-1] < 1)
-                {//end when the last index is incremented
-                        //initialize the section of the array you're pulling from
-                        unsigned int startTotal = 0;
-                        dimTotal = 1;
-                        for (int i = 0; i < this->getDimensions().size(); i++)
-                        {
-                                if (i == 0)
-                                {//stride doesn't factor in to the first dimension since it's being used with the insert call
-                                        startTotal += startIndex[i] * dimTotal;
-                                }
-                                else
-                                {
-                                        startTotal += startIndex[i] * dimTotal + arrayStride[i] * dimTotal * indexVector[i-1];
-                                }
-                                dimTotal *= this->getDimensions()[i];
-                        }
-                        //insert the subsection
-                        this->insert(startTotal, holderArray, holderoffset, numInserted[0], arrayStride[0], 1);
-			holderoffset+=numInserted[0];
-                        //increment up the vector
-                        bool increment = true;
-                        for (int i = 0; i < indexVector.size() && increment; i++)
-                        {
-                                indexVector[i]++;
-                                if (i+1 < numInserted.size())//to keep the loop from breaking at the end
-                                {
-                                        if (indexVector[i] >= numInserted[i+1])
-                                        {
-                                                indexVector[i] = indexVector[i] % numInserted[i+1];
-                                        }
-                                        else
-                                        {
-                                                increment = false;
-                                        }
-                                }
-                        }
-                }
-
-	}
-	else
-	{
-		//throw an error
-		if (!(values->getDimensions().size() == valuesStartIndex.size() && valuesStartIndex.size() == numValues.size() && numValues.size() == valuesStride.size()))
-		{
-			XdmfError::message(XdmfError::FATAL,
-			                   "Number of starts, strides, and values retrieved does not match up with the dimensions of the array being retrieved from");
-		}
-		else if (!(numInserted.size() == startIndex.size() && startIndex.size() == mDimensions.size() && mDimensions.size() == arrayStride.size()))
-		{
-			XdmfError::message(XdmfError::FATAL,
-                                           "Number of starts, strides, and values written does not match up with the dimensions of the array being inserted into");
-		}
-	}
-	
-
-
+    }
+  }
 }
 
 
@@ -1646,9 +1698,14 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
   std::map<std::string, std::string>::const_iterator content =
     itemProperties.find("Content0");
   if(content == itemProperties.end()) {
-    XdmfError::message(XdmfError::FATAL, 
-                       "'Content' not found in itemProperties in "
-                       "XdmfArray::populateItem");
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+                         "'Content' not found in itemProperties in "
+                         "XdmfArray::populateItem");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
 
   //this was originally a constant, but the compiler doesn't like creating vectors of constant strings.
@@ -1676,9 +1733,14 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
   std::map<std::string, std::string>::const_iterator dimensions =
     itemProperties.find("Dimensions");
   if(dimensions == itemProperties.end()) {
-    XdmfError::message(XdmfError::FATAL, 
-                       "'Dimensions' not found in itemProperties in "
-                       "XdmfArray::populateItem");
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+                         "'Dimensions' not found in itemProperties in "
+                         "XdmfArray::populateItem");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
    
   boost::tokenizer<> tokens(dimensions->second);
@@ -1691,9 +1753,14 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
   std::map<std::string, std::string>::const_iterator format =
     itemProperties.find("Format");
   if(format == itemProperties.end()) {
-    XdmfError::message(XdmfError::FATAL, 
-                       "'Format' not found in itemProperties in "
-                       "XdmfArray::populateItem");
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+                         "'Format' not found in itemProperties in "
+                         "XdmfArray::populateItem");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
   const std::string & formatVal = format->second;
 
@@ -1704,10 +1771,15 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
     while (contentIndex < contentVals.size()) {
       size_t colonLocation = contentVals[contentIndex].find(":");
       if(colonLocation == std::string::npos) {
-        XdmfError::message(XdmfError::FATAL, 
-                           "':' not found in content in "
-                           "XdmfArray::populateItem -- double check an HDF5 "
-                           "data set is specified for the file");
+        try {
+          XdmfError::message(XdmfError::FATAL, 
+                             "':' not found in content in "
+                             "XdmfArray::populateItem -- double check an HDF5 "
+                             "data set is specified for the file");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
       }
 
       std::string hdf5Path = contentVals[contentIndex].substr(0, colonLocation);
@@ -1772,9 +1844,14 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
     }
   }
   else {
-    XdmfError::message(XdmfError::FATAL, 
-                       "Neither 'HDF' nor 'XML' specified as 'Format' "
-                       "in XdmfArray::populateItem");
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+                         "Neither 'HDF' nor 'XML' specified as 'Format' "
+                         "in XdmfArray::populateItem");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
 
   std::map<std::string, std::string>::const_iterator name =

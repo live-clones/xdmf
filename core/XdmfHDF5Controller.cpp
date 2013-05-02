@@ -38,15 +38,20 @@ XdmfHDF5Controller::New(const std::string & hdf5FilePath,
                         const std::vector<unsigned int> & dimensions,
                         const std::vector<unsigned int> & dataspaceDimensions)
 {
-  shared_ptr<XdmfHDF5Controller> 
-    p(new XdmfHDF5Controller(hdf5FilePath,
-                             dataSetPath,
-                             type,
-                             start,
-                             stride,
-                             dimensions,
-                             dataspaceDimensions));
-  return p;
+  try {
+    shared_ptr<XdmfHDF5Controller> 
+      p(new XdmfHDF5Controller(hdf5FilePath,
+                               dataSetPath,
+                               type,
+                               start,
+                               stride,
+                               dimensions,
+                               dataspaceDimensions));
+    return p;
+  }
+  catch (XdmfError e) {
+    throw e;
+  }
 }
 
 XdmfHDF5Controller::XdmfHDF5Controller(const std::string & hdf5FilePath,
@@ -149,17 +154,27 @@ XdmfHDF5Controller::read(XdmfArray * const array, const int fapl)
     closeDatatype = true;
   }
   else {
-    XdmfError::message(XdmfError::FATAL,
-                       "Unknown XdmfArrayType encountered in hdf5 "
-                       "controller.");
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Unknown XdmfArrayType encountered in hdf5 "
+                         "controller.");
+        }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
 
   array->initialize(mType, mDimensions);
 
   if(numVals != array->getSize()) {
-    XdmfError::message(XdmfError::FATAL,
-                       "Number of values in hdf5 dataset does not match "
-                       "allocated size in XdmfArray.");
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Number of values in hdf5 dataset does not match "
+                         "allocated size in XdmfArray.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
 
   if(closeDatatype) {

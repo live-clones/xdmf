@@ -512,6 +512,8 @@ public:
 
   /**
    * Get the dimensions of the array.
+   * If the array isn't initialized the dimensions
+   * will be based on the heavyDataControllers it has, if any.
    *
    * Example of use:
    *

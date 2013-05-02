@@ -94,9 +94,14 @@ XdmfAttribute::populateItem(const std::map<std::string, std::string> & itemPrope
     mName = name->second;
   }
   else {
-    XdmfError::message(XdmfError::FATAL,
-                       "'Name' not found in itemProperties in "
-                       "XdmfAttribute::populateItem");
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "'Name' not found in itemProperties in "
+                         "XdmfAttribute::populateItem");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
 
   mCenter = XdmfAttributeCenter::New(itemProperties);

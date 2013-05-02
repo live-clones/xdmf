@@ -82,9 +82,14 @@ public:
     mDocument = xmlReadFile(filePath.c_str(), NULL, 0);
 
     if(mDocument == NULL) {
-      XdmfError::message(XdmfError::FATAL,
-                         "xmlReadFile could not read " + filePath +
-                         " in XdmfCoreReader::XdmfCoreReaderImpl::openFile");
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "xmlReadFile could not read " + filePath +
+                           " in XdmfCoreReader::XdmfCoreReaderImpl::openFile");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
     }
 
     mDocuments.insert(std::make_pair((char*)mDocument->URL, mDocument));
@@ -99,9 +104,14 @@ public:
     mDocument = xmlParseDoc((const xmlChar*)lightData.c_str());
                                
     if(mDocument == NULL) {
-      XdmfError::message(XdmfError::FATAL,
-                         "xmlReadFile could not parse passed light data string"
-                         " in XdmfCoreReader::XdmfCoreReaderImpl::parse");
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "xmlReadFile could not parse passed light data string"
+                           " in XdmfCoreReader::XdmfCoreReaderImpl::parse");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
     }
 
     //    mDocuments.insert(std::make_pair((char*)mDocument->URL, mDocument));
@@ -204,8 +214,13 @@ public:
           }
 
           if (expressionToParse.compare("") == 0) {
-            XdmfError::message(XdmfError::FATAL,
-              "Error: No Expression in Function");
+            try {
+              XdmfError::message(XdmfError::FATAL,
+                "Error: No Expression in Function");
+            }
+            catch (XdmfError e) {
+              throw e;
+            }
           }
 
           //two seperate loops to allow for different orders and multiple variable sets
@@ -330,8 +345,13 @@ public:
                             childArray = shared_dynamic_cast<XdmfArray>(pointedItems[0]);//try to cast it as an array
                           }
                           catch (...) {//if that doesn't work throw an error
-                            XdmfError::message(XdmfError::FATAL,
-                                               "Error: Variable not Equivalent to an Array");//because we should only be working with arrays
+                            try {
+                              XdmfError::message(XdmfError::FATAL,
+                                                 "Error: Variable not Equivalent to an Array");//because we should only be working with arrays
+                            }
+                            catch (XdmfError e) {
+                              throw e;
+                            }
                           }
                         }
                       }
@@ -370,18 +390,22 @@ public:
                     for (int i = 0; i < controllerParts.size(); i = i + hdf5step) {
                       size_t colonLocation = controllerParts[i].find(":");
                       if(colonLocation == std::string::npos) {
-                        XdmfError::message(XdmfError::FATAL,
-                                           "':' not found in function variable content in "
-                                           "read -- double check an HDF5 "
-                                           "data set is specified for the file");
+                        try {
+                          XdmfError::message(XdmfError::FATAL,
+                                             "':' not found in function variable content in "
+                                             "read -- double check an HDF5 "
+                                             "data set is specified for the file");
+                        }
+                        catch (XdmfError e) {
+                          throw e;
+                        }
                       }
 
                       std::string hdf5Path = controllerParts[i].substr(0, colonLocation);
                       std::string dataSetPath = controllerParts[i].substr(colonLocation+1);
                       std::vector<unsigned int> contentDims;
 
-			//TODO might need to rewrite this try-catch block
-                      try {
+                      if (i + 1 < controllerParts.size()){
                         //this is the string that contains the dimensions
                         boost::tokenizer<> dimtokens(controllerParts[i + 1]);
                         for(boost::tokenizer<>::const_iterator iter = dimtokens.begin();
@@ -391,11 +415,16 @@ public:
                         }
                         hdf5step = 2;//if this works then the dimension content should be skipped over
                       }
-                      catch (...) {//if it fails then it means that the next content is not a dimension string
+                      else {//if it fails then it means that the next content is not a dimension string
                         //in this case an error should be thrown, formatting error
                         //because there is no base array to pull dimensions from
-                        XdmfError::message(XdmfError::FATAL,
-                                           "Error: Improper HDF5 Format");
+                        try {
+                          XdmfError::message(XdmfError::FATAL,
+                                             "Error: Improper HDF5 Format");
+                        }
+                        catch (XdmfError e) {
+                          throw e;
+                        }
                       }
 
                       childArray->insert(XdmfHDF5Controller::New(hdf5Path,
@@ -437,15 +466,25 @@ public:
                   //parse the value into the array
                   if (childKey.compare("") != 0){
                     if (variableCollection.find(childKey) != variableCollection.end()) {
-                      XdmfError::message(XdmfError::WARNING,
-                                         "Warning: Variable Redefined");
+                      try {
+                        XdmfError::message(XdmfError::WARNING,
+                                           "Warning: Variable Redefined");
+                      }
+                      catch (XdmfError e) {
+                        throw e;
+                      }
                     }
                     childArray->read();
                     variableCollection[childKey] = childArray;
                   }
                   else {
-                    XdmfError::message(XdmfError::WARNING,
-                                       "Warning: Value Unpaired to Key");
+                    try {
+                      XdmfError::message(XdmfError::WARNING,
+                                         "Warning: Value Unpaired to Key");
+                    }
+                    catch (XdmfError e) {
+                      throw e;
+                    }
                   }
                 }
                 childVariable = childVariable->next;
@@ -453,8 +492,13 @@ public:
             }
             childNode = childNode->next;
           }
-
-          shared_ptr<XdmfArray> parsedArray = XdmfArray::evaluateExpression(expressionToParse, variableCollection);
+          shared_ptr<XdmfArray> parsedArray = shared_ptr<XdmfArray>();
+          try {
+            parsedArray = XdmfArray::evaluateExpression(expressionToParse, variableCollection);
+          }
+          catch (XdmfError e) {
+            throw e;
+          }
           //the properties and children aren't really needed to generate the object, but the factory still requires them.
           std::map<std::string, std::string> newArrayProperties;
           std::vector<shared_ptr<XdmfItem> > newArrayChildren;
@@ -484,7 +528,12 @@ public:
         }
         else {
           // Normal reading
-          this->readSingleNode(currNode, myItems);
+          try {
+            this->readSingleNode(currNode, myItems);
+          }
+          catch (XdmfError e) {
+            throw e;
+          }
         }
       }
       currNode = currNode->next;
@@ -571,21 +620,31 @@ public:
                                              (char *)currAttribute->children->content));
         currAttribute = currAttribute->next;
       }
-
-      const std::vector<shared_ptr<XdmfItem> > childItems =
-        this->read(currNode->children);
-      shared_ptr<XdmfItem> newItem =
-        mItemFactory->createItem((const char *)currNode->name,
-                                 itemProperties,
-                                 childItems);
-      if(newItem == NULL) {
-        XdmfError::message(XdmfError::FATAL, 
-                           "mItemFactory failed to createItem in "
-                           "XdmfCoreReader::XdmfCoreReaderImpl::readSingleNode");
+      try {
+        const std::vector<shared_ptr<XdmfItem> > childItems =
+          this->read(currNode->children);
+        shared_ptr<XdmfItem> newItem = 
+          mItemFactory->createItem((const char *)currNode->name,
+                                   itemProperties,
+                                   childItems);
+      
+        if(newItem == NULL) {
+          try {
+            XdmfError::message(XdmfError::FATAL, 
+                               "mItemFactory failed to createItem in "
+                               "XdmfCoreReader::XdmfCoreReaderImpl::readSingleNode");
+          }
+          catch (XdmfError e) {
+            throw e;
+          }
+        }
+        newItem->populateItem(itemProperties, childItems, mCoreReader);
+        myItems.push_back(newItem);
+        mXPathMap.insert(std::make_pair(currNode, newItem));
       }
-      newItem->populateItem(itemProperties, childItems, mCoreReader);
-      myItems.push_back(newItem);
-      mXPathMap.insert(std::make_pair(currNode, newItem));
+      catch (XdmfError e) {
+        throw e;
+      }
     }
   }
 
@@ -597,7 +656,12 @@ public:
       xmlXPathEvalExpression((xmlChar*)xPath.c_str(), mXPathContext);
     if(xPathObject && xPathObject->nodesetval) {
       for(int i=0; i<xPathObject->nodesetval->nodeNr; ++i) {
-        this->readSingleNode(xPathObject->nodesetval->nodeTab[i], myItems);
+        try {
+          this->readSingleNode(xPathObject->nodesetval->nodeTab[i], myItems);
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
       }
     }
     xmlXPathFreeObject(xPathObject);
@@ -625,16 +689,26 @@ XdmfCoreReader::~XdmfCoreReader()
 shared_ptr<XdmfItem >
 XdmfCoreReader::parse(const std::string & lightData) const
 {
-  mImpl->parse(lightData);
+  try {
+    mImpl->parse(lightData);
+  }
+  catch (XdmfError e) {
+    throw e;
+  }
   const xmlNodePtr currNode = xmlDocGetRootElement(mImpl->mDocument);
   std::vector<shared_ptr<XdmfItem> > toReturn;
-  if(mImpl->mItemFactory->createItem((const char*)currNode->name,
-                                     std::map<std::string, std::string>(),
-                                     std::vector<shared_ptr<XdmfItem> >()) == NULL) {
-    toReturn = mImpl->read(currNode->children);
+  try {
+    if(mImpl->mItemFactory->createItem((const char*)currNode->name,
+                                       std::map<std::string, std::string>(),
+                                       std::vector<shared_ptr<XdmfItem> >()) == NULL) {
+      toReturn = mImpl->read(currNode->children);
+    }
+    else {
+      toReturn = mImpl->read(currNode);
+    }
   }
-  else {
-    toReturn = mImpl->read(currNode);
+  catch (XdmfError e) {
+    throw e;
   }
   mImpl->closeFile();
   return(toReturn[0]);
@@ -643,39 +717,60 @@ XdmfCoreReader::parse(const std::string & lightData) const
 std::vector<shared_ptr<XdmfItem> >
 XdmfCoreReader::readItems(const std::string & filePath) const
 {
-  mImpl->openFile(filePath);
-  const xmlNodePtr currNode = xmlDocGetRootElement(mImpl->mDocument);
-  const std::vector<shared_ptr<XdmfItem> > toReturn =
-    mImpl->read(currNode->children);
-  mImpl->closeFile();
-  return toReturn;
+  try {
+    mImpl->openFile(filePath);
+    const xmlNodePtr currNode = xmlDocGetRootElement(mImpl->mDocument);
+    const std::vector<shared_ptr<XdmfItem> > toReturn =
+      mImpl->read(currNode->children);
+    mImpl->closeFile();
+    return toReturn;
+  }
+  catch (XdmfError e) {
+    throw e;
+  }
+
 }
 
 shared_ptr<XdmfItem>
 XdmfCoreReader::read(const std::string & filePath) const
 {
-  const std::vector<shared_ptr<XdmfItem> > toReturn = readItems(filePath);
-  if (toReturn.size() == 0) {
-    return(shared_ptr<XdmfItem>());
+  try {
+    const std::vector<shared_ptr<XdmfItem> > toReturn = readItems(filePath);
+    if (toReturn.size() == 0) {
+      return(shared_ptr<XdmfItem>());
+    }
+    return(toReturn[0]);
   }
-  return(toReturn[0]);
+  catch (XdmfError e) {
+    throw e;
+  }
 }
 
 std::vector<shared_ptr<XdmfItem> >
 XdmfCoreReader::read(const std::string & filePath,
                      const std::string & xPath) const
 {
-  mImpl->openFile(filePath);
-  std::vector<shared_ptr<XdmfItem> > toReturn = this->readPathObjects(xPath);
-  mImpl->closeFile();
-  return toReturn;
+  try {
+    mImpl->openFile(filePath);
+    std::vector<shared_ptr<XdmfItem> > toReturn = this->readPathObjects(xPath);
+    mImpl->closeFile();
+    return toReturn;
+  }
+  catch (XdmfError e) {
+    throw e;
+  }
 }
 
 std::vector<shared_ptr<XdmfItem> >
 XdmfCoreReader::readPathObjects(const std::string & xPath) const
 {
   std::vector<shared_ptr<XdmfItem> > toReturn;
-  mImpl->readPathObjects(xPath, toReturn);
+  try {
+    mImpl->readPathObjects(xPath, toReturn);
+  }
+  catch (XdmfError e) {
+    throw e;
+  }
   return toReturn;
 }
 

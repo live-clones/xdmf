@@ -34,6 +34,7 @@
 #include "XdmfSystemUtils.hpp"
 #include "XdmfWriter.hpp"
 #include "XdmfVersion.hpp"
+#include "XdmfError.hpp"
 
 /**
  * PIMPL
@@ -200,6 +201,12 @@ XdmfWriter::getHeavyDataWriter() const
   return mImpl->mHeavyDataWriter;
 }
 
+void
+XdmfWriter::setHeavyDataWriter(shared_ptr<XdmfHeavyDataWriter> heavyDataWriter)
+{
+  mImpl->mHeavyDataWriter = heavyDataWriter;
+}
+
 std::string
 XdmfWriter::getFilePath() const
 {
@@ -234,12 +241,6 @@ void
 XdmfWriter::setDocumentTitle(std::string title)
 {
   mImpl->mDocumentTitle = title;
-}
-
-void 
-XdmfWriter::setHeavyDataWriter(shared_ptr<XdmfHeavyDataWriter> heavyDataWriter)
-{
-  mImpl->mHeavyDataWriter = heavyDataWriter;
 }
 
 void
@@ -285,7 +286,12 @@ XdmfWriter::visit(XdmfArray & array,
     array.getItemTag().compare(XdmfArray::ItemTag) != 0;
 
   if(isSubclassed) {
-    this->visit(dynamic_cast<XdmfItem &>(array), visitor);
+    try {
+      this->visit(dynamic_cast<XdmfItem &>(array), visitor);
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
 
   if(array.getSize() > 0 && !(mImpl->mLastXPathed && isSubclassed)) {
@@ -304,7 +310,12 @@ XdmfWriter::visit(XdmfArray & array,
       //this case is for if the data is smaller than the limit
       //create case for when data is over the limit
       // Write values to heavy data
-      mImpl->mHeavyDataWriter->visit(array, mImpl->mHeavyDataWriter);
+      try {
+        mImpl->mHeavyDataWriter->visit(array, mImpl->mHeavyDataWriter);
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
       std::stringstream valuesStream;
       for(int i = 0; i < array.getNumberHeavyDataControllers(); i++) {
         std::string heavyDataPath =
@@ -391,7 +402,12 @@ XdmfWriter::visit(XdmfItem & item,
 
   std::string tag = item.getItemTag();
   if (tag.length() == 0) {
-    item.traverse(visitor);
+    try {
+      item.traverse(visitor);
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
   else {
     if(mImpl->mWriteXPaths) {
@@ -536,7 +552,12 @@ XdmfWriter::visit(XdmfItem & item,
                    (xmlChar*)iter->first.c_str(),
                    (xmlChar*)iter->second.c_str());
       }
-      item.traverse(visitor);
+      try {
+        item.traverse(visitor);
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
     }
 
     mImpl->mXMLCurrentNode = mImpl->mXMLCurrentNode->parent;

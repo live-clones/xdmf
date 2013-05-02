@@ -215,6 +215,22 @@ public:
    * Set the heavy data writer that this XdmfWriter uses to write
    * heavy data to disk.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfWriter.cpp
+   * @skipline outFile
+   * @until exampleHeavyWriter
+   * @skipline setHeavyDataWriter
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleWriter.py
+   * @skipline outFile
+   * @until exampleHeavyWriter
+   * @skipline setHeavyDataWriter
+   *
    * @param heavyDataWriter the heavy data writer to set.
    */
   void setHeavyDataWriter(shared_ptr<XdmfHeavyDataWriter> heavyDataWriter);

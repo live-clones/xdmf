@@ -44,9 +44,14 @@ public:
     static shared_ptr<XdmfTopologyCurvilinear>
     New(const XdmfCurvilinearGrid * const curvilinearGrid)
     {
-      shared_ptr<XdmfTopologyCurvilinear> 
-        p(new XdmfTopologyCurvilinear(curvilinearGrid));
-      return p;
+      try {
+        shared_ptr<XdmfTopologyCurvilinear> 
+          p(new XdmfTopologyCurvilinear(curvilinearGrid));
+        return p;
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
     }
 
     unsigned int
@@ -69,7 +74,12 @@ public:
     XdmfTopologyCurvilinear(const XdmfCurvilinearGrid * const curvilinearGrid) :
       mCurvilinearGrid(curvilinearGrid)
     {
-      this->setType(XdmfTopologyTypeCurvilinear::New(curvilinearGrid));
+      try {
+        this->setType(XdmfTopologyTypeCurvilinear::New(curvilinearGrid));
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
     }
 
     const XdmfCurvilinearGrid * const mCurvilinearGrid;
@@ -100,9 +110,14 @@ public:
         return 12;
       }
       else {
-        XdmfError::message(XdmfError::FATAL, 
-                           "Grid dimensions not 2 or 3 in "
-                           "XdmfTopologyTypeCurvilinear::getEdgesPerElement");
+        try {
+          XdmfError::message(XdmfError::FATAL, 
+                             "Grid dimensions not 2 or 3 in "
+                             "XdmfTopologyTypeCurvilinear::getEdgesPerElement");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
       }
       return 0;
     }
@@ -119,9 +134,14 @@ public:
         return 6;
       }
       else {
-        XdmfError::message(XdmfError::FATAL, 
-                           "Grid dimensions not 2 or 3 in "
-                           "XdmfTopologyTypeCurvilinear::getFacesPerElement");
+        try {
+          XdmfError::message(XdmfError::FATAL, 
+                             "Grid dimensions not 2 or 3 in "
+                             "XdmfTopologyTypeCurvilinear::getFacesPerElement");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
       }
       return 0;
     }
@@ -147,9 +167,14 @@ public:
         collectedProperties["Type"] = "2DSMesh";
       }
       else {
-        XdmfError::message(XdmfError::FATAL, 
-                           "Grid dimensions not 2 or 3 in "
-                           "XdmfTopologyTypeCurvilinear::getProperties");
+        try {
+          XdmfError::message(XdmfError::FATAL, 
+                             "Grid dimensions not 2 or 3 in "
+                             "XdmfTopologyTypeCurvilinear::getProperties");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
       }
       collectedProperties["Dimensions"] = dimensions->getValuesString();
     }

@@ -24,6 +24,7 @@ ADD_TEST_CXX(TestXdmfArrayMultidimensional)
 ADD_TEST_CXX(TestXdmfArrayMultiDimensionalInsert)
 ADD_TEST_CXX(TestXdmfArrayWriteRead)
 ADD_TEST_CXX(TestXdmfArrayWriteReadHyperSlabs)
+ADD_TEST_CXX(TestXdmfError)
 ADD_TEST_CXX(TestXdmfHDF5Controller)
 ADD_TEST_CXX(TestXdmfHDF5Writer)
 if(XDMF_BUILD_DSM)
@@ -46,6 +47,7 @@ CLEAN_TEST_CXX(TestXdmfArrayWriteRead
   test.h5)
 CLEAN_TEST_CXX(TestXdmfArrayWriteRead
   testHyperslab.h5)
+CLEAN_TEST_CXX(TestXdmfError)
 CLEAN_TEST_CXX(TestXdmfHDF5Controller)
 CLEAN_TEST_CXX(TestXdmfHDF5Writer
   hdf5WriterTest.h5)

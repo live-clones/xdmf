@@ -79,9 +79,14 @@ XdmfSetType::New(const std::map<std::string, std::string> & itemProperties)
     type = itemProperties.find("SetType");
   }
   if(type == itemProperties.end()) {
-    XdmfError::message(XdmfError::FATAL, 
-                       "Neither 'Type' nor 'SetType' found in itemProperties "
-                       "in XdmfSetType::New");
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+                         "Neither 'Type' nor 'SetType' found in itemProperties "
+                         "in XdmfSetType::New");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
   const std::string & typeVal = type->second;
 
@@ -101,9 +106,14 @@ XdmfSetType::New(const std::map<std::string, std::string> & itemProperties)
     return NoSetType();
   }
 
-  XdmfError::message(XdmfError::FATAL, 
-                     "Type not of 'None', 'Node', 'Cell', 'Face', or "
-                     "'Edge' in XdmfSetType::New");
+  try {
+    XdmfError::message(XdmfError::FATAL, 
+                       "Type not of 'None', 'Node', 'Cell', 'Face', or "
+                       "'Edge' in XdmfSetType::New");
+  }
+  catch (XdmfError e) {
+    throw e;
+  }
 
   return shared_ptr<const XdmfSetType>();
 }

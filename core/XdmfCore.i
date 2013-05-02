@@ -161,9 +161,26 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
 #ifdef SWIGPYTHON
 
+%exception
+{
+        try
+        {
+                $action
+        }
+        catch (XdmfError e)
+        {
+                PyErr_SetString(PyExc_RuntimeError, e.what());
+                return NULL;
+        }
+}
+
+#ifdef XDMF_BUILD_DSM
+
 %include mpi4py/mpi4py.i
 
 %mpi4py_typemap(Comm, MPI_Comm);
+
+#endif
 
 /*This causes it to avoid throwing a warning for redefining fuctions that are defined for XdmfArray.
   I this case doing so was intentional.*/

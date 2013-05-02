@@ -150,9 +150,14 @@ XdmfSparseMatrix::populateItem(const std::map<std::string, std::string> & itemPr
     mName = name->second;
   }
   else  {
-    XdmfError::message(XdmfError::FATAL,
-                       "'Name' not found in itemProperties in "
-                       "XdmfSparseMatrix::populateItem");
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "'Name' not found in itemProperties in "
+                         "XdmfSparseMatrix::populateItem");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
   std::map<std::string, std::string>::const_iterator numberRows =
     itemProperties.find("NumberRows");
@@ -160,9 +165,14 @@ XdmfSparseMatrix::populateItem(const std::map<std::string, std::string> & itemPr
     mNumberRows = std::atoi(numberRows->second.c_str());
   }
   else  {
-    XdmfError::message(XdmfError::FATAL,
-                       "'NumberRows' not found in itemProperties in "
-                       "XdmfSparseMatrix::populateItem");
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "'NumberRows' not found in itemProperties in "
+                         "XdmfSparseMatrix::populateItem");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
   std::map<std::string, std::string>::const_iterator numberColumns =
     itemProperties.find("NumberColumns");
@@ -170,9 +180,14 @@ XdmfSparseMatrix::populateItem(const std::map<std::string, std::string> & itemPr
     mNumberColumns = std::atoi(numberColumns->second.c_str());
   }
   else  {
-    XdmfError::message(XdmfError::FATAL,
-                       "'NumberColumns' not found in itemProperties in "
-                       "XdmfSparseMatrix::populateItem");
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "'NumberColumns' not found in itemProperties in "
+                         "XdmfSparseMatrix::populateItem");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
 
   std::vector<shared_ptr<XdmfArray> > arrayVector;
@@ -189,9 +204,14 @@ XdmfSparseMatrix::populateItem(const std::map<std::string, std::string> & itemPr
   if(arrayVector.size() < 3) {
     //The three required arrays are for the row pointer, column index, and the contained values.
     //Without these arrays the object can't be properly built.
-    XdmfError::message(XdmfError::FATAL,
-                       "Expected 3 arrays attached to "
-                       "XdmfSparseMatrix::populateItem");
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Expected 3 arrays attached to "
+                         "XdmfSparseMatrix::populateItem");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
   mRowPointer = arrayVector[0];
   mColumnIndex = arrayVector[1];

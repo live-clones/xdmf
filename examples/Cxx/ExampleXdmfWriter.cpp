@@ -28,6 +28,8 @@ int main(int, char **)
 
 	shared_ptr<const XdmfHeavyDataWriter> exampleHeavyWriterConst = exampleWriter->getHeavyDataWriter();
 
+	exampleWriter->setHeavyDataWriter(exampleHeavyWriter);
+
 	unsigned int exampleLimit = exampleWriter->getLightDataLimit();
 
 	XdmfWriter::Mode testMode = XdmfWriter::Default;

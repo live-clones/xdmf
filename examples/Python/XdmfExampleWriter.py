@@ -15,6 +15,8 @@ if __name__ == "__main__":
 
 	exampleHeavyWriter = exampleWriter.getHeavyDataWriter()
 
+	exampleWriter.setHeavyDataWriter(exampleHeavyWriter)
+
 	exampleLimit = exampleWriter.getLightDataLimit()
 
 	testMode = XdmfWriter.Default

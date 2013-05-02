@@ -168,15 +168,25 @@ XdmfMap::populateItem(const std::map<std::string, std::string> & itemProperties,
 
   if(arrayVector.size() != 0) {
     if(arrayVector.size() != 3) {
-      XdmfError::message(XdmfError::FATAL,
-                         "Expected 3 arrays attached to "
-                         "XdmfMap::populateItem");
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "Expected 3 arrays attached to "
+                           "XdmfMap::populateItem");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
     }
     if(!(arrayVector[0]->getSize() == arrayVector[1]->getSize() &&
          arrayVector[0]->getSize() == arrayVector[2]->getSize())) {
-      XdmfError::message(XdmfError::FATAL,
-                         "Arrays must be of equal size in "
-                         "XdmfMap:: populateItem");
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "Arrays must be of equal size in "
+                           "XdmfMap:: populateItem");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
     }
 
     // check if any arrays have values in memory - if so, they need to be
@@ -256,8 +266,13 @@ XdmfMap::read()
          remoteTaskCount &&
          localNodeCount ==
          remoteNodeCount)){
-      XdmfError::message(XdmfError::FATAL,
-                         "Arrays must be of equal size in XdmfMap::read");
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "Arrays must be of equal size in XdmfMap::read");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
     }
 
     shared_ptr<XdmfArray> remoteTaskIds = XdmfArray::New();
@@ -326,10 +341,16 @@ XdmfMap::setHeavyDataControllers(std::vector<shared_ptr<XdmfHeavyDataController>
   if(!(localNodeCount ==
        remoteTaskCount &&
        localNodeCount ==
-       remoteNodeCount))
-    XdmfError::message(XdmfError::FATAL,
-                       "Arrays must be of equal size in "
-                       "XdmfMap::setHeavyDataControllers");
+       remoteNodeCount)) {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Arrays must be of equal size in "
+                         "XdmfMap::setHeavyDataControllers");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
   mRemoteTaskIdsControllers = remoteTaskIdsControllers;
   mLocalNodeIdsControllers = localNodeIdsControllers;
   mRemoteLocalNodeIdsControllers = remoteLocalNodeIdsControllers;

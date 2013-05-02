@@ -81,9 +81,14 @@ XdmfAttributeCenter::New(const std::map<std::string, std::string> & itemProperti
   std::map<std::string, std::string>::const_iterator center =
     itemProperties.find("Center");
   if(center == itemProperties.end()) {
-    XdmfError::message(XdmfError::FATAL, 
-                       "'Center' not found in itemProperties in "
-                       "XdmfAttributeCenter::New");
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+                         "'Center' not found in itemProperties in "
+                         "XdmfAttributeCenter::New");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
   const std::string & centerVal = center->second;
   
@@ -103,9 +108,14 @@ XdmfAttributeCenter::New(const std::map<std::string, std::string> & itemProperti
     return Edge();
   }
 
-  XdmfError::message(XdmfError::FATAL, 
-                     "Center not of 'Grid','Cell','Face','Edge','Node' "
-                     "in XdmfAttributeCenter::New");
+  try {
+    XdmfError::message(XdmfError::FATAL, 
+                       "Center not of 'Grid','Cell','Face','Edge','Node' "
+                       "in XdmfAttributeCenter::New");
+  }
+  catch (XdmfError e) {
+    throw e;
+  }
 
   return shared_ptr<const XdmfAttributeCenter>();
 }
