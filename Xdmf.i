@@ -91,6 +91,7 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
     #include <XdmfDomain.hpp>
     #include <XdmfGeometry.hpp>
     #include <XdmfGeometryType.hpp>
+    #include <XdmfGraph.hpp>
     #include <XdmfGrid.hpp>
     #include <XdmfGridCollection.hpp>
     #include <XdmfGridCollectionType.hpp>
