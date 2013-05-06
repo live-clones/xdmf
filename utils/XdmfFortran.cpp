@@ -847,6 +847,7 @@ XdmfFortran::numGridCollectionGridCollections()
 		{
 			throw e;
 		}
+		return -1;
 	}
 }
 
@@ -868,7 +869,7 @@ XdmfFortran::retrieveDomainNumProperties()
 void
 XdmfFortran::retrieveDomainProperty(int index, char * key, int keyLength, char * value, int valueLength)
 {
-	if (index < mDomain->getItemProperties().size())
+	if (index < (int)mDomain->getItemProperties().size())
 	{
 		std::map<std::string, std::string>::iterator walker = mDomain->getItemProperties().begin();
 		for (int i = 0; i<index; i++)
@@ -913,7 +914,7 @@ XdmfFortran::retrieveDomainPropertyByKey(char * key, char * value, int valueLeng
 void
 XdmfFortran::removeDomainGridCollection(int index)
 {
-	if (mDomain->getNumberGridCollections() > index)
+	if ((int)mDomain->getNumberGridCollections() > index)
 	{
 		mDomain->removeGridCollection(index);
 	}
@@ -933,7 +934,7 @@ XdmfFortran::removeDomainGridCollection(int index)
 void
 XdmfFortran::openDomainGridCollection(int index, int openMaps, int openAttributes, int openInformation, int openSets)
 {
-	if (mDomain->getNumberGridCollections() > index)
+	if ((int)mDomain->getNumberGridCollections() > index)
 	{
 		shared_ptr<XdmfGridCollection> openedGridCollection = mDomain->getGridCollection(index);
 		int i;
@@ -1001,7 +1002,7 @@ XdmfFortran::removeGridCollectionGridCollection(int index)
 {
 	if (!mGridCollections.empty())
 	{
-		if (mGridCollections.top()->getNumberGridCollections() > index)
+		if ((int)mGridCollections.top()->getNumberGridCollections() > index)
 		{
 			mGridCollections.top()->removeGridCollection(index);
 		}
@@ -1035,7 +1036,7 @@ XdmfFortran::openGridCollectionGridCollection(int index, int openMaps, int openA
 {
 	if (!mGridCollections.empty())
 	{
-		if (mGridCollections.top()->getNumberGridCollections() > index)
+		if ((int)mGridCollections.top()->getNumberGridCollections() > index)
 		{
 			shared_ptr<XdmfGridCollection> openedGridCollection = mGridCollections.top()->getGridCollection(index);
 			int i;
@@ -1173,6 +1174,7 @@ XdmfFortran::retrieveGridCollectionNumProperties()
 		{
 			throw e;
 		}
+		return -1;
 	}
 }
 
@@ -1181,7 +1183,7 @@ XdmfFortran::retrieveGridCollectionProperty(int index, char * key, int keyLength
 {
 	if (!mGridCollections.empty())
 	{
-		if (index < mGridCollections.top()->getItemProperties().size())
+		if (index < (int)mGridCollections.top()->getItemProperties().size())
 		{
 			std::map<std::string, std::string>::iterator walker = mGridCollections.top()->getItemProperties().begin();
 			for (int i = 0; i<index; i++)
@@ -1254,7 +1256,7 @@ XdmfFortran::openDomainGrid(int gridType, int index, int openMaps, int openAttri
 {
 	if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
 	{
-		if (index < mDomain->getNumberCurvilinearGrids())
+		if (index < (int)mDomain->getNumberCurvilinearGrids())
 		{
 			shared_ptr<XdmfCurvilinearGrid> openedGrid = mDomain->getCurvilinearGrid(index);
 			shared_ptr<const XdmfArrayType> dataType;
@@ -1321,7 +1323,7 @@ XdmfFortran::openDomainGrid(int gridType, int index, int openMaps, int openAttri
 	}
 	else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
 	{
-		if (index < mDomain->getNumberRectilinearGrids())
+		if (index < (int)mDomain->getNumberRectilinearGrids())
 		{
 			shared_ptr<XdmfRectilinearGrid> openedGrid = mDomain->getRectilinearGrid(index);
 			shared_ptr<const XdmfArrayType> dataType;
@@ -1387,7 +1389,7 @@ XdmfFortran::openDomainGrid(int gridType, int index, int openMaps, int openAttri
 	}
 	else if (gridType == XDMF_GRID_TYPE_REGULAR)
 	{
-		if (index < mDomain->getNumberRegularGrids())
+		if (index < (int)mDomain->getNumberRegularGrids())
 		{
 			shared_ptr<XdmfRegularGrid> openedGrid = mDomain->getRegularGrid(index);
 			shared_ptr<const XdmfArrayType> dataType;
@@ -1455,7 +1457,7 @@ XdmfFortran::openDomainGrid(int gridType, int index, int openMaps, int openAttri
 	}
 	else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
 	{
-		if (index < mDomain->getNumberUnstructuredGrids())
+		if (index < (int)mDomain->getNumberUnstructuredGrids())
 		{
 			shared_ptr<XdmfUnstructuredGrid> openedGrid = mDomain->getUnstructuredGrid(index);
 			mTopology = openedGrid->getTopology();
@@ -1537,7 +1539,7 @@ XdmfFortran::removeDomainGrid(int gridType, int index)
 {
 	if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
 	{
-		if (index < mDomain->getNumberCurvilinearGrids())
+		if (index < (int)mDomain->getNumberCurvilinearGrids())
 		{
 			mDomain->removeCurvilinearGrid(index);
 		}
@@ -1555,7 +1557,7 @@ XdmfFortran::removeDomainGrid(int gridType, int index)
 	}
 	else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
 	{
-		if (index < mDomain->getNumberRectilinearGrids())
+		if (index < (int)mDomain->getNumberRectilinearGrids())
 		{
 			mDomain->removeRectilinearGrid(index);
 		}
@@ -1573,7 +1575,7 @@ XdmfFortran::removeDomainGrid(int gridType, int index)
 	}
 	else if (gridType == XDMF_GRID_TYPE_REGULAR)
 	{
-		if (index < mDomain->getNumberRegularGrids())
+		if (index < (int)mDomain->getNumberRegularGrids())
 		{
 			mDomain->removeRegularGrid(index);
 		}
@@ -1591,7 +1593,7 @@ XdmfFortran::removeDomainGrid(int gridType, int index)
 	}
 	else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
 	{
-		if (index < mDomain->getNumberUnstructuredGrids())
+		if (index < (int)mDomain->getNumberUnstructuredGrids())
 		{
 			mDomain->removeUnstructuredGrid(index);
 		}
@@ -1626,7 +1628,7 @@ XdmfFortran::replaceDomainGrid(int gridType, int index, char * name)
 	int i;
 	if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
 	{
-		if (index < mDomain->getNumberCurvilinearGrids())
+		if (index < (int)mDomain->getNumberCurvilinearGrids())
 		{
 			if(mDimensions == NULL)
 			{
@@ -1737,7 +1739,7 @@ XdmfFortran::replaceDomainGrid(int gridType, int index, char * name)
 	}
 	else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
 	{
-		if (index < mDomain->getNumberRectilinearGrids())
+		if (index < (int)mDomain->getNumberRectilinearGrids())
 		{
 			if(mCoordinates.empty())
 			{
@@ -1834,7 +1836,7 @@ XdmfFortran::replaceDomainGrid(int gridType, int index, char * name)
 	}
 	else if (gridType == XDMF_GRID_TYPE_REGULAR)
 	{
-		if (index < mDomain->getNumberRegularGrids())
+		if (index < (int)mDomain->getNumberRegularGrids())
 		{
 			if(mBrick == NULL)
 			{
@@ -1959,7 +1961,7 @@ XdmfFortran::replaceDomainGrid(int gridType, int index, char * name)
 	}
 	else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
 	{
-		if (index < mDomain->getNumberUnstructuredGrids())
+		if (index < (int)mDomain->getNumberUnstructuredGrids())
 		{
 			if(mGeometry == NULL)
 			{
@@ -2075,7 +2077,7 @@ XdmfFortran::retrieveDomainGridName(int gridType, int index, char * returnName, 
 	shared_ptr<XdmfGrid> openedGrid;
 	if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
 	{
-		if (index < mDomain->getNumberCurvilinearGrids())
+		if (index < (int)mDomain->getNumberCurvilinearGrids())
 		{
 			openedGrid = mDomain->getCurvilinearGrid(index);
 		}
@@ -2093,7 +2095,7 @@ XdmfFortran::retrieveDomainGridName(int gridType, int index, char * returnName, 
 	}
 	else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
 	{
-		if (index < mDomain->getNumberRectilinearGrids())
+		if (index < (int)mDomain->getNumberRectilinearGrids())
 		{
 			openedGrid = mDomain->getRectilinearGrid(index);
 		}
@@ -2111,7 +2113,7 @@ XdmfFortran::retrieveDomainGridName(int gridType, int index, char * returnName, 
 	}
 	else if (gridType == XDMF_GRID_TYPE_REGULAR)
 	{
-		if (index < mDomain->getNumberRegularGrids())
+		if (index < (int)mDomain->getNumberRegularGrids())
 		{
 			openedGrid = mDomain->getRegularGrid(index);
 		}
@@ -2129,7 +2131,7 @@ XdmfFortran::retrieveDomainGridName(int gridType, int index, char * returnName, 
 	}
 	else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
 	{
-		if (index < mDomain->getNumberUnstructuredGrids())
+		if (index < (int)mDomain->getNumberUnstructuredGrids())
 		{
 			openedGrid = mDomain->getUnstructuredGrid(index);
 		}
@@ -2168,7 +2170,7 @@ XdmfFortran::retrieveDomainGridTag(int gridType, int index, char * returnTag, in
 	shared_ptr<XdmfGrid> openedGrid;
 	if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
 	{
-		if (index < mDomain->getNumberCurvilinearGrids())
+		if (index < (int)mDomain->getNumberCurvilinearGrids())
 		{
 			openedGrid = mDomain->getCurvilinearGrid(index);
 		}
@@ -2186,7 +2188,7 @@ XdmfFortran::retrieveDomainGridTag(int gridType, int index, char * returnTag, in
 	}
 	else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
 	{
-		if (index < mDomain->getNumberRectilinearGrids())
+		if (index < (int)mDomain->getNumberRectilinearGrids())
 		{
 			openedGrid = mDomain->getRectilinearGrid(index);
 		}
@@ -2204,7 +2206,7 @@ XdmfFortran::retrieveDomainGridTag(int gridType, int index, char * returnTag, in
 	}
 	else if (gridType == XDMF_GRID_TYPE_REGULAR)
 	{
-		if (index < mDomain->getNumberRegularGrids())
+		if (index < (int)mDomain->getNumberRegularGrids())
 		{
 			openedGrid = mDomain->getRegularGrid(index);
 		}
@@ -2222,7 +2224,7 @@ XdmfFortran::retrieveDomainGridTag(int gridType, int index, char * returnTag, in
 	}
 	else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
 	{
-		if (index < mDomain->getNumberUnstructuredGrids())
+		if (index < (int)mDomain->getNumberUnstructuredGrids())
 		{
 			openedGrid = mDomain->getUnstructuredGrid(index);
 		}
@@ -2260,7 +2262,7 @@ XdmfFortran::retrieveDomainGridNumProperties(int gridType, int index)
 {
 	if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
 	{
-		if (index < mDomain->getNumberCurvilinearGrids())
+		if (index < (int)mDomain->getNumberCurvilinearGrids())
 		{
 			return mDomain->getCurvilinearGrid(index)->getItemProperties().size();
 		}
@@ -2274,11 +2276,12 @@ XdmfFortran::retrieveDomainGridNumProperties(int gridType, int index)
 			{
 				throw e;
 			}
+			return -1;
 		}
 	}
 	else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
 	{
-		if (index < mDomain->getNumberRectilinearGrids())
+		if (index < (int)mDomain->getNumberRectilinearGrids())
 		{
 			return mDomain->getRectilinearGrid(index)->getItemProperties().size();
 		}
@@ -2292,11 +2295,12 @@ XdmfFortran::retrieveDomainGridNumProperties(int gridType, int index)
 			{
 				throw e;
 			}
+			return -1;
 		}
 	}
 	else if (gridType == XDMF_GRID_TYPE_REGULAR)
 	{
-		if (index < mDomain->getNumberRegularGrids())
+		if (index < (int)mDomain->getNumberRegularGrids())
 		{
 			return mDomain->getRegularGrid(index)->getItemProperties().size();
 		}
@@ -2310,11 +2314,12 @@ XdmfFortran::retrieveDomainGridNumProperties(int gridType, int index)
 			{
 				throw e;
 			}
+			return -1;
 		}
 	}
 	else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
 	{
-		if (index < mDomain->getNumberUnstructuredGrids())
+		if (index < (int)mDomain->getNumberUnstructuredGrids())
 		{
 			return mDomain->getUnstructuredGrid(index)->getItemProperties().size();
 		}
@@ -2328,6 +2333,7 @@ XdmfFortran::retrieveDomainGridNumProperties(int gridType, int index)
 			{
 				throw e;
 			}
+			return -1;
 		}
 	}
 	else
@@ -2340,6 +2346,7 @@ XdmfFortran::retrieveDomainGridNumProperties(int gridType, int index)
 		{
 			throw e;
 		}
+		return -1;
 	}
 }
 
@@ -2349,7 +2356,7 @@ XdmfFortran::retrieveDomainGridProperty(int gridType, int gridIndex, int index, 
 	shared_ptr<XdmfGrid> openedGrid;
 	if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
 	{
-		if (index < mDomain->getNumberCurvilinearGrids())
+		if (index < (int)mDomain->getNumberCurvilinearGrids())
 		{
 			openedGrid = mDomain->getCurvilinearGrid(index);
 		}
@@ -2367,7 +2374,7 @@ XdmfFortran::retrieveDomainGridProperty(int gridType, int gridIndex, int index, 
 	}
 	else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
 	{
-		if (index < mDomain->getNumberRectilinearGrids())
+		if (index < (int)mDomain->getNumberRectilinearGrids())
 		{
 			openedGrid = mDomain->getRectilinearGrid(index);
 		}
@@ -2385,7 +2392,7 @@ XdmfFortran::retrieveDomainGridProperty(int gridType, int gridIndex, int index, 
 	}
 	else if (gridType == XDMF_GRID_TYPE_REGULAR)
 	{
-		if (index < mDomain->getNumberRegularGrids())
+		if (index < (int)mDomain->getNumberRegularGrids())
 		{
 			openedGrid = mDomain->getRegularGrid(index);
 		}
@@ -2403,7 +2410,7 @@ XdmfFortran::retrieveDomainGridProperty(int gridType, int gridIndex, int index, 
 	}
 	else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
 	{
-		if (index < mDomain->getNumberUnstructuredGrids())
+		if (index < (int)mDomain->getNumberUnstructuredGrids())
 		{
 			openedGrid = mDomain->getUnstructuredGrid(index);
 		}
@@ -2430,7 +2437,7 @@ XdmfFortran::retrieveDomainGridProperty(int gridType, int gridIndex, int index, 
 			throw e;
 		}
 	}
-	if (index < openedGrid->getItemProperties().size())
+	if (index < (int)openedGrid->getItemProperties().size())
 	{
 		std::map<std::string, std::string>::iterator walker = openedGrid->getItemProperties().begin();
 		for (int i = 0; i<index; i++)
@@ -2465,7 +2472,7 @@ XdmfFortran::retrieveDomainGridPropertyByKey(int gridType, int index, char * key
 	shared_ptr<XdmfGrid> openedGrid;
 	if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
 	{
-		if (index < mDomain->getNumberCurvilinearGrids())
+		if (index < (int)mDomain->getNumberCurvilinearGrids())
 		{
 			openedGrid = mDomain->getCurvilinearGrid(index);
 		}
@@ -2483,7 +2490,7 @@ XdmfFortran::retrieveDomainGridPropertyByKey(int gridType, int index, char * key
 	}
 	else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
 	{
-		if (index < mDomain->getNumberRectilinearGrids())
+		if (index < (int)mDomain->getNumberRectilinearGrids())
 		{
 			openedGrid = mDomain->getRectilinearGrid(index);
 		}
@@ -2501,7 +2508,7 @@ XdmfFortran::retrieveDomainGridPropertyByKey(int gridType, int index, char * key
 	}
 	else if (gridType == XDMF_GRID_TYPE_REGULAR)
 	{
-		if (index < mDomain->getNumberRegularGrids())
+		if (index < (int)mDomain->getNumberRegularGrids())
 		{
 			openedGrid = mDomain->getRegularGrid(index);
 		}
@@ -2519,7 +2526,7 @@ XdmfFortran::retrieveDomainGridPropertyByKey(int gridType, int index, char * key
 	}
 	else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
 	{
-		if (index < mDomain->getNumberUnstructuredGrids())
+		if (index < (int)mDomain->getNumberUnstructuredGrids())
 		{
 			openedGrid = mDomain->getUnstructuredGrid(index);
 		}
@@ -2563,7 +2570,7 @@ XdmfFortran::openGridCollectionGrid(int gridType, int index, int openMaps, int o
 	{
 		if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
 		{
-			if (index < mGridCollections.top()->getNumberCurvilinearGrids())
+			if (index < (int)mGridCollections.top()->getNumberCurvilinearGrids())
 			{
 				shared_ptr<XdmfCurvilinearGrid> openedGrid = mGridCollections.top()->getCurvilinearGrid(index);
 				shared_ptr<const XdmfArrayType> dataType;
@@ -2630,7 +2637,7 @@ XdmfFortran::openGridCollectionGrid(int gridType, int index, int openMaps, int o
 		}
 		else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
 		{
-			if (index < mGridCollections.top()->getNumberRectilinearGrids())
+			if (index < (int)mGridCollections.top()->getNumberRectilinearGrids())
 			{
 				shared_ptr<XdmfRectilinearGrid> openedGrid = mGridCollections.top()->getRectilinearGrid(index);
 				shared_ptr<const XdmfArrayType> dataType;
@@ -2696,7 +2703,7 @@ XdmfFortran::openGridCollectionGrid(int gridType, int index, int openMaps, int o
 		}
 		else if (gridType == XDMF_GRID_TYPE_REGULAR)
 		{
-			if (index < mGridCollections.top()->getNumberRegularGrids())
+			if (index < (int)mGridCollections.top()->getNumberRegularGrids())
 			{
 				shared_ptr<XdmfRegularGrid> openedGrid = mGridCollections.top()->getRegularGrid(index);
 				shared_ptr<const XdmfArrayType> dataType;
@@ -2764,7 +2771,7 @@ XdmfFortran::openGridCollectionGrid(int gridType, int index, int openMaps, int o
 		}
 		else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
 		{
-			if (index < mGridCollections.top()->getNumberUnstructuredGrids())
+			if (index < (int)mGridCollections.top()->getNumberUnstructuredGrids())
 			{
 				shared_ptr<XdmfUnstructuredGrid> openedGrid = mGridCollections.top()->getUnstructuredGrid(index);
 				mTopology = openedGrid->getTopology();
@@ -2861,7 +2868,7 @@ XdmfFortran::removeGridCollectionGrid(int gridType, int index)
 	{
 		if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
 		{
-			if (index < mGridCollections.top()->getNumberCurvilinearGrids())
+			if (index < (int)mGridCollections.top()->getNumberCurvilinearGrids())
 			{
 				mGridCollections.top()->removeCurvilinearGrid(index);
 			}
@@ -2879,7 +2886,7 @@ XdmfFortran::removeGridCollectionGrid(int gridType, int index)
 		}
 		else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
 		{
-			if (index < mGridCollections.top()->getNumberRectilinearGrids())
+			if (index < (int)mGridCollections.top()->getNumberRectilinearGrids())
 			{
 				mGridCollections.top()->removeRectilinearGrid(index);
 			}
@@ -2897,7 +2904,7 @@ XdmfFortran::removeGridCollectionGrid(int gridType, int index)
 		}
 		else if (gridType == XDMF_GRID_TYPE_REGULAR)
 		{
-			if (index < mGridCollections.top()->getNumberRegularGrids())
+			if (index < (int)mGridCollections.top()->getNumberRegularGrids())
 			{
 				mGridCollections.top()->removeRegularGrid(index);
 			}
@@ -2915,7 +2922,7 @@ XdmfFortran::removeGridCollectionGrid(int gridType, int index)
 		}
 		else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
 		{
-			if (index < mGridCollections.top()->getNumberUnstructuredGrids())
+			if (index < (int)mGridCollections.top()->getNumberUnstructuredGrids())
 			{
 				mGridCollections.top()->removeUnstructuredGrid(index);
 			}
@@ -2954,7 +2961,7 @@ XdmfFortran::replaceGridCollectionGrid(int gridType, int index, char * name)
 		int i;
 		if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
 		{
-			if (index < mGridCollections.top()->getNumberCurvilinearGrids())
+			if (index < (int)mGridCollections.top()->getNumberCurvilinearGrids())
 			{
 				if(mDimensions == NULL)
 				{
@@ -3065,7 +3072,7 @@ XdmfFortran::replaceGridCollectionGrid(int gridType, int index, char * name)
 		}
 		else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
 		{
-			if (index < mGridCollections.top()->getNumberRectilinearGrids())
+			if (index < (int)mGridCollections.top()->getNumberRectilinearGrids())
 			{
 				if(mCoordinates.empty())
 				{
@@ -3162,7 +3169,7 @@ XdmfFortran::replaceGridCollectionGrid(int gridType, int index, char * name)
 		}
 		else if (gridType == XDMF_GRID_TYPE_REGULAR)
 		{
-			if (index < mGridCollections.top()->getNumberRegularGrids())
+			if (index < (int)mGridCollections.top()->getNumberRegularGrids())
 			{
 				if(mBrick == NULL)
 				{
@@ -3287,7 +3294,7 @@ XdmfFortran::replaceGridCollectionGrid(int gridType, int index, char * name)
 		}
 		else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
 		{
-			if (index < mGridCollections.top()->getNumberUnstructuredGrids())
+			if (index < (int)mGridCollections.top()->getNumberUnstructuredGrids())
 			{
 				if(mGeometry == NULL)
 				{
@@ -3418,7 +3425,7 @@ XdmfFortran::retrieveGridCollectionGridName(int gridType, int index, char * retu
 		shared_ptr<XdmfGrid> openedGrid;
 		if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
 		{
-			if (index < mGridCollections.top()->getNumberCurvilinearGrids())
+			if (index < (int)mGridCollections.top()->getNumberCurvilinearGrids())
 			{
 				openedGrid = mGridCollections.top()->getCurvilinearGrid(index);
 			}
@@ -3436,7 +3443,7 @@ XdmfFortran::retrieveGridCollectionGridName(int gridType, int index, char * retu
 		}
 		else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
 		{
-			if (index < mGridCollections.top()->getNumberRectilinearGrids())
+			if (index < (int)mGridCollections.top()->getNumberRectilinearGrids())
 			{
 				openedGrid = mGridCollections.top()->getRectilinearGrid(index);
 			}
@@ -3454,7 +3461,7 @@ XdmfFortran::retrieveGridCollectionGridName(int gridType, int index, char * retu
 		}
 		else if (gridType == XDMF_GRID_TYPE_REGULAR)
 		{
-			if (index < mGridCollections.top()->getNumberRegularGrids())
+			if (index < (int)mGridCollections.top()->getNumberRegularGrids())
 			{
 				openedGrid = mGridCollections.top()->getRegularGrid(index);
 			}
@@ -3472,7 +3479,7 @@ XdmfFortran::retrieveGridCollectionGridName(int gridType, int index, char * retu
 		}
 		else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
 		{
-			if (index < mGridCollections.top()->getNumberUnstructuredGrids())
+			if (index < (int)mGridCollections.top()->getNumberUnstructuredGrids())
 			{
 				openedGrid = mGridCollections.top()->getUnstructuredGrid(index);
 			}
@@ -3526,7 +3533,7 @@ XdmfFortran::retrieveGridCollectionGridTag(int gridType, int index, char * retur
 		shared_ptr<XdmfGrid> openedGrid;
 		if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
 		{
-			if (index < mGridCollections.top()->getNumberCurvilinearGrids())
+			if (index < (int)mGridCollections.top()->getNumberCurvilinearGrids())
 			{
 				openedGrid = mGridCollections.top()->getCurvilinearGrid(index);
 			}
@@ -3544,7 +3551,7 @@ XdmfFortran::retrieveGridCollectionGridTag(int gridType, int index, char * retur
 		}
 		else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
 		{
-			if (index < mGridCollections.top()->getNumberRectilinearGrids())
+			if (index < (int)mGridCollections.top()->getNumberRectilinearGrids())
 			{
 				openedGrid = mGridCollections.top()->getRectilinearGrid(index);
 			}
@@ -3562,7 +3569,7 @@ XdmfFortran::retrieveGridCollectionGridTag(int gridType, int index, char * retur
 		}
 		else if (gridType == XDMF_GRID_TYPE_REGULAR)
 		{
-			if (index < mGridCollections.top()->getNumberRegularGrids())
+			if (index < (int)mGridCollections.top()->getNumberRegularGrids())
 			{
 				openedGrid = mGridCollections.top()->getRegularGrid(index);
 			}
@@ -3580,7 +3587,7 @@ XdmfFortran::retrieveGridCollectionGridTag(int gridType, int index, char * retur
 		}
 		else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
 		{
-			if (index < mGridCollections.top()->getNumberUnstructuredGrids())
+			if (index < (int)mGridCollections.top()->getNumberUnstructuredGrids())
 			{
 				openedGrid = mGridCollections.top()->getUnstructuredGrid(index);
 			}
@@ -3633,7 +3640,7 @@ XdmfFortran::retrieveGridCollectionGridNumProperties(int gridType, int index)
 	{
 		if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
 		{
-			if (index < mGridCollections.top()->getNumberCurvilinearGrids())
+			if (index < (int)mGridCollections.top()->getNumberCurvilinearGrids())
 			{
 				return mGridCollections.top()->getCurvilinearGrid(index)->getItemProperties().size();
 			}
@@ -3647,11 +3654,12 @@ XdmfFortran::retrieveGridCollectionGridNumProperties(int gridType, int index)
 				{
 					throw e;
 				}
+				return -1;
 			}
 		}
 		else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
 		{
-			if (index < mGridCollections.top()->getNumberRectilinearGrids())
+			if (index < (int)mGridCollections.top()->getNumberRectilinearGrids())
 			{
 				return mGridCollections.top()->getRectilinearGrid(index)->getItemProperties().size();
 			}
@@ -3665,11 +3673,12 @@ XdmfFortran::retrieveGridCollectionGridNumProperties(int gridType, int index)
 				{
 					throw e;
 				}
+				return -1;
 			}
 		}
 		else if (gridType == XDMF_GRID_TYPE_REGULAR)
 		{
-			if (index < mGridCollections.top()->getNumberRegularGrids())
+			if (index < (int)mGridCollections.top()->getNumberRegularGrids())
 			{
 				return mGridCollections.top()->getRegularGrid(index)->getItemProperties().size();
 			}
@@ -3683,11 +3692,12 @@ XdmfFortran::retrieveGridCollectionGridNumProperties(int gridType, int index)
 				{
 					throw e;
 				}
+				return -1;
 			}
 		}
 		else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
 		{
-			if (index < mGridCollections.top()->getNumberUnstructuredGrids())
+			if (index < (int)mGridCollections.top()->getNumberUnstructuredGrids())
 			{
 				return mGridCollections.top()->getUnstructuredGrid(index)->getItemProperties().size();
 			}
@@ -3701,6 +3711,7 @@ XdmfFortran::retrieveGridCollectionGridNumProperties(int gridType, int index)
 				{
 					throw e;
 				}
+				return -1;
 			}
 		}
 		else
@@ -3713,6 +3724,7 @@ XdmfFortran::retrieveGridCollectionGridNumProperties(int gridType, int index)
 			{
 				throw e;
 			}
+			return -1;
 		}
 	}
 	else
@@ -3726,6 +3738,7 @@ XdmfFortran::retrieveGridCollectionGridNumProperties(int gridType, int index)
 		{
 			throw e;
 		}
+		return -1;
 	}
 }
 
@@ -3738,7 +3751,7 @@ XdmfFortran::retrieveGridCollectionGridProperty(int gridType, int gridIndex, int
 		shared_ptr<XdmfGrid> openedGrid;
 		if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
 		{
-			if (index < mGridCollections.top()->getNumberCurvilinearGrids())
+			if (index < (int)mGridCollections.top()->getNumberCurvilinearGrids())
 			{
 				openedGrid = mGridCollections.top()->getCurvilinearGrid(index);
 			}
@@ -3756,7 +3769,7 @@ XdmfFortran::retrieveGridCollectionGridProperty(int gridType, int gridIndex, int
 		}
 		else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
 		{
-			if (index < mGridCollections.top()->getNumberRectilinearGrids())
+			if (index < (int)mGridCollections.top()->getNumberRectilinearGrids())
 			{
 				openedGrid = mGridCollections.top()->getRectilinearGrid(index);
 			}
@@ -3774,7 +3787,7 @@ XdmfFortran::retrieveGridCollectionGridProperty(int gridType, int gridIndex, int
 		}
 		else if (gridType == XDMF_GRID_TYPE_REGULAR)
 		{
-			if (index < mGridCollections.top()->getNumberRegularGrids())
+			if (index < (int)mGridCollections.top()->getNumberRegularGrids())
 			{
 				openedGrid = mGridCollections.top()->getRegularGrid(index);
 			}
@@ -3792,7 +3805,7 @@ XdmfFortran::retrieveGridCollectionGridProperty(int gridType, int gridIndex, int
 		}
 		else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
 		{
-			if (index < mGridCollections.top()->getNumberUnstructuredGrids())
+			if (index < (int)mGridCollections.top()->getNumberUnstructuredGrids())
 			{
 				openedGrid = mGridCollections.top()->getUnstructuredGrid(index);
 			}
@@ -3819,7 +3832,7 @@ XdmfFortran::retrieveGridCollectionGridProperty(int gridType, int gridIndex, int
 				throw e;
 			}
 		}
-		if (index < openedGrid->getItemProperties().size())
+		if (index < (int)openedGrid->getItemProperties().size())
 		{
 			std::map<std::string, std::string>::iterator walker = openedGrid->getItemProperties().begin();
 			for (int i = 0; i<index; i++)
@@ -3869,7 +3882,7 @@ XdmfFortran::retrieveGridCollectionGridPropertyByKey(int gridType, int index, ch
 		shared_ptr<XdmfGrid> openedGrid;
 		if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
 		{
-			if (index < mGridCollections.top()->getNumberCurvilinearGrids())
+			if (index < (int)mGridCollections.top()->getNumberCurvilinearGrids())
 			{
 				openedGrid = mGridCollections.top()->getCurvilinearGrid(index);
 			}
@@ -3887,7 +3900,7 @@ XdmfFortran::retrieveGridCollectionGridPropertyByKey(int gridType, int index, ch
 		}
 		else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
 		{
-			if (index < mGridCollections.top()->getNumberRectilinearGrids())
+			if (index < (int)mGridCollections.top()->getNumberRectilinearGrids())
 			{
 				openedGrid = mGridCollections.top()->getRectilinearGrid(index);
 			}
@@ -3905,7 +3918,7 @@ XdmfFortran::retrieveGridCollectionGridPropertyByKey(int gridType, int index, ch
 		}
 		else if (gridType == XDMF_GRID_TYPE_REGULAR)
 		{
-			if (index < mGridCollections.top()->getNumberRegularGrids())
+			if (index < (int)mGridCollections.top()->getNumberRegularGrids())
 			{
 				openedGrid = mGridCollections.top()->getRegularGrid(index);
 			}
@@ -3923,7 +3936,7 @@ XdmfFortran::retrieveGridCollectionGridPropertyByKey(int gridType, int index, ch
 		}
 		else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
 		{
-			if (index < mGridCollections.top()->getNumberUnstructuredGrids())
+			if (index < (int)mGridCollections.top()->getNumberUnstructuredGrids())
 			{
 				openedGrid = mGridCollections.top()->getUnstructuredGrid(index);
 			}
@@ -4002,6 +4015,7 @@ XdmfFortran::numDomainGrids(int gridType)
 		{
 			throw e;
 		}
+		return -1;
 	}
 }
 
@@ -4036,6 +4050,7 @@ XdmfFortran::numGridCollectionGrids(int gridType)
 			{
 				throw e;
 			}
+			return -1;
 		}
 	}
 	else
@@ -4049,6 +4064,7 @@ XdmfFortran::numGridCollectionGrids(int gridType)
 		{
 			throw e;
 		}
+		return -1;
 	}
 }
 int
@@ -4076,6 +4092,7 @@ XdmfFortran::retrieveGridCollectionType()
 			{
 				throw e;
 			}
+			return -1;
 		}
 		else
 		{
@@ -4088,6 +4105,7 @@ XdmfFortran::retrieveGridCollectionType()
 			{
 				throw e;
 			}
+			return -1;
 		}
 	}
 	else
@@ -4101,6 +4119,7 @@ XdmfFortran::retrieveGridCollectionType()
 		{
 			throw e;
 		}
+		return -1;
 	}
 }
 
@@ -4148,6 +4167,7 @@ XdmfFortran::retrieveGeometryType()
 		{
 			throw e;
 		}
+		return -1;
 	}
 	else
 	{
@@ -4170,6 +4190,7 @@ XdmfFortran::retrieveGeometryType()
 			{
 				throw e;
 			}
+			return -1;
 		}
 		else
 		{
@@ -4181,6 +4202,7 @@ XdmfFortran::retrieveGeometryType()
 			{
 				throw e;
 			}
+			return -1;
 		}
 	}
 }
@@ -4199,6 +4221,7 @@ XdmfFortran::retrieveGeometryValueType()
 		{
 			throw e;
 		}
+		return -1;
 	}
 	else
 	{
@@ -4250,6 +4273,7 @@ XdmfFortran::retrieveGeometryValueType()
 			{
 				throw e;
 			}
+			return -1;
 		}
 		else
 		{
@@ -4262,6 +4286,7 @@ XdmfFortran::retrieveGeometryValueType()
 			{
 				throw e;
 			}
+			return -1;
 		}
 	}
 }
@@ -4311,6 +4336,7 @@ XdmfFortran::retrieveGeometryNumPoints()
 		{
 			throw e;
 		}
+		return -1;
 	}
 	else
 	{
@@ -4332,6 +4358,7 @@ XdmfFortran::retrieveGeometrySize()
 		{
 			throw e;
 		}
+		return -1;
 	}
 	else
 	{
@@ -4359,6 +4386,7 @@ XdmfFortran::retrieveGeometryNumProperties()
 		{
 			throw e;
 		}
+		return -1;
 	}
 	else
 	{
@@ -4383,7 +4411,7 @@ XdmfFortran::retrieveGeometryProperty(int index, char * key, int keyLength, char
 	}
 	else
 	{
-		if (index < mGeometry->getItemProperties().size())
+		if (index < (int)mGeometry->getItemProperties().size())
 		{
 			std::map<std::string, std::string>::iterator walker = mGeometry->getItemProperties().begin();
 			for (int i = 0; i<index; i++)
@@ -4479,6 +4507,7 @@ XdmfFortran::retrieveTopologyType()
 		{
 			throw e;
 		}
+		return -1;
 	}
 	else
 	{
@@ -4609,6 +4638,7 @@ XdmfFortran::retrieveTopologyType()
 			{
 				throw e;
 			}
+			return -1;
 		}
 		else
 		{
@@ -4620,6 +4650,7 @@ XdmfFortran::retrieveTopologyType()
 			{
 				throw e;
 			}
+			return -1;
 		}
 	}
 }
@@ -4638,6 +4669,7 @@ XdmfFortran::retrieveTopologyValueType()
 		{
 			throw e;
 		}
+		return -1;
 	}
 	else
 	{		
@@ -4689,6 +4721,7 @@ XdmfFortran::retrieveTopologyValueType()
 			{
 				throw e;
 			}
+			return -1;
 		}
 		else
 		{
@@ -4701,6 +4734,7 @@ XdmfFortran::retrieveTopologyValueType()
 			{
 				throw e;
 			}
+			return -1;
 		}
 	}
 }
@@ -4750,6 +4784,7 @@ XdmfFortran::retrieveTopologyNumElements()
 		{
 			throw e;
 		}
+		return -1;
 	}
 	else
 	{
@@ -4771,6 +4806,7 @@ XdmfFortran::retrieveTopologySize()
 		{
 			throw e;
 		}
+		return -1;
 	}
 	else
 	{
@@ -4798,6 +4834,7 @@ XdmfFortran::retrieveTopologyNumProperties()
 		{
 			throw e;
 		}
+		return -1;
 	}
 	else
 	{
@@ -4822,7 +4859,7 @@ XdmfFortran::retrieveTopologyProperty(int index, char * key, int keyLength, char
 	}
 	else
 	{
-		if (index < mTopology->getItemProperties().size())
+		if (index < (int)mTopology->getItemProperties().size())
 		{
 			std::map<std::string, std::string>::iterator walker = mTopology->getItemProperties().begin();
 			for (int i = 0; i<index; i++)
@@ -4896,7 +4933,7 @@ XdmfFortran::setDimensions(int numValues, int arrayType, void * pointValues)
 void
 XdmfFortran::openPreviousDimensions(int index)
 {
-	if (mPreviousDimensions.size()>index)
+	if ((int)mPreviousDimensions.size()>index)
 	{
 		mDimensions = mPreviousDimensions[index];
 	}
@@ -4958,6 +4995,7 @@ XdmfFortran::retrieveDimensionsValueType()
 		{
 			throw e;
 		}
+		return -1;
 	}
 	else
 	{
@@ -5009,6 +5047,7 @@ XdmfFortran::retrieveDimensionsValueType()
 			{
 				throw e;
 			}
+			return -1;
 		}
 		else
 		{
@@ -5021,6 +5060,7 @@ XdmfFortran::retrieveDimensionsValueType()
 			{
 				throw e;
 			}
+			return -1;
 		}
 	}
 }
@@ -5070,6 +5110,7 @@ XdmfFortran::retrieveDimensionsSize()
 		{
 			throw e;
 		}
+		return -1;
 	}
 	else
 	{
@@ -5091,6 +5132,7 @@ XdmfFortran::retrieveDimensionsNumProperties()
 		{
 			throw e;
 		}
+		return -1;
 	}
 	else
 	{
@@ -5115,7 +5157,7 @@ XdmfFortran::retrieveDimensionsProperty(int index, char * key, int keyLength, ch
 	}
 	else
 	{
-		if (index < mDimensions->getItemProperties().size())
+		if (index < (int)mDimensions->getItemProperties().size())
 		{
 			std::map<std::string, std::string>::iterator walker = mDimensions->getItemProperties().begin();
 			for (int i = 0; i<index; i++)
@@ -5189,7 +5231,7 @@ XdmfFortran::setOrigin(int numValues, int arrayType, void * pointValues)
 void
 XdmfFortran::setPreviousOrigin(int index)
 {
-	if (index < mPreviousOrigins.size())
+	if (index < (int)mPreviousOrigins.size())
 	{
 		mOrigin = mPreviousOrigins[index];
 	}
@@ -5251,6 +5293,7 @@ XdmfFortran::retrieveOriginValueType()
 		{
 			throw e;
 		}
+		return -1;
 	}
 	else
 	{
@@ -5302,6 +5345,7 @@ XdmfFortran::retrieveOriginValueType()
 			{
 				throw e;
 			}
+			return -1;
 		}
 		else
 		{
@@ -5314,6 +5358,7 @@ XdmfFortran::retrieveOriginValueType()
 			{
 				throw e;
 			}
+			return -1;
 		}
 	}
 }
@@ -5363,6 +5408,7 @@ XdmfFortran::retrieveOriginSize()
 		{
 			throw e;
 		}
+		return -1;
 	}
 	else
 	{
@@ -5384,6 +5430,7 @@ XdmfFortran::retrieveOriginNumProperties()
 		{
 			throw e;
 		}
+		return -1;
 	}
 	else
 	{
@@ -5408,7 +5455,7 @@ XdmfFortran::retrieveOriginProperty(int index, char * key, int keyLength, char *
 	}
 	else
 	{
-		if (index < mOrigin->getItemProperties().size())
+		if (index < (int)mOrigin->getItemProperties().size())
 		{
 			std::map<std::string, std::string>::iterator walker = mOrigin->getItemProperties().begin();
 			for (int i = 0; i<index; i++)
@@ -5482,7 +5529,7 @@ XdmfFortran::setBrick(int numValues, int arrayType, void * pointValues)
 void
 XdmfFortran::setPreviousBrick(int index)
 {
-	if (index < mPreviousBricks.size())
+	if (index < (int)mPreviousBricks.size())
 	{
 		mBrick = mPreviousBricks[index];
 	}
@@ -5544,6 +5591,7 @@ XdmfFortran::retrieveBrickValueType()
 		{
 			throw e;
 		}
+		return -1;
 	}
 	else
 	{
@@ -5595,6 +5643,7 @@ XdmfFortran::retrieveBrickValueType()
 			{
 				throw e;
 			}
+			return -1;
 		}
 		else
 		{
@@ -5607,6 +5656,7 @@ XdmfFortran::retrieveBrickValueType()
 			{
 				throw e;
 			}
+			return -1;
 		}
 	}
 }
@@ -5656,6 +5706,7 @@ XdmfFortran::retrieveBrickSize()
 		{
 			throw e;
 		}
+		return -1;
 	}
 	else
 	{
@@ -5677,6 +5728,7 @@ XdmfFortran::retrieveBrickNumProperties()
 		{
 			throw e;
 		}
+		return -1;
 	}
 	else
 	{
@@ -5701,7 +5753,7 @@ XdmfFortran::retrieveBrickProperty(int index, char * key, int keyLength, char * 
 	}
 	else
 	{
-		if (index < mBrick->getItemProperties().size())
+		if (index < (int)mBrick->getItemProperties().size())
 		{
 			std::map<std::string, std::string>::iterator walker = mBrick->getItemProperties().begin();
 			for (int i = 0; i<index; i++)
@@ -5782,7 +5834,7 @@ XdmfFortran::clearMaps()
 void
 XdmfFortran::retrieveMapTag(int index, char * tag, int tagLength)
 {
-	if (index < mMaps.size())
+	if (index < (int)mMaps.size())
 	{
 		char * tempTag = strdup(mMaps[index]->getItemTag().c_str());
 		memset(tag, 0, tagLength);
@@ -5811,7 +5863,7 @@ XdmfFortran::addRemoteNodeID(int index, int localNodeID, int remoteTaskID, int r
 void
 XdmfFortran::retrieveRemoteNodeIDs(int index, int localNodeID, int remoteTaskID, int * remoteNodeIDs)
 {
-	if (mMaps.size()>index)
+	if ((int)mMaps.size()>index)
 	{
 		if (mMaps[index]->getRemoteNodeIds(remoteTaskID).count(localNodeID)>0)
 		{
@@ -5854,7 +5906,7 @@ XdmfFortran::retrieveRemoteNodeIDs(int index, int localNodeID, int remoteTaskID,
 int
 XdmfFortran::retrieveNumRemoteNodeIDs(int index, int localNodeID, int remoteTaskID)
 {
-	if (mMaps.size()<index)
+	if ((int)mMaps.size()<index)
 	{
 		if (mMaps[index]->getRemoteNodeIds(remoteTaskID).count(localNodeID)>0)
 		{
@@ -5876,13 +5928,14 @@ XdmfFortran::retrieveNumRemoteNodeIDs(int index, int localNodeID, int remoteTask
 		{
 			throw e;
 		}
+		return -1;
 	}
 }
 
 int
 XdmfFortran::storeMap(int index)
 {
-	if (index < mMaps.size())
+	if (index < (int)mMaps.size())
 	{
 		int id = mPreviousMaps.size();
 		mPreviousMaps.push_back(mMaps[index]);
@@ -5899,13 +5952,14 @@ XdmfFortran::storeMap(int index)
 		{
 			throw e;
 		}
+		return -1;
 	}
 }
 
 void
 XdmfFortran::addPreviousMap(int index)
 {
-	if (index < mPreviousMaps.size())
+	if (index < (int)mPreviousMaps.size())
 	{
 		mMaps.push_back(mPreviousMaps[index]);
 	}
@@ -5932,7 +5986,7 @@ XdmfFortran::clearPreviousMaps()
 void
 XdmfFortran::removeMap(int index)
 {	
-	if (index < mMaps.size())
+	if (index < (int)mMaps.size())
 	{
 		mMaps.erase(mMaps.begin()+index);
 	}
@@ -5953,7 +6007,7 @@ XdmfFortran::removeMap(int index)
 int
 XdmfFortran::retrieveMapNumProperties(int index)
 {
-	if (index < mMaps.size())
+	if (index < (int)mMaps.size())
 	{
 		return mMaps[index]->getItemProperties().size();
 	}	
@@ -5968,15 +6022,16 @@ XdmfFortran::retrieveMapNumProperties(int index)
 		{
 			throw e;
 		}
+		return -1;
 	}
 }
 
 void
 XdmfFortran::retrieveMapProperty(int mapIndex, int index, char * key, int keyLength, char * value, int valueLength)
 {
-	if (mapIndex < mMaps.size())
+	if (mapIndex < (int)mMaps.size())
 	{
-		if (index < mMaps[index]->getItemProperties().size())
+		if (index < (int)mMaps[index]->getItemProperties().size())
 		{
 			std::map<std::string, std::string>::iterator walker = mMaps[index]->getItemProperties().begin();
 			for (int i = 0; i<index; i++)
@@ -6021,7 +6076,7 @@ XdmfFortran::retrieveMapProperty(int mapIndex, int index, char * key, int keyLen
 void
 XdmfFortran::retrieveMapPropertyByKey(int index, char * key, char * value, int valueLength)
 {
-	if (index < mMaps.size())
+	if (index < (int)mMaps.size())
 	{
 		std::string tempString = key;
 		memset(value, 0, valueLength);
@@ -6061,7 +6116,7 @@ XdmfFortran::clearAttributes()
 void
 XdmfFortran::retrieveAttributeTag(int index, char * tag, int tagLength)
 {
-	if (index < mAttributes.size())
+	if (index < (int)mAttributes.size())
 	{
 		char * tempTag = strdup(mAttributes[index]->getItemTag().c_str());
 		memset(tag, 0, tagLength);
@@ -6084,7 +6139,7 @@ XdmfFortran::retrieveAttributeTag(int index, char * tag, int tagLength)
 void
 XdmfFortran::retrieveAttributeName(int index, char * name, int nameLength)
 {
-	if (index < mAttributes.size())
+	if (index < (int)mAttributes.size())
 	{
 		char * tempName = strdup(mAttributes[index]->getName().c_str());
 		memset(name, 0, nameLength);
@@ -6107,7 +6162,7 @@ XdmfFortran::retrieveAttributeName(int index, char * name, int nameLength)
 int
 XdmfFortran::retrieveAttributeValueType(int index)
 {
-	if (index < mAttributes.size())
+	if (index < (int)mAttributes.size())
 	{
 		shared_ptr<const XdmfArrayType> dataType = mAttributes[index]->getArrayType();
 		if (dataType == XdmfArrayType::Int8())
@@ -6157,6 +6212,7 @@ XdmfFortran::retrieveAttributeValueType(int index)
 			{
 				throw e;
 			}
+			return -1;
 		}
 		else
 		{
@@ -6169,6 +6225,7 @@ XdmfFortran::retrieveAttributeValueType(int index)
 			{
 				throw e;
 			}
+			return -1;
 		}
 	}
 	else
@@ -6181,13 +6238,14 @@ XdmfFortran::retrieveAttributeValueType(int index)
 		{
 			throw e;
 		}
+		return -1;
 	}
 }
 
 void
 XdmfFortran::retrieveAttributeValues(int index, void * values, int dataType, int numberRead, int startIndex, int arrayStride, int valueStride)
 {
-	if (index < mAttributes.size())
+	if (index < (int)mAttributes.size())
 	{
 		if (!mAttributes[index]->isInitialized())
 		{
@@ -6217,7 +6275,7 @@ XdmfFortran::retrieveAttributeValues(int index, void * values, int dataType, int
 void
 XdmfFortran::removeAttribute(int index)
 {
-	if (index < mAttributes.size())
+	if (index < (int)mAttributes.size())
 	{
 		mAttributes.erase(mAttributes.begin()+index);
 	}
@@ -6237,7 +6295,7 @@ XdmfFortran::removeAttribute(int index)
 void
 XdmfFortran::replaceAttribute(int index, char * name, int attributeCenter, int attributeType, int numValues, int arrayType, void * values)
 {
-	if (index < mAttributes.size())
+	if (index < (int)mAttributes.size())
 	{
 		shared_ptr<XdmfAttribute> currAttribute = XdmfAttribute::New();
 		currAttribute->setName(name);
@@ -6319,7 +6377,7 @@ XdmfFortran::replaceAttribute(int index, char * name, int attributeCenter, int a
 void
 XdmfFortran::openAttribute(int index)
 {
-	if (index < mAttributes.size())
+	if (index < (int)mAttributes.size())
 	{
 		int i;
 		shared_ptr<XdmfAttribute> openedAttribute = mAttributes[index];
@@ -6348,7 +6406,7 @@ XdmfFortran::openAttribute(int index)
 int
 XdmfFortran::retrieveAttributeSize(int index)
 {
-	if (index < mAttributes.size())
+	if (index < (int)mAttributes.size())
 	{
 		return mAttributes[index]->getSize();
 	}
@@ -6362,13 +6420,14 @@ XdmfFortran::retrieveAttributeSize(int index)
 		{
 			throw e;
 		}
+		return -1;
 	}
 }
 
 int
 XdmfFortran::retrieveAttributeType(int index)
 {
-	if (index < mAttributes.size())
+	if (index < (int)mAttributes.size())
 	{
 		shared_ptr<const XdmfAttributeType> returnType = mAttributes[index]->getType();
 		if (returnType == XdmfAttributeType::Scalar())
@@ -6410,13 +6469,14 @@ XdmfFortran::retrieveAttributeType(int index)
 		{
 			throw e;
 		}
+		return -1;
 	}
 }
 
 int
 XdmfFortran::retrieveAttributeCenter(int index)
 {
-	if (index < mAttributes.size())
+	if (index < (int)mAttributes.size())
 	{
 		shared_ptr<const XdmfAttributeCenter> returnCenter = mAttributes[index]->getCenter();
 		if (returnCenter == XdmfAttributeCenter::Grid())
@@ -6449,6 +6509,7 @@ XdmfFortran::retrieveAttributeCenter(int index)
 			{
 				throw e;
 			}
+			return -1;
 		}
 	}
 	else
@@ -6461,6 +6522,7 @@ XdmfFortran::retrieveAttributeCenter(int index)
 		{
 			throw e;
 		}
+		return -1;
 	}
 }
 
@@ -6473,7 +6535,7 @@ XdmfFortran::clearPreviousAttributes()
 int
 XdmfFortran::retrieveAttributeNumProperties(int index)
 {
-	if (index < mAttributes.size())
+	if (index < (int)mAttributes.size())
 	{
 		return mAttributes[index]->getItemProperties().size();
 	}
@@ -6487,15 +6549,16 @@ XdmfFortran::retrieveAttributeNumProperties(int index)
 		{
 			throw e;
 		}
+		return -1;
 	}	
 }
 
 void
 XdmfFortran::retrieveAttributeProperty(int attributeIndex, int index, char * key, int keyLength, char * value, int valueLength)
 {
-	if (attributeIndex < mAttributes.size())
+	if (attributeIndex < (int)mAttributes.size())
 	{
-		if (index < mAttributes[attributeIndex]->getItemProperties().size())
+		if (index < (int)mAttributes[attributeIndex]->getItemProperties().size())
 		{
 			std::map<std::string, std::string>::iterator walker = mAttributes[attributeIndex]->getItemProperties().begin();
 			for (int i = 0; i<index; i++)
@@ -6539,7 +6602,7 @@ XdmfFortran::retrieveAttributeProperty(int attributeIndex, int index, char * key
 void
 XdmfFortran::retrieveAttributePropertyByKey(int index, char * key, char * value, int valueLength)
 {
-	if (index < mAttributes.size())
+	if (index < (int)mAttributes.size())
 	{
 		std::string tempString = key;
 		memset(value, 0, valueLength);
@@ -6581,7 +6644,7 @@ XdmfFortran::addCoordinate(char * name, int numValues, int arrayType, void * val
 void
 XdmfFortran::addPreviousCoordinate(int index)
 {
-	if (index < mPreviousCoordinates.size())
+	if (index < (int)mPreviousCoordinates.size())
 	{
 		mCoordinates.push_back(mPreviousCoordinates[index]);
 	}
@@ -6613,7 +6676,7 @@ XdmfFortran::retrieveNumCoordinates()
 void
 XdmfFortran::retrieveCoordinateTag(int index, char * tag, int tagLength)
 {
-	if (index < mCoordinates.size())
+	if (index < (int)mCoordinates.size())
 	{
 		char * tempTag = strdup(mCoordinates[index]->getItemTag().c_str());
 		memset(tag, 0, tagLength);
@@ -6636,7 +6699,7 @@ XdmfFortran::retrieveCoordinateTag(int index, char * tag, int tagLength)
 void
 XdmfFortran::retrieveCoordinateName(int index, char * name, int nameLength)
 {
-	if (index < mCoordinates.size())
+	if (index < (int)mCoordinates.size())
 	{
 		char * tempName = strdup(mCoordinates[index]->getName().c_str());
 		memset(name, 0, nameLength);
@@ -6659,7 +6722,7 @@ XdmfFortran::retrieveCoordinateName(int index, char * name, int nameLength)
 int
 XdmfFortran::retrieveCoordinateValueType(int index)
 {
-	if (index < mCoordinates.size())
+	if (index < (int)mCoordinates.size())
 	{
 		shared_ptr<const XdmfArrayType> dataType = mCoordinates[index]->getArrayType();
 		if (dataType == XdmfArrayType::Int8())
@@ -6709,6 +6772,7 @@ XdmfFortran::retrieveCoordinateValueType(int index)
 			{
 				throw e;
 			}
+			return -1;
 		}
 		else
 		{
@@ -6721,6 +6785,7 @@ XdmfFortran::retrieveCoordinateValueType(int index)
 			{
 				throw e;
 			}
+			return -1;
 		}
 	}
 	else
@@ -6733,13 +6798,14 @@ XdmfFortran::retrieveCoordinateValueType(int index)
 		{
 			throw e;
 		}
+		return -1;
 	}
 }
 
 void
 XdmfFortran::retrieveCoordinateValues(int index, void * values, int dataType, int numberRead, int startIndex, int arrayStride, int valueStride)
 {
-	if (index < mCoordinates.size())
+	if (index < (int)mCoordinates.size())
 	{
 		if (!mCoordinates[index]->isInitialized())
 		{
@@ -6769,7 +6835,7 @@ XdmfFortran::retrieveCoordinateValues(int index, void * values, int dataType, in
 void
 XdmfFortran::removeCoordinate(int index)
 {
-	if (index < mCoordinates.size())
+	if (index < (int)mCoordinates.size())
 	{
 		mCoordinates.erase(mCoordinates.begin()+index);
 	}
@@ -6789,7 +6855,7 @@ XdmfFortran::removeCoordinate(int index)
 void
 XdmfFortran::replaceCoordinate(int index, char * name, int numValues, int arrayType, void * values)
 {
-	if (index < mCoordinates.size())
+	if (index < (int)mCoordinates.size())
 	{
 		shared_ptr<XdmfArray> currArray = XdmfArray::New();
 		currArray->setName(name);
@@ -6812,7 +6878,7 @@ XdmfFortran::replaceCoordinate(int index, char * name, int numValues, int arrayT
 int
 XdmfFortran::retrieveCoordinateSize(int index)
 {
-	if (index < mCoordinates.size())
+	if (index < (int)mCoordinates.size())
 	{
 		return mCoordinates[index]->getSize();
 	}
@@ -6826,6 +6892,7 @@ XdmfFortran::retrieveCoordinateSize(int index)
 		{
 			throw e;
 		}
+		return -1;
 	}
 }
 
@@ -6838,7 +6905,7 @@ XdmfFortran::clearCoordinates()
 int
 XdmfFortran::retrieveCoordinateNumProperties(int index)
 {
-	if (index < mCoordinates.size())
+	if (index < (int)mCoordinates.size())
 	{
 		return mCoordinates[index]->getItemProperties().size();
 	}
@@ -6852,15 +6919,16 @@ XdmfFortran::retrieveCoordinateNumProperties(int index)
 		{
 			throw e;
 		}
+		return -1;
 	}	
 }
 
 void
 XdmfFortran::retrieveCoordinateProperty(int coordinateIndex, int index, char * key, int keyLength, char * value, int valueLength)
 {
-	if (coordinateIndex < mCoordinates.size())
+	if (coordinateIndex < (int)mCoordinates.size())
 	{
-		if (index < mCoordinates[coordinateIndex]->getItemProperties().size())
+		if (index < (int)mCoordinates[coordinateIndex]->getItemProperties().size())
 		{
 			std::map<std::string, std::string>::iterator walker = mCoordinates[coordinateIndex]->getItemProperties().begin();
 			for (int i = 0; i<index; i++)
@@ -6904,7 +6972,7 @@ XdmfFortran::retrieveCoordinateProperty(int coordinateIndex, int index, char * k
 void
 XdmfFortran::retrieveCoordinatePropertyByKey(int index, char * key, char * value, int valueLength)
 {
-	if (index < mCoordinates.size())
+	if (index < (int)mCoordinates.size())
 	{
 		std::string tempString = key;
 		memset(value, 0, valueLength);
@@ -6958,6 +7026,7 @@ XdmfFortran::addSet(char * name, int newSetType, void * values, int numValues,  
 			{
 				throw e;
 			}
+			return -1;
 	}
 
 	for(std::vector<shared_ptr<XdmfAttribute> >::const_iterator iter =
@@ -6998,7 +7067,7 @@ XdmfFortran::clearSets()
 void
 XdmfFortran::addPreviousSet(int index)
 {
-	if (index < mPreviousSets.size())
+	if (index < (int)mPreviousSets.size())
 	{
 		mSets.push_back(mPreviousSets[index]);
 	}
@@ -7024,7 +7093,7 @@ XdmfFortran::clearPreviousSets()
 void
 XdmfFortran::retrieveSetTag(int index, char * tag, int tagLength)
 {
-	if (index < mSets.size())
+	if (index < (int)mSets.size())
 	{
 		char * tempTag = strdup(mSets[index]->getItemTag().c_str());
 		memset(tag, 0, tagLength);
@@ -7047,7 +7116,7 @@ XdmfFortran::retrieveSetTag(int index, char * tag, int tagLength)
 void
 XdmfFortran::retrieveSetName(int index, char * name, int nameLength)
 {
-	if (index < mSets.size())
+	if (index < (int)mSets.size())
 	{
 		char * tempName = strdup(mSets[index]->getName().c_str());
 		memset(name, 0, nameLength);
@@ -7076,7 +7145,7 @@ XdmfFortran::retrieveNumSets()
 int
 XdmfFortran::retrieveSetSize(int index)
 {
-	if (index < mSets.size())
+	if (index < (int)mSets.size())
 	{
 		return mSets[index]->getSize();
 	}
@@ -7090,13 +7159,14 @@ XdmfFortran::retrieveSetSize(int index)
 		{
 			throw e;
 		}
+		return -1;
 	}
 }
 
 int
 XdmfFortran::retrieveSetValueType(int index)
 {
-	if (index < mSets.size())
+	if (index < (int)mSets.size())
 	{
 		shared_ptr<const XdmfArrayType> dataType = mSets[index]->getArrayType();
 		if (dataType == XdmfArrayType::Int8())
@@ -7146,6 +7216,7 @@ XdmfFortran::retrieveSetValueType(int index)
 			{
 				throw e;
 			}
+			return -1;
 		}
 		else
 		{
@@ -7158,6 +7229,7 @@ XdmfFortran::retrieveSetValueType(int index)
 			{
 				throw e;
 			}
+			return -1;
 		}
 	}
 	else
@@ -7170,13 +7242,14 @@ XdmfFortran::retrieveSetValueType(int index)
 		{
 			throw e;
 		}
+		return -1;
 	}
 }
 
 void
 XdmfFortran::retrieveSetValues(int index, void * values, int dataType, int numberRead, int startIndex, int arrayStride, int valueStride)
 {
-	if (index < mSets.size())
+	if (index < (int)mSets.size())
 	{
 		if (!mSets[index]->isInitialized())
 		{
@@ -7206,7 +7279,7 @@ XdmfFortran::retrieveSetValues(int index, void * values, int dataType, int numbe
 int
 XdmfFortran::retrieveSetType(int index)
 {
-	if (index < mSets.size())
+	if (index < (int)mSets.size())
 	{
 		shared_ptr<const XdmfSetType> returnType = mSets[index]->getType();
 		if (returnType == XdmfSetType::Node())
@@ -7235,6 +7308,7 @@ XdmfFortran::retrieveSetType(int index)
 			{
 				throw e;
 			}
+			return -1;
 		}
 		else
 		{
@@ -7246,6 +7320,7 @@ XdmfFortran::retrieveSetType(int index)
 			{
 				throw e;
 			}
+			return -1;
 		}
 	}
 	else
@@ -7258,13 +7333,14 @@ XdmfFortran::retrieveSetType(int index)
 		{
 			throw e;
 		}
+		return -1;
 	}
 }
 
 void
 XdmfFortran::openSet(int index, int openAttribute, int openInformation)
 {
-	if (index < mSets.size())
+	if (index < (int)mSets.size())
 	{
 		shared_ptr<XdmfSet> openedSet = mSets[index];
 		int i;
@@ -7308,7 +7384,7 @@ XdmfFortran::openSet(int index, int openAttribute, int openInformation)
 void
 XdmfFortran::removeSet(int index)
 {
-	if (index < mSets.size())
+	if (index < (int)mSets.size())
 	{
 		mSets.erase(mSets.begin()+index);
 	}
@@ -7386,7 +7462,7 @@ XdmfFortran::replaceSet(int index, char * name, int newSetType, void * values, i
 int
 XdmfFortran::retrieveSetNumProperties(int index)
 {
-	if (index < mSets.size())
+	if (index < (int)mSets.size())
 	{
 		return mSets[index]->getItemProperties().size();
 	}
@@ -7400,15 +7476,16 @@ XdmfFortran::retrieveSetNumProperties(int index)
 		{
 			throw e;
 		}
+		return -1;
 	}
 }
 
 void
 XdmfFortran::retrieveSetProperty(int setIndex, int index, char * key, int keyLength, char * value, int valueLength)
 {
-	if (setIndex < mSets.size())
+	if (setIndex < (int)mSets.size())
 	{
-		if (index < mSets[setIndex]->getItemProperties().size())
+		if (index < (int)mSets[setIndex]->getItemProperties().size())
 		{
 			std::map<std::string, std::string>::iterator walker = mSets[setIndex]->getItemProperties().begin();
 			for (int i = 0; i<index; i++)
@@ -7452,7 +7529,7 @@ XdmfFortran::retrieveSetProperty(int setIndex, int index, char * key, int keyLen
 void
 XdmfFortran::retrieveSetPropertyByKey(int index, char * key, char * value, int valueLength)
 {
-	if (index < mSets.size())
+	if (index < (int)mSets.size())
 	{
 		std::string tempString = key;
 		memset(value, 0, valueLength);
@@ -7491,7 +7568,7 @@ XdmfFortran::clearInformations()
 void
 XdmfFortran::retrieveInformationTag(int index, char * tag, int tagLength)
 {
-	if (index < mInformations.size())
+	if (index < (int)mInformations.size())
 	{
 		char * tempTag = strdup(mInformations[index]->getItemTag().c_str());
 		memset(tag, 0, tagLength);
@@ -7514,10 +7591,10 @@ XdmfFortran::retrieveInformationTag(int index, char * tag, int tagLength)
 void
 XdmfFortran::retrieveInformation(int index, char * key, int keyLength, char * value, int valueLength)
 {
-	if (index < mInformations.size())
+	if (index < (int)mInformations.size())
 	{
 		char * tempKey = strdup(mInformations[index]->getKey().c_str());
-		char * tempValue = strdup(mInformations[index]->getValue().c_str());		
+		char * tempValue = strdup(mInformations[index]->getValue().c_str());
 		memset(key, 0, keyLength);
 		memset(value, 0, valueLength);
 		memcpy(key, tempKey, strlen(tempKey)+1);
@@ -7541,7 +7618,7 @@ XdmfFortran::retrieveInformation(int index, char * key, int keyLength, char * va
 void
 XdmfFortran::replaceInformation(int index, char * key, char * value)
 {
-	if (index < mInformations.size())
+	if (index < (int)mInformations.size())
 	{
 		mInformations[index]->setKey(key);
 		mInformations[index]->setValue(value);
@@ -7562,7 +7639,7 @@ XdmfFortran::replaceInformation(int index, char * key, char * value)
 void
 XdmfFortran::removeInformation(int index)
 {
-	if (index < mInformations.size())
+	if (index < (int)mInformations.size())
 	{
 		mInformations.erase(mInformations.begin()+index);
 	}
@@ -7582,7 +7659,7 @@ XdmfFortran::removeInformation(int index)
 void
 XdmfFortran::openInformation(int index)
 {
-	if (index < mInformations.size())
+	if (index < (int)mInformations.size())
 	{
 		shared_ptr<XdmfInformation> sourceInformation = mInformations[index];
 		int i;
@@ -7611,7 +7688,7 @@ XdmfFortran::openInformation(int index)
 void
 XdmfFortran::retrieveInformationByKey(char * key, char * value, int valueLength)
 {
-	int i;
+	unsigned int i;
 	int found = 0;
 	std::string searchString(key);
 	char * tempValue;
@@ -7643,7 +7720,7 @@ XdmfFortran::retrieveInformationByKey(char * key, char * value, int valueLength)
 void
 XdmfFortran::replaceInformationByKey(char * key, char * value)
 {
-	int i;
+	unsigned int i;
 	int found = 0;
 	std::string searchString(key);
 	for (i=0;i<mInformations.size();i++)
@@ -7671,7 +7748,7 @@ XdmfFortran::replaceInformationByKey(char * key, char * value)
 void
 XdmfFortran::removeInformationByKey(char * key)
 {
-	int i;
+	unsigned int i;
 	int found = 0;
 	std::string searchString(key);
 	for (i=0;i<mInformations.size();i++)
@@ -7705,7 +7782,7 @@ XdmfFortran::clearPreviousInformation()
 int
 XdmfFortran::retrieveInformationNumProperties(int index)
 {
-	if (index < mInformations.size())
+	if (index < (int)mInformations.size())
 	{
 		return mInformations[index]->getItemProperties().size();
 	}
@@ -7719,15 +7796,16 @@ XdmfFortran::retrieveInformationNumProperties(int index)
 		{
 			throw e;
 		}
+		return -1;
 	}
 }
 
 void
 XdmfFortran::retrieveInformationProperty(int informationIndex, int index, char * key, int keyLength, char * value, int valueLength)
 {
-	if (informationIndex < mInformations.size())
+	if (informationIndex < (int)mInformations.size())
 	{
-		if (index < mInformations[informationIndex]->getItemProperties().size())
+		if (index < (int)mInformations[informationIndex]->getItemProperties().size())
 		{
 			std::map<std::string, std::string>::iterator walker = mInformations[informationIndex]->getItemProperties().begin();
 			for (int i = 0; i<index; i++)
@@ -7771,7 +7849,7 @@ XdmfFortran::retrieveInformationProperty(int informationIndex, int index, char *
 void
 XdmfFortran::retrieveInformationPropertyByKey(int index, char * key, char * value, int valueLength)
 {
-	if (index < mInformations.size())
+	if (index < (int)mInformations.size())
 	{
 		std::string tempString = key;
 		memset(value, 0, valueLength);

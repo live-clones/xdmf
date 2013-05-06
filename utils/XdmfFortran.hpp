@@ -2292,9 +2292,9 @@ private:
   shared_ptr<XdmfGeometry> mGeometry;
   shared_ptr<XdmfTime>     mTime;
   shared_ptr<XdmfTopology> mTopology;
-  shared_ptr<XdmfArray>	   mDimensions;
-  shared_ptr<XdmfArray>    mOrigin;
   shared_ptr<XdmfArray>    mBrick;
+  shared_ptr<XdmfArray>    mOrigin;
+  shared_ptr<XdmfArray>	   mDimensions;
   shared_ptr<XdmfHeavyDataWriter> mHeavyDataWriter;
 
   std::vector<shared_ptr<XdmfAttribute> >     mAttributes;

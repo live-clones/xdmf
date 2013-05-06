@@ -539,7 +539,7 @@ public:
   {
     if(mArray->mHeavyDataControllers.size()>0) {
       int total = 0;
-      for (int i = 0; i < mArray->mHeavyDataControllers.size(); i++) {
+      for (unsigned int i = 0; i < mArray->mHeavyDataControllers.size(); i++) {
         total += mArray->mHeavyDataControllers[i]->getSize();
       }
       return total;
@@ -613,7 +613,7 @@ XdmfArray::evaluateExpression(std::string expression, std::map<std::string, shar
 
   //string is parsed left to right
   //elements of the same priority are evaluated right to left
-  for (int i = 0; i < expression.size(); i++) {
+  for (unsigned int i = 0; i < expression.size(); i++) {
     if (mValidDigitChars.find(expression[i]) != std::string::npos) {//found to be a digit
       //progress until a non-digit is found
       int valueStart = i;
@@ -880,13 +880,12 @@ XdmfArray::addOperation(char newoperator, shared_ptr<XdmfArray>(*operationref)(s
     else { //build the operation
       //add operation to the supported character string
       mSupportedOperations.push_back(newoperator);
-      int priorityArraySize = sizeof(mOperationPriority)/sizeof(int);
+      unsigned int priorityArraySize = sizeof(mOperationPriority)/sizeof(int);
       if (mSupportedOperations.size()-1 > priorityArraySize) {//first check to see if the priority array is large enough
         //if it isn't make it bigger, double size should be fine
         int newArray [priorityArraySize*2];
         std::copy(mOperationPriority, mOperationPriority+(priorityArraySize-1), newArray);
-        delete mOperationPriority;
-        *mOperationPriority = *newArray;
+	*mOperationPriority = *newArray;
       }
       size_t priorityLocation = mSupportedOperations.find(newoperator);
       mOperationPriority[priorityLocation] = priority;
@@ -1161,8 +1160,8 @@ XdmfArray::interlace(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2)
     returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
   }
   //determine ratio of array sizes
-  int arrayRatio1 = floor(static_cast<double>(val1->getSize())/val2->getSize());
-  int arrayRatio2 = floor(static_cast<double>(val2->getSize())/val1->getSize());
+  int arrayRatio1 = (int)floor(static_cast<double>(val1->getSize())/val2->getSize());
+  int arrayRatio2 = (int)floor(static_cast<double>(val2->getSize())/val1->getSize());
   if (arrayRatio1 < 1) {
     arrayRatio1 = 1;
   }
@@ -1178,23 +1177,23 @@ XdmfArray::interlace(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2)
     //first array gets the first value of the new array
     if (i<arrayRatio1) {
       int amountWritten = val1->getSize()/arrayRatio1;
-      if (((amountWritten * arrayRatio1) + i) < val1->getSize()) {
+      if (((amountWritten * arrayRatio1) + i) < (int)val1->getSize()) {
         amountWritten++;
       }
       if (amountWritten > floor(val2->getSize()/arrayRatio2)) {
-        arrayExcess1 += amountWritten - floor(val2->getSize()/arrayRatio2);
-        amountWritten = floor(val2->getSize()/arrayRatio2);
+        arrayExcess1 += amountWritten - (int)floor(val2->getSize()/arrayRatio2);
+        amountWritten = (int)floor(val2->getSize()/arrayRatio2);
       }
       returnArray->insert(i, val1, i, amountWritten, stride, arrayRatio1);
     }
     else { //second array takes the rest
       int amountWritten = val2->getSize()/arrayRatio2;
-      if (((amountWritten * arrayRatio2) + i) < val2->getSize()) {
+      if (((amountWritten * arrayRatio2) + i) < (int)val2->getSize()) {
         amountWritten++;
       }
       if (amountWritten > floor(val1->getSize()/arrayRatio1)) {
-        arrayExcess2 += amountWritten - floor(val1->getSize()/arrayRatio1);
-        amountWritten = floor(val1->getSize()/arrayRatio1);
+        arrayExcess2 += amountWritten - (int)floor(val1->getSize()/arrayRatio1);
+        amountWritten = (int)floor(val1->getSize()/arrayRatio1);
       }
       returnArray->insert(i, val2, i-arrayRatio1, amountWritten, stride, arrayRatio2);
     }
@@ -1226,7 +1225,7 @@ int
 XdmfArray::addFunction(std::string name, shared_ptr<XdmfArray>(*functionref)(std::vector<shared_ptr<XdmfArray> >))
 {
   //check to ensure that the name has valid characters
-  for (int i = 0; i < name.size(); i++) {
+  for (unsigned int i = 0; i < name.size(); i++) {
     if (mValidVariableChars.find(name[i]) == std::string::npos) {//if the character is not found in the list of valid characters
       //then throw an error
       try {
@@ -1257,8 +1256,8 @@ shared_ptr<XdmfArray>
 XdmfArray::sum(std::vector<shared_ptr<XdmfArray> > values)
 {
   double total = 0.0;
-  for (int i = 0; i < values.size(); i++) {
-    for (int j = 0; j < values[i]->getSize(); j++) {
+  for (unsigned int i = 0; i < values.size(); i++) {
+    for (unsigned int j = 0; j < values[i]->getSize(); j++) {
       total += values[i]->getValue<double>(j);
     }
   }
@@ -1272,7 +1271,7 @@ XdmfArray::ave(std::vector<shared_ptr<XdmfArray> > values)
 {
 	double total = sum(values)->getValue<double>(0);;
 	int totalSize = 0;
-	for (int i = 0; i < values.size(); i++)
+	for (unsigned int i = 0; i < values.size(); i++)
 	{
 		totalSize += values[i]->getSize();
 	}
@@ -1310,9 +1309,9 @@ XdmfArray::getDimensions() const
       std::vector<unsigned int> tempDimensions;
       //find the controller with the most dimensions
       int dimControllerIndex = 0;
-      int dimSizeMax = 0;
+      unsigned int dimSizeMax = 0;
       unsigned int dimTotal = 0;
-      for (int i = 0; i < mHeavyDataControllers.size(); i++) {
+      for (unsigned int i = 0; i < mHeavyDataControllers.size(); i++) {
         dimTotal += mHeavyDataControllers[i]->getSize();
         if (mHeavyDataControllers[i]->getSize() > dimSizeMax) {
           dimSizeMax = mHeavyDataControllers[i]->getSize();
@@ -1321,7 +1320,7 @@ XdmfArray::getDimensions() const
       }
       //total up the size of the lower dimensions
       int controllerDimensionSubtotal = 1;
-      for (int i = 0; i < mHeavyDataControllers[dimControllerIndex]->getDimensions().size() - 1; i++) {
+      for (unsigned int i = 0; i < mHeavyDataControllers[dimControllerIndex]->getDimensions().size() - 1; i++) {
         returnDimensions.push_back(mHeavyDataControllers[dimControllerIndex]->getDimensions()[i]);
         controllerDimensionSubtotal *= mHeavyDataControllers[dimControllerIndex]->getDimensions()[i];
       }
@@ -1566,12 +1565,12 @@ XdmfArray::insert(const std::vector<unsigned int> startIndex,
     //pull data from values
     std::vector<unsigned int > dimTotalVector;
     unsigned int dimTotal = 1;
-    for (int i = 0; i < values->getDimensions().size(); i++) {
+    for (unsigned int i = 0; i < values->getDimensions().size(); i++) {
       dimTotalVector.push_back(dimTotal);
       dimTotal *= values->getDimensions()[i];
     }
-    std::vector<int> indexVector;
-    for (int i = 0; i < values->getDimensions().size(); i++) {
+    std::vector<unsigned int> indexVector;
+    for (unsigned int i = 0; i < values->getDimensions().size(); i++) {
       indexVector.push_back(0);
     }
     shared_ptr<XdmfArray> holderArray = XdmfArray::New();
@@ -1580,7 +1579,7 @@ XdmfArray::insert(const std::vector<unsigned int> startIndex,
       //initialize the section of the array you're pulling from
       unsigned int startTotal = 0;
       dimTotal = 1;
-      for (int i = 0; i < values->getDimensions().size(); i++) {
+      for (unsigned int i = 0; i < values->getDimensions().size(); i++) {
         if (i == 0) {//stride doesn't factor in to the first dimension since it's being used with the insert call
           startTotal += valuesStartIndex[i] * dimTotal;
         }
@@ -1594,7 +1593,7 @@ XdmfArray::insert(const std::vector<unsigned int> startIndex,
       holderoffset+=numValues[0];
       //increment up the vector
       bool increment = true;
-      for (int i = 0; i < indexVector.size() && increment; i++) {
+      for (unsigned int i = 0; i < indexVector.size() && increment; i++) {
         indexVector[i]++;
         if (i+1 < numValues.size()) {//to keep the loop from breaking at the end
           if (indexVector[i] >= numValues[i+1]) {
@@ -1610,7 +1609,7 @@ XdmfArray::insert(const std::vector<unsigned int> startIndex,
     //use an variation of the last loop to insert into this array
 
     indexVector.clear();
-    for (int i = 0; i < this->getDimensions().size(); i++) {
+    for (unsigned int i = 0; i < this->getDimensions().size(); i++) {
       indexVector.push_back(0);
     }
     holderoffset = 0;
@@ -1618,7 +1617,7 @@ XdmfArray::insert(const std::vector<unsigned int> startIndex,
       //initialize the section of the array you're pulling from
       unsigned int startTotal = 0;
       dimTotal = 1;
-      for (int i = 0; i < this->getDimensions().size(); i++) {
+      for (unsigned int i = 0; i < this->getDimensions().size(); i++) {
         if (i == 0) {//stride doesn't factor in to the first dimension since it's being used with the insert call
           startTotal += startIndex[i] * dimTotal;
         }
@@ -1632,7 +1631,7 @@ XdmfArray::insert(const std::vector<unsigned int> startIndex,
       holderoffset+=numInserted[0];
       //increment up the vector
       bool increment = true;
-      for (int i = 0; i < indexVector.size() && increment; i++) {
+      for (unsigned int i = 0; i < indexVector.size() && increment; i++) {
         indexVector[i]++;
         if (i+1 < numInserted.size()) {//to keep the loop from breaking at the end
           if (indexVector[i] >= numInserted[i+1]) {
@@ -1664,7 +1663,6 @@ XdmfArray::insert(const std::vector<unsigned int> startIndex,
       catch (XdmfError e) {
         throw e;
       }
-
     }
   }
 }
@@ -1712,7 +1710,7 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
   std::vector<std::string> contentVals;
   contentVals.push_back(content->second);
 
-  int contentIndex=1;
+  unsigned int contentIndex=1;
 
   bool endOfContent = false;
 
@@ -1799,7 +1797,7 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
       }
       else {//if it fails then it means that the next content is not a dimension string
         //in this case it is assumed that the controller will have dimensions equal to the array
-        for (int j = 0; j < mDimensions.size(); j++) {
+        for (unsigned int j = 0; j < mDimensions.size(); j++) {
           contentDims.push_back(mDimensions[j]);
         }
         contentStep = 1;
@@ -1869,11 +1867,11 @@ XdmfArray::read()
 {
   if(mHeavyDataControllers.size() > 0) {
     this->release();
-    for (int i = 0; i < mHeavyDataControllers.size(); i++) {
+    for (unsigned int i = 0; i < mHeavyDataControllers.size(); i++) {
       shared_ptr<XdmfArray> tempArray = XdmfArray::New();
       mHeavyDataControllers[i]->read(tempArray.get());
       unsigned int dimTotal = 1;
-      for (int j = 0; j < mHeavyDataControllers[i]->getDimensions().size(); j++) {
+      for (unsigned int j = 0; j < mHeavyDataControllers[i]->getDimensions().size(); j++) {
         dimTotal *= mHeavyDataControllers[i]->getDimensions()[j];
       }
       this->insert(mHeavyDataControllers[i]->getArrayOffset(), tempArray, 0, dimTotal, 1, 1);
@@ -1882,9 +1880,9 @@ XdmfArray::read()
     std::vector<unsigned int> tempDimensions;
     //find the controller with the most dimensions
     int dimControllerIndex = 0;
-    int dimSizeMax = 0;
+    unsigned int dimSizeMax = 0;
     unsigned int dimTotal = 0;
-    for (int i = 0; i < mHeavyDataControllers.size(); i++) {
+    for (unsigned int i = 0; i < mHeavyDataControllers.size(); i++) {
         dimTotal += mHeavyDataControllers[i]->getSize();
         if (mHeavyDataControllers[i]->getSize() > dimSizeMax) {
           dimSizeMax = mHeavyDataControllers[i]->getSize();
@@ -1893,7 +1891,7 @@ XdmfArray::read()
     }
     //total up the size of the lower dimensions
     int controllerDimensionSubtotal = 1;
-    for (int i = 0; i < mHeavyDataControllers[dimControllerIndex]->getDimensions().size() - 1; i++) {
+    for (unsigned int i = 0; i < mHeavyDataControllers[dimControllerIndex]->getDimensions().size() - 1; i++) {
       returnDimensions.push_back(mHeavyDataControllers[dimControllerIndex]->getDimensions()[i]);
       controllerDimensionSubtotal *= mHeavyDataControllers[dimControllerIndex]->getDimensions()[i];
     }

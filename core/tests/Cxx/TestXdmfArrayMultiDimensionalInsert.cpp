@@ -46,14 +46,5 @@ int main(int, char **)
 
 	assert(readArray->getValuesString().compare("1 0 3 0 5 0 0 0 0 0 0 0 11 0 13 0 15 0 0 0 0 0 0 0") == 0);
 
-	for (int i = 0; i < readArray->getDimensions()[1]; i++)
-	{
-		for (int j = 0; j < readArray->getDimensions()[0]; j++)
-		{
-			printf("%d ", readArray->getValue<int>(i*readArray->getDimensions()[0]+j));
-		}
-		printf("\n");
-	}
-
 	return 0;
 }

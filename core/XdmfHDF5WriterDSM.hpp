@@ -331,6 +331,7 @@ public:
 
   void openFile();
 
+  using XdmfHeavyDataWriter::visit;
   void visit(XdmfArray & array,
              const shared_ptr<XdmfBaseVisitor> visitor);
 

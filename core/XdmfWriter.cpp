@@ -317,7 +317,7 @@ XdmfWriter::visit(XdmfArray & array,
         throw e;
       }
       std::stringstream valuesStream;
-      for(int i = 0; i < array.getNumberHeavyDataControllers(); i++) {
+      for(unsigned int i = 0; i < array.getNumberHeavyDataControllers(); i++) {
         std::string heavyDataPath =
           array.getHeavyDataController(i)->getFilePath();
         size_t index = heavyDataPath.find_last_of("/\\");
@@ -330,7 +330,7 @@ XdmfWriter::visit(XdmfArray & array,
           }//otherwise the full path is required
         }
         std::stringstream dimensionStream;
-        for (int j = 0; j < array.getHeavyDataController(i)->getDimensions().size(); j++) {
+        for (unsigned int j = 0; j < array.getHeavyDataController(i)->getDimensions().size(); j++) {
           dimensionStream << array.getHeavyDataController(i)->getDimensions()[j];
           if (j < array.getHeavyDataController(i)->getDimensions().size() - 1) {
             dimensionStream << " ";
@@ -366,7 +366,7 @@ XdmfWriter::visit(XdmfArray & array,
       array.swap(arrayToWrite);
       mImpl->mXMLCurrentNode = mImpl->mXMLCurrentNode->last;
       this->visit(dynamic_cast<XdmfItem &>(*arrayToWrite.get()), visitor);
-      for(int i = 0; i<xmlTextValues.size(); i++) {
+      for(unsigned int i = 0; i<xmlTextValues.size(); i++) {
         xmlAddChild(mImpl->mXMLCurrentNode->last,
                     xmlNewText((xmlChar*)xmlTextValues[i].c_str()));
       }
@@ -375,7 +375,7 @@ XdmfWriter::visit(XdmfArray & array,
     }
     else {
       this->visit(dynamic_cast<XdmfItem &>(array), visitor);
-      for(int i = 0; i<xmlTextValues.size(); i++) {
+      for(unsigned int i = 0; i<xmlTextValues.size(); i++) {
         xmlAddChild(mImpl->mXMLCurrentNode->last,
                     xmlNewText((xmlChar*)xmlTextValues[i].c_str()));
       }
@@ -415,7 +415,7 @@ XdmfWriter::visit(XdmfItem & item,
         XdmfInformation & xpathinfo = dynamic_cast<XdmfInformation &>(item);
         if (xpathinfo.getKey() == "XIncludes") {
           shared_ptr<XdmfInformation> outputinfo;
-          for (int i = 0; i < xpathinfo.getNumberInformations(); i++) {
+          for (unsigned int i = 0; i < xpathinfo.getNumberInformations(); i++) {
             mImpl->mXPathCount++;
             outputinfo = xpathinfo.getInformation(i);
             mImpl->mXMLCurrentNode = xmlNewChild(mImpl->mXMLCurrentNode,

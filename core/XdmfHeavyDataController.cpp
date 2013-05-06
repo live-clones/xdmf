@@ -40,8 +40,8 @@ XdmfHeavyDataController::XdmfHeavyDataController(const std::string & filePath,
   mFilePath(filePath),
   mStart(start),
   mStride(stride),
-  mType(type),
-  mArrayStartOffset(0)
+  mArrayStartOffset(0),
+  mType(type)
 {
   if(!(mStart.size() == mStride.size() && 
        mStride.size() == mDimensions.size()))

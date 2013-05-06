@@ -190,13 +190,13 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %extend XdmfArray {
 
 %{
-  #include <stack>;
-/*These can't be accessed from python so don't worry about security issues.*/
+  #include <stack>
   static std::map<std::string, PyObject *> pythonFunctions;
   static std::map<char, PyObject *> pythonOperations;
   static int pythonOperationPriority [4];
   static std::string pythonSupportedOperations = "";
 %}
+/*These can't be accessed from python so don't worry about security issues.*/
 
     PyObject * getBuffer() {
         void *vp = $self->getValuesInternal();
@@ -329,15 +329,6 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
     /*note, accessing private members is impossible from swig.*/
 
     /*to generate new static functions mark them as static here.*/
-    static std::vector<std::string> getSupportedFunctions()
-    {
-      std::vector<std::string> returnVector = XdmfArray::getSupportedFunctions();
-      for (std::map<std::string, PyObject *>::iterator functionWalker = pythonFunctions.begin(); functionWalker != pythonFunctions.end(); functionWalker++) {
-        returnVector.push_back(functionWalker->first);
-      }
-      return returnVector;
-    }
-
     static shared_ptr<XdmfArray> evaluateFunction(std::vector<shared_ptr<XdmfArray> > functValues, std::string functName)
     {
       if (pythonFunctions.find(functName)!= pythonFunctions.end()) {
@@ -356,24 +347,6 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
       else {
          /*this does not actually cause an infinte recursive loop, it sends the values to the version of the function defined in XdmfArray.cpp*/
          return XdmfArray::evaluateFunction(functValues, functName);
-      }
-    }
-
-    static std::string getSupportedOperations()
-    {
-      std::string returnVector = XdmfArray::getSupportedOperations();
-      returnVector += pythonSupportedOperations;
-      return returnVector;
-    }
-
-    static int getOperationPriority(char operation)
-    {
-      size_t operationLocation = pythonSupportedOperations.find(operation);
-      if (operationLocation != std::string::npos) {
-        return pythonOperationPriority[operationLocation];
-      }
-      else {
-        return XdmfArray::getOperationPriority(operation);
       }
     }
 
@@ -407,7 +380,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
       /*string is parsed left to right
         elements of the same priority are evaluated right to left*/
-      for (int i = 0; i < expression.size(); i++) {
+      for (unsigned int i = 0; i < expression.size(); i++) {
         if (XdmfArray::getValidDigitChars().find(expression[i]) != std::string::npos) {/*found to be a digit*/
           /*progress until a non-digit is found*/
           int valueStart = i;
@@ -429,7 +402,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
           if (variables.find(expression.substr(valueStart, i + 1 - valueStart)) == variables.end()) {
             std::vector<std::string> functionList = XdmfArray::getSupportedFunctions();
             bool functionExists = false;
-            for (int j = 0; j < functionList.size() && !functionExists; j++) {
+            for (unsigned int j = 0; j < functionList.size() && !functionExists; j++) {
               if (functionList[j] == expression.substr(valueStart, i + 1 - valueStart)) {
                 functionExists = true;
               }
@@ -647,11 +620,10 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
           /*if not an already defined python function*/
           if (pythonOperations.find(newName) == pythonOperations.end()) {
             pythonSupportedOperations.push_back(newName);
-            int priorityArraySize = sizeof(pythonOperationPriority)/sizeof(int);
+            unsigned int priorityArraySize = sizeof(pythonOperationPriority)/sizeof(int);
             if (pythonSupportedOperations.size()-1 > priorityArraySize) {
               int newArray [priorityArraySize*2];
               std::copy(pythonOperationPriority, pythonOperationPriority+(priorityArraySize-1), newArray);
-              delete pythonOperationPriority;
               *pythonOperationPriority = *newArray;
             }
           }
@@ -666,12 +638,11 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
           }
           else {
             pythonSupportedOperations.push_back(newName);
-            int priorityArraySize = sizeof(pythonOperationPriority)/sizeof(int);
+            unsigned int priorityArraySize = sizeof(pythonOperationPriority)/sizeof(int);
             if (pythonSupportedOperations.size()-1 > priorityArraySize)
             {
               int newArray [priorityArraySize*2];
               std::copy(pythonOperationPriority, pythonOperationPriority+(priorityArraySize-1), newArray);
-              delete pythonOperationPriority;
               *pythonOperationPriority = *newArray;
             }
           }
@@ -725,7 +696,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
       /*string is parsed left to right
         elements of the same priority are evaluated right to left*/
-      for (int i = 0; i < expression.size(); i++) {
+      for (unsigned int i = 0; i < expression.size(); i++) {
         if (XdmfArray::getValidDigitChars().find(expression[i]) != std::string::npos) { /*found to be a digit*/
           /*progress until a non-digit is found*/
           int valueStart = i;
@@ -747,7 +718,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
           if (variables.find(expression.substr(valueStart, i + 1 - valueStart)) == variables.end()) {
             std::vector<std::string> functionList = XdmfArray::getSupportedFunctions();
             bool functionExists = false;
-            for (int j = 0; j < functionList.size() && !functionExists; j++) {
+            for (unsigned int j = 0; j < functionList.size() && !functionExists; j++) {
               if (functionList[j] == expression.substr(valueStart, i + 1 - valueStart)) {
                 functionExists = true;
               }

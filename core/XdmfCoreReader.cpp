@@ -387,7 +387,7 @@ public:
 
                     //insert those controllers into the childArray
                     int hdf5step = 2;
-                    for (int i = 0; i < controllerParts.size(); i = i + hdf5step) {
+                    for (unsigned int i = 0; i < controllerParts.size(); i = i + hdf5step) {
                       size_t colonLocation = controllerParts[i].find(":");
                       if(colonLocation == std::string::npos) {
                         try {
