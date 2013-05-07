@@ -183,8 +183,11 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 #endif
 
 /*This causes it to avoid throwing a warning for redefining fuctions that are defined for XdmfArray.
-  I this case doing so was intentional.*/
+  I do this because doing so was intentional.*/
 #pragma SWIG nowarn=302
+/*This causes it to avoid throwing a warning about overloaded functions.
+  We are doing this intentionally so suppressing the warning makes sense.*/
+#pragma SWIG nowarn=509
 
 // Provide accessors from python lists to XdmfArrays
 %extend XdmfArray {

@@ -532,9 +532,11 @@ XdmfHDF5Writer::write(XdmfArray & array,
                   status = H5Sclose(checkspace);
                 }
                 if (mMode == Overwrite) {
-                  fileSize = fileSize - checksize;//remove previous set's size, since it's overwritten
-                  if (fileSize < 0) {
+                  if (checksize > fileSize) {
                     fileSize = 0;
+                  }
+                  else {
+                    fileSize = fileSize - checksize;//remove previous set's size, since it's overwritten
                   }
                   if (fileSize == 0) {
                     fileSize += 800;
