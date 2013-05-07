@@ -1489,9 +1489,20 @@ XdmfHDF5Writer::write(XdmfArray & array,
                           fapl);
         }
 
-        hid_t dataset = H5Dopen(mImpl->mHDF5Handle,
-                                dataSetPath.str().c_str(),
-                                H5P_DEFAULT);
+	htri_t testingSet = H5Lexists(mImpl->mHDF5Handle,
+                                      dataSetPath.str().c_str(),
+                                      H5P_DEFAULT);
+
+        hid_t dataset = 0;
+
+        if (testingSet == 0) {
+          dataset = -1;
+        }
+        else {
+          dataset = H5Dopen(mImpl->mHDF5Handle,
+                            dataSetPath.str().c_str(),
+                            H5P_DEFAULT);
+        }
 
         //hid_t checkspace = H5S_ALL;
         //checkspace = H5Dget_space(dataset);

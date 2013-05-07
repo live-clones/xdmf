@@ -65,14 +65,14 @@ int main(int, char **)
 
 	writtenArray->release();
 	writtenArray->read();
-	printf("after read\n");
-	printf("array size = %d\n", writtenArray->getSize());
+	std::cout << "after read" << std::endl;
+	std::cout << "array size = " << writtenArray->getSize() << std::endl;
 	assert(writtenArray->getSize() == 9000000);
 	for (int i = 0; i < writtenArray->getSize(); i++)
         {
                 if (i != writtenArray->getValue<int>(i))
 		{
-			printf("%d doesn't match %d\n", i, writtenArray->getValue<int>(i));
+			std::cout << i << " doesn't match " << writtenArray->getValue<int>(i) << std::endl;
 		}
 		assert(i == writtenArray->getValue<int>(i));
         }

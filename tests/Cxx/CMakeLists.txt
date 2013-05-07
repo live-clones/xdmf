@@ -20,6 +20,7 @@ ADD_TEST_CXX(TestXdmfMap)
 ADD_TEST_CXX(TestXdmfReader)
 ADD_TEST_CXX(TestXdmfRegularGrid)
 ADD_TEST_CXX(TestXdmfRectilinearGrid)
+ADD_TEST_CXX(XdmfPostFixCalc)
 ADD_TEST_CXX(TestXdmfSet)
 ADD_TEST_CXX(TestXdmfTime)
 ADD_TEST_CXX(TestXdmfTopology)
@@ -68,6 +69,7 @@ CLEAN_TEST_CXX(TestXdmfRectilinearGrid
 CLEAN_TEST_CXX(TestXdmfRegularGrid
   TestXdmfRegularGrid1.xmf
   TestXdmfRegularGrid2.xmf)
+CLEAN_TEST_CXX(XdmfPostFixCalc)
 CLEAN_TEST_CXX(TestXdmfSet)
 CLEAN_TEST_CXX(TestXdmfTime)
 CLEAN_TEST_CXX(TestXdmfTopology)

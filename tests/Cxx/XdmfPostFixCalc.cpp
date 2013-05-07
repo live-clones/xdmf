@@ -36,7 +36,12 @@ std::map<std::string,  shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArra
 int main(int, char **)
 {
 	XdmfArray::addFunction("MAX", maximum);
-	XdmfArray::addCalculation('@', invChunk, 2);
+        XdmfArray::addOperation('&', invChunk, 2);
+	XdmfArray::addOperation('!', invChunk, 2);
+	XdmfArray::addOperation('^', invChunk, 2);
+	XdmfArray::addOperation('>', invChunk, 2);
+	XdmfArray::addOperation('<', invChunk, 2);
+	XdmfArray::addOperation('@', invChunk, 2);
 
 	functions["AVE"] = ave;
 	//sometimes typecasts are required, sometimes they cause errors
@@ -55,7 +60,10 @@ int main(int, char **)
 
 	double answer = parse(problemToSolve, variableTable);
 
-	printf("%f\n", answer);
+	std::cout << answer << std::endl;
+
+	//unless the calculation is fully written out it won't equal properly
+	assert(answer == 2*25+2*3+(double)2048/3+(double)8/5+4+100+6+25);
 
 	//std::string arrayExpression = "A|B#C|D";
 	std::string arrayExpression = "MAX(2,(AVE(A@B)#AVE(C|D)))";
@@ -93,37 +101,50 @@ int main(int, char **)
 	arrayVariable["D"] = testArray4;
 	arrayVariable["E"] = testArray5;
 
-	printf("before parsing\n");
+	std::cout << "before parsing" << std::endl;
 
 	shared_ptr<XdmfArray> answerArray;
 	answerArray = parse(arrayExpression, arrayVariable);
 
-	printf("after parsing\n");
+	std::cout << "after parsing" << std::endl;
 
-	printf("answer array = %s\n", answerArray->getValuesString());
-	printf("array size = %d\n", answerArray->getSize());
+	std::cout << "answer array = " << answerArray->getValuesString() << std::endl;
 
-	printf("interlace\n");
-	answerArray = XdmfArray::evaluateCalculation(testArray1, testArray5, '#');
-	printf("answer array = %s\n", answerArray->getValuesString());
-	printf("chunk\n");
-	answerArray = XdmfArray::evaluateCalculation(testArray1, testArray5, '|');
-	printf("answer array = %s\n", answerArray->getValuesString());
-	printf("inverse chunk\n");
-	answerArray = XdmfArray::evaluateCalculation(testArray1, testArray5, '@');
-	printf("answer array = %s\n", answerArray->getValuesString());
+	assert(answerArray->getValuesString().compare("3.5") == 0);
 
-	printf("after parsing\n");
+	std::cout << "array size = " << answerArray->getSize() << std::endl;
 
-	printf("answer array = %s\n", answerArray->getValuesString());
-	printf("array size = %d\n", answerArray->getSize());
+	assert(answerArray->getSize() == 1);
+
+	std::cout << "interlace" << std::endl;
+	answerArray = XdmfArray::evaluateOperation(testArray1, testArray5, '#');
+	std::cout << "answer array = " << answerArray->getValuesString() << std::endl;
+
+	assert(answerArray->getValuesString().compare("1 5 1 5 1 5 1 5 1 5 1 5 1 5 1 5 1 5 1 5 5 5 5") == 0);
+
+	std::cout << "chunk" << std::endl;
+	answerArray = XdmfArray::evaluateOperation(testArray1, testArray5, '|');
+	std::cout << "answer array = " << answerArray->getValuesString() << std::endl;
+
+	assert(answerArray->getValuesString().compare("1 1 1 1 1 1 1 1 1 1 5 5 5 5 5 5 5 5 5 5 5 5 5") == 0);
+
+	std::cout << "inverse chunk" << std::endl;
+	answerArray = XdmfArray::evaluateOperation(testArray1, testArray5, '@');
+	std::cout << "answer array = " << answerArray->getValuesString() << std::endl;
+
+	assert(answerArray->getValuesString().compare("5 5 5 5 5 5 5 5 5 5 5 5 5 1 1 1 1 1 1 1 1 1 1") == 0);
 
 	answerArray = XdmfArray::evaluateExpression(arrayExpression, arrayVariable);
 
-	printf("after parsing\n");
+	std::cout << "after parsing" << std::endl;
 
-	printf("answer array = %s\n", answerArray->getValuesString());
-	printf("array size = %d\n", answerArray->getSize());
+	std::cout << "answer array = " << answerArray->getValuesString() << std::endl;
+
+	assert(answerArray->getValuesString().compare("3.5") == 0);
+
+	std::cout << "array size = " << answerArray->getSize() << std::endl;
+
+	assert(answerArray->getSize() == 1);
 
 	return 0;
 }
@@ -175,7 +196,7 @@ double parse(std::string expression, std::map<std::string, double> variables)
 			{
 				if (functions.find(expression.substr(valueStart, i + 1 - valueStart)) == functions.end())
 				{
-					printf("Error: Invalid Variable or Function: %s\n", expression.substr(valueStart, i + 1 - valueStart));
+					std::cout << "Error: Invalid Variable or Function: " << expression.substr(valueStart, i + 1 - valueStart) << std::endl;
 					return 0;
 				}
 				else
@@ -184,7 +205,7 @@ double parse(std::string expression, std::map<std::string, double> variables)
 					//check if next character is an open parenthesis
 					if (expression[i+1] != '(')
 					{
-						printf("Error: No values supplied to function %s\n", expression.substr(valueStart, i + 1 - valueStart));
+						std::cout << "Error: No values supplied to function " << expression.substr(valueStart, i + 1 - valueStart) << std::endl;
 						return 0;
 					}
 					//if it is grab the string between paranthesis
@@ -244,7 +265,7 @@ double parse(std::string expression, std::map<std::string, double> variables)
 						if (valueStack.size() < 2)//must be at least two values for this loop to work properly
 						{
 							//error, not enough values
-							printf("Error: Not Enough Values\n");
+							std::cout << "Error: Not Enough Values" << std::endl;
 							return 0;
 						}
 						else
@@ -275,7 +296,7 @@ double parse(std::string expression, std::map<std::string, double> variables)
 						if (valueStack.size() < 2)//must be at least two values for this loop to work properly
 						{
 							//error, not enough values
-							printf("Error: Not Enough Values\n");
+							std::cout << "Error: Not Enough Values" << std::endl;
 							return 0;
 						}
 						else
@@ -310,14 +331,14 @@ double parse(std::string expression, std::map<std::string, double> variables)
 		if (valueStack.size() < 2)//must be at least two values for this loop to work properly
 		{
 			//error, not enough values
-			printf("Error: Not Enough Values\n");
+			std::cout << "Error: Not Enough Values" << std::endl;
 			return 0;
 		}
 		else
 		{
 			if(operationStack.top() == '(')
 			{
-				printf("Warning: Unpaired Parenthesis\n");
+				std::cout << "Warning: Unpaired Parenthesis" << std::endl;
 				operationStack.pop();
 			}
 			else
@@ -329,7 +350,7 @@ double parse(std::string expression, std::map<std::string, double> variables)
 				if (operationStack.size() == 0)
 				{
 					//error, not enough operations
-					printf("Error: Not Enough Operators\n");
+					std::cout << "Error: Not Enough Operators" << std::endl;
 					return 0;
 				}
 				else
@@ -344,7 +365,7 @@ double parse(std::string expression, std::map<std::string, double> variables)
 	//throw error if there's extra operations
 	if (operationStack.size() > 0)
 	{
-		printf("Warning: Left Over Operators\n");
+		std::cout << "Warning: Left Over Operators" << std::endl;
 	}
 
 	return valueStack.top();
@@ -447,7 +468,7 @@ shared_ptr<XdmfArray> parse(std::string expression, std::map<std::string, shared
 			{
 				if (arrayFunctions.find(expression.substr(valueStart, i + 1 - valueStart)) == arrayFunctions.end())
 				{
-					printf("Error: Invalid Variable or Function\n");
+					std::cout << "Error: Invalid Variable or Function" << std::endl;
 					return XdmfArray::New();
 				}
 				else
@@ -456,7 +477,7 @@ shared_ptr<XdmfArray> parse(std::string expression, std::map<std::string, shared
 					//check if next character is an open parenthesis
 					if (expression[i+1] != '(')
 					{
-						printf("Error: No Values Supplied to Function %s\n", expression.substr(valueStart, i + 1 - valueStart));
+						std::cout << "Error: No Values Supplied to Function " << expression.substr(valueStart, i + 1 - valueStart) << std::endl;
 						return XdmfArray::New();
 					}
 					//if it is grab the string between paranthesis
@@ -546,7 +567,7 @@ shared_ptr<XdmfArray> parse(std::string expression, std::map<std::string, shared
 						if (valueStack.size() < 2)//must be at least two values for this loop to work properly
 						{
 							//error, not enough values
-							printf("Error: Not Enough Values\n");
+							std::cout << "Error: Not Enough Values" << std::endl;
 							return XdmfArray::New();
 						}
 						else
@@ -581,13 +602,13 @@ shared_ptr<XdmfArray> parse(std::string expression, std::map<std::string, shared
 	{
 		if(operationStack.top() == '(')
 		{
-			printf("Warning: Unpaired Parenthesis\n");
+			std::cout << "Warning: Unpaired Parenthesis" << std::endl;
 			operationStack.pop();
 		}
 		else if (valueStack.size() < 2)//must be at least two values for this loop to work properly
 		{
 			//error, not enough values
-			printf("Error: Not Enough Values\n");
+			std::cout << "Error: Not Enough Values" << std::endl;
 			return XdmfArray::New();
 		}
 		else
@@ -599,7 +620,7 @@ shared_ptr<XdmfArray> parse(std::string expression, std::map<std::string, shared
 			if (operationStack.size() == 0)
 			{
 				//error, not enough operations
-				printf("Error: Not Enough Operators\n");
+				std::cout << "Error: Not Enough Operators" << std::endl;
 				return XdmfArray::New();
 			}
 			else
@@ -613,12 +634,12 @@ shared_ptr<XdmfArray> parse(std::string expression, std::map<std::string, shared
 	//throw error if there's extra operations
 	if (operationStack.size() > 0)
 	{
-		printf("Warning: Left Over Operators\n");
+		std::cout << "Warning: Left Over Operators" << std::endl;
 	}
 
 	if (valueStack.size() > 1)
 	{
-		printf("Warning: Left Over Values\n");
+		std::cout << "Warning: Left Over Values" << std::endl;
 	}
 
 	return valueStack.top();
