@@ -34,6 +34,7 @@
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfHDF5Writer.hpp"
 
+
 namespace {
 
   const static unsigned int DEFAULT_CHUNK_SIZE = 0;
@@ -248,20 +249,21 @@ XdmfHDF5Writer::visit(XdmfArray & array,
   if (checkWritten == mImpl->mWrittenItems.end() || array.getItemTag() == "DataItem") {
     //if it has children send the writer to them too.
     try {
-    array.traverse(visitor);
+      array.traverse(visitor);
     }
     catch (XdmfError e) {
       throw e;
     }
-    //only do this if the object has not already been written
-    try {
-      this->write(array, H5P_DEFAULT);
+    if (array.isInitialized()) {
+      //only do this if the object has not already been written
+      try {
+        this->write(array, H5P_DEFAULT);
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      mImpl->mWrittenItems.insert(&array);
     }
-    catch (XdmfError e) {
-      throw e;
-    }
-    mImpl->mWrittenItems.insert(&array);
-
   }
   //if the object has already been written, just end, it already has the data
   mImpl->mDepth--;
@@ -1681,14 +1683,12 @@ XdmfHDF5Writer::write(XdmfArray & array,
           }
         }
 
-
         status = H5Dwrite(dataset,
                           datatype,
                           memspace,
                           dataspace,
                           H5P_DEFAULT,
                           curArray->getValuesInternal());
-
 
         if(status < 0) {
           try {
@@ -1704,10 +1704,14 @@ XdmfHDF5Writer::write(XdmfArray & array,
         if(dataspace != H5S_ALL) {
           status = H5Sclose(dataspace);
         }
+
         if(memspace != H5S_ALL) {
           status = H5Sclose(memspace);
         }
+
         status = H5Dclose(dataset);
+
+	//this is causing a lot of overhead
         if(closeFile) {
           mImpl->closeFile();
         }

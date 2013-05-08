@@ -170,7 +170,7 @@ double parse(std::string expression, std::map<std::string, double> variables)
 
 	//string is parsed left to right
 	//elements of the same priority are evaluated right to left
-	for (int i = 0; i < expression.size(); i++)
+	for (unsigned int i = 0; i < expression.size(); i++)
 	{
 		if (validDigitChars.find(expression[i]) != std::string::npos)//found to be a digit
 		{
@@ -211,7 +211,7 @@ double parse(std::string expression, std::map<std::string, double> variables)
 					//if it is grab the string between paranthesis
 					i = i + 2;
 					valueStart = i;
-					int numOpenParenthesis = 0;
+					unsigned int numOpenParenthesis = 0;
 					while ((expression[i] != ')' || numOpenParenthesis) && i < expression.size())
 					{
 						if (expression[i] == '(')
@@ -407,7 +407,7 @@ double function(std::vector<double> valueVector, std::string functionName)
 double sum(std::vector<double> values)
 {
 	double total = 0.0;
-	for (int i = 0; i < values.size(); i++)
+	for (unsigned int i = 0; i < values.size(); i++)
 	{
 		total += values[i];
 	}
@@ -439,7 +439,7 @@ shared_ptr<XdmfArray> parse(std::string expression, std::map<std::string, shared
 
 	//string is parsed left to right
 	//elements of the same priority are evaluated right to left
-	for (int i = 0; i < expression.size(); i++)
+	for (unsigned int i = 0; i < expression.size(); i++)
 	{
 		if (validDigitChars.find(expression[i]) != std::string::npos)//found to be a digit
 		{
@@ -483,7 +483,7 @@ shared_ptr<XdmfArray> parse(std::string expression, std::map<std::string, shared
 					//if it is grab the string between paranthesis
 					i = i + 2;
 					valueStart = i;
-					int numOpenParenthesis = 0;
+					unsigned int numOpenParenthesis = 0;
 					while ((expression[i] != ')' || numOpenParenthesis) && i < expression.size())
 					{
 						if (expression[i] == '(')
@@ -975,8 +975,8 @@ shared_ptr<XdmfArray> calculation(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArr
 			returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
                 }
 		//determine ratio of array sizes
-		int arrayRatio1 = floor(static_cast<double>(val1->getSize())/val2->getSize());
-		int arrayRatio2 = floor(static_cast<double>(val2->getSize())/val1->getSize());
+		int arrayRatio1 = (int)floor(static_cast<double>(val1->getSize())/val2->getSize());
+		int arrayRatio2 = (int)floor(static_cast<double>(val2->getSize())/val1->getSize());
 		if (arrayRatio1 < 1)
 		{
 			arrayRatio1 = 1;
@@ -996,28 +996,28 @@ shared_ptr<XdmfArray> calculation(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArr
 			if (i<arrayRatio1)
 			{
 				int amountWritten = val1->getSize()/arrayRatio1;
-				if (((amountWritten * arrayRatio1) + i) < val1->getSize())
+				if ((unsigned int)((amountWritten * arrayRatio1) + i) < val1->getSize())
 				{
 					amountWritten++;
 				}
 				if (amountWritten > floor(val2->getSize()/arrayRatio2))
 				{
-					arrayExcess1 += amountWritten - floor(val2->getSize()/arrayRatio2);
-					amountWritten = floor(val2->getSize()/arrayRatio2);
+					arrayExcess1 += amountWritten - (int)floor(val2->getSize()/arrayRatio2);
+					amountWritten = (int)floor(val2->getSize()/arrayRatio2);
 				}
 				returnArray->insert(i, val1, i, amountWritten, stride, arrayRatio1);
 			}
 			else //second array takes the rest
 			{
 				int amountWritten = val2->getSize()/arrayRatio2;
-				if (((amountWritten * arrayRatio2) + i) < val2->getSize())
+				if ((unsigned int)((amountWritten * arrayRatio2) + i) < val2->getSize())
 				{
 					amountWritten++;
 				}
 				if (amountWritten > floor(val1->getSize()/arrayRatio1))
 				{
-					arrayExcess2 += amountWritten - floor(val1->getSize()/arrayRatio1);
-					amountWritten = floor(val1->getSize()/arrayRatio1);
+					arrayExcess2 += amountWritten - (int)floor(val1->getSize()/arrayRatio1);
+					amountWritten = (int)floor(val1->getSize()/arrayRatio1);
 				}
 				returnArray->insert(i, val2, i-arrayRatio1, amountWritten, stride, arrayRatio2);
 			}
@@ -1064,9 +1064,9 @@ shared_ptr<XdmfArray> function(std::vector<shared_ptr<XdmfArray> > valueVector, 
 shared_ptr<XdmfArray> sum(std::vector<shared_ptr<XdmfArray> > values)
 {
         double total = 0.0;
-        for (int i = 0; i < values.size(); i++)
+        for (unsigned int i = 0; i < values.size(); i++)
         {
-		for (int j = 0; j < values[i]->getSize(); j++)
+		for (unsigned int j = 0; j < values[i]->getSize(); j++)
 		{
                 	total += values[i]->getValue<double>(j);
 		}
@@ -1080,7 +1080,7 @@ shared_ptr<XdmfArray> ave(std::vector<shared_ptr<XdmfArray> > values)
 {
 	double total = sum(values)->getValue<double>(0);;
 	int totalSize = 0;
-	for (int i = 0; i < values.size(); i++)
+	for (unsigned int i = 0; i < values.size(); i++)
 	{
 		totalSize += values[i]->getSize();
 	}
@@ -1100,9 +1100,9 @@ shared_ptr<XdmfArray> maximum(std::vector<shared_ptr<XdmfArray> > values)
 	else
 	{
 		double maxVal = values[0]->getValue<double>(0);
-		for (int i = 0; i < values.size(); i++)
+		for (unsigned int i = 0; i < values.size(); i++)
 		{
-			for (int j = 0; j < values[i]->getSize(); j++)
+			for (unsigned int j = 0; j < values[i]->getSize(); j++)
 			{
 				if (maxVal < values[i]->getValue<double>(j))
 				{

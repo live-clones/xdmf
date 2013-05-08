@@ -415,7 +415,9 @@ XdmfFortran::addGrid(const char * const name, const bool writeToHDF5)//unstructu
                  mDomain,
                  mGridCollections);
   if (writeToHDF5 && mHeavyDataWriter != NULL) {
+    mHeavyDataWriter->openFile();
     grid->accept(mHeavyDataWriter);
+    mHeavyDataWriter->closeFile();
   }
 }
 
@@ -456,7 +458,9 @@ XdmfFortran::addGridCurvilinear(const char * const name, const bool writeToHDF5)
                  mDomain,
                  mGridCollections);
   if (writeToHDF5 && mHeavyDataWriter != NULL) {
+    mHeavyDataWriter->openFile();
     grid->accept(mHeavyDataWriter);
+    mHeavyDataWriter->closeFile();
   }
 }
 
@@ -486,7 +490,9 @@ XdmfFortran::addGridRectilinear(const char * const name, const bool writeToHDF5)
                  mDomain,
                  mGridCollections);
   if (writeToHDF5 && mHeavyDataWriter != NULL) {
+    mHeavyDataWriter->openFile();
     grid->accept(mHeavyDataWriter);
+    mHeavyDataWriter->closeFile();
   }
 }
 
@@ -535,7 +541,9 @@ XdmfFortran::addGridRegular(const char * const name, const bool writeToHDF5)
                  mDomain,
                  mGridCollections);
   if (writeToHDF5 && mHeavyDataWriter != NULL) {
+    mHeavyDataWriter->openFile();
     grid->accept(mHeavyDataWriter);
+    mHeavyDataWriter->closeFile();
   }
 }
 
@@ -625,7 +633,9 @@ XdmfFortran::closeGridCollection(const bool writeToHDF5)
 {
   if(!mGridCollections.empty()) {
     if (writeToHDF5 && mHeavyDataWriter != NULL) {
+      mHeavyDataWriter->openFile();
       mGridCollections.top()->accept(mHeavyDataWriter);
+      mHeavyDataWriter->closeFile();
     }
     mGridCollections.pop();
   }
@@ -7919,7 +7929,9 @@ XdmfFortran::write(const char * const xmlFilePath, const int datalimit, const bo
   writer->getHeavyDataWriter()->setReleaseData(release);
   shared_dynamic_cast<XdmfHDF5Writer>(writer->getHeavyDataWriter())->setFileSizeLimit(mMaxFileSize);
   shared_dynamic_cast<XdmfHDF5Writer>(writer->getHeavyDataWriter())->setAllowSetSplitting(mAllowSetSplitting);
+  shared_dynamic_cast<XdmfHDF5Writer>(writer->getHeavyDataWriter())->openFile();
   mDomain->accept(writer);
+  shared_dynamic_cast<XdmfHDF5Writer>(writer->getHeavyDataWriter())->closeFile();
 }
 
 void 
@@ -7935,7 +7947,9 @@ XdmfFortran::writeHDF5(const char * const xmlFilePath, const bool release)
   if (mHeavyDataWriter->getReleaseData() != release) {
     mHeavyDataWriter->setReleaseData(release);
   }
+  mHeavyDataWriter->openFile();
   mDomain->accept(mHeavyDataWriter);
+  mHeavyDataWriter->closeFile();
 }
 
 void
