@@ -68,7 +68,10 @@ public:
   void
   closeFile()
   {
+    // remove xpath info as it will not be valid for the new file
     mXPath.clear();
+    mXPathCount = 0;
+    mXPathString = "";
 
     std::ofstream fileStream;
     if(!mStream) {
