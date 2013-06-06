@@ -54,7 +54,7 @@ XdmfGraph::getItemTag() const
 unsigned int
 XdmfGraph::getNumberNodes() const
 {
-  //The number of nodes is equal to the number of rows or columns. Either will work.
+  // The number of nodes is equal to the number of rows or columns. Either will work.
   return this->getNumberRows();
 }
 

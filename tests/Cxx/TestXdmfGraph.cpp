@@ -35,11 +35,9 @@ int main(int, char **)
 
   shared_ptr<XdmfWriter> writer = XdmfWriter::New("TestXdmfGraph.xmf");
   graph->accept(writer);
-	printf("after writing\n");
   shared_ptr<XdmfReader> reader = XdmfReader::New();
   shared_ptr<XdmfGraph> readGraph = 
     shared_dynamic_cast<XdmfGraph>(reader->read("TestXdmfGraph.xmf"));
-	printf("after reading\n");
   assert(readGraph);
   assert(readGraph->getNumberNodes() == graph->getNumberNodes());
   assert(readGraph->getNumberAttributes() == graph->getNumberAttributes());

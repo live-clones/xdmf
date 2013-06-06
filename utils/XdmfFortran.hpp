@@ -173,6 +173,7 @@ class XdmfHeavyDataWriter;
 #define XdmfInitHDF5 xdmfinithdf5_
 
 #define XdmfSetTopologyPolyline xdmfsettopologypolyline_
+#define XdmfSetTopologyPolygon xdmfsettopologypolygon_
 
 
 #define XdmfRetrieveNumDomainGridCollections xdmfretrievenumdomaingridcollections_
@@ -540,10 +541,6 @@ public:
                   const int arrayType,
                   const void * const connectivityValues,
                   const int numNodes);
-
-
-
-
 
   /**
    * Returns the number of grid collections currently
@@ -2285,6 +2282,21 @@ public:
                           const int arrayType,
                           const void * const connectivityValues);
 
+  /**
+   * Set the topology (connectivity data) for a polygon that will be
+   * added to the next grid.
+   *
+   * @param nodesPerElement number of nodes in the polygon.
+   * @param numValues number of connectivity values to copy.
+   * @param arrayType type of connectivity values.
+   * @param connectivityValues array of connectivity values.
+   *
+   * @return int providing id to fortran if reusing.
+   */
+  int setTopologyPolygon(const unsigned int nodesPerElement,
+                         const unsigned int numValues,
+                         const int arrayType,
+                         const void * const connectivityValues);
 
 private:
   

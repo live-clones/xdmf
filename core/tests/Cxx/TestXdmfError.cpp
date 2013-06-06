@@ -50,7 +50,7 @@ int main(int, char **)
 	catch (XdmfError e)
 	{
 		//a print statement is redundant since the error message is sent to cout
-		//printf("The error message is:\n%s\n", e.what());
+		//std::cout << "The error message is:\n" << e.what() << std::endl;
 	}
 
 	return 0;

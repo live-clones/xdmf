@@ -9,6 +9,6 @@ int main(int, char **)
 	shared_ptr<XdmfReader> testReader = XdmfReader::New();
 	shared_ptr<XdmfArray> readArray = shared_dynamic_cast<XdmfArray>(testReader->read("arraydata.xmf"));
 	readArray->read();
-	printf("Array ocntains %s\n", readArray->getValuesString());
+	std::cout << "Array ocntains " << readArray->getValuesString() << std::endl;
 	return 0;
 }

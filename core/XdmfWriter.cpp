@@ -73,6 +73,7 @@ public:
   {
     mXPath.clear();
 
+    //this section writes to file
     std::ofstream fileStream;
     if(!mStream) {
       fileStream.open(mXMLFilePath.c_str());
@@ -96,7 +97,7 @@ public:
     
     xmlFreeDoc(mXMLDocument);
     xmlCleanupParser();
-    
+
     if(mHeavyDataWriter->getMode() == XdmfHeavyDataWriter::Default) {
       mHeavyDataWriter->closeFile();
     }
@@ -285,6 +286,7 @@ XdmfWriter::visit(XdmfArray & array,
   const bool isSubclassed = 
     array.getItemTag().compare(XdmfArray::ItemTag) != 0;
 
+
   if(isSubclassed) {
     try {
       this->visit(dynamic_cast<XdmfItem &>(array), visitor);
@@ -294,10 +296,10 @@ XdmfWriter::visit(XdmfArray & array,
     }
   }
 
+
   if(array.getSize() > 0 && !(mImpl->mLastXPathed && isSubclassed)) {
     std::vector<std::string> xmlTextValues;
 
-    //adjust for multifile write
     // Take care of writing to single heavy data file (Default behavior)
     if(!array.isInitialized() && array.getHeavyDataController(0) &&
        array.getHeavyDataController(0)->getFilePath().compare(mImpl->mHeavyDataWriter->getFilePath()) != 0 &&
@@ -307,36 +309,42 @@ XdmfWriter::visit(XdmfArray & array,
 
     if(array.getHeavyDataController(0) ||
        array.getSize() > mImpl->mLightDataLimit) {
-      //this case is for if the data is smaller than the limit
-      //create case for when data is over the limit
       // Write values to heavy data
-      try {
+
+      try {// this takes about half the time needed
         mImpl->mHeavyDataWriter->visit(array, mImpl->mHeavyDataWriter);
       }
       catch (XdmfError e) {
         throw e;
       }
+
       std::stringstream valuesStream;
-      for(unsigned int i = 0; i < array.getNumberHeavyDataControllers(); i++) {
+      for(unsigned int i = 0; i < array.getNumberHeavyDataControllers(); ++i) {
         std::string heavyDataPath =
           array.getHeavyDataController(i)->getFilePath();
         size_t index = heavyDataPath.find_last_of("/\\");
-        if(index != std::string::npos) {//if path is not a folder
-          const std::string heavyDataDir = heavyDataPath.substr(0, index + 1);//put the directory path into this variable
-          if(mImpl->mXMLFilePath.find(heavyDataDir) == 0) {//if the directory is in the XML File Path
+        if(index != std::string::npos) {
+          // if path is not a folder
+          // put the directory path into this variable
+          const std::string heavyDataDir = heavyDataPath.substr(0, index + 1);
+          // if the directory is in the XML File Path
+          if(mImpl->mXMLFilePath.find(heavyDataDir) == 0) {
             heavyDataPath =
               heavyDataPath.substr(heavyDataDir.size(),
-                                   heavyDataPath.size() - heavyDataDir.size());//pull the file off of the end and place it in the DataPath
-          }//otherwise the full path is required
+                                   heavyDataPath.size() - heavyDataDir.size());
+            // pull the file off of the end and place it in the DataPath
+          }
+          // otherwise the full path is required
         }
         std::stringstream dimensionStream;
-        for (unsigned int j = 0; j < array.getHeavyDataController(i)->getDimensions().size(); j++) {
+        for (unsigned int j = 0; j < array.getHeavyDataController(i)->getDimensions().size(); ++j) {
           dimensionStream << array.getHeavyDataController(i)->getDimensions()[j];
           if (j < array.getHeavyDataController(i)->getDimensions().size() - 1) {
             dimensionStream << " ";
           }
         }
-        valuesStream.str(std::string());//clear the stream
+        // clear the stream
+        valuesStream.str(std::string());
 	if (array.getNumberHeavyDataControllers() > 1) {
           valuesStream << heavyDataPath << ":"
                        << array.getHeavyDataController(i)->getDataSetPath()
@@ -366,7 +374,7 @@ XdmfWriter::visit(XdmfArray & array,
       array.swap(arrayToWrite);
       mImpl->mXMLCurrentNode = mImpl->mXMLCurrentNode->last;
       this->visit(dynamic_cast<XdmfItem &>(*arrayToWrite.get()), visitor);
-      for(unsigned int i = 0; i<xmlTextValues.size(); i++) {
+      for(unsigned int i = 0; i<xmlTextValues.size(); ++i) {
         xmlAddChild(mImpl->mXMLCurrentNode->last,
                     xmlNewText((xmlChar*)xmlTextValues[i].c_str()));
       }
@@ -375,7 +383,7 @@ XdmfWriter::visit(XdmfArray & array,
     }
     else {
       this->visit(dynamic_cast<XdmfItem &>(array), visitor);
-      for(unsigned int i = 0; i<xmlTextValues.size(); i++) {
+      for(unsigned int i = 0; i<xmlTextValues.size(); ++i) {
         xmlAddChild(mImpl->mXMLCurrentNode->last,
                     xmlNewText((xmlChar*)xmlTextValues[i].c_str()));
       }
@@ -415,7 +423,7 @@ XdmfWriter::visit(XdmfItem & item,
         XdmfInformation & xpathinfo = dynamic_cast<XdmfInformation &>(item);
         if (xpathinfo.getKey() == "XIncludes") {
           shared_ptr<XdmfInformation> outputinfo;
-          for (unsigned int i = 0; i < xpathinfo.getNumberInformations(); i++) {
+          for (unsigned int i = 0; i < xpathinfo.getNumberInformations(); ++i) {
             mImpl->mXPathCount++;
             outputinfo = xpathinfo.getInformation(i);
             mImpl->mXMLCurrentNode = xmlNewChild(mImpl->mXMLCurrentNode,
@@ -509,6 +517,7 @@ XdmfWriter::visit(XdmfItem & item,
         }
         else {
           // Not inserted before --- need to write all data and traverse.
+
           mImpl->mXMLCurrentNode = xmlNewChild(mImpl->mXMLCurrentNode,
                                                NULL,
                                                (xmlChar *)tag.c_str(),

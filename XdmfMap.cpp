@@ -219,19 +219,18 @@ XdmfMap::populateItem(const std::map<std::string, std::string> & itemProperties,
     }
     else {
 
-	//this needs to be changed to account for controllers being a vector now
       mRemoteTaskIdsControllers.clear();
-      for (unsigned int i = 0; i <  arrayVector[0]->getNumberHeavyDataControllers(); i++)
+      for (unsigned int i = 0; i <  arrayVector[0]->getNumberHeavyDataControllers(); ++i)
       {
         mRemoteTaskIdsControllers.push_back(arrayVector[0]->getHeavyDataController(i));
       }
       mLocalNodeIdsControllers.clear();
-      for (unsigned int i = 0; i <  arrayVector[1]->getNumberHeavyDataControllers(); i++)
+      for (unsigned int i = 0; i <  arrayVector[1]->getNumberHeavyDataControllers(); ++i)
       {
         mLocalNodeIdsControllers.push_back(arrayVector[1]->getHeavyDataController(i));
       }
       mRemoteLocalNodeIdsControllers.clear();
-      for (unsigned int i = 0; i <  arrayVector[2]->getNumberHeavyDataControllers(); i++)
+      for (unsigned int i = 0; i <  arrayVector[2]->getNumberHeavyDataControllers(); ++i)
       {
         mRemoteLocalNodeIdsControllers.push_back(arrayVector[2]->getHeavyDataController(i));
       }
@@ -247,17 +246,17 @@ XdmfMap::read()
      mRemoteLocalNodeIdsControllers.size() > 0) {
 
     unsigned int localNodeCount = 0;
-    for (unsigned int i = 0; i< mLocalNodeIdsControllers.size(); i++)
+    for (unsigned int i = 0; i< mLocalNodeIdsControllers.size(); ++i)
     {
       localNodeCount += mLocalNodeIdsControllers[i]->getSize();
     }
     unsigned int remoteTaskCount = 0;
-    for (unsigned int i = 0; i< mRemoteTaskIdsControllers.size(); i++)
+    for (unsigned int i = 0; i< mRemoteTaskIdsControllers.size(); ++i)
     {
       remoteTaskCount += mRemoteTaskIdsControllers[i]->getSize();
     }
     unsigned int remoteNodeCount = 0;
-    for (unsigned int i = 0; i< mRemoteLocalNodeIdsControllers.size(); i++)
+    for (unsigned int i = 0; i< mRemoteLocalNodeIdsControllers.size(); ++i)
     {
       remoteNodeCount += mRemoteLocalNodeIdsControllers[i]->getSize();
     }
@@ -280,21 +279,21 @@ XdmfMap::read()
     shared_ptr<XdmfArray> remoteLocalNodeIds = XdmfArray::New();
 
     mRemoteTaskIdsControllers[0]->read(remoteTaskIds.get());
-    for (unsigned int i = 1; i < mRemoteTaskIdsControllers.size(); i++)
+    for (unsigned int i = 1; i < mRemoteTaskIdsControllers.size(); ++i)
     {
       shared_ptr<XdmfArray> tempArray = XdmfArray::New();
       mRemoteTaskIdsControllers[i]->read(tempArray.get());
       remoteTaskIds->insert(remoteTaskIds->getSize(), tempArray, 0, tempArray->getSize());
     }
     mLocalNodeIdsControllers[0]->read(localNodeIds.get());
-    for (unsigned int i = 1; i < mLocalNodeIdsControllers.size(); i++)
+    for (unsigned int i = 1; i < mLocalNodeIdsControllers.size(); ++i)
     {
       shared_ptr<XdmfArray> tempArray = XdmfArray::New();
       mLocalNodeIdsControllers[i]->read(tempArray.get());
       localNodeIds->insert(localNodeIds->getSize(), tempArray, 0, tempArray->getSize());
     }
     mRemoteLocalNodeIdsControllers[0]->read(remoteLocalNodeIds.get());
-    for (unsigned int i = 1; i < mRemoteLocalNodeIdsControllers.size(); i++)
+    for (unsigned int i = 1; i < mRemoteLocalNodeIdsControllers.size(); ++i)
     {
       shared_ptr<XdmfArray> tempArray = XdmfArray::New();
       mRemoteLocalNodeIdsControllers[i]->read(tempArray.get());
@@ -324,17 +323,17 @@ XdmfMap::setHeavyDataControllers(std::vector<shared_ptr<XdmfHeavyDataController>
                                  std::vector<shared_ptr<XdmfHeavyDataController> > remoteLocalNodeIdsControllers)
 {
   unsigned int localNodeCount = 0;
-  for (unsigned int i = 0; i< localNodeIdsControllers.size(); i++)
+  for (unsigned int i = 0; i< localNodeIdsControllers.size(); ++i)
   {
     localNodeCount += localNodeIdsControllers[i]->getSize();
   }
   unsigned int remoteTaskCount = 0;
-  for (unsigned int i = 0; i< remoteTaskIdsControllers.size(); i++)
+  for (unsigned int i = 0; i< remoteTaskIdsControllers.size(); ++i)
   {
     remoteTaskCount += remoteTaskIdsControllers[i]->getSize();
   }
   unsigned int remoteNodeCount = 0;
-  for (unsigned int i = 0; i< remoteLocalNodeIdsControllers.size(); i++)
+  for (unsigned int i = 0; i< remoteLocalNodeIdsControllers.size(); ++i)
   {
     remoteNodeCount += remoteLocalNodeIdsControllers[i]->getSize();
   }
@@ -396,15 +395,15 @@ XdmfMap::traverse(const shared_ptr<XdmfBaseVisitor> visitor)
     }
   }
 
-  for (unsigned int i = 0; i < mRemoteTaskIdsControllers.size(); i++)
+  for (unsigned int i = 0; i < mRemoteTaskIdsControllers.size(); ++i)
   {
     remoteTaskIds->insert(mRemoteTaskIdsControllers[i]);
   }
-  for (unsigned int i = 0; i < mLocalNodeIdsControllers.size(); i++)
+  for (unsigned int i = 0; i < mLocalNodeIdsControllers.size(); ++i)
   {
     localNodeIds->insert(mLocalNodeIdsControllers[i]);
   }
-  for (unsigned int i = 0; i < mRemoteLocalNodeIdsControllers.size(); i++)
+  for (unsigned int i = 0; i < mRemoteLocalNodeIdsControllers.size(); ++i)
   {
     remoteLocalNodeIds->insert(mRemoteLocalNodeIdsControllers[i]);
   }
@@ -417,15 +416,15 @@ XdmfMap::traverse(const shared_ptr<XdmfBaseVisitor> visitor)
   mRemoteTaskIdsControllers.clear();
   mRemoteLocalNodeIdsControllers.clear();
 
-  for (unsigned int i = 0; i < remoteTaskIds->getNumberHeavyDataControllers(); i++)
+  for (unsigned int i = 0; i < remoteTaskIds->getNumberHeavyDataControllers(); ++i)
   {
     mRemoteTaskIdsControllers.push_back(remoteTaskIds->getHeavyDataController(i));
   }
-  for (unsigned int i = 0; i < localNodeIds->getNumberHeavyDataControllers(); i++)
+  for (unsigned int i = 0; i < localNodeIds->getNumberHeavyDataControllers(); ++i)
   {
     mLocalNodeIdsControllers.push_back(localNodeIds->getHeavyDataController(i));
   }
-  for (unsigned int i = 0; i < remoteLocalNodeIds->getNumberHeavyDataControllers(); i++)
+  for (unsigned int i = 0; i < remoteLocalNodeIds->getNumberHeavyDataControllers(); ++i)
   {
     mRemoteLocalNodeIdsControllers.push_back(remoteLocalNodeIds->getHeavyDataController(i));
   }

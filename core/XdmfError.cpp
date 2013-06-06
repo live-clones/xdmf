@@ -68,8 +68,8 @@ XdmfError::setBuffer(std::streambuf* buf)
  *** Private Static Functions ***
  ********************************/
 
-//automatically writes the message to the provided buffer
-//by default this is basically a print statement
+// automatically writes the message to the provided buffer
+// by default this is basically a print statement
 void
 XdmfError::WriteToStream(std::string msg)
 {

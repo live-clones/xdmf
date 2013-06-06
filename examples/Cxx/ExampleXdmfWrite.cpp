@@ -190,7 +190,7 @@ int main(int, char **)
         /*
         the version of XdmfMap::New() used here returns a number of maps equal to the number of attributes it was provided with.
         */
-        for (int i = 0; i<mapcollection.size(); i++)
+        for (int i = 0; i<mapcollection.size(); ++i)
 	{
 		gridHolder->insert(mapcollection[i]);
 	}
@@ -226,14 +226,14 @@ int main(int, char **)
         primaryDomain->accept(exampleWriter);
 
         exampleHeavyWriter->setMode(XdmfHeavyDataWriter::Append);
-	for (int i = 0; i <= 408; i++)
+	for (int i = 0; i <= 408; ++i)
 	{//overflow occurs a little after the end of this loop
 		primaryDomain->accept(exampleHeavyWriter);
 	}
 	exampleHeavyWriter->setMode(XdmfHeavyDataWriter::Default);
 	primaryDomain->accept(exampleHeavyWriter);
 	exampleHeavyWriter->setMode(XdmfHeavyDataWriter::Append);
-	for (int i = 0; i<5; i++)
+	for (int i = 0; i<5; ++i)
 	{//this loop covers the overflow of the fileSizeLimit
 		primaryDomain->accept(exampleHeavyWriter);
 	}

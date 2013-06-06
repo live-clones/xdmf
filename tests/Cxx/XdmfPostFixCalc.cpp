@@ -211,7 +211,7 @@ double parse(std::string expression, std::map<std::string, double> variables)
 					//if it is grab the string between paranthesis
 					i = i + 2;
 					valueStart = i;
-					unsigned int numOpenParenthesis = 0;
+					int numOpenParenthesis = 0;
 					while ((expression[i] != ')' || numOpenParenthesis) && i < expression.size())
 					{
 						if (expression[i] == '(')
@@ -483,7 +483,7 @@ shared_ptr<XdmfArray> parse(std::string expression, std::map<std::string, shared
 					//if it is grab the string between paranthesis
 					i = i + 2;
 					valueStart = i;
-					unsigned int numOpenParenthesis = 0;
+					int numOpenParenthesis = 0;
 					while ((expression[i] != ')' || numOpenParenthesis) && i < expression.size())
 					{
 						if (expression[i] == '(')
@@ -996,11 +996,11 @@ shared_ptr<XdmfArray> calculation(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArr
 			if (i<arrayRatio1)
 			{
 				int amountWritten = val1->getSize()/arrayRatio1;
-				if ((unsigned int)((amountWritten * arrayRatio1) + i) < val1->getSize())
+				if (((amountWritten * arrayRatio1) + i) < (int)val1->getSize())
 				{
 					amountWritten++;
 				}
-				if (amountWritten > floor(val2->getSize()/arrayRatio2))
+				if (amountWritten > (int)floor(val2->getSize()/arrayRatio2))
 				{
 					arrayExcess1 += amountWritten - (int)floor(val2->getSize()/arrayRatio2);
 					amountWritten = (int)floor(val2->getSize()/arrayRatio2);
@@ -1010,11 +1010,11 @@ shared_ptr<XdmfArray> calculation(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArr
 			else //second array takes the rest
 			{
 				int amountWritten = val2->getSize()/arrayRatio2;
-				if ((unsigned int)((amountWritten * arrayRatio2) + i) < val2->getSize())
+				if (((amountWritten * arrayRatio2) + i) < (int)val2->getSize())
 				{
 					amountWritten++;
 				}
-				if (amountWritten > floor(val1->getSize()/arrayRatio1))
+				if (amountWritten > (int)floor(val1->getSize()/arrayRatio1))
 				{
 					arrayExcess2 += amountWritten - (int)floor(val1->getSize()/arrayRatio1);
 					amountWritten = (int)floor(val1->getSize()/arrayRatio1);

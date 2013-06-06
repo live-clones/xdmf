@@ -189,7 +189,7 @@ int main(int, char **)
         dimensionVector.push_back(5);
         dimensionVector.push_back(4);
         writtenArray->initialize<int>(dimensionVector);
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < 20; ++i)
         {
                 writtenArray->insert(i, i + 1);
         }
@@ -234,9 +234,9 @@ shared_ptr<XdmfArray> maximum(std::vector<shared_ptr<XdmfArray> > values)
 	else
 	{
 		double maxVal = values[0]->getValue<double>(0);
-		for (int i = 0; i < values.size(); i++)
+		for (int i = 0; i < values.size(); ++i)
 		{
-			for (int j = 0; j < values[i]->getSize(); j++)
+			for (int j = 0; j < values[i]->getSize(); ++j)
 			{
 				if (maxVal < values[i]->getValue<double>(j))
 				{

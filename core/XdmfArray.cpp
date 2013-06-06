@@ -38,13 +38,13 @@
 std::string XdmfArray::mSupportedOperations = "|#()";
 const std::string XdmfArray::mValidVariableChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_:.";
 const std::string XdmfArray::mValidDigitChars = "-1234567890.";
-//list the priorities for the operations, based on the order of operations
-//the index of the corresponding operation in validOperationChars is the same as the index of its priority in this array
+// list the priorities for the operations, based on the order of operations
+// the index of the corresponding operation in validOperationChars is the same as the index of its priority in this array
 int XdmfArray::mOperationPriority [8] = {2, 1, 0, 0};
-//the higher the value, the earlier the operation is evaluated in the order of operations
-//with the exception of parenthesis which are evaluated as soon as the closing parenthesis is found
+// the higher the value, the earlier the operation is evaluated in the order of operations
+// with the exception of parenthesis which are evaluated as soon as the closing parenthesis is found
 
-//note, it doesn't handle overloaded functions well. Will generate errors unless overload methods are typecast.
+// note, it doesn't handle overloaded functions well. Will generate errors unless overload methods are typecast.
 std::map<std::string, shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >)> XdmfArray::arrayFunctions = boost::assign::map_list_of ("SUM", (shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))XdmfArray::sum) ("AVE", (shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))XdmfArray::ave);
 std::map<char, shared_ptr<XdmfArray> (*)(shared_ptr<XdmfArray>, shared_ptr<XdmfArray>)> XdmfArray::operations = boost::assign::map_list_of ('|', XdmfArray::chunk) ('#', XdmfArray::interlace);
 
@@ -539,7 +539,7 @@ public:
   {
     if(mArray->mHeavyDataControllers.size()>0) {
       int total = 0;
-      for (unsigned int i = 0; i < mArray->mHeavyDataControllers.size(); i++) {
+      for (unsigned int i = 0; i < mArray->mHeavyDataControllers.size(); ++i) {
         total += mArray->mHeavyDataControllers[i]->getSize();
       }
       return total;
@@ -586,12 +586,70 @@ XdmfArray::~XdmfArray()
 
 const std::string XdmfArray::ItemTag = "DataItem";
 
+int
+XdmfArray::addFunction(std::string name, shared_ptr<XdmfArray>(*functionref)(std::vector<shared_ptr<XdmfArray> >))
+{
+  // check to ensure that the name has valid characters
+  for (unsigned int i = 0; i < name.size(); ++i) {
+    // if the character is not found in the list of valid characters
+    if (mValidVariableChars.find(name[i]) == std::string::npos) {
+      // then throw an error
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "Error: Function Name Contains Invalid Character(s)");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  size_t origsize = arrayFunctions.size();
+  arrayFunctions[name] = functionref;
+  // if no new functions were added
+  if (origsize == arrayFunctions.size()) {
+    // toss a warning, it's nice to let people know that they're doing this
+    try {
+      XdmfError::message(XdmfError::WARNING,
+                         "Warning: Function Overwritten");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+  return arrayFunctions.size();
+}
+
+shared_ptr<XdmfArray>
+XdmfArray::ave(std::vector<shared_ptr<XdmfArray> > values)
+{
+        double total = sum(values)->getValue<double>(0);;
+        int totalSize = 0;
+        for (unsigned int i = 0; i < values.size(); ++i)
+        {
+                totalSize += values[i]->getSize();
+        }
+        shared_ptr<XdmfArray> returnArray = XdmfArray::New();
+        returnArray->insert(0, total/totalSize);
+        return returnArray;
+}
+
 void
 XdmfArray::clear()
 {
   boost::apply_visitor(Clear(this), 
                        mArray);
   mDimensions.clear();
+}
+
+shared_ptr<XdmfArray>
+XdmfArray::chunk(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2)
+{
+  // join chunk (add the new array to the end of the first one)
+  // joins into new array and returns it
+  shared_ptr<XdmfArray> returnArray = XdmfArray::New();
+  returnArray->insert(0, val1, 0, val1->getSize(),  1, 1);
+  returnArray->insert(val1->getSize(), val2, 0, val2->getSize(), 1, 1);
+  return returnArray;
 }
 
 void
@@ -603,35 +661,41 @@ XdmfArray::erase(const unsigned int index)
   mDimensions.clear();
 }
 
-//This function and the functions it depends on are reimplemented in XdmfCore.i in order to properly interface with python.
-//There are differences between the versions, but the overall algorithm remains mostly the same.
+// This function and the functions it depends on are reimplemented in XdmfCore.i in order to properly interface with python.
+// There are differences between the versions, but the overall algorithm remains mostly the same.
 shared_ptr<XdmfArray>
 XdmfArray::evaluateExpression(std::string expression, std::map<std::string, shared_ptr<XdmfArray> > variables)
 {
   std::stack<shared_ptr<XdmfArray> > valueStack;
   std::stack<char> operationStack;
 
-  //string is parsed left to right
-  //elements of the same priority are evaluated right to left
-  for (unsigned int i = 0; i < expression.size(); i++) {
+  // string is parsed left to right
+  // elements of the same priority are evaluated right to left
+  for (unsigned int i = 0; i < expression.size(); ++i) {
     if (mValidDigitChars.find(expression[i]) != std::string::npos) {//found to be a digit
-      //progress until a non-digit is found
+      // progress until a non-digit is found
       int valueStart = i;
-      while (mValidDigitChars.find(expression[i + 1]) != std::string::npos) {
-        i++;
+      if (i + 1 < expression.size()) {
+        while (mValidDigitChars.find(expression[i+1]) != std::string::npos) {
+          i++;
+        }
       }
-      //push back to the value stack
+      // push back to the value stack
       shared_ptr<XdmfArray> valueArray = XdmfArray::New();
-      valueArray->insert(0, atof(expression.substr(valueStart, i + 1 - valueStart).c_str()));//use this to convert to double
+      // use this to convert to double
+      valueArray->insert(0, atof(expression.substr(valueStart, i + 1 - valueStart).c_str()));
       valueStack.push(valueArray);
     }
-    else if (mValidVariableChars.find(expression[i]) != std::string::npos) {//found to be a variable
+    else if (mValidVariableChars.find(expression[i]) != std::string::npos) {
+      // found to be a variable
       int valueStart = i;
-      //progress until a nonvariable value is found
-      while (mValidVariableChars.find(expression[i + 1]) != std::string::npos) {
-        i++;
+      // progress until a nonvariable value is found
+      if (i+1 < expression.size()){ 
+        while (mValidVariableChars.find(expression[i+1]) != std::string::npos) {
+          i++;
+        }
       }
-      //convert to equivalent
+      // convert to equivalent
       if (variables.find(expression.substr(valueStart, i + 1 - valueStart)) == variables.end()) {
         if (arrayFunctions.find(expression.substr(valueStart, i + 1 - valueStart)) == arrayFunctions.end()) {
           try {
@@ -644,17 +708,24 @@ XdmfArray::evaluateExpression(std::string expression, std::map<std::string, shar
         }
         else {
           std::string currentFunction = expression.substr(valueStart, i + 1 - valueStart);
-          //check if next character is an open parenthesis
-          if (expression[i+1] != '(') {
-            try {
-              XdmfError::message(XdmfError::FATAL,
-                                 "Error: No values supplied to function " + expression.substr(valueStart, i + 1 - valueStart));
-            }
-            catch (XdmfError e) {
-              throw e;
+          // check if next character is an open parenthesis
+          if (i+1 >= expression.size()) {
+            if (expression[i+1] != '(') {
+              try {
+                XdmfError::message(XdmfError::FATAL,
+                                   "Error: No values supplied to function " + expression.substr(valueStart, i + 1 - valueStart));
+              }
+              catch (XdmfError e) {
+                throw e;
+              }
             }
           }
-          //if it is grab the string between paranthesis
+          // if it is grab the string between paranthesis
+
+          if (i + 2 >= expression.size()) {
+            XdmfError::message(XdmfError::FATAL,
+                               "Error: Missing closing parethesis to function " + expression.substr(valueStart, i + 1 - valueStart));
+          }
           i = i + 2;
           valueStart = i;
           int numOpenParenthesis = 0;
@@ -669,12 +740,12 @@ XdmfArray::evaluateExpression(std::string expression, std::map<std::string, shar
           }
           std::string functionParameters = expression.substr(valueStart, i - valueStart);
           std::vector<shared_ptr<XdmfArray> > parameterVector;
-          //split that string at commas
+          // split that string at commas
           size_t parameterSplit = 0;
           while (parameterSplit != std::string::npos) {
             parameterSplit = 0;
             parameterSplit = functionParameters.find_first_of(",", parameterSplit);
-            //feed the substrings to the parse function
+            // feed the substrings to the parse function
             if (parameterSplit == std::string::npos) {
               parameterVector.push_back(evaluateExpression(functionParameters, variables));
             }
@@ -687,17 +758,19 @@ XdmfArray::evaluateExpression(std::string expression, std::map<std::string, shar
         }
       }
       else {
-        //push equivalent to value stack
+        // push equivalent to value stack
         valueStack.push(variables.find(expression.substr(valueStart, i + 1 - valueStart))->second);
       }
     }
-    else if (mSupportedOperations.find(expression[i]) != std::string::npos) {//found to be an operation
-      //pop operations off the stack until one of a lower or equal importance is found
+    else if (mSupportedOperations.find(expression[i]) != std::string::npos) {
+      // found to be an operation
+      // pop operations off the stack until one of a lower or equal importance is found
       if (operationStack.size() > 0) {
         if (expression[i] == ')') {
-          //to close a parenthesis pop off all operations until another parentheis is found
+          // to close a parenthesis pop off all operations until another parentheis is found
           while (operationStack.size() > 0 && operationStack.top() != '(') {
-            if (valueStack.size() < 2) {//must be at least two values for this loop to work properly
+            // must be at least two values for this loop to work properly
+            if (valueStack.size() < 2) {
               try {
                 XdmfError::message(XdmfError::FATAL,
                                    "Error: Not Enough Values in evaluateExpression");
@@ -718,16 +791,17 @@ XdmfArray::evaluateExpression(std::string expression, std::map<std::string, shar
           operationStack.pop();
         }
         else if (expression[i] == '(') {
-          //just add it if it's a start parenthesis
-          //nothing happens here in that case
-          //addition happens after the if statement
+          // just add it if it's a start parenthesis
+          // nothing happens here in that case
+          // addition happens after the if statement
         }
         else {
           int operationLocation = getOperationPriority(expression[i]);
           int topOperationLocation = getOperationPriority(operationStack.top());
-          //see order of operations to determine importance
+          // see order of operations to determine importance
           while (operationStack.size() > 0 && operationLocation < topOperationLocation) {
-            if (valueStack.size() < 2) {//must be at least two values for this loop to work properly
+            // must be at least two values for this loop to work properly
+            if (valueStack.size() < 2) {
               try {
                 XdmfError::message(XdmfError::FATAL,
                                    "Error: Not Enough Values in evaluateExpression");
@@ -752,14 +826,14 @@ XdmfArray::evaluateExpression(std::string expression, std::map<std::string, shar
         }
       }
       if (expression[i] != ')') {
-        //add the operation to the operation stack
+        // add the operation to the operation stack
         operationStack.push(expression[i]);
       }
     }
-    //if not a value or operation the character is ignored
+    // if not a value or operation the character is ignored
   }
 
-  //empty what's left in the stacks before finishing
+  // empty what's left in the stacks before finishing
   while (valueStack.size() > 1 && operationStack.size() > 0) {
     if (valueStack.size() < 2) {//must be at least two values for this loop to work properly
       try {
@@ -802,7 +876,7 @@ XdmfArray::evaluateExpression(std::string expression, std::map<std::string, shar
     }
   }
 
-  //throw error if there's extra operations
+  // throw error if there's extra operations
   if (operationStack.size() > 0) {
     try {
       XdmfError::message(XdmfError::WARNING,
@@ -849,10 +923,12 @@ XdmfArray::addOperation(char newoperator, shared_ptr<XdmfArray>(*operationref)(s
       throw e;
     }
   }
-  //give warning if the operation already exists
+  // give warning if the operation already exists
   size_t origsize = operations.size();
-  operations[newoperator] = operationref;//place reference in the associated location
-  if (origsize == operations.size()) {//it's nice to let people know they're doing this so they don't get surprised about changes in behavior
+  // place reference in the associated location
+  operations[newoperator] = operationref;
+  // it's nice to let people know they're doing this so they don't get surprised about changes in behavior
+  if (origsize == operations.size()) {
     try {
       XdmfError::message(XdmfError::WARNING,
                          "Warning: Function Overwritten");
@@ -860,14 +936,14 @@ XdmfArray::addOperation(char newoperator, shared_ptr<XdmfArray>(*operationref)(s
     catch (XdmfError e) {
       throw e;
     }
-    //overwrite the existing info for that operation
-    //add the priority to the specified location in the priority array
+    // overwrite the existing info for that operation
+    // add the priority to the specified location in the priority array
     size_t priorityLocation = mSupportedOperations.find(newoperator);
     mOperationPriority[priorityLocation] = priority;
   }
   else {
-    //create new operation
-    //as long as the operation isn't a valid function character
+    // create new operation
+    // as long as the operation isn't a valid function character
     if (mValidVariableChars.find(newoperator) != std::string::npos || mValidDigitChars.find(newoperator) != std::string::npos) {
       try {
         XdmfError::message(XdmfError::FATAL,
@@ -877,12 +953,14 @@ XdmfArray::addOperation(char newoperator, shared_ptr<XdmfArray>(*operationref)(s
         throw e;
       }
     }
-    else { //build the operation
-      //add operation to the supported character string
+    else {
+      // build the operation
+      // add operation to the supported character string
       mSupportedOperations.push_back(newoperator);
       unsigned int priorityArraySize = sizeof(mOperationPriority)/sizeof(int);
-      if (mSupportedOperations.size()-1 > priorityArraySize) {//first check to see if the priority array is large enough
-        //if it isn't make it bigger, double size should be fine
+      // first check to see if the priority array is large enough
+      if (mSupportedOperations.size()-1 > priorityArraySize) {
+        // if it isn't make it bigger, double size should be fine
         int newArray [priorityArraySize*2];
         std::copy(mOperationPriority, mOperationPriority+(priorityArraySize-1), newArray);
 	*mOperationPriority = *newArray;
@@ -894,322 +972,7 @@ XdmfArray::addOperation(char newoperator, shared_ptr<XdmfArray>(*operationref)(s
   return operations.size();
 }
 
-shared_ptr<XdmfArray>
-XdmfArray::chunk(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2)
-{
-  //join chunk (add the new array to the end of the first one)
-  //joins into new array and returns it
-  shared_ptr<XdmfArray> returnArray = XdmfArray::New();
-  returnArray->insert(0, val1, 0, val1->getSize(),  1, 1);
-  returnArray->insert(val1->getSize(), val2, 0, val2->getSize(), 1, 1);
-  return returnArray;
-}
-
-shared_ptr<XdmfArray>
-XdmfArray::interlace(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2)
-{
-  //join interlace (evenly space the second array within the first one)
-  //builds a new array
-  shared_ptr<XdmfArray> returnArray = XdmfArray::New();
-  //resize to the combined size of both arrays
-  //determining what type to class it as in order to not lose data, and to still have the smallest data type of the two
-  shared_ptr<const XdmfArrayType> arrayType1 = val1->getArrayType();
-  shared_ptr<const XdmfArrayType> arrayType2 = val2->getArrayType();
-  if (arrayType1 == XdmfArrayType::Int8()) {
-    //if floats reclass as floats of the appropriate size
-    if (arrayType2 == XdmfArrayType::String()) {
-      //string is the only compatible type here
-      std::string sampleValue = "";
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    else if (arrayType2 == XdmfArrayType::Float32()) {
-      float sampleValue = 0.0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    else if (arrayType2 == XdmfArrayType::Float64()) {
-      double sampleValue = 0.0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    //if uints reclass as ints of the appropriate size
-    else if (arrayType2 == XdmfArrayType::Int64() || arrayType2 == XdmfArrayType::UInt32()) {
-      long sampleValue = 0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    else if (arrayType2 == XdmfArrayType::Int32() || arrayType2 == XdmfArrayType::UInt16()) {
-      int sampleValue = 0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    else if (arrayType2 == XdmfArrayType::Int16() || arrayType2 == XdmfArrayType::UInt8()) {
-      short sampleValue = 0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    else {
-      char sampleValue = 0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-  }
-  else if (arrayType1 == XdmfArrayType::Int16()) {
-    //if floats reclass as floats of the appropriate size
-    if (arrayType2 == XdmfArrayType::String()) {
-      //string is the only compatible type here
-      std::string sampleValue = "";
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    else if (arrayType2 == XdmfArrayType::Float32()) {
-      float sampleValue = 0.0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    else if (arrayType2 == XdmfArrayType::Float64()) {
-      double sampleValue = 0.0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    //if uints reclass as ints of the appropriate size
-    else if (arrayType2 == XdmfArrayType::Int64() || arrayType2 == XdmfArrayType::UInt32()) {
-      long sampleValue = 0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    else if (arrayType2 == XdmfArrayType::Int32() || arrayType2 == XdmfArrayType::UInt16()) {
-      int sampleValue = 0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    else
-    {
-      short sampleValue = 0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-  }
-  else if (arrayType1 == XdmfArrayType::Int32()) {
-    //if floats reclass as floats of the appropriate size
-    if (arrayType2 == XdmfArrayType::String()) {
-      //string is the only compatible type here
-      std::string sampleValue = "";
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    else if (arrayType2 == XdmfArrayType::Float32()) {
-      float sampleValue = 0.0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    else if (arrayType2 == XdmfArrayType::Float64()) {
-      double sampleValue = 0.0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    //if uints reclass as ints of the appropriate size
-    else if (arrayType2 == XdmfArrayType::Int64() || arrayType2 == XdmfArrayType::UInt32()) {
-      long sampleValue = 0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    else {
-      int sampleValue = 0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-  }
-  else if (arrayType1 == XdmfArrayType::Int64()) {
-    //if floats reclass as floats of the appropriate size
-    if (arrayType2 == XdmfArrayType::String()) {
-      //string is the only compatible type here
-      std::string sampleValue = "";
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    else if (arrayType2 == XdmfArrayType::Float32()) {
-      float sampleValue = 0.0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    else if (arrayType2 == XdmfArrayType::Float64()) {
-      double sampleValue = 0.0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    //if uints reclass as ints of the appropriate size
-    else {
-      long sampleValue = 0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-  }
-  else if (arrayType1 == XdmfArrayType::Float32()) {
-    //use floats of the appropriate size
-    if (arrayType2 == XdmfArrayType::String()) {
-      //string is the only compatible type here
-      std::string sampleValue = "";
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    else if (arrayType2 == XdmfArrayType::Float64()) {
-      double sampleValue = 0.0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    else {
-      float sampleValue = 0.0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-  }
-  else if (arrayType1 == XdmfArrayType::Float64()) {
-    //use floats of the appropriate size
-    if (arrayType2 == XdmfArrayType::String()) {
-      //string is the only compatible type here
-      std::string sampleValue = "";
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    else {
-      double sampleValue = 0.0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-  }
-  else if (arrayType1 == XdmfArrayType::UInt8()) {
-    //if int are used reclass as int of the larger size
-    if (arrayType2 == XdmfArrayType::Int8() || arrayType2 == XdmfArrayType::Int16()) {
-      short sampleValue = 0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    else if (arrayType2 == XdmfArrayType::Int32()) {
-      int sampleValue = 0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    else if (arrayType2 == XdmfArrayType::Int64()) {
-      long sampleValue = 0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    //if floats are used, reclass as floats of the appropriate size
-    else if (arrayType2 == XdmfArrayType::Float32()) {
-      float sampleValue = 0.0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    else if (arrayType2 == XdmfArrayType::Float64()) {
-      double sampleValue = 0.0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    //if uints are used, adjust size as required
-    else if (arrayType2 == XdmfArrayType::UInt8()) {
-      unsigned char sampleValue = 0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    else if (arrayType2 == XdmfArrayType::UInt16()) {
-      unsigned short sampleValue = 0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    else if (arrayType2 == XdmfArrayType::UInt32()) {
-      unsigned int sampleValue = 0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    else if (arrayType2 == XdmfArrayType::String()) {
-      //string is the only compatible type here
-      std::string sampleValue = "";
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-  }
-  else if (arrayType1 == XdmfArrayType::UInt16()) {
-    //if int are used reclass as int of the larger size
-    if (arrayType2 == XdmfArrayType::Int8() || arrayType2 == XdmfArrayType::Int16() || arrayType2 == XdmfArrayType::Int32()) {
-      int sampleValue = 0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    else if (arrayType2 == XdmfArrayType::Int64()) {
-      long sampleValue = 0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    //if floats are used, reclass as floats of the appropriate size
-    else if (arrayType2 == XdmfArrayType::Float32()) {
-      float sampleValue = 0.0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    else if (arrayType2 == XdmfArrayType::Float64()) {
-      double sampleValue = 0.0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    //if uints are used, adjust size as required
-    else if (arrayType2 == XdmfArrayType::UInt8() || arrayType2 == XdmfArrayType::UInt16()) {
-      unsigned short sampleValue = 0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    else if (arrayType2 == XdmfArrayType::UInt32()) {
-      unsigned int sampleValue = 0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    else if (arrayType2 == XdmfArrayType::String()) {
-      //string is the only compatible type here
-      std::string sampleValue = "";
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-  }
-  else if (arrayType1 == XdmfArrayType::UInt32()) {
-    //if int are used reclass as int of the larger size
-    if (arrayType2 == XdmfArrayType::Int8() || arrayType2 == XdmfArrayType::Int16() || arrayType2 == XdmfArrayType::Int32() || arrayType2 == XdmfArrayType::Int64()) {
-      long sampleValue = 0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    //if floats are used, reclass as floats of the appropriate size
-    else if (arrayType2 == XdmfArrayType::Float32()) {
-      float sampleValue = 0.0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    else if (arrayType2 == XdmfArrayType::Float64()) {
-      double sampleValue = 0.0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    //if uints are used, adjust size as required
-    else if (arrayType2 == XdmfArrayType::UInt8() || arrayType2 == XdmfArrayType::UInt16() || arrayType2 == XdmfArrayType::UInt32()) {
-      unsigned int sampleValue = 0;
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-    else if (arrayType2 == XdmfArrayType::String()) {
-      //string is the only compatible type here
-      std::string sampleValue = "";
-      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-    }
-  }
-  else if (arrayType1 == XdmfArrayType::String()) {
-    //string is the only compatible type here
-    std::string sampleValue = "";
-    returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
-  }
-  //determine ratio of array sizes
-  int arrayRatio1 = (int)floor(static_cast<double>(val1->getSize())/val2->getSize());
-  int arrayRatio2 = (int)floor(static_cast<double>(val2->getSize())/val1->getSize());
-  if (arrayRatio1 < 1) {
-    arrayRatio1 = 1;
-  }
-  if (arrayRatio2 < 1) {
-    arrayRatio2 = 1;
-  }
-  //stride is equal to the ratios rounded up and added together
-  int stride = arrayRatio1+arrayRatio2;
-  int arrayExcess1 = 0;
-  int arrayExcess2 = 0;
-  for (int i = 0; i < stride; i++) {
-    //add the values of each array, using strides to interlace and starting index to offset
-    //first array gets the first value of the new array
-    if (i<arrayRatio1) {
-      int amountWritten = val1->getSize()/arrayRatio1;
-      if (((amountWritten * arrayRatio1) + i) < (int)val1->getSize()) {
-        amountWritten++;
-      }
-      if (amountWritten > floor(val2->getSize()/arrayRatio2)) {
-        arrayExcess1 += amountWritten - (int)floor(val2->getSize()/arrayRatio2);
-        amountWritten = (int)floor(val2->getSize()/arrayRatio2);
-      }
-      returnArray->insert(i, val1, i, amountWritten, stride, arrayRatio1);
-    }
-    else { //second array takes the rest
-      int amountWritten = val2->getSize()/arrayRatio2;
-      if (((amountWritten * arrayRatio2) + i) < (int)val2->getSize()) {
-        amountWritten++;
-      }
-      if (amountWritten > floor(val1->getSize()/arrayRatio1)) {
-        arrayExcess2 += amountWritten - (int)floor(val1->getSize()/arrayRatio1);
-        amountWritten = (int)floor(val1->getSize()/arrayRatio1);
-      }
-      returnArray->insert(i, val2, i-arrayRatio1, amountWritten, stride, arrayRatio2);
-    }
-  }
-  if (arrayExcess1 > 0) {
-    returnArray->insert(val1->getSize()+val2->getSize()-arrayExcess1, val1, 0, arrayExcess1, 1, 1);
-  }
-  else if (arrayExcess2 > 0) {
-    returnArray->insert(val1->getSize()+val2->getSize()-arrayExcess2, val2, 0, arrayExcess2, 1, 1);
-  }
-  returnArray->resize(val1->getSize()+val2->getSize(), 0);
-  //after all inserts are done, add the excess values to the end of the array? Possibly do during the initial insert process?
-  return returnArray;
-}
-
-//this is how you use references to functions
+// this is how you use references to functions
 shared_ptr<XdmfArray>
 XdmfArray::evaluateFunction(std::vector<shared_ptr<XdmfArray> > valueVector, std::string functionName)
 {
@@ -1219,65 +982,6 @@ XdmfArray::evaluateFunction(std::vector<shared_ptr<XdmfArray> > valueVector, std
   else {
     return shared_ptr<XdmfArray>();
   }
-}
-
-int
-XdmfArray::addFunction(std::string name, shared_ptr<XdmfArray>(*functionref)(std::vector<shared_ptr<XdmfArray> >))
-{
-  //check to ensure that the name has valid characters
-  for (unsigned int i = 0; i < name.size(); i++) {
-    if (mValidVariableChars.find(name[i]) == std::string::npos) {//if the character is not found in the list of valid characters
-      //then throw an error
-      try {
-        XdmfError::message(XdmfError::FATAL,
-                           "Error: Function Name Contains Invalid Character(s)");
-      }
-      catch (XdmfError e) {
-        throw e;
-      }
-    }
-  }
-  size_t origsize = arrayFunctions.size();
-  arrayFunctions[name] = functionref;
-  if (origsize == arrayFunctions.size()) {//if no new functions were added
-    //toss a warning, it's nice to let people know that they're doing this
-    try {
-      XdmfError::message(XdmfError::WARNING,
-                         "Warning: Function Overwritten");
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
-  }
-  return arrayFunctions.size();
-}
-
-shared_ptr<XdmfArray>
-XdmfArray::sum(std::vector<shared_ptr<XdmfArray> > values)
-{
-  double total = 0.0;
-  for (unsigned int i = 0; i < values.size(); i++) {
-    for (unsigned int j = 0; j < values[i]->getSize(); j++) {
-      total += values[i]->getValue<double>(j);
-    }
-  }
-  shared_ptr<XdmfArray> returnArray = XdmfArray::New();
-  returnArray->insert(0, total);
-  return returnArray;
-}
-
-shared_ptr<XdmfArray>
-XdmfArray::ave(std::vector<shared_ptr<XdmfArray> > values)
-{
-	double total = sum(values)->getValue<double>(0);;
-	int totalSize = 0;
-	for (unsigned int i = 0; i < values.size(); i++)
-	{
-		totalSize += values[i]->getSize();
-	}
-	shared_ptr<XdmfArray> returnArray = XdmfArray::New();
-	returnArray->insert(0, total/totalSize);
-	return returnArray;
 }
 
 shared_ptr<const XdmfArrayType>
@@ -1307,24 +1011,24 @@ XdmfArray::getDimensions() const
     if(!this->isInitialized() && mHeavyDataControllers.size() > 0) {
       std::vector<unsigned int> returnDimensions;
       std::vector<unsigned int> tempDimensions;
-      //find the controller with the most dimensions
+      // find the controller with the most dimensions
       int dimControllerIndex = 0;
       unsigned int dimSizeMax = 0;
       unsigned int dimTotal = 0;
-      for (unsigned int i = 0; i < mHeavyDataControllers.size(); i++) {
+      for (unsigned int i = 0; i < mHeavyDataControllers.size(); ++i) {
         dimTotal += mHeavyDataControllers[i]->getSize();
         if (mHeavyDataControllers[i]->getSize() > dimSizeMax) {
           dimSizeMax = mHeavyDataControllers[i]->getSize();
           dimControllerIndex = i;
         }
       }
-      //total up the size of the lower dimensions
+      // total up the size of the lower dimensions
       int controllerDimensionSubtotal = 1;
-      for (unsigned int i = 0; i < mHeavyDataControllers[dimControllerIndex]->getDimensions().size() - 1; i++) {
+      for (unsigned int i = 0; i < mHeavyDataControllers[dimControllerIndex]->getDimensions().size() - 1; ++i) {
         returnDimensions.push_back(mHeavyDataControllers[dimControllerIndex]->getDimensions()[i]);
         controllerDimensionSubtotal *= mHeavyDataControllers[dimControllerIndex]->getDimensions()[i];
       }
-      //divide the total contained by the dimensions by the size of the lower dimensions
+      // divide the total contained by the dimensions by the size of the lower dimensions
       returnDimensions.push_back(dimTotal/controllerDimensionSubtotal);
       return returnDimensions;
     }
@@ -1405,22 +1109,22 @@ XdmfArray::getSupportedFunctions()
 {
   std::vector<std::string> returnVector;
   for (std::map<std::string, shared_ptr<XdmfArray>(*)(std::vector<shared_ptr<XdmfArray> >)>::iterator functionWalker = arrayFunctions.begin();
-       functionWalker != arrayFunctions.end(); functionWalker++) {
+       functionWalker != arrayFunctions.end(); ++functionWalker) {
     returnVector.push_back(functionWalker->first);
   }
   return returnVector;
 }
 
 const std::string
-XdmfArray::getValidVariableChars()
+XdmfArray::getValidDigitChars()
 {
-	return mValidVariableChars;
+        return mValidDigitChars;
 }
 
 const std::string
-XdmfArray::getValidDigitChars()
+XdmfArray::getValidVariableChars()
 {
-	return mValidDigitChars;
+	return mValidVariableChars;
 }
 
 void *
@@ -1465,8 +1169,8 @@ XdmfArray::getHeavyDataController() const
 void
 XdmfArray::setHeavyDataController(shared_ptr<XdmfHeavyDataController> newController)
 {
-  //since this is replacing the previous version which was designed to completely replace the controller of the array
-  //it will clear the current controllers before adding the new one in
+  // since this is replacing the previous version which was designed to completely replace the controller of the array
+  // it will clear the current controllers before adding the new one in
   mHeavyDataControllers.clear();
   mHeavyDataControllers.push_back(newController);
 }
@@ -1560,27 +1264,30 @@ XdmfArray::insert(const std::vector<unsigned int> startIndex,
                   const std::vector<unsigned int> arrayStride,
                   const std::vector<unsigned int> valuesStride)
 {
+  // ensuring dimensions match up when pulling data
   if ((values->getDimensions().size() == valuesStartIndex.size() && valuesStartIndex.size() == numValues.size() && numValues.size() == valuesStride.size())
-      && (numInserted.size() == startIndex.size() && startIndex.size() == mDimensions.size() && mDimensions.size() == arrayStride.size())) {//ensuring dimensions match up when pulling data
-    //pull data from values
+      && (numInserted.size() == startIndex.size() && startIndex.size() == mDimensions.size() && mDimensions.size() == arrayStride.size())) {
+    // pull data from values
     std::vector<unsigned int > dimTotalVector;
     unsigned int dimTotal = 1;
-    for (unsigned int i = 0; i < values->getDimensions().size(); i++) {
+    for (unsigned int i = 0; i < values->getDimensions().size(); ++i) {
       dimTotalVector.push_back(dimTotal);
       dimTotal *= values->getDimensions()[i];
     }
     std::vector<unsigned int> indexVector;
-    for (unsigned int i = 0; i < values->getDimensions().size(); i++) {
+    for (unsigned int i = 0; i < values->getDimensions().size(); ++i) {
       indexVector.push_back(0);
     }
     shared_ptr<XdmfArray> holderArray = XdmfArray::New();
     unsigned int holderoffset = 0;
-    while (indexVector[indexVector.size()-1] < 1) {//end when the last index is incremented
-      //initialize the section of the array you're pulling from
+    // end when the last index is incremented
+    while (indexVector[indexVector.size()-1] < 1) {
+      // initialize the section of the array you're pulling from
       unsigned int startTotal = 0;
       dimTotal = 1;
-      for (unsigned int i = 0; i < values->getDimensions().size(); i++) {
-        if (i == 0) {//stride doesn't factor in to the first dimension since it's being used with the insert call
+      for (unsigned int i = 0; i < values->getDimensions().size(); ++i) {
+        // stride doesn't factor in to the first dimension since it's being used with the insert call
+        if (i == 0) {
           startTotal += valuesStartIndex[i] * dimTotal;
         }
         else {
@@ -1588,14 +1295,15 @@ XdmfArray::insert(const std::vector<unsigned int> startIndex,
         }
         dimTotal *= values->getDimensions()[i];
       }
-      //insert the subsection
+      // insert the subsection
       holderArray->insert(holderoffset, values, startTotal, numValues[0], 1, valuesStride[0]);
       holderoffset+=numValues[0];
-      //increment up the vector
+      // increment up the vector
       bool increment = true;
-      for (unsigned int i = 0; i < indexVector.size() && increment; i++) {
+      for (unsigned int i = 0; i < indexVector.size() && increment; ++i) {
         indexVector[i]++;
-        if (i+1 < numValues.size()) {//to keep the loop from breaking at the end
+        // to keep the loop from breaking at the end
+        if (i+1 < numValues.size()) {
           if (indexVector[i] >= numValues[i+1]) {
             indexVector[i] = indexVector[i] % numValues[i+1];
           }
@@ -1605,20 +1313,21 @@ XdmfArray::insert(const std::vector<unsigned int> startIndex,
         }
       }
     }
-    //values being inserted retrieved
-    //use an variation of the last loop to insert into this array
+    // values being inserted retrieved
+    // use an variation of the last loop to insert into this array
 
     indexVector.clear();
-    for (unsigned int i = 0; i < this->getDimensions().size(); i++) {
+    for (unsigned int i = 0; i < this->getDimensions().size(); ++i) {
       indexVector.push_back(0);
     }
     holderoffset = 0;
-    while (indexVector[indexVector.size()-1] < 1) {//end when the last index is incremented
-      //initialize the section of the array you're pulling from
+    // end when the last index is incremented
+    while (indexVector[indexVector.size()-1] < 1) {
+      // initialize the section of the array you're pulling from
       unsigned int startTotal = 0;
       dimTotal = 1;
-      for (unsigned int i = 0; i < this->getDimensions().size(); i++) {
-        if (i == 0) {//stride doesn't factor in to the first dimension since it's being used with the insert call
+      for (unsigned int i = 0; i < this->getDimensions().size(); ++i) {
+        if (i == 0) {// stride doesn't factor in to the first dimension since it's being used with the insert call
           startTotal += startIndex[i] * dimTotal;
         }
         else {
@@ -1626,14 +1335,14 @@ XdmfArray::insert(const std::vector<unsigned int> startIndex,
         }
         dimTotal *= this->getDimensions()[i];
       }
-      //insert the subsection
+      // insert the subsection
       this->insert(startTotal, holderArray, holderoffset, numInserted[0], arrayStride[0], 1);
       holderoffset+=numInserted[0];
-      //increment up the vector
+      // increment up the vector
       bool increment = true;
-      for (unsigned int i = 0; i < indexVector.size() && increment; i++) {
+      for (unsigned int i = 0; i < indexVector.size() && increment; ++i) {
         indexVector[i]++;
-        if (i+1 < numInserted.size()) {//to keep the loop from breaking at the end
+        if (i+1 < numInserted.size()) {// to keep the loop from breaking at the end
           if (indexVector[i] >= numInserted[i+1]) {
             indexVector[i] = indexVector[i] % numInserted[i+1];
           }
@@ -1645,7 +1354,7 @@ XdmfArray::insert(const std::vector<unsigned int> startIndex,
     }
   }
   else {
-    //throw an error
+    // throw an error
     if (!(values->getDimensions().size() == valuesStartIndex.size() && valuesStartIndex.size() == numValues.size() && numValues.size() == valuesStride.size())) {
       try {
         XdmfError::message(XdmfError::FATAL,
@@ -1667,6 +1376,310 @@ XdmfArray::insert(const std::vector<unsigned int> startIndex,
   }
 }
 
+shared_ptr<XdmfArray>
+XdmfArray::interlace(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2)
+{
+  // join interlace (evenly space the second array within the first one)
+  // builds a new array
+  shared_ptr<XdmfArray> returnArray = XdmfArray::New();
+  // resize to the combined size of both arrays
+  // determining what type to class it as in order to not lose data, and to still have the smallest data type of the two
+  shared_ptr<const XdmfArrayType> arrayType1 = val1->getArrayType();
+  shared_ptr<const XdmfArrayType> arrayType2 = val2->getArrayType();
+  if (arrayType1 == XdmfArrayType::Int8()) {
+    // if floats reclass as floats of the appropriate size
+    if (arrayType2 == XdmfArrayType::String()) {
+      // string is the only compatible type here
+      std::string sampleValue = "";
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    else if (arrayType2 == XdmfArrayType::Float32()) {
+      float sampleValue = 0.0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    else if (arrayType2 == XdmfArrayType::Float64()) {
+      double sampleValue = 0.0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    // if uints reclass as ints of the appropriate size
+    else if (arrayType2 == XdmfArrayType::Int64() || arrayType2 == XdmfArrayType::UInt32()) {
+      long sampleValue = 0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    else if (arrayType2 == XdmfArrayType::Int32() || arrayType2 == XdmfArrayType::UInt16()) {
+      int sampleValue = 0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    else if (arrayType2 == XdmfArrayType::Int16() || arrayType2 == XdmfArrayType::UInt8()) {
+      short sampleValue = 0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    else {
+      char sampleValue = 0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+  }
+  else if (arrayType1 == XdmfArrayType::Int16()) {
+    // if floats reclass as floats of the appropriate size
+    if (arrayType2 == XdmfArrayType::String()) {
+      // string is the only compatible type here
+      std::string sampleValue = "";
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    else if (arrayType2 == XdmfArrayType::Float32()) {
+      float sampleValue = 0.0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    else if (arrayType2 == XdmfArrayType::Float64()) {
+      double sampleValue = 0.0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    // if uints reclass as ints of the appropriate size
+    else if (arrayType2 == XdmfArrayType::Int64() || arrayType2 == XdmfArrayType::UInt32()) {
+      long sampleValue = 0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    else if (arrayType2 == XdmfArrayType::Int32() || arrayType2 == XdmfArrayType::UInt16()) {
+      int sampleValue = 0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    else
+    {
+      short sampleValue = 0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+  }
+  else if (arrayType1 == XdmfArrayType::Int32()) {
+    // if floats reclass as floats of the appropriate size
+    if (arrayType2 == XdmfArrayType::String()) {
+      // string is the only compatible type here
+      std::string sampleValue = "";
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    else if (arrayType2 == XdmfArrayType::Float32()) {
+      float sampleValue = 0.0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    else if (arrayType2 == XdmfArrayType::Float64()) {
+      double sampleValue = 0.0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    // if uints reclass as ints of the appropriate size
+    else if (arrayType2 == XdmfArrayType::Int64() || arrayType2 == XdmfArrayType::UInt32()) {
+      long sampleValue = 0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    else {
+      int sampleValue = 0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+  }
+  else if (arrayType1 == XdmfArrayType::Int64()) {
+    // if floats reclass as floats of the appropriate size
+    if (arrayType2 == XdmfArrayType::String()) {
+      // string is the only compatible type here
+      std::string sampleValue = "";
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    else if (arrayType2 == XdmfArrayType::Float32()) {
+      float sampleValue = 0.0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    else if (arrayType2 == XdmfArrayType::Float64()) {
+      double sampleValue = 0.0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    // if uints reclass as ints of the appropriate size
+    else {
+      long sampleValue = 0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+  }
+  else if (arrayType1 == XdmfArrayType::Float32()) {
+    // use floats of the appropriate size
+    if (arrayType2 == XdmfArrayType::String()) {
+      // string is the only compatible type here
+      std::string sampleValue = "";
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    else if (arrayType2 == XdmfArrayType::Float64()) {
+      double sampleValue = 0.0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    else {
+      float sampleValue = 0.0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+  }
+  else if (arrayType1 == XdmfArrayType::Float64()) {
+    // use floats of the appropriate size
+    if (arrayType2 == XdmfArrayType::String()) {
+      // string is the only compatible type here
+      std::string sampleValue = "";
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    else {
+      double sampleValue = 0.0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+  }
+  else if (arrayType1 == XdmfArrayType::UInt8()) {
+    // if int are used reclass as int of the larger size
+    if (arrayType2 == XdmfArrayType::Int8() || arrayType2 == XdmfArrayType::Int16()) {
+      short sampleValue = 0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    else if (arrayType2 == XdmfArrayType::Int32()) {
+      int sampleValue = 0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    else if (arrayType2 == XdmfArrayType::Int64()) {
+      long sampleValue = 0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    // if floats are used, reclass as floats of the appropriate size
+    else if (arrayType2 == XdmfArrayType::Float32()) {
+      float sampleValue = 0.0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    else if (arrayType2 == XdmfArrayType::Float64()) {
+      double sampleValue = 0.0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    // if uints are used, adjust size as required
+    else if (arrayType2 == XdmfArrayType::UInt8()) {
+      unsigned char sampleValue = 0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    else if (arrayType2 == XdmfArrayType::UInt16()) {
+      unsigned short sampleValue = 0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    else if (arrayType2 == XdmfArrayType::UInt32()) {
+      unsigned int sampleValue = 0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    else if (arrayType2 == XdmfArrayType::String()) {
+      // string is the only compatible type here
+      std::string sampleValue = "";
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+  }
+  else if (arrayType1 == XdmfArrayType::UInt16()) {
+    // if int are used reclass as int of the larger size
+    if (arrayType2 == XdmfArrayType::Int8() || arrayType2 == XdmfArrayType::Int16() || arrayType2 == XdmfArrayType::Int32()) {
+      int sampleValue = 0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    else if (arrayType2 == XdmfArrayType::Int64()) {
+      long sampleValue = 0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    // if floats are used, reclass as floats of the appropriate size
+    else if (arrayType2 == XdmfArrayType::Float32()) {
+      float sampleValue = 0.0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    else if (arrayType2 == XdmfArrayType::Float64()) {
+      double sampleValue = 0.0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    // if uints are used, adjust size as required
+    else if (arrayType2 == XdmfArrayType::UInt8() || arrayType2 == XdmfArrayType::UInt16()) {
+      unsigned short sampleValue = 0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    else if (arrayType2 == XdmfArrayType::UInt32()) {
+      unsigned int sampleValue = 0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    else if (arrayType2 == XdmfArrayType::String()) {
+      // string is the only compatible type here
+      std::string sampleValue = "";
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+  }
+  else if (arrayType1 == XdmfArrayType::UInt32()) {
+    // if int are used reclass as int of the larger size
+    if (arrayType2 == XdmfArrayType::Int8() || arrayType2 == XdmfArrayType::Int16() || arrayType2 == XdmfArrayType::Int32() || arrayType2 == XdmfArrayType::Int64()) {
+      long sampleValue = 0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    // if floats are used, reclass as floats of the appropriate size
+    else if (arrayType2 == XdmfArrayType::Float32()) {
+      float sampleValue = 0.0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    else if (arrayType2 == XdmfArrayType::Float64()) {
+      double sampleValue = 0.0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    // if uints are used, adjust size as required
+    else if (arrayType2 == XdmfArrayType::UInt8() || arrayType2 == XdmfArrayType::UInt16() || arrayType2 == XdmfArrayType::UInt32()) {
+      unsigned int sampleValue = 0;
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+    else if (arrayType2 == XdmfArrayType::String()) {
+      // string is the only compatible type here
+      std::string sampleValue = "";
+      returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+    }
+  }
+  else if (arrayType1 == XdmfArrayType::String()) {
+    // string is the only compatible type here
+    std::string sampleValue = "";
+    returnArray->resize(val1->getSize()+val2->getSize(), sampleValue);
+  }
+  // determine ratio of array sizes
+  int arrayRatio1 = (int)floor(static_cast<double>(val1->getSize())/val2->getSize());
+  int arrayRatio2 = (int)floor(static_cast<double>(val2->getSize())/val1->getSize());
+  if (arrayRatio1 < 1) {
+    arrayRatio1 = 1;
+  }
+  if (arrayRatio2 < 1) {
+    arrayRatio2 = 1;
+  }
+  // stride is equal to the ratios rounded up and added together
+  int stride = arrayRatio1+arrayRatio2;
+  int arrayExcess1 = 0;
+  int arrayExcess2 = 0;
+  for (int i = 0; i < stride; ++i) {
+    // add the values of each array, using strides to interlace and starting index to offset
+    // first array gets the first value of the new array
+    if (i<arrayRatio1) {
+      int amountWritten = val1->getSize()/arrayRatio1;
+      if (((amountWritten * arrayRatio1) + i) < (int)val1->getSize()) {
+        amountWritten++;
+      }
+      if (amountWritten > floor(val2->getSize()/arrayRatio2)) {
+        arrayExcess1 += amountWritten - (int)floor(val2->getSize()/arrayRatio2);
+        amountWritten = (int)floor(val2->getSize()/arrayRatio2);
+      }
+      returnArray->insert(i, val1, i, amountWritten, stride, arrayRatio1);
+    }
+    else {
+      // second array takes the rest
+      int amountWritten = val2->getSize()/arrayRatio2;
+      if (((amountWritten * arrayRatio2) + i) < (int)val2->getSize()) {
+        amountWritten++;
+      }
+      if (amountWritten > floor(val1->getSize()/arrayRatio1)) {
+        arrayExcess2 += amountWritten - (int)floor(val1->getSize()/arrayRatio1);
+        amountWritten = (int)floor(val1->getSize()/arrayRatio1);
+      }
+      returnArray->insert(i, val2, i-arrayRatio1, amountWritten, stride, arrayRatio2);
+    }
+  }
+  if (arrayExcess1 > 0) {
+    returnArray->insert(val1->getSize()+val2->getSize()-arrayExcess1, val1, 0, arrayExcess1, 1, 1);
+  }
+  else if (arrayExcess2 > 0) {
+    returnArray->insert(val1->getSize()+val2->getSize()-arrayExcess2, val2, 0, arrayExcess2, 1, 1);
+  }
+  returnArray->resize(val1->getSize()+val2->getSize(), 0);
+  // after all inserts are done, add the excess values to the end of the array? Possibly do during the initial insert process?
+  return returnArray;
+}
 
 bool
 XdmfArray::isInitialized() const
@@ -1687,7 +1700,7 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
                         const std::vector<shared_ptr<XdmfItem> > & childItems,
                         const XdmfCoreReader * const reader)
 {
-  //This inserts any XdmfInformation in childItems into the object.
+  // This inserts any XdmfInformation in childItems into the object.
   XdmfItem::populateItem(itemProperties, childItems, reader);
 
   const shared_ptr<const XdmfArrayType> arrayType = 
@@ -1706,7 +1719,7 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
     }
   }
 
-  //this was originally a constant, but the compiler doesn't like creating vectors of constant strings.
+  // this was originally a constant, but the compiler doesn't like creating vectors of constant strings.
   std::vector<std::string> contentVals;
   contentVals.push_back(content->second);
 
@@ -1783,21 +1796,23 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
       std::string hdf5Path = contentVals[contentIndex].substr(0, colonLocation);
       std::string dataSetPath = contentVals[contentIndex].substr(colonLocation+1);
 
-      //parse dimensions from the content
+      // parse dimensions from the content
       std::vector<unsigned int> contentDims;
       if (contentVals.size() > contentIndex+1) {
-        //this is the string that contains the dimensions
+        // this is the string that contains the dimensions
         boost::tokenizer<> dimtokens(contentVals[contentIndex+1]);
         for(boost::tokenizer<>::const_iterator iter = dimtokens.begin();
             iter != dimtokens.end();
             ++iter) {
           contentDims.push_back(atoi((*iter).c_str()));
         }
-	contentStep = 2;//if this works then the dimension content should be skipped over
+	contentStep = 2;
+        // if this works then the dimension content should be skipped over
       }
-      else {//if it fails then it means that the next content is not a dimension string
-        //in this case it is assumed that the controller will have dimensions equal to the array
-        for (unsigned int j = 0; j < mDimensions.size(); j++) {
+      else {
+        // if it fails then it means that the next content is not a dimension string
+        // in this case it is assumed that the controller will have dimensions equal to the array
+        for (unsigned int j = 0; j < mDimensions.size(); ++j) {
           contentDims.push_back(mDimensions[j]);
         }
         contentStep = 1;
@@ -1865,39 +1880,44 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
 void
 XdmfArray::read()
 {
-  if(mHeavyDataControllers.size() > 0) {
+  if(mHeavyDataControllers.size() > 1) {
     this->release();
-    for (unsigned int i = 0; i < mHeavyDataControllers.size(); i++) {
+    for (unsigned int i = 0; i < mHeavyDataControllers.size(); ++i) {
       shared_ptr<XdmfArray> tempArray = XdmfArray::New();
       mHeavyDataControllers[i]->read(tempArray.get());
       unsigned int dimTotal = 1;
-      for (unsigned int j = 0; j < mHeavyDataControllers[i]->getDimensions().size(); j++) {
+      for (unsigned int j = 0; j < mHeavyDataControllers[i]->getDimensions().size(); ++j) {
         dimTotal *= mHeavyDataControllers[i]->getDimensions()[j];
       }
       this->insert(mHeavyDataControllers[i]->getArrayOffset(), tempArray, 0, dimTotal, 1, 1);
     }
     std::vector<unsigned int> returnDimensions;
     std::vector<unsigned int> tempDimensions;
-    //find the controller with the most dimensions
+    // find the controller with the most dimensions
     int dimControllerIndex = 0;
     unsigned int dimSizeMax = 0;
     unsigned int dimTotal = 0;
-    for (unsigned int i = 0; i < mHeavyDataControllers.size(); i++) {
+    for (unsigned int i = 0; i < mHeavyDataControllers.size(); ++i) {
         dimTotal += mHeavyDataControllers[i]->getSize();
         if (mHeavyDataControllers[i]->getSize() > dimSizeMax) {
           dimSizeMax = mHeavyDataControllers[i]->getSize();
           dimControllerIndex = i;
         }
     }
-    //total up the size of the lower dimensions
+    // total up the size of the lower dimensions
     int controllerDimensionSubtotal = 1;
-    for (unsigned int i = 0; i < mHeavyDataControllers[dimControllerIndex]->getDimensions().size() - 1; i++) {
+    for (unsigned int i = 0; i < mHeavyDataControllers[dimControllerIndex]->getDimensions().size() - 1; ++i) {
       returnDimensions.push_back(mHeavyDataControllers[dimControllerIndex]->getDimensions()[i]);
       controllerDimensionSubtotal *= mHeavyDataControllers[dimControllerIndex]->getDimensions()[i];
     }
-    //divide the total contained by the dimensions by the size of the lower dimensions
+    // divide the total contained by the dimensions by the size of the lower dimensions
     returnDimensions.push_back(dimTotal/controllerDimensionSubtotal);
     mDimensions = returnDimensions;
+  }
+  else if (mHeavyDataControllers.size() == 1) {
+    this->release();
+    mHeavyDataControllers[0]->read(this);
+    mDimensions = mHeavyDataControllers[0]->getDimensions();
   }
 }
 
@@ -1921,6 +1941,20 @@ void
 XdmfArray::setName(const std::string & name)
 {
   mName = name;
+}
+
+shared_ptr<XdmfArray>
+XdmfArray::sum(std::vector<shared_ptr<XdmfArray> > values)
+{
+  double total = 0.0;
+  for (unsigned int i = 0; i < values.size(); ++i) {
+    for (unsigned int j = 0; j < values[i]->getSize(); ++j) {
+      total += values[i]->getValue<double>(j);
+    }
+  }
+  shared_ptr<XdmfArray> returnArray = XdmfArray::New();
+  returnArray->insert(0, total);
+  return returnArray;
 }
 
 void

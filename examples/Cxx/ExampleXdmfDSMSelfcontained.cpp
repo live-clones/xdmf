@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 
 	shared_ptr<XdmfArray> testArray = XdmfArray::New();
 
-	for (unsigned int i = 1; i <= 4; i++)
+	for (unsigned int i = 1; i <= 4; ++i)
 	{
 		testArray->pushBack(i*id);
 	}
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
 
 	testArray->insert(writeController);
 
-	for (unsigned int i = 0; i<size; i++)
+	for (unsigned int i = 0; i<size; ++i)
 	{
 		MPI_Barrier(comm);
 		if (i == id)
@@ -106,26 +106,26 @@ int main(int argc, char *argv[])
 			std::cout << "filepath = " << testArray->getHeavyDataController(0)->getFilePath() << std::endl;
 			outputVector = testArray->getHeavyDataController(0)->getDataspaceDimensions();
 			std::cout << "Data space dimensions" << std::endl;
-			for (int j=0; j<outputVector.size(); j++)
+			for (int j=0; j<outputVector.size(); ++j)
 			{
 				std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
 			}
 			std::cout << "Controller Dimensions" << std::endl;
 			outputVector = testArray->getHeavyDataController(0)->getDimensions();
-			for (int j=0; j<outputVector.size(); j++)
+			for (int j=0; j<outputVector.size(); ++j)
 			{
 				std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
 			}
 			std::cout << "Controller size" << testArray->getHeavyDataController(0)->getSize() << std::endl;
 			std::cout << "Controller starts" << std::endl;
 			outputVector = testArray->getHeavyDataController(0)->getStart();
-			for (int j=0; j<outputVector.size(); j++)
+			for (int j=0; j<outputVector.size(); ++j)
 			{
 				std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
 			}
 			std::cout << "Controller strides" << std::endl;
 			outputVector = testArray->getHeavyDataController(0)->getStride();
-			for (int j=0; j<outputVector.size(); j++)
+			for (int j=0; j<outputVector.size(); ++j)
 			{
 				std::cout << "[" << j << "] =" << outputVector[j] << "\n" << std::endl;
 			}
@@ -169,7 +169,7 @@ int main(int argc, char *argv[])
 	std::cout << "done testing read" << std::endl;
 	
 
-        for (unsigned int i = 0; i<size; i++)
+        for (unsigned int i = 0; i<size; ++i)
         {
                 MPI_Barrier(comm);
                 if (i == id)
@@ -180,26 +180,26 @@ int main(int argc, char *argv[])
                         std::cout << "filepath = " << readArray->getHeavyDataController(0)->getFilePath() << std::endl;
                         outputVector = readArray->getHeavyDataController(0)->getDataspaceDimensions();
                         std::cout << "Data space dimensions" << std::endl;
-                        for (int j=0; j<outputVector.size(); j++)
+                        for (int j=0; j<outputVector.size(); ++j)
                         {
                                 std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
                         }
                         std::cout << "Controller Dimensions" << std::endl;
                         outputVector = readArray->getHeavyDataController(0)->getDimensions();
-                        for (int j=0; j<outputVector.size(); j++)
+                        for (int j=0; j<outputVector.size(); ++j)
                         {
                                 std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
                         }
                         std::cout << "Controller size" << readArray->getHeavyDataController(0)->getSize() << std::endl;
                         std::cout << "Controller starts" << std::endl;
                         outputVector = readArray->getHeavyDataController(0)->getStart();
-                        for (int j=0; j<outputVector.size(); j++)
+                        for (int j=0; j<outputVector.size(); ++j)
                         {
                                 std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
                         }
                         std::cout << "Controller strides" << std::endl;
                         outputVector = readArray->getHeavyDataController(0)->getStride();
-                        for (int j=0; j<outputVector.size(); j++)
+                        for (int j=0; j<outputVector.size(); ++j)
                         {
                                 std::cout << "[" << j << "] =" << outputVector[j] << "\n" << std::endl;
                         }

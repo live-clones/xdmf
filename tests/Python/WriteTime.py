@@ -35,7 +35,6 @@ if __name__ == "__main__":
 	startclock = time.clock()
 
 	for i in range(numTimestamps):
-		#print "timestamp " + str(i)
 		timestampGrid = XdmfGridCollection.New()
 		timestampTime = XdmfTime.New(i)
 		timestampGrid.setTime(timestampTime)
@@ -68,11 +67,15 @@ if __name__ == "__main__":
 			#sectionGrid.accept(exampleHeavyWriter)
 			#exampleHeavyWriter.closeFile()
 		primaryCollection.insert(timestampGrid)
+		writeclock = time.clock()
 		exampleHeavyWriter.openFile()
-		timestampGrid.accept(exampleHeavyWriter)
 		#primaryDomain.accept(exampleHeavyWriter)
-		#primaryDomain.accept(exampleWriter)
+		if i % 10 == 9:
+			primaryDomain.accept(exampleWriter)
+		else:
+			timestampGrid.accept(exampleHeavyWriter)
 		exampleHeavyWriter.closeFile()
+		print "iteration " + str(i) + " Time = " + str(time.clock() - writeclock)
 
 
 	exampleHeavyWriter.openFile()
@@ -81,3 +84,8 @@ if __name__ == "__main__":
 	exampleHeavyWriter.closeFile()
 
 	print (time.clock() - startclock)
+
+	print XdmfSystemUtils.getRealPath("timestamptest.xmf")
+
+	#os.remove("/usr/var/tmp/ajburns/timing.xmf")
+	#os.remove("/usr/var/tmp/ajburns/timing.h5")

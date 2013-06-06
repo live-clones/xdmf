@@ -950,6 +950,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %include XdmfItem.hpp
 %include XdmfItemProperty.hpp
 %include XdmfSparseMatrix.hpp
+%include XdmfSystemUtils.hpp
 %include XdmfVisitor.hpp
 %include XdmfHeavyDataController.hpp
 %include XdmfHeavyDataWriter.hpp

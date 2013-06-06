@@ -377,8 +377,9 @@ XdmfFortran::addAttribute(const char * const name,
   return id;
 }
 
+// unstructured version
 void 
-XdmfFortran::addGrid(const char * const name, const bool writeToHDF5)//unstructured version
+XdmfFortran::addGrid(const char * const name, const bool writeToHDF5)
 {
   const shared_ptr<XdmfUnstructuredGrid> grid = XdmfUnstructuredGrid::New();
   grid->setName(name);
@@ -837,4094 +838,3243 @@ XdmfFortran::setTopology(const int topologyType,
 int
 XdmfFortran::retrieveNumDomainGridCollections()
 {
-	return mDomain->getNumberGridCollections();
+  return mDomain->getNumberGridCollections();
 }
 
 int
 XdmfFortran::numGridCollectionGridCollections()
 {
-	if (!mGridCollections.empty())
-	{
-		return mGridCollections.top()->getNumberGridCollections();
-	}
-	else
-	{
-		try 
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: No grid collections are open."); 
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
+  if (!mGridCollections.empty()) {
+    return mGridCollections.top()->getNumberGridCollections();
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: No grid collections are open."); 
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
 }
 
 void
 XdmfFortran::retrieveDomainTag(char * returnTag, int tagLength)
 {
-	char * tempTag = strdup(mDomain->getItemTag().c_str());
-	memset(returnTag, 0, tagLength);
-	memcpy(returnTag, tempTag, strlen(tempTag)+1);
-	delete [] tempTag;
+  char * tempTag = strdup(mDomain->getItemTag().c_str());
+  memset(returnTag, 0, tagLength);
+  memcpy(returnTag, tempTag, strlen(tempTag)+1);
+  delete [] tempTag;
 }
 
 int
 XdmfFortran::retrieveDomainNumProperties()
 {
-	return mDomain->getItemProperties().size();
+  return mDomain->getItemProperties().size();
 }
 
 void
 XdmfFortran::retrieveDomainProperty(int index, char * key, int keyLength, char * value, int valueLength)
 {
-	if (index < (int)mDomain->getItemProperties().size())
-	{
-		std::map<std::string, std::string>::iterator walker = mDomain->getItemProperties().begin();
-		for (int i = 0; i<index; i++)
-		{
-			walker++;
-		}
-		char * tempKey = strdup((*walker).first.c_str());
-		memset(key, 0, keyLength);
-		memcpy(key, tempKey, strlen(tempKey)+1);
-		delete [] tempKey;
-		char * tempValue = strdup((*walker).second.c_str());
-		memset(value, 0, valueLength);
-		memcpy(value, tempValue, strlen(tempValue)+1);
-		delete [] tempValue;
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (index < (int)mDomain->getItemProperties().size()) {
+    std::map<std::string, std::string>::iterator walker = mDomain->getItemProperties().begin();
+    for (int i = 0; i<index; i++) {
+      walker++;
+    }
+    char * tempKey = strdup((*walker).first.c_str());
+    memset(key, 0, keyLength);
+    memcpy(key, tempKey, strlen(tempKey)+1);
+    delete [] tempKey;
+    char * tempValue = strdup((*walker).second.c_str());
+    memset(value, 0, valueLength);
+    memcpy(value, tempValue, strlen(tempValue)+1);
+    delete [] tempValue;
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::retrieveDomainPropertyByKey(char * key, char * value, int valueLength)
 {
-	std::string tempString = key;
-	memset(value, 0, valueLength);
-	if ((mDomain->getItemProperties().count(tempString))>0)
-	{
-		char * tempValue = strdup(mDomain->getItemProperties()[tempString].c_str());
-		memcpy(value, tempValue, strlen(tempValue)+1);
-		delete [] tempValue;
-	}
+  std::string tempString = key;
+  memset(value, 0, valueLength);
+  if ((mDomain->getItemProperties().count(tempString))>0) {
+    char * tempValue = strdup(mDomain->getItemProperties()[tempString].c_str());
+    memcpy(value, tempValue, strlen(tempValue)+1);
+    delete [] tempValue;
+  }
 }
 
 void
 XdmfFortran::removeDomainGridCollection(int index)
 {
-	if ((int)mDomain->getNumberGridCollections() > index)
-	{
-		mDomain->removeGridCollection(index);
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if ((int)mDomain->getNumberGridCollections() > index) {
+    mDomain->removeGridCollection(index);
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::openDomainGridCollection(int index, int openMaps, int openAttributes, int openInformation, int openSets)
 {
-	if ((int)mDomain->getNumberGridCollections() > index)
-	{
-		shared_ptr<XdmfGridCollection> openedGridCollection = mDomain->getGridCollection(index);
-		int i;
-		int n;
-		if (openMaps == 1)
-		{
-			n = openedGridCollection->getNumberMaps();
-			shared_ptr<XdmfMap> openedMap;
-			for (i = 0; i < n; i++)
-			{
-				openedMap = openedGridCollection->getMap(i);
-				mMaps.push_back(openedMap);
-				mPreviousMaps.push_back(openedMap);
-			}
-		}
-		if (openAttributes == 1)
-		{
-			n = openedGridCollection->getNumberAttributes();
-			shared_ptr<XdmfAttribute> openedAttribute;
-			for (i = 0; i < n; i++)
-			{
-				openedAttribute = openedGridCollection->getAttribute(i);
-				mAttributes.push_back(openedAttribute);
-				mPreviousAttributes.push_back(openedAttribute);
-			}
-		}
-		if (openInformation == 1)
-		{
-			n = openedGridCollection->getNumberInformations();
-			shared_ptr<XdmfInformation> openedInformation;
-			for (i = 0; i < n; i++)
-			{
-				openedInformation = openedGridCollection->getInformation(i);
-				mInformations.push_back(openedInformation);
-				mPreviousInformations.push_back(openedInformation);
-			}
-		}
-		if (openSets == 1)
-		{
-			n = openedGridCollection->getNumberSets();
-			shared_ptr<XdmfSet> openedSet;
-			for (i = 0; i < n; i++)
-			{
-				openedSet = openedGridCollection->getSet(i);
-				mSets.push_back(openedSet);
-			}
-			mGridCollections.push(openedGridCollection);
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if ((int)mDomain->getNumberGridCollections() > index) {
+    shared_ptr<XdmfGridCollection> openedGridCollection = mDomain->getGridCollection(index);
+    int i;
+    int n;
+    if (openMaps == 1) {
+      n = openedGridCollection->getNumberMaps();
+      shared_ptr<XdmfMap> openedMap;
+      for (i = 0; i < n; i++) {
+        openedMap = openedGridCollection->getMap(i);
+        mMaps.push_back(openedMap);
+        mPreviousMaps.push_back(openedMap);
+      }
+    }
+    if (openAttributes == 1) {
+      n = openedGridCollection->getNumberAttributes();
+      shared_ptr<XdmfAttribute> openedAttribute;
+      for (i = 0; i < n; i++) {
+        openedAttribute = openedGridCollection->getAttribute(i);
+        mAttributes.push_back(openedAttribute);
+        mPreviousAttributes.push_back(openedAttribute);
+      }
+    }
+    if (openInformation == 1) {
+      n = openedGridCollection->getNumberInformations();
+      shared_ptr<XdmfInformation> openedInformation;
+      for (i = 0; i < n; i++) {
+        openedInformation = openedGridCollection->getInformation(i);
+        mInformations.push_back(openedInformation);
+        mPreviousInformations.push_back(openedInformation);
+      }
+    }
+    if (openSets == 1) {
+      n = openedGridCollection->getNumberSets();
+      shared_ptr<XdmfSet> openedSet;
+      for (i = 0; i < n; i++) {
+        openedSet = openedGridCollection->getSet(i);
+        mSets.push_back(openedSet);
+      }
+      mGridCollections.push(openedGridCollection);
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::removeGridCollectionGridCollection(int index)
 {
-	if (!mGridCollections.empty())
-	{
-		if ((int)mGridCollections.top()->getNumberGridCollections() > index)
-		{
-			mGridCollections.top()->removeGridCollection(index);
-		}
-		else
-		{
-			try 
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: No grid collections are open.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (!mGridCollections.empty()) {
+    if ((int)mGridCollections.top()->getNumberGridCollections() > index) {
+      mGridCollections.top()->removeGridCollection(index);
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: No grid collections are open.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::openGridCollectionGridCollection(int index, int openMaps, int openAttributes, int openInformation, int openSets)
 {
-	if (!mGridCollections.empty())
-	{
-		if ((int)mGridCollections.top()->getNumberGridCollections() > index)
-		{
-			shared_ptr<XdmfGridCollection> openedGridCollection = mGridCollections.top()->getGridCollection(index);
-			int i;
-			int n;
-			if (openMaps == 1)
-			{
-				n = openedGridCollection->getNumberMaps();
-				shared_ptr<XdmfMap> openedMap;
-				for (i = 0; i < n; i++)
-				{
-					openedMap = openedGridCollection->getMap(i);
-					mMaps.push_back(openedMap);
-					mPreviousMaps.push_back(openedMap);
-				}
-			}
-			if (openAttributes == 1)
-			{
-				n = openedGridCollection->getNumberAttributes();
-				shared_ptr<XdmfAttribute> openedAttribute;
-				for (i = 0; i < n; i++)
-				{
-					openedAttribute = openedGridCollection->getAttribute(i);
-					mAttributes.push_back(openedAttribute);
-					mPreviousAttributes.push_back(openedAttribute);
-				}
-			}
-			if (openInformation == 1)
-			{
-				n = openedGridCollection->getNumberInformations();
-				shared_ptr<XdmfInformation> openedInformation;
-				for (i = 0; i < n; i++)
-				{
-					openedInformation = openedGridCollection->getInformation(i);
-					mInformations.push_back(openedInformation);
-					mPreviousInformations.push_back(openedInformation);
-				}
-			}
-			if (openSets == 1)
-			{
-				n = openedGridCollection->getNumberSets();
-				shared_ptr<XdmfSet> openedSet;
-				for (i = 0; i < n; i++)
-				{
-					openedSet = openedGridCollection->getSet(i);
-					mSets.push_back(openedSet);
-				}
-				mGridCollections.push(openedGridCollection);
-			}
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: No grid collections are open.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (!mGridCollections.empty()) {
+    if ((int)mGridCollections.top()->getNumberGridCollections() > index) {
+      shared_ptr<XdmfGridCollection> openedGridCollection = mGridCollections.top()->getGridCollection(index);
+      int i;
+      int n;
+      if (openMaps == 1) {
+        n = openedGridCollection->getNumberMaps();
+        shared_ptr<XdmfMap> openedMap;
+        for (i = 0; i < n; i++) {
+          openedMap = openedGridCollection->getMap(i);
+          mMaps.push_back(openedMap);
+          mPreviousMaps.push_back(openedMap);
+        }
+      }
+      if (openAttributes == 1) {
+        n = openedGridCollection->getNumberAttributes();
+        shared_ptr<XdmfAttribute> openedAttribute;
+        for (i = 0; i < n; i++) {
+          openedAttribute = openedGridCollection->getAttribute(i);
+          mAttributes.push_back(openedAttribute);
+          mPreviousAttributes.push_back(openedAttribute);
+        }
+      }
+      if (openInformation == 1) {
+        n = openedGridCollection->getNumberInformations();
+        shared_ptr<XdmfInformation> openedInformation;
+        for (i = 0; i < n; i++) {
+          openedInformation = openedGridCollection->getInformation(i);
+          mInformations.push_back(openedInformation);
+          mPreviousInformations.push_back(openedInformation);
+        }
+      }
+      if (openSets == 1) {
+        n = openedGridCollection->getNumberSets();
+        shared_ptr<XdmfSet> openedSet;
+        for (i = 0; i < n; i++) {
+          openedSet = openedGridCollection->getSet(i);
+          mSets.push_back(openedSet);
+        }
+        mGridCollections.push(openedGridCollection);
+      }
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: No grid collections are open.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::retrieveGridCollectionTag(char * returnTag, int tagLength)
 {
-	if (!mGridCollections.empty())
-	{
-		char * tempTag = strdup(mGridCollections.top()->getItemTag().c_str());
-		memset(returnTag, 0, tagLength);
-		memcpy(returnTag, tempTag, strlen(tempTag)+1);
-		delete [] tempTag;
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: No grid collections are open.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (!mGridCollections.empty()) {
+    char * tempTag = strdup(mGridCollections.top()->getItemTag().c_str());
+    memset(returnTag, 0, tagLength);
+    memcpy(returnTag, tempTag, strlen(tempTag)+1);
+    delete [] tempTag;
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: No grid collections are open.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::retrieveGridCollectionName(char * returnName, int nameLength)
 {
-	if (!mGridCollections.empty())
-	{
-		char * tempName = strdup(mGridCollections.top()->getName().c_str());
-		memset(returnName, 0, nameLength);
-		memcpy(returnName, tempName, strlen(tempName)+1);
-		delete [] tempName;
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: No grid collections are open.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (!mGridCollections.empty()) {
+    char * tempName = strdup(mGridCollections.top()->getName().c_str());
+    memset(returnName, 0, nameLength);
+    memcpy(returnName, tempName, strlen(tempName)+1);
+    delete [] tempName;
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: No grid collections are open.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 int
 XdmfFortran::retrieveGridCollectionNumProperties()
 {
-	if (!mGridCollections.empty())
-	{
-		return mGridCollections.top()->getItemProperties().size();
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: No grid collections are open.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
+  if (!mGridCollections.empty()) {
+    return mGridCollections.top()->getItemProperties().size();
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: No grid collections are open.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
 }
 
 void
 XdmfFortran::retrieveGridCollectionProperty(int index, char * key, int keyLength, char * value, int valueLength)
 {
-	if (!mGridCollections.empty())
-	{
-		if (index < (int)mGridCollections.top()->getItemProperties().size())
-		{
-			std::map<std::string, std::string>::iterator walker = mGridCollections.top()->getItemProperties().begin();
-			for (int i = 0; i<index; i++)
-			{
-				walker++;
-			}
-			char * tempKey = strdup((*walker).first.c_str());
-			memset(key, 0, keyLength);
-			memcpy(key, tempKey, strlen(tempKey)+1);
-			delete [] tempKey;
-			char * tempValue = strdup((*walker).second.c_str());
-			memset(value, 0, valueLength);
-			memcpy(value, tempValue, strlen(tempValue)+1);
-			delete [] tempValue;
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: No grid collections are open.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (!mGridCollections.empty()) {
+    if (index < (int)mGridCollections.top()->getItemProperties().size()) {
+      std::map<std::string, std::string>::iterator walker = mGridCollections.top()->getItemProperties().begin();
+      for (int i = 0; i<index; i++) {
+        walker++;
+      }
+      char * tempKey = strdup((*walker).first.c_str());
+      memset(key, 0, keyLength);
+      memcpy(key, tempKey, strlen(tempKey)+1);
+      delete [] tempKey;
+      char * tempValue = strdup((*walker).second.c_str());
+      memset(value, 0, valueLength);
+      memcpy(value, tempValue, strlen(tempValue)+1);
+      delete [] tempValue;
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: No grid collections are open.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::retrieveGridCollectionPropertyByKey(char * key, char * value, int valueLength)
 {
-	if (!mGridCollections.empty())
-	{
-		std::string tempString = key;
-		memset(value, 0, valueLength);
-		if ((mGridCollections.top()->getItemProperties().count(tempString))>0)
-		{
-			char * tempValue = strdup(mGridCollections.top()->getItemProperties()[tempString].c_str());
-			memcpy(value, tempValue, strlen(tempValue)+1);
-			delete [] tempValue;
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: No grid collections are open.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (!mGridCollections.empty()) {
+    std::string tempString = key;
+    memset(value, 0, valueLength);
+    if ((mGridCollections.top()->getItemProperties().count(tempString))>0) {
+      char * tempValue = strdup(mGridCollections.top()->getItemProperties()[tempString].c_str());
+      memcpy(value, tempValue, strlen(tempValue)+1);
+      delete [] tempValue;
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: No grid collections are open.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::openDomainGrid(int gridType, int index, int openMaps, int openAttributes, int openInformation, int openSets)
 {
-	if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
-	{
-		if (index < (int)mDomain->getNumberCurvilinearGrids())
-		{
-			shared_ptr<XdmfCurvilinearGrid> openedGrid = mDomain->getCurvilinearGrid(index);
-			shared_ptr<const XdmfArrayType> dataType;
-			mGeometry = openedGrid->getGeometry();
-			mDimensions = openedGrid->getDimensions();
-			mTime = openedGrid->getTime();
-			int i;
-			int n;
-			if (openAttributes == 1)
-			{
-				n = openedGrid->getNumberAttributes();
-				shared_ptr<XdmfAttribute> openedAttribute;
-				for (i = 0; i < n; i++)
-				{
-					openedAttribute = openedGrid->getAttribute(i);
-					mAttributes.push_back(openedAttribute);
-					mPreviousAttributes.push_back(openedAttribute);
-				}
-			}
-			if (openMaps == 1)
-			{
-				n = openedGrid->getNumberMaps();
-				shared_ptr<XdmfMap> openedMap;
-				for (i = 0; i < n; i++)
-				{
-					openedMap = openedGrid->getMap(i);
-					mMaps.push_back(openedMap);
-					mPreviousMaps.push_back(openedMap);
-				}
-			}
-			if (openInformation == 1)
-			{
-				n = openedGrid->getNumberInformations();
-				shared_ptr<XdmfInformation> openedInformation;
-				for (i = 0; i < n; i++)
-				{
-					openedInformation = openedGrid->getInformation(i);
-					mInformations.push_back(openedInformation);
-					mPreviousInformations.push_back(openedInformation);
-				}
-			}
-			if (openSets == 1)
-			{
-				n = openedGrid->getNumberSets();
-				shared_ptr<XdmfSet> openedSet;
-				for (i = 0; i < n; i++)
-				{
-					openedSet = openedGrid->getSet(i);
-					mSets.push_back(openedSet);
-				}
-			}
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
-	{
-		if (index < (int)mDomain->getNumberRectilinearGrids())
-		{
-			shared_ptr<XdmfRectilinearGrid> openedGrid = mDomain->getRectilinearGrid(index);
-			shared_ptr<const XdmfArrayType> dataType;
-			mCoordinates = openedGrid->getCoordinates();
-			mTime = openedGrid->getTime();
-			int i;
-			int n;
-			if (openAttributes == 1)
-			{
-				n = openedGrid->getNumberAttributes();
-				shared_ptr<XdmfAttribute> openedAttribute;
-				for (i = 0; i < n; i++)
-				{
-					openedAttribute = openedGrid->getAttribute(i);
-					mAttributes.push_back(openedAttribute);
-					mPreviousAttributes.push_back(openedAttribute);
-				}
-			}
-			if (openMaps == 1)
-			{
-				n = openedGrid->getNumberMaps();
-				shared_ptr<XdmfMap> openedMap;
-				for (i = 0; i < n; i++)
-				{
-					openedMap = openedGrid->getMap(i);
-					mMaps.push_back(openedMap);
-					mPreviousMaps.push_back(openedMap);
-				}
-			}
-			if (openInformation == 1)
-			{
-				n = openedGrid->getNumberInformations();
-				shared_ptr<XdmfInformation> openedInformation;
-				for (i = 0; i < n; i++)
-				{
-					openedInformation = openedGrid->getInformation(i);
-					mInformations.push_back(openedInformation);
-					mPreviousInformations.push_back(openedInformation);
-				}
-			}
-			if (openSets == 1)
-			{
-				n = openedGrid->getNumberSets();
-				shared_ptr<XdmfSet> openedSet;
-				for (i = 0; i < n; i++)
-				{
-					openedSet = openedGrid->getSet(i);
-					mSets.push_back(openedSet);
-				}
-			}
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else if (gridType == XDMF_GRID_TYPE_REGULAR)
-	{
-		if (index < (int)mDomain->getNumberRegularGrids())
-		{
-			shared_ptr<XdmfRegularGrid> openedGrid = mDomain->getRegularGrid(index);
-			shared_ptr<const XdmfArrayType> dataType;
-			mTime = openedGrid->getTime();
-			mBrick = openedGrid->getBrickSize();
-			mOrigin = openedGrid->getOrigin();
-			mDimensions = openedGrid->getDimensions();
-			int i;
-			int n;
-			if (openAttributes == 1)
-			{
-				n = openedGrid->getNumberAttributes();
-				shared_ptr<XdmfAttribute> openedAttribute;
-				for (i = 0; i < n; i++)
-				{
-					openedAttribute = openedGrid->getAttribute(i);
-					mAttributes.push_back(openedAttribute);
-					mPreviousAttributes.push_back(openedAttribute);
-				}
-			}
-			if (openMaps == 1)
-			{
-				n = openedGrid->getNumberMaps();
-				shared_ptr<XdmfMap> openedMap;
-				for (i = 0; i < n; i++)
-				{
-					openedMap = openedGrid->getMap(i);
-					mMaps.push_back(openedMap);
-					mPreviousMaps.push_back(openedMap);
-				}
-			}
-			if (openInformation == 1)
-			{
-				n = openedGrid->getNumberInformations();
-				shared_ptr<XdmfInformation> openedInformation;
-				for (i = 0; i < n; i++)
-				{
-					openedInformation = openedGrid->getInformation(i);
-					mInformations.push_back(openedInformation);
-					mPreviousInformations.push_back(openedInformation);
-				}
-			}
-			if (openSets == 1)
-			{
-				n = openedGrid->getNumberSets();
-				shared_ptr<XdmfSet> openedSet;
-				for (i = 0; i < n; i++)
-				{
-					openedSet = openedGrid->getSet(i);
-					mSets.push_back(openedSet);
-				}
-			}
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
-	{
-		if (index < (int)mDomain->getNumberUnstructuredGrids())
-		{
-			shared_ptr<XdmfUnstructuredGrid> openedGrid = mDomain->getUnstructuredGrid(index);
-			mTopology = openedGrid->getTopology();
-			mGeometry = openedGrid->getGeometry();
-			mTime = openedGrid->getTime();
-			int i;
-			int n;
-			if (openAttributes == 1)
-			{
-				n = openedGrid->getNumberAttributes();
-				shared_ptr<XdmfAttribute> openedAttribute;
-				for (i = 0; i < n; i++)
-				{
-					openedAttribute = openedGrid->getAttribute(i);
-					mAttributes.push_back(openedAttribute);
-					mPreviousAttributes.push_back(openedAttribute);
-				}
-			}
-			if (openMaps == 1)
-			{
-				n = openedGrid->getNumberMaps();
-				shared_ptr<XdmfMap> openedMap;
-				for (i = 0; i < n; i++)
-				{
-					openedMap = openedGrid->getMap(i);
-					mMaps.push_back(openedMap);
-					mPreviousMaps.push_back(openedMap);
-				}
-			}
-			if (openInformation == 1)
-			{
-				n = openedGrid->getNumberInformations();
-				shared_ptr<XdmfInformation> openedInformation;
-				for (i = 0; i < n; i++)
-				{
-					openedInformation = openedGrid->getInformation(i);
-					mInformations.push_back(openedInformation);
-					mPreviousInformations.push_back(openedInformation);
-				}
-			}
-			if (openSets == 1)
-			{
-				n = openedGrid->getNumberSets();
-				shared_ptr<XdmfSet> openedSet;
-				for (i = 0; i < n; i++)
-				{
-					openedSet = openedGrid->getSet(i);
-					mSets.push_back(openedSet);
-				}
-			}
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Invalid Grid Type.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (gridType == XDMF_GRID_TYPE_CURVILINEAR) {
+    if (index < (int)mDomain->getNumberCurvilinearGrids()) {
+      shared_ptr<XdmfCurvilinearGrid> openedGrid = mDomain->getCurvilinearGrid(index);
+      shared_ptr<const XdmfArrayType> dataType;
+      mGeometry = openedGrid->getGeometry();
+      mDimensions = openedGrid->getDimensions();
+      mTime = openedGrid->getTime();
+      int i;
+      int n;
+      if (openAttributes == 1) {
+        n = openedGrid->getNumberAttributes();
+        shared_ptr<XdmfAttribute> openedAttribute;
+        for (i = 0; i < n; i++) {
+          openedAttribute = openedGrid->getAttribute(i);
+          mAttributes.push_back(openedAttribute);
+          mPreviousAttributes.push_back(openedAttribute);
+        }
+      }
+      if (openMaps == 1) {
+        n = openedGrid->getNumberMaps();
+        shared_ptr<XdmfMap> openedMap;
+        for (i = 0; i < n; i++) {
+          openedMap = openedGrid->getMap(i);
+          mMaps.push_back(openedMap);
+          mPreviousMaps.push_back(openedMap);
+        }
+      }
+      if (openInformation == 1) {
+        n = openedGrid->getNumberInformations();
+        shared_ptr<XdmfInformation> openedInformation;
+        for (i = 0; i < n; i++) {
+          openedInformation = openedGrid->getInformation(i);
+          mInformations.push_back(openedInformation);
+          mPreviousInformations.push_back(openedInformation);
+        }
+      }
+      if (openSets == 1) {
+        n = openedGrid->getNumberSets();
+        shared_ptr<XdmfSet> openedSet;
+        for (i = 0; i < n; i++) {
+          openedSet = openedGrid->getSet(i);
+          mSets.push_back(openedSet);
+        }
+      }
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else if (gridType == XDMF_GRID_TYPE_RECTILINEAR) {
+    if (index < (int)mDomain->getNumberRectilinearGrids()) {
+      shared_ptr<XdmfRectilinearGrid> openedGrid = mDomain->getRectilinearGrid(index);
+      shared_ptr<const XdmfArrayType> dataType;
+      mCoordinates = openedGrid->getCoordinates();
+      mTime = openedGrid->getTime();
+      int i;
+      int n;
+      if (openAttributes == 1) {
+        n = openedGrid->getNumberAttributes();
+        shared_ptr<XdmfAttribute> openedAttribute;
+        for (i = 0; i < n; i++) {
+          openedAttribute = openedGrid->getAttribute(i);
+          mAttributes.push_back(openedAttribute);
+          mPreviousAttributes.push_back(openedAttribute);
+        }
+      }
+      if (openMaps == 1) {
+        n = openedGrid->getNumberMaps();
+        shared_ptr<XdmfMap> openedMap;
+        for (i = 0; i < n; i++) {
+          openedMap = openedGrid->getMap(i);
+          mMaps.push_back(openedMap);
+          mPreviousMaps.push_back(openedMap);
+        }
+      }
+      if (openInformation == 1) {
+        n = openedGrid->getNumberInformations();
+        shared_ptr<XdmfInformation> openedInformation;
+        for (i = 0; i < n; i++) {
+          openedInformation = openedGrid->getInformation(i);
+          mInformations.push_back(openedInformation);
+          mPreviousInformations.push_back(openedInformation);
+        }
+      }
+      if (openSets == 1) {
+        n = openedGrid->getNumberSets();
+        shared_ptr<XdmfSet> openedSet;
+        for (i = 0; i < n; i++) {
+          openedSet = openedGrid->getSet(i);
+          mSets.push_back(openedSet);
+        }
+      }
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else if (gridType == XDMF_GRID_TYPE_REGULAR) {
+    if (index < (int)mDomain->getNumberRegularGrids()) {
+      shared_ptr<XdmfRegularGrid> openedGrid = mDomain->getRegularGrid(index);
+      shared_ptr<const XdmfArrayType> dataType;
+      mTime = openedGrid->getTime();
+      mBrick = openedGrid->getBrickSize();
+      mOrigin = openedGrid->getOrigin();
+      mDimensions = openedGrid->getDimensions();
+      int i;
+      int n;
+      if (openAttributes == 1) {
+        n = openedGrid->getNumberAttributes();
+        shared_ptr<XdmfAttribute> openedAttribute;
+        for (i = 0; i < n; i++) {
+          openedAttribute = openedGrid->getAttribute(i);
+          mAttributes.push_back(openedAttribute);
+          mPreviousAttributes.push_back(openedAttribute);
+        }
+      }
+      if (openMaps == 1) {
+        n = openedGrid->getNumberMaps();
+        shared_ptr<XdmfMap> openedMap;
+        for (i = 0; i < n; i++) {
+          openedMap = openedGrid->getMap(i);
+          mMaps.push_back(openedMap);
+          mPreviousMaps.push_back(openedMap);
+        }
+      }
+      if (openInformation == 1) {
+        n = openedGrid->getNumberInformations();
+        shared_ptr<XdmfInformation> openedInformation;
+        for (i = 0; i < n; i++) {
+          openedInformation = openedGrid->getInformation(i);
+          mInformations.push_back(openedInformation);
+          mPreviousInformations.push_back(openedInformation);
+        }
+      }
+      if (openSets == 1) {
+        n = openedGrid->getNumberSets();
+        shared_ptr<XdmfSet> openedSet;
+        for (i = 0; i < n; i++) {
+          openedSet = openedGrid->getSet(i);
+          mSets.push_back(openedSet);
+        }
+      }
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED) {
+    if (index < (int)mDomain->getNumberUnstructuredGrids()) {
+      shared_ptr<XdmfUnstructuredGrid> openedGrid = mDomain->getUnstructuredGrid(index);
+      mTopology = openedGrid->getTopology();
+      mGeometry = openedGrid->getGeometry();
+      mTime = openedGrid->getTime();
+      int i;
+      int n;
+      if (openAttributes == 1) {
+        n = openedGrid->getNumberAttributes();
+        shared_ptr<XdmfAttribute> openedAttribute;
+        for (i = 0; i < n; i++) {
+          openedAttribute = openedGrid->getAttribute(i);
+          mAttributes.push_back(openedAttribute);
+          mPreviousAttributes.push_back(openedAttribute);
+        }
+      }
+      if (openMaps == 1) {
+        n = openedGrid->getNumberMaps();
+        shared_ptr<XdmfMap> openedMap;
+        for (i = 0; i < n; i++) {
+          openedMap = openedGrid->getMap(i);
+          mMaps.push_back(openedMap);
+          mPreviousMaps.push_back(openedMap);
+        }
+      }
+      if (openInformation == 1) {
+        n = openedGrid->getNumberInformations();
+        shared_ptr<XdmfInformation> openedInformation;
+        for (i = 0; i < n; i++) {
+          openedInformation = openedGrid->getInformation(i);
+          mInformations.push_back(openedInformation);
+          mPreviousInformations.push_back(openedInformation);
+        }
+      }
+      if (openSets == 1) {
+        n = openedGrid->getNumberSets();
+        shared_ptr<XdmfSet> openedSet;
+        for (i = 0; i < n; i++) {
+          openedSet = openedGrid->getSet(i);
+          mSets.push_back(openedSet);
+        }
+      }
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Invalid Grid Type.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::removeDomainGrid(int gridType, int index)
 {
-	if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
-	{
-		if (index < (int)mDomain->getNumberCurvilinearGrids())
-		{
-			mDomain->removeCurvilinearGrid(index);
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
-	{
-		if (index < (int)mDomain->getNumberRectilinearGrids())
-		{
-			mDomain->removeRectilinearGrid(index);
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else if (gridType == XDMF_GRID_TYPE_REGULAR)
-	{
-		if (index < (int)mDomain->getNumberRegularGrids())
-		{
-			mDomain->removeRegularGrid(index);
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
-	{
-		if (index < (int)mDomain->getNumberUnstructuredGrids())
-		{
-			mDomain->removeUnstructuredGrid(index);
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Invalid Grid Type.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (gridType == XDMF_GRID_TYPE_CURVILINEAR) {
+    if (index < (int)mDomain->getNumberCurvilinearGrids()) {
+      mDomain->removeCurvilinearGrid(index);
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else if (gridType == XDMF_GRID_TYPE_RECTILINEAR) {
+    if (index < (int)mDomain->getNumberRectilinearGrids()) {
+      mDomain->removeRectilinearGrid(index);
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else if (gridType == XDMF_GRID_TYPE_REGULAR) {
+    if (index < (int)mDomain->getNumberRegularGrids()) {
+      mDomain->removeRegularGrid(index);
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED) {
+    if (index < (int)mDomain->getNumberUnstructuredGrids()) {
+      mDomain->removeUnstructuredGrid(index);
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Invalid Grid Type.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::replaceDomainGrid(int gridType, int index, char * name)
 {
-	int i;
-	if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
-	{
-		if (index < (int)mDomain->getNumberCurvilinearGrids())
-		{
-			if(mDimensions == NULL)
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Must set dimensions before replacing grid.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-			if(mGeometry == NULL)
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, 
-						"Must set geometry before adding grid.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
+  int i;
+  if (gridType == XDMF_GRID_TYPE_CURVILINEAR) {
+    if (index < (int)mDomain->getNumberCurvilinearGrids()) {
+      if(mDimensions == NULL) {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Must set dimensions before replacing grid.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+      if(mGeometry == NULL) {
+        try {
+          XdmfError::message(XdmfError::FATAL, 
+            "Must set geometry before adding grid.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
 
-			shared_ptr<XdmfCurvilinearGrid> grid = mDomain->getCurvilinearGrid(index);
-			grid->setName(name);
+      shared_ptr<XdmfCurvilinearGrid> grid = mDomain->getCurvilinearGrid(index);
+      grid->setName(name);
 
-			grid->setGeometry(mGeometry);
-			grid->setDimensions(mDimensions);
+      grid->setGeometry(mGeometry);
+      grid->setDimensions(mDimensions);
 
-			for (i=grid->getNumberAttributes()-1;i>=0;i--)
-			{
-				grid->removeAttribute(0);
-			}
+      for (i=grid->getNumberAttributes()-1;i>=0;i--) {
+        grid->removeAttribute(0);
+      }
 
-			for(std::vector<shared_ptr<XdmfAttribute> >::const_iterator iter =
-				mAttributes.begin(); 
-				iter != mAttributes.end();
-				++iter)
-			{
-				grid->insert(*iter);
-			}
+      for(std::vector<shared_ptr<XdmfAttribute> >::const_iterator iter =
+          mAttributes.begin(); 
+          iter != mAttributes.end();
+          ++iter) {
+        grid->insert(*iter);
+      }
 
-			mAttributes.clear();
+      mAttributes.clear();
 
-			for( i=grid->getNumberInformations()-1;i>=0;i--)
-			{
-				grid->removeInformation(0);
-			}
+      for( i=grid->getNumberInformations()-1;i>=0;i--) {
+        grid->removeInformation(0);
+      }
 
-			for(std::vector<shared_ptr<XdmfInformation> >::const_iterator iter =
-				mInformations.begin(); 
-				iter != mInformations.end();
-				++iter)
-			{
-				grid->insert(*iter);
-			}
+      for(std::vector<shared_ptr<XdmfInformation> >::const_iterator iter =
+          mInformations.begin(); 
+          iter != mInformations.end();
+          ++iter) {
+        grid->insert(*iter);
+      }
 
-			mInformations.clear();
+      mInformations.clear();
 
-			for (i=grid->getNumberSets()-1;i>=0;i--)
-			{
-				grid->removeSet(0);
-			}
+      for (i=grid->getNumberSets()-1;i>=0;i--) {
+        grid->removeSet(0);
+      }
 
-			for(std::vector<shared_ptr<XdmfSet> >::const_iterator iter =
-				mSets.begin(); 
-				iter != mSets.end();
-				++iter)
-			{
-				grid->insert(*iter);
-			}
+      for(std::vector<shared_ptr<XdmfSet> >::const_iterator iter =
+          mSets.begin(); 
+          iter != mSets.end();
+          ++iter) {
+        grid->insert(*iter);
+      }
 
-			mSets.clear();
+      mSets.clear();
 
-			for (i=grid->getNumberMaps()-1;i>=0;i--)
-			{
-				grid->removeMap(0);
-			}
+      for (i=grid->getNumberMaps()-1;i>=0;i--) {
+        grid->removeMap(0);
+      }
 
-			for(std::vector<shared_ptr<XdmfMap> >::const_iterator iter =
-				mMaps.begin(); 
-				iter != mMaps.end();
-				++iter)
-			{
-				grid->insert(*iter);
-			}
+      for(std::vector<shared_ptr<XdmfMap> >::const_iterator iter =
+          mMaps.begin(); 
+          iter != mMaps.end();
+          ++iter) {
+        grid->insert(*iter);
+      }
 
-			mMaps.clear();
+      mMaps.clear();
     
-			if(mTime)
-			{
-				grid->setTime(mTime);
-			}
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
-	{
-		if (index < (int)mDomain->getNumberRectilinearGrids())
-		{
-			if(mCoordinates.empty())
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, 
-						"Must set Coordinates before adding grid.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
+      if(mTime) {
+        grid->setTime(mTime);
+      }
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else if (gridType == XDMF_GRID_TYPE_RECTILINEAR) {
+    if (index < (int)mDomain->getNumberRectilinearGrids()) {
+      if(mCoordinates.empty()) {
+        try {
+          XdmfError::message(XdmfError::FATAL, 
+            "Must set Coordinates before adding grid.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
 
-			shared_ptr<XdmfRectilinearGrid> grid = mDomain->getRectilinearGrid(index);
-			grid->setCoordinates(mCoordinates);
-			mCoordinates.clear();
-			for (i=grid->getNumberAttributes()-1;i>=0;i--)
-			{
-				grid->removeAttribute(0);
-			}
+      shared_ptr<XdmfRectilinearGrid> grid = mDomain->getRectilinearGrid(index);
+      grid->setCoordinates(mCoordinates);
+      mCoordinates.clear();
+      for (i=grid->getNumberAttributes()-1;i>=0;i--) {
+        grid->removeAttribute(0);
+      }
 
-			for(std::vector<shared_ptr<XdmfAttribute> >::const_iterator iter =
-				mAttributes.begin(); 
-				iter != mAttributes.end();
-				++iter)
-			{
-				grid->insert(*iter);
-			}
+      for(std::vector<shared_ptr<XdmfAttribute> >::const_iterator iter =
+          mAttributes.begin(); 
+          iter != mAttributes.end();
+          ++iter) {
+        grid->insert(*iter);
+      }
 
-			mAttributes.clear();
+      mAttributes.clear();
 
-			for (i=grid->getNumberInformations()-1;i>=0;i--)
-			{
-				grid->removeInformation(0);
-			}
+      for (i=grid->getNumberInformations()-1;i>=0;i--) {
+        grid->removeInformation(0);
+      }
 
-			for(std::vector<shared_ptr<XdmfInformation> >::const_iterator iter =
-				mInformations.begin(); 
-				iter != mInformations.end();
-				++iter)
-			{
-				grid->insert(*iter);
-			}
+      for(std::vector<shared_ptr<XdmfInformation> >::const_iterator iter =
+          mInformations.begin(); 
+          iter != mInformations.end();
+          ++iter) {
+        grid->insert(*iter);
+      }
 
-			mInformations.clear();
+      mInformations.clear();
 
-			for (i=grid->getNumberSets()-1;i>=0;i--)
-			{
-				grid->removeSet(0);
-			}
+      for (i=grid->getNumberSets()-1;i>=0;i--) {
+        grid->removeSet(0);
+      }
 
-			for(std::vector<shared_ptr<XdmfSet> >::const_iterator iter =
-				mSets.begin(); 
-				iter != mSets.end();
-				++iter)
-			{
-				grid->insert(*iter);
-			}
+      for(std::vector<shared_ptr<XdmfSet> >::const_iterator iter =
+          mSets.begin(); 
+          iter != mSets.end();
+          ++iter) {
+        grid->insert(*iter);
+      }
 
-			mSets.clear();
+      mSets.clear();
 
-			for (i=grid->getNumberMaps()-1;i>=0;i--)
-			{
-				grid->removeMap(0);
-			}
+      for (i=grid->getNumberMaps()-1;i>=0;i--) {
+        grid->removeMap(0);
+      }
 
-			for(std::vector<shared_ptr<XdmfMap> >::const_iterator iter =
-				mMaps.begin(); 
-				iter != mMaps.end();
-				++iter)
-			{
-				grid->insert(*iter);
-			}
+      for(std::vector<shared_ptr<XdmfMap> >::const_iterator iter =
+          mMaps.begin(); 
+          iter != mMaps.end();
+          ++iter) {
+        grid->insert(*iter);
+      }
 
-			mMaps.clear();
+      mMaps.clear();
     
-			if(mTime)
-			{
-				grid->setTime(mTime);
-			}
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else if (gridType == XDMF_GRID_TYPE_REGULAR)
-	{
-		if (index < (int)mDomain->getNumberRegularGrids())
-		{
-			if(mBrick == NULL)
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, 
-						"Must set brick size before adding grid.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
+      if(mTime) {
+        grid->setTime(mTime);
+      }
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else if (gridType == XDMF_GRID_TYPE_REGULAR) {
+    if (index < (int)mDomain->getNumberRegularGrids()) {
+      if(mBrick == NULL) {
+        try {
+          XdmfError::message(XdmfError::FATAL, 
+            "Must set brick size before adding grid.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
 
-			if(mDimensions == NULL)
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, 
-						"Must set dimensions before adding grid.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
+      if(mDimensions == NULL) {
+        try {
+          XdmfError::message(XdmfError::FATAL, 
+            "Must set dimensions before adding grid.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
 
-			if(mOrigin == NULL)
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, 
-						"Must set origin before adding grid.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
+      if(mOrigin == NULL) {
+        try {
+          XdmfError::message(XdmfError::FATAL, 
+            "Must set origin before adding grid.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
   
-	    		shared_ptr<XdmfRegularGrid> grid = mDomain->getRegularGrid(index);
-			grid->setOrigin(mOrigin);
-			grid->setDimensions(mDimensions);
-			grid->setBrickSize(mBrick);
+      shared_ptr<XdmfRegularGrid> grid = mDomain->getRegularGrid(index);
+      grid->setOrigin(mOrigin);
+      grid->setDimensions(mDimensions);
+      grid->setBrickSize(mBrick);
 
-			for (i=grid->getNumberAttributes()-1;i>=0;i--)
-			{
-				grid->removeAttribute(0);
-			}
+      for (i=grid->getNumberAttributes()-1;i>=0;i--) {
+        grid->removeAttribute(0);
+      }
 
-			for(std::vector<shared_ptr<XdmfAttribute> >::const_iterator iter =
-				mAttributes.begin(); 
-				iter != mAttributes.end();
-				++iter)
-			{
-				grid->insert(*iter);
-			}
+      for(std::vector<shared_ptr<XdmfAttribute> >::const_iterator iter =
+          mAttributes.begin(); 
+          iter != mAttributes.end();
+          ++iter) {
+        grid->insert(*iter);
+      }
 
-			mAttributes.clear();
+      mAttributes.clear();
 
-			for (i=grid->getNumberInformations()-1;i>=0;i--)
-			{
-				grid->removeInformation(0);
-			}
+      for (i=grid->getNumberInformations()-1;i>=0;i--) {
+        grid->removeInformation(0);
+      }
 
-			for(std::vector<shared_ptr<XdmfInformation> >::const_iterator iter =
-				mInformations.begin(); 
-				iter != mInformations.end();
-				++iter)
-			{
-				grid->insert(*iter);
-			}
+      for(std::vector<shared_ptr<XdmfInformation> >::const_iterator iter =
+          mInformations.begin(); 
+          iter != mInformations.end();
+          ++iter) {
+        grid->insert(*iter);
+      }
 
-			mInformations.clear();
+      mInformations.clear();
 
-			for (i=grid->getNumberSets()-1;i>=0;i--)
-			{
-				grid->removeSet(0);
-			}
+      for (i=grid->getNumberSets()-1;i>=0;i--) {
+        grid->removeSet(0);
+      }
 
-			for(std::vector<shared_ptr<XdmfSet> >::const_iterator iter =
-				mSets.begin(); 
-				iter != mSets.end();
-				++iter)
-			{
-				grid->insert(*iter);
-			}
+      for(std::vector<shared_ptr<XdmfSet> >::const_iterator iter =
+          mSets.begin(); 
+          iter != mSets.end();
+          ++iter) {
+        grid->insert(*iter);
+      }
 
-			mSets.clear();
+      mSets.clear();
 
-			for (i=grid->getNumberMaps()-1;i>=0;i--)
-			{
-				grid->removeMap(0);
-			}
+      for (i=grid->getNumberMaps()-1;i>=0;i--) {
+        grid->removeMap(0);
+      }
 
-			for(std::vector<shared_ptr<XdmfMap> >::const_iterator iter =
-				mMaps.begin(); 
-				iter != mMaps.end();
-				++iter)
-			{
-				grid->insert(*iter);
-			}
+      for(std::vector<shared_ptr<XdmfMap> >::const_iterator iter =
+          mMaps.begin(); 
+          iter != mMaps.end();
+          ++iter) {
+        grid->insert(*iter);
+      }
 
-			mMaps.clear();
+      mMaps.clear();
     
-			if(mTime)
-			{
-				grid->setTime(mTime);
-			}
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
-	{
-		if (index < (int)mDomain->getNumberUnstructuredGrids())
-		{
-			if(mGeometry == NULL)
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, 
-						"Must set geometry before adding grid.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-			if(mTopology == NULL)
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, 
-						"Must set topology before adding grid.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-			shared_ptr<XdmfUnstructuredGrid> grid = mDomain->getUnstructuredGrid(index);
-			grid->setName(name);
-			grid->setGeometry(mGeometry);
-			grid->setTopology(mTopology);
+      if(mTime) {
+        grid->setTime(mTime);
+      }
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED) {
+    if (index < (int)mDomain->getNumberUnstructuredGrids()) {
+      if(mGeometry == NULL) {
+        try {
+          XdmfError::message(XdmfError::FATAL, 
+            "Must set geometry before adding grid.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+      if(mTopology == NULL) {
+        try {
+          XdmfError::message(XdmfError::FATAL, 
+            "Must set topology before adding grid.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+      shared_ptr<XdmfUnstructuredGrid> grid = mDomain->getUnstructuredGrid(index);
+      grid->setName(name);
+      grid->setGeometry(mGeometry);
+      grid->setTopology(mTopology);
 
-			for (i=grid->getNumberAttributes()-1;i>=0;i--)
-			{
-				grid->removeAttribute(0);
-			}
+      for (i=grid->getNumberAttributes()-1;i>=0;i--) {
+        grid->removeAttribute(0);
+      }
 
-			for(std::vector<shared_ptr<XdmfAttribute> >::const_iterator iter =
-				mAttributes.begin(); 
-				iter != mAttributes.end();
-				++iter)
-			{
-				grid->insert(*iter);
-			}
+      for(std::vector<shared_ptr<XdmfAttribute> >::const_iterator iter =
+          mAttributes.begin(); 
+          iter != mAttributes.end();
+          ++iter) {
+        grid->insert(*iter);
+      }
 
-			mAttributes.clear();
+      mAttributes.clear();
 
-			for (i=grid->getNumberInformations()-1;i>=0;i--)
-			{
-				grid->removeInformation(0);
-			}
+      for (i=grid->getNumberInformations()-1;i>=0;i--) {
+        grid->removeInformation(0);
+      }
 
-			for(std::vector<shared_ptr<XdmfInformation> >::const_iterator iter =
-				mInformations.begin(); 
-				iter != mInformations.end();
-				++iter)
-			{
-				grid->insert(*iter);
-			}
+      for(std::vector<shared_ptr<XdmfInformation> >::const_iterator iter =
+          mInformations.begin(); 
+          iter != mInformations.end();
+          ++iter) {
+        grid->insert(*iter);
+      }
 
-			mInformations.clear();
+      mInformations.clear();
 
-			for (i=grid->getNumberSets()-1;i>=0;i--)
-			{
-				grid->removeSet(0);
-			}
+      for (i=grid->getNumberSets()-1;i>=0;i--) {
+        grid->removeSet(0);
+      }
 
-			for(std::vector<shared_ptr<XdmfSet> >::const_iterator iter =
-				mSets.begin(); 
-				iter != mSets.end();
-				++iter)
-			{
-				grid->insert(*iter);
-			}
+      for(std::vector<shared_ptr<XdmfSet> >::const_iterator iter =
+          mSets.begin(); 
+          iter != mSets.end();
+          ++iter) {
+        grid->insert(*iter);
+      }
 
-			mSets.clear();
+      mSets.clear();
 
-			for (i=grid->getNumberMaps()-1;i>=0;i--)
-			{
-				grid->removeMap(0);
-			}
+      for (i=grid->getNumberMaps()-1;i>=0;i--) {
+        grid->removeMap(0);
+      }
 
-			for(std::vector<shared_ptr<XdmfMap> >::const_iterator iter =
-				mMaps.begin(); 
-				iter != mMaps.end();
-				++iter)
-			{
-				grid->insert(*iter);
-			}
+      for(std::vector<shared_ptr<XdmfMap> >::const_iterator iter =
+          mMaps.begin(); 
+          iter != mMaps.end();
+          ++iter) {
+        grid->insert(*iter);
+      }
 
-			mMaps.clear();
+      mMaps.clear();
     
-			if(mTime)
-			{
-				grid->setTime(mTime);
-			}
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
+      if(mTime) {
+        grid->setTime(mTime);
+      }
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
 }
 
 void
 XdmfFortran::retrieveDomainGridName(int gridType, int index, char * returnName, int nameLength)
 {
-	shared_ptr<XdmfGrid> openedGrid;
-	if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
-	{
-		if (index < (int)mDomain->getNumberCurvilinearGrids())
-		{
-			openedGrid = mDomain->getCurvilinearGrid(index);
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
-	{
-		if (index < (int)mDomain->getNumberRectilinearGrids())
-		{
-			openedGrid = mDomain->getRectilinearGrid(index);
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else if (gridType == XDMF_GRID_TYPE_REGULAR)
-	{
-		if (index < (int)mDomain->getNumberRegularGrids())
-		{
-			openedGrid = mDomain->getRegularGrid(index);
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
-	{
-		if (index < (int)mDomain->getNumberUnstructuredGrids())
-		{
-			openedGrid = mDomain->getUnstructuredGrid(index);
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Invalid Grid Type.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
-	char * tempName = strdup(openedGrid->getName().c_str());
-	memset(returnName, 0, nameLength);
-	memcpy(returnName, tempName, strlen(tempName)+1);
-	delete [] tempName;
+  shared_ptr<XdmfGrid> openedGrid;
+  if (gridType == XDMF_GRID_TYPE_CURVILINEAR) {
+    if (index < (int)mDomain->getNumberCurvilinearGrids()) {
+      openedGrid = mDomain->getCurvilinearGrid(index);
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else if (gridType == XDMF_GRID_TYPE_RECTILINEAR) {
+    if (index < (int)mDomain->getNumberRectilinearGrids()) {
+      openedGrid = mDomain->getRectilinearGrid(index);
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else if (gridType == XDMF_GRID_TYPE_REGULAR) {
+    if (index < (int)mDomain->getNumberRegularGrids()) {
+      openedGrid = mDomain->getRegularGrid(index);
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED) {
+    if (index < (int)mDomain->getNumberUnstructuredGrids()) {
+      openedGrid = mDomain->getUnstructuredGrid(index);
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Invalid Grid Type.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+  char * tempName = strdup(openedGrid->getName().c_str());
+  memset(returnName, 0, nameLength);
+  memcpy(returnName, tempName, strlen(tempName)+1);
+  delete [] tempName;
 }
 
 void
 XdmfFortran::retrieveDomainGridTag(int gridType, int index, char * returnTag, int tagLength)
 {
-	shared_ptr<XdmfGrid> openedGrid;
-	if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
-	{
-		if (index < (int)mDomain->getNumberCurvilinearGrids())
-		{
-			openedGrid = mDomain->getCurvilinearGrid(index);
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
-	{
-		if (index < (int)mDomain->getNumberRectilinearGrids())
-		{
-			openedGrid = mDomain->getRectilinearGrid(index);
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else if (gridType == XDMF_GRID_TYPE_REGULAR)
-	{
-		if (index < (int)mDomain->getNumberRegularGrids())
-		{
-			openedGrid = mDomain->getRegularGrid(index);
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
-	{
-		if (index < (int)mDomain->getNumberUnstructuredGrids())
-		{
-			openedGrid = mDomain->getUnstructuredGrid(index);
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Invalid Grid Type.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
-	char * tempTag = strdup(openedGrid->getItemTag().c_str());
-	memset(returnTag, 0, tagLength);
-	memcpy(returnTag, tempTag, strlen(tempTag)+1);
-	delete [] tempTag;
+  shared_ptr<XdmfGrid> openedGrid;
+  if (gridType == XDMF_GRID_TYPE_CURVILINEAR) {
+    if (index < (int)mDomain->getNumberCurvilinearGrids()) {
+      openedGrid = mDomain->getCurvilinearGrid(index);
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e)
+      {
+        throw e;
+      }
+    }
+  }
+  else if (gridType == XDMF_GRID_TYPE_RECTILINEAR) {
+    if (index < (int)mDomain->getNumberRectilinearGrids()) {
+      openedGrid = mDomain->getRectilinearGrid(index);
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else if (gridType == XDMF_GRID_TYPE_REGULAR) {
+    if (index < (int)mDomain->getNumberRegularGrids()) {
+      openedGrid = mDomain->getRegularGrid(index);
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED) {
+    if (index < (int)mDomain->getNumberUnstructuredGrids()) {
+      openedGrid = mDomain->getUnstructuredGrid(index);
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Invalid Grid Type.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+  char * tempTag = strdup(openedGrid->getItemTag().c_str());
+  memset(returnTag, 0, tagLength);
+  memcpy(returnTag, tempTag, strlen(tempTag)+1);
+  delete [] tempTag;
 }
 
 int
 XdmfFortran::retrieveDomainGridNumProperties(int gridType, int index)
 {
-	if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
-	{
-		if (index < (int)mDomain->getNumberCurvilinearGrids())
-		{
-			return mDomain->getCurvilinearGrid(index)->getItemProperties().size();
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-		}
-	}
-	else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
-	{
-		if (index < (int)mDomain->getNumberRectilinearGrids())
-		{
-			return mDomain->getRectilinearGrid(index)->getItemProperties().size();
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-		}
-	}
-	else if (gridType == XDMF_GRID_TYPE_REGULAR)
-	{
-		if (index < (int)mDomain->getNumberRegularGrids())
-		{
-			return mDomain->getRegularGrid(index)->getItemProperties().size();
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-		}
-	}
-	else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
-	{
-		if (index < (int)mDomain->getNumberUnstructuredGrids())
-		{
-			return mDomain->getUnstructuredGrid(index)->getItemProperties().size();
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Invalid Grid Type.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
+  if (gridType == XDMF_GRID_TYPE_CURVILINEAR) {
+    if (index < (int)mDomain->getNumberCurvilinearGrids()) {
+      return mDomain->getCurvilinearGrid(index)->getItemProperties().size();
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+    }
+  }
+  else if (gridType == XDMF_GRID_TYPE_RECTILINEAR) {
+    if (index < (int)mDomain->getNumberRectilinearGrids()) {
+      return mDomain->getRectilinearGrid(index)->getItemProperties().size();
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+    }
+  }
+  else if (gridType == XDMF_GRID_TYPE_REGULAR) {
+    if (index < (int)mDomain->getNumberRegularGrids()) {
+      return mDomain->getRegularGrid(index)->getItemProperties().size();
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+    }
+  }
+  else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED) {
+    if (index < (int)mDomain->getNumberUnstructuredGrids()) {
+      return mDomain->getUnstructuredGrid(index)->getItemProperties().size();
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Invalid Grid Type.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
 }
 
 void
 XdmfFortran::retrieveDomainGridProperty(int gridType, int gridIndex, int index, char * key, int keyLength, char * value, int valueLength)
 {
-	shared_ptr<XdmfGrid> openedGrid;
-	if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
-	{
-		if (index < (int)mDomain->getNumberCurvilinearGrids())
-		{
-			openedGrid = mDomain->getCurvilinearGrid(index);
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
-	{
-		if (index < (int)mDomain->getNumberRectilinearGrids())
-		{
-			openedGrid = mDomain->getRectilinearGrid(index);
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else if (gridType == XDMF_GRID_TYPE_REGULAR)
-	{
-		if (index < (int)mDomain->getNumberRegularGrids())
-		{
-			openedGrid = mDomain->getRegularGrid(index);
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
-	{
-		if (index < (int)mDomain->getNumberUnstructuredGrids())
-		{
-			openedGrid = mDomain->getUnstructuredGrid(index);
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Invalid Grid Type.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
-	if (index < (int)openedGrid->getItemProperties().size())
-	{
-		std::map<std::string, std::string>::iterator walker = openedGrid->getItemProperties().begin();
-		for (int i = 0; i<index; i++)
-		{
-			walker++;
-		}
-		char * tempKey = strdup((*walker).first.c_str());
-		memset(key, 0, keyLength);
-		memcpy(key, tempKey, strlen(tempKey)+1);
-		delete [] tempKey;
-		char * tempValue = strdup((*walker).second.c_str());
-		memset(value, 0, valueLength);
-		memcpy(value, tempValue, strlen(tempValue)+1);
-		delete [] tempValue;
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  shared_ptr<XdmfGrid> openedGrid;
+  if (gridType == XDMF_GRID_TYPE_CURVILINEAR) {
+    if (index < (int)mDomain->getNumberCurvilinearGrids()) {
+      openedGrid = mDomain->getCurvilinearGrid(index);
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else if (gridType == XDMF_GRID_TYPE_RECTILINEAR) {
+    if (index < (int)mDomain->getNumberRectilinearGrids()) {
+      openedGrid = mDomain->getRectilinearGrid(index);
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else if (gridType == XDMF_GRID_TYPE_REGULAR) {
+    if (index < (int)mDomain->getNumberRegularGrids()) {
+      openedGrid = mDomain->getRegularGrid(index);
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED) {
+    if (index < (int)mDomain->getNumberUnstructuredGrids()) {
+      openedGrid = mDomain->getUnstructuredGrid(index);
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Invalid Grid Type.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+  if (index < (int)openedGrid->getItemProperties().size()) {
+    std::map<std::string, std::string>::iterator walker = openedGrid->getItemProperties().begin();
+    for (int i = 0; i<index; i++) {
+      walker++;
+    }
+    char * tempKey = strdup((*walker).first.c_str());
+    memset(key, 0, keyLength);
+    memcpy(key, tempKey, strlen(tempKey)+1);
+    delete [] tempKey;
+    char * tempValue = strdup((*walker).second.c_str());
+    memset(value, 0, valueLength);
+    memcpy(value, tempValue, strlen(tempValue)+1);
+    delete [] tempValue;
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::retrieveDomainGridPropertyByKey(int gridType, int index, char * key, char * value, int valueLength)
 {
-	shared_ptr<XdmfGrid> openedGrid;
-	if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
-	{
-		if (index < (int)mDomain->getNumberCurvilinearGrids())
-		{
-			openedGrid = mDomain->getCurvilinearGrid(index);
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
-	{
-		if (index < (int)mDomain->getNumberRectilinearGrids())
-		{
-			openedGrid = mDomain->getRectilinearGrid(index);
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else if (gridType == XDMF_GRID_TYPE_REGULAR)
-	{
-		if (index < (int)mDomain->getNumberRegularGrids())
-		{
-			openedGrid = mDomain->getRegularGrid(index);
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
-	{
-		if (index < (int)mDomain->getNumberUnstructuredGrids())
-		{
-			openedGrid = mDomain->getUnstructuredGrid(index);
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Invalid Grid Type.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
-	std::string tempString = key;
-	memset(value, 0, valueLength);
-	if ((openedGrid->getItemProperties().count(tempString))>0)
-	{
-		char * tempValue = strdup(openedGrid->getItemProperties()[tempString].c_str());
-		memcpy(value, tempValue, strlen(tempValue)+1);
-		delete [] tempValue;
-	}
+  shared_ptr<XdmfGrid> openedGrid;
+  if (gridType == XDMF_GRID_TYPE_CURVILINEAR) {
+    if (index < (int)mDomain->getNumberCurvilinearGrids()) {
+      openedGrid = mDomain->getCurvilinearGrid(index);
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else if (gridType == XDMF_GRID_TYPE_RECTILINEAR) {
+    if (index < (int)mDomain->getNumberRectilinearGrids()) {
+      openedGrid = mDomain->getRectilinearGrid(index);
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else if (gridType == XDMF_GRID_TYPE_REGULAR) {
+    if (index < (int)mDomain->getNumberRegularGrids()) {
+      openedGrid = mDomain->getRegularGrid(index);
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED) {
+    if (index < (int)mDomain->getNumberUnstructuredGrids()) {
+      openedGrid = mDomain->getUnstructuredGrid(index);
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Invalid Grid Type.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+  std::string tempString = key;
+  memset(value, 0, valueLength);
+  if ((openedGrid->getItemProperties().count(tempString))>0) {
+    char * tempValue = strdup(openedGrid->getItemProperties()[tempString].c_str());
+    memcpy(value, tempValue, strlen(tempValue)+1);
+    delete [] tempValue;
+  }
 }
 
 void
 XdmfFortran::openGridCollectionGrid(int gridType, int index, int openMaps, int openAttributes, int openInformation, int openSets)
 {
-	if (!mGridCollections.empty())
-	{
-		if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
-		{
-			if (index < (int)mGridCollections.top()->getNumberCurvilinearGrids())
-			{
-				shared_ptr<XdmfCurvilinearGrid> openedGrid = mGridCollections.top()->getCurvilinearGrid(index);
-				shared_ptr<const XdmfArrayType> dataType;
-				mGeometry = openedGrid->getGeometry();
-				mDimensions = openedGrid->getDimensions();
-				mTime = openedGrid->getTime();
-				int i;
-				int n;
-				if (openAttributes == 1)
-				{
-					n = openedGrid->getNumberAttributes();
-					shared_ptr<XdmfAttribute> openedAttribute;
-					for (i = 0; i < n; i++)
-					{
-						openedAttribute = openedGrid->getAttribute(i);
-						mAttributes.push_back(openedAttribute);
-						mPreviousAttributes.push_back(openedAttribute);
-					}
-				}
-				if (openMaps == 1)
-				{
-					n = openedGrid->getNumberMaps();
-					shared_ptr<XdmfMap> openedMap;
-					for (i = 0; i < n; i++)
-					{
-						openedMap = openedGrid->getMap(i);
-						mMaps.push_back(openedMap);
-						mPreviousMaps.push_back(openedMap);
-					}
-				}
-				if (openInformation == 1)
-				{
-					n = openedGrid->getNumberInformations();
-					shared_ptr<XdmfInformation> openedInformation;
-					for (i = 0; i < n; i++)
-					{
-						openedInformation = openedGrid->getInformation(i);
-						mInformations.push_back(openedInformation);
-						mPreviousInformations.push_back(openedInformation);
-					}
-				}
-				if (openSets == 1)
-				{
-					n = openedGrid->getNumberSets();
-					shared_ptr<XdmfSet> openedSet;
-					for (i = 0; i < n; i++)
-					{
-						openedSet = openedGrid->getSet(i);
-						mSets.push_back(openedSet);
-					}
-				}
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-		}
-		else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
-		{
-			if (index < (int)mGridCollections.top()->getNumberRectilinearGrids())
-			{
-				shared_ptr<XdmfRectilinearGrid> openedGrid = mGridCollections.top()->getRectilinearGrid(index);
-				shared_ptr<const XdmfArrayType> dataType;
-				mCoordinates = openedGrid->getCoordinates();
-				mTime = openedGrid->getTime();
-				int i;
-				int n;
-				if (openAttributes == 1)
-				{
-					n = openedGrid->getNumberAttributes();
-					shared_ptr<XdmfAttribute> openedAttribute;
-					for (i = 0; i < n; i++)
-					{
-						openedAttribute = openedGrid->getAttribute(i);
-						mAttributes.push_back(openedAttribute);
-						mPreviousAttributes.push_back(openedAttribute);
-					}
-				}
-				if (openMaps == 1)
-				{
-					n = openedGrid->getNumberMaps();
-					shared_ptr<XdmfMap> openedMap;
-					for (i = 0; i < n; i++)
-					{
-						openedMap = openedGrid->getMap(i);
-						mMaps.push_back(openedMap);
-						mPreviousMaps.push_back(openedMap);
-					}
-				}
-				if (openInformation == 1)
-				{
-					n = openedGrid->getNumberInformations();
-					shared_ptr<XdmfInformation> openedInformation;
-					for (i = 0; i < n; i++)
-					{
-						openedInformation = openedGrid->getInformation(i);
-						mInformations.push_back(openedInformation);
-						mPreviousInformations.push_back(openedInformation);
-					}
-				}
-				if (openSets == 1)
-				{
-					n = openedGrid->getNumberSets();
-					shared_ptr<XdmfSet> openedSet;
-					for (i = 0; i < n; i++)
-					{
-						openedSet = openedGrid->getSet(i);
-						mSets.push_back(openedSet);
-					}
-				}
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-		}
-		else if (gridType == XDMF_GRID_TYPE_REGULAR)
-		{
-			if (index < (int)mGridCollections.top()->getNumberRegularGrids())
-			{
-				shared_ptr<XdmfRegularGrid> openedGrid = mGridCollections.top()->getRegularGrid(index);
-				shared_ptr<const XdmfArrayType> dataType;
-				mTime = openedGrid->getTime();
-				mBrick = openedGrid->getBrickSize();
-				mOrigin = openedGrid->getOrigin();
-				mDimensions = openedGrid->getDimensions();
-				int i;
-				int n;
-				if (openAttributes == 1)
-				{
-					n = openedGrid->getNumberAttributes();
-					shared_ptr<XdmfAttribute> openedAttribute;
-					for (i = 0; i < n; i++)
-					{
-						openedAttribute = openedGrid->getAttribute(i);
-						mAttributes.push_back(openedAttribute);
-						mPreviousAttributes.push_back(openedAttribute);
-					}
-				}
-				if (openMaps == 1)
-				{
-					n = openedGrid->getNumberMaps();
-					shared_ptr<XdmfMap> openedMap;
-					for (i = 0; i < n; i++)
-					{
-						openedMap = openedGrid->getMap(i);
-						mMaps.push_back(openedMap);
-						mPreviousMaps.push_back(openedMap);
-					}
-				}
-				if (openInformation == 1)
-				{
-					n = openedGrid->getNumberInformations();
-					shared_ptr<XdmfInformation> openedInformation;
-					for (i = 0; i < n; i++)
-					{
-						openedInformation = openedGrid->getInformation(i);
-						mInformations.push_back(openedInformation);
-						mPreviousInformations.push_back(openedInformation);
-					}
-				}
-				if (openSets == 1)
-				{
-					n = openedGrid->getNumberSets();
-					shared_ptr<XdmfSet> openedSet;
-					for (i = 0; i < n; i++)
-					{
-						openedSet = openedGrid->getSet(i);
-						mSets.push_back(openedSet);
-					}
-				}
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-		}
-		else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
-		{
-			if (index < (int)mGridCollections.top()->getNumberUnstructuredGrids())
-			{
-				shared_ptr<XdmfUnstructuredGrid> openedGrid = mGridCollections.top()->getUnstructuredGrid(index);
-				mTopology = openedGrid->getTopology();
-				mGeometry = openedGrid->getGeometry();
-				mTime = openedGrid->getTime();
-				int i;
-				int n;
-				if (openAttributes == 1)
-				{
-					n = openedGrid->getNumberAttributes();
-					shared_ptr<XdmfAttribute> openedAttribute;
-					for (i = 0; i < n; i++)
-					{
-						openedAttribute = openedGrid->getAttribute(i);
-						mAttributes.push_back(openedAttribute);
-						mPreviousAttributes.push_back(openedAttribute);
-					}
-				}
-				if (openMaps == 1)
-				{
-					n = openedGrid->getNumberMaps();
-					shared_ptr<XdmfMap> openedMap;
-					for (i = 0; i < n; i++)
-					{
-						openedMap = openedGrid->getMap(i);
-						mMaps.push_back(openedMap);
-						mPreviousMaps.push_back(openedMap);
-					}
-				}
-				if (openInformation == 1)
-				{
-					n = openedGrid->getNumberInformations();
-					shared_ptr<XdmfInformation> openedInformation;
-					for (i = 0; i < n; i++)
-					{
-						openedInformation = openedGrid->getInformation(i);
-						mInformations.push_back(openedInformation);
-						mPreviousInformations.push_back(openedInformation);
-					}
-				}
-				if (openSets == 1)
-				{
-					n = openedGrid->getNumberSets();
-					shared_ptr<XdmfSet> openedSet;
-					for (i = 0; i < n; i++)
-					{
-						openedSet = openedGrid->getSet(i);
-						mSets.push_back(openedSet);
-					}
-				}
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Invalid Grid Type.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"There is no grid collection currently loaded.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (!mGridCollections.empty()) {
+    if (gridType == XDMF_GRID_TYPE_CURVILINEAR) {
+      if (index < (int)mGridCollections.top()->getNumberCurvilinearGrids()) {
+        shared_ptr<XdmfCurvilinearGrid> openedGrid = mGridCollections.top()->getCurvilinearGrid(index);
+        shared_ptr<const XdmfArrayType> dataType;
+        mGeometry = openedGrid->getGeometry();
+        mDimensions = openedGrid->getDimensions();
+        mTime = openedGrid->getTime();
+        int i;
+        int n;
+        if (openAttributes == 1) {
+          n = openedGrid->getNumberAttributes();
+          shared_ptr<XdmfAttribute> openedAttribute;
+          for (i = 0; i < n; i++) {
+            openedAttribute = openedGrid->getAttribute(i);
+            mAttributes.push_back(openedAttribute);
+            mPreviousAttributes.push_back(openedAttribute);
+          }
+        }
+        if (openMaps == 1) {
+          n = openedGrid->getNumberMaps();
+          shared_ptr<XdmfMap> openedMap;
+          for (i = 0; i < n; i++) {
+            openedMap = openedGrid->getMap(i);
+            mMaps.push_back(openedMap);
+            mPreviousMaps.push_back(openedMap);
+          }
+        }
+        if (openInformation == 1) {
+          n = openedGrid->getNumberInformations();
+          shared_ptr<XdmfInformation> openedInformation;
+          for (i = 0; i < n; i++) {
+            openedInformation = openedGrid->getInformation(i);
+            mInformations.push_back(openedInformation);
+            mPreviousInformations.push_back(openedInformation);
+          }
+        }
+        if (openSets == 1) {
+          n = openedGrid->getNumberSets();
+          shared_ptr<XdmfSet> openedSet;
+          for (i = 0; i < n; i++) {
+            openedSet = openedGrid->getSet(i);
+            mSets.push_back(openedSet);
+          }
+        }
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+    }
+    else if (gridType == XDMF_GRID_TYPE_RECTILINEAR) {
+      if (index < (int)mGridCollections.top()->getNumberRectilinearGrids()) {
+        shared_ptr<XdmfRectilinearGrid> openedGrid = mGridCollections.top()->getRectilinearGrid(index);
+        shared_ptr<const XdmfArrayType> dataType;
+        mCoordinates = openedGrid->getCoordinates();
+        mTime = openedGrid->getTime();
+        int i;
+        int n;
+        if (openAttributes == 1) {
+          n = openedGrid->getNumberAttributes();
+          shared_ptr<XdmfAttribute> openedAttribute;
+          for (i = 0; i < n; i++) {
+            openedAttribute = openedGrid->getAttribute(i);
+            mAttributes.push_back(openedAttribute);
+            mPreviousAttributes.push_back(openedAttribute);
+          }
+        }
+        if (openMaps == 1) {
+          n = openedGrid->getNumberMaps();
+          shared_ptr<XdmfMap> openedMap;
+          for (i = 0; i < n; i++) {
+            openedMap = openedGrid->getMap(i);
+            mMaps.push_back(openedMap);
+            mPreviousMaps.push_back(openedMap);
+          }
+        }
+        if (openInformation == 1) {
+          n = openedGrid->getNumberInformations();
+          shared_ptr<XdmfInformation> openedInformation;
+          for (i = 0; i < n; i++) {
+            openedInformation = openedGrid->getInformation(i);
+            mInformations.push_back(openedInformation);
+            mPreviousInformations.push_back(openedInformation);
+          }
+        }
+        if (openSets == 1) {
+          n = openedGrid->getNumberSets();
+          shared_ptr<XdmfSet> openedSet;
+          for (i = 0; i < n; i++) {
+            openedSet = openedGrid->getSet(i);
+            mSets.push_back(openedSet);
+          }
+        }
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+    }
+    else if (gridType == XDMF_GRID_TYPE_REGULAR) {
+      if (index < (int)mGridCollections.top()->getNumberRegularGrids()) {
+        shared_ptr<XdmfRegularGrid> openedGrid = mGridCollections.top()->getRegularGrid(index);
+        shared_ptr<const XdmfArrayType> dataType;
+        mTime = openedGrid->getTime();
+        mBrick = openedGrid->getBrickSize();
+        mOrigin = openedGrid->getOrigin();
+        mDimensions = openedGrid->getDimensions();
+        int i;
+        int n;
+        if (openAttributes == 1) {
+          n = openedGrid->getNumberAttributes();
+          shared_ptr<XdmfAttribute> openedAttribute;
+          for (i = 0; i < n; i++) {
+            openedAttribute = openedGrid->getAttribute(i);
+            mAttributes.push_back(openedAttribute);
+            mPreviousAttributes.push_back(openedAttribute);
+          }
+        }
+        if (openMaps == 1) {
+          n = openedGrid->getNumberMaps();
+          shared_ptr<XdmfMap> openedMap;
+          for (i = 0; i < n; i++) {
+            openedMap = openedGrid->getMap(i);
+            mMaps.push_back(openedMap);
+            mPreviousMaps.push_back(openedMap);
+          }
+        }
+        if (openInformation == 1) {
+          n = openedGrid->getNumberInformations();
+          shared_ptr<XdmfInformation> openedInformation;
+          for (i = 0; i < n; i++) {
+            openedInformation = openedGrid->getInformation(i);
+            mInformations.push_back(openedInformation);
+            mPreviousInformations.push_back(openedInformation);
+          }
+        }
+        if (openSets == 1) {
+          n = openedGrid->getNumberSets();
+          shared_ptr<XdmfSet> openedSet;
+          for (i = 0; i < n; i++) {
+            openedSet = openedGrid->getSet(i);
+            mSets.push_back(openedSet);
+          }
+        }
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+    }
+    else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED) {
+      if (index < (int)mGridCollections.top()->getNumberUnstructuredGrids()) {
+        shared_ptr<XdmfUnstructuredGrid> openedGrid = mGridCollections.top()->getUnstructuredGrid(index);
+        mTopology = openedGrid->getTopology();
+        mGeometry = openedGrid->getGeometry();
+        mTime = openedGrid->getTime();
+        int i;
+        int n;
+        if (openAttributes == 1) {
+          n = openedGrid->getNumberAttributes();
+          shared_ptr<XdmfAttribute> openedAttribute;
+          for (i = 0; i < n; i++) {
+            openedAttribute = openedGrid->getAttribute(i);
+            mAttributes.push_back(openedAttribute);
+            mPreviousAttributes.push_back(openedAttribute);
+          }
+        }
+        if (openMaps == 1) {
+          n = openedGrid->getNumberMaps();
+          shared_ptr<XdmfMap> openedMap;
+          for (i = 0; i < n; i++) {
+            openedMap = openedGrid->getMap(i);
+            mMaps.push_back(openedMap);
+            mPreviousMaps.push_back(openedMap);
+          }
+        }
+        if (openInformation == 1) {
+          n = openedGrid->getNumberInformations();
+          shared_ptr<XdmfInformation> openedInformation;
+          for (i = 0; i < n; i++) {
+            openedInformation = openedGrid->getInformation(i);
+            mInformations.push_back(openedInformation);
+            mPreviousInformations.push_back(openedInformation);
+          }
+        }
+        if (openSets == 1) {
+          n = openedGrid->getNumberSets();
+          shared_ptr<XdmfSet> openedSet;
+          for (i = 0; i < n; i++) {
+            openedSet = openedGrid->getSet(i);
+            mSets.push_back(openedSet);
+          }
+        }
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Invalid Grid Type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "There is no grid collection currently loaded.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::removeGridCollectionGrid(int gridType, int index)
-{	
-	if (!mGridCollections.empty())
-	{
-		if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
-		{
-			if (index < (int)mGridCollections.top()->getNumberCurvilinearGrids())
-			{
-				mGridCollections.top()->removeCurvilinearGrid(index);
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-		}
-		else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
-		{
-			if (index < (int)mGridCollections.top()->getNumberRectilinearGrids())
-			{
-				mGridCollections.top()->removeRectilinearGrid(index);
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-		}
-		else if (gridType == XDMF_GRID_TYPE_REGULAR)
-		{
-			if (index < (int)mGridCollections.top()->getNumberRegularGrids())
-			{
-				mGridCollections.top()->removeRegularGrid(index);
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-		}
-		else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
-		{
-			if (index < (int)mGridCollections.top()->getNumberUnstructuredGrids())
-			{
-				mGridCollections.top()->removeUnstructuredGrid(index);
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"There is no grid collection currently loaded.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+{
+  if (!mGridCollections.empty()) {
+    if (gridType == XDMF_GRID_TYPE_CURVILINEAR) {
+      if (index < (int)mGridCollections.top()->getNumberCurvilinearGrids()) {
+        mGridCollections.top()->removeCurvilinearGrid(index);
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+    }
+    else if (gridType == XDMF_GRID_TYPE_RECTILINEAR) {
+      if (index < (int)mGridCollections.top()->getNumberRectilinearGrids()) {
+        mGridCollections.top()->removeRectilinearGrid(index);
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+    }
+    else if (gridType == XDMF_GRID_TYPE_REGULAR) {
+      if (index < (int)mGridCollections.top()->getNumberRegularGrids()) {
+        mGridCollections.top()->removeRegularGrid(index);
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+    }
+    else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED) {
+      if (index < (int)mGridCollections.top()->getNumberUnstructuredGrids()) {
+        mGridCollections.top()->removeUnstructuredGrid(index);
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "There is no grid collection currently loaded.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::replaceGridCollectionGrid(int gridType, int index, char * name)
 {
-	if (!mGridCollections.empty())
-	{
-		int i;
-		if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
-		{
-			if (index < (int)mGridCollections.top()->getNumberCurvilinearGrids())
-			{
-				if(mDimensions == NULL)
-				{
-					try
-					{
-						XdmfError::message(XdmfError::FATAL, "Must set dimensions before replacing grid.");
-					}
-					catch (XdmfError e)
-					{
-						throw e;
-					}
-				}
-				if(mGeometry == NULL)
-				{
-					try
-					{
-						XdmfError::message(XdmfError::FATAL, 
-							"Must set geometry before adding grid.");
-					}
-					catch (XdmfError e)
-					{
-						throw e;
-					}
-				}
+  if (!mGridCollections.empty()) {
+    int i;
+    if (gridType == XDMF_GRID_TYPE_CURVILINEAR) {
+      if (index < (int)mGridCollections.top()->getNumberCurvilinearGrids()) {
+        if(mDimensions == NULL) {
+          try {
+            XdmfError::message(XdmfError::FATAL, "Must set dimensions before replacing grid.");
+          }
+          catch (XdmfError e) {
+            throw e;
+          }
+        }
+        if(mGeometry == NULL) {
+          try {
+            XdmfError::message(XdmfError::FATAL, 
+              "Must set geometry before adding grid.");
+          }
+          catch (XdmfError e) {
+            throw e;
+          }
+        }
 
-				shared_ptr<XdmfCurvilinearGrid> grid = mGridCollections.top()->getCurvilinearGrid(index);
-				grid->setName(name);
+        shared_ptr<XdmfCurvilinearGrid> grid = mGridCollections.top()->getCurvilinearGrid(index);
+        grid->setName(name);
 
-				grid->setGeometry(mGeometry);
-				grid->setDimensions(mDimensions);
+        grid->setGeometry(mGeometry);
+        grid->setDimensions(mDimensions);
 
-				for (i=grid->getNumberAttributes()-1;i>=0;i--)
-				{
-					grid->removeAttribute(0);
-				}
+        for (i=grid->getNumberAttributes()-1;i>=0;i--) {
+          grid->removeAttribute(0);
+        }
 
-				for(std::vector<shared_ptr<XdmfAttribute> >::const_iterator iter =
-					mAttributes.begin(); 
-					iter != mAttributes.end();
-					++iter)
-				{
-					grid->insert(*iter);
-				}
+        for(std::vector<shared_ptr<XdmfAttribute> >::const_iterator iter =
+            mAttributes.begin(); 
+            iter != mAttributes.end();
+            ++iter) {
+          grid->insert(*iter);
+        }
 
-				mAttributes.clear();
+        mAttributes.clear();
 
-				for( i=grid->getNumberInformations()-1;i>=0;i--)
-				{
-					grid->removeInformation(0);
-				}
+        for( i=grid->getNumberInformations()-1;i>=0;i--) {
+          grid->removeInformation(0);
+        }
 
-				for(std::vector<shared_ptr<XdmfInformation> >::const_iterator iter =
-					mInformations.begin(); 
-					iter != mInformations.end();
-					++iter)
-				{
-					grid->insert(*iter);
-				}
+        for(std::vector<shared_ptr<XdmfInformation> >::const_iterator iter =
+            mInformations.begin(); 
+            iter != mInformations.end();
+            ++iter) {
+          grid->insert(*iter);
+        }
 
-				mInformations.clear();
+        mInformations.clear();
 
-				for (i=grid->getNumberSets()-1;i>=0;i--)
-				{
-					grid->removeSet(0);
-				}
+        for (i=grid->getNumberSets()-1;i>=0;i--) {
+          grid->removeSet(0);
+        }
 
-				for(std::vector<shared_ptr<XdmfSet> >::const_iterator iter =
-					mSets.begin(); 
-					iter != mSets.end();
-					++iter)
-				{
-					grid->insert(*iter);
-				}
+        for(std::vector<shared_ptr<XdmfSet> >::const_iterator iter =
+            mSets.begin(); 
+            iter != mSets.end();
+            ++iter) {
+          grid->insert(*iter);
+        }
 
-				mSets.clear();
+        mSets.clear();
 
-				for (i=grid->getNumberMaps()-1;i>=0;i--)
-				{
-					grid->removeMap(0);
-				}
+        for (i=grid->getNumberMaps()-1;i>=0;i--) {
+          grid->removeMap(0);
+        }
 
-				for(std::vector<shared_ptr<XdmfMap> >::const_iterator iter =
-					mMaps.begin(); 
-					iter != mMaps.end();
-					++iter)
-				{
-					grid->insert(*iter);
-				}
+        for(std::vector<shared_ptr<XdmfMap> >::const_iterator iter =
+            mMaps.begin(); 
+            iter != mMaps.end();
+            ++iter) {
+          grid->insert(*iter);
+        }
 
-				mMaps.clear();
+        mMaps.clear();
     
-				if(mTime)
-				{
-					grid->setTime(mTime);
-				}
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range."); 
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-		}
-		else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
-		{
-			if (index < (int)mGridCollections.top()->getNumberRectilinearGrids())
-			{
-				if(mCoordinates.empty())
-				{
-					try
-					{
-						XdmfError::message(XdmfError::FATAL, 
-							"Must set Coordinates before adding grid.");
-					}
-					catch (XdmfError e)
-					{
-						throw e;
-					}
-				}
+        if(mTime) {
+          grid->setTime(mTime);
+        }
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range."); 
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+    }
+    else if (gridType == XDMF_GRID_TYPE_RECTILINEAR) {
+      if (index < (int)mGridCollections.top()->getNumberRectilinearGrids()) {
+        if(mCoordinates.empty()) {
+          try {
+            XdmfError::message(XdmfError::FATAL, 
+              "Must set Coordinates before adding grid.");
+          }
+          catch (XdmfError e) {
+            throw e;
+          }
+        }
 
-				shared_ptr<XdmfRectilinearGrid> grid = mGridCollections.top()->getRectilinearGrid(index);
-				grid->setCoordinates(mCoordinates);
-				mCoordinates.clear();
-				for (i=grid->getNumberAttributes()-1;i>=0;i--)
-				{
-					grid->removeAttribute(0);
-				}
+        shared_ptr<XdmfRectilinearGrid> grid = mGridCollections.top()->getRectilinearGrid(index);
+        grid->setCoordinates(mCoordinates);
+        mCoordinates.clear();
+        for (i=grid->getNumberAttributes()-1;i>=0;i--) {
+          grid->removeAttribute(0);
+        }
 
-				for(std::vector<shared_ptr<XdmfAttribute> >::const_iterator iter =
-					mAttributes.begin(); 
-					iter != mAttributes.end();
-					++iter)
-				{
-					grid->insert(*iter);
-				}
+        for(std::vector<shared_ptr<XdmfAttribute> >::const_iterator iter =
+            mAttributes.begin(); 
+            iter != mAttributes.end();
+            ++iter) {
+          grid->insert(*iter);
+        }
 
-				mAttributes.clear();
+        mAttributes.clear();
 
-				for (i=grid->getNumberInformations()-1;i>=0;i--)
-				{
-					grid->removeInformation(0);
-				}
+        for (i=grid->getNumberInformations()-1;i>=0;i--) {
+          grid->removeInformation(0);
+        }
 
-				for(std::vector<shared_ptr<XdmfInformation> >::const_iterator iter =
-					mInformations.begin(); 
-					iter != mInformations.end();
-					++iter)
-				{
-					grid->insert(*iter);
-				}
+        for(std::vector<shared_ptr<XdmfInformation> >::const_iterator iter =
+            mInformations.begin(); 
+            iter != mInformations.end();
+            ++iter) {
+          grid->insert(*iter);
+        }
 
-				mInformations.clear();
+        mInformations.clear();
 
-				for (i=grid->getNumberSets()-1;i>=0;i--)
-				{
-					grid->removeSet(0);
-				}
+        for (i=grid->getNumberSets()-1;i>=0;i--) {
+          grid->removeSet(0);
+        }
 
-				for(std::vector<shared_ptr<XdmfSet> >::const_iterator iter =
-					mSets.begin(); 
-					iter != mSets.end();
-					++iter)
-				{
-					grid->insert(*iter);
-				}
+        for(std::vector<shared_ptr<XdmfSet> >::const_iterator iter =
+            mSets.begin(); 
+            iter != mSets.end();
+            ++iter) {
+          grid->insert(*iter);
+        }
 
-				mSets.clear();
+        mSets.clear();
 
-				for (i=grid->getNumberMaps()-1;i>=0;i--)
-				{
-					grid->removeMap(0);
-				}
+        for (i=grid->getNumberMaps()-1;i>=0;i--) {
+          grid->removeMap(0);
+        }
 
-				for(std::vector<shared_ptr<XdmfMap> >::const_iterator iter =
-					mMaps.begin(); 
-					iter != mMaps.end();
-					++iter)
-				{
-					grid->insert(*iter);
-				}
+        for(std::vector<shared_ptr<XdmfMap> >::const_iterator iter =
+            mMaps.begin(); 
+            iter != mMaps.end();
+            ++iter) {
+          grid->insert(*iter);
+        }
 
-				mMaps.clear();
+        mMaps.clear();
     
-				if(mTime)
-				{
-					grid->setTime(mTime);
-				}
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-		}
-		else if (gridType == XDMF_GRID_TYPE_REGULAR)
-		{
-			if (index < (int)mGridCollections.top()->getNumberRegularGrids())
-			{
-				if(mBrick == NULL)
-				{
-					try
-					{
-						XdmfError::message(XdmfError::FATAL, 
-							"Must set brick size before adding grid.");
-					}
-					catch (XdmfError e)
-					{
-						throw e;
-					}
-				}
+        if(mTime) {
+          grid->setTime(mTime);
+        }
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+    }
+    else if (gridType == XDMF_GRID_TYPE_REGULAR) {
+      if (index < (int)mGridCollections.top()->getNumberRegularGrids()) {
+        if(mBrick == NULL) {
+          try {
+            XdmfError::message(XdmfError::FATAL, 
+              "Must set brick size before adding grid.");
+          }
+          catch (XdmfError e) {
+            throw e;
+          }
+        }
 
-				if(mDimensions == NULL)
-				{
-					try
-					{
-						XdmfError::message(XdmfError::FATAL, 
-							"Must set dimensions before adding grid.");
-					}
-					catch (XdmfError e)
-					{
-						throw e;
-					}
-				}
+        if(mDimensions == NULL) {
+          try {
+            XdmfError::message(XdmfError::FATAL, 
+              "Must set dimensions before adding grid.");
+          }
+          catch (XdmfError e) {
+            throw e;
+          }
+        }
 
-				if(mOrigin == NULL)
-				{
-					try
-					{
-						XdmfError::message(XdmfError::FATAL, 
-							"Must set origin before adding grid.");
-					}
-					catch (XdmfError e)
-					{
-						throw e;
-					}
-				}
+        if(mOrigin == NULL) {
+          try {
+            XdmfError::message(XdmfError::FATAL, 
+              "Must set origin before adding grid.");
+          }
+          catch (XdmfError e) {
+            throw e;
+          }
+        }
   
-		    		shared_ptr<XdmfRegularGrid> grid = mGridCollections.top()->getRegularGrid(index);
-				grid->setOrigin(mOrigin);
-				grid->setDimensions(mDimensions);
-				grid->setBrickSize(mBrick);
+        shared_ptr<XdmfRegularGrid> grid = mGridCollections.top()->getRegularGrid(index);
+        grid->setOrigin(mOrigin);
+        grid->setDimensions(mDimensions);
+        grid->setBrickSize(mBrick);
 
-				for (i=grid->getNumberAttributes()-1;i>=0;i--)
-				{
-					grid->removeAttribute(0);
-				}
+        for (i=grid->getNumberAttributes()-1;i>=0;i--) {
+          grid->removeAttribute(0);
+        }
 
-				for(std::vector<shared_ptr<XdmfAttribute> >::const_iterator iter =
-					mAttributes.begin(); 
-					iter != mAttributes.end();
-					++iter)
-				{
-					grid->insert(*iter);
-				}
+        for(std::vector<shared_ptr<XdmfAttribute> >::const_iterator iter =
+            mAttributes.begin(); 
+            iter != mAttributes.end();
+            ++iter) {
+          grid->insert(*iter);
+        }
 
-				mAttributes.clear();
+        mAttributes.clear();
 
-				for (i=grid->getNumberInformations()-1;i>=0;i--)
-				{
-					grid->removeInformation(0);
-				}
+        for (i=grid->getNumberInformations()-1;i>=0;i--) {
+          grid->removeInformation(0);
+        }
 
-				for(std::vector<shared_ptr<XdmfInformation> >::const_iterator iter =
-					mInformations.begin(); 
-					iter != mInformations.end();
-					++iter)
-				{
-					grid->insert(*iter);
-				}
+        for(std::vector<shared_ptr<XdmfInformation> >::const_iterator iter =
+            mInformations.begin(); 
+            iter != mInformations.end();
+            ++iter) {
+          grid->insert(*iter);
+        }
 
-				mInformations.clear();
+        mInformations.clear();
 
-				for (i=grid->getNumberSets()-1;i>=0;i--)
-				{
-					grid->removeSet(0);
-				}
+        for (i=grid->getNumberSets()-1;i>=0;i--) {
+          grid->removeSet(0);
+        }
 
-				for(std::vector<shared_ptr<XdmfSet> >::const_iterator iter =
-					mSets.begin(); 
-					iter != mSets.end();
-					++iter)
-				{
-					grid->insert(*iter);
-				}
+        for(std::vector<shared_ptr<XdmfSet> >::const_iterator iter =
+            mSets.begin(); 
+            iter != mSets.end();
+            ++iter) {
+          grid->insert(*iter);
+        }
 
-				mSets.clear();
+        mSets.clear();
 
-				for (i=grid->getNumberMaps()-1;i>=0;i--)
-				{
-					grid->removeMap(0);
-				}
+        for (i=grid->getNumberMaps()-1;i>=0;i--) {
+          grid->removeMap(0);
+        }
 
-				for(std::vector<shared_ptr<XdmfMap> >::const_iterator iter =
-					mMaps.begin(); 
-					iter != mMaps.end();
-					++iter)
-				{
-					grid->insert(*iter);
-				}
+        for(std::vector<shared_ptr<XdmfMap> >::const_iterator iter =
+            mMaps.begin(); 
+            iter != mMaps.end();
+            ++iter) {
+          grid->insert(*iter);
+        }
 
-				mMaps.clear();
+        mMaps.clear();
     
-				if(mTime)
-				{
-					grid->setTime(mTime);
-				}
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-		}
-		else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
-		{
-			if (index < (int)mGridCollections.top()->getNumberUnstructuredGrids())
-			{
-				if(mGeometry == NULL)
-				{
-					try
-					{
-						XdmfError::message(XdmfError::FATAL, 
-							"Must set geometry before adding grid.");
-					}
-					catch (XdmfError e)
-					{
-						throw e;
-					}
-				}
-				if(mTopology == NULL)
-				{
-					try
-					{
-						XdmfError::message(XdmfError::FATAL, 
-							"Must set topology before adding grid.");
-					}
-					catch (XdmfError e)
-					{
-						throw e;
-					}
-				}
-				shared_ptr<XdmfUnstructuredGrid> grid = mGridCollections.top()->getUnstructuredGrid(index);
-				grid->setName(name);
-				grid->setGeometry(mGeometry);
-				grid->setTopology(mTopology);
+        if(mTime) {
+          grid->setTime(mTime);
+        }
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+    }
+    else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED) {
+      if (index < (int)mGridCollections.top()->getNumberUnstructuredGrids()) {
+        if(mGeometry == NULL) {
+          try {
+            XdmfError::message(XdmfError::FATAL, 
+              "Must set geometry before adding grid.");
+          }
+          catch (XdmfError e) {
+            throw e;
+          }
+        }
+        if(mTopology == NULL) {
+          try {
+            XdmfError::message(XdmfError::FATAL, 
+              "Must set topology before adding grid.");
+          }
+          catch (XdmfError e) {
+            throw e;
+          }
+        }
+        shared_ptr<XdmfUnstructuredGrid> grid = mGridCollections.top()->getUnstructuredGrid(index);
+        grid->setName(name);
+        grid->setGeometry(mGeometry);
+        grid->setTopology(mTopology);
 
-				for (i=grid->getNumberAttributes()-1;i>=0;i--)
-				{
-					grid->removeAttribute(0);
-				}
+        for (i=grid->getNumberAttributes()-1;i>=0;i--) {
+          grid->removeAttribute(0);
+        }
 
-				for(std::vector<shared_ptr<XdmfAttribute> >::const_iterator iter =
-					mAttributes.begin(); 
-					iter != mAttributes.end();
-					++iter)
-				{
-					grid->insert(*iter);
-				}
+        for(std::vector<shared_ptr<XdmfAttribute> >::const_iterator iter =
+            mAttributes.begin(); 
+            iter != mAttributes.end();
+            ++iter) {
+          grid->insert(*iter);
+        }
 
-				mAttributes.clear();
+        mAttributes.clear();
 
-				for (i=grid->getNumberInformations()-1;i>=0;i--)
-				{
-					grid->removeInformation(0);
-				}
+        for (i=grid->getNumberInformations()-1;i>=0;i--) {
+          grid->removeInformation(0);
+        }
 
-				for(std::vector<shared_ptr<XdmfInformation> >::const_iterator iter =
-					mInformations.begin(); 
-					iter != mInformations.end();
-					++iter)
-				{
-					grid->insert(*iter);
-				}
+        for(std::vector<shared_ptr<XdmfInformation> >::const_iterator iter =
+            mInformations.begin(); 
+            iter != mInformations.end();
+            ++iter) {
+          grid->insert(*iter);
+        }
 
-				mInformations.clear();
+        mInformations.clear();
 
-				for (i=grid->getNumberSets()-1;i>=0;i--)
-				{
-					grid->removeSet(0);
-				}
+        for (i=grid->getNumberSets()-1;i>=0;i--) {
+          grid->removeSet(0);
+        }
 
-				for(std::vector<shared_ptr<XdmfSet> >::const_iterator iter =
-					mSets.begin(); 
-					iter != mSets.end();
-					++iter)
-				{
-					grid->insert(*iter);
-				}
+        for(std::vector<shared_ptr<XdmfSet> >::const_iterator iter =
+            mSets.begin(); 
+            iter != mSets.end();
+            ++iter) {
+          grid->insert(*iter);
+        }
 
-				mSets.clear();
+        mSets.clear();
 
-				for (i=grid->getNumberMaps()-1;i>=0;i--)
-				{
-					grid->removeMap(0);
-				}
+        for (i=grid->getNumberMaps()-1;i>=0;i--) {
+          grid->removeMap(0);
+        }
 
-				for(std::vector<shared_ptr<XdmfMap> >::const_iterator iter =
-					mMaps.begin(); 
-					iter != mMaps.end();
-					++iter)
-				{
-					grid->insert(*iter);
-				}
+        for(std::vector<shared_ptr<XdmfMap> >::const_iterator iter =
+            mMaps.begin(); 
+            iter != mMaps.end();
+            ++iter) {
+          grid->insert(*iter);
+        }
 
-				mMaps.clear();
+        mMaps.clear();
     
-				if(mTime)
-				{
-					grid->setTime(mTime);
-				}
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"There is no grid collection currently loaded.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+        if(mTime) {
+          grid->setTime(mTime);
+        }
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "There is no grid collection currently loaded.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::retrieveGridCollectionGridName(int gridType, int index, char * returnName, int nameLength)
 {
-	if (!mGridCollections.empty())
-	{
-		shared_ptr<XdmfGrid> openedGrid;
-		if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
-		{
-			if (index < (int)mGridCollections.top()->getNumberCurvilinearGrids())
-			{
-				openedGrid = mGridCollections.top()->getCurvilinearGrid(index);
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-		}
-		else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
-		{
-			if (index < (int)mGridCollections.top()->getNumberRectilinearGrids())
-			{
-				openedGrid = mGridCollections.top()->getRectilinearGrid(index);
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-		}
-		else if (gridType == XDMF_GRID_TYPE_REGULAR)
-		{
-			if (index < (int)mGridCollections.top()->getNumberRegularGrids())
-			{
-				openedGrid = mGridCollections.top()->getRegularGrid(index);
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-		}
-		else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
-		{
-			if (index < (int)mGridCollections.top()->getNumberUnstructuredGrids())
-			{
-				openedGrid = mGridCollections.top()->getUnstructuredGrid(index);
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Invalid Grid Type.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-		char * tempName = strdup(openedGrid->getName().c_str());
-		memset(returnName, 0, nameLength);
-		memcpy(returnName, tempName, strlen(tempName)+1);
-		delete [] tempName;
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"There is no grid collection currently loaded.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (!mGridCollections.empty()) {
+    shared_ptr<XdmfGrid> openedGrid;
+    if (gridType == XDMF_GRID_TYPE_CURVILINEAR) {
+      if (index < (int)mGridCollections.top()->getNumberCurvilinearGrids()) {
+        openedGrid = mGridCollections.top()->getCurvilinearGrid(index);
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+    }
+    else if (gridType == XDMF_GRID_TYPE_RECTILINEAR) {
+      if (index < (int)mGridCollections.top()->getNumberRectilinearGrids()) {
+        openedGrid = mGridCollections.top()->getRectilinearGrid(index);
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+    }
+    else if (gridType == XDMF_GRID_TYPE_REGULAR) {
+      if (index < (int)mGridCollections.top()->getNumberRegularGrids()) {
+        openedGrid = mGridCollections.top()->getRegularGrid(index);
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+    }
+    else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED) {
+      if (index < (int)mGridCollections.top()->getNumberUnstructuredGrids()) {
+        openedGrid = mGridCollections.top()->getUnstructuredGrid(index);
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Invalid Grid Type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+    char * tempName = strdup(openedGrid->getName().c_str());
+    memset(returnName, 0, nameLength);
+    memcpy(returnName, tempName, strlen(tempName)+1);
+    delete [] tempName;
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "There is no grid collection currently loaded.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::retrieveGridCollectionGridTag(int gridType, int index, char * returnTag, int tagLength)
 {
-	if (!mGridCollections.empty())
-	{
-		shared_ptr<XdmfGrid> openedGrid;
-		if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
-		{
-			if (index < (int)mGridCollections.top()->getNumberCurvilinearGrids())
-			{
-				openedGrid = mGridCollections.top()->getCurvilinearGrid(index);
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-		}
-		else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
-		{
-			if (index < (int)mGridCollections.top()->getNumberRectilinearGrids())
-			{
-				openedGrid = mGridCollections.top()->getRectilinearGrid(index);
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-		}
-		else if (gridType == XDMF_GRID_TYPE_REGULAR)
-		{
-			if (index < (int)mGridCollections.top()->getNumberRegularGrids())
-			{
-				openedGrid = mGridCollections.top()->getRegularGrid(index);
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-		}
-		else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
-		{
-			if (index < (int)mGridCollections.top()->getNumberUnstructuredGrids())
-			{
-				openedGrid = mGridCollections.top()->getUnstructuredGrid(index);
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Invalid Grid Type.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-		char * tempTag = strdup(openedGrid->getItemTag().c_str());
-		memset(returnTag, 0, tagLength);
-		memcpy(returnTag, tempTag, strlen(tempTag)+1);
-		delete [] tempTag;
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"There is no grid collection currently loaded.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (!mGridCollections.empty()) {
+    shared_ptr<XdmfGrid> openedGrid;
+    if (gridType == XDMF_GRID_TYPE_CURVILINEAR) {
+      if (index < (int)mGridCollections.top()->getNumberCurvilinearGrids()) {
+        openedGrid = mGridCollections.top()->getCurvilinearGrid(index);
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+    }
+    else if (gridType == XDMF_GRID_TYPE_RECTILINEAR) {
+      if (index < (int)mGridCollections.top()->getNumberRectilinearGrids()) {
+        openedGrid = mGridCollections.top()->getRectilinearGrid(index);
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+    }
+    else if (gridType == XDMF_GRID_TYPE_REGULAR) {
+      if (index < (int)mGridCollections.top()->getNumberRegularGrids()) {
+        openedGrid = mGridCollections.top()->getRegularGrid(index);
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+    }
+    else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED) {
+      if (index < (int)mGridCollections.top()->getNumberUnstructuredGrids()) {
+        openedGrid = mGridCollections.top()->getUnstructuredGrid(index);
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Invalid Grid Type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+    char * tempTag = strdup(openedGrid->getItemTag().c_str());
+    memset(returnTag, 0, tagLength);
+    memcpy(returnTag, tempTag, strlen(tempTag)+1);
+    delete [] tempTag;
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "There is no grid collection currently loaded.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 int
 XdmfFortran::retrieveGridCollectionGridNumProperties(int gridType, int index)
 {
-	if (!mGridCollections.empty())
-	{
-		if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
-		{
-			if (index < (int)mGridCollections.top()->getNumberCurvilinearGrids())
-			{
-				return mGridCollections.top()->getCurvilinearGrid(index)->getItemProperties().size();
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-				return -1;
-			}
-		}
-		else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
-		{
-			if (index < (int)mGridCollections.top()->getNumberRectilinearGrids())
-			{
-				return mGridCollections.top()->getRectilinearGrid(index)->getItemProperties().size();
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-				return -1;
-			}
-		}
-		else if (gridType == XDMF_GRID_TYPE_REGULAR)
-		{
-			if (index < (int)mGridCollections.top()->getNumberRegularGrids())
-			{
-				return mGridCollections.top()->getRegularGrid(index)->getItemProperties().size();
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-				return -1;
-			}
-		}
-		else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
-		{
-			if (index < (int)mGridCollections.top()->getNumberUnstructuredGrids())
-			{
-				return mGridCollections.top()->getUnstructuredGrid(index)->getItemProperties().size();
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-				return -1;
-			}
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Invalid Grid Type.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"There is no grid collection currently loaded.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
+  if (!mGridCollections.empty()) {
+    if (gridType == XDMF_GRID_TYPE_CURVILINEAR) {
+      if (index < (int)mGridCollections.top()->getNumberCurvilinearGrids()) {
+        return mGridCollections.top()->getCurvilinearGrid(index)->getItemProperties().size();
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+        return -1;
+      }
+    }
+    else if (gridType == XDMF_GRID_TYPE_RECTILINEAR) {
+      if (index < (int)mGridCollections.top()->getNumberRectilinearGrids()) {
+        return mGridCollections.top()->getRectilinearGrid(index)->getItemProperties().size();
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+        return -1;
+      }
+    }
+    else if (gridType == XDMF_GRID_TYPE_REGULAR) {
+      if (index < (int)mGridCollections.top()->getNumberRegularGrids()) {
+        return mGridCollections.top()->getRegularGrid(index)->getItemProperties().size();
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+        return -1;
+      }
+    }
+    else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED) {
+      if (index < (int)mGridCollections.top()->getNumberUnstructuredGrids()) {
+        return mGridCollections.top()->getUnstructuredGrid(index)->getItemProperties().size();
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+        return -1;
+      }
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Invalid Grid Type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "There is no grid collection currently loaded.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
 }
 
 void
 XdmfFortran::retrieveGridCollectionGridProperty(int gridType, int gridIndex, int index,
-	char * key, int keyLength, char * value, int valueLength)
+  char * key, int keyLength, char * value, int valueLength)
 {
-	if (!mGridCollections.empty())
-	{
-		shared_ptr<XdmfGrid> openedGrid;
-		if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
-		{
-			if (index < (int)mGridCollections.top()->getNumberCurvilinearGrids())
-			{
-				openedGrid = mGridCollections.top()->getCurvilinearGrid(index);
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-		}
-		else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
-		{
-			if (index < (int)mGridCollections.top()->getNumberRectilinearGrids())
-			{
-				openedGrid = mGridCollections.top()->getRectilinearGrid(index);
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-		}
-		else if (gridType == XDMF_GRID_TYPE_REGULAR)
-		{
-			if (index < (int)mGridCollections.top()->getNumberRegularGrids())
-			{
-				openedGrid = mGridCollections.top()->getRegularGrid(index);
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-		}
-		else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
-		{
-			if (index < (int)mGridCollections.top()->getNumberUnstructuredGrids())
-			{
-				openedGrid = mGridCollections.top()->getUnstructuredGrid(index);
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Invalid Grid Type.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-		if (index < (int)openedGrid->getItemProperties().size())
-		{
-			std::map<std::string, std::string>::iterator walker = openedGrid->getItemProperties().begin();
-			for (int i = 0; i<index; i++)
-			{
-				walker++;
-			}
-			char * tempKey = strdup((*walker).first.c_str());
-			memset(key, 0, keyLength);
-			memcpy(key, tempKey, strlen(tempKey)+1);
-			delete [] tempKey;
-			char * tempValue = strdup((*walker).second.c_str());
-			memset(value, 0, valueLength);
-			memcpy(value, tempValue, strlen(tempValue)+1);
-			delete [] tempValue;
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"There is no grid collection currently loaded.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (!mGridCollections.empty()) {
+    shared_ptr<XdmfGrid> openedGrid;
+    if (gridType == XDMF_GRID_TYPE_CURVILINEAR) {
+      if (index < (int)mGridCollections.top()->getNumberCurvilinearGrids()) {
+        openedGrid = mGridCollections.top()->getCurvilinearGrid(index);
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+    }
+    else if (gridType == XDMF_GRID_TYPE_RECTILINEAR) {
+      if (index < (int)mGridCollections.top()->getNumberRectilinearGrids()) {
+        openedGrid = mGridCollections.top()->getRectilinearGrid(index);
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+    }
+    else if (gridType == XDMF_GRID_TYPE_REGULAR) {
+      if (index < (int)mGridCollections.top()->getNumberRegularGrids()) {
+        openedGrid = mGridCollections.top()->getRegularGrid(index);
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+    }
+    else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED) {
+      if (index < (int)mGridCollections.top()->getNumberUnstructuredGrids()) {
+        openedGrid = mGridCollections.top()->getUnstructuredGrid(index);
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Invalid Grid Type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+    if (index < (int)openedGrid->getItemProperties().size()) {
+      std::map<std::string, std::string>::iterator walker = openedGrid->getItemProperties().begin();
+      for (int i = 0; i<index; i++) {
+        walker++;
+      }
+      char * tempKey = strdup((*walker).first.c_str());
+      memset(key, 0, keyLength);
+      memcpy(key, tempKey, strlen(tempKey)+1);
+      delete [] tempKey;
+      char * tempValue = strdup((*walker).second.c_str());
+      memset(value, 0, valueLength);
+      memcpy(value, tempValue, strlen(tempValue)+1);
+      delete [] tempValue;
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "There is no grid collection currently loaded.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::retrieveGridCollectionGridPropertyByKey(int gridType, int index, char * key, char * value, int valueLength)
 {
-	if (!mGridCollections.empty())
-	{
-		shared_ptr<XdmfGrid> openedGrid;
-		if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
-		{
-			if (index < (int)mGridCollections.top()->getNumberCurvilinearGrids())
-			{
-				openedGrid = mGridCollections.top()->getCurvilinearGrid(index);
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-		}
-		else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
-		{
-			if (index < (int)mGridCollections.top()->getNumberRectilinearGrids())
-			{
-				openedGrid = mGridCollections.top()->getRectilinearGrid(index);
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-		}
-		else if (gridType == XDMF_GRID_TYPE_REGULAR)
-		{
-			if (index < (int)mGridCollections.top()->getNumberRegularGrids())
-			{
-				openedGrid = mGridCollections.top()->getRegularGrid(index);
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-		}
-		else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
-		{
-			if (index < (int)mGridCollections.top()->getNumberUnstructuredGrids())
-			{
-				openedGrid = mGridCollections.top()->getUnstructuredGrid(index);
-			}
-			else
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Invalid Grid Type.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-		std::string tempString = key;
-		memset(value, 0, valueLength);
-		if ((openedGrid->getItemProperties().count(tempString))>0)
-		{
-			char * tempValue = strdup(openedGrid->getItemProperties()[tempString].c_str());
-			memcpy(value, tempValue, strlen(tempValue)+1);
-			delete [] tempValue;
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"There is no grid collection currently loaded.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (!mGridCollections.empty()) {
+    shared_ptr<XdmfGrid> openedGrid;
+    if (gridType == XDMF_GRID_TYPE_CURVILINEAR) {
+      if (index < (int)mGridCollections.top()->getNumberCurvilinearGrids()) {
+        openedGrid = mGridCollections.top()->getCurvilinearGrid(index);
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+    }
+    else if (gridType == XDMF_GRID_TYPE_RECTILINEAR) {
+      if (index < (int)mGridCollections.top()->getNumberRectilinearGrids()) {
+        openedGrid = mGridCollections.top()->getRectilinearGrid(index);
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+    }
+    else if (gridType == XDMF_GRID_TYPE_REGULAR) {
+      if (index < (int)mGridCollections.top()->getNumberRegularGrids()) {
+        openedGrid = mGridCollections.top()->getRegularGrid(index);
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+    }
+    else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED) {
+      if (index < (int)mGridCollections.top()->getNumberUnstructuredGrids()) {
+        openedGrid = mGridCollections.top()->getUnstructuredGrid(index);
+      }
+      else {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Invalid Grid Type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+    std::string tempString = key;
+    memset(value, 0, valueLength);
+    if ((openedGrid->getItemProperties().count(tempString))>0) {
+      char * tempValue = strdup(openedGrid->getItemProperties()[tempString].c_str());
+      memcpy(value, tempValue, strlen(tempValue)+1);
+      delete [] tempValue;
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "There is no grid collection currently loaded.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 int
 XdmfFortran::numDomainGrids(int gridType)
 {
-	if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
-	{
-		return mDomain->getNumberCurvilinearGrids();
-	}
-	else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
-	{
-		return mDomain->getNumberRectilinearGrids();
-	}
-	else if (gridType == XDMF_GRID_TYPE_REGULAR)
-	{
-		return mDomain->getNumberRegularGrids();
-	}
-	else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
-	{
-		return mDomain->getNumberUnstructuredGrids();
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Invalid Grid Type.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
+  if (gridType == XDMF_GRID_TYPE_CURVILINEAR) {
+    return mDomain->getNumberCurvilinearGrids();
+  }
+  else if (gridType == XDMF_GRID_TYPE_RECTILINEAR) {
+    return mDomain->getNumberRectilinearGrids();
+  }
+  else if (gridType == XDMF_GRID_TYPE_REGULAR) {
+    return mDomain->getNumberRegularGrids();
+  }
+  else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED) {
+    return mDomain->getNumberUnstructuredGrids();
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Invalid Grid Type.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
 }
 
 int
 XdmfFortran::numGridCollectionGrids(int gridType)
 {
-	if (!mGridCollections.empty())
-	{
-		if (gridType == XDMF_GRID_TYPE_CURVILINEAR)
-		{
-			return mGridCollections.top()->getNumberCurvilinearGrids();
-		}
-		else if (gridType == XDMF_GRID_TYPE_RECTILINEAR)
-		{
-			return mGridCollections.top()->getNumberRectilinearGrids();
-		}
-		else if (gridType == XDMF_GRID_TYPE_REGULAR)
-		{
-			return mGridCollections.top()->getNumberRegularGrids();
-		}
-		else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED)
-		{
-			return mGridCollections.top()->getNumberUnstructuredGrids();
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Invalid Grid Type."); 
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Error: No Grid Collections have been loaded.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
+  if (!mGridCollections.empty()) {
+    if (gridType == XDMF_GRID_TYPE_CURVILINEAR) {
+      return mGridCollections.top()->getNumberCurvilinearGrids();
+    }
+    else if (gridType == XDMF_GRID_TYPE_RECTILINEAR) {
+      return mGridCollections.top()->getNumberRectilinearGrids();
+    }
+    else if (gridType == XDMF_GRID_TYPE_REGULAR) {
+      return mGridCollections.top()->getNumberRegularGrids();
+    }
+    else if (gridType == XDMF_GRID_TYPE_UNSTRUCTURED) {
+      return mGridCollections.top()->getNumberUnstructuredGrids();
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Invalid Grid Type."); 
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Error: No Grid Collections have been loaded.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
 }
 int
 XdmfFortran::retrieveGridCollectionType()
 {
-	if (!mGridCollections.empty())
-	{
-		shared_ptr<const XdmfGridCollectionType> returnType = mGridCollections.top()->getType();
-		if (returnType == XdmfGridCollectionType::Spatial())
-		{
-			return XDMF_GRID_COLLECTION_TYPE_SPATIAL;
-		}
-		else if (returnType == XdmfGridCollectionType::Temporal())
-		{
-			return XDMF_GRID_COLLECTION_TYPE_TEMPORAL;
-		}
-		else if (returnType == XdmfGridCollectionType::NoCollectionType())
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, 
-					"Error: No Grid Collection Type.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, 
-					"Invalid Grid Collection Type.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"There is no grid collection currently loaded.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
+  if (!mGridCollections.empty()) {
+    shared_ptr<const XdmfGridCollectionType> returnType = mGridCollections.top()->getType();
+    if (returnType == XdmfGridCollectionType::Spatial()) {
+      return XDMF_GRID_COLLECTION_TYPE_SPATIAL;
+    }
+    else if (returnType == XdmfGridCollectionType::Temporal()) {
+      return XDMF_GRID_COLLECTION_TYPE_TEMPORAL;
+    }
+    else if (returnType == XdmfGridCollectionType::NoCollectionType()) {
+      try {
+        XdmfError::message(XdmfError::FATAL, 
+          "Error: No Grid Collection Type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, 
+          "Invalid Grid Collection Type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "There is no grid collection currently loaded.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
 }
 
 float
 XdmfFortran::retrieveTime()
 {
-	return static_cast<float>(mTime->getValue());
+  return static_cast<float>(mTime->getValue());
 }
 
 void
 XdmfFortran::retrieveGeometryTag(char * tag, int tagLength)
 {
-	if (mGeometry == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set geometry before its tag can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
-	else
-	{
-		char * tempTag = strdup(mGeometry->getItemTag().c_str());
-		memset(tag, 0, tagLength);
-		memcpy(tag, tempTag, strlen(tempTag)+1);
-		delete [] tempTag;
-	}
+  if (mGeometry == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set geometry before its tag can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+  else {
+    char * tempTag = strdup(mGeometry->getItemTag().c_str());
+    memset(tag, 0, tagLength);
+    memcpy(tag, tempTag, strlen(tempTag)+1);
+    delete [] tempTag;
+  }
 }
 
 int
 XdmfFortran::retrieveGeometryType()
 {
-	if (mGeometry == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set geometry before its type can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
-	else
-	{
-		shared_ptr<const XdmfGeometryType> returnType = mGeometry->getType();
-		if (returnType == XdmfGeometryType::XY())
-		{
-			return XDMF_GEOMETRY_TYPE_XY;
-		}
-		else if (returnType == XdmfGeometryType::XYZ())
-		{
-			return XDMF_GEOMETRY_TYPE_XYZ;
-		}
-		else if (returnType == XdmfGeometryType::NoGeometryType())
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Uninitialized geometry type");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Invalid geometry type");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-		}
-	}
+  if (mGeometry == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set geometry before its type can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
+  else {
+    shared_ptr<const XdmfGeometryType> returnType = mGeometry->getType();
+    if (returnType == XdmfGeometryType::XY()) {
+      return XDMF_GEOMETRY_TYPE_XY;
+    }
+    else if (returnType == XdmfGeometryType::XYZ()) {
+      return XDMF_GEOMETRY_TYPE_XYZ;
+    }
+    else if (returnType == XdmfGeometryType::NoGeometryType()) {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Uninitialized geometry type");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Invalid geometry type");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+    }
+  }
 }
 
 int
 XdmfFortran::retrieveGeometryValueType()
 {
-	if (mGeometry == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set geometry before its value type can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
-	else
-	{
-		shared_ptr<const XdmfArrayType> dataType = mGeometry->getArrayType();
-		if (dataType == XdmfArrayType::Int8())
-		{
-			return XDMF_ARRAY_TYPE_INT8;
-		}
-		else if (dataType == XdmfArrayType::Int16())
-		{
-			return XDMF_ARRAY_TYPE_INT16;
-		}
-		else if (dataType == XdmfArrayType::Int32())
-		{
-			return XDMF_ARRAY_TYPE_INT32;
-		}
-		else if (dataType == XdmfArrayType::Int64())
-		{
-			return XDMF_ARRAY_TYPE_INT64;
-		}
-		else if (dataType == XdmfArrayType::UInt8())
-		{
-			return XDMF_ARRAY_TYPE_UINT8;
-		}
-		else if (dataType == XdmfArrayType::UInt16())
-		{
-			return XDMF_ARRAY_TYPE_UINT16;
-		}
-		else if (dataType == XdmfArrayType::UInt32())
-		{
-			return XDMF_ARRAY_TYPE_UINT32;
-		}
-		else if (dataType == XdmfArrayType::Float32())
-		{
-			return XDMF_ARRAY_TYPE_FLOAT32;
-		}
-		else if (dataType == XdmfArrayType::Float64())
-		{
-			return XDMF_ARRAY_TYPE_FLOAT64;
-		}
-		else if (dataType == XdmfArrayType::Uninitialized())
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, 
-					"Uninitialized Geometry Data Type.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, 
-					"Invalid Geometry Data Type.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-		}
-	}
+  if (mGeometry == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set geometry before its value type can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
+  else {
+    shared_ptr<const XdmfArrayType> dataType = mGeometry->getArrayType();
+    if (dataType == XdmfArrayType::Int8()) {
+      return XDMF_ARRAY_TYPE_INT8;
+    }
+    else if (dataType == XdmfArrayType::Int16()) {
+      return XDMF_ARRAY_TYPE_INT16;
+    }
+    else if (dataType == XdmfArrayType::Int32()) {
+      return XDMF_ARRAY_TYPE_INT32;
+    }
+    else if (dataType == XdmfArrayType::Int64()) {
+      return XDMF_ARRAY_TYPE_INT64;
+    }
+    else if (dataType == XdmfArrayType::UInt8()) {
+      return XDMF_ARRAY_TYPE_UINT8;
+    }
+    else if (dataType == XdmfArrayType::UInt16()) {
+      return XDMF_ARRAY_TYPE_UINT16;
+    }
+    else if (dataType == XdmfArrayType::UInt32()) {
+      return XDMF_ARRAY_TYPE_UINT32;
+    }
+    else if (dataType == XdmfArrayType::Float32()) {
+      return XDMF_ARRAY_TYPE_FLOAT32;
+    }
+    else if (dataType == XdmfArrayType::Float64()) {
+      return XDMF_ARRAY_TYPE_FLOAT64;
+    }
+    else if (dataType == XdmfArrayType::Uninitialized()) {
+      try {
+        XdmfError::message(XdmfError::FATAL, 
+          "Uninitialized Geometry Data Type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, 
+          "Invalid Geometry Data Type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+    }
+  }
 }
 
 void
 XdmfFortran::retrieveGeometryValues(void * values, int dataType, int numberRead, int startIndex, int arrayStride, int valueStride)
 {
-	if(mGeometry == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set geometry before its values can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
-	else
-	{
-		if (!mGeometry->isInitialized())
-		{
-			mGeometry->read();
-		}
-		readFromArray(mGeometry,
-			dataType,
-			values,
-			numberRead,
-			startIndex,
-			arrayStride,
-			valueStride);
-	}
+  if(mGeometry == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set geometry before its values can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+  else {
+    if (!mGeometry->isInitialized()) {
+      mGeometry->read();
+    }
+    readFromArray(mGeometry,
+                  dataType,
+                  values,
+                  numberRead,
+                  startIndex,
+                  arrayStride,
+                  valueStride);
+  }
 }
 
 int
 XdmfFortran::retrieveGeometryNumPoints()
 {
-	if (mGeometry == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set geometry before the number of points it contains can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
-	else
-	{
-		return mGeometry->getNumberPoints();
-	}
+  if (mGeometry == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set geometry before the number of points it contains can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
+  else {
+    return mGeometry->getNumberPoints();
+  }
 }
 
 int
 XdmfFortran::retrieveGeometrySize()
 {
-	if (mGeometry == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set geometry before its size can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
-	else
-	{
-		return mGeometry->getSize();
-	}
+  if (mGeometry == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set geometry before its size can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
+  else {
+    return mGeometry->getSize();
+  }
 }
 
 void
 XdmfFortran::clearPreviousGeometries()
 {
-	mPreviousGeometries.clear();
+  mPreviousGeometries.clear();
 }
 
 int
 XdmfFortran::retrieveGeometryNumProperties()
 {
-	if (mGeometry == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set geometry before the number of properties it contains can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
-	else
-	{
-		return mGeometry->getItemProperties().size();
-	}	
+  if (mGeometry == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set geometry before the number of properties it contains can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
+  else {
+    return mGeometry->getItemProperties().size();
+  } 
 }
 
 void
 XdmfFortran::retrieveGeometryProperty(int index, char * key, int keyLength, char * value, int valueLength)
 {
-	if (mGeometry == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set geometry before the properties it contains can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
-	else
-	{
-		if (index < (int)mGeometry->getItemProperties().size())
-		{
-			std::map<std::string, std::string>::iterator walker = mGeometry->getItemProperties().begin();
-			for (int i = 0; i<index; i++)
-			{
-				walker++;
-			}
-			char * tempKey = strdup((*walker).first.c_str());
-			memset(key, 0, keyLength);
-			memcpy(key, tempKey, strlen(tempKey)+1);
-			delete [] tempKey;
-			char * tempValue = strdup((*walker).second.c_str());
-			memset(value, 0, valueLength);
-			memcpy(value, tempValue, strlen(tempValue)+1);
-			delete [] tempValue;
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
+  if (mGeometry == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set geometry before the properties it contains can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+  else {
+    if (index < (int)mGeometry->getItemProperties().size()) {
+      std::map<std::string, std::string>::iterator walker = mGeometry->getItemProperties().begin();
+      for (int i = 0; i<index; i++) {
+        walker++;
+      }
+      char * tempKey = strdup((*walker).first.c_str());
+      memset(key, 0, keyLength);
+      memcpy(key, tempKey, strlen(tempKey)+1);
+      delete [] tempKey;
+      char * tempValue = strdup((*walker).second.c_str());
+      memset(value, 0, valueLength);
+      memcpy(value, tempValue, strlen(tempValue)+1);
+      delete [] tempValue;
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
 }
 
 void
 XdmfFortran::retrieveGeometryPropertyByKey(char * key, char * value, int valueLength)
 {
-	if (mGeometry == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set geometry before the properties it contains can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
-	else
-	{
-		std::string tempString = key;
-		memset(value, 0, valueLength);
-		if ((mGeometry->getItemProperties().count(tempString))>0)
-		{
-			char * tempValue = strdup(mGeometry->getItemProperties()[tempString].c_str());
-			memcpy(value, tempValue, strlen(tempValue)+1);
-			delete [] tempValue;
-		}
-	}
+  if (mGeometry == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set geometry before the properties it contains can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+  else {
+    std::string tempString = key;
+    memset(value, 0, valueLength);
+    if ((mGeometry->getItemProperties().count(tempString))>0) {
+      char * tempValue = strdup(mGeometry->getItemProperties()[tempString].c_str());
+      memcpy(value, tempValue, strlen(tempValue)+1);
+      delete [] tempValue;
+    }
+  }
 }
 
 void
 XdmfFortran::retrieveTopologyTag(char * tag, int tagLength)
 {
-	if (mTopology == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set Topology before its tag can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
-	else
-	{
-		char * tempTag = strdup(mTopology->getItemTag().c_str());
-		memset(tag, 0, tagLength);
-		memcpy(tag, tempTag, strlen(tempTag)+1);
-		delete [] tempTag;
-	}
+  if (mTopology == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set Topology before its tag can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+  else {
+    char * tempTag = strdup(mTopology->getItemTag().c_str());
+    memset(tag, 0, tagLength);
+    memcpy(tag, tempTag, strlen(tempTag)+1);
+    delete [] tempTag;
+  }
 }
 
 int
 XdmfFortran::retrieveTopologyType()
 {
-	if (mTopology == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set Topology before its type can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
-	else
-	{
-		shared_ptr<const XdmfTopologyType> returnType =  mTopology->getType();
-		if (returnType ==  XdmfTopologyType::Polyvertex())
-		{
-			return XDMF_TOPOLOGY_TYPE_POLYVERTEX;
-		}
-		else if (returnType == XdmfTopologyType::Polyline(0))
-		{
-			return XDMF_TOPOLOGY_TYPE_POLYLINE;
-		}
-		else if (returnType == XdmfTopologyType::Polygon(0))
-		{
-			return XDMF_TOPOLOGY_TYPE_POLYGON;
-		}
-		else if (returnType == XdmfTopologyType::Triangle())
-		{
-			return XDMF_TOPOLOGY_TYPE_TRIANGLE;
-		}
-		else if (returnType == XdmfTopologyType::Quadrilateral())
-		{
-			return XDMF_TOPOLOGY_TYPE_QUADRILATERAL;
-		}
-		else if (returnType == XdmfTopologyType::Tetrahedron())
-		{
-			return XDMF_TOPOLOGY_TYPE_TETRAHEDRON;
-		}
-		else if (returnType == XdmfTopologyType::Pyramid())
-		{
-			return XDMF_TOPOLOGY_TYPE_PYRAMID;
-		}
-		else if (returnType == XdmfTopologyType::Wedge())
-		{
-			return XDMF_TOPOLOGY_TYPE_WEDGE;
-		}
-		else if (returnType == XdmfTopologyType::Hexahedron())
-		{
-			return XDMF_TOPOLOGY_TYPE_HEXAHEDRON;
-		}
-		else if (returnType == XdmfTopologyType::Edge_3())
-		{
-			return XDMF_TOPOLOGY_TYPE_EDGE_3;
-		}
-		else if (returnType == XdmfTopologyType::Triangle_6())
-		{
-			return XDMF_TOPOLOGY_TYPE_TRIANGLE_6;
-		}
-		else if (returnType == XdmfTopologyType::Quadrilateral_8())
-		{
-			return XDMF_TOPOLOGY_TYPE_QUADRILATERAL_8;
-		}
-		else if (returnType == XdmfTopologyType::Quadrilateral_9())
-		{
-			return XDMF_TOPOLOGY_TYPE_QUADRILATERAL_9;
-		}
-		else if (returnType == XdmfTopologyType::Tetrahedron_10())
-		{
-			return XDMF_TOPOLOGY_TYPE_TETRAHEDRON_10;
-		}
-		else if (returnType == XdmfTopologyType::Pyramid_13())
-		{
-			return XDMF_TOPOLOGY_TYPE_PYRAMID_13;
-		}
-		else if (returnType == XdmfTopologyType::Wedge_15())
-		{
-			return XDMF_TOPOLOGY_TYPE_WEDGE_15;
-		}
-		else if (returnType == XdmfTopologyType::Wedge_18())
-		{
-			return XDMF_TOPOLOGY_TYPE_WEDGE_18;
-		}
-		else if (returnType == XdmfTopologyType::Hexahedron_20())
-		{
-			return XDMF_TOPOLOGY_TYPE_HEXAHEDRON_20;
-		}
-		else if (returnType == XdmfTopologyType::Hexahedron_24())
-		{
-			return XDMF_TOPOLOGY_TYPE_HEXAHEDRON_24;
-		}
-		else if (returnType == XdmfTopologyType::Hexahedron_27())
-		{
-			return XDMF_TOPOLOGY_TYPE_HEXAHEDRON_27;
-		}
-		else if (returnType == XdmfTopologyType::Hexahedron_64())
-		{
-			return XDMF_TOPOLOGY_TYPE_HEXAHEDRON_64;
-		}
-		else if (returnType == XdmfTopologyType::Hexahedron_125())
-		{
-			return XDMF_TOPOLOGY_TYPE_HEXAHEDRON_125;
-		}
-		else if (returnType == XdmfTopologyType::Hexahedron_216())
-		{
-			return XDMF_TOPOLOGY_TYPE_HEXAHEDRON_216;
-		}
-		else if (returnType == XdmfTopologyType::Hexahedron_343())
-		{
-			return XDMF_TOPOLOGY_TYPE_HEXAHEDRON_343;
-		}
-		else if (returnType == XdmfTopologyType::Hexahedron_512())
-		{
-			return XDMF_TOPOLOGY_TYPE_HEXAHEDRON_512;
-		}
-		else if (returnType == XdmfTopologyType::Hexahedron_729())
-		{
-			return XDMF_TOPOLOGY_TYPE_HEXAHEDRON_729;
-		}
-		else if (returnType == XdmfTopologyType::Hexahedron_1000())
-		{
-			return XDMF_TOPOLOGY_TYPE_HEXAHEDRON_1000;
-		}
-		else if (returnType == XdmfTopologyType::Hexahedron_1331())
-		{
-			return XDMF_TOPOLOGY_TYPE_HEXAHEDRON_1331;
-		}
-		else if (returnType == XdmfTopologyType::Mixed())
-		{
-			return XDMF_TOPOLOGY_TYPE_MIXED;
-		}
-		else if (returnType == XdmfTopologyType::NoTopologyType())
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Uninitialized topology type.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Invalid topology type.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-		}
-	}
+  if (mTopology == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set Topology before its type can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
+  else {
+    shared_ptr<const XdmfTopologyType> returnType =  mTopology->getType();
+    if (returnType ==  XdmfTopologyType::Polyvertex()) {
+      return XDMF_TOPOLOGY_TYPE_POLYVERTEX;
+    }
+    else if (returnType == XdmfTopologyType::Polyline(0)) {
+      return XDMF_TOPOLOGY_TYPE_POLYLINE;
+    }
+    else if (returnType == XdmfTopologyType::Polygon(0)) {
+      return XDMF_TOPOLOGY_TYPE_POLYGON;
+    }
+    else if (returnType == XdmfTopologyType::Triangle()) {
+      return XDMF_TOPOLOGY_TYPE_TRIANGLE;
+    }
+    else if (returnType == XdmfTopologyType::Quadrilateral()) {
+      return XDMF_TOPOLOGY_TYPE_QUADRILATERAL;
+    }
+    else if (returnType == XdmfTopologyType::Tetrahedron()) {
+      return XDMF_TOPOLOGY_TYPE_TETRAHEDRON;
+    }
+    else if (returnType == XdmfTopologyType::Pyramid()) {
+      return XDMF_TOPOLOGY_TYPE_PYRAMID;
+    }
+    else if (returnType == XdmfTopologyType::Wedge()) {
+      return XDMF_TOPOLOGY_TYPE_WEDGE;
+    }
+    else if (returnType == XdmfTopologyType::Hexahedron()) {
+      return XDMF_TOPOLOGY_TYPE_HEXAHEDRON;
+    }
+    else if (returnType == XdmfTopologyType::Edge_3()) {
+      return XDMF_TOPOLOGY_TYPE_EDGE_3;
+    }
+    else if (returnType == XdmfTopologyType::Triangle_6()) {
+      return XDMF_TOPOLOGY_TYPE_TRIANGLE_6;
+    }
+    else if (returnType == XdmfTopologyType::Quadrilateral_8()) {
+      return XDMF_TOPOLOGY_TYPE_QUADRILATERAL_8;
+    }
+    else if (returnType == XdmfTopologyType::Quadrilateral_9()) {
+      return XDMF_TOPOLOGY_TYPE_QUADRILATERAL_9;
+    }
+    else if (returnType == XdmfTopologyType::Tetrahedron_10()) {
+      return XDMF_TOPOLOGY_TYPE_TETRAHEDRON_10;
+    }
+    else if (returnType == XdmfTopologyType::Pyramid_13()) {
+      return XDMF_TOPOLOGY_TYPE_PYRAMID_13;
+    }
+    else if (returnType == XdmfTopologyType::Wedge_15()) {
+      return XDMF_TOPOLOGY_TYPE_WEDGE_15;
+    }
+    else if (returnType == XdmfTopologyType::Wedge_18()) {
+      return XDMF_TOPOLOGY_TYPE_WEDGE_18;
+    }
+    else if (returnType == XdmfTopologyType::Hexahedron_20()) {
+      return XDMF_TOPOLOGY_TYPE_HEXAHEDRON_20;
+    }
+    else if (returnType == XdmfTopologyType::Hexahedron_24()) {
+      return XDMF_TOPOLOGY_TYPE_HEXAHEDRON_24;
+    }
+    else if (returnType == XdmfTopologyType::Hexahedron_27()) {
+      return XDMF_TOPOLOGY_TYPE_HEXAHEDRON_27;
+    }
+    else if (returnType == XdmfTopologyType::Hexahedron_64()) {
+      return XDMF_TOPOLOGY_TYPE_HEXAHEDRON_64;
+    }
+    else if (returnType == XdmfTopologyType::Hexahedron_125()) {
+      return XDMF_TOPOLOGY_TYPE_HEXAHEDRON_125;
+    }
+    else if (returnType == XdmfTopologyType::Hexahedron_216()) {
+      return XDMF_TOPOLOGY_TYPE_HEXAHEDRON_216;
+    }
+    else if (returnType == XdmfTopologyType::Hexahedron_343()) {
+      return XDMF_TOPOLOGY_TYPE_HEXAHEDRON_343;
+    }
+    else if (returnType == XdmfTopologyType::Hexahedron_512()) {
+      return XDMF_TOPOLOGY_TYPE_HEXAHEDRON_512;
+    }
+    else if (returnType == XdmfTopologyType::Hexahedron_729()) {
+      return XDMF_TOPOLOGY_TYPE_HEXAHEDRON_729;
+    }
+    else if (returnType == XdmfTopologyType::Hexahedron_1000()) {
+      return XDMF_TOPOLOGY_TYPE_HEXAHEDRON_1000;
+    }
+    else if (returnType == XdmfTopologyType::Hexahedron_1331()) {
+      return XDMF_TOPOLOGY_TYPE_HEXAHEDRON_1331;
+    }
+    else if (returnType == XdmfTopologyType::Mixed()) {
+      return XDMF_TOPOLOGY_TYPE_MIXED;
+    }
+    else if (returnType == XdmfTopologyType::NoTopologyType()) {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Uninitialized topology type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Invalid topology type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+    }
+  }
 }
 
 int
 XdmfFortran::retrieveTopologyValueType()
 {
-	if (mTopology == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set Topology before its value type can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
-	else
-	{		
-		shared_ptr<const XdmfArrayType> dataType = mTopology->getArrayType();
-		if (dataType == XdmfArrayType::Int8())
-		{
-			return XDMF_ARRAY_TYPE_INT8;
-		}
-		else if (dataType == XdmfArrayType::Int16())
-		{
-			return XDMF_ARRAY_TYPE_INT16;
-		}
-		else if (dataType == XdmfArrayType::Int32())
-		{
-			return XDMF_ARRAY_TYPE_INT32;
-		}
-		else if (dataType == XdmfArrayType::Int64())
-		{
-			return XDMF_ARRAY_TYPE_INT64;
-		}
-		else if (dataType == XdmfArrayType::UInt8())
-		{
-			return XDMF_ARRAY_TYPE_UINT8;
-		}
-		else if (dataType == XdmfArrayType::UInt16())
-		{
-			return XDMF_ARRAY_TYPE_UINT16;
-		}
-		else if (dataType == XdmfArrayType::UInt32())
-		{
-			return XDMF_ARRAY_TYPE_UINT32;
-		}
-		else if (dataType == XdmfArrayType::Float32())
-		{
-			return XDMF_ARRAY_TYPE_FLOAT32;
-		}
-		else if (dataType == XdmfArrayType::Float64())
-		{
-			return XDMF_ARRAY_TYPE_FLOAT64;
-		}
-		else if (dataType == XdmfArrayType::Uninitialized())
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, 
-					"Uninitialized Topology Data Type.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, 
-					"Invalid Topology Data Type.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-		}
-	}
+  if (mTopology == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set Topology before its value type can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
+  else {   
+    shared_ptr<const XdmfArrayType> dataType = mTopology->getArrayType();
+    if (dataType == XdmfArrayType::Int8()) {
+      return XDMF_ARRAY_TYPE_INT8;
+    }
+    else if (dataType == XdmfArrayType::Int16()) {
+      return XDMF_ARRAY_TYPE_INT16;
+    }
+    else if (dataType == XdmfArrayType::Int32()) {
+      return XDMF_ARRAY_TYPE_INT32;
+    }
+    else if (dataType == XdmfArrayType::Int64()) {
+      return XDMF_ARRAY_TYPE_INT64;
+    }
+    else if (dataType == XdmfArrayType::UInt8()) {
+      return XDMF_ARRAY_TYPE_UINT8;
+    }
+    else if (dataType == XdmfArrayType::UInt16()) {
+      return XDMF_ARRAY_TYPE_UINT16;
+    }
+    else if (dataType == XdmfArrayType::UInt32()) {
+      return XDMF_ARRAY_TYPE_UINT32;
+    }
+    else if (dataType == XdmfArrayType::Float32()) {
+      return XDMF_ARRAY_TYPE_FLOAT32;
+    }
+    else if (dataType == XdmfArrayType::Float64()) {
+      return XDMF_ARRAY_TYPE_FLOAT64;
+    }
+    else if (dataType == XdmfArrayType::Uninitialized()) {
+      try {
+        XdmfError::message(XdmfError::FATAL, 
+          "Uninitialized Topology Data Type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, 
+          "Invalid Topology Data Type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+    }
+  }
 }
 
 void
 XdmfFortran::retrieveTopologyValues(void * values, int dataType, int numberRead, int startIndex, int arrayStride, int valueStride)
 {
-	if(mTopology == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set topology before its values can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
-	else
-	{
-		if (!mTopology->isInitialized())
-		{
-			mTopology->read();
-		}
-		readFromArray(mTopology,
-			dataType,
-			values,
-			numberRead,
-			startIndex,
-			arrayStride,
-			valueStride);
-	}
+  if(mTopology == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set topology before its values can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+  else {
+    if (!mTopology->isInitialized()) {
+      mTopology->read();
+    }
+    readFromArray(mTopology,
+                  dataType,
+                  values,
+                  numberRead,
+                  startIndex,
+                  arrayStride,
+                  valueStride);
+  }
 }
 
 int
 XdmfFortran::retrieveTopologyNumElements()
 {
-	if (mTopology == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set Topology before the number of Elements it contains can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
-	else
-	{
-		return mTopology->getNumberElements();
-	}
+  if (mTopology == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set Topology before the number of Elements it contains can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
+  else {
+    return mTopology->getNumberElements();
+  }
 }
 
 int
 XdmfFortran::retrieveTopologySize()
 {
-	if (mTopology == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set Topology before its size can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
-	else
-	{
-		return mTopology->getSize();
-	}
+  if (mTopology == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set Topology before its size can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
+  else {
+    return mTopology->getSize();
+  }
 }
 
 void
 XdmfFortran::clearPreviousTopologies()
 {
-	mPreviousTopologies.clear();
+  mPreviousTopologies.clear();
 }
 
 int
 XdmfFortran::retrieveTopologyNumProperties()
 {
-	if (mTopology == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set Topology before the number of properties it contains can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
-	else
-	{
-		return mTopology->getItemProperties().size();
-	}	
+  if (mTopology == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set Topology before the number of properties it contains can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
+  else {
+    return mTopology->getItemProperties().size();
+  } 
 }
 
 void
 XdmfFortran::retrieveTopologyProperty(int index, char * key, int keyLength, char * value, int valueLength)
 {
-	if (mTopology == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set Topology before the properties it contains can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
-	else
-	{
-		if (index < (int)mTopology->getItemProperties().size())
-		{
-			std::map<std::string, std::string>::iterator walker = mTopology->getItemProperties().begin();
-			for (int i = 0; i<index; i++)
-			{
-				walker++;
-			}
-			char * tempKey = strdup((*walker).first.c_str());
-			memset(key, 0, keyLength);
-			memcpy(key, tempKey, strlen(tempKey)+1);
-			delete [] tempKey;
-			char * tempValue = strdup((*walker).second.c_str());
-			memset(value, 0, valueLength);
-			memcpy(value, tempValue, strlen(tempValue)+1);
-			delete [] tempValue;
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
+  if (mTopology == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set Topology before the properties it contains can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+  else {
+    if (index < (int)mTopology->getItemProperties().size()) {
+      std::map<std::string, std::string>::iterator walker = mTopology->getItemProperties().begin();
+      for (int i = 0; i<index; i++) {
+        walker++;
+      }
+      char * tempKey = strdup((*walker).first.c_str());
+      memset(key, 0, keyLength);
+      memcpy(key, tempKey, strlen(tempKey)+1);
+      delete [] tempKey;
+      char * tempValue = strdup((*walker).second.c_str());
+      memset(value, 0, valueLength);
+      memcpy(value, tempValue, strlen(tempValue)+1);
+      delete [] tempValue;
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
 }
 
 void
 XdmfFortran::retrieveTopologyPropertyByKey(char * key, char * value, int valueLength)
 {
-	if (mTopology == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set Topology before the properties it contains can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
-	else
-	{
-		std::string tempString = key;
-		memset(value, 0, valueLength);
-		if ((mTopology->getItemProperties().count(tempString))>0)
-		{
-			char * tempValue = strdup(mTopology->getItemProperties()[tempString].c_str());
-			memcpy(value, tempValue, strlen(tempValue)+1);
-			delete [] tempValue;
-		}
-	}
+  if (mTopology == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set Topology before the properties it contains can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+  else {
+    std::string tempString = key;
+    memset(value, 0, valueLength);
+    if ((mTopology->getItemProperties().count(tempString))>0) {
+      char * tempValue = strdup(mTopology->getItemProperties()[tempString].c_str());
+      memcpy(value, tempValue, strlen(tempValue)+1);
+      delete [] tempValue;
+    }
+  }
 }
 
 int
@@ -4943,286 +4093,232 @@ XdmfFortran::setDimensions(int numValues, int arrayType, void * pointValues)
 void
 XdmfFortran::openPreviousDimensions(int index)
 {
-	if ((int)mPreviousDimensions.size()>index)
-	{
-		mDimensions = mPreviousDimensions[index];
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if ((int)mPreviousDimensions.size()>index) {
+    mDimensions = mPreviousDimensions[index];
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::clearPreviousDimensions()
 {
-	mPreviousDimensions.clear();
+  mPreviousDimensions.clear();
 }
 
 void
 XdmfFortran::retrieveDimensionsTag(char * tag, int tagLength)
 {
-	if (mDimensions == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set dimensions before its tag can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
-	else
-	{
-		char * tempTag = strdup(mDimensions->getItemTag().c_str());
-		memset(tag, 0, tagLength);
-		memcpy(tag, tempTag, strlen(tempTag)+1);
-		delete [] tempTag;
-	}
+  if (mDimensions == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set dimensions before its tag can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+  else {
+    char * tempTag = strdup(mDimensions->getItemTag().c_str());
+    memset(tag, 0, tagLength);
+    memcpy(tag, tempTag, strlen(tempTag)+1);
+    delete [] tempTag;
+  }
 }
 
 int
 XdmfFortran::retrieveDimensionsValueType()
 {
-	if (mDimensions == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set dimensions before its value type can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
-	else
-	{
-		shared_ptr<const XdmfArrayType> dataType = mDimensions->getArrayType();
-		if (dataType == XdmfArrayType::Int8())
-		{
-			return XDMF_ARRAY_TYPE_INT8;
-		}
-		else if (dataType == XdmfArrayType::Int16())
-		{
-			return XDMF_ARRAY_TYPE_INT16;
-		}
-		else if (dataType == XdmfArrayType::Int32())
-		{
-			return XDMF_ARRAY_TYPE_INT32;
-		}
-		else if (dataType == XdmfArrayType::Int64())
-		{
-			return XDMF_ARRAY_TYPE_INT64;
-		}
-		else if (dataType == XdmfArrayType::UInt8())
-		{
-			return XDMF_ARRAY_TYPE_UINT8;
-		}
-		else if (dataType == XdmfArrayType::UInt16())
-		{
-			return XDMF_ARRAY_TYPE_UINT16;
-		}
-		else if (dataType == XdmfArrayType::UInt32())
-		{
-			return XDMF_ARRAY_TYPE_UINT32;
-		}
-		else if (dataType == XdmfArrayType::Float32())
-		{
-			return XDMF_ARRAY_TYPE_FLOAT32;
-		}
-		else if (dataType == XdmfArrayType::Float64())
-		{
-			return XDMF_ARRAY_TYPE_FLOAT64;
-		}
-		else if (dataType == XdmfArrayType::Uninitialized())
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, 
-					"Uninitialized Dimension Data Type.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, 
-					"Invalid Dimension Data Type.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-		}
-	}
+  if (mDimensions == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set dimensions before its value type can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
+  else {
+    shared_ptr<const XdmfArrayType> dataType = mDimensions->getArrayType();
+    if (dataType == XdmfArrayType::Int8()) {
+      return XDMF_ARRAY_TYPE_INT8;
+    }
+    else if (dataType == XdmfArrayType::Int16()) {
+      return XDMF_ARRAY_TYPE_INT16;
+    }
+    else if (dataType == XdmfArrayType::Int32()) {
+      return XDMF_ARRAY_TYPE_INT32;
+    }
+    else if (dataType == XdmfArrayType::Int64()) {
+      return XDMF_ARRAY_TYPE_INT64;
+    }
+    else if (dataType == XdmfArrayType::UInt8()) {
+      return XDMF_ARRAY_TYPE_UINT8;
+    }
+    else if (dataType == XdmfArrayType::UInt16()) {
+      return XDMF_ARRAY_TYPE_UINT16;
+    }
+    else if (dataType == XdmfArrayType::UInt32()) {
+      return XDMF_ARRAY_TYPE_UINT32;
+    }
+    else if (dataType == XdmfArrayType::Float32()) {
+      return XDMF_ARRAY_TYPE_FLOAT32;
+    }
+    else if (dataType == XdmfArrayType::Float64()) {
+      return XDMF_ARRAY_TYPE_FLOAT64;
+    }
+    else if (dataType == XdmfArrayType::Uninitialized()) {
+      try {
+        XdmfError::message(XdmfError::FATAL, 
+          "Uninitialized Dimension Data Type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, 
+          "Invalid Dimension Data Type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+    }
+  }
 }
 
 void
 XdmfFortran::retrieveDimensionsValues(void * values, int dataType, int numberRead, int startIndex, int arrayStride, int valueStride)
 {
-	if(mDimensions == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set dimensions before its values can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
-	else
-	{
-		if (!mDimensions->isInitialized())
-		{
-			mDimensions->read();
-		}
-		readFromArray(mDimensions,
-			dataType,
-			values,
-			numberRead,
-			startIndex,
-			arrayStride,
-			valueStride);
-	}
+  if(mDimensions == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set dimensions before its values can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+  else {
+    if (!mDimensions->isInitialized()) {
+      mDimensions->read();
+    }
+    readFromArray(mDimensions,
+                  dataType,
+                  values,
+                  numberRead,
+                  startIndex,
+                  arrayStride,
+                  valueStride);
+  }
 }
 
 int
 XdmfFortran::retrieveDimensionsSize()
 {
-	if (mDimensions == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set Dimensions before its size can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
-	else
-	{
-		return mDimensions->getSize();
-	}
+  if (mDimensions == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set Dimensions before its size can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
+  else {
+    return mDimensions->getSize();
+  }
 }
 
 int
 XdmfFortran::retrieveDimensionsNumProperties()
 {
-	if (mDimensions == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set dimensions before the number of properties it contains can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
-	else
-	{
-		return mDimensions->getItemProperties().size();
-	}	
+  if (mDimensions == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set dimensions before the number of properties it contains can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
+  else {
+    return mDimensions->getItemProperties().size();
+  } 
 }
 
 void
 XdmfFortran::retrieveDimensionsProperty(int index, char * key, int keyLength, char * value, int valueLength)
 {
-	if (mDimensions == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set dimensions before the properties it contains can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
-	else
-	{
-		if (index < (int)mDimensions->getItemProperties().size())
-		{
-			std::map<std::string, std::string>::iterator walker = mDimensions->getItemProperties().begin();
-			for (int i = 0; i<index; i++)
-			{
-				walker++;
-			}
-			char * tempKey = strdup((*walker).first.c_str());
-			memset(key, 0, keyLength);
-			memcpy(key, tempKey, strlen(tempKey)+1);
-			delete [] tempKey;
-			char * tempValue = strdup((*walker).second.c_str());
-			memset(value, 0, valueLength);
-			memcpy(value, tempValue, strlen(tempValue)+1);
-			delete [] tempValue;
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
+  if (mDimensions == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set dimensions before the properties it contains can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+  else {
+    if (index < (int)mDimensions->getItemProperties().size()) {
+      std::map<std::string, std::string>::iterator walker = mDimensions->getItemProperties().begin();
+      for (int i = 0; i<index; i++) {
+        walker++;
+      }
+      char * tempKey = strdup((*walker).first.c_str());
+      memset(key, 0, keyLength);
+      memcpy(key, tempKey, strlen(tempKey)+1);
+      delete [] tempKey;
+      char * tempValue = strdup((*walker).second.c_str());
+      memset(value, 0, valueLength);
+      memcpy(value, tempValue, strlen(tempValue)+1);
+      delete [] tempValue;
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
 }
 
 void
 XdmfFortran::retrieveDimensionsPropertyByKey(char * key, char * value, int valueLength)
 {
-	if (mDimensions == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set dimensions before the properties it contains can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
-	else
-	{
-		std::string tempString = key;
-		memset(value, 0, valueLength);
-		if ((mDimensions->getItemProperties().count(tempString))>0)
-		{
-			char * tempValue = strdup(mDimensions->getItemProperties()[tempString].c_str());
-			memcpy(value, tempValue, strlen(tempValue)+1);
-			delete [] tempValue;
-		}
-	}
+  if (mDimensions == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set dimensions before the properties it contains can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+  else {
+    std::string tempString = key;
+    memset(value, 0, valueLength);
+    if ((mDimensions->getItemProperties().count(tempString))>0) {
+      char * tempValue = strdup(mDimensions->getItemProperties()[tempString].c_str());
+      memcpy(value, tempValue, strlen(tempValue)+1);
+      delete [] tempValue;
+    }
+  }
 }
 
 int
@@ -5241,286 +4337,232 @@ XdmfFortran::setOrigin(int numValues, int arrayType, void * pointValues)
 void
 XdmfFortran::setPreviousOrigin(int index)
 {
-	if (index < (int)mPreviousOrigins.size())
-	{
-		mOrigin = mPreviousOrigins[index];
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Error: Index out of bounds.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (index < (int)mPreviousOrigins.size()) {
+    mOrigin = mPreviousOrigins[index];
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Error: Index out of bounds.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::clearPreviousOrigins()
 {
-	mPreviousOrigins.clear();
+  mPreviousOrigins.clear();
 }
 
 void
 XdmfFortran::retrieveOriginTag(char * tag, int tagLength)
 {
-	if (mOrigin == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set origin before its tag can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
-	else
-	{
-		char * tempTag = strdup(mOrigin->getItemTag().c_str());
-		memset(tag, 0, tagLength);
-		memcpy(tag, tempTag, strlen(tempTag)+1);
-		delete [] tempTag;
-	}
+  if (mOrigin == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set origin before its tag can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+  else {
+    char * tempTag = strdup(mOrigin->getItemTag().c_str());
+    memset(tag, 0, tagLength);
+    memcpy(tag, tempTag, strlen(tempTag)+1);
+    delete [] tempTag;
+  }
 }
 
 int
 XdmfFortran::retrieveOriginValueType()
 {
-	if (mOrigin == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set origin before its value type can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
-	else
-	{
-		shared_ptr<const XdmfArrayType> dataType = mOrigin->getArrayType();
-		if (dataType == XdmfArrayType::Int8())
-		{
-			return XDMF_ARRAY_TYPE_INT8;
-		}
-		else if (dataType == XdmfArrayType::Int16())
-		{
-			return XDMF_ARRAY_TYPE_INT16;
-		}
-		else if (dataType == XdmfArrayType::Int32())
-		{
-			return XDMF_ARRAY_TYPE_INT32;
-		}
-		else if (dataType == XdmfArrayType::Int64())
-		{
-			return XDMF_ARRAY_TYPE_INT64;
-		}
-		else if (dataType == XdmfArrayType::UInt8())
-		{
-			return XDMF_ARRAY_TYPE_UINT8;
-		}
-		else if (dataType == XdmfArrayType::UInt16())
-		{
-			return XDMF_ARRAY_TYPE_UINT16;
-		}
-		else if (dataType == XdmfArrayType::UInt32())
-		{
-			return XDMF_ARRAY_TYPE_UINT32;
-		}
-		else if (dataType == XdmfArrayType::Float32())
-		{
-			return XDMF_ARRAY_TYPE_FLOAT32;
-		}
-		else if (dataType == XdmfArrayType::Float64())
-		{
-			return XDMF_ARRAY_TYPE_FLOAT64;
-		}
-		else if (dataType == XdmfArrayType::Uninitialized())
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, 
-					"Uninitialized Origin Data Type.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, 
-					"Invalid Origin Data Type.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-		}
-	}
+  if (mOrigin == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set origin before its value type can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
+  else {
+    shared_ptr<const XdmfArrayType> dataType = mOrigin->getArrayType();
+    if (dataType == XdmfArrayType::Int8()) {
+      return XDMF_ARRAY_TYPE_INT8;
+    }
+    else if (dataType == XdmfArrayType::Int16()) {
+      return XDMF_ARRAY_TYPE_INT16;
+    }
+    else if (dataType == XdmfArrayType::Int32()) {
+      return XDMF_ARRAY_TYPE_INT32;
+    }
+    else if (dataType == XdmfArrayType::Int64()) {
+      return XDMF_ARRAY_TYPE_INT64;
+    }
+    else if (dataType == XdmfArrayType::UInt8()) {
+      return XDMF_ARRAY_TYPE_UINT8;
+    }
+    else if (dataType == XdmfArrayType::UInt16()) {
+      return XDMF_ARRAY_TYPE_UINT16;
+    }
+    else if (dataType == XdmfArrayType::UInt32()) {
+      return XDMF_ARRAY_TYPE_UINT32;
+    }
+    else if (dataType == XdmfArrayType::Float32()) {
+      return XDMF_ARRAY_TYPE_FLOAT32;
+    }
+    else if (dataType == XdmfArrayType::Float64()) {
+      return XDMF_ARRAY_TYPE_FLOAT64;
+    }
+    else if (dataType == XdmfArrayType::Uninitialized()) {
+      try {
+        XdmfError::message(XdmfError::FATAL, 
+          "Uninitialized Origin Data Type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, 
+          "Invalid Origin Data Type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+    }
+  }
 }
 
 void
 XdmfFortran::retrieveOriginValues(void * values, int dataType, int numberRead, int startIndex, int arrayStride, int valueStride)
 {
-	if(mOrigin == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set origin before its values can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
-	else
-	{
-		if (!mOrigin->isInitialized())
-		{
-			mOrigin->read();
-		}
-		readFromArray(mOrigin,
-			dataType,
-			values,
-			numberRead,
-			startIndex,
-			arrayStride,
-			valueStride);
-	}
+  if(mOrigin == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set origin before its values can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+  else {
+    if (!mOrigin->isInitialized()) {
+      mOrigin->read();
+    }
+    readFromArray(mOrigin,
+                  dataType,
+                  values,
+                  numberRead,
+                  startIndex,
+                  arrayStride,
+                  valueStride);
+  }
 }
 
 int
 XdmfFortran::retrieveOriginSize()
 {
-	if (mOrigin == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set origin before its size can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
-	else
-	{
-		return mOrigin->getSize();
-	}
+  if (mOrigin == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set origin before its size can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
+  else {
+    return mOrigin->getSize();
+  }
 }
 
 int
 XdmfFortran::retrieveOriginNumProperties()
 {
-	if (mOrigin == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set origin before the number of properties it contains can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
-	else
-	{
-		return mOrigin->getItemProperties().size();
-	}	
+  if (mOrigin == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set origin before the number of properties it contains can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
+  else {
+    return mOrigin->getItemProperties().size();
+  } 
 }
 
 void
 XdmfFortran::retrieveOriginProperty(int index, char * key, int keyLength, char * value, int valueLength)
 {
-	if (mOrigin == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set Origin before the properties it contains can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
-	else
-	{
-		if (index < (int)mOrigin->getItemProperties().size())
-		{
-			std::map<std::string, std::string>::iterator walker = mOrigin->getItemProperties().begin();
-			for (int i = 0; i<index; i++)
-			{
-				walker++;
-			}
-			char * tempKey = strdup((*walker).first.c_str());
-			memset(key, 0, keyLength);
-			memcpy(key, tempKey, strlen(tempKey)+1);
-			delete [] tempKey;
-			char * tempValue = strdup((*walker).second.c_str());
-			memset(value, 0, valueLength);
-			memcpy(value, tempValue, strlen(tempValue)+1);
-			delete [] tempValue;
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
+  if (mOrigin == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set Origin before the properties it contains can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+  else {
+    if (index < (int)mOrigin->getItemProperties().size()) {
+      std::map<std::string, std::string>::iterator walker = mOrigin->getItemProperties().begin();
+      for (int i = 0; i<index; i++) {
+        walker++;
+      }
+      char * tempKey = strdup((*walker).first.c_str());
+      memset(key, 0, keyLength);
+      memcpy(key, tempKey, strlen(tempKey)+1);
+      delete [] tempKey;
+      char * tempValue = strdup((*walker).second.c_str());
+      memset(value, 0, valueLength);
+      memcpy(value, tempValue, strlen(tempValue)+1);
+      delete [] tempValue;
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
 }
 
 void
 XdmfFortran::retrieveOriginPropertyByKey(char * key, char * value, int valueLength)
 {
-	if (mOrigin == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set origin before the properties it contains can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
-	else
-	{
-		std::string tempString = key;
-		memset(value, 0, valueLength);
-		if ((mOrigin->getItemProperties().count(tempString))>0)
-		{
-			char * tempValue = strdup(mOrigin->getItemProperties()[tempString].c_str());
-			memcpy(value, tempValue, strlen(tempValue)+1);
-			delete [] tempValue;
-		}
-	}
+  if (mOrigin == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set origin before the properties it contains can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+  else {
+    std::string tempString = key;
+    memset(value, 0, valueLength);
+    if ((mOrigin->getItemProperties().count(tempString))>0) {
+      char * tempValue = strdup(mOrigin->getItemProperties()[tempString].c_str());
+      memcpy(value, tempValue, strlen(tempValue)+1);
+      delete [] tempValue;
+    }
+  }
 }
 
 int
@@ -5539,2363 +4581,1949 @@ XdmfFortran::setBrick(int numValues, int arrayType, void * pointValues)
 void
 XdmfFortran::setPreviousBrick(int index)
 {
-	if (index < (int)mPreviousBricks.size())
-	{
-		mBrick = mPreviousBricks[index];
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Error: Index out of bounds.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (index < (int)mPreviousBricks.size()) {
+    mBrick = mPreviousBricks[index];
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Error: Index out of bounds.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::clearPreviousBricks()
 {
-	mPreviousBricks.clear();
+  mPreviousBricks.clear();
 }
 
 void
 XdmfFortran::retrieveBrickTag(char * tag, int tagLength)
 {
-	if (mBrick == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set Brick before its tag can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
-	else
-	{
-		char * tempTag = strdup(mBrick->getItemTag().c_str());
-		memset(tag, 0, tagLength);
-		memcpy(tag, tempTag, strlen(tempTag)+1);
-		delete [] tempTag;
-	}
+  if (mBrick == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set Brick before its tag can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+  else {
+    char * tempTag = strdup(mBrick->getItemTag().c_str());
+    memset(tag, 0, tagLength);
+    memcpy(tag, tempTag, strlen(tempTag)+1);
+    delete [] tempTag;
+  }
 }
 
 int
 XdmfFortran::retrieveBrickValueType()
 {
-	if (mBrick == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set brick before its value type can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
-	else
-	{
-		shared_ptr<const XdmfArrayType> dataType = mBrick->getArrayType();
-		if (dataType == XdmfArrayType::Int8())
-		{
-			return XDMF_ARRAY_TYPE_INT8;
-		}
-		else if (dataType == XdmfArrayType::Int16())
-		{
-			return XDMF_ARRAY_TYPE_INT16;
-		}
-		else if (dataType == XdmfArrayType::Int32())
-		{
-			return XDMF_ARRAY_TYPE_INT32;
-		}
-		else if (dataType == XdmfArrayType::Int64())
-		{
-			return XDMF_ARRAY_TYPE_INT64;
-		}
-		else if (dataType == XdmfArrayType::UInt8())
-		{
-			return XDMF_ARRAY_TYPE_UINT8;
-		}
-		else if (dataType == XdmfArrayType::UInt16())
-		{
-			return XDMF_ARRAY_TYPE_UINT16;
-		}
-		else if (dataType == XdmfArrayType::UInt32())
-		{
-			return XDMF_ARRAY_TYPE_UINT32;
-		}
-		else if (dataType == XdmfArrayType::Float32())
-		{
-			return XDMF_ARRAY_TYPE_FLOAT32;
-		}
-		else if (dataType == XdmfArrayType::Float64())
-		{
-			return XDMF_ARRAY_TYPE_FLOAT64;
-		}
-		else if (dataType == XdmfArrayType::Uninitialized())
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, 
-					"Uninitialized Brick Data Type.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, 
-					"Invalid Brick Data Type.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-		}
-	}
+  if (mBrick == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set brick before its value type can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
+  else {
+    shared_ptr<const XdmfArrayType> dataType = mBrick->getArrayType();
+    if (dataType == XdmfArrayType::Int8()) {
+      return XDMF_ARRAY_TYPE_INT8;
+    }
+    else if (dataType == XdmfArrayType::Int16()) {
+      return XDMF_ARRAY_TYPE_INT16;
+    }
+    else if (dataType == XdmfArrayType::Int32()) {
+      return XDMF_ARRAY_TYPE_INT32;
+    }
+    else if (dataType == XdmfArrayType::Int64()) {
+      return XDMF_ARRAY_TYPE_INT64;
+    }
+    else if (dataType == XdmfArrayType::UInt8()) {
+      return XDMF_ARRAY_TYPE_UINT8;
+    }
+    else if (dataType == XdmfArrayType::UInt16()) {
+      return XDMF_ARRAY_TYPE_UINT16;
+    }
+    else if (dataType == XdmfArrayType::UInt32()) {
+      return XDMF_ARRAY_TYPE_UINT32;
+    }
+    else if (dataType == XdmfArrayType::Float32()) {
+      return XDMF_ARRAY_TYPE_FLOAT32;
+    }
+    else if (dataType == XdmfArrayType::Float64()) {
+      return XDMF_ARRAY_TYPE_FLOAT64;
+    }
+    else if (dataType == XdmfArrayType::Uninitialized()) {
+      try {
+        XdmfError::message(XdmfError::FATAL, 
+          "Uninitialized Brick Data Type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, 
+          "Invalid Brick Data Type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+    }
+  }
 }
 
 void
 XdmfFortran::retrieveBrickValues(void * values, int dataType, int numberRead, int startIndex, int arrayStride, int valueStride)
 {
-	if(mBrick == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set brick before its values can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
-	else
-	{
-		if (!mBrick->isInitialized())
-		{
-			mBrick->read();
-		}
-		readFromArray(mBrick,
-			dataType,
-			values,
-			numberRead,
-			startIndex,
-			arrayStride,
-			valueStride);
-	}
+  if(mBrick == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set brick before its values can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+  else {
+    if (!mBrick->isInitialized()) {
+      mBrick->read();
+    }
+    readFromArray(mBrick,
+                  dataType,
+                  values,
+                  numberRead,
+                  startIndex,
+                  arrayStride,
+                  valueStride);
+  }
 }
 
 int
 XdmfFortran::retrieveBrickSize()
 {
-	if (mBrick == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set brick before its size can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
-	else
-	{
-		return mBrick->getSize();
-	}
+  if (mBrick == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+                         "Must set brick before its size can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
+  else {
+    return mBrick->getSize();
+  }
 }
 
 int
 XdmfFortran::retrieveBrickNumProperties()
 {
-	if (mBrick == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set brick before the number of properties it contains can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
-	else
-	{
-		return mBrick->getItemProperties().size();
-	}	
+  if (mBrick == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set brick before the number of properties it contains can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
+  else {
+    return mBrick->getItemProperties().size();
+  } 
 }
 
 void
 XdmfFortran::retrieveBrickProperty(int index, char * key, int keyLength, char * value, int valueLength)
 {
-	if (mBrick == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set brick before the properties it contains can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
-	else
-	{
-		if (index < (int)mBrick->getItemProperties().size())
-		{
-			std::map<std::string, std::string>::iterator walker = mBrick->getItemProperties().begin();
-			for (int i = 0; i<index; i++)
-			{
-				walker++;
-			}
-			char * tempKey = strdup((*walker).first.c_str());
-			memset(key, 0, keyLength);
-			memcpy(key, tempKey, strlen(tempKey)+1);
-			delete [] tempKey;
-			char * tempValue = strdup((*walker).second.c_str());
-			memset(value, 0, valueLength);
-			memcpy(value, tempValue, strlen(tempValue)+1);
-			delete [] tempValue;
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
+  if (mBrick == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set brick before the properties it contains can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+  else {
+    if (index < (int)mBrick->getItemProperties().size()) {
+      std::map<std::string, std::string>::iterator walker = mBrick->getItemProperties().begin();
+      for (int i = 0; i<index; i++) {
+        walker++;
+      }
+      char * tempKey = strdup((*walker).first.c_str());
+      memset(key, 0, keyLength);
+      memcpy(key, tempKey, strlen(tempKey)+1);
+      delete [] tempKey;
+      char * tempValue = strdup((*walker).second.c_str());
+      memset(value, 0, valueLength);
+      memcpy(value, tempValue, strlen(tempValue)+1);
+      delete [] tempValue;
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
 }
 
 void
 XdmfFortran::retrieveBrickPropertyByKey(char * key, char * value, int valueLength)
 {
-	if (mBrick == NULL)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Must set brick before the properties it contains can be retrieved.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
-	else
-	{
-		std::string tempString = key;
-		memset(value, 0, valueLength);
-		if ((mBrick->getItemProperties().count(tempString))>0)
-		{
-			char * tempValue = strdup(mBrick->getItemProperties()[tempString].c_str());
-			memcpy(value, tempValue, strlen(tempValue)+1);
-			delete [] tempValue;
-		}
-	}
+  if (mBrick == NULL) {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Must set brick before the properties it contains can be retrieved.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+  else {
+    std::string tempString = key;
+    memset(value, 0, valueLength);
+    if ((mBrick->getItemProperties().count(tempString))>0) {
+      char * tempValue = strdup(mBrick->getItemProperties()[tempString].c_str());
+      memcpy(value, tempValue, strlen(tempValue)+1);
+      delete [] tempValue;
+    }
+  }
 }
 
 void
 XdmfFortran::addMap(char * name)
 {
-	shared_ptr<XdmfMap> addedMap = XdmfMap::New();
-	addedMap->setName(name);
-	mMaps.push_back(addedMap);
+  shared_ptr<XdmfMap> addedMap = XdmfMap::New();
+  addedMap->setName(name);
+  mMaps.push_back(addedMap);
 }
 
 int
 XdmfFortran::retrieveNumMaps()
 {
-	return mMaps.size();
+  return mMaps.size();
 }
 
 void
 XdmfFortran::clearMaps()
 {
-	mMaps.clear();
+  mMaps.clear();
 }
 
 void
 XdmfFortran::retrieveMapTag(int index, char * tag, int tagLength)
 {
-	if (index < (int)mMaps.size())
-	{
-		char * tempTag = strdup(mMaps[index]->getItemTag().c_str());
-		memset(tag, 0, tagLength);
-		memcpy(tag, tempTag, strlen(tempTag)+1);
-		delete [] tempTag;
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (index < (int)mMaps.size()) {
+    char * tempTag = strdup(mMaps[index]->getItemTag().c_str());
+    memset(tag, 0, tagLength);
+    memcpy(tag, tempTag, strlen(tempTag)+1);
+    delete [] tempTag;
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::addRemoteNodeID(int index, int localNodeID, int remoteTaskID, int remoteLocalNodeID)
 {
-	mMaps[index]->insert(remoteTaskID, localNodeID, remoteLocalNodeID);
+  mMaps[index]->insert(remoteTaskID, localNodeID, remoteLocalNodeID);
 }
 
 void
 XdmfFortran::retrieveRemoteNodeIDs(int index, int localNodeID, int remoteTaskID, int * remoteNodeIDs)
 {
-	if ((int)mMaps.size()>index)
-	{
-		if (mMaps[index]->getRemoteNodeIds(remoteTaskID).count(localNodeID)>0)
-		{
-			std::set<int> returnSet = mMaps[index]->getRemoteNodeIds(remoteTaskID)[localNodeID];
-			std::set<int>::iterator walker;
-			int i = 0;
-			for (walker = returnSet.begin(); walker != returnSet.end();walker++)
-			{
-				remoteNodeIDs[i] =  *walker;
-				i++;
-			}
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, 
-					"The map does not contain a remote ID for the requested node.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Error: Index out of Range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if ((int)mMaps.size()>index) {
+    if (mMaps[index]->getRemoteNodeIds(remoteTaskID).count(localNodeID)>0) {
+      std::set<int> returnSet = mMaps[index]->getRemoteNodeIds(remoteTaskID)[localNodeID];
+      std::set<int>::iterator walker;
+      int i = 0;
+      for (walker = returnSet.begin(); walker != returnSet.end();walker++) {
+        remoteNodeIDs[i] =  *walker;
+        i++;
+      }
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, 
+          "The map does not contain a remote ID for the requested node.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Error: Index out of Range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 int
 XdmfFortran::retrieveNumRemoteNodeIDs(int index, int localNodeID, int remoteTaskID)
 {
-	if ((int)mMaps.size()<index)
-	{
-		if (mMaps[index]->getRemoteNodeIds(remoteTaskID).count(localNodeID)>0)
-		{
-			return mMaps[index]->getRemoteNodeIds(remoteTaskID)[localNodeID].size();
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Error: Index out of Range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
+  if ((int)mMaps.size()<index) {
+    if (mMaps[index]->getRemoteNodeIds(remoteTaskID).count(localNodeID)>0) {
+      return mMaps[index]->getRemoteNodeIds(remoteTaskID)[localNodeID].size();
+    }
+    else {
+      return 0;
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Error: Index out of Range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
 }
 
 int
 XdmfFortran::storeMap(int index)
 {
-	if (index < (int)mMaps.size())
-	{
-		int id = mPreviousMaps.size();
-		mPreviousMaps.push_back(mMaps[index]);
-		return id;
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Error: Index out of Range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
+  if (index < (int)mMaps.size()) {
+    int id = mPreviousMaps.size();
+    mPreviousMaps.push_back(mMaps[index]);
+    return id;
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Error: Index out of Range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
 }
 
 void
 XdmfFortran::addPreviousMap(int index)
 {
-	if (index < (int)mPreviousMaps.size())
-	{
-		mMaps.push_back(mPreviousMaps[index]);
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (index < (int)mPreviousMaps.size()) {
+    mMaps.push_back(mPreviousMaps[index]);
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::clearPreviousMaps()
 {
-	mPreviousMaps.clear();
+  mPreviousMaps.clear();
 }
 
 void
 XdmfFortran::removeMap(int index)
-{	
-	if (index < (int)mMaps.size())
-	{
-		mMaps.erase(mMaps.begin()+index);
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+{ 
+  if (index < (int)mMaps.size()) {
+    mMaps.erase(mMaps.begin()+index);
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 int
 XdmfFortran::retrieveMapNumProperties(int index)
 {
-	if (index < (int)mMaps.size())
-	{
-		return mMaps[index]->getItemProperties().size();
-	}	
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
+  if (index < (int)mMaps.size()) {
+    return mMaps[index]->getItemProperties().size();
+  } 
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
 }
 
 void
 XdmfFortran::retrieveMapProperty(int mapIndex, int index, char * key, int keyLength, char * value, int valueLength)
 {
-	if (mapIndex < (int)mMaps.size())
-	{
-		if (index < (int)mMaps[index]->getItemProperties().size())
-		{
-			std::map<std::string, std::string>::iterator walker = mMaps[index]->getItemProperties().begin();
-			for (int i = 0; i<index; i++)
-			{
-				walker++;
-			}
-			char * tempKey = strdup((*walker).first.c_str());
-			memset(key, 0, keyLength);
-			memcpy(key, tempKey, strlen(tempKey)+1);
-			delete [] tempKey;
-			char * tempValue = strdup((*walker).second.c_str());
-			memset(value, 0, valueLength);
-			memcpy(value, tempValue, strlen(tempValue)+1);
-			delete [] tempValue;
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (mapIndex < (int)mMaps.size()) {
+    if (index < (int)mMaps[index]->getItemProperties().size()) {
+      std::map<std::string, std::string>::iterator walker = mMaps[index]->getItemProperties().begin();
+      for (int i = 0; i<index; i++) {
+        walker++;
+      }
+      char * tempKey = strdup((*walker).first.c_str());
+      memset(key, 0, keyLength);
+      memcpy(key, tempKey, strlen(tempKey)+1);
+      delete [] tempKey;
+      char * tempValue = strdup((*walker).second.c_str());
+      memset(value, 0, valueLength);
+      memcpy(value, tempValue, strlen(tempValue)+1);
+      delete [] tempValue;
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::retrieveMapPropertyByKey(int index, char * key, char * value, int valueLength)
 {
-	if (index < (int)mMaps.size())
-	{
-		std::string tempString = key;
-		memset(value, 0, valueLength);
-		if ((mMaps[index]->getItemProperties().count(tempString))>0)
-		{
-			char * tempValue = strdup(mMaps[index]->getItemProperties()[tempString].c_str());
-			memcpy(value, tempValue, strlen(tempValue)+1);
-			delete [] tempValue;
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, 
-				"Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (index < (int)mMaps.size()) {
+    std::string tempString = key;
+    memset(value, 0, valueLength);
+    if ((mMaps[index]->getItemProperties().count(tempString))>0) {
+      char * tempValue = strdup(mMaps[index]->getItemProperties()[tempString].c_str());
+      memcpy(value, tempValue, strlen(tempValue)+1);
+      delete [] tempValue;
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+        "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 int
 XdmfFortran::retrieveNumAttributes()
 {
-	return mAttributes.size();
+  return mAttributes.size();
 }
 
 void
 XdmfFortran::clearAttributes()
 {
-	mAttributes.clear();
+  mAttributes.clear();
 }
 
 void
 XdmfFortran::retrieveAttributeTag(int index, char * tag, int tagLength)
 {
-	if (index < (int)mAttributes.size())
-	{
-		char * tempTag = strdup(mAttributes[index]->getItemTag().c_str());
-		memset(tag, 0, tagLength);
-		memcpy(tag, tempTag, strlen(tempTag)+1);
-		delete [] tempTag;
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (index < (int)mAttributes.size()) {
+    char * tempTag = strdup(mAttributes[index]->getItemTag().c_str());
+    memset(tag, 0, tagLength);
+    memcpy(tag, tempTag, strlen(tempTag)+1);
+    delete [] tempTag;
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::retrieveAttributeName(int index, char * name, int nameLength)
 {
-	if (index < (int)mAttributes.size())
-	{
-		char * tempName = strdup(mAttributes[index]->getName().c_str());
-		memset(name, 0, nameLength);
-		memcpy(name, tempName, strlen(tempName)+1);
-		delete [] tempName;
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (index < (int)mAttributes.size()) {
+    char * tempName = strdup(mAttributes[index]->getName().c_str());
+    memset(name, 0, nameLength);
+    memcpy(name, tempName, strlen(tempName)+1);
+    delete [] tempName;
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 int
 XdmfFortran::retrieveAttributeValueType(int index)
 {
-	if (index < (int)mAttributes.size())
-	{
-		shared_ptr<const XdmfArrayType> dataType = mAttributes[index]->getArrayType();
-		if (dataType == XdmfArrayType::Int8())
-		{
-			return XDMF_ARRAY_TYPE_INT8;
-		}
-		else if (dataType == XdmfArrayType::Int16())
-		{
-			return XDMF_ARRAY_TYPE_INT16;
-		}
-		else if (dataType == XdmfArrayType::Int32())
-		{
-			return XDMF_ARRAY_TYPE_INT32;
-		}
-		else if (dataType == XdmfArrayType::Int64())
-		{
-			return XDMF_ARRAY_TYPE_INT64;
-		}
-		else if (dataType == XdmfArrayType::UInt8())
-		{
-			return XDMF_ARRAY_TYPE_UINT8;
-		}
-		else if (dataType == XdmfArrayType::UInt16())
-		{
-			return XDMF_ARRAY_TYPE_UINT16;
-		}
-		else if (dataType == XdmfArrayType::UInt32())
-		{
-			return XDMF_ARRAY_TYPE_UINT32;
-		}
-		else if (dataType == XdmfArrayType::Float32())
-		{
-			return XDMF_ARRAY_TYPE_FLOAT32;
-		}
-		else if (dataType == XdmfArrayType::Float64())
-		{
-			return XDMF_ARRAY_TYPE_FLOAT64;
-		}
-		else if (dataType == XdmfArrayType::Uninitialized())
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, 
-					"Uninitialized Attribute Data Type.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, 
-					"Invalid Attribute Data Type.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
+  if (index < (int)mAttributes.size()) {
+    shared_ptr<const XdmfArrayType> dataType = mAttributes[index]->getArrayType();
+    if (dataType == XdmfArrayType::Int8()) {
+      return XDMF_ARRAY_TYPE_INT8;
+    }
+    else if (dataType == XdmfArrayType::Int16()) {
+      return XDMF_ARRAY_TYPE_INT16;
+    }
+    else if (dataType == XdmfArrayType::Int32()) {
+      return XDMF_ARRAY_TYPE_INT32;
+    }
+    else if (dataType == XdmfArrayType::Int64()) {
+      return XDMF_ARRAY_TYPE_INT64;
+    }
+    else if (dataType == XdmfArrayType::UInt8()) {
+      return XDMF_ARRAY_TYPE_UINT8;
+    }
+    else if (dataType == XdmfArrayType::UInt16()) {
+      return XDMF_ARRAY_TYPE_UINT16;
+    }
+    else if (dataType == XdmfArrayType::UInt32()) {
+      return XDMF_ARRAY_TYPE_UINT32;
+    }
+    else if (dataType == XdmfArrayType::Float32()) {
+      return XDMF_ARRAY_TYPE_FLOAT32;
+    }
+    else if (dataType == XdmfArrayType::Float64()) {
+      return XDMF_ARRAY_TYPE_FLOAT64;
+    }
+    else if (dataType == XdmfArrayType::Uninitialized()) {
+      try {
+        XdmfError::message(XdmfError::FATAL, 
+          "Uninitialized Attribute Data Type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, 
+          "Invalid Attribute Data Type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
 }
 
 void
 XdmfFortran::retrieveAttributeValues(int index, void * values, int dataType, int numberRead, int startIndex, int arrayStride, int valueStride)
 {
-	if (index < (int)mAttributes.size())
-	{
-		if (!mAttributes[index]->isInitialized())
-		{
-			mAttributes[index]->read();
-		}
-		readFromArray(mAttributes[index],
-			dataType,
-			values,
-			numberRead,
-			startIndex,
-			arrayStride,
-			valueStride);
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (index < (int)mAttributes.size()) {
+    if (!mAttributes[index]->isInitialized()) {
+      mAttributes[index]->read();
+    }
+    readFromArray(mAttributes[index],
+                  dataType,
+                  values,
+                  numberRead,
+                  startIndex,
+                  arrayStride,
+                  valueStride);
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::removeAttribute(int index)
 {
-	if (index < (int)mAttributes.size())
-	{
-		mAttributes.erase(mAttributes.begin()+index);
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}	
+  if (index < (int)mAttributes.size()) {
+    mAttributes.erase(mAttributes.begin()+index);
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  } 
 }
 
 void
 XdmfFortran::replaceAttribute(int index, char * name, int attributeCenter, int attributeType, int numValues, int arrayType, void * values)
 {
-	if (index < (int)mAttributes.size())
-	{
-		shared_ptr<XdmfAttribute> currAttribute = XdmfAttribute::New();
-		currAttribute->setName(name);
-		switch(attributeCenter)
-		{
-			case XDMF_ATTRIBUTE_CENTER_GRID:
-				currAttribute->setCenter(XdmfAttributeCenter::Grid());
-				break;
-			case XDMF_ATTRIBUTE_CENTER_CELL:
-				currAttribute->setCenter(XdmfAttributeCenter::Cell());
-				break;
-			case XDMF_ATTRIBUTE_CENTER_FACE:
-				currAttribute->setCenter(XdmfAttributeCenter::Face());
-				break;
-			case XDMF_ATTRIBUTE_CENTER_EDGE:
-				currAttribute->setCenter(XdmfAttributeCenter::Edge());
-				break;
-			case XDMF_ATTRIBUTE_CENTER_NODE:
-				currAttribute->setCenter(XdmfAttributeCenter::Node());
-				break;
-			default:
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Invalid attribute center");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-		}
+  if (index < (int)mAttributes.size()) {
+    shared_ptr<XdmfAttribute> currAttribute = XdmfAttribute::New();
+    currAttribute->setName(name);
+    switch(attributeCenter) {
+      case XDMF_ATTRIBUTE_CENTER_GRID:
+        currAttribute->setCenter(XdmfAttributeCenter::Grid());
+        break;
+      case XDMF_ATTRIBUTE_CENTER_CELL:
+        currAttribute->setCenter(XdmfAttributeCenter::Cell());
+        break;
+      case XDMF_ATTRIBUTE_CENTER_FACE:
+        currAttribute->setCenter(XdmfAttributeCenter::Face());
+        break;
+      case XDMF_ATTRIBUTE_CENTER_EDGE:
+        currAttribute->setCenter(XdmfAttributeCenter::Edge());
+        break;
+      case XDMF_ATTRIBUTE_CENTER_NODE:
+        currAttribute->setCenter(XdmfAttributeCenter::Node());
+        break;
+      default:
+        try {
+          XdmfError::message(XdmfError::FATAL, "Invalid attribute center");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+    }
 
-		switch(attributeType)
-		{
-			case XDMF_ATTRIBUTE_TYPE_SCALAR:
-				currAttribute->setType(XdmfAttributeType::Scalar());
-				break;
-			case XDMF_ATTRIBUTE_TYPE_VECTOR:
-				currAttribute->setType(XdmfAttributeType::Vector());
-				break;
-			case XDMF_ATTRIBUTE_TYPE_TENSOR:
-				currAttribute->setType(XdmfAttributeType::Tensor());
-				break;
-			case XDMF_ATTRIBUTE_TYPE_MATRIX:
-				currAttribute->setType(XdmfAttributeType::Matrix());
-				break;
-			case XDMF_ATTRIBUTE_TYPE_TENSOR6:
-				currAttribute->setType(XdmfAttributeType::Tensor6());
-				break;
-			case XDMF_ATTRIBUTE_TYPE_GLOBALID:
-				currAttribute->setType(XdmfAttributeType::GlobalId());
-				break;
-			default:
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Invalid attribute type");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-		}
+    switch(attributeType) {
+      case XDMF_ATTRIBUTE_TYPE_SCALAR:
+        currAttribute->setType(XdmfAttributeType::Scalar());
+        break;
+      case XDMF_ATTRIBUTE_TYPE_VECTOR:
+        currAttribute->setType(XdmfAttributeType::Vector());
+        break;
+      case XDMF_ATTRIBUTE_TYPE_TENSOR:
+        currAttribute->setType(XdmfAttributeType::Tensor());
+        break;
+      case XDMF_ATTRIBUTE_TYPE_MATRIX:
+        currAttribute->setType(XdmfAttributeType::Matrix());
+        break;
+      case XDMF_ATTRIBUTE_TYPE_TENSOR6:
+        currAttribute->setType(XdmfAttributeType::Tensor6());
+        break;
+      case XDMF_ATTRIBUTE_TYPE_GLOBALID:
+        currAttribute->setType(XdmfAttributeType::GlobalId());
+        break;
+      default:
+        try {
+          XdmfError::message(XdmfError::FATAL, "Invalid attribute type");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+    }
 
-		writeToArray(currAttribute, numValues, arrayType, values);
-		mAttributes[index] = currAttribute;
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}	
+    writeToArray(currAttribute, numValues, arrayType, values);
+    mAttributes[index] = currAttribute;
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  } 
 }
 
 void
 XdmfFortran::openAttribute(int index)
 {
-	if (index < (int)mAttributes.size())
-	{
-		int i;
-		shared_ptr<XdmfAttribute> openedAttribute = mAttributes[index];
-		int n = openedAttribute->getNumberInformations();
-		shared_ptr<XdmfInformation> openedInformation;
-		for (i = 0; i < n; i++)
-		{
-			openedInformation = openedAttribute->getInformation(i);
-			mInformations.push_back(openedInformation);
-			mPreviousInformations.push_back(openedInformation);
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (index < (int)mAttributes.size()) {
+    int i;
+    shared_ptr<XdmfAttribute> openedAttribute = mAttributes[index];
+    int n = openedAttribute->getNumberInformations();
+    shared_ptr<XdmfInformation> openedInformation;
+    for (i = 0; i < n; i++) {
+      openedInformation = openedAttribute->getInformation(i);
+      mInformations.push_back(openedInformation);
+      mPreviousInformations.push_back(openedInformation);
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 int
 XdmfFortran::retrieveAttributeSize(int index)
 {
-	if (index < (int)mAttributes.size())
-	{
-		return mAttributes[index]->getSize();
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
+  if (index < (int)mAttributes.size()) {
+    return mAttributes[index]->getSize();
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
 }
 
 int
 XdmfFortran::retrieveAttributeType(int index)
 {
-	if (index < (int)mAttributes.size())
-	{
-		shared_ptr<const XdmfAttributeType> returnType = mAttributes[index]->getType();
-		if (returnType == XdmfAttributeType::Scalar())
-		{
-			return XDMF_ATTRIBUTE_TYPE_SCALAR;
-		}
-		else if (returnType == XdmfAttributeType::Vector())
-		{
-			return XDMF_ATTRIBUTE_TYPE_VECTOR;
-		}
-		else if (returnType == XdmfAttributeType::Tensor())
-		{
-			return XDMF_ATTRIBUTE_TYPE_TENSOR;
-		}
-		else if (returnType == XdmfAttributeType::Matrix())
-		{
-			return XDMF_ATTRIBUTE_TYPE_MATRIX;
-		}
-		else if (returnType == XdmfAttributeType::Tensor6())
-		{
-			return XDMF_ATTRIBUTE_TYPE_TENSOR6;
-		}
-		else if (returnType == XdmfAttributeType::GlobalId())
-		{
-			return XDMF_ATTRIBUTE_TYPE_GLOBALID;
-		}
-		else
-		{
-			return XDMF_ATTRIBUTE_TYPE_NOTYPE;
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
+  if (index < (int)mAttributes.size()) {
+    shared_ptr<const XdmfAttributeType> returnType = mAttributes[index]->getType();
+    if (returnType == XdmfAttributeType::Scalar()) {
+      return XDMF_ATTRIBUTE_TYPE_SCALAR;
+    }
+    else if (returnType == XdmfAttributeType::Vector()) {
+      return XDMF_ATTRIBUTE_TYPE_VECTOR;
+    }
+    else if (returnType == XdmfAttributeType::Tensor()) {
+      return XDMF_ATTRIBUTE_TYPE_TENSOR;
+    }
+    else if (returnType == XdmfAttributeType::Matrix()) {
+      return XDMF_ATTRIBUTE_TYPE_MATRIX;
+    }
+    else if (returnType == XdmfAttributeType::Tensor6()) {
+      return XDMF_ATTRIBUTE_TYPE_TENSOR6;
+    }
+    else if (returnType == XdmfAttributeType::GlobalId()) {
+      return XDMF_ATTRIBUTE_TYPE_GLOBALID;
+    }
+    else {
+      return XDMF_ATTRIBUTE_TYPE_NOTYPE;
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
 }
 
 int
 XdmfFortran::retrieveAttributeCenter(int index)
 {
-	if (index < (int)mAttributes.size())
-	{
-		shared_ptr<const XdmfAttributeCenter> returnCenter = mAttributes[index]->getCenter();
-		if (returnCenter == XdmfAttributeCenter::Grid())
-		{
-			return XDMF_ATTRIBUTE_CENTER_GRID;
-		}
-		else if (returnCenter == XdmfAttributeCenter::Cell())
-		{
-			return XDMF_ATTRIBUTE_CENTER_CELL;
-		}
-		else if (returnCenter == XdmfAttributeCenter::Face())
-		{
-			return XDMF_ATTRIBUTE_CENTER_FACE;
-		}
-		else if (returnCenter == XdmfAttributeCenter::Edge())
-		{
-			return XDMF_ATTRIBUTE_CENTER_EDGE;
-		}
-		else if (returnCenter == XdmfAttributeCenter::Node())
-		{
-			return XDMF_ATTRIBUTE_CENTER_NODE;
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Invalid Attribute Center.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
+  if (index < (int)mAttributes.size()) {
+    shared_ptr<const XdmfAttributeCenter> returnCenter = mAttributes[index]->getCenter();
+    if (returnCenter == XdmfAttributeCenter::Grid()) {
+      return XDMF_ATTRIBUTE_CENTER_GRID;
+    }
+    else if (returnCenter == XdmfAttributeCenter::Cell()) {
+      return XDMF_ATTRIBUTE_CENTER_CELL;
+    }
+    else if (returnCenter == XdmfAttributeCenter::Face()) {
+      return XDMF_ATTRIBUTE_CENTER_FACE;
+    }
+    else if (returnCenter == XdmfAttributeCenter::Edge()) {
+      return XDMF_ATTRIBUTE_CENTER_EDGE;
+    }
+    else if (returnCenter == XdmfAttributeCenter::Node()) {
+      return XDMF_ATTRIBUTE_CENTER_NODE;
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Invalid Attribute Center.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
 }
 
 void
 XdmfFortran::clearPreviousAttributes()
 {
-	mPreviousAttributes.clear();
+  mPreviousAttributes.clear();
 }
 
 int
 XdmfFortran::retrieveAttributeNumProperties(int index)
 {
-	if (index < (int)mAttributes.size())
-	{
-		return mAttributes[index]->getItemProperties().size();
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}	
+  if (index < (int)mAttributes.size()) {
+    return mAttributes[index]->getItemProperties().size();
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  } 
 }
 
 void
 XdmfFortran::retrieveAttributeProperty(int attributeIndex, int index, char * key, int keyLength, char * value, int valueLength)
 {
-	if (attributeIndex < (int)mAttributes.size())
-	{
-		if (index < (int)mAttributes[attributeIndex]->getItemProperties().size())
-		{
-			std::map<std::string, std::string>::iterator walker = mAttributes[attributeIndex]->getItemProperties().begin();
-			for (int i = 0; i<index; i++)
-			{
-				walker++;
-			}
-			char * tempKey = strdup((*walker).first.c_str());
-			memset(key, 0, keyLength);
-			memcpy(key, tempKey, strlen(tempKey)+1);
-			delete [] tempKey;
-			char * tempValue = strdup((*walker).second.c_str());
-			memset(value, 0, valueLength);
-			memcpy(value, tempValue, strlen(tempValue)+1);
-			delete [] tempValue;
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Property index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (attributeIndex < (int)mAttributes.size()) {
+    if (index < (int)mAttributes[attributeIndex]->getItemProperties().size()) {
+      std::map<std::string, std::string>::iterator walker = mAttributes[attributeIndex]->getItemProperties().begin();
+      for (int i = 0; i<index; i++) {
+        walker++;
+      }
+      char * tempKey = strdup((*walker).first.c_str());
+      memset(key, 0, keyLength);
+      memcpy(key, tempKey, strlen(tempKey)+1);
+      delete [] tempKey;
+      char * tempValue = strdup((*walker).second.c_str());
+      memset(value, 0, valueLength);
+      memcpy(value, tempValue, strlen(tempValue)+1);
+      delete [] tempValue;
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Property index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::retrieveAttributePropertyByKey(int index, char * key, char * value, int valueLength)
 {
-	if (index < (int)mAttributes.size())
-	{
-		std::string tempString = key;
-		memset(value, 0, valueLength);
-		if ((mAttributes[index]->getItemProperties().count(tempString))>0)
-		{
-			char * tempValue = strdup(mAttributes[index]->getItemProperties()[tempString].c_str());
-			memcpy(value, tempValue, strlen(tempValue)+1);
-			delete [] tempValue;
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (index < (int)mAttributes.size()) {
+    std::string tempString = key;
+    memset(value, 0, valueLength);
+    if ((mAttributes[index]->getItemProperties().count(tempString))>0) {
+      char * tempValue = strdup(mAttributes[index]->getItemProperties()[tempString].c_str());
+      memcpy(value, tempValue, strlen(tempValue)+1);
+      delete [] tempValue;
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 int
 XdmfFortran::addCoordinate(char * name, int numValues, int arrayType, void * values)
 {
-	shared_ptr<XdmfArray> currArray = XdmfArray::New();
-	currArray->setName(name);
+  shared_ptr<XdmfArray> currArray = XdmfArray::New();
+  currArray->setName(name);
 
-	writeToArray(currArray, numValues, arrayType, values);
+  writeToArray(currArray, numValues, arrayType, values);
 
-	mCoordinates.push_back(currArray);
+  mCoordinates.push_back(currArray);
 
-	const int id = mPreviousCoordinates.size();
-	mPreviousCoordinates.push_back(currArray);
-	return id;
+  const int id = mPreviousCoordinates.size();
+  mPreviousCoordinates.push_back(currArray);
+  return id;
 }
 
 void
 XdmfFortran::addPreviousCoordinate(int index)
 {
-	if (index < (int)mPreviousCoordinates.size())
-	{
-		mCoordinates.push_back(mPreviousCoordinates[index]);
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (index < (int)mPreviousCoordinates.size()) {
+    mCoordinates.push_back(mPreviousCoordinates[index]);
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::clearPreviousCoordinates()
 {
-	mPreviousCoordinates.clear();
+  mPreviousCoordinates.clear();
 }
 
 int
 XdmfFortran::retrieveNumCoordinates()
 {
-	return mCoordinates.size();
+  return mCoordinates.size();
 }
 
 void
 XdmfFortran::retrieveCoordinateTag(int index, char * tag, int tagLength)
 {
-	if (index < (int)mCoordinates.size())
-	{
-		char * tempTag = strdup(mCoordinates[index]->getItemTag().c_str());
-		memset(tag, 0, tagLength);
-		memcpy(tag, tempTag, strlen(tempTag)+1);
-		delete [] tempTag;
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (index < (int)mCoordinates.size()) {
+    char * tempTag = strdup(mCoordinates[index]->getItemTag().c_str());
+    memset(tag, 0, tagLength);
+    memcpy(tag, tempTag, strlen(tempTag)+1);
+    delete [] tempTag;
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::retrieveCoordinateName(int index, char * name, int nameLength)
 {
-	if (index < (int)mCoordinates.size())
-	{
-		char * tempName = strdup(mCoordinates[index]->getName().c_str());
-		memset(name, 0, nameLength);
-		memcpy(name, tempName, strlen(tempName)+1);
-		delete [] tempName;
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (index < (int)mCoordinates.size()) {
+    char * tempName = strdup(mCoordinates[index]->getName().c_str());
+    memset(name, 0, nameLength);
+    memcpy(name, tempName, strlen(tempName)+1);
+    delete [] tempName;
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 int
 XdmfFortran::retrieveCoordinateValueType(int index)
 {
-	if (index < (int)mCoordinates.size())
-	{
-		shared_ptr<const XdmfArrayType> dataType = mCoordinates[index]->getArrayType();
-		if (dataType == XdmfArrayType::Int8())
-		{
-			return XDMF_ARRAY_TYPE_INT8;
-		}
-		else if (dataType == XdmfArrayType::Int16())
-		{
-			return XDMF_ARRAY_TYPE_INT16;
-		}
-		else if (dataType == XdmfArrayType::Int32())
-		{
-			return XDMF_ARRAY_TYPE_INT32;
-		}
-		else if (dataType == XdmfArrayType::Int64())
-		{
-			return XDMF_ARRAY_TYPE_INT64;
-		}
-		else if (dataType == XdmfArrayType::UInt8())
-		{
-			return XDMF_ARRAY_TYPE_UINT8;
-		}
-		else if (dataType == XdmfArrayType::UInt16())
-		{
-			return XDMF_ARRAY_TYPE_UINT16;
-		}
-		else if (dataType == XdmfArrayType::UInt32())
-		{
-			return XDMF_ARRAY_TYPE_UINT32;
-		}
-		else if (dataType == XdmfArrayType::Float32())
-		{
-			return XDMF_ARRAY_TYPE_FLOAT32;
-		}
-		else if (dataType == XdmfArrayType::Float64())
-		{
-			return XDMF_ARRAY_TYPE_FLOAT64;
-		}
-		else if (dataType == XdmfArrayType::Uninitialized())
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, 
-					"Uninitialized Coordinate Data Type.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, 
-					"Invalid Coordinate Data Type.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
+  if (index < (int)mCoordinates.size()) {
+    shared_ptr<const XdmfArrayType> dataType = mCoordinates[index]->getArrayType();
+    if (dataType == XdmfArrayType::Int8()) {
+      return XDMF_ARRAY_TYPE_INT8;
+    }
+    else if (dataType == XdmfArrayType::Int16()) {
+      return XDMF_ARRAY_TYPE_INT16;
+    }
+    else if (dataType == XdmfArrayType::Int32()) {
+      return XDMF_ARRAY_TYPE_INT32;
+    }
+    else if (dataType == XdmfArrayType::Int64()) {
+      return XDMF_ARRAY_TYPE_INT64;
+    }
+    else if (dataType == XdmfArrayType::UInt8()) {
+      return XDMF_ARRAY_TYPE_UINT8;
+    }
+    else if (dataType == XdmfArrayType::UInt16()) {
+      return XDMF_ARRAY_TYPE_UINT16;
+    }
+    else if (dataType == XdmfArrayType::UInt32()) {
+      return XDMF_ARRAY_TYPE_UINT32;
+    }
+    else if (dataType == XdmfArrayType::Float32()) {
+      return XDMF_ARRAY_TYPE_FLOAT32;
+    }
+    else if (dataType == XdmfArrayType::Float64()) {
+      return XDMF_ARRAY_TYPE_FLOAT64;
+    }
+    else if (dataType == XdmfArrayType::Uninitialized()) {
+      try {
+        XdmfError::message(XdmfError::FATAL, 
+          "Uninitialized Coordinate Data Type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, 
+          "Invalid Coordinate Data Type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
 }
 
 void
 XdmfFortran::retrieveCoordinateValues(int index, void * values, int dataType, int numberRead, int startIndex, int arrayStride, int valueStride)
 {
-	if (index < (int)mCoordinates.size())
-	{
-		if (!mCoordinates[index]->isInitialized())
-		{
-			mCoordinates[index]->read();
-		}
-		readFromArray(mCoordinates[index],
-			dataType,
-			values,
-			numberRead,
-			startIndex,
-			arrayStride,
-			valueStride);
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (index < (int)mCoordinates.size()) {
+    if (!mCoordinates[index]->isInitialized()) {
+      mCoordinates[index]->read();
+    }
+    readFromArray(mCoordinates[index],
+                  dataType,
+                  values,
+                  numberRead,
+                  startIndex,
+                  arrayStride,
+                  valueStride);
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::removeCoordinate(int index)
 {
-	if (index < (int)mCoordinates.size())
-	{
-		mCoordinates.erase(mCoordinates.begin()+index);
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}	
+  if (index < (int)mCoordinates.size()) {
+    mCoordinates.erase(mCoordinates.begin()+index);
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  } 
 }
 
 void
 XdmfFortran::replaceCoordinate(int index, char * name, int numValues, int arrayType, void * values)
 {
-	if (index < (int)mCoordinates.size())
-	{
-		shared_ptr<XdmfArray> currArray = XdmfArray::New();
-		currArray->setName(name);
-		writeToArray(currArray, numValues, arrayType, values);
-		mCoordinates[index] = currArray;
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}	
+  if (index < (int)mCoordinates.size()) {
+    shared_ptr<XdmfArray> currArray = XdmfArray::New();
+    currArray->setName(name);
+    writeToArray(currArray, numValues, arrayType, values);
+    mCoordinates[index] = currArray;
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 int
 XdmfFortran::retrieveCoordinateSize(int index)
 {
-	if (index < (int)mCoordinates.size())
-	{
-		return mCoordinates[index]->getSize();
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
+  if (index < (int)mCoordinates.size()) {
+    return mCoordinates[index]->getSize();
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
 }
 
 void
 XdmfFortran::clearCoordinates()
 {
-	mCoordinates.clear();
+  mCoordinates.clear();
 }
 
 int
 XdmfFortran::retrieveCoordinateNumProperties(int index)
 {
-	if (index < (int)mCoordinates.size())
-	{
-		return mCoordinates[index]->getItemProperties().size();
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}	
+  if (index < (int)mCoordinates.size()) {
+    return mCoordinates[index]->getItemProperties().size();
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  } 
 }
 
 void
 XdmfFortran::retrieveCoordinateProperty(int coordinateIndex, int index, char * key, int keyLength, char * value, int valueLength)
 {
-	if (coordinateIndex < (int)mCoordinates.size())
-	{
-		if (index < (int)mCoordinates[coordinateIndex]->getItemProperties().size())
-		{
-			std::map<std::string, std::string>::iterator walker = mCoordinates[coordinateIndex]->getItemProperties().begin();
-			for (int i = 0; i<index; i++)
-			{
-				walker++;
-			}
-			char * tempKey = strdup((*walker).first.c_str());
-			memset(key, 0, keyLength);
-			memcpy(key, tempKey, strlen(tempKey)+1);
-			delete [] tempKey;
-			char * tempValue = strdup((*walker).second.c_str());
-			memset(value, 0, valueLength);
-			memcpy(value, tempValue, strlen(tempValue)+1);
-			delete [] tempValue;
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Property index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (coordinateIndex < (int)mCoordinates.size()) {
+    if (index < (int)mCoordinates[coordinateIndex]->getItemProperties().size()) {
+      std::map<std::string, std::string>::iterator walker = mCoordinates[coordinateIndex]->getItemProperties().begin();
+      for (int i = 0; i<index; i++) {
+        walker++;
+      }
+      char * tempKey = strdup((*walker).first.c_str());
+      memset(key, 0, keyLength);
+      memcpy(key, tempKey, strlen(tempKey)+1);
+      delete [] tempKey;
+      char * tempValue = strdup((*walker).second.c_str());
+      memset(value, 0, valueLength);
+      memcpy(value, tempValue, strlen(tempValue)+1);
+      delete [] tempValue;
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Property index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::retrieveCoordinatePropertyByKey(int index, char * key, char * value, int valueLength)
 {
-	if (index < (int)mCoordinates.size())
-	{
-		std::string tempString = key;
-		memset(value, 0, valueLength);
-		if ((mCoordinates[index]->getItemProperties().count(tempString))>0)
-		{
-			char * tempValue = strdup(mCoordinates[index]->getItemProperties()[tempString].c_str());
-			memcpy(value, tempValue, strlen(tempValue)+1);
-			delete [] tempValue;
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (index < (int)mCoordinates.size()) {
+    std::string tempString = key;
+    memset(value, 0, valueLength);
+    if ((mCoordinates[index]->getItemProperties().count(tempString))>0) {
+      char * tempValue = strdup(mCoordinates[index]->getItemProperties()[tempString].c_str());
+      memcpy(value, tempValue, strlen(tempValue)+1);
+      delete [] tempValue;
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 int 
 XdmfFortran::addSet(char * name, int newSetType, void * values, int numValues,  int arrayType)
 {
-	const shared_ptr<XdmfSet> newSet = XdmfSet::New();
-	newSet->setName(name);
+  const shared_ptr<XdmfSet> newSet = XdmfSet::New();
+  newSet->setName(name);
 
-	switch (newSetType)
-	{
-		case XDMF_SET_TYPE_NODE:
-			newSet->setType(XdmfSetType::Node());
-			break;
-		case XDMF_SET_TYPE_CELL:
-			newSet->setType(XdmfSetType::Cell());
-			break;
-		case XDMF_SET_TYPE_FACE:
-			newSet->setType(XdmfSetType::Face());
-			break;
-		case XDMF_SET_TYPE_EDGE:
-			newSet->setType(XdmfSetType::Edge());
-			break;
-		default:
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, 
-					"Invalid set type.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-	}
+  switch (newSetType) {
+    case XDMF_SET_TYPE_NODE:
+      newSet->setType(XdmfSetType::Node());
+      break;
+    case XDMF_SET_TYPE_CELL:
+      newSet->setType(XdmfSetType::Cell());
+      break;
+    case XDMF_SET_TYPE_FACE:
+      newSet->setType(XdmfSetType::Face());
+      break;
+    case XDMF_SET_TYPE_EDGE:
+      newSet->setType(XdmfSetType::Edge());
+      break;
+    default:
+      try {
+        XdmfError::message(XdmfError::FATAL, 
+          "Invalid set type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+  }
 
-	for(std::vector<shared_ptr<XdmfAttribute> >::const_iterator iter =
-		mAttributes.begin(); 
-		iter != mAttributes.end();
-		++iter)
-	{
-		newSet->insert(*iter);
-	}
-	mAttributes.clear();
+  for(std::vector<shared_ptr<XdmfAttribute> >::const_iterator iter =
+      mAttributes.begin(); 
+      iter != mAttributes.end();
+      ++iter) {
+    newSet->insert(*iter);
+  }
+  mAttributes.clear();
 
-	if (!mInformations.empty())
-	{
-		for(std::vector<shared_ptr<XdmfInformation> >::const_iterator iter =
-			mInformations.begin(); 
-			iter != mInformations.end();
-			++iter)
-		{
-			newSet->insert(*iter);
-		}
-		mInformations.clear();
-	}
+  if (!mInformations.empty()) {
+    for(std::vector<shared_ptr<XdmfInformation> >::const_iterator iter =
+        mInformations.begin(); 
+        iter != mInformations.end();
+        ++iter) {
+      newSet->insert(*iter);
+    }
+    mInformations.clear();
+  }
 
-	writeToArray(newSet, numValues, arrayType, values);
+  writeToArray(newSet, numValues, arrayType, values);
 
-	mSets.push_back(newSet);
-	int id = mPreviousSets.size();
-	mPreviousSets.push_back(newSet);
-	return id;
+  mSets.push_back(newSet);
+  int id = mPreviousSets.size();
+  mPreviousSets.push_back(newSet);
+  return id;
 }
 
 void
 XdmfFortran::clearSets()
 {
-	mSets.clear();
+  mSets.clear();
 }
 
 void
 XdmfFortran::addPreviousSet(int index)
 {
-	if (index < (int)mPreviousSets.size())
-	{
-		mSets.push_back(mPreviousSets[index]);
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (index < (int)mPreviousSets.size()) {
+    mSets.push_back(mPreviousSets[index]);
+  }
+  else
+  {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::clearPreviousSets()
 {
-	mPreviousSets.clear();
+  mPreviousSets.clear();
 }
 
 void
 XdmfFortran::retrieveSetTag(int index, char * tag, int tagLength)
 {
-	if (index < (int)mSets.size())
-	{
-		char * tempTag = strdup(mSets[index]->getItemTag().c_str());
-		memset(tag, 0, tagLength);
-		memcpy(tag, tempTag, strlen(tempTag)+1);
-		delete [] tempTag;
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (index < (int)mSets.size()) {
+    char * tempTag = strdup(mSets[index]->getItemTag().c_str());
+    memset(tag, 0, tagLength);
+    memcpy(tag, tempTag, strlen(tempTag)+1);
+    delete [] tempTag;
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::retrieveSetName(int index, char * name, int nameLength)
 {
-	if (index < (int)mSets.size())
-	{
-		char * tempName = strdup(mSets[index]->getName().c_str());
-		memset(name, 0, nameLength);
-		memcpy(name, tempName, strlen(tempName)+1);
-		delete [] tempName;
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (index < (int)mSets.size()) {
+    char * tempName = strdup(mSets[index]->getName().c_str());
+    memset(name, 0, nameLength);
+    memcpy(name, tempName, strlen(tempName)+1);
+    delete [] tempName;
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 int
 XdmfFortran::retrieveNumSets()
 {
-	return mSets.size();
+  return mSets.size();
 }
 
 int
 XdmfFortran::retrieveSetSize(int index)
 {
-	if (index < (int)mSets.size())
-	{
-		return mSets[index]->getSize();
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
+  if (index < (int)mSets.size()) {
+    return mSets[index]->getSize();
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
 }
 
 int
 XdmfFortran::retrieveSetValueType(int index)
 {
-	if (index < (int)mSets.size())
-	{
-		shared_ptr<const XdmfArrayType> dataType = mSets[index]->getArrayType();
-		if (dataType == XdmfArrayType::Int8())
-		{
-			return XDMF_ARRAY_TYPE_INT8;
-		}
-		else if (dataType == XdmfArrayType::Int16())
-		{
-			return XDMF_ARRAY_TYPE_INT16;
-		}
-		else if (dataType == XdmfArrayType::Int32())
-		{
-			return XDMF_ARRAY_TYPE_INT32;
-		}
-		else if (dataType == XdmfArrayType::Int64())
-		{
-			return XDMF_ARRAY_TYPE_INT64;
-		}
-		else if (dataType == XdmfArrayType::UInt8())
-		{
-			return XDMF_ARRAY_TYPE_UINT8;
-		}
-		else if (dataType == XdmfArrayType::UInt16())
-		{
-			return XDMF_ARRAY_TYPE_UINT16;
-		}
-		else if (dataType == XdmfArrayType::UInt32())
-		{
-			return XDMF_ARRAY_TYPE_UINT32;
-		}
-		else if (dataType == XdmfArrayType::Float32())
-		{
-			return XDMF_ARRAY_TYPE_FLOAT32;
-		}
-		else if (dataType == XdmfArrayType::Float64())
-		{
-			return XDMF_ARRAY_TYPE_FLOAT64;
-		}
-		else if (dataType == XdmfArrayType::Uninitialized())
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, 
-					"Uninitialized Set Data Type.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, 
-					"Invalid Set Data Type.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
+  if (index < (int)mSets.size()) {
+    shared_ptr<const XdmfArrayType> dataType = mSets[index]->getArrayType();
+    if (dataType == XdmfArrayType::Int8()) {
+      return XDMF_ARRAY_TYPE_INT8;
+    }
+    else if (dataType == XdmfArrayType::Int16()) {
+      return XDMF_ARRAY_TYPE_INT16;
+    }
+    else if (dataType == XdmfArrayType::Int32()) {
+      return XDMF_ARRAY_TYPE_INT32;
+    }
+    else if (dataType == XdmfArrayType::Int64()) {
+      return XDMF_ARRAY_TYPE_INT64;
+    }
+    else if (dataType == XdmfArrayType::UInt8()) {
+      return XDMF_ARRAY_TYPE_UINT8;
+    }
+    else if (dataType == XdmfArrayType::UInt16()) {
+      return XDMF_ARRAY_TYPE_UINT16;
+    }
+    else if (dataType == XdmfArrayType::UInt32()) {
+      return XDMF_ARRAY_TYPE_UINT32;
+    }
+    else if (dataType == XdmfArrayType::Float32()) {
+      return XDMF_ARRAY_TYPE_FLOAT32;
+    }
+    else if (dataType == XdmfArrayType::Float64()) {
+      return XDMF_ARRAY_TYPE_FLOAT64;
+    }
+    else if (dataType == XdmfArrayType::Uninitialized()) {
+      try {
+        XdmfError::message(XdmfError::FATAL, 
+          "Uninitialized Set Data Type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, 
+          "Invalid Set Data Type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
 }
 
 void
 XdmfFortran::retrieveSetValues(int index, void * values, int dataType, int numberRead, int startIndex, int arrayStride, int valueStride)
 {
-	if (index < (int)mSets.size())
-	{
-		if (!mSets[index]->isInitialized())
-		{
-			mSets[index]->read();
-		}
-		readFromArray(mSets[index],
-			dataType,
-			values,
-			numberRead,
-			startIndex,
-			arrayStride,
-			valueStride);
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (index < (int)mSets.size()) {
+    if (!mSets[index]->isInitialized()) {
+      mSets[index]->read();
+    }
+    readFromArray(mSets[index],
+                  dataType,
+                  values,
+                  numberRead,
+                  startIndex,
+                  arrayStride,
+                  valueStride);
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 int
 XdmfFortran::retrieveSetType(int index)
 {
-	if (index < (int)mSets.size())
-	{
-		shared_ptr<const XdmfSetType> returnType = mSets[index]->getType();
-		if (returnType == XdmfSetType::Node())
-		{
-			return XDMF_SET_TYPE_NODE;
-		}
-		else if (returnType == XdmfSetType::Cell())
-		{
-			return XDMF_SET_TYPE_CELL;
-		}
-		else if (returnType == XdmfSetType::Face())
-		{
-			return XDMF_SET_TYPE_FACE;
-		}
-		else if (returnType == XdmfSetType::Edge())
-		{
-			return XDMF_SET_TYPE_EDGE;
-		}
-		else if (returnType == XdmfSetType::NoSetType())
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Uninitialized set type.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Invalid set type.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-			return -1;
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
+  if (index < (int)mSets.size()) {
+    shared_ptr<const XdmfSetType> returnType = mSets[index]->getType();
+    if (returnType == XdmfSetType::Node()) {
+      return XDMF_SET_TYPE_NODE;
+    }
+    else if (returnType == XdmfSetType::Cell()) {
+      return XDMF_SET_TYPE_CELL;
+    }
+    else if (returnType == XdmfSetType::Face()) {
+      return XDMF_SET_TYPE_FACE;
+    }
+    else if (returnType == XdmfSetType::Edge()) {
+      return XDMF_SET_TYPE_EDGE;
+    }
+    else if (returnType == XdmfSetType::NoSetType()) {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Uninitialized set type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Invalid set type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+      return -1;
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
 }
 
 void
 XdmfFortran::openSet(int index, int openAttribute, int openInformation)
 {
-	if (index < (int)mSets.size())
-	{
-		shared_ptr<XdmfSet> openedSet = mSets[index];
-		int i;
-		int n;
-		n = openedSet->getNumberAttributes();
-		if (openAttribute == 1)
-		{
-			shared_ptr<XdmfAttribute> openedAttribute;
-			for (i = 0; i < n; i++)
-			{
-				openedAttribute = openedSet->getAttribute(i);
-				mAttributes.push_back(openedAttribute);
-				mPreviousAttributes.push_back(openedAttribute);
-			}
-		}
-		if (openInformation == 1)
-		{
-			n = openedSet->getNumberInformations();
-			shared_ptr<XdmfInformation> openedInformation;
-			for (i = 0; i < n; i++)
-			{
-				openedInformation = openedSet->getInformation(i);
-				mInformations.push_back(openedInformation);
-				mPreviousInformations.push_back(openedInformation);
-			}
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (index < (int)mSets.size()) {
+    shared_ptr<XdmfSet> openedSet = mSets[index];
+    int i;
+    int n;
+    n = openedSet->getNumberAttributes();
+    if (openAttribute == 1) {
+      shared_ptr<XdmfAttribute> openedAttribute;
+      for (i = 0; i < n; i++) {
+        openedAttribute = openedSet->getAttribute(i);
+        mAttributes.push_back(openedAttribute);
+        mPreviousAttributes.push_back(openedAttribute);
+      }
+    }
+    if (openInformation == 1) {
+      n = openedSet->getNumberInformations();
+      shared_ptr<XdmfInformation> openedInformation;
+      for (i = 0; i < n; i++) {
+        openedInformation = openedSet->getInformation(i);
+        mInformations.push_back(openedInformation);
+        mPreviousInformations.push_back(openedInformation);
+      }
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::removeSet(int index)
 {
-	if (index < (int)mSets.size())
-	{
-		mSets.erase(mSets.begin()+index);
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (index < (int)mSets.size()) {
+    mSets.erase(mSets.begin()+index);
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void 
 XdmfFortran::replaceSet(int index, char * name, int newSetType, void * values, int numValues,  int arrayType)
 {
-	const shared_ptr<XdmfSet> newSet = XdmfSet::New();
-	newSet->setName(name);
+  const shared_ptr<XdmfSet> newSet = XdmfSet::New();
+  newSet->setName(name);
 
-	switch (newSetType)
-	{
-		case XDMF_SET_TYPE_NODE:
-			newSet->setType(XdmfSetType::Node());
-			break;
-		case XDMF_SET_TYPE_CELL:
-			newSet->setType(XdmfSetType::Cell());
-			break;
-		case XDMF_SET_TYPE_FACE:
-			newSet->setType(XdmfSetType::Face());
-			break;
-		case XDMF_SET_TYPE_EDGE:
-			newSet->setType(XdmfSetType::Edge());
-			break;
-		default:
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, 
-					"Invalid set type.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-	}
+  switch (newSetType) {
+    case XDMF_SET_TYPE_NODE:
+      newSet->setType(XdmfSetType::Node());
+      break;
+    case XDMF_SET_TYPE_CELL:
+      newSet->setType(XdmfSetType::Cell());
+      break;
+    case XDMF_SET_TYPE_FACE:
+      newSet->setType(XdmfSetType::Face());
+      break;
+    case XDMF_SET_TYPE_EDGE:
+      newSet->setType(XdmfSetType::Edge());
+      break;
+    default:
+      try {
+        XdmfError::message(XdmfError::FATAL, 
+          "Invalid set type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+  }
 
-	for(std::vector<shared_ptr<XdmfAttribute> >::const_iterator iter =
-		mAttributes.begin(); 
-		iter != mAttributes.end();
-		++iter)
-	{
-		newSet->insert(*iter);
-	}
-	mAttributes.clear();
+  for(std::vector<shared_ptr<XdmfAttribute> >::const_iterator iter =
+      mAttributes.begin(); 
+      iter != mAttributes.end();
+      ++iter) {
+    newSet->insert(*iter);
+  }
+  mAttributes.clear();
 
-	if (!mInformations.empty())
-	{
-		for(std::vector<shared_ptr<XdmfInformation> >::const_iterator iter =
-			mInformations.begin(); 
-			iter != mInformations.end();
-			++iter)
-		{
-			newSet->insert(*iter);
-		}
-		mInformations.clear();
-	}
+  if (!mInformations.empty()) {
+    for(std::vector<shared_ptr<XdmfInformation> >::const_iterator iter =
+        mInformations.begin(); 
+        iter != mInformations.end();
+        ++iter) {
+      newSet->insert(*iter);
+    }
+    mInformations.clear();
+  }
 
-	writeToArray(newSet, numValues, arrayType, values);
+  writeToArray(newSet, numValues, arrayType, values);
 
-	mSets[index] = newSet;
+  mSets[index] = newSet;
 }
 
 int
 XdmfFortran::retrieveSetNumProperties(int index)
 {
-	if (index < (int)mSets.size())
-	{
-		return mSets[index]->getItemProperties().size();
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
+  if (index < (int)mSets.size()) {
+    return mSets[index]->getItemProperties().size();
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
 }
 
 void
 XdmfFortran::retrieveSetProperty(int setIndex, int index, char * key, int keyLength, char * value, int valueLength)
 {
-	if (setIndex < (int)mSets.size())
-	{
-		if (index < (int)mSets[setIndex]->getItemProperties().size())
-		{
-			std::map<std::string, std::string>::iterator walker = mSets[setIndex]->getItemProperties().begin();
-			for (int i = 0; i<index; i++)
-			{
-				walker++;
-			}
-			char * tempKey = strdup((*walker).first.c_str());
-			memset(key, 0, keyLength);
-			memcpy(key, tempKey, strlen(tempKey)+1);
-			delete [] tempKey;
-			char * tempValue = strdup((*walker).second.c_str());
-			memset(value, 0, valueLength);
-			memcpy(value, tempValue, strlen(tempValue)+1);
-			delete [] tempValue;
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Property index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (setIndex < (int)mSets.size()) {
+    if (index < (int)mSets[setIndex]->getItemProperties().size()) {
+      std::map<std::string, std::string>::iterator walker = mSets[setIndex]->getItemProperties().begin();
+      for (int i = 0; i<index; i++) {
+        walker++;
+      }
+      char * tempKey = strdup((*walker).first.c_str());
+      memset(key, 0, keyLength);
+      memcpy(key, tempKey, strlen(tempKey)+1);
+      delete [] tempKey;
+      char * tempValue = strdup((*walker).second.c_str());
+      memset(value, 0, valueLength);
+      memcpy(value, tempValue, strlen(tempValue)+1);
+      delete [] tempValue;
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Property index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::retrieveSetPropertyByKey(int index, char * key, char * value, int valueLength)
 {
-	if (index < (int)mSets.size())
-	{
-		std::string tempString = key;
-		memset(value, 0, valueLength);
-		if ((mSets[index]->getItemProperties().count(tempString))>0)
-		{
-			char * tempValue = strdup(mSets[index]->getItemProperties()[tempString].c_str());
-			memcpy(value, tempValue, strlen(tempValue)+1);
-			delete [] tempValue;
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (index < (int)mSets.size()) {
+    std::string tempString = key;
+    memset(value, 0, valueLength);
+    if ((mSets[index]->getItemProperties().count(tempString))>0) {
+      char * tempValue = strdup(mSets[index]->getItemProperties()[tempString].c_str());
+      memcpy(value, tempValue, strlen(tempValue)+1);
+      delete [] tempValue;
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 int
 XdmfFortran::retrieveNumInformation()
 {
-	return mInformations.size();
+  return mInformations.size();
 }
 
 void
 XdmfFortran::clearInformations()
 {
-	mInformations.clear();
+  mInformations.clear();
 }
 
 void
 XdmfFortran::retrieveInformationTag(int index, char * tag, int tagLength)
 {
-	if (index < (int)mInformations.size())
-	{
-		char * tempTag = strdup(mInformations[index]->getItemTag().c_str());
-		memset(tag, 0, tagLength);
-		memcpy(tag, tempTag, strlen(tempTag)+1);
-		delete [] tempTag;
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (index < (int)mInformations.size()) {
+    char * tempTag = strdup(mInformations[index]->getItemTag().c_str());
+    memset(tag, 0, tagLength);
+    memcpy(tag, tempTag, strlen(tempTag)+1);
+    delete [] tempTag;
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::retrieveInformation(int index, char * key, int keyLength, char * value, int valueLength)
 {
-	if (index < (int)mInformations.size())
-	{
-		char * tempKey = strdup(mInformations[index]->getKey().c_str());
-		char * tempValue = strdup(mInformations[index]->getValue().c_str());
-		memset(key, 0, keyLength);
-		memset(value, 0, valueLength);
-		memcpy(key, tempKey, strlen(tempKey)+1);
-		memcpy(value, tempValue, strlen(tempValue)+1);
-		delete [] tempKey;
-		delete [] tempValue;
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (index < (int)mInformations.size()) {
+    char * tempKey = strdup(mInformations[index]->getKey().c_str());
+    char * tempValue = strdup(mInformations[index]->getValue().c_str());
+    memset(key, 0, keyLength);
+    memset(value, 0, valueLength);
+    memcpy(key, tempKey, strlen(tempKey)+1);
+    memcpy(value, tempValue, strlen(tempValue)+1);
+    delete [] tempKey;
+    delete [] tempValue;
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::replaceInformation(int index, char * key, char * value)
 {
-	if (index < (int)mInformations.size())
-	{
-		mInformations[index]->setKey(key);
-		mInformations[index]->setValue(value);
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (index < (int)mInformations.size()) {
+    mInformations[index]->setKey(key);
+    mInformations[index]->setValue(value);
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::removeInformation(int index)
 {
-	if (index < (int)mInformations.size())
-	{
-		mInformations.erase(mInformations.begin()+index);
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (index < (int)mInformations.size()) {
+    mInformations.erase(mInformations.begin()+index);
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::openInformation(int index)
 {
-	if (index < (int)mInformations.size())
-	{
-		shared_ptr<XdmfInformation> sourceInformation = mInformations[index];
-		int i;
-		int n = sourceInformation->getNumberInformations();
-		shared_ptr<XdmfInformation> openedInformation;
-		for (i = 0; i < n; i++)
-		{
-			openedInformation = sourceInformation->getInformation(i);
-			mInformations.push_back(openedInformation);
-			mPreviousInformations.push_back(openedInformation);
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (index < (int)mInformations.size()) {
+    shared_ptr<XdmfInformation> sourceInformation = mInformations[index];
+    int i;
+    int n = sourceInformation->getNumberInformations();
+    shared_ptr<XdmfInformation> openedInformation;
+    for (i = 0; i < n; i++) {
+      openedInformation = sourceInformation->getInformation(i);
+      mInformations.push_back(openedInformation);
+      mPreviousInformations.push_back(openedInformation);
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::retrieveInformationByKey(char * key, char * value, int valueLength)
 {
-	unsigned int i;
-	int found = 0;
-	std::string searchString(key);
-	char * tempValue;
-	for (i=0;i<mInformations.size();i++)
-	{
-		if (searchString == mInformations[i]->getKey())
-		{
-			found = 1;
-			tempValue = strdup(mInformations[i]->getValue().c_str());
-			memset(value, 0, valueLength);
-			memcpy(value, tempValue, strlen(tempValue)+1);
-			i = mInformations.size();
-			delete [] tempValue;
-		}
-	}
-	if (found == 0)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Item with specifed key does not exist.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  unsigned int i;
+  int found = 0;
+  std::string searchString(key);
+  char * tempValue;
+  for (i=0;i<mInformations.size();i++) {
+    if (searchString == mInformations[i]->getKey()) {
+      found = 1;
+      tempValue = strdup(mInformations[i]->getValue().c_str());
+      memset(value, 0, valueLength);
+      memcpy(value, tempValue, strlen(tempValue)+1);
+      i = mInformations.size();
+      delete [] tempValue;
+    }
+  }
+  if (found == 0) {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Item with specifed key does not exist.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::replaceInformationByKey(char * key, char * value)
 {
-	unsigned int i;
-	int found = 0;
-	std::string searchString(key);
-	for (i=0;i<mInformations.size();i++)
-	{
-		if (searchString == mInformations[i]->getKey())
-		{
-			mInformations[i]->setValue(value);
-			i = mInformations.size();
-			found = 1;
-		}
-	}
-	if (found == 0)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Item with specifed key does not exist.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  unsigned int i;
+  int found = 0;
+  std::string searchString(key);
+  for (i=0;i<mInformations.size();i++) {
+    if (searchString == mInformations[i]->getKey()) {
+      mInformations[i]->setValue(value);
+      i = mInformations.size();
+      found = 1;
+    }
+  }
+  if (found == 0) {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Item with specifed key does not exist.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::removeInformationByKey(char * key)
 {
-	unsigned int i;
-	int found = 0;
-	std::string searchString(key);
-	for (i=0;i<mInformations.size();i++)
-	{
-		if (searchString == mInformations[i]->getKey())
-		{
-			mInformations.erase(mInformations.begin()+i);
-			i = mInformations.size();
-			found = 1;
-		}
-	}
-	if (found == 0)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Item with specifed key does not exist.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  unsigned int i;
+  int found = 0;
+  std::string searchString(key);
+  for (i=0;i<mInformations.size();i++) {
+    if (searchString == mInformations[i]->getKey()) {
+      mInformations.erase(mInformations.begin()+i);
+      i = mInformations.size();
+      found = 1;
+    }
+  }
+  if (found == 0) {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Item with specifed key does not exist.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::clearPreviousInformation()
 {
-	mPreviousInformations.clear();
+  mPreviousInformations.clear();
 }
 
 int
 XdmfFortran::retrieveInformationNumProperties(int index)
 {
-	if (index < (int)mInformations.size())
-	{
-		return mInformations[index]->getItemProperties().size();
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		return -1;
-	}
+  if (index < (int)mInformations.size()) {
+    return mInformations[index]->getItemProperties().size();
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+    return -1;
+  }
 }
 
 void
 XdmfFortran::retrieveInformationProperty(int informationIndex, int index, char * key, int keyLength, char * value, int valueLength)
 {
-	if (informationIndex < (int)mInformations.size())
-	{
-		if (index < (int)mInformations[informationIndex]->getItemProperties().size())
-		{
-			std::map<std::string, std::string>::iterator walker = mInformations[informationIndex]->getItemProperties().begin();
-			for (int i = 0; i<index; i++)
-			{
-				walker++;
-			}
-			char * tempKey = strdup((*walker).first.c_str());
-			memset(key, 0, keyLength);
-			memcpy(key, tempKey, strlen(tempKey)+1);
-			delete [] tempKey;
-			char * tempValue = strdup((*walker).second.c_str());
-			memset(value, 0, valueLength);
-			memcpy(value, tempValue, strlen(tempValue)+1);
-			delete [] tempValue;
-		}
-		else
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Error: Property index out of range.");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (informationIndex < (int)mInformations.size()) {
+    if (index < (int)mInformations[informationIndex]->getItemProperties().size()) {
+      std::map<std::string, std::string>::iterator walker = mInformations[informationIndex]->getItemProperties().begin();
+      for (int i = 0; i<index; i++) {
+        walker++;
+      }
+      char * tempKey = strdup((*walker).first.c_str());
+      memset(key, 0, keyLength);
+      memcpy(key, tempKey, strlen(tempKey)+1);
+      delete [] tempKey;
+      char * tempValue = strdup((*walker).second.c_str());
+      memset(value, 0, valueLength);
+      memcpy(value, tempValue, strlen(tempValue)+1);
+      delete [] tempValue;
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Property index out of range.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void
 XdmfFortran::retrieveInformationPropertyByKey(int index, char * key, char * value, int valueLength)
 {
-	if (index < (int)mInformations.size())
-	{
-		std::string tempString = key;
-		memset(value, 0, valueLength);
-		if ((mInformations[index]->getItemProperties().count(tempString))>0)
-		{
-			char * tempValue = strdup(mInformations[index]->getItemProperties()[tempString].c_str());
-			memcpy(value, tempValue, strlen(tempValue)+1);
-			delete [] tempValue;
-		}
-	}
-	else
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (index < (int)mInformations.size()) {
+    std::string tempString = key;
+    memset(value, 0, valueLength);
+    if ((mInformations[index]->getItemProperties().count(tempString))>0) {
+      char * tempValue = strdup(mInformations[index]->getItemProperties()[tempString].c_str());
+      memcpy(value, tempValue, strlen(tempValue)+1);
+      delete [] tempValue;
+    }
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Index out of range.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 
 void
 XdmfFortran::clearPrevious()
 {
-	mPreviousTopologies.clear();
-	mPreviousGeometries.clear();
-	mPreviousAttributes.clear();
-	mPreviousMaps.clear();
-	mPreviousSets.clear();
-	mPreviousDimensions.clear();
-	mPreviousOrigins.clear();
-	mPreviousBricks.clear();
-	mPreviousCoordinates.clear();
+  mPreviousTopologies.clear();
+  mPreviousGeometries.clear();
+  mPreviousAttributes.clear();
+  mPreviousMaps.clear();
+  mPreviousSets.clear();
+  mPreviousDimensions.clear();
+  mPreviousOrigins.clear();
+  mPreviousBricks.clear();
+  mPreviousCoordinates.clear();
 }
 
 
@@ -7929,9 +6557,7 @@ XdmfFortran::write(const char * const xmlFilePath, const int datalimit, const bo
   writer->getHeavyDataWriter()->setReleaseData(release);
   shared_dynamic_cast<XdmfHDF5Writer>(writer->getHeavyDataWriter())->setFileSizeLimit(mMaxFileSize);
   shared_dynamic_cast<XdmfHDF5Writer>(writer->getHeavyDataWriter())->setAllowSetSplitting(mAllowSetSplitting);
-  shared_dynamic_cast<XdmfHDF5Writer>(writer->getHeavyDataWriter())->openFile();
   mDomain->accept(writer);
-  shared_dynamic_cast<XdmfHDF5Writer>(writer->getHeavyDataWriter())->closeFile();
 }
 
 void 
@@ -7979,6 +6605,24 @@ XdmfFortran::setTopologyPolyline(const unsigned int nodesPerElement,
 {
   mTopology = XdmfTopology::New();
   mTopology->setType(XdmfTopologyType::Polyline(nodesPerElement));
+  // insert connectivity values into array
+  writeToArray(mTopology,
+               numValues,
+               arrayType,
+               connectivityValues);
+  const int id = mPreviousTopologies.size();
+  mPreviousTopologies.push_back(mTopology);
+  return id;
+}
+
+int
+XdmfFortran::setTopologyPolygon(const unsigned int nodesPerElement,
+                        const unsigned int numValues,
+                        const int arrayType,
+                        const void * const connectivityValues)
+{
+  mTopology = XdmfTopology::New();
+  mTopology->setType(XdmfTopologyType::Polygon(nodesPerElement));
   // insert connectivity values into array
   writeToArray(mTopology,
                numValues,
@@ -8319,7 +6963,7 @@ extern "C"
 
   void
   XdmfRetrieveDomainGridProperty(long * pointer, int * gridType, int * gridIndex, int * index,
-	char * key, int * keyLength, char * value, int * valueLength)
+  char * key, int * keyLength, char * value, int * valueLength)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
     xdmfFortran->retrieveDomainGridProperty(*gridType, *gridIndex, *index, key, *keyLength, value, *valueLength);
@@ -8377,7 +7021,7 @@ extern "C"
 
   void
   XdmfRetrieveGridCollectionGridProperty(long * pointer, int * gridType, int * gridIndex, int * index,
-	char * key, int * keyLength, char * value, int * valueLength)
+  char * key, int * keyLength, char * value, int * valueLength)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
     xdmfFortran->retrieveGridCollectionGridProperty(*gridType, *gridIndex, *index, key, *keyLength, value, *valueLength);
@@ -8413,7 +7057,7 @@ extern "C"
 
   void
   XdmfRetrieveTopologyValues(long * pointer, void * values, int * dataType,
-	int * numberRead, int * startIndex, int * arrayStride, int * valueStride)
+  int * numberRead, int * startIndex, int * arrayStride, int * valueStride)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
     xdmfFortran->retrieveTopologyValues(values, *dataType, *numberRead, *startIndex, *arrayStride, *valueStride);
@@ -8454,7 +7098,7 @@ extern "C"
     xdmfFortran->clearPreviousTopologies();
   }
 
-  void	
+  void  
   XdmfRetrieveTopologyNumProperties(long * pointer, int * total)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
@@ -8484,7 +7128,7 @@ extern "C"
 
   void
   XdmfRetrieveGeometryValues(long * pointer, void * values, int * dataType,
-	int * numberRead, int * startIndex, int * arrayStride, int * valueStride)
+  int * numberRead, int * startIndex, int * arrayStride, int * valueStride)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
     xdmfFortran->retrieveGeometryValues(values, *dataType, *numberRead, *startIndex, *arrayStride, *valueStride);
@@ -8525,7 +7169,7 @@ extern "C"
     xdmfFortran->clearPreviousGeometries();
   }
 
-  void	
+  void  
   XdmfRetrieveGeometryNumProperties(long * pointer, int * total)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
@@ -8558,7 +7202,7 @@ extern "C"
   XdmfOpenPreviousDimensions(long * pointer, int * index)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
-    xdmfFortran->openPreviousDimensions(*index);	
+    xdmfFortran->openPreviousDimensions(*index);  
   }
 
   void
@@ -8577,7 +7221,7 @@ extern "C"
 
   void
   XdmfRetrieveDimensionsValues(long * pointer, void * values, int * dataType,
-	int * numberRead, int * startIndex, int * arrayStride, int * valueStride)
+  int * numberRead, int * startIndex, int * arrayStride, int * valueStride)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
     xdmfFortran->retrieveDimensionsValues(values, *dataType, *numberRead, *startIndex, *arrayStride, *valueStride);
@@ -8597,7 +7241,7 @@ extern "C"
     *total = xdmfFortran->retrieveDimensionsSize();
   }
 
-  void	
+  void  
   XdmfRetrieveDimensionsNumProperties(long * pointer, int * total)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
@@ -8648,7 +7292,7 @@ extern "C"
 
   void
   XdmfRetrieveOriginValues(long * pointer, void * values, int * dataType,
-	int * numberRead, int * startIndex, int * arrayStride, int * valueStride)
+  int * numberRead, int * startIndex, int * arrayStride, int * valueStride)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
     xdmfFortran->retrieveOriginValues(values, *dataType, *numberRead, *startIndex, *arrayStride, *valueStride);
@@ -8668,7 +7312,7 @@ extern "C"
     *total = xdmfFortran->retrieveOriginSize();
   }
 
-  void	
+  void  
   XdmfRetrieveOriginNumProperties(long * pointer, int * total)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
@@ -8720,7 +7364,7 @@ extern "C"
 
   void
   XdmfRetrieveBrickValues(long * pointer, void * values, int * dataType,
-	int * numberRead, int * startIndex, int * arrayStride, int * valueStride)
+  int * numberRead, int * startIndex, int * arrayStride, int * valueStride)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
     xdmfFortran->retrieveBrickValues(values, *dataType, *numberRead, *startIndex, *arrayStride, *valueStride);
@@ -8740,7 +7384,7 @@ extern "C"
     *total = xdmfFortran->retrieveBrickSize();
   }
 
-  void	
+  void  
   XdmfRetrieveBrickNumProperties(long * pointer, int * total)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
@@ -8838,7 +7482,7 @@ extern "C"
     xdmfFortran->clearPreviousMaps();
   }
 
-  void	
+  void  
   XdmfRetrieveMapNumProperties(long * pointer, int * index, int * total)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
@@ -8875,7 +7519,7 @@ extern "C"
 
   void
   XdmfReplaceAttribute(long * pointer, int * index, char * name, int * attributeCenter,
-	int * attributeType, int * numValues, int * arrayType, void * values)
+  int * attributeType, int * numValues, int * arrayType, void * values)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
     xdmfFortran->replaceAttribute(*index, name, *attributeCenter, *attributeType, *numValues, *arrayType, values);
@@ -8911,7 +7555,7 @@ extern "C"
 
   void
   XdmfRetrieveAttributeValues(long * pointer, int * index,  void * values, int * dataType,
-	int * numberRead, int * startIndex, int * arrayStride, int * valueStride)
+  int * numberRead, int * startIndex, int * arrayStride, int * valueStride)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
     xdmfFortran->retrieveAttributeValues(*index, values, *dataType, *numberRead, *startIndex, *arrayStride, *valueStride);
@@ -9031,7 +7675,7 @@ extern "C"
 
   void
   XdmfRetrieveCoordinateValues(long * pointer, int * index,  void * values, int * dataType,
-	int * numberRead, int * startIndex, int * arrayStride, int * valueStride)
+  int * numberRead, int * startIndex, int * arrayStride, int * valueStride)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
     xdmfFortran->retrieveCoordinateValues(*index, values, *dataType, *numberRead, *startIndex, *arrayStride, *valueStride);
@@ -9151,7 +7795,7 @@ extern "C"
 
   void
   XdmfRetrieveSetValues(long * pointer, int * index,  void * values, int * dataType,
-	int * numberRead, int * startIndex, int * arrayStride, int * valueStride)
+  int * numberRead, int * startIndex, int * arrayStride, int * valueStride)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
     xdmfFortran->retrieveSetValues(*index, values, *dataType, *numberRead, *startIndex, *arrayStride, *valueStride);

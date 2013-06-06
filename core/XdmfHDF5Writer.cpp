@@ -82,7 +82,6 @@ public:
       // Perhaps we should throw a warning.
       closeFile();
     }
-
     // Save old error handler and turn off error handling for now
     H5E_auto_t old_func;
     void * old_client_data;
@@ -92,6 +91,7 @@ public:
     int toReturn = 0;
 
     mOpenFile.assign(filePath);
+
 
     if(H5Fis_hdf5(filePath.c_str()) > 0) {
       mHDF5Handle = H5Fopen(filePath.c_str(), 
@@ -103,6 +103,7 @@ public:
       toReturn = numObjects;
     }
     else {
+	//this is where it currently fails
       mHDF5Handle = H5Fcreate(filePath.c_str(),
                               H5F_ACC_TRUNC,
                               H5P_DEFAULT,
@@ -279,7 +280,7 @@ XdmfHDF5Writer::visit(XdmfItem & item,
   mImpl->mDepth++;
   //This is similar to the algorithm for writing XPaths
   //shouldn't be a problem if XPaths are turned off because all this does is avoid writing an object twice
-  //if it was written once then all instances of the object should have the ocntroller
+  //if it was written once then all instances of the object should have the controller
   std::set<const XdmfItem *>::iterator checkWritten = mImpl->mWrittenItems.find(&item);
   if (checkWritten == mImpl->mWrittenItems.end()) {
     mImpl->mWrittenItems.insert(&item);
@@ -303,6 +304,8 @@ XdmfHDF5Writer::write(XdmfArray & array,
 {
   hid_t datatype = -1;
   bool closeDatatype = false;
+
+  const unsigned int hdf5Overhead = 800;//base size of an hdf5 file is 800
 
   //determining data type
   if(array.isInitialized()) {
@@ -373,7 +376,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
     std::vector<shared_ptr<XdmfHeavyDataController> > previousControllers;
 
     //hold the controllers in order to base the new controllers on them
-    for(unsigned int i = 0; i < array.getNumberHeavyDataControllers(); i++) {
+    for(unsigned int i = 0; i < array.getNumberHeavyDataControllers(); ++i) {
       previousControllers.push_back(array.getHeavyDataController(i));
     }
 
@@ -404,10 +407,10 @@ XdmfHDF5Writer::write(XdmfArray & array,
 
     int controllerIndexOffset = 0;
 
-    for(unsigned int i = 0; i < previousControllers.size(); i++)// it is assumed that the array will have at least one controller, if it didn't have one a temporary one was generated
+    for(unsigned int i = 0; i < previousControllers.size(); ++i)// it is assumed that the array will have at least one controller, if it didn't have one a temporary one was generated
     {
       if (mMode == Append) {//append only cares about the last controller, so add the rest back in
-	for (; i < previousControllers.size() - 1; i++) {
+	for (; i < previousControllers.size() - 1; ++i) {
           array.insert(previousControllers[i]);
 	}
       }
@@ -489,7 +492,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
 	
 
           unsigned int containedInController = 1;
-          for (unsigned int j = 0; j < dataspaceDimensions.size(); j++) {
+          for (unsigned int j = 0; j < dataspaceDimensions.size(); ++j) {
             containedInController *= dataspaceDimensions[j];
           }
           hssize_t hyperslabSize = 0;
@@ -541,7 +544,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
                     fileSize = fileSize - checksize;//remove previous set's size, since it's overwritten
                   }
                   if (fileSize == 0) {
-                    fileSize += 800;
+                    fileSize += hdf5Overhead;
                   }
                 }
                 else if (mMode == Hyperslab) {
@@ -549,12 +552,12 @@ XdmfHDF5Writer::write(XdmfArray & array,
                 }
               }
               if (fileSize == 0) {
-                fileSize += 800;
+                fileSize += hdf5Overhead;
               }
               fclose(checkFile);
             }
             else if (previousDataSize == 0) {
-              fileSize += 800;//base size of an hdf5 file is 800
+              fileSize += hdf5Overhead;
             }
             // close stream and release buffer
             //check size to see if it's within range
@@ -567,7 +570,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
               if (mMode == Hyperslab) {
                 remainingValues += 1;
                 sizeArrayIndex += 1;
-                for (unsigned int j = 0; j < dataspaceDimensions[j]; j++) {
+                for (unsigned int j = 0; j < dataspaceDimensions[j]; ++j) {
                   remainingValues *= dataspaceDimensions[j];
                   sizeArrayIndex *= dimensions[j];
                 }
@@ -583,7 +586,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
               //if remaining size is less than available space, just write all of what's left
               //calculate remaining size
               unsigned int remainingSize = 0;
-              for (unsigned int j = sizeArrayIndex; j < array.getSize(); j++) {
+              for (unsigned int j = sizeArrayIndex; j < array.getSize(); ++j) {
                 remainingSize += array.getValue<std::string>(j).size() * 8;
               }
               if (mMode == Hyperslab) {
@@ -594,7 +597,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
                 //if the array hasn't been split
                 if (amountAlreadyWritten == 0) {
                   //just pass all data to the partial vectors
-                  for (unsigned int j = 0; j < dimensions.size(); j++) {//done using a loop so that data is copied, not referenced
+                  for (unsigned int j = 0; j < dimensions.size(); ++j) {//done using a loop so that data is copied, not referenced
                     partialStarts.push_back(start[j]);
                     partialStrides.push_back(stride[j]);
                     partialDimensions.push_back(dimensions[j]);
@@ -605,7 +608,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
                   int dimensionIndex = previousDimensions.size() - 1;
                   //loop previous dimensions in
                   int j = 0;
-                  for (j = 0; j < dimensionIndex; j++) {
+                  for (j = 0; j < dimensionIndex; ++j) {
                     partialStarts.push_back(start[j]);
                     partialStrides.push_back(stride[j]);
                     partialDimensions.push_back(dimensions[j]);
@@ -622,7 +625,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
                     //total up number of blocks for the higher dimesions and subtract the amount already written
                     unsigned int dimensiontotal = dimensions[j];
                     unsigned int dataspacetotal = dataspaceDimensions[j];
-                    for (unsigned int k = j + 1; k < dimensions.size(); k++) {
+                    for (unsigned int k = j + 1; k < dimensions.size(); ++k) {
                       dimensiontotal *= dimensions[k];
                       dataspacetotal *= dataspaceDimensions[k];
                     }
@@ -646,7 +649,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
                     //total up number of blocks for the higher dimesions and subtract the amount already written
                     //since it isn't hyperslab dimensions and dataspacedimensions should be the same
                     unsigned int dimensiontotal = dimensions[j];
-                    for (unsigned int k = j + 1; k < dimensions.size(); k++) {
+                    for (unsigned int k = j + 1; k < dimensions.size(); ++k) {
                       dimensiontotal *= dimensions[k];
                     }
                     if (previousDimensions.size() > 0) {
@@ -676,7 +679,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
                   //see if it will fit in the next file
                   //if it will just go to the next file
                   //otherwise split it.
-                  if (remainingSize + 800 > mImpl->mHDF5FileSizeLimit*(1024*1024) && usableSpace > 0) {
+                  if (remainingSize + hdf5Overhead > mImpl->mHDF5FileSizeLimit*(1024*1024) && usableSpace > 0) {
                     if (mImpl->mAllowSplitDataSets) {
                       //figure out the size of the largest block that will fit.
                       unsigned int blockSizeSubtotal = 0;
@@ -689,7 +692,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
                         dimensionSizeTotal *= dimensions[dimensionIndex];
                         previousBlockSize = blockSizeSubtotal;
                         blockSizeSubtotal = 0;
-                        for (unsigned int k = 0; k < dimensionSizeTotal; k++) {
+                        for (unsigned int k = 0; k < dimensionSizeTotal; ++k) {
                           if (amountAlreadyWritten + k > array.getSize()) {
                             try {
                               XdmfError::message(XdmfError::FATAL,
@@ -710,7 +713,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
                       unsigned int numBlocks = usableSpace / blockSizeSubtotal;//this should be less than the current value for the dimension
                       //add dimensions as required.
                       unsigned int j = 0;
-                      for (; j < dimensionIndex; j++) {
+                      for (; j < dimensionIndex; ++j) {
                         partialStarts.push_back(start[j]);
                         partialStrides.push_back(stride[j]);
                         partialDimensions.push_back(dimensions[j]);
@@ -747,7 +750,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
                     }
                     else {
                       //just pass all data to the partial vectors
-                      for (unsigned int j = 0; j < dimensions.size(); j++) {//done using a loop so that data is copied, not referenced
+                      for (unsigned int j = 0; j < dimensions.size(); ++j) {//done using a loop so that data is copied, not referenced
                         partialStarts.push_back(start[j]);
                         partialStrides.push_back(stride[j]);
                         partialDimensions.push_back(dimensions[j]);
@@ -761,7 +764,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
                   //see if the remaining data will fit in the next file
                   //if yes, skip to it
                   //if no, split
-                  if (remainingSize + 800 > mImpl->mHDF5FileSizeLimit*(1024*1024) && usableSpace > 0) {
+                  if (remainingSize + hdf5Overhead > mImpl->mHDF5FileSizeLimit*(1024*1024) && usableSpace > 0) {
                     //figure out the size of the largest block that will fit.
                     unsigned int blockSizeSubtotal = 0;
                     unsigned int tempTotal = 0;
@@ -773,7 +776,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
                       dimensionSizeTotal *= dimensions[dimensionIndex];
                       tempTotal = blockSizeSubtotal;
                       blockSizeSubtotal = 0;
-                      for (unsigned int k = 0; k < dimensionSizeTotal; k++) {
+                      for (unsigned int k = 0; k < dimensionSizeTotal; ++k) {
                         if (amountAlreadyWritten + k > array.getSize()) {
                           try {
                             XdmfError::message(XdmfError::FATAL,
@@ -791,7 +794,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
                     dimensionIndex--;
                     blockSizeSubtotal = tempTotal;
                     unsigned int j = 0;
-                    for (; j < dimensionIndex; j++) {
+                    for (; j < dimensionIndex; ++j) {
                       partialStarts.push_back(start[j]);
                       partialStrides.push_back(stride[j]);
                       partialDimensions.push_back(dimensions[j]);
@@ -866,13 +869,13 @@ XdmfHDF5Writer::write(XdmfArray & array,
               unsigned int remainingValues = 0;
               if (mMode == Hyperslab) {
                 remainingValues += 1;
-                for (unsigned int j = 0; j < dataspaceDimensions.size(); j++) {
+                for (unsigned int j = 0; j < dataspaceDimensions.size(); ++j) {
                   remainingValues *= dataspaceDimensions[j];
                 }
               }
               else {
                 remainingValues += 1;
-                for (unsigned int j = 0; j < dimensions.size(); j++) {
+                for (unsigned int j = 0; j < dimensions.size(); ++j) {
                   remainingValues *= dimensions[j];
                 }
               }
@@ -886,7 +889,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
                 //if the array hasn't been split
                 if (amountAlreadyWritten == 0) {
                   //just pass all data to the partial vectors
-                  for (unsigned int j = 0; j < dimensions.size(); j++) {//done using a loop so that data is copied, not referenced
+                  for (unsigned int j = 0; j < dimensions.size(); ++j) {//done using a loop so that data is copied, not referenced
                     partialStarts.push_back(start[j]);
                     partialStrides.push_back(stride[j]);
                     partialDimensions.push_back(dimensions[j]);
@@ -897,7 +900,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
                   int dimensionIndex = previousDimensions.size() - 1;
                   //loop previous dimensions in
                   int j = 0;
-                  for (j = 0; j < dimensionIndex; j++) {
+                  for (j = 0; j < dimensionIndex; ++j) {
                     partialStarts.push_back(start[j]);
                     partialStrides.push_back(stride[j]);
                     partialDimensions.push_back(dimensions[j]);
@@ -914,7 +917,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
                     //total up number of blocks for the higher dimesions and subtract the amount already written
                     unsigned int dimensiontotal = dimensions[j];
                     unsigned int dataspacetotal = dataspaceDimensions[j];
-                    for (unsigned int k = j + 1; k < dimensions.size(); k++) {
+                    for (unsigned int k = j + 1; k < dimensions.size(); ++k) {
                       dimensiontotal *= dimensions[k];
                       dataspacetotal *= dataspaceDimensions[k];
                     }
@@ -938,7 +941,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
                     //total up number of blocks for the higher dimesions and subtract the amount already written
                     //since it isn't hyperslab dimensions and dataspacedimensions should be the same
                     unsigned int dimensiontotal = dimensions[j];
-                    for (unsigned int k = j + 1; k < dimensions.size(); k++) {
+                    for (unsigned int k = j + 1; k < dimensions.size(); ++k) {
                       dimensiontotal *= dimensions[k];
                     }
                     if (previousDimensions.size() > 0) {
@@ -968,7 +971,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
                   //see if it will fit in the next file
                   //if it will just go to the next file
                   //otherwise split it.
-                  if ((remainingValues * dataItemSize) + 800 > mImpl->mHDF5FileSizeLimit*(1024*1024) && usableSpace > 0) {
+                  if ((remainingValues * dataItemSize) + hdf5Overhead > mImpl->mHDF5FileSizeLimit*(1024*1024) && usableSpace > 0) {
                     if (mImpl->mAllowSplitDataSets) {
                       //figure out the size of the largest block that will fit.
                       unsigned int blockSizeSubtotal = 1;
@@ -985,7 +988,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
                       unsigned int numBlocks = usableSpace / blockSizeSubtotal;//this should be less than the current value for the dimension
                       //add dimensions as required.
                       unsigned int j = 0;
-                      for (j = 0; j < dimensionIndex; j++) {
+                      for (j = 0; j < dimensionIndex; ++j) {
                         partialStarts.push_back(start[j]);
                         partialStrides.push_back(stride[j]);
                         partialDimensions.push_back(dimensions[j]);
@@ -1022,7 +1025,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
                     }
                     else {
                       //just pass all data to the partial vectors
-                      for (unsigned int j = 0; j < dimensions.size(); j++) {//done using a loop so that data is copied, not referenced
+                      for (unsigned int j = 0; j < dimensions.size(); ++j) {//done using a loop so that data is copied, not referenced
                         partialStarts.push_back(start[j]);
                         partialStrides.push_back(stride[j]);
                         partialDimensions.push_back(dimensions[j]);
@@ -1036,7 +1039,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
                   //see if it will fit in the next file
                   //if it will just go to the next file
                   //otherwise split it.
-                  if ((remainingValues * dataItemSize) + 800 > mImpl->mHDF5FileSizeLimit*(1024*1024) && usableSpace > 0) {
+                  if ((remainingValues * dataItemSize) + hdf5Overhead > mImpl->mHDF5FileSizeLimit*(1024*1024) && usableSpace > 0) {
                     unsigned int blockSizeSubtotal = 1;
                     unsigned int dimensionIndex = 0;
                     //find the dimension that was split
@@ -1048,7 +1051,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
                     dimensionIndex--;
                     blockSizeSubtotal /= dataspaceDimensions[dimensionIndex];
                     unsigned int j = 0;
-                    for (j = 0; j < dimensionIndex; j++) {
+                    for (j = 0; j < dimensionIndex; ++j) {
                       partialStarts.push_back(start[j]);
                       partialStrides.push_back(stride[j]);
                       partialDimensions.push_back(dimensions[j]);
@@ -1119,12 +1122,12 @@ XdmfHDF5Writer::write(XdmfArray & array,
 
             if (partialDimensions.size() > 0) {//building the array to be written
               int containedInDimensions = 1;//count moved
-              for (unsigned int j = 0 ; j < partialDimensions.size(); j++) {
+              for (unsigned int j = 0 ; j < partialDimensions.size(); ++j) {
                 containedInDimensions *= partialDimensions[j];
               }
               int containedInPriorDimensions = controllerIndexOffset;//starting index
               int startOffset = 1;
-              for (unsigned int j = 0; j < previousDimensions.size(); j++) {
+              for (unsigned int j = 0; j < previousDimensions.size(); ++j) {
                 startOffset *= previousDimensions[j];
               }
               if (previousDimensions.size() == 0) {
@@ -1132,7 +1135,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
               }
               containedInPriorDimensions += startOffset;
               int dimensionTotal = 1;
-              for (unsigned int j = 0; j < dimensions.size(); j++) {
+              for (unsigned int j = 0; j < dimensions.size(); ++j) {
                 dimensionTotal *= dimensions[j];
               }
               if (containedInDimensions > 0) {
@@ -1193,7 +1196,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
                 }
                 else if (closeDatatype) {//closeDatatype is only true if strings are being used
                   partialArray->initialize(XdmfArrayType::String(), 0);
-                  for (int j = containedInPriorDimensions; j < containedInPriorDimensions + containedInDimensions; j++) {
+                  for (int j = containedInPriorDimensions; j < containedInPriorDimensions + containedInDimensions; ++j) {
                     partialArray->pushBack(array.getValue<std::string>(j));
                   }
                 }
@@ -1215,7 +1218,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
               //so use that since the dimensions should be equal to the dataspace dimensions in all other variations
               //total up written data space
               unsigned int writtenDataSpace = 1;
-              for (unsigned int j = 0; j < partialDataSizes.size(); j++) {
+              for (unsigned int j = 0; j < partialDataSizes.size(); ++j) {
                 writtenDataSpace *= partialDataSizes[j];
               }
               amountAlreadyWritten += writtenDataSpace;
@@ -1233,14 +1236,14 @@ XdmfHDF5Writer::write(XdmfArray & array,
                 }
                 else if (previousDimensions.size() < partialDimensions.size()) {
                   unsigned int overflowDimensions = 1;
-                  for (unsigned int j = previousDimensions.size() - 1; j < partialDimensions.size(); j++) {
+                  for (unsigned int j = previousDimensions.size() - 1; j < partialDimensions.size(); ++j) {
                     overflowDimensions *= partialDimensions[j];
                   }
                   previousDimensions[previousDimensions.size()-1] += overflowDimensions;
                 }
                 else if (previousDimensions.size() > partialDimensions.size()) {
                   unsigned int overflowDimensions = 1;
-                  for (unsigned int j = partialDimensions.size() - 1; j < previousDimensions.size(); j++) {
+                  for (unsigned int j = partialDimensions.size() - 1; j < previousDimensions.size(); ++j) {
                     overflowDimensions *= previousDimensions[j];
                   }
                   previousDimensions.resize(partialDimensions.size());
@@ -1252,14 +1255,14 @@ XdmfHDF5Writer::write(XdmfArray & array,
                 }
                 else if (previousDataSizes.size() < partialDataSizes.size()) {
                   unsigned int overflowDataSizes = 1;
-                  for (unsigned int j = previousDataSizes.size() - 1; j < partialDataSizes.size(); j++) {
+                  for (unsigned int j = previousDataSizes.size() - 1; j < partialDataSizes.size(); ++j) {
                     overflowDataSizes *= partialDataSizes[j];
                   }
                   previousDataSizes[previousDataSizes.size()-1] += overflowDataSizes;
                 }
                 else if (previousDataSizes.size() > partialDataSizes.size()) {
                   unsigned int overflowDataSizes = 1;
-                  for (unsigned int j = partialDataSizes.size() - 1; j < previousDataSizes.size(); j++) {
+                  for (unsigned int j = partialDataSizes.size() - 1; j < previousDataSizes.size(); ++j) {
                     overflowDataSizes *= previousDataSizes[j];
                   }
                   previousDataSizes.resize(partialDataSizes.size());
@@ -1428,7 +1431,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
           else if (closeDatatype) {//closeDatatype is only true if strings are being used
             partialArray->initialize(XdmfArrayType::String(), 0);
             //transfering via loop because the getValues function is not fully tested with strings
-            for (j = controllerIndexOffset; j < controllerIndexOffset + heavyDataController->getSize() && j < array.getSize(); j++){
+            for (j = controllerIndexOffset; j < controllerIndexOffset + heavyDataController->getSize() && j < array.getSize(); ++j){
               partialArray->pushBack(array.getValue<std::string>(j));
             }
           }
@@ -1466,7 +1469,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
 
 
       //loop based on the amount of blocks split from the array.
-      for (unsigned int writeIndex = 0; writeIndex < arraysWritten.size(); writeIndex++) {
+      for (unsigned int writeIndex = 0; writeIndex < arraysWritten.size(); ++writeIndex) {
 
 	//this is the section where the data is written to hdf5
 	//if you want to change the writer to write to a different data format, do it here

@@ -17,16 +17,16 @@ int main(int, char **)
 	shared_ptr<XdmfReader> testReader = XdmfReader::New();
 	/*
 	shared_ptr<XdmfArray> readArray = shared_dynamic_cast<XdmfArray>(testReader->read("array.xmf"));
-	printf("Array ocntains %s\n", readArray->getValuesString());
+	std::cout << "Array ocntains " << readArray->getValuesString() << std::endl;
 	*/
 	shared_ptr<XdmfDomain> readDomain = shared_dynamic_cast<XdmfDomain>(testReader->read("array.xmf"));
-	printf("pulling out unstructured grid\n");
+	std::cout << "pulling out unstructured grid" << std::endl;
 	shared_ptr<XdmfRectilinearGrid> readGrid = readDomain->getRectilinearGrid(0);
-	//printf("pulling out geometry\n");
+	//std::cout << "pulling out geometry" << std::endl;
 	//shared_ptr<XdmfGeometry> readGeometry = readGrid->getGeometry();
-	printf("pulling out dimensions\n");
+	std::cout << "pulling out dimensions" << std::endl;
 	std::vector<shared_ptr<XdmfArray> > readDimensions = readGrid->getCoordinates();
-	printf("Geometry contains %s\n", readDimensions[0]->getValuesString());
+	std::cout << "Geometry contains " << readDimensions[0]->getValuesString() << std::endl;
 	shared_ptr<XdmfWriter> testWriter = XdmfWriter::New("arrayoutput.xmf");
 	readGrid->accept(testWriter);
 	//readArray->accept(testWriter);

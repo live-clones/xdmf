@@ -222,28 +222,23 @@ int main(int, char **)
 	exampleHeavyWriter->setFileSizeLimit(1);
 
 	primaryDomain->accept(exampleHeavyWriter);
-	printf("default mode\n");
 	exampleHeavyWriter->setMode(XdmfHeavyDataWriter::Overwrite);//do this so that the data isn't in the hdf5 file twice.
-	printf("overwrite mode\n");
 	exampleHeavyWriter->setFileIndex(0);
         exampleWriter->setLightDataLimit(1);
 	primaryDomain->accept(exampleWriter);
 
         exampleHeavyWriter->setMode(XdmfHeavyDataWriter::Append);
-	printf("append mode\n");
 	for (int i = 0; i <= 797; i++)
 	{//overflow occurs at around 509
 		primaryDomain->accept(exampleHeavyWriter);
 	}
-	/*exampleHeavyWriter->setMode(XdmfHeavyDataWriter::Default);
-	printf("default mode\n");
+	exampleHeavyWriter->setMode(XdmfHeavyDataWriter::Default);
 	primaryDomain->accept(exampleHeavyWriter);
-	printf("append mode\n");
 	exampleHeavyWriter->setMode(XdmfHeavyDataWriter::Append);
 	for (int i = 0; i<500; i++)
 	{
 		primaryDomain->accept(exampleHeavyWriter);
-	}*/
+	}
 	primaryDomain->accept(exampleWriter);
   return 0;
 }
