@@ -6,7 +6,7 @@
 
 #include "XdmfTestDataGenerator.hpp"
 
-int main(int, char *)
+int main(int, char **)
 {
   shared_ptr<XdmfExodusWriter> exodusWriter = XdmfExodusWriter::New();
   shared_ptr<XdmfUnstructuredGrid> hexahedron =

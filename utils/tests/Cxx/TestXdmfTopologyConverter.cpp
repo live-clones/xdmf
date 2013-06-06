@@ -9,7 +9,7 @@
 #include "XdmfUnstructuredGrid.hpp"
 #include "XdmfWriter.hpp"
 
-int main(int, char *)
+int main(int, char **)
 {
   shared_ptr<XdmfTopologyConverter> converter =
     XdmfTopologyConverter::New();
