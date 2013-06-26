@@ -34,7 +34,7 @@
 
 namespace {
 
-  const static unsigned int DEFAULT_CHUNK_SIZE = 10000;
+  const static unsigned int DEFAULT_CHUNK_SIZE = 1000;
 
 }
 
@@ -67,7 +67,8 @@ public:
   
   int
   openFile(const std::string & filePath,
-           const int fapl)
+           const int fapl,
+           const int mDataSetId)
   {
     if(mHDF5Handle >= 0) {
       // Perhaps we should throw a warning.
@@ -86,10 +87,15 @@ public:
       mHDF5Handle = H5Fopen(filePath.c_str(), 
                             H5F_ACC_RDWR, 
                             fapl);
-      hsize_t numObjects;
-      /*herr_t status = */H5Gget_num_objs(mHDF5Handle,
-                                          &numObjects);
-      toReturn = numObjects;
+      if(mDataSetId == 0) {
+        hsize_t numObjects;
+        /*herr_t status = */H5Gget_num_objs(mHDF5Handle,
+                                            &numObjects);
+        toReturn = numObjects;
+      }
+      else {
+        toReturn = mDataSetId;
+      }
     }
     else {
       mHDF5Handle = H5Fcreate(filePath.c_str(),
@@ -171,7 +177,8 @@ void
 XdmfHDF5Writer::openFile(const int fapl)
 {
   mDataSetId = mImpl->openFile(mFilePath,
-                               fapl);
+                               fapl,
+                               mDataSetId);
 }
 
 void
@@ -274,17 +281,18 @@ XdmfHDF5Writer::write(XdmfArray & array,
     bool closeFile = false;
     if(mImpl->mHDF5Handle < 0) {
       mImpl->openFile(hdf5FilePath,
-                      fapl);
+                      fapl,
+                      mDataSetId);
       closeFile = true;
     }
 
     hid_t dataset = H5Dopen(mImpl->mHDF5Handle,
                             dataSetPath.str().c_str(),
                             H5P_DEFAULT);
-
     // if default mode find a new data set to write to (keep
     // incrementing dataSetId)
     if(dataset >= 0 && mMode == Default) {
+      H5Dclose(dataset);
       while(true) {
         dataSetPath.str(std::string());
         dataSetPath << "Data" << ++mDataSetId;
