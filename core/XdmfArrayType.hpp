@@ -111,8 +111,9 @@ private:
   static shared_ptr<const XdmfArrayType>
   New(const std::map<std::string, std::string> & itemProperties);
 
-  std::string mName;
-  unsigned int mPrecision;
+  const std::string mName;
+  const unsigned int mPrecision;
+  std::string mPrecisionString;
 };
 
 #endif /* XDMFARRAYTYPE_HPP_ */
