@@ -36,7 +36,7 @@
 
 namespace {
 
-  const static unsigned int DEFAULT_CHUNK_SIZE = 0;
+  const static unsigned int DEFAULT_CHUNK_SIZE = 1000;
 
 }
 
@@ -75,7 +75,8 @@ public:
 
   int
   openFile(const std::string & filePath,
-           const int fapl)
+           const int fapl,
+           const int mDataSetId)
   {
     if(mHDF5Handle >= 0) {
       // Perhaps we should throw a warning.
@@ -96,10 +97,15 @@ public:
       mHDF5Handle = H5Fopen(filePath.c_str(), 
                             H5F_ACC_RDWR, 
                             fapl);
-      hsize_t numObjects;
-      /*herr_t status = */H5Gget_num_objs(mHDF5Handle,
-                                          &numObjects);
-      toReturn = numObjects;
+      if(mDataSetId == 0) {
+        hsize_t numObjects;
+        /*herr_t status = */H5Gget_num_objs(mHDF5Handle,
+                                            &numObjects);
+        toReturn = numObjects;
+      }
+      else {
+        toReturn = mDataSetId;
+      }
     }
     else {
 	//this is where it currently fails
@@ -231,7 +237,8 @@ void
 XdmfHDF5Writer::openFile(const int fapl)
 {
   mDataSetId = mImpl->openFile(mFilePath,
-                               fapl);
+                               fapl,
+                               mDataSetId);
 }
 
 void
