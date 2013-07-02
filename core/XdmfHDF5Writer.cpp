@@ -531,7 +531,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
               if (mMode == Overwrite || mMode == Hyperslab) {
                 //find previous data size
                 mImpl->openFile(testFile.str(),
-                                fapl);
+                                fapl, mDataSetId);
                 hid_t checkset = H5Dopen(mImpl->mHDF5Handle,
                                          dataSetPath.str().c_str(),
                                          H5P_DEFAULT);
@@ -1496,7 +1496,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
             closeFile = true;
           }
           mImpl->openFile(curFileName,
-                          fapl);
+                          fapl, mDataSetId);
         }
 
 	htri_t testingSet = H5Lexists(mImpl->mHDF5Handle,
@@ -1739,7 +1739,7 @@ XdmfHDF5Writer::write(XdmfArray & array,
         if(mMode == Append) {
           //find data size
           mImpl->openFile(curFileName,
-                          fapl);
+                          fapl, mDataSetId);
           hid_t checkset = H5Dopen(mImpl->mHDF5Handle,
                                    dataSetPath.str().c_str(),
                                    H5P_DEFAULT);
