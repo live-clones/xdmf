@@ -5,10 +5,16 @@
 #include <XdmfWriter.hpp>
 #include <XdmfHDF5Writer.hpp>
 #include <XdmfHDF5Controller.hpp>
+#include <sys/timeb.h>
 
 int main(int, char **)
 {
-	
+	timeb tb;
+	ftime(&tb);
+	int start = tb.millitm + (tb.time & 0xfffff) * 1000;
+
+
+
 	shared_ptr<XdmfArray> writtenArray = XdmfArray::New();
 	for (int i = 0; i < 9000000; i++)
 	{
@@ -76,6 +82,15 @@ int main(int, char **)
 		}
 		assert(i == writtenArray->getValue<int>(i));
         }
+
+
+	ftime(&tb);
+        int end = tb.millitm + (tb.time & 0xfffff) * 1000;
+
+	int nSpan = end - start;
+	if(nSpan < 0)
+		nSpan += 0x100000 * 1000;
+	std::cout << nSpan << std::endl;
 
 	return 0;
 }

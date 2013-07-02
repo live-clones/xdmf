@@ -16,6 +16,9 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
     #include <XdmfCore.hpp>
     #include <XdmfCoreItemFactory.hpp>
     #include <XdmfCoreReader.hpp>
+    #include <XdmfDSMManager.hpp>
+    #include <XdmfDSMBuffer.hpp>
+    #include <XdmfDSMCommMPI.hpp>
     #include <XdmfError.hpp>
     #include <XdmfHeavyDataController.hpp>
     #include <XdmfHeavyDataWriter.hpp>
@@ -968,6 +971,9 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 #ifdef XDMF_BUILD_DSM
     %include XdmfHDF5ControllerDSM.hpp
     %include XdmfHDF5WriterDSM.hpp
+    %include XdmfDSMManager.hpp
+    %include XdmfDSMBuffer.hpp
+    %include XdmfDSMCommMPI.hpp
 #endif
 
 %include XdmfArray.hpp

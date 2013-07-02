@@ -62,12 +62,12 @@ int main(int argc, char *argv[])
                                std::vector<unsigned int>(1, 1),
                                std::vector<unsigned int>(1, 3),
                                std::vector<unsigned int>(1, size*3),
-                               NULL);
+                               dsmBuffer);
   array->setHeavyDataController(controller);
 
   // Create DSM Writer and write to DSM space.
   shared_ptr<XdmfHDF5WriterDSM> writer =
-    XdmfHDF5WriterDSM::New("dsm.h5", NULL);
+    XdmfHDF5WriterDSM::New("dsm.h5", dsmBuffer);
   writer->setMode(XdmfHeavyDataWriter::Hyperslab);
   array->accept(writer);
 

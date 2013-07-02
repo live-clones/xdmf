@@ -100,6 +100,7 @@ XdmfHDF5Controller::read(XdmfArray * const array, const int fapl)
   std::vector<hsize_t> stride(mStride.begin(), mStride.end());
   std::vector<hsize_t> count(mDimensions.begin(), mDimensions.end());
 
+
   status = H5Sselect_hyperslab(dataspace,
                                H5S_SELECT_SET,
                                &start[0],
@@ -163,6 +164,7 @@ XdmfHDF5Controller::read(XdmfArray * const array, const int fapl)
       throw e;
     }
   }
+
 
   array->initialize(mType, mDimensions);
 

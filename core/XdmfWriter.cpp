@@ -71,10 +71,7 @@ public:
   void
   closeFile()
   {
-    // remove xpath info as it will not be valid for the new file
     mXPath.clear();
-    mXPathCount = 0;
-    mXPathString = "";
 
     //this section writes to file
     std::ofstream fileStream;

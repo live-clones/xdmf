@@ -34,7 +34,6 @@
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfHDF5Writer.hpp"
 
-
 namespace {
 
   const static unsigned int DEFAULT_CHUNK_SIZE = 0;
@@ -1435,9 +1434,9 @@ XdmfHDF5Writer::write(XdmfArray & array,
               partialArray->pushBack(array.getValue<std::string>(j));
             }
           }
-          if (partialArray->getSize()==0) {
-            break;
-          }
+//          if (partialArray->getSize()==0) {
+//            break;
+//          }
           arrayOffsetsWritten.push_back(controllerIndexOffset);
           controllerIndexOffset = j;//set the offset to the point after the end of the current subset
 
@@ -1457,7 +1456,6 @@ XdmfHDF5Writer::write(XdmfArray & array,
         }
 
       }
-
 
       std::list<std::string>::iterator fileNameWalker = filesWritten.begin();
       std::list<shared_ptr<XdmfArray> >::iterator arrayWalker = arraysWritten.begin();

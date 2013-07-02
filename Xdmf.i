@@ -18,6 +18,9 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
     #include <XdmfArrayType.hpp>
     #include <XdmfCoreItemFactory.hpp>
     #include <XdmfCoreReader.hpp>
+    #include <XdmfDSMManager.hpp>
+    #include <XdmfDSMBuffer.hpp>
+    #include <XdmfDSMCommMPI.hpp>
     #include <XdmfError.hpp>
     #include <XdmfHDF5Controller.hpp>
     #include <XdmfHDF5Writer.hpp>
