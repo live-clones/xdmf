@@ -16,6 +16,7 @@ ADD_TEST_PYTHON_PYTHONPATH("")
 # -----------------------
 ADD_TEST_PYTHON(TestXdmfEquals)
 ADD_TEST_PYTHON(TestXdmfHDF5Writer)
+ADD_TEST_PYTHON(TestXdmfRead)
 ADD_TEST_PYTHON(TestXdmfSet)
 ADD_TEST_PYTHON(TestXdmfWriter)
 
@@ -28,6 +29,8 @@ ADD_TEST_PYTHON(TestXdmfWriter)
 CLEAN_TEST_PYTHON(TestXdmfEquals)
 CLEAN_TEST_PYTHON(TestXdmfHDF5Writer
   hdf5WriterPythonTest.h5)
+CLEAN_TEST_PYTHON(TestXdmfRead
+  TestXdmfRead.xmf)
 CLEAN_TEST_PYTHON(TestXdmfSet)
 CLEAN_TEST_PYTHON(TestXdmfWriter
   output.h5

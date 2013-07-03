@@ -126,14 +126,14 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
     else if(shared_ptr<XdmfCurvilinearGrid> value = shared_dynamic_cast<XdmfCurvilinearGrid>($1)) {
         *(shared_ptr< XdmfCurvilinearGrid > **)&($result) = value ? new shared_ptr< XdmfCurvilinearGrid >(value) : 0;
     }
+    else if(shared_ptr<XdmfGridCollection> value = shared_dynamic_cast<XdmfGridCollection>($1)) {
+        *(shared_ptr< XdmfGridCollection > **)&($result) = value ? new shared_ptr< XdmfGridCollection >(value) : 0;
+    }
     else if(shared_ptr<XdmfDomain> value = shared_dynamic_cast<XdmfDomain>($1)) {
         *(shared_ptr< XdmfDomain > **)&($result) = value ? new shared_ptr< XdmfDomain >(value) : 0;
     }
     else if(shared_ptr<XdmfGeometry> value = shared_dynamic_cast<XdmfGeometry>($1)) {
         *(shared_ptr< XdmfGeometry > **)&($result) = value ? new shared_ptr< XdmfGeometry >(value) : 0;
-    }
-    else if(shared_ptr<XdmfGridCollection> value = shared_dynamic_cast<XdmfGridCollection>($1)) {
-        *(shared_ptr< XdmfGridCollection > **)&($result) = value ? new shared_ptr< XdmfGridCollection >(value) : 0;
     }
     else if(shared_ptr<XdmfInformation> value = shared_dynamic_cast<XdmfInformation>($1)) {
         *(shared_ptr< XdmfInformation > **)&($result) = value ? new shared_ptr< XdmfInformation >(value) : 0;
@@ -260,6 +260,9 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
         else if(shared_ptr<XdmfCurvilinearGrid> gridCurvilinear = shared_dynamic_cast<XdmfCurvilinearGrid>(obj)) {
             result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfCurvilinearGrid>(gridCurvilinear)), SWIGTYPE_p_boost__shared_ptrT_XdmfCurvilinearGrid_t, SWIG_POINTER_OWN);
         }
+        else if(shared_ptr<XdmfGridCollection> gridCollection = shared_dynamic_cast<XdmfGridCollection>(obj)) {
+            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfGridCollection>(gridCollection)), SWIGTYPE_p_boost__shared_ptrT_XdmfGridCollection_t, SWIG_POINTER_OWN);
+        }
         else if(shared_ptr<XdmfDomain> domain = shared_dynamic_cast<XdmfDomain>(obj)) {
             result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfDomain>(domain)), SWIGTYPE_p_boost__shared_ptrT_XdmfDomain_t, SWIG_POINTER_OWN);
         }
@@ -268,9 +271,6 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
         }
         else if(shared_ptr<XdmfGraph> graph = shared_dynamic_cast<XdmfGraph>(obj)) {
             result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfGraph>(graph)), SWIGTYPE_p_boost__shared_ptrT_XdmfGraph_t, SWIG_POINTER_OWN);
-        }
-        else if(shared_ptr<XdmfGridCollection> gridCollection = shared_dynamic_cast<XdmfGridCollection>(obj)) {
-            result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfGridCollection>(gridCollection)), SWIGTYPE_p_boost__shared_ptrT_XdmfGridCollection_t, SWIG_POINTER_OWN);
         }
         else if(shared_ptr<XdmfInformation> information = shared_dynamic_cast<XdmfInformation>(obj)) {
             result = SWIG_NewPointerObj(SWIG_as_voidptr(new shared_ptr<XdmfInformation>(information)), SWIGTYPE_p_boost__shared_ptrT_XdmfInformation_t, SWIG_POINTER_OWN);
