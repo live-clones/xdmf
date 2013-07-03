@@ -73,7 +73,7 @@ public:
   {
     mXPath.clear();
 
-    //this section writes to file
+    // This section writes to file
     std::ofstream fileStream;
     if(!mStream) {
       fileStream.open(mXMLFilePath.c_str());
@@ -311,7 +311,8 @@ XdmfWriter::visit(XdmfArray & array,
        array.getSize() > mImpl->mLightDataLimit) {
       // Write values to heavy data
 
-      try {// this takes about half the time needed
+      try {
+        // This takes about half the time needed
         mImpl->mHeavyDataWriter->visit(array, mImpl->mHeavyDataWriter);
       }
       catch (XdmfError e) {
@@ -324,17 +325,17 @@ XdmfWriter::visit(XdmfArray & array,
           array.getHeavyDataController(i)->getFilePath();
         size_t index = heavyDataPath.find_last_of("/\\");
         if(index != std::string::npos) {
-          // if path is not a folder
+          // If path is not a folder
           // put the directory path into this variable
           const std::string heavyDataDir = heavyDataPath.substr(0, index + 1);
-          // if the directory is in the XML File Path
+          // If the directory is in the XML File Path
           if(mImpl->mXMLFilePath.find(heavyDataDir) == 0) {
             heavyDataPath =
               heavyDataPath.substr(heavyDataDir.size(),
                                    heavyDataPath.size() - heavyDataDir.size());
-            // pull the file off of the end and place it in the DataPath
+            // Pull the file off of the end and place it in the DataPath
           }
-          // otherwise the full path is required
+          // Otherwise the full path is required
         }
         std::stringstream dimensionStream;
         for (unsigned int j = 0; j < array.getHeavyDataController(i)->getDimensions().size(); ++j) {
@@ -343,7 +344,7 @@ XdmfWriter::visit(XdmfArray & array,
             dimensionStream << " ";
           }
         }
-        // clear the stream
+        // Clear the stream
         valuesStream.str(std::string());
 	if (array.getNumberHeavyDataControllers() > 1) {
           valuesStream << heavyDataPath << ":"

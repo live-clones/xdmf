@@ -118,23 +118,23 @@ XdmfHDF5WriterDSM::XdmfHDF5WriterDSM(const std::string & filePath,
   mGroupSize(-1),
   mServerMode(false)
 {
-        H5FDdsmManager * newManager = new H5FDdsmManager();
-        newManager->SetMpiComm(comm);
-        newManager->SetLocalBufferSizeMBytes(bufferSize);
-        newManager->SetIsStandAlone(H5FD_DSM_TRUE);
-        newManager->Create();
+  H5FDdsmManager * newManager = new H5FDdsmManager();
+  newManager->SetMpiComm(comm);
+  newManager->SetLocalBufferSizeMBytes(bufferSize);
+  newManager->SetIsStandAlone(H5FD_DSM_TRUE);
+  newManager->Create();
 
-        H5FD_dsm_set_manager(newManager);
+  H5FD_dsm_set_manager(newManager);
 
-        H5FD_dsm_set_options(H5FD_DSM_LOCK_ASYNCHRONOUS);
+  H5FD_dsm_set_options(H5FD_DSM_LOCK_ASYNCHRONOUS);
 
-        H5FDdsmBuffer * newBuffer = newManager->GetDsmBuffer();
-	mDSMManager = newManager;
-	mDSMBuffer = newBuffer;
+  H5FDdsmBuffer * newBuffer = newManager->GetDsmBuffer();
+  mDSMManager = newManager;
+  mDSMBuffer = newBuffer;
 }
 
 
-//the database/nonthreaded version
+// The database/nonthreaded version
 
 XdmfHDF5WriterDSM::XdmfHDF5WriterDSM(const std::string & filePath,
                                      XdmfDSMBuffer * const dsmBuffer,
@@ -174,105 +174,96 @@ XdmfHDF5WriterDSM::XdmfHDF5WriterDSM(const std::string & filePath,
   mDSMBuffer(NULL),
   mServerMode(true)
 {
-	//negative values will be changed to maximum range
-        if (startCoreIndex < 0)
-        {
-                startCoreIndex = 0;
-        }
-        if (endCoreIndex < 0)
-        {
-                endCoreIndex = mGroupSize - 1;
-        }
+  // Negative values will be changed to maximum range
+  if (startCoreIndex < 0) {
+    startCoreIndex = 0;
+  }
+  if (endCoreIndex < 0) {
+    endCoreIndex = mGroupSize - 1;
+  }
 
-	//ensure start index is less than end index
-        if (startCoreIndex > endCoreIndex)
-        {
-                int tempholder = startCoreIndex;
-                startCoreIndex = endCoreIndex;
-                endCoreIndex = tempholder;
-        }
+  // Ensure start index is less than end index
+  if (startCoreIndex > endCoreIndex) {
+    int tempholder = startCoreIndex;
+    startCoreIndex = endCoreIndex;
+    endCoreIndex = tempholder;
+  }
 
-        mGroupComm = comm;
-        mStartCoreIndex = startCoreIndex;
-        mEndCoreIndex = endCoreIndex;
+  mGroupComm = comm;
+  mStartCoreIndex = startCoreIndex;
+  mEndCoreIndex = endCoreIndex;
 
-	MPI_Comm_size(comm, &mGroupSize);
-        MPI_Comm_rank(comm, &mRank);
+  MPI_Comm_size(comm, &mGroupSize);
+  MPI_Comm_rank(comm, &mRank);
 
-	MPI_Group workers, dsmgroup, serversplit, servergroup;
+  MPI_Group workers, dsmgroup, serversplit, servergroup;
 
-	int * ServerIds = (int *)calloc((mEndCoreIndex - mStartCoreIndex + 1), sizeof(int));
-	unsigned int index = 0;
-	for(int i=mStartCoreIndex ; i <= mEndCoreIndex ; ++i)
-	{
-		ServerIds[index++] = i;
-	}
+  int * ServerIds = (int *)calloc((mEndCoreIndex - mStartCoreIndex + 1), sizeof(int));
+  unsigned int index = 0;
+  for(int i=mStartCoreIndex ; i <= mEndCoreIndex ; ++i) {
+    ServerIds[index++] = i;
+  }
 
-	MPI_Comm_group(comm, &serversplit);
-	MPI_Group_incl(serversplit, index, ServerIds, &servergroup);
-	MPI_Comm_create(comm, servergroup, &mServerComm);
-	MPI_Comm_group(comm, &dsmgroup);
-	MPI_Group_excl(dsmgroup, index, ServerIds, &workers);
-	MPI_Comm_create(comm, workers, &mWorkerComm);
-        cfree(ServerIds);
+  MPI_Comm_group(comm, &serversplit);
+  MPI_Group_incl(serversplit, index, ServerIds, &servergroup);
+  MPI_Comm_create(comm, servergroup, &mServerComm);
+  MPI_Comm_group(comm, &dsmgroup);
+  MPI_Group_excl(dsmgroup, index, ServerIds, &workers);
+  MPI_Comm_create(comm, workers, &mWorkerComm);
+  cfree(ServerIds);
 
-	//create the manager
+  // Create the manager
 
-	mDSMServerManager = new XdmfDSMManager();
+  mDSMServerManager = new XdmfDSMManager();
 
-	mDSMServerManager->SetLocalBufferSizeMBytes(bufferSize);
-	mDSMServerManager->SetInterCommType(H5FD_DSM_COMM_MPI);
+  mDSMServerManager->SetLocalBufferSizeMBytes(bufferSize);
+  mDSMServerManager->SetInterCommType(H5FD_DSM_COMM_MPI);
 
-        MPI_Barrier(mGroupComm);
+  MPI_Barrier(mGroupComm);
 
-	if (mRank >=mStartCoreIndex && mRank <=mEndCoreIndex)
-	{
-		mDSMServerManager->SetMpiComm(mServerComm);
-		mDSMServerManager->Create();
-	}
-	else
-	{
-		mDSMServerManager->SetMpiComm(mWorkerComm);
-		mDSMServerManager->SetIsServer(false);
-		mDSMServerManager->Create(mStartCoreIndex, mEndCoreIndex);
-	}
+  if (mRank >=mStartCoreIndex && mRank <=mEndCoreIndex) {
+    mDSMServerManager->SetMpiComm(mServerComm);
+    mDSMServerManager->Create();
+  }
+  else {
+    mDSMServerManager->SetMpiComm(mWorkerComm);
+    mDSMServerManager->SetIsServer(false);
+    mDSMServerManager->Create(mStartCoreIndex, mEndCoreIndex);
+  }
 
-	XDMF_dsm_set_manager(mDSMServerManager);
+  XDMF_dsm_set_manager(mDSMServerManager);
 
-	mDSMServerBuffer = mDSMServerManager->GetDsmBuffer();
+  mDSMServerBuffer = mDSMServerManager->GetDsmBuffer();
 
-	mDSMServerBuffer->GetComm()->DupInterComm(mGroupComm);
-	mDSMServerBuffer->SetIsConnected(true);
+  mDSMServerBuffer->GetComm()->DupInterComm(mGroupComm);
+  mDSMServerBuffer->SetIsConnected(true);
 
-	MPI_Barrier(comm);
+  MPI_Barrier(comm);
 
-	//loop needs to be started before anything can be done to the file, since the service is what sets up the file
+  // Loop needs to be started before anything can be done to the file, since the service is what sets up the file
 
-	if (mRank < mStartCoreIndex || mRank > mEndCoreIndex)
-	{
-		//turn off the server designation
-		mDSMServerBuffer->SetIsServer(H5FD_DSM_FALSE);//if this is set to false then the buffer will attempt to connect to the intercomm for DSM stuff
-		mDSMServerManager->SetIsServer(H5FD_DSM_FALSE);
-	}
-	else
-	{
-		//on cores where memory is set up, start the service loop
-		//this should iterate infinitely until a value to end the loop is passed
-		H5FDdsmInt32 returnOpCode;
-		try
-		{
-			mDSMServerBuffer->BufferServiceLoop(&returnOpCode);
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  if (mRank < mStartCoreIndex || mRank > mEndCoreIndex) {
+    // Turn off the server designation
+    mDSMServerBuffer->SetIsServer(H5FD_DSM_FALSE);
+    // If this is set to false then the buffer will attempt to connect to the intercomm for DSM communications
+    mDSMServerManager->SetIsServer(H5FD_DSM_FALSE);
+  }
+  else {
+    // On cores where memory is set up, start the service loop
+    // This should iterate infinitely until a value to end the loop is passed
+    H5FDdsmInt32 returnOpCode;
+    try {
+      mDSMServerBuffer->BufferServiceLoop(&returnOpCode);
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 XdmfHDF5WriterDSM::~XdmfHDF5WriterDSM()
 {
-	
+  
 }
 
 shared_ptr<XdmfHDF5Controller>
@@ -308,9 +299,27 @@ XdmfHDF5WriterDSM::createHDF5Controller(const std::string & hdf5FilePath,
   }
 }
 
-H5FDdsmManager * XdmfHDF5WriterDSM::getManager()
+void XdmfHDF5WriterDSM::deleteManager()
 {
-  return mDSMManager;
+  if (mDSMManager != NULL)
+  {
+    delete mDSMManager;
+  }
+  if (mDSMServerManager != NULL)
+  {
+    closeFile();
+    delete mDSMServerManager;
+  }
+}
+
+void
+XdmfHDF5WriterDSM::closeFile()
+{
+  if(mFAPL >= 0) {
+    herr_t status = H5Pclose(mFAPL);
+    mFAPL = -1;
+  }
+  XdmfHDF5Writer::closeFile();
 }
 
 H5FDdsmBuffer * XdmfHDF5WriterDSM::getBuffer()
@@ -318,14 +327,26 @@ H5FDdsmBuffer * XdmfHDF5WriterDSM::getBuffer()
   return mDSMBuffer;
 }
 
-XdmfDSMManager * XdmfHDF5WriterDSM::getServerManager()
+H5FDdsmManager * XdmfHDF5WriterDSM::getManager()
 {
-  return mDSMServerManager;
+  return mDSMManager;
 }
 
 XdmfDSMBuffer * XdmfHDF5WriterDSM::getServerBuffer()
 {
   return mDSMServerBuffer;
+}
+
+MPI_Comm XdmfHDF5WriterDSM::getServerComm()
+{
+        MPI_Comm returnComm;
+        int status = MPI_Comm_dup(mServerComm, &returnComm);
+        return returnComm;
+}
+
+XdmfDSMManager * XdmfHDF5WriterDSM::getServerManager()
+{
+  return mDSMServerManager;
 }
 
 bool XdmfHDF5WriterDSM::getServerMode()
@@ -335,27 +356,25 @@ bool XdmfHDF5WriterDSM::getServerMode()
 
 MPI_Comm XdmfHDF5WriterDSM::getWorkerComm()
 {
-	MPI_Comm returnComm;
-	int status = MPI_Comm_dup(mWorkerComm, &returnComm);
-	return returnComm;
+  MPI_Comm returnComm;
+  int status = MPI_Comm_dup(mWorkerComm, &returnComm);
+  return returnComm;
 }
 
-MPI_Comm XdmfHDF5WriterDSM::getServerComm()
+void XdmfHDF5WriterDSM::setBuffer(H5FDdsmBuffer * newBuffer)
 {
-	MPI_Comm returnComm;
-	int status = MPI_Comm_dup(mServerComm, &returnComm);
-	return returnComm;
+  mDSMBuffer = newBuffer;
+}
+
+void XdmfHDF5WriterDSM::setBuffer(XdmfDSMBuffer * newBuffer)
+{
+  mDSMServerBuffer = newBuffer;
 }
 
 void XdmfHDF5WriterDSM::setManager(H5FDdsmManager * newManager)
 {
   H5FDdsmBuffer * newBuffer = newManager->GetDsmBuffer();
   mDSMManager = newManager;
-  mDSMBuffer = newBuffer;
-}
-
-void XdmfHDF5WriterDSM::setBuffer(H5FDdsmBuffer * newBuffer)
-{
   mDSMBuffer = newBuffer;
 }
 
@@ -366,9 +385,32 @@ void XdmfHDF5WriterDSM::setManager(XdmfDSMManager * newManager)
   mDSMServerBuffer = newBuffer;
 }
 
-void XdmfHDF5WriterDSM::setBuffer(XdmfDSMBuffer * newBuffer)
+void XdmfHDF5WriterDSM::setServerComm(MPI_Comm comm)
 {
-  mDSMServerBuffer = newBuffer;
+  int status;
+  if (mServerComm != MPI_COMM_NULL) {
+    status = MPI_Comm_free(&mServerComm);
+    if (status != MPI_SUCCESS) {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Failed to disconnect Comm");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  if (comm != MPI_COMM_NULL) {
+    status = MPI_Comm_dup(comm, &mServerComm);
+    if (status != MPI_SUCCESS) {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Failed to duplicate Comm");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  mDSMServerBuffer->GetComm()->DupComm(comm);
 }
 
 void XdmfHDF5WriterDSM::setServerMode(bool newMode)
@@ -378,131 +420,56 @@ void XdmfHDF5WriterDSM::setServerMode(bool newMode)
 
 void XdmfHDF5WriterDSM::setWorkerComm(MPI_Comm comm)
 {
-	int status;
-	if (mWorkerComm != MPI_COMM_NULL)
-	{
-		status = MPI_Comm_free(&mWorkerComm);
-		if (status != MPI_SUCCESS)
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Failed to disconnect Comm");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	if (comm != MPI_COMM_NULL)
-	{
-		status = MPI_Comm_dup(comm, &mWorkerComm);
-		if (status != MPI_SUCCESS)
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Failed to duplicate Comm");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	mDSMServerBuffer->GetComm()->DupComm(comm);
-}
-
-void XdmfHDF5WriterDSM::setServerComm(MPI_Comm comm)
-{
-	int status;
-	if (mServerComm != MPI_COMM_NULL)
-	{
-		status = MPI_Comm_free(&mServerComm);
-		if (status != MPI_SUCCESS)
-		{
-			try
-			{	
-				XdmfError::message(XdmfError::FATAL, "Failed to disconnect Comm");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	if (comm != MPI_COMM_NULL)
-	{
-		status = MPI_Comm_dup(comm, &mServerComm);
-		if (status != MPI_SUCCESS)
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Failed to duplicate Comm");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	mDSMServerBuffer->GetComm()->DupComm(comm);
-}
-
-void XdmfHDF5WriterDSM::deleteManager()
-{
-	if (mDSMManager != NULL)
-	{
-		delete mDSMManager;
-	}
-	if (mDSMServerManager != NULL)
-	{
-		closeFile();
-		delete mDSMServerManager;
-	}
+  int status;
+  if (mWorkerComm != MPI_COMM_NULL) {
+    status = MPI_Comm_free(&mWorkerComm);
+    if (status != MPI_SUCCESS) {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Failed to disconnect Comm");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  if (comm != MPI_COMM_NULL) {
+    status = MPI_Comm_dup(comm, &mWorkerComm);
+    if (status != MPI_SUCCESS) {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Failed to duplicate Comm");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  mDSMServerBuffer->GetComm()->DupComm(comm);
 }
 
 void XdmfHDF5WriterDSM::stopDSM()
 {
-	//send manually
-	for (int i = mStartCoreIndex; i <= mEndCoreIndex; ++i)
-	{
-		try
-		{
-			mDSMServerBuffer->SendCommandHeader(H5FD_DSM_OPCODE_DONE, i, 0, 0, H5FD_DSM_INTER_COMM);
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-		//originally this was set to the intra comm
-		//that doesn't work in this instance because it won't reach the server cores
-	}
+  // Send manually
+  for (int i = mStartCoreIndex; i <= mEndCoreIndex; ++i) {
+    try {
+      mDSMServerBuffer->SendCommandHeader(H5FD_DSM_OPCODE_DONE, i, 0, 0, H5FD_DSM_INTER_COMM);
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 void XdmfHDF5WriterDSM::restartDSM()
 {
-	if (mRank >= mStartCoreIndex && mRank <= mEndCoreIndex)
-	{
-		H5FDdsmInt32 returnOpCode;
-		try
-		{
-			mDSMServerBuffer->BufferServiceLoop(&returnOpCode);
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
-}
-
-void 
-XdmfHDF5WriterDSM::closeFile()
-{
-  if(mFAPL >= 0) {
-    herr_t status = H5Pclose(mFAPL);
-    mFAPL = -1;
+  if (mRank >= mStartCoreIndex && mRank <= mEndCoreIndex) {
+    H5FDdsmInt32 returnOpCode;
+    try {
+      mDSMServerBuffer->BufferServiceLoop(&returnOpCode);
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
-  XdmfHDF5Writer::closeFile();
 }
 
 void 

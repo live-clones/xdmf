@@ -58,348 +58,287 @@
 
 XdmfDSMCommMPI::XdmfDSMCommMPI()
 {
-	IntraComm = MPI_COMM_NULL;
-	Id = -1;
-	IntraSize = -1;
-	InterComm = MPI_COMM_NULL;
-	InterSize = -1;
-	SetDsmMasterHostName("");
-	InterCommType = XDMF_DSM_COMM_MPI;
+  IntraComm = MPI_COMM_NULL;
+  Id = -1;
+  IntraSize = -1;
+  InterComm = MPI_COMM_NULL;
+  InterSize = -1;
+  SetDsmMasterHostName("");
+  InterCommType = XDMF_DSM_COMM_MPI;
 }
 
 XdmfDSMCommMPI::~XdmfDSMCommMPI()
 {
-	if (InterComm != MPI_COMM_NULL)
-        {
-                int status = MPI_Comm_free(&InterComm);
-                if (status != MPI_SUCCESS)
-                {
-			try
-			{
-                        	XdmfError::message(XdmfError::FATAL, "Failed to free intercomm Comm");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-                }
-        }
-        if (IntraComm != MPI_COMM_NULL)
-        {
-                int status = MPI_Comm_free(&IntraComm);
-                if (status != MPI_SUCCESS)
-                {
-			try
-			{
-                        	XdmfError::message(XdmfError::FATAL, "Failed to free intercomm Comm");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-                }
-        }
+  if (InterComm != MPI_COMM_NULL) {
+    int status = MPI_Comm_free(&InterComm);
+    if (status != MPI_SUCCESS) {
+      try {
+                          XdmfError::message(XdmfError::FATAL, "Failed to free intercomm Comm");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  if (IntraComm != MPI_COMM_NULL) {
+    int status = MPI_Comm_free(&IntraComm);
+    if (status != MPI_SUCCESS) {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Failed to free intercomm Comm");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
 }
 
 void
 XdmfDSMCommMPI::SetDsmMasterHostName(const char *hostName)
 {
-	strcpy(DsmMasterHostName, hostName);
+  strcpy(DsmMasterHostName, hostName);
 }
 
 char *
 XdmfDSMCommMPI::GetDsmMasterHostName()
 {
-	return DsmMasterHostName;
+  return DsmMasterHostName;
 }
 
 int
 XdmfDSMCommMPI::GetId()
 {
-	return this->Id;
+  return this->Id;
 }
 
 int
 XdmfDSMCommMPI::GetIntraSize()
 {
-	return this->IntraSize;
+  return this->IntraSize;
 }
 
 int
 XdmfDSMCommMPI::GetInterSize()
 {
-	return this->InterSize;
+  return this->InterSize;
 }
 
 int
 XdmfDSMCommMPI::GetInterCommType()
 {
-	return this->InterCommType;
+  return this->InterCommType;
 }
 
 void
 XdmfDSMCommMPI::Init()
 {
-	int size, rank;
-	if (MPI_Comm_size(this->IntraComm, &size) != MPI_SUCCESS)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Failed to initialize size");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
-	if (MPI_Comm_rank(this->IntraComm, &rank) != MPI_SUCCESS)
-	{
-		try
-		{
-			XdmfError::message(XdmfError::FATAL, "Failed to initialize rank");
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
+  int size, rank;
+  if (MPI_Comm_size(this->IntraComm, &size) != MPI_SUCCESS) {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Failed to initialize size");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+  if (MPI_Comm_rank(this->IntraComm, &rank) != MPI_SUCCESS) {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Failed to initialize rank");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 
-	this->Id = rank;
-	this->IntraSize = size;
+  this->Id = rank;
+  this->IntraSize = size;
 }
-
-//possibly use setenv/unsetenv/getenv to pass dsm port
-//http://linux.die.net/man/3/setenv
 
 void
 XdmfDSMCommMPI::OpenPort()
 {
-	if (Id == 0)
-	{
-		int status = MPI_Open_port(MPI_INFO_NULL, DsmMasterHostName);
-		if (status != MPI_SUCCESS)
-		{
-			try
-			{
-				std::string message = "Failed to open port ";
-				message = message + DsmMasterHostName;
-				XdmfError::message(XdmfError::FATAL, message);
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
+  if (Id == 0) {
+    int status = MPI_Open_port(MPI_INFO_NULL, DsmMasterHostName);
+    if (status != MPI_SUCCESS) {
+      try {
+        std::string message = "Failed to open port ";
+        message = message + DsmMasterHostName;
+        XdmfError::message(XdmfError::FATAL, message);
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
 }
 
 void
 XdmfDSMCommMPI::ClosePort()
 {
-	if (Id == 0)
-	{
-		int status;
-		status = MPI_Open_port(MPI_INFO_NULL, DsmMasterHostName);
-		if (status != MPI_SUCCESS)
-		{
-			try
-			{
-				std::string message = "Failed to close port ";
-				message = message + DsmMasterHostName;
-				XdmfError::message(XdmfError::FATAL, message);
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
+  if (Id == 0) {
+    int status;
+    status = MPI_Open_port(MPI_INFO_NULL, DsmMasterHostName);
+    if (status != MPI_SUCCESS) {
+      try {
+        std::string message = "Failed to close port ";
+        message = message + DsmMasterHostName;
+        XdmfError::message(XdmfError::FATAL, message);
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
 }
 
 void
 XdmfDSMCommMPI::Accept()
 {
-	int status = MPI_Comm_accept(DsmMasterHostName, MPI_INFO_NULL, 0, IntraComm, &InterComm);
-	if (status != MPI_SUCCESS)
-	{
-		try
-		{
-			std::string message = "Failed to accept port ";
-			message = message + DsmMasterHostName;
-			XdmfError::message(XdmfError::FATAL, message);
-		}
-		catch (XdmfError e)
-		{
-			throw e;
-		}
-	}
-	else
-	{
-		MPI_Comm_remote_size(InterComm, &InterSize);
-	}
+  int status = MPI_Comm_accept(DsmMasterHostName, MPI_INFO_NULL, 0, IntraComm, &InterComm);
+  if (status != MPI_SUCCESS) {
+    try {
+      std::string message = "Failed to accept port ";
+      message = message + DsmMasterHostName;
+      XdmfError::message(XdmfError::FATAL, message);
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+  else {
+    MPI_Comm_remote_size(InterComm, &InterSize);
+  }
 }
 
 int
 XdmfDSMCommMPI::Connect()
 {
-	if (InterComm != MPI_COMM_NULL)
-	{
-		// If the intercomm already exists, no need to connect
-		// If you want to reset the intercomm, set it to MPI_COMM_NULL before calling this
-		// using either SetInterComm or Disconnect
-		return MPI_SUCCESS;
-	}
-	else
-	{
-		MPI_Errhandler_set(IntraComm, MPI_ERRORS_RETURN);
-		int status = MPI_Comm_connect(DsmMasterHostName, MPI_INFO_NULL, 0, IntraComm, &InterComm);
-		MPI_Errhandler_set(IntraComm, MPI_ERRORS_ARE_FATAL);
-		if (status != MPI_SUCCESS)
-		{
-			try
-			{
-				std::string message = "Failed to connect to port ";
-				message = message + DsmMasterHostName;
-				XdmfError::message(XdmfError::FATAL, message);
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-		else
-		{
-			status = MPI_Comm_remote_size(InterComm, &InterSize);
-			return MPI_SUCCESS;
-		}
-	}
-	return MPI_SUCCESS;
+  if (InterComm != MPI_COMM_NULL) {
+    // If the intercomm already exists, no need to connect
+    // If you want to reset the intercomm, set it to MPI_COMM_NULL before calling this
+    // using either SetInterComm or Disconnect
+    return MPI_SUCCESS;
+  }
+  else {
+    MPI_Errhandler_set(IntraComm, MPI_ERRORS_RETURN);
+    int status = MPI_Comm_connect(DsmMasterHostName, MPI_INFO_NULL, 0, IntraComm, &InterComm);
+    MPI_Errhandler_set(IntraComm, MPI_ERRORS_ARE_FATAL);
+    if (status != MPI_SUCCESS) {
+      try {
+        std::string message = "Failed to connect to port ";
+        message = message + DsmMasterHostName;
+        XdmfError::message(XdmfError::FATAL, message);
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+    else {
+      status = MPI_Comm_remote_size(InterComm, &InterSize);
+      return MPI_SUCCESS;
+    }
+  }
+  return MPI_SUCCESS;
 }
 
 void
 XdmfDSMCommMPI::Disconnect()
 {
-	if (InterComm != MPI_COMM_NULL)
-	{
-		int status = MPI_Comm_free(&InterComm);
-		if (status != MPI_SUCCESS)
-		{
-			try
-			{
-				XdmfError::message(XdmfError::FATAL, "Failed to disconnect Comm");
-			}
-			catch (XdmfError e)
-			{
-				throw e;
-			}
-		}
-	}
-	InterComm = MPI_COMM_NULL;
+  if (InterComm != MPI_COMM_NULL) {
+    int status = MPI_Comm_free(&InterComm);
+    if (status != MPI_SUCCESS) {
+      try {
+        XdmfError::message(XdmfError::FATAL, "Failed to disconnect Comm");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  InterComm = MPI_COMM_NULL;
 }
 
 void
 XdmfDSMCommMPI::DupComm(MPI_Comm comm)
 {
-	if (IntraComm != comm)
-	{
-		int status;
-		if (IntraComm != MPI_COMM_NULL)
-		{
-			status = MPI_Comm_free(&IntraComm);
-			if (status != MPI_SUCCESS)
-			{
-				try
-				{
-	                        	XdmfError::message(XdmfError::FATAL, "Failed to disconnect Comm");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-		}
-		if (comm != MPI_COMM_NULL)
-		{
-			status = MPI_Comm_dup(comm, &IntraComm);
-			if (status != MPI_SUCCESS)
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Failed to duplicate Comm");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-			else
-			{
-				status = MPI_Comm_size(IntraComm, &IntraSize);
-				status = MPI_Comm_rank(IntraComm, &Id);
-			}
-		}
-	}
+  if (IntraComm != comm) {
+    int status;
+    if (IntraComm != MPI_COMM_NULL) {
+      status = MPI_Comm_free(&IntraComm);
+      if (status != MPI_SUCCESS) {
+        try {
+                            XdmfError::message(XdmfError::FATAL, "Failed to disconnect Comm");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+    }
+    if (comm != MPI_COMM_NULL) {
+      status = MPI_Comm_dup(comm, &IntraComm);
+      if (status != MPI_SUCCESS) {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Failed to duplicate Comm");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+      else {
+        status = MPI_Comm_size(IntraComm, &IntraSize);
+        status = MPI_Comm_rank(IntraComm, &Id);
+      }
+    }
+  }
 }
 
 void
 XdmfDSMCommMPI::DupInterComm(MPI_Comm comm)
 {
-	if (InterComm != comm)
-	{
-		int status;
-		if (InterComm != MPI_COMM_NULL)
-		{
-			status = MPI_Comm_free(&InterComm);
-			if (status != MPI_SUCCESS)
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Failed to disconnect Comm");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-		}
-		if (comm != MPI_COMM_NULL)
-		{
-			status = MPI_Comm_dup(comm, &InterComm);
-			if (status != MPI_SUCCESS)
-			{
-				try
-				{
-					XdmfError::message(XdmfError::FATAL, "Failed to duplicate Comm");
-				}
-				catch (XdmfError e)
-				{
-					throw e;
-				}
-			}
-			else
-			{
-				status = MPI_Comm_size(InterComm, &InterSize);
-				if (status != MPI_SUCCESS)
-				{
-					MPI_Comm_remote_size(InterComm, &InterSize);
-				}
-			}
-		}
-		else
-		{
-			InterSize = -1;
-		}
-	}
+  if (InterComm != comm) {
+    int status;
+    if (InterComm != MPI_COMM_NULL) {
+      status = MPI_Comm_free(&InterComm);
+      if (status != MPI_SUCCESS) {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Failed to disconnect Comm");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+    }
+    if (comm != MPI_COMM_NULL) {
+      status = MPI_Comm_dup(comm, &InterComm);
+      if (status != MPI_SUCCESS) {
+        try {
+          XdmfError::message(XdmfError::FATAL, "Failed to duplicate Comm");
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+      }
+      else {
+        status = MPI_Comm_size(InterComm, &InterSize);
+        if (status != MPI_SUCCESS) {
+          MPI_Comm_remote_size(InterComm, &InterSize);
+        }
+      }
+    }
+    else {
+      InterSize = -1;
+    }
+  }
 }
 
 MPI_Comm
 XdmfDSMCommMPI::GetInterComm()
 {
-	return InterComm;
+  return InterComm;
 }
 
 MPI_Comm
 XdmfDSMCommMPI::GetIntraComm()
 {
-	return IntraComm;
+  return IntraComm;
 }

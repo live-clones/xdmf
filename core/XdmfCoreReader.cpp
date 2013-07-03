@@ -182,17 +182,17 @@ public:
 
         }
         else if (xmlStrcmp(currNode->name, (xmlChar*)"Function") == 0) {
-          // function handling goes here
+          // Function handling goes here
           xmlNodePtr childNode = currNode->children;
 
           std::string arraySubType = "";
-          // get Array Subtype, if any
+          // Gget Array Subtype, if any
           xmlAttrPtr currAttribute = currNode->properties;
           while (currAttribute != NULL) {
             if (xmlStrcmp(currAttribute->name, (xmlChar*)"Type") == 0 ) {
               arraySubType = (char*)currAttribute->children->content;
               break;
-              // uses the first type found
+              // Uses the first type found
             }
           }
 
@@ -200,7 +200,7 @@ public:
 
           while (childNode != NULL) {
             if (xmlStrcmp(childNode->name, (xmlChar*)"Expression") == 0){
-              // store expression
+              // Store expression
               xmlAttrPtr childAttribute = childNode->properties;
               while (childAttribute != NULL) {
                 if(xmlStrcmp(childAttribute->name, (xmlChar*)"Value") == 0) {
@@ -224,13 +224,13 @@ public:
             }
           }
 
-          // two seperate loops to allow for different orders and multiple variable sets
+          // Two seperate loops to allow for different orders and multiple variable sets
           childNode = currNode->children;
 
           std::map<std::string, shared_ptr<XdmfArray> > variableCollection;
           while (childNode != NULL) {
             if (xmlStrcmp(childNode->name, (xmlChar*)"Variable") == 0) {
-              // store child variables
+              // Store child variables
               xmlNodePtr childVariable = childNode->children;
 
               while (childVariable != NULL) {
@@ -246,31 +246,31 @@ public:
                   std::map<std::string, std::string> typeMap;
 
                   while (childAttribute != NULL) {
-                    // the variable type of the array
+                    // The variable type of the array
                     if (xmlStrcmp(childAttribute->name, (xmlChar*)"DataType") == 0) {
                       typeMap["DataType"] = (char*)childAttribute->children->content;
                     }
-                    // the precision of the variable type (only used for long and double)
+                    // The precision of the variable type (only used for long and double)
                     else if (xmlStrcmp(childAttribute->name, (xmlChar*)"Precision") == 0) {
                       typeMap["Precision"] = (char*)childAttribute->children->content;
                     }
-                    // the key or mapped string for the variable
+                    // The key or mapped string for the variable
                     else if (xmlStrcmp(childAttribute->name, (xmlChar*)"Key") == 0) {
                       childKey = (char*)childAttribute->children->content;
                     }
-                    // text based xml data
+                    // Text based xml data
                     else if (xmlStrcmp(childAttribute->name, (xmlChar*)"Value") == 0) {
                       dataString = (char*)childAttribute->children->content;
                     }
-                    // an x pointer to another XdmfArray
+                    // An x pointer to another XdmfArray
                     else if (xmlStrcmp(childAttribute->name, (xmlChar*)"XPointer") == 0) {
                       childXPointer = childAttribute->children->content;
                     }
-                    // used in conjunction with Xpointers to reference objects in a different file
+                    // Used in conjunction with Xpointers to reference objects in a different file
                     else if (xmlStrcmp(childAttribute->name, (xmlChar*)"href") == 0) {
                       childhref = childAttribute->children->content;
                     }
-                    // path to hdf5 data sets and the dimensions of those sets
+                    // Path to hdf5 data sets and the dimensions of those sets
                     else if (xmlStrcmp(childAttribute->name, (xmlChar*)"hdf5") == 0) {
                       childhdf5 = (char*)childAttribute->children->content;
                     }
@@ -315,7 +315,7 @@ public:
                     dataType = XdmfArrayType::Uninitialized();
                   }
 
-                  // if xpointer grab item at that location
+                  // If xpointer grab item at that location
                   if (childXPointer) {
                     xmlXPathContextPtr context = mXPathContext;
 
@@ -338,18 +338,18 @@ public:
                       xmlXPathObjectPtr result = xmlXPtrEval(childXPointer, context);
                       if(result && !xmlXPathNodeSetIsEmpty(result->nodesetval)) {
                         for(int i=0; i<result->nodesetval->nodeNr; ++i) {
-                          // there should only be one item being returned here
-                          // place into a new vector
+                          // There should only be one item being returned here
+                          // Place into a new vector
                           std::vector<shared_ptr<XdmfItem> > pointedItems;
                           this->readSingleNode(result->nodesetval->nodeTab[i], pointedItems);
                           try {
-                            // try to cast it as an array
+                            // Try to cast it as an array
                             childArray = shared_dynamic_cast<XdmfArray>(pointedItems[0]);
                           }
                           catch (...) {
-                            // if that doesn't work throw an error
+                            // If that doesn't work throw an error
                             try {
-                              // because we should only be working with arrays
+                              // Because we should only be working with arrays
                               XdmfError::message(XdmfError::FATAL,
                                                  "Error: Variable not Equivalent to an Array");
                             }
@@ -366,11 +366,11 @@ public:
                       xmlXPathFreeContext(context);
                     }
                   }
-                  // if hdf5 create controllers and attach it
+                  // If hdf5 create controllers and attach it
                   else if (childhdf5.compare("") != 0) {
-                    // parse the hdf5 controllers
+                    // Parse the hdf5 controllers
                     std::vector<std::string> controllerParts;
-                    // split the content based on "|" characters
+                    // Split the content based on "|" characters
                     size_t barSplit = 0;
                     std::string splitString(childhdf5);
                     std::string subcontent;
@@ -389,7 +389,7 @@ public:
                       controllerParts.push_back(subcontent);
                     }
 
-                    // insert those controllers into the childArray
+                    // Insert those controllers into the childArray
                     int hdf5step = 2;
                     for (unsigned int i = 0; i < controllerParts.size(); i = i + hdf5step) {
                       size_t colonLocation = controllerParts[i].find(":");
@@ -410,18 +410,18 @@ public:
                       std::vector<unsigned int> contentDims;
 
                       if (i + 1 < controllerParts.size()){
-                        // this is the string that contains the dimensions
+                        // This is the string that contains the dimensions
                         boost::tokenizer<> dimtokens(controllerParts[i + 1]);
                         for(boost::tokenizer<>::const_iterator iter = dimtokens.begin();
                             iter != dimtokens.end();
                             ++iter) {
                           contentDims.push_back(atoi((*iter).c_str()));
                         }
-                        hdf5step = 2;// if this works then the dimension content should be skipped over
+                        hdf5step = 2;// If this works then the dimension content should be skipped over
                       }
                       else {
-                        // if it fails then it means that the next content is not a dimension string
-                        // in this case an error should be thrown, formatting error
+                        // If it fails then it means that the next content is not a dimension string
+                        // In this case an error should be thrown, formatting error
                         // because there is no base array to pull dimensions from
                         try {
                           XdmfError::message(XdmfError::FATAL,
@@ -441,9 +441,9 @@ public:
                                                                  contentDims));
                     }
                   }
-                  // if xml parse strait to insert
+                  // If xml parse strait to insert
                   else if (dataString.compare("") != 0) {
-                    // parse the data into tokens
+                    // Parse the data into tokens
                     childArray->initialize(dataType, 0);
                     unsigned int index = 0;
                     boost::char_separator<char> sep(" \t\n");
@@ -453,7 +453,7 @@ public:
                           iter = tokens.begin();
                           iter != tokens.end();
                           ++iter, ++index) {
-                        // insert those tokens into the childArray
+                        // Insert those tokens into the childArray
                         childArray->insert(index, *iter);
                       }
                     }
@@ -462,13 +462,13 @@ public:
                           iter = tokens.begin();
                           iter != tokens.end();
                           ++iter, ++index) {
-                        // insert those tokens into the childArray
+                        // Insert those tokens into the childArray
                         childArray->insert(index, atof((*iter).c_str()));
                       }
                     }
                   }
 
-                  // parse the value into the array
+                  // Parse the value into the array
                   if (childKey.compare("") != 0){
                     if (variableCollection.find(childKey) != variableCollection.end()) {
                       try {
@@ -504,25 +504,25 @@ public:
           catch (XdmfError e) {
             throw e;
           }
-          // the properties and children aren't really needed to generate the object, but the factory still requires them.
+          // The properties and children aren't really needed to generate the object, but the factory still requires them.
           std::map<std::string, std::string> newArrayProperties;
           std::vector<shared_ptr<XdmfItem> > newArrayChildren;
           shared_ptr<XdmfArray> returnArray = XdmfArray::New();
 
           if (arraySubType.compare("") == 0) {
-            // if no type is specified an array is generated
+            // If no type is specified an array is generated
             arraySubType = "DataItem";
           }
 
-          // this should generate an item that corresponds to the tag provided, the casting ensures that it is a subtype of array
-          // using a factory to be able to build things outside of core
+          // This should generate an item that corresponds to the tag provided, the casting ensures that it is a subtype of array
+          // Using a factory to be able to build things outside of core
           returnArray = shared_dynamic_cast<XdmfArray>(mItemFactory->createItem(
                                                        arraySubType,
                                                        newArrayProperties,
                                                        newArrayChildren));
 
           if (!returnArray) {
-            // if the specified tag fails to generate an item then reclass as an array
+            // If the specified tag fails to generate an item then reclass as an array
             arraySubType = "DataItem";
             returnArray = shared_dynamic_cast<XdmfArray>(mItemFactory->createItem(
                                                          arraySubType,
@@ -557,15 +557,15 @@ public:
   readSingleNode(const xmlNodePtr currNode,
                  std::vector<shared_ptr<XdmfItem> > & myItems)
   {
-    // check to see if the node is already in the Xpath
+    // Check to see if the node is already in the Xpath
     std::map<xmlNodePtr, shared_ptr<XdmfItem> >::const_iterator iter =
       mXPathMap.find(currNode);
-    // if it is grab it from the previously stored items
+    // If it is grab it from the previously stored items
     if(iter != mXPathMap.end()) {
       myItems.push_back(iter->second);
     }
     else {
-      // otherwise, generate it from the node
+      // Otherwise, generate it from the node
       std::map<std::string, std::string> itemProperties;
 
       xmlNodePtr childNode = currNode->children;
@@ -575,13 +575,13 @@ public:
           if(childNode->type == XML_TEXT_NODE && childNode->content) {
             const char * content = (char*)childNode->content;
             
-            // determine if content is whitespace
+            // Determine if content is whitespace
             bool whitespace = true;
             
             const char * contentPtr = content;
-            // step through to end of pointer
+            // Step through to end of pointer
             while(contentPtr != NULL) {
-              // if not a whitespace character, break
+              // If not a whitespace character, break
               if(!isspace(*contentPtr++)) {
                 whitespace = false;
                 break;
@@ -593,7 +593,7 @@ public:
                 itemProperties.insert(std::make_pair("XMLDir", mXMLDir));
               }
 
-              // split the content based on "|" characters
+              // Split the content based on "|" characters
               size_t barSplit = 0;
               std::string splitString(content);
               std::string subcontent;
