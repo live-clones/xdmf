@@ -19,19 +19,19 @@ XdmfError::~XdmfError() throw()
 XdmfError::Level
 XdmfError::getLevel()
 {
-    return XdmfError::mLevel;
+  return XdmfError::mLevel;
 }
 
 void
 XdmfError::setLevel(Level l)
 {
-    XdmfError::mLevel = l;
+  XdmfError::mLevel = l;
 }
 
 const char *
 XdmfError::what() const throw()
 {
-    return XdmfError::mMessage.c_str();
+  return XdmfError::mMessage.c_str();
 }
 
 /*******************************
@@ -41,27 +41,27 @@ XdmfError::what() const throw()
 XdmfError::Level
 XdmfError::getLevelLimit()
 {
-    return XdmfError::mLevelLimit;
+  return XdmfError::mLevelLimit;
 }
 
 void
 XdmfError::setLevelLimit(Level l)
 {
-    XdmfError::mLevelLimit = l;
+  XdmfError::mLevelLimit = l;
 }
 
 void
 XdmfError::message(Level level, std::string msg)
 {
-    if(level<=XdmfError::getLevelLimit())
-        XdmfError::WriteToStream(msg);
-	throw XdmfError(level, msg);
+  if(level<=XdmfError::getLevelLimit())
+    XdmfError::WriteToStream(msg);
+    throw XdmfError(level, msg);
 }
 
 void
 XdmfError::setBuffer(std::streambuf* buf)
 {
-    XdmfError::mBuf = buf;
+  XdmfError::mBuf = buf;
 }
 
 /********************************
@@ -73,9 +73,9 @@ XdmfError::setBuffer(std::streambuf* buf)
 void
 XdmfError::WriteToStream(std::string msg)
 {
-    if(msg[msg.length()-1] != '\n')
-        msg+='\n';
-    XdmfError::mBuf->sputn(msg.c_str(),msg.length());
+  if(msg[msg.length()-1] != '\n')
+    msg+='\n';
+  XdmfError::mBuf->sputn(msg.c_str(),msg.length());
 }
 
 /******************************************
