@@ -104,7 +104,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until exampleWriter
    * @skipline if
@@ -141,7 +141,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until exampleWriter
    * @skipline if
@@ -174,7 +174,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until exampleWriter
    * @skipline if
@@ -213,7 +213,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until exampleWriter
    * @skipline if
@@ -249,7 +249,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until exampleWriter
    * @skipline if
@@ -282,7 +282,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until exampleWriter
    * @skipline if
@@ -315,7 +315,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until exampleWriter
    * @skipline if
@@ -347,7 +347,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until exampleWriter
    * @skipline if
@@ -379,7 +379,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until exampleWriter
    * @skipline if
@@ -411,7 +411,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until exampleWriter
    * @skipline if
@@ -443,7 +443,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until exampleWriter
    * @skipline if
@@ -475,7 +475,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until exampleWriter
    * @skipline if
@@ -507,7 +507,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until exampleWriter
    * @skipline if
@@ -539,7 +539,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until exampleWriter
    * @skipline if
@@ -573,7 +573,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until exampleWriter
    * @skipline if
@@ -608,7 +608,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until exampleWriter
    * @skipline if
@@ -641,7 +641,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until exampleWriter
    * @skipline if
@@ -675,7 +675,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until exampleWriter
    * @skipline if
@@ -708,7 +708,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until exampleWriter
    * @skipline if
@@ -743,7 +743,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until exampleWriter
    * @skipline if
@@ -777,7 +777,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until exampleWriter
    * @skipline if

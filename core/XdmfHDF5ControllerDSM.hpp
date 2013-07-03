@@ -201,7 +201,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until exampleWriter
    * @skipline if
@@ -226,7 +226,7 @@ public:
       const std::vector<unsigned int> & start,
       const std::vector<unsigned int> & stride,
       const std::vector<unsigned int> & dimensions,
-      const std::vector<unsigned int> & datspaceDimensions,
+      const std::vector<unsigned int> & dataspaceDimensions,
       XdmfDSMBuffer * const dsmBuffer,
       int startCoreIndex,
       int endCoreIndex);
@@ -246,7 +246,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until workerComm
    * @skipline exampleController
@@ -272,7 +272,7 @@ public:
       const std::vector<unsigned int> & start,
       const std::vector<unsigned int> & stride,
       const std::vector<unsigned int> & dimensions,
-      const std::vector<unsigned int> & datspaceDimensions,
+      const std::vector<unsigned int> & dataspaceDimensions,
       MPI_Comm comm,
       unsigned int bufferSize,
       int startCoreIndex,
@@ -402,7 +402,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until workerComm
    * @skipline exampleController
@@ -436,7 +436,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until workerComm
    * @skipline exampleController
@@ -469,7 +469,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until workerComm
    * @skipline exampleController
@@ -504,7 +504,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until exampleWriter
    * @skipline if
@@ -538,7 +538,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until workerComm
    * @skipline exampleController
@@ -612,7 +612,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until workerComm
    * @skipline exampleController
@@ -689,7 +689,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until workerComm
    * @skipline exampleController
@@ -724,7 +724,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until workerComm
    * @skipline exampleController
@@ -759,7 +759,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until exampleWriter
    * @skipline if
@@ -792,7 +792,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until workerComm
    * @skipline exampleController
@@ -825,7 +825,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until workerComm
    * @skipline exampleController
@@ -859,7 +859,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleDSMNoThread.cpp
+   * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until workerComm
    * @skipline exampleController
