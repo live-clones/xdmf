@@ -20,6 +20,7 @@ if(XDMF_BUILD_EXODUS_IO)
     include_directories(${EXODUS_INCLUDE_DIR} ${NetCDF_INCLUDE_DIR})
   endif(EXODUS_FOUND)
   set(XdmfUtilsSources ${XdmfUtilsSources} XdmfExodusReader XdmfExodusWriter)
+  set(XdmfUtilsExecutables ${XdmfUtilsExecutables} XdmfExodusConverter)
   set(XdmfUtilsLinkLibraries
     ${XdmfUtilsLinkLibraries}
     ${EXODUS_LIBRARIES}

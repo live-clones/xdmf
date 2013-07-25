@@ -25,6 +25,7 @@
 #define XDMFEXODUSWRITER_HPP_
 
 // Forward Declarations
+class XdmfGridCollection;
 class XdmfUnstructuredGrid;
 
 // Includes
@@ -53,11 +54,22 @@ public:
    * Write an XdmfUnstructuredGrid to an ExodusII file.
    *
    * @param filePath of the ExodusII file to write.
-   * @param gridToWrite an XdmfUnstructuredGrid to write to ExodusII file
+   * @param grid an XdmfUnstructuredGrid to write to ExodusII file
    * format.
    */
   void write(const std::string & filePath,
-             const shared_ptr<XdmfUnstructuredGrid> gridToWrite) const;
+             const shared_ptr<XdmfUnstructuredGrid> grid) const;
+
+  /**
+   * Write an XdmfGridCollection to an ExodusII file.
+   *
+   * @param filePath of the ExodusII file to write.
+   * @param grid an XdmfGridCollection to write to ExodusII file
+   * format.
+   */
+  void write(const std::string & filePath,
+             const shared_ptr<XdmfGridCollection> grid) const;
+
 
 protected:
 
