@@ -40,6 +40,7 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
     #include <XdmfAttributeType.hpp>
     #include <XdmfCurvilinearGrid.hpp>
     #include <XdmfDomain.hpp>
+    #include <XdmfFunction.hpp>
     #include <XdmfGeometry.hpp>
     #include <XdmfGeometryType.hpp>
     #include <XdmfGraph.hpp>
@@ -96,6 +97,7 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
     #include <XdmfAttributeType.hpp>
     #include <XdmfCurvilinearGrid.hpp>
     #include <XdmfDomain.hpp>
+    #include <XdmfFunction.hpp>
     #include <XdmfGeometry.hpp>
     #include <XdmfGeometryType.hpp>
     #include <XdmfGraph.hpp>

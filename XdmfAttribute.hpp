@@ -53,12 +53,14 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfAttribute.cpp
-   * @skipline New
+   * @skipline //#initialization
+   * @until //#initialization
    *
    * Python
    *
    * @dontinclude XdmfExampleAttribute.py
-   * @skipline New
+   * @skipline #//initialization
+   * @until #//initialization
    *
    * @return constructed XdmfAttribute.
    */
@@ -77,14 +79,22 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfAttribute.cpp
-   * @skipline Assuming
-   * @skipline getCenter
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setCenter
+   * @until //#setCenter
+   * @skipline //#getCenter
+   * @until //#getCenter
    *
    * Python
    *
    * @dontinclude XdmfExampleAttribute.py
-   * @skipline Assuming
-   * @skipline getCenter
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setCenter
+   * @until #//setCenter
+   * @skipline #//getCenter
+   * @until #//getCenter
    *
    * @return XdmfAttributeCenter of the attribute.
    */
@@ -102,14 +112,22 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfAttribute.cpp
-   * @skipline Assuming
-   * @skipline getName
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setName
+   * @until //#setName
+   * @skipline //#getName
+   * @until //#getName
    *
    * Python
    *
    * @dontinclude XdmfExampleAttribute.py
-   * @skipline Assuming
-   * @skipline getName
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setName
+   * @until #//setName
+   * @skipline #//getName
+   * @until #//getName
    *
    * @return a string containing the name of the attribute.
    */
@@ -123,14 +141,22 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfAttribute.cpp
-   * @skipline Assuming
-   * @skipline getType
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setType
+   * @until //#setType
+   * @skipline //#getType
+   * @until //#getType
    *
    * Python
    *
    * @dontinclude XdmfExampleAttribute.py
-   * @skipline Assuming
-   * @skipline getType
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setType
+   * @until #//setType
+   * @skipline #//getType
+   * @until #//getType
    *
    * @return XdmfAttributeType of the attribute.
    */
@@ -144,14 +170,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfAttribute.cpp
-   * @skipline New
-   * @skipline setCenter
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setCenter
+   * @until //#setCenter
    *
    * Python
    *
    * @dontinclude XdmfExampleAttribute.py
-   * @skipline New
-   * @skipline setCenter
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setCenter
+   * @until #//setCenter
    *
    * @param center the XdmfAttributeCenter to set.
    */
@@ -165,16 +195,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfAttribute.cpp
-   * @skipline New
-   * @skipline newName
-   * @skipline setName
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setName
+   * @until //#setName
    *
    * Python
    *
    * @dontinclude XdmfExampleAttribute.py
-   * @skipline New
-   * @skipline newName
-   * @skipline setName
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setName
+   * @until #//setName
    *
    * @param name a string containing the name to set.
    */
@@ -188,14 +220,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfAttribute.cpp
-   * @skipline New
-   * @skipline setType
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setType
+   * @until //#setType
    *
    * Python
    *
    * @dontinclude XdmfExampleAttribute.py
-   * @skipline New
-   * @skipline setType
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setType
+   * @until #//setType
    *
    * @param type XdmfAttributeType to set.
    */

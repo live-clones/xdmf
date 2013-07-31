@@ -42,14 +42,22 @@
  * C++
  *
  * @dontinclude ExampleXdmfAttribute.cpp
- * @skipline exampleCenter
- * @until }
+ * @skipline //#initialization
+ * @until //#initialization
+ * @skipline //#setCenter
+ * @until //#setCenter
+ * @skipline //#getCenter
+ * @until //#getCenter
  *
  * Python
  *
  * @dontinclude XdmfExampleAttribute.py
- * @skipline exampleCenter
- * @until do
+ * @skipline #//initialization
+ * @until #//initialization
+ * @skipline #//setCenter
+ * @until #//setCenter
+ * @skipline #//getCenter
+ * @until #//getCenter
  *
  *   Grid
  *   Cell

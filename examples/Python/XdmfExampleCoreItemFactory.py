@@ -1,6 +1,8 @@
 from Xdmf import *
 
 if __name__ == "__main__":
+	#//createItem begin
+
 	#using XdmfItemFactory because XdmfCoreItemFactory is abstract
 	exampleFactory = XdmfItemFactory.New()
 	newProperties = StringMap()
@@ -9,3 +11,5 @@ if __name__ == "__main__":
 	#Same usage as the individual constructors
 	#childItems and itemProperties are not added to the item when created this way
 	#the collections are used to determine type
+
+	#//createItem end

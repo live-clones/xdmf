@@ -77,134 +77,36 @@ XdmfDSMManager::~XdmfDSMManager()
   this->Destroy();
 }
 
-XdmfDSMBuffer *
-XdmfDSMManager::GetDsmBuffer()
-{
-  return this->DsmBuffer;
-}
-
 void
-XdmfDSMManager::SetDsmBuffer(XdmfDSMBuffer * newBuffer)
+XdmfDSMManager::Connect(bool persist)
 {
-  this->DsmBuffer = newBuffer;
-}
+  int status;
 
-int
-XdmfDSMManager::GetUpdatePiece()
-{
-  return this->UpdatePiece;
-}
-
-int
-XdmfDSMManager::GetUpdateNumPieces()
-{
-  return this->UpdateNumPieces;
-}
-
-MPI_Comm
-XdmfDSMManager::GetMpiComm()
-{
-  return this->MpiComm;
-}
-
-void
-XdmfDSMManager::SetMpiComm(MPI_Comm comm)
-{
-  if (comm != this->MpiComm) {
-    this->MpiComm = comm;
-    if (this->MpiComm != MPI_COMM_NULL) {
-      MPI_Comm_size(this->MpiComm, &this->UpdateNumPieces);
-      MPI_Comm_rank(this->MpiComm, &this->UpdatePiece);
+  do {
+    try {
+      status = this->DsmBuffer->GetComm()->Connect();
     }
-  }
-}
-
-void
-XdmfDSMManager::SetLocalBufferSizeMBytes(unsigned int newSize)
-{
-  this->LocalBufferSizeMBytes = newSize;
-}
-
-unsigned int
-XdmfDSMManager::GetLocalBufferSizeMBytes()
-{
-  return this->LocalBufferSizeMBytes;
-}
-
-void
-XdmfDSMManager::SetIsServer(bool newStatus)
-{
-  this->IsServer = newStatus;
-}
-
-bool
-XdmfDSMManager::GetIsServer()
-{
-  return this->IsServer;
-}
-
-void
-XdmfDSMManager::SetDsmType(int newType)
-{
-  this->DsmType = newType;
-}
-
-int
-XdmfDSMManager::GetDsmType()
-{
-  return this->DsmType;
-}
-
-void
-XdmfDSMManager::SetBlockLength(long newSize)
-{
-  this->BlockLength = newSize;
-}
-
-long
-XdmfDSMManager::GetBlockLength()
-{
-  return this->BlockLength;
-}
-
-void
-XdmfDSMManager::SetInterCommType(int newType)
-{
-  this->InterCommType = newType;
-}
-
-int
-XdmfDSMManager::GetInterCommType()
-{
-  return this->InterCommType;
-}
-
-bool
-XdmfDSMManager::GetIsConnected()
-{
-  if (this->DsmBuffer) {
-    return this->DsmBuffer->GetIsConnected();
-  }
-  else {
-    return false;
-  }
-}
-
-void
-XdmfDSMManager::Destroy()
-{
-  // Watch out that all processes have empty message queues
-  // Should be already done during the disconnection
-  if (this->DsmBuffer) {
-    delete this->DsmBuffer;
-    this->DsmBuffer = NULL;
-    // Will be replaced by an Xdmf version
-    // H5FD_dsm_set_manager(NULL);
-  }
-  if (this->DsmComm) {
-    delete this->DsmComm;
-    this->DsmComm = NULL;
-  }
+    catch (XdmfError e) {
+      throw e;
+    }
+    if (status == MPI_SUCCESS) {
+      dynamic_cast<XdmfDSMBuffer*> (this->DsmBuffer)->SetIsConnected(true);
+      try {
+        this->DsmBuffer->ReceiveInfo();
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+    else {
+#ifdef _WIN32
+  Sleep(1000);
+  // Since windows has a different sleep command
+#else
+  sleep(1);
+#endif
+    }
+  } while (persist && (status != MPI_SUCCESS));
 }
 
 void
@@ -261,38 +163,20 @@ XdmfDSMManager::Create(int startId, int endId)
   }
 }
 
-
 void
-XdmfDSMManager::Connect(bool persist)
+XdmfDSMManager::Destroy()
 {
-  int status;
-
-  if (!(dynamic_cast<XdmfDSMBuffer*> (this->DsmBuffer)->GetIsConnected())) {
-    do {
-      try {
-        status = this->DsmBuffer->GetComm()->Connect();
-      }
-      catch (XdmfError e) {
-        throw e;
-      }
-      if (status == MPI_SUCCESS) {
-        dynamic_cast<XdmfDSMBuffer*> (this->DsmBuffer)->SetIsConnected(true);
-        try {
-          this->DsmBuffer->ReceiveInfo();
-        }
-        catch (XdmfError e) {
-          throw e;
-        }
-      }
-      else {
-#ifdef _WIN32
-  Sleep(1000);
-  // Since windows has a different sleep command
-#else
-  sleep(1);
-#endif
-      }
-    } while (persist && (status != MPI_SUCCESS));
+  // Watch out that all processes have empty message queues
+  // Should be already done during the disconnection
+  if (this->DsmBuffer) {
+    delete this->DsmBuffer;
+    this->DsmBuffer = NULL;
+    // Will be replaced by an Xdmf version
+    // H5FD_dsm_set_manager(NULL);
+  }
+  if (this->DsmComm) {
+    delete this->DsmComm;
+    this->DsmComm = NULL;
   }
 }
 
@@ -307,4 +191,117 @@ XdmfDSMManager::Disconnect()
     throw e;
   }
   dynamic_cast<XdmfDSMBuffer*> (this->DsmBuffer)->SetIsConnected(false);
+}
+
+long
+XdmfDSMManager::GetBlockLength()
+{
+  return this->BlockLength;
+}
+
+XdmfDSMBuffer *
+XdmfDSMManager::GetDsmBuffer()
+{
+  return this->DsmBuffer;
+}
+
+int
+XdmfDSMManager::GetDsmType()
+{
+  return this->DsmType;
+}
+
+int
+XdmfDSMManager::GetInterCommType()
+{
+  return this->InterCommType;
+}
+
+bool
+XdmfDSMManager::GetIsConnected()
+{
+  if (this->DsmBuffer) {
+    return this->DsmBuffer->GetIsConnected();
+  }
+  else {
+    return false;
+  }
+}
+
+bool
+XdmfDSMManager::GetIsServer()
+{
+  return this->IsServer;
+}
+
+unsigned int
+XdmfDSMManager::GetLocalBufferSizeMBytes()
+{
+  return this->LocalBufferSizeMBytes;
+}
+
+MPI_Comm
+XdmfDSMManager::GetMpiComm()
+{
+  return this->MpiComm;
+}
+
+int
+XdmfDSMManager::GetUpdatePiece()
+{
+  return this->UpdatePiece;
+}
+
+int
+XdmfDSMManager::GetUpdateNumPieces()
+{
+  return this->UpdateNumPieces;
+}
+
+void
+XdmfDSMManager::SetBlockLength(long newSize)
+{
+  this->BlockLength = newSize;
+}
+
+void
+XdmfDSMManager::SetDsmBuffer(XdmfDSMBuffer * newBuffer)
+{
+  this->DsmBuffer = newBuffer;
+}
+
+void
+XdmfDSMManager::SetDsmType(int newType)
+{
+  this->DsmType = newType;
+}
+
+void
+XdmfDSMManager::SetIsServer(bool newStatus)
+{
+  this->IsServer = newStatus;
+}
+
+void
+XdmfDSMManager::SetInterCommType(int newType)
+{
+  this->InterCommType = newType;
+}
+
+void
+XdmfDSMManager::SetLocalBufferSizeMBytes(unsigned int newSize)
+{
+  this->LocalBufferSizeMBytes = newSize;
+}
+
+void
+XdmfDSMManager::SetMpiComm(MPI_Comm comm)
+{
+  if (comm != this->MpiComm) {
+    this->MpiComm = comm;
+    if (this->MpiComm != MPI_COMM_NULL) {
+      MPI_Comm_size(this->MpiComm, &this->UpdateNumPieces);
+      MPI_Comm_rank(this->MpiComm, &this->UpdatePiece);
+    }
+  }
 }

@@ -59,18 +59,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfCoreReader.cpp
-   * @skipline using
-   * @skipline New
-   * @skipline readLight
-   * @until parse
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#parse
+   * @until //#parse
    *
    * Python
    *
    * @dontinclude XdmfExampleCoreReader.py
-   * @skipline using
-   * @skipline New
-   * @skipline readLight
-   * @until parse
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//parse
+   * @until #//parse
    *
    * @param lightData a string containing light data description of an
    * Xdmf file.
@@ -87,19 +87,22 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfCoreReader.cpp
-   * @skipline using
-   * @skipline New
-   * @skipline readPath
-   * @skipline Assuming
-   * @until exampleDomain
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#readpath
+   * @until //#readpath
+   * @skipline //#readroot
+   * @until //#readroot
    *
    * Python
    *
    * @dontinclude XdmfExampleCoreReader.py
-   * @skipline using
-   * @skipline New
-   * @skipline readPath
-   * @skipline exampleItem
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//readpath
+   * @until #//readpath
+   * @skipline #//readroot
+   * @until #//readroot
    *
    * @param filePath the path of the Xdmf file to read in from disk.
    *
@@ -115,20 +118,22 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfCoreReader.cpp
-   * @skipline using
-   * @skipline New
-   * @skipline readPath
-   * @skipline readXPath
-   * @skipline exampleItems
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#readpath
+   * @until //#readpath
+   * @skipline //#readXPath
+   * @until //#readXPath
    *
    * Python
    *
    * @dontinclude XdmfExampleCoreReader.py
-   * @skipline using
-   * @skipline New
-   * @skipline readPath
-   * @skipline readXPath
-   * @skipline exampleItems
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//readpath
+   * @until #//readpath
+   * @skipline #//readXPath
+   * @until #//readXPath
    *
    * @param filePath the path of the Xdmf file to read in from disk.
    * @param xPath an XPath corresponding to the portion of the file to read.
@@ -147,19 +152,22 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfCoreReader.cpp
-   * @skipline using
-   * @skipline New
-   * @skipline readPath
-   * @skipline exampleCollection
-   * @until //
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#readpath
+   * @until //#readpath
+   * @skipline //#readItems
+   * @until //#readItems
    *
    * Python
    *
    * @dontinclude XdmfExampleCoreReader.py
-   * @skipline using
-   * @skipline New
-   * @skipline readPath
-   * @skipline exampleCollection
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//readpath
+   * @until #//readpath
+   * @skipline #//readItems
+   * @until #//readItems
    *
    * @param filePath the path of the Xdmf file to read in from disk.
    *

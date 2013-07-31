@@ -55,15 +55,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRectilinearGrid.cpp
-   * @skipline pointsXArray
-   * @until pointsYArray->pushBack(10)
-   * @skipline XdmfRectilinearGrid
+   * @skipline //#initvalues
+   * @until //#initvalues
+   * @skipline //#initialization2
+   * @until //#initialization2
    *
    * Python
    *
    * @dontinclude XdmfExampleRectilinearGrid.py
-   * @skipline pointsXArray
-   * @until XdmfRectilinearGrid
+   * @skipline #//initvalues
+   * @until #//initvalues
+   * @skipline #//initialization2
+   * @until #//initialization2
    *
    * @param xCoordinates the coordinates of points along the x axis
    * @param yCoordinates the coordinates of points along the y axis.
@@ -82,18 +85,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRectilinearGrid.cpp
-   * @skipline pointsXArray
-   * @until pointsZArray->pushBack(2)
-   * @skip size
-   * @skipline pointsZArray
+   * @skipline //#initvalues
+   * @until //#initvalues
+   * @skipline //#initialization3
+   * @until //#initialization3
    *
    * Python
    *
    * @dontinclude XdmfExampleRectilinearGrid.py
-   * @skipline pointsXArray
-   * @until pointsYArray.pushBackAsInt32(10)
-   * @skipline pointsZArray
-   * @until XdmfRectilinearGrid
+   * @skipline #//initvalues
+   * @until #//initvalues
+   * @skipline #//initialization3
+   * @until #//initialization3
    *
    * @param xCoordinates the coordinates of points along the x axis
    * @param yCoordinates the coordinates of points along the y axis.
@@ -114,20 +117,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRectilinearGrid.cpp
-   * @skipline pointsXArray
-   * @until pointsZArray->pushBack(2)
-   * @skipline pointsCollector
-   * @until XdmfRectilinearGrid
+   * @skipline //#initvalues
+   * @until //#initvalues
+   * @skipline //#initializationvector
+   * @until //#initializationvector
    *
    * Python
    *
    * @dontinclude XdmfExampleRectilinearGrid.py
-   * @skipline pointsXArray
-   * @until pointsYArray.pushBackAsInt32(10)
-   * @skipline pointsZArray
-   * @until pointsZArray.pushBackAsInt32(2)
-   * @skipline pointsCollector
-   * @until XdmfRectilinearGrid
+   * @skipline #//initvalues
+   * @until #//initvalues
+   * @skipline #//initializationvector
+   * @until #//initializationvector
    *
    * @param axesCoordinates the coordinates of points along each axis.
    *
@@ -149,16 +150,22 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRectilinearGrid.cpp
-   * @skipline Assuming
-   * @skipline readPointsX
-   * @until readPointsY
+   * @skipline //#initvalues
+   * @until //#initvalues
+   * @skipline //#initialization2
+   * @until //#initialization2
+   * @skipline //#getCoodinatessingle
+   * @until //#getCoodinatessingle
    *
    * Python
    *
    * @dontinclude XdmfExampleRectilinearGrid.py
-   * @skipline Assuming
-   * @skipline readPointsX
-   * @until readPointsY
+   * @skipline #//initvalues
+   * @until #//initvalues
+   * @skipline #//initialization2
+   * @until #//initialization2
+   * @skipline #//getCoodinatessingle
+   * @until #//getCoodinatessingle
    *
    * @param axisIndex the index of the axis to retrieve, (i.e. 0 for
    * x-axis). If no array exists at the index, return NULL.
@@ -176,9 +183,12 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRectilinearGrid.cpp
-   * @skipline Assuming
-   * @skipline readPointsXConst
-   * @until readPointsYConst
+   * @skipline //#initvalues
+   * @until //#initvalues
+   * @skipline //#initialization2
+   * @until //#initialization2
+   * @skipline //#getCoodinatessingleconst
+   * @until //#getCoodinatessingleconst
    *
    * Python: does not support a constant version of this function
    *
@@ -198,14 +208,22 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRectilinearGrid.cpp
-   * @skipline Assuming
-   * @skipline exampleCoordinates
+   * @skipline //#initvalues
+   * @until //#initvalues
+   * @skipline //#initializationvector
+   * @until //#initializationvector
+   * @skipline //#getCoodinatesvector
+   * @until //#getCoodinatesvector
    *
    * Python
    *
    * @dontinclude XdmfExampleRectilinearGrid.py
-   * @skipline Assuming
-   * @skipline exampleCoordinates
+   * @skipline #//initvalues
+   * @until #//initvalues
+   * @skipline #//initializationvector
+   * @until #//initializationvector
+   * @skipline #//getCoodinatesvector
+   * @until #//getCoodinatesvector
    *
    * @return vector containing an array of coordinates along each
    * direction.
@@ -220,8 +238,12 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRectilinearGrid.cpp
-   * @skipline Assuming
-   * @skipline exampleCoordinatesConst
+   * @skipline //#initvalues
+   * @until //#initvalues
+   * @skipline //#initializationvector
+   * @until //#initializationvector
+   * @skipline //#getCoodinatesvectorconst
+   * @until //#getCoodinatesvectorconst
    *
    * Python: does not support a constant version of this function
    *
@@ -239,14 +261,22 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRectilinearGrid.cpp
-   * @skipline Assuming
-   * @skipline exampleDimensions
+   * @skipline //#initvalues
+   * @until //#initvalues
+   * @skipline //#initializationvector
+   * @until //#initializationvector
+   * @skipline //#getDimensions
+   * @until //#getDimensions
    *
    * Python
    *
    * @dontinclude XdmfExampleRectilinearGrid.py
-   * @skipline Assuming
-   * @skipline exampleDimensions
+   * @skipline #//initvalues
+   * @until #//initvalues
+   * @skipline #//initializationvector
+   * @until #//initializationvector
+   * @skipline #//getDimensions
+   * @until #//getDimensions
    *
    * @return XdmfArray containing dimensions of this grid.
    */
@@ -261,8 +291,12 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRectilinearGrid.cpp
-   * @skipline Assuming
-   * @skipline exampleDimensionsConst
+   * @skipline //#initvalues
+   * @until //#initvalues
+   * @skipline //#initializationvector
+   * @until //#initializationvector
+   * @skipline //#getDimensionsconst
+   * @until //#getDimensionsconst
    *
    * Python: Doesn't support a constant version of this function
    *
@@ -278,18 +312,22 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRectilinearGrid.cpp
-   * @skipline Assuming
-   * @skipline pointsXArray
-   * @until pointsXArray->pushBack(10)
-   * @skipline setCoordinates
+   * @skipline //#initvalues
+   * @until //#initvalues
+   * @skipline //#initialization3
+   * @until //#initialization3
+   * @skipline //#setCoordinatessingle
+   * @until //#setCoordinatessingle
    *
    * Python
    *
    * @dontinclude XdmfExampleRectilinearGrid.py
-   * @skipline Assuming
-   * @skipline pointsXArray
-   * @until pointsXArray.pushBackAsInt32(10)
-   * @skipline setCoordinates
+   * @skipline #//initvalues
+   * @until #//initvalues
+   * @skipline #//initialization3
+   * @until #//initialization3
+   * @skipline #//setCoordinatessingle
+   * @until #//setCoordinatessingle
    *
    * @param axisIndex the index of the axis to set (i.e. 0 for x-axis).
    * @param axisCoordinates the coordinates of points along a single axis to
@@ -306,24 +344,22 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRectilinearGrid.cpp
-   * @skipline Assuming
-   * @skipline pointsXArray
-   * @until pointsZArray->pushBack(2);
-   * @skipline pointsCollector
-   * @until pointsZArray
-   * @skipline setCoordinates
+   * @skipline //#initvalues
+   * @until //#initvalues
+   * @skipline //#initializationvector
+   * @until //#initializationvector
+   * @skipline //#setCoordinatesvector
+   * @until //#setCoordinatesvector
    *
    * Python
    *
    * @dontinclude XdmfExampleRectilinearGrid.py
-   * @skipline Assuming
-   * @skipline pointsXArray
-   * @until pointsYArray.pushBackAsInt32(10)
-   * @skipline pointsZArray
-   * @until pointsZArray.pushBackAsInt32(2)
-   * @skipline ArrayVector
-   * @until pointsZArray
-   * @skipline setCoordinates
+   * @skipline #//initvalues
+   * @until #//initvalues
+   * @skipline #//initializationvector
+   * @until #//initializationvector
+   * @skipline #//setCoordinatesvector
+   * @until #//setCoordinatesvector
    *
    * @param axesCoordinates the coordinates of points along each axis.
    */

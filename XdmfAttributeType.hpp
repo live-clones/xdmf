@@ -42,14 +42,22 @@
  * C++
  *
  * @dontinclude ExampleXdmfAttribute.cpp
- * @skipline exampleType
- * @until }
+ * @skipline //#initialization
+ * @until //#initialization
+ * @skipline //#setType
+ * @until //#setType
+ * @skipline //#getType
+ * @until //#getType
  *
  * Python
  *
  * @dontinclude XdmfExampleAttribute.py
- * @skipline exampleType
- * @until do
+ * @skipline #//initialization
+ * @until #//initialization
+ * @skipline #//setType
+ * @until #//setType
+ * @skipline #//getType
+ * @until #//getType
  *
  * Xdmf supports the following attribute types:
  *   NoAttributeType

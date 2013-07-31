@@ -3,6 +3,8 @@ from Xdmf import *
 if __name__ == "__main__":
 	#Assuming exampleGrid is a shared pointer to an XdmfRegularGrid object
 
+	#//initvalues begin
+
 	newBrickX = 20.0
 	newPointsX = 5
 	newOriginX = 0.0
@@ -13,17 +15,41 @@ if __name__ == "__main__":
 	newPointsZ = 5
 	newOriginZ = 0.0
 
+	#//initvalues end
+
+	#//initialization2 begin
+
 	exampleGrid = XdmfRegularGrid.New(
 		newBrickX, newBrickY, newPointsX, newPointsY, newOriginX, newOriginY)
+
+	#//initialization2 end
+
+	#//initialization3 begin
 
 	exampleGrid = XdmfRegularGrid.New(
 		newBrickX, newBrickY, newBrickZ, newPointsX, newPointsY, newPointsZ, newOriginX, newOriginY, newOriginZ)
 
+	#//initialization3 end
+
+	#//getBrickSize begin
 
 	exampleBrick = exampleGrid.getBrickSize()
+
+	#//getBrickSize end
+
+	#//getDimensions begin
+
 	exampleDimensions = exampleGrid.getDimensions()
+
+	#//getDimensions end
+
+	#//getOrigin begin
+
 	exampleOrigin = exampleGrid.getOrigin()
 
+	#//getOrigin end
+
+	#//initializationvector begin
 
 	newBrickSize = XdmfArray.New()
 	newBrickSize.pushBackAsFloat64(20.0)
@@ -40,6 +66,22 @@ if __name__ == "__main__":
 
 	exampleGrid = XdmfRegularGrid.New(newBrickSize, newNumPoints, newGridOrigin)
 
+	#//initializationvector end
+
+	#//setBrickSize begin
+
 	exampleGrid.setBrickSize(newBrickSize)
+
+	#//setBrickSize end
+
+	#//setDimensions begin
+
 	exampleGrid.setDimensions(newNumPoints)
+
+	#//setDimensions end
+
+	#//setOrigin begin
+
 	exampleGrid.setOrigin(newGridOrigin)
+
+	#//setOrigin end

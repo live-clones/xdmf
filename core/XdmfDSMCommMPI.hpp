@@ -41,6 +41,8 @@
 
 #include <mpi.h>
 
+#include <string>
+
 /**
  * @brief Holds communicators for interacting with H5FD dsm.
  *
@@ -56,7 +58,7 @@ public:
   ~XdmfDSMCommMPI();
 
   /**
-   * Accepts connections to the port currently named by DsmMasterHostName. Called on server side, accepts from core 0.
+   * Accepts connections to the port currently named by DsmPortName. Called on server side, accepts from core 0.
    *
    * Example of use:
    *
@@ -92,10 +94,10 @@ public:
    * @until ClosePort
    *
    */
-  void Accept();
+  void Accept(unsigned int numConnections = 1);
 
   /**
-   * Closes the port currently named by DsmMasterHostName.
+   * Closes the port currently named by DsmPortName.
    *
    * Example of use:
    *
@@ -134,7 +136,7 @@ public:
   void ClosePort();
 
   /**
-   * If core ID is 0 then attempts to connect to the port currently named by DsmMasterHostName
+   * If core ID is 0 then attempts to connect to the port currently named by DsmPortName
    *
    * Example of use:
    *
@@ -288,6 +290,11 @@ public:
   void DupInterComm(MPI_Comm comm);
 
   /**
+   *
+   */
+  std::string GetDsmFileName();
+
+  /**
    * Gets the port name that will be connected to when Connect/Accept is called.
    *
    * Example of use:
@@ -325,7 +332,7 @@ public:
    *
    * @return      a pointer to the character string that specifies the port
    */
-  char * GetDsmMasterHostName();
+  char * GetDsmPortName();
 
   /**
    * Gets the Id with regards to the IntraComm.
@@ -430,6 +437,11 @@ public:
    * @return	An integer representation of the InterComm's type
    */
   int GetInterCommType();
+
+  /**
+   *
+   */
+  int GetInterId();
 
   /**
    * Gets the number of cores contained in the InterComm.
@@ -571,7 +583,7 @@ public:
   void Init();
 
   /**
-   * Opens a port and stores the port name in DsmMasterHostName.
+   * Opens a port and stores the port name in DsmPortName.
    *
    * Example of use:
    *
@@ -608,6 +620,16 @@ public:
    *
    */
   void OpenPort();
+
+  /**
+   *
+   */
+  void ReadDsmPortName();
+
+  /**
+   *
+   */
+  void SetDsmFileName(std::string filename);
 
   /**
    * Sets the port name that will be connected to when Connect/Accept is called.
@@ -650,7 +672,7 @@ public:
    *
    * @param       hostName        a pointer to the character string that specifies the port
    */
-  void SetDsmMasterHostName(const char *hostName);
+  void SetDsmPortName(const char *hostName);
 
 protected:
 
@@ -660,9 +682,11 @@ private:
   int		Id;
   int		IntraSize;
   MPI_Comm	InterComm;
+  int		InterId;
   int		InterSize;
   int		InterCommType;
-  char 		DsmMasterHostName[MPI_MAX_PORT_NAME];
+  char 		DsmPortName[MPI_MAX_PORT_NAME];
+  std::string	DsmFileName;
 };
 
 #endif /* XDMFDSMCOMMMPI_HPP_ */

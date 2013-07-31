@@ -86,9 +86,7 @@ XdmfHDF5ControllerDSM::New(const std::string & hdf5FilePath,
                            const std::vector<unsigned int> & stride,
                            const std::vector<unsigned int> & dimensions,
                            const std::vector<unsigned int> & datspaceDimensions,
-                           XdmfDSMBuffer * const dsmBuffer,
-                           int startCoreIndex,
-                           int endCoreIndex)
+                           XdmfDSMBuffer * const dsmBuffer)
 {
   shared_ptr<XdmfHDF5ControllerDSM>
     p(new XdmfHDF5ControllerDSM(hdf5FilePath,
@@ -98,9 +96,7 @@ XdmfHDF5ControllerDSM::New(const std::string & hdf5FilePath,
                                 stride,
                                 dimensions,
                                 datspaceDimensions,
-                                dsmBuffer,
-                                startCoreIndex,
-                                endCoreIndex));
+                                dsmBuffer));
   return p;
 }
 
@@ -151,13 +147,7 @@ XdmfHDF5ControllerDSM::XdmfHDF5ControllerDSM(const std::string & hdf5FilePath,
   mDSMBuffer(dsmBuffer),
   mDSMServerBuffer(NULL),
   mDSMServerManager(NULL),
-  mGroupComm(MPI_COMM_NULL),
-  mServerComm(MPI_COMM_NULL),
   mWorkerComm(MPI_COMM_NULL),
-  mStartCoreIndex(-1),
-  mEndCoreIndex(-1),
-  mRank(-1),
-  mGroupSize(-1),
   mServerMode(false)
 {
 }
@@ -180,13 +170,7 @@ XdmfHDF5ControllerDSM::XdmfHDF5ControllerDSM(const std::string & hdf5FilePath,
                      dataspaceDimensions),
   mDSMServerBuffer(NULL),
   mDSMServerManager(NULL),
-  mGroupComm(MPI_COMM_NULL),
-  mServerComm(MPI_COMM_NULL),
   mWorkerComm(MPI_COMM_NULL),
-  mStartCoreIndex(-1),
-  mEndCoreIndex(-1),
-  mRank(-1),
-  mGroupSize(-1),
   mServerMode(false)
 
 {
@@ -213,9 +197,7 @@ XdmfHDF5ControllerDSM::XdmfHDF5ControllerDSM(const std::string & hdf5FilePath,
                                              const std::vector<unsigned int> & stride,
                                              const std::vector<unsigned int> & dimensions,
                                              const std::vector<unsigned int> & dataspaceDimensions,
-                                             XdmfDSMBuffer * const dsmBuffer,
-                                             int startCoreIndex,
-                                             int endCoreIndex) :
+                                             XdmfDSMBuffer * const dsmBuffer) :
   XdmfHDF5Controller(hdf5FilePath,
                      dataSetPath,
                      type,
@@ -227,20 +209,20 @@ XdmfHDF5ControllerDSM::XdmfHDF5ControllerDSM(const std::string & hdf5FilePath,
   mDSMBuffer(NULL),
   mDSMServerBuffer(dsmBuffer),
   mDSMServerManager(NULL),
-  mStartCoreIndex(startCoreIndex),
-  mEndCoreIndex(endCoreIndex),
   mServerMode(true)
 {
-  mGroupComm = mDSMServerBuffer->GetComm()->GetInterComm();
-  MPI_Comm_rank(mGroupComm, &mRank);
-  MPI_Comm_size(mGroupComm, &mGroupSize);
-  if (mRank >=mStartCoreIndex && mRank <=mEndCoreIndex) {
-    mServerComm = mDSMServerBuffer->GetComm()->GetIntraComm();
-    mWorkerComm = MPI_COMM_NULL;
+  mWorkerComm = mDSMServerBuffer->GetComm()->GetIntraComm();
+  if (xdmf_dsm_get_manager() == NULL) {
+    mDSMServerManager = new XdmfDSMManager();
+    mDSMServerManager->SetLocalBufferSizeMBytes(mDSMServerBuffer->GetLength());
+    mDSMServerManager->SetInterCommType(H5FD_DSM_COMM_MPI);
+    mDSMServerManager->SetIsServer(false);
+    mDSMServerManager->SetMpiComm(mDSMServerBuffer->GetComm()->GetIntraComm());
+    mDSMServerManager->SetDsmBuffer(mDSMServerBuffer);
+    XDMF_dsm_set_manager(mDSMServerManager);
   }
   else {
-    mServerComm = MPI_COMM_NULL;
-    mWorkerComm = mDSMServerBuffer->GetComm()->GetIntraComm();
+    static_cast<XdmfDSMManager *>(xdmf_dsm_get_manager())->SetDsmBuffer(mDSMServerBuffer);
   }
 }
 
@@ -267,12 +249,18 @@ XdmfHDF5ControllerDSM::XdmfHDF5ControllerDSM(const std::string & hdf5FilePath,
   mServerMode(true)
 
 {
+
+  int rank, size;
+
+  MPI_Comm_size(comm, &size);
+  MPI_Comm_rank(comm, &rank);
+
   // Negative values will be changed to maximum range
   if (startCoreIndex < 0) {
     startCoreIndex = 0;
   }
   if (endCoreIndex < 0) {
-    endCoreIndex = mGroupSize - 1;
+    endCoreIndex = size - 1;
   }
 
   // Ensure start index is less than end index
@@ -282,24 +270,19 @@ XdmfHDF5ControllerDSM::XdmfHDF5ControllerDSM(const std::string & hdf5FilePath,
     endCoreIndex = tempholder;
   }
 
-  mGroupComm = comm;
-  mStartCoreIndex = startCoreIndex;
-  mEndCoreIndex = endCoreIndex;
-
-  MPI_Comm_size(comm, &mGroupSize);
-  MPI_Comm_rank(comm, &mRank);
+  MPI_Comm serverComm;
 
   MPI_Group workers, dsmgroup, serversplit, servergroup;
 
   int * ServerIds = (int *)calloc((3), sizeof(int));
   unsigned int index = 0;
-  for(int i=mStartCoreIndex ; i <= mEndCoreIndex ; ++i) {
+  for(int i=startCoreIndex ; i <= endCoreIndex ; ++i) {
     ServerIds[index++] = i;
   }
 
   MPI_Comm_group(comm, &serversplit);
   MPI_Group_incl(serversplit, index, ServerIds, &servergroup);
-  MPI_Comm_create(comm, servergroup, &mServerComm);
+  MPI_Comm_create(comm, servergroup, &serverComm);
   MPI_Comm_group(comm, &dsmgroup);
   MPI_Group_excl(dsmgroup, index, ServerIds, &workers);
   MPI_Comm_create(comm, workers, &mWorkerComm);
@@ -312,28 +295,37 @@ XdmfHDF5ControllerDSM::XdmfHDF5ControllerDSM(const std::string & hdf5FilePath,
   mDSMServerManager->SetLocalBufferSizeMBytes(bufferSize);
   mDSMServerManager->SetInterCommType(H5FD_DSM_COMM_MPI);
 
-  if (mRank >=mStartCoreIndex && mRank <=mEndCoreIndex) {
-    mDSMServerManager->SetMpiComm(mServerComm);
+  if (rank >= startCoreIndex && rank <= endCoreIndex) {
+    mDSMServerManager->SetMpiComm(serverComm);
     mDSMServerManager->Create();
   }
   else {
     mDSMServerManager->SetMpiComm(mWorkerComm);
     mDSMServerManager->SetIsServer(false);
-    mDSMServerManager->Create(mStartCoreIndex, mEndCoreIndex);
+    mDSMServerManager->Create(startCoreIndex, endCoreIndex);
   }
 
   XDMF_dsm_set_manager(mDSMServerManager);
 
   mDSMServerBuffer = mDSMServerManager->GetDsmBuffer();
 
-  mDSMServerBuffer->GetComm()->DupInterComm(mGroupComm);
+  mDSMServerBuffer->GetComm()->DupInterComm(comm);
   mDSMServerBuffer->SetIsConnected(true);
+
+  if (startCoreIndex < size) {
+    if (rank >= startCoreIndex && rank <= endCoreIndex) {
+      mDSMServerManager->GetDsmBuffer()->ReceiveInfo();
+    }
+    else {
+      mDSMServerManager->GetDsmBuffer()->SendInfo();
+    }
+  }
 
   MPI_Barrier(comm);
 
   // Loop needs to be started before anything can be done to the file, since the service is what sets up the file
 
-  if (mRank < mStartCoreIndex || mRank > mEndCoreIndex) {
+  if (rank < startCoreIndex || rank > endCoreIndex) {
     // Turn off the server designation
     mDSMServerBuffer->SetIsServer(H5FD_DSM_FALSE);
     // If this is set to false then the buffer will attempt to connect to the intercomm for DSM stuff
@@ -386,13 +378,6 @@ XdmfDSMBuffer * XdmfHDF5ControllerDSM::getServerBuffer()
   return mDSMServerBuffer;
 }
 
-MPI_Comm XdmfHDF5ControllerDSM::getServerComm()
-{
-  MPI_Comm returnComm = MPI_COMM_NULL;
-  int status = MPI_Comm_dup(mServerComm, &returnComm);
-  return returnComm;
-}
-
 XdmfDSMManager * XdmfHDF5ControllerDSM::getServerManager()
 {
   return mDSMServerManager;
@@ -434,34 +419,6 @@ void XdmfHDF5ControllerDSM::setBuffer(H5FDdsmBuffer * newBuffer)
   mDSMBuffer = newBuffer;
 }
 
-void XdmfHDF5ControllerDSM::setServerComm(MPI_Comm comm)
-{
-  int status;
-  if (mServerComm != MPI_COMM_NULL) {
-    status = MPI_Comm_free(&mServerComm);
-    if (status != MPI_SUCCESS) {
-      try {
-        XdmfError::message(XdmfError::FATAL, "Failed to disconnect Comm");
-      }
-      catch (XdmfError e) {
-        throw e;
-      }
-    }
-  }
-  if (comm != MPI_COMM_NULL) {
-    status = MPI_Comm_dup(comm, &mServerComm);
-    if (status != MPI_SUCCESS) {
-      try {
-        XdmfError::message(XdmfError::FATAL, "Failed to duplicate Comm");
-      }
-      catch (XdmfError e) {
-        throw e;
-      }
-    }
-  }
-  mDSMServerBuffer->GetComm()->DupComm(comm);
-}
-
 void XdmfHDF5ControllerDSM::setServerMode(bool newMode)
 {
   mServerMode = newMode;
@@ -498,7 +455,7 @@ void XdmfHDF5ControllerDSM::setWorkerComm(MPI_Comm comm)
 void XdmfHDF5ControllerDSM::stopDSM()
 {
   // Send manually
-  for (int i = mStartCoreIndex; i <= mEndCoreIndex; ++i) {
+  for (int i = mDSMServerBuffer->GetStartServerId(); i <= mDSMServerBuffer->GetEndServerId(); ++i) {
     try {
       mDSMServerBuffer->SendCommandHeader(H5FD_DSM_OPCODE_DONE, i, 0, 0, H5FD_DSM_INTER_COMM);
     }
@@ -510,7 +467,7 @@ void XdmfHDF5ControllerDSM::stopDSM()
 
 void XdmfHDF5ControllerDSM::restartDSM()
 {
-  if (mRank >= mStartCoreIndex && mRank <= mEndCoreIndex) {
+  if (mDSMServerBuffer->GetComm()->GetInterId() >= mDSMServerBuffer->GetStartServerId() && mDSMServerBuffer->GetComm()->GetInterId() <= mDSMServerBuffer->GetEndServerId()) {
     H5FDdsmInt32 returnOpCode;
     try {
       mDSMServerBuffer->BufferServiceLoop(&returnOpCode);

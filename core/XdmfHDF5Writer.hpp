@@ -32,6 +32,8 @@ class XdmfHDF5Controller;
 // Includes
 #include "XdmfCore.hpp"
 #include "XdmfHeavyDataWriter.hpp"
+#include "XdmfHeavyDataController.hpp"
+#include <list>
 
 /**
  * @brief Traverse the Xdmf graph and write heavy data stored in
@@ -79,149 +81,6 @@ public:
   virtual ~XdmfHDF5Writer();
 
 
-  /**
-   * Sets the file size limit of the HDF5 files produced by the writer in MB. Overflow is pushed to a new HDF5 file.
-   * Using with arrays of string type may reduce performance.
-   *
-   * Example of use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfHDF5Writer.cpp
-   * @skipline newPath
-   * @until setFileSizeLimit
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleHDF5Writer.py
-   * @skipline newPath
-   * @until setFileSizeLimit
-   *
-   * @param	newSize	The size limit in MB
-   */
-  void setFileSizeLimit(int newSize);
-
-  /**
-   * Gets the file size limit of the HDF5 files produced by the writer in MB. Overflow is pushed to a new HDF5 file.
-   *
-   * Example of use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfHDF5Writer.cpp
-   * @skipline newPath
-   * @until New
-   * @skipline exampleLimit
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleHDF5Writer.py
-   * @skipline newPath
-   * @until New
-   * @skipline exampleLimit
-   *
-   * @return	The size limit in MB
-   */
-  int getFileSizeLimit();
-
-  /**
-   * Sets whether to allow the HDF5 writer to split data sets when writing to hdf5.
-   * Splitting should only occur for massive data sets.
-   * Setting to false assures compatibility with previous editions.
-   * Default setting is false
-   *
-   * Example of use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfHDF5Writer.cpp
-   * @skipline newPath
-   * @until New
-   * @skipline newAllow
-   * @until setAllow
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleHDF5Writer.py
-   * @skipline newPath
-   * @until New
-   * @skipline newAllow
-   * @until setAllow
-   *
-   * @param	newAllow	whether to allow data sets to be split across hdf5 files
-   */
-  void setAllowSetSplitting(bool newAllow);
-
-  /**
-   * Gets whether the HDF5 Writer is allowed to split data sets when writing to hdf5.
-   * Splitting should only occur for massive data sets.
-   * Setting to false assures compatibility with previous editions.
-   * Default setting is false.
-   *
-   * Example of use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfHDF5Writer.cpp
-   * @skipline newPath
-   * @until New
-   * @skipline exampleAllow
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleHDF5Writer.py
-   * @skipline newPath
-   * @until New
-   * @skipline exampleAllow
-   *
-   * @return	whether to allow data sets to be split across hdf5 files
-   */
-  int getAllowSetSplitting();
-
-  /**
-   * Sets the file index. Used when file splitting and incremented when the current file is full. Set to 0 before using hyperslab or overwrite.
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfHDF5Writer.cpp
-   * @skipline newPath
-   * @until New
-   * @skipline newFileIndex
-   * @until setFileIndex
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleHDF5Writer.py
-   * @skipline newPath
-   * @until New
-   * @skipline newFileIndex
-   * @until setFileIndex
-   *
-   * @param	newIndex	The index that the writer will append to the file name when incorperating file splitting
-   */
-  void setFileIndex(int newIndex);
-
-  /**
-   * Gets the file index. Used when file splitting and incremented whent he current file is full.
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfHDF5Writer.cpp
-   * @skipline newPath
-   * @until New
-   * @skipline getFileIndex
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleHDF5Writer.py
-   * @skipline newPath
-   * @until New
-   * @skipline getFileIndex
-   *
-   * @return	The current file index.
-   */
-  int getFileIndex();
-
   virtual void closeFile();
 
   /**
@@ -244,6 +103,8 @@ public:
    * @return chunk size used to output datasets to hdf5.
    */
   unsigned int getChunkSize() const;
+
+  virtual int getDataSetSize(std::string fileName, std::string dataSetName, const int fapl);
 
   virtual void openFile();
 
@@ -279,6 +140,28 @@ public:
   virtual void visit(XdmfItem & item,
                      const shared_ptr<XdmfBaseVisitor> visitor);
 
+  using XdmfHeavyDataWriter::controllerSplitting;
+
+/*  //TODO temp, going to move to heavydatacontroller
+  virtual void controllerSplitting(XdmfArray & array,
+                                   const int fapl,
+                                   int & controllerIndexOffset,
+                                   shared_ptr<XdmfHeavyDataController> heavyDataController,
+                                   std::string checkFileName,
+                                   std::string checkFileExt,
+                                   std::string dataSetPath,
+                                   std::vector<unsigned int> dimensions,
+                                   std::vector<unsigned int> dataspaceDimensions,
+                                   std::vector<unsigned int> start,
+                                   std::vector<unsigned int> stride,
+                                   std::list<std::string> & filesWritten,
+                                   std::list<shared_ptr<XdmfArray> > & arraysWritten,
+                                   std::list<std::vector<unsigned int> > & startsWritten,
+                                   std::list<std::vector<unsigned int> > & stridesWritten,
+                                   std::list<std::vector<unsigned int> > & dimensionsWritten,
+                                   std::list<std::vector<unsigned int> > & dataSizesWritten,
+                                   std::list<unsigned int> & arrayOffsetsWritten);*/
+
 protected:
 
   XdmfHDF5Writer(const std::string & filePath);
@@ -302,14 +185,14 @@ protected:
    *
    * @return new HDF5 Controller.
    */
-  virtual shared_ptr<XdmfHDF5Controller>
-  createHDF5Controller(const std::string & hdf5FilePath,
-                       const std::string & dataSetPath,
-                       const shared_ptr<const XdmfArrayType> type,
-                       const std::vector<unsigned int> & start,
-                       const std::vector<unsigned int> & stride,
-                       const std::vector<unsigned int> & dimensions,
-                       const std::vector<unsigned int> & dataspaceDimensions);
+  virtual shared_ptr<XdmfHeavyDataController>
+  createController(const std::string & hdf5FilePath,
+                   const std::string & dataSetPath,
+                   const shared_ptr<const XdmfArrayType> type,
+                   const std::vector<unsigned int> & start,
+                   const std::vector<unsigned int> & stride,
+                   const std::vector<unsigned int> & dimensions,
+                   const std::vector<unsigned int> & dataspaceDimensions);
 
   /**
    * Open hdf5 file with a fapl.

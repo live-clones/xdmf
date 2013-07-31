@@ -6,6 +6,7 @@
 #include <math.h>
 #include <XdmfArray.hpp>
 #include <XdmfArrayType.hpp>
+#include <XdmfFunction.hpp>
 #include "boost/assign.hpp"
 
 double parse(std::string expression, std::map<std::string, double> variables);
@@ -35,13 +36,13 @@ std::map<std::string,  shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArra
 
 int main(int, char **)
 {
-	XdmfArray::addFunction("MAX", maximum);
-        XdmfArray::addOperation('&', invChunk, 2);
-	XdmfArray::addOperation('!', invChunk, 2);
-	XdmfArray::addOperation('^', invChunk, 2);
-	XdmfArray::addOperation('>', invChunk, 2);
-	XdmfArray::addOperation('<', invChunk, 2);
-	XdmfArray::addOperation('@', invChunk, 2);
+	XdmfFunction::addFunction("MAX", maximum);
+        XdmfFunction::addOperation('&', invChunk, 2);
+	XdmfFunction::addOperation('!', invChunk, 2);
+	XdmfFunction::addOperation('^', invChunk, 2);
+	XdmfFunction::addOperation('>', invChunk, 2);
+	XdmfFunction::addOperation('<', invChunk, 2);
+	XdmfFunction::addOperation('@', invChunk, 2);
 
 	functions["AVE"] = ave;
 	//sometimes typecasts are required, sometimes they cause errors
@@ -117,24 +118,24 @@ int main(int, char **)
 	assert(answerArray->getSize() == 1);
 
 	std::cout << "interlace" << std::endl;
-	answerArray = XdmfArray::evaluateOperation(testArray1, testArray5, '#');
+	answerArray = XdmfFunction::evaluateOperation(testArray1, testArray5, '#');
 	std::cout << "answer array = " << answerArray->getValuesString() << std::endl;
 
 	assert(answerArray->getValuesString().compare("1 5 1 5 1 5 1 5 1 5 1 5 1 5 1 5 1 5 1 5 5 5 5") == 0);
 
 	std::cout << "chunk" << std::endl;
-	answerArray = XdmfArray::evaluateOperation(testArray1, testArray5, '|');
+	answerArray = XdmfFunction::evaluateOperation(testArray1, testArray5, '|');
 	std::cout << "answer array = " << answerArray->getValuesString() << std::endl;
 
 	assert(answerArray->getValuesString().compare("1 1 1 1 1 1 1 1 1 1 5 5 5 5 5 5 5 5 5 5 5 5 5") == 0);
 
 	std::cout << "inverse chunk" << std::endl;
-	answerArray = XdmfArray::evaluateOperation(testArray1, testArray5, '@');
+	answerArray = XdmfFunction::evaluateOperation(testArray1, testArray5, '@');
 	std::cout << "answer array = " << answerArray->getValuesString() << std::endl;
 
 	assert(answerArray->getValuesString().compare("5 5 5 5 5 5 5 5 5 5 5 5 5 1 1 1 1 1 1 1 1 1 1") == 0);
 
-	answerArray = XdmfArray::evaluateExpression(arrayExpression, arrayVariable);
+	answerArray = XdmfFunction::evaluateExpression(arrayExpression, arrayVariable);
 
 	std::cout << "after parsing" << std::endl;
 

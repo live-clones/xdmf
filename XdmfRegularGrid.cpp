@@ -267,7 +267,7 @@ public:
   private:
 
     XdmfTopologyTypeRegular(const XdmfRegularGrid * const regularGrid) :
-      XdmfTopologyType(0, 0, 0, "foo", XdmfTopologyType::Structured, 0x1102),
+      XdmfTopologyType(0, 0, std::vector<shared_ptr<const XdmfTopologyType> >(), 0, "foo", XdmfTopologyType::Structured, 0x1102),
       mRegularGrid(regularGrid)
     {
     }

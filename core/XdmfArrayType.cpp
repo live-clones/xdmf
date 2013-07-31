@@ -187,6 +187,171 @@ XdmfArrayType::New(const std::map<std::string, std::string> & itemProperties)
   return shared_ptr<const XdmfArrayType>();
 }
 
+shared_ptr<const XdmfArrayType>
+XdmfArrayType::comparePrecision(shared_ptr<const XdmfArrayType> type1, shared_ptr<const XdmfArrayType> type2)
+{
+  std::string type1Name = type1->getName();
+  std::string type2Name = type2->getName();
+
+  if (type2Name.compare(type1Name) == 0) {
+    if (type1->getElementSize() >= type2->getElementSize()) {
+      return type1;
+    }
+    else {
+      return type2;
+    }
+  }
+
+  bool firstIsSigned = false;
+  if (type1Name.compare("UChar") != 0 && type1Name.compare("UShort") != 0 && type1Name.compare("UInt") != 0) {
+    firstIsSigned = true;
+  }
+
+  bool secondIsSigned = false;
+  if (type2Name.compare("UChar") != 0 && type2Name.compare("UShort") != 0 && type2Name.compare("UInt") != 0) {
+    secondIsSigned = true;
+  }
+
+  std::map<std::string, int> controlmap;
+  controlmap["Char"] = 1;
+  controlmap["UChar"] = 2;
+  controlmap["Short"] = 3;
+  controlmap["UShort"] = 4;
+  controlmap["Int"] = 5;
+  controlmap["UInt"] = 6;
+  controlmap["Float"] = 7;
+  controlmap["String"] = 8;
+
+  int control = controlmap[type1Name];
+
+
+  // In this switch the starting location is determined by
+  // the first type and then the algorithm cascades
+  // until it finds the second type
+  switch (control) {
+    case 1:
+      // Char
+    case 2:
+      // UChar
+      if (type2Name.compare("Char") == 0 || type2Name.compare("UChar") == 0) {
+        // This statement would be called in the case
+        // where there is a mixed type of Char and UChar
+        // The resulting type should be a Short
+        return Int16();
+        break;
+      }
+    case 3:
+      // Short
+      if (type2Name.compare("Char") == 0 || type2Name.compare("UChar") == 0 || type2Name.compare("Short") == 0) {
+        // This will be called for any combination of
+        // Char/UChar and Short
+        // In all of these cases the result shoule be a Short
+        return Int16();
+        break;
+      }
+    case 4:
+      // UShort
+      if (type2Name.compare("Char") == 0 || type2Name.compare("Short") == 0) {
+        // When mixing UShort with a signed type that has a lower precision
+        // the resulting type should be an int
+        return Int32();
+        break;
+      }
+      else if (type2Name.compare("UChar") == 0 || type2Name.compare("UShort") == 0) {
+        // When mixing UShort with an unsigned type that has a lower precision
+        // a Ushort should be the resulting type
+        if (!firstIsSigned) {
+          return UInt16();
+        }
+        else {
+          return Int32();
+        }
+        break;
+      }
+    case 5:
+      // Int
+      if (type2Name.compare("Int") != 0 && type2Name.compare("UInt") != 0 && type2Name.compare("Float") != 0 && type2Name.compare("String") != 0) {
+        // When mixing an Int with a type of lower precision
+        // the resulting type should match the Int's precision
+        if (type1->getElementSize() == 4) {
+          return Int32();
+        }
+        else {
+          return Int64();
+        }
+        break;
+      }
+      if (type2Name.compare("Int") == 0) {
+        if (type2->getElementSize() == 4) {
+          return Int32();
+        }
+        else {
+          return Int64();
+        }
+        break;
+      }
+    case 6:
+      // UInt
+      if (type2Name.compare("UInt") != 0 && type2Name.compare("Int") != 0 && type2Name.compare("Float") != 0 && type2Name.compare("String") != 0) {
+        // When mixing UInt with another non-floating-point type
+        // the result should be either long or unsigned int
+        // depending on the if the mixed type is signed or not
+        if (!secondIsSigned) {
+          return UInt32();
+        }
+        else {
+          return Int64();
+        }
+        break;
+      }
+      else if (type2Name.compare("UInt") == 0) {
+        if (firstIsSigned) {
+          return Int64();
+        }
+        else {
+          return UInt32();
+        }
+        break;
+      }
+      else if (type2Name.compare("Int") == 0) {
+        return Int64();
+        break;
+      }
+    case 7:
+      // Float
+      if (type2Name.compare("String") != 0 && type2Name.compare("Float") != 0 && type2Name.compare("UInt") != 0) {
+        // String is the only type that has priority over a float
+        // This case occurs when type1 is a float
+        return type1;
+        break;
+      }
+      else if (type2Name.compare("UInt") == 0) {
+        return Float64();
+      }
+      else if (type2Name.compare("Float") == 0) {
+        // Since there was a check earlier to see if the type names matched
+        // This is the case when type2 is a float
+        if (type1Name.compare("UInt") == 0) {
+          return Float64();
+        }
+	else {
+          return type2;
+        }
+        break;
+      }
+    case 8:
+      // String
+      // String has priority over everything
+      return String();
+      break;
+    default:
+      break;
+  }
+  // Double is the default value
+  // Should all of the above manage to fail to return a value
+  return Float64();
+}
+
 unsigned int
 XdmfArrayType::getElementSize() const
 {

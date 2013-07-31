@@ -55,12 +55,14 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDomain.cpp
-   * @skipline New
+   * @skipline //#initialization
+   * @until //#initialization
    *
    * Python
    *
    * @dontinclude XdmfExampleDomain.py
-   * @skipline New
+   * @skipline #//initialization
+   * @until #//initialization
    *
    * @return constructed XdmfDomain.
    */

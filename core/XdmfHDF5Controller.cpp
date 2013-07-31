@@ -170,9 +170,11 @@ XdmfHDF5Controller::read(XdmfArray * const array, const int fapl)
 
   if(numVals != array->getSize()) {
     try {
+      std::stringstream errOut;
+      errOut << "Number of values in hdf5 dataset (" << numVals;
+      errOut << ")\ndoes not match allocated size in XdmfArray (" << array->getSize() << ").";
       XdmfError::message(XdmfError::FATAL,
-                         "Number of values in hdf5 dataset does not match "
-                         "allocated size in XdmfArray.");
+                         errOut.str());
     }
     catch (XdmfError e) {
       throw e;

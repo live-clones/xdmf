@@ -70,12 +70,14 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfMap.cpp
-   * @skipline New
+   * @skipline //#initialization
+   * @until //#initialization
    *
    * Python
    *
    * @dontinclude XdmfExampleMap.py
-   * @skipline New
+   * @skipline #//initialization
+   * @until #//initialization
    *
    * @return constructed XdmfMap.
    */
@@ -91,16 +93,14 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfMap.cpp
-   * @skipline holdGlobalNodes
-   * @until localNodeID)
+   * @skipline //#initializationnode
+   * @until //#initializationnode
    *
    * Python
    *
    * @dontinclude XdmfExampleMap.py
-   * @skipline #create
-   * @until push_back(map2Attribute)
-   * @skipline New
-   * @until localNodeID)
+   * @skipline #//initializationnode
+   * @until #//initializationnode
    *
    * @param globalNodeIds a vector of attributes containing globalNodeId
    * values for each partition to be mapped.
@@ -126,16 +126,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfMap.cpp
-   * @skip getMap
-   * @skipline Assuming
-   * @until //remoteNodeValue
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getMap
+   * @until //#getMap
    *
    * Python
    *
    * @dontinclude XdmfExampleMap.py
-   * @skip getMap
-   * @skipline Assuming
-   * @until #prints
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getMap
+   * @until #//getMap
    *
    * @return stored boundary communicator map.
    */
@@ -149,14 +151,22 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfMap.cpp
-   * @skipline Assumming
-   * @skipline getName
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setName
+   * @until //#setName
+   * @skipline //#getName
+   * @until //#getName
    *
    * Python
    *
    * @dontinclude XdmfExampleMap.py
-   * @skipline Assumming
-   * @skipline getName
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setName
+   * @until #//setName
+   * @skipline #//getName
+   * @until #//getName
    *
    * @return name of boundary communicator map.
    */
@@ -171,20 +181,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfMap.cpp
-   * @skip getMap
-   * @skipline Assuming
-   * @until 4)
-   * @skipline getRemoteNodeIds
-   * @until //remoteNodeValue
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getRemoteNodeIds
+   * @until //#getRemoteNodeIds
    *
    * Python
    *
    * @dontinclude XdmfExampleMap.py
-   * @skip getMap
-   * @skipline Assuming
-   * @until 4)
-   * @skipline getRemoteNodeIds
-   * @until #prints
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getRemoteNodeIds
+   * @until #//getRemoteNodeIds
    *
    * @param remoteTaskId a task id to retrieve mapping for.
    *
@@ -205,16 +213,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfMap.cpp
-   * @skipline New
-   * @skipline newRemoteTaskID
-   * @until //This
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#inserttuple
+   * @until //#inserttuple
    *
    * Python
    *
    * @dontinclude XdmfExampleMap.py
-   * @skipline New
-   * @skipline newRemoteTaskID
-   * @until #This
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//inserttuple
+   * @until #//inserttuple
    *
    * @param remoteTaskId task id where the remoteLoalNodeId is located.
    * @param localNodeId the node id of the node being mapped.
@@ -234,16 +244,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfMap.cpp
-   * @skipline Assumming
-   * @skipline isInitialized
-   * @until }
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#isInitialized
+   * @until //#isInitialized
    *
    * Python
    *
    * @dontinclude XdmfExampleMap.py
-   * @skipline Assumming
-   * @skipline isInitialized
-   * @until read
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline #//isInitialized
+   * @until #//isInitialized
    *
    * @return bool true if map contains values in memory.
    */
@@ -257,16 +269,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfMap.cpp
-   * @skipline Assumming
-   * @skipline isInitialized
-   * @until }
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#isInitialized
+   * @until //#isInitialized
    *
    * Python
    *
    * @dontinclude XdmfExampleMap.py
-   * @skipline Assumming
-   * @skipline isInitialized
-   * @until read
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline #//isInitialized
+   * @until #//isInitialized
    */
   void read();
 
@@ -278,14 +292,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfMap.cpp
-   * @skipline Assumming
-   * @skipline release
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#release
+   * @until //#release
    *
    * Python
    *
    * @dontinclude XdmfExampleMap.py
-   * @skipline Assumming
-   * @skipline release
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline #//release
+   * @until #//release
    */
   void release();
 
@@ -297,14 +315,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfMap.cpp
-   * @skipline hdf5FilePath
-   * @until setHeavyDataController
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setHeavyDataController
+   * @until //#setHeavyDataController
    *
    * Python
    *
    * @dontinclude XdmfExampleMap.py
-   * @skipline hdf5FilePath
-   * @until setHeavyDataController
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline #//setHeavyDataController
+   * @until #//setHeavyDataController
    *
    * @param remoteTaskIdsControllers a vector of XdmfHeavyDataControllers to the remote
    * task ids dataset.
@@ -326,16 +348,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfMap.cpp
-   * @skipline New
-   * First create a std::map<int, std::set<int> >
-   * @skipline taskMap
-   * @until //Are
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setMap
+   * @until //#setMap
    *
    * Python
    *
    * @dontinclude XdmfExampleMap.py
-   * @skipline newTaskMap
-   * @until #Is
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setMap
+   * @until #//setMap
    *
    * @param map the boundary communicator map to store.
    */
@@ -349,16 +373,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfMap.cpp
-   * @skipline Assumming
-   * @skipline newName
-   * @until setName
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setName
+   * @until //#setName
    *
    * Python
    *
    * @dontinclude XdmfExampleMap.py
-   * @skipline Assumming
-   * @skipline newName
-   * @until setName
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setName
+   * @until #//setName
    *
    * @param name the name of the boundary communicator map to set.
    */

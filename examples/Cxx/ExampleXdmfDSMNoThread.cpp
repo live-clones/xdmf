@@ -83,23 +83,16 @@ int main(int argc, char *argv[])
 
 	if (id < size - numServersCores)
 	{
+
 		// This section is to demonstrate the functionality of the XdmfDSM classes
 
 		exampleWriter->setServerMode(true);
 		bool exampleServerMode = exampleWriter->getServerMode();
 
-		/*
-		MPI_Comm exampleServerComm = exampleWriter->getServerComm();
-		exampleWriter->setServerComm(exampleServerComm);
-		*/
-
 		MPI_Comm exampleWorkerComm = exampleWriter->getWorkerComm();
 		exampleWriter->setWorkerComm(exampleWorkerComm);
 
 /*
-		MPI_Comm exampleServerComm = exampleController->getServerComm();
-		exampleController->setServerComm(exampleServerComm);
-
 		MPI_Comm exampleWorkerComm = exampleController->getWorkerComm();
 		exampleController->setWorkerComm(exampleWorkerComm);
 */
@@ -112,11 +105,9 @@ int main(int argc, char *argv[])
 			writeStrideVector,
 			writeCountVector,
 			writeDataSizeVector,
-			exampleWriter->getServerBuffer(),
-	                size-numServersCores,
-			size-1);
+			exampleWriter->getServerBuffer());
 
-		shared_ptr<XdmfHDF5WriterDSM> exampleWriter2 = XdmfHDF5WriterDSM::New(newPath, exampleWriter->getServerBuffer(), size-numServersCores, size-1);
+		shared_ptr<XdmfHDF5WriterDSM> exampleWriter2 = XdmfHDF5WriterDSM::New(newPath, exampleWriter->getServerBuffer());
 
 		writeController->setServerMode(true);
 		bool exampleControllerServerMode = writeController->getServerMode();
@@ -162,10 +153,12 @@ int main(int argc, char *argv[])
 
 		exampleBuffer = exampleWriter->getServerBuffer();
 		exampleWriter->setBuffer(exampleBuffer);
+
 /*
 		exampleBuffer = exampleController->getServerBuffer();
 		exampleController->setBuffer(exampleBuffer);
 */
+
 		exampleManager->SetDsmBuffer(exampleBuffer);
 		exampleBuffer = exampleManager->GetDsmBuffer();
 
@@ -185,6 +178,15 @@ int main(int argc, char *argv[])
 
 		int exampleServerStart = exampleBuffer->GetStartServerId();
 		int exampleServerEnd = exampleBuffer->GetEndServerId();
+
+
+		for (int i = 0; i<size - numServersCores; ++i)
+		{
+			if (i == id)
+			{
+				std::cout << "starting id = " << exampleServerStart << " and ending id = " << exampleServerEnd << " from core " << id << std::endl;
+			}
+		}
 
 		long exampleBufferLength = exampleBuffer->GetLength();
 		long exampleTotalBufferLength = exampleBuffer->GetTotalLength();
@@ -247,38 +249,6 @@ int main(int argc, char *argv[])
 	                int recvData;
 	                exampleBuffer->ReceiveAcknowledgment(0, recvData, XDMF_DSM_PUT_DATA_TAG, XDMF_DSM_INTER_COMM);
 	        }
-
-                MPI_Comm readComm, writeComm;
-
-                MPI_Group readingCores, writingCores;
-
-                MPI_Comm_group(workerComm, &workers);
-                int * ServerIds = (int *)calloc(((size - numServersCores) / 2), sizeof(int));
-                unsigned int index = 0;
-                for(int i=0 ; i < (int)((size - numServersCores) / 2) ; ++i)
-                {
-                        ServerIds[index++] = i;
-                }
-
-                MPI_Group_excl(workers, index, ServerIds, &writingCores);
-                testval = MPI_Comm_create(workerComm, writingCores, &writeComm);
-                MPI_Group_incl(workers, index, ServerIds, &readingCores);
-                testval = MPI_Comm_create(workerComm, readingCores, &readComm);
-                cfree(ServerIds);
-
-
-		if (id < (int)((size - numServersCores) / 2))
-		{
-			exampleBuffer->GetComm()->DupComm(readComm);
-			exampleBuffer->ReceiveInfo();
-		}
-		else
-		{
-			exampleBuffer->GetComm()->DupComm(writeComm);
-			exampleBuffer->SendInfo();
-		}
-
-		exampleBuffer->GetComm()->DupComm(workerComm);
 
 		int broadcastComm = XDMF_DSM_INTER_COMM;
 		exampleBuffer->BroadcastComm(&broadcastComm, 0);
@@ -343,7 +313,7 @@ int main(int argc, char *argv[])
 		if (!connectingGroup)
 		{
 			exampleDSMComm->OpenPort();
-			portString = exampleDSMComm->GetDsmMasterHostName();
+			portString = exampleDSMComm->GetDsmPortName();
 			// Send the port string to the connecting group
 			exampleDSMComm->Accept();
 
@@ -354,7 +324,7 @@ int main(int argc, char *argv[])
 		if (connectingGroup)
 		{
 			// Recieve string from Master group
-			exampleDSMComm->SetDsmMasterHostName(portString);
+			exampleDSMComm->SetDsmPortName(portString);
 			exampleDSMComm->Connect();
 
 			// When done with connection
@@ -364,7 +334,7 @@ int main(int argc, char *argv[])
 		if (connectingGroup)
 		{
 			// Recieve string from Master group
-			exampleDSMComm->SetDsmMasterHostName(portString);
+			exampleDSMComm->SetDsmPortName(portString);
 			exampleManager->Connect();
 
 			// When done with connection
@@ -444,15 +414,13 @@ int main(int argc, char *argv[])
 			readStrideVector,
 			readCountVector,
 			readDataSizeVector,
-			exampleWriter->getServerBuffer(),
-       	        	size-numServersCores,
-       		        size-1);
+			exampleWriter->getServerBuffer());
 
 		readArray->insert(readController);
 
 		if (id == 0)
 		{
-			printf("\n\n\n");
+			std::cout << "\n\n\n";
 		}
 
 		std::cout << "testing read" << std::endl;
@@ -520,6 +488,15 @@ int main(int argc, char *argv[])
 	XdmfDSMCommMPI * exampleDSMComm = exampleWriter->getServerBuffer()->GetComm();
 	MPI_Comm exampleInterComm = exampleDSMComm->GetInterComm();
 	exampleDSMComm->DupInterComm(comm);
+
+	if (id >= size - numServersCores)
+	{
+		exampleWriter->getServerBuffer()->SendInfo();
+	}
+	else
+	{
+		exampleWriter->getServerBuffer()->ReceiveInfo();
+	}
 
 	/*
 	exampleWriter->restartDSM();

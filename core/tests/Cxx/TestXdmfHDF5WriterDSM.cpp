@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
                                std::vector<unsigned int>(1, 1),
                                std::vector<unsigned int>(1, size*3),
                                std::vector<unsigned int>(1, size*3),
-                               NULL);
+                               dsmBuffer);
   array->setHeavyDataController(fullController);
   array->release();
   array->read();

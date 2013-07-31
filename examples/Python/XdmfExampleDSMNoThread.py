@@ -66,22 +66,15 @@ if __name__ == "__main__":
 
         if (id < size - numServersCores):
 
-
 		# This section is to demonstrate the functionality of the XdmfDSM classes
 
 		exampleWriter.setServerMode(True)
 		exampleServerMode = exampleWriter.getServerMode()
 
-		exampleServerComm = exampleWriter.getServerComm()
-		exampleWriter.setServerComm(exampleServerComm)
-
 		exampleWorkerComm = exampleWriter.getWorkerComm()
 		exampleWriter.setWorkerComm(exampleWorkerComm)
 
 		'''
-		exampleServerComm = exampleController.getServerComm()
-		exampleController.setServerComm(exampleServerComm)
-
 		exampleWorkerComm = exampleController.getWorkerComm()
 		exampleController.setWorkerComm(exampleWorkerComm)
 		'''
@@ -94,11 +87,9 @@ if __name__ == "__main__":
 			writeStrideVector,
 			writeCountVector,
 			writeDataSizeVector,
-			exampleWriter.getServerBuffer(),
-			size-numServersCores,
-			size-1);
+			exampleWriter.getServerBuffer());
 
-		exampleWriter2 = XdmfHDF5WriterDSM.New(newPath, exampleWriter.getServerBuffer(), size-numServersCores, size-1);
+		exampleWriter2 = XdmfHDF5WriterDSM.New(newPath, exampleWriter.getServerBuffer());
 
 		writeController.setServerMode(True)
 		exampleControllerServerMode = writeController.getServerMode()
@@ -202,13 +193,6 @@ if __name__ == "__main__":
 
 		writeComm = workerComm.Create(writingCores)
 
-		if (id < (int)((size - numServersCores) / 2)):
-			exampleBuffer.GetComm().DupComm(writeComm)
-			exampleBuffer.ReceiveInfo()
-		else:
-			exampleBuffer.GetComm().DupComm(readComm)
-			exampleBuffer.SendInfo()
-
 		exampleBuffer.GetComm().DupComm(workerComm)
 
 		if (id == 0):
@@ -237,10 +221,10 @@ if __name__ == "__main__":
                 exampleIntraComm = exampleDSMComm.GetIntraComm()
 		exampleDSMComm.DupComm(exampleIntraComm.Dup())
 
-		print type(exampleDSMComm.GetDsmMasterHostName())
+		print type(exampleDSMComm.GetDsmPortName())
 		testName = "test"
-		exampleDSMComm.SetDsmMasterHostName(testName)
-		print exampleDSMComm.GetDsmMasterHostName()
+		exampleDSMComm.SetDsmPortName(testName)
+		print exampleDSMComm.GetDsmPortName()
 
 		'''
 
@@ -254,7 +238,7 @@ if __name__ == "__main__":
 
                 if (!connectingGroup):
                         exampleDSMComm.OpenPort()
-                        portString = exampleDSMComm.GetDsmMasterHostName()
+                        portString = exampleDSMComm.GetDsmPortName()
                         // Send the port string to the connecting group
                         exampleDSMComm.Accept()
                         // When done with connection
@@ -262,14 +246,14 @@ if __name__ == "__main__":
 
                 if (connectingGroup):
                         // Recieve string from Master group
-                        exampleDSMComm.SetDsmMasterHostName(portString)
+                        exampleDSMComm.SetDsmPortName(portString)
                         exampleDSMComm.Connect()
                         // When done with connection
                         exampleDSMComm.Disconnect()
 
                 if (connectingGroup):
                         // Recieve string from Master group
-                        exampleDSMComm.SetDsmMasterHostName(portString);
+                        exampleDSMComm.SetDsmPortName(portString);
                         exampleManager.Connect();
                         // When done with connection
                         exampleManager.Disconnect();
@@ -277,7 +261,6 @@ if __name__ == "__main__":
 		'''
 
                 # This is the end of the Demonstration
-		
 
 		exampleWriter.setMode(XdmfHeavyDataWriter.Hyperslab)
 
@@ -333,9 +316,7 @@ if __name__ == "__main__":
 			readStrideVector,
 			readCountVector,
 			readDataSizeVector,
-			exampleWriter.getServerBuffer(),
-			size-numServersCores,
-			size-1)
+			exampleWriter.getServerBuffer())
 
 		readArray.insert(readController)
 
@@ -377,7 +358,6 @@ if __name__ == "__main__":
 
 		# End of Work Section
 
-
 	if (id == 0):
 		exampleWriter.stopDSM()
 		'''
@@ -390,6 +370,11 @@ if __name__ == "__main__":
 
 	exampleInterComm = exampleDSMComm.GetInterComm()
         exampleDSMComm.DupInterComm(exampleInterComm.Dup())
+
+	if (id >= size - numServersCores):
+		exampleWriter.getServerBuffer().SendInfo()
+	else:
+		exampleWriter.getServerBuffer().ReceiveInfo()
 
 	'''
 	exampleWriter.restartDSM()

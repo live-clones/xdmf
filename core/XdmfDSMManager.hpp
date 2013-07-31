@@ -89,6 +89,8 @@ public:
    * @until size-1
    * @skipline if
    * @until {
+   * @skipline XdmfDSMManager
+   * @skipline exampleController
    * @skipline XdmfDSMBuffer
    * @skipline exampleController
    * @skipline XdmfDSMCommMPI
@@ -108,6 +110,7 @@ public:
    * @skipline total
    * @until exampleWriter
    * @skipline if
+   * @skipline exampleManager
    * @skipline exampleBuffer
    * @skipline exampleDSMComm
    * @skipline connectingGroup
@@ -198,6 +201,8 @@ public:
    * @until size-1
    * @skipline if
    * @until {
+   * @skipline XdmfDSMManager
+   * @skipline exampleController
    * @skipline XdmfDSMBuffer
    * @skipline exampleController
    * @skipline XdmfDSMCommMPI
@@ -217,6 +222,7 @@ public:
    * @skipline total
    * @until exampleWriter
    * @skipline if
+   * @skipline exampleManager
    * @skipline exampleBuffer
    * @skipline exampleDSMComm
    * @skipline connectingGroup
@@ -423,38 +429,6 @@ public:
   bool GetIsServer();
 
   /**
-   * Gets the MpiComm that the manager is currently using.
-   *
-   * Example of use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleWriter
-   * @skipline if
-   * @until {
-   * @skipline exampleManager
-   * @skipline exampleWriter
-   * @skipline exampleManagerComm
-   * @skip Section
-   * @skipline }
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until exampleWriter
-   * @skipline if
-   * @skipline exampleManager
-   * @skipline exampleManagerComm
-   *
-   * @return      The MpiComm that the manager is currently using
-   */
-  MPI_Comm GetMpiComm();
-
-  /**
    * Gets the maximum size of the local buffer on server cores.
    *
    * Example of use:
@@ -485,6 +459,38 @@ public:
    * @return      the maximum size of the data buffer on server cores
    */
   unsigned int GetLocalBufferSizeMBytes();
+
+  /**
+   * Gets the MpiComm that the manager is currently using.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfDSMNoThread.cpp
+   * @skipline size
+   * @until MPI_Comm_size
+   * @skipline exampleWriter
+   * @skipline if
+   * @until {
+   * @skipline exampleManager
+   * @skipline exampleWriter
+   * @skipline exampleManagerComm
+   * @skip Section
+   * @skipline }
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleDSMNoThread.py
+   * @skipline total
+   * @until exampleWriter
+   * @skipline if
+   * @skipline exampleManager
+   * @skipline exampleManagerComm
+   *
+   * @return      The MpiComm that the manager is currently using
+   */
+  MPI_Comm GetMpiComm();
 
   /**
    * Gets the id of the core with regards to the MpiComm

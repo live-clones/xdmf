@@ -107,12 +107,14 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline New
+   * @skipline //#initialization
+   * @until //#initialization
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
-   * @skipline New
+   * @skipline #//initialization
+   * @until #//initialization
    *
    * @return constructed XdmfArray.
    */
@@ -125,98 +127,6 @@ public:
   static const std::string ItemTag;
 
   /**
-   * Adds an operation to the list of viable operators.
-   *
-   * Example of Use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfArray.cpp
-   * @skipline prepend
-   * @skipline main
-   * @skipline addOperation
-   * @skipline return
-   * @until }
-   * @skipline prepend
-   * @until }
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleArray.py
-   * @skipline prepend
-   * @until val2.getSize
-   * @skipline return
-   * @skipline __main__
-   * @skipline addOperation
-   *
-   * @param     newoperator     the character to be associated with the provided binary operation
-   * @param     functionref     a pointer to the function to be associated with the provided operator
-   * @param     priority        used to determine order of operations the higher the value the earlier it is evaluated
-   */
-  static int addOperation(char newoperator, shared_ptr<XdmfArray>(*functionref)(shared_ptr<XdmfArray>, shared_ptr<XdmfArray>), int priority);
-
-  /*
-   * adds a specified function to the list of functions used while evaluating strings
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfArray.cpp
-   * @skipline maximum
-   * @skipline main
-   * @skipline addFunction
-   * @skipline return
-   * @until }
-   * @skipline maximum
-   * @until else
-   * @skipline {
-   * @until returnArray;
-   * @skipline }
-   * @until }
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleArray.py
-   * @skipline maximum
-   * @until else
-   * @skipline maxVal
-   * @until pushBackAsFloat
-   * @skipline return
-   * @skipline __main__
-   * @skipline addFunction
-   *
-   * @param     name            A string to be associated with the provided function during string evaluation
-   * @param     functionref     A pointer to the function to be associated with the given string
-   * @return                    The total number of functions currently associated
-   */
-  static int addFunction(std::string name, shared_ptr<XdmfArray>(*functionref)(std::vector<shared_ptr<XdmfArray> >));
-
-  /**
-   * Averages the values contained in all the provided arrays.
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfArray.cpp
-   * @skipline valueArray1
-   * @until valueVector
-   * @skipline valueArray1
-   * @until valueArray2
-   * @skipline ave
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleArray.py
-   * @skipline valueArray1
-   * @until valueVector
-   * @skipline valueArray1
-   * @until valueArray2
-   * @skipline ave
-   *
-   * @param     values  a vector containing the arrays to be used
-   * @return            an XdmfArray containing  one value which is the average of all values contained within the provided arrays
-   */
-  static shared_ptr<XdmfArray> ave(std::vector<shared_ptr<XdmfArray> > values);
-
-  /**
    * Remove all values from this array.
    *
    * Example of use:
@@ -224,41 +134,20 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline Assuming
-   * @skipline clear
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#clear
+   * @until //#clear
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
-   * @skipline Assuming
-   * @skipline clear
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//clear
+   * @until #//clear
    */
   void clear();
-
-  /**
-   * Joins the two provided arrays together end to end.
-   *
-   * Example of Use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfArray.cpp
-   * @skipline valueArray1
-   * @until (6)
-   * @skipline chunk
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleArray.py
-   * @skipline valueArray1
-   * @until (6)
-   * @skipline chunk
-   *
-   * @param     val1            the first array being evaluated
-   * @param     val2            the second array being evaluated
-   * @return                    the arrays joined end to end
-   */
-  static shared_ptr<XdmfArray> chunk(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2);
 
   /**
    * Remove a value from this array.
@@ -268,142 +157,24 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline Assuming
-   * @skip exampleInternalPointerConst
-   * @skipline //
-   * @until ]
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#erase
+   * @until //#erase
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
-   * @skip exampleArray.insertAsFloat64(newIndex, newValue)
-   * @skipline contains
-   * @until ]
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//arraydefaultvalues
+   * @until #//arraydefaultvalues
+   * @skipline #//erase
+   * @until //#erase
+   *
+   * @param 	index	the index of the value to be removed
    */
   void erase(const unsigned int index);
-
-  /**
-   * Evaluates an expression based on the list of variables provided.
-   * A list of valid operations is retrievable from the getSupportedOperations static method.
-   * None of the XdmfArrays provided are modified during the evaluation process.
-   *
-   * Example of Use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfArray.cpp
-   * @skipline maximum
-   * @skipline main
-   * @skipline addOperation
-   * @skipline addFunction
-   * @skipline valueMap
-   * @until }
-   * @skipline maximum
-   * @until else
-   * @skipline {
-   * @until returnArray;
-   * @skipline }
-   * @until }
-   * @skipline prepend
-   * @until }
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleArray.py
-   * @skipline maximum
-   * @until else
-   * @skipline maxVal
-   * @until pushBackAsFloat
-   * @skipline return
-   * @skipline prepend
-   * @until val2.getSize
-   * @skipline return
-   * @skipline __main__
-   * @skipline addOperation
-   * @skipline addFunction
-   * @skipline valueMap
-   * @until evaluateExpression
-   *
-   * @param	expression	a string containing the expresion to be evaluated
-   * @param	variables	a map of strings to their XdmfArray equivalent
-   * @return			a shared pointer to the XdmfArray resulting from the expression
-   */
-  static shared_ptr<XdmfArray> evaluateExpression(std::string expression, std::map<std::string, shared_ptr<XdmfArray> > variables);
-
-  /**
-   * Evaluates the operation specified using the two shared pointers to XdmfArrays provided.
-   * A list of valid operations is retrievable from the getSupportedOperations static method.
-   * None of the XdmfArrays provided are modified during the evaluation process.
-   *
-   * Example of Use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfArray.cpp
-   * @skipline prepend
-   * @skipline main
-   * @skipline answerArray
-   * @skipline addOperation
-   * @until evaluateOperation
-   * @skipline return
-   * @until }
-   * @skipline prepend
-   * @until }
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleArray.py
-   * @skipline prepend
-   * @until val2.getSize
-   * @skipline return
-   * @skipline __main__
-   * @skipline addOperation
-   * @until evaluateOperation
-   *
-   * @param	val1		the first array being evaluated
-   * @param	val2		the second array being evaluated
-   * @param	operation	a character specifying the operation performed
-   * @return			a shared pointer to the Xdmf Array that results from the calculation
-   */
-  static shared_ptr<XdmfArray> evaluateOperation(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2, char operation);
-
-  /**
-   * Evaluates the function specified using the vector of XdmfArrays provided.
-   * None of the XdmfArrays provided are modified during the evaluation process.
-   * 
-   * C++
-   *
-   * @dontinclude ExampleXdmfArray.cpp
-   * @skipline maximum
-   * @skipline main
-   * @skipline addFunction
-   * @until evaluateFunction
-   * @skipline return
-   * @until }
-   * @skipline maximum
-   * @until else
-   * @skipline {
-   * @until returnArray;
-   * @skipline }
-   * @until }
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleArray.py
-   * @skipline maximum
-   * @until else
-   * @skipline maxVal
-   * @until pushBackAsFloat
-   * @skipline return
-   * @skipline __main__
-   * @skipline addFunction
-   * @until evaluateFunction
-   *
-   * @param	valueVector	a vector containing the arrays to be used
-   * @param	functionName	the string associated with the function being called
-   * @return			the result of the function being called, a scalar will be returned as an XdmfArray with one value
-   */
-  static shared_ptr<XdmfArray> evaluateFunction(std::vector<shared_ptr<XdmfArray> > valueVector, std::string functionName);
 
   /**
    * Get the data type of this array.
@@ -413,14 +184,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline Assuming
-   * @skipline getArrayType
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getArrayType
+   * @until //#getArrayType
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
-   * @skipline Assuming
-   * @skipline getArrayType
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getArrayType
+   * @until #//getArrayType
    *
    * @return a XdmfArrayType containing the data type for the array.
    */
@@ -435,14 +210,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline Assuming
-   * @skipline getCapacity
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getCapacity
+   * @until //#getCapacity
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
-   * @skipline Assuming
-   * @skipline getCapacity
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getCapacity
+   * @until #//getCapacity
    *
    * @return the capacity of this array.
    */
@@ -458,14 +237,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline Assuming
-   * @skipline exampleDimensions
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getDimensions
+   * @until //#getDimensions
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
-   * @skipline Assuming
-   * @skipline exampleDimensions
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getDimensions
+   * @until #//getDimensions
    *
    * @return the dimensions of the array.
    */
@@ -479,14 +262,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline Assuming
-   * @skipline exampleDimensionString
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getDimensionsString
+   * @until //#getDimensionsString
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
-   * @skipline Assuming
-   * @skipline exampleDimensionString
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getDimensionsString
+   * @until #//getDimensionsString
    *
    * @return the dimensions of the array as a string.
    */
@@ -504,39 +291,26 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline Assuming
-   * @skipline exampleName
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setName
+   * @until //#setName
+   * @skipline //#getName
+   * @until //#getName
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
-   * @skipline Assuming
-   * @skipline exampleName
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setName
+   * @until #//setName
+   * @skipline #//getName
+   * @until #//getName
    *
    * @return a string containing the name of the array.
    */
   std::string getName() const;
-
-  /**
-   * Gets the priority of operation whose associated character is provided. Returns -1 if the operation is not supported.
-   * The higher the value the earlier that operation is evaluated during evaluateExpression.
-   *
-   * Example of Use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfArray.cpp
-   * @skipline getOperationPriority
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleArray.py
-   * @skipline getOperationPriority
-   *
-   * @param	operation	the character associated with the operation to be checked
-   * @return			the priority of the operation
-   */
-  static int getOperationPriority(char operation);
 
   /**
    * Get the number of values stored in this array.
@@ -546,98 +320,22 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline Assuming
-   * @skipline exampleSize
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getSize
+   * @until //#getSize
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
-   * @skipline Assuming
-   * @skipline exampleSize
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getSize
+   * @until #//getSize
    *
    * @return the number of values stored in this array.
    */
   unsigned int getSize() const;
-
-  /**
-   * Gets a string that contains all the characters of the supported operations.
-   * Parenthesis are included for grouping purposes in expressions.
-   *
-   * Example of Use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfArray.cpp
-   * @skipline getSupportedOperations
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleArray.py
-   * @skipline getSupportedOperations
-   *
-   * @return	a string containing the characters for all supported operations
-   */
-  static const std::string getSupportedOperations();
-
-  /**
-   * Gets a string that contains all the characters of the supported operations.
-   * Parenthesis are included for grouping purposes in expressions.
-   *
-   * Example of Use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfArray.cpp
-   * @skipline getSupportedFunctions
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleArray.py
-   * @skipline getSupportedFunctions
-   *
-   * @return    a vector containing the strings associated with all valid functions
-   */
-  static const std::vector<std::string> getSupportedFunctions();
-
-  /**
-   * Gets a string that contains all strings that are viable for use when mapping
-   * to scalars (which are stored in XdmfArrays of size 1) for the evaluateExpression function.
-   *
-   * Example of Use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfArray.cpp
-   * @skipline getValidDigitChars
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleArray.py
-   * @skipline getValidDigitChars
-   *
-   * @return    a string containing all valid variable characters
-   */
-  static const std::string getValidDigitChars();
-
-  /**
-   * Gets a string that contains all strings that are viable for use when mapping
-   * to shared pointers of XdmfArrays for the evaluateExpression function.
-   *
-   * Example of Use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfArray.cpp
-   * @skipline getValidVariableChars
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleArray.py
-   * @skipline getValidVariableChars
-   *
-   * @return	a string containing all valid variable characters
-   */
-  static const std::string getValidVariableChars();
 
   /**
    * Get a copy of a single value stored in this array.
@@ -647,18 +345,24 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline Assuming
-   * @skip XdmfHeavyDataController
-   * @skipline if
-   * @until index
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#datapointersetup
+   * @until //#datapointersetup
+   * @skipline //#initsharedvector
+   * @until //#initsharedvector
+   * @skipline //#getValueindex
+   * @until //#getValueindex
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
-   * @skipline Assuming
-   * @skip [0,
-   * @skipline 7]
-   * @until Variations
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//arraydefaultvalues
+   * @until #//arraydefaultvalues
+   * @skipline #//getValueindex
+   * @until #//getValueindex
    *
    * @return the requested value.
    */
@@ -673,18 +377,20 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline New
-   * @skipline storeArray
-   * @skipline exampleArray
-   * @until {0,2,4,6,8,5,3,7,4,9}
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getValues
+   * @until //#getValues
    *
    * Python: This function is not supported in Python, it is replaced by the getNumpyArray function
    *
    * @dontinclude XdmfExampleArray.py
-   * @skipline New
-   * @skipline initArray
-   * @skipline exampleArray
-   * @skipline getNumpyArray	
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//arraydefaultvalues
+   * @until #//arraydefaultvalues
+   * @skipline #//getNumpyArray
+   * @until #//getNumpyArray
    *
    * @param startIndex the index in this array to begin copying from.
    * @param valuesPointer a pointer to an array to copy into.
@@ -709,10 +415,10 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline Assuming
-   * @skip getValuesString
-   * @skipline //
-   * @until exampleInternalVector
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getValuesInternalvector
+   * @until //#getValuesInternalvector
    *
    * Python:
    * Python does not support this version of the getValuesInternal function, it defaults to the version that returns a void pointer
@@ -731,15 +437,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline Assuming
-   * @skipline exampleInternalPointer
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getValuesInternalvoid
+   * @until //#getValuesInternalvoid
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
-   * @skipline Assuming
-   * @skipline getValuesInternal
-   * @until used
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline #//getValuesInternal
+   * @until #//getValuesInternal
    *
    * @return a void pointer to the first value stored in this array.
    */
@@ -752,8 +461,10 @@ public:
    * Example of use:
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline Assuming
-   * @skipline exampleInternalPointerConst
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getValuesInternalvoidconst
+   * @until //#getValuesInternalvoidconst
    *
    * Python:
    * Python does not support this version of the getValuesInternal function, it defaults to the version that returns a void pointer
@@ -770,15 +481,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline Assuming
-   * @skipline getValuesString
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getValuesString
+   * @until //#getValuesString
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
-   * @skipline Assuming
-   * @skipline exampleValueString
-   * @until contained
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getValuesparse
+   * @until #//getValuesparse
    *
    * @return a string containing the contents of the array.
    */
@@ -792,9 +506,12 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline Assuming
-   * @skipline newSize
-   * @skipline exampleVector
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#sizedeclaration
+   * @until //#sizedeclaration
+   * @skipline //#initializesingletemplate
+   * @until //#initializesingletemplate
    *
    * Python: Does not support this version of initialize
    *
@@ -814,9 +531,12 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline Assuming
-   * @skipline newSizeVector
-   * @until exampleVector
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#sizevectordeclaration
+   * @until //#sizevectordeclaration
+   * @skipline //#initializevectortemplate
+   * @until //#initializevectortemplate
    *
    * Python: Does not support this version of initialize
    *
@@ -837,16 +557,20 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline Assuming
-   * @skipline newSize
-   * @skipline XdmfArrayType
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#sizedeclaration
+   * @until //#sizedeclaration
+   * @skipline //#initializesingletype
+   * @until //#initializesingletype
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
-   * @skipline Assuming
-   * @skipline newSize
-   * @skipline XdmfArrayType
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//initializesingle
+   * @until #//initializesingle
    *
    * @param arrayType the type of array to initialize.
    * @param size the number of values in the initialized array.
@@ -862,17 +586,20 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline Assuming
-   * @skipline newSizeVector
-   * @until 5
-   * @skipline XdmfArrayType
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#sizevectordeclaration
+   * @until //#sizevectordeclaration
+   * @skipline //#initializevectortype
+   * @until //#initializevectortype
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
-   * @skipline Assuming
-   * @skipline UInt32Vector
-   * @until initialize
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//initializevector
+   * @until #//initializevector
    *
    * @param arrayType the type of array to initialize.
    * @param dimensions the number dimensions of the initialized array.
@@ -890,17 +617,20 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline New
-   * @skipline newIndex
-   * @until newValue
-   * @skipline insert
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#pointinsertvalues
+   * @until //#pointinsertvalues
+   * @skipline //#pointinsert
+   * @until //#pointinsert
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
-   * @skipline New
-   * @skipline newIndex
-   * @until insertAsInt32
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//pointinsert
+   * @until #//pointinsert
    *
    * @param index the index in this array to insert.
    * @param value the value to insert
@@ -917,18 +647,22 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline New
-   * @skipline initArray
-   * @until insert
-   * @skipline tempArray
-   * @until {0,2,4,6,8,5,3,7,4,9}
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#datapointersetup
+   * @until //#datapointersetup
+   * @skipline //#pointerinsert
+   * @until //#pointerinsert
+   * @skipline //#arrayinsert
+   * @until //#arrayinsert
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
-   * @skipline New
-   * @skipline initArray
-   * @until {0,2,4,6,8,5,3,7,4,9}
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//insertarray
+   * @until #//insertarray
    *
    * @param startIndex the index in this array to begin insertion.
    * @param values a shared pointer to an XdmfArray to copy into this array.
@@ -954,14 +688,14 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline writtenArray
-   * @until writeStrides)
+   * @skipline //#insertmultidim
+   * @until //#insertmultidim
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
-   * @skipline writtenArray
-   * @until writeStrides)
+   * @skipline #//insertmultidim
+   * @until #//insertmultidim
    *
    * @param startIndex the index in this array to begin insertion for each dimension
    * @param values a shared pointer to an XdmfArray to copy into this array.
@@ -987,18 +721,20 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline New
-   * @skipline initArray
-   * @skipline insert
-   * @until {0,2,4,6,8,5,3,7,4,9}
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#datapointersetup
+   * @until //#datapointersetup
+   * @skipline //#pointerinsert
+   * @until //#pointerinsert
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
-   * @skipline New
-   * @skipline initArray
-   * @skipline insertAsInt32
-   * @until Sublists
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//insertlist
+   * @until #//insertlist
    *
    * @param startIndex the index in this array to begin insertion.
    * @param valuesPointer a pointer to the values to copy into this array.
@@ -1016,30 +752,6 @@ public:
               const unsigned int valuesStride = 1);
 
   /**
-   * Joins the two provided arrays while interspercing their values evenly.
-   * Example of Use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfArray.cpp
-   * @skipline valueArray1
-   * @until (6)
-   * @skipline interlace
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleArray.py
-   * @skipline valueArray1
-   * @until (6)
-   * @skipline interlace
-   *
-   * @param     val1            the first array being evaluated
-   * @param     val2            the second array being evaluated
-   * @return                    the interlaced arrays
-   */
-  static shared_ptr<XdmfArray> interlace(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2);
-
-  /**
    * Returns whether the array is initialized (contains values in
    * memory).
    *
@@ -1048,16 +760,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline Assuming
-   * @skipline isInitialized
-   * @until }
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#isInitialized
+   * @until //#isInitialized
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
-   * @skipline Assuming
-   * @skipline isInitialized
-   * @until read
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//isInitialized
+   * @until #//isInitialized
    */
   bool isInitialized() const;
 
@@ -1069,16 +783,22 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline New
-   * @skipline newValue
-   * @skipline pushBack
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#pointinsertvalues
+   * @until //#pointinsertvalues
+   * @skipline //#pushBack
+   * @until //#pushBack
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
-   * @skipline New
-   * @skipline newValue
-   * @until pushBackAsFloat64
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//pushBack
+   * @until #//pushBack
+   *
+   * @param	value	The value to be inserted
    */
   template <typename T>
   void pushBack(const T & value);
@@ -1091,14 +811,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline Assuming
-   * @skipline exampleController
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getHeavyDataController
+   * @until //#getHeavyDataController
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
-   * @skipline Assuming
-   * @skipline exampleController
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getHeavyDataController
+   * @until #//getHeavyDataController
    *
    * @return the heavy data controller attached to this array.
    */
@@ -1113,8 +837,10 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline Assuming
-   * @skipline exampleControllerConst
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getHeavyDataControllerconst
+   * @until //#getHeavyDataControllerconst
    *
    * Python: Doesn't support a constant version of this function
    *
@@ -1131,16 +857,22 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline Assuming
-   * @skipline exampleController
-   * @until setHeaveyDataController
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getHeavyDataController
+   * @until //#getHeavyDataController
+   * @skipline //#setHeavyDataController
+   * @until //#setHeavyDataController
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
-   * @skipline Assuming
-   * @skipline exampleController
-   * @until setHeaveyDataController
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getHeavyDataController
+   * @until #//getHeavyDataController
+   * @skipline #//setHeavyDataController
+   * @until #//setHeavyDataController
    *
    * @param newController the heavy data controller to attach to this array.
    */
@@ -1155,16 +887,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline Assuming
-   * @skipline !exampleArray
-   * @until }
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#read
+   * @until //#read
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
-   * @skipline Assuming
-   * @skipline isInitialized
-   * @until read
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//isInitialized
+   * @until #//isInitialized
    */
   void read();
 
@@ -1176,14 +910,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline Assuming
-   * @skipline release
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#release
+   * @until //#release
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
-   * @skipline Assuming
-   * @skipline release
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//release
+   * @until #//release
    */
   void release();
 
@@ -1195,16 +933,20 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline New
-   * @skipline newSize
-   * @skipline reserve
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#sizedeclaration
+   * @until //#sizedeclaration
+   * @skipline //#reserve
+   * @until //#reserve
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
-   * @skipline New
-   * @skipline newSize
-   * @skipline reserve
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//reserve
+   * @until #//reserve
    *
    * @param size the capacity to set this array to.
    */
@@ -1221,23 +963,22 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline New
-   * @skipline newSize
-   * @skipline initArray
-   * @skipline insert 
-   * @until //
-   * @skipline newSize
-   * @until 4}
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#sizedeclaration
+   * @until //#sizedeclaration
+   * @skipline //#resizesingle
+   * @until //#resizesingle
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
-   * @skipline New
-   * @skipline initArray
-   * @skipline insert
-   * @until #
-   * @skipline newSize
-   * @until resizeAsFloat64
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//arraydefaultvalues
+   * @until #//arraydefaultvalues
+   * @skipline #//resizesingle
+   * @until #//resizesingle
    *
    * @param numValues the number of values to resize this array to.
    * @param value the number to initialize newly created values to, if needed.
@@ -1258,25 +999,22 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline New
-   * @skipline newSizeVector
-   * @until push_back(5)
-   * @skipline initArray
-   * @skipline insert
-   * @until //
-   * @skip resize
-   * @skipline newSizeVector
-   * @until 4}
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#sizevectordeclaration
+   * @until //#sizevectordeclaration
+   * @skipline //#resizevector
+   * @until //#resizevector
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
-   * @skipline New
-   * @skipline initArray
-   * @skipline insertAsInt32
-   * @until #
-   * @skipline newSizeArray
-   * @until resizeAsFloat64
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//arraydefaultvalues
+   * @until #//arraydefaultvalues
+   * @skipline #//resizevector
+   * @until #//resizevector
    *
    * @param dimensions the dimensions to resize the array to.
    * @param value the number to intialize newly created values to, if needed.
@@ -1293,16 +1031,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline New
-   * @skipline newName
-   * @until setName
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setName
+   * @until //#setName
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
-   * @skipline New
-   * @skipline newName
-   * @until setName
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setName
+   * @until #//setName
    *
    * @param name of the array to set.
    */
@@ -1328,8 +1068,12 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline initArray
-   * @skipline setValuesInternal
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#datapointersetup
+   * @until //#datapointersetup
+   * @skipline //#setValuesInternalpointer
+   * @until //#setValuesInternalpointer
    *
    * Python: does not support setValuesInternal
    *
@@ -1354,9 +1098,12 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline New
-   * @skipline initVector
-   * @skipline setValuesInternal
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#initinternalvector
+   * @until //#initinternalvector
+   * @skipline //#setValuesInternalvector
+   * @until //#setValuesInternalvector
    *
    * Python: does not support setValuesInternal
    *
@@ -1378,11 +1125,14 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline New
-   * @skipline initVector
-   * @until push_back(5)
-   * @skipline storeVector
-   * @until setValuesInternal
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#initinternalvector
+   * @until //#initinternalvector
+   * @skipline //#initsharedvector
+   * @until //#initsharedvector
+   * @skipline //#setValuesInternalsharedvector
+   * @until //#setValuesInternalsharedvector
    *
    * Python: does not support setValuesInternal
    *
@@ -1390,32 +1140,6 @@ public:
    */
   template<typename T>
   void setValuesInternal(const shared_ptr<std::vector<T> > array);
-
-  /**
-   * Adds together all the values contained in the provided arrays.
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfArray.cpp
-   * @skipline valueArray1
-   * @until valueVector
-   * @skipline valueArray1
-   * @until valueArray2
-   * @skipline sum
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleArray.py
-   * @skipline valueArray1
-   * @until valueVector
-   * @skipline valueArray1
-   * @until valueArray2
-   * @skipline sum
-   *
-   * @param     values  a vector containing the arrays to be used
-   * @return            an XdmfArray containing one value which is the total of all the values contained within the provided arrays
-   */
-  static shared_ptr<XdmfArray> sum(std::vector<shared_ptr<XdmfArray> > values);
 
   /**
    * Exchange the contents of the vector with the contents of this
@@ -1426,13 +1150,12 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline New
-   * @skipline initArray
-   * @skipline insert
-   * @skipline initVector
-   * @until push_back(5)
-   * @skipline //
-   * @until //
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#initinternalvector
+   * @until //#initinternalvector
+   * @skipline //#swapvector
+   * @until //#swapvector
    *
    * Python: The Python version only supports swapping XdmfArrays
    *
@@ -1451,14 +1174,14 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline New
-   * @skipline initArray
-   * @skipline insert
-   * @skipline initVector
-   * @until push_back(5)
-   * @skipline //
-   * @skipline storeSwapSucceded
-   * @until //
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#initinternalvector
+   * @until //#initinternalvector
+   * @skipline //#initsharedvector
+   * @until //#initsharedvector
+   * @skipline //#swapsharedvector
+   * @until //#swapsharedvector
    *
    * Python: The Python version only supports swapping XdmfArrays
    *
@@ -1477,22 +1200,20 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArray.cpp
-   * @skipline New
-   * @skipline initArray
-   * @skipline insert
-   * @skipline swapArray
-   * @until swap(
-   * @skipline //
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#swaparray
+   * @until //#swaparray
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
-   * @skipline New
-   * @skipline initArray
-   * @skipline insert
-   * @skipline swapArray
-   * @until swap(
-   * @skipline #
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//arraydefaultvalues
+   * @until #//arraydefaultvalues
+   * @skipline //#swap
+   * @until //#swap
    *
    * @param array a smart pointer to a vector to exchange values with.
    */
@@ -1569,13 +1290,6 @@ private:
   std::string mName;
   unsigned int mTmpReserveSize;
 
-  static std::string mSupportedOperations;
-  static const std::string mValidVariableChars;
-  static const std::string mValidDigitChars;
-  static int mOperationPriority[];
-
-  static std::map<std::string, shared_ptr<XdmfArray>(*)(std::vector<shared_ptr<XdmfArray> >)> arrayFunctions;
-  static std::map<char, shared_ptr<XdmfArray>(*)(shared_ptr<XdmfArray>, shared_ptr<XdmfArray>)> operations;
 };
 
 #include "XdmfArray.tpp"

@@ -1,9 +1,13 @@
 from Xdmf import *
 
 if __name__ == "__main__":
-	#Assuming that exampleGrid is a shared pointer to an XdmfUnstructuredGrid object
+	#//initialization begin
 
 	exampleGrid = XdmfUnstructuredGrid.New()
+
+	#//initialization end
+
+	#//initializationregular begin
 
 	newBrickX = 0.0
 	newBrickY = 0.0
@@ -13,6 +17,10 @@ if __name__ == "__main__":
 	newOriginY = 20.0
 	baseGrid = XdmfRegularGrid.New(newBrickX, newBrickY, newPointsX, newPointsY, newOriginX, newOriginY)
 	regGeneratedGrid = XdmfUnstructuredGrid.New(baseGrid)
+
+	#//initializationregular end
+
+	#//setGeometry begin
 
 	newGeometry = XdmfGeometry.New()
 	newGeometry.setType(XdmfGeometryType.XYZ())
@@ -27,6 +35,10 @@ if __name__ == "__main__":
 	newGeometry.pushBackAsInt32(9)
 	exampleGrid.setGeometry(newGeometry)
 
+	#//setGeometry end
+
+	#//setTopology begin
+
 	newTopology = XdmfTopology.New()
 	newTopology.setType(XdmfTopologyType.Triangle())
 	newTopology.pushBackAsInt32(1)
@@ -40,5 +52,16 @@ if __name__ == "__main__":
 	newTopology.pushBackAsInt32(9)
 	exampleGrid.setTopology(newTopology)
 
+	#//setTopology end
+
+	#//getGeometry begin
+
 	exampleGeometry = exampleGrid.getGeometry()
+
+	#//getGeometry end
+
+	#//getTopology begin
+
 	exampleTopology = exampleGrid.getTopology()
+
+	#//getTopology end

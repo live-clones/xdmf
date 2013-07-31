@@ -56,12 +56,14 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfGridCollection.cpp
-   * @skipline New
+   * @skipline //#initalization
+   * @until //#initalization
    *
    * Python
    *
    * @dontinclude XdmfExampleGridCollection.py
-   * @skipline New
+   * @skipline #//initalization
+   * @until #//initalization
    *
    * @return constructed XdmfGridCollection.
    */
@@ -84,14 +86,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfGridCollection.cpp
-   * @skipline Assuming
-   * @skipline getType
+   * @skipline //#initalization
+   * @until //#initalization
+   * @skipline //#getType
+   * @until //#getType
    *
    * Python
    *
    * @dontinclude XdmfExampleGridCollection.py
-   * @skipline Assuming
-   * @skipline getType
+   * @skipline #//initalization
+   * @until #//initalization
+   * @skipline #//getType
+   * @until #//getType
    *
    * @return XdmfGridCollectionType of this collection.
    */
@@ -108,18 +114,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfGridCollection.cpp
-   * @skipline Assuming
-   * @skipline exampleInformation
-   * @until setValue
-   * @skipline insert
+   * @skipline //#initalization
+   * @until //#initalization
+   * @skipline //#insert
+   * @until //#insert
    *
    * Python
    *
    * @dontinclude XdmfExampleGridCollection.py
-   * @skipline Assuming
-   * @skipline exampleInformation
-   * @until setValue
-   * @skipline insert
+   * @skipline #//initalization
+   * @until #//initalization
+   * @skipline #//insert
+   * @until #//insert
    *
    * @param information an XdmfInformation to attach to this item.
    */
@@ -134,14 +140,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfGridCollection.cpp
-   * @skipline Assuming
-   * @skipline setType
+   * @skipline //#initalization
+   * @until //#initalization
+   * @skipline //#setType
+   * @until //#setType
    *
    * Python
    *
    * @dontinclude XdmfExampleGridCollection.py
-   * @skipline Assuming
-   * @skipline setType
+   * @skipline #//initalization
+   * @until #//initalization
+   * @skipline #//setType
+   * @until #//setType
    *
    * @param type the XdmfGridCollectionType to set.
    */

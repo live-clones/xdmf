@@ -47,12 +47,14 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfItemFactory.cpp
-   * @skipline New
+   * @skipline //#initialization
+   * @until //#initialization
    *
    * Python
    *
    * @dontinclude XdmfExampleItemFactory.py
-   * @skipline New
+   * @skipline #//initialization
+   * @until #//initialization
    *
    * @return constructed XdmfItemFactory.
    */

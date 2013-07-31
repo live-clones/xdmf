@@ -49,12 +49,14 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfGraph.cpp
-   * @skipline New
+   * @skipline //#initialization
+   * @until //#initialization
    *
    * Python
    *
    * @dontinclude XdmfExampleGraph.py
-   * @skipline New
+   * @skipline #//initialization
+   * @until #//initialization
    *
    * @param numberNodes number of nodes in graph.
    *

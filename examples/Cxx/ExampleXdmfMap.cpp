@@ -4,9 +4,13 @@
 
 int main(int, char **)
 {
+	//#initialization begin
+
 	shared_ptr<XdmfMap> exampleMap = XdmfMap::New();
 
-	//Assumming that exampleMap is a shared pointer to a XdmfMap object
+	//#initialization end
+
+	//#initializationnode begin
 
 	std::vector<shared_ptr<XdmfAttribute> > holdGlobalNodes;
 	shared_ptr<XdmfAttribute> nodeAttribute = XdmfAttribute::New();
@@ -35,6 +39,10 @@ int main(int, char **)
 	//then map 1 would have an entry of (3, 5, 2)
 	//and map 3 would have an entry of (1, 2, 5)
 	//The entries are formatted (remoteTaskID, remoteLocalNodeID, localNodeID)
+
+	//#initializationnode end
+
+	//#setMap begin
 
 	std::map<int, std::map<int, std::set<int> > > taskMap;
 	std::map<int, std::set<int> > nodeMap;
@@ -84,6 +92,10 @@ int main(int, char **)
 	//(2, 9, 9)
 	//Are now in the XdmfMap
 
+	//#setMap end
+
+
+	//#inserttuple begin
 
         unsigned int newRemoteTaskID = 4;
         unsigned int newLocalNodeID = 7;
@@ -91,11 +103,18 @@ int main(int, char **)
         exampleMap->insert(newRemoteTaskID, newLocalNodeID, newRemoteLocalNodeID);
 	//This inserts an entry of (4, 7, 3) into the map
 
+	//#inserttuple end
+
+
+	//#setName begin
 
 	std::string newName = "New Name";
 	exampleMap->setName(newName);
 
-	//getMap
+	//#setName end
+
+	//#getMap begin
+
 	//Assuming that exampleMap is a shared pointer to an XdmfMap object filled with the following tuples
 	//(1, 1, 9)
 	//(1, 2, 8)
@@ -122,7 +141,18 @@ int main(int, char **)
 	int remoteNodeValue = (*setWalker);
 	//remoteNodeValue now equals 9
 
-	
+	//#getMap end
+
+
+	//#getRemoteNodeIds begin
+
+	//Assuming that exampleMap is a shared pointer to an XdmfMap object filled with the following tuples
+	//(1, 1, 9)
+	//(1, 2, 8)
+	//(2, 3, 7)
+	//(2, 4, 6)
+	//(3, 5, 5)
+	//(3, 6, 4)
 	std::map<int, std::set<int> > nodeIDMap = exampleMap->getRemoteNodeIds(1);
 	//nodeIDMap now contains the following tuples because it retrieved the tuples associated with taskID 1
 	//(1, 9)
@@ -137,13 +167,24 @@ int main(int, char **)
 	int remoteNodeValue = (*setWalker);
 	//remoteNodeValue now equals 9
 
+	//#getRemoteNodeIds end
+
+	//#getName begin
 
 	std::string exampleName = exampleMap->getName();
+
+	//#getName end
+
+	//#isInitialized begin
 
 	if (!exampleMap->isInitialized())
 	{
 		exampleMap->read();
 	}
+
+	//#isInitialized end
+
+	//#setHeavyDataControllers begin
 
 	std::string hdf5FilePath = "The HDF5 file path goes here";
 	std::string hdf5SetPath = "The HDF5 set path goes here";
@@ -175,7 +216,13 @@ int main(int, char **)
 	shared_ptr<XdmfMap> exampleMap = XdmfMap::New();
 	exampleMap->setHeavyDataControllers(newRemoteTaskController, newLocalNodeController, newRemoteLocalNodeController);
 
+	//#setHeavyDataControllers end
+
+	//#release begin
+
 	exampleMap->release();
+
+	//#release end
 
 	return 0;
 }

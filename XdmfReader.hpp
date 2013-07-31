@@ -48,12 +48,14 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfReader.cpp
-   * @skipline New
+   * @skipline //#initialization
+   * @until //#initialization
    *
    * Python
    *
    * @dontinclude XdmfExampleReader.py
-   * @skipline New
+   * @skipline #//initialization
+   * @until #//initialization
    *
    * @return constructed XdmfReader.
    */

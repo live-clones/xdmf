@@ -27,24 +27,24 @@ def prepend(val1, val2):
 
 if __name__ == "__main__":
 	#functions are passed as callable pyobjects
-	XdmfArray.addFunction("MAX", maximum)
-	functionVector = XdmfArray.getSupportedFunctions()
+	XdmfFunction.addFunction("MAX", maximum)
+	functionVector = XdmfFunction.getSupportedFunctions()
 	for i in range (0, functionVector.size()):
 		print functionVector[i]
-	XdmfArray.addOperation("@", prepend, 2)
-	print XdmfArray.getSupportedOperations()
+	XdmfFunction.addOperation("@", prepend, 2)
+	print XdmfFunction.getSupportedOperations()
         testVector = ArrayVector()
 	testArray = XdmfArray.New()
 	testArray.pushBackAsInt32(10)
 	testArray.pushBackAsInt32(9)
 	testVector.push_back(testArray)
 	print "before evaluating function"
-	resultArray = XdmfArray.evaluateFunction(testVector, "MAX")
+	resultArray = XdmfFunction.evaluateFunction(testVector, "MAX")
 	print type(resultArray)
 	print "after function is evaulated"
 	print resultArray.getValuesString()
 	print "before evaluating function"
-	resultArray = XdmfArray.evaluateFunction(testVector, "AVE")
+	resultArray = XdmfFunction.evaluateFunction(testVector, "AVE")
 	print type(resultArray)
 	print "after function is evaulated"
 	print resultArray.getValuesString()
@@ -52,11 +52,11 @@ if __name__ == "__main__":
 	testArray2.pushBackAsInt32(1)
 	testArray2.pushBackAsInt32(2)
 	print "before evaluating Operation"
-	resultArray = XdmfArray.evaluateOperation(testArray, testArray2, "|")
+	resultArray = XdmfFunction.evaluateOperation(testArray, testArray2, "|")
 	print type(resultArray)
 	print "after evaluationg Operation"
 	print resultArray.getValuesString()
-	resultArray = XdmfArray.evaluateOperation(testArray, testArray2, "@")
+	resultArray = XdmfFunction.evaluateOperation(testArray, testArray2, "@")
 	print type(resultArray)
 	print "after evaluationg Operation"
 	print resultArray.getValuesString()
@@ -70,10 +70,7 @@ if __name__ == "__main__":
 	testArray3.pushBackAsInt32(5)
 	testArray3.pushBackAsInt32(5)
 	testMap["C"] = testArray3
-	resultArray = XdmfArray.evaluateExpression("A|B#C", testMap)
+	resultArray = XdmfFunction.evaluateExpression("A|B#C", testMap)
 	print type(resultArray)
 	print resultArray.getValuesString()
 	print "after evaluating expression"
-
-	#honestly, I don't think it's possible to make the dynamic library work in Python without completely reworking half of Xdmf
-	#(possible exaggeration, but either way, it would take a lot of work.)

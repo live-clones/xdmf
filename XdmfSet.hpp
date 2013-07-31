@@ -56,12 +56,14 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfSet.cpp
-   * @skipline New
+   * @skipline //#initialize
+   * @until //#initialize
    *
    * Python
    *
    * @dontinclude XdmfExampleSet.py
-   * @skipline New
+   * @skipline #//initialize
+   * @until #//initialize
    *
    * @return constructed XdmfSet.
    */
@@ -85,14 +87,22 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfSet.cpp
-   * @skipline Assuming
-   * @skipline getName
+   * @skipline //#initialize
+   * @until //#initialize
+   * @skipline //#setName
+   * @until //#setName
+   * @skipline //#getName
+   * @until //#getName
    *
    * Python
    *
    * @dontinclude XdmfExampleSet.py
-   * @skipline Assuming
-   * @skipline getName
+   * @skipline #//initialize
+   * @until #//initialize
+   * @skipline #//setName
+   * @until #//setName
+   * @skipline #//getName
+   * @until #//getName
    *
    * @return a string containing the name of the set.
    */
@@ -106,14 +116,22 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfSet.cpp
-   * @skipline Assuming
-   * @skipline getType
+   * @skipline //#initialize
+   * @until //#initialize
+   * @skipline //#setType
+   * @until //#setType
+   * @skipline //#getType
+   * @until //#getType
    *
    * Python
    *
    * @dontinclude XdmfExampleSet.py
-   * @skipline Assuming
-   * @skipline getType
+   * @skipline #//initialize
+   * @until #//initialize
+   * @skipline #//setType
+   * @until #//setType
+   * @skipline #//getType
+   * @until #//getType
    *
    * @return XdmfSetType of this set.
    */
@@ -133,16 +151,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfSet.cpp
-   * @skipline New
-   * @skipline newName
-   * @until setName
+   * @skipline //#initialize
+   * @until //#initialize
+   * @skipline //#setName
+   * @until //#setName
    *
    * Python
    *
    * @dontinclude XdmfExampleSet.py
-   * @skipline New
-   * @skipline newName
-   * @until setName
+   * @skipline #//initialize
+   * @until #//initialize
+   * @skipline #//setName
+   * @until #//setName
    *
    * @param name a string containing the name to set.
    */
@@ -156,14 +176,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfSet.cpp
-   * @skipline New
-   * @skipline setType
+   * @skipline //#initialize
+   * @until //#initialize
+   * @skipline //#setType
+   * @until //#setType
    *
    * Python
    *
    * @dontinclude XdmfExampleSet.py
-   * @skipline New
-   * @skipline setType
+   * @skipline //#initialize
+   * @until //#initialize
+   * @skipline //#setType
+   * @until //#setType
    *
    * @param type the XdmfSetType to set.
    */

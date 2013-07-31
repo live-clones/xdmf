@@ -1256,3 +1256,418 @@ XdmfTopologyConverter::convert(const shared_ptr<XdmfUnstructuredGrid> gridToConv
   return shared_ptr<XdmfUnstructuredGrid>();
 
 }
+
+shared_ptr<XdmfTopology>
+XdmfTopologyConverter::getExternalFaces(const shared_ptr<XdmfTopology> convertedTopology) {
+
+  if (convertedTopology->getSize() < convertedTopology->getType()->getNodesPerElement()) {
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Not enough nodes for GetExternalSurface");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+
+  long largestId = convertedTopology->getValue<long>(0);
+  for (unsigned int i = 1; i < convertedTopology->getSize(); ++i) {
+    if (largestId < convertedTopology->getValue<long>(i)) {
+      largestId = convertedTopology->getValue<long>(i);
+    }
+  }
+
+  std::vector<std::vector<std::vector<long> > > hash(largestId);
+
+  if(convertedTopology->getType() == XdmfTopologyType::Tetrahedron()) {
+
+    // This loop can be generalized in a later version
+    for(int arrayOffset=0; arrayOffset<convertedTopology->getSize(); arrayOffset += convertedTopology->getType()->getNodesPerElement()) {
+      std::vector<long> faceNodes;
+      for (unsigned int i = 0; i < convertedTopology->getType()->getNodesPerElement(); ++i) {
+        faceNodes.push_back(convertedTopology->getValue<long>(arrayOffset + i));
+      }
+
+      std::vector< std::vector<long> > faceVectors;
+      // 0, 1, 3 face
+      std::vector<long> face1Vector;
+      face1Vector.push_back(faceNodes[0]);
+      face1Vector.push_back(faceNodes[1]);
+      face1Vector.push_back(faceNodes[3]);
+      faceVectors.push_back(face1Vector);
+      // 0, 2, 1 face
+      std::vector<long> face2Vector;
+      face2Vector.push_back(faceNodes[0]);
+      face2Vector.push_back(faceNodes[2]);
+      face2Vector.push_back(faceNodes[1]);
+      faceVectors.push_back(face2Vector);
+      // 0, 3, 2 face
+      std::vector<long> face3Vector;
+      face3Vector.push_back(faceNodes[0]);
+      face3Vector.push_back(faceNodes[3]);
+      face3Vector.push_back(faceNodes[2]);
+      faceVectors.push_back(face3Vector);
+      // 1, 2, 3 face
+      std::vector<long> face4Vector;
+      face4Vector.push_back(faceNodes[1]);
+      face4Vector.push_back(faceNodes[2]);
+      face4Vector.push_back(faceNodes[3]);
+      faceVectors.push_back(face4Vector);
+
+      for (unsigned int i = 0; i < faceVectors.size(); ++i) {
+        insertInHash(faceVectors[i], hash, 3);
+      }
+    }
+
+    // create new topology
+    shared_ptr<XdmfTopology> toReturn = XdmfTopology::New();
+    toReturn->setType(XdmfTopologyType::Triangle());
+    std::vector<long> newCells;
+    int index = 0;
+    for(std::vector<std::vector<std::vector<long> > >::const_iterator hashIter = hash.begin();
+        hashIter != hash.end();
+        ++hashIter, ++index)
+    {
+      const std::vector<std::vector<long> > & currHash = *hashIter;
+      for(std::vector<std::vector<long> >::const_iterator currHashIter = currHash.begin();
+          currHashIter != currHash.end();
+          ++currHashIter)
+      {
+        const std::vector<long> & currFaceIds = *currHashIter;
+        newCells.push_back(index);
+        newCells.push_back(currFaceIds[0]);
+        newCells.push_back(currFaceIds[1]);
+      }
+    }
+    toReturn->initialize(XdmfArrayType::Int64());
+    toReturn->insert(0, &newCells[0], newCells.size());
+    return toReturn;
+  }
+  else if(convertedTopology->getType() == XdmfTopologyType::Hexahedron()) {
+    for(long arrayOffset=0; arrayOffset<convertedTopology->getSize(); arrayOffset += convertedTopology->getType()->getNodesPerElement())
+    {
+      std::vector<long> faceNodes;
+      for (unsigned int i = 0; i < convertedTopology->getType()->getNodesPerElement(); ++i) {
+        faceNodes.push_back(convertedTopology->getValue<long>(arrayOffset + i));
+      }
+
+      std::vector< std::vector<long> > faceVectors;
+      // 0, 1, 5, 4 face
+      std::vector<long> face1Vector;
+      face1Vector.push_back(faceNodes[0]);
+      face1Vector.push_back(faceNodes[1]);
+      face1Vector.push_back(faceNodes[5]);
+      face1Vector.push_back(faceNodes[4]);
+      faceVectors.push_back(face1Vector);
+      // 0, 3, 2, 1 face
+      std::vector<long> face2Vector;
+      face2Vector.push_back(faceNodes[0]);
+      face2Vector.push_back(faceNodes[3]);
+      face2Vector.push_back(faceNodes[2]);
+      face2Vector.push_back(faceNodes[1]);
+      faceVectors.push_back(face2Vector);
+      // 0, 4, 7, 3 face
+      std::vector<long> face3Vector;
+      face3Vector.push_back(faceNodes[0]);
+      face3Vector.push_back(faceNodes[4]);
+      face3Vector.push_back(faceNodes[7]);
+      face3Vector.push_back(faceNodes[3]);
+      faceVectors.push_back(face3Vector);
+      // 1, 2, 6, 5 face
+      std::vector<long> face4Vector;
+      face4Vector.push_back(faceNodes[1]);
+      face4Vector.push_back(faceNodes[2]);
+      face4Vector.push_back(faceNodes[6]);
+      face4Vector.push_back(faceNodes[5]);
+      faceVectors.push_back(face4Vector);
+      // 2, 3, 7, 6 face
+      std::vector<long> face5Vector;
+      face5Vector.push_back(faceNodes[2]);
+      face5Vector.push_back(faceNodes[3]);
+      face5Vector.push_back(faceNodes[7]);
+      face5Vector.push_back(faceNodes[6]);
+      faceVectors.push_back(face5Vector);
+      // 4, 5, 6, 7 face
+      std::vector<long> face6Vector;
+      face6Vector.push_back(faceNodes[4]);
+      face6Vector.push_back(faceNodes[5]);
+      face6Vector.push_back(faceNodes[6]);
+      face6Vector.push_back(faceNodes[7]);
+      faceVectors.push_back(face6Vector);
+
+      for (unsigned int i = 0; i < faceVectors.size(); ++i) {
+        insertInHash(faceVectors[i], hash, 4);
+      }
+    }
+
+    // create new topology
+    shared_ptr<XdmfTopology> toReturn = XdmfTopology::New();
+    toReturn->setType(XdmfTopologyType::Quadrilateral());
+    std::vector<long> newCells;
+    int index = 0;
+    for(std::vector<std::vector<std::vector<long> > >::const_iterator hashIter = hash.begin();
+        hashIter != hash.end();
+        ++hashIter, ++index)
+    {
+      const std::vector<std::vector<long> > & currHash = *hashIter;
+      for(std::vector<std::vector<long> >::const_iterator currHashIter = currHash.begin();
+          currHashIter != currHash.end();
+          ++currHashIter)
+      {
+        const std::vector<long> & currFaceIds = *currHashIter;
+        newCells.push_back(index);
+        newCells.push_back(currFaceIds[0]);
+        newCells.push_back(currFaceIds[1]);
+        newCells.push_back(currFaceIds[2]);
+      }
+    }
+    toReturn->initialize(XdmfArrayType::Int64());
+    toReturn->insert(0, &newCells[0], newCells.size());
+    return toReturn;
+  }
+  else if(convertedTopology->getType() == XdmfTopologyType::Tetrahedron_10()) {
+    for(long arrayOffset=0; arrayOffset<convertedTopology->getSize(); arrayOffset += convertedTopology->getType()->getNodesPerElement())
+    {
+      std::vector<long> faceNodes;
+      for (unsigned int i = 0; i < convertedTopology->getType()->getNodesPerElement(); ++i) {
+        faceNodes.push_back(convertedTopology->getValue<long>(arrayOffset + i));
+      }
+
+      std::vector< std::vector<long> > faceVectors;
+      // 0, 1, 3, 4, 8, 7 face
+      std::vector<long> face1Vector;
+      face1Vector.push_back(faceNodes[0]);
+      face1Vector.push_back(faceNodes[1]);
+      face1Vector.push_back(faceNodes[3]);
+      face1Vector.push_back(faceNodes[4]);
+      face1Vector.push_back(faceNodes[8]);
+      face1Vector.push_back(faceNodes[7]);
+      faceVectors.push_back(face1Vector);
+      // 0, 2, 1, 6, 5, 4 face
+      std::vector<long> face2Vector;
+      face2Vector.push_back(faceNodes[0]);
+      face2Vector.push_back(faceNodes[2]);
+      face2Vector.push_back(faceNodes[1]);
+      face2Vector.push_back(faceNodes[6]);
+      face2Vector.push_back(faceNodes[5]);
+      face2Vector.push_back(faceNodes[4]);
+      faceVectors.push_back(face2Vector);
+      // 0, 3, 2, 7, 9, 6 face
+      std::vector<long> face3Vector;
+      face3Vector.push_back(faceNodes[0]);
+      face3Vector.push_back(faceNodes[3]);
+      face3Vector.push_back(faceNodes[2]);
+      face3Vector.push_back(faceNodes[7]);
+      face3Vector.push_back(faceNodes[9]);
+      face3Vector.push_back(faceNodes[6]);
+      faceVectors.push_back(face3Vector);
+      // 1, 2, 3, 5, 9, 8 face
+      std::vector<long> face4Vector;
+      face4Vector.push_back(faceNodes[1]);
+      face4Vector.push_back(faceNodes[2]);
+      face4Vector.push_back(faceNodes[3]);
+      face4Vector.push_back(faceNodes[5]);
+      face4Vector.push_back(faceNodes[9]);
+      face4Vector.push_back(faceNodes[8]);
+      faceVectors.push_back(face4Vector);
+
+      for (unsigned int i = 0; i < faceVectors.size(); ++i) {
+        insertInHash(faceVectors[i], hash, 3);
+      }
+    }
+
+    // create new topology
+    shared_ptr<XdmfTopology> toReturn = XdmfTopology::New();
+    toReturn->setType(XdmfTopologyType::Triangle_6());
+    std::vector<long> newCells;
+    int index = 0;
+    for(std::vector<std::vector<std::vector<long> > >::const_iterator hashIter = hash.begin();
+        hashIter != hash.end();
+        ++hashIter, ++index)
+    {
+      const std::vector<std::vector<long> > & currHash = *hashIter;
+      for(std::vector<std::vector<long> >::const_iterator currHashIter = currHash.begin();
+          currHashIter != currHash.end();
+          ++currHashIter)
+      {
+        const std::vector<long> & currFaceIds = *currHashIter;
+        newCells.push_back(index);
+        newCells.push_back(currFaceIds[0]);
+        newCells.push_back(currFaceIds[1]);
+        newCells.push_back(currFaceIds[2]);
+        newCells.push_back(currFaceIds[3]);
+        newCells.push_back(currFaceIds[4]);
+      }
+    }
+    toReturn->initialize(XdmfArrayType::Int64());
+    toReturn->insert(0, &newCells[0], newCells.size());
+    return toReturn;
+  }
+  else if(convertedTopology->getType() == XdmfTopologyType::Hexahedron_20()) {
+    for(long arrayOffset=0; arrayOffset<convertedTopology->getSize(); arrayOffset += convertedTopology->getType()->getNodesPerElement())
+    {
+      std::vector<long> faceNodes;
+      for (unsigned int i = 0; i < convertedTopology->getType()->getNodesPerElement(); ++i) {
+        faceNodes.push_back(convertedTopology->getValue<long>(arrayOffset + i));
+      }
+
+      std::vector< std::vector<long> > faceVectors;
+      // 0, 1, 5, 4, 8, 17, 12, 16 face
+      std::vector<long> face1Vector;
+      face1Vector.push_back(faceNodes[0]);
+      face1Vector.push_back(faceNodes[1]);
+      face1Vector.push_back(faceNodes[5]);
+      face1Vector.push_back(faceNodes[4]);
+      face1Vector.push_back(faceNodes[8]);
+      face1Vector.push_back(faceNodes[17]);
+      face1Vector.push_back(faceNodes[12]);
+      face1Vector.push_back(faceNodes[16]);
+      faceVectors.push_back(face1Vector);
+      // 0, 3, 2, 1, 11, 10, 9, 8 face
+      std::vector<long> face2Vector;
+      face2Vector.push_back(faceNodes[0]);
+      face2Vector.push_back(faceNodes[3]);
+      face2Vector.push_back(faceNodes[2]);
+      face2Vector.push_back(faceNodes[1]);
+      face2Vector.push_back(faceNodes[11]);
+      face2Vector.push_back(faceNodes[10]);
+      face2Vector.push_back(faceNodes[9]);
+      face2Vector.push_back(faceNodes[8]);
+      faceVectors.push_back(face2Vector);
+      // 0, 4, 7, 3, 16, 15, 19, 11 face
+      std::vector<long> face3Vector;
+      face3Vector.push_back(faceNodes[0]);
+      face3Vector.push_back(faceNodes[4]);
+      face3Vector.push_back(faceNodes[7]);
+      face3Vector.push_back(faceNodes[3]);
+      face3Vector.push_back(faceNodes[16]);
+      face3Vector.push_back(faceNodes[15]);
+      face3Vector.push_back(faceNodes[19]);
+      face3Vector.push_back(faceNodes[11]);
+      faceVectors.push_back(face3Vector);
+      // 1, 2, 6, 5, 9, 18, 13, 17 face
+      std::vector<long> face4Vector;
+      face4Vector.push_back(faceNodes[1]);
+      face4Vector.push_back(faceNodes[2]);
+      face4Vector.push_back(faceNodes[6]);
+      face4Vector.push_back(faceNodes[5]);
+      face4Vector.push_back(faceNodes[9]);
+      face4Vector.push_back(faceNodes[18]);
+      face4Vector.push_back(faceNodes[13]);
+      face4Vector.push_back(faceNodes[17]);
+      faceVectors.push_back(face4Vector);
+      // 2, 3, 7, 6, 10, 19, 14, 18 face
+      std::vector<long> face5Vector;
+      face5Vector.push_back(faceNodes[2]);
+      face5Vector.push_back(faceNodes[3]);
+      face5Vector.push_back(faceNodes[7]);
+      face5Vector.push_back(faceNodes[6]);
+      face5Vector.push_back(faceNodes[10]);
+      face5Vector.push_back(faceNodes[19]);
+      face5Vector.push_back(faceNodes[14]);
+      face5Vector.push_back(faceNodes[18]);
+      faceVectors.push_back(face5Vector);
+      // 4, 5, 6, 7, 12, 13, 14, 15 face
+      std::vector<long> face6Vector;
+      face6Vector.push_back(faceNodes[4]);
+      face6Vector.push_back(faceNodes[5]);
+      face6Vector.push_back(faceNodes[6]);
+      face6Vector.push_back(faceNodes[7]);
+      face6Vector.push_back(faceNodes[12]);
+      face6Vector.push_back(faceNodes[13]);
+      face6Vector.push_back(faceNodes[14]);
+      face6Vector.push_back(faceNodes[15]);
+      faceVectors.push_back(face6Vector);
+
+      for (unsigned int i = 0; i < faceVectors.size(); ++i) {
+        insertInHash(faceVectors[i], hash, 4);
+      }
+    }
+
+    // create new topology
+    shared_ptr<XdmfTopology> toReturn = XdmfTopology::New();
+    toReturn->setType(XdmfTopologyType::Quadrilateral_8());
+    std::vector<long> newCells;
+    int index = 0;
+    for(std::vector<std::vector<std::vector<long> > >::const_iterator hashIter = hash.begin();
+        hashIter != hash.end();
+        ++hashIter, ++index)
+    {
+      const std::vector<std::vector<long> > & currHash = *hashIter;
+      for(std::vector<std::vector<long> >::const_iterator currHashIter = currHash.begin();
+          currHashIter != currHash.end();
+          ++currHashIter)
+      {
+        const std::vector<long> & currFaceIds = *currHashIter;
+        newCells.push_back(index);
+        newCells.push_back(currFaceIds[0]);
+        newCells.push_back(currFaceIds[1]);
+        newCells.push_back(currFaceIds[2]);
+        newCells.push_back(currFaceIds[3]);
+        newCells.push_back(currFaceIds[4]);
+        newCells.push_back(currFaceIds[5]);
+        newCells.push_back(currFaceIds[6]);
+      }
+    }
+    toReturn->initialize(XdmfArrayType::Int64());
+    toReturn->insert(0, &newCells[0], newCells.size());
+    return toReturn;
+  }
+
+  XdmfError::message(XdmfError::FATAL, "Unsupported TopologyType when computing external surface");
+  return shared_ptr<XdmfTopology>();
+}
+
+void
+XdmfTopologyConverter::insertInHash(std::vector<long> nodes,
+                  std::vector<std::vector<std::vector<long> > > & hash,
+                  unsigned int numCornerNodes)
+{
+  unsigned int minIndex = 0;
+  for (unsigned int i = 0; i < numCornerNodes; ++i) {
+    if (nodes[i] < nodes[minIndex]) {
+      minIndex = i;
+    }
+  }
+  if (minIndex !=0) {
+    // If the min value is not the first value, rotate as appropriate
+    std::vector<long> sortedVector (nodes.begin()+minIndex,
+                                    nodes.begin()+numCornerNodes);
+    sortedVector.insert(sortedVector.end(),
+                        nodes.begin(),
+                        nodes.begin()+minIndex);
+    if (nodes.size() > numCornerNodes) {
+      sortedVector.insert(sortedVector.end(),
+                          nodes.begin()+numCornerNodes+minIndex,
+                          nodes.begin()+numCornerNodes+numCornerNodes);
+      sortedVector.insert(sortedVector.end(),
+                          nodes.begin()+numCornerNodes,
+                          nodes.begin()+numCornerNodes+minIndex);
+    }
+    nodes = sortedVector;
+  }
+
+  // The nodes are now sorted so that the smallest corner is first
+  // Look for existing cell in the hash;
+  std::vector<std::vector<long> > & currHash = hash[nodes[0]];
+  for(std::vector<std::vector<long> >::iterator iter =
+      currHash.begin(); iter != currHash.end();
+      ++iter) {
+    std::vector<long> & currFace = *iter;
+    // size - 1 because the first value is used elsewhere
+    if(currFace.size() == nodes.size()-1) {
+      if ((nodes[1] == currFace[0] && 
+           nodes[numCornerNodes-1] == currFace[numCornerNodes-2]) ||
+          (nodes[1] == currFace[numCornerNodes-2] &&
+           nodes[numCornerNodes-1] == currFace[0])) {
+        currHash.erase(iter);
+        return;
+      }
+    }
+  }
+
+  std::vector<long> newFace;
+  for (unsigned int i = 1; i < nodes.size(); ++i) {
+    newFace.push_back(nodes[i]);
+  }
+  currHash.push_back(newFace);
+}

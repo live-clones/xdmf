@@ -1,7 +1,7 @@
 from Xdmf import *
 
 if __name__ == "__main__":
-	#Assumming that exampleTime is a shared pointer to an XdmfTime object
+	#//initialization begin
 
 	exampleTime = XdmfTime.New()
 	#The Default case sets the time to 0.0
@@ -10,6 +10,16 @@ if __name__ == "__main__":
 	newTime = 5.0
 	exampleTime2 = XdmfTime.New(newTime)
 
+	#//initialization end
+
+	#//setValue begin
+
 	exampleTime.setValue(newTime)
 
-	readTime = exampleTime.getTime()
+	#//setValue end
+
+	#//getValue begin
+
+	readTime = exampleTime.getValue()
+
+	#//getValue end

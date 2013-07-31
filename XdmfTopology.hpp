@@ -64,12 +64,14 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfTopology.cpp
-   * @skipline New
+   * @skipline //#initialization
+   * @until //#initialization
    *
    * Python
    *
    * @dontinclude XdmfExampleTopology.py
-   * @skipline New
+   * @skipline #//initialization
+   * @until #//initialization
    *
    * @return constructed XdmfTopology.
    */
@@ -92,14 +94,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfTopology.cpp
-   * @skipline Assuming
-   * @skipline getNumberElements
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getNumberElements
+   * @until //#getNumberElements
    *
    * Python
    *
    * @dontinclude XdmfExampleTopology.py
-   * @skipline Assuming
-   * @skipline getNumberElements
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getNumberElements
+   * @until #//getNumberElements
    *
    * @return int of number elements in the Topology.
    */
@@ -113,14 +119,22 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfTopology.cpp
-   * @skipline Assuming
-   * @skipline getType
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setType
+   * @until //#setType
+   * @skipline //#getType
+   * @until //#getType
    *
    * Python
    *
    * @dontinclude XdmfExampleTopology.py
-   * @skipline Assuming
-   * @skipline getType
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setType
+   * @until #//setType
+   * @skipline #//getType
+   * @until #//getType
    *
    * @return XdmfTopologyType of the topology.
    */
@@ -134,14 +148,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfTopology.cpp
-   * @skipline New
-   * @skipline setType
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setType
+   * @until //#setType
    *
    * Python
    *
    * @dontinclude XdmfExampleTopology.py
-   * @skipline New
-   * @skipline setType
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setType
+   * @until #//setType
    *
    * @param type the XdmfTopologyType to set.
    */

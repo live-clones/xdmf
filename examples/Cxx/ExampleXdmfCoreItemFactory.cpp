@@ -3,6 +3,8 @@
 
 int main(int, char **)
 {
+	//#createItem begin
+
 	//using XdmfItemFactory because XdmfCoreItemFactory is abstract
 	shared_ptr<XdmfItemFactory> exampleFactory = XdmfItemFactory::New();
 	std::map<std::string, std::string> newProperties;
@@ -13,6 +15,8 @@ int main(int, char **)
 	//But the item has to be cast afterwards to the correct type.
 	//childItems and itemProperties are not added to the item when created this way
 	//the collections are used to determine type
+
+	//#createItem end
 
 	return 0;
 }

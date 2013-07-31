@@ -195,7 +195,7 @@ public:
    * @skipline if
    * @until {
    * @skipline writeController
-   * @until size-1
+   * @until getServerBuffer 
    * @skip Section
    * @skipline }
    *
@@ -206,7 +206,7 @@ public:
    * @until exampleWriter
    * @skipline if
    * @skipline writeController
-   * @until size-1
+   * @until getServerBuffer
    *
    * @param     hdf5FilePath            The path to the hdf5 file that the controller will be accessing
    * @param     dataSetPath             The location within the file of the data the controller with be accessing
@@ -216,8 +216,6 @@ public:
    * @param     dimensions              A vector of the number of values read from all dimensions of the data
    * @param     dataspaceDimensions     A vecotr containing the total size of the dimension in the data space
    * @param     dsmBuffer               A pointer to the dsm buffer
-   * @param	startCoreIndex		The index at which the server cores for the buffer start
-   * @param	endCoreIndex		The index at which the server cores for the buffer end
    */
   static shared_ptr<XdmfHDF5ControllerDSM>
   New(const std::string & hdf5FilePath,
@@ -227,9 +225,7 @@ public:
       const std::vector<unsigned int> & stride,
       const std::vector<unsigned int> & dimensions,
       const std::vector<unsigned int> & dataspaceDimensions,
-      XdmfDSMBuffer * const dsmBuffer,
-      int startCoreIndex,
-      int endCoreIndex);
+      XdmfDSMBuffer * const dsmBuffer);
 
   /**
    * Create a new controller for an DSM data set.
@@ -414,39 +410,6 @@ public:
    * @return	The XdmfDSMBuffer that is controlling the data for the DSM
    */
   XdmfDSMBuffer * getServerBuffer();
-
-  /**
-   * Gets the communicator that the servers use to communicate between themselves.
-   * Will be MPI_COMM_NULL on worker cores.
-   *
-   * Example of use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline getServerComm
-   * @skip Section
-   * @skipline }
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until workerComm
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @skipline exampleController
-   *
-   * @return	The comm that the servers are using.
-   */
-  MPI_Comm getServerComm();
 
   /**
    * Gets the manager for the non-threaded version of DSM
@@ -704,40 +667,6 @@ public:
   void setManager(XdmfDSMManager * newManager);
 
   /**
-   * Sets the comm that the servers will use to communicate with the other server cores.
-   * 
-   * Example of use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline getServerComm
-   * @skipline setServerComm
-   * @skip Section
-   * @skipline }
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until workerComm
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @skipline exampleController
-   * @skipline setServerComm
-   *
-   * @param	comm	The communicator that the server will be using to communicate with the other server cores.
-   */
-  void setServerComm(MPI_Comm comm);
-
-  /**
    * Used to switch between server and threaded mode.
    * True is server mode, false is threaded mode.
    * 
@@ -913,9 +842,7 @@ protected:
                         const std::vector<unsigned int> & stride,
                         const std::vector<unsigned int> & dimensions,
                         const std::vector<unsigned int> & dataspaceDimensions,
-                        XdmfDSMBuffer * const dsmBuffer,
-                        int startCoreIndex,
-                        int endCoreIndex);
+                        XdmfDSMBuffer * const dsmBuffer);
 
 private:
 
@@ -927,13 +854,7 @@ private:
 
   XdmfDSMBuffer * mDSMServerBuffer;
   XdmfDSMManager * mDSMServerManager;
-  MPI_Comm mGroupComm;
-  MPI_Comm mServerComm;
   MPI_Comm mWorkerComm;
-  int mStartCoreIndex;
-  int mEndCoreIndex;
-  int mRank;
-  int mGroupSize;
   bool mServerMode;
 };
 

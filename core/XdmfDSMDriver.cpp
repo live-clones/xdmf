@@ -1195,6 +1195,7 @@ xdmf_dsm_update_entry(haddr_t start, haddr_t end)
 
   entry.start = start;
   entry.end   = end;
+
   addr = (int) (dsmBuffer->GetTotalLength() - sizeof(XdmfDSMEntry) - 1);
 
   // Do not send anything if the end of the file is 0

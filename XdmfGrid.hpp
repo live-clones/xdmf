@@ -71,16 +71,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfGrid.cpp
-   * @skipline Using
-   * @until Assumming
-   * @skipline getGeometry
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getGeometry
+   * @until //#getGeometry
    *
    * Python
    *
    * @dontinclude XdmfExampleGrid.py
-   * @skipline Using
-   * @until Assumming
-   * @skipline getGeometry
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getGeometry
+   * @until #//getGeometry
    *
    * @return the geometry associated with this grid.
    */
@@ -98,16 +100,22 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfGrid.cpp
-   * @skipline Using
-   * @until Assumming
-   * @skipline getName
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setName
+   * @until //#setName
+   * @skipline //#getName
+   * @until //#getName
    *
    * Python
    *
    * @dontinclude XdmfExampleGrid.py
-   * @skipline Using
-   * @until Assumming
-   * @skipline getName
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setName
+   * @until #//setName
+   * @skipline #//getName
+   * @until #//getName
    *
    * @return the name of the grid.
    */
@@ -121,16 +129,22 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfGrid.cpp
-   * @skipline Using
-   * @until Assumming
-   * @skipline getTime
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setTime
+   * @until //#setTime
+   * @skipline //#getTime
+   * @until //#getTime
    *
    * Python
    *
    * @dontinclude XdmfExampleGrid.py
-   * @skipline Using
-   * @until Assumming
-   * @skipline getTime
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setTime
+   * @until #//setTime
+   * @skipline #//getTime
+   * @until #//getTime
    *
    * @return pointer to the XdmfTime attached to this grid. If no
    * XdmfTime is attached, return a NULL pointer.
@@ -145,9 +159,12 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfGrid.cpp
-   * @skipline Using
-   * @until Assumming
-   * @skipline exampleTimeConst
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setTime
+   * @until //#setTime
+   * @skipline //#getTimeconst
+   * @until //#getTimeconst
    *
    * Python: Python doesn't have a constant version
    * 
@@ -164,16 +181,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfGrid.cpp
-   * @skipline Using
-   * @until Assumming
-   * @skipline getTopology
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getTopology
+   * @until //#getTopology
    *
    * Python
    *
    * @dontinclude XdmfExampleGrid.py
-   * @skipline Using
-   * @until Assumming
-   * @skipline getTopology
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getTopology
+   * @until #//getTopology
    *
    * @return the topology associated with this grid.
    */
@@ -189,18 +208,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfGrid.cpp
-   * @skipline Using
-   * @until Assumming
-   * @skipline newName
-   * @skipline setName
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setName
+   * @until //#setName
    *
    * Python
    *
    * @dontinclude XdmfExampleGrid.py
-   * @skipline Using
-   * @until Assumming
-   * @skipline newName
-   * @skipline setName
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setName
+   * @until #//setName
    *
    * @param name of the grid to set.
    */
@@ -214,18 +233,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfGrid.cpp
-   * @skipline Using
-   * @until Assumming
-   * @skipline newTime
-   * @skipline setTime
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setTime
+   * @until //#setTime
    *
    * Python
    *
    * @dontinclude XdmfExampleGrid.py
-   * @skipline Using
-   * @until Assumming
-   * @skipline newTime
-   * @skipline setTime
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setTime
+   * @until #//setTime
    *
    * @param time an XdmfTime to associate with this grid.
    */

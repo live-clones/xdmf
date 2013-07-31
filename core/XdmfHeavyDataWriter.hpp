@@ -30,7 +30,10 @@ class XdmfArray;
 // Includes
 #include <string>
 #include "XdmfCore.hpp"
+#include "XdmfArrayType.hpp"
+#include "XdmfHeavyDataController.hpp"
 #include "XdmfVisitor.hpp"
+#include <list>
 
 /**
  * @brief Traverses the Xdmf graph and writes heavy data stored in
@@ -98,6 +101,91 @@ public:
   virtual void closeFile() = 0;
 
   /**
+   *
+   */
+  virtual void controllerSplitting(XdmfArray & array,
+                                   const int fapl,
+                                   int & controllerIndexOffset,
+                                   shared_ptr<XdmfHeavyDataController> heavyDataController,
+                                   std::string checkFileName,
+                                   std::string checkFileExt,
+                                   std::string dataSetPath,
+                                   std::vector<unsigned int> dimensions,
+                                   std::vector<unsigned int> dataspaceDimensions,
+                                   std::vector<unsigned int> start,
+                                   std::vector<unsigned int> stride,
+                                   std::list<std::string> & filesWritten,
+                                   std::list<shared_ptr<XdmfArray> > & arraysWritten,
+                                   std::list<std::vector<unsigned int> > & startsWritten,
+                                   std::list<std::vector<unsigned int> > & stridesWritten,
+                                   std::list<std::vector<unsigned int> > & dimensionsWritten,
+                                   std::list<std::vector<unsigned int> > & dataSizesWritten,
+                                   std::list<unsigned int> & arrayOffsetsWritten);
+
+  virtual shared_ptr<XdmfHeavyDataController>
+  createController(const std::string & hdf5FilePath,
+                   const std::string & dataSetPath,
+                   const shared_ptr<const XdmfArrayType> type,
+                   const std::vector<unsigned int> & start,
+                   const std::vector<unsigned int> & stride,
+                   const std::vector<unsigned int> & dimensions,
+                   const std::vector<unsigned int> & dataspaceDimensions) = 0;
+
+  /**
+   * Gets whether the HDF5 Writer is allowed to split data sets when writing to hdf5.
+   * Splitting should only occur for massive data sets.
+   * Setting to false assures compatibility with previous editions.
+   * Default setting is false.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfHDF5Writer.cpp
+   * @skipline newPath
+   * @until New
+   * @skipline exampleAllow
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleHDF5Writer.py
+   * @skipline newPath
+   * @until New
+   * @skipline exampleAllow
+   *
+   * @return    whether to allow data sets to be split across hdf5 files
+   */
+  int getAllowSetSplitting();
+
+  virtual int getDataSetSize(std::string fileName, std::string dataSetName, const int fapl) = 0;
+
+  /**
+   * Gets the file index. Used when file splitting and incremented whent he current file is full.
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfHDF5Writer.cpp
+   * @skipline newPath
+   * @until New
+   * @skipline getFileIndex
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleHDF5Writer.py
+   * @skipline newPath
+   * @until New
+   * @skipline getFileIndex
+   *
+   * @return    The current file index.
+   */
+  int getFileIndex();
+
+  /**
+   *
+   */
+  unsigned int getFileOverhead();
+
+  /**
    * Get the path to the heavy data file on disk this writer is writing to.
    *
    * Example of use:
@@ -118,6 +206,29 @@ public:
    * writer is writing to.
    */
   std::string getFilePath() const;
+
+  /**
+   * Gets the file size limit of the HDF5 files produced by the writer in MB. Overflow is pushed to a new HDF5 file.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfHDF5Writer.cpp
+   * @skipline newPath
+   * @until New
+   * @skipline exampleLimit
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleHDF5Writer.py
+   * @skipline newPath
+   * @until New
+   * @skipline exampleLimit
+   *
+   * @return    The size limit in MB
+   */
+  int getFileSizeLimit();
 
   /**
    * Get the Mode of operation for this writer.
@@ -195,6 +306,79 @@ public:
   virtual void openFile() = 0;
 
   /**
+   * Sets whether to allow the HDF5 writer to split data sets when writing to hdf5.
+   * Splitting should only occur for massive data sets.
+   * Setting to false assures compatibility with previous editions.
+   * Default setting is false
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfHDF5Writer.cpp
+   * @skipline newPath
+   * @until New
+   * @skipline newAllow
+   * @until setAllow
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleHDF5Writer.py
+   * @skipline newPath
+   * @until New
+   * @skipline newAllow
+   * @until setAllow
+   *
+   * @param     newAllow        whether to allow data sets to be split across hdf5 files
+   */
+  void setAllowSetSplitting(bool newAllow);
+
+  /**
+   * Sets the file index. Used when file splitting and incremented when the current file is full. Set to 0 before using hyperslab or overwrite.
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfHDF5Writer.cpp
+   * @skipline newPath
+   * @until New
+   * @skipline newFileIndex
+   * @until setFileIndex
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleHDF5Writer.py
+   * @skipline newPath
+   * @until New
+   * @skipline newFileIndex
+   * @until setFileIndex
+   *
+   * @param     newIndex        The index that the writer will append to the file name when incorperating file splitting
+   */
+  void setFileIndex(int newIndex);
+
+  /**
+   * Sets the file size limit of the HDF5 files produced by the writer in MB. Overflow is pushed to a new HDF5 file.
+   * Using with arrays of string type may reduce performance.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfHDF5Writer.cpp
+   * @skipline newPath
+   * @until setFileSizeLimit
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleHDF5Writer.py
+   * @skipline newPath
+   * @until setFileSizeLimit
+   *
+   * @param     newSize The size limit in MB
+   */
+  void setFileSizeLimit(int newSize);
+
+  /**
    * Set the mode of operation for this writer.
    *
    * Example of use:
@@ -265,13 +449,18 @@ public:
 
 protected:
 
-  XdmfHeavyDataWriter();
-  XdmfHeavyDataWriter(const std::string & filePath);
+  XdmfHeavyDataWriter(const double compression = 1, const unsigned int overhead = 0);
+  XdmfHeavyDataWriter(const std::string & filePath, const double compression = 1, const unsigned int overhead = 0);
 
+  bool mAllowSplitDataSets;
   int mDataSetId;
+  int mFileIndex;
   std::string mFilePath;
+  unsigned int mFileSizeLimit;
   Mode mMode;
   bool mReleaseData;
+  double  mCompressionRatio;
+  unsigned int mFileOverhead;
 
 private:
 

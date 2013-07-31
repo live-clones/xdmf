@@ -3,15 +3,50 @@
 
 int main(int, char **)
 {
+	//#initialization begin
+
 	XdmfError testError = XdmfError(XdmfError:DEBUG, "This is a debug error");
+
+	//#initialization end
+
+	//#getLevel begin
+
+	XdmfError::Level testError.getLevel();
+
+	//#getLevel end
+
+	//#setLevel begin
+
+	testError.setLevel(XdmfError::WARNING);
+
+	//#setLevel end
+
+	//#what begin
+
+	char * errorOutput = testError.what();
+
+	//#what end
+
+	//#getLevelLimit begin
 
 	XdmfError::Level exampleLevel = XdmfError::getLevelLimit();
 
+	//#getLevelLimit end
+
+	//#setLevelLimit begin
+
 	XdmfError::setLevelLimit(XdmfError::FATAL);
 
-	XdmfError::setBuffer(std::cout.rdbuf());//the default buffer is cout
+	//#setLevelLimit end
 
+	//#setBuffer begin
 
+	XdmfError::setBuffer(std::cout.rdbuf());
+	//the default buffer is cout
+
+	//#setBuffer end
+
+	//#message begin
 
 	try
 	{
@@ -19,12 +54,10 @@ int main(int, char **)
 	}
 	catch (XdmfError exampleError)
 	{
-		XdmfError::Level exampleError.getLevel();
-
-		exampleError.setLevel(XdmfError::WARNING);
-
 		char * errorOutput = exampleError.what();
 	}
+
+	//#message end
 
 	return 0;
 }

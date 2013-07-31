@@ -45,14 +45,14 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfTime.cpp
-   * @skipline New
-   * @until exampleTime2
+   * @skipline //#initialization
+   * @until //#initialization
    *
    * Python
    *
    * @dontinclude XdmfExampleTime.py
-   * @skipline New
-   * @until exampleTime2
+   * @skipline #//initialization
+   * @until #//initialization
    *
    * @param value the timeValue of the XdmfTime to create.
    * @return the new XdmfTime.
@@ -76,14 +76,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfTime.cpp
-   * @skipline Assumming
-   * @skipline getTime
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getValue
+   * @until //#getValue
    *
    * Python
    *
    * @dontinclude XdmfExampleTime.py
-   * @skipline Assumming
-   * @skipline getTime
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getValue
+   * @until #//getValue
    *
    * @return a double containing the time value.
    */
@@ -97,16 +101,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfTime.cpp
-   * @skipline New
-   * @skipline newTime
-   * @skipline setValue
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setValue
+   * @until //#setValue
    *
    * Python
    *
    * @dontinclude XdmfExampleTime.py
-   * @skipline New
-   * @skipline newTime
-   * @skipline setValue
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setValue
+   * @until #//setValue
    *
    * @param time a double containing the time value.
    */

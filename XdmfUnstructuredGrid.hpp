@@ -52,12 +52,14 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfUnstructuredGrid.cpp
-   * @skipline New
+   * @skipline //#initialization
+   * @until //#initialization
    *
    * Python
    *
    * @dontinclude XdmfExampleUnstructuredGrid.py
-   * @skipline New
+   * @skipline #//initialization
+   * @until #//initialization
    *
    * @return constructed XdmfUnstructuredGrid.
    */
@@ -71,14 +73,14 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfUnstructuredGrid.cpp
-   * @skipline newBrickX
-   * @until XdmfUnstructuredGrid
+   * @skipline //#initializationregular
+   * @until //#initializationregular
    *
    * Python
    *
    * @dontinclude XdmfExampleUnstructuredGrid.py
-   * @skipline newBrickX
-   * @until XdmfUnstructuredGrid
+   * @skipline #//initializationregular
+   * @until #//initializationregular
    *
    * @param regularGrid	The grid that the unstructured grid will be created from
    *
@@ -99,14 +101,22 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfUnstructuredGrid.cpp
-   * @skipline Assuming
-   * @skipline getGeometry
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setGeometry
+   * @until //#setGeometry
+   * @skipline //#getGeometry
+   * @until //#getGeometry
    *
    * Python
    *
    * @dontinclude XdmfExampleUnstructuredGrid.py
-   * @skipline Assuming
-   * @skipline getGeometry
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setGeometry
+   * @until #//setGeometry
+   * @skipline #//getGeometry
+   * @until #//getGeometry
    *
    * @return the geometry associated with this grid.
    */
@@ -122,14 +132,22 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfUnstructuredGrid.cpp
-   * @skipline Assuming
-   * @skipline getTopology
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setTopology
+   * @until //#setTopology
+   * @skipline //#getTopology
+   * @until //#getTopology
    *
    * Python
    *
    * @dontinclude XdmfExampleUnstructuredGrid.py
-   * @skipline Assuming
-   * @skipline getTopology
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setTopology
+   * @until #//setTopology
+   * @skipline #//getTopology
+   * @until #//getTopology
    *
    * @return the topology associated with this grid.
    */
@@ -143,16 +161,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfUnstructuredGrid.cpp
-   * @skipline New
-   * @skipline newGeometry
-   * @until setGeometry
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setGeometry
+   * @until //#setGeometry
    *
    * Python
    *
    * @dontinclude XdmfExampleUnstructuredGrid.py
-   * @skipline New
-   * @skipline newGeometry
-   * @until setGeometry
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setGeometry
+   * @until #//setGeometry
    *
    * @param geometry an XdmfGeometry to associate with this grid.
    */
@@ -166,16 +186,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfUnstructuredGrid.cpp
-   * @skipline New
-   * @skipline newTopology
-   * @until setTopology
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setTopology
+   * @until //#setTopology
    *
    * Python
    *
    * @dontinclude XdmfExampleUnstructuredGrid.py
-   * @skipline New
-   * @skipline newTopology
-   * @until setTopology
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setTopology
+   * @until #//setTopology
    *
    * @param topology an XdmfTopology to associate with this grid.
    */

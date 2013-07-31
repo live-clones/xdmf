@@ -1,9 +1,14 @@
 from Xdmf import *
 
 if __name__ == "__main__":
+
+	#//initialization begin
+
 	exampleMap = XdmfMap.New()
 
-	#Assumming that exampleMap is a shared pointer to a XdmfMap object
+	#//initialization end
+
+	#//initializationnode begin
 
 	#create attributes for each task id
 	#the index of the node id in the attribute is the local node id
@@ -27,12 +32,6 @@ if __name__ == "__main__":
 	testVector.push_back(map1Attribute)
 	testVector.push_back(map2Attribute)
 
-	newRemoteTaskID = 4
-	newLocalNodeID = 7
-	newRemoteLocalNodeID = 3
-	exampleMap.insert(newRemoteTaskID, newLocalNodeID, newRemoteLocalNodeID)
-	#This inserts an entry of (4, 7, 3) into the map
-
 	exampleMapVector = XdmfMap.New(testVector)
 	#returns a vector of maps that holds the equivalencies for the nodes provided
 	#for example if Attribute 1 had globalNodeID 3 at localNodeID 2
@@ -40,6 +39,20 @@ if __name__ == "__main__":
 	#then map 1 would have an entry of (3, 5, 2)
 	#and map 3 would have an entry of (1, 2, 5)
 	#The entries are formatted (remoteTaskID, remoteLocalNodeID, localNodeID)
+
+	#//initializationnode end
+
+	#//inserttuple begin
+
+	newRemoteTaskID = 4
+	newLocalNodeID = 7
+	newRemoteLocalNodeID = 3
+	exampleMap.insert(newRemoteTaskID, newLocalNodeID, newRemoteLocalNodeID)
+	#This inserts an entry of (4, 7, 3) into the map
+
+	#//inserttuple end
+
+	#//setMap begin
 
 	newTaskMap = XdmfMapMap()
 	newNodeIdMap = XdmfMapNodeIdMap()
@@ -82,12 +95,23 @@ if __name__ == "__main__":
 	#(2, 9, 9)
 	#Is now stored in exampleMap
 
+	#//setMap end
+
+	#//setName begin
+
 	newName = "New Name"
 	exampleMap.setName(newName)
 
+	#//setName end
+
+	#//getName begin
+
 	exampleName = exampleMap.getName()
 
-	#getMap
+	#//getName end
+
+	#//getMap begin
+
 	#Assuming that exampleMap is a shared pointer to an XdmfMap object filled with the following tuples
 	#(1, 1, 9)
 	#(1, 2, 8)
@@ -120,6 +144,9 @@ if __name__ == "__main__":
 		print val
 	#prints out all the remote node values associated with taskID 1 and localNode 1
 
+	#//getMap end
+
+	#//getRemoteNodeIds begin
 
 	nodeIDMap = exampleMap.getRemoteNodeIds(1)
 	#nodeIDMap now contains the following tuples because it retrieved the tuples associated with taskID 1
@@ -137,10 +164,22 @@ if __name__ == "__main__":
 		print val
 	#prints out all the remote node values associated with taskID 1 and localNode 1
 
+	#//getRemoteNodeIds end
+
+	#//isInitialized begin
+
 	if not(exampleMap.isInitialized()):
 		exampleMap.read()
 
+	#//isInitialized end
+
+	#//release begin
+
 	exampleMap.release()
+
+	#//release end
+
+	#//setHeavyDataControllers begin
 
 	hdf5FilePath = "The HDF5 file path goes here"
 	hdf5SetPath = "The HDF5 set path goes here"
@@ -162,3 +201,5 @@ if __name__ == "__main__":
 		startIndex, readStride, readNumber)
 	exampleMap = XdmfMap.New()
 	exampleMap.setHeavyDataControllers(newRemoteTaskController, newLocalNodeController, newRemoteLocalNodeController)
+
+	#//setHeavyDataControllers end

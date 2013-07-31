@@ -322,5 +322,58 @@ int main(int, char **)
   int num = stringArray->getValue<int>(3);
   assert(num == 1);
 
+  /**
+   * ArrayType compatibility
+   */
+  std::vector<shared_ptr<const XdmfArrayType> > typeVector;
+  typeVector.push_back(XdmfArrayType::Int8());
+  typeVector.push_back(XdmfArrayType::Int16());
+  typeVector.push_back(XdmfArrayType::Int32());
+  typeVector.push_back(XdmfArrayType::Int64());
+  typeVector.push_back(XdmfArrayType::UInt8());
+  typeVector.push_back(XdmfArrayType::UInt16());
+  typeVector.push_back(XdmfArrayType::UInt32());
+  typeVector.push_back(XdmfArrayType::Float32());
+  typeVector.push_back(XdmfArrayType::Float64());
+  typeVector.push_back(XdmfArrayType::String());
+
+  for (unsigned int i = 0; i < typeVector.size(); ++i) {
+    for (unsigned int j = 0; j < typeVector.size(); ++j) {
+      shared_ptr<XdmfArray> valTypeArray1 = XdmfArray::New();
+      shared_ptr<XdmfArray> valTypeArray2 = XdmfArray::New();
+      shared_ptr<const XdmfArrayType> valType1 = typeVector[i];
+      shared_ptr<const XdmfArrayType> valType2 = typeVector[j];
+      valTypeArray1->initialize(valType1);
+      valTypeArray2->initialize(valType2);
+      valTypeArray1->pushBack(-1.25);
+      valTypeArray2->pushBack(-1.25);
+      shared_ptr<XdmfArray> valIntersectArray = XdmfArray::New();
+      shared_ptr<const XdmfArrayType> valIntersectType = XdmfArrayType::comparePrecision(typeVector[i], typeVector[j]);
+      valIntersectArray->initialize(valIntersectType);
+      valIntersectArray->insert(0, valTypeArray1, 0, 1, 1);
+      valIntersectArray->insert(1, valTypeArray2, 0, 1, 1);
+      std::stringstream output1;
+      std::stringstream output2;
+      if (valType1 == XdmfArrayType::Int8() && valType2 == XdmfArrayType::String()) {
+        output1 << valTypeArray1->getValue<char>(0) << " " << valTypeArray2->getValuesString() << std::endl;
+      }
+      else if (valType1 == XdmfArrayType::UInt8() && valType2 == XdmfArrayType::String()) {
+        output1 << valTypeArray1->getValue<unsigned char>(0) << " " << valTypeArray2->getValuesString() << std::endl;
+      }
+      else if (valType2 == XdmfArrayType::Int8() && valType1 == XdmfArrayType::String()) {
+        output1 << valTypeArray1->getValuesString() << " " << valTypeArray2->getValue<char>(0) << std::endl;
+      }
+      else if (valType2 == XdmfArrayType::UInt8() && valType1 == XdmfArrayType::String()) {
+        output1 << valTypeArray1->getValuesString() << " " << valTypeArray2->getValue<unsigned char>(0) << std::endl;
+      }
+      else {
+        output1 << valTypeArray1->getValuesString() << " " << valTypeArray2->getValuesString() << std::endl;
+      }
+      output2 << valIntersectArray->getValuesString() << std::endl;
+      //std::cout << output1.str() << output2.str();
+      assert(output1.str() == output2.str());
+    }
+  }
+
   return 0;
 }

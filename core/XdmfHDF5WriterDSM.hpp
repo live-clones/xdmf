@@ -176,15 +176,11 @@ public:
    *
    * @param	filePath	The location of the hdf5 file to output to on disk.
    * @param	dsmBuffer	The Buffer to write to.
-   * @param	startCoreIndex	The index of the first core in the server block
-   * @param	endCoreIndex	The index of the last core in the server block.
    * @return			a New XdmfHDF5WriterDSM
    */
   static shared_ptr<XdmfHDF5WriterDSM>
   New(const std::string & filePath,
-            XdmfDSMBuffer * const dsmBuffer,
-            int startCoreIndex,
-            int endCoreIndex);
+            XdmfDSMBuffer * const dsmBuffer);
 
   /**
    * Contruct XdmfHDF5WriterDSM, nonthreaded version
@@ -355,36 +351,6 @@ public:
   XdmfDSMBuffer * getServerBuffer();
 
   /**
-   * Gets the communicator that the servers use to communicate between themselves.
-   * Will be MPI_COMM_NULL on worker cores.
-   *
-   * Example of use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleWriter
-   * @skipline if
-   * @until {
-   * @skipline getServerComm
-   * @skip Section
-   * @skipline }
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until exampleWriter
-   * @skipline if
-   * @skipline getServerComm
-   *
-   * @return	The comm that the servers are using.
-   */
-  MPI_Comm getServerComm();
-
-  /**
    * Gets the manager for the non-threaded version of DSM
    *
    * Example of use:
@@ -472,6 +438,18 @@ public:
    * @return	The comm that the workers are using.
    */
   MPI_Comm getWorkerComm();
+
+  /**
+   * Sets whether to allow the HDF5 writer to split data sets when writing to hdf5.
+   * Splitting should only occur for massive data sets.
+   * Setting to false assures compatibility with previous editions.
+   * Default setting is false
+   * In DSM this function has no effect because splitting would prevent the algorithm from working
+   *
+   *
+   * @param     newAllow        whether to allow data sets to be split across hdf5 files
+   */
+  void setAllowSetSplitting(bool newAllow);
 
   /**
    * Sets the Writer's dsmBuffer to the provided buffer
@@ -614,36 +592,6 @@ public:
    * @param	newManager	A pointer the the manager to be set.
    */
   void setManager(XdmfDSMManager * newManager);
-  /**
-   * Sets the comm that the servers will use to communicate with the other server cores.
-   * 
-   * Example of use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleWriter
-   * @skipline if
-   * @until {
-   * @skipline getServerComm
-   * @until setServerComm
-   * @skip Section
-   * @skipline }
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until exampleWriter
-   * @skipline if
-   * @skipline getServerComm
-   * @skipline setServerComm
-   *
-   * @param	comm	The communicator that the server will be using to communicate with the other server cores.
-   */
-  void setServerComm(MPI_Comm comm);
 
   /**
    * Used to switch between server and threaded mode.
@@ -780,9 +728,7 @@ protected:
                     unsigned int bufferSize);
 
   XdmfHDF5WriterDSM(const std::string & filePath,
-                    XdmfDSMBuffer * const dsmBuffer,
-                    int startCoreIndex,
-                    int endCoreIndex);
+                    XdmfDSMBuffer * const dsmBuffer);
 
   XdmfHDF5WriterDSM(const std::string & filePath,
                     MPI_Comm comm,
@@ -790,8 +736,8 @@ protected:
                     int startCoreIndex,
                     int endCoreIndex);
 
-  virtual shared_ptr<XdmfHDF5Controller>
-  createHDF5Controller(const std::string & hdf5FilePath,
+  virtual shared_ptr<XdmfHeavyDataController>
+  createController(const std::string & hdf5FilePath,
                        const std::string & dataSetPath,
                        const shared_ptr<const XdmfArrayType> type,
                        const std::vector<unsigned int> & start,
@@ -810,13 +756,7 @@ private:
 
   XdmfDSMBuffer * mDSMServerBuffer;
   XdmfDSMManager * mDSMServerManager;
-  MPI_Comm mGroupComm;
-  MPI_Comm mServerComm;
   MPI_Comm mWorkerComm;
-  int mStartCoreIndex;
-  int mEndCoreIndex;
-  int mRank;
-  int mGroupSize;
   bool mServerMode;
 
 };

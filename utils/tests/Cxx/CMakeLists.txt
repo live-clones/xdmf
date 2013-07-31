@@ -18,7 +18,6 @@ include(AddTestsCxx)
 #       Read UseCxxTest.cmake for more information
 # ---------------------------------------
 ADD_TEST_CXX(TestXdmfTopologyConverter)
-
 if(XDMF_BUILD_EXODUS_IO)
   ADD_TEST_CXX(TestXdmfExodusIO)
 endif(XDMF_BUILD_EXODUS_IO)

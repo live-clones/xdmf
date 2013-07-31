@@ -17,14 +17,22 @@
  * C++
  *
  * @dontinclude ExampleXdmfSet.cpp
- * @skipline exampleType
- * @until }
+ * @skipline //#initialize
+ * @until //#initialize
+ * @skipline //#setType
+ * @until //#setType
+ * @skipline //#getType
+ * @until //#getType
  *
  * Python
  *
  * @dontinclude XdmfExampleSet.py
- * @skipline exampleType
- * @until do
+ * @skipline #//initialize
+ * @until #//initialize
+ * @skipline #//setType
+ * @until #//setType
+ * @skipline #//getType
+ * @until #//getType
  *
  * Xdmf supports the following set types:
  *   NoSetType

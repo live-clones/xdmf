@@ -42,14 +42,16 @@
  * C++
  *
  * @dontinclude ExampleXdmfGeometryType.cpp
- * @skipline getType
- * @until }
+ * @skipline //#initialization
+ * @until //#initialization
+ * @skipline //#getType
+ * @until //#getType
  *
  * Python
  *
  * @dontinclude XdmfExampleGeometryType.py
- * @skipline getType
- * @until do
+ * @skipline #//getType
+ * @until #//getType
  *
  * Xdmf supports the following geometry types:
  *   NoGeometryType
@@ -77,12 +79,14 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfGeometryType.cpp
-   * @skipline getDimensions
+   * @skipline //#getDimensions
+   * @until //#getDimensions
    *
    * Python
    *
    * @dontinclude XdmfExampleGeometryType.py
-   * @skipline getDimensions
+   * @skipline #//getDimensions
+   * @until #//getDimensions
    *
    * @return an int containing number of dimensions.
    */
@@ -96,12 +100,14 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfGeometryType.cpp
-   * @skipline getName
+   * @skipline //#getName
+   * @until //#getName
    *
    * Python
    *
    * @dontinclude XdmfExampleGeometryType.py
-   * @skipline getName
+   * @skipline #//getName
+   * @until #//getName
    *
    * @return the name of this geometry type.
    */

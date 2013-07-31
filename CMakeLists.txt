@@ -225,6 +225,7 @@ if(NOT XDMF_BUILD_CORE_ONLY)
     XdmfAttributeType
     XdmfCurvilinearGrid
     XdmfDomain
+    XdmfFunction
     XdmfGeometry
     XdmfGeometryType
     XdmfGraph

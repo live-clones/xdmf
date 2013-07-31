@@ -50,14 +50,14 @@ public:
    * Example of use:
    *
    * @dontinclude ExampleXdmfCoreItemFactory.cpp
-   * @skipline //
-   * @until collections
+   * @skipline //#createItem
+   * @until //#createItem
    *
    * Python
    *
    * @dontinclude XdmfExampleCoreItemFactory.py
-   * @skipline #
-   * @until collections
+   * @skipline #//createItem
+   * @until #//createItem
    *
    * @param itemTag a string containing the tag of the XdmfItem to create.
    * @param itemProperties a map of key/value properties for the the XdmfItem.

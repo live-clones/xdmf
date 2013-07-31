@@ -7,7 +7,8 @@ option(XDMF_BUILD_FORTRAN OFF)
 
 set(XdmfUtilsSources
   XdmfDiff
-  XdmfTopologyConverter)
+  XdmfTopologyConverter
+  XdmfUtils)
 set(XdmfUtilsLinkLibraries Xdmf)
 
 if(XDMF_BUILD_FORTRAN)

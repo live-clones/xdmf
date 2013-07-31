@@ -55,18 +55,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRegularGrid.cpp
-   * @skipline newBrickX
-   * @until newOriginY
-   * @skipline XdmfRegularGrid
-   * @until ;
+   * @skipline //#initvalue
+   * @until //#initvalue
+   * @skipline //#initialization2
+   * @until //#initialization2
    *
    * Python
    *
    * @dontinclude XdmfExampleRegularGrid.py
-   * @skipline newBrickX
-   * @until newOriginY
-   * @skipline XdmfRegularGrid
-   * @until )
+   * @skipline #//initvalue
+   * @until #//initvalue
+   * @skipline #//initialization2
+   * @until #//initialization2
    *
    * @param xBrickSize the size of the brick in the x direction.
    * @param yBrickSize the size of the brick in the y direction.
@@ -92,18 +92,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRegularGrid.cpp
-   * @skipline newBrickX
-   * @until newOriginY
-   * @skipline XdmfRegularGrid
-   * @skipline newBrickZ
+   * @skipline //#initvalue
+   * @until //#initvalue
+   * @skipline //#initialization3
+   * @until //#initialization3
    *
    * Python
    *
    * @dontinclude XdmfExampleRegularGrid.py
-   * @skipline newBrickX
-   * @until newOriginY
-   * @skipline XdmfRegularGrid
-   * @skipline newBrickZ
+   * @skipline #//initvalue
+   * @until #//initvalue
+   * @skipline #//initialization3
+   * @until #//initialization3
    *
    * @param xBrickSize the size of the brick in the x direction.
    * @param yBrickSize the size of the brick in the y direction.
@@ -135,14 +135,14 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRegularGrid.cpp
-   * @skipline newBrickSize
-   * @until XdmfRegularGrid
+   * @skipline //#initializationvector
+   * @until //#initializationvector
    *
    * Python
    *
    * @dontinclude XdmfExampleRegularGrid.py
-   * @skipline newBrickSize
-   * @until XdmfRegularGrid
+   * @skipline #//initializationvector
+   * @until #//initializationvector
    *
    * @param brickSize the size of the brick in each direction.
    * @param numPoints the number of points in each direction.
@@ -168,14 +168,22 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRegularGrid.cpp
-   * @skipline Assuming
-   * @skipline exampleBrick
+   * @skipline //#initvalue
+   * @until //#initvalue
+   * @skipline //#initialization2
+   * @until //#initialization2
+   * @skipline //#getBrickSize
+   * @until //#getBrickSize
    *
    * Python
    *
    * @dontinclude XdmfExampleRegularGrid.py
-   * @skipline Assuming
-   * @skipline getBrickSize
+   * @skipline #//initvalue
+   * @until #//initvalue
+   * @skipline #//initialization2
+   * @until #//initialization2
+   * @skipline #//getBrickSize
+   * @until #//getBrickSize
    *
    * @return XdmfArray containing brick sizes for this grid.
    */
@@ -189,8 +197,12 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRegularGrid.cpp
-   * @skipline Assuming
-   * @skipline exampleBrickConst
+   * @skipline //#initvalue
+   * @until //#initvalue
+   * @skipline //#initialization2
+   * @until //#initialization2
+   * @skipline //#getBrickSizeconst
+   * @until //#getBrickSizeconst
    *
    * Python: Does not support a constant version of this function
    *
@@ -207,14 +219,22 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRegularGrid.cpp
-   * @skipline Assuming
-   * @skipline exampleDimensions
+   * @skipline //#initvalue
+   * @until //#initvalue
+   * @skipline //#initialization2
+   * @until //#initialization2
+   * @skipline //#getDimensions
+   * @until //#getDimensions
    *
    * Python
    *
    * @dontinclude XdmfExampleRegularGrid.py
-   * @skipline Assuming
-   * @skipline getDimensions
+   * @skipline #//initvalue
+   * @until #//initvalue
+   * @skipline #//initialization2
+   * @until #//initialization2
+   * @skipline #//getDimensions
+   * @until #//getDimensions
    *
    * @return XdmfArray containing dimensions of this grid.
    */
@@ -229,8 +249,12 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRegularGrid.cpp
-   * @skipline Assuming
-   * @skipline exampleDimensions
+   * @skipline //#initvalue
+   * @until //#initvalue
+   * @skipline //#initialization2
+   * @until //#initialization2
+   * @skipline //#getDimensionsconst
+   * @until //#getDimensionsconst
    *
    * Python: Does not support a constant version of this function
    *
@@ -246,14 +270,22 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRegularGrid.cpp
-   * @skipline Assuming
-   * @skipline exampleOrigin
+   * @skipline //#initvalue
+   * @until //#initvalue
+   * @skipline //#initialization2
+   * @until //#initialization2
+   * @skipline //#getOrigin
+   * @until //#getOrigin
    *
    * Python
    *
    * @dontinclude XdmfExampleRegularGrid.py
-   * @skipline Assuming
-   * @skipline getOrigin
+   * @skipline #//initvalue
+   * @until #//initvalue
+   * @skipline #//initialization2
+   * @until #//initialization2
+   * @skipline #//getOrigin
+   * @until #//getOrigin
    *
    * @return XdmfArray containing the location of the origin of the
    * grid.
@@ -268,8 +300,12 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRegularGrid.cpp
-   * @skipline Assuming
-   * @skipline exampleOriginConst
+   * @skipline //#initvalue
+   * @until //#initvalue
+   * @skipline //#initialization2
+   * @until //#initialization2
+   * @skipline //#getOriginconst
+   * @until //#getOriginconst
    *
    * Python: Does not support a constant version of this function
    *
@@ -286,18 +322,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRegularGrid.cpp
-   * @skipline Assuming
-   * @skipline newBrickSize
-   * @until newBrickSize->pushBack(22.0)
-   * @skipline setBrickSize
+   * @skipline //#initializationvector
+   * @until //#initializationvector
+   * @skipline //#setBrickSize
+   * @until //#setBrickSize
    *
    * Python
    *
    * @dontinclude XdmfExampleRegularGrid.py
-   * @skipline Assuming
-   * @skipline newBrickSize
-   * @until newBrickSize.pushBackAsFloat64(22.0)
-   * @skipline setBrickSize
+   * @skipline #//initializationvector
+   * @until #//initializationvector
+   * @skipline #//setBrickSize
+   * @until #//setBrickSize
    *
    * @param brickSize the sizes of the points composing the mesh. This
    * should have the same number of terms as the dimensionality of the
@@ -314,18 +350,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRegularGrid.cpp
-   * @skipline Assuming
-   * @skipline newNumPoints
-   * @until newNumPoints->pushBack(7)
-   * @skipline setDimensions
+   * @skipline //#initializationvector
+   * @until //#initializationvector
+   * @skipline //#setDimensions
+   * @until //#setDimensions
    *
    * Python
    *
    * @dontinclude XdmfExampleRegularGrid.py
-   * @skipline Assuming
-   * @skipline newNumPoints
-   * @until newNumPoints.pushBackAsUInt32(7)
-   * @skipline setDimensions
+   * @skipline #//initializationvector
+   * @until #//initializationvector
+   * @skipline #//setDimensions
+   * @until #//setDimensions
    *
    * @param dimensions the dimension of the grid.
    */
@@ -339,18 +375,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfRegularGrid.cpp
-   * @skipline Assuming
-   * @skipline newGridOrigin
-   * @until newGridOrigin->pushBack(2.0)
-   * @skipline setOrigin
+   * @skipline //#initializationvector
+   * @until //#initializationvector
+   * @skipline //#setOrigin
+   * @until //#setOrigin
    *
    * Python
    *
    * @dontinclude XdmfExampleRegularGrid.py
-   * @skipline Assuming
-   * @skipline newGridOrigin
-   * @until newGridOrigin.pushBackAsFloat64(2.0)
-   * @skipline setOrigin
+   * @skipline #//initializationvector
+   * @until #//initializationvector
+   * @skipline #//setOrigin
+   * @until #//setOrigin
    *
    * @param origin location of the origin of the grid.  This should
    * have the same number of terms as the dimensionality of the mesh.

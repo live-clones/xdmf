@@ -2,7 +2,7 @@
 
 int main(int, char **)
 {
-	//Assumming that exampleTime is a shared pointer to an XdmfTime object
+	//#initialization begin
 
 	shared_ptr<XdmfTime> exampleTime = XdmfTime::New();
 	//The Default case sets the time to 0.0
@@ -11,9 +11,19 @@ int main(int, char **)
         double newTime = 5.0;
         shared_ptr<XdmfTime> exampleTime2 = XdmfTime::New(newTime);
 
-	double readTime = exampleTime->getTime();
+	//#initialization end
+
+	//#getValue begin
+
+	double readTime = exampleTime->getValue();
+
+	//#getValue end
+
+	//#setValue begin
 
 	exampleTime->setValue(newTime);
+
+	//#setValue end
 
 	return 0;
 }

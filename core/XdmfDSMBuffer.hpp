@@ -87,6 +87,9 @@
 #define XDMF_DSM_LOCK_ACQUIRE        0x03
 #define XDMF_DSM_LOCK_RELEASE        0x05
 
+#define XDMF_DSM_ACCEPT              0x10
+#define XDMF_DSM_DISCONNECT          0x11
+
 #define XDMF_DSM_OPCODE_DONE         0xFF
 
 #define XDMF_DSM_SUCCESS  1
@@ -977,29 +980,43 @@ public:
    * @until cfree
    * @skipline exampleController
    * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skipline readComm
-   * @until cfree
-   * @skipline if
-   * @until workerComm
    * @skip Section
-   * @skipline }
+   * @skipline id
+   * @until }
+   * @skipline numServersCores
+   * @until }
+   * @skipline else
+   * @until }
    *
    * Python
    *
    * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until exampleWriter
-   * @skipline if
-   * @skipline exampleBuffer
-   * @skipline ServerIds
-   * @until (workerComm)
+   * @skip Section 
+   * @skipline id
+   * @until stopDSM
+   * @skipline numServersCores
+   * @until ReceiveInfo
    *
    */
   void ReceiveInfo();
+
+  /**
+   *
+   *
+   * Example of use:
+   * 
+   * C++
+   *
+   *
+   *
+   * Python
+   *
+   *
+   *
+   */
+  void SendAccept(unsigned int numConnects);
 
   /**
    * Sends an integer as an acknowledgement to the specified core.
@@ -1178,62 +1195,27 @@ public:
    * @until cfree
    * @skipline exampleController
    * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skipline readComm
-   * @until cfree
-   * @skipline if
-   * @until workerComm
    * @skip Section
-   * @skipline }
+   * @skipline id
+   * @until }
+   * @skipline numServersCores
+   * @until }
+   * @skipline else
+   * @until }
    *
    * Python
    *
    * @dontinclude XdmfExampleDSMNoThread.py
    * @skipline total
    * @until exampleWriter
-   * @skipline if
-   * @skipline exampleBuffer
-   * @skipline ServerIds
-   * @until (workerComm)
+   * @skip Section 
+   * @skipline id
+   * @until stopDSM
+   * @skipline numServersCores
+   * @until ReceiveInfo
    *
    */
   void SendInfo();
-
-  /**
-   * Sets the DSM type to the provided type.
-   *
-   * Example of use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skipline SetDsmType
-   * @skip Section
-   * @skipline }
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until exampleWriter
-   * @skipline if
-   * @skipline exampleBuffer
-   * @skipline SetDsmType
-   *
-   * @param       newDsmType      The Dsm type that the buffer will be changed to
-   */
-  void SetDsmType(int newDsmType);
 
   /**
    * Sets the size of the blocks used in the data buffer.
@@ -1302,6 +1284,39 @@ public:
    * @param       newComm         The communicator that is to be used by the DSM
    */
   void SetComm(XdmfDSMCommMPI * newComm);
+
+  /**
+   * Sets the DSM type to the provided type.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfDSMNoThread.cpp
+   * @skipline size
+   * @until MPI_Comm_size
+   * @skipline exampleController
+   * @until size-1
+   * @skipline if
+   * @until {
+   * @skipline XdmfDSMBuffer
+   * @skipline exampleController
+   * @skipline SetDsmType
+   * @skip Section
+   * @skipline }
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleDSMNoThread.py
+   * @skipline total
+   * @until exampleWriter
+   * @skipline if
+   * @skipline exampleBuffer
+   * @skipline SetDsmType
+   *
+   * @param       newDsmType      The Dsm type that the buffer will be changed to
+   */
+  void SetDsmType(int newDsmType);
 
   /**
    * Sets the Buffer's connection status. Used if the XdmfDSMCommMPI is connected or disconnected manually.

@@ -120,9 +120,7 @@ int main(int argc, char *argv[])
 				writeStrideVector,
 				writeCountVector,
 				writeDataSizeVector,
-				exampleWriter->getServerBuffer(),
-		                size-numServersCores,
-		                size-1);
+				exampleWriter->getServerBuffer());
 
 			testArray->insert(writeController);
 
@@ -139,10 +137,7 @@ int main(int argc, char *argv[])
 				readStrideVector,
 				readCountVector,
 				readDataSizeVector,
-				exampleWriter->getServerBuffer(),
-				size-numServersCores,
-				size-1);
-
+				exampleWriter->getServerBuffer());
 			readArray->insert(readController);
 
 			for (unsigned int i = 0; i<size-numServersCores; ++i)
@@ -173,9 +168,7 @@ int main(int argc, char *argv[])
 				readStrideVector,
 				readCountVector,
 				readDataSizeVector,
-				exampleWriter->getServerBuffer(),
-				size-numServersCores,
-				size-1);
+				exampleWriter->getServerBuffer());
 
 			readArray->insert(readController);
 
@@ -189,9 +182,7 @@ int main(int argc, char *argv[])
 				readStrideVector,
 				readOutputCountVector,
 				readDataSizeVector,
-				exampleWriter->getServerBuffer(),
-				size-numServersCores,
-				size-1);;
+				exampleWriter->getServerBuffer());
 
 			writeStartVector.push_back(0);
 			writeStrideVector.push_back(1);
@@ -205,9 +196,7 @@ int main(int argc, char *argv[])
 				writeStrideVector,
 				writeCountVector,
 				writeDataSizeVector,
-				exampleWriter->getServerBuffer(),
-				size-numServersCores,
-				size-1);
+				exampleWriter->getServerBuffer());
 
 			testArray->insert(writeController);
 		}

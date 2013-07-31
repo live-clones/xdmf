@@ -54,15 +54,16 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfCurvilinearGrid.cpp
-   * @skipline newPointsX
-   * @until New
+   * @skipline //#initializationdim2
+   * @until //#initializationdim2
    *
    * Python
    *
    * @dontinclude XdmfExampleCurvilinearGrid.py
-   * @skipline newPointsX
-   * @until newPointsY
-   * @skipline newPointsX
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//constructor2
+   * @until #//constructor2
    *
    * @param xNumPoints the number of points in the x direction.
    * @param yNumPoints the number of points in the y direction.
@@ -81,16 +82,16 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfCurvilinearGrid.cpp
-   * @skip 3
-   * @skipline newPointsX
-   * @until New
+   * @skipline //#initializationdim3
+   * @until //#initializationdim3
    *
    * Python
    *
    * @dontinclude XdmfExampleCurvilinearGrid.py
-   * @skipline newPointsX
-   * @until newPointsZ
-   * @skipline newPointsZ
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//constructor3
+   * @until #//constructor3
    *
    * @param xNumPoints the number of points in the x direction.
    * @param yNumPoints the number of points in the y direction.
@@ -111,15 +112,16 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfCurvilinearGrid.cpp
-   * @skip via
-   * @skipline newPoints
-   * @until XdmfCurvilinearGrid
+   * @skipline //#initializationvector
+   * @until //#initializationvector
    *
    * Python
    *
    * @dontinclude XdmfExampleCurvilinearGrid.py
-   * @skipline newPoints
-   * @until exampleGrid
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//constructorvector
+   * @until #//constructorvector
    *
    * @param numPoints the number of points in each direction.
    *
@@ -142,14 +144,24 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfCurvilinearGrid.cpp
-   * @skipline Assuming
-   * @skipline getDimensions
+   * @skipline //#initializationdim3
+   * @until //#initializationdim3
+   * @skipline //#setDimensions
+   * @until //#setDimensions
+   * @skipline //#getDimensions
+   * @until //#getDimensions
    *
    * Python
    *
    * @dontinclude XdmfExampleCurvilinearGrid.py
-   * @skipline Assuming
-   * @skipline getDimensions
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//constructorvector
+   * @until #//constructorvector
+   * @skipline #//setDimensions
+   * @until #//setDimensions
+   * @skipline #//getDimensions
+   * @until #//getDimensions
    *
    * @return XdmfArray containing dimensions of this grid.
    */
@@ -164,8 +176,12 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfCurvilinearGrid.cpp
-   * @skipline Assuming
-   * @skipline const
+   * @skipline //#initializationdim3
+   * @until //#initializationdim3
+   * @skipline //#setDimensions
+   * @until //#setDimensions
+   * @skipline //#getDimensionsconst
+   * @until //#getDimensionsconst
    *
    * Python: Python doesn't have a constant version
    *
@@ -181,14 +197,24 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfCurvilinearGrid.cpp
-   * @skipline Assuming
-   * @skipline getGeometry
+   * @skipline //#initializationdim3
+   * @until //#initializationdim3
+   * @skipline //#setGeometry
+   * @until //#setGeometry
+   * @skipline //#getGeometry
+   * @until //#getGeometry
    *
    * Python
    *
    * @dontinclude XdmfExampleCurvilinearGrid.py
-   * @skipline Assuming
-   * @skipline getGeometry
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//constructorvector
+   * @until #//constructorvector
+   * @skipline #//setGeometry
+   * @until #//setGeometry
+   * @skipline #//getGeometry
+   * @until #//getGeometry
    *
    * @return the geometry associated with this grid.
    */
@@ -203,18 +229,20 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfCurvilinearGrid.cpp
-   * @skipline Assuming
-   * @skipline XdmfArray::New
-   * @until setDimensions
+   * @skipline //#initializationdim3
+   * @until //#initializationdim3
+   * @skipline //#setDimensions
+   * @until //#setDimensions
    *
    * Python
    *
    * @dontinclude XdmfExampleCurvilinearGrid.py
-   * @skipline Assuming
-   * @skip setDimensions
-   * @skipline newPoints
-   * @until setDimensions
-   * Assuming that exampleGrid is a sharedPointer to an XdmfCurvilinearGrid object
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//constructorvector
+   * @until #//constructorvector
+   * @skipline #//setDimensions
+   * @until #//setDimensions
    *
    * @param dimensions the dimension of the grid.
    */
@@ -228,17 +256,20 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfCurvilinearGrid.cpp
-   * @skipline newData
-   * @until setGeometry
+   * @skipline //#initializationdim3
+   * @until //#initializationdim3
+   * @skipline //#setGeometry
+   * @until //#setGeometry
    *
    * Python
    *
    * @dontinclude XdmfExampleCurvilinearGrid.py
-   * @skip setGeometry
-   * @skipline newPoints
-   * @until insert
-   * Assuming that exampleGrid is a sharedPointer to an XdmfCurvilinearGrid object
-   * @skipline setGeometry
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//constructorvector
+   * @until #//constructorvector
+   * @skipline #//setGeometry
+   * @until #//setGeometry
    *
    * @param geometry an XdmfGeometry to associate with this grid.
    */

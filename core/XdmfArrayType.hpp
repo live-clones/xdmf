@@ -41,14 +41,14 @@
  * C++
  *
  * @dontinclude ExampleXdmfArrayType.cpp
- * @skipline XdmfArrayType
- * @until }
+ * @skipline //#getType
+ * @until //#getType
  *
  * Python
  *
  * @dontinclude XdmfExampleArrayType.py
- * @skipline exampleType
- * @until do
+ * @skipline #//getType
+ * @until #//getType
  *
  * Xdmf supports the following attribute types:
  *   Uninitialized
@@ -85,6 +85,27 @@ public:
   static shared_ptr<const XdmfArrayType> String();
 
   /**
+   * Compares the two types given and returns a type that is compatible with both.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @skipline //#comparePrecision
+   * @until //#comparePrecision
+   *
+   * Python
+   *
+   * @skipline #//comparePrecision
+   * @until #//comparePrecision
+   *
+   * @param	type1	The first type to be compared
+   * @param	type2	The second type to be compared
+   * @return		The type that is compatible with both provided types
+   */
+  static shared_ptr<const XdmfArrayType> comparePrecision(shared_ptr<const XdmfArrayType> type1, shared_ptr<const XdmfArrayType> type2);
+
+  /**
    * Get the data size, in bytes, of the value associated with this
    * array type.
    *
@@ -93,12 +114,14 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArrayType.cpp
-   * @skipline getElementSize
+   * @skipline //#getElementSize
+   * @until //#getElementSize
    *
    * Python
    *
    * @dontinclude XdmfExampleArrayType.py
-   * @skipline getElementSize
+   * @skipline #//getElementSize
+   * @until #//getElementSize
    *
    * @return the data size, in bytes.
    */
@@ -112,12 +135,14 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfArrayType.cpp
-   * @skipline getName
+   * @skipline //#getName
+   * @until //#getName
    *
    * Python
    *
    * @dontinclude XdmfExampleArrayType.py
-   * @skipline getName
+   * @skipline #//getName
+   * @until #//getName
    *
    * @return the name of the data type.
    */

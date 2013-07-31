@@ -51,12 +51,14 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfGeometry.cpp
-   * @skipline New
+   * @skipline //#initialization
+   * @until //#initialization
    *
    * Python
    *
    * @dontinclude XdmfExampleGeometry.py
-   * @skipline New
+   * @skipline #//initialization
+   * @until #//initialization
    *
    * @return constructed XdmfGeometry.
    */
@@ -79,14 +81,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfGeometry.cpp
-   * @skipline Assuming
-   * @skipline getNumberPoints
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getNumberPoints
+   * @until //#getNumberPoints
    *
    * Python
    *
    * @dontinclude XdmfExampleGeometry.py
-   * @skipline Assuming
-   * @skipline getNumberPoints
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getNumberPoints
+   * @until #//getNumberPoints
    */
   virtual unsigned int getNumberPoints() const;
 
@@ -98,14 +104,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfGeometry.cpp
-   * @skipline Assuming
-   * @skipline getType
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getType
+   * @until //#getType
    *
    * Python
    *
    * @dontinclude XdmfExampleGeometry.py
-   * @skipline Assuming
-   * @skipline getType
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getType
+   * @until #//getType
    *
    * @return XdmfGeometryType of this geometry.
    */
@@ -119,14 +129,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfGeometry.cpp
-   * @skipline New
-   * @skipline setType
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setType
+   * @until //#setType
    *
    * Python
    *
    * @dontinclude XdmfExampleGeometry.py
-   * @skipline New
-   * @skipline setType
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setType
+   * @until #//setType
    *
    * @param type the XdmfGeometryType to set.
    */

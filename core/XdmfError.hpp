@@ -20,14 +20,14 @@ public:
      * C++
      *
      * @dontinclude ExampleXdmfError.cpp
-     * @skipline DEBUG
+     * @skipline //#initialization
+     * @until //#initialization
      *
      * Python:
      *
      * @dontinclude XdmfExampleError.py
-     * @skip exampleError
-     * @skipline try
-     * @until setLevel
+     * @skipline #//initialization
+     * @until #//initialization
      *
      * @param	level	the error level of the exception being constructed
      * @param	message	the message to be attached to the exception
@@ -44,18 +44,16 @@ public:
      * C++
      *
      * @dontinclude ExampleXdmfError.cpp
-     * @skipline try
-     * @until catch
-     * @skipline {
-     * @skipline setLevel
-     * @skipline }
+     * @skipline //#initialization
+     * @until //#initialization
+     * @skipline //#setLevel
+     * @until //#setLevel
      *
      * Python:
      *
      * @dontinclude XdmfExampleError.py
-     * @skip exampleError
-     * @skipline try
-     * @until setLevel
+     * @skipline #//setLevel
+     * @until #//setLevel
      *
      * @param	l	the new level of the exception
      */
@@ -69,18 +67,16 @@ public:
      * C++
      *
      * @dontinclude ExampleXdmfError.cpp
-     * @skipline try
-     * @until catch
-     * @skipline {
-     * @skipline getLevel
-     * @skipline }
+     * @skipline //#initialization
+     * @until //#initialization
+     * @skipline //#getLevel
+     * @until //#getLevel
      *
      * Python:
      *
      * @dontinclude XdmfExampleError.py
-     * @skip exampleError
-     * @skipline try
-     * @until getLevel
+     * @skipline #//getLevel
+     * @until #//getLevel
      *
      * @return	the error level of the exception
      */
@@ -94,12 +90,16 @@ public:
      * C++
      *
      * @dontinclude ExampleXdmfError.cpp
-     * @skipline setLevelLimit
+     * @skipline //#initialization
+     * @until //#initialization
+     * @skipline //#setLevelLimit
+     * @until //#setLevelLimit
      *
      * Python
      *
      * @dontinclude XdmfExampleError.py
-     * @skipline setLevelLimit
+     * @skipline #//setLevelLimit
+     * @until #//setLevelLimit
      *
      * @param	l	the cutoff level for sending exceptions via message
      */
@@ -113,12 +113,16 @@ public:
      * C++
      *
      * @dontinclude ExampleXdmfError.cpp
-     * @skipline getLevelLimit
+     * @skipline //#initialization
+     * @until //#initialization
+     * @skipline //#getLevelLimit
+     * @until //#getLevelLimit
      *
      * Python
      *
      * @dontinclude XdmfExampleError.py
-     * @skipline getLevelLimit
+     * @skipline #//getLevelLimit
+     * @until #//getLevelLimit
      *
      * @return	gets the cuttof level for sending exceptions via message
      */
@@ -134,17 +138,16 @@ public:
      * C++
      *
      * @dontinclude ExampleXdmfError.cpp
-     * @skipline try
-     * @until catch
-     * @skipline {
-     * @skipline what
-     * @skipline }
+     * @skipline //#initialization
+     * @until //#initialization
+     * @skipline //#message
+     * @until //#message
      *
      * Python: Generates a RuntimeError instead of an XdmfError in Python
      *
      * @dontinclude XdmfExampleError.py
-     * @skipline try
-     * @until print
+     * @skipline #//message
+     * @until #//message
      *
      * @param	l	the level of the error to be generated
      * @param	msg	the message to be associated with the error generated and printed out
@@ -159,7 +162,10 @@ public:
      * C++
      *
      * @dontinclude ExampleXdmfError.cpp
-     * @skipline setBuffer
+     * @skipline //#initialization
+     * @until //#initialization
+     * @skipline //#setBuffer
+     * @until //#setBuffer
      *
      * Python: Not supported in Python
      *
@@ -175,18 +181,16 @@ public:
      * C++
      *
      * @dontinclude ExampleXdmfError.cpp
-     * @skipline try
-     * @until catch
-     * @skipline {
-     * @skipline what
-     * @skipline }
+     * @skipline //#initialization
+     * @until //#initialization
+     * @skipline //#what
+     * @until //#what
      *
      * Python
      *
      * @dontinclude XdmfExampleError.py
-     * @skip exampleError
-     * @skipline try
-     * @until what
+     * @skipline #//what
+     * @until #//what
      *
      * @return	the message associated with the exception
      */

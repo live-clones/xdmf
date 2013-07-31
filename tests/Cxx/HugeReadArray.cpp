@@ -9,6 +9,6 @@ int main(int, char **)
 	shared_ptr<XdmfReader> testReader = XdmfReader::New();
 	shared_ptr<XdmfArray> readArray = shared_dynamic_cast<XdmfArray>(testReader->read("arraydata.xmf"));
 	readArray->read();
-	std::cout << "Array ocntains " << readArray->getValuesString() << std::endl;
+	std::cout << "Array contains " << readArray->getValuesString() << std::endl;
 	return 0;
 }

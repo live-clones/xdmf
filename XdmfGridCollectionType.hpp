@@ -42,14 +42,18 @@
  * C++
  *
  * @dontinclude ExampleXdmfGridCollection.cpp
- * @skipline exampleType
- * @until }
+ * @skipline //#initalization
+ * @until //#initalization
+ * @skipline //#getType
+ * @until //#getType
  *
  * Python
  *
  * @dontinclude XdmfExampleGridCollection.py
- * @skipline exampleType
- * @until do
+ * @skipline #//initalization
+ * @until #//initalization
+ * @skipline #//getType
+ * @until #//getType
  *
  * Xdmf supports the following collection types:
  *   NoCollectionType

@@ -111,11 +111,24 @@ public:
           const shared_ptr<const XdmfTopologyType> topologyType,
           const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter = shared_ptr<XdmfHeavyDataWriter>()) const;
 
+  /**
+   * Gets all faces within the given topology. Removing duplicates.
+   *
+   * @param	convertedTopology	The topology to be deconstructed
+   * @return				A topology containing the faces from the deconstructed topology
+   */
+  shared_ptr<XdmfTopology>
+  getExternalFaces(const shared_ptr<XdmfTopology> convertedTopology);
+
 protected:
 
   XdmfTopologyConverter();
 
 private:
+
+  void insertInHash(std::vector<long> nodes,
+                    std::vector<std::vector<std::vector<long> > > & hash,
+                    unsigned int numCornerNodes);
 
   XdmfTopologyConverter(const XdmfTopologyConverter &);  // Not implemented.
   void operator=(const XdmfTopologyConverter &);  // Not implemented.
