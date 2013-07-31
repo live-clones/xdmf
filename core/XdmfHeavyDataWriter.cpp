@@ -32,26 +32,26 @@
 
 XdmfHeavyDataWriter::XdmfHeavyDataWriter(const double compression, const unsigned int overhead) :
   mAllowSplitDataSets(false),
-  mCompressionRatio(compression),
   mDataSetId(0),
   mFileIndex(0),
-  mFileOverhead(overhead),
   mFilePath(""),
   mFileSizeLimit(0),
-  mMode(Default)
+  mMode(Default),
+  mCompressionRatio(compression),
+  mFileOverhead(overhead)
 {
 }
 
 XdmfHeavyDataWriter::XdmfHeavyDataWriter(const std::string & filePath, const double compression, const unsigned int overhead) :
   mAllowSplitDataSets(false),
-  mCompressionRatio(compression),
   mDataSetId(0),
   mFileIndex(0),
-  mFileOverhead(overhead),
   mFilePath(XdmfSystemUtils::getRealPath(filePath)),
   mFileSizeLimit(0),
   mMode(Default),
-  mReleaseData(false)
+  mReleaseData(false),
+  mCompressionRatio(compression),
+  mFileOverhead(overhead)
 {
 }
 
@@ -130,10 +130,11 @@ XdmfHeavyDataWriter::controllerSplitting(XdmfArray & array,
         // If overwrite subtract previous data size.
         if (mMode == Overwrite || mMode == Hyperslab) {
           // Find previous data size
-          int checksize = getDataSetSize(testFile.str(), dataSetPath, fapl);
-          if (checksize < 0) {
-            checksize = 0;
+          int checkfilesize = getDataSetSize(testFile.str(), dataSetPath, fapl);
+          if (checkfilesize < 0) {
+            checkfilesize = 0;
           }
+          unsigned int checksize = (unsigned int)checkfilesize;
           if (mMode == Overwrite) {
             if (checksize > fileSize) {
               fileSize = 0;
@@ -186,7 +187,7 @@ XdmfHeavyDataWriter::controllerSplitting(XdmfArray & array,
         // Calculate remaining size
         unsigned int remainingSize = 0;
         for (unsigned int j = sizeArrayIndex; j < array.getSize(); ++j) {
-          remainingSize += array.getValue<std::string>(j).size() * 8 * mCompressionRatio;
+          remainingSize += (unsigned int)((double)(array.getValue<std::string>(j).size()) * 8.0 * mCompressionRatio);
         }
         if (mMode == Hyperslab) {
           // Size is estimated based on averages
@@ -195,7 +196,7 @@ XdmfHeavyDataWriter::controllerSplitting(XdmfArray & array,
                            remainingValues;
         }
         if (remainingSize + previousDataSize + fileSize
-            < getFileSizeLimit()*(1024*1024)) {
+            < (unsigned int)getFileSizeLimit()*(1024*1024)) {
           // If the array hasn't been split
           if (amountAlreadyWritten == 0) {
             // Just pass all data to the partial vectors
@@ -281,7 +282,7 @@ XdmfHeavyDataWriter::controllerSplitting(XdmfArray & array,
           // until the dimension block is less, then take a fraction of the dimension
           // Calculate the number of values of the data type you're using will fit
           unsigned int usableSpace = (getFileSizeLimit()*(1024*1024) - fileSize);
-          if (previousDataSize + fileSize > getFileSizeLimit()*(1024*1024)) {
+          if (previousDataSize + fileSize > (unsigned int)getFileSizeLimit()*(1024*1024)) {
             usableSpace = 0;
           }
           usableSpace += hyperslabSize-previousDataSize;
@@ -290,7 +291,7 @@ XdmfHeavyDataWriter::controllerSplitting(XdmfArray & array,
             // See if it will fit in the next file
             // If it will just go to the next file
             // Otherwise split it.
-            if (remainingSize + getFileOverhead() > getFileSizeLimit()*(1024*1024)
+            if (remainingSize + getFileOverhead() > (unsigned int)getFileSizeLimit()*(1024*1024)
                 && usableSpace > 0) {
               if (getAllowSetSplitting()) {
                 // Figure out the size of the largest block that will fit.
@@ -390,7 +391,7 @@ XdmfHeavyDataWriter::controllerSplitting(XdmfArray & array,
             // See if the remaining data will fit in the next file
             // If yes, skip to it
             // If no, split
-            if (remainingSize + getFileOverhead() > getFileSizeLimit()*(1024*1024)
+            if (remainingSize + getFileOverhead() > (unsigned int)getFileSizeLimit()*(1024*1024)
                 && usableSpace > 0) {
               // Figure out the size of the largest block that will fit.
               unsigned int blockSizeSubtotal = 0;
@@ -448,7 +449,7 @@ XdmfHeavyDataWriter::controllerSplitting(XdmfArray & array,
                   // Stride should not change in this algorithm
                   partialStrides.push_back(stride[j]);
                   partialDataSizes.push_back(numBlocks);
-                  // Determine how many values from the array\
+                  // Determine how many values from the array
                   // will fit into the blocks being used
                   // with the dimensions specified
                   unsigned int displacement = (numBlocks - newStart)
@@ -485,7 +486,7 @@ XdmfHeavyDataWriter::controllerSplitting(XdmfArray & array,
                 // If moving to next file
                 // just do nothing and pass out of the if statement
                 // but also check if specified file size is too small
-                if (getFileSizeLimit()*(1024*1024)
+                if ((unsigned int)getFileSizeLimit()*(1024*1024)
                     < blockSizeSubtotal) {
                   // This shouldn't ever trigger
                   // but it's good to cover ourselves
@@ -531,10 +532,10 @@ XdmfHeavyDataWriter::controllerSplitting(XdmfArray & array,
         if (remainingValues == 0) {//end if no remaining values
           break;
         }
-        unsigned int dataItemSize = array.getArrayType()->getElementSize() * mCompressionRatio;
+        unsigned int dataItemSize = (unsigned int)((double) (array.getArrayType()->getElementSize()) * mCompressionRatio);
         // If remaining size is less than available space, just write all of what's left
         if ((remainingValues * dataItemSize) + previousDataSize + fileSize
-            < getFileSizeLimit()*(1024*1024)) {
+            < (unsigned int)getFileSizeLimit()*(1024*1024)) {
           // If the array hasn't been split
           if (amountAlreadyWritten == 0) {
             // Just pass all data to the partial vectors
@@ -621,7 +622,7 @@ XdmfHeavyDataWriter::controllerSplitting(XdmfArray & array,
           // Calculate the number of values of the data type you're using will fit
           unsigned int usableSpace = (getFileSizeLimit()*(1024*1024) -
                                       fileSize) / dataItemSize;
-          if (getFileSizeLimit()*(1024*1024) < fileSize) {
+          if ((unsigned int)getFileSizeLimit()*(1024*1024) < fileSize) {
             usableSpace = 0;
           }
           usableSpace += hyperslabSize-previousDataSize;
@@ -631,7 +632,7 @@ XdmfHeavyDataWriter::controllerSplitting(XdmfArray & array,
             // If it will just go to the next file
             // Otherwise split it.
             if ((remainingValues * dataItemSize) + getFileOverhead() >
-                getFileSizeLimit()*(1024*1024)
+                (unsigned int)getFileSizeLimit()*(1024*1024)
                 && usableSpace > 0) {
               if (getAllowSetSplitting()) {
                 // Figure out the size of the largest block that will fit.
@@ -714,7 +715,7 @@ XdmfHeavyDataWriter::controllerSplitting(XdmfArray & array,
             // If it will just go to the next file
             // Otherwise split it.
             if ((remainingValues * dataItemSize) + getFileOverhead() >
-                getFileSizeLimit()*(1024*1024)
+                (unsigned int)getFileSizeLimit()*(1024*1024)
                 && usableSpace > 0) {
               unsigned int blockSizeSubtotal = 1;
               unsigned int dimensionIndex = 0;
@@ -789,7 +790,7 @@ XdmfHeavyDataWriter::controllerSplitting(XdmfArray & array,
                 // If moving to next file
                 // just do nothing and pass out of the if statement
                 // but also check if specified file size is too small
-                if (getFileSizeLimit()*(1024*1024) < blockSizeSubtotal) {
+                if ((unsigned int)getFileSizeLimit()*(1024*1024) < blockSizeSubtotal) {
                   // This shouldn't ever trigger, but it's good to cover ourselves
                   // Throw an error if the block size won't work
                   try {

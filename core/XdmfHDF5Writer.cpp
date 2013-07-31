@@ -315,9 +315,6 @@ XdmfHDF5Writer::write(XdmfArray & array,
   hid_t datatype = -1;
   bool closeDatatype = false;
 
-  // Base size of an hdf5 file is 800
-  const unsigned int hdf5Overhead = 800;
-
   // Determining data type
   if(array.isInitialized()) {
     if(array.getArrayType() == XdmfArrayType::Int8()) {

@@ -1281,7 +1281,7 @@ XdmfTopologyConverter::getExternalFaces(const shared_ptr<XdmfTopology> converted
   if(convertedTopology->getType() == XdmfTopologyType::Tetrahedron()) {
 
     // This loop can be generalized in a later version
-    for(int arrayOffset=0; arrayOffset<convertedTopology->getSize(); arrayOffset += convertedTopology->getType()->getNodesPerElement()) {
+    for(unsigned int arrayOffset=0; arrayOffset<convertedTopology->getSize(); arrayOffset += convertedTopology->getType()->getNodesPerElement()) {
       std::vector<long> faceNodes;
       for (unsigned int i = 0; i < convertedTopology->getType()->getNodesPerElement(); ++i) {
         faceNodes.push_back(convertedTopology->getValue<long>(arrayOffset + i));

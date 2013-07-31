@@ -570,8 +570,8 @@ XdmfTopologyType::XdmfTopologyType(const unsigned int nodesPerElement,
                                    const unsigned int id) :
   mCellType(cellType),
   mEdgesPerElement(edgesPerElement),
-  mFaces(faces),
   mFacesPerElement(facesPerElement),
+  mFaces(faces),
   mID(id),
   mName(name),
   mNodesPerElement(nodesPerElement)

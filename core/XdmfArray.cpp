@@ -998,7 +998,7 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
     }
   }
 
-  int contentIndex;
+  unsigned int contentIndex;
 
   const std::string & contentVal = content->second;
 
