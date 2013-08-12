@@ -66,6 +66,17 @@
 * shared pointers can be created. These pointers are freed
 * automatically by the shared pointer reference counting mechanism.
 *
+*
+* Structure:
+*
+* Xdmf2 is structured in a tree format with an XdmfDomain serving
+* as the base. The Domain contains multiple grid collections or
+* grids; each with their own geometries, topologies, attributes,
+* and/or sets. With the inclusion of shared pointers in Xdmf2
+* a topology could be shared across multiple grids or a grid 
+* could be included in multiple grid collections and/or the domain.
+*
+*
 * C++ Examples:
 *
 * \subpage cppwrite "C++ Example of Xdmf Creation"

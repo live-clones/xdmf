@@ -46,14 +46,14 @@ class XDMFCORE_EXPORT XdmfSystemUtils {
    * C++
    *
    * @dontinclude ExampleXdmfSystemUtils.cpp
-   * @skipline priorPath
-   * @until convertedPath
+   * @skipline //#getRealPath
+   * @until //#getRealPath
    *
    * Python
    *
    * @dontinclude XdmfExampleSystemUtils.py
-   * @skipline priorPath
-   * @until convertedPath
+   * @skipline #//getRealPath
+   * @until #//getRealPath
    *
    * @param path a string containing the path to convert.
    *

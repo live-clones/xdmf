@@ -89,47 +89,20 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfHeavyDataWriter.cpp
-   * @skipline Assume
-   * @skipline closeFile
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#closeFile
+   * @until //#closeFile
    *
    * Python
    *
    * @dontinclude XdmfExampleHeavyDataWriter.py
-   * @skipline Assume
-   * @skipline closeFile
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//closeFile
+   * @until #//closeFile
    */
   virtual void closeFile() = 0;
-
-  /**
-   *
-   */
-  virtual void controllerSplitting(XdmfArray & array,
-                                   const int fapl,
-                                   int & controllerIndexOffset,
-                                   shared_ptr<XdmfHeavyDataController> heavyDataController,
-                                   std::string checkFileName,
-                                   std::string checkFileExt,
-                                   std::string dataSetPath,
-                                   std::vector<unsigned int> dimensions,
-                                   std::vector<unsigned int> dataspaceDimensions,
-                                   std::vector<unsigned int> start,
-                                   std::vector<unsigned int> stride,
-                                   std::list<std::string> & filesWritten,
-                                   std::list<shared_ptr<XdmfArray> > & arraysWritten,
-                                   std::list<std::vector<unsigned int> > & startsWritten,
-                                   std::list<std::vector<unsigned int> > & stridesWritten,
-                                   std::list<std::vector<unsigned int> > & dimensionsWritten,
-                                   std::list<std::vector<unsigned int> > & dataSizesWritten,
-                                   std::list<unsigned int> & arrayOffsetsWritten);
-
-  virtual shared_ptr<XdmfHeavyDataController>
-  createController(const std::string & hdf5FilePath,
-                   const std::string & dataSetPath,
-                   const shared_ptr<const XdmfArrayType> type,
-                   const std::vector<unsigned int> & start,
-                   const std::vector<unsigned int> & stride,
-                   const std::vector<unsigned int> & dimensions,
-                   const std::vector<unsigned int> & dataspaceDimensions) = 0;
 
   /**
    * Gets whether the HDF5 Writer is allowed to split data sets when writing to hdf5.
@@ -141,47 +114,69 @@ public:
    *
    * C++
    *
-   * @dontinclude ExampleXdmfHDF5Writer.cpp
-   * @skipline newPath
-   * @until New
-   * @skipline exampleAllow
+   * @dontinclude ExampleXdmfHeavyDataWriter.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getAllowSetSplitting
+   * @until //#getAllowSetSplitting
    *
    * Python
    *
-   * @dontinclude XdmfExampleHDF5Writer.py
-   * @skipline newPath
-   * @until New
-   * @skipline exampleAllow
+   * @dontinclude XdmfExampleHeavyDataWriter.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getAllowSetSplitting
+   * @until #//getAllowSetSplitting
    *
-   * @return    whether to allow data sets to be split across hdf5 files
+   * @return	whether to allow data sets to be split across hdf5 files
    */
   int getAllowSetSplitting();
-
-  virtual int getDataSetSize(std::string fileName, std::string dataSetName, const int fapl) = 0;
 
   /**
    * Gets the file index. Used when file splitting and incremented whent he current file is full.
    *
    * C++
    *
-   * @dontinclude ExampleXdmfHDF5Writer.cpp
-   * @skipline newPath
-   * @until New
-   * @skipline getFileIndex
+   * @dontinclude ExampleXdmfHeavyDataWriter.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getFileIndex
+   * @until //#getFileIndex
    *
    * Python
    *
-   * @dontinclude XdmfExampleHDF5Writer.py
-   * @skipline newPath
-   * @until New
-   * @skipline getFileIndex
+   * @dontinclude XdmfExampleHeavyDataWriter.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getFileIndex
+   * @until #//getFileIndex
    *
-   * @return    The current file index.
+   * @return	The current file index.
    */
   int getFileIndex();
 
   /**
+   * Gets the amount of bytes that the heavy data writer uses as overhead for the data type.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfHeavyDataWriter.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getFileOverhead
+   * @until //#getFileOverhead
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleHeavyDataWriter.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getFileOverhead
+   * @until #//getFileOverhead
+   *
+   * @return	amount of bytes used as overhead
    */
   unsigned int getFileOverhead();
 
@@ -193,17 +188,21 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfHeavyDataWriter.cpp
-   * @skipline Assume
-   * @skipline getFilePath
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getFilePath
+   * @until //#getFilePath
    *
    * Python
    *
    * @dontinclude XdmfExampleHeavyDataWriter.py
-   * @skipline Assume
-   * @skipline getFilePath
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getFilePath
+   * @until #//getFilePath
    *
-   * @return a std::string containing the path to the heavy file on disk this
-   * writer is writing to.
+   * @return	a std::string containing the path to the heavy file on disk this
+   * 		writer is writing to.
    */
   std::string getFilePath() const;
 
@@ -214,19 +213,21 @@ public:
    *
    * C++
    *
-   * @dontinclude ExampleXdmfHDF5Writer.cpp
-   * @skipline newPath
-   * @until New
-   * @skipline exampleLimit
+   * @dontinclude ExampleXdmfHeavyDataWriter.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getFileSizeLimit
+   * @until //#getFileSizeLimit
    *
    * Python
    *
-   * @dontinclude XdmfExampleHDF5Writer.py
-   * @skipline newPath
-   * @until New
-   * @skipline exampleLimit
+   * @dontinclude XdmfExampleHeavyDataWriter.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getFileSizeLimit
+   * @until #//getFileSizeLimit
    *
-   * @return    The size limit in MB
+   * @return	The size limit in MB
    */
   int getFileSizeLimit();
 
@@ -238,19 +239,20 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfHeavyDataWriter.cpp
-   * @skipline Assuming
-   * @skipline exampleMode
-   * @skipline getMode
-   * @until }
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getMode
+   * @until //#getMode
    *
    * Python
    *
    * @dontinclude XdmfExampleHeavyDataWriter.py
-   * @skipline Assuming
-   * @skipline exampleMode
-   * @until #
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getMode
+   * @until #//getMode
    *
-   * @return the Mode of operation for this writer.
+   * @return	the Mode of operation for this writer.
    */
   Mode getMode() const;
 
@@ -262,16 +264,20 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfHeavyDataWriter.cpp
-   * @skipline Assume
-   * @skipline getReleaseData
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getReleaseData
+   * @until //#getReleaseData
    *
    * Python
    *
    * @dontinclude XdmfExampleHeavyDataWriter.py
-   * @skipline Assume
-   * @skipline getReleaseData
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getReleaseData
+   * @until #//getReleaseData
    *
-   * @return true if data is freed after writing
+   * @return	true if data is freed after writing
    */
   bool getReleaseData() const;
 
@@ -294,14 +300,18 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfHeavyDataWriter.cpp
-   * @skipline Assume
-   * @skipline openFile
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#openFile
+   * @until //#openFile
    *
    * Python
    *
    * @dontinclude XdmfExampleHeavyDataWriter.py
-   * @skipline Assume
-   * @skipline openFile
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//openFile
+   * @until #//openFile
    */
   virtual void openFile() = 0;
 
@@ -315,21 +325,21 @@ public:
    *
    * C++
    *
-   * @dontinclude ExampleXdmfHDF5Writer.cpp
-   * @skipline newPath
-   * @until New
-   * @skipline newAllow
-   * @until setAllow
+   * @dontinclude ExampleXdmfHeavyDataWriter.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setAllowSetSplitting
+   * @until //#setAllowSetSplitting
    *
    * Python
    *
-   * @dontinclude XdmfExampleHDF5Writer.py
-   * @skipline newPath
-   * @until New
-   * @skipline newAllow
-   * @until setAllow
+   * @dontinclude XdmfExampleHeavyDataWriter.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setAllowSetSplitting
+   * @until #//setAllowSetSplitting
    *
-   * @param     newAllow        whether to allow data sets to be split across hdf5 files
+   * @param	newAllow	whether to allow data sets to be split across hdf5 files
    */
   void setAllowSetSplitting(bool newAllow);
 
@@ -338,21 +348,21 @@ public:
    *
    * C++
    *
-   * @dontinclude ExampleXdmfHDF5Writer.cpp
-   * @skipline newPath
-   * @until New
-   * @skipline newFileIndex
-   * @until setFileIndex
+   * @dontinclude ExampleXdmfHeavyDataWriter.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getFileIndex
+   * @until //#getFileIndex
    *
    * Python
    *
-   * @dontinclude XdmfExampleHDF5Writer.py
-   * @skipline newPath
-   * @until New
-   * @skipline newFileIndex
-   * @until setFileIndex
+   * @dontinclude XdmfExampleHeavyDataWriter.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getFileIndex
+   * @until #//getFileIndex
    *
-   * @param     newIndex        The index that the writer will append to the file name when incorperating file splitting
+   * @param	newIndex	The index that the writer will append to the file name when incorperating file splitting
    */
   void setFileIndex(int newIndex);
 
@@ -364,17 +374,21 @@ public:
    *
    * C++
    *
-   * @dontinclude ExampleXdmfHDF5Writer.cpp
-   * @skipline newPath
-   * @until setFileSizeLimit
+   * @dontinclude ExampleXdmfHeavyDataWriter.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setFileSizeLimit
+   * @until //#setFileSizeLimit
    *
    * Python
    *
-   * @dontinclude XdmfExampleHDF5Writer.py
-   * @skipline newPath
-   * @until setFileSizeLimit
+   * @dontinclude XdmfExampleHeavyDataWriter.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setFileSizeLimit
+   * @until #//setFileSizeLimit
    *
-   * @param     newSize The size limit in MB
+   * @param	newSize The size limit in MB
    */
   void setFileSizeLimit(int newSize);
 
@@ -386,16 +400,20 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfHeavyDataWriter.cpp
-   * @skipline Assume
-   * @skipline setMode
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setMode
+   * @until //#setMode
    *
    * Python
    *
    * @dontinclude XdmfExampleHeavyDataWriter.py
-   * @skipline Assume
-   * @skipline setMode
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setMode
+   * @until #//setMode
    *
-   * @param mode the Mode of operation for this writer.
+   * @param	mode	the Mode of operation for this writer.
    */
   void setMode(const Mode mode);
 
@@ -407,17 +425,20 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfHeavyDataWriter.cpp
-   * @skipline Assume
-   * @skipline setReleaseData
-   * @until //
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setReleaseData
+   * @until //#setReleaseData
    *
    * Python
    *
    * @dontinclude XdmfExampleHeavyDataWriter.py
-   * @skipline Assume
-   * @skipline setReleaseData
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setReleaseData
+   * @until #//setReleaseData
    *
-   * @param releaseData true if data should be freed after writing
+   * @param	releaseData	true if data should be freed after writing
    */
   void setReleaseData(const bool releaseData = true);
 
@@ -429,19 +450,21 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfHeavyDataWriter.cpp
-   * @skipline Assuming
-   * @skipline exampleArray
-   * @until visit
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#visit
+   * @until //#visit
    *
    * Python
    *
    * @dontinclude XdmfExampleHeavyDataWriter.py
-   * @skipline Assuming
-   * @skipline exampleArray
-   * @until visit
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//visit
+   * @until #//visit
    *
-   * @param array an XdmfArray to write to heavy data.
-   * @param visitor a smart pointer to this visitor --- aids in grid traversal.
+   * @param	array		an XdmfArray to write to heavy data.
+   * @param	visitor		a smart pointer to this visitor --- aids in grid traversal.
    */
   using XdmfVisitor::visit;
   virtual void visit(XdmfArray & array,
@@ -451,6 +474,36 @@ protected:
 
   XdmfHeavyDataWriter(const double compression = 1, const unsigned int overhead = 0);
   XdmfHeavyDataWriter(const std::string & filePath, const double compression = 1, const unsigned int overhead = 0);
+
+  virtual shared_ptr<XdmfHeavyDataController>
+  createController(const std::string & hdf5FilePath,
+                   const std::string & dataSetPath,
+                   const shared_ptr<const XdmfArrayType> type,
+                   const std::vector<unsigned int> & start,
+                   const std::vector<unsigned int> & stride,
+                   const std::vector<unsigned int> & dimensions,
+                   const std::vector<unsigned int> & dataspaceDimensions) = 0;
+
+  virtual void controllerSplitting(XdmfArray & array,
+                                   const int fapl,
+                                   int & controllerIndexOffset,
+                                   shared_ptr<XdmfHeavyDataController> heavyDataController,
+                                   std::string checkFileName,
+                                   std::string checkFileExt,
+                                   std::string dataSetPath,
+                                   std::vector<unsigned int> dimensions,
+                                   std::vector<unsigned int> dataspaceDimensions,
+                                   std::vector<unsigned int> start,
+                                   std::vector<unsigned int> stride,
+                                   std::list<std::string> & filesWritten,
+                                   std::list<shared_ptr<XdmfArray> > & arraysWritten,
+                                   std::list<std::vector<unsigned int> > & startsWritten,
+                                   std::list<std::vector<unsigned int> > & stridesWritten,
+                                   std::list<std::vector<unsigned int> > & dimensionsWritten,
+                                   std::list<std::vector<unsigned int> > & dataSizesWritten,
+                                   std::list<unsigned int> & arrayOffsetsWritten);
+
+  virtual int getDataSetSize(std::string fileName, std::string dataSetName, const int fapl) = 0;
 
   bool mAllowSplitDataSets;
   int mDataSetId;

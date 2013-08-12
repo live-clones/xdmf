@@ -62,18 +62,20 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfHeavyDataController.cpp
-   * @skipline Assuming
-   * @until Since
-   * @skipline getDataSetPath
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getDataSetPath
+   * @until //#getDataSetPath
    *
    * Python
    *
    * @dontinclude XdmfExampleHeavyDataController.py
-   * @skipline Assuming
-   * @until Since
-   * @skipline getDataSetPath
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getDataSetPath
+   * @until #//getDataSetPath
    *
-   * @return a std::string containing the path of the data set.
+   * @return 	a std::string containing the path of the data set.
    */
   std::string getDataSetPath() const;
 
@@ -83,8 +85,26 @@ public:
    * which may be larger than the dimensions of the array (if reading
    * a piece of a larger dataset).
    *
-   * @return a vector containing the size in each dimension of the dataspace
-   * owned by this controller.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfHeavyDataController.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getDataspaceDimensions
+   * @until //#getDataspaceDimensions
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleHeavyDataController.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getDataspaceDimensions
+   * @until #//getDataspaceDimensions
+   *
+   * @return 	a vector containing the size in each dimension of the dataspace
+   * 		owned by this controller.
    */
   std::vector<unsigned int> getDataspaceDimensions() const;
 
@@ -96,19 +116,21 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfHeavyDataController.cpp
-   * @skipline Assuming
-   * @until Since
-   * @skipline getDimensions
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getDimensions
+   * @until //#getDimensions
    *
    * Python
    *
    * @dontinclude XdmfExampleHeavyDataController.py
-   * @skipline Assuming
-   * @until Since
-   * @skipline getDimensions
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getDimensions
+   * @until #//getDimensions
    *
-   * @return a vector containing the size in each dimension of the heavy data
-   * set owned by this controller.
+   * @return 	a vector containing the size in each dimension of the heavy data
+   * 		set owned by this controller.
    */
   std::vector<unsigned int> getDimensions() const;
 
@@ -122,18 +144,20 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfHeavyDataController.cpp
-   * @skipline Assuming
-   * @until Since
-   * @skipline getFilePath
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getFilePath
+   * @until //#getFilePath
    *
    * Python
    *
    * @dontinclude XdmfExampleHeavyDataController.py
-   * @skipline Assuming
-   * @until Since
-   * @skipline getFilePath
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getFilePath
+   * @until #//getFilePath
    *
-   * @return a std::string containing the path to the heavy data file.
+   * @return 	a std::string containing the path to the heavy data file.
    */
   std::string getFilePath() const;
 
@@ -146,18 +170,20 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfHeavyDataController.cpp
-   * @skipline Assuming
-   * @until Since
-   * @skipline getName
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getName
+   * @until //#getName
    *
    * Python
    *
    * @dontinclude XdmfExampleHeavyDataController.py
-   * @skipline Assuming
-   * @until Since
-   * @skipline getName
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getName
+   * @until #//getName
    *
-   * @return std::string containing the name of this heavy data format
+   * @return 	std::string containing the name of this heavy data format
    */
   virtual std::string getName() const = 0;
 
@@ -169,62 +195,72 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfHeavyDataController.cpp
-   * @skipline Assuming
-   * @until Since
-   * @skipline getSize
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getSize
+   * @until //#getSize
    *
    * Python
    *
    * @dontinclude XdmfExampleHeavyDataController.py
-   * @skipline Assuming
-   * @until Since
-   * @skipline getSize
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getSize
+   * @until #//getSize
    *
-   * @return a int containing the size of the heavy data set.
+   * @return 	a int containing the size of the heavy data set.
    */
   unsigned int getSize() const;
 
   /**
-   * For use in conjunction with heavy data controllers set to arrays, the offset within the array from which the controller will be inserted
+   * For use in conjunction with heavy data controllers set to arrays
+   * the offset within the array from which the controller will be inserted
    * Is also set when created by a writer.
    *
    * C++
    *
    * @dontinclude ExampleXdmfHeavyDataController.cpp
-   * @skipline Assuming
-   * @until Since
-   * @skipline newArrayOffset
-   * @until setArrayOffset
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setArrayOffset
+   * @until //#setArrayOffset
    *
    * Python
    *
    * @dontinclude XdmfExampleHeavyDataController.py
-   * @skipline Assuming
-   * @until Since
-   * @skipline newArrayOffset
-   * @until setArrayOffset
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setArrayOffset
+   * @until #//setArrayOffset
    *
    * @param	newOffset	the new index at which the controller will be written
    */
   void setArrayOffset(unsigned int newOffset);
 
   /**
-   * Gets the index at which the controller will offset when an array reads it from its associated controllers.
+   * Gets the index at which the controller will offset when
+   * an array reads it from its associated controllers.
    * Set when created by a Writer or set manually.
    *
    * C++
    *
    * @dontinclude ExampleXdmfHeavyDataController.cpp
-   * @skipline Assuming
-   * @until Since
-   * @skipline getArrayOffset
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setArrayOffset
+   * @until //#setArrayOffset
+   * @skipline //#getArrayOffset
+   * @until //#getArrayOffset
    *
    * Python
    *
    * @dontinclude XdmfExampleHeavyDataController.py
-   * @skipline Assuming
-   * @until Since
-   * @skipline getArrayOffset
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setArrayOffset
+   * @until #//setArrayOffset
+   * @skipline #//getArrayOffset
+   * @until #//getArrayOffset
    *
    * @return	the offset that the array will read from
    */
@@ -236,19 +272,21 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfHeavyDataController.cpp
-   * @skipline Assuming
-   * @until Since
-   * @skipline getStart
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getStart
+   * @until //#getStart
    *
    * Python
    *
    * @dontinclude XdmfExampleHeavyDataController.py
-   * @skipline Assuming
-   * @until Since
-   * @skipline getStart
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getStart
+   * @until #//getStart
    *
-   * @return a vector containing the start index in each dimension of
-   * the heavy data set owned by this controller.
+   * @return	a vector containing the start index in each dimension of
+   * 		the heavy data set owned by this controller.
    */
   std::vector<unsigned int> getStart() const;
 
@@ -258,19 +296,21 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfHeavyDataController.cpp
-   * @skipline Assuming
-   * @until Since
-   * @skipline getStride
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getStride
+   * @until //#getStride
    *
    * Python
    *
    * @dontinclude XdmfExampleHeavyDataController.py
-   * @skipline Assuming
-   * @until Since
-   * @skipline getStride
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getStride
+   * @until #//getStride
    *
-   * @return a vector containing the stride in each dimension of the
-   * heavy data set owned by this controller.
+   * @return	a vector containing the stride in each dimension of the
+   * 		heavy data set owned by this controller.
    */
   std::vector<unsigned int> getStride() const;
 
@@ -283,18 +323,20 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfHeavyDataController.cpp
-   * @skipline Assuming
-   * @until Since
-   * @skipline getType
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getType
+   * @until //#getType
    *
    * Python
    *
    * @dontinclude XdmfExampleHeavyDataController.py
-   * @skipline Assuming
-   * @until Since
-   * @skipline getType
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getType
+   * @until #//getType
    *
-   * @return an XdmfArrayType containing the array type of the heavy data set.
+   * @return	an XdmfArrayType containing the array type of the heavy data set.
    */
   shared_ptr<const XdmfArrayType> getType() const;
 
@@ -307,20 +349,20 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfHeavyDataController.cpp
-   * @skipline Assuming
-   * @until Since
-   * @skipline exampleArray
-   * @until //
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#read
+   * @until //#read
    *
    * Python
    *
    * @dontinclude XdmfExampleHeavyDataController.py
-   * @skipline Assuming
-   * @until Since
-   * @skipline exampleArray
-   * @until #
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//read
+   * @until #//read
    *
-   * @param array and XdmfArray to read data into.
+   * @param	array	and XdmfArray to read data into.
    */
   virtual void read(XdmfArray * const array) = 0;
 

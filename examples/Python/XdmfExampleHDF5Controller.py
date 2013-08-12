@@ -1,6 +1,8 @@
 from Xdmf import *
 
 if __name__ == "__main__":
+	#//initialization begin
+
 	newPath = "File path to hdf5 file goes here"
 	newSetPath = "path to the set goes here"
 	readType = XdmfArrayType.Int32()
@@ -32,3 +34,5 @@ if __name__ == "__main__":
 		readStrides,
 		readCounts,
 		readDataSize)
+
+	#//initialization end

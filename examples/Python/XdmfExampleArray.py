@@ -253,7 +253,7 @@ if __name__ == "__main__":
 
 	newIndex = 0
 	newValue = 3.5
-	exampleArray.insertAsFloat64(newIndex, newValue)
+	exampleArray.insertAsFloat64(newIndex, [newValue])
 	#this example uses insertAsFloat64 to insert a double value
 	#versions for all other data types exist
 	#for example insertAsInt32 inserts as an int

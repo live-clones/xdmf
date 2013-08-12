@@ -51,14 +51,14 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfHDF5Controller.cpp
-   * @skipline newPath
-   * @until readDataSize)
+   * @skipline //#initialization
+   * @until //#initialization
    *
    * Python
    *
    * @dontinclude XdmfExampleHDF5Controller.py
-   * @skipline newPath
-   * @until readDataSize)
+   * @skipline #//initialization
+   * @until #//initialization
    *
    * @param hdf5FilePath the location of the hdf5 file the data set resides in.
    * @param dataSetPath the location of the dataset within the hdf5 file.

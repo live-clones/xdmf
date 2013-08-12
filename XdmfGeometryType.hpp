@@ -88,7 +88,7 @@ public:
    * @skipline #//getDimensions
    * @until #//getDimensions
    *
-   * @return an int containing number of dimensions.
+   * @return	an int containing number of dimensions.
    */
   virtual unsigned int getDimensions() const;
 
@@ -109,7 +109,7 @@ public:
    * @skipline #//getName
    * @until #//getName
    *
-   * @return the name of this geometry type.
+   * @return	the name of this geometry type.
    */
   std::string getName() const;
 

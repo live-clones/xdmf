@@ -54,8 +54,8 @@ public:
    * @skipline #//initialization
    * @until #//initialization
    *
-   * @param value the timeValue of the XdmfTime to create.
-   * @return the new XdmfTime.
+   * @param 	value 	the timeValue of the XdmfTime to create.
+   * @return 		the new XdmfTime.
    */
   static shared_ptr<XdmfTime> New(const double & value = 0);
 
@@ -89,7 +89,7 @@ public:
    * @skipline #//getValue
    * @until #//getValue
    *
-   * @return a double containing the time value.
+   * @return 	a double containing the time value.
    */
   double getValue() const;
 
@@ -114,7 +114,7 @@ public:
    * @skipline #//setValue
    * @until #//setValue
    *
-   * @param time a double containing the time value.
+   * @param 	time 	a double containing the time value.
    */
   void setValue(const double & time);
 

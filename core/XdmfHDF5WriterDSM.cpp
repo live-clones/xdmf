@@ -231,12 +231,14 @@ XdmfHDF5WriterDSM::XdmfHDF5WriterDSM(const std::string & filePath,
 
   MPI_Barrier(comm);
 
-  // Loop needs to be started before anything can be done to the file, since the service is what sets up the file
+  // Loop needs to be started before anything can be done to the file
+  // since the service is what sets up the file
 
   if (rank < startCoreIndex || rank > endCoreIndex) {
     // Turn off the server designation
     mDSMServerBuffer->SetIsServer(H5FD_DSM_FALSE);
-    // If this is set to false then the buffer will attempt to connect to the intercomm for DSM communications
+    // If this is set to false then the buffer will attempt to connect
+    // to the intercomm for DSM communications
     mDSMServerManager->SetIsServer(H5FD_DSM_FALSE);
   }
   else {
@@ -409,7 +411,9 @@ void XdmfHDF5WriterDSM::setWorkerComm(MPI_Comm comm)
 void XdmfHDF5WriterDSM::stopDSM()
 {
   // Send manually
-  for (int i = mDSMServerBuffer->GetStartServerId(); i <= mDSMServerBuffer->GetEndServerId(); ++i) {
+  for (int i = mDSMServerBuffer->GetStartServerId();
+       i <= mDSMServerBuffer->GetEndServerId();
+       ++i) {
     try {
       mDSMServerBuffer->SendCommandHeader(H5FD_DSM_OPCODE_DONE, i, 0, 0, H5FD_DSM_INTER_COMM);
     }
@@ -421,7 +425,10 @@ void XdmfHDF5WriterDSM::stopDSM()
 
 void XdmfHDF5WriterDSM::restartDSM()
 {
-  if (mDSMServerBuffer->GetComm()->GetInterId() >= mDSMServerBuffer->GetStartServerId() && mDSMServerBuffer->GetComm()->GetInterId() <= mDSMServerBuffer->GetEndServerId()) {
+  if (mDSMServerBuffer->GetComm()->GetInterId() >=
+        mDSMServerBuffer->GetStartServerId() &&
+      mDSMServerBuffer->GetComm()->GetInterId() <=
+        mDSMServerBuffer->GetEndServerId()) {
     H5FDdsmInt32 returnOpCode;
     try {
       mDSMServerBuffer->BufferServiceLoop(&returnOpCode);

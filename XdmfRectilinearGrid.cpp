@@ -120,7 +120,9 @@ public:
       }
       else {
         try {
-          XdmfError::message(XdmfError::FATAL, "Number of dimensions not 2 or 3 in XdmfGeometryTypeRectilinear::getProperties");
+          XdmfError::message(XdmfError::FATAL,
+                             "Number of dimensions not 2 or 3 in"
+                             " XdmfGeometryTypeRectilinear::getProperties");
         }
         catch (XdmfError e) {
           throw e;
@@ -276,7 +278,13 @@ public:
   private:
 
     XdmfTopologyTypeRectilinear(const XdmfRectilinearGrid * const rectilinearGrid) :
-      XdmfTopologyType(0, 0, std::vector<shared_ptr<const XdmfTopologyType> >(), 0, "foo", XdmfTopologyType::Structured, 0x1101),
+      XdmfTopologyType(0,
+                       0,
+                       std::vector<shared_ptr<const XdmfTopologyType> >(),
+                       0,
+                       "foo",
+                       XdmfTopologyType::Structured,
+                       0x1101),
       mRectilinearGrid(rectilinearGrid)
     {
     }

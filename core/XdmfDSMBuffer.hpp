@@ -100,7 +100,8 @@
  * @brief Controls the data buffer for DSM.
  *
  * XdmfDSMBuffer takes the place of the H5FDdsmBuffer defined in H5FD.
- * It is primarily for allowing the XdmfDSM to interact with HDF5 dsm without threads.
+ * It is primarily for allowing the XdmfDSM to interact with HDF5 dsm
+ * without threads.
  */
 class XDMFCORE_EXPORT XdmfDSMBuffer {
 
@@ -117,26 +118,52 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skipline AddressToId
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#AddressToId
+   * @until //#AddressToId
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python
    *
    * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until exampleWriter
-   * @skipline if
-   * @skipline exampleBuffer
-   * @skipline AddressToId
+   * @skipline #//initMPI
+   * @until #//initMPI
+   * @skipline #//initwritevector
+   * @until #//initwritevector
+   * @skipline #//initwritergenerate
+   * @until #//initwritergenerate
+   * @skipline #//startworksection
+   * @until #//startworksection
+   * @skipline #//getServerManagerwriter
+   * @until #//getServerManagerwriter
+   * @skipline #//GetDsmBuffer
+   * @until #//GetDsmBuffer
+   * @skipline #//AddressToId
+   * @until #//AddressToId
+   * @skipline #//stopDSMwriter
+   * @until #//stopDSMwriter
+   * @skipline #//finalizeMPI
+   * @until #//finalizeMPI
    *
    * @param	Address		The address to be found
    * @return			The id of the core that the address resides on
@@ -151,23 +178,34 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline workerComm
-   * @until cfree
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skipline broadcastComm
-   * @until BroadcastComm
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#BroadcastComm
+   * @until //#BroadcastComm
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python:
-   * Unusable in python unless an object of a cpointer type is passed via wrapped code
+   * Unusable in python unless an object of a cpointer type is
+   * passed via wrapped code
    *
    *
    *
@@ -185,41 +223,57 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline workerComm
-   * @until cfree
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skip RecieveInfo
-   * @skipline if
-   * @until BufferService
-   * @skipline }
-   * @until SendCommandHeader
-   * @skipline }
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#BufferService
+   * @until //#BufferService
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python
    *
    * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until exampleWriter
-   * @skipline if
-   * @skipline exampleBuffer
-   * @skip ServerIds
-   * @skip SendInfo
-   * @skipline if
-   * @skipline serviceOut
-   * @skipline if
-   * @skipline SendCommandHeader
+   * @skipline #//initMPI
+   * @until #//initMPI
+   * @skipline #//initwritevector
+   * @until #//initwritevector
+   * @skipline #//initwritergenerate
+   * @until #//initwritergenerate
+   * @skipline #//startworksection
+   * @until #//startworksection
+   * @skipline #//getServerManagerwriter
+   * @until #//getServerManagerwriter
+   * @skipline #//GetDsmBuffer
+   * @until #//GetDsmBuffer
+   * @skipline #//BufferService
+   * @until #//BufferService
+   * @skipline #//stopDSMwriter
+   * @until #//stopDSMwriter
+   * @skipline #//finalizeMPI
+   * @until #//finalizeMPI
    *
-   * @param       returnOpcode    A variable that will hold the code at the end of the loop
-   * @return                      If the iteration executed without problem returns XDMF_DSM_SUCCESS
+   * @param	returnOpcode	A variable that will hold the code at the
+   *				end of the loop
+   * @return			If the iteration executed without problem
+   * 				returns XDMF_DSM_SUCCESS
    */
   int BufferService(int *returnOpcode = 0);
 
@@ -232,40 +286,55 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline workerComm
-   * @until cfree
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skip RecieveInfo
-   * @skipline if
-   * @until BufferServiceLoop
-   * @skipline }
-   * @until SendCommandHeader
-   * @skipline }
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#BufferServiceLoop
+   * @until //#BufferServiceLoop
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python
    *
    * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until exampleWriter
-   * @skipline if
-   * @skipline exampleBuffer
-   * @skip ServerIds
-   * @skip SendInfo
-   * @skipline if
-   * @skipline BufferServiceLoop
-   * @skipline if
-   * @skipline SendCommandHeader
+   * @skipline #//initMPI
+   * @until #//initMPI
+   * @skipline #//initwritevector
+   * @until #//initwritevector
+   * @skipline #//initwritergenerate
+   * @until #//initwritergenerate
+   * @skipline #//startworksection
+   * @until #//startworksection
+   * @skipline #//getServerManagerwriter
+   * @until #//getServerManagerwriter
+   * @skipline #//GetDsmBuffer
+   * @until #//GetDsmBuffer
+   * @skipline #//BufferServiceLoop
+   * @until #//BufferServiceLoop
+   * @skipline #//stopDSMwriter
+   * @until #//stopDSMwriter
+   * @skipline #//finalizeMPI
+   * @until #//finalizeMPI
    *
-   * @param       returnOpcode    A variable that will hold the code at the end of the loop
+   * @param	returnOpcode	A variable that will hold the code at the
+   *				end of the loop
    */
   void BufferServiceLoop(int *returnOpcode = 0);
 
@@ -277,33 +346,65 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skipline ConfigureUniform
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#ConfigureUniform
+   * @until //#ConfigureUniform
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python
    *
    * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until exampleWriter
-   * @skipline if
-   * @skipline exampleBuffer
-   * @skipline ConfigureUniform
+   * @skipline #//initMPI
+   * @until #//initMPI
+   * @skipline #//initwritevector
+   * @until #//initwritevector
+   * @skipline #//initwritergenerate
+   * @until #//initwritergenerate
+   * @skipline #//startworksection
+   * @until #//startworksection
+   * @skipline #//getServerManagerwriter
+   * @until #//getServerManagerwriter
+   * @skipline #//GetDsmBuffer
+   * @until #//GetDsmBuffer
+   * @skipline #//ConfigureUniform
+   * @until #//ConfigureUniform
+   * @skipline #//stopDSMwriter
+   * @until #//stopDSMwriter
+   * @skipline #//finalizeMPI
+   * @until #//finalizeMPI
    *
-   * @param       Comm            The communicator that will be handling the communications for the DSM
-   * @param       Length          The length of the data buffer on server cores
-   * @param       StartId         The id that the server cores will start on, if set to -1 then it will default to 0
-   * @param       EndId           The id that the server cores will end on, if set to -1 then it will be the last core in the communicator
-   * @param       aBlockLength    The block size of the data buffer, 0 is no blocking
-   * @param       random          Whether the assignment is random or cyclic. Default is cyclic
+   * @param	Comm		The communicator that will be handling the
+   * 				communications for the DSM
+   * @param	Length		The length of the data buffer on server cores
+   * @param	StartId		The id that the server cores will start on,
+   *				if set to -1 then it will default to 0
+   * @param	EndId		The id that the server cores will end on,
+   *				if set to -1 then it will be the last core
+   *				in the communicator
+   * @param	aBlockLength	The block size of the data buffer, 0 is
+   * 				no blocking
+   * @param	random		Whether the assignment is random or cyclic.
+   *				Default is cyclic
    */
   void ConfigureUniform(XdmfDSMCommMPI *Comm, long Length,
                         int StartId = -1, int EndId = -1,
@@ -318,35 +419,43 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skipline core0StartAddress
-   * @until GetAddressRange
-   * @skipline dsmData
-   * @skipline if
-   * @until {
-   * @skipline Get
-   * @until message
-   * Skipline }
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#PutGet
+   * @until //#PutGet
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    *
    * Python:
-   * Unusable in python unless an object of a cpointer type is passed via wrapped code
+   * Unusable in python unless an object of a cpointer type is passed via
+   *  wrapped code
    * Use the XdmfHDF5WriterDSM for this functionality
    *
    *
    *
    * @param	Address		The starting address of the data retrieved
    * @param	aLength		The length of the data to be retrieved
-   * @param	Data		A pointer in which the data is to be stored after retieval
+   * @param	Data		A pointer in which the data is to be stored
+   * 				after retieval
    */
   void Get(long Address, long aLength, void *Data);
 
@@ -358,25 +467,39 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skipline core0StartAddress
-   * @until GetAddressRange
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#GetAddressRangeForId
+   * @until //#GetAddressRangeForId
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python:
-   * Unusable in python unless an object of a cpointer type is passed via wrapped code
+   * Unusable in python unless an object of a cpointer type is passed via
+   * wrapped code
    *
    *
    *
-   * @param	Id	The core for which the start and end address are to be found
+   * @param	Id	The core for which the start and end address are
+   * 			to be found
    * @param	Start	A pointer in which the start address is to be placed
    * @param	End	A pointer in which the end address is to be placed
    */
@@ -390,26 +513,52 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skipline GetBlockLength
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#GetBlockLengthbuffer
+   * @until //#GetBlockLengthbuffer
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python
    *
    * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until exampleWriter
-   * @skipline if
-   * @skipline exampleBuffer
-   * @skipline GetBlockLength
+   * @skipline #//initMPI
+   * @until #//initMPI
+   * @skipline #//initwritevector
+   * @until #//initwritevector
+   * @skipline #//initwritergenerate
+   * @until #//initwritergenerate
+   * @skipline #//startworksection
+   * @until #//startworksection
+   * @skipline #//getServerManagerwriter
+   * @until #//getServerManagerwriter
+   * @skipline #//GetDsmBuffer
+   * @until #//GetDsmBuffer
+   * @skipline #//GetBlockLength
+   * @until #//GetBlockLength
+   * @skipline #//stopDSMwriter
+   * @until #//stopDSMwriter
+   * @skipline #//finalizeMPI
+   * @until #//finalizeMPI
    *
    * @return      The size of the blocks in the DSM buffer
    */
@@ -423,59 +572,112 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skipline XdmfDSMCommMPI
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#GetComm
+   * @until //#GetComm
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python
    *
    * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until exampleWriter
-   * @skipline if
-   * @skipline exampleBuffer
-   * @skipline exampleDSMComm
+   * @skipline #//initMPI
+   * @until #//initMPI
+   * @skipline #//initwritevector
+   * @until #//initwritevector
+   * @skipline #//initwritergenerate
+   * @until #//initwritergenerate
+   * @skipline #//startworksection
+   * @until #//startworksection
+   * @skipline #//getServerManagerwriter
+   * @until #//getServerManagerwriter
+   * @skipline #//GetDsmBuffer
+   * @until #//GetDsmBuffer
+   * @skipline #//GetComm
+   * @until #//GetComm
+   * @skipline #//stopDSMwriter
+   * @until #//stopDSMwriter
+   * @skipline #//finalizeMPI
+   * @until #//finalizeMPI
    *
    * @return      The Comm controlling the communications for the DSM
    */
   XdmfDSMCommMPI * GetComm();
 
   /**
-   * Gets the data pointer that the buffer controls. Should be NULL on non-server cores.
+   * Gets the data pointer that the buffer controls.
+   * Should be NULL on non-server cores.
    *
    * Example of use:
    *
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skipline GetDataPointer
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#GetDataPointer
+   * @until //#GetDataPointer
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python
    *
    * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until exampleWriter
-   * @skipline if
-   * @skipline exampleBuffer
-   * @skipline GetDataPointer
+   * @skipline #//initMPI
+   * @until #//initMPI
+   * @skipline #//initwritevector
+   * @until #//initwritevector
+   * @skipline #//initwritergenerate
+   * @until #//initwritergenerate
+   * @skipline #//startworksection
+   * @until #//startworksection
+   * @skipline #//getServerManagerwriter
+   * @until #//getServerManagerwriter
+   * @skipline #//GetDsmBuffer
+   * @until #//GetDsmBuffer
+   * @skipline #//GetDataPointer
+   * @until #//GetDataPointer
+   * @skipline #//stopDSMwriter
+   * @until #//stopDSMwriter
+   * @skipline #//finalizeMPI
+   * @until #//finalizeMPI
    *
    * @return	The buffer's internal data pointer.
    */
@@ -489,28 +691,54 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skipline GetDsmType
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#GetDsmTypebuffer
+   * @until //#GetDsmTypebuffer
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python
    *
    * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until exampleWriter
-   * @skipline if
-   * @skipline exampleBuffer
-   * @skipline GetDsmType
+   * @skipline #//initMPI
+   * @until #//initMPI
+   * @skipline #//initwritevector
+   * @until #//initwritevector
+   * @skipline #//initwritergenerate
+   * @until #//initwritergenerate
+   * @skipline #//startworksection
+   * @until #//startworksection
+   * @skipline #//getServerManagerwriter
+   * @until #//getServerManagerwriter
+   * @skipline #//GetDsmBuffer
+   * @until #//GetDsmBuffer
+   * @skipline #//GetDsmTypebuffer
+   * @until #//GetDsmTypebuffer
+   * @skipline #//stopDSMwriter
+   * @until #//stopDSMwriter
+   * @skipline #//finalizeMPI
+   * @until #//finalizeMPI
    *
-   * @return      The integer representation of the DSM type
+   * @return	The integer representation of the DSM type
    */
   int GetDsmType();
 
@@ -522,28 +750,54 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skipline GetEndAddress
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#GetEndAddress
+   * @until //#GetEndAddress
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python
    *
    * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until exampleWriter
-   * @skipline if
-   * @skipline exampleBuffer
-   * @skipline GetEndAddress
+   * @skipline #//initMPI
+   * @until #//initMPI
+   * @skipline #//initwritevector
+   * @until #//initwritevector
+   * @skipline #//initwritergenerate
+   * @until #//initwritergenerate
+   * @skipline #//startworksection
+   * @until #//startworksection
+   * @skipline #//getServerManagerwriter
+   * @until #//getServerManagerwriter
+   * @skipline #//GetDsmBuffer
+   * @until #//GetDsmBuffer
+   * @skipline #//GetEndAddress
+   * @until #//GetEndAddress
+   * @skipline #//stopDSMwriter
+   * @until #//stopDSMwriter
+   * @skipline #//finalizeMPI
+   * @until #//finalizeMPI
    *
-   * @return      The end address of the DSM buffer
+   * @return	The end address of the DSM buffer
    */
   int GetEndAddress();
 
@@ -555,28 +809,54 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skipline GetEndServerId
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#GetEndServerId
+   * @until //#GetEndServerId
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python
    *
    * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until exampleWriter
-   * @skipline if
-   * @skipline exampleBuffer
-   * @skipline GetEndServerId
+   * @skipline #//initMPI
+   * @until #//initMPI
+   * @skipline #//initwritevector
+   * @until #//initwritevector
+   * @skipline #//initwritergenerate
+   * @until #//initwritergenerate
+   * @skipline #//startworksection
+   * @until #//startworksection
+   * @skipline #//getServerManagerwriter
+   * @until #//getServerManagerwriter
+   * @skipline #//GetDsmBuffer
+   * @until #//GetDsmBuffer
+   * @skipline #//GetEndServerId
+   * @until #//GetEndServerId
+   * @skipline #//stopDSMwriter
+   * @until #//stopDSMwriter
+   * @skipline #//finalizeMPI
+   * @until #//finalizeMPI
    *
-   * @return      The id of the last core that serves as a DSM server
+   * @return	The id of the last core that serves as a DSM server
    */
   int GetEndServerId();
 
@@ -588,28 +868,54 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skipline GetIsConnected
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#GetIsConnectedbuffer
+   * @until //#GetIsConnectedbuffer
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python
    *
    * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until exampleWriter
-   * @skipline if
-   * @skipline exampleBuffer
-   * @skipline GetIsConnected
+   * @skipline #//initMPI
+   * @until #//initMPI
+   * @skipline #//initwritevector
+   * @until #//initwritevector
+   * @skipline #//initwritergenerate
+   * @until #//initwritergenerate
+   * @skipline #//startworksection
+   * @until #//startworksection
+   * @skipline #//getServerManagerwriter
+   * @until #//getServerManagerwriter
+   * @skipline #//GetDsmBuffer
+   * @until #//GetDsmBuffer
+   * @skipline #//GetIsConnectedbuffer
+   * @until #//GetIsConnectedbuffer
+   * @skipline #//stopDSMwriter
+   * @until #//stopDSMwriter
+   * @skipline #//finalizeMPI
+   * @until #//finalizeMPI
    *
-   * @return      Whether the buffer is connected
+   * @return	Whether the buffer is connected
    */
   bool GetIsConnected();
 
@@ -621,28 +927,54 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skipline GetIsServer
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#GetIsServerbuffer
+   * @until //#GetIsServerbuffer
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python
    *
    * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until exampleWriter
-   * @skipline if
-   * @skipline exampleBuffer
-   * @skipline GetIsServer
+   * @skipline #//initMPI
+   * @until #//initMPI
+   * @skipline #//initwritevector
+   * @until #//initwritevector
+   * @skipline #//initwritergenerate
+   * @until #//initwritergenerate
+   * @skipline #//startworksection
+   * @until #//startworksection
+   * @skipline #//getServerManagerwriter
+   * @until #//getServerManagerwriter
+   * @skipline #//GetDsmBuffer
+   * @until #//GetDsmBuffer
+   * @skipline #//GetIsServerbuffer
+   * @until #//GetIsServerbuffer
+   * @skipline #//stopDSMwriter
+   * @until #//stopDSMwriter
+   * @skipline #//finalizeMPI
+   * @until #//finalizeMPI
    *
-   * @return      If the Buffer is a DSM server
+   * @return	If the Buffer is a DSM server
    */
   bool GetIsServer();
 
@@ -654,28 +986,54 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skipline GetLength
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#GetLength
+   * @until //#GetLength
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python
    *
    * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until exampleWriter
-   * @skipline if
-   * @skipline exampleBuffer
-   * @skipline GetLength
+   * @skipline #//initMPI
+   * @until #//initMPI
+   * @skipline #//initwritevector
+   * @until #//initwritevector
+   * @skipline #//initwritergenerate
+   * @until #//initwritergenerate
+   * @skipline #//startworksection
+   * @until #//startworksection
+   * @skipline #//getServerManagerwriter
+   * @until #//getServerManagerwriter
+   * @skipline #//GetDsmBuffer
+   * @until #//GetDsmBuffer
+   * @skipline #//GetLength
+   * @until #//GetLength
+   * @skipline #//stopDSMwriter
+   * @until #//stopDSMwriter
+   * @skipline #//finalizeMPI
+   * @until #//finalizeMPI
    *
-   * @return      The length of the data buffer per core
+   * @return	The length of the data buffer per core
    */
   long GetLength();
 
@@ -687,28 +1045,54 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skipline GetStartAddress
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#GetStartAddress
+   * @until //#GetStartAddress
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python
    *
    * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until exampleWriter
-   * @skipline if
-   * @skipline exampleBuffer
-   * @skipline GetStartAddress
+   * @skipline #//initMPI
+   * @until #//initMPI
+   * @skipline #//initwritevector
+   * @until #//initwritevector
+   * @skipline #//initwritergenerate
+   * @until #//initwritergenerate
+   * @skipline #//startworksection
+   * @until #//startworksection
+   * @skipline #//getServerManagerwriter
+   * @until #//getServerManagerwriter
+   * @skipline #//GetDsmBuffer
+   * @until #//GetDsmBuffer
+   * @skipline #//GetStartAddress
+   * @until #//GetStartAddress
+   * @skipline #//stopDSMwriter
+   * @until #//stopDSMwriter
+   * @skipline #//finalizeMPI
+   * @until #//finalizeMPI
    *
-   * @return      The beginning address of the DSM buffer
+   * @return	The beginning address of the DSM buffer
    */
   int GetStartAddress();
 
@@ -720,28 +1104,54 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skipline GetStartServerId
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#GetStartServerId
+   * @until //#GetStartServerId
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python
    *
    * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until exampleWriter
-   * @skipline if
-   * @skipline exampleBuffer
-   * @skipline GetStartServerId
+   * @skipline #//initMPI
+   * @until #//initMPI
+   * @skipline #//initwritevector
+   * @until #//initwritevector
+   * @skipline #//initwritergenerate
+   * @until #//initwritergenerate
+   * @skipline #//startworksection
+   * @until #//startworksection
+   * @skipline #//getServerManagerwriter
+   * @until #//getServerManagerwriter
+   * @skipline #//GetDsmBuffer
+   * @until #//GetDsmBuffer
+   * @skipline #//GetStartServerId
+   * @until #//GetStartServerId
+   * @skipline #//stopDSMwriter
+   * @until #//stopDSMwriter
+   * @skipline #//finalizeMPI
+   * @until #//finalizeMPI
    *
-   * @return      The id of the first core that serves as a DSM server
+   * @return	The id of the first core that serves as a DSM server
    */
   int GetStartServerId();
 
@@ -753,28 +1163,54 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skipline GetTotalLength
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#GetTotalLength
+   * @until //#GetTotalLength
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python
    *
    * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until exampleWriter
-   * @skipline if
-   * @skipline exampleBuffer
-   * @skipline GetTotalLength
+   * @skipline #//initMPI
+   * @until #//initMPI
+   * @skipline #//initwritevector
+   * @until #//initwritevector
+   * @skipline #//initwritergenerate
+   * @until #//initwritergenerate
+   * @skipline #//startworksection
+   * @until #//startworksection
+   * @skipline #//getServerManagerwriter
+   * @until #//getServerManagerwriter
+   * @skipline #//GetDsmBuffer
+   * @until #//GetDsmBuffer
+   * @skipline #//GetTotalLength
+   * @until #//GetTotalLength
+   * @skipline #//stopDSMwriter
+   * @until #//stopDSMwriter
+   * @skipline #//finalizeMPI
+   * @until #//finalizeMPI
    *
-   * @return      The total length of the data buffer
+   * @return	The total length of the data buffer
    */
   long GetTotalLength();
 
@@ -787,27 +1223,38 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skip ConfigureUniform
-   * @skipline id
-   * @until ReceiveCommandHeader
-   * @skipline }
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#CommandHeader
+   * @until //#CommandHeader
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python:
    * Unusable in python unless an object of a cpointer type is passed via wrapped code
    *
    *
    *
-   * @param       comm    a pointer to the variable that the integer code for the comm is placed in
+   * @param	comm	a pointer to the variable that the integer code for the
+   *			comm is placed in
    */
   void ProbeCommandHeader(int *comm);
 
@@ -820,31 +1267,40 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skipline core0StartAddress
-   * @until GetAddressRange
-   * @skipline dsmData
-   * @until Put
-   * @skipline }
-   * @until message
-   * Skipline }
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#PutGet
+   * @until //#PutGet
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python:
-   * Unusable in python unless an object of a cpointer type is passed via wrapped code
+   * Unusable in python unless an object of a cpointer type is passed
+   * via wrapped code
    * Use the XdmfHDF5WriterDSM for this functionality
    *
    *
    *
-   * @param	Address		The starting address that the data will be placed at
+   * @param	Address		The starting address that the data will
+   *				be placed at
    * @param	aLength		The length of the data to be sent
    * @param	Data		A pointer to the data to be sent
    */
@@ -859,30 +1315,58 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skip ReceiveData
-   * @skipline id
-   * @until ReceiveAcknowledgment
-   * @skipline }
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#SendRecvAcknowledgement
+   * @until //#SendRecvAcknowledgement
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python:
-   * Unusable in python unless an object of a cpointer type is passed via wrapped code
+   * @dontinclude XdmfExampleDSMNoThread.py
+   * @skipline #//initMPI
+   * @until #//initMPI
+   * @skipline #//initwritevector
+   * @until #//initwritevector
+   * @skipline #//initwritergenerate
+   * @until #//initwritergenerate
+   * @skipline #//startworksection
+   * @until #//startworksection
+   * @skipline #//getServerManagerwriter
+   * @until #//getServerManagerwriter
+   * @skipline #//GetDsmBuffer
+   * @until #//GetDsmBuffer
+   * @skipline #//SendAcknowledgment
+   * @until #//SendAcknowledgment
+   * @skipline #//ReceiveAcknowledgment
+   * @until #//ReceiveAcknowledgment
+   * @skipline #//stopDSMwriter
+   * @until #//stopDSMwriter
+   * @skipline #//finalizeMPI
+   * @until #//finalizeMPI
    *
-   *
-   *
-   * @param       source  The core to recieve from
-   * @param       data    The integer that the recieved data will be stored in
-   * @param       tag     The tag associated with the acknowledgement
-   * @param       comm    The comm over which the acknowldedgement will occur
+   * @param	source	The core to recieve from
+   * @param	data	The integer that the recieved data will be stored in
+   * @param	tag	The tag associated with the acknowledgement
+   * @param	comm	The comm over which the acknowldedgement will occur
    */
   void ReceiveAcknowledgment(int source, int &data, int tag, int comm);
 
@@ -896,32 +1380,47 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skip ConfigureUniform
-   * @skipline id
-   * @until ReceiveCommandHeader
-   * @skipline }
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#CommandHeader
+   * @until //#CommandHeader
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python:
-   * Unusable in python unless an object of a cpointer type is passed via wrapped code
+   * Unusable in python unless an object of a cpointer type is passed
+   *  via wrapped code
    *
-   *
-   *
-   * @param       opcode          A pointer to the location where the code associated with the operation will be stored
-   * @param       source          A pointer to the location where the index of the source core will be stored (will be the same as remoteSource if provided)
-   * @param       address         A pointer to the location where the address specified by the command will be stored
-   * @param       aLength         A pointer to the location where the length of the data specified by the command will be stored
-   * @param       comm            The communicator over which the transmission will occur
-   * @param       remoteSource    If provided, the core being recieved from
+   * @param	opcode		A pointer to the location where the code
+   *				associated with the operation will be stored
+   * @param	source		A pointer to the location where the index of
+   *				the source core will be stored
+   *				(will be the same as remoteSource if provided)
+   * @param	address		A pointer to the location where the address
+   *				specified by the command will be stored
+   * @param	aLength		A pointer to the location where the length of
+   *				the data specified by the command will be stored
+   * @param	comm		The communicator over which the transmission
+   *				will occur
+   * @param	remoteSource	If provided, the core being recieved from
    */
   void ReceiveCommandHeader(int *opcode, int *source, int *address, int *aLength, int comm, int remoteSource = -1);
 
@@ -934,32 +1433,47 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skip ReceiveCommandHeader
-   * @skipline id
-   * @until ReceiveData
-   * @skipline }
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#SendRecvData
+   * @until //#SendRecvData
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python:
-   * Unusable in python unless an object of a cpointer type is passed via wrapped code
+   * Unusable in python unless an object of a cpointer type is passed
+   * via wrapped code
    *
    *
    *
-   * @param       source          The core data will be recieved from
-   * @param       data            The pointer where the recieved data will be stored
-   * @param       aLength         The length of the data transmitted
-   * @param       tag             The communication tag to be used for the transmission
-   * @param       aAddress        The location where the data will be written on the data buffer
-   * @param       comm            The comunicator over which the data transfer will occur
+   * @param	source		The core data will be recieved from
+   * @param	data		The pointer where the recieved data will be
+   *				stored
+   * @param	aLength		The length of the data transmitted
+   * @param	tag		The communication tag to be used for the
+   *				transmission
+   * @param	aAddress	The location where the data will be written on
+   *				the data buffer
+   * @param	comm		The comunicator over which the data transfer
+   *				will occur
    */
   void ReceiveData(int source, char * data, int aLength, int tag, int aAddress, int comm);
 
@@ -974,47 +1488,74 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline workerComm
-   * @until cfree
-   * @skipline exampleController
-   * @until size-1
-   * @skip Section
-   * @skipline id
-   * @until }
-   * @skipline numServersCores
-   * @until }
-   * @skipline else
-   * @until }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#SendRecvInfo
+   * @until //#SendRecvInfo
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python
    *
    * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until exampleWriter
-   * @skip Section 
-   * @skipline id
-   * @until stopDSM
-   * @skipline numServersCores
-   * @until ReceiveInfo
-   *
+   * @skipline #//initMPI
+   * @until #//initMPI
+   * @skipline #//initwritevector
+   * @until #//initwritevector
+   * @skipline #//initwritergenerate
+   * @until #//initwritergenerate
+   * @skipline #//stopDSMwriter
+   * @until #//stopDSMwriter
+   * @skipline #//SendRecvInfo
+   * @until #//SendRecvInfo
+   * @skipline #//finalizeMPI
+   * @until #//finalizeMPI
    */
   void ReceiveInfo();
 
   /**
-   *
+   * Tells the server cores to prepare to accept a new connection.
+   * Then readies to accept a new connection.
    *
    * Example of use:
-   * 
+   *
    * C++
    *
-   *
+   * @dontinclude XdmfAcceptTest.cpp
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#OpenPort
+   * @until //#OpenPort
+   * @skipline //#SendAccept
+   * @until //#SendAccept
+   * @skipline //#finishwork
+   * @until //#finishwork
+   * @skipline //#ClosePort
+   * @until //#ClosePort
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python
    *
+   * @dontinclude XdmfExampleAcceptTest.py
+   * @skipline #//initMPI
+   * @until #//initMPI
+   * @skipline #//OpenPort
+   * @until #//OpenPort
+   * @skipline #//SendAccept
+   * @until #//SendAccept
+   * @skipline #//finishwork
+   * @until #//finishwork
+   * @skipline #//ClosePort
+   * @until #//ClosePort
    *
-   *
+   * @param	numConnects	The number of incoming connections to accept
    */
   void SendAccept(unsigned int numConnects);
 
@@ -1027,36 +1568,59 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skip ReceiveData
-   * @skipline id
-   * @until ReceiveAcknowledgment
-   * @skipline }
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#SendRecvAcknowledgement
+   * @until //#SendRecvAcknowledgement
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python
    *
    * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until exampleWriter
-   * @skipline if
-   * @skipline exampleBuffer
-   * @skip SendData
-   * @skipline if
-   * @skipline SendAcknowledgment
+   * @skipline #//initMPI
+   * @until #//initMPI
+   * @skipline #//initwritevector
+   * @until #//initwritevector
+   * @skipline #//initwritergenerate
+   * @until #//initwritergenerate
+   * @skipline #//startworksection
+   * @until #//startworksection
+   * @skipline #//getServerManagerwriter
+   * @until #//getServerManagerwriter
+   * @skipline #//GetDsmBuffer
+   * @until #//GetDsmBuffer
+   * @skipline #//SendAcknowledgment
+   * @until #//SendAcknowledgment
+   * @skipline #//ReceiveAcknowledgment
+   * @until #//ReceiveAcknowledgment
+   * @skipline #//stopDSMwriter
+   * @until #//stopDSMwriter
+   * @skipline #//finalizeMPI
+   * @until #//finalizeMPI
    *
-   * @param       dest    The core to send to
-   * @param       data    The integer to send
-   * @param       tag     The tag associated with the acknowledgement
-   * @param       comm    The comm over which the acknowldedgement will occur
+   * @param	dest	The core to send to
+   * @param	data	The integer to send
+   * @param	tag	The tag associated with the acknowledgement
+   * @param	comm	The comm over which the acknowldedgement will occur
    */
   void SendAcknowledgment(int dest, int data, int tag, int comm);
 
@@ -1069,37 +1633,58 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skip ConfigureUniform
-   * @skipline id
-   * @until ReceiveCommandHeader
-   * @skipline }
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#CommandHeader
+   * @until //#CommandHeader
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python
    *
    * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until exampleWriter
-   * @skipline if
-   * @skipline exampleBuffer
-   * @skip ConfigureUniform
-   * @skipline if
-   * @skipline SendCommandHeader
+   * @skipline #//initMPI
+   * @until #//initMPI
+   * @skipline #//initwritevector
+   * @until #//initwritevector
+   * @skipline #//initwritergenerate
+   * @until #//initwritergenerate
+   * @skipline #//startworksection
+   * @until #//startworksection
+   * @skipline #//getServerManagerwriter
+   * @until #//getServerManagerwriter
+   * @skipline #//GetDsmBuffer
+   * @until #//GetDsmBuffer
+   * @skipline #//SendCommandHeader
+   * @until #//SendCommandHeader
+   * @skipline #//stopDSMwriter
+   * @until #//stopDSMwriter
+   * @skipline #//finalizeMPI
+   * @until #//finalizeMPI
    *
-   * @param       opcode          The code for the command to be sent
-   * @param       dest            The core that the command is to be sent to
-   * @param       address         The address to be referenced by the command
-   * @param       aLength         The length of the data to be used by the command
-   * @param       comm            The communicator over which the transmission will occur
+   * @param	opcode		The code for the command to be sent
+   * @param	dest		The core that the command is to be sent to
+   * @param	address		The address to be referenced by the command
+   * @param	aLength		The length of the data to be used by the command
+   * @param	comm		The communicator over which the transmission will occur
    */
   void SendCommandHeader(int opcode, int dest, int address, int aLength, int comm);
 
@@ -1112,38 +1697,61 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skip ReceiveCommandHeader
-   * @skipline id
-   * @until ReceiveData
-   * @skipline }
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#SendRecvData
+   * @until //#SendRecvData
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python
    *
    * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until exampleWriter
-   * @skipline if
-   * @skipline exampleBuffer
-   * @skip SendCommandHeader
-   * @skipline if
-   * @skipline SendData
+   * @skipline #//initMPI
+   * @until #//initMPI
+   * @skipline #//initwritevector
+   * @until #//initwritevector
+   * @skipline #//initwritergenerate
+   * @until #//initwritergenerate
+   * @skipline #//startworksection
+   * @until #//startworksection
+   * @skipline #//getServerManagerwriter
+   * @until #//getServerManagerwriter
+   * @skipline #//GetDsmBuffer
+   * @until #//GetDsmBuffer
+   * @skipline #//SendData
+   * @until #//SendData
+   * @skipline #//stopDSMwriter
+   * @until #//stopDSMwriter
+   * @skipline #//finalizeMPI
+   * @until #//finalizeMPI
    *
-   * @param       dest            The core that the data will be sent to
-   * @param       data            A pointer to the location of the data being sent
-   * @param       aLength         The length of the data being sent
-   * @param       tag             The communication tag to be used for the transmission
-   * @param       aAddress        The address on the recieveing core's buffer that the data is to be placed in
-   * @param       comm            The communicator over which the data transfer will take place
+   * @param	dest		The core that the data will be sent to
+   * @param	data		A pointer to the location of the data being sent
+   * @param	aLength		The length of the data being sent
+   * @param	tag		The communication tag to be used for the transmission
+   * @param	aAddress	The address on the recieveing core's buffer that
+   *				the data is to be placed in
+   * @param	comm		The communicator over which the data transfer
+   *				will take place
    */
   void SendData(int dest, char * data, int aLength, int tag, int aAddress, int comm);
 
@@ -1155,26 +1763,30 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleWriter
-   * @skipline closeFile
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline SendDone
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#SendDone
+   * @until //#SendDone
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python
    *
    * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until exampleWriter
-   * @skipline Section
-   * @skipline if
-   * @skipline GetServerBuffer
-   * @skipline SendDone
-   *
+   * @skipline #//initMPI
+   * @until #//initMPI
+   * @skipline #//initwritevector
+   * @until #//initwritevector
+   * @skipline #//initwritergenerate
+   * @until #//initwritergenerate
+   * @skipline #//SendDone
+   * @until #//SendDone
+   * @skipline #//finalizeMPI
+   * @until #//finalizeMPI
    */
   void SendDone();
 
@@ -1189,31 +1801,34 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline workerComm
-   * @until cfree
-   * @skipline exampleController
-   * @until size-1
-   * @skip Section
-   * @skipline id
-   * @until }
-   * @skipline numServersCores
-   * @until }
-   * @skipline else
-   * @until }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#SendRecvInfo
+   * @until //#SendRecvInfo
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python
    *
    * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until exampleWriter
-   * @skip Section 
-   * @skipline id
-   * @until stopDSM
-   * @skipline numServersCores
-   * @until ReceiveInfo
-   *
+   * @skipline #//initMPI
+   * @until #//initMPI
+   * @skipline #//initwritevector
+   * @until #//initwritevector
+   * @skipline #//initwritergenerate
+   * @until #//initwritergenerate
+   * @skipline #//stopDSMwriter
+   * @until #//stopDSMwriter
+   * @skipline #//SendRecvInfo
+   * @until #//SendRecvInfo
+   * @skipline #//finalizeMPI
+   * @until #//finalizeMPI
    */
   void SendInfo();
 
@@ -1225,28 +1840,58 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skipline SetBlockLength
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#GetBlockLengthbuffer
+   * @until //#GetBlockLengthbuffer
+   * @skipline //#SetBlockLengthbuffer
+   * @until //#SetBlockLengthbuffer
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python
    *
    * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until exampleWriter
-   * @skipline if
-   * @skipline exampleBuffer
-   * @skipline SetBlockLength
+   * @skipline #//initMPI
+   * @until #//initMPI
+   * @skipline #//initwritevector
+   * @until #//initwritevector
+   * @skipline #//initwritergenerate
+   * @until #//initwritergenerate
+   * @skipline #//startworksection
+   * @until #//startworksection
+   * @skipline #//getServerManagerwriter
+   * @until #//getServerManagerwriter
+   * @skipline #//GetDsmBuffer
+   * @until #//GetDsmBuffer
+   * @skipline #//GetBlockLength
+   * @until #//GetBlockLength
+   * @skipline #//SetBlockLength
+   * @until #//SetBlockLength
+   * @skipline #//stopDSMwriter
+   * @until #//stopDSMwriter
+   * @skipline #//finalizeMPI
+   * @until #//finalizeMPI
    *
-   * @param       newBlock        The new block size to be used
+   * @param	newBlock	The new block size to be used
    */
   void SetBlockLength(long newBlock);
 
@@ -1258,30 +1903,58 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skipline XdmfDSMCommMPI
-   * @skipline SetComm
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#GetComm
+   * @until //#GetComm
+   * @skipline //#SetComm
+   * @until //#SetComm
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python
    *
    * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until exampleWriter
-   * @skipline if
-   * @skipline exampleBuffer
-   * @skipline exampleDSMComm
-   * @skipline SetComm
+   * @skipline #//initMPI
+   * @until #//initMPI
+   * @skipline #//initwritevector
+   * @until #//initwritevector
+   * @skipline #//initwritergenerate
+   * @until #//initwritergenerate
+   * @skipline #//startworksection
+   * @until #//startworksection
+   * @skipline #//getServerManagerwriter
+   * @until #//getServerManagerwriter
+   * @skipline #//GetDsmBuffer
+   * @until #//GetDsmBuffer
+   * @skipline #//GetComm
+   * @until #//GetComm
+   * @skipline #//SetComm
+   * @until #//SetComm
+   * @skipline #//stopDSMwriter
+   * @until #//stopDSMwriter
+   * @skipline #//finalizeMPI
+   * @until #//finalizeMPI
    *
-   * @param       newComm         The communicator that is to be used by the DSM
+   * @param	newComm		The communicator that is to be used by the DSM
    */
   void SetComm(XdmfDSMCommMPI * newComm);
 
@@ -1293,62 +1966,118 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skipline SetDsmType
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#SetDsmTypebuffer
+   * @until //#SetDsmTypebuffer
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python
    *
    * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until exampleWriter
-   * @skipline if
-   * @skipline exampleBuffer
-   * @skipline SetDsmType
+   * @skipline #//initMPI
+   * @until #//initMPI
+   * @skipline #//initwritevector
+   * @until #//initwritevector
+   * @skipline #//initwritergenerate
+   * @until #//initwritergenerate
+   * @skipline #//startworksection
+   * @until #//startworksection
+   * @skipline #//getServerManagerwriter
+   * @until #//getServerManagerwriter
+   * @skipline #//GetDsmBuffer
+   * @until #//GetDsmBuffer
+   * @skipline #//SetDsmTypebuffer
+   * @until #//SetDsmTypebuffer
+   * @skipline #//stopDSMwriter
+   * @until #//stopDSMwriter
+   * @skipline #//finalizeMPI
+   * @until #//finalizeMPI
    *
-   * @param       newDsmType      The Dsm type that the buffer will be changed to
+   * @param	newDsmType	The Dsm type that the buffer will be changed to
    */
   void SetDsmType(int newDsmType);
 
   /**
-   * Sets the Buffer's connection status. Used if the XdmfDSMCommMPI is connected or disconnected manually.
+   * Sets the Buffer's connection status. Used if the XdmfDSMCommMPI is
+   * connected or disconnected manually.
    *
    * Example of use:
    *
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skipline SetIsConnected
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#GetIsConnectedbuffer
+   * @until //#GetIsConnectedbuffer
+   * @skipline //#SetIsConnectedbuffer
+   * @until //#SetIsConnectedbuffer
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python
    *
    * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until exampleWriter
-   * @skipline if
-   * @skipline exampleBuffer
-   * @skipline GetIsConnected
-   * @skipline SetIsConnected
+   * @skipline #//initMPI
+   * @until #//initMPI
+   * @skipline #//initwritevector
+   * @until #//initwritevector
+   * @skipline #//initwritergenerate
+   * @until #//initwritergenerate
+   * @skipline #//startworksection
+   * @until #//startworksection
+   * @skipline #//getServerManagerwriter
+   * @until #//getServerManagerwriter
+   * @skipline #//GetDsmBuffer
+   * @until #//GetDsmBuffer
+   * @skipline #//GetIsConnectedbuffer
+   * @until #//GetIsConnectedbuffer
+   * @skipline #//SetIsConnectedbuffer
+   * @until #//SetIsConnectedbuffer
+   * @skipline #//stopDSMwriter
+   * @until #//stopDSMwriter
+   * @skipline #//finalizeMPI
+   * @until #//finalizeMPI
    *
-   * @param       newStatus       The new connection status
+   * @param	newStatus	The new connection status
    */
   void SetIsConnected(bool newStatus);
 
@@ -1360,29 +2089,56 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfDSMNoThread.cpp
-   * @skipline size
-   * @until MPI_Comm_size
-   * @skipline exampleController
-   * @until size-1
-   * @skipline if
-   * @until {
-   * @skipline XdmfDSMBuffer
-   * @skipline exampleController
-   * @skipline SetIsServer
-   * @skip Section
-   * @skipline }
+   * @skipline //#initMPI
+   * @until //#initMPI
+   * @skipline //#initwritevector
+   * @until //#initwritevector
+   * @skipline //#initwritergenerate
+   * @until //#initwritergenerate
+   * @skipline //#startworksection
+   * @until //#startworksection
+   * @skipline //#declaremanager
+   * @until //#declaremanager
+   * @skipline //#getServerManagerwriter
+   * @until //#getServerManagerwriter
+   * @skipline //#declarebuffer
+   * @until //#declarebuffer
+   * @skipline //#GetDsmBuffer
+   * @until //#GetDsmBuffer
+   * @skipline //#GetIsServerbuffer
+   * @until //#GetIsServerbuffer
+   * @skipline //#endworksection
+   * @until //#endworksection
+   * @skipline //#stopDSMwriter
+   * @until //#stopDSMwriter
+   * @skipline //#finalizeMPI
+   * @until //#finalizeMPI
    *
    * Python
    *
    * @dontinclude XdmfExampleDSMNoThread.py
-   * @skipline total
-   * @until exampleWriter
-   * @skipline if
-   * @skipline exampleBuffer
-   * @skipline GetIsServer
-   * @skipline SetIsServer
+   * @skipline #//initMPI
+   * @until #//initMPI
+   * @skipline #//initwritevector
+   * @until #//initwritevector
+   * @skipline #//initwritergenerate
+   * @until #//initwritergenerate
+   * @skipline #//startworksection
+   * @until #//startworksection
+   * @skipline #//getServerManagerwriter
+   * @until #//getServerManagerwriter
+   * @skipline #//GetDsmBuffer
+   * @until #//GetDsmBuffer
+   * @skipline #//GetIsServerbuffer
+   * @until #//GetIsServerbuffer
+   * @skipline #//SetIsServerbuffer
+   * @until #//SetIsServerbuffer
+   * @skipline #//stopDSMwriter
+   * @until #//stopDSMwriter
+   * @skipline #//finalizeMPI
+   * @until #//finalizeMPI
    *
-   * @param       newIsServer     Whether the buffer is to be a DSM server or not
+   * @param	newIsServer	Whether the buffer is to be a DSM server or not
    */
   void SetIsServer(bool newIsServer);
 

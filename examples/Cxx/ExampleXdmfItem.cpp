@@ -28,15 +28,33 @@ int main(int, char **)
 	std::string removeInfo = "Remove this";
 	exampleItem->removeInformation(removeInfo);
 
+	//#initialization begin
+
 	//Using a shared pointer to an XdmfDomain object as an example
 
 	shared_ptr<XdmfDomain> exampleDomain = XdmfDomain::New();
+
+	//#initialization end
+
+	//#getItemTag begin
+
 	std::string exampleTag = exampleDomain->getItemTag();
+
+	//#getItemTag end
+
+	//#getItemProperties begin
+
 	std::map<std::string, std::string> propertyMap = exampleDomain->getItemProperties();
+
+	//#getItemProperties end
+
+	//#traverse begin
+
 	std::string writePath = "file path here";
 	shared_ptr<XdmfWriter> exampleWriter = XdmfWriter::New(writepath);
 	exampleDomain->traverse(exampleWriter);
-	
+
+	//#traverse end
 
 	return 0;
 }

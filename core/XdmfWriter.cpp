@@ -202,12 +202,6 @@ XdmfWriter::getHeavyDataWriter() const
   return mImpl->mHeavyDataWriter;
 }
 
-void
-XdmfWriter::setHeavyDataWriter(shared_ptr<XdmfHeavyDataWriter> heavyDataWriter)
-{
-  mImpl->mHeavyDataWriter = heavyDataWriter;
-}
-
 std::string
 XdmfWriter::getFilePath() const
 {
@@ -242,6 +236,12 @@ void
 XdmfWriter::setDocumentTitle(std::string title)
 {
   mImpl->mDocumentTitle = title;
+}
+
+void
+XdmfWriter::setHeavyDataWriter(shared_ptr<XdmfHeavyDataWriter> heavyDataWriter)
+{
+  mImpl->mHeavyDataWriter = heavyDataWriter;
 }
 
 void

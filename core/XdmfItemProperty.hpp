@@ -56,16 +56,16 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfItemProperty.cpp
-   * @skipline //
-   * @until getProperties
+   * @skipline //#getProperties
+   * @until //#getProperties
    *
    * Python
    *
    * @dontinclude XdmfExampleItemProperty.py
-   * @skipline #
-   * @until getProperties
+   * @skipline #//getProperties
+   * @until #//getProperties
    *
-   * @param collectedProperties a map to insert name / value pairs into.
+   * @param	collectedProperties	a map to insert name / value pairs into.
    */
   virtual void
   getProperties(std::map<std::string, std::string> & collectedProperties) const = 0;

@@ -29,9 +29,9 @@
 #include "XdmfArray.hpp"
 
 /**
- * @brief 
+ * @brief Manipulates arrays based on expressions.
  *
- * 
+ * The function class provides a way to manipulate XdmfArrays via predefined functions.
  */
 class XDMF_EXPORT XdmfFunction : public XdmfItem {
 
@@ -80,11 +80,13 @@ public:
    * @skipline #//addOperation
    * @until #//addOperation
    *
-   * @param     newoperator     the character to be associated with the provided binary operation
-   * @param     functionref     a pointer to the function to be associated with the provided operator
-   * @param     priority        used to determine order of operations the higher the value the earlier it is evaluated
+   * @param	newoperator	the character to be associated with the provided binary operation
+   * @param	functionref	a pointer to the function to be associated with the provided operator
+   * @param	priority	used to determine order of operations the higher the value the earlier it is evaluated
    */
-  static int addOperation(char newoperator, shared_ptr<XdmfArray>(*functionref)(shared_ptr<XdmfArray>, shared_ptr<XdmfArray>), int priority);
+  static int addOperation(char newoperator,
+                          shared_ptr<XdmfArray>(*functionref)(shared_ptr<XdmfArray>, shared_ptr<XdmfArray>),
+                          int priority);
 
   /*
    * adds a specified function to the list of functions used while evaluating strings
@@ -113,11 +115,12 @@ public:
    * @skipline #//addFunction
    * @until #//addFunction
    *
-   * @param     name            A string to be associated with the provided function during string evaluation
-   * @param     functionref     A pointer to the function to be associated with the given string
-   * @return                    The total number of functions currently associated
+   * @param	name		A string to be associated with the provided function during string evaluation
+   * @param	functionref	A pointer to the function to be associated with the given string
+   * @return			The total number of functions currently associated
    */
-  static int addFunction(std::string name, shared_ptr<XdmfArray>(*functionref)(std::vector<shared_ptr<XdmfArray> >));
+  static int addFunction(std::string name,
+                         shared_ptr<XdmfArray>(*functionref)(std::vector<shared_ptr<XdmfArray> >));
 
   /**
    * Averages the values contained in all the provided arrays.
@@ -138,8 +141,8 @@ public:
    * @skipline #//average
    * @until #//average
    *
-   * @param     values  a vector containing the arrays to be used
-   * @return            an XdmfArray containing  one value which is the average of all values contained within the provided arrays
+   * @param	values	a vector containing the arrays to be used
+   * @return		an XdmfArray containing  one value which is the average of all values contained within the provided arrays
    */
   static shared_ptr<XdmfArray> average(std::vector<shared_ptr<XdmfArray> > values);
 
@@ -164,11 +167,12 @@ public:
    * @skipline #//chunk
    * @until #//chunk
    *
-   * @param     val1            the first array being evaluated
-   * @param     val2            the second array being evaluated
-   * @return                    the arrays joined end to end
+   * @param	val1	the first array being evaluated
+   * @param	val2	the second array being evaluated
+   * @return		the arrays joined end to end
    */
-  static shared_ptr<XdmfArray> chunk(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2);
+  static shared_ptr<XdmfArray> chunk(shared_ptr<XdmfArray> val1,
+                                     shared_ptr<XdmfArray> val2);
 
   /**
    * Evaluates an expression based on the list of variables provided.
@@ -219,11 +223,12 @@ public:
    * @skipline #//evaluateExpression
    * @until #//evaluateExpression
    *
-   * @param     expression      a string containing the expresion to be evaluated
-   * @param     variables       a map of strings to their XdmfArray equivalent
-   * @return                    a shared pointer to the XdmfArray resulting from the expression
+   * @param	expression	a string containing the expresion to be evaluated
+   * @param	variables	a map of strings to their XdmfArray equivalent
+   * @return			a shared pointer to the XdmfArray resulting from the expression
    */
-  static shared_ptr<XdmfArray> evaluateExpression(std::string expression, std::map<std::string, shared_ptr<XdmfArray> > variables);
+  static shared_ptr<XdmfArray> evaluateExpression(std::string expression,
+                                                  std::map<std::string, shared_ptr<XdmfArray> > variables);
 
   /**
    * Evaluates the operation specified using the two shared pointers to XdmfArrays provided.
@@ -264,12 +269,14 @@ public:
    * @skipline #//evaluateOperation
    * @until #//evaluateOperation
    *
-   * @param     val1            the first array being evaluated
-   * @param     val2            the second array being evaluated
-   * @param     operation       a character specifying the operation performed
-   * @return                    a shared pointer to the Xdmf Array that results from the calculation
+   * @param	val1		the first array being evaluated
+   * @param	val2		the second array being evaluated
+   * @param	operation	a character specifying the operation performed
+   * @return			a shared pointer to the Xdmf Array that results from the calculation
    */
-  static shared_ptr<XdmfArray> evaluateOperation(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2, char operation);
+  static shared_ptr<XdmfArray> evaluateOperation(shared_ptr<XdmfArray> val1,
+                                                 shared_ptr<XdmfArray> val2,
+                                                 char operation);
 
   /**
    * Evaluates the function specified using the vector of XdmfArrays provided.
@@ -307,11 +314,12 @@ public:
    * @skipline #//evaluateFunction
    * @until #//evaluateFunction
    *
-   * @param     valueVector     a vector containing the arrays to be used
-   * @param     functionName    the string associated with the function being called
-   * @return                    the result of the function being called, a scalar will be returned as an XdmfArray with one value
+   * @param	valueVector	a vector containing the arrays to be used
+   * @param	functionName	the string associated with the function being called
+   * @return			the result of the function being called, a scalar will be returned as an XdmfArray with one value
    */
-  static shared_ptr<XdmfArray> evaluateFunction(std::vector<shared_ptr<XdmfArray> > valueVector, std::string functionName);
+  static shared_ptr<XdmfArray> evaluateFunction(std::vector<shared_ptr<XdmfArray> > valueVector,
+                                                std::string functionName);
 
   std::map<std::string, std::string> getItemProperties() const;
 
@@ -335,8 +343,8 @@ public:
    * @skipline #//getOperationPriority
    * @until #//getOperationPriority
    *
-   * @param     operation       the character associated with the operation to be checked
-   * @return                    the priority of the operation
+   * @param	operation	the character associated with the operation to be checked
+   * @return			the priority of the operation
    */
   static int getOperationPriority(char operation);
 
@@ -358,7 +366,7 @@ public:
    * @skipline #//getSupportedOperations
    * @until #//getSupportedOperations
    *
-   * @return    a string containing the characters for all supported operations
+   * @return	a string containing the characters for all supported operations
    */
   static const std::string getSupportedOperations();
 
@@ -380,7 +388,7 @@ public:
    * @skipline #//getSupportedFunctions
    * @until #//getSupportedFunctions
    *
-   * @return    a vector containing the strings associated with all valid functions
+   * @return	a vector containing the strings associated with all valid functions
    */
   static const std::vector<std::string> getSupportedFunctions();
 
@@ -402,7 +410,7 @@ public:
    * @skipline #//getValidDigitChars
    * @until #//getValidDigitChars
    *
-   * @return    a string containing all valid variable characters
+   * @return	a string containing all valid variable characters
    */
   static const std::string getValidDigitChars();
 
@@ -424,7 +432,7 @@ public:
    * @skipline #//getValidVariableChars
    * @until #//getValidVariableChars
    *
-   * @return    a string containing all valid variable characters
+   * @return	a string containing all valid variable characters
    */
   static const std::string getValidVariableChars();
 
@@ -448,11 +456,12 @@ public:
    * @skipline #//interlace
    * @until #//interlace
    *
-   * @param     val1            the first array being evaluated
-   * @param     val2            the second array being evaluated
-   * @return                    the interlaced arrays
+   * @param	val1	the first array being evaluated
+   * @param	val2	the second array being evaluated
+   * @return		the interlaced arrays
    */
-  static shared_ptr<XdmfArray> interlace(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2);
+  static shared_ptr<XdmfArray> interlace(shared_ptr<XdmfArray> val1,
+                                         shared_ptr<XdmfArray> val2);
 
   /**
    * Adds together all the values contained in the provided arrays.
@@ -473,8 +482,8 @@ public:
    * @skipline #//sum
    * @until #//sum
    *
-   * @param     values  a vector containing the arrays to be used
-   * @return            an XdmfArray containing one value which is the total of all the values contained within the provided arrays
+   * @param	values	a vector containing the arrays to be used
+   * @return		an XdmfArray containing one value which is the total of all the values contained within the provided arrays
    */
   static shared_ptr<XdmfArray> sum(std::vector<shared_ptr<XdmfArray> > values);
 

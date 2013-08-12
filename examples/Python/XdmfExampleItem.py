@@ -23,11 +23,30 @@ if __name__ == "__main__":
 	removeInfo = "Remove this"
 	exampleItem.removeInformation(removeInfo)
 
+	#//initialization begin
+
 	#Using a shared pointer to an XdmfDomain object as an example
 
 	exampleDomain = XdmfDomain.New()
+
+	#//initialization end
+
+	#//getItemTag begin
+
 	exampleTag = exampleDomain.getItemTag()
+
+	#//getItemTag end
+
+	#//getItemProperties begin
+
 	propertyMap = exampleDomain.getItemProperties()
+
+	#//getItemProperties end
+
+	#//traverse begin
+
 	writePath = "file path here"
 	exampleWriter = XdmfWriter.New(writepath)
 	exampleDomain.traverse(exampleWriter)
+
+	#//traverse end

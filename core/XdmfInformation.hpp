@@ -51,16 +51,16 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfInformation.cpp
-   * @skipline New
-   * @until setValue
+   * @skipline //#initialization
+   * @until //#initialization
    *
    * Python
    *
    * @dontinclude XdmfExampleInformation.py
-   * @skipline New
-   * @until setValue
+   * @skipline #//initialization
+   * @until #//initialization
    *
-   * @return constructed XdmfInformation.
+   * @return	constructed XdmfInformation.
    */
   static shared_ptr<XdmfInformation> New();
 
@@ -72,20 +72,20 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfInformation.cpp
-   * @skipline infoExample
-   * @until //
+   * @skipline //#initializationfull
+   * @until //#initializationfull
    *
    * Python
    *
    * @dontinclude XdmfExampleInformation.py
-   * @skipline infoExample
-   * @until #
+   * @skipline #//initializationfull
+   * @until #//initializationfull
    *
    * @param key a string containing the key of the XdmfInformation to create.
    * @param value a string containing the value of the XdmfInformation to
    * create.
    *
-   * @return constructed XdmfInformation
+   * @return	constructed XdmfInformation
    */
   static shared_ptr<XdmfInformation> New(const std::string & key,
                                          const std::string & value);
@@ -108,20 +108,20 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfInformation.cpp
-   * @skipline infoExample
-   * @until //
-   * @skipline getKey
-   * @until //
+   * @skipline //#initializationfull
+   * @until //#initializationfull
+   * @skipline //#getKey
+   * @until //#getKey
    *
    * Python
    *
    * @dontinclude XdmfExampleInformation.py
-   * @skipline infoExample
-   * @until #
-   * @skipline getKey
-   * @until #
+   * @skipline #//initializationfull
+   * @until #//initializationfull
+   * @skipline #//getKey
+   * @until #//getKey
    *
-   * @return string containing the key.
+   * @return	string containing the key.
    */
   std::string getKey() const;
 
@@ -133,20 +133,20 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfInformation.cpp
-   * @skipline infoExample
-   * @until //
-   * @skipline getValue
-   * @until //
+   * @skipline //#initializationfull
+   * @until //#initializationfull
+   * @skipline //#getValue
+   * @until //#getValue
    *
    * Python
    *
    * @dontinclude XdmfExampleInformation.py
-   * @skipline infoExample
-   * @until #
-   * @skipline getValue
-   * @until #
+   * @skipline #//initializationfull
+   * @until #//initializationfull
+   * @skipline #//getValue
+   * @until #//getValue
    *
-   * @return string containing the value.
+   * @return	string containing the value.
    */
   std::string getValue() const;
 
@@ -160,20 +160,20 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfInformation.cpp
-   * @skipline infoExample
-   * @until //
-   * @skipline setKey
-   * @until //
+   * @skipline //#initializationfull
+   * @until //#initializationfull
+   * @skipline //#setKey
+   * @until //#setKey
    *
    * Python
    *
    * @dontinclude XdmfExampleInformation.py
-   * @skipline infoExample
-   * @until #
-   * @skipline setKey
-   * @until #
+   * @skipline #//initializationfull
+   * @until #//initializationfull
+   * @skipline #//setKey
+   * @until #//setKey
    *
-   * @param key a string containing the key to set.
+   * @param	key	a string containing the key to set.
    */
   void setKey(const std::string & key);
 
@@ -185,20 +185,20 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfInformation.cpp
-   * @skipline infoExample
-   * @until //
-   * @skipline setValue
-   * @until //
+   * @skipline //#initializationfull
+   * @until //#initializationfull
+   * @skipline //#setValue
+   * @until //#setValue
    *
    * Python
    *
    * @dontinclude XdmfExampleInformation.py
-   * @skipline infoExample
-   * @until #
-   * @skipline setValue
-   * @until #
+   * @skipline #//initializationfull
+   * @until #//initializationfull
+   * @skipline #//setValue
+   * @until #//setValue
    *
-   * @param value a string containing the value to set.
+   * @param	value	a string containing the value to set.
    */
   void setValue(const std::string & value);
 

@@ -2,6 +2,8 @@
 
 int main(int, char **)
 {
+	//#initialization begin
+
 	std::string newPath = "File path to hdf5 file goes here";
 	std::string newSetPath = "path to the set goes here";
 	shared_ptr<const XdmfArrayType> readType = XdmfArrayType::Int32();
@@ -33,6 +35,8 @@ int main(int, char **)
 		readStrides,
 		readCounts,
 		readDataSize);
+
+	//#initialization end
 
 	return 0;
 }

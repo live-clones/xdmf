@@ -4,6 +4,8 @@
 
 int main(int, char **)
 {
+	//#initialization begin
+
 	std::string newPath = "File path to hdf5 file goes here";
 	std::string newSetPath = "path to the set goes here";
 	shared_ptr<const XdmfArrayType> readType = XdmfArrayType::Int32();
@@ -22,42 +24,99 @@ int main(int, char **)
 	readCounts.push_back(10);
 	readCounts.push_back(10);
 	readCounts.push_back(10);
+	std::vector<unsigned int> readDataSize;
+	//Three dimensions, 10 values in each
+	readDataSize.push_back(10);
+	readDataSize.push_back(10);
+	readDataSize.push_back(10);
 	shared_ptr<XdmfHDF5Controller> exampleController = XdmfHDF5Controller::New(
 		newPath,
 		newSetPath,
 		readType,
 		readStarts,
 		readStrides,
-		readCounts);
+		readCounts,
+		readDataSize);
 
+	//Using XdmfHDF5Controller since XdmfHeavyDataController is an abstract class
 
-	//Assuming that exampleController is a shared pointer to an XdmfHDF5Controller object
-	//Since XdmfHeavyDataController is an abstract class
-	std::string exampleSetPath = exampleController->getDataSetPath();	
+	//#initialization end
+
+	//#getDataSetPath begin
+
+	std::string exampleSetPath = exampleController->getDataSetPath();
+
+	//#getDataSetPath end
+
+	//#getDimensions begin
 
 	std::vector<unsigned int>  exampleDimensions = exampleController->getDimensions();
 
+	//#getDimensions end
+
+	//#getDataspaceDimensions begin
+
+	std::vector<unsigned int> exampleDataspaceDimensions = exampleController->getDataspaceDimensions();
+
+	//#getDataspaceDimensions end
+
+	//#getFilePath begin
+
 	std::string exampleFilePath = exampleController->getFilePath();
+
+	//#getFilePath end
+
+	//#getName begin
 
 	std::string exampleName = exampleController->getName();
 
+	//#getName end
+
+	//#getSize begin
+
 	unsigned int exampleSize = exampleController->getSize();
 
+	//#getSize end
+
+	//#getType begin
+
 	shared_ptr<const XdmfArrayType> exampleType = exampleController->getType();
+
+	//#getType end
+
+	//#read begin
 
 	shared_ptr<XdmfArray> exampleArray = XdmfArray::New();
 	exampleController->read(exampleArray);
 	//exampleArray now holds the data that exampleController holds.
 
+	//#read end
+
+	//#getStart begin
+
         std::vector<unsigned int> exampleStart = exampleController->getStart();
 
+	//#getStart end
+
+	//#getStride begin
+
         std::vector<unsigned int> exampleStride = exampleController->getStride();
+
+	//#getStride end
+
+	//#setArrayOffset begin
 
 	unsigned int newArrayOffset = 5;//default is 0
 
 	exampleController->setArrayOffset(newArrayOffset);
 
+	//#setArrayOffset end
+
+	//#getArrayOffset begin
+
 	unsigned int exampleOffset = exampleController->getArrayOffset();
+
+	//#getArrayOffset end
 
 	return 0;
 }

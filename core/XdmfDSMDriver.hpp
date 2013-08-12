@@ -88,9 +88,12 @@ extern "C" {
 #else
   XDMFCORE_EXPORT void XDMF_dsm_term(void);
 #endif
-  XDMFCORE_EXPORT herr_t XDMF_dsm_lock(void);// lock and unlock are going to need different behavior
+  // lock and unlock are currently disabled the user has to make allowances
+  // to prevent race conditions
+  XDMFCORE_EXPORT herr_t XDMF_dsm_lock(void);
   XDMFCORE_EXPORT herr_t XDMF_dsm_unlock(unsigned long flag);
-  XDMFCORE_EXPORT herr_t XDMF_dsm_set_options(unsigned long flags);// currently no options to set
+  // Currently no options to set
+  XDMFCORE_EXPORT herr_t XDMF_dsm_set_options(unsigned long flags);
   XDMFCORE_EXPORT herr_t XDMF_dsm_set_manager(void *manager);
   XDMFCORE_EXPORT herr_t XDMFH5Pset_fapl_dsm(hid_t fapl_id, MPI_Comm intra_comm,
       void *local_buf_ptr, size_t local_buf_len);
@@ -105,11 +108,13 @@ extern "C" {
       void **buf_ptr_ptr, size_t *buf_len_ptr);
   XDMFCORE_EXPORT void    xdmf_dsm_set_manager(void *manager);
 
-  XDMFCORE_EXPORT herr_t  xdmf_dsm_alloc(MPI_Comm intra_comm, void *buf_ptr, size_t buf_len);// Probably a bad idea to create managers automatically for the non-threaded version
+  // Probably a bad idea to create managers automatically for the non-threaded version
+  XDMFCORE_EXPORT herr_t  xdmf_dsm_alloc(MPI_Comm intra_comm, void *buf_ptr, size_t buf_len);
   XDMFCORE_EXPORT herr_t  xdmf_dsm_free();
 
   XDMFCORE_EXPORT hbool_t xdmf_dsm_is_server();
-  XDMFCORE_EXPORT herr_t  xdmf_dsm_set_options(unsigned long flags);// currently no options to set
+  // Currently no options to set
+  XDMFCORE_EXPORT herr_t  xdmf_dsm_set_options(unsigned long flags);
 
   XDMFCORE_EXPORT hbool_t xdmf_dsm_is_connected();
   XDMFCORE_EXPORT herr_t  xdmf_dsm_connect();
@@ -117,7 +122,7 @@ extern "C" {
   XDMFCORE_EXPORT herr_t  xdmf_dsm_update_entry(haddr_t start, haddr_t end);
   XDMFCORE_EXPORT herr_t  xdmf_dsm_get_entry(haddr_t *start_ptr, haddr_t *end_ptr);
 
-  XDMFCORE_EXPORT herr_t  xdmf_dsm_lock();// Lock and unlock will need different behavior
+  XDMFCORE_EXPORT herr_t  xdmf_dsm_lock();
   XDMFCORE_EXPORT herr_t  xdmf_dsm_unlock(unsigned long flag);
 
   XDMFCORE_EXPORT herr_t  xdmf_dsm_read(haddr_t addr, size_t len, void *buf_ptr);

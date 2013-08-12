@@ -77,7 +77,7 @@ XdmfDSMCommMPI::~XdmfDSMCommMPI()
     int status = MPI_Comm_free(&InterComm);
     if (status != MPI_SUCCESS) {
       try {
-                          XdmfError::message(XdmfError::FATAL, "Failed to free intercomm Comm");
+        XdmfError::message(XdmfError::FATAL, "Failed to free intercomm Comm");
       }
       catch (XdmfError e) {
         throw e;
@@ -276,7 +276,7 @@ XdmfDSMCommMPI::DupComm(MPI_Comm comm)
       status = MPI_Comm_free(&IntraComm);
       if (status != MPI_SUCCESS) {
         try {
-                            XdmfError::message(XdmfError::FATAL, "Failed to disconnect Comm");
+          XdmfError::message(XdmfError::FATAL, "Failed to disconnect Comm");
         }
         catch (XdmfError e) {
           throw e;

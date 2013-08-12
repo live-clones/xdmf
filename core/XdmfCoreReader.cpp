@@ -271,10 +271,14 @@ public:
           }
         }
         if (newItem->getItemTag().compare((const char *)currNode->name) != 0) {
-          newItem->populateItem(itemProperties,  std::vector<shared_ptr<XdmfItem> >(), mCoreReader);
+          newItem->populateItem(itemProperties,
+                                std::vector<shared_ptr<XdmfItem> >(),
+                                mCoreReader);
         }
         else {
-          newItem->populateItem(itemProperties, childItems, mCoreReader);
+          newItem->populateItem(itemProperties,
+          childItems,
+          mCoreReader);
         }
         myItems.push_back(newItem);
         mXPathMap.insert(std::make_pair(currNode, newItem));

@@ -9,6 +9,8 @@
 
 int main(int argc, char *argv[])
 {
+	//#initMPI begin
+
 	int size, id, providedThreading, dsmSize;
 	dsmSize = 64;//The total size of the DSM being created
 	MPI_Status status;
@@ -18,6 +20,8 @@ int main(int argc, char *argv[])
 
 	MPI_Comm_rank(comm, &id);
 	MPI_Comm_size(comm, &size);
+
+	//#initMPI end
 
 	if (id == 0)
 	{
@@ -31,6 +35,8 @@ int main(int argc, char *argv[])
 			std::cout << "# MPI_THREAD_MULTIPLE is OK" << std::endl;
 		}
 	}
+
+	//#generateBuffer begin
 
 	// Create DSM
 	H5FDdsmManager * dsmManager = new H5FDdsmManager();
@@ -46,6 +52,8 @@ int main(int argc, char *argv[])
 	//Generate DSM buffer
 	H5FDdsmBuffer * dsmBuffer = dsmManager->GetDsmBuffer();
 
+	//#generateBuffer end
+
 	// Get info from remote server
 	double remoteMB = dsmBuffer->GetTotalLength() / (1024.0 * 1024.0);
 	double numServers = dsmBuffer->GetEndServerId() + 1;
@@ -60,17 +68,35 @@ int main(int argc, char *argv[])
 
 	std::cout << "setting up DSM writer" << std::endl;
 	// Create DSM Writer and write to DSM space.
-	std::string newPath = "dsm";//virtual file path
+
+	//#initializewriterfrombuffer begin
+
+	// Virtual file path
+	std::string newPath = "dsm";
 	shared_ptr<XdmfHDF5WriterDSM> writer = XdmfHDF5WriterDSM::New(newPath, dsmBuffer);
 	writer->setMode(XdmfHeavyDataWriter::Hyperslab);
 
-	std::vector<unsigned int> writeStartVector;//holds the starting index for each dimension
-	std::vector<unsigned int> writeStrideVector;//holds the distance between written values for each dimension
-	std::vector<unsigned int> writeCountVector;//holds the total number of values for each dimension
-	std::vector<unsigned int> writeDataSizeVector;//holds the maximum DSM size for each dimension
+	//#initializewriterfrombuffer end
+
+	//#createwritecontrollervectors begin
+
+	// Virtual set path
+	std::string newSetPath = "data";
+
+	// Holds the starting index for each dimension
+	std::vector<unsigned int> writeStartVector;
+	// Holds the distance between written values for each dimension
+	std::vector<unsigned int> writeStrideVector;
+	// Holds the total number of values for each dimension
+	std::vector<unsigned int> writeCountVector;
+	//holds the maximum DSM size for each dimension
+	std::vector<unsigned int> writeDataSizeVector;
+
 	shared_ptr<XdmfHDF5ControllerDSM> readController;
+
+	//#createwritecontrollervectors end
+
 	std::vector<unsigned int> outputVector;
-	std::string newSetPath = "data";//virtual set path
 
 	/*
 	//writes must happen from all cores
@@ -212,6 +238,8 @@ int main(int argc, char *argv[])
 		array->pushBack(id);
 	}
 
+	//#initializereadcontroller begin
+
 	int startindex = 0;
 	for (unsigned int i = 0; i <= id; ++i)
 	{
@@ -225,9 +253,9 @@ int main(int argc, char *argv[])
 	}
 
 	writeStartVector.push_back(startindex);
+	writeStrideVector.push_back(1);
 	writeCountVector.push_back(array->getSize());
 	writeDataSizeVector.push_back(datacount);
-	writeStrideVector.push_back(1);
 
 	readController = XdmfHDF5ControllerDSM::New(
 		newPath,
@@ -238,6 +266,9 @@ int main(int argc, char *argv[])
 		writeCountVector,
 		writeDataSizeVector,
 		dsmBuffer);
+
+	//#initializereadController end
+
 	array->insert(readController);
 	for (unsigned int i = 0; i < size; ++i)
 	{
@@ -359,10 +390,18 @@ int main(int argc, char *argv[])
 	MPI_Barrier(comm);
 	std::cout << "core #" << id << "finished waiting" << std::endl;
 
-	std::vector<unsigned int> startVector;//holds the starting index for each dimension
-	std::vector<unsigned int> strideVector;//holds the distance between read values for each dimension
-	std::vector<unsigned int> countVector;//holds the total number of values for each dimension
-	std::vector<unsigned int> datasizeVector;//holds the maximum DSM size for each dimension
+	//#createreadcontrollervectors begin
+
+	//holds the starting index for each dimension
+	std::vector<unsigned int> startVector;
+	//holds the distance between read values for each dimension
+	std::vector<unsigned int> strideVector;
+	//holds the total number of values for each dimension
+	std::vector<unsigned int> countVector;
+	//holds the maximum DSM size for each dimension
+	std::vector<unsigned int> datasizeVector;
+
+	//#createreadcontrollervectors end
 
 	/*
 	//single core read must be called across all cores
@@ -649,9 +688,13 @@ int main(int argc, char *argv[])
 
 
 	MPI_Barrier(comm);
+
+	//#finalizeMPI
 	delete dsmManager;
 
 	MPI_Finalize();
+
+	//#finalizeMPI
 
 	return 0;
 }

@@ -182,7 +182,13 @@ public:
   private:
 
     XdmfTopologyTypeCurvilinear(const XdmfCurvilinearGrid * const curvilinearGrid) :
-      XdmfTopologyType(0, 0, std::vector<shared_ptr<const XdmfTopologyType> >(), 0, "foo", XdmfTopologyType::Structured, 0x1110),
+      XdmfTopologyType(0,
+                       0,
+                       std::vector<shared_ptr<const XdmfTopologyType> >(),
+                       0,
+                       "foo",
+                       XdmfTopologyType::Structured,
+                       0x1110),
       mCurvilinearGrid(curvilinearGrid)
     {
     }

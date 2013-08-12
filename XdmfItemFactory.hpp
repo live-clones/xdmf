@@ -56,7 +56,7 @@ public:
    * @skipline #//initialization
    * @until #//initialization
    *
-   * @return constructed XdmfItemFactory.
+   * @return	constructed XdmfItemFactory.
    */
   static shared_ptr<XdmfItemFactory> New();
 

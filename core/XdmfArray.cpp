@@ -735,7 +735,8 @@ XdmfArray::getHeavyDataController() const
 void
 XdmfArray::setHeavyDataController(shared_ptr<XdmfHeavyDataController> newController)
 {
-  // Since this is replacing the previous version which was designed to completely replace the controller of the array
+  // Since this is replacing the previous version which was designed to
+  // completely replace the controller of the array
   // It will clear the current controllers before adding the new one in
   mHeavyDataControllers.clear();
   mHeavyDataControllers.push_back(newController);
@@ -940,7 +941,9 @@ XdmfArray::insert(const std::vector<unsigned int> startIndex,
           && numValues.size() == valuesStride.size())) {
       try {
         XdmfError::message(XdmfError::FATAL,
-                           "Error: Number of starts, strides, and/or values retrieved does not match up with the dimensions of the array being retrieved from");
+                           "Error: Number of starts, strides, and/or values "
+                           "retrieved does not match up with the dimensions "
+                           "of the array being retrieved from");
       }
       catch (XdmfError e) {
         throw e;
@@ -951,7 +954,9 @@ XdmfArray::insert(const std::vector<unsigned int> startIndex,
                && mDimensions.size() == arrayStride.size())) {
       try {
         XdmfError::message(XdmfError::FATAL,
-                           "Error: Number of starts, strides, and/or values written does not match up with the dimensions of the array being inserted into");
+                           "Error: Number of starts, strides, and/or values "
+                           "written does not match up with the dimensions "
+                           "of the array being inserted into");
       }
       catch (XdmfError e) {
         throw e;
@@ -1092,7 +1097,8 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
       }
       else {
         // If it fails then it means that the next content is not a dimension string
-        // In this case it is assumed that the controller will have dimensions equal to the array
+        // In this case it is assumed that the controller will have
+        // dimensions equal to the array
         for (unsigned int j = 0; j < mDimensions.size(); ++j) {
           contentDims.push_back(mDimensions[j]);
         }

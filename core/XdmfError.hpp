@@ -29,8 +29,8 @@ public:
      * @skipline #//initialization
      * @until #//initialization
      *
-     * @param	level	the error level of the exception being constructed
-     * @param	message	the message to be attached to the exception
+     * @param	level		the error level of the exception being constructed
+     * @param	message		the message to be attached to the exception
      */
     XdmfError(Level level, std::string message);
 

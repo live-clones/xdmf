@@ -2,6 +2,8 @@ from Xdmf import *
 from mpi4py.MPI import * #the act of importing this automatically calls Init
 
 if __name__ == "__main__":
+	#//initMPI begin
+
 	comm = COMM_WORLD
 
 	dsmSize = 64
@@ -9,8 +11,17 @@ if __name__ == "__main__":
 	id = comm.Get_rank()
 	size = comm.Get_size()
 
+	coreSize = int(dsmSize/size)
+
+	#//initMPI end
+
 	exampleArray = XdmfArray.New()
 	exampleArray.initializeAsInt32(0)
+
+	#Writing form all cores
+
+	#//writevectorinit begin
+
 	newPath = "dsm"
 	newSetPath = "data"
 
@@ -19,13 +30,16 @@ if __name__ == "__main__":
 	writeStrides = UInt32Vector()
 	writeDataSize = UInt32Vector()
 
-	#Writing form all cores
-	for i in range (1, 5):
-		exampleArray.pushBackAsInt32(i*id)
 	writeStarts.push_back(id*4)
 	writeCounts.push_back(4)
 	writeStrides.push_back(1)
 	writeDataSize.push_back(size*4)
+
+	#//writevectorinit end
+
+	for i in range (1, 5):
+                exampleArray.pushBackAsInt32(i*id)
+
 
 	#writing from one core
 	#if id == 0:
@@ -55,12 +69,15 @@ if __name__ == "__main__":
 	#writeStrides.push_back(1)
 	#writeDataSize.push_back(totaldata)
 
-
-	coreSize = int(dsmSize/size)
+	#//initwritergenerate begin
 
 	#Python has to do it this way because H5FD isn't wrapped to Python
 	#If this is used the manager must be deleted before the program ends.
 	exampleWriter = XdmfHDF5WriterDSM.New(newPath, comm, coreSize)
+
+	#//initwritergenerate end
+
+	#//initcontrollerwithbuffer begin
 
 	writeController = XdmfHDF5ControllerDSM.New(
 		newPath,
@@ -72,11 +89,26 @@ if __name__ == "__main__":
 		writeDataSize,
 		exampleWriter.getBuffer())
 
+	#//initcontrollerwithbuffer end
+
+	#//setManagercontroller begin
+
 	writeController.setManager(exampleWriter.getManager())
+
+	#//setManagercontroller end
+
+	#//setBuffercontroller begin
+
 	writeController.setBuffer(exampleWriter.getBuffer())
+
+	#//setBuffercontroller end
 
 	exampleWriter.deleteManager()
 
+	#//initcontrollergenerate begin
+
+	#Python has to do it this way because H5FD isn't wrapped to Python
+	#If this is used the manager must be deleted before the program ends.
 	writeController = XdmfHDF5ControllerDSM.New(
                 newPath,
                 newSetPath,
@@ -88,9 +120,25 @@ if __name__ == "__main__":
                 comm,
 		coreSize)
 
+	#//initcontrollergenerate end
+
+	#//initwriterwithbuffer begin
+
 	exampleWriter = XdmfHDF5WriterDSM.New(newPath, writeController.getBuffer())
+
+	#//initwriterwithbuffer end
+
+	#//setManagerwriter begin
+
 	exampleWriter.setManager(writeController.getManager())
+
+	#//setManagerwriter end
+
+	#//setBufferwriter begin
+
 	exampleWriter.setBuffer(writeController.getBuffer())
+
+	#//setBufferwriter end
 
 	exampleWriter.setMode(XdmfHeavyDataWriter.Hyperslab);
 
@@ -218,10 +266,18 @@ if __name__ == "__main__":
 			for j in range (0, readArray.getSize()):
 				print "Core #" + str(id) +" exampleArray[" + str(j) + "] = " + str(readArray.getValueAsInt32(j))
 
-	#if the New method using the Comm and data size is used, the manager has to be deleted or there will be a segfault
+	#//deleteManagerwriter begin
+
 	exampleWriter.deleteManager()
+
+	#//deleteManagerwriter end
+
 	'''
+	#//deleteManagercontroller
+
 	writeController.deleteManager()
+
+	#//deleteManagercontroller
 	'''
 
 	#finalize is automatically called on program exit

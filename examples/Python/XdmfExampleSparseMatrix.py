@@ -1,11 +1,25 @@
 from Xdmf import *
 
 if __name__ == "__main__":
+	#//initialization begin
+
         exampleMatrix = XdmfSparseMatrix.New(3, 3)
+
+	#//initialization end
+
+	#//setName begin
 
         exampleMatrix.setName("TestMatrix")
 
+	#//setName end
+
+	#//getName begin
+
         exampleName = exampleMatrix.getName()
+
+	#//getName end
+
+	#//setRowPointer begin
 
         newRowPointer = XdmfArray.New()
 
@@ -16,7 +30,15 @@ if __name__ == "__main__":
 
         exampleMatrix.setRowPointer(newRowPointer)
 
+	#//setRowPointer end
+
+	#//getRowPointer begin
+
         exampleRowPointer = exampleMatrix.getRowPointer()
+
+	#//getRowPointer end
+
+	#//setColumnIndex begin
 
         newColumnIndex = XdmfArray.New()
 
@@ -26,11 +48,27 @@ if __name__ == "__main__":
 
         exampleMatrix.setColumnIndex(newColumnIndex)
 
+	#//setColumnIndex end
+
+	#//getColumnIndex begin
+
         exampleColumnIndex = exampleMatrix.getColumnIndex()
+
+	#//getColumnIndex end
+
+	#//getNumberRows begin
 
         exampleNumRows = exampleMatrix.getNumberRows()
 
+	#//getNumberRows end
+
+	#//getNumberColumns begin
+
         exampleNumCols = exampleMatrix.getNumberColumns()
+
+	#//getNumberColumns end
+
+	#//setValues begin
 
         newValues = XdmfArray.New()
 
@@ -40,6 +78,16 @@ if __name__ == "__main__":
 
         exampleMatrix.setValues(newValues)
 
+	#//setValues end
+
+	#//getValues begin
+
         exampleValues = exampleMatrix.getValues()
 
+	#//getValues end
+
+	#//getValuesString begin
+
         exampleValueString = exampleMatrix.getValuesString()
+
+	#//getValuesString end

@@ -59,12 +59,12 @@ public:
    * @skipline #//createItem
    * @until #//createItem
    *
-   * @param itemTag a string containing the tag of the XdmfItem to create.
-   * @param itemProperties a map of key/value properties for the the XdmfItem.
-   * @param childItems the children of the XdmfItem to create.
+   * @param 	itemTag 	a string containing the tag of the XdmfItem to create.
+   * @param 	itemProperties 	a map of key/value properties for the the XdmfItem.
+   * @param 	childItems 	the children of the XdmfItem to create.
    *
-   * @return constructed XdmfItem. If no XdmfItem can be constructed,
-   * return NULL.
+   * @return 	constructed XdmfItem. If no XdmfItem can be constructed,
+   * 		return NULL.
    */
   virtual shared_ptr<XdmfItem>
   createItem(const std::string & itemTag,

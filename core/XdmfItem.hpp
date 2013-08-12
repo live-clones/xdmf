@@ -157,7 +157,7 @@ public:                                                                       \
       Assume that exampleItem is a shared pointer to the ParentClass object<br>
       Using an XdmfInformation as an example because all XdmfItems have XdmfInformation as a child class<br>
       '''<br>
-      removeIndex = 0
+      removeIndex = 0<br>
       exampleItem.removeInformation(removeIndex)
       @param index of the ChildClass to remove.
   */                                                                          \
@@ -293,17 +293,20 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfItem.cpp
-   * @skip {
-   * @skipline XdmfDomain
-   * @until getItemTag
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getItemTag
+   * @until //#getItemTag
    *
    * Python
    *
    * @dontinclude XdmfExampleItem.py
-   * @skipline XdmfDomain
-   * @until getItemTag
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getItemTag
+   * @until #//getItemTag
    *
-   * @return the tag for this XdmfItem.
+   * @return 	the tag for this XdmfItem.
    */
   virtual std::string getItemTag() const = 0;
 
@@ -316,17 +319,20 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfItem.cpp
-   * @skip {
-   * @skipline XdmfDomain
-   * @skipline getItemProperties
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getItemProperties
+   * @until //#getItemProperties
    *
    * Python
    *
    * @dontinclude XdmfExampleItem.py
-   * @skipline XdmfDomain
-   * @skipline getItemProperties
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getItemProperties
+   * @until #//getItemProperties
    *
-   * @return a map of key/value properties associated with this XdmfItem.
+   * @return	a map of key/value properties associated with this XdmfItem.
    */
   virtual std::map<std::string, std::string> getItemProperties() const = 0;
 
@@ -338,21 +344,20 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfItem.cpp
-   * @skip {
-   * @skipline XdmfDomain
-   * @skipline New
-   * @skipline writePath
-   * @until traverse
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#traverse
+   * @until //#traverse
    *
    * Python
    *
    * @dontinclude XdmfExampleItem.py
-   * @skipline XdmfDomain
-   * @skipline New
-   * @skipline writePath
-   * @until traverse
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//traverse
+   * @until #//traverse
    *
-   * @param visitor the visitor to pass to child items.
+   * @param 	visitor 	the visitor to pass to child items.
    */
   virtual void traverse(const shared_ptr<XdmfBaseVisitor> visitor);
 

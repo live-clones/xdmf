@@ -366,8 +366,7 @@ XDMFH5Pset_fapl_dsm(hid_t fapl_id, MPI_Comm intra_comm, void *local_buf_ptr,
 
   if (!xdmf_dsm_get_manager()) {
 	// throw error here instead of calling alloc
-    /*if (SUCCEED != dsm_alloc(intra_comm, local_buf_ptr, local_buf_len))
-      HGOTO_ERROR(H5E_PLIST, H5E_CANTALLOC, FAIL, "cannot allocate DSM buffer")*/
+        XdmfError::message(XdmfError::FATAL, "Error: In set_fapl_dsm No manager set");
   }
 
   if (SUCCEED != xdmf_dsm_get_properties(&fa.intra_comm, &fa.local_buf_ptr, &fa.local_buf_len))
@@ -599,7 +598,7 @@ XDMF_dsm_open(const char *name, unsigned flags, hid_t fapl_id, haddr_t maxaddr)
   file->local_buf_ptr = fa->local_buf_ptr;
   file->local_buf_len = fa->local_buf_len;
 
-  /* locking needs to be changed
+  /* locking is handled by the user
   if (SUCCEED != dsm_lock())
     HGOTO_ERROR(H5E_VFL, H5E_CANTLOCK, NULL, "cannot lock DSM")
   */
@@ -1011,8 +1010,6 @@ XDMF_dsm_communicator(const H5FD_t *_file)
 
 }
 
-//from Driver
-
 void*
 xdmf_dsm_get_manager()
 {
@@ -1062,15 +1059,8 @@ dsm_alloc(MPI_Comm intra_comm, void *buf_ptr, size_t buf_len)
   if (intra_comm == MPI_COMM_NULL) DSM_DRIVER_ERROR("invalid intra comm argument")
   if (buf_ptr && !buf_len) DSM_DRIVER_ERROR("invalid buffer length argument")
 
-  dsmManager = new H5FDdsmManager();
-  dsmManager->ReadConfigFile();
-  dsmManager->SetIsAutoAllocated(H5FD_DSM_TRUE);
+  dsmManager = new XdmfDSMManager();
   dsmManager->SetMpiComm(intra_comm);
-  if (buf_ptr) {
-    // TODO initialize DSM from given buffer
-  }
-  if (dsmManager->Create() != H5FD_DSM_SUCCESS)
-    DSM_DRIVER_ERROR("Cannot create DSM manager")
 
   return(SUCCEED);
 }*/
@@ -1122,7 +1112,7 @@ xdmf_dsm_set_options(unsigned long flags)
     }
   }
 
-	//currently no options to set
+	// Currently no options to set
 
   return(SUCCEED);
 }
@@ -1262,9 +1252,7 @@ xdmf_dsm_lock()
   }
 
 /* behavior will be different here
-  H5FDdsmBoolean parallel = (dsmManager->GetIsDriverSerial() == H5FD_DSM_TRUE) ? FALSE : TRUE;
-  if (dsmBufferService->RequestLockAcquire(parallel) != H5FD_DSM_SUCCESS)
-    DSM_DRIVER_ERROR("Cannot request lock acquisition")
+  As of right now, controlling race conditions falls on the user
 */
   return(SUCCEED);
 }
@@ -1286,9 +1274,7 @@ xdmf_dsm_unlock(unsigned long flag)
   }
 
 /*behavior will be different here
-  bool parallel = (dsmManager->GetIsDriverSerial() == H5FD_DSM_TRUE) ? FALSE : TRUE;
-  if (dsmBufferService->RequestLockRelease(flag, parallel) != H5FD_DSM_SUCCESS)
-    DSM_DRIVER_ERROR("Cannot request lock release")
+  As of right now, controlling race conditions falls on the user
 */
   return(SUCCEED);
 }

@@ -188,7 +188,8 @@ XdmfArrayType::New(const std::map<std::string, std::string> & itemProperties)
 }
 
 shared_ptr<const XdmfArrayType>
-XdmfArrayType::comparePrecision(shared_ptr<const XdmfArrayType> type1, shared_ptr<const XdmfArrayType> type2)
+XdmfArrayType::comparePrecision(shared_ptr<const XdmfArrayType> type1,
+                                shared_ptr<const XdmfArrayType> type2)
 {
   std::string type1Name = type1->getName();
   std::string type2Name = type2->getName();
@@ -203,12 +204,16 @@ XdmfArrayType::comparePrecision(shared_ptr<const XdmfArrayType> type1, shared_pt
   }
 
   bool firstIsSigned = false;
-  if (type1Name.compare("UChar") != 0 && type1Name.compare("UShort") != 0 && type1Name.compare("UInt") != 0) {
+  if (type1Name.compare("UChar") != 0 &&
+      type1Name.compare("UShort") != 0 &&
+      type1Name.compare("UInt") != 0) {
     firstIsSigned = true;
   }
 
   bool secondIsSigned = false;
-  if (type2Name.compare("UChar") != 0 && type2Name.compare("UShort") != 0 && type2Name.compare("UInt") != 0) {
+  if (type2Name.compare("UChar") != 0 &&
+      type2Name.compare("UShort") != 0 &&
+      type2Name.compare("UInt") != 0) {
     secondIsSigned = true;
   }
 
@@ -233,7 +238,8 @@ XdmfArrayType::comparePrecision(shared_ptr<const XdmfArrayType> type1, shared_pt
       // Char
     case 2:
       // UChar
-      if (type2Name.compare("Char") == 0 || type2Name.compare("UChar") == 0) {
+      if (type2Name.compare("Char") == 0 ||
+          type2Name.compare("UChar") == 0) {
         // This statement would be called in the case
         // where there is a mixed type of Char and UChar
         // The resulting type should be a Short
@@ -242,7 +248,9 @@ XdmfArrayType::comparePrecision(shared_ptr<const XdmfArrayType> type1, shared_pt
       }
     case 3:
       // Short
-      if (type2Name.compare("Char") == 0 || type2Name.compare("UChar") == 0 || type2Name.compare("Short") == 0) {
+      if (type2Name.compare("Char") == 0 ||
+          type2Name.compare("UChar") == 0 ||
+          type2Name.compare("Short") == 0) {
         // This will be called for any combination of
         // Char/UChar and Short
         // In all of these cases the result shoule be a Short
@@ -251,13 +259,15 @@ XdmfArrayType::comparePrecision(shared_ptr<const XdmfArrayType> type1, shared_pt
       }
     case 4:
       // UShort
-      if (type2Name.compare("Char") == 0 || type2Name.compare("Short") == 0) {
+      if (type2Name.compare("Char") == 0 ||
+          type2Name.compare("Short") == 0) {
         // When mixing UShort with a signed type that has a lower precision
         // the resulting type should be an int
         return Int32();
         break;
       }
-      else if (type2Name.compare("UChar") == 0 || type2Name.compare("UShort") == 0) {
+      else if (type2Name.compare("UChar") == 0 ||
+               type2Name.compare("UShort") == 0) {
         // When mixing UShort with an unsigned type that has a lower precision
         // a Ushort should be the resulting type
         if (!firstIsSigned) {
@@ -270,7 +280,10 @@ XdmfArrayType::comparePrecision(shared_ptr<const XdmfArrayType> type1, shared_pt
       }
     case 5:
       // Int
-      if (type2Name.compare("Int") != 0 && type2Name.compare("UInt") != 0 && type2Name.compare("Float") != 0 && type2Name.compare("String") != 0) {
+      if (type2Name.compare("Int") != 0 &&
+          type2Name.compare("UInt") != 0 &&
+          type2Name.compare("Float") != 0 &&
+          type2Name.compare("String") != 0) {
         // When mixing an Int with a type of lower precision
         // the resulting type should match the Int's precision
         if (type1->getElementSize() == 4) {
@@ -292,7 +305,10 @@ XdmfArrayType::comparePrecision(shared_ptr<const XdmfArrayType> type1, shared_pt
       }
     case 6:
       // UInt
-      if (type2Name.compare("UInt") != 0 && type2Name.compare("Int") != 0 && type2Name.compare("Float") != 0 && type2Name.compare("String") != 0) {
+      if (type2Name.compare("UInt") != 0 &&
+          type2Name.compare("Int") != 0 &&
+          type2Name.compare("Float") != 0 &&
+          type2Name.compare("String") != 0) {
         // When mixing UInt with another non-floating-point type
         // the result should be either long or unsigned int
         // depending on the if the mixed type is signed or not
@@ -319,7 +335,9 @@ XdmfArrayType::comparePrecision(shared_ptr<const XdmfArrayType> type1, shared_pt
       }
     case 7:
       // Float
-      if (type2Name.compare("String") != 0 && type2Name.compare("Float") != 0 && type2Name.compare("UInt") != 0) {
+      if (type2Name.compare("String") != 0 &&
+          type2Name.compare("Float") != 0 &&
+          type2Name.compare("UInt") != 0) {
         // String is the only type that has priority over a float
         // This case occurs when type1 is a float
         return type1;

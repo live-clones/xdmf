@@ -12,6 +12,8 @@
 
 int main(int argc, char *argv[])
 {
+	//#initMPI begin
+
 	int size, id, dsmSize;
 	dsmSize = 64;
 	MPI_Status status;
@@ -28,8 +30,6 @@ int main(int argc, char *argv[])
 
 	// Initializing objects
 
-	//since the start and end ids are larger than the size, there are no buffers alloted
-	//thus, no blockage occurs
 	XdmfDSMCommMPI * testComm = new XdmfDSMCommMPI();
 	testComm->DupComm(comm);
 	testComm->Init();
@@ -40,9 +40,64 @@ int main(int argc, char *argv[])
 
 	shared_ptr<XdmfHDF5WriterDSM> exampleWriter = XdmfHDF5WriterDSM::New(newPath, testBuffer);
 
+	//#initMPI end
+
+	//#ReadDsmPortName begin
+
 	exampleWriter->getServerBuffer()->GetComm()->ReadDsmPortName();
 
+	//#ReadDsmPortName end
+
+	//#GetDsmPortName begin
+
+	char * portName = exampleWriter->getServerBuffer()->GetComm()->GetDsmPortName();
+
+	//#GetDsmPortName end
+
+	//#SetDsmPortName begin
+
+	exampleWriter->getServerBuffer()->GetComm()->SetDsmPortName(portName);
+
+	//#SetDsmPortName end
+
+	//#Connect begin
+
 	exampleWriter->getServerManager()->Connect();
+
+	//#Connect end
+
+	/*
+
+	//#manualConnect begin
+
+	try
+	{
+		status = exampleWriter->getServerBuffer()->GetComm()->Connect();
+	}
+	catch (XdmfError e)
+	{
+		// Connection failed
+		std::cout << e.what() << std::endl;
+		return 0;
+	}
+	if (status == MPI_SUCCESS)
+	{
+		exampleWriter->getServerBuffer()->SetIsConnected(true);
+		try
+		{
+			exampleWriter->getServerBuffer()->ReceiveInfo();
+		}
+		catch (XdmfError e)
+		{
+			//ReceiveInfo failed
+			std::cout << e.what() << std::endl;
+			return 0;
+		}
+	}
+
+	//#manualConnect end
+
+	*/
 
 	MPI_Barrier(exampleWriter->getServerBuffer()->GetComm()->GetIntraComm());
 
@@ -169,11 +224,25 @@ int main(int argc, char *argv[])
 
 	MPI_Barrier(exampleWriter->getServerBuffer()->GetComm()->GetIntraComm());
 
-	// Do work stuff here
-
 	MPI_Barrier(exampleWriter->getServerBuffer()->GetComm()->GetInterComm());
 
+	//#Disconnectmanager begin
+
+	exampleWriter->getServerManager()->Disconnect();
+
+	//#Disconnectmanager end
+
+	//#Disconnectcomm begin
+
+	exampleWriter->getServerBuffer()->GetComm()->Disconnect();
+
+	//#Disconnectcomm end
+
+	//#finalizeMPI begin
+
 	MPI_Finalize();
+
+	//#finalizeMPI end
 
 	return 0;
 }

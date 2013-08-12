@@ -9,7 +9,9 @@
 
 int main(int argc, char *argv[])
 {
-	int size, id, providedThreading, dsmSize;
+	//#initMPI begin
+
+	int size, id, dsmSize;
 	dsmSize = 64;//The total size of the DSM being created
 	MPI_Status status;
 	MPI_Comm comm = MPI_COMM_WORLD;
@@ -19,18 +21,7 @@ int main(int argc, char *argv[])
 	MPI_Comm_rank(comm, &id);
 	MPI_Comm_size(comm, &size);
 
-	if (id == 0)
-	{
-		if (providedThreading != MPI_THREAD_MULTIPLE)
-		{
-			std::cout << "# MPI_THREAD_MULTIPLE not set, you may need to recompile your "
-				<< "MPI distribution with threads enabled" << std::endl;
-		}
-		else
-		{
-			std::cout << "# MPI_THREAD_MULTIPLE is OK" << std::endl;
-		}
-	}
+	//#initMPI end
 
 	std::vector<unsigned int> outputVector;
 
@@ -40,6 +31,8 @@ int main(int argc, char *argv[])
 	{
 		testArray->pushBack(i*id);
 	}
+
+	//#writevectorinit begin
 
 	std::string newPath = "dsm";
 	std::string newSetPath = "data";
@@ -53,9 +46,17 @@ int main(int argc, char *argv[])
 	std::vector<unsigned int> writeDataSizeVector;
 	writeDataSizeVector.push_back(4*size);
 
+	//#writevectorinit end
+
 	/*
+	//#initwritergenerate begin
+
 	shared_ptr<XdmfHDF5WriterDSM> exampleWriter = XdmfHDF5WriterDSM::New(newPath, comm, dsmSize/size);
+
+	//#initwritergenerate end
 	*/
+
+	//#initcontrollergenerate begin
 
 	shared_ptr<XdmfHDF5ControllerDSM> writeController = XdmfHDF5ControllerDSM::New(
 		newPath,
@@ -68,8 +69,11 @@ int main(int argc, char *argv[])
 		comm,
 		dsmSize/size);
 
+	//#initcontrollergenerate end
 
 	/*
+	//#initcontrollerwithbuffer begin
+
 	shared_ptr<XdmfHDF5ControllerDSM> writeController = XdmfHDF5ControllerDSM::New(
 		newPath,
 		newSetPath,
@@ -79,17 +83,43 @@ int main(int argc, char *argv[])
 		writeCountVector,
 		writeDataSizeVector,
 		exampleWriter->getBuffer());
+
+	//#initcontrollerwithbuffer end
+
+	//#setManagercontroller begin
+
 	writeController->setManager(exampleWriter->getManager());
+
+	//#setManagercontroller end
+
+	//#setBuffercontroller begin
+
 	writeController->setBuffer(exampleWriter->getBuffer());
 	//In this context setting the buffer is redundant
 	//However, if multiple buffers exist, this can be used to change between them
+
+	//#setBuffercontroller end
 	*/
 
+	//#initwriterwithbuffer begin
+
 	shared_ptr<XdmfHDF5WriterDSM> exampleWriter = XdmfHDF5WriterDSM::New(newPath, writeController->getBuffer());
+
+	//#initwriterwithbuffer end
+
+	//#setManagerwriter begin
+
 	exampleWriter->setManager(writeController->getManager());
+
+	//#setManagerwriter end
+
+	//#setBufferwriter begin
+
 	exampleWriter->setBuffer(writeController->getBuffer());
 	//In this context setting the buffer is redundant
 	//However, if multiple buffers exist, this can be used to change between them
+
+	//#setBufferwriter end
 
 	exampleWriter->setMode(XdmfHeavyDataWriter::Hyperslab);
 
@@ -213,18 +243,40 @@ int main(int argc, char *argv[])
 
 	MPI_Barrier(comm);
 
-	//the dsmManager must be deleted or else there will be a segfault
 	/*
+	//#managerdeletionwriter begin
+
+	//the dsmManager must be deleted or else there will be a segfault
+
 	delete exampleWriter->getManager();
-	//this function does the same thing as the above delete
-        //it was added so that python would have a way to avoid the segfault
-	writeController->deleteManager();
+
+	//#managerdeletionwriter end
+
+	//#deleteManagerwriter begin
+
+	//the dsmManager must be deleted or else there will be a segfault
+
+	examplewriter->deleteManager();
+
+	//#deleteManagerwriter end
 	*/
+
+	//#managerdeletioncontroller begin
+
+	//the dsmManager must be deleted or else there will be a segfault
+
 	delete writeController->getManager();
+
+	//#managerdeletioncontroller end
+
 	/*don't call delete twice on the same manager or else an error will occur
-	//this function does the same thing as the above delete
-	//it was added so that python would have a way to avoid the segfault
-	exampleWriter->deleteManager();
+	//#deleteManagercontroller begin
+
+	//the dsmManager must be deleted or else there will be a segfault
+
+	writeController->deleteManager();
+
+	//#deleteManagercontroller end
 	*/
 
 	MPI_Finalize();

@@ -61,19 +61,19 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfHDF5Writer.cpp
-   * @skipline newPath
-   * @until XdmfHDF5Writer
+   * @skipline //#initialization
+   * @until //#initialization
    *
    * Python
    *
    * @dontinclude XdmfExampleHDF5Writer.py
-   * @skipline newPath
-   * @until XdmfHDF5Writer
+   * @skipline #//initialization
+   * @until #//initialization
    *
    * @param filePath the location of the hdf5 file to output to on disk.
    * @param clobberFile whether to overwrite the previous file if it exists.
    *
-   * @return new XdmfHDF5Writer.
+   * @return	new XdmfHDF5Writer.
    */
   static shared_ptr<XdmfHDF5Writer> New(const std::string & filePath,
                                         const bool clobberFile = false);
@@ -89,22 +89,22 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfHDF5Writer.cpp
-   * @skipline newPath
-   * @until New
-   * @skipline getChunkSize
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getChunkSize
+   * @until //#getChunkSize
    *
    * Python
    *
    * @dontinclude XdmfExampleHDF5Writer.py
-   * @skipline newPath
-   * @until New
-   * @skipline getChunkSize
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getChunkSize
+   * @until #//getChunkSize
    *
-   * @return chunk size used to output datasets to hdf5.
+   * @return	chunk	size used to output datasets to hdf5.
    */
   unsigned int getChunkSize() const;
-
-  virtual int getDataSetSize(std::string fileName, std::string dataSetName, const int fapl);
 
   virtual void openFile();
 
@@ -116,20 +116,20 @@ public:
    * C++
    *
    * @dontinclude ExampleXdmfHDF5Writer.cpp
-   * @skipline newPath
-   * @until New
-   * @skipline newChunk
-   * @until setChunkSize
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setChunkSize
+   * @until //#setChunkSize
    *
    * Python
    *
    * @dontinclude XdmfExampleHDF5Writer.py
-   * @skipline newPath
-   * @until New
-   * @skipline newChunk
-   * @until setChunkSize
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setChunkSize
+   * @until #//setChunkSize
    *
-   * @param chunkSize the number of elements per chunk.
+   * @param 	chunkSize	the number of elements per chunk.
    */
   void setChunkSize(const unsigned int chunkSize);
 
@@ -140,31 +140,11 @@ public:
   virtual void visit(XdmfItem & item,
                      const shared_ptr<XdmfBaseVisitor> visitor);
 
-  using XdmfHeavyDataWriter::controllerSplitting;
-
-/*  //TODO temp, going to move to heavydatacontroller
-  virtual void controllerSplitting(XdmfArray & array,
-                                   const int fapl,
-                                   int & controllerIndexOffset,
-                                   shared_ptr<XdmfHeavyDataController> heavyDataController,
-                                   std::string checkFileName,
-                                   std::string checkFileExt,
-                                   std::string dataSetPath,
-                                   std::vector<unsigned int> dimensions,
-                                   std::vector<unsigned int> dataspaceDimensions,
-                                   std::vector<unsigned int> start,
-                                   std::vector<unsigned int> stride,
-                                   std::list<std::string> & filesWritten,
-                                   std::list<shared_ptr<XdmfArray> > & arraysWritten,
-                                   std::list<std::vector<unsigned int> > & startsWritten,
-                                   std::list<std::vector<unsigned int> > & stridesWritten,
-                                   std::list<std::vector<unsigned int> > & dimensionsWritten,
-                                   std::list<std::vector<unsigned int> > & dataSizesWritten,
-                                   std::list<unsigned int> & arrayOffsetsWritten);*/
-
 protected:
 
   XdmfHDF5Writer(const std::string & filePath);
+
+  using XdmfHeavyDataWriter::controllerSplitting;
 
   /**
    * Create a new HDF5 Controller that is able to read in after being
@@ -183,7 +163,7 @@ protected:
    * hdf5 data set (may be larger that dimensions if using
    * hyperslabs).
    *
-   * @return new HDF5 Controller.
+   * @return 	new HDF5 Controller.
    */
   virtual shared_ptr<XdmfHeavyDataController>
   createController(const std::string & hdf5FilePath,
@@ -194,18 +174,20 @@ protected:
                    const std::vector<unsigned int> & dimensions,
                    const std::vector<unsigned int> & dataspaceDimensions);
 
+  virtual int getDataSetSize(std::string fileName, std::string dataSetName, const int fapl);
+
   /**
    * Open hdf5 file with a fapl.
    *
-   * @param fapl the file access property list for the hdf5 file.
+   * @param 	fapl 	The file access property list for the hdf5 file.
    */
   void openFile(const int fapl);
 
   /**
    * Write the XdmfArray to a hdf5 file.
    *
-   * @param array an XdmfArray to write to hdf5.
-   * @param fapl the file access property list for the hdf5 file on disk.
+   * @param 	array	An XdmfArray to write to hdf5.
+   * @param 	fapl 	The file access property list for the hdf5 file on disk.
    */
   void write(XdmfArray & array, const int fapl);
 

@@ -68,14 +68,14 @@ public:
    * @skipline #//initialization2
    * @until #//initialization2
    *
-   * @param xBrickSize the size of the brick in the x direction.
-   * @param yBrickSize the size of the brick in the y direction.
-   * @param xNumPoints the number of points in the x direction.
-   * @param yNumPoints the number of points in the y direction.
-   * @param xOrigin the x coordinate of the origin.
-   * @param yOrigin the y coordinate of the origin.
+   * @param 	xBrickSize 	the size of the brick in the x direction.
+   * @param 	yBrickSize 	the size of the brick in the y direction.
+   * @param 	xNumPoints 	the number of points in the x direction.
+   * @param 	yNumPoints 	the number of points in the y direction.
+   * @param 	xOrigin 	the x coordinate of the origin.
+   * @param 	yOrigin 	the y coordinate of the origin.
    *
-   * @return constructed structured grid.
+   * @return 			constructed structured grid.
    */
   static shared_ptr<XdmfRegularGrid> New(const double xBrickSize,
                                          const double yBrickSize,
@@ -105,17 +105,17 @@ public:
    * @skipline #//initialization3
    * @until #//initialization3
    *
-   * @param xBrickSize the size of the brick in the x direction.
-   * @param yBrickSize the size of the brick in the y direction.
-   * @param zBrickSize the size of the brick in the z direction.
-   * @param xNumPoints the number of points in the x direction.
-   * @param yNumPoints the number of points in the y direction.
-   * @param zNumPoints the number of points in the z direction.
-   * @param xOrigin the x coordinate of the origin.
-   * @param yOrigin the y coordinate of the origin.
-   * @param zOrigin the z coordinate of the origin.
+   * @param 	xBrickSize 	the size of the brick in the x direction.
+   * @param 	yBrickSize 	the size of the brick in the y direction.
+   * @param 	zBrickSize 	the size of the brick in the z direction.
+   * @param 	xNumPoints 	the number of points in the x direction.
+   * @param 	yNumPoints 	the number of points in the y direction.
+   * @param 	zNumPoints 	the number of points in the z direction.
+   * @param 	xOrigin 	the x coordinate of the origin.
+   * @param 	yOrigin 	the y coordinate of the origin.
+   * @param 	zOrigin 	the z coordinate of the origin.
    *
-   * @return constructed structured grid.
+   * @return 			constructed structured grid.
    */
   static shared_ptr<XdmfRegularGrid> New(const double xBrickSize,
                                          const double yBrickSize,
@@ -144,11 +144,11 @@ public:
    * @skipline #//initializationvector
    * @until #//initializationvector
    *
-   * @param brickSize the size of the brick in each direction.
-   * @param numPoints the number of points in each direction.
-   * @param origin the coordinates of the origin.
+   * @param 	brickSize 	the size of the brick in each direction.
+   * @param 	numPoints 	the number of points in each direction.
+   * @param 	origin 		the coordinates of the origin.
    *
-   * @return constructed structured grid.
+   * @return 			constructed structured grid.
    */
   static shared_ptr<XdmfRegularGrid>
   New(const shared_ptr<XdmfArray> brickSize,
@@ -185,7 +185,7 @@ public:
    * @skipline #//getBrickSize
    * @until #//getBrickSize
    *
-   * @return XdmfArray containing brick sizes for this grid.
+   * @return 	XdmfArray containing brick sizes for this grid.
    */
   shared_ptr<XdmfArray> getBrickSize();
 
@@ -206,7 +206,7 @@ public:
    *
    * Python: Does not support a constant version of this function
    *
-   * @return XdmfArray containing brick sizes for this grid.
+   * @return 	XdmfArray containing brick sizes for this grid.
    */
   shared_ptr<const XdmfArray> getBrickSize() const;
 
@@ -236,7 +236,7 @@ public:
    * @skipline #//getDimensions
    * @until #//getDimensions
    *
-   * @return XdmfArray containing dimensions of this grid.
+   * @return 	XdmfArray containing dimensions of this grid.
    */
   shared_ptr<XdmfArray> getDimensions();
 
@@ -258,7 +258,7 @@ public:
    *
    * Python: Does not support a constant version of this function
    *
-   * @return XdmfArray containing the dimensions of this grid.
+   * @return 	XdmfArray containing the dimensions of this grid.
    */
   shared_ptr<const XdmfArray> getDimensions() const;
 
@@ -287,8 +287,8 @@ public:
    * @skipline #//getOrigin
    * @until #//getOrigin
    *
-   * @return XdmfArray containing the location of the origin of the
-   * grid.
+   * @return	XdmfArray containing the location of the origin of the
+   * 		grid.
    */
   shared_ptr<XdmfArray> getOrigin();
 
@@ -309,8 +309,8 @@ public:
    *
    * Python: Does not support a constant version of this function
    *
-   * @return XdmfArray containing the location of the origin of the
-   * grid (const version).
+   * @return 	XdmfArray containing the location of the origin of the
+   * 		grid (const version).
    */
   shared_ptr<const XdmfArray> getOrigin() const;
 
@@ -335,9 +335,9 @@ public:
    * @skipline #//setBrickSize
    * @until #//setBrickSize
    *
-   * @param brickSize the sizes of the points composing the mesh. This
-   * should have the same number of terms as the dimensionality of the
-   * mesh.
+   * @param 	brickSize 	the sizes of the points composing the mesh. This
+   * 				should have the same number of terms as the
+   *				dimensionality of the mesh.
    */
   void setBrickSize(const shared_ptr<XdmfArray> brickSize);
 
@@ -363,7 +363,7 @@ public:
    * @skipline #//setDimensions
    * @until #//setDimensions
    *
-   * @param dimensions the dimension of the grid.
+   * @param 	dimensions	The dimension of the grid.
    */
   void setDimensions(const shared_ptr<XdmfArray> dimensions);
 
@@ -388,8 +388,9 @@ public:
    * @skipline #//setOrigin
    * @until #//setOrigin
    *
-   * @param origin location of the origin of the grid.  This should
-   * have the same number of terms as the dimensionality of the mesh.
+   * @param 	origin 	location of the origin of the grid.  This should
+   * 			have the same number of terms as the dimensionality
+   *			of the mesh.
    */
   void setOrigin(const shared_ptr<XdmfArray> origin);
 

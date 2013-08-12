@@ -39,7 +39,7 @@ int main(int, char **)
 
 	int newSize = 10;
 	
-	//#sizedelcaration end
+	//#sizedeclaration end
 
 	//#reserve begin
 
@@ -65,7 +65,7 @@ int main(int, char **)
 	newSizeVector.push_back(4);
 	newSizeVector.push_back(5);
 
-	//#sizevectordelcaration end
+	//#sizevectordeclaration end
 
 	//#initializevectortemplate begin
 
@@ -295,7 +295,7 @@ int main(int, char **)
 
 	//#getSize end
 
-	//#setHeavyDataController begin
+	//#getHeavyDataController begin
 
 	shared_ptr<XdmfHeavyDataController> exampleController = exampleArray->getHeavyDataController();
 

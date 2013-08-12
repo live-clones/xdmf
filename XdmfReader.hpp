@@ -57,7 +57,7 @@ public:
    * @skipline #//initialization
    * @until #//initialization
    *
-   * @return constructed XdmfReader.
+   * @return	constructed XdmfReader.
    */
   static shared_ptr<XdmfReader> New();
 

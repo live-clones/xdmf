@@ -183,6 +183,9 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
 %mpi4py_typemap(Comm, MPI_Comm);
 
+%include <typemaps.i>
+%apply int & INOUT {int & data };
+
 #endif
 
 /*This causes it to avoid throwing a warning about overloaded functions.

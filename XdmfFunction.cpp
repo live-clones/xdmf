@@ -37,7 +37,11 @@ const std::string XdmfFunction::mValidDigitChars = "-1234567890.";
 // List the priorities for the operations, based on the order of operations
 // The index of the corresponding operation in validOperationChars
 // is the same as the index of its priority in this array
-std::map<char, int> XdmfFunction::mOperationPriority = boost::assign::map_list_of ('|', 2) ('#', 1) ('(', 0) (')', 0);
+std::map<char, int> XdmfFunction::mOperationPriority = 
+	boost::assign::map_list_of ('|', 2)
+                                   ('#', 1)
+                                   ('(', 0)
+                                   (')', 0);
 // The higher the value, the earlier the operation is
 // evaluated in the order of operations
 // With the exception of parenthesis which are evaluated
@@ -75,7 +79,7 @@ const std::string XdmfFunction::ItemTag = "Function";
 
 int
 XdmfFunction::addFunction(std::string name,
-                       shared_ptr<XdmfArray>(*functionref)(std::vector<shared_ptr<XdmfArray> >))
+                          shared_ptr<XdmfArray>(*functionref)(std::vector<shared_ptr<XdmfArray> >))
 {
   // Check to ensure that the name has valid characters
   for (unsigned int i = 0; i < name.size(); ++i) {
@@ -127,8 +131,11 @@ XdmfFunction::chunk(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2)
   // Join chunk (add the new array to the end of the first one)
   // Joins into new array and returns it
   shared_ptr<XdmfArray> returnArray = XdmfArray::New();
-    // Determining what type to class it as in order to not lose data, and to still have the smallest data type of the two
-  shared_ptr<const XdmfArrayType> resultType = XdmfArrayType::comparePrecision(val1->getArrayType(), val2->getArrayType());
+  // Determining what type to class it as in order to not lose data
+  // and to still have the smallest data type of the two
+  shared_ptr<const XdmfArrayType> resultType =
+    XdmfArrayType::comparePrecision(val1->getArrayType(),
+                                    val2->getArrayType());
 
   if (resultType == XdmfArrayType::Int8()) {
     char sampleValue = 0;
@@ -233,7 +240,8 @@ XdmfFunction::evaluateExpression(std::string expression,
           }
         }
         else {
-          std::string currentFunction = expression.substr(valueStart, i + 1 - valueStart);
+          std::string currentFunction =
+            expression.substr(valueStart, i + 1 - valueStart);
           // Check if next character is an open parenthesis
           if (i+1 >= expression.size()) {
             if (expression[i+1] != '(') {
@@ -278,7 +286,9 @@ XdmfFunction::evaluateExpression(std::string expression,
               parameterVector.push_back(evaluateExpression(functionParameters, variables));
             }
             else {
-              parameterVector.push_back(evaluateExpression(functionParameters.substr(0, parameterSplit), variables));
+              parameterVector.push_back(
+                evaluateExpression(functionParameters.substr(0, parameterSplit),
+                                   variables));
               functionParameters = functionParameters.substr(parameterSplit+1);
             }
           }
@@ -573,8 +583,10 @@ XdmfFunction::interlace(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2)
   // Builds a new array
   shared_ptr<XdmfArray> returnArray = XdmfArray::New();
   // Resize to the combined size of both arrays
-  // Determining what type to class it as in order to not lose data, and to still have the smallest data type of the two
-  shared_ptr<const XdmfArrayType> resultType = XdmfArrayType::comparePrecision(val1->getArrayType(), val2->getArrayType());
+  // Determining what type to class it as in order to not lose data
+  // and to still have the smallest data type of the two
+  shared_ptr<const XdmfArrayType> resultType =
+    XdmfArrayType::comparePrecision(val1->getArrayType(), val2->getArrayType());
 
   if (resultType == XdmfArrayType::Int8()) {
     char sampleValue = 0;
@@ -635,7 +647,8 @@ XdmfFunction::interlace(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2)
   int arrayExcess1 = 0;
   int arrayExcess2 = 0;
   for (int i = 0; i < stride; ++i) {
-    // Add the values of each array, using strides to interlace and starting index to offset
+    // Add the values of each array
+    // using strides to interlace and starting index to offset
     // first array gets the first value of the new array
     if (i<arrayRatio1) {
       int amountWritten = val1->getSize()/arrayRatio1;
@@ -662,10 +675,20 @@ XdmfFunction::interlace(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2)
     }
   }
   if (arrayExcess1 > 0) {
-    returnArray->insert(val1->getSize()+val2->getSize()-arrayExcess1, val1, 0, arrayExcess1, 1, 1);
+    returnArray->insert(val1->getSize()+val2->getSize()-arrayExcess1,
+                        val1,
+                        0,
+                        arrayExcess1,
+                        1,
+                        1);
   }
   else if (arrayExcess2 > 0) {
-    returnArray->insert(val1->getSize()+val2->getSize()-arrayExcess2, val2, 0, arrayExcess2, 1, 1);
+    returnArray->insert(val1->getSize()+val2->getSize()-arrayExcess2,
+                        val2,
+                        0,
+                        arrayExcess2,
+                        1,
+                        1);
   }
   // After all inserts are done, add the excess values to the end of the array
   return returnArray;

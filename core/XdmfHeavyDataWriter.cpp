@@ -30,7 +30,8 @@
 #include <list>
 #include <vector>
 
-XdmfHeavyDataWriter::XdmfHeavyDataWriter(const double compression, const unsigned int overhead) :
+XdmfHeavyDataWriter::XdmfHeavyDataWriter(const double compression,
+                                         const unsigned int overhead) :
   mAllowSplitDataSets(false),
   mDataSetId(0),
   mFileIndex(0),
@@ -42,7 +43,9 @@ XdmfHeavyDataWriter::XdmfHeavyDataWriter(const double compression, const unsigne
 {
 }
 
-XdmfHeavyDataWriter::XdmfHeavyDataWriter(const std::string & filePath, const double compression, const unsigned int overhead) :
+XdmfHeavyDataWriter::XdmfHeavyDataWriter(const std::string & filePath,
+                                         const double compression,
+                                         const unsigned int overhead) :
   mAllowSplitDataSets(false),
   mDataSetId(0),
   mFileIndex(0),
@@ -61,23 +64,23 @@ XdmfHeavyDataWriter::~XdmfHeavyDataWriter()
 
 void
 XdmfHeavyDataWriter::controllerSplitting(XdmfArray & array,
-                                    const int fapl,
-                                    int & controllerIndexOffset,
-                                    shared_ptr<XdmfHeavyDataController> heavyDataController,
-                                    std::string checkFileName,
-                                    std::string checkFileExt,
-                                    std::string dataSetPath,
-                                    std::vector<unsigned int> dimensions,
-                                    std::vector<unsigned int> dataspaceDimensions,
-                                    std::vector<unsigned int> start,
-                                    std::vector<unsigned int> stride,
-                                    std::list<std::string> & filesWritten,
-                                    std::list<shared_ptr<XdmfArray> > & arraysWritten,
-                                    std::list<std::vector<unsigned int> > & startsWritten,
-                                    std::list<std::vector<unsigned int> > & stridesWritten,
-                                    std::list<std::vector<unsigned int> > & dimensionsWritten,
-                                    std::list<std::vector<unsigned int> > & dataSizesWritten,
-                                    std::list<unsigned int> & arrayOffsetsWritten)
+                                         const int fapl,
+                                         int & controllerIndexOffset,
+                                         shared_ptr<XdmfHeavyDataController> heavyDataController,
+                                         std::string checkFileName,
+                                         std::string checkFileExt,
+                                         std::string dataSetPath,
+                                         std::vector<unsigned int> dimensions,
+                                         std::vector<unsigned int> dataspaceDimensions,
+                                         std::vector<unsigned int> start,
+                                         std::vector<unsigned int> stride,
+                                         std::list<std::string> & filesWritten,
+                                         std::list<shared_ptr<XdmfArray> > & arraysWritten,
+                                         std::list<std::vector<unsigned int> > & startsWritten,
+                                         std::list<std::vector<unsigned int> > & stridesWritten,
+                                         std::list<std::vector<unsigned int> > & dimensionsWritten,
+                                         std::list<std::vector<unsigned int> > & dataSizesWritten,
+                                         std::list<unsigned int> & arrayOffsetsWritten)
 {
   // This is the file splitting algorithm
   if (getFileSizeLimit() > 0) {
@@ -187,7 +190,9 @@ XdmfHeavyDataWriter::controllerSplitting(XdmfArray & array,
         // Calculate remaining size
         unsigned int remainingSize = 0;
         for (unsigned int j = sizeArrayIndex; j < array.getSize(); ++j) {
-          remainingSize += (unsigned int)((double)(array.getValue<std::string>(j).size()) * 8.0 * mCompressionRatio);
+          remainingSize +=
+            (unsigned int)((double)(array.getValue<std::string>(j).size()) *
+                           8.0 * mCompressionRatio);
         }
         if (mMode == Hyperslab) {
           // Size is estimated based on averages
@@ -291,7 +296,8 @@ XdmfHeavyDataWriter::controllerSplitting(XdmfArray & array,
             // See if it will fit in the next file
             // If it will just go to the next file
             // Otherwise split it.
-            if (remainingSize + getFileOverhead() > (unsigned int)getFileSizeLimit()*(1024*1024)
+            if (remainingSize + getFileOverhead() >
+                  (unsigned int)getFileSizeLimit()*(1024*1024)
                 && usableSpace > 0) {
               if (getAllowSetSplitting()) {
                 // Figure out the size of the largest block that will fit.
@@ -316,7 +322,8 @@ XdmfHeavyDataWriter::controllerSplitting(XdmfArray & array,
                         throw e;
                       }
                     }
-                    blockSizeSubtotal += array.getValue<std::string>(amountAlreadyWritten + k).size();
+                    blockSizeSubtotal +=
+                      array.getValue<std::string>(amountAlreadyWritten + k).size();
                   }
                   dimensionIndex++;
                 }
@@ -354,7 +361,9 @@ XdmfHeavyDataWriter::controllerSplitting(XdmfArray & array,
                   // Determine how many values from the array will fit
                   // into the blocks being used with the dimensions specified
                   unsigned int displacement = numBlocks / stride[j];
-                  if (((int)displacement * (int)stride[j]) + (start[j] % stride[j]) < numBlocks) {
+                  if (((int)displacement * (int)stride[j])
+                        + (start[j] % stride[j])
+                      < numBlocks) {
                     displacement++;
                   }
                   displacement -= start[j]/stride[j];
@@ -391,7 +400,8 @@ XdmfHeavyDataWriter::controllerSplitting(XdmfArray & array,
             // See if the remaining data will fit in the next file
             // If yes, skip to it
             // If no, split
-            if (remainingSize + getFileOverhead() > (unsigned int)getFileSizeLimit()*(1024*1024)
+            if (remainingSize + getFileOverhead() >
+                  (unsigned int)getFileSizeLimit()*(1024*1024)
                 && usableSpace > 0) {
               // Figure out the size of the largest block that will fit.
               unsigned int blockSizeSubtotal = 0;
@@ -415,7 +425,8 @@ XdmfHeavyDataWriter::controllerSplitting(XdmfArray & array,
                       throw e;
                     }
                   }
-                  blockSizeSubtotal += array.getValue<std::string>(amountAlreadyWritten + k).size();
+                  blockSizeSubtotal +=
+                    array.getValue<std::string>(amountAlreadyWritten + k).size();
                 }
                 dimensionIndex++;
               }
@@ -532,7 +543,9 @@ XdmfHeavyDataWriter::controllerSplitting(XdmfArray & array,
         if (remainingValues == 0) {//end if no remaining values
           break;
         }
-        unsigned int dataItemSize = (unsigned int)((double) (array.getArrayType()->getElementSize()) * mCompressionRatio);
+        unsigned int dataItemSize =
+          (unsigned int)((double) (array.getArrayType()->getElementSize()) *
+                         mCompressionRatio);
         // If remaining size is less than available space, just write all of what's left
         if ((remainingValues * dataItemSize) + previousDataSize + fileSize
             < (unsigned int)getFileSizeLimit()*(1024*1024)) {
@@ -758,7 +771,9 @@ XdmfHeavyDataWriter::controllerSplitting(XdmfArray & array,
                   // into the blocks being used
                   // with the dimensions specified
                   unsigned int displacement = numBlocks / stride[j];
-                  if (((int)displacement * (int)stride[j]) + (newStart % stride[j]) < numBlocks) {
+                  if (((int)displacement * (int)stride[j])
+                        + (newStart % stride[j])
+                      < numBlocks) {
                     displacement++;
                   }
                   displacement -= newStart/stride[j];
@@ -1191,7 +1206,8 @@ XdmfHeavyDataWriter::controllerSplitting(XdmfArray & array,
     else if (array.getArrayType() == XdmfArrayType::String()) {
       // closeDatatype is only true if strings are being used
       partialArray->initialize(XdmfArrayType::String(), 0);
-      // Transfering via loop because the getValues function is not fully tested with strings
+      // Transfering via loop because the getValues function
+      // is not fully tested with strings
       for (j = controllerIndexOffset;
            j < controllerIndexOffset + heavyDataController->getSize()
            && j < array.getSize();
