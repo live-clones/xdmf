@@ -109,6 +109,9 @@ XdmfArrayType::XdmfArrayType(const std::string & name,
   mName(name),
   mPrecision(precision)
 {
+  std::stringstream precisionString;
+  precisionString << precision;
+  mPrecisionString = precisionString.str();
 }
 
 XdmfArrayType::~XdmfArrayType()
@@ -193,7 +196,5 @@ void
 XdmfArrayType::getProperties(std::map<std::string, std::string> & collectedProperties) const
 {
   collectedProperties.insert(std::make_pair("DataType", mName));
-  std::stringstream precision;
-  precision << mPrecision;
-  collectedProperties.insert(std::make_pair("Precision", precision.str()));
+  collectedProperties.insert(std::make_pair("Precision", mPrecisionString));
 }
