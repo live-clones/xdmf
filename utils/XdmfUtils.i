@@ -16,6 +16,7 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
     #include <XdmfCoreItemFactory.hpp>
     #include <XdmfCoreReader.hpp>
     #include <XdmfError.hpp>
+    #include <XdmfFunction.hpp>
     #include <XdmfDSMManager.hpp>
     #include <XdmfDSMBuffer.hpp>
     #include <XdmfDSMCommMPI.hpp>
@@ -40,7 +41,6 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
     #include <XdmfAttributeType.hpp>
     #include <XdmfCurvilinearGrid.hpp>
     #include <XdmfDomain.hpp>
-    #include <XdmfFunction.hpp>
     #include <XdmfGeometry.hpp>
     #include <XdmfGeometryType.hpp>
     #include <XdmfGraph.hpp>
@@ -78,6 +78,7 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
     #include <XdmfCoreItemFactory.hpp>
     #include <XdmfCoreReader.hpp>
     #include <XdmfError.hpp>
+    #include <XdmfFunction.hpp>
     #include <XdmfHDF5Controller.hpp>
     #include <XdmfHDF5Writer.hpp>
     #include <XdmfHeavyDataController.hpp>
@@ -97,7 +98,6 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
     #include <XdmfAttributeType.hpp>
     #include <XdmfCurvilinearGrid.hpp>
     #include <XdmfDomain.hpp>
-    #include <XdmfFunction.hpp>
     #include <XdmfGeometry.hpp>
     #include <XdmfGeometryType.hpp>
     #include <XdmfGraph.hpp>

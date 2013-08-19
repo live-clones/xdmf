@@ -106,6 +106,27 @@ public:
     static void setLevelLimit(Level l);
 
     /**
+     * Sets the minimum Error level that displays messages with the message function.
+     *
+     * Example of use:
+     *
+     * C++
+     *
+     * @dontinclude ExampleXdmfError.cpp
+     * @skipline //#setSuppressionLevel
+     * @until //#setSuppressionLevel
+     *
+     * Python
+     *
+     * @dontinclude XdmfExampleError.py
+     * @skipline #//setSuppressionLevel
+     * @until #//setSuppressionLevel
+     *
+     * @param	l	The new minimum error level to display a message
+     */
+    static void setSuppressionLevel(Level l);
+
+    /**
      * Gets the level limit for Errors.
      *
      * Example of use:
@@ -127,6 +148,23 @@ public:
      * @return	gets the cuttof level for sending exceptions via message
      */
     static Level getLevelLimit();
+
+    /**
+     * Gets the minimum Error level that displays messages with the message function.
+     *
+     * @dontinclude ExampleXdmfError.cpp
+     * @skipline //#getSuppressionLevel
+     * @until //#getSuppressionLevel
+     *
+     * Python
+     *
+     * @dontinclude XdmfExampleError.py
+     * @skipline #//getSuppressionLevel
+     * @until #//getSuppressionLevel
+     *
+     * @return	The minimum error level to display a message
+     */
+    static Level getSuppressionLevel();
 
     /**
      * Alternate constructor for XdmfError exceptions.
@@ -199,6 +237,7 @@ public:
 private:
     Level mLevel;
     static Level mLevelLimit;
+    static Level mSuppressLevel;
     static std::streambuf* mBuf;
     std::string mMessage;
 

@@ -12,6 +12,7 @@ ADD_TEST_CXX_DEPENDENCIES("Xdmf")
 # ---------------------------------------
 ADD_TEST_CXX(TestXdmfAttribute)
 ADD_TEST_CXX(TestXdmfCurvilinearGrid)
+ADD_TEST_CXX(TestXdmfFunction)
 ADD_TEST_CXX(TestXdmfGeometry)
 ADD_TEST_CXX(TestXdmfGraph)
 ADD_TEST_CXX(TestXdmfGridCollection)
@@ -42,6 +43,9 @@ CLEAN_TEST_CXX(TestXdmfAttribute)
 CLEAN_TEST_CXX(TestXdmfCurvilinearGrid
   TestXdmfCurvilinearGrid1.xmf
   TestXdmfCurvilinearGrid2.xmf)
+CLEAN_TEST_CXX(TestXdmfFunction
+  function.xmf
+  function.h5)
 CLEAN_TEST_CXX(TestXdmfGeometry)
 CLEAN_TEST_CXX(TestXdmfGraph
   TestXdmfGraph.xmf)

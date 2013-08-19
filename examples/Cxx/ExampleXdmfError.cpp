@@ -39,6 +39,18 @@ int main(int, char **)
 
 	//#setLevelLimit end
 
+	//#getSuppressionLevel begin
+
+	XdmfError::Level exampleSuppression = XdmfError::getSuppressionLevel();
+
+	//#getSuppressionLevel end
+
+	//#setSuppressionLevel begin
+
+	XdmfError::setSuppressionLevel(XdmfError::DEBUG);
+
+	//#setSuppressionLevel end
+
 	//#setBuffer begin
 
 	XdmfError::setBuffer(std::cout.rdbuf());

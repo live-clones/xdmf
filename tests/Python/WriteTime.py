@@ -86,6 +86,3 @@ if __name__ == "__main__":
 	print (time.clock() - startclock)
 
 	print XdmfSystemUtils.getRealPath("timestamptest.xmf")
-
-	#os.remove("/usr/var/tmp/ajburns/timing.xmf")
-	#os.remove("/usr/var/tmp/ajburns/timing.h5")

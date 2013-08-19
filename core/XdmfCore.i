@@ -20,6 +20,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
     #include <XdmfDSMBuffer.hpp>
     #include <XdmfDSMCommMPI.hpp>
     #include <XdmfError.hpp>
+    #include <XdmfFunction.hpp>
     #include <XdmfHeavyDataController.hpp>
     #include <XdmfHeavyDataWriter.hpp>
     #include <XdmfHDF5Controller.hpp>
@@ -50,6 +51,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
     #include <XdmfCoreItemFactory.hpp>
     #include <XdmfCoreReader.hpp>
     #include <XdmfError.hpp>
+    #include <XdmfFunction.hpp>
     #include <XdmfHeavyDataController.hpp>
     #include <XdmfHeavyDataWriter.hpp>
     #include <XdmfHDF5Controller.hpp>
@@ -318,7 +320,6 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
         }
     }
 
-
     static shared_ptr<XdmfArray> XdmfArrayPtr(PyObject * obj)
     {
       void * resultPointer = 0;
@@ -328,14 +329,125 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
       shared_ptr<XdmfArray> returnArray = returnArrayPointer[0];
       return returnArray;
     }
-
-
-
 };
 
 %extend XdmfArrayType {
     bool __eq__(const XdmfArrayType * arrayType) {
    	return $self == arrayType;
+    }
+};
+
+/*This causes it to avoid throwing a warning for redefining fuctions that are defined for XdmfArray.
+  I do this because doing so was intentional.*/
+#pragma SWIG nowarn=302
+/*Warnint 325 is due to having nested classes in XdmfFunction that are not accessible when wrapped.
+  As of right now, this is acceptable behavior. So, the warning is suppressed*/
+#pragma SWIG nowarn=325
+
+%extend XdmfFunction {
+
+%{
+    /*trying to transfer python functions*/
+    /*note, accessing private members is impossible from swig.*/
+
+    class PythonFunction : public XdmfFunction::XdmfFunctionInternal {
+      public:
+        static shared_ptr<PythonFunction>
+        New(PyObject * functionref)
+        {
+          shared_ptr<PythonFunction> p (new PythonFunction(functionref));
+          return p;
+        }
+
+        ~PythonFunction()
+        {
+        }
+
+        virtual shared_ptr<XdmfArray> execute(std::vector<shared_ptr<XdmfArray> > valueVector)
+        {
+          swig_type_info * paramType = SWIG_TypeQuery("_p_std__vectorT_boost__shared_ptrT_XdmfArray_t_std__allocatorT_boost__shared_ptrT_XdmfArray_t_t_t");
+          PyObject * pyVector = SWIG_NewPointerObj(static_cast<void*>(& valueVector), paramType, SWIG_POINTER_NEW);
+          PyObject * args = PyTuple_New(1);
+          /* In this case you could also cast a pointer to the vector into the PyObject * type, but that doesn't work for all types*/
+          PyTuple_SetItem(args, 0, pyVector);
+          PyObject * resultObject = PyObject_CallObject(mInternalFunction, args);
+          void * resultPointer = 0;
+          swig_type_info * returnType = SWIG_TypeQuery("_p_boost__shared_ptrT_XdmfArray_t");
+          SWIG_ConvertPtr(resultObject, &resultPointer, returnType, 0);
+          shared_ptr<XdmfArray> * returnArrayPointer = reinterpret_cast<shared_ptr<XdmfArray> *>(resultPointer);
+          shared_ptr<XdmfArray> returnArray = returnArrayPointer[0];
+          return returnArray;
+        }
+      private:
+        PythonFunction(PyObject * functionref)
+        {
+          if (PyCallable_Check(functionref) == 1) {
+            mInternalFunction = functionref;
+          }
+          else {
+            XdmfError::message(XdmfError::FATAL,
+                               "Error: Function is not callable");
+          }
+        }
+
+        PyObject * mInternalFunction;
+    };
+
+    class PythonOperation : public XdmfFunction::XdmfOperationInternal {
+      public:
+        static shared_ptr<PythonOperation>
+        New(PyObject * operationref)
+        {
+          shared_ptr<PythonOperation> p (new PythonOperation(operationref));
+          return p;
+        }
+
+        ~PythonOperation()
+        {
+        }
+
+        virtual shared_ptr<XdmfArray> execute(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2)
+        {
+          swig_type_info * paramType = SWIG_TypeQuery("_p_boost__shared_ptrT_XdmfArray_t");
+          PyObject * pyVal1 = SWIG_NewPointerObj(static_cast<void*>(& val1), paramType, SWIG_POINTER_NEW);
+          PyObject * pyVal2 = SWIG_NewPointerObj(static_cast<void*>(& val2), paramType, SWIG_POINTER_NEW);
+          PyObject * args = PyTuple_New(2);
+          PyTuple_SetItem(args, 0, pyVal1);
+          PyTuple_SetItem(args, 1, pyVal2);
+          PyObject * resultObject = PyObject_CallObject(mInternalOperation, args);
+          void * resultPointer = 0;
+          swig_type_info * returnType = SWIG_TypeQuery("_p_boost__shared_ptrT_XdmfArray_t");
+          SWIG_ConvertPtr(resultObject, &resultPointer, returnType, 0);
+          shared_ptr<XdmfArray> * returnArrayPointer = reinterpret_cast<shared_ptr<XdmfArray> *>(resultPointer);
+          shared_ptr<XdmfArray> returnArray = returnArrayPointer[0];
+          return returnArray;
+        }
+      private:
+        PythonOperation(PyObject * operationref)
+        {
+          if (PyCallable_Check(operationref) == 1) {
+            mInternalOperation = operationref;
+          }
+          else {
+            XdmfError::message(XdmfError::FATAL,
+                               "Error: Operation is not callable");
+          }
+        }
+
+        PyObject * mInternalOperation;
+    };
+%}
+
+    static int addFunction(std::string newName, PyObject * functionref)
+    {
+      shared_ptr<PythonFunction> newFunction = PythonFunction::New(functionref);
+      return XdmfFunction::addFunction(newName, newFunction);
+    }
+
+    static int addOperation(char newName, PyObject * calcref, int priority)
+    {
+      shared_ptr<PythonOperation> newOperation = PythonOperation::New(calcref);
+      return XdmfFunction::addOperation(newName, newOperation, priority);
     }
 };
 
@@ -365,6 +477,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %shared_ptr(XdmfArrayType)
 %shared_ptr(XdmfCoreItemFactory)
 %shared_ptr(XdmfCoreReader)
+%shared_ptr(XdmfFunction)
 %shared_ptr(XdmfHDF5Controller)
 %shared_ptr(XdmfHDF5Writer)
 #ifdef XDMF_BUILD_DSM
@@ -394,6 +507,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %include XdmfSparseMatrix.hpp
 %include XdmfSystemUtils.hpp
 %include XdmfVisitor.hpp
+%include XdmfFunction.hpp
 %include XdmfHeavyDataController.hpp
 %include XdmfHeavyDataWriter.hpp
 

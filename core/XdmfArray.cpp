@@ -30,6 +30,7 @@
 #include <math.h>
 #include "XdmfArray.hpp"
 #include "XdmfArrayType.hpp"
+#include "XdmfFunction.hpp"
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfHeavyDataController.hpp"
 #include "XdmfVisitor.hpp"
@@ -562,7 +563,9 @@ XdmfArray::New()
 XdmfArray::XdmfArray() :
   mArrayPointerNumValues(0),
   mName(""),
-  mTmpReserveSize(0)
+  mTmpReserveSize(0),
+  mWriteAsFunction(false),
+  mFunction(shared_ptr<XdmfFunction>())
 {
 }
 
@@ -653,6 +656,12 @@ XdmfArray::getDimensionsString() const
                                                             dimensions.size());
 }
 
+shared_ptr<XdmfFunction>
+XdmfArray::getFunction()
+{
+  return mFunction;
+}
+
 std::map<std::string, std::string>
 XdmfArray::getItemProperties() const
 {
@@ -712,6 +721,12 @@ XdmfArray::getValuesString() const
 {
   return boost::apply_visitor(GetValuesString(mArrayPointerNumValues), 
                               mArray);
+}
+
+bool
+XdmfArray::getWriteAsFunction()
+{
+  return mWriteAsFunction;
 }
 
 shared_ptr<XdmfHeavyDataController>
@@ -1211,6 +1226,13 @@ XdmfArray::read()
 }
 
 void
+XdmfArray::readFunction()
+{
+  shared_ptr<XdmfArray> tempArray = mFunction->read();
+  this->swap(tempArray);
+}
+
+void
 XdmfArray::release()
 {
   mArray = boost::blank();
@@ -1230,6 +1252,18 @@ void
 XdmfArray::setName(const std::string & name)
 {
   mName = name;
+}
+
+void
+XdmfArray::setFunction(shared_ptr<XdmfFunction> newFunction)
+{
+  mFunction = newFunction;
+}
+
+void
+XdmfArray::setWriteAsFunction(bool newStatus)
+{
+  mWriteAsFunction = newStatus;
 }
 
 void

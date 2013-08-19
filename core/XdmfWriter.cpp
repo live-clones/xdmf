@@ -283,114 +283,122 @@ XdmfWriter::visit(XdmfArray & array,
   }
   mImpl->mDepth++;
 
-  const bool isSubclassed = 
-    array.getItemTag().compare(XdmfArray::ItemTag) != 0;
+  shared_ptr<XdmfFunction> internalFunction = array.getFunction();
 
-
-  if(isSubclassed) {
-    try {
-      this->visit(dynamic_cast<XdmfItem &>(array), visitor);
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+  if (internalFunction && array.getWriteAsFunction()) {
+    internalFunction->setConstructedType(array.getItemTag());
+    internalFunction->setConstructedProperties(array.getItemProperties());
+    internalFunction->accept(visitor);
   }
+  else {
 
+    const bool isSubclassed = 
+      array.getItemTag().compare(XdmfArray::ItemTag) != 0;
 
-  if(array.getSize() > 0 && !(mImpl->mLastXPathed && isSubclassed)) {
-    std::vector<std::string> xmlTextValues;
-
-    // Take care of writing to single heavy data file (Default behavior)
-    if(!array.isInitialized() && array.getHeavyDataController(0) &&
-       array.getHeavyDataController(0)->getFilePath().compare(mImpl->mHeavyDataWriter->getFilePath()) != 0 &&
-       mImpl->mMode == Default) {
-      array.read();
-    }
-
-    if(array.getHeavyDataController(0) ||
-       array.getSize() > mImpl->mLightDataLimit) {
-      // Write values to heavy data
-
+    if(isSubclassed) {
       try {
-        // This takes about half the time needed
-        mImpl->mHeavyDataWriter->visit(array, mImpl->mHeavyDataWriter);
+        this->visit(dynamic_cast<XdmfItem &>(array), visitor);
       }
       catch (XdmfError e) {
         throw e;
       }
+    }
 
-      std::stringstream valuesStream;
-      for(unsigned int i = 0; i < array.getNumberHeavyDataControllers(); ++i) {
-        std::string heavyDataPath =
-          array.getHeavyDataController(i)->getFilePath();
-        size_t index = heavyDataPath.find_last_of("/\\");
-        if(index != std::string::npos) {
-          // If path is not a folder
-          // put the directory path into this variable
-          const std::string heavyDataDir = heavyDataPath.substr(0, index + 1);
-          // If the directory is in the XML File Path
-          if(mImpl->mXMLFilePath.find(heavyDataDir) == 0) {
-            heavyDataPath =
-              heavyDataPath.substr(heavyDataDir.size(),
-                                   heavyDataPath.size() - heavyDataDir.size());
-            // Pull the file off of the end and place it in the DataPath
-          }
-          // Otherwise the full path is required
-        }
-        std::stringstream dimensionStream;
-        for (unsigned int j = 0; j < array.getHeavyDataController(i)->getDimensions().size(); ++j) {
-          dimensionStream << array.getHeavyDataController(i)->getDimensions()[j];
-          if (j < array.getHeavyDataController(i)->getDimensions().size() - 1) {
-            dimensionStream << " ";
-          }
-        }
-        // Clear the stream
-        valuesStream.str(std::string());
-	if (array.getNumberHeavyDataControllers() > 1) {
-          valuesStream << heavyDataPath << ":"
-                       << array.getHeavyDataController(i)->getDataSetPath()
-                       << "|" << dimensionStream.str();
-          if (i + 1 < array.getNumberHeavyDataControllers()){
-            valuesStream << "|";
-          }
-        }
-	else {
-         valuesStream << heavyDataPath << ":"
-                       << array.getHeavyDataController(i)->getDataSetPath(); 
-        }
-        xmlTextValues.push_back(valuesStream.str());
+    if(array.getSize() > 0 && !(mImpl->mLastXPathed && isSubclassed)) {
+      std::vector<std::string> xmlTextValues;
+
+      // Take care of writing to single heavy data file (Default behavior)
+      if(!array.isInitialized() && array.getHeavyDataController(0) &&
+         array.getHeavyDataController(0)->getFilePath().compare(mImpl->mHeavyDataWriter->getFilePath()) != 0 &&
+         mImpl->mMode == Default) {
+        array.read();
       }
-    }
-    else {
-      // Write values to XML
-      xmlTextValues.push_back(array.getValuesString());
-    }
 
-    bool oldWriteXPaths = mImpl->mWriteXPaths;
-    mImpl->mWriteXPaths = false;
+      if(array.getHeavyDataController(0) ||
+         array.getSize() > mImpl->mLightDataLimit) {
+        // Write values to heavy data
 
-    // Write XML (metadata) description
-    if(isSubclassed) {
-      shared_ptr<XdmfArray> arrayToWrite = XdmfArray::New();
-      array.swap(arrayToWrite);
-      mImpl->mXMLCurrentNode = mImpl->mXMLCurrentNode->last;
-      this->visit(dynamic_cast<XdmfItem &>(*arrayToWrite.get()), visitor);
-      for(unsigned int i = 0; i<xmlTextValues.size(); ++i) {
-        xmlAddChild(mImpl->mXMLCurrentNode->last,
-                    xmlNewText((xmlChar*)xmlTextValues[i].c_str()));
+        try {
+          // This takes about half the time needed
+          mImpl->mHeavyDataWriter->visit(array, mImpl->mHeavyDataWriter);
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+
+        std::stringstream valuesStream;
+        for(unsigned int i = 0; i < array.getNumberHeavyDataControllers(); ++i) {
+          std::string heavyDataPath =
+            array.getHeavyDataController(i)->getFilePath();
+          size_t index = heavyDataPath.find_last_of("/\\");
+          if(index != std::string::npos) {
+            // If path is not a folder
+            // put the directory path into this variable
+            const std::string heavyDataDir = heavyDataPath.substr(0, index + 1);
+            // If the directory is in the XML File Path
+            if(mImpl->mXMLFilePath.find(heavyDataDir) == 0) {
+              heavyDataPath =
+                heavyDataPath.substr(heavyDataDir.size(),
+                                     heavyDataPath.size() - heavyDataDir.size());
+              // Pull the file off of the end and place it in the DataPath
+            }
+            // Otherwise the full path is required
+          }
+          std::stringstream dimensionStream;
+          for (unsigned int j = 0; j < array.getHeavyDataController(i)->getDimensions().size(); ++j) {
+            dimensionStream << array.getHeavyDataController(i)->getDimensions()[j];
+            if (j < array.getHeavyDataController(i)->getDimensions().size() - 1) {
+              dimensionStream << " ";
+            }
+          }
+          // Clear the stream
+          valuesStream.str(std::string());
+          if (array.getNumberHeavyDataControllers() > 1) {
+            valuesStream << heavyDataPath << ":"
+                         << array.getHeavyDataController(i)->getDataSetPath()
+                         << "|" << dimensionStream.str();
+            if (i + 1 < array.getNumberHeavyDataControllers()){
+              valuesStream << "|";
+            }
+          }
+          else {
+            valuesStream << heavyDataPath << ":"
+                         << array.getHeavyDataController(i)->getDataSetPath(); 
+          }
+          xmlTextValues.push_back(valuesStream.str());
+        }
       }
-      mImpl->mXMLCurrentNode = mImpl->mXMLCurrentNode->parent;
-      array.swap(arrayToWrite);
-    }
-    else {
-      this->visit(dynamic_cast<XdmfItem &>(array), visitor);
-      for(unsigned int i = 0; i<xmlTextValues.size(); ++i) {
-        xmlAddChild(mImpl->mXMLCurrentNode->last,
-                    xmlNewText((xmlChar*)xmlTextValues[i].c_str()));
+      else {
+        // Write values to XML
+        xmlTextValues.push_back(array.getValuesString());
       }
+
+      bool oldWriteXPaths = mImpl->mWriteXPaths;
+      mImpl->mWriteXPaths = false;
+
+      // Write XML (metadata) description
+      if(isSubclassed) {
+        shared_ptr<XdmfArray> arrayToWrite = XdmfArray::New();
+        array.swap(arrayToWrite);
+        mImpl->mXMLCurrentNode = mImpl->mXMLCurrentNode->last;
+        this->visit(dynamic_cast<XdmfItem &>(*arrayToWrite.get()), visitor);
+        for(unsigned int i = 0; i<xmlTextValues.size(); ++i) {
+          xmlAddChild(mImpl->mXMLCurrentNode->last,
+                      xmlNewText((xmlChar*)xmlTextValues[i].c_str()));
+        }
+        mImpl->mXMLCurrentNode = mImpl->mXMLCurrentNode->parent;
+        array.swap(arrayToWrite);
+      }
+      else {
+        this->visit(dynamic_cast<XdmfItem &>(array), visitor);
+        for(unsigned int i = 0; i<xmlTextValues.size(); ++i) {
+          xmlAddChild(mImpl->mXMLCurrentNode->last,
+                      xmlNewText((xmlChar*)xmlTextValues[i].c_str()));
+        }
+      }
+      mImpl->mWriteXPaths = oldWriteXPaths;
     }
 
-    mImpl->mWriteXPaths = oldWriteXPaths;
   }
 
   mImpl->mDepth--;

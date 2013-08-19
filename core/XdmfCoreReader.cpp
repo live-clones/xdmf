@@ -245,7 +245,6 @@ public:
         }
       }
     
- 
       xmlAttrPtr currAttribute = currNode->properties;
       while(currAttribute != NULL) {
         itemProperties.insert(std::make_pair((char *)currAttribute->name,

@@ -31,6 +31,7 @@ class XdmfHeavyDataController;
 // Includes
 #include "XdmfCore.hpp"
 #include "XdmfItem.hpp"
+#include "XdmfFunction.hpp"
 #include <boost/shared_array.hpp>
 #include <boost/variant.hpp>
 
@@ -279,6 +280,36 @@ public:
    */
   std::string getDimensionsString() const;
 
+  /**
+   * Gets the function that the array will fill from when readFunction is called
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setFunction
+   * @until //#setFunction
+   * @skipline //#getFunction
+   * @until //#getFunction
+   *
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleArray.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setFunction
+   * @until #//setFunction
+   * @skipline #//getFunction
+   * @until #//getFunction
+   *
+   * @return	The function associated with this array
+   */
+  shared_ptr<XdmfFunction> getFunction();
+
   std::map<std::string, std::string> getItemProperties() const;
 
   std::string getItemTag() const;
@@ -501,6 +532,40 @@ public:
    * @return 	a string containing the contents of the array.
    */
   std::string getValuesString() const;
+
+  /**
+   * Gets if this array will be written as a function when written to file.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setFunction
+   * @until //#setFunction
+   * @skipline //#setWriteAsFunction
+   * @until //#setWriteAsFunction
+   * @skipline //#getWriteAsFunction
+   * @until //#getWriteAsFunction
+   *
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleArray.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setFunction
+   * @until #//setFunction
+   * @skipline #//setWriteAsFunction
+   * @until #//setWriteAsFunction
+   * @skipline #//getWriteAsFunction
+   * @until #//getWriteAsFunction
+   *
+   * @return	Whether the array will be written as a function
+   */
+  bool getWriteAsFunction();
 
   /**
    * Initialize the array to a specific size.
@@ -919,6 +984,35 @@ public:
   void read();
 
   /**
+   * Accumulates the data via the function associated with the array and
+   * swaps the data with the data currently in the array.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setFunction
+   * @until //#setFunction
+   * @skipline //#readFunction
+   * @until //#readFunction
+   *
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleArray.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setFunction
+   * @until #//setFunction
+   * @skipline #//readFunction
+   * @until #//readFunction
+   */
+  void readFunction();
+
+  /**
    * Release all data currently held in memory.
    *
    * Example of use:
@@ -1042,6 +1136,32 @@ public:
               const T & value = 0);
 
   /**
+   * Sets the function from which the Array will fill when readFunction is called.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setFunction
+   * @until //#setFunction
+   *
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleArray.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setFunction
+   * @until #//setFunction
+   *
+   * @param	newFunction	The function to be associated with this array
+   */
+  void setFunction(shared_ptr<XdmfFunction> newFunction);
+
+  /**
    * Set the name of the array.
    *
    * Example of use:
@@ -1159,6 +1279,36 @@ public:
    */
   template<typename T>
   void setValuesInternal(const shared_ptr<std::vector<T> > array);
+
+  /**
+   * Sets whether the array will be written as a function when written to file.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setFunction
+   * @until //#setFunction
+   * @skipline //#setWriteAsFunction
+   * @until //#setWriteAsFunction
+   *
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleArray.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setFunction
+   * @until #//setFunction
+   * @skipline #//setWriteAsFunction
+   * @until #//setWriteAsFunction
+   *
+   * @param	newStatus	Whether the array will be set to be written as a function
+   */
+  void setWriteAsFunction(bool newStatus = false);
 
   /**
    * Exchange the contents of the vector with the contents of this
@@ -1308,6 +1458,8 @@ private:
   std::vector<unsigned int> mDimensions;
   std::string mName;
   unsigned int mTmpReserveSize;
+  bool mWriteAsFunction;
+  shared_ptr<XdmfFunction> mFunction;
 
 };
 

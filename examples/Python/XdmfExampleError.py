@@ -14,6 +14,18 @@ if __name__ == "__main__":
 
 	#//setLevelLimit end
 
+	#//getSuppressionLevel begin
+
+	exampleSuppression = XdmfError.getSuppressionLevel()
+
+	#//getSuppressionLevel end
+
+	#//setSuppressionLevel begin
+
+	XdmfError.setSuppressionLevel(XdmfError.DEBUG)
+
+	#//setSuppressionLevel end
+
 	#//message begin
 
 	try:
