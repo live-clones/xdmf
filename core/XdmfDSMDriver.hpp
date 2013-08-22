@@ -66,7 +66,7 @@
 #include "H5FDpublic.h"
 
 #ifndef H5_HAVE_PARALLEL
-  #pragma Error : The H5FDdsm virtual File Driver for HDF5 can only be compiled against an HDF5 library with parallel IO support
+  #pragma Error : The XdmfDSM virtual File Driver for HDF5 can only be compiled against an HDF5 library with parallel IO support
 #endif
 
 #define XDMF_DSM_NOTIFY_NONE         0x0000

@@ -32,6 +32,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
     #include <XdmfItemProperty.hpp>
     #include <XdmfSharedPtr.hpp>
     #include <XdmfSparseMatrix.hpp>
+    #include <XdmfSubset.hpp>
     #include <XdmfSystemUtils.hpp>
     #include <XdmfVersion.hpp>
     #include <XdmfVisitor.hpp>
@@ -61,6 +62,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
     #include <XdmfItemProperty.hpp>
     #include <XdmfSharedPtr.hpp>
     #include <XdmfSparseMatrix.hpp>
+    #include <XdmfSubset.hpp>
     #include <XdmfSystemUtils.hpp>
     #include <XdmfVersion.hpp>
     #include <XdmfVisitor.hpp>
@@ -166,6 +168,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
 #ifdef SWIGPYTHON
 
+/*This converts XdmfErrors to Python RuntimeErrors*/
 %exception
 {
         try
@@ -350,6 +353,8 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
     /*trying to transfer python functions*/
     /*note, accessing private members is impossible from swig.*/
 
+
+    /*class to wrap python functions to be compatible with the XdmfFunction code*/
     class PythonFunction : public XdmfFunction::XdmfFunctionInternal {
       public:
         static shared_ptr<PythonFunction>
@@ -393,6 +398,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
         PyObject * mInternalFunction;
     };
 
+    /*class to wrap python functions to be compatible with the XdmfFunction Operation code*/
     class PythonOperation : public XdmfFunction::XdmfOperationInternal {
       public:
         static shared_ptr<PythonOperation>
@@ -490,6 +496,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %shared_ptr(XdmfItem)
 %shared_ptr(XdmfItemProperty)
 %shared_ptr(XdmfSparseMatrix)
+%shared_ptr(XdmfSubset)
 %shared_ptr(XdmfVisitor)
 %shared_ptr(XdmfWriter)
 
@@ -510,6 +517,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %include XdmfFunction.hpp
 %include XdmfHeavyDataController.hpp
 %include XdmfHeavyDataWriter.hpp
+%include XdmfSubset.hpp
 
 %include XdmfCoreItemFactory.hpp
 %include XdmfCoreReader.hpp

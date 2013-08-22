@@ -292,6 +292,12 @@ int main(int, char **)
 
 	//#setHeavyDataController end
 
+	//#readController begin
+
+	newArray->readController();
+
+	//#readController end
+
 	//#getHeavyDataControllerconst begin
 
 	shared_ptr<const XdmfHeavyDataController> exampleControllerConst = exampleArray->getHeavyDataController();
@@ -417,17 +423,61 @@ int main(int, char **)
 
 	//#readFunction end
 
-	//#setWriteAsFunction begin
+	//#setReadMode begin
 
-	exampleArray->setWriteAsFunction(true);
+	exampleArray->setReadMode(XdmfArray::Function);
 
-	//#setWriteAsFunction end
+	//#setReadMode end
 
-	//#getWriteAsFunction begin
+	//#getReadMode begin
 
-	bool isFunction = exampleArray->getWriteAsFunction();
+	ReadMode isFunction = exampleArray->getReadMode();
 
-	//#getWriteAsFunction end
+	if (isFunction == XdmfArray::Function)
+	{
+		exampleArray->readFunction();
+	}
+
+	//#getReadMode end
+
+	//#setSubset begin
+
+	shared_ptr<XdmfArray> newReference = XdmfArray::New();
+	for (unsigned int i = 0; i < 10; ++i)
+	{
+		newReference->pushBack(i);
+	}
+
+	std::vector<unsigned int> newStarts;
+	newStarts.push_back(0);
+
+	std::vector<unsigned int> newStrides;
+	newStrides.push_back(1);
+
+	std::vector<unsigned int> newDimensions;
+	newDimensions.pushBack(10);
+
+	shared_ptr<XdmfSubset> newSubset = XdmfSubset::New(newReference,
+                                                           newStarts,
+                                                           newStrides,
+                                                           newDimensions);
+
+	exampleArray->setSubset(newSubset);
+
+	//#setSubset end
+
+	//#getSubset begin
+
+	shared_ptr<XdmfSubset> exampleSubset = exampleArray->getSubset();
+
+	//#getSubset end
+
+	//#readSubset begin
+
+	exampleArray->setReadMode(XdmfArray::Subset);
+	exampleArray->readSubset();
+
+	//#readSubset end
 
 	return 0;
 }

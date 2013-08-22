@@ -55,7 +55,7 @@ if __name__ == "__main__":
 
 	functionHolder.setFunction(testFunction)
 
-	functionHolder.setWriteAsFunction(True)
+	functionHolder.setReadMode(XdmfArray.Function)
 
 	functionWriter = XdmfWriter.New("function.xmf")
 

@@ -36,7 +36,8 @@ CLEAN_TEST_PYTHON(TestXdmfFunctionRead)
 CLEAN_TEST_PYTHON(TestXdmfHDF5Writer
   hdf5WriterPythonTest.h5)
 CLEAN_TEST_PYTHON(TestXdmfRead
-  TestXdmfRead.xmf)
+  TestXdmfRead.xmf
+  TestXdmfRead.h5)
 CLEAN_TEST_PYTHON(TestXdmfSet)
 CLEAN_TEST_PYTHON(TestXdmfWriter
   output.h5

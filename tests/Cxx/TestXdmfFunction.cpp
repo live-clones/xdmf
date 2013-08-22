@@ -52,7 +52,7 @@ int main(int, char **)
 
 	functionHolder->setFunction(testFunction);
 
-	functionHolder->setWriteAsFunction(true);
+	functionHolder->setReadMode(XdmfArray::Function);
 
 
 

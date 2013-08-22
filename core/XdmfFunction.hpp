@@ -115,7 +115,8 @@ public:
   static const std::string ItemTag;
 
   /*
-   * Adds a specified function to the list of functions used while evaluating strings
+   * Adds a specified function to the list of functions used while
+   * evaluating strings
    *
    * Example of Use:
    *
@@ -149,11 +150,13 @@ public:
    *				with the given string
    * @return			The total number of functions currently usable
    */
-  static int addFunction(std::string name,
-                         shared_ptr<XdmfArray>(*functionref)(std::vector<shared_ptr<XdmfArray> >));
+  static int
+  addFunction(std::string name,
+              shared_ptr<XdmfArray>(*functionref)(std::vector<shared_ptr<XdmfArray> >));
 
   /**
-   * Adds a specified function to the list of functions used while evaluating strings.
+   * Adds a specified function to the list of functions used while
+   * evaluating strings.
    * This version allows for custom wrapping.
    *
    * Example of use:
@@ -178,8 +181,9 @@ public:
    *				associated with the given string
    * @return			The total number of functions currently usable
    */
-  static int addFunction(std::string name,
-                         shared_ptr<XdmfFunctionInternal> newFunction);
+  static int
+  addFunction(std::string name,
+              shared_ptr<XdmfFunctionInternal> newFunction);
 
   /**
    * Adds an operation to the list of viable operators.
@@ -218,10 +222,11 @@ public:
    *				the higher the value the earlier it is evaluated
    * @return			The number of viable operations
    */
-  static int addOperation(char newoperator,
-                          shared_ptr<XdmfArray>(*functionref)(shared_ptr<XdmfArray>,
-                                                              shared_ptr<XdmfArray>),
-                          int priority);
+  static int
+  addOperation(char newoperator,
+               shared_ptr<XdmfArray>(*functionref)(shared_ptr<XdmfArray>,
+                                                   shared_ptr<XdmfArray>),
+               int priority);
 
   /**
    * Adds an operation to the list of viable operators.
@@ -251,9 +256,10 @@ public:
    *				the higher the value the earlier it is evaluated
    * @return			The number of viable operations
    */
-  static int addOperation(char newoperator,
-                          shared_ptr<XdmfOperationInternal> newOperation,
-                          int priority);
+  static int
+  addOperation(char newoperator,
+               shared_ptr<XdmfOperationInternal> newOperation,
+               int priority);
 
   /**
    * Averages the values contained in all the provided arrays.
@@ -280,7 +286,8 @@ public:
    * @return		an XdmfArray containing one value which is the average
    *			of all values contained within the provided arrays
    */
-  static shared_ptr<XdmfArray> average(std::vector<shared_ptr<XdmfArray> > values);
+  static shared_ptr<XdmfArray>
+  average(std::vector<shared_ptr<XdmfArray> > values);
 
   /**
    * Joins the two provided arrays together end to end.
@@ -307,8 +314,9 @@ public:
    * @param	val2	the second array being evaluated
    * @return		the arrays joined end to end
    */
-  static shared_ptr<XdmfArray> chunk(shared_ptr<XdmfArray> val1,
-                                     shared_ptr<XdmfArray> val2);
+  static shared_ptr<XdmfArray>
+  chunk(shared_ptr<XdmfArray> val1,
+        shared_ptr<XdmfArray> val2);
 
   /**
    * Evaluates an expression based on the list of variables provided.
@@ -365,8 +373,9 @@ public:
    * @return			a shared pointer to the XdmfArray resulting
    *				from the expression
    */
-  static shared_ptr<XdmfArray> evaluateExpression(std::string expression,
-                                                  std::map<std::string, shared_ptr<XdmfArray> > variables);
+  static shared_ptr<XdmfArray>
+  evaluateExpression(std::string expression,
+                     std::map<std::string, shared_ptr<XdmfArray> > variables);
 
   /**
    * Evaluates the operation specified using the two shared pointers to
@@ -415,9 +424,10 @@ public:
    * @return			a shared pointer to the Xdmf Array that results
    *				from the calculation
    */
-  static shared_ptr<XdmfArray> evaluateOperation(shared_ptr<XdmfArray> val1,
-                                                 shared_ptr<XdmfArray> val2,
-                                                 char operation);
+  static shared_ptr<XdmfArray>
+  evaluateOperation(shared_ptr<XdmfArray> val1,
+                    shared_ptr<XdmfArray> val2,
+                    char operation);
 
   /**
    * Evaluates the function specified using the vector of XdmfArrays provided.
@@ -462,8 +472,9 @@ public:
    * @return			the result of the function being called,
    *				a scalar will be returned as an XdmfArray with one value
    */
-  static shared_ptr<XdmfArray> evaluateFunction(std::vector<shared_ptr<XdmfArray> > valueVector,
-                                                std::string functionName);
+  static shared_ptr<XdmfArray>
+  evaluateFunction(std::vector<shared_ptr<XdmfArray> > valueVector,
+                   std::string functionName);
 
   /**
    * Gets the properties of the array that the function will generate when read from file.
@@ -752,8 +763,9 @@ public:
    * @param	val2	the second array being evaluated
    * @return		the interlaced arrays
    */
-  static shared_ptr<XdmfArray> interlace(shared_ptr<XdmfArray> val1,
-                                         shared_ptr<XdmfArray> val2);
+  static shared_ptr<XdmfArray>
+  interlace(shared_ptr<XdmfArray> val1,
+            shared_ptr<XdmfArray> val2);
 
   /**
    * Adds a new variable to the list of variables that the Function will use.
@@ -857,7 +869,8 @@ public:
    *
    * @param	newProperties	The properties of the array to be generated
    */
-  void setConstructedProperties(std::map<std::string, std::string> newProperties);
+  void
+  setConstructedProperties(std::map<std::string, std::string> newProperties);
 
   /**
    * Sets the type of array that the function will generate when read from file.
@@ -934,7 +947,8 @@ public:
    * @return		an XdmfArray containing one value which is the total
    *			of all the values contained within the provided arrays
    */
-  static shared_ptr<XdmfArray> sum(std::vector<shared_ptr<XdmfArray> > values);
+  static shared_ptr<XdmfArray>
+  sum(std::vector<shared_ptr<XdmfArray> > values);
 
   void traverse(const shared_ptr<XdmfBaseVisitor> visitor);
 

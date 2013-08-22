@@ -32,6 +32,7 @@ class XdmfHeavyDataController;
 #include "XdmfCore.hpp"
 #include "XdmfItem.hpp"
 #include "XdmfFunction.hpp"
+#include "XdmfSubset.hpp"
 #include <boost/shared_array.hpp>
 #include <boost/variant.hpp>
 
@@ -99,6 +100,12 @@ class XdmfHeavyDataController;
 class XDMFCORE_EXPORT XdmfArray : public XdmfItem {
 
 public:
+
+  enum ReadMode {
+    Controller,
+    Function,
+    Subset
+  };
 
   /**
    * Create a new XdmfArray.
@@ -344,6 +351,41 @@ public:
   std::string getName() const;
 
   /**
+   * Gets the method this array will be written/read.
+   * Possible choices are: Controller, Function, and Subset
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setFunction
+   * @until //#setFunction
+   * @skipline //#setReadMode
+   * @until //#setReadMode
+   * @skipline //#getReadMode
+   * @until //#getReadMode
+   *
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleArray.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setFunction
+   * @until #//setFunction
+   * @skipline #//setReadMode
+   * @until #//setReadMode
+   * @skipline #//getReadMode
+   * @until #//getReadMode
+   *
+   * @return	What method will be used when reading/writing the array
+   */
+  ReadMode getReadMode() const;
+
+  /**
    * Get the number of values stored in this array.
    *
    * Example of use:
@@ -367,6 +409,35 @@ public:
    * @return 	the number of values stored in this array.
    */
   unsigned int getSize() const;
+
+  /**
+   * Gets the subset that the array will pull from when reading from a subset.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setSubset
+   * @until //#setSubset
+   * @skipline //#getSubset
+   * @until //#getSubset
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleArray.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setSubset
+   * @until #//setSubset
+   * @skipline #//getSubset
+   * @until #//getSubset
+   *
+   * @return	The subset being pulled from
+   */
+  shared_ptr<XdmfSubset> getSubset();
 
   /**
    * Get a copy of a single value stored in this array.
@@ -532,40 +603,6 @@ public:
    * @return 	a string containing the contents of the array.
    */
   std::string getValuesString() const;
-
-  /**
-   * Gets if this array will be written as a function when written to file.
-   *
-   * Example of use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfArray.cpp
-   * @skipline //#initialization
-   * @until //#initialization
-   * @skipline //#setFunction
-   * @until //#setFunction
-   * @skipline //#setWriteAsFunction
-   * @until //#setWriteAsFunction
-   * @skipline //#getWriteAsFunction
-   * @until //#getWriteAsFunction
-   *
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleArray.py
-   * @skipline #//initialization
-   * @until #//initialization
-   * @skipline #//setFunction
-   * @until #//setFunction
-   * @skipline #//setWriteAsFunction
-   * @until #//setWriteAsFunction
-   * @skipline #//getWriteAsFunction
-   * @until #//getWriteAsFunction
-   *
-   * @return	Whether the array will be written as a function
-   */
-  bool getWriteAsFunction();
 
   /**
    * Initialize the array to a specific size.
@@ -984,6 +1021,37 @@ public:
   void read();
 
   /**
+   * Reads data from the attached controllers to the internal data storage.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getHeavyDataController
+   * @until //#getHeavyDataController
+   * @skipline //#setHeavyDataController
+   * @until //#setHeavyDataController
+   * @skipline //#readController
+   * @until //#readController
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleArray.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getHeavyDataController
+   * @until #//getHeavyDataController
+   * @skipline #//setHeavyDataController
+   * @until #//setHeavyDataController
+   * @skipline #//readController
+   * @until #//readController
+   */
+  void readController();
+
+  /**
    * Accumulates the data via the function associated with the array and
    * swaps the data with the data currently in the array.
    *
@@ -1011,6 +1079,33 @@ public:
    * @until #//readFunction
    */
   void readFunction();
+
+  /**
+   * Reads the data pointed to by the subset into the array.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setSubset
+   * @until //#setSubset
+   * @skipline //#readSubset
+   * @until //#readSubset
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleArray.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setSubset
+   * @until #//setSubset
+   * @skipline #//readSubset
+   * @until #//readSubset
+   */
+  void readSubset();
 
   /**
    * Release all data currently held in memory.
@@ -1187,6 +1282,62 @@ public:
   void setName(const std::string & name);
 
   /**
+   * Sets the method this array will be written/read.
+   * Possible choices are: Controller, Function, and Subset
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setFunction
+   * @until //#setFunction
+   * @skipline //#setReadMode
+   * @until //#setReadMode
+   *
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleArray.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setFunction
+   * @until #//setFunction
+   * @skipline #//setReadMode
+   * @until #//setReadMode
+   *
+   * @param	newStatus	The method that the array will be read/written
+   */
+  void setReadMode(ReadMode newStatus = XdmfArray::Controller);
+
+  /**
+   * Sets the subset that the array will pull from when reading from a subset.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfArray.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setSubset
+   * @until //#setSubset
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleArray.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setSubset
+   * @until #//setSubset
+   *
+   * @param	newSubset	The subset to pull data from on read
+   */
+  void setSubset(shared_ptr<XdmfSubset> newSubset);
+
+  /**
    * Sets the values of this array to the values stored in the
    * arrayPointer array. No copy is made. Modifications to the array
    * are not permitted through the XdmfArray API. Any calls through
@@ -1279,36 +1430,6 @@ public:
    */
   template<typename T>
   void setValuesInternal(const shared_ptr<std::vector<T> > array);
-
-  /**
-   * Sets whether the array will be written as a function when written to file.
-   *
-   * Example of use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfArray.cpp
-   * @skipline //#initialization
-   * @until //#initialization
-   * @skipline //#setFunction
-   * @until //#setFunction
-   * @skipline //#setWriteAsFunction
-   * @until //#setWriteAsFunction
-   *
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleArray.py
-   * @skipline #//initialization
-   * @until #//initialization
-   * @skipline #//setFunction
-   * @until #//setFunction
-   * @skipline #//setWriteAsFunction
-   * @until #//setWriteAsFunction
-   *
-   * @param	newStatus	Whether the array will be set to be written as a function
-   */
-  void setWriteAsFunction(bool newStatus = false);
 
   /**
    * Exchange the contents of the vector with the contents of this
@@ -1458,8 +1579,9 @@ private:
   std::vector<unsigned int> mDimensions;
   std::string mName;
   unsigned int mTmpReserveSize;
-  bool mWriteAsFunction;
+  ReadMode mReadMode;
   shared_ptr<XdmfFunction> mFunction;
+  shared_ptr<XdmfSubset> mSubset;
 
 };
 

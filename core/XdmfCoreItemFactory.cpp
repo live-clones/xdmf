@@ -24,6 +24,7 @@
 #include "XdmfArray.hpp"
 #include "XdmfCoreItemFactory.hpp"
 #include "XdmfError.hpp"
+#include <boost/tokenizer.hpp>
 
 XdmfCoreItemFactory::XdmfCoreItemFactory()
 {
@@ -97,7 +98,7 @@ XdmfCoreItemFactory::createItem(const std::string & itemTag,
       // The properties and children aren't really needed
       // to generate the object, but the factory still requires them.
       std::vector<shared_ptr<XdmfItem> > newArrayChildren;
-      shared_ptr<XdmfArray> returnArray = XdmfArray::New();
+      shared_ptr<XdmfArray> returnArray = shared_ptr<XdmfArray>();
 
       // This should generate an item that corresponds to the tag provided
       // the casting ensures that it is a subtype of array
@@ -110,13 +111,85 @@ XdmfCoreItemFactory::createItem(const std::string & itemTag,
       returnArray->insert(0, parsedArray, 0, parsedArray->getSize());
       returnArray->setFunction(XdmfFunction::New(expressionToParse,
                                                  variableCollection));
+      returnArray->setReadMode(XdmfArray::Function);
       return returnArray;
     }
     else {
       parsedArray->setFunction(XdmfFunction::New(expressionToParse,
                                                  variableCollection));
+      parsedArray->setReadMode(XdmfArray::Function);
       return parsedArray;
     }
+  }
+  else if(itemTag.compare(XdmfSubset::ItemTag) == 0) {
+	//TODO
+
+    std::map<std::string, std::string>::const_iterator type =
+      itemProperties.find("ConstructedType");
+    std::string arraySubType;
+    if(type == itemProperties.end()) {
+      // If no type is specified an array is generated
+      arraySubType = XdmfArray::ItemTag;
+    }
+    else {
+      arraySubType = type->second;
+    }
+
+    std::vector<shared_ptr<XdmfItem> > newArrayChildren;
+    shared_ptr<XdmfArray> returnArray = shared_ptr<XdmfArray>();
+
+    returnArray = shared_dynamic_cast<XdmfArray>(createItem(
+                                                   arraySubType,
+                                                   itemProperties,
+                                                   newArrayChildren));
+
+    std::vector<unsigned int> startVector;
+    std::vector<unsigned int> strideVector;
+    std::vector<unsigned int> dimensionVector;
+    shared_ptr<XdmfArray> referenceArray;
+
+    std::map<std::string, std::string>::const_iterator starts =
+      itemProperties.find("SubsetStarts");
+
+    boost::tokenizer<> tokens(starts->second);
+    for(boost::tokenizer<>::const_iterator iter = tokens.begin();
+        iter != tokens.end();
+        ++iter) {
+      startVector.push_back(atoi((*iter).c_str()));
+    }
+
+    std::map<std::string, std::string>::const_iterator strides =
+      itemProperties.find("SubsetStrides");
+
+    boost::tokenizer<> stridetokens(strides->second);
+    for(boost::tokenizer<>::const_iterator iter = stridetokens.begin();
+        iter != stridetokens.end();
+        ++iter) {
+      strideVector.push_back(atoi((*iter).c_str()));
+    }
+
+    std::map<std::string, std::string>::const_iterator dimensions =
+      itemProperties.find("SubsetDimensions");
+
+    boost::tokenizer<> dimtokens(dimensions->second);
+    for(boost::tokenizer<>::const_iterator iter = dimtokens.begin();
+        iter != dimtokens.end();
+        ++iter) {
+      dimensionVector.push_back(atoi((*iter).c_str()));
+    }
+
+    referenceArray = shared_dynamic_cast<XdmfArray>(childItems[0]);
+
+    shared_ptr<XdmfSubset> newSubset = XdmfSubset::New(referenceArray,
+                                                       startVector,
+                                                       strideVector,
+                                                       dimensionVector);
+
+    returnArray->setSubset(newSubset);
+    returnArray->setReadMode(XdmfArray::Subset);
+
+    return returnArray;
+
   }
   return shared_ptr<XdmfItem>();
 }

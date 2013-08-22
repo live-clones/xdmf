@@ -44,5 +44,4 @@ if __name__ == "__main__":
 	try:
 		raise RuntimeError(XdmfError(XdmfError.FATAL, "testError"))
         except RuntimeError as e:
-                #this is simpler than it is in C++
 		print e.args[0].what()

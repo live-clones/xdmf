@@ -718,6 +718,8 @@ XdmfArray::resize(const unsigned int numValues,
                                         numValues,
                                         value),
                               mArray);
+  std::vector<unsigned int> newDimensions;
+  newDimensions.push_back(numValues);
 }
 
 template<typename T>

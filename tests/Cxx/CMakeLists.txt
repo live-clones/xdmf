@@ -23,6 +23,7 @@ ADD_TEST_CXX(TestXdmfRegularGrid)
 ADD_TEST_CXX(TestXdmfRectilinearGrid)
 ADD_TEST_CXX(XdmfPostFixCalc)
 ADD_TEST_CXX(TestXdmfSet)
+ADD_TEST_CXX(TestXdmfSubset)
 ADD_TEST_CXX(TestXdmfTime)
 ADD_TEST_CXX(TestXdmfTopology)
 ADD_TEST_CXX(TestXdmfTopologyMixed)
@@ -77,6 +78,9 @@ CLEAN_TEST_CXX(TestXdmfRegularGrid
   TestXdmfRegularGrid2.xmf)
 CLEAN_TEST_CXX(XdmfPostFixCalc)
 CLEAN_TEST_CXX(TestXdmfSet)
+CLEAN_TEST_CXX(TestXdmfSubset
+  subset.xmf
+  subset.h5)
 CLEAN_TEST_CXX(TestXdmfTime)
 CLEAN_TEST_CXX(TestXdmfTopology)
 CLEAN_TEST_CXX(TestXdmfTopologyMixed

@@ -283,15 +283,32 @@ XdmfWriter::visit(XdmfArray & array,
   }
   mImpl->mDepth++;
 
+  // Pull the Function and Subset accociated with the array
   shared_ptr<XdmfFunction> internalFunction = array.getFunction();
+  shared_ptr<XdmfSubset> internalSubset = array.getSubset();
 
-  if (internalFunction && array.getWriteAsFunction()) {
+  // If in the correct read mode process the function or subset
+  // if it exists
+  if (internalFunction && array.getReadMode() == XdmfArray::Function) {
+    // Pass information about the array to the function
+    // so it can properly recreate it when read
     internalFunction->setConstructedType(array.getItemTag());
     internalFunction->setConstructedProperties(array.getItemProperties());
     internalFunction->accept(visitor);
+    // This does not write the data contained within the array to file
+    // The data is regenerated upon read
   }
-  else {
-
+  else if (internalSubset && array.getReadMode() == XdmfArray::Subset) {
+    // Pass information about the array to the subset
+    // so it can properly recreate it when read
+    internalSubset->setConstructedType(array.getItemTag());
+    internalSubset->setConstructedProperties(array.getItemProperties());
+    internalSubset->accept(visitor);
+    // This does not write the data contained within the array to file
+    // The data is regenerated upon read
+  }
+  else if (array.getReadMode() == XdmfArray::Controller) {
+    // Controller mode is the default mode
     const bool isSubclassed = 
       array.getItemTag().compare(XdmfArray::ItemTag) != 0;
 
@@ -399,6 +416,39 @@ XdmfWriter::visit(XdmfArray & array,
       mImpl->mWriteXPaths = oldWriteXPaths;
     }
 
+  }
+  else {
+    // These statements are reached when an unsupported read mode is used
+    // or when a read mode is not properly set up
+    if (array.getReadMode() == XdmfArray::Function) {
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "Error: Array to be output as a function"
+                           " does not have an associated Function.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+    else if (array.getReadMode() == XdmfArray::Subset) {
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "Error: Array to be output as a subset"
+                           " does not have an associated Subset.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+    else {
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "Error: Invalid output type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
   }
 
   mImpl->mDepth--;

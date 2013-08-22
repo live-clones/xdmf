@@ -33,6 +33,7 @@
 #include "XdmfFunction.hpp"
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfHeavyDataController.hpp"
+#include "XdmfSubset.hpp"
 #include "XdmfVisitor.hpp"
 #include "XdmfError.hpp"
 
@@ -564,7 +565,7 @@ XdmfArray::XdmfArray() :
   mArrayPointerNumValues(0),
   mName(""),
   mTmpReserveSize(0),
-  mWriteAsFunction(false),
+  mReadMode(XdmfArray::Controller),
   mFunction(shared_ptr<XdmfFunction>())
 {
 }
@@ -695,11 +696,23 @@ XdmfArray::getName() const
   return mName;
 }
 
+XdmfArray::ReadMode
+XdmfArray::getReadMode() const
+{
+  return mReadMode;
+}
+
 unsigned int
 XdmfArray::getSize() const
 {
   return boost::apply_visitor(Size(this), 
                               mArray);
+}
+
+shared_ptr<XdmfSubset>
+XdmfArray::getSubset()
+{
+  return mSubset;
 }
 
 void *
@@ -723,12 +736,6 @@ XdmfArray::getValuesString() const
                               mArray);
 }
 
-bool
-XdmfArray::getWriteAsFunction()
-{
-  return mWriteAsFunction;
-}
-
 shared_ptr<XdmfHeavyDataController>
 XdmfArray::getHeavyDataController()
 {
@@ -745,16 +752,6 @@ XdmfArray::getHeavyDataController() const
   else {
     return shared_ptr<XdmfHeavyDataController>();
   }
-}
-
-void
-XdmfArray::setHeavyDataController(shared_ptr<XdmfHeavyDataController> newController)
-{
-  // Since this is replacing the previous version which was designed to
-  // completely replace the controller of the array
-  // It will clear the current controllers before adding the new one in
-  mHeavyDataControllers.clear();
-  mHeavyDataControllers.push_back(newController);
 }
 
 void
@@ -851,8 +848,8 @@ XdmfArray::insert(const std::vector<unsigned int> startIndex,
       && valuesStartIndex.size() == numValues.size()
       && numValues.size() == valuesStride.size())
       && (numInserted.size() == startIndex.size()
-      && startIndex.size() == mDimensions.size()
-      && mDimensions.size() == arrayStride.size())) {
+      && startIndex.size() == this->getDimensions().size()
+      && this->getDimensions().size() == arrayStride.size())) {
     // Pull data from values
     std::vector<unsigned int > dimTotalVector;
     unsigned int dimTotal = 1;
@@ -965,8 +962,8 @@ XdmfArray::insert(const std::vector<unsigned int> startIndex,
       }
     }
     else if (!(numInserted.size() == startIndex.size()
-               && startIndex.size() == mDimensions.size()
-               && mDimensions.size() == arrayStride.size())) {
+               && startIndex.size() == this->getDimensions().size()
+               && this->getDimensions().size() == arrayStride.size())) {
       try {
         XdmfError::message(XdmfError::FATAL,
                            "Error: Number of starts, strides, and/or values "
@@ -1182,6 +1179,31 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
 void
 XdmfArray::read()
 {
+  switch (mReadMode)
+  {
+    case XdmfArray::Controller:
+      this->readController();
+      break;
+    case XdmfArray::Function:
+      this->readFunction();
+      break;
+    case XdmfArray::Subset:
+      this->readSubset();
+      break;
+    default:
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "Error: Invalid Read Mode");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+  }
+}
+
+void
+XdmfArray::readController()
+{
   if(mHeavyDataControllers.size() > 1) {
     this->release();
     for (unsigned int i = 0; i < mHeavyDataControllers.size(); ++i) {
@@ -1233,6 +1255,13 @@ XdmfArray::readFunction()
 }
 
 void
+XdmfArray::readSubset()
+{
+  shared_ptr<XdmfArray> tempArray = mSubset->read();
+  this->swap(tempArray);
+}
+
+void
 XdmfArray::release()
 {
   mArray = boost::blank();
@@ -1249,21 +1278,37 @@ XdmfArray::reserve(const unsigned int size)
 }
 
 void
-XdmfArray::setName(const std::string & name)
-{
-  mName = name;
-}
-
-void
 XdmfArray::setFunction(shared_ptr<XdmfFunction> newFunction)
 {
   mFunction = newFunction;
 }
 
 void
-XdmfArray::setWriteAsFunction(bool newStatus)
+XdmfArray::setHeavyDataController(shared_ptr<XdmfHeavyDataController> newController)
 {
-  mWriteAsFunction = newStatus;
+  // Since this is replacing the previous version which was designed to
+  // completely replace the controller of the array
+  // It will clear the current controllers before adding the new one in
+  mHeavyDataControllers.clear();
+  mHeavyDataControllers.push_back(newController);
+}
+
+void
+XdmfArray::setName(const std::string & name)
+{
+  mName = name;
+}
+
+void
+XdmfArray::setReadMode(XdmfArray::ReadMode newStatus)
+{
+  mReadMode = newStatus;
+}
+
+void
+XdmfArray::setSubset(shared_ptr<XdmfSubset> newSubset)
+{
+  mSubset = newSubset;
 }
 
 void

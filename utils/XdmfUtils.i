@@ -31,6 +31,7 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
     #include <XdmfItemProperty.hpp>
     #include <XdmfSharedPtr.hpp>
     #include <XdmfSparseMatrix.hpp>
+    #include <XdmfSubset.hpp>
     #include <XdmfSystemUtils.hpp>
     #include <XdmfVisitor.hpp>
     #include <XdmfWriter.hpp>
@@ -88,6 +89,7 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
     #include <XdmfItemProperty.hpp>
     #include <XdmfSharedPtr.hpp>
     #include <XdmfSparseMatrix.hpp>
+    #include <XdmfSubset.hpp>
     #include <XdmfSystemUtils.hpp>
     #include <XdmfVisitor.hpp>
     #include <XdmfWriter.hpp>

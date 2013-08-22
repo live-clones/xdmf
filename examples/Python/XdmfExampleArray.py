@@ -250,6 +250,12 @@ if __name__ == "__main__":
 
 	#//setHeavyDataController end
 
+	#//readController begin
+
+	newArray->readController()
+
+	#//readController end
+
 	#//release begin
 
 	exampleArray.release()
@@ -323,15 +329,54 @@ if __name__ == "__main__":
 
         #//readFunction end
 
-        #//setWriteAsFunction begin
+        #//setReadMode begin
 
-        exampleArray.setWriteAsFunction(True)
+        exampleArray.setReadMode(XdmfArray.Function)
 
-        #//setWriteAsFunction end
+        #//setReadMode end
 
-        #//getWriteAsFunction begin
+        #//getReadMode begin
 
-        isFunction = exampleArray.getWriteAsFunction()
+        isFunction = exampleArray.getReadMode()
 
-        #//getWriteAsFunction end
+        if isFunction == XdmfArray.Function:
+                exampleArray.readFunction()
 
+        #//getReadMode end
+
+        #//setSubset begin
+
+	newReference = XdmfArray.New()
+	for i in range(0, 10):
+		newReference.pushBackAsInt32(i)
+
+	newStarts = UInt32Vector()
+        newStarts.push_back(0)
+
+	newStrides = UInt32Vector()
+	newStrides.push_back(1)
+
+	newDimensions = UInt32Vector()
+        newDimensions.pushBack(10)
+
+	newSubset = XdmfSubset.New(newReference,
+                                    newStarts,
+                                    newStrides,
+                                    newDimensions)
+
+        exampleArray.setSubset(newSubset)
+
+        #//setSubset end
+
+        #//getSubset begin
+
+        exampleSubset = exampleArray.getSubset();
+
+        #//getSubset end
+
+        #//readSubset begin
+
+        exampleArray.setReadMode(XdmfArray.Subset)
+        exampleArray.readSubset()
+
+        #//readSubset end

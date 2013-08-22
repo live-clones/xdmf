@@ -2,7 +2,7 @@
 /*                                    XDMF                                   */
 /*                       eXtensible Data Model and Format                    */
 /*                                                                           */
-/*  Id : XdmfHavyDataController.cpp                                          */
+/*  Id : XdmfHeavyDataController.cpp                                         */
 /*                                                                           */
 /*  Author:                                                                  */
 /*     Kenneth Leiter                                                        */
@@ -44,15 +44,18 @@ XdmfHeavyDataController::XdmfHeavyDataController(const std::string & filePath,
   mType(type)
 {
   if(!(mStart.size() == mStride.size() && 
-       mStride.size() == mDimensions.size()))
+       mStride.size() == mDimensions.size() &&
+       mDimensions.size() == mDataspaceDimensions.size())) {
     try {
       XdmfError::message(XdmfError::FATAL,
-                         "mStart, mStride, mDimensions must all be of equal "
-                         "length in XdmfHeavyDataController constructor");
+                         "mStart, mStride, mDimensions, and mDataSpaceDimensions"
+                         " must all be of equal length in XdmfHeavyDataController"
+                         " constructor");
     }
     catch (XdmfError e) {
       throw e;
     }
+  }
 }
 
 XdmfHeavyDataController::~XdmfHeavyDataController()

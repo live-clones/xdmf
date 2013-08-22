@@ -33,8 +33,6 @@ class TimedWrite():
         self.domain.accept(self.writer)
    
 if __name__ == "__main__":
-    print h5file
-    print xmffile
     timedWrite = TimedWrite()
     startclock = time.clock()
     print timeit.Timer(timedWrite.write).timeit(1)

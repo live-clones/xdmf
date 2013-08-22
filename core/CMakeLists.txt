@@ -105,6 +105,7 @@ set(XdmfCoreSources
   XdmfItem
   XdmfItemProperty
   XdmfSparseMatrix
+  XdmfSubset
   XdmfSystemUtils
   ${CMAKE_BINARY_DIR}/XdmfVersion
   XdmfVisitor

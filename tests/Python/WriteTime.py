@@ -2,18 +2,22 @@ from Xdmf import *
 
 import timeit
 import time
+import os
+
+h5file = os.getcwd() + "/timestamptest.h5"
+xmffile = os.getcwd() + "/timestamptest.xmf"
 
 if __name__ == "__main__":
 
 	#for later use in determining actual time
 	#    print timeit.Timer(timedWrite.write).timeit(1)
 
-        exampleHeavyWriter = XdmfHDF5Writer.New("timestamptest.h5")
+        exampleHeavyWriter = XdmfHDF5Writer.New(h5file)
 
         #possible options
         exampleHeavyWriter.setReleaseData(True)
 
-        exampleWriter = XdmfWriter.New("timestamptest.xmf", exampleHeavyWriter)
+        exampleWriter = XdmfWriter.New(xmffile, exampleHeavyWriter)
         exampleWriter.setLightDataLimit(10)
 
 
@@ -85,4 +89,5 @@ if __name__ == "__main__":
 
 	print (time.clock() - startclock)
 
-	print XdmfSystemUtils.getRealPath("timestamptest.xmf")
+	os.remove(xmffile)
+	os.remove(h5file)
