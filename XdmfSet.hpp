@@ -65,7 +65,7 @@ public:
    * @skipline #//initialize
    * @until #//initialize
    *
-   * @return 	constructed XdmfSet.
+   * @return 	Constructed XdmfSet.
    */
   static shared_ptr<XdmfSet> New();
 
@@ -104,7 +104,7 @@ public:
    * @skipline #//getName
    * @until #//getName
    *
-   * @return 	a string containing the name of the set.
+   * @return	A string containing the name of the set.
    */
   std::string getName() const;
 
@@ -164,7 +164,7 @@ public:
    * @skipline #//setName
    * @until #//setName
    *
-   * @param 	name 	a string containing the name to set.
+   * @param 	name	A string containing the name to set.
    */
   void setName(const std::string & name);
 
@@ -189,7 +189,7 @@ public:
    * @skipline //#setType
    * @until //#setType
    *
-   * @param 	type 	the XdmfSetType to set.
+   * @param	type	The XdmfSetType to set.
    */
   void setType(const shared_ptr<const XdmfSetType> type);
 

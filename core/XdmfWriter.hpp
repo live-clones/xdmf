@@ -86,9 +86,9 @@ public:
    * @skipline #//initialization
    * @until #//initialization
    *
-   * @param	xmlFilePath	the path to the xml file to write to.
+   * @param	xmlFilePath	The path to the xml file to write to.
    *
-   * @return			the new XdmfWriter.
+   * @return			The new XdmfWriter.
    */
   static shared_ptr<XdmfWriter> New(const std::string & xmlFilePath);
 
@@ -111,10 +111,10 @@ public:
    * @skipline #//heavyinitialization
    * @until #//heavyinitialization
    *
-   * @param	xmlFilePath		the path to the xml file to write to.
-   * @param	heavyDataWriter		the heavy data writer to use when writing.
+   * @param	xmlFilePath		The path to the xml file to write to.
+   * @param	heavyDataWriter		The heavy data writer to use when writing.
    *
-   * @return				the new XdmfWriter.
+   * @return				The new XdmfWriter.
    */
   static shared_ptr<XdmfWriter> New(const std::string & xmlFilePath, 
                                     const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter);
@@ -134,10 +134,10 @@ public:
    *
    * Python: does not curretnly support this version of New
    *
-   * @param	stream			the output stream to write light data to.
-   * @param	heavyDataWriter		the heavy data writer to use when writing.
+   * @param	stream			The output stream to write light data to.
+   * @param	heavyDataWriter		The heavy data writer to use when writing.
    *
-   * @return				the new XdmfWriter.
+   * @return				The new XdmfWriter.
    */
   static shared_ptr<XdmfWriter> New(std::ostream & stream,
                                     const shared_ptr<XdmfHeavyDataWriter> heavyDataWriter);
@@ -166,7 +166,7 @@ public:
    * @skipline //#getFilePath
    * @until //#getFilePath
    *
-   * @return 	a std::string containing the path to the XML file on disk this
+   * @return 	A std::string containing the path to the XML file on disk this
    * 		writer is writing to.
    */
   std::string getFilePath() const;
@@ -193,7 +193,7 @@ public:
    * @skipline #//getHeavyDataWriter
    * @until #//getHeavyDataWriter
    *
-   * @return 	the requested heavy data writer.
+   * @return 	The requested heavy data writer.
    */
   shared_ptr<XdmfHeavyDataWriter> getHeavyDataWriter();
 
@@ -213,7 +213,7 @@ public:
    *
    * Python: Does not support a contant version of this function
    *
-   * @return	the requested heavy data writer.
+   * @return	The requested heavy data writer.
    */
   shared_ptr<const XdmfHeavyDataWriter> getHeavyDataWriter() const;
 
@@ -239,7 +239,7 @@ public:
    * @skipline #//getLightDataLimit
    * @until #//getLightDataLimit
    *
-   * @return	an unsigned int containing the number of values.
+   * @return	An unsigned int containing the number of values.
    */
   unsigned int getLightDataLimit() const;
 
@@ -264,7 +264,7 @@ public:
    * @skipline #//getMode
    * @until #//getMode
    *
-   * @return	the Mode of operation for this writer.
+   * @return	The Mode of operation for this writer.
    */
   Mode getMode() const;
 
@@ -344,7 +344,7 @@ public:
    * @skipline #//setHeavyDataWriter
    * @until #//setHeavyDataWriter
    *
-   * @param	heavyDataWriter		the heavy data writer to set.
+   * @param	heavyDataWriter		The heavy data writer to set.
    */
   void setHeavyDataWriter(shared_ptr<XdmfHeavyDataWriter> heavyDataWriter);
 
@@ -370,7 +370,7 @@ public:
    * @skipline #//setLightDataLimit
    * @until #//setLightDataLimit
    *
-   * @param	numValues	an unsigned int containing the number of values.
+   * @param	numValues	An unsigned int containing the number of values.
    */
   void setLightDataLimit(const unsigned int numValues);
 
@@ -395,7 +395,7 @@ public:
    * @skipline #//setMode
    * @until #//setMode
    *
-   * @param	mode	the Mode of operation for this writer.
+   * @param	mode	The Mode of operation for this writer.
    */
   void setMode(const Mode mode);
 
@@ -420,7 +420,7 @@ public:
    * @skipline #//setWriteXPaths
    * @until #//setWriteXPaths
    *
-   * @param	writeXPaths	whether to write xpaths for this writer.
+   * @param	writeXPaths	Whether to write xpaths for this writer.
    */
   void setWriteXPaths(const bool writeXPaths = true);
 
@@ -445,7 +445,7 @@ public:
    * @skipline #//setXPathParse
    * @until #//setXPathParse
    *
-   * @param	xPathParse	whether to write xpaths for this writer.
+   * @param	xPathParse	Whether to write xpaths for this writer.
    */
   void setXPathParse(const bool xPathParse = true);
 
@@ -466,8 +466,8 @@ public:
    * @skipline #//visitarray
    * @until #//visitarray
    *
-   * @param	array		an XdmfArray to write to disk.
-   * @param	visitor		a smart pointer to this visitor --- aids in grid traversal.
+   * @param	array		An XdmfArray to write to disk.
+   * @param	visitor		A smart pointer to this visitor --- aids in grid traversal.
    */
   virtual void visit(XdmfArray & array,
                      const shared_ptr<XdmfBaseVisitor> visitor);
@@ -489,8 +489,8 @@ public:
    * @skipline #//visititem
    * @until #//visititem
    *
-   * @param	item		an XdmfItem to write to disk.
-   * @param	visitor		a smart pointer to this visitor --- aids in grid traversal.
+   * @param	item		An XdmfItem to write to disk.
+   * @param	visitor		A smart pointer to this visitor --- aids in grid traversal.
    */
   virtual void visit(XdmfItem & item,
                      const shared_ptr<XdmfBaseVisitor> visitor);

@@ -62,7 +62,7 @@ public:
    * @skipline #//initialization
    * @until #//initialization
    *
-   * @return	constructed XdmfAttribute.
+   * @return	Constructed XdmfAttribute.
    */
   static shared_ptr<XdmfAttribute> New();
 
@@ -129,7 +129,7 @@ public:
    * @skipline #//getName
    * @until #//getName
    *
-   * @return	a string containing the name of the attribute.
+   * @return	A string containing the name of the attribute.
    */
   std::string getName() const;
 
@@ -183,7 +183,7 @@ public:
    * @skipline #//setCenter
    * @until #//setCenter
    *
-   * @param	center	the XdmfAttributeCenter to set.
+   * @param	center	The XdmfAttributeCenter to set.
    */
   void setCenter(const shared_ptr<const XdmfAttributeCenter> center);
 
@@ -208,7 +208,7 @@ public:
    * @skipline #//setName
    * @until #//setName
    *
-   * @param	name	a string containing the name to set.
+   * @param	name	A string containing the name to set.
    */
   void setName(const std::string & name);
 

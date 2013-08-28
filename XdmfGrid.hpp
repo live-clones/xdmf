@@ -84,7 +84,7 @@ public:
    * @skipline #//getGeometry
    * @until #//getGeometry
    *
-   * @return	the geometry associated with this grid.
+   * @return	The geometry associated with this grid.
    */
   shared_ptr<const XdmfGeometry> getGeometry() const;
 
@@ -117,7 +117,7 @@ public:
    * @skipline #//getName
    * @until #//getName
    *
-   * @return	the name of the grid.
+   * @return	The name of the grid.
    */
   std::string getName() const;
 
@@ -146,7 +146,7 @@ public:
    * @skipline #//getTime
    * @until #//getTime
    *
-   * @return	pointer to the XdmfTime attached to this grid. If no
+   * @return	Pointer to the XdmfTime attached to this grid. If no
    * 		XdmfTime is attached, return a NULL pointer.
    */
   shared_ptr<XdmfTime> getTime();
@@ -168,7 +168,7 @@ public:
    *
    * Python: Python doesn't have a constant version
    * 
-   * @return	pointer to the XdmfTime attached to this grid. If no
+   * @return	Pointer to the XdmfTime attached to this grid. If no
    * 		XdmfTime is attached, return a NULL pointer.
    */
   shared_ptr<const XdmfTime> getTime() const;
@@ -194,7 +194,7 @@ public:
    * @skipline #//getTopology
    * @until #//getTopology
    *
-   * @return	the topology associated with this grid.
+   * @return	The topology associated with this grid.
    */
   shared_ptr<const XdmfTopology> getTopology() const;
 
@@ -221,7 +221,7 @@ public:
    * @skipline #//setName
    * @until #//setName
    *
-   * @param	name	name of the grid to set.
+   * @param	name	Name of the grid to set.
    */
   void setName(const std::string & name);
 
@@ -246,7 +246,7 @@ public:
    * @skipline #//setTime
    * @until #//setTime
    *
-   * @param	time	an XdmfTime to associate with this grid.
+   * @param	time	An XdmfTime to associate with this grid.
    */
   void setTime(const shared_ptr<XdmfTime> time);
 

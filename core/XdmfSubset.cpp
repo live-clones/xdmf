@@ -87,6 +87,8 @@ std::vector<unsigned int> XdmfSubset::getDimensions() const
 std::map<std::string, std::string>
 XdmfSubset::getItemProperties() const
 {
+  // Check to make sure the subset is valid
+  // before generating the properties.
   if(!(mStart.size() == mStride.size() &&
        mStride.size() == mDimensions.size())) {
     try {
@@ -146,6 +148,7 @@ XdmfSubset::getItemProperties() const
 
   subsetMap["SubsetDimensions"] = vectorStream.str();
 
+  // merge with the properties of the generated class
   for (std::map<std::string, std::string>::const_iterator constructedIt = mConstructedProperties.begin();
        constructedIt != mConstructedProperties.end();
        ++constructedIt) {
@@ -278,6 +281,8 @@ void
 XdmfSubset::setDimensions(std::vector<unsigned int> newDimensions)
 {
   mDimensions = newDimensions;
+  // Give the user a warning so they know they might have messed something up.
+  // If they don't want the warning they can suppress it.
   if(!(mStart.size() == mStride.size() &&
        mStride.size() == mDimensions.size())) {
     try {
@@ -295,6 +300,8 @@ void
 XdmfSubset::setStart(std::vector<unsigned int> newStarts)
 {
   mStart = newStarts;
+  // Give the user a warning so they know they might have messed something up.
+  // If they don't want the warning they can suppress it.
   if(!(mStart.size() == mStride.size() &&
        mStride.size() == mDimensions.size())) {
     try {
@@ -312,6 +319,8 @@ void
 XdmfSubset::setStride(std::vector<unsigned int> newStrides)
 {
   mStride = newStrides;
+  // Give the user a warning so they know they might have messed something up.
+  // If they don't want the warning they can suppress it.
   if(!(mStart.size() == mStride.size() &&
        mStride.size() == mDimensions.size())) {
     try {

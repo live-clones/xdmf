@@ -72,10 +72,10 @@ public:
    * @skipline #//parse
    * @until #//parse
    *
-   * @param 	lightData 	a string containing light data description of an
+   * @param	lightData	A string containing light data description of an
    * 				Xdmf file.
    *
-   * @return 			an XdmfItem at the root of the Xdmf tree.
+   * @return			An XdmfItem at the root of the Xdmf tree.
    */  
   virtual shared_ptr<XdmfItem> parse(const std::string & lightData) const;
 
@@ -104,9 +104,9 @@ public:
    * @skipline #//readroot
    * @until #//readroot
    *
-   * @param 	filePath	the path of the Xdmf file to read in from disk.
+   * @param	filePath	The path of the Xdmf file to read in from disk.
    *
-   * @return 			an XdmfItem at the root of the Xdmf tree.
+   * @return 			An XdmfItem at the root of the Xdmf tree.
    */
   virtual shared_ptr<XdmfItem> read(const std::string & filePath) const;
 
@@ -135,11 +135,11 @@ public:
    * @skipline #//readXPath
    * @until #//readXPath
    *
-   * @param 	filePath 	the path of the Xdmf file to read in from disk.
-   * @param 	xPath 		an XPath corresponding to the portion of the
+   * @param	filePath	The path of the Xdmf file to read in from disk.
+   * @param	xPath		An XPath corresponding to the portion of the
    *				file to read.
    *
-   * @return 			a vector of XdmfItems that are included
+   * @return			A vector of XdmfItems that are included
    *				in the XPath.
    */
   virtual std::vector<shared_ptr<XdmfItem> >
@@ -171,9 +171,9 @@ public:
    * @skipline #//readItems
    * @until #//readItems
    *
-   * @param 	filePath 	the path of the Xdmf file to read in from disk.
+   * @param	filePath	The path of the Xdmf file to read in from disk.
    *
-   * @return 			a vector of XdmfItems at the root of the Xdmf tree.
+   * @return			A vector of XdmfItems at the root of the Xdmf tree.
    */
   virtual std::vector<shared_ptr<XdmfItem> >
   readItems(const std::string & filePath) const;
@@ -183,7 +183,7 @@ public:
    *
    * Since files are closed between reads, this does nothing by itself.
    *
-   * @param 	xPath 	An XPath corresponding to the portion of the file to read.
+   * @param	xPath	An XPath corresponding to the portion of the file to read.
    *
    * @return		A vector of items at the X path provided.
    */

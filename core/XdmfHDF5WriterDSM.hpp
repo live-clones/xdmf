@@ -85,9 +85,9 @@ public:
    * @skipline #//deleteManagerwriter
    * @until #//deleteManagerwriter
    *
-   * @param 	filePath 	the location of the hdf5 file to output to on disk.
-   * @param 	dsmBuffer 	the dsm buffer to write to.
-   * @return 			new XdmfHDF5WriterDSM.
+   * @param	filePath	The location of the hdf5 file to output to on disk.
+   * @param	dsmBuffer	The dsm buffer to write to.
+   * @return			New XdmfHDF5WriterDSM.
    */
   static shared_ptr<XdmfHDF5WriterDSM>
   New(const std::string & filePath,
@@ -128,10 +128,10 @@ public:
    * @skipline #//deleteManagerwriter
    * @until #//deleteManagerwriter
    *
-   * @param	filePath	the location of the hdf5 file to output to on disk.
-   * @param	comm		the communicator that the buffer will be created in.
-   * @param	bufferSize	the size of the created buffer.
-   * @return 			new XdmfHDF5WriterDSM.
+   * @param	filePath	The location of the hdf5 file to output to on disk.
+   * @param	comm		The communicator that the buffer will be created in.
+   * @param	bufferSize	The size of the created buffer.
+   * @return			New XdmfHDF5WriterDSM.
    */
   static shared_ptr<XdmfHDF5WriterDSM>
   New(const std::string & filePath,
@@ -183,7 +183,7 @@ public:
    *
    * @param	filePath	The location of the hdf5 file to output to on disk.
    * @param	dsmBuffer	The Buffer to write to.
-   * @return			a New XdmfHDF5WriterDSM
+   * @return			A New XdmfHDF5WriterDSM
    */
   static shared_ptr<XdmfHDF5WriterDSM>
   New(const std::string & filePath,
@@ -223,11 +223,11 @@ public:
    * @until #//finalizeMPI
    *
    * @param	filePath	The location of the hdf5 file to output to on disk.
-   * @param     comm            the communicator that the buffer will be created in.
-   * @param     bufferSize      the size of the created buffer.
+   * @param	comm		The communicator that the buffer will be created in.
+   * @param	bufferSize	The size of the created buffer.
    * @param	startCoreIndex	The index of the first core in the server block
    * @param	endCoreIndex	The index of the last core in the server block
-   * @return			a New XdmfHDF5WriterDSM
+   * @return			A New XdmfHDF5WriterDSM
    */
   static shared_ptr<XdmfHDF5WriterDSM>
   New(const std::string & filePath,
@@ -309,7 +309,7 @@ public:
    * @skipline #//deleteManagerwriter
    * @until #//deleteManagerwriter
    *
-   * @return	the dsmBuffer of the Writer
+   * @return	The dsmBuffer of the Writer
    */
   H5FDdsmBuffer * getBuffer();
 
@@ -351,7 +351,7 @@ public:
    * @skipline #//deleteManagerwriter
    * @until #//deleteManagerwriter
    *
-   * @return	the dsmManager of the Writer
+   * @return	The dsmManager of the Writer
    */
   H5FDdsmManager * getManager();
 
@@ -556,7 +556,7 @@ public:
    * In DSM this function has no effect because splitting would prevent the algorithm from working
    *
    *
-   * @param	newAllow	whether to allow data sets to be split across hdf5 files
+   * @param	newAllow	Whether to allow data sets to be split across hdf5 files
    */
   void setAllowSetSplitting(bool newAllow);
 
@@ -597,7 +597,7 @@ public:
    * @skipline #//deleteManagercontroller
    * @until #//deleteManagercontroller
    *
-   * @param	newBuffer	the buffer to be set
+   * @param	newBuffer	The buffer to be set
    */
   void setBuffer(H5FDdsmBuffer * newBuffer);
 
@@ -692,7 +692,7 @@ public:
    * @skipline #//deleteManagercontroller
    * @until #//deleteManagercontroller
    *
-   * @param	newManager	the manager to be set
+   * @param	newManager	The manager to be set
    */
   void setManager(H5FDdsmManager * newManager);
 

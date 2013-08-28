@@ -65,7 +65,7 @@ public:
    * @skipline #//getProperties
    * @until #//getProperties
    *
-   * @param	collectedProperties	a map to insert name / value pairs into.
+   * @param	collectedProperties	A map to insert name / value pairs into.
    */
   virtual void
   getProperties(std::map<std::string, std::string> & collectedProperties) const = 0;

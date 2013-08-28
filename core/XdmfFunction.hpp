@@ -39,6 +39,14 @@ class XDMFCORE_EXPORT XdmfFunction : public XdmfItem {
 
 public:
 
+
+  /**
+   * Function wrapper to allow for more flexibility when wrapping
+   * functions to be used in the dynamic library.
+   *
+   * Not required to use the dynamic library because there are
+   * methods that take function pointers.
+   */
   class XdmfFunctionInternal {
     public:
       virtual ~XdmfFunctionInternal()
@@ -49,6 +57,13 @@ public:
       execute(std::vector<shared_ptr<XdmfArray> > valueVector) = 0;
   };
 
+  /**
+   * Binary Operator wrapper to allow for more flexibility when wrapping
+   * operations to be used in the dynamic library.
+   *
+   * Not required to use the dynamic library because there are
+   * methods that take function pointers.
+   */
   class XdmfOperationInternal {
     public:
       virtual ~XdmfOperationInternal()
@@ -186,7 +201,7 @@ public:
               shared_ptr<XdmfFunctionInternal> newFunction);
 
   /**
-   * Adds an operation to the list of viable operators.
+   * Adds an operation to the list of viable binary operators.
    *
    * Example of Use:
    *
@@ -229,7 +244,7 @@ public:
                int priority);
 
   /**
-   * Adds an operation to the list of viable operators.
+   * Adds an operation to the list of viable binary operators.
    * This version allows for custom wrapping.
    *
    * Example of use:
@@ -282,8 +297,8 @@ public:
    * @skipline #//average
    * @until #//average
    *
-   * @param	values	a vector containing the arrays to be used
-   * @return		an XdmfArray containing one value which is the average
+   * @param	values	A vector containing the arrays to be used
+   * @return		An XdmfArray containing one value which is the average
    *			of all values contained within the provided arrays
    */
   static shared_ptr<XdmfArray>
@@ -310,9 +325,9 @@ public:
    * @skipline #//chunk
    * @until #//chunk
    *
-   * @param	val1	the first array being evaluated
-   * @param	val2	the second array being evaluated
-   * @return		the arrays joined end to end
+   * @param	val1	The first array being evaluated
+   * @param	val2	The second array being evaluated
+   * @return		The arrays joined end to end
    */
   static shared_ptr<XdmfArray>
   chunk(shared_ptr<XdmfArray> val1,
@@ -368,9 +383,9 @@ public:
    * @skipline #//evaluateExpression
    * @until #//evaluateExpression
    *
-   * @param	expression	a string containing the expresion to be evaluated
-   * @param	variables	a map of strings to their XdmfArray equivalent
-   * @return			a shared pointer to the XdmfArray resulting
+   * @param	expression	A string containing the expresion to be evaluated
+   * @param	variables	A map of strings to their XdmfArray equivalent
+   * @return			A shared pointer to the XdmfArray resulting
    *				from the expression
    */
   static shared_ptr<XdmfArray>
@@ -418,10 +433,10 @@ public:
    * @skipline #//evaluateOperation
    * @until #//evaluateOperation
    *
-   * @param	val1		the first array being evaluated
-   * @param	val2		the second array being evaluated
-   * @param	operation	a character specifying the operation performed
-   * @return			a shared pointer to the Xdmf Array that results
+   * @param	val1		The first array being evaluated
+   * @param	val2		The second array being evaluated
+   * @param	operation	A character specifying the operation performed
+   * @return			A shared pointer to the Xdmf Array that results
    *				from the calculation
    */
   static shared_ptr<XdmfArray>
@@ -467,9 +482,9 @@ public:
    * @skipline #//evaluateFunction
    * @until #//evaluateFunction
    *
-   * @param	valueVector	a vector containing the arrays to be used
-   * @param	functionName	the string associated with the function being called
-   * @return			the result of the function being called,
+   * @param	valueVector	A vector containing the arrays to be used
+   * @param	functionName	The string associated with the function being called
+   * @return			The result of the function being called,
    *				a scalar will be returned as an XdmfArray with one value
    */
   static shared_ptr<XdmfArray>
@@ -583,9 +598,9 @@ public:
    * @skipline #//getOperationPriority
    * @until #//getOperationPriority
    *
-   * @param	operation	the character associated with the operation
+   * @param	operation	The character associated with the operation
    *				to be checked
-   * @return			the priority of the operation
+   * @return			The priority of the operation
    */
   static int getOperationPriority(char operation);
 
@@ -607,7 +622,7 @@ public:
    * @skipline #//getSupportedOperations
    * @until #//getSupportedOperations
    *
-   * @return	a string containing the characters for all supported operations
+   * @return	A string containing the characters for all supported operations
    */
   static const std::string getSupportedOperations();
 
@@ -629,7 +644,7 @@ public:
    * @skipline #//getSupportedFunctions
    * @until #//getSupportedFunctions
    *
-   * @return	a vector containing the strings associated with all valid functions
+   * @return	A vector containing the strings associated with all valid functions
    */
   static const std::vector<std::string> getSupportedFunctions();
 
@@ -652,7 +667,7 @@ public:
    * @skipline #//getValidDigitChars
    * @until #//getValidDigitChars
    *
-   * @return	a string containing all valid variable characters
+   * @return	A string containing all valid variable characters
    */
   static const std::string getValidDigitChars();
 
@@ -674,7 +689,7 @@ public:
    * @skipline #//getValidVariableChars
    * @until #//getValidVariableChars
    *
-   * @return	a string containing all valid variable characters
+   * @return	A string containing all valid variable characters
    */
   static const std::string getValidVariableChars();
 
@@ -734,7 +749,7 @@ public:
    * @skipline #//getVariableList
    * @until #//getVariableList
    *
-   * @return	a vector of all the keys for this function
+   * @return	A vector of all the keys for this function
    */
   std::vector<std::string> getVariableList();
 
@@ -759,9 +774,9 @@ public:
    * @skipline #//interlace
    * @until #//interlace
    *
-   * @param	val1	the first array being evaluated
-   * @param	val2	the second array being evaluated
-   * @return		the interlaced arrays
+   * @param	val1	The first array being evaluated
+   * @param	val2	The second array being evaluated
+   * @return		The interlaced arrays
    */
   static shared_ptr<XdmfArray>
   interlace(shared_ptr<XdmfArray> val1,
@@ -943,8 +958,8 @@ public:
    * @skipline #//sum
    * @until #//sum
    *
-   * @param	values	a vector containing the arrays to be used
-   * @return		an XdmfArray containing one value which is the total
+   * @param	values	A vector containing the arrays to be used
+   * @return		An XdmfArray containing one value which is the total
    *			of all the values contained within the provided arrays
    */
   static shared_ptr<XdmfArray>

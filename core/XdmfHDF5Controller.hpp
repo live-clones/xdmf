@@ -73,7 +73,7 @@ public:
    * hdf5 data set (may be larger than dimensions if using
    * hyperslabs).
    *
-   * @return new HDF5 Controller.
+   * @return	New HDF5 Controller.
    */
   static shared_ptr<XdmfHDF5Controller>
   New(const std::string & hdf5FilePath,

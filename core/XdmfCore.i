@@ -354,7 +354,9 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
     /*note, accessing private members is impossible from swig.*/
 
 
-    /*class to wrap python functions to be compatible with the XdmfFunction code*/
+    /*Class to wrap python functions to be compatible with the XdmfFunction code.
+      This version has an execute that takes a vector of XdmfArrays as parameters,
+      so it is used for functions.*/
     class PythonFunction : public XdmfFunction::XdmfFunctionInternal {
       public:
         static shared_ptr<PythonFunction>
@@ -373,7 +375,8 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
           swig_type_info * paramType = SWIG_TypeQuery("_p_std__vectorT_boost__shared_ptrT_XdmfArray_t_std__allocatorT_boost__shared_ptrT_XdmfArray_t_t_t");
           PyObject * pyVector = SWIG_NewPointerObj(static_cast<void*>(& valueVector), paramType, SWIG_POINTER_NEW);
           PyObject * args = PyTuple_New(1);
-          /* In this case you could also cast a pointer to the vector into the PyObject * type, but that doesn't work for all types*/
+          /* In this case you could also cast a pointer to the vector
+             into the PyObject * type, but that doesn't work for all types*/
           PyTuple_SetItem(args, 0, pyVector);
           PyObject * resultObject = PyObject_CallObject(mInternalFunction, args);
           void * resultPointer = 0;
@@ -398,7 +401,9 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
         PyObject * mInternalFunction;
     };
 
-    /*class to wrap python functions to be compatible with the XdmfFunction Operation code*/
+    /*Class to wrap python functions to be compatible with the XdmfFunction Operation code.
+      This version has an execute that takes two XdmfArrays as parameters,
+      so it is used for binary operators.*/
     class PythonOperation : public XdmfFunction::XdmfOperationInternal {
       public:
         static shared_ptr<PythonOperation>

@@ -68,14 +68,14 @@ public:
    * @skipline #//initialization2
    * @until #//initialization2
    *
-   * @param 	xBrickSize 	the size of the brick in the x direction.
-   * @param 	yBrickSize 	the size of the brick in the y direction.
-   * @param 	xNumPoints 	the number of points in the x direction.
-   * @param 	yNumPoints 	the number of points in the y direction.
-   * @param 	xOrigin 	the x coordinate of the origin.
-   * @param 	yOrigin 	the y coordinate of the origin.
+   * @param 	xBrickSize 	The size of the brick in the x direction.
+   * @param 	yBrickSize 	The size of the brick in the y direction.
+   * @param 	xNumPoints 	The number of points in the x direction.
+   * @param 	yNumPoints 	The number of points in the y direction.
+   * @param 	xOrigin 	The x coordinate of the origin.
+   * @param 	yOrigin 	The y coordinate of the origin.
    *
-   * @return 			constructed structured grid.
+   * @return 			Constructed structured grid.
    */
   static shared_ptr<XdmfRegularGrid> New(const double xBrickSize,
                                          const double yBrickSize,
@@ -105,17 +105,17 @@ public:
    * @skipline #//initialization3
    * @until #//initialization3
    *
-   * @param 	xBrickSize 	the size of the brick in the x direction.
-   * @param 	yBrickSize 	the size of the brick in the y direction.
-   * @param 	zBrickSize 	the size of the brick in the z direction.
-   * @param 	xNumPoints 	the number of points in the x direction.
-   * @param 	yNumPoints 	the number of points in the y direction.
-   * @param 	zNumPoints 	the number of points in the z direction.
-   * @param 	xOrigin 	the x coordinate of the origin.
-   * @param 	yOrigin 	the y coordinate of the origin.
-   * @param 	zOrigin 	the z coordinate of the origin.
+   * @param 	xBrickSize 	The size of the brick in the x direction.
+   * @param 	yBrickSize 	The size of the brick in the y direction.
+   * @param 	zBrickSize 	The size of the brick in the z direction.
+   * @param 	xNumPoints 	The number of points in the x direction.
+   * @param 	yNumPoints 	The number of points in the y direction.
+   * @param 	zNumPoints 	The number of points in the z direction.
+   * @param 	xOrigin 	The x coordinate of the origin.
+   * @param 	yOrigin 	The y coordinate of the origin.
+   * @param 	zOrigin 	The z coordinate of the origin.
    *
-   * @return 			constructed structured grid.
+   * @return 			Constructed structured grid.
    */
   static shared_ptr<XdmfRegularGrid> New(const double xBrickSize,
                                          const double yBrickSize,
@@ -144,11 +144,11 @@ public:
    * @skipline #//initializationvector
    * @until #//initializationvector
    *
-   * @param 	brickSize 	the size of the brick in each direction.
-   * @param 	numPoints 	the number of points in each direction.
-   * @param 	origin 		the coordinates of the origin.
+   * @param 	brickSize 	The size of the brick in each direction.
+   * @param 	numPoints 	The number of points in each direction.
+   * @param 	origin 		The coordinates of the origin.
    *
-   * @return 			constructed structured grid.
+   * @return 			Constructed structured grid.
    */
   static shared_ptr<XdmfRegularGrid>
   New(const shared_ptr<XdmfArray> brickSize,
@@ -335,7 +335,7 @@ public:
    * @skipline #//setBrickSize
    * @until #//setBrickSize
    *
-   * @param 	brickSize 	the sizes of the points composing the mesh. This
+   * @param 	brickSize 	The sizes of the points composing the mesh. This
    * 				should have the same number of terms as the
    *				dimensionality of the mesh.
    */
@@ -388,7 +388,7 @@ public:
    * @skipline #//setOrigin
    * @until #//setOrigin
    *
-   * @param 	origin 	location of the origin of the grid.  This should
+   * @param 	origin 	Location of the origin of the grid.  This should
    * 			have the same number of terms as the dimensionality
    *			of the mesh.
    */

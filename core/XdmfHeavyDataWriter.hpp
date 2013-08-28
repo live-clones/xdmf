@@ -128,7 +128,7 @@ public:
    * @skipline #//getAllowSetSplitting
    * @until #//getAllowSetSplitting
    *
-   * @return	whether to allow data sets to be split across hdf5 files
+   * @return	Whether to allow data sets to be split across hdf5 files
    */
   int getAllowSetSplitting();
 
@@ -176,7 +176,7 @@ public:
    * @skipline #//getFileOverhead
    * @until #//getFileOverhead
    *
-   * @return	amount of bytes used as overhead
+   * @return	Amount of bytes used as overhead
    */
   unsigned int getFileOverhead();
 
@@ -201,7 +201,7 @@ public:
    * @skipline #//getFilePath
    * @until #//getFilePath
    *
-   * @return	a std::string containing the path to the heavy file on disk this
+   * @return	A std::string containing the path to the heavy file on disk this
    * 		writer is writing to.
    */
   std::string getFilePath() const;
@@ -252,7 +252,7 @@ public:
    * @skipline #//getMode
    * @until #//getMode
    *
-   * @return	the Mode of operation for this writer.
+   * @return	The Mode of operation for this writer.
    */
   Mode getMode() const;
 
@@ -277,7 +277,7 @@ public:
    * @skipline #//getReleaseData
    * @until #//getReleaseData
    *
-   * @return	true if data is freed after writing
+   * @return	True if data is freed after writing
    */
   bool getReleaseData() const;
 
@@ -339,7 +339,7 @@ public:
    * @skipline #//setAllowSetSplitting
    * @until #//setAllowSetSplitting
    *
-   * @param	newAllow	whether to allow data sets to be split across hdf5 files
+   * @param	newAllow	Whether to allow data sets to be split across hdf5 files
    */
   void setAllowSetSplitting(bool newAllow);
 
@@ -388,7 +388,7 @@ public:
    * @skipline #//setFileSizeLimit
    * @until #//setFileSizeLimit
    *
-   * @param	newSize The size limit in MB
+   * @param	newSize		The size limit in MB
    */
   void setFileSizeLimit(int newSize);
 
@@ -413,7 +413,7 @@ public:
    * @skipline #//setMode
    * @until #//setMode
    *
-   * @param	mode	the Mode of operation for this writer.
+   * @param	mode	The Mode of operation for this writer.
    */
   void setMode(const Mode mode);
 
@@ -438,7 +438,7 @@ public:
    * @skipline #//setReleaseData
    * @until #//setReleaseData
    *
-   * @param	releaseData	true if data should be freed after writing
+   * @param	releaseData	True if data should be freed after writing
    */
   void setReleaseData(const bool releaseData = true);
 
@@ -463,8 +463,8 @@ public:
    * @skipline #//visit
    * @until #//visit
    *
-   * @param	array		an XdmfArray to write to heavy data.
-   * @param	visitor		a smart pointer to this visitor --- aids in grid traversal.
+   * @param	array		An XdmfArray to write to heavy data.
+   * @param	visitor		A smart pointer to this visitor --- aids in grid traversal.
    */
   using XdmfVisitor::visit;
   virtual void visit(XdmfArray & array,

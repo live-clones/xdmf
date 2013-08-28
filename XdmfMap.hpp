@@ -79,7 +79,7 @@ public:
    * @skipline #//initialization
    * @until #//initialization
    *
-   * @return 	constructed XdmfMap.
+   * @return 	Constructed XdmfMap.
    */
   static shared_ptr<XdmfMap> New();
 
@@ -102,11 +102,12 @@ public:
    * @skipline #//initializationnode
    * @until #//initializationnode
    *
-   * @param 	globalNodeIds 	a vector of attributes containing globalNodeId
+   * @param 	globalNodeIds 	A vector of attributes containing globalNodeId
    *                            values for each partition to be mapped.
    *
-   * @return constructed XdmfMaps for each partition. The size of the vector
-   *         will be the same as the globalNodeIds vector.
+   * @return 			Constructed XdmfMaps for each partition. The
+   *				size of the vector will be the same as the
+   *				globalNodeIds vector.
    */
   static std::vector<shared_ptr<XdmfMap> >
   New(const std::vector<shared_ptr<XdmfAttribute> > & globalNodeIds);
@@ -139,7 +140,7 @@ public:
    * @skipline #//getMap
    * @until #//getMap
    *
-   * @return 	stored boundary communicator map.
+   * @return 	Stored boundary communicator map.
    */
   std::map<task_id, node_id_map> getMap() const;
 
@@ -168,7 +169,7 @@ public:
    * @skipline #//getName
    * @until #//getName
    *
-   * @return 	name of boundary communicator map.
+   * @return	Name of boundary communicator map.
    */
   std::string getName() const;
 
@@ -194,10 +195,10 @@ public:
    * @skipline #//getRemoteNodeIds
    * @until #//getRemoteNodeIds
    *
-   * @param	remoteTaskId 	 task id to retrieve mapping for.
+   * @param	remoteTaskId 	Task id to retrieve mapping for.
    *
-   * @return	a map of local node ids to a vector of remote node ids on
-   *	 	remoteTaskId.
+   * @return			A map of local node ids to a vector of
+   *				remote node ids on remoteTaskId.
    */
   node_id_map getRemoteNodeIds(const task_id remoteTaskId);
 
@@ -228,8 +229,8 @@ public:
    *
    * @param 	remoteTaskId 		task id where the remoteLoalNodeId is
    *					located.
-   * @param 	localNodeId		the node id of the node being mapped.
-   * @param 	remoteLocalNodeId	a node id on the remoteTaskId that the
+   * @param 	localNodeId		The node id of the node being mapped.
+   * @param 	remoteLocalNodeId	A node id on the remoteTaskId that the
    *					localNodeId is mapped to.
    */
   void insert(const task_id  remoteTaskId,
@@ -329,11 +330,11 @@ public:
    * @skipline #//setHeavyDataController
    * @until #//setHeavyDataController
    *
-   * @param	remoteTaskIdsControllers	a vector of XdmfHeavyDataControllers 
+   * @param	remoteTaskIdsControllers	A vector of XdmfHeavyDataControllers 
    *						to the remote task ids dataset.
-   * @param	localNodeIdsControllers		a vector of XdmfHeavyDataControllers
+   * @param	localNodeIdsControllers		A vector of XdmfHeavyDataControllers
    *						to the local node ids dataset.
-   * @param	remoteLocalNodeIdsControllers	a vector of XdmfHeavyDataControllers
+   * @param	remoteLocalNodeIdsControllers	A vector of XdmfHeavyDataControllers
    *						to the remote local node ids dataset.
    */
   void
@@ -362,7 +363,7 @@ public:
    * @skipline #//setMap
    * @until #//setMap
    *
-   * @param	map	the boundary communicator map to store.
+   * @param	map	The boundary communicator map to store.
    */
   void setMap(std::map<task_id, node_id_map> map);
 
@@ -387,7 +388,7 @@ public:
    * @skipline #//setName
    * @until #//setName
    *
-   * @param	name	the name of the boundary communicator map to set.
+   * @param	name	The name of the boundary communicator map to set.
    */
   void setName(const std::string & name);
 

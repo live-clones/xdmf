@@ -75,7 +75,7 @@ public:
    * @skipline #//getDataSetPath
    * @until #//getDataSetPath
    *
-   * @return 	a std::string containing the path of the data set.
+   * @return	A std::string containing the path of the data set.
    */
   std::string getDataSetPath() const;
 
@@ -103,7 +103,7 @@ public:
    * @skipline #//getDataspaceDimensions
    * @until #//getDataspaceDimensions
    *
-   * @return 	a vector containing the size in each dimension of the dataspace
+   * @return	A vector containing the size in each dimension of the dataspace
    * 		owned by this controller.
    */
   std::vector<unsigned int> getDataspaceDimensions() const;
@@ -129,7 +129,7 @@ public:
    * @skipline #//getDimensions
    * @until #//getDimensions
    *
-   * @return 	a vector containing the size in each dimension of the heavy data
+   * @return	A vector containing the size in each dimension of the heavy data
    * 		set owned by this controller.
    */
   std::vector<unsigned int> getDimensions() const;
@@ -157,7 +157,7 @@ public:
    * @skipline #//getFilePath
    * @until #//getFilePath
    *
-   * @return 	a std::string containing the path to the heavy data file.
+   * @return	A std::string containing the path to the heavy data file.
    */
   std::string getFilePath() const;
 
@@ -183,7 +183,7 @@ public:
    * @skipline #//getName
    * @until #//getName
    *
-   * @return 	std::string containing the name of this heavy data format
+   * @return	std::string containing the name of this heavy data format
    */
   virtual std::string getName() const = 0;
 
@@ -208,7 +208,7 @@ public:
    * @skipline #//getSize
    * @until #//getSize
    *
-   * @return 	a int containing the size of the heavy data set.
+   * @return	An int containing the size of the heavy data set.
    */
   unsigned int getSize() const;
 
@@ -233,7 +233,7 @@ public:
    * @skipline #//setArrayOffset
    * @until #//setArrayOffset
    *
-   * @param	newOffset	the new index at which the controller will be written
+   * @param	newOffset	The new index at which the controller will be written
    */
   void setArrayOffset(unsigned int newOffset);
 
@@ -262,7 +262,7 @@ public:
    * @skipline #//getArrayOffset
    * @until #//getArrayOffset
    *
-   * @return	the offset that the array will read from
+   * @return	The offset that the array will read from
    */
   unsigned int getArrayOffset() const;
 
@@ -285,7 +285,7 @@ public:
    * @skipline #//getStart
    * @until #//getStart
    *
-   * @return	a vector containing the start index in each dimension of
+   * @return	A vector containing the start index in each dimension of
    * 		the heavy data set owned by this controller.
    */
   std::vector<unsigned int> getStart() const;
@@ -309,7 +309,7 @@ public:
    * @skipline #//getStride
    * @until #//getStride
    *
-   * @return	a vector containing the stride in each dimension of the
+   * @return	A vector containing the stride in each dimension of the
    * 		heavy data set owned by this controller.
    */
   std::vector<unsigned int> getStride() const;
@@ -336,7 +336,7 @@ public:
    * @skipline #//getType
    * @until #//getType
    *
-   * @return	an XdmfArrayType containing the array type of the heavy data set.
+   * @return	An XdmfArrayType containing the array type of the heavy data set.
    */
   shared_ptr<const XdmfArrayType> getType() const;
 
@@ -362,7 +362,7 @@ public:
    * @skipline #//read
    * @until #//read
    *
-   * @param	array	and XdmfArray to read data into.
+   * @param	array	An XdmfArray to read data into.
    */
   virtual void read(XdmfArray * const array) = 0;
 

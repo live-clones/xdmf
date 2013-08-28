@@ -68,10 +68,10 @@ public:
    * @skipline #//initialization2
    * @until #//initialization2
    *
-   * @param 	xCoordinates 	the coordinates of points along the x axis
-   * @param 	yCoordinates 	the coordinates of points along the y axis.
+   * @param 	xCoordinates 	The coordinates of points along the x axis
+   * @param 	yCoordinates 	The coordinates of points along the y axis.
    *
-   * @return 			constructed rectilinear grid.
+   * @return 			Constructed rectilinear grid.
    */
   static shared_ptr<XdmfRectilinearGrid>
   New(const shared_ptr<XdmfArray> xCoordinates,
@@ -98,11 +98,11 @@ public:
    * @skipline #//initialization3
    * @until #//initialization3
    *
-   * @param 	xCoordinates 	the coordinates of points along the x axis
-   * @param 	yCoordinates 	the coordinates of points along the y axis.
-   * @param 	zCoordinates 	the coordinates of points along the z axis.
+   * @param 	xCoordinates 	The coordinates of points along the x axis
+   * @param 	yCoordinates 	The coordinates of points along the y axis.
+   * @param 	zCoordinates 	The coordinates of points along the z axis.
    *
-   * @return 			constructed rectilinear grid.
+   * @return 			Constructed rectilinear grid.
    */
   static shared_ptr<XdmfRectilinearGrid>
   New(const shared_ptr<XdmfArray> xCoordinates,
@@ -130,9 +130,9 @@ public:
    * @skipline #//initializationvector
    * @until #//initializationvector
    *
-   * @param 	axesCoordinates 	the coordinates of points along each axis.
+   * @param 	axesCoordinates 	The coordinates of points along each axis.
    *
-   * @return 				constructed rectilinear grid.
+   * @return 				Constructed rectilinear grid.
    */
   static shared_ptr<XdmfRectilinearGrid>
   New(const std::vector<shared_ptr<XdmfArray> > & axesCoordinates);
@@ -167,11 +167,11 @@ public:
    * @skipline #//getCoodinatessingle
    * @until #//getCoodinatessingle
    *
-   * @param 	axisIndex 	the index of the axis to retrieve, (i.e. 0 for
+   * @param 	axisIndex 	The index of the axis to retrieve, (i.e. 0 for
    *				x-axis). If no array exists at the index,
    *				return NULL.
    *
-   * @return 			array of coordinates along
+   * @return 			Array of coordinates along requested axis
    */
   shared_ptr<XdmfArray> getCoordinates(const unsigned int axisIndex);
 
@@ -193,11 +193,11 @@ public:
    *
    * Python: does not support a constant version of this function
    *
-   * @param 	axisIndex 	the index of the axis to retrieve (i.e. 0 for
+   * @param 	axisIndex 	The index of the axis to retrieve (i.e. 0 for
    * 				x-axis). If no array exists at the index,
    *				return NULL.
    *
-   * @return 			array of coordinates along
+   * @return 			Array of coordinates along requeste axis
    */
   shared_ptr<const XdmfArray>
   getCoordinates(const unsigned int axisIndex) const;
@@ -227,7 +227,7 @@ public:
    * @skipline #//getCoodinatesvector
    * @until #//getCoodinatesvector
    *
-   * @return 	vector containing an array of coordinates along each
+   * @return 	Vector containing an array of coordinates along each
    * 		direction.
    */
   std::vector<shared_ptr<XdmfArray> > getCoordinates();
@@ -249,7 +249,7 @@ public:
    *
    * Python: does not support a constant version of this function
    *
-   * @return 	vector containing an array of coordinates along each
+   * @return 	Vector containing an array of coordinates along each
    * 		direction.
    */
   const std::vector<shared_ptr<XdmfArray> > getCoordinates() const;
@@ -331,9 +331,9 @@ public:
    * @skipline #//setCoordinatessingle
    * @until #//setCoordinatessingle
    *
-   * @param 	axisIndex 		the index of the axis to set
+   * @param 	axisIndex 		The index of the axis to set
    *					(i.e. 0 for x-axis).
-   * @param 	axisCoordinates 	the coordinates of points along
+   * @param 	axisCoordinates 	The coordinates of points along
    *					a single axis to set.
    */
   void setCoordinates(const unsigned int axisIndex,
@@ -364,7 +364,7 @@ public:
    * @skipline #//setCoordinatesvector
    * @until #//setCoordinatesvector
    *
-   * @param 	axesCoordinates 	the coordinates of points
+   * @param 	axesCoordinates 	The coordinates of points
    * 					along each axis.
    */
   void

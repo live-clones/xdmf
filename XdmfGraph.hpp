@@ -60,7 +60,7 @@ public:
    *
    * @param numberNodes number of nodes in graph.
    *
-   * @return	constructed XdmfGraph.
+   * @return	Constructed XdmfGraph.
    */
   static shared_ptr<XdmfGraph> New(const unsigned int numberNodes);
 

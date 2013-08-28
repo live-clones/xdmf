@@ -13,7 +13,6 @@ integer xdmfaddset
 
 
 
-
 ! Array Type
 integer XDMF_ARRAY_TYPE_INT8
 integer XDMF_ARRAY_TYPE_INT16

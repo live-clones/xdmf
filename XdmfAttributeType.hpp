@@ -96,7 +96,7 @@ protected:
    * accessed through more specific static methods that construct
    * XdmfAttributeTypes - i.e. XdmfAttributeType::Scalar().
    *
-   * @param name the name of the XdmfAttributeType to construct.
+   * @param	name	The name of the XdmfAttributeType to construct.
    */
   XdmfAttributeType(const std::string & name);
 

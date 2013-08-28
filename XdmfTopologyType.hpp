@@ -177,8 +177,8 @@ public:
    *
    * @param id of the topology type.
    *
-   * @return topology type corresponding to id - if no topology type is found
-   * an NULL pointer is returned.
+   * @return	Topology type corresponding to id - if no topology type is found
+   * 		an NULL pointer is returned.
    */
   static shared_ptr<const XdmfTopologyType> New(const unsigned int id);
 
@@ -199,7 +199,7 @@ public:
    * @skipline #//getCellType
    * @until #//getCellType
    *
-   * @return a CellType containing the cell type.
+   * @return 	A CellType containing the cell type.
    */
   CellType getCellType() const;
 
@@ -220,7 +220,7 @@ public:
    * @skipline #//getEdgesPerElement
    * @until #//getEdgesPerElement
    *
-   * @return an unsigned int containing the number of edges per element.
+   * @return	An unsigned int containing the number of edges per element.
    */
   virtual unsigned int getEdgesPerElement() const;
 
@@ -241,7 +241,7 @@ public:
    * @skipline #//getFacesPerElement
    * @until #//getFacesPerElement
    *
-   * @return an unsigned int containing the number of faces per element.
+   * @return	An unsigned int containing the number of faces per element.
    */
   virtual unsigned int getFacesPerElement() const;
 
@@ -262,7 +262,7 @@ public:
    * @skipline #//getFaceType
    * @until #//getFaceType
    *
-   * @return The face's topology type
+   * @return	The face's topology type
    */
   shared_ptr<const XdmfTopologyType>  getFaceType();
 
@@ -284,7 +284,7 @@ public:
    * @skipline //#getID
    * @until //#getID
    *
-   * @return the ID of the topology type.
+   * @return	The ID of the topology type.
    */
   virtual unsigned int getID() const;
 
@@ -305,7 +305,7 @@ public:
    * @skipline #//getName
    * @until #//getName
    *
-   * @return the name of this topology type.
+   * @return	The name of this topology type.
    */
   virtual std::string getName() const;
 
@@ -327,7 +327,7 @@ public:
    * @skipline #//getNodesPerElement
    * @until #//getNodesPerElement
    *
-   * @return an unsigned int containing number of nodes per element.
+   * @return	An unsigned int containing number of nodes per element.
    */
   virtual unsigned int getNodesPerElement() const;
 

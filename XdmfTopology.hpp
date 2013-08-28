@@ -73,7 +73,7 @@ public:
    * @skipline #//initialization
    * @until #//initialization
    *
-   * @return 	constructed XdmfTopology.
+   * @return 	Constructed XdmfTopology.
    */
   static shared_ptr<XdmfTopology> New();
 
@@ -107,7 +107,7 @@ public:
    * @skipline #//getNumberElements
    * @until #//getNumberElements
    *
-   * @return 	int of number elements in the Topology.
+   * @return 	Int of number elements in the Topology.
    */
   virtual unsigned int getNumberElements() const;
 
@@ -161,7 +161,7 @@ public:
    * @skipline #//setType
    * @until #//setType
    *
-   * @param 	type 	the XdmfTopologyType to set.
+   * @param 	type	The XdmfTopologyType to set.
    */
   void setType(const shared_ptr<const XdmfTopologyType> type);
 

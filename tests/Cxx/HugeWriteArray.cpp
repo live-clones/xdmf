@@ -74,7 +74,7 @@ int main(int, char **)
 	std::cout << "after read" << std::endl;
 	std::cout << "array size = " << writtenArray->getSize() << std::endl;
 	assert(writtenArray->getSize() == 9000000);
-	for (int i = 0; i < writtenArray->getSize(); i++)
+	for (int i = 0; i < (int)writtenArray->getSize(); ++i)
         {
                 if (i != writtenArray->getValue<int>(i))
 		{

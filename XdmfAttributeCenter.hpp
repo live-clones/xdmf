@@ -93,7 +93,7 @@ protected:
    * construct XdmfAttributeCenters -
    * i.e. XdmfAttributeCenter::Node().
    *
-   * @param name the name of the XdmfAttributeCenter to construct.
+   * @param	name	The name of the XdmfAttributeCenter to construct.
    */
   XdmfAttributeCenter(const std::string & name);
 

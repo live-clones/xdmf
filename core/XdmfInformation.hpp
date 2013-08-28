@@ -60,7 +60,7 @@ public:
    * @skipline #//initialization
    * @until #//initialization
    *
-   * @return	constructed XdmfInformation.
+   * @return	Constructed XdmfInformation.
    */
   static shared_ptr<XdmfInformation> New();
 
@@ -81,11 +81,11 @@ public:
    * @skipline #//initializationfull
    * @until #//initializationfull
    *
-   * @param key a string containing the key of the XdmfInformation to create.
-   * @param value a string containing the value of the XdmfInformation to
+   * @param	key	A string containing the key of the XdmfInformation to create.
+   * @param	value	A string containing the value of the XdmfInformation to
    * create.
    *
-   * @return	constructed XdmfInformation
+   * @return	Constructed XdmfInformation
    */
   static shared_ptr<XdmfInformation> New(const std::string & key,
                                          const std::string & value);
@@ -121,7 +121,7 @@ public:
    * @skipline #//getKey
    * @until #//getKey
    *
-   * @return	string containing the key.
+   * @return	A string containing the key.
    */
   std::string getKey() const;
 
@@ -146,7 +146,7 @@ public:
    * @skipline #//getValue
    * @until #//getValue
    *
-   * @return	string containing the value.
+   * @return	A string containing the value.
    */
   std::string getValue() const;
 
@@ -173,7 +173,7 @@ public:
    * @skipline #//setKey
    * @until #//setKey
    *
-   * @param	key	a string containing the key to set.
+   * @param	key	A string containing the key to set.
    */
   void setKey(const std::string & key);
 
@@ -198,7 +198,7 @@ public:
    * @skipline #//setValue
    * @until #//setValue
    *
-   * @param	value	a string containing the value to set.
+   * @param	value	A string containing the value to set.
    */
   void setValue(const std::string & value);
 

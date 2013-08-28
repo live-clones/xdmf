@@ -29,8 +29,8 @@ public:
      * @skipline #//initialization
      * @until #//initialization
      *
-     * @param	level		the error level of the exception being constructed
-     * @param	message		the message to be attached to the exception
+     * @param	level		The error level of the exception being constructed
+     * @param	message		The message to be attached to the exception
      */
     XdmfError(Level level, std::string message);
 
@@ -55,7 +55,7 @@ public:
      * @skipline #//setLevel
      * @until #//setLevel
      *
-     * @param	l	the new level of the exception
+     * @param	l	The new level of the exception
      */
     void setLevel(Level l);
 
@@ -78,7 +78,7 @@ public:
      * @skipline #//getLevel
      * @until #//getLevel
      *
-     * @return	the error level of the exception
+     * @return	The error level of the exception
      */
     Level getLevel();
 
@@ -101,7 +101,7 @@ public:
      * @skipline #//setLevelLimit
      * @until #//setLevelLimit
      *
-     * @param	l	the cutoff level for sending exceptions via message
+     * @param	l	The cutoff level for sending exceptions via message
      */
     static void setLevelLimit(Level l);
 
@@ -145,7 +145,7 @@ public:
      * @skipline #//getLevelLimit
      * @until #//getLevelLimit
      *
-     * @return	gets the cuttof level for sending exceptions via message
+     * @return	The cuttof level for sending exceptions via message
      */
     static Level getLevelLimit();
 
@@ -187,8 +187,8 @@ public:
      * @skipline #//message
      * @until #//message
      *
-     * @param	l	the level of the error to be generated
-     * @param	msg	the message to be associated with the error generated and printed out
+     * @param	l	The level of the error to be generated
+     * @param	msg	The message to be associated with the error generated and printed out
      */
     static void message(Level l, std::string msg);
 
@@ -207,7 +207,7 @@ public:
      *
      * Python: Not supported in Python
      *
-     * @param	buf	the buffer that the error messages will be printed to
+     * @param	buf	The buffer that the error messages will be printed to
      */
     static void setBuffer(std::streambuf* buf);
 
@@ -230,7 +230,7 @@ public:
      * @skipline #//what
      * @until #//what
      *
-     * @return	the message associated with the exception
+     * @return	The message associated with the exception
      */
     virtual const char * what() const throw();
 

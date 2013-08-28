@@ -347,7 +347,7 @@ public:
    * @skipline #//deleteManagercontroller
    * @until #//deleteManagercontroller
    *
-   * @return	the dsmManager of the controller
+   * @return	The dsmManager of the controller
    */
   H5FDdsmManager * getManager();
 
@@ -388,7 +388,7 @@ public:
    * @skipline #//deleteManagercontroller
    * @until #//deleteManagercontroller
    *
-   * @return	the dsmBuffer of the controller
+   * @return	The dsmBuffer of the controller
    */
   H5FDdsmBuffer * getBuffer();
 
@@ -722,7 +722,7 @@ public:
    * @skipline #//deleteManagerwriter
    * @until #//deleteManagerwriter
    *
-   * @param	newManager	the manager to be set
+   * @param	newManager	The manager to be set
    */
   void setManager(H5FDdsmManager * newManager);
 

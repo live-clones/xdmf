@@ -123,7 +123,7 @@ public:
    * @skipline #//getElementSize
    * @until #//getElementSize
    *
-   * @return 	the data size, in bytes.
+   * @return	The data size, in bytes.
    */
   unsigned int getElementSize() const;
 
@@ -144,7 +144,7 @@ public:
    * @skipline #//getName
    * @until #//getName
    *
-   * @return 	the name of the data type.
+   * @return	The name of the data type.
    */
   std::string getName() const;
 

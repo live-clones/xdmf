@@ -70,10 +70,10 @@ public:
    * @skipline #//initialization
    * @until #//initialization
    *
-   * @param filePath the location of the hdf5 file to output to on disk.
-   * @param clobberFile whether to overwrite the previous file if it exists.
+   * @param	filePath	The location of the hdf5 file to output to on disk.
+   * @param	clobberFile	Whether to overwrite the previous file if it exists.
    *
-   * @return	new XdmfHDF5Writer.
+   * @return			New XdmfHDF5Writer.
    */
   static shared_ptr<XdmfHDF5Writer> New(const std::string & filePath,
                                         const bool clobberFile = false);
@@ -102,7 +102,7 @@ public:
    * @skipline #//getChunkSize
    * @until #//getChunkSize
    *
-   * @return	chunk	size used to output datasets to hdf5.
+   * @return	Chunk size used to output datasets to hdf5.
    */
   unsigned int getChunkSize() const;
 
@@ -129,7 +129,7 @@ public:
    * @skipline #//setChunkSize
    * @until #//setChunkSize
    *
-   * @param 	chunkSize	the number of elements per chunk.
+   * @param 	chunkSize	The number of elements per chunk.
    */
   void setChunkSize(const unsigned int chunkSize);
 
