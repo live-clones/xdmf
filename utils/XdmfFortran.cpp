@@ -57,6 +57,11 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#ifdef XDMF_BUILD_DSM
+  #include <mpi.h>
+  #include "XdmfHDF5WriterDSM.hpp"
+  #include "XdmfHDF5ControllerDSM.hpp"
+#endif
 
 template <typename T>
 void
@@ -300,6 +305,7 @@ XdmfFortran::XdmfFortran() :
   mOrigin(shared_ptr<XdmfArray>()),
   mDimensions(shared_ptr<XdmfArray>()),
   mHeavyDataWriter(shared_ptr<XdmfHeavyDataWriter>()),
+  mDSMWriter(shared_ptr<XdmfHDF5WriterDSM>()),
   mMaxFileSize(0),
   mAllowSetSplitting(false)
 {
@@ -7536,17 +7542,324 @@ XdmfFortran::initHDF5(const char * const xmlFilePath,
   shared_ptr<XdmfHDF5Writer> writer = XdmfHDF5Writer::New(xmlFilePath);
   writer->setFileSizeLimit(mMaxFileSize);
   writer->setAllowSetSplitting(mAllowSetSplitting);
-  writer->setReleaseData( release );
+  writer->setReleaseData(release);
   mHeavyDataWriter = writer;
 }
 
-void 
+#ifdef XDMF_BUILD_DSM
+
+void
+XdmfFortran::initDSMServer(const char * const filePath,
+                           MPI_Comm comm,
+                           int bufferSize,
+                           int startCoreIndex,
+                           int endCoreIndex)
+{
+  // Non-Threaded version
+  std::string writtenFile(filePath);
+  if (bufferSize > 0) {
+    mDSMWriter = XdmfHDF5WriterDSM::New(writtenFile, comm, (unsigned int) bufferSize, startCoreIndex, endCoreIndex);
+    mDSMWriter->setMode(XdmfHeavyDataWriter::Hyperslab);
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Non-positive DSM buffer size.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+}
+
+void
+XdmfFortran::acceptDSM(int numConnections)
+{
+  if (mDSMWriter) {
+    mDSMWriter->getServerBuffer()->GetComm()->OpenPort();
+    mDSMWriter->getServerBuffer()->SendAccept(numConnections);
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Attempting to accept connection when DSM is not set up.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+}
+
+void
+XdmfFortran::closeDSMPort()
+{
+  if (mDSMWriter) {
+    mDSMWriter->getServerBuffer()->GetComm()->ClosePort();
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Attempting to close a port when DSM is not set up.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+}
+
+void
+XdmfFortran::connectDSM(const char * const filePath,
+                        MPI_Comm comm)
+{
+  std::string writtenFile(filePath);
+  XdmfDSMCommMPI * dsmComm = new XdmfDSMCommMPI();
+  dsmComm->DupComm(comm);
+  dsmComm->Init();
+  XdmfDSMBuffer * dsmBuffer = new XdmfDSMBuffer();
+  dsmBuffer->SetIsServer(false);
+  dsmBuffer->SetComm(dsmComm);
+  dsmBuffer->SetIsConnected(true);
+
+  mDSMWriter = XdmfHDF5WriterDSM::New(writtenFile, dsmBuffer);
+
+  mDSMWriter->setMode(XdmfHeavyDataWriter::Hyperslab);
+
+  // Currently uses default config file name
+  mDSMWriter->getServerBuffer()->GetComm()->ReadDsmPortName();
+
+  mDSMWriter->getServerManager()->Connect();
+  // To check if the DSM writer is using server mode
+  // bool test = mDSMWriter->getServerMode();
+}
+
+MPI_Comm
+XdmfFortran::getDSMInterComm()
+{
+  // Sanity check
+  if (mDSMWriter) {
+    return mDSMWriter->getServerBuffer()->GetComm()->GetInterComm();
+  }
+  else {
+    return MPI_COMM_NULL;
+  }
+}
+
+MPI_Comm
+XdmfFortran::getDSMIntraComm()
+{
+  // Sanity check
+  if (mDSMWriter) {
+    return mDSMWriter->getServerBuffer()->GetComm()->GetIntraComm();
+  }
+  else {
+    return MPI_COMM_NULL;
+  }
+}
+
+// Call only on one core
+void
+XdmfFortran::stopDSM()
+{
+  if (mDSMWriter) {
+    mDSMWriter->stopDSM();
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Stop called when DSM not initialized.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+  mDSMWriter =  shared_ptr<XdmfHDF5WriterDSM>();
+}
+
+void
+XdmfFortran::readFromDSM(const char * const dsmDataSetPath,
+                         const int arrayType,
+                         void * values,
+                         const int start,
+                         const int stride,
+                         const int dimensions,
+                         const int dataspace)
+{
+  if (mDSMWriter) {
+    shared_ptr<const XdmfArrayType> writtenArrayType = shared_ptr<const XdmfArrayType>();
+    switch(arrayType) {
+    case XDMF_ARRAY_TYPE_INT8:
+      writtenArrayType = XdmfArrayType::Int8();
+      break;
+    case XDMF_ARRAY_TYPE_INT16:
+      writtenArrayType = XdmfArrayType::Int16();
+      break;
+    case XDMF_ARRAY_TYPE_INT32:
+      writtenArrayType = XdmfArrayType::Int32();
+      break;
+    case XDMF_ARRAY_TYPE_INT64:
+      writtenArrayType = XdmfArrayType::Int64();
+      break;
+    case XDMF_ARRAY_TYPE_UINT8:
+      writtenArrayType = XdmfArrayType::UInt8();
+      break;
+    case XDMF_ARRAY_TYPE_UINT16:
+      writtenArrayType = XdmfArrayType::UInt16();
+      break;
+    case XDMF_ARRAY_TYPE_UINT32:
+      writtenArrayType = XdmfArrayType::UInt32();
+      break;
+    case XDMF_ARRAY_TYPE_FLOAT32:
+      writtenArrayType = XdmfArrayType::Float32();
+      break;
+    case XDMF_ARRAY_TYPE_FLOAT64:
+      writtenArrayType = XdmfArrayType::Float64();
+      break;
+    default:
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "Invalid array number type");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+    std::vector<unsigned int> startVector;
+    startVector.push_back(start);
+    std::vector<unsigned int> strideVector;
+    strideVector.push_back(stride);
+    std::vector<unsigned int> dimVector;
+    dimVector.push_back(dimensions);
+    std::vector<unsigned int> dataVector;
+    dataVector.push_back(dataspace);
+    std::string writtenPath(dsmDataSetPath);
+    shared_ptr<XdmfHDF5ControllerDSM> writerController =
+      XdmfHDF5ControllerDSM::New(mDSMWriter->getFilePath(),
+                                 writtenPath,
+                                 writtenArrayType,
+                                 startVector,
+                                 strideVector,
+                                 dimVector,
+                                 dataVector,
+                                 mDSMWriter->getServerBuffer());
+
+    shared_ptr<XdmfArray> readArray = XdmfArray::New();
+
+    readArray->insert(writerController);
+    readArray->read();
+
+    readFromArray(readArray,
+                  arrayType,
+                  values,
+                  dimensions,
+                  0,
+                  1,
+                  1);
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Attempting to read from DSM when DSM is not set up.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+}
+
+void
+XdmfFortran::writeToDSM(const char * const dsmDataSetPath,
+                        const int arrayType,
+                        void * values,
+                        const int start,
+                        const int stride,
+                        const int dimensions,
+                        const int dataspace)
+{
+  if (mDSMWriter) {
+    shared_ptr<const XdmfArrayType> writtenArrayType = shared_ptr<const XdmfArrayType>();
+    switch(arrayType) {
+    case XDMF_ARRAY_TYPE_INT8:
+      writtenArrayType = XdmfArrayType::Int8();
+      break;
+    case XDMF_ARRAY_TYPE_INT16:
+      writtenArrayType = XdmfArrayType::Int16();
+      break;
+    case XDMF_ARRAY_TYPE_INT32:
+      writtenArrayType = XdmfArrayType::Int32();
+      break;
+    case XDMF_ARRAY_TYPE_INT64:
+      writtenArrayType = XdmfArrayType::Int64();
+      break;
+    case XDMF_ARRAY_TYPE_UINT8:
+      writtenArrayType = XdmfArrayType::UInt8();
+      break;
+    case XDMF_ARRAY_TYPE_UINT16:
+      writtenArrayType = XdmfArrayType::UInt16();
+      break;
+    case XDMF_ARRAY_TYPE_UINT32:
+      writtenArrayType = XdmfArrayType::UInt32();
+      break;
+    case XDMF_ARRAY_TYPE_FLOAT32:
+      writtenArrayType = XdmfArrayType::Float32();
+      break;
+    case XDMF_ARRAY_TYPE_FLOAT64:
+      writtenArrayType = XdmfArrayType::Float64();
+      break;
+    default:
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "Invalid array number type");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+    std::vector<unsigned int> startVector;
+    startVector.push_back(start);
+    std::vector<unsigned int> strideVector;
+    strideVector.push_back(stride);
+    std::vector<unsigned int> dimVector;
+    dimVector.push_back(dimensions);
+    std::vector<unsigned int> dataVector;
+    dataVector.push_back(dataspace);
+    std::string writtenPath(dsmDataSetPath);
+    shared_ptr<XdmfHDF5ControllerDSM> writerController =
+      XdmfHDF5ControllerDSM::New(mDSMWriter->getFilePath(),
+                                 writtenPath,
+                                 writtenArrayType,
+                                 startVector,
+                                 strideVector,
+                                 dimVector,
+                                 dataVector,
+                                 mDSMWriter->getServerBuffer());
+
+    shared_ptr<XdmfArray> writtenArray = XdmfArray::New();
+    writeToArray(writtenArray,
+                 dimensions,
+                 arrayType,
+                 values);
+    writtenArray->insert(writerController);
+    writtenArray->accept(mDSMWriter);
+  }
+  else {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Attempting to write to DSM when DSM is not set up.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
+}
+
+#endif
+
+void
 XdmfFortran::read(const char * const xmlFilePath)
 {
   shared_ptr<XdmfReader> reader = XdmfReader::New();
   mDomain = shared_dynamic_cast<XdmfDomain>(reader->read( xmlFilePath )); 
 }
-
 
 //temporary fix, hopefully
 int
@@ -9518,6 +9831,114 @@ extern "C"
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
     xdmfFortran->write(xmlFilePath, *datalimit, *release);
   }
+
+#ifdef XDMF_BUILD_DSM
+
+  void
+  XdmfInitDSMServer(long * pointer,
+                    char * filePath,
+                    MPI_Fint * comm,
+                    int * bufferSize,
+                    int * startCoreIndex,
+                    int * endCoreIndex)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    MPI_Comm tempComm = MPI_Comm_f2c(*comm);
+    xdmfFortran->initDSMServer(filePath,
+                               tempComm,
+                               *bufferSize,
+                               *startCoreIndex,
+                               *endCoreIndex);
+  }
+
+  void
+  XdmfAcceptDSM(long * pointer, int * numConnections)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->acceptDSM(*numConnections);
+  }
+
+  void
+  XdmfCloseDSMPort(long * pointer)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->closeDSMPort();
+  }
+
+  void
+  XdmfConnectDSM(long * pointer,
+                 char * filePath,
+                 MPI_Fint * comm)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    MPI_Comm tempComm = MPI_Comm_f2c(*comm);
+    xdmfFortran->connectDSM(filePath, tempComm);
+  }
+
+  void
+  XdmfGetDSMInterComm(long * pointer, MPI_Fint * returnComm)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    MPI_Comm tempComm = xdmfFortran->getDSMInterComm();
+    *returnComm = MPI_Comm_c2f(tempComm);
+  }
+
+  void
+  XdmfGetDSMIntraComm(long * pointer, MPI_Fint * returnComm)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    MPI_Comm tempComm = xdmfFortran->getDSMIntraComm();
+    *returnComm = MPI_Comm_c2f(tempComm);
+  }
+
+  void
+  XdmfStopDSM(long * pointer)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->stopDSM();
+  }
+
+  void
+  XdmfReadFromDSM(long * pointer,
+                  char * dsmDataSetPath,
+                  int * arrayType,
+                  void * values,
+                  int * start,
+                  int * stride,
+                  int * dimensions,
+                  int * dataspace)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->readFromDSM(dsmDataSetPath,
+                             *arrayType,
+                             values,
+                             *start,
+                             *stride,
+                             *dimensions,
+                             *dataspace);
+  }
+
+  void
+  XdmfWriteToDSM(long * pointer,
+                 char * dsmDataSetPath,
+                 int * arrayType,
+                 void * values,
+                 int * start,
+                 int * stride,
+                 int * dimensions,
+                 int * dataspace)
+  {
+    XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
+    xdmfFortran->writeToDSM(dsmDataSetPath,
+                            *arrayType,
+                            values,
+                            *start,
+                            *stride,
+                            *dimensions,
+                            *dataspace);
+  }
+
+#endif
 
   void
   XdmfWriteHDF5(long * pointer,

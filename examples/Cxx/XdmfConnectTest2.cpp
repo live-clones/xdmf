@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 	// Initializing objects
 
 	//since the start and end ids are larger than the size there are no buffers alloted
-	//thus, not blockage occurs
+	//thus, no blockage occurs
 	XdmfDSMCommMPI * testComm = new XdmfDSMCommMPI();
 	testComm->DupComm(comm);
 	testComm->Init();
