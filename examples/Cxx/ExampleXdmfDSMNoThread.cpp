@@ -9,51 +9,51 @@
 
 int main(int argc, char *argv[])
 {
-	//#initMPI begin
+        //#initMPI begin
 
-	int size, id, dsmSize;
-	dsmSize = 64;//The total size of the DSM being created
-	MPI_Status status;
-	MPI_Comm comm = MPI_COMM_WORLD;
+        int size, id, dsmSize;
+        dsmSize = 64;//The total size of the DSM being created
+        MPI_Status status;
+        MPI_Comm comm = MPI_COMM_WORLD;
 
-	MPI_Init(&argc, &argv);
+        MPI_Init(&argc, &argv);
 
-	MPI_Comm_rank(comm, &id);
-	MPI_Comm_size(comm, &size);
+        MPI_Comm_rank(comm, &id);
+        MPI_Comm_size(comm, &size);
 
-	//#initMPI end
+        //#initMPI end
 
 
-	std::vector<unsigned int> outputVector;
+        std::vector<unsigned int> outputVector;
 
-	shared_ptr<XdmfArray> testArray = XdmfArray::New();
+        shared_ptr<XdmfArray> testArray = XdmfArray::New();
 
-	for (unsigned int i = 1; i <= 4; ++i)
-	{
-		testArray->pushBack(i*(id+1));
-	}
+        for (unsigned int i = 1; i <= 4; ++i)
+        {
+                testArray->pushBack(i*(id+1));
+        }
 
-	//#initwritevector begin
+        //#initwritevector begin
 
-	std::string newPath = "dsm";
-	std::string newSetPath = "data";
+        std::string newPath = "dsm";
+        std::string newSetPath = "data";
 
-	int numServersCores = 4;
+        int numServersCores = 4;
 
-	std::vector<unsigned int> writeStartVector;
-	writeStartVector.push_back(id*4);
-	//writeStartVector.push_back(id);
-	std::vector<unsigned int> writeStrideVector;
-	writeStrideVector.push_back(1);
-	//writeStrideVector.push_back(size-3);
-	std::vector<unsigned int> writeCountVector;
-	writeCountVector.push_back(4);
-	std::vector<unsigned int> writeDataSizeVector;
-	writeDataSizeVector.push_back(4*(size-numServersCores));
+        std::vector<unsigned int> writeStartVector;
+        writeStartVector.push_back(id*4);
+        //writeStartVector.push_back(id);
+        std::vector<unsigned int> writeStrideVector;
+        writeStrideVector.push_back(1);
+        //writeStrideVector.push_back(size-3);
+        std::vector<unsigned int> writeCountVector;
+        writeCountVector.push_back(4);
+        std::vector<unsigned int> writeDataSizeVector;
+        writeDataSizeVector.push_back(4*(size-numServersCores));
 
-	//#initwritervector end
+        //#initwritervector end
 
-	//#commsplit begin
+        //#commsplit begin
 
         MPI_Comm workerComm;
 
@@ -71,855 +71,855 @@ int main(int argc, char *argv[])
         int testval = MPI_Comm_create(comm, workers, &workerComm);
         cfree(ServerIds);
 
-	//#commsplit end
+        //#commsplit end
 
-	//#initwritergenerate begin
+        //#initwritergenerate begin
 
-	shared_ptr<XdmfHDF5WriterDSM> exampleWriter = XdmfHDF5WriterDSM::New(newPath, comm, dsmSize/numServersCores, size-numServersCores, size-1);
+        shared_ptr<XdmfHDF5WriterDSM> exampleWriter = XdmfHDF5WriterDSM::New(newPath, comm, dsmSize/numServersCores, size-numServersCores, size-1);
 
-	//#initwritergenerate end
+        //#initwritergenerate end
 /*
 
-	//#initcontrollergenerate begin
-	shared_ptr<XdmfHDF5ControllerDSM> exampleController = XdmfHDF5ControllerDSM::New(
-		newPath,
-		newSetPath,
-		XdmfArrayType::Int32(),
-		writeStartVector,
-		writeStrideVector,
-		writeCountVector,
-		writeDataSizeVector,
-		comm,
-		dsmSize/numServersCores,
-		size-numServersCores,
-		size-1);
+        //#initcontrollergenerate begin
+        shared_ptr<XdmfHDF5ControllerDSM> exampleController = XdmfHDF5ControllerDSM::New(
+                newPath,
+                newSetPath,
+                XdmfArrayType::Int32(),
+                writeStartVector,
+                writeStrideVector,
+                writeCountVector,
+                writeDataSizeVector,
+                comm,
+                dsmSize/numServersCores,
+                size-numServersCores,
+                size-1);
 
-	//#initcontrollergenerate end
+        //#initcontrollergenerate end
 */
 
-	// Split out sub-comm for the worker cores
-	// Server cores will not progress to this point until after the servers are done running
+        // Split out sub-comm for the worker cores
+        // Server cores will not progress to this point until after the servers are done running
 
-	//#startworksection begin
+        //#startworksection begin
 
-	if (id < size - numServersCores)
-	{
+        if (id < size - numServersCores)
+        {
 
-		//#startworksection end
+                //#startworksection end
 
-		// This section is to demonstrate the functionality of the XdmfDSM classes
+                // This section is to demonstrate the functionality of the XdmfDSM classes
 
-		//#setServerModewriter begin
+                //#setServerModewriter begin
 
-		exampleWriter->setServerMode(true);
+                exampleWriter->setServerMode(true);
 
-		//#setServerModewriter end
+                //#setServerModewriter end
 
-		//#getServerModewriter begin
+                //#getServerModewriter begin
 
-		bool exampleServerMode = exampleWriter->getServerMode();
+                bool exampleServerMode = exampleWriter->getServerMode();
 
-		//#getServerModewriter end
+                //#getServerModewriter end
 
-		//#getWorkerCommwriter begin
+                //#getWorkerCommwriter begin
 
-		MPI_Comm exampleWorkerComm = exampleWriter->getWorkerComm();
+                MPI_Comm exampleWorkerComm = exampleWriter->getWorkerComm();
 
-		//#getWorkerCommwriter end
+                //#getWorkerCommwriter end
 
-		//#setWorkerCommwriter begin
+                //#setWorkerCommwriter begin
 
-		exampleWriter->setWorkerComm(exampleWorkerComm);
+                exampleWriter->setWorkerComm(exampleWorkerComm);
 
-		//#setWorkerCommwriter end
+                //#setWorkerCommwriter end
 
 /*
-		//#getWorkerCommcontroller begin
+                //#getWorkerCommcontroller begin
 
-		MPI_Comm exampleWorkerComm = exampleController->getWorkerComm();
+                MPI_Comm exampleWorkerComm = exampleController->getWorkerComm();
 
-		//#getWorkerCommcontroller end
+                //#getWorkerCommcontroller end
 
-		//#setWorkerCommcontroller begin
+                //#setWorkerCommcontroller begin
 
-		exampleController->setWorkerComm(exampleWorkerComm);
+                exampleController->setWorkerComm(exampleWorkerComm);
 
-		//#setWorkerCommcontroller end
+                //#setWorkerCommcontroller end
 
-		//#setServerModecontroller begin
+                //#setServerModecontroller begin
 
-		exampleController->setServerMode(true);
+                exampleController->setServerMode(true);
 
-		//#setServerModecontroller end
+                //#setServerModecontroller end
 
-		//#getServerModecontroller begin
+                //#getServerModecontroller begin
 
-		bool exampleControllerServerMode = exampleController->getServerMode();
+                bool exampleControllerServerMode = exampleController->getServerMode();
 
-		//#getServerModecontroller end
+                //#getServerModecontroller end
 */
 
-		//#initcontrollerwithbuffer begin
+                //#initcontrollerwithbuffer begin
 
-		shared_ptr<XdmfHDF5ControllerDSM> writeController = XdmfHDF5ControllerDSM::New(
-			newPath,
-			newSetPath,
-			XdmfArrayType::Int32(),
-			writeStartVector,
-			writeStrideVector,
-			writeCountVector,
-			writeDataSizeVector,
-			exampleWriter->getServerBuffer());
+                shared_ptr<XdmfHDF5ControllerDSM> writeController = XdmfHDF5ControllerDSM::New(
+                        newPath,
+                        newSetPath,
+                        XdmfArrayType::Int32(),
+                        writeStartVector,
+                        writeStrideVector,
+                        writeCountVector,
+                        writeDataSizeVector,
+                        exampleWriter->getServerBuffer());
 
-		//#initcontrollerwithbuffer end
+                //#initcontrollerwithbuffer end
 
-		//#initwriterwithbuffer begin
+                //#initwriterwithbuffer begin
 
-		shared_ptr<XdmfHDF5WriterDSM> exampleWriter2 = XdmfHDF5WriterDSM::New(newPath, exampleWriter->getServerBuffer());
+                shared_ptr<XdmfHDF5WriterDSM> exampleWriter2 = XdmfHDF5WriterDSM::New(newPath, exampleWriter->getServerBuffer());
 
-		//#initwriterwithbuffer end
+                //#initwriterwithbuffer end
 
-		writeController->setServerMode(true);
-		bool exampleControllerServerMode = writeController->getServerMode();
+                writeController->setServerMode(true);
+                bool exampleControllerServerMode = writeController->getServerMode();
 
-		//#declaremanager begin
+                //#declaremanager begin
 
-		XdmfDSMManager * exampleManager;
+                XdmfDSMManager * exampleManager;
 
-		//#declaremanager end
+                //#declaremanager end
 
-		//#getServerManagerwriter begin
+                //#getServerManagerwriter begin
 
-		exampleManager = exampleWriter->getServerManager();
+                exampleManager = exampleWriter->getServerManager();
 
-		//#getServerManagerwriter end
+                //#getServerManagerwriter end
 
-		//#setManagerwriter begin
+                //#setManagerwriter begin
 
-		exampleWriter->setManager(exampleManager);
+                exampleWriter->setManager(exampleManager);
 
-		//#setManagerwriter end
+                //#setManagerwriter end
 
 /*
-		//#getServerManagercontroller begin
+                //#getServerManagercontroller begin
 
-		exampleManager = exampleController->getServerManager();
+                exampleManager = exampleController->getServerManager();
 
-		//#getServerManagercontroller end
+                //#getServerManagercontroller end
 
-		//#setManagercontroller begin
+                //#setManagercontroller begin
 
-		exampleController->setManager(exampleManager);
+                exampleController->setManager(exampleManager);
 
-		//#setManagercontroller end
+                //#setManagercontroller end
 */
 
-		//#GetUpdatePiece begin
+                //#GetUpdatePiece begin
 
-		int intraId = exampleManager->GetUpdatePiece();
+                int intraId = exampleManager->GetUpdatePiece();
 
-		//#GetUpdatePiece end
+                //#GetUpdatePiece end
 
-		//#GetUpdateNumPieces begin
+                //#GetUpdateNumPieces begin
 
-		int intraSize = exampleManager->GetUpdateNumPieces();
+                int intraSize = exampleManager->GetUpdateNumPieces();
 
-		//#getUpdateNumPieces end
+                //#getUpdateNumPieces end
 
-		//#GetMpiComm begin
+                //#GetMpiComm begin
 
-		MPI_Comm exampleManagerComm = exampleManager->GetMpiComm();
+                MPI_Comm exampleManagerComm = exampleManager->GetMpiComm();
 
-		//#GetMpiComm end
+                //#GetMpiComm end
 
-		//#SetMpiComm begin
+                //#SetMpiComm begin
 
-		exampleManager->SetMpiComm(exampleManagerComm);
+                exampleManager->SetMpiComm(exampleManagerComm);
 
-		//#SetMpiComm end
+                //#SetMpiComm end
 
-		//#GetLocalBufferSizeMBytes begin
+                //#GetLocalBufferSizeMBytes begin
 
-		int exampleBufferSize = exampleManager->GetLocalBufferSizeMBytes();
+                int exampleBufferSize = exampleManager->GetLocalBufferSizeMBytes();
 
-		//#GetLocalBufferSizeMBytes end
+                //#GetLocalBufferSizeMBytes end
 
-		//#SetLocalBufferSizeMBytes begin
+                //#SetLocalBufferSizeMBytes begin
 
-		exampleManager->SetLocalBufferSizeMBytes(exampleBufferSize);
+                exampleManager->SetLocalBufferSizeMBytes(exampleBufferSize);
 
-		//#SetLocalBufferSizeMBytes end
+                //#SetLocalBufferSizeMBytes end
 
-		//#GetIsServer begin
+                //#GetIsServer begin
 
-		bool exampleIsServer = exampleManager->GetIsServer();
+                bool exampleIsServer = exampleManager->GetIsServer();
 
-		//#GetIsServer end
+                //#GetIsServer end
 
-		//#SetIsServer begin
+                //#SetIsServer begin
 
-		exampleManager->SetIsServer(exampleIsServer);
+                exampleManager->SetIsServer(exampleIsServer);
 
-		//#SetIsServer end
+                //#SetIsServer end
 
-		//#GetDsmType begin
+                //#GetDsmType begin
 
-		int exampleType = exampleManager->GetDsmType();
+                int exampleType = exampleManager->GetDsmType();
 
-		//#GetDsmType end
+                //#GetDsmType end
 
-		//#SetDsmType begin
+                //#SetDsmType begin
 
-		exampleManager->SetDsmType(XDMF_DSM_TYPE_UNIFORM);
+                exampleManager->SetDsmType(XDMF_DSM_TYPE_UNIFORM);
 
-		//#SetDsmType end
+                //#SetDsmType end
 
-		//#GetBlockLength begin
+                //#GetBlockLength begin
 
-		long exampleBlockLength = exampleManager->GetBlockLength();
+                long exampleBlockLength = exampleManager->GetBlockLength();
 
-		//#GetBlockLength end
+                //#GetBlockLength end
 
-		//#SetBlockLength begin
+                //#SetBlockLength begin
 
-		exampleManager->SetBlockLength(exampleBlockLength);
+                exampleManager->SetBlockLength(exampleBlockLength);
 
-		//#SetBlockLength end
+                //#SetBlockLength end
 
-		//#GetInterCommType begin
+                //#GetInterCommType begin
 
-		int exampleCommType = exampleManager->GetInterCommType();
+                int exampleCommType = exampleManager->GetInterCommType();
 
-		//#GetInterCommType end
+                //#GetInterCommType end
 
-		//#SetInterCommType begin
+                //#SetInterCommType begin
 
-		exampleManager->SetInterCommType(XDMF_DSM_COMM_MPI);
+                exampleManager->SetInterCommType(XDMF_DSM_COMM_MPI);
 
-		//#SetInterCommType end
+                //#SetInterCommType end
 
-		//#GetIsConnected begin
+                //#GetIsConnected begin
 
-		bool exampleManagerConnectionStatus = exampleManager->GetIsConnected();
+                bool exampleManagerConnectionStatus = exampleManager->GetIsConnected();
 
-		//#GetIsConnected end
+                //#GetIsConnected end
 
-	/*
+        /*
                 //#Create begin
 
                 exampleManager->Create(size - numServerCores, size - 1);
 
                 //#Create end
 
-		//#Destroy begin
+                //#Destroy begin
 
-		exampleManager->Destroy();
+                exampleManager->Destroy();
 
-		//#Destroy end
-	*/
+                //#Destroy end
+        */
 
-		//#declarebuffer begin
+                //#declarebuffer begin
 
-		XdmfDSMBuffer * exampleBuffer;
+                XdmfDSMBuffer * exampleBuffer;
 
-		//#delcarebuffer end
+                //#delcarebuffer end
 
-		//#getServerBufferwriter begin
+                //#getServerBufferwriter begin
 
-		exampleBuffer = exampleWriter->getServerBuffer();
+                exampleBuffer = exampleWriter->getServerBuffer();
 
-		//#getServerBufferwriter end
+                //#getServerBufferwriter end
 
-		//#setBufferwriter begin
+                //#setBufferwriter begin
 
-		exampleWriter->setBuffer(exampleBuffer);
+                exampleWriter->setBuffer(exampleBuffer);
 
-		//#setBufferwriter end
+                //#setBufferwriter end
 
 /*
-		//#getServerBuffercontroller begin
+                //#getServerBuffercontroller begin
 
-		exampleBuffer = exampleController->getServerBuffer();
+                exampleBuffer = exampleController->getServerBuffer();
 
-		//#getServerBuffercontroller end
+                //#getServerBuffercontroller end
 
-		//#setBuffercontroller begin
+                //#setBuffercontroller begin
 
-		exampleController->setBuffer(exampleBuffer);
+                exampleController->setBuffer(exampleBuffer);
 
-		//#setBuffercontroller end
+                //#setBuffercontroller end
 */
 
-		//#GetDsmBuffer begin
+                //#GetDsmBuffer begin
 
-		exampleBuffer = exampleManager->GetDsmBuffer();
+                exampleBuffer = exampleManager->GetDsmBuffer();
 
-		//#GetDsmBuffer end
+                //#GetDsmBuffer end
 
-		//#SetDsmBuffer begin
+                //#SetDsmBuffer begin
 
-		exampleManager->SetDsmBuffer(exampleBuffer);
+                exampleManager->SetDsmBuffer(exampleBuffer);
 
-		//#SetDsmBuffer end
+                //#SetDsmBuffer end
 
-		//#GetIsConnectedbuffer begin
+                //#GetIsConnectedbuffer begin
 
-		bool exampleIsConnected = exampleBuffer->GetIsConnected();
+                bool exampleIsConnected = exampleBuffer->GetIsConnected();
 
-		//#GetIsConnectedbuffer end
+                //#GetIsConnectedbuffer end
 
-		//#SetIsConnectedbuffer begin
+                //#SetIsConnectedbuffer begin
 
-		exampleBuffer->SetIsConnected(exampleIsConnected);
+                exampleBuffer->SetIsConnected(exampleIsConnected);
 
-		//#SetIsConnectedbuffer end
+                //#SetIsConnectedbuffer end
 
-		//#GetDataPointer begin
+                //#GetDataPointer begin
 
-		char * exampleDataPointer = exampleBuffer->GetDataPointer();
+                char * exampleDataPointer = exampleBuffer->GetDataPointer();
 
-		//#GetDataPointer end
+                //#GetDataPointer end
 
-		//#GetDSMTypebuffer begin
+                //#GetDSMTypebuffer begin
 
-		int exampleDSMType = exampleBuffer->GetDsmType();
+                int exampleDSMType = exampleBuffer->GetDsmType();
 
-		//#GetDsmTypebuffer end
+                //#GetDsmTypebuffer end
 
-		//#SetDsmTypebuffer begin
+                //#SetDsmTypebuffer begin
 
-		exampleBuffer->SetDsmType(XDMF_DSM_TYPE_UNIFORM);
+                exampleBuffer->SetDsmType(XDMF_DSM_TYPE_UNIFORM);
 
-		//#SetDsmTypebuffer end
+                //#SetDsmTypebuffer end
 
-		//#GetIsServerbuffer begin
+                //#GetIsServerbuffer begin
 
-		bool exampleBufferIsServer = exampleBuffer->GetIsServer();
+                bool exampleBufferIsServer = exampleBuffer->GetIsServer();
 
-		//#GetIsServerbuffer end
+                //#GetIsServerbuffer end
 
-		//#SetIsServerbuffer begin
+                //#SetIsServerbuffer begin
 
-		exampleBuffer->SetIsServer(exampleIsServer);
+                exampleBuffer->SetIsServer(exampleIsServer);
 
-		//#SetIsServerbuffer end
+                //#SetIsServerbuffer end
 
-		//#GetStartAddress begin
+                //#GetStartAddress begin
 
-		int exampleBufferStart = exampleBuffer->GetStartAddress();
+                int exampleBufferStart = exampleBuffer->GetStartAddress();
 
-		//#GetStartAddress end
+                //#GetStartAddress end
 
-		//#GetEndAddress begin
+                //#GetEndAddress begin
 
-		int exampleBufferEnd = exampleBuffer->GetEndAddress();
+                int exampleBufferEnd = exampleBuffer->GetEndAddress();
 
-		//#GetEndAddress end
+                //#GetEndAddress end
 
-		//#GetStartServerId begin
+                //#GetStartServerId begin
 
-		int exampleServerStart = exampleBuffer->GetStartServerId();
+                int exampleServerStart = exampleBuffer->GetStartServerId();
 
-		//#GetStartServerId end
+                //#GetStartServerId end
 
-		//#GetEndServerId begin
+                //#GetEndServerId begin
 
-		int exampleServerEnd = exampleBuffer->GetEndServerId();
+                int exampleServerEnd = exampleBuffer->GetEndServerId();
 
-		//#GetEndServerId end
+                //#GetEndServerId end
 
-		for (int i = 0; i<size - numServersCores; ++i)
-		{
-			if (i == id)
-			{
-				std::cout << "starting id = " << exampleServerStart << " and ending id = " << exampleServerEnd << " from core " << id << std::endl;
-			}
-		}
+                for (int i = 0; i<size - numServersCores; ++i)
+                {
+                        if (i == id)
+                        {
+                                std::cout << "starting id = " << exampleServerStart << " and ending id = " << exampleServerEnd << " from core " << id << std::endl;
+                        }
+                }
 
-		//#GetLength begin
+                //#GetLength begin
 
-		long exampleBufferLength = exampleBuffer->GetLength();
+                long exampleBufferLength = exampleBuffer->GetLength();
 
-		//#GetLength end
+                //#GetLength end
 
-		//#GetTotalLength begin
+                //#GetTotalLength begin
 
-		long exampleTotalBufferLength = exampleBuffer->GetTotalLength();
+                long exampleTotalBufferLength = exampleBuffer->GetTotalLength();
 
-		//#GetTotalLength end
+                //#GetTotalLength end
 
-		//#GetBlockLengthbuffer begin
+                //#GetBlockLengthbuffer begin
 
-		long exampleBufferBlockLength = exampleBuffer->GetBlockLength();
+                long exampleBufferBlockLength = exampleBuffer->GetBlockLength();
 
-		//#GetBlockLengthbuffer end
+                //#GetBlockLengthbuffer end
 
-		//#SetBlockLengthbuffer begin
+                //#SetBlockLengthbuffer begin
 
-		exampleBuffer->SetBlockLength(exampleBufferBlockLength);
+                exampleBuffer->SetBlockLength(exampleBufferBlockLength);
 
-		//#SetBlockLengthbuffer end
+                //#SetBlockLengthbuffer end
 
-		/*
-		//#ConfigureUniform begin
+                /*
+                //#ConfigureUniform begin
 
-		exampleBuffer->ConfigureUniform(exampleBuffer->GetComm(), dsmSize/numServersCores, size - numServersCores, size - 1);
+                exampleBuffer->ConfigureUniform(exampleBuffer->GetComm(), dsmSize/numServersCores, size - numServersCores, size - 1);
 
-		//#ConfigureUniform end
-		*/
+                //#ConfigureUniform end
+                */
 
-		//#CommandHeader begin
+                //#CommandHeader begin
 
-		if (id == 0)
-		{
-			exampleBuffer->SendCommandHeader(XDMF_DSM_LOCK_ACQUIRE, 1, 0, 0, XDMF_DSM_INTRA_COMM);
-		}
+                if (id == 0)
+                {
+                        exampleBuffer->SendCommandHeader(XDMF_DSM_LOCK_ACQUIRE, 1, 0, 0, XDMF_DSM_INTRA_COMM);
+                }
 
-		if (id == 1)
-		{
-			int probeComm;
-			exampleBuffer->ProbeCommandHeader(&probeComm);
+                if (id == 1)
+                {
+                        int probeComm;
+                        exampleBuffer->ProbeCommandHeader(&probeComm);
 
-			if (probeComm == XDMF_DSM_INTER_COMM)
-			{
-				std::cout << "InterComm" << std::endl;
-			}
-			else
-			{
-				std::cout << "IntraComm" << std::endl;
-			}			
-			int length;
-			int address;
-			int opcode;
-			int source;
-			exampleBuffer->ReceiveCommandHeader(&opcode, &source, &length, &address, XDMF_DSM_INTRA_COMM, 0);
-		}
+                        if (probeComm == XDMF_DSM_INTER_COMM)
+                        {
+                                std::cout << "InterComm" << std::endl;
+                        }
+                        else
+                        {
+                                std::cout << "IntraComm" << std::endl;
+                        }                       
+                        int length;
+                        int address;
+                        int opcode;
+                        int source;
+                        exampleBuffer->ReceiveCommandHeader(&opcode, &source, &length, &address, XDMF_DSM_INTRA_COMM, 0);
+                }
 
-		//#CommandHeader end
+                //#CommandHeader end
 
-		//#SendRecvData begin
+                //#SendRecvData begin
 
-		if (id == 0)
-		{
-			char * sentData = "datastring";
-			exampleBuffer->SendData(1, sentData, 0, XDMF_DSM_PUT_DATA_TAG, 0, XDMF_DSM_INTER_COMM);
-		}
+                if (id == 0)
+                {
+                        char * sentData = "datastring";
+                        exampleBuffer->SendData(1, sentData, 0, XDMF_DSM_PUT_DATA_TAG, 0, XDMF_DSM_INTER_COMM);
+                }
 
-		if (id == 1)
-		{
-			int length;
-			int address;
-			char * recvData;
-			exampleBuffer->ReceiveData(0, recvData, length, XDMF_DSM_PUT_DATA_TAG, address, XDMF_DSM_INTER_COMM);
-		}
+                if (id == 1)
+                {
+                        int length;
+                        int address;
+                        char * recvData;
+                        exampleBuffer->ReceiveData(0, recvData, length, XDMF_DSM_PUT_DATA_TAG, address, XDMF_DSM_INTER_COMM);
+                }
 
-		//#SendRecvData end
+                //#SendRecvData end
 
-		//#SendRecvAcknowledgement begin
+                //#SendRecvAcknowledgement begin
 
-		if (id == 0)
-	        {
-	                int sentData = 1;
-	                exampleBuffer->SendAcknowledgment(1, sentData, XDMF_DSM_PUT_DATA_TAG, XDMF_DSM_INTER_COMM);
-	        }
+                if (id == 0)
+                {
+                        int sentData = 1;
+                        exampleBuffer->SendAcknowledgment(1, sentData, XDMF_DSM_PUT_DATA_TAG, XDMF_DSM_INTER_COMM);
+                }
 
-	        if (id == 1)
-	        {
-	                int recvData;
-	                exampleBuffer->ReceiveAcknowledgment(0, recvData, XDMF_DSM_PUT_DATA_TAG, XDMF_DSM_INTER_COMM);
-	        }
+                if (id == 1)
+                {
+                        int recvData;
+                        exampleBuffer->ReceiveAcknowledgment(0, recvData, XDMF_DSM_PUT_DATA_TAG, XDMF_DSM_INTER_COMM);
+                }
 
-		//#SendRecvAcknowledgement end
+                //#SendRecvAcknowledgement end
 
-		//#BroadcastComm begin
+                //#BroadcastComm begin
 
-		int broadcastComm = XDMF_DSM_INTER_COMM;
-		exampleBuffer->BroadcastComm(&broadcastComm, 0);
+                int broadcastComm = XDMF_DSM_INTER_COMM;
+                exampleBuffer->BroadcastComm(&broadcastComm, 0);
 
-		//#BroadcastComm end
+                //#BroadcastComm end
 
-		//#BufferService begin
+                //#BufferService begin
 
-		if (id == 0)
-		{
-			int returnCode;
-			int serviceOut = exampleBuffer->BufferService(&returnCode);
-		}
-		if (id == 1)
-		{
-			exampleBuffer->SendCommandHeader(XDMF_DSM_OPCODE_DONE, 0, 0, 0, XDMF_DSM_INTER_COMM);
-		}
+                if (id == 0)
+                {
+                        int returnCode;
+                        int serviceOut = exampleBuffer->BufferService(&returnCode);
+                }
+                if (id == 1)
+                {
+                        exampleBuffer->SendCommandHeader(XDMF_DSM_OPCODE_DONE, 0, 0, 0, XDMF_DSM_INTER_COMM);
+                }
 
-		//#BufferService end
+                //#BufferService end
 
-		//#BufferServiceLoop begin
+                //#BufferServiceLoop begin
 
-		if (id == 0)
-		{
-			int returnCode;
-			exampleBuffer->BufferServiceLoop(&returnCode);
-		}
-		if (id == 1)
-		{
-			exampleBuffer->SendCommandHeader(XDMF_DSM_OPCODE_DONE, 0, 0, 0, XDMF_DSM_INTER_COMM);
-		}
+                if (id == 0)
+                {
+                        int returnCode;
+                        exampleBuffer->BufferServiceLoop(&returnCode);
+                }
+                if (id == 1)
+                {
+                        exampleBuffer->SendCommandHeader(XDMF_DSM_OPCODE_DONE, 0, 0, 0, XDMF_DSM_INTER_COMM);
+                }
 
-		//#BufferServiceloop end
+                //#BufferServiceloop end
 
-		//#GetAddressRangeForId begin
+                //#GetAddressRangeForId begin
 
-		int core0StartAddress = 0;
-		int core0EndAddress = 0;
-		exampleBuffer->GetAddressRangeForId(0, &core0StartAddress, &core0EndAddress);
+                int core0StartAddress = 0;
+                int core0EndAddress = 0;
+                exampleBuffer->GetAddressRangeForId(0, &core0StartAddress, &core0EndAddress);
 
-		//#GetAddressRangeForId end
+                //#GetAddressRangeForId end
 
-		//#AddressToId begin
+                //#AddressToId begin
 
-		int correspondingId = exampleBuffer->AddressToId(500);
+                int correspondingId = exampleBuffer->AddressToId(500);
 
-		//#AddressToId end
+                //#AddressToId end
 
-		//#PutGet begin
+                //#PutGet begin
 
-		int dsmData = 5;
-		if (sizeof(int)/sizeof(char) + core0StartAddress < core0EndAddress)
-		{
-			exampleBuffer->Put(0, sizeof(int)/sizeof(char), &dsmData);
-			exampleBuffer->Get(0, sizeof(int)/sizeof(char), &dsmData);
-		}
-		else
-		{
-			// Error occured
-			XdmfError::message(XdmfError::FATAL, "Address out of range");
-		}
+                int dsmData = 5;
+                if (sizeof(int)/sizeof(char) + core0StartAddress < core0EndAddress)
+                {
+                        exampleBuffer->Put(0, sizeof(int)/sizeof(char), &dsmData);
+                        exampleBuffer->Get(0, sizeof(int)/sizeof(char), &dsmData);
+                }
+                else
+                {
+                        // Error occured
+                        XdmfError::message(XdmfError::FATAL, "Address out of range");
+                }
 
-		//#PutGet end
+                //#PutGet end
 
-		//#GetComm begin
+                //#GetComm begin
 
-		XdmfDSMCommMPI * exampleDSMComm = exampleBuffer->GetComm();
+                XdmfDSMCommMPI * exampleDSMComm = exampleBuffer->GetComm();
 
-		//#GetComm end 
+                //#GetComm end 
 
-		//#SetComm begin
+                //#SetComm begin
 
-		exampleBuffer->SetComm(exampleDSMComm);
+                exampleBuffer->SetComm(exampleDSMComm);
 
-		//#SetComm end
+                //#SetComm end
 
-		//#GetId begin
+                //#GetId begin
 
-		int exampleIntraID = exampleDSMComm->GetId();
+                int exampleIntraID = exampleDSMComm->GetId();
 
-		//#GetId end
+                //#GetId end
 
-		//#GetIntraSize begin
+                //#GetIntraSize begin
 
-		int exampleIntraSize = exampleDSMComm->GetIntraSize();
+                int exampleIntraSize = exampleDSMComm->GetIntraSize();
 
-		//#GetIntraSize end
+                //#GetIntraSize end
 
-		//#GetInterId begin
+                //#GetInterId begin
 
-		int exampleInterId = exampleDSMComm->GetInterId();
+                int exampleInterId = exampleDSMComm->GetInterId();
 
-		//#GetInterId end
+                //#GetInterId end
 
-		//#GetInterSize begin
+                //#GetInterSize begin
 
-		int exampleInterSize = exampleDSMComm->GetInterSize();
+                int exampleInterSize = exampleDSMComm->GetInterSize();
 
-		//#GetInterSize end
+                //#GetInterSize end
 
-		//#GetInterCommType begin
+                //#GetInterCommType begin
 
-		int exampleInterCommType = exampleDSMComm->GetInterCommType();
+                int exampleInterCommType = exampleDSMComm->GetInterCommType();
 
-		//#GetInterCommType end
+                //#GetInterCommType end
 
-		//#initcomm begin
+                //#initcomm begin
 
-		exampleDSMComm->Init();
+                exampleDSMComm->Init();
 
-		//#initcomm end
+                //#initcomm end
 
-		//#GetIntraComm begin
+                //#GetIntraComm begin
 
-		MPI_Comm exampleIntraComm = exampleDSMComm->GetIntraComm();
+                MPI_Comm exampleIntraComm = exampleDSMComm->GetIntraComm();
 
-		//#GetIntraComm end
+                //#GetIntraComm end
 
-		//#DupComm begin
+                //#DupComm begin
 
-		exampleDSMComm->DupComm(workerComm);
+                exampleDSMComm->DupComm(workerComm);
 
-		//#DupComm end
+                //#DupComm end
 
-	/*
-		bool connectingGroup;
-		char * portString;
-		if (id < 5)
-		{
-			connectingGroup = true;
-		}
-		else
-		{
-			connectingGroup = false;
-		}
+        /*
+                bool connectingGroup;
+                char * portString;
+                if (id < 5)
+                {
+                        connectingGroup = true;
+                }
+                else
+                {
+                        connectingGroup = false;
+                }
 
-		if (!connectingGroup)
-		{
-			exampleDSMComm->OpenPort();
-			portString = exampleDSMComm->GetDsmPortName();
-			// Send the port string to the connecting group
-			exampleDSMComm->Accept();
+                if (!connectingGroup)
+                {
+                        exampleDSMComm->OpenPort();
+                        portString = exampleDSMComm->GetDsmPortName();
+                        // Send the port string to the connecting group
+                        exampleDSMComm->Accept();
 
-			// When done with connection;
-			exampleDSMComm->ClosePort();
-		}
-	
-		if (connectingGroup)
-		{
-			// Recieve string from Master group
-			exampleDSMComm->SetDsmPortName(portString);
-			exampleDSMComm->Connect();
+                        // When done with connection;
+                        exampleDSMComm->ClosePort();
+                }
+        
+                if (connectingGroup)
+                {
+                        // Recieve string from Master group
+                        exampleDSMComm->SetDsmPortName(portString);
+                        exampleDSMComm->Connect();
 
-			// When done with connection
-			exampleDSMComm->Disconnect();
-		}
+                        // When done with connection
+                        exampleDSMComm->Disconnect();
+                }
 
-		if (connectingGroup)
-		{
-			// Recieve string from Master group
-			exampleDSMComm->SetDsmPortName(portString);
-			exampleManager->Connect();
+                if (connectingGroup)
+                {
+                        // Recieve string from Master group
+                        exampleDSMComm->SetDsmPortName(portString);
+                        exampleManager->Connect();
 
-			// When done with connection
-			exampleManager->Disconnect();
-		}
+                        // When done with connection
+                        exampleManager->Disconnect();
+                }
 
-	*/
-
-
-		// This is the end of the Demonstration
-
-		exampleWriter->setMode(XdmfHeavyDataWriter::Hyperslab);
-
-		testArray->insert(writeController);
-
-		for (unsigned int i = 0; i<size-numServersCores; ++i)
-		{
-			MPI_Barrier(workerComm);
-			if (i == id)
-			{
-				std::cout << "Core # " << id << std::endl;
-				std::cout << "Controller stats" << std::endl;
-				std::cout << "datasetpath = " << testArray->getHeavyDataController(0)->getDataSetPath() << std::endl;
-				std::cout << "filepath = " << testArray->getHeavyDataController(0)->getFilePath() << std::endl;
-				outputVector = testArray->getHeavyDataController(0)->getDataspaceDimensions();
-				std::cout << "Data space dimensions" << std::endl;
-				for (unsigned int j=0; j<outputVector.size(); ++j)
-				{
-					std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
-				}
-				std::cout << "Controller Dimensions" << std::endl;
-				outputVector = testArray->getHeavyDataController(0)->getDimensions();
-				for (unsigned int j=0; j<outputVector.size(); ++j)
-				{
-					std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
-				}
-				std::cout << "Controller size" << testArray->getHeavyDataController(0)->getSize() << std::endl;
-				std::cout << "Controller starts" << std::endl;
-				outputVector = testArray->getHeavyDataController(0)->getStart();
-				for (unsigned int j=0; j<outputVector.size(); ++j)
-				{
-					std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
-				}
-				std::cout << "Controller strides" << std::endl;
-				outputVector = testArray->getHeavyDataController(0)->getStride();
-				for (unsigned int j=0; j<outputVector.size(); ++j)
-				{
-					std::cout << "[" << j << "] =" << outputVector[j] << "\n" << std::endl;
-				}
-				for(unsigned int j=0; j<testArray->getSize(); ++j)
-				{
-					std::cout << "core #" << id <<" testArray[" << j << "] = " << testArray->getValue<int>(j) << std::endl;
-				}
-			}
-		}
-		testArray->accept(exampleWriter);
-	
-		std::vector<unsigned int> readStartVector;
-		readStartVector.push_back(4*(size - id - 1 - numServersCores));
-		std::vector<unsigned int> readStrideVector;
-		readStrideVector.push_back(1);
-		std::vector<unsigned int> readCountVector;
-		readCountVector.push_back(4);
-		std::vector<unsigned int> readDataSizeVector;
-		readDataSizeVector.push_back(4*(size-numServersCores));
-
-		shared_ptr<XdmfArray> readArray = XdmfArray::New();
-
-		readArray->initialize<int>(0);
-		readArray->reserve(testArray->getSize());
-
-		shared_ptr<XdmfHDF5ControllerDSM> readController = XdmfHDF5ControllerDSM::New(
-			newPath,
-			newSetPath,
-			XdmfArrayType::Int32(),
-			readStartVector,
-			readStrideVector,
-			readCountVector,
-			readDataSizeVector,
-			exampleWriter->getServerBuffer());
-
-		readArray->insert(readController);
-
-		if (id == 0)
-		{
-			std::cout << "\n\n\n";
-		}
-
-		std::cout << "testing read" << std::endl;
-		readArray->read();
-	
-
-	        for (unsigned int i = 0; i<size; ++i)
-		{
-			MPI_Barrier(workerComm);
-			if (i == id)
-			{
-				std::cout << "Core # " << id << std::endl;
-				std::cout << "Controller stats" << std::endl;
-				std::cout << "datasetpath = " << readArray->getHeavyDataController(0)->getDataSetPath() << std::endl;
-				std::cout << "filepath = " << readArray->getHeavyDataController(0)->getFilePath() << std::endl;
-				outputVector = readArray->getHeavyDataController(0)->getDataspaceDimensions();
-				std::cout << "Data space dimensions" << std::endl;
-				for (unsigned int j=0; j<outputVector.size(); ++j)
-				{
-					std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
-				}
-				std::cout << "Controller Dimensions" << std::endl;
-				outputVector = readArray->getHeavyDataController(0)->getDimensions();
-				for (unsigned int j=0; j<outputVector.size(); ++j)
-				{
-					std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
-				}
-				std::cout << "Controller size" << readArray->getHeavyDataController(0)->getSize() << std::endl;
-				std::cout << "Controller starts" << std::endl;
-				outputVector = readArray->getHeavyDataController(0)->getStart();
-				for (unsigned int j=0; j<outputVector.size(); ++j)
-				{
-					std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
-				}
-				std::cout << "Controller strides" << std::endl;
-				outputVector = readArray->getHeavyDataController(0)->getStride();
-				for (unsigned int j=0; j<outputVector.size(); ++j)
-				{
-					std::cout << "[" << j << "] =" << outputVector[j] << "\n" << std::endl;
-				}
-				for(unsigned int j=0; j<readArray->getSize(); ++j)
-				{
-					std::cout << "core #" << id <<" readArray[" << j << "] = " << readArray->getValue<int>(j) << std::endl;
-				}
-			}
-		}
-
-		MPI_Barrier(workerComm);
-
-		// End of Work Section
-
-		//#endworksection begin
-
-	}
-
-	//#endworksection end
-
-	exampleWriter->closeFile();
-
-	//#stopDSMwriter begin
-
-	if (id == 0)
-        {
-		exampleWriter->stopDSM();
+        */
+
+
+                // This is the end of the Demonstration
+
+                exampleWriter->setMode(XdmfHeavyDataWriter::Hyperslab);
+
+                testArray->insert(writeController);
+
+                for (unsigned int i = 0; i<size-numServersCores; ++i)
+                {
+                        MPI_Barrier(workerComm);
+                        if (i == id)
+                        {
+                                std::cout << "Core # " << id << std::endl;
+                                std::cout << "Controller stats" << std::endl;
+                                std::cout << "datasetpath = " << testArray->getHeavyDataController(0)->getDataSetPath() << std::endl;
+                                std::cout << "filepath = " << testArray->getHeavyDataController(0)->getFilePath() << std::endl;
+                                outputVector = testArray->getHeavyDataController(0)->getDataspaceDimensions();
+                                std::cout << "Data space dimensions" << std::endl;
+                                for (unsigned int j=0; j<outputVector.size(); ++j)
+                                {
+                                        std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
+                                }
+                                std::cout << "Controller Dimensions" << std::endl;
+                                outputVector = testArray->getHeavyDataController(0)->getDimensions();
+                                for (unsigned int j=0; j<outputVector.size(); ++j)
+                                {
+                                        std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
+                                }
+                                std::cout << "Controller size" << testArray->getHeavyDataController(0)->getSize() << std::endl;
+                                std::cout << "Controller starts" << std::endl;
+                                outputVector = testArray->getHeavyDataController(0)->getStart();
+                                for (unsigned int j=0; j<outputVector.size(); ++j)
+                                {
+                                        std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
+                                }
+                                std::cout << "Controller strides" << std::endl;
+                                outputVector = testArray->getHeavyDataController(0)->getStride();
+                                for (unsigned int j=0; j<outputVector.size(); ++j)
+                                {
+                                        std::cout << "[" << j << "] =" << outputVector[j] << "\n" << std::endl;
+                                }
+                                for(unsigned int j=0; j<testArray->getSize(); ++j)
+                                {
+                                        std::cout << "core #" << id <<" testArray[" << j << "] = " << testArray->getValue<int>(j) << std::endl;
+                                }
+                        }
+                }
+                testArray->accept(exampleWriter);
+        
+                std::vector<unsigned int> readStartVector;
+                readStartVector.push_back(4*(size - id - 1 - numServersCores));
+                std::vector<unsigned int> readStrideVector;
+                readStrideVector.push_back(1);
+                std::vector<unsigned int> readCountVector;
+                readCountVector.push_back(4);
+                std::vector<unsigned int> readDataSizeVector;
+                readDataSizeVector.push_back(4*(size-numServersCores));
+
+                shared_ptr<XdmfArray> readArray = XdmfArray::New();
+
+                readArray->initialize<int>(0);
+                readArray->reserve(testArray->getSize());
+
+                shared_ptr<XdmfHDF5ControllerDSM> readController = XdmfHDF5ControllerDSM::New(
+                        newPath,
+                        newSetPath,
+                        XdmfArrayType::Int32(),
+                        readStartVector,
+                        readStrideVector,
+                        readCountVector,
+                        readDataSizeVector,
+                        exampleWriter->getServerBuffer());
+
+                readArray->insert(readController);
+
+                if (id == 0)
+                {
+                        std::cout << "\n\n\n";
+                }
+
+                std::cout << "testing read" << std::endl;
+                readArray->read();
+        
+
+                for (unsigned int i = 0; i<size; ++i)
+                {
+                        MPI_Barrier(workerComm);
+                        if (i == id)
+                        {
+                                std::cout << "Core # " << id << std::endl;
+                                std::cout << "Controller stats" << std::endl;
+                                std::cout << "datasetpath = " << readArray->getHeavyDataController(0)->getDataSetPath() << std::endl;
+                                std::cout << "filepath = " << readArray->getHeavyDataController(0)->getFilePath() << std::endl;
+                                outputVector = readArray->getHeavyDataController(0)->getDataspaceDimensions();
+                                std::cout << "Data space dimensions" << std::endl;
+                                for (unsigned int j=0; j<outputVector.size(); ++j)
+                                {
+                                        std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
+                                }
+                                std::cout << "Controller Dimensions" << std::endl;
+                                outputVector = readArray->getHeavyDataController(0)->getDimensions();
+                                for (unsigned int j=0; j<outputVector.size(); ++j)
+                                {
+                                        std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
+                                }
+                                std::cout << "Controller size" << readArray->getHeavyDataController(0)->getSize() << std::endl;
+                                std::cout << "Controller starts" << std::endl;
+                                outputVector = readArray->getHeavyDataController(0)->getStart();
+                                for (unsigned int j=0; j<outputVector.size(); ++j)
+                                {
+                                        std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
+                                }
+                                std::cout << "Controller strides" << std::endl;
+                                outputVector = readArray->getHeavyDataController(0)->getStride();
+                                for (unsigned int j=0; j<outputVector.size(); ++j)
+                                {
+                                        std::cout << "[" << j << "] =" << outputVector[j] << "\n" << std::endl;
+                                }
+                                for(unsigned int j=0; j<readArray->getSize(); ++j)
+                                {
+                                        std::cout << "core #" << id <<" readArray[" << j << "] = " << readArray->getValue<int>(j) << std::endl;
+                                }
+                        }
+                }
+
+                MPI_Barrier(workerComm);
+
+                // End of Work Section
+
+                //#endworksection begin
+
         }
 
-	//#stopDSMwriter end
+        //#endworksection end
 
-	/*
-	//#stopDSMcontroller begin
+        exampleWriter->closeFile();
 
-	if (id == 0)
-	{
-		exampleController->stopDSM();
-	}
+        //#stopDSMwriter begin
 
-	//#stopDSMcontroller end
-	*/
+        if (id == 0)
+        {
+                exampleWriter->stopDSM();
+        }
 
-	/*
-	//#SendDone begin
+        //#stopDSMwriter end
 
-	if (id == 0)
-	{
-		XdmfDSMBuffer closeBuffer = exampleWriter->getServerBuffer();
-		closeBuffer->SendDone();
-	}
+        /*
+        //#stopDSMcontroller begin
 
-	//#SendDone end
-	*/
+        if (id == 0)
+        {
+                exampleController->stopDSM();
+        }
 
-	//#GetInterComm begin
+        //#stopDSMcontroller end
+        */
 
-	XdmfDSMCommMPI * exampleDSMComm = exampleWriter->getServerBuffer()->GetComm();
-	MPI_Comm exampleInterComm = exampleDSMComm->GetInterComm();
+        /*
+        //#SendDone begin
 
-	//#GetInterComm end
+        if (id == 0)
+        {
+                XdmfDSMBuffer closeBuffer = exampleWriter->getServerBuffer();
+                closeBuffer->SendDone();
+        }
 
-	//#DupInterComm begin
+        //#SendDone end
+        */
 
-	exampleDSMComm->DupInterComm(comm);
+        //#GetInterComm begin
 
-	//#DupInterComm end
+        XdmfDSMCommMPI * exampleDSMComm = exampleWriter->getServerBuffer()->GetComm();
+        MPI_Comm exampleInterComm = exampleDSMComm->GetInterComm();
 
-	//#SendRecvInfo begin
+        //#GetInterComm end
 
-	if (id >= size - numServersCores)
-	{
-		exampleWriter->getServerBuffer()->SendInfo();
-	}
-	else
-	{
-		exampleWriter->getServerBuffer()->ReceiveInfo();
-	}
+        //#DupInterComm begin
 
-	//#SendRecvInfo begin
+        exampleDSMComm->DupInterComm(comm);
 
-	/*
-	//#restartDSMwriter begin
+        //#DupInterComm end
 
-	exampleWriter->restartDSM();
+        //#SendRecvInfo begin
 
-	//#restartDSMwriter end
+        if (id >= size - numServersCores)
+        {
+                exampleWriter->getServerBuffer()->SendInfo();
+        }
+        else
+        {
+                exampleWriter->getServerBuffer()->ReceiveInfo();
+        }
 
-	//#restartDSMcontroller begin
+        //#SendRecvInfo begin
 
-	exampleController->restartDSM();
+        /*
+        //#restartDSMwriter begin
 
-	//#restartDSMcontroller end
-	*/
+        exampleWriter->restartDSM();
 
-	MPI_Barrier(comm);
+        //#restartDSMwriter end
 
-	//#finalizeMPI begin
+        //#restartDSMcontroller begin
 
-	//the dsmManager must be deleted or else there will be a segfault
-	exampleWriter->deleteManager();
+        exampleController->restartDSM();
 
-	MPI_Finalize();
+        //#restartDSMcontroller end
+        */
 
-	//#finalizeMPI end
+        MPI_Barrier(comm);
 
-	return 0;
+        //#finalizeMPI begin
+
+        //the dsmManager must be deleted or else there will be a segfault
+        exampleWriter->deleteManager();
+
+        MPI_Finalize();
+
+        //#finalizeMPI end
+
+        return 0;
 }

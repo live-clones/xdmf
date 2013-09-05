@@ -64,7 +64,7 @@ public:
    * @skipline #//initialization
    * @until #//initialization
    *
-   * @return	Constructed XdmfDomain.
+   * @return    Constructed XdmfDomain.
    */
   static shared_ptr<XdmfDomain> New();
 

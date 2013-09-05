@@ -56,7 +56,7 @@
 // Forward Declarations
 
 // Includes
-#include <XdmfCore.hpp>
+#include <XdmfDSM.hpp>
 #include <XdmfDSMCommMPI.hpp>
 #include <mpi.h>
 
@@ -103,7 +103,7 @@
  * It is primarily for allowing the XdmfDSM to interact with HDF5 dsm
  * without threads.
  */
-class XDMFCORE_EXPORT XdmfDSMBuffer {
+class XDMFDSM_EXPORT XdmfDSMBuffer {
 
 public:
 
@@ -165,8 +165,8 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	Address		The address to be found
-   * @return			The id of the core that the address resides on
+   * @param     Address         The address to be found
+   * @return                    The id of the core that the address resides on
    */
   int AddressToId(int Address);
 
@@ -209,8 +209,8 @@ public:
    *
    *
    *
-   * @param	comm	The communicator to be transmitted
-   * @param	root	The core that the broadcast is originating from
+   * @param     comm    The communicator to be transmitted
+   * @param     root    The core that the broadcast is originating from
    */
   void BroadcastComm(int *comm, int root);
 
@@ -270,10 +270,10 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	returnOpcode	A variable that will hold the code at the
-   *				end of the loop
-   * @return			If the iteration executed without problem
-   * 				returns XDMF_DSM_SUCCESS
+   * @param     returnOpcode    A variable that will hold the code at the
+   *                            end of the loop
+   * @return                    If the iteration executed without problem
+   *                            returns XDMF_DSM_SUCCESS
    */
   int BufferService(int *returnOpcode = 0);
 
@@ -333,8 +333,8 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	returnOpcode	A variable that will hold the code at the
-   *				end of the loop
+   * @param     returnOpcode    A variable that will hold the code at the
+   *                            end of the loop
    */
   void BufferServiceLoop(int *returnOpcode = 0);
 
@@ -393,18 +393,18 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	Comm		The communicator that will be handling the
-   * 				communications for the DSM
-   * @param	Length		The length of the data buffer on server cores
-   * @param	StartId		The id that the server cores will start on,
-   *				if set to -1 then it will default to 0
-   * @param	EndId		The id that the server cores will end on,
-   *				if set to -1 then it will be the last core
-   *				in the communicator
-   * @param	aBlockLength	The block size of the data buffer, 0 is
-   * 				no blocking
-   * @param	random		Whether the assignment is random or cyclic.
-   *				Default is cyclic
+   * @param     Comm            The communicator that will be handling the
+   *                            communications for the DSM
+   * @param     Length          The length of the data buffer on server cores
+   * @param     StartId         The id that the server cores will start on,
+   *                            if set to -1 then it will default to 0
+   * @param     EndId           The id that the server cores will end on,
+   *                            if set to -1 then it will be the last core
+   *                            in the communicator
+   * @param     aBlockLength    The block size of the data buffer, 0 is
+   *                            no blocking
+   * @param     random          Whether the assignment is random or cyclic.
+   *                            Default is cyclic
    */
   void ConfigureUniform(XdmfDSMCommMPI *Comm, long Length,
                         int StartId = -1, int EndId = -1,
@@ -452,10 +452,10 @@ public:
    *
    *
    *
-   * @param	Address		The starting address of the data retrieved
-   * @param	aLength		The length of the data to be retrieved
-   * @param	Data		A pointer in which the data is to be stored
-   * 				after retieval
+   * @param     Address         The starting address of the data retrieved
+   * @param     aLength         The length of the data to be retrieved
+   * @param     Data            A pointer in which the data is to be stored
+   *                            after retieval
    */
   void Get(long Address, long aLength, void *Data);
 
@@ -498,10 +498,10 @@ public:
    *
    *
    *
-   * @param	Id	The core for which the start and end address are
-   * 			to be found
-   * @param	Start	A pointer in which the start address is to be placed
-   * @param	End	A pointer in which the end address is to be placed
+   * @param     Id      The core for which the start and end address are
+   *                    to be found
+   * @param     Start   A pointer in which the start address is to be placed
+   * @param     End     A pointer in which the end address is to be placed
    */
   void GetAddressRangeForId(int Id, int *Start, int *End);
 
@@ -679,7 +679,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	The buffer's internal data pointer.
+   * @return    The buffer's internal data pointer.
    */
   char * GetDataPointer();
 
@@ -738,7 +738,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	The integer representation of the DSM type
+   * @return    The integer representation of the DSM type
    */
   int GetDsmType();
 
@@ -797,7 +797,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	The end address of the DSM buffer
+   * @return    The end address of the DSM buffer
    */
   int GetEndAddress();
 
@@ -856,7 +856,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	The id of the last core that serves as a DSM server
+   * @return    The id of the last core that serves as a DSM server
    */
   int GetEndServerId();
 
@@ -915,7 +915,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	Whether the buffer is connected
+   * @return    Whether the buffer is connected
    */
   bool GetIsConnected();
 
@@ -974,7 +974,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	If the Buffer is a DSM server
+   * @return    If the Buffer is a DSM server
    */
   bool GetIsServer();
 
@@ -1033,7 +1033,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	The length of the data buffer per core
+   * @return    The length of the data buffer per core
    */
   long GetLength();
 
@@ -1092,7 +1092,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	The beginning address of the DSM buffer
+   * @return    The beginning address of the DSM buffer
    */
   int GetStartAddress();
 
@@ -1151,7 +1151,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	The id of the first core that serves as a DSM server
+   * @return    The id of the first core that serves as a DSM server
    */
   int GetStartServerId();
 
@@ -1210,7 +1210,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	The total length of the data buffer
+   * @return    The total length of the data buffer
    */
   long GetTotalLength();
 
@@ -1253,8 +1253,8 @@ public:
    *
    *
    *
-   * @param	comm	a pointer to the variable that the integer code for the
-   *			comm is placed in
+   * @param     comm    a pointer to the variable that the integer code for the
+   *                    comm is placed in
    */
   void ProbeCommandHeader(int *comm);
 
@@ -1299,10 +1299,10 @@ public:
    *
    *
    *
-   * @param	Address		The starting address that the data will
-   *				be placed at
-   * @param	aLength		The length of the data to be sent
-   * @param	Data		A pointer to the data to be sent
+   * @param     Address         The starting address that the data will
+   *                            be placed at
+   * @param     aLength         The length of the data to be sent
+   * @param     Data            A pointer to the data to be sent
    */
   void Put(long Address, long aLength, const void *Data);
 
@@ -1363,10 +1363,10 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	source	The core to recieve from
-   * @param	data	The integer that the recieved data will be stored in
-   * @param	tag	The tag associated with the acknowledgement
-   * @param	comm	The comm over which the acknowldedgement will occur
+   * @param     source  The core to recieve from
+   * @param     data    The integer that the recieved data will be stored in
+   * @param     tag     The tag associated with the acknowledgement
+   * @param     comm    The comm over which the acknowldedgement will occur
    */
   void ReceiveAcknowledgment(int source, int &data, int tag, int comm);
 
@@ -1409,18 +1409,18 @@ public:
    * Unusable in python unless an object of a cpointer type is passed
    *  via wrapped code
    *
-   * @param	opcode		A pointer to the location where the code
-   *				associated with the operation will be stored
-   * @param	source		A pointer to the location where the index of
-   *				the source core will be stored
-   *				(will be the same as remoteSource if provided)
-   * @param	address		A pointer to the location where the address
-   *				specified by the command will be stored
-   * @param	aLength		A pointer to the location where the length of
-   *				the data specified by the command will be stored
-   * @param	comm		The communicator over which the transmission
-   *				will occur
-   * @param	remoteSource	If provided, the core being recieved from
+   * @param     opcode          A pointer to the location where the code
+   *                            associated with the operation will be stored
+   * @param     source          A pointer to the location where the index of
+   *                            the source core will be stored
+   *                            (will be the same as remoteSource if provided)
+   * @param     address         A pointer to the location where the address
+   *                            specified by the command will be stored
+   * @param     aLength         A pointer to the location where the length of
+   *                            the data specified by the command will be stored
+   * @param     comm            The communicator over which the transmission
+   *                            will occur
+   * @param     remoteSource    If provided, the core being recieved from
    */
   void ReceiveCommandHeader(int *opcode, int *source, int *address, int *aLength, int comm, int remoteSource = -1);
 
@@ -1464,16 +1464,16 @@ public:
    *
    *
    *
-   * @param	source		The core data will be recieved from
-   * @param	data		The pointer where the recieved data will be
-   *				stored
-   * @param	aLength		The length of the data transmitted
-   * @param	tag		The communication tag to be used for the
-   *				transmission
-   * @param	aAddress	The location where the data will be written on
-   *				the data buffer
-   * @param	comm		The comunicator over which the data transfer
-   *				will occur
+   * @param     source          The core data will be recieved from
+   * @param     data            The pointer where the recieved data will be
+   *                            stored
+   * @param     aLength         The length of the data transmitted
+   * @param     tag             The communication tag to be used for the
+   *                            transmission
+   * @param     aAddress        The location where the data will be written on
+   *                            the data buffer
+   * @param     comm            The comunicator over which the data transfer
+   *                            will occur
    */
   void ReceiveData(int source, char * data, int aLength, int tag, int aAddress, int comm);
 
@@ -1555,7 +1555,7 @@ public:
    * @skipline #//ClosePort
    * @until #//ClosePort
    *
-   * @param	numConnects	The number of incoming connections to accept
+   * @param     numConnects     The number of incoming connections to accept
    */
   void SendAccept(unsigned int numConnects);
 
@@ -1617,10 +1617,10 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	dest	The core to send to
-   * @param	data	The integer to send
-   * @param	tag	The tag associated with the acknowledgement
-   * @param	comm	The comm over which the acknowldedgement will occur
+   * @param     dest    The core to send to
+   * @param     data    The integer to send
+   * @param     tag     The tag associated with the acknowledgement
+   * @param     comm    The comm over which the acknowldedgement will occur
    */
   void SendAcknowledgment(int dest, int data, int tag, int comm);
 
@@ -1680,11 +1680,11 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	opcode		The code for the command to be sent
-   * @param	dest		The core that the command is to be sent to
-   * @param	address		The address to be referenced by the command
-   * @param	aLength		The length of the data to be used by the command
-   * @param	comm		The communicator over which the transmission will occur
+   * @param     opcode          The code for the command to be sent
+   * @param     dest            The core that the command is to be sent to
+   * @param     address         The address to be referenced by the command
+   * @param     aLength         The length of the data to be used by the command
+   * @param     comm            The communicator over which the transmission will occur
    */
   void SendCommandHeader(int opcode, int dest, int address, int aLength, int comm);
 
@@ -1744,14 +1744,14 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	dest		The core that the data will be sent to
-   * @param	data		A pointer to the location of the data being sent
-   * @param	aLength		The length of the data being sent
-   * @param	tag		The communication tag to be used for the transmission
-   * @param	aAddress	The address on the recieveing core's buffer that
-   *				the data is to be placed in
-   * @param	comm		The communicator over which the data transfer
-   *				will take place
+   * @param     dest            The core that the data will be sent to
+   * @param     data            A pointer to the location of the data being sent
+   * @param     aLength         The length of the data being sent
+   * @param     tag             The communication tag to be used for the transmission
+   * @param     aAddress        The address on the recieveing core's buffer that
+   *                            the data is to be placed in
+   * @param     comm            The communicator over which the data transfer
+   *                            will take place
    */
   void SendData(int dest, char * data, int aLength, int tag, int aAddress, int comm);
 
@@ -1891,7 +1891,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	newBlock	The new block size to be used
+   * @param     newBlock        The new block size to be used
    */
   void SetBlockLength(long newBlock);
 
@@ -1954,7 +1954,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	newComm		The communicator that is to be used by the DSM
+   * @param     newComm         The communicator that is to be used by the DSM
    */
   void SetComm(XdmfDSMCommMPI * newComm);
 
@@ -2013,7 +2013,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	newDsmType	The Dsm type that the buffer will be changed to
+   * @param     newDsmType      The Dsm type that the buffer will be changed to
    */
   void SetDsmType(int newDsmType);
 
@@ -2077,7 +2077,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	newStatus	The new connection status
+   * @param     newStatus       The new connection status
    */
   void SetIsConnected(bool newStatus);
 
@@ -2138,7 +2138,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	newIsServer	Whether the buffer is to be a DSM server or not
+   * @param     newIsServer     Whether the buffer is to be a DSM server or not
    */
   void SetIsServer(bool newIsServer);
 
@@ -2149,29 +2149,29 @@ private:
 
   void SetLength(long aLength);
 
-  class			CommandMsg;
-  class			InfoMsg;
+  class                 CommandMsg;
+  class                 InfoMsg;
 
-  bool			IsServer;
+  bool                  IsServer;
 
-  int			EndAddress;
-  int			StartAddress;
+  int                   EndAddress;
+  int                   StartAddress;
 
-  int			StartServerId;
-  int			EndServerId;
+  int                   StartServerId;
+  int                   EndServerId;
 
-  unsigned int		Length;
-  unsigned int		TotalLength;
-  unsigned int		BlockLength;
+  unsigned int          Length;
+  unsigned int          TotalLength;
+  unsigned int          BlockLength;
 
-  XdmfDSMCommMPI	*Comm;
+  XdmfDSMCommMPI        *Comm;
 
-  char			*DataPointer;
+  char                  *DataPointer;
 
-  int			DsmType;
+  int                   DsmType;
 
-  int			CommChannel;
-  bool			IsConnected;
+  int                   CommChannel;
+  bool                  IsConnected;
 };
 
 #endif /* XDMFDSMBUFFER_HPP_ */

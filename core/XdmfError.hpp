@@ -29,8 +29,8 @@ public:
      * @skipline #//initialization
      * @until #//initialization
      *
-     * @param	level		The error level of the exception being constructed
-     * @param	message		The message to be attached to the exception
+     * @param   level           The error level of the exception being constructed
+     * @param   message         The message to be attached to the exception
      */
     XdmfError(Level level, std::string message);
 
@@ -55,7 +55,7 @@ public:
      * @skipline #//setLevel
      * @until #//setLevel
      *
-     * @param	l	The new level of the exception
+     * @param   l       The new level of the exception
      */
     void setLevel(Level l);
 
@@ -78,7 +78,7 @@ public:
      * @skipline #//getLevel
      * @until #//getLevel
      *
-     * @return	The error level of the exception
+     * @return  The error level of the exception
      */
     Level getLevel();
 
@@ -101,7 +101,7 @@ public:
      * @skipline #//setLevelLimit
      * @until #//setLevelLimit
      *
-     * @param	l	The cutoff level for sending exceptions via message
+     * @param   l       The cutoff level for sending exceptions via message
      */
     static void setLevelLimit(Level l);
 
@@ -122,7 +122,7 @@ public:
      * @skipline #//setSuppressionLevel
      * @until #//setSuppressionLevel
      *
-     * @param	l	The new minimum error level to display a message
+     * @param   l       The new minimum error level to display a message
      */
     static void setSuppressionLevel(Level l);
 
@@ -145,7 +145,7 @@ public:
      * @skipline #//getLevelLimit
      * @until #//getLevelLimit
      *
-     * @return	The cuttof level for sending exceptions via message
+     * @return  The cuttof level for sending exceptions via message
      */
     static Level getLevelLimit();
 
@@ -162,7 +162,7 @@ public:
      * @skipline #//getSuppressionLevel
      * @until #//getSuppressionLevel
      *
-     * @return	The minimum error level to display a message
+     * @return  The minimum error level to display a message
      */
     static Level getSuppressionLevel();
 
@@ -187,8 +187,8 @@ public:
      * @skipline #//message
      * @until #//message
      *
-     * @param	l	The level of the error to be generated
-     * @param	msg	The message to be associated with the error generated and printed out
+     * @param   l       The level of the error to be generated
+     * @param   msg     The message to be associated with the error generated and printed out
      */
     static void message(Level l, std::string msg);
 
@@ -207,7 +207,7 @@ public:
      *
      * Python: Not supported in Python
      *
-     * @param	buf	The buffer that the error messages will be printed to
+     * @param   buf     The buffer that the error messages will be printed to
      */
     static void setBuffer(std::streambuf* buf);
 
@@ -230,7 +230,7 @@ public:
      * @skipline #//what
      * @until #//what
      *
-     * @return	The message associated with the exception
+     * @return  The message associated with the exception
      */
     virtual const char * what() const throw();
 

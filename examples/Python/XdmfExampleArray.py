@@ -3,323 +3,323 @@ from numpy import *
 
 if __name__ == "__main__":
 
-	#//initialization begin
+        #//initialization begin
 
-	exampleArray = XdmfArray.New()
+        exampleArray = XdmfArray.New()
 
-	#//initialization end
+        #//initialization end
 
-	#//setName begin
+        #//setName begin
 
-	newName = "New Name"
-	exampleArray.setName(newName)
+        newName = "New Name"
+        exampleArray.setName(newName)
 
-	#//setName end
+        #//setName end
 
-	#//reserve begin
+        #//reserve begin
 
-	newSize = 10
-	exampleArray.reserve(newSize)
+        newSize = 10
+        exampleArray.reserve(newSize)
 
-	#//reserve end
+        #//reserve end
 
-	#//initializesingle begin
+        #//initializesingle begin
 
-	newSize = 10
-	exampleArray.initialize(XdmfArrayType.Int32(), newSize)
+        newSize = 10
+        exampleArray.initialize(XdmfArrayType.Int32(), newSize)
 
-	#//initializesingle end
+        #//initializesingle end
 
-	#//initializevector begin
+        #//initializevector begin
 
-	newSizeVector = UInt32Vector()
-	newSizeVector.push_back(5)
-	newSizeVector.push_back(5)
-	newSizeVector.push_back(5)
-	exampleArray.initialize(XdmfArrayType.Int32(), newSizeVector)
+        newSizeVector = UInt32Vector()
+        newSizeVector.push_back(5)
+        newSizeVector.push_back(5)
+        newSizeVector.push_back(5)
+        exampleArray.initialize(XdmfArrayType.Int32(), newSizeVector)
 
-	#//initializevector end
+        #//initializevector end
 
-	#//getArrayType begin
+        #//getArrayType begin
 
-	exampleType = exampleArray.getArrayType()
+        exampleType = exampleArray.getArrayType()
 
-	#//getArrayType end
+        #//getArrayType end
 
-	#//getCapacity begin
+        #//getCapacity begin
 
-	exampleCapacity = exampleArray.getCapacity()
+        exampleCapacity = exampleArray.getCapacity()
 
-	#//getCapacity end
+        #//getCapacity end
 
-	#//getDimensions begin
+        #//getDimensions begin
 
-	exampleDimensions = exampleArray.getDimensions()
+        exampleDimensions = exampleArray.getDimensions()
 
-	#//getDimensions end
+        #//getDimensions end
 
-	#//getDimensionsString begin
+        #//getDimensionsString begin
 
-	exampleDimensionString = exampleArray.getDimensionsString()
+        exampleDimensionString = exampleArray.getDimensionsString()
 
-	#//getDimensionsString end
+        #//getDimensionsString end
 
-	#//getName begin
+        #//getName begin
 
-	exampleName = exampleArray.getName()
+        exampleName = exampleArray.getName()
 
-	#//getName end
+        #//getName end
 
-	#//getSize begin
+        #//getSize begin
 
-	exampleSize = exampleArray.getSize()
+        exampleSize = exampleArray.getSize()
 
-	#//getSize end
+        #//getSize end
 
-	#//insertarray begin
+        #//insertarray begin
 
-	initArray = [0,1,2,3,4,5,6,7,8,9]
-	storeArray = XdmfArray.New()
-	exampleArray.insertAsInt32(0, initArray)
-	storeArray.insert(0, exampleArray, 0, 10, 1, 1)
-	#storeArray now contains {0,1,2,3,4,5,6,7,8,9}
-	storeArray.insert(0, exampleArray, 0, 5, 2, 1)
-	#storeArray now contains {0,1,1,3,2,5,3,7,4,9}
-	storeArray.insert(0, exampleArray, 0, 5, 1, 2)
-	#storeArray now contains {0,2,4,6,8,5,3,7,4,9}
+        initArray = [0,1,2,3,4,5,6,7,8,9]
+        storeArray = XdmfArray.New()
+        exampleArray.insertAsInt32(0, initArray)
+        storeArray.insert(0, exampleArray, 0, 10, 1, 1)
+        #storeArray now contains {0,1,2,3,4,5,6,7,8,9}
+        storeArray.insert(0, exampleArray, 0, 5, 2, 1)
+        #storeArray now contains {0,1,1,3,2,5,3,7,4,9}
+        storeArray.insert(0, exampleArray, 0, 5, 1, 2)
+        #storeArray now contains {0,2,4,6,8,5,3,7,4,9}
 
-	#//insertarray end
+        #//insertarray end
 
-	#//insertlist begin
+        #//insertlist begin
 
-	initArray = [0,1,2,3,4,5,6,7,8,9]
-	exampleArray.insertAsInt32(0, initArray)
-	#exampleArray now contains {0,1,2,3,4,5,6,7,8,9}
-	exampleArray.insertAsInt32(0, initArray[0:5:2])
-	#exampleArray now contains {0,2,4,6,8,5,3,7,4,9}
-	exampleArray.insertAsInt32(0, initArray[::-1])
-	#exampleArray now contains {9,8,7,6,5,4,3,2,1,0}
+        initArray = [0,1,2,3,4,5,6,7,8,9]
+        exampleArray.insertAsInt32(0, initArray)
+        #exampleArray now contains {0,1,2,3,4,5,6,7,8,9}
+        exampleArray.insertAsInt32(0, initArray[0:5:2])
+        #exampleArray now contains {0,2,4,6,8,5,3,7,4,9}
+        exampleArray.insertAsInt32(0, initArray[::-1])
+        #exampleArray now contains {9,8,7,6,5,4,3,2,1,0}
 
-	#Python uses a different function for each data type
-	#This example uses insertAsInt32 to insert ints
-	#insertAsFloat64 can also be used to insert doubles
-	#This function takes a start index and a list
-	#Sublists are inserted using Python's sublist notation
+        #Python uses a different function for each data type
+        #This example uses insertAsInt32 to insert ints
+        #insertAsFloat64 can also be used to insert doubles
+        #This function takes a start index and a list
+        #Sublists are inserted using Python's sublist notation
 
-	#//insertlist end
+        #//insertlist end
 
-	#//getNumpyArray begin
+        #//getNumpyArray begin
 
-	outputArray = exampleArray.getNumpyArray()
+        outputArray = exampleArray.getNumpyArray()
 
-	#//getNumpyArray end
+        #//getNumpyArray end
 
-	#//arraydefaultvalues begin
+        #//arraydefaultvalues begin
 
-	initArray = [0,1,2,3,4,5,6,7,8,9]
+        initArray = [0,1,2,3,4,5,6,7,8,9]
         exampleArray.insertAsInt32(0, initArray)
 
-	#//arraydefaultvalues end
+        #//arraydefaultvalues end
 
-	#//resizesingle begin
+        #//resizesingle begin
 
-	newSize = 20
-	baseValue = 1
-	exampleArray.resizeAsInt32(newSize, baseValue)
-	#exampleArray now contains {0,1,2,3,4,5,6,7,8,9,1,1,1,1,1,1,1,1,1,1}
-	newSize = 5
-	exampleArray.resizeAsInt32(newSize, baseValue)
-	#exampleArray now contains {0,1,2,3,4}
-	#This example uses resizeAsInt32 because the baseValue inserted is to be an integer
-	#All other supported data types have similarly named function calls
-	#For example to insert a double resizeAsFloat64 is called
+        newSize = 20
+        baseValue = 1
+        exampleArray.resizeAsInt32(newSize, baseValue)
+        #exampleArray now contains {0,1,2,3,4,5,6,7,8,9,1,1,1,1,1,1,1,1,1,1}
+        newSize = 5
+        exampleArray.resizeAsInt32(newSize, baseValue)
+        #exampleArray now contains {0,1,2,3,4}
+        #This example uses resizeAsInt32 because the baseValue inserted is to be an integer
+        #All other supported data types have similarly named function calls
+        #For example to insert a double resizeAsFloat64 is called
 
-	#//resizesingle end
+        #//resizesingle end
 
-	#//resizevector begin
+        #//resizevector begin
 
         newSizeArray = UInt32Vector()
-	newSizeArray.push_back(4)
-	newSizeArray.push_back(5)
+        newSizeArray.push_back(4)
+        newSizeArray.push_back(5)
         baseValue = 1
         exampleArray.resizeAsInt32(newSizeArray, baseValue)
         #exampleArray now contains {0,1,2,3,4,5,6,7,8,9,1,1,1,1,1,1,1,1,1,1}
-	newSizeArray[0] = 1
+        newSizeArray[0] = 1
         exampleArray.resizeAsInt32(newSizeArray, baseValue)
-	#exampleArray now contains {0,1,2,3,4}
-	#This example uses resizeAsInt32 because the baseValue inserted is to be an integer
-	#All other supported data types have similarly named function calls
-	#For example to insert a double resizeAsFloat64 is called
+        #exampleArray now contains {0,1,2,3,4}
+        #This example uses resizeAsInt32 because the baseValue inserted is to be an integer
+        #All other supported data types have similarly named function calls
+        #For example to insert a double resizeAsFloat64 is called
 
-	#//resizevector end
+        #//resizevector end
 
-	#//getValueindex begin
+        #//getValueindex begin
 
-	#If exampleArray contains  [0, 1, 2, 3, 4, 5, 6, 7]
-	exampleValue = exampleArray.getValueAsInt32(4)
-	#exampleValue now equals 4
-	#The data type of the returned value can be changed by changing the function name
-	#getValueAsInt32 returns an int value while getValueAsFloat64 returns a double value
-	#Variations of this function exist for all supported data types
+        #If exampleArray contains  [0, 1, 2, 3, 4, 5, 6, 7]
+        exampleValue = exampleArray.getValueAsInt32(4)
+        #exampleValue now equals 4
+        #The data type of the returned value can be changed by changing the function name
+        #getValueAsInt32 returns an int value while getValueAsFloat64 returns a double value
+        #Variations of this function exist for all supported data types
 
-	#//getValueindex end
+        #//getValueindex end
 
-	#//getValuesparse begin
+        #//getValuesparse begin
 
-	exampleValueString = exampleArray.getValuesString()
-	valueArray = [float(piece) for piece in exampleArray.getValuesString().split()]
-	#This is one method of getting the contained values of the array
+        exampleValueString = exampleArray.getValuesString()
+        valueArray = [float(piece) for piece in exampleArray.getValuesString().split()]
+        #This is one method of getting the contained values of the array
 
-	#//getValuesparse end
+        #//getValuesparse end
 
-	#//isInitialized begin
+        #//isInitialized begin
 
-	if not(exampleArray.isInitialized()):
-		exampleArray.read()
+        if not(exampleArray.isInitialized()):
+                exampleArray.read()
 
-	#//isInitialized end
+        #//isInitialized end
 
-	#//getValuesInternal begin
+        #//getValuesInternal begin
 
-	exampleValues = exampleArray.getValuesInternal()
-	#alternatively getBuffer gives a buffer object
-	exampleValues = exampleArray.getBuffer()
-	#due to the way python handles void pointers, this function is only useful for getting a pointer to pass
-	#if the retrieval of the internal values of the array is required, another function should be used
+        exampleValues = exampleArray.getValuesInternal()
+        #alternatively getBuffer gives a buffer object
+        exampleValues = exampleArray.getBuffer()
+        #due to the way python handles void pointers, this function is only useful for getting a pointer to pass
+        #if the retrieval of the internal values of the array is required, another function should be used
 
-	#//getValuesInternal end
+        #//getValuesInternal end
 
-	#//swap begin
+        #//swap begin
 
-	swapArray = XdmfArray.New()
-	initArray2 = [1,2,3,4,5]
-	swapArray.insertAsInt32(0, initArray2)
-	#exampleArray contains {0,1,2,3,4,5,6,7,8,9} and swapArray contains {1,2,3,4,5}
-	exampleArray.swap(swapArray)
-	#Now exampleArray contains {1,2,3,4,5} and swapArray contains {0,1,2,3,4,5,6,7,8,9}
+        swapArray = XdmfArray.New()
+        initArray2 = [1,2,3,4,5]
+        swapArray.insertAsInt32(0, initArray2)
+        #exampleArray contains {0,1,2,3,4,5,6,7,8,9} and swapArray contains {1,2,3,4,5}
+        exampleArray.swap(swapArray)
+        #Now exampleArray contains {1,2,3,4,5} and swapArray contains {0,1,2,3,4,5,6,7,8,9}
 
-	#//swap end
+        #//swap end
 
-	#//pushBack begin
+        #//pushBack begin
 
-	newValue = 5
-	exampleArray.pushBackAsInt32(newValue)
-	#For Python pushBack has multiple functions to cover different data types
-	#This case used an int so the function was pushBackAsInt32
-	#Another example would be to use pushBackAsFloat64 for double values
+        newValue = 5
+        exampleArray.pushBackAsInt32(newValue)
+        #For Python pushBack has multiple functions to cover different data types
+        #This case used an int so the function was pushBackAsInt32
+        #Another example would be to use pushBackAsFloat64 for double values
 
-	#//pushBack end
+        #//pushBack end
 
-	#//pointinsert begin
+        #//pointinsert begin
 
-	newIndex = 0
-	newValue = 3.5
-	exampleArray.insertAsFloat64(newIndex, [newValue])
-	#this example uses insertAsFloat64 to insert a double value
-	#versions for all other data types exist
-	#for example insertAsInt32 inserts as an int
+        newIndex = 0
+        newValue = 3.5
+        exampleArray.insertAsFloat64(newIndex, [newValue])
+        #this example uses insertAsFloat64 to insert a double value
+        #versions for all other data types exist
+        #for example insertAsInt32 inserts as an int
 
-	#//pointinsert end
+        #//pointinsert end
 
-	#//erase begin
+        #//erase begin
 
-	#If exampleArray contains  [0, 1, 2, 3, 4, 5, 6, 7]
-	erasedIndex = 4
-	exampleArray.erase(erasedIndex)
-	#exampleArray now contains the following
-	#[0, 1, 2, 3, 5, 6, 7]
+        #If exampleArray contains  [0, 1, 2, 3, 4, 5, 6, 7]
+        erasedIndex = 4
+        exampleArray.erase(erasedIndex)
+        #exampleArray now contains the following
+        #[0, 1, 2, 3, 5, 6, 7]
 
-	#//erase end
+        #//erase end
 
-	#//clear begin
+        #//clear begin
 
-	exampleArray.clear()
+        exampleArray.clear()
 
-	#//clear end
+        #//clear end
 
-	#//getHeavyDataController begin
+        #//getHeavyDataController begin
 
-	exampleController = exampleArray.getHeavyDataController()
+        exampleController = exampleArray.getHeavyDataController()
 
-	#//getHeavyDataController end
+        #//getHeavyDataController end
 
-	#//setHeavyDataController begin
+        #//setHeavyDataController begin
 
-	newArray = XdmfArray.New()
-	newArray.setHeavyDataController(exampleController)
+        newArray = XdmfArray.New()
+        newArray.setHeavyDataController(exampleController)
 
-	#//setHeavyDataController end
+        #//setHeavyDataController end
 
-	#//readController begin
+        #//readController begin
 
-	newArray->readController()
+        newArray->readController()
 
-	#//readController end
+        #//readController end
 
-	#//release begin
+        #//release begin
 
-	exampleArray.release()
+        exampleArray.release()
 
-	#//release end
+        #//release end
 
-	#//insertmultidim begin
+        #//insertmultidim begin
 
-	writtenArray = XdmfArray.New()
-	dimensionVector = UInt32Vector()
-	dimensionVector.push_back(5)
-	dimensionVector.push_back(4)
-	writtenArray.initializeAsInt32(dimensionVector)
-	for i in range (0, 20):
-		writtenArray.insert(i, i + 1)
-	readArray = XdmfArray.New()
-	readDimensionVector = UInt32Vector()
-	readDimensionVector.push_back(6)
-	readDimensionVector.push_back(4)
-	readArray.initializeAsInt32(readDimensionVector)
+        writtenArray = XdmfArray.New()
+        dimensionVector = UInt32Vector()
+        dimensionVector.push_back(5)
+        dimensionVector.push_back(4)
+        writtenArray.initializeAsInt32(dimensionVector)
+        for i in range (0, 20):
+                writtenArray.insert(i, i + 1)
+        readArray = XdmfArray.New()
+        readDimensionVector = UInt32Vector()
+        readDimensionVector.push_back(6)
+        readDimensionVector.push_back(4)
+        readArray.initializeAsInt32(readDimensionVector)
 
-	writeStarts = UInt32Vector()
-	writeStarts.push_back(0)
-	writeStarts.push_back(0)
-	writeStrides = UInt32Vector()
-	writeStrides.push_back(2)
-	writeStrides.push_back(2)
-	writeDim = UInt32Vector()
-	writeDim.push_back(3)
-	writeDim.push_back(2)
-	readStarts = UInt32Vector()
-	readStarts.push_back(0)
-	readStarts.push_back(0)
-	readStrides = UInt32Vector()
-	readStrides.push_back(2)
-	readStrides.push_back(2)
-	readDim = UInt32Vector()
-	readDim.push_back(3)
-	readDim.push_back(2)
+        writeStarts = UInt32Vector()
+        writeStarts.push_back(0)
+        writeStarts.push_back(0)
+        writeStrides = UInt32Vector()
+        writeStrides.push_back(2)
+        writeStrides.push_back(2)
+        writeDim = UInt32Vector()
+        writeDim.push_back(3)
+        writeDim.push_back(2)
+        readStarts = UInt32Vector()
+        readStarts.push_back(0)
+        readStarts.push_back(0)
+        readStrides = UInt32Vector()
+        readStrides.push_back(2)
+        readStrides.push_back(2)
+        readDim = UInt32Vector()
+        readDim.push_back(3)
+        readDim.push_back(2)
 
-	readArray.insert(readStarts, writtenArray, writeStarts, writeDim, readDim, readStrides, writeStrides)
+        readArray.insert(readStarts, writtenArray, writeStarts, writeDim, readDim, readStrides, writeStrides)
 
-	#//insertmultidim end
+        #//insertmultidim end
 
         #//setFunction begin
 
-	variableArray = XdmfArray.New()
+        variableArray = XdmfArray.New()
 
-	for i in range(0, 10):
-		variableArray.pushBack(i)
+        for i in range(0, 10):
+                variableArray.pushBack(i)
 
-	variableMap = ArrayMap()
+        variableMap = ArrayMap()
 
-	variableMap["A"] = variableArray
+        variableMap["A"] = variableArray
 
-	arrayFunction = XdmfFunction.New("AVE(A)", variableMap)
+        arrayFunction = XdmfFunction.New("AVE(A)", variableMap)
 
-	exampleArray.setFunction(exampleFunction)
+        exampleArray.setFunction(exampleFunction)
 
         #//setFunction end
 
         #//getFunction begin
 
-	exampleFunction = exampleArray.getFunction()
+        exampleFunction = exampleArray.getFunction()
 
         #//getFunction end
 
@@ -346,20 +346,20 @@ if __name__ == "__main__":
 
         #//setSubset begin
 
-	newReference = XdmfArray.New()
-	for i in range(0, 10):
-		newReference.pushBackAsInt32(i)
+        newReference = XdmfArray.New()
+        for i in range(0, 10):
+                newReference.pushBackAsInt32(i)
 
-	newStarts = UInt32Vector()
+        newStarts = UInt32Vector()
         newStarts.push_back(0)
 
-	newStrides = UInt32Vector()
-	newStrides.push_back(1)
+        newStrides = UInt32Vector()
+        newStrides.push_back(1)
 
-	newDimensions = UInt32Vector()
+        newDimensions = UInt32Vector()
         newDimensions.pushBack(10)
 
-	newSubset = XdmfSubset.New(newReference,
+        newSubset = XdmfSubset.New(newReference,
                                     newStarts,
                                     newStrides,
                                     newDimensions)

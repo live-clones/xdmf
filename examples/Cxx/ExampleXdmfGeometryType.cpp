@@ -2,32 +2,32 @@
 
 int main(int, char **)
 {
-	//#initialization begin
+        //#initialization begin
 
-	shared_ptr<XdmfGeometry> exampleGeometry = XdmfGeometry::New();
+        shared_ptr<XdmfGeometry> exampleGeometry = XdmfGeometry::New();
 
-	//#initialization end
+        //#initialization end
 
-	//#getType begin
+        //#getType begin
 
-	if (exampleGeometry->getType() == XdmfGeometry::XYZ())
-	{
-		//do whatever is to be done if the geometry is xyz
-	}
+        if (exampleGeometry->getType() == XdmfGeometry::XYZ())
+        {
+                //do whatever is to be done if the geometry is xyz
+        }
 
-	//#getType end
+        //#getType end
 
-	//#getDimensions begin
+        //#getDimensions begin
 
-	unsigned int exampleDimensions = XdmfGeometryType::XYZ()->getDimensions();
+        unsigned int exampleDimensions = XdmfGeometryType::XYZ()->getDimensions();
 
-	//#getDimensions end
+        //#getDimensions end
 
-	//#getName begin
+        //#getName begin
 
-	std::string exampleName = XdmfGeometryType::XYZ()->getName();
+        std::string exampleName = XdmfGeometryType::XYZ()->getName();
 
-	//#getName end
+        //#getName end
 
-	return 0;
+        return 0;
 }

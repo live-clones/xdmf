@@ -70,10 +70,10 @@ public:
    * @skipline #//initialization
    * @until #//initialization
    *
-   * @param	filePath	The location of the hdf5 file to output to on disk.
-   * @param	clobberFile	Whether to overwrite the previous file if it exists.
+   * @param     filePath        The location of the hdf5 file to output to on disk.
+   * @param     clobberFile     Whether to overwrite the previous file if it exists.
    *
-   * @return			New XdmfHDF5Writer.
+   * @return                    New XdmfHDF5Writer.
    */
   static shared_ptr<XdmfHDF5Writer> New(const std::string & filePath,
                                         const bool clobberFile = false);
@@ -102,7 +102,7 @@ public:
    * @skipline #//getChunkSize
    * @until #//getChunkSize
    *
-   * @return	Chunk size used to output datasets to hdf5.
+   * @return    Chunk size used to output datasets to hdf5.
    */
   unsigned int getChunkSize() const;
 
@@ -129,7 +129,7 @@ public:
    * @skipline #//setChunkSize
    * @until #//setChunkSize
    *
-   * @param 	chunkSize	The number of elements per chunk.
+   * @param     chunkSize       The number of elements per chunk.
    */
   void setChunkSize(const unsigned int chunkSize);
 
@@ -163,7 +163,7 @@ protected:
    * hdf5 data set (may be larger that dimensions if using
    * hyperslabs).
    *
-   * @return 	new HDF5 Controller.
+   * @return    new HDF5 Controller.
    */
   virtual shared_ptr<XdmfHeavyDataController>
   createController(const std::string & hdf5FilePath,
@@ -179,15 +179,15 @@ protected:
   /**
    * Open hdf5 file with a fapl.
    *
-   * @param 	fapl 	The file access property list for the hdf5 file.
+   * @param     fapl    The file access property list for the hdf5 file.
    */
   void openFile(const int fapl);
 
   /**
    * Write the XdmfArray to a hdf5 file.
    *
-   * @param 	array	An XdmfArray to write to hdf5.
-   * @param 	fapl 	The file access property list for the hdf5 file on disk.
+   * @param     array   An XdmfArray to write to hdf5.
+   * @param     fapl    The file access property list for the hdf5 file on disk.
    */
   void write(XdmfArray & array, const int fapl);
 

@@ -33,7 +33,7 @@ ADD_TEST_CXX(TestXdmfWriter)
 ADD_TEST_CXX(TestXdmfWriterHDF5ThenXML)
 ADD_TEST_CXX(TestXdmfXPath)
 #removed due to long execution time
-#ADD_TEST_CXX(HugeWriteArray)
+ADD_TEST_CXX(HugeWriteArray)
 
 # Add any cxx cleanup here:
 # Note: We don't want to use a foreach loop to test the files incase we
@@ -96,9 +96,9 @@ CLEAN_TEST_CXX(TestXdmfXPath
   XdmfXPath1.xmf
   XdmfXPath2.xmf)
 #removed due to long execution time
-#CLEAN_TEST_CXX(HugeWriteArray
-#  arraydata1.h5
-#  arraydata2.h5
-#  arraydata3.h5
-#  arraydata.h5
-#  arraydata.xmf)
+CLEAN_TEST_CXX(HugeWriteArray
+  arraydata1.h5
+  arraydata2.h5
+  arraydata3.h5
+  arraydata.h5
+  arraydata.xmf)

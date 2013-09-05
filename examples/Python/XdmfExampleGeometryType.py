@@ -2,25 +2,25 @@ from Xdmf import *
 
 if __name__ == "__main__":
 
-	#//getDimensions begin
+        #//getDimensions begin
 
-	exampleDimensions = XdmfGeometryType.XYZ().getDimensions()
+        exampleDimensions = XdmfGeometryType.XYZ().getDimensions()
 
-	#//getDimensions end
+        #//getDimensions end
 
-	#//getName begin
+        #//getName begin
 
-	exampleName = XdmfGeometryType.XYZ().getName()
+        exampleName = XdmfGeometryType.XYZ().getName()
 
-	#//getName end
+        #//getName end
 
-	#//getType begin
+        #//getType begin
 
-	exampleGeometry = XdmfGeometry.New()
+        exampleGeometry = XdmfGeometry.New()
 
-	exampleType = exampleGeometry.getType()
+        exampleType = exampleGeometry.getType()
 
-	if exampleType == XdmfGeometryType.XYZ():
-		#do whatever is to be done if the geometry is XYZ
+        if exampleType == XdmfGeometryType.XYZ():
+                #do whatever is to be done if the geometry is XYZ
 
-	#//getType end
+        #//getType end

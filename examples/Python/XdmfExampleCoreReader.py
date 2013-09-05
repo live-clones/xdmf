@@ -1,41 +1,41 @@
 from Xdmf import *
 
 if __name__ == "__main__":
-	#//initialization begin
+        #//initialization begin
 
-	#using XdmfReader since XdmfCoreReader is abstract
-	exampleReader = XdmfReader.New()
+        #using XdmfReader since XdmfCoreReader is abstract
+        exampleReader = XdmfReader.New()
 
-	#//initialization end
+        #//initialization end
 
-	#//parse begin
+        #//parse begin
 
-	readLight = "<dataitem>1 1 1 1 1 1 3 5 7 4 2</dataitem>"
-	exampleItem = exampleReader.parse(readLight)
+        readLight = "<dataitem>1 1 1 1 1 1 3 5 7 4 2</dataitem>"
+        exampleItem = exampleReader.parse(readLight)
 
-	#//parse end
+        #//parse end
 
-	#//readpath begin
+        #//readpath begin
 
-	readPath = "your file path here";
+        readPath = "your file path here";
 
-	#//readpath end
+        #//readpath end
 
-	#//readroot begin
+        #//readroot begin
 
-	exampleItem = exampleReader.read(readPath)
+        exampleItem = exampleReader.read(readPath)
 
-	#//readroot end
+        #//readroot end
 
-	#//readItems begin
+        #//readItems begin
 
-	exampleCollection = exampleReader.readItems(readPath)
+        exampleCollection = exampleReader.readItems(readPath)
 
-	#//readItems end
+        #//readItems end
 
-	#//readXPath begin
+        #//readXPath begin
 
-	readXPath = "your X path here"
-	exampleItems = exampleReader.read(readPath, readXPath)
+        readXPath = "your X path here"
+        exampleItems = exampleReader.read(readPath, readXPath)
 
-	#//readXPath end
+        #//readXPath end

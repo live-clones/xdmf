@@ -1,117 +1,117 @@
 from Xdmf import *
 
 if __name__ == "__main__":
-	#//initialization begin
+        #//initialization begin
 
-	newPath = "Your file path goes here"
-	replaceOrig = True
-	exampleWriter = XdmfHDF5Writer.New(newPath, replaceOrig)
+        newPath = "Your file path goes here"
+        replaceOrig = True
+        exampleWriter = XdmfHDF5Writer.New(newPath, replaceOrig)
 
-	#//initialization end
+        #//initialization end
 
-	#//openFile begin
+        #//openFile begin
 
-	exampleWriter.openFile()
+        exampleWriter.openFile()
 
-	#//openFile end
+        #//openFile end
 
-	#//closeFile begin
+        #//closeFile begin
 
-	exampleWriter.closeFile()
+        exampleWriter.closeFile()
 
-	#//closeFile end
+        #//closeFile end
 
-	#//getFilePath begin
+        #//getFilePath begin
 
-	examplePath = exampleWriter.getFilePath()
+        examplePath = exampleWriter.getFilePath()
 
-	#//getFilePath end
+        #//getFilePath end
 
-	#//getMode begin
+        #//getMode begin
 
-	exampleMode = XdmfHeavyDataWriter.Default
-	if exampleWriter.getMode() == exampleMode:
-		#Do whatever is to be done if the mode is default
+        exampleMode = XdmfHeavyDataWriter.Default
+        if exampleWriter.getMode() == exampleMode:
+                #Do whatever is to be done if the mode is default
 
-	#//getMode end
+        #//getMode end
 
-	#//getReleaseData begin
+        #//getReleaseData begin
 
-	testRelease = exampleWriter.getReleaseData()
+        testRelease = exampleWriter.getReleaseData()
 
-	#//getReleaseData end
+        #//getReleaseData end
 
-	#//setFileSizeLimit begin
+        #//setFileSizeLimit begin
 
-	newFileSizeLimit = 10
+        newFileSizeLimit = 10
 
-	exampleWriter.setFileSizeLimit(newFileSizeLimit)
+        exampleWriter.setFileSizeLimit(newFileSizeLimit)
 
-	#//setFileSizeLimit end
+        #//setFileSizeLimit end
 
-	#//getFileSizeLimit begin
+        #//getFileSizeLimit begin
 
-	exampleLimit = exampleWriter.getFileSizeLimit()
+        exampleLimit = exampleWriter.getFileSizeLimit()
 
-	#//getFileSizeLimit end
+        #//getFileSizeLimit end
 
-	#//getFileOverhead begin
+        #//getFileOverhead begin
 
-	exampleOverhead = exampleWriter.getFileOverhead()
+        exampleOverhead = exampleWriter.getFileOverhead()
 
-	#//getFileOverhead end
+        #//getFileOverhead end
 
-	#//setAllowSetSplitting begin
+        #//setAllowSetSplitting begin
 
-	newAllow = True
-	#false is default
+        newAllow = True
+        #false is default
 
-	exampleWriter.setAllowSetSplitting(newAllow)
+        exampleWriter.setAllowSetSplitting(newAllow)
 
-	#//setAllowSetSplitting end
+        #//setAllowSetSplitting end
 
-	#//getAllowSetSplitting begin
+        #//getAllowSetSplitting begin
 
-	exampleAllowSplitting = exampleWriter.getAllowSetSplitting()
+        exampleAllowSplitting = exampleWriter.getAllowSetSplitting()
 
-	#//getAllowSetSplitting end
+        #//getAllowSetSplitting end
 
-	#//setFileIndex begin
+        #//setFileIndex begin
 
-	newFileIndex = 0
-	#0 resets to no appended index
+        newFileIndex = 0
+        #0 resets to no appended index
 
-	exampleWriter.setFileIndex(newFileIndex)
+        exampleWriter.setFileIndex(newFileIndex)
 
-	#//setFileIndex end
+        #//setFileIndex end
 
-	#//getFileIndex begin
+        #//getFileIndex begin
 
-	exampleIndex = exampleWriter.getFileIndex()
+        exampleIndex = exampleWriter.getFileIndex()
 
-	#//getFileIndex end
+        #//getFileIndex end
 
-	#//setMode begin
+        #//setMode begin
 
-	exampleWriter.setMode(XdmfHeavyDataWriter.Default)
+        exampleWriter.setMode(XdmfHeavyDataWriter.Default)
 
-	#//setMode end
+        #//setMode end
 
-	#//setReleaseData begin
+        #//setReleaseData begin
 
-	exampleWriter.setReleaseData(True)
-	#Sets the writer to release data after writing
+        exampleWriter.setReleaseData(True)
+        #Sets the writer to release data after writing
 
-	#//setReleaseData end
+        #//setReleaseData end
 
-	#//visit begin
+        #//visit begin
 
-	exampleArray = XdmfArray.New()
-	exampleArray.pushBackAsInt32(1)
-	exampleArray.pushBackAsInt32(2)
-	exampleArray.pushBackAsInt32(3)
-	exampleArray.pushBackAsInt32(4)
-	exampleArray.pushBackAsInt32(5)
-	exampleWriter.visit(exampleArray, exampleWriter)
+        exampleArray = XdmfArray.New()
+        exampleArray.pushBackAsInt32(1)
+        exampleArray.pushBackAsInt32(2)
+        exampleArray.pushBackAsInt32(3)
+        exampleArray.pushBackAsInt32(4)
+        exampleArray.pushBackAsInt32(5)
+        exampleWriter.visit(exampleArray, exampleWriter)
 
-	#//visit end
+        #//visit end

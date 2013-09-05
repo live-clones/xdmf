@@ -65,7 +65,7 @@ public:
    * @skipline #//initalization
    * @until #//initalization
    *
-   * @return	Constructed XdmfGridCollection.
+   * @return    Constructed XdmfGridCollection.
    */
   static shared_ptr<XdmfGridCollection> New();
 
@@ -99,7 +99,7 @@ public:
    * @skipline #//getType
    * @until #//getType
    *
-   * @return	XdmfGridCollectionType of this collection.
+   * @return    XdmfGridCollectionType of this collection.
    */
   shared_ptr<const XdmfGridCollectionType> getType() const;
 
@@ -127,7 +127,7 @@ public:
    * @skipline #//insert
    * @until #//insert
    *
-   * @param	information	An XdmfInformation to attach to this item.
+   * @param     information     An XdmfInformation to attach to this item.
    */
   void insert(const shared_ptr<XdmfInformation> information);
 
@@ -153,7 +153,7 @@ public:
    * @skipline #//setType
    * @until #//setType
    *
-   * @param	type	The XdmfGridCollectionType to set.
+   * @param     type    The XdmfGridCollectionType to set.
    */
   void setType(const shared_ptr<const XdmfGridCollectionType> type);
 

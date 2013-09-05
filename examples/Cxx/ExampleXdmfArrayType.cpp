@@ -2,34 +2,34 @@
 
 int main(int, char **)
 {
-	//#getType begin
+        //#getType begin
 
-	shared_ptr<XdmfArray> exampleArray = XdmfArray::New();
+        shared_ptr<XdmfArray> exampleArray = XdmfArray::New();
 
-	if (XdmfArrayType::Int8() == exampleArray->getArrayType())
-	{
-		//do whatever is to be done with in the case that the array type is Int8
-	}
+        if (XdmfArrayType::Int8() == exampleArray->getArrayType())
+        {
+                //do whatever is to be done with in the case that the array type is Int8
+        }
 
-	//#getType end
+        //#getType end
 
-	//#getElementSize begin
+        //#getElementSize begin
 
-	unsigned int dataSize = XdmfArrayType::Int8()->getElementSize();
+        unsigned int dataSize = XdmfArrayType::Int8()->getElementSize();
 
-	//#getElementSize end
+        //#getElementSize end
 
-	//#getName begin
+        //#getName begin
 
-	std::string dataName = XdmfArrayType::Int8()->getName();
+        std::string dataName = XdmfArrayType::Int8()->getName();
 
-	//#getName end
+        //#getName end
 
-	//#comparePrecision begin
+        //#comparePrecision begin
 
-	shared_ptr<const XdmfArrayType> resultType = XdmfArrayType::comparePrecision(XdmfArrayType::Int16(), XdmfArrayType::UInt8());
+        shared_ptr<const XdmfArrayType> resultType = XdmfArrayType::comparePrecision(XdmfArrayType::Int16(), XdmfArrayType::UInt8());
 
-	//#comparePrecision end
+        //#comparePrecision end
 
-	return 0;
+        return 0;
 }

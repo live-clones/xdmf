@@ -68,10 +68,10 @@ public:
    * @skipline #//initialization2
    * @until #//initialization2
    *
-   * @param 	xCoordinates 	The coordinates of points along the x axis
-   * @param 	yCoordinates 	The coordinates of points along the y axis.
+   * @param     xCoordinates    The coordinates of points along the x axis
+   * @param     yCoordinates    The coordinates of points along the y axis.
    *
-   * @return 			Constructed rectilinear grid.
+   * @return                    Constructed rectilinear grid.
    */
   static shared_ptr<XdmfRectilinearGrid>
   New(const shared_ptr<XdmfArray> xCoordinates,
@@ -98,11 +98,11 @@ public:
    * @skipline #//initialization3
    * @until #//initialization3
    *
-   * @param 	xCoordinates 	The coordinates of points along the x axis
-   * @param 	yCoordinates 	The coordinates of points along the y axis.
-   * @param 	zCoordinates 	The coordinates of points along the z axis.
+   * @param     xCoordinates    The coordinates of points along the x axis
+   * @param     yCoordinates    The coordinates of points along the y axis.
+   * @param     zCoordinates    The coordinates of points along the z axis.
    *
-   * @return 			Constructed rectilinear grid.
+   * @return                    Constructed rectilinear grid.
    */
   static shared_ptr<XdmfRectilinearGrid>
   New(const shared_ptr<XdmfArray> xCoordinates,
@@ -130,9 +130,9 @@ public:
    * @skipline #//initializationvector
    * @until #//initializationvector
    *
-   * @param 	axesCoordinates 	The coordinates of points along each axis.
+   * @param     axesCoordinates         The coordinates of points along each axis.
    *
-   * @return 				Constructed rectilinear grid.
+   * @return                            Constructed rectilinear grid.
    */
   static shared_ptr<XdmfRectilinearGrid>
   New(const std::vector<shared_ptr<XdmfArray> > & axesCoordinates);
@@ -167,11 +167,11 @@ public:
    * @skipline #//getCoodinatessingle
    * @until #//getCoodinatessingle
    *
-   * @param 	axisIndex 	The index of the axis to retrieve, (i.e. 0 for
-   *				x-axis). If no array exists at the index,
-   *				return NULL.
+   * @param     axisIndex       The index of the axis to retrieve, (i.e. 0 for
+   *                            x-axis). If no array exists at the index,
+   *                            return NULL.
    *
-   * @return 			Array of coordinates along requested axis
+   * @return                    Array of coordinates along requested axis
    */
   shared_ptr<XdmfArray> getCoordinates(const unsigned int axisIndex);
 
@@ -193,11 +193,11 @@ public:
    *
    * Python: does not support a constant version of this function
    *
-   * @param 	axisIndex 	The index of the axis to retrieve (i.e. 0 for
-   * 				x-axis). If no array exists at the index,
-   *				return NULL.
+   * @param     axisIndex       The index of the axis to retrieve (i.e. 0 for
+   *                            x-axis). If no array exists at the index,
+   *                            return NULL.
    *
-   * @return 			Array of coordinates along requeste axis
+   * @return                    Array of coordinates along requeste axis
    */
   shared_ptr<const XdmfArray>
   getCoordinates(const unsigned int axisIndex) const;
@@ -227,8 +227,8 @@ public:
    * @skipline #//getCoodinatesvector
    * @until #//getCoodinatesvector
    *
-   * @return 	Vector containing an array of coordinates along each
-   * 		direction.
+   * @return    Vector containing an array of coordinates along each
+   *            direction.
    */
   std::vector<shared_ptr<XdmfArray> > getCoordinates();
 
@@ -249,8 +249,8 @@ public:
    *
    * Python: does not support a constant version of this function
    *
-   * @return 	Vector containing an array of coordinates along each
-   * 		direction.
+   * @return    Vector containing an array of coordinates along each
+   *            direction.
    */
   const std::vector<shared_ptr<XdmfArray> > getCoordinates() const;
 
@@ -280,7 +280,7 @@ public:
    * @skipline #//getDimensions
    * @until #//getDimensions
    *
-   * @return 	XdmfArray containing dimensions of this grid.
+   * @return    XdmfArray containing dimensions of this grid.
    */
   shared_ptr<XdmfArray> getDimensions();
 
@@ -302,7 +302,7 @@ public:
    *
    * Python: Doesn't support a constant version of this function
    *
-   * @return 	XdmfArray containing the dimensions of this grid.
+   * @return    XdmfArray containing the dimensions of this grid.
    */
   shared_ptr<const XdmfArray> getDimensions() const;
 
@@ -331,10 +331,10 @@ public:
    * @skipline #//setCoordinatessingle
    * @until #//setCoordinatessingle
    *
-   * @param 	axisIndex 		The index of the axis to set
-   *					(i.e. 0 for x-axis).
-   * @param 	axisCoordinates 	The coordinates of points along
-   *					a single axis to set.
+   * @param     axisIndex               The index of the axis to set
+   *                                    (i.e. 0 for x-axis).
+   * @param     axisCoordinates         The coordinates of points along
+   *                                    a single axis to set.
    */
   void setCoordinates(const unsigned int axisIndex,
                       const shared_ptr<XdmfArray> axisCoordinates);
@@ -364,8 +364,8 @@ public:
    * @skipline #//setCoordinatesvector
    * @until #//setCoordinatesvector
    *
-   * @param 	axesCoordinates 	The coordinates of points
-   * 					along each axis.
+   * @param     axesCoordinates         The coordinates of points
+   *                                    along each axis.
    */
   void
   setCoordinates(const std::vector<shared_ptr<XdmfArray> > axesCoordinates);

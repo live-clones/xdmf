@@ -4,46 +4,6 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 */
 
 
-#ifdef XDMF_BUILD_DSM
-
-%module XdmfCore
-%{
-
-    #include <mpi.h>
-
-    #include <XdmfArray.hpp>
-    #include <XdmfArrayType.hpp>
-    #include <XdmfCore.hpp>
-    #include <XdmfCoreItemFactory.hpp>
-    #include <XdmfCoreReader.hpp>
-    #include <XdmfDSMManager.hpp>
-    #include <XdmfDSMBuffer.hpp>
-    #include <XdmfDSMCommMPI.hpp>
-    #include <XdmfError.hpp>
-    #include <XdmfFunction.hpp>
-    #include <XdmfHeavyDataController.hpp>
-    #include <XdmfHeavyDataWriter.hpp>
-    #include <XdmfHDF5Controller.hpp>
-    #include <XdmfHDF5Writer.hpp>
-    #include <XdmfHDF5ControllerDSM.hpp>
-    #include <XdmfHDF5WriterDSM.hpp>
-    #include <XdmfInformation.hpp>
-    #include <XdmfItem.hpp>
-    #include <XdmfItemProperty.hpp>
-    #include <XdmfSharedPtr.hpp>
-    #include <XdmfSparseMatrix.hpp>
-    #include <XdmfSubset.hpp>
-    #include <XdmfSystemUtils.hpp>
-    #include <XdmfVersion.hpp>
-    #include <XdmfVisitor.hpp>
-    #include <XdmfWriter.hpp>
-
-    #include <ProjectVersion.hpp>
-%}
-
-
-#else
-
 %module XdmfCore
 %{
     #include <XdmfArray.hpp>
@@ -70,8 +30,6 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
     #include <ProjectVersion.hpp>
 %}
-
-#endif
 
 #ifdef SWIGJAVA
 
@@ -181,17 +139,6 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
                 return NULL;
         }
 }
-
-#ifdef XDMF_BUILD_DSM
-
-%include mpi4py/mpi4py.i
-
-%mpi4py_typemap(Comm, MPI_Comm);
-
-%include <typemaps.i>
-%apply int & INOUT {int & data };
-
-#endif
 
 /*This causes it to avoid throwing a warning about overloaded functions.
   We are doing this intentionally so suppressing the warning makes sense.*/
@@ -491,10 +438,6 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %shared_ptr(XdmfFunction)
 %shared_ptr(XdmfHDF5Controller)
 %shared_ptr(XdmfHDF5Writer)
-#ifdef XDMF_BUILD_DSM
-    %shared_ptr(XdmfHDF5ControllerDSM)
-    %shared_ptr(XdmfHDF5WriterDSM)
-#endif
 %shared_ptr(XdmfHeavyDataController)
 %shared_ptr(XdmfHeavyDataWriter)
 %shared_ptr(XdmfInformation)
@@ -533,14 +476,6 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
 %include CMake/VersionSuite/ProjectVersion.hpp
 %include XdmfVersion.hpp
-
-#ifdef XDMF_BUILD_DSM
-    %include XdmfHDF5ControllerDSM.hpp
-    %include XdmfHDF5WriterDSM.hpp
-    %include XdmfDSMManager.hpp
-    %include XdmfDSMBuffer.hpp
-    %include XdmfDSMCommMPI.hpp
-#endif
 
 %include XdmfArray.hpp
 %include XdmfArrayType.hpp

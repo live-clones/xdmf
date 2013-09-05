@@ -2,51 +2,51 @@ from Xdmf import *
 
 if __name__ == "__main__":
 
-	#//initialization begin
-	exampleAttribute = XdmfAttribute.New()
-	#//initialization end
+        #//initialization begin
+        exampleAttribute = XdmfAttribute.New()
+        #//initialization end
 
-	#Assuming that exampleAttribute is a shared pointer to an XdmfAttribute object
+        #Assuming that exampleAttribute is a shared pointer to an XdmfAttribute object
 
-	#//setCenter begin
+        #//setCenter begin
 
-	exampleAttribute.setCenter(XdmfAttributeCenter.Node())
+        exampleAttribute.setCenter(XdmfAttributeCenter.Node())
 
-	#//setCenter end
+        #//setCenter end
 
-	#//setName begin
+        #//setName begin
 
-	newName = "New Name"
-	exampleAttribute.setName(newName)
+        newName = "New Name"
+        exampleAttribute.setName(newName)
 
-	#//setNAme end
+        #//setNAme end
 
-	#//setType begin
+        #//setType begin
 
-	exampleAttribute.setType(XdmfAttributeType.Scalar())
+        exampleAttribute.setType(XdmfAttributeType.Scalar())
 
-	#//setType end
+        #//setType end
 
-	#//getCenter begin
+        #//getCenter begin
 
-	exampleCenter = exampleAttribute.getCenter()
+        exampleCenter = exampleAttribute.getCenter()
 
-	if exampleCenter == XdmfAttributeCenter.Grid():
-		#do whatever is to be done if the center is a grid
+        if exampleCenter == XdmfAttributeCenter.Grid():
+                #do whatever is to be done if the center is a grid
 
-	#//getCenter end
+        #//getCenter end
 
-	#//getName begin
+        #//getName begin
 
-	exampleName = exampleAttribute.getName()
+        exampleName = exampleAttribute.getName()
 
-	#//getName end
+        #//getName end
 
-	#//getType begin
+        #//getType begin
 
-	exampleType = exampleAttribute.getType()
+        exampleType = exampleAttribute.getType()
 
-	if exampleType == XdmfAttributeType.Scalar():
-		#do whatever is to be done if the Type is a Scalar
+        if exampleType == XdmfAttributeType.Scalar():
+                #do whatever is to be done if the Type is a Scalar
 
-	#//getType end
+        #//getType end

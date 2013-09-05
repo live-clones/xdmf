@@ -2,8 +2,8 @@ from Xdmf import *
 
 if __name__ == "__main__":
 
-	#//initialization begin
+        #//initialization begin
 
-	exampleReader = XdmfReader.New()
+        exampleReader = XdmfReader.New()
 
-	#//initialization end
+        #//initialization end

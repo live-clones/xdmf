@@ -25,8 +25,10 @@
 #define XDMFHDF5WRITERDSM_HPP_
 
 // Forward Declarations
-class H5FDdsmBuffer;
-class H5FDdsmManager;
+#ifdef XDMF_BUILD_DSM_THREADS
+  class H5FDdsmBuffer;
+  class H5FDdsmManager;
+#endif
 
 // Includes
 #include "XdmfHDF5Writer.hpp"
@@ -52,6 +54,7 @@ class XdmfHDF5WriterDSM : public XdmfHDF5Writer {
 
 public:
 
+#ifdef XDMF_BUILD_DSM_THREADS
   /**
    * Construct XdmfHDF5WriterDSM
    *
@@ -85,9 +88,9 @@ public:
    * @skipline #//deleteManagerwriter
    * @until #//deleteManagerwriter
    *
-   * @param	filePath	The location of the hdf5 file to output to on disk.
-   * @param	dsmBuffer	The dsm buffer to write to.
-   * @return			New XdmfHDF5WriterDSM.
+   * @param     filePath        The location of the hdf5 file to output to on disk.
+   * @param     dsmBuffer       The dsm buffer to write to.
+   * @return                    New XdmfHDF5WriterDSM.
    */
   static shared_ptr<XdmfHDF5WriterDSM>
   New(const std::string & filePath,
@@ -128,15 +131,16 @@ public:
    * @skipline #//deleteManagerwriter
    * @until #//deleteManagerwriter
    *
-   * @param	filePath	The location of the hdf5 file to output to on disk.
-   * @param	comm		The communicator that the buffer will be created in.
-   * @param	bufferSize	The size of the created buffer.
-   * @return			New XdmfHDF5WriterDSM.
+   * @param     filePath        The location of the hdf5 file to output to on disk.
+   * @param     comm            The communicator that the buffer will be created in.
+   * @param     bufferSize      The size of the created buffer.
+   * @return                    New XdmfHDF5WriterDSM.
    */
   static shared_ptr<XdmfHDF5WriterDSM>
   New(const std::string & filePath,
             MPI_Comm comm,
             unsigned int bufferSize);
+#endif
 
   /**
    * Contruct XdmfHDF5WriterDSM, nonthreaded version
@@ -181,9 +185,9 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	filePath	The location of the hdf5 file to output to on disk.
-   * @param	dsmBuffer	The Buffer to write to.
-   * @return			A New XdmfHDF5WriterDSM
+   * @param     filePath        The location of the hdf5 file to output to on disk.
+   * @param     dsmBuffer       The Buffer to write to.
+   * @return                    A New XdmfHDF5WriterDSM
    */
   static shared_ptr<XdmfHDF5WriterDSM>
   New(const std::string & filePath,
@@ -222,12 +226,12 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	filePath	The location of the hdf5 file to output to on disk.
-   * @param	comm		The communicator that the buffer will be created in.
-   * @param	bufferSize	The size of the created buffer.
-   * @param	startCoreIndex	The index of the first core in the server block
-   * @param	endCoreIndex	The index of the last core in the server block
-   * @return			A New XdmfHDF5WriterDSM
+   * @param     filePath        The location of the hdf5 file to output to on disk.
+   * @param     comm            The communicator that the buffer will be created in.
+   * @param     bufferSize      The size of the created buffer.
+   * @param     startCoreIndex  The index of the first core in the server block
+   * @param     endCoreIndex    The index of the last core in the server block
+   * @return                    A New XdmfHDF5WriterDSM
    */
   static shared_ptr<XdmfHDF5WriterDSM>
   New(const std::string & filePath,
@@ -272,6 +276,7 @@ public:
 
   void closeFile();
 
+#ifdef XDMF_BUILD_DSM_THREADS
   /**
    * Returns the current dsmBuffer the Writer. If there is no manager then it returns null
    *
@@ -309,7 +314,7 @@ public:
    * @skipline #//deleteManagerwriter
    * @until #//deleteManagerwriter
    *
-   * @return	The dsmBuffer of the Writer
+   * @return    The dsmBuffer of the Writer
    */
   H5FDdsmBuffer * getBuffer();
 
@@ -351,9 +356,10 @@ public:
    * @skipline #//deleteManagerwriter
    * @until #//deleteManagerwriter
    *
-   * @return	The dsmManager of the Writer
+   * @return    The dsmManager of the Writer
    */
   H5FDdsmManager * getManager();
+#endif
 
   /**
    * Gets the buffer for the non-threaded version of DSM
@@ -400,7 +406,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	The XdmfDSMBuffer that is controlling the data for the DSM
+   * @return    The XdmfDSMBuffer that is controlling the data for the DSM
    */
   XdmfDSMBuffer * getServerBuffer();
 
@@ -449,7 +455,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	The XdmfDSMManager that is controlling the DSM
+   * @return    The XdmfDSMManager that is controlling the DSM
    */
   XdmfDSMManager * getServerManager();
 
@@ -497,7 +503,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	If the DSM is in server mode or not
+   * @return    If the DSM is in server mode or not
    */
   bool getServerMode();
 
@@ -544,7 +550,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	The comm that the workers are using.
+   * @return    The comm that the workers are using.
    */
   MPI_Comm getWorkerComm();
 
@@ -556,10 +562,11 @@ public:
    * In DSM this function has no effect because splitting would prevent the algorithm from working
    *
    *
-   * @param	newAllow	Whether to allow data sets to be split across hdf5 files
+   * @param     newAllow        Whether to allow data sets to be split across hdf5 files
    */
   void setAllowSetSplitting(bool newAllow);
 
+#ifdef XDMF_BUILD_DSM_THREADS
   /**
    * Sets the Writer's dsmBuffer to the provided buffer
    *
@@ -597,9 +604,10 @@ public:
    * @skipline #//deleteManagercontroller
    * @until #//deleteManagercontroller
    *
-   * @param	newBuffer	The buffer to be set
+   * @param     newBuffer       The buffer to be set
    */
   void setBuffer(H5FDdsmBuffer * newBuffer);
+#endif
 
   /**
    * Sets the Writer's dsmBuffer to the provided buffer
@@ -650,10 +658,11 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	newBuffer	A pointer to the buffer to be set
+   * @param     newBuffer       A pointer to the buffer to be set
    */
   void setBuffer(XdmfDSMBuffer * newBuffer);
 
+#ifdef XDMF_BUILD_DSM_THREADS
   /**
    * Sets the Writer's dsmManager to the provided manager.
    * Then the dsmBuffer controlled by the manager is set to the Writer
@@ -692,9 +701,10 @@ public:
    * @skipline #//deleteManagercontroller
    * @until #//deleteManagercontroller
    *
-   * @param	newManager	The manager to be set
+   * @param     newManager      The manager to be set
    */
   void setManager(H5FDdsmManager * newManager);
+#endif
 
   /**
    * Sets the Writer's dsmManager to the provided manager.
@@ -746,7 +756,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	newManager	A pointer the the manager to be set.
+   * @param     newManager      A pointer the the manager to be set.
    */
   void setManager(XdmfDSMManager * newManager);
 
@@ -794,7 +804,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	newMode		The mode that the writer is to be set to.
+   * @param     newMode         The mode that the writer is to be set to.
    */
   void setServerMode(bool newMode);
 
@@ -845,7 +855,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	comm	The communicator that the worker will be using to communicate with the other worker cores.
+   * @param     comm    The communicator that the worker will be using to communicate with the other worker cores.
    */
   void setWorkerComm(MPI_Comm comm);
 
@@ -931,12 +941,14 @@ public:
 
 protected:
 
+#ifdef XDMF_BUILD_DSM_THREADS
   XdmfHDF5WriterDSM(const std::string & filePath,
                     H5FDdsmBuffer * const dsmBuffer);
 
   XdmfHDF5WriterDSM(const std::string & filePath,
                     MPI_Comm comm,
                     unsigned int bufferSize);
+#endif
 
   XdmfHDF5WriterDSM(const std::string & filePath,
                     XdmfDSMBuffer * const dsmBuffer);
@@ -961,8 +973,11 @@ private:
   XdmfHDF5WriterDSM(const XdmfHDF5WriterDSM &);  // Not implemented.
   void operator=(const XdmfHDF5WriterDSM &);  // Not implemented.
 
+#ifdef XDMF_BUILD_DSM_THREADS
   H5FDdsmBuffer * mDSMBuffer;
   H5FDdsmManager * mDSMManager;
+#endif
+
   int mFAPL;
 
   XdmfDSMBuffer * mDSMServerBuffer;

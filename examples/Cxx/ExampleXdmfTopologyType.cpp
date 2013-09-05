@@ -3,69 +3,69 @@
 
 int main(int, char **)
 {
-	//#initialization begin
+        //#initialization begin
 
-	unsigned int exampleID = XdmfTopologyType::Triangle()->getID();
-	shared_ptr<XdmfTopology> createdTopology = XdmfTopology::New();
-	createdTopology->setType(XdmfTopologyType::New(exampleID));
+        unsigned int exampleID = XdmfTopologyType::Triangle()->getID();
+        shared_ptr<XdmfTopology> createdTopology = XdmfTopology::New();
+        createdTopology->setType(XdmfTopologyType::New(exampleID));
 
-	//#initialization end
+        //#initialization end
 
-	//#getCellType begin
+        //#getCellType begin
 
-	XdmfTopologyType::CellType exampleType = XdmfTopologyType::Linear;
-	//Assuming that exampleTopology is a shared pointer to a filled XdmfTopology object
-	if (exampleType == exampleTopology->getCellType())
-	{
-		//Do whatever is to be done if the cell type is linear
-	}
+        XdmfTopologyType::CellType exampleType = XdmfTopologyType::Linear;
+        //Assuming that exampleTopology is a shared pointer to a filled XdmfTopology object
+        if (exampleType == exampleTopology->getCellType())
+        {
+                //Do whatever is to be done if the cell type is linear
+        }
 
-	//#getCellType end
+        //#getCellType end
 
-	//#getEdgesPerElement begin
+        //#getEdgesPerElement begin
 
-	unsigned int numEdges = XdmfTopologyType::Triangle()->getEdgesPerElement();
+        unsigned int numEdges = XdmfTopologyType::Triangle()->getEdgesPerElement();
 
-	//#getEdgesPerElement end
+        //#getEdgesPerElement end
 
-	//#getFacesPerElement begin
+        //#getFacesPerElement begin
 
-	unsigned int numFaces = XdmfTopologyType::Triangle()->getFacesPerElement();
+        unsigned int numFaces = XdmfTopologyType::Triangle()->getFacesPerElement();
 
-	//#getFacesPerElement end
+        //#getFacesPerElement end
 
-	//#getID begin
+        //#getID begin
 
-	unsigned int holdID = XdmfTopologyType::Triangle()->getID();
+        unsigned int holdID = XdmfTopologyType::Triangle()->getID();
 
-	//#getID end
+        //#getID end
 
-	//#getName begin
+        //#getName begin
 
-	std::string exampleName = XdmfTopologyType::Triangle()->getName();
+        std::string exampleName = XdmfTopologyType::Triangle()->getName();
 
-	//#getName end
+        //#getName end
 
-	//#getFaceType begin
+        //#getFaceType begin
 
-	shared_ptr<const XdmfTopologyType> exampleface = XdmfTopologyType::Tetrahedron()->getFaceType();
+        shared_ptr<const XdmfTopologyType> exampleface = XdmfTopologyType::Tetrahedron()->getFaceType();
 
-	//#getFaceType end
+        //#getFaceType end
 
-	//#getNodesPerElement begin
+        //#getNodesPerElement begin
 
-	unsigned int numNodes = XdmfTopologyType::Triangle()->getNodesPerElement();
+        unsigned int numNodes = XdmfTopologyType::Triangle()->getNodesPerElement();
 
-	//#getNodesPerElement end
+        //#getNodesPerElement end
 
-	//#getType begin
+        //#getType begin
 
-	if (createdTopology->getType() == XdmfTopologyType::Triangle())
-	{
-		//Do whatever is to be done if the type is Triangle
-	}
+        if (createdTopology->getType() == XdmfTopologyType::Triangle())
+        {
+                //Do whatever is to be done if the type is Triangle
+        }
 
-	//#getType end
+        //#getType end
 
-	return 0;
+        return 0;
 }

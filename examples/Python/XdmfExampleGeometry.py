@@ -2,28 +2,28 @@ from Xdmf import *
 
 if __name__ == "__main__":
 
-	#//initialization begin
+        #//initialization begin
 
-	exampleGeometry = XdmfGeometry.New()
+        exampleGeometry = XdmfGeometry.New()
 
-	#//initialization end
+        #//initialization end
 
-	#Assuming that exampleGeometry is a shared pointer to a XdmfGeometry object
+        #Assuming that exampleGeometry is a shared pointer to a XdmfGeometry object
 
-	#//setType begin
+        #//setType begin
 
-	exampleGeometry.setType(XdmfGeometryType.XYZ())
+        exampleGeometry.setType(XdmfGeometryType.XYZ())
 
-	#//setType end
+        #//setType end
 
-	#//getType begin
+        #//getType begin
 
-	exampleType = exampleGeometry.getType()
+        exampleType = exampleGeometry.getType()
 
-	#//getType end
+        #//getType end
 
-	#//getNumberPoints begin
+        #//getNumberPoints begin
 
-	numPoints = exampleGeometry.getNumberPoints()
+        numPoints = exampleGeometry.getNumberPoints()
 
-	#//getNumberPoints end
+        #//getNumberPoints end

@@ -2,28 +2,28 @@
 
 int main(int, char **)
 {
-	//#initialization begin
+        //#initialization begin
 
-	shared_ptr<XdmfTime> exampleTime = XdmfTime::New();
-	//The Default case sets the time to 0.0
-	//You can also specify a time when creating the XdmfTime object
+        shared_ptr<XdmfTime> exampleTime = XdmfTime::New();
+        //The Default case sets the time to 0.0
+        //You can also specify a time when creating the XdmfTime object
 
         double newTime = 5.0;
         shared_ptr<XdmfTime> exampleTime2 = XdmfTime::New(newTime);
 
-	//#initialization end
+        //#initialization end
 
-	//#getValue begin
+        //#getValue begin
 
-	double readTime = exampleTime->getValue();
+        double readTime = exampleTime->getValue();
 
-	//#getValue end
+        //#getValue end
 
-	//#setValue begin
+        //#setValue begin
 
-	exampleTime->setValue(newTime);
+        exampleTime->setValue(newTime);
 
-	//#setValue end
+        //#setValue end
 
-	return 0;
+        return 0;
 }

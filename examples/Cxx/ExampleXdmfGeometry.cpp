@@ -3,31 +3,31 @@
 
 int main(int, char **)
 {
-	//#initialization begin
+        //#initialization begin
 
-	shared_ptr<XdmfGeometry> exampleGeometry = XdmfGeometry::New();
+        shared_ptr<XdmfGeometry> exampleGeometry = XdmfGeometry::New();
 
-	//#initialization end
+        //#initialization end
 
-	//Assuming that exampleGeometry is a shared pointer to a XdmfGeometry object
+        //Assuming that exampleGeometry is a shared pointer to a XdmfGeometry object
 
-	//#setType begin
+        //#setType begin
 
-	exampleGeometry->setType(XdmfGeometryType::XYZ());
+        exampleGeometry->setType(XdmfGeometryType::XYZ());
 
-	//#setType end
+        //#setType end
 
-	//#getType begin
+        //#getType begin
 
-	shared_ptr<const XdmfGeometryType> exampleType = exampleGeometry->getType();
+        shared_ptr<const XdmfGeometryType> exampleType = exampleGeometry->getType();
 
-	//#getType end
+        //#getType end
 
-	//#getNumberPoints begin
+        //#getNumberPoints begin
 
-	unsigned int numPoints = exampleGeometry->getNumberPoints();
+        unsigned int numPoints = exampleGeometry->getNumberPoints();
 
-	//#getNumberPoints end
+        //#getNumberPoints end
 
-	return 0;
+        return 0;
 }

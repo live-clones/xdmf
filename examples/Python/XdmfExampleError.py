@@ -1,72 +1,72 @@
 from Xdmf import *
 
 if __name__ == "__main__":
-	#//getLevelLimit begin
+        #//getLevelLimit begin
 
-	exampleLevel = XdmfError.getLevelLimit()
-	#these are considered integers in Python
+        exampleLevel = XdmfError.getLevelLimit()
+        #these are considered integers in Python
 
-	#//getLevelLimit end
+        #//getLevelLimit end
 
-	#//setLevelLimit begin
+        #//setLevelLimit begin
 
-	XdmfError.setLevelLimit(XdmfError.FATAL)
+        XdmfError.setLevelLimit(XdmfError.FATAL)
 
-	#//setLevelLimit end
+        #//setLevelLimit end
 
-	#//getSuppressionLevel begin
+        #//getSuppressionLevel begin
 
-	exampleSuppression = XdmfError.getSuppressionLevel()
+        exampleSuppression = XdmfError.getSuppressionLevel()
 
-	#//getSuppressionLevel end
+        #//getSuppressionLevel end
 
-	#//setSuppressionLevel begin
+        #//setSuppressionLevel begin
 
-	XdmfError.setSuppressionLevel(XdmfError.DEBUG)
+        XdmfError.setSuppressionLevel(XdmfError.DEBUG)
 
-	#//setSuppressionLevel end
+        #//setSuppressionLevel end
 
-	#//message begin
+        #//message begin
 
-	try:
-		XdmfError::message(XdmfError::FATAL, "this is an example error")
-	except RuntimeError as exampleError:
-		print exampleError
+        try:
+                XdmfError::message(XdmfError::FATAL, "this is an example error")
+        except RuntimeError as exampleError:
+                print exampleError
 
-	#//message end
+        #//message end
 
-	#//what begin
+        #//what begin
 
-	try:
-		raise RuntimeError(XdmfError(XdmfError.FATAL, "testError"))
-	except RuntimeError as exampleError:
-		errorString = e.args[0].what()
+        try:
+                raise RuntimeError(XdmfError(XdmfError.FATAL, "testError"))
+        except RuntimeError as exampleError:
+                errorString = e.args[0].what()
 
-	#//what end
+        #//what end
 
-	#//getLevel begin
+        #//getLevel begin
 
-	try:
-		raise RuntimeError(XdmfError(XdmfError.FATAL, "testError"))
-	except RuntimeError as exampleError:
-		errorLevel = e.args[0].getLevel()
+        try:
+                raise RuntimeError(XdmfError(XdmfError.FATAL, "testError"))
+        except RuntimeError as exampleError:
+                errorLevel = e.args[0].getLevel()
 
-	#//getLevel end
+        #//getLevel end
 
-	#//setLevel begin
+        #//setLevel begin
 
-	try:
-		raise RuntimeError(XdmfError(XdmfError.FATAL, "testError"))
-	except RuntimeError as exampleError:
-		e.args[0].setLevel(XdmfError.FATAL)
+        try:
+                raise RuntimeError(XdmfError(XdmfError.FATAL, "testError"))
+        except RuntimeError as exampleError:
+                e.args[0].setLevel(XdmfError.FATAL)
 
-	#//setLevel end
+        #//setLevel end
 
-	#//initialization begin
+        #//initialization begin
 
-	try:
-		raise RuntimeError(XdmfError(XdmfError.FATAL, "testError"))
-	except RuntimeError as exampleError:
-		print exampleError
+        try:
+                raise RuntimeError(XdmfError(XdmfError.FATAL, "testError"))
+        except RuntimeError as exampleError:
+                print exampleError
 
-	#//initialization end
+        #//initialization end

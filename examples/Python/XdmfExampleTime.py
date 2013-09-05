@@ -1,25 +1,25 @@
 from Xdmf import *
 
 if __name__ == "__main__":
-	#//initialization begin
+        #//initialization begin
 
-	exampleTime = XdmfTime.New()
-	#The Default case sets the time to 0.0
-	#You can also specify a time when creating the XdmfTime object
+        exampleTime = XdmfTime.New()
+        #The Default case sets the time to 0.0
+        #You can also specify a time when creating the XdmfTime object
 
-	newTime = 5.0
-	exampleTime2 = XdmfTime.New(newTime)
+        newTime = 5.0
+        exampleTime2 = XdmfTime.New(newTime)
 
-	#//initialization end
+        #//initialization end
 
-	#//setValue begin
+        #//setValue begin
 
-	exampleTime.setValue(newTime)
+        exampleTime.setValue(newTime)
 
-	#//setValue end
+        #//setValue end
 
-	#//getValue begin
+        #//getValue begin
 
-	readTime = exampleTime.getValue()
+        readTime = exampleTime.getValue()
 
-	#//getValue end
+        #//getValue end

@@ -5,34 +5,34 @@ from numpy import *
 
 def maximum(values):
         # Need to cast to the right data type
-	values = ArrayVector(values)
-	if values[0].getArrayType() == XdmfArrayType.String():
-		returnArray = XdmfArray.New()
-		returnArray.pushBackAsString(values[0].getValueAsString(0))
-		return returnArray;
-	else:
-		maxVal = values[0].getValueAsFloat64(0)
-		for i in range (0, values.size()):
-			for j in range (0, values[i].getSize()):
-				if maxVal < values[i].getValueAsFloat64(j):
-					maxVal = values[i].getValueAsFloat64(j)
-		returnArray = XdmfArray.New()
-		returnArray.pushBackAsFloat64(maxVal)
-		return returnArray
+        values = ArrayVector(values)
+        if values[0].getArrayType() == XdmfArrayType.String():
+                returnArray = XdmfArray.New()
+                returnArray.pushBackAsString(values[0].getValueAsString(0))
+                return returnArray;
+        else:
+                maxVal = values[0].getValueAsFloat64(0)
+                for i in range (0, values.size()):
+                        for j in range (0, values[i].getSize()):
+                                if maxVal < values[i].getValueAsFloat64(j):
+                                        maxVal = values[i].getValueAsFloat64(j)
+                returnArray = XdmfArray.New()
+                returnArray.pushBackAsFloat64(maxVal)
+                return returnArray
 
 #//definefunction end
 
 #//defineoperation begin
 
 def prepend(val1, val2):
-	# Need to cast to the right data type
-	# Had to write a custom casting method to integrate it properly
-	val1 = XdmfArray.XdmfArrayPtr(val1)
-	val2 = XdmfArray.XdmfArrayPtr(val2)
-	returnArray = XdmfArray.New()
-	returnArray.insert(0, val2, 0, val2.getSize())
-	returnArray.insert(val2.getSize(), val1, 0, val1.getSize())
-	return returnArray
+        # Need to cast to the right data type
+        # Had to write a custom casting method to integrate it properly
+        val1 = XdmfArray.XdmfArrayPtr(val1)
+        val2 = XdmfArray.XdmfArrayPtr(val2)
+        returnArray = XdmfArray.New()
+        returnArray.insert(0, val2, 0, val2.getSize())
+        returnArray.insert(val2.getSize(), val1, 0, val1.getSize())
+        return returnArray
 
 #//defineoperation end
 
@@ -40,208 +40,208 @@ def prepend(val1, val2):
 
 if __name__ == "__main__":
 
-	#//programstart end
+        #//programstart end
 
-	#//getSupportedOperations begin
+        #//getSupportedOperations begin
 
-	exampleOperations = XdmfFunction.getSupportedOperations()
+        exampleOperations = XdmfFunction.getSupportedOperations()
 
-	#//getSupportedOperations end
+        #//getSupportedOperations end
 
-	#//getSupportedFunctions begin
+        #//getSupportedFunctions begin
 
-	exampleFunctions = XdmfFunction.getSupportedFunctions()
+        exampleFunctions = XdmfFunction.getSupportedFunctions()
 
-	#//getSupportedFunctions end
+        #//getSupportedFunctions end
 
-	#//getValidVariableChars begin
+        #//getValidVariableChars begin
 
-	exampleVariableChars = XdmfFunction.getValidVariableChars()
+        exampleVariableChars = XdmfFunction.getValidVariableChars()
 
-	#//getValidVariableChars end
+        #//getValidVariableChars end
 
-	#//getValidDigitChars begin
+        #//getValidDigitChars begin
 
-	exampleDigitChars = XdmfFunction.getValidDigitChars()
+        exampleDigitChars = XdmfFunction.getValidDigitChars()
 
-	#//getValidDigitChars end
+        #//getValidDigitChars end
 
-	#//getOperationPriority begin
+        #//getOperationPriority begin
 
-	examplePriority = XdmfFunction.getOperationPriority('|')
+        examplePriority = XdmfFunction.getOperationPriority('|')
 
-	#//getOperationPriority end
+        #//getOperationPriority end
 
-	#//valueinit begin
+        #//valueinit begin
 
-	valueArray1 = XdmfArray.New()
-	valueArray1.pushBackAsInt32(1)
-	valueArray1.pushBackAsInt32(2)
-	valueArray1.pushBackAsInt32(3)
-	valueArray1.pushBackAsInt32(4)
-	valueArray2 = XdmfArray.New()
-	valueArray2.pushBackAsInt32(9)
-	valueArray2.pushBackAsInt32(8)
-	valueArray2.pushBackAsInt32(7)
-	valueArray2.pushBackAsInt32(6)
+        valueArray1 = XdmfArray.New()
+        valueArray1.pushBackAsInt32(1)
+        valueArray1.pushBackAsInt32(2)
+        valueArray1.pushBackAsInt32(3)
+        valueArray1.pushBackAsInt32(4)
+        valueArray2 = XdmfArray.New()
+        valueArray2.pushBackAsInt32(9)
+        valueArray2.pushBackAsInt32(8)
+        valueArray2.pushBackAsInt32(7)
+        valueArray2.pushBackAsInt32(6)
 
-	valueVector = ArrayVector()
-	valueVector.push_back(valueArray1)
-	valueVector.push_back(valueArray2)
+        valueVector = ArrayVector()
+        valueVector.push_back(valueArray1)
+        valueVector.push_back(valueArray2)
 
-	#//valueinit end
+        #//valueinit end
 
-	#//sum begin
+        #//sum begin
 
-	answerArray = XdmfFunction.sum(valueVector)
+        answerArray = XdmfFunction.sum(valueVector)
 
-	#//sum end
+        #//sum end
 
-	#//average begin
+        #//average begin
 
-	answerArray = XdmfFunction.average(valueVector)
+        answerArray = XdmfFunction.average(valueVector)
 
-	#//average end
+        #//average end
 
-	#//chunk begin
+        #//chunk begin
 
-	answerArray = XdmfFunction.chunk(valueArray1, valueArray2)
+        answerArray = XdmfFunction.chunk(valueArray1, valueArray2)
 
-	#//chunk end
+        #//chunk end
 
-	#//interlace begin
+        #//interlace begin
 
-	answerArray = XdmfFunction.interlace(valueArray1, valueArray2)
+        answerArray = XdmfFunction.interlace(valueArray1, valueArray2)
 
-	#//interlace end
+        #//interlace end
 
-	#//addOperation begin
+        #//addOperation begin
 
-	exampleNumOperations = XdmfFunction.addOperation('@', prepend, 2)
+        exampleNumOperations = XdmfFunction.addOperation('@', prepend, 2)
 
-	#//addOperation end
+        #//addOperation end
 
-	#//evaluateOperation begin
+        #//evaluateOperation begin
 
-	answerArray = XdmfFunction.evaluateOperation(valueArray1, valueArray2, '@')
+        answerArray = XdmfFunction.evaluateOperation(valueArray1, valueArray2, '@')
 
-	#//evaluateOperation end
+        #//evaluateOperation end
 
-	#//addFunction begin
+        #//addFunction begin
 
-	exampleNumFunctions = XdmfFunction.addFunction("MAX", maximum)
+        exampleNumFunctions = XdmfFunction.addFunction("MAX", maximum)
 
-	#//addFunction end
+        #//addFunction end
 
-	#//evaluateFunction begin
+        #//evaluateFunction begin
 
-	answerArray = XdmfFunction.evaluateFunction(valueVector, "MAX")
+        answerArray = XdmfFunction.evaluateFunction(valueVector, "MAX")
 
-	#//evaluateFunction end
+        #//evaluateFunction end
 
-	#//evaluateExpression begin
+        #//evaluateExpression begin
 
-	valueMap = ArrayMap()
-	valueMap["A"] = valueArray1
-	valueMap["B"] = valueArray2
+        valueMap = ArrayMap()
+        valueMap["A"] = valueArray1
+        valueMap["B"] = valueArray2
 
-	parsedExpression = "MAX(A,B)@(A#B)"
-	answerArray = XdmfFunction.evaluateExpression(parsedExpression, valueMap)
+        parsedExpression = "MAX(A,B)@(A#B)"
+        answerArray = XdmfFunction.evaluateExpression(parsedExpression, valueMap)
 
-	#//evaluateExpression end
+        #//evaluateExpression end
 
-	#//initialization begin
+        #//initialization begin
 
-	testFunction = XdmfFunction.New()
+        testFunction = XdmfFunction.New()
 
-	#//initalization end
+        #//initalization end
 
-	#//initexpression begin
+        #//initexpression begin
 
-	functionExpression = "AVE(A)"
-	variableArray = XdmfArray.New()
+        functionExpression = "AVE(A)"
+        variableArray = XdmfArray.New()
 
-	for i in range(0, 10):
-		variableArray.pushBackAsInt32(i)
+        for i in range(0, 10):
+                variableArray.pushBackAsInt32(i)
 
-	variableMap = ArrayMap()
-	variableMap["A"] = variableArray;
+        variableMap = ArrayMap()
+        variableMap["A"] = variableArray;
 
-	exampleFunction = XdmfFunction.New(functionExpression, variableMap)
+        exampleFunction = XdmfFunction.New(functionExpression, variableMap)
 
-	#//initexpression end
+        #//initexpression end
 
-	#//setExpression begin
+        #//setExpression begin
 
-	newExpression = "SUM(A)"
-	exampleFunction.setExpression(newExpression)
+        newExpression = "SUM(A)"
+        exampleFunction.setExpression(newExpression)
 
-	#//setExpression end
+        #//setExpression end
 
-	#//getExpression begin
+        #//getExpression begin
 
-	exampleExpression = exampleFunction.getExpression()
+        exampleExpression = exampleFunction.getExpression()
 
-	#//getExpression end
+        #//getExpression end
 
-	#//insertVariable begin
+        #//insertVariable begin
 
-	secondVariableArray = XdmfArray.New()
+        secondVariableArray = XdmfArray.New()
 
-	for i in range(0, 10):
-		secondVariableArray.pushBack(i)
+        for i in range(0, 10):
+                secondVariableArray.pushBack(i)
 
-	exampleFunction.insertVariable("B", secondVariableArray)
+        exampleFunction.insertVariable("B", secondVariableArray)
 
-	#//insertVariable end
+        #//insertVariable end
 
-	#//getVariable begin
+        #//getVariable begin
 
-	variableValue = exampleFunction->getVariable("B")
+        variableValue = exampleFunction->getVariable("B")
 
-	#//getVariable end
+        #//getVariable end
 
-	#//getVariableList begin
+        #//getVariableList begin
 
-	exampleVarList = exampleFunction.getVariableList()
+        exampleVarList = exampleFunction.getVariableList()
 
-	#//getVariableList end
+        #//getVariableList end
 
-	#//removeVariable begin
+        #//removeVariable begin
 
-	exampleFunction.removeVariable("B")
+        exampleFunction.removeVariable("B")
 
-	#//removeVariable end
+        #//removeVariable end
 
-	#//setConstructedType begin
+        #//setConstructedType begin
 
-	typeAttribute = XdmfAttribute.New()
+        typeAttribute = XdmfAttribute.New()
 
-	exampleFunction.setConstructedType(typeAttribute.getItemTag())
+        exampleFunction.setConstructedType(typeAttribute.getItemTag())
 
-	#//setConstructedType end
+        #//setConstructedType end
 
-	#//getConstructedType begin
+        #//getConstructedType begin
 
-	std::string exampleType = exampleFunction->getConstructedType();
+        std::string exampleType = exampleFunction->getConstructedType();
 
-	#//getConstructedType end
+        #//getConstructedType end
 
-	#//setConstructedProperties begin
+        #//setConstructedProperties begin
 
-	propertyAttribute = XdmfAttributeNew()
-	exampleFunction.setConstructedProperties(propertyAttribute.getItemProperties())
+        propertyAttribute = XdmfAttributeNew()
+        exampleFunction.setConstructedProperties(propertyAttribute.getItemProperties())
 
-	#//setConstructedProperties end
+        #//setConstructedProperties end
 
-	#//getConstructedProperties begin
+        #//getConstructedProperties begin
 
-	exampleProperties = exampleFunction.getConstructedProperties()
+        exampleProperties = exampleFunction.getConstructedProperties()
 
-	#//getConstructedProperties end
+        #//getConstructedProperties end
 
-	#//read begin
+        #//read begin
 
-	functionResult = exampleFunction.read()
+        functionResult = exampleFunction.read()
 
-	#//read end
+        #//read end

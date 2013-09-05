@@ -21,12 +21,14 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#include <H5FDdsm.h>
+#ifdef XDMF_BUILD_DSM_THREADS
+  #include <H5FDdsm.h>
+  #include <H5FDdsmManager.h>
+  #include <H5FDdsmBuffer.h>
+  #include <H5FDdsmBufferService.h>
+  #include <H5FDdsmComm.h>
+#endif
 #include <hdf5.h>
-#include <H5FDdsmManager.h>
-#include <H5FDdsmBuffer.h>
-#include <H5FDdsmBufferService.h>
-#include <H5FDdsmComm.h>
 #include <XdmfDSMCommMPI.hpp>
 #include <XdmfDSMBuffer.hpp>
 #include <XdmfDSMManager.hpp>
@@ -35,6 +37,7 @@
 #include "XdmfHDF5WriterDSM.hpp"
 #include "XdmfError.hpp"
 
+#ifdef XDMF_BUILD_DSM_THREADS
 shared_ptr<XdmfHDF5WriterDSM>
 XdmfHDF5WriterDSM::New(const std::string & filePath,
                        H5FDdsmBuffer * const dsmBuffer)
@@ -43,6 +46,7 @@ XdmfHDF5WriterDSM::New(const std::string & filePath,
                                                         dsmBuffer));
   return p;
 }
+#endif
 
 shared_ptr<XdmfHDF5WriterDSM>
 XdmfHDF5WriterDSM::New(const std::string & filePath,
@@ -53,6 +57,7 @@ XdmfHDF5WriterDSM::New(const std::string & filePath,
   return p;
 }
 
+#ifdef XDMF_BUILD_DSM_THREADS
 shared_ptr<XdmfHDF5WriterDSM>
 XdmfHDF5WriterDSM::New(const std::string & filePath,
                        MPI_Comm comm,
@@ -63,6 +68,7 @@ XdmfHDF5WriterDSM::New(const std::string & filePath,
                                                         bufferSize));
   return p;
 }
+#endif
 
 shared_ptr<XdmfHDF5WriterDSM>
 XdmfHDF5WriterDSM::New(const std::string & filePath,
@@ -79,6 +85,7 @@ XdmfHDF5WriterDSM::New(const std::string & filePath,
   return p;
 }
 
+#ifdef XDMF_BUILD_DSM_THREADS
 XdmfHDF5WriterDSM::XdmfHDF5WriterDSM(const std::string & filePath,
                                      H5FDdsmBuffer * const dsmBuffer) :
   XdmfHDF5Writer(filePath),
@@ -116,15 +123,16 @@ XdmfHDF5WriterDSM::XdmfHDF5WriterDSM(const std::string & filePath,
   mDSMManager = newManager;
   mDSMBuffer = newBuffer;
 }
-
+#endif
 
 // The database/nonthreaded version
-
 XdmfHDF5WriterDSM::XdmfHDF5WriterDSM(const std::string & filePath,
                                      XdmfDSMBuffer * const dsmBuffer) :
   XdmfHDF5Writer(filePath),
+#ifdef XDMF_BUILD_DSM_THREADS
   mDSMManager(NULL),
   mDSMBuffer(NULL),
+#endif
   mFAPL(-1),
   mDSMServerManager(NULL),
   mDSMServerBuffer(dsmBuffer),
@@ -134,7 +142,7 @@ XdmfHDF5WriterDSM::XdmfHDF5WriterDSM(const std::string & filePath,
   if (xdmf_dsm_get_manager() == NULL) {
     mDSMServerManager = new XdmfDSMManager();
     mDSMServerManager->SetLocalBufferSizeMBytes(mDSMServerBuffer->GetLength());
-    mDSMServerManager->SetInterCommType(H5FD_DSM_COMM_MPI);
+    mDSMServerManager->SetInterCommType(XDMF_DSM_COMM_MPI);
     mDSMServerManager->SetIsServer(false);
     mDSMServerManager->SetMpiComm(mDSMServerBuffer->GetComm()->GetIntraComm());
     mDSMServerManager->SetDsmBuffer(mDSMServerBuffer);
@@ -152,8 +160,10 @@ XdmfHDF5WriterDSM::XdmfHDF5WriterDSM(const std::string & filePath,
                                      int endCoreIndex) :
   XdmfHDF5Writer(filePath),
   mFAPL(-1),
+#ifdef XDMF_BUILD_DSM_THREADS
   mDSMManager(NULL),
   mDSMBuffer(NULL),
+#endif
   mServerMode(true)
 {
   int rank, size;
@@ -199,7 +209,7 @@ XdmfHDF5WriterDSM::XdmfHDF5WriterDSM(const std::string & filePath,
   mDSMServerManager = new XdmfDSMManager();
 
   mDSMServerManager->SetLocalBufferSizeMBytes(bufferSize);
-  mDSMServerManager->SetInterCommType(H5FD_DSM_COMM_MPI);
+  mDSMServerManager->SetInterCommType(XDMF_DSM_COMM_MPI);
 
   MPI_Barrier(comm);
 
@@ -236,15 +246,15 @@ XdmfHDF5WriterDSM::XdmfHDF5WriterDSM(const std::string & filePath,
 
   if (rank < startCoreIndex || rank > endCoreIndex) {
     // Turn off the server designation
-    mDSMServerBuffer->SetIsServer(H5FD_DSM_FALSE);
+    mDSMServerBuffer->SetIsServer(false);
     // If this is set to false then the buffer will attempt to connect
     // to the intercomm for DSM communications
-    mDSMServerManager->SetIsServer(H5FD_DSM_FALSE);
+    mDSMServerManager->SetIsServer(false);
   }
   else {
     // On cores where memory is set up, start the service loop
     // This should iterate infinitely until a value to end the loop is passed
-    H5FDdsmInt32 returnOpCode;
+    int returnOpCode;
     try {
       mDSMServerBuffer->BufferServiceLoop(&returnOpCode);
     }
@@ -278,7 +288,8 @@ XdmfHDF5WriterDSM::createController(const std::string & hdf5FilePath,
                                       dataspaceDimensions,
                                       mDSMServerBuffer);
   }
-  else {
+#ifdef XDMF_BUILD_DSM_THREADS
+  else if (mDSMBuffer != NULL) {
     return XdmfHDF5ControllerDSM::New(hdf5FilePath,
                                       dataSetPath,
                                       type,
@@ -288,14 +299,20 @@ XdmfHDF5WriterDSM::createController(const std::string & hdf5FilePath,
                                       dataspaceDimensions,
                                       mDSMBuffer);
   }
+#endif
+  else {
+    return shared_ptr<XdmfHDF5ControllerDSM>();
+  }
 }
 
 void XdmfHDF5WriterDSM::deleteManager()
 {
+#ifdef XDMF_BUILD_DSM_THREADS
   if (mDSMManager != NULL)
   {
     delete mDSMManager;
   }
+#endif
   if (mDSMServerManager != NULL)
   {
     closeFile();
@@ -313,6 +330,7 @@ XdmfHDF5WriterDSM::closeFile()
   XdmfHDF5Writer::closeFile();
 }
 
+#ifdef XDMF_BUILD_DSM_THREADS
 H5FDdsmBuffer * XdmfHDF5WriterDSM::getBuffer()
 {
   return mDSMBuffer;
@@ -322,6 +340,7 @@ H5FDdsmManager * XdmfHDF5WriterDSM::getManager()
 {
   return mDSMManager;
 }
+#endif
 
 XdmfDSMBuffer * XdmfHDF5WriterDSM::getServerBuffer()
 {
@@ -351,22 +370,26 @@ void XdmfHDF5WriterDSM::setAllowSetSplitting(bool newAllow)
   XdmfHDF5Writer::setAllowSetSplitting(false); 
 }
 
+#ifdef XDMF_BUILD_DSM_THREADS
 void XdmfHDF5WriterDSM::setBuffer(H5FDdsmBuffer * newBuffer)
 {
   mDSMBuffer = newBuffer;
 }
+#endif
 
 void XdmfHDF5WriterDSM::setBuffer(XdmfDSMBuffer * newBuffer)
 {
   mDSMServerBuffer = newBuffer;
 }
 
+#ifdef XDMF_BUILD_DSM_THREADS
 void XdmfHDF5WriterDSM::setManager(H5FDdsmManager * newManager)
 {
   H5FDdsmBuffer * newBuffer = newManager->GetDsmBuffer();
   mDSMManager = newManager;
   mDSMBuffer = newBuffer;
 }
+#endif
 
 void XdmfHDF5WriterDSM::setManager(XdmfDSMManager * newManager)
 {
@@ -410,12 +433,22 @@ void XdmfHDF5WriterDSM::setWorkerComm(MPI_Comm comm)
 
 void XdmfHDF5WriterDSM::stopDSM()
 {
-  // Send manually
-  for (int i = mDSMServerBuffer->GetStartServerId();
-       i <= mDSMServerBuffer->GetEndServerId();
-       ++i) {
+  if (mServerMode) {
+    // Send manually
+    for (int i = mDSMServerBuffer->GetStartServerId();
+         i <= mDSMServerBuffer->GetEndServerId();
+         ++i) {
+      try {
+        mDSMServerBuffer->SendCommandHeader(XDMF_DSM_OPCODE_DONE, i, 0, 0, XDMF_DSM_INTER_COMM);
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else {
     try {
-      mDSMServerBuffer->SendCommandHeader(H5FD_DSM_OPCODE_DONE, i, 0, 0, H5FD_DSM_INTER_COMM);
+      XdmfError::message(XdmfError::FATAL, "Error: Stopping DSM manually only available in server mode.");
     }
     catch (XdmfError e) {
       throw e;
@@ -425,13 +458,23 @@ void XdmfHDF5WriterDSM::stopDSM()
 
 void XdmfHDF5WriterDSM::restartDSM()
 {
-  if (mDSMServerBuffer->GetComm()->GetInterId() >=
-        mDSMServerBuffer->GetStartServerId() &&
-      mDSMServerBuffer->GetComm()->GetInterId() <=
-        mDSMServerBuffer->GetEndServerId()) {
-    H5FDdsmInt32 returnOpCode;
+  if (mServerMode) {
+    if (mDSMServerBuffer->GetComm()->GetInterId() >=
+          mDSMServerBuffer->GetStartServerId() &&
+        mDSMServerBuffer->GetComm()->GetInterId() <=
+          mDSMServerBuffer->GetEndServerId()) {
+      int returnOpCode;
+      try {
+        mDSMServerBuffer->BufferServiceLoop(&returnOpCode);
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
+  }
+  else {
     try {
-      mDSMServerBuffer->BufferServiceLoop(&returnOpCode);
+      XdmfError::message(XdmfError::FATAL, "Error: Restarting DSM only available in server mode.");
     }
     catch (XdmfError e) {
       throw e;
@@ -455,7 +498,16 @@ XdmfHDF5WriterDSM::openFile()
     }
   }
   else {
+#ifdef XDMF_BUILD_DSM_THREADS
     H5Pset_fapl_dsm(mFAPL, MPI_COMM_WORLD, mDSMBuffer, 0);
+#else
+    try {
+      XdmfError::message(XdmfError::FATAL, "Error: Threaded DSM not enabled.");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+#endif
   }
   XdmfHDF5Writer::openFile(mFAPL);
 }
@@ -475,7 +527,16 @@ void XdmfHDF5WriterDSM::visit(XdmfArray & array,
       }
     }
     else {
+#ifdef XDMF_BUILD_DSM_THREADS
       H5Pset_fapl_dsm(mFAPL, MPI_COMM_WORLD, mDSMBuffer, 0);
+#else
+      try {
+        XdmfError::message(XdmfError::FATAL, "Error: Threaded DSM not enabled.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
+#endif
     }
 
     closeFAPL = true;

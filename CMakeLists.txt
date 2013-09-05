@@ -49,6 +49,10 @@ option(XDMF_WRAP_JAVA OFF)
 # Test for DSM
 option(XDMF_BUILD_DSM OFF)
 
+if(XDMF_BUILD_DSM)
+  option(XDMF_BUILD_DSM_THREADS ON)
+endif(XDMF_BUILD_DSM)
+
 # If we are wrapping either, we need swig
 if(XDMF_WRAP_PYTHON OR XDMF_WRAP_JAVA)
   find_package(SWIG REQUIRED)
@@ -214,7 +218,7 @@ if(XDMF_WRAP_JAVA)
 endif(XDMF_WRAP_JAVA)
 
 add_subdirectory(core)
-include_directories(${XdmfCore_INCLUDE_DIRS})
+include_directories(${XdmfCore_INCLUDE_DIRS} ${XdmfDSM_INCLUDE_DIRS})
 link_directories(${XDMF_LIBRARY_DIRS})
 
 option(XDMF_BUILD_CORE_ONLY OFF)
@@ -244,7 +248,11 @@ if(NOT XDMF_BUILD_CORE_ONLY)
     XdmfUnstructuredGrid)
 
   add_library(Xdmf ${XdmfSources})
-  target_link_libraries(Xdmf XdmfCore)
+  if(XDMF_BUILD_DSM)
+    target_link_libraries(Xdmf XdmfCore XdmfDSM)
+  else(XDMF_BUILD_DSM)
+    target_link_libraries(Xdmf XdmfCore)
+  endif(XDMF_BUILD_DSM)
 
   if(WIN32)
 	set_target_properties(Xdmf PROPERTIES
@@ -264,7 +272,7 @@ if(NOT XDMF_BUILD_CORE_ONLY)
   endif(XDMF_WRAP_JAVA)
 
   if(XDMF_WRAP_PYTHON)
-    XDMF_SWIG_PYTHON(Xdmf XdmfCore)
+    XDMF_SWIG_PYTHON(Xdmf XdmfCore XdmfDSM)
   endif(XDMF_WRAP_PYTHON)
 
   if(BUILD_TESTING)

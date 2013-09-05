@@ -3,73 +3,73 @@
 
 int main(int, char **)
 {
-	//#initialization begin
+        //#initialization begin
 
-	XdmfError testError = XdmfError(XdmfError:DEBUG, "This is a debug error");
+        XdmfError testError = XdmfError(XdmfError:DEBUG, "This is a debug error");
 
-	//#initialization end
+        //#initialization end
 
-	//#getLevel begin
+        //#getLevel begin
 
-	XdmfError::Level testError.getLevel();
+        XdmfError::Level testError.getLevel();
 
-	//#getLevel end
+        //#getLevel end
 
-	//#setLevel begin
+        //#setLevel begin
 
-	testError.setLevel(XdmfError::WARNING);
+        testError.setLevel(XdmfError::WARNING);
 
-	//#setLevel end
+        //#setLevel end
 
-	//#what begin
+        //#what begin
 
-	char * errorOutput = testError.what();
+        char * errorOutput = testError.what();
 
-	//#what end
+        //#what end
 
-	//#getLevelLimit begin
+        //#getLevelLimit begin
 
-	XdmfError::Level exampleLevel = XdmfError::getLevelLimit();
+        XdmfError::Level exampleLevel = XdmfError::getLevelLimit();
 
-	//#getLevelLimit end
+        //#getLevelLimit end
 
-	//#setLevelLimit begin
+        //#setLevelLimit begin
 
-	XdmfError::setLevelLimit(XdmfError::FATAL);
+        XdmfError::setLevelLimit(XdmfError::FATAL);
 
-	//#setLevelLimit end
+        //#setLevelLimit end
 
-	//#getSuppressionLevel begin
+        //#getSuppressionLevel begin
 
-	XdmfError::Level exampleSuppression = XdmfError::getSuppressionLevel();
+        XdmfError::Level exampleSuppression = XdmfError::getSuppressionLevel();
 
-	//#getSuppressionLevel end
+        //#getSuppressionLevel end
 
-	//#setSuppressionLevel begin
+        //#setSuppressionLevel begin
 
-	XdmfError::setSuppressionLevel(XdmfError::DEBUG);
+        XdmfError::setSuppressionLevel(XdmfError::DEBUG);
 
-	//#setSuppressionLevel end
+        //#setSuppressionLevel end
 
-	//#setBuffer begin
+        //#setBuffer begin
 
-	XdmfError::setBuffer(std::cout.rdbuf());
-	//the default buffer is cout
+        XdmfError::setBuffer(std::cout.rdbuf());
+        //the default buffer is cout
 
-	//#setBuffer end
+        //#setBuffer end
 
-	//#message begin
+        //#message begin
 
-	try
-	{
-		XdmfError::message(XdmfError::FATAL, "this is an example error");
-	}
-	catch (XdmfError exampleError)
-	{
-		char * errorOutput = exampleError.what();
-	}
+        try
+        {
+                XdmfError::message(XdmfError::FATAL, "this is an example error");
+        }
+        catch (XdmfError exampleError)
+        {
+                char * errorOutput = exampleError.what();
+        }
 
-	//#message end
+        //#message end
 
-	return 0;
+        return 0;
 }

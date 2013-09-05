@@ -1,59 +1,59 @@
 from Xdmf import *
 
 if __name__ == "__main__":
-	#//initialization begin
+        #//initialization begin
 
-	exampleID = XdmfTopologyType.Triangle().getID()
-	createdTopology = XdmfTopology.New()
-	createdTopology.setType(XdmfTopologyType.New(exampleID))
+        exampleID = XdmfTopologyType.Triangle().getID()
+        createdTopology = XdmfTopology.New()
+        createdTopology.setType(XdmfTopologyType.New(exampleID))
 
-	#//initialization end
+        #//initialization end
 
-	#//getCellType begin
+        #//getCellType begin
 
-	exampleType = XdmfTopologyType.Linear
-	if exampleType == exampleTopology.getCellType:
-		'''
-		Do whatever is to be done if the cell type is linear
-		'''
+        exampleType = XdmfTopologyType.Linear
+        if exampleType == exampleTopology.getCellType:
+                '''
+                Do whatever is to be done if the cell type is linear
+                '''
 
-	#//getCellType end
+        #//getCellType end
 
-	#//getEdgesPerElement begin
+        #//getEdgesPerElement begin
 
-	numEdges = XdmfTopologyType.Triangle().getEdgesPerElement()
+        numEdges = XdmfTopologyType.Triangle().getEdgesPerElement()
 
-	#//getEdgesPerElement end
+        #//getEdgesPerElement end
 
-	#//getFacesPerElement begin
+        #//getFacesPerElement begin
 
-	numFaces = XdmfTopologyType.Triangle().getFacesPerElement()
+        numFaces = XdmfTopologyType.Triangle().getFacesPerElement()
 
-	#//getFacesPerElement end
+        #//getFacesPerElement end
 
-	#//getId begin
+        #//getId begin
 
-	holdID = XdmfTopologyType::Triangle().getID()
+        holdID = XdmfTopologyType::Triangle().getID()
 
-	#//getId end
+        #//getId end
 
-	#//getName begin
+        #//getName begin
 
-	exampleName = XdmfTopologyType.Triangle().getName()
+        exampleName = XdmfTopologyType.Triangle().getName()
 
-	#//getName end
+        #//getName end
 
-	#//getNodesPerElement begin
+        #//getNodesPerElement begin
 
-	numNodes = XdmfTopologyType.Triangle().getNodesPerElement()
+        numNodes = XdmfTopologyType.Triangle().getNodesPerElement()
 
-	#//getNodesPerElement end
+        #//getNodesPerElement end
 
-	#//getType begin
+        #//getType begin
 
-	testType = createdTopology.getType()
+        testType = createdTopology.getType()
 
-	if testType == XdmfTopologyType.Triangle:
-		#do whatever is to be done if the type is a triangle
+        if testType == XdmfTopologyType.Triangle:
+                #do whatever is to be done if the type is a triangle
 
-	#//getType end
+        #//getType end

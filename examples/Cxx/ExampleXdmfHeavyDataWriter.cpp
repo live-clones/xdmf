@@ -2,126 +2,126 @@
 
 int main(int, char **)
 {
-	//#initialization begin
+        //#initialization begin
 
-	std::string newPath = "Your file path goes here";
-	bool replaceOrig = true;
-	shared_ptr<XdmfHDF5Writer> exampleWriter = XdmfHDF5Writer::New(newPath, replaceOrig);
+        std::string newPath = "Your file path goes here";
+        bool replaceOrig = true;
+        shared_ptr<XdmfHDF5Writer> exampleWriter = XdmfHDF5Writer::New(newPath, replaceOrig);
 
-	//using an XdmfHDF5Writer because XdmfHeavyWriter is abstract
+        //using an XdmfHDF5Writer because XdmfHeavyWriter is abstract
 
-	//#initialization end
+        //#initialization end
 
-	//#openFile begin
+        //#openFile begin
 
-	exampleWriter->openFile();
+        exampleWriter->openFile();
 
-	//#openFile end
+        //#openFile end
 
-	//#closeFile begin
+        //#closeFile begin
 
-	exampleWriter->closeFile();
+        exampleWriter->closeFile();
 
-	//#closeFile end
+        //#closeFile end
 
-	//#getFilePath begin
+        //#getFilePath begin
 
-	std::string examplePath = exampleWriter->getFilePath();
+        std::string examplePath = exampleWriter->getFilePath();
 
-	//#getFilePath end
+        //#getFilePath end
 
-	//#getMode begin
+        //#getMode begin
 
-	XdmfHeavyDataWriter::Mode exampleMode = XdmfHeavyDataWriter::Default;
+        XdmfHeavyDataWriter::Mode exampleMode = XdmfHeavyDataWriter::Default;
 
-	if (exampleWriter->getMode() == exampleMode)
-	{
-		//Do whatever is to be done if the mode is default
-	}
+        if (exampleWriter->getMode() == exampleMode)
+        {
+                //Do whatever is to be done if the mode is default
+        }
 
-	//#getMode end
+        //#getMode end
 
-	//#getReleaseData begin
+        //#getReleaseData begin
 
-	bool testRelease = exampleWriter->getReleaseData();
+        bool testRelease = exampleWriter->getReleaseData();
 
-	//#getReleaseData end
+        //#getReleaseData end
 
-	//#setMode begin
+        //#setMode begin
 
-	exampleWriter->setMode(XdmfHeavyDataWriter::Default);
+        exampleWriter->setMode(XdmfHeavyDataWriter::Default);
 
-	//#setMode end
+        //#setMode end
 
-	//#setReleaseData begin
+        //#setReleaseData begin
 
-	exampleWriter->setReleaseData(true);
-	//Sets the writer to release data after writing
+        exampleWriter->setReleaseData(true);
+        //Sets the writer to release data after writing
 
-	//#setReleaseData end
+        //#setReleaseData end
 
-	//#setFileSizeLimit begin
+        //#setFileSizeLimit begin
 
-	int newFileSizeLimit = 10;
-	//limit of 10 MB
+        int newFileSizeLimit = 10;
+        //limit of 10 MB
 
-	exampleWriter->setFileSizeLimit(newFileSizeLimit);
+        exampleWriter->setFileSizeLimit(newFileSizeLimit);
 
-	//#setFileSizeLimit end
+        //#setFileSizeLimit end
 
-	//#getFileSizeLimit begin
+        //#getFileSizeLimit begin
 
-	int exampleLimit = exampleWriter->getFileSizeLimit();
+        int exampleLimit = exampleWriter->getFileSizeLimit();
 
-	//#getFileSizeLimit end
+        //#getFileSizeLimit end
 
-	//#getFileOverhead begin
+        //#getFileOverhead begin
 
-	unsigned int exampleOverhead = exampleWriter->getFileOverhead();
+        unsigned int exampleOverhead = exampleWriter->getFileOverhead();
 
-	//#getFileOverhead end
+        //#getFileOverhead end
 
-	//#setAllowSetSplitting begin
+        //#setAllowSetSplitting begin
 
-	bool newAllow = true;
-	//false is default
+        bool newAllow = true;
+        //false is default
 
-	exampleWriter->setAllowSetSplitting(newAllow);
+        exampleWriter->setAllowSetSplitting(newAllow);
 
-	//#setAllowSetSplitting end
+        //#setAllowSetSplitting end
 
-	//#getAllowSetSplitting begin
+        //#getAllowSetSplitting begin
 
-	bool exampleAllowSplitting = exampleWriter->getAllowSetSplitting();
+        bool exampleAllowSplitting = exampleWriter->getAllowSetSplitting();
 
-	//#getAllowSetSplitting end
+        //#getAllowSetSplitting end
 
-	//#setFileIndex begin
+        //#setFileIndex begin
 
-	int newFileIndex = 0;
-	//0 resets to no appended index
+        int newFileIndex = 0;
+        //0 resets to no appended index
 
-	exampleWriter->setFileIndex(newFileIndex);
+        exampleWriter->setFileIndex(newFileIndex);
 
-	//#setFileIndex end
+        //#setFileIndex end
 
-	//#getFileIndex begin
+        //#getFileIndex begin
 
-	int exampleIndex = exampleWriter->getFileIndex();
+        int exampleIndex = exampleWriter->getFileIndex();
 
-	//#getFileIndex end
+        //#getFileIndex end
 
-	//#visit begin
+        //#visit begin
 
-	shared_ptr<XdmfArray> exampleArray = XdmfArray::New();
-	exampleArray->pushBack(1);
-	exampleArray->pushBack(2);
-	exampleArray->pushBack(3);
-	exampleArray->pushBack(4);
-	exampleArray->pushBack(5);
-	exampleWriter->visit(exampleArray, exampleWriter);
+        shared_ptr<XdmfArray> exampleArray = XdmfArray::New();
+        exampleArray->pushBack(1);
+        exampleArray->pushBack(2);
+        exampleArray->pushBack(3);
+        exampleArray->pushBack(4);
+        exampleArray->pushBack(5);
+        exampleWriter->visit(exampleArray, exampleWriter);
 
-	//#visit end
+        //#visit end
 
-	return 0;
+        return 0;
 }

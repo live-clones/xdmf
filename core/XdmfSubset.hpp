@@ -60,13 +60,13 @@ public:
    * @skipline #//initialization
    * @until #//initialization
    *
-   * @param	referenceArray	The array that the subset is generated from.
-   * @param	start		A vector of the starting points for each
-   *				dimension.
-   * @param	stride		A vector of the strides for each dimension.
-   * @param	dimensions	A vector of the amount of values read from each
-   *				dimension.
-   * @return			A constructed XdmfSubset
+   * @param     referenceArray  The array that the subset is generated from.
+   * @param     start           A vector of the starting points for each
+   *                            dimension.
+   * @param     stride          A vector of the strides for each dimension.
+   * @param     dimensions      A vector of the amount of values read from each
+   *                            dimension.
+   * @return                    A constructed XdmfSubset
    */
   static shared_ptr<XdmfSubset>
   New(shared_ptr<XdmfArray> referenceArray,
@@ -105,7 +105,7 @@ public:
    * @skipline #//getConstructedProperties
    * @until #//getConstructedProperties
    *
-   * @return	The properties of the array to be generated
+   * @return    The properties of the array to be generated
    */
   std::map<std::string, std::string> getConstructedProperties();
 
@@ -134,7 +134,7 @@ public:
    * @skipline #//getConstructedType
    * @until #//getConstructedType
    *
-   * @return	The tag of the type to be generated
+   * @return    The tag of the type to be generated
    */
   std::string getConstructedType();
 
@@ -159,8 +159,8 @@ public:
    * @skipline #//getDimensions
    * @until #//getDimensions
    *
-   * @return	A vector containing the size in each dimension of the
-   *		set referenced by this subset.
+   * @return    A vector containing the size in each dimension of the
+   *            set referenced by this subset.
    */
   std::vector<unsigned int> getDimensions() const;
 
@@ -189,7 +189,7 @@ public:
    * @skipline #//getReferenceArray
    * @until #//getReferenceArray
    *
-   * @return	The array that the subset pulls data from
+   * @return    The array that the subset pulls data from
    */
   shared_ptr<XdmfArray> getReferenceArray();
 
@@ -214,7 +214,7 @@ public:
    * @skipline #//getSize
    * @until #//getSize
    *
-   * @return	An int containing the size of the subset.
+   * @return    An int containing the size of the subset.
    */
   unsigned int getSize() const;
 
@@ -239,8 +239,8 @@ public:
    * @skipline #//getStart
    * @until #//getStart
    *
-   * @return	A vector containing the start index in each dimension of
-   *		the set referenced by this subset.
+   * @return    A vector containing the start index in each dimension of
+   *            the set referenced by this subset.
    */
   std::vector<unsigned int> getStart() const;
 
@@ -265,8 +265,8 @@ public:
    * @skipline #//getStride
    * @until #//getStride
    *
-   * @return	A vector containing the stride in each dimension of the
-   *		heavy data set owned by this controller.
+   * @return    A vector containing the stride in each dimension of the
+   *            heavy data set owned by this controller.
    */
   std::vector<unsigned int> getStride() const;
 
@@ -291,7 +291,7 @@ public:
    * @skipline #//read
    * @until #//read
    *
-   * @return	An array filled with data based on the subset's parameters.
+   * @return    An array filled with data based on the subset's parameters.
    */
   shared_ptr<XdmfArray> read();
 
@@ -316,7 +316,7 @@ public:
    * @skipline #//setConstructedProperties
    * @until #//setConstructedProperties
    *
-   * @param	newProperties	The properties of the array to be generated
+   * @param     newProperties   The properties of the array to be generated
    */
   void setConstructedProperties(std::map<std::string, std::string> newProperties);
 
@@ -341,7 +341,7 @@ public:
    * @skipline #//setConstructedType
    * @until #//setConstructedType
    *
-   * @param	newType		The tag of the type to be generated
+   * @param     newType         The tag of the type to be generated
    */
   void setConstructedType(std::string newType);
 
@@ -370,8 +370,8 @@ public:
    * @skipline #//setDimensions
    * @until #//setDimensions
    *
-   * @param	newDimensions	A vector containing the size in each dimension
-   *				of the set to be referenced by this subset.
+   * @param     newDimensions   A vector containing the size in each dimension
+   *                            of the set to be referenced by this subset.
    */
   void setDimensions(std::vector<unsigned int> newDimensions);
 
@@ -400,9 +400,9 @@ public:
    * @skipline #//setStart
    * @until #//setStart
    *
-   * @param	newStarts	A vector containing the start index in each
-   *				dimension of the set to be referenced by this
-   * 				subset.
+   * @param     newStarts       A vector containing the start index in each
+   *                            dimension of the set to be referenced by this
+   *                            subset.
    */
   void setStart(std::vector<unsigned int> newStarts);
 
@@ -433,8 +433,8 @@ public:
    * @skipline #//setStride
    * @until #//setStride
    *
-   * @param	newStrides 	A vector containing the stride in each
-   * 				dimension of the set referenced by this subset.
+   * @param     newStrides      A vector containing the stride in each
+   *                            dimension of the set referenced by this subset.
    */
   void setStride(std::vector<unsigned int> newStrides);
 

@@ -37,7 +37,7 @@
 #define XDMF_DSM_NUM_CONNECTION_IDS 0x02
 
 // Includes
-#include <XdmfCore.hpp>
+#include <XdmfDSM.hpp>
 
 #include <mpi.h>
 
@@ -50,7 +50,7 @@
  * It provides more access to the the intra and inter communicators.
  * It is primarily for allowing the XdmfDSM to interact with HDF5 dsm without threads.
  */
-class XDMFCORE_EXPORT XdmfDSMCommMPI {
+class XDMFDSM_EXPORT XdmfDSMCommMPI {
 
 public:
 
@@ -163,7 +163,7 @@ public:
    * @skipline #//Disconnectcomm
    * @until #//Disconnectcomm
    *
-   * @return	 Whether the connection was successful or not
+   * @return     Whether the connection was successful or not
    */
   int Connect();
 
@@ -262,7 +262,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	comm	The comm to be used as the IntraComm
+   * @param     comm    The comm to be used as the IntraComm
    */
   void DupComm(MPI_Comm comm);
 
@@ -307,7 +307,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	comm	The comm to be used as the intercomm
+   * @param     comm    The comm to be used as the intercomm
    */
   void DupInterComm(MPI_Comm comm);
 
@@ -350,7 +350,7 @@ public:
    * @skipline #//ClosePort
    * @until #//ClosePort
    *
-   * @return	The file name where connection info will be written
+   * @return    The file name where connection info will be written
    */
   std::string GetDsmFileName();
 
@@ -389,7 +389,7 @@ public:
    * @skipline #//Disconnectcomm
    * @until #//Disconnectcomm
    *
-   * @return	a pointer to the character string that specifies the port
+   * @return    a pointer to the character string that specifies the port
    */
   char * GetDsmPortName();
 
@@ -452,7 +452,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	The Id of the core with regards to the IntraComm
+   * @return    The Id of the core with regards to the IntraComm
    */
   int GetId();
 
@@ -493,7 +493,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	 The communicator currently serving as the intercomm.
+   * @return     The communicator currently serving as the intercomm.
    */
   MPI_Comm GetInterComm();
 
@@ -556,7 +556,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	An integer representation of the InterComm's type
+   * @return    An integer representation of the InterComm's type
    */
   int GetInterCommType();
 
@@ -619,7 +619,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	The Id of the core with regards to the IntraComm
+   * @return    The Id of the core with regards to the IntraComm
    */
   int GetInterId();
 
@@ -682,7 +682,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	The number of cores in the InterComm
+   * @return    The number of cores in the InterComm
    */
   int GetInterSize();
 
@@ -745,7 +745,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	The communicator currently serving as the intracomm.
+   * @return    The communicator currently serving as the intracomm.
    */
   MPI_Comm GetIntraComm();
 
@@ -808,7 +808,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	The number of cores in the IntraComm
+   * @return    The number of cores in the IntraComm
    */
   int GetIntraSize();
 
@@ -987,7 +987,7 @@ public:
    * @skipline #//ClosePort
    * @until #//ClosePort
    *
-   * @param	filename	The file name where connection info will be written
+   * @param     filename        The file name where connection info will be written
    */
   void SetDsmFileName(std::string filename);
 
@@ -1029,7 +1029,7 @@ public:
    * @skipline #//Disconnectcomm
    * @until #//Disconnectcomm
    *
-   * @param	hostName	a pointer to the character string that specifies the port
+   * @param     hostName        a pointer to the character string that specifies the port
    */
   void SetDsmPortName(const char *hostName);
 
@@ -1037,15 +1037,15 @@ protected:
 
 
 private:
-  MPI_Comm	IntraComm;
-  int		Id;
-  int		IntraSize;
-  MPI_Comm	InterComm;
-  int		InterId;
-  int		InterSize;
-  int		InterCommType;
-  char 		DsmPortName[MPI_MAX_PORT_NAME];
-  std::string	DsmFileName;
+  MPI_Comm      IntraComm;
+  int           Id;
+  int           IntraSize;
+  MPI_Comm      InterComm;
+  int           InterId;
+  int           InterSize;
+  int           InterCommType;
+  char          DsmPortName[MPI_MAX_PORT_NAME];
+  std::string   DsmFileName;
 };
 
 #endif /* XDMFDSMCOMMMPI_HPP_ */

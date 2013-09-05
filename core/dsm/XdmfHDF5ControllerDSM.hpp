@@ -25,11 +25,13 @@
 #define XDMFHDF5CONTROLLERDSM_HPP_
 
 // Forward Declarations
-class H5FDdsmBuffer;
-class H5FDdsmManager;
+#ifdef XDMF_BUILD_DSM_THREADS
+  class H5FDdsmBuffer;
+  class H5FDdsmManager;
+#endif
 
 // Includes
-#include "XdmfCore.hpp"
+#include "XdmfDSM.hpp"
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfDSMManager.hpp"
 #include "XdmfDSMBuffer.hpp"
@@ -43,11 +45,13 @@ class H5FDdsmManager;
  * This allows data to be released from memory but still be accessible
  * or have its location written to light data.
  */
-class XDMFCORE_EXPORT XdmfHDF5ControllerDSM : public XdmfHDF5Controller {
+class XDMFDSM_EXPORT XdmfHDF5ControllerDSM : public XdmfHDF5Controller {
 
 public:
 
   virtual ~XdmfHDF5ControllerDSM();
+
+#ifdef XDMF_BUILD_DSM_THREADS
 
   /**
    * Create a new controller for an DSM data set.
@@ -84,14 +88,14 @@ public:
    * @skipline #//deleteManagerwriter
    * @until #//deleteManagerwriter
    *
-   * @param	hdf5FilePath		The path to the hdf5 file that the controller will be accessing
-   * @param	dataSetPath		The location within the file of the data the controller with be accessing
-   * @param	type			The data type of the data Ex: XdmfArrayType::Int32()
-   * @param	start			A vector of the start indexes for all dimensions of the data
-   * @param	stride			A vector of the distance between reads for all dimensions of the data
-   * @param	dimensions		A vector of the number of values read from all dimensions of the data
-   * @param	dataspaceDimensions	A vecotr containing the total size of the dimension in the data space
-   * @param	dsmBuffer		A pointer to the dsm buffer
+   * @param     hdf5FilePath            The path to the hdf5 file that the controller will be accessing
+   * @param     dataSetPath             The location within the file of the data the controller with be accessing
+   * @param     type                    The data type of the data Ex: XdmfArrayType::Int32()
+   * @param     start                   A vector of the start indexes for all dimensions of the data
+   * @param     stride                  A vector of the distance between reads for all dimensions of the data
+   * @param     dimensions              A vector of the number of values read from all dimensions of the data
+   * @param     dataspaceDimensions     A vecotr containing the total size of the dimension in the data space
+   * @param     dsmBuffer               A pointer to the dsm buffer
    */
   static shared_ptr<XdmfHDF5ControllerDSM>
   New(const std::string & hdf5FilePath,
@@ -136,15 +140,15 @@ public:
    * @skipline #//deleteManagercontroller
    * @until #//deleteManagercontroller
    *
-   * @param	hdf5FilePath		The path to the hdf5 file that the controller will be accessing
-   * @param	dataSetPath		The location within the file of the data the controller with be accessing
-   * @param	type			The data type of the data Ex: XdmfArrayType::Int32()
-   * @param	start			A vector of the start indexes for all dimensions of the data
-   * @param	stride			A vector of the distance between reads for all dimensions of the data
-   * @param	dimensions		A vector of the number of values read from all dimensions of the data
-   * @param	dataspaceDimensions	A vecotr containing the total size of the dimension in the data space
-   * @param	comm			The communicator that the DSM buffer will reference
-   * @param	bufferSize		The size of the buffer to be created on the core calling this function               
+   * @param     hdf5FilePath            The path to the hdf5 file that the controller will be accessing
+   * @param     dataSetPath             The location within the file of the data the controller with be accessing
+   * @param     type                    The data type of the data Ex: XdmfArrayType::Int32()
+   * @param     start                   A vector of the start indexes for all dimensions of the data
+   * @param     stride                  A vector of the distance between reads for all dimensions of the data
+   * @param     dimensions              A vector of the number of values read from all dimensions of the data
+   * @param     dataspaceDimensions     A vecotr containing the total size of the dimension in the data space
+   * @param     comm                    The communicator that the DSM buffer will reference
+   * @param     bufferSize              The size of the buffer to be created on the core calling this function               
    */
   static shared_ptr<XdmfHDF5ControllerDSM>
   New(const std::string & hdf5FilePath,
@@ -156,6 +160,8 @@ public:
       const std::vector<unsigned int> & dataspaceDimensions,
       MPI_Comm comm,
       unsigned int bufferSize);
+
+#endif
 
   /**
    * Create a new controller for an DSM data set.
@@ -200,14 +206,14 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	hdf5FilePath		The path to the hdf5 file that the controller will be accessing
-   * @param	dataSetPath		The location within the file of the data the controller with be accessing
-   * @param	type			The data type of the data Ex: XdmfArrayType::Int32()
-   * @param	start			A vector of the start indexes for all dimensions of the data
-   * @param	stride			A vector of the distance between reads for all dimensions of the data
-   * @param	dimensions		A vector of the number of values read from all dimensions of the data
-   * @param	dataspaceDimensions	A vecotr containing the total size of the dimension in the data space
-   * @param	dsmBuffer		A pointer to the dsm buffer
+   * @param     hdf5FilePath            The path to the hdf5 file that the controller will be accessing
+   * @param     dataSetPath             The location within the file of the data the controller with be accessing
+   * @param     type                    The data type of the data Ex: XdmfArrayType::Int32()
+   * @param     start                   A vector of the start indexes for all dimensions of the data
+   * @param     stride                  A vector of the distance between reads for all dimensions of the data
+   * @param     dimensions              A vector of the number of values read from all dimensions of the data
+   * @param     dataspaceDimensions     A vecotr containing the total size of the dimension in the data space
+   * @param     dsmBuffer               A pointer to the dsm buffer
    */
   static shared_ptr<XdmfHDF5ControllerDSM>
   New(const std::string & hdf5FilePath,
@@ -252,18 +258,18 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	hdf5FilePath		The path to the hdf5 file that the controller will be accessing
-   * @param	dataSetPath		The location within the file of the data the controller with be accessing
-   * @param	type			The data type of the data Ex: XdmfArrayType::Int32()
-   * @param	start			A vector of the start indexes for all dimensions of the data
-   * @param	start			A vector of the start indexes for all dimensions of the data
-   * @param	stride			A vector of the distance between reads for all dimensions of the data
-   * @param	dimensions		A vector of the number of values read from all dimensions of the data
-   * @param	dataspaceDimensions	A vecotr containing the total size of the dimension in the data space
-   * @param	comm			The communicator that the DSM buffer will reference
-   * @param	bufferSize		The size of the buffer to be created on the core calling this function
-   * @param	startCoreIndex		The index at which the server cores for the buffer start
-   * @param	endCoreIndex		The index at which the server cores for the buffer end
+   * @param     hdf5FilePath            The path to the hdf5 file that the controller will be accessing
+   * @param     dataSetPath             The location within the file of the data the controller with be accessing
+   * @param     type                    The data type of the data Ex: XdmfArrayType::Int32()
+   * @param     start                   A vector of the start indexes for all dimensions of the data
+   * @param     start                   A vector of the start indexes for all dimensions of the data
+   * @param     stride                  A vector of the distance between reads for all dimensions of the data
+   * @param     dimensions              A vector of the number of values read from all dimensions of the data
+   * @param     dataspaceDimensions     A vecotr containing the total size of the dimension in the data space
+   * @param     comm                    The communicator that the DSM buffer will reference
+   * @param     bufferSize              The size of the buffer to be created on the core calling this function
+   * @param     startCoreIndex          The index at which the server cores for the buffer start
+   * @param     endCoreIndex            The index at which the server cores for the buffer end
    */
   static shared_ptr<XdmfHDF5ControllerDSM>
   New(const std::string & hdf5FilePath,
@@ -310,6 +316,8 @@ public:
    */
   void deleteManager();
 
+#ifdef XDMF_BUILD_DSM_THREADS
+
   /**
    * Returns the current dsmManager for the Controller. If there is no manager then it returns null
    *
@@ -347,7 +355,7 @@ public:
    * @skipline #//deleteManagercontroller
    * @until #//deleteManagercontroller
    *
-   * @return	The dsmManager of the controller
+   * @return    The dsmManager of the controller
    */
   H5FDdsmManager * getManager();
 
@@ -388,9 +396,11 @@ public:
    * @skipline #//deleteManagercontroller
    * @until #//deleteManagercontroller
    *
-   * @return	The dsmBuffer of the controller
+   * @return    The dsmBuffer of the controller
    */
   H5FDdsmBuffer * getBuffer();
+
+#endif
 
   /**
    * Gets the buffer for the non-threaded version of DSM
@@ -437,7 +447,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	The XdmfDSMBuffer that is controlling the data for the DSM
+   * @return    The XdmfDSMBuffer that is controlling the data for the DSM
    */
   XdmfDSMBuffer * getServerBuffer();
 
@@ -488,7 +498,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	The XdmfDSMManager that is controlling the DSM
+   * @return    The XdmfDSMManager that is controlling the DSM
    */
   XdmfDSMManager * getServerManager();
 
@@ -536,7 +546,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	If the DSM is in server mode or not
+   * @return    If the DSM is in server mode or not
    */
   bool getServerMode();
 
@@ -585,9 +595,11 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	The comm that the workers are using.
+   * @return    The comm that the workers are using.
    */
   MPI_Comm getWorkerComm();
+
+#ifdef XDMF_BUILD_DSM_THREADS
 
   /**
    * Sets the controller's dsmBuffer to the provided buffer
@@ -626,9 +638,11 @@ public:
    * @skipline #//deleteManagerwriter
    * @until #//deleteManagerwriter
    *
-   * @param	newBuffer	The buffer to be set
+   * @param     newBuffer       The buffer to be set
    */
   void setBuffer(H5FDdsmBuffer * newBuffer);
+
+#endif
 
   /**
    * Sets the controller's dsmBuffer to the provided buffer
@@ -680,9 +694,11 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	newBuffer	A pointer to the buffer to be set
+   * @param     newBuffer       A pointer to the buffer to be set
    */
   void setBuffer(XdmfDSMBuffer * newBuffer);
+
+#ifdef XDMF_BUILD_DSM_THREADS
 
   /**
    * Sets the controller's dsmManager to the provided manager.
@@ -722,9 +738,11 @@ public:
    * @skipline #//deleteManagerwriter
    * @until #//deleteManagerwriter
    *
-   * @param	newManager	The manager to be set
+   * @param     newManager      The manager to be set
    */
   void setManager(H5FDdsmManager * newManager);
+
+#endif
 
   /**
    * Sets the controller's dsmManager to the provided manager.
@@ -776,7 +794,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	newManager	A pointer the the manager to be set.
+   * @param     newManager      A pointer the the manager to be set.
    */
   void setManager(XdmfDSMManager * newManager);
 
@@ -824,7 +842,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	newMode		The mode that the writer is to be set to.
+   * @param     newMode         The mode that the writer is to be set to.
    */
   void setServerMode(bool newMode);
 
@@ -876,8 +894,8 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	comm	The communicator that the worker will be using to
-   *			communicate with the other worker cores.
+   * @param     comm    The communicator that the worker will be using to
+   *                    communicate with the other worker cores.
    */
   void setWorkerComm(MPI_Comm comm);
 
@@ -960,6 +978,8 @@ public:
 
 protected:
 
+#ifdef XDMF_BUILD_DSM_THREADS
+
   XdmfHDF5ControllerDSM(const std::string & hdf5FilePath,
                         const std::string & dataSetPath,
                         const shared_ptr<const XdmfArrayType> type,
@@ -978,6 +998,8 @@ protected:
                         const std::vector<unsigned int> & dataspaceDimensions,
                         MPI_Comm comm,
                         unsigned int bufferSize);
+
+#endif
 
   XdmfHDF5ControllerDSM(const std::string & hdf5FilePath,
                         const std::string & dataSetPath,
@@ -1005,8 +1027,12 @@ private:
   XdmfHDF5ControllerDSM(const XdmfHDF5Controller &);  // Not implemented.
   void operator=(const XdmfHDF5Controller &);  // Not implemented.
 
+#ifdef XDMF_BUILD_DSM_THREADS
+
   H5FDdsmBuffer * mDSMBuffer;
   H5FDdsmManager * mDSMManager;
+
+#endif
 
   XdmfDSMBuffer * mDSMServerBuffer;
   XdmfDSMManager * mDSMServerManager;

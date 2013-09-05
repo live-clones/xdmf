@@ -306,7 +306,7 @@ public:
    * @skipline #//getItemTag
    * @until #//getItemTag
    *
-   * @return 	The tag for this XdmfItem.
+   * @return    The tag for this XdmfItem.
    */
   virtual std::string getItemTag() const = 0;
 
@@ -332,7 +332,7 @@ public:
    * @skipline #//getItemProperties
    * @until #//getItemProperties
    *
-   * @return	A map of key/value properties associated with this XdmfItem.
+   * @return    A map of key/value properties associated with this XdmfItem.
    */
   virtual std::map<std::string, std::string> getItemProperties() const = 0;
 
@@ -357,7 +357,7 @@ public:
    * @skipline #//traverse
    * @until #//traverse
    *
-   * @param 	visitor 	The visitor to pass to child items.
+   * @param     visitor         The visitor to pass to child items.
    */
   virtual void traverse(const shared_ptr<XdmfBaseVisitor> visitor);
 

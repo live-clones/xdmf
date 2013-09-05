@@ -4,41 +4,41 @@
 
 int main(int, char **)
 {
-	//Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object
+        //Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object
 
-	//#initalization begin
+        //#initalization begin
 
-	shared_ptr<XdmfGridCollection> exampleCollection = XdmfGridCollection::New();
+        shared_ptr<XdmfGridCollection> exampleCollection = XdmfGridCollection::New();
 
-	//#initialization end
+        //#initialization end
 
-	//#setType begin
+        //#setType begin
 
-	exampleCollection->setType(XdmfGridCollectionType::Temporal());
+        exampleCollection->setType(XdmfGridCollectionType::Temporal());
 
-	//#setType end
+        //#setType end
 
-	//#getType begin
+        //#getType begin
 
-	shared_ptr<const XdmfGridCollectionType> exampleType = exampleCollection->getType();
+        shared_ptr<const XdmfGridCollectionType> exampleType = exampleCollection->getType();
 
-	if (exampleType == XdmfGridCollectionType::Temporal())
-	{
-		//do whatever is to be done if the grid collection is temporal
-	}
+        if (exampleType == XdmfGridCollectionType::Temporal())
+        {
+                //do whatever is to be done if the grid collection is temporal
+        }
 
-	//#getType end
+        //#getType end
 
-	//#insert begin
+        //#insert begin
 
-	shared_ptr<XdmfInformation> exampleInformation = XdmfInformation::New();
-	std::string newKey = "New Key";
-	std::string newValue = "New Value";
-	exampleInformation->setKey(newKey);
-	exampleInformation->setValue(newValue);
-	exampleCollection->insert(exampleInformation);
+        shared_ptr<XdmfInformation> exampleInformation = XdmfInformation::New();
+        std::string newKey = "New Key";
+        std::string newValue = "New Value";
+        exampleInformation->setKey(newKey);
+        exampleInformation->setValue(newValue);
+        exampleCollection->insert(exampleInformation);
 
-	//#insert end
+        //#insert end
 
-	return 0;
+        return 0;
 }

@@ -1,26 +1,26 @@
 from Xdmf import *
 
 if __name__ == "__main__":
-	#//initialization begin
+        #//initialization begin
 
-	exampleTopology = XdmfTopology.New()
+        exampleTopology = XdmfTopology.New()
 
-	#//initialization end
+        #//initialization end
 
-	#//setType begin
+        #//setType begin
 
-	exampleTopology.setType(XdmfTopologyType.Pyramid())
+        exampleTopology.setType(XdmfTopologyType.Pyramid())
 
-	#//setType end
+        #//setType end
 
-	#//getType begin
+        #//getType begin
 
-	exampleType = exampleTopology.getType()
+        exampleType = exampleTopology.getType()
 
-	#//getType end
+        #//getType end
 
-	#//getNumberElements begin
+        #//getNumberElements begin
 
-	numElements = exampleTopology.getNumberElements()
+        numElements = exampleTopology.getNumberElements()
 
-	#//getNumberElements end
+        #//getNumberElements end

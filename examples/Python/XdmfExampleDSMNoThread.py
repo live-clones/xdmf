@@ -2,576 +2,576 @@ from Xdmf import *
 from mpi4py.MPI import *
 
 if __name__ == "__main__":
-	#//initMPI begin
+        #//initMPI begin
 
-	#The total size of the DSM being created
-	dsmSize = 64
-	comm = COMM_WORLD
+        #The total size of the DSM being created
+        dsmSize = 64
+        comm = COMM_WORLD
 
-	id = comm.Get_rank()
-	size = comm.Get_size()
+        id = comm.Get_rank()
+        size = comm.Get_size()
 
-	#//initMPI end
+        #//initMPI end
 
-	testArray = XdmfArray.New()
-	testArray.initializeAsInt32(0)
+        testArray = XdmfArray.New()
+        testArray.initializeAsInt32(0)
 
-	for i in range(1,5):
-		testArray.pushBackAsInt32(i*(id+1))
+        for i in range(1,5):
+                testArray.pushBackAsInt32(i*(id+1))
 
-	#//initwritevector begin
+        #//initwritevector begin
 
-	newPath = "dsm"
-	newSetPath = "data"
+        newPath = "dsm"
+        newSetPath = "data"
 
-	numServersCores = 4
+        numServersCores = 4
 
-	writeStartVector = UInt32Vector()
-	writeStartVector.push_back(id*4)
-	#writeStartVector.push_back(id);
-	writeStrideVector = UInt32Vector()
-	writeStrideVector.push_back(1)
-	#writeStrideVector.push_back(size-3);
-	writeCountVector = UInt32Vector()
-	writeCountVector.push_back(4)
-	writeDataSizeVector = UInt32Vector()
-	writeDataSizeVector.push_back(4*(size-numServersCores))
+        writeStartVector = UInt32Vector()
+        writeStartVector.push_back(id*4)
+        #writeStartVector.push_back(id);
+        writeStrideVector = UInt32Vector()
+        writeStrideVector.push_back(1)
+        #writeStrideVector.push_back(size-3);
+        writeCountVector = UInt32Vector()
+        writeCountVector.push_back(4)
+        writeDataSizeVector = UInt32Vector()
+        writeDataSizeVector.push_back(4*(size-numServersCores))
 
-	#//initwritevector end
+        #//initwritevector end
 
-	#//splitcomm begin
+        #//splitcomm begin
 
-	ServerIds = []
+        ServerIds = []
 
-	for i in range(size-numServersCores, size):
-		ServerIds.append(i)
+        for i in range(size-numServersCores, size):
+                ServerIds.append(i)
 
-	workers = comm.Get_group().Excl(ServerIds)
+        workers = comm.Get_group().Excl(ServerIds)
 
-	workerComm = comm.Create(workers)
+        workerComm = comm.Create(workers)
 
-	#//splitcomm end
+        #//splitcomm end
 
-	#//initwritergenerate begin
+        #//initwritergenerate begin
 
-	exampleWriter = XdmfHDF5WriterDSM.New(newPath, comm, dsmSize/numServersCores, size-numServersCores, size-1)
+        exampleWriter = XdmfHDF5WriterDSM.New(newPath, comm, dsmSize/numServersCores, size-numServersCores, size-1)
 
-	#//initwritergenerate end
+        #//initwritergenerate end
 
-	'''
-	#//initcontrollergenerate begin
+        '''
+        #//initcontrollergenerate begin
 
-	exampleController = XdmfHDF5ControllerDSM.New(
-		newPath,
-		newSetPath,
-		XdmfArrayType.Int32(),
-		writeStartVector,
-		writeStrideVector,
-		writeCountVector,
-		writeDataSizeVector,
-		comm,
-		dsmSize/numServersCores,
-		size-numServersCores,
-		size-1)
+        exampleController = XdmfHDF5ControllerDSM.New(
+                newPath,
+                newSetPath,
+                XdmfArrayType.Int32(),
+                writeStartVector,
+                writeStrideVector,
+                writeCountVector,
+                writeDataSizeVector,
+                comm,
+                dsmSize/numServersCores,
+                size-numServersCores,
+                size-1)
 
-	#//initcontrollergenerate end
-	'''
+        #//initcontrollergenerate end
+        '''
 
-	
+        
 
         # Split out sub-comm for the worker cores
         # Server cores will not progress to this point until after the servers are done running
 
-	#//startworksection begin
+        #//startworksection begin
 
         if (id < size - numServersCores):
 
-		#//startworksection end
+                #//startworksection end
 
-		# This section is to demonstrate the functionality of the XdmfDSM classes
+                # This section is to demonstrate the functionality of the XdmfDSM classes
 
-		#//setServerModewriter begin
+                #//setServerModewriter begin
 
-		exampleWriter.setServerMode(True)
+                exampleWriter.setServerMode(True)
 
-		#//setServerModewriter end
+                #//setServerModewriter end
 
-		#//getServerModewriter begin
+                #//getServerModewriter begin
 
-		exampleServerMode = exampleWriter.getServerMode()
+                exampleServerMode = exampleWriter.getServerMode()
 
-		#//getServerModewriter end
+                #//getServerModewriter end
 
-		#//getWorkerCommwriter begin
+                #//getWorkerCommwriter begin
 
-		exampleWorkerComm = exampleWriter.getWorkerComm()
+                exampleWorkerComm = exampleWriter.getWorkerComm()
 
-		#//getWorkerCommwriter end
+                #//getWorkerCommwriter end
 
-		#//setWorkerCommwriter begin
+                #//setWorkerCommwriter begin
 
-		exampleWriter.setWorkerComm(exampleWorkerComm)
+                exampleWriter.setWorkerComm(exampleWorkerComm)
 
-		#//setWorkerCommwriter end
+                #//setWorkerCommwriter end
 
-		'''
-		#//getWorkerCommcontroller begin
+                '''
+                #//getWorkerCommcontroller begin
 
-		exampleWorkerComm = exampleController.getWorkerComm()
+                exampleWorkerComm = exampleController.getWorkerComm()
 
-		#//getWorkerCommcontroller end
+                #//getWorkerCommcontroller end
 
-		#//setWorkerCommcontroller begin
+                #//setWorkerCommcontroller begin
 
-		exampleController.setWorkerComm(exampleWorkerComm)
+                exampleController.setWorkerComm(exampleWorkerComm)
 
-		#//setWorkerCommcontroller end
+                #//setWorkerCommcontroller end
 
-		#//setServerModecontroller begin
+                #//setServerModecontroller begin
 
-		exampleController.setServerMode(True)
+                exampleController.setServerMode(True)
 
-		#//setServerModecontroller end
+                #//setServerModecontroller end
 
-		#//getServerModecontroller begin
+                #//getServerModecontroller begin
 
-		exampleControllerServerMode = exampleController.getServerMode()
+                exampleControllerServerMode = exampleController.getServerMode()
 
-		#//getServerModecontroller end
-		'''
+                #//getServerModecontroller end
+                '''
 
-		#//initcontrollerfrombuffer begin
+                #//initcontrollerfrombuffer begin
 
-		writeController = XdmfHDF5ControllerDSM.New(
-			newPath,
-			newSetPath,
-			XdmfArrayType.Int32(),
-			writeStartVector,
-			writeStrideVector,
-			writeCountVector,
-			writeDataSizeVector,
-			exampleWriter.getServerBuffer());
+                writeController = XdmfHDF5ControllerDSM.New(
+                        newPath,
+                        newSetPath,
+                        XdmfArrayType.Int32(),
+                        writeStartVector,
+                        writeStrideVector,
+                        writeCountVector,
+                        writeDataSizeVector,
+                        exampleWriter.getServerBuffer());
 
-		#//initcontrollerfrombuffer end
+                #//initcontrollerfrombuffer end
 
-		#//initwriterfrombuffer begin
+                #//initwriterfrombuffer begin
 
-		exampleWriter2 = XdmfHDF5WriterDSM.New(newPath, exampleWriter.getServerBuffer());
+                exampleWriter2 = XdmfHDF5WriterDSM.New(newPath, exampleWriter.getServerBuffer());
 
-		#//initwriterfrombuffer end
+                #//initwriterfrombuffer end
 
-		writeController.setServerMode(True)
-		exampleControllerServerMode = writeController.getServerMode()
+                writeController.setServerMode(True)
+                exampleControllerServerMode = writeController.getServerMode()
 
-		#//getServerManagerwriter begin
+                #//getServerManagerwriter begin
 
-		exampleManager = exampleWriter.getServerManager()
+                exampleManager = exampleWriter.getServerManager()
 
-		#//getServerManagerwriter end
+                #//getServerManagerwriter end
 
-		#//setServerManagerwriter begin
+                #//setServerManagerwriter begin
 
-		exampleWriter.setManager(exampleManager)
+                exampleWriter.setManager(exampleManager)
 
-		#//setServerManagerwriter end
-		
-		'''
-		#//getServerManagercontroller begin
+                #//setServerManagerwriter end
+                
+                '''
+                #//getServerManagercontroller begin
 
-		exampleManager = exampleController.getServerManager()
+                exampleManager = exampleController.getServerManager()
 
-		#//getServerManagercontroller end
+                #//getServerManagercontroller end
 
-		#//setServerManagercontroller begin
+                #//setServerManagercontroller begin
 
-		exampleController.setManager(exampleManager)
+                exampleController.setManager(exampleManager)
 
-		#//setServerManagercontroller end
-		'''
+                #//setServerManagercontroller end
+                '''
 
-		#//GetUpdatePiece begin
+                #//GetUpdatePiece begin
 
-		intraId = exampleManager.GetUpdatePiece()
+                intraId = exampleManager.GetUpdatePiece()
 
-		#//GetUpdatePiece end
+                #//GetUpdatePiece end
 
-		#//GetUpdateNumPieces begin
+                #//GetUpdateNumPieces begin
 
-		intraSize = exampleManager.GetUpdateNumPieces()
+                intraSize = exampleManager.GetUpdateNumPieces()
 
-		#//GetUpdateNumPieces end
+                #//GetUpdateNumPieces end
 
-		#//GetMpiComm begin
+                #//GetMpiComm begin
 
-		exampleManagerComm = exampleManager.GetMpiComm()
+                exampleManagerComm = exampleManager.GetMpiComm()
 
-		#//GetMpiComm end
+                #//GetMpiComm end
 
-		#//SetMpiComm begin
+                #//SetMpiComm begin
 
-		exampleManager.SetMpiComm(exampleManagerComm)
+                exampleManager.SetMpiComm(exampleManagerComm)
 
-		#//SetMpiComm end
+                #//SetMpiComm end
 
-		#//GetlocalBufferSizeMBytes begin
+                #//GetlocalBufferSizeMBytes begin
 
-		exampleBufferSize = exampleManager.GetLocalBufferSizeMBytes()
+                exampleBufferSize = exampleManager.GetLocalBufferSizeMBytes()
 
-		#//GetLocalBufferSizeMBytes end
+                #//GetLocalBufferSizeMBytes end
 
-		#//SetLocalBufferSizeMBytes begin
+                #//SetLocalBufferSizeMBytes begin
 
-		exampleManager.SetLocalBufferSizeMBytes(exampleBufferSize)
+                exampleManager.SetLocalBufferSizeMBytes(exampleBufferSize)
 
-		#//SetLocalBufferSizeMBytes end
+                #//SetLocalBufferSizeMBytes end
 
-		#//GetIsServer begin
+                #//GetIsServer begin
 
-		exampleIsServer = exampleManager.GetIsServer()
+                exampleIsServer = exampleManager.GetIsServer()
 
-		#//GetIsServer end
+                #//GetIsServer end
 
-		#//SetIsServer begin
+                #//SetIsServer begin
 
-		exampleManager.SetIsServer(exampleIsServer)
+                exampleManager.SetIsServer(exampleIsServer)
 
-		#//SetIsServer end
+                #//SetIsServer end
 
-		#//GetDsmType begin
+                #//GetDsmType begin
 
-		exampleType = exampleManager.GetDsmType()
+                exampleType = exampleManager.GetDsmType()
 
-		#//GetDsmType end
+                #//GetDsmType end
 
-		#//SetDsmType begin
+                #//SetDsmType begin
 
-		exampleManager.SetDsmType(XDMF_DSM_TYPE_UNIFORM)
+                exampleManager.SetDsmType(XDMF_DSM_TYPE_UNIFORM)
 
-		#//SetDsmType end
+                #//SetDsmType end
 
-		#//GetBlockLength begin
+                #//GetBlockLength begin
 
-		exampleBlockLength = exampleManager.GetBlockLength()
+                exampleBlockLength = exampleManager.GetBlockLength()
 
-		#//GetBlockLength end
+                #//GetBlockLength end
 
-		#//SetBlockLength begin
+                #//SetBlockLength begin
 
-		exampleManager.SetBlockLength(exampleBlockLength)
+                exampleManager.SetBlockLength(exampleBlockLength)
 
-		#//SetBlockLength end
+                #//SetBlockLength end
 
-		#//GetInterCommType begin
+                #//GetInterCommType begin
 
-		exampleCommType = exampleManager.GetInterCommType()
+                exampleCommType = exampleManager.GetInterCommType()
 
-		#//GetInterCommType end
+                #//GetInterCommType end
 
-		#//SetinterCommType begin
+                #//SetinterCommType begin
 
-		exampleManager.SetInterCommType(XDMF_DSM_COMM_MPI)
+                exampleManager.SetInterCommType(XDMF_DSM_COMM_MPI)
 
-		#//SetInterCommType end
+                #//SetInterCommType end
 
-		#//GetIsConnected begin
+                #//GetIsConnected begin
 
-		exampleManagerConnectionStatus = exampleManager.GetIsConnected()
+                exampleManagerConnectionStatus = exampleManager.GetIsConnected()
 
-		#//GetIsConnected end
+                #//GetIsConnected end
 
-		'''
-		#//Create begin
+                '''
+                #//Create begin
 
-		exampleManager.Create(size - numServerCores, size - 1)
+                exampleManager.Create(size - numServerCores, size - 1)
 
-		#//Create end
+                #//Create end
 
-		#//Destroy begin
+                #//Destroy begin
 
-		exampleManager.Destroy()
+                exampleManager.Destroy()
 
-		#//Destroy end
-		'''
+                #//Destroy end
+                '''
 
-		#//getServerBufferwriter begin
+                #//getServerBufferwriter begin
 
-		exampleBuffer = exampleWriter.getServerBuffer()
+                exampleBuffer = exampleWriter.getServerBuffer()
 
-		#//getServerBufferwriter end
+                #//getServerBufferwriter end
 
-		#//setBufferwriter begin
+                #//setBufferwriter begin
 
-		exampleWriter.setBuffer(exampleBuffer)
+                exampleWriter.setBuffer(exampleBuffer)
 
-		#//setBufferwriter end
+                #//setBufferwriter end
 
-		'''
-		#//getServerBuffercontroller begin
+                '''
+                #//getServerBuffercontroller begin
 
-		exampleBuffer = exampleController.getServerBuffer()
+                exampleBuffer = exampleController.getServerBuffer()
 
-		#//getServerBuffercontroller end
+                #//getServerBuffercontroller end
 
-		#//setBuffercontroller begin
+                #//setBuffercontroller begin
 
-		exampleController.setBuffer(exampleBuffer)
+                exampleController.setBuffer(exampleBuffer)
 
-		#//setBuffercontroller end
-		'''
+                #//setBuffercontroller end
+                '''
 
-		#//GetDsmBuffer begin
+                #//GetDsmBuffer begin
 
-		exampleBuffer = exampleManager.GetDsmBuffer()
+                exampleBuffer = exampleManager.GetDsmBuffer()
 
-		#//GetDsmBuffer end
+                #//GetDsmBuffer end
 
-		#//SetDsmBuffer begin
+                #//SetDsmBuffer begin
 
                 exampleManager.SetDsmBuffer(exampleBuffer)
 
-		#//SetDsmBuffer end
+                #//SetDsmBuffer end
 
-		#//GetIsConnectedbuffer begin
+                #//GetIsConnectedbuffer begin
 
                 exampleIsConnected = exampleBuffer.GetIsConnected()
 
-		#//GetIsConnectedbuffer end
+                #//GetIsConnectedbuffer end
 
-		#//SetIsConnectedbuffer begin
+                #//SetIsConnectedbuffer begin
 
                 exampleBuffer.SetIsConnected(exampleIsConnected)
 
-		#//SetIsConnectedbuffer end
+                #//SetIsConnectedbuffer end
 
-		#//GetDataPointer begin
+                #//GetDataPointer begin
 
                 exampleDataPointer = exampleBuffer.GetDataPointer()
 
-		#//GetDataPointer end
+                #//GetDataPointer end
 
-		#//GetDsmTypebuffer begin
+                #//GetDsmTypebuffer begin
 
                 exampleDSMType = exampleBuffer.GetDsmType()
 
-		#//GetDsmTypebuffer end
+                #//GetDsmTypebuffer end
 
-		#//SetDsmTypebuffer begin
+                #//SetDsmTypebuffer begin
 
                 exampleBuffer.SetDsmType(XDMF_DSM_TYPE_UNIFORM)
 
-		#//SetDsmTypebuffer end
+                #//SetDsmTypebuffer end
 
-		#//GetIsServerbuffer begin
+                #//GetIsServerbuffer begin
 
                 exampleBufferIsServer = exampleBuffer.GetIsServer()
 
-		#//GetIsServerbuffer end
+                #//GetIsServerbuffer end
 
-		#//SetIsServerbuffer begin
+                #//SetIsServerbuffer begin
 
                 exampleBuffer.SetIsServer(exampleIsServer)
 
-		#//SetIsServerbuffer end
+                #//SetIsServerbuffer end
 
-		#//GetStartAddress begin
+                #//GetStartAddress begin
 
                 exampleBufferStart = exampleBuffer.GetStartAddress()
 
-		#//GetStartAddress end
+                #//GetStartAddress end
 
-		#//GetEndAddress begin
+                #//GetEndAddress begin
 
                 exampleBufferEnd = exampleBuffer.GetEndAddress()
 
-		#//GetEndAddress end
+                #//GetEndAddress end
 
-		#//GetStartServerId begin
+                #//GetStartServerId begin
 
                 exampleServerStart = exampleBuffer.GetStartServerId()
 
-		#//GetStartServerId end
+                #//GetStartServerId end
 
-		#//GetEndServerid begin
+                #//GetEndServerid begin
 
                 exampleServerEnd = exampleBuffer.GetEndServerId()
 
-		#//GetEndServerId end
+                #//GetEndServerId end
 
-		#//GetLength begin
+                #//GetLength begin
 
                 exampleBufferLength = exampleBuffer.GetLength()
 
-		#//GetLength end
+                #//GetLength end
 
-		#//GetTotalLength begin
+                #//GetTotalLength begin
 
                 exampleTotalBufferLength = exampleBuffer.GetTotalLength()
 
-		#//GetTotalLength end
+                #//GetTotalLength end
 
-		#//GetBlockLengthbuffer begin
+                #//GetBlockLengthbuffer begin
 
                 exampleBufferBlockLength = exampleBuffer.GetBlockLength()
 
-		#//GetBlockLengthbuffer end
+                #//GetBlockLengthbuffer end
 
-		#//SetBlockLengthbuffer begin
+                #//SetBlockLengthbuffer begin
 
                 exampleBuffer.SetBlockLength(exampleBufferBlockLength)
 
-		#//SetBlockLengthbuffer end
+                #//SetBlockLengthbuffer end
 
-		'''
-		#//ConfigureUniform begin
+                '''
+                #//ConfigureUniform begin
 
                 exampleBuffer.ConfigureUniform(exampleBuffer.GetComm(), dsmSize/numServersCores, size - numServersCores, size - 1)
 
-		#//ConfigureUniform end
-		'''
-		sendingCore = -1
+                #//ConfigureUniform end
+                '''
+                sendingCore = -1
 
-		#//SendCommandHeader begin
+                #//SendCommandHeader begin
 
                 if (id == sendingCore):
                         exampleBuffer.SendCommandHeader(XDMF_DSM_OPCODE_DONE, 1, 0, 0, XDMF_DSM_INTER_COMM)
 
-		#//SendCommandHeader end
+                #//SendCommandHeader end
 
-		#//SendData begin
+                #//SendData begin
 
                 if (id == sendingCore):
                         sentData = "datastring"
                         exampleBuffer.SendData(1, sentData, 0, XDMF_DSM_PUT_DATA_TAG, 0, XDMF_DSM_INTER_COMM)
 
-		#//SendData end
+                #//SendData end
 
-		#//SendAcknowledgment begin
+                #//SendAcknowledgment begin
 
                 if (id == 1):
                         sentData = 1
                         exampleBuffer.SendAcknowledgment(0, sentData, XDMF_DSM_PUT_DATA_TAG, XDMF_DSM_INTER_COMM)
 
-		#//SendAcknowledgment end
+                #//SendAcknowledgment end
 
-		#//ReceiveAcknowledgement begin
+                #//ReceiveAcknowledgement begin
 
-		if (id == 0):
-			recvData = 0
-			exampleBuffer.ReceiveAcknowledgment(1, recvData, XDMF_DSM_PUT_DATA_TAG, XDMF_DSM_INTER_COMM)
+                if (id == 0):
+                        recvData = 0
+                        exampleBuffer.ReceiveAcknowledgment(1, recvData, XDMF_DSM_PUT_DATA_TAG, XDMF_DSM_INTER_COMM)
 
-		#//ReceiveAcknowledgement end
+                #//ReceiveAcknowledgement end
 
 
 
-		ServerIds = []
+                ServerIds = []
 
-		for i in range(0, (size - numServersCores) / 2):
-			ServerIds.append(i)
+                for i in range(0, (size - numServersCores) / 2):
+                        ServerIds.append(i)
 
-		readingCores = workerComm.Get_group().Excl(ServerIds)
+                readingCores = workerComm.Get_group().Excl(ServerIds)
 
-		readComm = workerComm.Create(readingCores)
+                readComm = workerComm.Create(readingCores)
 
-		writingCores = workerComm.Get_group().Incl(ServerIds)
+                writingCores = workerComm.Get_group().Incl(ServerIds)
 
-		writeComm = workerComm.Create(writingCores)
+                writeComm = workerComm.Create(writingCores)
 
-		exampleBuffer.GetComm().DupComm(workerComm)
+                exampleBuffer.GetComm().DupComm(workerComm)
 
-		#//BufferService begin
+                #//BufferService begin
 
-		if (id == 0):
-			serviceOut = exampleBuffer.BufferService()
+                if (id == 0):
+                        serviceOut = exampleBuffer.BufferService()
 
                 if (id == 1):
-			exampleBuffer.SendCommandHeader(XDMF_DSM_OPCODE_DONE, 0, 0, 0, XDMF_DSM_INTER_COMM)
+                        exampleBuffer.SendCommandHeader(XDMF_DSM_OPCODE_DONE, 0, 0, 0, XDMF_DSM_INTER_COMM)
 
-		#//BufferService end
+                #//BufferService end
 
-		#//BufferServiceLoop begin
+                #//BufferServiceLoop begin
 
-		if (id == 0):
-			exampleBuffer.BufferServiceLoop()
+                if (id == 0):
+                        exampleBuffer.BufferServiceLoop()
 
-		if (id == 1):
-			exampleBuffer.SendCommandHeader(XDMF_DSM_OPCODE_DONE, 0, 0, 0, XDMF_DSM_INTER_COMM)
+                if (id == 1):
+                        exampleBuffer.SendCommandHeader(XDMF_DSM_OPCODE_DONE, 0, 0, 0, XDMF_DSM_INTER_COMM)
 
-		#//BufferServiceLoop end
+                #//BufferServiceLoop end
 
-		#//AddressToId begin
+                #//AddressToId begin
 
                 correspondingId = exampleBuffer.AddressToId(500)
 
-		#//AddressToId end
+                #//AddressToId end
 
-		#//GetComm begin
+                #//GetComm begin
 
                 exampleDSMComm = exampleBuffer.GetComm()
 
-		#//GetComm end
+                #//GetComm end
 
-		#//SetComm begin
+                #//SetComm begin
 
                 exampleBuffer.SetComm(exampleDSMComm)
 
-		#//SetComm end
+                #//SetComm end
 
-		#//GetId begin
+                #//GetId begin
 
                 exampleIntraID = exampleDSMComm.GetId()
 
-		#//GetId end
+                #//GetId end
 
-		#//GetIntraSize begin
+                #//GetIntraSize begin
 
                 exampleIntraSize = exampleDSMComm.GetIntraSize()
 
-		#//GetIntraSize end
+                #//GetIntraSize end
 
-		#//GetInterId begin
+                #//GetInterId begin
 
-		exampleInterID = exampleDSMComm.GetInterId()
+                exampleInterID = exampleDSMComm.GetInterId()
 
-		#//GetInterId end
+                #//GetInterId end
 
-		#//GetInterSize begin
+                #//GetInterSize begin
 
                 exampleInterSize = exampleDSMComm.GetInterSize()
 
-		#//GetInterSize end
+                #//GetInterSize end
 
-		#//GetInterCommType begin
+                #//GetInterCommType begin
 
                 exampleInterCommType = exampleDSMComm.GetInterCommType()
 
-		#//GetInterCommType end
+                #//GetInterCommType end
 
-		#//initcomm begin
+                #//initcomm begin
 
                 exampleDSMComm.Init()
 
-		#//initcomm end
+                #//initcomm end
 
-		#//GetIntraComm begin
+                #//GetIntraComm begin
 
                 exampleIntraComm = exampleDSMComm.GetIntraComm()
 
-		#//GetIntraComm end
+                #//GetIntraComm end
 
-		#//DupComm begin
+                #//DupComm begin
 
-		exampleDSMComm.DupComm(exampleIntraComm.Dup())
+                exampleDSMComm.DupComm(exampleIntraComm.Dup())
 
-		#//DupComm end
+                #//DupComm end
 
 
 
-		print type(exampleDSMComm.GetDsmPortName())
-		testName = "test"
-		exampleDSMComm.SetDsmPortName(testName)
-		print exampleDSMComm.GetDsmPortName()
+                print type(exampleDSMComm.GetDsmPortName())
+                testName = "test"
+                exampleDSMComm.SetDsmPortName(testName)
+                print exampleDSMComm.GetDsmPortName()
 
-		'''
+                '''
 
                 connectingGroup = True
                 if (id < 5):
@@ -579,7 +579,7 @@ if __name__ == "__main__":
                 else:
                         connectingGroup = False;
 
-		portString = ""
+                portString = ""
 
                 if (!connectingGroup):
                         exampleDSMComm.OpenPort()
@@ -603,73 +603,73 @@ if __name__ == "__main__":
                         // When done with connection
                         exampleManager.Disconnect();
 
-		'''
+                '''
 
                 # This is the end of the Demonstration
 
-		exampleWriter.setMode(XdmfHeavyDataWriter.Hyperslab)
+                exampleWriter.setMode(XdmfHeavyDataWriter.Hyperslab)
 
-		testArray.insert(writeController)
+                testArray.insert(writeController)
 
-		for i in range(0, size-numServersCores):
-			workerComm.Barrier()
-			if (i == id):
-				print "Core # " + str(id)
-				print "Controller stats" 
-				print "datasetpath = " + testArray.getHeavyDataController(0).getDataSetPath() 
-				print "filepath = " + testArray.getHeavyDataController(0).getFilePath()
-				outputVector = testArray.getHeavyDataController(0).getDataspaceDimensions()
-				print "Data space dimensions" 
-				for j in range(0, outputVector.size()):
-					print "[" + str(j) + "] =" + str(outputVector[j])
-				print "Controller Dimensions"
-				outputVector = testArray.getHeavyDataController(0).getDimensions()
-				for j in range(0, outputVector.size()):
-					print "[" + str(j) + "] =" + str(outputVector[j])
-				print "Controller size"  + str(testArray.getHeavyDataController(0).getSize())
-				print "Controller starts"
-				outputVector = testArray.getHeavyDataController(0).getStart()
-				for j in range(0, outputVector.size()):
-					print "[" + str(j) + "] =" + str(outputVector[j])
-				print "Controller strides"
-				outputVector = testArray.getHeavyDataController(0).getStride()
-				for j in range(0, outputVector.size()):
-					print "[" + str(j) + "] =" + str(outputVector[j])
-				for j in range(0, testArray.getSize()):
-					print "core #" + str(id) + " testArray[" + str(j) + "] = " + str(testArray.getValueAsInt32(j))
-		testArray.accept(exampleWriter)
+                for i in range(0, size-numServersCores):
+                        workerComm.Barrier()
+                        if (i == id):
+                                print "Core # " + str(id)
+                                print "Controller stats" 
+                                print "datasetpath = " + testArray.getHeavyDataController(0).getDataSetPath() 
+                                print "filepath = " + testArray.getHeavyDataController(0).getFilePath()
+                                outputVector = testArray.getHeavyDataController(0).getDataspaceDimensions()
+                                print "Data space dimensions" 
+                                for j in range(0, outputVector.size()):
+                                        print "[" + str(j) + "] =" + str(outputVector[j])
+                                print "Controller Dimensions"
+                                outputVector = testArray.getHeavyDataController(0).getDimensions()
+                                for j in range(0, outputVector.size()):
+                                        print "[" + str(j) + "] =" + str(outputVector[j])
+                                print "Controller size"  + str(testArray.getHeavyDataController(0).getSize())
+                                print "Controller starts"
+                                outputVector = testArray.getHeavyDataController(0).getStart()
+                                for j in range(0, outputVector.size()):
+                                        print "[" + str(j) + "] =" + str(outputVector[j])
+                                print "Controller strides"
+                                outputVector = testArray.getHeavyDataController(0).getStride()
+                                for j in range(0, outputVector.size()):
+                                        print "[" + str(j) + "] =" + str(outputVector[j])
+                                for j in range(0, testArray.getSize()):
+                                        print "core #" + str(id) + " testArray[" + str(j) + "] = " + str(testArray.getValueAsInt32(j))
+                testArray.accept(exampleWriter)
 
-		readStartVector = UInt32Vector()
-		readStartVector.push_back(4*(size - id - 1 - numServersCores))
-		readStrideVector = UInt32Vector()
-		readStrideVector.push_back(1)
-		readCountVector = UInt32Vector()
-		readCountVector.push_back(4)
-		readDataSizeVector = UInt32Vector()
-		readDataSizeVector.push_back(4*(size-numServersCores))
+                readStartVector = UInt32Vector()
+                readStartVector.push_back(4*(size - id - 1 - numServersCores))
+                readStrideVector = UInt32Vector()
+                readStrideVector.push_back(1)
+                readCountVector = UInt32Vector()
+                readCountVector.push_back(4)
+                readDataSizeVector = UInt32Vector()
+                readDataSizeVector.push_back(4*(size-numServersCores))
 
-		readArray = XdmfArray.New()
+                readArray = XdmfArray.New()
 
-		readArray.initializeAsInt32(0)
-		readArray.reserve(testArray.getSize())
+                readArray.initializeAsInt32(0)
+                readArray.reserve(testArray.getSize())
 
-		readController = XdmfHDF5ControllerDSM.New(
-			newPath,
-			newSetPath,
-			XdmfArrayType.Int32(),
-			readStartVector,
-			readStrideVector,
-			readCountVector,
-			readDataSizeVector,
-			exampleWriter.getServerBuffer())
+                readController = XdmfHDF5ControllerDSM.New(
+                        newPath,
+                        newSetPath,
+                        XdmfArrayType.Int32(),
+                        readStartVector,
+                        readStrideVector,
+                        readCountVector,
+                        readDataSizeVector,
+                        exampleWriter.getServerBuffer())
 
-		readArray.insert(readController)
+                readArray.insert(readController)
 
-		if (id == 0):
-			print "\n\n\n"
+                if (id == 0):
+                        print "\n\n\n"
 
-		print "testing read"
-		readArray.read()
+                print "testing read"
+                readArray.read()
 
 
                 for i in range (0, size):
@@ -699,78 +699,78 @@ if __name__ == "__main__":
                                 for j in range (0, readArray.getSize()):
                                         print "core #" + str(id) + " readArray[" + str(j) + "] = " + str(readArray.getValueAsInt32(j))
 
-		workerComm.Barrier()
+                workerComm.Barrier()
 
-		# End of Work Section
+                # End of Work Section
 
-	#//stopDSMwriter begin
+        #//stopDSMwriter begin
 
-	if (id == 0):
-		exampleWriter.stopDSM()
+        if (id == 0):
+                exampleWriter.stopDSM()
 
-	#//stopDSMwriter end
+        #//stopDSMwriter end
 
-	'''
-	#//stopDSMcontroller begin
+        '''
+        #//stopDSMcontroller begin
 
 
-	if (id == 0):
+        if (id == 0):
                 exampleController.stopDSM()
 
-	#//stopDSMcontroller end
+        #//stopDSMcontroller end
 
-	#//sendDone begin
+        #//sendDone begin
 
-	if (id == 0):
+        if (id == 0):
                 closeBuffer = exampleWriter.getServerBuffer()
                 closeBuffer.SendDone()
 
-	#//sendDone end
+        #//sendDone end
 
-	'''
-	#//GetInterComm begin
+        '''
+        #//GetInterComm begin
 
-	exampleDSMComm = exampleWriter.getServerBuffer().GetComm()
+        exampleDSMComm = exampleWriter.getServerBuffer().GetComm()
 
-	exampleInterComm = exampleDSMComm.GetInterComm()
+        exampleInterComm = exampleDSMComm.GetInterComm()
 
-	#//GetInterComm end
+        #//GetInterComm end
 
-	#//DupInterComm begin
+        #//DupInterComm begin
 
         exampleDSMComm.DupInterComm(exampleInterComm.Dup())
 
-	#//DupInterComm end
+        #//DupInterComm end
 
-	#//SendRecvInfo begin
+        #//SendRecvInfo begin
 
-	if (id >= size - numServersCores):
-		exampleWriter.getServerBuffer().SendInfo()
-	else:
-		exampleWriter.getServerBuffer().ReceiveInfo()
+        if (id >= size - numServersCores):
+                exampleWriter.getServerBuffer().SendInfo()
+        else:
+                exampleWriter.getServerBuffer().ReceiveInfo()
 
-	#//SendRecvInfo end
+        #//SendRecvInfo end
 
-	'''
-	#//restartDSMwriter begin
+        '''
+        #//restartDSMwriter begin
 
-	exampleWriter.restartDSM()
+        exampleWriter.restartDSM()
 
-	#//restartDSMwriter end
+        #//restartDSMwriter end
 
-	#//restartDSMcontroller begin
+        #//restartDSMcontroller begin
 
-	exampleController.restartDSM()
+        exampleController.restartDSM()
 
-	#//restartDSMcontroller end
-	'''
+        #//restartDSMcontroller end
+        '''
 
-	#//finalizeMPI
+        #//finalizeMPI
 
-	exampleWriter.deleteManager()
+        exampleWriter.deleteManager()
 
-	#//finalizeMPI
+        #//finalizeMPI
 
-	'''
-	exampleController.deleteManager()
-	'''
+        '''
+        exampleController.deleteManager()
+        '''

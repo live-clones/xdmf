@@ -58,7 +58,7 @@
 // Includes
 #include <XdmfDSMBuffer.hpp>
 #include <XdmfDSMCommMPI.hpp>
-#include <XdmfCore.hpp>
+#include <XdmfDSM.hpp>
 #include <mpi.h>
 
 
@@ -68,7 +68,7 @@
  * XdmfDSMManager takes the place of the H5FDdsmManager defined in H5FD.
  * It is primarily for allowing the XdmfDSM to interact with HDF5 dsm without threads.
  */
-class XDMFCORE_EXPORT XdmfDSMManager {
+class XDMFDSM_EXPORT XdmfDSMManager {
 
 public:
 
@@ -106,7 +106,7 @@ public:
    * @skipline #//Disconnectmanager
    * @until #//Disconnectmanager
    *
-   * @param	persist		Whether to try to connect repeatedly
+   * @param     persist         Whether to try to connect repeatedly
    */
   void Connect(bool persist = false);
 
@@ -159,8 +159,8 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	startId		The index of the first server node
-   * @param	endId		The index of the last server node
+   * @param     startId         The index of the first server node
+   * @param     endId           The index of the last server node
    */
   void Create(int startId = -1, int endId = -1);
 
@@ -301,7 +301,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	The size of the blocks currently being used
+   * @return    The size of the blocks currently being used
    */
   long GetBlockLength();
 
@@ -356,7 +356,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	The buffer that the manager is using as its internal buffer
+   * @return    The buffer that the manager is using as its internal buffer
    */
   XdmfDSMBuffer * GetDsmBuffer();
 
@@ -409,7 +409,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	They type of DSM being used
+   * @return    They type of DSM being used
    */
   int GetDsmType();
 
@@ -462,7 +462,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	They type of intercomm currently being used
+   * @return    They type of intercomm currently being used
    */
   int GetInterCommType();
 
@@ -515,7 +515,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	Whether the Buffer is connected
+   * @return    Whether the Buffer is connected
    */
   bool GetIsConnected();
 
@@ -568,7 +568,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	Whether the Manager is a server or not
+   * @return    Whether the Manager is a server or not
    */
   bool GetIsServer();
 
@@ -621,7 +621,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	the maximum size of the data buffer on server cores
+   * @return    the maximum size of the data buffer on server cores
    */
   unsigned int GetLocalBufferSizeMBytes();
 
@@ -674,7 +674,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	The MpiComm that the manager is currently using
+   * @return    The MpiComm that the manager is currently using
    */
   MPI_Comm GetMpiComm();
 
@@ -727,7 +727,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	The Id of the core calling this function
+   * @return    The Id of the core calling this function
    */
   int GetUpdatePiece();
 
@@ -780,7 +780,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @return	The total number of cores over the MpiComm
+   * @return    The total number of cores over the MpiComm
    */
   int GetUpdateNumPieces();
 
@@ -838,7 +838,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	newSize		The size to the blocks to be used
+   * @param     newSize         The size to the blocks to be used
    */
   void SetBlockLength(long newSize);
 
@@ -897,7 +897,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	newBuffer	The buffer that the Manager is to use as its internal buffer
+   * @param     newBuffer       The buffer that the Manager is to use as its internal buffer
    */
   void SetDsmBuffer(XdmfDSMBuffer * newBuffer);
 
@@ -950,7 +950,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	newType		The Type of DSM that the manager should generate
+   * @param     newType         The Type of DSM that the manager should generate
    */
   void SetDsmType(int newType);
 
@@ -1008,7 +1008,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	newStatus	Whether the Manager is to be a server or not
+   * @param     newStatus       Whether the Manager is to be a server or not
    */
   void SetIsServer(bool newStatus);
 
@@ -1061,7 +1061,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	newType		The type of intercomm to be generated for now on
+   * @param     newType         The type of intercomm to be generated for now on
    */
   void SetInterCommType(int newType);
 
@@ -1120,7 +1120,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	newSize		The new maximum size of the data buffer on the server cores
+   * @param     newSize         The new maximum size of the data buffer on the server cores
    */
   void SetLocalBufferSizeMBytes(unsigned int newSize);
 
@@ -1178,7 +1178,7 @@ public:
    * @skipline #//finalizeMPI
    * @until #//finalizeMPI
    *
-   * @param	comm	The comm to be set as the MpiComm for this manager
+   * @param     comm    The comm to be set as the MpiComm for this manager
    */
   void SetMpiComm(MPI_Comm comm);
 

@@ -4,119 +4,119 @@
 
 int main(int, char **)
 {
-	//#initialization begin
+        //#initialization begin
 
-	std::string newPath = "File path to hdf5 file goes here";
-	std::string newSetPath = "path to the set goes here";
-	shared_ptr<const XdmfArrayType> readType = XdmfArrayType::Int32();
-	std::vector<unsigned int> readStarts;
-	//Three dimensions, all starting at index 0
-	readStarts.push_back(0);
-	readStarts.push_back(0);
-	readStarts.push_back(0);
-	std::vector<unsigned int> readStrides;
-	//Three dimensions, no skipping between reads
-	readStrides.push_back(1);
-	readStrides.push_back(1);
-	readStrides.push_back(1);
-	std::vector<unsigned int> readCounts;
-	//Three dimensions, reading 10 values from each
-	readCounts.push_back(10);
-	readCounts.push_back(10);
-	readCounts.push_back(10);
-	std::vector<unsigned int> readDataSize;
-	//Three dimensions, 10 values in each
-	readDataSize.push_back(10);
-	readDataSize.push_back(10);
-	readDataSize.push_back(10);
-	shared_ptr<XdmfHDF5Controller> exampleController = XdmfHDF5Controller::New(
-		newPath,
-		newSetPath,
-		readType,
-		readStarts,
-		readStrides,
-		readCounts,
-		readDataSize);
+        std::string newPath = "File path to hdf5 file goes here";
+        std::string newSetPath = "path to the set goes here";
+        shared_ptr<const XdmfArrayType> readType = XdmfArrayType::Int32();
+        std::vector<unsigned int> readStarts;
+        //Three dimensions, all starting at index 0
+        readStarts.push_back(0);
+        readStarts.push_back(0);
+        readStarts.push_back(0);
+        std::vector<unsigned int> readStrides;
+        //Three dimensions, no skipping between reads
+        readStrides.push_back(1);
+        readStrides.push_back(1);
+        readStrides.push_back(1);
+        std::vector<unsigned int> readCounts;
+        //Three dimensions, reading 10 values from each
+        readCounts.push_back(10);
+        readCounts.push_back(10);
+        readCounts.push_back(10);
+        std::vector<unsigned int> readDataSize;
+        //Three dimensions, 10 values in each
+        readDataSize.push_back(10);
+        readDataSize.push_back(10);
+        readDataSize.push_back(10);
+        shared_ptr<XdmfHDF5Controller> exampleController = XdmfHDF5Controller::New(
+                newPath,
+                newSetPath,
+                readType,
+                readStarts,
+                readStrides,
+                readCounts,
+                readDataSize);
 
-	//Using XdmfHDF5Controller since XdmfHeavyDataController is an abstract class
+        //Using XdmfHDF5Controller since XdmfHeavyDataController is an abstract class
 
-	//#initialization end
+        //#initialization end
 
-	//#getDataSetPath begin
+        //#getDataSetPath begin
 
-	std::string exampleSetPath = exampleController->getDataSetPath();
+        std::string exampleSetPath = exampleController->getDataSetPath();
 
-	//#getDataSetPath end
+        //#getDataSetPath end
 
-	//#getDimensions begin
+        //#getDimensions begin
 
-	std::vector<unsigned int>  exampleDimensions = exampleController->getDimensions();
+        std::vector<unsigned int>  exampleDimensions = exampleController->getDimensions();
 
-	//#getDimensions end
+        //#getDimensions end
 
-	//#getDataspaceDimensions begin
+        //#getDataspaceDimensions begin
 
-	std::vector<unsigned int> exampleDataspaceDimensions = exampleController->getDataspaceDimensions();
+        std::vector<unsigned int> exampleDataspaceDimensions = exampleController->getDataspaceDimensions();
 
-	//#getDataspaceDimensions end
+        //#getDataspaceDimensions end
 
-	//#getFilePath begin
+        //#getFilePath begin
 
-	std::string exampleFilePath = exampleController->getFilePath();
+        std::string exampleFilePath = exampleController->getFilePath();
 
-	//#getFilePath end
+        //#getFilePath end
 
-	//#getName begin
+        //#getName begin
 
-	std::string exampleName = exampleController->getName();
+        std::string exampleName = exampleController->getName();
 
-	//#getName end
+        //#getName end
 
-	//#getSize begin
+        //#getSize begin
 
-	unsigned int exampleSize = exampleController->getSize();
+        unsigned int exampleSize = exampleController->getSize();
 
-	//#getSize end
+        //#getSize end
 
-	//#getType begin
+        //#getType begin
 
-	shared_ptr<const XdmfArrayType> exampleType = exampleController->getType();
+        shared_ptr<const XdmfArrayType> exampleType = exampleController->getType();
 
-	//#getType end
+        //#getType end
 
-	//#read begin
+        //#read begin
 
-	shared_ptr<XdmfArray> exampleArray = XdmfArray::New();
-	exampleController->read(exampleArray);
-	//exampleArray now holds the data that exampleController holds.
+        shared_ptr<XdmfArray> exampleArray = XdmfArray::New();
+        exampleController->read(exampleArray);
+        //exampleArray now holds the data that exampleController holds.
 
-	//#read end
+        //#read end
 
-	//#getStart begin
+        //#getStart begin
 
         std::vector<unsigned int> exampleStart = exampleController->getStart();
 
-	//#getStart end
+        //#getStart end
 
-	//#getStride begin
+        //#getStride begin
 
         std::vector<unsigned int> exampleStride = exampleController->getStride();
 
-	//#getStride end
+        //#getStride end
 
-	//#setArrayOffset begin
+        //#setArrayOffset begin
 
-	unsigned int newArrayOffset = 5;//default is 0
+        unsigned int newArrayOffset = 5;//default is 0
 
-	exampleController->setArrayOffset(newArrayOffset);
+        exampleController->setArrayOffset(newArrayOffset);
 
-	//#setArrayOffset end
+        //#setArrayOffset end
 
-	//#getArrayOffset begin
+        //#getArrayOffset begin
 
-	unsigned int exampleOffset = exampleController->getArrayOffset();
+        unsigned int exampleOffset = exampleController->getArrayOffset();
 
-	//#getArrayOffset end
+        //#getArrayOffset end
 
-	return 0;
+        return 0;
 }

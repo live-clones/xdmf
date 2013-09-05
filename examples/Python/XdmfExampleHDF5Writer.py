@@ -1,25 +1,25 @@
 from Xdmf import *
 
 if __name__ == "__main__":
-	#//initialization begin
+        #//initialization begin
 
-	newPath = "Your file path goes here"
-	replaceOrig = True
-	exampleWriter = XdmfHDF5Writer.New(newPath, replaceOrig)
+        newPath = "Your file path goes here"
+        replaceOrig = True
+        exampleWriter = XdmfHDF5Writer.New(newPath, replaceOrig)
 
-	#//initialization end
+        #//initialization end
 
-	#//setChunkSize begin
+        #//setChunkSize begin
 
         newChunk = 10
-	#creates blocks in sets of 10 slots
+        #creates blocks in sets of 10 slots
 
         exampleWriter.setChunkSize(newChunk)
 
-	#//setChunkSize end
+        #//setChunkSize end
 
-	#//getChunkSize begin
+        #//getChunkSize begin
 
         exampleChunk = exampleWriter.getChunkSize()
 
-	#//getChunkSize end
+        #//getChunkSize end

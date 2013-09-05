@@ -3,11 +3,11 @@
 
 int main(int, char **)
 {
-	int size = 2;
+        int size = 2;
 
-	//Assuming that exampleGrid is a shared pointer to an XdmfRectilinearGrid
+        //Assuming that exampleGrid is a shared pointer to an XdmfRectilinearGrid
 
-	//#initvalues begin
+        //#initvalues begin
 
         shared_ptr<XdmfArray> pointsXArray = XdmfArray::New();
         pointsXArray->pushBack(5);
@@ -31,91 +31,91 @@ int main(int, char **)
         pointsZArray->pushBack(7);
         pointsZArray->pushBack(2);
 
-	//#initvalues end
+        //#initvalues end
 
-	if (size==2)
-	{
+        if (size==2)
+        {
 
-	//#initialization2 begin
+        //#initialization2 begin
 
-	shared_ptr<XdmfRectilinearGrid> exampleGrid = XdmfRectilinearGrid::New(pointsXArray, pointsYArray);
+        shared_ptr<XdmfRectilinearGrid> exampleGrid = XdmfRectilinearGrid::New(pointsXArray, pointsYArray);
 
-	//#initialization2 end
+        //#initialization2 end
 
-	//#getCoodinatessingle begin
+        //#getCoodinatessingle begin
 
-	shared_ptr<XdmfArray> readPointsX = exampleGrid->getCoordinates(0);
-	shared_ptr<XdmfArray> readPointsY = exampleGrid->getCoordinates(1);
+        shared_ptr<XdmfArray> readPointsX = exampleGrid->getCoordinates(0);
+        shared_ptr<XdmfArray> readPointsY = exampleGrid->getCoordinates(1);
 
-	//#getCoordinatessingle end
+        //#getCoordinatessingle end
 
-	//#getCoordinatessingleconst begin
+        //#getCoordinatessingleconst begin
 
-	shared_ptr<const XdmfArray> readPointsXConst = exampleGrid->getCoordinates(0);
+        shared_ptr<const XdmfArray> readPointsXConst = exampleGrid->getCoordinates(0);
         shared_ptr<const XdmfArray> readPointsYConst = exampleGrid->getCoordinates(1);
 
-	//#getCoordinatessingleconst end
+        //#getCoordinatessingleconst end
 
-	}
+        }
         else if (size==3)
         {
 
-	//#initialization3 begin
+        //#initialization3 begin
 
-	shared_ptr<XdmfRectilinearGrid> exampleGrid = XdmfRectilinearGrid::New(pointsXArray, pointsYArray, pointsZArray);
+        shared_ptr<XdmfRectilinearGrid> exampleGrid = XdmfRectilinearGrid::New(pointsXArray, pointsYArray, pointsZArray);
 
-	//#initialization3 end
+        //#initialization3 end
 
-	//#setCoordinatessingle begin
+        //#setCoordinatessingle begin
 
-	exampleGrid->setCoordinates(0, pointsXArray);
+        exampleGrid->setCoordinates(0, pointsXArray);
 
-	//#setCoordinatessingle end
+        //#setCoordinatessingle end
 
         }
         else //mutable size
         {
 
-	//#initializationvector begin
+        //#initializationvector begin
 
-	std::vector<shared_ptr<XdmfArray> > pointsCollector;
-	pointsCollector.push_back(pointsXArray);
-	pointsCollector.push_back(pointsYArray);
-	pointsCollector.push_back(pointsZArray);
-	shared_ptr<XdmfRectilinearGrid> exampleGrid = XdmfRectilinearGrid::New(pointsCollector);
+        std::vector<shared_ptr<XdmfArray> > pointsCollector;
+        pointsCollector.push_back(pointsXArray);
+        pointsCollector.push_back(pointsYArray);
+        pointsCollector.push_back(pointsZArray);
+        shared_ptr<XdmfRectilinearGrid> exampleGrid = XdmfRectilinearGrid::New(pointsCollector);
 
-	//#initializationvector end
+        //#initializationvector end
 
-	//#setCoordinatesvector begin
+        //#setCoordinatesvector begin
 
-	exampleGrid->setCoordinates(pointsCollector);
+        exampleGrid->setCoordinates(pointsCollector);
 
-	//#setCoordinatesvector end
+        //#setCoordinatesvector end
 
-	//#getDimensions begin
+        //#getDimensions begin
 
-	shared_ptr<XdmfArray> exampleDimensions = exampleGrid->getDimensions();
+        shared_ptr<XdmfArray> exampleDimensions = exampleGrid->getDimensions();
 
-	//#getDimensions end
+        //#getDimensions end
 
-	//#getDimensionsconst begin
+        //#getDimensionsconst begin
 
-	shared_ptr<const XdmfArray> exampleDimensionsConst = exampleGrid->getDimensions();
+        shared_ptr<const XdmfArray> exampleDimensionsConst = exampleGrid->getDimensions();
 
-	//#getDimensionsconst end
+        //#getDimensionsconst end
 
-	//#getCoordinatesvector begin
+        //#getCoordinatesvector begin
 
-	std::vector<shared_ptr<XdmfArray> > exampleCoordinates = exampleGrid->getCoordinates();
+        std::vector<shared_ptr<XdmfArray> > exampleCoordinates = exampleGrid->getCoordinates();
 
-	//#getCoordinatesvector end
+        //#getCoordinatesvector end
 
-	//#getCoordinatesvectorconst begin
+        //#getCoordinatesvectorconst begin
 
-	const std::vector<shared_ptr<XdmfArray> > exampleCoordinatesConst = exampleGrid->getCoordinates();
+        const std::vector<shared_ptr<XdmfArray> > exampleCoordinatesConst = exampleGrid->getCoordinates();
 
-	//#getCoordinatesvectorconst end
+        //#getCoordinatesvectorconst end
 
         }
-	return 0;
+        return 0;
 }

@@ -59,7 +59,7 @@
 #include <XdmfDSMBuffer.hpp>
 #include <XdmfDSMCommMPI.hpp>
 #include <XdmfDSMManager.hpp>
-#include <XdmfCore.hpp>
+#include <XdmfDSM.hpp>
 #include <mpi.h>
 
 #include "H5Ipublic.h"
@@ -82,51 +82,53 @@
 #define XDMF_DSM (XDMF_dsm_init())
 
 extern "C" {
-  XDMFCORE_EXPORT hid_t  XDMF_dsm_init(void);
+  XDMFDSM_EXPORT hid_t  XDMF_dsm_init(void);
 #if H5_VERSION_GE(1,9,0)
-  XDMFCORE_EXPORT herr_t XDMF_dsm_term(void);
+  XDMFDSM_EXPORT herr_t XDMF_dsm_term(void);
 #else
-  XDMFCORE_EXPORT void XDMF_dsm_term(void);
+  XDMFDSM_EXPORT void XDMF_dsm_term(void);
 #endif
   // lock and unlock are currently disabled the user has to make allowances
   // to prevent race conditions
-  XDMFCORE_EXPORT herr_t XDMF_dsm_lock(void);
-  XDMFCORE_EXPORT herr_t XDMF_dsm_unlock(unsigned long flag);
+  XDMFDSM_EXPORT herr_t XDMF_dsm_lock(void);
+  XDMFDSM_EXPORT herr_t XDMF_dsm_unlock(unsigned long flag);
   // Currently no options to set
-  XDMFCORE_EXPORT herr_t XDMF_dsm_set_options(unsigned long flags);
-  XDMFCORE_EXPORT herr_t XDMF_dsm_set_manager(void *manager);
-  XDMFCORE_EXPORT herr_t XDMFH5Pset_fapl_dsm(hid_t fapl_id, MPI_Comm intra_comm,
+  XDMFDSM_EXPORT herr_t XDMF_dsm_set_options(unsigned long flags);
+  XDMFDSM_EXPORT herr_t XDMF_dsm_set_manager(void *manager);
+  XDMFDSM_EXPORT herr_t XDMFH5Pset_fapl_dsm(hid_t fapl_id, MPI_Comm intra_comm,
       void *local_buf_ptr, size_t local_buf_len);
-  XDMFCORE_EXPORT herr_t XDMFH5Pget_fapl_dsm(hid_t fapl_id, MPI_Comm *intra_comm /* out */,
+  XDMFDSM_EXPORT herr_t XDMFH5Pget_fapl_dsm(hid_t fapl_id, MPI_Comm *intra_comm /* out */,
       void **local_buf_ptr_ptr /* out */, size_t *local_buf_len_ptr /* out */);
 
 
 
 
-  XDMFCORE_EXPORT void   *xdmf_dsm_get_manager();
-  XDMFCORE_EXPORT herr_t  xdmf_dsm_get_properties(MPI_Comm *intra_comm,
+  XDMFDSM_EXPORT void   *xdmf_dsm_get_manager();
+  XDMFDSM_EXPORT herr_t  xdmf_dsm_get_properties(MPI_Comm *intra_comm,
       void **buf_ptr_ptr, size_t *buf_len_ptr);
-  XDMFCORE_EXPORT void    xdmf_dsm_set_manager(void *manager);
+  XDMFDSM_EXPORT void    xdmf_dsm_set_manager(void *manager);
 
+/*
   // Probably a bad idea to create managers automatically for the non-threaded version
-  XDMFCORE_EXPORT herr_t  xdmf_dsm_alloc(MPI_Comm intra_comm, void *buf_ptr, size_t buf_len);
-  XDMFCORE_EXPORT herr_t  xdmf_dsm_free();
+  XDMFDSM_EXPORT herr_t  xdmf_dsm_alloc(MPI_Comm intra_comm, void *buf_ptr, size_t buf_len);
+*/
+  XDMFDSM_EXPORT herr_t  xdmf_dsm_free();
 
-  XDMFCORE_EXPORT hbool_t xdmf_dsm_is_server();
+  XDMFDSM_EXPORT hbool_t xdmf_dsm_is_server();
   // Currently no options to set
-  XDMFCORE_EXPORT herr_t  xdmf_dsm_set_options(unsigned long flags);
+  XDMFDSM_EXPORT herr_t  xdmf_dsm_set_options(unsigned long flags);
 
-  XDMFCORE_EXPORT hbool_t xdmf_dsm_is_connected();
-  XDMFCORE_EXPORT herr_t  xdmf_dsm_connect();
+  XDMFDSM_EXPORT hbool_t xdmf_dsm_is_connected();
+  XDMFDSM_EXPORT herr_t  xdmf_dsm_connect();
 
-  XDMFCORE_EXPORT herr_t  xdmf_dsm_update_entry(haddr_t start, haddr_t end);
-  XDMFCORE_EXPORT herr_t  xdmf_dsm_get_entry(haddr_t *start_ptr, haddr_t *end_ptr);
+  XDMFDSM_EXPORT herr_t  xdmf_dsm_update_entry(haddr_t start, haddr_t end);
+  XDMFDSM_EXPORT herr_t  xdmf_dsm_get_entry(haddr_t *start_ptr, haddr_t *end_ptr);
 
-  XDMFCORE_EXPORT herr_t  xdmf_dsm_lock();
-  XDMFCORE_EXPORT herr_t  xdmf_dsm_unlock(unsigned long flag);
+  XDMFDSM_EXPORT herr_t  xdmf_dsm_lock();
+  XDMFDSM_EXPORT herr_t  xdmf_dsm_unlock(unsigned long flag);
 
-  XDMFCORE_EXPORT herr_t  xdmf_dsm_read(haddr_t addr, size_t len, void *buf_ptr);
-  XDMFCORE_EXPORT herr_t  xdmf_dsm_write(haddr_t addr, size_t len, const void *buf_ptr);
+  XDMFDSM_EXPORT herr_t  xdmf_dsm_read(haddr_t addr, size_t len, void *buf_ptr);
+  XDMFDSM_EXPORT herr_t  xdmf_dsm_write(haddr_t addr, size_t len, const void *buf_ptr);
 }
 
 #endif /* XDMFDSMDRIVER_HPP_ */

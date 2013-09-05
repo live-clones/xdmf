@@ -65,10 +65,10 @@ public:
    * @skipline #//constructor2
    * @until #//constructor2
    *
-   * @param	xNumPoints	The number of points in the x direction.
-   * @param	yNumPoints	The number of points in the y direction.
+   * @param     xNumPoints      The number of points in the x direction.
+   * @param     yNumPoints      The number of points in the y direction.
    *
-   * @return			Constructed curvilinear grid.
+   * @return                    Constructed curvilinear grid.
    */
   static shared_ptr<XdmfCurvilinearGrid>
   New(const unsigned int xNumPoints,
@@ -93,11 +93,11 @@ public:
    * @skipline #//constructor3
    * @until #//constructor3
    *
-   * @param	xNumPoints	The number of points in the x direction.
-   * @param	yNumPoints	The number of points in the y direction.
-   * @param	zNumPoints	The number of points in the z direction.
+   * @param     xNumPoints      The number of points in the x direction.
+   * @param     yNumPoints      The number of points in the y direction.
+   * @param     zNumPoints      The number of points in the z direction.
    *
-   * @return			Constructed curvilinear grid.
+   * @return                    Constructed curvilinear grid.
    */
   static shared_ptr<XdmfCurvilinearGrid>
   New(const unsigned int xNumPoints,
@@ -123,9 +123,9 @@ public:
    * @skipline #//constructorvector
    * @until #//constructorvector
    *
-   * @param	numPoints	The number of points in each direction.
+   * @param     numPoints       The number of points in each direction.
    *
-   * @return			Constructed curvilinear grid.
+   * @return                    Constructed curvilinear grid.
    */
   static shared_ptr<XdmfCurvilinearGrid>
   New(const shared_ptr<XdmfArray> numPoints);
@@ -163,7 +163,7 @@ public:
    * @skipline #//getDimensions
    * @until #//getDimensions
    *
-   * @return	XdmfArray containing dimensions of this grid.
+   * @return    XdmfArray containing dimensions of this grid.
    */
   shared_ptr<XdmfArray> getDimensions();
 
@@ -185,7 +185,7 @@ public:
    *
    * Python: Python doesn't have a constant version
    *
-   * @return	XdmfArray containing the dimensions of this grid.
+   * @return    XdmfArray containing the dimensions of this grid.
    */
   shared_ptr<const XdmfArray> getDimensions() const;
 
@@ -216,7 +216,7 @@ public:
    * @skipline #//getGeometry
    * @until #//getGeometry
    *
-   * @return	The geometry associated with this grid.
+   * @return    The geometry associated with this grid.
    */
   shared_ptr<XdmfGeometry> getGeometry();
 
@@ -244,7 +244,7 @@ public:
    * @skipline #//setDimensions
    * @until #//setDimensions
    *
-   * @param	dimensions	The dimension of the grid.
+   * @param     dimensions      The dimension of the grid.
    */
   void setDimensions(const shared_ptr<XdmfArray> dimensions);
 
@@ -271,7 +271,7 @@ public:
    * @skipline #//setGeometry
    * @until #//setGeometry
    *
-   * @param	geometry	An XdmfGeometry to associate with this grid.
+   * @param     geometry        An XdmfGeometry to associate with this grid.
    */
   void setGeometry(const shared_ptr<XdmfGeometry> geometry);
 

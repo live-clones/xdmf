@@ -7,136 +7,136 @@
 
 int main(int, char **)
 {
-	//#initialization begin
+        //#initialization begin
 
-	std::string outFile = "output file name goes here";
-	shared_ptr<XdmfWriter> writerExample = XdmfWriter::New(outFile);
+        std::string outFile = "output file name goes here";
+        shared_ptr<XdmfWriter> writerExample = XdmfWriter::New(outFile);
 
-	//#initialization end
+        //#initialization end
 
-	//#heavyinitialization begin
+        //#heavyinitialization begin
 
-	std::string heavyFile = "heavy file name goes here";
-	bool replaceFile = true;
-	shared_ptr<XdmfHDF5Writer> exampleHeavyWriter = XdmfHDF5Writer::New(heavyFile, replaceFile);
-	shared_ptr<XdmfWriter> exampleWriter = XdmfWriter::New(outFile, exampleHeavyWriter);
+        std::string heavyFile = "heavy file name goes here";
+        bool replaceFile = true;
+        shared_ptr<XdmfHDF5Writer> exampleHeavyWriter = XdmfHDF5Writer::New(heavyFile, replaceFile);
+        shared_ptr<XdmfWriter> exampleWriter = XdmfWriter::New(outFile, exampleHeavyWriter);
 
-	//#heavyinitialization end
+        //#heavyinitialization end
 
-	//#bufferinitialization begin
+        //#bufferinitialization begin
 
-	filebuf exampleBuffer;
-	exampleBuffer.open("file goes here", ios::out);
-	ostream exampleStream(&exampleBuffer);
-	shared_ptr<XdmfWriter> exampleBufferWriter = XdmfWriter::New(exampleStream, exampleHeavyWriter);
+        filebuf exampleBuffer;
+        exampleBuffer.open("file goes here", ios::out);
+        ostream exampleStream(&exampleBuffer);
+        shared_ptr<XdmfWriter> exampleBufferWriter = XdmfWriter::New(exampleStream, exampleHeavyWriter);
 
-	//#bufferinitialization end
+        //#bufferinitialization end
 
-	//#getFilePath begin
+        //#getFilePath begin
 
-	std::string examplePath = exampleWriter->getFilePath();
+        std::string examplePath = exampleWriter->getFilePath();
 
-	//#getFilePath
+        //#getFilePath
 
-	//#getHeavyDataWriter begin
+        //#getHeavyDataWriter begin
 
-	shared_ptr<XdmfHeavyDataWriter> exampleHeavyWriter = exampleWriter->getHeavyDataWriter();
+        shared_ptr<XdmfHeavyDataWriter> exampleHeavyWriter = exampleWriter->getHeavyDataWriter();
 
-	//#getHeavyDataWriter end
+        //#getHeavyDataWriter end
 
-	//#getHeavyDataWriterconst begin
+        //#getHeavyDataWriterconst begin
 
-	shared_ptr<const XdmfHeavyDataWriter> exampleHeavyWriterConst = exampleWriter->getHeavyDataWriter();
+        shared_ptr<const XdmfHeavyDataWriter> exampleHeavyWriterConst = exampleWriter->getHeavyDataWriter();
 
-	//#getHeavyDataWriterconst end
+        //#getHeavyDataWriterconst end
 
-	//#setHeavyDataWriter begin
+        //#setHeavyDataWriter begin
 
-	exampleWriter->setHeavyDataWriter(exampleHeavyWriter);
+        exampleWriter->setHeavyDataWriter(exampleHeavyWriter);
 
-	//#setHeavyDataWriter end
+        //#setHeavyDataWriter end
 
-	//#getLightDataLimit begin
+        //#getLightDataLimit begin
 
-	unsigned int exampleLimit = exampleWriter->getLightDataLimit();
+        unsigned int exampleLimit = exampleWriter->getLightDataLimit();
 
-	//#getLightDataLimit end
+        //#getLightDataLimit end
 
-	//#getMode begin
+        //#getMode begin
 
-	XdmfWriter::Mode testMode = XdmfWriter::Default;
-	if (exampleWriter->getMode() == testMode)
-	{
-		//Do whatever is to be done if the mode is default
-	}
+        XdmfWriter::Mode testMode = XdmfWriter::Default;
+        if (exampleWriter->getMode() == testMode)
+        {
+                //Do whatever is to be done if the mode is default
+        }
 
-	//#getMode end
+        //#getMode end
 
-	//#getWriteXPaths begin
+        //#getWriteXPaths begin
 
-	bool exampleTestPaths = exampleWriter->getWriteXPaths();
+        bool exampleTestPaths = exampleWriter->getWriteXPaths();
 
-	//#getWriteXPaths end
+        //#getWriteXPaths end
 
-	//#getXPathParse begin
+        //#getXPathParse begin
 
-	bool exampleXPathParse = exampleWriter->getXPathParse();
+        bool exampleXPathParse = exampleWriter->getXPathParse();
 
-	//#getXPathParse end
+        //#getXPathParse end
 
-	//#setLightDataLimit begin
+        //#setLightDataLimit begin
 
-	unsigned int newLimit = 20;
-	exampleWriter->setLightDataLimit(newLimit);
-	//The writer will now place any data with a number of values over 20 into heavy data
+        unsigned int newLimit = 20;
+        exampleWriter->setLightDataLimit(newLimit);
+        //The writer will now place any data with a number of values over 20 into heavy data
 
-	//#setLightDataLimit end
+        //#setLightDataLimit end
 
-	//#setMode begin
+        //#setMode begin
 
-	exampleWriter->setMode(XdmfWriter::Default);
+        exampleWriter->setMode(XdmfWriter::Default);
 
-	//#setMode end
+        //#setMode end
 
-	//#setWriteXPaths begin
+        //#setWriteXPaths begin
 
-	exampleWriter->setWriteXPaths(true);
+        exampleWriter->setWriteXPaths(true);
 
-	//#setWriteXPaths end
+        //#setWriteXPaths end
 
-	//#setXPathParse begin
+        //#setXPathParse begin
 
-	exampleWriter->setXPathParse(true);
+        exampleWriter->setXPathParse(true);
 
-	//#setXPathParse end
+        //#setXPathParse end
 
-	//#visitarray begin
+        //#visitarray begin
 
-	//Using XdmfAttribute here, but any XdmfArray would work
-	shared_ptr<XdmfAttribute> exampleAttribute = XdmfAttribute::New();
-	exampleAttribute->setCenter(XdmfAttributeCenter::Node());
-	exampleAttribute->setType(XdmfAttributeType::Scalar());
-	exampleAttribute->pushBack(1);
-	exampleAttribute->pushBack(2);
-	exampleAttribute->pushBack(3);
-	exampleAttribute->pushBack(4);
-	exampleAttribute->pushBack(5);
-	exampleAttribute->pushBack(6);
-	std::string attributeFile = "output file name goes here";
-	shared_ptr<XdmfWriter> exampleArrayWriter = XdmfWriter::New(attributeFile);
-	exampleArrayWriter->visit(exampleAttribute, exampleWriter);
+        //Using XdmfAttribute here, but any XdmfArray would work
+        shared_ptr<XdmfAttribute> exampleAttribute = XdmfAttribute::New();
+        exampleAttribute->setCenter(XdmfAttributeCenter::Node());
+        exampleAttribute->setType(XdmfAttributeType::Scalar());
+        exampleAttribute->pushBack(1);
+        exampleAttribute->pushBack(2);
+        exampleAttribute->pushBack(3);
+        exampleAttribute->pushBack(4);
+        exampleAttribute->pushBack(5);
+        exampleAttribute->pushBack(6);
+        std::string attributeFile = "output file name goes here";
+        shared_ptr<XdmfWriter> exampleArrayWriter = XdmfWriter::New(attributeFile);
+        exampleArrayWriter->visit(exampleAttribute, exampleWriter);
 
-	//#visitarray end
+        //#visitarray end
 
-	//#visititem begin
+        //#visititem begin
 
-	//Using XdmfDomain here, but any XdmfItem would work
-	shared_ptr<XdmfDomain> exampleDomain = XdmfDomain::New();
-	std::string domainFile = "output file name goes here";
-	shared_ptr<XdmfWriter> exampleDomainWriter = XdmfWriter::New(domainFile);
-	exampleDomainWriter->visit(exampleDomain, exampleWriter);
+        //Using XdmfDomain here, but any XdmfItem would work
+        shared_ptr<XdmfDomain> exampleDomain = XdmfDomain::New();
+        std::string domainFile = "output file name goes here";
+        shared_ptr<XdmfWriter> exampleDomainWriter = XdmfWriter::New(domainFile);
+        exampleDomainWriter->visit(exampleDomain, exampleWriter);
 
-	//#visititem end
+        //#visititem end
 
-	return 0;
+        return 0;
 }

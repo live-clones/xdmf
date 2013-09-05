@@ -99,9 +99,9 @@ public:
    * @skipline #//comparePrecision
    * @until #//comparePrecision
    *
-   * @param	type1	The first type to be compared
-   * @param	type2	The second type to be compared
-   * @return		The type that is compatible with both provided types
+   * @param     type1   The first type to be compared
+   * @param     type2   The second type to be compared
+   * @return            The type that is compatible with both provided types
    */
   static shared_ptr<const XdmfArrayType> comparePrecision(shared_ptr<const XdmfArrayType> type1, shared_ptr<const XdmfArrayType> type2);
 
@@ -123,7 +123,7 @@ public:
    * @skipline #//getElementSize
    * @until #//getElementSize
    *
-   * @return	The data size, in bytes.
+   * @return    The data size, in bytes.
    */
   unsigned int getElementSize() const;
 
@@ -144,7 +144,7 @@ public:
    * @skipline #//getName
    * @until #//getName
    *
-   * @return	The name of the data type.
+   * @return    The name of the data type.
    */
   std::string getName() const;
 

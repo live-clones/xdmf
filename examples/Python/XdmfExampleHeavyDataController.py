@@ -1,116 +1,116 @@
 from Xdmf import *
 
 if __name__ == "__main__":
-	#//initialization begin
+        #//initialization begin
 
-	newPath = "File path to hdf5 file goes here"
-	newSetPath = "path to the set goes here"
-	readType = XdmfArrayType.Int32()
-	readStarts = UInt32Vector()
-	#Three dimensions, all starting at index 0
-	readStarts.push_back(0)
-	readStarts.push_back(0)
-	readStarts.push_back(0)
-	readStrides = UInt32Vector()
-	#Three dimensions, no skipping between reads
-	readStrides.push_back(1)
-	readStrides.push_back(1)
-	readStrides.push_back(1)
-	readCounts = UInt32Vector()
-	#Three dimensions, reading 10 values from each
-	readCounts.push_back(10)
-	readCounts.push_back(10)
-	readCounts.push_back(10)
-	readDataSize = UInt32Vector()
-	#Three dimensions, 10 values in each
-	readDataSize.push_back(10)
-	readDataSize.push_back(10)
-	readDataSize.push_back(10)
-	exampleController = XdmfHDF5Controller.New(
-		newPath,
-		newSetPath,
-		readType,
-		readStarts,
-		readStrides,
-		readCounts,
-		readDataSize)
+        newPath = "File path to hdf5 file goes here"
+        newSetPath = "path to the set goes here"
+        readType = XdmfArrayType.Int32()
+        readStarts = UInt32Vector()
+        #Three dimensions, all starting at index 0
+        readStarts.push_back(0)
+        readStarts.push_back(0)
+        readStarts.push_back(0)
+        readStrides = UInt32Vector()
+        #Three dimensions, no skipping between reads
+        readStrides.push_back(1)
+        readStrides.push_back(1)
+        readStrides.push_back(1)
+        readCounts = UInt32Vector()
+        #Three dimensions, reading 10 values from each
+        readCounts.push_back(10)
+        readCounts.push_back(10)
+        readCounts.push_back(10)
+        readDataSize = UInt32Vector()
+        #Three dimensions, 10 values in each
+        readDataSize.push_back(10)
+        readDataSize.push_back(10)
+        readDataSize.push_back(10)
+        exampleController = XdmfHDF5Controller.New(
+                newPath,
+                newSetPath,
+                readType,
+                readStarts,
+                readStrides,
+                readCounts,
+                readDataSize)
 
-	#Using an XdmfHDF5Controller since XdmfHeavyDataController is an abstract class
+        #Using an XdmfHDF5Controller since XdmfHeavyDataController is an abstract class
 
-	#//initialization end
+        #//initialization end
 
-	#//getDataSetPath begin
+        #//getDataSetPath begin
 
-	examplePath = exampleController.getDataSetPath()
+        examplePath = exampleController.getDataSetPath()
 
-	#//getDataSetPath end
+        #//getDataSetPath end
 
-	#//getDimensions begin
+        #//getDimensions begin
 
-	exampleDimensions = exampleController.getDimensions()
+        exampleDimensions = exampleController.getDimensions()
 
-	#//getDimensions end
+        #//getDimensions end
 
-	#//getDataspaceDimensions begin
+        #//getDataspaceDimensions begin
 
-	exampleDataspaceDimensions = exampleController.getDataspaceDimensions()
+        exampleDataspaceDimensions = exampleController.getDataspaceDimensions()
 
-	#//getDataspaceDimensions end
+        #//getDataspaceDimensions end
 
-	#//getFilePath begin
+        #//getFilePath begin
 
-	examplePath = exampleController.getFilePath()
+        examplePath = exampleController.getFilePath()
 
-	#//getFilePath end
+        #//getFilePath end
 
-	#//getName begin
+        #//getName begin
 
-	exampleName = exampleController.getName()
+        exampleName = exampleController.getName()
 
-	#//getName end
+        #//getName end
 
-	#//getSize begin
+        #//getSize begin
 
-	exampleSize = exampleController.getSize()
+        exampleSize = exampleController.getSize()
 
-	#//getSize end
+        #//getSize end
 
-	#//getType begin
+        #//getType begin
 
-	exampleType = exampleController.getType()
+        exampleType = exampleController.getType()
 
-	#//getType end
+        #//getType end
 
-	#//read begin
+        #//read begin
 
-	exampleArray = XdmfArray.New()
-	exampleController.read(exampleArray)
-	#exampleArray now holds the data that exampleController holds.
+        exampleArray = XdmfArray.New()
+        exampleController.read(exampleArray)
+        #exampleArray now holds the data that exampleController holds.
 
-	#//read end
+        #//read end
 
-	#//getStart begin
+        #//getStart begin
 
         exampleStart = exampleController.getStart()
 
-	#//getStart end
+        #//getStart end
 
-	#//getStride begin
+        #//getStride begin
 
         exampleStride = exampleController.getStride()
 
-	#//getStride end
+        #//getStride end
 
-	#//setArrayOffset begin
+        #//setArrayOffset begin
 
         newArrayOffset = 5#default is 0
 
         exampleController.setArrayOffset(newArrayOffset)
 
-	#//setArrayOffset end
+        #//setArrayOffset end
 
-	#//getArrayOffset begin
+        #//getArrayOffset begin
 
         exampleOffset = exampleController.getArrayOffset()
 
-	#//getArrayOffset end
+        #//getArrayOffset end

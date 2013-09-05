@@ -124,7 +124,7 @@ public:
    * @skipline #//initialization
    * @until #//initialization
    *
-   * @return	Constructed XdmfArray.
+   * @return    Constructed XdmfArray.
    */
   static shared_ptr<XdmfArray> New();
 
@@ -180,7 +180,7 @@ public:
    * @skipline #//erase
    * @until #//erase
    *
-   * @param	index	The index of the value to be removed
+   * @param     index   The index of the value to be removed
    */
   void erase(const unsigned int index);
 
@@ -205,7 +205,7 @@ public:
    * @skipline #//getArrayType
    * @until #//getArrayType
    *
-   * @return 	An XdmfArrayType containing the data type for the array.
+   * @return    An XdmfArrayType containing the data type for the array.
    */
   shared_ptr<const XdmfArrayType> getArrayType() const;
 
@@ -231,7 +231,7 @@ public:
    * @skipline #//getCapacity
    * @until #//getCapacity
    *
-   * @return 	The capacity of this array.
+   * @return    The capacity of this array.
    */
   unsigned int getCapacity() const;
 
@@ -258,7 +258,7 @@ public:
    * @skipline #//getDimensions
    * @until #//getDimensions
    *
-   * @return 	The dimensions of the array.
+   * @return    The dimensions of the array.
    */
   std::vector<unsigned int> getDimensions() const;
 
@@ -283,7 +283,7 @@ public:
    * @skipline #//getDimensionsString
    * @until #//getDimensionsString
    *
-   * @return 	The dimensions of the array as a string.
+   * @return    The dimensions of the array as a string.
    */
   std::string getDimensionsString() const;
 
@@ -313,7 +313,7 @@ public:
    * @skipline #//getFunction
    * @until #//getFunction
    *
-   * @return	The function associated with this array
+   * @return    The function associated with this array
    */
   shared_ptr<XdmfFunction> getFunction();
 
@@ -346,7 +346,7 @@ public:
    * @skipline #//getName
    * @until #//getName
    *
-   * @return 	A string containing the name of the array.
+   * @return    A string containing the name of the array.
    */
   std::string getName() const;
 
@@ -381,7 +381,7 @@ public:
    * @skipline #//getReadMode
    * @until #//getReadMode
    *
-   * @return	What method will be used when reading/writing the array
+   * @return    What method will be used when reading/writing the array
    */
   ReadMode getReadMode() const;
 
@@ -406,7 +406,7 @@ public:
    * @skipline #//getSize
    * @until #//getSize
    *
-   * @return 	The number of values stored in this array.
+   * @return    The number of values stored in this array.
    */
   unsigned int getSize() const;
 
@@ -435,7 +435,7 @@ public:
    * @skipline #//getSubset
    * @until #//getSubset
    *
-   * @return	The subset being pulled from
+   * @return    The subset being pulled from
    */
   shared_ptr<XdmfSubset> getSubset();
 
@@ -466,7 +466,7 @@ public:
    * @skipline #//getValueindex
    * @until #//getValueindex
    *
-   * @return 	The requested value.
+   * @return    The requested value.
    */
   template <typename T>
   T getValue(const unsigned int index) const;
@@ -496,13 +496,13 @@ public:
    * @skipline #//getNumpyArray
    * @until #//getNumpyArray
    *
-   * @param	startIndex	The index in this array to begin copying from.
-   * @param	valuesPointer	A pointer to an array to copy into.
-   * @param	numValues	The number of values to copy.
-   * @param	arrayStride	Number of values to stride in this array
-   *				between each copy.
-   * @param	valuesStride	Number of values to stride in the pointer
-   *				between each copy.
+   * @param     startIndex      The index in this array to begin copying from.
+   * @param     valuesPointer   A pointer to an array to copy into.
+   * @param     numValues       The number of values to copy.
+   * @param     arrayStride     Number of values to stride in this array
+   *                            between each copy.
+   * @param     valuesStride    Number of values to stride in the pointer
+   *                            between each copy.
    */
   template <typename T> void
   getValues(const unsigned int startIndex,
@@ -528,8 +528,8 @@ public:
    * Python does not support this version of the getValuesInternal function,
    * it defaults to the version that returns a void pointer
    *
-   * @return 	A smart pointer to the internal vector of values stored
-   * 		in this array.
+   * @return    A smart pointer to the internal vector of values stored
+   *            in this array.
    */
   template <typename T>
   shared_ptr<std::vector<T> > getValuesInternal();
@@ -555,7 +555,7 @@ public:
    * @skipline #//getValuesInternal
    * @until #//getValuesInternal
    *
-   * @return 	A void pointer to the first value stored in this array.
+   * @return    A void pointer to the first value stored in this array.
    */
   void * getValuesInternal();
 
@@ -575,7 +575,7 @@ public:
    * Python does not support this version of the getValuesInternal function,
    * it defaults to the version that returns a void pointer
    *
-   * @return 	A void pointer to the first value stored in this array.
+   * @return    A void pointer to the first value stored in this array.
    */
   const void * getValuesInternal() const;
 
@@ -600,7 +600,7 @@ public:
    * @skipline #//getValuesparse
    * @until #//getValuesparse
    *
-   * @return 	A string containing the contents of the array.
+   * @return    A string containing the contents of the array.
    */
   std::string getValuesString() const;
 
@@ -621,10 +621,10 @@ public:
    *
    * Python: Does not support this version of initialize
    *
-   * @param 	size 	The number of values in the initialized array.
+   * @param     size    The number of values in the initialized array.
    *
-   * @return		A smart pointer to the internal vector of values
-   * 			initialized in this array.
+   * @return            A smart pointer to the internal vector of values
+   *                    initialized in this array.
    */
   template <typename T>
   shared_ptr<std::vector<T> > initialize(const unsigned int size = 0);
@@ -646,10 +646,10 @@ public:
    *
    * Python: Does not support this version of initialize
    *
-   * @param 	dimensions 	The dimensions of the initialized array.
+   * @param     dimensions      The dimensions of the initialized array.
    *
-   * @return 			A smart pointer to the internal vector of values
-   * 				initialized in this array.
+   * @return                    A smart pointer to the internal vector of values
+   *                            initialized in this array.
    */
   template <typename T>
   shared_ptr<std::vector<T> >
@@ -678,8 +678,8 @@ public:
    * @skipline #//initializesingle
    * @until #//initializesingle
    *
-   * @param 	arrayType 	The type of array to initialize.
-   * @param 	size 		The number of values in the initialized array.
+   * @param     arrayType       The type of array to initialize.
+   * @param     size            The number of values in the initialized array.
    */
   void initialize(const shared_ptr<const XdmfArrayType> arrayType,
                   const unsigned int size = 0);
@@ -707,8 +707,8 @@ public:
    * @skipline #//initializevector
    * @until #//initializevector
    *
-   * @param 	arrayType 	The type of array to initialize.
-   * @param 	dimensions 	The number dimensions of the initialized array.
+   * @param     arrayType       The type of array to initialize.
+   * @param     dimensions      The number dimensions of the initialized array.
    */
   void initialize(const shared_ptr<const XdmfArrayType> arrayType,
                   const std::vector<unsigned int> & dimensions);
@@ -738,8 +738,8 @@ public:
    * @skipline #//pointinsert
    * @until #//pointinsert
    *
-   * @param	index	The index in this array to insert.
-   * @param	value	The value to insert
+   * @param     index   The index in this array to insert.
+   * @param     value   The value to insert
    */
   template<typename T>
   void insert(const unsigned int index,
@@ -770,15 +770,15 @@ public:
    * @skipline #//insertarray
    * @until #//insertarray
    *
-   * @param	startIndex		The index in this array to begin insertion.
-   * @param	values			A shared pointer to an XdmfArray to copy
-   *					into this array.
-   * @param	valuesStartIndex	The index in the XdmfArray to begin copying.
-   * @param	numValues		The number of values to copy into this array.
-   * @param	arrayStride		Number of values to stride in this array
-   *					between each copy.
-   * @param	valuesStride		Number of values to stride in the XdmfArray
-   * 					between each copy.
+   * @param     startIndex              The index in this array to begin insertion.
+   * @param     values                  A shared pointer to an XdmfArray to copy
+   *                                    into this array.
+   * @param     valuesStartIndex        The index in the XdmfArray to begin copying.
+   * @param     numValues               The number of values to copy into this array.
+   * @param     arrayStride             Number of values to stride in this array
+   *                                    between each copy.
+   * @param     valuesStride            Number of values to stride in the XdmfArray
+   *                                    between each copy.
    */
   void insert(const unsigned int startIndex,
               const shared_ptr<const XdmfArray> values,
@@ -804,24 +804,24 @@ public:
    * @skipline #//insertmultidim
    * @until #//insertmultidim
    *
-   * @param	startIndex		The index in this array to begin
-   *					insertion for each dimension
-   * @param	values			A shared pointer to an XdmfArray
-   * 					to copy into this array.
-   * @param	valuesStartIndex	The index in the XdmfArray to begin
-   *					copying for each dimension of the
-   *					source array
-   * @param	numValues		The number of values to copy into this
-   *					array for each dimension on the
-   *					source array
-   * @param	numInserted		The number of strides to make across
-   * 					the array being written to for each
-   * 					dimension
-   * @param	arrayStride		Number of values to stride in this array
-   * 					between each copy for each dimension
-   * @param	valuesStride		Number of values to stride in the
-   * 					XdmfArray between each copy for each
-   *					dimension of the source array
+   * @param     startIndex              The index in this array to begin
+   *                                    insertion for each dimension
+   * @param     values                  A shared pointer to an XdmfArray
+   *                                    to copy into this array.
+   * @param     valuesStartIndex        The index in the XdmfArray to begin
+   *                                    copying for each dimension of the
+   *                                    source array
+   * @param     numValues               The number of values to copy into this
+   *                                    array for each dimension on the
+   *                                    source array
+   * @param     numInserted             The number of strides to make across
+   *                                    the array being written to for each
+   *                                    dimension
+   * @param     arrayStride             Number of values to stride in this array
+   *                                    between each copy for each dimension
+   * @param     valuesStride            Number of values to stride in the
+   *                                    XdmfArray between each copy for each
+   *                                    dimension of the source array
    */
   void insert(const std::vector<unsigned int> startIndex,
               const shared_ptr<const XdmfArray> values,
@@ -854,13 +854,13 @@ public:
    * @skipline #//insertlist
    * @until #//insertlist
    *
-   * @param	startIndex	The index in this array to begin insertion.
-   * @param	valuesPointer	A pointer to the values to copy into this array.
-   * @param	numValues	The number of values to copy into this array.
-   * @param	arrayStride	Number of values to stride in this array between
-   *				each copy.
-   * @param	valuesStride	Number of values to stride in the pointer between
-   * 				each copy.
+   * @param     startIndex      The index in this array to begin insertion.
+   * @param     valuesPointer   A pointer to the values to copy into this array.
+   * @param     numValues       The number of values to copy into this array.
+   * @param     arrayStride     Number of values to stride in this array between
+   *                            each copy.
+   * @param     valuesStride    Number of values to stride in the pointer between
+   *                            each copy.
    */
   template<typename T>
   void insert(const unsigned int startIndex,
@@ -916,7 +916,7 @@ public:
    * @skipline #//pushBack
    * @until #//pushBack
    *
-   * @param	value	The value to be inserted
+   * @param     value   The value to be inserted
    */
   template <typename T>
   void pushBack(const T & value);
@@ -942,7 +942,7 @@ public:
    * @skipline #//getHeavyDataController
    * @until #//getHeavyDataController
    *
-   * @return	The heavy data controller attached to this array.
+   * @return    The heavy data controller attached to this array.
    */
   shared_ptr<XdmfHeavyDataController>
   getHeavyDataController();
@@ -962,7 +962,7 @@ public:
    *
    * Python: Doesn't support a constant version of this function
    *
-   * @return	The heavy data controller attached to this array.
+   * @return    The heavy data controller attached to this array.
    */
   shared_ptr<const XdmfHeavyDataController>
   getHeavyDataController() const;
@@ -992,7 +992,7 @@ public:
    * @skipline #//setHeavyDataController
    * @until #//setHeavyDataController
    *
-   * @param	newController	The heavy data controller to attach to this array.
+   * @param     newController   The heavy data controller to attach to this array.
    */
   void
   setHeavyDataController(shared_ptr<XdmfHeavyDataController> newController);
@@ -1153,7 +1153,7 @@ public:
    * @skipline #//reserve
    * @until #//reserve
    *
-   * @param	size	The capacity to set this array to.
+   * @param     size    The capacity to set this array to.
    */
   void reserve(const unsigned int size);
 
@@ -1185,9 +1185,9 @@ public:
    * @skipline #//resizesingle
    * @until #//resizesingle
    *
-   * @param	numValues	The number of values to resize this array to.
-   * @param	value		The number to initialize newly created
-   *				values to, if needed.
+   * @param     numValues       The number of values to resize this array to.
+   * @param     value           The number to initialize newly created
+   *                            values to, if needed.
    */
   template<typename T>
   void resize(const unsigned int numValues,
@@ -1222,9 +1222,9 @@ public:
    * @skipline #//resizevector
    * @until #//resizevector
    *
-   * @param	dimensions	The dimensions to resize the array to.
-   * @param	value		The number to intialize newly created values to,
-   *				if needed.
+   * @param     dimensions      The dimensions to resize the array to.
+   * @param     value           The number to intialize newly created values to,
+   *                            if needed.
    */
   template<typename T>
   void resize(const std::vector<unsigned int> & dimensions,
@@ -1252,7 +1252,7 @@ public:
    * @skipline #//setFunction
    * @until #//setFunction
    *
-   * @param	newFunction	The function to be associated with this array
+   * @param     newFunction     The function to be associated with this array
    */
   void setFunction(shared_ptr<XdmfFunction> newFunction);
 
@@ -1277,7 +1277,7 @@ public:
    * @skipline #//setName
    * @until #//setName
    *
-   * @param	name	Name of the array to set.
+   * @param     name    Name of the array to set.
    */
   void setName(const std::string & name);
 
@@ -1308,7 +1308,7 @@ public:
    * @skipline #//setReadMode
    * @until #//setReadMode
    *
-   * @param	newStatus	The method that the array will be read/written
+   * @param     newStatus       The method that the array will be read/written
    */
   void setReadMode(ReadMode newStatus = XdmfArray::Controller);
 
@@ -1333,7 +1333,7 @@ public:
    * @skipline #//setSubset
    * @until #//setSubset
    *
-   * @param	newSubset	The subset to pull data from on read
+   * @param     newSubset       The subset to pull data from on read
    */
   void setSubset(shared_ptr<XdmfSubset> newSubset);
 
@@ -1366,11 +1366,11 @@ public:
    *
    * Python: does not support setValuesInternal
    *
-   * @param	arrayPointer		A pointer to an array to store in
-   *					this XdmfArray.
-   * @param	numValues		The number of values in the array.
-   * @param	transferOwnership	Whether to transfer responsibility for
-   *					deletion of the array to XdmfArray.
+   * @param     arrayPointer            A pointer to an array to store in
+   *                                    this XdmfArray.
+   * @param     numValues               The number of values in the array.
+   * @param     transferOwnership       Whether to transfer responsibility for
+   *                                    deletion of the array to XdmfArray.
    */
   template<typename T>
   void setValuesInternal(const T * const arrayPointer,
@@ -1397,9 +1397,9 @@ public:
    *
    * Python: does not support setValuesInternal
    *
-   * @param	array			A vector to store in this XdmfArray.
-   * @param	transferOwnership	Whether to transfer responsibility for
-   *					deletion of the array to XdmfArray.
+   * @param     array                   A vector to store in this XdmfArray.
+   * @param     transferOwnership       Whether to transfer responsibility for
+   *                                    deletion of the array to XdmfArray.
    */
   template<typename T>
   void setValuesInternal(std::vector<T> & array,
@@ -1426,7 +1426,7 @@ public:
    *
    * Python: does not support setValuesInternal
    *
-   * @param	array	A smart pointer to a vector to store in this array.
+   * @param     array   A smart pointer to a vector to store in this array.
    */
   template<typename T>
   void setValuesInternal(const shared_ptr<std::vector<T> > array);
@@ -1449,8 +1449,8 @@ public:
    *
    * Python: The Python version only supports swapping XdmfArrays
    *
-   * @param	array 	A vector to exchange values with.
-   * @return		bool whether the swap was successful.
+   * @param     array   A vector to exchange values with.
+   * @return            bool whether the swap was successful.
    */
   template<typename T>
   bool swap(std::vector<T> & array);
@@ -1475,8 +1475,8 @@ public:
    *
    * Python: The Python version only supports swapping XdmfArrays
    *
-   * @param	array	A smart pointer to a vector to exchange values with.
-   * @return		bool whether the swap was successful.
+   * @param     array   A smart pointer to a vector to exchange values with.
+   * @return            bool whether the swap was successful.
    */
   template<typename T>
   bool swap(const shared_ptr<std::vector<T> > array);
@@ -1505,7 +1505,7 @@ public:
    * @skipline //#swap
    * @until //#swap
    *
-   * @param	array	A smart pointer to a vector to exchange values with.
+   * @param     array   A smart pointer to a vector to exchange values with.
    */
   void swap(const shared_ptr<XdmfArray> array);
 

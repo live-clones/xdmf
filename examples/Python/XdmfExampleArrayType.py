@@ -1,31 +1,31 @@
 from Xdmf import *
 
 if __name__ == "__main__":
-	#//getElementSize begin
+        #//getElementSize begin
 
-	dataSize = XdmfArrayType.Int8().getElementSize()
+        dataSize = XdmfArrayType.Int8().getElementSize()
 
-	#//getElementSize end
+        #//getElementSize end
 
-	#//getName begin
+        #//getName begin
 
-	dataName = XdmfArrayType.Int8().getName()
+        dataName = XdmfArrayType.Int8().getName()
 
-	#//getName end
+        #//getName end
 
-	#//getType begin
+        #//getType begin
 
-	exampleArray = XdmfArray.New()
+        exampleArray = XdmfArray.New()
 
-	exampleType = exampleArray.getType()
+        exampleType = exampleArray.getType()
 
-	if exampleType == XdmfArrayType.Int8():
-		#do whatever is to be done if the type is Int8
+        if exampleType == XdmfArrayType.Int8():
+                #do whatever is to be done if the type is Int8
 
-	#//getType end
+        #//getType end
 
-	#//comparePrecision begin
+        #//comparePrecision begin
 
-	resultType = XdmfArrayType.comparePrecision(XdmfArrayType.Int16(), XdmfArrayType.UInt8())
+        resultType = XdmfArrayType.comparePrecision(XdmfArrayType.Int16(), XdmfArrayType.UInt8())
 
-	#//comparePrecision end
+        #//comparePrecision end

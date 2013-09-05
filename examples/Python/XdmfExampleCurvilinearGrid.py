@@ -1,70 +1,70 @@
 from Xdmf import *
 
 if __name__ == "__main__":
-	#Assuming that exampleGrid is a shared pointer to an XdmfCurvilinearGrid object
+        #Assuming that exampleGrid is a shared pointer to an XdmfCurvilinearGrid object
 
-	#//initialization begin
+        #//initialization begin
 
-	newPointsX = 5
-	newPointsY = 5
-	newPointsZ = 5
+        newPointsX = 5
+        newPointsY = 5
+        newPointsZ = 5
 
-	#//initialization end
+        #//initialization end
 
-	#//constructor2 begin
+        #//constructor2 begin
 
-	exampleGrid = XdmfCurvilinearGrid.New(newPointsX, newPointsY)
+        exampleGrid = XdmfCurvilinearGrid.New(newPointsX, newPointsY)
 
-	#//constructor2 end
+        #//constructor2 end
 
-	#//constructor3 begin
+        #//constructor3 begin
 
-	exampleGrid = XdmfCurvilinearGrid.New(newPointsX, newPointsY, newPointsZ)
+        exampleGrid = XdmfCurvilinearGrid.New(newPointsX, newPointsY, newPointsZ)
 
-	#//constructor3 end
+        #//constructor3 end
 
-	#//constructorvector begin
+        #//constructorvector begin
 
-	newPoints = XdmfArray.New()
-	newPoints.pushBackAsInt32(5)
-	newPoints.pushBackAsInt32(5)
-	newPoints.pushBackAsInt32(5)
-	exampleGrid = XdmfCurvilinearGrid.New(newPoints)
+        newPoints = XdmfArray.New()
+        newPoints.pushBackAsInt32(5)
+        newPoints.pushBackAsInt32(5)
+        newPoints.pushBackAsInt32(5)
+        exampleGrid = XdmfCurvilinearGrid.New(newPoints)
 
-	#//constructorvector end
+        #//constructorvector end
 
-	#//setGeometry begin
+        #//setGeometry begin
 
-	newPoints = XdmfArray.New()
-	newPoints.pushBackAsInt32(5)
-	newPoints.pushBackAsInt32(5)
-	newPoints.pushBackAsInt32(5)
-	newGeometry = XdmfGeometry.New()
-	newGeometry.setType(XdmfGeometryType.XYZ())
-	# Start index is 0, 3 values are passed, stride for both arrays is 1
-	newGeometry.insert(0, newPoints, 0, 3, 1, 1)
-	exampleGrid.setGeometry(newGeometry)
+        newPoints = XdmfArray.New()
+        newPoints.pushBackAsInt32(5)
+        newPoints.pushBackAsInt32(5)
+        newPoints.pushBackAsInt32(5)
+        newGeometry = XdmfGeometry.New()
+        newGeometry.setType(XdmfGeometryType.XYZ())
+        # Start index is 0, 3 values are passed, stride for both arrays is 1
+        newGeometry.insert(0, newPoints, 0, 3, 1, 1)
+        exampleGrid.setGeometry(newGeometry)
 
-	#//setGeometry end
+        #//setGeometry end
 
-	#//setDimensions begin
+        #//setDimensions begin
 
-	newPoints = XdmfArray.New()
-	newPoints.pushBackAsInt32(5)
-	newPoints.pushBackAsInt32(5)
-	newPoints.pushBackAsInt32(5)
-	exampleGrid.setDimensions(newPoints)
+        newPoints = XdmfArray.New()
+        newPoints.pushBackAsInt32(5)
+        newPoints.pushBackAsInt32(5)
+        newPoints.pushBackAsInt32(5)
+        exampleGrid.setDimensions(newPoints)
 
-	#//setDimensions end
+        #//setDimensions end
 
-	#//getGeometry begin
+        #//getGeometry begin
 
-	exampleGeometry = exampleGrid.getGeometry()
+        exampleGeometry = exampleGrid.getGeometry()
 
-	#//getGeometry end
+        #//getGeometry end
 
-	#//getDimensions begin
+        #//getDimensions begin
 
-	exampleDimensions = exampleGrid.getDimensions()
+        exampleDimensions = exampleGrid.getDimensions()
 
-	#//getDimensions end
+        #//getDimensions end

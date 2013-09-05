@@ -60,7 +60,7 @@ public:
    * @skipline #//initialization
    * @until #//initialization
    *
-   * @return	Constructed XdmfGeometry.
+   * @return    Constructed XdmfGeometry.
    */
   static shared_ptr<XdmfGeometry> New();
 
@@ -117,7 +117,7 @@ public:
    * @skipline #//getType
    * @until #//getType
    *
-   * @return	XdmfGeometryType of this geometry.
+   * @return    XdmfGeometryType of this geometry.
    */
   shared_ptr<const XdmfGeometryType> getType() const;
 
@@ -142,7 +142,7 @@ public:
    * @skipline #//setType
    * @until #//setType
    *
-   * @param	type	The XdmfGeometryType to set.
+   * @param     type    The XdmfGeometryType to set.
    */
   void setType(const shared_ptr<const XdmfGeometryType> type);
 

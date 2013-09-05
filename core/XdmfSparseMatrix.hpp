@@ -55,10 +55,10 @@ public:
    * @skipline #//initialization
    * @until #//initialization
    *
-   * @param 	numberRows	Number of rows in matrix.
-   * @param 	numberColumns	Number of columns in matrix.
+   * @param     numberRows      Number of rows in matrix.
+   * @param     numberColumns   Number of columns in matrix.
    *
-   * @return			Constructed XdmfSparseMatrix.
+   * @return                    Constructed XdmfSparseMatrix.
    */
   static shared_ptr<XdmfSparseMatrix> New(const unsigned int numberRows,
                                           const unsigned int numberColumns);
@@ -93,8 +93,8 @@ public:
    * @skipline #//getColumnIndex
    * @until #//getColumnIndex
    *
-   * @return 	Array containing column indices for nonzero entries of
-   * 		matrix. This is the same size as values.
+   * @return    Array containing column indices for nonzero entries of
+   *            matrix. This is the same size as values.
    */
   shared_ptr<XdmfArray> getColumnIndex();
 
@@ -127,7 +127,7 @@ public:
    * @skipline #//getName
    * @until #//getName
    *
-   * @return 	A string containing the name of the sparse matrix.
+   * @return    A string containing the name of the sparse matrix.
    */
   std::string getName() const;
 
@@ -156,7 +156,7 @@ public:
    * @skipline #//getNumberColumns
    * @until #//getNumberColumns
    *
-   * @return 	The number of columns in the sparse matrix.
+   * @return    The number of columns in the sparse matrix.
    */
   unsigned int getNumberColumns() const;
 
@@ -185,7 +185,7 @@ public:
    * @skipline #//getNumberRows
    * @until #//getNumberRows
    *
-   * @return 	The number of rows in the sparse matrix.
+   * @return    The number of rows in the sparse matrix.
    */
   unsigned int getNumberRows() const;
 
@@ -214,9 +214,9 @@ public:
    * @skipline #//getRowPointer
    * @until #//getRowPointer
    *
-   * @return 	Array containing indices into column array for each
-   * 		row. This is the size of the number of rows in the matrix +
-   * 		1. The last value is the number of nonzero entries in the matrix
+   * @return    Array containing indices into column array for each
+   *            row. This is the size of the number of rows in the matrix +
+   *            1. The last value is the number of nonzero entries in the matrix
    */
   shared_ptr<XdmfArray> getRowPointer();
 
@@ -253,7 +253,7 @@ public:
    * @skipline #//getValues
    * @until #//getValues
    *
-   * @return 	Array containing values of nonzero entries of matrix.
+   * @return    Array containing values of nonzero entries of matrix.
    */
   shared_ptr<XdmfArray> getValues();
 
@@ -290,7 +290,7 @@ public:
    * @skipline #//getValuesString
    * @until #//getValuesString
    *
-   * @return 	Atring representation of matrix.
+   * @return    Atring representation of matrix.
    */
   std::string getValuesString() const;
 
@@ -315,8 +315,8 @@ public:
    * @skipline #//setColumnIndex
    * @until #//setColumnIndex
    *
-   * @param 	columnIndex 	Array containing column indices for nonzero
-   * 				entries of matrix. This is the same size as values.
+   * @param     columnIndex     Array containing column indices for nonzero
+   *                            entries of matrix. This is the same size as values.
    */
   void setColumnIndex(const shared_ptr<XdmfArray> columnIndex);
 
@@ -341,7 +341,7 @@ public:
    * @skipline #//setName
    * @until #//setName
    *
-   * @param	name	A string containing the name to set.
+   * @param     name    A string containing the name to set.
    */
   void setName(const std::string & name);
 
@@ -366,9 +366,9 @@ public:
    * @skipline #//setRowPointer
    * @until #//setRowPointer
    *
-   * @param	rowPointer	Array containing indices into column array for
-   *				each row. This is the size of the number of rows in the matrix +
-   *				1. The last value is the number of nonzero entries in the matrix
+   * @param     rowPointer      Array containing indices into column array for
+   *                            each row. This is the size of the number of rows in the matrix +
+   *                            1. The last value is the number of nonzero entries in the matrix
    */
   void setRowPointer(const shared_ptr<XdmfArray> rowPointer);
 
@@ -401,8 +401,8 @@ public:
    * @skipline #//setValues
    * @until #//setValues
    *
-   * @param	values	Array containing values of nonzero entries of
-   *			matrix.
+   * @param     values  Array containing values of nonzero entries of
+   *                    matrix.
    */
   void setValues(const shared_ptr<XdmfArray> values);
 

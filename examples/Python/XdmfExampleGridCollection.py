@@ -1,36 +1,36 @@
 from Xdmf import *
 
 if __name__ == "__main__":
-	#Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object
+        #Assuming that exampleCollection is a shared pointer to an XdmfGridCollection object
 
-	#//initialization begin
+        #//initialization begin
 
-	exampleCollection = XdmfGridCollection.New()
+        exampleCollection = XdmfGridCollection.New()
 
-	#//initialization end
+        #//initialization end
 
-	#//setType begin
+        #//setType begin
 
-	exampleCollection.setType(XdmfGridCollectionType.Temporal())
+        exampleCollection.setType(XdmfGridCollectionType.Temporal())
 
-	#//setType end
+        #//setType end
 
-	#//getType begin
+        #//getType begin
 
-	exampleType = exampleCollection.getType()
+        exampleType = exampleCollection.getType()
 
-	if exampleType == XdmfGridCollectionType.Temporal():
-		#do whatever is to be done if the grid collection is temporal
+        if exampleType == XdmfGridCollectionType.Temporal():
+                #do whatever is to be done if the grid collection is temporal
 
-	#//getType end
+        #//getType end
 
-	#//insert begin
+        #//insert begin
 
-	exampleInformation = XdmfInformation.New()
-	newKey = "New Key"
-	newValue = "New Value"
-	exampleInformation.setKey(newKey)
-	exampleInformation.setValue(newValue)
-	exampleCollection.insert(exampleInformation)
+        exampleInformation = XdmfInformation.New()
+        newKey = "New Key"
+        newValue = "New Value"
+        exampleInformation.setKey(newKey)
+        exampleInformation.setValue(newValue)
+        exampleCollection.insert(exampleInformation)
 
-	#//insert end
+        #//insert end

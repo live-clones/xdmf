@@ -32,6 +32,11 @@
 #undef XDMFCORE_TEMPLATE
 #define XDMFCORE_TEMPLATE extern
 
+#undef XDMFDSM_EXPORT
+#define XDMFDSM_EXPORT __declspec(dllimport)
+#undef XDMFDSM_TEMPLATE
+#define XDMFDSM_TEMPLATE extern
+
 #undef XDMF_EXPORT
 #define XDMF_EXPORT __declspec(dllimport)
 #undef XDMF_TEMPLATE
@@ -60,9 +65,11 @@
 #else /* _WIN32 */
 /* We don't need to export/import since there are no dlls */
 #define XDMFCORE_EXPORT
+#define XDMFDSM_EXPORT
 #define XDMF_EXPORT
 #define XDMFUTILS_EXPORT
 #define XDMFCORE_TEMPLATE
+#define XDMFDSM_TEMPLATE
 #define XDMF_TEMPLATE
 #define XDMFUTILS_TEMPLATE
 

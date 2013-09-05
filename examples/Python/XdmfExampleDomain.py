@@ -2,8 +2,8 @@ from Xdmf import *
 
 if __name__ == "__main__":
 
-	#//initialization begin
+        #//initialization begin
 
-	exampleDomain = XdmfDomain.New()
+        exampleDomain = XdmfDomain.New()
 
-	#//initialization end
+        #//initialization end

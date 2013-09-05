@@ -3,96 +3,96 @@
 
 int main(int, char **)
 {
-	//#initialization begin
+        //#initialization begin
 
-	shared_ptr<XdmfSparseMatrix> exampleMatrix = XdmfSparseMatrix::New(3, 3);
+        shared_ptr<XdmfSparseMatrix> exampleMatrix = XdmfSparseMatrix::New(3, 3);
 
-	//#initialization end
+        //#initialization end
 
-	//#setName begin
+        //#setName begin
 
-	exampleMatrix->setName("TestMatrix");
+        exampleMatrix->setName("TestMatrix");
 
-	//#setName end
+        //#setName end
 
-	//#getName begin
+        //#getName begin
 
-	std::string exampleName = exampleMatrix->getName();
+        std::string exampleName = exampleMatrix->getName();
 
-	//#getName end
+        //#getName end
 
-	//#setRowPointer begin
+        //#setRowPointer begin
 
-	shared_ptr<XdmfArray> newRowPointer = XdmfArray::New();
+        shared_ptr<XdmfArray> newRowPointer = XdmfArray::New();
 
-	newRowPointer->insert<unsigned int>(0, 1);
-	newRowPointer->insert<unsigned int>(1, 1);
-	newRowPointer->insert<unsigned int>(2, 2);
-	newRowPointer->insert<unsigned int>(3, 3);
+        newRowPointer->insert<unsigned int>(0, 1);
+        newRowPointer->insert<unsigned int>(1, 1);
+        newRowPointer->insert<unsigned int>(2, 2);
+        newRowPointer->insert<unsigned int>(3, 3);
 
-	exampleMatrix->setRowPointer(newRowPointer);
+        exampleMatrix->setRowPointer(newRowPointer);
 
-	//#setRowPointer end
+        //#setRowPointer end
 
-	//#getRowPointer begin
+        //#getRowPointer begin
 
-	shared_ptr<XdmfArray> exampleRowPointer = exampleMatrix->getRowPointer();
+        shared_ptr<XdmfArray> exampleRowPointer = exampleMatrix->getRowPointer();
 
-	//#getRowPointer end
+        //#getRowPointer end
 
-	//#setColumnIndex begin
+        //#setColumnIndex begin
 
-	shared_ptr<XdmfArray> newColumnIndex = XdmfArray::New();
+        shared_ptr<XdmfArray> newColumnIndex = XdmfArray::New();
 
-	newColumnIndex->pushBack<unsigned int>(1);
-	newColumnIndex->pushBack<unsigned int>(2);
-	newColumnIndex->pushBack<unsigned int>(0);
+        newColumnIndex->pushBack<unsigned int>(1);
+        newColumnIndex->pushBack<unsigned int>(2);
+        newColumnIndex->pushBack<unsigned int>(0);
 
-	exampleMatrix->setColumnIndex(newColumnIndex);
+        exampleMatrix->setColumnIndex(newColumnIndex);
 
-	//#setColumnIndex end
+        //#setColumnIndex end
 
-	//#getColumnIndex begin
+        //#getColumnIndex begin
 
-	shared_ptr<XdmfArray> exampleColumnIndex = exampleMatrix->getColumnIndex();
+        shared_ptr<XdmfArray> exampleColumnIndex = exampleMatrix->getColumnIndex();
 
-	//#getColumnIndex end
+        //#getColumnIndex end
 
-	//#getNumberRows begin
+        //#getNumberRows begin
 
-	unsigned int exampleNumRows = exampleMatrix->getNumberRows();
+        unsigned int exampleNumRows = exampleMatrix->getNumberRows();
 
-	//#getNumberRows end
+        //#getNumberRows end
 
-	//#getNumberColumns begin
+        //#getNumberColumns begin
 
-	unsigned int exampleNumCols = exampleMatrix->getNumberColumns();
+        unsigned int exampleNumCols = exampleMatrix->getNumberColumns();
 
-	//#getNumberColumns end
+        //#getNumberColumns end
 
-	//#setValues begin
+        //#setValues begin
 
-	shared_ptr<XdmfArray> newValues = XdmfArray::New();
+        shared_ptr<XdmfArray> newValues = XdmfArray::New();
 
-	newValues->pushBack<double>(5.0);
-	newValues->pushBack<double>(6.0);
-	newValues->pushBack<double>(-1.0);
+        newValues->pushBack<double>(5.0);
+        newValues->pushBack<double>(6.0);
+        newValues->pushBack<double>(-1.0);
 
-	exampleMatrix->setValues(newValues);
+        exampleMatrix->setValues(newValues);
 
-	//#setValues end
+        //#setValues end
 
-	//#getValues begin
+        //#getValues begin
 
-	shared_ptr<XdmfArray> exampleValues = exampleMatrix->getValues();
+        shared_ptr<XdmfArray> exampleValues = exampleMatrix->getValues();
 
-	//#getValues end
+        //#getValues end
 
-	//#getValuesString begin
+        //#getValuesString begin
 
-	std::string exampleValueString = exampleMatrix->getValuesString();
+        std::string exampleValueString = exampleMatrix->getValuesString();
 
-	//#getValuesString end
+        //#getValuesString end
 
-	return 0;
+        return 0;
 }

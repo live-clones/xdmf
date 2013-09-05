@@ -3,29 +3,29 @@
 
 int main(int, char **)
 {
-	//#initialization begin
+        //#initialization begin
 
-	shared_ptr<XdmfTopology> exampleTopology = XdmfTopology::New();
+        shared_ptr<XdmfTopology> exampleTopology = XdmfTopology::New();
 
-	//#initialization end
+        //#initialization end
 
-	//#setType begin
+        //#setType begin
 
-	exampleTopology->setType(XdmfTopologyType::Pyramid());
+        exampleTopology->setType(XdmfTopologyType::Pyramid());
 
-	//#setType end
+        //#setType end
 
-	//#getType begin
+        //#getType begin
 
-	shared_ptr<const XdmfTopologyType> exampleType = exampleTopology->getType();
+        shared_ptr<const XdmfTopologyType> exampleType = exampleTopology->getType();
 
-	//#getType end
+        //#getType end
 
-	//#getNumberElements begin
+        //#getNumberElements begin
 
-	unsigned int numElements = exampleTopology->getNumberElements();
+        unsigned int numElements = exampleTopology->getNumberElements();
 
-	//#getNumberElements end
+        //#getNumberElements end
 
-	return 0;
+        return 0;
 }

@@ -1,117 +1,117 @@
 from Xdmf import *
 
 if __name__ == "__main__":
-	#//initialization begin
+        #//initialization begin
 
-	outFile = "output file name goes here"
-	exampleWriter = XdmfWriter.New(outFile)
+        outFile = "output file name goes here"
+        exampleWriter = XdmfWriter.New(outFile)
 
-	#//initialization end
+        #//initialization end
 
-	#//heavyinitialization begin
+        #//heavyinitialization begin
 
-	outFile = "output file name goes here"
-	heavyFile = "heavy file name goes here"
-	replaceFile = True
-	exampleHeavyWriter = XdmfHDF5Writer.New(heavyFile, replaceFile)
-	exampleWriter = XdmfWriter.New(outFile, exampleHeavyWriter)
+        outFile = "output file name goes here"
+        heavyFile = "heavy file name goes here"
+        replaceFile = True
+        exampleHeavyWriter = XdmfHDF5Writer.New(heavyFile, replaceFile)
+        exampleWriter = XdmfWriter.New(outFile, exampleHeavyWriter)
 
-	#//heavyinitialization end
+        #//heavyinitialization end
 
-	#//getFilePath begin
+        #//getFilePath begin
 
-	examplePath = exampleWriter.getFilePath()
+        examplePath = exampleWriter.getFilePath()
 
-	#//getFilePath end
+        #//getFilePath end
 
-	#//getHeavyDataWriter begin
+        #//getHeavyDataWriter begin
 
-	exampleHeavyWriter = exampleWriter.getHeavyDataWriter()
+        exampleHeavyWriter = exampleWriter.getHeavyDataWriter()
 
-	#//getHeavyDataWriter end
+        #//getHeavyDataWriter end
 
-	#//setHeavyDataWriter begin
+        #//setHeavyDataWriter begin
 
-	exampleWriter.setHeavyDataWriter(exampleHeavyWriter)
+        exampleWriter.setHeavyDataWriter(exampleHeavyWriter)
 
-	#//setHeavyDataWriter end
+        #//setHeavyDataWriter end
 
-	#//getLightDataLimit begin
+        #//getLightDataLimit begin
 
-	exampleLimit = exampleWriter.getLightDataLimit()
+        exampleLimit = exampleWriter.getLightDataLimit()
 
-	#//getLightDataLimit end
+        #//getLightDataLimit end
 
-	#//getMode begin
+        #//getMode begin
 
-	testMode = XdmfWriter.Default
-	if exampleWriter.getMode() == testMode:
-		#Do whatever is to be done if the mode is default
+        testMode = XdmfWriter.Default
+        if exampleWriter.getMode() == testMode:
+                #Do whatever is to be done if the mode is default
 
-	#//getMode end
+        #//getMode end
 
-	#//getWriteXPaths begin
+        #//getWriteXPaths begin
 
-	exampleTestPaths = exampleWriter.getWriteXPaths()
+        exampleTestPaths = exampleWriter.getWriteXPaths()
 
-	#//getWriteXPaths end
+        #//getWriteXPaths end
 
-	#//getXPathParse begin
+        #//getXPathParse begin
 
-	exampleXPathParse = exampleWriter.getXPathParse()
+        exampleXPathParse = exampleWriter.getXPathParse()
 
-	#//getXPathParse end
+        #//getXPathParse end
 
-	#//setLightDataLimit begin
+        #//setLightDataLimit begin
 
-	newLimit = 20;
-	exampleWriter.setLightDataLimit(newLimit)
-	#The writer will now place any data with a number of values over 20 into heavy data
+        newLimit = 20;
+        exampleWriter.setLightDataLimit(newLimit)
+        #The writer will now place any data with a number of values over 20 into heavy data
 
-	#//setLightDataLimit end
+        #//setLightDataLimit end
 
-	#//setMode begin
+        #//setMode begin
 
-	exampleWriter.setMode(XdmfWriter.Default)
+        exampleWriter.setMode(XdmfWriter.Default)
 
-	#//setMode end
+        #//setMode end
 
-	#//setWriteXPaths begin
+        #//setWriteXPaths begin
 
-	exampleWriter.setWriteXPaths(True)
+        exampleWriter.setWriteXPaths(True)
 
-	#//setWriteXPaths end
+        #//setWriteXPaths end
 
-	#//setXPathParse begin
+        #//setXPathParse begin
 
-	exampleWriter.setXPathParse(True)
+        exampleWriter.setXPathParse(True)
 
-	#//setXPathParse end
+        #//setXPathParse end
 
-	#//visitarray begin
+        #//visitarray begin
 
-	#Using XdmfAttribute here, but any XdmfArray would work
-	exampleAttribute = XdmfAttribute.New()
-	exampleAttribute.setCenter(XdmfAttributeCenter.Node())
-	exampleAttribute.setType(XdmfAttributeType.Scalar())
-	exampleAttribute.pushBackAsInt32(1)
-	exampleAttribute.pushBackAsInt32(2)
-	exampleAttribute.pushBackAsInt32(3)
-	exampleAttribute.pushBackAsInt32(4)
-	exampleAttribute.pushBackAsInt32(5)
-	exampleAttribute.pushBackAsInt32(6)
-	outFile = "output file name goes here"
-	exampleWriter = XdmfWriter.New(outFile)
-	exampleWriter.visit(exampleAttribute, exampleWriter)
+        #Using XdmfAttribute here, but any XdmfArray would work
+        exampleAttribute = XdmfAttribute.New()
+        exampleAttribute.setCenter(XdmfAttributeCenter.Node())
+        exampleAttribute.setType(XdmfAttributeType.Scalar())
+        exampleAttribute.pushBackAsInt32(1)
+        exampleAttribute.pushBackAsInt32(2)
+        exampleAttribute.pushBackAsInt32(3)
+        exampleAttribute.pushBackAsInt32(4)
+        exampleAttribute.pushBackAsInt32(5)
+        exampleAttribute.pushBackAsInt32(6)
+        outFile = "output file name goes here"
+        exampleWriter = XdmfWriter.New(outFile)
+        exampleWriter.visit(exampleAttribute, exampleWriter)
 
-	#//visitarray end
+        #//visitarray end
 
-	#//visititem begin
+        #//visititem begin
 
-	#Using XdmfDomain here, but any XdmfItem would work
-	exampleDomain = XdmfDomain.New()
-	outFile = "output file name goes here"
-	exampleWriter = XdmfWriter.New(outFile)
-	exampleWriter.visit(exampleDomain, exampleWriter)
+        #Using XdmfDomain here, but any XdmfItem would work
+        exampleDomain = XdmfDomain.New()
+        outFile = "output file name goes here"
+        exampleWriter = XdmfWriter.New(outFile)
+        exampleWriter.visit(exampleDomain, exampleWriter)
 
-	#//visititem end
+        #//visititem end

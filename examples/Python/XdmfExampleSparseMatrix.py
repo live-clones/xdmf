@@ -1,25 +1,25 @@
 from Xdmf import *
 
 if __name__ == "__main__":
-	#//initialization begin
+        #//initialization begin
 
         exampleMatrix = XdmfSparseMatrix.New(3, 3)
 
-	#//initialization end
+        #//initialization end
 
-	#//setName begin
+        #//setName begin
 
         exampleMatrix.setName("TestMatrix")
 
-	#//setName end
+        #//setName end
 
-	#//getName begin
+        #//getName begin
 
         exampleName = exampleMatrix.getName()
 
-	#//getName end
+        #//getName end
 
-	#//setRowPointer begin
+        #//setRowPointer begin
 
         newRowPointer = XdmfArray.New()
 
@@ -30,15 +30,15 @@ if __name__ == "__main__":
 
         exampleMatrix.setRowPointer(newRowPointer)
 
-	#//setRowPointer end
+        #//setRowPointer end
 
-	#//getRowPointer begin
+        #//getRowPointer begin
 
         exampleRowPointer = exampleMatrix.getRowPointer()
 
-	#//getRowPointer end
+        #//getRowPointer end
 
-	#//setColumnIndex begin
+        #//setColumnIndex begin
 
         newColumnIndex = XdmfArray.New()
 
@@ -48,27 +48,27 @@ if __name__ == "__main__":
 
         exampleMatrix.setColumnIndex(newColumnIndex)
 
-	#//setColumnIndex end
+        #//setColumnIndex end
 
-	#//getColumnIndex begin
+        #//getColumnIndex begin
 
         exampleColumnIndex = exampleMatrix.getColumnIndex()
 
-	#//getColumnIndex end
+        #//getColumnIndex end
 
-	#//getNumberRows begin
+        #//getNumberRows begin
 
         exampleNumRows = exampleMatrix.getNumberRows()
 
-	#//getNumberRows end
+        #//getNumberRows end
 
-	#//getNumberColumns begin
+        #//getNumberColumns begin
 
         exampleNumCols = exampleMatrix.getNumberColumns()
 
-	#//getNumberColumns end
+        #//getNumberColumns end
 
-	#//setValues begin
+        #//setValues begin
 
         newValues = XdmfArray.New()
 
@@ -78,16 +78,16 @@ if __name__ == "__main__":
 
         exampleMatrix.setValues(newValues)
 
-	#//setValues end
+        #//setValues end
 
-	#//getValues begin
+        #//getValues begin
 
         exampleValues = exampleMatrix.getValues()
 
-	#//getValues end
+        #//getValues end
 
-	#//getValuesString begin
+        #//getValuesString begin
 
         exampleValueString = exampleMatrix.getValuesString()
 
-	#//getValuesString end
+        #//getValuesString end

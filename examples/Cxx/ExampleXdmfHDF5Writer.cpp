@@ -2,28 +2,28 @@
 
 int main(int, char **)
 {
-	//#initialization begin
+        //#initialization begin
 
-	std::string newPath = "Your file path goes here";
-	bool replaceOrig = true;
-	shared_ptr<XdmfHDF5Writer> exampleWriter = XdmfHDF5Writer::New(newPath, replaceOrig);
+        std::string newPath = "Your file path goes here";
+        bool replaceOrig = true;
+        shared_ptr<XdmfHDF5Writer> exampleWriter = XdmfHDF5Writer::New(newPath, replaceOrig);
 
-	//#initialization end
+        //#initialization end
 
-	//#setChunkSize begin
+        //#setChunkSize begin
 
-	int newChunk = 10;
-	//creates blocks in sets of 10 slots
+        int newChunk = 10;
+        //creates blocks in sets of 10 slots
 
-	exampleWriter->setChunkSize(newChunk);
+        exampleWriter->setChunkSize(newChunk);
 
-	//#setChunkSize end
+        //#setChunkSize end
 
-	//#getChunkSize begin
+        //#getChunkSize begin
 
-	int exampleChunk = exampleWriter->getChunkSize();
+        int exampleChunk = exampleWriter->getChunkSize();
 
-	//#getChunkSize end
+        //#getChunkSize end
 
-	return 0;
+        return 0;
 }

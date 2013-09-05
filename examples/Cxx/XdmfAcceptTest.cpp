@@ -9,96 +9,96 @@
 
 int main(int argc, char *argv[])
 {
-	//#initMPI begin
+        //#initMPI begin
 
-	int size, id, dsmSize;
-	dsmSize = 64;
-	MPI_Status status;
-	MPI_Comm comm = MPI_COMM_WORLD;
+        int size, id, dsmSize;
+        dsmSize = 64;
+        MPI_Status status;
+        MPI_Comm comm = MPI_COMM_WORLD;
 
-	MPI_Init(&argc, &argv);
+        MPI_Init(&argc, &argv);
 
-	MPI_Comm_rank(comm, &id);
-	MPI_Comm_size(comm, &size);
-
-
-	std::string newPath = "dsm";
-	int numServersCores = size - 1;
-	int numConnections = 2;
+        MPI_Comm_rank(comm, &id);
+        MPI_Comm_size(comm, &size);
 
 
-	shared_ptr<XdmfHDF5WriterDSM> exampleWriter = XdmfHDF5WriterDSM::New(newPath, comm, dsmSize/numServersCores, size-numServersCores, size-1);
+        std::string newPath = "dsm";
+        int numServersCores = size - 1;
+        int numConnections = 2;
 
-	if (id == 0)
-	{
-		//#initMPI end
 
-		//#GetDsmFileName begin
+        shared_ptr<XdmfHDF5WriterDSM> exampleWriter = XdmfHDF5WriterDSM::New(newPath, comm, dsmSize/numServersCores, size-numServersCores, size-1);
 
-		std::string connectionFileName = exampleWriter->getServerBuffer()->GetComm()->GetDsmFileName();
+        if (id == 0)
+        {
+                //#initMPI end
 
-		//#GetDsmFileName end
+                //#GetDsmFileName begin
 
-		//#SetDsmFileName begin
+                std::string connectionFileName = exampleWriter->getServerBuffer()->GetComm()->GetDsmFileName();
 
-		exampleWriter->getServerBuffer()->GetComm()->SetDsmFileName(connectionFileName);
+                //#GetDsmFileName end
 
-		//#SetDsmFileName end
+                //#SetDsmFileName begin
 
-		//#OpenPort begin
+                exampleWriter->getServerBuffer()->GetComm()->SetDsmFileName(connectionFileName);
 
-		exampleWriter->getServerBuffer()->GetComm()->OpenPort();
+                //#SetDsmFileName end
 
-		//#OpenPort end
+                //#OpenPort begin
 
-		//#SendAccept begin
+                exampleWriter->getServerBuffer()->GetComm()->OpenPort();
 
-		exampleWriter->getServerBuffer()->SendAccept(numConnections);
+                //#OpenPort end
 
-		//#SendAccept end
+                //#SendAccept begin
 
-		/*
+                exampleWriter->getServerBuffer()->SendAccept(numConnections);
 
-		//#manualAccept begin
+                //#SendAccept end
 
-		// Notify the server cores to accept connections
-		for (int i = exampleWriter->getServerBuffer()->StartServerId; i <= exampleWriter->getServerBuffer()->EndServerId; ++i)
-		{
-			if (i != exampleWriter->getServerBuffer()->Comm->GetId())
-			{
-				exampleWriter->getServerBuffer()->SendCommandHeader(XDMF_DSM_ACCEPT, i, 0, 0, XDMF_DSM_INTER_COMM);
-				exampleWriter->getServerBuffer()->SendAcknowledgment(i, numConnections, XDMF_DSM_EXCHANGE_TAG, XDMF_DSM_INTER_COMM);
-			}
-		}
-		// Accept connections
-		exampleWriter->getServerBuffer()->Comm->Accept(numConnections);
-		// Distribute current DSM status
-		exampleWriter->getServerBuffer()->SendInfo();
+                /*
 
-		//#manualAccept end
+                //#manualAccept begin
 
-		*/
+                // Notify the server cores to accept connections
+                for (int i = exampleWriter->getServerBuffer()->StartServerId; i <= exampleWriter->getServerBuffer()->EndServerId; ++i)
+                {
+                        if (i != exampleWriter->getServerBuffer()->Comm->GetId())
+                        {
+                                exampleWriter->getServerBuffer()->SendCommandHeader(XDMF_DSM_ACCEPT, i, 0, 0, XDMF_DSM_INTER_COMM);
+                                exampleWriter->getServerBuffer()->SendAcknowledgment(i, numConnections, XDMF_DSM_EXCHANGE_TAG, XDMF_DSM_INTER_COMM);
+                        }
+                }
+                // Accept connections
+                exampleWriter->getServerBuffer()->Comm->Accept(numConnections);
+                // Distribute current DSM status
+                exampleWriter->getServerBuffer()->SendInfo();
 
-		//#finishwork begin
+                //#manualAccept end
 
-		MPI_Barrier(exampleWriter->getServerBuffer()->GetComm()->GetIntraComm());
-	}
+                */
 
-	MPI_Barrier(exampleWriter->getServerBuffer()->GetComm()->GetInterComm());
+                //#finishwork begin
 
-	//#finishwork end
+                MPI_Barrier(exampleWriter->getServerBuffer()->GetComm()->GetIntraComm());
+        }
 
-	//#ClosePort begin
+        MPI_Barrier(exampleWriter->getServerBuffer()->GetComm()->GetInterComm());
 
-	exampleWriter->getServerBuffer()->GetComm()->ClosePort();
+        //#finishwork end
 
-	//#ClosePort end
+        //#ClosePort begin
 
-	//#finalizeMPI begin
+        exampleWriter->getServerBuffer()->GetComm()->ClosePort();
 
-	MPI_Finalize();
+        //#ClosePort end
 
-	//#finalizeMPI end
+        //#finalizeMPI begin
 
-	return 0;
+        MPI_Finalize();
+
+        //#finalizeMPI end
+
+        return 0;
 }

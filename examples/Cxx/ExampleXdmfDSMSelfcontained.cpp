@@ -9,195 +9,195 @@
 
 int main(int argc, char *argv[])
 {
-	//#initMPI begin
+        //#initMPI begin
 
-	int size, id, dsmSize;
-	dsmSize = 64;//The total size of the DSM being created
-	MPI_Status status;
-	MPI_Comm comm = MPI_COMM_WORLD;
+        int size, id, dsmSize;
+        dsmSize = 64;//The total size of the DSM being created
+        MPI_Status status;
+        MPI_Comm comm = MPI_COMM_WORLD;
 
-	MPI_Init_thread(&argc, &argv, MPI_THREAD_MULTIPLE, &providedThreading);
+        MPI_Init_thread(&argc, &argv, MPI_THREAD_MULTIPLE, &providedThreading);
 
-	MPI_Comm_rank(comm, &id);
-	MPI_Comm_size(comm, &size);
+        MPI_Comm_rank(comm, &id);
+        MPI_Comm_size(comm, &size);
 
-	//#initMPI end
+        //#initMPI end
 
-	std::vector<unsigned int> outputVector;
+        std::vector<unsigned int> outputVector;
 
-	shared_ptr<XdmfArray> testArray = XdmfArray::New();
+        shared_ptr<XdmfArray> testArray = XdmfArray::New();
 
-	for (unsigned int i = 1; i <= 4; ++i)
-	{
-		testArray->pushBack(i*id);
-	}
+        for (unsigned int i = 1; i <= 4; ++i)
+        {
+                testArray->pushBack(i*id);
+        }
 
-	//#writevectorinit begin
+        //#writevectorinit begin
 
-	std::string newPath = "dsm";
-	std::string newSetPath = "data";
+        std::string newPath = "dsm";
+        std::string newSetPath = "data";
 
-	std::vector<unsigned int> writeStartVector;
-	writeStartVector.push_back(id*4);
-	std::vector<unsigned int> writeStrideVector;
-	writeStrideVector.push_back(1);
-	std::vector<unsigned int> writeCountVector;
-	writeCountVector.push_back(4);
-	std::vector<unsigned int> writeDataSizeVector;
-	writeDataSizeVector.push_back(4*size);
+        std::vector<unsigned int> writeStartVector;
+        writeStartVector.push_back(id*4);
+        std::vector<unsigned int> writeStrideVector;
+        writeStrideVector.push_back(1);
+        std::vector<unsigned int> writeCountVector;
+        writeCountVector.push_back(4);
+        std::vector<unsigned int> writeDataSizeVector;
+        writeDataSizeVector.push_back(4*size);
 
-	//#writevectorinit end
+        //#writevectorinit end
 
-	/*
-	//#initwritergenerate begin
+        /*
+        //#initwritergenerate begin
 
-	shared_ptr<XdmfHDF5WriterDSM> exampleWriter = XdmfHDF5WriterDSM::New(newPath, comm, dsmSize/size);
+        shared_ptr<XdmfHDF5WriterDSM> exampleWriter = XdmfHDF5WriterDSM::New(newPath, comm, dsmSize/size);
 
-	//#initwritergenerate end
-	*/
+        //#initwritergenerate end
+        */
 
-	//#initcontrollergenerate begin
+        //#initcontrollergenerate begin
 
-	shared_ptr<XdmfHDF5ControllerDSM> writeController = XdmfHDF5ControllerDSM::New(
-		newPath,
-		newSetPath,
-		XdmfArrayType::Int32(),
-		writeStartVector,
-		writeStrideVector,
-		writeCountVector,
-		writeDataSizeVector,
-		comm,
-		dsmSize/size);
+        shared_ptr<XdmfHDF5ControllerDSM> writeController = XdmfHDF5ControllerDSM::New(
+                newPath,
+                newSetPath,
+                XdmfArrayType::Int32(),
+                writeStartVector,
+                writeStrideVector,
+                writeCountVector,
+                writeDataSizeVector,
+                comm,
+                dsmSize/size);
 
-	//#initcontrollergenerate end
+        //#initcontrollergenerate end
 
-	/*
-	//#initcontrollerwithbuffer begin
+        /*
+        //#initcontrollerwithbuffer begin
 
-	shared_ptr<XdmfHDF5ControllerDSM> writeController = XdmfHDF5ControllerDSM::New(
-		newPath,
-		newSetPath,
-		XdmfArrayType::Int32(),
-		writeStartVector,
-		writeStrideVector,
-		writeCountVector,
-		writeDataSizeVector,
-		exampleWriter->getBuffer());
+        shared_ptr<XdmfHDF5ControllerDSM> writeController = XdmfHDF5ControllerDSM::New(
+                newPath,
+                newSetPath,
+                XdmfArrayType::Int32(),
+                writeStartVector,
+                writeStrideVector,
+                writeCountVector,
+                writeDataSizeVector,
+                exampleWriter->getBuffer());
 
-	//#initcontrollerwithbuffer end
+        //#initcontrollerwithbuffer end
 
-	//#setManagercontroller begin
+        //#setManagercontroller begin
 
-	writeController->setManager(exampleWriter->getManager());
+        writeController->setManager(exampleWriter->getManager());
 
-	//#setManagercontroller end
+        //#setManagercontroller end
 
-	//#setBuffercontroller begin
+        //#setBuffercontroller begin
 
-	writeController->setBuffer(exampleWriter->getBuffer());
-	//In this context setting the buffer is redundant
-	//However, if multiple buffers exist, this can be used to change between them
+        writeController->setBuffer(exampleWriter->getBuffer());
+        //In this context setting the buffer is redundant
+        //However, if multiple buffers exist, this can be used to change between them
 
-	//#setBuffercontroller end
-	*/
+        //#setBuffercontroller end
+        */
 
-	//#initwriterwithbuffer begin
+        //#initwriterwithbuffer begin
 
-	shared_ptr<XdmfHDF5WriterDSM> exampleWriter = XdmfHDF5WriterDSM::New(newPath, writeController->getBuffer());
+        shared_ptr<XdmfHDF5WriterDSM> exampleWriter = XdmfHDF5WriterDSM::New(newPath, writeController->getBuffer());
 
-	//#initwriterwithbuffer end
+        //#initwriterwithbuffer end
 
-	//#setManagerwriter begin
+        //#setManagerwriter begin
 
-	exampleWriter->setManager(writeController->getManager());
+        exampleWriter->setManager(writeController->getManager());
 
-	//#setManagerwriter end
+        //#setManagerwriter end
 
-	//#setBufferwriter begin
+        //#setBufferwriter begin
 
-	exampleWriter->setBuffer(writeController->getBuffer());
-	//In this context setting the buffer is redundant
-	//However, if multiple buffers exist, this can be used to change between them
+        exampleWriter->setBuffer(writeController->getBuffer());
+        //In this context setting the buffer is redundant
+        //However, if multiple buffers exist, this can be used to change between them
 
-	//#setBufferwriter end
+        //#setBufferwriter end
 
-	exampleWriter->setMode(XdmfHeavyDataWriter::Hyperslab);
+        exampleWriter->setMode(XdmfHeavyDataWriter::Hyperslab);
 
-	testArray->insert(writeController);
+        testArray->insert(writeController);
 
-	for (unsigned int i = 0; i<size; ++i)
-	{
-		MPI_Barrier(comm);
-		if (i == id)
-		{
-			std::cout << "Core # " << id << std::endl;
-			std::cout << "Controller stats" << std::endl;
-			std::cout << "datasetpath = " << testArray->getHeavyDataController(0)->getDataSetPath() << std::endl;
-			std::cout << "filepath = " << testArray->getHeavyDataController(0)->getFilePath() << std::endl;
-			outputVector = testArray->getHeavyDataController(0)->getDataspaceDimensions();
-			std::cout << "Data space dimensions" << std::endl;
-			for (int j=0; j<outputVector.size(); ++j)
-			{
-				std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
-			}
-			std::cout << "Controller Dimensions" << std::endl;
-			outputVector = testArray->getHeavyDataController(0)->getDimensions();
-			for (int j=0; j<outputVector.size(); ++j)
-			{
-				std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
-			}
-			std::cout << "Controller size" << testArray->getHeavyDataController(0)->getSize() << std::endl;
-			std::cout << "Controller starts" << std::endl;
-			outputVector = testArray->getHeavyDataController(0)->getStart();
-			for (int j=0; j<outputVector.size(); ++j)
-			{
-				std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
-			}
-			std::cout << "Controller strides" << std::endl;
-			outputVector = testArray->getHeavyDataController(0)->getStride();
-			for (int j=0; j<outputVector.size(); ++j)
-			{
-				std::cout << "[" << j << "] =" << outputVector[j] << "\n" << std::endl;
-			}
-			for(unsigned int i=0; i<testArray->getSize(); ++i)
-			{
-				std::cout << "core #" << id <<" testArray[" << i << "] = " << testArray->getValue<int>(i) << std::endl;
-			}
-		}
-	}
+        for (unsigned int i = 0; i<size; ++i)
+        {
+                MPI_Barrier(comm);
+                if (i == id)
+                {
+                        std::cout << "Core # " << id << std::endl;
+                        std::cout << "Controller stats" << std::endl;
+                        std::cout << "datasetpath = " << testArray->getHeavyDataController(0)->getDataSetPath() << std::endl;
+                        std::cout << "filepath = " << testArray->getHeavyDataController(0)->getFilePath() << std::endl;
+                        outputVector = testArray->getHeavyDataController(0)->getDataspaceDimensions();
+                        std::cout << "Data space dimensions" << std::endl;
+                        for (int j=0; j<outputVector.size(); ++j)
+                        {
+                                std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
+                        }
+                        std::cout << "Controller Dimensions" << std::endl;
+                        outputVector = testArray->getHeavyDataController(0)->getDimensions();
+                        for (int j=0; j<outputVector.size(); ++j)
+                        {
+                                std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
+                        }
+                        std::cout << "Controller size" << testArray->getHeavyDataController(0)->getSize() << std::endl;
+                        std::cout << "Controller starts" << std::endl;
+                        outputVector = testArray->getHeavyDataController(0)->getStart();
+                        for (int j=0; j<outputVector.size(); ++j)
+                        {
+                                std::cout << "[" << j << "] =" << outputVector[j] << std::endl;
+                        }
+                        std::cout << "Controller strides" << std::endl;
+                        outputVector = testArray->getHeavyDataController(0)->getStride();
+                        for (int j=0; j<outputVector.size(); ++j)
+                        {
+                                std::cout << "[" << j << "] =" << outputVector[j] << "\n" << std::endl;
+                        }
+                        for(unsigned int i=0; i<testArray->getSize(); ++i)
+                        {
+                                std::cout << "core #" << id <<" testArray[" << i << "] = " << testArray->getValue<int>(i) << std::endl;
+                        }
+                }
+        }
 
-	testArray->accept(exampleWriter);
+        testArray->accept(exampleWriter);
 
-	std::vector<unsigned int> readStartVector;
-	readStartVector.push_back(4*(size - id - 1));
-	std::vector<unsigned int> readStrideVector;
-	readStrideVector.push_back(1);
-	std::vector<unsigned int> readCountVector;
-	readCountVector.push_back(4);
-	std::vector<unsigned int> readDataSizeVector;
-	readDataSizeVector.push_back(4*size);
+        std::vector<unsigned int> readStartVector;
+        readStartVector.push_back(4*(size - id - 1));
+        std::vector<unsigned int> readStrideVector;
+        readStrideVector.push_back(1);
+        std::vector<unsigned int> readCountVector;
+        readCountVector.push_back(4);
+        std::vector<unsigned int> readDataSizeVector;
+        readDataSizeVector.push_back(4*size);
 
-	shared_ptr<XdmfArray> readArray = XdmfArray::New();
+        shared_ptr<XdmfArray> readArray = XdmfArray::New();
 
-	readArray->initialize<int>(0);
-	readArray->reserve(testArray->getSize());
+        readArray->initialize<int>(0);
+        readArray->reserve(testArray->getSize());
 
-	shared_ptr<XdmfHDF5ControllerDSM> readController = XdmfHDF5ControllerDSM::New(
-		newPath,
-		newSetPath,
-		XdmfArrayType::Int32(),
-		readStartVector,
-		readStrideVector,
-		readCountVector,
-		readDataSizeVector,
-		exampleWriter->getBuffer());
+        shared_ptr<XdmfHDF5ControllerDSM> readController = XdmfHDF5ControllerDSM::New(
+                newPath,
+                newSetPath,
+                XdmfArrayType::Int32(),
+                readStartVector,
+                readStrideVector,
+                readCountVector,
+                readDataSizeVector,
+                exampleWriter->getBuffer());
 
-	readArray->insert(readController);
+        readArray->insert(readController);
 
-	std::cout << "testing read" << std::endl;
-	readArray->read();
-	std::cout << "done testing read" << std::endl;
-	
+        std::cout << "testing read" << std::endl;
+        readArray->read();
+        std::cout << "done testing read" << std::endl;
+        
 
         for (unsigned int i = 0; i<size; ++i)
         {
@@ -241,45 +241,45 @@ int main(int argc, char *argv[])
         }
 
 
-	MPI_Barrier(comm);
+        MPI_Barrier(comm);
 
-	/*
-	//#managerdeletionwriter begin
+        /*
+        //#managerdeletionwriter begin
 
-	//the dsmManager must be deleted or else there will be a segfault
+        //the dsmManager must be deleted or else there will be a segfault
 
-	delete exampleWriter->getManager();
+        delete exampleWriter->getManager();
 
-	//#managerdeletionwriter end
+        //#managerdeletionwriter end
 
-	//#deleteManagerwriter begin
+        //#deleteManagerwriter begin
 
-	//the dsmManager must be deleted or else there will be a segfault
+        //the dsmManager must be deleted or else there will be a segfault
 
-	examplewriter->deleteManager();
+        examplewriter->deleteManager();
 
-	//#deleteManagerwriter end
-	*/
+        //#deleteManagerwriter end
+        */
 
-	//#managerdeletioncontroller begin
+        //#managerdeletioncontroller begin
 
-	//the dsmManager must be deleted or else there will be a segfault
+        //the dsmManager must be deleted or else there will be a segfault
 
-	delete writeController->getManager();
+        delete writeController->getManager();
 
-	//#managerdeletioncontroller end
+        //#managerdeletioncontroller end
 
-	/*don't call delete twice on the same manager or else an error will occur
-	//#deleteManagercontroller begin
+        /*don't call delete twice on the same manager or else an error will occur
+        //#deleteManagercontroller begin
 
-	//the dsmManager must be deleted or else there will be a segfault
+        //the dsmManager must be deleted or else there will be a segfault
 
-	writeController->deleteManager();
+        writeController->deleteManager();
 
-	//#deleteManagercontroller end
-	*/
+        //#deleteManagercontroller end
+        */
 
-	MPI_Finalize();
+        MPI_Finalize();
 
-	return 0;
+        return 0;
 }

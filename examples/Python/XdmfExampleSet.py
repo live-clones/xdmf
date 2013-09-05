@@ -1,36 +1,36 @@
 from Xdmf import *
 
 if __name__ == "__main__":
-	#//initialization begin
+        #//initialization begin
 
-	exampleSet = XdmfSet.New()
+        exampleSet = XdmfSet.New()
 
-	#//initialization end
+        #//initialization end
 
-	#//setName begin
+        #//setName begin
 
-	std::string newName = "New Name";
-	exampleSet->setName(newName);
+        std::string newName = "New Name";
+        exampleSet->setName(newName);
 
-	#//setName end
+        #//setName end
 
-	#//setType begin
+        #//setType begin
 
-	exampleSet->setType(XdmfSetType::Node());
+        exampleSet->setType(XdmfSetType::Node());
 
-	#//setType end
+        #//setType end
 
-	#//getName begin
+        #//getName begin
 
-	exampleName = exampleSet.getName()
+        exampleName = exampleSet.getName()
 
-	#//getName end
+        #//getName end
 
-	#//getType begin
+        #//getType begin
 
-	exampleType = exampleSet.getType()
+        exampleType = exampleSet.getType()
 
-	if exampleType == XdmfSetType.Node():
-		#do whatever is to be done if the set is a node
+        if exampleType == XdmfSetType.Node():
+                #do whatever is to be done if the set is a node
 
-	#//getType end
+        #//getType end

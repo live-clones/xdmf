@@ -1,48 +1,48 @@
 from Xdmf import *
 
 if __name__ == "__main__":
-	#//initialization begin
+        #//initialization begin
 
-	exampleGrid = XdmfUnstructuredGrid.New()
+        exampleGrid = XdmfUnstructuredGrid.New()
 
-	#Using an unstructured grid since XdmfGrid is an abstract class
+        #Using an unstructured grid since XdmfGrid is an abstract class
 
-	#//initialization end
+        #//initialization end
 
-	#//setName begin
+        #//setName begin
 
-	newName = "New Name"
-	exampleGrid.setName(newName)
+        newName = "New Name"
+        exampleGrid.setName(newName)
 
-	#//setName end
+        #//setName end
 
-	#//setTime begin
+        #//setTime begin
 
-	newTime = XdmfTime.New(20.0)
-	exampleGrid.setTime(newTime)
+        newTime = XdmfTime.New(20.0)
+        exampleGrid.setTime(newTime)
 
-	#//setTIme end
+        #//setTIme end
 
-	#//getTime begin
+        #//getTime begin
 
-	exampleTime = exampleGrid.getTime()
+        exampleTime = exampleGrid.getTime()
 
-	#//getTime end
+        #//getTime end
 
-	#//getName begin
+        #//getName begin
 
-	exampleName = exampleGrid.getName()
+        exampleName = exampleGrid.getName()
 
-	#//getName end
+        #//getName end
 
-	#//getGeometry begin
+        #//getGeometry begin
 
-	exampleGeometry = exampleGrid.getGeometry()
+        exampleGeometry = exampleGrid.getGeometry()
 
-	#//getGeometry end
+        #//getGeometry end
 
-	#//getTopology begin
+        #//getTopology begin
 
-	exampleTopology = exampleGrid.getTopology()
+        exampleTopology = exampleGrid.getTopology()
 
-	#//getTopology end
+        #//getTopology end

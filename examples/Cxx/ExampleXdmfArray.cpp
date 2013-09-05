@@ -6,353 +6,353 @@
 
 int main(int, char **)
 {
-	//#initialization begin
+        //#initialization begin
 
-	shared_ptr<XdmfArray> exampleArray = XdmfArray::New();
+        shared_ptr<XdmfArray> exampleArray = XdmfArray::New();
 
-	//#initialization end
+        //#initialization end
 
-	//#setName begin
+        //#setName begin
 
-	std::string newName = "New Name";
-	exampleArray->setName(newName);
+        std::string newName = "New Name";
+        exampleArray->setName(newName);
 
-	//#setName end
+        //#setName end
 
-	//#sizedeclaration begin
+        //#sizedeclaration begin
 
-	int newSize = 10;
-	
-	//#sizedeclaration end
+        int newSize = 10;
+        
+        //#sizedeclaration end
 
-	//#reserve begin
+        //#reserve begin
 
-	exampleArray->reserve(newSize);
+        exampleArray->reserve(newSize);
 
-	//#reserve end
+        //#reserve end
 
-	//#initializesingletemplate begin
+        //#initializesingletemplate begin
 
-	shared_ptr<std::vector<int> > exampleVector = exampleArray->initialize<int>(newSize);
+        shared_ptr<std::vector<int> > exampleVector = exampleArray->initialize<int>(newSize);
 
-	//#initializesingletemplate end
+        //#initializesingletemplate end
 
-	//#initializesingletype begin
+        //#initializesingletype begin
 
-	exampleArray->initialize(XdmfArrayType::Int32(), newSize);
+        exampleArray->initialize(XdmfArrayType::Int32(), newSize);
 
-	//#initializesingletype end
+        //#initializesingletype end
 
-	//#sizevectordeclaration begin
+        //#sizevectordeclaration begin
 
-	std::vector<unsigned int> newSizeVector;
-	newSizeVector.push_back(4);
-	newSizeVector.push_back(5);
+        std::vector<unsigned int> newSizeVector;
+        newSizeVector.push_back(4);
+        newSizeVector.push_back(5);
 
-	//#sizevectordeclaration end
+        //#sizevectordeclaration end
 
-	//#initializevectortemplate begin
+        //#initializevectortemplate begin
 
-	shared_ptr<std::vector<int> > exampleVectorFromVector = exampleArray->initialize<int>(newSizeVector);
+        shared_ptr<std::vector<int> > exampleVectorFromVector = exampleArray->initialize<int>(newSizeVector);
 
-	//#initializevectortemplate end
+        //#initializevectortemplate end
 
-	//#initializevectortype begin
+        //#initializevectortype begin
 
-	exampleArray->initialize(XdmfArrayType::Int32(), newSize);
+        exampleArray->initialize(XdmfArrayType::Int32(), newSize);
 
-	//#initializevectortype end
+        //#initializevectortype end
 
-	//#isInitialized begin
+        //#isInitialized begin
 
-	if (exampleArray->isInitialized())
-	{
-		//do whatever is to be done if the array is initialized
-	}
+        if (exampleArray->isInitialized())
+        {
+                //do whatever is to be done if the array is initialized
+        }
 
-	//#isInitialized end
+        //#isInitialized end
 
-	//#read begin
+        //#read begin
 
-	if (!exampleArray->isInitialized())
-	{
-		exampleArray->read();
-	}
+        if (!exampleArray->isInitialized())
+        {
+                exampleArray->read();
+        }
 
-	//#read end
+        //#read end
 
-	//#datapointersetup begin
+        //#datapointersetup begin
 
-	int initArray [10] = {0,1,2,3,4,5,6,7,8,9};
+        int initArray [10] = {0,1,2,3,4,5,6,7,8,9};
 
-	//#datapointersetup end
+        //#datapointersetup end
 
-	//#pointerinsert begin
+        //#pointerinsert begin
 
-	exampleArray->insert(0, initArray, 10, 1, 1);
-	//exampleArray now contains {0,1,2,3,4,5,6,7,8,9}
-	exampleArray->insert(0, initArray, 5, 2, 1);
-	//exampleArray now contains {0,1,1,3,2,5,3,7,4,9}
-	exampleArray->insert(0, initArray, 5, 1, 2);
-	//exampleArray now contains {0,2,4,6,8,5,3,7,4,9}
+        exampleArray->insert(0, initArray, 10, 1, 1);
+        //exampleArray now contains {0,1,2,3,4,5,6,7,8,9}
+        exampleArray->insert(0, initArray, 5, 2, 1);
+        //exampleArray now contains {0,1,1,3,2,5,3,7,4,9}
+        exampleArray->insert(0, initArray, 5, 1, 2);
+        //exampleArray now contains {0,2,4,6,8,5,3,7,4,9}
 
-	//#pointerinsert end
+        //#pointerinsert end
 
-	//#arrayinsert begin
+        //#arrayinsert begin
 
-	shared_ptr<XdmfArray> tempArray = XdmfArray::New();
-	tempArray->insert(0, exampleArray, 0, 10, 1, 1);
-	//tempArray now contains {0,1,2,3,4,5,6,7,8,9}
-	tempArray->insert(0, exampleArray, 0, 5, 2, 1);
-	//tempArray now contains {0,1,1,3,2,5,3,7,4,9}
-	tempArray->insert(0, exampleArray, 0, 5, 1, 2);
-	//tempArray now contains {0,2,4,6,8,5,3,7,4,9}
+        shared_ptr<XdmfArray> tempArray = XdmfArray::New();
+        tempArray->insert(0, exampleArray, 0, 10, 1, 1);
+        //tempArray now contains {0,1,2,3,4,5,6,7,8,9}
+        tempArray->insert(0, exampleArray, 0, 5, 2, 1);
+        //tempArray now contains {0,1,1,3,2,5,3,7,4,9}
+        tempArray->insert(0, exampleArray, 0, 5, 1, 2);
+        //tempArray now contains {0,2,4,6,8,5,3,7,4,9}
 
-	//#arrayinsert end
+        //#arrayinsert end
 
-	//#pointinsertvalues begin
+        //#pointinsertvalues begin
 
-	double newValue = 3.5;
+        double newValue = 3.5;
 
-	//#pointinsertvalues end
+        //#pointinsertvalues end
 
-	//#pushBack begin
+        //#pushBack begin
 
-	exampleArray->pushBack(newValue);
+        exampleArray->pushBack(newValue);
 
-	//#pushBack end
+        //#pushBack end
 
-	//#pointinsert begin
+        //#pointinsert begin
 
-	int newIndex = 0;
-	exampleArray->insert(newIndex, newValue);
-	//the value of 3.5 is inserted at index 0
+        int newIndex = 0;
+        exampleArray->insert(newIndex, newValue);
+        //the value of 3.5 is inserted at index 0
 
-	//#pointinsert end
+        //#pointinsert end
 
-	//#setValuesInternalpointer begin
+        //#setValuesInternalpointer begin
 
-	exampleArray->setValuesInternal(initArray, 10, 1);
+        exampleArray->setValuesInternal(initArray, 10, 1);
 
-	//#setValuesInternalpointer end
+        //#setValuesInternalpointer end
 
-	//#initinternalvector begin
+        //#initinternalvector begin
 
-	std::vector<int> initVector;
-	initVector.push_back(1);
-	initVector.push_back(2);
-	initVector.push_back(3);
-	initVector.push_back(4);
-	initVector.push_back(5);
+        std::vector<int> initVector;
+        initVector.push_back(1);
+        initVector.push_back(2);
+        initVector.push_back(3);
+        initVector.push_back(4);
+        initVector.push_back(5);
 
-	//#initinternalvector end
+        //#initinternalvector end
 
-	//#setValuesInternalvector begin
+        //#setValuesInternalvector begin
 
-	exampleArray->setValuesInternal(initVector, 1);
+        exampleArray->setValuesInternal(initVector, 1);
 
-	//#setValuesInternalvector end
+        //#setValuesInternalvector end
 
-	//#initsharedvector begin
+        //#initsharedvector begin
 
-	shared_ptr<std::vector<int> > storeVector(&initVector);
+        shared_ptr<std::vector<int> > storeVector(&initVector);
 
-	//#initsharedvector end
+        //#initsharedvector end
 
-	//#setValuesInternalsharedvector begin
+        //#setValuesInternalsharedvector begin
 
-	exampleArray->setValuesInternal(storeVector);
+        exampleArray->setValuesInternal(storeVector);
 
-	//#setValuesInternalsharedvector end
+        //#setValuesInternalsharedvector end
 
-	//#setarraybase begin
+        //#setarraybase begin
 
         exampleArray->insert(0, initArray, 10, 1, 1);
         //exampleArray now contains {0,1,2,3,4,5,6,7,8,9}
 
-	//#setarraybase end
+        //#setarraybase end
 
-	//#swapvector begin
+        //#swapvector begin
 
-	//The vector contains {1,2,3,4,5} and the XdmfArray contains {0,1,2,3,4,5,6,7,8,9}
-	bool swapSucceded = exampleArray->swap(initVector);
-	//The vector contains {0,1,2,3,4,5,6,7,8,9} and the XdmfArray contains {1,2,3,4,5}
+        //The vector contains {1,2,3,4,5} and the XdmfArray contains {0,1,2,3,4,5,6,7,8,9}
+        bool swapSucceded = exampleArray->swap(initVector);
+        //The vector contains {0,1,2,3,4,5,6,7,8,9} and the XdmfArray contains {1,2,3,4,5}
 
-	//#swapvector end
+        //#swapvector end
 
-	//#swapsharedvector begin
+        //#swapsharedvector begin
 
-	//The vector contains {1,2,3,4,5} and the XdmfArray contains {0,1,2,3,4,5,6,7,8,9}
-	bool storeSwapSucceded = exampleArray->swap(storeVector);
-	//storeVector contains {0,1,2,3,4,5,6,7,8,9} and the XdmfArray contains {1,2,3,4,5}
+        //The vector contains {1,2,3,4,5} and the XdmfArray contains {0,1,2,3,4,5,6,7,8,9}
+        bool storeSwapSucceded = exampleArray->swap(storeVector);
+        //storeVector contains {0,1,2,3,4,5,6,7,8,9} and the XdmfArray contains {1,2,3,4,5}
 
-	//#swapsharedvector end
+        //#swapsharedvector end
 
-	//#swaparray begin
+        //#swaparray begin
 
-	shared_ptr<XdmfArray> swapArray = XdmfArray::New();
-	int initArray2 [5] = {1,2,3,4,5};
-	swapArray->insert(0, initArray2, 5, 1, 1);
-	//exampleArray contains {0,1,2,3,4,5,6,7,8,9} and swapArray contains {1,2,3,4,5}
-	exampleArray->swap(swapArray);
-	//Now exampleArray contains {1,2,3,4,5} and swapArray contains {0,1,2,3,4,5,6,7,8,9}
+        shared_ptr<XdmfArray> swapArray = XdmfArray::New();
+        int initArray2 [5] = {1,2,3,4,5};
+        swapArray->insert(0, initArray2, 5, 1, 1);
+        //exampleArray contains {0,1,2,3,4,5,6,7,8,9} and swapArray contains {1,2,3,4,5}
+        exampleArray->swap(swapArray);
+        //Now exampleArray contains {1,2,3,4,5} and swapArray contains {0,1,2,3,4,5,6,7,8,9}
 
-	//#swaparray end
+        //#swaparray end
 
-	//#clear begin
+        //#clear begin
 
-	exampleArray->clear();
+        exampleArray->clear();
 
-	//#clear end
+        //#clear end
 
-	//#getValues begin
+        //#getValues begin
 
-	int storeArray [10] = {0,1,2,3,4,5,6,7,8,9};
-	exampleArray->insert(0, storeArray, 10, 1, 1);
-	int readArray [10] = {10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
-	exampleArray->getValues(0, readArray, 5, 1, 2);
-	//readArray now contains {0, 11, 1, 13, 2, 15, 3, 17, 4, 19}
-	exampleArray->getValues(0, readArray, 5, 2, 1);
-	//readArray now contains {0, 2, 4, 6, 8, 15, 3, 17, 4, 19}
+        int storeArray [10] = {0,1,2,3,4,5,6,7,8,9};
+        exampleArray->insert(0, storeArray, 10, 1, 1);
+        int readArray [10] = {10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
+        exampleArray->getValues(0, readArray, 5, 1, 2);
+        //readArray now contains {0, 11, 1, 13, 2, 15, 3, 17, 4, 19}
+        exampleArray->getValues(0, readArray, 5, 2, 1);
+        //readArray now contains {0, 2, 4, 6, 8, 15, 3, 17, 4, 19}
 
-	//#getValues end
+        //#getValues end
 
-	//#resizesingle begin
+        //#resizesingle begin
 
-	newSize = 20;
-	int baseValue = 1;
-	exampleArray->resize(newSize, baseValue);
-	//exampleArray now contains {0,1,2,3,4,5,6,7,8,9,1,1,1,1,1,1,1,1,1,1}
-	newSize = 5;
-	exampleArray->resize(newSize, baseValue);
-	//exampleArray now contains {0,1,2,3,4}
+        newSize = 20;
+        int baseValue = 1;
+        exampleArray->resize(newSize, baseValue);
+        //exampleArray now contains {0,1,2,3,4,5,6,7,8,9,1,1,1,1,1,1,1,1,1,1}
+        newSize = 5;
+        exampleArray->resize(newSize, baseValue);
+        //exampleArray now contains {0,1,2,3,4}
 
-	//#resizesingle end
+        //#resizesingle end
 
-	//#resizevector begin
+        //#resizevector begin
 
-	std::vector<unsigned int> newresizeVector;
-	newResizeVector.push_back(4);
-	newResizeVector.push_back(5);	
+        std::vector<unsigned int> newresizeVector;
+        newResizeVector.push_back(4);
+        newResizeVector.push_back(5);   
 
-	exampleArray->resize(newResizeVector, baseValue);
-	//exampleArray now contains {0,1,2,3,4,5,6,7,8,9,1,1,1,1,1,1,1,1,1,1}
-	newResizeVector[0] = 1;
-	exampleArray->resize(newResizeVector, baseValue);
-	//exampleArray now contains {0,1,2,3,4}
+        exampleArray->resize(newResizeVector, baseValue);
+        //exampleArray now contains {0,1,2,3,4,5,6,7,8,9,1,1,1,1,1,1,1,1,1,1}
+        newResizeVector[0] = 1;
+        exampleArray->resize(newResizeVector, baseValue);
+        //exampleArray now contains {0,1,2,3,4}
 
-	//#resizevector end
+        //#resizevector end
 
-	//#getCapacity begin
+        //#getCapacity begin
 
-	unsigned int exampleCapacity = exampleArray->getCapacity();
+        unsigned int exampleCapacity = exampleArray->getCapacity();
 
-	//#getCapacity end
+        //#getCapacity end
 
-	//#getDimensions begin
+        //#getDimensions begin
 
-	std::vector<unsigned int> exampleDimensions = exampleArray->getDimensions();
+        std::vector<unsigned int> exampleDimensions = exampleArray->getDimensions();
 
-	//#getDimensions end
+        //#getDimensions end
 
-	//#getDimensionsString begin
+        //#getDimensionsString begin
 
-	std::string exampleDimensionString = exampleArray->getDimensionsString();
+        std::string exampleDimensionString = exampleArray->getDimensionsString();
 
-	//#getDimensionsString end
+        //#getDimensionsString end
 
-	//#getArrayType begin
+        //#getArrayType begin
 
-	shared_ptr<const XdmfArrayType> exampleType = exampleArray->getArrayType();
+        shared_ptr<const XdmfArrayType> exampleType = exampleArray->getArrayType();
 
-	//#getArrayType end
+        //#getArrayType end
 
-	//#getName begin
+        //#getName begin
 
-	std::string exampleName = exampleArray->getName();
+        std::string exampleName = exampleArray->getName();
 
-	//#getName end
+        //#getName end
 
-	//#getSize begin
+        //#getSize begin
 
-	unsigned int exampleSize = exampleArray->getSize();
+        unsigned int exampleSize = exampleArray->getSize();
 
-	//#getSize end
+        //#getSize end
 
-	//#getHeavyDataController begin
+        //#getHeavyDataController begin
 
-	shared_ptr<XdmfHeavyDataController> exampleController = exampleArray->getHeavyDataController();
+        shared_ptr<XdmfHeavyDataController> exampleController = exampleArray->getHeavyDataController();
 
-	//#getHeavyDataController end
+        //#getHeavyDataController end
 
-	//#setHeavyDataController begin
+        //#setHeavyDataController begin
 
-	shared_ptr<XdmfArray> newArray = XdmfArray::New();
-	newArray->setHeavyDataController(exampleController);
+        shared_ptr<XdmfArray> newArray = XdmfArray::New();
+        newArray->setHeavyDataController(exampleController);
 
-	//#setHeavyDataController end
+        //#setHeavyDataController end
 
-	//#readController begin
+        //#readController begin
 
-	newArray->readController();
+        newArray->readController();
 
-	//#readController end
+        //#readController end
 
-	//#getHeavyDataControllerconst begin
+        //#getHeavyDataControllerconst begin
 
-	shared_ptr<const XdmfHeavyDataController> exampleControllerConst = exampleArray->getHeavyDataController();
+        shared_ptr<const XdmfHeavyDataController> exampleControllerConst = exampleArray->getHeavyDataController();
 
-	//#getHeavyDataControllerconst end
+        //#getHeavyDataControllerconst end
 
-	//#getValueindex begin
+        //#getValueindex begin
 
-	//if exampleArray contains {0,1,2,3,4,5,6,7,8,9}
-	int exampleValue = exampleArray->getValue<int>(4);
-	//exampleValue now has the value of what was stored at index 4, which in this case is 4
+        //if exampleArray contains {0,1,2,3,4,5,6,7,8,9}
+        int exampleValue = exampleArray->getValue<int>(4);
+        //exampleValue now has the value of what was stored at index 4, which in this case is 4
 
-	//#getValueindex end
+        //#getValueindex end
 
-	//#getValuesString begin
+        //#getValuesString begin
 
-	std::string exampleValueString = exampleArray->getValuesString();
+        std::string exampleValueString = exampleArray->getValuesString();
 
-	//#getValuesString end
+        //#getValuesString end
 
-	//#getValuesInternalvector begin
+        //#getValuesInternalvector begin
 
-	shared_ptr<std::vector<int> > exampleInternalVector = exampleArray->getValuesInternal<int>();
+        shared_ptr<std::vector<int> > exampleInternalVector = exampleArray->getValuesInternal<int>();
 
-	//#getValuesInternalvector end
+        //#getValuesInternalvector end
 
-	//#getValuesInternalvoid begin
+        //#getValuesInternalvoid begin
 
-	void * exampleInternalPointer = exampleArray->getValuesInternal();
+        void * exampleInternalPointer = exampleArray->getValuesInternal();
 
-	//#getValuesInternalvoid end
+        //#getValuesInternalvoid end
 
-	//#getValuesInternalvoidconst begin
+        //#getValuesInternalvoidconst begin
 
-	const void * exampleInternalPointerConst = exampleArray->getValuesInternal();
+        const void * exampleInternalPointerConst = exampleArray->getValuesInternal();
 
-	//#getValuesInternalvoidconst end
+        //#getValuesInternalvoidconst end
 
-	//#erase begin
+        //#erase begin
 
-	//if exampleArray contains {0,1,2,3,4,5,6,7,8,9}
-	unsigned int erasedIndex = 4;
-	exampleArray->erase(erasedIndex);
-	//exampleArray now contains the following
-	// {0,1,2,3,5,6,7,8,9}
+        //if exampleArray contains {0,1,2,3,4,5,6,7,8,9}
+        unsigned int erasedIndex = 4;
+        exampleArray->erase(erasedIndex);
+        //exampleArray now contains the following
+        // {0,1,2,3,5,6,7,8,9}
 
-	//#erase end
+        //#erase end
 
-	//#release begin
+        //#release begin
 
-	exampleArray->release();
+        exampleArray->release();
 
-	//#release end
+        //#release end
 
-	//#insertmultidim begin
+        //#insertmultidim begin
 
         shared_ptr<XdmfArray> writtenArray = XdmfArray::New();
         std::vector<unsigned int> dimensionVector;
@@ -390,94 +390,94 @@ int main(int, char **)
 
         readArray->insert(readStarts, writtenArray, writeStarts, writeDim, readDim, readStrides, writeStrides);
 
-	//#insertmultidim end
+        //#insertmultidim end
 
-	//#setFunction begin
+        //#setFunction begin
 
-	shared_ptr<XdmfArray> variableArray = XdmfArray::New();
+        shared_ptr<XdmfArray> variableArray = XdmfArray::New();
 
-	for (unsigned int i = 0; i < 10; ++i)
-	{
-		variableArray->pushBack(i);
-	}
+        for (unsigned int i = 0; i < 10; ++i)
+        {
+                variableArray->pushBack(i);
+        }
 
-	std::map<std::string, shared_ptr<XdmfArray> > variableMap;
+        std::map<std::string, shared_ptr<XdmfArray> > variableMap;
 
-	variableMap["A"] = variableArray;
+        variableMap["A"] = variableArray;
 
-	shared_ptr<XdmfFunction> arrayFunction = XdmfFunction::New("AVE(A)", variableMap);
+        shared_ptr<XdmfFunction> arrayFunction = XdmfFunction::New("AVE(A)", variableMap);
 
-	exampleArray->setFunction(exampleFunction);
+        exampleArray->setFunction(exampleFunction);
 
-	//#setFunction end
+        //#setFunction end
 
-	//#getFunction begin
+        //#getFunction begin
 
-	shared_ptr<XdmfFunction> exampleFunction = exampleArray->getFunction();
+        shared_ptr<XdmfFunction> exampleFunction = exampleArray->getFunction();
 
-	//#getFunction end
+        //#getFunction end
 
-	//#readFunction begin
+        //#readFunction begin
 
-	exampleArray->readFunction();
+        exampleArray->readFunction();
 
-	//#readFunction end
+        //#readFunction end
 
-	//#setReadMode begin
+        //#setReadMode begin
 
-	exampleArray->setReadMode(XdmfArray::Function);
+        exampleArray->setReadMode(XdmfArray::Function);
 
-	//#setReadMode end
+        //#setReadMode end
 
-	//#getReadMode begin
+        //#getReadMode begin
 
-	ReadMode isFunction = exampleArray->getReadMode();
+        ReadMode isFunction = exampleArray->getReadMode();
 
-	if (isFunction == XdmfArray::Function)
-	{
-		exampleArray->readFunction();
-	}
+        if (isFunction == XdmfArray::Function)
+        {
+                exampleArray->readFunction();
+        }
 
-	//#getReadMode end
+        //#getReadMode end
 
-	//#setSubset begin
+        //#setSubset begin
 
-	shared_ptr<XdmfArray> newReference = XdmfArray::New();
-	for (unsigned int i = 0; i < 10; ++i)
-	{
-		newReference->pushBack(i);
-	}
+        shared_ptr<XdmfArray> newReference = XdmfArray::New();
+        for (unsigned int i = 0; i < 10; ++i)
+        {
+                newReference->pushBack(i);
+        }
 
-	std::vector<unsigned int> newStarts;
-	newStarts.push_back(0);
+        std::vector<unsigned int> newStarts;
+        newStarts.push_back(0);
 
-	std::vector<unsigned int> newStrides;
-	newStrides.push_back(1);
+        std::vector<unsigned int> newStrides;
+        newStrides.push_back(1);
 
-	std::vector<unsigned int> newDimensions;
-	newDimensions.pushBack(10);
+        std::vector<unsigned int> newDimensions;
+        newDimensions.pushBack(10);
 
-	shared_ptr<XdmfSubset> newSubset = XdmfSubset::New(newReference,
+        shared_ptr<XdmfSubset> newSubset = XdmfSubset::New(newReference,
                                                            newStarts,
                                                            newStrides,
                                                            newDimensions);
 
-	exampleArray->setSubset(newSubset);
+        exampleArray->setSubset(newSubset);
 
-	//#setSubset end
+        //#setSubset end
 
-	//#getSubset begin
+        //#getSubset begin
 
-	shared_ptr<XdmfSubset> exampleSubset = exampleArray->getSubset();
+        shared_ptr<XdmfSubset> exampleSubset = exampleArray->getSubset();
 
-	//#getSubset end
+        //#getSubset end
 
-	//#readSubset begin
+        //#readSubset begin
 
-	exampleArray->setReadMode(XdmfArray::Subset);
-	exampleArray->readSubset();
+        exampleArray->setReadMode(XdmfArray::Subset);
+        exampleArray->readSubset();
 
-	//#readSubset end
+        //#readSubset end
 
-	return 0;
+        return 0;
 }

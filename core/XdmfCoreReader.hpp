@@ -72,10 +72,10 @@ public:
    * @skipline #//parse
    * @until #//parse
    *
-   * @param	lightData	A string containing light data description of an
-   * 				Xdmf file.
+   * @param     lightData       A string containing light data description of an
+   *                            Xdmf file.
    *
-   * @return			An XdmfItem at the root of the Xdmf tree.
+   * @return                    An XdmfItem at the root of the Xdmf tree.
    */  
   virtual shared_ptr<XdmfItem> parse(const std::string & lightData) const;
 
@@ -104,9 +104,9 @@ public:
    * @skipline #//readroot
    * @until #//readroot
    *
-   * @param	filePath	The path of the Xdmf file to read in from disk.
+   * @param     filePath        The path of the Xdmf file to read in from disk.
    *
-   * @return 			An XdmfItem at the root of the Xdmf tree.
+   * @return                    An XdmfItem at the root of the Xdmf tree.
    */
   virtual shared_ptr<XdmfItem> read(const std::string & filePath) const;
 
@@ -135,12 +135,12 @@ public:
    * @skipline #//readXPath
    * @until #//readXPath
    *
-   * @param	filePath	The path of the Xdmf file to read in from disk.
-   * @param	xPath		An XPath corresponding to the portion of the
-   *				file to read.
+   * @param     filePath        The path of the Xdmf file to read in from disk.
+   * @param     xPath           An XPath corresponding to the portion of the
+   *                            file to read.
    *
-   * @return			A vector of XdmfItems that are included
-   *				in the XPath.
+   * @return                    A vector of XdmfItems that are included
+   *                            in the XPath.
    */
   virtual std::vector<shared_ptr<XdmfItem> >
   read(const std::string & filePath,
@@ -171,9 +171,9 @@ public:
    * @skipline #//readItems
    * @until #//readItems
    *
-   * @param	filePath	The path of the Xdmf file to read in from disk.
+   * @param     filePath        The path of the Xdmf file to read in from disk.
    *
-   * @return			A vector of XdmfItems at the root of the Xdmf tree.
+   * @return                    A vector of XdmfItems at the root of the Xdmf tree.
    */
   virtual std::vector<shared_ptr<XdmfItem> >
   readItems(const std::string & filePath) const;
@@ -183,9 +183,9 @@ public:
    *
    * Since files are closed between reads, this does nothing by itself.
    *
-   * @param	xPath	An XPath corresponding to the portion of the file to read.
+   * @param     xPath   An XPath corresponding to the portion of the file to read.
    *
-   * @return		A vector of items at the X path provided.
+   * @return            A vector of items at the X path provided.
    */
   std::vector<shared_ptr<XdmfItem> >
   readPathObjects(const std::string & xPath) const;

@@ -114,8 +114,8 @@ public:
   /**
    * Gets all faces within the given topology. Removing duplicates.
    *
-   * @param	convertedTopology	The topology to be deconstructed
-   * @return				A topology containing the faces from the deconstructed topology
+   * @param     convertedTopology       The topology to be deconstructed
+   * @return                            A topology containing the faces from the deconstructed topology
    */
   shared_ptr<XdmfTopology>
   getExternalFaces(const shared_ptr<XdmfTopology> convertedTopology);

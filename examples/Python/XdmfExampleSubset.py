@@ -1,109 +1,109 @@
 from Xdmf import *
 
 if __name__ == "__main__":
-	#//initialization begin
+        #//initialization begin
 
-	baseArray = XdmfArray.New()
+        baseArray = XdmfArray.New()
 
-	for i in range(0, 10):
-		baseArray.pushBack(i)
+        for i in range(0, 10):
+                baseArray.pushBack(i)
 
-	initStart = UInt32Vector()
-	initStart.push_back(0)
-	initStride = UInt32Vector()
-	initStride.push_back(1)
-	initDimension = UInt32Vector()
-	initDimension.push_back(10)
+        initStart = UInt32Vector()
+        initStart.push_back(0)
+        initStride = UInt32Vector()
+        initStride.push_back(1)
+        initDimension = UInt32Vector()
+        initDimension.push_back(10)
 
-	exampleSubset = XdmfSubset.New(baseArray,
+        exampleSubset = XdmfSubset.New(baseArray,
                                        initStart,
                                        initStride,
                                        initDimension)
 
-	#//initialization end
+        #//initialization end
 
-	#//getStart begin
+        #//getStart begin
 
-	exampleStart = exampleSubset.getStart()
+        exampleStart = exampleSubset.getStart()
 
-	#//getStart end
+        #//getStart end
 
-	#//setStart begin
+        #//setStart begin
 
-	exampleSubset.setStart(exampleStart)
+        exampleSubset.setStart(exampleStart)
 
-	#//setStart end
+        #//setStart end
 
-	#//getStride begin
+        #//getStride begin
 
-	exampleStride = exampleSubset.getStride()
+        exampleStride = exampleSubset.getStride()
 
-	#getStride end
+        #getStride end
 
-	#//setStride begin
+        #//setStride begin
 
-	exampleSubset.setStride(exampleStride)
+        exampleSubset.setStride(exampleStride)
 
-	#//setStride end
+        #//setStride end
 
-	#//getDimensions begin
+        #//getDimensions begin
 
-	exampleDimensions = exampleSubset.getDimensions()
+        exampleDimensions = exampleSubset.getDimensions()
 
-	#//getDimensions end
+        #//getDimensions end
 
-	#//setDimensions begin
+        #//setDimensions begin
 
-	exampleSubset.setDimensions(exampleDimensions)
+        exampleSubset.setDimensions(exampleDimensions)
 
-	#//setDimensions end
+        #//setDimensions end
 
-	#//getReferenceArray begin
+        #//getReferenceArray begin
 
-	exampleInternalArray = exampleSubset.getReferenceArray()
+        exampleInternalArray = exampleSubset.getReferenceArray()
 
-	#//getReferenceArray end
+        #//getReferenceArray end
 
-	#//setReferenceArray begin
+        #//setReferenceArray begin
 
-	exampleSubset.setReferenceArray(exampleInternalArray)
+        exampleSubset.setReferenceArray(exampleInternalArray)
 
-	#//setReferenceArray end
+        #//setReferenceArray end
 
-	#//getSize begin
+        #//getSize begin
 
-	exampleSize = exampleSubset.getSize()
+        exampleSize = exampleSubset.getSize()
 
-	#//getSize end
+        #//getSize end
 
-	#//setConstructedType begin
+        #//setConstructedType begin
 
-	typeAttribute = XdmfAttribute.New()
-	exampleSubset.setConstructedType(typeAttribute.getItemTag())
+        typeAttribute = XdmfAttribute.New()
+        exampleSubset.setConstructedType(typeAttribute.getItemTag())
 
-	#//setConstructedType end
+        #//setConstructedType end
 
-	#//getConstructedType begin
+        #//getConstructedType begin
 
-	exampleType = exampleSubset.getConstructedType()
+        exampleType = exampleSubset.getConstructedType()
 
-	#//getConstructedType end
+        #//getConstructedType end
 
-	#//setConstructedProperties begin
+        #//setConstructedProperties begin
 
-	propertyAttribute = XdmfAttribute.New()
-	exampleSubset.setConstructedProperties(propertyAttribute.getItemProperties())
+        propertyAttribute = XdmfAttribute.New()
+        exampleSubset.setConstructedProperties(propertyAttribute.getItemProperties())
 
-	#//setConstructedProperties end
+        #//setConstructedProperties end
 
-	#//getConstructedProperties begin
+        #//getConstructedProperties begin
 
-	exampleProperties = exampleSubset.getConstructedProperties()
+        exampleProperties = exampleSubset.getConstructedProperties()
 
-	#//getConstructedProperties end
+        #//getConstructedProperties end
 
-	#//read begin
+        #//read begin
 
-	subsetResult = exampleSubset.read()
+        subsetResult = exampleSubset.read()
 
         #//read end

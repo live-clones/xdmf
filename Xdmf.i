@@ -62,7 +62,10 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
     #include <XdmfTopology.hpp>
     #include <XdmfTopologyType.hpp>
     #include <XdmfUnstructuredGrid.hpp>
+
 %}
+
+%import XdmfDSM.i
 
 #else
 %module Xdmf
@@ -253,6 +256,15 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 %pythoncode {
     from XdmfCore import *
 }
+
+#ifdef XDMF_BUILD_DSM
+
+%pythoncode {
+    from XdmfDSM import *
+}
+
+#endif /* XDMF_BUILD_DSM */
+
 
 %fragment("XdmfItemCast", "header") {
     #include <XdmfSharedPtr.hpp>

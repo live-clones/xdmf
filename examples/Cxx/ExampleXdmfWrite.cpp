@@ -22,7 +22,7 @@
 
 int main(int, char **)
 {
-	shared_ptr<XdmfDomain> primaryDomain = XdmfDomain::New();
+        shared_ptr<XdmfDomain> primaryDomain = XdmfDomain::New();
         shared_ptr<XdmfInformation> domaininfo = XdmfInformation::New("Domain", "This is the primary data structure in Xdmf");
         shared_ptr<XdmfInformation> domaininfoinfo = XdmfInformation::New("Information", "Information can have information");
         domaininfo->insert(domaininfoinfo);
@@ -119,7 +119,7 @@ int main(int, char **)
         double rectXcoordinates [] = {1.1, 1.1, 2.1, 2.1, 1.1, 2.1, 4.1, 1.1, 3.1, 1.1, 2.1, 2.1};
         double rectYcoordinates [] = {2.1, 2.1, 2.1, 4.1, 3.1, 3.1, 1.1, 1.1, 0.1, 2.1, 1.1, 0.1};
         double rectZcoordinates [] = {4.1, 1.1, -1.1, 1.1, 2.1, 0.1, 1.1, 2.1, -0.1, 4.1, 3.1, -1.1};
-	shared_ptr<XdmfArray> rectXarray = XdmfArray::New();
+        shared_ptr<XdmfArray> rectXarray = XdmfArray::New();
         rectXarray->insert(0, rectXcoordinates, 12, 1, 1);
         shared_ptr<XdmfArray> rectYarray = XdmfArray::New();
         rectYarray->insert(0, rectYcoordinates, 12, 1, 1);
@@ -162,7 +162,7 @@ int main(int, char **)
         shared_ptr<XdmfTime> regtime = XdmfTime::New(5.0);
         shared_ptr<XdmfInformation> regtimeinfo = XdmfInformation::New("Time", "This is the time for the regular grid");
         regtime->insert(regtimeinfo);
-	reggrid->setTime(regtime);
+        reggrid->setTime(regtime);
         shared_ptr<XdmfAttribute> regglobalID = XdmfAttribute::New();
         regglobalID->setType(XdmfAttributeType::GlobalId());
         regglobalID->setCenter(XdmfAttributeCenter::Node());
@@ -171,7 +171,7 @@ int main(int, char **)
         regglobalID->insert(0, task4globalnodes, 7, 1, 1);
         shared_ptr<XdmfInformation> regglobalIDinfo = XdmfInformation::New("Global Node Equivalencies", "These are the global nodes that associate with the local nodes");
         regglobalID->insert(regglobalIDinfo);
-	reggrid->insert(regglobalID);
+        reggrid->insert(regglobalID);
 
 
 
@@ -191,9 +191,9 @@ int main(int, char **)
         the version of XdmfMap::New() used here returns a number of maps equal to the number of attributes it was provided with.
         */
         for (int i = 0; i<mapcollection.size(); ++i)
-	{
-		gridHolder->insert(mapcollection[i]);
-	}
+        {
+                gridHolder->insert(mapcollection[i]);
+        }
 
         gridHolder->insert(ungrid);
         gridHolder->insert(curvgrid);
@@ -219,24 +219,24 @@ int main(int, char **)
         shared_ptr<XdmfHDF5Writer> exampleHeavyWriter = XdmfHDF5Writer::New("testoutput.h5");
         shared_ptr<XdmfWriter> exampleWriter = XdmfWriter::New("testoutput.xmf", exampleHeavyWriter);
 
-	exampleHeavyWriter->setFileSizeLimit(1);
+        exampleHeavyWriter->setFileSizeLimit(1);
 
-	primaryDomain->accept(exampleHeavyWriter);
-	exampleHeavyWriter->setMode(XdmfHeavyDataWriter::Overwrite);//do this so that the data isn't in the hdf5 file twice.
+        primaryDomain->accept(exampleHeavyWriter);
+        exampleHeavyWriter->setMode(XdmfHeavyDataWriter::Overwrite);//do this so that the data isn't in the hdf5 file twice.
         primaryDomain->accept(exampleWriter);
 
         exampleHeavyWriter->setMode(XdmfHeavyDataWriter::Append);
-	for (int i = 0; i <= 408; ++i)
-	{//overflow occurs a little after the end of this loop
-		primaryDomain->accept(exampleHeavyWriter);
-	}
-	exampleHeavyWriter->setMode(XdmfHeavyDataWriter::Default);
-	primaryDomain->accept(exampleHeavyWriter);
-	exampleHeavyWriter->setMode(XdmfHeavyDataWriter::Append);
-	for (int i = 0; i<5; ++i)
-	{//this loop covers the overflow of the fileSizeLimit
-		primaryDomain->accept(exampleHeavyWriter);
-	}
-	primaryDomain->accept(exampleWriter);
+        for (int i = 0; i <= 408; ++i)
+        {//overflow occurs a little after the end of this loop
+                primaryDomain->accept(exampleHeavyWriter);
+        }
+        exampleHeavyWriter->setMode(XdmfHeavyDataWriter::Default);
+        primaryDomain->accept(exampleHeavyWriter);
+        exampleHeavyWriter->setMode(XdmfHeavyDataWriter::Append);
+        for (int i = 0; i<5; ++i)
+        {//this loop covers the overflow of the fileSizeLimit
+                primaryDomain->accept(exampleHeavyWriter);
+        }
+        primaryDomain->accept(exampleWriter);
   return 0;
 }

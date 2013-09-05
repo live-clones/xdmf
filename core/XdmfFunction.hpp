@@ -92,7 +92,7 @@ public:
    * @skipline #//initialization
    * @until #//initialization
    *
-   * @return	Constructed XdmfFunction.
+   * @return    Constructed XdmfFunction.
    */
   static shared_ptr<XdmfFunction> New();
 
@@ -113,10 +113,10 @@ public:
    * @skipline #//initexpression
    * @until #//initexpression
    *
-   * @param	newExpression	The expression that the function will evaluate
-   * @param	newVariables	The arrays that the function will use
-   *				to evalute the expression
-   * @return			Constructed XdmfFunction.
+   * @param     newExpression   The expression that the function will evaluate
+   * @param     newVariables    The arrays that the function will use
+   *                            to evalute the expression
+   * @return                    Constructed XdmfFunction.
    */
   static shared_ptr<XdmfFunction>
   New(std::string newExpression,
@@ -159,11 +159,11 @@ public:
    * @skipline #//addFunction
    * @until #//addFunction
    *
-   * @param	name		A string to be associated with the provided
-   *				function during string evaluation
-   * @param	functionref	A pointer to the function to be associated
-   *				with the given string
-   * @return			The total number of functions currently usable
+   * @param     name            A string to be associated with the provided
+   *                            function during string evaluation
+   * @param     functionref     A pointer to the function to be associated
+   *                            with the given string
+   * @return                    The total number of functions currently usable
    */
   static int
   addFunction(std::string name,
@@ -190,11 +190,11 @@ public:
    *
    * Python: This version of addFunction is not supported in Python
    *
-   * @param	name		A string to be associated with the provided
-   *				function during string evaluation
-   * @param	newFunction	A shared pointer to the function to be
-   *				associated with the given string
-   * @return			The total number of functions currently usable
+   * @param     name            A string to be associated with the provided
+   *                            function during string evaluation
+   * @param     newFunction     A shared pointer to the function to be
+   *                            associated with the given string
+   * @return                    The total number of functions currently usable
    */
   static int
   addFunction(std::string name,
@@ -229,13 +229,13 @@ public:
    * @skipline #//addOperation
    * @until #//addOperation
    *
-   * @param	newoperator	The character to be associated with the provided
-   *				binary operation
-   * @param	functionref	A pointer to the function to be associated with
-   *				the provided operator
-   * @param	priority	Used to determine order of operations,
-   *				the higher the value the earlier it is evaluated
-   * @return			The number of viable operations
+   * @param     newoperator     The character to be associated with the provided
+   *                            binary operation
+   * @param     functionref     A pointer to the function to be associated with
+   *                            the provided operator
+   * @param     priority        Used to determine order of operations,
+   *                            the higher the value the earlier it is evaluated
+   * @return                    The number of viable operations
    */
   static int
   addOperation(char newoperator,
@@ -263,13 +263,13 @@ public:
    *
    * Python: This version of addOperation is not supported in Python
    *
-   * @param	newoperator	The character to be associated with the provided
-   *				binary operation
-   * @param	newOperation	A pointer to the function to be associated
-   *				with the provided operator
-   * @param	priority	Used to determine order of operations,
-   *				the higher the value the earlier it is evaluated
-   * @return			The number of viable operations
+   * @param     newoperator     The character to be associated with the provided
+   *                            binary operation
+   * @param     newOperation    A pointer to the function to be associated
+   *                            with the provided operator
+   * @param     priority        Used to determine order of operations,
+   *                            the higher the value the earlier it is evaluated
+   * @return                    The number of viable operations
    */
   static int
   addOperation(char newoperator,
@@ -297,9 +297,9 @@ public:
    * @skipline #//average
    * @until #//average
    *
-   * @param	values	A vector containing the arrays to be used
-   * @return		An XdmfArray containing one value which is the average
-   *			of all values contained within the provided arrays
+   * @param     values  A vector containing the arrays to be used
+   * @return            An XdmfArray containing one value which is the average
+   *                    of all values contained within the provided arrays
    */
   static shared_ptr<XdmfArray>
   average(std::vector<shared_ptr<XdmfArray> > values);
@@ -325,9 +325,9 @@ public:
    * @skipline #//chunk
    * @until #//chunk
    *
-   * @param	val1	The first array being evaluated
-   * @param	val2	The second array being evaluated
-   * @return		The arrays joined end to end
+   * @param     val1    The first array being evaluated
+   * @param     val2    The second array being evaluated
+   * @return            The arrays joined end to end
    */
   static shared_ptr<XdmfArray>
   chunk(shared_ptr<XdmfArray> val1,
@@ -383,10 +383,10 @@ public:
    * @skipline #//evaluateExpression
    * @until #//evaluateExpression
    *
-   * @param	expression	A string containing the expresion to be evaluated
-   * @param	variables	A map of strings to their XdmfArray equivalent
-   * @return			A shared pointer to the XdmfArray resulting
-   *				from the expression
+   * @param     expression      A string containing the expresion to be evaluated
+   * @param     variables       A map of strings to their XdmfArray equivalent
+   * @return                    A shared pointer to the XdmfArray resulting
+   *                            from the expression
    */
   static shared_ptr<XdmfArray>
   evaluateExpression(std::string expression,
@@ -433,11 +433,11 @@ public:
    * @skipline #//evaluateOperation
    * @until #//evaluateOperation
    *
-   * @param	val1		The first array being evaluated
-   * @param	val2		The second array being evaluated
-   * @param	operation	A character specifying the operation performed
-   * @return			A shared pointer to the Xdmf Array that results
-   *				from the calculation
+   * @param     val1            The first array being evaluated
+   * @param     val2            The second array being evaluated
+   * @param     operation       A character specifying the operation performed
+   * @return                    A shared pointer to the Xdmf Array that results
+   *                            from the calculation
    */
   static shared_ptr<XdmfArray>
   evaluateOperation(shared_ptr<XdmfArray> val1,
@@ -482,10 +482,10 @@ public:
    * @skipline #//evaluateFunction
    * @until #//evaluateFunction
    *
-   * @param	valueVector	A vector containing the arrays to be used
-   * @param	functionName	The string associated with the function being called
-   * @return			The result of the function being called,
-   *				a scalar will be returned as an XdmfArray with one value
+   * @param     valueVector     A vector containing the arrays to be used
+   * @param     functionName    The string associated with the function being called
+   * @return                    The result of the function being called,
+   *                            a scalar will be returned as an XdmfArray with one value
    */
   static shared_ptr<XdmfArray>
   evaluateFunction(std::vector<shared_ptr<XdmfArray> > valueVector,
@@ -516,7 +516,7 @@ public:
    * @skipline #//getConstructedProperties
    * @until #//getConstructedProperties
    *
-   * @return	The properties of the array to be generated
+   * @return    The properties of the array to be generated
    */
   std::map<std::string, std::string> getConstructedProperties();
 
@@ -545,7 +545,7 @@ public:
    * @skipline #//getConstructedType
    * @until #//getConstructedType
    *
-   * @return	The tag of the type to be generated
+   * @return    The tag of the type to be generated
    */
   std::string getConstructedType();
 
@@ -570,7 +570,7 @@ public:
    * @skipline #//setExpression
    * @until #//setExpression
    *
-   * @return	The expression that the function is currently using to evaluate
+   * @return    The expression that the function is currently using to evaluate
    */
   std::string getExpression();
 
@@ -598,9 +598,9 @@ public:
    * @skipline #//getOperationPriority
    * @until #//getOperationPriority
    *
-   * @param	operation	The character associated with the operation
-   *				to be checked
-   * @return			The priority of the operation
+   * @param     operation       The character associated with the operation
+   *                            to be checked
+   * @return                    The priority of the operation
    */
   static int getOperationPriority(char operation);
 
@@ -622,7 +622,7 @@ public:
    * @skipline #//getSupportedOperations
    * @until #//getSupportedOperations
    *
-   * @return	A string containing the characters for all supported operations
+   * @return    A string containing the characters for all supported operations
    */
   static const std::string getSupportedOperations();
 
@@ -644,7 +644,7 @@ public:
    * @skipline #//getSupportedFunctions
    * @until #//getSupportedFunctions
    *
-   * @return	A vector containing the strings associated with all valid functions
+   * @return    A vector containing the strings associated with all valid functions
    */
   static const std::vector<std::string> getSupportedFunctions();
 
@@ -667,7 +667,7 @@ public:
    * @skipline #//getValidDigitChars
    * @until #//getValidDigitChars
    *
-   * @return	A string containing all valid variable characters
+   * @return    A string containing all valid variable characters
    */
   static const std::string getValidDigitChars();
 
@@ -689,7 +689,7 @@ public:
    * @skipline #//getValidVariableChars
    * @until #//getValidVariableChars
    *
-   * @return	A string containing all valid variable characters
+   * @return    A string containing all valid variable characters
    */
   static const std::string getValidVariableChars();
 
@@ -719,8 +719,8 @@ public:
    * @skipline #//getVariable
    * @until #//getVariable
    *
-   * @param	key	The string that is associated with the array to be retrieved
-   * @return		The array that corresponds with the key provided.
+   * @param     key     The string that is associated with the array to be retrieved
+   * @return            The array that corresponds with the key provided.
    */
   shared_ptr<XdmfArray> getVariable(std::string key);
 
@@ -749,7 +749,7 @@ public:
    * @skipline #//getVariableList
    * @until #//getVariableList
    *
-   * @return	A vector of all the keys for this function
+   * @return    A vector of all the keys for this function
    */
   std::vector<std::string> getVariableList();
 
@@ -774,9 +774,9 @@ public:
    * @skipline #//interlace
    * @until #//interlace
    *
-   * @param	val1	The first array being evaluated
-   * @param	val2	The second array being evaluated
-   * @return		The interlaced arrays
+   * @param     val1    The first array being evaluated
+   * @param     val2    The second array being evaluated
+   * @return            The interlaced arrays
    */
   static shared_ptr<XdmfArray>
   interlace(shared_ptr<XdmfArray> val1,
@@ -803,8 +803,8 @@ public:
    * @skipline #//insertVariable
    * @until #//insertVariable
    *
-   * @param	key	The string to be associated with the provided array
-   * @param	value	The value of the variable when evaluated
+   * @param     key     The string to be associated with the provided array
+   * @param     value   The value of the variable when evaluated
    */
   void insertVariable(std::string key, shared_ptr<XdmfArray> value);
 
@@ -857,7 +857,7 @@ public:
    * @skipline #//removeVariable
    * @until #//removeVariable
    *
-   * @param	key	The string to be associated with the provided array
+   * @param     key     The string to be associated with the provided array
    */
   void removeVariable(std::string key);
 
@@ -882,7 +882,7 @@ public:
    * @skipline #//setConstructedProperties
    * @until #//setConstructedProperties
    *
-   * @param	newProperties	The properties of the array to be generated
+   * @param     newProperties   The properties of the array to be generated
    */
   void
   setConstructedProperties(std::map<std::string, std::string> newProperties);
@@ -908,7 +908,7 @@ public:
    * @skipline #//setConstructedType
    * @until #//setConstructedType
    *
-   * @param	newType		The tag of the type to be generated
+   * @param     newType         The tag of the type to be generated
    */
   void setConstructedType(std::string newType);
 
@@ -933,7 +933,7 @@ public:
    * @skipline #//setExpression
    * @until #//setExpression
    *
-   * @param	newExpression	The expression that the function is to evaluate
+   * @param     newExpression   The expression that the function is to evaluate
    */
   void setExpression(std::string newExpression);
 
@@ -958,9 +958,9 @@ public:
    * @skipline #//sum
    * @until #//sum
    *
-   * @param	values	A vector containing the arrays to be used
-   * @return		An XdmfArray containing one value which is the total
-   *			of all the values contained within the provided arrays
+   * @param     values  A vector containing the arrays to be used
+   * @return            An XdmfArray containing one value which is the total
+   *                    of all the values contained within the provided arrays
    */
   static shared_ptr<XdmfArray>
   sum(std::vector<shared_ptr<XdmfArray> > values);

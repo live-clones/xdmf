@@ -3,122 +3,122 @@
 
 int main(int, char **)
 {
-	int size = 2;
+        int size = 2;
 
-	//Assuming exampleGrid is a shared pointer to an XdmfRegularGrid object
+        //Assuming exampleGrid is a shared pointer to an XdmfRegularGrid object
 
-	//#initvalue begin
+        //#initvalue begin
 
-	double newBrickX = 20.0;
+        double newBrickX = 20.0;
         unsigned int newPointsX = 5;
         double newOriginX = 0;
-	double newBrickY = 20.0;
-	unsigned int newPointsY = 5;
-	double newOriginY = 0;
-	double newBrickZ = 20.0;
-	unsigned int newPointsZ = 5;
-	double newOriginZ = 0;
+        double newBrickY = 20.0;
+        unsigned int newPointsY = 5;
+        double newOriginY = 0;
+        double newBrickZ = 20.0;
+        unsigned int newPointsZ = 5;
+        double newOriginZ = 0;
 
-	//#initvalue end
+        //#initvalue end
 
-	if (size==2)
-	{
+        if (size==2)
+        {
 
-	//#initialization2 begin
+        //#initialization2 begin
 
-	shared_ptr<XdmfRegularGrid> exampleGrid = XdmfRegularGrid::New(
-		newBrickX, newBrickY, newPointsX, newPointsY, newOriginX, newOriginY);
+        shared_ptr<XdmfRegularGrid> exampleGrid = XdmfRegularGrid::New(
+                newBrickX, newBrickY, newPointsX, newPointsY, newOriginX, newOriginY);
 
-	//#initialization2 end
+        //#initialization2 end
 
-	//#getBrickSize begin
+        //#getBrickSize begin
 
-	shared_ptr<XdmfArray> exampleBrick = exampleGrid->getBrickSize();
+        shared_ptr<XdmfArray> exampleBrick = exampleGrid->getBrickSize();
 
-	//#getBrickSize end
+        //#getBrickSize end
 
-	//#getBrickSizeconst begin
+        //#getBrickSizeconst begin
 
-	shared_ptr<const XdmfArray> exampleBrickConst = exampleGrid->getBrickSize();
+        shared_ptr<const XdmfArray> exampleBrickConst = exampleGrid->getBrickSize();
 
-	//#getBrickSizeconst end
+        //#getBrickSizeconst end
 
-	//#getDimensions begin
+        //#getDimensions begin
 
-	shared_ptr<XdmfArray> exampleDimensions = exampleGrid->getDimensions();
+        shared_ptr<XdmfArray> exampleDimensions = exampleGrid->getDimensions();
 
-	//#getDimensions end
+        //#getDimensions end
 
-	//#getDimensionsconst begin
+        //#getDimensionsconst begin
 
-	shared_ptr<const XdmfArray> exampleDimensionsConst = exampleGrid->getDimensions();
+        shared_ptr<const XdmfArray> exampleDimensionsConst = exampleGrid->getDimensions();
 
-	//#getDimensionsconst end
+        //#getDimensionsconst end
 
-	//#getOrigin begin
+        //#getOrigin begin
 
-	shared_ptr<XdmfArray> exampleOrigin = exampleGrid->getOrigin();
+        shared_ptr<XdmfArray> exampleOrigin = exampleGrid->getOrigin();
 
-	//#getOrigin end
+        //#getOrigin end
 
-	//#getOriginconst begin
+        //#getOriginconst begin
 
-	shared_ptr<const XdmfArray> exampleOriginConst = exampleGrid->getOrigin();
+        shared_ptr<const XdmfArray> exampleOriginConst = exampleGrid->getOrigin();
 
-	//#getOriginconst end
+        //#getOriginconst end
 
-	}
-	else if (size==3)
-	{
+        }
+        else if (size==3)
+        {
 
-	//#initialization3 begin
+        //#initialization3 begin
 
-	shared_ptr<XdmfRegularGrid> exampleGrid = XdmfRegularGrid::New(
-		newBrickX, newBrickY, newBrickZ, newPointsX, newPointsY, newPointsZ, newOriginX, newOriginY, newOriginZ);
+        shared_ptr<XdmfRegularGrid> exampleGrid = XdmfRegularGrid::New(
+                newBrickX, newBrickY, newBrickZ, newPointsX, newPointsY, newPointsZ, newOriginX, newOriginY, newOriginZ);
 
-	//#initialization3 end
+        //#initialization3 end
 
-	}
-	else //mutable size
-	{
+        }
+        else //mutable size
+        {
 
-	//#initializationvector begin
+        //#initializationvector begin
 
-	shared_ptr<XdmfArray> newBrickSize = XdmfArray::New();
-	newBrickSize->pushBack(20.0);
-	newBrickSize->pushBack(21.0);
-	newBrickSize->pushBack(22.0);
-	shared_ptr<XdmfArray> newNumPoints = XdmfArray::New();
-	newNumPoints->pushBack(5);
-	newNumPoints->pushBack(6);
-	newNumPoints->pushBack(7);
-	shared_ptr<XdmfArray> newGridOrigin = XdmfArray::New();
-	newGridOrigin->pushBack(0.0);
-	newGridOrigin->pushBack(1.0);
-	newGridOrigin->pushBack(2.0);
-	shared_ptr<XdmfRegularGrid> exampleGrid = XdmfRegularGrid::New(newBrickSize, newNumPoints, newGridOrigin);
+        shared_ptr<XdmfArray> newBrickSize = XdmfArray::New();
+        newBrickSize->pushBack(20.0);
+        newBrickSize->pushBack(21.0);
+        newBrickSize->pushBack(22.0);
+        shared_ptr<XdmfArray> newNumPoints = XdmfArray::New();
+        newNumPoints->pushBack(5);
+        newNumPoints->pushBack(6);
+        newNumPoints->pushBack(7);
+        shared_ptr<XdmfArray> newGridOrigin = XdmfArray::New();
+        newGridOrigin->pushBack(0.0);
+        newGridOrigin->pushBack(1.0);
+        newGridOrigin->pushBack(2.0);
+        shared_ptr<XdmfRegularGrid> exampleGrid = XdmfRegularGrid::New(newBrickSize, newNumPoints, newGridOrigin);
 
-	//#initializationvector end
+        //#initializationvector end
 
-	//#setBrickSize begin
+        //#setBrickSize begin
 
-	exampleGrid->setBrickSize(newBrickSize);
+        exampleGrid->setBrickSize(newBrickSize);
 
-	//#setBrickSize end
+        //#setBrickSize end
 
-	//#setDimensions begin
+        //#setDimensions begin
 
-	exampleGrid->setDimensions(newNumPoints);
+        exampleGrid->setDimensions(newNumPoints);
 
-	//#setDimensions end
+        //#setDimensions end
 
-	//#setOrigin begin
+        //#setOrigin begin
 
-	exampleGrid->setOrigin(newGridOrigin);
+        exampleGrid->setOrigin(newGridOrigin);
 
-	//#setOrigin end
+        //#setOrigin end
 
-	}
+        }
 
-	return 0;
+        return 0;
 }

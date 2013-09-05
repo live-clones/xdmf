@@ -3,41 +3,41 @@
 
 int main(int, char **)
 {
-	//#initialize begin
+        //#initialize begin
 
-	shared_ptr<XdmfSet> exampleSet = XdmfSet::New();
+        shared_ptr<XdmfSet> exampleSet = XdmfSet::New();
 
-	//#initialize end
+        //#initialize end
 
-	//#setName begin
+        //#setName begin
 
-	std::string newName = "New Name";
-	exampleSet->setName(newName);
+        std::string newName = "New Name";
+        exampleSet->setName(newName);
 
-	//#setName end
+        //#setName end
 
-	//#setType begin
+        //#setType begin
 
-	exampleSet->setType(XdmfSetType::Node());
+        exampleSet->setType(XdmfSetType::Node());
 
-	//#setType end
+        //#setType end
 
-	//#getName begin
+        //#getName begin
 
-	std::string exampleName = exampleSet->getName();
+        std::string exampleName = exampleSet->getName();
 
-	//#getName end
+        //#getName end
 
-	//#getType begin
+        //#getType begin
 
-	shared_ptr<const XdmfSetType> exampleType = exampleSet->getType();
+        shared_ptr<const XdmfSetType> exampleType = exampleSet->getType();
 
-	if (exampleType == XdmfSetType::Node())
-	{
-		//Do whatever is to be done if the set is a node
-	}
+        if (exampleType == XdmfSetType::Node())
+        {
+                //Do whatever is to be done if the set is a node
+        }
 
-	//#getType end
+        //#getType end
 
-	return 0;
+        return 0;
 }

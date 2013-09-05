@@ -2,11 +2,11 @@
 
 int main(int, char **)
 {
-	//#initialization begin
+        //#initialization begin
 
-	shared_ptr<XdmfItemFactory> exampleFactory = XdmfItemFactory::New();
+        shared_ptr<XdmfItemFactory> exampleFactory = XdmfItemFactory::New();
 
-	//#initialization end
+        //#initialization end
 
-	return 0;
+        return 0;
 }

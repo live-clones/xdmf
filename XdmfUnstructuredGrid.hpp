@@ -61,7 +61,7 @@ public:
    * @skipline #//initialization
    * @until #//initialization
    *
-   * @return	Constructed XdmfUnstructuredGrid.
+   * @return    Constructed XdmfUnstructuredGrid.
    */
   static shared_ptr<XdmfUnstructuredGrid> New();
 
@@ -82,9 +82,9 @@ public:
    * @skipline #//initializationregular
    * @until #//initializationregular
    *
-   * @param	regularGrid	The grid that the unstructured grid will be created from
+   * @param     regularGrid     The grid that the unstructured grid will be created from
    *
-   * @return			Constructed XdmfUnstructuredGrid.
+   * @return                    Constructed XdmfUnstructuredGrid.
    */
   static shared_ptr<XdmfUnstructuredGrid> 
   New(const shared_ptr<XdmfRegularGrid> regularGrid);
@@ -118,7 +118,7 @@ public:
    * @skipline #//getGeometry
    * @until #//getGeometry
    *
-   * @return	The geometry associated with this grid.
+   * @return    The geometry associated with this grid.
    */
   shared_ptr<XdmfGeometry> getGeometry();
 
@@ -149,7 +149,7 @@ public:
    * @skipline #//getTopology
    * @until #//getTopology
    *
-   * @return	The topology associated with this grid.
+   * @return    The topology associated with this grid.
    */
   shared_ptr<XdmfTopology> getTopology();
 
@@ -174,7 +174,7 @@ public:
    * @skipline #//setGeometry
    * @until #//setGeometry
    *
-   * @param	geometry	An XdmfGeometry to associate with this grid.
+   * @param     geometry        An XdmfGeometry to associate with this grid.
    */
   void setGeometry(const shared_ptr<XdmfGeometry> geometry);
 
@@ -199,7 +199,7 @@ public:
    * @skipline #//setTopology
    * @until #//setTopology
    *
-   * @param	topology	An XdmfTopology to associate with this grid.
+   * @param     topology        An XdmfTopology to associate with this grid.
    */
   void setTopology(const shared_ptr<XdmfTopology> topology);
 

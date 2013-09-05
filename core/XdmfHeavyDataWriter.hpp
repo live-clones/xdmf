@@ -128,7 +128,7 @@ public:
    * @skipline #//getAllowSetSplitting
    * @until #//getAllowSetSplitting
    *
-   * @return	Whether to allow data sets to be split across hdf5 files
+   * @return    Whether to allow data sets to be split across hdf5 files
    */
   int getAllowSetSplitting();
 
@@ -151,7 +151,7 @@ public:
    * @skipline #//getFileIndex
    * @until #//getFileIndex
    *
-   * @return	The current file index.
+   * @return    The current file index.
    */
   int getFileIndex();
 
@@ -176,7 +176,7 @@ public:
    * @skipline #//getFileOverhead
    * @until #//getFileOverhead
    *
-   * @return	Amount of bytes used as overhead
+   * @return    Amount of bytes used as overhead
    */
   unsigned int getFileOverhead();
 
@@ -201,8 +201,8 @@ public:
    * @skipline #//getFilePath
    * @until #//getFilePath
    *
-   * @return	A std::string containing the path to the heavy file on disk this
-   * 		writer is writing to.
+   * @return    A std::string containing the path to the heavy file on disk this
+   *            writer is writing to.
    */
   std::string getFilePath() const;
 
@@ -227,7 +227,7 @@ public:
    * @skipline #//getFileSizeLimit
    * @until #//getFileSizeLimit
    *
-   * @return	The size limit in MB
+   * @return    The size limit in MB
    */
   int getFileSizeLimit();
 
@@ -252,7 +252,7 @@ public:
    * @skipline #//getMode
    * @until #//getMode
    *
-   * @return	The Mode of operation for this writer.
+   * @return    The Mode of operation for this writer.
    */
   Mode getMode() const;
 
@@ -277,7 +277,7 @@ public:
    * @skipline #//getReleaseData
    * @until #//getReleaseData
    *
-   * @return	True if data is freed after writing
+   * @return    True if data is freed after writing
    */
   bool getReleaseData() const;
 
@@ -339,7 +339,7 @@ public:
    * @skipline #//setAllowSetSplitting
    * @until #//setAllowSetSplitting
    *
-   * @param	newAllow	Whether to allow data sets to be split across hdf5 files
+   * @param     newAllow        Whether to allow data sets to be split across hdf5 files
    */
   void setAllowSetSplitting(bool newAllow);
 
@@ -362,7 +362,7 @@ public:
    * @skipline #//getFileIndex
    * @until #//getFileIndex
    *
-   * @param	newIndex	The index that the writer will append to the file name when incorperating file splitting
+   * @param     newIndex        The index that the writer will append to the file name when incorperating file splitting
    */
   void setFileIndex(int newIndex);
 
@@ -388,7 +388,7 @@ public:
    * @skipline #//setFileSizeLimit
    * @until #//setFileSizeLimit
    *
-   * @param	newSize		The size limit in MB
+   * @param     newSize         The size limit in MB
    */
   void setFileSizeLimit(int newSize);
 
@@ -413,7 +413,7 @@ public:
    * @skipline #//setMode
    * @until #//setMode
    *
-   * @param	mode	The Mode of operation for this writer.
+   * @param     mode    The Mode of operation for this writer.
    */
   void setMode(const Mode mode);
 
@@ -438,7 +438,7 @@ public:
    * @skipline #//setReleaseData
    * @until #//setReleaseData
    *
-   * @param	releaseData	True if data should be freed after writing
+   * @param     releaseData     True if data should be freed after writing
    */
   void setReleaseData(const bool releaseData = true);
 
@@ -463,8 +463,8 @@ public:
    * @skipline #//visit
    * @until #//visit
    *
-   * @param	array		An XdmfArray to write to heavy data.
-   * @param	visitor		A smart pointer to this visitor --- aids in grid traversal.
+   * @param     array           An XdmfArray to write to heavy data.
+   * @param     visitor         A smart pointer to this visitor --- aids in grid traversal.
    */
   using XdmfVisitor::visit;
   virtual void visit(XdmfArray & array,
