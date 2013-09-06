@@ -67,6 +67,7 @@ XdmfDSMCommMPI::XdmfDSMCommMPI()
   InterId = -1;
   InterSize = -1;
   SetDsmPortName("");
+  // This is the default file name for the config file.
   DsmFileName = "dsmconnect.cfg";
   InterCommType = XDMF_DSM_COMM_MPI;
 }

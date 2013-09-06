@@ -53,5 +53,136 @@ int main(int, char **)
 		//std::cout << "The error message is:\n" << e.what() << std::endl;
 	}
 
+	std::cout << "default error levels" << std::endl;
+
+	try
+	{
+		XdmfError::message(XdmfError::FATAL, "throwing fatal");
+	}
+	catch (XdmfError e)
+	{
+		std::cout << "fatal caught" << std::endl;
+	}
+
+        try
+        {
+		XdmfError::message(XdmfError::WARNING, "throwing warning");
+        }
+        catch (XdmfError e)
+        {
+		std::cout << "warning caught" << std::endl;
+        }
+
+        try
+        {
+		XdmfError::message(XdmfError::DEBUG, "throwing debug");
+        }
+        catch (XdmfError e)
+        {
+		std::cout << "debug caught" << std::endl;
+        }
+
+	std::cout << std::endl;
+
+	std::cout << "both levels set to FATAL" << std::endl;
+
+	XdmfError::setSuppressionLevel(XdmfError::FATAL);
+	XdmfError::setLevelLimit(XdmfError::FATAL);
+
+        try
+        {
+                XdmfError::message(XdmfError::FATAL, "throwing fatal");
+        }
+        catch (XdmfError e)
+        {
+                std::cout << "fatal caught" << std::endl;
+        }
+
+        try
+        {
+                XdmfError::message(XdmfError::WARNING, "throwing warning");
+        }
+        catch (XdmfError e)
+        {
+                std::cout << "warning caught" << std::endl;
+        }
+
+        try
+        {
+                XdmfError::message(XdmfError::DEBUG, "throwing debug");
+        }
+        catch (XdmfError e)
+        {
+                std::cout << "debug caught" << std::endl;
+        }
+
+	std::cout << std::endl;
+
+	std::cout << "both levels set to WARNING" << std::endl;
+
+	XdmfError::setSuppressionLevel(XdmfError::WARNING);
+	XdmfError::setLevelLimit(XdmfError::WARNING);
+
+        try
+        {
+                XdmfError::message(XdmfError::FATAL, "throwing fatal");
+        }
+        catch (XdmfError e)
+        {
+                std::cout << "fatal caught" << std::endl;
+        }
+
+        try
+        {
+                XdmfError::message(XdmfError::WARNING, "throwing warning");
+        }
+        catch (XdmfError e)
+        {
+                std::cout << "warning caught" << std::endl;
+        }
+
+        try
+        {
+                XdmfError::message(XdmfError::DEBUG, "throwing debug");
+        }
+        catch (XdmfError e)
+        {
+                std::cout << "debug caught" << std::endl;
+        }
+
+	std::cout << std::endl;
+
+	std::cout << "both levels set to DEBUG" << std::endl;
+
+	XdmfError::setSuppressionLevel(XdmfError::DEBUG);
+	XdmfError::setLevelLimit(XdmfError::DEBUG);
+
+        try
+        {
+                XdmfError::message(XdmfError::FATAL, "throwing fatal");
+        }
+        catch (XdmfError e)
+        {
+                std::cout << "fatal caught" << std::endl;
+        }
+
+        try
+        {
+                XdmfError::message(XdmfError::WARNING, "throwing warning");
+        }
+        catch (XdmfError e)
+        {
+                std::cout << "warning caught" << std::endl;
+        }
+
+        try
+        {
+                XdmfError::message(XdmfError::DEBUG, "throwing debug");
+        }
+        catch (XdmfError e)
+        {
+                std::cout << "debug caught" << std::endl;
+        }
+
 	return 0;
 }

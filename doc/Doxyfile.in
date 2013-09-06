@@ -567,6 +567,7 @@ WARN_LOGFILE           =
 INPUT                  = "@CMAKE_SOURCE_DIR@" \
                          "@CMAKE_SOURCE_DIR@/core" \
                          "@CMAKE_SOURCE_DIR@/core/loki" \
+                         "@CMAKE_SOURCE_DIR@/core/dsm" \
                          "@CMAKE_BINARY_DIR@"
 
 # This tag can be used to specify the character encoding of the source files

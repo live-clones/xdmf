@@ -65,7 +65,7 @@ XdmfError::setSuppressionLevel(Level l)
 void
 XdmfError::message(Level level, std::string msg)
 {
-  if (level>=XdmfError::getSuppressionLevel())
+  if (level<=XdmfError::getSuppressionLevel())
   {
     XdmfError::WriteToStream(msg);
   }
@@ -99,5 +99,5 @@ XdmfError::WriteToStream(std::string msg)
  ******************************************/
 
 XdmfError::Level XdmfError::mLevelLimit = XdmfError::FATAL;
-XdmfError::Level XdmfError::mSuppressLevel = XdmfError::DEBUG;
+XdmfError::Level XdmfError::mSuppressLevel = XdmfError::WARNING;
 std::streambuf* XdmfError::mBuf=std::cout.rdbuf();

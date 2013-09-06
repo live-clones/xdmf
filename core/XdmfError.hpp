@@ -168,8 +168,9 @@ public:
 
     /**
      * Alternate constructor for XdmfError exceptions.
-     * This one automatically prints out the message provided if the error level is within range.
-     * If not within range an error will not be thrown
+     * This one automatically prints out the message provided if the error level
+     * above the suppression level. If the error level is not above the
+     * level limit an exception will not be thrown.
      *
      * Example of use:
      *
