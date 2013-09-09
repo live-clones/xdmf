@@ -24,6 +24,8 @@
 #include "XdmfArray.hpp"
 #include "XdmfCoreItemFactory.hpp"
 #include "XdmfError.hpp"
+#include "XdmfFunction.hpp"
+#include "XdmfSubset.hpp"
 #include <boost/tokenizer.hpp>
 
 XdmfCoreItemFactory::XdmfCoreItemFactory()
@@ -109,21 +111,19 @@ XdmfCoreItemFactory::createItem(const std::string & itemTag,
                                                      newArrayChildren));
 
       returnArray->insert(0, parsedArray, 0, parsedArray->getSize());
-      returnArray->setFunction(XdmfFunction::New(expressionToParse,
-                                                 variableCollection));
-      returnArray->setReadMode(XdmfArray::Function);
+      returnArray->setReference(XdmfFunction::New(expressionToParse,
+                                                  variableCollection));
+      returnArray->setReadMode(XdmfArray::Reference);
       return returnArray;
     }
     else {
-      parsedArray->setFunction(XdmfFunction::New(expressionToParse,
-                                                 variableCollection));
-      parsedArray->setReadMode(XdmfArray::Function);
+      parsedArray->setReference(XdmfFunction::New(expressionToParse,
+                                                  variableCollection));
+      parsedArray->setReadMode(XdmfArray::Reference);
       return parsedArray;
     }
   }
   else if(itemTag.compare(XdmfSubset::ItemTag) == 0) {
-	//TODO
-
     std::map<std::string, std::string>::const_iterator type =
       itemProperties.find("ConstructedType");
     std::string arraySubType;
@@ -185,8 +185,8 @@ XdmfCoreItemFactory::createItem(const std::string & itemTag,
                                                        strideVector,
                                                        dimensionVector);
 
-    returnArray->setSubset(newSubset);
-    returnArray->setReadMode(XdmfArray::Subset);
+    returnArray->setReference(newSubset);
+    returnArray->setReadMode(XdmfArray::Reference);
 
     return returnArray;
 

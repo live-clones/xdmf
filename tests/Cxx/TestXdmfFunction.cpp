@@ -50,9 +50,9 @@ int main(int, char **)
 
 	shared_ptr<XdmfAttribute> functionHolder = XdmfAttribute::New();
 
-	functionHolder->setFunction(testFunction);
+	functionHolder->setReference(testFunction);
 
-	functionHolder->setReadMode(XdmfArray::Function);
+	functionHolder->setReadMode(XdmfArray::Reference);
 
 
 
@@ -63,7 +63,7 @@ int main(int, char **)
 
 
 
-	functionHolder->readFunction();
+	functionHolder->readReference();
 
 	std::cout << functionHolder->getValuesString() << std::endl;
 
@@ -75,7 +75,7 @@ int main(int, char **)
 
 	shared_ptr<XdmfAttribute> readFunctionHolder = shared_dynamic_cast<XdmfAttribute>(readItem);
 
-	readFunctionHolder->readFunction();
+	readFunctionHolder->readReference();
 
 	assert(readFunctionHolder->getValuesString().compare(functionHolder->getValuesString()) == 0);
 

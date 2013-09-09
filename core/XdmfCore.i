@@ -7,6 +7,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %module XdmfCore
 %{
     #include <XdmfArray.hpp>
+    #include <XdmfArrayReference.hpp>
     #include <XdmfArrayType.hpp>
     #include <XdmfCore.hpp>
     #include <XdmfCoreItemFactory.hpp>
@@ -432,6 +433,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 
 // Shared Pointer Templates
 %shared_ptr(XdmfArray)
+%shared_ptr(XdmfArrayReference)
 %shared_ptr(XdmfArrayType)
 %shared_ptr(XdmfCoreItemFactory)
 %shared_ptr(XdmfCoreReader)
@@ -462,6 +464,7 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
 %include XdmfSparseMatrix.hpp
 %include XdmfSystemUtils.hpp
 %include XdmfVisitor.hpp
+%include XdmfArrayReference.hpp
 %include XdmfFunction.hpp
 %include XdmfHeavyDataController.hpp
 %include XdmfHeavyDataWriter.hpp

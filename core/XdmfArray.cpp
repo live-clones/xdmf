@@ -30,10 +30,9 @@
 #include <math.h>
 #include "XdmfArray.hpp"
 #include "XdmfArrayType.hpp"
-#include "XdmfFunction.hpp"
+#include "XdmfArrayReference.hpp"
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfHeavyDataController.hpp"
-#include "XdmfSubset.hpp"
 #include "XdmfVisitor.hpp"
 #include "XdmfError.hpp"
 
@@ -565,8 +564,7 @@ XdmfArray::XdmfArray() :
   mArrayPointerNumValues(0),
   mName(""),
   mTmpReserveSize(0),
-  mReadMode(XdmfArray::Controller),
-  mFunction(shared_ptr<XdmfFunction>())
+  mReadMode(XdmfArray::Controller)
 {
 }
 
@@ -657,12 +655,6 @@ XdmfArray::getDimensionsString() const
                                                             dimensions.size());
 }
 
-shared_ptr<XdmfFunction>
-XdmfArray::getFunction()
-{
-  return mFunction;
-}
-
 std::map<std::string, std::string>
 XdmfArray::getItemProperties() const
 {
@@ -709,10 +701,10 @@ XdmfArray::getSize() const
                               mArray);
 }
 
-shared_ptr<XdmfSubset>
-XdmfArray::getSubset()
+shared_ptr<XdmfArrayReference>
+XdmfArray::getReference()
 {
-  return mSubset;
+  return mReference;
 }
 
 void *
@@ -1184,11 +1176,8 @@ XdmfArray::read()
     case XdmfArray::Controller:
       this->readController();
       break;
-    case XdmfArray::Function:
-      this->readFunction();
-      break;
-    case XdmfArray::Subset:
-      this->readSubset();
+    case XdmfArray::Reference:
+      this->readReference();
       break;
     default:
       try {
@@ -1248,16 +1237,9 @@ XdmfArray::readController()
 }
 
 void
-XdmfArray::readFunction()
+XdmfArray::readReference()
 {
-  shared_ptr<XdmfArray> tempArray = mFunction->read();
-  this->swap(tempArray);
-}
-
-void
-XdmfArray::readSubset()
-{
-  shared_ptr<XdmfArray> tempArray = mSubset->read();
+  shared_ptr<XdmfArray> tempArray = mReference->read();
   this->swap(tempArray);
 }
 
@@ -1275,12 +1257,6 @@ XdmfArray::reserve(const unsigned int size)
   boost::apply_visitor(Reserve(this,
                                size),
                        mArray);
-}
-
-void
-XdmfArray::setFunction(shared_ptr<XdmfFunction> newFunction)
-{
-  mFunction = newFunction;
 }
 
 void
@@ -1306,9 +1282,9 @@ XdmfArray::setReadMode(XdmfArray::ReadMode newStatus)
 }
 
 void
-XdmfArray::setSubset(shared_ptr<XdmfSubset> newSubset)
+XdmfArray::setReference(shared_ptr<XdmfArrayReference> newReference)
 {
-  mSubset = newSubset;
+  mReference = newReference;
 }
 
 void

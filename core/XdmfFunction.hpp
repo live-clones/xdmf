@@ -27,6 +27,7 @@
 // Includes
 #include "XdmfCore.hpp"
 #include "XdmfArray.hpp"
+#include "XdmfArrayReference.hpp"
 
 class XdmfArray;
 
@@ -35,7 +36,7 @@ class XdmfArray;
  *
  * The function class provides a way to manipulate XdmfArrays via predefined functions.
  */
-class XDMFCORE_EXPORT XdmfFunction : public XdmfItem {
+class XDMFCORE_EXPORT XdmfFunction : public XdmfArrayReference {
 
 public:
 
@@ -492,64 +493,6 @@ public:
                    std::string functionName);
 
   /**
-   * Gets the properties of the array that the function will generate when read from file.
-   *
-   * Example of use:
-   *
-   * C++
-   * 
-   * @dontinclude ExampleXdmfFunction.cpp
-   * @skipline //#initexpression
-   * @until //#initexpression
-   * @skipline //#setConstructedProperties
-   * @until //#setConstructedProperties
-   * @skipline //#getConstructedProperties
-   * @until //#getConstructedProperties
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleFunction.py
-   * @skipline #//initexpression
-   * @until #//initexpression
-   * @skipline #//setConstructedProperties
-   * @until #//setConstructedProperties
-   * @skipline #//getConstructedProperties
-   * @until #//getConstructedProperties
-   *
-   * @return    The properties of the array to be generated
-   */
-  std::map<std::string, std::string> getConstructedProperties();
-
-  /**
-   * Gets the type of array that the function will generate when read from file.
-   *
-   * Example of use:
-   *
-   * C++
-   * 
-   * @dontinclude ExampleXdmfFunction.cpp
-   * @skipline //#initexpression
-   * @until //#initexpression
-   * @skipline //#setConstructedType
-   * @until //#setConstructedType
-   * @skipline //#getConstructedType
-   * @until //#getConstructedType
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleFunction.py
-   * @skipline #//initexpression
-   * @until #//initexpression
-   * @skipline #//setConstructedType
-   * @until #//setConstructedType
-   * @skipline #//getConstructedType
-   * @until #//getConstructedType
-   *
-   * @return    The tag of the type to be generated
-   */
-  std::string getConstructedType();
-
-  /**
    * Sets the expression that the function will evaluate.
    *
    * Example of use:
@@ -830,7 +773,7 @@ public:
    * @skipline #//read
    * @until #//read
    */
-  shared_ptr<XdmfArray> read();
+  virtual shared_ptr<XdmfArray> read();
 
   /**
    * Removes a variable from the function if it exists.
@@ -860,57 +803,6 @@ public:
    * @param     key     The string to be associated with the provided array
    */
   void removeVariable(std::string key);
-
-  /**
-   * Sets the properties of array that the function will generate when read from file.
-   *
-   * Example of use:
-   *
-   * C++
-   * 
-   * @dontinclude ExampleXdmfFunction.cpp
-   * @skipline //#initexpression
-   * @until //#initexpression
-   * @skipline //#setConstructedProperties
-   * @until //#setConstructedProperties
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleFunction.py
-   * @skipline #//initexpression
-   * @until #//initexpression
-   * @skipline #//setConstructedProperties
-   * @until #//setConstructedProperties
-   *
-   * @param     newProperties   The properties of the array to be generated
-   */
-  void
-  setConstructedProperties(std::map<std::string, std::string> newProperties);
-
-  /**
-   * Sets the type of array that the function will generate when read from file.
-   *
-   * Example of use:
-   *
-   * C++
-   * 
-   * @dontinclude ExampleXdmfFunction.cpp
-   * @skipline //#initexpression
-   * @until //#initexpression
-   * @skipline //#setConstructedType
-   * @until //#setConstructedType
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleFunction.py
-   * @skipline #//initexpression
-   * @until #//initexpression
-   * @skipline #//setConstructedType
-   * @until #//setConstructedType
-   *
-   * @param     newType         The tag of the type to be generated
-   */
-  void setConstructedType(std::string newType);
 
   /**
    * Sets the expression that the function will evaluate.
@@ -981,8 +873,6 @@ private:
 
   std::map<std::string, shared_ptr<XdmfArray> > mVariableList;
   std::string mExpression;
-  std::string mConstructedType;
-  std::map<std::string, std::string> mConstructedProperties;
 
   static std::string mSupportedOperations;
   static const std::string mValidVariableChars;

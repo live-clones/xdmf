@@ -53,15 +53,15 @@ if __name__ == "__main__":
 
 	functionHolder = XdmfAttribute.New()
 
-	functionHolder.setFunction(testFunction)
+	functionHolder.setReference(testFunction)
 
-	functionHolder.setReadMode(XdmfArray.Function)
+	functionHolder.setReadMode(XdmfArray.Reference)
 
 	functionWriter = XdmfWriter.New("function.xmf")
 
 	functionHolder.accept(functionWriter)
 
-	functionHolder.readFunction()
+	functionHolder.readReference()
 
 	print functionHolder.getValuesString()
 
@@ -73,6 +73,6 @@ if __name__ == "__main__":
 
 	readFunctionHolder = readItem
 
-	readFunctionHolder.readFunction()
+	readFunctionHolder.readReference()
 
 	assert readFunctionHolder.getValuesString() == functionHolder.getValuesString()

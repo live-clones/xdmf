@@ -12,6 +12,7 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
 
     // XdmfCore Includes
     #include <XdmfArray.hpp>
+    #include <XdmfArrayReference.hpp>
     #include <XdmfArrayType.hpp>
     #include <XdmfCoreItemFactory.hpp>
     #include <XdmfCoreReader.hpp>
@@ -75,6 +76,7 @@ swig -v -c++ -python -o XdmfUtilsPython.cpp XdmfUtils.i
 %{
     // XdmfCore Includes
     #include <XdmfArray.hpp>
+    #include <XdmfArrayReference.hpp>
     #include <XdmfArrayType.hpp>
     #include <XdmfCoreItemFactory.hpp>
     #include <XdmfCoreReader.hpp>

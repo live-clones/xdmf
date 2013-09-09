@@ -35,8 +35,7 @@ XdmfSubset::XdmfSubset(shared_ptr<XdmfArray> referenceArray,
   mParent(referenceArray),
   mDimensions(dimensions),
   mStart(start),
-  mStride(stride),
-  mConstructedType("")
+  mStride(stride)
 {
   if(!(mStart.size() == mStride.size() &&
        mStride.size() == mDimensions.size())) {
@@ -65,18 +64,6 @@ XdmfSubset::New(shared_ptr<XdmfArray> referenceArray,
 {
   shared_ptr<XdmfSubset> p(new XdmfSubset(referenceArray, start, stride, dimensions));
   return p;
-}
-
-std::map<std::string, std::string>
-XdmfSubset::getConstructedProperties()
-{
-  return mConstructedProperties;
-}
-
-std::string
-XdmfSubset::getConstructedType()
-{
-  return mConstructedType;
 }
 
 std::vector<unsigned int> XdmfSubset::getDimensions() const
@@ -263,18 +250,6 @@ XdmfSubset::read()
                     writeStrides,
                     mStride);
   return tempArray;
-}
-
-void
-XdmfSubset::setConstructedProperties(std::map<std::string, std::string> newProperties)
-{
-  mConstructedProperties = newProperties;
-}
-
-void
-XdmfSubset::setConstructedType(std::string newType)
-{
-  mConstructedType = newType;
 }
 
 void

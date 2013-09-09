@@ -300,7 +300,7 @@ if __name__ == "__main__":
 
         #//insertmultidim end
 
-        #//setFunction begin
+        #//setReference begin
 
         variableArray = XdmfArray.New()
 
@@ -313,70 +313,33 @@ if __name__ == "__main__":
 
         arrayFunction = XdmfFunction.New("AVE(A)", variableMap)
 
-        exampleArray.setFunction(exampleFunction)
+        exampleArray.setReference(arrayFunction)
 
-        #//setFunction end
+        #//setReference end
 
-        #//getFunction begin
+        #//getReference begin
 
-        exampleFunction = exampleArray.getFunction()
+        exampleReference = exampleArray.getReference()
 
-        #//getFunction end
+        #//getReference end
 
-        #//readFunction begin
+        #//readReference begin
 
-        exampleArray.readFunction()
+        exampleArray.readReference()
 
-        #//readFunction end
+        #//readReference end
 
         #//setReadMode begin
 
-        exampleArray.setReadMode(XdmfArray.Function)
+        exampleArray.setReadMode(XdmfArray.Reference)
 
         #//setReadMode end
 
         #//getReadMode begin
 
-        isFunction = exampleArray.getReadMode()
+        isReference = exampleArray.getReadMode()
 
-        if isFunction == XdmfArray.Function:
-                exampleArray.readFunction()
+        if isReference == XdmfArray.Reference:
+                exampleArray.readReference()
 
         #//getReadMode end
-
-        #//setSubset begin
-
-        newReference = XdmfArray.New()
-        for i in range(0, 10):
-                newReference.pushBackAsInt32(i)
-
-        newStarts = UInt32Vector()
-        newStarts.push_back(0)
-
-        newStrides = UInt32Vector()
-        newStrides.push_back(1)
-
-        newDimensions = UInt32Vector()
-        newDimensions.pushBack(10)
-
-        newSubset = XdmfSubset.New(newReference,
-                                    newStarts,
-                                    newStrides,
-                                    newDimensions)
-
-        exampleArray.setSubset(newSubset)
-
-        #//setSubset end
-
-        #//getSubset begin
-
-        exampleSubset = exampleArray.getSubset();
-
-        #//getSubset end
-
-        #//readSubset begin
-
-        exampleArray.setReadMode(XdmfArray.Subset)
-        exampleArray.readSubset()
-
-        #//readSubset end

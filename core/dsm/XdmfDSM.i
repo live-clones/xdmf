@@ -10,6 +10,7 @@ swig -v -c++ -python -o XdmfDSMPython.cpp XdmfDSM.i
     #include <mpi.h>
 
     #include <XdmfArray.hpp>
+    #include <XdmfArrayReference.hpp>
     #include <XdmfArrayType.hpp>
     #include <XdmfCore.hpp>
     #include <XdmfCoreItemFactory.hpp>

@@ -43,9 +43,9 @@ int main(int, char **)
 
 	shared_ptr<XdmfAttribute> subsetHolder = XdmfAttribute::New();
 
-	subsetHolder->setSubset(testSubset);
+	subsetHolder->setReference(testSubset);
 
-	subsetHolder->setReadMode(XdmfArray::Subset);
+	subsetHolder->setReadMode(XdmfArray::Reference);
 
 
 
@@ -56,7 +56,7 @@ int main(int, char **)
 
 
 
-	subsetHolder->readSubset();
+	subsetHolder->readReference();
 
 	std::cout << subsetHolder->getValuesString() << std::endl;
 
@@ -68,9 +68,9 @@ int main(int, char **)
 
 	shared_ptr<XdmfAttribute> readSubsetHolder = shared_dynamic_cast<XdmfAttribute>(readItem);
 
-	readSubsetHolder->readSubset();
+	readSubsetHolder->readReference();
 
-	std::cout << readSubsetHolder->getSubset()->getReferenceArray()->getValuesString() << std::endl;
+	std::cout << shared_dynamic_cast<XdmfSubset>(readSubsetHolder->getReference())->getReferenceArray()->getValuesString() << std::endl;
 
 	std::cout << readSubsetHolder->getValuesString() << std::endl;
 

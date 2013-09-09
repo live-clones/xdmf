@@ -392,7 +392,7 @@ int main(int, char **)
 
         //#insertmultidim end
 
-        //#setFunction begin
+        //#setReference begin
 
         shared_ptr<XdmfArray> variableArray = XdmfArray::New();
 
@@ -407,77 +407,40 @@ int main(int, char **)
 
         shared_ptr<XdmfFunction> arrayFunction = XdmfFunction::New("AVE(A)", variableMap);
 
-        exampleArray->setFunction(exampleFunction);
+	// Using an XdmfFunction as an example but any array reference will work.
 
-        //#setFunction end
+        exampleArray->setReference(arrayFunction);
 
-        //#getFunction begin
+        //#setReference end
 
-        shared_ptr<XdmfFunction> exampleFunction = exampleArray->getFunction();
+        //#getReference begin
 
-        //#getFunction end
+        shared_ptr<XdmfFunction> exampleFunction = shared_dynamic_cast<XdmfFunction>(exampleArray->getReference());
 
-        //#readFunction begin
+        //#getReference end
 
-        exampleArray->readFunction();
+        //#readReference begin
 
-        //#readFunction end
+        exampleArray->readReference();
+
+        //#readReference end
 
         //#setReadMode begin
 
-        exampleArray->setReadMode(XdmfArray::Function);
+        exampleArray->setReadMode(XdmfArray::Reference);
 
         //#setReadMode end
 
         //#getReadMode begin
 
-        ReadMode isFunction = exampleArray->getReadMode();
+        ReadMode isReference = exampleArray->getReadMode();
 
-        if (isFunction == XdmfArray::Function)
+        if (isReference == XdmfArray::Reference)
         {
-                exampleArray->readFunction();
+                exampleArray->readReference();
         }
 
         //#getReadMode end
-
-        //#setSubset begin
-
-        shared_ptr<XdmfArray> newReference = XdmfArray::New();
-        for (unsigned int i = 0; i < 10; ++i)
-        {
-                newReference->pushBack(i);
-        }
-
-        std::vector<unsigned int> newStarts;
-        newStarts.push_back(0);
-
-        std::vector<unsigned int> newStrides;
-        newStrides.push_back(1);
-
-        std::vector<unsigned int> newDimensions;
-        newDimensions.pushBack(10);
-
-        shared_ptr<XdmfSubset> newSubset = XdmfSubset::New(newReference,
-                                                           newStarts,
-                                                           newStrides,
-                                                           newDimensions);
-
-        exampleArray->setSubset(newSubset);
-
-        //#setSubset end
-
-        //#getSubset begin
-
-        shared_ptr<XdmfSubset> exampleSubset = exampleArray->getSubset();
-
-        //#getSubset end
-
-        //#readSubset begin
-
-        exampleArray->setReadMode(XdmfArray::Subset);
-        exampleArray->readSubset();
-
-        //#readSubset end
 
         return 0;
 }

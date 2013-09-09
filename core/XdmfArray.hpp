@@ -31,8 +31,7 @@ class XdmfHeavyDataController;
 // Includes
 #include "XdmfCore.hpp"
 #include "XdmfItem.hpp"
-#include "XdmfFunction.hpp"
-#include "XdmfSubset.hpp"
+#include "XdmfArrayReference.hpp"
 #include <boost/shared_array.hpp>
 #include <boost/variant.hpp>
 
@@ -103,8 +102,7 @@ public:
 
   enum ReadMode {
     Controller,
-    Function,
-    Subset
+    Reference
   };
 
   /**
@@ -287,36 +285,6 @@ public:
    */
   std::string getDimensionsString() const;
 
-  /**
-   * Gets the function that the array will fill from when readFunction is called
-   *
-   * Example of use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfArray.cpp
-   * @skipline //#initialization
-   * @until //#initialization
-   * @skipline //#setFunction
-   * @until //#setFunction
-   * @skipline //#getFunction
-   * @until //#getFunction
-   *
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleArray.py
-   * @skipline #//initialization
-   * @until #//initialization
-   * @skipline #//setFunction
-   * @until #//setFunction
-   * @skipline #//getFunction
-   * @until #//getFunction
-   *
-   * @return    The function associated with this array
-   */
-  shared_ptr<XdmfFunction> getFunction();
-
   std::map<std::string, std::string> getItemProperties() const;
 
   std::string getItemTag() const;
@@ -352,7 +320,7 @@ public:
 
   /**
    * Gets the method this array will be written/read.
-   * Possible choices are: Controller, Function, and Subset
+   * Possible choices are: Controller, and Reference
    *
    * Example of use:
    *
@@ -361,8 +329,8 @@ public:
    * @dontinclude ExampleXdmfArray.cpp
    * @skipline //#initialization
    * @until //#initialization
-   * @skipline //#setFunction
-   * @until //#setFunction
+   * @skipline //#setReference
+   * @until //#setReference
    * @skipline //#setReadMode
    * @until //#setReadMode
    * @skipline //#getReadMode
@@ -374,8 +342,8 @@ public:
    * @dontinclude XdmfExampleArray.py
    * @skipline #//initialization
    * @until #//initialization
-   * @skipline #//setFunction
-   * @until #//setFunction
+   * @skipline #//setReference
+   * @until #//setReference
    * @skipline #//setReadMode
    * @until #//setReadMode
    * @skipline #//getReadMode
@@ -411,7 +379,7 @@ public:
   unsigned int getSize() const;
 
   /**
-   * Gets the subset that the array will pull from when reading from a subset.
+   * Gets the array reference that the array will pull from when reading from a reference.
    *
    * Example of use:
    *
@@ -420,24 +388,24 @@ public:
    * @dontinclude ExampleXdmfArray.cpp
    * @skipline //#initialization
    * @until //#initialization
-   * @skipline //#setSubset
-   * @until //#setSubset
-   * @skipline //#getSubset
-   * @until //#getSubset
+   * @skipline //#setReference
+   * @until //#setReference
+   * @skipline //#getReference
+   * @until //#getReference
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
    * @skipline #//initialization
    * @until #//initialization
-   * @skipline #//setSubset
-   * @until #//setSubset
-   * @skipline #//getSubset
-   * @until #//getSubset
+   * @skipline #//setReference
+   * @until #//setReference
+   * @skipline #//getReference
+   * @until #//getReference
    *
-   * @return    The subset being pulled from
+   * @return    The reference being pulled from
    */
-  shared_ptr<XdmfSubset> getSubset();
+  shared_ptr<XdmfArrayReference> getReference();
 
   /**
    * Get a copy of a single value stored in this array.
@@ -1052,8 +1020,7 @@ public:
   void readController();
 
   /**
-   * Accumulates the data via the function associated with the array and
-   * swaps the data with the data currently in the array.
+   * Reads the data pointed to by the array reference into the array.
    *
    * Example of use:
    *
@@ -1062,50 +1029,22 @@ public:
    * @dontinclude ExampleXdmfArray.cpp
    * @skipline //#initialization
    * @until //#initialization
-   * @skipline //#setFunction
-   * @until //#setFunction
-   * @skipline //#readFunction
-   * @until //#readFunction
-   *
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleArray.py
-   * @skipline #//initialization
-   * @until #//initialization
-   * @skipline #//setFunction
-   * @until #//setFunction
-   * @skipline #//readFunction
-   * @until #//readFunction
-   */
-  void readFunction();
-
-  /**
-   * Reads the data pointed to by the subset into the array.
-   *
-   * Example of use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfArray.cpp
-   * @skipline //#initialization
-   * @until //#initialization
-   * @skipline //#setSubset
-   * @until //#setSubset
-   * @skipline //#readSubset
-   * @until //#readSubset
+   * @skipline //#setReference
+   * @until //#setReference
+   * @skipline //#readReference
+   * @until //#readReference
    *
    * Python
    *
    * @dontinclude XdmfExampleArray.py
    * @skipline #//initialization
    * @until #//initialization
-   * @skipline #//setSubset
-   * @until #//setSubset
-   * @skipline #//readSubset
-   * @until #//readSubset
+   * @skipline #//setReference
+   * @until #//setReference
+   * @skipline #//readReference
+   * @until #//readReference
    */
-  void readSubset();
+  void readReference();
 
   /**
    * Release all data currently held in memory.
@@ -1231,7 +1170,7 @@ public:
               const T & value = 0);
 
   /**
-   * Sets the function from which the Array will fill when readFunction is called.
+   * Sets the array reference from which the Array will fill when readReference is called.
    *
    * Example of use:
    *
@@ -1240,8 +1179,8 @@ public:
    * @dontinclude ExampleXdmfArray.cpp
    * @skipline //#initialization
    * @until //#initialization
-   * @skipline //#setFunction
-   * @until //#setFunction
+   * @skipline //#setReference
+   * @until //#setReference
    *
    *
    * Python
@@ -1249,12 +1188,12 @@ public:
    * @dontinclude XdmfExampleArray.py
    * @skipline #//initialization
    * @until #//initialization
-   * @skipline #//setFunction
-   * @until #//setFunction
+   * @skipline #//setReference
+   * @until #//setReference
    *
-   * @param     newFunction     The function to be associated with this array
+   * @param     newReference     The reference to be associated with this array
    */
-  void setFunction(shared_ptr<XdmfFunction> newFunction);
+  void setReference(shared_ptr<XdmfArrayReference> newReference);
 
   /**
    * Set the name of the array.
@@ -1283,7 +1222,7 @@ public:
 
   /**
    * Sets the method this array will be written/read.
-   * Possible choices are: Controller, Function, and Subset
+   * Possible choices are: Controller, and Reference
    *
    * Example of use:
    *
@@ -1292,8 +1231,8 @@ public:
    * @dontinclude ExampleXdmfArray.cpp
    * @skipline //#initialization
    * @until //#initialization
-   * @skipline //#setFunction
-   * @until //#setFunction
+   * @skipline //#setReference
+   * @until //#setReference
    * @skipline //#setReadMode
    * @until //#setReadMode
    *
@@ -1303,39 +1242,14 @@ public:
    * @dontinclude XdmfExampleArray.py
    * @skipline #//initialization
    * @until #//initialization
-   * @skipline #//setFunction
-   * @until #//setFunction
+   * @skipline #//setReference
+   * @until #//setReference
    * @skipline #//setReadMode
    * @until #//setReadMode
    *
    * @param     newStatus       The method that the array will be read/written
    */
   void setReadMode(ReadMode newStatus = XdmfArray::Controller);
-
-  /**
-   * Sets the subset that the array will pull from when reading from a subset.
-   *
-   * Example of use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfArray.cpp
-   * @skipline //#initialization
-   * @until //#initialization
-   * @skipline //#setSubset
-   * @until //#setSubset
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleArray.py
-   * @skipline #//initialization
-   * @until #//initialization
-   * @skipline #//setSubset
-   * @until #//setSubset
-   *
-   * @param     newSubset       The subset to pull data from on read
-   */
-  void setSubset(shared_ptr<XdmfSubset> newSubset);
 
   /**
    * Sets the values of this array to the values stored in the
@@ -1580,8 +1494,7 @@ private:
   std::string mName;
   unsigned int mTmpReserveSize;
   ReadMode mReadMode;
-  shared_ptr<XdmfFunction> mFunction;
-  shared_ptr<XdmfSubset> mSubset;
+  shared_ptr<XdmfArrayReference> mReference;
 
 };
 

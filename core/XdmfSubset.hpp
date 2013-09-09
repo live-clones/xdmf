@@ -31,6 +31,7 @@ class XdmfArray;
 #include <vector>
 #include "XdmfCore.hpp"
 #include "XdmfItem.hpp"
+#include "XdmfArrayReference.hpp"
 #include "XdmfSharedPtr.hpp"
 
 /**
@@ -39,7 +40,7 @@ class XdmfArray;
  * This class serves to allow an array to retrieve data that is a subsection
  * of an already existing array.
  */
-class XDMFCORE_EXPORT XdmfSubset: public XdmfItem {
+class XDMFCORE_EXPORT XdmfSubset: public XdmfArrayReference {
 
 public:
 
@@ -78,65 +79,6 @@ public:
 
   LOKI_DEFINE_VISITABLE(XdmfSubset, XdmfItem);
   static const std::string ItemTag;
-
-  /**
-   * Gets the properties of the array that the subset will generate when read
-   * from file.
-   *
-   * Example of use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfSubset.cpp
-   * @skipline //#initialization
-   * @until //#initialization
-   * @skipline //#setConstructedProperties
-   * @until //#setConstructedProperties
-   * @skipline //#getConstructedProperties
-   * @until //#getConstructedProperties
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleSubset.py
-   * @skipline #//initialization
-   * @until #//initialization
-   * @skipline #//setConstructedProperties
-   * @until #//setConstructedProperties
-   * @skipline #//getConstructedProperties
-   * @until #//getConstructedProperties
-   *
-   * @return    The properties of the array to be generated
-   */
-  std::map<std::string, std::string> getConstructedProperties();
-
-  /**
-   * Gets the type of array that the subset will generate when read from file.
-   *
-   * Example of use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfSubset.cpp
-   * @skipline //#initialization
-   * @until //#initialization
-   * @skipline //#setConstructedType
-   * @until //#setConstructedType
-   * @skipline //#getConstructedType
-   * @until //#getConstructedType
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleSubset.py
-   * @skipline #//initialization
-   * @until #//initialization
-   * @skipline #//setConstructedType
-   * @until #//setConstructedType
-   * @skipline #//getConstructedType
-   * @until #//getConstructedType
-   *
-   * @return    The tag of the type to be generated
-   */
-  std::string getConstructedType();
 
   /**
    * Get the dimensions of the set referenced by this subset.
@@ -293,57 +235,7 @@ public:
    *
    * @return    An array filled with data based on the subset's parameters.
    */
-  shared_ptr<XdmfArray> read();
-
-  /**
-   * Sets the properties of array that the subset will generate when read from file.
-   *
-   * Example of use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfSubset.cpp
-   * @skipline //#initialization
-   * @until //#initialization
-   * @skipline //#setConstructedProperties
-   * @until //#setConstructedProperties
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleSubset.py
-   * @skipline #//initialization
-   * @until #//initialization
-   * @skipline #//setConstructedProperties
-   * @until #//setConstructedProperties
-   *
-   * @param     newProperties   The properties of the array to be generated
-   */
-  void setConstructedProperties(std::map<std::string, std::string> newProperties);
-
-  /**
-   * Sets the type of array that the subset will generate when read from file.
-   *
-   * Example of use:
-   *
-   * C++
-   *
-   * @dontinclude ExampleXdmfSubset.cpp
-   * @skipline //#initialization
-   * @until //#initialization
-   * @skipline //#setConstructedType
-   * @until //#setConstructedType
-   *
-   * Python
-   *
-   * @dontinclude XdmfExampleSubset.py
-   * @skipline #//initialization
-   * @until #//initialization
-   * @skipline #//setConstructedType
-   * @until #//setConstructedType
-   *
-   * @param     newType         The tag of the type to be generated
-   */
-  void setConstructedType(std::string newType);
+  virtual shared_ptr<XdmfArray> read();
 
   /**
    * Set the dimensions of the set referenced by this subset.
@@ -456,9 +348,6 @@ protected:
   std::vector<unsigned int> mDimensions;
   std::vector<unsigned int> mStart;
   std::vector<unsigned int> mStride;
-
-  std::string mConstructedType;
-  std::map<std::string, std::string> mConstructedProperties;
 
 private:
 

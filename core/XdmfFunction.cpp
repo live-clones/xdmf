@@ -133,16 +133,14 @@ XdmfFunction::New(std::string newExpression,
 }
 
 XdmfFunction::XdmfFunction():
-  mExpression(""),
-  mConstructedType("")
+  mExpression("")
 {
 }
 
 XdmfFunction::XdmfFunction(std::string newExpression,
                            std::map<std::string, shared_ptr<XdmfArray> > newVariables):
   mVariableList(newVariables),
-  mExpression(newExpression),
-  mConstructedType("")
+  mExpression(newExpression)
 {
 }
 
@@ -608,18 +606,6 @@ XdmfFunction::evaluateFunction(std::vector<shared_ptr<XdmfArray> > valueVector,
   }
 }
 
-std::map<std::string, std::string>
-XdmfFunction::getConstructedProperties()
-{
-  return mConstructedProperties;
-}
-
-std::string
-XdmfFunction::getConstructedType()
-{
-  return mConstructedType;
-}
-
 std::string
 XdmfFunction::getExpression()
 {
@@ -849,18 +835,6 @@ XdmfFunction::removeVariable(std::string key)
   if (removeWalker != mVariableList.end()) {
     mVariableList.erase(removeWalker);
   }
-}
-
-void
-XdmfFunction::setConstructedProperties(std::map<std::string, std::string> newProperties)
-{
-  mConstructedProperties = newProperties;
-}
-
-void
-XdmfFunction::setConstructedType(std::string newType)
-{
-  mConstructedType = newType;
 }
 
 void

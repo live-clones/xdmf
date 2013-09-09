@@ -96,6 +96,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/XdmfConfig.hpp.in
 
 set(XdmfCoreSources
   XdmfArray
+  XdmfArrayReference
   XdmfArrayType
   XdmfCoreItemFactory
   XdmfCoreReader
