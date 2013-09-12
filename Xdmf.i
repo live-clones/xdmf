@@ -255,14 +255,16 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 %template(MapVector) std::vector<shared_ptr<XdmfMap> >;
 %template(ArrayVector) std::vector<shared_ptr<XdmfArray> >;
 
-%pythoncode {
-    from XdmfCore import *
-}
-
 #ifdef XDMF_BUILD_DSM
 
 %pythoncode {
     from XdmfDSM import *
+}
+
+#else
+
+%pythoncode {
+    from XdmfCore import *
 }
 
 #endif /* XDMF_BUILD_DSM */
