@@ -701,12 +701,13 @@ XdmfDSMBuffer::ReceiveAcknowledgment(int source, int &data, int tag, int comm)
                       &signalStatus);
   }
   else {
+    MPI_Comm tempComm = MPI_Comm_f2c(comm);
     status = MPI_Recv(&data,
                       sizeof(int),
                       MPI_UNSIGNED_CHAR,
                       source,
                       tag,
-                      comm,
+                      tempComm,
                       &signalStatus);
   }
 
@@ -752,12 +753,13 @@ XdmfDSMBuffer::ReceiveCommandHeader(int *opcode, int *source, int *address, int 
   }
   else {
     // In this case the integer is probably a pointer to an MPI_Comm object
+    MPI_Comm tempComm = MPI_Comm_f2c(comm);
     status = MPI_Recv(&cmd,
                       sizeof(CommandMsg),
                       MPI_UNSIGNED_CHAR,
                       remoteSource,
                       XDMF_DSM_COMMAND_TAG,
-                      comm,
+                      tempComm,
                       &signalStatus);
   }
 
@@ -801,12 +803,13 @@ XdmfDSMBuffer::ReceiveData(int source, char * data, int aLength, int tag, int aA
                       &signalStatus);
   }
   else {
+    MPI_Comm tempComm = MPI_Comm_f2c(comm);
     status = MPI_Recv(data,
                       aLength,
                       MPI_UNSIGNED_CHAR,
                       source,
                       tag,
-                      comm,
+                      tempComm,
                       &signalStatus);
   }
   if (status != MPI_SUCCESS) {
@@ -902,12 +905,13 @@ XdmfDSMBuffer::SendAcknowledgment(int dest, int data, int tag, int comm)
                       static_cast<XdmfDSMCommMPI *>(this->Comm)->GetInterComm());
   }
   else {
+    MPI_Comm tempComm = MPI_Comm_f2c(comm);
     status = MPI_Send(&data,
                       sizeof(int),
                       MPI_UNSIGNED_CHAR,
                       dest,
                       tag,
-                      comm);
+                      tempComm);
   }
   if (status != MPI_SUCCESS) {
     try {
@@ -952,12 +956,13 @@ XdmfDSMBuffer::SendCommandHeader(int opcode, int dest, int address, int aLength,
   }
   else {
     // In this case the comm should be a pointer to an MPI_Comm object
+    MPI_Comm tempComm = MPI_Comm_f2c(comm);
     status = MPI_Send(&cmd,
                       sizeof(CommandMsg),
                       MPI_UNSIGNED_CHAR,
                       dest,
                       XDMF_DSM_COMMAND_TAG,
-                      comm);
+                      tempComm);
   }
   if (status != MPI_SUCCESS) {
     try {
@@ -990,7 +995,8 @@ XdmfDSMBuffer::SendData(int dest, char * data, int aLength, int tag, int aAddres
                       static_cast<XdmfDSMCommMPI *>(this->Comm)->GetInterComm());
   }
   else {
-    status = MPI_Send(data, aLength, MPI_UNSIGNED_CHAR, dest, tag, comm);
+    MPI_Comm tempComm = MPI_Comm_f2c(comm);
+    status = MPI_Send(data, aLength, MPI_UNSIGNED_CHAR, dest, tag, tempComm);
   }
   if (status != MPI_SUCCESS) {
     try {
