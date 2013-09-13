@@ -10,12 +10,9 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 option(XDMF_BUILD_DSM_THREADS ON)
 
-mark_as_advanced(CLEAR Boost_INCLUDE_DIR)
-find_package(Boost REQUIRED)
-if(Boost_FOUND)
-  include_directories(${Boost_INCLUDE_DIRS})
-  mark_as_advanced(FORCE Boost_INCLUDE_DIR)
-endif(Boost_FOUND)
+mark_as_advanced(Boost_INCLUDE_DIR)
+include_directories(${Boost_INCLUDE_DIRS})
+mark_as_advanced(FORCE Boost_INCLUDE_DIR)
 
 mark_as_advanced(CLEAR HDF5_C_INCLUDE_DIR)
 mark_as_advanced(CLEAR HDF5_hdf5_LIBRARY_DEBUG)
