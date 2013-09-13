@@ -29,6 +29,7 @@
 #include "XdmfSystemUtils.hpp"
 #include <list>
 #include <vector>
+#include "stdio.h"
 
 XdmfHeavyDataWriter::XdmfHeavyDataWriter(const double compression,
                                          const unsigned int overhead) :
