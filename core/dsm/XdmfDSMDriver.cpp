@@ -104,6 +104,17 @@ XdmfDSMManager *dsmManager = NULL;
                                  (size_t)((A)+(Z))<(size_t)(A))
 
 extern "C" {
+
+#include "H5FDprivate.h"  /* File drivers           */
+#include "H5private.h"    /* Generic Functions      */
+#include "H5ACprivate.h"  /* Metadata cache         */
+#include "H5Dprivate.h"   /* Dataset functions      */
+#include "H5Eprivate.h"   /* Error handling         */
+#include "H5Fprivate.h"   /* File access            */
+#include "H5FDmpi.h"      /* MPI-based file drivers */
+#include "H5Iprivate.h"   /* IDs                    */
+#include "H5Pprivate.h"   /* Property lists         */
+
 /* Private Prototypes */
 static void    *XDMF_dsm_fapl_get(H5FD_t *_file);
 static void    *XDMF_dsm_fapl_copy(const void *_old_fa);
@@ -123,7 +134,6 @@ static herr_t   XDMF_dsm_flush(H5FD_t *_file, hid_t dxpl_id, unsigned closing);
 static int      XDMF_dsm_mpi_rank(const H5FD_t *_file);
 static int      XDMF_dsm_mpi_size(const H5FD_t *_file);
 static MPI_Comm XDMF_dsm_communicator(const H5FD_t *_file);
-}
 
 /* The DSM file driver information */
 static const H5FD_class_mpi_t XDMF_dsm_g = {
@@ -171,19 +181,7 @@ static const H5FD_class_mpi_t XDMF_dsm_g = {
     XDMF_dsm_communicator                       /* get_comm             */
 };
 
-extern "C" {
-
 #define H5_INTERFACE_INIT_FUNC  XDMF_dsm_init_interface
-
-#include "H5FDprivate.h"  /* File drivers           */
-#include "H5private.h"    /* Generic Functions      */
-#include "H5ACprivate.h"  /* Metadata cache         */
-#include "H5Dprivate.h"   /* Dataset functions      */
-#include "H5Eprivate.h"   /* Error handling         */
-#include "H5Fprivate.h"   /* File access            */
-#include "H5FDmpi.h"      /* MPI-based file drivers */
-#include "H5Iprivate.h"   /* IDs                    */
-#include "H5Pprivate.h"   /* Property lists         */
 
 static herr_t
 XDMF_dsm_init_interface(void)
