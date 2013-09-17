@@ -54,7 +54,6 @@
 #include <XdmfDSMManager.hpp>
 #include <XdmfDSMBuffer.hpp>
 #include <XdmfDSMCommMPI.hpp>
-#include <XdmfDSMDriver.hpp>
 #include <XdmfError.hpp>
 #include <mpi.h>
 
@@ -104,7 +103,6 @@ XdmfDSMManager *dsmManager = NULL;
                                  (size_t)((A)+(Z))<(size_t)(A))
 
 extern "C" {
-
 #include "H5FDprivate.h"  /* File drivers           */
 #include "H5private.h"    /* Generic Functions      */
 #include "H5ACprivate.h"  /* Metadata cache         */
@@ -114,6 +112,8 @@ extern "C" {
 #include "H5FDmpi.h"      /* MPI-based file drivers */
 #include "H5Iprivate.h"   /* IDs                    */
 #include "H5Pprivate.h"   /* Property lists         */
+
+#include <XdmfDSMDriver.hpp>
 
 /* Private Prototypes */
 static void    *XDMF_dsm_fapl_get(H5FD_t *_file);
@@ -213,10 +213,11 @@ XDMF_dsm_init(void)
   /* Set return value */
   ret_value = XDMF_DSM_g;// return value is the new id of the driver
 
-done:
-  if (err_occurred) {
-    /* Nothing */
-  }
+// Removed because error handling isn't called in this function
+//done:
+//  if (err_occurred) {
+//    /* Nothing */
+//  }
 
   FUNC_LEAVE_NOAPI(ret_value)
 }
@@ -335,10 +336,11 @@ XDMF_dsm_set_manager(void *manager)
 
   xdmf_dsm_set_manager(manager);
 
-done:
-  if (err_occurred) {
-    /* Nothing */
-  }
+// Removed because error handling isn't called in this function
+//done:
+//  if (err_occurred) {
+//    /* Nothing */
+//  }
 
   FUNC_LEAVE_NOAPI(ret_value)
 }
@@ -730,8 +732,12 @@ XDMF_dsm_query(const H5FD_t UNUSED *_file, unsigned long *flags /* out */)
     *flags = 0;
     *flags |= H5FD_FEAT_AGGREGATE_METADATA;  /* OK to aggregate metadata allocations */
     *flags |= H5FD_FEAT_AGGREGATE_SMALLDATA; /* OK to aggregate "small" raw data allocations */
+#ifdef H5FD_FEAT_HAS_MPI
     *flags |= H5FD_FEAT_HAS_MPI;             /* This driver uses MPI */
+#endif
+#ifdef H5FD_FEAT_ALLOCATE_EARLY
     *flags |= H5FD_FEAT_ALLOCATE_EARLY;      /* Allocate space early instead of late */
+#endif
   } /* end if */
 
   FUNC_LEAVE_NOAPI(SUCCEED)

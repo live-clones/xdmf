@@ -81,6 +81,18 @@
 
 #define XDMF_DSM (XDMF_dsm_init())
 
+#define IS_XDMF_DSM(f) /* (H5F_t *f) */    \
+    (XDMF_DSM==H5F_DRIVER_ID(f))
+
+#include "H5FDmpiposix.h"
+
+#ifndef H5FD_FEAT_HAS_MPI
+  // This is a temporary solution to allow interface with standard hdf5 in addition to hdf5vfd
+  // Hopefully a better solution will be made in the future
+  #define XDMF_dsm_init H5FD_mpiposix_init
+  //#pragma message(": warning Xdmf: H5FD mpiposix file driver replaced to enable dsm compatibility with hdf5")
+#endif
+
 extern "C" {
   XDMFDSM_EXPORT hid_t  XDMF_dsm_init(void);
 #if H5_VERSION_GE(1,9,0)
