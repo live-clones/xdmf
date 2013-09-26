@@ -258,6 +258,7 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 #ifdef XDMF_BUILD_DSM
 
 %pythoncode {
+    from XdmfCore import *
     from XdmfDSM import *
 }
 
