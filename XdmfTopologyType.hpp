@@ -37,6 +37,20 @@
  * calling one of the static methods in the class,
  * i.e. XdmfTopologyType::Tetrahedron().
  *
+ * Example of use:
+ *
+ * C++
+ *
+ * @dontinclude ExampleXdmfTopologyType.cpp
+ * @skipline //#getType
+ * @until //#getType
+ *
+ * Python
+ *
+ * @dontinclude XdmfExampleTopologyType.py
+ * @skipline #//getType
+ * @until #//getType
+ *
  * Xdmf supports the following topology types:
  *   NoTopologyType
  *   Polyvertex - Unconnected Points
@@ -147,46 +161,151 @@ public:
   /**
    * Get a topology type from id.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfTopologyType.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleTopologyType.py
+   * @skipline #//initialization
+   * @until #//initialization
+   *
    * @param id of the topology type.
    *
-   * @return topology type corresponding to id - if no topology type is found
-   * an NULL pointer is returned.
+   * @return	Topology type corresponding to id - if no topology type is found
+   * 		an NULL pointer is returned.
    */
   static shared_ptr<const XdmfTopologyType> New(const unsigned int id);
 
   /**
    * Get the cell type associated with this topology type.
    *
-   * @return a CellType containing the cell type.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfTopologyType.cpp
+   * @skipline //#getCellType
+   * @until //#getCellType
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleTopologyType.py
+   * @skipline #//getCellType
+   * @until #//getCellType
+   *
+   * @return 	A CellType containing the cell type.
    */
   CellType getCellType() const;
 
   /**
    * Get the number of edges per element associated with this topology type.
    *
-   * @return an unsigned int containing the number of edges per element.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfTopologyType.cpp
+   * @skipline //#getEdgesPerElement
+   * @until //#getEdgesPerElement
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleTopologyType.py
+   * @skipline #//getEdgesPerElement
+   * @until #//getEdgesPerElement
+   *
+   * @return	An unsigned int containing the number of edges per element.
    */
   virtual unsigned int getEdgesPerElement() const;
 
   /**
    * Get the number of faces per element associated with this topology type.
    *
-   * @return an unsigned int containing the number of faces per element.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfTopologyType.cpp
+   * @skipline //#getFacesPerElement
+   * @until //#getFacesPerElement
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleTopologyType.py
+   * @skipline #//getFacesPerElement
+   * @until #//getFacesPerElement
+   *
+   * @return	An unsigned int containing the number of faces per element.
    */
   virtual unsigned int getFacesPerElement() const;
+
+  /**
+   * Gets the type of the faces of the topology.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfTopologyType.cpp
+   * @skipline //#getFaceType
+   * @until //#getFaceType
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleTopologyType.py
+   * @skipline #//getFaceType
+   * @until #//getFaceType
+   *
+   * @return	The face's topology type
+   */
+  shared_ptr<const XdmfTopologyType>  getFaceType();
 
   /**
    * Get the id of this cell type, necessary in order to create grids
    * containing mixed cells.
    *
-   * @return the ID of the topology type.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfTopologyType.cpp
+   * @skipline //#getID
+   * @until //#getID
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleTopologyType.py
+   * @skipline //#getID
+   * @until //#getID
+   *
+   * @return	The ID of the topology type.
    */
   virtual unsigned int getID() const;
 
   /**
    * Get the name of this topology type.
    *
-   * @return the name of this topology type.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfTopologyType.cpp
+   * @skipline //#getName
+   * @until //#getName
+   *
+   * Python 
+   *
+   * @dontinclude XdmfExampleTopologyType.py
+   * @skipline #//getName
+   * @until #//getName
+   *
+   * @return	The name of this topology type.
    */
   virtual std::string getName() const;
 
@@ -194,7 +313,21 @@ public:
    * Get the number of nodes per element associated with this topology
    * type.
    *
-   * @return an unsigned int containing number of nodes per element.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfTopologyType.cpp
+   * @skipline //#getNodesPerElement
+   * @until //#getNodesPerElement
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleTopologyType.py
+   * @skipline #//getNodesPerElement
+   * @until #//getNodesPerElement
+   *
+   * @return	An unsigned int containing number of nodes per element.
    */
   virtual unsigned int getNodesPerElement() const;
 
@@ -211,6 +344,7 @@ protected:
    */
   XdmfTopologyType(const unsigned int nodesPerElement,
                    const unsigned int facesPerElement,
+                   std::vector<shared_ptr<const XdmfTopologyType> > faces,
                    const unsigned int edgesPerElement,
                    const std::string & name,
                    const CellType cellType,
@@ -227,6 +361,7 @@ private:
   const CellType mCellType;
   const unsigned int mEdgesPerElement;
   const unsigned int mFacesPerElement;
+  std::vector<shared_ptr<const XdmfTopologyType> > mFaces;
   const unsigned int mID;
   const std::string mName;
   const unsigned int mNodesPerElement;

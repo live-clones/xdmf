@@ -48,7 +48,21 @@ public:
   /**
    * Create a new XdmfAttribute.
    *
-   * @return constructed XdmfAttribute.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfAttribute.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleAttribute.py
+   * @skipline #//initialization
+   * @until #//initialization
+   *
+   * @return    Constructed XdmfAttribute.
    */
   static shared_ptr<XdmfAttribute> New();
 
@@ -60,7 +74,29 @@ public:
   /**
    * Get the XdmfAttributeCenter associated with this attribute.
    *
-   * @return XdmfAttributeCenter of the attribute.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfAttribute.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setCenter
+   * @until //#setCenter
+   * @skipline //#getCenter
+   * @until //#getCenter
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleAttribute.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setCenter
+   * @until #//setCenter
+   * @skipline #//getCenter
+   * @until #//getCenter
+   *
+   * @return    XdmfAttributeCenter of the attribute.
    */
   shared_ptr<const XdmfAttributeCenter> getCenter() const;
 
@@ -71,35 +107,133 @@ public:
   /**
    * Get the name of the attribute.
    *
-   * @return a string containing the name of the attribute.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfAttribute.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setName
+   * @until //#setName
+   * @skipline //#getName
+   * @until //#getName
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleAttribute.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setName
+   * @until #//setName
+   * @skipline #//getName
+   * @until #//getName
+   *
+   * @return    A string containing the name of the attribute.
    */
   std::string getName() const;
 
   /**
    * Get the XdmfAttributeType associated with this attribute.
    *
-   * @return XdmfAttributeType of the attribute.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfAttribute.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setType
+   * @until //#setType
+   * @skipline //#getType
+   * @until //#getType
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleAttribute.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setType
+   * @until #//setType
+   * @skipline #//getType
+   * @until #//getType
+   *
+   * @return    XdmfAttributeType of the attribute.
    */
   shared_ptr<const XdmfAttributeType> getType() const;
 
   /**
    * Set the XdmfAttributeCenter associated with this attribute.
    *
-   * @param center the XdmfAttributeCenter to set.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfAttribute.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setCenter
+   * @until //#setCenter
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleAttribute.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setCenter
+   * @until #//setCenter
+   *
+   * @param     center  The XdmfAttributeCenter to set.
    */
   void setCenter(const shared_ptr<const XdmfAttributeCenter> center);
 
   /**
    * Set the name of the attribute.
    *
-   * @param name a string containing the name to set.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfAttribute.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setName
+   * @until //#setName
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleAttribute.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setName
+   * @until #//setName
+   *
+   * @param     name    A string containing the name to set.
    */
   void setName(const std::string & name);
 
   /**
    * Set the XdmfAttributeType associated with this attribute.
    *
-   * @param type XdmfAttributeType to set.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfAttribute.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setType
+   * @until //#setType
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleAttribute.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setType
+   * @until #//setType
+   *
+   * @param     type    XdmfAttributeType to set.
    */
   void setType(const shared_ptr<const XdmfAttributeType> type);
 

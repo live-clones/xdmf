@@ -1,7 +1,9 @@
 import mil.army.arl.xdmf.*;
 
-public class TestXdmfEquals {
-    public static void main (String argv[]) {
+public class TestXdmfEquals
+{
+    public static void main (String argv[])
+	{
         System.out.println("Hello World");
 
 	System.out.println("Checking XdmfAttributeCenter");	

@@ -41,6 +41,20 @@ class XDMFCORE_EXPORT XdmfSystemUtils {
    * Converts a filesystem path to an absolute real path (absolute
    * path with no symlinks)
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfSystemUtils.cpp
+   * @skipline //#getRealPath
+   * @until //#getRealPath
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleSystemUtils.py
+   * @skipline #//getRealPath
+   * @until #//getRealPath
+   *
    * @param path a string containing the path to convert.
    *
    * @return the equivalent real path.

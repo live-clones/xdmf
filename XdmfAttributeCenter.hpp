@@ -35,8 +35,30 @@
  * where its values are centered on an XdmfGrid. A specific
  * XdmfAttributeCenter can be created by calling on of the static
  * methods in the class, i.e.  XdmfAttributeCenter::Cell().
- *
  * Xdmf supports the following attribute centers:
+ *
+ * Example of use:
+ *
+ * C++
+ *
+ * @dontinclude ExampleXdmfAttribute.cpp
+ * @skipline //#initialization
+ * @until //#initialization
+ * @skipline //#setCenter
+ * @until //#setCenter
+ * @skipline //#getCenter
+ * @until //#getCenter
+ *
+ * Python
+ *
+ * @dontinclude XdmfExampleAttribute.py
+ * @skipline #//initialization
+ * @until #//initialization
+ * @skipline #//setCenter
+ * @until #//setCenter
+ * @skipline #//getCenter
+ * @until #//getCenter
+ *
  *   Grid
  *   Cell
  *   Face
@@ -71,7 +93,7 @@ protected:
    * construct XdmfAttributeCenters -
    * i.e. XdmfAttributeCenter::Node().
    *
-   * @param name the name of the XdmfAttributeCenter to construct.
+   * @param     name    The name of the XdmfAttributeCenter to construct.
    */
   XdmfAttributeCenter(const std::string & name);
 

@@ -2,7 +2,7 @@
 /*                                    XDMF                                   */
 /*                       eXtensible Data Model and Format                    */
 /*                                                                           */
-/*  Id : XdmfHavyDataController.cpp                                          */
+/*  Id : XdmfHeavyDataController.cpp                                         */
 /*                                                                           */
 /*  Author:                                                                  */
 /*     Kenneth Leiter                                                        */
@@ -40,13 +40,22 @@ XdmfHeavyDataController::XdmfHeavyDataController(const std::string & filePath,
   mFilePath(filePath),
   mStart(start),
   mStride(stride),
+  mArrayStartOffset(0),
   mType(type)
 {
   if(!(mStart.size() == mStride.size() && 
-       mStride.size() == mDimensions.size()))
-    XdmfError::message(XdmfError::FATAL,
-                       "mStart, mStride, mDimensions must all be of equal "
-                       "length in XdmfHeavyDataController constructor");
+       mStride.size() == mDimensions.size() &&
+       mDimensions.size() == mDataspaceDimensions.size())) {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "mStart, mStride, mDimensions, and mDataSpaceDimensions"
+                         " must all be of equal length in XdmfHeavyDataController"
+                         " constructor");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 XdmfHeavyDataController::~XdmfHeavyDataController()
@@ -83,6 +92,18 @@ XdmfHeavyDataController::getSize() const
                          mDimensions.end(),
                          1,
                          std::multiplies<unsigned int>());
+}
+
+void
+XdmfHeavyDataController::setArrayOffset(unsigned int newOffset)
+{
+  mArrayStartOffset = newOffset;
+}
+
+unsigned int
+XdmfHeavyDataController::getArrayOffset() const
+{
+  return mArrayStartOffset;
 }
 
 std::vector<unsigned int> 

@@ -3,15 +3,22 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 option(XDMF_BUILD_EXODUS_IO OFF)
 option(XDMF_BUILD_PARTITIONER OFF)
 option(XDMF_BUILD_FORTRAN OFF)
+option(XDMF_BUILD_DSM OFF)
+
 
 set(XdmfUtilsSources
   XdmfDiff
-  XdmfTopologyConverter)
+  XdmfTopologyConverter
+  XdmfUtils)
 set(XdmfUtilsLinkLibraries Xdmf)
 
 if(XDMF_BUILD_FORTRAN)
   set(XdmfUtilsSources ${XdmfUtilsSources} XdmfFortran)
 endif(XDMF_BUILD_FORTRAN)
+
+if (XDMF_BUILD_DSM)
+  add_definitions(-DXDMF_BUILD_DSM)
+endif (XDMF_BUILD_DSM)
 
 if(XDMF_BUILD_EXODUS_IO)
   set(XDMF_SWIG_FLAGS ${XDMF_SWIG_FLAGS} -DXDMF_BUILD_EXODUS_IO)
@@ -78,6 +85,7 @@ endif(BUILD_TESTING)
 if(XDMF_WRAP_JAVA)
   XDMF_SWIG_JAVA(XdmfUtils Compiled_Xdmf_Jar)
 endif(XDMF_WRAP_JAVA)
+
 
 if(XDMF_WRAP_PYTHON)
   XDMF_SWIG_PYTHON(XdmfUtils Xdmf)

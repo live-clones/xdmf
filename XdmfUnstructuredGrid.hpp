@@ -47,14 +47,44 @@ public:
   /**
    * Create a new XdmfUnstructuredGrid.
    *
-   * @return constructed XdmfUnstructuredGrid.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfUnstructuredGrid.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleUnstructuredGrid.py
+   * @skipline #//initialization
+   * @until #//initialization
+   *
+   * @return    Constructed XdmfUnstructuredGrid.
    */
   static shared_ptr<XdmfUnstructuredGrid> New();
 
   /**
    * Create a new XdmfUnstructuredGrid from a XdmfRegularGrid.
    *
-   * @return constructed XdmfUnstructuredGrid.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfUnstructuredGrid.cpp
+   * @skipline //#initializationregular
+   * @until //#initializationregular
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleUnstructuredGrid.py
+   * @skipline #//initializationregular
+   * @until #//initializationregular
+   *
+   * @param     regularGrid     The grid that the unstructured grid will be created from
+   *
+   * @return                    Constructed XdmfUnstructuredGrid.
    */
   static shared_ptr<XdmfUnstructuredGrid> 
   New(const shared_ptr<XdmfRegularGrid> regularGrid);
@@ -66,7 +96,29 @@ public:
   /**
    * Get the geometry associated with this grid.
    *
-   * @return the geometry associated with this grid.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfUnstructuredGrid.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setGeometry
+   * @until //#setGeometry
+   * @skipline //#getGeometry
+   * @until //#getGeometry
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleUnstructuredGrid.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setGeometry
+   * @until #//setGeometry
+   * @skipline #//getGeometry
+   * @until #//getGeometry
+   *
+   * @return    The geometry associated with this grid.
    */
   shared_ptr<XdmfGeometry> getGeometry();
 
@@ -75,21 +127,79 @@ public:
   /**
    * Get the topology associated with this grid.
    *
-   * @return the topology associated with this grid.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfUnstructuredGrid.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setTopology
+   * @until //#setTopology
+   * @skipline //#getTopology
+   * @until //#getTopology
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleUnstructuredGrid.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setTopology
+   * @until #//setTopology
+   * @skipline #//getTopology
+   * @until #//getTopology
+   *
+   * @return    The topology associated with this grid.
    */
   shared_ptr<XdmfTopology> getTopology();
 
   /**
    * Set the geometry associated with this grid.
    *
-   * @param geometry an XdmfGeometry to associate with this grid.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfUnstructuredGrid.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setGeometry
+   * @until //#setGeometry
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleUnstructuredGrid.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setGeometry
+   * @until #//setGeometry
+   *
+   * @param     geometry        An XdmfGeometry to associate with this grid.
    */
   void setGeometry(const shared_ptr<XdmfGeometry> geometry);
 
   /**
    * Set the topology associated with this grid.
    *
-   * @param topology an XdmfTopology to associate with this grid.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfUnstructuredGrid.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setTopology
+   * @until //#setTopology
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleUnstructuredGrid.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setTopology
+   * @until #//setTopology
+   *
+   * @param     topology        An XdmfTopology to associate with this grid.
    */
   void setTopology(const shared_ptr<XdmfTopology> topology);
 

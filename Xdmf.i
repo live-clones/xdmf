@@ -3,22 +3,31 @@ XdmfPython.cpp:
 swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 */
 
+
+#ifdef XDMF_BUILD_DSM
+
 %module Xdmf
 %{
+
+    // MPI Includes
+    #include <mpi.h>
 
     // XdmfCore Includes
     #include <Xdmf.hpp>
     #include <XdmfArray.hpp>
+    #include <XdmfArrayReference.hpp>
     #include <XdmfArrayType.hpp>
     #include <XdmfCoreItemFactory.hpp>
     #include <XdmfCoreReader.hpp>
+    #include <XdmfDSMManager.hpp>
+    #include <XdmfDSMBuffer.hpp>
+    #include <XdmfDSMCommMPI.hpp>
     #include <XdmfError.hpp>
+    #include <XdmfFunction.hpp>
     #include <XdmfHDF5Controller.hpp>
     #include <XdmfHDF5Writer.hpp>
-#ifdef XDMF_BUILD_DSM
     #include <XdmfHDF5ControllerDSM.hpp>
     #include <XdmfHDF5WriterDSM.hpp>
-#endif
     #include <XdmfHeavyDataController.hpp>
     #include <XdmfHeavyDataWriter.hpp>
     #include <XdmfInformation.hpp>
@@ -26,6 +35,62 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
     #include <XdmfItemProperty.hpp>
     #include <XdmfSharedPtr.hpp>
     #include <XdmfSparseMatrix.hpp>
+    #include <XdmfSubset.hpp>
+    #include <XdmfSystemUtils.hpp>
+    #include <XdmfVisitor.hpp>
+    #include <XdmfWriter.hpp>
+
+    // Xdmf Includes
+    #include <XdmfAttribute.hpp>
+    #include <XdmfAttributeCenter.hpp>
+    #include <XdmfAttributeType.hpp>
+    #include <XdmfCurvilinearGrid.hpp>
+    #include <XdmfDomain.hpp>
+    #include <XdmfGeometry.hpp>
+    #include <XdmfGeometryType.hpp>
+    #include <XdmfGraph.hpp>
+    #include <XdmfGrid.hpp>
+    #include <XdmfGridCollection.hpp>
+    #include <XdmfGridCollectionType.hpp>
+    #include <XdmfItemFactory.hpp>
+    #include <XdmfMap.hpp>
+    #include <XdmfReader.hpp>
+    #include <XdmfRectilinearGrid.hpp>
+    #include <XdmfRegularGrid.hpp>
+    #include <XdmfSet.hpp>
+    #include <XdmfSetType.hpp>
+    #include <XdmfTime.hpp>
+    #include <XdmfTopology.hpp>
+    #include <XdmfTopologyType.hpp>
+    #include <XdmfUnstructuredGrid.hpp>
+
+%}
+
+%import XdmfDSM.i
+
+#else
+%module Xdmf
+%{
+
+    // XdmfCore Includes
+    #include <Xdmf.hpp>
+    #include <XdmfArray.hpp>
+    #include <XdmfArrayReference.hpp>
+    #include <XdmfArrayType.hpp>
+    #include <XdmfCoreItemFactory.hpp>
+    #include <XdmfCoreReader.hpp>
+    #include <XdmfError.hpp>
+    #include <XdmfFunction.hpp>
+    #include <XdmfHDF5Controller.hpp>
+    #include <XdmfHDF5Writer.hpp>
+    #include <XdmfHeavyDataController.hpp>
+    #include <XdmfHeavyDataWriter.hpp>
+    #include <XdmfInformation.hpp>
+    #include <XdmfItem.hpp>
+    #include <XdmfItemProperty.hpp>
+    #include <XdmfSharedPtr.hpp>
+    #include <XdmfSparseMatrix.hpp>
+    #include <XdmfSubset.hpp>
     #include <XdmfSystemUtils.hpp>
     #include <XdmfVisitor.hpp>
     #include <XdmfWriter.hpp>
@@ -54,6 +119,8 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
     #include <XdmfTopologyType.hpp>
     #include <XdmfUnstructuredGrid.hpp>
 %}
+
+#endif
 
 %import XdmfCore.i
 
@@ -171,14 +238,38 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 
 %include std_set.i
 %include std_map.i
+%include std_vector.i
+
+#ifdef XDMF_BUILD_DSM
+
+%include mpi4py/mpi4py.i
+
+%mpi4py_typemap(Comm, MPI_Comm);
+
+#endif /* XDMF_BUILD_DSM */
 
 %template(XdmfMapNodeIdSet) std::set<int>;
 %template(XdmfMapNodeIdMap) std::map<int, std::set<int> >;
 %template(XdmfMapMap) std::map<int, std::map<int, std::set<int> > >;
+%template(AttributeVector) std::vector<shared_ptr<XdmfAttribute> >;
+%template(MapVector) std::vector<shared_ptr<XdmfMap> >;
+%template(ArrayVector) std::vector<shared_ptr<XdmfArray> >;
+
+#ifdef XDMF_BUILD_DSM
+
+%pythoncode {
+    from XdmfCore import *
+    from XdmfDSM import *
+}
+
+#else
 
 %pythoncode {
     from XdmfCore import *
 }
+
+#endif /* XDMF_BUILD_DSM */
+
 
 %fragment("XdmfItemCast", "header") {
     #include <XdmfSharedPtr.hpp>

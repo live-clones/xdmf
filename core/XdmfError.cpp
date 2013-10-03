@@ -2,71 +2,102 @@
 #include <cstdlib>
 #include <iostream>
 
-XdmfError::XdmfError()
-{}
+XdmfError::XdmfError(Level level, std::string message) :
+  mLevel(level),
+  mMessage(message)
+{
+}
 
-XdmfError::~XdmfError()
-{}
+XdmfError::~XdmfError() throw()
+{
+}
+
+/************************
+ *** Public Functions ***
+ ************************/
+
+XdmfError::Level
+XdmfError::getLevel()
+{
+  return XdmfError::mLevel;
+}
+
+void
+XdmfError::setLevel(Level l)
+{
+  XdmfError::mLevel = l;
+}
+
+const char *
+XdmfError::what() const throw()
+{
+  return XdmfError::mMessage.c_str();
+}
 
 /*******************************
  *** Public Static Functions ***
  *******************************/
 
 XdmfError::Level
-XdmfError::getLevel()
+XdmfError::getLevelLimit()
 {
-    return XdmfError::mLevel;
+  return XdmfError::mLevelLimit;
 }
-void
-XdmfError::setLevel(Level l)
+
+XdmfError::Level
+XdmfError::getSuppressionLevel()
 {
-    XdmfError::mLevel = l;
+  return XdmfError::mSuppressLevel;
+}
+
+void
+XdmfError::setLevelLimit(Level l)
+{
+  XdmfError::mLevelLimit = l;
+}
+
+void
+XdmfError::setSuppressionLevel(Level l)
+{
+  XdmfError::mSuppressLevel = l;
 }
 
 void
 XdmfError::message(Level level, std::string msg)
 {
-    if(level<=XdmfError::getLevel())
-        XdmfError::WriteToStream(msg);
-    if(level == XdmfError::FATAL)
-        std::exit(1);
+  if (level<=XdmfError::getSuppressionLevel())
+  {
+    XdmfError::WriteToStream(msg);
+  }
+  if(level<=XdmfError::getLevelLimit()) {
+    throw XdmfError(level, msg);
+  }
 }
 
 void
 XdmfError::setBuffer(std::streambuf* buf)
 {
-    XdmfError::mBuf = buf;
-}
-
-std::streambuf*
-XdmfError::getInternalBuffer()
-{
-    return XdmfError::mStream.rdbuf();
-}
-
-std::string
-XdmfError::getInternalString()
-{
-    return XdmfError::mStream.str();
+  XdmfError::mBuf = buf;
 }
 
 /********************************
  *** Private Static Functions ***
  ********************************/
 
+// automatically writes the message to the provided buffer
+// by default this is basically a print statement
 void
 XdmfError::WriteToStream(std::string msg)
 {
-    if(msg[msg.length()-1] != XdmfError::newline[0])
-        msg+=XdmfError::newline;
-    XdmfError::mBuf->sputn(msg.c_str(),msg.length());
+  if(msg[msg.length()-1] != '\n')
+    msg+='\n';
+  XdmfError::mBuf->sputn(msg.c_str(),msg.length());
 }
 
 /******************************************
  *** Initialize Static Member Variables ***
  ******************************************/
 
-XdmfError::Level XdmfError::mLevel = FATAL;
+XdmfError::Level XdmfError::mLevelLimit = XdmfError::FATAL;
+XdmfError::Level XdmfError::mSuppressLevel = XdmfError::WARNING;
 std::streambuf* XdmfError::mBuf=std::cout.rdbuf();
-std::ostringstream XdmfError::mStream;
-std::string XdmfError::newline = "\n";

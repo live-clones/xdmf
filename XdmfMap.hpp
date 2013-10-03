@@ -65,7 +65,21 @@ public:
   /**
    * Create a new XdmfMap.
    *
-   * @return constructed XdmfMap.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfMap.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleMap.py
+   * @skipline #//initialization
+   * @until #//initialization
+   *
+   * @return    Constructed XdmfMap.
    */
   static shared_ptr<XdmfMap> New();
 
@@ -74,11 +88,26 @@ public:
    * entry in the globalNodeIds vector contains the global node ids
    * for that partition.
    *
-   * @param globalNodeIds a vector of attributes containing globalNodeId
-   * values for each partition to be mapped.
+   * Example of use:
    *
-   * @return constructed XdmfMaps for each partition. The size of the vector
-   * will be the same as the globalNodeIds vector.
+   * C++
+   *
+   * @dontinclude ExampleXdmfMap.cpp
+   * @skipline //#initializationnode
+   * @until //#initializationnode
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleMap.py
+   * @skipline #//initializationnode
+   * @until #//initializationnode
+   *
+   * @param     globalNodeIds   A vector of attributes containing globalNodeId
+   *                            values for each partition to be mapped.
+   *
+   * @return                    Constructed XdmfMaps for each partition. The
+   *                            size of the vector will be the same as the
+   *                            globalNodeIds vector.
    */
   static std::vector<shared_ptr<XdmfMap> >
   New(const std::vector<shared_ptr<XdmfAttribute> > & globalNodeIds);
@@ -93,14 +122,54 @@ public:
   /**
    * Get stored boundary communicator map.
    *
-   * @return stored boundary communicator map.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfMap.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getMap
+   * @until //#getMap
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleMap.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getMap
+   * @until #//getMap
+   *
+   * @return    Stored boundary communicator map.
    */
   std::map<task_id, node_id_map> getMap() const;
 
   /**
    * Get name of boundary communicator map.
    *
-   * @return name of boundary communicator map.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfMap.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setName
+   * @until //#setName
+   * @skipline //#getName
+   * @until //#getName
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleMap.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setName
+   * @until #//setName
+   * @skipline #//getName
+   * @until #//getName
+   *
+   * @return    Name of boundary communicator map.
    */
   std::string getName() const;
 
@@ -108,10 +177,28 @@ public:
    * Given a remote task id return a map of local node ids to remote
    * node ids
    *
-   * @param remoteTaskId a task id to retrieve mapping for.
+   * Example of use:
    *
-   * @return a map of local node ids to a vector of remote node ids on
-   * remoteTaskId.
+   * C++
+   *
+   * @dontinclude ExampleXdmfMap.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getRemoteNodeIds
+   * @until //#getRemoteNodeIds
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleMap.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getRemoteNodeIds
+   * @until #//getRemoteNodeIds
+   *
+   * @param     remoteTaskId    Task id to retrieve mapping for.
+   *
+   * @return                    A map of local node ids to a vector of
+   *                            remote node ids on remoteTaskId.
    */
   node_id_map getRemoteNodeIds(const task_id remoteTaskId);
 
@@ -122,10 +209,29 @@ public:
   /**
    * Insert a new entry in map.
    *
-   * @param remoteTaskId task id where the remoteLoalNodeId is located.
-   * @param localNodeId the node id of the node being mapped.
-   * @param remoteLocalNodeId a node id on the remoteTaskId that the
-   * localNodeId is mapped to.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfMap.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#inserttuple
+   * @until //#inserttuple
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleMap.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//inserttuple
+   * @until #//inserttuple
+   *
+   * @param     remoteTaskId            task id where the remoteLoalNodeId is
+   *                                    located.
+   * @param     localNodeId             The node id of the node being mapped.
+   * @param     remoteLocalNodeId       A node id on the remoteTaskId that the
+   *                                    localNodeId is mapped to.
    */
   void insert(const task_id  remoteTaskId,
               const node_id  localNodeId,
@@ -135,46 +241,154 @@ public:
    * Returns whether the map is initialized (contains values in
    * memory).
    *
-   * @return bool true if map contains values in memory.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfMap.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#isInitialized
+   * @until //#isInitialized
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleMap.py
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline #//isInitialized
+   * @until #//isInitialized
+   *
+   * @return    bool true if map contains values in memory.
    */
   bool isInitialized() const;
 
   /**
    * Read data from disk into memory.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfMap.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#isInitialized
+   * @until //#isInitialized
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleMap.py
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline #//isInitialized
+   * @until #//isInitialized
    */
   void read();
 
   /**
    * Release all data held in memory. The heavy data remain attached.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfMap.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#release
+   * @until //#release
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleMap.py
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline #//release
+   * @until #//release
    */
   void release();
 
   /**
    * Set the heavy data controllers for this map.
    *
-   * @param remoteTaskIdsController an XdmfHeavyDataController to the remote
-   * task ids dataset.
-   * @param localNodeIdsController an XdmfHeavyDataController to the local
-   * node ids dataset.
-   * @param remoteLocalNodeIdsController an XdmfHeavyDataController to the
-   * remote local node ids dataset.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfMap.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setHeavyDataController
+   * @until //#setHeavyDataController
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleMap.py
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline #//setHeavyDataController
+   * @until #//setHeavyDataController
+   *
+   * @param     remoteTaskIdsControllers        A vector of XdmfHeavyDataControllers 
+   *                                            to the remote task ids dataset.
+   * @param     localNodeIdsControllers         A vector of XdmfHeavyDataControllers
+   *                                            to the local node ids dataset.
+   * @param     remoteLocalNodeIdsControllers   A vector of XdmfHeavyDataControllers
+   *                                            to the remote local node ids dataset.
    */
   void
-  setHeavyDataControllers(shared_ptr<XdmfHeavyDataController> remoteTaskIdsController,
-                          shared_ptr<XdmfHeavyDataController> localNodeIdsController,
-                          shared_ptr<XdmfHeavyDataController> remoteLocalNodeIdsController);
+  setHeavyDataControllers(std::vector<shared_ptr<XdmfHeavyDataController> > remoteTaskIdsControllers,
+                          std::vector<shared_ptr<XdmfHeavyDataController> > localNodeIdsControllers,
+                          std::vector<shared_ptr<XdmfHeavyDataController> > remoteLocalNodeIdsControllers);
 
   /**
    * Set the boundary communicator map.
    *
-   * @param map the boundary communicator map to store.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfMap.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setMap
+   * @until //#setMap
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleMap.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setMap
+   * @until #//setMap
+   *
+   * @param     map     The boundary communicator map to store.
    */
   void setMap(std::map<task_id, node_id_map> map);
 
   /**
    * Set the name of the boundary communicator map.
    *
-   * @param name the name of the boundary communicator map to set.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfMap.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setName
+   * @until //#setName
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleMap.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setName
+   * @until #//setName
+   *
+   * @param     name    The name of the boundary communicator map to set.
    */
   void setName(const std::string & name);
 
@@ -194,12 +408,12 @@ private:
   XdmfMap(const XdmfMap & map);  // Not implemented.
   void operator=(const XdmfMap & map);  // Not implemented.
 
-  shared_ptr<XdmfHeavyDataController> mLocalNodeIdsController;
+  std::vector<shared_ptr<XdmfHeavyDataController> > mLocalNodeIdsControllers;
   // remoteTaskId | localNodeId | remoteLocalNodeId
   std::map<task_id, node_id_map > mMap;
   std::string mName;
-  shared_ptr<XdmfHeavyDataController> mRemoteLocalNodeIdsController;
-  shared_ptr<XdmfHeavyDataController> mRemoteTaskIdsController;
+  std::vector<shared_ptr<XdmfHeavyDataController> > mRemoteLocalNodeIdsControllers;
+  std::vector<shared_ptr<XdmfHeavyDataController> > mRemoteTaskIdsControllers;
 
 };
 

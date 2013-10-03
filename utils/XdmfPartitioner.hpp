@@ -94,7 +94,6 @@ public:
    *
    * @param gridToPartition an XdmfGridUnstructured to partition.
    * @param numberOfPartitions the number of pieces to partition the grid into.
-   * @param metisScheme which metis partitioning scheme to use.
    * @param heavyDataWriter an XdmfHDF5Writer to write the partitioned mesh to.
    * If no heavyDataWriter is specified, all partitioned data will remain in
    * memory.

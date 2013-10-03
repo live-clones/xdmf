@@ -12,6 +12,28 @@
  * edges that are part of an XdmfGrid. This property indicates which
  * type the set contains.
  *
+ * Example of use:
+ *
+ * C++
+ *
+ * @dontinclude ExampleXdmfSet.cpp
+ * @skipline //#initialize
+ * @until //#initialize
+ * @skipline //#setType
+ * @until //#setType
+ * @skipline //#getType
+ * @until //#getType
+ *
+ * Python
+ *
+ * @dontinclude XdmfExampleSet.py
+ * @skipline #//initialize
+ * @until #//initialize
+ * @skipline #//setType
+ * @until #//setType
+ * @skipline #//getType
+ * @until #//getType
+ *
  * Xdmf supports the following set types:
  *   NoSetType
  *   Node
@@ -45,7 +67,7 @@ protected:
    * accessed through more specific static methods that construct
    * XdmfSetTypes - i.e. XdmfSetType::Node().
    *
-   * @param name a std::string containing the name of the XdmfSetType.
+   * @param     name    A std::string containing the name of the XdmfSetType.
    */
   XdmfSetType(const std::string & name);
 

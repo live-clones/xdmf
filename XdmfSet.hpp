@@ -51,14 +51,28 @@ public:
   /**
    * Create a new XdmfSet.
    *
-   * @return constructed XdmfSet.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfSet.cpp
+   * @skipline //#initialize
+   * @until //#initialize
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleSet.py
+   * @skipline #//initialize
+   * @until #//initialize
+   *
+   * @return    Constructed XdmfSet.
    */
   static shared_ptr<XdmfSet> New();
 
   virtual ~XdmfSet();
 
   LOKI_DEFINE_VISITABLE(XdmfSet, XdmfArray);
-  XDMF_CHILDREN(XdmfAttribute, Attribute, Name);
+  XDMF_CHILDREN(XdmfSet, XdmfAttribute, Attribute, Name);
   static const std::string ItemTag;
 
   std::map<std::string, std::string> getItemProperties() const;
@@ -68,14 +82,58 @@ public:
   /**
    * Get the name of the set.
    *
-   * @return a string containing the name of the set.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfSet.cpp
+   * @skipline //#initialize
+   * @until //#initialize
+   * @skipline //#setName
+   * @until //#setName
+   * @skipline //#getName
+   * @until //#getName
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleSet.py
+   * @skipline #//initialize
+   * @until #//initialize
+   * @skipline #//setName
+   * @until #//setName
+   * @skipline #//getName
+   * @until #//getName
+   *
+   * @return    A string containing the name of the set.
    */
   std::string getName() const;
 
   /**
    * Get the XdmfSetType associated with this set.
    *
-   * @return XdmfSetType of this set.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfSet.cpp
+   * @skipline //#initialize
+   * @until //#initialize
+   * @skipline //#setType
+   * @until //#setType
+   * @skipline //#getType
+   * @until //#getType
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleSet.py
+   * @skipline #//initialize
+   * @until #//initialize
+   * @skipline #//setType
+   * @until #//setType
+   * @skipline #//getType
+   * @until #//getType
+   *
+   * @return    XdmfSetType of this set.
    */
   shared_ptr<const XdmfSetType> getType() const;
 
@@ -88,14 +146,50 @@ public:
   /**
    * Set the name of the set.
    *
-   * @param name a string containing the name to set.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfSet.cpp
+   * @skipline //#initialize
+   * @until //#initialize
+   * @skipline //#setName
+   * @until //#setName
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleSet.py
+   * @skipline #//initialize
+   * @until #//initialize
+   * @skipline #//setName
+   * @until #//setName
+   *
+   * @param     name    A string containing the name to set.
    */
   void setName(const std::string & name);
 
   /**
    * Set the XdmfSetType associated with this set.
    *
-   * @param type the XdmfSetType to set.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfSet.cpp
+   * @skipline //#initialize
+   * @until //#initialize
+   * @skipline //#setType
+   * @until //#setType
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleSet.py
+   * @skipline //#initialize
+   * @until //#initialize
+   * @skipline //#setType
+   * @until //#setType
+   *
+   * @param     type    The XdmfSetType to set.
    */
   void setType(const shared_ptr<const XdmfSetType> type);
 

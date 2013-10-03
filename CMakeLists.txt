@@ -1,6 +1,11 @@
 project(Xdmf)
 cmake_minimum_required(VERSION 2.6)
 
+#Needed to build DSM because relative paths are used to add its libraries
+if (POLICY CMP0015)
+	cmake_policy(SET CMP0015 NEW)
+endif (POLICY CMP0015)
+
 if(MSVC10)
 	SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
 	SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR})
@@ -41,6 +46,13 @@ endif(BUILD_TESTING)
 option(XDMF_WRAP_PYTHON OFF)
 option(XDMF_WRAP_JAVA OFF)
 
+# Test for DSM
+option(XDMF_BUILD_DSM OFF)
+
+if(XDMF_BUILD_DSM)
+  option(XDMF_BUILD_DSM_THREADS ON)
+endif(XDMF_BUILD_DSM)
+
 # If we are wrapping either, we need swig
 if(XDMF_WRAP_PYTHON OR XDMF_WRAP_JAVA)
   find_package(SWIG REQUIRED)
@@ -54,7 +66,11 @@ endif(XDMF_WRAP_PYTHON OR XDMF_WRAP_JAVA)
 if(XDMF_WRAP_PYTHON)
   find_package(PythonInterp REQUIRED)
   find_package(PythonLibs REQUIRED)
-  include_directories(${PYTHON_INCLUDE_DIRS})
+  if (XDMF_BUILD_DSM)
+    include_directories(${PYTHON_INCLUDE_DIRS} ${MPI_CXX_INCLUDE_PATH})
+  else (XDMF_BUILD_DSM)
+    include_directories(${PYTHON_INCLUDE_DIRS})
+  endif (XDMF_BUILD_DSM)
 
   # A macro to swig and create the python files
   # Since we essentually do the same thing inside and outside core, it
@@ -69,6 +85,10 @@ if(XDMF_WRAP_PYTHON)
     # optimize swig generation --- these are all flags corresponding to -O
     # except -fvirtual which breaks visitor operation
     set(CMAKE_SWIG_FLAGS ${XDMF_SWIG_FLAGS} -modern -fastdispatch -nosafecstrings -noproxydel -fastproxy -fastinit -fastunpack -fastquery -modernargs -nobuildnone)
+    #Enables DSM
+    if (XDMF_BUILD_DSM)
+      set(CMAKE_SWIG_FLAGS ${CMAKE_SWIG_FLAGS} -DXDMF_BUILD_DSM)
+    endif (XDMF_BUILD_DSM)
     set_source_files_properties(${python_name}.i PROPERTIES CPLUSPLUS ON)
     set(swig_extra_generated_files "")
     swig_add_module(${python_name} python ${python_name}.i)
@@ -198,7 +218,7 @@ if(XDMF_WRAP_JAVA)
 endif(XDMF_WRAP_JAVA)
 
 add_subdirectory(core)
-include_directories(${XdmfCore_INCLUDE_DIRS})
+include_directories(${XdmfCore_INCLUDE_DIRS} ${XdmfDSM_INCLUDE_DIRS})
 link_directories(${XDMF_LIBRARY_DIRS})
 
 option(XDMF_BUILD_CORE_ONLY OFF)
@@ -228,7 +248,11 @@ if(NOT XDMF_BUILD_CORE_ONLY)
     XdmfUnstructuredGrid)
 
   add_library(Xdmf ${XdmfSources})
-  target_link_libraries(Xdmf XdmfCore)
+  if(XDMF_BUILD_DSM)
+    target_link_libraries(Xdmf XdmfCore XdmfDSM)
+  else(XDMF_BUILD_DSM)
+    target_link_libraries(Xdmf XdmfCore)
+  endif(XDMF_BUILD_DSM)
 
   if(WIN32)
 	set_target_properties(Xdmf PROPERTIES
@@ -248,7 +272,7 @@ if(NOT XDMF_BUILD_CORE_ONLY)
   endif(XDMF_WRAP_JAVA)
 
   if(XDMF_WRAP_PYTHON)
-    XDMF_SWIG_PYTHON(Xdmf XdmfCore)
+    XDMF_SWIG_PYTHON(Xdmf XdmfCore XdmfDSM)
   endif(XDMF_WRAP_PYTHON)
 
   if(BUILD_TESTING)

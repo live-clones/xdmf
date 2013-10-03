@@ -51,7 +51,21 @@ public:
   /**
    * Create a new XdmfGridCollection.
    *
-   * @return constructed XdmfGridCollection.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfGridCollection.cpp
+   * @skipline //#initalization
+   * @until //#initalization
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleGridCollection.py
+   * @skipline #//initalization
+   * @until #//initalization
+   *
+   * @return    Constructed XdmfGridCollection.
    */
   static shared_ptr<XdmfGridCollection> New();
 
@@ -67,7 +81,25 @@ public:
   /**
    * Get the XdmfGridCollectionType associated with this grid collection.
    *
-   * @return XdmfGridCollectionType of this collection.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfGridCollection.cpp
+   * @skipline //#initalization
+   * @until //#initalization
+   * @skipline //#getType
+   * @until //#getType
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleGridCollection.py
+   * @skipline #//initalization
+   * @until #//initalization
+   * @skipline #//getType
+   * @until #//getType
+   *
+   * @return    XdmfGridCollectionType of this collection.
    */
   shared_ptr<const XdmfGridCollectionType> getType() const;
 
@@ -77,7 +109,25 @@ public:
   /**
    * Insert an information into the grid collection.
    *
-   * @param information an XdmfInformation to attach to this item.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfGridCollection.cpp
+   * @skipline //#initalization
+   * @until //#initalization
+   * @skipline //#insert
+   * @until //#insert
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleGridCollection.py
+   * @skipline #//initalization
+   * @until #//initalization
+   * @skipline #//insert
+   * @until #//insert
+   *
+   * @param     information     An XdmfInformation to attach to this item.
    */
   void insert(const shared_ptr<XdmfInformation> information);
 
@@ -85,7 +135,25 @@ public:
    * Set the XdmfGridCollectionType associated with this grid
    * collection.
    *
-   * @param type the XdmfGridCollectionType to set.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfGridCollection.cpp
+   * @skipline //#initalization
+   * @until //#initalization
+   * @skipline //#setType
+   * @until //#setType
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleGridCollection.py
+   * @skipline #//initalization
+   * @until #//initalization
+   * @skipline #//setType
+   * @until #//setType
+   *
+   * @param     type    The XdmfGridCollectionType to set.
    */
   void setType(const shared_ptr<const XdmfGridCollectionType> type);
 

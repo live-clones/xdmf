@@ -51,7 +51,21 @@ public:
    * Retrieve the key/value pairs that this XdmfItemProperty contains by
    * inserting into the passed map.
    *
-   * @param collectedProperties a map to insert name / value pairs into.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfItemProperty.cpp
+   * @skipline //#getProperties
+   * @until //#getProperties
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleItemProperty.py
+   * @skipline #//getProperties
+   * @until #//getProperties
+   *
+   * @param     collectedProperties     A map to insert name / value pairs into.
    */
   virtual void
   getProperties(std::map<std::string, std::string> & collectedProperties) const = 0;

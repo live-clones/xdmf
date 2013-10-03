@@ -1,5 +1,8 @@
 project(XdmfCore)
 cmake_minimum_required(VERSION 2.6)
+if (POLICY CMP0015)
+  cmake_policy(SET CMP0015 NEW)
+endif (POLICY CMP0015)
 
 include(CheckCXXSourceCompiles)
 include(SetUpVersion)
@@ -19,6 +22,10 @@ set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 option(XDMF_BUILD_DSM OFF)
+
+if(XDMF_BUILD_DSM)
+  option(XDMF_BUILD_DSM_THREADS ON)
+endif(XDMF_BUILD_DSM)
 
 mark_as_advanced(CLEAR Boost_INCLUDE_DIR)
 find_package(Boost REQUIRED)
@@ -77,7 +84,7 @@ check_cxx_source_compiles("
 struct Base { virtual ~Base(){} };
 struct Derived : public Base {};
 
-int main(int ac, char ** av)
+int main(int ac, char * av)
 {
   boost::shared_ptr<Base> ptr(new Base());
   boost::shared_dynamic_cast<Derived>(ptr);
@@ -89,10 +96,12 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/XdmfConfig.hpp.in
 
 set(XdmfCoreSources
   XdmfArray
+  XdmfArrayReference
   XdmfArrayType
   XdmfCoreItemFactory
   XdmfCoreReader
   XdmfError
+  XdmfFunction
   XdmfHDF5Controller
   XdmfHDF5Writer
   XdmfHeavyDataController
@@ -101,32 +110,11 @@ set(XdmfCoreSources
   XdmfItem
   XdmfItemProperty
   XdmfSparseMatrix
+  XdmfSubset
   XdmfSystemUtils
   ${CMAKE_BINARY_DIR}/XdmfVersion
   XdmfVisitor
   XdmfWriter)
-
-option(XDMF_BUILD_DSM OFF)
-if(XDMF_BUILD_DSM)
-  set(XdmfCoreSources
-    ${XdmfCoreSources}
-    XdmfHDF5ControllerDSM
-    XdmfHDF5WriterDSM)
-
-  find_package(H5FDdsm REQUIRED NO_MODULE)
-  if(H5FDdsm_FOUND)
-    include_directories(${H5FDdsm_INCLUDE_DIR})
-    get_filename_component(H5FDdsm_LIBRARY_DIR 
-                           "${H5FDdsm_INCLUDE_DIR}/../lib" REALPATH)
-    set(XDMF_LIBRARY_DIRS ${XDMF_LIBRARY_DIRS} ${H5FDdsm_LIBRARY_DIR})
-    get_property(h5fddsm_lib_location TARGET H5FDdsm PROPERTY LOCATION)
-    set(H5FDdsm_LIBRARIES ${h5fddsm_lib_location})
-    set(XDMF_LIBRARIES ${XDMF_LIBRARIES} ${H5FDdsm_LIBRARIES})
-  else(H5FDdsm_FOUND)
-    message(SEND_ERROR
-      "Cannot find HDF5 DSM!  Please set H5FDdsm_DIR and configure again.")
-  endif(H5FDdsm_FOUND)
-endif(XDMF_BUILD_DSM)
 
 add_library(XdmfCore ${XdmfCoreSources})
 link_directories(${XDMF_LIBRARY_DIRS})
@@ -191,6 +179,10 @@ set(XdmfCore_INCLUDE_DIRS
 
 set(XDMF_LIBRARIES ${XDMF_LIBRARIES} ${CMAKE_INSTALL_PREFIX}/lib)
 set(XDMF_BINARIES ${XDMF_BINARIES} ${CMAKE_INSTALL_PREFIX}/bin)
+
+if(XDMF_BUILD_DSM)
+  add_subdirectory(dsm)
+endif(XDMF_BUILD_DSM)
 
 if(BUILD_TESTING)
   add_subdirectory(tests)

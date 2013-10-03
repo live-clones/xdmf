@@ -58,15 +58,33 @@ public:
   virtual ~XdmfGrid() = 0;
 
   LOKI_DEFINE_VISITABLE(XdmfGrid, XdmfItem);
-  XDMF_CHILDREN(XdmfAttribute, Attribute, Name);
-  XDMF_CHILDREN(XdmfSet, Set, Name);
-  XDMF_CHILDREN(XdmfMap, Map, Name);
+  XDMF_CHILDREN(XdmfGrid, XdmfAttribute, Attribute, Name);
+  XDMF_CHILDREN(XdmfGrid, XdmfSet, Set, Name);
+  XDMF_CHILDREN(XdmfGrid, XdmfMap, Map, Name);
   static const std::string ItemTag;
 
   /**
    * Get the geometry associated with this grid.
    *
-   * @return the geometry associated with this grid.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfGrid.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getGeometry
+   * @until //#getGeometry
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleGrid.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getGeometry
+   * @until #//getGeometry
+   *
+   * @return    The geometry associated with this grid.
    */
   shared_ptr<const XdmfGeometry> getGeometry() const;
 
@@ -77,30 +95,106 @@ public:
   /**
    * Get the name of the grid.
    *
-   * @return the name of the grid.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfGrid.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setName
+   * @until //#setName
+   * @skipline //#getName
+   * @until //#getName
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleGrid.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setName
+   * @until #//setName
+   * @skipline #//getName
+   * @until #//getName
+   *
+   * @return    The name of the grid.
    */
   std::string getName() const;
 
   /**
    * Get the time associated with this grid.
    *
-   * @return pointer to the XdmfTime attached to this grid. If no
-   * XdmfTime is attached, return a NULL pointer.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfGrid.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setTime
+   * @until //#setTime
+   * @skipline //#getTime
+   * @until //#getTime
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleGrid.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setTime
+   * @until #//setTime
+   * @skipline #//getTime
+   * @until #//getTime
+   *
+   * @return    Pointer to the XdmfTime attached to this grid. If no
+   *            XdmfTime is attached, return a NULL pointer.
    */
   shared_ptr<XdmfTime> getTime();
 
   /**
    * Get the time associated with this grid (const version).
    *
-   * @return pointer to the XdmfTime attached to this grid. If no
-   * XdmfTime is attached, return a NULL pointer.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfGrid.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setTime
+   * @until //#setTime
+   * @skipline //#getTimeconst
+   * @until //#getTimeconst
+   *
+   * Python: Python doesn't have a constant version
+   * 
+   * @return    Pointer to the XdmfTime attached to this grid. If no
+   *            XdmfTime is attached, return a NULL pointer.
    */
   shared_ptr<const XdmfTime> getTime() const;
 
   /**
    * Get the topology associated with this grid.
    *
-   * @return the topology associated with this grid.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfGrid.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getTopology
+   * @until //#getTopology
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleGrid.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getTopology
+   * @until #//getTopology
+   *
+   * @return    The topology associated with this grid.
    */
   shared_ptr<const XdmfTopology> getTopology() const;
 
@@ -109,14 +203,50 @@ public:
   /**
    * Set the name of the grid.
    *
-   * @param name of the grid to set.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfGrid.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setName
+   * @until //#setName
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleGrid.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setName
+   * @until #//setName
+   *
+   * @param     name    Name of the grid to set.
    */
   void setName(const std::string & name);
 
   /**
    * Set the time associated with this grid.
    *
-   * @param time an XdmfTime to associate with this grid.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfGrid.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setTime
+   * @until //#setTime
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleGrid.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setTime
+   * @until #//setTime
+   *
+   * @param     time    An XdmfTime to associate with this grid.
    */
   void setTime(const shared_ptr<XdmfTime> time);
 

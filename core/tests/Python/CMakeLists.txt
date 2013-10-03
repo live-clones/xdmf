@@ -24,6 +24,7 @@ ADD_TEST_PYTHON_PATH("${LIBXML2_BINARY_DIRS}")
 ADD_TEST_PYTHON(TestXdmfArray)
 ADD_TEST_PYTHON(TestXdmfArrayMultidimensional)
 ADD_TEST_PYTHON(TestXdmfEquals)
+ADD_TEST_PYTHON(TestXdmfError)
 ADD_TEST_PYTHON(TestXdmfVersion)
 
 # Add any python cleanup here:
@@ -34,6 +35,7 @@ ADD_TEST_PYTHON(TestXdmfVersion)
 CLEAN_TEST_PYTHON(TestXdmfArray)
 CLEAN_TEST_PYTHON(TestXdmfArrayMultidimensional)
 CLEAN_TEST_PYTHON(TestXdmfEquals)
+CLEAN_TEST_PYTHON(TestXdmfError)
 CLEAN_TEST_PYTHON(TestXdmfVersion)
 
 # Add a custom target for all python tests

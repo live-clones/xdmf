@@ -44,16 +44,30 @@ public:
   /**
    * Create a new XdmfGraph.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfGraph.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleGraph.py
+   * @skipline #//initialization
+   * @until #//initialization
+   *
    * @param numberNodes number of nodes in graph.
    *
-   * @return constructed XdmfGraph.
+   * @return    Constructed XdmfGraph.
    */
   static shared_ptr<XdmfGraph> New(const unsigned int numberNodes);
 
   virtual ~XdmfGraph();
 
   LOKI_DEFINE_VISITABLE(XdmfGraph, XdmfSparseMatrix);
-  XDMF_CHILDREN(XdmfAttribute, Attribute, Name);
+  XDMF_CHILDREN(XdmfGraph, XdmfAttribute, Attribute, Name);
   static const std::string ItemTag;
 
   std::string getItemTag() const;

@@ -15,6 +15,8 @@ ADD_TEST_PYTHON_PYTHONPATH("")
 #	Read UsePythonTest.cmake for more information
 # -----------------------
 ADD_TEST_PYTHON(TestXdmfEquals)
+ADD_TEST_PYTHON(TestXdmfFunction)
+ADD_TEST_PYTHON(TestXdmfFunctionRead)
 ADD_TEST_PYTHON(TestXdmfHDF5Writer)
 ADD_TEST_PYTHON(TestXdmfRead)
 ADD_TEST_PYTHON(TestXdmfSet)
@@ -27,10 +29,15 @@ ADD_TEST_PYTHON(TestXdmfWriter)
 #	Read UseCxxTest.cmake for more information
 # ---------------------------------------
 CLEAN_TEST_PYTHON(TestXdmfEquals)
+CLEAN_TEST_PYTHON(TestXdmfFunction
+  function.xmf
+  function.h5)
+CLEAN_TEST_PYTHON(TestXdmfFunctionRead)
 CLEAN_TEST_PYTHON(TestXdmfHDF5Writer
   hdf5WriterPythonTest.h5)
 CLEAN_TEST_PYTHON(TestXdmfRead
-  TestXdmfRead.xmf)
+  TestXdmfRead.xmf
+  TestXdmfRead.h5)
 CLEAN_TEST_PYTHON(TestXdmfSet)
 CLEAN_TEST_PYTHON(TestXdmfWriter
   output.h5

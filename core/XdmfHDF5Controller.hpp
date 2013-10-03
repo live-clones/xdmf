@@ -46,6 +46,20 @@ public:
   /**
    * Create a new controller for an hdf5 data set on disk.
    *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfHDF5Controller.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleHDF5Controller.py
+   * @skipline #//initialization
+   * @until #//initialization
+   *
    * @param hdf5FilePath the location of the hdf5 file the data set resides in.
    * @param dataSetPath the location of the dataset within the hdf5 file.
    * @param type the data type of the dataset to read.
@@ -56,10 +70,10 @@ public:
    * @param dimensions the number of elements to select in each
    * dimension from the hdf5 data set. (size in each dimension)
    * @param dataspaceDimensions the number of elements in the entire
-   * hdf5 data set (may be larger that dimensions if using
+   * hdf5 data set (may be larger than dimensions if using
    * hyperslabs).
    *
-   * @return new HDF5 Controller.
+   * @return    New HDF5 Controller.
    */
   static shared_ptr<XdmfHDF5Controller>
   New(const std::string & hdf5FilePath,

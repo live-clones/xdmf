@@ -46,7 +46,21 @@ public:
   /**
    * Create a new XdmfGeometry.
    *
-   * @return constructed XdmfGeometry.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfGeometry.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleGeometry.py
+   * @skipline #//initialization
+   * @until #//initialization
+   *
+   * @return    Constructed XdmfGeometry.
    */
   static shared_ptr<XdmfGeometry> New();
 
@@ -61,20 +75,74 @@ public:
 
   /**
    * Get the number of points stored in this geometry.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfGeometry.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getNumberPoints
+   * @until //#getNumberPoints
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleGeometry.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getNumberPoints
+   * @until #//getNumberPoints
    */
   virtual unsigned int getNumberPoints() const;
 
   /**
    * Get the XdmfGeometryType associated with this geometry.
    *
-   * @return XdmfGeometryType of this geometry.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfGeometry.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getType
+   * @until //#getType
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleGeometry.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getType
+   * @until #//getType
+   *
+   * @return    XdmfGeometryType of this geometry.
    */
   shared_ptr<const XdmfGeometryType> getType() const;
 
   /**
    * Set the XdmfGeometryType associated with this geometry.
    *
-   * @param type the XdmfGeometryType to set.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfGeometry.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setType
+   * @until //#setType
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleGeometry.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setType
+   * @until #//setType
+   *
+   * @param     type    The XdmfGeometryType to set.
    */
   void setType(const shared_ptr<const XdmfGeometryType> type);
 

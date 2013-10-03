@@ -37,6 +37,24 @@
  * the static methods in the class,
  * i.e. XdmfGridCollectionType::Temporal().
  *
+ * Example of use:
+ *
+ * C++
+ *
+ * @dontinclude ExampleXdmfGridCollection.cpp
+ * @skipline //#initalization
+ * @until //#initalization
+ * @skipline //#getType
+ * @until //#getType
+ *
+ * Python
+ *
+ * @dontinclude XdmfExampleGridCollection.py
+ * @skipline #//initalization
+ * @until #//initalization
+ * @skipline #//getType
+ * @until #//getType
+ *
  * Xdmf supports the following collection types:
  *   NoCollectionType
  *   Spatial

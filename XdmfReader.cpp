@@ -23,6 +23,7 @@
 
 #include "XdmfItemFactory.hpp"
 #include "XdmfReader.hpp"
+#include "XdmfError.hpp"
 
 shared_ptr<XdmfReader>
 XdmfReader::New()
@@ -45,12 +46,22 @@ XdmfReader::~XdmfReader()
 shared_ptr<XdmfItem>
 XdmfReader::read(const std::string & filePath) const
 {
-  return XdmfCoreReader::read(filePath);
+  try {
+    return XdmfCoreReader::read(filePath);
+  }
+  catch (XdmfError e) {
+    throw e;
+  }
 }
 
 std::vector<shared_ptr<XdmfItem> >
 XdmfReader::read(const std::string & filePath,
                  const std::string & xPath) const
 {
-  return XdmfCoreReader::read(filePath, xPath);
+  try {
+    return XdmfCoreReader::read(filePath, xPath);
+  }
+  catch (XdmfError e) {
+    throw e;
+  }
 }

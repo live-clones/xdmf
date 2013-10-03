@@ -65,9 +65,14 @@ XdmfGridCollectionType::New(const std::map<std::string, std::string> & itemPrope
   std::map<std::string, std::string>::const_iterator type =
     itemProperties.find("CollectionType");
   if(type == itemProperties.end()) {
-    XdmfError::message(XdmfError::FATAL, 
-                       "'CollectionType' not in itemProperties in "
-                       "XdmfGridCollectionType::New");
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+                         "'CollectionType' not in itemProperties in "
+                         "XdmfGridCollectionType::New");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
 
   const std::string & typeVal = type->second;
@@ -81,9 +86,14 @@ XdmfGridCollectionType::New(const std::map<std::string, std::string> & itemPrope
     return Temporal();
   }
 
-  XdmfError::message(XdmfError::FATAL, 
-                     "'CollectionType' not of 'None', 'Spatial', or "
-                     "'Temporal' in XdmfGridCollectionType::New");
+  try {
+    XdmfError::message(XdmfError::FATAL, 
+                       "'CollectionType' not of 'None', 'Spatial', or "
+                       "'Temporal' in XdmfGridCollectionType::New");
+  }
+  catch (XdmfError e) {
+    throw e;
+  }
 
   return shared_ptr<const XdmfGridCollectionType>();
 }

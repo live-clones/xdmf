@@ -65,7 +65,67 @@
 * constructors in the XDMF API are protected, ensuring that only
 * shared pointers can be created. These pointers are freed
 * automatically by the shared pointer reference counting mechanism.
+*
+*
+* Structure:
+*
+* Xdmf2 is structured in a tree format with an XdmfDomain serving
+* as the base. The Domain contains multiple grid collections or
+* grids; each with their own geometries, topologies, attributes,
+* and/or sets. With the inclusion of shared pointers in Xdmf2
+* a topology could be shared across multiple grids or a grid 
+* could be included in multiple grid collections and/or the domain.
+*
+*
+* C++ Examples:
+*
+* \subpage cppwrite "C++ Example of Xdmf Creation"
+*
+* \subpage cppread "C++ Example of Reading Xdmf"
+*
+* \subpage cppedit "C++ Example of Reading and Modifying Xdmf"
+*
+* Python Examples:
+*
+* \subpage pywrite "Python Example of Xdmf Creation"
+*
+* \subpage pyread "Python Example of Reading Xdmf"
+*
+* \subpage pyedit "Python Example of Reading and Modifying Xdmf"
+*
 */
+
+/*!
+* \page cppwrite Example of Xdmf Creation
+* \include ExampleXdmfWrite.cpp
+*/
+
+/*!
+* \page cppread Example of Reading Xdmf
+* \include ExampleXdmfRead.cpp
+*/
+
+/*!
+* \page cppedit Example of Reading and Modifying
+* \include ExampleXdmfEdit.cpp
+*/
+
+/*!
+* \page pywrite Example of Xdmf Creation
+* \include XdmfExampleWrite.py
+*/
+
+/*!
+* \page pyread Example of Reading Xdmf
+* \include XdmfExampleRead.py
+*/
+
+/*!
+* \page pyedit Example of Reading and Modifying
+* \include XdmfExampleEdit.py
+*/
+
+
 
 /* Keep all our Win32 Conversions here */
 #ifdef _WIN32
@@ -74,6 +134,11 @@
 #define XDMFCORE_EXPORT __declspec(dllimport)
 #undef XDMFCORE_TEMPLATE
 #define XDMFCORE_TEMPLATE extern
+
+#undef XDMFDSM_EXPORT
+#define XDMFDSM_EXPORT __declspec(dllimport)
+#undef XDMFDSM_TEMPLATE
+#define XDMFDSM_TEMPLATE extern
 
 #ifdef Xdmf_EXPORTS
 #define XDMF_EXPORT __declspec(dllexport)
@@ -98,8 +163,10 @@
 #else /* _WIN32 */
 /* We don't need to export/import since there are no dlls */
 #define XDMFCORE_EXPORT
+#define XDMFDSM_EXPORT
 #define XDMF_EXPORT
 #define XDMFCORE_TEMPLATE
+#define XDMFDSM_TEMPLATE
 #define XDMF_TEMPLATE
 #endif /* _WIN32 */
 #endif /* _XDMF_HPP */

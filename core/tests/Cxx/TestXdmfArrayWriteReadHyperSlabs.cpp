@@ -2,6 +2,7 @@
 #include "XdmfArrayType.hpp"
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfHDF5Writer.hpp"
+#include <iostream>
 
 int main(int, char **)
 {
@@ -56,5 +57,6 @@ int main(int, char **)
   assert(array1->getValuesString().compare("1 2") == 0);
   array2->release();
   array2->read();
+  std::cout << array2->getValuesString() << std::endl;
   assert(array2->getValuesString().compare("3 4") == 0);
 }

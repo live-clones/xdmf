@@ -130,10 +130,16 @@ XdmfPartitioner::partition(const shared_ptr<XdmfGraph> graphToPartition,
 
   // Make sure row pointer and column index are non null
   if(!(graphToPartition->getRowPointer() &&
-       graphToPartition->getColumnIndex()))
-    XdmfError::message(XdmfError::FATAL,
-                       "Current graph's row pointer or column index is null "
-                       "in XdmfPartitioner::partition");
+       graphToPartition->getColumnIndex())) {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Current graph's row pointer or column index is null "
+                         "in XdmfPartitioner::partition");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
  
   graphToPartition->removeAttribute("Partition");
 
@@ -278,10 +284,16 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
   }
 
   // Make sure geometry and topology are non null
-  if(!(gridToPartition->getGeometry() && gridToPartition->getTopology()))
-    XdmfError::message(XdmfError::FATAL,
-                       "Current grid's geometry or topology is null in "
-                       "XdmfPartitioner::partition");
+  if(!(gridToPartition->getGeometry() && gridToPartition->getTopology())) {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Current grid's geometry or topology is null in "
+                         "XdmfPartitioner::partition");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 
   const shared_ptr<XdmfGeometry> geometry =
     gridToPartition->getGeometry();
@@ -363,10 +375,14 @@ XdmfPartitioner::partition(const shared_ptr<XdmfUnstructuredGrid> gridToPartitio
                         nodesPartition);
   }
   else {
-    XdmfError::message(XdmfError::FATAL,
-                       "Invalid metis partitioning scheme selected in "
-                       "XdmfPartitioner::partition");
-
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Invalid metis partitioning scheme selected in "
+                         "XdmfPartitioner::partition");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
 
   delete [] metisConnectivityEptr;
@@ -735,9 +751,14 @@ XdmfPartitioner::unpartition(const shared_ptr<XdmfGridCollection> gridToUnPartit
       grid->getAttribute("GlobalNodeId");
 
     if(!globalNodeIds) {
-      XdmfError::message(XdmfError::FATAL,
-                         "Cannot find GlobalNodeId attribute in "
-                         "XdmfPartitioner::unpartition");
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "Cannot find GlobalNodeId attribute in "
+                           "XdmfPartitioner::unpartition");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
     }
 
     bool releaseGlobalNodeIds = false;

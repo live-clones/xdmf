@@ -54,29 +54,93 @@ public:
    * Parse a string containing light data into an Xdmf structure in
    * memory.
    *
-   * @param lightData a string containing light data description of an
-   * Xdmf file.
+   * Example of use:
    *
-   * @return an XdmfItem at the root of the Xdmf tree.
+   * C++
+   *
+   * @dontinclude ExampleXdmfCoreReader.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#parse
+   * @until //#parse
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleCoreReader.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//parse
+   * @until #//parse
+   *
+   * @param     lightData       A string containing light data description of an
+   *                            Xdmf file.
+   *
+   * @return                    An XdmfItem at the root of the Xdmf tree.
    */  
   virtual shared_ptr<XdmfItem> parse(const std::string & lightData) const;
 
   /**
    * Read an Xdmf file from disk into memory.
    *
-   * @param filePath the path of the Xdmf file to read in from disk.
+   * Example of use:
    *
-   * @return an XdmfItem at the root of the Xdmf tree.
+   * C++
+   *
+   * @dontinclude ExampleXdmfCoreReader.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#readpath
+   * @until //#readpath
+   * @skipline //#readroot
+   * @until //#readroot
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleCoreReader.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//readpath
+   * @until #//readpath
+   * @skipline #//readroot
+   * @until #//readroot
+   *
+   * @param     filePath        The path of the Xdmf file to read in from disk.
+   *
+   * @return                    An XdmfItem at the root of the Xdmf tree.
    */
   virtual shared_ptr<XdmfItem> read(const std::string & filePath) const;
 
   /**
    * Read part of an Xdmf file from disk into memory.
    *
-   * @param filePath the path of the Xdmf file to read in from disk.
-   * @param xPath an XPath corresponding to the portion of the file to read.
+   * Example of use:
    *
-   * @return a vector of XdmfItems that are included in the XPath.
+   * C++
+   *
+   * @dontinclude ExampleXdmfCoreReader.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#readpath
+   * @until //#readpath
+   * @skipline //#readXPath
+   * @until //#readXPath
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleCoreReader.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//readpath
+   * @until #//readpath
+   * @skipline #//readXPath
+   * @until #//readXPath
+   *
+   * @param     filePath        The path of the Xdmf file to read in from disk.
+   * @param     xPath           An XPath corresponding to the portion of the
+   *                            file to read.
+   *
+   * @return                    A vector of XdmfItems that are included
+   *                            in the XPath.
    */
   virtual std::vector<shared_ptr<XdmfItem> >
   read(const std::string & filePath,
@@ -85,13 +149,44 @@ public:
   /**
    * Read an Xdmf file from disk into memory.
    *
-   * @param filePath the path of the Xdmf file to read in from disk.
+   * Example of use:
    *
-   * @return a vector of XdmfItems at the root of the Xdmf tree.
+   * C++
+   *
+   * @dontinclude ExampleXdmfCoreReader.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#readpath
+   * @until //#readpath
+   * @skipline //#readItems
+   * @until //#readItems
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleCoreReader.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//readpath
+   * @until #//readpath
+   * @skipline #//readItems
+   * @until #//readItems
+   *
+   * @param     filePath        The path of the Xdmf file to read in from disk.
+   *
+   * @return                    A vector of XdmfItems at the root of the Xdmf tree.
    */
   virtual std::vector<shared_ptr<XdmfItem> >
   readItems(const std::string & filePath) const;
 
+  /**
+   * Used by the other functions to read items from an open file.
+   *
+   * Since files are closed between reads, this does nothing by itself.
+   *
+   * @param     xPath   An XPath corresponding to the portion of the file to read.
+   *
+   * @return            A vector of items at the X path provided.
+   */
   std::vector<shared_ptr<XdmfItem> >
   readPathObjects(const std::string & xPath) const;
 

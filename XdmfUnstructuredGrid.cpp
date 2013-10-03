@@ -142,10 +142,15 @@ XdmfUnstructuredGrid::XdmfUnstructuredGrid(const shared_ptr<XdmfRegularGrid> reg
 
   if(dimensions->getSize() != brickSize->getSize() ||
      dimensions->getSize() != origin->getSize()) {
-    XdmfError::message(XdmfError::FATAL,
-                       "Inconsistent brick, dimension, and origin sizes when"
-                       "converting regular grid to unstructured grid in "
-                       "XdmfUnstructuredGrid constructor");
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "Inconsistent brick, dimension, and origin sizes when"
+                         "converting regular grid to unstructured grid in "
+                         "XdmfUnstructuredGrid constructor");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
 
   bool releaseOrigin = false;
@@ -175,10 +180,15 @@ XdmfUnstructuredGrid::XdmfUnstructuredGrid(const shared_ptr<XdmfRegularGrid> reg
     topologyType = XdmfTopologyType::Hexahedron();
   }
   else {
-    XdmfError::message(XdmfError::FATAL, 
-                       "Cannot convert regular grid of dimensions not 2 or 3 "
-                       "to XdmfUnstructuredGrid in XdmfUnstructuredGrid "
-                       "constructor");
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+                         "Cannot convert regular grid of dimensions not 2 or 3 "
+                         "to XdmfUnstructuredGrid in XdmfUnstructuredGrid "
+                         "constructor");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
   }
   mGeometry->setType(geometryType);
   mTopology->setType(topologyType);

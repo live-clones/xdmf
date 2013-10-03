@@ -59,7 +59,21 @@ public:
   /**
    * Create a new XdmfTopology.
    *
-   * @return constructed XdmfTopology.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfTopology.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleTopology.py
+   * @skipline #//initialization
+   * @until #//initialization
+   *
+   * @return    Constructed XdmfTopology.
    */
   static shared_ptr<XdmfTopology> New();
 
@@ -75,21 +89,79 @@ public:
   /**
    * Get the number of elements this Topology contains.
    *
-   * @return int of number elements in the Topology.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfTopology.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getNumberElements
+   * @until //#getNumberElements
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleTopology.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getNumberElements
+   * @until #//getNumberElements
+   *
+   * @return    Int of number elements in the Topology.
    */
   virtual unsigned int getNumberElements() const;
 
   /**
    * Get the XdmfTopologyType associated with this topology.
    *
-   * @return XdmfTopologyType of the topology.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfTopology.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setType
+   * @until //#setType
+   * @skipline //#getType
+   * @until //#getType
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleTopology.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setType
+   * @until #//setType
+   * @skipline #//getType
+   * @until #//getType
+   *
+   * @return    XdmfTopologyType of the topology.
    */
   shared_ptr<const XdmfTopologyType> getType() const;
 
   /**
    * Set the XdmfTopologyType associated with this topology.
    *
-   * @param type the XdmfTopologyType to set.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfTopology.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setType
+   * @until //#setType
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleTopology.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setType
+   * @until #//setType
+   *
+   * @param     type    The XdmfTopologyType to set.
    */
   void setType(const shared_ptr<const XdmfTopologyType> type);
 

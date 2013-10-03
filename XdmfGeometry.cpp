@@ -23,6 +23,7 @@
 
 #include "XdmfGeometry.hpp"
 #include "XdmfGeometryType.hpp"
+#include "XdmfError.hpp"
 
 shared_ptr<XdmfGeometry> XdmfGeometry::New()
 {
@@ -45,9 +46,14 @@ const std::string XdmfGeometry::ItemTag = "Geometry";
 std::map<std::string, std::string>
 XdmfGeometry::getItemProperties() const
 {
-  std::map<std::string, std::string> geometryProperties;
-  mType->getProperties(geometryProperties);
-  return geometryProperties;
+  try {
+    std::map<std::string, std::string> geometryProperties;
+    mType->getProperties(geometryProperties);
+    return geometryProperties;
+  }
+  catch (XdmfError e) {
+    throw e;
+  }
 }
 
 std::string

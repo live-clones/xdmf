@@ -24,7 +24,7 @@ if __name__ == "__main__":
     # Create 2D arrays
     #
     array2 = XdmfArray.New()
-    newDimensions = UIntVector(2, 2)
+    newDimensions = UInt32Vector(2, 2)
     array2.initialize(XdmfArrayType.UInt16(), newDimensions)
     assert array2.getArrayType() == XdmfArrayType.UInt16()
     assert array2.getSize() == 4
@@ -34,7 +34,7 @@ if __name__ == "__main__":
     dimensionsString = array2.getDimensionsString()
     assert dimensionsString == "2 2"
 
-    newDimensions = UIntVector(3, 3)
+    newDimensions = UInt32Vector(3, 3)
     array2.resizeAsUInt16(newDimensions)
     assert array2.getSize() == 27
     dimensions = array2.getDimensions()

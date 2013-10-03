@@ -1,5 +1,6 @@
 #include "XdmfGeometry.hpp"
 #include "XdmfGeometryType.hpp"
+#include "XdmfSharedPtr.hpp"
 
 int main(int, char **)
 {

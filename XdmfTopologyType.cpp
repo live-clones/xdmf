@@ -24,6 +24,7 @@
 #include <cctype>
 #include <sstream>
 #include <utility>
+#include <vector>
 #include "XdmfError.hpp"
 #include "XdmfTopologyType.hpp"
 
@@ -31,22 +32,27 @@
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::NoTopologyType()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(0, 0, 0, "NoTopology", NoCellType, 0x0));
+    p(new XdmfTopologyType(0, 0, faces, 0, "NoTopology", NoCellType, 0x0));
   return p;
 }
 
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Polyvertex()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(1, 0, 0, "Polyvertex", Linear, 0x1));
+    p(new XdmfTopologyType(1, 0, faces, 0, "Polyvertex", Linear, 0x1));
   return p;
 }
 
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Polyline(const unsigned int nodesPerElement)
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
   static std::map<unsigned int, shared_ptr<const XdmfTopologyType> >
     previousTypes;
   std::map<unsigned int, shared_ptr<const XdmfTopologyType> >::const_iterator
@@ -55,7 +61,7 @@ XdmfTopologyType::Polyline(const unsigned int nodesPerElement)
     return type->second;
   }
   shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(nodesPerElement, 0, nodesPerElement - 1, 
+    p(new XdmfTopologyType(nodesPerElement, 0, faces, nodesPerElement - 1, 
                            "Polyline", Linear, 0x2));
   previousTypes[nodesPerElement] = p;
   return p;
@@ -64,6 +70,8 @@ XdmfTopologyType::Polyline(const unsigned int nodesPerElement)
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Polygon(const unsigned int nodesPerElement)
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
   static std::map<unsigned int, shared_ptr<const XdmfTopologyType> >
     previousTypes;
   std::map<unsigned int, shared_ptr<const XdmfTopologyType> >::const_iterator
@@ -72,7 +80,7 @@ XdmfTopologyType::Polygon(const unsigned int nodesPerElement)
     return type->second;
   }
   shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(nodesPerElement, 1, nodesPerElement,
+    p(new XdmfTopologyType(nodesPerElement, 1, faces, nodesPerElement,
                            "Polygon", Linear, 0x3));
   previousTypes[nodesPerElement] = p;
   return p;
@@ -81,160 +89,201 @@ XdmfTopologyType::Polygon(const unsigned int nodesPerElement)
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Triangle()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(3, 1, 3, "Triangle", Linear, 0x4));
+    p(new XdmfTopologyType(3, 1, faces, 3, "Triangle", Linear, 0x4));
   return p;
 }
 
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Quadrilateral()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(4, 1, 4, "Quadrilateral", Linear, 0x5));
+    p(new XdmfTopologyType(4, 1, faces, 4, "Quadrilateral", Linear, 0x5));
   return p;
 }
 
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Tetrahedron()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::Triangle());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(4, 4, 6, "Tetrahedron", Linear, 0x6));
+    p(new XdmfTopologyType(4, 4, faces, 6, "Tetrahedron", Linear, 0x6));
   return p;
 }
 
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Pyramid()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(5, 5, 8, "Pyramid", Linear, 0x7));
+    p(new XdmfTopologyType(5, 5, faces, 8, "Pyramid", Linear, 0x7));
   return p;
 }
 
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Wedge()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(6, 5, 9, "Wedge", Linear, 0x8));
+    p(new XdmfTopologyType(6, 5, faces, 9, "Wedge", Linear, 0x8));
   return p;
 }
 
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Hexahedron()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::Quadrilateral());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(8, 6, 12, "Hexahedron", Linear, 0x9));
+    p(new XdmfTopologyType(8, 6, faces, 12, "Hexahedron", Linear, 0x9));
   return p;
 }
 
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Edge_3()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(3, 0, 1, "Edge_3", Quadratic, 0x22));
+    p(new XdmfTopologyType(3, 0, faces, 1, "Edge_3", Quadratic, 0x22));
   return p;
 }
 
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Triangle_6()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(6, 1, 3, "Triangle_6", Quadratic, 0x24));
+    p(new XdmfTopologyType(6, 1, faces, 3, "Triangle_6", Quadratic, 0x24));
   return p;
 }
 
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Quadrilateral_8()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(8, 1, 4, "Quadrilateral_8", Quadratic, 0x25));
+    p(new XdmfTopologyType(8, 1, faces, 4, "Quadrilateral_8", Quadratic, 0x25));
   return p;
 }
 
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Quadrilateral_9()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(9, 1, 4, "Quadrilateral_9", Quadratic, 0x23));
+    p(new XdmfTopologyType(9, 1, faces, 4, "Quadrilateral_9", Quadratic, 0x23));
   return p;
 }
 
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Tetrahedron_10()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
+  faces.push_back(XdmfTopologyType::Triangle_6());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(10, 4, 6, "Tetrahedron_10", Quadratic, 0x26));
+    p(new XdmfTopologyType(10, 4, faces, 6, "Tetrahedron_10", Quadratic, 0x26));
   return p;
 }
 
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Pyramid_13()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(13, 5, 8, "Pyramid_13", Quadratic, 0x27));
+    p(new XdmfTopologyType(13, 5, faces, 8, "Pyramid_13", Quadratic, 0x27));
   return p;
 }
 
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Wedge_15()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(15, 5, 9, "Wedge_15", Quadratic, 0x28));
+    p(new XdmfTopologyType(15, 5, faces, 9, "Wedge_15", Quadratic, 0x28));
   return p;
 }
 
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Wedge_18()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(18, 5, 9, "Wedge_18", Quadratic, 0x29));
+    p(new XdmfTopologyType(18, 5, faces, 9, "Wedge_18", Quadratic, 0x29));
   return p;
 }
 
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Hexahedron_20()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::Quadrilateral_8());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(20, 6, 12, "Hexahedron_20", Quadratic, 0x30));
+    p(new XdmfTopologyType(20, 6, faces, 12, "Hexahedron_20", Quadratic, 0x30));
   return p;
 }
 
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Hexahedron_24()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(24, 6, 12, "Hexahedron_24", Quadratic, 0x31));
+    p(new XdmfTopologyType(24, 6, faces, 12, "Hexahedron_24", Quadratic, 0x31));
   return p;
 }
 
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Hexahedron_27()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::Quadrilateral_9());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(27, 6, 12, "Hexahedron_27", Quadratic, 0x32));
+    p(new XdmfTopologyType(27, 6, faces, 12, "Hexahedron_27", Quadratic, 0x32));
   return p;
 }
 
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Hexahedron_64()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(64, 6, 12, "Hexahedron_64", Cubic, 0x33));
+    p(new XdmfTopologyType(64, 6, faces, 12, "Hexahedron_64", Cubic, 0x33));
   return p;
 }
 
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Hexahedron_125()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(125, 6, 12, "Hexahedron_125", Quartic, 0x34));
+    p(new XdmfTopologyType(125, 6, faces, 12, "Hexahedron_125", Quartic, 0x34));
   return p;
 }
 
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Hexahedron_216()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(216, 6, 12, "Hexahedron_216", Quintic, 0x35));
+    p(new XdmfTopologyType(216, 6, faces, 12, "Hexahedron_216", Quintic, 0x35));
   return p;
 }
 
@@ -242,8 +291,10 @@ XdmfTopologyType::Hexahedron_216()
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Hexahedron_343()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(343, 6, 12, "Hexahedron_343", Sextic, 0x36));
+    p(new XdmfTopologyType(343, 6, faces, 12, "Hexahedron_343", Sextic, 0x36));
   return p;
 }
 
@@ -251,8 +302,10 @@ XdmfTopologyType::Hexahedron_343()
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Hexahedron_512()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(512, 6, 12, "Hexahedron_512", Septic, 0x37));
+    p(new XdmfTopologyType(512, 6, faces, 12, "Hexahedron_512", Septic, 0x37));
   return p;
 }
 
@@ -260,8 +313,10 @@ XdmfTopologyType::Hexahedron_512()
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Hexahedron_729()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(729, 6, 12, "Hexahedron_729", Octic, 0x38));
+    p(new XdmfTopologyType(729, 6, faces, 12, "Hexahedron_729", Octic, 0x38));
   return p;
 }
 
@@ -269,32 +324,40 @@ XdmfTopologyType::Hexahedron_729()
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Hexahedron_1000()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(1000, 6, 12, "Hexahedron_1000", Nonic, 0x39));
+    p(new XdmfTopologyType(1000, 6, faces, 12, "Hexahedron_1000", Nonic, 0x39));
   return p;
 }
 
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Hexahedron_1331()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(1331, 6, 12, "Hexahedron_1331", Decic, 0x40));
+    p(new XdmfTopologyType(1331, 6, faces, 12, "Hexahedron_1331", Decic, 0x40));
   return p;
 }
 
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Hexahedron_Spectral_64()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(64, 6, 12, "Hexahedron_Spectral_64", Cubic, 0x41));
+    p(new XdmfTopologyType(64, 6, faces, 12, "Hexahedron_Spectral_64", Cubic, 0x41));
   return p;
 }
 
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Hexahedron_Spectral_125()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(125, 6, 12, 
+    p(new XdmfTopologyType(125, 6, faces, 12, 
                            "Hexahedron_Spectral_125", Quartic, 0x42));
   return p;
 }
@@ -302,8 +365,10 @@ XdmfTopologyType::Hexahedron_Spectral_125()
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Hexahedron_Spectral_216()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(216, 6, 12, 
+    p(new XdmfTopologyType(216, 6, faces, 12, 
                            "Hexahedron_Spectral_216", Quintic, 0x43));
   return p;
 }
@@ -312,8 +377,10 @@ XdmfTopologyType::Hexahedron_Spectral_216()
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Hexahedron_Spectral_343()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(343, 6, 12, 
+    p(new XdmfTopologyType(343, 6, faces, 12, 
                            "Hexahedron_Spectral_343", Sextic, 0x44));
   return p;
 }
@@ -322,8 +389,10 @@ XdmfTopologyType::Hexahedron_Spectral_343()
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Hexahedron_Spectral_512()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(512, 6, 12, 
+    p(new XdmfTopologyType(512, 6, faces, 12, 
                            "Hexahedron_Spectral_512", Septic, 0x45));
   return p;
 }
@@ -332,8 +401,10 @@ XdmfTopologyType::Hexahedron_Spectral_512()
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Hexahedron_Spectral_729()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(729, 6, 12, 
+    p(new XdmfTopologyType(729, 6, faces, 12, 
                            "Hexahedron_Spectral_729", Octic, 0x46));
   return p;
 }
@@ -342,8 +413,10 @@ XdmfTopologyType::Hexahedron_Spectral_729()
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Hexahedron_Spectral_1000()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(1000, 6, 12, 
+    p(new XdmfTopologyType(1000, 6, faces, 12, 
                            "Hexahedron_Spectral_1000", Nonic, 0x47));
   return p;
 }
@@ -351,8 +424,10 @@ XdmfTopologyType::Hexahedron_Spectral_1000()
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Hexahedron_Spectral_1331()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  faces.push_back(XdmfTopologyType::NoTopologyType());
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(1331, 6, 12, 
+    p(new XdmfTopologyType(1331, 6, faces, 12, 
                            "Hexahedron_Spectral_1331", Decic, 0x48));
   return p;
 }
@@ -360,8 +435,9 @@ XdmfTopologyType::Hexahedron_Spectral_1331()
 shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Mixed()
 {
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
   static shared_ptr<const XdmfTopologyType>
-    p(new XdmfTopologyType(0, 0, 0, "Mixed", Arbitrary, 0x70));
+    p(new XdmfTopologyType(0, 0, faces, 0, "Mixed", Arbitrary, 0x70));
   return p;
 }
 
@@ -487,6 +563,7 @@ XdmfTopologyType::New(const unsigned int id)
 
 XdmfTopologyType::XdmfTopologyType(const unsigned int nodesPerElement,
                                    const unsigned int facesPerElement,
+                                   std::vector<shared_ptr<const XdmfTopologyType> > faces,
                                    const unsigned int edgesPerElement,
                                    const std::string & name,
                                    const CellType cellType,
@@ -494,6 +571,7 @@ XdmfTopologyType::XdmfTopologyType(const unsigned int nodesPerElement,
   mCellType(cellType),
   mEdgesPerElement(edgesPerElement),
   mFacesPerElement(facesPerElement),
+  mFaces(faces),
   mID(id),
   mName(name),
   mNodesPerElement(nodesPerElement)
@@ -513,9 +591,14 @@ XdmfTopologyType::New(const std::map<std::string, std::string> & itemProperties)
     type = itemProperties.find("TopologyType");
   }
   if(type == itemProperties.end()) {
-    XdmfError::message(XdmfError::FATAL, 
-                       "Neither 'Type' nor 'TopologyType' found in "
-                       "itemProperties in XdmfTopologyType::New");
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+                         "Neither 'Type' nor 'TopologyType' found in "
+                         "itemProperties in XdmfTopologyType::New");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
   std::string typeVal = type->second;
   std::transform(typeVal.begin(),
@@ -536,17 +619,27 @@ XdmfTopologyType::New(const std::map<std::string, std::string> & itemProperties)
     if(nodesPerElement != itemProperties.end()) {
       return Polyline(atoi(nodesPerElement->second.c_str()));
     }
-    XdmfError::message(XdmfError::FATAL, 
-                         "'NodesPerElement' not in itemProperties and type "
-                       "'POLYLINE' selected in XdmfTopologyType::New");
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+                           "'NodesPerElement' not in itemProperties and type "
+                         "'POLYLINE' selected in XdmfTopologyType::New");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
   else if(typeVal.compare("POLYGON") == 0) {
     if(nodesPerElement != itemProperties.end()) {
       return Polygon(atoi(nodesPerElement->second.c_str()));
     }
-    XdmfError::message(XdmfError::FATAL, 
-                       "'NodesPerElement' not in itemProperties and type "
-                       "'POLYGON' selected in XdmfTopologyType::New");
+    try {
+      XdmfError::message(XdmfError::FATAL, 
+                         "'NodesPerElement' not in itemProperties and type "
+                         "'POLYGON' selected in XdmfTopologyType::New");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
   else if(typeVal.compare("TRIANGLE") == 0) {
     return Triangle();
@@ -645,8 +738,13 @@ XdmfTopologyType::New(const std::map<std::string, std::string> & itemProperties)
     return Mixed();
   }
   
-  XdmfError::message(XdmfError::FATAL, 
-                     "Invalid Type selected in XdmfTopologyType::New");
+  try {
+    XdmfError::message(XdmfError::FATAL, 
+                       "Invalid Type selected in XdmfTopologyType::New");
+  }
+  catch (XdmfError e) {
+    throw e;
+  }
 
   return shared_ptr<const XdmfTopologyType>();
 }
@@ -661,6 +759,17 @@ unsigned int
 XdmfTopologyType::getEdgesPerElement() const
 {
   return mEdgesPerElement;
+}
+
+shared_ptr<const XdmfTopologyType>
+XdmfTopologyType::getFaceType()
+{
+  if (mFaces.size() == 0) {
+    return XdmfTopologyType::NoTopologyType();
+  }
+  else {
+    return mFaces[0];
+  }
 }
 
 unsigned int

@@ -40,8 +40,22 @@ public:
   /**
    * Create a new XdmfTime.
    *
-   * @param value the timeValue of the XdmfTime to create.
-   * @return the new XdmfTime.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfTime.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleTime.py
+   * @skipline #//initialization
+   * @until #//initialization
+   *
+   * @param     value   The timeValue of the XdmfTime to create.
+   * @return            The new XdmfTime.
    */
   static shared_ptr<XdmfTime> New(const double & value = 0);
 
@@ -57,14 +71,50 @@ public:
   /**
    * Get the time value associated with this XdmfTime.
    *
-   * @return a double containing the time value.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfTime.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getValue
+   * @until //#getValue
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleTime.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getValue
+   * @until #//getValue
+   *
+   * @return    A double containing the time value.
    */
   double getValue() const;
 
   /**
    * Set the time value associated with this XdmfTime.
    *
-   * @param time a double containing the time value.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfTime.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#setValue
+   * @until //#setValue
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleTime.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//setValue
+   * @until #//setValue
+   *
+   * @param     time    A double containing the time value.
    */
   void setValue(const double & time);
 

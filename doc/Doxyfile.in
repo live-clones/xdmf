@@ -567,6 +567,7 @@ WARN_LOGFILE           =
 INPUT                  = "@CMAKE_SOURCE_DIR@" \
                          "@CMAKE_SOURCE_DIR@/core" \
                          "@CMAKE_SOURCE_DIR@/core/loki" \
+                         "@CMAKE_SOURCE_DIR@/core/dsm" \
                          "@CMAKE_BINARY_DIR@"
 
 # This tag can be used to specify the character encoding of the source files
@@ -638,7 +639,7 @@ EXAMPLE_PATTERNS       =
 # commands irrespective of the value of the RECURSIVE tag.
 # Possible values are YES and NO. If left blank NO is used.
 
-EXAMPLE_RECURSIVE      = NO
+EXAMPLE_RECURSIVE      = YES
 
 # The IMAGE_PATH tag can be used to specify one or more files or
 # directories that contain image that are included in the documentation (see

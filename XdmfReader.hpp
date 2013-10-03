@@ -43,7 +43,21 @@ public:
   /**
    * Create a new XdmfReader.
    *
-   * @return constructed XdmfReader.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfReader.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleReader.py
+   * @skipline #//initialization
+   * @until #//initialization
+   *
+   * @return    Constructed XdmfReader.
    */
   static shared_ptr<XdmfReader> New();
 

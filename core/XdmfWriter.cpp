@@ -26,6 +26,7 @@
 #include <sstream>
 #include <utility>
 #include "XdmfArray.hpp"
+#include "XdmfInformation.hpp"
 #include "XdmfHeavyDataWriter.hpp"
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfHDF5Writer.hpp"
@@ -33,6 +34,7 @@
 #include "XdmfSystemUtils.hpp"
 #include "XdmfWriter.hpp"
 #include "XdmfVersion.hpp"
+#include "XdmfError.hpp"
 
 /**
  * PIMPL
@@ -52,6 +54,7 @@ public:
     mMode(Default),
     mStream(stream),
     mWriteXPaths(true),
+    mXPathParse(true),
     mXMLCurrentNode(NULL),
     mXMLDocument(NULL),
     mXMLFilePath(XdmfSystemUtils::getRealPath(xmlFilePath)),
@@ -68,11 +71,9 @@ public:
   void
   closeFile()
   {
-    // remove xpath info as it will not be valid for the new file
     mXPath.clear();
-    mXPathCount = 0;
-    mXPathString = "";
 
+    // This section writes to file
     std::ofstream fileStream;
     if(!mStream) {
       fileStream.open(mXMLFilePath.c_str());
@@ -96,7 +97,7 @@ public:
     
     xmlFreeDoc(mXMLDocument);
     xmlCleanupParser();
-    
+
     if(mHeavyDataWriter->getMode() == XdmfHeavyDataWriter::Default) {
       mHeavyDataWriter->closeFile();
     }
@@ -127,6 +128,7 @@ public:
   Mode mMode;
   std::ostream * mStream;
   bool mWriteXPaths;
+  bool mXPathParse;
   xmlNodePtr mXMLCurrentNode;
   xmlDocPtr mXMLDocument;
   std::string mXMLFilePath;
@@ -224,13 +226,19 @@ XdmfWriter::getWriteXPaths() const
   return mImpl->mWriteXPaths;
 }
 
+bool
+XdmfWriter::getXPathParse() const
+{
+  return mImpl->mXPathParse;
+}
+
 void
 XdmfWriter::setDocumentTitle(std::string title)
 {
   mImpl->mDocumentTitle = title;
 }
 
-void 
+void
 XdmfWriter::setHeavyDataWriter(shared_ptr<XdmfHeavyDataWriter> heavyDataWriter)
 {
   mImpl->mHeavyDataWriter = heavyDataWriter;
@@ -261,6 +269,12 @@ XdmfWriter::setWriteXPaths(const bool writeXPaths)
 }
 
 void
+XdmfWriter::setXPathParse(const bool xPathParse)
+{
+  mImpl->mXPathParse = xPathParse;
+}
+
+void
 XdmfWriter::visit(XdmfArray & array,
                   const shared_ptr<XdmfBaseVisitor> visitor)
 {
@@ -269,69 +283,152 @@ XdmfWriter::visit(XdmfArray & array,
   }
   mImpl->mDepth++;
 
-  const bool isSubclassed = 
-    array.getItemTag().compare(XdmfArray::ItemTag) != 0;
+  // Pull the Function and Subset accociated with the array
+  shared_ptr<XdmfArrayReference> internalReference = array.getReference();
 
-  if(isSubclassed) {
-    this->visit(dynamic_cast<XdmfItem &>(array), visitor);
+  // If in the correct read mode process the function or subset
+  // if it exists
+  if (internalReference && array.getReadMode() == XdmfArray::Reference) {
+    // Pass information about the array to the function
+    // so it can properly recreate it when read
+    internalReference->setConstructedType(array.getItemTag());
+    internalReference->setConstructedProperties(array.getItemProperties());
+    internalReference->accept(visitor);
+    // This does not write the data contained within the array to file
+    // The data is regenerated upon read
   }
+  else if (array.getReadMode() == XdmfArray::Controller) {
+    // Controller mode is the default mode
+    const bool isSubclassed = 
+      array.getItemTag().compare(XdmfArray::ItemTag) != 0;
 
-  if(array.getSize() > 0 && !(mImpl->mLastXPathed && isSubclassed)) {
-    std::stringstream xmlTextValues;
-
-    // Take care of writing to single heavy data file (Default behavior)
-    if(!array.isInitialized() && array.getHeavyDataController() &&
-       array.getHeavyDataController()->getFilePath().compare(mImpl->mHeavyDataWriter->getFilePath()) != 0 &&
-       mImpl->mMode == Default) {
-      array.read();
+    if(isSubclassed) {
+      try {
+        this->visit(dynamic_cast<XdmfItem &>(array), visitor);
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
     }
 
-    if(array.getHeavyDataController() ||
-       array.getSize() > mImpl->mLightDataLimit) {
-      // Write values to heavy data
-      mImpl->mHeavyDataWriter->visit(array, mImpl->mHeavyDataWriter);
+    if(array.getSize() > 0 && !(mImpl->mLastXPathed && isSubclassed)) {
+      std::vector<std::string> xmlTextValues;
 
-      std::string heavyDataPath =
-        array.getHeavyDataController()->getFilePath();
-      size_t index = heavyDataPath.find_last_of("/\\");
-      if(index != std::string::npos) {
-        const std::string heavyDataDir = heavyDataPath.substr(0, index + 1);
-        if(mImpl->mXMLFilePath.find(heavyDataDir) == 0) {
-          heavyDataPath =
-            heavyDataPath.substr(heavyDataDir.size(),
-                                 heavyDataPath.size() - heavyDataDir.size());
-        }
+      // Take care of writing to single heavy data file (Default behavior)
+      if(!array.isInitialized() && array.getHeavyDataController(0) &&
+         array.getHeavyDataController(0)->getFilePath().compare(mImpl->mHeavyDataWriter->getFilePath()) != 0 &&
+         mImpl->mMode == Default) {
+        array.read();
       }
 
-      xmlTextValues << heavyDataPath << ":"
-                    << array.getHeavyDataController()->getDataSetPath();
+      if(array.getHeavyDataController(0) ||
+         array.getSize() > mImpl->mLightDataLimit) {
+        // Write values to heavy data
+
+        try {
+          // This takes about half the time needed
+          mImpl->mHeavyDataWriter->visit(array, mImpl->mHeavyDataWriter);
+        }
+        catch (XdmfError e) {
+          throw e;
+        }
+
+        std::stringstream valuesStream;
+        for(unsigned int i = 0; i < array.getNumberHeavyDataControllers(); ++i) {
+          std::string heavyDataPath =
+            array.getHeavyDataController(i)->getFilePath();
+          size_t index = heavyDataPath.find_last_of("/\\");
+          if(index != std::string::npos) {
+            // If path is not a folder
+            // put the directory path into this variable
+            const std::string heavyDataDir = heavyDataPath.substr(0, index + 1);
+            // If the directory is in the XML File Path
+            if(mImpl->mXMLFilePath.find(heavyDataDir) == 0) {
+              heavyDataPath =
+                heavyDataPath.substr(heavyDataDir.size(),
+                                     heavyDataPath.size() - heavyDataDir.size());
+              // Pull the file off of the end and place it in the DataPath
+            }
+            // Otherwise the full path is required
+          }
+          std::stringstream dimensionStream;
+          for (unsigned int j = 0; j < array.getHeavyDataController(i)->getDimensions().size(); ++j) {
+            dimensionStream << array.getHeavyDataController(i)->getDimensions()[j];
+            if (j < array.getHeavyDataController(i)->getDimensions().size() - 1) {
+              dimensionStream << " ";
+            }
+          }
+          // Clear the stream
+          valuesStream.str(std::string());
+          if (array.getNumberHeavyDataControllers() > 1) {
+            valuesStream << heavyDataPath << ":"
+                         << array.getHeavyDataController(i)->getDataSetPath()
+                         << "|" << dimensionStream.str();
+            if (i + 1 < array.getNumberHeavyDataControllers()){
+              valuesStream << "|";
+            }
+          }
+          else {
+            valuesStream << heavyDataPath << ":"
+                         << array.getHeavyDataController(i)->getDataSetPath(); 
+          }
+          xmlTextValues.push_back(valuesStream.str());
+        }
+      }
+      else {
+        // Write values to XML
+        xmlTextValues.push_back(array.getValuesString());
+      }
+
+      bool oldWriteXPaths = mImpl->mWriteXPaths;
+      mImpl->mWriteXPaths = false;
+
+      // Write XML (metadata) description
+      if(isSubclassed) {
+        shared_ptr<XdmfArray> arrayToWrite = XdmfArray::New();
+        array.swap(arrayToWrite);
+        mImpl->mXMLCurrentNode = mImpl->mXMLCurrentNode->last;
+        this->visit(dynamic_cast<XdmfItem &>(*arrayToWrite.get()), visitor);
+        for(unsigned int i = 0; i<xmlTextValues.size(); ++i) {
+          xmlAddChild(mImpl->mXMLCurrentNode->last,
+                      xmlNewText((xmlChar*)xmlTextValues[i].c_str()));
+        }
+        mImpl->mXMLCurrentNode = mImpl->mXMLCurrentNode->parent;
+        array.swap(arrayToWrite);
+      }
+      else {
+        this->visit(dynamic_cast<XdmfItem &>(array), visitor);
+        for(unsigned int i = 0; i<xmlTextValues.size(); ++i) {
+          xmlAddChild(mImpl->mXMLCurrentNode->last,
+                      xmlNewText((xmlChar*)xmlTextValues[i].c_str()));
+        }
+      }
+      mImpl->mWriteXPaths = oldWriteXPaths;
+    }
+
+  }
+  else {
+    // These statements are reached when an unsupported read mode is used
+    // or when a read mode is not properly set up
+    if (array.getReadMode() == XdmfArray::Reference) {
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "Error: Array to be output as an array reference"
+                           " does not have an associated reference.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
     }
     else {
-      // Write values to XML
-      xmlTextValues << array.getValuesString();
+      try {
+        XdmfError::message(XdmfError::FATAL,
+                           "Error: Invalid output type.");
+      }
+      catch (XdmfError e) {
+        throw e;
+      }
     }
-
-    bool oldWriteXPaths = mImpl->mWriteXPaths;
-    mImpl->mWriteXPaths = false;
-
-    // Write XML (metadata) description
-    if(isSubclassed) {
-      shared_ptr<XdmfArray> arrayToWrite = XdmfArray::New();
-      array.swap(arrayToWrite);
-      mImpl->mXMLCurrentNode = mImpl->mXMLCurrentNode->last;
-      this->visit(dynamic_cast<XdmfItem &>(*arrayToWrite.get()), visitor);
-      xmlAddChild(mImpl->mXMLCurrentNode->last,
-                  xmlNewText((xmlChar*)xmlTextValues.str().c_str()));
-      mImpl->mXMLCurrentNode = mImpl->mXMLCurrentNode->parent;
-      array.swap(arrayToWrite);
-    }
-    else {
-      this->visit(dynamic_cast<XdmfItem &>(array), visitor);
-      xmlAddChild(mImpl->mXMLCurrentNode->last,
-                  xmlNewText((xmlChar*)xmlTextValues.str().c_str()));
-    }
-
-    mImpl->mWriteXPaths = oldWriteXPaths;
   }
 
   mImpl->mDepth--;
@@ -352,78 +449,164 @@ XdmfWriter::visit(XdmfItem & item,
 
   std::string tag = item.getItemTag();
   if (tag.length() == 0) {
-    item.traverse(visitor);
+    try {
+      item.traverse(visitor);
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
   }
   else {
     if(mImpl->mWriteXPaths) {
-      mImpl->mXPathCount++;
+      if (tag == "Information" && mImpl->mXPathParse) {
+        XdmfInformation & xpathinfo = dynamic_cast<XdmfInformation &>(item);
+        if (xpathinfo.getKey() == "XIncludes") {
+          shared_ptr<XdmfInformation> outputinfo;
+          for (unsigned int i = 0; i < xpathinfo.getNumberInformations(); ++i) {
+            mImpl->mXPathCount++;
+            outputinfo = xpathinfo.getInformation(i);
+            mImpl->mXMLCurrentNode = xmlNewChild(mImpl->mXMLCurrentNode,
+                                                 NULL,
+                                                 (xmlChar*)"xi:include",
+                                                 NULL);
+            xmlNewProp(mImpl->mXMLCurrentNode,
+                       (xmlChar*)"href",
+                       (xmlChar*)(outputinfo->getKey().c_str()));
+            xmlNewProp(mImpl->mXMLCurrentNode,
+                       (xmlChar*)"xpointer",
+                       (xmlChar*)(outputinfo->getValue().c_str()));
+            if (i < xpathinfo.getNumberInformations()-1) {
+              mImpl->mXMLCurrentNode = mImpl->mXMLCurrentNode->parent;
+            }
+          }
+        }
+        else {
+          mImpl->mXPathCount++;
 
-      const std::string parentXPathString = mImpl->mXPathString;
+          const std::string parentXPathString = mImpl->mXPathString;
 
-      std::stringstream newXPathString;
-      newXPathString << mImpl->mXPathString << "/" << mImpl->mXPathCount;
-      mImpl->mXPathString = newXPathString.str();
+          std::stringstream newXPathString;
+          newXPathString << mImpl->mXPathString << "/" << mImpl->mXPathCount;
+          mImpl->mXPathString = newXPathString.str();
 
-      std::map<const XdmfItem * const, std::string>::const_iterator iter =
-        mImpl->mXPath.find(&item);
-      if(iter != mImpl->mXPath.end()) {
-        // Inserted before --- just xpath location of previously written node
-        mImpl->mXMLCurrentNode = xmlNewChild(mImpl->mXMLCurrentNode,
-                                             NULL,
-                                             (xmlChar*)"xi:include",
-                                             NULL);
-        xmlNewProp(mImpl->mXMLCurrentNode,
-                   (xmlChar*)"xpointer",
-                   (xmlChar*)iter->second.c_str());
-        mImpl->mLastXPathed = true;
+          std::map<const XdmfItem * const, std::string>::const_iterator iter =
+            mImpl->mXPath.find(&item);
+          if(iter != mImpl->mXPath.end()) {
+            // Inserted before --- just xpath location of previously written node
+            mImpl->mXMLCurrentNode = xmlNewChild(mImpl->mXMLCurrentNode,
+                                                 NULL,
+                                                 (xmlChar*)"xi:include",
+                                                 NULL);
+            xmlNewProp(mImpl->mXMLCurrentNode,
+                       (xmlChar*)"xpointer",
+                       (xmlChar*)iter->second.c_str());
+            mImpl->mLastXPathed = true;
+          }
+          else {
+            // Not inserted before --- need to write all data and traverse.
+            mImpl->mXMLCurrentNode = xmlNewChild(mImpl->mXMLCurrentNode,
+                                                 NULL,
+                                                 (xmlChar *)tag.c_str(),
+                                                 NULL);
+            std::stringstream xPathProp;
+            xPathProp << "element(/1" << mImpl->mXPathString << ")";
+            mImpl->mXPath.insert(std::make_pair(&item, xPathProp.str()));
+            const std::map<std::string, std::string> & itemProperties =
+              item.getItemProperties();
+            for(std::map<std::string, std::string>::const_iterator iter =
+                itemProperties.begin();
+                iter != itemProperties.end();
+                ++iter) {
+              xmlNewProp(mImpl->mXMLCurrentNode,
+                         (xmlChar*)iter->first.c_str(),
+                         (xmlChar*)iter->second.c_str());
+            }
+            const unsigned int parentCount = mImpl->mXPathCount;
+            mImpl->mXPathCount = 0;
+            item.traverse(visitor);
+            mImpl->mXPathCount = parentCount;
+            mImpl->mLastXPathed = false;
+          }
+
+          mImpl->mXPathString = parentXPathString;
+
+        }
       }
       else {
-        // Not inserted before --- need to write all data and traverse.
-        mImpl->mXMLCurrentNode = xmlNewChild(mImpl->mXMLCurrentNode,
-                                             NULL,
-                                             (xmlChar *)tag.c_str(),
-                                             NULL);
-        std::stringstream xPathProp;
-        xPathProp << "element(/1" << mImpl->mXPathString << ")";
-        mImpl->mXPath.insert(std::make_pair(&item, xPathProp.str()));
-        const std::map<std::string, std::string> & itemProperties =
-          item.getItemProperties();
-        for(std::map<std::string, std::string>::const_iterator iter =
-              itemProperties.begin();
-            iter != itemProperties.end();
-            ++iter) {
-          xmlNewProp(mImpl->mXMLCurrentNode, 
-                     (xmlChar*)iter->first.c_str(), 
-                     (xmlChar*)iter->second.c_str());
-        }
-        const unsigned int parentCount = mImpl->mXPathCount;
-        mImpl->mXPathCount = 0;
-        item.traverse(visitor);
-        mImpl->mXPathCount = parentCount;
-        mImpl->mLastXPathed = false;
-      }
+        mImpl->mXPathCount++;
 
-      mImpl->mXPathString = parentXPathString;
+        const std::string parentXPathString = mImpl->mXPathString;
+
+        std::stringstream newXPathString;
+        newXPathString << mImpl->mXPathString << "/" << mImpl->mXPathCount;
+        mImpl->mXPathString = newXPathString.str();
+
+        std::map<const XdmfItem * const, std::string>::const_iterator iter =
+        mImpl->mXPath.find(&item);
+        if(iter != mImpl->mXPath.end()) {
+          // Inserted before --- just xpath location of previously written node
+          mImpl->mXMLCurrentNode = xmlNewChild(mImpl->mXMLCurrentNode,
+                                               NULL,
+                                               (xmlChar*)"xi:include",
+                                               NULL);
+         xmlNewProp(mImpl->mXMLCurrentNode,
+                    (xmlChar*)"xpointer",
+                    (xmlChar*)iter->second.c_str());
+         mImpl->mLastXPathed = true;
+        }
+        else {
+          // Not inserted before --- need to write all data and traverse.
+
+          mImpl->mXMLCurrentNode = xmlNewChild(mImpl->mXMLCurrentNode,
+                                               NULL,
+                                               (xmlChar *)tag.c_str(),
+                                               NULL);
+          std::stringstream xPathProp;
+          xPathProp << "element(/1" << mImpl->mXPathString << ")";
+          mImpl->mXPath.insert(std::make_pair(&item, xPathProp.str()));
+          const std::map<std::string, std::string> & itemProperties =
+          item.getItemProperties();
+          for(std::map<std::string, std::string>::const_iterator iter =
+              itemProperties.begin();
+              iter != itemProperties.end();
+              ++iter) {
+            xmlNewProp(mImpl->mXMLCurrentNode,
+                       (xmlChar*)iter->first.c_str(),
+                       (xmlChar*)iter->second.c_str());
+          }
+          const unsigned int parentCount = mImpl->mXPathCount;
+          mImpl->mXPathCount = 0;
+          item.traverse(visitor);
+          mImpl->mXPathCount = parentCount;
+          mImpl->mLastXPathed = false;
+        }
+        mImpl->mXPathString = parentXPathString;
+      }
     }
     else
-      {
-        // Not inserted before --- need to write all data and traverse.
-        mImpl->mXMLCurrentNode = xmlNewChild(mImpl->mXMLCurrentNode,
-                                             NULL,
-                                             (xmlChar*)tag.c_str(),
-                                             NULL);
-        const std::map<std::string, std::string> itemProperties =
-          item.getItemProperties();
-        for(std::map<std::string, std::string>::const_iterator iter =
-              itemProperties.begin();
-            iter != itemProperties.end();
-            ++iter) {
-          xmlNewProp(mImpl->mXMLCurrentNode,
-                     (xmlChar*)iter->first.c_str(),
-                     (xmlChar*)iter->second.c_str());
-        }
+    {
+     // Not inserted before --- need to write all data and traverse.
+      mImpl->mXMLCurrentNode = xmlNewChild(mImpl->mXMLCurrentNode,
+                                           NULL,
+                                           (xmlChar*)tag.c_str(),
+                                           NULL);
+      const std::map<std::string, std::string> itemProperties =
+        item.getItemProperties();
+      for(std::map<std::string, std::string>::const_iterator iter =
+            itemProperties.begin();
+          iter != itemProperties.end();
+          ++iter) {
+        xmlNewProp(mImpl->mXMLCurrentNode,
+                   (xmlChar*)iter->first.c_str(),
+                   (xmlChar*)iter->second.c_str());
+      }
+      try {
         item.traverse(visitor);
       }
+      catch (XdmfError e) {
+        throw e;
+      }
+    }
 
     mImpl->mXMLCurrentNode = mImpl->mXMLCurrentNode->parent;
   }

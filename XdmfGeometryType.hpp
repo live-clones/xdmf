@@ -37,6 +37,22 @@
  * XdmfGeometryType can be created by calling one of the static
  * methods in the class, i.e.  XdmfAttributeType::XYZ().
  *
+ * Example of use:
+ *
+ * C++
+ *
+ * @dontinclude ExampleXdmfGeometryType.cpp
+ * @skipline //#initialization
+ * @until //#initialization
+ * @skipline //#getType
+ * @until //#getType
+ *
+ * Python
+ *
+ * @dontinclude XdmfExampleGeometryType.py
+ * @skipline #//getType
+ * @until #//getType
+ *
  * Xdmf supports the following geometry types:
  *   NoGeometryType
  *   XYZ
@@ -58,14 +74,42 @@ public:
   /**
    * Get the dimensions of this geometry type - i.e. XYZ = 3.
    *
-   * @return an int containing number of dimensions.
+   * Example of use:
+   * 
+   * C++
+   *
+   * @dontinclude ExampleXdmfGeometryType.cpp
+   * @skipline //#getDimensions
+   * @until //#getDimensions
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleGeometryType.py
+   * @skipline #//getDimensions
+   * @until #//getDimensions
+   *
+   * @return    An int containing number of dimensions.
    */
   virtual unsigned int getDimensions() const;
 
   /**
    * Get the name of this geometry type.
    *
-   * @return the name of this geometry type.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfGeometryType.cpp
+   * @skipline //#getName
+   * @until //#getName
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleGeometryType.py
+   * @skipline #//getName
+   * @until #//getName
+   *
+   * @return    The name of this geometry type.
    */
   std::string getName() const;
 

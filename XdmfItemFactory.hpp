@@ -42,7 +42,21 @@ public:
   /**
    * Create a new XdmfItemFactory.
    *
-   * @return constructed XdmfItemFactory.
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfItemFactory.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleItemFactory.py
+   * @skipline #//initialization
+   * @until #//initialization
+   *
+   * @return    Constructed XdmfItemFactory.
    */
   static shared_ptr<XdmfItemFactory> New();
 

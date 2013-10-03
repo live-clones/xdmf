@@ -37,6 +37,28 @@
  * XdmfAttributeType can be created by calling one of the static
  * methods in the class, i.e. XdmfAttributeType::Scalar().
  *
+ * Example of use:
+ *
+ * C++
+ *
+ * @dontinclude ExampleXdmfAttribute.cpp
+ * @skipline //#initialization
+ * @until //#initialization
+ * @skipline //#setType
+ * @until //#setType
+ * @skipline //#getType
+ * @until //#getType
+ *
+ * Python
+ *
+ * @dontinclude XdmfExampleAttribute.py
+ * @skipline #//initialization
+ * @until #//initialization
+ * @skipline #//setType
+ * @until #//setType
+ * @skipline #//getType
+ * @until #//getType
+ *
  * Xdmf supports the following attribute types:
  *   NoAttributeType
  *   Scalar
@@ -74,7 +96,7 @@ protected:
    * accessed through more specific static methods that construct
    * XdmfAttributeTypes - i.e. XdmfAttributeType::Scalar().
    *
-   * @param name the name of the XdmfAttributeType to construct.
+   * @param     name    The name of the XdmfAttributeType to construct.
    */
   XdmfAttributeType(const std::string & name);
 
