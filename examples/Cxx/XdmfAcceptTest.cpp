@@ -90,7 +90,10 @@ int main(int argc, char *argv[])
 
         //#ClosePort begin
 
-        exampleWriter->getServerBuffer()->GetComm()->ClosePort();
+	if (id == 0)
+	{
+	        exampleWriter->getServerBuffer()->GetComm()->ClosePort();
+	}
 
         //#ClosePort end
 

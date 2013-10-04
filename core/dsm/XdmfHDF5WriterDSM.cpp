@@ -406,6 +406,7 @@ void XdmfHDF5WriterDSM::setServerMode(bool newMode)
 void XdmfHDF5WriterDSM::setWorkerComm(MPI_Comm comm)
 {
   int status;
+#ifndef OPEN_MPI
   if (mWorkerComm != MPI_COMM_NULL) {
     status = MPI_Comm_free(&mWorkerComm);
     if (status != MPI_SUCCESS) {
@@ -417,6 +418,7 @@ void XdmfHDF5WriterDSM::setWorkerComm(MPI_Comm comm)
       }
     }
   }
+#endif
   if (comm != MPI_COMM_NULL) {
     status = MPI_Comm_dup(comm, &mWorkerComm);
     if (status != MPI_SUCCESS) {
