@@ -644,10 +644,31 @@ XdmfExodusReader::read(const std::string & fileName,
 
   ex_close(exodusHandle);
 
+  // add block information as sets
+  unsigned int elementId = 0;
+  for(int i=0; i<num_elem_blk; ++i) {
+    const int numberElementsInBlock = numElemsInBlock[i];
+    shared_ptr<XdmfSet> set = XdmfSet::New();
+    std::stringstream setName;
+    setName << "Block " << i;
+    set->setName(setName.str());
+    set->setType(XdmfSetType::Cell());
+    set->initialize(XdmfArrayType::Int32(), numberElementsInBlock);
+    for(int j=0; j<numberElementsInBlock; ++j) {
+      set->insert(j, elementId++);
+    }
+    toReturn->insert(set);
+    if(heavyDataWriter) {
+      set->accept(heavyDataWriter);
+      set->release();
+    }
+  }
+
   delete [] blockIds;
   delete [] numElemsInBlock;
   delete [] numNodesPerElemInBlock;
   delete [] numElemAttrInBlock;
+  
 
   if(heavyDataWriter) {
     heavyDataWriter->closeFile();

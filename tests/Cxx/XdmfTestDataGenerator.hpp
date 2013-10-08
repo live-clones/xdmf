@@ -71,13 +71,21 @@ public:
     gridAttribute->setCenter(XdmfAttributeCenter::Grid());
     gridAttribute->insert(0, &gridValues[0], 2);
 
-
     // Add Node Set
     shared_ptr<XdmfSet> nodeSet = XdmfSet::New();
     int nodeIds[] = {0, 1, 2};
     nodeSet->setName("Node Set");
     nodeSet->setType(XdmfSetType::Node());
     nodeSet->insert(0, &nodeIds[0], 3);
+
+    // Add Node Set Attribute
+    double nodeSetAttributeValues[] = {10, 11, 12};
+    shared_ptr<XdmfAttribute> nodeSetAttribute = XdmfAttribute::New();
+    nodeSetAttribute->setName("Node Set Attribute");
+    nodeSetAttribute->setType(XdmfAttributeType::Scalar());
+    nodeSetAttribute->setCenter(XdmfAttributeCenter::Node());
+    nodeSetAttribute->insert(0, &nodeSetAttributeValues[0], 3);
+    nodeSet->insert(nodeSetAttribute);
 
     // Add Time
     shared_ptr<XdmfTime> time = XdmfTime::New(100);

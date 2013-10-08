@@ -43,8 +43,13 @@ XdmfMap::New(const std::vector<shared_ptr<XdmfAttribute> > & globalNodeIds)
   std::map<node_id, std::map<task_id, node_id> > globalNodeIdMap;
 
   // fill globalNodeIdMap using globalNodeIds
+  std::vector<bool> releaseGlobalNodeIds(globalNodeIds.size(), false);
   for(unsigned int i=0; i<globalNodeIds.size(); ++i) {
     const shared_ptr<XdmfAttribute> currGlobalNodeIds = globalNodeIds[i];
+    if(!currGlobalNodeIds->isInitialized()) {
+      currGlobalNodeIds->read();
+      releaseGlobalNodeIds[i] = true;
+    }
     for(unsigned int j=0; j<currGlobalNodeIds->getSize(); ++j) {
       const node_id currGlobalNodeId = currGlobalNodeIds->getValue<node_id>(j);
       globalNodeIdMap[currGlobalNodeId][i] = j;
@@ -73,6 +78,9 @@ XdmfMap::New(const std::vector<shared_ptr<XdmfAttribute> > & globalNodeIds)
           }
         }
       }
+    }
+    if(releaseGlobalNodeIds[i]) {
+      currGlobalNodeIds->release();
     }
   }
 

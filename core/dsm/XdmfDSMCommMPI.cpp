@@ -74,6 +74,7 @@ XdmfDSMCommMPI::XdmfDSMCommMPI()
 
 XdmfDSMCommMPI::~XdmfDSMCommMPI()
 {
+#ifndef OPEN_MPI
   if (InterComm != MPI_COMM_NULL) {
     int status = MPI_Comm_free(&InterComm);
     if (status != MPI_SUCCESS) {
@@ -96,6 +97,7 @@ XdmfDSMCommMPI::~XdmfDSMCommMPI()
       }
     }
   }
+#endif
 }
 
 void
@@ -170,7 +172,7 @@ XdmfDSMCommMPI::ClosePort()
 {
   if (Id == 0) {
     int status;
-    status = MPI_Open_port(MPI_INFO_NULL, DsmPortName);
+    status = MPI_Close_port(DsmPortName);
     if (status != MPI_SUCCESS) {
       try {
         std::string message = "Failed to close port ";
@@ -254,6 +256,7 @@ XdmfDSMCommMPI::Connect()
 void
 XdmfDSMCommMPI::Disconnect()
 {
+#ifndef OPEN_MPI
   if (InterComm != MPI_COMM_NULL) {
     int status = MPI_Comm_free(&InterComm);
     if (status != MPI_SUCCESS) {
@@ -265,6 +268,7 @@ XdmfDSMCommMPI::Disconnect()
       }
     }
   }
+#endif
   InterComm = MPI_COMM_NULL;
 }
 
@@ -273,6 +277,7 @@ XdmfDSMCommMPI::DupComm(MPI_Comm comm)
 {
   if (IntraComm != comm) {
     int status;
+#ifndef OPEN_MPI
     if (IntraComm != MPI_COMM_NULL) {
       status = MPI_Comm_free(&IntraComm);
       if (status != MPI_SUCCESS) {
@@ -284,6 +289,7 @@ XdmfDSMCommMPI::DupComm(MPI_Comm comm)
         }
       }
     }
+#endif
     if (comm != MPI_COMM_NULL) {
       status = MPI_Comm_dup(comm, &IntraComm);
       if (status != MPI_SUCCESS) {
@@ -307,6 +313,7 @@ XdmfDSMCommMPI::DupInterComm(MPI_Comm comm)
 {
   if (InterComm != comm) {
     int status;
+#ifndef OPEN_MPI
     if (InterComm != MPI_COMM_NULL) {
       status = MPI_Comm_free(&InterComm);
       if (status != MPI_SUCCESS) {
@@ -318,6 +325,7 @@ XdmfDSMCommMPI::DupInterComm(MPI_Comm comm)
         }
       }
     }
+#endif
     if (comm != MPI_COMM_NULL) {
       status = MPI_Comm_dup(comm, &InterComm);
       if (status != MPI_SUCCESS) {
