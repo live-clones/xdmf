@@ -70,6 +70,7 @@ XdmfDSMCommMPI::XdmfDSMCommMPI()
   // This is the default file name for the config file.
   DsmFileName = "dsmconnect.cfg";
   InterCommType = XDMF_DSM_COMM_MPI;
+  HasOpenedPort = false;
 }
 
 XdmfDSMCommMPI::~XdmfDSMCommMPI()
@@ -107,7 +108,20 @@ XdmfDSMCommMPI::Accept(unsigned int numConnections)
     if (InterComm == MPI_COMM_NULL) {
       // If there is no InterComm, then accept from IntraComm and merge into InterComm
       MPI_Comm tempComm;
-      int status = MPI_Comm_accept(DsmPortName, MPI_INFO_NULL, 0, IntraComm, &tempComm);
+      int * portCheck = new int[GetInterSize()]();
+      int portStatus;
+      portStatus = 0;
+      if (HasOpenedPort) {
+        portStatus = 1;
+      }
+      MPI_Allgather(&portStatus, 1, MPI_INT, &(portCheck[0]), 1, MPI_INT, InterComm);
+      unsigned int index = 0;
+      for (index = 0; index < GetInterSize(); ++index) {
+        if (portCheck[index] == 1) {
+          break;
+        }
+      }
+      int status = MPI_Comm_accept(DsmPortName, MPI_INFO_NULL, index, IntraComm, &tempComm);
       if (status != MPI_SUCCESS) {
         try {
           std::string message = "Failed to accept port ";
@@ -136,7 +150,20 @@ XdmfDSMCommMPI::Accept(unsigned int numConnections)
     else {
       // If there is an InterComm, accept into the InterComm and merge
       MPI_Comm tempComm;
-      int status = MPI_Comm_accept(DsmPortName, MPI_INFO_NULL, 0, InterComm, &tempComm);
+      int * portCheck = new int[GetInterSize()]();
+      int portStatus;
+      portStatus = 0;
+      if (HasOpenedPort) {
+        portStatus = 1;
+      }
+      MPI_Allgather(&portStatus, 1, MPI_INT, &(portCheck[0]), 1, MPI_INT, InterComm);
+      unsigned int index = 0;
+      for (index = 0; index < GetInterSize(); ++index) {
+        if (portCheck[index] == 1) {
+          break;
+        }
+      }
+      int status = MPI_Comm_accept(DsmPortName, MPI_INFO_NULL, index, InterComm, &tempComm);
       if (status != MPI_SUCCESS) {
         try {
           std::string message = "Failed to accept port ";
@@ -184,6 +211,7 @@ XdmfDSMCommMPI::ClosePort()
       }
     }
   }
+  HasOpenedPort = false;
 }
 
 int
@@ -455,6 +483,7 @@ XdmfDSMCommMPI::OpenPort()
         throw e;
       }
     }
+    HasOpenedPort = true;
   }
   MPI_Bcast(DsmPortName, MPI_MAX_PORT_NAME, MPI_CHAR, 0, IntraComm);
 }

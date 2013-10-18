@@ -1046,6 +1046,7 @@ private:
   int           InterCommType;
   char          DsmPortName[MPI_MAX_PORT_NAME];
   std::string   DsmFileName;
+  bool          HasOpenedPort;
 };
 
 #endif /* XDMFDSMCOMMMPI_HPP_ */
