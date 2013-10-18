@@ -837,9 +837,9 @@ XdmfDSMBuffer::ReceiveInfo()
     infoStatus = 1;
   }
 
-  int groupInfoStatus[this->Comm->GetInterSize()];
+  int * groupInfoStatus = new int[this->Comm->GetInterSize()]();
 
-  MPI_Allgather(&infoStatus, 1, MPI_INT, &groupInfoStatus, 1, MPI_INT, this->Comm->GetInterComm());
+  MPI_Allgather(&infoStatus, 1, MPI_INT, &(groupInfoStatus[0]), 1, MPI_INT, this->Comm->GetInterComm());
 
   int sendCore = 0;
 
@@ -874,7 +874,7 @@ void
 XdmfDSMBuffer::SendAccept(unsigned int numConnections)
 {
   for (int i = this->StartServerId; i <= this->EndServerId; ++i) {
-    if (i != this->Comm->GetId()){
+    if (i != this->Comm->GetInterId()){
       this->SendCommandHeader(XDMF_DSM_ACCEPT, i, 0, 0, XDMF_DSM_INTER_COMM);
       this->SendAcknowledgment(i, numConnections, XDMF_DSM_EXCHANGE_TAG, XDMF_DSM_INTER_COMM);
     }
@@ -1053,12 +1053,12 @@ XdmfDSMBuffer::SendInfo()
     infoStatus = 2;
   }
 
-  int groupInfoStatus[this->Comm->GetInterSize()];
+  int * groupInfoStatus = new int[this->Comm->GetInterSize()]();
 
   MPI_Allgather(&infoStatus,
                 1,
                 MPI_INT,
-                &groupInfoStatus,
+                &(groupInfoStatus[0]),
                 1,
                 MPI_INT,
                 this->Comm->GetInterComm());
