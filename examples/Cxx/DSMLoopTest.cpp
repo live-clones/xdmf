@@ -1,6 +1,4 @@
 #include <mpi.h>
-#include <H5FDdsm.h>
-#include <H5FDdsmManager.h>
 #include <stdlib.h>
 #include <iostream>
 #include "XdmfArray.hpp"
