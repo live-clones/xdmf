@@ -21,6 +21,7 @@
 /*                                                                           */
 /*****************************************************************************/
 
+#include <cstring>
 #include <exodusII.h>
 #include <set>
 #include <sstream>

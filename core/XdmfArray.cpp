@@ -1083,8 +1083,25 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
         }
       }
 
-      std::string hdf5Path = contentVals[contentIndex].substr(0, colonLocation);
-      std::string dataSetPath = contentVals[contentIndex].substr(colonLocation+1);
+      std::string hdf5Path = 
+        contentVals[contentIndex].substr(0, colonLocation);
+      std::string dataSetPath = 
+        contentVals[contentIndex].substr(colonLocation+1);
+
+      // FIXME: for other OS (e.g. windows)
+      if(hdf5Path.size() > 0 && hdf5Path[0] != '/') {
+        // Dealing with a relative path for hdf5 location
+        std::map<std::string, std::string>::const_iterator xmlDir =
+          itemProperties.find("XMLDir");
+        if(xmlDir == itemProperties.end()) {
+          XdmfError::message(XdmfError::FATAL,
+                             "'XMLDir' not found in itemProperties in "
+                             "XdmfArray::populateItem");
+        }
+        std::stringstream newHDF5Path;
+        newHDF5Path << xmlDir->second << hdf5Path;
+        hdf5Path = newHDF5Path.str();
+      }
 
       // Parse dimensions from the content
       std::vector<unsigned int> contentDims;
