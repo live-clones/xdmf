@@ -3,6 +3,15 @@ XdmfPython.cpp:
 swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 */
 
+%{
+#include <cstddef>
+#include <iostream>
+#if PY_VERSION_HEX >= 0x03020000
+    #define SWIGPY_SLICE_ARG(obj) ((PyObject*) (obj))
+#else
+    #define SWIGPY_SLICE_ARG(obj) ((PySliceObject*) (obj))
+#endif
+%}
 
 #ifdef XDMF_BUILD_DSM
 
