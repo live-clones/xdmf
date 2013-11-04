@@ -798,7 +798,7 @@ XdmfFunction::interlace(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2)
   if (arrayExcess1 > 0) {
     returnArray->insert(val1->getSize()+val2->getSize()-arrayExcess1,
                         val1,
-                        0,
+                        val1->getSize()-arrayExcess1,
                         arrayExcess1,
                         1,
                         1);
@@ -806,7 +806,7 @@ XdmfFunction::interlace(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2)
   else if (arrayExcess2 > 0) {
     returnArray->insert(val1->getSize()+val2->getSize()-arrayExcess2,
                         val2,
-                        0,
+                        val2->getSize()-arrayExcess2,
                         arrayExcess2,
                         1,
                         1);
