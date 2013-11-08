@@ -63,9 +63,13 @@ swig -v -c++ -python -o XdmfDSMPython.cpp XdmfDSM.i
 
 #ifdef SWIGPYTHON
 
+%pythoncode {
+    from XdmfCore import *
+}
+
 %include mpi4py/mpi4py.i
 
-//%mpi4py_typemap(Comm, MPI_Comm);
+%mpi4py_typemap(Comm, MPI_Comm);
 
 %include <typemaps.i>
 %apply int & INOUT {int & data };
