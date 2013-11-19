@@ -17,6 +17,7 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 
 %module Xdmf
 %{
+    #define SWIGPY_SLICE_ARG(obj) ((PySliceObject*) (obj))
 
     // MPI Includes
     #include <mpi.h>
@@ -80,6 +81,7 @@ swig -v -c++ -python -o XdmfPython.cpp Xdmf.i
 #else
 %module Xdmf
 %{
+    #define SWIGPY_SLICE_ARG(obj) ((PySliceObject*) (obj))
 
     // XdmfCore Includes
     #include <Xdmf.hpp>
