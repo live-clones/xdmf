@@ -24,7 +24,6 @@
 #include <cctype>
 #include <sstream>
 #include <utility>
-#include <vector>
 #include "XdmfError.hpp"
 #include "XdmfTopologyType.hpp"
 
@@ -563,7 +562,7 @@ XdmfTopologyType::New(const unsigned int id)
 
 XdmfTopologyType::XdmfTopologyType(const unsigned int nodesPerElement,
                                    const unsigned int facesPerElement,
-                                   std::vector<shared_ptr<const XdmfTopologyType> > faces,
+                                   const std::vector<shared_ptr<const XdmfTopologyType> > & faces,
                                    const unsigned int edgesPerElement,
                                    const std::string & name,
                                    const CellType cellType,

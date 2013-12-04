@@ -25,6 +25,7 @@
 #define XDMFTOPOLOGYTYPE_HPP_
 
 // Includes
+#include <vector>
 #include "Xdmf.hpp"
 #include "XdmfItemProperty.hpp"
 
@@ -344,7 +345,7 @@ protected:
    */
   XdmfTopologyType(const unsigned int nodesPerElement,
                    const unsigned int facesPerElement,
-                   std::vector<shared_ptr<const XdmfTopologyType> > faces,
+                   const std::vector<shared_ptr<const XdmfTopologyType> > & faces,
                    const unsigned int edgesPerElement,
                    const std::string & name,
                    const CellType cellType,
