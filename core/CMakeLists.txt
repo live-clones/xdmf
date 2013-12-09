@@ -84,7 +84,7 @@ check_cxx_source_compiles("
 struct Base { virtual ~Base(){} };
 struct Derived : public Base {};
 
-int main(int ac, char * av)
+int main(int ac, char * av[])
 {
   boost::shared_ptr<Base> ptr(new Base());
   boost::shared_dynamic_cast<Derived>(ptr);
