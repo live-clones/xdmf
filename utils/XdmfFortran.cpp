@@ -5302,6 +5302,9 @@ void
 XdmfFortran::retrieveRemoteNodeIDs(const int index, const int localNodeID, const int remoteTaskID, int * remoteNodeIDs)
 {
   if ((int)mMaps.size()>index) {
+    if (!mMaps[index]->isInitialized()) {
+      mMaps[index]->read();
+    }
     if (mMaps[index]->getRemoteNodeIds(remoteTaskID).count(localNodeID)>0) {
       std::set<int> returnSet = mMaps[index]->getRemoteNodeIds(remoteTaskID)[localNodeID];
       std::set<int>::iterator walker;
@@ -5337,6 +5340,9 @@ int
 XdmfFortran::retrieveNumRemoteNodeIDs(const int index, const int localNodeID, const int remoteTaskID)
 {
   if ((int)mMaps.size()<index) {
+    if (!mMaps[index]->isInitialized()) {
+      mMaps[index]->read();
+    }
     if (mMaps[index]->getRemoteNodeIds(remoteTaskID).count(localNodeID)>0) {
       return mMaps[index]->getRemoteNodeIds(remoteTaskID)[localNodeID].size();
     }
