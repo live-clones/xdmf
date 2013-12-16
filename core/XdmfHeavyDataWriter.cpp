@@ -1046,14 +1046,34 @@ XdmfHeavyDataWriter::controllerSplitting(XdmfArray & array,
     unsigned int j = controllerIndexOffset;
 
     try {
+      if (mMode == Default) {
+      std::stringstream testFile;
+      if (getFileIndex() == 0) {
+        // If sequentially named files need to be created or referenced
+        testFile << checkFileName << "." << checkFileExt;
+      }
+      else {
+        testFile << checkFileName << getFileIndex() << "." << checkFileExt;
+      }
       heavyDataController =
-        this->createController(heavyDataController->getFilePath(),
+        this->createController(testFile.str(),
                                heavyDataController->getDataSetPath(),
                                array.getArrayType(),
                                start,
                                stride,
                                dimensions,
                                dataspaceDimensions);
+      }
+      else {
+          heavyDataController =
+          this->createController(heavyDataController->getFilePath(),
+                                 heavyDataController->getDataSetPath(),
+                                 array.getArrayType(),
+                                 start,
+                                 stride,
+                                 dimensions,
+                                 dataspaceDimensions);
+      }
     }
     catch (XdmfError e) {
       throw e;
