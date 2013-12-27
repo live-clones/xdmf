@@ -1031,6 +1031,13 @@ XdmfPartitioner::unpartition(const shared_ptr<XdmfGridCollection> gridToUnPartit
 
         for(unsigned int k=0; k<set->getNumberAttributes(); ++k) {
           const shared_ptr<XdmfAttribute> attribute = set->getAttribute(k);
+
+          bool releaseAttribute = false;
+          if(!attribute->isInitialized()) {
+            attribute->read();
+            releaseAttribute = true;
+          }
+
           const shared_ptr<const XdmfAttributeCenter> attributeCenter =
             attribute->getCenter();
           const shared_ptr<const XdmfAttributeType> attributeType =
@@ -1052,6 +1059,10 @@ XdmfPartitioner::unpartition(const shared_ptr<XdmfGridCollection> gridToUnPartit
                                          attribute,
                                          0,
                                          attribute->getSize());
+          }
+
+          if(releaseAttribute) {
+            attribute->release();
           }
 
         }
@@ -1078,9 +1089,11 @@ XdmfPartitioner::unpartition(const shared_ptr<XdmfGridCollection> gridToUnPartit
 #include "XdmfDomain.hpp"
 #include "XdmfGraph.hpp"
 #include "XdmfGridCollection.hpp"
+#include "XdmfGridCollectionType.hpp"
 #include "XdmfHDF5Writer.hpp"
 #include "XdmfPartitioner.hpp"
 #include "XdmfReader.hpp"
+#include "XdmfUnstructuredGrid.hpp"
 #include "XdmfWriter.hpp"
 
   namespace {
@@ -1270,15 +1283,46 @@ XdmfPartitioner::unpartition(const shared_ptr<XdmfGridCollection> gridToUnPartit
     heavyFileName << meshName << ".h5";
     shared_ptr<XdmfHDF5Writer> heavyDataWriter =
       XdmfHDF5Writer::New(heavyFileName.str());
+    heavyDataWriter->setReleaseData(true);
 
     shared_ptr<XdmfDomain> newDomain = XdmfDomain::New();
 
     shared_ptr<XdmfPartitioner> partitioner = XdmfPartitioner::New();
 
     if(unpartition) {
-      shared_ptr<XdmfUnstructuredGrid> toWrite =
-        partitioner->unpartition(domain->getGridCollection(0));
-      newDomain->insert(toWrite);
+      shared_ptr<XdmfGridCollection> gridCollection = 
+        domain->getGridCollection(0);
+      const shared_ptr<const XdmfGridCollectionType> collectionType = 
+        gridCollection->getType();
+      if(collectionType == XdmfGridCollectionType::Spatial()) {
+        shared_ptr<XdmfUnstructuredGrid> toWrite =
+          partitioner->unpartition(gridCollection);
+        newDomain->insert(toWrite);
+      }
+      else if(collectionType == XdmfGridCollectionType::Temporal()) {
+        const unsigned int numberTimesteps = 
+          gridCollection->getNumberGridCollections();
+        if(numberTimesteps == 0) {
+          std::cout << "No grid collections to unpartition" << std::endl;
+          return 1;
+        }
+        shared_ptr<XdmfGridCollection> newCollection = 
+          XdmfGridCollection::New();
+        newCollection->setType(XdmfGridCollectionType::Temporal());
+        for(unsigned int i=0; i<numberTimesteps; ++i) {
+          const shared_ptr<XdmfGridCollection> spatialCollection = 
+            gridCollection->getGridCollection(i);
+          const shared_ptr<XdmfTime> time = spatialCollection->getTime();
+          assert(spatialCollection->getType() == 
+                 XdmfGridCollectionType::Spatial());
+          const shared_ptr<XdmfUnstructuredGrid> toWrite = 
+            partitioner->unpartition(spatialCollection);
+          toWrite->accept(heavyDataWriter);
+          toWrite->setTime(time);
+          newCollection->insert(toWrite);
+        }
+        newDomain->insert(newCollection);
+      }
     }
     else {
       if(domain->getNumberGraphs() == 0) {
