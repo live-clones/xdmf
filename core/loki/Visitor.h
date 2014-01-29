@@ -267,9 +267,9 @@ struct DefaultCatchAll
             // Apply the Acyclic Visitor
             if (Visitor<T,R>* p = dynamic_cast<Visitor<T,R>*>(guest.get()))
             {
-                return p->visit(visited, guest);
+                p->visit(visited, guest);
             }
-            return R();
+            return;
         }
     };
 
@@ -288,9 +288,9 @@ struct DefaultCatchAll
             // Apply the Acyclic Visitor
             if (Visitor<T,R,true>* p = dynamic_cast<Visitor<T,R,true>*>(guest.get()))
             {
-                return p->visit(visited, guest);
+                p->visit(visited, guest);
             }
-            return R();
+            return;
         }
     };
 
@@ -303,18 +303,18 @@ struct DefaultCatchAll
 
 #define LOKI_DEFINE_VISITABLE_BASE() \
     virtual ReturnType accept(const shared_ptr<Loki::BaseVisitor> guest) \
-    { return acceptImpl(*this, guest); }
+    { acceptImpl(*this, guest); }
 
 #define LOKI_DEFINE_VISITABLE(my_class, my_base) \
     virtual ReturnType accept(const shared_ptr<Loki::BaseVisitor> guest) \
     { \
         if (Loki::Visitor<my_class,ReturnType>* p = dynamic_cast<Loki::Visitor<my_class,ReturnType>*>(guest.get())) \
         { \
-            return p->visit(*this, guest); \
+            p->visit(*this, guest); \
         } \
         else \
         { \
-            return my_base::accept(guest); \
+            my_base::accept(guest); \
         } \
     }
 
