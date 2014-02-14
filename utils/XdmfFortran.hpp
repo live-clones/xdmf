@@ -338,7 +338,7 @@ class XdmfHDF5WriterDSM;
 #define XdmfRetrieveSetSize xdmfretrievesetsize_
 #define XdmfRetrieveSetValues xdmfretrievesetvalues_
 #define XdmfRetrieveSetValueType xdmfretrievesetvaluetype_
-#define XdmfOpenSet xdmfopenet_
+#define XdmfOpenSet xdmfopenset_
 #define XdmfRemoveSet xdmfremoveset_
 #define XdmfReplaceSet xdmfreplaceset_
 #define XdmfRetrieveSetNumProperties xdmfretrievesetnumproperties_
