@@ -387,6 +387,8 @@ XdmfExodusWriter::write(const std::string & filePath,
               num_node_sets,
               num_side_sets);
 
+  std::cout << "End Init" << std::endl;
+
   shared_ptr<XdmfGeometry> geometry = currGrid->getGeometry(); 
   bool releaseGeometry = false;
   if(!geometry->isInitialized()) {
@@ -409,6 +411,8 @@ XdmfExodusWriter::write(const std::string & filePath,
   delete [] x;
   delete [] y;
   delete [] z;
+
+  std::cout << "End Geometry" << std::endl;
 
   shared_ptr<XdmfTopology> topology = currGrid->getTopology();
 
@@ -525,6 +529,7 @@ XdmfExodusWriter::write(const std::string & filePath,
     delete [] elem_connectivity;
   }
 
+  std::cout << "End Topology" << std::endl;
   
   // write attributes
   int numGlobalAttributes = 0;
@@ -570,6 +575,8 @@ XdmfExodusWriter::write(const std::string & filePath,
   ex_put_var_param(exodusHandle, "n", numNodalAttributes);
   ex_put_var_param(exodusHandle, "e", numElementAttributes);
 
+  std::cout << "End Attribute Params" << std::endl;
+
   char ** globalNames = new char*[numGlobalAttributes];
   char ** nodalNames = new char*[numNodalAttributes];
   char ** elementNames = new char*[numElementAttributes];
@@ -594,6 +601,28 @@ XdmfExodusWriter::write(const std::string & filePath,
   delete [] nodalNames;
   delete [] elementNames;
 
+  std::cout << "End Attribute Names" << std::endl;
+
+  if(numElementAttributes > 0) {
+    const int numTruthTableValues = num_elem_blk * numElementAttributes;
+    int * truthTable = new int[numTruthTableValues];
+    for(int i=0; i<numTruthTableValues; ++i) {
+      truthTable[i] = 1;
+    }
+    ex_put_elem_var_tab(exodusHandle, 
+                        num_elem_blk, 
+                        numElementAttributes, 
+                        truthTable);
+    delete [] truthTable;
+  }
+
+  std::cout << "Done truth table" << std::endl;
+
+  writeSets(exodusHandle,
+            currGrid);
+
+  std::cout << "Done sets" << std::endl;
+
   double * globalAttributeVals = new double[numGlobalAttributes];
 
   int globalIndex = 0;
@@ -605,6 +634,7 @@ XdmfExodusWriter::write(const std::string & filePath,
 
   for(unsigned int j=0; j<currGrid->getNumberAttributes(); ++j) {
     shared_ptr<XdmfAttribute> currAttribute = currGrid->getAttribute(j);
+    std::cout << currAttribute->getName() << std::endl;
     bool releaseAttribute = false;
     if(!currAttribute->isInitialized()) {
       currAttribute->read();
@@ -651,22 +681,24 @@ XdmfExodusWriter::write(const std::string & filePath,
           double * elementValues = new double[num_elem_in_blk];
 
           // loop over components
-          for(int l=0; l<elementComponents[elementComponentIndex]; ++l) {
+          const int numberComponents = 
+            elementComponents[elementComponentIndex];
+          std::cout << numberComponents << std::endl;
+
+          for(int l=0; l<numberComponents; ++l) {
             for(int m=0; m<num_elem_in_blk; ++m) {
-              const int elementId = set->getValue<int>(elementId);
+              const int elementId = set->getValue<int>(m);
               elementValues[m] = 
-                currAttribute->getValue<double>(elementId + l);
+                currAttribute->getValue<double>(numberComponents * elementId + l);
             }
             ex_put_elem_var(exodusHandle,
                             1,
-                            elementIndex+1,
+                            elementIndex+l+1,
                             10+k,
                             num_elem,
                             elementValues);
             ex_update(exodusHandle);
-            elementIndex++;
           }        
-          elementComponentIndex++;
 
           delete [] elementValues;
 
@@ -674,6 +706,8 @@ XdmfExodusWriter::write(const std::string & filePath,
             set->release();
           }
         }
+        elementIndex += elementComponents[elementComponentIndex];
+        elementComponentIndex++;
       }
       else {
         for(int k=0; k<elementComponents[elementComponentIndex]; ++k) {
@@ -706,8 +740,7 @@ XdmfExodusWriter::write(const std::string & filePath,
   ex_update(exodusHandle);
   delete [] globalAttributeVals;
 
-  writeSets(exodusHandle,
-            currGrid);
+  std::cout << "Done attribute" << std::endl;
  
   // close exodus file
   ex_close(exodusHandle);
@@ -1186,7 +1219,7 @@ XdmfExodusWriter::write(const std::string & filePath,
         std::set<int> * setToAddTo = NULL;
 	if(set->getType() == XdmfSetType::Cell()) {
 	  setToAddTo = &sideSets[set->getName()];
-          for(unsigned int j=0; i<set->getSize(); ++j) {
+          for(unsigned int j=0; j<set->getSize(); ++j) {
             const int id = set->getValue<int>(j);
             setToAddTo->insert(elementOffset + id + 1);
           }
