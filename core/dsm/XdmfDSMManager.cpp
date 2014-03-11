@@ -57,6 +57,10 @@
 #include <XdmfError.hpp>
 #include <mpi.h>
 
+#ifdef _WIN32
+  #include <unistd.h>
+#endif
+
 XdmfDSMManager::XdmfDSMManager()
 {
   this->MpiComm                 = MPI_COMM_NULL;
