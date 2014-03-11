@@ -59,6 +59,10 @@
 #include <stdlib.h>
 #include <algorithm>
 
+#ifdef _WIN32
+  #include <unistd.h>
+#endif
+
 XdmfDSMBuffer::XdmfDSMBuffer()
 {
   this->CommChannel = XDMF_DSM_INTER_COMM;
