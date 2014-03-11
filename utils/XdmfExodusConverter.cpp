@@ -97,8 +97,6 @@ int main(int argc, char* argv[])
                      argc,
                      argv);
 
-  std::cout << inputFileName << std::endl;
-
   FILE * refFile = fopen(inputFileName.c_str(), "r");
   if (refFile) {
     // Success
@@ -180,74 +178,4 @@ int main(int argc, char* argv[])
     std::cout << "Wrote: " << xmlFileName.str() << std::endl;
   }
 
-  /*
-
-  shared_ptr<XdmfReader> reader = XdmfReader::New();
-  shared_ptr<XdmfDomain> domain =
-    shared_dynamic_cast<XdmfDomain>(reader->read(inputFileName));
-
-  if(unpartition) {
-    if(domain->getNumberGridCollections() == 0) {
-      std::cout << "No grid collections to unpartition" << std::endl;
-      return 1;
-    }
-  }
-  else {
-    if(domain->getNumberUnstructuredGrids() == 0 &&
-       domain->getNumberGridCollections() == 0 &&
-       domain->getNumberGraphs() == 0) {
-      std::cout << "No grids or graphs to partition" << std::endl;
-      return 1;
-    }
-  }
-
-  std::stringstream heavyFileName;
-  heavyFileName << meshName << ".h5";
-  shared_ptr<XdmfHDF5Writer> heavyDataWriter =
-    XdmfHDF5Writer::New(heavyFileName.str());
-
-  shared_ptr<XdmfDomain> newDomain = XdmfDomain::New();
-
-  shared_ptr<XdmfPartitioner> partitioner = XdmfPartitioner::New();
-  
-  if(unpartition) {
-    shared_ptr<XdmfUnstructuredGrid> toWrite =
-      partitioner->unpartition(domain->getGridCollection(0));
-    newDomain->insert(toWrite);
-  }
-  else {
-    if(domain->getNumberGraphs() == 0) {
-      shared_ptr<XdmfUnstructuredGrid> gridToPartition;
-      if(domain->getNumberUnstructuredGrids() == 0) {
-        // repartition
-        gridToPartition =
-          partitioner->unpartition(domain->getGridCollection(0));
-      }
-      else {
-        gridToPartition = domain->getUnstructuredGrid(0);
-      }
-      shared_ptr<XdmfGridCollection> toWrite =
-        partitioner->partition(gridToPartition,
-                               numPartitions,
-                               metisScheme,
-                               heavyDataWriter);
-      newDomain->insert(toWrite);
-    }
-    else {
-      shared_ptr<XdmfGraph> graphToPartition = domain->getGraph(0);
-      partitioner->partition(graphToPartition,
-                             numPartitions);
-      newDomain->insert(graphToPartition);
-    }
-  }
-
-  std::stringstream xmlFileName;
-  xmlFileName << meshName << ".xmf";
-  shared_ptr<XdmfWriter> writer = XdmfWriter::New(xmlFileName.str(),
-                                                  heavyDataWriter);
-  newDomain->accept(writer);
-
-  std::cout << "Wrote: " << xmlFileName.str() << std::endl;
-
-  */
 }

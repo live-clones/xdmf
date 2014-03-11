@@ -33,6 +33,7 @@
 #include "XdmfGeometryType.hpp"
 #include "XdmfGridCollection.hpp"
 #include "XdmfGridCollectionType.hpp"
+#include "XdmfPartitioner.hpp"
 #include "XdmfSet.hpp"
 #include "XdmfSetType.hpp"
 #include "XdmfTopology.hpp"
@@ -135,9 +136,6 @@ namespace {
   /**
    * Pull general information from grid in order to initialize exodus
    * file.
-   *
-   * This should be called once per element block (spatial partition) in
-   * the xdmf file.
    */
   void
   getGridInformation(const shared_ptr<XdmfUnstructuredGrid> grid,
@@ -150,38 +148,64 @@ namespace {
                      std::vector<int> & num_elem_this_blk,
                      std::vector<int> & num_nodes_per_elem,
                      std::vector<int> & num_attr,
-                     std::map<std::string, std::set<int> > & nodeSets,
-                     std::map<std::string, std::set<int> > & sideSets)
+                     int & num_node_sets,
+                     std::vector<shared_ptr<XdmfSet> > & blocks)
   {
 
     // get topology
     const shared_ptr<XdmfTopology> topology = grid->getTopology();
+    const shared_ptr<const XdmfTopologyType> topologyType = 
+      topology->getType();
     const int numberElements = topology->getNumberElements();
+    const int nodesPerElement = topologyType->getNodesPerElement();
 
-    num_dim = grid->getGeometry()->getType()->getDimensions();
-    num_elem += numberElements;
-    num_elem_blk++;
-    elem_blk_ids.push_back(10 + num_elem_blk);
+    // get geometry
+    const shared_ptr<XdmfGeometry> geometry = grid->getGeometry();
+    const shared_ptr<const XdmfGeometryType> geometryType = 
+      geometry->getType();
+    const int numberNodes = geometry->getNumberPoints();
+
+    num_dim = geometryType->getDimensions();
+    num_nodes = numberNodes;
+    num_elem = numberElements;
 
     // get exodus topology type
-    const std::string exodusTopologyType =
-      xdmfToExodusTopologyType(topology->getType());
-    char * cellTypeCStr = new char[exodusTopologyType.size() + 1];
-    strcpy(cellTypeCStr, exodusTopologyType.c_str());
-    elem_type.push_back(cellTypeCStr);
-    
-    num_elem_this_blk.push_back(numberElements);
-    num_nodes_per_elem.push_back(topology->getType()->getNodesPerElement()); 
-    num_attr.push_back(0);
-      
+    const std::string exodusTopologyType = 
+      xdmfToExodusTopologyType(topologyType);
+     
+    // search for blocks in file
+    int elementBlockId = 10;
     for(unsigned int i=0; i<grid->getNumberSets(); ++i) {
       shared_ptr<XdmfSet> set = grid->getSet(i);
       if(set->getType() == XdmfSetType::Cell()) {
-        sideSets[set->getName()] = std::set<int>();
+        if(set->getName().find("Block") == 0) {
+          ++num_elem_blk;
+          blocks.push_back(set);
+          elem_blk_ids.push_back(elementBlockId++);
+          char * cellTypeCStr = new char[exodusTopologyType.size() + 1];
+          strcpy(cellTypeCStr, exodusTopologyType.c_str());
+          elem_type.push_back(cellTypeCStr);   
+          num_elem_this_blk.push_back(set->getSize());
+          num_nodes_per_elem.push_back(nodesPerElement);
+          num_attr.push_back(0);
+        }
       }
       else if(set->getType() == XdmfSetType::Node()) {
-        nodeSets[set->getName()] = std::set<int>();
+        ++num_node_sets;
       }
+    }
+
+    // adjust for case where there are no blocks found in the xdmf file
+    if(blocks.size() == 0) {
+      num_elem_blk = 1;
+      elem_blk_ids.push_back(elementBlockId);
+      elem_blk_ids.push_back(elementBlockId++);
+      char * cellTypeCStr = new char[exodusTopologyType.size() + 1];
+      strcpy(cellTypeCStr, exodusTopologyType.c_str());
+      elem_type.push_back(cellTypeCStr);   
+      num_elem_this_blk.push_back(numberElements);
+      num_nodes_per_elem.push_back(nodesPerElement);
+      num_attr.push_back(0);
     }
     
   }
@@ -271,40 +295,47 @@ namespace {
 
     for(unsigned int i=0; i<numberSets; ++i) {
       const shared_ptr<XdmfSet> set = grid->getSet(i);
-      bool releaseSet = false;
-      if(!set->isInitialized()) {
-        set->read();
-        releaseSet = true;
-      }
-   
-      std::string name = set->getName();
-      if(name.size() > MAX_STR_LENGTH) {
-        name = name.substr(0, MAX_STR_LENGTH);
-      }
 
-      const unsigned int setSize = set->getSize();
-      values.resize(setSize);
-      for(unsigned int k=0; k<setSize; ++k) {
-        // Add 1 to xdmf ids because exodus ids begin at 1
-        values[k] = set->getValue<int>(k) + 1;
-      }
+      if(set->getType() == XdmfSetType::Node()) {
+
+        bool releaseSet = false;
+        if(!set->isInitialized()) {
+          set->read();
+          releaseSet = true;
+        }
+        
+        std::string name = set->getName();
+        if(name.size() > MAX_STR_LENGTH) {
+          name = name.substr(0, MAX_STR_LENGTH);
+        }
+        
+        const unsigned int setSize = set->getSize();
+        values.resize(setSize);
+        for(unsigned int k=0; k<setSize; ++k) {
+          // Add 1 to xdmf ids because exodus ids begin at 1
+          values[k] = set->getValue<int>(k) + 1;
+        }
       
-      if(set->getType() == XdmfSetType::Cell()) {
-        ex_put_side_set_param(exodusHandle, setId + i, setSize, 0);
-        ex_put_side_set(exodusHandle, setId + i, &(values[0]), NULL);
-        ex_put_name(exodusHandle, EX_SIDE_SET, setId + i, name.c_str());
-      }
-      else if(set->getType() == XdmfSetType::Node()) {
+        /*
+          if(set->getType() == XdmfSetType::Cell()) {
+          ex_put_side_set_param(exodusHandle, setId + i, setSize, 0);
+          ex_put_side_set(exodusHandle, setId + i, &(values[0]), NULL);
+          ex_put_name(exodusHandle, EX_SIDE_SET, setId + i, name.c_str());
+          }
+        */
+
+        
         ex_put_node_set_param(exodusHandle, setId + i, setSize, 0);
         ex_put_node_set(exodusHandle, setId + i, &(values[0]));
         ex_put_name(exodusHandle, EX_NODE_SET, setId + i, name.c_str());
-      }
 
-      if(releaseSet) {
-        set->release();
+        if(releaseSet) {
+          set->release();
+        }
       }
     }
   }
+
 }
 
 shared_ptr<XdmfExodusWriter>
@@ -327,282 +358,14 @@ XdmfExodusWriter::write(const std::string & filePath,
                         const shared_ptr<XdmfUnstructuredGrid> gridToWrite) const
 {
 
-  // open exodus file
-  int wordSize = 8;
-  int storeSize = 8;
-  int exodusHandle = ex_create(filePath.c_str(),
-                               EX_CLOBBER,
-                               &wordSize,
-                               &storeSize);
+  // add this grid to a simple grid collection and write
+  shared_ptr<XdmfGridCollection> collection = XdmfGridCollection::New();
+  collection->setType(XdmfGridCollectionType::Temporal());
+  collection->insert(gridToWrite);
+  return write(filePath,
+               collection);
 
-  // initialize exodus file
-  std::string title = gridToWrite->getName();
-  if(title.size() > MAX_STR_LENGTH) {
-    title = title.substr(0, MAX_STR_LENGTH);
-  }
-
-  shared_ptr<XdmfGridCollection> gridCollection =
-    shared_ptr<XdmfGridCollection>();
-  shared_ptr<XdmfUnstructuredGrid> currGrid = gridToWrite;
-
-  // check if they are temporal collections and use the first grid to
-  // determine geometry and topology.
-  if(shared_ptr<XdmfGridCollection> tmpGrid =
-     shared_dynamic_cast<XdmfGridCollection>(gridToWrite)) {
-    if(tmpGrid->getType() == XdmfGridCollectionType::Temporal() &&
-       tmpGrid->getNumberUnstructuredGrids() > 0) {
-      currGrid = tmpGrid->getUnstructuredGrid(0);
-      gridCollection = tmpGrid;
-    }
-    else {
-      // only temporal collections are currently supported.
-      XdmfError::message(XdmfError::FATAL, "Only Temporal Collections are currently supported or no unstructured grids provided in XdmfExodusWriter::write");
-    }
-  }
-  else {
-    // this is expected to fail when we've already found a grid.
-  }
-
-  // make sure geometry and topology are non null
-  if(!(currGrid->getGeometry() && currGrid->getTopology()))
-    XdmfError::message(XdmfError::FATAL, "Current grid's geometry or topology is null in XdmfExodusWriter::write");
-
-  int num_dim = currGrid->getGeometry()->getType()->getDimensions();
-  int num_nodes = currGrid->getGeometry()->getNumberPoints();
-  int num_elem = currGrid->getTopology()->getNumberElements();
-  int num_elem_blk = 1;
-  int num_node_sets = 0;
-  int num_side_sets = 0;
-
-  for (unsigned int i=0; i<currGrid->getNumberSets(); ++i) {
-    if(currGrid->getSet(i)->getType() == XdmfSetType::Cell()) {
-      num_side_sets++;
-    }
-    else if(currGrid->getSet(i)->getType() == XdmfSetType::Node()) {
-      num_node_sets++;
-    }
-  }
-
-  ex_put_init(exodusHandle,
-              title.c_str(),
-              num_dim,
-              num_nodes,
-              num_elem,
-              num_elem_blk,
-              num_node_sets,
-              num_side_sets);
-
-  shared_ptr<XdmfGeometry> geometry = currGrid->getGeometry(); 
-  bool releaseGeometry = false;
-  if(!geometry->isInitialized()) {
-    geometry->read();
-    releaseGeometry = true;
-  }
-  double * x = new double[num_nodes];
-  double * y = new double[num_nodes];
-  double * z = new double[num_nodes];
-  // Write nodal coordinate values to exodus
-  geometry->getValues(0, x, num_nodes, 3);
-  geometry->getValues(1, y, num_nodes, 3);
-  if(geometry->getType() == XdmfGeometryType::XYZ()) {
-    geometry->getValues(2, z, num_nodes, 3);
-  }
-  if(releaseGeometry) {
-    geometry->release();
-  }
-  ex_put_coord(exodusHandle, x ,y ,z);
-  delete [] x;
-  delete [] y;
-  delete [] z;
-
-  // write element block parameters
-  std::string exodusTopologyType =
-    xdmfToExodusTopologyType(currGrid->getTopology()->getType());
-  ex_put_elem_block(exodusHandle,
-                    10,
-                    exodusTopologyType.c_str(),
-                    num_elem,
-                    currGrid->getTopology()->getType()->getNodesPerElement(),
-                    num_side_sets);
-
-  // write element connectivity
-  shared_ptr<XdmfTopology> topology = currGrid->getTopology();
-  bool releaseTopology = false;
-  if(!topology->isInitialized()) {
-    topology->read();
-    releaseTopology = true;
-  }
-  const unsigned int connectivitySize = currGrid->getTopology()->getSize();
-  int * elem_connectivity = new int[connectivitySize];
-  for(unsigned int i=0; i<connectivitySize; ++i) {
-    elem_connectivity[i] = currGrid->getTopology()->getValue<int>(i) + 1;
-  }
-  if(releaseTopology) {
-    topology->release();
-  }
-  convertXdmfToExodusTopology(elem_connectivity,
-                              currGrid->getTopology()->getType(),
-                              num_elem);
-  ex_put_elem_conn(exodusHandle, 10, elem_connectivity);
-  delete [] elem_connectivity;
-  
-  // write attributes
-  int numGlobalAttributes = 0;
-  int numNodalAttributes = 0;
-  int numElementAttributes = 0;
-
-  std::vector<int> globalComponents;
-  std::vector<int> nodalComponents;
-  std::vector<int> elementComponents;
-  std::vector<std::string> globalAttributeNames;
-  std::vector<std::string> nodalAttributeNames;
-  std::vector<std::string> elementAttributeNames;
-
-  for(unsigned int i=0; i<currGrid->getNumberAttributes(); ++i) {
-    shared_ptr<XdmfAttribute> currAttribute = currGrid->getAttribute(i);
-    if(currAttribute->getCenter() == XdmfAttributeCenter::Grid()) {
-      int numComponents = currAttribute->getSize();
-      globalComponents.push_back(numComponents);
-      numGlobalAttributes += numComponents;
-      constructAttributeNames(currAttribute->getName(),
-                              globalAttributeNames,
-                              numComponents);
-    }
-    else if(currAttribute->getCenter() == XdmfAttributeCenter::Node()) {
-      int numComponents = currAttribute->getSize() / num_nodes;
-      nodalComponents.push_back(numComponents);
-      numNodalAttributes += numComponents;
-      constructAttributeNames(currAttribute->getName(),
-                              nodalAttributeNames,
-                              numComponents);
-    }
-    else if(currAttribute->getCenter() == XdmfAttributeCenter::Cell()) {
-      int numComponents = currAttribute->getSize() / num_elem;
-      elementComponents.push_back(numComponents);
-      numElementAttributes += numComponents;
-      constructAttributeNames(currAttribute->getName(),
-                              elementAttributeNames,
-                              numComponents);
-    }
-  }
-
-  ex_put_var_param(exodusHandle, "g", numGlobalAttributes);
-  ex_put_var_param(exodusHandle, "n", numNodalAttributes);
-  ex_put_var_param(exodusHandle, "e", numElementAttributes);
-
-  char ** globalNames = new char*[numGlobalAttributes];
-  char ** nodalNames = new char*[numNodalAttributes];
-  char ** elementNames = new char*[numElementAttributes];
-
-  for(int i=0; i<numGlobalAttributes; ++i) {
-    globalNames[i] = (char*)globalAttributeNames[i].c_str();
-  }
-
-  for(int i=0; i<numNodalAttributes; ++i) {
-    nodalNames[i] = (char*)nodalAttributeNames[i].c_str();
-  }
-
-  for(int i=0; i<numElementAttributes; ++i) {
-    elementNames[i] = (char*)elementAttributeNames[i].c_str();
-  }
-
-  ex_put_var_names(exodusHandle, "g", numGlobalAttributes, globalNames);
-  ex_put_var_names(exodusHandle, "n", numNodalAttributes, nodalNames);
-  ex_put_var_names(exodusHandle, "e", numElementAttributes, elementNames);
-
-  delete [] globalNames;
-  delete [] nodalNames;
-  delete [] elementNames;
-
-  int numGrids = 1;
-  if(gridCollection) {
-    numGrids = gridCollection->getNumberUnstructuredGrids();
-  }
-
-  for(int i=0; i<numGrids; ++i) {
-    double * globalAttributeVals = new double[numGlobalAttributes];
-
-    int globalIndex = 0;
-    int globalComponentIndex = 0;
-    int nodalIndex = 0;
-    int nodalComponentIndex = 0;
-    int elementIndex = 0;
-    int elementComponentIndex = 0;
-
-    if(gridCollection) {
-      currGrid = gridCollection->getUnstructuredGrid(i);
-    }
-
-    for(unsigned int j=0; j<currGrid->getNumberAttributes(); ++j) {
-      shared_ptr<XdmfAttribute> currAttribute = currGrid->getAttribute(j);
-      bool releaseAttribute = false;
-      if(!currAttribute->isInitialized()) {
-        currAttribute->read();
-        releaseAttribute = true;
-      }
-      if(currAttribute->getCenter() == XdmfAttributeCenter::Grid()) {
-        for(int k=0; k<globalComponents[globalComponentIndex]; ++k) {
-          currAttribute->getValues(k, globalAttributeVals + globalIndex, 1);
-          globalIndex++;
-        }
-        globalComponentIndex++;
-      }
-      else if(currAttribute->getCenter() == XdmfAttributeCenter::Node()) {
-        for(int k=0; k<nodalComponents[nodalComponentIndex]; ++k) {
-          double * nodalValues = new double[num_nodes];
-          currAttribute->getValues(k,
-                                   nodalValues,
-                                   num_nodes,
-                                   nodalComponents[nodalComponentIndex]);
-          ex_put_nodal_var(exodusHandle,
-                           i+1,
-                           nodalIndex+1,
-                           num_nodes,
-                           nodalValues);
-          ex_update(exodusHandle);
-          delete [] nodalValues;
-          nodalIndex++;
-        }
-        nodalComponentIndex++;
-      }
-      else if(currAttribute->getCenter() == XdmfAttributeCenter::Cell()) {
-        for(int k=0; k<elementComponents[elementComponentIndex]; ++k) {
-          double * elementValues = new double[num_elem];
-          currAttribute->getValues(k,
-                                   elementValues,
-                                   num_elem,
-                                   elementComponents[elementComponentIndex]);
-          ex_put_elem_var(exodusHandle,
-                          i+1,
-                          elementIndex+1,
-                          10, num_elem,
-                          elementValues);
-          ex_update(exodusHandle);
-          delete [] elementValues;
-          elementIndex++;
-        }
-        elementComponentIndex++;
-      }
-      if(releaseAttribute) {
-        currAttribute->release();
-      }
-    }
-    ex_put_glob_vars(exodusHandle,
-                     i+1,
-                     numGlobalAttributes,
-                     globalAttributeVals);
-    ex_update(exodusHandle);
-    delete [] globalAttributeVals;
-
-    writeSets(exodusHandle,
-              currGrid);
-
-  }
-  
-  // close exodus file
-  ex_close(exodusHandle);
 }
-
 
 void
 XdmfExodusWriter::write(const std::string & filePath,
@@ -648,6 +411,8 @@ XdmfExodusWriter::write(const std::string & filePath,
   int num_nodes = 0;
   int num_elem = 0;
   int num_elem_blk = 0;
+  int num_node_sets = 0;
+  int num_side_sets = 0;
 
   std::vector<int> elem_blk_ids;
   std::vector<char *> elem_type;
@@ -655,87 +420,48 @@ XdmfExodusWriter::write(const std::string & filePath,
   std::vector<int> num_nodes_per_elem;
   std::vector<int> num_attr;
   std::vector<shared_ptr<XdmfAttribute> > globalNodeIds;
-
-  std::map<std::string, std::set<int> > nodeSets;
-  std::map<std::string, std::set<int> > sideSets;
  
   // initialize file
 
+  shared_ptr<XdmfUnstructuredGrid> unstructuredGrid;
+    
   if(isSpatial) {
-    
-    // need to figure out number of points and elements
-    for(unsigned int i=0; i<gridCollection->getNumberUnstructuredGrids(); 
-        ++i) {
+        
+    // unpartition grid as exodus does not store partitioning information
+    shared_ptr<XdmfPartitioner> partitioner = XdmfPartitioner::New();
+    unstructuredGrid = partitioner->unpartition(gridCollection);
 
-      const shared_ptr<XdmfUnstructuredGrid> unstructuredGrid =
-        gridCollection->getUnstructuredGrid(i);
-      
-      getGridInformation(unstructuredGrid,
-                         num_dim,
-                         num_nodes,
-                         num_elem,
-                         num_elem_blk,
-                         elem_blk_ids,
-                         elem_type,
-                         num_elem_this_blk,
-                         num_nodes_per_elem,
-                         num_attr,
-                         nodeSets,
-                         sideSets);
-
-      shared_ptr<XdmfAttribute> globalNodeId =
-        unstructuredGrid->getAttribute("GlobalNodeId");
-      globalNodeIds.push_back(globalNodeId);
-     
-      if(!globalNodeId) {
-        XdmfError::message(XdmfError::FATAL,
-                           "Must have GlobalNodeId attribute to convert "
-                           "spatially partitioned Xdmf file to Exodus.");
-      }
- 
-      bool releaseGlobalNodeId = false;
-      if(!globalNodeId->isInitialized()) {
-        globalNodeId->read();
-        releaseGlobalNodeId = true;
-      }
-      
-      for(unsigned int j=0; j<globalNodeId->getSize(); ++j) {
-        const int index = globalNodeId->getValue<int>(j);
-        num_nodes = std::max(index + 1, num_nodes);
-      }
-      
-      if(releaseGlobalNodeId) {
-        globalNodeId->release();
-      }
-      
-    }
-    
   }
   else {
-    
-    const shared_ptr<XdmfUnstructuredGrid> unstructuredGrid =
-      gridCollection->getUnstructuredGrid(0);
 
-    getGridInformation(unstructuredGrid,
-                       num_dim,
-                       num_nodes,
-                       num_elem,
-                       num_elem_blk,
-                       elem_blk_ids,
-                       elem_type,
-                       num_elem_this_blk,
-                       num_nodes_per_elem,
-                       num_attr,
-                       nodeSets,
-                       sideSets);
-
-    num_nodes = unstructuredGrid->getGeometry()->getNumberPoints();
+    // get first unstructured grid from temporal collection
+    unstructuredGrid = gridCollection->getUnstructuredGrid(0);
     
   }
- 
-  const int num_node_sets = nodeSets.size();
-  const int num_side_sets = sideSets.size();
- 
+
+  std::vector<shared_ptr<XdmfSet> > blocks;
+  getGridInformation(unstructuredGrid,
+                     num_dim,
+                     num_nodes,
+                     num_elem,
+                     num_elem_blk,
+                     elem_blk_ids,
+                     elem_type,
+                     num_elem_this_blk,
+                     num_nodes_per_elem,
+                     num_attr,
+                     num_node_sets,
+                     blocks);
+
+  /*
+  std::cout << "num_dim: " << num_dim << std::endl;
+  std::cout << "num_nodes: " << num_nodes << std::endl;
+  std::cout << "num_elem: " << num_elem << std::endl;
+  std::cout << "num_elem_blk: " << num_elem_blk << std::endl;
+  std::cout << "num_node_sets: " << num_node_sets << std::endl;
+  std::cout << "num_side_sets: " << num_side_sets << std::endl;
+  */
+
   error = ex_put_init(exodusHandle,
                       title.c_str(),
                       num_dim,
@@ -749,7 +475,7 @@ XdmfExodusWriter::write(const std::string & filePath,
     XdmfError::message(XdmfError::FATAL,
                        "Error initializing exodus file.");
   }
-
+ 
   const int define_maps  = 0;
   error = ex_put_concat_elem_block(exodusHandle, 
                                    &(elem_blk_ids[0]), 
@@ -758,7 +484,7 @@ XdmfExodusWriter::write(const std::string & filePath,
                                    &(num_nodes_per_elem[0]),
                                    &(num_attr[0]), 
                                    define_maps);
-
+  
   if(error != 0) {
     XdmfError::message(XdmfError::FATAL,
                        "Error initializing element blocks in exodus file");
@@ -769,7 +495,9 @@ XdmfExodusWriter::write(const std::string & filePath,
     delete [] elem_type[i];
   }
 
+  /*
   std::cout << "End Init" << std::endl;
+  */
 
   // write geometry
 
@@ -780,74 +508,25 @@ XdmfExodusWriter::write(const std::string & filePath,
   if(num_dim == 3) {
     z = new double[num_nodes];
   }
-
-  if(isSpatial) {
-    for(int i=0; i<num_elem_blk; ++i) {
-
-      shared_ptr<XdmfUnstructuredGrid> unstructuredGrid = 
-        gridCollection->getUnstructuredGrid(i);
-
-      // get geometry
-      shared_ptr<XdmfGeometry> geometry = unstructuredGrid->getGeometry();
-      bool releaseGeometry = false;
-      if(!geometry->isInitialized()) {
-        geometry->read();
-        releaseGeometry = true;
-      }
-
-      // get global node id
-      shared_ptr<XdmfAttribute> globalNodeId = globalNodeIds[i];
-      bool releaseGlobalNodeId = false;
-      if(!globalNodeId->isInitialized()) {
-        globalNodeId->read();
-        releaseGlobalNodeId = true;
-      }
-
-      // read nodal positions
-      const unsigned int numberPoints = geometry->getNumberPoints();
-      unsigned int arrayOffset = 0;
-      for(unsigned int j=0; j<numberPoints; ++j) {
-        const unsigned int currId = globalNodeId->getValue<unsigned int>(j);
-        x[currId] = geometry->getValue<double>(arrayOffset++);
-        y[currId] = geometry->getValue<double>(arrayOffset++);
-        if(num_dim == 3) {
-          z[currId] = geometry->getValue<double>(arrayOffset++);
-        }
-      }
-    
-      // release data
-      if(releaseGlobalNodeId) {
-        globalNodeId->release();
-      }
-      if(releaseGeometry) {
-        geometry->release();
-      }
-    }
+   
+  // get geometry
+  shared_ptr<XdmfGeometry> geometry = unstructuredGrid->getGeometry();
+  bool releaseGeometry = false;
+  if(!geometry->isInitialized()) {
+    geometry->read();
+    releaseGeometry = true;
   }
-  else
-  {
-    shared_ptr<XdmfUnstructuredGrid> unstructuredGrid = 
-      gridCollection->getUnstructuredGrid(0);
+  
+  // read nodal positions
+  geometry->getValues(0, x, num_nodes, 3);
+  geometry->getValues(1, y, num_nodes, 3);
+  if(num_dim == 3) {
+    geometry->getValues(2, z, num_nodes, 3);
+  }
     
-    // get geometry
-    shared_ptr<XdmfGeometry> geometry = unstructuredGrid->getGeometry();
-    bool releaseGeometry = false;
-    if(!geometry->isInitialized()) {
-      geometry->read();
-      releaseGeometry = true;
-    }
-    
-    // read nodal positions
-    geometry->getValues(0, x, num_nodes, 3);
-    geometry->getValues(1, y, num_nodes, 3);
-    if(num_dim == 3) {
-      geometry->getValues(2, z, num_nodes, 3);
-    }
-    
-    // release data
-    if(releaseGeometry) {
-      geometry->release();
-    }
+  // release data
+  if(releaseGeometry) {
+    geometry->release();
   }
 
   error = ex_put_coord(exodusHandle, x ,y ,z);
@@ -856,67 +535,90 @@ XdmfExodusWriter::write(const std::string & filePath,
   delete [] y;
   delete [] z;
 
+  /*
   std::cout << "End Geometry" << std::endl;
+  */
 
   // write topology
+  shared_ptr<XdmfTopology> topology = unstructuredGrid->getTopology();
+  shared_ptr<const XdmfTopologyType> topologyType = topology->getType();
+  const int nodesPerElement = topologyType->getNodesPerElement();
+  bool releaseTopology = false;
+  if(!topology->isInitialized()) {
+    topology->read();
+    releaseTopology = true;
+  }
+    
+  if(blocks.size() > 0) {
 
-  for(int iNumBlocks=0; iNumBlocks < num_elem_blk; ++iNumBlocks) {
-
-    shared_ptr<XdmfTopology> topology = 
-      gridCollection->getUnstructuredGrid(iNumBlocks)->getTopology();
-
-    bool releaseTopology = false;
-    if(!topology->isInitialized()) {
-      topology->read();
-      releaseTopology = true;
-    }
-
-    // write element connectivity
-    const unsigned int connectivitySize = topology->getSize();;
-    int * elem_connectivity = new int[connectivitySize];
-
-    if(isSpatial) {
-      shared_ptr<XdmfAttribute> globalNodeId = globalNodeIds[iNumBlocks];
-
-      bool releaseGlobalNodeId = false;
-      if(!globalNodeId->isInitialized()) {
-        globalNodeId->read();
-        releaseGlobalNodeId = true;
-      }
-
-      for(unsigned int i=0; i<connectivitySize; ++i) {
-        const int pointId = topology->getValue<int>(i);
-        const int globalPointId = globalNodeId->getValue<int>(pointId) + 1;
-        elem_connectivity[i] = globalPointId;
+    // if blocks, write topology to blocks
+    for(unsigned int i=0; i<blocks.size(); ++i) {
+      
+      shared_ptr<XdmfSet> & set = blocks[i];
+      
+      bool releaseSet = false;
+      if(!set->isInitialized()) {
+        set->read();
+        releaseSet = true;
       }
       
-      if(releaseGlobalNodeId) {
-        globalNodeId->release();
+      const unsigned int connectivitySize = set->getSize() * nodesPerElement;
+      int * elem_connectivity = new int[connectivitySize];      
+      int offset = 0;
+      for(unsigned int j=0; j<set->getSize(); ++j) {
+        const int elementId = set->getValue<int>(j);
+        const int topologyOffset = elementId * nodesPerElement;
+        for(int k=0; k<nodesPerElement; ++k) {
+          elem_connectivity[offset] = 
+            topology->getValue<int>(topologyOffset + k) + 1;
+          ++offset;
+        }
       }
-    }
-    else {
-      for(unsigned int i=0; i<connectivitySize; ++i) {
-        elem_connectivity[i] = topology->getValue<int>(i) + 1;
+      
+      if(releaseSet) {
+        set->release();
       }
+      
+      convertXdmfToExodusTopology(elem_connectivity,
+                                  topologyType,
+                                  num_elem);
+      
+      ex_put_elem_conn(exodusHandle, 
+                       elem_blk_ids[i], 
+                       elem_connectivity);
+      
+      delete [] elem_connectivity;
+      
     }
-
+  }
+  else {
+    
+    // write to single block
+    const unsigned int connectivitySize = topology->getSize();
+    int * elem_connectivity = new int[connectivitySize];
+    for(unsigned int i=0; i<connectivitySize; ++i) {
+      elem_connectivity[i] = topology->getValue<int>(i) + 1;
+    }
     if(releaseTopology) {
       topology->release();
     }
-
     convertXdmfToExodusTopology(elem_connectivity,
-                                topology->getType(),
-                                topology->getNumberElements());
-        
-    error = ex_put_elem_conn(exodusHandle, 
-                             elem_blk_ids[iNumBlocks], 
-                             elem_connectivity);
+                                topologyType,
+                                num_elem);
+    ex_put_elem_conn(exodusHandle, 
+                     elem_blk_ids[0], 
+                     elem_connectivity);
 
     delete [] elem_connectivity;
-
+  }
+    
+  if(releaseTopology) {
+    topology->release();
   }
 
+  /*
   std::cout << "End Topology" << std::endl;
+  */
 
   // write attributes
   int numGlobalAttributes = 0;
@@ -931,12 +633,10 @@ XdmfExodusWriter::write(const std::string & filePath,
   std::vector<std::string> elementAttributeNames;
 
   const unsigned int numberAttributes = 
-    gridCollection->getUnstructuredGrid(0)->getNumberAttributes();
+    unstructuredGrid->getNumberAttributes();
 
   for(unsigned int i=0; i<numberAttributes; ++i) {
 
-    const shared_ptr<XdmfUnstructuredGrid> unstructuredGrid = 
-      gridCollection->getUnstructuredGrid(0);
     const shared_ptr<XdmfAttribute> attribute = 
       unstructuredGrid->getAttribute(i);
     const unsigned int numberElements = 
@@ -984,7 +684,9 @@ XdmfExodusWriter::write(const std::string & filePath,
     ex_put_var_param(exodusHandle, "e", numElementAttributes);
   }
 
+  /*
   std::cout << "Done attribute params" << std::endl;
+  */
 
   char ** globalNames = new char*[numGlobalAttributes];
   char ** nodalNames = new char*[numNodalAttributes];
@@ -1016,7 +718,9 @@ XdmfExodusWriter::write(const std::string & filePath,
   delete [] nodalNames;
   delete [] elementNames;
 
+  /*
   std::cout << "Done attribute names" << std::endl;
+  */
 
   if(numElementAttributes > 0) {
     const int numTruthTableValues = num_elem_blk * numElementAttributes;
@@ -1031,7 +735,9 @@ XdmfExodusWriter::write(const std::string & filePath,
     delete [] truthTable;
   }
 
+  /*
   std::cout << "Done truth table" << std::endl;
+  */
 
   unsigned int numTemporalGrids = 1;
   if(isTemporal) {
@@ -1043,106 +749,32 @@ XdmfExodusWriter::write(const std::string & filePath,
     }
   }
 
-  // Write Sets
-  int setId = 20;
+  // only write for first timestep
+  writeSets(exodusHandle,
+            unstructuredGrid);
 
-  // Set name to set of ids.
-  if(isSpatial) {
-    unsigned int elementOffset = 0;
-    for(int iNumBlocks=0; iNumBlocks<num_elem_blk; ++iNumBlocks) {
-
-      shared_ptr<XdmfUnstructuredGrid> currGrid;
-      if(isTemporal) {
-        currGrid = grid->getGridCollection(0)->getUnstructuredGrid(iNumBlocks);
-      }
-      else {
-        currGrid = grid->getUnstructuredGrid(iNumBlocks);
-      }
-
-      shared_ptr<XdmfAttribute> globalNodeId = globalNodeIds[iNumBlocks];
-      bool releaseGlobalNodeId = false;
-      if(currGrid->getNumberSets() > 0 && !globalNodeId->isInitialized()) {
-        globalNodeId->read();
-        releaseGlobalNodeId = true;
-      }
-      
-      for(unsigned int i=0; i<currGrid->getNumberSets(); ++i) {
-        const shared_ptr<XdmfSet> set = currGrid->getSet(i);
-        bool releaseSet = false;
-        if(!set->isInitialized()) {
-          set->read();
-          releaseSet = true;
-        }
-        std::set<int> * setToAddTo = NULL;
-	if(set->getType() == XdmfSetType::Cell()) {
-	  setToAddTo = &sideSets[set->getName()];
-          for(unsigned int j=0; i<set->getSize(); ++j) {
-            const int id = set->getValue<int>(j);
-            setToAddTo->insert(elementOffset + id + 1);
-          }
-	}
-	else if(set->getType() == XdmfSetType::Node()) {
-          setToAddTo = &nodeSets[set->getName()];
-          for(unsigned int j=0; j<set->getSize(); ++j) {
-            const int id = set->getValue<int>(j);
-            const int globalId = globalNodeId->getValue<int>(id);
-            setToAddTo->insert(globalId + 1);
-          }
-	}
-        if(releaseSet) {
-          set->release();
-        }
-      }
-      if(releaseGlobalNodeId) {
-        globalNodeId->release();
-      }
-      elementOffset += num_elem_this_blk[iNumBlocks];
-    }
-
-    for(std::map<std::string, std::set<int> >::const_iterator iter = 
-          sideSets.begin(); iter != sideSets.end(); ++iter) {
-      const std::string & currSetName = iter->first;
-      const std::set<int> & currSet = iter->second;
-      std::vector<int> setValues(currSet.begin(),
-                                 currSet.end());
-      std::string name = currSetName;
-      if(name.length() > MAX_STR_LENGTH) {
-        name = name.substr(0, MAX_STR_LENGTH);
-      }
-      ex_put_side_set_param(exodusHandle, setId + 1, setValues.size(), 0);
-      ex_put_side_set(exodusHandle, setId + 1, &setValues[0], NULL);
-      ex_put_name(exodusHandle, EX_SIDE_SET, setId + 1, name.c_str());
-      ++setId;
-    }
-
-    for(std::map<std::string, std::set<int> >::const_iterator iter = 
-          nodeSets.begin(); iter != nodeSets.end(); ++iter) {
-      const std::string & currSetName = iter->first;
-      const std::set<int> & currSet = iter->second;
-      std::vector<int> setValues(currSet.begin(),
-                                 currSet.end());
-      std::string name = currSetName;
-      if(name.length() > MAX_STR_LENGTH) {
-        name = name.substr(0, MAX_STR_LENGTH);
-      }
-      ex_put_node_set_param(exodusHandle, setId + 1, setValues.size(), 0);
-      ex_put_node_set(exodusHandle, setId + 1, &setValues[0]);
-      ex_put_name(exodusHandle, EX_NODE_SET, setId + 1, name.c_str());
-      ++setId;
-    }
-
-  }
-  else {
-    // only write for first timestep
-    writeSets(exodusHandle,
-              grid->getUnstructuredGrid(0));
-  }
- 
+  /*
   std::cout << "Done Sets" << std::endl;
+  */
 
   for(unsigned int i=0; i<numTemporalGrids; ++i) {
 
-    std::cout << i << std::endl;
+    // get appropriate grid
+    if(isTemporal) {
+      if(isSpatial) {
+        // we already unpartitioned the first timestep, avoid doing it again
+        if(i != 0) {
+          // unpartition spatial partitioning
+          std::cout << "unpartition" << std::endl;
+          gridCollection = grid->getGridCollection(i);
+          shared_ptr<XdmfPartitioner> partitioner = XdmfPartitioner::New();
+          unstructuredGrid = partitioner->unpartition(gridCollection);
+        }
+      }
+      else {
+        unstructuredGrid = grid->getUnstructuredGrid(i);
+      }
+    }
 
     double * globalAttributeVals = new double[numGlobalAttributes];
 
@@ -1157,145 +789,129 @@ XdmfExodusWriter::write(const std::string & filePath,
 
     for(unsigned int j=0; j<numberAttributes; ++j) {
       
-      clock_t start = clock();
-      std::string attributeName;
+      shared_ptr<XdmfAttribute> attribute = unstructuredGrid->getAttribute(j);
+      shared_ptr<const XdmfAttributeCenter> attributeCenter = 
+        attribute->getCenter();
 
-      std::vector<std::vector<double> > nodalArrays;
-      shared_ptr<const XdmfAttributeCenter> attributeCenter;
+      /*
+      std::cout << attribute->getName() << std::endl;
+      */
 
-      for(int iNumBlocks=0; iNumBlocks<num_elem_blk; ++iNumBlocks) {
-
-        shared_ptr<XdmfAttribute> attribute;
-
-        if(isTemporal) {
-          if(isSpatial) {
-            attribute = 
-              grid->getGridCollection(i)->getUnstructuredGrid(iNumBlocks)->getAttribute(j);
-          }
-          else {
-            attribute = grid->getUnstructuredGrid(i)->getAttribute(j);
-          }
-        }
-        else {
-          attribute = grid->getUnstructuredGrid(iNumBlocks)->getAttribute(j);
-        }
-        
-        bool releaseAttribute = false;
-        if(!attribute->isInitialized()) {
-          attribute->read();
-          releaseAttribute = true;
-        }
-
-        attributeName = attribute->getName();
-
-        attributeCenter = attribute->getCenter();
-      
-        if(attributeCenter == XdmfAttributeCenter::Grid()) {
-          for(unsigned int k=0; 
-              k<globalComponents[globalComponentIndex]; ++k) {
-            globalAttributeVals[globalIndex] = attribute->getValue<double>(k);
-            globalIndex++;
-          }
-          globalComponentIndex++;
-        }
-        else if(attributeCenter == XdmfAttributeCenter::Node()) {
-
-          const unsigned int numComponents =
-            nodalComponents[nodalComponentIndex];
-
-          // resize storage if this is the first block
-          if(iNumBlocks == 0) {
-            nodalArrays.resize(numComponents);
-            for(unsigned int k=0; k<numComponents; ++k) {
-              nodalArrays[k].resize(num_nodes);
-            }
-          }
-          
-          const unsigned int numberValues = 
-            attribute->getSize() / numComponents;
-
-          if(isSpatial) {
-            shared_ptr<XdmfAttribute> globalNodeId = globalNodeIds[iNumBlocks];
-            bool releaseGlobalNodeId = true;
-            if(!globalNodeId->isInitialized()) {
-              globalNodeId->read();
-              releaseGlobalNodeId = true;
-            }
-            unsigned int index = 0;
-            for(unsigned int l=0; l<numberValues; ++l) {
-              const int globalId = globalNodeId->getValue<int>(l);
-              for(unsigned int k=0; k<numComponents; ++k) {
-                nodalArrays[k][globalId] = 
-                  attribute->getValue<double>(index++);
-              }
-            }
-            if(releaseGlobalNodeId) {
-              globalNodeId->release();
-            }
-          }
-          else {
-            for(unsigned int k=0; k<numComponents; ++k) {
-              attribute->getValues(k,
-                                   &(nodalArrays[k][0]),
-                                   numberValues,
-                                   numComponents);
-            }
-          }
-        }
-        else if(attributeCenter == XdmfAttributeCenter::Cell()) {
-          const unsigned int numElemInBlock = num_elem_this_blk[iNumBlocks];
-          elementArray.resize(numElemInBlock);
-          const unsigned int numComponents = 
-            elementComponents[elementComponentIndex];
-          for(unsigned int k=0; k<numComponents; ++k){
-            attribute->getValues(k, 
-                                 &(elementArray[0]), 
-                                 numElemInBlock, 
-                                 numComponents);
-            ex_put_elem_var(exodusHandle, 
-                            i+1, 
-                            elementIndex+k+1, 
-                            elem_blk_ids[iNumBlocks], 
-                            numElemInBlock, 
-                            &elementArray[0]);
-          }
-        }
-        
-        if(releaseAttribute) {
-          attribute->release();
-        }
+      bool releaseAttribute = false;
+      if(!attribute->isInitialized()) {
+        attribute->read();
+        releaseAttribute = true;
       }
-      if(attributeCenter == XdmfAttributeCenter::Cell()) {
-        elementIndex+=elementComponents[elementComponentIndex];
-        elementComponentIndex++;
+
+      if(attribute->getCenter() == XdmfAttributeCenter::Grid()) {
+        for(unsigned int k=0; k<globalComponents[globalComponentIndex]; ++k) {
+          attribute->getValues(k, 
+                               globalAttributeVals + globalIndex, 
+                               1);
+          globalIndex++;
+        }
+        globalComponentIndex++;
       }
-      else if(attributeCenter == XdmfAttributeCenter::Node()) {
+      else if(attribute->getCenter() == XdmfAttributeCenter::Node()) {
         for(unsigned int k=0; k<nodalComponents[nodalComponentIndex]; ++k) {
-          ex_put_nodal_var(exodusHandle, 
-                           i+1, 
-                           nodalIndex+1, 
-                           nodalArrays[k].size(), 
-                           &nodalArrays[k][0]);
+          double * nodalValues = new double[num_nodes];
+          attribute->getValues(k,
+                               nodalValues,
+                               num_nodes,
+                               nodalComponents[nodalComponentIndex]);
+          ex_put_nodal_var(exodusHandle,
+                           i+1,
+                           nodalIndex+1,
+                           num_nodes,
+                           nodalValues);
+          ex_update(exodusHandle);
+          delete [] nodalValues;
           nodalIndex++;
         }
         nodalComponentIndex++;
       }
-      clock_t end = clock();
-      std::cout << attributeName << " " 
-                << ((double)(end-start) / CLOCKS_PER_SEC) 
-                << std::endl;
+      else if(attribute->getCenter() == XdmfAttributeCenter::Cell()) {
+        if(blocks.size() > 0) {
+          for(unsigned int k=0; k<blocks.size(); ++k) {
+            
+            const shared_ptr<XdmfSet> & set = blocks[k];
+            const int num_elem_in_blk = set->getSize();
+            
+            bool releaseSet = false;
+            if(!set->isInitialized()) {
+              set->read();
+              releaseSet = true;
+            }
+            
+            double * elementValues = new double[num_elem_in_blk];
+            
+            // loop over components
+            const int numberComponents = 
+              elementComponents[elementComponentIndex];
+            
+            for(int l=0; l<numberComponents; ++l) {
+              for(int m=0; m<num_elem_in_blk; ++m) {
+                const int elementId = set->getValue<int>(m);
+                elementValues[m] = 
+                  attribute->getValue<double>(numberComponents*elementId + l);
+              }
+              ex_put_elem_var(exodusHandle,
+                              i+1,
+                              elementIndex+l+1,
+                              elem_blk_ids[k],
+                              num_elem_in_blk,
+                              elementValues);
+              ex_update(exodusHandle);
+            }        
+            
+            delete [] elementValues;
+            
+            if(releaseSet) {
+              set->release();
+            }
+          }
+          elementIndex += elementComponents[elementComponentIndex];
+          elementComponentIndex++;
+        }
+        else {
+          for(unsigned int k=0; 
+              k<elementComponents[elementComponentIndex]; ++k) {
+            double * elementValues = new double[num_elem];
+            attribute->getValues(k,
+                                 elementValues,
+                                 num_elem,
+                                 elementComponents[elementComponentIndex]);
+            ex_put_elem_var(exodusHandle,
+                            i+1,
+                            elementIndex+1,
+                            elem_blk_ids[0], 
+                            num_elem,
+                            elementValues);
+            ex_update(exodusHandle);
+            delete [] elementValues;
+            elementIndex++;
+          }
+          elementComponentIndex++;
+        }
+      }
+      if(releaseAttribute) {
+        attribute->release();
+      }
     }
     if(numGlobalAttributes > 0) {
-      ex_put_glob_vars(exodusHandle, 
-                       i+1, 
-                       numGlobalAttributes, 
+      ex_put_glob_vars(exodusHandle,
+                       i+1,
+                       numGlobalAttributes,
                        globalAttributeVals);
     }
     ex_update(exodusHandle);
     delete [] globalAttributeVals;
+
   }
 
+  /*
   std::cout << "Done Attributes" << std::endl;
+  */
 
   // close exodus file
   ex_close(exodusHandle);
