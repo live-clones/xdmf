@@ -18,6 +18,7 @@ ADD_TEST_CXX(TestXdmfGraph)
 ADD_TEST_CXX(TestXdmfGridCollection)
 ADD_TEST_CXX(TestXdmfHDF5Hyperslab)
 ADD_TEST_CXX(TestXdmfMap)
+ADD_TEST_Cxx(TestXdmfMultiOpen)
 ADD_TEST_CXX(TestXdmfReader)
 ADD_TEST_CXX(TestXdmfRegularGrid)
 ADD_TEST_CXX(TestXdmfRectilinearGrid)
@@ -66,6 +67,9 @@ CLEAN_TEST_CXX(TestXdmfMap
   TestXdmfMapHDF1.xmf
   TestXdmfMapHDF1.h5
   TestXdmfMapHDF2.xmf)
+CLEAN_TEST_CXX(TestXdmfMultiOpen
+  setfile.h5
+  attributefile.h5)
 CLEAN_TEST_CXX(TestXdmfReader
   TestXdmfReader1.h5
   TestXdmfReader1.xmf

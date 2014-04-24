@@ -29,6 +29,10 @@
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfSystemUtils.hpp"
 
+unsigned int XdmfHDF5Controller::mMaxOpenedFiles = 0;
+static std::map<std::string, hid_t> mOpenFiles;
+std::map<std::string, unsigned int> XdmfHDF5Controller::mOpenFileUsage;
+
 shared_ptr<XdmfHDF5Controller>
 XdmfHDF5Controller::New(const std::string & hdf5FilePath,
                         const std::string & dataSetPath,
@@ -75,10 +79,28 @@ XdmfHDF5Controller::~XdmfHDF5Controller()
 {
 }
 
+void
+XdmfHDF5Controller::closeFiles()
+{
+  for (std::map<std::string, hid_t>::iterator closeIter = mOpenFiles.begin();
+       closeIter != mOpenFiles.end();
+       ++closeIter) {
+    H5Fclose(closeIter->second);
+  }
+  mOpenFiles.clear();
+  mOpenFileUsage.clear();
+}
+
 std::string
 XdmfHDF5Controller::getName() const
 {
   return "HDF";
+}
+
+unsigned int
+XdmfHDF5Controller::getMaxOpenedFiles()
+{
+  return XdmfHDF5Controller::mMaxOpenedFiles;
 }
 
 void
@@ -91,8 +113,39 @@ void
 XdmfHDF5Controller::read(XdmfArray * const array, const int fapl)
 {
   herr_t status;
-
-  hid_t hdf5Handle = H5Fopen(mFilePath.c_str(), H5F_ACC_RDONLY, fapl);
+  hid_t hdf5Handle;
+  if (XdmfHDF5Controller::mMaxOpenedFiles == 0) {
+    hdf5Handle = H5Fopen(mFilePath.c_str(), H5F_ACC_RDONLY, fapl);
+  }
+  else {
+    std::map<std::string, hid_t>::iterator checkOpen = mOpenFiles.find(mFilePath);
+    if (checkOpen == mOpenFiles.end()) {
+      // If the number of open files would become larger than allowed
+      if (mOpenFiles.size() + 1 > mMaxOpenedFiles) {
+        // Close least used one
+        std::map<std::string, unsigned int>::iterator walker = mOpenFileUsage.begin();
+        std::string oldestFile = walker->first;
+        while (walker != mOpenFileUsage.end()) {
+          // We want the file with the fewest accesses
+          // If two are tied, we use the older one
+          if (mOpenFileUsage[oldestFile] > walker->second) {
+            oldestFile = walker->first;
+          }
+          ++walker;
+        }
+        status = H5Fclose(mOpenFiles[oldestFile]);
+        mOpenFiles.erase(oldestFile);
+        mOpenFileUsage.erase(oldestFile);
+      }
+      hdf5Handle = H5Fopen(mFilePath.c_str(), H5F_ACC_RDONLY, fapl);
+      mOpenFiles[mFilePath] = hdf5Handle;
+      mOpenFileUsage[mFilePath] = 1;
+    }
+    else {
+      hdf5Handle = checkOpen->second;
+      mOpenFileUsage[mFilePath]++;
+    }
+  }
   hid_t dataset = H5Dopen(hdf5Handle, mDataSetPath.c_str(), H5P_DEFAULT);
   hid_t dataspace = H5Dget_space(dataset);
 
@@ -160,7 +213,7 @@ XdmfHDF5Controller::read(XdmfArray * const array, const int fapl)
                          "Unknown XdmfArrayType encountered in hdf5 "
                          "controller.");
         }
-    catch (XdmfError e) {
+    catch (XdmfError & e) {
       throw e;
     }
   }
@@ -176,25 +229,24 @@ XdmfHDF5Controller::read(XdmfArray * const array, const int fapl)
       XdmfError::message(XdmfError::FATAL,
                          errOut.str());
     }
-    catch (XdmfError e) {
+    catch (XdmfError & e) {
       throw e;
     }
   }
-
   if(closeDatatype) {
     char ** data = new char*[numVals];
-    status = H5Dread(dataset, 
-                     datatype, 
+    status = H5Dread(dataset,
+                     datatype,
                      memspace,
                      dataspace,
-                     H5P_DEFAULT, 
+                     H5P_DEFAULT,
                      data);
     for(hssize_t i=0; i<numVals; ++i) {
       array->insert<std::string>(i, data[i]);
     }
-    status = H5Dvlen_reclaim(datatype, 
-                             dataspace, 
-                             H5P_DEFAULT, 
+    status = H5Dvlen_reclaim(datatype,
+                             dataspace,
+                             H5P_DEFAULT,
                              data);
     delete [] data;
   }
@@ -213,5 +265,13 @@ XdmfHDF5Controller::read(XdmfArray * const array, const int fapl)
   if(closeDatatype) {
     status = H5Tclose(datatype);
   }
-  status = H5Fclose(hdf5Handle);
+  if (XdmfHDF5Controller::mMaxOpenedFiles == 0) {
+    status = H5Fclose(hdf5Handle);
+  }
+}
+
+void
+XdmfHDF5Controller::setMaxOpenedFiles(unsigned int newMax)
+{
+  XdmfHDF5Controller::mMaxOpenedFiles = newMax;
 }

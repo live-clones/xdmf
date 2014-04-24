@@ -133,6 +133,73 @@ MACRO(ADD_TEST_PYTHON executable)
 
 ENDMACRO(ADD_TEST_PYTHON executable)
 
+
+
+# PYTHON MPI Test Macro
+# Author: Andrew Burns
+# Description: This macro builds and adds a script to execute MPI tests.
+# Parameters:
+#               executable      = script name
+#               files           = code to be compiled and executed by the script
+#               tdep            = test dependency (Full Test Name with Prefix)
+#               ${ARGN}         = any arguments for the executable
+MACRO(ADD_MPI_TEST_PYTHON script files)
+    PARSE_TEST_ARGS("${ARGN}")
+
+    GET_PROPERTY(python_file_dependencies GLOBAL
+                 PROPERTY PYTHON_TEST_FILE_DEPENDENCIES)
+    GET_PROPERTY(python_pythonpath GLOBAL PROPERTY PYTHON_TEST_PYTHONPATH)
+    GET_PROPERTY(python_ldpath GLOBAL PROPERTY PYTHON_TEST_LDPATH)
+    GET_PROPERTY(python_path GLOBAL PROPERTY PYTHON_TEST_PATH)
+
+    IF(WIN32)
+        IF("${python_path}" STREQUAL "")
+            SET(python_path ${python_ldpath})
+        ENDIF("${python_path}" STREQUAL "")
+    ENDIF(WIN32)
+
+    set(tempfiles ${files})
+
+    WHILE(NOT "${tempfiles}" STREQUAL "")
+        # ${executable}
+        STRING(REGEX MATCH "([^ ,])+,|([^ ,])+" executable "${tempfiles}")
+        STRING(REGEX REPLACE "," "" executable "${executable}")
+        STRING(REGEX REPLACE "${executable},|${executable}" "" trimmed "${tempfiles}")
+
+        set(tempfiles ${trimmed})
+
+        IF(EXISTS ${python_source_dir}/${executable}.py)
+                file(COPY
+                    ${python_source_dir}/${executable}.py
+                    DESTINATION ${python_binary_dir}/
+                )
+        ENDIF(EXISTS ${python_source_dir}/${executable}.py)
+
+    ENDWHILE(NOT "${tempfiles}" STREQUAL "")
+
+    SET_CORE("${python_binary_dir}")
+    ADD_TEST(Python${is_core}_${script} ${CMAKE_COMMAND}
+            -D "EXECUTABLE='./${script}'"
+            -D "ARGUMENTS=${arguments}"
+            -D "PYTHONPATH=${python_pythonpath}"
+            -D "LDPATH=${python_ldpath}"
+            -D "PATH=${python_path}"
+            -D "SEPARATOR=${sep}"
+            -P "${python_binary_dir}/TestDriverPythonScript.cmake"
+    )
+    IF(NOT "${tdep}" STREQUAL "")
+        SET_TESTS_PROPERTIES(Python${is_core}_${script}}
+            PROPERTIES DEPENDS ${tdep})
+    ENDIF(NOT "${tdep}" STREQUAL "")
+    file(COPY
+        ${python_source_dir}/${script}
+        DESTINATION ${python_binary_dir}/
+    )
+ENDMACRO(ADD_MPI_TEST_PYTHON script files)
+
+
+
+
 # Python Clean Macro
 # Author: Brian Panneton
 # Description: This macro sets up the python test for a make clean.
@@ -176,4 +243,5 @@ ENDMACRO(CREATE_TARGET_TEST_PYTHON)
 
 # Configure the python 'driver' file
 CONFIGURE_FILE(${TESTING_SUITE_DIR}/TestingSuite/TestDriverPython.cmake.in ${python_binary_dir}/TestDriverPython.cmake @ONLY)
+CONFIGURE_FILE(${TESTING_SUITE_DIR}/TestingSuite/TestDriverPythonScript.cmake.in ${python_binary_dir}/TestDriverPythonScript.cmake @ONLY)
 

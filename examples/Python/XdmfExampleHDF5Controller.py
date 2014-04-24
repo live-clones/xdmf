@@ -36,3 +36,21 @@ if __name__ == "__main__":
                 readDataSize)
 
         #//initialization end
+
+        #//setMaxOpenedFiles begin
+
+        XdmfHDF5Controller.setMaxOpenedFiles(2)
+
+        #//setMaxOpenedFiles end
+
+        #//getMaxOpenedFiles begin
+
+        maxNumOpened = XdmfHDF5Controller.getMaxOpenedFiles()
+
+        #//getMaxOpenedFiles end
+
+        #//closeFiles begin
+
+        XdmfHDF5Controller.closeFiles()
+
+        #//closeFiles end

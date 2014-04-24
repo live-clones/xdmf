@@ -99,6 +99,73 @@ MACRO(ADD_TEST_CXX executable)
     ENDIF(NOT "${tdep}" STREQUAL "")
 ENDMACRO(ADD_TEST_CXX executable)
 
+# CXX MPI Test Macro
+# Author: Andrew Burns
+# Description: This macro builds and adds a script to execute MPI tests.
+# Parameters:
+#               executable      = script name
+#               files           = code to be compiled and executed by the script
+#               tdep            = test dependency (Full Test Name with Prefix)
+#               ${ARGN}         = any arguments for the executable
+MACRO(ADD_MPI_TEST_CXX script files)
+    PARSE_TEST_ARGS("${ARGN}")
+
+    set(tempfiles ${files})
+
+    WHILE(NOT "${tempfiles}" STREQUAL "")
+        # ${executable}
+        STRING(REGEX MATCH "([^ ,])+,|([^ ,])+" executable "${tempfiles}")
+        STRING(REGEX REPLACE "," "" executable "${executable}")
+        STRING(REGEX REPLACE "${executable},|${executable}" "" trimmed "${tempfiles}")
+
+        set(tempfiles ${trimmed})
+
+        IF(EXISTS ${cxx_source_dir}/${executable}.cpp)
+            ADD_EXECUTABLE(${executable} ${cxx_source_dir}/${executable}.cpp)
+        ENDIF(EXISTS ${cxx_source_dir}/${executable}.cpp)
+
+        IF(EXISTS ${cxx_source_dir}/${executable}.cxx)
+            ADD_EXECUTABLE(${executable} ${cxx_source_dir}/${executable}.cxx)
+        ENDIF(EXISTS ${cxx_source_dir}/${executable}.cxx)
+
+        GET_PROPERTY(cxx_dependencies GLOBAL PROPERTY CXX_TEST_DEPENDENCIES)
+        GET_PROPERTY(cxx_ldpath GLOBAL PROPERTY CXX_TEST_LDPATH)
+        GET_PROPERTY(cxx_path GLOBAL PROPERTY CXX_TEST_PATH)
+        TARGET_LINK_LIBRARIES(${executable} ${cxx_dependencies})
+
+        # Take care of windowisims
+        IF(WIN32)
+            SET_TARGET_PROPERTIES(${executable} PROPERTIES
+                PREFIX ../
+                RUNTIME_OUTPUT_DIRECTORY ${cxx_binary_dir}
+                LIBRARY_OUTPUT_DIRECTORY ${cxx_binary_dir}
+                ARCHIVE_OUTPUT_DIRECTORY ${cxx_binary_dir})
+
+            IF("${cxx_path}" STREQUAL "")
+                SET(cxx_path ${cxx_ldpath})
+            ENDIF("${cxx_path}" STREQUAL "")
+        ENDIF(WIN32)
+    ENDWHILE(NOT "${tempfiles}" STREQUAL "")
+
+    SET_CORE("${cxx_binary_dir}")
+    ADD_TEST(Cxx${is_core}_${script} ${CMAKE_COMMAND}
+            -D "EXECUTABLE='./${script}'"
+            -D "ARGUMENTS=${arguments}"
+            -D "LDPATH=${cxx_ldpath}"
+            -D "PATH=${cxx_path}"
+            -D "SEPARATOR=${sep}"
+            -P "${cxx_binary_dir}/TestDriverCxx.cmake"
+    )
+    IF(NOT "${tdep}" STREQUAL "")
+            SET_TESTS_PROPERTIES(Cxx${is_core}_${script}
+            PROPERTIES DEPENDS ${tdep} ${script})
+    ENDIF(NOT "${tdep}" STREQUAL "")
+    file(COPY
+        ${cxx_source_dir}/${script}
+        DESTINATION ${cxx_binary_dir}/
+    )
+ENDMACRO(ADD_MPI_TEST_CXX script files)
+
 # CXX Clean Macro
 # Author: Brian Panneton
 # Description: This macro sets up the cxx test for a make clean.

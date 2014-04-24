@@ -83,7 +83,7 @@ PROGRAM XdmfFortranExample
   PRINT *, "Value: ", itemValue
   CALL XDMFRETRIEVEMAPPROPERTYBYKEY(obj, 0, itemKey, itemValue, 256)
   PRINT *, "Value: ", itemValue
-  CALL XDMFRETRIEVEREMOTENODEIDS(obj, 0, 3, 1, myMappedNodes)
+  CALL XDMFRETRIEVEREMOTENODEIDS(obj, 0, 1, 3, myMappedNodes)
   PRINT *, 'Nodes: ', myMappedNodes
 !!!! Unstructured and Curvilinear only
   PRINT *, 'Geometry'

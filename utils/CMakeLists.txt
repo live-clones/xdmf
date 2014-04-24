@@ -14,6 +14,7 @@ set(XdmfUtilsLinkLibraries Xdmf)
 
 if(XDMF_BUILD_FORTRAN)
   set(XdmfUtilsSources ${XdmfUtilsSources} XdmfFortran)
+  enable_language (Fortran)
 endif(XDMF_BUILD_FORTRAN)
 
 if (XDMF_BUILD_DSM)

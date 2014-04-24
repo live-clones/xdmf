@@ -84,9 +84,70 @@ public:
       const std::vector<unsigned int> & dimensions,
       const std::vector<unsigned int> & dataspaceDimensions);
 
+  /**
+   * Closes the files currently open for reading.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfHDF5Controller.cpp
+   * @skipline //#closeFiles
+   * @until //#closeFiles
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleHDF5Controller.py
+   * @skipline #//closeFiles
+   * @until #//closeFiles
+   */
+  static void closeFiles();
+
   virtual std::string getName() const;
 
+  /**
+   * Gets the maximum number of hdf5 files that are allowed to be open at once.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfHDF5Controller.cpp
+   * @skipline //#getMaxOpenedFiles
+   * @until //#getMaxOpenedFiles
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleHDF5Controller.py
+   * @skipline #//getMaxOpenedFiles
+   * @until #//getMaxOpenedFiles
+   *
+   * @return    The maximum number of hdf5 files
+   */
+  static unsigned int getMaxOpenedFiles();
+
   virtual void read(XdmfArray * const array);
+
+  /**
+   * Sets the maximum number of hdf5 files that are allowed to be open at once.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfHDF5Controller.cpp
+   * @skipline //#setMaxOpenedFiles
+   * @until //#setMaxOpenedFiles
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleHDF5Controller.py
+   * @skipline #//setMaxOpenedFiles
+   * @until #//setMaxOpenedFiles
+   *
+   * @param     newMax  The new maximum amount of files to be open
+   */
+  static void setMaxOpenedFiles(unsigned int newMax);
 
 protected:
 
@@ -105,6 +166,9 @@ private:
   XdmfHDF5Controller(const XdmfHDF5Controller &);  // Not implemented.
   void operator=(const XdmfHDF5Controller &);  // Not implemented.
 
+  static std::map<std::string, unsigned int> mOpenFileUsage;
+  // When set to 0 there will be no files that stay open after a read
+  static unsigned int mMaxOpenedFiles;
 };
 
 #endif /* XDMFHDF5CONTROLLER_HPP_ */

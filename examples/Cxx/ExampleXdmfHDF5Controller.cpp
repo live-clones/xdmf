@@ -38,5 +38,23 @@ int main(int, char **)
 
         //#initialization end
 
+        //#setMaxOpenedFiles begin
+
+        XdmfHDF5Controller::setMaxOpenedFiles(2);
+
+        //#setMaxOpenedFiles end
+
+        //#getMaxOpenedFiles begin
+
+        unsigned int maxNumOpened = XdmfHDF5Controller::getMaxOpenedFiles();
+
+        //#getMaxOpenedFiles end
+
+        //#closeFiles begin
+
+        XdmfHDF5Controller::closeFiles();
+
+        //#closeFiles end
+
         return 0;
 }
