@@ -183,6 +183,9 @@ class XdmfHDF5WriterDSM;
 #define XdmfWriteToDSM xdmfwritetodsm_
 #define XdmfWriteHDF5 xdmfwritehdf5_
 #define XdmfInitHDF5 xdmfinithdf5_
+#define XdmfGetMaxOpenedFiles xdmfgetmaxopenedfiles_
+#define XdmfSetMaxOpenedFiles xdmfsetmaxopenedfiles_
+#define XdmfCloseOpenedHDF5Files xdmfcloseopenedhdf5files_
 #define XdmfSetTopologyPolyline xdmfsettopologypolyline_
 #define XdmfSetTopologyPolygon xdmfsettopologypolygon_
 #define XdmfRetrieveNumDomainGridCollections xdmfretrievenumdomaingridcollections_

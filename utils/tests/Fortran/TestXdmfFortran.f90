@@ -26,6 +26,13 @@ PROGRAM XdmfFortranExample
   infilename = 'my_output.xmf'//CHAR(0)
   
   CALL XDMFINIT(obj)
+
+  CALL XDMFSETMAXOPENEDFILES(1)
+
+  numContained = XDMFGETMAXOPENEDFILES()
+
+  PRINT *, 'Maximum hdf5 files loaded: ', numContained
+
   CALL XDMFREAD(obj, infilename)
 
   PRINT *, 'Load From: ', TRIM(infilename)
@@ -312,6 +319,7 @@ PROGRAM XdmfFortranExample
   PRINT *, 'Key: ', itemKey
   PRINT *, 'Value: ', itemValue
 
+  CALL XDMFCLOSEOPENEDHDF5FILES()
 
   CALL XDMFCLOSE(obj)
 

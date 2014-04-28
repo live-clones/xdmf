@@ -52,6 +52,7 @@
 #include "XdmfUnstructuredGrid.hpp"
 #include "XdmfWriter.hpp"
 #include "XdmfHDF5Writer.hpp"
+#include "XdmfHDF5Controller.hpp"
 #include "string.h"
 
 #include <stdio.h>
@@ -9962,6 +9963,24 @@ extern "C"
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
     xdmfFortran->initHDF5(xmlFilePath, release);
+  }
+
+  unsigned int
+  XdmfGetMaxOpenedFiles()
+  {
+    return XdmfHDF5Controller::getMaxOpenedFiles();
+  }
+
+  void
+  XdmfSetMaxOpenedFiles(int * numFilePtr)
+  {
+    XdmfHDF5Controller::setMaxOpenedFiles(*numFilePtr);
+  }
+
+  void
+  XdmfCloseOpenedHDF5Files()
+  {
+    XdmfHDF5Controller::closeFiles();
   }
 
   void

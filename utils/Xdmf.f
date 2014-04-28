@@ -9,6 +9,7 @@
         integer xdmfstoremap
         integer xdmfaddcoordinate
         integer xdmfaddset
+        integer xdmfgetmaxopenedfiles
 
 ! Array Type
         integer XDMF_ARRAY_TYPE_INT8
