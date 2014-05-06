@@ -6,6 +6,7 @@ endif (POLICY CMP0015)
 
 include(CheckCXXSourceCompiles)
 include(SetUpVersion)
+include(TestBigEndian)
 
 if(VERSION_CONTROL_AUTOUPDATE OR 
     NOT EXISTS ${CMAKE_BINARY_DIR}/XdmfVersion.hpp)
@@ -76,6 +77,9 @@ if(LIBXML2_FOUND)
 endif(LIBXML2_FOUND)
 
 # Perform compile-time checks and generate XdmfConfig.hpp
+
+TEST_BIG_ENDIAN(XDMF_BIG_ENDIAN)
+
 unset(HAVE_BOOST_SHARED_DYNAMIC_CAST CACHE)
 set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${Boost_INCLUDE_DIRS})
 check_cxx_source_compiles("
@@ -98,6 +102,7 @@ set(XdmfCoreSources
   XdmfArray
   XdmfArrayReference
   XdmfArrayType
+  XdmfBinaryController
   XdmfCoreItemFactory
   XdmfCoreReader
   XdmfError

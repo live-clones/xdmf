@@ -341,7 +341,8 @@ XdmfWriter::visit(XdmfArray & array,
           if(index != std::string::npos) {
             // If path is not a folder
             // put the directory path into this variable
-            const std::string heavyDataDir = heavyDataPath.substr(0, index + 1);
+            const std::string heavyDataDir = 
+              heavyDataPath.substr(0, index + 1);
             // If the directory is in the XML File Path
             if(mImpl->mXMLFilePath.find(heavyDataDir) == 0) {
               heavyDataPath =
@@ -358,19 +359,25 @@ XdmfWriter::visit(XdmfArray & array,
               dimensionStream << " ";
             }
           }
+
+          const std::string dataSetPath = 
+            array.getHeavyDataController(i)->getDataSetPath();
+
           // Clear the stream
           valuesStream.str(std::string());
           if (array.getNumberHeavyDataControllers() > 1) {
             valuesStream << heavyDataPath << ":"
-                         << array.getHeavyDataController(i)->getDataSetPath()
+                         << dataSetPath
                          << "|" << dimensionStream.str();
             if (i + 1 < array.getNumberHeavyDataControllers()){
               valuesStream << "|";
             }
           }
           else {
-            valuesStream << heavyDataPath << ":"
-                         << array.getHeavyDataController(i)->getDataSetPath(); 
+            valuesStream << heavyDataPath;
+            if(!dataSetPath.empty()) {
+              valuesStream << ":" << dataSetPath;
+            }
           }
           xmlTextValues.push_back(valuesStream.str());
         }

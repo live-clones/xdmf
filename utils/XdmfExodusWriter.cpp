@@ -360,6 +360,7 @@ XdmfExodusWriter::write(const std::string & filePath,
 
   // add this grid to a simple grid collection and write
   shared_ptr<XdmfGridCollection> collection = XdmfGridCollection::New();
+  collection->setName(gridToWrite->getName());
   collection->setType(XdmfGridCollectionType::Temporal());
   collection->insert(gridToWrite);
   return write(filePath,

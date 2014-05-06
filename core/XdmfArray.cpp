@@ -31,11 +31,36 @@
 #include "XdmfArray.hpp"
 #include "XdmfArrayType.hpp"
 #include "XdmfArrayReference.hpp"
+#include "XdmfBinaryController.hpp"
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfHeavyDataController.hpp"
 #include "XdmfVisitor.hpp"
 #include "XdmfError.hpp"
 
+namespace {
+
+  std::string
+  getFullHeavyDataPath(const std::string & filePath,
+                       const std::map<std::string, std::string> & itemProperties)
+  {
+    // FIXME: for other OS (e.g. windows)
+    if(filePath.size() > 0 && filePath[0] != '/') {
+      // Dealing with a relative path for heavyData location
+      std::map<std::string, std::string>::const_iterator xmlDir =
+        itemProperties.find("XMLDir");
+      if(xmlDir == itemProperties.end()) {
+        XdmfError::message(XdmfError::FATAL,
+                           "'XMLDir' not found in itemProperties in "
+                           "XdmfArray::populateItem");
+      }
+      std::stringstream newHeavyDataPath;
+      newHeavyDataPath << xmlDir->second << filePath;
+      return newHeavyDataPath.str();
+    }
+    return filePath;
+  }
+  
+}
 
 XDMF_CHILDREN_IMPLEMENTATION(XdmfArray,
                              XdmfHeavyDataController,
@@ -524,14 +549,11 @@ public:
   unsigned int
   operator()(const boost::blank & array) const
   {
-    if(mArray->mHeavyDataControllers.size()>0) {
-      int total = 0;
-      for (unsigned int i = 0; i < mArray->mHeavyDataControllers.size(); ++i) {
-        total += mArray->mHeavyDataControllers[i]->getSize();
-      }
-      return total;
+    unsigned int total = 0;
+    for (unsigned int i = 0; i < mArray->mHeavyDataControllers.size(); ++i) {
+      total += mArray->mHeavyDataControllers[i]->getSize();
     }
-    return 0;
+    return total;
   }
 
   template<typename T>
@@ -659,9 +681,8 @@ std::map<std::string, std::string>
 XdmfArray::getItemProperties() const
 {
   std::map<std::string, std::string> arrayProperties;
-  if(mHeavyDataControllers.size()>0) {
-    arrayProperties.insert(std::make_pair("Format",
-                                          mHeavyDataControllers[0]->getName()));
+  if(mHeavyDataControllers.size() > 0) {
+    mHeavyDataControllers[0]->getProperties(arrayProperties);
   }
   else {
     arrayProperties.insert(std::make_pair("Format", "XML"));
@@ -738,7 +759,7 @@ XdmfArray::getHeavyDataController()
 shared_ptr<const XdmfHeavyDataController>
 XdmfArray::getHeavyDataController() const
 {
-  if (mHeavyDataControllers.size()>0) {
+  if (mHeavyDataControllers.size() > 0) {
     return mHeavyDataControllers[0];
   }
   else {
@@ -747,7 +768,7 @@ XdmfArray::getHeavyDataController() const
 }
 
 void
-XdmfArray::initialize(const shared_ptr<const XdmfArrayType> arrayType,
+XdmfArray::initialize(const shared_ptr<const XdmfArrayType> & arrayType,
                       const unsigned int size)
 {
   if(arrayType == XdmfArrayType::Int8()) {
@@ -795,7 +816,7 @@ XdmfArray::initialize(const shared_ptr<const XdmfArrayType> arrayType,
 }
 
 void
-XdmfArray::initialize(const shared_ptr<const XdmfArrayType> arrayType,
+XdmfArray::initialize(const shared_ptr<const XdmfArrayType> & arrayType,
                       const std::vector<unsigned int> & dimensions)
 {
   mDimensions = dimensions;
@@ -1065,7 +1086,6 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
   }
   const std::string & formatVal = format->second;
 
-
   if(formatVal.compare("HDF") == 0) {
     contentIndex = 0;
     int contentStep = 2;
@@ -1088,20 +1108,9 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
       std::string dataSetPath = 
         contentVals[contentIndex].substr(colonLocation+1);
 
-      // FIXME: for other OS (e.g. windows)
-      if(hdf5Path.size() > 0 && hdf5Path[0] != '/') {
-        // Dealing with a relative path for hdf5 location
-        std::map<std::string, std::string>::const_iterator xmlDir =
-          itemProperties.find("XMLDir");
-        if(xmlDir == itemProperties.end()) {
-          XdmfError::message(XdmfError::FATAL,
-                             "'XMLDir' not found in itemProperties in "
-                             "XdmfArray::populateItem");
-        }
-        std::stringstream newHDF5Path;
-        newHDF5Path << xmlDir->second << hdf5Path;
-        hdf5Path = newHDF5Path.str();
-      }
+
+      hdf5Path = getFullHeavyDataPath(hdf5Path,
+                                      itemProperties);
 
       // Parse dimensions from the content
       std::vector<unsigned int> contentDims;
@@ -1126,8 +1135,7 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
         contentStep = 1;
       }
 
-
-      mHeavyDataControllers.push_back( 
+      mHeavyDataControllers.push_back(
         XdmfHDF5Controller::New(hdf5Path,
                                 dataSetPath,
                                 arrayType,
@@ -1137,8 +1145,8 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
                                                           1),
                                 contentDims,
                                 contentDims)
-      );
-      contentIndex+=contentStep;
+        );
+      contentIndex += contentStep;
     }
   }
   else if(formatVal.compare("XML") == 0) {
@@ -1163,6 +1171,43 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
         this->insert(index, atof((*iter).c_str()));
       }
     }
+  }
+  else if(formatVal.compare("Binary") == 0) {
+
+    XdmfBinaryController::Endian endian = XdmfBinaryController::NATIVE;
+    std::map<std::string, std::string>::const_iterator endianIter =
+      itemProperties.find("Endian");
+    if(endianIter != itemProperties.end()) {
+      if(endianIter->second.compare("Big") == 0) {
+        endian =  XdmfBinaryController::BIG;
+      }
+      else if(endianIter->second.compare("Little") == 0) {
+        endian =  XdmfBinaryController::LITTLE;
+      }
+      else if(endianIter->second.compare("Native") == 0) {
+        endian =  XdmfBinaryController::NATIVE;
+      }
+      else {
+        XdmfError(XdmfError::FATAL,
+                  "Invalid endianness type: " + endianIter->second);
+      }
+    }
+
+    unsigned int seek = 0;
+    std::map<std::string, std::string>::const_iterator seekIter =
+      itemProperties.find("Seek");
+    if(seekIter != itemProperties.end()) {
+      seek = std::atoi(seekIter->second.c_str());
+    }
+
+    const std::string binaryPath = getFullHeavyDataPath(contentVals[0],
+                                                        itemProperties);
+
+    mHeavyDataControllers.push_back(XdmfBinaryController::New(binaryPath,
+                                                              arrayType,
+                                                              endian,
+                                                              seek,
+                                                              mDimensions));
   }
   else {
     try {

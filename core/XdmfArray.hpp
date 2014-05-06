@@ -649,7 +649,7 @@ public:
    * @param     arrayType       The type of array to initialize.
    * @param     size            The number of values in the initialized array.
    */
-  void initialize(const shared_ptr<const XdmfArrayType> arrayType,
+  void initialize(const shared_ptr<const XdmfArrayType> & arrayType,
                   const unsigned int size = 0);
 
   /**
@@ -678,7 +678,7 @@ public:
    * @param     arrayType       The type of array to initialize.
    * @param     dimensions      The number dimensions of the initialized array.
    */
-  void initialize(const shared_ptr<const XdmfArrayType> arrayType,
+  void initialize(const shared_ptr<const XdmfArrayType> & arrayType,
                   const std::vector<unsigned int> & dimensions);
 
   using XdmfItem::insert;

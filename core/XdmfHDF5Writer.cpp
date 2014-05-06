@@ -473,15 +473,29 @@ XdmfHDF5Writer::write(XdmfArray & array,
         if((mMode == Overwrite || mMode == Append || mMode == Hyperslab)
           && heavyDataController) {
 
-          // Write to the previous dataset
-          dataSetPath.str(std::string());
-          dataSetPath << heavyDataController->getDataSetPath();
-          hdf5FilePath = heavyDataController->getFilePath();
-          if(mMode == Hyperslab) {
-            // Start, stride, and dataspace dimensions only matter for hyperslab mode
-            dataspaceDimensions = heavyDataController->getDataspaceDimensions();
-            start = heavyDataController->getStart();
-            stride = heavyDataController->getStride();
+          // If overwriting, appending, or writing to a hyperslab this
+          // should be an hdf5 controller - cast it and pull info of
+          // dataset we are writing to.
+          shared_ptr<XdmfHDF5Controller> hdf5Controller = 
+            shared_dynamic_cast<XdmfHDF5Controller>(heavyDataController);
+
+          if(hdf5Controller) {
+            // Write to the previous dataset
+            dataSetPath.str(std::string());
+            dataSetPath << hdf5Controller->getDataSetPath();
+            hdf5FilePath = hdf5Controller->getFilePath();
+            if(mMode == Hyperslab) {
+              // Start, stride, and dataspace dimensions only matter
+              // for hyperslab mode
+              dataspaceDimensions = hdf5Controller->getDataspaceDimensions();
+              start = hdf5Controller->getStart();
+              stride = hdf5Controller->getStride();
+            }
+          }
+          else {
+            XdmfError::message(XdmfError::FATAL,
+                               "Can only overwrite, append, or write a "
+                               "hyperslab to a dataset of the same type");
           }
         }
         else {
@@ -777,9 +791,6 @@ XdmfHDF5Writer::write(XdmfArray & array,
         if(mMode == Default) {
           ++mDataSetId;
         }
-
-
-
 
         // Attach a new controller to the array
         shared_ptr<XdmfHDF5Controller> newDataController =

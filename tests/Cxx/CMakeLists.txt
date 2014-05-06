@@ -11,6 +11,7 @@ ADD_TEST_CXX_DEPENDENCIES("Xdmf")
 #	Read UseCxxTest.cmake for more information
 # ---------------------------------------
 ADD_TEST_CXX(TestXdmfAttribute)
+ADD_TEST_CXX(TestXdmfBinaryController)
 ADD_TEST_CXX(TestXdmfCurvilinearGrid)
 ADD_TEST_CXX(TestXdmfFunction)
 ADD_TEST_CXX(TestXdmfGeometry)
@@ -42,6 +43,9 @@ ADD_TEST_CXX(TestXdmfXPath)
 #       Read UseCxxTest.cmake for more information
 # ---------------------------------------
 CLEAN_TEST_CXX(TestXdmfAttribute)
+CLEAN_TEST_CXX(TestXdmfBinaryController
+  TestXdmfBinary.xmf
+  testBinary.bin)
 CLEAN_TEST_CXX(TestXdmfCurvilinearGrid
   TestXdmfCurvilinearGrid1.xmf
   TestXdmfCurvilinearGrid2.xmf)

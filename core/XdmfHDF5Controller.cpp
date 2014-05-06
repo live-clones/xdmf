@@ -36,7 +36,7 @@ std::map<std::string, unsigned int> XdmfHDF5Controller::mOpenFileUsage;
 shared_ptr<XdmfHDF5Controller>
 XdmfHDF5Controller::New(const std::string & hdf5FilePath,
                         const std::string & dataSetPath,
-                        const shared_ptr<const XdmfArrayType> type,
+                        const shared_ptr<const XdmfArrayType> & type,
                         const std::vector<unsigned int> & start,
                         const std::vector<unsigned int> & stride,
                         const std::vector<unsigned int> & dimensions,
@@ -60,7 +60,7 @@ XdmfHDF5Controller::New(const std::string & hdf5FilePath,
 
 XdmfHDF5Controller::XdmfHDF5Controller(const std::string & hdf5FilePath,
                                        const std::string & dataSetPath,
-                                       const shared_ptr<const XdmfArrayType> type,
+                                       const shared_ptr<const XdmfArrayType> & type,
                                        const std::vector<unsigned int> & start,
                                        const std::vector<unsigned int> & stride,
                                        const std::vector<unsigned int> & dimensions,
@@ -68,11 +68,24 @@ XdmfHDF5Controller::XdmfHDF5Controller(const std::string & hdf5FilePath,
   XdmfHeavyDataController(hdf5FilePath,
                           dataSetPath,
                           type,
-                          start,
-                          stride,
-                          dimensions,
-                          dataspaceDimensions)
+                          dimensions),
+  mDataspaceDimensions(dataspaceDimensions),
+  mStart(start),
+  mStride(stride)
 {
+  if(!(mStart.size() == mStride.size() && 
+       mStride.size() == mDimensions.size() &&
+       mDimensions.size() == mDataspaceDimensions.size())) {
+    try {
+      XdmfError::message(XdmfError::FATAL,
+                         "mStart, mStride, mDimensions, and "
+                         "mDataSpaceDimensions must all be of equal length in "
+                         "XdmfHDF5Controller constructor");
+    }
+    catch (XdmfError e) {
+      throw e;
+    }
+  }
 }
 
 XdmfHDF5Controller::~XdmfHDF5Controller()
@@ -91,6 +104,12 @@ XdmfHDF5Controller::closeFiles()
   mOpenFileUsage.clear();
 }
 
+std::vector<unsigned int> 
+XdmfHDF5Controller::getDataspaceDimensions() const
+{
+  return mDataspaceDimensions;
+}
+
 std::string
 XdmfHDF5Controller::getName() const
 {
@@ -101,6 +120,24 @@ unsigned int
 XdmfHDF5Controller::getMaxOpenedFiles()
 {
   return XdmfHDF5Controller::mMaxOpenedFiles;
+}
+
+void 
+XdmfHDF5Controller::getProperties(std::map<std::string, std::string> & collectedProperties) const
+{
+  collectedProperties["Format"] = this->getName();
+}
+
+std::vector<unsigned int> 
+XdmfHDF5Controller::getStart() const
+{
+  return mStart;
+}
+
+std::vector<unsigned int> 
+XdmfHDF5Controller::getStride() const
+{
+  return mStride;
 }
 
 void

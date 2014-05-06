@@ -78,7 +78,7 @@ public:
   static shared_ptr<XdmfHDF5Controller>
   New(const std::string & hdf5FilePath,
       const std::string & dataSetPath,
-      const shared_ptr<const XdmfArrayType> type,
+      const shared_ptr<const XdmfArrayType> & type,
       const std::vector<unsigned int> & start,
       const std::vector<unsigned int> & stride,
       const std::vector<unsigned int> & dimensions,
@@ -103,6 +103,35 @@ public:
    */
   static void closeFiles();
 
+  /**
+   * Get the dimensions of the dataspace owned by this
+   * controller. This is the dimension of the entire heavy dataset,
+   * which may be larger than the dimensions of the array (if reading
+   * a piece of a larger dataset).
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfHeavyDataController.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getDataspaceDimensions
+   * @until //#getDataspaceDimensions
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleHeavyDataController.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getDataspaceDimensions
+   * @until #//getDataspaceDimensions
+   *
+   * @return    A vector containing the size in each dimension of the dataspace
+   *            owned by this controller.
+   */
+  std::vector<unsigned int> getDataspaceDimensions() const;
+
   virtual std::string getName() const;
 
   /**
@@ -125,6 +154,56 @@ public:
    * @return    The maximum number of hdf5 files
    */
   static unsigned int getMaxOpenedFiles();
+
+  virtual void 
+  getProperties(std::map<std::string, std::string> & collectedProperties) const;
+  /**
+   * Get the start index of the heavy data set owned by this controller.
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfHeavyDataController.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getStart
+   * @until //#getStart
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleHeavyDataController.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getStart
+   * @until #//getStart
+   *
+   * @return    A vector containing the start index in each dimension of
+   *            the heavy data set owned by this controller.
+   */
+  std::vector<unsigned int> getStart() const;
+
+  /**
+   * Get the stride of the heavy data set owned by this controller.
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfHeavyDataController.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getStride
+   * @until //#getStride
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleHeavyDataController.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getStride
+   * @until #//getStride
+   *
+   * @return    A vector containing the stride in each dimension of the
+   *            heavy data set owned by this controller.
+   */
+  std::vector<unsigned int> getStride() const;
 
   virtual void read(XdmfArray * const array);
 
@@ -153,7 +232,7 @@ protected:
 
   XdmfHDF5Controller(const std::string & hdf5FilePath,
                      const std::string & dataSetPath,
-                     const shared_ptr<const XdmfArrayType> type,
+                     const shared_ptr<const XdmfArrayType> & type,
                      const std::vector<unsigned int> & start,
                      const std::vector<unsigned int> & stride,
                      const std::vector<unsigned int> & dimensions,
@@ -169,6 +248,11 @@ private:
   static std::map<std::string, unsigned int> mOpenFileUsage;
   // When set to 0 there will be no files that stay open after a read
   static unsigned int mMaxOpenedFiles;
+
+  const std::vector<unsigned int> mDataspaceDimensions;
+  const std::vector<unsigned int> mStart;
+  const std::vector<unsigned int> mStride;
+
 };
 
 #endif /* XDMFHDF5CONTROLLER_HPP_ */
