@@ -21,8 +21,9 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#include <boost/tokenizer.hpp>
+#include <boost/algorithm/string/trim.hpp>
 #include <boost/assign.hpp>
+#include <boost/tokenizer.hpp>
 #include <limits>
 #include <sstream>
 #include <utility>
@@ -1030,7 +1031,8 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
 
   unsigned int contentIndex;
 
-  const std::string & contentVal = content->second;
+  // trim content of whitespace
+  const std::string contentVal = boost::algorithm::trim_copy(content->second);
 
   std::vector<std::string> contentVals;
 
@@ -1107,7 +1109,6 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
         contentVals[contentIndex].substr(0, colonLocation);
       std::string dataSetPath = 
         contentVals[contentIndex].substr(colonLocation+1);
-
 
       hdf5Path = getFullHeavyDataPath(hdf5Path,
                                       itemProperties);
