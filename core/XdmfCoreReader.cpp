@@ -24,10 +24,11 @@
 #include <libxml/uri.h>
 #include <libxml/xpointer.h>
 #include <libxml/xmlreader.h>
-#include "boost/tokenizer.hpp"
+#include <boost/algorithm/string/trim.hpp>
+#include <boost/tokenizer.hpp>
+#include <cstring>
 #include <map>
 #include <sstream>
-#include <cstring>
 #include <utility>
 #include "XdmfArray.hpp"
 #include "XdmfArrayType.hpp"
@@ -79,7 +80,7 @@ public:
       mXMLDir = mXMLDir.substr(0, index + 1);
     }
 
-    mDocument = xmlReadFile(filePath.c_str(), NULL, 0);
+    mDocument = xmlReadFile(filePath.c_str(), NULL, XML_PARSE_NOENT);
 
     if(mDocument == NULL) {
       try {
@@ -205,7 +206,7 @@ public:
   readSingleNode(const xmlNodePtr currNode,
                  std::vector<shared_ptr<XdmfItem> > & myItems)
   {
-    // Check to see if the node is already in the Xpath
+    // Check to see if the node is already in the XPath Map (seen previously)
     std::map<xmlNodePtr, shared_ptr<XdmfItem> >::const_iterator iter =
       mXPathMap.find(currNode);
     // If it is grab it from the previously stored items
@@ -213,29 +214,19 @@ public:
       myItems.push_back(iter->second);
     }
     else {
-      // Otherwise, generate it from the node
+      // Otherwise, generate a new Item from the node
       std::map<std::string, std::string> itemProperties;
 
       xmlNodePtr childNode = currNode->children;
-      if (XdmfArray::ItemTag.compare((char *)currNode->name) == 0) {
+      if (XdmfArray::ItemTag.compare((char *)currNode->name) == 0 ||
+          strcmp("DataStructure", (char *)currNode->name) == 0) {
         while(childNode != NULL) {
           if(childNode->type == XML_TEXT_NODE && childNode->content) {
-            const char * content = (char*)childNode->content;
             
-            // Determine if content is whitespace
-            bool whitespace = true;
+            std::string content((char *)childNode->content);
+            boost::algorithm::trim(content);
             
-            const char * contentPtr = content;
-            // Step through to end of pointer
-            while(contentPtr != NULL) {
-              // If not a whitespace character, break
-              if(!isspace(*contentPtr++)) {
-                whitespace = false;
-                break;
-              }
-            }
-            
-            if(!whitespace) {
+            if(content.size() != 0) {
               itemProperties.insert(std::make_pair("Content", content));
               itemProperties.insert(std::make_pair("XMLDir", mXMLDir));
               break;

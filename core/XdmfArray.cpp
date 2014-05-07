@@ -21,7 +21,6 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#include <boost/algorithm/string/trim.hpp>
 #include <boost/assign.hpp>
 #include <boost/tokenizer.hpp>
 #include <limits>
@@ -1010,6 +1009,7 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
                         const std::vector<shared_ptr<XdmfItem> > & childItems,
                         const XdmfCoreReader * const reader)
 {
+
   // This inserts any XdmfInformation in childItems into the object.
   XdmfItem::populateItem(itemProperties, childItems, reader);
 
@@ -1031,8 +1031,7 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
 
   unsigned int contentIndex;
 
-  // trim content of whitespace
-  const std::string contentVal = boost::algorithm::trim_copy(content->second);
+  const std::string & contentVal = content->second;
 
   std::vector<std::string> contentVals;
 
