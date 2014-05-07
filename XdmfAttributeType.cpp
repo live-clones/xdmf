@@ -100,14 +100,8 @@ XdmfAttributeType::New(const std::map<std::string, std::string> & itemProperties
     type = itemProperties.find("AttributeType");
   }
   if(type == itemProperties.end()) {
-    try {
-      XdmfError::message(XdmfError::FATAL, 
-                         "Neither 'Type' nor 'AttributeType' found in "
-                         "itemProperties in XdmfAttributeType::New");
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    // to support old xdmf defaults, return Scalar()
+    return Scalar();
   }
   const std::string & typeVal = type->second;
 

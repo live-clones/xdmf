@@ -44,6 +44,10 @@ XdmfCoreItemFactory::createItem(const std::string & itemTag,
   if(itemTag.compare(XdmfArray::ItemTag) == 0) {
     return XdmfArray::New();
   }
+  else if(itemTag.compare("DataStructure") == 0) {
+    // to support old xdmf DataStructure tag
+    return XdmfArray::New();
+  }
   else if (itemTag.compare(XdmfFunction::ItemTag) == 0) {
     std::map<std::string, std::string>::const_iterator type =
       itemProperties.find("ConstructedType");

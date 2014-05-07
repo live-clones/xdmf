@@ -127,15 +127,8 @@ XdmfArrayType::New(const std::map<std::string, std::string> & itemProperties)
     type = itemProperties.find("NumberType");
   }
   if(type == itemProperties.end()) {
-    try {
-      XdmfError::message(XdmfError::FATAL,
-                         "Type unset because neither 'DataType' nor "
-                         "'NumberType' found in itemProperties in "
-                         "XdmfArrayType::New");
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    // to support old xdmf defaults, return Float32()
+    return Float32();
   }
   const std::string & typeVal = type->second;
 
