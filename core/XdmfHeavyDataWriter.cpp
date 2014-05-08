@@ -27,9 +27,9 @@
 #include "XdmfArrayType.hpp"
 #include "XdmfError.hpp"
 #include "XdmfSystemUtils.hpp"
+#include <cstdio>
 #include <list>
 #include <vector>
-#include "stdio.h"
 
 XdmfHeavyDataWriter::XdmfHeavyDataWriter(const double compression,
                                          const unsigned int overhead) :
@@ -315,13 +315,8 @@ XdmfHeavyDataWriter::controllerSplitting(XdmfArray & array,
                   blockSizeSubtotal = 0;
                   for (unsigned int k = 0; k < dimensionSizeTotal; ++k) {
                     if (amountAlreadyWritten + k > array.getSize()) {
-                      try {
-                        XdmfError::message(XdmfError::FATAL,
-                                           "Error: Invalid Dimension in HDF5 Write.\n");
-                      }
-                      catch (XdmfError e) {
-                        throw e;
-                      }
+                      XdmfError::message(XdmfError::FATAL,
+                                         "Error: Invalid Dimension in HDF5 Write.\n");
                     }
                     blockSizeSubtotal +=
                       array.getValue<std::string>(amountAlreadyWritten + k).size();
@@ -418,13 +413,8 @@ XdmfHeavyDataWriter::controllerSplitting(XdmfArray & array,
                 blockSizeSubtotal = 0;
                 for (unsigned int k = 0; k < dimensionSizeTotal; ++k) {
                   if (amountAlreadyWritten + k > array.getSize()) {
-                    try {
-                      XdmfError::message(XdmfError::FATAL,
-                                         "Error: Invalid Dimension in HDF5 Write.\n");
-                    }
-                    catch (XdmfError e) {
-                      throw e;
-                    }
+                    XdmfError::message(XdmfError::FATAL,
+                                       "Error: Invalid Dimension in HDF5 Write.\n");
                   }
                   blockSizeSubtotal +=
                     array.getValue<std::string>(amountAlreadyWritten + k).size();
@@ -503,14 +493,9 @@ XdmfHeavyDataWriter::controllerSplitting(XdmfArray & array,
                   // This shouldn't ever trigger
                   // but it's good to cover ourselves
                   // and throw an error if the block size won't work
-                  try {
-                    XdmfError::message(XdmfError::FATAL,
-                                        "Error: Dimension Block size"
-                                       " / Maximum File size mismatch.");
-                  }
-                  catch (XdmfError e) {
-                    throw e;
-                  }
+                  XdmfError::message(XdmfError::FATAL,
+                                     "Error: Dimension Block size"
+                                     " / Maximum File size mismatch.");
                 }
               }
             }
@@ -809,14 +794,9 @@ XdmfHeavyDataWriter::controllerSplitting(XdmfArray & array,
                 if ((unsigned int)getFileSizeLimit()*(1024*1024) < blockSizeSubtotal) {
                   // This shouldn't ever trigger, but it's good to cover ourselves
                   // Throw an error if the block size won't work
-                  try {
-                    XdmfError::message(XdmfError::FATAL,
-                                       "Error: Dimension Block size"
-                                       " / Maximum File size mismatch.\n");
-                  }
-                  catch (XdmfError e) {
-                    throw e;
-                  }
+                  XdmfError::message(XdmfError::FATAL,
+                                     "Error: Dimension Block size"
+                                     " / Maximum File size mismatch.\n");
                 }
               }
             }
@@ -1045,8 +1025,7 @@ XdmfHeavyDataWriter::controllerSplitting(XdmfArray & array,
     // Need to copy by duplicating the contents of the array
     unsigned int j = controllerIndexOffset;
 
-    try {
-      if (mMode == Default) {
+    if (mMode == Default) {
       std::stringstream testFile;
       if (getFileIndex() == 0) {
         // If sequentially named files need to be created or referenced
@@ -1063,20 +1042,16 @@ XdmfHeavyDataWriter::controllerSplitting(XdmfArray & array,
                                stride,
                                dimensions,
                                dataspaceDimensions);
-      }
-      else {
-          heavyDataController =
-          this->createController(heavyDataController->getFilePath(),
-                                 heavyDataController->getDataSetPath(),
-                                 array.getArrayType(),
-                                 start,
-                                 stride,
-                                 dimensions,
-                                 dataspaceDimensions);
-      }
     }
-    catch (XdmfError e) {
-      throw e;
+    else {
+      heavyDataController =
+        this->createController(heavyDataController->getFilePath(),
+                               heavyDataController->getDataSetPath(),
+                               array.getArrayType(),
+                               start,
+                               stride,
+                               dimensions,
+                               dataspaceDimensions);
     }
 
     int movedSize = 0;

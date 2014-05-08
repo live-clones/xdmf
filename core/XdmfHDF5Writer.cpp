@@ -158,18 +158,13 @@ XdmfHDF5Writer::createController(const std::string & hdf5FilePath,
                                      const std::vector<unsigned int> & dimensions,
                                      const std::vector<unsigned int> & dataspaceDimensions)
 {
-  try {
-    return XdmfHDF5Controller::New(hdf5FilePath,
-                                   dataSetPath,
-                                   type,
-                                   start,
-                                   stride,
-                                   dimensions,
-                                   dataspaceDimensions);
-  }
-  catch (XdmfError e) {
-    throw e;
-  }
+  return XdmfHDF5Controller::New(hdf5FilePath,
+                                 dataSetPath,
+                                 type,
+                                 start,
+                                 stride,
+                                 dimensions,
+                                 dataspaceDimensions);
 }
 
 unsigned int
@@ -259,20 +254,10 @@ XdmfHDF5Writer::visit(XdmfArray & array,
   std::set<const XdmfItem *>::iterator checkWritten = mImpl->mWrittenItems.find(&array);
   if (checkWritten == mImpl->mWrittenItems.end() || array.getItemTag() == "DataItem") {
     // If it has children send the writer to them too.
-    try {
-      array.traverse(visitor);
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    array.traverse(visitor);
     if (array.isInitialized()) {
       // Only do this if the object has not already been written
-      try {
-        this->write(array, H5P_DEFAULT);
-      }
-      catch (XdmfError e) {
-        throw e;
-      }
+      this->write(array, H5P_DEFAULT);
       mImpl->mWrittenItems.insert(&array);
     }
   }
@@ -294,12 +279,7 @@ XdmfHDF5Writer::visit(XdmfItem & item,
   std::set<const XdmfItem *>::iterator checkWritten = mImpl->mWrittenItems.find(&item);
   if (checkWritten == mImpl->mWrittenItems.end()) {
     mImpl->mWrittenItems.insert(&item);
-    try {
-      item.traverse(visitor);
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    item.traverse(visitor);
   }
   mImpl->mDepth--;
   if(mImpl->mDepth <= 0) {
@@ -351,14 +331,9 @@ XdmfHDF5Writer::write(XdmfArray & array,
       closeDatatype = true;
     }
     else {
-      try {
-        XdmfError::message(XdmfError::FATAL,
-                           "Array of unsupported type in "
-                           "XdmfHDF5Writer::write");
-      }
-      catch (XdmfError e) {
-        throw e;
-      }
+      XdmfError::message(XdmfError::FATAL,
+                         "Array of unsupported type in "
+                         "XdmfHDF5Writer::write");
     }
   }
 
@@ -399,20 +374,15 @@ XdmfHDF5Writer::write(XdmfArray & array,
 
     if (previousControllers.size() == 0) {
       // Create a temporary controller if the array doesn't have one
-      try {
-        shared_ptr<XdmfHeavyDataController> tempDataController =
-          this->createController(hdf5FilePath,
-                                 "Data",
-                                 array.getArrayType(),
-                                 std::vector<unsigned int>(1, 0),
-                                 std::vector<unsigned int>(1, 1),
-                                 std::vector<unsigned int>(1, array.getSize()),
-                                 std::vector<unsigned int>(1, array.getSize()));
-        previousControllers.push_back(tempDataController);
-      }
-      catch (XdmfError e) {
-        throw e;
-      }
+      shared_ptr<XdmfHeavyDataController> tempDataController =
+        this->createController(hdf5FilePath,
+                               "Data",
+                               array.getArrayType(),
+                               std::vector<unsigned int>(1, 0),
+                               std::vector<unsigned int>(1, 1),
+                               std::vector<unsigned int>(1, array.getSize()),
+                               std::vector<unsigned int>(1, array.getSize()));
+      previousControllers.push_back(tempDataController);
     }
 
     int controllerIndexOffset = 0;
@@ -690,15 +660,10 @@ XdmfHDF5Writer::write(XdmfArray & array,
 
           const unsigned int ndims = H5Sget_simple_extent_ndims(dataspace);
           if(ndims != current_dims.size()) {
-            try {
-            XdmfError::message(XdmfError::FATAL,                            \
+            XdmfError::message(XdmfError::FATAL,
                                "Data set rank different -- ndims != "
                                "current_dims.size() -- in "
                                "XdmfHDF5Writer::write");
-            }
-            catch (XdmfError e) {
-              throw e;
-            }
           }
 
           status = H5Dset_extent(dataset, &current_dims[0]);
@@ -710,15 +675,10 @@ XdmfHDF5Writer::write(XdmfArray & array,
 
           const unsigned int ndims = H5Sget_simple_extent_ndims(dataspace);
           if(ndims != current_dims.size()) {
-            try {
-              XdmfError::message(XdmfError::FATAL,                            \
-                                 "Data set rank different -- ndims != "
-                                 "current_dims.size() -- in "
-                                 "XdmfHDF5Writer::write");
-            }
-            catch (XdmfError e) {
-              throw e;
-            }
+            XdmfError::message(XdmfError::FATAL,
+                               "Data set rank different -- ndims != "
+                               "current_dims.size() -- in "
+                               "XdmfHDF5Writer::write");
           }
           status = H5Dset_extent(dataset, &current_dims[0]);
           dataspace = H5Dget_space(dataset);
@@ -744,14 +704,9 @@ XdmfHDF5Writer::write(XdmfArray & array,
                                        NULL) ;
 
           if(status < 0) {
-            try {
-              XdmfError::message(XdmfError::FATAL,
-                                 "H5Dset_extent returned failure in "
-                                 "XdmfHDF5Writer::write -- status: " + status);
-            }
-            catch (XdmfError e) {
-              throw e;
-            }
+            XdmfError::message(XdmfError::FATAL,
+                               "H5Dset_extent returned failure in "
+                               "XdmfHDF5Writer::write -- status: " + status);
           }
         }
 
@@ -763,14 +718,9 @@ XdmfHDF5Writer::write(XdmfArray & array,
                           curArray->getValuesInternal());
 
         if(status < 0) {
-          try {
-            XdmfError::message(XdmfError::FATAL,
-                               "H5Dwrite returned failure in XdmfHDF5Writer::write "
-                               "-- status: " + status);
-          }
-          catch (XdmfError e) {
-            throw e;
-          }
+          XdmfError::message(XdmfError::FATAL,
+                             "H5Dwrite returned failure in XdmfHDF5Writer::write "
+                             "-- status: " + status);
         }
 
         if(dataspace != H5S_ALL) {
@@ -822,36 +772,28 @@ XdmfHDF5Writer::write(XdmfArray & array,
           std::vector<unsigned int> insertDataSpaceDimensions;
           insertDataSpaceDimensions.push_back(newSize);
 
-          try {
-            newDataController = 
-              shared_dynamic_cast<XdmfHDF5Controller>(this->createController(curFileName,
-                                                      dataSetPath.str(),
-                                                      curArray->getArrayType(),
-                                                      insertStarts,
-                                                      insertStrides,
-                                                      insertDimensions,
-                                                      insertDataSpaceDimensions));
-          }
-          catch (XdmfError e) {
-            throw e;
-          }
+          newDataController = 
+            shared_dynamic_cast<XdmfHDF5Controller>
+            (this->createController(curFileName,
+                                    dataSetPath.str(),
+                                    curArray->getArrayType(),
+                                    insertStarts,
+                                    insertStrides,
+                                    insertDimensions,
+                                    insertDataSpaceDimensions));
         }
 
         if(!newDataController) {
           // If the controller wasn't generated by append
-          try {
-            newDataController =
-              shared_dynamic_cast<XdmfHDF5Controller>(this->createController(curFileName,
-                                                      dataSetPath.str(),
-                                                      curArray->getArrayType(),
-                                                      curStart,
-                                                      curStride,
-                                                      curDimensions,
-                                                      curDataSize));
-          }
-          catch (XdmfError e) {
-            throw e;
-          }
+          newDataController =
+            shared_dynamic_cast<XdmfHDF5Controller>
+            (this->createController(curFileName,
+                                    dataSetPath.str(),
+                                    curArray->getArrayType(),
+                                    curStart,
+                                    curStride,
+                                    curDimensions,
+                                    curDataSize));
         }
 
         newDataController->setArrayOffset(curArrayOffset);

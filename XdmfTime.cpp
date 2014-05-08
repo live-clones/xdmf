@@ -78,14 +78,9 @@ XdmfTime::populateItem(const std::map<std::string, std::string> & itemProperties
     mValue = atof(value->second.c_str());
   }
   else {
-    try {
-      XdmfError::message(XdmfError::FATAL, 
-                         "'Value' not in itemProperties in "
-                         "XdmfTime::populateItem");
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    XdmfError::message(XdmfError::FATAL, 
+                       "'Value' not in itemProperties in "
+                       "XdmfTime::populateItem");
   }
 }
 

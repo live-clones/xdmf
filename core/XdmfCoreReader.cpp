@@ -83,14 +83,9 @@ public:
     mDocument = xmlReadFile(filePath.c_str(), NULL, XML_PARSE_NOENT);
 
     if(mDocument == NULL) {
-      try {
-        XdmfError::message(XdmfError::FATAL,
-                           "xmlReadFile could not read " + filePath +
-                           " in XdmfCoreReader::XdmfCoreReaderImpl::openFile");
-      }
-      catch (XdmfError e) {
-        throw e;
-      }
+      XdmfError::message(XdmfError::FATAL,
+                         "xmlReadFile could not read " + filePath +
+                         " in XdmfCoreReader::XdmfCoreReaderImpl::openFile");
     }
 
     mDocuments.insert(std::make_pair((char*)mDocument->URL, mDocument));
@@ -105,17 +100,12 @@ public:
     mDocument = xmlParseDoc((const xmlChar*)lightData.c_str());
                                
     if(mDocument == NULL) {
-      try {
-        XdmfError::message(XdmfError::FATAL,
-                           "xmlReadFile could not parse passed light data string"
-                           " in XdmfCoreReader::XdmfCoreReaderImpl::parse");
-      }
-      catch (XdmfError e) {
-        throw e;
-      }
+      XdmfError::message(XdmfError::FATAL,
+                         "xmlReadFile could not parse passed light data string"
+                         " in XdmfCoreReader::XdmfCoreReaderImpl::parse");
     }
-
-    //    mDocuments.insert(std::make_pair((char*)mDocument->URL, mDocument));
+    
+    //mDocuments.insert(std::make_pair((char*)mDocument->URL, mDocument));
     mXPathContext = xmlXPtrNewContext(mDocument, NULL, NULL);
     mXPathMap.clear();
   }
@@ -184,12 +174,7 @@ public:
         }
         else {
           // Normal reading
-          try {
-            this->readSingleNode(currNode, myItems);
-          }
-          catch (XdmfError e) {
-            throw e;
-          }
+          this->readSingleNode(currNode, myItems);
         }
       }
       currNode = currNode->next;
@@ -242,40 +227,32 @@ public:
                                              (char *)currAttribute->children->content));
         currAttribute = currAttribute->next;
       }
-      try {
-        const std::vector<shared_ptr<XdmfItem> > childItems =
-          this->read(currNode->children);
-        shared_ptr<XdmfItem> newItem = 
-          mItemFactory->createItem((const char *)currNode->name,
-                                   itemProperties,
-                                   childItems);
+
+      const std::vector<shared_ptr<XdmfItem> > childItems =
+        this->read(currNode->children);
+      shared_ptr<XdmfItem> newItem = 
+        mItemFactory->createItem((const char *)currNode->name,
+                                 itemProperties,
+                                 childItems);
       
-        if(newItem == NULL) {
-          try {
-            XdmfError::message(XdmfError::FATAL, 
-                               "mItemFactory failed to createItem in "
-                               "XdmfCoreReader::XdmfCoreReaderImpl::readSingleNode");
-          }
-          catch (XdmfError e) {
-            throw e;
-          }
-        }
-        if (newItem->getItemTag().compare((const char *)currNode->name) != 0) {
-          newItem->populateItem(itemProperties,
-                                std::vector<shared_ptr<XdmfItem> >(),
-                                mCoreReader);
-        }
-        else {
-          newItem->populateItem(itemProperties,
-          childItems,
-          mCoreReader);
-        }
-        myItems.push_back(newItem);
-        mXPathMap.insert(std::make_pair(currNode, newItem));
+      if(newItem == NULL) {
+        XdmfError::message(XdmfError::FATAL, 
+                           "mItemFactory failed to createItem in "
+                           "XdmfCoreReader::XdmfCoreReaderImpl::readSingleNode");
       }
-      catch (XdmfError e) {
-        throw e;
+
+      if (newItem->getItemTag().compare((const char *)currNode->name) != 0) {
+        newItem->populateItem(itemProperties,
+                              std::vector<shared_ptr<XdmfItem> >(),
+                              mCoreReader);
       }
+      else {
+        newItem->populateItem(itemProperties,
+                              childItems,
+                              mCoreReader);
+      }
+      myItems.push_back(newItem);
+      mXPathMap.insert(std::make_pair(currNode, newItem));
     }
   }
 
@@ -287,12 +264,7 @@ public:
       xmlXPathEvalExpression((xmlChar*)xPath.c_str(), mXPathContext);
     if(xPathObject && xPathObject->nodesetval) {
       for(int i=0; i<xPathObject->nodesetval->nodeNr; ++i) {
-        try {
-          this->readSingleNode(xPathObject->nodesetval->nodeTab[i], myItems);
-        }
-        catch (XdmfError e) {
-          throw e;
-        }
+        this->readSingleNode(xPathObject->nodesetval->nodeTab[i], myItems);
       }
     }
     xmlXPathFreeObject(xPathObject);
@@ -320,26 +292,16 @@ XdmfCoreReader::~XdmfCoreReader()
 shared_ptr<XdmfItem >
 XdmfCoreReader::parse(const std::string & lightData) const
 {
-  try {
-    mImpl->parse(lightData);
-  }
-  catch (XdmfError e) {
-    throw e;
-  }
+  mImpl->parse(lightData);
   const xmlNodePtr currNode = xmlDocGetRootElement(mImpl->mDocument);
   std::vector<shared_ptr<XdmfItem> > toReturn;
-  try {
-    if(mImpl->mItemFactory->createItem((const char*)currNode->name,
-                                       std::map<std::string, std::string>(),
-                                       std::vector<shared_ptr<XdmfItem> >()) == NULL) {
-      toReturn = mImpl->read(currNode->children);
-    }
-    else {
-      toReturn = mImpl->read(currNode);
-    }
+  if(mImpl->mItemFactory->createItem((const char*)currNode->name,
+                                     std::map<std::string, std::string>(),
+                                     std::vector<shared_ptr<XdmfItem> >()) == NULL) {
+    toReturn = mImpl->read(currNode->children);
   }
-  catch (XdmfError e) {
-    throw e;
+  else {
+    toReturn = mImpl->read(currNode);
   }
   mImpl->closeFile();
   return(toReturn[0]);
@@ -348,60 +310,39 @@ XdmfCoreReader::parse(const std::string & lightData) const
 std::vector<shared_ptr<XdmfItem> >
 XdmfCoreReader::readItems(const std::string & filePath) const
 {
-  try {
-    mImpl->openFile(filePath);
-    const xmlNodePtr currNode = xmlDocGetRootElement(mImpl->mDocument);
-    const std::vector<shared_ptr<XdmfItem> > toReturn =
-      mImpl->read(currNode->children);
-    mImpl->closeFile();
-    return toReturn;
-  }
-  catch (XdmfError e) {
-    throw e;
-  }
-
+  mImpl->openFile(filePath);
+  const xmlNodePtr currNode = xmlDocGetRootElement(mImpl->mDocument);
+  const std::vector<shared_ptr<XdmfItem> > toReturn =
+    mImpl->read(currNode->children);
+  mImpl->closeFile();
+  return toReturn;
 }
 
 shared_ptr<XdmfItem>
 XdmfCoreReader::read(const std::string & filePath) const
 {
-  try {
-    const std::vector<shared_ptr<XdmfItem> > toReturn = readItems(filePath);
-    if (toReturn.size() == 0) {
-      return(shared_ptr<XdmfItem>());
-    }
-    return(toReturn[0]);
+  const std::vector<shared_ptr<XdmfItem> > toReturn = readItems(filePath);
+  if (toReturn.size() == 0) {
+    return(shared_ptr<XdmfItem>());
   }
-  catch (XdmfError e) {
-    throw e;
-  }
+  return(toReturn[0]);
 }
 
 std::vector<shared_ptr<XdmfItem> >
 XdmfCoreReader::read(const std::string & filePath,
                      const std::string & xPath) const
 {
-  try {
-    mImpl->openFile(filePath);
-    std::vector<shared_ptr<XdmfItem> > toReturn = this->readPathObjects(xPath);
-    mImpl->closeFile();
-    return toReturn;
-  }
-  catch (XdmfError e) {
-    throw e;
-  }
+  mImpl->openFile(filePath);
+  std::vector<shared_ptr<XdmfItem> > toReturn = this->readPathObjects(xPath);
+  mImpl->closeFile();
+  return toReturn;
 }
 
 std::vector<shared_ptr<XdmfItem> >
 XdmfCoreReader::readPathObjects(const std::string & xPath) const
 {
   std::vector<shared_ptr<XdmfItem> > toReturn;
-  try {
-    mImpl->readPathObjects(xPath, toReturn);
-  }
-  catch (XdmfError e) {
-    throw e;
-  }
+  mImpl->readPathObjects(xPath, toReturn);
   return toReturn;
 }
 

@@ -171,15 +171,11 @@ XdmfArrayType::New(const std::map<std::string, std::string> & itemProperties)
     return Uninitialized();
   }
 
-  try {
-    XdmfError::message(XdmfError::FATAL,
-                       "Type not one of accepted values: " + typeVal +
-                       " in XdmfArrayType::New");
-  }
-  catch (XdmfError e) {
-    throw e;
-  }
-
+  XdmfError::message(XdmfError::FATAL,
+                     "Type not one of accepted values: " + typeVal +
+                     " in XdmfArrayType::New");
+  
+  // unreachable
   return shared_ptr<const XdmfArrayType>();
 }
 

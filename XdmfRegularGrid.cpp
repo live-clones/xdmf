@@ -114,12 +114,9 @@ public:
         collectedProperties["Type"] = "ORIGIN_DXDY";
       }
       else {
-        try {
-          XdmfError::message(XdmfError::FATAL, "Dimensions not 2 or 3 in XdmfGeometryTypeRegular::getProperties");
-        }
-        catch (XdmfError e) {
-          throw e;
-        }
+        XdmfError::message(XdmfError::FATAL, 
+                           "Dimensions not 2 or 3 in "
+                           "XdmfGeometryTypeRegular::getProperties");
       }
     }
 
@@ -197,14 +194,9 @@ public:
         return 12;
       }
       else {
-        try {
-          XdmfError::message(XdmfError::FATAL, 
-                             "Grid dimensions not 2 or 3 in "
-                             "XdmfTopologyTypeRegular::getEdgesPerElement");
-        }
-        catch (XdmfError e) {
-          throw e;
-        }
+        XdmfError::message(XdmfError::FATAL, 
+                           "Grid dimensions not 2 or 3 in "
+                           "XdmfTopologyTypeRegular::getEdgesPerElement");
       }
       return 0;
     }
@@ -220,14 +212,9 @@ public:
         return 6;
       }
       else {
-        try {
-          XdmfError::message(XdmfError::FATAL, 
-                             "Grid dimensions not 2 or 3 in "
-                             "XdmfTopologyTypeRegular::getFacesPerElement");
-        }
-        catch (XdmfError e) {
-          throw e;
-        }
+        XdmfError::message(XdmfError::FATAL, 
+                           "Grid dimensions not 2 or 3 in "
+                           "XdmfTopologyTypeRegular::getFacesPerElement");
       }
       return 0;
     }
@@ -252,14 +239,9 @@ public:
         collectedProperties["Type"] = "2DCoRectMesh";
       }
       else {
-        try {
-          XdmfError::message(XdmfError::FATAL, 
-                             "Dimensions not 2 or 3 in "
-                             "XdmfTopologyTypeRegular::getProperties");
-        }
-        catch (XdmfError e) {
-          throw e;
-        }
+        XdmfError::message(XdmfError::FATAL, 
+                           "Dimensions not 2 or 3 in "
+                           "XdmfTopologyTypeRegular::getProperties");
       }
       collectedProperties["Dimensions"] = dimensions->getValuesString();
     }

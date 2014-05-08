@@ -77,18 +77,12 @@ XdmfBinaryController::New(const std::string & filePath,
                           const unsigned int seek,
                           const std::vector<unsigned int> & dimensions)
 {
-  try {
-    shared_ptr<XdmfBinaryController> 
-      p(new XdmfBinaryController(filePath,
-                                 type,
-                                 endian,
-                                 seek,
-                                 dimensions));
-    return p;
-  }
-  catch (XdmfError e) {
-    throw e;
-  }
+  shared_ptr<XdmfBinaryController> p(new XdmfBinaryController(filePath,
+                                                              type,
+                                                              endian,
+                                                              seek,
+                                                              dimensions));
+  return p;
 }
 
 XdmfBinaryController::XdmfBinaryController(const std::string & filePath,

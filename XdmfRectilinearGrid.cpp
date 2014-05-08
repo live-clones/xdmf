@@ -119,14 +119,9 @@ public:
         collectedProperties["Type"] = "VXVY";
       }
       else {
-        try {
-          XdmfError::message(XdmfError::FATAL,
-                             "Number of dimensions not 2 or 3 in"
-                             " XdmfGeometryTypeRectilinear::getProperties");
-        }
-        catch (XdmfError e) {
-          throw e;
-        }
+        XdmfError::message(XdmfError::FATAL,
+                           "Number of dimensions not 2 or 3 in"
+                           " XdmfGeometryTypeRectilinear::getProperties");
       }
     }
 
@@ -206,14 +201,9 @@ public:
         return 12;
       }
       else {
-        try {
-          XdmfError::message(XdmfError::FATAL, 
-                             "Grid dimensions not 2 or 3 in "
-                             "XdmfTopologyTypeRectilinear::getEdgesPerElement");
-        }
-        catch (XdmfError e) {
-          throw e;
-        }
+        XdmfError::message(XdmfError::FATAL, 
+                           "Grid dimensions not 2 or 3 in "
+                           "XdmfTopologyTypeRectilinear::getEdgesPerElement");
       }
       return 0;
     }
@@ -230,14 +220,9 @@ public:
         return 6;
       }
       else {
-        try {
-          XdmfError::message(XdmfError::FATAL, 
-                             "Grid dimensions not 2 or 3 in "
-                             "XdmfTopologyTypeRectilinear::getFacesPerElement");
-        }
-        catch (XdmfError e) {
-          throw e;
-        }
+        XdmfError::message(XdmfError::FATAL, 
+                           "Grid dimensions not 2 or 3 in "
+                           "XdmfTopologyTypeRectilinear::getFacesPerElement");
       }
       return 0;
     }
@@ -263,14 +248,9 @@ public:
         collectedProperties["Type"] = "2DRectMesh";
       }
       else {
-        try {
-          XdmfError::message(XdmfError::FATAL, 
-                             "Number of dimensions not 2 or 3 in "
-                             "XdmfTopologyTypeRectilinear::getProperties");
-        }
-        catch (XdmfError e) {
-          throw e;
-        }
+        XdmfError::message(XdmfError::FATAL, 
+                           "Number of dimensions not 2 or 3 in "
+                           "XdmfTopologyTypeRectilinear::getProperties");
       }
       collectedProperties["Dimensions"] = dimensions->getValuesString();
     }

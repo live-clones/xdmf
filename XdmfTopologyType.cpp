@@ -590,14 +590,9 @@ XdmfTopologyType::New(const std::map<std::string, std::string> & itemProperties)
     type = itemProperties.find("TopologyType");
   }
   if(type == itemProperties.end()) {
-    try {
-      XdmfError::message(XdmfError::FATAL, 
-                         "Neither 'Type' nor 'TopologyType' found in "
-                         "itemProperties in XdmfTopologyType::New");
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    XdmfError::message(XdmfError::FATAL, 
+                       "Neither 'Type' nor 'TopologyType' found in "
+                       "itemProperties in XdmfTopologyType::New");
   }
   std::string typeVal = type->second;
   std::transform(typeVal.begin(),
@@ -618,27 +613,17 @@ XdmfTopologyType::New(const std::map<std::string, std::string> & itemProperties)
     if(nodesPerElement != itemProperties.end()) {
       return Polyline(atoi(nodesPerElement->second.c_str()));
     }
-    try {
-      XdmfError::message(XdmfError::FATAL, 
-                           "'NodesPerElement' not in itemProperties and type "
-                         "'POLYLINE' selected in XdmfTopologyType::New");
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    XdmfError::message(XdmfError::FATAL, 
+                       "'NodesPerElement' not in itemProperties and type "
+                       "'POLYLINE' selected in XdmfTopologyType::New");
   }
   else if(typeVal.compare("POLYGON") == 0) {
     if(nodesPerElement != itemProperties.end()) {
       return Polygon(atoi(nodesPerElement->second.c_str()));
     }
-    try {
-      XdmfError::message(XdmfError::FATAL, 
-                         "'NodesPerElement' not in itemProperties and type "
-                         "'POLYGON' selected in XdmfTopologyType::New");
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    XdmfError::message(XdmfError::FATAL, 
+                       "'NodesPerElement' not in itemProperties and type "
+                       "'POLYGON' selected in XdmfTopologyType::New");
   }
   else if(typeVal.compare("TRIANGLE") == 0) {
     return Triangle();
@@ -737,14 +722,10 @@ XdmfTopologyType::New(const std::map<std::string, std::string> & itemProperties)
     return Mixed();
   }
   
-  try {
-    XdmfError::message(XdmfError::FATAL, 
-                       "Invalid Type selected in XdmfTopologyType::New");
-  }
-  catch (XdmfError e) {
-    throw e;
-  }
-
+  XdmfError::message(XdmfError::FATAL, 
+                     "Invalid Type selected in XdmfTopologyType::New");
+  
+  // unreachable
   return shared_ptr<const XdmfTopologyType>();
 }
 

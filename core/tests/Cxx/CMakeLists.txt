@@ -27,6 +27,7 @@ ADD_TEST_CXX(TestXdmfArrayWriteReadHyperSlabs)
 ADD_TEST_CXX(TestXdmfError)
 ADD_TEST_CXX(TestXdmfHDF5Controller)
 ADD_TEST_CXX(TestXdmfHDF5Writer)
+ADD_TEST_CXX(TestXdmfHDF5WriterTree)
 ADD_TEST_CXX(TestXdmfInformation)
 ADD_TEST_CXX(TestXdmfSparseMatrix)
 ADD_TEST_CXX(TestXdmfVersion)
@@ -48,6 +49,8 @@ CLEAN_TEST_CXX(TestXdmfError)
 CLEAN_TEST_CXX(TestXdmfHDF5Controller)
 CLEAN_TEST_CXX(TestXdmfHDF5Writer
   hdf5WriterTest.h5)
+CLEAN_TEST_CXX(TestXdmfHDF5WriterTree
+  hdf5WriterTestTree.h5)
 CLEAN_TEST_CXX(TestXdmfInformation)
 CLEAN_TEST_CXX(TestXdmfSparseMatrix
   TestXdmfSparseMatrix.xmf)

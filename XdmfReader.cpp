@@ -46,22 +46,12 @@ XdmfReader::~XdmfReader()
 shared_ptr<XdmfItem>
 XdmfReader::read(const std::string & filePath) const
 {
-  try {
-    return XdmfCoreReader::read(filePath);
-  }
-  catch (XdmfError e) {
-    throw e;
-  }
+  return XdmfCoreReader::read(filePath);
 }
 
 std::vector<shared_ptr<XdmfItem> >
 XdmfReader::read(const std::string & filePath,
                  const std::string & xPath) const
 {
-  try {
-    return XdmfCoreReader::read(filePath, xPath);
-  }
-  catch (XdmfError e) {
-    throw e;
-  }
+  return XdmfCoreReader::read(filePath, xPath);
 }

@@ -63,13 +63,8 @@ XdmfCoreItemFactory::createItem(const std::string & itemTag,
       itemProperties.find("Expression");
     std::string expressionToParse;
     if(expression == itemProperties.end()) {
-      try {
-        XdmfError::message(XdmfError::FATAL,
-                           "Error: Function found no expression");
-      }
-      catch (XdmfError e) {
-        throw e;
-      }
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Function found no expression");
     }
     else {
       expressionToParse = expression->second;
@@ -83,23 +78,13 @@ XdmfCoreItemFactory::createItem(const std::string & itemTag,
         tempArray->read();
       }
       catch (...) {
-        try {
-          XdmfError::message(XdmfError::FATAL,
-                             "Error: Function passed non-Array item");
-        }
-        catch (XdmfError e) {
-          throw e;
-        }
+        XdmfError::message(XdmfError::FATAL,
+                           "Error: Function passed non-Array item");
       }
     }
     shared_ptr<XdmfArray> parsedArray = shared_ptr<XdmfArray>();
-    try {
-      parsedArray = XdmfFunction::evaluateExpression(expressionToParse,
-                                                     variableCollection);
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    parsedArray = XdmfFunction::evaluateExpression(expressionToParse,
+                                                   variableCollection);
     if (arraySubType != XdmfArray::ItemTag) {
       // The properties and children aren't really needed
       // to generate the object, but the factory still requires them.

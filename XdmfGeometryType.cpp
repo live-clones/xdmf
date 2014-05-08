@@ -67,14 +67,9 @@ XdmfGeometryType::New(const std::map<std::string, std::string> & itemProperties)
     type = itemProperties.find("GeometryType");
   }
   if(type == itemProperties.end()) {
-    try {
-      XdmfError::message(XdmfError::FATAL, 
-                         "Neither 'Type' nor 'GeometryType' in itemProperties "
-                         "in XdmfGeometryType::New");
-      }
-      catch (XdmfError e) {
-        throw e;
-      }
+    XdmfError::message(XdmfError::FATAL, 
+                       "Neither 'Type' nor 'GeometryType' in itemProperties "
+                       "in XdmfGeometryType::New");
   }
   const std::string & typeVal = type->second;
 
@@ -88,13 +83,8 @@ XdmfGeometryType::New(const std::map<std::string, std::string> & itemProperties)
     return XY();
   }
 
-  try {
-    XdmfError::message(XdmfError::FATAL, "Type not 'None', 'XYZ', or 'XY' "
-                       "in XdmfGeometryType::New");
-  }
-  catch (XdmfError e) {
-    throw e;
-  }
+  XdmfError::message(XdmfError::FATAL, "Type not 'None', 'XYZ', or 'XY' "
+                     "in XdmfGeometryType::New");
 
   return shared_ptr<const XdmfGeometryType>();
 }

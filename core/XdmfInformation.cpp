@@ -96,14 +96,9 @@ XdmfInformation::populateItem(const std::map<std::string, std::string> & itemPro
     mKey = key->second;
   }
   else {
-    try {
-      XdmfError::message(XdmfError::FATAL,
-                         "'Name' not found in itemProperties in "
-                         "XdmfInformation::populateItem");
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    XdmfError::message(XdmfError::FATAL,
+                       "'Name' not found in itemProperties in "
+                       "XdmfInformation::populateItem");
   }
 
   std::map<std::string, std::string>::const_iterator value =
@@ -117,14 +112,9 @@ XdmfInformation::populateItem(const std::map<std::string, std::string> & itemPro
       mValue = value->second;
     }
     else {
-      try {
-        XdmfError::message(XdmfError::FATAL,
-                           "'Value' not found in itemProperties in "
-                           "XdmfInformation::populateItem");
-      }
-      catch (XdmfError e) {
-        throw e;
-      }
+      XdmfError::message(XdmfError::FATAL,
+                         "'Value' not found in itemProperties in "
+                         "XdmfInformation::populateItem");
     }
   }
   for(std::vector<shared_ptr<XdmfItem> >::const_iterator iter =

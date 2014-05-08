@@ -79,14 +79,9 @@ XdmfTopology::getNumberElements() const
         const shared_ptr<const XdmfTopologyType> topologyType =
           XdmfTopologyType::New(id);
         if(topologyType == NULL) {
-          try {
-            XdmfError::message(XdmfError::FATAL,
-                               "Invalid topology type id found in connectivity "
-                               "when parsing mixed topology.");
-          }
-          catch (XdmfError e) {
-            throw e;
-          }
+          XdmfError::message(XdmfError::FATAL,
+                             "Invalid topology type id found in connectivity "
+                             "when parsing mixed topology.");
         }
         if(topologyType == XdmfTopologyType::Polyvertex()) {
           const unsigned int numberPolyvertexElements =

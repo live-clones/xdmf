@@ -46,14 +46,9 @@ const std::string XdmfGeometry::ItemTag = "Geometry";
 std::map<std::string, std::string>
 XdmfGeometry::getItemProperties() const
 {
-  try {
-    std::map<std::string, std::string> geometryProperties;
-    mType->getProperties(geometryProperties);
-    return geometryProperties;
-  }
-  catch (XdmfError e) {
-    throw e;
-  }
+  std::map<std::string, std::string> geometryProperties;
+  mType->getProperties(geometryProperties);
+  return geometryProperties;
 }
 
 std::string

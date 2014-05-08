@@ -303,12 +303,7 @@ XdmfWriter::visit(XdmfArray & array,
       array.getItemTag().compare(XdmfArray::ItemTag) != 0;
 
     if(isSubclassed) {
-      try {
-        this->visit(dynamic_cast<XdmfItem &>(array), visitor);
-      }
-      catch (XdmfError e) {
-        throw e;
-      }
+      this->visit(dynamic_cast<XdmfItem &>(array), visitor);
     }
 
     if(array.getSize() > 0 && !(mImpl->mLastXPathed && isSubclassed)) {
@@ -325,13 +320,7 @@ XdmfWriter::visit(XdmfArray & array,
          array.getSize() > mImpl->mLightDataLimit) {
         // Write values to heavy data
 
-        try {
-          // This takes about half the time needed
-          mImpl->mHeavyDataWriter->visit(array, mImpl->mHeavyDataWriter);
-        }
-        catch (XdmfError e) {
-          throw e;
-        }
+        mImpl->mHeavyDataWriter->visit(array, mImpl->mHeavyDataWriter);
 
         std::stringstream valuesStream;
         for(unsigned int i = 0; i < array.getNumberHeavyDataControllers(); ++i) {
@@ -418,23 +407,13 @@ XdmfWriter::visit(XdmfArray & array,
     // These statements are reached when an unsupported read mode is used
     // or when a read mode is not properly set up
     if (array.getReadMode() == XdmfArray::Reference) {
-      try {
-        XdmfError::message(XdmfError::FATAL,
-                           "Error: Array to be output as an array reference"
-                           " does not have an associated reference.");
-      }
-      catch (XdmfError e) {
-        throw e;
-      }
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Array to be output as an array reference"
+                         " does not have an associated reference.");
     }
     else {
-      try {
-        XdmfError::message(XdmfError::FATAL,
-                           "Error: Invalid output type.");
-      }
-      catch (XdmfError e) {
-        throw e;
-      }
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Invalid output type.");
     }
   }
 
@@ -456,12 +435,7 @@ XdmfWriter::visit(XdmfItem & item,
 
   std::string tag = item.getItemTag();
   if (tag.length() == 0) {
-    try {
-      item.traverse(visitor);
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    item.traverse(visitor);
   }
   else {
     if(mImpl->mWriteXPaths) {
@@ -607,12 +581,7 @@ XdmfWriter::visit(XdmfItem & item,
                    (xmlChar*)iter->first.c_str(),
                    (xmlChar*)iter->second.c_str());
       }
-      try {
-        item.traverse(visitor);
-      }
-      catch (XdmfError e) {
-        throw e;
-      }
+      item.traverse(visitor);
     }
 
     mImpl->mXMLCurrentNode = mImpl->mXMLCurrentNode->parent;

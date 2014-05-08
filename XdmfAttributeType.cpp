@@ -127,16 +127,12 @@ XdmfAttributeType::New(const std::map<std::string, std::string> & itemProperties
     return NoAttributeType();
   }
 
-  try {
-    XdmfError::message(XdmfError::FATAL, 
-                       "Type not of 'None','Scalar','Vector','Tensor', "
-                       "'Matrix','Tensor6', or 'GlobalId' in "
-                       "XdmfAttributeType::New");
-  }
-  catch (XdmfError e) {
-    throw e;
-  }
+  XdmfError::message(XdmfError::FATAL, 
+                     "Type not of 'None','Scalar','Vector','Tensor', "
+                     "'Matrix','Tensor6', or 'GlobalId' in "
+                     "XdmfAttributeType::New");
 
+  // unreachable
   return shared_ptr<const XdmfAttributeType>();
 }
 

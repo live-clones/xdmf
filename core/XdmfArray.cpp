@@ -50,8 +50,8 @@ namespace {
         itemProperties.find("XMLDir");
       if(xmlDir == itemProperties.end()) {
         XdmfError::message(XdmfError::FATAL,
-                           "'XMLDir' not found in itemProperties in "
-                           "XdmfArray::populateItem");
+                           "'XMLDir' not found in itemProperties when "
+                           "building full heavy data path");
       }
       std::stringstream newHeavyDataPath;
       newHeavyDataPath << xmlDir->second << filePath;
@@ -805,13 +805,8 @@ XdmfArray::initialize(const shared_ptr<const XdmfArrayType> & arrayType,
     this->release();
   }
   else {
-    try {
-      XdmfError::message(XdmfError::FATAL, 
-                         "Array of unsupported type in XdmfArray::initialize");
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    XdmfError::message(XdmfError::FATAL, 
+                       "Array of unsupported type in XdmfArray::initialize");
   }
 }
 
@@ -964,28 +959,18 @@ XdmfArray::insert(const std::vector<unsigned int> startIndex,
     if (!(values->getDimensions().size() == valuesStartIndex.size()
           && valuesStartIndex.size() == numValues.size()
           && numValues.size() == valuesStride.size())) {
-      try {
-        XdmfError::message(XdmfError::FATAL,
-                           "Error: Number of starts, strides, and/or values "
-                           "retrieved does not match up with the dimensions "
-                           "of the array being retrieved from");
-      }
-      catch (XdmfError e) {
-        throw e;
-      }
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Number of starts, strides, and/or values "
+                         "retrieved does not match up with the dimensions "
+                         "of the array being retrieved from");
     }
     else if (!(numInserted.size() == startIndex.size()
                && startIndex.size() == this->getDimensions().size()
                && this->getDimensions().size() == arrayStride.size())) {
-      try {
-        XdmfError::message(XdmfError::FATAL,
-                           "Error: Number of starts, strides, and/or values "
-                           "written does not match up with the dimensions "
-                           "of the array being inserted into");
-      }
-      catch (XdmfError e) {
-        throw e;
-      }
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Number of starts, strides, and/or values "
+                         "written does not match up with the dimensions "
+                         "of the array being inserted into");
     }
   }
 }
@@ -1016,17 +1001,12 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
   const shared_ptr<const XdmfArrayType> arrayType = 
     XdmfArrayType::New(itemProperties);
 
- std::map<std::string, std::string>::const_iterator content =
+  std::map<std::string, std::string>::const_iterator content =
     itemProperties.find("Content");
   if(content == itemProperties.end()) {
-    try {
-      XdmfError::message(XdmfError::FATAL,
-                         "'Content' not found in itemProperties in "
-                         "XdmfArray::populateItem");
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    XdmfError::message(XdmfError::FATAL,
+                       "'Content' not found in itemProperties in "
+                       "XdmfArray::populateItem");
   }
 
   unsigned int contentIndex;
@@ -1056,14 +1036,9 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
   std::map<std::string, std::string>::const_iterator dimensions =
     itemProperties.find("Dimensions");
   if(dimensions == itemProperties.end()) {
-    try {
-      XdmfError::message(XdmfError::FATAL, 
-                         "'Dimensions' not found in itemProperties in "
-                         "XdmfArray::populateItem");
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    XdmfError::message(XdmfError::FATAL, 
+                       "'Dimensions' not found in itemProperties in "
+                       "XdmfArray::populateItem");
   }
    
   boost::tokenizer<> tokens(dimensions->second);
@@ -1076,14 +1051,9 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
   std::map<std::string, std::string>::const_iterator format =
     itemProperties.find("Format");
   if(format == itemProperties.end()) {
-    try {
-      XdmfError::message(XdmfError::FATAL, 
-                         "'Format' not found in itemProperties in "
-                         "XdmfArray::populateItem");
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    XdmfError::message(XdmfError::FATAL, 
+                       "'Format' not found in itemProperties in "
+                       "XdmfArray::populateItem");
   }
   const std::string & formatVal = format->second;
 
@@ -1093,15 +1063,10 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
     while (contentIndex < contentVals.size()) {
       size_t colonLocation = contentVals[contentIndex].find(":");
       if(colonLocation == std::string::npos) {
-        try {
-          XdmfError::message(XdmfError::FATAL, 
-                             "':' not found in content in "
-                             "XdmfArray::populateItem -- double check an HDF5 "
-                             "data set is specified for the file");
-        }
-        catch (XdmfError e) {
-          throw e;
-        }
+        XdmfError::message(XdmfError::FATAL, 
+                           "':' not found in content in "
+                           "XdmfArray::populateItem -- double check an HDF5 "
+                           "data set is specified for the file");
       }
 
       std::string hdf5Path = 
@@ -1210,14 +1175,9 @@ XdmfArray::populateItem(const std::map<std::string, std::string> & itemPropertie
                                                               mDimensions));
   }
   else {
-    try {
-      XdmfError::message(XdmfError::FATAL, 
-                         "Neither 'HDF' nor 'XML' specified as 'Format' "
-                         "in XdmfArray::populateItem");
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    XdmfError::message(XdmfError::FATAL, 
+                       "Neither 'HDF' nor 'XML' specified as 'Format' "
+                       "in XdmfArray::populateItem");
   }
 
   std::map<std::string, std::string>::const_iterator name =
@@ -1242,13 +1202,8 @@ XdmfArray::read()
       this->readReference();
       break;
     default:
-      try {
-        XdmfError::message(XdmfError::FATAL,
-                           "Error: Invalid Read Mode");
-      }
-      catch (XdmfError e) {
-        throw e;
-      }
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Invalid Read Mode");
   }
 }
 

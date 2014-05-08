@@ -39,14 +39,9 @@ XdmfSubset::XdmfSubset(shared_ptr<XdmfArray> referenceArray,
 {
   if(!(mStart.size() == mStride.size() &&
        mStride.size() == mDimensions.size())) {
-    try {
-      XdmfError::message(XdmfError::FATAL,
-                         "mStart, mStride, mDimensions must all be of equal "
-                         "length in XdmfSubset constructor");
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    XdmfError::message(XdmfError::FATAL,
+                       "mStart, mStride, mDimensions must all be of equal "
+                       "length in XdmfSubset constructor");
   }
 }
 
@@ -78,27 +73,17 @@ XdmfSubset::getItemProperties() const
   // before generating the properties.
   if(!(mStart.size() == mStride.size() &&
        mStride.size() == mDimensions.size())) {
-    try {
-      XdmfError::message(XdmfError::FATAL,
-                         "mStart, mStride, mDimensions must all be of equal "
-                         "length in XdmfSubset getItemProperties");
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    XdmfError::message(XdmfError::FATAL,
+                       "mStart, mStride, mDimensions must all be of equal "
+                       "length in XdmfSubset getItemProperties");
   }
 
   if (mStart.size() < 1 ||
       mStride.size() < 1 ||
       mDimensions.size() < 1) {
-    try {
-      XdmfError::message(XdmfError::WARNING,
-                         "mStart, mStride, mDimensions must have at least "
-                         "one value contained within");
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    XdmfError::message(XdmfError::WARNING,
+                       "mStart, mStride, mDimensions must have at least "
+                       "one value contained within");
   }
 
   std::map<std::string, std::string> subsetMap;
@@ -222,14 +207,9 @@ XdmfSubset::read()
   if (mStart.size() < 1 ||
       mStride.size() < 1 ||
       mDimensions.size() < 1) {
-    try {
-      XdmfError::message(XdmfError::WARNING,
-                         "mStart, mStride, mDimensions must have at least "
-                         "one value contained within");
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    XdmfError::message(XdmfError::WARNING,
+                       "mStart, mStride, mDimensions must have at least "
+                       "one value contained within");
   }
 
   shared_ptr<XdmfArray> tempArray = XdmfArray::New();
@@ -260,14 +240,9 @@ XdmfSubset::setDimensions(std::vector<unsigned int> newDimensions)
   // If they don't want the warning they can suppress it.
   if(!(mStart.size() == mStride.size() &&
        mStride.size() == mDimensions.size())) {
-    try {
-      XdmfError::message(XdmfError::WARNING,
-                         "mStart, mStride, mDimensions now have different sizes."
-                         "The sizes should be equal before use.");
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    XdmfError::message(XdmfError::WARNING,
+                       "mStart, mStride, mDimensions now have different sizes."
+                       "The sizes should be equal before use.");
   }
 }
 
@@ -279,14 +254,9 @@ XdmfSubset::setStart(std::vector<unsigned int> newStarts)
   // If they don't want the warning they can suppress it.
   if(!(mStart.size() == mStride.size() &&
        mStride.size() == mDimensions.size())) {
-    try {
-      XdmfError::message(XdmfError::WARNING,
-                         "mStart, mStride, mDimensions now have different sizes."
-                         "The sizes should be equal before use.");
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    XdmfError::message(XdmfError::WARNING,
+                       "mStart, mStride, mDimensions now have different sizes."
+                       "The sizes should be equal before use.");
   }
 }
 
@@ -298,14 +268,9 @@ XdmfSubset::setStride(std::vector<unsigned int> newStrides)
   // If they don't want the warning they can suppress it.
   if(!(mStart.size() == mStride.size() &&
        mStride.size() == mDimensions.size())) {
-    try {
-      XdmfError::message(XdmfError::WARNING,
-                         "mStart, mStride, mDimensions now have different sizes."
-                         "The sizes should be equal before use.");
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    XdmfError::message(XdmfError::WARNING,
+                       "mStart, mStride, mDimensions now have different sizes."
+                       "The sizes should be equal before use.");
   }
 }
 

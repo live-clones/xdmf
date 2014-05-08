@@ -168,13 +168,8 @@ XdmfFunction::addFunction(std::string name,
     // If the character is not found in the list of valid characters
     if (mValidVariableChars.find(name[i]) == std::string::npos) {
       // Then throw an error
-      try {
-        XdmfError::message(XdmfError::FATAL,
-                           "Error: Function Name Contains Invalid Character(s)");
-      }
-      catch (XdmfError e) {
-        throw e;
-      }
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Function Name Contains Invalid Character(s)");
     }
   }
   size_t origsize = arrayFunctions.size();
@@ -182,13 +177,8 @@ XdmfFunction::addFunction(std::string name,
   // If no new functions were added
   if (origsize == arrayFunctions.size()) {
     // Toss a warning, it's nice to let people know that they're doing this
-    try {
-      XdmfError::message(XdmfError::WARNING,
-                         "Warning: Function Overwritten");
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    XdmfError::message(XdmfError::WARNING,
+                       "Warning: Function Overwritten");
   }
   return arrayFunctions.size();
 }
@@ -212,23 +202,13 @@ XdmfFunction::addOperation(char newoperator,
                            int priority)
 {
   if (newoperator == '(' || newoperator == ')') {
-    try {
-      XdmfError::message(XdmfError::FATAL,
-                         "Error: Parenthesis can not be redefined");
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    XdmfError::message(XdmfError::FATAL,
+                       "Error: Parenthesis can not be redefined");
   }
   if (mValidVariableChars.find(newoperator) != std::string::npos
       || mValidDigitChars.find(newoperator) != std::string::npos) {
-    try {
-      XdmfError::message(XdmfError::FATAL,
-                         "Error: Operation Overlaps with Variables");
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    XdmfError::message(XdmfError::FATAL,
+                       "Error: Operation Overlaps with Variables");
   }
   // Give warning if the operation already exists
   size_t origsize = operations.size();
@@ -237,13 +217,8 @@ XdmfFunction::addOperation(char newoperator,
   if (origsize == operations.size()) {
     // It's nice to let people know they're doing this
     // So they don't get surprised about changes in behavior
-    try {
-      XdmfError::message(XdmfError::WARNING,
-                         "Warning: Operation Overwritten");
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    XdmfError::message(XdmfError::WARNING,
+                       "Warning: Operation Overwritten");
     // Overwrite the existing info for that operation
     // Add the priority to the specified location in the priority array
     mOperationPriority[newoperator] = priority;
@@ -372,14 +347,9 @@ XdmfFunction::evaluateExpression(std::string expression,
           == variables.end()) {
         if (arrayFunctions.find(expression.substr(valueStart, i + 1 - valueStart))
             == arrayFunctions.end()) {
-          try {
-            XdmfError::message(XdmfError::FATAL,
-                               "Error: Invalid Variable in evaluateExpression "
-                               + expression.substr(valueStart, i + 1 - valueStart));
-          }
-          catch (XdmfError e) {
-            throw e;
-          }
+          XdmfError::message(XdmfError::FATAL,
+                             "Error: Invalid Variable in evaluateExpression "
+                             + expression.substr(valueStart, i + 1 - valueStart));
         }
         else {
           std::string currentFunction =
@@ -387,14 +357,9 @@ XdmfFunction::evaluateExpression(std::string expression,
           // Check if next character is an open parenthesis
           if (i+1 >= expression.size()) {
             if (expression[i+1] != '(') {
-              try {
-                XdmfError::message(XdmfError::FATAL,
-                                   "Error: No values supplied to function "
-                                   + expression.substr(valueStart, i + 1 - valueStart));
-              }
-              catch (XdmfError e) {
-                throw e;
-              }
+              XdmfError::message(XdmfError::FATAL,
+                                 "Error: No values supplied to function "
+                                 + expression.substr(valueStart, i + 1 - valueStart));
             }
           }
           // If it is grab the string between paranthesis
@@ -451,13 +416,8 @@ XdmfFunction::evaluateExpression(std::string expression,
           while (operationStack.size() > 0 && operationStack.top() != '(') {
             // Must be at least two values for this loop to work properly
             if (valueStack.size() < 2) {
-              try {
-                XdmfError::message(XdmfError::FATAL,
-                                   "Error: Not Enough Values in evaluateExpression");
-              }
-              catch (XdmfError e) {
-                throw e;
-              }
+              XdmfError::message(XdmfError::FATAL,
+                                 "Error: Not Enough Values in evaluateExpression");
             }
             else {
               shared_ptr<XdmfArray> val2 = valueStack.top();
@@ -482,13 +442,8 @@ XdmfFunction::evaluateExpression(std::string expression,
           while (operationStack.size() > 0 && operationLocation < topOperationLocation) {
             // Must be at least two values for this loop to work properly
             if (valueStack.size() < 2) {
-              try {
-                XdmfError::message(XdmfError::FATAL,
-                                   "Error: Not Enough Values in evaluateExpression");
-              }
-              catch (XdmfError e) {
-                throw e;
-              }
+              XdmfError::message(XdmfError::FATAL,
+                                 "Error: Not Enough Values in evaluateExpression");
             }
             else {
               shared_ptr<XdmfArray> val2 = valueStack.top();
@@ -517,23 +472,13 @@ XdmfFunction::evaluateExpression(std::string expression,
   while (valueStack.size() > 1 && operationStack.size() > 0) {
     if (valueStack.size() < 2) {
       // Must be at least two values for this loop to work properly
-      try {
-        XdmfError::message(XdmfError::FATAL,
-                           "Error: Not Enough Values in evaluateExpression");
-      }
-      catch (XdmfError e) {
-        throw e;
-      }
+      XdmfError::message(XdmfError::FATAL,
+                         "Error: Not Enough Values in evaluateExpression");
     }
     else {
       if(operationStack.top() == '(') {
-        try {
-          XdmfError::message(XdmfError::WARNING,
-                             "Warning: Unpaired Parenthesis");
-        }
-        catch (XdmfError e) {
-          throw e;
-        }
+        XdmfError::message(XdmfError::WARNING,
+                           "Warning: Unpaired Parenthesis");
       }
       else {
         shared_ptr<XdmfArray> val2 = valueStack.top();
@@ -541,13 +486,8 @@ XdmfFunction::evaluateExpression(std::string expression,
         shared_ptr<XdmfArray> val1 = valueStack.top();
         valueStack.pop();
         if (operationStack.size() == 0) {
-          try {
-            XdmfError::message(XdmfError::FATAL,
-                               "Error: Not Enough Operators in evaluateExpression");
-          }
-          catch (XdmfError e) {
-            throw e;
-          }
+          XdmfError::message(XdmfError::FATAL,
+                             "Error: Not Enough Operators in evaluateExpression");
         }
         else {
           valueStack.push(evaluateOperation(val1, val2, operationStack.top()));
@@ -559,23 +499,13 @@ XdmfFunction::evaluateExpression(std::string expression,
 
   // Throw error if there's extra operations
   if (operationStack.size() > 0) {
-    try {
-      XdmfError::message(XdmfError::WARNING,
-                         "Warning: Left Over Operators in evaluateExpression");
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    XdmfError::message(XdmfError::WARNING,
+                       "Warning: Left Over Operators in evaluateExpression");
   }
 
   if (valueStack.size() > 1) {
-    try {
-      XdmfError::message(XdmfError::WARNING,
-                         "Warning: Left Over Values in evaluateExpression");
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    XdmfError::message(XdmfError::WARNING,
+                       "Warning: Left Over Values in evaluateExpression");
   }
 
   return valueStack.top();

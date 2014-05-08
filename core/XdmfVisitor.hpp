@@ -32,10 +32,10 @@ class XdmfItem;
 #include "XdmfCore.hpp"
 
 /**
- * @brief Perform an operation on an Xdmf graph structure.
+ * @brief Perform an operation on an Xdmf tree structure.
  *
  * XdmfVisitor is an abstract base class for any operation that
- * operates on an Xdmf graph structure. These operations could involve
+ * operates on an Xdmf tree structure. These operations could involve
  * writing to disk or modifying the structure in some way.
  */
 class XDMFCORE_EXPORT XdmfVisitor : public XdmfBaseVisitor,

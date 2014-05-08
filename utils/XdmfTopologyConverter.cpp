@@ -1085,14 +1085,9 @@ XdmfTopologyConverter::convert(const shared_ptr<XdmfUnstructuredGrid> gridToConv
 {
   // Make sure geometry and topology are non null
   if(!(gridToConvert->getGeometry() && gridToConvert->getTopology())) {
-    try {
-      XdmfError::message(XdmfError::FATAL,
-                         "Current grid's geometry or topology is null "
-                         "in XdmfTopologyConverter::convert");
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    XdmfError::message(XdmfError::FATAL,
+                       "Current grid's geometry or topology is null "
+                       "in XdmfTopologyConverter::convert");
   }
 
   shared_ptr<const XdmfTopologyType> topologyTypeToConvert =
@@ -1103,14 +1098,9 @@ XdmfTopologyConverter::convert(const shared_ptr<XdmfUnstructuredGrid> gridToConv
   }
 
   if(gridToConvert->getGeometry()->getType() != XdmfGeometryType::XYZ()) {
-    try {
-      XdmfError::message(XdmfError::FATAL,
-                         "Grid to convert's type is not 'XYZ' in "
-                         "XdmfTopologyConverter::convert");
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    XdmfError::message(XdmfError::FATAL,
+                       "Grid to convert's type is not 'XYZ' in "
+                       "XdmfTopologyConverter::convert");
   }
 
   Converter * converter = NULL;
@@ -1242,14 +1232,9 @@ XdmfTopologyConverter::convert(const shared_ptr<XdmfUnstructuredGrid> gridToConv
     return toReturn;
   }
   else {
-    try {
-      XdmfError::message(XdmfError::FATAL,
-                         "Cannot convert topology type in "
-                         "XdmfTopologyConverter::convert");
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+    XdmfError::message(XdmfError::FATAL,
+                       "Cannot convert topology type in "
+                       "XdmfTopologyConverter::convert");
   }
 
   // not reached
@@ -1260,15 +1245,12 @@ XdmfTopologyConverter::convert(const shared_ptr<XdmfUnstructuredGrid> gridToConv
 shared_ptr<XdmfTopology>
 XdmfTopologyConverter::getExternalFaces(const shared_ptr<XdmfTopology> convertedTopology) {
 
-  if (convertedTopology->getSize() < convertedTopology->getType()->getNodesPerElement()) {
-    try {
-      XdmfError::message(XdmfError::FATAL, "Error: Not enough nodes for GetExternalSurface");
-    }
-    catch (XdmfError e) {
-      throw e;
-    }
+  if (convertedTopology->getSize() < 
+      convertedTopology->getType()->getNodesPerElement()) {
+    XdmfError::message(XdmfError::FATAL, 
+                       "Error: Not enough nodes for GetExternalSurface");
   }
-
+  
   long largestId = convertedTopology->getValue<long>(0);
   for (unsigned int i = 1; i < convertedTopology->getSize(); ++i) {
     if (largestId < convertedTopology->getValue<long>(i)) {
