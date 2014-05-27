@@ -5,8 +5,8 @@ int main(int, char **)
 {
   // Test != and == operators
   assert(XdmfAttributeType::Scalar() == XdmfAttributeType::Scalar());
-  assert(XdmfAttributeType::Scalar() == XdmfAttributeType::Vector() == false);
-  assert(XdmfAttributeType::Scalar() != XdmfAttributeType::Scalar() == false);
+  assert((XdmfAttributeType::Scalar() == XdmfAttributeType::Vector()) == false);
+  assert((XdmfAttributeType::Scalar() != XdmfAttributeType::Scalar()) == false);
   assert(XdmfAttributeType::Scalar() != XdmfAttributeType::Vector());
 
   shared_ptr<XdmfAttribute> attribute = XdmfAttribute::New();

@@ -74,6 +74,25 @@ swig -v -c++ -python -o XdmfDSMPython.cpp XdmfDSM.i
 %include <typemaps.i>
 %apply int & INOUT {int & data };
 
+%extend XdmfHeavyDataController {
+    static shared_ptr<XdmfHDF5ControllerDSM> XdmfHDF5ControllerDSMCast(PyObject * obj)
+    {
+      void * resultPointer = 0;
+      swig_type_info * returnType = SWIG_TypeQuery("_p_boost__shared_ptrT_XdmfHeavyDataController_t");
+      SWIG_ConvertPtr(obj, &resultPointer, returnType, 0);
+      shared_ptr<XdmfHeavyDataController> * returnControllerPointer =
+        reinterpret_cast<shared_ptr<XdmfHeavyDataController> *>(resultPointer);
+      shared_ptr<XdmfHeavyDataController> returnController = returnControllerPointer[0];
+      if (shared_ptr<XdmfHDF5ControllerDSM> returnHDF5Controller = shared_dynamic_cast<XdmfHDF5ControllerDSM>(returnController)) {
+        return returnHDF5Controller;
+      }
+      else {
+        XdmfError::message(XdmfError::FATAL, "Error: Attempting to cast a non HDF5 Controller to HDF5");
+        return shared_ptr<XdmfHDF5ControllerDSM>();
+      }
+    }
+};
+
 #endif /* SWIGPYTHON */
 
 

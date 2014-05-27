@@ -30,84 +30,86 @@
 shared_ptr<const XdmfArrayType>
 XdmfArrayType::Uninitialized()
 {
-  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("None", 0));
+  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("None", 0, XdmfArrayType::Unsigned));
   return p;
 }
 
 shared_ptr<const XdmfArrayType>
 XdmfArrayType::Int8()
 {
-  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("Char", 1));
+  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("Char", 1, XdmfArrayType::Signed));
   return p;
 }
 
 shared_ptr<const XdmfArrayType>
 XdmfArrayType::Int16()
 {
-  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("Short", 2));
+  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("Short", 2, XdmfArrayType::Signed));
   return p;
 }
 
 shared_ptr<const XdmfArrayType>
 XdmfArrayType::Int32()
 {
-  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("Int", 4));
+  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("Int", 4, XdmfArrayType::Signed));
   return p;
 }
 
 shared_ptr<const XdmfArrayType>
 XdmfArrayType::Int64()
 {
-  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("Int", 8));
+  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("Int", 8, XdmfArrayType::Signed));
   return p;
 }
 
 shared_ptr<const XdmfArrayType>
 XdmfArrayType::Float32()
 {
-  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("Float", 4));
+  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("Float", 4, XdmfArrayType::Float));
   return p;
 }
 
 shared_ptr<const XdmfArrayType>
 XdmfArrayType::Float64()
 {
-  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("Float", 8));
+  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("Float", 8, XdmfArrayType::Float));
   return p;
 }
 
 shared_ptr<const XdmfArrayType>
 XdmfArrayType::UInt8()
 {
-  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("UChar", 1));
+  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("UChar", 1, XdmfArrayType::Unsigned));
   return p;
 }
 
 shared_ptr<const XdmfArrayType>
 XdmfArrayType::UInt16()
 {
-  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("UShort", 2));
+  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("UShort", 2, XdmfArrayType::Unsigned));
   return p;
 }
 
 shared_ptr<const XdmfArrayType>
 XdmfArrayType::UInt32()
 {
-  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("UInt", 4));
+  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("UInt", 4, XdmfArrayType::Unsigned));
   return p;
 }
 
 shared_ptr<const XdmfArrayType>
 XdmfArrayType::String()
 {
-  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("String", 0));
+  static shared_ptr<const XdmfArrayType> p(new XdmfArrayType("String", 0, XdmfArrayType::Unsigned));
   return p;
 }
 
 XdmfArrayType::XdmfArrayType(const std::string & name,
-                             const unsigned int precision) :
+                             const unsigned int precision,
+                             const Format typeFormat) :
   mName(name),
-  mPrecision(precision)
+  mPrecision(precision),
+  mTypeFormat(typeFormat)
 {
   std::stringstream precisionString;
   precisionString << precision;
@@ -372,6 +374,29 @@ std::string
 XdmfArrayType::getName() const
 {
   return mName;
+}
+
+bool
+XdmfArrayType::getIsFloat() const
+{
+  if (mTypeFormat == XdmfArrayType::Float) {
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+
+bool
+XdmfArrayType::getIsSigned() const
+{
+  if (mTypeFormat == XdmfArrayType::Float ||
+      mTypeFormat == XdmfArrayType::Signed) {
+    return true;
+  }
+  else {
+    return false;
+  }
 }
 
 void

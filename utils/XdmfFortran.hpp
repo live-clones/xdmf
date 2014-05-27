@@ -56,96 +56,108 @@ class XdmfHDF5WriterDSM;
 /**
  * Array Type
  */
-#define XDMF_ARRAY_TYPE_INT8                    0
-#define XDMF_ARRAY_TYPE_INT16                   1
-#define XDMF_ARRAY_TYPE_INT32                   2
-#define XDMF_ARRAY_TYPE_INT64                   3
-#define XDMF_ARRAY_TYPE_UINT8                   4
-#define XDMF_ARRAY_TYPE_UINT16                  5
-#define XDMF_ARRAY_TYPE_UINT32                  6
-#define XDMF_ARRAY_TYPE_FLOAT32                 7
-#define XDMF_ARRAY_TYPE_FLOAT64                 8
+#define XDMF_ARRAY_TYPE_INT8                             0
+#define XDMF_ARRAY_TYPE_INT16                            1
+#define XDMF_ARRAY_TYPE_INT32                            2
+#define XDMF_ARRAY_TYPE_INT64                            3
+#define XDMF_ARRAY_TYPE_UINT8                            4
+#define XDMF_ARRAY_TYPE_UINT16                           5
+#define XDMF_ARRAY_TYPE_UINT32                           6
+#define XDMF_ARRAY_TYPE_FLOAT32                          7
+#define XDMF_ARRAY_TYPE_FLOAT64                          8
 
 /**
  * Attribute Center
  */
-#define XDMF_ATTRIBUTE_CENTER_GRID              100
-#define XDMF_ATTRIBUTE_CENTER_CELL              101
-#define XDMF_ATTRIBUTE_CENTER_FACE              102
-#define XDMF_ATTRIBUTE_CENTER_EDGE              103
-#define XDMF_ATTRIBUTE_CENTER_NODE              104
+#define XDMF_ATTRIBUTE_CENTER_GRID                       100
+#define XDMF_ATTRIBUTE_CENTER_CELL                       101
+#define XDMF_ATTRIBUTE_CENTER_FACE                       102
+#define XDMF_ATTRIBUTE_CENTER_EDGE                       103
+#define XDMF_ATTRIBUTE_CENTER_NODE                       104
 
 /**
  * Attribute Type
  */
-#define XDMF_ATTRIBUTE_TYPE_SCALAR              200
-#define XDMF_ATTRIBUTE_TYPE_VECTOR              201
-#define XDMF_ATTRIBUTE_TYPE_TENSOR              202
-#define XDMF_ATTRIBUTE_TYPE_MATRIX              203
-#define XDMF_ATTRIBUTE_TYPE_TENSOR6             204
-#define XDMF_ATTRIBUTE_TYPE_GLOBALID            205
-#define XDMF_ATTRIBUTE_TYPE_NOTYPE              206
+#define XDMF_ATTRIBUTE_TYPE_SCALAR                       200
+#define XDMF_ATTRIBUTE_TYPE_VECTOR                       201
+#define XDMF_ATTRIBUTE_TYPE_TENSOR                       202
+#define XDMF_ATTRIBUTE_TYPE_MATRIX                       203
+#define XDMF_ATTRIBUTE_TYPE_TENSOR6                      204
+#define XDMF_ATTRIBUTE_TYPE_GLOBALID                     205
+#define XDMF_ATTRIBUTE_TYPE_NOTYPE                       206
 
 /**
  * Geometry Type
  */
-#define XDMF_GEOMETRY_TYPE_XYZ                  301
-#define XDMF_GEOMETRY_TYPE_XY                   302
+#ifndef XDMF_GEOMETRY_TYPE_XYZ
+  #define XDMF_GEOMETRY_TYPE_XYZ                         301
+#endif
+#ifndef XDMF_GEOMETRY_TYPE_XY
+  #define XDMF_GEOMETRY_TYPE_XY                          302
+#endif
 
 /**
  * Grid Collection Type
  */
-#define XDMF_GRID_COLLECTION_TYPE_SPATIAL       400
-#define XDMF_GRID_COLLECTION_TYPE_TEMPORAL      401 
+#define XDMF_GRID_COLLECTION_TYPE_SPATIAL                400
+#define XDMF_GRID_COLLECTION_TYPE_TEMPORAL               401
 
 /**
  * Topology Type
  */
-#define XDMF_TOPOLOGY_TYPE_POLYVERTEX           500
-#define XDMF_TOPOLOGY_TYPE_POLYLINE             501
-#define XDMF_TOPOLOGY_TYPE_POLYGON              502
-#define XDMF_TOPOLOGY_TYPE_TRIANGLE             503
-#define XDMF_TOPOLOGY_TYPE_QUADRILATERAL        504
-#define XDMF_TOPOLOGY_TYPE_TETRAHEDRON          505
-#define XDMF_TOPOLOGY_TYPE_PYRAMID              506
-#define XDMF_TOPOLOGY_TYPE_WEDGE                507
-#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON           508
-#define XDMF_TOPOLOGY_TYPE_EDGE_3               509
-#define XDMF_TOPOLOGY_TYPE_TRIANGLE_6           510
-#define XDMF_TOPOLOGY_TYPE_QUADRILATERAL_8      511
-#define XDMF_TOPOLOGY_TYPE_QUADRILATERAL_9      512
-#define XDMF_TOPOLOGY_TYPE_TETRAHEDRON_10       513
-#define XDMF_TOPOLOGY_TYPE_PYRAMID_13           514
-#define XDMF_TOPOLOGY_TYPE_WEDGE_15             515
-#define XDMF_TOPOLOGY_TYPE_WEDGE_18             516
-#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_20        517
-#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_24        518
-#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_27        519
-#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_64        520
-#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_125       521
-#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_216       522
-#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_343       523
-#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_512       524
-#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_729       525
-#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_1000      526
-#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_1331      527
-#define XDMF_TOPOLOGY_TYPE_MIXED                528
+#define XDMF_TOPOLOGY_TYPE_POLYVERTEX                    500
+#define XDMF_TOPOLOGY_TYPE_POLYLINE                      501
+#define XDMF_TOPOLOGY_TYPE_POLYGON                       502
+#define XDMF_TOPOLOGY_TYPE_TRIANGLE                      503
+#define XDMF_TOPOLOGY_TYPE_QUADRILATERAL                 504
+#define XDMF_TOPOLOGY_TYPE_TETRAHEDRON                   505
+#define XDMF_TOPOLOGY_TYPE_PYRAMID                       506
+#define XDMF_TOPOLOGY_TYPE_WEDGE                         507
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON                    508
+#define XDMF_TOPOLOGY_TYPE_EDGE_3                        509
+#define XDMF_TOPOLOGY_TYPE_TRIANGLE_6                    510
+#define XDMF_TOPOLOGY_TYPE_QUADRILATERAL_8               511
+#define XDMF_TOPOLOGY_TYPE_QUADRILATERAL_9               512
+#define XDMF_TOPOLOGY_TYPE_TETRAHEDRON_10                513
+#define XDMF_TOPOLOGY_TYPE_PYRAMID_13                    514
+#define XDMF_TOPOLOGY_TYPE_WEDGE_15                      515
+#define XDMF_TOPOLOGY_TYPE_WEDGE_18                      516
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_20                 517
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_24                 518
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_27                 519
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_64                 520
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_125                521
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_216                522
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_343                523
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_512                524
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_729                525
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_1000               526
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_1331               527
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_64        528
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_125       529
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_216       530
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_343       531
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_512       532
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_729       533
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_1000      534
+#define XDMF_TOPOLOGY_TYPE_HEXAHEDRON_SPECTRAL_1331      535
+#define XDMF_TOPOLOGY_TYPE_MIXED                         536
 
 /**
  * Set Type
  */
-#define XDMF_SET_TYPE_NODE                      601
-#define XDMF_SET_TYPE_CELL                      602
-#define XDMF_SET_TYPE_FACE                      603
-#define XDMF_SET_TYPE_EDGE                      604
+#define XDMF_SET_TYPE_NODE                               601
+#define XDMF_SET_TYPE_CELL                               602
+#define XDMF_SET_TYPE_FACE                               603
+#define XDMF_SET_TYPE_EDGE                               604
 
 /**
  * Grid Type
  */
-#define XDMF_GRID_TYPE_CURVILINEAR              701
-#define XDMF_GRID_TYPE_RECTILINEAR              702
-#define XDMF_GRID_TYPE_REGULAR                  703
-#define XDMF_GRID_TYPE_UNSTRUCTURED             704
+#define XDMF_GRID_TYPE_CURVILINEAR                       701
+#define XDMF_GRID_TYPE_RECTILINEAR                       702
+#define XDMF_GRID_TYPE_REGULAR                           703
+#define XDMF_GRID_TYPE_UNSTRUCTURED                      704
 
 
 // This works with g77 and gfortran. Different compilers require different
@@ -183,9 +195,6 @@ class XdmfHDF5WriterDSM;
 #define XdmfWriteToDSM xdmfwritetodsm_
 #define XdmfWriteHDF5 xdmfwritehdf5_
 #define XdmfInitHDF5 xdmfinithdf5_
-#define XdmfGetMaxOpenedFiles xdmfgetmaxopenedfiles_
-#define XdmfSetMaxOpenedFiles xdmfsetmaxopenedfiles_
-#define XdmfCloseOpenedHDF5Files xdmfcloseopenedhdf5files_
 #define XdmfSetTopologyPolyline xdmfsettopologypolyline_
 #define XdmfSetTopologyPolygon xdmfsettopologypolygon_
 #define XdmfRetrieveNumDomainGridCollections xdmfretrievenumdomaingridcollections_

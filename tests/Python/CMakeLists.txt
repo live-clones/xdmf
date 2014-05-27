@@ -7,7 +7,7 @@ ADD_TEST_PYTHON_DEPENDENCIES("")
 
 # Add any pythonpath directories that the python tests may need
 # Note: PYTHON_TEST_PYTHONPATH is also set in core
-ADD_TEST_PYTHON_PYTHONPATH("")
+ADD_TEST_PYTHON_PYTHONPATH("${PYTHON_INCLUDE_MPI4PY_DIR}/../..")
 
 # Add any python tests here:
 # Note: We don't want to use a foreach loop to test the files incase we

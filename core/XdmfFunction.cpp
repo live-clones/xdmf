@@ -87,7 +87,7 @@ class XdmfOperationInternalImpl : public XdmfFunction::XdmfOperationInternal {
 std::string XdmfFunction::mSupportedOperations = "|#()";
 const std::string XdmfFunction::mValidVariableChars =
   "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_:.";
-const std::string XdmfFunction::mValidDigitChars = "-1234567890.";
+const std::string XdmfFunction::mValidDigitChars = "1234567890.";
 // List the priorities for the operations, based on the order of operations
 // The index of the corresponding operation in validOperationChars
 // is the same as the index of its priority in this array
@@ -318,8 +318,32 @@ XdmfFunction::evaluateExpression(std::string expression,
   // String is parsed left to right
   // Elements of the same priority are evaluated right to left
   for (unsigned int i = 0; i < expression.size(); ++i) {
+    bool hyphenIsDigit = false;
+    // hyphen is a special case since it can be used to annotate negative numbers
+    if (expression[i] == '-') {
+      if (i == 0) {
+        //would have to be a digit, otherwise it would be a unpaired operation
+        hyphenIsDigit = true;
+      }
+      else if (mValidDigitChars.find(expression[i+1]) != std::string::npos) {
+        // If value after is a valid digit,
+        // check value before
+        // If a digit, it's an operation
+        // If a variable, it's an operation
+        // If an operation, it's a digit character
+        if (mSupportedOperations.find(expression[i-1]) != std::string::npos) {
+          hyphenIsDigit = true;
+        }
+        else if (expression[i-1] <= ' ') {
+          // If whitespace is in front of the hyphen it is presumed to be a negative sign
+          // This is to handle passing negative values to functions properly
+          hyphenIsDigit = true;
+        }
+      }
+    }
     // Found to be a digit
-    if (mValidDigitChars.find(expression[i]) != std::string::npos) {
+    if (mValidDigitChars.find(expression[i]) != std::string::npos||
+        (expression[i] == '-' && hyphenIsDigit)) {
       // Progress until a non-digit is found
       int valueStart = i;
       if (i + 1 < expression.size()) {
@@ -409,7 +433,7 @@ XdmfFunction::evaluateExpression(std::string expression,
     }
     else if (mSupportedOperations.find(expression[i]) != std::string::npos) {
       // Found to be an operation
-      // Ppop operations off the stack until one of a lower or equal importance is found
+      // Pop operations off the stack until one of a lower or equal importance is found
       if (operationStack.size() > 0) {
         if (expression[i] == ')') {
           // To close a parenthesis pop off all operations until another parentheis is found
@@ -508,7 +532,14 @@ XdmfFunction::evaluateExpression(std::string expression,
                        "Warning: Left Over Values in evaluateExpression");
   }
 
-  return valueStack.top();
+  // Ensure that an array is returned
+  // Will error out if this is not done.
+  if (valueStack.size() > 0) {
+    return valueStack.top();
+  }
+  else {
+    return XdmfArray::New();
+  }
 }
 
 shared_ptr<XdmfArray>
@@ -537,9 +568,14 @@ XdmfFunction::evaluateFunction(std::vector<shared_ptr<XdmfArray> > valueVector,
 }
 
 std::string
-XdmfFunction::getExpression()
+XdmfFunction::getExpression() const
 {
-  return mExpression;
+  if (mExpression.c_str() == NULL) {
+    return "";
+  }
+  else {
+    return mExpression;
+  }
 }
 
 std::string
@@ -612,7 +648,12 @@ XdmfFunction::getValidVariableChars()
 shared_ptr<XdmfArray>
 XdmfFunction::getVariable(std::string key)
 {
-  return mVariableList[key];
+  if (mVariableList.count(key) > 0) {
+    return mVariableList[key];
+  }
+  else {
+    return shared_ptr<XdmfArray>();
+  }
 }
 
 std::vector<std::string>
@@ -752,7 +793,7 @@ XdmfFunction::insertVariable(std::string key, shared_ptr<XdmfArray> value)
 }
 
 shared_ptr<XdmfArray>
-XdmfFunction::read()
+XdmfFunction::read() const
 {
   return evaluateExpression(mExpression, mVariableList);
 }
@@ -770,7 +811,12 @@ XdmfFunction::removeVariable(std::string key)
 void
 XdmfFunction::setExpression(std::string newExpression)
 {
-  mExpression = newExpression;
+  if (mExpression.c_str() == NULL) {
+    XdmfError::message(XdmfError::FATAL, "Error: Internal Expression String is a null reference");
+  }
+  else {
+    mExpression = newExpression;
+  }
 }
 
 shared_ptr<XdmfArray>
@@ -791,6 +837,10 @@ void
 XdmfFunction::traverse(const shared_ptr<XdmfBaseVisitor> visitor)
 {
   XdmfItem::traverse(visitor);
+
+  shared_ptr<XdmfArray> spacerarray = XdmfArray::New();
+  spacerarray->pushBack((int)0);
+  spacerarray->accept(visitor);
 
   for (std::map<std::string, shared_ptr<XdmfArray> >::iterator it = mVariableList.begin();
        it != mVariableList.end();

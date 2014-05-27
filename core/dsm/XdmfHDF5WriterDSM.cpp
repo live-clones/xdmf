@@ -359,8 +359,10 @@ bool XdmfHDF5WriterDSM::getServerMode()
 
 MPI_Comm XdmfHDF5WriterDSM::getWorkerComm()
 {
-  MPI_Comm returnComm;
-  int status = MPI_Comm_dup(mWorkerComm, &returnComm);
+  MPI_Comm returnComm = MPI_COMM_NULL;
+  if (mWorkerComm != MPI_COMM_NULL) {
+    MPI_Comm_dup(mWorkerComm, &returnComm);
+  }
   return returnComm;
 }
 

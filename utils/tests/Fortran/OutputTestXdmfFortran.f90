@@ -150,14 +150,17 @@ PROGRAM XdmfFortranExample
   nodeAttributeId = XDMFADDATTRIBUTE(obj, 'NodeValues'//CHAR(0), &
        XDMF_ATTRIBUTE_CENTER_NODE, XDMF_ATTRIBUTE_TYPE_SCALAR, 12, &
        XDMF_ARRAY_TYPE_FLOAT64, myNodeAttribute)
+  PRINT *, 'Node Attribute ID: ', nodeAttributeId
   CALL XDMFRETRIEVEATTRIBUTEVALUES(obj, 0, mySmallerNode, XDMF_ARRAY_TYPE_FLOAT64, 6, 0, 1, 1)
   tempID =  XDMFADDINFORMATION(obj, 'Attrib2'//CHAR(0), 'This is Attribute 2'//CHAR(0))
   cellAttributeId = XDMFADDATTRIBUTE(obj, 'CellValues'//CHAR(0), &
        XDMF_ATTRIBUTE_CENTER_CELL, XDMF_ATTRIBUTE_TYPE_SCALAR, 2, &
        XDMF_ARRAY_TYPE_FLOAT64, myCellAttribute)
+  PRINT *, 'Cell Attribute ID: ', cellAttributeId
   nodeSmallAttributeId = XDMFADDATTRIBUTE(obj, 'SmallNodeValues'//CHAR(0), &
        XDMF_ATTRIBUTE_CENTER_NODE, XDMF_ATTRIBUTE_TYPE_SCALAR, 6, &
-       XDMF_ARRAY_TYPE_FLOAT64, mySmallerNode)  
+       XDMF_ARRAY_TYPE_FLOAT64, mySmallerNode)
+  PRINT *, 'Node Attribute ID: ', nodeSmallAttributeId
   tempID = XDMFADDINFORMATION(obj, 'Grid1'//CHAR(0), 'This is Grid 1'//CHAR(0))
   tempID = XDMFADDINFORMATION(obj, 'SubInformation'//CHAR(0), 'This is an information inside an information'//CHAR(0))
   CALL XDMFADDINFORMATIONARRAY(obj, 1, myBrick, 3, XDMF_ARRAY_TYPE_FLOAT64)

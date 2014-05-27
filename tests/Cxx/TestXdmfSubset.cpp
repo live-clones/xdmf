@@ -76,5 +76,22 @@ int main(int, char **)
 
 	assert(readSubsetHolder->getValuesString().compare(subsetHolder->getValuesString()) == 0);
 
+        shared_ptr<XdmfArray> referenceArray2 = XdmfArray::New();
+
+        for (unsigned int i = 10; i < 37; ++i)
+        {
+                referenceArray2->pushBack(i);
+        }
+
+        referenceArray2->resize(initDimensions, 0);
+
+        testSubset->setReferenceArray(referenceArray2);
+
+        std::string changedSubsetOutput = testSubset->read()->getValuesString();
+
+        std::cout << "after changing reference Array: " << changedSubsetOutput << std::endl;
+
+        assert(changedSubsetOutput.compare("10 12 16 18 28 30 34 36") == 0);
+
 	return 0;
 }

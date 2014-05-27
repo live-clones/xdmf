@@ -1,1 +1,1 @@
-mpirun -n 4 ./DSMLoopTest
+$MPIEXEC -n 4 ./DSMLoopTest

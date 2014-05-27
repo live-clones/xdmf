@@ -10,10 +10,10 @@ int main(int, char **)
 {
   // Test != and == operators
   assert(XdmfTopologyType::Hexahedron() == XdmfTopologyType::Hexahedron());
-  assert(XdmfTopologyType::Hexahedron() ==
-         XdmfTopologyType::Tetrahedron() == false);
-  assert(XdmfTopologyType::Hexahedron() !=
-         XdmfTopologyType::Hexahedron() == false);
+  assert((XdmfTopologyType::Hexahedron() ==
+         XdmfTopologyType::Tetrahedron()) == false);
+  assert((XdmfTopologyType::Hexahedron() !=
+         XdmfTopologyType::Hexahedron()) == false);
   assert(XdmfTopologyType::Hexahedron() != XdmfTopologyType::Tetrahedron());
 
   shared_ptr<XdmfTopology> top = XdmfTopology::New();
@@ -31,7 +31,7 @@ int main(int, char **)
   shared_ptr<const XdmfTopologyType> polygon12 = XdmfTopologyType::Polygon(12);
 
   assert(polygon == polygon6);
-  assert(polygon == polygon12 == false);
+  assert((polygon == polygon12) == false);
 
   shared_ptr<XdmfTopology> polyTop = XdmfTopology::New();
   setPolyTopology(polyTop);

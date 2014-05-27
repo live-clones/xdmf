@@ -38,6 +38,30 @@ int main(int, char **)
 
         //#initialization end
 
+        //#getDataSetPath begin
+
+        std::string exampleSetPath = exampleController->getDataSetPath();
+
+        //#getDataSetPath end
+
+        //#getDataspaceDimensions begin
+
+        std::vector<unsigned int> exampleDataspaceDimensions = exampleController->getDataspaceDimensions();
+
+        //#getDataspaceDimensions end
+
+        //#getStart begin
+
+        std::vector<unsigned int> exampleStart = exampleController->getStart();
+
+        //#getStart end
+
+        //#getStride begin
+
+        std::vector<unsigned int> exampleStride = exampleController->getStride();
+
+        //#getStride end
+
         //#setMaxOpenedFiles begin
 
         XdmfHDF5Controller::setMaxOpenedFiles(2);

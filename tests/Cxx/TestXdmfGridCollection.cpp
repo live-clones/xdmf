@@ -12,10 +12,10 @@ int main(int, char **)
   // Test != and == operators
   assert(XdmfGridCollectionType::Spatial() == 
          XdmfGridCollectionType::Spatial());
-  assert(XdmfGridCollectionType::Spatial() ==
-         XdmfGridCollectionType::Temporal() == false);
-  assert(XdmfGridCollectionType::Spatial() !=
-         XdmfGridCollectionType::Spatial() == false);
+  assert((XdmfGridCollectionType::Spatial() ==
+         XdmfGridCollectionType::Temporal()) == false);
+  assert((XdmfGridCollectionType::Spatial() !=
+         XdmfGridCollectionType::Spatial()) == false);
   assert(XdmfGridCollectionType::Spatial() !=
          XdmfGridCollectionType::Temporal());
 

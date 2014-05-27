@@ -405,7 +405,7 @@ XdmfDSMManager * XdmfHDF5ControllerDSM::getServerManager()
   return mDSMServerManager;
 }
 
-bool XdmfHDF5ControllerDSM::getServerMode()
+bool XdmfHDF5ControllerDSM::getServerMode() const
 {
   return mServerMode;
 }
@@ -413,7 +413,9 @@ bool XdmfHDF5ControllerDSM::getServerMode()
 MPI_Comm XdmfHDF5ControllerDSM::getWorkerComm()
 {
   MPI_Comm returnComm = MPI_COMM_NULL;
-  int status = MPI_Comm_dup(mWorkerComm, &returnComm);
+  if (mWorkerComm != MPI_COMM_NULL) {
+    MPI_Comm_dup(mWorkerComm, &returnComm);
+  }
   return returnComm;
 }
 

@@ -37,6 +37,30 @@ if __name__ == "__main__":
 
         #//initialization end
 
+        #//getDataSetPath begin
+
+        examplePath = exampleController.getDataSetPath()
+
+        #//getDataSetPath end
+
+        #//getDataspaceDimensions begin
+
+        exampleDataspaceDimensions = exampleController.getDataspaceDimensions()
+
+        #//getDataspaceDimensions end
+
+        #//getStart begin
+
+        exampleStart = exampleController.getStart()
+
+        #//getStart end
+
+        #//getStride begin
+
+        exampleStride = exampleController.getStride()
+
+        #//getStride end
+
         #//setMaxOpenedFiles begin
 
         XdmfHDF5Controller.setMaxOpenedFiles(2)
@@ -54,3 +78,4 @@ if __name__ == "__main__":
         XdmfHDF5Controller.closeFiles()
 
         #//closeFiles end
+

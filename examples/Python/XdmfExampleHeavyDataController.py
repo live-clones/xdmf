@@ -39,29 +39,23 @@ if __name__ == "__main__":
 
         #//initialization end
 
-        #//getDataSetPath begin
-
-        examplePath = exampleController.getDataSetPath()
-
-        #//getDataSetPath end
-
         #//getDimensions begin
 
         exampleDimensions = exampleController.getDimensions()
 
         #//getDimensions end
 
-        #//getDataspaceDimensions begin
-
-        exampleDataspaceDimensions = exampleController.getDataspaceDimensions()
-
-        #//getDataspaceDimensions end
-
         #//getFilePath begin
 
         examplePath = exampleController.getFilePath()
 
         #//getFilePath end
+
+        #//getDescriptor begin
+
+        exampleDescriptor = exampleController.getDescriptor()
+
+        #//getDescriptor end
 
         #//getName begin
 
@@ -88,18 +82,6 @@ if __name__ == "__main__":
         #exampleArray now holds the data that exampleController holds.
 
         #//read end
-
-        #//getStart begin
-
-        exampleStart = exampleController.getStart()
-
-        #//getStart end
-
-        #//getStride begin
-
-        exampleStride = exampleController.getStride()
-
-        #//getStride end
 
         #//setArrayOffset begin
 

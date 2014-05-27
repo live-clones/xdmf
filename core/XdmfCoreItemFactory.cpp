@@ -26,6 +26,8 @@
 #include "XdmfError.hpp"
 #include "XdmfFunction.hpp"
 #include "XdmfSubset.hpp"
+#include "XdmfInformation.hpp"
+#include "XdmfSparseMatrix.hpp"
 #include <boost/tokenizer.hpp>
 
 XdmfCoreItemFactory::XdmfCoreItemFactory()
@@ -74,8 +76,11 @@ XdmfCoreItemFactory::createItem(const std::string & itemTag,
       try {
         shared_ptr<XdmfArray> tempArray =
           shared_dynamic_cast<XdmfArray>(childItems[i]);
-        variableCollection[tempArray->getName()] = tempArray;
-        tempArray->read();
+        if (tempArray->getName().compare("") != 0)
+        {
+          variableCollection[tempArray->getName()] = tempArray;
+          tempArray->read();
+        }
       }
       catch (...) {
         XdmfError::message(XdmfError::FATAL,
@@ -167,7 +172,22 @@ XdmfCoreItemFactory::createItem(const std::string & itemTag,
       dimensionVector.push_back(atoi((*iter).c_str()));
     }
 
-    referenceArray = shared_dynamic_cast<XdmfArray>(childItems[0]);
+    bool foundspacer = false;
+
+    for(std::vector<shared_ptr<XdmfItem> >::const_iterator iter =
+          childItems.begin();
+        iter != childItems.end();
+        ++iter) {
+      if(shared_ptr<XdmfArray> array = shared_dynamic_cast<XdmfArray>(*iter)) {
+        if (foundspacer) {
+          referenceArray = shared_dynamic_cast<XdmfArray>(array);
+          break;
+        }
+        else {
+          foundspacer = true;
+        }
+      }
+    }
 
     shared_ptr<XdmfSubset> newSubset = XdmfSubset::New(referenceArray,
                                                        startVector,

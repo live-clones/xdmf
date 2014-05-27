@@ -13,6 +13,18 @@ if __name__ == "__main__":
 
         #//getName end
 
+        #//getIsSigned begin
+
+        isSigned = XdmfArrayType.UInt8().getIsSigned()
+
+        #//getIsSigned end
+
+        #//getIsFloat begin
+
+        isFloat = XdmfArrayType.UInt8().getIsFloat()
+
+        #//getIsFloat end
+
         #//getType begin
 
         exampleArray = XdmfArray.New()

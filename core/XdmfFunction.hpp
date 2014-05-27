@@ -126,7 +126,7 @@ public:
 
   virtual ~XdmfFunction();
 
-  LOKI_DEFINE_VISITABLE(XdmfFunction, XdmfItem);
+  LOKI_DEFINE_VISITABLE(XdmfFunction, XdmfItem)
 
   static const std::string ItemTag;
 
@@ -515,7 +515,7 @@ public:
    *
    * @return    The expression that the function is currently using to evaluate
    */
-  std::string getExpression();
+  std::string getExpression() const;
 
   std::map<std::string, std::string> getItemProperties() const;
 
@@ -773,7 +773,7 @@ public:
    * @skipline #//read
    * @until #//read
    */
-  virtual shared_ptr<XdmfArray> read();
+  virtual shared_ptr<XdmfArray> read() const;
 
   /**
    * Removes a variable from the function if it exists.

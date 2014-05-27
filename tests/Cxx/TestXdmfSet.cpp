@@ -6,8 +6,8 @@ int main(int, char **)
 {
   // Test != and == operators
   assert(XdmfSetType::Node() == XdmfSetType::Node());
-  assert(XdmfSetType::Node() == XdmfSetType::Cell() == false);
-  assert(XdmfSetType::Node() != XdmfSetType::Node() == false);
+  assert((XdmfSetType::Node() == XdmfSetType::Cell()) == false);
+  assert((XdmfSetType::Node() != XdmfSetType::Node()) == false);
   assert(XdmfSetType::Node() != XdmfSetType::Cell());
 
   shared_ptr<XdmfSet> set = XdmfSet::New();

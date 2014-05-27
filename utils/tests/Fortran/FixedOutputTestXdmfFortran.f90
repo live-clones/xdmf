@@ -9,11 +9,11 @@
 
 
        PROGRAM XdmfFortranExample
-
+ 
          Implicit none
          INCLUDE 'Xdmf.f'
 
-
+  
 
        INTEGER*8 obj
        character*256 filename
@@ -24,8 +24,8 @@
        INTEGER nodeAttributeId, nodeSmallAttributeId, cellAttributeId,  &
      &         testSetID, testMapID, tempID
 
-       filename = 'my_output.xmf'//CHAR(0)
-
+       filename = 'my_fixed_form_output.xmf'//CHAR(0)
+  
        myPoints(1,1,1) = 0
        myPoints(2,1,1) = 0
        myPoints(3,1,1) = 1
@@ -62,7 +62,7 @@
        myPoints(1,3,4) = 3
        myPoints(2,3,4) = 2
        myPoints(3,3,4) = -2
-
+  
        myConnections(1,1) = 0
        myConnections(2,1) = 1
        myConnections(3,1) = 7
@@ -79,7 +79,7 @@
        myConnections(6,2) = 5
        myConnections(7,2) = 11
        myConnections(8,2) = 10
-
+  
        myNodeAttribute(1,1) = 100
        myNodeAttribute(1,2) = 300
        myNodeAttribute(1,3) = 300
@@ -92,7 +92,7 @@
        myNodeAttribute(3,2) = 500
        myNodeAttribute(3,3) = 500
        myNodeAttribute(3,4) = 700
-
+  
         myCellAttribute(1) = 100
         myCellAttribute(2) = 200
 

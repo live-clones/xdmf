@@ -35,6 +35,7 @@
 #include "XdmfWriter.hpp"
 #include "XdmfVersion.hpp"
 #include "XdmfError.hpp"
+#include "string.h"
 
 /**
  * PIMPL
@@ -184,6 +185,13 @@ XdmfWriter::XdmfWriter(const std::string & xmlFilePath,
 {
 }
 
+XdmfWriter::XdmfWriter(const XdmfWriter & writerRef)
+{
+  char * transferPath = strdup(writerRef.getFilePath().c_str());
+  char * heavyTransferPath = strdup(writerRef.getHeavyDataWriter()->getFilePath().c_str());
+  mImpl = new XdmfWriterImpl(transferPath, XdmfHDF5Writer::New(heavyTransferPath), NULL);
+}
+
 XdmfWriter::~XdmfWriter()
 {
   delete mImpl;
@@ -199,78 +207,116 @@ XdmfWriter::getHeavyDataWriter()
 shared_ptr<const XdmfHeavyDataWriter>
 XdmfWriter::getHeavyDataWriter() const
 {
+  if (mImpl == NULL) {
+    XdmfError::message(XdmfError::FATAL, "Error: Writer Internal Object is Null");
+  }
   return mImpl->mHeavyDataWriter;
 }
 
 std::string
 XdmfWriter::getFilePath() const
 {
+  if (mImpl == NULL) {
+    XdmfError::message(XdmfError::FATAL, "Error: Writer Internal Object is Null");
+  }
   return mImpl->mXMLFilePath;
 }
 
 unsigned int
 XdmfWriter::getLightDataLimit() const
 {
+  if (mImpl == NULL) {
+    XdmfError::message(XdmfError::FATAL, "Error: Writer Internal Object is Null");
+  }
   return mImpl->mLightDataLimit;
 }
 
 XdmfWriter::Mode
 XdmfWriter::getMode() const
 {
+  if (mImpl == NULL) {
+    XdmfError::message(XdmfError::FATAL, "Error: Writer Internal Object is Null");
+  }
   return mImpl->mMode;
 }
 
 bool
 XdmfWriter::getWriteXPaths() const
 {
+  if (mImpl == NULL) {
+    XdmfError::message(XdmfError::FATAL, "Error: Writer Internal Object is Null");
+  }
   return mImpl->mWriteXPaths;
 }
 
 bool
 XdmfWriter::getXPathParse() const
 {
+  if (mImpl == NULL) {
+    XdmfError::message(XdmfError::FATAL, "Error: Writer Internal Object is Null");
+  }
   return mImpl->mXPathParse;
 }
 
 void
 XdmfWriter::setDocumentTitle(std::string title)
-{
+{  if (mImpl == NULL) {
+    XdmfError::message(XdmfError::FATAL, "Error: Writer Internal Object is Null");
+  }
   mImpl->mDocumentTitle = title;
 }
 
 void
 XdmfWriter::setHeavyDataWriter(shared_ptr<XdmfHeavyDataWriter> heavyDataWriter)
 {
+  if (mImpl == NULL) {
+    XdmfError::message(XdmfError::FATAL, "Error: Writer Internal Object is Null");
+  }
   mImpl->mHeavyDataWriter = heavyDataWriter;
 }
 
 void
 XdmfWriter::setLightDataLimit(const unsigned int numValues)
 {
+  if (mImpl == NULL) {
+    XdmfError::message(XdmfError::FATAL, "Error: Writer Internal Object is Null");
+  }
   mImpl->mLightDataLimit = numValues;
 }
 
 void
 XdmfWriter::setMode(const Mode mode)
 {
+  if (mImpl == NULL) {
+    XdmfError::message(XdmfError::FATAL, "Error: Writer Internal Object is Null");
+  }
   mImpl->mMode = mode;
 }
 
 void
 XdmfWriter::setVersionString(std::string version)
 {
+  if (mImpl == NULL) {
+    XdmfError::message(XdmfError::FATAL, "Error: Writer Internal Object is Null");
+  }
   mImpl->mVersionString = version;
 }
 
 void
 XdmfWriter::setWriteXPaths(const bool writeXPaths)
 {
+  if (mImpl == NULL) {
+    XdmfError::message(XdmfError::FATAL, "Error: Writer Internal Object is Null");
+  }
   mImpl->mWriteXPaths = writeXPaths;
 }
 
 void
 XdmfWriter::setXPathParse(const bool xPathParse)
 {
+  if (mImpl == NULL) {
+    XdmfError::message(XdmfError::FATAL, "Error: Writer Internal Object is Null");
+  }
   mImpl->mXPathParse = xPathParse;
 }
 
@@ -278,6 +324,9 @@ void
 XdmfWriter::visit(XdmfArray & array,
                   const shared_ptr<XdmfBaseVisitor> visitor)
 {
+  if (mImpl == NULL) {
+    XdmfError::message(XdmfError::FATAL, "Error: Writer Internal Object is Null");
+  }
   if (mImpl->mDepth == 0) {
     mImpl->openFile();
   }
@@ -320,18 +369,19 @@ XdmfWriter::visit(XdmfArray & array,
          array.getSize() > mImpl->mLightDataLimit) {
         // Write values to heavy data
 
+        // This takes about half the time needed
         mImpl->mHeavyDataWriter->visit(array, mImpl->mHeavyDataWriter);
 
         std::stringstream valuesStream;
         for(unsigned int i = 0; i < array.getNumberHeavyDataControllers(); ++i) {
+
           std::string heavyDataPath =
             array.getHeavyDataController(i)->getFilePath();
           size_t index = heavyDataPath.find_last_of("/\\");
           if(index != std::string::npos) {
             // If path is not a folder
             // put the directory path into this variable
-            const std::string heavyDataDir = 
-              heavyDataPath.substr(0, index + 1);
+            const std::string heavyDataDir = heavyDataPath.substr(0, index + 1);
             // If the directory is in the XML File Path
             if(mImpl->mXMLFilePath.find(heavyDataDir) == 0) {
               heavyDataPath =
@@ -341,6 +391,7 @@ XdmfWriter::visit(XdmfArray & array,
             }
             // Otherwise the full path is required
           }
+
           std::stringstream dimensionStream;
           for (unsigned int j = 0; j < array.getHeavyDataController(i)->getDimensions().size(); ++j) {
             dimensionStream << array.getHeavyDataController(i)->getDimensions()[j];
@@ -348,24 +399,13 @@ XdmfWriter::visit(XdmfArray & array,
               dimensionStream << " ";
             }
           }
-
-          const std::string dataSetPath = 
-            array.getHeavyDataController(i)->getDataSetPath();
-
           // Clear the stream
           valuesStream.str(std::string());
+          valuesStream << heavyDataPath << array.getHeavyDataController(i)->getDescriptor();
           if (array.getNumberHeavyDataControllers() > 1) {
-            valuesStream << heavyDataPath << ":"
-                         << dataSetPath
-                         << "|" << dimensionStream.str();
-            if (i + 1 < array.getNumberHeavyDataControllers()){
+            valuesStream << "|" << dimensionStream.str();
+            if (i + 1 < array.getNumberHeavyDataControllers()) {
               valuesStream << "|";
-            }
-          }
-          else {
-            valuesStream << heavyDataPath;
-            if(!dataSetPath.empty()) {
-              valuesStream << ":" << dataSetPath;
             }
           }
           xmlTextValues.push_back(valuesStream.str());
@@ -427,7 +467,9 @@ void
 XdmfWriter::visit(XdmfItem & item,
                   const shared_ptr<XdmfBaseVisitor> visitor)
 {
-
+  if (mImpl == NULL) {
+    XdmfError::message(XdmfError::FATAL, "Error: Writer Internal Object is Null");
+  }
   if (mImpl->mDepth == 0) {
     mImpl->openFile();
   }

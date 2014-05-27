@@ -15,12 +15,12 @@ int main(int, char **)
   assert(array->getHeavyDataController() == NULL);
   shared_ptr<XdmfHDF5Writer> writer = XdmfHDF5Writer::New("hdf5WriterTest.h5");
   array->accept(writer);
-  shared_ptr<XdmfHeavyDataController> firstController =
-    array->getHeavyDataController();
+  shared_ptr<XdmfHDF5Controller> firstController =
+    shared_dynamic_cast<XdmfHDF5Controller>(array->getHeavyDataController());
   std::string firstPath = firstController->getDataSetPath();
   array->accept(writer);
-  shared_ptr<XdmfHeavyDataController> secondController =
-    array->getHeavyDataController();
+  shared_ptr<XdmfHDF5Controller> secondController =
+    shared_dynamic_cast<XdmfHDF5Controller>(array->getHeavyDataController());
   std::string secondPath = secondController->getDataSetPath();
   assert(firstPath.compare(secondPath) != 0);
 
@@ -29,23 +29,23 @@ int main(int, char **)
   //
   writer->setMode(XdmfHDF5Writer::Overwrite);
   array->accept(writer);
-  shared_ptr<XdmfHeavyDataController> thirdController =
-    array->getHeavyDataController();
+  shared_ptr<XdmfHDF5Controller> thirdController =
+    shared_dynamic_cast<XdmfHDF5Controller>(array->getHeavyDataController());
   std::string thirdPath = thirdController->getDataSetPath();
   assert(secondPath.compare(thirdPath) == 0);
 
   array->pushBack(3);
   array->accept(writer);
-  shared_ptr<XdmfHeavyDataController> fourthController =
-    array->getHeavyDataController();
+  shared_ptr<XdmfHDF5Controller> fourthController =
+    shared_dynamic_cast<XdmfHDF5Controller>(array->getHeavyDataController());
   std::string fourthPath = fourthController->getDataSetPath();
   assert(thirdPath.compare(fourthPath) == 0);
 
   array->erase(0);
   array->erase(0);
   array->accept(writer);
-  shared_ptr<XdmfHeavyDataController> fifthController = 
-    array->getHeavyDataController();
+  shared_ptr<XdmfHDF5Controller> fifthController = 
+    shared_dynamic_cast<XdmfHDF5Controller>(array->getHeavyDataController());
   std::string fifthPath = fifthController->getDataSetPath();
   assert(fourthPath.compare(fifthPath) == 0);
 

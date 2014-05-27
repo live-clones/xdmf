@@ -71,6 +71,7 @@ if __name__ == "__main__":
 
         #//ClosePort begin
 
-        exampleWriter.getServerBuffer().GetComm().ClosePort()
+	if id == 0:
+	        exampleWriter.getServerBuffer().GetComm().ClosePort()
 
         #//ClosePort end

@@ -26,8 +26,6 @@ PROGRAM XdmfFortranExample
 
   filename = 'nested_output.xmf'//CHAR(0)
 
-  buffersize = 16/commsize
-
   if (buffersize < 1) then
     buffersize = 1
   endif
@@ -38,6 +36,8 @@ PROGRAM XdmfFortranExample
 
   CALL MPI_COMM_RANK(MPI_COMM_WORLD, id, ierr)
   CALL MPI_COMM_SIZE(MPI_COMM_WORLD, commsize, ierr)
+
+  buffersize = 16/commsize
 
 !! Cores 1 to size-1 are blocked by the initialization of the server.
 !! When the server finishes they are released and allowed to progress.
@@ -53,7 +53,9 @@ PROGRAM XdmfFortranExample
 
   CALL MPI_BARRIER(interComm, ierr)
 
-  CALL XDMFCLOSEDSMPORT(obj)
+  if (id == 0) then
+    CALL XDMFCLOSEDSMPORT(obj)
+  endif
 
   CALL XDMFCLOSE(obj)
 

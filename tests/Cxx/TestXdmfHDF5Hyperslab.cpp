@@ -117,8 +117,8 @@ int main(int, char **)
   const std::vector<unsigned int> count(2, 2);
   const std::vector<unsigned int> dataSpaceSize(2, 3);
 
-  shared_ptr<XdmfHeavyDataController> controller =
-    readArray2->getHeavyDataController();
+  shared_ptr<XdmfHDF5Controller> controller =
+    shared_dynamic_cast<XdmfHDF5Controller>(readArray2->getHeavyDataController());
   assert(controller);
 
   shared_ptr<XdmfHDF5Controller> hyperslabController =

@@ -74,13 +74,23 @@ XdmfInformation::getItemTag() const
 std::string
 XdmfInformation::getKey() const
 {
-  return mKey;
+  if (mKey.c_str() == NULL) {
+    return "";
+  }
+  else {
+    return mKey;
+  }
 }
 
 std::string
 XdmfInformation::getValue() const
 {
-  return mValue;
+  if (mValue.c_str() == NULL) {
+    return "";
+  }
+  else {
+    return mValue;
+  }
 }
 
 void
@@ -130,13 +140,23 @@ XdmfInformation::populateItem(const std::map<std::string, std::string> & itemPro
 void
 XdmfInformation::setKey(const std::string & key)
 {
-  mKey= key;
+  if (mKey.c_str() == NULL) {
+    XdmfError::message(XdmfError::FATAL, "Error: Internal Key String is a null reference");
+  }
+  else {
+    mKey = key;
+  }
 }
 
 void
 XdmfInformation::setValue(const std::string & value)
 {
-  mValue= value;
+  if (mValue.c_str() == NULL) {
+    XdmfError::message(XdmfError::FATAL, "Error: Internal Value String is a null reference");
+  }
+  else {
+    mValue = value;
+  }
 }
 
 void

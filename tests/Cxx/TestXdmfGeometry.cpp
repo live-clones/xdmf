@@ -6,8 +6,8 @@ int main(int, char **)
 {
   // Test != and == operators
   assert(XdmfGeometryType::XYZ() == XdmfGeometryType::XYZ());
-  assert(XdmfGeometryType::XYZ() == XdmfGeometryType::XY() == false);
-  assert(XdmfGeometryType::XYZ() != XdmfGeometryType::XYZ() == false);
+  assert((XdmfGeometryType::XYZ() == XdmfGeometryType::XY()) == false);
+  assert((XdmfGeometryType::XYZ() != XdmfGeometryType::XYZ()) == false);
   assert(XdmfGeometryType::XYZ() != XdmfGeometryType::XY());
 
   shared_ptr<XdmfGeometry> geometry = XdmfGeometry::New();

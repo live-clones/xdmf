@@ -21,7 +21,6 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#include <boost/assign.hpp>
 #include <boost/tokenizer.hpp>
 #include <limits>
 #include <sstream>
@@ -706,13 +705,23 @@ XdmfArray::getItemTag() const
 std::string
 XdmfArray::getName() const
 {
-  return mName;
+  if (mName.c_str() == NULL) {
+    return "";
+  }
+  else {
+    return mName;
+  }
 }
 
 XdmfArray::ReadMode
 XdmfArray::getReadMode() const
 {
-  return mReadMode;
+  if (mReadMode) {
+    return mReadMode;
+  }
+  else {
+    return XdmfArray::Controller;
+  }
 }
 
 unsigned int
@@ -725,7 +734,13 @@ XdmfArray::getSize() const
 shared_ptr<XdmfArrayReference>
 XdmfArray::getReference()
 {
-  return mReference;
+  if (mReference) {
+    return mReference;
+  }
+  else {
+    // Returning arbitrary Reference since one isn't defined
+    return shared_ptr<XdmfArrayReference>();
+  }
 }
 
 void *
@@ -1246,9 +1261,16 @@ XdmfArray::readController()
     returnDimensions.push_back(dimTotal/controllerDimensionSubtotal);
     mDimensions = returnDimensions;
   }
-  else if (mHeavyDataControllers.size() == 1) {
+  else if (mHeavyDataControllers.size() == 1 && mHeavyDataControllers[0]->getArrayOffset() == 0) {
     this->release();
     mHeavyDataControllers[0]->read(this);
+    mDimensions = mHeavyDataControllers[0]->getDimensions();
+  }
+  else if (mHeavyDataControllers.size() == 1 && mHeavyDataControllers[0]->getArrayOffset() > 0) {
+    this->release();
+    shared_ptr<XdmfArray> tempArray = XdmfArray::New();
+    mHeavyDataControllers[0]->read(tempArray.get());
+    this->insert(mHeavyDataControllers[0]->getArrayOffset(), tempArray, 0, mHeavyDataControllers[0]->getSize(), 1, 1);
     mDimensions = mHeavyDataControllers[0]->getDimensions();
   }
 }
@@ -1289,7 +1311,12 @@ XdmfArray::setHeavyDataController(shared_ptr<XdmfHeavyDataController> newControl
 void
 XdmfArray::setName(const std::string & name)
 {
-  mName = name;
+  if (mName.c_str() == NULL) {
+    XdmfError::message(XdmfError::FATAL, "Error: Internal Name String is a null reference");
+  }
+  else {
+    mName = name;
+  }
 }
 
 void

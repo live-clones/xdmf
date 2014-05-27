@@ -42,29 +42,23 @@ int main(int, char **)
 
         //#initialization end
 
-        //#getDataSetPath begin
-
-        std::string exampleSetPath = exampleController->getDataSetPath();
-
-        //#getDataSetPath end
-
         //#getDimensions begin
 
         std::vector<unsigned int>  exampleDimensions = exampleController->getDimensions();
 
         //#getDimensions end
 
-        //#getDataspaceDimensions begin
-
-        std::vector<unsigned int> exampleDataspaceDimensions = exampleController->getDataspaceDimensions();
-
-        //#getDataspaceDimensions end
-
         //#getFilePath begin
 
         std::string exampleFilePath = exampleController->getFilePath();
 
         //#getFilePath end
+
+        //#getDescriptor begin
+
+        std::string exampleDescriptor = exampleController->getDescriptor();
+
+        //#getDescriptor end
 
         //#getName begin
 
@@ -91,18 +85,6 @@ int main(int, char **)
         //exampleArray now holds the data that exampleController holds.
 
         //#read end
-
-        //#getStart begin
-
-        std::vector<unsigned int> exampleStart = exampleController->getStart();
-
-        //#getStart end
-
-        //#getStride begin
-
-        std::vector<unsigned int> exampleStride = exampleController->getStride();
-
-        //#getStride end
 
         //#setArrayOffset begin
 

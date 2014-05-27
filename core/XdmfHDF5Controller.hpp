@@ -27,6 +27,7 @@
 // Includes
 #include "XdmfCore.hpp"
 #include "XdmfHeavyDataController.hpp"
+#include <map>
 
 /**
  * @brief Couples an XdmfArray with HDF5 data stored on disk.
@@ -104,6 +105,33 @@ public:
   static void closeFiles();
 
   /**
+   * Get the path of the data set within the heavy data file owned by
+   * this controller.
+   * For "/home/output.h5:/foo/data" this is "/foo/data"
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfHDF5Controller.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getDataSetPath
+   * @until //#getDataSetPath
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleHDF5Controller.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getDataSetPath
+   * @until #//getDataSetPath
+   *
+   * @return    A std::string containing the path of the data set.
+   */
+  std::string getDataSetPath() const;
+
+  /**
    * Get the dimensions of the dataspace owned by this
    * controller. This is the dimension of the entire heavy dataset,
    * which may be larger than the dimensions of the array (if reading
@@ -113,7 +141,7 @@ public:
    *
    * C++
    *
-   * @dontinclude ExampleXdmfHeavyDataController.cpp
+   * @dontinclude ExampleXdmfHDF5Controller.cpp
    * @skipline //#initialization
    * @until //#initialization
    * @skipline //#getDataspaceDimensions
@@ -121,7 +149,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleHeavyDataController.py
+   * @dontinclude XdmfExampleHDF5Controller.py
    * @skipline #//initialization
    * @until #//initialization
    * @skipline #//getDataspaceDimensions
@@ -131,6 +159,8 @@ public:
    *            owned by this controller.
    */
   std::vector<unsigned int> getDataspaceDimensions() const;
+
+  virtual std::string getDescriptor() const;
 
   virtual std::string getName() const;
 
@@ -162,7 +192,7 @@ public:
    *
    * C++
    *
-   * @dontinclude ExampleXdmfHeavyDataController.cpp
+   * @dontinclude ExampleXdmfHDF5Controller.cpp
    * @skipline //#initialization
    * @until //#initialization
    * @skipline //#getStart
@@ -170,7 +200,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleHeavyDataController.py
+   * @dontinclude XdmfExampleHDF5Controller.py
    * @skipline #//initialization
    * @until #//initialization
    * @skipline #//getStart
@@ -186,7 +216,7 @@ public:
    *
    * C++
    *
-   * @dontinclude ExampleXdmfHeavyDataController.cpp
+   * @dontinclude ExampleXdmfHDF5Controller.cpp
    * @skipline //#initialization
    * @until //#initialization
    * @skipline //#getStride
@@ -194,7 +224,7 @@ public:
    *
    * Python
    *
-   * @dontinclude XdmfExampleHeavyDataController.py
+   * @dontinclude XdmfExampleHDF5Controller.py
    * @skipline #//initialization
    * @until #//initialization
    * @skipline #//getStride
@@ -249,10 +279,10 @@ private:
   // When set to 0 there will be no files that stay open after a read
   static unsigned int mMaxOpenedFiles;
 
+  const std::string mDataSetPath;
   const std::vector<unsigned int> mDataspaceDimensions;
   const std::vector<unsigned int> mStart;
   const std::vector<unsigned int> mStride;
-
 };
 
 #endif /* XDMFHDF5CONTROLLER_HPP_ */

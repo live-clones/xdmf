@@ -18,11 +18,12 @@ shared_ptr<XdmfArray> parse(std::string expression, std::map<std::string, shared
 shared_ptr<XdmfArray> calculation(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2, char operation);
 shared_ptr<XdmfArray> invChunk(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2);
 shared_ptr<XdmfArray> function(std::vector<shared_ptr<XdmfArray> > valueVector, std::string functionName);
+shared_ptr<XdmfArray> subtract(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2);
 shared_ptr<XdmfArray> sum(std::vector<shared_ptr<XdmfArray> > values);
 shared_ptr<XdmfArray> ave(std::vector<shared_ptr<XdmfArray> > values);
 shared_ptr<XdmfArray> maximum(std::vector<shared_ptr<XdmfArray> > values);
 
-std::string validDigitChars = "1234567890.";
+std::string validDigitChars = "-1234567890.";
 std::string validVariableChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_:.";
 
 //std::map<std::string,  double (*)(std::vector<double>)> functions = boost::assign::map_list_of ("SUM", sum) ("AVE", ave);
@@ -147,6 +148,56 @@ int main(int, char **)
 
 	assert(answerArray->getSize() == 1);
 
+        // - is a special case since it can be considered a negative sign
+
+        XdmfFunction::addOperation('-', subtract, 2);
+
+        std::map<std::string, shared_ptr<XdmfArray> > minusVariable;
+
+        std::string minusExpression = "-5--5";
+
+        shared_ptr<XdmfArray> minusResult = XdmfFunction::evaluateExpression(minusExpression, minusVariable);
+
+        std::cout << "result of minus equation = " << minusResult->getValuesString() << std::endl;
+
+        assert(strcmp("0", minusResult->getValuesString().c_str()) == 0);
+
+        shared_ptr<XdmfArray> minusTest1 = XdmfArray::New();
+        minusTest1->pushBack<int>(-5);
+
+        minusVariable["A"] = minusTest1;
+
+        minusExpression = "-5-A";
+
+        minusResult = XdmfFunction::evaluateExpression(minusExpression, minusVariable);
+
+        std::cout << "result of minus equation = " << minusResult->getValuesString() << std::endl;
+
+        assert(strcmp("0", minusResult->getValuesString().c_str()) == 0);
+
+        minusExpression = "A--5";
+
+        minusResult = XdmfFunction::evaluateExpression(minusExpression, minusVariable);
+
+        std::cout << "result of minus equation = " << minusResult->getValuesString() << std::endl;
+
+        assert(strcmp("0", minusResult->getValuesString().c_str()) == 0);
+
+        minusExpression = "MAX(-5, -4, -3, -2, -1)";
+
+        minusResult = XdmfFunction::evaluateExpression(minusExpression, minusVariable);
+
+        std::cout << "result of negative equation = " << minusResult->getValuesString() << std::endl;
+
+        assert(strcmp("-1", minusResult->getValuesString().c_str()) == 0);
+
+        shared_ptr<XdmfArray> minusTest2 = XdmfArray::New();
+        minusTest2->pushBack<int>(13);
+
+        shared_ptr<XdmfArray> minusTestResult = subtract(minusTest1, minusTest2);
+
+        std::cout << "result of subtract function = " << minusTestResult->getValuesString() << std::endl;
+
 	return 0;
 }
 
@@ -156,7 +207,7 @@ double parse(std::string expression, std::map<std::string, double> variables)
 	std::stack<char> operationStack;
 
 	std::string validOperationChars = "+-*/()^"; //will be global at some point, all supported operations
-	int operationPriority [validOperationChars.size()];
+	int * operationPriority = new int[validOperationChars.size()]();
 	//list the priorities for the operations, based on the order of operations
 	//the index of the corresponding operation in validOperationChars is the same as the index of its priority in this array
 	operationPriority[0] = 1;//+
@@ -427,7 +478,7 @@ shared_ptr<XdmfArray> parse(std::string expression, std::map<std::string, shared
 	std::stack<char> operationStack;
 
 	std::string validOperationChars = "|#()@"; //will be global at some point, all supported operations
-	int operationPriority [validOperationChars.size()];
+	int * operationPriority = new int[validOperationChars.size()]();
 	//list the priorities for the operations, based on the order of operations
 	//the index of the corresponding operation in validOperationChars is the same as the index of its priority in this array
 	operationPriority[0] = 2;//|
@@ -1115,4 +1166,50 @@ shared_ptr<XdmfArray> maximum(std::vector<shared_ptr<XdmfArray> > values)
 		returnArray->pushBack(maxVal);
 		return returnArray;
 	}
+}
+
+shared_ptr<XdmfArray> subtract(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2)
+{
+      shared_ptr<XdmfArray> returnArray = XdmfArray::New();
+      shared_ptr<const XdmfArrayType> returnType = XdmfArrayType::comparePrecision(val1->getArrayType(), val2->getArrayType());
+      for (unsigned int i = 0; i < val1->getSize() && i < val2->getSize(); ++i)
+      {
+              if (returnType == XdmfArrayType::UInt8())
+              {
+                      returnArray->insert(i, val1->getValue<unsigned char>(i) - val2->getValue<unsigned char>(i));
+              }
+              else if (returnType == XdmfArrayType::UInt16())
+              {
+                      returnArray->insert(i, val1->getValue<unsigned short>(i) - val2->getValue<unsigned short>(i));
+              }
+              else if (returnType == XdmfArrayType::UInt32())
+              {
+                      returnArray->insert(i, val1->getValue<unsigned int>(i) - val2->getValue<unsigned int>(i));
+              }
+              else if (returnType == XdmfArrayType::Int8())
+              {
+                      returnArray->insert(i, val1->getValue<char>(i) - val2->getValue<char>(i));
+              }
+              else if (returnType == XdmfArrayType::Int16())
+              {
+                      returnArray->insert(i, val1->getValue<short>(i) - val2->getValue<short>(i));
+              }
+              else if (returnType == XdmfArrayType::Int32())
+              {
+                      returnArray->insert(i, val1->getValue<int>(i) - val2->getValue<int>(i));
+              }
+              else if (returnType == XdmfArrayType::Int64())
+              {
+                      returnArray->insert(i, val1->getValue<long>(i) - val2->getValue<long>(i));
+              }
+              else if (returnType == XdmfArrayType::Float32())
+              {
+                      returnArray->insert(i, val1->getValue<float>(i) - val2->getValue<float>(i));
+              }
+              else if (returnType == XdmfArrayType::Float64())
+              {
+                      returnArray->insert(i, val1->getValue<double>(i) - val2->getValue<double>(i));
+              }
+      }
+      return returnArray;
 }

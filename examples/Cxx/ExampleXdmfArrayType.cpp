@@ -19,6 +19,18 @@ int main(int, char **)
 
         //#getElementSize end
 
+        //#getIsSigned begin
+
+        bool isSigned = XdmfArrayType::UInt8()->getIsSigned();
+
+        //#getIsSigned end
+
+        //#getIsFloat begin
+
+        bool isFloat = XdmfArrayType::UInt8()->getIsFloat();
+
+        //#getIsFloat end
+
         //#getName begin
 
         std::string dataName = XdmfArrayType::Int8()->getName();

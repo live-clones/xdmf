@@ -270,7 +270,7 @@ if __name__ == "__main__":
         dimensionVector.push_back(4)
         writtenArray.initializeAsInt32(dimensionVector)
         for i in range (0, 20):
-                writtenArray.insert(i, i + 1)
+                writtenArray.insertAsInt32(i, i + 1)
         readArray = XdmfArray.New()
         readDimensionVector = UInt32Vector()
         readDimensionVector.push_back(6)

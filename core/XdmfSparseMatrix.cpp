@@ -57,6 +57,9 @@ const std::string XdmfSparseMatrix::ItemTag = "SparseMatrix";
 shared_ptr<XdmfArray>
 XdmfSparseMatrix::getColumnIndex()
 {
+  if (!mColumnIndex) {
+    XdmfError::message(XdmfError::FATAL, "Error: Sparse Matrix Column Index is Null");
+  }
   return mColumnIndex;
 }
 
@@ -85,7 +88,12 @@ XdmfSparseMatrix::getItemTag() const
 std::string
 XdmfSparseMatrix::getName() const
 {
-  return mName;
+  if (mName.c_str() == NULL) {
+    return "";
+  }
+  else {
+    return mName;
+  }
 }
 
 unsigned int
@@ -103,12 +111,18 @@ XdmfSparseMatrix::getNumberRows() const
 shared_ptr<XdmfArray>
 XdmfSparseMatrix::getRowPointer()
 {
+  if (!mRowPointer) {
+    XdmfError::message(XdmfError::FATAL, "Error: Sparse Matrix Row Pointer is Null");
+  }
   return mRowPointer;
 }
 
 shared_ptr<XdmfArray>
 XdmfSparseMatrix::getValues()
 {
+  if (!mValues) {
+    XdmfError::message(XdmfError::FATAL, "Error: Sparse Matrix Values are Null");
+  }
   return mValues;
 }
 
@@ -118,6 +132,12 @@ XdmfSparseMatrix::getValuesString() const
 
   std::stringstream toReturn;
   for(unsigned int i=0; i<mNumberRows; ++i) {
+    if (i + 1 < mNumberRows) {
+      if (mRowPointer->getValue<unsigned int>(i) > mRowPointer->getValue<unsigned int>(i+1)) {
+        XdmfError::message(XdmfError::FATAL,
+                           "Error: getValuesString(), Sparse Matrix Row Pointer is not sorted.");
+      }
+    }
     unsigned int index = 0;
     for(unsigned int j=mRowPointer->getValue<unsigned int>(i);
         j<mRowPointer->getValue<unsigned int>(i+1);
@@ -202,24 +222,38 @@ XdmfSparseMatrix::populateItem(const std::map<std::string, std::string> & itemPr
 void
 XdmfSparseMatrix::setColumnIndex(const shared_ptr<XdmfArray> columnIndex)
 {
+  if (!mColumnIndex) {
+    XdmfError::message(XdmfError::FATAL, "Error: Sparse Matrix Column Index is Null");
+  }
   mColumnIndex = columnIndex;
 }
 
 void
 XdmfSparseMatrix::setName(const std::string & name)
 {
-  mName = name;
+  if (mName.c_str() == NULL) {
+    XdmfError::message(XdmfError::FATAL, "Error: Internal Name String is a null reference");
+  }
+  else {
+    mName = name;
+  }
 }
 
 void
 XdmfSparseMatrix::setRowPointer(const shared_ptr<XdmfArray> rowPointer)
 {
+  if (!mRowPointer) {
+    XdmfError::message(XdmfError::FATAL, "Error: Sparse Matrix Row Pointer is Null");
+  }
   mRowPointer = rowPointer;
 }
 
 void
 XdmfSparseMatrix::setValues(const shared_ptr<XdmfArray> values)
 {
+  if (!mValues) {
+    XdmfError::message(XdmfError::FATAL, "Error: Sparse Matrix Values are Null");
+  }
   mValues = values;
 }
 

@@ -616,9 +616,9 @@ if __name__ == "__main__":
                         if (i == id):
                                 print "Core # " + str(id)
                                 print "Controller stats" 
-                                print "datasetpath = " + testArray.getHeavyDataController(0).getDataSetPath() 
+                                print "datasetpath = " + XdmfHeavyDataController.XdmfHDF5ControllerCast(testArray.getHeavyDataController(0)).getDataSetPath() 
                                 print "filepath = " + testArray.getHeavyDataController(0).getFilePath()
-                                outputVector = testArray.getHeavyDataController(0).getDataspaceDimensions()
+                                outputVector = XdmfHeavyDataController.XdmfHDF5ControllerCast(testArray.getHeavyDataController(0)).getDataspaceDimensions()
                                 print "Data space dimensions" 
                                 for j in range(0, outputVector.size()):
                                         print "[" + str(j) + "] =" + str(outputVector[j])
@@ -628,11 +628,11 @@ if __name__ == "__main__":
                                         print "[" + str(j) + "] =" + str(outputVector[j])
                                 print "Controller size"  + str(testArray.getHeavyDataController(0).getSize())
                                 print "Controller starts"
-                                outputVector = testArray.getHeavyDataController(0).getStart()
+                                outputVector = XdmfHeavyDataController.XdmfHDF5ControllerCast(testArray.getHeavyDataController(0)).getStart()
                                 for j in range(0, outputVector.size()):
                                         print "[" + str(j) + "] =" + str(outputVector[j])
                                 print "Controller strides"
-                                outputVector = testArray.getHeavyDataController(0).getStride()
+                                outputVector = XdmfHeavyDataController.XdmfHDF5ControllerCast(testArray.getHeavyDataController(0)).getStride()
                                 for j in range(0, outputVector.size()):
                                         print "[" + str(j) + "] =" + str(outputVector[j])
                                 for j in range(0, testArray.getSize()):
@@ -677,9 +677,9 @@ if __name__ == "__main__":
                         if (i == id):
                                 print "Core # " + str(id)
                                 print "Controller stats"
-                                print "datasetpath = " + readArray.getHeavyDataController(0).getDataSetPath()
+                                print "datasetpath = " + XdmfHeavyDataController.XdmfHDF5ControllerCast(readArray.getHeavyDataController(0)).getDataSetPath()
                                 print "filepath = " + readArray.getHeavyDataController(0).getFilePath()
-                                outputVector = readArray.getHeavyDataController(0).getDataspaceDimensions()
+                                outputVector = XdmfHeavyDataController.XdmfHDF5ControllerCast(readArray.getHeavyDataController(0)).getDataspaceDimensions()
                                 print "Data space dimensions"
                                 for j in range(0, outputVector.size()):
                                         print "[" + str(j) + "] =" + str(outputVector[j])
@@ -689,11 +689,11 @@ if __name__ == "__main__":
                                         print "[" + str(j) + "] =" + str(outputVector[j])
                                 print "Controller size" + str(readArray.getHeavyDataController(0).getSize())
                                 print "Controller starts"
-                                outputVector = readArray.getHeavyDataController(0).getStart()
+                                outputVector = XdmfHeavyDataController.XdmfHDF5ControllerCast(readArray.getHeavyDataController(0)).getStart()
                                 for j in range(0, outputVector.size()):
                                         print "[" + str(j) + "] =" + str(outputVector[j])
                                 print "Controller strides"
-                                outputVector = readArray.getHeavyDataController(0).getStride()
+                                outputVector = XdmfHeavyDataController.XdmfHDF5ControllerCast(readArray.getHeavyDataController(0)).getStride()
                                 for j in range(0, outputVector.size()):
                                         print "[" + str(j) + "] =" + str(outputVector[j])
                                 for j in range (0, readArray.getSize()):

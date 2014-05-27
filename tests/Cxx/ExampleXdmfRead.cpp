@@ -229,7 +229,7 @@ int main(int, char **)
 	std::cout << "The topology's tag: " << untopology->getItemTag().c_str()  << std::endl;
 	if (untopology->getType() == XdmfTopologyType::Hexahedron())
 	{
-		std::cout "This topology is a hexahedron" << std::endl;
+		std::cout << "This topology is a hexahedron" << std::endl;
         }
 	else
 	{
@@ -255,7 +255,7 @@ int main(int, char **)
 	}
 	outputInformation = ungeometry->getInformation(0);
 	std::cout << "Key: " << outputInformation->getKey().c_str() << "\nValue: " << outputInformation->getValue().c_str() << std::endl;
-	std::cout << "Contains " << ungeometry->getNumberPoints() << " points\n", ungeometry->getNumberPoints() << std::endl;
+	std::cout << "Contains " << ungeometry->getNumberPoints() << " points\n" << ungeometry->getNumberPoints() << std::endl;
 	std::cout << "Contains the values: " << ungeometry->getValuesString().c_str() << std::endl;
 
 

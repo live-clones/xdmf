@@ -288,10 +288,29 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
     }
 };
 
+%extend XdmfHeavyDataController {
+    static shared_ptr<XdmfHDF5Controller> XdmfHDF5ControllerCast(PyObject * obj)
+    {
+      void * resultPointer = 0;
+      swig_type_info * returnType = SWIG_TypeQuery("_p_boost__shared_ptrT_XdmfHeavyDataController_t");
+      SWIG_ConvertPtr(obj, &resultPointer, returnType, 0);
+      shared_ptr<XdmfHeavyDataController> * returnControllerPointer =
+        reinterpret_cast<shared_ptr<XdmfHeavyDataController> *>(resultPointer);
+      shared_ptr<XdmfHeavyDataController> returnController = returnControllerPointer[0];
+      if (shared_ptr<XdmfHDF5Controller> returnHDF5Controller = shared_dynamic_cast<XdmfHDF5Controller>(returnController)) {
+        return returnHDF5Controller;
+      }
+      else {
+        XdmfError::message(XdmfError::FATAL, "Error: Attempting to cast a non HDF5 Controller to HDF5");
+        return shared_ptr<XdmfHDF5Controller>();
+      }
+    }
+};
+
 /*This causes it to avoid throwing a warning for redefining fuctions that are defined for XdmfArray.
   I do this because doing so was intentional.*/
 #pragma SWIG nowarn=302
-/*Warnint 325 is due to having nested classes in XdmfFunction that are not accessible when wrapped.
+/*Warning 325 is due to having nested classes in XdmfFunction that are not accessible when wrapped.
   As of right now, this is acceptable behavior. So, the warning is suppressed*/
 #pragma SWIG nowarn=325
 
