@@ -33,7 +33,7 @@ XdmfInformation::New()
 {
   shared_ptr<XdmfInformation> p(new XdmfInformation());
   return p;
-};
+}
 
 shared_ptr<XdmfInformation>
 XdmfInformation::New(const std::string & key,
@@ -41,7 +41,7 @@ XdmfInformation::New(const std::string & key,
 {
   shared_ptr<XdmfInformation> p(new XdmfInformation(key, value));
   return p;
-};
+}
 
 XdmfInformation::XdmfInformation(const std::string & key,
                                  const std::string & value) :

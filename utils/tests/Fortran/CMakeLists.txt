@@ -26,8 +26,6 @@ if (MPIEXEC_MAX_NUMPROCS STRGREATER 5)
     ADD_MPI_TEST_FORTRAN(ConnectDSMFortran.sh AcceptDSMFortran,ConnectDSMFortran2,ConnectDSMFortran)
   ENDIF ("${IS_OPENMPI}" STREQUAL "")
 endif(MPIEXEC_MAX_NUMPROCS STRGREATER 5)
-SET_SOURCE_FILES_PROPERTIES(BinaryFortran.f90 PROPERTIES COMPILE_FLAGS -fno-range-check)
-ADD_TEST_FORTRAN(BinaryFortran)
 ADD_TEST_FORTRAN(OutputTestXdmfFortran)
 ADD_TEST_FORTRAN(EditTestXdmfFortran)
 ADD_TEST_FORTRAN(TestXdmfFortran)
@@ -40,7 +38,6 @@ ADD_TEST_FORTRAN(FixedOutputTestXdmfFortran -ffixed-form)
 #       have multiple files (ie: CLEAN_TEST_CXX(testname outputfile1 ...))
 #       Read UseCxxTest.cmake for more information
 # ---------------------------------------
-CLEAN_TEST_FORTRAN(BinaryFortran)
 CLEAN_TEST_FORTRAN(OutputTestXdmfFortran)
 CLEAN_TEST_FORTRAN(TestXdmfFortran
   my_output.h5

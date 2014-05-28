@@ -187,6 +187,7 @@ public:
 
   virtual void 
   getProperties(std::map<std::string, std::string> & collectedProperties) const;
+
   /**
    * Get the start index of the heavy data set owned by this controller.
    *

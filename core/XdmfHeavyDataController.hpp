@@ -235,6 +235,8 @@ public:
    */
   unsigned int getArrayOffset() const;
 
+  virtual void getProperties(std::map<std::string, std::string> & collectedProperties) const = 0;
+
   /**
    * Get the array type of the heavy data set owned by this
    * controller.
@@ -290,7 +292,7 @@ public:
 protected:
 
   XdmfHeavyDataController(const std::string & filePath,
-                          const shared_ptr<const XdmfArrayType> type,
+                          const shared_ptr<const XdmfArrayType> & type,
                           const std::vector<unsigned int> & dimensions);
 
   const std::vector<unsigned int> mDimensions;

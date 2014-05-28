@@ -33,6 +33,7 @@ XdmfHeavyDataController::XdmfHeavyDataController(const std::string & filePath,
                                                  const std::vector<unsigned int> & dimensions) :
   mDimensions(dimensions),
   mFilePath(filePath),
+  mArrayStartOffset(0),
   mType(type)
 {
 }

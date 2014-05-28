@@ -1,3 +1,4 @@
+#include "stdio.h"
 #include "XdmfArray.hpp"
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfHeavyDataWriter.hpp"
@@ -91,6 +92,7 @@ int main(int, char **)
   //
   readArray2->read();
   assert(readArray2->isInitialized());
+  printf("size = %d\n", readArray2->getSize());
   assert(readArray2->getSize() == 9);
   readDimensions = readArray2->getDimensions();
   assert(readDimensions.size() == 2);

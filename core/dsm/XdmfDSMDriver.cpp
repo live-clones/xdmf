@@ -183,13 +183,6 @@ static const H5FD_class_mpi_t XDMF_dsm_g = {
 
 #define H5_INTERFACE_INIT_FUNC  XDMF_dsm_init_interface
 
-void
-XdmfUnused(void)
-{
-  //To remove warning about XDMF_dsm_init_interface being unused
-  XDMF_dsm_init_interface();
-}
-
 static herr_t
 XDMF_dsm_init_interface(void)
 {
@@ -200,6 +193,13 @@ XDMF_dsm_init_interface(void)
 #endif
 
   FUNC_LEAVE_NOAPI(XDMF_dsm_init())
+}
+
+void
+XdmfUnused(void)
+{
+  //To remove warning about XDMF_dsm_init_interface being unused
+  XDMF_dsm_init_interface();
 }
 
 hid_t
