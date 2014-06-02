@@ -22,6 +22,7 @@
 /*****************************************************************************/
 
 #include <hdf5.h>
+#include <numeric>
 #include <sstream>
 #include "XdmfArray.hpp"
 #include "XdmfArrayType.hpp"
@@ -173,22 +174,45 @@ XdmfHDF5Controller::read(XdmfArray * const array, const int fapl)
       mOpenFileUsage[mFilePath]++;
     }
   }
-  hid_t dataset = H5Dopen(hdf5Handle, mDataSetPath.c_str(), H5P_DEFAULT);
-  hid_t dataspace = H5Dget_space(dataset);
 
-  std::vector<hsize_t> start(mStart.begin(), mStart.end());
-  std::vector<hsize_t> stride(mStride.begin(), mStride.end());
-  std::vector<hsize_t> count(mDimensions.begin(), mDimensions.end());
+  const hid_t dataset = H5Dopen(hdf5Handle, mDataSetPath.c_str(), H5P_DEFAULT);
+  const hid_t dataspace = H5Dget_space(dataset);
 
+  const unsigned int dataspaceDims = H5Sget_simple_extent_ndims(dataspace);
+  const std::vector<hsize_t> count(mDimensions.begin(), mDimensions.end());
 
-  status = H5Sselect_hyperslab(dataspace,
-                               H5S_SELECT_SET,
-                               &start[0],
-                               &stride[0],
-                               &count[0],
-                               NULL);
-  hssize_t numVals = H5Sget_select_npoints(dataspace);
+  if(dataspaceDims != mDimensions.size()) {
+    // special case where the number of dimensions of the hdf5 dataset
+    // does not equal the number of dimensions in the light data
+    // description - in this case we cannot properly take a hyperslab
+    // selection, so we assume we are reading the entire dataset and
+    // check whether that is ok to do
+    const int numberValuesHDF5 = H5Sget_select_npoints(dataspace);
+    const int numberValuesXdmf = 
+      std::accumulate(mDimensions.begin(),
+                      mDimensions.end(),
+                      1,
+                      std::multiplies<unsigned int>());
+    if(numberValuesHDF5 != numberValuesXdmf) {
+      XdmfError::message(XdmfError::FATAL,
+                         "Number of dimensions in light data description in "
+                         "Xdmf does not match number of dimensions in hdf5 "
+                         "file.");
+    }
+  }
+  else {
+    const std::vector<hsize_t> start(mStart.begin(), mStart.end());
+    const std::vector<hsize_t> stride(mStride.begin(), mStride.end());
 
+    status = H5Sselect_hyperslab(dataspace,
+                                 H5S_SELECT_SET,
+                                 &start[0],
+                                 &stride[0],
+                                 &count[0],
+                                 NULL);
+  }
+
+  const hssize_t numVals = H5Sget_select_npoints(dataspace);
   hid_t memspace = H5Screate_simple(mDimensions.size(),
                                     &count[0],
                                     NULL);

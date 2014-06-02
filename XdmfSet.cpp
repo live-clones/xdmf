@@ -87,11 +87,6 @@ XdmfSet::populateItem(const std::map<std::string, std::string> & itemProperties,
   if(name != itemProperties.end()) {
     mName = name->second;
   }
-  else  {
-    XdmfError::message(XdmfError::FATAL, 
-                       "'Name' not found in itemProperties in "
-                       "XdmfSet::populateItem");
-  }
   mType = XdmfSetType::New(itemProperties);
   for(std::vector<shared_ptr<XdmfItem> >::const_iterator iter =
         childItems.begin();

@@ -122,60 +122,8 @@ public:
 
     while(currNode != NULL) {
       if(currNode->type == XML_ELEMENT_NODE) {
-        if(xmlStrcmp(currNode->name, (xmlChar*)"include") == 0) {
-          // Deal with proper reading of XIncludes
-
-          xmlChar * xpointer = NULL;
-          xmlChar * href = NULL;
-
-          xmlAttrPtr currAttribute = currNode->properties;
-          while(currAttribute != NULL) {
-            if(xmlStrcmp(currAttribute->name, (xmlChar*)"xpointer") == 0) {
-              xpointer = currAttribute->children->content;
-            }
-            if(xmlStrcmp(currAttribute->name, (xmlChar*)"href") == 0) {
-              href = currAttribute->children->content;
-            }
-            currAttribute = currAttribute->next;
-          }
-
-          xmlXPathContextPtr context = mXPathContext;
-          if(href) {
-	    xmlDocPtr document;
-            xmlChar * filePath = xmlBuildURI(href, mDocument->URL);
-	    std::map<std::string, xmlDocPtr>::const_iterator iter = 
-	      mDocuments.find((char*)filePath);
-	    if(iter == mDocuments.end()) {
-	      document = xmlReadFile((char*)filePath, NULL, 0);
-	      mDocuments.insert(std::make_pair((char*)document->URL, document));
-	    }
-	    else {
-	      document = iter->second;
-	    }
-
-            context = xmlXPtrNewContext(document, NULL, NULL);           
-          }
-
-          if(xpointer) {
-            xmlXPathObjectPtr result = xmlXPtrEval(xpointer, context);
-            if(result && !xmlXPathNodeSetIsEmpty(result->nodesetval)) {
-              for(int i=0; i<result->nodesetval->nodeNr; ++i) {
-                this->readSingleNode(result->nodesetval->nodeTab[i],
-                                     myItems);
-              }
-            }
-            xmlXPathFreeObject(result);
-          }
-
-          if(href) {
-            xmlXPathFreeContext(context);
-          }
-
-        }
-        else {
-          // Normal reading
-          this->readSingleNode(currNode, myItems);
-        }
+        // Normal reading
+        this->readSingleNode(currNode, myItems);
       }
       currNode = currNode->next;
     }
@@ -191,68 +139,134 @@ public:
   readSingleNode(const xmlNodePtr currNode,
                  std::vector<shared_ptr<XdmfItem> > & myItems)
   {
-    // Check to see if the node is already in the XPath Map (seen previously)
-    std::map<xmlNodePtr, shared_ptr<XdmfItem> >::const_iterator iter =
-      mXPathMap.find(currNode);
-    // If it is grab it from the previously stored items
-    if(iter != mXPathMap.end()) {
-      myItems.push_back(iter->second);
-    }
-    else {
-      // Otherwise, generate a new Item from the node
-      std::map<std::string, std::string> itemProperties;
-
-      xmlNodePtr childNode = currNode->children;
-      if (XdmfArray::ItemTag.compare((char *)currNode->name) == 0 ||
-          strcmp("DataStructure", (char *)currNode->name) == 0) {
-        while(childNode != NULL) {
-          if(childNode->type == XML_TEXT_NODE && childNode->content) {
-            
-            std::string content((char *)childNode->content);
-            boost::algorithm::trim(content);
-            
-            if(content.size() != 0) {
-              itemProperties.insert(std::make_pair("Content", content));
-              itemProperties.insert(std::make_pair("XMLDir", mXMLDir));
-              break;
-            }
-          }
-          childNode = childNode->next;
-        }
-      }
     
+    // Deal with proper resolution of XIncludes
+    if(xmlStrcmp(currNode->name, (xmlChar*)"include") == 0) {
+      
+      xmlChar * xpointer = NULL;
+      xmlChar * href = NULL;
+      
       xmlAttrPtr currAttribute = currNode->properties;
       while(currAttribute != NULL) {
-        itemProperties.insert(std::make_pair((char *)currAttribute->name,
-                                             (char *)currAttribute->children->content));
+        if(xmlStrcmp(currAttribute->name, (xmlChar*)"xpointer") == 0) {
+          xpointer = currAttribute->children->content;
+        }
+        if(xmlStrcmp(currAttribute->name, (xmlChar*)"href") == 0) {
+          href = currAttribute->children->content;
+        }
         currAttribute = currAttribute->next;
       }
-
-      const std::vector<shared_ptr<XdmfItem> > childItems =
-        this->read(currNode->children);
-      shared_ptr<XdmfItem> newItem = 
-        mItemFactory->createItem((const char *)currNode->name,
-                                 itemProperties,
-                                 childItems);
       
-      if(newItem == NULL) {
-        XdmfError::message(XdmfError::FATAL, 
-                           "mItemFactory failed to createItem in "
-                           "XdmfCoreReader::XdmfCoreReaderImpl::readSingleNode");
+      xmlXPathContextPtr oldContext = mXPathContext;
+      if(href) {
+        xmlDocPtr document;
+        xmlChar * filePath = xmlBuildURI(href, mDocument->URL);
+        std::map<std::string, xmlDocPtr>::const_iterator iter = 
+          mDocuments.find((char*)filePath);
+        if(iter == mDocuments.end()) {
+          document = xmlReadFile((char*)filePath, NULL, 0);
+          mDocuments.insert(std::make_pair((char*)document->URL, 
+                                           document));
+        }
+        else {
+          document = iter->second;
+        }
+        
+        mXPathContext = xmlXPtrNewContext(document, NULL, NULL);           
       }
+      
+      if(xpointer) {
+        xmlXPathObjectPtr result = xmlXPtrEval(xpointer, mXPathContext);
+        if(result && !xmlXPathNodeSetIsEmpty(result->nodesetval)) {
+          for(int i=0; i<result->nodesetval->nodeNr; ++i) {
+            this->readSingleNode(result->nodesetval->nodeTab[i],
+                                 myItems);
+          }
+        }
+        else {
+          XdmfError::message(XdmfError::FATAL,
+                             "Invalid xpointer encountered.");
+        }
+        xmlXPathFreeObject(result);
+      }
+      
+      if(href) {
+        xmlXPathFreeContext(mXPathContext);
+      }
+      
+      mXPathContext = oldContext;
+      
+    }
+    else {
 
-      if (newItem->getItemTag().compare((const char *)currNode->name) != 0) {
-        newItem->populateItem(itemProperties,
-                              std::vector<shared_ptr<XdmfItem> >(),
-                              mCoreReader);
+      // Check to see if the node is already in the XPath Map (seen previously)
+      std::map<xmlNodePtr, shared_ptr<XdmfItem> >::const_iterator iter =
+        mXPathMap.find(currNode);
+      // If it is grab it from the previously stored items
+      if(iter != mXPathMap.end()) {
+        myItems.push_back(iter->second);
       }
       else {
-        newItem->populateItem(itemProperties,
-                              childItems,
-                              mCoreReader);
+        // Otherwise, generate a new XdmfItem from the node
+        std::map<std::string, std::string> itemProperties;
+        
+        xmlNodePtr childNode = currNode->children;
+        if (XdmfArray::ItemTag.compare((char *)currNode->name) == 0 ||
+            strcmp("DataStructure", (char *)currNode->name) == 0) {
+          while(childNode != NULL) {
+            if(childNode->type == XML_TEXT_NODE && childNode->content) {
+              
+              std::string content((char *)childNode->content);
+              boost::algorithm::trim(content);
+              
+              if(content.size() != 0) {
+                itemProperties.insert(std::make_pair("Content", content));
+                itemProperties.insert(std::make_pair("XMLDir", mXMLDir));
+                break;
+              }
+            }
+            childNode = childNode->next;
+          }
+        }
+        
+        // Pull attributes from node
+        xmlAttrPtr currAttribute = currNode->properties;
+        while(currAttribute != NULL) {
+          itemProperties.insert(std::make_pair((char *)currAttribute->name,
+                                               (char *)currAttribute->children->content));
+          currAttribute = currAttribute->next;
+        }
+        
+        // Build XdmfItem
+        const std::vector<shared_ptr<XdmfItem> > childItems =
+          this->read(currNode->children);
+        shared_ptr<XdmfItem> newItem = 
+          mItemFactory->createItem((const char *)currNode->name,
+                                   itemProperties,
+                                   childItems);
+        
+        if(newItem == NULL) {
+          XdmfError::message(XdmfError::FATAL, 
+                             "mItemFactory failed to createItem in "
+                             "XdmfCoreReader::XdmfCoreReaderImpl::readSingleNode");
+        }
+        
+
+        // Populate built XdmfItem
+        if (newItem->getItemTag().compare((const char *)currNode->name) != 0) {
+          newItem->populateItem(itemProperties,
+                                std::vector<shared_ptr<XdmfItem> >(),
+                                mCoreReader);
+        }
+        else {
+          newItem->populateItem(itemProperties,
+                                childItems,
+                                mCoreReader);
+        }
+
+        myItems.push_back(newItem);
+        mXPathMap.insert(std::make_pair(currNode, newItem));
       }
-      myItems.push_back(newItem);
-      mXPathMap.insert(std::make_pair(currNode, newItem));
     }
   }
 
