@@ -986,7 +986,7 @@ XdmfFortran::openDomainGridCollection(const int index,
       mDomain->getGridCollection(index);
     int i;
     int n;
-    if (openMaps == 1) {
+    if (openMaps) {
       n = openedGridCollection->getNumberMaps();
       shared_ptr<XdmfMap> openedMap;
       for (i = 0; i < n; i++) {
@@ -995,7 +995,7 @@ XdmfFortran::openDomainGridCollection(const int index,
         mPreviousMaps.push_back(openedMap);
       }
     }
-    if (openAttributes == 1) {
+    if (openAttributes) {
       n = openedGridCollection->getNumberAttributes();
       shared_ptr<XdmfAttribute> openedAttribute;
       for (i = 0; i < n; i++) {
@@ -1004,7 +1004,7 @@ XdmfFortran::openDomainGridCollection(const int index,
         mPreviousAttributes.push_back(openedAttribute);
       }
     }
-    if (openInformation == 1) {
+    if (openInformation) {
       n = openedGridCollection->getNumberInformations();
       shared_ptr<XdmfInformation> openedInformation;
       for (i = 0; i < n; i++) {
@@ -1013,7 +1013,7 @@ XdmfFortran::openDomainGridCollection(const int index,
         mPreviousInformations.push_back(openedInformation);
       }
     }
-    if (openSets == 1) {
+    if (openSets) {
       n = openedGridCollection->getNumberSets();
       shared_ptr<XdmfSet> openedSet;
       for (i = 0; i < n; i++) {
@@ -1075,7 +1075,7 @@ XdmfFortran::openGridCollectionGridCollection(const int index,
         mGridCollections.top()->getGridCollection(index);
       int i;
       int n;
-      if (openMaps == 1) {
+      if (openMaps) {
         n = openedGridCollection->getNumberMaps();
         shared_ptr<XdmfMap> openedMap;
         for (i = 0; i < n; i++) {
@@ -1084,7 +1084,7 @@ XdmfFortran::openGridCollectionGridCollection(const int index,
           mPreviousMaps.push_back(openedMap);
         }
       }
-      if (openAttributes == 1) {
+      if (openAttributes) {
         n = openedGridCollection->getNumberAttributes();
         shared_ptr<XdmfAttribute> openedAttribute;
         for (i = 0; i < n; i++) {
@@ -1093,7 +1093,7 @@ XdmfFortran::openGridCollectionGridCollection(const int index,
           mPreviousAttributes.push_back(openedAttribute);
         }
       }
-      if (openInformation == 1) {
+      if (openInformation) {
         n = openedGridCollection->getNumberInformations();
         shared_ptr<XdmfInformation> openedInformation;
         for (i = 0; i < n; i++) {
@@ -1102,7 +1102,7 @@ XdmfFortran::openGridCollectionGridCollection(const int index,
           mPreviousInformations.push_back(openedInformation);
         }
       }
-      if (openSets == 1) {
+      if (openSets) {
         n = openedGridCollection->getNumberSets();
         shared_ptr<XdmfSet> openedSet;
         for (i = 0; i < n; i++) {
@@ -1275,7 +1275,7 @@ XdmfFortran::openDomainGrid(const int gridType,
       mTime = openedGrid->getTime();
       int i;
       int n;
-      if (openAttributes == 1) {
+      if (openAttributes) {
         n = openedGrid->getNumberAttributes();
         shared_ptr<XdmfAttribute> openedAttribute;
         for (i = 0; i < n; i++) {
@@ -1284,7 +1284,7 @@ XdmfFortran::openDomainGrid(const int gridType,
           mPreviousAttributes.push_back(openedAttribute);
         }
       }
-      if (openMaps == 1) {
+      if (openMaps) {
         n = openedGrid->getNumberMaps();
         shared_ptr<XdmfMap> openedMap;
         for (i = 0; i < n; i++) {
@@ -1293,7 +1293,7 @@ XdmfFortran::openDomainGrid(const int gridType,
           mPreviousMaps.push_back(openedMap);
         }
       }
-      if (openInformation == 1) {
+      if (openInformation) {
         n = openedGrid->getNumberInformations();
         shared_ptr<XdmfInformation> openedInformation;
         for (i = 0; i < n; i++) {
@@ -1302,7 +1302,7 @@ XdmfFortran::openDomainGrid(const int gridType,
           mPreviousInformations.push_back(openedInformation);
         }
       }
-      if (openSets == 1) {
+      if (openSets) {
         n = openedGrid->getNumberSets();
         shared_ptr<XdmfSet> openedSet;
         for (i = 0; i < n; i++) {
@@ -1330,7 +1330,7 @@ XdmfFortran::openDomainGrid(const int gridType,
       mTime = openedGrid->getTime();
       int i;
       int n;
-      if (openAttributes == 1) {
+      if (openAttributes) {
         n = openedGrid->getNumberAttributes();
         shared_ptr<XdmfAttribute> openedAttribute;
         for (i = 0; i < n; i++) {
@@ -1339,7 +1339,7 @@ XdmfFortran::openDomainGrid(const int gridType,
           mPreviousAttributes.push_back(openedAttribute);
         }
       }
-      if (openMaps == 1) {
+      if (openMaps) {
         n = openedGrid->getNumberMaps();
         shared_ptr<XdmfMap> openedMap;
         for (i = 0; i < n; i++) {
@@ -1348,7 +1348,7 @@ XdmfFortran::openDomainGrid(const int gridType,
           mPreviousMaps.push_back(openedMap);
         }
       }
-      if (openInformation == 1) {
+      if (openInformation) {
         n = openedGrid->getNumberInformations();
         shared_ptr<XdmfInformation> openedInformation;
         for (i = 0; i < n; i++) {
@@ -1357,7 +1357,7 @@ XdmfFortran::openDomainGrid(const int gridType,
           mPreviousInformations.push_back(openedInformation);
         }
       }
-      if (openSets == 1) {
+      if (openSets) {
         n = openedGrid->getNumberSets();
         shared_ptr<XdmfSet> openedSet;
         for (i = 0; i < n; i++) {
@@ -1387,7 +1387,7 @@ XdmfFortran::openDomainGrid(const int gridType,
       mDimensions = openedGrid->getDimensions();
       int i;
       int n;
-      if (openAttributes == 1) {
+      if (openAttributes) {
         n = openedGrid->getNumberAttributes();
         shared_ptr<XdmfAttribute> openedAttribute;
         for (i = 0; i < n; i++) {
@@ -1396,7 +1396,7 @@ XdmfFortran::openDomainGrid(const int gridType,
           mPreviousAttributes.push_back(openedAttribute);
         }
       }
-      if (openMaps == 1) {
+      if (openMaps) {
         n = openedGrid->getNumberMaps();
         shared_ptr<XdmfMap> openedMap;
         for (i = 0; i < n; i++) {
@@ -1405,7 +1405,7 @@ XdmfFortran::openDomainGrid(const int gridType,
           mPreviousMaps.push_back(openedMap);
         }
       }
-      if (openInformation == 1) {
+      if (openInformation) {
         n = openedGrid->getNumberInformations();
         shared_ptr<XdmfInformation> openedInformation;
         for (i = 0; i < n; i++) {
@@ -1414,7 +1414,7 @@ XdmfFortran::openDomainGrid(const int gridType,
           mPreviousInformations.push_back(openedInformation);
         }
       }
-      if (openSets == 1) {
+      if (openSets) {
         n = openedGrid->getNumberSets();
         shared_ptr<XdmfSet> openedSet;
         for (i = 0; i < n; i++) {
@@ -1442,7 +1442,7 @@ XdmfFortran::openDomainGrid(const int gridType,
       mTime = openedGrid->getTime();
       int i;
       int n;
-      if (openAttributes == 1) {
+      if (openAttributes) {
         n = openedGrid->getNumberAttributes();
         shared_ptr<XdmfAttribute> openedAttribute;
         for (i = 0; i < n; i++) {
@@ -1451,7 +1451,7 @@ XdmfFortran::openDomainGrid(const int gridType,
           mPreviousAttributes.push_back(openedAttribute);
         }
       }
-      if (openMaps == 1) {
+      if (openMaps) {
         n = openedGrid->getNumberMaps();
         shared_ptr<XdmfMap> openedMap;
         for (i = 0; i < n; i++) {
@@ -1460,7 +1460,7 @@ XdmfFortran::openDomainGrid(const int gridType,
           mPreviousMaps.push_back(openedMap);
         }
       }
-      if (openInformation == 1) {
+      if (openInformation) {
         n = openedGrid->getNumberInformations();
         shared_ptr<XdmfInformation> openedInformation;
         for (i = 0; i < n; i++) {
@@ -1469,7 +1469,7 @@ XdmfFortran::openDomainGrid(const int gridType,
           mPreviousInformations.push_back(openedInformation);
         }
       }
-      if (openSets == 1) {
+      if (openSets) {
         n = openedGrid->getNumberSets();
         shared_ptr<XdmfSet> openedSet;
         for (i = 0; i < n; i++) {
@@ -2374,7 +2374,7 @@ XdmfFortran::openGridCollectionGrid(const int gridType,
         mTime = openedGrid->getTime();
         int i;
         int n;
-        if (openAttributes == 1) {
+        if (openAttributes) {
           n = openedGrid->getNumberAttributes();
           shared_ptr<XdmfAttribute> openedAttribute;
           for (i = 0; i < n; i++) {
@@ -2383,7 +2383,7 @@ XdmfFortran::openGridCollectionGrid(const int gridType,
             mPreviousAttributes.push_back(openedAttribute);
           }
         }
-        if (openMaps == 1) {
+        if (openMaps) {
           n = openedGrid->getNumberMaps();
           shared_ptr<XdmfMap> openedMap;
           for (i = 0; i < n; i++) {
@@ -2392,7 +2392,7 @@ XdmfFortran::openGridCollectionGrid(const int gridType,
             mPreviousMaps.push_back(openedMap);
           }
         }
-        if (openInformation == 1) {
+        if (openInformation) {
           n = openedGrid->getNumberInformations();
           shared_ptr<XdmfInformation> openedInformation;
           for (i = 0; i < n; i++) {
@@ -2401,7 +2401,7 @@ XdmfFortran::openGridCollectionGrid(const int gridType,
             mPreviousInformations.push_back(openedInformation);
           }
         }
-        if (openSets == 1) {
+        if (openSets) {
           n = openedGrid->getNumberSets();
           shared_ptr<XdmfSet> openedSet;
           for (i = 0; i < n; i++) {
@@ -2429,7 +2429,7 @@ XdmfFortran::openGridCollectionGrid(const int gridType,
         mTime = openedGrid->getTime();
         int i;
         int n;
-        if (openAttributes == 1) {
+        if (openAttributes) {
           n = openedGrid->getNumberAttributes();
           shared_ptr<XdmfAttribute> openedAttribute;
           for (i = 0; i < n; i++) {
@@ -2438,7 +2438,7 @@ XdmfFortran::openGridCollectionGrid(const int gridType,
             mPreviousAttributes.push_back(openedAttribute);
           }
         }
-        if (openMaps == 1) {
+        if (openMaps) {
           n = openedGrid->getNumberMaps();
           shared_ptr<XdmfMap> openedMap;
           for (i = 0; i < n; i++) {
@@ -2447,7 +2447,7 @@ XdmfFortran::openGridCollectionGrid(const int gridType,
             mPreviousMaps.push_back(openedMap);
           }
         }
-        if (openInformation == 1) {
+        if (openInformation) {
           n = openedGrid->getNumberInformations();
           shared_ptr<XdmfInformation> openedInformation;
           for (i = 0; i < n; i++) {
@@ -2456,7 +2456,7 @@ XdmfFortran::openGridCollectionGrid(const int gridType,
             mPreviousInformations.push_back(openedInformation);
           }
         }
-        if (openSets == 1) {
+        if (openSets) {
           n = openedGrid->getNumberSets();
           shared_ptr<XdmfSet> openedSet;
           for (i = 0; i < n; i++) {
@@ -2486,7 +2486,7 @@ XdmfFortran::openGridCollectionGrid(const int gridType,
         mDimensions = openedGrid->getDimensions();
         int i;
         int n;
-        if (openAttributes == 1) {
+        if (openAttributes) {
           n = openedGrid->getNumberAttributes();
           shared_ptr<XdmfAttribute> openedAttribute;
           for (i = 0; i < n; i++) {
@@ -2495,7 +2495,7 @@ XdmfFortran::openGridCollectionGrid(const int gridType,
             mPreviousAttributes.push_back(openedAttribute);
           }
         }
-        if (openMaps == 1) {
+        if (openMaps) {
           n = openedGrid->getNumberMaps();
           shared_ptr<XdmfMap> openedMap;
           for (i = 0; i < n; i++) {
@@ -2504,7 +2504,7 @@ XdmfFortran::openGridCollectionGrid(const int gridType,
             mPreviousMaps.push_back(openedMap);
           }
         }
-        if (openInformation == 1) {
+        if (openInformation) {
           n = openedGrid->getNumberInformations();
           shared_ptr<XdmfInformation> openedInformation;
           for (i = 0; i < n; i++) {
@@ -2513,7 +2513,7 @@ XdmfFortran::openGridCollectionGrid(const int gridType,
             mPreviousInformations.push_back(openedInformation);
           }
         }
-        if (openSets == 1) {
+        if (openSets) {
           n = openedGrid->getNumberSets();
           shared_ptr<XdmfSet> openedSet;
           for (i = 0; i < n; i++) {
@@ -2541,7 +2541,7 @@ XdmfFortran::openGridCollectionGrid(const int gridType,
         mTime = openedGrid->getTime();
         int i;
         int n;
-        if (openAttributes == 1) {
+        if (openAttributes) {
           n = openedGrid->getNumberAttributes();
           shared_ptr<XdmfAttribute> openedAttribute;
           for (i = 0; i < n; i++) {
@@ -2550,7 +2550,7 @@ XdmfFortran::openGridCollectionGrid(const int gridType,
             mPreviousAttributes.push_back(openedAttribute);
           }
         }
-        if (openMaps == 1) {
+        if (openMaps) {
           n = openedGrid->getNumberMaps();
           shared_ptr<XdmfMap> openedMap;
           for (i = 0; i < n; i++) {
@@ -2559,7 +2559,7 @@ XdmfFortran::openGridCollectionGrid(const int gridType,
             mPreviousMaps.push_back(openedMap);
           }
         }
-        if (openInformation == 1) {
+        if (openInformation) {
           n = openedGrid->getNumberInformations();
           shared_ptr<XdmfInformation> openedInformation;
           for (i = 0; i < n; i++) {
@@ -2568,7 +2568,7 @@ XdmfFortran::openGridCollectionGrid(const int gridType,
             mPreviousInformations.push_back(openedInformation);
           }
         }
-        if (openSets == 1) {
+        if (openSets) {
           n = openedGrid->getNumberSets();
           shared_ptr<XdmfSet> openedSet;
           for (i = 0; i < n; i++) {
@@ -6721,7 +6721,7 @@ XdmfFortran::openSet(const int index, const int openAttribute, const int openInf
     int i;
     int n;
     n = openedSet->getNumberAttributes();
-    if (openAttribute == 1) {
+    if (openAttribute) {
       shared_ptr<XdmfAttribute> openedAttribute;
       for (i = 0; i < n; i++) {
         openedAttribute = openedSet->getAttribute(i);
@@ -6729,7 +6729,7 @@ XdmfFortran::openSet(const int index, const int openAttribute, const int openInf
         mPreviousAttributes.push_back(openedAttribute);
       }
     }
-    if (openInformation == 1) {
+    if (openInformation) {
       n = openedSet->getNumberInformations();
       shared_ptr<XdmfInformation> openedInformation;
       for (i = 0; i < n; i++) {
