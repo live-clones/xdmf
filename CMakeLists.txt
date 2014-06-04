@@ -23,6 +23,9 @@ set(CMAKE_MODULE_PATH
 
 include(XdmfFunctions)
 
+# Converting Install Prefix to an absolute path
+get_filename_component(CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}" ABSOLUTE)
+
 # RPath
 set(CMAKE_SKIP_BUILD_RPATH  FALSE)
 set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
@@ -277,6 +280,7 @@ if(NOT XDMF_BUILD_CORE_ONLY)
 
   if(XDMF_WRAP_PYTHON)
     XDMF_SWIG_PYTHON(Xdmf XdmfCore XdmfDSM)
+    set(XDMF_PYTHON_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/lib/python/)
   endif(XDMF_WRAP_PYTHON)
 
   if(BUILD_TESTING)
