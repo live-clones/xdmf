@@ -7205,12 +7205,14 @@ XdmfFortran::retrieveInformationPropertyByKey(const int index,
 
 void
 XdmfFortran::addInformationArray(const int index,
+                                 char * name,
                                  void * values,
                                  const int numValues,
                                  const int arrayType)
 {
   if (index < (int)mInformations.size()) {
     shared_ptr<XdmfArray> newArray = XdmfArray::New();
+    newArray->setName(name);
     writeToArray(newArray, numValues, arrayType, values);
     mInformations[index]->insert(newArray);
   }
@@ -9724,10 +9726,10 @@ extern "C"
   }
 
   void
-  XdmfAddInformationArray(long * pointer, int * index, void * values, int * numValues, int * arrayType)
+  XdmfAddInformationArray(long * pointer, int * index, char * name, void * values, int * numValues, int * arrayType)
   {
     XdmfFortran * xdmfFortran = reinterpret_cast<XdmfFortran *>(*pointer);
-    xdmfFortran->addInformationArray(*index, values, *numValues, *arrayType);
+    xdmfFortran->addInformationArray(*index, name, values, *numValues, *arrayType);
   }
 
   void

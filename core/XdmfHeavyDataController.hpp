@@ -32,6 +32,7 @@ class XdmfArrayType;
 #include "XdmfCore.hpp"
 #include <string>
 #include <vector>
+#include <map>
 #include "XdmfSharedPtr.hpp"
 
 /**

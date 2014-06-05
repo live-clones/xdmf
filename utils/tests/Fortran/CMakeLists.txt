@@ -30,7 +30,18 @@ ADD_TEST_FORTRAN(OutputTestXdmfFortran)
 ADD_TEST_FORTRAN(EditTestXdmfFortran)
 ADD_TEST_FORTRAN(TestXdmfFortran)
 ADD_TEST_FORTRAN(NestedInfoFortran)
-SET_SOURCE_FILES_PROPERTIES(FixedOutputTestXdmfFortran.f90 PROPERTIES COMPILE_FLAGS -ffixed-form)
+#if GCC
+STRING(REGEX MATCH "gfortran" IS_GCC "${CMAKE_Fortran_COMPILER}")
+IF ("${IS_GCC}" STREQUAL "gfortran")
+  SET_SOURCE_FILES_PROPERTIES(FixedOutputTestXdmfFortran.f90 PROPERTIES
+COMPILE_FLAGS "-ffixed-form")
+ENDIF ("${IS_GCC}" STREQUAL "gfortran")
+#if Intel
+STRING(REGEX MATCH "ifort" IS_INTEL "${CMAKE_Fortran_COMPILER}")
+IF ("${IS_INTEL}" STREQUAL "ifort")
+  SET_SOURCE_FILES_PROPERTIES(FixedOutputTestXdmfFortran.f90 PROPERTIES
+COMPILE_FLAGS "-fixed")
+ENDIF ("${IS_INTEL}" STREQUAL "ifort")
 ADD_TEST_FORTRAN(FixedOutputTestXdmfFortran -ffixed-form)
 
 # Add any cxx cleanup here:

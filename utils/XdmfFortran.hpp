@@ -2762,6 +2762,7 @@ public:
    * @param     arrayType       The data type that the array will consist of.
    */
   void addInformationArray(const int index,
+                           char * name,
                            void * values,
                            const int numValues,
                            const int arrayType);

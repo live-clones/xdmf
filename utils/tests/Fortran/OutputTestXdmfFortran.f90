@@ -163,7 +163,7 @@ PROGRAM XdmfFortranExample
   PRINT *, 'Node Attribute ID: ', nodeSmallAttributeId
   tempID = XDMFADDINFORMATION(obj, 'Grid1'//CHAR(0), 'This is Grid 1'//CHAR(0))
   tempID = XDMFADDINFORMATION(obj, 'SubInformation'//CHAR(0), 'This is an information inside an information'//CHAR(0))
-  CALL XDMFADDINFORMATIONARRAY(obj, 1, myBrick, 3, XDMF_ARRAY_TYPE_FLOAT64)
+  CALL XDMFADDINFORMATIONARRAY(obj, 1, "Array"//CHAR(0), myBrick, 3, XDMF_ARRAY_TYPE_FLOAT64)
   CALL XDMFMODIFYINFORMATIONARRAY(obj, 1, 0, myBrick, XDMF_ARRAY_TYPE_FLOAT64, 3, 3, 1, 1)
   CALL XDMFINSERTINFORMATIONINTOINFORMATION(obj, 0, 1, .TRUE.)
   CALL XDMFADDGRID(obj, 'TestGrid'//CHAR(0), .FALSE.)

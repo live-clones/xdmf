@@ -130,6 +130,8 @@ public:
 
   static const std::string ItemTag;
 
+  static shared_ptr<XdmfArray> abs(std::vector<shared_ptr<XdmfArray> > values);
+
   /*
    * Adds a specified function to the list of functions used while
    * evaluating strings
@@ -277,6 +279,14 @@ public:
                shared_ptr<XdmfOperationInternal> newOperation,
                int priority);
 
+  static shared_ptr<XdmfArray> addition(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2);
+
+  static shared_ptr<XdmfArray> arcsin(std::vector<shared_ptr<XdmfArray> > values);
+
+  static shared_ptr<XdmfArray> arccos(std::vector<shared_ptr<XdmfArray> > values);
+
+  static shared_ptr<XdmfArray> arctan(std::vector<shared_ptr<XdmfArray> > values);
+
   /**
    * Averages the values contained in all the provided arrays.
    *
@@ -333,6 +343,12 @@ public:
   static shared_ptr<XdmfArray>
   chunk(shared_ptr<XdmfArray> val1,
         shared_ptr<XdmfArray> val2);
+
+  static shared_ptr<XdmfArray> cos(std::vector<shared_ptr<XdmfArray> > values);
+
+  static shared_ptr<XdmfArray> division(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2);
+
+  static shared_ptr<XdmfArray> exponent(std::vector<shared_ptr<XdmfArray> > values);
 
   /**
    * Evaluates an expression based on the list of variables provided.
@@ -751,6 +767,12 @@ public:
    */
   void insertVariable(std::string key, shared_ptr<XdmfArray> value);
 
+  static shared_ptr<XdmfArray> join(std::vector<shared_ptr<XdmfArray> > values);
+
+  static shared_ptr<XdmfArray> log(std::vector<shared_ptr<XdmfArray> > values);
+
+  static shared_ptr<XdmfArray> multiplication(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2);
+
   /**
    * Parses the expression that the function contains and generates an array
    * containing the values that the function produces.
@@ -829,6 +851,12 @@ public:
    */
   void setExpression(std::string newExpression);
 
+  static shared_ptr<XdmfArray> sin(std::vector<shared_ptr<XdmfArray> > values);
+
+  static shared_ptr<XdmfArray> sqrt(std::vector<shared_ptr<XdmfArray> > values);
+
+  static shared_ptr<XdmfArray> subtraction(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2);
+
   /**
    * Adds together all the values contained in the provided arrays.
    *
@@ -856,6 +884,8 @@ public:
    */
   static shared_ptr<XdmfArray>
   sum(std::vector<shared_ptr<XdmfArray> > values);
+
+  static shared_ptr<XdmfArray> tan(std::vector<shared_ptr<XdmfArray> > values);
 
   void traverse(const shared_ptr<XdmfBaseVisitor> visitor);
 
