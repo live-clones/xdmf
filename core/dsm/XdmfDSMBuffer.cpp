@@ -59,7 +59,7 @@
 #include <stdlib.h>
 #include <algorithm>
 
-#ifdef _WIN32
+#ifndef _WIN32
   #include <unistd.h>
 #endif
 
