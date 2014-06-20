@@ -238,7 +238,6 @@ XdmfArrayType::comparePrecision(shared_ptr<const XdmfArrayType> type1,
         // where there is a mixed type of Char and UChar
         // The resulting type should be a Short
         return Int16();
-        break;
       }
     case 3:
       // Short
@@ -249,7 +248,6 @@ XdmfArrayType::comparePrecision(shared_ptr<const XdmfArrayType> type1,
         // Char/UChar and Short
         // In all of these cases the result shoule be a Short
         return Int16();
-        break;
       }
     case 4:
       // UShort
@@ -258,7 +256,6 @@ XdmfArrayType::comparePrecision(shared_ptr<const XdmfArrayType> type1,
         // When mixing UShort with a signed type that has a lower precision
         // the resulting type should be an int
         return Int32();
-        break;
       }
       else if (type2Name.compare("UChar") == 0 ||
                type2Name.compare("UShort") == 0) {
@@ -270,7 +267,6 @@ XdmfArrayType::comparePrecision(shared_ptr<const XdmfArrayType> type1,
         else {
           return Int32();
         }
-        break;
       }
     case 5:
       // Int
@@ -286,7 +282,6 @@ XdmfArrayType::comparePrecision(shared_ptr<const XdmfArrayType> type1,
         else {
           return Int64();
         }
-        break;
       }
       if (type2Name.compare("Int") == 0) {
         if (type2->getElementSize() == 4) {
@@ -295,7 +290,6 @@ XdmfArrayType::comparePrecision(shared_ptr<const XdmfArrayType> type1,
         else {
           return Int64();
         }
-        break;
       }
     case 6:
       // UInt
@@ -312,7 +306,6 @@ XdmfArrayType::comparePrecision(shared_ptr<const XdmfArrayType> type1,
         else {
           return Int64();
         }
-        break;
       }
       else if (type2Name.compare("UInt") == 0) {
         if (firstIsSigned) {
@@ -321,11 +314,9 @@ XdmfArrayType::comparePrecision(shared_ptr<const XdmfArrayType> type1,
         else {
           return UInt32();
         }
-        break;
       }
       else if (type2Name.compare("Int") == 0) {
         return Int64();
-        break;
       }
     case 7:
       // Float
@@ -335,7 +326,6 @@ XdmfArrayType::comparePrecision(shared_ptr<const XdmfArrayType> type1,
         // String is the only type that has priority over a float
         // This case occurs when type1 is a float
         return type1;
-        break;
       }
       else if (type2Name.compare("UInt") == 0) {
         return Float64();
@@ -349,13 +339,11 @@ XdmfArrayType::comparePrecision(shared_ptr<const XdmfArrayType> type1,
 	else {
           return type2;
         }
-        break;
       }
     case 8:
       // String
       // String has priority over everything
       return String();
-      break;
     default:
       break;
   }
