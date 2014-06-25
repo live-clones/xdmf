@@ -1,6 +1,7 @@
 #include "XdmfTestDataGenerator.hpp"
 #include "XdmfVisitor.hpp"
 #include "XdmfGrid.hpp"
+#include <iostream>
 
 // Make a new XdmfVisitor that simply counts number of values
 class XdmfVisitorValueCounter : public XdmfVisitor,
@@ -57,6 +58,8 @@ int main(int, char **)
   shared_ptr<XdmfGrid> grid = XdmfTestDataGenerator::createHexahedron();
 
   grid->accept(visitor);
+
+  std::cout << visitor->getCount() << " ?= " << 71 << std::endl;
 
   assert(visitor->getCount() == 71);
 

@@ -76,9 +76,13 @@ int main(int argc, char *argv[])
   // Release data and read back in to check if we wrote correctly
   array->release();
   array->read();
+  std::cout << array->getSize() << "?=" << 3 << std::endl;
   assert(array->getSize() == 3);
+  std::cout << array->getValue<int>(0) << "?=" << 3*rank << std::endl;
   assert(array->getValue<int>(0) == 3*rank);
+  std::cout << array->getValue<int>(1) << "?=" << ((3*rank) + 1) << std::endl;
   assert(array->getValue<int>(1) == 3*rank + 1);
+  std::cout << array->getValue<int>(2) << "?=" << ((3*rank) + 2) << std::endl;
   assert(array->getValue<int>(2) == 3*rank + 2);
   
   MPI_Barrier(comm);
@@ -96,8 +100,10 @@ int main(int argc, char *argv[])
   array->setHeavyDataController(fullController);
   array->release();
   array->read();
+  std::cout << array->getSize() << "?=" << (size * 3) << std::endl;
   assert(array->getSize() == size*3);
   for(int i=0; i<size*3; ++i) {
+    std::cout << array->getValue<int>(i) << "?=" << i << std::endl;
     assert(array->getValue<int>(i) == i);
   }
 

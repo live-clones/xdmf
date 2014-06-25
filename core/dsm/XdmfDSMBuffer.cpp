@@ -125,7 +125,7 @@ XdmfDSMBuffer::AddressToId(int Address)
                   << this->EndServerId;
           XdmfError::message(XdmfError::FATAL, message.str());
         }
-        catch (XdmfError e) {
+        catch (XdmfError & e) {
           throw e;
         }
       }
@@ -137,7 +137,7 @@ XdmfDSMBuffer::AddressToId(int Address)
         message << "DsmType " << this->DsmType << " not yet implemented";
         XdmfError::message(XdmfError::FATAL, message.str());
       }
-      catch (XdmfError e) {
+      catch (XdmfError & e) {
         throw e;
       }
       break;
@@ -155,7 +155,7 @@ XdmfDSMBuffer::BroadcastComm(int *comm, int root)
     try {
       XdmfError(XdmfError::FATAL, "Broadcast of Comm failed");
     }
-    catch (XdmfError e) {
+    catch (XdmfError & e) {
       throw e;
     }
   }
@@ -164,7 +164,7 @@ XdmfDSMBuffer::BroadcastComm(int *comm, int root)
 int
 XdmfDSMBuffer::BufferService(int *returnOpcode)
 {
-  int        opcode, who, status = XDMF_DSM_FAIL;
+  int        opcode, who;
   int        aLength;
   int          address;
   char        *datap;
@@ -175,14 +175,14 @@ XdmfDSMBuffer::BufferService(int *returnOpcode)
       try {
         this->ProbeCommandHeader(&this->CommChannel);
       }
-      catch (XdmfError e) {
+      catch (XdmfError & e) {
         throw e;
       }
     }
     try {
       this->BroadcastComm(&this->CommChannel, 0);
     }
-    catch (XdmfError e) {
+    catch (XdmfError & e) {
       throw e;
     }
   }
@@ -195,12 +195,12 @@ XdmfDSMBuffer::BufferService(int *returnOpcode)
                                this->CommChannel,
                                syncId);
   }
-  catch (XdmfError e) {
+  catch (XdmfError & e) {
     throw e;
   }
 
   // Connection is an ID for client or server,
-  int communicatorId = this->CommChannel;
+//  int communicatorId = this->CommChannel;
 
   switch(opcode) {
 
@@ -214,7 +214,7 @@ XdmfDSMBuffer::BufferService(int *returnOpcode)
                 << this->EndAddress;
         XdmfError::message(XdmfError::FATAL, message.str());
       }
-      catch (XdmfError e) {
+      catch (XdmfError & e) {
         throw e;
       }
     }
@@ -223,7 +223,7 @@ XdmfDSMBuffer::BufferService(int *returnOpcode)
          XdmfError::message(XdmfError::FATAL,
                             "Null Data Pointer when trying to put data");
        }
-       catch (XdmfError e) {
+       catch (XdmfError & e) {
          throw e;
        }
     }
@@ -236,7 +236,7 @@ XdmfDSMBuffer::BufferService(int *returnOpcode)
                         0,
                         this->CommChannel);
     }
-    catch (XdmfError e) {
+    catch (XdmfError & e) {
       throw e;
     }
     break;
@@ -251,7 +251,7 @@ XdmfDSMBuffer::BufferService(int *returnOpcode)
                 << this->EndAddress;
         XdmfError::message(XdmfError::FATAL, message.str());
       }
-      catch (XdmfError e) {
+      catch (XdmfError & e) {
         throw e;
       }
     }
@@ -260,7 +260,7 @@ XdmfDSMBuffer::BufferService(int *returnOpcode)
          XdmfError::message(XdmfError::FATAL,
                             "Null Data Pointer when trying to put data");
        }
-       catch (XdmfError e) {
+       catch (XdmfError & e) {
          throw e;
        }
     }
@@ -273,7 +273,7 @@ XdmfDSMBuffer::BufferService(int *returnOpcode)
                      0,
                      this->CommChannel);
     }
-    catch (XdmfError e) {
+    catch (XdmfError & e) {
       throw e;
     }
     break;
@@ -281,6 +281,7 @@ XdmfDSMBuffer::BufferService(int *returnOpcode)
 // H5FD_DSM_ACCEPT
   // Comes from client
   case XDMF_DSM_ACCEPT:
+  {
     int numConnections;	
     this->ReceiveAcknowledgment(who,
                                 numConnections,
@@ -289,7 +290,7 @@ XdmfDSMBuffer::BufferService(int *returnOpcode)
     this->Comm->Accept(numConnections);
     this->SendInfo();
     break;
-
+  }
   // H5FD_DSM_LOCK_ACQUIRE
   // Comes from client or server depending on communicator
   case XDMF_DSM_LOCK_ACQUIRE:
@@ -314,7 +315,7 @@ XdmfDSMBuffer::BufferService(int *returnOpcode)
       message << "Error: Unknown Opcode " << opcode;
       XdmfError::message(XdmfError::FATAL, message.str());
     }
-    catch (XdmfError e) {
+    catch (XdmfError & e) {
       throw e;
     }
   }
@@ -331,7 +332,7 @@ XdmfDSMBuffer::BufferServiceLoop(int *returnOpcode)
     try {
       status = this->BufferService(&op);
     }
-    catch (XdmfError e) {
+    catch (XdmfError & e) {
       throw e;
     }
     if (returnOpcode) *returnOpcode = op;
@@ -380,7 +381,7 @@ XdmfDSMBuffer::ConfigureUniform(XdmfDSMCommMPI *aComm, long aLength,
         this->SetLength(aLength);
       }
     }
-    catch (XdmfError e) {
+    catch (XdmfError & e) {
       throw e;
     }
     this->StartAddress = (aComm->GetId() - startId) * aLength;
@@ -412,7 +413,7 @@ XdmfDSMBuffer::Get(long Address, long aLength, void *Data)
       try {
         XdmfError::message(XdmfError::FATAL, "Address Error");
       }
-      catch (XdmfError e) {
+      catch (XdmfError & e) {
         throw e;
       }
     }
@@ -431,7 +432,6 @@ XdmfDSMBuffer::Get(long Address, long aLength, void *Data)
     }
     else{
       // Otherwise send it to the appropriate core to deal with
-      int   status;
       int   dataComm = XDMF_DSM_INTRA_COMM;
       if (this->Comm->GetInterComm() != MPI_COMM_NULL) {
         dataComm = XDMF_DSM_INTER_COMM;
@@ -439,13 +439,13 @@ XdmfDSMBuffer::Get(long Address, long aLength, void *Data)
       try {
         this->SendCommandHeader(XDMF_DSM_OPCODE_GET, who, Address - astart, len, dataComm);
       }
-      catch (XdmfError e) {
+      catch (XdmfError & e) {
         throw e;
       }
       try {
         this->ReceiveData(who, datap, len, XDMF_DSM_GET_DATA_TAG, Address - astart, dataComm);
       }
-      catch (XdmfError e) {
+      catch (XdmfError & e) {
         throw e;
       }
     }
@@ -480,7 +480,7 @@ XdmfDSMBuffer::GetAddressRangeForId(int Id, int *Start, int *End){
           message << "DsmType " << this->DsmType << " not yet implemented";
           XdmfError::message(XdmfError::FATAL, message.str());
         }
-        catch (XdmfError e) {
+        catch (XdmfError & e) {
           throw e;
         }
         break;
@@ -583,7 +583,7 @@ XdmfDSMBuffer::ProbeCommandHeader(int *comm)
          XdmfError::message(XdmfError::FATAL,
                             "Error: Failed to probe for command header");
        }
-       catch (XdmfError e) {
+       catch (XdmfError & e) {
          throw e;
        }
     }
@@ -627,7 +627,7 @@ XdmfDSMBuffer::Put(long Address, long aLength, const void *Data)
       try {
         XdmfError::message(XdmfError::FATAL, "Address Error");
       }
-      catch (XdmfError e) {
+      catch (XdmfError & e) {
         throw e;
       }
     }
@@ -658,7 +658,7 @@ XdmfDSMBuffer::Put(long Address, long aLength, const void *Data)
                                 len,
                                 dataComm);
       }
-      catch (XdmfError e) {
+      catch (XdmfError & e) {
         throw e;
       }
       try {
@@ -669,7 +669,7 @@ XdmfDSMBuffer::Put(long Address, long aLength, const void *Data)
                        Address - astart,
                        dataComm);
       }
-      catch (XdmfError e) {
+      catch (XdmfError & e) {
         throw e;
       }
     }
@@ -719,7 +719,7 @@ XdmfDSMBuffer::ReceiveAcknowledgment(int source, int &data, int tag, int comm)
     try {
       XdmfError::message(XdmfError::FATAL, "Error: Failed to receive data");
     }
-    catch (XdmfError e) {
+    catch (XdmfError & e) {
       throw e;
     }
   }
@@ -771,7 +771,7 @@ XdmfDSMBuffer::ReceiveCommandHeader(int *opcode, int *source, int *address, int 
     try {
       XdmfError::message(XdmfError::FATAL, "Error: Failed to receive command header");
     }
-    catch (XdmfError e) {
+    catch (XdmfError & e) {
       throw e;
     }
   }
@@ -820,7 +820,7 @@ XdmfDSMBuffer::ReceiveData(int source, char * data, int aLength, int tag, int aA
     try {
       XdmfError::message(XdmfError::FATAL, "Error: Failed to receive data");
     }
-    catch (XdmfError e) {
+    catch (XdmfError & e) {
       throw e;
     }
   }
@@ -831,7 +831,6 @@ XdmfDSMBuffer::ReceiveInfo()
 {
   InfoMsg  dsmInfo;
   int status;
-  MPI_Status signalStatus;
 
   memset(&dsmInfo, 0, sizeof(InfoMsg));
 
@@ -861,7 +860,7 @@ XdmfDSMBuffer::ReceiveInfo()
     try {
       XdmfError::message(XdmfError::FATAL, "Error: Failed to broadcast info");
     }
-    catch (XdmfError e) {
+    catch (XdmfError & e) {
       throw e;
     }
   }
@@ -921,7 +920,7 @@ XdmfDSMBuffer::SendAcknowledgment(int dest, int data, int tag, int comm)
     try {
       XdmfError::message(XdmfError::FATAL, "Error: Failed to receive data");
     }
-    catch (XdmfError e) {
+    catch (XdmfError & e) {
       throw e;
     }
   }
@@ -972,7 +971,7 @@ XdmfDSMBuffer::SendCommandHeader(int opcode, int dest, int address, int aLength,
     try {
       XdmfError::message(XdmfError::FATAL, "Error: Failed to send command header");
     }
-    catch (XdmfError e) {
+    catch (XdmfError & e) {
       throw e;
     }
   }
@@ -1006,7 +1005,7 @@ XdmfDSMBuffer::SendData(int dest, char * data, int aLength, int tag, int aAddres
     try {
       XdmfError::message(XdmfError::FATAL, "Error: Failed to send data");
     }
-    catch (XdmfError e) {
+    catch (XdmfError & e) {
       throw e;
     }
   }
@@ -1033,7 +1032,7 @@ XdmfDSMBuffer::SendDone()
       }
     }
   }
-  catch (XdmfError e) {
+  catch (XdmfError & e) {
     throw e;
   }
 }
@@ -1084,7 +1083,7 @@ XdmfDSMBuffer::SendInfo()
     try {
       XdmfError::message(XdmfError::FATAL, "Error: Failed to send info");
     }
-    catch (XdmfError e) {
+    catch (XdmfError & e) {
       throw e;
     }
   }
@@ -1134,8 +1133,14 @@ XdmfDSMBuffer::SetLength(long aLength)
 #ifdef _WIN32
     this->DataPointer = calloc(this->Length, sizeof(char));
 #else
+  #ifdef _SC_PAGESIZE
+    posix_memalign((void **)(&this->DataPointer), sysconf(_SC_PAGESIZE), this->Length);
+    memset(this->DataPointer, 0, this->Length);
+  #else
+    // Older linux variation, for backwards compatibility
     posix_memalign((void **)(&this->DataPointer), getpagesize(), this->Length);
     memset(this->DataPointer, 0, this->Length);
+  #endif
 #endif
   }
 

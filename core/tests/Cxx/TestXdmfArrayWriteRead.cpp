@@ -1,6 +1,7 @@
 #include "XdmfArray.hpp"
 #include "XdmfHDF5Writer.hpp"
 #include "XdmfHDF5Controller.hpp"
+#include <iostream>
 
 int main(int, char **)
 {
@@ -8,20 +9,27 @@ int main(int, char **)
 
   shared_ptr<XdmfArray> array = XdmfArray::New();
   array->insert(0, &values[0], 4, 1, 1);
+  std::cout << array->getSize() << " ?= " << 4 << std::endl;
   assert(array->getSize() == 4);
+  std::cout << array->getValuesString() << " ?= " << "1 2 3 4" << std::endl;
   assert(array->getValuesString().compare("1 2 3 4") == 0);
 
   shared_ptr<XdmfHDF5Writer> writer = XdmfHDF5Writer::New("test.h5");
   array->accept(writer);
 
+  std::cout << array->getSize() << " ?= " << 4 << std::endl;
   assert(array->getSize() == 4);
+  std::cout << array->getValuesString() << " ?= " << "1 2 3 4" << std::endl;
   assert(array->getValuesString().compare("1 2 3 4") == 0);
 
   array->release();
+  std::cout << array->getValuesString() << " ?= " << "" << std::endl;
   assert(array->getValuesString() == "");
+  std::cout << array->getSize() << " ?= " << 4 << std::endl;
   assert(array->getSize() == 4);
 
   array->read();
+  std::cout << array->getValuesString() << " ?= " << "1 2 3 4" << std::endl;
   assert(array->getValuesString().compare("1 2 3 4") == 0);
 
   shared_ptr<XdmfArray> stringArray = XdmfArray::New();
@@ -30,7 +38,9 @@ int main(int, char **)
   stringArray->pushBack<std::string>("cat");
   stringArray->pushBack<std::string>("dog");
   stringArray->pushBack<std::string>("blah");
+  std::cout << stringArray->getSize() << " ?= " << 5 << std::endl;
   assert(stringArray->getSize() == 5);
+  std::cout << stringArray->getValuesString() << " ?= " << "foo bar cat dog blah" << std::endl;
   assert(stringArray->getValuesString().compare("foo bar cat dog blah") == 0);
 
   shared_ptr<XdmfHDF5Writer> stringWriter = 
@@ -39,8 +49,11 @@ int main(int, char **)
 
   stringArray->release();
   stringArray->read();
+  std::cout << stringArray->getSize() << " ?= " << 5 << std::endl;
   assert(stringArray->getSize() == 5);
+  std::cout << stringArray->getValuesString() << " ?= " << "foo bar cat dog blah" << std::endl;
   assert(stringArray->getValuesString().compare("foo bar cat dog blah") == 0);
+  std::cout << stringArray->getValue<std::string>(0) << " ?= " << "foo" << std::endl;
   assert(stringArray->getValue<std::string>(0).compare("foo") == 0);
   
   shared_ptr<XdmfArray> dimensionsArray = XdmfArray::New();
@@ -62,9 +75,14 @@ int main(int, char **)
 
   dimensionsArray->release();
   dimensionsArray->read();
+  std::cout << dimensionsArray->getSize() << " ?= " << 24 << std::endl;
   assert(dimensionsArray->getSize() == 24);
   std::vector<unsigned int> readDimensions = dimensionsArray->getDimensions();
+  std::cout << readDimensions.size() << " ?= " << 3 << std::endl;
   assert(readDimensions.size() == 3);
+  std::cout << readDimensions[0] << " ?= " << 2 << std::endl;
+  std::cout << readDimensions[1] << " ?= " << 3 << std::endl;
+  std::cout << readDimensions[2] << " ?= " << 4 << std::endl;
   assert(readDimensions[0] == 2);
   assert(readDimensions[1] == 3);
   assert(readDimensions[2] == 4);

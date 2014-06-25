@@ -15,6 +15,13 @@ set(XdmfUtilsLinkLibraries Xdmf)
 if(XDMF_BUILD_FORTRAN)
   set(XdmfUtilsSources ${XdmfUtilsSources} XdmfFortran)
   enable_language (Fortran)
+  if (XDMF_BUILD_DSM)
+    # gcc doesn't automatically link to the fortran mpi libraries
+    STRING(REGEX MATCH "gfortran" IS_GFORTRAN "${CMAKE_Fortran_COMPILER}")
+    if (NOT "${IS_GFORTRAN}" STREQUAL "")
+      set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -lmpi_f90")
+    endif (NOT "${IS_GFORTRAN}" STREQUAL "")
+  endif (XDMF_BUILD_DSM)
 endif(XDMF_BUILD_FORTRAN)
 
 if (XDMF_BUILD_DSM)

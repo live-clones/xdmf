@@ -1,6 +1,7 @@
 #include "XdmfArray.hpp"
 #include "XdmfGeometry.hpp"
 #include "XdmfGeometryType.hpp"
+#include "XdmfGridCollection.hpp"
 #include "XdmfRectilinearGrid.hpp"
 #include "XdmfReader.hpp"
 #include "XdmfTopology.hpp"
@@ -36,11 +37,10 @@ int main(int, char **)
                                                                   vy,
                                                                   vz);
 
-  std::cout << grid->getDimensions()->getValuesString() << " ?= 4 3 3" << std::endl;
+  std::cout << grid->getDimensions()->getValuesString() << " ?= " << "4 3 3" << std::endl;
   std::cout << vx << " ?= " << grid->getCoordinates(0) << std::endl;
   std::cout << vy << " ?= " << grid->getCoordinates(1) << std::endl;
   std::cout << vz << " ?= " << grid->getCoordinates(2) << std::endl;
-
   assert(grid->getDimensions()->getValuesString().compare("4 3 3") == 0);
   assert(vx == grid->getCoordinates(0));
   assert(vy == grid->getCoordinates(1));
@@ -64,30 +64,9 @@ int main(int, char **)
   // Input / Output
 
   shared_ptr<XdmfWriter> writer =
-    XdmfWriter::New("TestXdmfRectilinearGrid1.xmf");
+    XdmfWriter::New("TestXdmfHDF5Visit.xmf");
+  grid->accept(writer->getHeavyDataWriter());
   grid->accept(writer);
-
-  shared_ptr<XdmfReader> reader = XdmfReader::New();
-  shared_ptr<XdmfRectilinearGrid> grid2 = 
-    shared_dynamic_cast<XdmfRectilinearGrid>
-    (reader->read("TestXdmfRectilinearGrid1.xmf"));
-
-  shared_ptr<XdmfWriter> writer2 =
-    XdmfWriter::New("TestXdmfRectilinearGrid2.xmf");
-  grid2->accept(writer2);
-
-  if (XdmfTestCompareFiles::compareFiles("TestXdmfRectilinearGrid1.xmf",
-                                            "TestXdmfRectilinearGrid2.xmf"))
-  {
-    std::cout << "compared files are equal" << std::endl;
-  }
-  else
-  {
-    std::cout << "compared files are not equal" << std::endl;
-  }
-
-  assert(XdmfTestCompareFiles::compareFiles("TestXdmfRectilinearGrid1.xmf",
-                                            "TestXdmfRectilinearGrid2.xmf"));
 
   return 0;
 }

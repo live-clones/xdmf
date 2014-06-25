@@ -38,12 +38,28 @@ int main(int, char **)
   shared_ptr<XdmfReader> reader = XdmfReader::New();
   shared_ptr<XdmfGraph> readGraph = 
     shared_dynamic_cast<XdmfGraph>(reader->read("TestXdmfGraph.xmf"));
+
+  if (readGraph)
+  {
+    std::cout << "graph exists" << std::endl;
+  }
+  else
+  {
+    std::cout << "graph does not exist" << std::endl;
+  }
+
+  std::cout << readGraph->getNumberNodes() << " ?= " << graph->getNumberNodes() << std::endl;
+  std::cout << readGraph->getNumberAttributes() << " ?= " << graph->getNumberAttributes() << std::endl;
+
   assert(readGraph);
   assert(readGraph->getNumberNodes() == graph->getNumberNodes());
   assert(readGraph->getNumberAttributes() == graph->getNumberAttributes());
   
   shared_ptr<XdmfAttribute> readAttribute = readGraph->getAttribute(0);
-  
+
+  std::cout << readAttribute->getName() << " ?= " << attribute->getName() << std::endl;
+  std::cout << readAttribute->getSize() << " ?= " << attribute->getSize() << std::endl;
+
   assert(readAttribute->getName().compare(attribute->getName()) == 0);
   assert(readAttribute->getSize() == attribute->getSize());
 

@@ -2,6 +2,8 @@
 #include "XdmfReader.hpp"
 #include "XdmfWriter.hpp"
 
+#include <iostream>
+
 #include "XdmfTestCompareFiles.hpp"
 #include "XdmfTestDataGenerator.hpp"
 
@@ -28,6 +30,36 @@ int main(int, char **)
   fileBuffer << file.rdbuf();
   std::string fileContents(fileBuffer.str());
 
+  if (fileContents.find("xpointer=\"element(/1/1/1)\"") !=
+      std::string::npos)
+  {
+    std::cout << "XPointer 1 found" << std::endl;
+  }
+  else
+  {
+    std::cout << "XPointer 1 not found" << std::endl;
+  }
+
+  if (fileContents.find("xpointer=\"element(/1/1/1/2)\"") !=
+      std::string::npos)
+  {
+    std::cout << "XPointer 2 found" << std::endl;
+  }
+  else
+  {
+    std::cout << "XPointer 2 not found" << std::endl;
+  }
+
+  if (fileContents.find("xpointer=\"element(/1/1/1/3)\"") !=
+      std::string::npos)
+  {
+    std::cout << "XPointer 3 found" << std::endl;
+  }
+  else
+  {
+    std::cout << "XPointer 3 not found" << std::endl;
+  }
+
   assert(fileContents.find("xpointer=\"element(/1/1/1)\"") !=
          std::string::npos);
   assert(fileContents.find("xpointer=\"element(/1/1/1/2)\"") !=
@@ -43,6 +75,16 @@ int main(int, char **)
   shared_ptr<XdmfWriter> writer2 =
     XdmfWriter::New("XdmfXPath2.xmf");
   domain2->accept(writer2);
+
+  if (XdmfTestCompareFiles::compareFiles("XdmfXPath1.xmf",
+                                            "XdmfXPath2.xmf"))
+  {
+    std::cout << "compared files are the same" << std::endl;
+  }
+  else
+  {
+    std::cout << "compared files are not the same" << std::endl;
+  }
 
   assert(XdmfTestCompareFiles::compareFiles("XdmfXPath1.xmf",
                                             "XdmfXPath2.xmf"));

@@ -212,7 +212,7 @@ int main(int argc, char *argv[])
                         {
                                 // Controllers are accessed like this since the writer removes them and creates its own.
                                 shared_dynamic_cast<XdmfHDF5ControllerDSM>(readArray->getHeavyDataController(0))->setWorkerComm(readComm);
-                                std::cout << "read on core" << id << std::endl;
+                                printf("read on core %d\n", id);
                                 readArray->read();
                                 MPI_Barrier(readComm);
 

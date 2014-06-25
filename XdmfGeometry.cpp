@@ -33,6 +33,7 @@ shared_ptr<XdmfGeometry> XdmfGeometry::New()
 }
 
 XdmfGeometry::XdmfGeometry() :
+  XdmfArray(),
   mNumberPoints(0),
   mType(XdmfGeometryType::NoGeometryType())
 {

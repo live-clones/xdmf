@@ -7,8 +7,8 @@
 #include <map>
 #include <iostream>
 #include <cmath>
-#include <string.h>
-#include <stdio.h>
+#include "string.h"
+#include "stdio.h"
 
 shared_ptr<XdmfArray> maximum(std::vector<shared_ptr<XdmfArray> > values);
 
@@ -74,11 +74,19 @@ int main(int, char **)
 
 	shared_ptr<XdmfItem> readItem = functionReader->read("function.xmf");
 
+        std::cout << readItem->getItemTag() << " ?= Attribute" << std::endl;
+
 	assert(readItem->getItemTag().compare("Attribute") == 0);
 
 	shared_ptr<XdmfAttribute> readFunctionHolder = shared_dynamic_cast<XdmfAttribute>(readItem);
 
+	readFunctionHolder->release();
+
+        std::cout << "before reading: " << readFunctionHolder->getValuesString() << std::endl;
+
 	readFunctionHolder->readReference();
+
+	std::cout << "check: " << readFunctionHolder->getValuesString() << " = " << functionHolder->getValuesString() << std::endl;
 
 	assert(readFunctionHolder->getValuesString().compare(functionHolder->getValuesString()) == 0);
 
@@ -97,19 +105,21 @@ int main(int, char **)
         testVals["B"] = valArray2;
         testVals["C"] = valArray3;
 
+        printf("ABS(-0.5) = %lf\n", std::abs((double)-0.5));
+        printf("array contains: %s\n", XdmfFunction::evaluateExpression("ABS(A)", testVals)->getValuesString().c_str());
         assert(strcmp(XdmfFunction::evaluateExpression("ABS(A)", testVals)->getValuesString().c_str(), "0.5") == 0);
 
         printf("ARCCOS(-0.5) = %lf\n", std::acos((double)-0.5));
-        printf("array contains: %s\n", XdmfFunction::evaluateExpression("ARCCOS(A)", testVals)->getValuesString().c_str());
-        assert(strcmp(XdmfFunction::evaluateExpression("ARCCOS(A)", testVals)->getValuesString().c_str(), "2.0943951023931957") == 0);
+        printf("array contains: %s\n", XdmfFunction::evaluateExpression("ACOS(A)", testVals)->getValuesString().c_str());
+        assert(strcmp(XdmfFunction::evaluateExpression("ACOS(A)", testVals)->getValuesString().c_str(), "2.0943951023931957") == 0);
 
         printf("ARCSIN(-0.5) = %lf\n", std::asin((double)-0.5));
-        printf("array contains: %s\n", XdmfFunction::evaluateExpression("ARCSIN(A)", testVals)->getValuesString().c_str());
-        assert(strcmp(XdmfFunction::evaluateExpression("ARCSIN(A)", testVals)->getValuesString().c_str(), "-0.52359877559829893") == 0);
+        printf("array contains: %s\n", XdmfFunction::evaluateExpression("ASIN(A)", testVals)->getValuesString().c_str());
+        assert(strcmp(XdmfFunction::evaluateExpression("ASIN(A)", testVals)->getValuesString().c_str(), "-0.52359877559829893") == 0);
 
         printf("ARCTAN(-0.5) = %lf\n", std::atan((double)-0.5));
-        printf("array contains: %s\n", XdmfFunction::evaluateExpression("ARCTAN(A)", testVals)->getValuesString().c_str());
-        assert(strcmp(XdmfFunction::evaluateExpression("ARCTAN(A)", testVals)->getValuesString().c_str(), "-0.46364760900080609") == 0);
+        printf("array contains: %s\n", XdmfFunction::evaluateExpression("ATAN(A)", testVals)->getValuesString().c_str());
+        assert(strcmp(XdmfFunction::evaluateExpression("ATAN(A)", testVals)->getValuesString().c_str(), "-0.46364760900080609") == 0);
 
         printf("EXP(-0.5, 2) = %lf\n", std::pow((double)-0.5, 2));
         printf("array contains: %s\n", XdmfFunction::evaluateExpression("EXP(A, C)", testVals)->getValuesString().c_str());
@@ -157,7 +167,6 @@ int main(int, char **)
         printf("A / B = %lf\n", -0.5 / -0.25);
         printf("array contains: %s\n", XdmfFunction::evaluateExpression("A/B", testVals)->getValuesString().c_str());
         assert(strcmp(XdmfFunction::evaluateExpression("A/B", testVals)->getValuesString().c_str(), "2") == 0);
-
 
 	return 0;
 }

@@ -15,7 +15,6 @@ include(AddTestsFortran)
 #       Read UseCxxTest.cmake for more information
 # ---------------------------------------
 if (MPIEXEC_MAX_NUMPROCS STRGREATER 5)
-  get_filename_component(MPI_BIN_DIRECTORY ${MPI_C_COMPILER} PATH)
   EXECUTE_PROCESS(
     COMMAND ${MPIEXEC} --version
     OUTPUT_VARIABLE MPI_TYPE_OUTPUT
@@ -33,16 +32,14 @@ ADD_TEST_FORTRAN(NestedInfoFortran)
 #if GCC
 STRING(REGEX MATCH "gfortran" IS_GCC "${CMAKE_Fortran_COMPILER}")
 IF ("${IS_GCC}" STREQUAL "gfortran")
-  SET_SOURCE_FILES_PROPERTIES(FixedOutputTestXdmfFortran.f90 PROPERTIES
-COMPILE_FLAGS "-ffixed-form")
+  SET_SOURCE_FILES_PROPERTIES(FixedOutputTestXdmfFortran.f90 PROPERTIES COMPILE_FLAGS "-ffixed-form")
 ENDIF ("${IS_GCC}" STREQUAL "gfortran")
 #if Intel
 STRING(REGEX MATCH "ifort" IS_INTEL "${CMAKE_Fortran_COMPILER}")
 IF ("${IS_INTEL}" STREQUAL "ifort")
-  SET_SOURCE_FILES_PROPERTIES(FixedOutputTestXdmfFortran.f90 PROPERTIES
-COMPILE_FLAGS "-fixed")
+  SET_SOURCE_FILES_PROPERTIES(FixedOutputTestXdmfFortran.f90 PROPERTIES COMPILE_FLAGS "-fixed")
 ENDIF ("${IS_INTEL}" STREQUAL "ifort")
-ADD_TEST_FORTRAN(FixedOutputTestXdmfFortran -ffixed-form)
+ADD_TEST_FORTRAN(FixedOutputTestXdmfFortran)
 
 # Add any cxx cleanup here:
 # Note: We don't want to use a foreach loop to test the files incase we

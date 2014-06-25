@@ -82,7 +82,7 @@ XdmfDSMCommMPI::~XdmfDSMCommMPI()
       try {
         XdmfError::message(XdmfError::FATAL, "Failed to free intercomm Comm");
       }
-      catch (XdmfError e) {
+      catch (XdmfError & e) {
         throw e;
       }
     }
@@ -93,7 +93,7 @@ XdmfDSMCommMPI::~XdmfDSMCommMPI()
       try {
         XdmfError::message(XdmfError::FATAL, "Failed to free intercomm Comm");
       }
-      catch (XdmfError e) {
+      catch (XdmfError & e) {
         throw e;
       }
     }
@@ -128,7 +128,7 @@ XdmfDSMCommMPI::Accept(unsigned int numConnections)
           message = message + DsmPortName;
           XdmfError::message(XdmfError::FATAL, message);
         }
-        catch (XdmfError e) {
+        catch (XdmfError & e) {
           throw e;
         }
       }
@@ -138,7 +138,7 @@ XdmfDSMCommMPI::Accept(unsigned int numConnections)
         try {
           XdmfError::message(XdmfError::FATAL, "Failed to merge intercomm");
         }
-        catch (XdmfError e) {
+        catch (XdmfError & e) {
           throw e;
         }
       }
@@ -170,7 +170,7 @@ XdmfDSMCommMPI::Accept(unsigned int numConnections)
           message = message + DsmPortName;
           XdmfError::message(XdmfError::FATAL, message);
         }
-        catch (XdmfError e) {
+        catch (XdmfError & e) {
           throw e;
         }
       }
@@ -180,7 +180,7 @@ XdmfDSMCommMPI::Accept(unsigned int numConnections)
         try {
           XdmfError::message(XdmfError::FATAL, "Failed to merge InterComm");
         }
-        catch (XdmfError e) {
+        catch (XdmfError & e) {
           throw e;
         }
       }
@@ -206,7 +206,7 @@ XdmfDSMCommMPI::ClosePort()
         message = message + DsmPortName;
         XdmfError::message(XdmfError::FATAL, message);
       }
-      catch (XdmfError e) {
+      catch (XdmfError & e) {
         throw e;
       }
     }
@@ -228,7 +228,7 @@ XdmfDSMCommMPI::Connect()
         message = message + DsmPortName;
         XdmfError::message(XdmfError::FATAL, message);
       }
-      catch (XdmfError e) {
+      catch (XdmfError & e) {
         throw e;
       }
     }
@@ -237,7 +237,7 @@ XdmfDSMCommMPI::Connect()
       try {
         XdmfError::message(XdmfError::FATAL, "Failed to merge InterComm");
       }
-      catch (XdmfError e) {
+      catch (XdmfError & e) {
         throw e;
       }
     }
@@ -257,7 +257,7 @@ XdmfDSMCommMPI::Connect()
         message = message + DsmPortName;
         XdmfError::message(XdmfError::FATAL, message);
       }
-      catch (XdmfError e) {
+      catch (XdmfError & e) {
         throw e;
       }
     }
@@ -266,7 +266,7 @@ XdmfDSMCommMPI::Connect()
       try {
         XdmfError::message(XdmfError::FATAL, "Failed to merge InterComm");
       }
-      catch (XdmfError e) {
+      catch (XdmfError & e) {
         throw e;
       }
     }
@@ -291,7 +291,7 @@ XdmfDSMCommMPI::Disconnect()
       try {
         XdmfError::message(XdmfError::FATAL, "Failed to disconnect Comm");
       }
-      catch (XdmfError e) {
+      catch (XdmfError & e) {
         throw e;
       }
     }
@@ -312,7 +312,7 @@ XdmfDSMCommMPI::DupComm(MPI_Comm comm)
         try {
           XdmfError::message(XdmfError::FATAL, "Failed to disconnect Comm");
         }
-        catch (XdmfError e) {
+        catch (XdmfError & e) {
           throw e;
         }
       }
@@ -324,7 +324,7 @@ XdmfDSMCommMPI::DupComm(MPI_Comm comm)
         try {
           XdmfError::message(XdmfError::FATAL, "Failed to duplicate Comm");
         }
-        catch (XdmfError e) {
+        catch (XdmfError & e) {
           throw e;
         }
       }
@@ -348,7 +348,7 @@ XdmfDSMCommMPI::DupInterComm(MPI_Comm comm)
         try {
           XdmfError::message(XdmfError::FATAL, "Failed to disconnect Comm");
         }
-        catch (XdmfError e) {
+        catch (XdmfError & e) {
           throw e;
         }
       }
@@ -360,7 +360,7 @@ XdmfDSMCommMPI::DupInterComm(MPI_Comm comm)
         try {
           XdmfError::message(XdmfError::FATAL, "Failed to duplicate Comm");
         }
-        catch (XdmfError e) {
+        catch (XdmfError & e) {
           throw e;
         }
       }
@@ -438,7 +438,7 @@ XdmfDSMCommMPI::Init()
     try {
       XdmfError::message(XdmfError::FATAL, "Failed to initialize size");
     }
-    catch (XdmfError e) {
+    catch (XdmfError & e) {
       throw e;
     }
   }
@@ -446,7 +446,7 @@ XdmfDSMCommMPI::Init()
     try {
       XdmfError::message(XdmfError::FATAL, "Failed to initialize rank");
     }
-    catch (XdmfError e) {
+    catch (XdmfError & e) {
       throw e;
     }
   }
@@ -466,7 +466,7 @@ XdmfDSMCommMPI::OpenPort()
         message = message + DsmPortName;
         XdmfError::message(XdmfError::FATAL, message);
       }
-      catch (XdmfError e) {
+      catch (XdmfError & e) {
         throw e;
       }
     }
@@ -479,7 +479,7 @@ XdmfDSMCommMPI::OpenPort()
       try {
         XdmfError::message(XdmfError::FATAL, "Failed to write port to file");
       }
-      catch (XdmfError e) {
+      catch (XdmfError & e) {
         throw e;
       }
     }

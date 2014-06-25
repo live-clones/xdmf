@@ -44,6 +44,8 @@ int main(int, char **)
 	
 	readArray->insert(readStarts, writtenArray, writeStarts, writeDim, readDim, readStrides, writeStrides);
 
+        std::cout << readArray->getValuesString() << " ?= " << "1 0 3 0 5 0 0 0 0 0 0 0 11 0 13 0 15 0 0 0 0 0 0 0" << std::endl;
+
 	assert(readArray->getValuesString().compare("1 0 3 0 5 0 0 0 0 0 0 0 11 0 13 0 15 0 0 0 0 0 0 0") == 0);
 
 	return 0;

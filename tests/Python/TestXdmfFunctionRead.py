@@ -69,10 +69,14 @@ if __name__ == "__main__":
 
 	readItem = functionReader.read("function.xmf")
 
+        print readItem.getItemTag() + " ?= Attribute"
+
 	assert readItem.getItemTag() == "Attribute"
 
 	readFunctionHolder = readItem
 
 	readFunctionHolder.readReference()
+
+        print readFunctionHolder.getValuesString() + " ?= " + functionHolder.getValuesString()
 
 	assert readFunctionHolder.getValuesString() == functionHolder.getValuesString()

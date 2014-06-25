@@ -25,11 +25,17 @@ void performTests(std::vector<shared_ptr<XdmfMap> > & boundaryMaps)
   XdmfMap::node_id_map mapping;
 
   mapping = boundaryMaps[0]->getRemoteNodeIds(1);
+  std::cout << mapping.size() << " ?= " << 1 << std::endl;
+  std::cout << mapping[1].size() << " ?= " << 1 << std::endl;
+  std::cout << *(mapping[1].begin()) << " ?= " << 0 << std::endl;
   assert(mapping.size() == 1);
   assert(mapping[1].size() == 1);
   assert(*(mapping[1].begin()) == 0);
 
   mapping = boundaryMaps[1]->getRemoteNodeIds(0);
+  std::cout << mapping.size() << " ?= " << 1 << std::endl;
+  std::cout << mapping[0].size() << " ?= " << 1 << std::endl;
+  std::cout << *(mapping[0].begin()) << " ?= " << 1 << std::endl;
   assert(mapping.size() == 1);
   assert(mapping[0].size() == 1);
   assert(*(mapping[0].begin()) == 1);
@@ -114,6 +120,16 @@ int main(int, char **)
   shared_ptr<XdmfWriter> writer2 = XdmfWriter::New("TestXdmfMap2.xmf");
   domain2->accept(writer2);
 
+  if (XdmfTestCompareFiles::compareFiles("TestXdmfMap1.xmf",
+                                         "TestXdmfMap2.xmf"))
+  {
+    std::cout << "compared files are the same" << std::endl;
+  }
+  else
+  {
+    std::cout << "compared files are not the same" << std::endl;
+  }
+
   assert(XdmfTestCompareFiles::compareFiles("TestXdmfMap1.xmf",
                                             "TestXdmfMap2.xmf"));
 
@@ -135,6 +151,16 @@ int main(int, char **)
   writerHDF2->getHeavyDataWriter()->setMode(XdmfHeavyDataWriter::Overwrite);
   writerHDF2->setLightDataLimit(0);
   domainHDF->accept(writerHDF2);
+
+  if (XdmfTestCompareFiles::compareFiles("TestXdmfMapHDF1.xmf",
+                                         "TestXdmfMapHDF2.xmf"))
+  {
+    std::cout << "compared files are the same" << std::endl;
+  }
+  else
+  {
+    std::cout << "compared files are not the same" << std::endl;
+  }
 
   assert(XdmfTestCompareFiles::compareFiles("TestXdmfMapHDF1.xmf",
                                             "TestXdmfMapHDF2.xmf"));

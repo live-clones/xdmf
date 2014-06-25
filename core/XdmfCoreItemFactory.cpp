@@ -71,22 +71,46 @@ XdmfCoreItemFactory::createItem(const std::string & itemTag,
     else {
       expressionToParse = expression->second;
     }
+
+    std::map<std::string, std::string>::const_iterator variableNames =
+      itemProperties.find("VariableNames");
+    std::vector<std::string> nameVector;
+
+    std::string variableList = variableNames->second;
+
+    size_t barSplit = 0;
+    std::string subcontent;
+    while (barSplit != std::string::npos) {
+      barSplit = 0;
+      barSplit = variableList.find_first_of("|", barSplit);
+      if (barSplit == std::string::npos) {
+        subcontent = variableList;
+      }
+      else {
+        subcontent = variableList.substr(0, barSplit);
+        variableList = variableList.substr(barSplit+1);
+        barSplit++;
+      }
+      nameVector.push_back(subcontent);
+    }
+
+
     std::map<std::string, shared_ptr<XdmfArray> > variableCollection;
-    for (unsigned int i = 0; i < childItems.size(); ++i) {
-      try {
-        shared_ptr<XdmfArray> tempArray =
-          shared_dynamic_cast<XdmfArray>(childItems[i]);
-        if (tempArray->getName().compare("") != 0)
-        {
-          variableCollection[tempArray->getName()] = tempArray;
-          tempArray->read();
+    for (unsigned int i = 0; i < childItems.size() && i < nameVector.size(); ++i) {
+      if (nameVector[i].compare("") != 0) {
+        if (shared_ptr<XdmfArray> array =
+          shared_dynamic_cast<XdmfArray>(childItems[i])) {
+
+          variableCollection[nameVector[i]] = array;
+          array->read();
+        }
+        else {
+          XdmfError::message(XdmfError::FATAL,
+                             "Error: Function passed non-Array item");
         }
       }
-      catch (...) {
-        XdmfError::message(XdmfError::FATAL,
-                           "Error: Function passed non-Array item");
-      }
     }
+
     shared_ptr<XdmfArray> parsedArray = shared_ptr<XdmfArray>();
     parsedArray = XdmfFunction::evaluateExpression(expressionToParse,
                                                    variableCollection);

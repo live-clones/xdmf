@@ -258,7 +258,7 @@ XdmfHDF5WriterDSM::XdmfHDF5WriterDSM(const std::string & filePath,
     try {
       mDSMServerBuffer->BufferServiceLoop(&returnOpCode);
     }
-    catch (XdmfError e) {
+    catch (XdmfError & e) {
       throw e;
     }
   }
@@ -324,7 +324,7 @@ void
 XdmfHDF5WriterDSM::closeFile()
 {
   if(mFAPL >= 0) {
-    herr_t status = H5Pclose(mFAPL);
+    H5Pclose(mFAPL);
     mFAPL = -1;
   }
   XdmfHDF5Writer::closeFile();
@@ -415,7 +415,7 @@ void XdmfHDF5WriterDSM::setWorkerComm(MPI_Comm comm)
       try {
         XdmfError::message(XdmfError::FATAL, "Failed to disconnect Comm");
       }
-      catch (XdmfError e) {
+      catch (XdmfError & e) {
         throw e;
       }
     }
@@ -427,7 +427,7 @@ void XdmfHDF5WriterDSM::setWorkerComm(MPI_Comm comm)
       try {
         XdmfError::message(XdmfError::FATAL, "Failed to duplicate Comm");
       }
-      catch (XdmfError e) {
+      catch (XdmfError & e) {
         throw e;
       }
     }
@@ -445,7 +445,7 @@ void XdmfHDF5WriterDSM::stopDSM()
       try {
         mDSMServerBuffer->SendCommandHeader(XDMF_DSM_OPCODE_DONE, i, 0, 0, XDMF_DSM_INTER_COMM);
       }
-      catch (XdmfError e) {
+      catch (XdmfError & e) {
         throw e;
       }
     }
@@ -454,7 +454,7 @@ void XdmfHDF5WriterDSM::stopDSM()
     try {
       XdmfError::message(XdmfError::FATAL, "Error: Stopping DSM manually only available in server mode.");
     }
-    catch (XdmfError e) {
+    catch (XdmfError & e) {
       throw e;
     }
   }
@@ -471,7 +471,7 @@ void XdmfHDF5WriterDSM::restartDSM()
       try {
         mDSMServerBuffer->BufferServiceLoop(&returnOpCode);
       }
-      catch (XdmfError e) {
+      catch (XdmfError & e) {
         throw e;
       }
     }
@@ -480,7 +480,7 @@ void XdmfHDF5WriterDSM::restartDSM()
     try {
       XdmfError::message(XdmfError::FATAL, "Error: Restarting DSM only available in server mode.");
     }
-    catch (XdmfError e) {
+    catch (XdmfError & e) {
       throw e;
     }
   }
@@ -508,7 +508,7 @@ XdmfHDF5WriterDSM::openFile()
     try {
       XdmfError::message(XdmfError::FATAL, "Error: Threaded DSM not enabled.");
     }
-    catch (XdmfError e) {
+    catch (XdmfError & e) {
       throw e;
     }
 #endif
@@ -537,7 +537,7 @@ void XdmfHDF5WriterDSM::visit(XdmfArray & array,
       try {
         XdmfError::message(XdmfError::FATAL, "Error: Threaded DSM not enabled.");
       }
-      catch (XdmfError e) {
+      catch (XdmfError & e) {
         throw e;
       }
 #endif
@@ -551,7 +551,7 @@ void XdmfHDF5WriterDSM::visit(XdmfArray & array,
 
   if(closeFAPL) {
     // Close file access property list
-    herr_t status = H5Pclose(mFAPL);
+    H5Pclose(mFAPL);
     mFAPL = -1;
   }
 

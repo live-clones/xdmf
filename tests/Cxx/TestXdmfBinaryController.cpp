@@ -1,4 +1,5 @@
 #include <fstream>
+#include <iostream>
 #include <vector>
 #include "XdmfArray.hpp"
 #include "XdmfArrayType.hpp"
@@ -38,7 +39,13 @@ int main(int, char **)
   shared_ptr<XdmfArray> testArray = XdmfArray::New();
   testArray->setHeavyDataController(binaryController);
   testArray->read();
-  
+
+  std::cout << testArray->getSize() << " ?= " << 4 << std::endl;
+  std::cout << testArray->getValue<int>(0) << " ?= " << outputData[0] << std::endl;
+  std::cout << testArray->getValue<int>(1) << " ?= " << outputData[1] << std::endl;
+  std::cout << testArray->getValue<int>(2) << " ?= " << outputData[2] << std::endl;
+  std::cout << testArray->getValue<int>(3) << " ?= " << outputData[3] << std::endl;
+
   assert(testArray->getSize() == 4);
   assert(testArray->getValue<int>(0) == outputData[0]);
   assert(testArray->getValue<int>(1) == outputData[1]);
@@ -60,6 +67,7 @@ int main(int, char **)
   shared_ptr<XdmfReader> reader = XdmfReader::New();
   shared_ptr<XdmfArray> array = 
     shared_dynamic_cast<XdmfArray>(reader->read("TestXdmfBinary.xmf"));
+  std::cout << array << " ?!= " << NULL << std::endl;
   assert(array != NULL);
 
   return 0;

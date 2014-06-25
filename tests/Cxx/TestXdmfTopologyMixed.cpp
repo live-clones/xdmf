@@ -6,6 +6,7 @@
 #include "XdmfTopologyType.hpp"
 #include "XdmfUnstructuredGrid.hpp"
 #include "XdmfWriter.hpp"
+#include <iostream>
 
 #include "XdmfTestCompareFiles.hpp"
 
@@ -43,6 +44,8 @@ int main(int, char **)
   topology->pushBack(7);
   topology->pushBack(8);
 
+  std::cout << topology->getNumberElements() << " ?= " << 2 << std::endl;
+
   assert(topology->getNumberElements() == 2);
 
   shared_ptr<XdmfDomain> domain = XdmfDomain::New();
@@ -60,6 +63,16 @@ int main(int, char **)
   shared_ptr<XdmfWriter> writer2 =
     XdmfWriter::New("TestXdmfTopologyMixed2.xmf");
   readDomain->accept(writer2);
+
+  if (XdmfTestCompareFiles::compareFiles("TestXdmfTopologyMixed1.xmf",
+                                         "TestXdmfTopologyMixed2.xmf"))
+  {
+    std::cout << "compared files are the same" << std::endl;
+  }
+  else
+  {
+    std::cout << "compared files are not the same" << std::endl;
+  }
 
   assert(XdmfTestCompareFiles::compareFiles("TestXdmfTopologyMixed1.xmf",
                                             "TestXdmfTopologyMixed2.xmf"));

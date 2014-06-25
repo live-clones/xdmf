@@ -51,7 +51,7 @@ if __name__ == "__main__":
 	resultArray = XdmfFunction.evaluateFunction(testVector, "AVE")
 	print type(resultArray)
 	print "after function is evaulated"
-	print resultArray.getValuesString()
+	print resultArray.getValuesString() + " ?= 9.5"
 	assert resultArray.getValuesString() == "9.5"
 	testArray2 = XdmfArray.New()
 	testArray2.pushBackAsInt32(1)
@@ -60,12 +60,12 @@ if __name__ == "__main__":
 	resultArray = XdmfFunction.evaluateOperation(testArray, testArray2, "|")
 	print type(resultArray)
 	print "after evaluationg Operation"
-	print resultArray.getValuesString()
+	print resultArray.getValuesString() + " ?= 10 9 1 2"
 	assert resultArray.getValuesString() == "10 9 1 2"
 	resultArray = XdmfFunction.evaluateOperation(testArray, testArray2, "@")
 	print type(resultArray)
 	print "after evaluationg Operation"
-	print resultArray.getValuesString()
+	print resultArray.getValuesString() + " ?= 1 2 10 9"
 	assert resultArray.getValuesString() == "1 2 10 9"
 	print "before evaluating expression"
 	testMap = ArrayMap()
@@ -79,6 +79,6 @@ if __name__ == "__main__":
 	testMap["C"] = testArray3
 	resultArray = XdmfFunction.evaluateExpression("A|B#C", testMap)
 	print type(resultArray)
-	print resultArray.getValuesString()
+	print resultArray.getValuesString() + " ?= 10 5 9 5 1 5 2 5"
 	assert resultArray.getValuesString() == "10 5 9 5 1 5 2 5"
 	print "after evaluating expression"

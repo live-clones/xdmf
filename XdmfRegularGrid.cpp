@@ -353,7 +353,10 @@ XdmfRegularGrid::XdmfRegularGrid(const shared_ptr<XdmfArray> brickSize,
 
 XdmfRegularGrid::~XdmfRegularGrid()
 {
-  delete mImpl;
+  if (mImpl) {
+    delete mImpl;
+  }
+  mImpl = NULL;
 }
 
 const std::string XdmfRegularGrid::ItemTag = "Grid";
@@ -368,6 +371,9 @@ XdmfRegularGrid::getBrickSize()
 shared_ptr<const XdmfArray>
 XdmfRegularGrid::getBrickSize() const
 {
+  if (mImpl == NULL) {
+    XdmfError::message(XdmfError::FATAL, "Error: Regular Grid Internal Object is NULL");
+  }
   return mImpl->mBrickSize;
 }
 
@@ -381,6 +387,9 @@ XdmfRegularGrid::getDimensions()
 shared_ptr<const XdmfArray>
 XdmfRegularGrid::getDimensions() const
 {
+  if (mImpl == NULL) {
+    XdmfError::message(XdmfError::FATAL, "Error: Regular Grid Internal Object is NULL");
+  }
   return mImpl->mDimensions;
 }
 
@@ -394,6 +403,9 @@ XdmfRegularGrid::getOrigin()
 shared_ptr<const XdmfArray>
 XdmfRegularGrid::getOrigin() const
 {
+  if (mImpl == NULL) {
+    XdmfError::message(XdmfError::FATAL, "Error: Regular Grid Internal Object is NULL");
+  }
   return mImpl->mOrigin;
 }
 
@@ -428,17 +440,26 @@ XdmfRegularGrid::populateItem(const std::map<std::string, std::string> & itemPro
 void
 XdmfRegularGrid::setBrickSize(const shared_ptr<XdmfArray> brickSize)
 {
+  if (mImpl == NULL) {
+    XdmfError::message(XdmfError::FATAL, "Error: Regular Grid Internal Object is NULL");
+  }
   mImpl->mBrickSize = brickSize;
 }
 
 void
 XdmfRegularGrid::setDimensions(const shared_ptr<XdmfArray> dimensions)
 {
+  if (mImpl == NULL) {
+    XdmfError::message(XdmfError::FATAL, "Error: Regular Grid Internal Object is NULL");
+  }
   mImpl->mDimensions = dimensions;
 }
 
 void
 XdmfRegularGrid::setOrigin(const shared_ptr<XdmfArray> origin)
 {
+  if (mImpl == NULL) {
+    XdmfError::message(XdmfError::FATAL, "Error: Regular Grid Internal Object is NULL");
+  }
   mImpl->mOrigin = origin;
 }

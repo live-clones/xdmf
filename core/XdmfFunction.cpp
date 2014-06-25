@@ -114,11 +114,11 @@ std::map<std::string, shared_ptr<XdmfFunction::XdmfFunctionInternal> >
                                             XdmfFunction::abs))
       ("ABS_TOKEN", XdmfFunctionInternalImpl::New((shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))
                                             XdmfFunction::abs))
-      ("ARCCOS", XdmfFunctionInternalImpl::New((shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))
+      ("ACOS", XdmfFunctionInternalImpl::New((shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))
                                             XdmfFunction::arccos))
-      ("ARCSIN", XdmfFunctionInternalImpl::New((shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))
+      ("ASIN", XdmfFunctionInternalImpl::New((shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))
                                             XdmfFunction::arcsin))
-      ("ARCTAN", XdmfFunctionInternalImpl::New((shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))
+      ("ATAN", XdmfFunctionInternalImpl::New((shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))
                                             XdmfFunction::arctan))
       ("AVE", XdmfFunctionInternalImpl::New((shared_ptr<XdmfArray> (*)(std::vector<shared_ptr<XdmfArray> >))
                                             XdmfFunction::average))
@@ -349,15 +349,15 @@ XdmfFunction::arctan(std::vector<shared_ptr<XdmfArray> > values)
 shared_ptr<XdmfArray>
 XdmfFunction::average(std::vector<shared_ptr<XdmfArray> > values)
 {
-        double total = sum(values)->getValue<double>(0);;
-        int totalSize = 0;
-        for (unsigned int i = 0; i < values.size(); ++i)
-        {
-                totalSize += values[i]->getSize();
-        }
-        shared_ptr<XdmfArray> returnArray = XdmfArray::New();
-        returnArray->insert(0, total/totalSize);
-        return returnArray;
+  double total = sum(values)->getValue<double>(0);;
+  int totalSize = 0;
+  for (unsigned int i = 0; i < values.size(); ++i)
+  {
+    totalSize += values[i]->getSize();
+  }
+  shared_ptr<XdmfArray> returnArray = XdmfArray::New();
+  returnArray->insert(0, total/totalSize);
+  return returnArray;
 }
 
 shared_ptr<XdmfArray>
@@ -520,7 +520,7 @@ XdmfFunction::evaluateExpression(std::string expression,
       }
     }
     // Found to be a digit
-    if (mValidDigitChars.find(expression[i]) != std::string::npos||
+    if (mValidDigitChars.find(expression[i]) != std::string::npos ||
         (expression[i] == '-' && hyphenIsDigit)) {
       // Progress until a non-digit is found
       int valueStart = i;
@@ -775,6 +775,16 @@ XdmfFunction::getItemProperties() const
        ++constructedIt) {
     functionProperties[constructedIt->first] = constructedIt->second;
   }
+
+  std::stringstream variableStream;
+
+  for (std::map<std::string, shared_ptr<XdmfArray> >::const_iterator variableIter = mVariableList.begin();
+       variableIter != mVariableList.end();
+       ++variableIter) {
+    variableStream << "|" << variableIter->first;
+  }
+
+  functionProperties["VariableNames"] = variableStream.str();
 
   return functionProperties;
 }
@@ -1157,7 +1167,6 @@ XdmfFunction::traverse(const shared_ptr<XdmfBaseVisitor> visitor)
   for (std::map<std::string, shared_ptr<XdmfArray> >::iterator it = mVariableList.begin();
        it != mVariableList.end();
        ++it) {
-    it->second->setName(it->first);
     it->second->accept(visitor);
   }
 }

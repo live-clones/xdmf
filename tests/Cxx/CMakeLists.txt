@@ -18,6 +18,7 @@ ADD_TEST_CXX(TestXdmfGeometry)
 ADD_TEST_CXX(TestXdmfGraph)
 ADD_TEST_CXX(TestXdmfGridCollection)
 ADD_TEST_CXX(TestXdmfHDF5Hyperslab)
+ADD_TEST_CXX(TestXdmfHDF5Visit)
 ADD_TEST_CXX(TestXdmfMap)
 ADD_TEST_CXX(TestXdmfMultiOpen)
 ADD_TEST_CXX(TestXdmfMultiXPath)
@@ -66,6 +67,9 @@ CLEAN_TEST_CXX(TestXdmfHDF5Hyperslab
   TestXdmfHDF5Hyperslab.xmf
   TestXdmfHDF5Hyperslab.h5
   TestXdmfHDF5Hyperslab2.xmf)
+CLEAN_TEST_CXX(TestXdmfHDF5Visit
+  TestXdmfHDF5Visit.xmf
+  TestXdmfHDF5Visit.h5)
 CLEAN_TEST_CXX(TestXdmfMap
   TestXdmfMap1.xmf
   TestXdmfMap2.xmf

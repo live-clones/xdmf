@@ -72,9 +72,15 @@ public:
 
   std::string getItemTag() const;
 
+  shared_ptr<XdmfTime> getTime();
+
+  shared_ptr<const XdmfTime> getTime() const;
+
   unsigned int getNumberNodes() const;
 
   using XdmfSparseMatrix::insert;
+
+  void setTime(const shared_ptr<XdmfTime> time);
 
   void traverse(const shared_ptr<XdmfBaseVisitor> visitor);
 
@@ -91,6 +97,8 @@ private:
 
   XdmfGraph(const XdmfGraph &);  // Not implemented.
   void operator=(const XdmfGraph &);  // Not implemented.
+
+  shared_ptr<XdmfTime> mTime;
 };
 
 #ifdef _WIN32

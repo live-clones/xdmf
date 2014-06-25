@@ -11,12 +11,16 @@ int main(int, char **)
 
   shared_ptr<XdmfArray> array1 = XdmfArray::New();
   array1->insert(0, &values1[0], 2, 1, 1);
+  std::cout << array1->getSize() << " ?= " << "2" << std::endl;
   assert(array1->getSize() == 2);
+  std::cout << array1->getValuesString() << " ?= " << "1 2" << std::endl;
   assert(array1->getValuesString().compare("1 2") == 0);
 
   shared_ptr<XdmfArray> array2 = XdmfArray::New();
   array2->insert(0, &values2[0], 2, 1, 1);
+  std::cout << array2->getSize() << " ?= " << "2" << std::endl;
   assert(array2->getSize() == 2);
+  std::cout << array2->getValuesString() << " ?= " << "3 4" << std::endl;
   assert(array2->getValuesString().compare("3 4") == 0);
 
   //
@@ -54,9 +58,11 @@ int main(int, char **)
   //
   array1->release();
   array1->read();
+  std::cout << array1->getValuesString() << " ?= " << "1 2" << std::endl;
   assert(array1->getValuesString().compare("1 2") == 0);
   array2->release();
   array2->read();
+  std::cout << array2->getValuesString() << " ?= " << "3 4" << std::endl;
   std::cout << array2->getValuesString() << std::endl;
   assert(array2->getValuesString().compare("3 4") == 0);
 }

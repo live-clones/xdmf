@@ -20,6 +20,11 @@ int main(int, char **)
   array1->insert(2, insertArray3, 0, 10, 4, 1);
   array1->insert(3, insertArray4, 0, 10, 4, 1);
 
+  std::cout << array1->getValuesString() << " ?= "
+            << "1 2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1 "
+            << "2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1 2 "
+            << "3 4 1 2 3 4" << std::endl;
+
   assert(array1->getValuesString().compare("1 2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1 "
                                            "2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1 2 "
                                            "3 4 1 2 3 4") == 0);
@@ -37,6 +42,11 @@ int main(int, char **)
   array2->insert(2, &(insertArray7[0]), 10, 4, 1);
   array2->insert(3, &(insertArray8[0]), 10, 4, 1);
 
+  std::cout << array2->getValuesString() << " ?= "
+            << "1 2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1 "
+            << "2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1 2 "
+            << "3 4 1 2 3 4" << std::endl;
+
   assert(array2->getValuesString().compare("1 2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1 "
                                            "2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1 2 "
                                            "3 4 1 2 3 4") == 0);
@@ -53,6 +63,11 @@ int main(int, char **)
   array3->insert(1, &(insertArray10[0]), 10, 4, 1);
   array3->insert(2, &(insertArray11[0]), 10, 4, 1);
   array3->insert(3, &(insertArray12[0]), 10, 4, 1);
+
+  std::cout << array3->getValuesString() << " ?= "
+            << "1 2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1 "
+            << "2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1 2 "
+            << "3 4 1 2 3 4" << std::endl;
 
   assert(array3->getValuesString().compare("1 2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1 "
                                            "2 3 4 1 2 3 4 1 2 3 4 1 2 3 4 1 2 "

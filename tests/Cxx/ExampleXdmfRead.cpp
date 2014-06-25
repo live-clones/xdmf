@@ -547,6 +547,7 @@ int main(int, char **)
         {
                 std::cout << (*outputwalker).first.c_str() << ": " << (*outputwalker).second.c_str() << std::endl;
         }
+std::cout << "test1" << std::endl;
         std::cout << "The Regular Grid's time is: " << reggrid->getTime()->getValue() << std::endl;
         for (i=0; i<reggrid->getNumberMaps(); ++i)
         {

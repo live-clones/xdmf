@@ -24,8 +24,11 @@
 #ifdef XDMF_BUILD_DSM_THREADS
   #include <H5FDdsm.h>
   #include <H5FDdsmManager.h>
+  #include <H5FDdsmBuffer.h>
 #endif
 #include <hdf5.h>
+#include "XdmfArray.hpp"
+#include "XdmfArrayType.hpp"
 #include "XdmfHDF5ControllerDSM.hpp"
 #include "XdmfDSMManager.hpp"
 #include "XdmfDSMBuffer.hpp"
@@ -354,7 +357,7 @@ XdmfHDF5ControllerDSM::XdmfHDF5ControllerDSM(const std::string & hdf5FilePath,
     try {
       mDSMServerBuffer->BufferServiceLoop(&returnOpCode);
     }
-    catch (XdmfError e) {
+    catch (XdmfError & e) {
       throw e;
     }
   }
@@ -466,7 +469,7 @@ void XdmfHDF5ControllerDSM::setWorkerComm(MPI_Comm comm)
       try {
         XdmfError::message(XdmfError::FATAL, "Failed to disconnect Comm");
       }
-      catch (XdmfError e) {
+      catch (XdmfError & e) {
         throw e;
       }
     }
@@ -478,7 +481,7 @@ void XdmfHDF5ControllerDSM::setWorkerComm(MPI_Comm comm)
       try {
         XdmfError::message(XdmfError::FATAL, "Failed to duplicate Comm");
       }
-      catch (XdmfError e) {
+      catch (XdmfError & e) {
         throw e;
       }
     }
@@ -496,7 +499,7 @@ void XdmfHDF5ControllerDSM::stopDSM()
       try {
         mDSMServerBuffer->SendCommandHeader(XDMF_DSM_OPCODE_DONE, i, 0, 0, XDMF_DSM_INTER_COMM);
       }
-      catch (XdmfError e) {
+      catch (XdmfError & e) {
         throw e;
       }
     }
@@ -505,7 +508,7 @@ void XdmfHDF5ControllerDSM::stopDSM()
     try {
       XdmfError::message(XdmfError::FATAL, "Error: Stopping DSM manually only available in server mode.");
     }
-    catch (XdmfError e) {
+    catch (XdmfError & e) {
       throw e;
     }
   }
@@ -522,7 +525,7 @@ void XdmfHDF5ControllerDSM::restartDSM()
       try {
         mDSMServerBuffer->BufferServiceLoop(&returnOpCode);
       }
-      catch (XdmfError e) {
+      catch (XdmfError & e) {
         throw e;
       }
     }
@@ -531,7 +534,7 @@ void XdmfHDF5ControllerDSM::restartDSM()
     try {
       XdmfError::message(XdmfError::FATAL, "Error: Restarting DSM only available in server mode.");
     }
-    catch (XdmfError e) {
+    catch (XdmfError & e) {
       throw e;
     }
   }
@@ -555,7 +558,7 @@ void XdmfHDF5ControllerDSM::read(XdmfArray * const array)
     try {
       XdmfError::message(XdmfError::FATAL, "Error: Threaded DSM not enabled");
     }
-    catch (XdmfError e) {
+    catch (XdmfError & e) {
       throw e;
     }
 #endif
@@ -565,5 +568,5 @@ void XdmfHDF5ControllerDSM::read(XdmfArray * const array)
   XdmfHDF5Controller::read(array, fapl);
 
   // Close file access property list
-  herr_t status = H5Pclose(fapl);
+  H5Pclose(fapl);
 }

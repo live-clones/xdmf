@@ -72,7 +72,12 @@ XdmfAttribute::getItemTag() const
 std::string
 XdmfAttribute::getName() const
 {
-  return mName;
+  if (mName.c_str() == NULL) {
+    return "";
+  }
+  else {
+    return mName;
+  }
 }
 
 shared_ptr<const XdmfAttributeType>
@@ -125,7 +130,12 @@ XdmfAttribute::setCenter(const shared_ptr<const XdmfAttributeCenter> center)
 void
 XdmfAttribute::setName(const std::string & name)
 {
-  mName= name;
+  if (mName.c_str() == NULL) {
+    XdmfError::message(XdmfError::FATAL, "Error: Internal Name String is a null reference");
+  }
+  else {
+    mName = name;
+  }
 }
 
 void

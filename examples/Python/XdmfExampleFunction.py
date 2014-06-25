@@ -245,3 +245,166 @@ if __name__ == "__main__":
         functionResult = exampleFunction.read()
 
         #//read end
+
+        #//abs begin
+
+        toBeAbs = XdmfArray.New()
+        toBeAbs.pushBackAsFloat64(-5.5)
+        absVector = ArrayVector()
+        absVector.push_back(toBeAbs)
+        absResult = XdmfFunction.abs(absVector)
+        assert absResult.getValuesString() == "5.5"
+
+        #//abs end
+
+        #//arcsin begin
+
+        toBeArcsin = XdmfArray.New()
+        toBeArcsin.pushBackAsFloat64(-0.5)
+        arcsinVector = ArrayVector()
+        arcsinVector.push_back(toBeArcsin)
+        arcsinResult = XdmfFunction.arcsin(arcsinVector)
+        assert arcsinResult.getValuesString() == "-0.52359877559829893"
+
+        #//arcsin end
+
+        #//arccos begin
+
+        toBeArccos = XdmfArray.New()
+        toBeArccos.pushBackAsFloat64(-0.5)
+        arccosVector = ArrayVector()
+        arccosVector.push_back(toBeArccos)
+        arccosResult = XdmfFunction.arccos(arccosVector)
+        assert arccosResult.getValuesString() == "2.0943951023931957"
+
+        #//arccos end
+
+        #//cos begin
+
+        toBeCos = XdmfArray.New()
+        toBeCos.pushBackAsFloat64(-0.5)
+        cosVector = ArrayVector()
+        cosVector.push_back(toBeCos)
+        cosResult = XdmfFunction.cos(cosVector)
+        assert cosResult.getValuesString() == "0.87758256189037276"
+
+        #//cos end
+
+        #//sin begin
+
+        toBeSin = XdmfArray.New()
+        toBeSin.pushBackAsFloat64(-0.5)
+        sinVector = ArrayVector()
+        sinVector.push_back(toBeSin)
+        sinResult = XdmfFunction.sin(sinVector)
+        assert sinResult.getValuesString() == "-0.47942553860420301"
+
+        #//sin end
+
+        #//tan begin
+
+        toBeTan = XdmfArray.New()
+        toBeTan.pushBackAsFloat64(-0.5)
+        tanVector = ArrayVector()
+        tanVector.push_back(toBeTan)
+        tanResult = XdmfFunction.tan(tanVector)
+        assert tanResult.getValuesString() == "-0.54630248984379048"
+
+        #//tan end
+
+        #//sqrt begin
+
+        toBeSqrt = XdmfArray.New()
+        toBeSqrt.pushBackAsFloat64(2)
+        sqrtVector = ArrayVector()
+        sqrtVector.push_back(toBeSqrt)
+        sqrtResult = XdmfFunction.sqrt(sqrtVector)
+        assert sqrtResult.getValuesString() == "1.4142135623730951"
+
+        #//sqrt end
+
+        #//log begin
+
+        toBeLog = XdmfArray.New()
+        toBeLog.pushBackAsFloat64(2)
+        logBase = XdmfArray.New()
+        logBase.pushBackAsFloat64(4)
+        logVector = ArrayVector()
+        logVector.push_back(toBeLog)
+        logVector.push_back(logBase)
+        logResult = XdmfFunction.log(logVector)
+        assert logResult.getValuesString() == "0.5"
+
+        #//log end
+
+        #//exp begin
+
+        powerBase = XdmfArray.New()
+        powerBase.pushBackAsFloat64(-0.5)
+        powerFactor = XdmfArray.New()
+        powerFactor.pushBackAsFloat64(2)
+        expVector = ArrayVector()
+        expVector.push_back(powerBase)
+        expVector.push_back(powerFactor)
+        expResult = XdmfFunction.exponent(expVector)
+        assert expResult.getValuesString() == "0.25"
+
+        #//exp end
+
+        #//join begin
+
+        array1 = XdmfArray.New()
+        array1.pushBackAsFloat64(-0.5)
+        array2 = XdmfArray.New()
+        array2.pushBackAsFloat64(2)
+        joinVector = ArrayVector()
+        joinVector.push_back(array1)
+        joinVector.push_back(array2)
+        joinResult = XdmfFunction.join(joinVector)
+        assert joinResult.getValuesString() == "-0.5 2"
+
+        #//join end
+
+        #//addition begin
+
+        addArray1 = XdmfArray.New()
+        addArray1.pushBackAsFloat64(-0.5)
+        addArray2 = XdmfArray.New()
+        addArray2.pushBackAsFloat64(2)
+        addResult = XdmfFunction.addition(addArray1, addArray2)
+        assert addResult.getValuesString() == "1.5"
+
+        #//addition end
+
+        #//division begin
+
+        divArray1 = XdmfArray.New()
+        divArray1.pushBackAsFloat64(-0.5)
+        divArray2 = XdmfArray.New()
+        divArray2.pushBackAsFloat64(2)
+        divResult = XdmfFunction.division(divArray1, divArray2)
+        assert divResult.getValuesString() == "-0.25"
+
+        #//division end
+
+        #//multiplication begin
+
+        mulArray1 = XdmfArray.New()
+        mulArray1.pushBackAsFloat64(-0.5)
+        mulArray2 = XdmfArray.New()
+        mulArray2.pushBackAsFloat64(2)
+        mulResult = XdmfFunction.multiplication(mulArray1, mulArray2)
+        assert mulResult.getValuesString() == "-1"
+
+        #//multiplication end
+
+        #//subtraction begin
+
+        subArray1 = XdmfArray.New()
+        subArray1.pushBackAsFloat64(-0.5)
+        subArray2 = XdmfArray.New()
+        subArray2.pushBackAsFloat64(2)
+        subResult = XdmfFunction.subtraction(subArray1, subArray2)
+        assert subResult.getValuesString() == "-2.5"
+
+        #//subtraction end

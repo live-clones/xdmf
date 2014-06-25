@@ -12,6 +12,9 @@
 
 int main(int argc, char *argv[])
 {
+// This test does not work properly with openmpi
+// due to an issue with the openmpi code
+#ifndef OPEN_MPI
         //#initMPI begin
 
         int size, id, dsmSize;
@@ -264,6 +267,8 @@ int main(int argc, char *argv[])
         MPI_Finalize();
 
         //#finalizeMPI end
+
+#endif
 
         return 0;
 }

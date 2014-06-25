@@ -1,5 +1,7 @@
 #include "XdmfSparseMatrix.hpp"
 #include "XdmfWriter.hpp"
+#include "stdio.h"
+#include <iostream>
 
 int main(int, char **)
 {
@@ -20,6 +22,8 @@ int main(int, char **)
   values->pushBack<double>(5.0);
   values->pushBack<double>(6.0);
   values->pushBack<double>(-1.0);
+
+  std::cout << "matrix contains" << "\n" << matrix->getValuesString() << std::endl;
 
   assert(matrix->getValuesString().compare("0.0, 5, 0.0, \n0.0, 0.0, 6, \n-1, 0.0, 0.0, \n") == 0);
 

@@ -2,76 +2,79 @@ from mpi4py.MPI import *
 from Xdmf import *
 
 if __name__ == "__main__":
-        #//initMPI begin
+        if get_vendor()[0] == 'Open MPI':
+          print "Interprogram DSM does not work properly with OpenMPI"
+        else:
+          #//initMPI begin
 
-        dsmSize = 64
-        comm = COMM_WORLD
+          dsmSize = 64
+          comm = COMM_WORLD
 
-        id = comm.Get_rank()
-        size = comm.Get_size()
+          id = comm.Get_rank()
+          size = comm.Get_size()
 
-        newPath = "dsm";
-        numServersCores = size - 1;
-        numConnections = 2
+          newPath = "dsm";
+          numServersCores = size - 1;
+          numConnections = 2
 
-        exampleWriter = XdmfHDF5WriterDSM.New(newPath, comm, dsmSize/numServersCores, size-numServersCores, size-1);
+          exampleWriter = XdmfHDF5WriterDSM.New(newPath, comm, dsmSize/numServersCores, size-numServersCores, size-1);
 
-        if id == 0:
-                #//initMPI end
+          if id == 0:
+                  #//initMPI end
 
-                #//GetDsmFileName begin
+                  #//GetDsmFileName begin
 
-                connectionFileName = exampleWriter.getServerBuffer().GetComm().GetDsmFileName()
+                  connectionFileName = exampleWriter.getServerBuffer().GetComm().GetDsmFileName()
 
-                #//GetDsmFileName end
+                  #//GetDsmFileName end
 
-                #//SetDsmFileName begin
+                  #//SetDsmFileName begin
 
-                exampleWriter.getServerBuffer().GetComm().SetDsmFileName(connectionFileName)
+                  exampleWriter.getServerBuffer().GetComm().SetDsmFileName(connectionFileName)
 
-                #//SetDsmFileName end
+                  #//SetDsmFileName end
 
-                #//OpenPort begin
+                  #//OpenPort begin
 
-                exampleWriter.getServerBuffer().GetComm().OpenPort()
+                  exampleWriter.getServerBuffer().GetComm().OpenPort()
 
-                #//OpenPort end
+                  #//OpenPort end
 
-                #//SendAccept begin
+                  #//SendAccept begin
 
-                exampleWriter.getServerBuffer().SendAccept(numConnections)
+                  exampleWriter.getServerBuffer().SendAccept(numConnections)
 
-                #//SendAccept end
+                  #//SendAccept end
 
-                '''
+                  '''
 
-                #//manualAccept begin
+                  #//manualAccept begin
 
-                # Notify the server cores to accept connections
-                for i in range(exampleWriter.getServerBuffer().StartServerId, exampleWriter.getServerBuffer().EndServerId+1):
-                        if i != exampleWriter.getServerBuffer().Comm.GetId():
-                                exampleWriter.getServerBuffer().SendCommandHeader(XDMF_DSM_ACCEPT, i, 0, 0, XDMF_DSM_INTER_COMM)
-                                exampleWriter.getServerBuffer().SendAcknowledgment(i, numConnections, XDMF_DSM_EXCHANGE_TAG, XDMF_DSM_INTER_COMM)
-                # Accept connections
-                exampleWriter.getServerBuffer().Comm.Accept(numConnections)
-                # Distribute current DSM status
-                exampleWriter.getServerBuffer().SendInfo()
+                  # Notify the server cores to accept connections
+                  for i in range(exampleWriter.getServerBuffer().StartServerId, exampleWriter.getServerBuffer().EndServerId+1):
+                          if i != exampleWriter.getServerBuffer().Comm.GetId():
+                                  exampleWriter.getServerBuffer().SendCommandHeader(XDMF_DSM_ACCEPT, i, 0, 0, XDMF_DSM_INTER_COMM)
+                                  exampleWriter.getServerBuffer().SendAcknowledgment(i, numConnections, XDMF_DSM_EXCHANGE_TAG, XDMF_DSM_INTER_COMM)
+                  # Accept connections
+                  exampleWriter.getServerBuffer().Comm.Accept(numConnections)
+                  # Distribute current DSM status
+                  exampleWriter.getServerBuffer().SendInfo()
 
-                #//manualAccept end
+                  #//manualAccept end
 
-                '''
+                  '''
 
-                #//finishwork begin
+                  #//finishwork begin
 
-                exampleWriter.getServerBuffer().GetComm().GetIntraComm().Barrier()
+                  exampleWriter.getServerBuffer().GetComm().GetIntraComm().Barrier()
 
-        exampleWriter.getServerBuffer().GetComm().GetInterComm().Barrier()
+          exampleWriter.getServerBuffer().GetComm().GetInterComm().Barrier()
 
-        #//finishwork end
+          #//finishwork end
 
-        #//ClosePort begin
+          #//ClosePort begin
 
-	if id == 0:
-	        exampleWriter.getServerBuffer().GetComm().ClosePort()
+	  if id == 0:
+	          exampleWriter.getServerBuffer().GetComm().ClosePort()
 
-        #//ClosePort end
+          #//ClosePort end

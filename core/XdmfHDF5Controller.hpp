@@ -160,6 +160,29 @@ public:
    */
   std::vector<unsigned int> getDataspaceDimensions() const;
 
+  /**
+   * Gets the controller in string form. For writing to file.
+   *
+   * Example of use:
+   *
+   * C++
+   *
+   * @dontinclude ExampleXdmfHeavyDataController.cpp
+   * @skipline //#initialization
+   * @until //#initialization
+   * @skipline //#getDescriptor
+   * @until //#getDescriptor
+   *
+   * Python
+   *
+   * @dontinclude XdmfExampleHeavyDataController.py
+   * @skipline #//initialization
+   * @until #//initialization
+   * @skipline #//getDescriptor
+   * @until #//getDescriptor
+   *
+   * @return    A string that contains relevant information for the controller
+   */
   virtual std::string getDescriptor() const;
 
   virtual std::string getName() const;

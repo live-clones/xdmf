@@ -1,4 +1,3 @@
-#include "stdio.h"
 #include "XdmfArray.hpp"
 #include "XdmfHDF5Controller.hpp"
 #include "XdmfHeavyDataWriter.hpp"
@@ -16,8 +15,12 @@ int main(int, char **)
   array->initialize<int>(dimensions);
   int values[] = {0, 1, 2, 3};
   array->insert(0, &values[0], 4);
+  std::cout << array->getSize() << " ?= " << 4 << std::endl;
   assert(array->getSize() == 4);
   dimensions = array->getDimensions();
+  std::cout << dimensions.size() << " ?= " << 2 << std::endl;
+  std::cout << dimensions[0] << " ?= " << 2 << std::endl;
+  std::cout << dimensions[1] << " ?= " << 2 << std::endl;
   assert(dimensions.size() == 2);
   assert(dimensions[0] == 2 && dimensions[1] == 2);
 
@@ -35,9 +38,21 @@ int main(int, char **)
   shared_ptr<XdmfReader> reader = XdmfReader::New();
   shared_ptr<XdmfItem> item = reader->read("TestXdmfHDF5Hyperslab.xmf");
   shared_ptr<XdmfArray> readArray = shared_dynamic_cast<XdmfArray>(item);
+  if (readArray)
+  {
+    std::cout << "array exists" << std::endl;
+  }
+  else
+  {
+    std::cout << "array does not exist" << std::endl;
+  }
+  std::cout << readArray->getSize() << " ?= " << 4 << std::endl;
   assert(readArray);
   assert(readArray->getSize() == 4);
   std::vector<unsigned int> readDimensions = readArray->getDimensions();
+  std::cout << readDimensions.size() << " ?= " << 2 << std::endl;
+  std::cout << readDimensions[0] << " ?= " << 2 << std::endl;
+  std::cout << readDimensions[1] << " ?= " << 2 << std::endl;
   assert(readDimensions.size() == 2);
   assert(readDimensions[0] == 2 && readDimensions[1] == 2);
 
@@ -45,13 +60,26 @@ int main(int, char **)
   // Read heavy values from disk.
   //
   readArray->read();
+  if (readArray->isInitialized())
+  {
+    std::cout << "array is initialized" << std::endl;
+  }
+  else
+  {
+    std::cout << "array is not initialized" << std::endl;
+  }
+  std::cout << readArray->getSize() << " ?= " << 4 << std::endl;
   assert(readArray->isInitialized());
   assert(readArray->getSize() == 4);
   readDimensions = readArray->getDimensions();
+  std::cout << readDimensions.size() << " ?= " << 2 << std::endl;
+  std::cout << readDimensions[0] << " ?= " << 2 << std::endl;
+  std::cout << readDimensions[1] << " ?= " << 2 << std::endl;
   assert(readDimensions.size() == 2);
   assert(readDimensions[0] == 2 && readDimensions[1] == 2);
 
   for(int i=0; i<4; ++i) {
+    std::cout << readArray->getValue<int>(i) << " ?= " << i << std::endl;
     assert(readArray->getValue<int>(i) == i);
   }
 
@@ -63,8 +91,12 @@ int main(int, char **)
   for(int i=0; i<9; ++i) {
     readArray->insert(i, i);
   }
+  std::cout << readArray->getSize() << " ?= " << 9 << std::endl;
   assert(readArray->getSize() == 9);
   dimensions = readArray->getDimensions();
+  std::cout << dimensions.size() << " ?= " << 2 << std::endl;
+  std::cout << dimensions[0] << " ?= " << 3 << std::endl;
+  std::cout << dimensions[1] << " ?= " << 3 << std::endl;
   assert(dimensions.size() == 2);
   assert(dimensions[0] == 3 && dimensions[1] == 3);
 
@@ -81,9 +113,21 @@ int main(int, char **)
 
   shared_ptr<XdmfItem> item2 = reader->read("TestXdmfHDF5Hyperslab2.xmf");
   shared_ptr<XdmfArray> readArray2 = shared_dynamic_cast<XdmfArray>(item2);
+  if (readArray2)
+  {
+    std::cout << "array exists" << std::endl;
+  }
+  else
+  {
+    std::cout << "array does not exist" << std::endl;
+  }
+  std::cout << readArray2->getSize() << " ?= " << 9 << std::endl;
   assert(readArray2);
   assert(readArray2->getSize() == 9);
   readDimensions = readArray2->getDimensions();
+  std::cout << readDimensions.size() << " ?= " << 2 << std::endl;
+  std::cout << readDimensions[0] << " ?= " << 3 << std::endl;
+  std::cout << readDimensions[1] << " ?= " << 3 << std::endl;
   assert(readDimensions.size() == 2);
   assert(readDimensions[0] == 3 && readDimensions[1] == 3);
 
@@ -91,14 +135,26 @@ int main(int, char **)
   // Read heavy values from disk.
   //
   readArray2->read();
+  if (readArray2->isInitialized())
+  {
+    std::cout << "array is initialized" << std::endl;
+  }
+  else
+  {
+    std::cout << "array is not initialized" << std::endl;
+  }
+  std::cout << readArray2->getSize() << " ?= " << 9 << std::endl;
   assert(readArray2->isInitialized());
-  printf("size = %d\n", readArray2->getSize());
   assert(readArray2->getSize() == 9);
   readDimensions = readArray2->getDimensions();
+  std::cout << readDimensions.size() << " ?= " << 2 << std::endl;
+  std::cout << readDimensions[0] << " ?= " << 3 << std::endl;
+  std::cout << readDimensions[1] << " ?= " << 3 << std::endl;
   assert(readDimensions.size() == 2);
   assert(readDimensions[0] == 3 && readDimensions[1] == 3);
 
   for(int i=0; i<9; ++i) {
+    std::cout << readArray2->getValue<int>(i) << " ?= " << i << std::endl;
     assert(readArray2->getValue<int>(i) == i);
   }
 
@@ -121,6 +177,16 @@ int main(int, char **)
 
   shared_ptr<XdmfHDF5Controller> controller =
     shared_dynamic_cast<XdmfHDF5Controller>(readArray2->getHeavyDataController());
+
+  if (controller)
+  {
+    std::cout << "HDF5 controller exists" << std::endl;
+  }
+  else
+  {
+    std::cout << "HDF5 controller does not exists" << std::endl;
+  }
+
   assert(controller);
 
   shared_ptr<XdmfHDF5Controller> hyperslabController =
@@ -134,14 +200,25 @@ int main(int, char **)
 
   shared_ptr<XdmfArray> hyperslabArray = XdmfArray::New();
   hyperslabArray->setHeavyDataController(hyperslabController);
+  std::cout << hyperslabArray->getSize() << " ?= " << 4 << std::endl;
   assert(hyperslabArray->getSize() == 4);
   std::vector<unsigned int> hyperslabDimensions =
     hyperslabArray->getDimensions();
+  std::cout << hyperslabDimensions.size() << " ?= " << 2 << std::endl;
+  std::cout << hyperslabDimensions[0] << " ?= " << 2 << std::endl;
+  std::cout << hyperslabDimensions[1] << " ?= " << 2 << std::endl;
   assert(hyperslabDimensions.size() == 2);
   assert(hyperslabDimensions[0] == 2 && hyperslabDimensions[1] == 2);
   hyperslabArray->read();
 
   hyperslabDimensions = hyperslabArray->getDimensions();
+  std::cout << hyperslabDimensions.size() << " ?= " << 2 << std::endl;
+  std::cout << hyperslabDimensions[0] << " ?= " << 2 << std::endl;
+  std::cout << hyperslabDimensions[1] << " ?= " << 2 << std::endl;
+  std::cout << hyperslabArray->getValue<int>(0) << " ?= " << 4 << std::endl;
+  std::cout << hyperslabArray->getValue<int>(1) << " ?= " << 5 << std::endl;
+  std::cout << hyperslabArray->getValue<int>(2) << " ?= " << 7 << std::endl;
+  std::cout << hyperslabArray->getValue<int>(3) << " ?= " << 8 << std::endl;
   assert(hyperslabDimensions.size() == 2);
   assert(hyperslabDimensions[0] == 2 && hyperslabDimensions[1] == 2);
   assert(hyperslabArray->getValue<int>(0) == 4);

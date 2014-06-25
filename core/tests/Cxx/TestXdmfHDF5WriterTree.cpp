@@ -1,6 +1,7 @@
 #include "XdmfArray.hpp"
 #include "XdmfHDF5Writer.hpp"
 #include "XdmfInformation.hpp"
+#include <iostream>
 
 int main(int, char **)
 {
@@ -26,6 +27,24 @@ int main(int, char **)
     XdmfHDF5Writer::New("hdf5WriterTestTree.h5");
   information->accept(writer);
 
+  if (array1->getHeavyDataController())
+  {
+    std::cout << "array 1 does not have a heavy data controller" << std::endl;
+  }
+  else
+  {
+    std::cout << "array 1 has a heavy data controller" << std::endl;
+  }
+
+  if (array2->getHeavyDataController())
+  {
+    std::cout << "array 2 does not have a heavy data controller" << std::endl;
+  }
+  else
+  {
+    std::cout << "array 2 has a heavy data controller" << std::endl;
+  }
+
   assert(array1->getHeavyDataController());
   assert(array2->getHeavyDataController());
   
@@ -34,6 +53,16 @@ int main(int, char **)
 
   array1->read();
   array2->read();
+
+  for (unsigned int i = 0; i < 3; ++i)
+  {
+    std::cout << array1->getValue<int>(i) << " ?= " << i << std::endl;
+  }
+
+  for (unsigned int i = 0; i < 3; ++i)
+  {
+    std::cout << array2->getValue<int>(i) << " ?= " << i+3 << std::endl;
+  }
 
   assert(array1->getValue<int>(0) == 0);
   assert(array1->getValue<int>(1) == 1);
