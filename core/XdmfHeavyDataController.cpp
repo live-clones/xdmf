@@ -48,12 +48,6 @@ XdmfHeavyDataController::getArrayOffset() const
   return mArrayStartOffset;
 }
 
-std::string
-XdmfHeavyDataController::getDescriptor() const
-{
-  return "";
-}
-
 std::vector<unsigned int> 
 XdmfHeavyDataController::getDimensions() const
 {

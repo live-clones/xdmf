@@ -327,9 +327,6 @@ XdmfCoreReader::~XdmfCoreReader()
 shared_ptr<XdmfItem >
 XdmfCoreReader::parse(const std::string & lightData) const
 {
-  if (mImpl == NULL) {
-    XdmfError::message(XdmfError::FATAL, "Error: Reader Internal Object is NULL");
-  }
   mImpl->parse(lightData);
   const xmlNodePtr currNode = xmlDocGetRootElement(mImpl->mDocument);
   std::vector<shared_ptr<XdmfItem> > toReturn;
@@ -348,9 +345,6 @@ XdmfCoreReader::parse(const std::string & lightData) const
 std::vector<shared_ptr<XdmfItem> >
 XdmfCoreReader::readItems(const std::string & filePath) const
 {
-  if (mImpl == NULL) {
-    XdmfError::message(XdmfError::FATAL, "Error: Reader Internal Object is NULL");
-  }
   mImpl->openFile(filePath);
   const xmlNodePtr currNode = xmlDocGetRootElement(mImpl->mDocument);
   const std::vector<shared_ptr<XdmfItem> > toReturn =
@@ -373,9 +367,6 @@ std::vector<shared_ptr<XdmfItem> >
 XdmfCoreReader::read(const std::string & filePath,
                      const std::string & xPath) const
 {
-  if (mImpl == NULL) {
-    XdmfError::message(XdmfError::FATAL, "Error: Reader Internal Object is NULL");
-  }
   mImpl->openFile(filePath);
   std::vector<shared_ptr<XdmfItem> > toReturn = this->readPathObjects(xPath);
   mImpl->closeFile();
@@ -385,9 +376,6 @@ XdmfCoreReader::read(const std::string & filePath,
 std::vector<shared_ptr<XdmfItem> >
 XdmfCoreReader::readPathObjects(const std::string & xPath) const
 {
-  if (mImpl == NULL) {
-    XdmfError::message(XdmfError::FATAL, "Error: Reader Internal Object is NULL");
-  }
   std::vector<shared_ptr<XdmfItem> > toReturn;
   mImpl->readPathObjects(xPath, toReturn);
   return toReturn;

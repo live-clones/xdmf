@@ -343,9 +343,6 @@ XdmfRectilinearGrid::getCoordinates(const unsigned int axisIndex)
 shared_ptr<const XdmfArray>
 XdmfRectilinearGrid::getCoordinates(const unsigned int axisIndex) const
 {
-  if (mImpl == NULL) {
-    XdmfError::message(XdmfError::FATAL, "Error: Xdmf Rectilinear Grid Internal Object is NULL");
-  }
   if(axisIndex < mImpl->mCoordinates.size()) {
     return mImpl->mCoordinates[axisIndex];
   }
@@ -361,9 +358,6 @@ XdmfRectilinearGrid::getCoordinates()
 const std::vector<shared_ptr<XdmfArray> >
 XdmfRectilinearGrid::getCoordinates() const
 {
-  if (mImpl == NULL) {
-    XdmfError::message(XdmfError::FATAL, "Error: Xdmf Rectilinear Grid Internal Object is NULL");
-  }
   return mImpl->mCoordinates;
 }
 
@@ -377,9 +371,6 @@ XdmfRectilinearGrid::getDimensions()
 shared_ptr<const XdmfArray>
 XdmfRectilinearGrid::getDimensions() const
 {
-  if (mImpl == NULL) {
-    XdmfError::message(XdmfError::FATAL, "Error: Xdmf Rectilinear Grid Internal Object is NULL");
-  }
   shared_ptr<XdmfArray> dimensions = XdmfArray::New();
   dimensions->reserve(mImpl->mCoordinates.size());
   for(std::vector<shared_ptr<XdmfArray> >::const_iterator iter =
@@ -416,9 +407,6 @@ void
 XdmfRectilinearGrid::setCoordinates(const unsigned int axisIndex,
                                     const shared_ptr<XdmfArray> axisCoordinates)
 {
-  if (mImpl == NULL) {
-    XdmfError::message(XdmfError::FATAL, "Error: Xdmf Rectilinear Grid Internal Object is NULL");
-  }
   if(mImpl->mCoordinates.size() <= axisIndex) {
     mImpl->mCoordinates.reserve(axisIndex + 1);
     unsigned int numArraysToInsert =
@@ -433,8 +421,5 @@ XdmfRectilinearGrid::setCoordinates(const unsigned int axisIndex,
 void
 XdmfRectilinearGrid::setCoordinates(const std::vector<shared_ptr<XdmfArray> > axesCoordinates)
 {
-  if (mImpl == NULL) {
-    XdmfError::message(XdmfError::FATAL, "Error: Xdmf Rectilinear Grid Internal Object is NULL");
-  }
   mImpl->mCoordinates = axesCoordinates;
 }

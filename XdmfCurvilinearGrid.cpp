@@ -241,9 +241,6 @@ XdmfCurvilinearGrid::getDimensions()
 shared_ptr<const XdmfArray>
 XdmfCurvilinearGrid::getDimensions() const
 {
-  if (mImpl == NULL) {
-    XdmfError::message(XdmfError::FATAL, "Error: Curvilinear Grid Internal Object is NULL");
-  }
   return mImpl->mDimensions;
 }
 
@@ -275,9 +272,6 @@ XdmfCurvilinearGrid::populateItem(const std::map<std::string, std::string> & ite
 void
 XdmfCurvilinearGrid::setDimensions(const shared_ptr<XdmfArray> dimensions)
 {
-  if (mImpl == NULL) {
-    XdmfError::message(XdmfError::FATAL, "Error: Curvilinear Grid Internal Object is NULL");
-  }
   mImpl->mDimensions = dimensions;
 }
 

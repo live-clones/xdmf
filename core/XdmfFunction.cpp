@@ -748,12 +748,7 @@ XdmfFunction::evaluateFunction(std::vector<shared_ptr<XdmfArray> > valueVector,
 std::string
 XdmfFunction::getExpression() const
 {
-  if (mExpression.c_str() == NULL) {
-    return "";
-  }
-  else {
-    return mExpression;
-  }
+  return mExpression;
 }
 
 std::string
@@ -1066,12 +1061,7 @@ XdmfFunction::removeVariable(std::string key)
 void
 XdmfFunction::setExpression(std::string newExpression)
 {
-  if (mExpression.c_str() == NULL) {
-    XdmfError::message(XdmfError::FATAL, "Error: Internal Expression String is a null reference");
-  }
-  else {
-    mExpression = newExpression;
-  }
+  mExpression = newExpression;
 }
 
 shared_ptr<XdmfArray>

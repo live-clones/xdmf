@@ -207,116 +207,78 @@ XdmfWriter::getHeavyDataWriter()
 shared_ptr<const XdmfHeavyDataWriter>
 XdmfWriter::getHeavyDataWriter() const
 {
-  if (mImpl == NULL) {
-    XdmfError::message(XdmfError::FATAL, "Error: Writer Internal Object is Null");
-  }
   return mImpl->mHeavyDataWriter;
 }
 
 std::string
 XdmfWriter::getFilePath() const
 {
-  if (mImpl == NULL) {
-    XdmfError::message(XdmfError::FATAL, "Error: Writer Internal Object is Null");
-  }
   return mImpl->mXMLFilePath;
 }
 
 unsigned int
 XdmfWriter::getLightDataLimit() const
 {
-  if (mImpl == NULL) {
-    XdmfError::message(XdmfError::FATAL, "Error: Writer Internal Object is Null");
-  }
   return mImpl->mLightDataLimit;
 }
 
 XdmfWriter::Mode
 XdmfWriter::getMode() const
 {
-  if (mImpl == NULL) {
-    XdmfError::message(XdmfError::FATAL, "Error: Writer Internal Object is Null");
-  }
   return mImpl->mMode;
 }
 
 bool
 XdmfWriter::getWriteXPaths() const
 {
-  if (mImpl == NULL) {
-    XdmfError::message(XdmfError::FATAL, "Error: Writer Internal Object is Null");
-  }
   return mImpl->mWriteXPaths;
 }
 
 bool
 XdmfWriter::getXPathParse() const
 {
-  if (mImpl == NULL) {
-    XdmfError::message(XdmfError::FATAL, "Error: Writer Internal Object is Null");
-  }
   return mImpl->mXPathParse;
 }
 
 void
 XdmfWriter::setDocumentTitle(std::string title)
-{  if (mImpl == NULL) {
-    XdmfError::message(XdmfError::FATAL, "Error: Writer Internal Object is Null");
-  }
+{
   mImpl->mDocumentTitle = title;
 }
 
 void
 XdmfWriter::setHeavyDataWriter(shared_ptr<XdmfHeavyDataWriter> heavyDataWriter)
 {
-  if (mImpl == NULL) {
-    XdmfError::message(XdmfError::FATAL, "Error: Writer Internal Object is Null");
-  }
   mImpl->mHeavyDataWriter = heavyDataWriter;
 }
 
 void
 XdmfWriter::setLightDataLimit(const unsigned int numValues)
 {
-  if (mImpl == NULL) {
-    XdmfError::message(XdmfError::FATAL, "Error: Writer Internal Object is Null");
-  }
   mImpl->mLightDataLimit = numValues;
 }
 
 void
 XdmfWriter::setMode(const Mode mode)
 {
-  if (mImpl == NULL) {
-    XdmfError::message(XdmfError::FATAL, "Error: Writer Internal Object is Null");
-  }
   mImpl->mMode = mode;
 }
 
 void
 XdmfWriter::setVersionString(std::string version)
 {
-  if (mImpl == NULL) {
-    XdmfError::message(XdmfError::FATAL, "Error: Writer Internal Object is Null");
-  }
   mImpl->mVersionString = version;
 }
 
 void
 XdmfWriter::setWriteXPaths(const bool writeXPaths)
 {
-  if (mImpl == NULL) {
-    XdmfError::message(XdmfError::FATAL, "Error: Writer Internal Object is Null");
-  }
   mImpl->mWriteXPaths = writeXPaths;
 }
 
 void
 XdmfWriter::setXPathParse(const bool xPathParse)
 {
-  if (mImpl == NULL) {
-    XdmfError::message(XdmfError::FATAL, "Error: Writer Internal Object is Null");
-  }
   mImpl->mXPathParse = xPathParse;
 }
 
@@ -324,9 +286,6 @@ void
 XdmfWriter::visit(XdmfArray & array,
                   const shared_ptr<XdmfBaseVisitor> visitor)
 {
-  if (mImpl == NULL) {
-    XdmfError::message(XdmfError::FATAL, "Error: Writer Internal Object is Null");
-  }
   if (mImpl->mDepth == 0) {
     mImpl->openFile();
   }
@@ -467,9 +426,6 @@ void
 XdmfWriter::visit(XdmfItem & item,
                   const shared_ptr<XdmfBaseVisitor> visitor)
 {
-  if (mImpl == NULL) {
-    XdmfError::message(XdmfError::FATAL, "Error: Writer Internal Object is Null");
-  }
   if (mImpl->mDepth == 0) {
     mImpl->openFile();
   }

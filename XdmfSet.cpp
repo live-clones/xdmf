@@ -67,12 +67,7 @@ XdmfSet::getItemTag() const
 std::string
 XdmfSet::getName() const
 {
-  if (mName.c_str() == NULL) {
-    return "";
-  }
-  else {
-    return mName;
-  }
+  return mName;
 }
 
 shared_ptr<const XdmfSetType>
@@ -117,12 +112,7 @@ XdmfSet::populateItem(const std::map<std::string, std::string> & itemProperties,
 void
 XdmfSet::setName(const std::string & name)
 {
-  if (mName.c_str() == NULL) {
-    XdmfError::message(XdmfError::FATAL, "Error: Internal Name String is a null reference");
-  }
-  else {
-    mName = name;
-  }
+  mName = name;
 }
 
 void

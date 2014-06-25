@@ -940,14 +940,7 @@ XdmfHDF5Writer::createController(const shared_ptr<XdmfHeavyDataController> & ref
 unsigned int
 XdmfHDF5Writer::getChunkSize() const
 {
-  if (mImpl != NULL) {
-    return mImpl->mChunkSize;
-  }
-  else {
-    // Fatal error if impl is null
-    XdmfError::message(XdmfError::FATAL, "Error: HDF5 internal object is NULL");
-    return 0;
-  }
+  return mImpl->mChunkSize;
 }
 
 int
@@ -1000,13 +993,7 @@ XdmfHDF5Writer::getDataSetSize(const std::string & fileName, const std::string &
 void 
 XdmfHDF5Writer::closeFile()
 {
-  if (mImpl != NULL) {
-    mImpl->closeFile();
-  }
-  else {
-    // Fatal error if impl is null
-    XdmfError::message(XdmfError::FATAL, "Error: HDF5 internal object is NULL");
-  }
+  mImpl->closeFile();
 }
 
 void 
@@ -1018,54 +1005,36 @@ XdmfHDF5Writer::openFile()
 void
 XdmfHDF5Writer::openFile(const int fapl)
 {
-  if (mImpl != NULL) {
-    mDataSetId = mImpl->openFile(mFilePath,
-                                 fapl,
-                                 mDataSetId);
-  }
-  else {
-    // Fatal error if impl is null
-    XdmfError::message(XdmfError::FATAL, "Error: HDF5 internal object is NULL");
-  }
+  mDataSetId = mImpl->openFile(mFilePath,
+                               fapl,
+                               mDataSetId);
 }
 
 void
 XdmfHDF5Writer::setChunkSize(const unsigned int chunkSize)
 {
-  if (mImpl != NULL) {
-    mImpl->mChunkSize = chunkSize;
-  }
-  else {
-    // Fatal error if impl is null
-    XdmfError::message(XdmfError::FATAL, "Error: HDF5 internal object is NULL");
-  }
+  mImpl->mChunkSize = chunkSize;
 }
 
 void
 XdmfHDF5Writer::visit(XdmfArray & array,
                       const shared_ptr<XdmfBaseVisitor> visitor)
 {
-  if (mImpl != NULL) {
-    mImpl->mDepth++;
-    std::set<const XdmfItem *>::iterator checkWritten = mImpl->mWrittenItems.find(&array);
-    if (checkWritten == mImpl->mWrittenItems.end() || array.getItemTag() == "DataItem") {
-      // If it has children send the writer to them too.
-      array.traverse(visitor);
-      if (array.isInitialized()) {
-        // Only do this if the object has not already been written
-        this->write(array, H5P_DEFAULT);
-        mImpl->mWrittenItems.insert(&array);
-      }
-    }
-    // If the object has already been written, just end, it already has the data
-    mImpl->mDepth--;
-    if(mImpl->mDepth <= 0) {
-      mImpl->mWrittenItems.clear();
+  mImpl->mDepth++;
+  std::set<const XdmfItem *>::iterator checkWritten = mImpl->mWrittenItems.find(&array);
+  if (checkWritten == mImpl->mWrittenItems.end() || array.getItemTag() == "DataItem") {
+    // If it has children send the writer to them too.
+    array.traverse(visitor);
+    if (array.isInitialized()) {
+      // Only do this if the object has not already been written
+      this->write(array, H5P_DEFAULT);
+      mImpl->mWrittenItems.insert(&array);
     }
   }
-  else {
-    // Fatal error if impl is null
-    XdmfError::message(XdmfError::FATAL, "Error: HDF5 internal object is NULL");
+  // If the object has already been written, just end, it already has the data
+  mImpl->mDepth--;
+  if(mImpl->mDepth <= 0) {
+    mImpl->mWrittenItems.clear();
   }
 }
 
@@ -1074,24 +1043,18 @@ void
 XdmfHDF5Writer::visit(XdmfItem & item,
                       const shared_ptr<XdmfBaseVisitor> visitor)
 {
-  if (mImpl != NULL) {
-    mImpl->mDepth++;
-    // This is similar to the algorithm for writing XPaths
-    // shouldn't be a problem if XPaths are turned off because all this does is avoid writing an object twice
-    // if it was written once then all instances of the object should have the controller
-    std::set<const XdmfItem *>::iterator checkWritten = mImpl->mWrittenItems.find(&item);
-    if (checkWritten == mImpl->mWrittenItems.end()) {
-      mImpl->mWrittenItems.insert(&item);
-      item.traverse(visitor);
-    }
-    mImpl->mDepth--;
-    if(mImpl->mDepth <= 0) {
-      mImpl->mWrittenItems.clear();
-    }
+  mImpl->mDepth++;
+  // This is similar to the algorithm for writing XPaths
+  // shouldn't be a problem if XPaths are turned off because all this does is avoid writing an object twice
+  // if it was written once then all instances of the object should have the controller
+  std::set<const XdmfItem *>::iterator checkWritten = mImpl->mWrittenItems.find(&item);
+  if (checkWritten == mImpl->mWrittenItems.end()) {
+    mImpl->mWrittenItems.insert(&item);
+    item.traverse(visitor);
   }
-  else {
-    // Fatal error if impl is null
-    XdmfError::message(XdmfError::FATAL, "Error: HDF5 internal object is NULL");
+  mImpl->mDepth--;
+  if(mImpl->mDepth <= 0) {
+    mImpl->mWrittenItems.clear();
   }
 }
 
@@ -1100,11 +1063,6 @@ void
 XdmfHDF5Writer::write(XdmfArray & array,
                       const int fapl)
 {
-  if (mImpl == NULL) {
-    // Fatal error if impl is null
-    XdmfError::message(XdmfError::FATAL, "Error: HDF5 internal object is NULL");
-  }
-
   hid_t datatype = -1;
   bool closeDatatype = false;
 

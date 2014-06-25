@@ -76,7 +76,7 @@ public:
    *
    * @return    A string that contains relevant information for the controller
    */
-  virtual std::string getDescriptor() const;
+  virtual std::string getDescriptor() const = 0;
 
   /**
    * Get the dimensions of the heavy data set owned by this controller.

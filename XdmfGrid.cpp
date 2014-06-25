@@ -73,12 +73,7 @@ XdmfGrid::getItemTag() const
 std::string
 XdmfGrid::getName() const
 {
-  if (mName.c_str() == NULL) {
-    return "";
-  }
-  else {
     return mName;
-  }
 }
 
 shared_ptr<XdmfTime>
@@ -148,12 +143,7 @@ XdmfGrid::populateItem(const std::map<std::string, std::string> & itemProperties
 void
 XdmfGrid::setName(const std::string & name)
 {
-  if (mName.c_str() == NULL) {
-      XdmfError::message(XdmfError::FATAL, "Error: Internal Name String is a null reference");
-  }
-  else {
-    mName = name;
-  }
+  mName = name;
 }
 
 void
