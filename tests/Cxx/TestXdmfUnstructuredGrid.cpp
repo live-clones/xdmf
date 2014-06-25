@@ -4,6 +4,8 @@
 #include "XdmfSet.hpp"
 #include "XdmfTime.hpp"
 
+#include <iostream>
+
 int main(int, char **)
 {
   shared_ptr<XdmfUnstructuredGrid> grid = XdmfUnstructuredGrid::New();
@@ -22,8 +24,8 @@ int main(int, char **)
   std::cout << grid->getNumberAttributes() << " ?= " << 1 << std::endl;
   std::cout << grid->getAttribute(0) << " ?= " << attr << std::endl;
   std::cout << grid->getAttribute("foo") << " ?= " << attr << std::endl;
-  std::cout << grid->getAttribute(1) << " ?= " << NULL << std::endl;
-  std::cout << grid->getAttribute("foo1") << " ?= " << NULL << std::endl;
+  std::cout << grid->getAttribute(1) << " ?= " << "NULL" << std::endl;
+  std::cout << grid->getAttribute("foo1") << " ?= " << "NULL" << std::endl;
   assert(grid->getNumberAttributes() == 1);
   assert(grid->getAttribute(0) == attr);
   assert(grid->getAttribute("foo") == attr);
@@ -39,8 +41,8 @@ int main(int, char **)
   std::cout << grid->getNumberSets() << " ?= " << 1 << std::endl;
   std::cout << grid->getSet(0) << " ?= " << set << std::endl;
   std::cout << grid->getSet("foo") << " ?= " << set << std::endl;
-  std::cout << grid->getSet(1) << " ?= " << NULL << std::endl;
-  std::cout << grid->getSet("foo1") << " ?= " << NULL << std::endl;
+  std::cout << grid->getSet(1) << " ?= " << "NULL" << std::endl;
+  std::cout << grid->getSet("foo1") << " ?= " << "NULL" << std::endl;
   assert(grid->getNumberSets() == 1);
   assert(grid->getSet(0) == set);
   assert(grid->getSet("foo") == set);
@@ -48,7 +50,7 @@ int main(int, char **)
   assert(grid->getSet(1) == NULL);
 
   // Insert Time
-  std::cout << grid->getTime() << " ?= " << NULL << std::endl;
+  std::cout << grid->getTime() << " ?= " << "NULL" << std::endl;
   assert(grid->getTime() == NULL);
   shared_ptr<XdmfTime> time = XdmfTime::New(0);
   grid->setTime(time);

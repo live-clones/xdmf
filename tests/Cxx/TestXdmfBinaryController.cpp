@@ -67,7 +67,7 @@ int main(int, char **)
   shared_ptr<XdmfReader> reader = XdmfReader::New();
   shared_ptr<XdmfArray> array = 
     shared_dynamic_cast<XdmfArray>(reader->read("TestXdmfBinary.xmf"));
-  std::cout << array << " ?!= " << NULL << std::endl;
+  std::cout << array << " ?!= " << "NULL" << std::endl;
   assert(array != NULL);
 
   return 0;

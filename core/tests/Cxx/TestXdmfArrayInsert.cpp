@@ -1,5 +1,7 @@
 #include "XdmfArray.hpp"
 
+#include <iostream>
+
 int main(int, char **)
 {
 

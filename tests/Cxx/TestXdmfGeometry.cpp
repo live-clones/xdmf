@@ -2,6 +2,8 @@
 #include "XdmfGeometryType.hpp"
 #include "XdmfSharedPtr.hpp"
 
+#include <iostream>
+
 int main(int, char **)
 {
   // Test != and == operators

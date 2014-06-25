@@ -19,7 +19,7 @@ int main(int, char **)
   std::cout << array->getSize() << " ?= " << 0 << std::endl;
   std::cout << array->getArrayType() << " ?= " << XdmfArrayType::Uninitialized() << std::endl;
   std::cout << array->getValuesString() << " ?= " << "" << std::endl;
-  std::cout << array->getValuesInternal() << " ?= " << NULL << std::endl;
+  std::cout << array->getValuesInternal() << " ?= " << "NULL" << std::endl;
   assert(array->getSize() == 0);
   assert(array->getArrayType() == XdmfArrayType::Uninitialized());
   assert(array->getValuesString() == "");
@@ -272,7 +272,7 @@ int main(int, char **)
   // Assert we can't get an int vector out of our array.
   shared_ptr<std::vector<int> > storedValues2Int =
     array6->getValuesInternal<int>();
-  std::cout << storedValues2Int << " ?= " << NULL << std::endl;
+  std::cout << storedValues2Int << " ?= " << "NULL" << std::endl;
   assert(storedValues2Int == NULL);
 
   //

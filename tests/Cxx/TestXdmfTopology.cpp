@@ -1,6 +1,8 @@
 #include "XdmfTopology.hpp"
 #include "XdmfTopologyType.hpp"
 
+#include <iostream>
+
 void setPolyTopology(shared_ptr<XdmfTopology> polyTop)
 {
   polyTop->setType(XdmfTopologyType::Polygon(6));

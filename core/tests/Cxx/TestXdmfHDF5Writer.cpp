@@ -14,7 +14,8 @@ int main(int, char **)
   // Default operation - Always write to separate datasets.
   //
 
-  std::cout << array->getHeavyDataController() << " ?= " << NULL << std::endl; 
+  std::cout << array->getHeavyDataController() << " ?= " << "NULL"
+            << std::endl; 
 
   assert(array->getHeavyDataController() == NULL);
   shared_ptr<XdmfHDF5Writer> writer = XdmfHDF5Writer::New("hdf5WriterTest.h5");
