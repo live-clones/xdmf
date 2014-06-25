@@ -29,6 +29,7 @@ class XdmfAttribute;
 
 // Includes
 #include "Xdmf.hpp"
+#include "XdmfTime.hpp"
 #include "XdmfSparseMatrix.hpp"
 
 /**

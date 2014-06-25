@@ -103,6 +103,12 @@ XdmfBinaryController::~XdmfBinaryController()
 {
 }
 
+std::string
+XdmfBinaryController::getDescriptor() const
+{
+  return "";
+}
+
 XdmfBinaryController::Endian
 XdmfBinaryController::getEndian() const
 {
