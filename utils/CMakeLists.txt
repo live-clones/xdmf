@@ -19,7 +19,32 @@ if(XDMF_BUILD_FORTRAN)
     # gcc doesn't automatically link to the fortran mpi libraries
     STRING(REGEX MATCH "gfortran" IS_GFORTRAN "${CMAKE_Fortran_COMPILER}")
     if (NOT "${IS_GFORTRAN}" STREQUAL "")
-      set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -lmpi_f90")
+      EXECUTE_PROCESS(
+        COMMAND ${MPIEXEC} --version
+        OUTPUT_VARIABLE MPI_TYPE_OUTPUT
+        ERROR_VARIABLE MPI_TYPE_ERROR
+      )
+      STRING(REGEX MATCH "[0-9]+[.][0-9]+[.][0-9]+" MPI_VERSION"${MPI_TYPE_ERROR}")
+      STRING(REGEX MATCH "^[0-9]+" MPI_VERSION_MAJOR "${MPI_VERSION}")
+      STRING(REGEX MATCH "[0-9]+[.][0-9]+$" MPI_VERSION_CUT "${MPI_VERSION}")
+      STRING(REGEX MATCH "^[0-9]+" MPI_VERSION_MINOR "${MPI_VERSION_CUT}")
+      if ((${MPI_VERSION_MAJOR} EQUAL 1) OR (${MPI_VERSION_MAJOR} LESS 1))
+        if (${MPI_VERSION_MAJOR} EQUAL 1)
+          if (${MPI_VERSION_MINOR} LESS 8)
+            # Minor version is less than 1.8
+            set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -lmpi_f90")
+          else (${MPI_VERSION_MINOR} LESS 8)
+            # Version is 1.8.0 or greater
+            set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -lmpi_mpifh")
+          endif (${MPI_VERSION_MINOR} LESS 8)
+        else (${MPI_VERSION_MAJOR} EQUAL 1)
+          # Major version is less than 1
+          set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -lmpi_f90")
+        endif (${MPI_VERSION_MAJOR} EQUAL 1)
+      else ((${MPI_VERSION_MAJOR} EQUAL 1) OR (${MPI_VERSION_MAJOR} LESS 1))
+        # Major version is greater than 1
+        set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -lmpi_mpifh")
+      endif ((${MPI_VERSION_MAJOR} EQUAL 1) OR (${MPI_VERSION_MAJOR} LESS 1))
     endif (NOT "${IS_GFORTRAN}" STREQUAL "")
   endif (XDMF_BUILD_DSM)
 endif(XDMF_BUILD_FORTRAN)
