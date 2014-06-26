@@ -5,6 +5,8 @@
 #include "XdmfReader.hpp"
 #include "XdmfWriter.hpp"
 
+#include <iostream>
+
 int main(int, char **)
 {
 

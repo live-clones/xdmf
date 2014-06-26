@@ -24,8 +24,8 @@ int main(int, char **)
   assert(set->getName().compare("TEST") == 0);
 
   std::cout << set->getNumberAttributes() << " ?= " << 0 << std::endl;
-  std::cout << set->getAttribute("") << " ?= " << NULL << std::endl;
-  std::cout << set->getAttribute(0) << " ?= " << NULL << std::endl;
+  std::cout << set->getAttribute("") << " ?= " << "NULL" << std::endl;
+  std::cout << set->getAttribute(0) << " ?= " << "NULL" << std::endl;
   assert(set->getNumberAttributes() == 0);
   assert(set->getAttribute("") == NULL);
   assert(set->getAttribute(0) == NULL);

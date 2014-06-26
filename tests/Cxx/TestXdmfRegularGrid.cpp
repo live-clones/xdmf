@@ -9,6 +9,8 @@
 
 #include "XdmfTestCompareFiles.hpp"
 
+#include <iostream>
+
 int main(int, char **)
 {
   shared_ptr<XdmfRegularGrid> grid = XdmfRegularGrid::New(1, 1, 1,

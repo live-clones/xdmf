@@ -29,8 +29,10 @@ int main(int, char **)
   assert(information1->getValue().compare("Value1") == 0);
 
   std::cout << information->getNumberInformations() << " ?= " << 0 << std::endl;
-  std::cout << information->getInformation(0) << " ?= " << NULL << std::endl;
-  std::cout << information->getInformation("foo") << " ?= " << NULL << std::endl;
+  std::cout << information->getInformation(0) << " ?= " << "NULL" 
+            << std::endl;
+  std::cout << information->getInformation("foo") << " ?= " << "NULL"
+            << std::endl;
 
   assert(information->getNumberInformations() == 0);
   assert(information->getInformation(0) == NULL);
@@ -46,10 +48,14 @@ int main(int, char **)
 
   assert(information->getNumberInformations() == 1);
 
-  std::cout << information->getInformation(0) << " ?= " << information1 << std::endl;
-  std::cout << information->getInformation(1) << " ?= " << NULL << std::endl;
-  std::cout << information->getInformation("Key1") << " ?= " << information1 << std::endl;
-  std::cout << information->getInformation("foo") << " ?= " << NULL << std::endl;
+  std::cout << information->getInformation(0) << " ?= " << information1 
+            << std::endl;
+  std::cout << information->getInformation(1) << " ?= " << "NULL" 
+            << std::endl;
+  std::cout << information->getInformation("Key1") << " ?= " << information1 
+            << std::endl;
+  std::cout << information->getInformation("foo") << " ?= " << "NULL"
+            << std::endl;
 
   assert(information->getInformation(0) == information1);
   assert(information->getInformation(1) == NULL);
