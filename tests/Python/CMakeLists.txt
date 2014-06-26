@@ -21,6 +21,7 @@ ADD_TEST_PYTHON(TestXdmfHDF5Writer)
 ADD_TEST_PYTHON(TestXdmfRead)
 ADD_TEST_PYTHON(TestXdmfSet)
 ADD_TEST_PYTHON(TestXdmfWriter)
+ADD_TEST_PYTHON(TestXdmfXPointerReference)
 
 
 # Add any python cleanup here:
@@ -42,6 +43,11 @@ CLEAN_TEST_PYTHON(TestXdmfSet)
 CLEAN_TEST_PYTHON(TestXdmfWriter
   output.h5
   output.xmf)
+CLEAN_TEST_PYTHON(TestXdmfXPointerReference
+  duplicateXpointer.xmf
+  duplicateXpointer.h5
+  duplicateXpointer2.xmf
+  duplicateXpointer2.h5)
 
 
 # Add a custom target for all python tests

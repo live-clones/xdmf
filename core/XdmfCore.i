@@ -145,6 +145,65 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
   We are doing this intentionally so suppressing the warning makes sense.*/
 #pragma SWIG nowarn=509
 
+%extend XdmfItem {
+    bool __eq__(const XdmfItem * item) {
+        return $self == item;
+    }
+};
+
+%extend XdmfItemProperty {
+    bool __eq__(const XdmfItemProperty * item) {
+        return $self == item;
+    }
+};
+
+%extend XdmfVisitor {
+    bool __eq__(const XdmfVisitor * item) {
+        return $self == item;
+    }
+};
+
+%extend XdmfHeavyDataWriter {
+    bool __eq__(const XdmfHeavyDataWriter * item) {
+        return $self == item;
+    }
+};
+
+%extend XdmfHeavyDataController {
+    bool __eq__(const XdmfHeavyDataController * item) {
+        return $self == item;
+    }
+
+    static shared_ptr<XdmfHDF5Controller> XdmfHDF5ControllerCast(PyObject * obj)
+    {
+      void * resultPointer = 0;
+      swig_type_info * returnType = SWIG_TypeQuery("_p_boost__shared_ptrT_XdmfHeavyDataController_t");
+      SWIG_ConvertPtr(obj, &resultPointer, returnType, 0);
+      shared_ptr<XdmfHeavyDataController> * returnControllerPointer =
+        reinterpret_cast<shared_ptr<XdmfHeavyDataController> *>(resultPointer);
+      shared_ptr<XdmfHeavyDataController> returnController = returnControllerPointer[0];
+      if (shared_ptr<XdmfHDF5Controller> returnHDF5Controller = shared_dynamic_cast<XdmfHDF5Controller>(returnController)) {
+        return returnHDF5Controller;
+      }
+      else {
+        XdmfError::message(XdmfError::FATAL, "Error: Attempting to cast a non HDF5 Controller to HDF5");
+        return shared_ptr<XdmfHDF5Controller>();
+      }
+    }
+};
+
+%extend XdmfCoreReader {
+    bool __eq__(const XdmfCoreReader * item) {
+        return $self == item;
+    }
+};
+
+%extend XdmfWriter {
+    bool __eq__(const XdmfWriter * item) {
+        return $self == item;
+    }
+};
+
 // Provide accessors from python lists to XdmfArrays
 %extend XdmfArray {
 
@@ -279,31 +338,6 @@ swig -v -c++ -python -o XdmfCorePython.cpp XdmfCore.i
       shared_ptr<XdmfArray> * returnArrayPointer = reinterpret_cast<shared_ptr<XdmfArray> *>(resultPointer);
       shared_ptr<XdmfArray> returnArray = returnArrayPointer[0];
       return returnArray;
-    }
-};
-
-%extend XdmfArrayType {
-    bool __eq__(const XdmfArrayType * arrayType) {
-   	return $self == arrayType;
-    }
-};
-
-%extend XdmfHeavyDataController {
-    static shared_ptr<XdmfHDF5Controller> XdmfHDF5ControllerCast(PyObject * obj)
-    {
-      void * resultPointer = 0;
-      swig_type_info * returnType = SWIG_TypeQuery("_p_boost__shared_ptrT_XdmfHeavyDataController_t");
-      SWIG_ConvertPtr(obj, &resultPointer, returnType, 0);
-      shared_ptr<XdmfHeavyDataController> * returnControllerPointer =
-        reinterpret_cast<shared_ptr<XdmfHeavyDataController> *>(resultPointer);
-      shared_ptr<XdmfHeavyDataController> returnController = returnControllerPointer[0];
-      if (shared_ptr<XdmfHDF5Controller> returnHDF5Controller = shared_dynamic_cast<XdmfHDF5Controller>(returnController)) {
-        return returnHDF5Controller;
-      }
-      else {
-        XdmfError::message(XdmfError::FATAL, "Error: Attempting to cast a non HDF5 Controller to HDF5");
-        return shared_ptr<XdmfHDF5Controller>();
-      }
     }
 };
 

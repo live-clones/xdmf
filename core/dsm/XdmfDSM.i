@@ -74,6 +74,25 @@ swig -v -c++ -python -o XdmfDSMPython.cpp XdmfDSM.i
 %include <typemaps.i>
 %apply int & INOUT {int & data };
 
+%extend XdmfDSMBuffer {
+    bool __eq__(const XdmfDSMBuffer * item) {
+        return $self == item;
+    }
+};
+
+%extend XdmfDSMCommMPI {
+    bool __eq__(const XdmfDSMCommMPI * item) {
+        return $self == item;
+    }
+};
+
+
+%extend XdmfDSMManager {
+    bool __eq__(const XdmfDSMManager * item) {
+        return $self == item;
+    }
+};
+
 %extend XdmfHeavyDataController {
     static shared_ptr<XdmfHDF5ControllerDSM> XdmfHDF5ControllerDSMCast(PyObject * obj)
     {

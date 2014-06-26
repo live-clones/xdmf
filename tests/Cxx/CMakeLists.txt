@@ -36,6 +36,7 @@ ADD_TEST_CXX(TestXdmfVisitorValueCounter)
 ADD_TEST_CXX(TestXdmfWriter)
 ADD_TEST_CXX(TestXdmfWriterHDF5ThenXML)
 ADD_TEST_CXX(TestXdmfXPath)
+ADD_TEST_CXX(TestXdmfXPointerReference)
 #removed due to long execution time
 #ADD_TEST_CXX(HugeWriteArray)
 
@@ -111,6 +112,11 @@ CLEAN_TEST_CXX(TestXdmfWriterHDF5ThenXML)
 CLEAN_TEST_CXX(TestXdmfXPath
   XdmfXPath1.xmf
   XdmfXPath2.xmf)
+CLEAN_TEST_CXX(TestXdmfXPointerReference
+  duplicateXpointer.xmf
+  duplicateXpointer.h5
+  duplicateXpointer2.xmf
+  duplicateXpointer2.h5)
 #removed due to long execution time
 #CLEAN_TEST_CXX(HugeWriteArray
 #  arraydata1.h5
