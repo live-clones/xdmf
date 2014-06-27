@@ -119,8 +119,8 @@ if(XDMF_WRAP_PYTHON)
     endif (XDMF_BUILD_DSM)
     set_source_files_properties(${python_name}.i PROPERTIES CPLUSPLUS ON)
     set(swig_extra_generated_files "")
-    swig_add_module(${python_name} python ${python_name}.i)
-    swig_link_libraries(${python_name} ${python_name} ${PYTHON_LIBRARIES})
+    swig_add_module(${python_name}Python python ${python_name}.i)
+    swig_link_libraries(${python_name}Python ${python_name} ${PYTHON_LIBRARIES})
     set_property(DIRECTORY APPEND PROPERTY
       ADDITIONAL_MAKE_CLEAN_FILES
       ${CMAKE_BINARY_DIR}/${python_name}.pyc
