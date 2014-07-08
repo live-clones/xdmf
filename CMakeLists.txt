@@ -158,7 +158,7 @@ if(XDMF_WRAP_PYTHON)
 
     install(FILES ${CMAKE_BINARY_DIR}/${python_name}.py
       DESTINATION lib/python)
-    install(TARGETS ${SWIG_MODULE_${python_name}_REAL_NAME}
+    install(TARGETS ${SWIG_MODULE_${python_name}Python_REAL_NAME}
       DESTINATION lib/python)
   endmacro(XDMF_SWIG_PYTHON)
 endif(XDMF_WRAP_PYTHON)
