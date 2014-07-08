@@ -132,7 +132,7 @@ int main(int, char **)
         printf("LOG(2) = %lf\n", std::log((double)2));
         printf("array contains: %s\n", XdmfFunction::evaluateExpression("LOG(C)", testVals)->getValuesString().c_str());
         assert(strcmp(XdmfFunction::evaluateExpression("LOG(C)", testVals)->getValuesString().c_str(), "0.69314718055994529") == 0);
-        printf("LOG(2, 4) = %lf\n", std::log((double)2)/std::log(4));
+        printf("LOG(2, 4) = %lf\n", std::log((double)2)/std::log((double)4));
         printf("array contains: %s\n", XdmfFunction::evaluateExpression("LOG(C, 4)", testVals)->getValuesString().c_str());
         assert(strcmp(XdmfFunction::evaluateExpression("LOG(C, 4)", testVals)->getValuesString().c_str(), "0.5") == 0);
 
