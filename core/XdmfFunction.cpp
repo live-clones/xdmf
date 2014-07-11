@@ -192,7 +192,7 @@ XdmfFunction::abs(std::vector<shared_ptr<XdmfArray> > values)
                        "Error: No Array Passed to Function abs");
   }
   bool release = false;
-  if (!values[0]->getIsInitialized()) {
+  if (!values[0]->isInitialized()) {
     values[0]->read();
     release = true;
   }
@@ -317,10 +317,10 @@ XdmfFunction::addition(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2)
     }
   }
   if (release1) {
-    val1->release()
+    val1->release();
   }
   if (release2) {
-    val2->release()
+    val2->release();
   }
   return returnArray;
 }
@@ -335,7 +335,7 @@ XdmfFunction::arcsin(std::vector<shared_ptr<XdmfArray> > values)
                        "Error: No Array Passed to Function arcsin");
   }
   bool release = false;
-  if (!values[0]->getIsInitialized()) {
+  if (!values[0]->isInitialized()) {
     values[0]->read();
     release = true;
   }
@@ -358,7 +358,7 @@ XdmfFunction::arccos(std::vector<shared_ptr<XdmfArray> > values)
                        "Error: No Array Passed to Function arccos");
   }
   bool release = false;
-  if (!values[0]->getIsInitialized()) {
+  if (!values[0]->isInitialized()) {
     values[0]->read();
     release = true;
   }
@@ -381,7 +381,7 @@ XdmfFunction::arctan(std::vector<shared_ptr<XdmfArray> > values)
                        "Error: No Array Passed to Function arctan");
   }
   bool release = false;
-  if (!values[0]->getIsInitialized()) {
+  if (!values[0]->isInitialized()) {
     values[0]->read();
     release = true;
   }
@@ -418,7 +418,7 @@ XdmfFunction::cos(std::vector<shared_ptr<XdmfArray> > values)
                        "Error: No Array Passed to Function cos");
   }
   bool release = false;
-  if (!values[0]->getIsInitialized()) {
+  if (!values[0]->isInitialized()) {
     values[0]->read();
     release = true;
   }
@@ -499,10 +499,10 @@ XdmfFunction::chunk(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2)
   returnArray->insert(0, val1, 0, val1->getSize(),  1, 1);
   returnArray->insert(val1->getSize(), val2, 0, val2->getSize(), 1, 1);
   if (release1) {
-    val1->release()
+    val1->release();
   }
   if (release2) {
-    val2->release()
+    val2->release();
   }
   return returnArray;
 }
@@ -542,10 +542,10 @@ XdmfFunction::exponent(std::vector<shared_ptr<XdmfArray> > values)
     }
   }
   if (release1) {
-    values[0]->release()
+    values[0]->release();
   }
   if (release2) {
-    values[1]->release()
+    values[1]->release();
   }
   return returnArray;
 }
@@ -580,10 +580,10 @@ XdmfFunction::division(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2)
     }
   }
   if (release1) {
-    val1->release()
+    val1->release();
   }
   if (release2) {
-    val2->release()
+    val2->release();
   }
   return returnArray;
 }
@@ -1079,10 +1079,10 @@ XdmfFunction::interlace(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2)
   }
   // After all inserts are done, add the excess values to the end of the array
   if (release1) {
-    val1->release()
+    val1->release();
   }
   if (release2) {
-    val2->release()
+    val2->release();
   }
   return returnArray;
 }
@@ -1097,13 +1097,22 @@ shared_ptr<XdmfArray>
 XdmfFunction::join(std::vector<shared_ptr<XdmfArray> > values)
 {
   shared_ptr<XdmfArray> returnArray = XdmfArray::New();
+  bool release = false;
   for (unsigned int i = 0; i < values.size(); ++i) {
+    release = false;
+    if (!values[i]->isInitialized()) {
+      values[i]->read();
+      release = true;
+    }
     returnArray->insert(returnArray->getSize(),
                         values[i],
                         0,
                         values[i]->getSize(),
                         1,
                         1);
+    if (release) {
+      values[i]->release();
+    }
   }
   return returnArray;
 }
@@ -1147,10 +1156,10 @@ XdmfFunction::log(std::vector<shared_ptr<XdmfArray> > values)
     }
   }
   if (release1) {
-    values[0]->release()
+    values[0]->release();
   }
   if (release2) {
-    values[1]->release()
+    values[1]->release();
   }
   return returnArray;
 }
@@ -1185,10 +1194,10 @@ XdmfFunction::multiplication(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> v
     }
   }
   if (release1) {
-    val1->release()
+    val1->release();
   }
   if (release2) {
-    val2->release()
+    val2->release();
   }
   return returnArray;
 }
@@ -1226,7 +1235,7 @@ XdmfFunction::sin(std::vector<shared_ptr<XdmfArray> > values)
                        "Error: No Array Passed to Function sin");
   }
   bool release = false;
-  if (!values[0]->getIsInitialized()) {
+  if (!values[0]->isInitialized()) {
     values[0]->read();
     release = true;
   }
@@ -1249,7 +1258,7 @@ XdmfFunction::sqrt(std::vector<shared_ptr<XdmfArray> > values)
                        "Error: No Array Passed to Function sqrt");
   }
   bool release = false;
-  if (!values[0]->getIsInitialized()) {
+  if (!values[0]->isInitialized()) {
     values[0]->read();
     release = true;
   }
@@ -1292,10 +1301,10 @@ XdmfFunction::subtraction(shared_ptr<XdmfArray> val1, shared_ptr<XdmfArray> val2
     }
   }
   if (release1) {
-    val1->release()
+    val1->release();
   }
   if (release2) {
-    val2->release()
+    val2->release();
   }
   return returnArray;
 }
@@ -1307,7 +1316,7 @@ XdmfFunction::sum(std::vector<shared_ptr<XdmfArray> > values)
   bool release = false;
   for (unsigned int i = 0; i < values.size(); ++i) {
     release = false;
-    if (!values[i]->getIsInitialized()) {
+    if (!values[i]->isInitialized()) {
       values[i]->read();
       release = true;
     }
@@ -1333,7 +1342,7 @@ XdmfFunction::tan(std::vector<shared_ptr<XdmfArray> > values)
                        "Error: No Array Passed to Function tan");
   }
   bool release = false;
-  if (!values[0]->getIsInitialized()) {
+  if (!values[0]->isInitialized()) {
     values[0]->read();
     release = true;
   }
