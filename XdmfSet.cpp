@@ -108,7 +108,6 @@ XdmfSet::populateItem(const std::map<std::string, std::string> & itemProperties,
         this->setReadMode(XdmfArray::Reference);
       }
       // TODO: If multiple dataitems.
-      break;
     }
   }
 }
