@@ -192,7 +192,7 @@ namespace {
         toReturn->getGeometry()->release();
       }
 
-      bool releaseTopology;
+      bool releaseTopology = false;
       if(!gridToConvert->getTopology()->isInitialized()) {
         gridToConvert->getTopology()->read();
         releaseTopology = true;
@@ -365,6 +365,40 @@ namespace {
       }
       }
     }
+    
+    void
+    addEdgeToHash(unsigned int a,
+                  unsigned int b,
+                  FaceHash & hash,
+                  std::vector<unsigned int> & edge) const
+    {
+      
+      // reorder to get lowest id in a
+      bool swapped = false;
+      if(a > b) {
+        std::swap(a, b);
+        swapped = true;
+      }
+
+      std::vector<unsigned int> newEdge(edge.size());
+      if(swapped) {
+        for(unsigned int i=0; i<edge.size(); ++i) {
+          newEdge[i] = edge[edge.size() - i - 1];
+        }
+      }
+      else {
+        for(unsigned int i=0; i<edge.size(); ++i) {
+          newEdge[i] = edge[i];
+        }
+      }
+      
+      // Look for existing cell in the hash;
+      FaceHash::value_type & currHash = hash[a];
+      std::vector<unsigned int> currEdge(1);
+      currEdge[0] = b;
+      currHash.push_back(std::make_pair(currEdge, newEdge));
+      
+    }
 
     void
     addFaceToHash(unsigned int a,
@@ -390,7 +424,49 @@ namespace {
       currHash.push_back(std::make_pair(currFace, newFace));
       
     }
-
+    
+    std::vector<unsigned int>
+    getEdge(unsigned int a,
+            unsigned int b,
+            FaceHash & hash) const
+    {
+      
+      // reorder to get lowest id in a
+      bool swapped = false;
+      if(a > b) {
+        std::swap(a, b);
+        swapped = true;
+      }      
+      
+      // Look for existing cell in the hash;
+      FaceHash::value_type & currHash = hash[a];
+      for(FaceHash::value_type::iterator iter = currHash.begin(); 
+          iter != currHash.end(); ++iter) {
+        std::vector<unsigned int> & currEdge = iter->first;
+        if(currEdge.size() == 1) {
+          if(b == currEdge[0]) {
+            const std::vector<unsigned int> edge = iter->second;
+            std::vector<unsigned int> returnValue(edge.size());
+            if(swapped) {
+              for(unsigned int i=0; i<edge.size(); ++i) {
+                returnValue[i] = edge[edge.size() - i - 1];
+              }
+            }
+            else {
+              for(unsigned int i=0; i<edge.size(); ++i) {
+                returnValue[i] = edge[i];
+              }
+            }
+            //currHash.erase(iter);
+            return returnValue;           
+          }
+        }
+      }
+     
+      return std::vector<unsigned int>();
+            
+    }
+    
     std::vector<unsigned int>
     getFace(unsigned int a,
             unsigned int b,
@@ -541,7 +617,33 @@ namespace {
           getFace(threeIndex, sevenIndex, sixIndex, twoIndex, hash);
         std::vector<unsigned int> topFace = 
           getFace(fourIndex, fiveIndex, sixIndex, sevenIndex, hash);
-                                                   
+        
+        // get previously added edges
+        std::vector<unsigned int> bottomFrontEdge =
+          getEdge(zeroIndex, oneIndex, hash);
+        std::vector<unsigned int> bottomRightEdge =
+          getEdge(oneIndex, twoIndex, hash);
+        std::vector<unsigned int> bottomBackEdge =
+          getEdge(twoIndex, threeIndex, hash);
+        std::vector<unsigned int> bottomLeftEdge =
+          getEdge(threeIndex, zeroIndex, hash);
+        std::vector<unsigned int> topFrontEdge =
+          getEdge(fourIndex, fiveIndex, hash);
+        std::vector<unsigned int> topRightEdge =
+          getEdge(fiveIndex, sixIndex, hash);
+        std::vector<unsigned int> topBackEdge =
+          getEdge(sixIndex, sevenIndex, hash);
+        std::vector<unsigned int> topLeftEdge =
+          getEdge(sevenIndex, fourIndex, hash);
+        std::vector<unsigned int> frontLeftEdge =
+          getEdge(zeroIndex, fourIndex, hash);
+        std::vector<unsigned int> frontRightEdge =
+          getEdge(oneIndex, fiveIndex, hash);
+        std::vector<unsigned int> backRightEdge =
+          getEdge(twoIndex, sixIndex, hash);
+        std::vector<unsigned int> backLeftEdge =
+          getEdge(threeIndex, sevenIndex, hash);        
+                                             
         // get locations of corner vertices of the element
         geometry->getValues(zeroIndex * 3,
                             &(elementCorner0[0]),
@@ -612,7 +714,7 @@ namespace {
                                        planeCorner3,
                                        j);
             for(unsigned int k=0; k<mNodesPerEdge; ++k) {
-               // calculate point to add to mesh
+              // calculate point to add to mesh
               calculateIntermediatePoint(newPoints[pointIndex++],
                                          lineEndPoint0,
                                          lineEndPoint1,
@@ -621,6 +723,7 @@ namespace {
           }
         }
         
+        // put matched faces in new element
         if(bottomFace.size() > 0) {
           unsigned int index = 0;
           for(unsigned int i=0; i<mNumberPoints; i+=mNodesPerEdge) {
@@ -666,6 +769,90 @@ namespace {
           }
         }
         
+        // put matched edges in new element
+        if(bottomFrontEdge.size() > 0) {
+          unsigned int index = 0;
+          for(unsigned int i=0; i<mNumberPoints; i+=mNodesPerFace) {
+            newIds[i] = bottomFrontEdge[index++];
+          }
+        }
+        if(bottomRightEdge.size() > 0) {
+          unsigned int index = 0;
+          for(unsigned int i=mNumberPoints - mNodesPerFace; 
+              i<mNumberPoints; i+=mNodesPerEdge) {
+            newIds[i] = bottomRightEdge[index++];
+          }
+        }
+        if(bottomBackEdge.size() > 0) {
+          unsigned int index = 0;
+          for(int i=mNumberPoints - mNodesPerEdge; i>0; 
+              i-=mNodesPerFace) {
+            newIds[i] = bottomBackEdge[index++];
+          }
+        }
+        if(bottomLeftEdge.size() > 0) {
+          unsigned int index = 0;
+          for(int i=mNodesPerFace - mNodesPerEdge; i>=0; 
+              i-=mNodesPerEdge) {
+            newIds[i] = bottomLeftEdge[index++];
+          }
+        }
+        if(topFrontEdge.size() > 0) {
+          unsigned int index = 0;
+          for(unsigned int i=mNodesPerEdge - 1; 
+              i<mNumberPoints; i+=mNodesPerFace) {
+            newIds[i] = topFrontEdge[index++];
+          }
+        }
+        if(topRightEdge.size() > 0) {
+          unsigned int index = 0;
+          for(unsigned int i=mNumberPoints - mNodesPerFace + mNodesPerEdge - 1;
+              i<mNumberPoints; i+=mNodesPerEdge) {
+            newIds[i] = topRightEdge[index++];
+          }
+        }
+        if(topBackEdge.size() > 0) {
+          unsigned int index = 0;
+          for(int i=mNumberPoints - 1; i>0; 
+              i-=mNodesPerFace) {
+            newIds[i] = topBackEdge[index++];
+          }
+        }
+        if(topLeftEdge.size() > 0) {
+          unsigned int index = 0;
+          for(int i=mNodesPerFace - 1; i>0; 
+              i-=mNodesPerEdge) {
+            newIds[i] = topLeftEdge[index++];
+          }
+        }
+        if(frontLeftEdge.size() > 0) {
+          unsigned int index = 0;
+          for(unsigned int i=0; i<mNodesPerEdge; ++i) {
+            newIds[i] = frontLeftEdge[index++];
+          }
+        }
+        if(frontRightEdge.size() > 0) {
+          unsigned int index = 0;
+          for(unsigned int i=mNumberPoints - mNodesPerFace; 
+              i<mNumberPoints - mNodesPerFace + mNodesPerEdge; ++i) {
+            newIds[i] = frontRightEdge[index++];
+          }
+        }
+        if(backRightEdge.size() > 0) {
+          unsigned int index = 0;
+          for(unsigned int i=mNumberPoints - mNodesPerEdge; i<mNumberPoints; 
+              ++i) {
+            newIds[i] = backRightEdge[index++];
+          }
+        }
+        if(backLeftEdge.size() > 0) {
+          unsigned int index = 0;
+          for(unsigned int i=mNodesPerFace - mNodesPerEdge; i<mNodesPerFace; 
+              ++i) {
+            newIds[i] = backLeftEdge[index++];
+          }
+        }       
+                  
         // finally, add the points and ids to the new topology and geometry
         for(unsigned int i=0; i<mNumberPoints; ++i) {
           const int id = newIds[i];
@@ -748,6 +935,116 @@ namespace {
           addFaceToHash(fourIndex, sevenIndex, sixIndex, fiveIndex, hash, 
                         topFace);
         }
+
+        //
+        // populate edges if they were not found previously
+        //
+        if(bottomFrontEdge.size() == 0) {
+          bottomFrontEdge.resize(mNodesPerEdge);
+          unsigned int index = 0;
+          for(unsigned int i=0; i<mNumberPoints; i+=mNodesPerFace) {
+            bottomFrontEdge[index++] = newIds[i];
+          }
+          addEdgeToHash(zeroIndex, oneIndex, hash, bottomFrontEdge);
+        }
+        if(bottomRightEdge.size() == 0) {
+          bottomRightEdge.resize(mNodesPerEdge);
+          unsigned int index = 0;
+          for(unsigned int i=mNumberPoints - mNodesPerFace; 
+              i<mNumberPoints; i+=mNodesPerEdge) {
+            bottomRightEdge[index++] = newIds[i];
+          }
+          addEdgeToHash(oneIndex, twoIndex, hash, bottomRightEdge);
+        }
+        if(bottomBackEdge.size() == 0) {
+          bottomBackEdge.resize(mNodesPerEdge);
+          unsigned int index = 0;
+          for(int i=mNumberPoints - mNodesPerEdge; i>0; 
+              i-=mNodesPerFace) {
+            bottomBackEdge[index++] = newIds[i];
+          }
+          addEdgeToHash(twoIndex, threeIndex, hash, bottomBackEdge);
+        }
+        if(bottomLeftEdge.size() == 0) {
+          bottomLeftEdge.resize(mNodesPerEdge);
+          unsigned int index = 0;
+          for(int i=mNodesPerFace - mNodesPerEdge; i>=0; 
+              i-=mNodesPerEdge) {
+            bottomLeftEdge[index++] = newIds[i];
+          }
+          addEdgeToHash(threeIndex, zeroIndex, hash, bottomLeftEdge);
+        }
+        if(topFrontEdge.size() == 0) {
+          topFrontEdge.resize(mNodesPerEdge);
+          unsigned int index = 0;
+          for(unsigned int i=mNodesPerEdge - 1; 
+              i<mNumberPoints; i+=mNodesPerFace) {
+            topFrontEdge[index++] = newIds[i];
+          }
+          addEdgeToHash(fourIndex, fiveIndex, hash, topFrontEdge);
+        }
+        if(topRightEdge.size() == 0) {
+          topRightEdge.resize(mNodesPerEdge);
+          unsigned int index = 0;
+          for(unsigned int i=mNumberPoints - mNodesPerFace + mNodesPerEdge - 1;
+              i<mNumberPoints; i+=mNodesPerEdge) {
+            topRightEdge[index++] = newIds[i];
+          }
+          addEdgeToHash(fiveIndex, sixIndex, hash, topRightEdge);
+        }
+        if(topBackEdge.size() == 0) {
+          topBackEdge.resize(mNodesPerEdge);
+          unsigned int index = 0;
+          for(int i=mNumberPoints - 1; i>0; 
+              i-=mNodesPerFace) {
+            topBackEdge[index++] = newIds[i];
+          }
+          addEdgeToHash(sixIndex, sevenIndex, hash, topBackEdge);
+        }
+        if(topLeftEdge.size() == 0) {
+          topLeftEdge.resize(mNodesPerEdge);
+          unsigned int index = 0;
+          for(int i=mNodesPerFace - 1; i>0; 
+              i-=mNodesPerEdge) {
+            topLeftEdge[index++] = newIds[i];
+          }
+          addEdgeToHash(sevenIndex, fourIndex, hash, topLeftEdge);
+        }
+        if(frontLeftEdge.size() == 0) {
+          frontLeftEdge.resize(mNodesPerEdge);
+          unsigned int index = 0;
+          for(unsigned int i=0; i<mNodesPerEdge; ++i) {
+            frontLeftEdge[index++] = newIds[i];
+          }
+          addEdgeToHash(zeroIndex, fourIndex, hash, frontLeftEdge);
+        }
+        if(frontRightEdge.size() == 0) {
+          frontRightEdge.resize(mNodesPerEdge);
+          unsigned int index = 0;
+          for(unsigned int i=mNumberPoints - mNodesPerFace; 
+              i<mNumberPoints - mNodesPerFace + mNodesPerEdge; ++i) {
+            frontRightEdge[index++] = newIds[i];
+          }
+          addEdgeToHash(oneIndex, fiveIndex, hash, frontRightEdge);
+        }
+        if(backRightEdge.size() == 0) {
+          backRightEdge.resize(mNodesPerEdge);
+          unsigned int index = 0;
+          for(unsigned int i=mNumberPoints - mNodesPerEdge; i<mNumberPoints; 
+              ++i) {
+            backRightEdge[index++] = newIds[i];
+          }
+          addEdgeToHash(twoIndex, sixIndex, hash, backRightEdge);
+        }
+        if(backLeftEdge.size() == 0) {
+          backLeftEdge.resize(mNodesPerEdge);
+          unsigned int index = 0;
+          for(unsigned int i=mNodesPerFace - mNodesPerEdge; i<mNodesPerFace; 
+              ++i) {
+            backLeftEdge[index++] = newIds[i];
+          }
+          addEdgeToHash(threeIndex, sevenIndex, hash, backLeftEdge);
+        }         
 
         // add ids to map
         oldIdToNewId[zeroIndex] = newIds[mZeroIndex];
@@ -1308,78 +1605,78 @@ XdmfTopologyConverter::getExternalFaces(const shared_ptr<XdmfTopology> converted
     for(std::vector<std::vector<std::vector<long> > >::const_iterator hashIter = hash.begin();
         hashIter != hash.end();
         ++hashIter, ++index)
-    {
-      const std::vector<std::vector<long> > & currHash = *hashIter;
-      for(std::vector<std::vector<long> >::const_iterator currHashIter = currHash.begin();
-          currHashIter != currHash.end();
-          ++currHashIter)
       {
-        const std::vector<long> & currFaceIds = *currHashIter;
-        newCells.push_back(index);
-        newCells.push_back(currFaceIds[0]);
-        newCells.push_back(currFaceIds[1]);
+        const std::vector<std::vector<long> > & currHash = *hashIter;
+        for(std::vector<std::vector<long> >::const_iterator currHashIter = currHash.begin();
+            currHashIter != currHash.end();
+            ++currHashIter)
+          {
+            const std::vector<long> & currFaceIds = *currHashIter;
+            newCells.push_back(index);
+            newCells.push_back(currFaceIds[0]);
+            newCells.push_back(currFaceIds[1]);
+          }
       }
-    }
     toReturn->initialize(XdmfArrayType::Int64());
     toReturn->insert(0, &newCells[0], newCells.size());
     return toReturn;
   }
   else if(convertedTopology->getType() == XdmfTopologyType::Hexahedron()) {
     for(long arrayOffset=0; arrayOffset<convertedTopology->getSize(); arrayOffset += convertedTopology->getType()->getNodesPerElement())
-    {
-      std::vector<long> faceNodes;
-      for (unsigned int i = 0; i < convertedTopology->getType()->getNodesPerElement(); ++i) {
-        faceNodes.push_back(convertedTopology->getValue<long>(arrayOffset + i));
-      }
+      {
+        std::vector<long> faceNodes;
+        for (unsigned int i = 0; i < convertedTopology->getType()->getNodesPerElement(); ++i) {
+          faceNodes.push_back(convertedTopology->getValue<long>(arrayOffset + i));
+        }
 
-      std::vector< std::vector<long> > faceVectors;
-      // 0, 1, 5, 4 face
-      std::vector<long> face1Vector;
-      face1Vector.push_back(faceNodes[0]);
-      face1Vector.push_back(faceNodes[1]);
-      face1Vector.push_back(faceNodes[5]);
-      face1Vector.push_back(faceNodes[4]);
-      faceVectors.push_back(face1Vector);
-      // 0, 3, 2, 1 face
-      std::vector<long> face2Vector;
-      face2Vector.push_back(faceNodes[0]);
-      face2Vector.push_back(faceNodes[3]);
-      face2Vector.push_back(faceNodes[2]);
-      face2Vector.push_back(faceNodes[1]);
-      faceVectors.push_back(face2Vector);
-      // 0, 4, 7, 3 face
-      std::vector<long> face3Vector;
-      face3Vector.push_back(faceNodes[0]);
-      face3Vector.push_back(faceNodes[4]);
-      face3Vector.push_back(faceNodes[7]);
-      face3Vector.push_back(faceNodes[3]);
-      faceVectors.push_back(face3Vector);
-      // 1, 2, 6, 5 face
-      std::vector<long> face4Vector;
-      face4Vector.push_back(faceNodes[1]);
-      face4Vector.push_back(faceNodes[2]);
-      face4Vector.push_back(faceNodes[6]);
-      face4Vector.push_back(faceNodes[5]);
-      faceVectors.push_back(face4Vector);
-      // 2, 3, 7, 6 face
-      std::vector<long> face5Vector;
-      face5Vector.push_back(faceNodes[2]);
-      face5Vector.push_back(faceNodes[3]);
-      face5Vector.push_back(faceNodes[7]);
-      face5Vector.push_back(faceNodes[6]);
-      faceVectors.push_back(face5Vector);
-      // 4, 5, 6, 7 face
-      std::vector<long> face6Vector;
-      face6Vector.push_back(faceNodes[4]);
-      face6Vector.push_back(faceNodes[5]);
-      face6Vector.push_back(faceNodes[6]);
-      face6Vector.push_back(faceNodes[7]);
-      faceVectors.push_back(face6Vector);
+        std::vector< std::vector<long> > faceVectors;
+        // 0, 1, 5, 4 face
+        std::vector<long> face1Vector;
+        face1Vector.push_back(faceNodes[0]);
+        face1Vector.push_back(faceNodes[1]);
+        face1Vector.push_back(faceNodes[5]);
+        face1Vector.push_back(faceNodes[4]);
+        faceVectors.push_back(face1Vector);
+        // 0, 3, 2, 1 face
+        std::vector<long> face2Vector;
+        face2Vector.push_back(faceNodes[0]);
+        face2Vector.push_back(faceNodes[3]);
+        face2Vector.push_back(faceNodes[2]);
+        face2Vector.push_back(faceNodes[1]);
+        faceVectors.push_back(face2Vector);
+        // 0, 4, 7, 3 face
+        std::vector<long> face3Vector;
+        face3Vector.push_back(faceNodes[0]);
+        face3Vector.push_back(faceNodes[4]);
+        face3Vector.push_back(faceNodes[7]);
+        face3Vector.push_back(faceNodes[3]);
+        faceVectors.push_back(face3Vector);
+        // 1, 2, 6, 5 face
+        std::vector<long> face4Vector;
+        face4Vector.push_back(faceNodes[1]);
+        face4Vector.push_back(faceNodes[2]);
+        face4Vector.push_back(faceNodes[6]);
+        face4Vector.push_back(faceNodes[5]);
+        faceVectors.push_back(face4Vector);
+        // 2, 3, 7, 6 face
+        std::vector<long> face5Vector;
+        face5Vector.push_back(faceNodes[2]);
+        face5Vector.push_back(faceNodes[3]);
+        face5Vector.push_back(faceNodes[7]);
+        face5Vector.push_back(faceNodes[6]);
+        faceVectors.push_back(face5Vector);
+        // 4, 5, 6, 7 face
+        std::vector<long> face6Vector;
+        face6Vector.push_back(faceNodes[4]);
+        face6Vector.push_back(faceNodes[5]);
+        face6Vector.push_back(faceNodes[6]);
+        face6Vector.push_back(faceNodes[7]);
+        faceVectors.push_back(face6Vector);
 
-      for (unsigned int i = 0; i < faceVectors.size(); ++i) {
-        insertInHash(faceVectors[i], hash, 4);
+        for (unsigned int i = 0; i < faceVectors.size(); ++i) {
+          insertInHash(faceVectors[i], hash, 4);
+        }
       }
-    }
 
     // create new topology
     shared_ptr<XdmfTopology> toReturn = XdmfTopology::New();
@@ -1389,73 +1686,73 @@ XdmfTopologyConverter::getExternalFaces(const shared_ptr<XdmfTopology> converted
     for(std::vector<std::vector<std::vector<long> > >::const_iterator hashIter = hash.begin();
         hashIter != hash.end();
         ++hashIter, ++index)
-    {
-      const std::vector<std::vector<long> > & currHash = *hashIter;
-      for(std::vector<std::vector<long> >::const_iterator currHashIter = currHash.begin();
-          currHashIter != currHash.end();
-          ++currHashIter)
       {
-        const std::vector<long> & currFaceIds = *currHashIter;
-        newCells.push_back(index);
-        newCells.push_back(currFaceIds[0]);
-        newCells.push_back(currFaceIds[1]);
-        newCells.push_back(currFaceIds[2]);
+        const std::vector<std::vector<long> > & currHash = *hashIter;
+        for(std::vector<std::vector<long> >::const_iterator currHashIter = currHash.begin();
+            currHashIter != currHash.end();
+            ++currHashIter)
+          {
+            const std::vector<long> & currFaceIds = *currHashIter;
+            newCells.push_back(index);
+            newCells.push_back(currFaceIds[0]);
+            newCells.push_back(currFaceIds[1]);
+            newCells.push_back(currFaceIds[2]);
+          }
       }
-    }
     toReturn->initialize(XdmfArrayType::Int64());
     toReturn->insert(0, &newCells[0], newCells.size());
     return toReturn;
   }
   else if(convertedTopology->getType() == XdmfTopologyType::Tetrahedron_10()) {
     for(long arrayOffset=0; arrayOffset<convertedTopology->getSize(); arrayOffset += convertedTopology->getType()->getNodesPerElement())
-    {
-      std::vector<long> faceNodes;
-      for (unsigned int i = 0; i < convertedTopology->getType()->getNodesPerElement(); ++i) {
-        faceNodes.push_back(convertedTopology->getValue<long>(arrayOffset + i));
-      }
+      {
+        std::vector<long> faceNodes;
+        for (unsigned int i = 0; i < convertedTopology->getType()->getNodesPerElement(); ++i) {
+          faceNodes.push_back(convertedTopology->getValue<long>(arrayOffset + i));
+        }
 
-      std::vector< std::vector<long> > faceVectors;
-      // 0, 1, 3, 4, 8, 7 face
-      std::vector<long> face1Vector;
-      face1Vector.push_back(faceNodes[0]);
-      face1Vector.push_back(faceNodes[1]);
-      face1Vector.push_back(faceNodes[3]);
-      face1Vector.push_back(faceNodes[4]);
-      face1Vector.push_back(faceNodes[8]);
-      face1Vector.push_back(faceNodes[7]);
-      faceVectors.push_back(face1Vector);
-      // 0, 2, 1, 6, 5, 4 face
-      std::vector<long> face2Vector;
-      face2Vector.push_back(faceNodes[0]);
-      face2Vector.push_back(faceNodes[2]);
-      face2Vector.push_back(faceNodes[1]);
-      face2Vector.push_back(faceNodes[6]);
-      face2Vector.push_back(faceNodes[5]);
-      face2Vector.push_back(faceNodes[4]);
-      faceVectors.push_back(face2Vector);
-      // 0, 3, 2, 7, 9, 6 face
-      std::vector<long> face3Vector;
-      face3Vector.push_back(faceNodes[0]);
-      face3Vector.push_back(faceNodes[3]);
-      face3Vector.push_back(faceNodes[2]);
-      face3Vector.push_back(faceNodes[7]);
-      face3Vector.push_back(faceNodes[9]);
-      face3Vector.push_back(faceNodes[6]);
-      faceVectors.push_back(face3Vector);
-      // 1, 2, 3, 5, 9, 8 face
-      std::vector<long> face4Vector;
-      face4Vector.push_back(faceNodes[1]);
-      face4Vector.push_back(faceNodes[2]);
-      face4Vector.push_back(faceNodes[3]);
-      face4Vector.push_back(faceNodes[5]);
-      face4Vector.push_back(faceNodes[9]);
-      face4Vector.push_back(faceNodes[8]);
-      faceVectors.push_back(face4Vector);
+        std::vector< std::vector<long> > faceVectors;
+        // 0, 1, 3, 4, 8, 7 face
+        std::vector<long> face1Vector;
+        face1Vector.push_back(faceNodes[0]);
+        face1Vector.push_back(faceNodes[1]);
+        face1Vector.push_back(faceNodes[3]);
+        face1Vector.push_back(faceNodes[4]);
+        face1Vector.push_back(faceNodes[8]);
+        face1Vector.push_back(faceNodes[7]);
+        faceVectors.push_back(face1Vector);
+        // 0, 2, 1, 6, 5, 4 face
+        std::vector<long> face2Vector;
+        face2Vector.push_back(faceNodes[0]);
+        face2Vector.push_back(faceNodes[2]);
+        face2Vector.push_back(faceNodes[1]);
+        face2Vector.push_back(faceNodes[6]);
+        face2Vector.push_back(faceNodes[5]);
+        face2Vector.push_back(faceNodes[4]);
+        faceVectors.push_back(face2Vector);
+        // 0, 3, 2, 7, 9, 6 face
+        std::vector<long> face3Vector;
+        face3Vector.push_back(faceNodes[0]);
+        face3Vector.push_back(faceNodes[3]);
+        face3Vector.push_back(faceNodes[2]);
+        face3Vector.push_back(faceNodes[7]);
+        face3Vector.push_back(faceNodes[9]);
+        face3Vector.push_back(faceNodes[6]);
+        faceVectors.push_back(face3Vector);
+        // 1, 2, 3, 5, 9, 8 face
+        std::vector<long> face4Vector;
+        face4Vector.push_back(faceNodes[1]);
+        face4Vector.push_back(faceNodes[2]);
+        face4Vector.push_back(faceNodes[3]);
+        face4Vector.push_back(faceNodes[5]);
+        face4Vector.push_back(faceNodes[9]);
+        face4Vector.push_back(faceNodes[8]);
+        faceVectors.push_back(face4Vector);
 
-      for (unsigned int i = 0; i < faceVectors.size(); ++i) {
-        insertInHash(faceVectors[i], hash, 3);
+        for (unsigned int i = 0; i < faceVectors.size(); ++i) {
+          insertInHash(faceVectors[i], hash, 3);
+        }
       }
-    }
 
     // create new topology
     shared_ptr<XdmfTopology> toReturn = XdmfTopology::New();
@@ -1465,105 +1762,105 @@ XdmfTopologyConverter::getExternalFaces(const shared_ptr<XdmfTopology> converted
     for(std::vector<std::vector<std::vector<long> > >::const_iterator hashIter = hash.begin();
         hashIter != hash.end();
         ++hashIter, ++index)
-    {
-      const std::vector<std::vector<long> > & currHash = *hashIter;
-      for(std::vector<std::vector<long> >::const_iterator currHashIter = currHash.begin();
-          currHashIter != currHash.end();
-          ++currHashIter)
       {
-        const std::vector<long> & currFaceIds = *currHashIter;
-        newCells.push_back(index);
-        newCells.push_back(currFaceIds[0]);
-        newCells.push_back(currFaceIds[1]);
-        newCells.push_back(currFaceIds[2]);
-        newCells.push_back(currFaceIds[3]);
-        newCells.push_back(currFaceIds[4]);
+        const std::vector<std::vector<long> > & currHash = *hashIter;
+        for(std::vector<std::vector<long> >::const_iterator currHashIter = currHash.begin();
+            currHashIter != currHash.end();
+            ++currHashIter)
+          {
+            const std::vector<long> & currFaceIds = *currHashIter;
+            newCells.push_back(index);
+            newCells.push_back(currFaceIds[0]);
+            newCells.push_back(currFaceIds[1]);
+            newCells.push_back(currFaceIds[2]);
+            newCells.push_back(currFaceIds[3]);
+            newCells.push_back(currFaceIds[4]);
+          }
       }
-    }
     toReturn->initialize(XdmfArrayType::Int64());
     toReturn->insert(0, &newCells[0], newCells.size());
     return toReturn;
   }
   else if(convertedTopology->getType() == XdmfTopologyType::Hexahedron_20()) {
     for(long arrayOffset=0; arrayOffset<convertedTopology->getSize(); arrayOffset += convertedTopology->getType()->getNodesPerElement())
-    {
-      std::vector<long> faceNodes;
-      for (unsigned int i = 0; i < convertedTopology->getType()->getNodesPerElement(); ++i) {
-        faceNodes.push_back(convertedTopology->getValue<long>(arrayOffset + i));
-      }
+      {
+        std::vector<long> faceNodes;
+        for (unsigned int i = 0; i < convertedTopology->getType()->getNodesPerElement(); ++i) {
+          faceNodes.push_back(convertedTopology->getValue<long>(arrayOffset + i));
+        }
 
-      std::vector< std::vector<long> > faceVectors;
-      // 0, 1, 5, 4, 8, 17, 12, 16 face
-      std::vector<long> face1Vector;
-      face1Vector.push_back(faceNodes[0]);
-      face1Vector.push_back(faceNodes[1]);
-      face1Vector.push_back(faceNodes[5]);
-      face1Vector.push_back(faceNodes[4]);
-      face1Vector.push_back(faceNodes[8]);
-      face1Vector.push_back(faceNodes[17]);
-      face1Vector.push_back(faceNodes[12]);
-      face1Vector.push_back(faceNodes[16]);
-      faceVectors.push_back(face1Vector);
-      // 0, 3, 2, 1, 11, 10, 9, 8 face
-      std::vector<long> face2Vector;
-      face2Vector.push_back(faceNodes[0]);
-      face2Vector.push_back(faceNodes[3]);
-      face2Vector.push_back(faceNodes[2]);
-      face2Vector.push_back(faceNodes[1]);
-      face2Vector.push_back(faceNodes[11]);
-      face2Vector.push_back(faceNodes[10]);
-      face2Vector.push_back(faceNodes[9]);
-      face2Vector.push_back(faceNodes[8]);
-      faceVectors.push_back(face2Vector);
-      // 0, 4, 7, 3, 16, 15, 19, 11 face
-      std::vector<long> face3Vector;
-      face3Vector.push_back(faceNodes[0]);
-      face3Vector.push_back(faceNodes[4]);
-      face3Vector.push_back(faceNodes[7]);
-      face3Vector.push_back(faceNodes[3]);
-      face3Vector.push_back(faceNodes[16]);
-      face3Vector.push_back(faceNodes[15]);
-      face3Vector.push_back(faceNodes[19]);
-      face3Vector.push_back(faceNodes[11]);
-      faceVectors.push_back(face3Vector);
-      // 1, 2, 6, 5, 9, 18, 13, 17 face
-      std::vector<long> face4Vector;
-      face4Vector.push_back(faceNodes[1]);
-      face4Vector.push_back(faceNodes[2]);
-      face4Vector.push_back(faceNodes[6]);
-      face4Vector.push_back(faceNodes[5]);
-      face4Vector.push_back(faceNodes[9]);
-      face4Vector.push_back(faceNodes[18]);
-      face4Vector.push_back(faceNodes[13]);
-      face4Vector.push_back(faceNodes[17]);
-      faceVectors.push_back(face4Vector);
-      // 2, 3, 7, 6, 10, 19, 14, 18 face
-      std::vector<long> face5Vector;
-      face5Vector.push_back(faceNodes[2]);
-      face5Vector.push_back(faceNodes[3]);
-      face5Vector.push_back(faceNodes[7]);
-      face5Vector.push_back(faceNodes[6]);
-      face5Vector.push_back(faceNodes[10]);
-      face5Vector.push_back(faceNodes[19]);
-      face5Vector.push_back(faceNodes[14]);
-      face5Vector.push_back(faceNodes[18]);
-      faceVectors.push_back(face5Vector);
-      // 4, 5, 6, 7, 12, 13, 14, 15 face
-      std::vector<long> face6Vector;
-      face6Vector.push_back(faceNodes[4]);
-      face6Vector.push_back(faceNodes[5]);
-      face6Vector.push_back(faceNodes[6]);
-      face6Vector.push_back(faceNodes[7]);
-      face6Vector.push_back(faceNodes[12]);
-      face6Vector.push_back(faceNodes[13]);
-      face6Vector.push_back(faceNodes[14]);
-      face6Vector.push_back(faceNodes[15]);
-      faceVectors.push_back(face6Vector);
+        std::vector< std::vector<long> > faceVectors;
+        // 0, 1, 5, 4, 8, 17, 12, 16 face
+        std::vector<long> face1Vector;
+        face1Vector.push_back(faceNodes[0]);
+        face1Vector.push_back(faceNodes[1]);
+        face1Vector.push_back(faceNodes[5]);
+        face1Vector.push_back(faceNodes[4]);
+        face1Vector.push_back(faceNodes[8]);
+        face1Vector.push_back(faceNodes[17]);
+        face1Vector.push_back(faceNodes[12]);
+        face1Vector.push_back(faceNodes[16]);
+        faceVectors.push_back(face1Vector);
+        // 0, 3, 2, 1, 11, 10, 9, 8 face
+        std::vector<long> face2Vector;
+        face2Vector.push_back(faceNodes[0]);
+        face2Vector.push_back(faceNodes[3]);
+        face2Vector.push_back(faceNodes[2]);
+        face2Vector.push_back(faceNodes[1]);
+        face2Vector.push_back(faceNodes[11]);
+        face2Vector.push_back(faceNodes[10]);
+        face2Vector.push_back(faceNodes[9]);
+        face2Vector.push_back(faceNodes[8]);
+        faceVectors.push_back(face2Vector);
+        // 0, 4, 7, 3, 16, 15, 19, 11 face
+        std::vector<long> face3Vector;
+        face3Vector.push_back(faceNodes[0]);
+        face3Vector.push_back(faceNodes[4]);
+        face3Vector.push_back(faceNodes[7]);
+        face3Vector.push_back(faceNodes[3]);
+        face3Vector.push_back(faceNodes[16]);
+        face3Vector.push_back(faceNodes[15]);
+        face3Vector.push_back(faceNodes[19]);
+        face3Vector.push_back(faceNodes[11]);
+        faceVectors.push_back(face3Vector);
+        // 1, 2, 6, 5, 9, 18, 13, 17 face
+        std::vector<long> face4Vector;
+        face4Vector.push_back(faceNodes[1]);
+        face4Vector.push_back(faceNodes[2]);
+        face4Vector.push_back(faceNodes[6]);
+        face4Vector.push_back(faceNodes[5]);
+        face4Vector.push_back(faceNodes[9]);
+        face4Vector.push_back(faceNodes[18]);
+        face4Vector.push_back(faceNodes[13]);
+        face4Vector.push_back(faceNodes[17]);
+        faceVectors.push_back(face4Vector);
+        // 2, 3, 7, 6, 10, 19, 14, 18 face
+        std::vector<long> face5Vector;
+        face5Vector.push_back(faceNodes[2]);
+        face5Vector.push_back(faceNodes[3]);
+        face5Vector.push_back(faceNodes[7]);
+        face5Vector.push_back(faceNodes[6]);
+        face5Vector.push_back(faceNodes[10]);
+        face5Vector.push_back(faceNodes[19]);
+        face5Vector.push_back(faceNodes[14]);
+        face5Vector.push_back(faceNodes[18]);
+        faceVectors.push_back(face5Vector);
+        // 4, 5, 6, 7, 12, 13, 14, 15 face
+        std::vector<long> face6Vector;
+        face6Vector.push_back(faceNodes[4]);
+        face6Vector.push_back(faceNodes[5]);
+        face6Vector.push_back(faceNodes[6]);
+        face6Vector.push_back(faceNodes[7]);
+        face6Vector.push_back(faceNodes[12]);
+        face6Vector.push_back(faceNodes[13]);
+        face6Vector.push_back(faceNodes[14]);
+        face6Vector.push_back(faceNodes[15]);
+        faceVectors.push_back(face6Vector);
 
-      for (unsigned int i = 0; i < faceVectors.size(); ++i) {
-        insertInHash(faceVectors[i], hash, 4);
+        for (unsigned int i = 0; i < faceVectors.size(); ++i) {
+          insertInHash(faceVectors[i], hash, 4);
+        }
       }
-    }
 
     // create new topology
     shared_ptr<XdmfTopology> toReturn = XdmfTopology::New();
@@ -1573,23 +1870,23 @@ XdmfTopologyConverter::getExternalFaces(const shared_ptr<XdmfTopology> converted
     for(std::vector<std::vector<std::vector<long> > >::const_iterator hashIter = hash.begin();
         hashIter != hash.end();
         ++hashIter, ++index)
-    {
-      const std::vector<std::vector<long> > & currHash = *hashIter;
-      for(std::vector<std::vector<long> >::const_iterator currHashIter = currHash.begin();
-          currHashIter != currHash.end();
-          ++currHashIter)
       {
-        const std::vector<long> & currFaceIds = *currHashIter;
-        newCells.push_back(index);
-        newCells.push_back(currFaceIds[0]);
-        newCells.push_back(currFaceIds[1]);
-        newCells.push_back(currFaceIds[2]);
-        newCells.push_back(currFaceIds[3]);
-        newCells.push_back(currFaceIds[4]);
-        newCells.push_back(currFaceIds[5]);
-        newCells.push_back(currFaceIds[6]);
+        const std::vector<std::vector<long> > & currHash = *hashIter;
+        for(std::vector<std::vector<long> >::const_iterator currHashIter = currHash.begin();
+            currHashIter != currHash.end();
+            ++currHashIter)
+          {
+            const std::vector<long> & currFaceIds = *currHashIter;
+            newCells.push_back(index);
+            newCells.push_back(currFaceIds[0]);
+            newCells.push_back(currFaceIds[1]);
+            newCells.push_back(currFaceIds[2]);
+            newCells.push_back(currFaceIds[3]);
+            newCells.push_back(currFaceIds[4]);
+            newCells.push_back(currFaceIds[5]);
+            newCells.push_back(currFaceIds[6]);
+          }
       }
-    }
     toReturn->initialize(XdmfArrayType::Int64());
     toReturn->insert(0, &newCells[0], newCells.size());
     return toReturn;
@@ -1601,8 +1898,8 @@ XdmfTopologyConverter::getExternalFaces(const shared_ptr<XdmfTopology> converted
 
 void
 XdmfTopologyConverter::insertInHash(std::vector<long> nodes,
-                  std::vector<std::vector<std::vector<long> > > & hash,
-                  unsigned int numCornerNodes)
+                                    std::vector<std::vector<std::vector<long> > > & hash,
+                                    unsigned int numCornerNodes)
 {
   unsigned int minIndex = 0;
   for (unsigned int i = 0; i < numCornerNodes; ++i) {
@@ -1632,7 +1929,7 @@ XdmfTopologyConverter::insertInHash(std::vector<long> nodes,
   // Look for existing cell in the hash;
   std::vector<std::vector<long> > & currHash = hash[nodes[0]];
   for(std::vector<std::vector<long> >::iterator iter =
-      currHash.begin(); iter != currHash.end();
+        currHash.begin(); iter != currHash.end();
       ++iter) {
     std::vector<long> & currFace = *iter;
     // size - 1 because the first value is used elsewhere
