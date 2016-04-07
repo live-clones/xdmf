@@ -124,9 +124,9 @@ foreach(executable ${XdmfUtilsExecutables})
 
 endforeach(executable ${XdmfUtilsExecutables})
 
-if(BUILD_TESTING)
+if(XDMF_BUILD_TESTING)
   add_subdirectory(tests)
-endif(BUILD_TESTING)
+endif(XDMF_BUILD_TESTING)
 
 if(XDMF_WRAP_JAVA)
   XDMF_SWIG_JAVA(XdmfUtils Compiled_Xdmf_Jar)
