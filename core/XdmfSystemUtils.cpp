@@ -52,6 +52,13 @@ XdmfSystemUtils::getRealPath(const std::string & path)
   xmlParseURIReference(ref, path.c_str());
   char realPath[PATH_MAX];
   char *rp = realpath(ref->path, realPath);
+  if (rp == 0)
+  {
+     //indicates a failure that we are silently ignoring
+     //TODO: realPath is now undefined but in practice
+     //ends up path.c_str()
+     rp = realPath;
+  }
   xmlFreeURI(ref);
   return std::string(rp);
 }
