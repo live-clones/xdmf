@@ -587,6 +587,7 @@ XdmfWriter::visit(XdmfItem & item,
 
   mImpl->mDepth--;
   if(mImpl->mDepth <= 0) {
+    mImpl->mXPathCount = 0 ;
     mImpl->closeFile();
   }
 }
