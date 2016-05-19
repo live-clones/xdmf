@@ -20,8 +20,10 @@ Brief instructions for building XDMF from source code:
 * Prepare the CMake-based build. There are two options:
 
   1. Use the following command and select options using a menu.
-   
+
+     ```sh
      ccmake ..
+     ```
 
   2. Set options on the command line. A typical command line for building 
      XDMF with Python bindings may look like the following:
