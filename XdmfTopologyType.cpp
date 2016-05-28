@@ -146,6 +146,15 @@ XdmfTopologyType::Hexahedron()
 }
 
 shared_ptr<const XdmfTopologyType>
+XdmfTopologyType::Polyhedron()
+{
+  std::vector<shared_ptr<const XdmfTopologyType> > faces;
+  static shared_ptr<const XdmfTopologyType>
+    p(new XdmfTopologyType(0, 0, faces, 0, "Polyhedron", Linear, 0x10));
+  return p;
+}
+
+shared_ptr<const XdmfTopologyType>
 XdmfTopologyType::Edge_3()
 {
   std::vector<shared_ptr<const XdmfTopologyType> > faces;
@@ -473,6 +482,9 @@ XdmfTopologyType::New(const unsigned int id)
   else if(id == XdmfTopologyType::Hexahedron()->getID()) {
     return XdmfTopologyType::Hexahedron();
   }
+  else if(id == XdmfTopologyType::Polyhedron()->getID()) {
+    return XdmfTopologyType::Polyhedron();
+  }
   else if(id == XdmfTopologyType::Edge_3()->getID()) {
     return XdmfTopologyType::Edge_3();
   }
@@ -642,6 +654,9 @@ XdmfTopologyType::New(const std::map<std::string, std::string> & itemProperties)
   }
   else if(typeVal.compare("HEXAHEDRON") == 0) {
     return Hexahedron();
+  }
+  else if(typeVal.compare("POLYHEDRON") == 0) {
+    return Polyhedron();
   }
   else if(typeVal.compare("EDGE_3") == 0) {
     return Edge_3();

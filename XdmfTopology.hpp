@@ -51,6 +51,10 @@ class XdmfTopologyType;
  *
  * The tetrahedron is composed of nodes 20, 25, 100, and 200. The
  * polygon is composed of nodes 300 to 304.
+ *
+ * Elements of type Polyhedron (i.e. N face cells, where each face is a M edge
+ * polygon) are in the following format:
+ * [nCellFaces, nFace0Pts, id0_0, id0_1, ..., nFace1Pts, id1_0, id1_1, ..., ...]
  */
 class XDMF_EXPORT XdmfTopology : public XdmfArray {
 
