@@ -97,6 +97,18 @@ XdmfTopology::getNumberElements() const
           numberElements += 1;
           index += numberNodes + 2;
         }
+        else if(topologyType == XdmfTopologyType::Polyhedron()) {
+          // get number of face
+          const unsigned int numberFaces =
+            this->getValue<unsigned int>(index + 1);
+          // skip to first face
+          index += 2;
+          // iterate over all faces and add number of nodes per face to index
+          for(unsigned int i=0; i<numberFaces; ++i) {
+            index += this->getValue<unsigned int>(index) + 1;
+          }
+          numberElements += 1;
+        }
         else {
           // add 1 to element count and move to next element id
           numberElements += 1;
