@@ -62,6 +62,7 @@
  *   Tetrahedron - 4 Triangular Faces
  *   Wedge - 4 Triangular Faces, Quadrilateral Base
  *   Hexahedron - 6 Quadrilateral Faces
+ *   Polyhedron - N Face Cell, where each Face is a M Edge Polygon
  *   Edge_3 - 3 Node Quadratic Line
  *   Triangle_6 - 6 Node Quadratic Triangle
  *   Quadrilateral_8 - 8 Node Quadratic Quadrilateral
@@ -120,7 +121,7 @@ public:
    */
   static shared_ptr<const XdmfTopologyType> NoTopologyType();
   static shared_ptr<const XdmfTopologyType> Polyvertex();
-  static shared_ptr<const XdmfTopologyType> 
+  static shared_ptr<const XdmfTopologyType>
   Polyline(const unsigned int nodesPerElement);
   static shared_ptr<const XdmfTopologyType>
   Polygon(const unsigned int nodesPerElement);
@@ -130,6 +131,7 @@ public:
   static shared_ptr<const XdmfTopologyType> Pyramid();
   static shared_ptr<const XdmfTopologyType> Wedge();
   static shared_ptr<const XdmfTopologyType> Hexahedron();
+  static shared_ptr<const XdmfTopologyType> Polyhedron();
   static shared_ptr<const XdmfTopologyType> Edge_3();
   static shared_ptr<const XdmfTopologyType> Triangle_6();
   static shared_ptr<const XdmfTopologyType> Quadrilateral_8();
@@ -300,7 +302,7 @@ public:
    * @skipline //#getName
    * @until //#getName
    *
-   * Python 
+   * Python
    *
    * @dontinclude XdmfExampleTopologyType.py
    * @skipline #//getName
