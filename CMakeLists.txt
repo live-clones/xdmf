@@ -326,7 +326,11 @@ if(NOT XDMF_BUILD_CORE_ONLY)
   endif()
 
   if(XDMF_WRAP_PYTHON)
-    XDMF_SWIG_PYTHON(${XDMF_LIBNAME} XdmfCore XdmfDSM)
+    if (XDMF_BUILD_DSM)
+      XDMF_SWIG_PYTHON(${XDMF_LIBNAME} XdmfCore)
+    else()
+      XDMF_SWIG_PYTHON(${XDMF_LIBNAME} XdmfCore XdmfDSM)
+    endif()
     set(XDMF_PYTHON_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/lib/python/)
   endif()
 
