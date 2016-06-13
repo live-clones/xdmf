@@ -215,6 +215,27 @@ public:
         if (mItemFactory->isArrayTag((char *)currNode->name)) {
           while(childNode != NULL) {
             if(childNode->type == XML_TEXT_NODE && childNode->content) {
+#if 1 //ARL's side
+              const char * content = (char*)childNode->content;
+
+              // Determine if content is whitespace
+              bool whitespace = true;
+
+              const char * contentPtr = content;
+              // Step through to end of pointer
+              while(contentPtr != NULL) {
+                // If not a whitespace character, break
+                if(!isspace(*contentPtr++)) {
+                  whitespace = false;
+                  break;
+                }
+              }
+              if(!whitespace) {
+                itemProperties.insert(std::make_pair("Content", content));
+                itemProperties.insert(std::make_pair("XMLDir", mXMLDir));
+                break;
+              }
+#else //VTK's side, breaks XDMF's tests, revisit if problematic in VTK
               std::string content((char *)childNode->content);
               boost::algorithm::trim(content);
 
@@ -223,6 +244,7 @@ public:
                 itemProperties.insert(std::make_pair("XMLDir", mXMLDir));
                 break;
               }
+#endif
             }
             childNode = childNode->next;
           }
