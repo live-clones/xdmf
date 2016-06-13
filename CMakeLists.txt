@@ -143,7 +143,7 @@ if(XDMF_WRAP_PYTHON)
   # Output:
   #     Target Name = the output target name will have ${python_name} as its name
   macro(XDMF_SWIG_PYTHON python_name)
-    set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
+    set(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR})
     # optimize swig generation --- these are all flags corresponding to -O
     # except -fvirtual which breaks visitor operation
     set(CMAKE_SWIG_FLAGS ${XDMF_SWIG_FLAGS} -modern -fastdispatch -nosafecstrings -noproxydel -fastproxy -fastinit -fastunpack -fastquery -modernargs -nobuildnone)
@@ -168,7 +168,7 @@ if(XDMF_WRAP_PYTHON)
     endif()
 
     if(WIN32)
-	  if(NOT MSVC10)
+      if(NOT MSVC10)
         set_target_properties(${SWIG_MODULE_${python_name}Python_REAL_NAME}
           PROPERTIES
           PREFIX ../
@@ -176,7 +176,7 @@ if(XDMF_WRAP_PYTHON)
           RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
           LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
           ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-	  endif()
+      endif()
     endif()
 
     set_target_properties(${SWIG_MODULE_${python_name}Python_REAL_NAME}
@@ -217,9 +217,9 @@ if(XDMF_WRAP_JAVA)
   #     Target Name     = the output target name will have ${java_name}Java as its name
   #     Target Jar      = the output target jar will have ${java_name}Java.jar as its name
   macro(XDMF_SWIG_JAVA java_name)
-    set(${java_name}_JAVA_JAR ${CMAKE_CURRENT_BINARY_DIR}/${java_name}.jar)
+    set(${java_name}_JAVA_JAR ${CMAKE_BINARY_DIR}/${java_name}.jar)
     set(XDMF_JAVA_PACKAGE_DIR mil/army/arl/xdmf)
-    set(XDMF_JAVA_DIR ${CMAKE_CURRENT_BINARY_DIR}/${XDMF_JAVA_PACKAGE_DIR})
+    set(XDMF_JAVA_DIR ${CMAKE_BINARY_DIR}/${XDMF_JAVA_PACKAGE_DIR})
     set(CMAKE_SWIG_OUTDIR ${XDMF_JAVA_DIR})
     set(CMAKE_SWIG_FLAGS ${XDMF_SWIG_FLAGS} -v -make_default -package mil.army.arl.xdmf)
     set_source_files_properties(${java_name}.i PROPERTIES CPLUSPLUS ON)
