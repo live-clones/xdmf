@@ -11,9 +11,9 @@ ADD_TEST_CXX_DEPENDENCIES("Xdmf")
 #	Read UseCxxTest.cmake for more information
 # ---------------------------------------
 if ("${XDMF_DSM_IS_CRAY}" STREQUAL "")
-  IF (MPIEXEC_MAX_NUMPROCS STRGREATER 5)
+  IF (MPIEXEC_MAX_NUMPROCS GREATER 5)
     ADD_MPI_TEST_CXX(DSMFileTest.sh XdmfFileAcceptTest,XdmfFileConnectTest)
-  ENDIF(MPIEXEC_MAX_NUMPROCS STRGREATER 5)
+  ENDIF(MPIEXEC_MAX_NUMPROCS GREATER 5)
 endif ("${XDMF_DSM_IS_CRAY}" STREQUAL "")
 ADD_TEST_CXX(TestXdmfAggregate)
 ADD_TEST_CXX(TestXdmfAttribute)

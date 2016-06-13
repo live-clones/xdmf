@@ -1,7 +1,6 @@
 #include "XdmfArray.hpp"
 #include "XdmfArrayType.hpp"
 #include "XdmfWriter.hpp"
-#include "XdmfHDF5ControllerDSM.hpp"
 #include "XdmfHDF5Writer.hpp"
 #include "XdmfReader.hpp"
 #include "XdmfSubset.hpp"
